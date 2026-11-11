@@ -3,19 +3,23 @@
 /// Jewel.
 ///
 /// It is reached from two rooms of SceneId_SolSanctumReliefs
-/// (sol_sanctum_entrance.c) and leads back to them:
-/// SOL_SANCTUM_MAZE_TO_SOL_SANCTUM_RELIEFS_SOUTH to the room of steps off the
-/// first relief room, and SOL_SANCTUM_MAZE_TO_SOL_SANCTUM_RELIEFS_NORTH to the
-/// second relief room. It places nobody; its one event besides the exits is
-/// the chest (FLAG_SOL_SANCTUM_SECOND_SMALL_JEWEL_FOUND), whose jewel opens the
-/// second minotaur relief. Its setup, SolSanctumRooms_Initialize
-/// (shared/sol_sanctum_init_zoom.h), is the one SceneId_SolSanctumCorridor
-/// shares: once Mt. Aleph has erupted, the room rumbles and shakes.
+/// (sol_sanctum_entrance.c) and leads back to them.
+/// SOL_SANCTUM_MAZE_TO_SOL_SANCTUM_RELIEFS_SOUTH goes to the room of steps off
+/// the first relief room, and SOL_SANCTUM_MAZE_TO_SOL_SANCTUM_RELIEFS_NORTH to
+/// the second relief room.
 ///
-/// The south exit leaves down stairs (EXIT_STYLE_STAIRS_DOWN): walking
-/// north into its arch, the leader steps in and sinks out of sight as if down
-/// steps behind it, to SE_STAIRS_DOWN, and comes out walking down from a
-/// doorway in the room of steps (render probe maze-exit).
+/// It places nobody. Its one event besides the exits is the chest
+/// (FLAG_SOL_SANCTUM_SECOND_SMALL_JEWEL_FOUND), whose jewel opens the second
+/// minotaur relief.
+///
+/// Its setup, SolSanctumRooms_Initialize (shared/sol_sanctum_init_zoom.h), is
+/// the one SceneId_SolSanctumCorridor shares. Once Mt. Aleph has erupted, the
+/// room rumbles and shakes.
+///
+/// The south exit leaves down stairs (EXIT_STYLE_STAIRS_DOWN). Walking north
+/// into its arch, the leader steps in and sinks out of sight as if down steps
+/// behind it, to SE_STAIRS_DOWN. He comes out walking down from a doorway in
+/// the room of steps (render probe maze-exit).
 
 #include "module/scene/sol_sanctum_maze.h"
 #include "module/scene/shared/sol_sanctum_init_zoom.h"

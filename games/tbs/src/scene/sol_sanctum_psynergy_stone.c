@@ -3,12 +3,15 @@
 /// (SceneId_SolSanctumStatue) that holds a Psynergy Stone.
 ///
 /// Its one exit, SOL_SANCTUM_PSYNERGY_STONE_TO_SOL_SANCTUM_STATUE, leads back
-/// to the statue room, and it places nobody. Searching in it finds the
-/// Psynergy Stone, which restores all PP. The stone is kept by an area
-/// flag (FLAG_SOL_SANCTUM_PSYNERGY_STONE_TAKEN) rather than a story flag, so
-/// Scene_Arrive puts it back whenever the party enters another
-/// area. Retreat does not work here, and once Mt. Aleph has erupted the
-/// room rumbles and shakes, as the rest of the sanctum does.
+/// to the statue room, and it places nobody.
+///
+/// Searching in it finds the Psynergy Stone, which restores all PP. The stone
+/// is kept by an area flag (FLAG_SOL_SANCTUM_PSYNERGY_STONE_TAKEN) rather than
+/// a story flag, so Scene_Arrive puts it back whenever the party enters another
+/// area.
+///
+/// Retreat does not work here. Once Mt. Aleph has erupted, the room rumbles and
+/// shakes, as the rest of the sanctum does.
 
 #include "module/scene/sol_sanctum_psynergy_stone.h"
 #include "battle.h"
@@ -54,9 +57,10 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gSolSanctumPsynergyStoneTriggers;
 }
 
-/// Opens the map with the window transition and blocks Retreat. Once Mt.
-/// Aleph has erupted (FLAG_SOL_SANCTUM_ERUPTED), the room rumbles (SE_RUMBLE)
-/// and shakes gently, as the rest of the sanctum does.
+/// Opens the map with the window transition and blocks Retreat.
+///
+/// Once Mt. Aleph has erupted (FLAG_SOL_SANCTUM_ERUPTED), the room rumbles
+/// (SE_RUMBLE) and shakes gently, as the rest of the sanctum does.
 s32 Scene_Initialize(void) {
   s32 shakeX = PIXELS(1);
   s32 shakeY = PIXELS(1);

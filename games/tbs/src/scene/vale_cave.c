@@ -1,60 +1,58 @@
 /// @file
-/// Vale Cave's overlay, which holds three rooms, each a scene of its own: the
-/// way in, which the game still calls Vale, and two rooms of Vale Cave proper.
-/// Kite, a Jupiter Djinni, hides in the second. No story flag is read here and
-/// no message is shown: the cave is a side trip from the part of Vale around
-/// Kraden's cottage, a run of Psynergy puzzles whose progress lives in scene
-/// and area flags.
+/// Vale Cave's overlay holds three rooms, each a scene of its own.
 ///
-/// - Vale (SceneId_ValeCaveMouth), the way in, an area of its own (29).
+/// They are the way in, which the game still calls Vale, and two rooms of Vale
+/// Cave proper. Kite, a Jupiter Djinni, hides in the second.
+///
+/// No story flag is read here and no message is shown. The cave is a side trip
+/// from the part of Vale around Kraden's cottage, a run of Psynergy puzzles
+/// whose progress lives in scene and area flags.
+///
+/// - Vale (SceneId_ValeCaveMouth), the way in, is an area of its own (29).
 ///   VALE_CAVE_MOUTH_TO_VALE_KRADENS_COTTAGE_WEST and
 ///   VALE_CAVE_MOUTH_TO_VALE_KRADENS_COTTAGE_EAST lead back to Kraden's part of
 ///   Vale (SceneId_ValeKradensCottage), whose
 ///   VALE_KRADENS_COTTAGE_TO_VALE_CAVE_MOUTH_WEST and
-///   VALE_KRADENS_COTTAGE_TO_VALE_CAVE_MOUTH_EAST lead here;
+///   VALE_KRADENS_COTTAGE_TO_VALE_CAVE_MOUTH_EAST lead here.
 ///   VALE_CAVE_MOUTH_TO_VALE_CAVE_KITE goes on into the cave. Each exit plays
-///   the exit sound first (ValeCave_LeaveRoom). On arrival
-///   ValeCave_Initialize fades the room in from the backdrop and clears
-///   FLAG_SHOW_AREA_NAME: entering a new area sets that flag, but
-///   this is still Vale.
-/// - Vale Cave (SceneId_ValeCaveKite), one map in three parts, each with its
-/// own
-///   entrances and camera box; walking south into a ledge's cells hops
-///   the leader down it (ValeCave_HopDownLedge). In the first part
+///   the exit sound first (ValeCave_LeaveRoom). On arrival ValeCave_Initialize
+///   fades the room in from the backdrop and clears FLAG_SHOW_AREA_NAME.
+///   Entering a new area sets that flag, but this is still Vale.
+/// - Vale Cave (SceneId_ValeCaveKite) is one map in three parts, each with its
+///   own entrances and camera box. Walking south into a ledge's cells hops the
+///   leader down it (ValeCave_HopDownLedge). In the first part
 ///   (VALE_CAVE_KITE_FROM_VALE_CAVE_MOUTH to
 ///   VALE_CAVE_KITE_FROM_VALE_CAVE_LOGS_WEST) Reveal shows a hidden cell while
 ///   it lasts (ValeCave_RevealHiddenTile). In Kite's part
 ///   (VALE_CAVE_KITE_EAST_FROM_WEST to
 ///   VALE_CAVE_KITE_FROM_VALE_CAVE_LOGS_EAST), coming near makes Kite hop away
 ///   (ValeCave_KiteRunsOff) and then run behind a ledge
-///   (ValeCave_KiteRunsBehindLedge, setting
-///   FLAG_VALE_CAVE_KITE_BEHIND_LEDGE); from then on twelve cell behaviors,
-///   45 to 56 on the 23 cells round the ledge, each send it to its point of
-///   gValeCave_WalkTargets on the ledge's far side as the leader walks round
-///   (ValeCave_KiteKeepsAway), so it cannot be reached until Halt stops it.
-///   A stopped Kite can be talked to
-///   and joins the party (ValeCave_TalkToKite), setting FLAG_KITE, which
-///   removes it from the actor placements. The room's chests hold the
-///   Halt Gem, which gives Halt, and a Nut. In the riding log's part
-///   (VALE_CAVE_KITE_SOUTH_FROM_WEST to
-///   VALE_CAVE_KITE_FROM_VALE_CAVE_LOGS_SOUTH) two stacks of crates sink into
-///   the water once Move or a push leaves them at their own column
-///   (FLAG_VALE_CAVE_WEST_CRATES_SUNK and FLAG_VALE_CAVE_EAST_CRATES_SUNK),
-///   opening the way, and a log carries the leader along the passage when
-///   walked into from the west or the east (FLAG_VALE_CAVE_RIDING_LOG_EAST).
-///   Its exits lead back to the first room, on to the third, and between its
-///   own parts.
-/// - Vale Cave (SceneId_ValeCaveLogs), the inner room, with three logs to push:
-///   one off a ledge (ValeCave_PushLogOffLedge), one along the ledge until
-///   it drops at its edge (ValeCave_PushLogOverEdge) and one north
-///   (ValeCave_PushLogNorth), each clearing the cells it held. Its exits
-///   lead back into the second room and between its own parts.
+///   (ValeCave_KiteRunsBehindLedge, setting FLAG_VALE_CAVE_KITE_BEHIND_LEDGE).
+///   From then on twelve cell behaviors, 45 to 56 on the 23 cells round the
+///   ledge, each send it to its point of gValeCave_WalkTargets on the ledge's
+///   far side as the leader walks round (ValeCave_KiteKeepsAway). So it cannot
+///   be reached until Halt stops it. A stopped Kite can be talked to and joins
+///   the party (ValeCave_TalkToKite), setting FLAG_KITE, which removes it from
+///   the actor placements. The room's chests hold the Halt Gem, which gives
+///   Halt, and a Nut. In the riding log's part (VALE_CAVE_KITE_SOUTH_FROM_WEST
+///   to VALE_CAVE_KITE_FROM_VALE_CAVE_LOGS_SOUTH) two stacks of crates sink
+///   into the water once Move or a push leaves them at their own column
+///   (FLAG_VALE_CAVE_WEST_CRATES_SUNK and FLAG_VALE_CAVE_EAST_CRATES_SUNK).
+///   That opens the way. A log carries the leader along the passage when walked
+///   into from the west or the east (FLAG_VALE_CAVE_RIDING_LOG_EAST). Its exits
+///   lead back to the first room, on to the third, and between its own parts.
+/// - Vale Cave (SceneId_ValeCaveLogs), the inner room, has three logs to push.
+///   One goes off a ledge (ValeCave_PushLogOffLedge). One goes along the ledge
+///   until it drops at its edge (ValeCave_PushLogOverEdge). One goes north
+///   (ValeCave_PushLogNorth). Each clears the cells it held. Its exits lead
+///   back into the second room and between its own parts.
 ///
-/// Vale Cave's two rooms are one area (30), so their area flags
+/// Vale Cave's two rooms are one area (30). So their area flags
 /// (FLAG_VALE_CAVE_RIDING_LOG_EAST, FLAG_VALE_CAVE_KITE_BEHIND_LEDGE) last
-/// while the party goes between them. On every arrival ValeCave_ApplyEntryState
-/// rebuilds the cells of each puzzle already solved and, once Kite has run
-/// behind its ledge, puts it back there.
+/// while the party goes between them.
+///
+/// On every arrival ValeCave_ApplyEntryState rebuilds the cells of each puzzle
+/// already solved. Once Kite has run behind its ledge, it puts Kite back there.
 
 #include "main_routine_work.h"
 #include "djinn_ids.h"
@@ -98,10 +96,12 @@
 #include "sounds.h"
 #include "sound_driver_symbols.h"
 
-/// The way in's actor placements (gValeCave_MouthActorPlacements),
-/// numbered from ACTOR_FIRST_PLACED: three stacks of crates (drawn as the
-/// crates of the Bilibin Barricade in bilibin.c), then two logs (as in Kolima
-/// Forest), none of which moves.
+/// The way in's actor placements (gValeCave_MouthActorPlacements), numbered
+/// from ACTOR_FIRST_PLACED.
+///
+/// They are three stacks of crates, drawn as the crates of the Bilibin
+/// Barricade in bilibin.c, then two logs, as in Kolima Forest. None of them
+/// moves.
 enum ValeCaveMouthActorId {
   /// ★ Named from what the player sees: three wooden crates stacked by the
   /// cave's mouth (its render)
@@ -114,23 +114,22 @@ enum ValeCaveMouthActorId {
   ACTOR_VALE_CAVE_MOUTH_SECOND_LOG
 };
 
-/// The second room's actor placements
-/// (gValeCave_KiteActorPlacements), numbered from ACTOR_FIRST_PLACED.
+/// The second room's actor placements (gValeCave_KiteActorPlacements), numbered
+/// from ACTOR_FIRST_PLACED.
 enum ValeCaveKiteActorId {
   /// Kite, a Jupiter Djinni, placed until it joins (FLAG_KITE).
   /// ★ Named from the game: "Kite" (MsgDjinnName)
   ACTOR_KITE = ACTOR_FIRST_PLACED,
-  /// The two stacks of crates in the riding log's part, which sink
-  /// into the water: the western under Move, the eastern under Move or a
-  /// push.
+  /// The two stacks of crates in the riding log's part, which sink into the
+  /// water. The western sinks under Move, the eastern under Move or a push.
   /// ★ Named from what the player sees: a stack of wooden crates beside the
   /// water (its render)
   ACTOR_WEST_CRATES,
   /// ★ Named from what the player sees: a stack of wooden crates beside the
   /// water (its render)
   ACTOR_EAST_CRATES,
-  /// The log the leader rides along its part's passage, from one end
-  /// to the other, drawn as the north-south log of Colosso's Lumber Water
+  /// The log the leader rides along its part's passage, from one end to the
+  /// other. It is drawn as the north-south log of Colosso's Lumber Water
   /// Crossing Area (colosseum_azart_match.c).
   /// ★ Named from what the player sees: a yellow log floating in the water (its
   /// render)
@@ -150,9 +149,10 @@ enum ValeCaveKiteActorId {
   ACTOR_SECOND_STANDING_LOG
 };
 
-/// The third room's actor placements
-/// (gValeCave_LogsActorPlacements), numbered from ACTOR_FIRST_PLACED;
-/// its first row places Kite as the second room's does. Its three logs are
+/// The third room's actor placements (gValeCave_LogsActorPlacements), numbered
+/// from ACTOR_FIRST_PLACED.
+///
+/// Its first row places Kite as the second room's does. Its three logs are
 /// pushed, and lie as in Kolima Forest.
 enum ValeCaveLogsActorId {
   /// Lying north to south, pushed off the ledge.
@@ -236,12 +236,12 @@ static void ValeCave_ApplyEntryState(void);
 /// (its render)
 #define FLAG_VALE_CAVE_SOUTH_LOG_ON_SOUTH_ROW FLAG_SCENE_TEMP_05
 
-/// In Vale Cave's second room, talking to Kite once Halt has stopped it: Kite,
-/// a Jupiter Djinni, joins the party.
+/// In Vale Cave's second room, talking to Kite once Halt has stopped it has
+/// Kite, a Jupiter Djinni, join the party.
 ///
-/// Scene_TalkToActor selects this TRIGGER_TALK_HALTED event while Kite
-/// is the paused actor. Djinn_JoinParty gives the Jupiter Djinni Kite
-/// and sets FLAG_KITE, so neither room places Kite again.
+/// Scene_TalkToActor selects this TRIGGER_TALK_HALTED event while Kite is the
+/// paused actor. Djinn_JoinParty gives the Jupiter Djinni Kite and sets
+/// FLAG_KITE, so neither room places Kite again.
 static void ValeCave_TalkToKite(void) {
   Djinn_JoinParty(ACTOR_KITE, ELEMENT_JUPITER, DJINNI_INDEX(DJINNI_KITE));
 }
@@ -290,8 +290,7 @@ static s32 ValeCave_FaceActorTowardLeader(struct Actor *updated) {
   ((void (*)(struct Actor *))ValeCave_FaceActorTowardLeader)
 #endif
 
-/// Selects entrance positions and camera bounds for the current cave
-/// room.
+/// Selects entrance positions and camera bounds for the current cave room.
 const struct SceneEntrance *ValeCave_GetEntrances(void) {
   s16 sceneId = gMainRoutineWork.next;
 
@@ -312,8 +311,8 @@ const struct SceneExitRegion *ValeCave_GetRegions(void) { return NULL; }
 /// Returns the shared packed exits for all cave rooms.
 const u32 *ValeCave_GetExits(void) { return gValeCave_Exits; }
 
-/// Selects the current room's actor placements: Kite, and the crates and
-/// logs.
+/// Selects the current room's actor placements, which are Kite, and the crates
+/// and logs.
 const struct ActorPlacement *ValeCave_GetActorPlacements(void) {
   s16 sceneId = gMainRoutineWork.next;
 
@@ -338,9 +337,9 @@ static void ValeCave_HideRevealedTile(void) {
 
 /// In Vale Cave's second room, Reveal shows a hidden cell.
 ///
-/// Reached by Reveal's PSYNERGY_PHASE_ACTS anywhere in the second room;
-/// copies cell (16, 17) over cell (15, 15) until ValeCave_HideRevealedTile
-/// puts it back.
+/// Reached by Reveal's PSYNERGY_PHASE_ACTS anywhere in the second room. Copies
+/// cell (16, 17) over cell (15, 15) until ValeCave_HideRevealedTile puts it
+/// back.
 static void ValeCave_RevealHiddenTile(void) {
   MapGrid_CopyCells(16, 17, 1, 1, 15, 15);
 }
@@ -364,9 +363,10 @@ ValeCave_SinkActorWithParticles(s32 actorId, s32 baseX, s32 baseZ,
   }
 }
 
-/// In Vale Cave's second room, Move on the western crates: once they are at
-/// column 23, Isaac steps aside and they sink into the water in a cloud of
-/// dust.
+/// In Vale Cave's second room, Move on the western crates sinks them into the
+/// water once they are at column 23.
+///
+/// Isaac steps aside, and they sink in a cloud of dust.
 ///
 /// Reached by Move on ACTOR_WEST_CRATES in the second room, until
 /// FLAG_VALE_CAVE_WEST_CRATES_SUNK is set. At column 23 it sets
@@ -408,8 +408,8 @@ static void ValeCave_MoveWestCratesIntoWater(void) {
   Event_End();
 }
 
-/// In Vale Cave's second room, Move on the eastern crates: once they are at
-/// column 27, they sink into the water.
+/// In Vale Cave's second room, Move on the eastern crates sinks them into the
+/// water once they are at column 27.
 ///
 /// Reached by Move on ACTOR_EAST_CRATES in the second room, until
 /// FLAG_VALE_CAVE_EAST_CRATES_SUNK is set, and from
@@ -452,8 +452,8 @@ static void ValeCave_MoveEastCratesIntoWater(void) {
   Event_End();
 }
 
-/// In Vale Cave's second room, pushing the eastern crates: they move a cell,
-/// and sink if they are then at column 27.
+/// In Vale Cave's second room, pushing the eastern crates moves them a cell,
+/// and they sink if they are then at column 27.
 ///
 /// Reached by walking into cell behavior 24 in the second room, until
 /// FLAG_VALE_CAVE_EAST_CRATES_SUNK is set.
@@ -464,11 +464,11 @@ static void ValeCave_PushEastCratesIntoWater(void) {
   ValeCave_MoveEastCratesIntoWater();
 }
 
-/// In Vale Cave's second room, walking south off a ledge: Isaac hops down if
+/// In Vale Cave's second room, walking south off a ledge has Isaac hop down if
 /// the cell below is free.
 ///
-/// Reached by walking south into cell behavior 21 in the second room.
-/// Returns 1 when the leader hopped, 0 when the landing cell is blocked.
+/// Reached by walking south into cell behavior 21 in the second room. Returns 1
+/// when the leader hopped, 0 when the landing cell is blocked.
 static s32 ValeCave_HopDownLedge(s32 unusedArgument) {
 
   union FieldCoordinate landingPosition[3];
@@ -512,11 +512,13 @@ static s32 ValeCave_HopDownLedge(s32 unusedArgument) {
   return 0;
 }
 
-/// In Kite's part of Vale Cave's second room, coming near Kite: the camera
-/// finds it; it notices the party and hops away up the ledge.
+/// In Kite's part of Vale Cave's second room, coming near Kite makes it hop
+/// away up the ledge.
+///
+/// The camera finds Kite first. Kite then notices the party and hops away.
 ///
 /// Reached by stepping on cell behavior 40 in the second room until Kite is
-/// caught (FLAG_KITE); runs once, setting FLAG_VALE_CAVE_KITE_RAN_OFF.
+/// caught (FLAG_KITE). Runs once, setting FLAG_VALE_CAVE_KITE_RAN_OFF.
 static void ValeCave_KiteRunsOff(void) {
 
   struct Actor *djinni;
@@ -546,8 +548,8 @@ static void ValeCave_KiteRunsOff(void) {
   }
 }
 
-/// In Kite's part of Vale Cave's second room, coming near again: Kite runs
-/// behind the ledge and turns to watch the party.
+/// In Kite's part of Vale Cave's second room, coming near again makes Kite run
+/// behind the ledge and turn to watch the party.
 ///
 /// Reached by stepping on cell behavior 41 in the second room until Kite is
 /// caught, once ValeCave_KiteRunsOff has run. Sets
@@ -579,12 +581,12 @@ static void ValeCave_KiteRunsBehindLedge(void) {
   }
 }
 
-/// In Kite's part of Vale Cave's second room, walking around the ledge: Kite
-/// keeps to the far side of it, unless Halt has stopped it.
+/// In Kite's part of Vale Cave's second room, as the leader walks around the
+/// ledge, Kite keeps to the far side of it, unless Halt has stopped it.
 ///
-/// Reached by stepping on cell behaviors 45 to 56 in the second room until
-/// Kite is caught, once FLAG_VALE_CAVE_KITE_BEHIND_LEDGE is set; each behavior
-/// sends Kite to its row of gValeCave_WalkTargets at the leader's speed.
+/// Reached by stepping on cell behaviors 45 to 56 in the second room until Kite
+/// is caught, once FLAG_VALE_CAVE_KITE_BEHIND_LEDGE is set. Each behavior sends
+/// Kite to its row of gValeCave_WalkTargets at the leader's speed.
 static void ValeCave_KiteKeepsAway(void) {
   struct Actor *djinni;
   struct Actor *leader;
@@ -616,8 +618,9 @@ static void ValeCave_KiteKeepsAway(void) {
   }
 }
 
-/// In Vale Cave's second room, Halt on Kite: it stops where it stands, and the
-/// party can walk up to it and talk to it (ValeCave_TalkToKite).
+/// In Vale Cave's second room, Halt on Kite stops it where it stands.
+///
+/// The party can then walk up to it and talk to it (ValeCave_TalkToKite).
 ///
 /// Reached by Halt on Kite in the second room.
 static void ValeCave_HaltKite(void) {
@@ -626,8 +629,8 @@ static void ValeCave_HaltKite(void) {
   Event_End();
 }
 
-/// In Vale Cave's third room, pushing the eastern log along the ledge: at its
-/// edge the log falls off, opening the way.
+/// In Vale Cave's third room, pushing the eastern log along the ledge makes it
+/// fall off at the ledge's edge, opening the way.
 ///
 /// Reached by walking into cell behavior 20 in the third room. When the log
 /// falls (column 17) it sets FLAG_VALE_CAVE_EAST_LOG_PUSHED_OVER_EDGE and
@@ -680,8 +683,8 @@ static void ValeCave_PushLogOverEdge(void) {
   Event_End();
 }
 
-/// In Vale Cave's third room, pushing the western log east: it falls off the
-/// ledge, opening the way.
+/// In Vale Cave's third room, pushing the western log east makes it fall off
+/// the ledge, opening the way.
 ///
 /// Reached by walking east into cell behavior 21 in the third room. Sets
 /// FLAG_VALE_CAVE_WEST_LOG_PUSHED_OFF_LEDGE and clears the cells the log held.
@@ -725,7 +728,7 @@ static void ValeCave_PushLogOffLedge(void) {
   Event_End();
 }
 
-/// In Vale Cave's third room, pushing the southern log north: it slides a cell,
+/// In Vale Cave's third room, pushing the southern log north slides it a cell,
 /// opening the way.
 ///
 /// Reached by walking into cell behavior 22 in the third room. Sets
@@ -783,12 +786,14 @@ const struct Trigger *ValeCave_GetTriggers(void) {
   return gValeCave_TriggersOther;
 }
 
-/// Arriving in any of the three rooms: chooses the entry transition and
-/// restores the room's puzzle state.
+/// Arriving in any of the three rooms chooses the entry transition and restores
+/// the room's puzzle state.
 ///
-/// The scene's initialize entry. The first room, Vale, fades in from the
-/// backdrop and clears FLAG_SHOW_AREA_NAME, so the area name is not shown
-/// again; the two rooms of Vale Cave open with the window transition.
+/// This is the scene's initialize entry.
+///
+/// The first room, Vale, fades in from the backdrop and clears
+/// FLAG_SHOW_AREA_NAME, so the area name is not shown again. The two rooms of
+/// Vale Cave open with the window transition.
 s32 ValeCave_Initialize(void) {
   s32 *request = &gFieldWork->transition;
 
@@ -808,8 +813,8 @@ s32 ValeCave_Initialize(void) {
 /// In Vale, the cave's way in (SceneId_ValeCaveMouth), each exit plays the exit
 /// sound before leaving.
 ///
-/// Reached by stepping on cell behaviors 1 to 3 in the first room; takes
-/// the exit of the same number (VALE_CAVE_MOUTH_TO_VALE_KRADENS_COTTAGE_WEST,
+/// Reached by stepping on cell behaviors 1 to 3 in the first room. Takes the
+/// exit of the same number (VALE_CAVE_MOUTH_TO_VALE_KRADENS_COTTAGE_WEST,
 /// VALE_CAVE_MOUTH_TO_VALE_CAVE_KITE or
 /// VALE_CAVE_MOUTH_TO_VALE_KRADENS_COTTAGE_EAST).
 static void ValeCave_LeaveRoom(void) {
@@ -834,7 +839,7 @@ static void ValeCave_UpdateRidingLogPassage(void) {
 
 #include "shared/actor_pair_move.h"
 
-/// In Vale Cave's second room, walking east onto the riding log: it carries
+/// In Vale Cave's second room, walking east onto the riding log has it carry
 /// the leader to the eastern end of the passage.
 ///
 /// Reached by walking east into cell behavior 20 in the second room. Sets
@@ -850,7 +855,7 @@ static void ValeCave_RideLogEast(void) {
   Sound_Play(SOUND_FADE_OUT_ACTION_SE);
 }
 
-/// In Vale Cave's second room, walking west onto the riding log: it carries
+/// In Vale Cave's second room, walking west onto the riding log has it carry
 /// the leader back to the western end of the passage.
 ///
 /// Reached by walking west into cell behavior 21 in the second room. Clears
@@ -882,9 +887,11 @@ static void ValeCave_CenterActorOnCell(s32 actorId, s32 column, s32 row) {
 /// Restores, on entry, Kite behind its ledge and the crates and logs of the
 /// puzzles already solved.
 ///
-/// Called by ValeCave_Initialize. In Kite's part of the second room
+/// Called by ValeCave_Initialize.
+///
+/// Kite's case is in Kite's part of the second room
 /// (VALE_CAVE_KITE_EAST_FROM_WEST to VALE_CAVE_KITE_FROM_VALE_CAVE_LOGS_EAST),
-/// while Kite is free and FLAG_VALE_CAVE_KITE_BEHIND_LEDGE is set, it sets
+/// while Kite is free and FLAG_VALE_CAVE_KITE_BEHIND_LEDGE is set. It then sets
 /// FLAG_VALE_CAVE_KITE_RAN_OFF (and FLAG_VALE_CAVE_KITE_RAN_BEHIND_LEDGE from
 /// VALE_CAVE_KITE_EAST_FROM_WEST) and puts Kite back behind the ledge.
 static void ValeCave_ApplyEntryState(void) {
@@ -988,8 +995,7 @@ static void ValeCave_ApplyEntryState(void) {
   }
 }
 
-/// In Vale Cave's second room, touching the riding log restarts its
-/// animation.
+/// In Vale Cave's second room, touching the riding log restarts its animation.
 ///
 /// Reached by stepping on cell behavior 20 or 21 in the second room.
 static void ValeCave_TouchRidingLog(void) {

@@ -1,91 +1,96 @@
 /// @file
 /// Ship rooms (SceneId_ShipRooms), a sheet of rooms drawn as a ship's cabins,
-/// all of them below the decks of the Tolbi-bound Ship: one of the ship's three
-/// scenes on its voyage from Kalay to Tolbi, told in tolbi_ship_deck.c. The map
-/// is four rooms, each a camera box of the entrance table, whose
-/// entrances are named by room: the passengers' hold
-/// (SHIP_ROOMS_PASSENGER_HOLD_FROM_TOLBI_SHIP_DECK and the others named for
-/// it), the cargo hold (SHIP_ROOMS_CRATE_HOLD_FROM_TOLBI_SHIP_DECK), the rowing
-/// deck where the oarsmen row (the SHIP_ROOMS_ROWING_DECK entrances and
-/// SHIP_ROOMS_FROM_WORLD_MAP) and the captain's quarters (the
-/// SHIP_ROOMS_CAPTAINS_ROOM entrances). Three exits lead up to the
-/// deck, SHIP_ROOMS_PASSENGER_HOLD_TO_TOLBI_SHIP_DECK from the hold,
+/// all of them below the decks of the Tolbi-bound Ship.
+///
+/// It is one of the ship's three scenes on its voyage from Kalay to Tolbi, told
+/// in tolbi_ship_deck.c.
+///
+/// The map is four rooms, each a camera box of the entrance table, whose
+/// entrances are named by room:
+///
+/// - The passengers' hold (SHIP_ROOMS_PASSENGER_HOLD_FROM_TOLBI_SHIP_DECK and
+///   the others named for it).
+/// - The cargo hold (SHIP_ROOMS_CRATE_HOLD_FROM_TOLBI_SHIP_DECK).
+/// - The rowing deck where the oarsmen row (the SHIP_ROOMS_ROWING_DECK
+///   entrances and SHIP_ROOMS_FROM_WORLD_MAP).
+/// - The captain's quarters (the SHIP_ROOMS_CAPTAINS_ROOM entrances).
+///
+/// Three exits lead up to the deck. They are
+/// SHIP_ROOMS_PASSENGER_HOLD_TO_TOLBI_SHIP_DECK from the hold,
 /// SHIP_ROOMS_CRATE_HOLD_TO_TOLBI_SHIP_DECK from the cargo hold and
-/// SHIP_ROOMS_CAPTAINS_ROOM_TO_TOLBI_SHIP_DECK from the captain's quarters, and
+/// SHIP_ROOMS_CAPTAINS_ROOM_TO_TOLBI_SHIP_DECK from the captain's quarters.
 /// SHIP_ROOMS_PASSENGER_HOLD_TO_ROWING_DECK and
 /// SHIP_ROOMS_ROWING_DECK_TO_PASSENGER_HOLD join the hold and the rowing deck.
-/// The actor placements and triggers are chosen by the room and the
-/// voyage's stage; most of the voyage's events play here, at the
-/// entrances from SHIP_ROOMS_CAPTAINS_ROOM_FROM_TOLBI_SHIP_MAST_CAST_OFF on,
-/// through the shared operations of ShipRooms_RunEventCommand. In story order:
+///
+/// The actor placements and triggers are chosen by the room and the voyage's
+/// stage. Most of the voyage's events play here, at the entrances from
+/// SHIP_ROOMS_CAPTAINS_ROOM_FROM_TOLBI_SHIP_MAST_CAST_OFF on, through the
+/// shared operations of ShipRooms_RunEventCommand. In story order:
 ///
 /// - At Kalay, while the ship waits for its replacement from Tolbi. Once the
-///   tour group has left Kalay (FLAG_KALAY_COLOSSO_TOUR_LEFT), walking into
-///   the hold (CELL_BEHAVIOR_SHIP_ROOMS_HOLD_WARRIORS) has Ouranos, a warrior
-///   bound for Colosso who "can't stand water", threaten to go ashore, and he
-///   and his friend Sean go to make the captain sail
+///   tour group has left Kalay (FLAG_KALAY_COLOSSO_TOUR_LEFT), walking into the
+///   hold (CELL_BEHAVIOR_SHIP_ROOMS_HOLD_WARRIORS) has Ouranos, a warrior bound
+///   for Colosso who "can't stand water", threaten to go ashore. He and his
+///   friend Sean go to make the captain sail
 ///   (FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN). The crew's talk of the delay
-///   plays here (CELL_BEHAVIOR_SHIP_ROOMS_QUARTERS_CREW) if it has not on
-///   deck. In the captain's quarters the warriors and passengers press the
-///   captain, who has just decided to sail
-///   (FLAG_TOLBI_SHIP_CAPTAIN_DECIDED_TO_SAIL); Ouranos and Sean offer to guard
-///   the deck with Kaja, Sean thinks of the young warriors among the
-///   passengers, and then the captain finds his lucky anchor charm gone and
-///   will not sail without it. Giving him the Anchor Charm, found on the mast,
-///   plays ShipRooms_ReturnLuckyAnchor: Sean names the party to guard
-///   the oarsmen, and the party agrees (FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED).
+///   plays here (CELL_BEHAVIOR_SHIP_ROOMS_QUARTERS_CREW) if it has not on deck.
+///   In the captain's quarters the warriors and passengers press the captain,
+///   who has just decided to sail (FLAG_TOLBI_SHIP_CAPTAIN_DECIDED_TO_SAIL).
+///   Ouranos and Sean offer to guard the deck with Kaja, and Sean thinks of the
+///   young warriors among the passengers. Then the captain finds his lucky
+///   anchor charm gone and will not sail without it. Giving him the Anchor
+///   Charm, found on the mast, plays ShipRooms_ReturnLuckyAnchor. Sean names
+///   the party to guard the oarsmen, and the party agrees
+///   (FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED).
 /// - Setting sail: on the rowing deck Kaja tells the oarsmen they sail without
-///   the replacement (FLAG_TOLBI_SHIP_SAILING_WITHOUT_REPLACEMENT), the party
-///   guarding them below while he, Ouranos and Sean guard the deck, and that if
-///   an oarsman falls the party must choose a passenger to row in his place,
-///   keeping the two teams balanced. After the deck and the mast, the captain
-///   casts off in the captain's quarters
-///   (SHIP_ROOMS_CAPTAINS_ROOM_FROM_TOLBI_SHIP_MAST_CAST_OFF,
-///   raising the charm), a passenger is called to the oars
-///   (SHIP_ROOMS_PASSENGER_HOLD_FROM_CAPTAINS_ROOM_CALL_TO_OARS) and
-///   the rowing deck rows
-///   (SHIP_ROOMS_ROWING_DECK_FROM_PASSENGER_HOLD_ROWING), which leads
+///   the replacement (FLAG_TOLBI_SHIP_SAILING_WITHOUT_REPLACEMENT). The party
+///   guards them below while he, Ouranos and Sean guard the deck. If an oarsman
+///   falls, the party must choose a passenger to row in his place, keeping the
+///   two teams balanced. After the deck and the mast, the captain casts off in
+///   the captain's quarters
+///   (SHIP_ROOMS_CAPTAINS_ROOM_FROM_TOLBI_SHIP_MAST_CAST_OFF, raising the
+///   charm). A passenger is called to the oars
+///   (SHIP_ROOMS_PASSENGER_HOLD_FROM_CAPTAINS_ROOM_CALL_TO_OARS) and the rowing
+///   deck rows (SHIP_ROOMS_ROWING_DECK_FROM_PASSENGER_HOLD_ROWING), which leads
 ///   to the World Map for the next leg.
-/// - The attacks, each called by the lookout on the mast or the deck; before
+/// - The attacks, each called by the lookout on the mast or the deck. Before
 ///   the first, the captain in the captain's quarters hears of monsters
-///   (SHIP_ROOMS_CAPTAINS_ROOM_FROM_TOLBI_SHIP_MAST_MONSTERS) and
-///   turns the ship
-///   (SHIP_ROOMS_CAPTAINS_ROOM_FROM_TOLBI_SHIP_DECK_TURN). Then
-///   monsters are belowdecks
-///   (SHIP_ROOMS_ROWING_DECK_FROM_TOLBI_SHIP_DECK_FIRST_ATTACK and
-///   the second and third attacks'). While they are aboard the stairs are
+///   (SHIP_ROOMS_CAPTAINS_ROOM_FROM_TOLBI_SHIP_MAST_MONSTERS) and turns the
+///   ship (SHIP_ROOMS_CAPTAINS_ROOM_FROM_TOLBI_SHIP_DECK_TURN). Then monsters
+///   are belowdecks (SHIP_ROOMS_ROWING_DECK_FROM_TOLBI_SHIP_DECK_FIRST_ATTACK
+///   and the second and third attacks'). While they are aboard the stairs are
 ///   barred (FLAG_TOLBI_SHIP_MONSTERS_BELOWDECKS) and the leader is turned back
-///   from them; talking to a monster on the rowing deck fights it (the first,
-///   second or third slot of the Tolbi ship's scripted battles, by the attack),
-///   returning to SHIP_ROOMS_ROWING_DECK_AFTER_FIRST_ATTACK_BATTLE or
+///   from them. Talking to a monster on the rowing deck fights it (the first,
+///   second or third slot of the Tolbi ship's scripted battles, by the attack).
+///   The party returns to SHIP_ROOMS_ROWING_DECK_AFTER_FIRST_ATTACK_BATTLE or
 ///   the second or third attack's, which record the attack fought off
 ///   (FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF, _SECOND_ATTACK_FOUGHT_OFF and
 ///   _THIRD_ATTACK_FOUGHT_OFF) and leave an oarsman hurt. The party then
-///   chooses a passenger in the hold to row: the attacks fought off number the
+///   chooses a passenger in the hold to row. The attacks fought off number the
 ///   seat being filled, and each seat has a group of nine flags, one for each
-///   passenger (FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS and the rest); the passenger
+///   passenger (FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS and the rest). The passenger
 ///   follows the party (FLAG_TOLBI_SHIP_ROWER_CHOSEN) to the rowing deck
-///   (SHIP_ROOMS_ROWING_DECK_FROM_PASSENGER_HOLD), where Kaja takes
-///   them on. Each passenger answers being asked in their own way, and their
-///   rowing values on the mast decide the course.
+///   (SHIP_ROOMS_ROWING_DECK_FROM_PASSENGER_HOLD), where Kaja takes them on.
+///   Each passenger answers being asked in their own way, and their rowing
+///   values on the mast decide the course.
 /// - The Kraken: SHIP_ROOMS_FROM_WORLD_MAP, the ship rocking,
-///   "there's a huge sea monster on the ship!" (FLAG_TOLBI_SHIP_KRAKEN_ON_DECK
-///   shakes the event until it is defeated on deck).
+///   "there's a huge sea monster on the ship!"
+///   (FLAG_TOLBI_SHIP_KRAKEN_ON_DECK shakes the event until it is defeated on
+///   deck).
 /// - The island: off course, a short event in the captain's quarters
-///   (SHIP_ROOMS_CAPTAINS_ROOM_FROM_TOLBI_SHIP_DECK_ISLAND) leads by
-///   the World Map (SHIP_ROOMS_TO_WORLD_MAP) to
-///   SHIP_ROOMS_ROWING_DECK_FROM_WORLD_MAP_ISLAND, where the rowers
-///   rest at the island (FLAG_TOLBI_SHIP_AT_ISLAND) and the hold and captain's
-///   quarters have their own talk. Back from it,
-///   SHIP_ROOMS_ROWING_DECK_FROM_TOLBI_SHIP_DECK_SWITCH_TEAMS has
-///   Kaja switch the left and right teams, the left team's timing having taken
-///   the ship off course, and the ship sets off for Tolbi.
-/// - SHIP_ROOMS_PASSENGER_HOLD_AFTER_DEFEAT, where a defeat at sea
-///   returns: it clears the voyage's flags from
-///   FLAG_TOLBI_SHIP_SAILING_WITHOUT_REPLACEMENT to _KRAKEN_DEFEATED and the
-///   rowers chosen, sets FLAG_TOLBI_SHIP_DEFEATED_AT_SEA and leads up to the
-///   deck (SHIP_ROOMS_PASSENGER_HOLD_TO_TOLBI_SHIP_DECK), so the
-///   voyage starts over.
+///   (SHIP_ROOMS_CAPTAINS_ROOM_FROM_TOLBI_SHIP_DECK_ISLAND) leads by the World
+///   Map (SHIP_ROOMS_TO_WORLD_MAP) to
+///   SHIP_ROOMS_ROWING_DECK_FROM_WORLD_MAP_ISLAND. There the rowers rest at the
+///   island (FLAG_TOLBI_SHIP_AT_ISLAND) and the hold and captain's quarters
+///   have their own talk. Back from it,
+///   SHIP_ROOMS_ROWING_DECK_FROM_TOLBI_SHIP_DECK_SWITCH_TEAMS has Kaja switch
+///   the left and right teams, the left team's timing having taken the ship off
+///   course, and the ship sets off for Tolbi.
+/// - SHIP_ROOMS_PASSENGER_HOLD_AFTER_DEFEAT, where a defeat at sea returns. It
+///   clears the voyage's flags from FLAG_TOLBI_SHIP_SAILING_WITHOUT_REPLACEMENT
+///   to _KRAKEN_DEFEATED and the rowers chosen, sets
+///   FLAG_TOLBI_SHIP_DEFEATED_AT_SEA and leads up to the deck
+///   (SHIP_ROOMS_PASSENGER_HOLD_TO_TOLBI_SHIP_DECK), so the voyage starts over.
 ///
 /// A travelling healer opens a Sanctum in the hold. At Tolbi
 /// (FLAG_TOLBI_SHIP_REACHED_TOLBI) the captain's quarters and the hold have
@@ -145,7 +150,7 @@
 /// ★ Named from the game: "Monsters belowdecks!"
 /// (MsgTolbiShipMonstersBelowdecks)
 #define FLAG_TOLBI_SHIP_MONSTERS_BELOWDECKS 0x301
-/// The Kraken is on deck: the deck shakes until it is defeated
+/// The Kraken is on deck, and the deck shakes until it is defeated
 /// (tolbi_ship_deck.c reads it too).
 /// ★ Named from the game: "there's a huge sea monster on the ship!"
 /// (MsgTolbiShipWonderWhatsWrongShipShouldnt)
@@ -182,12 +187,14 @@ enum ShipEventCommand {
   SHIP_PLACE_FOLLOWERS_AND_MONSTERS
 };
 
-/// The nine passengers who may be called to the oars, in the order of their
-/// rows in gShipRooms_HoldActorPlacementsAtSea and
-/// gShipRooms_RowingDeckActorPlacements and of each seat's group
-/// of flags (FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS + passenger). The game gives
-/// them no names, so each is named by what they say, or by what the guides call
-/// themselves.
+/// The nine passengers who may be called to the oars.
+///
+/// Their order is that of their rows in gShipRooms_HoldActorPlacementsAtSea and
+/// gShipRooms_RowingDeckActorPlacements and of each seat's group of flags
+/// (FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS + passenger).
+///
+/// The game gives them no names, so each is named by what they say, or by what
+/// the guides call themselves.
 enum TolbiShipPassenger {
   /// A man carrying a pack (SPRITE_MAN_CARRYING_A_PACK), the tour's guide.
   /// ★ Named from the game: "I'm the tour group's guide!"
@@ -231,10 +238,10 @@ enum TolbiShipPassenger {
 
 /// The captain's quarters, numbering the rows of
 /// gShipRooms_CaptainsQuartersActorPlacements and
-/// gShipRooms_CaptainsQuartersActorPlacementsWarriors from
-/// ACTOR_FIRST_PLACED; the party's rows take their own slots. The captain,
-/// Kaja and the crewman have the sprites they have on deck
-/// (tolbi_ship_deck.c).
+/// gShipRooms_CaptainsQuartersActorPlacementsWarriors from ACTOR_FIRST_PLACED.
+///
+/// The party's rows take their own slots. The captain, Kaja and the crewman
+/// have the sprites they have on deck (tolbi_ship_deck.c).
 /// ★ Named from the game: "To the captain's quarters, of course."
 /// (MsgTolbiShipIfWeArentGoingSet)
 enum TolbiShipCaptainsQuartersActorId {
@@ -264,11 +271,12 @@ enum TolbiShipCaptainsQuartersActorId {
   ACTOR_QUARTERS_SECOND_GUIDE
 };
 
-/// The hold while the ship waits at Kalay and after it reaches Tolbi,
-/// numbering the rows of gShipRooms_HoldActorPlacements from
-/// ACTOR_FIRST_PLACED: four of the passengers and the second guide, then the
-/// warriors bound for Colosso, Ouranos and his friend Sean, the travelling
-/// healer and Kaja.
+/// The hold while the ship waits at Kalay and after it reaches Tolbi, numbering
+/// the rows of gShipRooms_HoldActorPlacements from ACTOR_FIRST_PLACED.
+///
+/// They are four of the passengers and the second guide, then the warriors
+/// bound for Colosso, Ouranos and his friend Sean, the travelling healer and
+/// Kaja.
 enum TolbiShipHoldActorId {
   /// PASSENGER_WARRIOR.
   /// ★ Named from the game: "we'll help out as warriors."
@@ -307,10 +315,12 @@ enum TolbiShipHoldActorId {
   ACTOR_HOLD_KAJA
 };
 
-/// The hold at sea, numbering the rows of
-/// gShipRooms_HoldActorPlacementsAtSea from ACTOR_FIRST_PLACED:
-/// the nine passengers in the order of enum TolbiShipPassenger, the healer and
-/// Kaja. Each passenger's evidence is its enum TolbiShipPassenger line.
+/// The hold at sea, numbering the rows of gShipRooms_HoldActorPlacementsAtSea
+/// from ACTOR_FIRST_PLACED.
+///
+/// They are the nine passengers in the order of enum TolbiShipPassenger, the
+/// healer and Kaja. Each passenger's evidence is its enum TolbiShipPassenger
+/// line.
 enum TolbiShipSeaHoldActorId {
   /// ★ Named from the game: "I'm the tour group's guide!"
   /// (MsgTolbiShipInteriorsNobodyWouldChooseMeAfterAll)
@@ -357,9 +367,10 @@ enum TolbiShipSeaHoldActorId {
   ACTOR_SEA_HOLD_KAJA
 };
 
-/// The rowing deck, numbering the rows of
-/// gShipRooms_RowingDeckActorPlacements from
-/// ACTOR_FIRST_PLACED; the monsters of each attack are placed after them.
+/// The rowing deck, numbering the rows of gShipRooms_RowingDeckActorPlacements
+/// from ACTOR_FIRST_PLACED.
+///
+/// The monsters of each attack are placed after them.
 enum TolbiShipRowingDeckActorId {
   /// A man in a green bandana (SPRITE_MAN_IN_GREEN_BANDANA), one of the crew
   /// by his bandana.
@@ -372,8 +383,10 @@ enum TolbiShipRowingDeckActorId {
   /// (MsgTolbiShipInteriorsEveryoneRowsInTimeWithThis)
   ACTOR_ROWING_DRUMMER,
   /// The eight oarsmen, men in red bandanas (SPRITE_MAN_IN_RED_BANDANA), a seat
-  /// each, two by two from the north, the west seat
-  /// first; the passengers chosen take the first four seats.
+  /// each.
+  ///
+  /// The seats run two by two from the north, the west seat first. The
+  /// passengers chosen take the first four seats.
   /// ★ Named from the game: "These big muscles are a sign that we're
   /// oarsmen." (MsgTolbiShipInteriorsTheseBigMusclesAreASign)
   ACTOR_ROWING_FIRST_OARSMAN,
@@ -446,7 +459,7 @@ enum ShipRoomsCellBehavior {
   CELL_BEHAVIOR_SHIP_ROOMS_QUARTERS_JAR = 102
 };
 
-/// A speaker: the actor, with the speaker bits for where its message
+/// A speaker, which is the actor with the speaker bits for where its message
 /// window and portrait open.
 #define SPEAKER(actorId, bits) ((bits) | (actorId))
 
@@ -502,8 +515,10 @@ static void ShipRooms_DismissReplacementRowers(void);
 static void ShipRooms_SwapRowerSelections(s32 firstSeatFlags,
                                           s32 secondSeatFlags);
 
-/// An actor script call: stands the actor still at the origin, with no
-/// velocity and no target. Returns 0.
+/// An actor script call that stands the actor still at the origin, with no
+/// velocity and no target.
+///
+/// Returns 0.
 static s32 ShipRooms_ResetActor(struct Actor *interpreter) {
   struct Actor *actor = interpreter;
   Actor_SelectAnimation(actor, 1);
@@ -516,8 +531,10 @@ static s32 ShipRooms_ResetActor(struct Actor *interpreter) {
   return 0;
 }
 
-/// Bobs the actor between the floor and 8 pixels up by a random amount
-/// each frame. Returns 1.
+/// Bobs the actor between the floor and 8 pixels up by a random amount each
+/// frame.
+///
+/// Returns 1.
 static s32 ShipRooms_Bob(struct Actor *interpreter) {
   struct Actor *actor = interpreter;
   s16 verticalMotionDirection;
@@ -544,8 +561,10 @@ static s32 ShipRooms_Bob(struct Actor *interpreter) {
   return 1;
 }
 
-/// Now and then (two chances in 64) turns the actor to face
-/// south-southeast or south-southwest. Returns 1.
+/// Now and then (two chances in 64) turns the actor to face south-southeast or
+/// south-southwest.
+///
+/// Returns 1.
 static s32 ShipRooms_LookAround(struct Actor *interpreter) {
   struct Actor *actor = interpreter;
   u32 choice = (u32)(Import_RandomNext(actor) << 6) >> 16;
@@ -572,8 +591,9 @@ static void ShipRooms_WaitThenAdvance(struct Actor *actor) {
   }
 }
 
-/// Counts down the actor's walking time in riseBaseY. Returns 1 once the
-/// time is up or the actor has reached its target, else 0.
+/// Counts down the actor's walking time in riseBaseY.
+///
+/// Returns 1 once the time is up or the actor has reached its target, else 0.
 static s32 ShipRooms_HasArrived(struct Actor *actor) {
   s32 remaining = actor->riseBaseY;
 
@@ -590,10 +610,12 @@ static s32 ShipRooms_HasArrived(struct Actor *actor) {
 }
 
 /// The update of Kaja (ACTOR_QUARTERS_KAJA) while the ship waits off the
-/// island: he paces between two spots in the captain's quarters, looking about
-/// at each, and signals the captain (ACTOR_QUARTERS_CAPTAIN) through his own
-/// riseEnabled at three points of the round, but not while the captain is
-/// paused. work holds the step.
+/// island.
+///
+/// He paces between two spots in the captain's quarters, looking about at each.
+/// At three points of the round he signals the captain (ACTOR_QUARTERS_CAPTAIN)
+/// through his own riseEnabled, but not while the captain is paused. work holds
+/// the step.
 static void ShipRooms_PaceCaptainsQuarters(struct Actor *updated) {
   struct Actor *actor = (struct Actor *)updated;
   struct Actor *captain;
@@ -663,9 +685,10 @@ static void ShipRooms_PaceCaptainsQuarters(struct Actor *updated) {
   }
 }
 
-/// The update of the captain, who watches Kaja pace: turns north-northeast at
-/// the first signal, shrugs at the second if still turned, and faces east at
-/// the third. Does nothing while paused.
+/// The update of the captain, who watches Kaja pace.
+///
+/// He turns north-northeast at the first signal, shrugs at the second if still
+/// turned, and faces east at the third. Does nothing while paused.
 static void ShipRooms_WatchPacer(struct Actor *actor) {
   struct Actor *watcher = (struct Actor *)actor;
   struct Actor *pacer;
@@ -688,8 +711,10 @@ static void ShipRooms_WatchPacer(struct Actor *actor) {
   }
 }
 
-/// An actor script call: lays the actor flat on the floor, drawn
-/// underfoot at priority 1 with its parts hidden. Returns 1.
+/// An actor script call that lays the actor flat on the floor, drawn underfoot
+/// at priority 1 with its parts hidden.
+///
+/// Returns 1.
 static s32 ShipRooms_LayFlat(struct Actor *interpreter) {
   struct Actor *work = interpreter;
   struct Sprite *sprite = work->sprite;
@@ -714,15 +739,17 @@ const struct SceneExitRegion *ShipRooms_GetRegions(void) { return 0; }
 
 const u32 *ShipRooms_GetExits(void) { return gShipRooms_Exits; }
 
-/// A byte view keeps the native address arithmetic; direct row-field writes
-/// choose different bases and registers. The layout still belongs to the row.
+/// A byte view keeps the native address arithmetic, where direct row-field
+/// writes choose different bases and registers. The layout still belongs to the
+/// row.
 #define TOLBI_SHIP_TALK_FACING(bytes, row)                                     \
   ((bytes)[(row) * sizeof(struct ActorPlacement) +                             \
            offsetof(struct ActorPlacement, talkFacing)])
 
-/// Picks the actor placements for the room entered and the voyage's
-/// stage. Some stages change who turns to face the party when talked to
-/// (talkFacing) in the shared tables.
+/// Picks the actor placements for the room entered and the voyage's stage.
+///
+/// Some stages change who turns to face the party when talked to (talkFacing)
+/// in the shared tables.
 const struct ActorPlacement *ShipRooms_SelectActorPlacements(void) {
   u8 *placementBytes;
 
@@ -862,9 +889,10 @@ const struct Trigger *ShipRooms_SelectTriggers(void) {
   return gShipRooms_TriggersOther;
 }
 
-/// The crewman asks whether the party wants to see the captain too. This is in
-/// the captain's quarters at Kalay, once the warriors want to see the captain;
-/// on yes, the passengers' pressure on the captain plays
+/// The crewman asks whether the party wants to see the captain too.
+///
+/// This is in the captain's quarters at Kalay, once the warriors want to see
+/// the captain. On yes, the passengers' pressure on the captain plays
 /// (FLAG_TOLBI_SHIP_CAPTAIN_DECIDED_TO_SAIL).
 static void ShipRooms_TalkToCaptainsQuartersCrewman(void) {
   Event_Start();
@@ -907,11 +935,14 @@ static void ShipRooms_TalkToSeanInCaptainsQuarters(void) {
   Event_End();
 }
 
-/// The captain, by the voyage's stage: too late to hire mercenaries, then his
-/// bad luck at losing his lucky anchor, then uncertain what might happen, and
-/// under sail the news of an injured oarsman. After finding the Anchor Charm,
-/// talking to him also opens the File Screen, so that the charm can be
-/// returned.
+/// The captain, who speaks by the voyage's stage.
+///
+/// First it is too late to hire mercenaries, then he tells of his bad luck at
+/// losing his lucky anchor, then he is uncertain what might happen, and under
+/// sail he gives the news of an injured oarsman.
+///
+/// After finding the Anchor Charm, talking to him also opens the File Screen,
+/// so that the charm can be returned.
 static void ShipRooms_TalkToCaptain(void) {
   Event_Start();
   if (GameFlag_Get(FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF) != 0) {
@@ -941,9 +972,10 @@ static void ShipRooms_TalkToCaptain(void) {
   Event_End();
 }
 
-/// A passenger in the hold while the ship waits. Once the party has agreed to
-/// protect the ship, she worries the proud warriors won't like being told to
-/// row, and asks the party.
+/// A passenger in the hold while the ship waits.
+///
+/// Once the party has agreed to protect the ship, she worries the proud
+/// warriors won't like being told to row, and asks the party.
 static void ShipRooms_TalkToWaitingWarrior(void) {
   Event_Start();
   if (GameFlag_Get(FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED) != 0) {
@@ -971,7 +1003,9 @@ static void ShipRooms_TalkToWaitingWarrior(void) {
 }
 
 /// Another waiting passenger, once the party has agreed to protect the ship,
-/// asks whether it will row. "Are you going to row?"
+/// asks whether it will row.
+///
+/// "Are you going to row?"
 static void ShipRooms_TalkToWaitingMuscleAdmirer(void) {
   Event_Start();
   if (GameFlag_Get(FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED) != 0) {
@@ -1001,13 +1035,15 @@ static inline void ShipRooms_RejoinParty(s32 rowerId) {
   Actor_SetPosition(rowerId, 0, 0);
 }
 
-/// A passenger in the hold under sail, when an oar needs a rower. If someone
-/// has already been chosen this round, the chosen passenger steps beside the
-/// leader and follows them out while this one says chosenMessage; otherwise
-/// the party may ask this one to row (question) at the seat the attacks
-/// fought off number. The Ask...ToRow functions are this with each
-/// passenger's lines, except the stared-at passenger's and the second guide's,
-/// which write it out in full.
+/// A passenger in the hold under sail, when an oar needs a rower.
+///
+/// If someone has already been chosen this round, the chosen passenger steps
+/// beside the leader and follows them out while this one says chosenMessage.
+/// Otherwise the party may ask this one to row (question) at the seat the
+/// attacks fought off number.
+///
+/// The Ask...ToRow functions are this with each passenger's lines, except the
+/// stared-at passenger's and the second guide's, which write it out in full.
 #define TOLBI_SHIP_ASK_TO_ROW(speaker, chosenMessage, question, passenger)     \
   if (GameFlag_Get(FLAG_TOLBI_SHIP_ROWER_CHOSEN) != 0) {                       \
     s32 rowerId = ShipRooms_GetChosenOarsman();                                \
@@ -1065,8 +1101,9 @@ static void ShipRooms_AskLadyToRow(void) {
   }
 }
 
-/// The stared-at passenger is asked to row, as the others are. It's written out
-/// in full rather than through ShipRooms_AskToRow.
+/// The stared-at passenger is asked to row, as the others are.
+///
+/// It is written out in full rather than through ShipRooms_AskToRow.
 static void ShipRooms_AskStaredAtPassengerToRow(void) {
   s32 rowerId;
   struct Actor *actor;
@@ -1323,8 +1360,10 @@ static s32 ShipRooms_GetChosenOarsman(void) {
 }
 
 /// What a passenger at the oars says, or thinks under Mind Read, by the round
-/// they were chosen in: the first round's line, the second's, or a later
-/// one's. The TalkTo...AtOars and Read...MindAtOars functions are this, or
+/// they were chosen in.
+///
+/// That is the first round's line, the second's, or a later one's. The
+/// TalkTo...AtOars and Read...MindAtOars functions are this, or
 /// TOLBI_SHIP_ROWER_LINE_FIRST_OR_LATER, with each passenger's lines.
 #define TOLBI_SHIP_ROWER_LINE_BY_ROUND(passenger, actorId, first, second,      \
                                        later)                                  \
@@ -1348,7 +1387,7 @@ static s32 ShipRooms_GetChosenOarsman(void) {
   Event_ShowMessage(actorId, 0);                                               \
   Event_End()
 
-/// The head guide at the oars: Kaja's men are worried, monsters are
+/// The head guide at the oars, who says Kaja's men are worried, monsters are
 /// everywhere, or the ship is starting to list.
 static void ShipRooms_TalkToHeadGuideAtOars(void) {
   TOLBI_SHIP_ROWER_LINE_BY_ROUND(PASSENGER_HEAD_GUIDE, ACTOR_ROWING_HEAD_GUIDE,
@@ -1416,8 +1455,9 @@ static void ShipRooms_TalkToMuscleAdmirerAtOars(void) {
       MsgTolbiShipAnotherMonsterIsntFirstClass);
 }
 
-/// Mind Read on the head guide at the oars. "Just hurry up and slay that
-/// beast!"
+/// Mind Read on the head guide at the oars.
+///
+/// "Just hurry up and slay that beast!"
 static void ShipRooms_ReadHeadGuideMindAtOars(void) {
   TOLBI_SHIP_ROWER_LINE_BY_ROUND(PASSENGER_HEAD_GUIDE, ACTOR_ROWING_HEAD_GUIDE,
                                  MsgTolbiShipDontCareTakesJustHurry,
@@ -1441,7 +1481,8 @@ static void ShipRooms_ReadSweatingPassengerMindAtOars(void) {
       MsgTolbiShipBoatsRockingMuchImCertain);
 }
 
-/// Mind Read on the lady at the oars: there are so many monsters at sea.
+/// Mind Read on the lady at the oars, who thinks there are so many monsters at
+/// sea.
 static void ShipRooms_ReadLadyMindAtOars(void) {
   TOLBI_SHIP_ROWER_LINE_FIRST_OR_LATER(
       PASSENGER_LADY, ACTOR_ROWING_LADY, MsgTolbiShipHadIdeaThereWereMany,
@@ -1483,9 +1524,11 @@ static void ShipRooms_ReadMuscleAdmirerMindAtOars(void) {
 #undef TOLBI_SHIP_ROWER_LINE_BY_ROUND
 #undef TOLBI_SHIP_ROWER_LINE_FIRST_OR_LATER
 
-/// Asks a passenger to row. On yes they walk to the leader and leave with them,
-/// and the seat's flag for this passenger (seatFlag) and
-/// FLAG_TOLBI_SHIP_ROWER_CHOSEN are set; on no the next message refuses.
+/// Asks a passenger to row.
+///
+/// On yes they walk to the leader and leave with them, and the seat's flag for
+/// this passenger (seatFlag) and FLAG_TOLBI_SHIP_ROWER_CHOSEN are set. On no
+/// the next message refuses.
 static void ShipRooms_AskToRow(s32 speaker, s32 question, s32 seatFlag) {
   struct Actor *leader;
 
@@ -1510,10 +1553,11 @@ static void ShipRooms_AskToRow(s32 speaker, s32 question, s32 seatFlag) {
   Event_End();
 }
 
-/// The travelling healer in the hold. From in front of him (the leader facing
-/// roughly east) he opens his Sanctum; otherwise he talks by the voyage's
-/// stage. Under sail, until the ship is docked, he is ACTOR_SEA_HOLD_HEALER,
-/// else ACTOR_HOLD_HEALER.
+/// The travelling healer in the hold.
+///
+/// From in front of him (the leader facing roughly east) he opens his Sanctum.
+/// Otherwise he talks by the voyage's stage. Under sail, until the ship is
+/// docked, he is ACTOR_SEA_HOLD_HEALER, else ACTOR_HOLD_HEALER.
 static void ShipRooms_TalkToHealer(void) {
   struct Actor *leader;
 
@@ -1550,9 +1594,11 @@ static void ShipRooms_TalkToHealer(void) {
 
 /// Talking to one of the monsters on the rowing deck
 /// (ACTOR_ROWING_FIRST_MONSTER and the two after it) starts the battle with
-/// them: a slot of the encounter zone of the Tolbi ship's scripted battles, and
-/// the entrance the party comes back to, chosen by how far the voyage
-/// has gone.
+/// them.
+///
+/// The battle is a slot of the encounter zone of the Tolbi ship's scripted
+/// battles. The slot, and the entrance the party comes back to, are chosen by
+/// how far the voyage has gone.
 static void ShipRooms_FightRowingDeckMonsters(void) {
 
   Event_Start();
@@ -1583,6 +1629,7 @@ static void ShipRooms_FightRowingDeckMonsters(void) {
 }
 
 /// While the monsters are aboard, the leader is walked back from the stairs.
+///
 /// "Where are you going, Isaac? Slay the beasts and save my mates!"
 static void ShipRooms_TurnBackFromStairs(void) {
   if (GameFlag_Get(FLAG_TOLBI_SHIP_MONSTERS_BELOWDECKS) != 0) {
@@ -1597,9 +1644,10 @@ static void ShipRooms_TurnBackFromStairs(void) {
 }
 
 /// Below decks at Kalay, once the warriors have gone to the captain
-/// (CELL_BEHAVIOR_SHIP_ROOMS_QUARTERS_CREW): the captain, Kaja and the crewman
-/// wonder what could have happened to the replacement ship, as on deck
-/// (FLAG_TOLBI_SHIP_CREW_WONDERED_AT_DELAY).
+/// (CELL_BEHAVIOR_SHIP_ROOMS_QUARTERS_CREW): the crew wonders at the delay.
+///
+/// The captain, Kaja and the crewman wonder what could have happened to the
+/// replacement ship, as on deck (FLAG_TOLBI_SHIP_CREW_WONDERED_AT_DELAY).
 static void ShipRooms_WatchCrewWonderAtDelay(void) {
   if (GameFlag_Get(FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN) == 0)
     return;
@@ -1635,9 +1683,11 @@ static void ShipRooms_WatchCrewWonderAtDelay(void) {
 
 /// In the hold at Kalay, once the tour group has left Kalay
 /// (CELL_BEHAVIOR_SHIP_ROOMS_HOLD_WARRIORS): Ouranos threatens to go ashore if
-/// the ship doesn't sail. The second guide can't say when it will, so Sean and
-/// Ouranos set off to make the captain set sail, and the guide ("I don't want
-/// any violence!") hurries after them past the party.
+/// the ship doesn't sail.
+///
+/// The second guide can't say when it will, so Sean and Ouranos set off to make
+/// the captain set sail. The guide ("I don't want any violence!") hurries after
+/// them past the party.
 static void ShipRooms_WatchWarriorsStormOff(void) {
   s32 guideSpeaker;
   s32 seanSpeaker;
@@ -1770,8 +1820,10 @@ static void ShipRooms_WatchWarriorsStormOff(void) {
 }
 
 /// In the captain's quarters at Kalay: the passengers press the captain to
-/// launch; Ouranos and Sean offer to guard the deck, and the captain finds his
-/// lucky anchor charm gone and refuses to sail without it.
+/// launch.
+///
+/// Ouranos and Sean offer to guard the deck. The captain finds his lucky anchor
+/// charm gone and refuses to sail without it.
 static void ShipRooms_DiscussLaunchingWithoutAnchor(void) {
   s32 seanSpeech;
   s32 ouranosSpeech;
@@ -2036,9 +2088,10 @@ static void ShipRooms_DiscussLaunchingWithoutAnchor(void) {
 }
 
 /// In the captain's quarters at Kalay, using the Anchor Charm on the captain:
-/// he has his lucky anchor back, Sean names the party to guard the oarsmen, and
-/// the party agrees to protect the ship
-/// (FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED).
+/// he has his lucky anchor back.
+///
+/// Sean names the party to guard the oarsmen, and the party agrees to protect
+/// the ship (FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED).
 static void ShipRooms_ReturnLuckyAnchor(void) {
   struct Actor *actor;
   s32 captainSpeech;
@@ -2657,8 +2710,10 @@ static void ShipRooms_PlaceFoundActors(s32 gated) {
 }
 
 /// On the rowing deck, once the charm is back: Kaja tells the oarsmen the ship
-/// sails without its replacement and asks the party to bring a passenger to row
-/// whenever an oarsman falls, keeping the teams balanced; leads to the deck's
+/// sails without its replacement.
+///
+/// He asks the party to bring a passenger to row whenever an oarsman falls,
+/// keeping the teams balanced. Leads to the deck's
 /// TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_READY
 /// (FLAG_TOLBI_SHIP_SAILING_WITHOUT_REPLACEMENT).
 static void ShipRooms_AskForReplacementOarsmen(void) {
@@ -2837,6 +2892,7 @@ static void ShipRooms_AnnounceDeparture(void) {
 }
 
 /// Kaja comes into the hold and calls the first passenger to the rowing deck.
+///
 /// "Row those oars!"
 static void ShipRooms_KajaCallsToOars(void) {
   Event_Start();
@@ -3265,8 +3321,9 @@ static void ShipRooms_MoveCameraAndWait(s32 x, s32 y, s32 z, u32 flags) {
   Event_Wait(selected);
 }
 
-/// Reuses the voyage's actor, camera, transition and selection
-/// operations. Each command names how it interprets the two arguments below.
+/// Reuses the voyage's actor, camera, transition and selection operations.
+///
+/// Each command names how it interprets the two arguments below.
 static void ShipRooms_RunEventCommand(s32 step, u32 arg, u32 opt) {
   u32 slot;
 
@@ -3863,8 +3920,9 @@ static void ShipRooms_EndThirdAttack(void) {
   Event_End();
 }
 
-/// SHIP_ROOMS_FROM_WORLD_MAP, on the rowing deck: the ship rocks, a
-/// huge sea monster is on the ship, and the party goes up on deck
+/// SHIP_ROOMS_FROM_WORLD_MAP, on the rowing deck: the ship rocks.
+///
+/// A huge sea monster is on the ship, and the party goes up on deck
 /// (FLAG_TOLBI_SHIP_KRAKEN_ON_DECK).
 static void ShipRooms_NoticeShipRocking(void) {
   s32 secondRower;
@@ -4018,10 +4076,11 @@ static void ShipRooms_ShakeWhileKrakenAboard(void) {
   }
 }
 
-/// SHIP_ROOMS_CAPTAINS_ROOM_FROM_TOLBI_SHIP_DECK_ISLAND, in the
-/// captain's quarters, after the ship has come off course: a short exchange,
-/// then SHIP_ROOMS_TO_WORLD_MAP leads by the World Map to the island
-/// (SHIP_ROOMS_ROWING_DECK_FROM_WORLD_MAP_ISLAND).
+/// SHIP_ROOMS_CAPTAINS_ROOM_FROM_TOLBI_SHIP_DECK_ISLAND, in the captain's
+/// quarters, after the ship has come off course.
+///
+/// A short exchange plays, then SHIP_ROOMS_TO_WORLD_MAP leads by the World Map
+/// to the island (SHIP_ROOMS_ROWING_DECK_FROM_WORLD_MAP_ISLAND).
 static void ShipRooms_ShowCaptainsQuartersBeforeIsland(void) {
   Event_Start();
   ShipRooms_RunEventCommand(SHIP_SETUP_CAPTAINS_QUARTERS, 1, 0);
@@ -4036,8 +4095,10 @@ static void ShipRooms_ShowCaptainsQuartersBeforeIsland(void) {
   ShipRooms_RunEventCommand(SHIP_CLOSE_SCREEN, SHIP_ROOMS_TO_WORLD_MAP, 0);
 }
 
-/// SHIP_ROOMS_ROWING_DECK_FROM_WORLD_MAP_ISLAND, on the rowing deck
-/// at the island: Kaja rests the rowers, and each chosen passenger answers
+/// SHIP_ROOMS_ROWING_DECK_FROM_WORLD_MAP_ISLAND, on the rowing deck at the
+/// island.
+///
+/// Kaja rests the rowers, and each chosen passenger answers
 /// (FLAG_TOLBI_SHIP_AT_ISLAND).
 static void ShipRooms_ReachIsland(void) {
   s32 fourthRower;
@@ -4166,10 +4227,12 @@ static void ShipRooms_ReachIsland(void) {
   Event_End();
 }
 
-/// SHIP_ROOMS_ROWING_DECK_FROM_TOLBI_SHIP_DECK_SWITCH_TEAMS, on the
-/// rowing deck back from the island: Kaja switches the left and right teams,
-/// the left team's timing having taken the ship off course; the chosen
-/// passengers swap seats and the ship sets off again.
+/// SHIP_ROOMS_ROWING_DECK_FROM_TOLBI_SHIP_DECK_SWITCH_TEAMS, on the rowing deck
+/// back from the island.
+///
+/// Kaja switches the left and right teams, the left team's timing having taken
+/// the ship off course. The chosen passengers swap seats and the ship sets off
+/// again.
 static void ShipRooms_DismissReplacementRowers(void) {
   s32 firstRower;
   s32 fourthRower;
@@ -4276,8 +4339,8 @@ static void ShipRooms_SwapRowerSelections(s32 firstSeatFlags,
   GameFlag_Set(firstSeatFlags + secondPassenger);
 }
 
-/// The step beside the leader for each of the 16 facings: the high 16 bits are
-/// x, the low 16 bits z.
+/// The step beside the leader for each of the 16 facings, with x in the high 16
+/// bits and z in the low 16 bits.
 #define TURN_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))
 
 s32 gShipRooms_TurnSteps[] = {
@@ -4347,7 +4410,7 @@ s32 gShipRooms_FollowersRejoinBySeats[] = {
     SC_END,
 };
 
-/// Squashes and stretches the actor over and over: a shiver.
+/// Squashes and stretches the actor over and over, as a shiver.
 s32 gShipRooms_Shiver[] = {
     SC_SET(SW_SCALE_X, Q16_ONE),
     SC_SET(SW_SCALE_Y, Q16_ONE),
@@ -4508,8 +4571,8 @@ struct ActorPlacement gShipRooms_CaptainsQuartersActorPlacements[] = {
     { SCENE_TABLE_END },
 };
 
-/// The captain's quarters once the warriors have come to see the captain, with the party's
-/// followers.
+/// The captain's quarters once the warriors have come to see the captain, with
+/// the party's followers.
 struct ActorPlacement gShipRooms_CaptainsQuartersActorPlacementsWarriors[] = {
     { SPRITE_MAN_WITH_WHITE_BEARD_IN_GREEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(482), 0, PIXELS(604), FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0 },
@@ -4600,9 +4663,10 @@ struct ActorPlacement gShipRooms_HoldActorPlacementsAtSea[] = {
     { SCENE_TABLE_END },
 };
 
-/// The rowing deck, in the order of enum TolbiShipRowingDeckActorId: the crewman
-/// and the drummer, the oarsmen at the seats, the passengers who may take a
-/// seat, Kaja and the eight oars beside the seats.
+/// The rowing deck, in the order of enum TolbiShipRowingDeckActorId.
+///
+/// They are the crewman and the drummer, the oarsmen at the seats, the
+/// passengers who may take a seat, Kaja and the eight oars beside the seats.
 struct ActorPlacement gShipRooms_RowingDeckActorPlacements[] = {
     { SPRITE_MAN_IN_GREEN_BANDANA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(438), 0, PIXELS(152), FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0 },
@@ -4741,7 +4805,7 @@ struct Trigger gShipRooms_HoldTriggers[] = {
     { TRIGGERS_END },
 };
 
-/// The hold at sea: talking to a passenger asks them to row.
+/// The hold at sea, where talking to a passenger asks them to row.
 struct Trigger gShipRooms_HoldTriggersChoosingRowers[] = {
     { TRIGGER_EXIT, 1, CONDITION_ALWAYS, SHIP_ROOMS_PASSENGER_HOLD_TO_TOLBI_SHIP_DECK },
     { TRIGGER_EXIT, 2, CONDITION_ALWAYS, SHIP_ROOMS_PASSENGER_HOLD_TO_ROWING_DECK },
@@ -4806,8 +4870,9 @@ struct Trigger gShipRooms_HoldTriggersAtIsland[] = {
     { TRIGGERS_END },
 };
 
-/// The captain's quarters, from the wait at Kalay until the ship reaches Tolbi. The Anchor
-/// Charm is given back to the captain here.
+/// The captain's quarters, from the wait at Kalay until the ship reaches Tolbi.
+///
+/// The Anchor Charm is given back to the captain here.
 struct Trigger gShipRooms_CaptainsQuartersTriggers[] = {
     { TRIGGER_EXIT, 5, CONDITION_ALWAYS, SHIP_ROOMS_CAPTAINS_ROOM_TO_TOLBI_SHIP_DECK },
     { TRIGGER_TALK, ACTOR_QUARTERS_CAPTAIN, CONDITION_ALWAYS, EVENT(ShipRooms_TalkToCaptain) },
@@ -4891,7 +4956,7 @@ struct Trigger gShipRooms_RowingDeckTriggers[] = {
     { TRIGGERS_END },
 };
 
-/// The rowing deck while monsters are aboard: talking to one
+/// The rowing deck while monsters are aboard, where talking to one
 /// (ACTOR_ROWING_FIRST_MONSTER and the two after it) fights it.
 struct Trigger gShipRooms_RowingDeckTriggersMonstersAboard[] = {
     { TRIGGER_STEP, CELL_BEHAVIOR_SHIP_ROOMS_ROWING_DECK_STAIRS, CONDITION_ALWAYS, EVENT(ShipRooms_TurnBackFromStairs) },
@@ -4994,5 +5059,5 @@ struct Trigger gShipRooms_RowingDeckTriggersArrived[] = {
 };
 // clang-format on
 
-/// Frames left of the Kraken's current jolt; at 0 another may start.
+/// Frames left of the Kraken's current jolt. At 0 another may start.
 s32 gShipRooms_ShakeTimer;

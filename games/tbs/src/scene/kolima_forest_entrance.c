@@ -1,26 +1,29 @@
 /// @file
 /// Kolima Forest (SceneId_KolimaForestEntrance), the first of the forest's five
 /// scenes, entered from the World Map (KOLIMA_FOREST_ENTRANCE_FROM_WORLD_MAP).
+///
 /// If the party comes here before it has been to Kolima, the curse's event
 /// plays here instead of in the village
 /// (KolimaForestEntrance_WitnessForestCurse, until
-/// FLAG_KOLIMA_CURSE_WITNESSED): sparkles of Tret's glamour rain down, fields
+/// FLAG_KOLIMA_CURSE_WITNESSED). Sparkles of Tret's glamour rain down, fields
 /// of the party's own Psynergy shield it, and Tret and Laurel, unseen, speak of
 /// the dying forest. Five sparkles lie on the ground until Tret lifts the curse
 /// (FLAG_KOLIMA_CURSE_LIFTED).
 ///
-/// The fields flicker: the leader's and Mia's show on even frames and Ivan's
+/// The fields flicker. The leader's and Mia's show on even frames and Ivan's
 /// and Garet's on odd ones, each lifted out of sight on the others
 /// (KolimaForestEntrance_FlickerPsynergyFields). A sparkle bursts where it
 /// lands only inside the boxes KolimaForestEntrance_BurstOnPsynergyField tests,
 /// two with Mia in the party and three without her.
 ///
-/// Three logs lie here, rolled by walking into them; the one pushed west to the
+/// Three logs lie here, rolled by walking into them. The one pushed west to the
 /// water's edge tips into the river and floats there, cells the party can
-/// cross, and from the bank the leader can hop east (step trigger 11,
-/// KolimaForest_HopEast). KOLIMA_FOREST_ENTRANCE_TO_KOLIMA_FOREST_GLADE leads
-/// on into the forest (SceneId_KolimaForestGlade),
-/// KOLIMA_FOREST_ENTRANCE_TO_WORLD_MAP back to the World Map.
+/// cross. From the bank the leader can hop east (step trigger 11,
+/// KolimaForest_HopEast).
+///
+/// KOLIMA_FOREST_ENTRANCE_TO_KOLIMA_FOREST_GLADE leads on into the forest
+/// (SceneId_KolimaForestGlade), and KOLIMA_FOREST_ENTRANCE_TO_WORLD_MAP back to
+/// the World Map.
 ///
 /// FLAG_KOLIMA_FOREST_ENTRANCE_LOG_IN_RIVER: the log is in the river. Like
 /// every scene temp flag it is cleared when the party next comes in, so the log
@@ -66,7 +69,7 @@
 /// numbering the rows of gKolimaForestEntrance_ActorPlacements from
 /// ACTOR_FIRST_PLACED.
 enum {
-  /// The three logs; the last is the one that can reach the river.
+  /// The three logs. The last is the one that can reach the river.
   /// ★ Named from what the player sees: a log lying north to south (its
   /// render)
   ACTOR_FIRST_LOG = ACTOR_FIRST_PLACED,
@@ -81,7 +84,7 @@ enum {
   /// ★ Named from the game: "We are not the only ones who will die, Laurel."
   /// (MsgKolimaWatchOutItsHappeningAgain)
   ACTOR_LAUREL,
-  /// The fields of Psynergy, one over each party member; Mia's only with Mia.
+  /// The fields of Psynergy, one over each party member. Mia's only with Mia.
   /// ★ Named from the game: "You know what those fields were?"
   /// (MsgKolimaKnowThoseFieldsWere)
   ACTOR_LEADER_PSYNERGY_FIELD,
@@ -136,9 +139,9 @@ KolimaForestEntrance_FlashHitPsynergyFields(struct Actor *interpreter) {
   return 1;
 }
 
-/// Each frame: a ground sparkle's timer runs on at random, and the sparkle
-/// shows its bright frame (7) while the timer is past 1000, its dim one (10)
-/// before; at 1200 the timer starts over.
+/// Each frame, a ground sparkle's timer runs on at random. The sparkle shows
+/// its bright frame (7) while the timer is past 1000, its dim one (10) before.
+/// At 1200 the timer starts over.
 static s32
 KolimaForestEntrance_TwinkleGroundSparkle(struct Actor *interpreter) {
   struct Actor *actor = interpreter;
@@ -177,9 +180,9 @@ const struct ActorPlacement *KolimaForestEntrance_GetActorPlacements(void) {
   return gKolimaForestEntrance_ActorPlacements;
 }
 
-/// Kolima Forest (SceneId_KolimaForestEntrance), walking into a log: it rolls
+/// In Kolima Forest (SceneId_KolimaForestEntrance), walking into a log rolls it
 /// ahead until something stops it. The river log, stopped at the bank (cell
-/// column 20), tips over with a splash and floats in the water; its cells
+/// column 20), tips over with a splash and floats in the water. Its cells
 /// become ground the party can cross (sets
 /// FLAG_KOLIMA_FOREST_ENTRANCE_LOG_IN_RIVER).
 static void KolimaForestEntrance_PushLog(void) {
@@ -216,10 +219,9 @@ const struct Trigger *KolimaForestEntrance_GetTriggers(void) {
   return gKolimaForestEntrance_Triggers;
 }
 
-/// On entry a log already in the river floats there again and the logs mark
-/// the cells they cover. From the World Map, before the curse has been seen,
-/// the party sees it fall; once the curse is lifted the ground sparkles are
-/// gone.
+/// On entry a log already in the river floats there again and the logs mark the
+/// cells they cover. From the World Map, before the curse has been seen, the
+/// party sees it fall. Once the curse is lifted the ground sparkles are gone.
 s32 KolimaForestEntrance_Initialize(void) {
   Scene_RedrawActorFootprint(ACTOR_RIVER_LOG);
   if (GameFlag_Get(FLAG_KOLIMA_FOREST_ENTRANCE_LOG_IN_RIVER) != 0) {
@@ -246,17 +248,23 @@ s32 KolimaForestEntrance_Initialize(void) {
   return 0;
 }
 
-/// Kolima Forest, the first entry from the World Map before the curse has been
-/// seen in Kolima (FLAG_KOLIMA_CURSE_WITNESSED clear): the party sees the
-/// curse fall, the same event as Kolima_WitnessForestCurse without the trees
-/// that were people. Ivan notices sparkly stuff on the ground; sparkles rain
-/// from the sky, the party sinks under them, and fields of Psynergy rise around
-/// each party member before the sparkles reach them. They argue over whether it
-/// was their Psynergy, the sparkles fall again and the Psynergy fields rise
-/// again, and Tret and Laurel speak: Tret turned Kolima's people into trees for
-/// cutting him, and Laurel tells them to reawaken his gentle side and look for
-/// Tret deep within the forest. Lines and choices for Mia are skipped when she
-/// is not in the party. Sets FLAG_KOLIMA_CURSE_WITNESSED.
+/// In Kolima Forest, on the first entry from the World Map before the curse has
+/// been seen in Kolima (FLAG_KOLIMA_CURSE_WITNESSED clear), the party sees the
+/// curse fall. It is the same event as Kolima_WitnessForestCurse without the
+/// trees that were people.
+///
+/// - Ivan notices sparkly stuff on the ground.
+/// - Sparkles rain from the sky, the party sinks under them, and fields of
+///   Psynergy rise around each party member before the sparkles reach them.
+/// - They argue over whether it was their Psynergy.
+/// - The sparkles fall again and the Psynergy fields rise again.
+/// - Tret and Laurel speak. Tret turned Kolima's people into trees for cutting
+///   him. Laurel tells them to reawaken his gentle side and look for Tret deep
+///   within the forest.
+///
+/// Lines and choices for Mia are skipped when she is not in the party.
+///
+/// Sets FLAG_KOLIMA_CURSE_WITNESSED.
 static void KolimaForestEntrance_WitnessForestCurse(void) {
   struct Actor *record;
   s32 *party;

@@ -1,36 +1,45 @@
 /// @file
-/// Log rooms C (SceneId_LogRoomsC), a sheet of rooms drawn in logs, all of them
-/// Kolima's: the village's houses, shops and inn. Some of its exits join its
-/// own rooms by the stairs up the inn and the weapon and armor shop, five lead
-/// back out to the village (SceneId_Kolima) and one into Kolima Tunnel
-/// (SceneId_KolimaTunnel, LOG_ROOMS_C_TO_KOLIMA_TUNNEL).
+/// Log rooms C (SceneId_LogRoomsC), a sheet of rooms drawn in logs, holds only
+/// Kolima's rooms: the village's houses, shops and inn.
+///
+/// Some of its exits join its own rooms, by the stairs up the inn and the
+/// weapon and armor shop. Five lead back out to the village (SceneId_Kolima)
+/// and one into Kolima Tunnel (SceneId_KolimaTunnel,
+/// LOG_ROOMS_C_TO_KOLIMA_TUNNEL).
 ///
 /// Like the people outside, the fifteen residents (ACTOR_FIRST_VILLAGER to
-/// ACTOR_LAST_VILLAGER) were turned into trees when the curse fell, and until
-/// it is lifted in Kolima Forest (FLAG_KOLIMA_CURSE_LIFTED)
-/// LogRoomsC_GetActorPlacements gives them tree sprites that stand
-/// still: they answer only Mind Read, each with the thoughts of someone stuck
-/// as a tree
-/// ("Who caused all this? Someone must have tried to cut down Tret!"). Once the
-/// curse is lifted they talk, of the warriors said to have saved the village,
-/// of McCoy's halted palace and the lumberjacks' lost work, of a father's
-/// secret treasure "hidden deep in the forest", and the weapon, armor and item
-/// sellers and the innkeeper serve the party across their counters. Three
-/// bookcases hold books on the holy tree ("Tret and Laurel are the spirits of
-/// the holy trees protecting Kolima forest"), on trees and flowers and on
-/// logging; a jar holds a Lucky Medal and a barrel 7 coins.
+/// ACTOR_LAST_VILLAGER) were turned into trees when the curse fell. Until it
+/// is lifted in Kolima Forest (FLAG_KOLIMA_CURSE_LIFTED),
+/// LogRoomsC_GetActorPlacements gives them tree sprites that stand still.
+/// They answer only Mind Read, each with the thoughts of someone stuck as a
+/// tree
+/// ("Who caused all this? Someone must have tried to cut down Tret!").
+///
+/// Once the curse is lifted they talk. They speak of the warriors said to
+/// have saved the village, of McCoy's halted palace and the lumberjacks' lost
+/// work, and of a father's secret treasure "hidden deep in the forest". The
+/// weapon, armor and item sellers and the innkeeper serve the party across
+/// their counters.
+///
+/// Three bookcases hold books on the holy tree ("Tret and Laurel are the
+/// spirits of the holy trees protecting Kolima forest"), on trees and flowers
+/// and on logging. A jar holds a Lucky Medal and a barrel 7 coins.
 ///
 /// LogRoomsC_Initialize opens with a window transition and draws one of
-/// two rooms into the same place on the map. Entered by its door from the
-/// village (LOG_ROOMS_C_HOUSE_FROM_KOLIMA_SOUTH), it is the father's
-/// house, with its bookcase and rug and the father's family
-/// (ACTOR_FATHER_WITH_A_SECRET, ACTOR_WIFE_KEPT_FROM_THE_SECRET and
-/// ACTOR_CHILD_TOLD_THE_SECRET; places/kolima-interiors_cursed/map-7.png).
-/// Entered from behind, by the village doorway the leader steps south into
-/// (LOG_ROOMS_C_HOUSE_FROM_KOLIMA_NORTH) or up the ladder from Kolima
-/// Tunnel (LOG_ROOMS_C_FROM_KOLIMA_TUNNEL), other cells are copied in and
-/// it is a storeroom of crates and sacks with the ladder down in its floor, and
-/// the family is put out of sight (places/kolima-interiors_cursed/map-8.png).
+/// two rooms into the same place on the map.
+///
+/// Entered by its door from the village
+/// (LOG_ROOMS_C_HOUSE_FROM_KOLIMA_SOUTH), it is the father's house, with its
+/// bookcase and rug and the father's family (ACTOR_FATHER_WITH_A_SECRET,
+/// ACTOR_WIFE_KEPT_FROM_THE_SECRET and ACTOR_CHILD_TOLD_THE_SECRET;
+/// places/kolima-interiors_cursed/map-7.png).
+///
+/// It can also be entered from behind: by the village doorway the leader
+/// steps south into (LOG_ROOMS_C_HOUSE_FROM_KOLIMA_NORTH), or up the ladder
+/// from Kolima Tunnel (LOG_ROOMS_C_FROM_KOLIMA_TUNNEL). Then other cells are
+/// copied in, and it is a storeroom of crates and sacks with the ladder down
+/// in its floor. The family is put out of sight
+/// (places/kolima-interiors_cursed/map-8.png).
 
 #include "main_routine_work.h"
 #include "flags.h"
@@ -65,8 +74,8 @@ enum {
 };
 
 /// The residents, numbering gLogRoomsC_ActorPlacements' rows from
-/// ACTOR_FIRST_PLACED. Their notes quote what they say once the curse is
-/// lifted.
+/// ACTOR_FIRST_PLACED.
+/// Their notes quote what they say once the curse is lifted.
 enum KolimaInteriorActorId {
   /// An old man with a cane.
   /// ★ Named from the game: "I heard that traveling warriors from the Goma
@@ -185,9 +194,10 @@ const struct ActorPlacement *LogRoomsC_GetActorPlacements(void) {
   return placements;
 }
 
-/// Kolima's weapon shop, once the curse is lifted: spoken to across the counter
-/// (facing north), the shop opens; from any other side, the seller says Fuchin
-/// Temple is on the other side of the river.
+/// Kolima's weapon seller, once the curse is lifted, opens the shop when
+/// spoken to across the counter (facing north).
+/// From any other side, the seller says Fuchin Temple is on the other side of
+/// the river.
 static void LogRoomsC_TalkToWeaponMerchant(void) {
   u32 facing = Actor_Get(ACTOR_PARTY_LEADER)->facing;
 
@@ -202,9 +212,10 @@ static void LogRoomsC_TalkToWeaponMerchant(void) {
   Event_End();
 }
 
-/// Kolima's armor shop, once the curse is lifted: across the counter the shop
-/// opens; otherwise the seller calls the grand bridge across the river the
-/// pride of Kolima.
+/// Kolima's armor seller, once the curse is lifted, opens the shop across the
+/// counter.
+/// Otherwise the seller calls the grand bridge across the river the pride of
+/// Kolima.
 static void LogRoomsC_TalkToArmorMerchant(void) {
   u32 facing = Actor_Get(ACTOR_PARTY_LEADER)->facing;
 
@@ -219,8 +230,10 @@ static void LogRoomsC_TalkToArmorMerchant(void) {
   Event_End();
 }
 
-/// Kolima's item shop, once the curse is lifted: across the counter the shop
-/// opens; otherwise, "When I was a tree, I learned to appreciate the sun."
+/// Kolima's item seller, once the curse is lifted, opens the shop across the
+/// counter.
+/// Otherwise the seller says "When I was a tree, I learned to appreciate the
+/// sun."
 static void LogRoomsC_TalkToItemMerchant(void) {
   u32 facing = Actor_Get(ACTOR_PARTY_LEADER)->facing;
 
@@ -235,8 +248,9 @@ static void LogRoomsC_TalkToItemMerchant(void) {
   Event_End();
 }
 
-/// Kolima's inn, once the curse is lifted: across the counter the inn opens;
-/// otherwise the innkeeper says McCoy has halted the palace's construction, so
+/// Kolima's innkeeper, once the curse is lifted, opens the inn across the
+/// counter.
+/// Otherwise the innkeeper says McCoy has halted the palace's construction, so
 /// the lumberjacks who came for the work will leave.
 static void LogRoomsC_TalkToInnkeeper(void) {
   u32 facing = Actor_Get(ACTOR_PARTY_LEADER)->facing;
@@ -260,9 +274,10 @@ const struct Trigger *LogRoomsC_GetTriggers(void) {
   return gLogRoomsC_Triggers;
 }
 
-/// Sets up the houses for the curse and the way they're entered. It opens with
-/// a window transition, sets the trees' sprites while the curse lasts, and
-/// draws the father's room for the way it is entered.
+/// Sets up the houses for the curse and the way they're entered.
+///
+/// It opens with a window transition, sets the trees' sprites while the curse
+/// lasts, and draws the father's room for the way it is entered.
 s32 LogRoomsC_Initialize(void) {
   struct FieldWork *work = gFieldWork;
   s32 actorId;

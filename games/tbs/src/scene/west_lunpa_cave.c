@@ -4,19 +4,27 @@
 /// meets Bunza on the way out of Lunpa with Hammet.
 ///
 /// The party comes in from the World Map (WEST_LUNPA_CAVE_FROM_WORLD_MAP) and
-/// from Lunpa (WEST_LUNPA_CAVE_FROM_LUNPA);
+/// from Lunpa (WEST_LUNPA_CAVE_FROM_LUNPA).
 /// CELL_BEHAVIOR_WEST_LUNPA_CAVE_WORLD_MAP_PASSAGE and
 /// CELL_BEHAVIOR_WEST_LUNPA_CAVE_LUNPA_PASSAGE lead back out.
+///
 /// WEST_LUNPA_CAVE_FROM_LUNPA_UNUSED, which no exit names, repeats
 /// WEST_LUNPA_CAVE_FROM_LUNPA with a shorter camera.
 ///
-/// The gate puzzle runs on scene flags, which Scene_Initialize redraws: the
-/// lowering switch brings the gate down and the raising switch lifts it, each
-/// doing nothing while the gate already stands where it would put it or while
-/// the gate's puddle, frozen by Frost into a pillar, props it open. Freezing
+/// The gate is a puzzle with two switches. The lowering switch brings the gate
+/// down and the raising switch lifts it. Each does nothing while the gate
+/// already stands where it would put it.
+///
+/// A puddle lies under the gate, and Frost freezes it into a pillar. While
+/// the pillar props the gate open, neither switch does anything. Freezing
 /// that puddle with the gate down raises it onto the pillar with the
-/// puzzle-solved tune. Frost also freezes a puddle to the south into a pillar
-/// that can be climbed, and one to the north. Its scene flags:
+/// puzzle-solved tune.
+///
+/// Frost also freezes a puddle to the south into a pillar that can be
+/// climbed, and one to the north.
+///
+/// The puzzle runs on scene flags, which Scene_Initialize redraws. Its scene
+/// flags:
 ///
 /// - FLAG_WEST_LUNPA_CAVE_GATE_PUDDLE_FROZEN: the gate's puddle is frozen,
 ///   propping the gate open.
@@ -27,16 +35,21 @@
 /// - FLAG_WEST_LUNPA_CAVE_SOUTH_PUDDLE_FROZEN: the south puddle is frozen into
 ///   a pillar, which changes one cell's cell behavior.
 ///
-/// Once Donpa has let the party leave Lunpa Fortress with Hammet
-/// (FLAG_DODONPA_LOCKED_UP), stepping onto
-/// CELL_BEHAVIOR_WEST_LUNPA_CAVE_BUNZA_HIDING_PLACE the first time
-/// (FLAG_LUNPA_CAVE_REUNION_SEEN) plays the reunion: Bunza, a Kalay merchant,
-/// comes out from behind a rock (WestLunpaCave_HammetFindsBunza), they talk
-/// (Reunion_Converse), and the party's answers decide whether it rides home in
-/// Bunza's wagon (WagonChoice_Run). Riding leaves by WEST_LUNPA_CAVE_BY_WAGON
-/// to WORLD_MAP_FROM_WEST_LUNPA_CAVE, where world_map.c plays the departure;
-/// staying, Hammet and Bunza leave alone. Either way FLAG_BUNZAS_WAGON_LEFT is
-/// set, on the World Map or here.
+/// The reunion with Bunza, a Kalay merchant, plays here once
+/// (FLAG_LUNPA_CAVE_REUNION_SEEN). It needs Donpa to have let the party leave
+/// Lunpa Fortress with Hammet (FLAG_DODONPA_LOCKED_UP). It starts the first
+/// time the party steps onto
+/// CELL_BEHAVIOR_WEST_LUNPA_CAVE_BUNZA_HIDING_PLACE.
+///
+/// - Bunza comes out from behind a rock (WestLunpaCave_HammetFindsBunza).
+/// - They talk (Reunion_Converse).
+/// - The party's answers decide whether it rides home in Bunza's wagon
+///   (WagonChoice_Run).
+///
+/// Riding leaves by WEST_LUNPA_CAVE_BY_WAGON to
+/// WORLD_MAP_FROM_WEST_LUNPA_CAVE, where world_map.c plays the departure. If
+/// the party stays, Hammet and Bunza leave alone. Either way
+/// FLAG_BUNZAS_WAGON_LEFT is set, on the World Map or here.
 ///
 /// Unused: a fourth puddle stands at the map's origin, outside the cave's
 /// camera bounds, so Frost can never reach it
@@ -125,8 +138,8 @@ static void WestLunpaCave_UnusedFreezePuddle(void) {
   }
 }
 
-/// In West Lunpa Cave, Frost on the south puddle: it rises as an ice pillar the
-/// party can climb.
+/// In West Lunpa Cave, Frost on the south puddle raises it as an ice pillar
+/// the party can climb.
 static void WestLunpaCave_FreezeSouthPuddle(void) {
   struct Actor *puddle;
 
@@ -164,9 +177,9 @@ static void WestLunpaCave_GateDrawPropped(void) {
   MapGrid_CopyCellAttributes(19, 17, 1, 1, 21, 14);
 }
 
-/// In West Lunpa Cave, Frost on the puddle under the gate: its pillar props the
-/// gate open, and if the gate was down the player sees it rise and hears the
-/// puzzle solved.
+/// In West Lunpa Cave, Frost on the puddle under the gate freezes it into a
+/// pillar that props the gate open. If the gate was down, the player sees it
+/// rise and hears the puzzle solved.
 static void WestLunpaCave_FreezeGatePuddle(void) {
   struct Actor *pillar;
 
@@ -184,8 +197,8 @@ static void WestLunpaCave_FreezeGatePuddle(void) {
   }
 }
 
-/// In West Lunpa Cave, Frost on the north puddle: its pillar stays frozen when
-/// the party returns.
+/// In West Lunpa Cave, Frost on the north puddle freezes it into a pillar
+/// that stays frozen when the party returns.
 static void WestLunpaCave_FreezeNorthPuddle(void) {
   GameFlag_Set(FLAG_WEST_LUNPA_CAVE_NORTH_PUDDLE_FROZEN);
 }
@@ -215,8 +228,8 @@ static void WestLunpaCave_GateLower(void) {
   MapGrid_CopyCellAttributes(19, 17, 1, 1, 22, 15);
 }
 
-/// In West Lunpa Cave, searching the lowering switch: the leader flips it and
-/// the gate comes down, unless it is down already or a frozen pillar props it
+/// In West Lunpa Cave, searching the lowering switch makes the leader flip it.
+/// The gate comes down, unless it is down already or a frozen pillar props it
 /// open. "flipped the switch."
 static void WestLunpaCave_FlipLoweringSwitch(void) {
   if (Event_GetFlag(FLAG_WEST_LUNPA_CAVE_GATE_LOWERED) == 0) {
@@ -245,8 +258,8 @@ static void WestLunpaCave_GateRaise(void) {
   MapGrid_CopyCellAttributes(19, 17, 1, 1, 21, 14);
 }
 
-/// In West Lunpa Cave, searching the raising switch: the leader flips it and
-/// the gate goes up, unless it is up already or propped open. "flipped the
+/// In West Lunpa Cave, searching the raising switch makes the leader flip it.
+/// The gate goes up, unless it is up already or propped open. "flipped the
 /// switch."
 static void WestLunpaCave_FlipRaisingSwitch(void) {
   if (GameFlag_Get(FLAG_WEST_LUNPA_CAVE_GATE_PUDDLE_FROZEN) == 0) {
@@ -260,15 +273,21 @@ static void WestLunpaCave_FlipRaisingSwitch(void) {
   }
 }
 
-/// In West Lunpa Cave, Hammet finds Bunza hiding behind a rock. It plays on
-/// stepping onto cell behavior 10, by the rock Bunza hides behind, after
-/// Donpa has let the party leave the fortress with Hammet
-/// (FLAG_DODONPA_LOCKED_UP). Bunza steps out, the party and Hammet gather
-/// behind the leader, Garet and Mia think they saw someone, and Ivan asks
-/// whether Dodonpa's henchmen have found them (a yes: Garet will fight; a no:
-/// Garet wonders what else it could be). Hammet calls out and names Bunza,
-/// Bunza knows Hammet's voice, and the reunion and the wagon talk follow. Sets
-/// FLAG_LUNPA_CAVE_REUNION_SEEN, so it plays once.
+/// In West Lunpa Cave, Hammet finds Bunza hiding behind a rock.
+///
+/// It plays on stepping onto cell behavior 10, by the rock Bunza hides
+/// behind. Donpa must first have let the party leave the fortress with Hammet
+/// (FLAG_DODONPA_LOCKED_UP).
+///
+/// - Bunza steps out.
+/// - The party and Hammet gather behind the leader.
+/// - Garet and Mia think they saw someone.
+/// - Ivan asks whether Dodonpa's henchmen have found them. On a yes, Garet
+///   will fight. On a no, Garet wonders what else it could be.
+/// - Hammet calls out and names Bunza, and Bunza knows Hammet's voice.
+/// - The reunion and the wagon talk follow.
+///
+/// It sets FLAG_LUNPA_CAVE_REUNION_SEEN, so it plays once.
 static void WestLunpaCave_HammetFindsBunza(void) {
   struct Actor *leader;
   s32 sighting;
@@ -388,10 +407,11 @@ static void WestLunpaCave_HammetFindsBunza(void) {
   }
 }
 
-/// The reunion, with the screen closed and reopened on the group: Hammet and
-/// Ivan tell how the party came to his rescue, Bunza tells how he came to
-/// Lunpa and found the cave, warns that Dodonpa's henchmen are combing the
-/// area, and offers his wagon as a way out of Lunpa.
+/// The reunion, with the screen closed and reopened on the group.
+///
+/// Hammet and Ivan tell how the party came to his rescue. Bunza tells how he
+/// came to Lunpa and found the cave. He warns that Dodonpa's henchmen are
+/// combing the area, and offers his wagon as a way out of Lunpa.
 static void Reunion_Converse(void) {
   s32 reunion;
   s32 messageBase;
@@ -688,18 +708,22 @@ static void Reunion_Converse(void) {
 }
 
 /// Reconciles the party's answers until they either ride or stay behind.
-/// Garet asks whether to ride: a yes brings Bunza's question whether the party
-/// has unfinished business (a no rides), a no brings Garet's and Mia's
-/// questions whether it really will not ride. Answers that point to staying
-/// meet Garet's check that nothing is left to do (a yes rides) and Bunza's
-/// apology that he cannot wait, after which Mia asks whether the party will
-/// stay; a no to Mia's "You do want to go with them?" leaves Ivan confused and
-/// Garet asking again.
 ///
-/// The gotos are the conversation's own shape, not a forced layout: two of
-/// them enter the middle of the other branch (a no to riding joins the
-/// nothing-left check, and Mia's question joins Bunza's), which structured
-/// C could only write by repeating those questions' calls.
+/// Garet asks whether to ride.
+///
+/// - A yes brings Bunza's question whether the party has unfinished business.
+///   A no to that rides.
+/// - A no brings Garet's and Mia's questions whether it really will not ride.
+/// - Answers that point to staying meet Garet's check that nothing is left to
+///   do, where a yes rides. They also meet Bunza's apology that he cannot
+///   wait, after which Mia asks whether the party will stay.
+/// - A no to Mia's "You do want to go with them?" leaves Ivan confused and
+///   Garet asking again.
+///
+/// The gotos are the conversation's own shape, not a forced layout. Two of
+/// them enter the middle of the other branch. A no to riding joins the
+/// nothing-left check, and Mia's question joins Bunza's. Structured C could
+/// only write that by repeating those questions' calls.
 static void WagonChoice_Run(void) {
   s32 wagon;
   s32 insisted;

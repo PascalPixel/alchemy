@@ -1,54 +1,67 @@
 /// @file
-/// Kolima's overlay, which holds three scenes. The
-/// village's houses and shops are another overlay (log_rooms_c.c), and so
-/// is each scene of Kolima Forest.
+/// Kolima's overlay, which holds three scenes. The village's houses and shops
+/// are another overlay (log_rooms_c.c), and so is each scene of Kolima Forest.
 ///
-/// - Kolima (SceneId_Kolima), the village of lumberjacks, to which Lord
-///   McCoy has barricaded the road from Bilibin since the trouble began. The
-///   party's first entry from the World Map (KOLIMA_FROM_WORLD_MAP) plays
+/// - Kolima (SceneId_Kolima), the village of lumberjacks, to which Lord McCoy
+///   has barricaded the road from Bilibin since the trouble began.
+///
+///   The party's first entry from the World Map (KOLIMA_FROM_WORLD_MAP) plays
 ///   Kolima_WitnessForestCurse, unless the party has already seen it in Kolima
-///   Forest (FLAG_KOLIMA_CURSE_WITNESSED): every villager has been turned into
-///   a tree, sparkles fall from the sky and press the party down until domes
-///   of their own Psynergy shield them, and two unseen voices speak, Tret and
-///   Laurel, the spirits of the holy trees, who send the party to look for
-///   Tret deep within Kolima Forest.
+///   Forest (FLAG_KOLIMA_CURSE_WITNESSED). Every villager has been turned into
+///   a tree. Sparkles fall from the sky and press the party down until domes of
+///   their own Psynergy shield them. Two unseen voices speak, Tret and Laurel,
+///   the spirits of the holy trees, who send the party to look for Tret deep
+///   within Kolima Forest.
 ///
 ///   Until the curse is lifted in Kolima Forest (FLAG_KOLIMA_CURSE_LIFTED),
-///   Kolima_GetActorPlacements gives the nine villagers
-///   (ACTOR_FIRST_VILLAGER to ACTOR_LAST_VILLAGER) tree sprites that stand
-///   still, sparkles twinkle on the ground (ACTOR_FIRST_SPARKLE and the three
-///   after it, and five more that Kolima_Initialize places), and the villagers
-///   answer only Mind Read, with the thoughts of people stuck as trees.
+///   Kolima_GetActorPlacements gives the nine villagers (ACTOR_FIRST_VILLAGER
+///   to ACTOR_LAST_VILLAGER) tree sprites that stand still. Sparkles twinkle on
+///   the ground (ACTOR_FIRST_SPARKLE and the three after it, and five more that
+///   Kolima_Initialize places). The villagers answer only Mind Read, with the
+///   thoughts of people stuck as trees.
+///
 ///   Afterwards they are people again and talk of the curse, the holy tree and
-///   McCoy's money, and the healer among them (ACTOR_HEALER) offers the
-///   Sanctum's services across his counter. Granite, a Venus Djinni
-///   (ACTOR_GRANITE), waits in the village and joins when spoken to. Five
-///   doorways (KOLIMA_TO_INN to KOLIMA_TO_HOUSE_NORTH) lead into the houses and
-///   shops (SceneId_LogRoomsC), KOLIMA_TO_WORLD_MAP and
-///   KOLIMA_TO_WORLD_MAP_EAST to the World Map and KOLIMA_TO_KOLIMA_TUNNEL
+///   McCoy's money. The healer among them (ACTOR_HEALER) offers the Sanctum's
+///   services across his counter.
+///
+///   Granite, a Venus Djinni (ACTOR_GRANITE), waits in the village and joins
+///   when spoken to.
+///
+///   Five doorways (KOLIMA_TO_INN to KOLIMA_TO_HOUSE_NORTH) lead into the
+///   houses and shops (SceneId_LogRoomsC). KOLIMA_TO_WORLD_MAP and
+///   KOLIMA_TO_WORLD_MAP_EAST lead to the World Map and KOLIMA_TO_KOLIMA_TUNNEL
 ///   into Kolima Tunnel.
-/// - Kolima Tunnel (SceneId_KolimaTunnel), a passage with no one in it from
-///   one of the houses (LOG_ROOMS_C_FROM_KOLIMA_TUNNEL) to the village
-///   (KOLIMA_FROM_KOLIMA_TUNNEL). It shares the village's trigger table, whose
-///   exits KOLIMA_TO_WORLD_MAP and KOLIMA_TO_WORLD_MAP_EAST are, by the same
-///   numbers, its two ways out (KOLIMA_TUNNEL_TO_LOG_ROOMS_C and
-///   KOLIMA_TUNNEL_TO_KOLIMA). That table's two jars, an Apple and an Herb
-///   (examine triggers 100 and 101), are in the village: only Kolima's layout
-///   (map_037's treasure_spots.tsv) places them, at cells (23, 8) and (13,
-///   23).
+///
+/// - Kolima Tunnel (SceneId_KolimaTunnel), a passage with no one in it from one
+///   of the houses (LOG_ROOMS_C_FROM_KOLIMA_TUNNEL) to the village
+///   (KOLIMA_FROM_KOLIMA_TUNNEL).
+///
+///   It shares the village's trigger table, whose exits KOLIMA_TO_WORLD_MAP and
+///   KOLIMA_TO_WORLD_MAP_EAST are, by the same numbers, its two ways out
+///   (KOLIMA_TUNNEL_TO_LOG_ROOMS_C and KOLIMA_TUNNEL_TO_KOLIMA).
+///
+///   That table's two jars, an Apple and an Herb (examine triggers 100 and
+///   101), are in the village. Only Kolima's layout (map_037's
+///   treasure_spots.tsv) places them, at cells (23, 8) and (13, 23).
+///
 /// - Kolima Bridge (SceneId_KolimaBridge), "the grand bridge across the
 ///   river" and "the pride of Kolima" to the village's armor seller, with the
 ///   World Map at both ends. It is a drawbridge, standing raised between its
-///   posts. A villager stands beside it, a tree while the curse lasts
+///   posts.
+///
+///   A villager stands beside it, a tree while the curse lasts
 ///   (ACTOR_BRIDGE_VILLAGER_AS_TREE) and a man afterwards
-///   (ACTOR_BRIDGE_VILLAGER). The first time the party then steps up to the
-///   bridge (step trigger 10), Kolima_LowerBridge plays: he asks whether they
-///   are going to cross, hops aside and lets the drawbridge down across the
-///   river in front of the leader (FLAG_KOLIMA_BRIDGE_LOWERED; its recording,
-///   places/kolima-bridge/events/Kolima_LowerBridge.gif). From then on
-///   he says that for a while he thought no one would ever cross it again,
-///   Kolima_RestoreBridgeState draws it down on every later visit, and the
-///   bridge on the World Map is drawn down with the same flag.
+///   (ACTOR_BRIDGE_VILLAGER).
+///
+///   The first time the party then steps up to the bridge (step trigger 10),
+///   Kolima_LowerBridge plays. He asks whether they are going to cross, hops
+///   aside and lets the drawbridge down across the river in front of the leader
+///   (FLAG_KOLIMA_BRIDGE_LOWERED; its recording,
+///   places/kolima-bridge/events/Kolima_LowerBridge.gif).
+///
+///   From then on he says that for a while he thought no one would ever cross
+///   it again. Kolima_RestoreBridgeState draws it down on every later visit,
+///   and the bridge on the World Map is drawn down with the same flag.
 
 #include "script_operands.h"
 #include "djinn_ids.h"
@@ -98,10 +111,10 @@ static void Kolima_FaceActorAndWait(s32 actorId, s32 facing, s32 waitFrames);
 static void Kolima_SpawnCurseSparkle(void);
 static void Kolima_RestoreBridgeState(void);
 
-/// Actors of Kolima, numbering the rows of gKolimaActorPlacements
-/// from ACTOR_FIRST_PLACED: Garet, Ivan and Mia, who stand by for the curse,
-/// take their own actor slots. The nine villagers are named by what they
-/// say once the curse is lifted.
+/// Actors of Kolima, numbering the rows of gKolimaActorPlacements from
+/// ACTOR_FIRST_PLACED. Garet, Ivan and Mia, who stand by for the curse, take
+/// their own actor slots. The nine villagers are named by what they say once
+/// the curse is lifted.
 enum KolimaActorId {
   /// A young man with brown hair.
   /// ★ Named from the game: "This is Kolima, village of lumberjacks!"
@@ -136,7 +149,7 @@ enum KolimaActorId {
   /// ★ Named from the game: "Yawn... Trees are so... sleepy..."
   /// (MsgKolimaYawnTreesAreSoSleepy)
   ACTOR_GIRL_SLEEPY_TREES,
-  /// A man with a white beard in a tall hat and a long robe; opens the
+  /// A man with a white beard in a tall hat and a long robe. He opens the
   /// Sanctum's services across his counter (Sanctum_Run).
   /// ★ Named from the game: "Maybe if I meditate harder, I'll turn back into a
   /// man..." (MsgKolimaMaybeIfIMeditateHarderIll)
@@ -150,8 +163,8 @@ enum KolimaActorId {
   /// (MsgKolimaWatchOutItsHappeningAgain)
   ACTOR_LAUREL,
   /// The fields of Psynergy that rise over the party while the curse falls
-  /// ("You know what those fields were?"), each set where its character
-  /// stands in Kolima_WitnessForestCurse; Mia's only with her in the party.
+  /// ("You know what those fields were?"), each set where its character stands
+  /// in Kolima_WitnessForestCurse. Mia's is set only with her in the party.
   /// ★ Named from the game: "You know what those fields were?"
   /// (MsgKolimaKnowThoseFieldsWere)
   ACTOR_LEADER_PSYNERGY_FIELD,
@@ -204,9 +217,9 @@ static s32 Kolima_ApplyPendingPose(struct Actor *interpreter) {
   return 1;
 }
 
-/// Each frame of a sparkle on Kolima's ground: its timer runs on at random, and
-/// it shows its bright frame (7) past 1000 and its dim one (10) before; at
-/// 1200 the timer starts over.
+/// Each frame of a sparkle on Kolima's ground, its timer runs on at random. It
+/// shows its bright frame (7) past 1000 and its dim one (10) before. At 1200
+/// the timer starts over.
 static s32 Kolima_UpdateTimedAppearance(struct Actor *interpreter) {
   struct Actor *actor = interpreter;
   s32 randomValue = Import_RandomNext();
@@ -224,11 +237,13 @@ static s32 Kolima_UpdateTimedAppearance(struct Actor *interpreter) {
   return 1;
 }
 
-/// While the curse lasts, gives Kolima's nine villagers (actor placement
-/// rows 3 to 11, ACTOR_FIRST_VILLAGER to ACTOR_LAST_VILLAGER) tree sprites,
-/// SPRITE_TREE or, for rows 9 and 10 (ACTOR_BOY_DID_NOT_MIND_BEING_A_TREE and
-/// ACTOR_GIRL_SLEEPY_TREES), SPRITE_SMALL_TREE; they stand still and keep
-/// their facing when spoken to.
+/// While the curse lasts, gives Kolima's nine villagers tree sprites. The
+/// villagers are actor placement rows 3 to 11, ACTOR_FIRST_VILLAGER to
+/// ACTOR_LAST_VILLAGER.
+///
+/// The sprite is SPRITE_TREE or, for rows 9 and 10
+/// (ACTOR_BOY_DID_NOT_MIND_BEING_A_TREE and ACTOR_GIRL_SLEEPY_TREES),
+/// SPRITE_SMALL_TREE. They stand still and keep their facing when spoken to.
 static void
 Kolima_InitializeCursedVillagers(struct ActorPlacement *placements) {
   struct ActorPlacement *villager = &placements[3];
@@ -294,13 +309,12 @@ const struct SceneExitRegion *Kolima_GetRegions(void) {
 }
 
 /// The exits of all three scenes, each scene's after its header word (an exit
-/// of kind 0): Kolima's to the World Map, the houses (SceneId_LogRoomsC)
-/// and Kolima
-/// Tunnel, Kolima Bridge's to the World Map, and Kolima Tunnel's to a house
-/// and the village.
+/// of kind 0). Kolima's lead to the World Map, the houses (SceneId_LogRoomsC)
+/// and Kolima Tunnel, Kolima Bridge's to the World Map, and Kolima Tunnel's to
+/// a house and the village.
 const u32 *Kolima_GetExits(void) { return gKolimaExits; }
 
-/// Selects the people of Kolima or Kolima Bridge; Kolima Tunnel has none. In
+/// Selects the people of Kolima or Kolima Bridge. Kolima Tunnel has none. In
 /// Kolima the villagers are trees until the curse is lifted.
 const struct ActorPlacement *Kolima_GetActorPlacements(void) {
   s32 sceneId = gMainRoutineWork.next;
@@ -317,8 +331,8 @@ const struct ActorPlacement *Kolima_GetActorPlacements(void) {
   return gKolimaTunnelActorPlacements;
 }
 
-/// Kolima, once the curse is lifted: talking to the healer (ACTOR_HEALER)
-/// across his counter (facing north) opens the Sanctum's services; from any
+/// In Kolima, once the curse is lifted, talking to the healer (ACTOR_HEALER)
+/// across his counter (facing north) opens the Sanctum's services. From any
 /// other side he asks whether the holy tree's rage was the only cause of the
 /// curse, and either answer agrees that something changed when the gems fell.
 static void Kolima_TalkToHealer(void) {
@@ -337,7 +351,7 @@ static void Kolima_TalkToHealer(void) {
   Event_End();
 }
 
-/// Kolima: talking to Granite, a Venus Djinni, makes it join the party.
+/// In Kolima, talking to Granite, a Venus Djinni, makes it join the party.
 static void Kolima_GraniteJoins(void) {
   Djinn_JoinParty(ACTOR_GRANITE, ELEMENT_VENUS, DJINNI_INDEX(DJINNI_GRANITE));
 }
@@ -362,11 +376,13 @@ static void Kolima_WalkThroughExit(s32 exitNumber) {
   Import_EventSetExitRequest(exitNumber);
 }
 
-/// Kolima: walking into one of the five doorways into the houses and shops,
-/// whose step triggers are the numbers of the exits they take (KOLIMA_TO_INN to
-/// KOLIMA_TO_HOUSE_NORTH). The door sound plays; the four entered walking
-/// north open their door (gKolima_DoorCells) and the leader walks in, while
-/// KOLIMA_TO_HOUSE_NORTH, entered walking south, has no door to draw.
+/// In Kolima, walking into one of the five doorways leads into the houses and
+/// shops. Their step triggers are the numbers of the exits they take
+/// (KOLIMA_TO_INN to KOLIMA_TO_HOUSE_NORTH).
+///
+/// The door sound plays. The four entered walking north open their door
+/// (gKolima_DoorCells) and the leader walks in. KOLIMA_TO_HOUSE_NORTH, entered
+/// walking south, has no door to draw.
 static void Kolima_EnterDoor(void) {
   struct FieldWork *work = gFieldWork;
   s32 x = 0;
@@ -405,15 +421,20 @@ static void Kolima_EnterDoor(void) {
   Event_End();
 }
 
-/// Kolima Bridge, the first time the party steps up to it (step trigger 10,
-/// until FLAG_KOLIMA_BRIDGE_LOWERED): the villager beside it
-/// (ACTOR_BRIDGE_VILLAGER) asks whether they are going to cross, and at the
-/// leader's nod says "Go right ahead!" and hops aside to the post. The
-/// drawbridge then comes down across the river in front of the leader in four
-/// ever quicker steps of map cells, ten puffs of dust fly up where it lands,
-/// the screen shakes and the leader jumps back. The last cells copied also
-/// give the bridge the cell behaviors that open it. From then on the
-/// villager keeps turning to face the leader. Sets FLAG_KOLIMA_BRIDGE_LOWERED.
+/// At Kolima Bridge, the first time the party steps up to it, the villager
+/// beside it (ACTOR_BRIDGE_VILLAGER) asks whether they are going to cross. At
+/// the leader's nod he says "Go right ahead!" and hops aside to the post.
+///
+/// - The drawbridge then comes down across the river in front of the leader in
+///   four ever quicker steps of map cells.
+/// - As it lands, ten puffs of dust fly up.
+/// - The screen shakes and the leader jumps back.
+///
+/// The last cells copied also give the bridge the cell behaviors that open it.
+/// From then on the villager keeps turning to face the leader.
+///
+/// This is step trigger 10, and it plays until FLAG_KOLIMA_BRIDGE_LOWERED. Sets
+/// FLAG_KOLIMA_BRIDGE_LOWERED.
 static void Kolima_LowerBridge(void) {
   u32 debrisIndex;
 
@@ -505,12 +526,15 @@ static void Kolima_LowerBridge(void) {
 
 /// Sets up whichever scene is entered: Kolima Bridge as the curse and the
 /// bridge leave it (Kolima_RestoreBridgeState), Kolima Tunnel with a window
-/// transition, and Kolima itself. There the four sparkles twinkle, the
-/// villagers stand as trees while the curse lasts (and three cells around
-/// (14, 8) take the cell behavior of cell (13, 9)), and the first entry
-/// from the World Map plays Kolima_WitnessForestCurse. Once that has been seen,
-/// here or in Kolima Forest, Garet, Ivan and Mia, the two voices and the domes
-/// are taken away and five more sparkles are placed.
+/// transition, and Kolima itself.
+///
+/// In Kolima the four sparkles twinkle. While the curse lasts the villagers
+/// stand as trees, and three cells around (14, 8) take the cell behavior of
+/// cell (13, 9). The first entry from the World Map plays
+/// Kolima_WitnessForestCurse.
+///
+/// Once that has been seen, here or in Kolima Forest, Garet, Ivan and Mia, the
+/// two voices and the domes are taken away and five more sparkles are placed.
 s32 Kolima_Initialize(void) {
   s16 sceneId;
   u32 actorId;
@@ -619,23 +643,32 @@ static __inline__ void Kolima_NodTogether(void) {
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
 }
 
-/// Kolima, the first entry from the World Map (KOLIMA_FROM_WORLD_MAP), until
-/// FLAG_KOLIMA_CURSE_WITNESSED: the party sees the curse fall. The leader,
-/// Garet and Ivan, with Mia if she has joined, walk into a silent village.
-/// Ivan reads a tree's mind ("This tree...was a person"), Garet sees that
-/// everyone in Kolima has been turned into a tree and asks the leader whether
-/// he knows why, and Ivan notices "sparkly stuff on the ground". Sparkles rain
-/// from the sky and press the party down until domes of their own Psynergy rise
-/// over each of them; they argue over whether it was their Psynergy, since no
-/// one was concentrating, and Ivan decides that some Psynergy acts only when it
-/// is needed. A second shower raises the domes again, and Tret and Laurel,
-/// unseen, wonder at people immune to Tret's glamour: Tret, dying and torn in
-/// two, will not forgive Kolima's axes, and Laurel tells the party to reawaken
-/// his gentle side and look for Tret deep within the forest. Whatever the
-/// leader answers to Ivan and Garet, the party resolves to save Kolima. Mia's
-/// lines and moves are skipped without her. Sets FLAG_KOLIMA_CURSE_WITNESSED;
-/// KolimaForestEntrance_WitnessForestCurse plays the same event in Kolima
-/// Forest.
+/// In Kolima, on the first entry from the World Map (KOLIMA_FROM_WORLD_MAP),
+/// the party sees the curse fall. This plays until FLAG_KOLIMA_CURSE_WITNESSED.
+///
+/// - The leader, Garet and Ivan, with Mia if she has joined, walk into a silent
+///   village.
+/// - Ivan reads a tree's mind ("This tree...was a person").
+/// - Garet sees that everyone in Kolima has been turned into a tree and asks
+///   the leader whether he knows why.
+/// - Ivan notices "sparkly stuff on the ground".
+/// - Sparkles rain from the sky and press the party down until domes of their
+///   own Psynergy rise over each of them.
+/// - They argue over whether it was their Psynergy, since no one was
+///   concentrating. Ivan decides that some Psynergy acts only when it is
+///   needed.
+/// - A second shower raises the domes again.
+/// - Tret and Laurel, unseen, wonder at people immune to Tret's glamour. Tret,
+///   dying and torn in two, will not forgive Kolima's axes. Laurel tells the
+///   party to reawaken his gentle side and look for Tret deep within the
+///   forest.
+/// - Whatever the leader answers to Ivan and Garet, the party resolves to save
+///   Kolima.
+///
+/// Mia's lines and moves are skipped without her.
+///
+/// Sets FLAG_KOLIMA_CURSE_WITNESSED. KolimaForestEntrance_WitnessForestCurse
+/// plays the same event in Kolima Forest.
 static void Kolima_WitnessForestCurse(void) {
   struct Actor *actor;
   s32 *partyLayout;
@@ -1640,12 +1673,15 @@ s32 gKolima_PendingPose __attribute__((section(".bss")));
 s32 gKolima_MiaInParty __attribute__((section(".bss")));
 s32 gKolima_EffectActive __attribute__((section(".bss")));
 
-/// Sets up Kolima Bridge. While the curse lasts, the villager as a man
-/// (ACTOR_BRIDGE_VILLAGER) is put out of sight, leaving him a tree
-/// (ACTOR_BRIDGE_VILLAGER_AS_TREE), and the five cells from (9, 18), the
-/// cells of step trigger 10, take the open ground of the row above them, so
-/// that walking up to the river does not start Kolima_LowerBridge, whose
-/// villager is still a tree; afterwards the tree is put out of sight instead.
+/// Sets up Kolima Bridge.
+///
+/// While the curse lasts, the villager as a man (ACTOR_BRIDGE_VILLAGER) is put
+/// out of sight, leaving him a tree (ACTOR_BRIDGE_VILLAGER_AS_TREE). The five
+/// cells from (9, 18), the cells of step trigger 10, take the open ground of
+/// the row above them. So walking up to the river does not start
+/// Kolima_LowerBridge, whose villager is still a tree. Afterwards the tree is
+/// put out of sight instead.
+///
 /// Once the bridge is down (FLAG_KOLIMA_BRIDGE_LOWERED), it is drawn down and
 /// its cells changed to match.
 static void Kolima_RestoreBridgeState(void) {
@@ -1768,8 +1804,8 @@ u16 gKolima_DoorCells[] = {
     MAPGRID_ANIMATION_STEPS_END,
 };
 
-/// Kolima's entrances. No exit leads to entrances 2, 10 and 12;
-/// entrance 10 puts the party where KOLIMA_FROM_WORLD_MAP does.
+/// Kolima's entrances. No exit leads to entrances 2, 10 and 12. Entrance 10
+/// puts the party where KOLIMA_FROM_WORLD_MAP does.
 struct SceneEntrance gKolimaEntrances[] = {
     {0, CONDITION_ALWAYS, 232, 0, 120, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {KOLIMA_FROM_WORLD_MAP, CONDITION_ALWAYS, 44, 0, 267, FACING_EAST, 0, -1,
@@ -1815,8 +1851,9 @@ struct SceneExitRegion gKolimaTunnelRegions[] = {
     {-1, 0, 0, 0, 0, 0, 0, 0},
 };
 
-/// Kolima's exits, then Kolima Bridge's (from the header word for SceneId_KolimaBridge)
-/// and Kolima Tunnel's (from the one for SceneId_KolimaTunnel).
+/// Kolima's exits, then Kolima Bridge's (from the header word for
+/// SceneId_KolimaBridge) and Kolima Tunnel's (from the one for
+/// SceneId_KolimaTunnel).
 u32 gKolimaExits[] = {
     SCENE_EXITS(Kolima),
     SCENE_EXIT(KOLIMA_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_KOLIMA_WEST),
@@ -1842,8 +1879,8 @@ struct ActorPlacement gKolimaTunnelActorPlacements[] = {
 
 /// Kolima's people: Garet, Ivan and Mia for the curse, the nine villagers,
 /// Tret's and Laurel's voices and the four domes until the curse has been seen
-/// (FLAG_KOLIMA_CURSE_WITNESSED), four sparkles while it lasts, and Granite until
-/// it joins (its Djinni flag, FLAG_DJINNI(DJINNI_GRANITE)).
+/// (FLAG_KOLIMA_CURSE_WITNESSED), four sparkles while it lasts, and Granite
+/// until it joins (its Djinni flag, FLAG_DJINNI(DJINNI_GRANITE)).
 struct ActorPlacement gKolimaActorPlacements[] = {
     { ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0 },
@@ -1911,7 +1948,7 @@ struct ActorPlacement gKolima_EntryScript[] = {
 };
 
 /// Kolima Bridge's villager, as a man (ACTOR_BRIDGE_VILLAGER) and as a tree
-/// (ACTOR_BRIDGE_VILLAGER_AS_TREE), in the same place;
+/// (ACTOR_BRIDGE_VILLAGER_AS_TREE), in the same place.
 /// Kolima_RestoreBridgeState puts one of them out of sight.
 struct ActorPlacement gKolimaBridgeActorPlacements[] = {
     { SPRITE_BURLY_MAN_WITH_GREY_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -1923,11 +1960,12 @@ struct ActorPlacement gKolimaBridgeActorPlacements[] = {
 
 /// The triggers Kolima and Kolima Tunnel share: the exits and doorways, the
 /// villagers' words once the curse is lifted and their thoughts before and
-/// after, the healer, Granite and two jars. Exits 1 and 2, which cell 99 takes
-/// too, keep their numbers, since each scene's exit table gives them its own
-/// doors: KOLIMA_TO_WORLD_MAP and KOLIMA_TO_WORLD_MAP_EAST in Kolima,
-/// KOLIMA_TUNNEL_TO_LOG_ROOMS_C and KOLIMA_TUNNEL_TO_KOLIMA in Kolima
-/// Tunnel.
+/// after, the healer, Granite and two jars.
+///
+/// Exits 1 and 2, which cell 99 takes too, keep their numbers, since each
+/// scene's exit table gives them its own doors. Those are KOLIMA_TO_WORLD_MAP
+/// and KOLIMA_TO_WORLD_MAP_EAST in Kolima, KOLIMA_TUNNEL_TO_LOG_ROOMS_C and
+/// KOLIMA_TUNNEL_TO_KOLIMA in Kolima Tunnel.
 struct Trigger gKolimaTriggers[] = {
     { TRIGGER_EXIT, 99, CONDITION_ALWAYS, 1 },
     { TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1 },

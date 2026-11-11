@@ -4,26 +4,33 @@
 /// call Xian, and the room behind Master Feh's school.
 ///
 /// Each of Xian's doors leads to a room here, and each room leads back out to
-/// its door. LACQUER_ROOMS_B_HOUSE, LACQUER_ROOMS_B_HOUSE_NORTH and
-/// LACQUER_ROOMS_B_FROM_XIAN_EAST are villagers' houses;
-/// LACQUER_ROOMS_B_INN_SOUTH opens into the inn, where
-/// LACQUER_ROOMS_B_INN_TO_INN_GUEST_ROOMS leads on into its guest rooms and
-/// LACQUER_ROOMS_B_INN_GUEST_ROOMS_TO_INN back; and
-/// LACQUER_ROOMS_B_WEAPON_AND_ARMOR_SHOP opens into the weapon, armor and item
-/// shops. As in the village, every line has a row for each side of
-/// FLAG_XIAN_HEARD_HSU_TRAPPED, and two villagers' questions have a reply
-/// for a yes and one for a no. The shopkeepers and the innkeeper serve the
-/// party only when spoken to across the counter, and otherwise talk.
+/// its door:
+///
+/// - LACQUER_ROOMS_B_HOUSE, LACQUER_ROOMS_B_HOUSE_NORTH and
+///   LACQUER_ROOMS_B_FROM_XIAN_EAST are villagers' houses.
+/// - LACQUER_ROOMS_B_INN_SOUTH opens into the inn, where
+///   LACQUER_ROOMS_B_INN_TO_INN_GUEST_ROOMS leads on into its guest rooms and
+///   LACQUER_ROOMS_B_INN_GUEST_ROOMS_TO_INN back.
+/// - LACQUER_ROOMS_B_WEAPON_AND_ARMOR_SHOP opens into the weapon, armor and
+///   item shops.
+///
+/// As in the village, every line has a row for each side of
+/// FLAG_XIAN_HEARD_HSU_TRAPPED, and two villagers' questions have a reply for a
+/// yes and one for a no. The shopkeepers and the innkeeper serve the party only
+/// when spoken to across the counter, and otherwise talk.
 ///
 /// The room behind Master Feh's school
-/// (LACQUER_ROOMS_B_FROM_LACQUER_ROOMS_A_FEHS_SCHOOL) is reached only
-/// from the school (LACQUER_ROOMS_A_FEHS_SCHOOL_TO_HOUSE, in
-/// fuchin_temple.c) and has its own tables (LacquerRoomsB_GetTriggers). Once
-/// Xian has heard of Hsu, Master Feh, Feizhi and Hsu are there, Hsu lying in
-/// the bed (ANIM_HSU_IN_BED; the room's render with Hsu placed).
+/// (LACQUER_ROOMS_B_FROM_LACQUER_ROOMS_A_FEHS_SCHOOL) is reached only from the
+/// school (LACQUER_ROOMS_A_FEHS_SCHOOL_TO_HOUSE, in fuchin_temple.c) and has
+/// its own tables (LacquerRoomsB_GetTriggers).
+///
+/// Once Xian has heard of Hsu, Master Feh, Feizhi and Hsu are there, Hsu lying
+/// in the bed (ANIM_HSU_IN_BED; the room's render with Hsu placed).
+///
 /// FLAG_HSU_RESCUED_WITHOUT_PARTY, set when the party left the desert with Hsu
 /// still trapped (lamakan_desert.c), picks whether Feizhi thanks the party and
 /// Master Hama or Hama alone, and what Mind Read hears from each of them.
+///
 /// Arriving here clears FLAG_SHOW_AREA_NAME.
 
 #include "main_routine_work.h"
@@ -107,10 +114,10 @@ enum {
 };
 
 /// The actors placed in the room behind Master Feh's school
-/// (LACQUER_ROOMS_B_FROM_LACQUER_ROOMS_A_FEHS_SCHOOL), where they stand
-/// once Xian has heard of Hsu, as its dialogue shows them: Master Feh says
-/// Feizhi's prediction came true, Feizhi welcomes the party, and Hsu was
-/// injured on his way from Lama Temple.
+/// (LACQUER_ROOMS_B_FROM_LACQUER_ROOMS_A_FEHS_SCHOOL), where they stand once
+/// Xian has heard of Hsu. Its dialogue shows them: Master Feh says Feizhi's
+/// prediction came true, Feizhi welcomes the party, and Hsu was injured on his
+/// way from Lama Temple.
 enum {
   /// ★ Named from the game: "You warriors should visit Master Feh's school."
   /// (MsgXianYouWarriorsShouldVisitMasterFehs)
@@ -160,8 +167,8 @@ static inline u32 LacquerRoomsB_GetLeaderFacing(void) {
   return leader->facing;
 }
 
-/// Talking to Xian's weapon merchant: across the counter, the weapon shop;
-/// from elsewhere, talk of martial arts.
+/// Talking to Xian's weapon merchant across the counter opens the weapon shop.
+/// From elsewhere the merchant talks of martial arts.
 static void LacquerRoomsB_TalkToWeaponMerchant(void) {
   u32 leaderFacing = LacquerRoomsB_GetLeaderFacing();
 
@@ -180,8 +187,8 @@ static void LacquerRoomsB_TalkToWeaponMerchant(void) {
   Event_End();
 }
 
-/// Talking to Xian's armor merchant: across the counter, the armor shop;
-/// from elsewhere, talk of armor and kung fu.
+/// Talking to Xian's armor merchant across the counter opens the armor shop.
+/// From elsewhere the merchant talks of armor and kung fu.
 static void LacquerRoomsB_TalkToArmorMerchant(void) {
   u32 leaderFacing = LacquerRoomsB_GetLeaderFacing();
 
@@ -200,9 +207,9 @@ static void LacquerRoomsB_TalkToArmorMerchant(void) {
   Event_End();
 }
 
-/// Talking to Xian's item merchant: across the counter, the item shop; from
-/// elsewhere, talk of armor, or, once Xian has heard of Hsu, whether the party
-/// will cross the desert.
+/// Talking to Xian's item merchant across the counter opens the item shop. From
+/// elsewhere the merchant talks of armor, or, once Xian has heard of Hsu, of
+/// whether the party will cross the desert.
 static void LacquerRoomsB_TalkToItemMerchant(void) {
 
   u32 leaderFacing = LacquerRoomsB_GetLeaderFacing();
@@ -225,8 +232,8 @@ static void LacquerRoomsB_TalkToItemMerchant(void) {
   Event_End();
 }
 
-/// Talking to Xian's innkeeper: across the counter, the inn; from elsewhere,
-/// talk of towns and travelers.
+/// Talking to Xian's innkeeper across the counter opens the inn. From elsewhere
+/// the innkeeper talks of towns and travelers.
 static void LacquerRoomsB_TalkToInnkeeper(void) {
 
   u32 leaderFacing = LacquerRoomsB_GetLeaderFacing();
@@ -245,10 +252,10 @@ static void LacquerRoomsB_TalkToInnkeeper(void) {
   Event_End();
 }
 
-/// A young man in a house in Xian asks whether something is wrong on Silk
-/// Road. He is ACTOR_YOUNG_MAN_ON_SILK_ROAD, after the news of Hsu, and asks
-/// about Lamakan Desert too. A yes: no one can use Silk Road; a no: it is good
-/// to hear the desert is fine.
+/// A young man in a house in Xian asks whether something is wrong on Silk Road.
+/// He is ACTOR_YOUNG_MAN_ON_SILK_ROAD, after the news of Hsu, and asks about
+/// Lamakan Desert too. To a yes he says no one can use Silk Road. To a no, it
+/// is good to hear the desert is fine.
 static void LacquerRoomsB_AskAboutSilkRoad(void) {
   Event_Start();
   Event_SetMessageId(MsgXianSomethingWrongOnSilkRoad);
@@ -260,8 +267,8 @@ static void LacquerRoomsB_AskAboutSilkRoad(void) {
 }
 
 /// An old man in a house in Xian, ACTOR_OLD_MAN_ON_THE_ALTIN_ROAD, asks after
-/// the news of Hsu whether the monsters in Altin spat water. A yes: how
-/// strange; a no: but why would Feizhi lie?
+/// the news of Hsu whether the monsters in Altin spat water. To a yes he says
+/// how strange. To a no, but why would Feizhi lie?
 static void LacquerRoomsB_AskAboutAltinMonsters(void) {
   Event_Start();
   Event_SetMessageId(MsgXianDidMonstersInAltinSpit);
@@ -274,7 +281,7 @@ static void LacquerRoomsB_AskAboutAltinMonsters(void) {
 
 /// Feizhi thanks the party and Master Hama for freeing Hsu, in Xian. She is in
 /// the room behind Master Feh's school, when the party helped free Hsu
-/// (FLAG_HSU_RESCUED_WITHOUT_PARTY clear); she welcomes the party, looks at
+/// (FLAG_HSU_RESCUED_WITHOUT_PARTY clear). She welcomes the party, looks at
 /// Hsu, then thanks the party and Master Hama. "Oh, warrior! Welcome!"
 static void LacquerRoomsB_FeizhiThanksParty(void) {
   Event_Start();
@@ -299,12 +306,13 @@ const struct Trigger *LacquerRoomsB_GetTriggers(void) {
   return gLacquerRoomsB_Triggers;
 }
 
-/// Opens the room through a window transition and places hidden still actors
-/// of SPRITE_CHEST's sheet (Actor_CreateConfigured): one in the
-/// inn (LACQUER_ROOMS_B_INN_SOUTH and
-/// LACQUER_ROOMS_B_INN_FROM_INN_GUEST_ROOMS), two in the shops
-/// (LACQUER_ROOMS_B_WEAPON_AND_ARMOR_SHOP). In the room behind the school, it
-/// clears FLAG_SHOW_AREA_NAME and lays Hsu in the bed.
+/// Opens the room through a window transition and places hidden still actors of
+/// SPRITE_CHEST's sheet (Actor_CreateConfigured). There is one in the inn
+/// (LACQUER_ROOMS_B_INN_SOUTH and LACQUER_ROOMS_B_INN_FROM_INN_GUEST_ROOMS) and
+/// two in the shops (LACQUER_ROOMS_B_WEAPON_AND_ARMOR_SHOP).
+///
+/// In the room behind the school, it clears FLAG_SHOW_AREA_NAME and lays Hsu in
+/// the bed.
 s32 LacquerRoomsB_Initialize(void) {
   s16 entrance;
 

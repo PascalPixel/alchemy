@@ -1,7 +1,9 @@
 /// @file
-/// The title overlay: the start screen, the Golden Sun logo shown after the
-/// ending, and the screens that lead from the prologue and the last event on
-/// to Vale and the File Screen. Title_Run chooses by entrance.
+/// The title overlay holds the start screen, the Golden Sun logo shown after
+/// the ending, and the screens that lead from the prologue and the last event
+/// on to Vale and the File Screen.
+///
+/// Title_Run chooses by entrance.
 
 #include "main_routine_work.h"
 #include "vram_cache.h"
@@ -49,11 +51,13 @@ static void Title_RevealScreen(s32 unused);
 static void Title_LoadBackground(void);
 
 /// The title overlay's scene tables, which FieldSequence_Run reads through
-/// entry/title.s: one entrance row, the exit, and no actor
-/// placements or triggers.
+/// entry/title.s.
+///
+/// They hold one entrance row, the exit, and no actor placements or triggers.
 u8 *Title_GetEntrances(void) { return (u8 *)gTitleEntrances; }
 
-/// The exit regions entry: the title has no exit boxes.
+/// The exit regions entry, which is empty because the title has no exit
+/// boxes.
 s32 Scene_GetExitRegions(void) { return 0; }
 
 u8 *Title_GetExits(void) { return (u8 *)gTitleExits; }
@@ -64,21 +68,23 @@ u8 *Title_GetActorPlacements(void) { return (u8 *)gTitleActorPlacements; }
 /// The title overlay has no triggers.
 u8 *Title_GetTriggers(void) { return (u8 *)gTitleTriggers; }
 
-/// The overlay's initialize entry: plays what the entrance asks for,
-/// sets the after-battle destination and returns 0.
-/// - Entrance 10, after Jenna and Kraden's closing event on the world
-///   map (WorldMap_ShowEndingEvent): the Golden Sun logo for two seconds, then
-///   until a key is pressed or a minute passes, then entrance 2.
-/// - Entrance 9, after the ship sails (lemurian_ship.c's SetSail): the
-///   credits, then the File Screen's entrance 2, which offers to
-///   save the cleared game.
-/// - Entrance 2, at power-on (MainRoutine_Run) and after the logo:
-/// the
-///   Nintendo and Camelot logos and, when a save file exists, the title intro
-///   with its "Press Start" prompt; then the File Screen's
-///   entrance 1.
-/// - Any other entrance is the title shown after the prologue: the
-///   intro without its prompt, then Vale's entrance 16
+/// The overlay's initialize entry, which plays what the entrance asks for.
+///
+/// It also sets the after-battle destination and returns 0.
+///
+/// - Entrance 10 comes after Jenna and Kraden's closing event on the world
+///   map (WorldMap_ShowEndingEvent). It shows the Golden Sun logo for two
+///   seconds, then until a key is pressed or a minute passes, then goes to
+///   entrance 2.
+/// - Entrance 9 comes after the ship sails (lemurian_ship.c's SetSail). It
+///   plays the credits, then goes to the File Screen's entrance 2, which
+///   offers to save the cleared game.
+/// - Entrance 2 comes at power-on (MainRoutine_Run) and after the logo. It
+///   shows the Nintendo and Camelot logos and, when a save file exists, the
+///   title intro with its "Press Start" prompt. Then it goes to the File
+///   Screen's entrance 1.
+/// - Any other entrance is the title shown after the prologue. It plays the
+///   intro without its prompt, then goes to Vale's entrance 16
 ///   (Party_EndChildhood).
 s32 Title_Run(void) {
   s32 waitFrames;
@@ -164,11 +170,14 @@ s32 Title_Run(void) {
   return 0;
 }
 
-/// Loads the logo's lettering sprites and their palette. The tiles go into
-/// the VRAM cache entry gTitleVramBlock, taken on the first call; the decode
-/// buffer comes from the EWRAM pool and is freed before returning.
-/// English and Japanese letter the logo with 4-bit tiles on palette 15; the
-/// other editions with 256-colour tiles and a 224-colour palette.
+/// Loads the logo's lettering sprites and their palette.
+///
+/// The tiles go into the VRAM cache entry gTitleVramBlock, taken on the first
+/// call. The decode buffer comes from the EWRAM pool and is freed before
+/// returning.
+///
+/// English and Japanese letter the logo with 4-bit tiles on palette 15. The
+/// other editions use 256-colour tiles and a 224-colour palette.
 static void Title_LoadSprites(s32 unused) {
   u8 *decodedSprites;
   volatile u32 *dma3;
@@ -210,10 +219,12 @@ static void Title_LoadSprites(s32 unused) {
 }
 
 /// The task that queues the logo's lettering sprites each frame,
-/// revealing them from the left. Column n appears once gTitleRevealFrame / 2
-/// passes n, and is hidden on odd frames for its first four frames. Advances
-/// gTitleRevealFrame. Title_RevealScreen schedules it, and it is not removed
-/// in this overlay.
+/// revealing them from the left.
+///
+/// Column n appears once gTitleRevealFrame / 2 passes n, and is hidden on odd
+/// frames for its first four frames. The task advances gTitleRevealFrame.
+///
+/// Title_RevealScreen schedules it, and it is not removed in this overlay.
 static void Title_UpdateSpriteReveal(void) {
   u32 *attributes;
   struct TitleSprite *sprite;
@@ -288,11 +299,13 @@ static void Title_UpdateSpriteReveal(void) {
   gTitleRevealFrame++;
 }
 
-/// Shows the Golden Sun logo for Title_Run's entrance 10: loads it
-/// while the screen is black, starts the lettering's reveal
-/// (Title_UpdateSpriteReveal, left running), brings the logo up from black over
-/// 51 frames and opens the screen. Leaves the field work's transitions at 60
-/// frames.
+/// Shows the Golden Sun logo for Title_Run's entrance 10.
+///
+/// It loads the logo while the screen is black and starts the lettering's
+/// reveal (Title_UpdateSpriteReveal, left running). Then it brings the logo up
+/// from black over 51 frames and opens the screen.
+///
+/// It leaves the field work's transitions at 60 frames.
 static void Title_RevealScreen(s32 unused) {
   s32 brightnessStep;
 
@@ -333,9 +346,13 @@ static void Title_RevealScreen(s32 unused) {
 }
 
 /// Loads the Golden Sun logo onto BG2 (title.h's LOGO_ map) with the
-/// screen faded to black: its 224-colour palette, its 600 256-colour tiles,
-/// decoded through Ram_MapGridCellBuffer, and a tile map that numbers them row
-/// by row. Zeroes the four backgrounds' scroll and leaves the map work showing
+/// screen faded to black.
+///
+/// It loads the logo's 224-colour palette, its 600 256-colour tiles, decoded
+/// through Ram_MapGridCellBuffer, and a tile map that numbers them row by
+/// row.
+///
+/// It zeroes the four backgrounds' scroll and leaves the map work showing
 /// only BG2 and the sprites. FileScreen_LoadBackground (file_screen.c) is its
 /// twin.
 static void Title_LoadBackground(void) {
@@ -397,6 +414,6 @@ struct Trigger gTitleTriggers[] = {
     {TRIGGERS_END},
 };
 
-/// The VRAM cache entry holding the lettering's tiles; -1 until
+/// The VRAM cache entry holding the lettering's tiles, which is -1 until
 /// Title_LoadSprites takes one.
 s16 gTitleVramBlock = -1;

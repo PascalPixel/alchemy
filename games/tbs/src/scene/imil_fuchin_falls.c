@@ -2,80 +2,104 @@
 /// Imil Falls Cave, north of Imil, and Fuchin Falls Cave, the waterfall grotto
 /// of Fuchin Temple's test: two areas in seven scenes.
 ///
-/// - Imil Falls Cave (SceneId_ImilFallsCave), up the way north out of Imil; its
+/// - Imil Falls Cave (SceneId_ImilFallsCave), up the way north out of Imil. Its
 ///   only exit, IMIL_FALLS_CAVE_TO_IMIL, leads back down
-///   (IMIL_FROM_IMIL_FALLS_CAVE). Fever, a Mars Djinni, waits on its ice and
-///   joins the party when spoken to, without a battle. Every normal entry
-///   blocks Retreat and walks the leader up toward Fever, and stepping onto the
-///   ice (cell behavior 10) slides the leader in the held direction,
-///   turning toward it as he goes, until a blocked cell or one too high stops
-///   him.
-/// - Fuchin Falls Cave (SceneId_FuchinFallsCaveEntrance to
-///   SceneId_FuchinFallsCaveDragonStatue), the waterfall grotto. Master Nyunpa
-///   of Fuchin Temple tells the party they must survive its test before he will
-///   tell them how to pass through Mogall Forest. The test ends at the chest of
-///   the Orb of Force (FLAG_FUCHIN_FALLS_ORB_OF_FORCE_FOUND), and back at the
-///   temple Nyunpa names the power they have gained Ki (fuchin_temple.c). The
-///   way in and out is FUCHIN_FALLS_CAVE_ENTRANCE_TO_FUCHIN_TEMPLE_GROUNDS, to
-///   FUCHIN_TEMPLE_GROUNDS_FROM_FUCHIN_FALLS_CAVE_ENTRANCE. The code numbers
-///   the rooms by scene: the first to fourth rooms
-///   (SceneId_FuchinFallsCaveEntrance to SceneId_FuchinFallsCaveArcticBlade),
-///   the room of the Ki inscription (SceneId_FuchinFallsCaveOrbOfForce) and the
-///   dragon statue's room (SceneId_FuchinFallsCaveDragonStatue).
+///   (IMIL_FROM_IMIL_FALLS_CAVE).
 ///
-/// The first four rooms are crossed on floating logs
-/// (SPRITE_FLOATING_LOG_WEST_EAST and SPRITE_FLOATING_LOG_NORTH_SOUTH, the logs
-/// of Colosso's Lumber Water Crossing Area, colosseum_azart_match.c). Walking
-/// into a log's step trigger cell pushes it along the water to its next stop,
-/// the leader moving with it (Actor_PlacePairAtOffset); touching the cell
-/// plays the log's two rolling animations. Each stop is an area temp
-/// flag, FLAG_FUCHIN_FALLS_ENTRANCE_FIRST_LOG_EAST to
-/// FLAG_FUCHIN_FALLS_ENTRANCE_THIRD_LOG_NORTH for the first room's logs,
-/// FLAG_FUCHIN_FALLS_ZEPHYR_ROOM_FIRST_LOG_EAST_END to
-/// FLAG_FUCHIN_FALLS_ZEPHYR_ROOM_THIRD_LOG_NORTH the second's,
-/// FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FIRST_LOG_WEST_END to
-/// FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FOURTH_LOG_LOWER_STOP the third's and
-/// FLAG_FUCHIN_FALLS_ARCTIC_BLADE_ROOM_FIRST_LOG_SOUTH to
-/// FLAG_FUCHIN_FALLS_ARCTIC_BLADE_ROOM_THIRD_LOG_EAST the fourth's, so the logs
-/// are back where they started once the party leaves the cave's scenes. After
-/// each move, and on entry, the room's rebuild function puts every log at the
-/// cell its flags name and rewrites the cells of each log's track to match: in
-/// the first room (FuchinFallsCave_RebuildEntranceLogs) the track's cells are
-/// first copied in from a copy below the room that has each log's step trigger
-/// cells (11 and 12, 13 and 14, 15 and 16) at both ends of its run, then the
-/// end each log's flag says it is not at is overwritten with a wall cell of the
-/// water. Each cell of a track is then a wall, a way out or the push that
-/// moves a log. In the third room
-/// the logs block one another, so where a log stops depends on where the others
-/// lie; in the second and third rooms the leader hops across gaps a log's stop
-/// leaves.
+///   Fever, a Mars Djinni, waits on its ice. It joins the party when spoken to,
+///   without a battle.
+///
+///   Every normal entry blocks Retreat and walks the leader up toward Fever.
+///   Stepping onto the ice (cell behavior 10) slides the leader in the held
+///   direction. He turns toward it as he goes, until a blocked cell or one too
+///   high stops him.
+///
+/// - Fuchin Falls Cave (SceneId_FuchinFallsCaveEntrance to
+///   SceneId_FuchinFallsCaveDragonStatue), the waterfall grotto.
+///
+///   Master Nyunpa of Fuchin Temple tells the party they must survive its test
+///   before he will tell them how to pass through Mogall Forest. The test ends
+///   at the chest of the Orb of Force (FLAG_FUCHIN_FALLS_ORB_OF_FORCE_FOUND).
+///   Back at the temple, Nyunpa names the power they have gained Ki
+///   (fuchin_temple.c).
+///
+///   The way in and out is FUCHIN_FALLS_CAVE_ENTRANCE_TO_FUCHIN_TEMPLE_GROUNDS,
+///   to FUCHIN_TEMPLE_GROUNDS_FROM_FUCHIN_FALLS_CAVE_ENTRANCE.
+///
+///   The code numbers the rooms by scene. The first to fourth rooms are
+///   SceneId_FuchinFallsCaveEntrance to SceneId_FuchinFallsCaveArcticBlade.
+///   Then come the room of the Ki inscription
+///   (SceneId_FuchinFallsCaveOrbOfForce) and the dragon statue's room
+///   (SceneId_FuchinFallsCaveDragonStatue).
+///
+/// The first four rooms are crossed on floating logs,
+/// SPRITE_FLOATING_LOG_WEST_EAST and SPRITE_FLOATING_LOG_NORTH_SOUTH. They are
+/// the logs of Colosso's Lumber Water Crossing Area (colosseum_azart_match.c).
+///
+/// Walking into a log's step trigger cell pushes it along the water to its next
+/// stop, and the leader moves with it (Actor_PlacePairAtOffset). Touching the
+/// cell plays the log's two rolling animations.
+///
+/// Each stop is an area temp flag, so the logs are back where they started once
+/// the party leaves the cave's scenes:
+///
+/// - FLAG_FUCHIN_FALLS_ENTRANCE_FIRST_LOG_EAST to
+///   FLAG_FUCHIN_FALLS_ENTRANCE_THIRD_LOG_NORTH for the first room's logs
+/// - FLAG_FUCHIN_FALLS_ZEPHYR_ROOM_FIRST_LOG_EAST_END to
+///   FLAG_FUCHIN_FALLS_ZEPHYR_ROOM_THIRD_LOG_NORTH the second's
+/// - FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FIRST_LOG_WEST_END to
+///   FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FOURTH_LOG_LOWER_STOP the third's
+/// - FLAG_FUCHIN_FALLS_ARCTIC_BLADE_ROOM_FIRST_LOG_SOUTH to
+///   FLAG_FUCHIN_FALLS_ARCTIC_BLADE_ROOM_THIRD_LOG_EAST the fourth's
+///
+/// After each move, and on entry, the room's rebuild function puts every log at
+/// the cell its flags name. It rewrites the cells of each log's track to match.
+///
+/// In the first room (FuchinFallsCave_RebuildEntranceLogs) the track's cells
+/// are first copied in from a copy below the room. That copy has each log's
+/// step trigger cells (11 and 12, 13 and 14, 15 and 16) at both ends of its
+/// run. Then the end each log's flag says it is not at is overwritten with a
+/// wall cell of the water. Each cell of a track is then a wall, a way out or
+/// the push that moves a log.
+///
+/// In the third room the logs block one another, so where a log stops depends
+/// on where the others lie. In the second and third rooms the leader hops
+/// across gaps a log's stop leaves.
 ///
 /// Zephyr, a Jupiter Djinni, waits in the second room
-/// (SceneId_FuchinFallsCaveZephyr) and fights when spoken to. In the first room
-/// a chest holds a mimic, whose battle its find value starts (FIND_MIMIC); the
-/// fourth room's chest holds an Arctic Blade, and the Ki room's the Orb of
-/// Force. Arriving in the third room by
+/// (SceneId_FuchinFallsCaveZephyr) and fights when spoken to.
+///
+/// In the first room a chest holds a mimic, whose battle its find value starts
+/// (FIND_MIMIC). The fourth room's chest holds an Arctic Blade, and the Ki
+/// room's the Orb of Force.
+///
+/// Arriving in the third room by
 /// FUCHIN_FALLS_CAVE_DRAGONS_EYE_CHAMBER_FROM_LOGS before the Dragon's Eye is
 /// taken (FLAG_FUCHIN_FALLS_DRAGONS_EYE_FOUND) shows it, and searching there
 /// takes it.
 ///
-/// The dragon statue's room is dark until the eye is set: entering its northern
-/// half (its first six entrances, up to
+/// The dragon statue's room is dark until the eye is set. Entering its northern
+/// half darkens the palette. That half is its first six entrances, up to
 /// FUCHIN_FALLS_CAVE_DRAGON_STATUE_NORTH_HALF_FROM_SOUTH_HALF_EAST: from the Ki
-/// room, from the fourth room or up from the southern half) darkens the
-/// palette. Coming in from the Ki room
+/// room, from the fourth room or up from the southern half.
+///
+/// Coming in from the Ki room
 /// (FUCHIN_FALLS_CAVE_DRAGON_STATUE_FROM_FUCHIN_FALLS_CAVE_ORB_OF_FORCE_EAST
 /// and _WEST) or up by
 /// FUCHIN_FALLS_CAVE_DRAGON_STATUE_NORTH_HALF_FROM_SOUTH_HALF_MIDDLE starts the
-/// fade overlay (field/field_sequence/ground_mask.c), which follows the leader
-/// except from
-/// FUCHIN_FALLS_CAVE_DRAGON_STATUE_NORTH_HALF_FROM_SOUTH_HALF_MIDDLE, and
-/// step triggers 15 and 16 start and stop its following. When Reveal ends, the
-/// room goes dark again. The statue is `an eyeless dragon`; using the Dragon's
-/// Eye on it flashes the room, blows dust from the cave mouth as the room
-/// brightens, redraws the cells of the hidden path and uses the eye up
-/// (FLAG_FUCHIN_FALLS_DRAGONS_EYE_SET). The first room's inscription points the
-/// way: `The dragon's flame illuminates the path of truth in darkness.`
+/// fade overlay (field/field_sequence/ground_mask.c). The overlay follows the
+/// leader, except from
+/// FUCHIN_FALLS_CAVE_DRAGON_STATUE_NORTH_HALF_FROM_SOUTH_HALF_MIDDLE. Step
+/// triggers 15 and 16 start and stop its following. When Reveal ends, the room
+/// goes dark again.
+///
+/// The statue is `an eyeless dragon`. Using the Dragon's Eye on it flashes the
+/// room and blows dust from the cave mouth as the room brightens. It redraws
+/// the cells of the hidden path and uses the eye up
+/// (FLAG_FUCHIN_FALLS_DRAGONS_EYE_SET).
+///
+/// The first room's inscription points the way: `The dragon's flame illuminates
+/// the path of truth in darkness.`
 
 #include "script_operands.h"
 #include "main_routine_work.h"
@@ -148,13 +172,12 @@ enum ImilFuchinFallsActorId {
   /// Zephyr, a Jupiter Djinni, after the second room's three logs.
   /// ★ Named from the game: "Zephyr" (MsgDjinnName)
   ACTOR_ZEPHYR = ACTOR_FIRST_PLACED + 3,
-  /// A crate (SPRITE_CRATE) in the dragon statue's room, the sprite of the
-  /// third room's two foreground pieces
-  /// (FuchinFallsCave_CreateForegroundActor);
-  /// on
-  /// entry ImilFuchinFalls_PrepareRoom stills it at floor height and draws it
-  /// at sprite priority 1 in SPRITE_COLOR_HIDDEN, as those are drawn, so
-  /// every pixel is transparent and the player never sees it.
+  /// A crate (SPRITE_CRATE) in the dragon statue's room, which the player never
+  /// sees. It is the sprite of the third room's two foreground pieces
+  /// (FuchinFallsCave_CreateForegroundActor). On entry
+  /// ImilFuchinFalls_PrepareRoom stills it at floor height and draws it at
+  /// sprite priority 1 in SPRITE_COLOR_HIDDEN, as those are drawn, so every
+  /// pixel is transparent.
   ACTOR_INVISIBLE_DRAGON_ROOM_CRATE = ACTOR_FIRST_PLACED
 };
 
@@ -316,7 +339,7 @@ const struct ActorPlacement *ImilFuchinFalls_GetActorPlacements(void) {
 /// ★ Named from what the player sees: golden logs floating on the cave's pool,
 /// which float along it when pushed (its render)
 #define FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_MIDDLE FLAG_AREA_TEMP_0D
-/// The third room's third log lies at its lower stop; no move sets it.
+/// The third room's third log lies at its lower stop. No move sets it.
 /// ★ Named from what the player sees: golden logs floating on the cave's pool,
 /// which float along it when pushed (its render)
 #define FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_LOWER_STOP                \
@@ -334,7 +357,7 @@ const struct ActorPlacement *ImilFuchinFalls_GetActorPlacements(void) {
 /// ★ Named from what the player sees: golden logs floating on the cave's pool,
 /// which float along it when pushed (its render)
 #define FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FOURTH_LOG_MIDDLE FLAG_AREA_TEMP_11
-/// The third room's fourth log lies at its lower stop; no move sets it.
+/// The third room's fourth log lies at its lower stop. No move sets it.
 /// ★ Named from what the player sees: golden logs floating on the cave's pool,
 /// which float along it when pushed (its render)
 #define FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FOURTH_LOG_LOWER_STOP               \
@@ -359,8 +382,9 @@ static inline void FuchinFallsCave_FinishLogMove(void (*rebuildLogs)(void)) {
   rebuildLogs();
 }
 
-/// Fuchin Falls Cave, first room: pushing the first log east (step trigger 11)
-/// floats it 224 pixels east (FLAG_FUCHIN_FALLS_ENTRANCE_FIRST_LOG_EAST set).
+/// In Fuchin Falls Cave's first room, pushing the first log east (step
+/// trigger 11) floats it 224 pixels east and sets
+/// FLAG_FUCHIN_FALLS_ENTRANCE_FIRST_LOG_EAST.
 static void FuchinFallsCave_Entrance_MoveFirstLogEast(void) {
   Sound_Play(SE_WATER_MOVE);
   Actor_PlacePairAtOffset(ACTOR_FIRST_LOG, 112, 0);
@@ -371,8 +395,9 @@ static void FuchinFallsCave_Entrance_MoveFirstLogEast(void) {
   FuchinFallsCave_RebuildEntranceLogs();
 }
 
-/// Fuchin Falls Cave, first room: pushing the first log west (step trigger 12)
-/// floats it 224 pixels back (FLAG_FUCHIN_FALLS_ENTRANCE_FIRST_LOG_EAST clear).
+/// In Fuchin Falls Cave's first room, pushing the first log west (step
+/// trigger 12) floats it 224 pixels back and clears
+/// FLAG_FUCHIN_FALLS_ENTRANCE_FIRST_LOG_EAST.
 static void FuchinFallsCave_Entrance_MoveFirstLogWest(void) {
   s32 offset = 112;
 
@@ -386,9 +411,9 @@ static void FuchinFallsCave_Entrance_MoveFirstLogWest(void) {
   FuchinFallsCave_RebuildEntranceLogs();
 }
 
-/// Fuchin Falls Cave, first room: pushing the second log south (step trigger
-/// 13) floats it 64 pixels south (FLAG_FUCHIN_FALLS_ENTRANCE_SECOND_LOG_NORTH
-/// clear).
+/// In Fuchin Falls Cave's first room, pushing the second log south (step
+/// trigger 13) floats it 64 pixels south and clears
+/// FLAG_FUCHIN_FALLS_ENTRANCE_SECOND_LOG_NORTH.
 static void FuchinFallsCave_Entrance_MoveSecondLogSouth(void) {
   Sound_Play(SE_WATER_MOVE);
   Actor_PlacePairAtOffset(ACTOR_SECOND_LOG, 0, 64);
@@ -398,9 +423,9 @@ static void FuchinFallsCave_Entrance_MoveSecondLogSouth(void) {
   FuchinFallsCave_RebuildEntranceLogs();
 }
 
-/// Fuchin Falls Cave, first room: pushing the second log north (step trigger
-/// 14) floats it 64 pixels north (FLAG_FUCHIN_FALLS_ENTRANCE_SECOND_LOG_NORTH
-/// set).
+/// In Fuchin Falls Cave's first room, pushing the second log north (step
+/// trigger 14) floats it 64 pixels north and sets
+/// FLAG_FUCHIN_FALLS_ENTRANCE_SECOND_LOG_NORTH.
 static void FuchinFallsCave_Entrance_MoveSecondLogNorth(void) {
   Sound_Play(SE_WATER_MOVE);
   Actor_PlacePairAtOffset(ACTOR_SECOND_LOG, 0, -64);
@@ -410,9 +435,9 @@ static void FuchinFallsCave_Entrance_MoveSecondLogNorth(void) {
   FuchinFallsCave_RebuildEntranceLogs();
 }
 
-/// Fuchin Falls Cave, first room: pushing the third log south (step trigger 15)
-/// floats it 64 pixels south (FLAG_FUCHIN_FALLS_ENTRANCE_THIRD_LOG_NORTH
-/// clear).
+/// In Fuchin Falls Cave's first room, pushing the third log south (step
+/// trigger 15) floats it 64 pixels south and clears
+/// FLAG_FUCHIN_FALLS_ENTRANCE_THIRD_LOG_NORTH.
 static void FuchinFallsCave_Entrance_MoveThirdLogSouth(void) {
   Sound_Play(SE_WATER_MOVE);
   Actor_PlacePairAtOffset(ACTOR_THIRD_LOG, 0, 64);
@@ -422,8 +447,9 @@ static void FuchinFallsCave_Entrance_MoveThirdLogSouth(void) {
   FuchinFallsCave_RebuildEntranceLogs();
 }
 
-/// Fuchin Falls Cave, first room: pushing the third log north (step trigger 16)
-/// floats it 64 pixels north (FLAG_FUCHIN_FALLS_ENTRANCE_THIRD_LOG_NORTH set).
+/// In Fuchin Falls Cave's first room, pushing the third log north (step
+/// trigger 16) floats it 64 pixels north and sets
+/// FLAG_FUCHIN_FALLS_ENTRANCE_THIRD_LOG_NORTH.
 static void FuchinFallsCave_Entrance_MoveThirdLogNorth(void) {
   Sound_Play(SE_WATER_MOVE);
   Actor_PlacePairAtOffset(ACTOR_THIRD_LOG, 0, -64);
@@ -433,9 +459,10 @@ static void FuchinFallsCave_Entrance_MoveThirdLogNorth(void) {
   FuchinFallsCave_RebuildEntranceLogs();
 }
 
-/// Fuchin Falls Cave, second room: pushing the first log east (step trigger
-/// 11), while FLAG_FUCHIN_FALLS_ZEPHYR_ROOM_SECOND_LOG_SOUTH is clear, floats
-/// it 144 pixels east (FLAG_FUCHIN_FALLS_ZEPHYR_ROOM_FIRST_LOG_EAST_END set).
+/// In Fuchin Falls Cave's second room, pushing the first log east (step
+/// trigger 11) floats it 144 pixels east and sets
+/// FLAG_FUCHIN_FALLS_ZEPHYR_ROOM_FIRST_LOG_EAST_END. It moves only while
+/// FLAG_FUCHIN_FALLS_ZEPHYR_ROOM_SECOND_LOG_SOUTH is clear.
 static void FuchinFallsCave_ZephyrRoom_MoveFirstLogToEastEnd(void) {
   Sound_Play(SE_WATER_MOVE);
   Actor_PlacePairAtOffset(ACTOR_FIRST_LOG, 144, 0);
@@ -445,9 +472,10 @@ static void FuchinFallsCave_ZephyrRoom_MoveFirstLogToEastEnd(void) {
   FuchinFallsCave_RebuildZephyrRoomLogs();
 }
 
-/// Fuchin Falls Cave, second room: pushing the first log west (step trigger 12)
-/// floats it 144 pixels west (FLAG_FUCHIN_FALLS_ZEPHYR_ROOM_FIRST_LOG_EAST_END
-/// clear, FLAG_FUCHIN_FALLS_ZEPHYR_ROOM_FIRST_LOG_WEST_END set).
+/// In Fuchin Falls Cave's second room, pushing the first log west (step
+/// trigger 12) floats it 144 pixels west. It clears
+/// FLAG_FUCHIN_FALLS_ZEPHYR_ROOM_FIRST_LOG_EAST_END and sets
+/// FLAG_FUCHIN_FALLS_ZEPHYR_ROOM_FIRST_LOG_WEST_END.
 static void FuchinFallsCave_ZephyrRoom_MoveFirstLogToWestEnd(void) {
   Sound_Play(SE_WATER_MOVE);
   Actor_PlacePairAtOffset(ACTOR_FIRST_LOG, -144, 0);
@@ -458,9 +486,9 @@ static void FuchinFallsCave_ZephyrRoom_MoveFirstLogToWestEnd(void) {
   FuchinFallsCave_RebuildZephyrRoomLogs();
 }
 
-/// Fuchin Falls Cave, second room: pushing the first log west (step trigger 11)
-/// floats it 14 pixels west (FLAG_FUCHIN_FALLS_ZEPHYR_ROOM_FIRST_LOG_WEST_END
-/// set).
+/// In Fuchin Falls Cave's second room, pushing the first log west (step
+/// trigger 11) floats it 14 pixels west and sets
+/// FLAG_FUCHIN_FALLS_ZEPHYR_ROOM_FIRST_LOG_WEST_END.
 static void FuchinFallsCave_ZephyrRoom_NudgeFirstLogWest(void) {
   Sound_Play(SE_WATER_MOVE);
   Actor_PlacePairAtOffset(ACTOR_FIRST_LOG, -14, 0);
@@ -470,11 +498,13 @@ static void FuchinFallsCave_ZephyrRoom_NudgeFirstLogWest(void) {
   FuchinFallsCave_RebuildZephyrRoomLogs();
 }
 
-/// Fuchin Falls Cave, second room: pushing the first log east (step trigger 17)
-/// moves it one cell when the second log lies south
-/// (FLAG_FUCHIN_FALLS_ZEPHYR_ROOM_SECOND_LOG_SOUTH;
-/// FLAG_FUCHIN_FALLS_ZEPHYR_ROOM_FIRST_LOG_WEST_END clear), else 144 pixels
-/// (FLAG_FUCHIN_FALLS_ZEPHYR_ROOM_FIRST_LOG_EAST_END set).
+/// In Fuchin Falls Cave's second room, pushing the first log east (step
+/// trigger 17) moves it one cell or 144 pixels.
+///
+/// When the second log lies south
+/// (FLAG_FUCHIN_FALLS_ZEPHYR_ROOM_SECOND_LOG_SOUTH) it moves one cell and
+/// clears FLAG_FUCHIN_FALLS_ZEPHYR_ROOM_FIRST_LOG_WEST_END. Otherwise it moves
+/// 144 pixels and sets FLAG_FUCHIN_FALLS_ZEPHYR_ROOM_FIRST_LOG_EAST_END.
 static void FuchinFallsCave_ZephyrRoom_MoveFirstLogEast(void) {
   Sound_Play(SE_WATER_MOVE);
 
@@ -490,9 +520,9 @@ static void FuchinFallsCave_ZephyrRoom_MoveFirstLogEast(void) {
   FuchinFallsCave_FinishLogMove(FuchinFallsCave_RebuildZephyrRoomLogs);
 }
 
-/// Fuchin Falls Cave, second room: pushing the second log south (step trigger
-/// 13) floats it 64 pixels south
-/// (FLAG_FUCHIN_FALLS_ZEPHYR_ROOM_SECOND_LOG_SOUTH set).
+/// In Fuchin Falls Cave's second room, pushing the second log south (step
+/// trigger 13) floats it 64 pixels south and sets
+/// FLAG_FUCHIN_FALLS_ZEPHYR_ROOM_SECOND_LOG_SOUTH.
 static void FuchinFallsCave_ZephyrRoom_MoveSecondLogSouth(void) {
   Sound_Play(SE_WATER_MOVE);
   Actor_PlacePairAtOffset(ACTOR_SECOND_LOG, 0, 64);
@@ -502,9 +532,9 @@ static void FuchinFallsCave_ZephyrRoom_MoveSecondLogSouth(void) {
   FuchinFallsCave_RebuildZephyrRoomLogs();
 }
 
-/// Fuchin Falls Cave, second room: pushing the second log north (step trigger
-/// 14) floats it 64 pixels north
-/// (FLAG_FUCHIN_FALLS_ZEPHYR_ROOM_SECOND_LOG_SOUTH clear).
+/// In Fuchin Falls Cave's second room, pushing the second log north (step
+/// trigger 14) floats it 64 pixels north and clears
+/// FLAG_FUCHIN_FALLS_ZEPHYR_ROOM_SECOND_LOG_SOUTH.
 static void FuchinFallsCave_ZephyrRoom_MoveSecondLogNorth(void) {
   Sound_Play(SE_WATER_MOVE);
   Actor_PlacePairAtOffset(ACTOR_SECOND_LOG, 0, -64);
@@ -514,9 +544,9 @@ static void FuchinFallsCave_ZephyrRoom_MoveSecondLogNorth(void) {
   FuchinFallsCave_RebuildZephyrRoomLogs();
 }
 
-/// Fuchin Falls Cave, second room: pushing the third log south (step trigger
-/// 15) floats it 272 pixels south
-/// (FLAG_FUCHIN_FALLS_ZEPHYR_ROOM_THIRD_LOG_NORTH clear).
+/// In Fuchin Falls Cave's second room, pushing the third log south (step
+/// trigger 15) floats it 272 pixels south and clears
+/// FLAG_FUCHIN_FALLS_ZEPHYR_ROOM_THIRD_LOG_NORTH.
 static void FuchinFallsCave_ZephyrRoom_MoveThirdLogSouth(void) {
   Sound_Play(SE_WATER_MOVE);
   Actor_PlacePairAtOffset(ACTOR_THIRD_LOG, 0, 144);
@@ -527,9 +557,9 @@ static void FuchinFallsCave_ZephyrRoom_MoveThirdLogSouth(void) {
   FuchinFallsCave_RebuildZephyrRoomLogs();
 }
 
-/// Fuchin Falls Cave, second room: pushing the third log north (step trigger
-/// 16) floats it 272 pixels north
-/// (FLAG_FUCHIN_FALLS_ZEPHYR_ROOM_THIRD_LOG_NORTH set).
+/// In Fuchin Falls Cave's second room, pushing the third log north (step
+/// trigger 16) floats it 272 pixels north and sets
+/// FLAG_FUCHIN_FALLS_ZEPHYR_ROOM_THIRD_LOG_NORTH.
 static void FuchinFallsCave_ZephyrRoom_MoveThirdLogNorth(void) {
   s32 depth = -96;
 
@@ -543,11 +573,14 @@ static void FuchinFallsCave_ZephyrRoom_MoveThirdLogNorth(void) {
   FuchinFallsCave_RebuildZephyrRoomLogs();
 }
 
-/// Fuchin Falls Cave, third room: pushing the first log west (step trigger 10):
-/// 48 pixels (FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FIRST_LOG_MIDDLE set) when the
-/// third log lies at FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_MIDDLE or the
-/// fourth at FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FOURTH_LOG_UPPER_STOP, else 96
-/// (FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FIRST_LOG_WEST_END set).
+/// In Fuchin Falls Cave's third room, pushing the first log west (step
+/// trigger 10) moves it 48 pixels or 96.
+///
+/// It goes 48 pixels and sets
+/// FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FIRST_LOG_MIDDLE when the third log lies
+/// at FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_MIDDLE or the fourth at
+/// FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FOURTH_LOG_UPPER_STOP. Otherwise it goes
+/// 96 and sets FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FIRST_LOG_WEST_END.
 static void FuchinFallsCave_DragonsEyeRoom_MoveFirstLogWest(void) {
   Sound_Play(SE_WATER_MOVE);
 
@@ -566,10 +599,10 @@ static void FuchinFallsCave_DragonsEyeRoom_MoveFirstLogWest(void) {
   FuchinFallsCave_FinishLogMove(FuchinFallsCave_RebuildDragonsEyeRoomLogs);
 }
 
-/// Fuchin Falls Cave, third room: pushing the first log east (step trigger 11)
-/// floats it 48 pixels east
-/// (FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FIRST_LOG_WEST_END and
-/// FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FIRST_LOG_MIDDLE clear).
+/// In Fuchin Falls Cave's third room, pushing the first log east (step
+/// trigger 11) floats it 48 pixels east. It clears
+/// FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FIRST_LOG_WEST_END and
+/// FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FIRST_LOG_MIDDLE.
 static void FuchinFallsCave_DragonsEyeRoom_MoveFirstLogEastFromMiddle(void) {
   Sound_Play(SE_WATER_MOVE);
   GameFlag_Clear(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FIRST_LOG_WEST_END);
@@ -578,11 +611,13 @@ static void FuchinFallsCave_DragonsEyeRoom_MoveFirstLogEastFromMiddle(void) {
   FuchinFallsCave_FinishLogMove(FuchinFallsCave_RebuildDragonsEyeRoomLogs);
 }
 
-/// Fuchin Falls Cave, third room: pushing the first log west (step trigger 11),
-/// unless the third log lies at
+/// In Fuchin Falls Cave's third room, pushing the first log west (step
+/// trigger 11) floats it 48 pixels west and sets
+/// FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FIRST_LOG_WEST_END.
+///
+/// It does not move when the third log lies at
 /// FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_MIDDLE or the fourth at
-/// FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FOURTH_LOG_UPPER_STOP, floats it 48
-/// pixels west (FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FIRST_LOG_WEST_END set).
+/// FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FOURTH_LOG_UPPER_STOP.
 static void FuchinFallsCave_DragonsEyeRoom_MoveFirstLogWestIfClear(void) {
   if (GameFlag_Get(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FOURTH_LOG_UPPER_STOP) !=
       0) {
@@ -601,10 +636,10 @@ static void FuchinFallsCave_DragonsEyeRoom_MoveFirstLogWestIfClear(void) {
   FuchinFallsCave_FinishLogMove(FuchinFallsCave_RebuildDragonsEyeRoomLogs);
 }
 
-/// Fuchin Falls Cave, third room: pushing the first log east (step trigger 12)
-/// floats it 96 pixels east
-/// (FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FIRST_LOG_WEST_END and
-/// FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FIRST_LOG_MIDDLE clear).
+/// In Fuchin Falls Cave's third room, pushing the first log east (step
+/// trigger 12) floats it 96 pixels east. It clears
+/// FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FIRST_LOG_WEST_END and
+/// FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FIRST_LOG_MIDDLE.
 static void FuchinFallsCave_DragonsEyeRoom_MoveFirstLogEastFromWestEnd(void) {
   Sound_Play(SE_WATER_MOVE);
   GameFlag_Clear(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FIRST_LOG_WEST_END);
@@ -613,9 +648,9 @@ static void FuchinFallsCave_DragonsEyeRoom_MoveFirstLogEastFromWestEnd(void) {
   FuchinFallsCave_FinishLogMove(FuchinFallsCave_RebuildDragonsEyeRoomLogs);
 }
 
-/// Fuchin Falls Cave, third room: pushing the second log west (step trigger 14)
-/// floats it 32 pixels west (FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_SECOND_LOG_WEST
-/// set).
+/// In Fuchin Falls Cave's third room, pushing the second log west (step
+/// trigger 14) floats it 32 pixels west and sets
+/// FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_SECOND_LOG_WEST.
 static void FuchinFallsCave_DragonsEyeRoom_MoveSecondLogWest(void) {
   Sound_Play(SE_WATER_MOVE);
   Actor_PlacePairAtOffset(ACTOR_SECOND_LOG, -32, 0);
@@ -625,9 +660,9 @@ static void FuchinFallsCave_DragonsEyeRoom_MoveSecondLogWest(void) {
   FuchinFallsCave_RebuildDragonsEyeRoomLogs();
 }
 
-/// Fuchin Falls Cave, third room: pushing the second log east (step trigger 13)
-/// floats it 32 pixels east (FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_SECOND_LOG_WEST
-/// clear).
+/// In Fuchin Falls Cave's third room, pushing the second log east (step
+/// trigger 13) floats it 32 pixels east and clears
+/// FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_SECOND_LOG_WEST.
 static void FuchinFallsCave_DragonsEyeRoom_MoveSecondLogEast(void) {
   Sound_Play(SE_WATER_MOVE);
   Actor_PlacePairAtOffset(ACTOR_SECOND_LOG, 32, 0);
@@ -637,11 +672,13 @@ static void FuchinFallsCave_DragonsEyeRoom_MoveSecondLogEast(void) {
   FuchinFallsCave_RebuildDragonsEyeRoomLogs();
 }
 
-/// Fuchin Falls Cave, third room: pushing the third log north (step trigger
-/// 15): 64 pixels (FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_UPPER_STOP)
-/// when the first log lies at
-/// FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FIRST_LOG_WEST_END, else 128
-/// (FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_NORTH_END).
+/// In Fuchin Falls Cave's third room, pushing the third log north (step
+/// trigger 15) moves it 64 pixels or 128.
+///
+/// It goes 64 pixels, to
+/// FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_UPPER_STOP, when the first log
+/// lies at FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FIRST_LOG_WEST_END. Otherwise it
+/// goes 128, to FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_NORTH_END.
 static void FuchinFallsCave_DragonsEyeRoom_MoveThirdLogNorthFromSouthEnd(void) {
   Sound_Play(SE_WATER_MOVE);
   if (GameFlag_Get(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FIRST_LOG_WEST_END) !=
@@ -661,13 +698,16 @@ static void FuchinFallsCave_DragonsEyeRoom_MoveThirdLogNorthFromSouthEnd(void) {
   FuchinFallsCave_FinishLogMove(FuchinFallsCave_RebuildDragonsEyeRoomLogs);
 }
 
-/// Fuchin Falls Cave, third room: pushing the third log south (step trigger
-/// 16): one cell (FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_UPPER_STOP) when
-/// the first log lies at FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FIRST_LOG_WEST_END
-/// or the fourth at FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FOURTH_LOG_UPPER_STOP,
-/// 64 pixels (FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_MIDDLE) when the
-/// fourth lies at FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FOURTH_LOG_MIDDLE, else
-/// 128 (its stops clear).
+/// In Fuchin Falls Cave's third room, pushing the third log south (step
+/// trigger 16) moves it one cell, 64 pixels or 128.
+///
+/// - One cell, to FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_UPPER_STOP, when
+///   the first log lies at
+///   FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FIRST_LOG_WEST_END or the fourth at
+///   FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FOURTH_LOG_UPPER_STOP.
+/// - 64 pixels, to FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_MIDDLE, when
+///   the fourth lies at FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FOURTH_LOG_MIDDLE.
+/// - Otherwise 128, and its stops are cleared.
 static void FuchinFallsCave_DragonsEyeRoom_MoveThirdLogSouthFromNorthEnd(void) {
   Sound_Play(SE_WATER_MOVE);
 
@@ -703,8 +743,9 @@ static void FuchinFallsCave_DragonsEyeRoom_MoveThirdLogSouthFromNorthEnd(void) {
   FuchinFallsCave_FinishLogMove(FuchinFallsCave_RebuildDragonsEyeRoomLogs);
 }
 
-/// Fuchin Falls Cave, third room: pushing the third log north (step trigger 17)
-/// moves it one cell (FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_NORTH_END).
+/// In Fuchin Falls Cave's third room, pushing the third log north (step
+/// trigger 17) moves it one cell, to
+/// FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_NORTH_END.
 static void FuchinFallsCave_DragonsEyeRoom_NudgeThirdLogNorth(void) {
   Sound_Play(SE_WATER_MOVE);
   Actor_PlacePairAtOffset(ACTOR_THIRD_LOG, 0, -16);
@@ -717,14 +758,17 @@ static void FuchinFallsCave_DragonsEyeRoom_NudgeThirdLogNorth(void) {
   FuchinFallsCave_RebuildDragonsEyeRoomLogs();
 }
 
-/// Fuchin Falls Cave, third room: pushing the third log south (step trigger
-/// 17), unless the first log lies at
-/// FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FIRST_LOG_WEST_END: 48 pixels
-/// (FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_MIDDLE) when the fourth lies
-/// at FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FOURTH_LOG_MIDDLE, 32
-/// (FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_UPPER_STOP) when it lies at
-/// FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FOURTH_LOG_UPPER_STOP, else 112 (its
-/// stops clear).
+/// In Fuchin Falls Cave's third room, pushing the third log south (step
+/// trigger 17) moves it 48 pixels, 32 or 112.
+///
+/// It does not move when the first log lies at
+/// FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FIRST_LOG_WEST_END. Otherwise:
+///
+/// - 48 pixels, to FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_MIDDLE, when
+///   the fourth lies at FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FOURTH_LOG_MIDDLE.
+/// - 32, to FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_UPPER_STOP, when it
+///   lies at FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FOURTH_LOG_UPPER_STOP.
+/// - Else 112, and its stops are cleared.
 static void
 FuchinFallsCave_DragonsEyeRoom_MoveThirdLogSouthFromUpperStop(void) {
   Sound_Play(SE_WATER_MOVE);
@@ -753,9 +797,9 @@ FuchinFallsCave_DragonsEyeRoom_MoveThirdLogSouthFromUpperStop(void) {
   FuchinFallsCave_FinishLogMove(FuchinFallsCave_RebuildDragonsEyeRoomLogs);
 }
 
-/// Fuchin Falls Cave, third room: pushing the third log north (step trigger 18)
-/// floats it 64 pixels north
-/// (FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_NORTH_END).
+/// In Fuchin Falls Cave's third room, pushing the third log north (step
+/// trigger 18) floats it 64 pixels north, to
+/// FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_NORTH_END.
 static void FuchinFallsCave_DragonsEyeRoom_MoveThirdLogNorthFromMiddle(void) {
   Sound_Play(SE_WATER_MOVE);
   Actor_PlacePairAtOffset(ACTOR_THIRD_LOG, 0, -64);
@@ -766,10 +810,10 @@ static void FuchinFallsCave_DragonsEyeRoom_MoveThirdLogNorthFromMiddle(void) {
   FuchinFallsCave_RebuildDragonsEyeRoomLogs();
 }
 
-/// Fuchin Falls Cave, third room: pushing the third log south (step trigger
-/// 18), unless the fourth lies at
-/// FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FOURTH_LOG_UPPER_STOP, floats it 64
-/// pixels south (its stops clear).
+/// In Fuchin Falls Cave's third room, pushing the third log south (step
+/// trigger 18) floats it 64 pixels south and clears its stops. It does not move
+/// when the fourth lies at
+/// FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FOURTH_LOG_UPPER_STOP.
 static void FuchinFallsCave_DragonsEyeRoom_MoveThirdLogSouthFromMiddle(void) {
   Sound_Play(SE_WATER_MOVE);
   Actor_PlacePairAtOffset(ACTOR_THIRD_LOG, 0, 64);
@@ -782,9 +826,9 @@ static void FuchinFallsCave_DragonsEyeRoom_MoveThirdLogSouthFromMiddle(void) {
   FuchinFallsCave_RebuildDragonsEyeRoomLogs();
 }
 
-/// Fuchin Falls Cave, third room: pushing the third log north (step trigger 19)
-/// floats it 80 pixels north
-/// (FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_NORTH_END).
+/// In Fuchin Falls Cave's third room, pushing the third log north (step
+/// trigger 19) floats it 80 pixels north, to
+/// FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_NORTH_END.
 static void
 FuchinFallsCave_DragonsEyeRoom_MoveThirdLogNorthFromLowerStop(void) {
   Sound_Play(SE_WATER_MOVE);
@@ -798,9 +842,8 @@ FuchinFallsCave_DragonsEyeRoom_MoveThirdLogNorthFromLowerStop(void) {
   FuchinFallsCave_RebuildDragonsEyeRoomLogs();
 }
 
-/// Fuchin Falls Cave, third room: pushing
-/// the third log south (step trigger 19) floats it 64 pixels south (its stops
-/// clear).
+/// In Fuchin Falls Cave's third room, pushing the third log south (step
+/// trigger 19) floats it 64 pixels south and clears its stops.
 static void
 FuchinFallsCave_DragonsEyeRoom_MoveThirdLogSouthFromLowerStop(void) {
   Sound_Play(SE_WATER_MOVE);
@@ -814,13 +857,16 @@ FuchinFallsCave_DragonsEyeRoom_MoveThirdLogSouthFromLowerStop(void) {
   FuchinFallsCave_RebuildDragonsEyeRoomLogs();
 }
 
-/// Fuchin Falls Cave, third room: pushing the fourth log north (step trigger
-/// 20): 64 pixels (FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FOURTH_LOG_MIDDLE) when
-/// the first log lies at FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FIRST_LOG_WEST_END
-/// or the third at FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_MIDDLE, 112
-/// (FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FOURTH_LOG_UPPER_STOP) when the third
-/// lies at FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_UPPER_STOP, else 128
-/// (FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FOURTH_LOG_NORTH_END).
+/// In Fuchin Falls Cave's third room, pushing the fourth log north (step
+/// trigger 20) moves it 64 pixels, 112 or 128.
+///
+/// - 64 pixels, to FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FOURTH_LOG_MIDDLE, when
+///   the first log lies at
+///   FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FIRST_LOG_WEST_END or the third at
+///   FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_MIDDLE.
+/// - 112, to FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FOURTH_LOG_UPPER_STOP, when the
+///   third lies at FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_UPPER_STOP.
+/// - Else 128, to FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FOURTH_LOG_NORTH_END.
 static void FuchinFallsCave_DragonsEyeRoom_MoveFourthLogNorth(void) {
   Sound_Play(SE_WATER_MOVE);
 
@@ -858,10 +904,10 @@ static void FuchinFallsCave_ClearFourthLogStops(void) {
   GameFlag_Clear(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FOURTH_LOG_LOWER_STOP);
 }
 
-/// Fuchin Falls Cave, third room: pushing the fourth log south (step trigger
-/// 21), unless the first log lies at
-/// FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FIRST_LOG_WEST_END, floats it 128 pixels
-/// south (its stops clear).
+/// In Fuchin Falls Cave's third room, pushing the fourth log south (step
+/// trigger 21) floats it 128 pixels south and clears its stops. It does not
+/// move when the first log lies at
+/// FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FIRST_LOG_WEST_END.
 static void
 FuchinFallsCave_DragonsEyeRoom_MoveFourthLogSouthFromNorthEnd(void) {
   Sound_Play(SE_WATER_MOVE);
@@ -870,9 +916,9 @@ FuchinFallsCave_DragonsEyeRoom_MoveFourthLogSouthFromNorthEnd(void) {
   FuchinFallsCave_FinishLogMove(FuchinFallsCave_RebuildDragonsEyeRoomLogs);
 }
 
-/// Fuchin Falls Cave, third room: pushing the fourth log north (step trigger
-/// 22) moves it one cell
-/// (FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FOURTH_LOG_NORTH_END).
+/// In Fuchin Falls Cave's third room, pushing the fourth log north (step
+/// trigger 22) moves it one cell, to
+/// FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FOURTH_LOG_NORTH_END.
 static void FuchinFallsCave_DragonsEyeRoom_NudgeFourthLogNorth(void) {
   Sound_Play(SE_WATER_MOVE);
   Actor_PlacePairAtOffset(ACTOR_FOURTH_LOG, 0, -16);
@@ -885,9 +931,8 @@ static void FuchinFallsCave_DragonsEyeRoom_NudgeFourthLogNorth(void) {
   FuchinFallsCave_RebuildDragonsEyeRoomLogs();
 }
 
-/// Fuchin Falls Cave, third room: pushing
-/// the fourth log south (step trigger 22) floats it 112 pixels south (its stops
-/// clear).
+/// In Fuchin Falls Cave's third room, pushing the fourth log south (step
+/// trigger 22) floats it 112 pixels south and clears its stops.
 static void
 FuchinFallsCave_DragonsEyeRoom_MoveFourthLogSouthFromUpperStop(void) {
   Sound_Play(SE_WATER_MOVE);
@@ -898,9 +943,8 @@ FuchinFallsCave_DragonsEyeRoom_MoveFourthLogSouthFromUpperStop(void) {
   FuchinFallsCave_RebuildDragonsEyeRoomLogs();
 }
 
-/// Fuchin Falls Cave, third room: pushing
-/// the fourth log south (step trigger 23) floats it 64 pixels south (its stops
-/// clear).
+/// In Fuchin Falls Cave's third room, pushing the fourth log south (step
+/// trigger 23) floats it 64 pixels south and clears its stops.
 static void FuchinFallsCave_DragonsEyeRoom_MoveFourthLogSouthFromMiddle(void) {
   Sound_Play(SE_WATER_MOVE);
   Actor_PlacePairAtOffset(ACTOR_FOURTH_LOG, 0, 64);
@@ -914,14 +958,16 @@ static void FuchinFallsCave_DragonsEyeRoom_MoveFourthLogSouthFromMiddle(void) {
 // as the third log's matching step trigger 19 does; the room never has a
 // step trigger 24, so the game never shows which.
 /// Unused: walking north into step trigger 24 in Fuchin Falls Cave's third room
-/// would float the fourth log 80 pixels south (its stops clear). Step trigger
-/// 24's cells reach the room only from their copy at columns 10 to 12, row 43,
-/// which FuchinFallsCave_RebuildDragonsEyeRoomLogs makes with the log at
-/// FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FOURTH_LOG_LOWER_STOP, and no move sets
-/// that flag, so the room never has a step trigger 24 (in tbs-en it appears
-/// there only with the flag set by hand; walking north on the log then carries
-/// the leader 80 pixels south, past the log's south end, where the rebuild puts
-/// the log back).
+/// would float the fourth log 80 pixels south (its stops clear).
+///
+/// Step trigger 24's cells reach the room only from their copy at columns 10 to
+/// 12, row 43. FuchinFallsCave_RebuildDragonsEyeRoomLogs makes it with the log
+/// at FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FOURTH_LOG_LOWER_STOP, and no move
+/// sets that flag. So the room never has a step trigger 24.
+///
+/// In tbs-en it appears there only with the flag set by hand. Walking north on
+/// the log then carries the leader 80 pixels south, past the log's south end,
+/// where the rebuild puts the log back.
 static void
 FuchinFallsCave_DragonsEyeRoom_UnusedMoveFourthLogSouthFromLowerStop(void) {
   Sound_Play(SE_WATER_MOVE);
@@ -934,7 +980,7 @@ FuchinFallsCave_DragonsEyeRoom_UnusedMoveFourthLogSouthFromLowerStop(void) {
 
 /// Unused: pushing the fourth log south from step trigger 24 in Fuchin Falls
 /// Cave's third room would float it 48 pixels south (its stops clear), back to
-/// its south end; the room never has a step trigger 24, as
+/// its south end. The room never has a step trigger 24, as
 /// FuchinFallsCave_DragonsEyeRoom_UnusedMoveFourthLogSouthFromLowerStop says.
 static void
 FuchinFallsCave_DragonsEyeRoom_UnusedMoveFourthLogSouthFromLastStop(void) {
@@ -946,9 +992,9 @@ FuchinFallsCave_DragonsEyeRoom_UnusedMoveFourthLogSouthFromLastStop(void) {
   FuchinFallsCave_RebuildDragonsEyeRoomLogs();
 }
 
-/// Fuchin Falls Cave, fourth room: pushing the first log south (step trigger
-/// 11) floats it 112 pixels south
-/// (FLAG_FUCHIN_FALLS_ARCTIC_BLADE_ROOM_FIRST_LOG_SOUTH set).
+/// In Fuchin Falls Cave's fourth room, pushing the first log south (step
+/// trigger 11) floats it 112 pixels south and sets
+/// FLAG_FUCHIN_FALLS_ARCTIC_BLADE_ROOM_FIRST_LOG_SOUTH.
 static void FuchinFallsCave_ArcticBladeRoom_MoveFirstLogSouth(void) {
   Sound_Play(SE_WATER_MOVE);
   Actor_PlacePairAtOffset(ACTOR_FIRST_LOG, 0, 112);
@@ -958,9 +1004,9 @@ static void FuchinFallsCave_ArcticBladeRoom_MoveFirstLogSouth(void) {
   FuchinFallsCave_RebuildArcticBladeRoomLogs();
 }
 
-/// Fuchin Falls Cave, fourth room: pushing the first log north (step trigger
-/// 12) floats it 112 pixels north
-/// (FLAG_FUCHIN_FALLS_ARCTIC_BLADE_ROOM_FIRST_LOG_SOUTH clear).
+/// In Fuchin Falls Cave's fourth room, pushing the first log north (step
+/// trigger 12) floats it 112 pixels north and clears
+/// FLAG_FUCHIN_FALLS_ARCTIC_BLADE_ROOM_FIRST_LOG_SOUTH.
 static void FuchinFallsCave_ArcticBladeRoom_MoveFirstLogNorth(void) {
   Sound_Play(SE_WATER_MOVE);
   Actor_PlacePairAtOffset(ACTOR_FIRST_LOG, 0, -112);
@@ -970,10 +1016,11 @@ static void FuchinFallsCave_ArcticBladeRoom_MoveFirstLogNorth(void) {
   FuchinFallsCave_RebuildArcticBladeRoomLogs();
 }
 
-/// Fuchin Falls Cave, fourth room: pushing the second log west (step trigger
-/// 13), while the first log lies north
-/// (FLAG_FUCHIN_FALLS_ARCTIC_BLADE_ROOM_FIRST_LOG_SOUTH clear), floats it 128
-/// pixels west (FLAG_FUCHIN_FALLS_ARCTIC_BLADE_ROOM_SECOND_LOG_WEST set).
+/// In Fuchin Falls Cave's fourth room, pushing the second log west (step
+/// trigger 13) floats it 128 pixels west and sets
+/// FLAG_FUCHIN_FALLS_ARCTIC_BLADE_ROOM_SECOND_LOG_WEST. It moves only while the
+/// first log lies north (FLAG_FUCHIN_FALLS_ARCTIC_BLADE_ROOM_FIRST_LOG_SOUTH
+/// clear).
 static void FuchinFallsCave_ArcticBladeRoom_MoveSecondLogWest(void) {
   Sound_Play(SE_WATER_MOVE);
   Actor_PlacePairAtOffset(ACTOR_SECOND_LOG, -128, 0);
@@ -983,9 +1030,9 @@ static void FuchinFallsCave_ArcticBladeRoom_MoveSecondLogWest(void) {
   FuchinFallsCave_RebuildArcticBladeRoomLogs();
 }
 
-/// Fuchin Falls Cave, fourth room: pushing the second log east (step trigger
-/// 14) floats it 128 pixels east
-/// (FLAG_FUCHIN_FALLS_ARCTIC_BLADE_ROOM_SECOND_LOG_WEST clear).
+/// In Fuchin Falls Cave's fourth room, pushing the second log east (step
+/// trigger 14) floats it 128 pixels east and clears
+/// FLAG_FUCHIN_FALLS_ARCTIC_BLADE_ROOM_SECOND_LOG_WEST.
 static void FuchinFallsCave_ArcticBladeRoom_MoveSecondLogEast(void) {
   Sound_Play(SE_WATER_MOVE);
   Actor_PlacePairAtOffset(ACTOR_SECOND_LOG, 128, 0);
@@ -995,9 +1042,9 @@ static void FuchinFallsCave_ArcticBladeRoom_MoveSecondLogEast(void) {
   FuchinFallsCave_RebuildArcticBladeRoomLogs();
 }
 
-/// Fuchin Falls Cave, fourth room: pushing the third log east (step trigger 15)
-/// floats it 160 pixels east
-/// (FLAG_FUCHIN_FALLS_ARCTIC_BLADE_ROOM_THIRD_LOG_EAST set).
+/// In Fuchin Falls Cave's fourth room, pushing the third log east (step
+/// trigger 15) floats it 160 pixels east and sets
+/// FLAG_FUCHIN_FALLS_ARCTIC_BLADE_ROOM_THIRD_LOG_EAST.
 static void FuchinFallsCave_ArcticBladeRoom_MoveThirdLogEast(void) {
   Sound_Play(SE_WATER_MOVE);
   Actor_PlacePairAtOffset(ACTOR_THIRD_LOG, 160, 0);
@@ -1007,9 +1054,9 @@ static void FuchinFallsCave_ArcticBladeRoom_MoveThirdLogEast(void) {
   FuchinFallsCave_RebuildArcticBladeRoomLogs();
 }
 
-/// Fuchin Falls Cave, fourth room: pushing the third log west (step trigger 16)
-/// floats it 160 pixels west
-/// (FLAG_FUCHIN_FALLS_ARCTIC_BLADE_ROOM_THIRD_LOG_EAST clear).
+/// In Fuchin Falls Cave's fourth room, pushing the third log west (step
+/// trigger 16) floats it 160 pixels west and clears
+/// FLAG_FUCHIN_FALLS_ARCTIC_BLADE_ROOM_THIRD_LOG_EAST.
 static void FuchinFallsCave_ArcticBladeRoom_MoveThirdLogWest(void) {
   Sound_Play(SE_WATER_MOVE);
   Actor_PlacePairAtOffset(ACTOR_THIRD_LOG, -160, 0);
@@ -1091,7 +1138,7 @@ const struct Trigger *ImilFuchinFalls_GetTriggers(void) {
   return gImilFuchinFalls_NoTriggers;
 }
 
-/// Walking into the way out of Imil Falls Cave (step trigger 1): faces the
+/// Walking into the way out of Imil Falls Cave (step trigger 1) faces the
 /// leader south and leaves for Imil.
 static void Imil_LeaveFallsCave(void) {
   struct Actor *leader;
@@ -1184,9 +1231,10 @@ static void FuchinFallsCave_RebuildEntranceLogs(void) {
 /// Puts the logs of Fuchin Falls Cave's second room where their flags say. The
 /// flags name cells in SceneId_FuchinFallsCaveZephyr, and the cells of the
 /// logs' tracks are rewritten to match.
-/// As in the third room, a stop without its log takes three walls in a row:
-/// from (20, 19) for a log lying north to south, from (14, 18) for one lying
-/// west to east.
+///
+/// As in the third room, a stop without its log takes three walls in a row.
+/// They run from (20, 19) for a log lying north to south, from (14, 18) for one
+/// lying west to east.
 static void FuchinFallsCave_RebuildZephyrRoomLogs(void) {
   {
     s32 column = 12;
@@ -1273,9 +1321,10 @@ static void FuchinFallsCave_RebuildZephyrRoomLogs(void) {
 /// Puts the four logs of Fuchin Falls Cave's third room where their flags say.
 /// The flags name cells in SceneId_FuchinFallsCaveDragonsEye, and the cells of
 /// the logs' tracks are rewritten to match.
-/// The rewriting uses two kinds of cell kept in spare corners of the map: where
+///
+/// The rewriting uses two kinds of cell kept in spare corners of the map. Where
 /// a log lies, its three cells take step triggers (rows 41 to 44), which roll
-/// it when stepped on; a stop it is not at takes three walls in a row, from
+/// it when stepped on. A stop it is not at takes three walls in a row, from
 /// (14, 29) for a log lying west to east.
 static void FuchinFallsCave_RebuildDragonsEyeRoomLogs(void) {
   {
@@ -1488,8 +1537,8 @@ static void FuchinFallsCave_StopLightFollowingLeader(void) {
 }
 
 /// Sets up the scene as the party enters. Every normal entry into Imil Falls
-/// Cave blocks Retreat and walks the leader toward Fever; otherwise each room
-/// of Fuchin Falls Cave restores its logs, the Dragon's Eye and its lighting.
+/// Cave blocks Retreat and walks the leader toward Fever. In Fuchin Falls Cave,
+/// each room restores its logs, the Dragon's Eye and its lighting.
 s32 ImilFuchinFalls_Initialize(void) {
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0 &&
@@ -1515,8 +1564,8 @@ static void Imil_WalkTowardFever(void) {
   Event_End();
 }
 
-/// Sets up a room of Fuchin Falls Cave for the entrance it is entered
-/// by: its logs, the Dragon's Eye and two foreground sprites in the third
+/// Sets up a room of Fuchin Falls Cave for the entrance it is entered by. That
+/// covers its logs, the Dragon's Eye and two foreground sprites in the third
 /// room, and the darkness and the fade overlay in the dragon statue's room.
 static void ImilFuchinFalls_PrepareRoom(void) {
   struct Actor *actor;
@@ -1608,9 +1657,10 @@ static void ImilFuchinFalls_RebuildLogRoom(void) {
   }
 }
 
-/// Hops across a gap in Fuchin Falls Cave: west or north in the second room
-/// (step triggers 13, 14 and 17), south in the third (step trigger 25) when its
-/// first log lies at FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FIRST_LOG_MIDDLE.
+/// Hops across a gap in Fuchin Falls Cave. The hop is west or north in the
+/// second room (step triggers 13, 14 and 17). In the third it is south (step
+/// trigger 25), when its first log lies at
+/// FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FIRST_LOG_MIDDLE.
 static void ImilFuchinFalls_HopOnTrigger(void) {
   s32 trigger = gFieldWork->stepTrigger;
 
@@ -1628,8 +1678,8 @@ static void ImilFuchinFalls_HopOnTrigger(void) {
   }
 }
 
-/// Hops the leader one gap north, in Fuchin Falls Cave's third room (
-/// step triggers 11 and 12).
+/// Hops the leader one gap north, in Fuchin Falls Cave's third room (step
+/// triggers 11 and 12).
 static void FuchinFallsCave_HopNorth(void) { ImilFuchinFalls_HopBy(0, -32); }
 
 /// Hops the leader one gap west, in Fuchin Falls Cave's third room (step
@@ -1792,9 +1842,9 @@ static void ImilFuchinFalls_BlowCaveMouthDust(void) {
       (const struct EffectOptions *)&options);
 }
 
-/// Using the Dragon's Eye on the dragon statue in Fuchin Falls Cave (trigger
-/// 20), until it is set: inserts the eye, lights the room and reveals its
-/// hidden path.
+/// Using the Dragon's Eye on the dragon statue in Fuchin Falls Cave
+/// (trigger 20) inserts the eye, lights the room and reveals its hidden path.
+/// It does so only until the eye is set.
 static void FuchinFallsCave_LightDragonWithEye(void) {
   u32 pass;
 
@@ -1866,10 +1916,12 @@ static void FuchinFallsCave_ReadShadowInscription(void) {
   Event_End();
 }
 
-/// Searching the dragon statue in Fuchin Falls Cave (examine trigger 20): its
-/// burning red eyes once set, else its empty sockets; with the Dragon's Eye
-/// carried it then opens the File Screen as the search ends, so that the eye
-/// can be used.
+/// Searching the dragon statue in Fuchin Falls Cave (examine trigger 20)
+/// describes its eyes. They are its burning red eyes once set, else its empty
+/// sockets.
+///
+/// With the Dragon's Eye carried, it then opens the File Screen as the search
+/// ends, so that the eye can be used.
 static void FuchinFallsCave_SearchDragonStatue(void) {
   Event_Start();
 

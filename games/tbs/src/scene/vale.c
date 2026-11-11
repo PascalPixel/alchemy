@@ -1,76 +1,91 @@
 /// @file
-/// SceneId_Vale, Isaac's village by day, outside the houses: the door of
+/// SceneId_Vale, Isaac's village by day, outside the houses, holds the door of
 /// Isaac's house, the houses of Garet's family and of Jenna's grandparents, the
-/// Sanctum and the paths out to Mt. Aleph and Kraden's cottage. The
-/// actor placements and triggers come in three sets, chosen by the story
-/// flags: before the party leaves Vale, after it has left
-/// (FLAG_VALE_PARTY_LEFT) and back from Kalay (FLAG_KALAY_REACHED);
-/// VALE_FROM_TITLE has a set of its own. In story order:
+/// Sanctum and the paths out to Mt. Aleph and Kraden's cottage.
 ///
-/// - The day the story begins, three years after the storm
-///   (cottage_rooms_b.c), which took Jenna's family and Isaac's father,
-///   Kyle. The game opens at VALE_FROM_TITLE with Vale_MendingTheRoof:
-///   under the caption "Three years later...", Isaac is mending the roof of his
-///   house while Dora, his mother, calls up to him; Garet, who will travel with
-///   him, trains his Psynergy nearby, and Jenna comes by, and the two speak of
-///   that day before going to fetch Isaac to go to Kraden's.
-///   VALE_TO_ROOF_MENDED brings the party back in at VALE_FROM_ROOF_MENDED,
-///   where Vale_RoofMended plays once (area flag
-///   FLAG_VALE_ROOF_MENDED_EVENT_PLAYED): Dora praises the roof, remembers
-///   Kyle, and sends the three off on their climb of Mt. Aleph with Kraden, the
-///   scholar who teaches them Alchemy (FLAG_VALE_ROOF_JUST_MENDED); for the
-///   rest of that visit Dora frets about the hole clumsy Garet left.
+/// The actor placements and triggers come in three sets, chosen by the story
+/// flags. They are before the party leaves Vale, after it has left
+/// (FLAG_VALE_PARTY_LEFT) and back from Kalay (FLAG_KALAY_REACHED).
+/// VALE_FROM_TITLE has a set of its own.
+///
+/// In story order:
+///
+/// - The day the story begins, three years after the storm (cottage_rooms_b.c),
+///   which took Jenna's family and Isaac's father, Kyle. The game opens at
+///   VALE_FROM_TITLE with Vale_MendingTheRoof. Under the caption
+///   "Three years later...", Isaac is mending the roof of his house while Dora,
+///   his mother, calls up to him. Garet, who will travel with him, trains his
+///   Psynergy nearby. Jenna comes by, and the two speak of that day before
+///   going to fetch Isaac to go to Kraden's. VALE_TO_ROOF_MENDED brings the
+///   party back in at VALE_FROM_ROOF_MENDED, where Vale_RoofMended plays once
+///   (area flag FLAG_VALE_ROOF_MENDED_EVENT_PLAYED). Dora praises the roof,
+///   remembers Kyle, and sends the three off on their climb of Mt. Aleph with
+///   Kraden, the scholar who teaches them Alchemy (FLAG_VALE_ROOF_JUST_MENDED).
+///   For the rest of that visit Dora frets about the hole clumsy Garet left.
 /// - Vale before the party leaves. Until Kraden has planned the visit to Sol
 ///   Sanctum (FLAG_SANCTUM_VISIT_PLANNED), Jenna stops Isaac on the path to Mt.
-///   Aleph; a bearded man in a long robe jumps out to warn him against sneaking
-///   up the sacred peak (FLAG_VALE_WARNED_AGAINST_MT_ALEPH) and then keeps
-///   watching him, asking again whenever he comes near (cell behaviors 51
-///   to 53). Three puppies (from ACTOR_FIRST_PUPPY) play; walking up to them
-///   from either side (cell behaviors 20 and 21) sets them barking, until
-///   the party has met Saturos and Menardi, of the strangers staying at the inn
-///   (FLAG_MET_SATUROS_AND_MENARDI); then the setup removes them. Villagers
+///   Aleph. A bearded man in a long robe jumps out to warn him against sneaking
+///   up the sacred peak (FLAG_VALE_WARNED_AGAINST_MT_ALEPH). He then keeps
+///   watching him, asking again whenever he comes near (cell behaviors 51 to
+///   53). Three puppies (from ACTOR_FIRST_PUPPY) play. Walking up to them from
+///   either side (cell behaviors 20 and 21) sets them barking, until the party
+///   has met Saturos and Menardi, of the strangers staying at the inn
+///   (FLAG_MET_SATUROS_AND_MENARDI). Then the setup removes them. Villagers
 ///   talk of the mayor, Garet's grandfather, and of not going beyond Kraden's
-///   cottage, Garet's sister scolds him, and Dora says Isaac can fix the hole
+///   cottage. Garet's sister scolds him, and Dora says Isaac can fix the hole
 ///   later.
-/// - After the party has left Vale (FLAG_VALE_PARTY_LEFT): Dora will not open
+/// - After the party has left Vale (FLAG_VALE_PARTY_LEFT), Dora will not open
 ///   the door of Isaac's house to him ("My Isaac would keep his promise... Go
-///   away."), and the villagers speak of the tremors and of Kraden, who has not
+///   away."). The villagers speak of the tremors and of Kraden, who has not
 ///   come back.
-/// - Back from Kalay (FLAG_KALAY_REACHED): Garet meets his sister (area
-///   flag FLAG_VALE_GARET_MET_SISTER) and asks one of his family to protect it
-///   while he is gone (FLAG_VALE_GARET_ASKED_TO_PROTECT_FAMILY), a young man
-///   asks whether Jenna is back (FLAG_VALE_ASKED_IF_JENNA_IS_BACK), another
-///   feels a tremor, another asks about the lack of travellers since the
-///   eruption (FLAG_VALE_ASKED_ABOUT_TRAVELERS). Isaac's house opens again:
-///   Dora lies ill inside (cottage_rooms_b.c).
+/// - Back from Kalay (FLAG_KALAY_REACHED), Garet meets his sister (area flag
+///   FLAG_VALE_GARET_MET_SISTER) and asks one of his family to protect it while
+///   he is gone (FLAG_VALE_GARET_ASKED_TO_PROTECT_FAMILY). A young man asks
+///   whether Jenna is back (FLAG_VALE_ASKED_IF_JENNA_IS_BACK), another feels a
+///   tremor, another asks about the lack of travellers since the eruption
+///   (FLAG_VALE_ASKED_ABOUT_TRAVELERS). Isaac's house opens again, and Dora
+///   lies ill inside (cottage_rooms_b.c).
 ///
-/// In every set: a Nut to catch with Catch (FLAG_VALE_NUT_CAUGHT; ACTOR_NUT,
-/// or ACTOR_NUT_AFTER_KALAY), a pillar to push or Move, whose column the
-/// setup restores from FLAG_VALE_PILLAR_IN_WEST_COLUMN, _IN_MIDDLE_COLUMN and
-/// _IN_EAST_COLUMN, a ladder up onto the roof of Isaac's house, climbed on
-/// cell behaviors 100 and 101 (FLAG_VALE_ON_ROOF while on the roof), and
-/// cells of the bridge over the river that change while the leader is on it
-/// (FLAG_VALE_ON_BRIDGE); after a battle (FLAG_KEEP_PARTY_POSITION) the
-/// setup restores both. Exits: VALE_TO_SOL_ENTRANCE up Mt. Aleph to Sol
-/// Entrance (SceneId_SolEntrance), VALE_TO_VALE_PLAZA to SceneId_ValePlaza,
-/// VALE_TO_VALE_KRADENS_COTTAGE_NORTH and VALE_TO_VALE_KRADENS_COTTAGE_SOUTH to
-/// SceneId_ValeKradensCottage, the doors VALE_TO_COTTAGE_ROOMS_A_EAST,
-/// VALE_TO_COTTAGE_ROOMS_A_SOUTH, VALE_TO_COTTAGE_ROOMS_A_NORTH,
-/// VALE_TO_COTTAGE_ROOMS_A_WEST and
-/// VALE_TO_COTTAGE_ROOMS_A_NORTH_WEST_BANK_DOOR into the houses
-/// (SceneId_CottageRoomsA, cottage_rooms_a.c),
-/// VALE_TO_COTTAGE_ROOMS_B into Isaac's house (SceneId_CottageRoomsB) and
-/// VALE_TO_SANCTUM into SceneId_Sanctum. Two events no table reaches remain:
-/// Vale_UnusedRoofMended, a copy of the roof's end, and
-/// Vale_UnusedWaterBurstsByTheRiver, which sets area flag
-/// FLAG_VALE_UNUSED_WATER_BURST_SEEN. FLAG_VALE_MT_ALEPH_GUARD_PAUSED pauses
-/// the man who watches Isaac while a menu is open. The TBS_PATCH_4 editions
-/// also set Dora's sprite priority before Kalay.
+/// Every set has these:
 ///
-/// In the opening Garet trains his Psynergy on the pillar: his sprite flashes
-/// white, then cycles through its colour modes with sparks about him, while the
-/// hand of Move (ACTOR_OPENING_MOVE_HAND) pushes the pillar west, the pillar
-/// cycling its colour modes too, and sheds sparkles.
+/// - A Nut to catch with Catch (FLAG_VALE_NUT_CAUGHT; ACTOR_NUT, or
+///   ACTOR_NUT_AFTER_KALAY).
+/// - A pillar to push or Move, whose column the setup restores from
+///   FLAG_VALE_PILLAR_IN_WEST_COLUMN, _IN_MIDDLE_COLUMN and _IN_EAST_COLUMN.
+/// - A ladder up onto the roof of Isaac's house, climbed on cell behaviors 100
+///   and 101 (FLAG_VALE_ON_ROOF while on the roof).
+/// - Cells of the bridge over the river that change while the leader is on it
+///   (FLAG_VALE_ON_BRIDGE).
+///
+/// After a battle (FLAG_KEEP_PARTY_POSITION) the setup restores both the roof's
+/// and the bridge's cells.
+///
+/// The exits:
+///
+/// - VALE_TO_SOL_ENTRANCE goes up Mt. Aleph to Sol Entrance
+///   (SceneId_SolEntrance).
+/// - VALE_TO_VALE_PLAZA goes to SceneId_ValePlaza.
+/// - VALE_TO_VALE_KRADENS_COTTAGE_NORTH and VALE_TO_VALE_KRADENS_COTTAGE_SOUTH
+///   go to SceneId_ValeKradensCottage.
+/// - The doors VALE_TO_COTTAGE_ROOMS_A_EAST, VALE_TO_COTTAGE_ROOMS_A_SOUTH,
+///   VALE_TO_COTTAGE_ROOMS_A_NORTH, VALE_TO_COTTAGE_ROOMS_A_WEST and
+///   VALE_TO_COTTAGE_ROOMS_A_NORTH_WEST_BANK_DOOR lead into the houses
+///   (SceneId_CottageRoomsA, cottage_rooms_a.c).
+/// - VALE_TO_COTTAGE_ROOMS_B leads into Isaac's house (SceneId_CottageRoomsB).
+/// - VALE_TO_SANCTUM leads into SceneId_Sanctum.
+///
+/// Two events no table reaches remain. They are Vale_UnusedRoofMended, a copy
+/// of the roof's end, and Vale_UnusedWaterBurstsByTheRiver, which sets area
+/// flag FLAG_VALE_UNUSED_WATER_BURST_SEEN.
+///
+/// FLAG_VALE_MT_ALEPH_GUARD_PAUSED pauses the man who watches Isaac while a
+/// menu is open. The TBS_PATCH_4 editions also set Dora's sprite priority
+/// before Kalay.
+///
+/// In the opening Garet trains his Psynergy on the pillar. His sprite flashes
+/// white, then cycles through its colour modes with sparks about him. Meanwhile
+/// the hand of Move (ACTOR_OPENING_MOVE_HAND) pushes the pillar west and sheds
+/// sparkles, and the pillar cycles its colour modes too.
 
 #include "main_routine_work.h"
 #include "vram_cache.h"
@@ -171,44 +186,46 @@ static void Vale_CycleActorPaletteAndSpawnEffects(struct Actor *actor);
 static void Vale_CycleActorPalette(struct Actor *actor);
 
 /// The placed actors of Vale by day, numbered in the order of
-/// gVale_ActorPlacements and gVale_ActorPlacementsAfterLeaving, which
-/// place the same people in the same rows. A row whose sprite is a party
-/// member's (Garet's, Jenna's) takes that party member's actor id instead
-/// (Event_SpawnActorPlacements), so the numbering skips it.
+/// gVale_ActorPlacements and gVale_ActorPlacementsAfterLeaving, which place the
+/// same people in the same rows.
+///
+/// A row whose sprite is a party member's (Garet's, Jenna's) takes that party
+/// member's actor id instead (Event_SpawnActorPlacements), so the numbering
+/// skips it.
 enum ValeActorId {
-  /// An old woman: "Mt. Aleph looks beautiful today. It's so peaceful."; after
+  /// An old woman. "Mt. Aleph looks beautiful today. It's so peaceful." After
   /// the party has left, "Vale is saved thanks to the Wise One!"
   /// ★ Named from the game: "Mt. Aleph looks beautiful today."
   /// (MsgValeMtAlephLooksBeautifulTodayIts)
   ACTOR_OLD_WOMAN_ADMIRING_MT_ALEPH = ACTOR_FIRST_PLACED,
-  /// A woman in a green dress: "Vale stays pristine because of Mt. Aleph's
+  /// A woman in a green dress. "Vale stays pristine because of Mt. Aleph's
   /// purity."
   /// ★ Named from the game: "Vale stays pristine because of Mt. Aleph's
   /// purity." (MsgValeValeStaysPristineBecauseOfMt)
   ACTOR_WOMAN_ON_ALEPHS_PURITY,
-  /// A little girl with orange pigtails: "I'm jealous of you, Garet, because
+  /// A little girl with orange pigtails. "I'm jealous of you, Garet, because
   /// your grandpa's the mayor." (Vale_TalkAboutTheMayorAndTremors)
   /// ★ Named from the game: "I'm jealous of you,"
   /// (MsgValeYourGrandpaIsTheMayor)
   ACTOR_GIRL_JEALOUS_OF_GARET,
-  /// A young man with brown hair: "This place looks just like it did three
+  /// A young man with brown hair. "This place looks just like it did three
   /// years ago... after the storm..."
   /// ★ Named from the game: "This place looks just like it did three years
   /// ago... after the storm..." (MsgValeThisPlaceLooksJustLikeIt)
   ACTOR_YOUNG_MAN_REMEMBERING_THE_STORM,
-  /// A strongman by the river: "Isaac, watch out! Don't get too close to the
+  /// A strongman by the river. "Isaac, watch out! Don't get too close to the
   /// river!"
   /// ★ Named from the game: "Don't get too close to the river!"
   /// (MsgValeIsaacWatchOutDontGetToo)
   ACTOR_STRONGMAN_BY_THE_RIVER,
-  /// A burly grey-haired man: "Vale must remain hidden. Psynergy's secrets
+  /// A burly grey-haired man. "Vale must remain hidden. Psynergy's secrets
   /// mustn't fall into the wrong hands."
   /// ★ Named from the game: "Vale must remain hidden."
   /// (MsgValeValeMustRemainHiddenPsynergysSecrets)
   ACTOR_MAN_KEEPING_VALE_HIDDEN,
-  /// A woman with fair hair who stands by the way out to Kraden's cottage:
-  /// "Do you need to go past here?", then "You mustn't go beyond Kraden's
-  /// cottage." (Vale_WarnAboutGoingBeyondKradensCottage)
+  /// A woman with fair hair who stands by the way out to Kraden's cottage. "Do
+  /// you need to go past here?", then "You mustn't go beyond Kraden's cottage."
+  /// (Vale_WarnAboutGoingBeyondKradensCottage)
   /// ★ Named from the game: "You mustn't go beyond Kraden's cottage."
   /// (MsgValeDontGoBeyondKradensCottage)
   ACTOR_WOMAN_ON_THE_WAY_TO_KRADEN,
@@ -217,21 +234,20 @@ enum ValeActorId {
   /// ★ Named from what the player sees: small white dogs with brown ears (its
   /// render)
   ACTOR_FIRST_PUPPY,
-  /// A young woman with an orange ponytail: "Garet, you make me so mad
-  /// sometimes!" (Vale_ArgueWithGaretsSister); Garet calls her "Sis"
-  /// back
-  /// from Kalay.
+  /// A young woman with an orange ponytail. "Garet, you make me so mad
+  /// sometimes!" (Vale_ArgueWithGaretsSister) Garet calls her "Sis" back from
+  /// Kalay.
   /// ★ Named from the game: "Your sister's really mad!"
   /// (MsgValeYoureInTroubleNowGaretYour)
   ACTOR_GARETS_SISTER = ACTOR_FIRST_PUPPY + 3,
-  /// "You're in trouble now, Garet... Your sister's really mad!"; after the
+  /// "You're in trouble now, Garet... Your sister's really mad!" After the
   /// party has left, "Please take care of my brother, Isaac."
   /// ★ Named from the game: "Please take care of my brother"
   /// (MsgValePleaseTakeCareOfMyBrother), said by a small boy with orange hair
   /// in a green shirt and shorts (its render)
   ACTOR_GARETS_BROTHER,
-  /// SPRITE_STONE_PILLAR, as Goma Cave's pillars: pushed
-  /// (Vale_PushPillar) or moved with Move, its column kept in
+  /// SPRITE_STONE_PILLAR, as Goma Cave's pillars. It is pushed
+  /// (Vale_PushPillar) or moved with Move. Its column is kept in
   /// FLAG_VALE_PILLAR_IN_WEST_COLUMN, _IN_MIDDLE_COLUMN and _IN_EAST_COLUMN
   /// (Vale_MovePillarBelowCliff).
   /// ★ Named from what the player sees: a stone pillar of brown rock standing
@@ -240,17 +256,15 @@ enum ValeActorId {
   /// ★ Named from the game: "your mother, Dora, has been crying"
   /// (MsgValeDoraHasBeenCrying)
   ACTOR_DORA, ///< Isaac's mother
-  /// A man with long brown hair and a beard in a long robe, who jumps out to
+  /// A man with long brown hair and a beard in a long robe. He jumps out to
   /// warn Isaac off the sacred peak, then keeps watching him
-  /// (Vale_WarnAgainstSneakingUpMtAleph). "Mt. Aleph is a sacred peak.
-  /// It is
+  /// (Vale_WarnAgainstSneakingUpMtAleph). "Mt. Aleph is a sacred peak. It is
   /// forbidden to climb it!"
   /// ★ Named from the game: "Mt. Aleph is a sacred peak."
   /// (MsgValeMtAlephIsASacredPeak)
   ACTOR_MAN_GUARDING_MT_ALEPH,
   /// The boards on the roof, SPRITE_ROOF_BOARDS, which Isaac moves into place
-  /// with
-  /// Psynergy at the roof's end (Vale_RoofMended).
+  /// with Psynergy at the roof's end (Vale_RoofMended).
   /// ★ Named from what the player sees: a short plank of yellow wood,
   /// spr_206.png (its render)
   ACTOR_FIRST_BOARD,
@@ -264,8 +278,8 @@ enum ValeActorId {
   ACTOR_NUT ///< the Nut for Catch, until FLAG_VALE_NUT_CAUGHT is set
 };
 
-/// Back from Kalay, the placed actors of
-/// gVale_ActorPlacementsAfterKalay; Garet's row takes his own actor id.
+/// Back from Kalay, the placed actors of gVale_ActorPlacementsAfterKalay.
+/// Garet's row takes his own actor id.
 enum ValeAfterKalayActorId {
   /// Garet's sister. "Ah! It's been a while... You're back?"
   /// (Vale_GaretMeetsHisSister)
@@ -276,41 +290,42 @@ enum ValeAfterKalayActorId {
   /// ★ Named from the game: "Please take care of my brother"
   /// (MsgValePleaseTakeCareOfMyBrother)
   ACTOR_GARETS_BROTHER_AFTER_KALAY,
-  /// The young man of ACTOR_YOUNG_MAN_REMEMBERING_THE_STORM: "Is Jenna back
+  /// The young man of ACTOR_YOUNG_MAN_REMEMBERING_THE_STORM. "Is Jenna back
   /// yet?" (Vale_AskWhetherJennaHasReturned)
   /// ★ Named from the game: "Is back yet?" (MsgValeIsJennaBackYet)
   ACTOR_YOUNG_MAN_ASKING_FOR_JENNA,
-  /// The strongman of ACTOR_STRONGMAN_BY_THE_RIVER: "I still remember when
+  /// The strongman of ACTOR_STRONGMAN_BY_THE_RIVER. "I still remember when
   /// Felix and I used to play here...*Sniff*"
   /// ★ Named from the game: "I still remember when" (MsgValeIUsedToPlayHere)
   ACTOR_STRONGMAN_REMEMBERING_FELIX,
   /// Three sprites of water, CrossboneIsleFloodgate's water sprite
-  /// SPRITE_SPLASH. Only Vale_UnusedWaterBurstsByTheRiver shows them: during a
+  /// SPRITE_SPLASH. Only Vale_UnusedWaterBurstsByTheRiver shows them. During a
   /// tremor each in turn grows from a tenth of its size at (266, 1230), north
   /// of ACTOR_STRONGMAN_REMEMBERING_FELIX, and vanishes
-  /// (gVale_UnusedWaterGrows). The row after them places the woman with fair
-  /// hair of ACTOR_WOMAN_ON_THE_WAY_TO_KRADEN at the origin, and nothing
-  /// names her.
+  /// (gVale_UnusedWaterGrows).
+  ///
+  /// The row after them places the woman with fair hair of
+  /// ACTOR_WOMAN_ON_THE_WAY_TO_KRADEN at the origin, and nothing names her.
   /// ★ Named from what the player sees: a spout of white water spraying up,
   /// spr_214.png (its render)
   ACTOR_FIRST_WATER,
-  /// An old woman: "Mt. Aleph's eruption was so powerful, it caused the
+  /// An old woman. "Mt. Aleph's eruption was so powerful, it caused the
   /// continent to crack!"
   /// ★ Named from the game: "Mt. Aleph's eruption was so powerful"
   /// (MsgValeMtAlephsEruptionWasSoPowerful)
   ACTOR_OLD_WOMAN_ON_THE_ERUPTION = ACTOR_FIRST_WATER + 4,
-  /// A woman in a green dress: "Aghh! I felt another one!"
+  /// A woman in a green dress. "Aghh! I felt another one!"
   /// (Vale_ReactToAnotherTremor)
   /// ★ Named from the game: "Aghh! I felt another one!"
   /// (MsgValeIFeltAnotherOne)
   ACTOR_WOMAN_FEELING_TREMORS,
-  /// A little girl with orange pigtails: "They say the danger is gone, even
+  /// A little girl with orange pigtails. "They say the danger is gone, even
   /// though the earthquakes continue..."
   /// ★ Named from the game: "They say the danger is gone, even though the
   /// earthquakes continue..." (MsgValeTheySayTheDangerIsGone)
   ACTOR_GIRL_DOUBTING_SAFETY,
-  /// A burly grey-haired man: "I wonder why we haven't seen any travelers
-  /// since the eruption..." (Vale_AskAboutTheLackOfTravelers)
+  /// A burly grey-haired man. "I wonder why we haven't seen any travelers since
+  /// the eruption..." (Vale_AskAboutTheLackOfTravelers)
   /// ★ Named from the game: "I wonder why we haven't seen any travelers
   /// since the eruption..." (MsgValeNoTravelersSinceTheEruption)
   ACTOR_MAN_MISSING_TRAVELERS,
@@ -322,8 +337,8 @@ enum ValeAfterKalayActorId {
 };
 
 /// The game's opening (Vale_MendingTheRoof), the placed actors of
-/// gVale_RepairActorPlacements; Jenna's and Garet's rows take their own
-/// actor ids.
+/// gVale_RepairActorPlacements. Jenna's and Garet's rows take their own actor
+/// ids.
 enum ValeOpeningActorId {
   /// A woman in a green dress who meets Jenna on her way.
   /// ★ Named from what the player sees: a woman with brown hair in a green
@@ -346,7 +361,7 @@ enum ValeOpeningActorId {
   /// ★ Named from what the player sees: a short plank of yellow wood,
   /// spr_206.png (its render)
   ACTOR_OPENING_THIRD_BOARD,
-  /// SPRITE_MOVE_HAND, the hand of Move (event_commands/catch.c): it pushes the
+  /// SPRITE_MOVE_HAND, the hand of Move (event_commands/catch.c). It pushes the
   /// pillar for Garet, shedding sparkles.
   /// ★ Named from what the player sees: a large open hand,
   /// spr_215.png (its render)
@@ -370,7 +385,7 @@ enum ValeAnimation {
 
 #include "shared/staged_actor.h"
 
-/// The roof of Isaac's house has just been mended; for the rest of the visit
+/// The roof of Isaac's house has just been mended. For the rest of the visit
 /// Dora frets about the hole Garet left.
 /// ★ Named from the game: "But what am I going to do about this hole?"
 /// (MsgValeIToldGaretItWas)
@@ -380,10 +395,12 @@ enum ValeAnimation {
 /// ★ Named from the game: "Haven't you finished mending the roof yet?"
 /// (MsgValeRepairCaption)
 #define FLAG_VALE_ON_ROOF FLAG_SCENE_TEMP_04
-/// The leader is on the rope bridge over the river. While it is set, the
-/// bridge's cells take the deck's shapes and cell behaviors: its two middle
-/// rows walkable at the deck's height and its rails walls; stepping off puts
-/// back the river's, walled water between open banks.
+/// The leader is on the rope bridge over the river.
+///
+/// While it is set, the bridge's cells take the deck's shapes and cell
+/// behaviors. Its two middle rows are walkable at the deck's height, and its
+/// rails are walls. Stepping off puts back the river's, walled water between
+/// open banks.
 /// ★ Named from what the player sees: a wooden bridge with rope rails over the
 /// river, above the waterfall (its render)
 #define FLAG_VALE_ON_BRIDGE FLAG_SCENE_TEMP_10
@@ -440,7 +457,7 @@ const struct ActorPlacement *Vale_GetActorPlacements(void) {
   return gVale_ActorPlacements;
 }
 
-/// Catch on the Nut in Vale: the party gets it.
+/// Catch on the Nut in Vale gives it to the party.
 static void Vale_CatchNut(void) {
   Event_Start();
   Actor_SetPosition(ACTOR_NUT, 0, 0);
@@ -489,9 +506,10 @@ static void Vale_TalkAboutTheMayorAndTremors(void) {
   Event_End();
 }
 
-/// A woman in Vale (ACTOR_WOMAN_ON_THE_WAY_TO_KRADEN) asks whether Isaac
-/// is going to Kraden's cottage and warns him not to go beyond it; after the
-/// party has left, says Kraden has not come back.
+/// A woman in Vale (ACTOR_WOMAN_ON_THE_WAY_TO_KRADEN) asks whether Isaac is
+/// going to Kraden's cottage and warns him not to go beyond it.
+///
+/// After the party has left, she says Kraden has not come back.
 static void Vale_WarnAboutGoingBeyondKradensCottage(void) {
   s32 flag = FLAG_VALE_ASKED_IF_GOING_TO_KRADEN;
   Event_Start();
@@ -518,7 +536,7 @@ static void Vale_WarnAboutGoingBeyondKradensCottage(void) {
   Event_End();
 }
 
-/// Garet's sister scolds him in Vale; afterwards she only threatens him.
+/// Garet's sister scolds him in Vale. Afterwards she only threatens him.
 /// "Garet, you make me so mad sometimes!"
 static void Vale_ArgueWithGaretsSister(void) {
   Event_Start();
@@ -547,9 +565,12 @@ static void Vale_ArgueWithGaretsSister(void) {
   Event_End();
 }
 
-/// Talking to Dora in Vale before the party leaves: right after the roof is
-/// mended (FLAG_VALE_ROOF_JUST_MENDED) she frets about the hole clumsy Garet
-/// left; otherwise, since it will not rain for a while, Isaac can fix it later.
+/// Talking to Dora in Vale before the party leaves has her speak of the hole in
+/// the roof.
+///
+/// Right after the roof is mended (FLAG_VALE_ROOF_JUST_MENDED) she frets about
+/// the hole clumsy Garet left. Otherwise, since it will not rain for a while,
+/// Isaac can fix it later.
 static void Vale_DoraFretsAboutTheRoof(void) {
   Event_Start();
   if (GameFlag_Get(FLAG_VALE_ROOF_JUST_MENDED) != 0) {
@@ -606,22 +627,22 @@ static void Vale_AskAboutTheLackOfTravelers(void) {
   Event_End();
 }
 
-/// Walking onto the bridge in Vale (cell behavior 15): its cells'
-/// cell behaviors change, remembered in FLAG_VALE_ON_BRIDGE.
+/// Walking onto the bridge in Vale (cell behavior 15) changes its cells' cell
+/// behaviors, remembered in FLAG_VALE_ON_BRIDGE.
 static void Vale_StepOntoBridge(void) {
   GameFlag_Set(FLAG_VALE_ON_BRIDGE);
   MapGrid_CopyCellAttributes(40, 84, 7, 4, 10, 84);
 }
 
-/// Walking off the bridge in Vale (cell behavior 14) restores its
-/// cells' cell behaviors.
+/// Walking off the bridge in Vale (cell behavior 14) restores its cells' cell
+/// behaviors.
 static void Vale_StepOffBridge(void) {
   GameFlag_Clear(FLAG_VALE_ON_BRIDGE);
   MapGrid_CopyCellAttributes(40, 89, 7, 4, 10, 84);
 }
 
-/// The door of Vale Sanctum (cell behavior 1): it opens, the leader walks
-/// in, and VALE_TO_SANCTUM leads into the Sanctum.
+/// The door of Vale Sanctum (cell behavior 1) opens, the leader walks in, and
+/// VALE_TO_SANCTUM leads into the Sanctum.
 static void Vale_EnterSanctum(void) {
   Sound_Play(SE_THUMP);
   MapGrid_AnimateCells(gVale_SanctumDoorOpens, 45, 11);
@@ -629,10 +650,11 @@ static void Vale_EnterSanctum(void) {
   Import_EventSetExitRequest(VALE_TO_SANCTUM);
 }
 
-/// The path to Mt. Aleph in Vale (cell behavior 2): Jenna stops Isaac until
-/// Kraden has planned the visit (FLAG_SANCTUM_VISIT_PLANNED); then
-/// VALE_TO_SOL_ENTRANCE leads up to Sol Entrance. Jenna says "Kraden is waiting
-/// for us".
+/// On the path to Mt. Aleph in Vale (cell behavior 2), Jenna stops Isaac until
+/// Kraden has planned the visit (FLAG_SANCTUM_VISIT_PLANNED).
+///
+/// After that, VALE_TO_SOL_ENTRANCE leads up to Sol Entrance. Jenna says
+/// "Kraden is waiting for us".
 static void Vale_ApproachMtAleph(void) {
   if (GameFlag_Get(FLAG_SANCTUM_VISIT_PLANNED) == 0) {
     Vale_HaveJennaStopTheAlephDetour();
@@ -662,8 +684,8 @@ static void Vale_ExitToValePlaza(void) {
   Import_EventSetExitRequest(VALE_TO_VALE_PLAZA);
 }
 
-/// The door of the house of Garet's family in Vale (cell behavior 6): it
-/// opens and VALE_TO_COTTAGE_ROOMS_A_EAST leads in.
+/// The door of the house of Garet's family in Vale (cell behavior 6) opens, and
+/// VALE_TO_COTTAGE_ROOMS_A_EAST leads in.
 static void Vale_EnterGaretsHouse(void) {
   Sound_Play(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gVale_IsaacsDoorOpens, 54, 32);
@@ -671,9 +693,9 @@ static void Vale_EnterGaretsHouse(void) {
   Import_EventSetExitRequest(VALE_TO_COTTAGE_ROOMS_A_EAST);
 }
 
-/// A house door in Vale (cell behavior 7): it opens and
-/// VALE_TO_COTTAGE_ROOMS_A_SOUTH leads in, to the room CottageRoomsA
-/// enters from COTTAGE_ROOMS_A_FROM_VALE_SOUTH.
+/// A house door in Vale (cell behavior 7) opens, and
+/// VALE_TO_COTTAGE_ROOMS_A_SOUTH leads in, to the room CottageRoomsA enters
+/// from COTTAGE_ROOMS_A_FROM_VALE_SOUTH.
 static void Vale_EnterCottageRoomsA(void) {
   Sound_Play(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gVale_GrandparentsDoorOpens, 45, 39);
@@ -681,9 +703,11 @@ static void Vale_EnterCottageRoomsA(void) {
   Import_EventSetExitRequest(VALE_TO_COTTAGE_ROOMS_A_SOUTH);
 }
 
-/// The door of Isaac's house in Vale (cell behavior 8): after the party has
-/// left and before Kalay, Dora will not open. "My Isaac would keep his
-/// promise... Go away." Otherwise VALE_TO_COTTAGE_ROOMS_B leads in.
+/// At the door of Isaac's house in Vale (cell behavior 8), Dora will not open
+/// after the party has left and before Kalay. "My Isaac would keep his
+/// promise... Go away."
+///
+/// Otherwise VALE_TO_COTTAGE_ROOMS_B leads in.
 static void Vale_EnterIsaacsHouse(void) {
   if (GameFlag_Get(FLAG_VALE_PARTY_LEFT) != 0 &&
       GameFlag_Get(FLAG_KALAY_REACHED) == 0) {
@@ -712,8 +736,8 @@ static void Vale_EnterIsaacsHouse(void) {
   }
 }
 
-/// The door of the house of Jenna's grandparents in Vale (cell behavior 9):
-/// it opens and VALE_TO_COTTAGE_ROOMS_A_NORTH leads in.
+/// The door of the house of Jenna's grandparents in Vale (cell behavior 9)
+/// opens, and VALE_TO_COTTAGE_ROOMS_A_NORTH leads in.
 static void Vale_EnterJennasGrandparentsHouse(void) {
   Sound_Play(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gVale_GrandparentsDoorOpens, 49, 69);
@@ -721,9 +745,9 @@ static void Vale_EnterJennasGrandparentsHouse(void) {
   Import_EventSetExitRequest(VALE_TO_COTTAGE_ROOMS_A_NORTH);
 }
 
-/// A house door in Vale (cell behavior 10): it opens and
-/// VALE_TO_COTTAGE_ROOMS_A_WEST leads in, to the room CottageRoomsA
-/// enters from COTTAGE_ROOMS_A_FROM_VALE_WEST.
+/// A house door in Vale (cell behavior 10) opens, and
+/// VALE_TO_COTTAGE_ROOMS_A_WEST leads in, to the room CottageRoomsA enters from
+/// COTTAGE_ROOMS_A_FROM_VALE_WEST.
 static void Vale_EnterCottageRoomsAWest(void) {
   Sound_Play(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gVale_WestHouseDoorOpens, 52, 76);
@@ -734,8 +758,10 @@ static void Vale_EnterCottageRoomsAWest(void) {
 /// Unused: its row answers cell behavior 11, which no cell of Vale's layout
 /// (map/map_000, the stormy night's too) carries, as
 /// ValePrologue_UnusedLeaveToCottageRoomsAWestByWestBankDoor in
-/// vale_prologue.c. It would have opened the door of the house west of the
-/// river, walked the leader to the spot before it and taken
+/// vale_prologue.c.
+///
+/// It would have opened the door of the house west of the river, walked the
+/// leader to the spot before it and taken
 /// VALE_TO_COTTAGE_ROOMS_A_NORTH_WEST_BANK_DOOR into the house of Jenna's
 /// grandparents, whose way out returns by that house's own door.
 static void Vale_UnusedEnterJennasGrandparentsHouseByWestBankDoor(void) {
@@ -745,7 +771,7 @@ static void Vale_UnusedEnterJennasGrandparentsHouseByWestBankDoor(void) {
   Import_EventSetExitRequest(VALE_TO_COTTAGE_ROOMS_A_NORTH_WEST_BANK_DOOR);
 }
 
-/// On the path to Mt. Aleph in Vale, before the visit is planned: Jenna comes
+/// On the path to Mt. Aleph in Vale, before the visit is planned, Jenna comes
 /// out to remind Isaac that Kraden is waiting, and he turns back.
 static void Vale_HaveJennaStopTheAlephDetour(void) {
   struct Actor *leader;
@@ -789,9 +815,9 @@ static void Vale_HaveJennaStopTheAlephDetour(void) {
   Event_End();
 }
 
-/// The puppies in Vale (cell behavior 20), until the party has met Saturos
-/// and Menardi: they bark, the camera pans down to them and back, and the
-/// leader turns away.
+/// Until the party has met Saturos and Menardi, the puppies in Vale (cell
+/// behavior 20) bark, the camera pans down to them and back, and the leader
+/// turns away.
 static void Vale_WatchThePuppies(void) {
   struct MapGridScrollWork *grid;
   s32 *savedOrigin;
@@ -841,7 +867,7 @@ static void Vale_WatchThePuppies(void) {
   }
 }
 
-/// The puppies in Vale from the other side (cell behavior 21): the same
+/// The puppies in Vale from the other side (cell behavior 21) do the same
 /// barking, without the camera pan.
 static void Vale_TurnBackFromThePuppies(void) {
   s32 msg;
@@ -862,9 +888,9 @@ static void Vale_TurnBackFromThePuppies(void) {
   }
 }
 
-/// Cell behavior 100 in Vale, at the foot of the ladder beside Isaac's
-/// house: walking north into it climbs the leader up onto the roof, whose cells
-/// change so it can be walked (FLAG_VALE_ON_ROOF set while there).
+/// Cell behavior 100 in Vale is at the foot of the ladder beside Isaac's house.
+/// Walking north into it climbs the leader up onto the roof, whose cells change
+/// so it can be walked (FLAG_VALE_ON_ROOF set while there).
 static void Vale_ClimbLadderOntoRoof(void) {
   Event_Start();
   MapGrid_CopyCellAttributes(49, 53, 8, 4, 20, 50);
@@ -874,9 +900,9 @@ static void Vale_ClimbLadderOntoRoof(void) {
   Event_End();
 }
 
-/// Cell behavior 101 in Vale, at the top of the ladder beside Isaac's
-/// house: walking south into it climbs the leader back down, and the roof's
-/// cells are put back (FLAG_VALE_ON_ROOF cleared).
+/// Cell behavior 101 in Vale is at the top of the ladder beside Isaac's house.
+/// Walking south into it climbs the leader back down, and the roof's cells are
+/// put back (FLAG_VALE_ON_ROOF cleared).
 static void Vale_ClimbDownFromRoof(void) {
   Event_Start();
   Vale_MoveActorAlongHigherZPath(ACTOR_PARTY_LEADER,
@@ -887,9 +913,10 @@ static void Vale_ClimbDownFromRoof(void) {
   Event_End();
 }
 
-/// A bearded man in a long robe in Vale (ACTOR_MAN_GUARDING_MT_ALEPH,
-/// cell behavior 50) jumps out in front of Isaac, then keeps watching him;
-/// sets FLAG_VALE_WARNED_AGAINST_MT_ALEPH. "You're not planning on sneaking up
+/// A bearded man in a long robe in Vale (ACTOR_MAN_GUARDING_MT_ALEPH, cell
+/// behavior 50) jumps out in front of Isaac, then keeps watching him.
+///
+/// Sets FLAG_VALE_WARNED_AGAINST_MT_ALEPH. "You're not planning on sneaking up
 /// to Mt. Aleph...?"
 static void Vale_WarnAgainstSneakingUpMtAleph(void) {
   struct Actor *guard;
@@ -956,8 +983,7 @@ static void Vale_RepeatMtAlephWarningFromFirstApproach(void) {
   }
 }
 
-/// Asks about the Aleph detour, then resumes each actor's response
-/// actions.
+/// Asks about the Aleph detour, then resumes each actor's response actions.
 static void Vale_AskAboutSneakingToAleph(const s32 *leaderActions,
                                          const s32 *guardActions) {
   const s32 *replyActions;
@@ -1598,11 +1624,12 @@ UNUSED static void Vale_UnusedRoofMended(void) {
   Event_End();
 }
 
-/// Vale's setup: plays the roof mending (VALE_FROM_TITLE) or its end (
-/// entrance 17, once), floats the Nut, places the pillar by its column, sets
-/// the watching man going, removes the puppies once Saturos and Menardi have
-/// been met, and after a battle restores the roof's and the bridge's
-/// cells.
+/// Vale's setup plays the roof mending (VALE_FROM_TITLE) or its end (entrance
+/// 17, once).
+///
+/// It also floats the Nut, places the pillar by its column, sets the watching
+/// man going, and removes the puppies once Saturos and Menardi have been met.
+/// After a battle it restores the roof's and the bridge's cells.
 s32 Vale_Initialize(void) {
   struct Actor *actor;
   s32 set;
@@ -1733,9 +1760,10 @@ s32 Vale_Initialize(void) {
   return 0;
 }
 
-/// Back from Kalay, Garet meets his sister in Vale; sets area flag
-/// FLAG_VALE_GARET_MET_SISTER. "Ah! It's been a while... You're back?"
-/// ("Sis...").
+/// Back from Kalay, Garet meets his sister in Vale.
+///
+/// Sets area flag FLAG_VALE_GARET_MET_SISTER. "Ah! It's been a while... You're
+/// back?" ("Sis...").
 static void Vale_GaretMeetsHisSister(void) {
   struct Actor *record;
   s32 msg;
@@ -1833,8 +1861,9 @@ static void Vale_GaretMeetsHisSister(void) {
 }
 
 /// Back from Kalay, Garet asks one of his family in Vale
-/// (ACTOR_GARETS_BROTHER_AFTER_KALAY) to protect it while he is gone; sets
-/// area flag FLAG_VALE_GARET_ASKED_TO_PROTECT_FAMILY. "WHATEVER YOU DO,
+/// (ACTOR_GARETS_BROTHER_AFTER_KALAY) to protect it while he is gone.
+///
+/// Sets area flag FLAG_VALE_GARET_ASKED_TO_PROTECT_FAMILY. "WHATEVER YOU DO,
 /// you must protect the family while I'm gone."
 static void Vale_GaretAsksToProtectFamily(void) {
   struct Actor *record;
@@ -1979,8 +2008,8 @@ UNUSED static void Vale_UnusedWaterBurstsByTheRiver(void) {
   Event_End();
 }
 
-/// Walks an actor to the foot of the ladder beside Isaac's house and
-/// climbs it onto the roof, in `approachAnimationId` on the rungs and
+/// Walks an actor to the foot of the ladder beside Isaac's house and climbs it
+/// onto the roof, in `approachAnimationId` on the rungs and
 /// `departureAnimationId` over the eaves.
 static void Vale_MoveActorAlongLowerZPath(s32 actorId, s32 approachAnimationId,
                                           s32 departureAnimationId,
@@ -2016,8 +2045,8 @@ static void Vale_MoveActorAlongLowerZPath(s32 actorId, s32 approachAnimationId,
   Actor_SetAnimation(actorId, ANIM_STAND);
 }
 
-/// Climbs an actor down the ladder beside Isaac's house from the roof,
-/// and restores falling motion if requested.
+/// Climbs an actor down the ladder beside Isaac's house from the roof, and
+/// restores falling motion if requested.
 static void Vale_MoveActorAlongHigherZPath(s32 actorId, s32 approachAnimationId,
                                            s32 departureAnimationId,
                                            s32 resumeMotion) {
@@ -2053,7 +2082,7 @@ static void Vale_MoveActorAlongHigherZPath(s32 actorId, s32 approachAnimationId,
 }
 
 /// Mode 0 sets count boards from first on the roof by the hole, still and
-/// without shadows; any other mode puts them out of sight.
+/// without shadows. Any other mode puts them out of sight.
 static void Vale_PlaceOrHideBoards(s32 first, u32 count, s32 mode) {
   s32 selector = first;
   u32 i;
@@ -2078,10 +2107,12 @@ static void Vale_PlaceOrHideBoards(s32 first, u32 count, s32 mode) {
   }
 }
 
-/// Arriving by VALE_FROM_TITLE, the game's opening in Vale: Isaac is mending
-/// the roof of his house, Garet trains his Psynergy, and Jenna comes by; the
-/// two speak of the storm three years ago before going to fetch Isaac. "Three
-/// years later... Isaac! Haven't you finished mending the roof yet?"
+/// Arriving by VALE_FROM_TITLE, the game's opening in Vale, finds Isaac mending
+/// the roof of his house.
+///
+/// Garet trains his Psynergy, and Jenna comes by. The two speak of the storm
+/// three years ago before going to fetch Isaac. "Three years later... Isaac!
+/// Haven't you finished mending the roof yet?"
 static void Vale_MendingTheRoof(void) {
   u32 i;
   // Default: NULL until the first board is fetched.
@@ -2409,9 +2440,9 @@ static void Vale_MendingTheRoof(void) {
   Event_End();
 }
 
-/// Arriving by VALE_FROM_ROOF_MENDED after the opening, in Vale: Dora praises
-/// the mended roof, remembers Kyle, and sends Isaac, Garet and Jenna off to Mt.
-/// Aleph with Kraden. "Good job, Isaac. You patched it nicely."
+/// Arriving by VALE_FROM_ROOF_MENDED after the opening, in Vale, has Dora
+/// praise the mended roof, remember Kyle, and send Isaac, Garet and Jenna off
+/// to Mt. Aleph with Kraden. "Good job, Isaac. You patched it nicely."
 static void Vale_RoofMended(void) {
   struct Actor *leader;
   struct Actor *actor;
@@ -3102,12 +3133,17 @@ static s32 Vale_DistanceInPixels(s32 *first_position, s32 *second_position) {
   return Iwram_Sqrt(delta_x_squared + delta_y_squared + delta_z_squared);
 }
 
-/// Whether the man guarding Mt. Aleph sees the target: within range pixels and
-/// in the sixteenth of a turn he faces or the one either side of it, or always
-/// when force is set. Seeing it stops him where he stands (paused, mode 1, with
-/// riseCounter marking why) until it is out of sight again; paused without
-/// riseCounter, as Vale_SynchronizeAlephGuardPause leaves him while a menu is
-/// open, he just stands. Returns 1 when he is stopped.
+/// Whether the man guarding Mt. Aleph sees the target.
+///
+/// He sees it within range pixels and in the sixteenth of a turn he faces or
+/// the one either side of it, or always when force is set.
+///
+/// Seeing it stops him where he stands (paused, mode 1, with riseCounter
+/// marking why) until it is out of sight again. Paused without riseCounter, as
+/// Vale_SynchronizeAlephGuardPause leaves him while a menu is open, he just
+/// stands.
+///
+/// Returns 1 when he is stopped.
 static s32 Vale_TestFacing(struct Actor *actor, struct Actor *target, s32 range,
                            s32 force) {
   s32 result;
@@ -3149,7 +3185,7 @@ static s32 Vale_TestFacing(struct Actor *actor, struct Actor *target, s32 range,
   return result;
 }
 
-/// The update routine of the man guarding Mt. Aleph: while he walks, he stops
+/// The update routine of the man guarding Mt. Aleph. While he walks, he stops
 /// when the leader comes within 18 pixels in front of him (Vale_TestFacing).
 // UB: calling this s32 function through a void update routine is incompatible.
 // Plain void changes 48 to 44 bytes in tbs-en.
@@ -3174,7 +3210,7 @@ static s32 Vale_HaveGuardWatchTheLeader(struct Actor *updated) {
 #endif
 }
 
-/// The Move hand's update routine in the opening: each frame it sheds a sparkle
+/// The Move hand's update routine in the opening. Each frame it sheds a sparkle
 /// (SPRITE_SPARKLE) just below and around it, with SE_ITEM_BREAK.
 static void Vale_TrailSparkles(struct Actor *updated) {
   struct Actor *source = updated;
@@ -3366,8 +3402,8 @@ static void Vale_AdjustPillarPriorityForLeaderHeight(void) {
 
 #include "shared/actor_orbit.h"
 
-/// Someone calling up Psynergy: drawn SPRITE_COLOR_WHITE (7) for two frames in
-/// four, and the World Map's attached sparks every 16 frames.
+/// Someone calling up Psynergy. They are drawn SPRITE_COLOR_WHITE (7) for two
+/// frames in four, with the World Map's attached sparks every 16 frames.
 static void Vale_FlashActorAndSpawnEffects(struct Actor *actor) {
 
   if ((gFrameCount & 2) != 0)
@@ -3378,9 +3414,9 @@ static void Vale_FlashActorAndSpawnEffects(struct Actor *actor) {
     WorldMap_CreateAttachedEffects(actor);
 }
 
-/// Someone using Psynergy: colour modes SPRITE_COLOR_NORMAL to SPRITE_COLOR_BRG
-/// (0 to 5), the sprite and its five swaps of colour channels, in turn, and
-/// sparks every 16 frames.
+/// Someone using Psynergy. They go through colour modes SPRITE_COLOR_NORMAL to
+/// SPRITE_COLOR_BRG (0 to 5), the sprite and its five swaps of colour channels,
+/// in turn, with sparks every 16 frames.
 static void Vale_CycleActorPaletteAndSpawnEffects(struct Actor *actor) {
   if ((gFrameCount & 1) != 0)
     Actor_SetColorMode(actor, (gFrameCount >> 1) % 6);
@@ -3388,8 +3424,8 @@ static void Vale_CycleActorPaletteAndSpawnEffects(struct Actor *actor) {
     WorldMap_CreateAttachedEffects(actor);
 }
 
-/// What Psynergy moves: colour modes SPRITE_COLOR_NORMAL to SPRITE_COLOR_BRG in
-/// turn, a step every second frame.
+/// What Psynergy moves. It goes through colour modes SPRITE_COLOR_NORMAL to
+/// SPRITE_COLOR_BRG in turn, a step every second frame.
 static void Vale_CycleActorPalette(struct Actor *actor) {
   if ((gFrameCount & 1) != 0)
     Actor_SetColorMode(actor, (gFrameCount >> 1) % 6);
@@ -3570,7 +3606,7 @@ s32 gVale_UnusedWaterGrows[] = {
     SC_END,
 };
 
-/// A sparkle falls and vanishes after 10 frames; the burst's sparkles start at
+/// A sparkle falls and vanishes after 10 frames. The burst's sparkles start at
 /// its second word, past the first SC_RELEASE.
 s32 gVale_SparkleScript[] = {
     SC_RELEASE,

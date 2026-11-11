@@ -1,10 +1,12 @@
 /// @file
 /// Gondowan Passage and Gondowan Cave, the guarded bridge into Gondowan and the
 /// cave east of it, which the party crosses on the way from Tolbi to Babi
-/// Lighthouse. Three scenes share this overlay:
+/// Lighthouse.
+///
+/// Three scenes share this overlay:
 ///
 /// - Gondowan Passage (SceneId_GondowanPassage, area name Gondowan Passage):
-///   three soldiers guard the bridge, and Iodem waits there to go on to Babi
+///   three soldiers guard the bridge. Iodem waits there to go on to Babi
 ///   Lighthouse with the party once Babi has spoken to it after Colosso
 ///   (FLAG_BABI_SPOKE_AFTER_COLOSSO).
 /// - Gondowan Cave (SceneId_GondowanCave, area name Gondowan Cave): both ways
@@ -14,39 +16,46 @@
 /// - GondowanCaveRiver (SceneId_GondowanCaveRiver): the river between the
 ///   cave's two halves, with a boulder for Lift and two chests.
 ///
-/// One exit table serves every scene; the other getters choose by
-/// gMainRoutineWork.next, Gondowan Passage's actor placements and
-/// triggers also by FLAG_BABI_SPOKE_AFTER_COLOSSO, and an empty set answers any
+/// One exit table serves every scene. The other getters choose by
+/// gMainRoutineWork.next, and Gondowan Passage's actor placements and
+/// triggers also by FLAG_BABI_SPOKE_AFTER_COLOSSO. An empty set answers any
 /// other scene. Every scene's trigger table carries GondowanCaveRiver's two
 /// chests.
 ///
 /// Gondowan Passage sets FLAG_RETREAT_BLOCKED on every entry. While Iodem
 /// travels with the party (FLAG_IODEM_FOLLOWING_PARTY) his actor is kept
-/// out of sight; talking to him or walking up to him while he waits (
-/// step trigger 11) makes him come along (GondowanCave_IodemRejoins), and until
-/// he has reached Babi Lighthouse (FLAG_BABI_LIGHTHOUSE_IODEM_ARRIVED) turning
-/// back (step trigger 10) brings him out to ask why
+/// out of sight.
+///
+/// Talking to him or walking up to him while he waits (step trigger 11) makes
+/// him come along (GondowanCave_IodemRejoins). Until he has reached Babi
+/// Lighthouse (FLAG_BABI_LIGHTHOUSE_IODEM_ARRIVED), turning back
+/// (step trigger 10) brings him out to ask why
 /// (GondowanCave_IodemAsksWhyTurningBack). If he stays to wait, the saved place
 /// becomes the Tolbi Sanctum, so a defeat returns the party there.
 ///
 /// GondowanCave's way across the water is two things that float in it, and
 /// step triggers 10 and 11 jump the leader across them
-/// (GondowanCave_JumpAcross). Both are kept in story flags, so the cave stays
-/// solved and Scene_Initialize puts them back: FLAG_GONDOWAN_CAVE_STUMP_MOVED
-/// once the stump has leapt in, and FLAG_GONDOWAN_CAVE_PILLAR_DROPPED once the
-/// pillar has gone in past column 42, shown from then on by
+/// (GondowanCave_JumpAcross).
+///
+/// Both are kept in story flags, so the cave stays solved and
+/// Scene_Initialize puts them back. FLAG_GONDOWAN_CAVE_STUMP_MOVED is set
+/// once the stump has leapt in. FLAG_GONDOWAN_CAVE_PILLAR_DROPPED is set once
+/// the pillar has gone in past column 42, shown from then on by
 /// ACTOR_DROPPED_PILLAR.
 ///
 /// Cell (107, 17) of the map grid is cell (43, 17) of layout layer 2,
-/// whose window starts 64 columns in: the crevice east of the pillar,
-/// where it drops. The layout loads that cell with ground 6, as the two cells
-/// west of it; copying (108, 17) over it gives it ground 0, as its east
-/// neighbour. The drop makes that copy, and so does every arrival by
-/// GONDOWAN_CAVE_FROM_WORLD_MAP_EAST, solved or not. Nothing the player sees
-/// depends on it: in tbs-en the screen is the same either way, the leader
-/// jumps the crevice at row 17 (step triggers 10 and 11) from either side
-/// either way, and the pillar settles at the same height in each of columns
-/// 41 to 44 either way.
+/// whose window starts 64 columns in. It is the crevice east of the pillar,
+/// where it drops.
+///
+/// The layout loads that cell with ground 6, as the two cells west of it.
+/// Copying (108, 17) over it gives it ground 0, as its east neighbour. The
+/// drop makes that copy, and so does every arrival by
+/// GONDOWAN_CAVE_FROM_WORLD_MAP_EAST, solved or not.
+///
+/// Nothing the player sees depends on it. In tbs-en the screen is the same
+/// either way. The leader jumps the crevice at row 17 (step triggers 10 and
+/// 11) from either side either way, and the pillar settles at the same height
+/// in each of columns 41 to 44 either way.
 
 #include "main_routine_work.h"
 #include "heap_slots.h"
@@ -81,8 +90,10 @@
 
 /// Gondowan Passage's placed actors, numbered in the order of
 /// gGondowanPassageActorPlacements and
-/// gGondowanPassageActorPlacementsWithIodem from ACTOR_FIRST_PLACED: the
-/// soldiers who guard the bridge, and in the second table Iodem after them.
+/// gGondowanPassageActorPlacementsWithIodem from ACTOR_FIRST_PLACED.
+///
+/// They are the soldiers who guard the bridge, and in the second table Iodem
+/// after them.
 enum GondowanPassageActorId {
   /// Asks whether the party will cross into Gondowan.
   /// ★ Named from the game: "Us? We're the soldiers who guard the bridge to
@@ -121,10 +132,11 @@ enum GondowanCaveActorId {
   /// ★ Named from what the player sees: a tall tan stone pillar standing on
   /// the cave floor (its render)
   ACTOR_PILLAR,
-  /// Stands in for the pillar once it has dropped in; out of sight at first.
-  /// It is drawn in the stump's sprite, splashing in (STUMP_ANIMATION_SPLASH)
-  /// and
-  /// on later visits afloat (STUMP_ANIMATION_SINK).
+  /// Stands in for the pillar once it has dropped in.
+  ///
+  /// It is out of sight at first. It is drawn in the stump's sprite, splashing
+  /// in (STUMP_ANIMATION_SPLASH) and on later visits afloat
+  /// (STUMP_ANIMATION_SINK).
   /// ★ Named from what the player sees: the pillar's top in the water, after
   /// the splash it drops in with (its render)
   ACTOR_DROPPED_PILLAR,
@@ -132,10 +144,11 @@ enum GondowanCaveActorId {
   /// ★ Named from what the player sees: a round boulder in the cave passage,
   /// which floats up under Lift (its render)
   ACTOR_BOULDER,
-  /// An invisible actor (SPRITE_BLANK, its shadow turned off) 16 pixels
-  /// west
-  /// of the boulder. It fills the gap between the boulder and the passage's
-  /// west wall, so the boulder blocks the passage until Lift takes both away
+  /// An invisible actor (SPRITE_BLANK, its shadow turned off) 16 pixels west
+  /// of the boulder.
+  ///
+  /// It fills the gap between the boulder and the passage's west wall, so the
+  /// boulder blocks the passage until Lift takes both away
   /// (https://alchemy.pascalpixel.com/places/gondowan-cave/map-4.png shows
   /// the gap).
   /// ★ Named from what the player sees: the open-looking gap between the
@@ -219,8 +232,11 @@ const struct Trigger *Scene_GetTriggers(void) {
 
 /// Turning back in Gondowan Passage (step trigger 10) with Iodem in the party,
 /// until he has reached Babi Lighthouse: he steps out and asks why Isaac is
-/// going back. Yes: he waits here for the party's return. No: he rejoins the
-/// party and Isaac steps away from the step trigger.
+/// going back.
+///
+/// Yes: he waits here for the party's return.
+///
+/// No: he rejoins the party and Isaac steps away from the step trigger.
 static void GondowanCave_IodemAsksWhyTurningBack(void) {
   struct Actor *leader;
 
@@ -276,10 +292,12 @@ static void GondowanCave_IodemAsksWhyTurningBack(void) {
   }
 }
 
-/// Iodem comes along with the party from Gondowan Passage, where he waits. He
-/// comes along when he's talked to, or walked up to (step trigger 11) while he
-/// isn't with the party. `I've been waiting for you, Isaac! We should go to
-/// Babi Lighthouse soon.`
+/// Iodem comes along with the party from Gondowan Passage, where he waits.
+///
+/// He comes along when he's talked to, or walked up to (step trigger 11) while
+/// he isn't with the party.
+///
+/// `I've been waiting for you, Isaac! We should go to Babi Lighthouse soon.`
 static void GondowanCave_IodemRejoins(void) {
   Event_Start();
   Actor_FaceActor(ACTOR_IODEM, ACTOR_PARTY_LEADER, 0);
@@ -306,10 +324,14 @@ static void GondowanCave_IodemRejoins(void) {
 }
 
 /// Talking to the first soldier in Gondowan Passage before Babi has spoken
-/// after Colosso: he asks whether the party will cross into Gondowan. `Do you
-/// wish to cross into Gondowan?` Yes: `I won't stop you, but I wouldn't go
-/// unless I had business there.`, with advice to watch Colosso until it is
-/// over. No: `That's a good idea. They wouldn't let you into Babi Lighthouse,
+/// after Colosso: he asks whether the party will cross into Gondowan.
+///
+/// `Do you wish to cross into Gondowan?`
+///
+/// Yes: `I won't stop you, but I wouldn't go unless I had business there.`,
+/// with advice to watch Colosso until it is over.
+///
+/// No: `That's a good idea. They wouldn't let you into Babi Lighthouse,
 /// anyway.`
 static void GondowanCave_SoldierAsksAboutCrossing(void) {
   s32 firstMessage;
@@ -334,9 +356,11 @@ static void GondowanCave_SoldierAsksAboutCrossing(void) {
 }
 
 /// Mind Read on the second soldier in Gondowan Passage, before Babi has
-/// spoken after Colosso: once Colosso is over (FLAG_COLOSSO_OVER) he grumbles
-/// that guard duty made him miss all of it; before, that the warriors fight
-/// while he guards the bridge.
+/// spoken after Colosso: he grumbles about guard duty.
+///
+/// Once Colosso is over (FLAG_COLOSSO_OVER) he grumbles that guard duty made
+/// him miss all of it. Before, he grumbles that the warriors fight while he
+/// guards the bridge.
 static void GondowanCave_ReadSoldierMind(void) {
   if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0 &&
       GameFlag_Get(FLAG_BABI_SPOKE_AFTER_COLOSSO) == 0)
@@ -347,9 +371,10 @@ static void GondowanCave_ReadSoldierMind(void) {
 }
 
 /// Leaving GondowanCave by GONDOWAN_CAVE_TO_WORLD_MAP_EAST (exit 1),
-/// out to the World Map. With FLAG_SCENE_TEMP_04 set, which nothing in the
-/// game sets, three unnamed flags and the pillar's are first put into one
-/// arrangement.
+/// out to the World Map.
+///
+/// With FLAG_SCENE_TEMP_04 set, which nothing in the game sets, three unnamed
+/// flags and the pillar's are first put into one arrangement.
 static void GondowanCave_LeaveToWorldMapEast(void) {
   struct FieldWork *work;
 
@@ -372,12 +397,16 @@ static void GondowanCave_LeaveToWorldMapEast(void) {
 }
 
 /// Walking west or east into step triggers 10 and 11 in GondowanCave: the
-/// leader jumps two cells forward where the map allows (Field_TryJumpForward),
-/// across the stump and the pillar once they float in the water.
+/// leader jumps two cells forward where the map allows (Field_TryJumpForward).
+///
+/// That takes him across the stump and the pillar once they float in the
+/// water.
 static void GondowanCave_JumpAcross(void) { Field_TryJumpForward(); }
 
-/// Move on the stump in GondowanCave, until it has leapt: from column 30 or
-/// less it spins and leaps into the water, freeing the cell where it stood.
+/// Move on the stump in GondowanCave, until it has leapt.
+///
+/// From column 30 or less it spins and leaps into the water, freeing the cell
+/// where it stood.
 static void GondowanCave_MoveStump(void) {
   Actor_Get(ACTOR_STUMP);
   Event_Start();
@@ -511,9 +540,11 @@ static void GondowanCave_LiftBoulder(void) {
   Actor_SetPosition(ACTOR_BOULDER_GAP, 0, 0);
 }
 
-/// Sets up the scene as the party enters. Gondowan Passage blocks Retreat and
-/// keeps Iodem out of sight while he travels with the party; Gondowan Cave's
-/// GondowanCave puts the stump and the pillar where the party left them.
+/// Sets up the scene as the party enters.
+///
+/// Gondowan Passage blocks Retreat and keeps Iodem out of sight while he
+/// travels with the party. Gondowan Cave's GondowanCave puts the stump and the
+/// pillar where the party left them.
 s32 Scene_Initialize(void) {
   struct Actor *actor;
 
@@ -559,6 +590,7 @@ s32 gFieldEffect_LongScript[] = {
 };
 
 /// Packs signed pixel steps with X in the upper halfword and Z in the lower.
+///
 /// Shift the unsigned representation so westward steps remain defined C.
 #define DIRECTION_STEP(dx, dz) (((u32)(dx) << 16) | ((dz) & 0xffff))
 

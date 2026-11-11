@@ -1,7 +1,9 @@
 /// @file
 /// Timber rooms A (SceneId_TimberRoomsA), a sheet of rooms drawn in timber, all
-/// of them inside Suhalla's buildings, whose rooms are told apart by the
-/// entrance the party arrives at, and whose area name follows it:
+/// of them inside Suhalla's buildings.
+///
+/// Its rooms are told apart by the entrance the party arrives at, and its
+/// area name follows it:
 ///
 /// - Suhalla: the houses, the shop and the inn behind the village's doors,
 ///   whose exits from the village (SUHALLA_TO_INN, SUHALLA_TO_HOUSE_WEST,
@@ -12,22 +14,29 @@
 ///   with TIMBER_ROOMS_A_SANCTUM_NORTH as its second entrance.
 ///
 /// The rooms' people and talk come in two sets, each an actor placement
-/// table and a trigger table, chosen by FLAG_BABI_SPOKE_AFTER_COLOSSO. Before
-/// Babi's audience after Colosso the village talks of Lalivero across the Nol
-/// River, out of reach under Tolbi's rule; after it, two of the soldiers who
-/// were escorting Sheba home lie wounded in a house, travelers the sandstorms
-/// blew back fill the inn, and an old woman half remembers a saying about the
-/// death storms. The two tables agree up to ACTOR_HEALER; the travelers stand
-/// off the map until the audience.
+/// table and a trigger table, chosen by FLAG_BABI_SPOKE_AFTER_COLOSSO.
+///
+/// Before Babi's audience after Colosso the village talks of Lalivero across
+/// the Nol River, out of reach under Tolbi's rule.
+///
+/// After it, two of the soldiers who were escorting Sheba home lie wounded in
+/// a house. Travelers the sandstorms blew back fill the inn, and an old woman
+/// half remembers a saying about the death storms.
+///
+/// The two tables agree up to ACTOR_HEALER. The travelers stand off the map
+/// until the audience.
 ///
 /// Stepping into the wounded soldiers' house (the step trigger on cell
 /// behavior 50) plays TimberRoomsA_IodemQuestionsWoundedSoldiers once, while
 /// Iodem travels with the party and has not yet reached Babi Lighthouse. It
 /// sets FLAG_IODEM_MET_WOUNDED_SOLDIERS either way, which Iodem's lines in the
-/// Suhalla Desert and at Suhalla Gate read. The merchant, the innkeeper and
-/// the Healer serve a leader who faces north across their counters, and
-/// otherwise talk by the same flag. Searching the ovens finds a Smoke Bomb
-/// once (FLAG_TIMBER_ROOMS_A_OVEN_SMOKE_BOMB) and shows what is cooking.
+/// Suhalla Desert and at Suhalla Gate read.
+///
+/// The merchant, the innkeeper and the Healer serve a leader who faces north
+/// across their counters, and otherwise talk by the same flag.
+///
+/// Searching the ovens finds a Smoke Bomb once
+/// (FLAG_TIMBER_ROOMS_A_OVEN_SMOKE_BOMB) and shows what is cooking.
 ///
 /// Unused: the cactus steak line at the Smoke Bomb's oven, whose item row
 /// always answers first, and the entrance
@@ -50,36 +59,41 @@
 #include "sounds.h"
 #include "scene.h"
 
-/// The actors, numbering the rows of
-/// gTimberRoomsAActorPlacements and of
-/// gTimberRoomsAActorPlacementsAfterAudience from
-/// ACTOR_FIRST_PLACED; the two tables agree up to ACTOR_HEALER. Where an
-/// actor's talk changes after Babi's audience, the note quotes it
-/// before.
+/// The actors, numbering the rows of gTimberRoomsAActorPlacements and of
+/// gTimberRoomsAActorPlacementsAfterAudience from ACTOR_FIRST_PLACED.
+///
+/// The two tables agree up to ACTOR_HEALER. Where an actor's talk changes
+/// after Babi's audience, the note quotes it before.
 enum TimberRoomsAActorId {
   /// A little girl with orange pigtails (SPRITE_GIRL_WITH_PIGTAILS), the
-  /// daughter of the man who aids anyone in trouble. "My father loves people
-  /// so much, he can't help but aid anyone in trouble."
+  /// daughter of the man who aids anyone in trouble.
+  ///
+  /// She says "My father loves people so much, he can't help but aid anyone
+  /// in trouble."
   /// ★ Named from the game: "I guess I'm just my father's child!"
   /// (MsgSuhallaInteriorsWhenISeePeopleInTrouble)
   ACTOR_FATHERS_DAUGHTER = ACTOR_FIRST_PLACED,
   /// The man who aids anyone in trouble, a man with brown hair
   /// (SPRITE_YOUNG_MAN_WITH_BROWN_HAIR), in whose house the wounded soldiers
-  /// lie after the audience. "Let me know if you have any problems. I'll do
-  /// anything I can to help."
+  /// lie after the audience.
+  ///
+  /// He says "Let me know if you have any problems. I'll do anything I can to
+  /// help."
   /// ★ Named from the game: "I want to help people so badly, I can't sit idly
   /// by!" (MsgSuhallaInteriorsIWantToHelpPeopleSo)
   ACTOR_FATHER_WHO_WANTS_TO_HELP,
-  /// A bent old man with a cane (SPRITE_OLD_MAN_WITH_CANE). After the
-  /// audience: "Do not approach the large cyclones in the middle of the
-  /// Suhalla."
+  /// A bent old man with a cane (SPRITE_OLD_MAN_WITH_CANE).
+  ///
+  /// After the audience he says "Do not approach the large cyclones in the
+  /// middle of the Suhalla."
   /// ★ Named from the game: "Tolbi probably ignores small villages like
   /// Suhalla" (MsgSuhallaInteriorsTolbiProbablyIgnoresSmallVillagesLike)
   ACTOR_OLD_MAN_IGNORED_BY_TOLBI,
-  /// In the old woman's sprite (SPRITE_OLD_WOMAN, as in vale_plaza.c). "If you
-  /// head east across
-  /// Suhalla, Lalivero is so close you can see it across the Nol River..."
-  /// After the audience she half remembers a saying about the death storms.
+  /// In the old woman's sprite (SPRITE_OLD_WOMAN, as in vale_plaza.c).
+  ///
+  /// She says "If you head east across Suhalla, Lalivero is so close you can
+  /// see it across the Nol River..." After the audience she half remembers a
+  /// saying about the death storms.
   /// ★ Named from what the player sees: a white-haired old woman in a dark
   /// dress (its render)
   ACTOR_OLD_WOMAN,
@@ -96,10 +110,10 @@ enum TimberRoomsAActorId {
   /// ★ Named from the game: "I wonder if any customers can get through those
   /// sandstorms..." (MsgSuhallaInteriorsIWonderIfAnyCustomersCan)
   ACTOR_INN_WOMAN,
-  /// Travelers the sandstorms blew back, out of sight until the audience: two
-  /// stocky strong men (SPRITE_STRONGMAN). "We
-  /// went into the Suhalla to go build the lighthouse, but the storms caught
-  /// us."
+  /// Travelers the sandstorms blew back, out of sight until the audience.
+  ///
+  /// They are two stocky strong men (SPRITE_STRONGMAN). This one says "We went
+  /// into the Suhalla to go build the lighthouse, but the storms caught us."
   /// ★ Named from the game: "We went into the Suhalla to go build the
   /// lighthouse" (MsgSuhallaInteriorsWeWentIntoTheSuhallaTo)
   ACTOR_LIGHTHOUSE_WORKER,
@@ -148,10 +162,11 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gTimberRoomsAActorPlacements;
 }
 
-/// Suhalla's merchant. Spoken to facing north, across the counter, the
-/// merchant opens the shop; otherwise says Suhalla's is the only store, or,
-/// after Babi's audience, asks whether the party is surprised to find so few
-/// shops.
+/// Suhalla's merchant.
+///
+/// Spoken to facing north, across the counter, the merchant opens the shop.
+/// Otherwise the merchant says Suhalla's is the only store, or, after Babi's
+/// audience, asks whether the party is surprised to find so few shops.
 static void TimberRoomsA_TalkToMerchant(s32 actorId) {
   u16 facing =
       (Actor_Get(ACTOR_PARTY_LEADER)->facing + TRIG_TURN / 8) & ~0x3fff;
@@ -176,9 +191,11 @@ static void TimberRoomsA_TalkToMerchant(s32 actorId) {
   }
 }
 
-/// Suhalla's innkeeper. Spoken to facing north, across the counter, the
-/// innkeeper offers a room; otherwise has nothing to do until Tolbi's festival
-/// ends, or, after Babi's audience, has been busy since the sandstorms began.
+/// Suhalla's innkeeper.
+///
+/// Spoken to facing north, across the counter, the innkeeper offers a room.
+/// Otherwise the innkeeper has nothing to do until Tolbi's festival ends, or,
+/// after Babi's audience, has been busy since the sandstorms began.
 static void TimberRoomsA_TalkToInnkeeper(s32 actorId) {
   u16 facing =
       (Actor_Get(ACTOR_PARTY_LEADER)->facing + TRIG_TURN / 8) & ~0x3fff;
@@ -195,9 +212,11 @@ static void TimberRoomsA_TalkToInnkeeper(s32 actorId) {
   }
 }
 
-/// Suhalla Sanctum's Healer. Spoken to facing north, across the counter, the
-/// Healer offers the sanctum's services; otherwise talks of Lalivero under
-/// Tolbi's rule, or, after Babi's audience, wonders why there are so many
+/// Suhalla Sanctum's Healer.
+///
+/// Spoken to facing north, across the counter, the Healer offers the
+/// sanctum's services. Otherwise the Healer talks of Lalivero under Tolbi's
+/// rule, or, after Babi's audience, wonders why there are so many
 /// sandstorms.
 static void TimberRoomsA_TalkToHealer(s32 actorId) {
   u16 facing =
@@ -216,10 +235,14 @@ static void TimberRoomsA_TalkToHealer(s32 actorId) {
 }
 
 /// A traveler the storms blew back asks whether the party was blown here too.
+///
 /// That's in Suhalla after Babi's audience, and the question is whether the
-/// party was on the way to Babi Lighthouse: yes, and the traveler means to give
-/// up and follow the northern mountain back to Tolbi; no, and tells of setting
-/// out to open a business at the lighthouse.
+/// party was on the way to Babi Lighthouse.
+///
+/// - Yes, and the traveler means to give up and follow the northern mountain
+///   back to Tolbi.
+/// - No, and the traveler tells of setting out to open a business at the
+///   lighthouse.
 static void TimberRoomsA_AskIfBlownHere(s32 actorId) {
   s32 question = MsgSuhallaSupposeFolkBlown;
   Event_SetMessageId(question);
@@ -234,8 +257,10 @@ static void TimberRoomsA_AskIfBlownHere(s32 actorId) {
   Event_ShowMessage(actorId, 0);
 }
 
-/// The doors of Suhalla and Suhalla Sanctum, and the doors between the inn and
-/// its guest rooms: the party leaves by the touched exit.
+/// The party leaves by the touched exit.
+///
+/// This serves the doors of Suhalla and Suhalla Sanctum, and the doors between
+/// the inn and its guest rooms.
 static void TimberRoomsA_LeaveByExit(void) {
   struct FieldWork *state = gFieldWork;
   s16 *touchedTrigger = (s16 *)&state->stepTrigger;
@@ -244,15 +269,23 @@ static void TimberRoomsA_LeaveByExit(void) {
   Sound_Play(SE_MAP_EXIT);
 }
 
-/// In Suhalla after Babi's audience, stepping into the house where the two
-/// wounded soldiers lie (cell behavior 50), once: Iodem steps out of the
-/// party and questions them. "Iodem..." They were escorting Sheba to Lalivero
-/// when a sandstorm hit them, and tell of others who stopped the cyclones with
-/// water and slew the monsters causing them. Iodem asks whether these are the
-/// ones the party follows, resolves either way to search the desert for Sheba
-/// and pursue them, and rejoins the party. Sets
-/// FLAG_IODEM_MET_WOUNDED_SOLDIERS either way; once Iodem has reached Babi
-/// Lighthouse (FLAG_BABI_LIGHTHOUSE_IODEM_ARRIVED), the event does not play.
+/// In Suhalla after Babi's audience, Iodem steps out of the party and
+/// questions the two wounded soldiers.
+///
+/// It plays once, on stepping into the house where they lie (cell behavior
+/// 50).
+///
+/// - A soldier says "Iodem..."
+/// - They were escorting Sheba to Lalivero when a sandstorm hit them.
+/// - They tell of others who stopped the cyclones with water and slew the
+///   monsters causing them.
+/// - Iodem asks whether these are the ones the party follows.
+/// - Either way he resolves to search the desert for Sheba and pursue them,
+///   and rejoins the party.
+///
+/// Sets FLAG_IODEM_MET_WOUNDED_SOLDIERS either way. Once Iodem has reached
+/// Babi Lighthouse (FLAG_BABI_LIGHTHOUSE_IODEM_ARRIVED), the event does not
+/// play.
 static void TimberRoomsA_IodemQuestionsWoundedSoldiers(void) {
   struct Actor *leader;
   GameFlag_Set(FLAG_IODEM_MET_WOUNDED_SOLDIERS);
@@ -569,10 +602,12 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gTimberRoomsATriggers;
 }
 
-/// Sets Suhalla's buildings up as the party enters: the merchant and
-/// innkeeper behind their counters, and the two wounded soldiers lying in their
-/// beds. TIMBER_ROOMS_A_AFTER_BABI_SPOKE sets
-/// FLAG_BABI_SPOKE_AFTER_COLOSSO.
+/// Sets Suhalla's buildings up as the party enters.
+///
+/// It puts the merchant and innkeeper behind their counters, and the two
+/// wounded soldiers lying in their beds.
+///
+/// TIMBER_ROOMS_A_AFTER_BABI_SPOKE sets FLAG_BABI_SPOKE_AFTER_COLOSSO.
 s32 Scene_Initialize(void) {
   struct Actor *actor;
   if (gMainRoutineWork.entrance == TIMBER_ROOMS_A_AFTER_BABI_SPOKE)

@@ -1,39 +1,41 @@
 /// @file
 /// Lighthouse Aerie (SceneId_VenusLighthouseAerie), the top of Venus Lighthouse
-/// and the only scene of this overlay: one chain of events cut by two battles
-/// and two trips to the World Map. Each part starts in
-/// VenusLighthouseAerie_Initialize from the entrance the part before
-/// sent the party to, and every arrival blocks Retreat and sets
-/// FLAG_VENUS_LIGHTHOUSE_LIT. The parts, in the order the entrances
-/// chain them:
+/// and the only scene of this overlay.
+///
+/// What happens here is one chain of events cut by two battles and two trips
+/// to the World Map. Each part starts in VenusLighthouseAerie_Initialize from
+/// the entrance the part before sent the party to. Every arrival blocks
+/// Retreat and sets FLAG_VENUS_LIGHTHOUSE_LIT.
+///
+/// The parts, in the order the entrances chain them:
 /// - The arrival (VENUS_LIGHTHOUSE_AERIE_FROM_VENUS_LIGHTHOUSE_FOURTH_FLOOR,
-///   VenusLighthouseAerie_OverhearSaturosAndMenardi): a platform carries the
+///   VenusLighthouseAerie_OverhearSaturosAndMenardi). A platform carries the
 ///   leader up and a conversation plays, with one yes-or-no question that
 ///   changes only the reply.
 /// - Six floating platforms lie between the party and the beacon
 ///   (CELL_BEHAVIOR_VENUS_LIGHTHOUSE_AERIE_PLATFORM,
-///   CELL_BEHAVIOR_VENUS_LIGHTHOUSE_AERIE_FLOOR_BY_PLATFORMS): the leader jumps
-///   from one to the next, and each stops bobbing and dips under him as he
-///   lands (FLAG_VENUS_AERIE_ON_PLATFORM while he stands on one).
+///   CELL_BEHAVIOR_VENUS_LIGHTHOUSE_AERIE_FLOOR_BY_PLATFORMS). The leader
+///   jumps from one to the next, and each stops bobbing and dips under him as
+///   he lands. FLAG_VENUS_AERIE_ON_PLATFORM is set while he stands on one.
 /// - The confrontation (CELL_BEHAVIOR_VENUS_LIGHTHOUSE_AERIE_BEFORE_BEACON,
-///   VenusLighthouseAerie_ConfrontSaturosAndMenardi): the Shaman's Rod is
+///   VenusLighthouseAerie_ConfrontSaturosAndMenardi). The Shaman's Rod is
 ///   handed over, remembered in FLAG_SHAMANS_ROD_HOLDER plus the party member
-///   who carried it, and the first battle follows (ENCOUNTER_ZONE_SCRIPTED,
+///   who carried it. The first battle follows (ENCOUNTER_ZONE_SCRIPTED,
 ///   slot 1, FLAG_AERIE_FIRST_BATTLE_BEGUN).
 /// - After it (VENUS_LIGHTHOUSE_AERIE_AFTER_FIRST_BATTLE,
-///   VenusLighthouseAerie_CombineSaturosAndMenardi): Saturos throws the Venus
+///   VenusLighthouseAerie_CombineSaturosAndMenardi). Saturos throws the Venus
 ///   Star into the beacon (ACTOR_VENUS_STAR_SHADOW), Felix and Sheba leave,
 ///   and Saturos and Menardi fuse. Party_RestorePpOfLitElements refills the PP
 ///   of the party's Adepts whose lighthouses are lit, and the second battle
 ///   follows (slot 0, FLAG_AERIE_SECOND_BATTLE_BEGUN).
 /// - After that (VENUS_LIGHTHOUSE_AERIE_AFTER_SECOND_BATTLE,
-///   VenusLighthouseAerie_FinishSaturosAndMenardiBattle): Saturos and Menardi
-///   fall into the lighthouse, and the beacon erupts: its beam
+///   VenusLighthouseAerie_FinishSaturosAndMenardiBattle). Saturos and Menardi
+///   fall into the lighthouse, and the beacon erupts. Its beam
 ///   (ACTOR_BEAM_BOTTOM to ACTOR_BEAM_TOP) rises, the aerie splits and its
-///   statues move apart, and the light lifts the party away to the World Map's
+///   statues move apart. The light lifts the party away to the World Map's
 ///   lighthouse transition (WORLD_MAP_AFTER_VENUS_LIGHTHOUSE_LIT). The beam's
 ///   five segments are sprites stacked over the beacon, with particles rising
-///   round them, and the split is drawn by copying the map grid's cells
+///   round them. The split is drawn by copying the map grid's cells
 ///   (MapGrid_CopyCellsTo in VenusLighthouseAerie_EruptBeacon)
 ///   (https://alchemy.pascalpixel.com/places/venus-lighthouse-aerie/eruption.gif:
 ///   eight seconds from just before the segments stack, each numbered 1 to 5
@@ -42,12 +44,12 @@
 ///   five and a half seconds in, pulled apart into its layers, the sky at the
 ///   back, BG2, BG1 and BG0, and the sprites in front).
 /// - A look back (VENUS_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT,
-///   VenusLighthouseAerie_ShowShebaInDanger): Sheba hangs from the broken
+///   VenusLighthouseAerie_ShowShebaInDanger). Sheba hangs from the broken
 ///   aerie, and VENUS_LIGHTHOUSE_AERIE_TO_WORLD_MAP returns to the World Map
 ///   (WORLD_MAP_BEFORE_SHEBAS_FALL) with its music kept.
 /// - Sheba's fall (VENUS_LIGHTHOUSE_AERIE_FROM_WORLD_MAP,
-///   VenusLighthouseAerie_StageShebasFall): Sheba and Felix fall, and the party
-///   is taken to Lalivero (VENUS_LIGHTHOUSE_AERIE_TO_TIMBER_ROOMS_C)
+///   VenusLighthouseAerie_StageShebasFall). Sheba and Felix fall, and the
+///   party is taken to Lalivero (VENUS_LIGHTHOUSE_AERIE_TO_TIMBER_ROOMS_C)
 ///   with FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED set.
 ///
 /// A lost battle returns to VENUS_LIGHTHOUSE_AERIE_AFTER_DEFEAT, which gives
@@ -117,14 +119,17 @@
 // their own.
 
 /// Plus the party member (0 to 3) who carried the Shaman's Rod when it was
-/// handed over before the aerie's first battle; a defeat gives it back.
+/// handed over before the aerie's first battle. A defeat gives it back.
 /// ★ Named from the game: "Shaman's Rod" (MsgItemName)
 #define FLAG_SHAMANS_ROD_HOLDER 0x345
 
-/// Area flags that choose the aerie's field music after each battle, by
-/// the scene's field music rules (gScene_MusicRules,
-/// field/scene_rules.s): MUS_SILENCE before the first battle, MUS_BABI once
-/// the first has begun and MUS_ELEMENTAL_STARS once the second has.
+/// Area flags that choose the aerie's field music after each battle.
+///
+/// They work by the scene's field music rules (gScene_MusicRules,
+/// field/scene_rules.s). The music is MUS_SILENCE before the first battle,
+/// MUS_BABI once the first has begun and MUS_ELEMENTAL_STARS once the second
+/// has.
+///
 /// VenusLighthouseFirstFloor and VenusLighthouseFourthFloor, in the same
 /// area, keep their Psynergy Stones in the same two flags, which no one goes
 /// back down to see.
@@ -175,9 +180,11 @@ enum VenusLighthouseAerieCellBehavior {
 /// mode (Actor_ConfigureSpriteColor).
 enum { CHILD_VALUE_BLINK = 0x100 };
 
-/// Animations the aerie plays by number beyond enum ActorAnimation, from
-/// each sprite's animation table (graphics/sprite/spr_<number>.tsv; the party's
-/// through their animation lists).
+/// Animations the aerie plays by number beyond enum ActorAnimation.
+///
+/// They come from each sprite's animation table
+/// (graphics/sprite/spr_<number>.tsv). The party's are reached through their
+/// animation lists.
 enum {
   /// Saturos standing, two pictures alternating at long intervals
   /// (spr_032.tsv).
@@ -328,8 +335,8 @@ const struct ActorPlacement *VenusLighthouseAerie_GetActorPlacements(void) {
 /// air between the lighthouse and the towers beside it (its render)
 #define FLAG_VENUS_AERIE_ON_PLATFORM FLAG_SCENE_TEMP_50
 
-/// Walking off the edge of a platform: if the ground two cells ahead is clear,
-/// the leader jumps across to it.
+/// Walking off the edge of a platform makes the leader jump across, if the
+/// ground two cells ahead is clear.
 static void VenusLighthouseAerie_JumpToNextPlatform(void) {
   struct Actor *actor;
   union {
@@ -365,7 +372,8 @@ static void VenusLighthouseAerie_JumpToNextPlatform(void) {
   }
 }
 
-/// Landing on a platform: it dips under the leader and springs back up.
+/// Landing on a platform makes it dip under the leader and spring back up.
+///
 /// FLAG_VENUS_AERIE_ON_PLATFORM is set while the leader stands on a platform,
 /// so this runs once per landing.
 static void VenusLighthouseAerie_LandOnPlatform(void) {
@@ -406,9 +414,12 @@ static void VenusLighthouseAerie_LandOnPlatform(void) {
   Event_End();
 }
 
-/// Stepping back onto the floor, and before each jump: the leader walks and
-/// falls normally again, and all six platforms float, bobbing, as they do
-/// until the leader lands on one (VenusLighthouseAerie_LandOnPlatform).
+/// Stepping back onto the floor, and before each jump, sets the platforms
+/// floating again.
+///
+/// The leader walks and falls normally again. All six platforms float,
+/// bobbing, as they do until the leader lands on one
+/// (VenusLighthouseAerie_LandOnPlatform).
 static void VenusLighthouseAerie_FloatPlatforms(void) {
   s32 flags;
 
@@ -429,10 +440,12 @@ const struct Trigger *VenusLighthouseAerie_GetTriggers(void) {
 }
 
 /// Sets up the beacon's statues and the six platforms.
-/// It then runs the part of the event the entrance selects (the
-/// arrival only when not back from a battle), or, after a lost battle, gives
-/// back the Shaman's Rod and leaves for Lalivero Sanctum. Back from a battle,
-/// the platform nearest the leader stands still.
+///
+/// It then runs the part of the event the entrance selects. The arrival runs
+/// only when not back from a battle. After a lost battle it instead gives
+/// back the Shaman's Rod and leaves for Lalivero Sanctum.
+///
+/// Back from a battle, the platform nearest the leader stands still.
 s32 VenusLighthouseAerie_Initialize(void) {
   s32 mirroredScale;
   u32 platformId;
@@ -821,14 +834,19 @@ static void VenusLighthouseAerie_ShowPartyMember(s32 actorId, s32 shown) {
   }
 }
 
-/// Walking up to Saturos and Menardi
-/// (CELL_BEHAVIOR_VENUS_LIGHTHOUSE_AERIE_BEFORE_BEACON): Felix refuses to be
-/// rescued, Sheba reads the party's minds for the rod that reaches Jupiter
-/// Lighthouse, they promise not to harm her for the Shaman's Rod, Felix carries
-/// it over, they will not let her go, and the first battle begins. It sets
-/// FLAG_SHAMANS_ROD_HOLDER plus the party member who carried the rod, and
-/// FLAG_AERIE_FIRST_BATTLE_BEGUN as the battle starts, which changes the
-/// aerie's music.
+/// Walking up to Saturos and Menardi starts the confrontation
+/// (CELL_BEHAVIOR_VENUS_LIGHTHOUSE_AERIE_BEFORE_BEACON).
+///
+/// - Felix refuses to be rescued.
+/// - Sheba reads the party's minds for the rod that reaches Jupiter
+///   Lighthouse.
+/// - They promise not to harm her for the Shaman's Rod.
+/// - Felix carries it over.
+/// - They will not let her go, and the first battle begins.
+///
+/// It sets FLAG_SHAMANS_ROD_HOLDER plus the party member who carried the rod.
+/// It sets FLAG_AERIE_FIRST_BATTLE_BEGUN as the battle starts, which changes
+/// the aerie's music.
 static void VenusLighthouseAerie_ConfrontSaturosAndMenardi(void) {
   s32 rodHolder;
   struct Actor *actor;
@@ -1353,12 +1371,17 @@ static inline void VenusLighthouseAerie_ShowGroupEmote(s32 emote,
   Actor_ShowEmote(ACTOR_MIA, emote, waitFrames);
 }
 
-/// Back from the first battle (VENUS_LIGHTHOUSE_AERIE_AFTER_FIRST_BATTLE):
-/// Felix will still have the beacons lit, Saturos throws the Venus Star into
-/// the lighthouse, its light restores Saturos and Menardi, Felix leaves with
-/// Sheba, and the two fuse. Refills the PP of the party's Adepts whose
-/// lighthouses are lit, starts the second battle and sets
-/// FLAG_AERIE_SECOND_BATTLE_BEGUN, which changes the aerie's music.
+/// Back from the first battle, Saturos and Menardi fuse
+/// (VENUS_LIGHTHOUSE_AERIE_AFTER_FIRST_BATTLE).
+///
+/// - Felix will still have the beacons lit.
+/// - Saturos throws the Venus Star into the lighthouse.
+/// - Its light restores Saturos and Menardi.
+/// - Felix leaves with Sheba, and the two fuse.
+///
+/// It refills the PP of the party's Adepts whose lighthouses are lit, starts
+/// the second battle and sets FLAG_AERIE_SECOND_BATTLE_BEGUN, which changes
+/// the aerie's music.
 static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   struct EffectOptions menardiBurst;
   s32 velocity[3];
@@ -2056,10 +2079,13 @@ static void VenusLighthouseAerie_FinishSaturosAndMenardiBattle(void) {
   Event_End();
 }
 
-/// A look back from the World Map (VENUS_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT,
-/// after the World Map's lighthouse transition): Felix cries out as Sheba
-/// clings to the broken aerie, then the World Map returns with its music still
-/// playing (VENUS_LIGHTHOUSE_AERIE_TO_WORLD_MAP).
+/// A look back from the World Map shows Sheba in danger
+/// (VENUS_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT, after the World Map's lighthouse
+/// transition).
+///
+/// Felix cries out as Sheba clings to the broken aerie. Then the World Map
+/// returns with its music still playing
+/// (VENUS_LIGHTHOUSE_AERIE_TO_WORLD_MAP).
 static void VenusLighthouseAerie_ShowShebaInDanger(void) {
   Event_Start();
   VenusLighthouseAerie_RestorePartyOnBrokenAerie();
@@ -2075,10 +2101,11 @@ static void VenusLighthouseAerie_ShowShebaInDanger(void) {
   Event_End();
 }
 
-/// Back from the World Map (VENUS_LIGHTHOUSE_AERIE_FROM_WORLD_MAP): stages the
-/// broken aerie for Sheba's fall and the party's escape, plays them, sets
-/// FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED and leaves for Lalivero
-/// (VENUS_LIGHTHOUSE_AERIE_TO_TIMBER_ROOMS_C).
+/// Back from the World Map, stages the broken aerie for Sheba's fall and the
+/// party's escape (VENUS_LIGHTHOUSE_AERIE_FROM_WORLD_MAP).
+///
+/// It plays them, sets FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED and leaves for
+/// Lalivero (VENUS_LIGHTHOUSE_AERIE_TO_TIMBER_ROOMS_C).
 static void VenusLighthouseAerie_StageShebasFall(void) {
   struct Actor *leader;
   struct Actor *actor;
@@ -2692,9 +2719,10 @@ static void VenusLighthouseAerie_TryToPreventFall(void) {
   VenusLighthouseAerie_ShowMessage(ACTOR_SHEBA);
 }
 
-/// Shows Sheba falling, Felix jumping after her and the party escaping: it
-/// resolves to find Jenna and the others at Idejima, and a long search finds
-/// no sign of Jenna.
+/// Shows Sheba falling, Felix jumping after her and the party escaping.
+///
+/// The party resolves to find Jenna and the others at Idejima, and a long
+/// search finds no sign of Jenna.
 static void VenusLighthouseAerie_PlayShebasFall(void) {
   struct Actor *actor;
   s32 stepPending;

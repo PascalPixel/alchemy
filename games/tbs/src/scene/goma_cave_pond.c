@@ -3,17 +3,21 @@
 /// and a stump, in the cave in the Goma Range that the mayor of Vault tells the
 /// party to pass through on the way to Bilibin.
 ///
-/// The room is reached only from the room above (goma_cave_pillar.c): its
+/// The room is reached only from the room above (goma_cave_pillar.c). Its
 /// three exits lead back up to that room's
 /// GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_POND_WEST, _SOUTH and _EAST. It has no
-/// triggers of its own. Its one placed actor is the stump the party
-/// pushes over the edge up there with Move: once it has fallen
-/// (FLAG_GOMA_CAVE_STUMP_FELL), entering finds it sunk in the pond until only
-/// its top shows (STUMP_ANIMATION_SINK), drawn underfoot with no collision
-/// flags. The five by five cells around it, open water in the room's render
-/// (places/goma-cave-pond/map-1.png), are replaced by a copy that adds
-/// CELL_BEHAVIOR_JUMP_FORWARD cells, so the leader can jump across the water by
-/// way of it.
+/// triggers of its own.
+///
+/// Its one placed actor is the stump the party pushes over the edge up there
+/// with Move. Once it has fallen (FLAG_GOMA_CAVE_STUMP_FELL), entering finds
+/// it sunk in the pond until only its top shows (STUMP_ANIMATION_SINK), drawn
+/// underfoot with no collision flags.
+///
+/// The five by five cells around it are open water in the room's render
+/// (places/goma-cave-pond/map-1.png). They are replaced by a copy that adds
+/// CELL_BEHAVIOR_JUMP_FORWARD cells, so the leader can jump across the water
+/// by way of the stump.
+///
 /// The flag is an area temp flag, so the stump is back up in the room
 /// above once the party leaves Goma Cave's four scenes.
 #include "module/scene/goma_cave_pond.h"
@@ -70,8 +74,10 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 
 const struct Trigger *Scene_GetTriggers(void) { return gGomaCavePondTriggers; }
 
-/// Sets up the room as the party enters. Once the stump in the room above has
-/// been pushed over, it lies here underfoot, and the cells it covers change.
+/// Sets up the room as the party enters.
+///
+/// Once the stump in the room above has been pushed over, it lies here
+/// underfoot, and the cells it covers change.
 s32 Scene_Initialize(void) {
   struct FieldWork *work;
 

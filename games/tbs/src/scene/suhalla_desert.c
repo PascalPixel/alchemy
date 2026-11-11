@@ -1,47 +1,53 @@
 /// @file
 /// Suhalla Desert, the desert of sandstorms between Suhalla and Suhalla Gate,
 /// which the party crosses with Iodem after Babi's audience while Sheba is
-/// missing in it. Three scenes share this overlay and the area name Suhalla
-/// Desert:
+/// missing in it.
+///
+/// Three scenes share this overlay and the area name Suhalla Desert:
 ///
 /// - SuhallaDesertNorth (SceneId_SuhallaDesertNorth): entered from the world
-/// map
-///   near Suhalla, with five storms.
+///   map near Suhalla, with five storms.
 /// - SuhallaDesertSouth (SceneId_SuhallaDesertSouth): four storms and a fifth
 ///   that gives chase, Flash, a Mars Djinni, a stone pillar that Reveal shows,
 ///   and near its way out Iodem's question whether to search on for Sheba
 ///   (SuhallaDesert_IodemAsksWhetherToPressOn,
 ///   FLAG_SUHALLA_DESERT_TALKED_OF_SHEBA).
 /// - SuhallaDesertCaves (SceneId_SuhallaDesertCaves): two caves under the
-/// desert,
-///   reached from SuhallaDesertSouth; they place nothing.
+///   desert, reached from SuhallaDesertSouth. They place nothing.
 ///
 /// One exit table and, for the first two scenes, one trigger table serve the
-/// overlay; the exits in that trigger table keep their numbers, which each
+/// overlay. The exits in that trigger table keep their numbers, which each
 /// scene's exit rows lead its own way.
 ///
 /// The storms are the desert's mechanism, ACTOR_FIRST_SANDSTORM to
-/// ACTOR_LAST_SANDSTORM in the first two scenes. As the party nears one
-/// (cell behaviors 61 to 65 and 71 to 73) it rises, growing to full size,
-/// and the sand haze, BG1 blended over the rest (SUHALLA_DESERT_HAZE_BLEND),
-/// fades in the first time (SuhallaDesert_RaiseStorm); the first storm to rise
-/// while Iodem travels with the party brings him out to warn of them. Walking
-/// into one (cell behaviors 41 to 45 and 51 to 54) draws the leader to its
-/// centre and lifts the party, spinning, for SANDSTORM_CAPTURE_FRAMES
-/// (SuhallaDesert_CatchInStorm). Douse in that time stops the storm and the
-/// monster in it attacks (SuhallaDesert_DouseStorm); otherwise the storm
-/// carries the party up and drops it on the World Map outside Suhalla
+/// ACTOR_LAST_SANDSTORM in the first two scenes.
+///
+/// As the party nears one (cell behaviors 61 to 65 and 71 to 73) it rises,
+/// growing to full size (SuhallaDesert_RaiseStorm). The first time, the sand
+/// haze fades in. The haze is BG1 blended over the rest
+/// (SUHALLA_DESERT_HAZE_BLEND). The first storm to rise while Iodem travels
+/// with the party brings him out to warn of them.
+///
+/// Walking into one (cell behaviors 41 to 45 and 51 to 54) draws the leader
+/// to its centre and lifts the party, spinning, for SANDSTORM_CAPTURE_FRAMES
+/// (SuhallaDesert_CatchInStorm).
+///
+/// Douse in that time stops the storm and the monster in it attacks
+/// (SuhallaDesert_DouseStorm). Otherwise the storm carries the party up and
+/// drops it on the World Map outside Suhalla
 /// (SuhallaDesert_StormCarriesPartyAway), which is why everyone the storms
-/// catch winds up there. In SuhallaDesertSouth, cell behavior 81 sets the
-/// fifth storm chasing the leader (SuhallaDesert_ChaseLeader), and it catches a
-/// leader on the move.
+/// catch winds up there.
+///
+/// In SuhallaDesertSouth, cell behavior 81 sets the fifth storm chasing the
+/// leader (SuhallaDesert_ChaseLeader), and it catches a leader on the move.
 ///
 /// A doused storm's flag is an area flag, five from
 /// FLAG_SUHALLA_DESERT_FIRST_MAP_SANDSTORM_DOUSED and five from
 /// FLAG_SUHALLA_DESERT_SECOND_MAP_SANDSTORM_DOUSED, so the storm stays gone
-/// until the party leaves the desert's area; the chasing storm, once
-/// doused, is gone for good (FLAG_SUHALLA_DESERT_CHASING_SANDSTORM_DOUSED). Its
-/// scene flags:
+/// until the party leaves the desert's area. The chasing storm, once
+/// doused, is gone for good (FLAG_SUHALLA_DESERT_CHASING_SANDSTORM_DOUSED).
+///
+/// Its scene flags:
 ///
 /// - FLAG_SUHALLA_DESERT_FIRST_SANDSTORM_RISEN to
 ///   FLAG_SUHALLA_DESERT_FIFTH_SANDSTORM_RISEN: storms ACTOR_FIRST_SANDSTORM
@@ -97,7 +103,9 @@
 #include "fixed_math.h"
 
 /// Storms doused in the first and second scenes, one flag per storm from the
-/// first; each storm stays away once doused.
+/// first.
+///
+/// Each storm stays away once doused.
 enum {
   /// The first scene's storms, five from this one.
   /// ★ Named from the game: "A sandstorm!" (MsgSuhallaSandstorm)
@@ -105,7 +113,7 @@ enum {
   /// The second scene's storms, five from this one.
   /// ★ Named from the game: "A sandstorm!" (MsgSuhallaSandstorm)
   FLAG_SUHALLA_DESERT_SECOND_MAP_SANDSTORM_DOUSED = FLAG_AREA_TEMP_11,
-  /// A storm has risen: the sand haze stays faded in.
+  /// A storm has risen, so the sand haze stays faded in.
   /// ★ Named from the game: "A sandstorm!" (MsgSuhallaSandstorm)
   FLAG_SUHALLA_DESERT_SANDSTORMS_RISEN = FLAG_AREA_TEMP_40,
   /// The Psynergy Stone has been found, an area flag.
@@ -114,7 +122,9 @@ enum {
 };
 
 /// The actors, numbering the actor placement rows of the first two
-/// scenes from ACTOR_FIRST_PLACED; the third scene places none.
+/// scenes from ACTOR_FIRST_PLACED.
+///
+/// The third scene places none.
 enum {
   /// The storms, five in each scene.
   /// ★ Named from the game: "A sandstorm!" (MsgSuhallaSandstorm)
@@ -143,20 +153,25 @@ enum {
 enum { SANDSTORM_CAPTURE_FRAMES = 180 };
 
 /// The treasure spot of SuhallaDesertSouth's hidden Psynergy Stone, whose
-/// search row finds the stone (FIND_PSYNERGY_STONE). Its actor stands in
-/// its cell only while Reveal lasts (SuhallaDesert_RevealStarts moves it to the
-/// cell's centre) and is moved off the map as Reveal ends.
+/// search row finds the stone (FIND_PSYNERGY_STONE).
+///
+/// Its actor stands in its cell only while Reveal lasts
+/// (SuhallaDesert_RevealStarts moves it to the cell's centre). It is moved
+/// off the map as Reveal ends.
 enum { TREASURE_SPOT_PSYNERGY_STONE = 100 };
 
-/// The events the storms raise: the spinning has run out, or the chasing storm
-/// has reached the moving leader.
+/// The events the storms raise.
+///
+/// Either the spinning has run out, or the chasing storm has reached the
+/// moving leader.
 enum {
   RAISED_CHASING_SANDSTORM_CATCHES = 55,
   RAISED_SANDSTORM_CARRIES_PARTY_AWAY = 99
 };
 
-/// The sand haze: BG1 blended over every layer, its weight rising from 0 to
-/// 16 as the first storm rises.
+/// The sand haze, which is BG1 blended over every layer.
+///
+/// Its weight rises from 0 to 16 as the first storm rises.
 #define SUHALLA_DESERT_HAZE_BLEND                                              \
   (BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL)
 
@@ -170,8 +185,9 @@ static u16 sSuhallaDesertSavedColor;
 #include "shared/field_effect_create.h"
 #include "shared/field_effect_spawn.h"
 
-/// The first sandstorm (ACTOR_FIRST_SANDSTORM) has risen on this visit; the
-/// four flags after it are the next four sandstorms'.
+/// The first sandstorm (ACTOR_FIRST_SANDSTORM) has risen on this visit.
+///
+/// The four flags after it are the next four sandstorms'.
 /// ★ Named from the game: "The sandstorms suddenly increased... I hope no one
 /// gets caught in one and gets injured."
 /// (MsgSuhallaTheSandstormsSuddenlyIncreasedIHope)
@@ -207,12 +223,13 @@ static u16 sSuhallaDesertSavedColor;
 /// ★ Named from the game: "For some reason, anyone who gets caught in a
 /// sandstorm winds up here." (MsgSuhallaInteriorsForSomeReasonAnyoneWhoGets)
 #define FLAG_SUHALLA_DESERT_CAUGHT_IN_SANDSTORM FLAG_SCENE_TEMP_0F
-/// A byte flag: the frames left before the sandstorm that caught the leader
-/// carries the party away.
+/// A byte flag that holds the frames left before the sandstorm that caught
+/// the leader carries the party away.
 /// ★ Named from the game: "For some reason, anyone who gets caught in a
 /// sandstorm winds up here." (MsgSuhallaInteriorsForSomeReasonAnyoneWhoGets)
 #define FLAG_SUHALLA_DESERT_CAPTURE_FRAMES_LEFT FLAG_SCENE_TEMP_10
-/// A byte flag: the actor id of the sandstorm that caught the leader.
+/// A byte flag that holds the actor id of the sandstorm that caught the
+/// leader.
 /// ★ Named from the game: "For some reason, anyone who gets caught in a
 /// sandstorm winds up here." (MsgSuhallaInteriorsForSomeReasonAnyoneWhoGets)
 #define FLAG_SUHALLA_DESERT_CATCHING_SANDSTORM FLAG_SCENE_TEMP_18
@@ -224,7 +241,7 @@ static void SuhallaDesert_FightFlash(void) {
   Field_RequestDjinnBattle(ACTOR_FLASH, DJINNI_FLASH);
 }
 
-/// A storm's actor placement script: clears its sprite and collision
+/// A storm's actor placement script, which clears its sprite and collision
 /// flags.
 static s32
 SuhallaDesert_ClearActorSpriteAndCollisionFlags(struct Actor *interpreter) {
@@ -234,7 +251,7 @@ SuhallaDesert_ClearActorSpriteAndCollisionFlags(struct Actor *interpreter) {
   return 0;
 }
 
-/// A storm's actor placement script: toggles its single-sprite storage.
+/// A storm's actor placement script, which toggles its single-sprite storage.
 static s32 SuhallaDesert_ToggleActorActive(struct Actor *interpreter) {
   struct Actor *actor = interpreter;
   actor->spriteStorageKind ^= 1;
@@ -277,7 +294,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gSuhallaDesertActorPlacementsOther;
 }
 
-/// Each frame while caught: spins the leader, and counts down to raising event
+/// Each frame while caught, spins the leader and counts down to raising event
 /// 99, the storm carrying the party away.
 static void SuhallaDesert_UpdateCaptureTimer(void) {
   struct Actor *selectedActor;
@@ -301,8 +318,10 @@ static void SuhallaDesert_UpdateCaptureTimer(void) {
                         remainingFrames);
 }
 
-/// The leader walks into a storm: drawn to its centre and lifted, the party
-/// spins until Douse stops the storm or it carries them away.
+/// The leader walks into a storm and is caught.
+///
+/// Drawn to its centre and lifted, the party spins until Douse stops the
+/// storm or it carries them away.
 static void SuhallaDesert_CatchInStorm(s32 stormId) {
   s32 stormIdCopy;
   s32 captureActive;
@@ -376,17 +395,21 @@ static void SuhallaDesert_CaughtByFourthStorm(void) {
   SuhallaDesert_CatchInStorm(ACTOR_FIRST_SANDSTORM + 3);
 }
 
-/// The fifth storm catches the leader. In SuhallaDesertNorth the leader walks
-/// into it (cell behavior 45); in SuhallaDesertSouth it's the chasing
-/// storm, which reaches the moving leader (event 55).
+/// The fifth storm catches the leader.
+///
+/// In SuhallaDesertNorth the leader walks into it (cell behavior 45). In
+/// SuhallaDesertSouth it's the chasing storm, which reaches the moving leader
+/// (event 55).
 static void SuhallaDesert_CaughtByFifthStorm(void) {
   SuhallaDesert_CatchInStorm(ACTOR_FIRST_SANDSTORM + 4);
 }
 
 /// As the party nears a storm it rises, growing to full size with the sand
-/// haze fading in the first time. The first time a storm rises with Iodem in
-/// the party, he steps out and warns of the sandstorms: "If we don't get past
-/// here, we'll never make it to Babi Lighthouse."
+/// haze fading in the first time.
+///
+/// The first time a storm rises with Iodem in the party, he steps out and
+/// warns of the sandstorms. He says "If we don't get past here, we'll never
+/// make it to Babi Lighthouse."
 static void SuhallaDesert_RaiseStorm(s32 stormId) {
   s32 frame;
   s32 nextFrame;
@@ -514,14 +537,19 @@ static void SuhallaDesert_FifthStormRises(void) {
   SuhallaDesert_RaiseStorm(ACTOR_FIRST_SANDSTORM + 4);
 }
 
-/// Iodem asks whether to search the desert for Sheba again or press on. It
-/// plays in SuhallaDesertSouth, near its way out to the World Map (cell
-/// behavior 9), once Iodem has heard the wounded soldiers in Suhalla: he steps
-/// out of the party. "Sheba is nowhere to be found. Should we search the desert
-/// once more or press on to Lalivero?" Whatever the answer, Iodem decides to
-/// head first for the guard gate ahead, Suhalla Gate, and leave Sheba to the
-/// soldiers there, and rejoins the party. Sets
-/// FLAG_SUHALLA_DESERT_TALKED_OF_SHEBA.
+/// Iodem asks whether to search the desert for Sheba again or press on.
+///
+/// It plays in SuhallaDesertSouth, near its way out to the World Map (cell
+/// behavior 9), once Iodem has heard the wounded soldiers in Suhalla.
+///
+/// He steps out of the party and says "Sheba is nowhere to be found. Should
+/// we search the desert once more or press on to Lalivero?"
+///
+/// Whatever the answer, Iodem decides to head first for the guard gate ahead,
+/// Suhalla Gate, and leave Sheba to the soldiers there. Then he rejoins the
+/// party.
+///
+/// Sets FLAG_SUHALLA_DESERT_TALKED_OF_SHEBA.
 static void SuhallaDesert_IodemAsksWhetherToPressOn(void) {
   struct Actor *leader;
 
@@ -588,9 +616,10 @@ static void SuhallaDesert_IodemAsksWhetherToPressOn(void) {
   }
 }
 
-/// The chasing storm's script: it follows the leader, throwing up sand every
-/// eight frames, and catches a moving leader it comes within 8 pixels of
-/// (event 55).
+/// The chasing storm's script, which follows the leader.
+///
+/// It throws up sand every eight frames, and catches a moving leader it comes
+/// within 8 pixels of (event 55).
 static s32 SuhallaDesert_ChaseLeader(struct Actor *interpreter) {
   struct Actor *actor = interpreter;
   struct EffectOptions options;
@@ -647,7 +676,7 @@ static s32 SuhallaDesert_ChaseLeader(struct Actor *interpreter) {
   return 1;
 }
 
-/// In SuhallaDesertSouth, until the chasing storm has been doused: it
+/// In SuhallaDesertSouth, until the chasing storm has been doused, it
 /// appears behind the party and gives chase.
 static void SuhallaDesert_StormGivesChase(void) {
   if (GameFlag_Get(FLAG_SUHALLA_DESERT_CHASING_SANDSTORM_DOUSED) == 0) {
@@ -658,18 +687,21 @@ static void SuhallaDesert_StormGivesChase(void) {
 }
 
 /// In Suhalla Desert (SceneId_SuhallaDesertNorth and
-/// SceneId_SuhallaDesertSouth), Douse cast at the storm that caught the leader:
-/// sets the Psynergy effect's child option, so that Douse's orb rises to 80
-/// pixels above the storm rather than 32 and rains on it from above
-/// (FieldPsynergy_Douse).
+/// SceneId_SuhallaDesertSouth), Douse cast at the storm that caught the leader
+/// rains on it from above.
+///
+/// The event sets the Psynergy effect's child option, so that Douse's orb
+/// rises to 80 pixels above the storm rather than 32 and rains on it from
+/// above (FieldPsynergy_Douse).
 static void SuhallaDesert_DouseCastAtStorm(void) {
   u8 *state = gFieldEffectWork;
   ((struct FieldEffectWork *)state)->childOption = 1;
 }
 
 /// In Suhalla Desert (SceneId_SuhallaDesertNorth and
-/// SceneId_SuhallaDesertSouth), Douse stops the storm that caught the leader:
-/// it is doused for good, and the monster in it attacks.
+/// SceneId_SuhallaDesertSouth), Douse stops the storm that caught the leader.
+///
+/// It is doused for good, and the monster in it attacks.
 /// SceneId_SuhallaDesertSouth's fourth and chasing storms hold other monsters.
 static void SuhallaDesert_DouseStorm(s32 unused, s32 stormId) {
   struct MainRoutineWork *state;
@@ -708,10 +740,12 @@ static void SuhallaDesert_DouseStorm(s32 unused, s32 stormId) {
 }
 
 /// In Suhalla Desert (SceneId_SuhallaDesertNorth and
-/// SceneId_SuhallaDesertSouth), the spinning runs out (event 99): the storm
-/// rises into the sky with the party, the screen closes, and the party lands
-/// falling (FLAG_ARRIVE_FALLING) on the World Map outside Suhalla, or where the
-/// second scene's fourth storm drops it.
+/// SceneId_SuhallaDesertSouth), the spinning runs out (event 99) and the storm
+/// carries the party away.
+///
+/// The storm rises into the sky with the party and the screen closes. The
+/// party lands falling (FLAG_ARRIVE_FALLING) on the World Map outside Suhalla,
+/// or where the second scene's fourth storm drops it.
 static void SuhallaDesert_StormCarriesPartyAway(void) {
   s32 stormId;
   struct Actor *selectedActor;
@@ -755,7 +789,7 @@ static void SuhallaDesert_StormCarriesPartyAway(void) {
   }
 }
 
-/// While Reveal lasts: one palette color pulses, brightening and dimming over
+/// While Reveal lasts, one palette color pulses, brightening and dimming over
 /// 64 frames.
 static void SuhallaDesert_PulseRevealPalette(void) {
   u16 brightnessFrame = gFrameCount & 63;
@@ -769,14 +803,18 @@ static void SuhallaDesert_PulseRevealPalette(void) {
 }
 
 #ifdef UBFIX
-/// Reveal wears off, and what it showed is hidden again. It runs as Reveal
-/// ends and whenever a scene is entered, and only in SuhallaDesertSouth does it
-/// hide what Reveal showed and put back the pulsing color.
+/// Reveal wears off, and what it showed is hidden again.
+///
+/// It runs as Reveal ends and whenever a scene is entered. Only in
+/// SuhallaDesertSouth does it hide what Reveal showed and put back the
+/// pulsing color.
 static void SuhallaDesert_RevealEnds(void) {
 #else
-/// Reveal wears off, and what it showed is hidden again. It runs as Reveal
-/// ends and whenever a scene is entered, and only in SuhallaDesertSouth does it
-/// hide what Reveal showed and put back the pulsing color.
+/// Reveal wears off, and what it showed is hidden again.
+///
+/// It runs as Reveal ends and whenever a scene is entered. Only in
+/// SuhallaDesertSouth does it hide what Reveal showed and put back the
+/// pulsing color.
 static s32 SuhallaDesert_RevealEnds(void) {
   s32 removalResult;
 #endif
@@ -802,14 +840,16 @@ static s32 SuhallaDesert_RevealEnds(void) {
 }
 
 #ifdef UBFIX
-/// Reveal shows a hidden stone pillar in the desert's south. In
-/// SuhallaDesertSouth the stone pillar appears at 248, 712, map cells and the
-/// Psynergy Stone's map object change, and a palette color pulses.
+/// Reveal shows a hidden stone pillar in the desert's south.
+///
+/// In SuhallaDesertSouth the stone pillar appears at 248, 712. Map cells and
+/// the Psynergy Stone's map object change, and a palette color pulses.
 static void SuhallaDesert_RevealStarts(void) {
 #else
-/// Reveal shows a hidden stone pillar in the desert's south. In
-/// SuhallaDesertSouth the stone pillar appears at 248, 712, map cells and the
-/// Psynergy Stone's map object change, and a palette color pulses.
+/// Reveal shows a hidden stone pillar in the desert's south.
+///
+/// In SuhallaDesertSouth the stone pillar appears at 248, 712. Map cells and
+/// the Psynergy Stone's map object change, and a palette color pulses.
 static s32 SuhallaDesert_RevealStarts(void) {
 #endif
   if (gMainRoutineWork.next == (s32)&SceneId_SuhallaDesertSouth) {
@@ -837,8 +877,10 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gSuhallaDesertTriggersOther;
 }
 
-/// Sets a scene up as the party enters: a capture goes on spinning, Reveal's
-/// color is saved, and the first two scenes set up their storms.
+/// Sets a scene up as the party enters.
+///
+/// A capture goes on spinning, Reveal's color is saved, and the first two
+/// scenes set up their storms.
 s32 Scene_Initialize(void) {
   struct MapGridScrollAnimView *gridState;
 
@@ -867,9 +909,11 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-/// The first scene's storms on entry: a doused storm counts as risen, the
-/// others start small (unless the party is coming back to where it stood), and
-/// the sand haze is faded in if a storm has risen before.
+/// The first scene's storms on entry.
+///
+/// A doused storm counts as risen. The others start small, unless the party
+/// is coming back to where it stood. The sand haze is faded in if a storm has
+/// risen before.
 static void SuhallaDesert_SetUpFirstMapStorms(void) {
   // Trial: sharing the blend tail through an ordinary inline shrinks this
   // function from 324 to 312 bytes in tbs-en; retain the original body.
@@ -914,9 +958,10 @@ static void SuhallaDesert_SetUpFirstMapStorms(void) {
                       IO_WRITE_16);
 }
 
-/// The second scene's storms on entry, as the first scene's; the fourth storm's
-/// first sprite part takes parameter 10, and once the chasing storm has been
-/// doused it is gone for good.
+/// The second scene's storms on entry, as the first scene's.
+///
+/// The fourth storm's first sprite part takes parameter 10, and once the
+/// chasing storm has been doused it is gone for good.
 static void SuhallaDesert_SetUpSecondMapStorms(void) {
   // Trial: the same blend-tail inline shrinks this function from 344 to 332
   // bytes in tbs-en; retain the original body.
@@ -1124,9 +1169,10 @@ s32 gSuhallaDesertChaseScript[] = {
     SC_END,
 };
 
-/// The first two scenes' events, in one table. Its exits keep their numbers,
-/// since each scene's exit table gives them its own ways out: exit 1 is
-/// SUHALLA_DESERT_NORTH_TO_WORLD_MAP in the first and
+/// The first two scenes' events, in one table.
+///
+/// Its exits keep their numbers, since each scene's exit table gives them its
+/// own ways out. Exit 1 is SUHALLA_DESERT_NORTH_TO_WORLD_MAP in the first and
 /// SUHALLA_DESERT_SOUTH_TO_SUHALLA_DESERT_NORTH in the second.
 struct Trigger gSuhallaDesertTriggersOther[] = {
     { TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1 },

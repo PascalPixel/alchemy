@@ -12,40 +12,47 @@
 ///   cottage_rooms_b.c) and one into the Colosseum Tunnel
 ///   (BABI_PALACE_TO_COLOSSEUM_TUNNEL).
 ///
-/// Each scene has three actor placement tables and three trigger tables,
-/// and Scene_GetActorPlacements and Scene_GetTriggers choose between them by
-/// two story flags: while Babi is missing, during the finals (FLAG_BABI_SAVED,
-/// set when the party saves him in Altmiller Cave) and after Colosso
-/// (FLAG_COLOSSO_OVER). The people inside stand in all three under other
-/// actor ids, so each table has its own actor id enum.
+/// Each scene has three actor placement tables and three trigger tables.
+/// Scene_GetActorPlacements and Scene_GetTriggers choose between them by two
+/// story flags. The three times are while Babi is missing, during the finals
+/// (FLAG_BABI_SAVED, set when the party saves him in Altmiller Cave) and after
+/// Colosso (FLAG_COLOSSO_OVER).
+///
+/// The people inside stand in all three under other actor ids, so each table
+/// has its own actor id enum.
 ///
 /// While Babi is missing, the attendant shows the party four beds
-/// (BabiPalace_ShowBeds), which a search then sleeps in
-/// (BabiPalace_RestInPalaceBeds, with a talk the first night,
-/// FLAG_BABI_PALACE_FIRST_NIGHT). Stepping beside Iodem
-/// (CELL_BEHAVIOR_BABI_PALACE_BESIDE_IODEM) plays BabiPalace_HearSoldiersReport
-/// once (FLAG_IODEM_HEARD_SOLDIERS, whose rows for Iodem and his soldiers place
-/// no one once it is set), and Sheba notices the first Mind Read on her
-/// (BabiPalace_ReadShebasMind, FLAG_SHEBA_NOTICED_MIND_READ).
+/// (BabiPalace_ShowBeds). A search then sleeps in them
+/// (BabiPalace_RestInPalaceBeds), with a talk the first night
+/// (FLAG_BABI_PALACE_FIRST_NIGHT).
+///
+/// Stepping beside Iodem (CELL_BEHAVIOR_BABI_PALACE_BESIDE_IODEM) plays
+/// BabiPalace_HearSoldiersReport once. Its flag is FLAG_IODEM_HEARD_SOLDIERS,
+/// and the rows for Iodem and his soldiers place no one once it is set.
+///
+/// Sheba notices the first Mind Read on her (BabiPalace_ReadShebasMind,
+/// FLAG_SHEBA_NOTICED_MIND_READ).
 ///
 /// During the finals the guards outside pass on Babi's word once
 /// (BabiPalace_PassOnBabisWord, FLAG_BABI_PALACE_GUARD_GAVE_WORD) and the
-/// attendant offers a rest (BabiPalace_OfferRest). The finals send the party
-/// back here by two entrances, which BabiPalace_ApplyEntryState answers
-/// by restoring the party and its inventory
-/// (BabiPalace_RestorePartyAndInventory) and playing a waking in the big
-/// bedroom: a lost first or second match by
-/// BABI_PALACE_FROM_COLOSSEUM_AZART_MATCH (BabiPalace_WakeFromFinalsDream),
-/// the third match by BABI_PALACE_FROM_COLOSSEUM_NAVAMPA_MATCH
+/// attendant offers a rest (BabiPalace_OfferRest).
+///
+/// The finals send the party back here by two entrances.
+/// BabiPalace_ApplyEntryState answers them by restoring the party and its
+/// inventory (BabiPalace_RestorePartyAndInventory) and playing a waking in the
+/// big bedroom. A lost first or second match comes in by
+/// BABI_PALACE_FROM_COLOSSEUM_AZART_MATCH (BabiPalace_WakeFromFinalsDream). The
+/// third match comes in by BABI_PALACE_FROM_COLOSSEUM_NAVAMPA_MATCH
 /// (BabiPalace_WakeAfterFinals).
 ///
 /// After Colosso, entering the throne room by
 /// BABI_PALACE_MEETING_ROOM_FROM_CARPET_ROOM the first time plays Babi's
-/// audience (BabiPalace_MeetBabiAfterColosso, FLAG_BABI_SPOKE_AFTER_COLOSSO),
-/// which gives the victor's prize when FLAG_WON_COLOSSO is set and ends with
-/// Babi sending Iodem with the party, to meet at Gondowan Passage. The Cloak
-/// Ball on show is an actor drawn from the item's icon until the party
-/// takes it (BabiPalace_OfferCloakBall, FLAG_BABI_PALACE_CLOAK_BALL).
+/// audience (BabiPalace_MeetBabiAfterColosso, FLAG_BABI_SPOKE_AFTER_COLOSSO).
+/// It gives the victor's prize when FLAG_WON_COLOSSO is set, and ends with Babi
+/// sending Iodem with the party, to meet at Gondowan Passage.
+///
+/// The Cloak Ball on show is an actor drawn from the item's icon until the
+/// party takes it (BabiPalace_OfferCloakBall, FLAG_BABI_PALACE_CLOAK_BALL).
 
 #include "main_routine_work.h"
 #include "heap.h"
@@ -87,26 +94,31 @@
 #include "sounds.h"
 #include "sound_driver_symbols.h"
 
-/// The palace's actors are placed by one of three tables, as the story
-/// goes on: before Babi is rescued
+/// The palace's actors are placed by one of three tables, as the story goes on.
+///
+/// The three are before Babi is rescued
 /// (gBabiPalace_ActorPlacementsBabiMissing), during the finals
 /// (gBabiPalace_ActorPlacementsFinals) and after Colosso
-/// (gBabiPalace_ActorPlacementsAfterColosso). Each numbers its rows from
-/// ACTOR_FIRST_PLACED, with Garet, Ivan, Mia and Sheba in their own party
-/// slots, and most of the people stand in all three under other numbers. The
-/// palace's residents, three old men with canes and a young man with brown
-/// hair, stand in all three: one sent Babi's soldiers to search the town, and
+/// (gBabiPalace_ActorPlacementsAfterColosso).
+///
+/// Each numbers its rows from ACTOR_FIRST_PLACED, with Garet, Ivan, Mia and
+/// Sheba in their own party slots. Most of the people stand in all three under
+/// other numbers.
+///
+/// The palace's residents, three old men with canes and a young man with brown
+/// hair, stand in all three. One sent Babi's soldiers to search the town, and
 /// another tells warriors who are not entering Colosso that they may not stay.
 /// The game names none of them.
 ///
-/// Before the rescue: the attendant who shows the party its beds, Iodem and the
-/// two soldiers he sent to Altmiller Cave; Sheba is held here until Colosso is
-/// over.
+/// Before the rescue there are the attendant who shows the party its beds,
+/// Iodem and the two soldiers he sent to Altmiller Cave. Sheba is held here
+/// until Colosso is over.
 enum BabiPalaceActorId {
   /// An old man with a cane, in the same room and at the same number in every
-  /// table, and the one who sent Babi's soldiers to search the town: "Did you
-  /// run into any of Babi's soldiers in Town?", and if not, "Hmph! I told them
-  /// to search every nook and cranny of this town..."
+  /// table. He is the one who sent Babi's soldiers to search the town.
+  ///
+  /// He asks "Did you run into any of Babi's soldiers in Town?", and if not,
+  /// says "Hmph! I told them to search every nook and cranny of this town..."
   /// ★ Named from the game: "Did you run into any of Babi's soldiers in Town?"
   /// (MsgTolbiRunBabisSoldiers)
   ACTOR_ASKING_ABOUT_BABIS_SOLDIERS = ACTOR_FIRST_PLACED,
@@ -133,7 +145,7 @@ enum BabiPalaceActorId {
   /// ★ Named from the game: "If you're entering Colosso, hurry along to the
   /// colosseum." (MsgBabiPalaceIfYoureEnteringColossoHurryAlong)
   ACTOR_HURRYING_WARRIORS_ALONG,
-  /// Four of Babi's soldiers, in one room; the first says "Only warriors who
+  /// Four of Babi's soldiers, in one room. The first says "Only warriors who
   /// fight well in Colosso's finals can become soldiers here."
   /// ★ Named from the game: "Only warriors who fight well in Colosso's finals
   /// can become soldiers here." (MsgBabiPalaceOnlyWarriorsWhoFightWellIn)
@@ -164,7 +176,7 @@ enum BabiPalaceActorId {
   ACTOR_SECOND_SOLDIER
 };
 
-/// During the finals: ACTOR_ASKING_ABOUT_BABIS_SOLDIERS keeps its number, and
+/// During the finals, ACTOR_ASKING_ABOUT_BABIS_SOLDIERS keeps its number, and
 /// the others stand under new ones.
 enum BabiPalaceFinalsActorId {
   /// The same resident as ACTOR_HURRYING_WARRIORS_ALONG: "What are you doing?
@@ -193,9 +205,9 @@ enum BabiPalaceFinalsActorId {
   ACTOR_FINALS_OLD_WOMAN_IN_SHEBAS_ROOM
 };
 
-/// After Colosso: Babi, and the Cloak Ball he keeps on show;
-/// ACTOR_ASKING_ABOUT_BABIS_SOLDIERS, ACTOR_BED_ATTENDANT and Iodem keep
-/// their numbers.
+/// After Colosso there are Babi and the Cloak Ball he keeps on show.
+/// ACTOR_ASKING_ABOUT_BABIS_SOLDIERS, ACTOR_BED_ATTENDANT and Iodem keep their
+/// numbers.
 enum BabiPalaceAfterColossoActorId {
   /// One of Babi's soldiers.
   /// ★ Named from the game: "We're relieved everything went so well."
@@ -248,7 +260,7 @@ enum {
   ACTOR_SECOND_GUARD = 9
 };
 
-/// The attendant has led the party to the beds; talking again sends the
+/// The attendant has led the party to the beds. Talking again sends the
 /// attendant back.
 /// ★ Named from the game: "We have just enough extra beds in this room for
 /// everybody." (MsgTolbiWeHaveJustEnoughExtra)
@@ -256,7 +268,8 @@ enum { FLAG_BABI_PALACE_ATTENDANT_SHOWED_BEDS = FLAG_SCENE_TEMP_00 };
 
 /// The palace map's tileset animations that open its doors, for
 /// TilesetAnim_Resume (play) and TilesetAnim_Pause (pause).
-/// Each scene entry pauses them, so every door is drawn shut; the recording of
+///
+/// Each scene entry pauses them, so every door is drawn shut. The recording of
 /// BabiPalace_LeaveThroughDoor shows one swing open
 /// (https://alchemy.pascalpixel.com/places/babi-palace/events/BabiPalace_LeaveThroughDoor.gif).
 enum BabiPalaceDoorAnimation {
@@ -265,12 +278,14 @@ enum BabiPalaceDoorAnimation {
   BABI_PALACE_OVEN_ROOM_DOOR_ANIMATION = 4     ///< the oven room's door
 };
 
-/// The leader's animations in the big bedroom's bed, after the four shared
-/// ones (enum ActorAnimation). The nod and the shake of the head answer
-/// yes and no in BabiPalace_WakeAfterFinals.
+/// The leader's animations in the big bedroom's bed, after the four shared ones
+/// (enum ActorAnimation).
+///
+/// The nod and the shake of the head answer yes and no in
+/// BabiPalace_WakeAfterFinals.
 enum BabiPalaceBedAnimation {
   ANIM_IN_BED_LYING = 31,
-  /// Sitting up: the leader is raised by 3 pixels as it starts.
+  /// Sitting up. The leader is raised by 3 pixels as it starts.
   ANIM_IN_BED_SITTING_UP = 32,
   ANIM_IN_BED_NOD = 33,
   ANIM_IN_BED_SHAKE_HEAD = 34
@@ -309,8 +324,8 @@ static inline void BabiPalace_CloseDoors(void) {
   TilesetAnim_Pause(BABI_PALACE_OVEN_ROOM_DOOR_ANIMATION);
 }
 
-/// After a night in the palace's beds: the party's HP and PP are full,
-/// Garet, Ivan and Mia rejoin, and the inventory Colosso held is returned.
+/// After a night in the palace's beds, the party's HP and PP are full, Garet,
+/// Ivan and Mia rejoin, and the inventory Colosso held is returned.
 static __inline__ void BabiPalace_RestorePartyAndInventory(void) {
   s16 members[8];
   struct Unit *state;
@@ -337,7 +352,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
   return gBabiPalace_Entrances;
 }
 
-/// The palace has no exit regions; the table is empty.
+/// The palace has no exit regions, so the table is empty.
 const struct SceneExitRegion *BabiPalace_GetRegions(void) {
   return gBabiPalace_Regions;
 }
@@ -345,8 +360,8 @@ const struct SceneExitRegion *BabiPalace_GetRegions(void) {
 /// Both scenes share one exit table.
 const u32 *BabiPalace_GetExits(void) { return gBabiPalace_Exits; }
 
-/// Returns the actor placements for the scene and the story: before Babi's
-/// rescue, during the finals or after Colosso.
+/// Returns the actor placements for the scene and the story, which is before
+/// Babi's rescue, during the finals or after Colosso.
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   if (gMainRoutineWork.next == (s32)&SceneId_BabiPalaceEntrance) {
     return gBabiPalace_OutsideActorPlacements;
@@ -360,7 +375,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gBabiPalace_ActorPlacementsBabiMissing;
 }
 
-/// Asks a yes or no question; the answers are the two messages after it.
+/// Asks a yes or no question. The answers are the two messages after it.
 static inline void BabiPalace_ShowQuestionAnswer(s32 actorId, s32 question) {
   Event_SetMessageId(question);
   Event_OpenMessage(actorId, 0);
@@ -371,17 +386,20 @@ static inline void BabiPalace_ShowQuestionAnswer(s32 actorId, s32 question) {
   Event_ShowMessage(actorId, 0);
 }
 
-/// An old man with a cane asks whether the party ran into Babi's soldiers. He's
-/// one of the palace's residents, and asks while Babi is missing whether the
-/// party ran into them in town.
+/// An old man with a cane asks whether the party ran into Babi's soldiers.
+///
+/// He's one of the palace's residents, and asks while Babi is missing whether
+/// the party ran into them in town.
 static void BabiPalace_AskAboutSoldiers(s32 actorId) {
   BabiPalace_ShowQuestionAnswer(actorId, MsgTolbiRunBabisSoldiers);
 }
 
-/// Talking to the attendant before Babi's rescue: the attendant leads the party
-/// to the beds. "We have just enough extra beds in this room for everybody.
-/// Please follow me." Talking again, the attendant asks whether the party will
-/// sleep right away and goes back.
+/// The attendant leads the party to the beds when spoken to before Babi's
+/// rescue. "We have just enough extra beds in this room for everybody. Please
+/// follow me."
+///
+/// Talking again, the attendant asks whether the party will sleep right away
+/// and goes back.
 static void BabiPalace_ShowBeds(s32 actorId) {
 
   struct Actor *leader;
@@ -442,10 +460,11 @@ static void BabiPalace_ShowBeds(s32 actorId) {
   Event_End();
 }
 
-/// Talking to the attendant during the finals: the first time, the attendant
-/// asks whether the party came to rest before the match and steps aside;
-/// afterwards, the attendant offers rest. "if you're tired, please feel free to
-/// get some rest."
+/// The attendant offers the party a rest when spoken to during the finals.
+///
+/// The first time, the attendant asks whether the party came to rest before the
+/// match and steps aside. Afterwards, the attendant offers rest. "if you're
+/// tired, please feel free to get some rest."
 static void BabiPalace_OfferRest(s32 actorId) {
   s32 question;
 
@@ -483,9 +502,10 @@ static void BabiPalace_OfferRest(s32 actorId) {
   Event_End();
 }
 
-/// A warrior asks whether the party is entering Colosso. The warrior is in the
-/// palace while Babi is missing, and either hurries the party to the trials or
-/// asks whether it got hurt too.
+/// A warrior asks whether the party is entering Colosso.
+///
+/// The warrior is in the palace while Babi is missing, and either hurries the
+/// party to the trials or asks whether it got hurt too.
 static void BabiPalace_AskAboutColosso(s32 actorId) {
   s32 question = MsgTolbiPlanningEnterColosso;
 
@@ -504,8 +524,10 @@ static void BabiPalace_AskAboutColosso(s32 actorId) {
   Event_ShowMessage(actorId, 0);
 }
 
-/// A warrior with indigestion gives up on entering Colosso. The warrior is in
-/// the palace while Babi is missing, tries to shrug it off, and doubles up.
+/// A warrior with indigestion gives up on entering Colosso.
+///
+/// The warrior is in the palace while Babi is missing, tries to shrug it off,
+/// and doubles up.
 static void BabiPalace_TalkToWarriorWithIndigestion(s32 actorId) {
   struct Actor *actor;
   const s32 *indigestionScript;
@@ -546,9 +568,11 @@ static void BabiPalace_TalkToWarriorWithIndigestion(s32 actorId) {
   Event_End();
 }
 
-/// Mind Read on Sheba in the palace, while Babi is missing: she cannot escape
-/// to Lalivero alone; the first time, she feels it, ends the Psynergy and
-/// asks about it. "Did you just..."
+/// Mind Read on Sheba in the palace, while Babi is missing, reads that she
+/// cannot escape to Lalivero alone.
+///
+/// The first time, she feels it, ends the Psynergy and asks about it. "Did you
+/// just..."
 static void BabiPalace_ReadShebasMind(s32 casterId, s32 actorId) {
   Event_Start();
   Event_SetMessageId(MsgTolbiEvenIfEscapedBabiPalace);
@@ -577,15 +601,17 @@ static void BabiPalace_AskAboutMeetingBabi(s32 actorId) {
   BabiPalace_ShowQuestionAnswer(actorId, MsgTolbiMeetBabi);
 }
 
-/// A young man asks whether the party is going back east already. He has brown
-/// hair and is one of the palace's residents, and asks after Colosso whether
-/// the party wants to go back already to the eastern shores of the Karagol Sea.
+/// A young man asks whether the party is going back east already.
+///
+/// He has brown hair and is one of the palace's residents. He asks after
+/// Colosso whether the party wants to go back already to the eastern shores of
+/// the Karagol Sea.
 static void BabiPalace_AskAboutEasternShores(s32 actorId) {
   BabiPalace_ShowQuestionAnswer(actorId, MsgTolbiEasternShoresKaragol);
 }
 
-/// Taking the Cloak Ball on show after Colosso: Babi asks whether the party
-/// wants it, and lends it for the quest if it does.
+/// When the party takes the Cloak Ball on show after Colosso, Babi asks whether
+/// it wants it, and lends it for the quest if it does.
 static void BabiPalace_OfferCloakBall(void) {
   s32 msg;
 
@@ -623,8 +649,8 @@ static void BabiPalace_OfferCloakBall(void) {
   }
 }
 
-/// Waking after resting before the finals: the leader dreamt of fighting in
-/// them, the others tease, and the party sets off for the colosseum.
+/// Waking after resting before the finals, the leader has dreamt of fighting in
+/// them. The others tease, and the party sets off for the colosseum.
 static void BabiPalace_WakeFromFinalsDream(void) {
   struct Actor *leader;
 
@@ -761,7 +787,7 @@ static void BabiPalace_WakeFromFinalsDream(void) {
   Event_End();
 }
 
-/// Searching the beds: the party goes to bed, talking it over the first night.
+/// Searching the beds sends the party to bed, talking it over the first night.
 /// "Would you like to sleep now?"
 static void BabiPalace_RestInPalaceBeds(void) {
   struct Actor *leader;
@@ -920,9 +946,11 @@ static void BabiPalace_RestInPalaceBeds(void) {
   Event_End();
 }
 
-/// Walking past Iodem while Babi is missing: his two soldiers report back
-/// from Altmiller Cave without Babi, and Iodem tells how Babi has vanished
-/// into the cave before; then they leave.
+/// Walking past Iodem while Babi is missing, the party hears his soldiers
+/// report.
+///
+/// His two soldiers report back from Altmiller Cave without Babi, and Iodem
+/// tells how Babi has vanished into the cave before. Then they leave.
 static void BabiPalace_HearSoldiersReport(void) {
   GameFlag_Set(FLAG_IODEM_HEARD_SOLDIERS);
   Event_Start();
@@ -1221,8 +1249,8 @@ static void BabiPalace_HearSoldiersReport(void) {
   Event_End();
 }
 
-/// Waking in the palace after the finals: the leader slept long after
-/// fighting to the end; Babi wants to see the party.
+/// Waking in the palace after the finals, the leader has slept long after
+/// fighting to the end. Babi wants to see the party.
 static void BabiPalace_WakeAfterFinals(void) {
   struct Actor *actor;
   s32 step;
@@ -1479,12 +1507,15 @@ static void BabiPalace_WakeAfterFinals(void) {
   Event_End();
 }
 
-/// Arriving after Colosso: Iodem and Babi have been waiting for the party.
-/// Babi praises its fighting, saw its Psynergy through his Cloak Ball, and
-/// tells of Lemuria and the draught that has kept him alive; it is running
-/// out, and he asks the party to sail his Lemurian ship to find Lemuria.
-/// Learning that the party is bound for Venus Lighthouse, he sends Iodem
-/// with it, to meet at Gondowan Passage.
+/// Arriving after Colosso, the party finds Iodem and Babi have been waiting for
+/// it.
+///
+/// - Babi praises its fighting, and saw its Psynergy through his Cloak Ball.
+/// - He tells of Lemuria and the draught that has kept him alive.
+/// - The draught is running out, and he asks the party to sail his Lemurian
+///   ship to find Lemuria.
+/// - Learning that the party is bound for Venus Lighthouse, he sends Iodem with
+///   it, to meet at Gondowan Passage.
 static void BabiPalace_MeetBabiAfterColosso(void) {
   Sound_Play(MUS_BABI);
   Event_Start();
@@ -2527,11 +2558,14 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Event_End();
 }
 
-/// Walking north into one of the palace's doors: it opens (SE_DOOR_OPEN) and
-/// the leader walks through. The door's step trigger is the number of the exit
-/// it leads to, so the triggers name each by its exit and the subject is
-/// passed on as the exit. The throne room's door walks the leader straight
-/// north; the others first center the leader on the door.
+/// Walking north into one of the palace's doors opens it (SE_DOOR_OPEN), and
+/// the leader walks through.
+///
+/// The door's step trigger is the number of the exit it leads to. So the
+/// triggers name each by its exit, and the subject is passed on as the exit.
+///
+/// The throne room's door walks the leader straight north. The others first
+/// center the leader on the door.
 static void BabiPalace_LeaveThroughDoor(void) {
   struct FieldWork *work;
 
@@ -2561,7 +2595,7 @@ static void BabiPalace_LeaveThroughDoor(void) {
   Event_End();
 }
 
-/// Walking north into the palace's door from outside: it opens and the leader
+/// Walking north into the palace's door from outside opens it, and the leader
 /// goes in.
 static void BabiPalace_LeaveThroughAnimatedDoor(void) {
   Event_Start();
@@ -2642,9 +2676,10 @@ static void BabiPalace_ThankForSavingBabi(void) {
   }
 }
 
-/// A guard asks whether the party is leaving like the other warriors. The guard
-/// stands outside the palace after Colosso, and means the other warriors who
-/// stayed in the palace.
+/// A guard asks whether the party is leaving like the other warriors.
+///
+/// The guard stands outside the palace after Colosso, and means the other
+/// warriors who stayed in the palace.
 static void BabiPalace_AskAboutRemainingWarriors(s32 actorId) {
   s32 question = MsgTolbiWarriorsWhoStayed;
 
@@ -2692,9 +2727,11 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gBabiPalace_TriggersBabiMissing;
 }
 
-/// Sets up the scene being entered: the doors, the Cloak Ball on show, and
-/// the events that play on arrival (Babi after Colosso, the attendant during
-/// the finals, waking after a night's rest). Returns 0.
+/// Sets up the scene being entered. Returns 0.
+///
+/// It sets up the doors, the Cloak Ball on show, and the events that play on
+/// arrival: Babi after Colosso, the attendant during the finals, and waking
+/// after a night's rest.
 s32 BabiPalace_ApplyEntryState(void) {
   struct Actor *actor;
   struct Sprite *sprite;

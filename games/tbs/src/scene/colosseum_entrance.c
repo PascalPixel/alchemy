@@ -1,43 +1,45 @@
 /// @file
-/// Tolbi's colosseum, where Colosso is fought, in three scenes: the Colosseum
-/// Entrance outside its gates, the Colosseum Tunnel from Babi's Palace, and the
-/// Colosseum itself, whose stands, waiting room and passages lead to the sites
-/// of the three finals matches.
+/// Tolbi's colosseum, where Colosso is fought, in three scenes.
 ///
-/// Colosso has two parts, and the code tells them apart by FLAG_BABI_SAVED.
-/// While warriors fight their trials, Babi, the ruler of Tolbi, is missing.
-/// Once the party has saved his life in Altmiller Cave, the trials are over and
-/// Babi has picked Isaac for the finals himself: every scene here then plays
-/// the finals day. FLAG_COLOSSO_OVER, set after the third finals match, closes
-/// the colosseum until next year.
+/// The three are the Colosseum Entrance outside its gates, the Colosseum
+/// Tunnel from Babi's Palace, and the Colosseum itself. The Colosseum's
+/// stands, waiting room and passages lead to the sites of the three finals
+/// matches.
+///
+/// Colosso has two parts. While warriors fight their trials, Babi, the ruler
+/// of Tolbi, is missing. Once the party has saved his life in Altmiller Cave,
+/// the trials are over and Babi has picked Isaac for the finals himself.
+///
+/// The code tells the two parts apart by FLAG_BABI_SAVED. Once it is set,
+/// every scene here plays the finals day. FLAG_COLOSSO_OVER, set after the
+/// third finals match, closes the colosseum until next year.
 ///
 /// - Colosseum Entrance (SceneId_ColosseumEntrance), before the gates,
-///   reached from Tolbi. During the trials the crowd cannot get in: its people
+///   reached from Tolbi. During the trials the crowd cannot get in. Its people
 ///   talk of the heats and of the Lucky Guess, a bet on which warrior will win
 ///   the finals, and Mind Read hears what they hope for. On the finals day
-///   ColosseumEntrance_GetActorPlacements places a second crowd, with
-///   Isaac's companions and four of the colosseum's soldiers, and the
-///   triggers' flag conditions give everyone new lines: the scalpers sell
-///   seats, and the Lucky Guess man recognizes Isaac and will not let a
-///   finalist play (FLAG_LUCKY_GUESS_REFUSED_ISAAC remembers that he said so).
-///   Stepping toward the gates (ColosseumEntrance_CrowdRecognizesIsaac) plays
-///   the soldiers' quarrel over the boy Babi picked; they lead the party in,
-///   and if Isaac will not go, they and his companions talk him round, Garet
-///   leading the way if he still refuses. The party arrives at the Colosseum's
+///   ColosseumEntrance_GetActorPlacements places a second crowd, with Isaac's
+///   companions and four of the colosseum's soldiers, and the triggers' flag
+///   conditions give everyone new lines. The scalpers sell seats. The Lucky
+///   Guess man recognizes Isaac and will not let a finalist play, and
+///   FLAG_LUCKY_GUESS_REFUSED_ISAAC remembers that he said so. Stepping toward
+///   the gates (ColosseumEntrance_CrowdRecognizesIsaac) plays the soldiers'
+///   quarrel over the boy Babi picked. They lead the party in. If Isaac will
+///   not go, they and his companions talk him round, and Garet leads the way
+///   if he still refuses. The party arrives at the Colosseum's
 ///   COLOSSEUM_FROM_COLOSSEUM_ENTRANCE. Once Colosso is over,
 ///   ColosseumEntrance_UpdateEntranceCells changes the layout's cells before
 ///   the gates, and two people linger to say the colosseum is closed until next
 ///   year. COLOSSEUM_ENTRANCE_TO_TOLBI leads back to Tolbi.
 /// - Colosseum Tunnel (SceneId_ColosseumTunnel), the passage from Babi's
-///   Palace (BABI_PALACE_TO_COLOSSEUM_TUNNEL) into the Colosseum, whose end
-///   of the tunnel (COLOSSEUM_TUNNEL_FROM_COLOSSEUM and
-///   COLOSSEUM_FROM_COLOSSEUM_TUNNEL) takes the same area name. It has only its
-///   two exits.
+///   Palace (BABI_PALACE_TO_COLOSSEUM_TUNNEL) into the Colosseum. The
+///   Colosseum's end of the tunnel (COLOSSEUM_TUNNEL_FROM_COLOSSEUM and
+///   COLOSSEUM_FROM_COLOSSEUM_TUNNEL) takes the same area name. The tunnel has
+///   only its two exits.
 /// - Colosseum (SceneId_Colosseum), one scene that holds the stands, the trial
 ///   grounds, the finals' waiting room and the passages to the finals stages,
-///   each an entrance's camera box on it.
-///   Every arrival is an entrance of its own, and
-///   ColosseumEntrance_ApplyArrivalState plays the event that
+///   each an entrance's camera box on it. Every arrival is an entrance of its
+///   own, and ColosseumEntrance_ApplyArrivalState plays the event that
 ///   entrance stands for. During the trials the stands' entrances
 ///   (COLOSSEUM_STANDS_FROM_STONE_PASSAGE_WEST,
 ///   COLOSSEUM_STANDS_FROM_TRIAL_GROUNDS) alternate with the two trial
@@ -48,14 +50,14 @@
 ///   (InventorySnapshot_Save) for Babi's Palace to give back, and the waiting
 ///   room's line asks whether Isaac is ready (ColosseumEntrance_FinalsStart).
 ///   Each finals stage returns to its own entrance here
-///   (COLOSSEUM_FROM_COLOSSEUM_*_MATCH_*), and FLAG_COLOSSO_FIRST_MATCH_WON and
+///   (COLOSSEUM_FROM_COLOSSEUM_*_MATCH_*). FLAG_COLOSSO_FIRST_MATCH_WON and
 ///   FLAG_COLOSSO_SECOND_MATCH_WON choose which stage the long passages lead to
-///   next; the stages themselves are colosseum_azart_match.c,
+///   next. The stages themselves are colosseum_azart_match.c,
 ///   colosseum_satrage_match.c and colosseum_navampa_match.c.
 ///
-/// The three scenes share one exit table, a run of exits for each scene, and
-/// the Colosseum's exits are how its arrivals chain into one another and into
-/// the finals stages.
+/// The three scenes share one exit table, a run of exits for each scene. The
+/// Colosseum's exits are how its arrivals chain into one another and into the
+/// finals stages.
 
 #include "main_routine_work.h"
 #include "scene_ids.h"
@@ -104,12 +106,14 @@ static void ColosseumEntrance_CelebrateBothWins(void);
 static void ColosseumEntrance_InitializeContestants(void);
 
 /// The Colosseum Entrance's people, numbered by the rows of
-/// gColosseumEntranceActorPlacements;
-/// gColosseumEntranceActorPlacementsFinalsDay places the same people in
-/// its first nine rows after Isaac's companions, who take their own
-/// actor slots, and gColosseumEntranceActorPlacementsAfterColosso keeps
-/// the first two. They are named by what they say during the trials, except
-/// where the finals day says more about who they are.
+/// gColosseumEntranceActorPlacements.
+///
+/// gColosseumEntranceActorPlacementsFinalsDay places the same people in its
+/// first nine rows after Isaac's companions, who take their own actor slots.
+/// gColosseumEntranceActorPlacementsAfterColosso keeps the first two.
+///
+/// They are named by what they say during the trials, except where the finals
+/// day says more about who they are.
 enum ColosseumEntranceActorId {
   /// A young man with brown hair in a purple shirt who talks of the heats.
   /// "They're holding the preliminary Colosso heats right now."
@@ -123,8 +127,7 @@ enum ColosseumEntranceActorId {
   ACTOR_WOMAN_CANNOT_GET_IN,
   /// A burly grey-haired man who asks whether the party hopes to get in
   /// (ColosseumEntrance_DiscussSeating). "Are you hoping to get in to see
-  /// Colosso
-  /// now?"
+  /// Colosso now?"
   /// ★ Named from the game: "Are you hoping to get in to see Colosso now?"
   /// (MsgColosseumHopingGetInSeeColosso)
   ACTOR_VILLAGER_SEATING,
@@ -139,13 +142,13 @@ enum ColosseumEntranceActorId {
   /// years" (MsgColosseumEntranceIveBeenBettingOnTheLucky)
   ACTOR_OLD_MAN_BETTING_FOR_YEARS,
   /// An old woman who walks about before the finals day. "Colosso's Lucky Guess
-  /// makes the battles in the colosseum better."; on the finals day, "I want to
+  /// makes the battles in the colosseum better." On the finals day, "I want to
   /// watch the finals from a good spot, but it costs too much!"
   /// ★ Named from the game: "I want to watch the finals from a good spot"
   /// (MsgColosseumWantWatchFinalsFromGood)
   ACTOR_OLD_WOMAN_GOOD_SPOT,
-  /// A strongman, one of the scalpers. During the trials he bets: "I want to
-  /// win big, so I put it all on a warrior no one else has picked."; on the
+  /// A strongman, one of the scalpers. During the trials he bets. "I want to
+  /// win big, so I put it all on a warrior no one else has picked." On the
   /// finals day he is busy with a customer, and Mind Read hears "I'm going to
   /// be in trouble if I get stuck with any unsold seats..."
   /// ★ Named from the game: "I'm going to be in trouble if I get stuck with any
@@ -157,8 +160,7 @@ enum ColosseumEntranceActorId {
   /// (MsgColosseumDoKnowLuckyGuess)
   ACTOR_LUCKY_GUESS_MAN = ACTOR_FIRST_PLACED + 8,
   /// The four soldiers at the gates on the finals day (SPRITE_SOLDIER, as in
-  /// the waiting room), gColosseumEntranceActorPlacementsFinalsDay only.
-  /// The
+  /// the waiting room), gColosseumEntranceActorPlacementsFinalsDay only. The
   /// first greets Isaac ("Hey, you're Isaac!") and leads the party in.
   /// ★ Named from what the player sees: a soldier in a helmet with a spear,
   /// SPRITE_SOLDIER (its render)
@@ -209,7 +211,7 @@ enum ColosseumTrialActorId {
   /// trial ground (its render)
   ACTOR_GROUNDS_FIRST_TORCH = ACTOR_FIRST_PLACED,
   /// Five warriors, 14 to 18, in the finalists' sprite
-  /// (SPRITE_WARRIOR_IN_GOLDEN_HELMET); two of them take the trials the party
+  /// (SPRITE_WARRIOR_IN_GOLDEN_HELMET). Two of them take the trials the party
   /// is shown.
   /// ★ Named from the game: "That warrior failed his trial"
   /// (MsgColosseumHaveMakeThroughCountlessMatches)
@@ -225,9 +227,9 @@ enum ColosseumTrialActorId {
   /// (MsgColosseumHavePerfectTechniquesLikeThose)
   ACTOR_CLEARING_WARRIOR,
   /// Two young men with fair hair (SPRITE_YOUNG_MAN_WITH_FAIR_HAIR, drawn
-  /// mirrored) who judge the trial with flags: a red flag when the warrior
-  /// fails and a white one when he clears it (enum FlagBearerAnimation). No
-  /// text names them.
+  /// mirrored) who judge the trial with flags. They raise a red flag when the
+  /// warrior fails and a white one when he clears it (enum
+  /// FlagBearerAnimation). No text names them.
   /// ★ Named from what the player sees: two young men with fair hair in white
   /// tunics beside the trial, who raise a flag at its end (its render)
   ACTOR_FIRST_FLAG_BEARER = ACTOR_FIRST_PLACED + 11,
@@ -244,10 +246,11 @@ enum FlagBearerAnimation {
   FLAG_BEARER_ANIMATION_WHITE_FLAG = 6 ///< raises a white flag: he cleared it
 };
 
-/// The four soldiers of gColosseumSoldiersActorPlacements
-/// (SPRITE_SOLDIER), who brief the party at COLOSSEUM_FROM_COLOSSEUM_ENTRANCE,
-/// congratulate Isaac after his wins and lead him through the passages; Isaac's
-/// companions take their own actor slots.
+/// The four soldiers of gColosseumSoldiersActorPlacements (SPRITE_SOLDIER).
+///
+/// They brief the party at COLOSSEUM_FROM_COLOSSEUM_ENTRANCE, congratulate
+/// Isaac after his wins and lead him through the passages. Isaac's companions
+/// take their own actor slots.
 enum ColosseumSoldierActorId {
   /// ★ Named from what the player sees: soldiers in helmets with spears
   /// (its render)
@@ -260,8 +263,10 @@ enum ColosseumSoldierActorId {
 
 /// The Colosseum's waiting room (Colosseum,
 /// COLOSSEUM_FROM_COLOSSEUM_AZART_MATCH_WEST), numbered by the rows of
-/// gColosseumActorPlacementsFromColosseumAzartMatchWest: four soldiers and
-/// the seven warriors who cleared the trials, as they introduce themselves.
+/// gColosseumActorPlacementsFromColosseumAzartMatchWest.
+///
+/// It holds four soldiers and the seven warriors who cleared the trials, as
+/// they introduce themselves.
 enum ColosseumWaitingRoomActorId {
   /// Asks whether Isaac is ready for the finals.
   /// ★ Named from what the player sees: a soldier in a helmet with a spear
@@ -337,7 +342,7 @@ enum {
   /// ★ Named from the game: "If you win there, you advance to the finals."
   /// (MsgTolbiTheTrialsAreStartingAtThe)
   FLAG_FINALS_LINE_ARMED = FLAG_SCENE_TEMP_34,
-  /// The leader has stepped onto the line since; its step trigger is off.
+  /// The leader has stepped onto the line since. Its step trigger is off.
   /// ★ Named from the game: "If you win there, you advance to the finals."
   /// (MsgTolbiTheTrialsAreStartingAtThe)
   FLAG_FINALS_LINE_REACHED = FLAG_SCENE_TEMP_35
@@ -360,10 +365,11 @@ const struct SceneExitRegion *ColosseumEntrance_GetRegions(void) { return 0; }
 /// Returns the shared colosseum exits.
 const u32 *ColosseumEntrance_GetExits(void) { return gColosseumEntranceExits; }
 
-/// Selects the actors: in the Colosseum by the entrance the
-/// party arrives at
-/// (the stands, the trial grounds, the passages, the waiting room or the
-/// soldiers' briefing), at the Colosseum Entrance by how far Colosso has gone.
+/// Selects the actors for the scene being entered.
+///
+/// In the Colosseum it goes by the entrance the party arrives at: the stands,
+/// the trial grounds, the passages, the waiting room or the soldiers'
+/// briefing. At the Colosseum Entrance it goes by how far Colosso has gone.
 const struct ActorPlacement *ColosseumEntrance_GetActorPlacements(void) {
   const struct ActorPlacement *table;
 
@@ -432,10 +438,11 @@ const struct Trigger *ColosseumEntrance_GetTriggers(void) {
   return gColosseumEntranceTriggersOther;
 }
 
-/// At the Colosseum Entrance: during the trials, a burly grey-haired man asks
-/// whether the party hopes to get in to see Colosso; on the finals day
-/// (FLAG_BABI_SAVED) the colosseum is already full, and only the scalpers have
-/// seats.
+/// At the Colosseum Entrance, a burly grey-haired man talks about getting in.
+///
+/// During the trials he asks whether the party hopes to get in to see Colosso.
+/// On the finals day (FLAG_BABI_SAVED) the colosseum is already full, and only
+/// the scalpers have seats.
 static void ColosseumEntrance_DiscussSeating(void) {
   Event_Start();
   if (GameFlag_Get(FLAG_BABI_SAVED)) {
@@ -452,8 +459,10 @@ static void ColosseumEntrance_DiscussSeating(void) {
   Event_End();
 }
 
-/// At the Colosseum Entrance, an old woman: the Lucky Guess makes the battles
-/// better; on the finals day, a good spot costs too much.
+/// At the Colosseum Entrance, an old woman talks about the Lucky Guess.
+///
+/// She says the Lucky Guess makes the battles better. On the finals day she
+/// says a good spot costs too much.
 static void ColosseumEntrance_DiscussLuckyGuessSeats(void) {
   Event_Start();
   if (GameFlag_Get(FLAG_BABI_SAVED)) {
@@ -470,9 +479,10 @@ static void ColosseumEntrance_DiscussLuckyGuessSeats(void) {
   Event_End();
 }
 
-/// At the Colosseum Entrance: a strongman, betting, put it all on a warrior no
-/// one picked; on the finals day a scalper, busy with a customer, asks if the
-/// party wants seats.
+/// At the Colosseum Entrance, a strongman talks about his bet.
+///
+/// Betting, he put it all on a warrior no one picked. On the finals day he is
+/// a scalper, busy with a customer, who asks if the party wants seats.
 static void ColosseumEntrance_DiscussLuckyGuessWinnings(void) {
   Event_Start();
   if (GameFlag_Get(FLAG_BABI_SAVED) != 0) {
@@ -491,9 +501,10 @@ static void ColosseumEntrance_DiscussLuckyGuessWinnings(void) {
   Event_End();
 }
 
-/// The Lucky Guess man at the Colosseum Entrance explains the game; on the
-/// finals day he recognizes Isaac as Babi's pick and refuses him, as finalists
-/// may not play (FLAG_LUCKY_GUESS_REFUSED_ISAAC: said once).
+/// The Lucky Guess man at the Colosseum Entrance explains the game.
+///
+/// On the finals day he recognizes Isaac as Babi's pick and refuses him, as
+/// finalists may not play. He says so once (FLAG_LUCKY_GUESS_REFUSED_ISAAC).
 static void ColosseumEntrance_OfferLuckyGuess(void) {
   Event_Start();
   if (GameFlag_Get(FLAG_BABI_SAVED) != 0) {
@@ -532,9 +543,10 @@ static void ColosseumEntrance_OfferLuckyGuess(void) {
   Event_End();
 }
 
-/// Azart won't lose to someone who skipped the trials. He waits in the
-/// Colosseum's waiting room as the second-best, and goes back to pacing after
-/// he has said so.
+/// Azart won't lose to someone who skipped the trials.
+///
+/// He waits in the Colosseum's waiting room as the second-best, and goes back
+/// to pacing after he has said so.
 static void ColosseumEntrance_TalkToAzart(void) {
   struct Actor *contestant;
 
@@ -594,8 +606,10 @@ static void ColosseumEntrance_TalkToSatrage(void) {
   Event_End();
 }
 
-/// In the Colosseum's waiting room, Dekka psyches himself up; the first time,
-/// Navampa explains he will not answer (FLAG_NAVAMPA_SPOKE_FOR_DEKKA).
+/// In the Colosseum's waiting room, Dekka psyches himself up.
+///
+/// The first time, Navampa explains he will not answer
+/// (FLAG_NAVAMPA_SPOKE_FOR_DEKKA).
 static void ColosseumEntrance_TalkToDekka(void) {
   Event_Start();
   Actor_RunRepeatedMotion(ACTOR_DEKKA, 2);
@@ -635,8 +649,8 @@ static void ColosseumEntrance_TalkToNavampa(void) {
   Event_End();
 }
 
-/// In the Colosseum's waiting room, Buford, the seventh seed: anyone could win
-/// today.
+/// In the Colosseum's waiting room, Buford, the seventh seed, says anyone
+/// could win today.
 static void ColosseumEntrance_TalkToBuford(void) {
   Event_Start();
   Actor_TurnToFaceEachOther(ACTOR_BUFORD, ACTOR_PARTY_LEADER, 20);
@@ -667,13 +681,18 @@ static void ColosseumEntrance_AskIfReadyForFinals(void) {
   Event_End();
 }
 
-/// Stepping toward the gates at the Colosseum Entrance
-/// (CELL_BEHAVIOR_COLOSSEUM_ENTRANCE_BEFORE_GATES) on the finals day: four
-/// soldiers recognize Isaac as Babi's pick and quarrel over a boy in the
-/// finals, then one takes the party in to the Colosseum's
-/// COLOSSEUM_FROM_COLOSSEUM_ENTRANCE. If Isaac will not go, the soldiers insist
-/// and Ivan, Mia and Garet talk him round; if he still refuses, Garet leads the
-/// way in. Before Babi is saved it does nothing.
+/// Stepping toward the gates at the Colosseum Entrance on the finals day, the
+/// soldiers recognize Isaac and take the party in.
+///
+/// The cells are CELL_BEHAVIOR_COLOSSEUM_ENTRANCE_BEFORE_GATES. Four soldiers
+/// recognize Isaac as Babi's pick and quarrel over a boy in the finals. Then
+/// one takes the party in to the Colosseum's
+/// COLOSSEUM_FROM_COLOSSEUM_ENTRANCE.
+///
+/// If Isaac will not go, the soldiers insist and Ivan, Mia and Garet talk him
+/// round. If he still refuses, Garet leads the way in.
+///
+/// Before Babi is saved it does nothing.
 static void ColosseumEntrance_CrowdRecognizesIsaac(void) {
   struct Actor *leader;
 
@@ -898,12 +917,15 @@ static void ColosseumEntrance_CrowdRecognizesIsaac(void) {
   Event_End();
 }
 
-/// Stepping to the line in the Colosseum's waiting room
-/// (CELL_BEHAVIOR_COLOSSEUM_FINALS_LINE, while FLAG_FINALS_LINE_ARMED is set
-/// and FLAG_FINALS_LINE_REACHED clear): asked whether he is ready, Isaac can
-/// still wait; if he is, the warriors grumble, line up by rank and march out,
-/// and Isaac follows them out by the east passage
-/// (COLOSSEUM_WAITING_ROOM_TO_PILLARED_PASSAGE_EAST).
+/// Stepping to the line in the Colosseum's waiting room asks whether Isaac is
+/// ready for the finals.
+///
+/// The line is CELL_BEHAVIOR_COLOSSEUM_FINALS_LINE, and it asks while
+/// FLAG_FINALS_LINE_ARMED is set and FLAG_FINALS_LINE_REACHED clear.
+///
+/// Asked whether he is ready, Isaac can still wait. If he is, the warriors
+/// grumble, line up by rank and march out, and Isaac follows them out by the
+/// east passage (COLOSSEUM_WAITING_ROOM_TO_PILLARED_PASSAGE_EAST).
 static void ColosseumEntrance_FinalsStart(void) {
   struct Actor *actor;
   const s32 *script;
@@ -1045,10 +1067,12 @@ static void ColosseumEntrance_StepBackFromFinalsLine(void) {
   GameFlag_Set(FLAG_FINALS_LINE_ARMED);
 }
 
-/// The trial attendant in the Colosseum's stands: until both trials have been
-/// watched, the screen goes to the next warrior's trial (the failed one first,
-/// by FLAG_COLOSSO_FAILED_TRIAL_SEEN); afterwards he talks about the
-/// techniques.
+/// The trial attendant in the Colosseum's stands shows the party two warriors'
+/// trials.
+///
+/// Until both trials have been watched, the screen goes to the next warrior's
+/// trial, the failed one first, by FLAG_COLOSSO_FAILED_TRIAL_SEEN. Afterwards
+/// he talks about the techniques.
 static void ColosseumEntrance_TalkToTrialAttendant(void) {
   s32 clearedTrialSeen;
 
@@ -1082,9 +1106,10 @@ static void ColosseumEntrance_TalkToTrialAttendant(void) {
   Event_End();
 }
 
-/// The Colosseum's trial grounds, arriving by
-/// COLOSSEUM_FAILED_TRIAL_FROM_STANDS: a warrior strains at the trial, gives up
-/// and runs, and the screen goes back to the stands.
+/// In the Colosseum's trial grounds, a warrior fails his trial.
+///
+/// The party arrives by COLOSSEUM_FAILED_TRIAL_FROM_STANDS. A warrior strains
+/// at the trial, gives up and runs, and the screen goes back to the stands.
 static void ColosseumEntrance_ShowFailedTrial(void) {
   struct Actor *actor;
   s32 facing;
@@ -1200,8 +1225,10 @@ static void ColosseumEntrance_ShowFailedTrial(void) {
   Event_End();
 }
 
-/// Back in the Colosseum's stands from a trial
-/// (COLOSSEUM_STANDS_FROM_TRIAL_GROUNDS): the attendant says the warrior
+/// Back in the Colosseum's stands from a trial, the attendant says how it
+/// went.
+///
+/// The entrance is COLOSSEUM_STANDS_FROM_TRIAL_GROUNDS. He says the warrior
 /// failed, or after the second trial that he cleared it.
 static void ColosseumEntrance_ExplainTrial(void) {
   Event_Start();
@@ -1227,10 +1254,11 @@ static void ColosseumEntrance_ExplainTrial(void) {
   Event_End();
 }
 
-/// The Colosseum's trial grounds, arriving by
-/// COLOSSEUM_CLEARED_TRIAL_FROM_STANDS: a warrior heaves the trial object up in
-/// jolts and drops it, shaking the ground: he clears the trial
-/// (FLAG_COLOSSO_CLEARED_TRIAL_SEEN).
+/// In the Colosseum's trial grounds, a warrior clears his trial.
+///
+/// The party arrives by COLOSSEUM_CLEARED_TRIAL_FROM_STANDS. A warrior heaves
+/// the trial object up in jolts and drops it, shaking the ground. He clears
+/// the trial (FLAG_COLOSSO_CLEARED_TRIAL_SEEN).
 static void ColosseumEntrance_ShowClearedTrial(void) {
   u32 counter;
   struct Actor *trialEffect;
@@ -1358,9 +1386,10 @@ static void ColosseumEntrance_ShowClearedTrial(void) {
   Event_End();
 }
 
-/// Sets up the Colosseum or its entrance as the party arrives. The Colosseum is
-/// set up by the entrance the party arrives at, and the Colosseum
-/// Entrance by how far Colosso has gone.
+/// Sets up the Colosseum or its entrance as the party arrives.
+///
+/// The Colosseum is set up by the entrance the party arrives at, and the
+/// Colosseum Entrance by how far Colosso has gone.
 s32 ColosseumEntrance_Initialize(void) {
   s32 sceneId = gMainRoutineWork.next;
 
@@ -1372,16 +1401,19 @@ s32 ColosseumEntrance_Initialize(void) {
   return 0;
 }
 
-/// Each arrival in the Colosseum has its own event: the trials (the stands and
-/// the trial grounds), the briefing before the finals
-/// (COLOSSEUM_FROM_COLOSSEUM_ENTRANCE), the passages to the finals stages
-/// (COLOSSEUM_LONG_PASSAGE_FROM_WAITING_ROOM_EAST,
-/// COLOSSEUM_FROM_COLOSSEUM_NAVAMPA_MATCH,
-/// COLOSSEUM_LONG_PASSAGE_FROM_WAITING_ROOM_WEST and
-/// COLOSSEUM_FROM_COLOSSEUM_SATRAGE_MATCH_SOUTH), the waiting room
-/// (COLOSSEUM_FROM_COLOSSEUM_AZART_MATCH_WEST) and the congratulations after
-/// the first and second wins (COLOSSEUM_FROM_COLOSSEUM_AZART_MATCH_EAST and
-/// COLOSSEUM_FROM_COLOSSEUM_SATRAGE_MATCH_NORTH).
+/// Each arrival in the Colosseum has its own event.
+///
+/// - The trials: the stands and the trial grounds.
+/// - The briefing before the finals (COLOSSEUM_FROM_COLOSSEUM_ENTRANCE).
+/// - The passages to the finals stages
+///   (COLOSSEUM_LONG_PASSAGE_FROM_WAITING_ROOM_EAST,
+///   COLOSSEUM_FROM_COLOSSEUM_NAVAMPA_MATCH,
+///   COLOSSEUM_LONG_PASSAGE_FROM_WAITING_ROOM_WEST and
+///   COLOSSEUM_FROM_COLOSSEUM_SATRAGE_MATCH_SOUTH).
+/// - The waiting room (COLOSSEUM_FROM_COLOSSEUM_AZART_MATCH_WEST).
+/// - The congratulations after the first and second wins
+///   (COLOSSEUM_FROM_COLOSSEUM_AZART_MATCH_EAST and
+///   COLOSSEUM_FROM_COLOSSEUM_SATRAGE_MATCH_NORTH).
 static void ColosseumEntrance_ApplyArrivalState(void) {
   s32 entrance;
 
@@ -1457,10 +1489,11 @@ static void ColosseumEntrance_FaceDirection(s32 actorId, s32 facing) {
   Actor_FaceDirection(actorId, (u16)facing, 10);
 }
 
-/// The Colosseum Entrance's setup: once Colosso is over, the tiles and cells by
-/// the gates change; before that, the Lucky Guess man (ACTOR_LUCKY_GUESS_MAN)
-/// takes child value 2, and on the finals day a cell pair before the gates
-/// changes.
+/// The Colosseum Entrance's setup changes the cells by the gates.
+///
+/// Once Colosso is over, the tiles and cells by the gates change. Before that,
+/// the Lucky Guess man (ACTOR_LUCKY_GUESS_MAN) takes child value 2, and on the
+/// finals day a cell pair before the gates changes.
 static void ColosseumEntrance_UpdateEntranceCells(void) {
   s32 column, row;
 
@@ -1486,11 +1519,12 @@ static inline void ColosseumEntrance_PositionPartyForBriefing(void) {
   Actor_SetPosition(ACTOR_MIA, PIXELS(808), PIXELS(152));
 }
 
-/// The Colosseum's briefing, the party's arrival from the gates
-/// (COLOSSEUM_FROM_COLOSSEUM_ENTRANCE): only Isaac may enter the finals, so the
-/// soldiers let his companions cheer him on from the stage, and at Ivan's
-/// asking they agree to show Isaac the finals stages before the first match. An
-/// soldier then leads the party on
+/// The Colosseum's briefing, as the party arrives from the gates
+/// (COLOSSEUM_FROM_COLOSSEUM_ENTRANCE).
+///
+/// Only Isaac may enter the finals, so the soldiers let his companions cheer
+/// him on from the stage. At Ivan's asking they agree to show Isaac the finals
+/// stages before the first match. A soldier then leads the party on
 /// (COLOSSEUM_WAITING_ROOM_TO_LONG_PASSAGE_EAST).
 static void ColosseumEntrance_ExplainPartySupport(void) {
   s32 flag;
@@ -1692,10 +1726,11 @@ static void ColosseumEntrance_ExplainPartySupport(void) {
   Import_EventSetExitRequest(COLOSSEUM_WAITING_ROOM_TO_LONG_PASSAGE_EAST);
 }
 
-/// The Colosseum's east passage
-/// (COLOSSEUM_LONG_PASSAGE_FROM_WAITING_ROOM_EAST): a soldier leads Isaac
-/// to the next finals match's tour, Colosseum Final 1 or, after the second win,
-/// Colosseum Final 3.
+/// In the Colosseum's east passage, a soldier leads Isaac to the next finals
+/// match's tour.
+///
+/// The entrance is COLOSSEUM_LONG_PASSAGE_FROM_WAITING_ROOM_EAST. The tour is
+/// Colosseum Final 1 or, after the second win, Colosseum Final 3.
 static void ColosseumEntrance_EscortToEastExit(void) {
   struct Actor *escort;
 
@@ -1730,7 +1765,7 @@ static void ColosseumEntrance_EscortToEastExit(void) {
   }
 }
 
-/// Arriving in the Colosseum's waiting room from Colosseum Final 1's tour: the
+/// Arriving in the Colosseum's waiting room from Colosseum Final 1's tour, the
 /// soldier tells the warriors to prepare.
 static void ColosseumEntrance_AnnounceFinals(void) {
   struct Actor *contestant;
@@ -1778,9 +1813,11 @@ static void ColosseumEntrance_AnnounceFinals(void) {
   Event_End();
 }
 
-/// The Colosseum's east passage (COLOSSEUM_FROM_COLOSSEUM_NAVAMPA_MATCH): Isaac
-/// walks alone into Colosseum Final 1 or, after the second win, Colosseum Final
-/// 3, where his friends take their turns to lend a hand
+/// In the Colosseum's east passage, Isaac walks alone into his match.
+///
+/// The entrance is COLOSSEUM_FROM_COLOSSEUM_NAVAMPA_MATCH. He walks into
+/// Colosseum Final 1 or, after the second win, Colosseum Final 3, where his
+/// friends take their turns to lend a hand
 /// (COLOSSEUM_TO_COLOSSEUM_AZART_MATCH_WEST or
 /// COLOSSEUM_TO_COLOSSEUM_NAVAMPA_MATCH_SOUTH).
 static void ColosseumEntrance_WalkToEastExit(void) {
@@ -1800,9 +1837,10 @@ static void ColosseumEntrance_WalkToEastExit(void) {
   }
 }
 
-/// Back in the Colosseum after the first win
-/// (COLOSSEUM_FROM_COLOSSEUM_AZART_MATCH_EAST): the soldiers congratulate
-/// Isaac and lead him on to Colosseum Final 2.
+/// Back in the Colosseum after the first win, the soldiers congratulate Isaac
+/// and lead him on to Colosseum Final 2.
+///
+/// The entrance is COLOSSEUM_FROM_COLOSSEUM_AZART_MATCH_EAST.
 static void ColosseumEntrance_CelebrateAdvancement(void) {
   const s32 *actions;
 
@@ -1852,9 +1890,10 @@ static void ColosseumEntrance_CelebrateAdvancement(void) {
   Import_EventSetExitRequest(COLOSSEUM_WAITING_ROOM_TO_LONG_PASSAGE_WEST);
 }
 
-/// The Colosseum's west passage
-/// (COLOSSEUM_LONG_PASSAGE_FROM_WAITING_ROOM_WEST): a soldier leads Isaac
-/// to Colosseum Final 2's tour.
+/// In the Colosseum's west passage, a soldier leads Isaac to Colosseum Final
+/// 2's tour.
+///
+/// The entrance is COLOSSEUM_LONG_PASSAGE_FROM_WAITING_ROOM_WEST.
 static void ColosseumEntrance_EscortToWestExit(void) {
   struct Actor *escort;
 
@@ -1885,9 +1924,11 @@ static void ColosseumEntrance_EscortToWestExit(void) {
   Import_EventSetExitRequest(COLOSSEUM_TO_COLOSSEUM_SATRAGE_MATCH_WEST);
 }
 
-/// The Colosseum's west passage (COLOSSEUM_FROM_COLOSSEUM_SATRAGE_MATCH_SOUTH):
-/// Isaac walks alone into Colosseum Final 2, where his friends take their turns
-/// to lend a hand (COLOSSEUM_TO_COLOSSEUM_SATRAGE_MATCH_EAST).
+/// In the Colosseum's west passage, Isaac walks alone into Colosseum Final 2.
+///
+/// The entrance is COLOSSEUM_FROM_COLOSSEUM_SATRAGE_MATCH_SOUTH. There his
+/// friends take their turns to lend a hand
+/// (COLOSSEUM_TO_COLOSSEUM_SATRAGE_MATCH_EAST).
 static void ColosseumEntrance_WalkToWestExit(void) {
   Event_Start();
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(8) / 5, PIXELS(4) / 5);
@@ -1901,11 +1942,12 @@ static void ColosseumEntrance_WalkToWestExit(void) {
   Import_EventSetExitRequest(COLOSSEUM_TO_COLOSSEUM_SATRAGE_MATCH_EAST);
 }
 
-/// Back in the Colosseum after the second win
-/// (COLOSSEUM_FROM_COLOSSEUM_SATRAGE_MATCH_NORTH): one more win and Isaac is
-/// the champion; the soldiers lead him back east
-/// (COLOSSEUM_WAITING_ROOM_TO_LONG_PASSAGE_EAST), now to Colosseum
-/// Final 3.
+/// Back in the Colosseum after the second win, one more win and Isaac is the
+/// champion.
+///
+/// The entrance is COLOSSEUM_FROM_COLOSSEUM_SATRAGE_MATCH_NORTH. The soldiers
+/// lead him back east (COLOSSEUM_WAITING_ROOM_TO_LONG_PASSAGE_EAST), now to
+/// Colosseum Final 3.
 static void ColosseumEntrance_CelebrateBothWins(void) {
   const s32 *actions;
 

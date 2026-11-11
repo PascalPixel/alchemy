@@ -1,16 +1,21 @@
 /// @file
-/// Cottage rooms B (SceneId_CottageRoomsB), a sheet of rooms drawn as cottages:
-/// the game packs rooms of several places that share a tile style onto one map,
-/// each room a camera box of its own that the entrance the party comes
-/// in by chooses. This sheet's rooms are in Vale but for one in Babi's Palace,
-/// and its tables and setup choose by the entrance and the story
-/// flags. The rooms, in story order, by the exits that lead in:
+/// Cottage rooms B (SceneId_CottageRoomsB) is a sheet of rooms drawn as
+/// cottages.
+///
+/// The game packs rooms of several places that share a tile style onto one
+/// map. Each room is a camera box of its own, and the entrance the party comes
+/// in by chooses it.
+///
+/// This sheet's rooms are in Vale but for one in Babi's Palace. Its tables and
+/// setup choose by the entrance and the story flags.
+///
+/// Here are the rooms in story order, by the exits that lead in:
 ///
 /// - Isaac's house in Vale: its upper floor, where a new game begins
 ///   (COTTAGE_ROOMS_B_FROM_VALE_PLAZA_SOUTHEAST, from scene/file_screen.c), and
 ///   its ground floor, entered from Vale (COTTAGE_ROOMS_B_FROM_VALE, from
 ///   Vale's VALE_TO_COTTAGE_ROOMS_B and the stormy night's
-///   VALE_PROLOGUE_TO_COTTAGE_ROOMS_B_ISAACS_HOUSE), joined by the stairs
+///   VALE_PROLOGUE_TO_COTTAGE_ROOMS_B_ISAACS_HOUSE). The stairs join the two
 ///   (COTTAGE_ROOMS_B_ISAACS_HOUSE_FROM_UPSTAIRS and
 ///   COTTAGE_ROOMS_B_ISAACS_HOUSE_FROM_GROUND_FLOOR).
 /// - A house in Vale with two beds before a hearth, entered only on the stormy
@@ -32,7 +37,7 @@
 ///   ★ Named from what the player sees: a forge with its furnace and anvil
 ///   (its render)
 /// - A second forge room, stocked with sacks and crates beneath weapons and a
-///   shield on its wall, whose doorway in ValePlaza opens only once the party
+///   shield on its wall. Its doorway in ValePlaza opens only once the party
 ///   is back from Kalay (COTTAGE_ROOMS_B_FROM_VALE_PLAZA_NORTHEAST).
 ///   ★ Named from what the player sees: a forge room of sacks and crates with
 ///   weapons and a shield on its wall (its render)
@@ -44,14 +49,14 @@
 /// - The stormy night, three years before the journey, when a new game begins
 ///   at COTTAGE_ROOMS_B_FROM_VALE_PLAZA_SOUTHEAST (from scene/file_screen.c, or
 ///   ValePlaza's VALE_PLAZA_TO_COTTAGE_ROOMS_B_SOUTHEAST). The setup sets
-///   FLAG_VALE_STORM and plays CottageRoomsB_DoraWakesIsaac: Dora, Isaac's
-///   mother, wakes him because the Mt. Aleph Boulder is going to fall, makes
-///   him take his tunic (FLAG_ISAAC_WEARS_TUNIC) and leads him downstairs
+///   FLAG_VALE_STORM and plays CottageRoomsB_DoraWakesIsaac. Dora, Isaac's
+///   mother, wakes him because the Mt. Aleph Boulder is going to fall. She
+///   makes him take his tunic (FLAG_ISAAC_WEARS_TUNIC) and leads him downstairs
 ///   (COTTAGE_ROOMS_B_ISAACS_HOUSE_TO_GROUND_FLOOR_WITH_DORA, to
-///   COTTAGE_ROOMS_B_ISAACS_HOUSE_FROM_UPSTAIRS_WITH_DORA), where
-///   CottageRoomsB_HurryToThePlaza plays: Kyle, Isaac's father, calls them to
-///   hurry, ACTOR_FLAME_AND_SMOKE shakes outside the house, then turns to
-///   smoke and rises away, and they run for the plaza, where the village takes
+///   COTTAGE_ROOMS_B_ISAACS_HOUSE_FROM_UPSTAIRS_WITH_DORA). There
+///   CottageRoomsB_HurryToThePlaza plays. Kyle, Isaac's father, calls them to
+///   hurry. ACTOR_FLAME_AND_SMOKE shakes outside the house, then turns to
+///   smoke and rises away. They run for the plaza, where the village takes
 ///   refuge, by COTTAGE_ROOMS_B_TO_VALE_PROLOGUE_WITH_DORA into
 ///   ValePrologue (VALE_PROLOGUE_FROM_COTTAGE_ROOMS_B_WITH_DORA). While
 ///   FLAG_VALE_STORM is set the villagers are put out of sight, lightning
@@ -61,40 +66,40 @@
 /// - Vale before the party leaves (FLAG_VALE_PARTY_LEFT clear): from Kraden's
 ///   cottage (ValeKradensCottage's
 ///   VALE_KRADENS_COTTAGE_TO_COTTAGE_ROOMS_B_MYTHRIL_BAG) the party arrives at
-///   COTTAGE_ROOMS_B_FROM_VALE_KRADENS_COTTAGE_MYTHRIL_BAG, inside it, where
+///   COTTAGE_ROOMS_B_FROM_VALE_KRADENS_COTTAGE_MYTHRIL_BAG, inside it. There
 ///   the Mythril Bag rises and wobbles before Kraden as he prepares for the
-///   visit to Sol Sanctum (vale_kradens_cottage.c);
+///   visit to Sol Sanctum (vale_kradens_cottage.c).
 ///   COTTAGE_ROOMS_B_TO_VALE_KRADENS_COTTAGE_SOUTH leads back out
 ///   (VALE_KRADENS_COTTAGE_FROM_COTTAGE_ROOMS_B_SOUTH). In a room of the inn
 ///   the masked man (ACTOR_MASKED_MAN) asks "Hey... Boy... Do you have
-///   business with me?" and sends Isaac off whatever he answers; at the inn the
+///   business with me?" and sends Isaac off whatever he answers. At the inn the
 ///   talk is of three strange travellers staying there, one of them masked, and
 ///   the innkeeper offers a room.
 /// - After the party has left Vale (FLAG_VALE_PARTY_LEFT): the villagers talk
-///   of the eruption and of Jenna, whom the visitors kidnapped, and one asks
+///   of the eruption and of Jenna, whom the visitors kidnapped. One asks
 ///   whether the masked man was Felix, Jenna's brother, and whether Jenna can
 ///   be trusted.
 /// - Back from Kalay (FLAG_KALAY_REACHED): Dora lies ill. The innkeeper
-///   welcomes Isaac home and a burly grey-haired man at the inn
+///   welcomes Isaac home, and a burly grey-haired man at the inn
 ///   (ACTOR_MAN_ISAAC_HAS_GROWN) sees how he has grown (Vale's area
 ///   flags FLAG_VALE_INNKEEPER_WELCOMED_ISAAC and
-///   FLAG_VALE_MAN_SAW_ISAAC_GROWN); Mind Read on either tells of Dora's
-///   illness (FLAG_READ_THOUGHTS_ABOUT_DORA). Visiting her
-///   (FLAG_VISITED_SICK_DORA) she reminds Isaac that he promised not to come
-///   back until his quest was done, and gets up to show she is well; she stays
-///   up for that visit (FLAG_VALE_DORA_OUT_OF_BED), and the setup otherwise
-///   puts her back in bed, where she dreams of Kyle.
+///   FLAG_VALE_MAN_SAW_ISAAC_GROWN). Mind Read on either tells of Dora's
+///   illness (FLAG_READ_THOUGHTS_ABOUT_DORA). When Isaac visits her
+///   (FLAG_VISITED_SICK_DORA) she reminds him that he promised not to come
+///   back until his quest was done, and gets up to show she is well. She stays
+///   up for that visit (FLAG_VALE_DORA_OUT_OF_BED). The setup otherwise puts
+///   her back in bed, where she dreams of Kyle.
 /// - Babi's Palace (COTTAGE_ROOMS_B_FROM_BABI_PALACE, from Babi's Palace's
 ///   BABI_PALACE_TO_COTTAGE_ROOMS_B, SceneId_BabiPalace), in Tolbi, whose lord
-///   is Babi: a room of his scholars, who speak of Alchemy, of Kraden, Babi's
+///   is Babi: a room of his scholars. They speak of Alchemy, of Kraden, Babi's
 ///   favourite scholar, and of the Venus Ruins under Babi Lighthouse with a
 ///   long tunnel beneath them. They talk differently once the Colosso finals
 ///   are over (FLAG_COLOSSO_OVER), when one asks whether the party knows
 ///   Kraden. The setup does not show the area's name there.
 ///
 /// The exits COTTAGE_ROOMS_B_TO_VALE_PLAZA_NORTHWEST to
-/// COTTAGE_ROOMS_B_TO_VALE_PROLOGUE_EAST are taken by the cell
-/// behaviors of the same numbers, leading to the rest of Vale (ValePlaza,
+/// COTTAGE_ROOMS_B_TO_VALE_PROLOGUE_EAST are taken by the cell behaviors of
+/// the same numbers. They lead to the rest of Vale (ValePlaza,
 /// ValeKradensCottage, Vale and ValePrologue) or between this scene's own
 /// parts.
 
@@ -159,31 +164,30 @@ static void CottageRoomsB_DemonstrateCatch(void);
 #define FLAG_VALE_DORA_OUT_OF_BED FLAG_SCENE_TEMP_03
 
 /// Vale's placed actors, numbered by the rows of
-/// gCottageRoomsB_ActorPlacements. The tables after the party leaves
-/// and after Kalay keep the rows up to the inn's, and differ after them
-/// (CottageRoomsBAfterKalayActorId).
+/// gCottageRoomsB_ActorPlacements.
+///
+/// The tables after the party leaves and after Kalay keep the rows up to the
+/// inn's, and differ after them (CottageRoomsBAfterKalayActorId).
 enum CottageRoomsBActorId {
   /// Isaac's mother, a woman with fair hair tied up. "Isaac, wake up!"
   /// ★ Named from the game: "your mother, Dora, has been crying"
   /// (MsgValeDoraHasBeenCrying)
   ACTOR_DORA = ACTOR_FIRST_PLACED,
   /// Isaac's father, a man with fair hair (SPRITE_KYLE, Kyle in
-  /// vale_prologue.c).
-  /// "Isaac, Dora, hurry! The Boulder could fall at any second!"
+  /// vale_prologue.c). "Isaac, Dora, hurry! The Boulder could fall at any
+  /// second!"
   /// ★ Named from the game: "Kyle, watch out!"
   /// (MsgValeKyleWatchOutTheBoulderThe)
   ACTOR_KYLE,
-  /// SPRITE_FLAME_AND_SMOKE, whose frames are a flame and wisps of smoke; it is
-  /// placed
-  /// outside the house only for CottageRoomsB_HurryToThePlaza, where it shakes,
-  /// then
-  /// flares up as its animation turns from flame to smoke, and rises 18 pixels
-  /// as it shrinks away.
+  /// SPRITE_FLAME_AND_SMOKE, whose frames are a flame and wisps of smoke. It is
+  /// placed outside the house only for CottageRoomsB_HurryToThePlaza. There it
+  /// shakes, then flares up as its animation turns from flame to smoke, and
+  /// rises 18 pixels as it shrinks away.
   /// ★ Named from what the player sees: a small flame, then wisps of smoke,
   /// spr_208.png (its render)
   ACTOR_FLAME_AND_SMOKE,
   /// A young man with brown hair who lost his father in the storm and means to
-  /// be a smith. "My father also died in that storm three years ago."; once the
+  /// be a smith. "My father also died in that storm three years ago." Once the
   /// party has left, "By then, I'll surely be a fine smith."
   /// ★ Named from the game: "My father also died in that storm three years
   /// ago." (MsgValeMyFatherAlsoDiedInThat)
@@ -202,19 +206,19 @@ enum CottageRoomsBActorId {
   /// (MsgValeOneOfTheMenFromThat)
   ACTOR_YOUNG_MAN_SAW_MASK,
   /// A woman with fair hair at the inn. "Two of those three guests staying with
-  /// us have gone out."; Mind Read later hears "I found his wallet when I was
+  /// us have gone out." Mind Read later hears "I found his wallet when I was
   /// cleaning the room..."
   /// ★ Named from the game: "We're a small hotel, and we get few guests"
   /// (MsgValeWereASmallHotelAndWe)
   ACTOR_INN_WORKER,
-  /// In a room of the inn, before the party leaves Vale: masked Felix
-  /// (SPRITE_FELIX_MASKED, sol_sanctum_eruption.h). "Hey... Boy... Do you have
-  /// business with me?"
+  /// Masked Felix (SPRITE_FELIX_MASKED, sol_sanctum_eruption.h), in a room of
+  /// the inn before the party leaves Vale. "Hey... Boy... Do you have business
+  /// with me?"
   /// ★ Named from the game: "That masked man..." (MsgValeTheMaskedManWasFelix)
   ACTOR_MASKED_MAN,
-  /// SPRITE_TUNIC, set beside Isaac's bed on the stormy night: Catch reaches it
-  /// and Isaac puts it on (FLAG_ISAAC_WEARS_TUNIC). Dora: "Don't go out without
-  /// your tunic!"
+  /// SPRITE_TUNIC, set beside Isaac's bed on the stormy night. Catch reaches it
+  /// and Isaac puts it on (FLAG_ISAAC_WEARS_TUNIC). Dora says "Don't go out
+  /// without your tunic!"
   /// ★ Named from the game: "Don't go out without your tunic!"
   /// (MsgValeComeOnHurry)
   ACTOR_TUNIC,
@@ -228,14 +232,14 @@ enum CottageRoomsBActorId {
 /// from the first table's.
 enum CottageRoomsBAfterKalayActorId {
   /// A burly grey-haired man at the inn. "Well if it isn't Isaac! You've grown
-  /// so much, I almost didn't recognize you!"; Mind Read hears of Dora's
+  /// so much, I almost didn't recognize you!" Mind Read hears of Dora's
   /// illness.
   /// ★ Named from the game: "You've grown so much" (MsgValeYouveGrownSoMuch)
   ACTOR_MAN_ISAAC_HAS_GROWN = ACTOR_FIRST_PLACED + 8,
   // XXX (no evidence): what the next was meant to do; nothing the player can
   // do shows a use.
   /// SPRITE_BLANK, a solid actor that draws nothing, beside
-  /// ACTOR_MAN_ISAAC_HAS_GROWN; no event answers it, the setup takes away the
+  /// ACTOR_MAN_ISAAC_HAS_GROWN. No event answers it. The setup takes away the
   /// shadow its blank sprite would draw, and it closes no way the innkeeper
   /// and the man do not.
   ACTOR_INVISIBLE_AFTER_KALAY
@@ -252,8 +256,8 @@ enum CottageRoomsBBabiScholarActorId {
   /// research." (MsgBabiBabiMakesHisScholarsPerformAll)
   ACTOR_SCHOLAR_ANCIENT_RUINS = ACTOR_FIRST_PLACED,
   /// A scholar with glasses in a blue cap, whose experiments fail. "No matter
-  /// how many times I run the experiment, I never get the results I want!";
-  /// after the finals he asks whether the party knows Kraden.
+  /// how many times I run the experiment, I never get the results I want!"
+  /// After the finals he asks whether the party knows Kraden.
   /// ★ Named from the game: "No matter how many times I run the experiment"
   /// (MsgBabiNoMatterHowManyTimesI)
   ACTOR_SCHOLAR_EXPERIMENT,
@@ -306,16 +310,17 @@ enum CottageRoomsBAnimation {
 
 // FLAG_VALE_DORA_OUT_OF_BED: Dora got out of her sickbed on this visit.
 
-/// Returns the entrances, among them the events played on arrival:
-/// COTTAGE_ROOMS_B_FROM_BABI_PALACE from Babi's palace
-/// (BABI_PALACE_TO_COTTAGE_ROOMS_B),
-/// COTTAGE_ROOMS_B_FROM_VALE_PLAZA_SOUTHEAST where a new game begins
-/// (scene/file_screen.c, and ValePlaza's
-/// VALE_PLAZA_TO_COTTAGE_ROOMS_B_SOUTHEAST),
-/// COTTAGE_ROOMS_B_ISAACS_HOUSE_FROM_UPSTAIRS_WITH_DORA from this scene's
-/// own COTTAGE_ROOMS_B_ISAACS_HOUSE_TO_GROUND_FLOOR_WITH_DORA, and
-/// COTTAGE_ROOMS_B_FROM_VALE_KRADENS_COTTAGE_MYTHRIL_BAG from Kraden's cottage
-/// (VALE_KRADENS_COTTAGE_TO_COTTAGE_ROOMS_B_MYTHRIL_BAG).
+/// Returns the entrances, among them the events played on arrival.
+///
+/// - COTTAGE_ROOMS_B_FROM_BABI_PALACE, from Babi's palace
+///   (BABI_PALACE_TO_COTTAGE_ROOMS_B).
+/// - COTTAGE_ROOMS_B_FROM_VALE_PLAZA_SOUTHEAST, where a new game begins
+///   (scene/file_screen.c, and ValePlaza's
+///   VALE_PLAZA_TO_COTTAGE_ROOMS_B_SOUTHEAST).
+/// - COTTAGE_ROOMS_B_ISAACS_HOUSE_FROM_UPSTAIRS_WITH_DORA, from this scene's
+///   own COTTAGE_ROOMS_B_ISAACS_HOUSE_TO_GROUND_FLOOR_WITH_DORA.
+/// - COTTAGE_ROOMS_B_FROM_VALE_KRADENS_COTTAGE_MYTHRIL_BAG, from Kraden's
+///   cottage (VALE_KRADENS_COTTAGE_TO_COTTAGE_ROOMS_B_MYTHRIL_BAG).
 const struct SceneEntrance *CottageRoomsB_GetEntrances(void) {
   return gCottageRoomsB_Entrances;
 }
@@ -347,9 +352,11 @@ const struct ActorPlacement *CottageRoomsB_GetActorPlacements(void) {
 }
 
 /// In Babi's Palace, one of Babi's scholars asks whether the party knows
-/// Kraden. Reached by talking to ACTOR_SCHOLAR_EXPERIMENT in their room
-/// (COTTAGE_ROOMS_B_FROM_BABI_PALACE) once FLAG_COLOSSO_OVER is set;
-/// speakerId is the actor spoken to.
+/// Kraden.
+///
+/// Reached by talking to ACTOR_SCHOLAR_EXPERIMENT in their room
+/// (COTTAGE_ROOMS_B_FROM_BABI_PALACE) once FLAG_COLOSSO_OVER is set. speakerId
+/// is the actor spoken to.
 static void CottageRoomsB_ScholarAsksAboutKraden(s32 speakerId) {
   s32 firstMessage = MsgValeFolksSeemKnow;
 
@@ -365,8 +372,10 @@ static void CottageRoomsB_ScholarAsksAboutKraden(s32 speakerId) {
   Event_ShowMessage(speakerId, 0);
 }
 
-/// Chooses the events: Babi's scholars talk differently once the Colosso
-/// finals are over; Vale's villagers follow the storm and the story.
+/// Chooses the events for the room the party is in.
+///
+/// Babi's scholars talk differently once the Colosso finals are over. Vale's
+/// villagers follow the storm and the story.
 const struct Trigger *CottageRoomsB_GetTriggers(void) {
   if (gMainRoutineWork.entrance == COTTAGE_ROOMS_B_FROM_BABI_PALACE) {
     if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
@@ -387,10 +396,13 @@ const struct Trigger *CottageRoomsB_GetTriggers(void) {
   return gCottageRoomsB_Triggers;
 }
 
-/// The masked man at the inn asks Isaac his business. In a room of Vale's inn,
-/// the masked man asks whether Isaac has business with him, and sends him off
-/// whatever he answers. "Hey... Boy..." Reached by talking to
-/// ACTOR_MASKED_MAN before the party leaves Vale (gCottageRoomsB_Triggers).
+/// The masked man at the inn asks Isaac his business.
+///
+/// In a room of Vale's inn, the masked man asks whether Isaac has business
+/// with him, and sends him off whatever he answers. "Hey... Boy..."
+///
+/// Reached by talking to ACTOR_MASKED_MAN before the party leaves Vale
+/// (gCottageRoomsB_Triggers).
 static void CottageRoomsB_AskIsaacHisBusiness(void) {
   Event_Start();
   Actor_StartRepeatedMotion(ACTOR_MASKED_MAN, 2);
@@ -415,10 +427,13 @@ static void CottageRoomsB_AskIsaacHisBusiness(void) {
   Event_End();
 }
 
-/// A young man asks whether the masked man was Felix. In Vale, the young man
-/// with brown hair also wonders whether Jenna can be trusted. Reached by
-/// talking to ACTOR_YOUNG_MAN_SAW_MASK once the party has left Vale and until
-/// it reaches Kalay (gCottageRoomsB_TriggersAfterLeaving).
+/// A young man asks whether the masked man was Felix.
+///
+/// In Vale, the young man with brown hair also wonders whether Jenna can be
+/// trusted.
+///
+/// Reached by talking to ACTOR_YOUNG_MAN_SAW_MASK once the party has left Vale
+/// and until it reaches Kalay (gCottageRoomsB_TriggersAfterLeaving).
 static void CottageRoomsB_AskWhetherMaskedManWasFelix(void) {
   struct FieldWork *work;
 
@@ -439,6 +454,7 @@ static void CottageRoomsB_AskWhetherMaskedManWasFelix(void) {
 }
 
 /// Stops storm lightning before fading through the requested exit.
+///
 /// Called by the exits below.
 static void CottageRoomsB_CloseScreenAndExit(s32 exitNumber) {
   if (GameFlag_Get(FLAG_VALE_STORM) != 0) {
@@ -456,93 +472,108 @@ static void CottageRoomsB_CloseScreenAndExit(s32 exitNumber) {
 // (gCottageRoomsB_Exits, or gCottageRoomsB_StormExits on the stormy
 // night).
 
-/// Reached by cell behavior 1; leads to ValePlaza
-/// (VALE_PLAZA_FROM_COTTAGE_ROOMS_B_WEST).
+/// Leads to ValePlaza (VALE_PLAZA_FROM_COTTAGE_ROOMS_B_WEST).
+///
+/// Reached by cell behavior 1.
 static void CottageRoomsB_ExitToValePlazaNorthwest(void) {
   Sound_Play(SE_MAP_EXIT);
   CottageRoomsB_CloseScreenAndExit(COTTAGE_ROOMS_B_TO_VALE_PLAZA_NORTHWEST);
 }
 
-/// Reached by cell behavior 2; leads to Kraden's cottage
+/// Leads to Kraden's cottage
 /// (VALE_KRADENS_COTTAGE_FROM_COTTAGE_ROOMS_B_NORTH).
+///
+/// Reached by cell behavior 2.
 static void CottageRoomsB_ExitToValeKradensCottageNorth(void) {
   Sound_Play(SE_MAP_EXIT);
   CottageRoomsB_CloseScreenAndExit(
       COTTAGE_ROOMS_B_TO_VALE_KRADENS_COTTAGE_NORTH);
 }
 
-/// Reached by cell behavior 3; leads to ValePlaza
-/// (VALE_PLAZA_FROM_COTTAGE_ROOMS_B_NORTH).
+/// Leads to ValePlaza (VALE_PLAZA_FROM_COTTAGE_ROOMS_B_NORTH).
+///
+/// Reached by cell behavior 3.
 static void CottageRoomsB_ExitToValePlazaNortheast(void) {
   Sound_Play(SE_MAP_EXIT);
   CottageRoomsB_CloseScreenAndExit(COTTAGE_ROOMS_B_TO_VALE_PLAZA_NORTHEAST);
 }
 
-/// Reached by cell behavior 4; leads to ValePlaza
-/// (VALE_PLAZA_FROM_COTTAGE_ROOMS_B_SOUTH).
+/// Leads to ValePlaza (VALE_PLAZA_FROM_COTTAGE_ROOMS_B_SOUTH).
+///
+/// Reached by cell behavior 4.
 static void CottageRoomsB_ExitToValePlazaWest(void) {
   Sound_Play(SE_MAP_EXIT);
   CottageRoomsB_CloseScreenAndExit(COTTAGE_ROOMS_B_TO_VALE_PLAZA_WEST);
 }
 
-/// Reached by cell behavior 5, the inn's stairs; climbs to its guest room
-/// at COTTAGE_ROOMS_B_VALE_INN_FROM_GROUND_FLOOR.
+/// Climbs the inn's stairs to its guest room, at
+/// COTTAGE_ROOMS_B_VALE_INN_FROM_GROUND_FLOOR.
+///
+/// Reached by cell behavior 5.
 static void CottageRoomsB_ExitToInnUpstairs(void) {
   Sound_Play(SE_STAIRS_UP);
   CottageRoomsB_CloseScreenAndExit(COTTAGE_ROOMS_B_VALE_INN_TO_UPSTAIRS);
 }
 
-/// Reached by cell behavior 6; leads to Vale
-/// (VALE_FROM_COTTAGE_ROOMS_B), or on the stormy night to ValePrologue
-/// (VALE_PROLOGUE_FROM_COTTAGE_ROOMS_B_ISAACS_HOUSE).
+/// Leads to Vale (VALE_FROM_COTTAGE_ROOMS_B), or on the stormy night to
+/// ValePrologue (VALE_PROLOGUE_FROM_COTTAGE_ROOMS_B_ISAACS_HOUSE).
+///
+/// Reached by cell behavior 6.
 static void CottageRoomsB_ExitToVale(void) {
   Sound_Play(SE_MAP_EXIT);
   CottageRoomsB_CloseScreenAndExit(COTTAGE_ROOMS_B_TO_VALE);
 }
 
-/// Reached by cell behavior 7, the stairs of Isaac's house; climbs to its
-/// upper floor.
+/// Climbs the stairs of Isaac's house to its upper floor.
+///
+/// Reached by cell behavior 7.
 static void CottageRoomsB_ExitToIsaacsHouseUpstairs(void) {
   Sound_Play(SE_STAIRS_UP);
   CottageRoomsB_CloseScreenAndExit(COTTAGE_ROOMS_B_ISAACS_HOUSE_TO_UPSTAIRS);
 }
 
-/// Reached by cell behavior 8, the stairs of the inn's guest room; goes
-/// back down.
+/// Goes back down the stairs of the inn's guest room.
+///
+/// Reached by cell behavior 8.
 static void CottageRoomsB_ExitToInnDownstairs(void) {
   Sound_Play(SE_STAIRS_DOWN);
   CottageRoomsB_CloseScreenAndExit(COTTAGE_ROOMS_B_VALE_INN_TO_GROUND_FLOOR);
 }
 
-/// Reached by cell behavior 9, the stairs on the upper floor of Isaac's
-/// house; goes back down.
+/// Goes back down the stairs on the upper floor of Isaac's house.
+///
+/// Reached by cell behavior 9.
 static void CottageRoomsB_ExitToIsaacsHouseDownstairs(void) {
   Sound_Play(SE_STAIRS_DOWN);
   CottageRoomsB_CloseScreenAndExit(
       COTTAGE_ROOMS_B_ISAACS_HOUSE_TO_GROUND_FLOOR);
 }
 
-/// Reached by cell behavior 10; leads to ValePrologue
-/// (VALE_PROLOGUE_FROM_COTTAGE_ROOMS_B_WEST).
+/// Leads to ValePrologue (VALE_PROLOGUE_FROM_COTTAGE_ROOMS_B_WEST).
+///
+/// Reached by cell behavior 10.
 static void CottageRoomsB_ExitToValePrologueWest(void) {
   Sound_Play(SE_MAP_EXIT);
   CottageRoomsB_CloseScreenAndExit(COTTAGE_ROOMS_B_TO_VALE_PROLOGUE_WEST);
 }
 
-/// Reached by cell behavior 11; leads to ValePrologue
-/// (VALE_PROLOGUE_FROM_COTTAGE_ROOMS_B_EAST).
+/// Leads to ValePrologue (VALE_PROLOGUE_FROM_COTTAGE_ROOMS_B_EAST).
+///
+/// Reached by cell behavior 11.
 static void CottageRoomsB_ExitToValePrologueEast(void) {
   Sound_Play(SE_MAP_EXIT);
   CottageRoomsB_CloseScreenAndExit(COTTAGE_ROOMS_B_TO_VALE_PROLOGUE_EAST);
 }
 
-/// Sets up these rooms for the stormy night or the story's villagers. It also
-/// plays the events of COTTAGE_ROOMS_B_FROM_VALE_PLAZA_SOUTHEAST,
+/// Sets up these rooms for the stormy night or the story's villagers.
+///
+/// It also plays the events of COTTAGE_ROOMS_B_FROM_VALE_PLAZA_SOUTHEAST,
 /// COTTAGE_ROOMS_B_ISAACS_HOUSE_FROM_UPSTAIRS_WITH_DORA and
-/// COTTAGE_ROOMS_B_FROM_VALE_KRADENS_COTTAGE_MYTHRIL_BAG. Called by
-/// FieldSequence_Run once the actors are placed.
+/// COTTAGE_ROOMS_B_FROM_VALE_KRADENS_COTTAGE_MYTHRIL_BAG.
+///
+/// Called by FieldSequence_Run once the actors are placed.
 /// COTTAGE_ROOMS_B_FROM_VALE_PLAZA_SOUTHEAST sets FLAG_VALE_STORM before
-/// CottageRoomsB_DoraWakesIsaac; back from Kalay, Dora is put back in her
+/// CottageRoomsB_DoraWakesIsaac. Back from Kalay, Dora is put back in her
 /// sickbed unless FLAG_VALE_DORA_OUT_OF_BED says she got up.
 s32 CottageRoomsB_Initialize(void) {
   struct Actor *actor;
@@ -620,9 +651,12 @@ s32 CottageRoomsB_Initialize(void) {
 }
 
 /// In their house in Vale on the stormy night, Dora wakes Isaac, makes him take
-/// his tunic, and leads him out into the storm. "The Mt. Aleph Boulder is going
-/// to fall!" Called by CottageRoomsB_Initialize on arrival by
-/// COTTAGE_ROOMS_B_FROM_VALE_PLAZA_SOUTHEAST, where a new game begins. Sets
+/// his tunic, and leads him out into the storm.
+///
+/// "The Mt. Aleph Boulder is going to fall!"
+///
+/// Called by CottageRoomsB_Initialize on arrival by
+/// COTTAGE_ROOMS_B_FROM_VALE_PLAZA_SOUTHEAST, where a new game begins. It sets
 /// FLAG_ISAAC_WEARS_TUNIC and takes
 /// COTTAGE_ROOMS_B_ISAACS_HOUSE_TO_GROUND_FLOOR_WITH_DORA, back into this
 /// scene by COTTAGE_ROOMS_B_ISAACS_HOUSE_FROM_UPSTAIRS_WITH_DORA, where
@@ -793,10 +827,14 @@ static __inline__ void SetBlendTarget(u32 value) { REG_BLDCNT = value; }
 static __inline__ void SetBlendAlpha(u32 value) { REG_BLDALPHA = value; }
 
 /// Outside the house in Vale on the stormy night, Kyle calls to Isaac and Dora
-/// to hurry; ACTOR_FLAME_AND_SMOKE shakes, then turns to smoke and rises
-/// away, as they run to the plaza. Called by CottageRoomsB_Initialize on
-/// arrival by COTTAGE_ROOMS_B_ISAACS_HOUSE_FROM_UPSTAIRS_WITH_DORA, after
-/// CottageRoomsB_DoraWakesIsaac. Takes
+/// to hurry, and they run to the plaza.
+///
+/// As they run, ACTOR_FLAME_AND_SMOKE shakes, then turns to smoke and rises
+/// away.
+///
+/// Called by CottageRoomsB_Initialize on arrival by
+/// COTTAGE_ROOMS_B_ISAACS_HOUSE_FROM_UPSTAIRS_WITH_DORA, after
+/// CottageRoomsB_DoraWakesIsaac. It takes
 /// COTTAGE_ROOMS_B_TO_VALE_PROLOGUE_WITH_DORA, to ValePrologue
 /// (VALE_PROLOGUE_FROM_COTTAGE_ROOMS_B_WITH_DORA), where
 /// ValePrologue_DoraSendsIsaacToThePlaza follows.
@@ -929,11 +967,14 @@ ramp:
   Import_EventSetExitRequest(COTTAGE_ROOMS_B_TO_VALE_PROLOGUE_WITH_DORA);
 }
 
-/// Vale's innkeeper offers a room from behind the counter; elsewhere talks of
-/// the travelers, the eruption, or, back from Kalay, welcomes Isaac home.
-/// Reached by talking to ACTOR_INNKEEPER in every Vale table but the
-/// storm's, and back from Kalay by Mind Read on him until he has welcomed
-/// Isaac. Sets FLAG_VALE_INNKEEPER_WELCOMED_ISAAC on that welcome.
+/// Vale's innkeeper offers a room from behind the counter.
+///
+/// Elsewhere the innkeeper talks of the travelers, the eruption, or, back from
+/// Kalay, welcomes Isaac home.
+///
+/// Reached by talking to ACTOR_INNKEEPER in every Vale table but the storm's,
+/// and back from Kalay by Mind Read on him until he has welcomed Isaac. It
+/// sets FLAG_VALE_INNKEEPER_WELCOMED_ISAAC on that welcome.
 static void CottageRoomsB_TalkToInnkeeper(void) {
   struct Actor *actor;
 
@@ -970,10 +1011,13 @@ static void CottageRoomsB_TalkToInnkeeper(void) {
 }
 
 /// Back from Kalay, a burly grey-haired man at Vale's inn
-/// (ACTOR_MAN_ISAAC_HAS_GROWN) remarks how much Isaac has grown. Reached by
-/// talking to him while FLAG_VALE_INNKEEPER_WELCOMED_ISAAC is clear, or by Mind
-/// Read on him until FLAG_VALE_MAN_SAW_ISAAC_GROWN is set, which this sets.
-/// The talk row tests the innkeeper's flag, not this one: after his welcome
+/// (ACTOR_MAN_ISAAC_HAS_GROWN) remarks how much Isaac has grown.
+///
+/// Reached by talking to him while FLAG_VALE_INNKEEPER_WELCOMED_ISAAC is clear,
+/// or by Mind Read on him until FLAG_VALE_MAN_SAW_ISAAC_GROWN is set, which
+/// this sets.
+///
+/// The talk row tests the innkeeper's flag, not this one. After his welcome
 /// the row below plays the same line as a plain message, which leaves
 /// FLAG_VALE_MAN_SAW_ISAAC_GROWN clear for Mind Read to play this once.
 static void CottageRoomsB_RemarkIsaacHasGrown(void) {
@@ -987,8 +1031,10 @@ static void CottageRoomsB_RemarkIsaacHasGrown(void) {
   Event_End();
 }
 
-/// Mind Read on Vale's innkeeper: Dora would not let Isaac stay in Vale.
-/// Reached back from Kalay once he has welcomed Isaac. Sets
+/// Mind Read on Vale's innkeeper hears that Dora would not let Isaac stay in
+/// Vale.
+///
+/// Reached back from Kalay once he has welcomed Isaac. It sets
 /// FLAG_READ_THOUGHTS_ABOUT_DORA.
 static void CottageRoomsB_ReadInnkeepersThoughts(void) {
   Event_Start();
@@ -999,8 +1045,10 @@ static void CottageRoomsB_ReadInnkeepersThoughts(void) {
   Event_End();
 }
 
-/// Mind Read on ACTOR_MAN_ISAAC_HAS_GROWN at Vale's inn: Dora was struck
-/// with illness. Reached back from Kalay once he has remarked on Isaac. Sets
+/// Mind Read on ACTOR_MAN_ISAAC_HAS_GROWN at Vale's inn hears that Dora was
+/// struck with illness.
+///
+/// Reached back from Kalay once he has remarked on Isaac. It sets
 /// FLAG_READ_THOUGHTS_ABOUT_DORA.
 static void CottageRoomsB_ReadThoughtsAboutDorasIllness(void) {
   Event_Start();
@@ -1011,10 +1059,13 @@ static void CottageRoomsB_ReadThoughtsAboutDorasIllness(void) {
   Event_End();
 }
 
-/// Back from Kalay, Isaac visits Dora in her sickbed at home in Vale; she asks
-/// who told him she was ill, then gets up to show she feels well. Reached by
-/// talking to Dora, or by Mind Read on her, until FLAG_VISITED_SICK_DORA is
-/// set. Sets it and FLAG_VALE_DORA_OUT_OF_BED.
+/// Back from Kalay, Isaac visits Dora in her sickbed at home in Vale.
+///
+/// She asks who told him she was ill, then gets up to show she feels well.
+///
+/// Reached by talking to Dora, or by Mind Read on her, until
+/// FLAG_VISITED_SICK_DORA is set. It sets that flag and
+/// FLAG_VALE_DORA_OUT_OF_BED.
 static void CottageRoomsB_VisitSickDora(void) {
   struct Actor *leader;
   s32 firstMessage;
@@ -1143,10 +1194,14 @@ static void CottageRoomsB_VisitSickDora(void) {
   Event_End();
 }
 
-/// Talking to Dora at home in Vale, back from Kalay: in her sickbed she murmurs
-/// Kyle's name; once up, she tells Isaac not to worry. Reached by talking to
-/// her back from Kalay once FLAG_VISITED_SICK_DORA is set; she is up while
-/// FLAG_VALE_DORA_OUT_OF_BED is set.
+/// Talking to Dora at home in Vale, back from Kalay, after Isaac has visited
+/// her.
+///
+/// In her sickbed she murmurs Kyle's name. Once up, she tells Isaac not to
+/// worry.
+///
+/// Reached by talking to her back from Kalay once FLAG_VISITED_SICK_DORA is
+/// set. She is up while FLAG_VALE_DORA_OUT_OF_BED is set.
 static void CottageRoomsB_TalkToDora(void) {
   s32 message;
 
@@ -1172,6 +1227,7 @@ static void CottageRoomsB_TalkToDora(void) {
 }
 
 /// Restores the room's tiles and cell behaviors outside the storm.
+///
 /// Called by CottageRoomsB_Initialize when FLAG_VALE_STORM is clear.
 static void CottageRoomsB_RestoreRoomPatch(void) {
   MapGrid_CopyCellsTo(22, 85, 25, 85, 2, 2);
@@ -1179,11 +1235,13 @@ static void CottageRoomsB_RestoreRoomPatch(void) {
 }
 
 /// In Vale, the Mythril Bag rises and wobbles before Kraden, with no text.
+///
 /// Called by CottageRoomsB_Initialize on arrival by
 /// COTTAGE_ROOMS_B_FROM_VALE_KRADENS_COTTAGE_MYTHRIL_BAG, from Kraden's
 /// cottage, while he prepares for the first Sol Sanctum visit
-/// (ValeKradensCottage_KradenPlansSanctumVisit). Takes
-/// COTTAGE_ROOMS_B_TO_VALE_KRADENS_COTTAGE_SOUTH back outside
+/// (ValeKradensCottage_KradenPlansSanctumVisit).
+///
+/// It takes COTTAGE_ROOMS_B_TO_VALE_KRADENS_COTTAGE_SOUTH back outside
 /// (VALE_KRADENS_COTTAGE_FROM_COTTAGE_ROOMS_B_SOUTH), where
 /// ValeKradensCottage_KradenSetsOff gathers the party.
 static void CottageRoomsB_ShowMythrilBag(void) {
@@ -1337,6 +1395,7 @@ UNUSED static void CottageRoomsB_CyclePaletteWithoutParticles(void) {
 }
 
 /// Catch plays from Dora on the tunic, then its actors are released.
+///
 /// Called by CottageRoomsB_DoraWakesIsaac as Dora hands Isaac his tunic.
 static void CottageRoomsB_DemonstrateCatch(void) {
   FieldPsynergy_LoadResources(ABILITY_CATCH, 1);

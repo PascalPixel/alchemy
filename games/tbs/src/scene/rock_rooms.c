@@ -1,36 +1,42 @@
 /// @file
-/// Rock rooms (SceneId_RockRooms), a sheet of rooms cut into rock: the game
-/// packs rooms that share a tile style onto one map, and this one holds the
-/// buildings of Lunpa and the house at Suhalla Gate. Its rooms are told apart
-/// by the entrance the party comes in by, and the area name follows it:
+/// Rock rooms (SceneId_RockRooms), a sheet of rooms cut into rock.
+///
+/// The game packs rooms that share a tile style onto one map. This one holds
+/// the buildings of Lunpa and the house at Suhalla Gate. Its rooms are told
+/// apart by the entrance the party comes in by, and the area name follows it:
 ///
 /// - Lunpa: the three homes, the weapon and armor shop, the item shop, the inn
-///   and the crate room, entered by the town's doors (lunpa.c) at
+///   and the crate room. They are entered by the town's doors (lunpa.c) at
 ///   ROOM_FIRST_HOME to ROOM_INN and ROOM_CRATE_ROOM.
 /// - Lunpa Temple: ROOM_TEMPLE from the town, and ROOM_TEMPLE_SECOND_ENTRANCE,
 ///   where a party defeated in Lunpa wakes.
 /// - Gate to Suhalla: the house beside Suhalla Gate (suhalla_gate.c), entered
-///   at ROOM_GATE_TO_SUHALLA (ROCK_ROOMS_FROM_SUHALLA_GATE_CHECKPOINT),
-///   the sheet's one room that is not Lunpa's, where a traveling Healer offers
-///   the Sanctum's services.
+///   at ROOM_GATE_TO_SUHALLA (ROCK_ROOMS_FROM_SUHALLA_GATE_CHECKPOINT). It is
+///   the sheet's one room that is not Lunpa's, and a traveling Healer offers
+///   the Sanctum's services there.
 ///
-/// A room's entrance number is also its exit kind and the step trigger
-/// of its door (ROOM_DOOR), so each door leads back out the way the party came
-/// in. Scene_GetTriggers gives the house at Suhalla Gate its own table, and
-/// Lunpa's rooms the sealed town's (gInteriorSealedTriggers) until Donpa's
-/// judgment sets FLAG_DODONPA_LOCKED_UP, then the reopened town's
-/// (gInteriorReopenedTriggers). While the town is sealed the merchants neither
-/// buy nor sell and the innkeeper offers only his home; talking to the inn's
-/// chef or reading his mind tells of the prisoner he takes meals to
-/// (FLAG_LUNPA_HEARD_OF_PRISONER). Once it reopens, the shops, the inn and the
-/// temple serve across their counters.
+/// Each door leads back out the way the party came in. That works because a
+/// room's entrance number is also its exit kind and the step trigger of its
+/// door (ROOM_DOOR).
 ///
-/// A merchant or Healer serves only a leader who faces north across the
-/// counter (FACING_IS_NORTH); otherwise they talk. The counters are blank
-/// actors in front of the merchants (ACTOR_WEAPON_COUNTER and the
-/// others), so talking across one reaches the merchant's trigger. Entering by
-/// ROOM_GATE_TO_SUHALLA makes the house the place a defeated party wakes and
-/// hides the area name.
+/// Scene_GetTriggers gives the house at Suhalla Gate its own table. Lunpa's
+/// rooms take the sealed town's table (gInteriorSealedTriggers) until Donpa's
+/// judgment sets FLAG_DODONPA_LOCKED_UP, and the reopened town's
+/// (gInteriorReopenedTriggers) after it.
+///
+/// While the town is sealed, the merchants neither buy nor sell and the
+/// innkeeper offers only his home. Talking to the inn's chef or reading his
+/// mind tells of the prisoner he takes meals to (FLAG_LUNPA_HEARD_OF_PRISONER).
+/// Once the town reopens, the shops, the inn and the temple serve across their
+/// counters.
+///
+/// A merchant or Healer serves only a leader who faces north across the counter
+/// (FACING_IS_NORTH). Otherwise they talk. The counters are blank actors in
+/// front of the merchants (ACTOR_WEAPON_COUNTER and the others), so talking
+/// across one reaches the merchant's trigger.
+///
+/// Entering by ROOM_GATE_TO_SUHALLA makes the house the place a defeated party
+/// wakes and hides the area name.
 
 #include "main_routine_work.h"
 #include "event.h"

@@ -1,18 +1,20 @@
 /// @file
-/// Kolima Forest (SceneId_KolimaForestGlade), the second of the forest's
-/// five scenes, on the party's way to Tret between SceneId_KolimaForestEntrance
-/// and SceneId_KolimaForestCliff. Three logs lie in the grass to be rolled by
-/// walking into them, and a Nut floats out of reach until Catch pulls it in
-/// (FLAG_KOLIMA_FOREST_NUT_CAUGHT). Until Tret lifts the curse
-/// (FLAG_KOLIMA_CURSE_LIFTED), KolimaPalette_Curse gives the forest redder,
-/// darker colours.
+/// Kolima Forest (SceneId_KolimaForestGlade), the second of the forest's five
+/// scenes, on the party's way to Tret between SceneId_KolimaForestEntrance and
+/// SceneId_KolimaForestCliff.
+///
+/// Three logs lie in the grass to be rolled by walking into them. A Nut floats
+/// out of reach until Catch pulls it in (FLAG_KOLIMA_FOREST_NUT_CAUGHT).
+///
+/// Until Tret lifts the curse (FLAG_KOLIMA_CURSE_LIFTED), KolimaPalette_Curse
+/// gives the forest redder, darker colours.
 ///
 /// Until the third patch the Nut's actor placement row tested Vale's
 /// FLAG_VALE_NUT_CAUGHT rather than FLAG_KOLIMA_FOREST_NUT_CAUGHT, so once
 /// Vale's Nut had been caught this one was never placed.
 ///
-/// The scene's name, Glade, is ours, for what sets the scene apart: open grass
-/// and stumps ringed by trees, with no cliff or river
+/// The scene's name, Glade, is ours, for what sets the scene apart. It is open
+/// grass and stumps ringed by trees, with no cliff or river
 /// (places/kolima-forest-glade_cursed/map-0.png).
 
 #include "speaker.h"
@@ -76,7 +78,7 @@ const struct ActorPlacement *KolimaForestGlade_GetActorPlacements(void) {
   return gKolimaForestGlade_ActorPlacements;
 }
 
-/// Kolima Forest (SceneId_KolimaForestGlade), walking into a log: it rolls
+/// In Kolima Forest (SceneId_KolimaForestGlade), walking into a log rolls it
 /// ahead until something stops it.
 static void KolimaForestGlade_PushLog(void) {
   struct PushedActorProbe result;
@@ -86,8 +88,9 @@ static void KolimaForestGlade_PushLog(void) {
   Event_End();
 }
 
-/// Kolima Forest (SceneId_KolimaForestGlade), Catch on the floating Nut (until
-/// FLAG_KOLIMA_FOREST_NUT_CAUGHT): it vanishes and the party finds a Nut.
+/// In Kolima Forest (SceneId_KolimaForestGlade), Catch on the floating Nut
+/// makes it vanish, and the party finds a Nut. This works until
+/// FLAG_KOLIMA_FOREST_NUT_CAUGHT.
 static void KolimaForestGlade_CatchNut(void) {
   Event_Start();
   Actor_SetPosition(ACTOR_NUT, 0, 0);
@@ -166,8 +169,8 @@ u32 gKolimaForestGlade_Exits[] = {
     SCENE_EXITS_END,
 };
 
-/// Until the third patch the Nut's actor placement tested Vale's FLAG_VALE_NUT_CAUGHT, not the flag
-/// catching it sets.
+/// Until the third patch the Nut's actor placement tested Vale's
+/// FLAG_VALE_NUT_CAUGHT, not the flag catching it sets.
 struct ActorPlacement gKolimaForestGlade_ActorPlacements[] = {
     { SPRITE_LOG_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         PIXELS(360), 0, PIXELS(368), FACING_SOUTH, TALK_FACING_KEEP, 0 },

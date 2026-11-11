@@ -1,60 +1,85 @@
 /// @file
-/// Tree rooms (SceneId_TreeRooms), a sheet of rooms drawn inside a tree: the
-/// inside of Tret, the holy tree of Kolima Forest, and the first of Tret Tree's
-/// two scenes. The party comes in from Kolima Forest (kolima_forest_tree.c) to
-/// face Tret's wrathful side. FLAG_TRET_DEFEATED, whether that battle is won
-/// and Tret has spoken with the party since, decides most of the scene.
+/// Tree rooms (SceneId_TreeRooms) is a sheet of rooms drawn inside a tree.
 ///
-/// The map is six rooms, the six camera boxes of its entrance table.
-/// The party comes in from Kolima Forest (SceneId_KolimaForestTree) at
+/// It is the inside of Tret, the holy tree of Kolima Forest, and the first of
+/// Tret Tree's two scenes. The party comes in from Kolima Forest
+/// (kolima_forest_tree.c) to face Tret's wrathful side.
+///
+/// FLAG_TRET_DEFEATED decides most of the scene. It says whether that battle is
+/// won and Tret has spoken with the party since.
+///
+/// The map is six rooms, the six camera boxes of its entrance table. The party
+/// comes in from Kolima Forest (SceneId_KolimaForestTree) at
 /// TREE_ROOMS_FROM_KOLIMA_FOREST_TREE and leaves by
-/// TREE_ROOMS_TO_KOLIMA_FOREST_TREE; eight exits, from
-/// TREE_ROOMS_TO_TRET_TREE_BRANCH_SOUTH_SOUTHWEST to _NORTH_NORTHEAST,
-/// lead out to Tret Tree's other scene (SceneId_TretTreeBranch), and six more,
-/// TREE_ROOMS_ENTRANCE_TO_SECOND_FLOOR to
-/// TREE_ROOMS_ENTRANCE_TO_TRET, lead from room to room, three of them
+/// TREE_ROOMS_TO_KOLIMA_FOREST_TREE.
+///
+/// Eight exits, from TREE_ROOMS_TO_TRET_TREE_BRANCH_SOUTH_SOUTHWEST to
+/// _NORTH_NORTHEAST, lead out to Tret Tree's other scene
+/// (SceneId_TretTreeBranch). Six more, TREE_ROOMS_ENTRANCE_TO_SECOND_FLOOR to
+/// TREE_ROOMS_ENTRANCE_TO_TRET, lead from room to room. Three of those go
 /// through regions 28 to 36 pixels up (Scene_GetExitRegions).
 ///
-/// Webs hold cocoons, each a step trigger (cell behaviors 21 to 29, 31, 32
+/// Webs hold cocoons. Each is a step trigger (cell behaviors 21 to 29, 31, 32
 /// and 50 to 59) with a temporary flag of its own
-/// (FLAG_TRET_TREE_SECOND_FLOOR_COCOON_1_TORN and the others). The first step
-/// on a cocoon tears it: its cell is redrawn and its flag set. The next step on
-/// a torn cocoon breaks through, and the leader spins and falls to the room
-/// below, arriving at the entrance numbered as the cocoon
-/// (FLAG_ARRIVE_FALLING plays the landing), straight below the cocoon: the
-/// second floor's nine (21 to 29) drop the leader into the entrance room, the
-/// third floor's two (31 and 32) onto the second floor and the fifth floor's
-/// (50 to 59) onto the fourth. A third cocoon drawn on the third floor, on its
-/// southwest web, has no step trigger. The layout draws four cocoons already
-/// torn (22, 52, 54 and 58) and the setup sets their flags, so they give way at
-/// the first step. A latch in the scene state (sLastCocoon) keeps a step from
-/// counting twice until the leader walks on. Cocoon 50 is the way down to Tret:
-/// entrances 50, 40, 30 and 20 each let the leader fall on to the
-/// entrance numbered ten lower, and at entrance 10 the leader lands
-/// in a ring of dust as the map shakes, in front of Tret. Torn cocoons stay
-/// torn across a battle: after one (FLAG_KEEP_PARTY_POSITION) the setup redraws
-/// them from gTreeRooms_MapPatches.
+/// (FLAG_TRET_TREE_SECOND_FLOOR_COCOON_1_TORN and the others).
 ///
-/// Tret's face (ACTOR_TRET) and a second Tret actor at the same spot
-/// speak his lines. Walking up to him (cell behavior 40, while
-/// FLAG_TRET_DEFEATED is clear) runs TreeRooms_FightTret: he roars, the party
-/// gathers in front of him, and the evil within him scorns them before the
-/// battle with Tret. The battle returns to
-/// TREE_ROOMS_AFTER_FIGHT_TRET, where the setup plays the conversation
-/// after it: a passage opens in his room, he comes to himself, thanks the party
-/// and asks whether they need something, realises that he turned the people of
-/// Kolima into trees ("I turned the people of Kolima into trees?"), tries to
-/// free them but cannot reach that far, and his face sinks away as the party
-/// resolve to heal him. Only then is FLAG_TRET_DEFEATED set; in Kolima Forest
-/// it lets Hermes' Water heal Tret and lift the curse. Once it is set, the
-/// setup moves both Tret actors away, opens that passage and redraws
-/// cells near entrance 20; before, it keeps the passage closed.
+/// The first step on a cocoon tears it. Its cell is redrawn and its flag set.
+///
+/// The next step on a torn cocoon breaks through. The leader spins and falls to
+/// the room below, arriving at the entrance numbered as the cocoon, straight
+/// below the cocoon. FLAG_ARRIVE_FALLING plays the landing.
+///
+/// - The second floor's nine (21 to 29) drop the leader into the entrance room.
+/// - The third floor's two (31 and 32) drop the leader onto the second floor.
+/// - The fifth floor's (50 to 59) drop the leader onto the fourth.
+///
+/// A third cocoon drawn on the third floor, on its southwest web, has no step
+/// trigger.
+///
+/// The layout draws four cocoons already torn (22, 52, 54 and 58) and the setup
+/// sets their flags, so they give way at the first step.
+///
+/// A latch in the scene state (sLastCocoon) keeps a step from counting twice
+/// until the leader walks on.
+///
+/// Cocoon 50 is the way down to Tret. Entrances 50, 40, 30 and 20 each let the
+/// leader fall on to the entrance numbered ten lower. At entrance 10 the leader
+/// lands in a ring of dust as the map shakes, in front of Tret.
+///
+/// Torn cocoons stay torn across a battle. After one (FLAG_KEEP_PARTY_POSITION)
+/// the setup redraws them from gTreeRooms_MapPatches.
+///
+/// Tret's face (ACTOR_TRET) and a second Tret actor at the same spot speak his
+/// lines.
+///
+/// Walking up to him (cell behavior 40, while FLAG_TRET_DEFEATED is clear) runs
+/// TreeRooms_FightTret. He roars, the party gathers in front of him, and the
+/// evil within him scorns them before the battle with Tret.
+///
+/// The battle returns to TREE_ROOMS_AFTER_FIGHT_TRET, where the setup plays the
+/// conversation after it.
+///
+/// - A passage opens in his room.
+/// - He comes to himself, thanks the party and asks whether they need
+///   something.
+/// - He realises that he turned the people of Kolima into trees
+///   ("I turned the people of Kolima into trees?").
+/// - He tries to free them but cannot reach that far.
+/// - His face sinks away as the party resolve to heal him.
+///
+/// Only then is FLAG_TRET_DEFEATED set. In Kolima Forest it lets Hermes' Water
+/// heal Tret and lift the curse.
+///
+/// Once it is set, the setup moves both Tret actors away, opens that passage
+/// and redraws cells near entrance 20. Before, it keeps the passage closed.
 ///
 /// The setup also saves the background palettes and starts a slow tint that
-/// shifts them every 32 frames (not after the battle until the conversation
-/// ends; casting Reveal stops it), and scales the first layer of the map grid
-/// to the room. Two chests hold a Healing Ring and a Nut, and a Psynergy Stone
-/// lies here (examine triggers 100 to 102).
+/// shifts them every 32 frames. The tint does not start after the battle until
+/// the conversation ends, and casting Reveal stops it. The setup also scales
+/// the first layer of the map grid to the room.
+///
+/// Two chests hold a Healing Ring and a Nut, and a Psynergy Stone lies here
+/// (examine triggers 100 to 102).
 
 #include "speaker.h"
 #include "version.h"
@@ -97,9 +122,10 @@
 #include "sounds.h"
 #include "sound_driver_symbols.h"
 
-/// Tret's face (SPRITE_TRET), the first actor placed after the party,
-/// and a second Tret actor (SPRITE_TRET_RAISED) placed at the same spot.
-/// Both speak Tret's lines: the face as he attacks, the second after the
+/// Tret's face (SPRITE_TRET), the first actor placed after the party, and a
+/// second Tret actor (SPRITE_TRET_RAISED) placed at the same spot.
+///
+/// Both speak Tret's lines. The face speaks as he attacks, the second after the
 /// battle.
 enum {
   /// ★ Named from the game: "Tret was once a kindly forest king."
@@ -110,7 +136,7 @@ enum {
   ACTOR_SECOND_TRET
 };
 
-/// The speaker of a message; every speaker in this scene has
+/// The speaker of a message. Every speaker in this scene has
 /// SPEAKER_WINDOW_BELOW.
 #define SPEAKER(actorId) (SPEAKER_WINDOW_BELOW | (actorId))
 
@@ -127,8 +153,8 @@ enum {
 
 static void TretPalette_SaveMapColors(void);
 static void TretPalette_UpdateMapTint(void);
-/// The face gestures TreeRooms_PlayGesture plays on Tret, each from
-/// the face with its eyes open; the wrathful ones on his wrathful face.
+/// The face gestures TreeRooms_PlayGesture plays on Tret. Each starts from the
+/// face with its eyes open, and the wrathful ones are on his wrathful face.
 enum TreeRoomsGesture {
   TRET_GESTURE_CLOSE_EYES = 0,
   TRET_GESTURE_OPEN_EYES = 1,
@@ -166,8 +192,8 @@ static s16 *sLastCocoon;
 /// across the floor (its render)
 #define FLAG_TRET_TREE_SECOND_FLOOR_COCOON_1_TORN FLAG_SCENE_TEMP_00
 /// Cocoon 22 has been torn by a first step, so the next step on it drops the
-/// leader to the room below (the layout draws it torn, and the setup sets this
-/// flag).
+/// leader to the room below. The layout draws it torn, and the setup sets this
+/// flag.
 /// ★ Named from what the player sees: golden cocoons on a spider web stretched
 /// across the floor (its render)
 #define FLAG_TRET_TREE_SECOND_FLOOR_COCOON_2_TORN FLAG_SCENE_TEMP_01
@@ -227,8 +253,8 @@ static s16 *sLastCocoon;
 /// across the floor (its render)
 #define FLAG_TRET_TREE_FIFTH_FLOOR_NORTHWEST_COCOON_TORN FLAG_SCENE_TEMP_0C
 /// Cocoon 52 has been torn by a first step, so the next step on it drops the
-/// leader to the room below (the layout draws it torn, and the setup sets this
-/// flag).
+/// leader to the room below. The layout draws it torn, and the setup sets this
+/// flag.
 /// ★ Named from what the player sees: golden cocoons on a spider web stretched
 /// across the floor (its render)
 #define FLAG_TRET_TREE_FIFTH_FLOOR_NORTH_COCOON_TORN FLAG_SCENE_TEMP_0D
@@ -238,8 +264,8 @@ static s16 *sLastCocoon;
 /// across the floor (its render)
 #define FLAG_TRET_TREE_FIFTH_FLOOR_NORTHEAST_COCOON_TORN FLAG_SCENE_TEMP_0E
 /// Cocoon 54 has been torn by a first step, so the next step on it drops the
-/// leader to the room below (the layout draws it torn, and the setup sets this
-/// flag).
+/// leader to the room below. The layout draws it torn, and the setup sets this
+/// flag.
 /// ★ Named from what the player sees: golden cocoons on a spider web stretched
 /// across the floor (its render)
 #define FLAG_TRET_TREE_FIFTH_FLOOR_WEST_COCOON_TORN FLAG_SCENE_TEMP_0F
@@ -259,8 +285,8 @@ static s16 *sLastCocoon;
 /// across the floor (its render)
 #define FLAG_TRET_TREE_FIFTH_FLOOR_SOUTH_COCOON_TORN FLAG_SCENE_TEMP_12
 /// Cocoon 58 has been torn by a first step, so the next step on it drops the
-/// leader to the room below (the layout draws it torn, and the setup sets this
-/// flag).
+/// leader to the room below. The layout draws it torn, and the setup sets this
+/// flag.
 /// ★ Named from what the player sees: golden cocoons on a spider web stretched
 /// across the floor (its render)
 #define FLAG_TRET_TREE_FIFTH_FLOOR_SOUTHEAST_COCOON_TORN FLAG_SCENE_TEMP_13
@@ -275,8 +301,8 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
   return gTreeRoomsEntrances;
 }
 
-/// Returns the three exit regions 28 to 36 pixels up: up to the second floor
-/// (TREE_ROOMS_ENTRANCE_TO_SECOND_FLOOR), up to the fourth
+/// Returns the three exit regions 28 to 36 pixels up. They lead up to the
+/// second floor (TREE_ROOMS_ENTRANCE_TO_SECOND_FLOOR), up to the fourth
 /// (TREE_ROOMS_THIRD_FLOOR_TO_FOURTH_FLOOR) and back from Tret
 /// (TREE_ROOMS_TRET_TO_ENTRANCE).
 const struct SceneExitRegion *Scene_GetExitRegions(void) {
@@ -291,11 +317,16 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gTreeRoomsActorPlacements;
 }
 
-/// Stepping on a cocoon in Tret Tree: the first step tears it, copying its
-/// torn picture from the staging cell (row 35) and setting its temporary flag;
-/// the next step breaks through (row 36's cell), and the leader spins and
-/// falls, to land at the given entrance, numbered as the cocoon. The
-/// latch ignores the same cocoon again until the leader walks on.
+/// Stepping on a cocoon in Tret Tree tears it at the first step and breaks
+/// through at the next.
+///
+/// The first step copies its torn picture from the staging cell (row 35) and
+/// sets its temporary flag.
+///
+/// The next step breaks through (row 36's cell). The leader spins and falls, to
+/// land at the given entrance, numbered as the cocoon.
+///
+/// The latch ignores the same cocoon again until the leader walks on.
 static void TreeRooms_StepOnCocoon(s32 cocoonFlag, s32 sourceColumn,
                                    s32 sourceRow, s32 entrance) {
   s32 destinationColumn;
@@ -438,8 +469,7 @@ static void TreeRooms_StepOnFifthFloorEastCocoon(void) {
                          TREE_ROOMS_FROM_FIFTH_FLOOR_EAST_COCOON);
 }
 
-/// Cocoon 56 lands at the same spot as cocoon 54: their
-/// entrances agree.
+/// Cocoon 56 lands at the same spot as cocoon 54. Their entrances agree.
 static void TreeRooms_StepOnFifthFloorSouthwestCocoon(void) {
   TreeRooms_StepOnCocoon(FLAG_TRET_TREE_FIFTH_FLOOR_SOUTHWEST_COCOON_TORN, 81,
                          35, TREE_ROOMS_FROM_FIFTH_FLOOR_SOUTHWEST_COCOON);
@@ -471,11 +501,14 @@ static void TreeRooms_JumpFromCocoon(void) {
 /// Returns the exits, the cocoons, Tret, Reveal and the chests' events.
 const struct Trigger *Scene_GetTriggers(void) { return gTreeRoomsTriggers; }
 
-/// Walking up to Tret in Tret Tree (cell behavior 40, while
-/// FLAG_TRET_DEFEATED is clear): he roars, the party gathers in front of him,
-/// and the evil within him scorns them before the battle with Tret starts.
-/// "Hm... HROOOM!!!" and "You hoped to find my kindly self?" The battle returns
-/// to TREE_ROOMS_AFTER_FIGHT_TRET.
+/// Walking up to Tret in Tret Tree starts the battle with him (cell behavior
+/// 40, while FLAG_TRET_DEFEATED is clear).
+///
+/// He roars, the party gathers in front of him, and the evil within him scorns
+/// them before the battle with Tret starts. "Hm... HROOOM!!!" and "You hoped to
+/// find my kindly self?"
+///
+/// The battle returns to TREE_ROOMS_AFTER_FIGHT_TRET.
 static void TreeRooms_FightTret(void) {
   s32 hasMia;
   struct Actor *leader;
@@ -561,13 +594,17 @@ static void TreeRooms_FightTret(void) {
   Event_End();
 }
 
-/// After the battle with Tret, in Tret Tree: a passage opens in his room, and
-/// he comes to, thanks the party and says good-bye. "Oh... Mmmmm..." Garet and
-/// Ivan stop him and he asks whether they need something; answering no earns
-/// the leader a scolding. Tret realises that he turned the people of Kolima
-/// into trees, tries to free them in a swirl of sparks but cannot, and the
-/// party resolve to heal him. Sets FLAG_TRET_DEFEATED, which lets Hermes'
-/// Water heal him in Kolima Forest.
+/// After the battle with Tret, in Tret Tree, a passage opens in his room, and
+/// he comes to, thanks the party and says good-bye. "Oh... Mmmmm..."
+///
+/// Garet and Ivan stop him and he asks whether they need something. Answering
+/// no earns the leader a scolding.
+///
+/// Tret realises that he turned the people of Kolima into trees. He tries to
+/// free them in a swirl of sparks but cannot, and the party resolve to heal
+/// him.
+///
+/// Sets FLAG_TRET_DEFEATED, which lets Hermes' Water heal him in Kolima Forest.
 static void TreeRooms_PlayPostBattleConversation(void) {
   s32 hasMia;
   struct Actor *partyActor;
@@ -779,10 +816,11 @@ static void TreeRooms_PlayPostBattleConversation(void) {
   Event_End();
 }
 
-/// Sets the map grid by FLAG_TRET_DEFEATED: the passage in Tret's room closed
-/// before, open after, with cells near entrance 20 redrawn. With
-/// playRecoveryEvent it first plays the conversation after the battle, unless
-/// FLAG_KEEP_PARTY_POSITION is set.
+/// Sets the map grid by FLAG_TRET_DEFEATED. The passage in Tret's room is
+/// closed before and open after, with cells near entrance 20 redrawn.
+///
+/// With playRecoveryEvent it first plays the conversation after the battle,
+/// unless FLAG_KEEP_PARTY_POSITION is set.
 static void TreeRooms_ApplyPostBattleState(s32 playRecoveryEvent) {
   if (playRecoveryEvent != 0 && GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0)
     TreeRooms_PlayPostBattleConversation();
@@ -805,12 +843,13 @@ static void TreeRooms_ApplyPostBattleState(s32 playRecoveryEvent) {
   }
 }
 
-/// Tret Tree's setup: places or removes the Tret actors, starts the
-/// tint, redraws the torn cocoons after a battle, sets the map grid by
-/// FLAG_TRET_DEFEATED, and plays what the entrance calls for: the falls
-/// on from entrances 50, 40, 30 and 20, the landing at entrance
-/// 10, or the conversation after the battle at
-/// TREE_ROOMS_AFTER_FIGHT_TRET.
+/// Tret Tree's setup places or removes the Tret actors, starts the tint,
+/// redraws the torn cocoons after a battle, and sets the map grid by
+/// FLAG_TRET_DEFEATED.
+///
+/// It also plays what the entrance calls for. That is the falls on from
+/// entrances 50, 40, 30 and 20, the landing at entrance 10, or the conversation
+/// after the battle at TREE_ROOMS_AFTER_FIGHT_TRET.
 s32 TreeRooms_EnterRoom(void) {
   struct Actor *tret;
   struct Actor *actor;
@@ -1143,16 +1182,16 @@ static void TreeRooms_ApplyFlaggedMapPatches(void) {
   }
 }
 
-/// Casting Reveal in Tret Tree (PSYNERGY_PHASE_ACTS) stops the map
-/// tint until the scene is entered again.
+/// Casting Reveal in Tret Tree (PSYNERGY_PHASE_ACTS) stops the map tint until
+/// the scene is entered again.
 static void TreeRooms_CastReveal(void) {
   Task_Remove(TretPalette_UpdateMapTint);
 }
 
 #include "shared/field_effect_advance.h"
 
-/// Entrance 10, at the end of the fall from cocoon 50: the leader drops
-/// in from 130 pixels up in front of Tret, lands in a ring of dust and the map
+/// Entrance 10, at the end of the fall from cocoon 50. The leader drops in from
+/// 130 pixels up in front of Tret and lands in a ring of dust, and the map
 /// shakes.
 static void TreeRooms_RunLandingDustEvent(void) {
   struct EffectOptions options;
@@ -1225,9 +1264,9 @@ s32 gFieldEffect_LongScript[] = {
     SC_POSITION(0, 0, 0), SC_WAIT(1),           SC_RELEASE,
 };
 
-/// The torn cocoons redrawn after a battle: the cocoon's flag, whether it is
-/// redrawn (0 for the four the layout draws torn), the staging cell x/y and the
-/// cocoon's cell x/y.
+/// The torn cocoons redrawn after a battle. Each row is the cocoon's flag,
+/// whether it is redrawn (0 for the four the layout draws torn), the staging
+/// cell x/y and the cocoon's cell x/y.
 // clang-format off
 s16 gTreeRooms_MapPatches[] = {
     FLAG_TRET_TREE_SECOND_FLOOR_COCOON_1_TORN, 1, 64, 35, 113, 6,
@@ -1294,9 +1333,9 @@ s32 gTreeRooms_MiaGathersActions[] = {
     SC_END,
 };
 
-/// Tret's face sinks away after the conversation: eight times it shows 80
-/// pixels up for 4 frames and drops back 78, shrinking a sixteenth each time,
-/// and then it is put away.
+/// Tret's face sinks away after the conversation. Eight times it shows 80
+/// pixels up for 4 frames and drops back 78, shrinking a sixteenth each time.
+/// Then it is put away.
 s32 gTreeRooms_FaceSinksActions[] = {
     SC_SET(SW_MOTION, 0),
     SC_ADD(SW_Y, PIXELS(80)),

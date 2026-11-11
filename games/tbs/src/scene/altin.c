@@ -1,51 +1,64 @@
 /// @file
 /// Altin, the mining village north of the Alpine Crossing, in two scenes that
-/// share this overlay and the area name Altin: SceneId_Altin, the village
-/// outdoors, and SceneId_CottageRoomsD, a sheet of rooms drawn as cottages, all
-/// of them Altin's: its houses, shops and inn, entered by the village's doors
-/// (COTTAGE_ROOMS_D_FROM_ALTIN_NORTHWEST to
-/// COTTAGE_ROOMS_D_FROM_ALTIN_SOUTHWEST). The getters pick each scene's tables
-/// by gMainRoutineWork.next, both share one exit table, and a third,
-/// empty set of tables serves any other scene.
+/// share this overlay and the area name Altin.
 ///
-/// The village is flooded by the water beasts of its mine, whose scenes the
-/// area names call Altin Peak (altin_peak.c), and two things in Altin's code
-/// follow the party's work down there. The water drops in three stages with the
-/// three drains it opens by beating the mine's water beasts
-/// (FLAG_ALTIN_MINE_FIRST_DRAIN to _THIRD_DRAIN): Scene_Initialize turns them
-/// into three scene temp flags, the water dropped once, twice, or drained (the
-/// second and third drains both), and Altin_ApplyWaterLevel copies the layout
-/// area for that level over the village, with its cell behaviors, and
-/// leaves out whoever would be standing in the water. And every villager has
-/// two sets of lines and thoughts, before and after
-/// FLAG_HYDROS_STATUES_DEFEATED, whether the party has beaten the hydros
-/// statues at the bottom of the mine; the row that needs the flag clear comes
-/// first in each table, so the first row that matches picks the time.
+/// SceneId_Altin is the village outdoors. SceneId_CottageRoomsD is a sheet of
+/// rooms drawn as cottages, all of them Altin's. They are its houses, shops and
+/// inn, entered by the village's doors (COTTAGE_ROOMS_D_FROM_ALTIN_NORTHWEST to
+/// COTTAGE_ROOMS_D_FROM_ALTIN_SOUTHWEST).
+///
+/// The getters pick each scene's tables by gMainRoutineWork.next, and both
+/// share one exit table. A third, empty set of tables serves any other scene.
+///
+/// The village is flooded by the water beasts of its mine. The area names call
+/// the mine's scenes Altin Peak (altin_peak.c). Two things in Altin's code
+/// follow the party's work down there.
+///
+/// The first is the water. It drops in three stages with the three drains the
+/// party opens by beating the mine's water beasts (FLAG_ALTIN_MINE_FIRST_DRAIN
+/// to _THIRD_DRAIN). Scene_Initialize turns them into three scene temp flags,
+/// the water dropped once, twice, or drained (the second and third drains
+/// both). Altin_ApplyWaterLevel copies the layout area for that level over the
+/// village, with its cell behaviors, and leaves out whoever would be standing
+/// in the water.
+///
+/// The second is what people say. Every villager has two sets of lines and
+/// thoughts, before and after FLAG_HYDROS_STATUES_DEFEATED, which says whether
+/// the party has beaten the hydros statues at the bottom of the mine. The row
+/// that needs the flag clear comes first in each table, so the first row that
+/// matches picks the time.
 ///
 /// In the village (Altin), three villagers come home one by one as the water
-/// drops, and the armor and item merchants wait outside their flooded shops
-/// until theirs dry (the item merchant's after the first drop, the armor
-/// merchant's after the second). A water beast, drawn with its green and blue
-/// swapped (SPRITE_COLOR_RBG), spits water at the houses, its sound and its
-/// spray (Altin_SprayInitialize) running from Altin_ApplyWaterLevel, until the
-/// party
-/// steps near it (Altin_ScareOffBeast): it stops, cries out and hops away
-/// into the flood for good (FLAG_ALTIN_WATER_BEAST_LEFT). Doors (step triggers
-/// 2 to 9, Altin_EnterDoor, each leaving by the exit of its number) lead into
-/// CottageRoomsD and into the Altin Sanctum (ALTIN_TO_SANCTUM), whose wide
-/// door is redrawn by hand; coming back out of the Sanctum (ALTIN_FROM_SANCTUM)
-/// the area name is not shown again. Three doorways (step triggers 10 to
-/// 12, Altin_WalkThroughDoorway) and the exit ALTIN_TO_ALTIN_PEAK_SPRITZ lead
-/// into the mine, to Altin Peak's AltinPeakFirstWaterBeast,
-/// AltinPeakSouthEntrance, AltinPeakJunction and AltinPeakSpritz. A pillar that
-/// Move pushes to column 22 stays there (FLAG_ALTIN_PILLAR_MOVED).
+/// drops. The armor and item merchants wait outside their flooded shops until
+/// theirs dry. The item merchant's dries after the first drop, the armor
+/// merchant's after the second.
+///
+/// A water beast spits water at the houses. It is drawn with its green and blue
+/// swapped (SPRITE_COLOR_RBG), and its sound and its spray
+/// (Altin_SprayInitialize) run from Altin_ApplyWaterLevel. When the party steps
+/// near it (Altin_ScareOffBeast) it stops, cries out and hops away into the
+/// flood for good (FLAG_ALTIN_WATER_BEAST_LEFT).
+///
+/// Doors lead into CottageRoomsD and into the Altin Sanctum (ALTIN_TO_SANCTUM).
+/// They are step triggers 2 to 9, run by Altin_EnterDoor, each leaving by the
+/// exit of its number. The Sanctum's wide door is redrawn by hand. Coming back
+/// out of the Sanctum (ALTIN_FROM_SANCTUM) the area name is not shown again.
+///
+/// Three doorways (step triggers 10 to 12, Altin_WalkThroughDoorway) and the
+/// exit ALTIN_TO_ALTIN_PEAK_SPRITZ lead into the mine, to Altin Peak's
+/// AltinPeakFirstWaterBeast, AltinPeakSouthEntrance, AltinPeakJunction and
+/// AltinPeakSpritz.
+///
+/// A pillar that Move pushes to column 22 stays there
+/// (FLAG_ALTIN_PILLAR_MOVED).
 ///
 /// Inside, in Cottage rooms D (CottageRoomsD), two families shelter in the
-/// inn's Room One and Room Two, as the game calls them, until the first and the
-/// second drop send them home (CottageRoomsD_PlaceSheltering), and the weapon
-/// merchant waits in the inn until the water has drained. Each merchant opens
-/// across the counter once the shop has dried, and a cook from Xian paces
-/// between his pots (gCottageRoomsD_CookScript).
+/// inn's Room One and Room Two, as the game calls them. The first and the
+/// second drop send them home (CottageRoomsD_PlaceSheltering). The weapon
+/// merchant waits in the inn until the water has drained.
+///
+/// Each merchant opens across the counter once the shop has dried, and a cook
+/// from Xian paces between his pots (gCottageRoomsD_CookScript).
 
 #include "main_routine_work.h"
 #include "version.h"
@@ -85,17 +98,17 @@
 #define MAP_ALTIN_VILLAGE ((s32)&SceneId_Altin)
 #define MAP_ALTIN_HOUSES ((s32)&SceneId_CottageRoomsD)
 
-/// The village's actors, numbering the rows of
-/// gAltin_ActorPlacements. The people without an event of their own
-/// are named by their sprite and by what they say before the hydros statues are
-/// beaten.
+/// The village's actors, numbering the rows of gAltin_ActorPlacements.
+///
+/// The people without an event of their own are named by their sprite and by
+/// what they say before the hydros statues are beaten.
 enum AltinVillageActorId {
-  /// A bald, bare-chested strong man (SPRITE_BALD_MUSCULAR_MAN);
+  /// A bald, bare-chested strong man (SPRITE_BALD_MUSCULAR_MAN). His event is
   /// Altin_AskAboutFirstVisit.
   /// ★ Named from the game: "Is this your first time to visit Altin?"
   /// (MsgAltinYourFirstTimeVisitAltin)
   ACTOR_GREETING_STRONGMAN = ACTOR_FIRST_PLACED,
-  /// A stocky strong man flexing his arms (SPRITE_STRONGMAN);
+  /// A stocky strong man flexing his arms (SPRITE_STRONGMAN). His event is
   /// Altin_AskAboutHydros.
   /// ★ Named from the game: "How can those creatures spit up so much water?"
   /// (MsgAltinHowCanThoseCreaturesSpitUp)
@@ -116,13 +129,13 @@ enum AltinVillageActorId {
   /// ★ Named from the game: "Altin always used to run short on water."
   /// (MsgAltinAltinAlwaysUsedToRunShort)
   ACTOR_WOMAN_WATER_LUCK,
-  /// An old woman with white hair (SPRITE_OLD_WOMAN);
+  /// An old woman with white hair (SPRITE_OLD_WOMAN). Her event is
   /// Altin_TalkToThirstyOldWoman.
   /// ★ Named from the game: "We can't drink the water the monsters spew!"
   /// (MsgAltinWeCantDrinkWaterMonsters)
   ACTOR_THIRSTY_OLD_WOMAN,
-  /// The three who come back as the water recedes, one with each drop
-  /// (Altin_ApplyWaterLevel): this man with brown hair
+  /// Three villagers come back as the water recedes, one with each drop
+  /// (Altin_ApplyWaterLevel). They are this man with brown hair
   /// (SPRITE_YOUNG_MAN_WITH_BROWN_HAIR), then a strong man and an old man.
   /// ★ Named from the game: "The waters around here have subsided..."
   /// (MsgAltinTheWatersAroundHereHaveSubsided)
@@ -152,11 +165,12 @@ enum AltinVillageActorId {
   /// ★ Named from the game: "Oh, no! What will I do if all my merchandise is
   /// soaked?" (MsgAltinWillDoIfMyMerchandise)
   ACTOR_FLOODED_ITEM_MERCHANT,
-  /// Three crates placed with SPRITE_CRATE, which Altin_ApplyWaterLevel hides
-  /// (SPRITE_COLOR_HIDDEN) but leaves solid, as placed actors are:
-  /// invisible blocks at the top of the ladder on the east cliff and, two of
-  /// them, on the rails below the doorway into the mine (the drained village's
-  /// render with them drawn).
+  /// Three crates placed with SPRITE_CRATE. Altin_ApplyWaterLevel hides them
+  /// (SPRITE_COLOR_HIDDEN) but leaves them solid, as placed actors are.
+  ///
+  /// They are invisible blocks. One is at the top of the ladder on the east
+  /// cliff, and two are on the rails below the doorway into the mine (the
+  /// drained village's render with them drawn).
   /// ★ Named from the game: "Strange... I don't remember all these crates being
   /// up here before!" (MsgVaultVaultCutFree)
   ACTOR_FIRST_CRATE,
@@ -171,10 +185,9 @@ enum AltinVillageActorId {
 /// The houses' actors, numbering the rows of
 /// gCottageRoomsD_ActorPlacements, named as the village's are.
 enum AltinHouseActorId {
-  /// The family sheltering in the inn's Room One until the first drop: this
-  /// man with brown hair (SPRITE_YOUNG_MAN_WITH_BROWN_HAIR) and a woman with
-  /// fair
-  /// hair.
+  /// The family sheltering in the inn's Room One until the first drop. They are
+  /// this man with brown hair (SPRITE_YOUNG_MAN_WITH_BROWN_HAIR) and a woman
+  /// with fair hair.
   /// ★ Named from the game: "The guests in Room One moved back home when the
   /// waters receded." (MsgAltinTheGuestsInRoomOneMoved)
   ACTOR_ROOM_ONE_GUEST = ACTOR_FIRST_PLACED,
@@ -182,8 +195,8 @@ enum AltinHouseActorId {
   /// ★ Named from the game: "The guests in Room One moved back home when the
   /// waters receded." (MsgAltinTheGuestsInRoomOneMoved)
   ACTOR_ROOM_ONE_SECOND_GUEST,
-  /// The family in Room Two, until the second drop: this bent old man with a
-  /// cane (SPRITE_OLD_MAN_WITH_CANE) and an old woman.
+  /// The family in Room Two, until the second drop. They are this bent old man
+  /// with a cane (SPRITE_OLD_MAN_WITH_CANE) and an old woman.
   /// ★ Named from the game: "The guests in Room Two also went home after the
   /// waters receded." (MsgAltinTheGuestsInRoomTwoAlso)
   ACTOR_ROOM_TWO_GUEST,
@@ -191,11 +204,12 @@ enum AltinHouseActorId {
   /// ★ Named from the game: "The guests in Room Two also went home after the
   /// waters receded." (MsgAltinTheGuestsInRoomTwoAlso)
   ACTOR_ROOM_TWO_SECOND_GUEST,
-  /// A man with brown hair (SPRITE_YOUNG_MAN_WITH_BROWN_HAIR). He and
-  /// ACTOR_WOMAN_NO_PLACE_LIKE_HOME are the kissing girl's "Mom and Pop", who
-  /// have been acting weird since the ruins were found: his thoughts won't
-  /// give up a spot at the end of the mine's easternmost passage, and hers say
-  /// "My husband's sense for finding treasure has never failed."
+  /// A man with brown hair (SPRITE_YOUNG_MAN_WITH_BROWN_HAIR).
+  ///
+  /// He and ACTOR_WOMAN_NO_PLACE_LIKE_HOME are the kissing girl's "Mom and
+  /// Pop", who have been acting weird since the ruins were found. His thoughts
+  /// won't give up a spot at the end of the mine's easternmost passage, and
+  /// hers say "My husband's sense for finding treasure has never failed."
   /// ★ Named from the game: "I didn't want to leave my hometown..."
   /// (MsgAltinIDidntWantToLeaveMy)
   ACTOR_MAN_BACK_IN_HIS_HOMETOWN,
@@ -203,8 +217,8 @@ enum AltinHouseActorId {
   /// ★ Named from the game: "There's no place like home."
   /// (MsgAltinIHeardSomeoneKilledTheWater)
   ACTOR_WOMAN_NO_PLACE_LIKE_HOME,
-  /// A little girl with orange pigtails (SPRITE_GIRL_WITH_PIGTAILS);
-  /// CottageRoomsD_AskAboutMonsters.
+  /// A little girl with orange pigtails (SPRITE_GIRL_WITH_PIGTAILS). Her event
+  /// is CottageRoomsD_AskAboutMonsters.
   /// ★ Named from the game: "Here, let me thank you with...a kiss!"
   /// (MsgAltinDefeatedThoseMonstersDidnt)
   ACTOR_KISSING_GIRL,
@@ -228,8 +242,7 @@ enum AltinHouseActorId {
   /// (MsgAltinICameFromXianICook)
   ACTOR_COOK,
   /// A man with brown hair (SPRITE_YOUNG_MAN_WITH_BROWN_HAIR) in the inn,
-  /// telling
-  /// of its guests going home as the water drops.
+  /// telling of its guests going home as the water drops.
   /// ★ Named from the game: "None of us can go home until the water
   /// subsides." (MsgAltinNoneOfUsCanGoHome)
   ACTOR_MAN_WAITING_TO_GO_HOME
@@ -353,9 +366,10 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gAltin_NoTriggers;
 }
 
-/// A bald strong man asks whether this is the party's first visit. He's in
-/// Altin's village before the hydros statues are beaten; either way, he says
-/// the flood has changed Altin.
+/// A bald strong man asks whether this is the party's first visit.
+///
+/// He's in Altin's village before the hydros statues are beaten. Either way, he
+/// says the flood has changed Altin.
 static void Altin_AskAboutFirstVisit(void) {
   Event_Start();
   Event_SetMessageId(MsgAltinYourFirstTimeVisitAltin);
@@ -389,10 +403,11 @@ static void Altin_AskAboutHydros(void) {
   Event_End();
 }
 
-/// An old woman in Altin's village. While the beasts live, she complains that
-/// their water cannot be drunk, and the first time the camera pans to the water
-/// beast spitting at the houses. Once the statues are gone, she asks for help
-/// rebuilding.
+/// An old woman in Altin's village.
+///
+/// While the beasts live, she complains that their water cannot be drunk, and
+/// the first time the camera pans to the water beast spitting at the houses.
+/// Once the statues are gone, she asks for help rebuilding.
 static void Altin_TalkToThirstyOldWoman(void) {
 
   struct Actor *beast;
@@ -449,6 +464,7 @@ static void Altin_AskAboutRuins(void) {
 }
 
 /// A woman asks whether the party is who the girl from Xian was looking for.
+///
 /// She's from the family that sheltered in the inn's Room One, and asks inside
 /// Altin once the hydros statues are beaten.
 static void CottageRoomsD_AskAboutXianGirl(void) {
@@ -462,9 +478,10 @@ static void CottageRoomsD_AskAboutXianGirl(void) {
   Event_End();
 }
 
-/// An old man points the party to the bottom of the mine. He's from the family
-/// sheltering in the inn's Room Two, and inside Altin, before the hydros
-/// statues are beaten, he asks whether the party seeks the way west.
+/// An old man points the party to the bottom of the mine.
+///
+/// He's from the family sheltering in the inn's Room Two. Inside Altin, before
+/// the hydros statues are beaten, he asks whether the party seeks the way west.
 static void CottageRoomsD_AskAboutWayWest(void) {
 
   Event_Start();
@@ -476,9 +493,10 @@ static void CottageRoomsD_AskAboutWayWest(void) {
   Event_End();
 }
 
-/// A little girl thanks the leader with a kiss. She's back home inside Altin
-/// before the hydros statues are beaten, and asks whether the party defeated
-/// the monsters; she gives the kiss either way.
+/// A little girl thanks the leader with a kiss.
+///
+/// She's back home inside Altin before the hydros statues are beaten, and asks
+/// whether the party defeated the monsters. She gives the kiss either way.
 static void CottageRoomsD_AskAboutMonsters(void) {
 
   Event_Start();
@@ -503,8 +521,10 @@ static void CottageRoomsD_AskAboutMineBeasts(void) {
   Event_End();
 }
 
-/// Returns whether the party leader faces north, toward a shop counter: its
-/// facing lies strictly between northwest and northeast, measured in 16 bits.
+/// Returns whether the party leader faces north, toward a shop counter.
+///
+/// Its facing must lie strictly between northwest and northeast, measured in 16
+/// bits.
 static s32 Altin_LeaderFacesCounter(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
@@ -514,9 +534,10 @@ static s32 Altin_LeaderFacesCounter(void) {
   return 0;
 }
 
-/// Altin's weapon merchant: until the water drains he waits in the inn and
-/// cannot sell; afterwards he opens his shop when spoken to across the
-/// counter.
+/// Altin's weapon merchant waits in the inn until the water drains, and cannot
+/// sell.
+///
+/// Afterwards he opens his shop when spoken to across the counter.
 static void CottageRoomsD_TalkToWeaponMerchant(void) {
 
   if (GameFlag_Get(FLAG_ALTIN_WATER_DRAINED) == 0) {
@@ -545,9 +566,10 @@ static void CottageRoomsD_TalkToWeaponMerchant(void) {
   Event_End();
 }
 
-/// Altin's armor merchant, in either scene: outside, while his shop is under
-/// water, he laments; once it has dried after the second drop, he sells across
-/// his counter in the houses.
+/// Altin's armor merchant speaks in either scene.
+///
+/// Outside, while his shop is under water, he laments. Once it has dried after
+/// the second drop, he sells across his counter in the houses.
 static void Altin_TalkToArmorMerchant(void) {
 
   if (GameFlag_Get(FLAG_ALTIN_WATER_DROPPED_TWICE) == 0) {
@@ -573,7 +595,7 @@ static void Altin_TalkToArmorMerchant(void) {
   Event_End();
 }
 
-/// Altin's item merchant, the same way: she reopens after the first drop.
+/// Altin's item merchant works the same way, and reopens after the first drop.
 static void Altin_TalkToItemMerchant(void) {
   if (GameFlag_Get(FLAG_ALTIN_WATER_DROPPED_ONCE) == 0) {
     Event_Start();
@@ -598,9 +620,10 @@ static void Altin_TalkToItemMerchant(void) {
   Event_End();
 }
 
-/// Altin's innkeeper opens the inn when spoken to across the counter. Spoken to
-/// otherwise, the innkeeper talks about the flood or, once it is over, the
-/// temple west of the mine.
+/// Altin's innkeeper opens the inn when spoken to across the counter.
+///
+/// Spoken to otherwise, the innkeeper talks about the flood or, once it is
+/// over, the temple west of the mine.
 static void CottageRoomsD_TalkToInnkeeper(void) {
   struct Actor *leader;
 
@@ -628,9 +651,11 @@ static void CottageRoomsD_TalkToInnkeeper(void) {
   Event_End();
 }
 
-/// Walking north into one of the doors of Altin's village: everyone stops, the
-/// door opens and the party leader walks in. The Sanctum's wide door is redrawn
-/// in two halves by hand; the others play their opening pictures.
+/// The party leader walks north into one of the doors of Altin's village.
+///
+/// Everyone stops, the door opens and the leader walks in. The Sanctum's wide
+/// door is redrawn in two halves by hand. The others play their opening
+/// pictures.
 static void Altin_EnterDoor(void) {
   u32 actorId;
   struct FieldWork *work;
@@ -708,8 +733,8 @@ static void Altin_EnterDoor(void) {
   Event_End();
 }
 
-/// Walking north into one of the doorways of Altin's village that lead into
-/// the mine: the leader walks out.
+/// The leader walks out through one of the doorways of Altin's village that
+/// lead into the mine, on walking north into it.
 static void Altin_WalkThroughDoorway(void) {
   struct FieldWork *work;
 
@@ -724,9 +749,10 @@ static void Altin_WalkThroughDoorway(void) {
   Event_End();
 }
 
-/// Update routine of the hopping water beast in Altin's village: once a
-/// second it leaps up, falls back with a splash that shakes the screen
-/// briefly, and stands while on the ground.
+/// Update routine of the hopping water beast in Altin's village.
+///
+/// Once a second it leaps up and falls back with a splash that shakes the
+/// screen briefly. It stands while on the ground.
 static void Altin_BeastHop(struct Actor *actor) {
   struct Actor *beast = actor;
   s16 *shakeFrames = (s16 *)&beast->userValue;
@@ -786,7 +812,7 @@ static void Altin_BeastHopAway(void) {
   Actor_SetAnimation(ACTOR_WATER_BEAST, ANIM_STAND);
 }
 
-/// After Move: remembers whether the pillar now stands in map column 22, the
+/// After Move, remembers whether the pillar now stands in map column 22, the
 /// spot it is pushed to.
 static void Altin_CheckPillarMoved(void) {
   struct Actor *pillar = Actor_Get(ACTOR_STONE_STATUE);
@@ -827,10 +853,15 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-/// Sets up Altin's village (Altin): the layout area for the current water
-/// level (one of four 32 by 32 cell areas kept in the layout), the villagers
-/// and merchants present at that level, the water beast with its spray while
-/// it remains, and the pushed pillar. Then redraws the map around the leader.
+/// Sets up Altin's village (Altin).
+///
+/// - The layout area for the current water level, one of four 32 by 32 cell
+///   areas kept in the layout.
+/// - The villagers and merchants present at that level.
+/// - The water beast with its spray, while it remains.
+/// - The pushed pillar.
+///
+/// Then it redraws the map around the leader.
 static void Altin_ApplyWaterLevel(void) {
   struct Actor *leader;
 
@@ -905,9 +936,11 @@ static void Altin_ApplyWaterLevel(void) {
   wait(1);
 }
 
-/// Sets up inside Altin's buildings (CottageRoomsD): the families still
-/// sheltering in the inn's rooms, the weapon merchant waiting there until the
-/// water drains, and the shopkeepers kept from wandering.
+/// Sets up inside Altin's buildings (CottageRoomsD).
+///
+/// - The families still sheltering in the inn's rooms.
+/// - The weapon merchant waiting there until the water drains.
+/// - The shopkeepers, kept from wandering.
 static void CottageRoomsD_PlaceSheltering(void) {
   struct Actor *actor;
 
@@ -938,9 +971,11 @@ static void CottageRoomsD_PlaceSheltering(void) {
   }
 }
 
-/// Gives a new spray particle its look: SPRITE_DUST_PUFF standing still, drawn
-/// with its red and blue swapped so the dust is water, on sprite priority 1
-/// and at 0.3 scale. Altin_SprayDrift turns some white as they fade.
+/// Gives a new spray particle its look.
+///
+/// It is SPRITE_DUST_PUFF standing still, drawn with its red and blue swapped
+/// so the dust is water, on sprite priority 1 and at 0.3 scale.
+/// Altin_SprayDrift turns some white as they fade.
 static void Altin_SprayInitialize(struct Actor *spray) {
   spray->motionFlags = 0;
   spray->sprite->image.priority = 1;
@@ -950,9 +985,11 @@ static void Altin_SprayInitialize(struct Actor *spray) {
   spray->scaleY = WATER_SPRAY_START_SCALE;
 }
 
-/// Update routine of a spray particle: it drifts and grows with a random
-/// wobble, then curls upward and flattens as its movement timer runs down.
-/// The separate lifetime releases it after 20 updates.
+/// Update routine of a spray particle.
+///
+/// It drifts and grows with a random wobble, then curls upward and flattens as
+/// its movement timer runs down. The separate lifetime releases it after 20
+/// updates.
 static void Altin_SprayDrift(struct Actor *actor) {
   struct Actor *spray = actor;
   spray->x.fixed += WATER_SPRAY_LATERAL_STEP(
@@ -979,8 +1016,8 @@ static void Altin_SprayDrift(struct Actor *actor) {
   }
 }
 
-/// Task while the water beast spits: every fourth frame a spray
-/// particle starts from its spout, living 20 frames.
+/// Task while the water beast spits. Every fourth frame a spray particle starts
+/// from its spout, living 20 frames.
 static void Altin_BeastSpawnSpray(void) {
   struct Actor *spray;
   if ((gFrameCount & 3) == 0) {
@@ -997,8 +1034,10 @@ static void Altin_BeastSpawnSpray(void) {
   }
 }
 
-/// Stepping near the water beast in Altin's village: the camera pans to it, it
-/// stops spitting, turns to the party, cries out and hops away into the flood.
+/// The party scares off the water beast by stepping near it in Altin's village.
+///
+/// The camera pans to it, and it stops spitting, turns to the party, cries out
+/// and hops away into the flood.
 static void Altin_ScareOffBeast(void) {
   Event_Start();
   FieldCamera_SetSpeed(PIXELS(2) / 5, PIXELS(1) / 20);
@@ -1445,9 +1484,8 @@ struct Trigger gCottageRoomsD_Triggers[] = {
 };
 // clang-format on
 
-/// The opening pictures of the village's doors, two cells square. The
-/// Sanctum's door (the second) is wider, and Altin_EnterDoor redraws it by
-/// hand instead.
+/// The opening pictures of the village's doors, two cells square. The Sanctum's
+/// door (the second) is wider, and Altin_EnterDoor redraws it by hand instead.
 u16 gAltin_SanctumDoorCells[] = {
     MAPGRID_ANIMATION_STEP(42, 33, 2, 2, 0),
     MAPGRID_ANIMATION_STEP(42, 35, 2, 2, 5),

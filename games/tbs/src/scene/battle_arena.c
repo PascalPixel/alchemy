@@ -49,11 +49,11 @@
 #include "sounds.h"
 #include "heap.h"
 
-/// The attendant has asked the player to take part; every 300th call of
+/// The attendant has asked the player to take part. Every 300th call of
 /// BattleArena_PromptToParticipate clears it so she asks again.
 /// ★ Named from the game: "Would you like to apply?" (MsgLobbyPleaseSpeakWhen)
 #define FLAG_BATTLE_ARENA_ATTENDANT_ASKED FLAG_SCENE_TEMP_00
-/// The linked partner has asked for a battle: its signature matches and it
+/// The linked partner has asked for a battle. Its signature matches and it
 /// stands asked or in the circle.
 /// ★ Named from the game: "Your opponent has asked for a battle. Do you
 /// accept?" (MsgLobbyPleaseSpeakWhen)
@@ -77,7 +77,7 @@
 /// The first of eight flags, one per character from Isaac, each set while that
 /// character is in the battle party (BattleArena_RunRoundResult).
 #define FLAG_BATTLE_ARENA_IN_PARTY_FIRST FLAG_SCENE_TEMP_F0
-/// The attendant has explained the Battle Arena once; talking to her again
+/// The attendant has explained the Battle Arena once. Talking to her again
 /// offers to apply.
 /// ★ Named from the game: "Please speak to me when you want to fight in a
 /// battle." (MsgLobbyPleaseSpeakWhen)
@@ -87,7 +87,7 @@
 /// ★ Named from the game: "Test your skills in Linked Battles and Monster
 /// Battles!" (MsgFieldWelcomeToBattleArenaWherePeople)
 #define FLAG_BATTLE_ARENA_LINK_CHILD FLAG_AREA_TEMP_02
-/// The link is up: both consoles were heard (LOBBY_LINK_READY_MASK).
+/// The link is up. Both consoles were heard (LOBBY_LINK_READY_MASK).
 /// ★ Named from the game: "Your opponent has arrived!"
 /// (MsgLobbyOpponentArrived)
 #define FLAG_BATTLE_ARENA_LINK_UP FLAG_AREA_TEMP_03
@@ -103,18 +103,18 @@
 // Link transfers use three unit records followed by one recovery-table record.
 // Both sizes are whole 20-byte blocks, since the serial runtime sends 20 bytes
 // a block and ends a send only when its count reaches exactly 0.
-/// The bytes sent for each party member: a Unit (BATTLE_UNIT_SIZE, 332 bytes)
-/// and the eight bytes after it, 17 blocks of 20.
+/// The bytes sent for each party member. They are a Unit (BATTLE_UNIT_SIZE, 332
+/// bytes) and the eight bytes after it, 17 blocks of 20.
 #define LOBBY_UNIT_RECORD_BYTES (17 * 20)
-/// The bytes sent for the Djinn recovery table after the party members: the
-/// table (struct DjinnRecoveryTable, 268 bytes) and the 52 bytes after it, 16
-/// blocks of 20, two more than the table needs.
+/// The bytes sent for the Djinn recovery table after the party members. They
+/// are the table (struct DjinnRecoveryTable, 268 bytes) and the 52 bytes after
+/// it, 16 blocks of 20, two more than the table needs.
 #define LOBBY_RECOVERY_RECORD_BYTES (16 * 20)
-/// The party members a linked battle takes; a smaller party sends absent
+/// The party members a linked battle takes. A smaller party sends absent
 /// records.
 #define LOBBY_UNIT_RECORD_COUNT 3
-/// gLinkStatus bits 0 and 1: both consoles were heard this frame, as the
-/// battle code's LINK_BOTH_CONNECTED.
+/// gLinkStatus bits 0 and 1. Both consoles were heard this frame, as the battle
+/// code's LINK_BOTH_CONNECTED.
 #define LOBBY_LINK_READY_MASK 3
 /// A record fails on the 25th frame it waits without a link or past the
 /// timeout.
@@ -138,13 +138,13 @@
 //   monster series, the byte flag at FLAG_AREA_TEMP_E8 instead counts the
 //   victories, 0 to 2, towards a stronger monster.
 
-/// The actors, numbering the rows of gBattleArenaActorPlacements
-/// and gBattleArenaBattleActorPlacements, which list the same people in
-/// the same order; the rows of Garet, Ivan, Mia and Jenna take those
-/// characters' own ids.
+/// The actors, numbering the rows of gBattleArenaActorPlacements and
+/// gBattleArenaBattleActorPlacements, which list the same people in the same
+/// order. The rows of Garet, Ivan, Mia and Jenna take those characters' own
+/// ids.
 enum BattleArenaActorId {
-  /// The attendant, who arranges every battle; ACTOR_GREETER calls her the
-  /// girl at the counter.
+  /// The attendant, who arranges every battle. ACTOR_GREETER calls her the girl
+  /// at the counter.
   /// ★ Named from the game: "Please speak to me when you want to fight in a
   /// battle." (MsgLobbyPleaseSpeakWhen)
   ACTOR_ATTENDANT = ACTOR_FIRST_PLACED,
@@ -152,9 +152,8 @@ enum BattleArenaActorId {
   /// ★ Named from the game: "I will tell you your total wins when you finish
   /// the linked finals." (MsgLobbyTellTotalWins)
   ACTOR_LINKED_WINS_TELLER,
-  /// Opens a Sanctum's services (BattleArena_OpenSanctum);
-  /// SPRITE_MAN_IN_TALL_HAT, the
-  /// healer of every Sanctum in sanctum.c.
+  /// Opens a Sanctum's services (BattleArena_OpenSanctum). The sprite is
+  /// SPRITE_MAN_IN_TALL_HAT, the healer of every Sanctum in sanctum.c.
   /// ★ Named from the game: "Healer" (MsgDebugGlyphName)
   ACTOR_HEALER,
   /// ★ Named from the game: "Welcome to Battle Arena, where people craving
@@ -204,8 +203,8 @@ enum BattleArenaActorId {
   ACTOR_WARY_VISITOR
 };
 
-/// The words of gBattleArena_SlotValues, by slot: the signature, then the state
-/// a console publishes.
+/// The words of gBattleArena_SlotValues, by slot. They are the signature, then
+/// the state a console publishes.
 enum LobbySlot {
   LOBBY_SLOT_SIGNATURE = 0,
   LOBBY_SLOT_ASKED = 1,     ///< has asked for a battle
@@ -240,15 +239,19 @@ enum LinkTally {
 #define PEER_TAG(a, b, c, d) ((a) | ((b) << 8) | ((c) << 16) | ((d) << 24))
 
 // clang-format off
-/// The words the Battle Arena publishes in its link payload, by slot; the
-/// partner compares them with its own (BattleArena_PeerSlotMatches), by enum
-/// LobbySlot. The signature is in the first column (gBattleArena_SlotColumns),
-/// the states in the second. In English and French LOBBY_SLOT_ALONE equals the
-/// signature and changes nothing; elsewhere it is the signature's letters
-/// reversed, so while a console publishes it (no partner answered, or a
-/// monster series runs) a partner's signature test fails and the attendant
-/// does not offer that console as an opponent, until each return to linking
-/// writes the signature back.
+/// The words the Battle Arena publishes in its link payload, by slot.
+///
+/// The partner compares them with its own (BattleArena_PeerSlotMatches), by
+/// enum LobbySlot. The signature is in the first column
+/// (gBattleArena_SlotColumns), the states in the second.
+///
+/// In English and French LOBBY_SLOT_ALONE equals the signature and changes
+/// nothing. Elsewhere it is the signature's letters reversed.
+///
+/// So while a console publishes it (no partner answered, or a monster series
+/// runs) a partner's signature test fails, and the attendant does not offer
+/// that console as an opponent. Each return to linking writes the signature
+/// back.
 const s32 gBattleArena_SlotValues[] = {
 #if (LANGUAGE == LANGUAGE_GERMAN)
     PEER_TAG('C', 'S', 'G', 'G'), PEER_TAG('3', '0', '1', '2'),
@@ -282,19 +285,20 @@ const s32 gBattleArena_SlotValues[] = {
 #undef PEER_TAG
 
 /// A console's link payload as the Battle Arena reads it from
-/// gLinkPeerSignatures: values[0] is its signature word and values[1] its state
+/// gLinkPeerSignatures. values[0] is its signature word and values[1] its state
 /// word (gBattleArena_SlotValues, placed by gBattleArena_SlotColumns).
 struct LinkPeerPayload {
   s32 values[6]; ///< the payload's words; only 0 and 1 are read here
 };
 
-/// Frames BattleArena_PollPeerReady has gone without a link, 0 to 25; 0 while
-/// linked.
+/// Frames BattleArena_PollPeerReady has gone without a link, 0 to 25. It is 0
+/// while linked.
 static s32 sBattleArenaWaitFrames;
 
-/// What a Battle Arena handler's early exit returns. The ROM's s32 handlers
-/// return nothing there, leaving whatever the last call put in r0 (UB); UBFIX
-/// returns 0, as the function ends that fall off do.
+/// What a Battle Arena handler's early exit returns.
+///
+/// The ROM's s32 handlers return nothing there, leaving whatever the last call
+/// put in r0 (UB). UBFIX returns 0, as the function ends that fall off do.
 #ifdef UBFIX
 #define LOBBY_NO_RESULT 0
 #else
@@ -308,10 +312,14 @@ u8 *BattleArena_GetEntrances(void) { return (u8 *)gBattleArenaEntrances; }
 /// The exit regions entry: the Battle Arena has no exit boxes.
 s32 Scene_GetExitRegions(void) { return 0; }
 
-/// Restarts the link with interrupts locked: removes the serial and timer 3
-/// handlers, then runs Serial_Initialize. Called when no partner
-/// answers the attendant and after a linked battle broke off. The original
-/// s32 entry produces no defined result; its callers ignore it.
+/// Restarts the link with interrupts locked.
+///
+/// It removes the serial and timer 3 handlers, then runs Serial_Initialize. It
+/// is called when no partner answers the attendant and after a linked battle
+/// broke off.
+///
+/// The original s32 entry produces no defined result, and its callers ignore
+/// it.
 static s32 BattleArena_InitializeSerial(void) {
   u32 savedIrqState;
 
@@ -329,12 +337,13 @@ static s32 BattleArena_InitializeSerial(void) {
 
 u8 *BattleArena_GetExits(void) { return (u8 *)gBattleArenaExits; }
 
-/// The actor placements entry. After a defeat
-/// (BATTLE_ARENA_AFTER_MONSTER_LOSS or BATTLE_ARENA_AFTER_LINK_LOSS) the party
-/// party members and four visitors roughly trade places
-/// (gBattleArenaBattleActorPlacements): Garet, Ivan and Mia or Jenna take
-/// three of the visitors' spots, and the visitors stand around where the party
-/// stood.
+/// The actor placements entry.
+///
+/// After a defeat (BATTLE_ARENA_AFTER_MONSTER_LOSS or
+/// BATTLE_ARENA_AFTER_LINK_LOSS) the party members and four visitors roughly
+/// trade places (gBattleArenaBattleActorPlacements). Garet, Ivan and Mia or
+/// Jenna take three of the visitors' spots, and the visitors stand around where
+/// the party stood.
 s32 BattleArena_SelectActorPlacements(void) {
   s16 entrance = gMainRoutineWork.entrance;
 
@@ -346,9 +355,11 @@ s32 BattleArena_SelectActorPlacements(void) {
 }
 
 /// Returns 1 when the partner's payload holds slot's word in slot's column, 0
-/// when it does not or there is no link. Also sets or clears area flags
-/// FLAG_BATTLE_ARENA_LINK_UP (the link is up) and FLAG_BATTLE_ARENA_LINK_CHILD
-/// (this console is the child), and reads the other console's payload by them.
+/// when it does not or there is no link.
+///
+/// Also sets or clears area flags FLAG_BATTLE_ARENA_LINK_UP (the link is up)
+/// and FLAG_BATTLE_ARENA_LINK_CHILD (this console is the child), and reads the
+/// other console's payload by them.
 static s32 BattleArena_PeerSlotMatches(s32 slot) {
   s32 serialPlayerId = -1;
 
@@ -394,12 +405,16 @@ static void BattleArena_WriteSlotValue(s32 slot) {
 // modern build uses the task's actual function type to avoid an
 // incompatible indirect call.
 #ifdef UBFIX
-/// The task that watches the partner each frame in the Battle Arena. It forgets
-/// the partner after LOBBY_PEER_WAIT_FRAMES without a link, keeps
-/// FLAG_BATTLE_ARENA_PARTNER_ASKED current, raises LOBBY_EVENT_PROMPT once both
-/// sides agree and LOBBY_EVENT_DISCONNECTED when the link is lost while a
-/// battle is being arranged. BattleArena_RunRoundResult schedules it on every
-/// arrival; BattleArena_EnterBattle removes it.
+/// The task that watches the partner each frame in the Battle Arena.
+///
+/// - It forgets the partner after LOBBY_PEER_WAIT_FRAMES without a link.
+/// - It keeps FLAG_BATTLE_ARENA_PARTNER_ASKED current.
+/// - It raises LOBBY_EVENT_PROMPT once both sides agree.
+/// - It raises LOBBY_EVENT_DISCONNECTED when the link is lost while a battle is
+///   being arranged.
+///
+/// BattleArena_RunRoundResult schedules it on every arrival, and
+/// BattleArena_EnterBattle removes it.
 static void BattleArena_PollPeerReady(void) {
 #else
 static s32 BattleArena_PollPeerReady(void) {
@@ -476,16 +491,17 @@ static s32 BattleArena_PollPeerReady(void) {
 #endif
 }
 
-/// Calls of BattleArena_PromptToParticipate towards asking again, at 300;
+/// Calls of BattleArena_PromptToParticipate towards asking again, at 300. It is
 /// cleared on every arrival.
 u32 gBattleArenaCallFrames;
 
 /// LOBBY_EVENT_PROMPT: the attendant asks the player into the circle once both
 /// consoles agree, and again after 300 calls. The line is "If you want to
-/// participate, please step into the circle!". Returns the flag's value when
-/// FLAG_BATTLE_ARENA_ENTERING_BATTLE or FLAG_BATTLE_ARENA_ATTENDANT_ASKED is
-/// set and nothing is shown; the path that shows the line returns nothing in
-/// the ROM (UB).
+/// participate, please step into the circle!".
+///
+/// Returns the flag's value when FLAG_BATTLE_ARENA_ENTERING_BATTLE or
+/// FLAG_BATTLE_ARENA_ATTENDANT_ASKED is set and nothing is shown. The path that
+/// shows the line returns nothing in the ROM (UB).
 static s32 BattleArena_PromptToParticipate(void) {
   s32 set;
 
@@ -514,10 +530,12 @@ static s32 BattleArena_PromptToParticipate(void) {
 }
 
 /// LOBBY_EVENT_DISCONNECTED: the attendant says the link was disconnected.
+///
 /// Publishes LOBBY_SLOT_IDLE and clears the raised trigger and
 /// FLAG_BATTLE_ARENA_ATTENDANT_ASKED, FLAG_BATTLE_ARENA_ENTERING_BATTLE and
-/// FLAG_BATTLE_ARENA_LINK_LOST_UNREPORTED. The original handler has no defined
-/// return value.
+/// FLAG_BATTLE_ARENA_LINK_LOST_UNREPORTED.
+///
+/// The original handler has no defined return value.
 static s32 BattleArena_ReportDisconnection(void) {
   struct FieldWork *work = gFieldWork;
 
@@ -538,12 +556,16 @@ static s32 BattleArena_ReportDisconnection(void) {
 
 /// Receives the partner's three party member records into units 128 to 130
 /// (the battle's enemies, by Unit_Get) and its Djinn recovery table into the
-/// enemy side's (Djinn_GetRecoveryTable(1)). Each name gets the edition's
-/// MsgEnemyLabel ("Enemy" in English) in front, within the 14 letters a
-/// Unit name holds. Returns how many records hold a party member, or -1 when
-/// a transfer fails, overruns or runs out of time. The EWRAM pool buffer
-/// it allocates and frees is never written: the records are received in
-/// place.
+/// enemy side's (Djinn_GetRecoveryTable(1)).
+///
+/// Each name gets the edition's MsgEnemyLabel ("Enemy" in English) in front,
+/// within the 14 letters a Unit name holds.
+///
+/// Returns how many records hold a party member, or -1 when a transfer fails,
+/// overruns or runs out of time.
+///
+/// The EWRAM pool buffer it allocates and frees is never written, because the
+/// records are received in place.
 static s32 BattleArena_ReceivePartyRecords(void) {
   u16 namePrefix[24];
   u32 size;
@@ -709,13 +731,18 @@ static s32 BattleArena_CopyPartyOwnerIds(u16 *memberIds) {
 }
 
 /// Sends the first three party members' records, marked side 2
-/// (BATTLE_SIDE_PARTY), and for a smaller party absent records, copies of
-/// the last party member marked side 0. Then sends this side's Djinn recovery
-/// table, rewritten for the partner: each entry's party member becomes the
-/// number the partner gives that party member (128 plus its place), and the
-/// entries of party members not sent are dropped. Returns 0, or -1 when a send
-/// fails or runs out of time. The copies go through an EWRAM pool buffer freed
-/// before returning.
+/// (BATTLE_SIDE_PARTY).
+///
+/// For a smaller party it also sends absent records, copies of the last party
+/// member marked side 0.
+///
+/// Then it sends this side's Djinn recovery table, rewritten for the partner.
+/// Each entry's party member becomes the number the partner gives that party
+/// member (128 plus its place), and the entries of party members not sent are
+/// dropped.
+///
+/// Returns 0, or -1 when a send fails or runs out of time. The copies go
+/// through an EWRAM pool buffer freed before returning.
 static s32 BattleArena_SendPartyRecords(void) {
   // Measured plain form: replacing only the final wait and test polling
   // region with while(active transfers) adds 8 bytes in tbs-en.
@@ -854,10 +881,12 @@ next:
   } while (0);
 }
 
-/// Exchanges the two parties: the parent sends first, the child (area
-/// flag FLAG_BATTLE_ARENA_LINK_CHILD) receives first. On success stores the
-/// partner's party member count in FLAG_LINK_PARTY_COUNT and returns it; on
-/// failure resets the transfer state and returns a negative result.
+/// Exchanges the two parties. The parent sends first, and the child (area flag
+/// FLAG_BATTLE_ARENA_LINK_CHILD) receives first.
+///
+/// On success stores the partner's party member count in FLAG_LINK_PARTY_COUNT
+/// and returns it. On failure resets the transfer state and returns a negative
+/// result.
 static s32 BattleArena_ExchangePartyRecords(void) {
   s32 result;
   s32 receivedMemberCount;
@@ -901,17 +930,22 @@ check:
   return result;
 }
 
-/// Step trigger 10, the circle: starts the battle. A monster battle starts at
-/// once. A linked one needs the attendant's call
+/// Step trigger 10, the circle: starts the battle.
+///
+/// A monster battle starts at once. A linked one needs the attendant's call
 /// (FLAG_BATTLE_ARENA_ATTENDANT_ASKED) and no lost link waiting to be reported
-/// (FLAG_BATTLE_ARENA_LINK_LOST_UNREPORTED); it publishes LOBBY_SLOT_IN_CIRCLE
-/// and waits for the partner to step in, giving up when the partner withdraws,
-/// the link is lost, or the partner neither asks nor stands in the circle for
-/// LOBBY_PEER_WAIT_FRAMES. The leader then walks in while the parties are
-/// exchanged; a failed exchange walks back, restarts the Battle Arena's polling
-/// and raises LOBBY_EVENT_DISCONNECTED. Sets where the battle returns to (the
-/// BATTLE_ARENA_AFTER_ entrances) and requests it. The original returns
-/// have no defined status.
+/// (FLAG_BATTLE_ARENA_LINK_LOST_UNREPORTED).
+///
+/// The linked battle publishes LOBBY_SLOT_IN_CIRCLE and waits for the partner
+/// to step in. It gives up when the partner withdraws, the link is lost, or the
+/// partner neither asks nor stands in the circle for LOBBY_PEER_WAIT_FRAMES.
+///
+/// The leader then walks in while the parties are exchanged. A failed exchange
+/// walks back, restarts the Battle Arena's polling and raises
+/// LOBBY_EVENT_DISCONNECTED.
+///
+/// Sets where the battle returns to (the BATTLE_ARENA_AFTER_ entrances) and
+/// requests it. The original returns have no defined status.
 static s32 BattleArena_EnterBattle(void) {
   struct FieldWork *work;
   s32 failed;
@@ -1064,12 +1098,15 @@ static s32 BattleArena_EnterBattle(void) {
 #endif
 }
 
-/// Talking to ACTOR_ATTENDANT, who arranges a battle. With no partner, offers
-/// a monster battle. With one, calls off a monster battle in waiting, then asks
-/// the player to apply or to accept the partner's request; a yes is published
-/// as LOBBY_SLOT_ASKED. Agreeing sets FLAG_BATTLE_ARENA_PLAYER_AGREED, and for
-/// a linked battle FLAG_LINK_BATTLE and FLAG_LINK_BATTLE_ARRANGED. The original
-/// handler's return value is ignored.
+/// Talking to ACTOR_ATTENDANT, who arranges a battle.
+///
+/// With no partner, offers a monster battle. With one, calls off a monster
+/// battle in waiting, then asks the player to apply or to accept the partner's
+/// request. A yes is published as LOBBY_SLOT_ASKED.
+///
+/// Agreeing sets FLAG_BATTLE_ARENA_PLAYER_AGREED, and for a linked battle
+/// FLAG_LINK_BATTLE and FLAG_LINK_BATTLE_ARRANGED. The original handler's
+/// return value is ignored.
 static s32 BattleArena_ChooseBattleMode(void) {
   // Returns no value: r0 is whatever the last call left.
 
@@ -1181,10 +1218,13 @@ static s32 BattleArena_ChooseBattleMode(void) {
 #endif
 }
 
-/// Talking to ACTOR_LINKED_WINS_TELLER, who reports the linked battles won,
-/// the total when the leader faces north and those won in a row otherwise;
-/// before the first, the line says it will tell them later. Like the original
-/// handler, it never ends its event (no Event_End) and returns nothing.
+/// Talking to ACTOR_LINKED_WINS_TELLER, who reports the linked battles won.
+///
+/// The report is the total when the leader faces north and those won in a row
+/// otherwise. Before the first, the line says it will tell them later.
+///
+/// Like the original handler, it never ends its event (no Event_End) and
+/// returns nothing.
 static s32 BattleArena_ReportWinTallies(s32 actorId) {
   u32 facing = Actor_Get(ACTOR_PARTY_LEADER)->facing;
   u16 *tally;
@@ -1227,11 +1267,14 @@ static s32 BattleArena_ReportWinTallies(s32 actorId) {
   return 0;
 #endif
 }
-/// Talking to ACTOR_DEBUG_HELPER: Left and Right choose a parameter set number
-/// from 0 up, A loads it (DebugParameterSet_Load) and B cancels.
-/// ACTOR_LINKED_WINS_TELLER replies: one line for a cancel, one for a
-/// parameter set past the table's end (the loader's nonzero result), one for
-/// a loaded party.
+/// Talking to ACTOR_DEBUG_HELPER loads a debug parameter set.
+///
+/// Left and Right choose a parameter set number from 0 up, A loads it
+/// (DebugParameterSet_Load) and B cancels.
+///
+/// ACTOR_LINKED_WINS_TELLER replies with one line for a cancel, one for a
+/// parameter set past the table's end (the loader's nonzero result), and one
+/// for a loaded party.
 static s32 BattleArena_ChooseDebugParameterSet(s32 actorId) {
   struct Window *window;
   s32 setIndex;
@@ -1307,7 +1350,7 @@ static s32 BattleArena_OpenSanctum(s32 actorId) {
 
 /// Returns 1 when character memberId is among the first three party members
 /// while a linked battle is arranged (FLAG_LINK_BATTLE_ARRANGED), or its first
-/// four otherwise; 0 when not.
+/// four otherwise. Returns 0 when not.
 static s32 BattleArena_PartyContains(s32 memberId) {
   s32 count;
   s32 memberLimit;
@@ -1335,11 +1378,15 @@ static s32 BattleArena_PartyContains(s32 memberId) {
 /// UNUSED: the original empty Battle Arena callback.
 UNUSED static void State_NoOp(void) {}
 
-/// Talking to Garet, Ivan, Mia or Jenna, who speaks of the last linked battle
-/// (area flags FLAG_BATTLE_ARENA_LINK_BATTLE_ENDED and
-/// FLAG_BATTLE_ARENA_LINK_BATTLE_WON) and whether they fought in it, or else of
-/// whether Isaac and they are in the battle party. Each message family holds
-/// one line per character, at actor id - 1; Felix's holds "?".
+/// Talking to Garet, Ivan, Mia or Jenna in the Battle Arena.
+///
+/// Each speaks of the last linked battle (area flags
+/// FLAG_BATTLE_ARENA_LINK_BATTLE_ENDED and FLAG_BATTLE_ARENA_LINK_BATTLE_WON)
+/// and whether they fought in it, or else of whether Isaac and they are in the
+/// battle party.
+///
+/// Each message family holds one line per character, at actor id - 1. Felix's
+/// holds "?".
 static s32 BattleArena_TalkByProgress(s32 actorId) {
   s32 messageBase = MsgLobbyCantWaitLets;
   s32 isaacPresent = BattleArena_PartyContains(ISAAC);
@@ -1392,13 +1439,16 @@ static s32 BattleArena_LeaveArena(void) {
 // The handlers below are s32 and return no value: r0 is whatever
 // Event_End left.
 
-/// Talking to one of three visitors: ACTOR_TRAVELING_WARRIOR,
-/// ACTOR_FINALS_VISITOR, who explains the linked finals, and
-/// ACTOR_OLD_MANS_ARENA_VISITOR, who wonders whether this is the old man's
-/// Battle Arena. Each says their first line unless a linked battle has ended
-/// since the leader last walked south of z 224 (area flag
-/// FLAG_BATTLE_ARENA_LINK_BATTLE_ENDED), then their second after a win or their
-/// third after a loss (FLAG_BATTLE_ARENA_LINK_BATTLE_WON).
+/// Talking to one of three visitors.
+///
+/// They are ACTOR_TRAVELING_WARRIOR, ACTOR_FINALS_VISITOR, who explains the
+/// linked finals, and ACTOR_OLD_MANS_ARENA_VISITOR, who wonders whether this is
+/// the old man's Battle Arena.
+///
+/// Each says their first line unless a linked battle has ended since the leader
+/// last walked south of z 224 (area flag FLAG_BATTLE_ARENA_LINK_BATTLE_ENDED).
+/// Then they say their second after a win or their third after a loss
+/// (FLAG_BATTLE_ARENA_LINK_BATTLE_WON).
 static s32 BattleArena_TalkToVisitor(s32 actorId) {
   s32 message;
   s32 step = 0;
@@ -1427,10 +1477,11 @@ static s32 BattleArena_TalkToVisitor(s32 actorId) {
 #endif
 }
 
-/// Talking to ACTOR_PARTY_ORDER_VISITOR, who alternates, by
-/// FLAG_BATTLE_ARENA_PARTY_ORDER_NEXT, between the linked finals' limit of
-/// three allies (worded for the party's size) and how to change the party's
-/// order.
+/// Talking to ACTOR_PARTY_ORDER_VISITOR, who alternates between two
+/// explanations by FLAG_BATTLE_ARENA_PARTY_ORDER_NEXT.
+///
+/// One is the linked finals' limit of three allies, worded for the party's
+/// size. The other is how to change the party's order.
 static s32 BattleArena_ExplainPartyOrder(s32 actorId) {
   s32 message;
 
@@ -1479,10 +1530,11 @@ static s32 BattleArena_ReportMonsterRecord(s32 actorId) {
 
 u8 *BattleArena_GetTriggers(void) { return (u8 *)gBattleArenaTriggers; }
 
-/// Saves the battle results between saving and saved messages, through
-/// Save_ProcessSelectedFile, which writes the first 16 bytes of the save
-/// stamp (gBattleArenaRecord) into the current file. BattleArena_RunRoundResult
-/// calls it after each linked battle won or lost.
+/// Saves the battle results between saving and saved messages.
+///
+/// It saves through Save_ProcessSelectedFile, which writes the first 16 bytes
+/// of the save stamp (gBattleArenaRecord) into the current file.
+/// BattleArena_RunRoundResult calls it after each linked battle won or lost.
 static s32 BattleArena_SaveBattleResults(void) {
   // A shared inline message-pair helper grows each save routine from 108 to
   // 112 bytes in the native build, so retain the two copies.
@@ -1526,9 +1578,11 @@ static s32 BattleArena_SaveMonsterBattleResults(void) {
 #endif
 }
 
-/// Shows value, at most 999, on the wall board: three map cells at row 8,
-/// columns 14 to 16, each copied from column 27 at the row of its digit.
-/// BattleArena_RunRoundResult shows the most linked battles won in a row.
+/// Shows value, at most 999, on the wall board.
+///
+/// The board is three map cells at row 8, columns 14 to 16, each copied from
+/// column 27 at the row of its digit. BattleArena_RunRoundResult shows the most
+/// linked battles won in a row.
 static s32 BattleArena_DrawThreeDigitValue(s32 value) {
   s32 digit;
 
@@ -1544,14 +1598,17 @@ static s32 BattleArena_DrawThreeDigitValue(s32 value) {
 #endif
 }
 
-/// The overlay's initialize entry, run on every arrival: settles the battle
-/// that brought the party here and restarts the Battle Arena's polling. A
-/// linked battle broken off (FLAG_AREA_TEMP_E8) arrives as
-/// BATTLE_ARENA_AFTER_LINK_WIN; any other entrance than the
-/// BATTLE_ARENA_AFTER_ ones (BATTLE_ARENA_FROM_FILE_SCREEN, from the File
-/// Screen) restarts the link. Updates gMainRoutineWork.linkTallies, saves
-/// after linked battles and new monster records, and restores the party's HP,
-/// PP and Djinn unless a monster series goes on. Returns 0.
+/// The overlay's initialize entry, run on every arrival. It settles the battle
+/// that brought the party here and restarts the Battle Arena's polling.
+///
+/// A linked battle broken off (FLAG_AREA_TEMP_E8) arrives as
+/// BATTLE_ARENA_AFTER_LINK_WIN. Any other entrance than the BATTLE_ARENA_AFTER_
+/// ones (BATTLE_ARENA_FROM_FILE_SCREEN, from the File Screen) restarts the
+/// link.
+///
+/// Updates gMainRoutineWork.linkTallies, saves after linked battles and new
+/// monster records, and restores the party's HP, PP and Djinn unless a monster
+/// series goes on. Returns 0.
 s32 BattleArena_RunRoundResult(void) {
   s32 i;
   struct FieldWork *work;
@@ -1762,14 +1819,15 @@ s32 BattleArena_RunRoundResult(void) {
 }
 
 // clang-format off
-/// The payload word each slot of gBattleArena_SlotValues goes in: 0 the
-/// signature, 1 the state. The last two entries have no slot.
+/// The payload word each slot of gBattleArena_SlotValues goes in. 0 is the
+/// signature and 1 the state. The last two entries have no slot.
 u8 gBattleArena_SlotColumns[] = {
     0, 1, 1, 1, 1, 0, 0, 0,
 };
 
-/// Where the party appears: BATTLE_ARENA_FROM_FILE_SCREEN from the File Screen,
-/// the BATTLE_ARENA_AFTER_ ones after a battle (BattleArena_EnterBattle).
+/// Where the party appears. BATTLE_ARENA_FROM_FILE_SCREEN is from the File
+/// Screen, and the BATTLE_ARENA_AFTER_ ones are after a battle
+/// (BattleArena_EnterBattle).
 struct SceneEntrance gBattleArenaEntrances[] = {
     { BATTLE_ARENA_AFTER_LINK_LOSS, CONDITION_ALWAYS, 128, 0, 164, FACING_NORTH, 0, 16, 0, 416, 310, 0 },
     { BATTLE_ARENA_AFTER_LINK_WIN, CONDITION_ALWAYS, 352, 0, 148, FACING_NORTH, 0, 16, 0, 416, 310, 0 },

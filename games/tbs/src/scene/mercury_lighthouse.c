@@ -1,85 +1,85 @@
 /// @file
 /// Mercury Lighthouse (SceneId_MercuryLighthouseLower,
 /// SceneId_MercuryLighthouseMiddle, SceneId_MercuryLighthouseUpper and
-/// SceneId_MercuryLighthouseExterior), four of the lighthouse's scenes. They
-/// share the game's area name Mercury Lighthouse with
+/// SceneId_MercuryLighthouseExterior), four of the lighthouse's scenes.
+///
+/// They share the game's area name Mercury Lighthouse with
 /// SceneId_MercuryLighthouseEntrance (mercury_lighthouse_entrance.c), the floor
-/// inside the door; the Lighthouse Aerie at the top is
+/// inside the door. The Lighthouse Aerie at the top is
 /// SceneId_MercuryLighthouseAerie (mercury_lighthouse_aerie.c). The four share
 /// one exit table.
 ///
 /// Every entry sets FLAG_MERCURY_LIGHTHOUSE_LIT, under which Mercury Adepts
-/// regain PP faster, and Retreat leads out to MercuryLighthouseExterior's
-/// MERCURY_LIGHTHOUSE_EXTERIOR_FROM_WORLD_MAP. The story flags order the
-/// floors: the door opens only to Mia's Ply, once the party has met her in
-/// Imil (FLAG_IMIL_MET_MIA), and the fountain whose water heals Tret flows
-/// only once Saturos is beaten.
+/// regain PP faster. Retreat leads out to MercuryLighthouseExterior's
+/// MERCURY_LIGHTHOUSE_EXTERIOR_FROM_WORLD_MAP.
+///
+/// The story flags order the floors. The door opens only to Mia's Ply, once
+/// the party has met her in Imil (FLAG_IMIL_MET_MIA). The fountain whose water
+/// heals Tret flows only once Saturos is beaten.
 ///
 /// - SceneId_MercuryLighthouseExterior, the lighthouse's door and the ground
 ///   around it, reached from the World Map
 ///   (MERCURY_LIGHTHOUSE_EXTERIOR_FROM_WORLD_MAP). Until Mia has hurried here
 ///   the door stays shut. Then she stands before it, blocked by a statue
-///   (ACTOR_DOOR_STATUE): she senses someone inside
+///   (ACTOR_DOOR_STATUE), and senses someone inside
 ///   (MercuryLighthouse_MiaSensesSomeoneInside,
-///   FLAG_MIA_SENSED_SOMEONE_INSIDE). Move on the statue
-///   (MercuryLighthouse_MiaOpensEntranceWithPly): Mia saw the force that pushed
-///   it, learns the word Psynergy, opens the door with Ply, the power handed
-///   down in her clan, and goes in (FLAG_MERCURY_LIGHTHOUSE_OPENED_BY_MIA).
+///   FLAG_MIA_SENSED_SOMEONE_INSIDE). Move on the statue plays
+///   MercuryLighthouse_MiaOpensEntranceWithPly. Mia saw the force that pushed
+///   it, and learns the word Psynergy. She opens the door with Ply, the power
+///   handed down in her clan, and goes in
+///   (FLAG_MERCURY_LIGHTHOUSE_OPENED_BY_MIA).
 ///   MERCURY_LIGHTHOUSE_EXTERIOR_TO_MERCURY_LIGHTHOUSE_ENTRANCE, through the
 ///   door, leads into MercuryLighthouseEntrance.
 /// - SceneId_MercuryLighthouseLower. Mia is blocked again by a statue that was
-///   not there before; Move pushes it aside, and she joins the party with Fizz,
+///   not there before. Move pushes it aside, and she joins the party with Fizz,
 ///   a Mercury Djinni (MercuryLighthouse_MiaJoinsAfterRescue,
 ///   FLAG_MIA_JOINED_PARTY). Three pipe sections pushed into place let the
 ///   water run (FLAG_PIPE_1_JOINED to _3_JOINED) and carry the party down to
 ///   MercuryLighthouseEntrance
 ///   (MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_ENTRANCE_PIPE,
-///   FLAG_MERCURY_LIGHTHOUSE_CHANNELS_OPEN; the pipe room before and after is
+///   FLAG_MERCURY_LIGHTHOUSE_CHANNELS_OPEN). The pipe room before and after is
 ///   places/mercury-lighthouse-lower/map-4.png and
-///   places/mercury-lighthouse-lower_mercury-lighthouse-channels-open/map-4.png).
+///   places/mercury-lighthouse-lower_mercury-lighthouse-channels-open/map-4.png.
 ///   Once Ply has worked in MercuryLighthouseEntrance
 ///   (FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), the pool's heart gives the
-///   leader golden rings of light (SPRITE_GOLDEN_RINGS) that carry him across
+///   leader golden rings of light (SPRITE_GOLDEN_RINGS). They carry him across
 ///   the water, a ring spent with each hop, as there
 ///   (shared/mercury_lighthouse_pillar.h). A chest holds a Sleep Bomb.
 /// - SceneId_MercuryLighthouseMiddle. One pipe section raises or lowers stairs
-///   (FLAG_STAIRS_RAISED), another starts a fountain (FLAG_FOUNTAIN_RUNNING),
-///   and a statue moved onto a floor switch holds a gate open for good
-///   (FLAG_MERCURY_LIGHTHOUSE_GATE_HELD_OPEN); standing on the switch opens it
-///   only while the leader stays. Sleet, a Mercury Djinni, fights when spoken
-///   to. Chests hold a Psy Crystal and a Nut.
+///   (FLAG_STAIRS_RAISED), and another starts a fountain
+///   (FLAG_FOUNTAIN_RUNNING). A statue moved onto a floor switch holds a gate
+///   open for good (FLAG_MERCURY_LIGHTHOUSE_GATE_HELD_OPEN). Standing on the
+///   switch opens it only while the leader stays. Sleet, a Mercury Djinni,
+///   fights when spoken to. Chests hold a Psy Crystal and a Nut.
 /// - SceneId_MercuryLighthouseUpper. A pipe section pushed along a row opens
-/// one of
-///   three stone doors by its column, and at column 48 sends a statue sliding
-///   over the floor to a square opening, and it falls to the floor below
-///   (FLAG_MERCURY_LIGHTHOUSE_STATUE_FELL), where Move sets it on the stair
-///   gate's switch
-///   (FLAG_MERCURY_LIGHTHOUSE_UPPER_GATE_HELD_OPEN). Five stone statues stand
-///   in a row; moved to a set column, the last of them and one more statue
-///   each change a cell's behavior.
+///   one of three stone doors by its column. At column 48 it sends a statue
+///   sliding over the floor to a square opening, and the statue falls to the
+///   floor below (FLAG_MERCURY_LIGHTHOUSE_STATUE_FELL). There Move sets it on
+///   the stair gate's switch (FLAG_MERCURY_LIGHTHOUSE_UPPER_GATE_HELD_OPEN).
+///   Five stone statues stand in a row. Moved to a set column, the last of
+///   them and one more statue each change a cell's behavior.
 /// - MercuryLighthouseExterior again, higher up, reached from
 ///   MercuryLighthouseMiddle
 ///   (MERCURY_LIGHTHOUSE_MIDDLE_TO_MERCURY_LIGHTHOUSE_EXTERIOR) and
 ///   MercuryLighthouseUpper
 ///   (MERCURY_LIGHTHOUSE_UPPER_TO_MERCURY_LIGHTHOUSE_EXTERIOR_EAST and
-///   MERCURY_LIGHTHOUSE_UPPER_TO_MERCURY_LIGHTHOUSE_EXTERIOR_WEST): a lift down
-///   from the Lighthouse Aerie
+///   MERCURY_LIGHTHOUSE_UPPER_TO_MERCURY_LIGHTHOUSE_EXTERIOR_WEST). It holds a
+///   lift down from the Lighthouse Aerie
 ///   (MERCURY_LIGHTHOUSE_EXTERIOR_FROM_MERCURY_LIGHTHOUSE_AERIE), the Fountain
 ///   of Healing, whose sign promises the Water of Hermes, and a waterfall.
 ///   Arriving at the waterfall
 ///   (MERCURY_LIGHTHOUSE_EXTERIOR_WATERFALL_FROM_UPPER_PATH) shows its
-///   riddle, `He who honors
-///   the goddess of rainbows shall be guided to the heavens upon wings of fluid
-///   grace.`; Ply on its statue stops it and opens the way up
-///   (MercuryLighthouse_PlyOpensWaterfallPassage). The first time, Mia rises
-///   first and the party follows
+///   riddle, `He who honors the goddess of rainbows shall be guided to the
+///   heavens upon wings of fluid grace.` Ply on its statue stops it and opens
+///   the way up (MercuryLighthouse_PlyOpensWaterfallPassage). The first time,
+///   Mia rises first and the party follows
 ///   (MERCURY_LIGHTHOUSE_EXTERIOR_TO_WORLD_MAP_LIGHTHOUSE_LIT, the World Map's
 ///   WORLD_MAP_AFTER_MERCURY_LIGHTHOUSE_LIT, whose lighthouse transition ends
-///   at the Lighthouse Aerie); there the beacon has already been lit, and the
+///   at the Lighthouse Aerie). There the beacon has already been lit, and the
 ///   party fights Saturos (mercury_lighthouse_aerie.c). Once Saturos is beaten
 ///   (FLAG_SATUROS_BEATEN_AT_MERCURY) the leader rises alone
 ///   (MERCURY_LIGHTHOUSE_EXTERIOR_TO_MERCURY_LIGHTHOUSE_AERIE, the aerie's
-///   MERCURY_LIGHTHOUSE_AERIE_FROM_MERCURY_LIGHTHOUSE_EXTERIOR), the fountain
+///   MERCURY_LIGHTHOUSE_AERIE_FROM_MERCURY_LIGHTHOUSE_EXTERIOR). The fountain
 ///   flows, people come to drink from it, and an Empty Bottle used at it
 ///   becomes Hermes' Water, once a visit (FLAG_HERMES_WATER_TAKEN).
 
@@ -196,10 +196,10 @@ enum MercuryLighthouseLowerActorId {
   /// ★ Named from what the player sees: a stone pipe section lying north to
   /// south, spr_229.png (its render)
   ACTOR_THIRD_PIPE,
-  /// SPRITE_PIPE_END, one still frame, 59 pixels south of where
-  /// ACTOR_THIRD_PIPE comes to rest; pushing it does nothing, and nothing
-  /// else
-  /// moves it: the rim of the fixed pipe the third section joins.
+  /// The rim of the fixed pipe the third section joins.
+  /// It is SPRITE_PIPE_END, one still frame, 59 pixels south of where
+  /// ACTOR_THIRD_PIPE comes to rest. Pushing it does nothing, and nothing else
+  /// moves it.
   /// ★ Named from what the player sees: the rim at the top of an upright pipe
   /// in spr_230.png (its render)
   ACTOR_PIPE_END
@@ -211,8 +211,8 @@ enum MercuryLighthouseMiddleActorId {
   /// ★ Named from what the player sees: a stone pipe section lying north to
   /// south, spr_229.png (its render)
   ACTOR_STAIR_PIPE = ACTOR_FIRST_PLACED,
-  /// 59 pixels south of where ACTOR_STAIR_PIPE rests once the stairs are
-  /// raised; nothing moves it.
+  /// It stands 59 pixels south of where ACTOR_STAIR_PIPE rests once the stairs
+  /// are raised. Nothing moves it.
   /// ★ Named from what the player sees: the rim at the top of an upright pipe
   /// in spr_230.png (its render)
   ACTOR_STAIR_PIPE_END,
@@ -235,10 +235,10 @@ enum MercuryLighthouseUpperActorId {
   /// ★ Named from what the player sees: the blue statue ACTOR_SLIDING_STATUE
   /// shows above, before it falls (its render)
   ACTOR_FALLEN_STATUE = ACTOR_FIRST_PLACED,
-  /// At rest beside a jet of water; its first slide takes it under the jet.
+  /// At rest beside a jet of water. Its first slide takes it under the jet.
   /// When the door switch pipe stops at column 48, it slides over the floor to
-  /// the square hole in the floor at (840,744), a cell whose ground lies below
-  /// the floor's, and falls through it.
+  /// the square hole in the floor at (840,744) and falls through it. That hole
+  /// is a cell whose ground lies below the floor's.
   /// ★ Named from what the player sees: a blue statue beside a jet of water
   /// (its render)
   ACTOR_SLIDING_STATUE,
@@ -248,7 +248,7 @@ enum MercuryLighthouseUpperActorId {
   /// ★ Named from what the player sees: a stone pipe section lying north to
   /// south, spr_229.png (its render)
   ACTOR_DOOR_SWITCH_PIPE,
-  /// Three in a row south of the stone doors' pipes; nothing moves them.
+  /// Three in a row south of the stone doors' pipes. Nothing moves them.
   /// ★ Named from what the player sees: the rim at the top of an upright pipe
   /// in spr_230.png (its render)
   ACTOR_FIRST_DOOR_PIPE_END,
@@ -269,7 +269,7 @@ enum MercuryLighthouseUpperActorId {
 /// the waterfall, the statue on the lift and the people at the fountain.
 enum MercuryLighthouseExteriorActorId {
   /// A pair of statues either side of the way in from the World Map
-  /// (MERCURY_LIGHTHOUSE_EXTERIOR_FROM_WORLD_MAP); the east one is drawn
+  /// (MERCURY_LIGHTHOUSE_EXTERIOR_FROM_WORLD_MAP). The east one is drawn
   /// mirrored.
   /// ★ Named from what the player sees: blue statues either side of the way in
   /// (its render)
@@ -288,9 +288,8 @@ enum MercuryLighthouseExteriorActorId {
   /// in the Lighthouse Aerie (its render)
   ACTOR_LIFT_STATUE,
   /// The first of four people at the Fountain of Healing once Saturos is
-  /// beaten, in order a young man, a woman with fair hair, an old man with a
-  /// cane and
-  /// an old woman.
+  /// beaten. In order they are a young man, a woman with fair hair, an old man
+  /// with a cane and an old woman.
   /// ★ Named from what the player sees: people gathered round the fountain
   /// (its render)
   ACTOR_FIRST_VISITOR
@@ -306,7 +305,7 @@ enum {
   FLAG_FOUNTAIN_SHOWN =
       FLAG_AREA_TEMP_07, ///< the camera has shown it start once
   /// MercuryLighthouseLower's first pipe piece has been pushed into place,
-  /// joining the water pipes; with all three joined the water carries the party
+  /// joining the water pipes. With all three joined the water carries the party
   /// down.
   /// ★ Named from what the player sees: a pipe piece pushed along until it
   /// joins the pipes and water sprays through (its render)
@@ -322,7 +321,7 @@ enum {
   FLAG_UNUSED_PIPE_4_JOINED = FLAG_AREA_TEMP_13,
   /// ★ Named from what the player sees: a stone pipe section (its render)
   FLAG_DOOR_ROOM_PIPE_PUSHED = FLAG_AREA_TEMP_18,
-  /// Where the door switch pipe rests: each column opens a different stone door
+  /// Where the door switch pipe rests. Each column opens a different stone door
   /// (MercuryLighthouse_PushStoneDoorPipes). At column 47 it opens
   /// STONE_DOOR_NORTH, along the sliding statue's row.
   /// ★ Named from what the player sees: a stone pipe section (its render)
@@ -331,7 +330,7 @@ enum {
   /// falls.
   /// ★ Named from what the player sees: a stone pipe section (its render)
   FLAG_DOOR_SWITCH_PIPE_OPENS_SOUTH_DOOR = FLAG_AREA_TEMP_1A,
-  /// At column 53 it leaves every door shut; with none of the three set it
+  /// At column 53 it leaves every door shut. With none of the three set it
   /// opens STONE_DOOR_WEST.
   /// ★ Named from what the player sees: a stone pipe section (its render)
   FLAG_DOOR_SWITCH_PIPE_SHUTS_DOORS = FLAG_AREA_TEMP_1B,
@@ -451,13 +450,13 @@ const struct ActorPlacement *MercuryLighthouse_GetActorPlacements(void) {
 }
 
 /// MercuryLighthouseLower, as in MercuryLighthouseEntrance, once Ply has worked
-/// there: touching  CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_WATER keeps blue
+/// there: touching CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_WATER keeps blue
 /// ripples spreading from the leader.
 static void MercuryLighthouse_RippleWhileInPool(void) {
   MercuryLighthouse_RippleAroundLeader();
 }
 
-/// MercuryLighthouseLower, touching  CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_RIM
+/// MercuryLighthouseLower, touching CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_RIM
 /// or cell behavior 32: the leader loses his lights.
 static void MercuryLighthouse_LoseLightsOnLower(void) {
   MercuryLighthouse_LoseLights();
@@ -529,8 +528,9 @@ static void MercuryLighthouse_LeaveWaterfallByPassage(void) {
 /// MercuryLighthouseLower: with all three channel pipes in place the floor
 /// shakes, the screen fades and the party is carried down to
 /// MercuryLighthouseEntrance
-/// (MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_ENTRANCE_PIPE); moving one
-/// out again clears the flag.
+/// (MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_ENTRANCE_PIPE).
+///
+/// Moving one out again clears the flag.
 static void MercuryLighthouse_ExitWhenChannelsOpen(void) {
   if (GameFlag_Get(FLAG_PIPE_1_JOINED) != 0 &&
       GameFlag_Get(FLAG_PIPE_2_JOINED) != 0 &&
@@ -914,8 +914,10 @@ static void MercuryLighthouse_StopFountainSpray(void) {
 
 /// MercuryLighthouseMiddle, pushing a pipe (walking into cell behavior 1 or
 /// 45): the stair pipe raises the stairs at column 11 and lowers them anywhere
-/// else; the fountain pipe starts the fountain at row 40, the first time with
-/// the camera watching, and stops it at row 42.
+/// else.
+///
+/// The fountain pipe starts the fountain at row 40, the first time with the
+/// camera watching, and stops it at row 42.
 static void MercuryLighthouse_PushStairAndFountainPipes(void) {
   struct PushedActorProbe probe;
   s32 pillarId;
@@ -1057,9 +1059,9 @@ static void MercuryLighthouse_ReleaseStairFloorSwitch(void) {
   }
 }
 
-/// MercuryLighthouseUpper's three stone doors, named by where they stand: the
-/// west one opens along its column, the other two along their rows, the north
-/// one two cells above the south one.
+/// MercuryLighthouseUpper's three stone doors, named by where they stand.
+/// The west one opens along its column and the other two along their rows.
+/// The north one is two cells above the south one.
 enum { STONE_DOOR_WEST = 0, STONE_DOOR_SOUTH = 1, STONE_DOOR_NORTH = 2 };
 
 /// Chooses the random speed component used by stone-door particles.
@@ -1180,8 +1182,8 @@ static void MercuryLighthouse_CloseStoneDoor(s32 side) {
 }
 
 /// The camera turns to the sliding statue, which moves on only for the door
-/// switch pipe positions recorded; returns 1 when the next slide is its last,
-/// to the square opening.
+/// switch pipe positions recorded.
+/// Returns 1 when the next slide is its last, to the square opening.
 static s32 MercuryLighthouse_StartStatueSlide(void) {
   s32 cellX;
   s32 cellZ;
@@ -1249,8 +1251,10 @@ static s32 MercuryLighthouse_StopStatueSpray(void) {
 
 /// MercuryLighthouseUpper, pushing a pipe before the stone doors (walking
 /// into cell behavior 40): the door switch pipe opens a different stone
-/// door at each column, and at column 48, once the statue is in place, the
-/// statue slides out and falls to the floor below.
+/// door at each column.
+///
+/// At column 48, once the statue is in place, the statue slides out and falls
+/// to the floor below.
 static void MercuryLighthouse_PushStoneDoorPipes(void) {
   struct PushedActorProbe probe;
   s32 destinationColumn;
@@ -1358,9 +1362,10 @@ static void MercuryLighthouse_PushAndSaveRowStatuePositions(void) {
 }
 
 /// MercuryLighthouseUpper, Move on a row statue, or after a push: each
-/// statue's column is saved in its pair of flags, and the last changes the
-/// behavior of the cell at (58, 7) as it stands at column 57 or 59 or
-/// elsewhere.
+/// statue's column is saved in its pair of flags.
+///
+/// The last statue also changes the behavior of the cell at (58, 7), as it
+/// stands at column 57 or 59 or elsewhere.
 static void MercuryLighthouse_SyncRowStatueFlags(void) {
   s32 statueIndex;
   s32 positionFlag;
@@ -1407,11 +1412,12 @@ static void MercuryLighthouse_SyncRowStatueFlags(void) {
 
 /// MercuryLighthouseUpper, Move on the gap statue: at column 28 it stays for
 /// good (FLAG_PASSAGE_STATUE_MOVED) and the cell at (31, 20) takes the behavior
-/// of the cell at (29, 20), a jump spot. The statue stands on (29, 20), hiding
-/// the arched door to the lighthouse's exterior in the wall behind it; moved
-/// one column west it uncovers the door, and the leader on (31, 20) pushing
-/// west jumps the rough cell between onto the cell before the door. With the
-/// statue in place he cannot.
+/// of the cell at (29, 20), a jump spot.
+///
+/// The statue stands on (29, 20), hiding the arched door to the lighthouse's
+/// exterior in the wall behind it. Moved one column west, it uncovers the
+/// door. The leader on (31, 20) pushing west then jumps the rough cell between
+/// onto the cell before the door. With the statue in place he cannot.
 static void MercuryLighthouse_ChangeCellForGapStatue(void) {
   s32 column;
 
@@ -1463,9 +1469,10 @@ static void MercuryLighthouse_CycleEntrancePalette(void) {
 }
 
 /// MercuryLighthouseExterior, talking to Mia at the door or Mind Read on her,
-/// before it is open: she senses someone. "Somebody...is here." She asks
-/// whether the party hears it, says only Alex can enter besides her, and that
-/// the statue blocks her way.
+/// before it is open: she senses someone. "Somebody...is here."
+///
+/// She asks whether the party hears it, says only Alex can enter besides her,
+/// and that the statue blocks her way.
 static void MercuryLighthouse_MiaSensesSomeoneInside(void) {
   struct Actor *mia;
 
@@ -1571,7 +1578,9 @@ static void MercuryLighthouse_FadePaletteToWhite(void) {
 
 /// MercuryLighthouseExterior, Move on the door statue: once it stands at column
 /// 51 Mia asks whether the party did that, learns of Psynergy, and uses Ply to
-/// open the door; she goes in, and Garet and Ivan rejoin the leader.
+/// open the door.
+///
+/// She goes in, and Garet and Ivan rejoin the leader.
 static void MercuryLighthouse_MiaOpensEntranceWithPly(void) {
   struct Actor *actor;
   s32 column;
@@ -1780,7 +1789,8 @@ static void MercuryLighthouse_FadePaletteToBlack(void) {
 }
 
 /// Raises an actor into the passage with sparks for 96 frames, moving it every
-/// two frames; each move is about 0.1 pixel longer than the last.
+/// two frames.
+/// Each move is about 0.1 pixel longer than the last.
 static void MercuryLighthouse_RaiseActorWithSparks(s32 actorId) {
   struct EffectOptions options;
   struct Actor *actor;
@@ -1822,13 +1832,15 @@ static void MercuryLighthouse_RaiseActorWithSparks(s32 actorId) {
 }
 
 /// MercuryLighthouseExterior, Ply on the waterfall statue: the waterfall
-/// darkens and stops, sparkles rise and the way behind it opens. Once Saturos
-/// is beaten the leader rises through it alone to the Lighthouse Aerie
-/// (MERCURY_LIGHTHOUSE_EXTERIOR_TO_MERCURY_LIGHTHOUSE_AERIE); before that Mia
-/// rises first and the party follows
+/// darkens and stops, sparkles rise and the way behind it opens.
+///
+/// Before Saturos is beaten, Mia rises first and the party follows
 /// (MERCURY_LIGHTHOUSE_EXTERIOR_TO_WORLD_MAP_LIGHTHOUSE_LIT, the World Map's
 /// WORLD_MAP_AFTER_MERCURY_LIGHTHOUSE_LIT, whose lighthouse transition ends at
 /// the aerie).
+///
+/// Once Saturos is beaten the leader rises through it alone to the Lighthouse
+/// Aerie (MERCURY_LIGHTHOUSE_EXTERIOR_TO_MERCURY_LIGHTHOUSE_AERIE).
 static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
   s32 rowOffset;
   u32 random;
@@ -2081,7 +2093,9 @@ static void MercuryLighthouse_InspectLockedDoor(void) {
 
 /// MercuryLighthouseExterior, searching the Fountain of Healing (cell
 /// behavior 5) before taking its water: it seems dry, or once Saturos is beaten
-/// flows with water; carrying an Empty Bottle, the item menu then opens.
+/// flows with water.
+///
+/// Carrying an Empty Bottle, the item menu then opens.
 static void MercuryLighthouse_InspectHealingFountain(void) {
 
   Event_Start();
@@ -2119,8 +2133,9 @@ static void MercuryLighthouse_FillHermesWaterBottle(void) {
 /// cell behavior 15: on the first the leader steps to the hole and drops
 /// into MercuryLighthouseEntrance
 /// (MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_ENTRANCE_HOLE, its
-/// MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_LOWER_HOLE); on the
-/// second the motion runs alone.
+/// MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_LOWER_HOLE).
+///
+/// On the second the motion runs alone.
 static void MercuryLighthouse_EnterRisingPassage(void) {
   Event_Start();
   if (gMainRoutineWork.next == (s32)&SceneId_MercuryLighthouseLower) {
@@ -2756,9 +2771,11 @@ s32 MercuryLighthouse_Initialize(void) {
 }
 
 /// MercuryLighthouseLower, Move on the statue blocking Mia, before she has
-/// joined: once it stands at column 48, Mia thanks the party, asks whether it
-/// has business in the lighthouse and presses until it says yes, then joins
-/// with Fizz. "You've saved me again, haven't you!"
+/// joined: once it stands at column 48, Mia thanks the party. "You've saved me
+/// again, haven't you!"
+///
+/// She asks whether it has business in the lighthouse and presses until it
+/// says yes, then joins with Fizz.
 static void MercuryLighthouse_MiaJoinsAfterRescue(void) {
   s32 firstMessage;
   s32 pillarColumn;
@@ -2862,8 +2879,10 @@ static void MercuryLighthouse_MiaJoinsAfterRescue(void) {
 
 /// MercuryLighthouseExterior,
 /// MERCURY_LIGHTHOUSE_EXTERIOR_FROM_MERCURY_LIGHTHOUSE_AERIE: the leader rides
-/// the lift down from the Lighthouse Aerie beside its statue, hops off onto the
-/// landing by the Fountain of Healing, and the lift goes back up.
+/// the lift down from the Lighthouse Aerie beside its statue.
+///
+/// He hops off onto the landing by the Fountain of Healing, and the lift goes
+/// back up.
 static void MercuryLighthouse_RideLift(void) {
   struct MapGridLayerScroll *liftLayer;
   s32 liftSpeed;

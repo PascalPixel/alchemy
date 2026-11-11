@@ -1,16 +1,19 @@
 /// @file
 /// Kolima Forest (SceneId_KolimaForestCliff), the third of the forest's five
 /// scenes, between SceneId_KolimaForestGlade and SceneId_KolimaForestFloodgate.
-/// Of its three logs, rolled by walking into them, the one pushed west to the
+///
+/// It has three logs, rolled by walking into them. The one pushed west to the
 /// water's edge tips into the river and floats there, cells the party can cross
-/// to the far side, and from the bank the leader can hop east (step trigger 11,
-/// KolimaForest_HopEast). The forest keeps its cursed colours until Tret lifts
-/// the curse (FLAG_KOLIMA_CURSE_LIFTED).
+/// to the far side. From the bank the leader can hop east (step trigger 11,
+/// KolimaForest_HopEast).
+///
+/// The forest keeps its cursed colours until Tret lifts the curse
+/// (FLAG_KOLIMA_CURSE_LIFTED).
 ///
 /// FLAG_KOLIMA_FOREST_CLIFF_LOG_IN_RIVER: the log is in the river, until the
 /// party next comes in.
 ///
-/// The scene's name, Cliff, is ours, for what sets the scene apart: a rock
+/// The scene's name, Cliff, is ours, for what sets the scene apart. A rock
 /// cliff runs across its north side above the river and the logs
 /// (places/kolima-forest-cliff_cursed/map-0.png).
 
@@ -46,7 +49,7 @@
 /// The scene's actors, numbering the rows of
 /// gKolimaForestCliffActorPlacements.
 enum {
-  /// The three logs; the third is the one that can reach the river.
+  /// The three logs. The third is the one that can reach the river.
   /// ★ Named from what the player sees: a log lying west to east (its render)
   ACTOR_FIRST_LOG = ACTOR_FIRST_PLACED,
   /// ★ Named from what the player sees: a log lying north to south (its
@@ -75,9 +78,9 @@ const struct ActorPlacement *KolimaForestCliff_GetActorPlacements(void) {
   return gKolimaForestCliffActorPlacements;
 }
 
-/// Kolima Forest (SceneId_KolimaForestCliff), walking into a log: it rolls
+/// In Kolima Forest (SceneId_KolimaForestCliff), walking into a log rolls it
 /// ahead until something stops it. The river log, stopped at the bank (cell
-/// column 12), tips over with a splash and floats in the water; its cells
+/// column 12), tips over with a splash and floats in the water. Its cells
 /// become ground the party can cross (sets
 /// FLAG_KOLIMA_FOREST_CLIFF_LOG_IN_RIVER).
 static void KolimaForestCliff_PushLog(void) {

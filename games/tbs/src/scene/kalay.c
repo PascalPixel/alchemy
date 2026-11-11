@@ -3,89 +3,116 @@
 /// the tunnel beneath them: four areas in six scenes.
 ///
 /// - Kalay (SceneId_Kalay), the town. Eight doors (step triggers 1 to 8) open
-/// into
-///   the houses, the weapon and armor shops, the inn and the Kalay Sanctum
-///   (stucco_rooms_a.c), and KALAY_TO_WEAPON_SHOP_COUNTER and
-///   KALAY_TO_ARMOR_SHOP_COUNTER into the same two shops from behind their
-///   counters; KALAY_TO_HAMMET_PALACE_GROUNDS leads to Hammet Palace, and
-///   step triggers 9 and 10 out to the World Map (KALAY_TO_WORLD_MAP and
+///   into the houses, the weapon and armor shops, the inn and the Kalay Sanctum
+///   (stucco_rooms_a.c). KALAY_TO_WEAPON_SHOP_COUNTER and
+///   KALAY_TO_ARMOR_SHOP_COUNTER lead into the same two shops from behind their
+///   counters.
+///
+///   KALAY_TO_HAMMET_PALACE_GROUNDS leads to Hammet Palace. Step triggers 9 and
+///   10 lead out to the World Map (KALAY_TO_WORLD_MAP and
 ///   KALAY_TO_WORLD_MAP_WEST, to its WORLD_MAP_FROM_KALAY_EAST and
-///   WORLD_MAP_FROM_KALAY_WEST). The weapon, armor and item sellers open their
-///   shops only when spoken to across the counter. A Nut circles in the air
-///   until Catch pulls it in (FLAG_KALAY_TOWN_NUT_CAUGHT), and a statue at the
-///   north edge (ACTOR_TOWN_STATUE), which Move pushes aside, covers the way
-///   down into the Kalay Tunnel (KALAY_TO_KALAY_TUNNEL_TREASURE_ROOM); coming
-///   up from it (KALAY_FROM_KALAY_TUNNEL_TREASURE_ROOM) finds the statue moved.
+///   WORLD_MAP_FROM_KALAY_WEST).
+///
+///   The weapon, armor and item sellers open their shops only when spoken to
+///   across the counter. A Nut circles in the air until Catch pulls it in
+///   (FLAG_KALAY_TOWN_NUT_CAUGHT).
+///
+///   A statue at the north edge (ACTOR_TOWN_STATUE), which Move pushes aside,
+///   covers the way down into the Kalay Tunnel
+///   (KALAY_TO_KALAY_TUNNEL_TREASURE_ROOM). Coming up from it
+///   (KALAY_FROM_KALAY_TUNNEL_TREASURE_ROOM) finds the statue moved.
 ///
 /// Once the party has heard of the Colosso tour at the inn
 /// (FLAG_KALAY_HEARD_OF_COLOSSO_TOUR), leaving town plays the tour group's
-/// departure, once (FLAG_KALAY_COLOSSO_TOUR_LEFT): the guides count the group,
-/// find a man missing and lead it off without him, and he runs after it. The
-/// second guide is the head guide's sprite with its green and blue swapped
+/// departure, once (FLAG_KALAY_COLOSSO_TOUR_LEFT). The guides count the group,
+/// find a man missing and lead it off without him, and he runs after it.
+///
+/// The second guide is the head guide's sprite with its green and blue swapped
 /// (SPRITE_COLOR_RBG), here and in stucco_rooms_a.c and kalay_tolbi_docks.c.
+///
 /// - Hammet Palace (SceneId_HammetPalaceGrounds), before the door of the
-/// palace,
-///   where two soldiers of Kalay stand guard; the palace's rooms are
-///   SceneId_HammetPalace (hammet_palace.c). The first time the party comes,
-///   before Ivan has reported to Layana (FLAG_IVAN_REPORTED_TO_LAYANA), the
-///   guards recognize Ivan and take everyone in to Lady Layana
+///   palace, where two soldiers of Kalay stand guard. The palace's rooms are
+///   SceneId_HammetPalace (hammet_palace.c).
+///
+///   The first time the party comes, before Ivan has reported to Layana
+///   (FLAG_IVAN_REPORTED_TO_LAYANA), the guards recognize Ivan and take
+///   everyone in to Lady Layana
 ///   (HAMMET_PALACE_GROUNDS_TO_HAMMET_PALACE_LAYANAS_ROOM, to
-///   HAMMET_PALACE_LAYANAS_ROOM_FROM_HAMMET_PALACE_GROUNDS); afterwards they
-///   have other lines. Walking into the door (step trigger 2) opens it into the
-///   palace (HAMMET_PALACE_GROUNDS_TO_HAMMET_PALACE);
-///   HAMMET_PALACE_GROUNDS_TO_KALAY leads back to town.
-/// - Kalay Tunnel Entrance (SceneId_KalayTunnelEntrance), outside the town (the
+///   HAMMET_PALACE_LAYANAS_ROOM_FROM_HAMMET_PALACE_GROUNDS). Afterwards they
+///   have other lines.
+///
+///   Walking into the door (step trigger 2) opens it into the palace
+///   (HAMMET_PALACE_GROUNDS_TO_HAMMET_PALACE). HAMMET_PALACE_GROUNDS_TO_KALAY
+///   leads back to town.
+///
+/// - Kalay Tunnel Entrance (SceneId_KalayTunnelEntrance), outside the town. The
 ///   World Map's WORLD_MAP_TO_KALAY_TUNNEL_ENTRANCE leads in at
-///   KALAY_TUNNEL_ENTRANCE_FROM_WORLD_MAP_NORTH). A guard
-///   (ACTOR_TUNNEL_GUARD) bars `the cave up ahead` by Hammet and Layana's
-///   command, and a Nut floats here until Catch takes it
-///   (FLAG_KALAY_TUNNEL_ENTRANCE_NUT_CAUGHT). Arriving with Hammet in Bunza's
-///   wagon (SPRITE_LARGE_WAGON) after Lunpa
-///   (KALAY_TUNNEL_ENTRANCE_FROM_WORLD_MAP_SOUTH) plays his homecoming: the
+///   KALAY_TUNNEL_ENTRANCE_FROM_WORLD_MAP_NORTH.
+///
+///   A guard (ACTOR_TUNNEL_GUARD) bars `the cave up ahead` by Hammet and
+///   Layana's command. A Nut floats here until Catch takes it
+///   (FLAG_KALAY_TUNNEL_ENTRANCE_NUT_CAUGHT).
+///
+///   Arriving with Hammet in Bunza's wagon (SPRITE_LARGE_WAGON) after Lunpa
+///   (KALAY_TUNNEL_ENTRANCE_FROM_WORLD_MAP_SOUTH) plays his homecoming. The
 ///   guard opens the way, Hammet goes in, and the party rides off
 ///   (KALAY_TUNNEL_ENTRANCE_TO_WORLD_MAP_SOUTH, to
 ///   WORLD_MAP_FROM_KALAY_TUNNEL_ENTRANCE_SOUTH). Once FLAG_KALAY_TUNNEL_OPEN
 ///   is set the guard stands turned east.
+///
 ///   KALAY_TUNNEL_ENTRANCE_TO_KALAY_TUNNEL_CAVE leads into the Kalay Tunnel's
 ///   cave (KalayTunnelCave).
+///
 /// - Kalay Tunnel (SceneId_KalayTunnelCave to SceneId_KalayTunnelTreasureRoom),
-/// the
-///   passage to Hammet Palace and his treasure, which Layana opens to the party
-///   in thanks once Hammet is home (FLAG_KALAY_TUNNEL_OPEN). The cave
-///   (KalayTunnelCave) joins the Kalay Tunnel Entrance to the passage
+///   the passage to Hammet Palace and his treasure. Layana opens it to the
+///   party in thanks once Hammet is home (FLAG_KALAY_TUNNEL_OPEN).
+///
+///   The cave (KalayTunnelCave) joins the Kalay Tunnel Entrance to the passage
 ///   (KalayTunnelPassage), and a chest holds an Apple. The passage opens with a
 ///   window transition, its way through drawn open once FLAG_KALAY_TUNNEL_OPEN
-///   is set. The treasure room (KalayTunnelTreasureRoom) holds the puzzle: two
-///   statues, pushed by walking into them or moved with Move, each open a
-///   passage step by step once far enough west (FLAG_TUNNEL_FIRST_PASSAGE_OPEN
-///   and FLAG_TUNNEL_SECOND_PASSAGE_OPEN, area temp flags, so the
-///   statues are back once the party leaves the tunnel's scenes); while a
-///   passage is closed, particles stream from its statue as it nears its place.
+///   is set.
+///
+///   The treasure room (KalayTunnelTreasureRoom) holds the puzzle. Two statues,
+///   pushed by walking into them or moved with Move, each open a passage step
+///   by step once far enough west. The passages are
+///   FLAG_TUNNEL_FIRST_PASSAGE_OPEN and FLAG_TUNNEL_SECOND_PASSAGE_OPEN, area
+///   temp flags, so the statues are back once the party leaves the tunnel's
+///   scenes. While a passage is closed, particles stream from its statue as it
+///   nears its place.
+///
 ///   The first passage raises a puddle (ACTOR_PUDDLE) that Frost freezes and
-///   sinks into the floor, freeing its cells; that is a temporary flag, so the
-///   puddle stands again on each entry. Scorch, a Mars Djinni, joins the party
-///   when spoken to, without a battle, and five chests hold Spirit Gloves, a
-///   Sleep Bomb, a Lucky Medal, 200 coins and a Potion. Once
-///   FLAG_KALAY_TUNNEL_OPEN is set a man (ACTOR_WAITING_MAN) waits here,
-///   thinking `The things beyond these doors belong to you all.` The fade
-///   overlay (field/field_sequence/ground_mask.c) follows the leader through
-///   the treasure room unless he comes down from the town
-///   (KALAY_TUNNEL_TREASURE_ROOM_FROM_KALAY); step triggers 10 and 11 stop and
+///   sinks into the floor, freeing its cells. That is a temporary flag, so the
+///   puddle stands again on each entry.
+///
+///   Scorch, a Mars Djinni, joins the party when spoken to, without a battle.
+///   Five chests hold Spirit Gloves, a Sleep Bomb, a Lucky Medal, 200 coins and
+///   a Potion.
+///
+///   Once FLAG_KALAY_TUNNEL_OPEN is set a man (ACTOR_WAITING_MAN) waits here,
+///   thinking `The things beyond these doors belong to you all.`
+///
+///   The fade overlay (field/field_sequence/ground_mask.c) follows the leader
+///   through the treasure room unless he comes down from the town
+///   (KALAY_TUNNEL_TREASURE_ROOM_FROM_KALAY). Step triggers 10 and 11 stop and
 ///   restart it, and 18 and 19 fix and free his depth priority.
+///
 ///   KALAY_TUNNEL_TREASURE_ROOM_TO_HAMMET_PALACE leads into Hammet Palace
-///   (HAMMET_PALACE_FROM_KALAY_TUNNEL_TREASURE_ROOM),
+///   (HAMMET_PALACE_FROM_KALAY_TUNNEL_TREASURE_ROOM), and
 ///   KALAY_TUNNEL_TREASURE_ROOM_TO_KALAY up into the town
 ///   (KALAY_FROM_KALAY_TUNNEL_TREASURE_ROOM).
 ///
-/// Every scene sets FLAG_KALAY_REACHED on entry. Kalay and Hammet Palace's
-/// front also catch the palace's story up with Lunpa's: hearing in Lunpa that
-/// Hammet is held there (FLAG_LUNPA_HEARD_OF_PRISONER) sets area temp flag
-/// FLAG_KALAY_HEARD_HAMMET_HELD_IN_LUNPA, which changes what Layana says, and
-/// once Hammet is free (FLAG_DODONPA_LOCKED_UP, set as Donpa judges Dodonpa in
-/// Lunpa) Ivan's report and Layana's scolding count as seen and
-/// FLAG_KALAY_TUNNEL_OPEN opens the passage. The getters choose each scene's
-/// tables; the cave and the passage have no actor placements, and an
-/// empty set serves any other scene.
+/// Every scene sets FLAG_KALAY_REACHED on entry.
+///
+/// Kalay and Hammet Palace's front also catch the palace's story up with
+/// Lunpa's. Hearing in Lunpa that Hammet is held there
+/// (FLAG_LUNPA_HEARD_OF_PRISONER) sets area temp flag
+/// FLAG_KALAY_HEARD_HAMMET_HELD_IN_LUNPA, which changes what Layana says. Once
+/// Hammet is free (FLAG_DODONPA_LOCKED_UP, set as Donpa judges Dodonpa in
+/// Lunpa), Ivan's report and Layana's scolding count as seen and
+/// FLAG_KALAY_TUNNEL_OPEN opens the passage.
+///
+/// The getters choose each scene's tables. The cave and the passage have no
+/// actor placements, and an empty set serves any other scene.
 
 #include "main_routine_work.h"
 #include "module/field/field.h"
@@ -219,10 +246,10 @@ enum KalayTownActorId {
   /// ★ Named from the game: "Nut" (MsgItemName)
   ACTOR_TOWN_NUT,
   /// The tour group, ACTOR_FIRST_TOURIST and the six after it, then
-  /// ACTOR_OURANOS: in row order a chef (SPRITE_CHEF), a young woman in
-  /// green, a young man with brown hair, a woman with fair hair, a woman with a
-  /// sword, a bald, muscular man, a young man with blue hair, and Ouranos, a
-  /// young man with red hair.
+  /// ACTOR_OURANOS. In row order they are a chef (SPRITE_CHEF), a young woman
+  /// in green, a young man with brown hair, a woman with fair hair, a woman
+  /// with a sword, a bald, muscular man, a young man with blue hair, and
+  /// Ouranos, a young man with red hair.
   /// ★ Named from the game: "Why are we stopping at a place like this?"
   /// (MsgKalayWhyWeStoppingAtPlace)
   ACTOR_FIRST_TOURIST,
@@ -298,8 +325,8 @@ enum KalayTunnelActorId {
 /// SPRITE_PUDDLE's animation once Frost has frozen it into an ice pillar.
 enum { PUDDLE_ANIMATION_FROZEN = 5 };
 
-/// The Kalay Tunnel's own flags: the temporary ones last one entry, the
-/// passages (area temp flags) while the party stays in the tunnel's
+/// The Kalay Tunnel's own flags. The temporary ones last one entry. The
+/// passages (area temp flags) last while the party stays in the tunnel's
 /// scenes.
 enum KalayTunnelFlag {
   /// The fade overlay follows the leader.
@@ -381,7 +408,7 @@ static s32 Kalay_UpdateTouristFidget(struct Actor *interpreter) {
 #include "shared/actor_heading.h"
 
 /// The party has heard in Lunpa that Hammet is held there, or he is already
-/// free; it changes what Layana says.
+/// free. It changes what Layana says.
 /// ★ Named from the game: "you sneaked into Lunpa? That's far too dangerous!"
 /// (MsgKalayIsaacSneakedIntoLunpaThats)
 #define FLAG_KALAY_HEARD_HAMMET_HELD_IN_LUNPA FLAG_AREA_TEMP_21
@@ -535,9 +562,9 @@ static void Kalay_TalkAboutLayana(void) {
   Event_End();
 }
 
-/// In Kalay, across the counter, the leader facing north, the weapon shop
-/// opens; from elsewhere the merchant grumbles that Hammet sells his best
-/// weapons away.
+/// Talking to the weapon merchant in Kalay across the counter, with the leader
+/// facing north, opens the weapon shop. From elsewhere the merchant grumbles
+/// that Hammet sells his best weapons away.
 static void Kalay_TalkToWeaponMerchant(void) {
   struct Actor *leader;
   u32 relativeFacing;
@@ -555,9 +582,9 @@ static void Kalay_TalkToWeaponMerchant(void) {
   }
 }
 
-/// In Kalay, across the counter, the leader facing west to north, the armor
-/// shop opens; from elsewhere the merchant asks whether the party found its
-/// weapons.
+/// Talking to the armor merchant in Kalay across the counter, with the leader
+/// facing west to north, opens the armor shop. From elsewhere the merchant asks
+/// whether the party found its weapons.
 static void Kalay_TalkToArmorMerchant(void) {
   struct Actor *leader;
   u32 relativeFacing;
@@ -577,8 +604,9 @@ static void Kalay_TalkToArmorMerchant(void) {
   }
 }
 
-/// In Kalay, across the counter, the leader facing east, the item shop opens;
-/// from elsewhere the merchant praises Lady Layana.
+/// Talking to the item merchant in Kalay across the counter, with the leader
+/// facing east, opens the item shop. From elsewhere the merchant praises Lady
+/// Layana.
 static void Kalay_TalkToItemMerchant(void) {
   struct Actor *leader;
   u32 relativeFacing;
@@ -596,9 +624,9 @@ static void Kalay_TalkToItemMerchant(void) {
   }
 }
 
-/// Walking north into one of Kalay's eight doors (step triggers 1 to 8), into
-/// the houses, the inn or the Sanctum: everyone stops, the door opens and the
-/// leader walks in.
+/// Walking north into one of Kalay's eight doors (step triggers 1 to 8) leads
+/// into the houses, the inn or the Sanctum. Everyone stops, the door opens and
+/// the leader walks in.
 static void Kalay_OpenDoorAndExit(void) {
   struct FieldWork *work;
   struct Actor *actor;
@@ -643,8 +671,8 @@ static __inline__ void Kalay_AnimatePalaceDoor(void) {
   wait(5);
 }
 
-/// Walking north into the door of Hammet Palace (HammetPalaceGrounds,
-/// step trigger 2): it opens and the leader walks in.
+/// Walking north into the door of Hammet Palace (HammetPalaceGrounds, step
+/// trigger 2) opens it, and the leader walks in.
 static void Kalay_EnterPalace(void) {
   Event_Start();
   Kalay_AnimatePalaceDoor();
@@ -660,10 +688,15 @@ static void Kalay_EnterPalace(void) {
 }
 
 /// Leaving Kalay (step triggers 9 and 10) after hearing of the Colosso tour at
-/// the inn, until the tour has left: the party watches the tour group stop. The
-/// guides count everyone, pace back and forth while the tourists grumble, give
-/// up on the missing man and lead the group off; the late tourist then runs
-/// after it. Otherwise the party leaves.
+/// the inn, the party watches the tour group stop. This plays until the tour
+/// has left.
+///
+/// - The guides count everyone.
+/// - They pace back and forth while the tourists grumble.
+/// - They give up on the missing man and lead the group off.
+/// - The late tourist then runs after it.
+///
+/// Otherwise the party leaves.
 static void Kalay_WatchTourGroupDeparture(void) {
   s32 message;
   struct Actor *headWait;
@@ -1180,8 +1213,8 @@ static void Kalay_StartTrackingLeader(void) {
   }
 }
 
-/// Step trigger 19 in the Kalay Tunnel (KalayTunnelTreasureRoom): the leader's
-/// depth priority follows his position.
+/// Touching step trigger 19 in the Kalay Tunnel (KalayTunnelTreasureRoom) lets
+/// the leader's depth priority follow his position.
 static void Kalay_EnableLeaderAutomaticPriority(void) {
   u8 *priorityFlags;
   s32 flags;
@@ -1192,8 +1225,8 @@ static void Kalay_EnableLeaderAutomaticPriority(void) {
   *priorityFlags = flags;
 }
 
-/// Step trigger 18 in the Kalay Tunnel (KalayTunnelTreasureRoom): the leader's
-/// depth priority stays fixed.
+/// Touching step trigger 18 in the Kalay Tunnel (KalayTunnelTreasureRoom) keeps
+/// the leader's depth priority fixed.
 static void Kalay_DisableLeaderAutomaticPriority(void) {
   u8 *priorityFlags;
   s32 flags;
@@ -1235,13 +1268,17 @@ s32 Kalay_Initialize(void) {
   return 0;
 }
 
-/// Sets up Kalay. Having heard in Lunpa that Hammet is held there sets
-/// area temp flag FLAG_KALAY_HEARD_HAMMET_HELD_IN_LUNPA; once Hammet is
-/// free (FLAG_DODONPA_LOCKED_UP) the palace's FLAG_IVAN_REPORTED_TO_LAYANA,
+/// Sets up Kalay.
+///
+/// Having heard in Lunpa that Hammet is held there sets area temp flag
+/// FLAG_KALAY_HEARD_HAMMET_HELD_IN_LUNPA. Once Hammet is free
+/// (FLAG_DODONPA_LOCKED_UP) the palace's FLAG_IVAN_REPORTED_TO_LAYANA,
 /// FLAG_KALAY_LAYANA_SAID_LUNPA_TOO_DANGEROUS and FLAG_KALAY_TUNNEL_OPEN are
-/// set too, so its earlier events count as seen and the passage is open. Coming
-/// up from the Kalay Tunnel (KALAY_FROM_KALAY_TUNNEL_TREASURE_ROOM) finds its
-/// statue moved aside, and until it is caught the Nut circles in the air.
+/// set too, so its earlier events count as seen and the passage is open.
+///
+/// Coming up from the Kalay Tunnel (KALAY_FROM_KALAY_TUNNEL_TREASURE_ROOM)
+/// finds its statue moved aside, and until it is caught the Nut circles in the
+/// air.
 static void Kalay_PrepareTown(void) {
   OrbitingMapActor *nut;
   s32 found;
@@ -1289,9 +1326,9 @@ static void Kalay_PrepareTown(void) {
   }
 }
 
-/// Sets up Hammet Palace's front (HammetPalaceGrounds): the palace flags as in
-/// the town, and, the first time the party comes before Ivan has reported to
-/// Layana, the guards event.
+/// Sets up Hammet Palace's front (HammetPalaceGrounds). It sets the palace
+/// flags as in the town. The first time the party comes, before Ivan has
+/// reported to Layana, it starts the guards event.
 static void Kalay_PrepareHammetPalace(void) {
   if (GameFlag_Get(FLAG_DODONPA_LOCKED_UP) != 0) {
     GameFlag_Set(FLAG_KALAY_HEARD_HAMMET_HELD_IN_LUNPA);
@@ -1309,9 +1346,9 @@ static void Kalay_PrepareHammetPalace(void) {
   }
 }
 
-/// Sets up the Kalay Tunnel Entrance (KalayTunnelEntrance): the Nut floats
-/// until caught, the guard turns east once FLAG_KALAY_TUNNEL_OPEN opens the
-/// passage, and arriving by KALAY_TUNNEL_ENTRANCE_FROM_WORLD_MAP_SOUTH brings
+/// Sets up the Kalay Tunnel Entrance (KalayTunnelEntrance). The Nut floats
+/// until caught, and the guard turns east once FLAG_KALAY_TUNNEL_OPEN opens the
+/// passage. Arriving by KALAY_TUNNEL_ENTRANCE_FROM_WORLD_MAP_SOUTH brings
 /// Hammet home in Bunza's wagon.
 static void Kalay_PrepareTunnelEntrance(void) {
   struct Actor *guard;
@@ -1328,9 +1365,11 @@ static void Kalay_PrepareTunnelEntrance(void) {
   }
 }
 
-/// Sets up the Kalay Tunnel's passage (KalayTunnelPassage): it opens with a
-/// window transition, its way through is drawn open once FLAG_KALAY_TUNNEL_OPEN
-/// is set, and arriving from the treasure room
+/// Sets up the Kalay Tunnel's passage (KalayTunnelPassage). It opens with a
+/// window transition, and its way through is drawn open once
+/// FLAG_KALAY_TUNNEL_OPEN is set.
+///
+/// Arriving from the treasure room
 /// (KALAY_TUNNEL_PASSAGE_FROM_KALAY_TUNNEL_TREASURE_ROOM_WEST and
 /// KALAY_TUNNEL_PASSAGE_FROM_KALAY_TUNNEL_TREASURE_ROOM_EAST) or by the stairs
 /// from the north-east room
@@ -1354,11 +1393,11 @@ static void Kalay_StartWindowTransition(void) {
   }
 }
 
-/// Sets up the Kalay Tunnel's treasure room (KalayTunnelTreasureRoom): the fade
+/// Sets up the Kalay Tunnel's treasure room (KalayTunnelTreasureRoom). The fade
 /// overlay follows the leader unless he came down from the town
-/// (KALAY_TUNNEL_TREASURE_ROOM_FROM_KALAY); the pushed statues, the frozen
-/// puddle and the opened passages are restored, and once FLAG_KALAY_TUNNEL_OPEN
-/// is set the man waits here and some of the cells are redrawn.
+/// (KALAY_TUNNEL_TREASURE_ROOM_FROM_KALAY). The pushed statues, the frozen
+/// puddle and the opened passages are restored. Once FLAG_KALAY_TUNNEL_OPEN is
+/// set the man waits here and some of the cells are redrawn.
 static void Kalay_PrepareTunnel(void) {
 #if TBS_PATCH_1
   s32 resumedMap;
@@ -1618,12 +1657,13 @@ static void Kalay_AlternateGuidesPacing(void) {
   }
 }
 
-/// Before the door of Hammet Palace (HammetPalaceGrounds), the first time the
-/// party comes: the guards turn the party away until they recognize Ivan,
-/// tanned and grown, and learn that he does not know Hammet is a prisoner in
-/// Lunpa. Ivan insists his friends hear everything, and the guards open the
-/// door and take the party in to Lady Layana
-/// (HAMMET_PALACE_GROUNDS_TO_HAMMET_PALACE_LAYANAS_ROOM).
+/// The guards before the door of Hammet Palace (HammetPalaceGrounds) meet the
+/// party the first time it comes.
+///
+/// They turn the party away until they recognize Ivan, tanned and grown, and
+/// learn that he does not know Hammet is a prisoner in Lunpa. Ivan insists his
+/// friends hear everything. The guards open the door and take the party in to
+/// Lady Layana (HAMMET_PALACE_GROUNDS_TO_HAMMET_PALACE_LAYANAS_ROOM).
 static void Kalay_IvanMeetsPalaceGuards(void) {
   struct Actor *actor;
 
@@ -1834,12 +1874,14 @@ static void Kalay_IvanMeetsPalaceGuards(void) {
   Event_End();
 }
 
-/// Arriving at the Kalay Tunnel Entrance by
-/// KALAY_TUNNEL_ENTRANCE_FROM_WORLD_MAP_SOUTH, after the party has freed Hammet
-/// from Lunpa: Hammet comes home with the party in the wagon of Bunza, a Kalay
-/// merchant. Hammet explains the underground passage to the palace and asks
-/// Bunza to take the party round through the town, so the passage stays secret;
-/// the guard opens it, Hammet goes in and the party rides off.
+/// Hammet comes home with the party in the wagon of Bunza, a Kalay merchant,
+/// arriving at the Kalay Tunnel Entrance by
+/// KALAY_TUNNEL_ENTRANCE_FROM_WORLD_MAP_SOUTH after the party has freed him
+/// from Lunpa.
+///
+/// Hammet explains the underground passage to the palace. He asks Bunza to take
+/// the party round through the town, so the passage stays secret. The guard
+/// opens it, Hammet goes in and the party rides off.
 static void Kalay_HammetReturnsToPalace(void) {
   u8 *leaderPhase;
   u32 random;
@@ -2409,8 +2451,8 @@ static void Kalay_UpdateTunnelEmitters(void) {
   }
 }
 
-/// Creates a short-lived particle with random position and velocity offsets: a
-/// puff of dust (SPRITE_DUST_PUFF) with its blue raised to full.
+/// Creates a short-lived particle with random position and velocity offsets. It
+/// is a puff of dust (SPRITE_DUST_PUFF) with its blue raised to full.
 static void Kalay_SpawnTunnelParticle(s32 x, s32 height, s32 z) {
   s32 depth;
   struct Actor *particle;
@@ -2467,7 +2509,7 @@ static void Kalay_UpdateNutOrbit(void) {
 }
 
 /// Frost on the puddle in the Kalay Tunnel sinks it into the floor. The puddle
-/// is in KalayTunnelTreasureRoom; sinking it clears its cells, and it stays
+/// is in KalayTunnelTreasureRoom. Sinking it clears its cells, and it stays
 /// sunk until the scene is entered again.
 static void Kalay_FreezePuddle(void) {
   struct Actor *effect = Actor_Get(ACTOR_PUDDLE);

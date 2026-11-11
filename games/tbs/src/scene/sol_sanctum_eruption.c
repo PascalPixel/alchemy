@@ -1,36 +1,39 @@
 /// @file
 /// Elemental Star Room (SceneId_SolSanctumEruption), the chamber of
 /// SceneId_SolSanctumElementalStarRoom (sol_sanctum_elemental_star_room.c) as
-/// it collapses once the Mars Star is taken: one event, with no triggers of
-/// its own.
+/// it collapses once the Mars Star is taken.
 ///
+/// The scene is one event, with no triggers of its own.
 /// SolSanctumEruption_Initialize plays it on arrival at
 /// SOL_SANCTUM_ERUPTION_FROM_SOL_SANCTUM_ELEMENTAL_STAR_ROOM, in two parts:
-/// - SolSanctumEruption_PlayHostageEvent: the chamber quakes, the Wise One
-///   appears and stills it, and Saturos's group leaves with Jenna and Kraden,
+/// - SolSanctumEruption_PlayHostageEvent: the chamber quakes, and the Wise One
+///   appears and stills it. Saturos's group leaves with Jenna and Kraden,
 ///   rising out of the chamber one by one. Jenna leaves the party.
 /// - SolSanctumEruption_PlayWiseOneRescue: the Wise One has Isaac keep the Mars
 ///   Star, then sends Isaac and Garet away in a white flash. It sets
 ///   FLAG_SOL_SANCTUM_ERUPTED, which every room of Sol Sanctum tests from then
-///   on, and FLAG_SOL_SANCTUM_STAR_ROOM_COLLAPSED, and takes
+///   on, and FLAG_SOL_SANCTUM_STAR_ROOM_COLLAPSED. Then it takes
 ///   SOL_SANCTUM_ERUPTION_TO_SOL_SANCTUM_LUNA_SOL_ROOMS to the Luna and Sol
 ///   rooms (SceneId_SolSanctumLunaSolRooms).
 ///
-/// The effects are the event's own. Sixteen blue crystals thrown out in a ring
-/// (SolSanctumEruption_ThrowEruptionRing) become embers launched from a pool at
-/// a varying rate (SolSanctumEruption_StepEmbers and
-/// SolSanctumEruption_UpdateEmberFrequency, tasks the first part adds and
-/// the second removes); once Saturos's group starts to leave
-/// (FLAG_SOL_SANCTUM_ERUPTION_SATUROS_LEAVING), they fall silently. The
-/// breaking floor's cells flicker by task until the Wise One holds them,
-/// ten arcs of light rise at each of the chamber's four corners as the Wise One
-/// tells of the stars (SolSanctumEruption_RaiseElementalArcs), and the Wise One
+/// The effects are the event's own.
+///
+/// Sixteen blue crystals are thrown out in a ring
+/// (SolSanctumEruption_ThrowEruptionRing). They become embers launched from a
+/// pool at a varying rate. Two tasks do that, SolSanctumEruption_StepEmbers and
+/// SolSanctumEruption_UpdateEmberFrequency, which the first part adds and the
+/// second removes. Once Saturos's group starts to leave
+/// (FLAG_SOL_SANCTUM_ERUPTION_SATUROS_LEAVING), the embers fall silently.
+///
+/// The breaking floor's cells flicker by task until the Wise One holds them.
+/// Ten arcs of light rise at each of the chamber's four corners as the Wise One
+/// tells of the stars (SolSanctumEruption_RaiseElementalArcs). The Wise One
 /// glows through a cycle of palettes.
 ///
 /// Saturos's group and their hostages leave one by one from the platform where
-/// the party arrived (SolSanctumEruption_RaiseAndShrinkActor): each walks
-/// onto it, rises 30 pixels at full size, then rises on as he shrinks away,
-/// over a shadow that shrinks with him: the platform's actor,
+/// the party arrived (SolSanctumEruption_RaiseAndShrinkActor). Each walks onto
+/// it and rises 30 pixels at full size. Then he rises on as he shrinks away,
+/// over a shadow that shrinks with him. The platform's actor,
 /// ACTOR_PLATFORM_SHADOW, draws that shadow.
 
 #include "script_operands.h"
@@ -149,16 +152,17 @@ const u32 *SolSanctumEruption_GetExits(void) {
   return gSolSanctumEruption_Exits;
 }
 
-/// Returns Garet and Jenna, then the platform's shadow
+/// Returns everyone the event moves, all placed off the map until it does.
+///
+/// They are Garet and Jenna, then the platform's shadow
 /// (ACTOR_PLATFORM_SHADOW), Kraden, Saturos, Menardi, Felix masked and
 /// unmasked, Alex, the Wise One (ACTOR_WISE_ONE) and sixteen crystals (from
-/// ACTOR_FIRST_CRYSTAL), all placed off the map until the event moves
-/// them.
+/// ACTOR_FIRST_CRYSTAL).
 const struct ActorPlacement *SolSanctumEruption_GetActorPlacements(void) {
   return gSolSanctumEruption_ActorPlacements;
 }
 
-/// Returns the empty trigger table: the scene is one event.
+/// Returns the empty trigger table, because the scene is one event.
 const struct Trigger *SolSanctumEruption_GetTriggers(void) {
   return gSolSanctumEruption_Triggers;
 }
@@ -173,10 +177,13 @@ static inline void SolSanctumEruption_PlaceHostageGroup(void) {
   Actor_SetPosition(ACTOR_ALEX, PIXELS(479), PIXELS(362));
 }
 
-/// Elemental Star Room, collapsing: the Wise One stills the first quake,
-/// Saturos's group argues over the Mars Star and leaves with Jenna and Kraden
-/// as hostages, and the Wise One then rescues Isaac and Garet. Called by
-/// SolSanctumEruption_Initialize at
+/// Elemental Star Room, collapsing: Saturos's group leaves with its hostages.
+///
+/// The Wise One stills the first quake. Saturos's group argues over the Mars
+/// Star and leaves with Jenna and Kraden as hostages, and the Wise One then
+/// rescues Isaac and Garet.
+///
+/// Called by SolSanctumEruption_Initialize at
 /// SOL_SANCTUM_ERUPTION_FROM_SOL_SANCTUM_ELEMENTAL_STAR_ROOM, the cut from
 /// SceneId_SolSanctumElementalStarRoom. Sets
 /// FLAG_SOL_SANCTUM_ERUPTION_SATUROS_LEAVING, plays
@@ -634,10 +641,11 @@ UNUSED static void SolSanctumEruption_UnusedNoOpA(void) {}
 /// Unused: an empty function nothing refers to.
 UNUSED static void SolSanctumEruption_UnusedNoOpB(void) {}
 
-/// Plays the collapse after the cut from the Elemental Star Room. It plays at
-/// SOL_SANCTUM_ERUPTION_FROM_SOL_SANCTUM_ELEMENTAL_STAR_ROOM, the cut from the
-/// Elemental Star Room (SceneId_SolSanctumElementalStarRoom). Called by
-/// FieldSequence_Run once the actors exist.
+/// Plays the collapse after the cut from the Elemental Star Room.
+///
+/// It plays at SOL_SANCTUM_ERUPTION_FROM_SOL_SANCTUM_ELEMENTAL_STAR_ROOM, the
+/// cut from the Elemental Star Room (SceneId_SolSanctumElementalStarRoom).
+/// Called by FieldSequence_Run once the actors exist.
 s32 SolSanctumEruption_Initialize(void) {
   if (gMainRoutineWork.entrance ==
       SOL_SANCTUM_ERUPTION_FROM_SOL_SANCTUM_ELEMENTAL_STAR_ROOM) {
@@ -647,8 +655,9 @@ s32 SolSanctumEruption_Initialize(void) {
   return 0;
 }
 
-/// Keeps a flying ember sprite rotated a quarter-turn from its facing. Run by
-/// each ember's actor script, gEruption_EmberScript.
+/// Keeps a flying ember sprite rotated a quarter-turn from its facing.
+///
+/// Run by each ember's actor script, gEruption_EmberScript.
 static s32 SolSanctumEruption_AlignEmberToHeading(struct Actor *interpreter) {
   struct Actor *actor = interpreter;
   actor->sprite->rotation = actor->facing + TRIG_TURN / 4;
@@ -724,9 +733,11 @@ static void SolSanctumEruption_ResetEmberEmission(void) {
   }
 }
 
-/// Retires landed embers and launches new ones, shaking the map. It launches
-/// the next free one at the current frequency, shaking the map after each. Run
-/// each frame as a task that SolSanctumEruption_PlayHostageEvent adds and
+/// Retires landed embers and launches new ones, shaking the map.
+///
+/// It launches the next free one at the current frequency, shaking the map
+/// after each. Run each frame as a task that
+/// SolSanctumEruption_PlayHostageEvent adds and
 /// SolSanctumEruption_PlayWiseOneRescue removes.
 static void SolSanctumEruption_StepEmbers(void) {
   struct WeatherWork *sparkles;
@@ -817,8 +828,9 @@ static void SolSanctumEruption_StepEmbers(void) {
   }
 }
 
-/// Varies the ember emission interval and its duration. Run each frame as a
-/// task beside SolSanctumEruption_StepEmbers.
+/// Varies the ember emission interval and its duration.
+///
+/// Run each frame as a task beside SolSanctumEruption_StepEmbers.
 static void SolSanctumEruption_UpdateEmberFrequency(void) {
   u32 emissionLevel;
 
@@ -860,11 +872,14 @@ static inline void SolSanctumEruption_FinishMaterialization(void) {
   Actor_SetSpriteColorById(ACTOR_WISE_ONE, SPRITE_COLOR_NORMAL);
 }
 
-/// Elemental Star Room, collapsing: left behind, Isaac and Garet face the Wise
-/// One, which makes the Mars Star glow, warns them of Alchemy's threat and
-/// sends them out as the volcano erupts. Isaac keeps the Star. Called by
-/// SolSanctumEruption_PlayHostageEvent. Sets FLAG_SOL_SANCTUM_ERUPTED and
-/// FLAG_SOL_SANCTUM_STAR_ROOM_COLLAPSED and takes
+/// Elemental Star Room, collapsing: the Wise One sends Isaac and Garet out.
+///
+/// Left behind, Isaac and Garet face the Wise One. It makes the Mars Star glow,
+/// warns them of Alchemy's threat and sends them out as the volcano erupts.
+/// Isaac keeps the Star.
+///
+/// Called by SolSanctumEruption_PlayHostageEvent. Sets FLAG_SOL_SANCTUM_ERUPTED
+/// and FLAG_SOL_SANCTUM_STAR_ROOM_COLLAPSED and takes
 /// SOL_SANCTUM_ERUPTION_TO_SOL_SANCTUM_LUNA_SOL_ROOMS, to the rooms of Sol and
 /// Luna (SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_ERUPTION).
 static void SolSanctumEruption_PlayWiseOneRescue(void) {
@@ -1580,8 +1595,10 @@ static void SolSanctumEruption_DrawSecondCollapseTiles(s32 alternate) {
   MapGrid_CenterOnFollowedPoint();
 }
 
-/// Randomly alternates the first tile patch on even frames. Run each frame as
-/// a task while the floor breaks up, until the Wise One holds it.
+/// Randomly alternates the first tile patch on even frames.
+///
+/// Run each frame as a task while the floor breaks up, until the Wise One holds
+/// it.
 static void SolSanctumEruption_FlickerFirstCollapseTiles(void) {
   if ((gFrameCount & 1) == 0) {
     if ((u32)Math_RemainderUnsigned(Import_RandomNext(), 100) > 50) {
@@ -1712,8 +1729,9 @@ static void SolSanctumEruption_RaiseElementalArcs(u32 corner) {
   PaletteFade_StartInterpolation(40);
 }
 
-/// Stretches each active arc for eight frames, then lifts it out of view. Run
-/// each frame as a task while SolSanctumEruption_RaiseElementalArcs runs.
+/// Stretches each active arc for eight frames, then lifts it out of view.
+///
+/// Run each frame as a task while SolSanctumEruption_RaiseElementalArcs runs.
 static void SolSanctumEruption_UpdateElementalArcs(void) {
 
   u32 arcIndex;
@@ -1869,8 +1887,9 @@ static void SolSanctumEruption_SpawnEffectPair(struct Actor *parent) {
 
 #include "shared/event_psynergy.h"
 
-/// Cycles the Wise One's palette while it glows. Run each frame as a task
-/// that SolSanctumEruption_PlayWiseOneRescue adds and
+/// Cycles the Wise One's palette while it glows.
+///
+/// Run each frame as a task that SolSanctumEruption_PlayWiseOneRescue adds and
 /// SolSanctumEruption_FinishMaterialization removes.
 static void SolSanctumEruption_UpdateWiseOnePalette(void) {
   SolSanctumEruption_CycleActorPalette(Actor_Get(ACTOR_WISE_ONE));
@@ -1976,8 +1995,8 @@ struct Trigger gSolSanctumEruption_Triggers[] = {
 };
 
 /// Unused: a copy of the Elemental Star room's cell animation
-/// (gSolSanctumElementalStarRoom_StarCells), nine steps of a 3-by-4 picture;
-/// nothing in the eruption plays it.
+/// (gSolSanctumElementalStarRoom_StarCells), nine steps of a 3-by-4 picture.
+/// Nothing in the eruption plays it.
 u16 gSolSanctumEruption_UnusedStarCells[] = {
     MAPGRID_ANIMATION_STEP(59, 40, 3, 4, 6), MAPGRID_ANIMATION_STEP(62, 40, 3, 4, 6), MAPGRID_ANIMATION_STEP(65, 40, 3, 4, 6), MAPGRID_ANIMATION_STEP(68, 40, 3, 4, 6), MAPGRID_ANIMATION_STEP(71, 40, 3, 4, 6), MAPGRID_ANIMATION_STEP(74, 40, 3, 4, 6), MAPGRID_ANIMATION_STEP(77, 40, 3, 4, 6), MAPGRID_ANIMATION_STEP(80, 40, 3, 4, 6), MAPGRID_ANIMATION_STEP(83, 40, 3, 4, 0), MAPGRID_ANIMATION_STEPS_END,
 };

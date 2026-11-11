@@ -1,36 +1,52 @@
-/// @file McCoy's Palace in Bilibin: SceneId_McCoyPalace, with the area name
-/// McCoy's Palace, which its grounds share (mccoy_palace_grounds.c). The party
-/// comes in from the grounds by MCCOY_PALACE_FROM_MCCOY_PALACE_GROUNDS_WEST,
-/// or straight into McCoy's room by
-/// MCCOY_PALACE_FROM_MCCOY_PALACE_GROUNDS_EAST, which the red carpet's door
-/// (step trigger 9) also reaches. Its people follow three story flags,
+/// @file McCoy's Palace in Bilibin.
+///
+/// The scene is SceneId_McCoyPalace, with the area name McCoy's Palace, which
+/// its grounds share (mccoy_palace_grounds.c).
+///
+/// The party comes in from the grounds by
+/// MCCOY_PALACE_FROM_MCCOY_PALACE_GROUNDS_WEST. Or it comes straight into
+/// McCoy's room by MCCOY_PALACE_FROM_MCCOY_PALACE_GROUNDS_EAST, which the red
+/// carpet's door (step trigger 9) also reaches.
+///
+/// Its people follow three story flags:
 /// FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY, FLAG_KOLIMA_CURSE_LIFTED and
-/// FLAG_MCCOY_PALACE_REWARD_TAKEN, in what they say and how they turn when
-/// talked to (Scene_GetActorPlacements).
+/// FLAG_MCCOY_PALACE_REWARD_TAKEN. The flags decide what they say and how
+/// they turn when talked to (Scene_GetActorPlacements).
 ///
 /// Arriving in McCoy's room before the curse is lifted plays
-/// McCoyPalace_AudienceWithMcCoy: McCoy asks whether the party can save Kolima.
-/// A refusal sends it away (FLAG_MCCOY_PALACE_JOB_REFUSED) to come back later;
-/// an acceptance ends with McCoy taking back the key to the barricades and the
-/// captain seeing the party out (FLAG_CAPTAIN_SEEING_PARTY_OUT). Outside
-/// McCoy's door the captain then plays McCoyPalace_CaptainHintsAtBarricade,
-/// which sets FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY.
+/// McCoyPalace_AudienceWithMcCoy. McCoy asks whether the party can save
+/// Kolima.
+/// - A refusal sends it away (FLAG_MCCOY_PALACE_JOB_REFUSED) to come back
+///   later.
+/// - An acceptance ends with McCoy taking back the key to the barricades and
+///   the captain seeing the party out (FLAG_CAPTAIN_SEEING_PARTY_OUT).
+///
+/// Outside McCoy's door the captain then plays
+/// McCoyPalace_CaptainHintsAtBarricade, which sets
+/// FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY.
 ///
 /// Once the curse is lifted, the grounds' guards bring the party into McCoy's
 /// room, and McCoyPalace_McCoyRewardsParty plays until
-/// FLAG_MCCOY_PALACE_PARTY_REWARDED; McCoy's lines differ as the party has met
-/// him before or not. The captain takes the party to the treasure room
-/// (FLAG_REWARD_OFFERED), where McCoyPalace_PresentRewardChests shows four
-/// chests: a search of one gives its Vial, Potion, Psy Crystal or Water of Life
-/// (McCoyPalace_ClaimReward), and the others are then locked. The chest taken
-/// from is kept only in scene temp flags (FLAG_TOOK_VIAL and the others), so
-/// once the party has left the palace all four search as locked. Leaving
-/// without a reward (step trigger 51), the captain walks the leader back; with
-/// it ( step trigger 50) he sees the party off (FLAG_PARTY_SEEN_OFF).
+/// FLAG_MCCOY_PALACE_PARTY_REWARDED. McCoy's lines differ as the party has met
+/// him before or not.
+///
+/// The captain takes the party to the treasure room (FLAG_REWARD_OFFERED),
+/// where McCoyPalace_PresentRewardChests shows four chests. A search of one
+/// gives its Vial, Potion, Psy Crystal or Water of Life
+/// (McCoyPalace_ClaimReward), and the others are then locked.
+///
+/// The chest taken from is kept only in scene temp flags (FLAG_TOOK_VIAL and
+/// the others). So once the party has left the palace, all four search as
+/// locked.
+///
+/// Leaving without a reward (step trigger 51), the captain walks the leader
+/// back. Leaving with it (step trigger 50), he sees the party off
+/// (FLAG_PARTY_SEEN_OFF).
 ///
 /// Two barrels hold an Elixir and a Smoke Bomb, a wardrobe a silk negligee
-/// and a bookcase the list of McCoy's gifts to his wife. McCoy speaks with his
-/// portrait (SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY).
+/// and a bookcase the list of McCoy's gifts to his wife.
+///
+/// McCoy speaks with his portrait (SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY).
 
 #include "main_routine_work.h"
 #include "scene_ids.h"
@@ -64,17 +80,17 @@
 #include "sounds.h"
 
 /// The palace's people and the treasure room's chests, numbering
-/// gMcCoyPalaceActorPlacements' rows from ACTOR_FIRST_PLACED. Each note
-/// gives what they say before the reward, then after it.
+/// gMcCoyPalaceActorPlacements' rows from ACTOR_FIRST_PLACED.
+/// Each note gives what they say before the reward, then after it.
 enum McCoyPalaceActorId {
-  /// A burly grey-haired man; points the way to McCoy. "If you want to see Lord
-  /// McCoy, follow the red carpet."; later "The people of Bilibin will never
-  /// forget your bravery."
+  /// A burly grey-haired man who points the way to McCoy. "If you want to see
+  /// Lord McCoy, follow the red carpet." Later: "The people of Bilibin will
+  /// never forget your bravery."
   /// ★ Named from the game: "If you want to see Lord McCoy, follow the red
   /// carpet." (MsgBilibinIfYouWantToSeeLord)
   ACTOR_VILLAGER_FOLLOW_RED_CARPET = ACTOR_FIRST_PLACED,
-  /// A woman in a green dress; warns the party about McCoy. "Make sure you
-  /// don't offend Lord McCoy!"; later "I heard you received a spectacular
+  /// A woman in a green dress who warns the party about McCoy. "Make sure you
+  /// don't offend Lord McCoy!" Later: "I heard you received a spectacular
   /// reward."
   /// ★ Named from the game: "Make sure you don't offend Lord McCoy!"
   /// (MsgBilibinMakeSureYouDontOffendLord)
@@ -83,24 +99,24 @@ enum McCoyPalaceActorId {
   /// ★ Named from the game: "Oh, are you willing to go to Kolima Forest?"
   /// (MsgBilibinYouWillingGoKolimaForest)
   ACTOR_VILLAGER_ASKING_ABOUT_KOLIMA_FOREST,
-  /// A young man with brown hair; speaks of the old tree in Kolima Forest;
-  /// later "Things are looking grim south of Goma Range..."
+  /// A young man with brown hair who speaks of the old tree in Kolima Forest.
+  /// Later: "Things are looking grim south of Goma Range..."
   /// ★ Named from the game: "I always believed that the old tree in Kolima
   /// Forest should be protected!" (MsgBilibinIAlwaysBelievedThatTheOld)
   ACTOR_YOUNG_MAN_PROTECT_OLD_TREE,
   /// A woman with fair hair standing in Lady McCoy's room. "This is Lady
-  /// McCoy's room, so don't touch anything."; later "Milady was very upset when
+  /// McCoy's room, so don't touch anything." Later: "Milady was very upset when
   /// she left the room."
   /// ★ Named from the game: "This is Lady McCoy's room, so don't touch
   /// anything." (MsgBilibinThisIsLadyMccoysRoomSo)
   ACTOR_VILLAGER_LADY_MCCOYS_ROOM,
   /// A woman with fair hair who admires Lady McCoy. "Milady was renowned far
-  /// and wide for her beauty!"; later "For once, milord didn't let Lady McCoy
+  /// and wide for her beauty!" Later: "For once, milord didn't let Lady McCoy
   /// push him around!"
   /// ★ Named from the game: "Milady was renowned far and wide for her beauty!"
   /// (MsgBilibinMiladyWasRenownedFarAndWide)
   ACTOR_VILLAGER_MILADYS_BEAUTY,
-  /// A woman with fair hair; screams when spoken to ("AAAAH!!!"); Mind Read:
+  /// A woman with fair hair who screams when spoken to ("AAAAH!!!"). Mind Read:
   /// "Oh, no! This nightgown has a hole... Milady will be furious!"
   /// ★ Named from the game: "Oh, someday, I want to sleep in a silk nightgown
   /// like this." (MsgBilibinOhSomedayIWantToSleep)
@@ -112,7 +128,7 @@ enum McCoyPalaceActorId {
   /// ★ Named from the game: "I was watching from here. After all that fuss,
   /// you still went to Kolima?" (MsgBilibinWasWatchingFromHereAfter)
   ACTOR_SOLDIER_WATCHING_KOLIMA,
-  /// A soldier in a spiked helmet; shows the treasure room's chests, as the
+  /// A soldier in a spiked helmet who shows the treasure room's chests, as the
   /// captain asks.
   /// ★ Named from the game: "Please show them their reward!"
   /// (MsgBilibinLordMccoyOrdered)
@@ -151,9 +167,9 @@ enum {
   CHEST_ANIMATION_PEEK_AND_SHUT = 5
 };
 
-/// The palace's temporary flags: the scene temp flags last until the party
-/// leaves the palace's scene, the area temp flags until it leaves McCoy's
-/// Palace.
+/// The palace's temporary flags.
+/// The scene temp flags last until the party leaves the palace's scene, the
+/// area temp flags until it leaves McCoy's Palace.
 enum {
   /// The captain has opened McCoy's door, so walking through it is silent.
   /// ★ Named from its area name: McCoy's Palace
@@ -171,7 +187,7 @@ enum {
   FLAG_TOOK_PSY_CRYSTAL = FLAG_SCENE_TEMP_12,
   /// ★ Named from the game: "Water of Life" (MsgItemName)
   FLAG_TOOK_WATER_OF_LIFE = FLAG_SCENE_TEMP_13,
-  /// The old man has praised the party once; he then warns of the holy tree.
+  /// The old man has praised the party once. He then warns of the holy tree.
   /// ★ Named from the game: "You are a fine warrior." (MsgBilibinFineWarrior)
   FLAG_OLD_MAN_HAS_PRAISED = FLAG_AREA_TEMP_02,
   /// Mind Read has heard the old man's first thought.
@@ -211,10 +227,12 @@ const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
 const u32 *Scene_GetExits(void) { return gMcCoyPalaceExits; }
 
-/// The people of McCoy's Palace. Once the reward is taken, the woman in
-/// Milady's nightgown, the old man who praises the warriors, the soldier who
-/// watched the party go to Kolima and the soldier who keeps the treasure turn
-/// differently when talked to.
+/// The people of McCoy's Palace.
+///
+/// Once the reward is taken, four of them turn differently when talked to:
+/// the woman in Milady's nightgown, the old man who praises the warriors, the
+/// soldier who watched the party go to Kolima and the soldier who keeps the
+/// treasure.
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   struct ActorPlacement *placements;
 
@@ -311,9 +329,12 @@ static void McCoyPalace_TalkToSoldierWatchingKolima(void) {
   Event_End();
 }
 
-/// McCoy's Palace, the treasure room: the soldier who keeps the treasure. While
-/// the party chooses, only one item; after, the reward was the greatest;
-/// before, Bilibin's great treasures go to whoever ends the curse.
+/// McCoy's Palace, the treasure room: the soldier who keeps the treasure.
+///
+/// What he says follows the reward:
+/// - Before, Bilibin's great treasures go to whoever ends the curse.
+/// - While the party chooses, only one item.
+/// - After, the reward was the greatest.
 ///
 /// Unused: with flag 0x84d set he would say `Pick any one of the four
 /// treasures.` instead, but nothing in the game names or sets that flag.
@@ -372,6 +393,7 @@ static void McCoyPalace_ReadRewardSoldiersThoughts(void) {
 
 /// McCoy's Palace, step triggers 9, 12 and 13: walking north through a door
 /// opens it with a sound, the leader walks through and the next room loads.
+///
 /// McCoy's door (step trigger 9) makes no sound once the captain has opened it.
 static void McCoyPalace_WalkThroughDoor(void) {
   struct FieldWork *work;
@@ -473,8 +495,9 @@ static void McCoyPalace_SearchWaterOfLifeChest(void) {
   }
 }
 
-/// The chest opens and gives its item; with no room for it, the chest
-/// closes again and the reward is still to choose.
+/// The chest opens and gives its item.
+/// With no room for it, the chest closes again and the reward is still to
+/// choose.
 static void McCoyPalace_ClaimReward(s32 chestActorId, s32 itemId,
                                     s32 chestFlag) {
   s32 emitterHandle;
@@ -565,9 +588,13 @@ static __inline__ void McCoyPalace_OpenRewardChestRow(void) {
   MapGrid_CopyCellAttributes(42, 55, 4, 1, 38, 46);
 }
 
-/// Sets McCoy's Palace up: McCoy's first audience, the captain outside McCoy's
-/// door after it, the reward audience once Kolima's curse is lifted, or the
-/// reward chests where the party left them.
+/// Sets McCoy's Palace up.
+///
+/// It sets up one of these:
+/// - McCoy's first audience.
+/// - The captain outside McCoy's door after it.
+/// - The reward audience once Kolima's curse is lifted.
+/// - The reward chests where the party left them.
 s32 Scene_Initialize(void) {
   s32 rewardTaken;
   s32 curseLifted;
@@ -655,11 +682,16 @@ static __inline__ void McCoyPalace_PrepareCompanionApproach(void) {
 
 /// McCoy's Palace, through McCoy's door before the curse is lifted, the first
 /// audience: the captain announces the party and McCoy asks whether they can
-/// save Kolima. Refusing, he calls them too young and they leave; coming back,
-/// they may change their minds. Accepting, McCoy gives the key to the
-/// barricades, Garet bristles at being called children, and McCoy takes the
-/// key back and has the captain see them out. The party arrives at
-/// MCCOY_PALACE_FROM_MCCOY_PALACE_GROUNDS_EAST, beyond the door.
+/// save Kolima.
+///
+/// - Refusing, he calls them too young and they leave. Coming back, they may
+///   change their minds.
+/// - Accepting, McCoy gives the key to the barricades, Garet bristles at
+///   being called children, and McCoy takes the key back and has the captain
+///   see them out.
+///
+/// The party arrives at MCCOY_PALACE_FROM_MCCOY_PALACE_GROUNDS_EAST, beyond
+/// the door.
 static void McCoyPalace_AudienceWithMcCoy(void) {
   struct Actor *actor;
 
@@ -1234,6 +1266,7 @@ static void McCoyPalace_FaceCompanionsForAudience(void) {
 
 /// McCoy's Palace, once Kolima's curse is lifted: brought in under arrest, the
 /// party is thanked by McCoy and sent to choose a reward.
+///
 /// The gate guards bring the party in from the grounds
 /// (MCCOY_PALACE_GROUNDS_TO_MCCOY_PALACE_EAST) to
 /// MCCOY_PALACE_FROM_MCCOY_PALACE_GROUNDS_EAST, before McCoy.

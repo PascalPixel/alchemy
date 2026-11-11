@@ -1,12 +1,13 @@
 /// @file Lalivero, the town by Babi Lighthouse, one scene with the area name
-/// Lalivero: SceneId_Lalivero. Its buildings are timber_rooms_bc.c. The
-/// story brings the party here twice, and Lalivero_GetActorPlacements and
+/// Lalivero: SceneId_Lalivero. Its buildings are timber_rooms_bc.c.
+///
+/// The story brings the party here twice. Lalivero_GetActorPlacements and
 /// Lalivero_GetTriggers choose the town's people and triggers for each visit by
 /// FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED, set at Venus Lighthouse's aerie.
 ///
 /// On the first visit the party comes in from the World Map with Iodem, and
 /// Lalivero_WatchWoundedSoldiers plays once
-/// (FLAG_LALIVERO_WOUNDED_SOLDIERS_SEEN): two of Tolbi's soldiers lie beaten in
+/// (FLAG_LALIVERO_WOUNDED_SOLDIERS_SEEN). Two of Tolbi's soldiers lie beaten in
 /// the street and tell Iodem that Sheba's captors went to the ruins beneath
 /// Babi Lighthouse, with Faran after them. The townsfolk talk of Sheba, and the
 /// guard at the wharf lets no one by.
@@ -14,18 +15,23 @@
 /// On the second visit the party comes back through Faran's house. Its first
 /// step onto step trigger 50 plays Lalivero_IodemGivesBlackOrb
 /// (FLAG_IODEM_FAREWELL_SEEN), in which Iodem comes out of the house and gives
-/// the party the Black Orb that sails Babi's ship;
+/// the party the Black Orb that sails Babi's ship.
 /// Lalivero_TalkAboutIdejimaShip adds a few lines when FLAG_SAW_SHIP_AT_IDEJIMA
-/// is set. The wharf's guard then lets the party through
-/// (FLAG_LALIVERO_WHARF_OPEN), step trigger 51 turns it back toward the ship,
-/// and a sign and three blocked cells close the north exit.
+/// is set.
 ///
-/// On both visits Torch, a Mars Djinni, waits until it joins;
-/// Lalivero_EnterDoor opens the door or the Sanctum's gate before the leader
-/// leaves by the touched step trigger's exit into SceneId_TimberRoomsB or
-/// SceneId_TimberRoomsC; the World Map lies east and west; and a jar, a
-/// stone pillar and a chest hold a Water of Life, a Psy Crystal and a Warrior's
-/// Helm.
+/// The wharf's guard then lets the party through (FLAG_LALIVERO_WHARF_OPEN),
+/// step trigger 51 turns it back toward the ship, and a sign and three blocked
+/// cells close the north exit.
+///
+/// On both visits:
+///
+/// - Torch, a Mars Djinni, waits until it joins.
+/// - Lalivero_EnterDoor opens the door or the Sanctum's gate before the leader
+///   leaves by the touched step trigger's exit into SceneId_TimberRoomsB or
+///   SceneId_TimberRoomsC.
+/// - The World Map lies east and west.
+/// - A jar, a stone pillar and a chest hold a Water of Life, a Psy Crystal and
+///   a Warrior's Helm.
 
 #include "main_routine_work.h"
 #include "djinn_ids.h"
@@ -58,21 +64,20 @@
 
 static void Lalivero_TalkAboutIdejimaShip(void);
 
-/// Entrances that set up the later visit, 90 as if the party had also
-/// seen the ship at Idejima (FLAG_SAW_SHIP_AT_IDEJIMA). No exit leads to them
-/// and the entrance table has no row for them (the aerie's exit leads
-/// into Faran's house): only the debug scene selector, which exits to any
-/// entrance from 0 to 99, reaches them.
+/// Entrances that set up the later visit, 90 as if the party had also seen the
+/// ship at Idejima (FLAG_SAW_SHIP_AT_IDEJIMA). No exit leads to them and the
+/// entrance table has no row for them (the aerie's exit leads into Faran's
+/// house). Only the debug scene selector, which exits to any entrance from 0 to
+/// 99, reaches them.
 enum { ENTRANCE_FROM_AERIE = 90, ENTRANCE_FROM_AERIE_QUIETLY = 91 };
 
-/// The placed actors, numbered in the order of
-/// gLaliveroActorPlacements. gLaliveroActorPlacementsAfterLighthouse,
-/// for the later visit, places the same people in the same rows, then the sign
-/// and the Black Orb; its rows for Garet, Ivan and Mia take their own actor ids
-/// (Event_SpawnActorPlacements).
+/// The placed actors, numbered in the order of gLaliveroActorPlacements.
+/// gLaliveroActorPlacementsAfterLighthouse, for the later visit, places the
+/// same people in the same rows, then the sign and the Black Orb. Its rows for
+/// Garet, Ivan and Mia take their own actor ids (Event_SpawnActorPlacements).
 enum LaliveroActorId {
   /// Tolbi's soldiers, lying beaten in the street on the first visit. "Uhhnn...
-  /// We were taken by surprise..."; later "Ha ha! I thought they had done me in
+  /// We were taken by surprise..." Later, "Ha ha! I thought they had done me in
   /// for sure, but I'm all better now."
   /// ★ Named from what the player sees: a soldier in a helmet lying in the
   /// street (its render)
@@ -87,7 +92,7 @@ enum LaliveroActorId {
   /// (MsgLaliveroOhhTheyTookShebaHeaded)
   ACTOR_VILLAGER_THEY_TOOK_SHEBA,
   /// A woman with fair hair. "Sheba is our only hope. If something happens to
-  /// her, Lalivero is finished."; later asks whether the party is leaving
+  /// her, Lalivero is finished." Later she asks whether the party is leaving
   /// Lalivero.
   /// ★ Named from the game: "is our only hope."
   /// (MsgLaliveroActorIsOurOnlyHopeIf)
@@ -161,8 +166,8 @@ enum { WALL_CELL_X = 20, WALL_CELL_Y = 23 };
 /// An item icon's tiles: a 16-pixel square at 4 bits a pixel.
 #define ICON_TILE_BYTES (16 * 16 / 2)
 
-/// Lalivero, either visit: talking to Torch, a Mars Djinni, makes it join the
-/// party.
+/// In Lalivero, on either visit, talking to Torch, a Mars Djinni, makes it join
+/// the party.
 static void Lalivero_TalkToTorch(void) {
   Djinn_JoinParty(ACTOR_TORCH, ELEMENT_MARS, DJINNI_INDEX(DJINNI_TORCH));
 }
@@ -184,8 +189,9 @@ const struct ActorPlacement *Lalivero_GetActorPlacements(void) {
   return gLaliveroActorPlacements;
 }
 
-/// Lalivero, the first visit: the young man mourning Sheba stops sobbing to say
-/// she was taken to the ruins, faces north again and goes back to sobbing.
+/// In Lalivero, on the first visit, the young man mourning Sheba stops sobbing
+/// to say she was taken to the ruins, faces north again and goes back to
+/// sobbing.
 static void Lalivero_TalkToVillagerTheyTookSheba(s32 actorId) {
   void Actor_FaceDirection();
 
@@ -203,8 +209,8 @@ static void Lalivero_TalkToVillagerTheyTookSheba(s32 actorId) {
   Actor_SetScript(actorId, gLalivero_CryingScript);
 }
 
-/// Lalivero, after Venus Lighthouse: the woman with fair hair asks whether the
-/// party is leaving Lalivero, and wishes it well either way.
+/// In Lalivero, after Venus Lighthouse, the woman with fair hair asks whether
+/// the party is leaving Lalivero, and wishes it well either way.
 static void Lalivero_WomanAsksIfLeaving(s32 actorId) {
   s32 message = MsgLaliveroLeavingLalivero;
   Event_SetMessageId(message);
@@ -219,7 +225,7 @@ static void Lalivero_WomanAsksIfLeaving(s32 actorId) {
   Event_ShowMessage(actorId, 0);
 }
 
-/// Lalivero, after Venus Lighthouse: the guard at the wharf's door ("I was
+/// In Lalivero, after Venus Lighthouse, the guard at the wharf's door ("I was
 /// told to let you in if you showed up...") lets the party through and steps
 /// aside (sets FLAG_LALIVERO_WHARF_OPEN).
 static void Lalivero_WharfGuardLetsPartyThrough(void) {
@@ -256,7 +262,7 @@ static void Lalivero_EnterDoor(void) {
   Import_EventSetExitRequest(door);
 }
 
-/// Lalivero: a doorway with no door (step triggers 8 and 11); leave by the
+/// In Lalivero, a doorway with no door (step triggers 8 and 11) leaves by the
 /// touched step trigger's exit.
 static void Lalivero_EnterDoorway(void) {
   struct FieldWork *work = gFieldWork;
@@ -267,13 +273,15 @@ static void Lalivero_EnterDoorway(void) {
   Import_EventSetExitRequest(exit);
 }
 
-/// Lalivero, the first visit, arriving from the World Map: the party and Iodem
-/// find more of Tolbi's soldiers beaten in the street. Iodem asks whether they
-/// fought a group of six; there were seven, the same group the soldiers had
-/// been following, and one of them was Sheba, with the scholar Kraden
-/// protecting her. They headed for the ruins beneath Babi Lighthouse, and
-/// Faran, the master of Lalivero, followed them in. The soldiers send the party
-/// on, and Iodem sets off for Babi Lighthouse.
+/// In Lalivero, on the first visit, arriving from the World Map, the party and
+/// Iodem find more of Tolbi's soldiers beaten in the street.
+///
+/// Iodem asks whether they fought a group of six. There were seven, the same
+/// group the soldiers had been following, and one of them was Sheba, with the
+/// scholar Kraden protecting her. They headed for the ruins beneath Babi
+/// Lighthouse, and Faran, the master of Lalivero, followed them in.
+///
+/// The soldiers send the party on, and Iodem sets off for Babi Lighthouse.
 static void Lalivero_WatchWoundedSoldiers(void) {
   struct Actor *leader;
 
@@ -490,13 +498,15 @@ static void Lalivero_WatchWoundedSoldiers(void) {
   Event_End();
 }
 
-/// Lalivero, step trigger 50 after Venus Lighthouse, until Iodem has spoken
-/// (FLAG_IODEM_FAREWELL_SEEN): Garet stops the leader, for Iodem asked them to
-/// wait. Iodem comes out of Faran's house and tells the party that the misty
-/// island they saw from the lighthouse may be Lemuria, which could save Babi's
-/// life. The party promised Babi to find it, though it means first to find
-/// Jenna, whom it is searching for, and Iodem gives it the Black Orb that
-/// sails Babi's ship. Garet is glad to see the ocean at last.
+/// In Lalivero, at step trigger 50 after Venus Lighthouse, Garet stops the
+/// leader, for Iodem asked them to wait. This plays until Iodem has spoken
+/// (FLAG_IODEM_FAREWELL_SEEN).
+///
+/// Iodem comes out of Faran's house and tells the party that the misty island
+/// they saw from the lighthouse may be Lemuria, which could save Babi's life.
+/// The party promised Babi to find it, though it means first to find Jenna,
+/// whom it is searching for. Iodem gives it the Black Orb that sails Babi's
+/// ship. Garet is glad to see the ocean at last.
 static void Lalivero_IodemGivesBlackOrb(void) {
   struct Actor *leader;
 
@@ -873,8 +883,8 @@ static void Lalivero_TalkAboutIdejimaShip(void) {
   Event_ShowMessage(ACTOR_IVAN, 0);
 }
 
-/// Lalivero, step trigger 51 after Venus Lighthouse: Garet turns the leader
-/// back toward Babi's ship and the wharf the guard was keeping.
+/// In Lalivero, at step trigger 51 after Venus Lighthouse, Garet turns the
+/// leader back toward Babi's ship and the wharf the guard was keeping.
 static void Lalivero_TurnBackToTheShip(void) {
   Event_Start();
   Event_SetMessageId(MsgLaliveroWhereGoingArentWeTaking);

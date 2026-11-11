@@ -1,26 +1,25 @@
 /// @file
-/// Inside Kalay: the houses and the inn, and the Kalay Sanctum.
+/// Inside Kalay are the houses and the inn, and the Kalay Sanctum.
 ///
 /// - Stucco rooms A (SceneId_StuccoRoomsA), a sheet of rooms drawn in stucco,
-/// all
-///   of them Kalay's, whose area name is Kalay: every house and the inn, each
-///   entered from its own door in the town (kalay.c) at an entrance of
-///   its own, and left by the matching exit. The inn's entrances,
+///   all of them Kalay's, whose area name is Kalay. It holds every house and
+///   the inn, each entered from its own door in the town (kalay.c) at an
+///   entrance of its own, and left by the matching exit. The inn's entrances,
 ///   STUCCO_ROOMS_A_INN_FROM_INN_PASSAGE to
 ///   STUCCO_ROOMS_A_INN_PASSAGE_FROM_GUEST_ROOM_SOUTHEAST and
 ///   STUCCO_ROOMS_A_GUEST_ROOM_NORTHWEST_FROM_INN_PASSAGE, take the inn's
-///   actor placements and triggers; every other entrance takes
-///   the houses'. The inn is full of tourists on their way to see Colosso in
-///   Tolbi. The innkeeper offers a room when spoken to across the counter; from
+///   actor placements and triggers. Every other entrance takes the houses'.
+///   The inn is full of tourists on their way to see Colosso in Tolbi. The
+///   innkeeper offers a room when spoken to across the counter. From
 ///   elsewhere he asks `Are you going to Tolbi also?`, and the tour's guide in
 ///   the dining room says `Please finish eating if you are taking the tour!`
 ///   Either sets FLAG_KALAY_HEARD_OF_COLOSSO_TOUR, after which leaving the town
 ///   plays the tour group's departure. Once the tour has left
-///   (FLAG_KALAY_COLOSSO_TOUR_LEFT), its guests are gone from the inn, two
+///   (FLAG_KALAY_COLOSSO_TOUR_LEFT), its guests are gone from the inn. Two
 ///   people are gone from the houses, one of whom was about to join it, and
 ///   those who stay say so. Searching the ovens shows what the cooks are
-///   making, except that the oven with roasted eggplant gives a Smoke Bomb: its
-///   find comes first in the table under the same cell behavior, and a
+///   making, except that the oven with roasted eggplant gives a Smoke Bomb.
+///   Its find comes first in the table under the same cell behavior, and a
 ///   named examine trigger ignores its condition, so it answers every time and
 ///   the eggplant line is unused. Barrels hold 11 coins and an Elixir. The
 ///   inn's table and the houses' both carry these examine triggers.
@@ -53,12 +52,15 @@
 #include "flags.h"
 #include "sounds.h"
 
-/// Each table numbers its own rows from ACTOR_FIRST_PLACED: the houses'
-/// (gStuccoRoomsA_HouseActorPlacements), the inn's, whose rooms are
-/// entered through the inn's entrances
+/// Each table numbers its own rows from ACTOR_FIRST_PLACED.
+///
+/// The tables are the houses' (gStuccoRoomsA_HouseActorPlacements), the
+/// inn's, whose rooms are entered through the inn's entrances
 /// (gStuccoRoomsA_InnActorPlacements), and the Kalay Sanctum's
-/// (gStuccoRoomsA_SanctumActorPlacements). Unless a note says otherwise,
-/// it quotes what its actor says before the Colosso tour leaves.
+/// (gStuccoRoomsA_SanctumActorPlacements).
+///
+/// Unless a note says otherwise, it quotes what its actor says before the
+/// Colosso tour leaves.
 enum StuccoRoomsAActorId {
   // Kalay's houses
   /// A young man with brown hair (SPRITE_YOUNG_MAN_WITH_BROWN_HAIR).
@@ -131,8 +133,10 @@ enum StuccoRoomsAActorId {
   /// Tolbi." (MsgKalayInteriorsIveSignedOnForATour)
   ACTOR_FIRST_TOURIST,
   /// A young woman in green (SPRITE_YOUNG_WOMAN_IN_GREEN), who talks of the
-  /// Colosso gladiators. Like the other guests the tour takes, she is named
-  /// by what Kalay's people say of the inn's guests.
+  /// Colosso gladiators.
+  ///
+  /// Like the other guests the tour takes, she is named by what Kalay's
+  /// people say of the inn's guests.
   /// ★ Named from the game: "The guests at the inn are tourists on their way
   /// to see Colosso." (MsgKalayInnFestivalTourists)
   ACTOR_SECOND_TOURIST,
@@ -162,10 +166,11 @@ enum StuccoRoomsAActorId {
   /// ★ Named from the game: "I'm going to sign up for Colosso as soon as I
   /// arrive in Tolbi." (MsgKalayInteriorsImGoingToSignUpFor)
   ACTOR_WARRIOR_SIGNING_UP_FOR_COLOSSO,
-  /// The warriors bound for Colosso, Ouranos and Sean, young men with red and
-  /// with blue hair (SPRITE_YOUNG_MAN_WITH_RED_HAIR and
-  /// SPRITE_YOUNG_MAN_WITH_BLUE_HAIR, as in ship_rooms.c), named by
-  /// what each says of the other.
+  /// The warriors bound for Colosso, Ouranos and Sean.
+  ///
+  /// They are young men with red and with blue hair
+  /// (SPRITE_YOUNG_MAN_WITH_RED_HAIR and SPRITE_YOUNG_MAN_WITH_BLUE_HAIR, as
+  /// in ship_rooms.c), named by what each says of the other.
   /// ★ Named from the game: "Then, Ouranos and I will fight each other"
   /// (MsgKalayInteriorsWereSoStrongMakingTheFinals)
   ACTOR_OURANOS,
@@ -202,8 +207,9 @@ const struct SceneExitRegion *StuccoRoomsA_GetRegions(void) { return NULL; }
 
 const u32 *StuccoRoomsA_GetExits(void) { return gStuccoRoomsA_Exits; }
 
-/// The inn's rooms share one actor placement table and the houses
-/// another, chosen by entrance and clipped to the current view.
+/// The inn's rooms share one actor placement table and the houses another.
+///
+/// The table is chosen by entrance and clipped to the current view.
 const struct ActorPlacement *StuccoRoomsA_GetActorPlacements(void) {
   s32 sceneId = gMainRoutineWork.next;
 
@@ -263,9 +269,11 @@ const struct Trigger *StuccoRoomsA_GetTriggers(void) {
   return gStuccoRoomsA_NoTriggers;
 }
 
-/// The tour's guide in the dining room of Kalay's inn: now the party has heard
-/// of the tour. `Please finish eating if you are taking the tour! We'll be
-/// leaving soon!`
+/// The tour's guide in the dining room of Kalay's inn tells the party of the
+/// tour.
+///
+/// He says `Please finish eating if you are taking the tour! We'll be
+/// leaving soon!` Now the party has heard of the tour.
 static void StuccoRoomsA_TalkToTourGuide(void) {
   Event_Start();
   Event_SetMessageId(MsgKalayPleaseFinishEatingIfTaking);
@@ -275,8 +283,9 @@ static void StuccoRoomsA_TalkToTourGuide(void) {
   Event_End();
 }
 
-/// Someone asks whether the party knows the continent south of Tolbi. They're
-/// in one of Kalay's houses, and answer either way the party replies.
+/// Someone asks whether the party knows the continent south of Tolbi.
+///
+/// They're in one of Kalay's houses, and answer either way the party replies.
 static void StuccoRoomsA_AskAboutSouthernContinent(void) {
   Event_Start();
   Event_SetMessageId(MsgKalayDoKnowAboutContinentSouth);
@@ -288,9 +297,10 @@ static void StuccoRoomsA_AskAboutSouthernContinent(void) {
 }
 
 /// Spoken to across the counter of Kalay's inn, the leader facing west, the
-/// innkeeper offers a room. From any other side he asks whether the party is
-/// going to Tolbi too, or, once the tour has left, says how empty the inn
-/// feels.
+/// innkeeper offers a room.
+///
+/// From any other side he asks whether the party is going to Tolbi too. Once
+/// the tour has left, he says how empty the inn feels instead.
 static void StuccoRoomsA_TalkToInnkeeper(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
@@ -316,9 +326,10 @@ static void StuccoRoomsA_TalkToInnkeeper(void) {
   }
 }
 
-/// The Kalay Sanctum's healer offers its services across the counter. He does
-/// so when spoken to across the counter with the leader facing north; from
-/// elsewhere he says Kalay is a peaceful place.
+/// The Kalay Sanctum's healer offers its services across the counter.
+///
+/// He does so when spoken to across the counter with the leader facing north.
+/// From elsewhere he says Kalay is a peaceful place.
 static void StuccoRoomsA_TalkToHealer(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
@@ -335,9 +346,11 @@ static void StuccoRoomsA_TalkToHealer(void) {
   }
 }
 
-/// Walking north into one of four doors inside Kalay's houses and inn
-/// (step triggers 12, 13, 16 and 19): stops the room's actors, opens the
-/// door and walks the leader out.
+/// Walking north into one of four doors inside Kalay's houses and inn opens
+/// it and takes the party through.
+///
+/// The doors are step triggers 12, 13, 16 and 19. The event stops the room's
+/// actors, opens the door and walks the leader out.
 static void StuccoRoomsA_OpenDoorAndExit(void) {
   struct FieldWork *work = gFieldWork;
   u32 slot;
@@ -408,12 +421,15 @@ s32 StuccoRoomsA_Initialize(void) {
 }
 
 /// Once the Colosso tour has left, its guests are gone from Kalay's inn, and
-/// two people from the houses; until then the second tour guide is drawn with
-/// his green and blue swapped, as in kalay.c. Entering by
-/// STUCCO_ROOMS_A_HOUSE_NORTHEAST_LOWER instead blanks four by two cells
-/// below the ground floor, where the corner of a neighbouring room would
-/// otherwise show at the bottom edge of the view (the room's render with and
-/// without the copy).
+/// two people from the houses.
+///
+/// Until then the second tour guide is drawn with his green and blue swapped,
+/// as in kalay.c.
+///
+/// Entering by STUCCO_ROOMS_A_HOUSE_NORTHEAST_LOWER instead blanks four by two
+/// cells below the ground floor. The corner of a neighbouring room would
+/// otherwise show there, at the bottom edge of the view (the room's render
+/// with and without the copy).
 static void StuccoRoomsA_ApplyRoomState(void) {
   s16 entrance = gMainRoutineWork.entrance;
 
@@ -627,8 +643,10 @@ struct Trigger gStuccoRoomsA_NoTriggers[] = {
     { TRIGGERS_END },
 };
 
-/// A bare flag as a condition holds while that flag is clear: these lines are
-/// spoken before the Colosso tour leaves, the next ones after.
+/// A bare flag as a condition holds while that flag is clear.
+///
+/// So these lines are spoken before the Colosso tour leaves, the next ones
+/// after.
 struct Trigger gStuccoRoomsA_HouseTriggers[] = {
     { TRIGGER_EXIT, 1, CONDITION_ALWAYS, STUCCO_ROOMS_A_HOUSE_NORTHWEST_TO_KALAY },
     { TRIGGER_EXIT, 2, CONDITION_ALWAYS, STUCCO_ROOMS_A_HOUSE_NORTHEAST_UPPER_TO_KALAY },

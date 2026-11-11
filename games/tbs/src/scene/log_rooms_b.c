@@ -1,45 +1,55 @@
 /// @file
-/// Log rooms B (SceneId_LogRoomsB), a sheet of rooms drawn in logs, all of them
-/// Vault's: the town's houses, shops and inn once the party has reached Kalay.
-/// They replace the first visit's interiors (log_rooms_a.c) as
-/// SceneId_VaultRevisit (vault_revisit.c) replaces the town: each of its six
+/// Log rooms B (SceneId_LogRoomsB), a sheet of rooms drawn in logs, holds only
+/// Vault's rooms: the town's houses, shops and inn once the party has reached
+/// Kalay.
+///
+/// They replace the first visit's interiors (log_rooms_a.c), as
+/// SceneId_VaultRevisit (vault_revisit.c) replaces the town. Each of its six
 /// house doors leads to the entrance here named for the same door, and
 /// each room leads back out through it.
 ///
-/// The thieves have broken out of jail, and the talk is of them and of Colosso,
-/// the festival about to begin in Tolbi. The rooms, by entrance:
+/// The thieves have broken out of jail. The talk is of them and of Colosso,
+/// the festival about to begin in Tolbi.
+///
+/// The rooms, by entrance:
 /// - LOG_ROOMS_B_FROM_VAULT_REVISIT_SOUTHEAST, the gem owner's
-///   house: he says a cat ate his precious stone, and his wife does not believe
+///   house. He says a cat ate his precious stone, and his wife does not believe
 ///   him. Arriving here sets him on the floor and takes the stone off his
-///   table: the 4-by-3 block of cells copied from (0, 120) to (8, 67) lies
-///   under the window of the map grid's layer 2, at the table, and draws it
-///   bare where the first visit's house (log_rooms_a.c) draws the sparkling
-///   stone on it (render probe log-rooms-b, the room before and after).
+///   table. The 4-by-3 block of cells copied from (0, 120) to (8, 67) lies
+///   under the window of the map grid's layer 2, at the table. It draws the
+///   table bare, where the first visit's house (log_rooms_a.c) draws the
+///   sparkling stone on it (render probe log-rooms-b, the room before and
+///   after).
 /// - LOG_ROOMS_B_FROM_VAULT_REVISIT_SOUTH, the house of a boy who
 ///   doubts the thieves were from Lunpa.
 /// - LOG_ROOMS_B_FROM_VAULT_REVISIT_SOUTHWEST and
-///   LOG_ROOMS_B_INN_FROM_INN_UPSTAIRS, the inn, where the girl at
-///   the inn offers Bones and a Bone lies on the floor beside her; its stairs
-///   lead to the upstairs room, where a cook works.
+///   LOG_ROOMS_B_INN_FROM_INN_UPSTAIRS, the inn. The girl at the inn offers
+///   Bones there, and a Bone lies on the floor beside her. Its stairs lead to
+///   the upstairs room, where a cook works.
 /// - LOG_ROOMS_B_FROM_VAULT_REVISIT_EAST, the item shop.
 /// - LOG_ROOMS_B_FROM_VAULT_REVISIT_NORTH, the weapon and armor
 ///   shops.
-/// - LOG_ROOMS_B_FROM_VAULT_REVISIT_NORTHWEST, the mayor's house,
-///   where the mayor welcomes Isaac back and warns that the thieves have
-///   escaped (FLAG_VAULT_REVISIT_ISAAC_WELCOMED_BACK, an area flag, and
-///   FLAG_VAULT_WARNED_OF_ESCAPED_THIEVES); a Mind Read on him before that
+/// - LOG_ROOMS_B_FROM_VAULT_REVISIT_NORTHWEST, the mayor's house.
+///   The mayor welcomes Isaac back and warns that the thieves have escaped
+///   (FLAG_VAULT_REVISIT_ISAAC_WELCOMED_BACK, an area flag, and
+///   FLAG_VAULT_WARNED_OF_ESCAPED_THIEVES). A Mind Read on him before that
 ///   plays the welcome first.
 ///
 /// The Bones are how the party gets the dog in Vault to show its hidden
-/// passage. The girl's offer gives one Bone each time it is accepted
-/// (FLAG_VAULT_BONE_RECEIVED, shared with log_rooms_a.c, changes only her
-/// words), and searching the floor Bone (CELL_BEHAVIOR_LOG_ROOMS_A_INN_BARREL,
-/// Vault_FindBone) gives another. While the leader stands beside the floor
-/// Bone, Vault_UpdateBoneProximityFlag sets FLAG_VAULT_LEADER_BESIDE_BONE,
-/// which disables her talk row, so that the A button there searches instead of
-/// talking. The shopkeepers open their shops only when spoken to across the
-/// counter. A jar, two barrels and a wooden box keep the first visit's flags,
-/// so what the party took then stays taken, and two bookcases can be read.
+/// passage. The girl's offer gives one Bone each time it is accepted.
+/// FLAG_VAULT_BONE_RECEIVED, shared with log_rooms_a.c, changes only her
+/// words. Searching the floor Bone (CELL_BEHAVIOR_LOG_ROOMS_A_INN_BARREL,
+/// Vault_FindBone) gives another.
+///
+/// While the leader stands beside the floor Bone,
+/// Vault_UpdateBoneProximityFlag sets FLAG_VAULT_LEADER_BESIDE_BONE. That
+/// disables her talk row, so that the A button there searches instead of
+/// talking.
+///
+/// The shopkeepers open their shops only when spoken to across the counter.
+///
+/// A jar, two barrels and a wooden box keep the first visit's flags, so what
+/// the party took then stays taken. Two bookcases can be read.
 
 #include "main_routine_work.h"
 #include "module/scene/log_rooms_b.h"
@@ -206,11 +216,14 @@ static void LogRoomsB_HusbandLongsForColosso(void) {
   LogRoomsB_FaceAndSpeak(ACTOR_COLOSSO_HUSBAND, MsgVaultItsNearTimeForColosso);
 }
 
-/// In his house, the mayor welcomes Isaac back: the thieves he caught have
-/// escaped from jail, and Vault feared they would come after him. Asked whether
-/// the party has run into them, a yes and a no get different warnings. Sets
-/// FLAG_VAULT_REVISIT_ISAAC_WELCOMED_BACK, after which the mayor only warns of
-/// their revenge, and FLAG_VAULT_WARNED_OF_ESCAPED_THIEVES.
+/// In his house, the mayor welcomes Isaac back.
+///
+/// The thieves he caught have escaped from jail, and Vault feared they would
+/// come after him. He asks whether the party has run into them, and a yes and
+/// a no get different warnings.
+///
+/// Sets FLAG_VAULT_REVISIT_ISAAC_WELCOMED_BACK, after which the mayor only
+/// warns of their revenge, and FLAG_VAULT_WARNED_OF_ESCAPED_THIEVES.
 static void LogRoomsB_WelcomeIsaacBack(void) {
   Event_Start();
   Event_SetMessageId(MsgVaultIsaacYouveComeBackVault);
@@ -246,18 +259,22 @@ static void LogRoomsB_WarnOfThievesRevenge(void) {
 /// but gives none.
 ///
 /// She would have said `I did some cooking, so now I've got all these useless
-/// bones.` and asked `...You want some?`. Her earlier talk row,
-/// MsgVaultWeDontGetALotOf with no condition, always answers first
-/// (Scene_FindTrigger takes the first match), so the player only ever hears
-/// that travelers are few in winter.
+/// bones.` and asked `...You want some?`.
+///
+/// Her earlier talk row, MsgVaultWeDontGetALotOf with no condition, always
+/// answers first, because Scene_FindTrigger takes the first match. So the
+/// player only ever hears that travelers are few in winter.
 static void LogRoomsB_UnusedOfferLeftoverBones(void) {
   LogRoomsB_FaceAndSpeak(ACTOR_COOK, MsgVaultDidSomeCookingNowIve);
 }
 
 /// The girl at the inn offers leftover bones from dinner, or more of them once
-/// one was taken (FLAG_VAULT_BONE_RECEIVED); a yes gets a Bone if there is
-/// room, a no a nod. Her talk row needs FLAG_VAULT_LEADER_BESIDE_BONE clear,
-/// that is, the leader not standing beside the floor Bone.
+/// one was taken (FLAG_VAULT_BONE_RECEIVED).
+///
+/// A yes gets a Bone if there is room, and a no gets a nod.
+///
+/// Her talk row needs FLAG_VAULT_LEADER_BESIDE_BONE clear, that is, the leader
+/// not standing beside the floor Bone.
 static void LogRoomsB_OfferBones(void) {
   Event_Start();
   Actor_TurnToFaceEachOther(ACTOR_GIRL_AT_THE_INN, ACTOR_PARTY_LEADER, 0);
@@ -324,8 +341,9 @@ static void LogRoomsB_ReadMindAndWelcomeIsaacBack(void) {
 // Shared Bone-item dialogue follows the actor conversations.
 #include "shared/vault_bone.h"
 
-/// Across the counter the weapon shop opens; from elsewhere the merchant talks
-/// of a river of fire on the other side of Mt. Aleph.
+/// Across the counter the weapon shop opens.
+/// From elsewhere the merchant talks of a river of fire on the other side of
+/// Mt. Aleph.
 static void LogRoomsB_TalkToWeaponMerchant(void) {
   u32 leaderFacing;
 
@@ -343,8 +361,8 @@ static void LogRoomsB_TalkToWeaponMerchant(void) {
   Event_End();
 }
 
-/// Across the counter the armor shop opens; from elsewhere the merchant says
-/// the eruption split the continent in two.
+/// Across the counter the armor shop opens.
+/// From elsewhere the merchant says the eruption split the continent in two.
 static void LogRoomsB_TalkToArmorMerchant(void) {
   u32 leaderFacing;
 
@@ -362,8 +380,8 @@ static void LogRoomsB_TalkToArmorMerchant(void) {
   Event_End();
 }
 
-/// Across the counter the item shop opens; from elsewhere the merchant has had
-/// few customers lately.
+/// Across the counter the item shop opens.
+/// From elsewhere the merchant has had few customers lately.
 static void LogRoomsB_TalkToItemMerchant(void) {
   u32 leaderFacing;
 
@@ -381,8 +399,9 @@ static void LogRoomsB_TalkToItemMerchant(void) {
   Event_End();
 }
 
-/// Across the counter the inn opens; from elsewhere the innkeeper complains
-/// that no one comes, what with the volcano.
+/// Across the counter the inn opens.
+/// From elsewhere the innkeeper complains that no one comes, what with the
+/// volcano.
 static void LogRoomsB_TalkToInnkeeper(void) {
   u32 leaderFacing;
 
@@ -400,8 +419,9 @@ static void LogRoomsB_TalkToInnkeeper(void) {
   Event_End();
 }
 
-/// Mind Read on the girl at the inn: hungry while cooking, or, once a Bone was
-/// given, wondering whether "he" has a calcium deficiency.
+/// Mind Read on the girl at the inn shows what is on her mind.
+/// She is hungry while cooking or, once a Bone was given, wonders whether
+/// "he" has a calcium deficiency.
 static void LogRoomsB_ReadBoneGiverMind(void) {
   Event_Start();
   if (GameFlag_Get(FLAG_VAULT_BONE_RECEIVED) == 0) {
@@ -416,13 +436,14 @@ static void LogRoomsB_ReadBoneGiverMind(void) {
 /// Returns the talk, Psynergy, examine trigger and exit table.
 const struct Trigger *Scene_GetTriggers(void) { return gLogRoomsB_Triggers; }
 
-/// Opens the room through a window transition. Entering the house at
-/// LOG_ROOMS_B_FROM_VAULT_REVISIT_SOUTHEAST sets its owner on the
-/// floor and takes the stone off his table; entering the inn
-/// (LOG_ROOMS_B_FROM_VAULT_REVISIT_SOUTHWEST, or from upstairs by
-/// LOG_ROOMS_B_INN_FROM_INN_UPSTAIRS)
-/// places the floor Bone beside the girl and starts
-/// Vault_UpdateBoneProximityFlag.
+/// Opens the room through a window transition.
+///
+/// Entering the house at LOG_ROOMS_B_FROM_VAULT_REVISIT_SOUTHEAST sets its
+/// owner on the floor and takes the stone off his table.
+///
+/// Entering the inn (LOG_ROOMS_B_FROM_VAULT_REVISIT_SOUTHWEST, or from
+/// upstairs by LOG_ROOMS_B_INN_FROM_INN_UPSTAIRS) places the floor Bone
+/// beside the girl and starts Vault_UpdateBoneProximityFlag.
 s32 Scene_Initialize(void) {
   s32 entrance;
   s32 clearedState;

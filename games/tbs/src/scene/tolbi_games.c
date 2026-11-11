@@ -1,37 +1,39 @@
 /// @file
-/// Two scenes of Tolbi where the party plays for prizes whenever it is in town;
-/// neither has a story event.
+/// Two scenes of Tolbi where the party plays for prizes whenever it is in town.
+///
+/// Neither has a story event.
 ///
 /// - Stucco rooms C (SceneId_StuccoRoomsC), a sheet of rooms drawn in stucco,
-///   both of them Tolbi's, whose area name is Tolbi: the rooms of Lucky Dice
-///   and Lucky Wheels; STUCCO_ROOMS_C_LUCKY_DICE_TO_TOLBI and
+///   both of them Tolbi's, whose area name is Tolbi. They are the rooms of
+///   Lucky Dice and Lucky Wheels. STUCCO_ROOMS_C_LUCKY_DICE_TO_TOLBI and
 ///   STUCCO_ROOMS_C_LUCKY_WHEELS_TO_TOLBI lead back into SceneId_Tolbi. The
 ///   Lucky Dice attendant asks ten coins for each level of the party's average
-///   level: the coin total is saved in the main routine's work and the party
+///   level. The coin total is saved in the main routine's work and the party
 ///   goes to the Lucky Dice game, which returns to
-///   STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_DICE, where the setup has the attendant
+///   STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_DICE. There the setup has the attendant
 ///   announce the coins won or lost, with a jingle by the size of the win. The
 ///   Lucky Wheels attendant takes Game Tickets and warns when the bag has six
-///   free slots or fewer; the game returns to
-///   STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_WHEELS with the prize categories won, and
-///   the setup has the attendant hand over an item for each, a different one of
-///   the category's three than last time (Moons choose any category), or offers
-///   another game when nothing was won. Signs give both games' rules and the
-///   Lucky Wheels prizes. A soldier talks of Lucky Dice until Babi is saved
-///   (FLAG_BABI_SAVED, the finals day), then of the scalpers at the Colosso
-///   finals, and is gone once they have been fought (FLAG_COLOSSO_OVER).
+///   free slots or fewer. The game returns to
+///   STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_WHEELS with the prize categories won.
+///   The setup has the attendant hand over an item for each, a different one
+///   of the category's three than last time (Moons choose any category), or
+///   offers another game when nothing was won. Signs give both games' rules
+///   and the Lucky Wheels prizes. A soldier talks of Lucky Dice until Babi is
+///   saved (FLAG_BABI_SAVED, the finals day), then of the scalpers at the
+///   Colosso finals. He is gone once they have been fought
+///   (FLAG_COLOSSO_OVER).
 /// - Tolbi Spring (SceneId_TolbiSpring); TOLBI_SPRING_TO_TOLBI leads back into
 ///   Tolbi (TOLBI_FROM_TOLBI_SPRING). Searching the spring raises it and blends
 ///   it into view the first time in each visit (FLAG_TOLBI_SPRING_RISEN),
 ///   stands the leader with their back to it, and offers a coin or a Lucky
-///   Medal to toss. The toss is a small physics game: the token flies over the
+///   Medal to toss. The toss is a small physics game. The token flies over the
 ///   spring past four moving obstacles and is pulled toward the prize rings
 ///   until it settles in one of five. A coin wins 20, 10, 2 or 1 coins by ring,
-///   or nothing in the fifth; a medal wins an item drawn by weight from fifteen
+///   or nothing in the fifth. A medal wins an item drawn by weight from fifteen
 ///   prizes, the nearer the centre the fewer and better (Assassin Blade first,
 ///   Water of Life last), and the item won has its weight halved for later
 ///   tosses. Where the token settles is measured from TOLBI_SPRING_CENTER_X and
-///   _Z, the rings ending at squared distances of 224, 624, 1,088 and 1,680
+///   _Z. The rings end at squared distances of 224, 624, 1,088 and 1,680
 ///   square pixels, which match the rings painted in the spring. The spring
 ///   opens to show the prize as it is given. In the editions before TBS_PATCH_1
 ///   the coin and medal counts show an `=` after each number.
@@ -106,8 +108,10 @@ enum TolbiSpringGameRoomActorId {
   /// ★ Named from the game: "Hey, buddy, wanna try yer luck at the dice?"
   /// (MsgTolbiBuddyWannaTry)
   ACTOR_TOLBI_SPRING_DICE_ATTENDANT,
-  /// Beside the Lucky Dice attendant, in his sprite: likely a second
-  /// attendant, because the Colosso's attendants wear the same sprite.
+  /// Beside the Lucky Dice attendant, in his sprite.
+  ///
+  /// He is likely a second attendant, because the Colosso's attendants wear
+  /// the same sprite.
   /// ★ Named from the game: "Read the sign if ya don't know the rules."
   /// (MsgTolbiSpringReadTheSignIfYaDont)
   ACTOR_TOLBI_SPRING_DICE_RULES_ATTENDANT,
@@ -148,9 +152,10 @@ enum TolbiSpringGameRoomActorId {
 };
 
 /// Tolbi Spring's own actors (TolbiSpring), numbered in the order of
-/// gTolbiSpringActorPlacements from ACTOR_FIRST_PLACED. The toss draws
-/// the coin or the medal with its shadow and three trailing copies, which
-/// TOLBI_SPRING_COIN_TRAIL and TOLBI_SPRING_MEDAL_TRAIL number.
+/// gTolbiSpringActorPlacements from ACTOR_FIRST_PLACED.
+///
+/// The toss draws the coin or the medal with its shadow and three trailing
+/// copies, which TOLBI_SPRING_COIN_TRAIL and TOLBI_SPRING_MEDAL_TRAIL number.
 enum TolbiSpringActorId {
   /// ★ Named from what the player sees: the tossed coin's shadow, drawn at
   /// ground level below it as it flies (its render)
@@ -167,8 +172,9 @@ enum TolbiSpringActorId {
   /// (MsgTolbiTossLuckyMedal)
   ACTOR_TOLBI_SPRING_MEDAL,
   /// The four obstacles that move in the spring during a toss, in the order
-  /// of sObstacles: two crabs (SPRITE_CRAB), then two turtles
-  /// (SPRITE_TURTLE).
+  /// of sObstacles.
+  ///
+  /// They are two crabs (SPRITE_CRAB), then two turtles (SPRITE_TURTLE).
   /// ★ Named from what the player sees: two crabs and two turtles moving in
   /// the spring's water in the way of the toss (its render)
   ACTOR_TOLBI_SPRING_FIRST_OBSTACLE,
@@ -180,8 +186,10 @@ enum TolbiSpringActorId {
   /// ★ Named from the game: "Face away from Tolbi Spring and toss a coin into
   /// it." (MsgTolbiFaceAwayTolbi)
   ACTOR_TOLBI_SPRING_COIN_SIGN,
-  /// The tufts of grass at the foot of each sign: the signs' sprite in its
-  /// second frame, mirrored and drawn underfoot (TolbiSpring_Initialize).
+  /// The tufts of grass at the foot of each sign.
+  ///
+  /// They are the signs' sprite in its second frame, mirrored and drawn
+  /// underfoot (TolbiSpring_Initialize).
   /// ★ Named from what the player sees: a tuft of grass at the foot of each
   /// sign (its render)
   ACTOR_TOLBI_SPRING_EAST_SIGN_GRASS,
@@ -202,7 +210,9 @@ enum TolbiSpringActorId {
 };
 
 /// The actor that draws toss->trail[n] of a tossed coin or medal, n from
-/// 1 to 3: the rows before each shadow, the oldest copy first.
+/// 1 to 3.
+///
+/// They are the rows before each shadow, the oldest copy first.
 #define TOLBI_SPRING_COIN_TRAIL(n) (ACTOR_TOLBI_SPRING_COIN_SHADOW - (n))
 #define TOLBI_SPRING_MEDAL_TRAIL(n) (ACTOR_TOLBI_SPRING_MEDAL_SHADOW - (n))
 
@@ -239,7 +249,7 @@ enum TolbiSpringCellBehavior {
 #define TOLBI_SPRING_TOSS_MENU_WIDTH 10
 #endif
 
-/// The tossed coin or medal: its last four positions for the trail, its
+/// The tossed coin or medal, as its last four positions for the trail, its
 /// velocity and the frames the prize rings still pull it.
 struct SpringTossMotion {
   u8 unused[2]; ///< nothing reads or writes it
@@ -311,9 +321,10 @@ static void TolbiSpring_AskAboutFirstDiceGame(s32 actorId) {
   Event_ShowMessage(actorId, 0);
 }
 
-/// Searching Tolbi Spring: the spring rises into view the first time in the
-/// visit, and the leader stands with their back to it to toss a coin or a
-/// Lucky Medal.
+/// Searching Tolbi Spring lets the party toss a coin or a Lucky Medal.
+///
+/// The spring rises into view the first time in the visit, and the leader
+/// stands with their back to it to toss.
 static void TolbiSpring_TossCoinOrMedal(void) {
   s32 leader = gMainRoutineWork.leaderActorId;
 
@@ -360,13 +371,16 @@ const struct Trigger *TolbiSpring_GetTriggers(void) {
   return gTolbiSpringTriggersOther;
 }
 
-/// The setup of both scenes. Tolbi Spring: the blend, the two mirrored props
-/// drawn underfoot and, from Tolbi (TOLBI_SPRING_FROM_TOLBI), the toss's
-/// obstacles, with the spring shown at once if it has risen in this visit. The
-/// Lucky Dice and Lucky Wheels rooms: the soldier removed after
-/// FLAG_COLOSSO_OVER, and the returns from the games,
-/// STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_DICE announcing Lucky Dice's coins and
-/// STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_WHEELS handing over Lucky Wheels' prizes.
+/// The setup of both scenes.
+///
+/// For Tolbi Spring it sets up the blend, the two mirrored props drawn
+/// underfoot and, from Tolbi (TOLBI_SPRING_FROM_TOLBI), the toss's obstacles.
+/// The spring is shown at once if it has risen in this visit.
+///
+/// For the Lucky Dice and Lucky Wheels rooms it removes the soldier after
+/// FLAG_COLOSSO_OVER, and handles the returns from the games.
+/// STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_DICE announces Lucky Dice's coins and
+/// STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_WHEELS hands over Lucky Wheels' prizes.
 s32 TolbiSpring_Initialize(void) {
   s32 coinChange;
   s8 *wonPrizes;
@@ -567,9 +581,10 @@ static void TolbiSpring_RiseAndFadeIn(void) {
 }
 
 /// The Lucky Wheels attendant in Tolbi checks tickets and inventory space
-/// before sending the party to the game, which returns to
-/// STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_WHEELS; `spoken` is 1 after a game with
-/// no prize, to offer another.
+/// before sending the party to the game.
+///
+/// The game returns to STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_WHEELS. `spoken` is 1
+/// after a game with no prize, to offer another.
 static void TolbiSpring_OfferLuckyWheels(s32 spoken) {
   s32 tickets = PartyInventory_CountItem(ITEM_GAME_TICKET);
   s32 room;
@@ -636,9 +651,10 @@ static void TolbiSpring_OfferLuckyWheels(s32 spoken) {
                                   STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_WHEELS);
 }
 
-/// Talking to the Lucky Dice attendant in Tolbi: offers a game for ten coins a
-/// level of the party's average level and saves the coin total for the return
-/// to STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_DICE.
+/// Talking to the Lucky Dice attendant in Tolbi offers a game.
+///
+/// It costs ten coins a level of the party's average level. The event saves
+/// the coin total for the return to STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_DICE.
 static void TolbiSpring_OfferLuckyDice(void) {
   u32 cost;
   u32 coins;
@@ -1018,7 +1034,9 @@ static struct SpringTossMotion sToss;
 
 static s32 sTossKind;
 
-/// Three words nothing refers to; removing them would move the obstacle state.
+/// Three words nothing refers to.
+///
+/// Removing them would move the obstacle state.
 static s32 sTossUnused[3] UNUSED;
 
 static struct SpringObstacle sObstacles[4];

@@ -1,79 +1,86 @@
 /// @file
 /// Mercury Lighthouse (SceneId_MercuryLighthouseEntrance), the lighthouse's
 /// ground floor inside its door, which leads up to its floors
-/// (mercury_lighthouse.c). Mia, Imil's healer and the last of the Mercury Clan
-/// who guard the lighthouse, has sensed someone inside, where none but she and
-/// Alex, her apprentice who disappeared, can enter; she has hurried in ahead of
-/// the party to find out who.
+/// (mercury_lighthouse.c).
+///
+/// Mia is Imil's healer and the last of the Mercury Clan who guard the
+/// lighthouse. She has sensed someone inside, where none but she and Alex, her
+/// apprentice who disappeared, can enter. She has hurried in ahead of the party
+/// to find out who.
 ///
 /// - The doorway. Until Mia has gone on, coming in by the door
 ///   (MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_EXTERIOR) starts the
-///   scene again at MERCURY_LIGHTHOUSE_ENTRANCE_SIX_STATUES_BEFORE_LIZARD_MAN,
-///   where she tries again and again to get past a monster, the Lizard Man, who
-///   steps across to block her, then waits, turning to watch the leader come up
-///   (MercuryLighthouseEntrance_LizardManBlocksMia). Spoken to, she says `A
-///   monster inside Mercury Lighthouse? How could this be!?` The Lizard Man
-///   steps into the leader's way too (cell behavior 41, and back to the
-///   middle on 40 and 42); talking to him, Mind Read on him or walking north
+///   scene again at MERCURY_LIGHTHOUSE_ENTRANCE_SIX_STATUES_BEFORE_LIZARD_MAN.
+///   There she tries again and again to get past a monster, the Lizard Man, who
+///   steps across to block her. Then she waits, turning to watch the leader
+///   come up (MercuryLighthouseEntrance_LizardManBlocksMia). Spoken to, she
+///   says `A monster inside Mercury Lighthouse? How could this be!?` The Lizard
+///   Man steps into the leader's way too (cell behavior 41, and back to the
+///   middle on 40 and 42). Talking to him, Mind Read on him or walking north
 ///   into him starts the battle (the second slot of the encounter zone of Tret
 ///   Tree's and Mercury Lighthouse's scripted battles). Back from it
 ///   (MERCURY_LIGHTHOUSE_ENTRANCE_SIX_STATUES_AFTER_LIZARD_MAN), Mia nods to
 ///   the leader and goes on into the lighthouse
-///   (FLAG_MERCURY_LIGHTHOUSE_ENTERED_BY_MIA); cell behavior 10 by the
-///   doorway brings the party back to
+///   (FLAG_MERCURY_LIGHTHOUSE_ENTERED_BY_MIA). Cell behavior 10 by the doorway
+///   brings the party back to
 ///   MERCURY_LIGHTHOUSE_ENTRANCE_SIX_STATUES_AFTER_LIZARD_MAN, so this plays
 ///   even if the party wandered off. Six statues line the way to the doorway.
-/// - The pool. An inscription (cell behavior 1) reads `He who honors the
-///   heart of the goddess shall stand at the center of all, like a swan in the
-///   center of a rippling pond.` Ply cast on the invisible actor there
-///   from one cell only, (12, 32), dims the room, raises sparks from the water,
-///   starts the colours shimmering and opens the routes that need it
-///   (FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED): it copies the cell behaviors
-///   of 13 by 7 cells over the pool at (6, 32), and entering the goddess's room
-///   once it is set copies them again. Cells out in the water take
-///   CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_WATER, the heart
+/// - The pool. An inscription (cell behavior 1) reads `He who honors the heart
+///   of the goddess shall stand at the center of all, like a swan in the center
+///   of a rippling pond.` Ply cast on the invisible actor there from one cell
+///   only, (12, 32), dims the room, raises sparks from the water, starts the
+///   colours shimmering and opens the routes that need it
+///   (FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED). To open them it copies the cell
+///   behaviors of 13 by 7 cells over the pool at (6, 32), and entering the
+///   goddess's room once the flag is set copies them again. Cells out in the
+///   water take CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_WATER, the heart
 ///   CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_HEART and cells on the pool's rim
-///   CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_RIM, which the hops and lights below
-///   answer, while the water between them stays a wall. From then on the pool's
-///   heart ( CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_HEART) gives the leader up
-///   to three lights, each hop into the water spends one, and landing in it
-///   without one sinks the leader back to the heart (the helpers of
-///   shared/mercury_lighthouse_pillar.h). Dropping in from above
+///   CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_RIM. The hops and lights below
+///   answer those, while the water between them stays a wall. From then on the
+///   pool's heart gives the leader up to three lights. Each hop into the water
+///   spends one, and landing in it without one sinks the leader back to the
+///   heart (the helpers of shared/mercury_lighthouse_pillar.h). Dropping in
+///   from above
 ///   (MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_LOWER_HOLE) the first
 ///   time, the leader lands in a burst, and until Ply has worked the
 ///   inscription's words appear.
-/// - The way on. Three sparkling passages (cell behaviors 67 to 69) carry
-///   the leader between this floor's parts
+/// - The way on. Three sparkling passages (cell behaviors 67 to 69) carry the
+///   leader between this floor's parts
 ///   (MERCURY_LIGHTHOUSE_ENTRANCE_CHEST_FOUNTAIN_TO_DRY_FOUNTAIN,
 ///   MERCURY_LIGHTHOUSE_ENTRANCE_EAST_WATERFALLS_TO_TWIN_FOUNTAINS and
-///   MERCURY_LIGHTHOUSE_ENTRANCE_DRY_FOUNTAIN_TO_CHEST_FOUNTAIN); four doors
+///   MERCURY_LIGHTHOUSE_ENTRANCE_DRY_FOUNTAIN_TO_CHEST_FOUNTAIN). Four doors
+///   lead up to SceneId_MercuryLighthouseLower
 ///   (MERCURY_LIGHTHOUSE_ENTRANCE_TO_MERCURY_LIGHTHOUSE_LOWER_WEST,
 ///   MERCURY_LIGHTHOUSE_ENTRANCE_TO_MERCURY_LIGHTHOUSE_LOWER_WEST_NORTHWEST,
 ///   MERCURY_LIGHTHOUSE_ENTRANCE_TO_MERCURY_LIGHTHOUSE_LOWER_SOUTHWEST and
-///   MERCURY_LIGHTHOUSE_ENTRANCE_TO_MERCURY_LIGHTHOUSE_LOWER_EAST_NORTHEAST)
-///   and the rise from the channels
+///   MERCURY_LIGHTHOUSE_ENTRANCE_TO_MERCURY_LIGHTHOUSE_LOWER_EAST_NORTHEAST).
+///   So does the rise from the channels
 ///   (MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_LOWER_PIPE, then
-///   MERCURY_LIGHTHOUSE_ENTRANCE_TO_MERCURY_LIGHTHOUSE_LOWER_PIPE) lead up to
-///   SceneId_MercuryLighthouseLower, and
-///   MERCURY_LIGHTHOUSE_ENTRANCE_TO_MERCURY_LIGHTHOUSE_EXTERIOR back out
+///   MERCURY_LIGHTHOUSE_ENTRANCE_TO_MERCURY_LIGHTHOUSE_LOWER_PIPE).
+///   MERCURY_LIGHTHOUSE_ENTRANCE_TO_MERCURY_LIGHTHOUSE_EXTERIOR leads back out
 ///   through the door to the ground before it, Mercury Lighthouse's
 ///   SceneId_MercuryLighthouseExterior (mercury_lighthouse.c). Two chests hold
 ///   Psynergy Armor and a mimic.
 ///
 /// Every entry sets FLAG_MERCURY_LIGHTHOUSE_LIT, under which Mercury Adepts
-/// regain PP faster, and makes SceneId_MercuryLighthouseExterior's
-/// MERCURY_LIGHTHOUSE_EXTERIOR_FROM_WORLD_MAP the Retreat point. The shimmering
-/// colours (MercuryLighthouse_CyclePalette) run once Ply has worked, and always
-/// in the goddess's room (MERCURY_LIGHTHOUSE_ENTRANCE_GODDESS_FROM_SIX_STATUES
-/// and the two from the twin pools, and
-/// MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_LOWER_HOLE); elsewhere
-/// they are black until then. The lights the leader carries come back from
-/// their heap slot (shared/mercury_lighthouse_lights.h) on a return after a
-/// battle. MERCURY_LIGHTHOUSE_ENTRANCE_DRY_FOUNTAIN_FROM_CHEST_FOUNTAIN,
+/// regain PP faster. It also makes SceneId_MercuryLighthouseExterior's
+/// MERCURY_LIGHTHOUSE_EXTERIOR_FROM_WORLD_MAP the Retreat point.
+///
+/// The shimmering colours (MercuryLighthouse_CyclePalette) run once Ply has
+/// worked. In the goddess's room they always run
+/// (MERCURY_LIGHTHOUSE_ENTRANCE_GODDESS_FROM_SIX_STATUES and the two from the
+/// twin pools, and
+/// MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_LOWER_HOLE). Elsewhere
+/// they are black until then.
+///
+/// The lights the leader carries come back from their heap slot
+/// (shared/mercury_lighthouse_lights.h) on a return after a battle.
+///
+/// Three entrances each have two rows, chosen by whether the channels upstairs
+/// run (FLAG_MERCURY_LIGHTHOUSE_CHANNELS_OPEN). They are
+/// MERCURY_LIGHTHOUSE_ENTRANCE_DRY_FOUNTAIN_FROM_CHEST_FOUNTAIN,
 /// MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_LOWER_NORTHEAST and
-/// MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_LOWER_EAST_NORTHEAST
-/// each have two rows, chosen by whether the channels upstairs run
-/// (FLAG_MERCURY_LIGHTHOUSE_CHANNELS_OPEN).
+/// MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_LOWER_EAST_NORTHEAST.
 
 #include "script_operands.h"
 #include "sprite.h"
@@ -126,13 +133,15 @@
 #include "item_ids.h"
 
 /// This floor's actors, numbering its actor placement rows from
-/// ACTOR_FIRST_PLACED. Mia stands in her own party slot; the Lizard Man is
-/// the monster she cannot get past (his scripted battle fights him as "Lizard
-/// Man"); the Ply target is the invisible actor Ply is cast on.
+/// ACTOR_FIRST_PLACED.
+///
+/// Mia stands in her own party slot. The Lizard Man is the monster she cannot
+/// get past (his scripted battle fights him as "Lizard Man"). The Ply target is
+/// the invisible actor Ply is cast on.
 enum MercuryLighthouseEntranceActorId {
   /// ★ Named from the game: "Lizard Man" (MsgEnemyName)
   ACTOR_LIZARD_MAN = ACTOR_FIRST_PLACED,
-  /// Six statues line the way to the doorway: three on its west side (x 88),
+  /// Six statues line the way to the doorway, three on its west side (x 88),
   /// then three on its east (x 184).
   /// ★ Named from the game: "checked the stone statue..." (MsgCheckedGround)
   ACTOR_FIRST_STATUE,
@@ -220,8 +229,8 @@ static void MercuryLighthouseEntrance_HopAcrossPool(void) {
 }
 
 /// Mercury Lighthouse, the pool, once Ply has worked: touching its heart
-/// ( CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_HEART) gives the leader lights, up
-/// to three.
+/// (CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_HEART) gives the leader lights, up to
+/// three.
 static void MercuryLighthouseEntrance_ChargeLights(void) {
   MercuryLighthouse_ChargeLights();
 }
@@ -244,9 +253,9 @@ MercuryLighthouseEntrance_GetActorPlacements(void) {
   return gMercuryLighthouseEntrance_ActorPlacements;
 }
 
-/// Mercury Lighthouse: searching the inscription by the pool
-/// (cell behavior 1). "He who honors the heart of the goddess shall stand
-/// at the center of all..."
+/// Mercury Lighthouse: searching the inscription by the pool (cell behavior 1).
+///
+/// "He who honors the heart of the goddess shall stand at the center of all..."
 static void MercuryLighthouseEntrance_ReadHeartInscription(void) {
   Event_Start();
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
@@ -286,10 +295,13 @@ const struct Trigger *MercuryLighthouseEntrance_GetTriggers(void) {
 }
 
 /// Mercury Lighthouse, the pool: Ply on the Ply target, from cell (12, 32)
-/// only, as the inscription bids. The room dims, fifteen sparks rise from the
-/// pool, its colours start to shimmer, and the routes that need it open, so
-/// the pool's cell behaviors come into play. Until
-/// FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED is set, which it sets.
+/// only, as the inscription bids.
+///
+/// The room dims, fifteen sparks rise from the pool, and its colours start to
+/// shimmer. The routes that need it open, so the pool's cell behaviors come
+/// into play.
+///
+/// Until FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED is set, which it sets.
 static void MercuryLighthouseEntrance_ActivateWithPly(void) {
   s32 leaderColumn;
   s32 leaderRow;
@@ -361,17 +373,20 @@ static void MercuryLighthouseEntrance_ReturnToDoorway(void) {
       MERCURY_LIGHTHOUSE_ENTRANCE_TO_SIX_STATUES_AFTER_LIZARD_MAN);
 }
 
-/// Mercury Lighthouse, the doorway: touching cell behavior 40 or 42 while
-/// the Lizard Man stands aside: he steps back in front of the doorway.
+/// Mercury Lighthouse, the doorway: touching cell behavior 40 or 42 while the
+/// Lizard Man stands aside.
+///
+/// He steps back in front of the doorway.
 static void MercuryLighthouseEntrance_LizardManReturnsToCentre(void) {
   GameFlag_Clear(FLAG_LIZARD_MAN_STEPPED_ASIDE);
   Actor_SetScript(ACTOR_LIZARD_MAN,
                   gMercuryLighthouseEntrance_LizardManStepCentre);
 }
 
-/// Mercury Lighthouse, the doorway: touching cell behavior 41 while the
-/// Lizard Man stands in the doorway: he steps into the leader's way, west from
-/// column 7 and east otherwise.
+/// Mercury Lighthouse, the doorway: touching cell behavior 41 while the Lizard
+/// Man stands in the doorway.
+///
+/// He steps into the leader's way, west from column 7 and east otherwise.
 static void MercuryLighthouseEntrance_LizardManBlocksLeader(void) {
   struct Actor *leader;
   s32 leaderX;
@@ -391,8 +406,9 @@ static void MercuryLighthouseEntrance_LizardManBlocksLeader(void) {
 }
 
 /// Mercury Lighthouse, the doorway: talking to the Lizard Man, Mind Read on
-/// him, or walking north into cell behavior 40 or 41. He stirs and the
-/// battle begins; afterwards the party comes back at
+/// him, or walking north into cell behavior 40 or 41.
+///
+/// He stirs and the battle begins. Afterwards the party comes back at
 /// MERCURY_LIGHTHOUSE_ENTRANCE_SIX_STATUES_AFTER_LIZARD_MAN.
 static void MercuryLighthouseEntrance_FightLizardMan(void) {
   Event_Start();
@@ -413,11 +429,14 @@ static void MercuryLighthouseEntrance_FightLizardMan(void) {
 
 #include "shared/mercury_lighthouse_arrive.h"
 
-/// Sets up Mercury Lighthouse's ground floor: the lights the leader carries,
-/// FLAG_MERCURY_LIGHTHOUSE_LIT, the Retreat point, the pool's colours and the
-/// routes Ply has opened, then the event of the entrance taken: the
-/// Lizard Man event until Mia has gone in, the drop from above, the passages'
-/// arrivals and the rise from the channels.
+/// Sets up Mercury Lighthouse's ground floor, then plays the event of the
+/// entrance taken.
+///
+/// It sets up the lights the leader carries, FLAG_MERCURY_LIGHTHOUSE_LIT, the
+/// Retreat point, the pool's colours and the routes Ply has opened.
+///
+/// The events are the Lizard Man event until Mia has gone in, the drop from
+/// above, the passages' arrivals and the rise from the channels.
 s32 MercuryLighthouseEntrance_Initialize(void) {
   struct EffectOptions options;
   s32 velocity[3];
@@ -586,9 +605,11 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
 
 /// Mercury Lighthouse, the doorway, at
 /// MERCURY_LIGHTHOUSE_ENTRANCE_SIX_STATUES_BEFORE_LIZARD_MAN unless returning
-/// after a battle: Mia tries to get past the Lizard Man, who steps across to
-/// block her each time; then she waits, watching the leader come up, and the
-/// cells before the doorway become walkable.
+/// after a battle.
+///
+/// Mia tries to get past the Lizard Man, who steps across to block her each
+/// time. Then she waits, watching the leader come up, and the cells before the
+/// doorway become walkable.
 static void MercuryLighthouseEntrance_LizardManBlocksMia(void) {
   s32 paceCycle;
   struct Actor *mia;
@@ -670,8 +691,10 @@ static void MercuryLighthouseEntrance_LizardManBlocksMia(void) {
 
 /// Mercury Lighthouse, the doorway, at
 /// MERCURY_LIGHTHOUSE_ENTRANCE_SIX_STATUES_AFTER_LIZARD_MAN, back from the
-/// Lizard Man battle, once: Mia nods to the leader and goes on into the
-/// lighthouse. Sets FLAG_MERCURY_LIGHTHOUSE_ENTERED_BY_MIA.
+/// Lizard Man battle, once.
+///
+/// Mia nods to the leader and goes on into the lighthouse. Sets
+/// FLAG_MERCURY_LIGHTHOUSE_ENTERED_BY_MIA.
 static void MercuryLighthouseEntrance_MiaEntersLighthouse(void) {
   struct Actor *actor;
 
@@ -745,7 +768,7 @@ s32 gFieldEffect_LongScript[] = {
     SC_POSITION(0, 0, 0), SC_WAIT(1),           SC_RELEASE,
 };
 
-/// Pixel step by direction: X in the upper halfword, Z in the lower.
+/// Pixel step by direction, with X in the upper halfword and Z in the lower.
 #define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))
 
 s32 gPushedActor_DirectionSteps[] = {

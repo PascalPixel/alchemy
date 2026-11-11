@@ -1,70 +1,85 @@
 /// @file
-/// Vale (SceneId_ValeKradensCottage): the part of the village around Kraden's
-/// cottage, by the fence that closes off the lands beyond. Kraden, "a trained
-/// Alchemy sage" in his own words, came to Vale to study Mt. Aleph and Alchemy.
-/// One actor placement table serves every visit:
-/// ValeKradensCottage_Initialize removes the people a visit does not use, and
-/// ValeKradensCottage_GetTriggers picks the events for the time of the story.
+/// Vale (SceneId_ValeKradensCottage) is the part of the village around Kraden's
+/// cottage, by the fence that closes off the lands beyond.
 ///
-/// - The stormy night of the prologue (FLAG_VALE_STORM). The storm's scene
-/// (Vale,
-///   SceneId_ValePrologue) leads here by
-///   VALE_PROLOGUE_TO_VALE_KRADENS_COTTAGE_NORTH and
-///   VALE_PROLOGUE_TO_VALE_KRADENS_COTTAGE_SOUTH, arriving by
-///   VALE_KRADENS_COTTAGE_FROM_VALE_NORTH and
-///   VALE_KRADENS_COTTAGE_FROM_VALE_SOUTH, and the two paths lead back
-///   (VALE_KRADENS_COTTAGE_TO_VALE_PROLOGUE_NORTH and
-///   VALE_KRADENS_COTTAGE_TO_VALE_PROLOGUE_SOUTH). A rockslide has broken
-///   the fence and let monsters in: Initialize starts the lightning, leaves the
-///   two rocks that Isaac cannot budge across the way, copies
-///   CELL_BEHAVIOR_WALL over the path's six cells below the west rock and under
-///   the east one, two of which by day hold
-///   ValeKradensCottage_MeetSaturosAndMenardi's cell behavior 7, and lays a
-///   hurt man by the fence. Talking to him, or walking up to him (cell behavior
-///   20), plays ValeKradensCottage_TalkToRockslideSurvivor: asked whether he
-///   will die, a yes leaves him giving up
-///   (FLAG_VALE_ROCKSLIDE_SURVIVOR_GAVE_UP), and a no has him find he is not
-///   hurt at all, warn them of the monsters on their way to the plaza and run
-///   off (FLAG_VALE_ROCKSLIDE_SURVIVOR_ESCAPED), after which he is no longer
-///   placed. Two cells start a monster battle each, once (the first two slots
-///   of the encounter zone of the scripted battles of Vale, Vault and the world
-///   map).
-/// - Three years later, the day the story begins, Isaac comes up with Garet and
-///   Jenna to find two strangers outside. Walking past them (cell behavior
-///   7) plays ValeKradensCottage_MeetSaturosAndMenardi: the three overhear the
-///   two speak of Sol Sanctum and of using Kraden, confront them and are let
-///   go, the two calling each other Saturos and Menardi
-///   (FLAG_MET_SATUROS_AND_MENARDI), and the strangers then stand aside,
-///   turning to watch the leader. Near the cottage (cell behavior 5), the
-///   party overhears Kraden wondering what the strangers know of the Elemental
-///   Stars (ValeKradensCottage_OverhearKraden,
-///   FLAG_KRADEN_WONDERED_ABOUT_STRANGERS). Talking to Kraden plays
-///   ValeKradensCottage_KradenPlansSanctumVisit: Garet brings up Saturos and
-///   Menardi, and Kraden talks the three into a secret look at Sol Sanctum on
-///   the forbidden mountain, then goes in to prepare, and
-///   VALE_KRADENS_COTTAGE_TO_COTTAGE_ROOMS_B_MYTHRIL_BAG takes the party into
-///   the cottage (SceneId_CottageRoomsB,
-///   COTTAGE_ROOMS_B_FROM_VALE_KRADENS_COTTAGE_MYTHRIL_BAG). Coming back out by
-///   VALE_KRADENS_COTTAGE_FROM_COTTAGE_ROOMS_B_SOUTH, Kraden joins them for Mt.
-///   Aleph (ValeKradensCottage_KradenSetsOff, FLAG_SANCTUM_VISIT_PLANNED); from
-///   then on he and the strangers are gone. A small boy at the fence hears
-///   growls beyond it, and a jar holds an Elixir.
-/// - After the party has left Vale (FLAG_VALE_PARTY_LEFT) the child means to
-///   climb the fence one day, and after Kalay (FLAG_KALAY_REACHED) a woman with
-///   fair hair visits the empty cottage, missing Kraden.
+/// Kraden, "a trained Alchemy sage" in his own words, came to Vale to study Mt.
+/// Aleph and Alchemy.
 ///
-/// By day the cottage's door (ValeKradensCottage_EnterCottage) leads into the
-/// cottage (VALE_KRADENS_COTTAGE_TO_COTTAGE_ROOMS_B_NORTH, to
-/// SceneId_CottageRoomsB's COTTAGE_ROOMS_B_FROM_VALE_KRADENS_COTTAGE_NORTH),
-/// VALE_KRADENS_COTTAGE_TO_VALE_NORTH and VALE_KRADENS_COTTAGE_TO_VALE_SOUTH go
-/// down into the village (SceneId_Vale) and
-/// VALE_KRADENS_COTTAGE_TO_VALE_CAVE_MOUTH_WEST and
-/// VALE_KRADENS_COTTAGE_TO_VALE_CAVE_MOUTH_EAST into Vale Cave's way in
-/// (SceneId_ValeCaveMouth). Coming back from it by
-/// VALE_KRADENS_COTTAGE_FROM_VALE_CAVE_MOUTH_EAST clears
-/// FLAG_SHOW_AREA_NAME, so the area name is not shown again. The jar's row
-/// finds nothing on the stormy night, and after Kalay it is there only from the
-/// third patch on.
+/// One actor placement table serves every visit. ValeKradensCottage_Initialize
+/// removes the people a visit does not use, and ValeKradensCottage_GetTriggers
+/// picks the events for the time of the story.
+///
+/// On the stormy night of the prologue (FLAG_VALE_STORM), the storm's scene
+/// (Vale, SceneId_ValePrologue) leads here by
+/// VALE_PROLOGUE_TO_VALE_KRADENS_COTTAGE_NORTH and
+/// VALE_PROLOGUE_TO_VALE_KRADENS_COTTAGE_SOUTH. The party arrives by
+/// VALE_KRADENS_COTTAGE_FROM_VALE_NORTH and
+/// VALE_KRADENS_COTTAGE_FROM_VALE_SOUTH, and the two paths lead back
+/// (VALE_KRADENS_COTTAGE_TO_VALE_PROLOGUE_NORTH and
+/// VALE_KRADENS_COTTAGE_TO_VALE_PROLOGUE_SOUTH).
+///
+/// A rockslide has broken the fence and let monsters in. Initialize starts the
+/// lightning and leaves the two rocks that Isaac cannot budge across the way.
+/// It copies CELL_BEHAVIOR_WALL over the path's six cells below the west rock
+/// and under the east one. Two of those cells hold
+/// ValeKradensCottage_MeetSaturosAndMenardi's cell behavior 7 by day. It also
+/// lays a hurt man by the fence.
+///
+/// Talking to the hurt man, or walking up to him (cell behavior 20), plays
+/// ValeKradensCottage_TalkToRockslideSurvivor. He asks whether he will die. A
+/// yes leaves him giving up (FLAG_VALE_ROCKSLIDE_SURVIVOR_GAVE_UP). A no has
+/// him find he is not hurt at all, warn them of the monsters on their way to
+/// the plaza and run off (FLAG_VALE_ROCKSLIDE_SURVIVOR_ESCAPED), after which he
+/// is no longer placed.
+///
+/// Two cells start a monster battle each, once. They are the first two slots of
+/// the encounter zone of the scripted battles of Vale, Vault and the world map.
+///
+/// Three years later, the day the story begins, Isaac comes up with Garet and
+/// Jenna to find two strangers outside.
+///
+/// - Walking past the strangers (cell behavior 7) plays
+///   ValeKradensCottage_MeetSaturosAndMenardi. The three overhear the two speak
+///   of Sol Sanctum and of using Kraden, confront them and are let go. The two
+///   call each other Saturos and Menardi (FLAG_MET_SATUROS_AND_MENARDI). The
+///   strangers then stand aside, turning to watch the leader.
+/// - Near the cottage (cell behavior 5), the party overhears Kraden wondering
+///   what the strangers know of the Elemental Stars
+///   (ValeKradensCottage_OverhearKraden, FLAG_KRADEN_WONDERED_ABOUT_STRANGERS).
+/// - Talking to Kraden plays ValeKradensCottage_KradenPlansSanctumVisit. Garet
+///   brings up Saturos and Menardi. Kraden talks the three into a secret look
+///   at Sol Sanctum on the forbidden mountain, then goes in to prepare.
+/// - VALE_KRADENS_COTTAGE_TO_COTTAGE_ROOMS_B_MYTHRIL_BAG then takes the party
+///   into the cottage (SceneId_CottageRoomsB,
+///   COTTAGE_ROOMS_B_FROM_VALE_KRADENS_COTTAGE_MYTHRIL_BAG).
+/// - Coming back out by VALE_KRADENS_COTTAGE_FROM_COTTAGE_ROOMS_B_SOUTH, Kraden
+///   joins them for Mt. Aleph (ValeKradensCottage_KradenSetsOff,
+///   FLAG_SANCTUM_VISIT_PLANNED). From then on he and the strangers are gone.
+///
+/// On that day a small boy at the fence hears growls beyond it, and a jar holds
+/// an Elixir.
+///
+/// After the party has left Vale (FLAG_VALE_PARTY_LEFT) the child means to
+/// climb the fence one day. After Kalay (FLAG_KALAY_REACHED) a woman with fair
+/// hair visits the empty cottage, missing Kraden.
+///
+/// By day the scene has these ways out.
+///
+/// - The cottage's door (ValeKradensCottage_EnterCottage) leads into the
+///   cottage (VALE_KRADENS_COTTAGE_TO_COTTAGE_ROOMS_B_NORTH, to
+///   SceneId_CottageRoomsB's COTTAGE_ROOMS_B_FROM_VALE_KRADENS_COTTAGE_NORTH).
+/// - VALE_KRADENS_COTTAGE_TO_VALE_NORTH and VALE_KRADENS_COTTAGE_TO_VALE_SOUTH
+///   go down into the village (SceneId_Vale).
+/// - VALE_KRADENS_COTTAGE_TO_VALE_CAVE_MOUTH_WEST and
+///   VALE_KRADENS_COTTAGE_TO_VALE_CAVE_MOUTH_EAST go into Vale Cave's way in
+///   (SceneId_ValeCaveMouth).
+///
+/// Coming back from Vale Cave's way in by
+/// VALE_KRADENS_COTTAGE_FROM_VALE_CAVE_MOUTH_EAST clears FLAG_SHOW_AREA_NAME,
+/// so the area name is not shown again.
+///
+/// The jar's row finds nothing on the stormy night. After Kalay it is there
+/// only from the third patch on.
 
 #include "main_routine_work.h"
 #include "module/import.h"
@@ -99,16 +114,20 @@
 #include "sound_driver_symbols.h"
 
 /// The placed actors, numbered in the order of
-/// gValeKradensCottage_ActorPlacements; Garet and Jenna, placed between
-/// Kraden and Saturos, keep their own slots.
+/// gValeKradensCottage_ActorPlacements. Garet and Jenna, placed between Kraden
+/// and Saturos, keep their own slots.
 enum ValeKradensCottageActorId {
-  /// A boulder by the fence, with the sprite of the boulder Lift raises at the
-  /// Alpine Crossing (MsgMountainIsaacDidLiftBoulder) and in Gondowan Cave. Its
-  /// Lift row runs no event, like ACTOR_RIVER_BOULDER's in gondowan_cave.c,
-  /// and the stormy night's events have no row for it. Cast on it, Lift's two
-  /// hands close on it and burst into sparkles, the boulder stays where it is,
-  /// and no message follows, since the row answers the cast (render probe
-  /// kraden-lift, by day and after the party has left Vale).
+  /// This is a boulder by the fence. It has the sprite of the boulder Lift
+  /// raises at the Alpine Crossing (MsgMountainIsaacDidLiftBoulder) and in
+  /// Gondowan Cave.
+  ///
+  /// Its Lift row runs no event, like ACTOR_RIVER_BOULDER's in gondowan_cave.c.
+  /// The stormy night's events have no row for it.
+  ///
+  /// Cast on it, Lift's two hands close on it and burst into sparkles. The
+  /// boulder stays where it is, and no message follows, since the row answers
+  /// the cast (render probe kraden-lift, by day and after the party has left
+  /// Vale).
   /// ★ Named from the game: "did you lift the boulder?"
   /// (MsgMountainIsaacDidLiftBoulder), said of the same sprite
   ACTOR_FENCE_BOULDER = ACTOR_FIRST_PLACED,
@@ -144,9 +163,8 @@ enum ValeKradensCottageActorId {
 
 #include "shared/actor_facing.h"
 
-/// The front door of Kraden's cottage stands open since Kraden set off, so
-/// walking in (cell behavior 3, the exit into the cottage) skips its
-/// opening.
+/// The front door of Kraden's cottage stands open since Kraden set off. So
+/// walking in (cell behavior 3, the exit into the cottage) skips its opening.
 /// ★ Named from what the player sees: the arched wooden door of Kraden's
 /// thatched cottage (its render)
 #define FLAG_VALE_KRADENS_DOOR_OPEN FLAG_SCENE_TEMP_42
@@ -163,16 +181,15 @@ const u32 *ValeKradensCottage_GetExits(void) {
   return gValeKradensCottage_Exits;
 }
 
-/// Returns the one actor placement table for every visit;
-/// ValeKradensCottage_Initialize removes the actors a visit does not
-/// use.
+/// Returns the one actor placement table for every visit.
+/// ValeKradensCottage_Initialize removes the actors a visit does not use.
 const struct ActorPlacement *ValeKradensCottage_GetActorPlacements(void) {
   return gValeKradensCottage_ActorPlacements;
 }
 
-/// Selects the events for the current visit to Vale: after Kalay
-/// (FLAG_KALAY_REACHED), on the stormy night (FLAG_VALE_STORM), else the day
-/// the story begins.
+/// Selects the events for the current visit to Vale. They are the ones for
+/// after Kalay (FLAG_KALAY_REACHED), for the stormy night (FLAG_VALE_STORM), or
+/// else for the day the story begins.
 const struct Trigger *ValeKradensCottage_GetTriggers(void) {
   if (GameFlag_Get(FLAG_KALAY_REACHED) != 0) {
     return gValeKradensCottage_TriggersAfterKalay;
@@ -210,8 +227,9 @@ static __inline__ void ValeKradensCottage_WalkTowardLeader(s32 companionId) {
 }
 
 /// In Vale by Kraden's cottage, the child at the fence asks whether Isaac hears
-/// the growls beyond it; once the party has left Vale, he means to climb it
-/// someday.
+/// the growls beyond it.
+///
+/// Once the party has left Vale, he means to climb it someday.
 ///
 /// Reached by talking to the boy by the fence (ACTOR_BOY_BY_THE_FENCE) in the
 /// day's events.
@@ -243,16 +261,19 @@ static void ValeKradensCottage_TalkToBoyByTheFence(void) {
   Event_End();
 }
 
-/// In Vale, talking to Kraden outside his cottage: he talks Isaac, Garet and
-/// Jenna into a secret look at Sol Sanctum, then goes inside to prepare.
+/// In Vale, talking to Kraden outside his cottage has him talk Isaac, Garet and
+/// Jenna into a secret look at Sol Sanctum.
+///
+/// He then goes inside to prepare.
 ///
 /// Reached by talking to Kraden in the day's events, until
 /// FLAG_SANCTUM_VISIT_PLANNED is set. Ends by taking
 /// VALE_KRADENS_COTTAGE_TO_COTTAGE_ROOMS_B_MYTHRIL_BAG into the cottage
 /// (SceneId_CottageRoomsB,
-/// COTTAGE_ROOMS_B_FROM_VALE_KRADENS_COTTAGE_MYTHRIL_BAG); the party comes back
-/// by VALE_KRADENS_COTTAGE_FROM_COTTAGE_ROOMS_B_SOUTH, where
-/// ValeKradensCottage_KradenSetsOff goes on.
+/// COTTAGE_ROOMS_B_FROM_VALE_KRADENS_COTTAGE_MYTHRIL_BAG).
+///
+/// The party comes back by VALE_KRADENS_COTTAGE_FROM_COTTAGE_ROOMS_B_SOUTH,
+/// where ValeKradensCottage_KradenSetsOff goes on.
 static void ValeKradensCottage_KradenPlansSanctumVisit(void) {
   struct Actor *leader;
   s32 x, z;
@@ -522,15 +543,15 @@ static void ValeKradensCottage_KradenPlansSanctumVisit(void) {
   }
 }
 
-/// In Vale, back out of Kraden's cottage by
-/// VALE_KRADENS_COTTAGE_FROM_COTTAGE_ROOMS_B_SOUTH: Kraden comes out ready, and
-/// everyone joins Isaac for Mt. Aleph. "This is our best bet."
+/// In Vale, when the party comes back out of Kraden's cottage, Kraden comes out
+/// ready and everyone joins Isaac for Mt. Aleph.
+///
+/// "This is our best bet."
 ///
 /// Called by ValeKradensCottage_Initialize on
 /// VALE_KRADENS_COTTAGE_FROM_COTTAGE_ROOMS_B_SOUTH unless the party keeps its
-/// position. Sets FLAG_SANCTUM_VISIT_PLANNED and FLAG_VALE_KRADENS_DOOR_OPEN
-/// (the door stays open), and removes Kraden, Garet, Jenna, Saturos and
-/// Menardi.
+/// position. Sets FLAG_SANCTUM_VISIT_PLANNED and FLAG_VALE_KRADENS_DOOR_OPEN,
+/// so the door stays open. Removes Kraden, Garet, Jenna, Saturos and Menardi.
 static void ValeKradensCottage_KradenSetsOff(void) {
   struct Actor *actor;
   s32 facing;
@@ -600,11 +621,11 @@ static void ValeKradensCottage_KradenSetsOff(void) {
   Event_End();
 }
 
-/// In Vale, walking into Kraden's cottage: the door opens unless Kraden left
-/// it open.
+/// In Vale, walking into Kraden's cottage opens the door, unless Kraden left it
+/// open.
 ///
-/// Reached by walking north into cell behavior 3, by day and after Kalay;
-/// takes VALE_KRADENS_COTTAGE_TO_COTTAGE_ROOMS_B_NORTH into the cottage.
+/// Reached by walking north into cell behavior 3, by day and after Kalay. Takes
+/// VALE_KRADENS_COTTAGE_TO_COTTAGE_ROOMS_B_NORTH into the cottage.
 static void ValeKradensCottage_EnterCottage(void) {
   if (GameFlag_Get(FLAG_VALE_KRADENS_DOOR_OPEN) == 0) {
     Sound_Play(SE_DOOR_OPEN);
@@ -614,11 +635,13 @@ static void ValeKradensCottage_EnterCottage(void) {
   Import_EventSetExitRequest(VALE_KRADENS_COTTAGE_TO_COTTAGE_ROOMS_B_NORTH);
 }
 
-/// In Vale on the way to Kraden's cottage, walking past the two strangers:
-/// Isaac, Garet and Jenna overhear Saturos and Menardi, confront them and are
+/// In Vale on the way to Kraden's cottage, Isaac, Garet and Jenna walk past two
+/// strangers and overhear them.
+///
+/// The strangers are Saturos and Menardi. The three confront them and are
 /// warned off.
 ///
-/// Reached by stepping on cell behavior 7 in the day's events; runs once,
+/// Reached by stepping on cell behavior 7 in the day's events. Runs once,
 /// setting FLAG_MET_SATUROS_AND_MENARDI. Saturos and Menardi are left turning
 /// to watch the leader.
 static void ValeKradensCottage_MeetSaturosAndMenardi(void) {
@@ -852,11 +875,12 @@ static void ValeKradensCottage_MeetSaturosAndMenardi(void) {
   Event_End();
 }
 
-/// In Vale, walking up to Kraden's cottage: Kraden paces, wondering aloud who
-/// the strangers were and what they know of Sol Sanctum and the Elemental
-/// Stars.
+/// In Vale, walking up to Kraden's cottage finds Kraden pacing.
 ///
-/// Reached by stepping on cell behavior 5 in the day's events; runs once,
+/// He wonders aloud who the strangers were, and what they know of Sol Sanctum
+/// and the Elemental Stars.
+///
+/// Reached by stepping on cell behavior 5 in the day's events. Runs once,
 /// setting FLAG_KRADEN_WONDERED_ABOUT_STRANGERS.
 static void ValeKradensCottage_OverhearKraden(void) {
   struct Actor *leader;
@@ -947,18 +971,23 @@ static void ValeKradensCottage_OverhearKraden(void) {
   }
 }
 
-/// Arriving in Kraden's part of Vale: places the actors for the storm or
-/// for the day, and plays the arrival from the cottage.
+/// Arriving in Kraden's part of Vale places the actors for the storm or for the
+/// day, and plays the arrival from the cottage.
 ///
-/// The scene's initialize entry. On the stormy night (FLAG_VALE_STORM) it
-/// starts the lightning, removes the day's people, lays the survivor by the
-/// fence (unless FLAG_VALE_ROCKSLIDE_SURVIVOR_ESCAPED) and blocks the cells the
-/// rockslide covers. By day it removes the rocks and Garet, runs
+/// This is the scene's initialize entry.
+///
+/// On the stormy night (FLAG_VALE_STORM) it starts the lightning and removes
+/// the day's people. It lays the survivor by the fence (unless
+/// FLAG_VALE_ROCKSLIDE_SURVIVOR_ESCAPED) and blocks the cells the rockslide
+/// covers.
+///
+/// By day it removes the rocks and Garet. It runs
 /// ValeKradensCottage_KradenSetsOff from
 /// VALE_KRADENS_COTTAGE_FROM_COTTAGE_ROOMS_B_SOUTH, removes Kraden and the
 /// strangers once FLAG_SANCTUM_VISIT_PLANNED is set, and places the cottage
-/// visitor after Kalay. Clears FLAG_VALE_KRADENS_DOOR_OPEN when the party keeps
-/// its position.
+/// visitor after Kalay.
+///
+/// Clears FLAG_VALE_KRADENS_DOOR_OPEN when the party keeps its position.
 s32 ValeKradensCottage_Initialize(void) {
   struct Actor *actor;
   s32 debrisRow;
@@ -1046,13 +1075,15 @@ s32 ValeKradensCottage_Initialize(void) {
 }
 
 /// In Vale on the stormy night, the man hurt in the rockslide asks whether he
-/// will die: yes, and he gives up; no, and he finds he is unhurt, warns them
-/// about the monsters and runs off.
+/// will die.
 ///
-/// Reached on the stormy night by talking to him (ACTOR_ROCKSLIDE_SURVIVOR),
-/// or by stepping on cell behavior 20 until he has given up. Sets
+/// On a yes he gives up. On a no he finds he is unhurt, warns them about the
+/// monsters and runs off.
+///
+/// Reached on the stormy night by talking to him (ACTOR_ROCKSLIDE_SURVIVOR), or
+/// by stepping on cell behavior 20 until he has given up. Sets
 /// FLAG_VALE_ROCKSLIDE_SURVIVOR_GAVE_UP on yes, or
-/// FLAG_VALE_ROCKSLIDE_SURVIVOR_ESCAPED on no; once he has escaped it does
+/// FLAG_VALE_ROCKSLIDE_SURVIVOR_ESCAPED on no. Once he has escaped it does
 /// nothing.
 static void ValeKradensCottage_TalkToRockslideSurvivor(void) {
   struct Actor *leader;
@@ -1365,8 +1396,9 @@ struct Trigger gValeKradensCottage_TriggersAfterKalay[] = {
 };
 // clang-format on
 
-/// The cottage's arched front door opening: two pictures from the layout's
-/// cells below the village, drawn over the closed door on the middle layer.
+/// The cottage's arched front door opening. It is two pictures from the
+/// layout's cells below the village, drawn over the closed door on the middle
+/// layer.
 u16 gValeKradensCottage_DoorOpens[] = {
     MAPGRID_ANIMATION_STEP(2, 36, 2, 2, 1),
     MAPGRID_ANIMATION_STEP(4, 36, 2, 2, 1),

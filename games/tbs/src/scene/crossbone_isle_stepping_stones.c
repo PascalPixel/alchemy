@@ -1,37 +1,47 @@
 /// @file
 /// Five of the side rooms of Crossbone Isle Cave, the cave beneath Crossbone
-/// Isle. Each opens off one of the nine floors the cave descends through
-/// (crossbone_isle.c) through two doors, east and west: the floor's east door
+/// Isle.
+///
+/// Each opens off one of the nine floors the cave descends through
+/// (crossbone_isle.c) through two doors, east and west. The floor's east door
 /// leads in at the room's `_EAST` entrance
 /// (CROSSBONE_ISLE_STEPPING_STONES_FROM_CROSSBONE_ISLE_FIRST_FLOOR_EAST in the
-/// first) and its west door at the `_WEST` one, and the exits of the same names
-/// lead back out. Each is a puzzle with four chests, and all five take the area
-/// name Crossbone Isle Cave. In the order the party meets them:
+/// first) and its west door at the `_WEST` one. The exits of the same names
+/// lead back out.
+///
+/// Each is a puzzle with four chests, and all five take the area name
+/// Crossbone Isle Cave. In the order the party meets them:
 ///
 /// - SceneId_CrossboneIsleSteppingStones, off the first floor: stepping stones
-///   over a pit; walking into a pillar jumps two cells across it where the
+///   over a pit. Walking into a pillar jumps two cells across it where the
 ///   cells allow, and otherwise pushes it
 ///   (CrossboneIsleSteppingStones_JumpOrPushPillar).
+///
 /// - SceneId_CrossboneIsleIcePillars, off the second floor: pillars of ice to
 ///   push, standing and lying across a floor of spikes.
+///
 /// - SceneId_CrossboneIsleFloodgate, off the fifth floor: a cave with a stream
-///   and a floodgate across it, and seven logs to roll. The switch beside the
-///   floodgate (CrossboneIsleSteppingStones_FlipWaterSwitch) closes it, so the
-///   water backs up and floats the logs higher, or opens it to drain them back
-///   down; the water level lasts only while the party stays
+///   and a floodgate across it, and seven logs to roll.
+///
+///   The switch beside the floodgate
+///   (CrossboneIsleSteppingStones_FlipWaterSwitch) closes it, so the water
+///   backs up and floats the logs higher, or opens it to drain them back
+///   down. The water level lasts only while the party stays
 ///   (FLAG_CROSSBONE_ISLE_FLOODGATE_WATER_RAISED, kept through a battle).
+///
 /// - SceneId_CrossboneIsleStackedPillars, off the seventh floor, a cave of
-/// cliffs
-///   and ladders: four pillars that Move and Carry shift, and that settle and
-///   redraw their footprints after every push
-///   (CrossboneIsleSteppingStones_MovePillar), a ladder, and pillars to jump
-///   across.
+///   cliffs and ladders. It has four pillars that Move and Carry shift, a
+///   ladder, and pillars to jump across. The four pillars settle and redraw
+///   their footprints after every push
+///   (CrossboneIsleSteppingStones_MovePillar).
+///
 /// - SceneId_CrossboneIsleDragonStatue, off the eighth floor, by a dragon
-/// statue:
-///   three puddles that Frost freezes into pillars of ice. Frost on the third
-///   makes the pillar in it rise and thaws a frozen second puddle, and the
-///   third freezes only if the leader was not standing on it; a boulder moved
-///   with Move sinks into place at column 16.
+///   statue: three puddles that Frost freezes into pillars of ice.
+///
+///   Frost on the third makes the pillar in it rise and thaws a frozen second
+///   puddle. The third freezes only if the leader was not standing on it.
+///
+///   A boulder moved with Move sinks into place at column 16.
 ///
 /// The other three side rooms are in crossbone_isle_keys.c, and the ninth
 /// floor's in crossbone_isle.c.
@@ -101,9 +111,9 @@ enum CrossboneIsleSteppingStonesActorId {
   /// (its render)
   ACTOR_FIRST_PILLAR = ACTOR_FIRST_PLACED,
   /// The logs, SPRITE_LOG_NORTH_SOUTH and SPRITE_LOG_WEST_EAST as Kolima
-  /// Forest's: eight in
-  /// CrossboneIsleFloodgate, where the seven after the first float on the
-  /// raised water, and two in CrossboneIsleDragonStatue.
+  /// Forest's. There are eight in CrossboneIsleFloodgate, where the seven
+  /// after the first float on the raised water, and two in
+  /// CrossboneIsleDragonStatue.
   /// ★ Named from what the player sees: logs lying on the cave floor (its
   /// render)
   ACTOR_FIRST_LOG = ACTOR_FIRST_PLACED,
@@ -124,8 +134,7 @@ enum CrossboneIsleSteppingStonesActorId {
   /// drawn frozen around its pillar (its render)
   ACTOR_THIRD_PUDDLE,
   /// The pillar in CrossboneIsleDragonStatue's third puddle,
-  /// SPRITE_WHITE_PLATFORM,
-  /// which rises 32 pixels as Frost freezes the puddle.
+  /// SPRITE_WHITE_PLATFORM, which rises 32 pixels as Frost freezes the puddle.
   /// ★ Named from what the player sees: a narrow dark pillar standing in the
   /// third puddle (its render)
   ACTOR_RISING_PILLAR,
@@ -141,13 +150,13 @@ enum CrossboneIsleSteppingStonesActorId {
 /// closed floodgate, floating the logs higher (its render)
 #define FLAG_CROSSBONE_ISLE_FLOODGATE_WATER_RAISED FLAG_SCENE_TEMP_00
 /// CrossboneIsleStackedPillars: the first pillar has another pushed on top of
-/// it, so Move and Carry leave it be; the four pillars' flags follow from this
+/// it, so Move and Carry leave it be. The four pillars' flags follow from this
 /// one.
 /// ★ Named from what the player sees: two stacks of two grey stone pillars
 /// among the ladders and cliffs (its render)
 #define FLAG_CROSSBONE_ISLE_STACKED_PILLARS_FIRST_PILLAR_UNDER_ANOTHER         \
   FLAG_SCENE_TEMP_00
-/// CrossboneIsleDragonStatue: the first puddle is frozen; the second's and
+/// CrossboneIsleDragonStatue: the first puddle is frozen. The second's and
 /// third's flags follow from this one.
 /// ★ Named from what the player sees: three small blue puddles on the cave
 /// floor (its render)
@@ -717,7 +726,7 @@ static void CrossboneIsleSteppingStones_PushPillar(void) {
   Event_End();
 }
 
-/// A pillar slot's place and ground cell, without its flag; it holds one slot
+/// A pillar slot's place and ground cell, without its flag. It holds one slot
 /// while two are swapped.
 struct PillarPlacement {
   s32 x; ///< 16-pixel map cells
@@ -827,9 +836,10 @@ static void CrossboneIsleSteppingStones_AnimateWaterLevel(void) {
 }
 
 /// Searching the switch beside CrossboneIsleFloodgate's floodgate flips it.
-/// "Isaac flipped the switch." The floodgate closes and the water backs up
-/// behind it, floating the logs higher, or it opens and the water drains away
-/// and the logs settle on the floor.
+///
+/// "Isaac flipped the switch." Either the floodgate closes and the water backs
+/// up behind it, floating the logs higher, or it opens and the water drains
+/// away and the logs settle on the floor.
 static void CrossboneIsleSteppingStones_FlipWaterSwitch(void) {
   s32 waterRaised;
   struct Actor *water;
@@ -1401,9 +1411,10 @@ CrossboneIsleSteppingStones_SpawnThawParticle(struct Actor *updated) {
 #endif
 }
 
-/// Frost ends on the third puddle in CrossboneIsleDragonStatue: unless the
-/// leader stood on it, it freezes, and a frozen second puddle thaws back to
-/// water.
+/// Frost ends on the third puddle in CrossboneIsleDragonStatue: it freezes,
+/// unless the leader stood on it.
+///
+/// A frozen second puddle thaws back to water.
 static void CrossboneIsleSteppingStones_FreezeThirdPuddle(void) {
   s32 set;
 
@@ -1762,10 +1773,11 @@ const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_LongScript,
 };
 
-/// The glint of a puddle Frost has frozen in CrossboneIsleDragonStatue: the
-/// timer carries a colour mode to
-/// CrossboneIsleSteppingStones_SetChildValueFromTimer, green and blue swapped
-/// for two frames in every eight.
+/// The glint of a puddle Frost has frozen in CrossboneIsleDragonStatue.
+///
+/// The timer carries a colour mode to
+/// CrossboneIsleSteppingStones_SetChildValueFromTimer, with green and blue
+/// swapped for two frames in every eight.
 s32 gCrossboneIsleSteppingStones_ActionTable[] = {
     SC_SET(SW_TIMER, SPRITE_COLOR_RBG),
     SC_CALL(CrossboneIsleSteppingStones_SetChildValueFromTimer),
@@ -1776,8 +1788,9 @@ s32 gCrossboneIsleSteppingStones_ActionTable[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-/// The floodgate's switch flipping as CrossboneIsleSteppingStones_FlipWaterSwitch closes the
-/// gate, and flipping back as it opens it.
+/// The floodgate's switch flipping as
+/// CrossboneIsleSteppingStones_FlipWaterSwitch closes the gate, and flipping
+/// back as it opens it.
 u16 gCrossboneIsleSteppingStones_SwitchCloseSteps[] = {
     MAPGRID_ANIMATION_STEP(76, 34, 1, 2, 4), MAPGRID_ANIMATION_STEP(77, 34, 1, 2, 4), MAPGRID_ANIMATION_STEP(78, 34, 1, 2, 4), MAPGRID_ANIMATION_STEP(79, 34, 1, 2, 4), MAPGRID_ANIMATION_STEPS_END,
 };
@@ -1795,9 +1808,11 @@ u16 gCrossboneIsleSteppingStones_FloodgateOpenSteps[] = {
     MAPGRID_ANIMATION_STEP(71, 50, 2, 5, 6), MAPGRID_ANIMATION_STEP(69, 50, 2, 5, 6), MAPGRID_ANIMATION_STEP(67, 50, 2, 5, 6), MAPGRID_ANIMATION_STEP(65, 50, 2, 5, 6), MAPGRID_ANIMATION_STEPS_END,
 };
 
-/// The two cells at the floodgate's foot as it shuts: three pictures of white
-/// spray splashing up and falling, then the stream bed below the gate, left
-/// almost dry (CrossboneIsleSteppingStones_FlipWaterSwitch's render).
+/// The two cells at the floodgate's foot as it shuts.
+///
+/// They show three pictures of white spray splashing up and falling, then the
+/// stream bed below the gate, left almost dry
+/// (CrossboneIsleSteppingStones_FlipWaterSwitch's render).
 u16 gCrossboneIsleSteppingStones_FloodgateFootSteps[] = {
     MAPGRID_ANIMATION_STEP(75, 38, 2, 1, 4), MAPGRID_ANIMATION_STEP(77, 38, 2, 1, 6), MAPGRID_ANIMATION_STEP(79, 38, 2, 1, 8), MAPGRID_ANIMATION_STEP(65, 53, 2, 1, 1), MAPGRID_ANIMATION_STEPS_END,
 };

@@ -1,78 +1,88 @@
 /// @file
 /// The World Map (SceneId_WorldMap), the one perspective map (map/world)
-/// that joins the areas, and the only scene of this overlay. Its code does
-/// three kinds of work.
+/// that joins the areas, and the only scene of this overlay.
 ///
-/// It lets the party into the areas. Each area stands on the map
-/// as an actor drawn as a picture of its kind (SPRITE_WORLD_MAP_VILLAGE,
-/// _CAVE, _DOCK and the rest), turned with the map (WorldMap_AlignToMap).
-/// WorldMap_UpdateAreaContacts, run every frame, hides the actors
-/// outside a box around the view and raises the STEP_TRIGGER_AREA of the one
-/// the leader touches, which the trigger table turns into that area's
-/// exit; a few ways in are cells instead, each carrying the number of its exit.
-/// Five areas have two ways in, and their events choose the exit by the
-/// side the leader comes from: the Bilibin Barricade from the west or the east,
-/// and Kolima Bridge, Kalay Docks, Gondowan Passage and Lalivero from the north
-/// or the south. Kolima Bridge's actor shows the drawbridge let down
-/// once FLAG_KOLIMA_BRIDGE_LOWERED is set.
+/// Its code does three kinds of work.
+///
+/// It lets the party into the areas. Each area stands on the map as an actor
+/// drawn as a picture of its kind (SPRITE_WORLD_MAP_VILLAGE, _CAVE, _DOCK and
+/// the rest), turned with the map (WorldMap_AlignToMap).
+///
+/// WorldMap_UpdateAreaContacts runs every frame. It hides the actors outside
+/// a box around the view and raises the STEP_TRIGGER_AREA of the one the
+/// leader touches. The trigger table turns that into the area's exit. A few
+/// ways in are cells instead, each carrying the number of its exit.
+///
+/// Five areas have two ways in, and their events choose the exit by the side
+/// the leader comes from. For the Bilibin Barricade that is the west or the
+/// east. For Kolima Bridge, Kalay Docks, Gondowan Passage and Lalivero it is
+/// the north or the south.
+///
+/// Kolima Bridge's actor shows the drawbridge let down once
+/// FLAG_KOLIMA_BRIDGE_LOWERED is set.
 ///
 /// It holds what the party meets on the map itself. Vine, Corona and Hail, a
-/// Venus, a Mars and a Mercury Djinni, stand on the map and, talked to or
-/// walked near, fight once a random battle is nearly due. A whirlwind near
-/// Crossbone Isle (ACTOR_STORM, put away while the Tolbi-bound Ship lies at
-/// anchor off the island) lifts the party for 180 frames when walked into, as
-/// the Suhalla Desert's storms do: Douse on it brings the party down into a
-/// battle, and when the time runs out it drops the party outside Suhalla
-/// (WORLD_MAP_FROM_SUHALLA, FLAG_ARRIVE_FALLING). The Turtle Boots are buried
-/// in the ground (CELL_BEHAVIOR_WORLD_MAP_TURTLE_BOOTS).
+/// Venus, a Mars and a Mercury Djinni, stand on the map. Talked to or walked
+/// near, they fight once a random battle is nearly due.
+///
+/// A whirlwind spins near Crossbone Isle (ACTOR_STORM). It is put away while
+/// the Tolbi-bound Ship lies at anchor off the island. Walked into, it lifts
+/// the party for 180 frames, as the Suhalla Desert's storms do. Douse on it
+/// brings the party down into a battle. When the time runs out it drops the
+/// party outside Suhalla (WORLD_MAP_FROM_SUHALLA, FLAG_ARRIVE_FALLING).
+///
+/// The Turtle Boots are buried in the ground
+/// (CELL_BEHAVIOR_WORLD_MAP_TURTLE_BOOTS).
 ///
 /// And it plays the story's moments on the map, each run by WorldMap_Initialize
 /// for the entrance another scene sends the party to. In story order:
 /// - Leaving Vale (WORLD_MAP_FROM_VALE_PLAZA) sets FLAG_VALE_PARTY_LEFT the
 ///   first time.
 /// - Flint, the first Djinni, circles his spot until the party walks up to him
-///   (WorldMap_MeetFlint); he joins, teaches how Djinn are set and put on
+///   (WorldMap_MeetFlint). He joins and teaches how Djinn are set and put on
 ///   standby, and a tutorial battle follows.
-/// - Hammet's caravan: the first time the party touches Vault
-///   (WORLD_MAP_HAMMETS_CARAVAN_LEAVES), the caravan, cut off from Kalay by the
+/// - Hammet's caravan. It plays the first time the party touches Vault
+///   (WORLD_MAP_HAMMETS_CARAVAN_LEAVES). The caravan, cut off from Kalay by the
 ///   destroyed bridge, turns north for Lunpa as the ground shakes and a rock
-///   falls beside it; then the party goes on into Vault. It sets
+///   falls beside it. Then the party goes on into Vault. It sets
 ///   FLAG_LUNPA_GUARDS_SUSPECT_KALAY.
-/// - Mercury Lighthouse lit (WORLD_MAP_AFTER_MERCURY_LIGHTHOUSE_LIT): the
-///   lighthouse transition (WorldMap_PlayLighthouseTransition), then Mercury
-///   Lighthouse Aerie (MERCURY_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT).
-/// - Bunza's wagon: out of West Lunpa Cave (WORLD_MAP_FROM_WEST_LUNPA_CAVE)
+/// - Mercury Lighthouse lit (WORLD_MAP_AFTER_MERCURY_LIGHTHOUSE_LIT). The
+///   lighthouse transition plays (WorldMap_PlayLighthouseTransition), then
+///   Mercury Lighthouse Aerie follows
+///   (MERCURY_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT).
+/// - Bunza's wagon. Out of West Lunpa Cave (WORLD_MAP_FROM_WEST_LUNPA_CAVE)
 ///   Bunza, Hammet and the leader board it and it rolls off
-///   (FLAG_BUNZAS_WAGON_LEFT); at the Kalay Tunnel Entrance
+///   (FLAG_BUNZAS_WAGON_LEFT). At the Kalay Tunnel Entrance
 ///   (WORLD_MAP_FROM_KALAY_TUNNEL_ENTRANCE_SOUTH) it stops and the leader steps
 ///   down.
-/// - The Tolbi-bound Ship's crossing of the Karagol Sea: between the ship's
+/// - The Tolbi-bound Ship's crossing of the Karagol Sea. Between the ship's
 ///   scenes (WORLD_MAP_FROM_SHIP_ROOMS_SAIL_TO_FIRST_ATTACK to
 ///   _SAIL_TO_LAND) the map shows the ship sailing west and sends the party
 ///   back aboard (FLAG_TOLBI_SHIP_ROWING). A rowing off course takes it north
 ///   to anchor off the island (WORLD_MAP_FROM_SHIP_ROOMS,
-///   FLAG_TOLBI_SHIP_AT_ISLAND), where CELL_BEHAVIOR_WORLD_MAP_CROSSBONE_ISLE
-///   leads ashore and CELL_BEHAVIOR_WORLD_MAP_TOLBI_SHIP back aboard;
+///   FLAG_TOLBI_SHIP_AT_ISLAND). There
+///   CELL_BEHAVIOR_WORLD_MAP_CROSSBONE_ISLE leads ashore and
+///   CELL_BEHAVIOR_WORLD_MAP_TOLBI_SHIP back aboard.
 ///   WORLD_MAP_FROM_TOLBI_SHIP_DECK_REACH_TOLBI ends the crossing at Tolbi
 ///   (FLAG_TOLBI_SHIP_REACHED_TOLBI).
-/// - The Black Orb: out of Gateway Cave (WORLD_MAP_FROM_GATEWAY_CAVE) Iodem
+/// - The Black Orb. Out of Gateway Cave (WORLD_MAP_FROM_GATEWAY_CAVE) Iodem
 ///   sees Babi's ship scuttled off the coast and gives Isaac the orb to use on
-///   it (FLAG_WORLD_MAP_BLACK_ORB_HANDED_OVER, FLAG_SAW_SHIP_AT_IDEJIMA), and
+///   it (FLAG_WORLD_MAP_BLACK_ORB_HANDED_OVER, FLAG_SAW_SHIP_AT_IDEJIMA). He
 ///   calls him back if he walks into the cave again. Used on the wreck
-///   (CELL_BEHAVIOR_WORLD_MAP_SHIPWRECK) the orb does nothing; Iodem takes it
+///   (CELL_BEHAVIOR_WORLD_MAP_SHIPWRECK) the orb does nothing. Iodem takes it
 ///   back and the party must go on to Babi Lighthouse
 ///   (FLAG_BLACK_ORB_RETURNED). A defeat meanwhile returns to
 ///   WORLD_MAP_AFTER_BLACK_ORB_DEFEAT, which discards the orb and leads on by
 ///   WORLD_MAP_TO_ROCK_ROOMS.
-/// - Venus Lighthouse lit (WORLD_MAP_AFTER_VENUS_LIGHTHOUSE_LIT): the
-///   lighthouse transition, then back to the Lighthouse Aerie
-///   (VENUS_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT); after the look back
+/// - Venus Lighthouse lit (WORLD_MAP_AFTER_VENUS_LIGHTHOUSE_LIT). The
+///   lighthouse transition plays, then the party is back at the Lighthouse
+///   Aerie (VENUS_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT). After the look back
 ///   (WORLD_MAP_BEFORE_SHEBAS_FALL) the lighthouse shakes in clouds of dust
 ///   before Sheba's fall (WORLD_MAP_TO_VENUS_LIGHTHOUSE_AERIE).
-/// - The ending: once the cleared game is saved (scene/file_screen.c,
+/// - The ending. Once the cleared game is saved (scene/file_screen.c,
 ///   WORLD_MAP_FROM_FILE_SCREEN), the island Jenna and Kraden are adrift on
-///   drifts east, and WORLD_MAP_JENNA_AND_KRADEN_ADRIFT shows Alex leading them
-///   to Felix and Sheba before the Title returns.
+///   drifts east. WORLD_MAP_JENNA_AND_KRADEN_ADRIFT then shows Alex leading
+///   them to Felix and Sheba before the Title returns.
 ///
 /// WORLD_MAP_FROM_DEBUG, the debug menus' entrance, turns encounters
 /// off.
@@ -155,9 +165,9 @@
 /// ★ Named from what the player sees: a white whirlwind spinning on the map
 /// near Crossbone Isle, drawn as the Suhalla Desert's sandstorms (its render)
 #define FLAG_WORLD_MAP_STORM_GONE FLAG_SCENE_TEMP_F1
-/// The first flag of a byte (read and written with FieldGameFlag_GetByte and
-/// FieldGameFlag_SetByte) counting the frames the storm keeps the party in the
-/// air.
+/// The first flag of a byte counting the frames the storm keeps the party in
+/// the air. The byte is read and written with FieldGameFlag_GetByte and
+/// FieldGameFlag_SetByte.
 /// ★ Named from what the player sees: a white whirlwind spinning on the map
 /// near Crossbone Isle, drawn as the Suhalla Desert's sandstorms (its render)
 #define FLAG_WORLD_MAP_STORM_FRAMES_LEFT FLAG_SCENE_TEMP_F8
@@ -195,11 +205,13 @@ WorldMap_PlayLighthouseTransition(enum WorldMapLighthouse lighthouse);
 enum { CONTACT_LAST_ACTOR = 65, STEP_TRIGGER_AREA_BASE = 100 };
 
 /// The World Map's own actors, numbered in the order of
-/// gWorldMapActorPlacements from ACTOR_FIRST_PLACED: the Djinn met on
-/// the map, the areas, then the Tolbi-bound Ship, the storm and Iodem.
-/// Each area is named by the scene its exit leads into (gWorldMapExits),
-/// and touching it raises its STEP_TRIGGER_AREA
-/// (WorldMap_UpdateAreaContacts).
+/// gWorldMapActorPlacements from ACTOR_FIRST_PLACED.
+///
+/// First come the Djinn met on the map, then the areas, then the Tolbi-bound
+/// Ship, the storm and Iodem.
+///
+/// Each area is named by the scene its exit leads into (gWorldMapExits).
+/// Touching it raises its STEP_TRIGGER_AREA (WorldMap_UpdateAreaContacts).
 enum WorldMapActorId {
   /// The Venus Djinni: Flint, circling his spot until the party meets him,
   /// and later Vine.
@@ -312,9 +324,10 @@ enum WorldMapActorId {
 /// The cell behavior raised by touching an area's actor.
 #define STEP_TRIGGER_AREA(actorId) (STEP_TRIGGER_AREA_BASE + (actorId))
 
-/// The World Map's own cell behaviors, which the map's cells carry. Each
-/// exit cell carries the number of the exit it leads to, so the exit rows of
-/// gWorldTriggers name their cell behavior by that exit.
+/// The World Map's own cell behaviors, which the map's cells carry.
+///
+/// Each exit cell carries the number of the exit it leads to, so the exit rows
+/// of gWorldTriggers name their cell behavior by that exit.
 enum WorldMapCellBehavior {
   CELL_BEHAVIOR_WORLD_MAP_TOLBI_SHIP =
       74, ///< the shore beside the anchored ship
@@ -342,13 +355,13 @@ enum { ROWING_BALANCE_OFF_COURSE = 11 };
 /// SPRITE_WORLD_MAP_BRIDGE's animation once Kolima Bridge's drawbridge is down.
 enum { WORLD_MAP_BRIDGE_ANIMATION_LOWERED = 2 };
 
-/// The falling rock's animations (spr_216.png): it tumbles as it falls, then
+/// The falling rock's animations (spr_216.png). It tumbles as it falls, then
 /// shatters where it lands.
 enum { FALLING_ROCK_ANIMATION_TUMBLE = 2, FALLING_ROCK_ANIMATION_SHATTER = 3 };
 
 /// The actors of Hammet's caravan leaving Vault
 /// (gWorldMapActorPlacementsHammetsCaravan,
-/// WORLD_MAP_HAMMETS_CARAVAN_LEAVES), numbered from ACTOR_FIRST_PLACED;
+/// WORLD_MAP_HAMMETS_CARAVAN_LEAVES), numbered from ACTOR_FIRST_PLACED.
 /// Garet's row takes his own actor id.
 enum WorldMapCaravanActorId {
   /// Hammet, in his sprite, as ACTOR_HAMMET is out of West Lunpa Cave.
@@ -365,23 +378,23 @@ enum WorldMapCaravanActorId {
   /// horse (its render)
   ACTOR_CARAVAN_FIRST_WAGON,
   /// A blank actor (SPRITE_BLANK) that the falling rock is held above as
-  /// it drops (WorldMap_UpdateFallingRock); it grows from a tenth of its size
+  /// it drops (WorldMap_UpdateFallingRock). It grows from a tenth of its size
   /// as it moves (gCaravanRockGuideScript).
   ACTOR_INVISIBLE_ROCK_GUIDE = ACTOR_CARAVAN_FIRST_WAGON + 4,
-  /// Drawn as the rocks in sol_sanctum_eruption.c; it lands by the caravan
+  /// Drawn as the rocks in sol_sanctum_eruption.c. It lands by the caravan
   /// and shatters.
   /// ★ Named from the game: "being smashed by falling rocks here"
   /// (MsgWorldMapWeCantStayAnotherMinute)
   ACTOR_FALLING_ROCK
 };
 
-/// The Tolbi-bound Ship, the first actor of
-/// gWorldMapActorPlacementsCrossingEnds and
+/// The Tolbi-bound Ship, shown on its way across the Karagol Sea.
+///
+/// It is the first actor of gWorldMapActorPlacementsCrossingEnds and
 /// gWorldMapActorPlacementsCrossing
 /// (WORLD_MAP_FROM_SHIP_ROOMS_SAIL_TO_FIRST_ATTACK to
 /// WORLD_MAP_FROM_TOLBI_SHIP_DECK_REACH_TOLBI and
-/// WORLD_MAP_FROM_SHIP_ROOMS), shown on its way across the Karagol
-/// Sea.
+/// WORLD_MAP_FROM_SHIP_ROOMS).
 enum {
   /// ★ Named from its area name: Tolbi-bound Ship
   ACTOR_CROSSING_SHIP = ACTOR_FIRST_PLACED
@@ -395,8 +408,9 @@ enum {
   ACTOR_KALAY_WAGON = ACTOR_FIRST_PLACED + 2
 };
 
-/// The one actor of gWorldMapActorPlacementsFromClear, before the
-/// ending: the island Jenna and Kraden are adrift on ("How long will this
+/// The one actor of gWorldMapActorPlacementsFromClear, before the ending.
+///
+/// It is the island Jenna and Kraden are adrift on ("How long will this
 /// island continue to drift?"). It drifts east trailing a wake
 /// (WorldMap_SpawnIslandWake) until the map leads into their event.
 enum {
@@ -414,7 +428,7 @@ enum WorldMapEndingActorId {
   /// ★ Named from the game: "Oh, Kraden... How long will this island continue
   /// to drift?" (MsgWorldMapKradenHowLongWillIsland)
   ACTOR_KRADEN = ACTOR_FIRST_PLACED,
-  /// Alex, who comes to show them that Felix and Sheba are alive: "There is
+  /// Alex, who comes to show them that Felix and Sheba are alive. "There is
   /// something I wish to show you."
   /// ★ Named from the game: "Alex!" (MsgMercuryGot)
   ACTOR_ALEX,
@@ -442,8 +456,11 @@ enum {
 // party up in the air. FLAG_WORLD_MAP_STORM_GONE: the storm is done with, or
 // put away. FLAG_WORLD_MAP_STORM_FRAMES_LEFT: a byte: frames left in the air.
 
-/// Walking near Vine, or talking to him: once a battle is nearly due, half the
-/// time Vine fights; otherwise the next step brings an ordinary battle.
+/// Walking near Vine, or talking to him, can start a fight with him.
+///
+/// Once a battle is nearly due, half the time Vine fights. Otherwise the next
+/// step brings an ordinary battle.
+///
 /// Reached by talking to ACTOR_VENUS_DJINNI, or by walking onto
 /// CELL_BEHAVIOR_WORLD_MAP_VINE until Vine is caught.
 static void WorldMap_MeetVine(void) {
@@ -460,8 +477,9 @@ static void WorldMap_MeetVine(void) {
   }
 }
 
-/// Walking near Corona, or talking to him: once a battle is nearly due, Corona
-/// fights.
+/// Walking near Corona, or talking to him, makes Corona fight once a battle
+/// is nearly due.
+///
 /// Reached by talking to ACTOR_CORONA, or by walking onto
 /// CELL_BEHAVIOR_WORLD_MAP_CORONA until Corona is caught.
 static void WorldMap_MeetCorona(void) {
@@ -475,8 +493,9 @@ static void WorldMap_MeetCorona(void) {
   }
 }
 
-/// Walking near Hail, or talking to him: once a battle is nearly due, Hail
-/// fights.
+/// Walking near Hail, or talking to him, makes Hail fight once a battle is
+/// nearly due.
+///
 /// Reached by talking to ACTOR_HAIL, or by walking onto
 /// CELL_BEHAVIOR_WORLD_MAP_HAIL until Hail is caught.
 static void WorldMap_MeetHail(void) {
@@ -490,7 +509,7 @@ static void WorldMap_MeetHail(void) {
   }
 }
 
-/// The update routine of a sparkle around the Black Orb: it releases the
+/// The update routine of a sparkle around the Black Orb. It releases the
 /// sparkle on its second frame.
 static void WorldMap_ReleaseSparkAfterDelay(struct Actor *updated) {
   struct Actor *actor = (struct Actor *)updated;
@@ -501,7 +520,7 @@ static void WorldMap_ReleaseSparkAfterDelay(struct Actor *updated) {
   }
 }
 
-/// The update routine of the Black Orb held up over the wreck: it swells and
+/// The update routine of the Black Orb held up over the wreck. It swells and
 /// shrinks every four frames and gives off a sparkle every other frame.
 static void WorldMap_PulseOrbAndSpawnSparks(struct Actor *updated) {
   struct Actor *actor = (struct Actor *)updated;
@@ -534,8 +553,9 @@ static void WorldMap_PulseOrbAndSpawnSparks(struct Actor *updated) {
   spark->update = WorldMap_ReleaseSparkAfterDelay;
 }
 
-/// Flint's update routine until the party meets him (WorldMap_SetUpFlint): he
-/// flickers white and red and circles 16 pixels around his spot, bobbing 4
+/// Flint's update routine until the party meets him (WorldMap_SetUpFlint).
+///
+/// He flickers white and red and circles 16 pixels around his spot, bobbing 4
 /// pixels up and down, facing the way he goes. WorldMap_MeetFlint stops him
 /// by setting his work to 1.
 static void WorldMap_CircleFlint(struct Actor *updated) {
@@ -558,7 +578,7 @@ static void WorldMap_CircleFlint(struct Actor *updated) {
   }
 }
 
-/// Flint's actor script (gWorldMapFlintScript): until he is caught or his
+/// Flint's actor script (gWorldMapFlintScript). Until he is caught or his
 /// lesson has begun (FLAG_DJINN_LESSON), he circles his spot at half size.
 static s32 WorldMap_SetUpFlint(struct Actor *interpreter) {
   struct Actor *actor = interpreter;
@@ -585,7 +605,7 @@ const struct SceneExitRegion *WorldMap_GetRegions(void) { return NULL; }
 
 const u32 *WorldMap_GetExits(void) { return gWorldMapExits; }
 
-/// Kolima Bridge's actor script (gWorldMapKolimaBridgeScript): it turns with
+/// Kolima Bridge's actor script (gWorldMapKolimaBridgeScript). It turns with
 /// the map and shows the drawbridge let down once FLAG_KOLIMA_BRIDGE_LOWERED is
 /// set.
 static s32 WorldMap_SetUpKolimaBridge(struct Actor *interpreter) {
@@ -597,8 +617,8 @@ static s32 WorldMap_SetUpKolimaBridge(struct Actor *interpreter) {
   return 1;
 }
 
-/// The actor script of every picture on the map (gWorldMapAlignToMapScript):
-/// it turns the sprite with the map's rotation.
+/// The actor script of every picture on the map (gWorldMapAlignToMapScript).
+/// It turns the sprite with the map's rotation.
 static s32 WorldMap_AlignToMap(struct Actor *interpreter) {
   struct Actor *actor = interpreter;
   struct WorldMapRenderWork *work = gMapGridWork[0];
@@ -609,7 +629,7 @@ static s32 WorldMap_AlignToMap(struct Actor *interpreter) {
   return 1;
 }
 
-/// Iodem's actor script (gWorldMapIodemScript): he turns with the map and
+/// Iodem's actor script (gWorldMapIodemScript). He turns with the map and
 /// blocks the way, so the leader cannot walk through him.
 static s32 WorldMap_SetUpIodem(struct Actor *interpreter) {
   struct Actor *actor = interpreter;
@@ -621,11 +641,13 @@ static s32 WorldMap_SetUpIodem(struct Actor *interpreter) {
   return 1;
 }
 
-/// Sets up the storm (ACTOR_STORM) as it is placed: it does not collide, and
-/// while the Tolbi-bound Ship lies at anchor off the island
-/// (FLAG_TOLBI_SHIP_AT_ISLAND) it is put away at the map's origin and
-/// FLAG_WORLD_MAP_STORM_GONE keeps it from catching the party. Called by its
-/// actor script.
+/// Sets up the storm (ACTOR_STORM) as it is placed.
+///
+/// The storm does not collide. While the Tolbi-bound Ship lies at anchor off
+/// the island (FLAG_TOLBI_SHIP_AT_ISLAND) it is put away at the map's origin,
+/// and FLAG_WORLD_MAP_STORM_GONE keeps it from catching the party.
+///
+/// Called by its actor script.
 static s32 WorldMap_SetUpStorm(struct Actor *interpreter) {
   struct Actor *actor = interpreter;
   Actor_SetSpriteFlags(actor, 0);
@@ -639,7 +661,7 @@ static s32 WorldMap_SetUpStorm(struct Actor *interpreter) {
   return 0;
 }
 
-/// Called each frame by the storm's actor script (gWorldMapStormScript): it
+/// Called each frame by the storm's actor script (gWorldMapStormScript). It
 /// hides the storm on odd frames, and WorldMap_UpdateAreaContacts shows it
 /// again on the next, so it flickers.
 static s32 WorldMap_BlinkActorSprite(struct Actor *interpreter) {
@@ -649,11 +671,11 @@ static s32 WorldMap_BlinkActorSprite(struct Actor *interpreter) {
   return 1;
 }
 
-/// Chooses the actors for the entrance: each event has
-/// a table of its own while it is still to play, and every other arrival takes
-/// the areas, the Djinn, the storm and Iodem
-/// (gWorldMapActorPlacements) and sets
-/// FLAG_WORLD_MAP_ORDINARY_ACTORS.
+/// Chooses the actors for the entrance.
+///
+/// Each event has a table of its own while it is still to play. Every other
+/// arrival takes the areas, the Djinn, the storm and Iodem
+/// (gWorldMapActorPlacements) and sets FLAG_WORLD_MAP_ORDINARY_ACTORS.
 const struct ActorPlacement *WorldMap_GetActorPlacements(void) {
   switch (gMainRoutineWork.entrance) {
   case WORLD_MAP_FROM_WEST_LUNPA_CAVE:
@@ -727,8 +749,10 @@ static void WorldMap_SelectExitByZ(s32 trigger, s32 exitBefore, s32 exitAfter) {
   Sound_Play(SE_MAP_EXIT);
 }
 
-/// Touching the Bilibin Barricade's actor: the side the party comes from
-/// decides the exit, from the west WORLD_MAP_TO_BILIBIN_BARRICADE_WEST, from
+/// Touching the Bilibin Barricade's actor takes the party in by the side it
+/// comes from.
+///
+/// From the west the exit is WORLD_MAP_TO_BILIBIN_BARRICADE_WEST, and from
 /// the east WORLD_MAP_TO_BILIBIN_BARRICADE_EAST.
 static void WorldMap_EnterBilibinBarricade(void) {
   WorldMap_SelectExitByX(STEP_TRIGGER_AREA(ACTOR_TO_BILIBIN_BARRICADE),
@@ -736,9 +760,10 @@ static void WorldMap_EnterBilibinBarricade(void) {
                          WORLD_MAP_TO_BILIBIN_BARRICADE_EAST);
 }
 
-/// The party enters Kolima Bridge from the World Map. It works as
-/// WorldMap_EnterBilibinBarricade does, entering from the north by
-/// WORLD_MAP_TO_KOLIMA_BRIDGE_WEST and from the south by
+/// The party enters Kolima Bridge from the World Map.
+///
+/// It works as WorldMap_EnterBilibinBarricade does, entering from the north
+/// by WORLD_MAP_TO_KOLIMA_BRIDGE_WEST and from the south by
 /// WORLD_MAP_TO_KOLIMA_BRIDGE_EAST.
 static void WorldMap_EnterKolimaBridge(void) {
   WorldMap_SelectExitByZ(STEP_TRIGGER_AREA(ACTOR_TO_KOLIMA_BRIDGE),
@@ -746,8 +771,8 @@ static void WorldMap_EnterKolimaBridge(void) {
                          WORLD_MAP_TO_KOLIMA_BRIDGE_EAST);
 }
 
-/// As WorldMap_EnterKolimaBridge, for Kalay Docks: from the north
-/// WORLD_MAP_TO_KALAY_DOCKS_NORTH, from the south
+/// As WorldMap_EnterKolimaBridge, for Kalay Docks. From the north the exit is
+/// WORLD_MAP_TO_KALAY_DOCKS_NORTH, and from the south
 /// WORLD_MAP_TO_KALAY_DOCKS_EAST.
 static void WorldMap_EnterKalayDocks(void) {
   WorldMap_SelectExitByZ(STEP_TRIGGER_AREA(ACTOR_TO_KALAY_DOCKS),
@@ -755,8 +780,8 @@ static void WorldMap_EnterKalayDocks(void) {
                          WORLD_MAP_TO_KALAY_DOCKS_EAST);
 }
 
-/// As WorldMap_EnterKolimaBridge, for Gondowan Passage: from the north
-/// WORLD_MAP_TO_GONDOWAN_PASSAGE_EAST, from the south
+/// As WorldMap_EnterKolimaBridge, for Gondowan Passage. From the north the
+/// exit is WORLD_MAP_TO_GONDOWAN_PASSAGE_EAST, and from the south
 /// WORLD_MAP_TO_GONDOWAN_PASSAGE_WEST.
 static void WorldMap_EnterGondowanPassage(void) {
   WorldMap_SelectExitByZ(STEP_TRIGGER_AREA(ACTOR_TO_GONDOWAN_PASSAGE),
@@ -764,8 +789,8 @@ static void WorldMap_EnterGondowanPassage(void) {
                          WORLD_MAP_TO_GONDOWAN_PASSAGE_WEST);
 }
 
-/// As WorldMap_EnterKolimaBridge, for Lalivero: from the north
-/// WORLD_MAP_TO_LALIVERO_WEST, from the south WORLD_MAP_TO_LALIVERO_EAST.
+/// As WorldMap_EnterKolimaBridge, for Lalivero. From the north the exit is
+/// WORLD_MAP_TO_LALIVERO_WEST, and from the south WORLD_MAP_TO_LALIVERO_EAST.
 static void WorldMap_EnterLalivero(void) {
 
   WorldMap_SelectExitByZ(STEP_TRIGGER_AREA(ACTOR_TO_LALIVERO),
@@ -775,12 +800,16 @@ static void WorldMap_EnterLalivero(void) {
 
 const struct Trigger *WorldMap_GetTriggers(void) { return gWorldTriggers; }
 
-/// Run each frame on the map (WorldMap_Initialize adds it): it hides every
-/// placed actor outside a box around the view, 160 pixels either side,
-/// 300 north and 200 south, and raises the STEP_TRIGGER_AREA of an
-/// actor within reach of the leader, their radii scaled by their sprites,
-/// measured as the sum of the distances east-west and north-south. With the
-/// debug flag FLAG_DEBUG_STEPS_OFF it raises none.
+/// Run each frame on the map, where WorldMap_Initialize adds it.
+///
+/// It hides every placed actor outside a box around the view, 160 pixels
+/// either side, 300 north and 200 south.
+///
+/// It raises the STEP_TRIGGER_AREA of an actor within reach of the leader.
+/// Their radii are scaled by their sprites. The distance is measured as the
+/// sum of the distances east-west and north-south.
+///
+/// With the debug flag FLAG_DEBUG_STEPS_OFF it raises none.
 static void WorldMap_UpdateAreaContacts(void) {
   struct Actor *leader;
   struct FieldWork *work;
@@ -838,10 +867,12 @@ static void WorldMap_UpdateAreaContacts(void) {
   }
 }
 
-/// Touching Vault's actor: the first time, until
-/// FLAG_LUNPA_GUARDS_SUSPECT_KALAY is set, WORLD_MAP_HAMMETS_CARAVAN_LEAVES
-/// plays Hammet's caravan leaving (WORLD_MAP_TO_HAMMETS_CARAVAN_LEAVES); later
-/// it is Vault's door (WORLD_MAP_TO_VAULT_SOUTH).
+/// Touching Vault's actor takes the party into Vault.
+///
+/// The first time, until FLAG_LUNPA_GUARDS_SUSPECT_KALAY is set,
+/// WORLD_MAP_HAMMETS_CARAVAN_LEAVES plays Hammet's caravan leaving
+/// (WORLD_MAP_TO_HAMMETS_CARAVAN_LEAVES). Later it is Vault's door
+/// (WORLD_MAP_TO_VAULT_SOUTH).
 static void WorldMap_EnterVault(void) {
   if (GameFlag_Get(FLAG_LUNPA_GUARDS_SUSPECT_KALAY) == 0) {
     Import_EventSetExitRequest(WORLD_MAP_TO_HAMMETS_CARAVAN_LEAVES);
@@ -854,6 +885,7 @@ static void WorldMap_EnterVault(void) {
 /// Walking east from Crossbone Isle's shore back aboard the Tolbi-bound Ship
 /// (WORLD_MAP_TO_TOLBI_SHIP_DECK_CROSSBONE_ISLE, to
 /// TOLBI_SHIP_DECK_FROM_TOLBI_DOCKS).
+///
 /// Reached by walking east into CELL_BEHAVIOR_WORLD_MAP_TOLBI_SHIP while the
 /// ship lies at anchor off the island (FLAG_TOLBI_SHIP_AT_ISLAND).
 static void WorldMap_ReturnToTolbiShip(void) {
@@ -862,18 +894,24 @@ static void WorldMap_ReturnToTolbiShip(void) {
   Import_EventSetExitRequest(WORLD_MAP_TO_TOLBI_SHIP_DECK_CROSSBONE_ISLE);
 }
 
-/// The scene's initialization: it runs the moment the entrance selects,
-/// the story's moments listed at the top of this file. The two lighthouse
-/// entrances and WORLD_MAP_AFTER_BLACK_ORB_DEFEAT leave at once; every other
-/// arrival sets FLAG_RETREAT_BLOCKED, starts WorldMap_UpdateAreaContacts,
-/// opens the screen from a centre line, and until the Manticore of the Lamakan
-/// Desert is beaten (FLAG_LAMAKAN_MANTICORE_BEATEN) swaps in the 512-pixel tile
-/// south of Vault whose bridge over the river is broken in the middle (the
-/// World Map laid flat with and without the swap). The arrivals by Crossbone
-/// Isle and from the Suhalla Desert's storm resume the time in the air a storm
-/// left (FLAG_WORLD_MAP_STORM_FRAMES_LEFT). WORLD_MAP_FROM_DEBUG turns
-/// encounters off, and leaving Vale the first time sets FLAG_VALE_PARTY_LEFT
-/// and flag 0x85c, which nothing reads.
+/// The scene's initialization, which runs the moment the entrance selects.
+///
+/// Those moments are the story's moments listed at the top of this file. The
+/// two lighthouse entrances and WORLD_MAP_AFTER_BLACK_ORB_DEFEAT leave at
+/// once.
+///
+/// Every other arrival sets FLAG_RETREAT_BLOCKED, starts
+/// WorldMap_UpdateAreaContacts and opens the screen from a centre line. Until
+/// the Manticore of the Lamakan Desert is beaten
+/// (FLAG_LAMAKAN_MANTICORE_BEATEN) it also swaps in the 512-pixel tile south
+/// of Vault whose bridge over the river is broken in the middle (the
+/// World Map laid flat with and without the swap).
+///
+/// The arrivals by Crossbone Isle and from the Suhalla Desert's storm resume
+/// the time in the air a storm left (FLAG_WORLD_MAP_STORM_FRAMES_LEFT).
+///
+/// WORLD_MAP_FROM_DEBUG turns encounters off. Leaving Vale the first time sets
+/// FLAG_VALE_PARTY_LEFT and flag 0x85c, which nothing reads.
 s32 WorldMap_Initialize(void) {
   struct MainRoutineWork *state = &gMainRoutineWork;
   s16 *entrance = &state->entrance;
@@ -994,8 +1032,10 @@ s32 WorldMap_Initialize(void) {
 
 /// The actors placed at WORLD_MAP_FROM_WEST_LUNPA_CAVE
 /// (gWorldMapActorPlacementsFromWestLunpaCave), numbered from
-/// ACTOR_FIRST_PLACED: Bunza's wagon, then, after Lunpa's and West Lunpa
-/// Cave's area actors, Bunza and Hammet.
+/// ACTOR_FIRST_PLACED.
+///
+/// Bunza's wagon comes first. Bunza and Hammet come after Lunpa's and West
+/// Lunpa Cave's area actors.
 enum {
   /// Bunza's wagon.
   /// ★ Named from the game: "go back to Kalay in my wagon." (MsgLunpaBunza)
@@ -1007,10 +1047,11 @@ enum {
   ACTOR_HAMMET
 };
 
-/// Out of West Lunpa Cave by wagon: Bunza and Hammet nod to each other and
+/// Out of West Lunpa Cave by wagon, Bunza and Hammet nod to each other and
 /// climb aboard with the leader, and the wagon rolls off.
+///
 /// Called by WorldMap_Initialize at WORLD_MAP_FROM_WEST_LUNPA_CAVE, after the
-/// trade reopens (FLAG_DODONPA_LOCKED_UP) and until the wagon has left;
+/// trade reopens (FLAG_DODONPA_LOCKED_UP) and until the wagon has left. It
 /// sets FLAG_BUNZAS_WAGON_LEFT.
 static void WorldMap_BoardBunzasWagon(void) {
   struct Actor *record;
@@ -1074,12 +1115,17 @@ static void WorldMap_BoardBunzasWagon(void) {
   Event_End();
 }
 
-/// Outside Vault, the first time the party comes to it: Hammet's caravan
-/// rolls out to leave for Kalay, finds the bridge south destroyed, and turns
-/// north for Lunpa, leaving Ivan behind, as the ground shakes and a rock falls
-/// beside it. Then the party goes on into Vault (WORLD_MAP_TO_VAULT_SOUTH).
+/// Outside Vault, the first time the party comes to it, Hammet's caravan
+/// leaves.
+///
+/// - The caravan rolls out to leave for Kalay.
+/// - It finds the bridge south destroyed.
+/// - It turns north for Lunpa, leaving Ivan behind, as the ground shakes and
+///   a rock falls beside it.
+/// - Then the party goes on into Vault (WORLD_MAP_TO_VAULT_SOUTH).
+///
 /// Called by WorldMap_Initialize at WORLD_MAP_HAMMETS_CARAVAN_LEAVES until
-/// FLAG_LUNPA_GUARDS_SUSPECT_KALAY is set; sets it.
+/// FLAG_LUNPA_GUARDS_SUSPECT_KALAY is set. It sets that flag.
 static void WorldMap_ShowHammetsCaravan(void) {
   struct Actor *actor;
   struct Actor *spriteActor;
@@ -1407,8 +1453,9 @@ static void WorldMap_ShakeCameraWhereRockFalls(void) {
   WorldMap_MoveShakeCamera(PIXELS(5608), PIXELS(1736));
 }
 
-/// Keeps the falling rock above its guide as it drops, and lands it once. Run
-/// each frame while the rock falls in WorldMap_ShowHammetsCaravan; sets
+/// Keeps the falling rock above its guide as it drops, and lands it once.
+///
+/// Run each frame while the rock falls in WorldMap_ShowHammetsCaravan. It sets
 /// FLAG_WORLD_MAP_FALLING_ROCK_LANDED as it lands.
 static void WorldMap_UpdateFallingRock(void) {
   struct Actor *actor;
@@ -1429,12 +1476,15 @@ static void WorldMap_UpdateFallingRock(void) {
   }
 }
 
-/// A leg of the Tolbi-bound Ship's crossing: the ship sails out of Kalay
-/// Docks, and WORLD_MAP_TO_TOLBI_SHIP_MAST_FIRST_ATTACK leads up to the lookout
-/// on the mast for the first monster attack
-/// (TOLBI_SHIP_MAST_FROM_WORLD_MAP_FIRST_ATTACK, tolbi_ship_mast.c). Called by
-/// WorldMap_Initialize at
-/// WORLD_MAP_FROM_SHIP_ROOMS_SAIL_TO_FIRST_ATTACK; sets
+/// A leg of the Tolbi-bound Ship's crossing, in which the ship sails out of
+/// Kalay Docks.
+///
+/// WORLD_MAP_TO_TOLBI_SHIP_MAST_FIRST_ATTACK then leads up to the lookout on
+/// the mast for the first monster attack
+/// (TOLBI_SHIP_MAST_FROM_WORLD_MAP_FIRST_ATTACK, tolbi_ship_mast.c).
+///
+/// Called by WorldMap_Initialize at
+/// WORLD_MAP_FROM_SHIP_ROOMS_SAIL_TO_FIRST_ATTACK. It sets
 /// FLAG_TOLBI_SHIP_ROWING.
 static void WorldMap_SailToFirstMonsterAttack(void) {
   struct Actor *actor;
@@ -1457,10 +1507,11 @@ static void WorldMap_SailToFirstMonsterAttack(void) {
   Event_End();
 }
 
-/// The middle legs of the crossing: the ship, seen from above, sails west
-/// across the Karagol Sea from the far east of the map until
-/// gCrossingShipSailsWest says it has gone far enough, and the party leaves
-/// by exit, back aboard. Sets FLAG_TOLBI_SHIP_ROWING.
+/// The middle legs of the crossing, with the ship seen from above.
+///
+/// It sails west across the Karagol Sea from the far east of the map until
+/// gCrossingShipSailsWest says it has gone far enough. Then the party leaves
+/// by exit, back aboard. It sets FLAG_TOLBI_SHIP_ROWING.
 static inline void WorldMap_SailCrossingLeg(s32 exit) {
   struct Actor *actor;
 
@@ -1488,40 +1539,46 @@ static inline void WorldMap_SailCrossingLeg(s32 exit) {
   Event_End();
 }
 
-/// A leg of the Tolbi-bound Ship's crossing: WORLD_MAP_TO_TOLBI_SHIP_MAST_
+/// A leg of the Tolbi-bound Ship's crossing. WORLD_MAP_TO_TOLBI_SHIP_MAST_
 /// SECOND_ATTACK leads up to the lookout on the mast for the second monster
 /// attack (TOLBI_SHIP_MAST_FROM_WORLD_MAP_SECOND_ATTACK).
+///
 /// Called by WorldMap_Initialize at
 /// WORLD_MAP_FROM_SHIP_ROOMS_SAIL_TO_SECOND_ATTACK.
 static void WorldMap_SailToSecondMonsterAttack(void) {
   WorldMap_SailCrossingLeg(WORLD_MAP_TO_TOLBI_SHIP_MAST_SECOND_ATTACK);
 }
 
-/// A leg of the Tolbi-bound Ship's crossing: WORLD_MAP_TO_TOLBI_SHIP_MAST_
+/// A leg of the Tolbi-bound Ship's crossing. WORLD_MAP_TO_TOLBI_SHIP_MAST_
 /// THIRD_ATTACK leads up to the lookout on the mast for the third monster
 /// attack (TOLBI_SHIP_MAST_FROM_WORLD_MAP_THIRD_ATTACK).
+///
 /// Called by WorldMap_Initialize at
 /// WORLD_MAP_FROM_SHIP_ROOMS_SAIL_TO_THIRD_ATTACK.
 static void WorldMap_SailToThirdMonsterAttack(void) {
   WorldMap_SailCrossingLeg(WORLD_MAP_TO_TOLBI_SHIP_MAST_THIRD_ATTACK);
 }
 
-/// A leg of the Tolbi-bound Ship's crossing: WORLD_MAP_TO_SHIP_ROOMS
+/// A leg of the Tolbi-bound Ship's crossing. WORLD_MAP_TO_SHIP_ROOMS
 /// leads back down to the rowing deck as the Kraken comes aboard
 /// (SHIP_ROOMS_FROM_WORLD_MAP).
+///
 /// Called by WorldMap_Initialize at
 /// WORLD_MAP_FROM_SHIP_ROOMS_SAIL_TO_KRAKEN.
 static void WorldMap_SailToKraken(void) {
   WorldMap_SailCrossingLeg(WORLD_MAP_TO_SHIP_ROOMS);
 }
 
-/// The last leg of the Tolbi-bound Ship's crossing: the ship sails west,
-/// veering north when the rowers' balance (WorldMap_GetRowingBalance) is the
-/// one that takes it off course to the island, and
-/// WORLD_MAP_TO_TOLBI_SHIP_MAST_LAND_HO leads up to the lookout on the mast as
-/// he sights land (TOLBI_SHIP_MAST_FROM_WORLD_MAP_LAND_HO). Called by
-/// WorldMap_Initialize at WORLD_MAP_FROM_SHIP_ROOMS_SAIL_TO_LAND;
-/// sets FLAG_TOLBI_SHIP_ROWING.
+/// The last leg of the Tolbi-bound Ship's crossing, in which the ship sails
+/// west until land is sighted.
+///
+/// It veers north when the rowers' balance (WorldMap_GetRowingBalance) is the
+/// one that takes it off course to the island.
+/// WORLD_MAP_TO_TOLBI_SHIP_MAST_LAND_HO then leads up to the lookout on the
+/// mast as he sights land (TOLBI_SHIP_MAST_FROM_WORLD_MAP_LAND_HO).
+///
+/// Called by WorldMap_Initialize at WORLD_MAP_FROM_SHIP_ROOMS_SAIL_TO_LAND.
+/// It sets FLAG_TOLBI_SHIP_ROWING.
 static void WorldMap_SailUntilLandSighted(void) {
   struct Actor *actor;
 
@@ -1553,11 +1610,13 @@ static void WorldMap_SailUntilLandSighted(void) {
   Event_End();
 }
 
-/// The crossing's last leg: the ship sails into Tolbi's harbour, and
+/// The crossing's last leg, in which the ship sails into Tolbi's harbour.
+///
 /// WORLD_MAP_TO_TOLBI_SHIP_DECK leads back aboard as it docks
 /// (TOLBI_SHIP_DECK_FROM_WORLD_MAP).
-/// Called by WorldMap_Initialize at WORLD_MAP_FROM_TOLBI_SHIP_DECK_REACH_TOLBI;
-/// sets FLAG_TOLBI_SHIP_REACHED_TOLBI and clears FLAG_TOLBI_SHIP_ROWING.
+///
+/// Called by WorldMap_Initialize at WORLD_MAP_FROM_TOLBI_SHIP_DECK_REACH_TOLBI.
+/// It sets FLAG_TOLBI_SHIP_REACHED_TOLBI and clears FLAG_TOLBI_SHIP_ROWING.
 static void WorldMap_SailIntoTolbi(void) {
   struct Actor *actor;
 
@@ -1583,7 +1642,8 @@ static void WorldMap_SailIntoTolbi(void) {
 }
 
 /// Demonstrates setting a Djinni and placing it on standby.
-/// Called by WorldMap_MeetFlint; sets and clears FLAG_DJINN_LESSON_PART_A
+///
+/// Called by WorldMap_MeetFlint. It sets and clears FLAG_DJINN_LESSON_PART_A
 /// and _PART_B to choose the menu's two lessons.
 static void WorldMap_ShowDjinnTutorial(void) {
   WorldMap_Unfreeze();
@@ -1611,11 +1671,14 @@ static void WorldMap_ShowDjinnTutorial(void) {
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT, 6);
 }
 
-/// Walking up to Flint: he joins the party and shows how Djinn are set and put
-/// on standby; then comes the tutorial battle.
+/// Walking up to Flint makes him join the party and show how Djinn are set
+/// and put on standby. Then comes the tutorial battle.
+///
 /// Reached by walking onto CELL_BEHAVIOR_WORLD_MAP_FLINT until Flint is caught
-/// (FLAG_DJINNI(DJINNI_FLINT)). Sets FLAG_DJINN_LESSON and its two part
-/// flags for each lesson, and clears them all after the battle.
+/// (FLAG_DJINNI(DJINNI_FLINT)).
+///
+/// It sets FLAG_DJINN_LESSON and its two part flags for each lesson, and
+/// clears them all after the battle.
 static void WorldMap_MeetFlint(void) {
   struct Actor *djinni;
   struct Actor *leader;
@@ -1842,6 +1905,7 @@ s32 gWorldMapIodem;
 
 /// Brings Bunza's wagon to a stop and lets Isaac step down, after Hammet's
 /// return home (kalay.c's Kalay_HammetReturnsToPalace).
+///
 /// Called by WorldMap_Initialize at WORLD_MAP_FROM_KALAY_TUNNEL_ENTRANCE_SOUTH.
 static void WorldMap_StepDownFromBunzasWagon(void) {
   struct Actor *actor;
@@ -1901,13 +1965,15 @@ static void WorldMap_StepDownFromBunzasWagon(void) {
   Event_End();
 }
 
-/// Out of Gateway Cave: Iodem sees Babi's ship scuttled off the coast, gives
-/// Isaac the Black Orb and prompts him to use it on the ship. Called by
-/// WorldMap_Initialize at WORLD_MAP_FROM_GATEWAY_CAVE until the Black Orb is
-/// handed back and before the wounded soldiers are seen in Lalivero
-/// (FLAG_LALIVERO_WOUNDED_SOLDIERS_SEEN). Sets
-/// FLAG_WORLD_MAP_BLACK_ORB_HANDED_OVER and FLAG_SAW_SHIP_AT_IDEJIMA, and turns
-/// Gateway Cave's exit into WorldMap_IodemCallsIsaacBack.
+/// Out of Gateway Cave, Iodem sees Babi's ship scuttled off the coast, gives
+/// Isaac the Black Orb and prompts him to use it on the ship.
+///
+/// Called by WorldMap_Initialize at WORLD_MAP_FROM_GATEWAY_CAVE until the
+/// Black Orb is handed back and before the wounded soldiers are seen in
+/// Lalivero (FLAG_LALIVERO_WOUNDED_SOLDIERS_SEEN).
+///
+/// It sets FLAG_WORLD_MAP_BLACK_ORB_HANDED_OVER and FLAG_SAW_SHIP_AT_IDEJIMA,
+/// and turns Gateway Cave's exit into WorldMap_IodemCallsIsaacBack.
 static void WorldMap_RunBlackOrbEvent(void) {
   struct Actor *leader;
 
@@ -1989,13 +2055,15 @@ static void WorldMap_RunBlackOrbEvent(void) {
   Event_End();
 }
 
-/// Turns Gateway Cave's exit (the subject of ACTOR_TO_GATEWAY_CAVE's
-/// STEP_TRIGGER_AREA) into a step trigger that runs
-/// WorldMap_IodemCallsIsaacBack, and stands Iodem (ACTOR_IODEM, whose
-/// actor placement row it finds by his sprite) at pixel (6036, 3400); the
-/// actor given is not used. Called by WorldMap_RunBlackOrbEvent, and by
-/// WorldMap_Initialize when the party returns to WORLD_MAP_FROM_GATEWAY_CAVE
-/// with the orb still to use.
+/// Turns Gateway Cave's exit into a step trigger that runs
+/// WorldMap_IodemCallsIsaacBack.
+///
+/// The exit is the subject of ACTOR_TO_GATEWAY_CAVE's STEP_TRIGGER_AREA. It
+/// also stands Iodem at pixel (6036, 3400). Iodem is ACTOR_IODEM, whose actor
+/// placement row it finds by his sprite. The actor given is not used.
+///
+/// Called by WorldMap_RunBlackOrbEvent, and by WorldMap_Initialize when the
+/// party returns to WORLD_MAP_FROM_GATEWAY_CAVE with the orb still to use.
 static void WorldMap_BlockGatewayCaveExit(s32 actorId) {
   s32 i;
 
@@ -2021,6 +2089,7 @@ static void WorldMap_BlockGatewayCaveExit(s32 actorId) {
 }
 
 /// Makes touching Gateway Cave an exit again, to WORLD_MAP_TO_GATEWAY_CAVE.
+///
 /// Called by WorldMap_UseBlackOrb once the orb is handed back.
 static void WorldMap_RestoreGatewayCaveExit(void) {
   s32 i;
@@ -2039,8 +2108,9 @@ static void WorldMap_RestoreGatewayCaveExit(void) {
   }
 }
 
-/// Talking to Iodem, who gave the Black Orb (or reading his mind): he urges
-/// its use. "Now use it... on the ship."
+/// Talking to Iodem, who gave the Black Orb, or reading his mind, makes him
+/// urge its use. "Now use it... on the ship."
+///
 /// Reached by talking to ACTOR_IODEM, or by Mind Read on him.
 static void WorldMap_TalkAboutBlackOrb(void) {
   Event_Start();
@@ -2052,9 +2122,10 @@ static void WorldMap_TalkAboutBlackOrb(void) {
   Event_End();
 }
 
-/// Walking back into Gateway Cave with the Black Orb unused: Iodem calls the
-/// leader back to the coast. "Isaac, where you going? I said to use the Orb on
-/// Babi's ship!"
+/// Walking back into Gateway Cave with the Black Orb unused makes Iodem call
+/// the leader back to the coast. "Isaac, where you going? I said to use the
+/// Orb on Babi's ship!"
+///
 /// Reached by touching Gateway Cave while WorldMap_BlockGatewayCaveExit has
 /// made it a step trigger.
 static void WorldMap_IodemCallsIsaacBack(void) {
@@ -2069,11 +2140,14 @@ static void WorldMap_IodemCallsIsaacBack(void) {
   Event_End();
 }
 
-/// Searching the wreck off Gateway Cave: "The wreckage of a ship scuttled off
-/// the coast." While Iodem waits for the Black Orb to be used
+/// Searching the wreck off Gateway Cave shows "The wreckage of a ship
+/// scuttled off the coast."
+///
+/// While Iodem waits for the Black Orb to be used
 /// (FLAG_WORLD_MAP_BLACK_ORB_HANDED_OVER) the File Screen opens as the search
-/// ends, so that the orb can be used. Reached by searching
-/// CELL_BEHAVIOR_WORLD_MAP_SHIPWRECK.
+/// ends, so that the orb can be used.
+///
+/// Reached by searching CELL_BEHAVIOR_WORLD_MAP_SHIPWRECK.
 static void WorldMap_SearchShipwreck(void) {
 
   Event_Start();
@@ -2090,10 +2164,12 @@ static void WorldMap_SearchShipwreck(void) {
   Event_End();
 }
 
-/// Using the Black Orb on the shipwreck: nothing happens, the orb is taken back
-/// and the party is to press on to Babi Lighthouse. Reached by using the Black
-/// Orb on CELL_BEHAVIOR_WORLD_MAP_SHIPWRECK until it is handed back. Clears
-/// FLAG_WORLD_MAP_BLACK_ORB_HANDED_OVER and sets FLAG_BLACK_ORB_RETURNED.
+/// Using the Black Orb on the shipwreck does nothing. The orb is taken back
+/// and the party is to press on to Babi Lighthouse.
+///
+/// Reached by using the Black Orb on CELL_BEHAVIOR_WORLD_MAP_SHIPWRECK until
+/// it is handed back. It clears FLAG_WORLD_MAP_BLACK_ORB_HANDED_OVER and sets
+/// FLAG_BLACK_ORB_RETURNED.
 static void WorldMap_UseBlackOrb(void) {
   struct Actor *iodem;
   struct Actor *orb;
@@ -2253,9 +2329,12 @@ u16 gWorldMapBlend;
   IO_WRITE_QUEUE_PUSH((u32)BG_SCREEN_BLOCK(4), (u32)((buffer) + (offset)),     \
                       DMA_COPY_WORDS(320))
 
-/// The ending, on the island Jenna and Kraden are adrift on: they talk of the
-/// lit Venus beacon and of Felix and Isaac until Alex comes and leads them to
-/// Felix and Sheba, and the Title returns (TITLE_FROM_WORLD_MAP).
+/// The ending, on the island Jenna and Kraden are adrift on.
+///
+/// They talk of the lit Venus beacon and of Felix and Isaac until Alex comes
+/// and leads them to Felix and Sheba. Then the Title returns
+/// (TITLE_FROM_WORLD_MAP).
+///
 /// Called by WorldMap_Initialize at WORLD_MAP_JENNA_AND_KRADEN_ADRIFT.
 static void WorldMap_ShowEndingEvent(void) {
   WindowColor_Apply(gMainRoutineWork.windowColor[0],
@@ -2393,11 +2472,14 @@ static void WorldMap_ShowEndingEvent(void) {
   Event_SetDestination((s32)&SceneId_Title, TITLE_FROM_WORLD_MAP);
 }
 
-/// The look back before Sheba's fall: the view settles on Venus Lighthouse,
-/// which shakes in clouds of dust (WorldMap_UpdateLighthouseQuake) as the
-/// colours fade, and WORLD_MAP_TO_VENUS_LIGHTHOUSE_AERIE leads back up to the
-/// aerie, its music kept.
-/// Called by WorldMap_Initialize at WORLD_MAP_BEFORE_SHEBAS_FALL; sets
+/// The look back before Sheba's fall, with the view settling on Venus
+/// Lighthouse.
+///
+/// The lighthouse shakes in clouds of dust (WorldMap_UpdateLighthouseQuake)
+/// as the colours fade. WORLD_MAP_TO_VENUS_LIGHTHOUSE_AERIE then leads back
+/// up to the aerie, its music kept.
+///
+/// Called by WorldMap_Initialize at WORLD_MAP_BEFORE_SHEBAS_FALL. It sets
 /// FLAG_KEEP_MUSIC_ONCE.
 static void WorldMap_ShakeVenusLighthouse(void) {
   Event_Start();
@@ -2431,7 +2513,7 @@ static void WorldMap_ShakeVenusLighthouse(void) {
   Event_End();
 }
 
-/// Run each frame while Venus Lighthouse shakes: it puffs up dust at a random
+/// Run each frame while Venus Lighthouse shakes. It puffs up dust at a random
 /// spot in the QUAKE_DUST box, and every third frame moves the camera a pixel
 /// to one of four points around the lighthouse.
 static void WorldMap_UpdateLighthouseQuake(void) {
@@ -2472,11 +2554,14 @@ static void WorldMap_UpdateLighthouseQuake(void) {
   }
 }
 
-/// A leg of the Tolbi-bound Ship's crossing: out of the ship's interior
-/// (SHIP_ROOMS_TO_WORLD_MAP) the ship sails north to its anchorage
-/// off the island, where ACTOR_TOLBI_SHIP stands, and the party goes back
-/// into it (WORLD_MAP_TO_SHIP_ROOMS_ROWING_DECK_ISLAND). Called by
-/// WorldMap_Initialize at WORLD_MAP_FROM_SHIP_ROOMS.
+/// A leg of the Tolbi-bound Ship's crossing, in which the ship sails north to
+/// its anchorage off the island.
+///
+/// The party comes out of the ship's interior (SHIP_ROOMS_TO_WORLD_MAP). The
+/// ship sails to where ACTOR_TOLBI_SHIP stands, and the party goes back into
+/// it (WORLD_MAP_TO_SHIP_ROOMS_ROWING_DECK_ISLAND).
+///
+/// Called by WorldMap_Initialize at WORLD_MAP_FROM_SHIP_ROOMS.
 static void WorldMap_SailTolbiShipToIsland(void) {
 
   struct Actor *actor;
@@ -2516,8 +2601,10 @@ static void WorldMap_SailTolbiShipToIsland(void) {
 }
 
 /// The rowers' balance, as TolbiShipMast_GetRowingBalance (tolbi_ship_mast.c)
-/// reckons it: the rowing values at the first and third seats less those at
-/// the second and fourth. ROWING_BALANCE_OFF_COURSE takes the Tolbi-bound Ship
+/// reckons it.
+///
+/// It is the rowing values at the first and third seats less those at the
+/// second and fourth. ROWING_BALANCE_OFF_COURSE takes the Tolbi-bound Ship
 /// off course to the island.
 static s32 WorldMap_GetRowingBalance(void) {
   s32 positiveTotal = WorldMap_GetSeatRowValue(0);
@@ -2593,8 +2680,9 @@ static void WorldMap_SpawnIslandWake(void) {
 }
 
 /// Before the ending, the island Jenna and Kraden are adrift on drifts east
-/// with its wake under warm colours, and the map fades to white and leads into
-/// their event (WORLD_MAP_TO_JENNA_AND_KRADEN_ADRIFT).
+/// with its wake under warm colours. Then the map fades to white and leads
+/// into their event (WORLD_MAP_TO_JENNA_AND_KRADEN_ADRIFT).
+///
 /// Called by WorldMap_Initialize at WORLD_MAP_FROM_FILE_SCREEN, once the
 /// cleared game is saved (scene/file_screen.c).
 static void WorldMap_ShowIslandDrifting(void) {
@@ -2632,9 +2720,11 @@ static void WorldMap_ShowIslandDrifting(void) {
   Import_EventSetExitRequest(WORLD_MAP_TO_JENNA_AND_KRADEN_ADRIFT);
 }
 
-/// Run each frame while a storm holds the party in the air: it spins the leader
-/// and counts the frames left in the byte at FLAG_WORLD_MAP_STORM_FRAMES_LEFT,
-/// paused while a menu is open, raising RAISED_STORM_TIME_UP at the last.
+/// Run each frame while a storm holds the party in the air.
+///
+/// It spins the leader and counts the frames left in the byte at
+/// FLAG_WORLD_MAP_STORM_FRAMES_LEFT. The count is paused while a menu is
+/// open. At the last frame it raises RAISED_STORM_TIME_UP.
 static void WorldMap_UpdateStormTimer(void) {
 
   struct Actor *actor;
@@ -2656,9 +2746,11 @@ static void WorldMap_UpdateStormTimer(void) {
   FieldGameFlag_SetByte(FLAG_WORLD_MAP_STORM_FRAMES_LEFT, progress);
 }
 
-/// Draws the leader into the storm, lifts him and starts its timer. Called by
-/// WorldMap_WalkIntoStorm. Sets FLAG_WORLD_MAP_CAUGHT_IN_STORM and gives the
-/// party 180 frames in the air (FLAG_WORLD_MAP_STORM_FRAMES_LEFT).
+/// Draws the leader into the storm, lifts him and starts its timer.
+///
+/// Called by WorldMap_WalkIntoStorm. It sets FLAG_WORLD_MAP_CAUGHT_IN_STORM
+/// and gives the party 180 frames in the air
+/// (FLAG_WORLD_MAP_STORM_FRAMES_LEFT).
 static void WorldMap_CatchInStorm(s32 targetActorId) {
   s32 alreadyTraveling;
   struct Actor *actor;
@@ -2694,23 +2786,27 @@ static void WorldMap_CatchInStorm(s32 targetActorId) {
   }
 }
 
-/// Walking into the storm: the party is lifted up into the air. Reached by
-/// walking onto CELL_BEHAVIOR_WORLD_MAP_STORM until the storm is done with
-/// (FLAG_WORLD_MAP_STORM_GONE).
+/// Walking into the storm lifts the party up into the air.
+///
+/// Reached by walking onto CELL_BEHAVIOR_WORLD_MAP_STORM until the storm is
+/// done with (FLAG_WORLD_MAP_STORM_GONE).
 static void WorldMap_WalkIntoStorm(void) { WorldMap_CatchInStorm(ACTOR_STORM); }
 
-/// Starting to cast Douse on the storm: Douse's rain cloud gathers 80 pixels
-/// up, where the party floats (douse.c reads childOption). Reached by the first
-/// phase of Douse on the storm (ACTOR_STORM) while it holds the party in the
-/// air (FLAG_WORLD_MAP_CAUGHT_IN_STORM).
+/// Starting to cast Douse on the storm gathers Douse's rain cloud 80 pixels
+/// up, where the party floats (douse.c reads childOption).
+///
+/// Reached by the first phase of Douse on the storm (ACTOR_STORM) while it
+/// holds the party in the air (FLAG_WORLD_MAP_CAUGHT_IN_STORM).
 static void WorldMap_StartDousingStorm(void) {
   ((struct FieldEffectWork *)gFieldEffectWork)->childOption = 1;
 }
 
-/// Douse on the storm: the party comes down and the battle with what is in it
-/// begins (ENCOUNTER_ZONE_SCRIPTED, entries 5 and 7), as with the Suhalla
-/// Desert's storms. Reached by Douse on the storm (ACTOR_STORM) while it
-/// holds the party in the air. Clears FLAG_WORLD_MAP_CAUGHT_IN_STORM, sets
+/// Douse on the storm brings the party down, and the battle with what is in
+/// it begins (ENCOUNTER_ZONE_SCRIPTED, entries 5 and 7), as with the Suhalla
+/// Desert's storms.
+///
+/// Reached by Douse on the storm (ACTOR_STORM) while it holds the party in
+/// the air. It clears FLAG_WORLD_MAP_CAUGHT_IN_STORM, sets
 /// FLAG_WORLD_MAP_STORM_GONE and empties the timer.
 static void WorldMap_DouseMapStorm(void) {
   struct Actor *selectedActor;
@@ -2729,10 +2825,12 @@ static void WorldMap_DouseMapStorm(void) {
 }
 
 /// The storm drops the party outside Suhalla when its time in the air runs out.
+///
 /// The party and the storm fly off, and the map reopens outside Suhalla, where
-/// the desert's storms also drop the party. Reached by RAISED_STORM_TIME_UP,
-/// raised as the timer runs out. Sets FLAG_ARRIVE_FALLING and sends the party
-/// to WORLD_MAP_FROM_SUHALLA.
+/// the desert's storms also drop the party.
+///
+/// Reached by RAISED_STORM_TIME_UP, raised as the timer runs out. It sets
+/// FLAG_ARRIVE_FALLING and sends the party to WORLD_MAP_FROM_SUHALLA.
 static void WorldMap_StormDropsParty(void) {
   struct Actor *actor = Actor_Get(gMainRoutineWork.leaderActorId);
   struct Actor *other = Actor_Get(ACTOR_STORM);
@@ -2759,9 +2857,9 @@ static void WorldMap_StormDropsParty(void) {
   Event_SetDestination((s32)&SceneId_WorldMap, WORLD_MAP_FROM_SUHALLA);
 }
 
-/// Run each frame of the lighthouse transition: it blends BG0, where the
-/// transition is drawn, over everything, its own weight flickering between 12
-/// and 16 every two frames and the rest's from gWorldMapBlend.
+/// Run each frame of the lighthouse transition. It blends BG0, where the
+/// transition is drawn, over everything. BG0's own weight flickers between 12
+/// and 16 every two frames, and the rest's comes from gWorldMapBlend.
 static void WorldMap_UpdateTransitionBlend(void) {
 
   IoWriteQueue_Store16((u32)&REG_BLDCNT,
@@ -2775,7 +2873,7 @@ static void WorldMap_UpdateTransitionBlend(void) {
   }
 }
 
-/// Run each frame at the end of the lighthouse transition: every third frame
+/// Run each frame at the end of the lighthouse transition. Every third frame
 /// it moves the camera a pixel diagonally from the leader.
 static void WorldMap_JitterTransitionCamera(void) {
 
@@ -2814,16 +2912,19 @@ static inline void WorldMap_ShowTransitionPicture(u8 *buffer, s32 offset,
   Event_Wait(frames);
 }
 
-/// The lighthouse transition, after a beacon is lit: seven frames, tile maps
-/// drawn on BG0 in the lighthouse's colours (gWorldMapPalettes, by enum
-/// WorldMapLighthouse), are a ball of light over the lighthouse's top
-/// that swells frame by frame as the map darkens behind it, holds for 140
-/// frames and shrinks again; then the camera shakes and the screen closes for
-/// the aerie
+/// The lighthouse transition, after a beacon is lit.
+///
+/// A ball of light swells over the lighthouse's top, frame by frame, as the
+/// map darkens behind it. It holds for 140 frames and shrinks again. Then the
+/// camera shakes and the screen closes for the aerie
 /// (https://alchemy.pascalpixel.com/story/venus-lighthouse-lit.gif).
+///
+/// The ball is seven frames, tile maps drawn on BG0 in the lighthouse's
+/// colours (gWorldMapPalettes, by enum WorldMapLighthouse).
+///
 /// Called by WorldMap_Initialize at WORLD_MAP_AFTER_MERCURY_LIGHTHOUSE_LIT and
-/// WORLD_MAP_AFTER_VENUS_LIGHTHOUSE_LIT. Clears FLAG_KEEP_PARTY_POSITION and
-/// sets FLAG_SKIP_SCENE_CHANGE_SOUND.
+/// WORLD_MAP_AFTER_VENUS_LIGHTHOUSE_LIT. It clears FLAG_KEEP_PARTY_POSITION
+/// and sets FLAG_SKIP_SCENE_CHANGE_SOUND.
 static void
 WorldMap_PlayLighthouseTransition(enum WorldMapLighthouse lighthouse) {
   u8 *buffer = Heap_AllocEwram(16384);

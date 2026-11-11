@@ -5,31 +5,38 @@
 /// uncovers.
 ///
 /// The heat is a count of steps on hazard ground
-/// (gMainRoutineWork.hazardSteps): LamakanDesert_Initialize sets a limit of
-/// 600 on every scene, at which the party loses a quarter of its HP, and on all
-/// but LamakanDesertCave starts the heat gauge, a thermometer down the screen's
-/// left edge (HeatGauge_Draw). Each moving frame on the sand adds a step
-/// (HeatGauge_CountStep, CELL_BEHAVIOR_LAMAKAN_DESERT_SAND and the examine
-/// triggers' cell behaviors 100 to 107). As the gauge passes a quarter, a half
-/// and three quarters, HeatGauge_RaiseQuarterTriggers sets FLAG_HEAT_QUARTER to
+/// (gMainRoutineWork.hazardSteps). LamakanDesert_Initialize sets a limit of 600
+/// on every scene, at which the party loses a quarter of its HP. On all but
+/// LamakanDesertCave it starts the heat gauge, a thermometer down the screen's
+/// left edge (HeatGauge_Draw).
+///
+/// Each moving frame on the sand adds a step (HeatGauge_CountStep,
+/// CELL_BEHAVIOR_LAMAKAN_DESERT_SAND and the examine triggers' cell behaviors
+/// 100 to 107).
+///
+/// As the gauge passes a quarter, a half and three quarters, Garet, Ivan or Mia
+/// complains of the heat (LamakanDesert_ComplainAboutHeat). For that,
+/// HeatGauge_RaiseQuarterTriggers sets FLAG_HEAT_QUARTER to
 /// FLAG_HEAT_THREE_QUARTERS and raises LAMAKAN_DESERT_RAISED_HEAT_QUARTER to
-/// LAMAKAN_DESERT_RAISED_HEAT_THREE_QUARTERS, and Garet, Ivan or Mia complains
-/// of the heat (LamakanDesert_ComplainAboutHeat). Stepping into an oasis
-/// (CELL_BEHAVIOR_LAMAKAN_DESERT_OASIS), the leader hops into the middle of the
-/// nearest one and bathes until the heat has drained
+/// LAMAKAN_DESERT_RAISED_HEAT_THREE_QUARTERS.
+///
+/// Stepping into an oasis (CELL_BEHAVIOR_LAMAKAN_DESERT_OASIS), the leader hops
+/// into the middle of the nearest one and bathes until the heat has drained
 /// (LamakanDesert_BatheInOasis), and a running Reveal ends.
 ///
-/// Entry saves the patches of the map grid that hold the desert's secrets (the
-/// oases, the Ant Lions' pits, the Manticore, Smog, a Jupiter Djinni, and the
-/// chests and Psynergy Stones) and hides them under a shimmering heat haze
-/// (Reveal_HideSecrets); Reveal brings them back and stops the haze
-/// (Reveal_ShowSecrets) until it wears off. The oases' and pits' cells exist
-/// only while Reveal shines, as the monks of Lama Temple warn: `Reveal will
-/// help you find oases to cool you against the heat.`
+/// Entry saves the patches of the map grid that hold the desert's secrets and
+/// hides them under a shimmering heat haze (Reveal_HideSecrets). The secrets
+/// are the oases, the Ant Lions' pits, the Manticore, Smog, a Jupiter Djinni,
+/// and the chests and Psynergy Stones.
+///
+/// Reveal brings them back and stops the haze (Reveal_ShowSecrets) until it
+/// wears off. The oases' and pits' cells exist only while Reveal shines, as the
+/// monks of Lama Temple warn: `Reveal will help you find oases to cool you
+/// against the heat.`
 ///
 /// Stepping by a pit (CELL_BEHAVIOR_LAMAKAN_DESERT_PIT) pulls the leader into
-/// it for a battle with an Ant Lion (LamakanDesert_FallIntoPit), and slopes of
-/// sand (CELL_BEHAVIOR_LAMAKAN_DESERT_SLOPE) carry the leader south
+/// it for a battle with an Ant Lion (LamakanDesert_FallIntoPit). Slopes of sand
+/// (CELL_BEHAVIOR_LAMAKAN_DESERT_SLOPE) carry the leader south
 /// (LamakanDesert_SlideDownDune).
 ///
 /// In LamakanDesertManticore, until it is beaten
@@ -40,12 +47,13 @@
 /// beaten.
 ///
 /// LamakanDesertEast's LAMAKAN_DESERT_EAST_TO_WORLD_MAP and LamakanDesertCave's
-/// LAMAKAN_DESERT_CAVE_TO_WORLD_MAP lead out onto the World Map;
-/// LamakanDesertCave, a cave, has no heat gauge. Step trigger 9 takes
-/// LAMAKAN_DESERT_CAVE_TO_WORLD_MAP, and leaving that way while Hsu is still
-/// trapped (FLAG_HSU_RESCUED clear) sets FLAG_HSU_RESCUED and
-/// FLAG_HSU_RESCUED_WITHOUT_PARTY, which lacquer_rooms_b.c reads to have Feizhi
-/// thank Master Hama alone.
+/// LAMAKAN_DESERT_CAVE_TO_WORLD_MAP lead out onto the World Map.
+/// LamakanDesertCave, a cave, has no heat gauge.
+///
+/// Step trigger 9 takes LAMAKAN_DESERT_CAVE_TO_WORLD_MAP. Leaving that way
+/// while Hsu is still trapped (FLAG_HSU_RESCUED clear) sets FLAG_HSU_RESCUED
+/// and FLAG_HSU_RESCUED_WITHOUT_PARTY, which lacquer_rooms_b.c reads to have
+/// Feizhi thank Master Hama alone.
 
 #include "vram_cache.h"
 #include "module/import.h"
@@ -134,8 +142,7 @@ enum {
   /// (MsgMountainNorthAltinMineWestLama)
   FLAG_HEAT_THREE_QUARTERS = FLAG_AREA_TEMP_02,
   /// Who has complained since the gauge last passed a mark: one per party
-  /// member,
-  /// in the order of their actors.
+  /// member, in the order of their actors.
   /// ★ Named from the game: "My feet are burning!"
   /// (MsgMountainNorthAltinMineWestLama)
   FLAG_GARET_COMPLAINED = FLAG_AREA_TEMP_03,
@@ -147,13 +154,12 @@ enum {
   FLAG_MIA_COMPLAINED = FLAG_AREA_TEMP_05
 };
 
-/// The actors, numbered in the order of each scene's actor
-/// placements from ACTOR_FIRST_PLACED. LamakanDesertEast to
-/// LamakanDesertManticore place the Manticore, then the LamakanDesertEast and
-/// LamakanDesertManticore one pit and LamakanDesertSmog all four pits and Smog;
-/// LamakanDesertCave places none.
+/// The actors, numbered in the order of each scene's actor placements from
+/// ACTOR_FIRST_PLACED. LamakanDesertEast to LamakanDesertManticore place the
+/// Manticore, then the LamakanDesertEast and LamakanDesertManticore one pit and
+/// LamakanDesertSmog all four pits and Smog. LamakanDesertCave places none.
 enum {
-  /// The Manticore, until FLAG_LAMAKAN_MANTICORE_BEATEN; talking to it starts
+  /// The Manticore, until FLAG_LAMAKAN_MANTICORE_BEATEN. Talking to it starts
   /// its battle.
   /// ★ Named from the game: "Manticore" (MsgEnemyName)
   ACTOR_MANTICORE = ACTOR_FIRST_PLACED,
@@ -169,8 +175,8 @@ enum {
   ACTOR_SMOG = ACTOR_LAST_PIT + 1
 };
 
-/// The desert's two Psynergy Stones, area temp flags: each is back once
-/// the party has left Lamakan Desert.
+/// The desert's two Psynergy Stones, area temp flags. Each is back once the
+/// party has left Lamakan Desert.
 enum {
   /// ★ Named from the game: "a Psynergy Stone" (MsgGotPsynergyStone)
   FLAG_LAMAKAN_DESERT_FIRST_PSYNERGY_STONE = FLAG_AREA_TEMP_50,
@@ -207,7 +213,7 @@ enum {
 #include "shared/field_effect_create.h"
 #include "shared/field_effect_spawn.h"
 
-/// LamakanDesertSmog: talking to Smog, whom Reveal uncovers, adds the
+/// In LamakanDesertSmog, talking to Smog, whom Reveal uncovers, adds the
 /// Jupiter Djinni to the party.
 static void LamakanDesert_TalkToSmog(void) {
   Djinn_JoinParty(ACTOR_SMOG, ELEMENT_JUPITER, DJINNI_INDEX(DJINNI_SMOG));
@@ -278,7 +284,7 @@ const u32 *LamakanDesert_GetExits(void) { return gLamakanDesertExits; }
 
 /// The pits, the Manticore and Smog of each scene. Arriving at
 /// LamakanDesertManticore's LAMAKAN_DESERT_MANTICORE_AFTER_FIGHT_MANTICORE, the
-/// way back from the Manticore's battle, marks it beaten; in the patched
+/// way back from the Manticore's battle, marks it beaten. In the patched
 /// editions it also sets FLAG_KALAY_REACHED.
 const struct ActorPlacement *LamakanDesert_GetActorPlacements(void) {
   if (gMainRoutineWork.next == (s32)&SceneId_LamakanDesertManticore) {
@@ -304,7 +310,7 @@ const struct ActorPlacement *LamakanDesert_GetActorPlacements(void) {
   return gLamakanDesertActorPlacementsOther;
 }
 
-/// Lamakan Desert, step trigger 9: LAMAKAN_DESERT_CAVE_TO_WORLD_MAP. If
+/// In Lamakan Desert, step trigger 9 takes LAMAKAN_DESERT_CAVE_TO_WORLD_MAP. If
 /// Master Hsu is still trapped, he is rescued without the party (see the file
 /// comment).
 static void LamakanDesert_LeaveForTheWorldMap(void) {
@@ -327,13 +333,13 @@ const struct Trigger *LamakanDesert_GetTriggers(void) {
 
 #ifdef UBFIX
 /// Reveal wears off, and the desert's secrets sink under the sand again. It
-/// also runs on every entry to Lamakan Desert: the pits, the Manticore and Smog
+/// also runs on every entry to Lamakan Desert. The pits, the Manticore and Smog
 /// vanish under the sand (cells 70, 68 or 69, 99 over the saved patches), the
 /// chests and Psynergy Stones hide and the heat haze shimmers.
 static void Reveal_HideSecrets(void) {
 #else
 /// Reveal wears off, and the desert's secrets sink under the sand again. It
-/// also runs on every entry to Lamakan Desert: the pits, the Manticore and Smog
+/// also runs on every entry to Lamakan Desert. The pits, the Manticore and Smog
 /// vanish under the sand (cells 70, 68 or 69, 99 over the saved patches), the
 /// chests and Psynergy Stones hide and the heat haze shimmers.
 static s32 Reveal_HideSecrets(void) {
@@ -489,7 +495,7 @@ static void LamakanDesert_FightManticore(void) {
 
 /// Garet, Ivan or Mia complains about the heat. In Lamakan Desert this is
 /// raised as LAMAKAN_DESERT_RAISED_HEAT_QUARTER to _THREE_QUARTERS as the heat
-/// gauge passes a quarter, a half and three quarters, and the one who speaks is
+/// gauge passes a quarter, a half and three quarters. The one who speaks is
 /// picked at random (three tries for one who has not spoken yet).
 static void LamakanDesert_ComplainAboutHeat(s32 mark) {
   s32 tries;
@@ -581,10 +587,11 @@ struct LamakanDesertOasis {
   s32 z;
 };
 
-/// Lamakan Desert, stepping into an oasis (CELL_BEHAVIOR_LAMAKAN_DESERT_OASIS),
-/// which only Reveal shows: the leader hops into the middle of the nearest of
-/// the map's oases, bathes with a heart over his head while the gauge drains 5
-/// steps a frame, for at least a second, then hops out.
+/// In Lamakan Desert, stepping into an oasis
+/// (CELL_BEHAVIOR_LAMAKAN_DESERT_OASIS), which only Reveal shows, the leader
+/// hops into the middle of the nearest of the map's oases. He bathes with a
+/// heart over his head while the gauge drains 5 steps a frame, for at least a
+/// second, then hops out.
 static void LamakanDesert_BatheInOasis(void) {
   u8 *work;
   s32 frames;
@@ -725,8 +732,8 @@ static void LamakanDesert_BatheInOasis(void) {
   HeatGauge_SetHeld(0);
 }
 
-/// Lamakan Desert, walking on sand (step triggers 21 and 100 to 107): each
-/// moving frame adds a step of heat and kicks up dust, faster on the run.
+/// In Lamakan Desert, walking on sand (step triggers 21 and 100 to 107) adds a
+/// step of heat each moving frame and kicks up dust, faster on the run.
 static void HeatGauge_CountStep(void) {
   struct Actor *actor;
   struct FieldWork *work;
@@ -779,9 +786,9 @@ static void HeatGauge_CountStep(void) {
   }
 }
 
-/// Lamakan Desert, step trigger 22, stepping near a hidden pit: the leader
-/// looks at the nearest pit, is pulled backwards into it and a battle with an
-/// Ant Lion begins.
+/// In Lamakan Desert, stepping near a hidden pit (step trigger 22), the leader
+/// looks at the nearest pit and is pulled backwards into it, and a battle with
+/// an Ant Lion begins.
 static void LamakanDesert_FallIntoPit(void) {
   struct Actor *target;
   struct Actor *actor;
@@ -859,8 +866,8 @@ static void LamakanDesert_FallIntoPit(void) {
       ENCOUNTER_ZONE_SCRIPTED_MOGALL_ALTIN_LAMAKAN, 4);
 }
 
-/// Lamakan Desert, on a slope of sand (CELL_BEHAVIOR_LAMAKAN_DESERT_SLOPE): the
-/// sand carries the leader south 1.5 pixels a frame, and at a ledge the leader
+/// In Lamakan Desert, on a slope of sand (CELL_BEHAVIOR_LAMAKAN_DESERT_SLOPE),
+/// the sand carries the leader south 1.5 pixels a frame. At a ledge the leader
 /// hops down 8 pixels.
 static void LamakanDesert_SlideDownDune(void) {
   struct Actor *center;
@@ -937,9 +944,9 @@ static void LamakanDesert_SlideDownDune(void) {
   actor->z.fixed += PIXELS(3) / 2;
 }
 
-/// Lamakan Desert, step trigger 40 in LamakanDesertManticore, until the
-/// Manticore is beaten: the leader stops and backs away as the Manticore rises
-/// out of the sand.
+/// In Lamakan Desert, at step trigger 40 in LamakanDesertManticore, the leader
+/// stops and backs away as the Manticore rises out of the sand. This plays
+/// until the Manticore is beaten.
 static void LamakanDesert_MeetManticore(void) {
   s32 paused;
   struct Actor *record;
@@ -1005,8 +1012,8 @@ static void LamakanDesert_MeetManticore(void) {
   }
 }
 
-/// Entering Lamakan Desert: the heat gauge (600 steps) starts on all but
-/// LamakanDesertCave, the patches Reveal uncovers are saved to the spare cells
+/// Entering Lamakan Desert starts the heat gauge (600 steps) on all but
+/// LamakanDesertCave. The patches Reveal uncovers are saved to the spare cells
 /// at 64, 126 or 64, 124, and the secrets are hidden.
 s32 LamakanDesert_Initialize(void) {
   s32 spareRow;

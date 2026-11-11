@@ -6,49 +6,56 @@
 /// - AltmillerCaveEntrance (SceneId_AltmillerCaveEntrance): the dark passage in
 ///   from the World Map and the chamber beyond it.
 /// - AltmillerCaveBabi (SceneId_AltmillerCaveBabi): the invisible Babi, who
-/// asks
-///   for his draught (AltmillerCave_MeetInvisibleBabi) and drinks it
+///   asks for his draught (AltmillerCave_MeetInvisibleBabi) and drinks it
 ///   (AltmillerCave_RestoreBabiAndInviteParty), and a chest that is a Mimic.
 /// - AltmillerCaveVialChest (SceneId_AltmillerCaveVialChest) and
 ///   AltmillerCaveCookieChest (SceneId_AltmillerCaveCookieChest): a chest each.
 /// - AltmillerCaveSquall (SceneId_AltmillerCaveSquall): Squall, a Jupiter
-/// Djinni,
-///   three fallen columns to push, a stone pillar for Move and a puddle for
-///   Frost.
+///   Djinni, three fallen columns to push, a stone pillar for Move and a puddle
+///   for Frost.
 /// - AltmillerCaveDraught (SceneId_AltmillerCaveDraught): three more fallen
 ///   columns, the rock puzzle (AltmillerCave_TurnRock) and the chest that holds
 ///   the Mystic Draught behind the wall the puzzle opens.
 ///
-/// The rooms share one entrance table and one exit table, and the other
-/// getters choose by gMainRoutineWork.next. AltmillerCave_Initialize
-/// sends an entry from outside the cave (entrance 0) to the room's first
-/// entrance, darkens the dark rooms and puts back what the party has done.
-/// Saving Babi (FLAG_BABI_SAVED) is the story flag the rest of Tolbi waits on;
-/// the overlay's own state is in scene temp flags and gSceneLocalState, so it
+/// The rooms share one entrance table and one exit table, and the other getters
+/// choose by gMainRoutineWork.next. AltmillerCave_Initialize sends an entry
+/// from outside the cave (entrance 0) to the room's first entrance, darkens the
+/// dark rooms and puts back what the party has done.
+///
+/// Saving Babi (FLAG_BABI_SAVED) is the story flag the rest of Tolbi waits on.
+/// The overlay's own state is in scene temp flags and gSceneLocalState, so it
 /// starts over on every ordinary arrival.
 ///
-/// Every room but the two lit ones is dark (FLAG_ALTMILLER_CAVE_DARK): BG1 is
-/// blended over the rest (ALTMILLER_CAVE_DARKNESS_BLEND), and the light around
-/// the party is a display window, an ellipse around the leader inside which the
+/// Every room but the two lit ones is dark (FLAG_ALTMILLER_CAVE_DARK). BG1 is
+/// blended over the rest (ALTMILLER_CAVE_DARKNESS_BLEND). The light around the
+/// party is a display window, an ellipse around the leader inside which the
 /// layers are drawn differently (AltmillerCave_InitializeDarkness). In an
 /// evenly dark room BG1 covers everything outside it and is only blended inside
-/// it. AltmillerCaveEntrance darkens by steps instead
-/// (FLAG_ALTMILLER_CAVE_DARKENS_BY_STEPS): step triggers 60 to 65 each set a
-/// level, kept in gSceneLocalState byte 4, from the lightest at the mouth to
-/// the darkest by the inner chamber, and blends outside the light while BG1 is
-/// left out inside it. AltmillerCave_ApplyFadeBlend gives BG1 no weight and the
-/// layers under it 16 sixteenths at level 0, two fewer at each level after,
-/// down to 6 at level 5. Where one level meets the next, a cell of each lies
-/// side by side, so the level is that of the cell the leader last stepped on,
-/// in either direction. Reveal lights a dark room while it lasts and shows the
-/// rocks' colours (AltmillerCave_StartReveal, AltmillerCave_EndReveal).
+/// it.
 ///
-/// The rock puzzle keeps the rounds matched in gSceneLocalState byte 0 and its
-/// state and the light at the top in struct RockPuzzle after it. Turning the
-/// leftmost rock and then the rightmost brings out the ring of five lights; the
-/// ring spins (AltmillerCave_SpinLights, a task) and stops with one light at
-/// the top, and turning that light's rock spins it on to a different light. A
-/// wrong rock puts the lights away. The third match bursts the wall
+/// AltmillerCaveEntrance darkens by steps instead
+/// (FLAG_ALTMILLER_CAVE_DARKENS_BY_STEPS). Step triggers 60 to 65 each set a
+/// level, kept in gSceneLocalState byte 4, from the lightest at the mouth to
+/// the darkest by the inner chamber. This room blends outside the light, while
+/// BG1 is left out inside it.
+///
+/// AltmillerCave_ApplyFadeBlend gives BG1 no weight and the layers under it 16
+/// sixteenths at level 0, two fewer at each level after, down to 6 at level 5.
+/// Where one level meets the next, a cell of each lies side by side. So the
+/// level is that of the cell the leader last stepped on, in either direction.
+///
+/// Reveal lights a dark room while it lasts and shows the rocks' colours
+/// (AltmillerCave_StartReveal, AltmillerCave_EndReveal).
+///
+/// The rock puzzle keeps the rounds matched in gSceneLocalState byte 0, and its
+/// state and the light at the top in struct RockPuzzle after it.
+///
+/// Turning the leftmost rock and then the rightmost brings out the ring of five
+/// lights. The ring spins (AltmillerCave_SpinLights, a task) and stops with one
+/// light at the top. Turning that light's rock spins it on to a different
+/// light.
+///
+/// A wrong rock puts the lights away. The third match bursts the wall
 /// (AltmillerCave_ReleaseWallBurst). Coming up to the rocks from the pillar
 /// cave (ALTMILLER_CAVE_DRAUGHT_ROCKS_FROM_PILLAR_CAVE) starts the puzzle over.
 
@@ -104,8 +111,8 @@
 /// AltmillerCaveBabi's actors: Babi while invisible and once seen, and
 /// the two men from Tolbi who come looking for him.
 enum {
-  /// Babi's second sheet, SPRITE_INVISIBLE_BABI: the old man with
-  /// long pink hair and a cane, standing unseen in the cave.
+  /// Babi's second sheet, SPRITE_INVISIBLE_BABI. It is the old man with long
+  /// pink hair and a cane, standing unseen in the cave.
   /// ★ Named from the game: "Wrapped in Psynergetic light... Who could it
   /// be?" (MsgAltmillerSee)
   ACTOR_INVISIBLE_BABI = 8,
@@ -123,8 +130,8 @@ enum {
 };
 
 /// AltmillerCaveSquall and AltmillerCaveDraught place first the three fallen
-/// columns the party pushes; AltmillerCaveSquall then a puddle, a pillar for
-/// Move and Squall, a Jupiter Djinni.
+/// columns the party pushes. AltmillerCaveSquall then places a puddle, a pillar
+/// for Move and Squall, a Jupiter Djinni.
 enum {
   /// ★ Named from what the player sees: white stone columns lying across the
   /// floor, in the way (its render)
@@ -182,8 +189,8 @@ enum {
 
 enum { LIGHT_COUNT = 5 };
 
-/// The palette a light or rock is drawn in, as its child value: the five
-/// colors in the same order, and none for a rock while Reveal is off.
+/// The palette a light or rock is drawn in, as its child value. They are the
+/// five colors in the same order, and none for a rock while Reveal is off.
 enum {
   COLOR_BLUE = 1,
   COLOR_GREEN = 4,
@@ -195,8 +202,8 @@ enum {
 
 /// The scene temp flags the cave keeps.
 enum {
-  /// The cave is dark: set on entry everywhere but AltmillerCaveSquall and
-  /// AltmillerCaveDraught.
+  /// The cave is dark. It is set on entry everywhere but AltmillerCaveSquall
+  /// and AltmillerCaveDraught.
   /// ★ Named from what the player sees: the cave dark but for a small circle of
   /// light around the party (its render)
   FLAG_ALTMILLER_CAVE_DARK = FLAG_SCENE_TEMP_00,
@@ -251,8 +258,8 @@ enum { PUDDLE_ANIMATION_FROZEN = 5 };
 static void AltmillerCave_ReleaseWallBurst(void);
 
 /// The ring of five lights above AltmillerCaveDraught's rocks as it spins to
-/// its next light: angles are 16-bit turns, the light at the top is the chosen
-/// one.
+/// its next light. Angles are 16-bit turns, and the light at the top is the
+/// chosen one.
 struct LightWheel {
   s16 phase;
   s16 frames;
@@ -273,8 +280,8 @@ enum {
   WHEEL_STOPPED = 99
 };
 
-/// AltmillerCaveDraught's rock puzzle, kept in gSceneLocalState: the rounds of
-/// lights matched in byte 0, then the state and the light shown.
+/// AltmillerCaveDraught's rock puzzle, kept in gSceneLocalState. The rounds of
+/// lights matched are in byte 0, then the state and the light shown.
 struct RockPuzzle {
   u8 state;
   s8 chosen;
@@ -282,8 +289,8 @@ struct RockPuzzle {
 
 #define ROCK_PUZZLE ((struct RockPuzzle *)&gSceneLocalState[1])
 
-/// The puzzle's states: the leftmost rock turned, then the rightmost, which
-/// shows the lights; after three lights matched the wall opens.
+/// The puzzle's states. The leftmost rock is turned, then the rightmost, which
+/// shows the lights. After three lights matched the wall opens.
 enum {
   PUZZLE_START,
   PUZZLE_LEFT_ROCK_TURNED,
@@ -326,8 +333,8 @@ const struct ActorPlacement *AltmillerCave_GetActorPlacements(void) {
   return gAltmillerCave_ActorPlacementsOther;
 }
 
-/// Darkens AltmillerCaveEntrance to its current level: the brighter blend at
-/// level 0, each level one step darker.
+/// Darkens AltmillerCaveEntrance to its current level. The brighter blend is at
+/// level 0, and each level is one step darker.
 static void AltmillerCave_ApplyFadeBlend(void) {
   s8 level = ((s8 *)gSceneLocalState)[4];
 
@@ -373,8 +380,9 @@ static void AltmillerCave_SetFadeLevel(s32 level) {
 }
 
 /// Crossing the first darkness boundary sets the cave's lightest level.
-/// AltmillerCaveEntrance's boundaries are step triggers 60 to 65:
-/// crossing one sets its level, 0 to 5, each a step darker than the last.
+///
+/// AltmillerCaveEntrance's boundaries are step triggers 60 to 65. Crossing one
+/// sets its level, 0 to 5, each a step darker than the last.
 static void AltmillerCave_DarkenToLevel0(void) {
   AltmillerCave_SetFadeLevel(0);
 }
@@ -409,8 +417,8 @@ static void AltmillerCave_DarkenToLevel5(void) {
   AltmillerCave_SetFadeLevel(5);
 }
 
-/// Darkens the cave on entry: AltmillerCaveEntrance by its levels, the other
-/// dark rooms evenly.
+/// Darkens the cave on entry. AltmillerCaveEntrance darkens by its levels, the
+/// other dark rooms evenly.
 static void AltmillerCave_InitializeDarkness(void) {
   u8 **workCells = (u8 **)&gFieldWork;
   struct ScreenTransitionState *state;
@@ -468,8 +476,8 @@ static void AltmillerCave_InitializeDarkness(void) {
   }
 }
 
-/// Reveal's light: AltmillerCaveEntrance is lit and AltmillerCaveDraught's
-/// rocks show their colors.
+/// Reveal's light starts. AltmillerCaveEntrance is lit and
+/// AltmillerCaveDraught's rocks show their colors.
 static void AltmillerCave_StartReveal(void) {
   if (gMainRoutineWork.next == (s32)&SceneId_AltmillerCaveEntrance) {
     s32 alpha = BLEND_ALPHA(0, 16);
@@ -485,7 +493,7 @@ static void AltmillerCave_StartReveal(void) {
   }
 }
 
-/// Reveal's light ends: the cave darkens again and AltmillerCaveDraught's rocks
+/// Reveal's light ends. The cave darkens again and AltmillerCaveDraught's rocks
 /// lose their colors.
 static void AltmillerCave_EndReveal(void) {
   struct FieldEffectWork *effectWork =
@@ -504,8 +512,8 @@ static void AltmillerCave_EndReveal(void) {
   }
 }
 
-/// Retreat's first phase: the Psynergy's first actor faces south, and
-/// it is copied into a new actor for the Psynergy to use.
+/// Retreat's first phase. The Psynergy's first actor faces south, and it is
+/// copied into a new actor for the Psynergy to use.
 static void AltmillerCave_StartRetreat(void) {
   struct FieldEffectWork *effectWork;
   struct Actor *original;
@@ -528,8 +536,9 @@ static void AltmillerCave_StartRetreat(void) {
   }
 }
 
-/// After Move on AltmillerCaveSquall's pillar: in its cell at (30, 20) it
-/// settles and opens the way beside it (remembered in TBS_PATCH_1 and later).
+/// Runs after Move on AltmillerCaveSquall's pillar. In its cell at (30, 20) the
+/// pillar settles and opens the way beside it (remembered in TBS_PATCH_1 and
+/// later).
 static void AltmillerCave_UpdateMovedObstacle(void) {
   struct Actor *actor = Actor_Get(ACTOR_SQUALL_ROOM_PILLAR);
 
@@ -550,7 +559,7 @@ static void AltmillerCave_AdvanceObstacleAndCheckPassage(void) {
   AltmillerCave_UpdateMovedObstacle();
 }
 
-/// Frost's first phase on AltmillerCaveSquall's puddle: notes whether its place
+/// Frost's first phase on AltmillerCaveSquall's puddle notes whether its place
 /// is blocked, which keeps it from freezing.
 static void AltmillerCave_CheckFrostTargetCollision(void) {
   struct FieldEffectWork *effectWork =
@@ -567,8 +576,8 @@ static void AltmillerCave_CheckFrostTargetCollision(void) {
   }
 }
 
-/// Frost on AltmillerCaveSquall's puddle, unless blocked: it freezes and its
-/// cell takes the frozen attributes kept at (76, 16).
+/// Frost on AltmillerCaveSquall's puddle, unless blocked, freezes it. Its cell
+/// takes the frozen attributes kept at (76, 16).
 static void AltmillerCave_FreezePuddle(void) {
   struct FieldEffectWork *effectWork =
       (struct FieldEffectWork *)gFieldEffectWork;
@@ -587,8 +596,8 @@ static void AltmillerCave_FreezePuddle(void) {
   }
 }
 
-/// Walking into AltmillerCaveSquall's puddle while it is not frozen: the leader
-/// hops 32 pixels over it, if the landing is clear.
+/// Walking into AltmillerCaveSquall's puddle while it is not frozen makes the
+/// leader hop 32 pixels over it, if the landing is clear.
 static void AltmillerCave_HopSelectedActor(void) {
   struct Actor *actor = Actor_Get(gMainRoutineWork.leaderActorId);
   s32 motionFlags = actor->motionFlags;
@@ -638,7 +647,7 @@ static void AltmillerCave_MoveStagedActorToClearPosition(void) {
   Event_End();
 }
 
-/// Update routine of the light at the top of the stopped ring: it pulses
+/// Update routine of the light at the top of the stopped ring. It pulses
 /// through four sizes.
 static void AltmillerCave_PulseLight(struct Actor *actor) {
   struct Actor *light = (struct Actor *)actor;
@@ -680,9 +689,10 @@ static void AltmillerCave_PlaceLights(s32 angle) {
   } while (i < LIGHT_COUNT);
 }
 
-/// Task that spins the ring of lights: it speeds up, coasts, slows
-/// and stops with the chosen light at the top, which then pulses; a click
-/// (SE_CLICK) sounds for each fifth of a turn.
+/// Task that spins the ring of lights.
+///
+/// It speeds up, coasts, slows and stops with the chosen light at the top,
+/// which then pulses. A click (SE_CLICK) sounds for each fifth of a turn.
 static void AltmillerCave_SpinLights(void) {
   struct LightWheel *wheel = gAltmillerCave_LightWheel;
   s32 moving = 1;
@@ -730,11 +740,15 @@ static void AltmillerCave_SpinLights(void) {
 }
 
 /// Talking to one of AltmillerCaveDraught's rocks rotates it. "Isaac rotated
-/// the rock." Turning the leftmost rock, then the rightmost, brings out the
-/// ring of lights; then each time the rock matching the light at the top is
-/// turned, the ring spins to another light, and a wrong rock puts the lights
-/// away and starts over. After three lights matched the ring shrinks away, the
-/// wall bursts and the way to Babi's draught opens.
+/// the rock."
+///
+/// - Turning the leftmost rock, then the rightmost, brings out the ring of
+///   lights.
+/// - Then each time the rock matching the light at the top is turned, the ring
+///   spins to another light.
+/// - A wrong rock puts the lights away and starts over.
+/// - After three lights matched the ring shrinks away, the wall bursts and the
+///   way to Babi's draught opens.
 static void AltmillerCave_TurnRock(s32 rock) {
   s32 correctRock = 0;
   s32 i;
@@ -897,12 +911,16 @@ static __inline__ void AltmillerCave_FacePartyNorth(void) {
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
 }
 
-/// In AltmillerCaveBabi, talking to Babi or reading his mind once the Mystic
-/// Draught is found: he drinks it and appears, startling the party. Ivan reads
-/// his mind and finds him to be Babi, the ruler of Tolbi, who sought Lemurians
-/// to escape growing old. Two soldiers from Tolbi find him and take him back,
-/// and he invites the party to Colosso's finals; Garet asks whether they
-/// should take part.
+/// Babi drinks the Mystic Draught and appears, startling the party.
+///
+/// It plays in AltmillerCaveBabi on talking to Babi or reading his mind once
+/// the Mystic Draught is found.
+///
+/// - Ivan reads his mind and finds him to be Babi, the ruler of Tolbi, who
+///   sought Lemurians to escape growing old.
+/// - Two soldiers from Tolbi find him and take him back.
+/// - He invites the party to Colosso's finals.
+/// - Garet asks whether they should take part.
 static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   struct ScreenTransitionState *state;
   struct Actor *actor;
@@ -1707,10 +1725,12 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Event_End();
 }
 
-/// In AltmillerCaveBabi, talking to the invisible Babi or reading his mind
-/// the first time: he can be heard but not seen, cannot move, and asks the
-/// party to bring his draught from deep in the cave, telling the order of the
-/// five rocks.
+/// The invisible Babi asks the party to bring his draught from deep in the
+/// cave.
+///
+/// It plays in AltmillerCaveBabi on talking to the invisible Babi or reading
+/// his mind the first time. He can be heard but not seen, and cannot move. He
+/// tells the order of the five rocks.
 static void AltmillerCave_MeetInvisibleBabi(void) {
   struct Actor *leader;
   s32 line;
@@ -2028,9 +2048,11 @@ static void AltmillerCave_MeetInvisibleBabi(void) {
   Event_End();
 }
 
-/// In AltmillerCaveBabi, talking to Babi again before the draught is found:
-/// he asks whether the party forgot the order of the rock colors, and tells it
-/// again.
+/// Babi asks whether the party forgot the order of the rock colors, and tells
+/// it again.
+///
+/// It plays in AltmillerCaveBabi on talking to Babi again before the draught is
+/// found.
 static void AltmillerCave_RepeatRockOrder(void) {
   s32 question;
 
@@ -2053,9 +2075,11 @@ static void AltmillerCave_RepeatRockOrder(void) {
   Event_End();
 }
 
-/// In AltmillerCaveBabi, walking away from Babi (step trigger 19) the first
-/// time after meeting him: he calls the party back and says where the draught
-/// is. "Wait... The draught is... on a table behind the door."
+/// Babi calls the party back and says where the draught is. "Wait... The
+/// draught is... on a table behind the door."
+///
+/// It plays in AltmillerCaveBabi on walking away from Babi (step trigger 19)
+/// the first time after meeting him.
 static void AltmillerCave_BabiCallsPartyBack(void) {
   if (GameFlag_Get(FLAG_MET_INVISIBLE_BABI) == 0)
     return;
@@ -2100,8 +2124,8 @@ const struct Trigger *AltmillerCave_GetTriggers(void) {
   return gAltmillerCave_TriggersOther;
 }
 
-/// Update routine of AltmillerCaveDraught's obstacles: drawn on the leader's
-/// sprite priority.
+/// Update routine of AltmillerCaveDraught's obstacles. They are drawn on the
+/// leader's sprite priority.
 static void AltmillerCave_MatchLeaderPriority(struct Actor *updated) {
   struct Actor *actor = (struct Actor *)updated;
   if (actor != NULL) {
@@ -2118,11 +2142,13 @@ static __inline__ void AltmillerCave_RedrawObstacleFootprints(void) {
   Scene_RedrawActorFootprint(ACTOR_FIRST_OBSTACLE + 2);
 }
 
-/// Sets up the room being entered: an entry from outside the cave takes the
-/// room's first entrance; AltmillerCaveEntrance picks its darkness from
-/// the entrance; AltmillerCaveBabi's Babi is invisible until rescued;
-/// AltmillerCaveSquall's obstacles and pillar and AltmillerCaveDraught's
-/// obstacles, lights and rocks are restored. Returns 0.
+/// Sets up the room being entered. Returns 0.
+///
+/// - An entry from outside the cave takes the room's first entrance.
+/// - AltmillerCaveEntrance picks its darkness from the entrance.
+/// - AltmillerCaveBabi's Babi is invisible until rescued.
+/// - AltmillerCaveSquall's obstacles and pillar and AltmillerCaveDraught's
+///   obstacles, lights and rocks are restored.
 s32 AltmillerCave_Initialize(void) {
   s8 *state;
   struct Actor *actor;
@@ -2274,8 +2300,8 @@ s32 AltmillerCave_Initialize(void) {
   return 0;
 }
 
-/// Update routine of a piece of the burst wall: it flies off to a random
-/// point 120 pixels away, with a crash every fourth frame as they start.
+/// Update routine of a piece of the burst wall. It flies off to a random point
+/// 120 pixels away, with a crash every fourth frame as they start.
 static void AltmillerCave_UpdateWallFragment(struct FieldParticle *fragment) {
   s32 position[3];
   s32 x;
@@ -2313,7 +2339,7 @@ static void AltmillerCave_UpdateWallFragment(struct FieldParticle *fragment) {
   }
 }
 
-/// The wall bursts: 24 pieces fly out from the ring's center, the wall's
+/// The wall bursts. Its 24 pieces fly out from the ring's center, the wall's
 /// cells open to the passage, and the shaking calms.
 static void AltmillerCave_ReleaseWallBurst(void) {
   struct FieldEffectWork *effectWork;
@@ -2368,7 +2394,7 @@ static void AltmillerCave_ReleaseWallBurst(void) {
   FieldEffect_ReleaseSlots();
 }
 
-/// Pixel step by direction: X in the upper halfword, Z in the lower.
+/// Pixel step by direction, with X in the upper halfword and Z in the lower.
 #define DIRECTION_STEP(dx, dz) (((u32)(dx) << 16) | ((dz) & 0xffff))
 
 s32 gPushedActor_DirectionSteps[] = {

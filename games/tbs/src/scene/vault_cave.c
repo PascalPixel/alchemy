@@ -1,30 +1,34 @@
 /// @file
 /// Vault Cave's overlay, which holds three rooms, each a scene of its own and
 /// all named Vault Cave (SceneId_VaultCavePassage, SceneId_VaultCaveVambrace
-/// and SceneId_VaultCaveMouth, area 31). The cave opens off Vault as the party
-/// finds it on its return (SceneId_VaultRevisit), whose exits
+/// and SceneId_VaultCaveMouth, area 31).
+///
+/// The cave opens off Vault as the party finds it on its return
+/// (SceneId_VaultRevisit). That scene's exits
 /// VAULT_REVISIT_TO_VAULT_CAVE_PASSAGE and VAULT_REVISIT_TO_VAULT_CAVE_MOUTH
 /// lead in, through the hidden passage the dog shows and through a cave mouth
-/// in the town's northeast cliff. No story flag is read here and no one speaks:
-/// the cave is a side trip of puzzles for Move, Frost and Whirlwind, and only
-/// "The door is tightly locked." and "Isaac flipped the switch." are shown.
+/// in the town's northeast cliff.
+///
+/// No story flag is read here and no one speaks. The cave is a side trip of
+/// puzzles for Move, Frost and Whirlwind, and only "The door is tightly
+/// locked." and "Isaac flipped the switch." are shown.
 ///
 /// - Vault Cave (SceneId_VaultCavePassage), the way in from the hidden passage.
 ///   VAULT_CAVE_PASSAGE_FROM_VAULT_REVISIT is the foot of the ladder down from
-///   that passage, where a region takes VAULT_CAVE_PASSAGE_TO_VAULT_REVISIT
-///   back out to Vault (VAULT_REVISIT_FROM_VAULT_CAVE_PASSAGE); Retreat also
-///   leads there (Scene_Initialize). Searching the switch flips it
-///   (VaultCave_FlipSwitch, FLAG_VAULT_CAVE_SWITCH_FLIPPED): the switch
+///   that passage. A region there takes VAULT_CAVE_PASSAGE_TO_VAULT_REVISIT
+///   back out to Vault (VAULT_REVISIT_FROM_VAULT_CAVE_PASSAGE), and Retreat
+///   also leads there (Scene_Initialize). Searching the switch flips it
+///   (VaultCave_FlipSwitch, FLAG_VAULT_CAVE_SWITCH_FLIPPED). The switch
 ///   turns, the cave rumbles and shakes for eight seconds, and its map changes
 ///   as it fades (VaultCave_RunRumble). The change reaches
-///   SceneId_VaultCaveVambrace too: arriving in its northern room
+///   SceneId_VaultCaveVambrace too. Arriving in its northern room
 ///   (VAULT_CAVE_VAMBRACE_FROM_VAULT_CAVE_PASSAGE_NORTH,
 ///   VAULT_CAVE_VAMBRACE_FROM_VAULT_CAVE_MOUTH_NORTH,
 ///   VAULT_CAVE_VAMBRACE_NORTH_FROM_FROST_ROOM and
 ///   VAULT_CAVE_VAMBRACE_NORTH_FROM_WEST), Scene_Initialize draws it closed
 ///   until the switch is flipped and opens its cells after. Arriving down the
 ///   ladder clears the flag again, so the switch is reset each time the party
-///   comes in from Vault; arriving in the pool room
+///   comes in from Vault. Arriving in the pool room
 ///   (VAULT_CAVE_PASSAGE_FROM_VAULT_CAVE_VAMBRACE_EAST,
 ///   VAULT_CAVE_PASSAGE_FROM_VAULT_CAVE_VAMBRACE_SOUTHEAST,
 ///   VAULT_CAVE_PASSAGE_WATER_ROOM_FROM_NORTH_WEST,
@@ -34,20 +38,20 @@
 ///   ENCOUNTER_ZONE_MIMIC).
 /// - Vault Cave (SceneId_VaultCaveVambrace). In its southern room a pillar
 ///   (ACTOR_SOUTHERN_PILLAR) goes onto its switch by pushing
-///   (VaultCave_PushSouthernPillar) or Move (VaultCave_MoveSouthernPillar);
-///   once it rests there the puzzle chime plays and the switch opens the way
+///   (VaultCave_PushSouthernPillar) or Move (VaultCave_MoveSouthernPillar).
+///   Once it rests there the puzzle chime plays and the switch opens the way
 ///   (FLAG_VAULT_CAVE_SOUTH_PILLAR_ON_SWITCH). In the puddle room, six drops of
 ///   water (ACTOR_FIRST_WATER_DROP and the five after it) fall at random, one
 ///   every 64 frames, over six puddles (ACTOR_WEST_UPPER_PUDDLE to
 ///   ACTOR_FAR_EAST_PUDDLE) that Frost freezes. A frozen puddle changes its
 ///   map cell, and a drop falling onto it stops 32 pixels up instead of
-///   reaching the floor (VaultCave_UpdateFrostControlledFallingActors); while
+///   reaching the floor (VaultCave_UpdateFrostControlledFallingActors). While
 ///   the leader is 16 pixels or more above the floor, the puddles are drawn
 ///   beneath him. The six frozen states are
 ///   FLAG_VAULT_CAVE_WEST_UPPER_PUDDLE_FROZEN to
-///   FLAG_VAULT_CAVE_FAR_EAST_PUDDLE_FROZEN, read by index, and the room's
-///   entry code freezes again every puddle whose flag is set. Whirlwind blows
-///   away ivy (ACTOR_IVY) for as long as the party stays in the cave
+///   FLAG_VAULT_CAVE_FAR_EAST_PUDDLE_FROZEN, read by index. The room's entry
+///   code freezes again every puddle whose flag is set. Whirlwind blows away
+///   ivy (ACTOR_IVY) for as long as the party stays in the cave
 ///   (FLAG_VAULT_CAVE_IVY_BLOWN_AWAY, an area flag). A chest holds the
 ///   Vambrace.
 /// - Vault Cave (SceneId_VaultCaveMouth). In its northern room four water drops
@@ -56,15 +60,16 @@
 ///   pillar (ACTOR_NORTHERN_PILLAR) onto its switch
 ///   (FLAG_VAULT_CAVE_NORTH_PILLAR_ON_SWITCH). A water drop that lands on that
 ///   pillar marks it struck (FLAG_VAULT_CAVE_NORTH_PILLAR_STRUCK,
-///   SE_DUST_PUFF), and a struck pillar no longer opens the switch until the
-///   room is entered again. VAULT_CAVE_MOUTH_TO_VAULT_REVISIT leads out to
-///   Vault (VAULT_REVISIT_FROM_VAULT_CAVE_MOUTH).
+///   SE_DUST_PUFF). A struck pillar no longer opens the switch until the room
+///   is entered again. VAULT_CAVE_MOUTH_TO_VAULT_REVISIT leads out to Vault
+///   (VAULT_REVISIT_FROM_VAULT_CAVE_MOUTH).
 ///
 /// Each room has a door that only says it is locked
-/// (VaultCave_ShowLockedDoor). The pushes share VaultCave_PushPillarAhead,
-/// which moves the pillar the leader faces one cell unless another actor
-/// or the terrain is in the way, and the water drops run as tasks
-/// started by Scene_Initialize.
+/// (VaultCave_ShowLockedDoor).
+///
+/// The pushes share VaultCave_PushPillarAhead, which moves the pillar the
+/// leader faces one cell unless another actor or the terrain is in the way.
+/// The water drops run as tasks started by Scene_Initialize.
 
 #include "main_routine_work.h"
 #include "module/field/field.h"
@@ -151,7 +156,7 @@ enum {
   /// ★ Named from what the player sees: the easternmost puddle, between the
   /// rows (its render)
   FLAG_VAULT_CAVE_FAR_EAST_PUDDLE_FROZEN = FLAG_SCENE_TEMP_05,
-  /// A water drop struck the northern pillar before it reached its switch: the
+  /// A water drop struck the northern pillar before it reached its switch. The
   /// drop's cell matched the pillar's (VaultCave_ResetFallingActorAtActorCell).
   /// ★ Named from what the player sees: the pillar the leader pushes toward
   /// its switch in the northern room of SceneId_VaultCaveMouth (its render)
@@ -165,7 +170,7 @@ enum {
 /// gVaultCaveVambrace_ActorPlacements.
 enum VaultCaveVambraceActorId {
   /// A pillar, drawn as ACTOR_SOUTHERN_PILLAR is, two cells east of the
-  /// southern switch, drawn underfoot when the party arrives by
+  /// southern switch. It is drawn underfoot when the party arrives by
   /// VAULT_CAVE_VAMBRACE_FROM_VAULT_CAVE_PASSAGE_SOUTH or
   /// VAULT_CAVE_VAMBRACE_SOUTH_FROM_FROST_ROOM.
   /// ★ Named from what the player sees: a pink stone pillar with a flame
@@ -176,17 +181,17 @@ enum VaultCaveVambraceActorId {
   /// flame pillars, four cells from the switch marked with a flame, joined to
   /// it by a dotted track (its render)
   ACTOR_SOUTHERN_PILLAR,
-  /// The first of six water drops (in the sprite VaultCave_SpawnPuffs also
-  /// uses for the puffs where one lands) that fall at random, one every 64
-  /// frames (VaultCave_UpdateFrostControlledFallingActors).
+  /// The first of six water drops that fall at random, one every 64 frames
+  /// (VaultCave_UpdateFrostControlledFallingActors). VaultCave_SpawnPuffs also
+  /// uses their sprite for the puffs where one lands.
   /// ★ Named from what the player sees: blue drops of water above the puddles
   /// (its render)
   ACTOR_FIRST_WATER_DROP,
   /// The six puddles under the water drops, in their order and in the order of
   /// their flags (FLAG_VAULT_CAVE_WEST_UPPER_PUDDLE_FROZEN to
-  /// FLAG_VAULT_CAVE_FAR_EAST_PUDDLE_FROZEN). Drawn as the puddle that Frost
-  /// freezes into an ice pillar in bilibin_cave.c; frozen, a puddle stops a
-  /// water drop 32 pixels up.
+  /// FLAG_VAULT_CAVE_FAR_EAST_PUDDLE_FROZEN). They are drawn as the puddle that
+  /// Frost freezes into an ice pillar in bilibin_cave.c. Frozen, a puddle stops
+  /// a water drop 32 pixels up.
   /// ★ Named from what the player sees: six blue puddles on the cave floor,
   /// each under a drop of water (its render)
   ACTOR_WEST_UPPER_PUDDLE = ACTOR_FIRST_WATER_DROP + 6,
@@ -205,8 +210,8 @@ enum VaultCaveVambraceActorId {
   /// ★ Named from what the player sees: the easternmost puddle, between the
   /// rows (its render)
   ACTOR_FAR_EAST_PUDDLE,
-  /// Ivy (SPRITE_IVY), as in bilibin.c, drawn half as tall again, placed until
-  /// Whirlwind blows it away (FLAG_VAULT_CAVE_IVY_BLOWN_AWAY).
+  /// Ivy (SPRITE_IVY), as in bilibin.c, drawn half as tall again. It is placed
+  /// until Whirlwind blows it away (FLAG_VAULT_CAVE_IVY_BLOWN_AWAY).
   /// ★ Named from what the player sees: leafy green ivy against the cave
   /// wall (its render)
   ACTOR_IVY
@@ -328,9 +333,9 @@ static struct Actor *VaultCave_FindCollidableActorAtCell(s32 column, s32 row) {
   ((s32)(((u32)(u16)gVaultCave_DirectionSteps[(heading) * 2 + 1] << 16) |      \
          (u16)gVaultCave_DirectionSteps[(heading) * 2]))
 #else
-/// The step table read as one word per heading: the x step in pixels in the
-/// high halfword, the z step in the low. The struct's array reference keeps
-/// the native loads; an s32 pointer to the table does not.
+/// The step table read as one word per heading. The x step in pixels is in
+/// the high halfword, the z step in the low. The struct's array reference
+/// keeps the native loads, which an s32 pointer to the table does not.
 struct DirectionSteps {
   s32 xz[16];
 };
@@ -406,9 +411,8 @@ static void VaultCave_PushPillarAhead(void) {
 }
 
 /// Whirlwind blows the ivy away. It is cast on ACTOR_IVY in the puddle room
-/// of SceneId_VaultCaveVambrace, and the ivy stays gone for as long as the
-/// party stays in the cave (FLAG_VAULT_CAVE_IVY_BLOWN_AWAY is an area
-/// flag).
+/// of SceneId_VaultCaveVambrace. The ivy stays gone for as long as the party
+/// stays in the cave, because FLAG_VAULT_CAVE_IVY_BLOWN_AWAY is an area flag.
 static void VaultCave_UseWhirlwind(void) {
   GameFlag_Set(FLAG_VAULT_CAVE_IVY_BLOWN_AWAY);
 }
@@ -468,8 +472,9 @@ static inline void VaultCave_CompleteSouthernSwitch(void) {
   }
 }
 
-/// In VaultCaveVambrace's southern room, pushing the southern pillar; once it
-/// rests on its switch, the puzzle chime plays and the switch opens the way.
+/// In VaultCaveVambrace's southern room, the party pushes the southern pillar.
+/// Once it rests on its switch, the puzzle chime plays and the switch opens
+/// the way.
 static void VaultCave_PushSouthernPillar(void) {
   if (Event_GetFlag(FLAG_VAULT_CAVE_SOUTH_PILLAR_ON_SWITCH) == 0) {
     VaultCave_PushPillarAhead();
@@ -537,8 +542,8 @@ static inline void VaultCave_CompleteNorthernSwitch(void) {
   }
 }
 
-/// In VaultCaveMouth's northern room, pushing the northern pillar; it opens its
-/// switch only if no water drop has struck it.
+/// In VaultCaveMouth's northern room, the party pushes the northern pillar.
+/// It opens its switch only if no water drop has struck it.
 static void VaultCave_PushNorthernPillar(void) {
   VaultCave_PushPillarAhead();
   VaultCave_CompleteNorthernSwitch();
@@ -555,7 +560,7 @@ static void VaultCave_MoveNorthernPillar(void) {
 }
 
 /// Frost freezes the upper western puddle.
-/// The puddle is in VaultCaveVambrace's puddle room; freezing it changes its
+/// The puddle is in VaultCaveVambrace's puddle room. Freezing it changes its
 /// map cell, and arriving again re-freezes every puddle whose flag is set.
 static void VaultCave_FreezeWestUpperPuddle(void) {
   // An ordinary shared Frost helper keeps the extents but saves r5-r7 instead
@@ -742,10 +747,12 @@ static void VaultCave_RunRumble(void) {
 }
 
 /// In VaultCavePassage's pool room, searching the switch flips it.
-/// "Isaac flipped the switch." The first time since the party came in from
-/// Vault, the switch turns, the cave rumbles and shakes for eight seconds and
-/// the map changes as it fades; FLAG_VAULT_CAVE_SWITCH_FLIPPED then keeps the
-/// change until the party comes down the ladder from Vault again.
+/// "Isaac flipped the switch."
+///
+/// The first time since the party came in from Vault, the switch turns, the
+/// cave rumbles and shakes for eight seconds and the map changes as it fades.
+/// FLAG_VAULT_CAVE_SWITCH_FLIPPED then keeps the change until the party comes
+/// down the ladder from Vault again.
 static void VaultCave_FlipSwitch(void) {
   s32 destinationRow;
   s32 destinationColumn;
@@ -985,9 +992,8 @@ static void VaultCave_StartTimedFalls(void) {
   Task_AddFrame(VaultCave_UpdateTimedFallingActors, TASK_PASS_FRAME);
 }
 
-/// Arriving in any room of Vault Cave: restores the room's puzzles and
-/// actors, then sets the Retreat destination, the foot of the ladder from
-/// Vault.
+/// Arriving in any room of Vault Cave restores the room's puzzles and actors.
+/// It then sets the Retreat destination, the foot of the ladder from Vault.
 s32 Scene_Initialize(void) {
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);

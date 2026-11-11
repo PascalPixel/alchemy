@@ -2,88 +2,107 @@
 /// Bilibin, the Bilibin Treasury and the Bilibin Barricade, three scenes that
 /// share one overlay: SceneId_Bilibin, SceneId_BilibinTreasury and
 /// SceneId_BilibinBarricade. The getters pick each scene's tables by
-/// gMainRoutineWork.next, Bilibin_Initialize sets up the scene being
-/// entered, and Bilibin_PushStatueOrCrates serves all three.
+/// gMainRoutineWork.next, and Bilibin_Initialize sets up the scene being
+/// entered. Bilibin_PushStatueOrCrates serves all three.
 ///
 /// Bilibin (SceneId_Bilibin) is the town past Goma Cave, whose chief, Lord
 /// McCoy, has closed the road to Kolima. Almost everything here turns on
 /// FLAG_KOLIMA_CURSE_LIFTED, which the party sets in Kolima Forest when it
-/// heals Tret. Until then a man turned into a tree (ACTOR_TREE_MAN) stands at
-/// the entrance: a first look says it almost looks like a man, a second that it
-/// looks like a living person (FLAG_BILIBIN_TREE_EXAMINED remembers the first
-/// until the party leaves Bilibin), and Mind Read hears `Help me...
-/// Somebody...`. Once the curse is lifted, Bilibin_RestoreVillageActors
-/// puts the man himself (ACTOR_FORMER_TREE_MAN) beside the empty spot and
-/// turns ACTOR_OLD_MAN_ASKS_ABOUT_SOUTHEAST and
-/// ACTOR_OLD_WOMAN_ROAD_BLOCKED about. Each of the ten villagers
-/// (ACTOR_YOUNG_MAN_WELCOME to ACTOR_VILLAGER_STRANGE_CREATURES) has two
-/// lines and two thoughts in gBilibinTriggers, the row that needs the flag
-/// clear first, so the first row that matches picks the time; a few ask a
-/// yes-or-no question (the Bilibin_AskAbout functions).
+/// heals Tret.
 ///
-/// Bilibin's doors (step triggers 3 to 9, the numbers of the exits they take)
-/// open before the party walks in (Bilibin_OpenDoorAndLeave): six lead into
-/// Bilibin's buildings (SceneId_CottageRoomsC) and the seventh into the
-/// Bilibin Sanctum, out of which (BILIBIN_FROM_SANCTUM) the area name is not
-/// shown again. The other exits lead to the World Map, to the garden of McCoy's
-/// Palace and, two ways, into the Treasury: past the ivy at the west edge
-/// (ACTOR_IVY), gone when the party comes back out that way
-/// (BILIBIN_FROM_BILIBIN_TREASURY_WEST); its Whirlwind row runs no event, so
-/// Field_UsePsynergy only aims Whirlwind at it and the ivy stays. And
-/// from the cell a statue (ACTOR_VILLAGE_STATUE) stands on, once Move or a
-/// push slides it aside. Bilibin_UpdateVillageStatueCells keeps the cells of
-/// the statue's lane in step and hops the leader clear if it lands on him;
-/// coming back out that way (BILIBIN_FROM_BILIBIN_TREASURY_EAST) the party
-/// finds the statue moved.
+/// Until then a man turned into a tree (ACTOR_TREE_MAN) stands at the entrance.
+/// A first look says it almost looks like a man, a second that it looks like a
+/// living person. FLAG_BILIBIN_TREE_EXAMINED remembers the first look until the
+/// party leaves Bilibin. Mind Read hears `Help me... Somebody...`.
+///
+/// Once the curse is lifted, Bilibin_RestoreVillageActors puts the man himself
+/// (ACTOR_FORMER_TREE_MAN) beside the empty spot and turns
+/// ACTOR_OLD_MAN_ASKS_ABOUT_SOUTHEAST and ACTOR_OLD_WOMAN_ROAD_BLOCKED about.
+///
+/// Each of the ten villagers (ACTOR_YOUNG_MAN_WELCOME to
+/// ACTOR_VILLAGER_STRANGE_CREATURES) has two lines and two thoughts in
+/// gBilibinTriggers. The row that needs the flag clear comes first, so the
+/// first row that matches picks the time. A few ask a yes-or-no question (the
+/// Bilibin_AskAbout functions).
+///
+/// Bilibin's doors open before the party walks in (Bilibin_OpenDoorAndLeave).
+/// They are step triggers 3 to 9, the numbers of the exits they take. Six lead
+/// into Bilibin's buildings (SceneId_CottageRoomsC) and the seventh into the
+/// Bilibin Sanctum. Coming out of the Sanctum (BILIBIN_FROM_SANCTUM) the area
+/// name is not shown again.
+///
+/// The other exits lead to the World Map, to the garden of McCoy's Palace and,
+/// two ways, into the Treasury.
+///
+/// One way is past the ivy at the west edge (ACTOR_IVY), which is gone when the
+/// party comes back out that way (BILIBIN_FROM_BILIBIN_TREASURY_WEST). Its
+/// Whirlwind row runs no event, so Field_UsePsynergy only aims Whirlwind at it
+/// and the ivy stays.
+///
+/// The other way is from the cell a statue (ACTOR_VILLAGE_STATUE) stands on,
+/// once Move or a push slides it aside. Bilibin_UpdateVillageStatueCells keeps
+/// the cells of the statue's lane in step and hops the leader clear if it lands
+/// on him. Coming back out that way (BILIBIN_FROM_BILIBIN_TREASURY_EAST) the
+/// party finds the statue moved.
 ///
 /// FLAG_BILIBIN_KEEPING_MCCOY_WAITING is set while McCoy's gate guards have let
 /// the party in (FLAG_MCCOY_PALACE_ADMITTED) but it has not yet entered the
-/// palace (FLAG_MCCOY_PALACE_VISITED), for the garden's east guard to scold the
-/// party for keeping McCoy waiting. The garden is another area
-/// (scenes.s gives Bilibin 8 and the garden 9), so
-/// Scene_Arrive clears the flag on the way in and the guard never
-/// sees it set.
+/// palace (FLAG_MCCOY_PALACE_VISITED). It is there for the garden's east guard
+/// to scold the party for keeping McCoy waiting.
+///
+/// The garden is another area (scenes.s gives Bilibin 8 and the garden 9), so
+/// Scene_Arrive clears the flag on the way in and the guard never sees it set.
 ///
 /// The Bilibin Treasury (SceneId_BilibinTreasury) is what its sign calls
 /// `McCoy's Hidden Warehouse`. Gust, a Jupiter Djinni, is placed there until he
-/// joins the party when spoken to (Bilibin_GustJoins). A second statue
-/// (ACTOR_TREASURY_STATUE) slides along one column, and
+/// joins the party when spoken to (Bilibin_GustJoins).
+///
+/// A second statue (ACTOR_TREASURY_STATUE) slides along one column, and
 /// Bilibin_UpdateTreasuryStatueCells keeps the two cells it can stand on in
-/// step. Arriving by BILIBIN_TREASURY_UPPER_FROM_LOWER or
+/// step.
+///
+/// Arriving by BILIBIN_TREASURY_UPPER_FROM_LOWER or
 /// BILIBIN_TREASURY_FROM_BILIBIN_NORTH the leader starts 16 pixels above the
-/// floor; two exit regions (Bilibin_GetRegions) lead down its west ladder to
+/// floor. Two exit regions (Bilibin_GetRegions) lead down its west ladder to
 /// the lower room and back to Bilibin by the statue.
 ///
 /// The Bilibin Barricade (SceneId_BilibinBarricade) is the road east to Kolima
 /// where McCoy's barricade stands, reached from the World Map at either end.
-/// Its sign reads `This area is off-limits to all those without a permit. —Lord
-/// McCoy`, and a door there stays locked. A stack of crates
-/// (ACTOR_BARRICADE_CRATES) slides a cell at a time under Move or a push, and
-/// Bilibin_UpdateCratesCells rewrites the ten cells of its lane after each move
-/// (its recording,
-/// places/bilibin-barricade/events/Bilibin_UpdateCratesCells.gif). By the river
-/// stand three trees, one on another's shoulders (ACTOR_BOTTOM_TREE,
-/// ACTOR_MIDDLE_TREE and ACTOR_JILL_TREE at one spot, 0, 32 and 48 pixels
-/// up): the Gang of Three, children of the town turned into trees by the curse.
+/// Its sign reads `This area is off-limits to all those without a permit.
+/// —Lord McCoy`, and a door there stays locked.
+///
+/// A stack of crates (ACTOR_BARRICADE_CRATES) slides a cell at a time under
+/// Move or a push, and Bilibin_UpdateCratesCells rewrites the ten cells of its
+/// lane after each move (its recording,
+/// places/bilibin-barricade/events/Bilibin_UpdateCratesCells.gif).
+///
+/// By the river stand three trees, one on another's shoulders. They are
+/// ACTOR_BOTTOM_TREE, ACTOR_MIDDLE_TREE and ACTOR_JILL_TREE at one spot, 0, 32
+/// and 48 pixels up. They are the Gang of Three, children of the town turned
+/// into trees by the curse.
 ///
 /// Once Saturos is beaten at Mercury Lighthouse
 /// (FLAG_SATUROS_BEATEN_AT_MERCURY), while the curse holds, the travelers from
-/// Imil have crossed the river by pushing the trees down:
+/// Imil have crossed the river by pushing the trees down.
 /// Bilibin_RestoreRiverActors lays the middle tree on its side, with an
-/// invisible actor (ACTOR_FALLEN_TREE_STAND_IN) that answers for it,
-/// and puts Jill's tree in the water. Move on her
-/// (Bilibin_PullJillFromRiver) works once she is in cell column 6, by the
-/// bank: the leader pulls her ashore in three tugs, and
-/// FLAG_BILIBIN_JILL_RESCUED keeps her there. While whoever the player controls
-/// wades in the river, Bilibin_UpdateWadingRipples spreads a ripple from their
-/// feet every 30 frames.
+/// invisible actor (ACTOR_FALLEN_TREE_STAND_IN) that answers for it, and puts
+/// Jill's tree in the water.
+///
+/// Move on her (Bilibin_PullJillFromRiver) works once she is in cell column 6,
+/// by the bank. The leader pulls her ashore in three tugs, and
+/// FLAG_BILIBIN_JILL_RESCUED keeps her there.
+///
+/// While whoever the player controls wades in the river,
+/// Bilibin_UpdateWadingRipples spreads a ripple from their feet every 30
+/// frames.
 ///
 /// Once the curse is lifted the trees are gone, and the Gang of Three are
-/// children again on the bank (ACTOR_GANG_MEMBER_EAST,
-/// ACTOR_GANG_MEMBER_WEST and ACTOR_JILL). If Jill was never pulled out she
-/// is missing. If she was, stepping up to them (step trigger 13) plays
+/// children again on the bank (ACTOR_GANG_MEMBER_EAST, ACTOR_GANG_MEMBER_WEST
+/// and ACTOR_JILL). If Jill was never pulled out she is missing.
+///
+/// If she was, stepping up to them (step trigger 13) plays
 /// Bilibin_JillGivesHardNut, which gives the leader a Hard Nut
-/// (FLAG_BILIBIN_JILL_GIFT_RECEIVED); from then on the three turn to watch him.
+/// (FLAG_BILIBIN_JILL_GIFT_RECEIVED). From then on the three turn to watch him.
 
 #include "main_routine_work.h"
 #include "djinn_ids.h"
@@ -133,7 +152,7 @@ static void Bilibin_UpdateTreasuryStatueCells(void);
 /// the curse is lifted.
 enum BilibinActorId {
   /// Ivy drawn half as tall again at the west edge, where the way into the
-  /// Treasury runs; its Whirlwind row runs nothing.
+  /// Treasury runs. Its Whirlwind row runs nothing.
   /// ★ Named from what the player sees: leafy ivy against the cliff at the
   /// village's west edge, the sprite of the ivy Whirlwind blows away (its
   /// render)
@@ -213,8 +232,8 @@ enum BilibinBarricadeActorId {
   /// ★ Named from the game: "AHHHH! Please! Anyone! Please help!"
   /// (MsgBilibinAhhhhPleaseAnyonePleaseHelp)
   ACTOR_JILL_TREE,
-  /// Jill's two friends, once the curse is lifted, east and west of her: two
-  /// boys with brown hair. With her they were the "Gang of Three".
+  /// Jill's two friends, once the curse is lifted, east and west of her. They
+  /// are two boys with brown hair. With her they were the "Gang of Three".
   /// ★ Named from the game: "It was awful luck, being turned into"
   /// (MsgBilibinItWasAwfulLuckBeingTurned)
   ACTOR_GANG_MEMBER_EAST,
@@ -227,12 +246,10 @@ enum BilibinBarricadeActorId {
   /// ★ Named from the game: "Jill, are these the people who saved you?"
   /// (MsgBilibinYoureGuy)
   ACTOR_JILL,
-  /// Unused: a blank actor (SPRITE_BLANK_32) placed at the map's origin;
-  /// no
+  /// Unused: a blank actor (SPRITE_BLANK_32) placed at the map's origin. No
   /// code or trigger addresses it, so it never shows or answers anything.
   ACTOR_INVISIBLE_AT_ORIGIN,
-  /// The invisible actor (SPRITE_BLANK) that stands where the middle
-  /// tree lies
+  /// The invisible actor (SPRITE_BLANK) that stands where the middle tree lies
   /// pushed down and answers for it.
   /// ★ Named from the game: "Oh, it looks like she is okay."
   /// (MsgBilibinOhItLooksLikeSheIs)
@@ -266,8 +283,8 @@ struct BilibinRippleTimer gBilibin_RippleTimer;
 /// (MsgBilibinItsTreeButAlmostLooks)
 #define FLAG_BILIBIN_TREE_EXAMINED FLAG_AREA_TEMP_01
 /// McCoy's gate guards have let the party in but it has not yet entered the
-/// palace; the garden guard who reads it is in another area, so it is
-/// cleared before he can.
+/// palace. The garden guard who reads it is in another area, so it is cleared
+/// before he can.
 /// ★ Named from the game: "The master can be quite cranky. Hurry along, now!"
 /// (MsgBilibinMasterQuiteCranky)
 #define FLAG_BILIBIN_KEEPING_MCCOY_WAITING FLAG_AREA_TEMP_04
@@ -298,8 +315,8 @@ const struct SceneExitRegion *Bilibin_GetRegions(void) {
 /// Returns the packed exits shared by the three scenes.
 const u32 *Bilibin_GetExits(void) { return gBilibinExits; }
 
-/// Talking to Gust in the Bilibin Treasury: Gust, a Jupiter Djinni, joins the
-/// party.
+/// Talking to Gust in the Bilibin Treasury makes Gust, a Jupiter Djinni, join
+/// the party.
 static void Bilibin_GustJoins(void) {
   Djinn_JoinParty(ACTOR_GUST, ELEMENT_JUPITER, DJINNI_INDEX(DJINNI_GUST));
 }
@@ -321,8 +338,8 @@ const struct ActorPlacement *Bilibin_GetActorPlacements(void) {
   return gBilibinActorPlacementsOther;
 }
 
-/// Searching the well in Bilibin: the leader peers in, and its bottom cannot
-/// be seen.
+/// Searching the well in Bilibin, the leader peers in, and its bottom cannot be
+/// seen.
 static void Bilibin_InspectWell(void) {
   Event_Start();
   FieldMessage_Show(MsgFieldPeeredWell, 1);
@@ -370,10 +387,12 @@ static void Bilibin_InspectHumanShapedTree(void) {
   Event_End();
 }
 
-/// Talking to the tree at Bilibin's entrance, before the curse is lifted: it
-/// almost looks like a man and, looked at again, like a living person.
-/// Map-section temp flag FLAG_BILIBIN_TREE_EXAMINED remembers the first look
-/// until the party leaves Bilibin's area.
+/// The tree at Bilibin's entrance almost looks like a man and, looked at again,
+/// like a living person.
+///
+/// The party talks to it before the curse is lifted. Map-section temp flag
+/// FLAG_BILIBIN_TREE_EXAMINED remembers the first look until the party leaves
+/// Bilibin's area.
 static void Bilibin_ExamineTreeMan(void) {
   Event_Start();
   Event_SetMessageId(MsgBilibinItsTreeButAlmostLooks);
@@ -385,9 +404,10 @@ static void Bilibin_ExamineTreeMan(void) {
   Event_End();
 }
 
-/// A burly man asks about the tree at Bilibin's entrance. He's grey-haired and
-/// there before the curse is lifted, and asks whether the party saw it; on
-/// yes, he says it was once a man who came under a curse.
+/// A burly man asks about the tree at Bilibin's entrance.
+///
+/// He's grey-haired and there before the curse is lifted, and asks whether the
+/// party saw it. On yes, he says it was once a man who came under a curse.
 static void Bilibin_AskAboutEntranceTree(void) {
   Event_Start();
   Event_SetMessageId(MsgBilibinDidSeeTreeAtEntrance);
@@ -398,9 +418,10 @@ static void Bilibin_AskAboutEntranceTree(void) {
   Event_End();
 }
 
-/// An old man asks whether the party has tried heading southeast. He's in
-/// Bilibin before the curse is lifted, and either way he says the barricade
-/// blocks the road.
+/// An old man asks whether the party has tried heading southeast.
+///
+/// He's in Bilibin before the curse is lifted, and either way he says the
+/// barricade blocks the road.
 static void Bilibin_AskAboutSoutheastRoute(void) {
   Event_Start();
   Event_SetMessageId(MsgBilibinHaveTriedHeadingSoutheastFrom);
@@ -411,9 +432,10 @@ static void Bilibin_AskAboutSoutheastRoute(void) {
   Event_End();
 }
 
-/// The man who was the tree at the entrance talks about it. He's in Bilibin
-/// once the curse is lifted, and asks whether the party can believe he was a
-/// tree.
+/// The man who was the tree at the entrance talks about it.
+///
+/// He's in Bilibin once the curse is lifted, and asks whether the party can
+/// believe he was a tree.
 static void Bilibin_AskAboutBeingATree(void) {
   Event_Start();
   Event_SetMessageId(MsgBilibinWasTurnedIntoTreeFor);
@@ -424,9 +446,10 @@ static void Bilibin_AskAboutBeingATree(void) {
   Event_End();
 }
 
-/// A small boy asks whether the party broke the curse. He's in Bilibin once the
-/// curse is lifted, and asks whether the party are the three young warriors who
-/// broke it.
+/// A small boy asks whether the party broke the curse.
+///
+/// He's in Bilibin once the curse is lifted, and asks whether the party are the
+/// three young warriors who broke it.
 static void Bilibin_AskAboutCurseBreakers(void) {
   Event_Start();
   Event_SetMessageId(MsgBilibinCurseWasBrokenThanksEfforts);
@@ -437,9 +460,10 @@ static void Bilibin_AskAboutCurseBreakers(void) {
   Event_End();
 }
 
-/// A strongman asks whether the party has been to Imil. He's in Bilibin once
-/// the curse is lifted, and asks whether the party has been there, up north,
-/// and seen its lighthouse.
+/// A strongman asks whether the party has been to Imil.
+///
+/// He's in Bilibin once the curse is lifted, and asks whether the party has
+/// been there, up north, and seen its lighthouse.
 static void Bilibin_AskAboutImil(void) {
   Event_Start();
   Event_SetMessageId(MsgBilibinHaveEverBeenVillageImil);
@@ -450,11 +474,13 @@ static void Bilibin_AskAboutImil(void) {
   Event_End();
 }
 
-/// Walking into one of Bilibin's doors: everyone stops, the door opens and the
-/// leader walks through it. The doors' step triggers, 3 to 9, are the numbers
-/// of the exits they take: BILIBIN_TO_INN to BILIBIN_TO_WEAPON_AND_ARMOR_SHOP
-/// lead into Bilibin's buildings, and BILIBIN_TO_SANCTUM into the Bilibin
-/// Sanctum, whose door sounds and is stepped through differently.
+/// Walking into one of Bilibin's doors opens it. Everyone stops, the door opens
+/// and the leader walks through it.
+///
+/// The doors' step triggers, 3 to 9, are the numbers of the exits they take.
+/// BILIBIN_TO_INN to BILIBIN_TO_WEAPON_AND_ARMOR_SHOP lead into Bilibin's
+/// buildings, and BILIBIN_TO_SANCTUM into the Bilibin Sanctum, whose door
+/// sounds and is stepped through differently.
 static void Bilibin_OpenDoorAndLeave(void) {
 
   u32 actorSlot;
@@ -510,9 +536,11 @@ static void Bilibin_OpenDoorAndLeave(void) {
 }
 
 /// Move on Jill's tree in the river at the Bilibin Barricade, until she is
-/// rescued: once Move has brought her to cell column 6, by the bank, the leader
-/// pulls her ashore in three tugs, and she thanks the party for saving her from
-/// being washed downstream.
+/// rescued, lets the leader pull her ashore.
+///
+/// Once Move has brought her to cell column 6, by the bank, the leader pulls
+/// her ashore in three tugs. She thanks the party for saving her from being
+/// washed downstream.
 static void Bilibin_PullJillFromRiver(void) {
   struct Actor *leader;
   struct Actor *jillTree;
@@ -569,15 +597,16 @@ static void Bilibin_PullJillFromRiver(void) {
   }
 }
 
-/// Walking into the statue in the Bilibin Treasury or the crates at the
-/// Bilibin Barricade: the leader jumps forward onto them where he can
+/// Walking into the statue in the Bilibin Treasury or the crates at the Bilibin
+/// Barricade, the leader jumps forward onto them where he can
 /// (Field_TryJumpForward).
 static void Bilibin_JumpOntoStatueOrCrates(void) { Field_TryJumpForward(); }
 
-/// Jill and her friends thank the leader with a Hard Nut. It happens on
-/// stepping up to them on the bank at the Bilibin Barricade, once the curse is
-/// lifted and if she was pulled from the river: they recognize the leader, and
-/// she gives him the Hard Nut in thanks.
+/// Jill and her friends thank the leader with a Hard Nut.
+///
+/// It happens on stepping up to them on the bank at the Bilibin Barricade, once
+/// the curse is lifted and if she was pulled from the river. They recognize the
+/// leader, and she gives him the Hard Nut in thanks.
 /// "Remember me? I was that tree!"
 static void Bilibin_JillGivesHardNut(void) {
   struct Actor *leader;
@@ -689,7 +718,7 @@ static void Bilibin_JillGivesHardNut(void) {
 }
 
 /// Sets up the scene being entered, Bilibin, the Bilibin Barricade or the
-/// Bilibin Treasury: its actors by story flags, its cell behaviors
+/// Bilibin Treasury. It sets up its actors by story flags, its cell behaviors
 /// and its opening transition.
 s32 Bilibin_Initialize(void) {
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
@@ -704,9 +733,12 @@ s32 Bilibin_Initialize(void) {
   return 0;
 }
 
-/// Sets up Bilibin: the tree or the man by FLAG_KOLIMA_CURSE_LIFTED, the ivy
-/// and the statue by the entrance used, and area temp flag
-/// FLAG_BILIBIN_KEEPING_MCCOY_WAITING for McCoy's garden guard.
+/// Sets up Bilibin.
+///
+/// - The tree or the man, by FLAG_KOLIMA_CURSE_LIFTED.
+/// - The ivy and the statue, by the entrance used.
+/// - Area temp flag FLAG_BILIBIN_KEEPING_MCCOY_WAITING, for McCoy's garden
+///   guard.
 static void Bilibin_RestoreVillageActors(void) {
 
   struct Actor *actor;
@@ -746,9 +778,10 @@ static void Bilibin_RestoreVillageActors(void) {
 }
 
 /// Updates the cells around the statue in Bilibin after it moves. It runs after
-/// Move, a push, or entry: it updates the cell behaviors of the statue's
-/// lane, opens its home cell (16, 13) once it has left it, and moves the leader
-/// clear if it has landed on him.
+/// Move, a push, or entry.
+///
+/// It updates the cell behaviors of the statue's lane, opens its home cell (16,
+/// 13) once it has left it, and moves the leader clear if it has landed on him.
 static void Bilibin_UpdateVillageStatueCells(void) {
   s32 leaderRow;
   s32 leaderColumn;
@@ -791,9 +824,11 @@ static void Bilibin_UpdateVillageStatueCells(void) {
   }
 }
 
-/// Sets up the Bilibin Barricade: before the curse is lifted, Jill and her
-/// friends are trees here, stacked or, once Saturos is beaten at Mercury
-/// Lighthouse, pushed down; afterwards they are children again on the bank.
+/// Sets up the Bilibin Barricade.
+///
+/// Before the curse is lifted, Jill and her friends are trees here, stacked or,
+/// once Saturos is beaten at Mercury Lighthouse, pushed down. Afterwards they
+/// are children again on the bank.
 static void Bilibin_RestoreRiverActors(void) {
   struct Actor *jillTree;
   s32 populationState;
@@ -865,7 +900,7 @@ static void Bilibin_RestoreRiverActors(void) {
   Bilibin_UpdateCratesCells();
 }
 
-/// After the crates at the Bilibin Barricade move (Move, a push, or entry):
+/// After the crates at the Bilibin Barricade move (Move, a push, or entry),
 /// restores the ten cells of their lane, then marks the cell they stand on.
 static void Bilibin_UpdateCratesCells(void) {
   struct Actor *actor;
@@ -887,7 +922,7 @@ static void Bilibin_UpdateCratesCells(void) {
   MapGrid_CopyCellAttributes(0, 0, 1, 1, cratesColumn, cratesRow);
 }
 
-/// Sets up the Bilibin Treasury: its statue's cells, and the leader
+/// Sets up the Bilibin Treasury. It sets its statue's cells, and the leader
 /// arriving by BILIBIN_TREASURY_UPPER_FROM_LOWER or
 /// BILIBIN_TREASURY_FROM_BILIBIN_NORTH starts 16 pixels above the floor.
 static void Bilibin_SetUpTreasury(void) {
@@ -914,7 +949,7 @@ static void Bilibin_SetUpTreasury(void) {
 #include "shared/actor_find_at_cell.h"
 
 /// Pushing a statue in Bilibin or the Bilibin Treasury, or the crates at the
-/// Bilibin Barricade: it slides one cell ahead with the leader behind it, if
+/// Bilibin Barricade, slides it one cell ahead with the leader behind it, if
 /// the cell is free.
 static void Bilibin_PushStatueOrCrates(void) {
   struct Actor *leader;
@@ -965,9 +1000,9 @@ static void Bilibin_PushStatueOrCrates(void) {
   }
 }
 
-/// Runs every frame at the Bilibin Barricade: while whoever the player
-/// controls wades in the river, west of x 142 and under 8 pixels up, a ripple
-/// spreads from their feet every 30 frames.
+/// Runs every frame at the Bilibin Barricade. While whoever the player controls
+/// wades in the river, west of x 142 and under 8 pixels up, a ripple spreads
+/// from their feet every 30 frames.
 static void Bilibin_UpdateWadingRipples(void) {
   struct Actor *actor;
 
@@ -1009,7 +1044,7 @@ static void Bilibin_SpawnRipple(struct Actor *actor) {
   sprite->image.priority = 3;
 }
 
-/// After the statue in the Bilibin Treasury moves (Move, a push, or entry):
+/// After the statue in the Bilibin Treasury moves (Move, a push, or entry),
 /// updates the two cells it can stand on, rows 6 and 9 of its column.
 static void Bilibin_UpdateTreasuryStatueCells(void) {
   struct Actor *statue;
@@ -1034,8 +1069,8 @@ s32 gBilibin_FaceLeaderScript[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-/// Unused: the entrances for a scene other than the three, which never
-/// loads this overlay. Its words read as a MAPGRID_ANIMATION_STEP list, not as
+/// Unused: the entrances for a scene other than the three, which never loads
+/// this overlay. Its words read as a MAPGRID_ANIMATION_STEP list, not as
 /// entrances.
 u16 gBilibinEntrancesOther[] = {
     MAPGRID_ANIMATION_STEP(0, 65535, 168, 0, 168),
@@ -1347,7 +1382,8 @@ u16 *gBilibin_DoorSteps[] = {
     gBilibin_SanctumDoorSteps,
 };
 
-/// A door's cell: its column in the low halfword, its row in the high one.
+/// A door's cell, with its column in the low halfword and its row in the high
+/// one.
 #define DOOR_CELL(column, row) (((row) << 16) | (column))
 
 /// Each door's cell, in the order of gBilibin_DoorSteps.
@@ -1369,7 +1405,7 @@ u32 gBilibin_CratesLaneCells[] = {
 };
 // clang-format on
 
-/// Pixel step by direction: X in the upper halfword, Z in the lower.
+/// Pixel step by direction, with X in the upper halfword and Z in the lower.
 #define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))
 
 s32 gBilibin_FacingCellSteps[] = {

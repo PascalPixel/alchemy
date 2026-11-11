@@ -3,24 +3,32 @@
 /// at the edge of the Suhalla Desert, on the way from Gondowan Passage to
 /// Lalivero.
 ///
-/// Its people come in two sets, each an actor placement table and a
-/// trigger table, chosen by FLAG_BABI_SPOKE_AFTER_COLOSSO: before Babi's
-/// audience after Colosso the village talks of the sandstorms that close the
-/// desert, of its distrust of Angara and of Sheba, the hostage; after it, of
-/// the soldiers the storms caught on the way to Babi Lighthouse, who lie in one
-/// of its houses (timber_rooms_a.c). The same people stand in the same rows of
-/// both actor placement tables, so one enum names them; the woman the
-/// sandstorms brought stands off the map until the audience.
+/// Before Babi's audience after Colosso, the village talks of the sandstorms
+/// that close the desert, of its distrust of Angara and of Sheba, the
+/// hostage. After it, the village talks of the soldiers the storms caught on
+/// the way to Babi Lighthouse, who lie in one of its houses
+/// (timber_rooms_a.c).
 ///
-/// Five doors, whose cell behaviors are their exits' numbers
-/// (SUHALLA_TO_INN to SUHALLA_TO_HOUSE_EAST), open as the leader walks north
-/// into them (Suhalla_EnterDoor, Suhalla_EnterWideDoor) and lead into
-/// the village's buildings. Three ways lead out onto the World Map, and the
-/// desert's sandstorms drop a caught party at WORLD_MAP_FROM_SUHALLA. A chest
-/// and two jars hold a Hard Nut, a Lucky Medal and coins, and Growth grows a
-/// sprout and changes its cell. Its scene flag:
+/// So its people come in two sets, each an actor placement table and a
+/// trigger table, chosen by FLAG_BABI_SPOKE_AFTER_COLOSSO. The same people
+/// stand in the same rows of both actor placement tables, so one enum names
+/// them. The woman the sandstorms brought stands off the map until the
+/// audience.
 ///
-/// - FLAG_SUHALLA_SPROUT_GROWN: Growth has grown the sprout; a return that
+/// Five doors lead into the village's buildings. They open as the leader
+/// walks north into them (Suhalla_EnterDoor, Suhalla_EnterWideDoor). Their
+/// cell behaviors are their exits' numbers (SUHALLA_TO_INN to
+/// SUHALLA_TO_HOUSE_EAST).
+///
+/// Three ways lead out onto the World Map, and the desert's sandstorms drop
+/// a caught party at WORLD_MAP_FROM_SUHALLA.
+///
+/// A chest and two jars hold a Hard Nut, a Lucky Medal and coins. Growth
+/// grows a sprout and changes its cell.
+///
+/// Its scene flag:
+///
+/// - FLAG_SUHALLA_SPROUT_GROWN: Growth has grown the sprout. A return that
 ///   keeps the party's position, as after a battle, draws it grown again.
 
 #include "main_routine_work.h"
@@ -47,8 +55,9 @@
 #include "sounds.h"
 #include "flags.h"
 
-/// Growth has grown the sprout; a return that keeps the party's position draws
-/// it grown again.
+/// Growth has grown the sprout.
+///
+/// A return that keeps the party's position draws it grown again.
 /// ★ Named from what the player sees: a small green sprout in the sand by the
 /// inn (its render)
 #define FLAG_SUHALLA_SPROUT_GROWN FLAG_SCENE_TEMP_01
@@ -57,58 +66,72 @@
 enum { SPROUT_ANIMATION_GROWN = 4 };
 
 /// Suhalla's people and its sprout, numbering the rows of both actor
-/// placement tables from ACTOR_FIRST_PLACED: gSuhallaActorPlacementsLater
-/// places the same people, by sprite, in the same rows. Each note gives what
-/// they say before Babi's audience, then after it.
+/// placement tables from ACTOR_FIRST_PLACED.
+///
+/// gSuhallaActorPlacementsLater places the same people, by sprite, in the
+/// same rows. Each note gives what they say before Babi's audience, then
+/// after it.
 enum SuhallaActorId {
   /// A man with brown hair (SPRITE_YOUNG_MAN_WITH_BROWN_HAIR), who warns the
-  /// party
-  /// off the desert; later "Welcome to Suhalla. I bet the sandstorms were
+  /// party off the desert.
+  ///
+  /// Later he says "Welcome to Suhalla. I bet the sandstorms were
   /// terrible..."
   /// ★ Named from the game: "This is Suhalla."
   /// (MsgSuhallaThisIsSuhallaDontTryCrossing)
   ACTOR_MAN_THIS_IS_SUHALLA = ACTOR_FIRST_PLACED,
   /// A woman with fair hair (SPRITE_WOMAN_WITH_FAIR_HAIR), who asks whether
-  /// the party is trying to get to Lalivero (Suhalla_AskIfGoingToLalivero);
-  /// later "The desert is enveloped in sandstorms! It's frightening!"
+  /// the party is trying to get to Lalivero (Suhalla_AskIfGoingToLalivero).
+  ///
+  /// Later she says "The desert is enveloped in sandstorms! It's frightening!"
   /// ★ Named from the game: "Are you trying to get to Lalivero?"
   /// (MsgSuhallaTryingGetLalivero)
   ACTOR_WOMAN_ASKING_ABOUT_LALIVERO,
   /// A bearded man in a white turban (SPRITE_MAN_IN_WHITE_TURBAN), who
-  /// distrusts Angara for taking Sheba as a hostage; later "Soldiers from
-  /// Tolbi were caught in the sandstorms, and nearly all perished!"
+  /// distrusts Angara for taking Sheba as a hostage.
+  ///
+  /// Later he says "Soldiers from Tolbi were caught in the sandstorms, and
+  /// nearly all perished!"
   /// ★ Named from the game: "We Gondowans will never trust anyone from
   /// Angara!" (MsgSuhallaWeGondowansWillNeverTrustAnyone)
   ACTOR_MAN_NEVER_TRUSTING_ANGARA,
   /// A woman in a green dress (SPRITE_WOMAN_IN_GREEN_DRESS), placed off the
-  /// map until Babi's audience, then one of those the sandstorms have brought
-  /// here.
+  /// map until Babi's audience.
+  ///
+  /// After it she is one of those the sandstorms have brought here.
   /// ★ Named from the game: "We were brought here by the sandstorms."
   /// (MsgSuhallaWeWereBroughtHereByThe)
   ACTOR_WOMAN_BROUGHT_BY_SANDSTORMS,
   /// A bent old man with a cane (SPRITE_OLD_MAN_WITH_CANE), who speaks of the
-  /// desert spirits; later "This sandstorm is the fault of the Angarans!"
+  /// desert spirits.
+  ///
+  /// Later he says "This sandstorm is the fault of the Angarans!"
   /// ★ Named from the game: "desert spirits only create sandstorms"
   /// (MsgSuhallaItHasBeenSaidForAges)
   ACTOR_OLD_MAN_ON_DESERT_SPIRITS,
   /// An old woman with white hair (SPRITE_OLD_WOMAN), who doubts there is a
-  /// way to southern Gondowan, then asks whether a sandstorm brought the party
+  /// way to southern Gondowan.
+  ///
+  /// Later she asks whether a sandstorm brought the party
   /// (Suhalla_AskIfBroughtBySandstorm).
   /// ★ Named from the game: "You can't get to southern Gondowan from here"
   /// (MsgSuhallaYouCantGetToSouthernGondowan)
   ACTOR_OLD_WOMAN_ON_SOUTHERN_GONDOWAN,
   /// A small boy with fair hair (SPRITE_BOY_WITH_FAIR_HAIR), who would like to
-  /// see Tolbi's festivals; later "Why are the sandstorms attacking humans?"
+  /// see Tolbi's festivals.
+  ///
+  /// Later he says "Why are the sandstorms attacking humans?"
   /// ★ Named from the game: "The workers say there're huge festivals in
   /// Tolbi." (MsgSuhallaTheWorkersSayTherereHugeFestivals)
   ACTOR_BOY_ON_TOLBI_FESTIVALS,
   /// A little girl with orange pigtails (SPRITE_GIRL_WITH_PIGTAILS), who
-  /// worries about the storms; later "Those soldiers kept mumbling about
-  /// monsters..."
+  /// worries about the storms.
+  ///
+  /// Later she says "Those soldiers kept mumbling about monsters..."
   /// ★ Named from the game: "The sandstorms suddenly increased..."
   /// (MsgSuhallaTheSandstormsSuddenlyIncreasedIHope)
   ACTOR_GIRL_SANDSTORMS_INCREASED,
-  /// At 72, 144; Growth grows it (Suhalla_GrowSprout).
+  /// The sprout at 72, 144, which Growth grows (Suhalla_GrowSprout).
   /// ★ Named from what the player sees: a small green sprout in the sand by the
   /// inn (its render)
   ACTOR_SPROUT
@@ -130,11 +153,14 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gSuhallaActorPlacements;
 }
 
-/// A woman asks whether the party is trying to get to Lalivero. She's
-/// ACTOR_WOMAN_ASKING_ABOUT_LALIVERO, in Suhalla before Babi's audience. "Are
-/// you trying to get to Lalivero?" Yes, and the sandstorms make it impossible;
-/// no, and the woman doubts it, for Angarans who come to Suhalla are always
-/// going to Lalivero.
+/// A woman asks whether the party is trying to get to Lalivero.
+///
+/// She's ACTOR_WOMAN_ASKING_ABOUT_LALIVERO, in Suhalla before Babi's
+/// audience. She asks "Are you trying to get to Lalivero?"
+///
+/// - Yes, and the sandstorms make it impossible.
+/// - No, and the woman doubts it, for Angarans who come to Suhalla are always
+///   going to Lalivero.
 static void Suhalla_AskIfGoingToLalivero(s32 actorId) {
   s32 firstMessage = MsgSuhallaTryingGetLalivero;
   Event_SetMessageId(firstMessage);
@@ -149,10 +175,12 @@ static void Suhalla_AskIfGoingToLalivero(s32 actorId) {
   Event_ShowMessage(actorId, 0);
 }
 
-/// An old woman asks whether the sandstorm brought the party to Suhalla. She's
-/// ACTOR_OLD_WOMAN_ON_SOUTHERN_GONDOWAN, there after Babi's audience. Yes,
-/// and everyone the storms catch winds up here; no, and the old woman wonders
-/// why there are so many storms.
+/// An old woman asks whether the sandstorm brought the party to Suhalla.
+///
+/// She's ACTOR_OLD_WOMAN_ON_SOUTHERN_GONDOWAN, there after Babi's audience.
+///
+/// - Yes, and everyone the storms catch winds up here.
+/// - No, and the old woman wonders why there are so many storms.
 static void Suhalla_AskIfBroughtBySandstorm(s32 actorId) {
   s32 firstMessage = MsgSuhallaBroughtSuhallaSandstorm;
   Event_SetMessageId(firstMessage);
@@ -167,18 +195,24 @@ static void Suhalla_AskIfBroughtBySandstorm(s32 actorId) {
   Event_ShowMessage(actorId, 0);
 }
 
-/// Growth on Suhalla's sprout: the plant grows, and its cell takes the cell
-/// behavior of the grown plant's cell. Sets FLAG_SUHALLA_SPROUT_GROWN.
+/// Growth on Suhalla's sprout makes the plant grow.
+///
+/// Its cell takes the cell behavior of the grown plant's cell. The event
+/// sets FLAG_SUHALLA_SPROUT_GROWN.
 static void Suhalla_GrowSprout(void) {
   MapGrid_CopyCellAttributes(25, 9, 1, 1, 4, 9);
   GameFlag_Set(FLAG_SUHALLA_SPROUT_GROWN);
 }
 
-/// Walking north into one of Suhalla's doors (SUHALLA_TO_INN,
-/// SUHALLA_TO_HOUSE_WEST, SUHALLA_TO_HOUSE_NORTHEAST and SUHALLA_TO_HOUSE_EAST,
-/// whose cell behaviors are their exits' numbers): the door opens, the
-/// leader steps through and the party leaves by that exit into the village's
-/// buildings.
+/// Walking north into one of Suhalla's doors opens it and takes the party
+/// inside.
+///
+/// The door opens, the leader steps through and the party leaves by that
+/// exit into the village's buildings.
+///
+/// The doors are SUHALLA_TO_INN, SUHALLA_TO_HOUSE_WEST,
+/// SUHALLA_TO_HOUSE_NORTHEAST and SUHALLA_TO_HOUSE_EAST, whose cell behaviors
+/// are their exits' numbers.
 static void Suhalla_EnterDoor(void) {
   struct FieldWork *work = gFieldWork;
   s32 exitTrigger = work->stepTrigger;
@@ -216,10 +250,12 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gSuhallaTriggers;
 }
 
-/// Sets Suhalla up as the party enters: the screen opens with the backdrop
-/// fade, and the sprout is drawn grown if Growth was used on it before a
-/// return that keeps the party's position. SUHALLA_AFTER_BABI_SPOKE sets
-/// FLAG_BABI_SPOKE_AFTER_COLOSSO.
+/// Sets Suhalla up as the party enters.
+///
+/// The screen opens with the backdrop fade. The sprout is drawn grown if
+/// Growth was used on it before a return that keeps the party's position.
+///
+/// SUHALLA_AFTER_BABI_SPOKE sets FLAG_BABI_SPOKE_AFTER_COLOSSO.
 s32 Scene_Initialize(void) {
   struct FieldWork *work;
 

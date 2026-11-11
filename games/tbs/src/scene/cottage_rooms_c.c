@@ -1,40 +1,52 @@
 /// @file
-/// Cottage rooms C (SceneId_CottageRoomsC), a sheet of rooms drawn as cottages,
-/// all of them inside Bilibin's buildings, whose area name is Bilibin. Six of
-/// Bilibin's doors (BILIBIN_TO_INN to BILIBIN_TO_WEAPON_AND_ARMOR_SHOP, in
-/// bilibin.c) lead into its rooms, and each room's door leads back out to the
-/// door it was entered by. One room holds the weapon and armor shops, another
-/// the item shop, a third the inn with the restaurant beside it, whose stairs
+/// Cottage rooms C (SceneId_CottageRoomsC) is a sheet of rooms drawn as
+/// cottages, all of them inside Bilibin's buildings, whose area name is
+/// Bilibin.
+///
+/// Six of Bilibin's doors (BILIBIN_TO_INN to BILIBIN_TO_WEAPON_AND_ARMOR_SHOP,
+/// in bilibin.c) lead into its rooms, and each room's door leads back out to
+/// the door it was entered by.
+///
+/// One room holds the weapon and armor shops, and another the item shop. A
+/// third holds the inn with the restaurant beside it, and its stairs
 /// (COTTAGE_ROOMS_C_INN_TO_INN_UPSTAIRS and
-/// COTTAGE_ROOMS_C_INN_UPSTAIRS_TO_INN) join it to its upstairs rooms; three
-/// other buildings hold villagers. CottageRoomsC_GetActorPlacements leaves
-/// out the actors of the rooms not in view.
+/// COTTAGE_ROOMS_C_INN_UPSTAIRS_TO_INN) join it to its upstairs rooms. Three
+/// other buildings hold villagers. CottageRoomsC_GetActorPlacements leaves out
+/// the actors of the rooms not in view.
 ///
 /// Everyone has a line for while Kolima's curse holds (FLAG_KOLIMA_CURSE_LIFTED
-/// clear) and one for after. Before, the townsfolk explain the tree at the
-/// village entrance, McCoy's palace and the Water of Hermes, and in the
-/// restaurant the head chef, born in Kolima, is too worried to cook. After, the
-/// head chef cooks so hard his kitchen cannot keep up: the first time the party
-/// talks to him (FLAG_BILIBIN_CHEF_CALLED_ORDERS, kept until the party leaves
-/// Bilibin) he shouts a string of orders and the kitchen worker answers, and
-/// from then on he sends the party to the waitress
+/// clear) and one for after.
+///
+/// Before, the townsfolk explain the tree at the village entrance, McCoy's
+/// palace and the Water of Hermes. In the restaurant the head chef, born in
+/// Kolima, is too worried to cook.
+///
+/// After, the head chef cooks so hard his kitchen cannot keep up. The first
+/// time the party talks to him he shouts a string of orders and the kitchen
+/// worker answers (FLAG_BILIBIN_CHEF_CALLED_ORDERS, kept until the party
+/// leaves Bilibin). From then on he sends the party to the waitress
 /// (CottageRoomsC_TalkToBusyChef).
 ///
-/// gCottageRoomsCTriggers keeps both times in one table, in the ROM's order:
-/// every row that needs FLAG_KOLIMA_CURSE_LIFTED clear comes before the rows
-/// for afterwards, so the first row that matches picks the time. The merchants
-/// and the innkeeper open the shop or the inn only when the leader faces them
-/// across the counter (facing north), and otherwise talk of the time; Mind Read
-/// on the villager who admires Mia depends on whether she is in the party.
+/// gCottageRoomsCTriggers keeps both times in one table, in the ROM's order.
+/// Every row that needs FLAG_KOLIMA_CURSE_LIFTED clear comes before the rows
+/// for afterwards, so the first row that matches picks the time.
+///
+/// The merchants and the innkeeper open the shop or the inn only when the
+/// leader faces them across the counter (facing north), and otherwise talk of
+/// the time. Mind Read on the villager who admires Mia depends on whether she
+/// is in the party.
+///
 /// Searching finds an Antidote, a Sleep Bomb and a Hard Nut, egg soup and
 /// omelettes in the ovens, and a book called "All About Items".
+///
 /// CottageRoomsC_Initialize opens the rooms with a window around the leader
-/// and draws one diner, ACTOR_BILIBIN_DINER, at a fixed sprite priority. He
-/// stands at the north edge of the restaurant's table, on cell (7, 49), which
-/// alone of the diners' cells gives an actor standing on it priority 3
-/// (map_032's map.txt). Taken from that cell, his priority would
-/// put him behind the middle layer (`BG2`, priority 2 in this map); the fixed
-/// priority 2 draws him in front of it, as the other diners are.
+/// and draws one diner, ACTOR_BILIBIN_DINER, at a fixed sprite priority.
+///
+/// He stands at the north edge of the restaurant's table, on cell (7, 49).
+/// That cell alone of the diners' cells gives an actor standing on it priority
+/// 3 (map_032's map.txt). Taken from that cell, his priority would put him
+/// behind the middle layer (`BG2`, priority 2 in this map). The fixed priority
+/// 2 draws him in front of it, as the other diners are.
 
 #include "module/scene/cottage_rooms_c.h"
 #include "flags.h"
@@ -76,10 +88,11 @@ enum {
 enum { BILIBIN_INN = 2 };
 
 /// The placed actors, numbered in the order of
-/// gCottageRoomsCActorPlacements from ACTOR_FIRST_PLACED. Each room's
-/// actors are together: two in each house, then the shops' customers and
-/// keepers, the inn and its restaurant, and the room behind the inn's inner
-/// door.
+/// gCottageRoomsCActorPlacements from ACTOR_FIRST_PLACED.
+///
+/// Each room's actors are together: two in each house, then the shops'
+/// customers and keepers, the inn and its restaurant, and the room behind the
+/// inn's inner door.
 enum CottageRoomsCActorId {
   /// A young man with brown hair, in the house east.
   /// ★ Named from the game: "That tree at the entrance is really a man cursed"
@@ -186,9 +199,10 @@ const struct ActorPlacement *CottageRoomsC_GetActorPlacements(void) {
   return gCottageRoomsCActorPlacements;
 }
 
-/// Bilibin's weapon merchant: across the counter the shop opens; otherwise,
-/// before the curse is lifted, the merchant mourns Vale's lost healer, and
-/// after, recommends Altin's store.
+/// Bilibin's weapon merchant opens the shop across the counter, or talks.
+///
+/// Before the curse is lifted, the merchant mourns Vale's lost healer. After,
+/// the merchant recommends Altin's store.
 static void CottageRoomsC_TalkToWeaponMerchant(void) {
   u32 leaderFacing;
 
@@ -209,9 +223,11 @@ static void CottageRoomsC_TalkToWeaponMerchant(void) {
   Event_End();
 }
 
-/// Bilibin's item merchant: across the counter the shop opens; otherwise,
-/// before the curse is lifted, the merchant says Lord McCoy could use
-/// travelers like the party, and after, that his hired warriors were useless.
+/// Bilibin's item merchant opens the shop across the counter, or talks.
+///
+/// Before the curse is lifted, the merchant says Lord McCoy could use
+/// travelers like the party. After, the merchant says that his hired warriors
+/// were useless.
 static void CottageRoomsC_TalkToItemMerchant(void) {
   u32 leaderFacing;
 
@@ -232,15 +248,17 @@ static void CottageRoomsC_TalkToItemMerchant(void) {
   Event_End();
 }
 
-/// Returns both story stages' triggers; conditions choose the current
-/// dialogue.
+/// Returns both story stages' triggers.
+///
+/// Their conditions choose the current dialogue.
 const struct Trigger *CottageRoomsC_GetTriggers(void) {
   return gCottageRoomsCTriggers;
 }
 
-/// Bilibin's armor merchant: across the counter the shop opens; otherwise,
-/// before the curse is lifted, the merchant asks whether the party has heard
-/// of the ocean, and after, dreams aloud of it.
+/// Bilibin's armor merchant opens the shop across the counter, or talks.
+///
+/// Before the curse is lifted, the merchant asks whether the party has heard
+/// of the ocean. After, the merchant dreams aloud of it.
 static void CottageRoomsC_TalkToArmorMerchant(void) {
   u32 leaderFacing;
 
@@ -268,8 +286,10 @@ static void CottageRoomsC_TalkToArmorMerchant(void) {
   Event_End();
 }
 
-/// The head chef in Bilibin's restaurant, before the curse is lifted: born in
-/// Kolima, he is too worried to focus on his cooking.
+/// The head chef in Bilibin's restaurant, before the curse is lifted, is too
+/// worried to focus on his cooking.
+///
+/// He was born in Kolima.
 static void CottageRoomsC_TalkToWorriedChef(void) {
   Event_Start();
   Event_SetMessageId(MsgBilibinImReallyWorriedAboutKolima);
@@ -280,8 +300,10 @@ static void CottageRoomsC_TalkToWorriedChef(void) {
   Event_End();
 }
 
-/// A diner in Bilibin's restaurant, before the curse is lifted, still waiting
-/// for his dinner: his stomach growls, and he asks whether the party heard it.
+/// A diner in Bilibin's restaurant, before the curse is lifted, is still
+/// waiting for his dinner.
+///
+/// His stomach growls, and he asks whether the party heard it.
 static void CottageRoomsC_TalkToHungryDiner(void) {
   Event_Start();
   Event_SetMessageId(MsgBilibinGrrr);
@@ -299,9 +321,11 @@ static void CottageRoomsC_TalkToHungryDiner(void) {
   Event_End();
 }
 
-/// A diner asks whether a tree spirit can curse a man. The diner sits in
-/// Bilibin's restaurant before the curse is lifted; on yes, sends the party to
-/// hear Lord McCoy's story. Then the diner turns back to the table.
+/// A diner asks whether a tree spirit can curse a man.
+///
+/// The diner sits in Bilibin's restaurant before the curse is lifted. On yes,
+/// the diner sends the party to hear Lord McCoy's story. Then the diner turns
+/// back to the table.
 static void CottageRoomsC_AskAboutTreeSpirit(void) {
   Event_Start();
   Event_SetMessageId(MsgBilibinDoBelieveTreeSpiritCan);
@@ -317,8 +341,9 @@ static void CottageRoomsC_AskAboutTreeSpirit(void) {
   Event_End();
 }
 
-/// A young man asks whether Kolima Forest's holy tree survived. He's in Bilibin
-/// once the curse is lifted.
+/// A young man asks whether Kolima Forest's holy tree survived.
+///
+/// He's in Bilibin once the curse is lifted.
 static void CottageRoomsC_AskAboutHolyTree(void) {
   Event_Start();
   Event_SetMessageId(MsgBilibinDoKnowIfHolyTree);
@@ -330,8 +355,10 @@ static void CottageRoomsC_AskAboutHolyTree(void) {
 }
 
 /// A little girl in Bilibin, once the curse is lifted, asks whether the party
-/// knows what silk is; on yes, that Xian, across the river, makes it, at the
-/// start of Silk Road.
+/// knows what silk is.
+///
+/// On yes, she says that Xian, across the river, makes it, at the start of
+/// Silk Road.
 static void CottageRoomsC_AskAboutSilk(void) {
   Event_Start();
   Event_SetMessageId(MsgBilibinDoKnowSilk);
@@ -342,9 +369,10 @@ static void CottageRoomsC_AskAboutSilk(void) {
   Event_End();
 }
 
-/// Bilibin's innkeeper: across the counter the inn opens; otherwise, before
-/// the curse is lifted, the innkeeper is scared of the curse on Kolima, and
-/// after, asks whether it wasn't horrifying.
+/// Bilibin's innkeeper opens the inn across the counter, or talks.
+///
+/// Before the curse is lifted, the innkeeper is scared of the curse on
+/// Kolima. After, the innkeeper asks whether it wasn't horrifying.
 static void CottageRoomsC_TalkToInnkeeper(void) {
   u32 leaderFacing;
 
@@ -368,8 +396,8 @@ static void CottageRoomsC_TalkToInnkeeper(void) {
   Event_End();
 }
 
-/// The head chef in Bilibin's restaurant, once the curse is lifted: he calls
-/// out orders once, then sends the party to the waitress.
+/// The head chef in Bilibin's restaurant, once the curse is lifted, calls out
+/// orders once, then sends the party to the waitress.
 static void CottageRoomsC_TalkToBusyChef(void) {
   Event_Start();
   // The test is event.h's inline and the set below a direct call,
@@ -402,8 +430,9 @@ static void CottageRoomsC_TalkToBusyChef(void) {
   Event_End();
 }
 
-/// The kitchen worker can't keep up with the head chef's energy. This is in
-/// Bilibin's restaurant once the curse is lifted.
+/// The kitchen worker can't keep up with the head chef's energy.
+///
+/// This is in Bilibin's restaurant once the curse is lifted.
 static void CottageRoomsC_TalkToKitchenWorker(void) {
   Event_Start();
   Event_SetMessageId(MsgBilibinReallyThinkHeadChefHas);
@@ -416,8 +445,9 @@ static void CottageRoomsC_TalkToKitchenWorker(void) {
   Event_End();
 }
 
-/// The waitress hurries through her work before the head chef yells. She works
-/// in Bilibin's restaurant once the curse is lifted.
+/// The waitress hurries through her work before the head chef yells.
+///
+/// She works in Bilibin's restaurant once the curse is lifted.
 static void CottageRoomsC_TalkToWaitress(void) {
   Event_Start();
   Event_SetMessageId(MsgBilibinLetsSeeServeThemWater);
@@ -430,8 +460,10 @@ static void CottageRoomsC_TalkToWaitress(void) {
   Event_End();
 }
 
-/// A diner loves the meal and asks whether the party does too. The diner is in
-/// Bilibin's restaurant once the curse is lifted and the food flows.
+/// A diner loves the meal and asks whether the party does too.
+///
+/// The diner is in Bilibin's restaurant once the curse is lifted and the food
+/// flows.
 static void CottageRoomsC_TalkAboutMeal(void) {
   Event_Start();
   Event_SetMessageId(MsgBilibinWasSomeMealDontJust);
@@ -443,8 +475,10 @@ static void CottageRoomsC_TalkAboutMeal(void) {
 }
 
 /// Mind Read on the burly man in Bilibin who admires Mia, before the curse is
-/// lifted: with Mia in the party (FLAG_IN_PARTY says who is), even frozen Imil
-/// must feel warm with her around; without her, he hopes to see her
+/// lifted, hears his thoughts of her.
+///
+/// With Mia in the party (FLAG_IN_PARTY says who is), he thinks even frozen
+/// Imil must feel warm with her around. Without her, he hopes to see her
 /// again in spring.
 static void CottageRoomsC_ReadMiaAdmirersMind(void) {
   Event_Start();
@@ -457,9 +491,10 @@ static void CottageRoomsC_ReadMiaAdmirersMind(void) {
   Event_End();
 }
 
-/// Sets up Bilibin's buildings: the rooms open through a window, and the diner
-/// at the restaurant's table is drawn at sprite priority 2, never by the
-/// automatic priority.
+/// Sets up Bilibin's buildings.
+///
+/// The rooms open through a window, and the diner at the restaurant's table
+/// is drawn at sprite priority 2, never by the automatic priority.
 s32 CottageRoomsC_Initialize(void) {
   struct Actor *actor;
 

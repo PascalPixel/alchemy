@@ -1,27 +1,32 @@
 
 /// @file
-/// Stone rooms (SceneId_StoneRooms), a sheet of rooms drawn in stone: the game
-/// packs rooms of several places that share a tile style onto one map, and
-/// this one holds two, whose area names differ by entrance. The
-/// entrance also picks the tables: the thieves' for STONE_ROOMS_FROM_VAULT
-/// and STONE_ROOMS_FROM_LUNPA, the prisoner's for
-/// STONE_ROOMS_FROM_VAULT_REVISIT. In story order, by the exits that lead in:
+/// Stone rooms (SceneId_StoneRooms), a sheet of rooms drawn in stone.
+///
+/// The game packs rooms of several places that share a tile style onto one
+/// map. This one holds two, whose area names differ by entrance.
+///
+/// The entrance also picks the tables. STONE_ROOMS_FROM_VAULT and
+/// STONE_ROOMS_FROM_LUNPA take the thieves' tables, and
+/// STONE_ROOMS_FROM_VAULT_REVISIT takes the prisoner's.
+///
+/// The two rooms, in story order, by the exits that lead in:
 ///
 /// - Vault (STONE_ROOMS_FROM_VAULT and STONE_ROOMS_FROM_VAULT_REVISIT), the
-/// cell
-///   behind Vault's jail door. Once the party has beaten the three thieves in
-///   the inn's loft (FLAG_VAULT_THIEVES_JAILED, log_rooms_a.c), coming in
-///   from Vault finds them behind the bars, each with his own talk and Mind
-///   Read. Once Vault has become its later scene (vault_revisit.c), whose
-///   villagers say the thieves have broken out, its jail door comes in by
-///   STONE_ROOMS_FROM_VAULT_REVISIT and finds a lone prisoner instead.
+///   cell behind Vault's jail door. Once the party has beaten the three
+///   thieves in the inn's loft (FLAG_VAULT_THIEVES_JAILED, log_rooms_a.c),
+///   coming in from Vault finds them behind the bars. Each has his own talk
+///   and Mind Read. Later Vault becomes its later scene (vault_revisit.c),
+///   whose villagers say the thieves have broken out. Its jail door then
+///   comes in by STONE_ROOMS_FROM_VAULT_REVISIT and finds a lone prisoner
+///   instead.
 /// - Lunpa (STONE_ROOMS_FROM_LUNPA), Lunpa's hidden room, which the town's
 ///   hidden passage reaches (lunpa.c). Its six chests are each opened once
-///   (FLAG_LUNPA_HIDDEN_ROOM_CHEST_*), CELL_BEHAVIOR_LUNPA_HIDDEN_ROOM_DOOR
-///   leads back up into Lunpa, and arriving this way clears
-///   FLAG_SHOW_AREA_NAME, so no area name is shown. The room uses the thieves'
-///   tables, so its chests and exit sit in the same trigger table as the
-///   thieves' talk and the Vault door. ★ Named from what the player sees: a
+///   (FLAG_LUNPA_HIDDEN_ROOM_CHEST_*), and
+///   CELL_BEHAVIOR_LUNPA_HIDDEN_ROOM_DOOR leads back up into Lunpa. Arriving
+///   this way clears FLAG_SHOW_AREA_NAME, so no area name is shown. The room
+///   uses the thieves' tables, so its chests and exit sit in the same
+///   trigger table as the thieves' talk and the Vault door.
+///   ★ Named from what the player sees: a
 ///   hidden stone room of six chests behind barred windows (its render)
 
 #include "main_routine_work.h"
@@ -67,9 +72,10 @@ enum StoneRoomsCellBehavior {
 };
 
 /// The placed actors, numbering the rows of the table
-/// Scene_GetActorPlacements returns: the three thieves of
-/// gStoneRooms_ThiefActorPlacements, or the prisoner of
-/// gStoneRooms_PrisonerActorPlacements in the same first slot.
+/// Scene_GetActorPlacements returns.
+///
+/// They are the three thieves of gStoneRooms_ThiefActorPlacements, or the
+/// prisoner of gStoneRooms_PrisonerActorPlacements in the same first slot.
 enum JailActorId {
   /// The thieves' leader (SPRITE_MAN_WITH_LONG_DARK_HAIR), in the middle of the
   /// cell.
@@ -91,8 +97,9 @@ enum JailActorId {
 };
 
 /// The jail's occupants count as nearer than they stand for talk and
-/// Psynergy targets (Field_FindNearbyTalkTarget scales their distance by
-/// 10/13), so the party reaches them across the bars.
+/// Psynergy targets, so the party reaches them across the bars.
+///
+/// Field_FindNearbyTalkTarget scales their distance by 10/13.
 enum { JAIL_REACH_ACROSS_BARS = ACTOR_NEAR_TALK | ACTOR_NEAR_PSYNERGY };
 
 /// Returns the entrances from Vault, from Lunpa and from Vault's
@@ -103,15 +110,18 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
 
 const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
-/// Returns the exits to Vault, to Vault's revisit scene and to Lunpa, each to
-/// the entrance that scene names for the jail (VAULT_FROM_STONE_ROOMS,
-/// VAULT_REVISIT_FROM_STONE_ROOMS and LUNPA_FROM_STONE_ROOMS).
+/// Returns the exits to Vault, to Vault's revisit scene and to Lunpa.
+///
+/// Each leads to the entrance that scene names for the jail. They are
+/// VAULT_FROM_STONE_ROOMS, VAULT_REVISIT_FROM_STONE_ROOMS and
+/// LUNPA_FROM_STONE_ROOMS.
 const u32 *Scene_GetExits(void) { return gStoneRooms_Exits; }
 
-/// Places the three jailed thieves (each only once FLAG_VAULT_THIEVES_JAILED
-/// is set), or, entered from Vault's revisit scene
-/// (STONE_ROOMS_FROM_VAULT_REVISIT, after they have broken out), the lone
-/// prisoner.
+/// Places the three jailed thieves, or the lone prisoner.
+///
+/// Each thief is placed only once FLAG_VAULT_THIEVES_JAILED is set. The
+/// prisoner is placed when the party enters from Vault's revisit scene
+/// (STONE_ROOMS_FROM_VAULT_REVISIT), after the thieves have broken out.
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   if (gMainRoutineWork.entrance == STONE_ROOMS_FROM_VAULT_REVISIT) {
     return gStoneRooms_PrisonerActorPlacements;
@@ -119,9 +129,11 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gStoneRooms_ThiefActorPlacements;
 }
 
-/// Returns the thieves' triggers, which also hold the Lunpa room's chests and
-/// exit, or the prisoner's when the party came in from Vault's revisit scene,
-/// matching Scene_GetActorPlacements.
+/// Returns the thieves' triggers, or the prisoner's.
+///
+/// The thieves' triggers also hold the Lunpa room's chests and exit. The
+/// prisoner's are returned when the party came in from Vault's revisit
+/// scene, matching Scene_GetActorPlacements.
 const struct Trigger *Scene_GetTriggers(void) {
   if (gMainRoutineWork.entrance == STONE_ROOMS_FROM_VAULT_REVISIT) {
     return gStoneRooms_PrisonerTriggers;
@@ -129,9 +141,11 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gStoneRooms_ThiefTriggers;
 }
 
-/// In Vault's jail, the thieves' leader glares at each of his men and snaps
-/// "Shut yer yaps!", so that both start, then turns to the party: they got us
-/// this time, but next time they'll pay for this.
+/// In Vault's jail, the thieves' leader silences his men and vows revenge.
+///
+/// He glares at each of his men and snaps "Shut yer yaps!", so that both
+/// start. Then he turns to the party. They got us this time, he says, but
+/// next time they'll pay for this.
 ///
 /// Reached by talking to the leader (ACTOR_THIEF_LEADER) while
 /// FLAG_VAULT_THIEVES_JAILED is set.
@@ -181,8 +195,8 @@ static void StoneRooms_LeftThiefRegretsEscape(void) {
   Event_End();
 }
 
-/// In Vault's jail, the thief on the right shakes his head: he knew they
-/// should have skipped town sooner.
+/// In Vault's jail, the thief on the right shakes his head and says he knew
+/// they should have skipped town sooner.
 ///
 /// Reached by talking to him (ACTOR_RIGHT_THIEF) while
 /// FLAG_VAULT_THIEVES_JAILED is set.
@@ -196,11 +210,11 @@ static void StoneRooms_RightThiefRegretsStaying(void) {
   Event_End();
 }
 
-/// Mind Read on the thieves' leader in Vault's jail: he'll be out of this jail
-/// before you know it.
+/// Mind Read on the thieves' leader in Vault's jail shows him thinking he'll
+/// be out of this jail before you know it.
 ///
 /// Reached by Mind Read on ACTOR_THIEF_LEADER while FLAG_VAULT_THIEVES_JAILED
-/// is set; the two below are reached the same way on ACTOR_LEFT_THIEF and
+/// is set. The two below are reached the same way on ACTOR_LEFT_THIEF and
 /// ACTOR_RIGHT_THIEF.
 static void StoneRooms_ReadLeaderMind(void) {
   Event_Start();
@@ -210,7 +224,8 @@ static void StoneRooms_ReadLeaderMind(void) {
   Event_End();
 }
 
-/// Mind Read on the thief on the left: will he ever run free again?
+/// Mind Read on the thief on the left shows him wondering whether he will
+/// ever run free again.
 static void StoneRooms_ReadLeftThiefMind(void) {
   Event_Start();
   Event_SetMessageId(MsgVaultLeftThiefThoughts);
@@ -219,8 +234,8 @@ static void StoneRooms_ReadLeftThiefMind(void) {
   Event_End();
 }
 
-/// Mind Read on the thief on the right: is this because they stole Hammet's
-/// Shaman's Rod?
+/// Mind Read on the thief on the right shows him wondering whether this is
+/// because they stole Hammet's Shaman's Rod.
 static void StoneRooms_ReadRightThiefMind(void) {
   Event_Start();
   Event_SetMessageId(MsgVaultRightThiefThoughts);
@@ -232,9 +247,11 @@ static void StoneRooms_ReadRightThiefMind(void) {
 /// The party steps out of Vault's jail into Vault, with the exit sound.
 ///
 /// Reached by stepping on the door's cell (CELL_BEHAVIOR_VAULT_JAIL_DOOR) under
-/// the thieves' table, that is, entered from Vault or Lunpa; takes
-/// STONE_ROOMS_TO_VAULT to VAULT_FROM_STONE_ROOMS. The prisoner's table leaves
-/// by a plain exit instead, STONE_ROOMS_TO_VAULT_REVISIT.
+/// the thieves' table, that is, entered from Vault or Lunpa. It takes
+/// STONE_ROOMS_TO_VAULT to VAULT_FROM_STONE_ROOMS.
+///
+/// The prisoner's table leaves by a plain exit instead,
+/// STONE_ROOMS_TO_VAULT_REVISIT.
 static void StoneRooms_LeaveForVault(void) {
   Sound_Play(SE_MAP_EXIT);
   Import_EventSetExitRequest(STONE_ROOMS_TO_VAULT);
@@ -243,9 +260,10 @@ static void StoneRooms_LeaveForVault(void) {
 /// Opens the map through a window transition and lets the party reach the
 /// jail's occupants across the bars.
 ///
-/// Called by the field once the actors are placed. Coming in through
-/// Lunpa's hidden passage (STONE_ROOMS_FROM_LUNPA) clears
-/// FLAG_SHOW_AREA_NAME, so no area name is shown; otherwise it adds
+/// Called by the field once the actors are placed.
+///
+/// Coming in through Lunpa's hidden passage (STONE_ROOMS_FROM_LUNPA) clears
+/// FLAG_SHOW_AREA_NAME, so no area name is shown. Otherwise it adds
 /// JAIL_REACH_ACROSS_BARS to the prisoner or to the three thieves.
 s32 Scene_Initialize(void) {
   s16 entrance;

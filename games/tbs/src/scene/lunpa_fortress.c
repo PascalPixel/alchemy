@@ -1,66 +1,73 @@
 /// @file
 /// Lunpa Fortress, Dodonpa's fortress above Lunpa, where he holds Hammet for
-/// ransom, and the cave below it. Four scenes share this overlay and the area
-/// name Lunpa Fortress:
+/// ransom, and the cave below it.
+///
+/// Four scenes share this overlay and the area name Lunpa Fortress:
 ///
 /// - LunpaFortressGroundFloor (SceneId_LunpaFortressGroundFloor): inside the
-/// door
-///   from the Lunpa Fortress Gates. An entrance guard, two sentries, the upper
-///   hall's guard and a patrolling guard keep watch; Dodonpa's men and the
-///   people of the fortress talk, and chests and a barrel hold an Elixir, a
-///   Lucky Medal, a Mythril Circlet, coins and a Vial.
+///   door from the Lunpa Fortress Gates. An entrance guard, two sentries, the
+///   upper hall's guard and a patrolling guard keep watch. Dodonpa's men and
+///   the people of the fortress talk, and chests and a barrel hold an Elixir,
+///   a Lucky Medal, a Mythril Circlet, coins and a Vial.
 /// - LunpaFortressUpperFloor (SceneId_LunpaFortressUpperFloor): where Donpa
-///   sleeps. A patrolling pair and a hall patrol keep watch, three guards and
-///   then three more together fight the party as Brigands, the Cell Key hangs
+///   sleeps. A patrolling pair and a hall patrol keep watch. Three guards and
+///   then three more together fight the party as Brigands. The Cell Key hangs
 ///   here, and Dodonpa's family and the women he brought here talk. After the
 ///   rescue Donpa gives the party Tonic, a Mercury Djinni.
 /// - LunpaFortressCave (SceneId_LunpaFortressCave): the cave whose switches and
 ///   passage ivy hides, with a stack of crates to push into its hole.
 /// - LunpaFortressToadonpa (SceneId_LunpaFortressToadonpa): Hammet's cell,
-/// where
-///   Dodonpa frees Toadonpa on the party (LunpaFortress_FindHammet) and Donpa
-///   judges him after the battle (LunpaFortress_DonpaJudgesDodonpa), which sets
-///   FLAG_DODONPA_LOCKED_UP and changes all of Lunpa.
+///   where Dodonpa frees Toadonpa on the party (LunpaFortress_FindHammet).
+///   Donpa judges him after the battle (LunpaFortress_DonpaJudgesDodonpa),
+///   which sets FLAG_DODONPA_LOCKED_UP and changes all of Lunpa.
 ///
-/// The getters choose by gMainRoutineWork.next; LunpaFortressCave and
-/// LunpaFortressToadonpa share one exit table. Every return through the Lunpa
-/// Fortress Gates (lunpa.c) clears the fortress's puzzle and beaten-guard
-/// flags, so the fortress starts over.
+/// The getters choose by gMainRoutineWork.next. LunpaFortressCave and
+/// LunpaFortressToadonpa share one exit table.
+///
+/// Every return through the Lunpa Fortress Gates (lunpa.c) clears the
+/// fortress's puzzle and beaten-guard flags, so the fortress starts over.
 ///
 /// The guards are the fortress's mechanism. A guard on screen sees the leader
 /// along his row or column, within six cells (LunpaFortress_CanGuardSeeLeader),
-/// unless Cloak is on, and each guard has a watcher, a task that the
-/// entrance the party arrives by starts
-/// (LunpaFortress_InitializeGroundFloor, LunpaFortress_InitializeUpperFloor). A
-/// watcher that sees the leader raises one of the RAISED_*_SPOTTED triggers,
-/// whose event has the guard challenge the party and throw it out to the gates
-/// (LunpaFortress_GuardThrowsPartyOut, EXIT_THROWN_OUT). A cloaked leader
-/// within four cells of a patrolling guard makes the watcher request
-/// CLOAK_NEAR_GUARD. The patrolling guards walk actor scripts
-/// (gFirstPatrolRoute and the others), stop while a menu, Psynergy or an item
-/// is in use, and drag MAPGRID_LAYER_OVERHEAD along with them, shaking it by a
-/// pixel every frame: in the dark corridors that layer holds the circles of
-/// light the patrols carry, which flicker as they shake
+/// unless Cloak is on.
+///
+/// Each guard has a watcher, a task that the entrance the party arrives by
+/// starts (LunpaFortress_InitializeGroundFloor,
+/// LunpaFortress_InitializeUpperFloor). A watcher that sees the leader raises
+/// one of the RAISED_*_SPOTTED triggers. Its event has the guard challenge the
+/// party and throw it out to the gates (LunpaFortress_GuardThrowsPartyOut,
+/// EXIT_THROWN_OUT). A cloaked leader within four cells of a patrolling guard
+/// makes the watcher request CLOAK_NEAR_GUARD.
+///
+/// The patrolling guards walk actor scripts (gFirstPatrolRoute and the
+/// others). They stop while a menu, Psynergy or an item is in use. They drag
+/// MAPGRID_LAYER_OVERHEAD along with them, shaking it by a pixel every frame.
+/// In the dark corridors that layer holds the circles of light the patrols
+/// carry, which flicker as they shake
 /// (https://alchemy.pascalpixel.com/places/lunpa-fortress-upper-floor/map-1.png
 /// shows the pair's two circles). Each has stretches of its rounds where it
-/// cannot see the leader. On the upper floor the pair walk east and west
-/// between 88 and 192 pixels across, one 192 and one 288 pixels down; each sees
-/// a leader in his own column up to six rows away, or within a row of his up to
-/// six columns away, whatever stands between them, but never one in rows 5 to 7
-/// from column 10 west, at the passage's top, or in columns 8 and 9 below row
-/// 22 (LunpaFortress_IsLeaderInPatrolSafeZone). The guards who fight instead
-/// pick one of four challenges, by gLunpaFortressRandomPick, drawn on every
-/// arrival.
+/// cannot see the leader.
+///
+/// On the upper floor the pair walk east and west between 88 and 192 pixels
+/// across, one 192 and one 288 pixels down. Each sees a leader in his own
+/// column up to six rows away, or within a row of his up to six columns away,
+/// whatever stands between them. But neither ever sees one in rows 5 to 7 from
+/// column 10 west, at the passage's top, or in columns 8 and 9 below row 22
+/// (LunpaFortress_IsLeaderInPatrolSafeZone).
+///
+/// The guards who fight instead pick one of four challenges, by
+/// gLunpaFortressRandomPick, drawn on every arrival.
 ///
 /// The Cell Key opens the cell doors of all four scenes, facing each door with
-/// it in the party, and each opened door is remembered in an area temp flag
-/// from FLAG_AREA_TEMP_50 (TOADONPA_DOOR_FLAG and the others). In
-/// LunpaFortressCave, Whirlwind blows away the ivy that hides two switches and
-/// a passage; the switches show in the wall only while Reveal lasts, and
+/// it in the party. Each opened door is remembered in an area temp flag from
+/// FLAG_AREA_TEMP_50 (TOADONPA_DOOR_FLAG and the others).
+///
+/// In LunpaFortressCave, Whirlwind blows away the ivy that hides two switches
+/// and a passage. The switches show in the wall only while Reveal lasts, and
 /// searching one opens its passage.
 ///
 /// Scene temp flags:
-/// - FLAG_LUNPA_FORTRESS_PARTY_SPOTTED: a guard has spotted the party;
+/// - FLAG_LUNPA_FORTRESS_PARTY_SPOTTED: a guard has spotted the party.
 ///   FLAG_SCENE_TEMP_15 is set beside it and never read.
 /// - FLAG_LUNPA_FORTRESS_FIRST_SWITCH_UNDER_IVY and
 ///   FLAG_LUNPA_FORTRESS_SECOND_SWITCH_UNDER_IVY: LunpaFortressCave's first and
@@ -73,11 +80,12 @@
 ///   keep quiet, and has been startled.
 /// - FLAG_LUNPA_FORTRESS_FINDING_HAMMET: LunpaFortress_FindHammet is under way.
 ///
-/// Map-section temp flags: FLAG_LUNPA_FORTRESS_DODONPA_JUDGED once Donpa has
-/// judged Dodonpa, FLAG_LUNPA_FORTRESS_ATTENDANT_TOLD_OF_DONPA once his
-/// attendant has told of him, FLAG_LUNPA_FORTRESS_REWARD_SHOWN once she has
-/// shown his reward, and FLAG_AREA_TEMP_50 to FLAG_AREA_TEMP_5C for the
-/// opened cell doors.
+/// Map-section temp flags:
+/// - FLAG_LUNPA_FORTRESS_DODONPA_JUDGED: Donpa has judged Dodonpa.
+/// - FLAG_LUNPA_FORTRESS_ATTENDANT_TOLD_OF_DONPA: his attendant has told of
+///   him.
+/// - FLAG_LUNPA_FORTRESS_REWARD_SHOWN: she has shown his reward.
+/// - FLAG_AREA_TEMP_50 to FLAG_AREA_TEMP_5C: the opened cell doors.
 ///
 /// Unused: four item pickups that set out an Arctic Blade, a Masamune, a Silver
 /// Blade and a Shamshir on LunpaFortressGroundFloor's first four rows, and
@@ -123,9 +131,10 @@
 
 /// LunpaFortressGroundFloor's people, numbered in the order of
 /// gLunpaFortressGroundFloorActorPlacements from ACTOR_FIRST_PLACED,
-/// past its first four rows (in a chest's sprite, at the map's origin; see
-/// ACTOR_FIRST_SWORD_CHEST). Dodonpa's men, here and upstairs, wear the
-/// sprite of a man with a mop of orange hair (SPRITE_MAN_WITH_ORANGE_HAIR).
+/// past its first four rows. Those four are in a chest's sprite, at the map's
+/// origin (see ACTOR_FIRST_SWORD_CHEST).
+/// Dodonpa's men, here and upstairs, wear the sprite of a man with a mop of
+/// orange hair (SPRITE_MAN_WITH_ORANGE_HAIR).
 enum {
   /// ★ Named from what the player sees: one of Dodonpa's men standing watch
   /// by the way in from the Lunpa Fortress Gates, who throws out a party he
@@ -260,12 +269,12 @@ enum {
   /// ★ Named from what the player sees: ivy (SPRITE_IVY) on the wall that
   /// hides the second switch until Whirlwind blows it away (its render)
   ACTOR_CAVE_SECOND_SWITCH_IVY,
-  /// An invisible solid actor (SPRITE_BLANK, ACTOR_SOLID) at (504,
-  /// 168) that makes the jar the layout draws there, in the cell behind the
-  /// cave's eastern door, stop the leader: the layout's cell behavior lets
-  /// him walk onto the jar, and with this actor he stops 14 pixels short
-  /// of it. A blank sprite draws only its shadow, which
-  /// LunpaFortress_InitializeCave turns off.
+  /// An invisible solid actor (SPRITE_BLANK, ACTOR_SOLID) at (504, 168).
+  /// It makes the jar the layout draws there, in the cell behind the cave's
+  /// eastern door, stop the leader. The layout's cell behavior lets him walk
+  /// onto the jar, and with this actor he stops 14 pixels short of it.
+  /// A blank sprite draws only its shadow, which LunpaFortress_InitializeCave
+  /// turns off.
   ACTOR_INVISIBLE_CAVE_JAR,
   /// A stack of wooden crates (the sprite of the crates at the Bilibin
   /// Barricade and on Tolbi Docks), pushed or moved with Move onto its hole.
@@ -275,17 +284,18 @@ enum {
 };
 
 /// LunpaFortressToadonpa's people, numbered in the order of
-/// gLunpaFortressToadonpaActorPlacements from ACTOR_FIRST_PLACED; its
-/// rows for Ivan, Mia and Garet keep the party's own slots.
+/// gLunpaFortressToadonpaActorPlacements from ACTOR_FIRST_PLACED.
+/// Its rows for Ivan, Mia and Garet keep the party's own slots.
 enum {
   /// Three invisible solid actors (SPRITE_BLANK, ACTOR_SOLID) at
-  /// (56, 72), (136, 72) and (216, 72), in line with the cell doors
-  /// gLunpaFortressToadonpaDoorCells lists third, second and first, that make
-  /// the jar, chest and jar the layout draws in those cells stop the leader.
-  /// The layout's cell behaviors let him walk onto the two jars; the
-  /// chest's own cells already stop him, so the middle actor changes
-  /// nothing. Scene_Initialize turns off the shadows their blank sprites would
-  /// draw and lays them underfoot.
+  /// (56, 72), (136, 72) and (216, 72).
+  /// They stand in line with the cell doors gLunpaFortressToadonpaDoorCells
+  /// lists third, second and first. They make the jar, chest and jar the layout
+  /// draws in those cells stop the leader.
+  /// The layout's cell behaviors let him walk onto the two jars. The chest's
+  /// own cells already stop him, so the middle actor changes nothing.
+  /// Scene_Initialize turns off the shadows their blank sprites would draw and
+  /// lays them underfoot.
   ACTOR_INVISIBLE_TOADONPA_WEST_JAR = ACTOR_FIRST_PLACED,
   ACTOR_INVISIBLE_TOADONPA_CHEST,
   ACTOR_INVISIBLE_TOADONPA_EAST_JAR,
@@ -313,12 +323,13 @@ enum {
   /// (MsgLunpaHammetStillInside)
   ACTOR_TOADONPA_CELL_GUARD,
   /// An invisible actor that stands before Dodonpa's cell after Donpa's
-  /// judgment; talking to it or reading its mind reaches Dodonpa.
+  /// judgment. Talking to it or reading its mind reaches Dodonpa.
   ACTOR_INVISIBLE_TOADONPA_DODONPA
 };
 
-/// The cell behaviors the fortress's triggers answer: the cell doors
-/// count from CELL_BEHAVIOR_LUNPA_FORTRESS_FIRST_DOOR in each scene.
+/// The cell behaviors the fortress's triggers answer.
+/// The cell doors count from CELL_BEHAVIOR_LUNPA_FORTRESS_FIRST_DOOR in each
+/// scene.
 enum LunpaFortressCellBehavior {
   /// ★ Named from the game: "The door is tightly locked."
   /// (MsgFieldDoorTightlyLocked)
@@ -591,8 +602,8 @@ static void LunpaFortress_UnlockToadonpaDoor(void) {
   }
 }
 
-/// Draws one of LunpaFortressCave's cell doors open and lets the party through;
-/// the middle door opens two cells.
+/// Draws one of LunpaFortressCave's cell doors open and lets the party through.
+/// The middle door opens two cells.
 static void LunpaFortress_OpenCaveDoor(s32 doorIndex) {
   s32 doorCellX;
   s32 doorCellY;
@@ -714,10 +725,13 @@ static void LunpaFortress_SearchSealedDoor(void) {
 /// origin of LunpaFortressGroundFloor (its render)
 enum { ACTOR_FIRST_SWORD_CHEST = ACTOR_FIRST_PLACED };
 
-/// Unused: nothing calls this pickup or the three after it. Each opens one of
-/// four chests (ACTOR_FIRST_SWORD_CHEST on) and gives its sword, showing the
-/// picture before the leader; with no room the chest peeks and shuts. Each sets
-/// a flag nothing tests. This one gives the Arctic Blade, from the first chest.
+/// Unused: nothing calls this pickup or the three after it.
+///
+/// Each opens one of four chests (ACTOR_FIRST_SWORD_CHEST on) and gives its
+/// sword, showing the picture before the leader. With no room the chest peeks
+/// and shuts. Each sets a flag nothing tests.
+///
+/// This one gives the Arctic Blade, from the first chest.
 static void UNUSED LunpaFortress_UnusedTakeArcticBlade(void) {
   if (LunpaFortress_TryTakeChestItem(ACTOR_FIRST_SWORD_CHEST,
                                      ITEM_ARCTIC_BLADE) != 0) {
@@ -749,9 +763,11 @@ static void UNUSED LunpaFortress_UnusedTakeShamshir(void) {
   }
 }
 
-/// Unused: called only by the four pickups above. Opens the chest and gives
-/// the item, showing its picture before the leader; with no room for it, the
-/// chest peeks and shuts. Returns whether it was given.
+/// Unused: called only by the four pickups above.
+///
+/// Opens the chest and gives the item, showing its picture before the leader.
+/// With no room for it, the chest peeks and shuts. Returns whether it was
+/// given.
 static s32 LunpaFortress_TryTakeChestItem(s32 actorId, s32 itemId) {
   s32 itemGiven = 0;
   s32 itemEffect;
@@ -778,8 +794,8 @@ static void UNUSED LunpaFortress_DoNothingC(void) {}
 
 static void UNUSED LunpaFortress_DoNothingD(void) {}
 
-/// LunpaFortressUpperFloor: the leader steps up and takes the Cell Key. Catch
-/// on the key hanging there, or talking to it, starts this.
+/// LunpaFortressUpperFloor: the leader steps up and takes the Cell Key.
+/// Catch on the key hanging there, or talking to it, starts this.
 static void LunpaFortress_TakeCellKey(void) {
   Actor_WalkTo(ACTOR_PARTY_LEADER, 264, 792);
   Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
@@ -832,11 +848,14 @@ static s32 LunpaFortress_IsLeaderInPatrolSafeZone(void) {
 #endif
 
 /// Every frame in LunpaFortressUpperFloor: the pair patrolling the west
-/// corridor. They stand still while FLAG_MENU_OPEN is set or Psynergy or an
-/// item is in use; otherwise they walk, with MAPGRID_LAYER_OVERHEAD shaking and
-/// following the first. Close to a cloaked leader they request
-/// CLOAK_NEAR_GUARD; seeing an uncloaked leader, they raise
-/// RAISED_PATROL_PAIR_SPOTTED.
+/// corridor.
+///
+/// - They stand still while FLAG_MENU_OPEN is set or Psynergy or an item is in
+///   use.
+/// - Otherwise they walk, with MAPGRID_LAYER_OVERHEAD shaking and following
+///   the first.
+/// - Close to a cloaked leader they request CLOAK_NEAR_GUARD.
+/// - Seeing an uncloaked leader, they raise RAISED_PATROL_PAIR_SPOTTED.
 static void LunpaFortress_UpdatePairedGuardDetection(void) {
   struct Actor *firstGuard = Actor_Get(ACTOR_UPPER_FLOOR_FIRST_PATROL);
   struct Actor *secondGuard = Actor_Get(ACTOR_UPPER_FLOOR_SECOND_PATROL);
@@ -948,8 +967,8 @@ static s32 LunpaFortress_IsLeaderPassingPatrollingGuard(void) {
 }
 
 /// Every frame in LunpaFortressUpperFloor: the patrol in the east hall, as
-/// LunpaFortress_UpdatePairedGuardDetection; seeing the leader, it raises
-/// RAISED_HALL_PATROL_SPOTTED.
+/// LunpaFortress_UpdatePairedGuardDetection.
+/// Seeing the leader, it raises RAISED_HALL_PATROL_SPOTTED.
 static void LunpaFortress_UpdateHallGuardDetection(void) {
 
   struct Actor *guard = Actor_Get(ACTOR_UPPER_FLOOR_HALL_PATROL);
@@ -1028,8 +1047,8 @@ static s32 LunpaFortress_IsLeaderInGroundFloorPatrolSafeZone(void) {
 }
 
 /// Every frame in LunpaFortressGroundFloor: the patrolling guard, as
-/// LunpaFortress_UpdatePairedGuardDetection; seeing the leader, it raises
-/// RAISED_GROUND_FLOOR_PATROL_SPOTTED.
+/// LunpaFortress_UpdatePairedGuardDetection.
+/// Seeing the leader, it raises RAISED_GROUND_FLOOR_PATROL_SPOTTED.
 static void LunpaFortress_UpdateGroundFloorPatrolDetection(void) {
 
   struct Actor *guard = Actor_Get(ACTOR_GROUND_FLOOR_PATROL_GUARD);
@@ -1331,11 +1350,14 @@ static void LunpaFortress_CheckUpperFloorDoorApproach(void) {
   }
 }
 
-/// Unused: nothing calls it; LunpaFortressUpperFloor's patrolling pair throws
-/// the party out through LunpaFortress_PatrolPairThrowsPartyOut instead. The
-/// first patrol would stop, ask who the party is and send it out. That actor
-/// is inferred: row +1 of a scene's placements is a guard only on the upper
-/// floor.
+/// Unused: nothing calls it.
+///
+/// LunpaFortressUpperFloor's patrolling pair throws the party out through
+/// LunpaFortress_PatrolPairThrowsPartyOut instead. The first patrol would
+/// stop, ask who the party is and send it out.
+///
+/// That actor is inferred: row +1 of a scene's placements is a guard only on
+/// the upper floor.
 static void UNUSED LunpaFortress_UnusedFirstPatrolThrowsPartyOut(void) {
   Event_Start();
   Actor_SetDestinationOffset(ACTOR_UPPER_FLOOR_FIRST_PATROL, 0, 0);
@@ -1536,6 +1558,7 @@ static void LunpaFortress_FightHallGuard(void) {
 
 /// LunpaFortressUpperFloor, step trigger 31: walking up to the three guards,
 /// they argue, then fight the party together as three Brigands. "Who are you!?"
+///
 /// After the battle the party comes back here.
 static void LunpaFortress_FightThreeGuards(void) {
   s32 messageBase;
@@ -1897,10 +1920,14 @@ static void LunpaFortress_PositionPartyForMonster(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
 }
 
-/// LunpaFortressToadonpa, step trigger 20: walking into Hammet's cell. The
-/// first time, Hammet hears the party out and recognizes Ivan, then Dodonpa
-/// arrives, gloats, pulls a lever and frees Toadonpa on them; after a lost
-/// battle, the event goes straight to the trap. Either way, the battle follows.
+/// LunpaFortressToadonpa, step trigger 20: walking into Hammet's cell.
+///
+/// The first time:
+/// - Hammet hears the party out and recognizes Ivan.
+/// - Dodonpa arrives, gloats, pulls a lever and frees Toadonpa on them.
+///
+/// After a lost battle, the event goes straight to the trap. Either way, the
+/// battle follows.
 static void LunpaFortress_FindHammet(void) {
   s32 messageBase;
 
@@ -2196,9 +2223,13 @@ static void LunpaFortress_FindHammet(void) {
 }
 
 /// LunpaFortressToadonpa, LUNPA_FORTRESS_TOADONPA_AFTER_BATTLE after the battle
-/// with Toadonpa: the monster has fallen on Dodonpa. The party may pull it off
-/// him; they argue over his punishment until his father Donpa arrives, who
-/// orders him locked up, thanks the party, and lets them leave with Hammet.
+/// with Toadonpa: the monster has fallen on Dodonpa.
+///
+/// - The party may pull it off him.
+/// - They argue over his punishment until his father Donpa arrives.
+/// - Donpa orders him locked up, thanks the party, and lets them leave with
+///   Hammet.
+///
 /// Sets FLAG_DODONPA_LOCKED_UP.
 static void LunpaFortress_DonpaJudgesDodonpa(void) {
   struct Actor *leader;
@@ -2952,8 +2983,8 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
 }
 
 /// LunpaFortressGroundFloor: Mind Read on the second sentry reads his thoughts.
-/// He has one of eight thoughts, chosen at random when the scene was entered;
-/// in one he looks around first.
+/// He has one of eight thoughts, chosen at random when the scene was entered.
+/// In one he looks around first.
 static void LunpaFortress_ReadSentrysThoughts(void) {
 
   switch (gLunpaFortressRandomPick) {
@@ -3040,10 +3071,13 @@ static void LunpaFortress_TalkToSentry(void) {
   Event_ShowMessage(ACTOR_GROUND_FLOOR_SECOND_SENTRY, 0);
 }
 
-/// LunpaFortressUpperFloor: Donpa's attendant. Before the rescue the attendant
-/// hushes the party, glances at the sleeping Donpa, asks a question and tells
-/// of Donpa and his spoiled son; once told, only a line. After the rescue,
-/// Donpa is grateful.
+/// LunpaFortressUpperFloor: Donpa's attendant.
+///
+/// Before the rescue the attendant hushes the party, glances at the sleeping
+/// Donpa, asks a question and tells of Donpa and his spoiled son. Once told,
+/// only a line.
+///
+/// After the rescue, Donpa is grateful.
 static void LunpaFortress_TalkToAttendant(void) {
   s32 whisperMessage;
   s32 familyMessage;
@@ -3156,9 +3190,10 @@ static void LunpaFortress_ReadDonpasThoughts(void) {
   }
 }
 
-/// LunpaFortressUpperFloor: Donpa, asleep before the rescue. "ZZZZ..." After
-/// it, the first time, he thanks the party and has his attendant show them his
-/// reward, Tonic.
+/// LunpaFortressUpperFloor: Donpa, asleep before the rescue. "ZZZZ..."
+///
+/// After it, the first time, he thanks the party and has his attendant show
+/// them his reward, Tonic.
 static void LunpaFortress_TalkToDonpa(void) {
   s32 rewardMessage;
 
@@ -3272,8 +3307,10 @@ static void LunpaFortress_AskWhereDodonpaIs(void) {
 }
 
 /// LunpaFortressGroundFloor: a bent old man asks whether the party sneaked in.
-/// He's startled the first time, and wants to know whether it came in search of
-/// something; on yes, he promises to keep quiet. "Wh-Wh-Who goes there!"
+/// "Wh-Wh-Who goes there!"
+///
+/// He's startled the first time, and wants to know whether it came in search
+/// of something. On yes, he promises to keep quiet.
 static void LunpaFortress_TalkToStartledOldMan(void) {
   s32 frightMessage;
   s32 purposeMessage;
@@ -3327,9 +3364,9 @@ static void LunpaFortress_TalkToStartledOldMan(void) {
   }
 }
 
-/// LunpaFortressGroundFloor: Mind Read on the startled resident. Once they have
-/// promised, a thought about Hammet; before, Mind Read stops and they talk
-/// instead.
+/// LunpaFortressGroundFloor: Mind Read on the startled resident.
+/// Once they have promised, a thought about Hammet. Before, Mind Read stops
+/// and they talk instead.
 static void LunpaFortress_ReadStartledResidentsThoughts(void) {
 
   if (GameFlag_Get(FLAG_LUNPA_FORTRESS_OLD_MAN_PROMISED_SILENCE)) {
@@ -3348,7 +3385,8 @@ static void LunpaFortress_ReadStartledResidentsThoughts(void) {
 static void UNUSED LunpaFortress_DoNothingF(void) {}
 
 /// LunpaFortressToadonpa, after Donpa's judgment: Dodonpa behind bars begs his
-/// father's forgiveness; with the Cell Key, a further line shows.
+/// father's forgiveness.
+/// With the Cell Key, a further line shows.
 static void LunpaFortress_TalkToJailedDodonpa(void) {
   s32 pleaMessage = MsgLunpaWrongTurnOver;
 
@@ -3367,9 +3405,11 @@ static void LunpaFortress_ReadJailedDodonpasThoughts(void) {
   Event_ShowMessage(ACTOR_TOADONPA_DODONPA, 0);
 }
 
-/// Sets each scene up: a random pick for the guards' lines, the doors already
-/// opened, the watching guards and, in LunpaFortressToadonpa, the room after
-/// the battle with Toadonpa or Dodonpa jailed.
+/// Sets each scene up.
+///
+/// That is a random pick for the guards' lines, the doors already opened, the
+/// watching guards and, in LunpaFortressToadonpa, the room after the battle
+/// with Toadonpa or Dodonpa jailed.
 s32 Scene_Initialize(void) {
   struct Actor *mapActor;
 
@@ -3490,9 +3530,11 @@ static void LunpaFortress_InitializeGroundFloor(void) {
   wait(1);
 }
 
-/// Sets LunpaFortressUpperFloor up: beaten guards gone or lying where they
-/// fell, the Cell Key gone once taken, the patrols by entrance and
-/// Donpa's attendant by his reward's place.
+/// Sets LunpaFortressUpperFloor up.
+///
+/// Beaten guards are gone or lying where they fell, and the Cell Key is gone
+/// once taken. The patrols are set by entrance, and Donpa's attendant by his
+/// reward's place.
 static void LunpaFortress_InitializeUpperFloor(void) {
   struct Actor *keyActor;
 
@@ -3578,8 +3620,10 @@ static void LunpaFortress_InitializeUpperFloor(void) {
   keyActor->scaleY = 3 * Q16_ONE / 4;
 }
 
-/// Sets LunpaFortressCave up: the doors, the crates, the ivy Whirlwind blows
-/// away and the switches as the party left them.
+/// Sets LunpaFortressCave up.
+///
+/// The doors, the crates, the ivy Whirlwind blows away and the switches are
+/// as the party left them.
 static void LunpaFortress_InitializeCave(void) {
   struct Actor *mapActor;
 

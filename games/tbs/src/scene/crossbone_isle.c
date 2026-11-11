@@ -3,61 +3,83 @@
 /// the cave beneath it, in three areas by their area names: Crossbone
 /// Isle, Crossbone Isle Cave and the Pirate Ship.
 ///
-/// No one on the island speaks: it is a run of Psynergy puzzles and battles
+/// No one on the island speaks. It is a run of Psynergy puzzles and battles
 /// that ends with Deadbeard on the Pirate Ship. Its scenes are met in this
 /// order:
 ///
 /// - Crossbone Isle (SceneId_CrossboneIsle), the island itself, reached from
-/// the
-///   World Map (WORLD_MAP_TO_CROSSBONE_ISLE; CROSSBONE_ISLE_TO_WORLD_MAP leads
-///   back to it). Whirlwind blows two ivies away for good (flags from
-///   FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY, the first also opening a cell;
-///   the second's and a fourth's triggers are unused), Growth grows three
-///   plants so they can be crossed, for this visit only (flags from
-///   FLAG_CROSSBONE_ISLE_FIRST_PLANT_GROWN; the first plant's trigger is
-///   unused), two logs can be pushed, and a Nut circles until Catch takes it
+///   the World Map (WORLD_MAP_TO_CROSSBONE_ISLE; CROSSBONE_ISLE_TO_WORLD_MAP
+///   leads back to it).
+///
+///   Whirlwind blows two ivies away for good. Their flags start at
+///   FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY, and the first ivy also opens
+///   a cell. The second's and a fourth's triggers are unused.
+///
+///   Growth grows three plants so they can be crossed, for this visit only.
+///   Their flags start at FLAG_CROSSBONE_ISLE_FIRST_PLANT_GROWN, and the
+///   first plant's trigger is unused.
+///
+///   Two logs can be pushed, and a Nut circles until Catch takes it
 ///   (FLAG_CROSSBONE_ISLE_NUT_CAUGHT).
+///
 ///   CROSSBONE_ISLE_TO_CROSSBONE_ISLE_CAVE_ENTRANCE leads down into the cave.
+///
 /// - Crossbone Isle Cave (SceneId_CrossboneIsleCaveEntrance), the cave's mouth,
 ///   with only its two exits.
+///
 /// - Crossbone Isle Cave (SceneId_CrossboneIsleFirstFloor to
 ///   SceneId_CrossboneIsleNinthFloor), the nine floors the cave descends
-///   through, all on one layout, each entered from the east
+///   through, all on one layout. Each is entered from the east
 ///   (CORRIDOR_FROM_PREVIOUS_ROOM) and left to the west
-///   (CORRIDOR_TO_NEXT_ROOM). Every room numbers its doors alike, and
-///   scene_exits.h names them room by room
-///   (CROSSBONE_ISLE_FIRST_FLOOR_FROM_CROSSBONE_ISLE_CAVE_ENTRANCE and
-///   CROSSBONE_ISLE_FIRST_FLOOR_TO_CROSSBONE_ISLE_SECOND_FLOOR in the first).
-///   Each has two doors in its north wall into a side room of its own. The
-///   first time the party walks into the east door
-///   (CrossboneIsle_OpenEastDoor), the monsters behind it attack:
+///   (CORRIDOR_TO_NEXT_ROOM).
+///
+///   Every room numbers its doors alike, and scene_exits.h names them room
+///   by room (CROSSBONE_ISLE_FIRST_FLOOR_FROM_CROSSBONE_ISLE_CAVE_ENTRANCE
+///   and CROSSBONE_ISLE_FIRST_FLOOR_TO_CROSSBONE_ISLE_SECOND_FLOOR in the
+///   first).
+///
+///   Each room has two doors in its north wall into a side room of its own.
+///   The first time the party walks into the east door
+///   (CrossboneIsle_OpenEastDoor), the monsters behind it attack. They are
 ///   ENCOUNTER_ZONE_CROSSBONE_ISLE_FIRST_GUARDS for the first four rooms and
-///   ENCOUNTER_ZONE_CROSSBONE_ISLE_LAST_GUARDS for the next five, one group per
-///   room. Back from the battle (ENTRANCE_AFTER_BATTLE) the door opens and the
-///   party walks through, and from then on it simply opens (one flag per room
-///   from FLAG_CROSSBONE_ISLE_FIRST_EAST_DOOR_MONSTERS_DEFEATED); the west door
-///   always opens. Between the doors stands a pillar that, pushed or moved with
-///   Move to column 40, sinks into the floor and opens the corridor (one flag
-///   per room from FLAG_CROSSBONE_ISLE_FIRST_PASSAGE_OPENED). In the first
-///   floor a chest is a mimic (FLAG_CROSSBONE_ISLE_FIRST_FLOOR_MIMIC_BEATEN
-///   once beaten). The side rooms of the first eight floors are in
+///   ENCOUNTER_ZONE_CROSSBONE_ISLE_LAST_GUARDS for the next five, one group
+///   per room.
+///
+///   Back from the battle (ENTRANCE_AFTER_BATTLE) the door opens and the
+///   party walks through. From then on it simply opens, with one flag per
+///   room from FLAG_CROSSBONE_ISLE_FIRST_EAST_DOOR_MONSTERS_DEFEATED. The
+///   west door always opens.
+///
+///   Between the doors stands a pillar. Pushed or moved with Move to column
+///   40, it sinks into the floor and opens the corridor, with one flag per
+///   room from FLAG_CROSSBONE_ISLE_FIRST_PASSAGE_OPENED.
+///
+///   In the first floor a chest is a mimic
+///   (FLAG_CROSSBONE_ISLE_FIRST_FLOOR_MIMIC_BEATEN once beaten).
+///
+///   The side rooms of the first eight floors are in
 ///   crossbone_isle_stepping_stones.c and crossbone_isle_keys.c.
+///
 /// - Crossbone Isle Cave (SceneId_CrossboneIsleFloatingLogs), the ninth floor's
-///   side room: twelve logs floating on green water, which drift with the
-///   leader standing on them until another log or the shore stops them, and
-///   hops from log to log, lead to its four chests.
+///   side room, with twelve logs floating on green water. A log drifts with
+///   the leader standing on it until another log or the shore stops it.
+///   Drifting, and hopping from log to log, leads to the room's four chests.
+///
 /// - Crossbone Isle Cave (SceneId_CrossboneIslePier), the ledge past the ninth
 ///   floor where a wooden pier leads out to the Pirate Ship.
+///
 /// - Pirate Ship (SceneId_PirateShip), at the end. Stepping on step trigger 10
 ///   (CrossboneIsle_FightDeadbeard) sets off the battle with Deadbeard, the
-///   sixth group of ENCOUNTER_ZONE_CROSSBONE_ISLE_LAST_GUARDS; when the party
-///   comes back (ENTRANCE_AFTER_BATTLE) FLAG_CROSSBONE_ISLE_DEADBEARD_DEFEATED
-///   is set and a chest with the Demon Mail appears. A second chest is a mimic
-///   (FLAG_PIRATE_SHIP_MIMIC_BEATEN once beaten).
+///   sixth group of ENCOUNTER_ZONE_CROSSBONE_ISLE_LAST_GUARDS.
 ///
-/// Scene_Initialize restores each scene as its flags say: the ivy and plants on
-/// the island, the sliding logs' footprints, the corridor's sunk pillars and
-/// the chests the mimics leave.
+///   When the party comes back (ENTRANCE_AFTER_BATTLE),
+///   FLAG_CROSSBONE_ISLE_DEADBEARD_DEFEATED is set and a chest with the Demon
+///   Mail appears. A second chest is a mimic (FLAG_PIRATE_SHIP_MIMIC_BEATEN
+///   once beaten).
+///
+/// Scene_Initialize restores each scene as its flags say. That covers the
+/// ivy and plants on the island, the sliding logs' footprints, the corridor's
+/// sunk pillars and the chests the mimics leave.
 
 #include "main_routine_work.h"
 #include "version.h"
@@ -107,42 +129,44 @@ enum CrossboneIsleActorId {
   /// The Nut that circles over the island until Catch takes it
   /// (FLAG_CROSSBONE_ISLE_NUT_CAUGHT).
   /// ★ Named from the game: "Nut" (MsgItemName), the item
-  /// CrossboneIsle_CatchNut
-  /// gives
+  /// CrossboneIsle_CatchNut gives
   ACTOR_ISLE_NUT = ACTOR_FIRST_PLACED,
   /// The two logs a push rolls (CrossboneIsle_PushIsleLog).
   /// ★ Named from what the player sees: two logs lying on the island's
   /// grass (its render)
   ACTOR_FIRST_ISLE_LOG,
-  /// The four plants Growth grows, crossable once grown for the rest of the
-  /// visit (four flags from FLAG_CROSSBONE_ISLE_FIRST_PLANT_GROWN). The first
-  /// is placed at the map's origin, off stage
+  /// The four plants Growth grows. Once grown, a plant can be crossed for the
+  /// rest of the visit (four flags from FLAG_CROSSBONE_ISLE_FIRST_PLANT_GROWN).
+  /// The first is placed at the map's origin, off stage
   /// (CrossboneIsle_UnusedGrowFirstPlant).
   /// ★ Named from what the player sees: small sprouts on the cliff ledges
   /// (its render)
   ACTOR_FIRST_PLANT = ACTOR_FIRST_ISLE_LOG + 2,
   /// The ivy Whirlwind blows away, one flag each from
-  /// FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY. Only three rows place one, the
-  /// second at the map's origin, off stage
-  /// (CrossboneIsle_UnusedBlowAwaySecondIvy):
-  /// the fourth ivy's trigger and CrossboneIsle_RestoreIvy name
-  /// ACTOR_FIRST_IVY + 3, which the table leaves unplaced.
+  /// FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY.
+  ///
+  /// Only three rows place one, and the second is at the map's origin, off
+  /// stage (CrossboneIsle_UnusedBlowAwaySecondIvy). The fourth ivy's trigger
+  /// and CrossboneIsle_RestoreIvy name ACTOR_FIRST_IVY + 3, which the table
+  /// leaves unplaced.
   /// ★ Named from what the player sees: leafy ivy growing against the cliffs
   /// (its render)
   ACTOR_FIRST_IVY = ACTOR_FIRST_PLANT + 4
 };
 
 /// Growth has grown Crossbone Isle's first plant, until the party leaves the
-/// island's map: four scene temp flags from this one, one a plant.
+/// island's map. Four scene temp flags run from this one, one a plant.
 /// ★ Named from what the player sees: small sprouts on the cliff ledges (its
 /// render)
 enum { FLAG_CROSSBONE_ISLE_FIRST_PLANT_GROWN = FLAG_SCENE_TEMP_40 };
 
 /// The twelve floating logs of the ninth floor's side room
-/// (SceneId_CrossboneIsleFloatingLogs), numbered in the order of
-/// gCrossboneIsle_FloatingLogsActorPlacements, from the first to the
-/// twelfth, with their shapes: a log three cells wide slides north and south,
-/// and one three cells tall slides east and west.
+/// (SceneId_CrossboneIsleFloatingLogs), from the first to the twelfth.
+///
+/// They are numbered in the order of
+/// gCrossboneIsle_FloatingLogsActorPlacements, and each is given with its
+/// shape. A log three cells wide slides north and south, and one three cells
+/// tall slides east and west.
 enum CrossboneIsleFloatingLogsActorId {
   /// ★ Named from what the player sees: yellow logs floating on green water
   /// (its render)
@@ -193,15 +217,15 @@ enum CrossboneIsleCorridorActorId {
   ACTOR_SINKING_PILLAR = ACTOR_FIRST_PLACED
 };
 
-/// The corridor rooms' entrances, which every room numbers alike, so
-/// the code they share names them here; scene_exits.h names each room's own
+/// The corridor rooms' entrances, as the code the rooms share names them.
+///
+/// Every room numbers them alike. scene_exits.h names each room's own
 /// (CROSSBONE_ISLE_FIRST_FLOOR_FROM_CROSSBONE_ISLE_CAVE_ENTRANCE to
 /// CROSSBONE_ISLE_FIRST_FLOOR_FROM_CROSSBONE_ISLE_STEPPING_STONES_WEST in the
 /// first).
 enum {
   /// At the east end, from the room before (the cave's mouth,
-  /// CrossboneIsleCaveEntrance,
-  /// for the first).
+  /// CrossboneIsleCaveEntrance, for the first).
   CORRIDOR_FROM_PREVIOUS_ROOM = 1,
   /// At the west end, from the room after (CrossboneIslePier for the last).
   CORRIDOR_FROM_NEXT_ROOM = 2,
@@ -218,9 +242,11 @@ enum {
   CORRIDOR_TO_SIDE_ROOM_WEST = 4 ///< the west door (CrossboneIsle_OpenWestDoor)
 };
 
-/// The entrance a battle returns the party to: in a corridor room after
-/// the monsters behind its east door (CrossboneIsle_OpenEastDoor), and on the
-/// Pirate Ship after Deadbeard (CrossboneIsle_FightDeadbeard).
+/// The entrance a battle returns the party to.
+///
+/// In a corridor room that is after the monsters behind its east door
+/// (CrossboneIsle_OpenEastDoor). On the Pirate Ship it is after Deadbeard
+/// (CrossboneIsle_FightDeadbeard).
 enum { ENTRANCE_AFTER_BATTLE = 5 };
 
 static void CrossboneIsle_RestoreSunkPillar(void);
@@ -306,9 +332,10 @@ static void CrossboneIsle_SpawnPillarMovedBurst(s32 actorId) {
   }
 }
 
-/// Stepping on step trigger 10 on the Pirate Ship: Deadbeard attacks (the sixth
-/// group of ENCOUNTER_ZONE_CROSSBONE_ISLE_LAST_GUARDS), and the party comes
-/// back to the ship at ENTRANCE_AFTER_BATTLE.
+/// Stepping on step trigger 10 on the Pirate Ship: Deadbeard attacks.
+///
+/// He is the sixth group of ENCOUNTER_ZONE_CROSSBONE_ISLE_LAST_GUARDS. After
+/// the battle the party comes back to the ship at ENTRANCE_AFTER_BATTLE.
 static void CrossboneIsle_FightDeadbeard(void) {
 
   Event_Start();
@@ -351,11 +378,14 @@ static void CrossboneIsle_CatchNut(void) {
   Event_End();
 }
 
-/// Restores each scene's puzzles from its flags: the sliding logs'
-/// footprints in CrossboneIsleFloatingLogs; on the Pirate Ship the mimic's
-/// chest and, after Deadbeard, the Demon Mail's; on Crossbone Isle the ivy,
-/// plants and Nut; in the corridor rooms the mimic's chest, the sunk pillars
-/// and the door opened after a battle.
+/// Restores each scene's puzzles from its flags.
+///
+/// - In CrossboneIsleFloatingLogs, the sliding logs' footprints.
+/// - On the Pirate Ship, the mimic's chest and, after Deadbeard, the Demon
+///   Mail's.
+/// - On Crossbone Isle, the ivy, plants and Nut.
+/// - In the corridor rooms, the mimic's chest, the sunk pillars and the door
+///   opened after a battle.
 s32 Scene_Initialize(void) {
   struct Actor *actor;
   s32 sceneId;
@@ -484,9 +514,10 @@ static void CrossboneIsle_RestoreSunkPillar(void) {
 }
 
 /// Move on a corridor room's pillar in Crossbone Isle Cave, and after each
-/// push: once it reaches column 40 it sinks into the floor in a ring of dust,
-/// and the corridor is open (a flag per room from
-/// FLAG_CROSSBONE_ISLE_FIRST_PASSAGE_OPENED).
+/// push: at column 40 the pillar sinks.
+///
+/// It sinks into the floor in a ring of dust, and the corridor is open (a
+/// flag per room from FLAG_CROSSBONE_ISLE_FIRST_PASSAGE_OPENED).
 static void CrossboneIsle_MovePillar(void) {
   struct Actor *pillar;
   s16 *mapNumber;
@@ -553,10 +584,12 @@ static void CrossboneIsle_OpenWestDoor(void) {
   Import_EventSetExitRequest(CORRIDOR_TO_SIDE_ROOM_WEST);
 }
 
-/// Walking north into a corridor room's east door in Crossbone Isle Cave (
-/// step trigger 3): the first time, the monsters behind it attack, and the
-/// party comes back at ENTRANCE_AFTER_BATTLE; once they are beaten, the door
-/// opens onto the side room.
+/// Walking north into a corridor room's east door in Crossbone Isle Cave
+/// (step trigger 3): the monsters behind it attack, once.
+///
+/// The first time, the party fights them and comes back at
+/// ENTRANCE_AFTER_BATTLE. Once they are beaten, the door opens onto the side
+/// room.
 static void CrossboneIsle_OpenEastDoor(void) {
   if (GameFlag_Get(gMainRoutineWork.next +
                    (FLAG_CROSSBONE_ISLE_FIRST_EAST_DOOR_MONSTERS_DEFEATED -
@@ -631,9 +664,11 @@ static void CrossboneIsle_OpenEastDoorAfterBattle(void) {
 }
 
 /// Unused: Growth on Crossbone Isle's first plant would grow it and let the
-/// party climb at (304, 368), but the actor placements put that plant at
-/// the map's origin, off stage in the forest's corner, where no cast can reach
-/// it and the player never sees it (its render).
+/// party climb at (304, 368).
+///
+/// The actor placements put that plant at the map's origin, off stage in the
+/// forest's corner. No cast can reach it there and the player never sees it
+/// (its render).
 static void CrossboneIsle_UnusedGrowFirstPlant(s32 actorId) {
   s32 fixedX = PIXELS(304);
   s32 fixedZ = PIXELS(368);
@@ -703,8 +738,10 @@ static void CrossboneIsle_BlowAwayFirstIvy(void) {
 }
 
 /// Unused: Whirlwind on Crossbone Isle's second ivy would blow it away for
-/// good, but the actor placements put that ivy at the map's origin, off
-/// stage, where no cast can reach it and the player never sees it (its render).
+/// good.
+///
+/// The actor placements put that ivy at the map's origin, off stage. No cast
+/// can reach it there and the player never sees it (its render).
 static void CrossboneIsle_UnusedBlowAwaySecondIvy(void) {
   GameFlag_Set(FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 1);
 }
@@ -715,8 +752,9 @@ static void CrossboneIsle_BlowAwayThirdIvy(void) {
 }
 
 /// Unused: Whirlwind on Crossbone Isle's fourth ivy would blow it away for
-/// good, but the actor placements set only three, so no actor
-/// answers its trigger.
+/// good.
+///
+/// The actor placements set only three, so no actor answers its trigger.
 static void CrossboneIsle_UnusedBlowAwayFourthIvy(void) {
   GameFlag_Set(FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 3);
 }

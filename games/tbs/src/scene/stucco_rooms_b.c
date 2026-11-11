@@ -1,18 +1,20 @@
 /// @file
 /// Stucco rooms B (SceneId_StuccoRoomsB), a sheet of rooms drawn in stucco, all
-/// of them Tolbi's: its houses, inns and shops, which the area names call
-/// Tolbi, and Tolbi Sanctum, as the same scene is named at
-/// STUCCO_ROOMS_B_SANCTUM and STUCCO_ROOMS_B_SANCTUM_NORTH.
+/// of them Tolbi's.
+///
+/// They are its houses, inns and shops, which the area names call Tolbi, and
+/// Tolbi Sanctum, as the same scene is named at STUCCO_ROOMS_B_SANCTUM and
+/// STUCCO_ROOMS_B_SANCTUM_NORTH.
 ///
 /// - Tolbi, the rooms behind the town's doors, which Tolbi's exits
-///   TOLBI_TO_HOUSE_SOUTH to TOLBI_TO_HOUSE_SOUTHWEST lead into; this scene's
+///   TOLBI_TO_HOUSE_SOUTH to TOLBI_TO_HOUSE_SOUTHWEST lead into. This scene's
 ///   exits STUCCO_ROOMS_B_HOUSE_NORTHWEST_TO_TOLBI to
 ///   STUCCO_ROOMS_B_TO_TOLBI_WEST lead back out. During the festival one
-///   household lines up beds and becomes a makeshift inn, visitors have
-///   rented another house, and the weapon, armor and item shops
+///   household lines up beds and becomes a makeshift inn, and visitors have
+///   rented another house. The weapon, armor and item shops
 ///   (STUCCO_ROOMS_B_WEAPON_SHOP, STUCCO_ROOMS_B_ARMOR_SHOP and
 ///   STUCCO_ROOMS_B_ITEM_SHOP) open across their counters. The inn behind
-///   TOLBI_TO_INN is full, `Inn Full / No Vacancies`;
+///   TOLBI_TO_INN is full, `Inn Full / No Vacancies`.
 ///   STUCCO_ROOMS_B_INN_TO_INN_PASSAGE and
 ///   STUCCO_ROOMS_B_INN_PASSAGE_TO_INN join it to the inn's corridor, whose
 ///   doors lead into four guest rooms
@@ -21,31 +23,39 @@
 ///   healer opens the sanctum across the counter. STUCCO_ROOMS_B_SANCTUM_NORTH
 ///   is where a defeat returns the party while Iodem waits at Gondowan Passage.
 ///
-/// The rooms' talk follows Colosso in the same three stages as the town, each
-/// with its own trigger table (StuccoRoomsB_SelectTriggers) and, after
-/// Colosso, an actor placement table of its own. During the festival Babi
-/// is missing and the town is full of visitors, among them a tour group from
-/// Kalay that reserved only two rooms. On finals day (FLAG_BABI_SAVED) Babi
-/// has shown himself at the finals; the Spanish and Italian editions add a
-/// question about it (TBS_PATCH_4). After Colosso (FLAG_COLOSSO_OVER) no ship
-/// sails the Karagol, and the visitors are stranded; one of them says they
-/// made it to Tolbi with the party's help.
+/// The rooms' talk follows Colosso in the same three stages as the town. Each
+/// stage has its own trigger table (StuccoRoomsB_SelectTriggers) and, after
+/// Colosso, an actor placement table of its own.
+///
+/// - During the festival Babi is missing and the town is full of visitors,
+///   among them a tour group from Kalay that reserved only two rooms.
+/// - On finals day (FLAG_BABI_SAVED) Babi has shown himself at the finals.
+///   The Spanish and Italian editions add a question about it (TBS_PATCH_4).
+/// - After Colosso (FLAG_COLOSSO_OVER) no ship sails the Karagol, and the
+///   visitors are stranded. One of them says they made it to Tolbi with the
+///   party's help.
 ///
 /// After Colosso two short events play, each once, on entering their
-/// rooms (StuccoRoomsB_ApplyEntryState). In the northeast guest room a
-/// woman finds something on the floor, starts at the sight of the party and
-/// hides it behind the trash pile (StuccoRoomsB_WatchWomanHideMedal,
-/// FLAG_STUCCO_ROOMS_B_MEDAL_HIDDEN): a Lucky Medal, which the party can then
-/// take from that barrel (FLAG_STUCCO_ROOMS_B_MEDAL_TAKEN), after which she
-/// greets them, startled, and Mind Read hears her hope its owner will not ask
-/// for it back. In the southeast one stranded passengers argue that the
-/// captain will not sail although they agreed to do whatever it takes
-/// (StuccoRoomsB_WatchPassengersArgue, an area flag). A man who rode
-/// the ship from Kalay with the party greets it as `the would-be warrior`, and
-/// he and ACTOR_STUCCO_ROOMS_B_COLOSSO_FAN leave once the party has watched
-/// the passengers confront the tour guide on the Tolbi docks
-/// (FLAG_TOLBI_DOCKS_TOUR_GROUP_BLAMED). Barrels hold a Vial and a Lucky
-/// Medal, and searching the ovens shows what is cooking.
+/// rooms (StuccoRoomsB_ApplyEntryState).
+///
+/// In the northeast guest room a woman finds something on the floor, starts
+/// at the sight of the party and hides it behind the trash pile
+/// (StuccoRoomsB_WatchWomanHideMedal, FLAG_STUCCO_ROOMS_B_MEDAL_HIDDEN). It
+/// is a Lucky Medal, which the party can then take from that barrel
+/// (FLAG_STUCCO_ROOMS_B_MEDAL_TAKEN). After that she greets them, startled,
+/// and Mind Read hears her hope its owner will not ask for it back.
+///
+/// In the southeast one stranded passengers argue that the captain will not
+/// sail although they agreed to do whatever it takes
+/// (StuccoRoomsB_WatchPassengersArgue, an area flag).
+///
+/// A man who rode the ship from Kalay with the party greets it as
+/// `the would-be warrior`. He and ACTOR_STUCCO_ROOMS_B_COLOSSO_FAN leave once
+/// the party has watched the passengers confront the tour guide on the Tolbi
+/// docks (FLAG_TOLBI_DOCKS_TOUR_GROUP_BLAMED).
+///
+/// Barrels hold a Vial and a Lucky Medal, and searching the ovens shows what
+/// is cooking.
 
 #include "main_routine_work.h"
 #include "module/scene/stucco_rooms_b.h"
@@ -126,7 +136,11 @@ const struct ActorPlacement *StuccoRoomsB_SelectActorPlacements(void) {
 
 #if TBS_PATCH_4
 /// In Tolbi on finals day, patch 4 (the Spanish and Italian editions) adds a
-/// question: was Babi missing at all, since he showed himself at the finals?
+/// question about Babi.
+///
+/// It asks whether Babi was missing at all, since he showed himself at the
+/// finals.
+///
 /// Its lines are in every edition's text, Japanese included, so it is a
 /// later change to the script, not a translation's.
 static void StuccoRoomsB_AskWhetherBabiWasMissing(s32 speaker) {
@@ -146,7 +160,9 @@ const struct Trigger *StuccoRoomsB_SelectTriggers(void) {
 }
 
 /// Unused: leaves through TRANSITION_WINDOW, a screen transition of 24
-/// frames; no event row names it.
+/// frames.
+///
+/// No event row names it.
 UNUSED static void StuccoRoomsB_ExitThroughWindow(void) {
   struct FieldWork *work = gFieldWork;
 
@@ -156,9 +172,10 @@ UNUSED static void StuccoRoomsB_ExitThroughWindow(void) {
   Import_EventSetExitRequest();
 }
 
-/// In Tolbi, walking into one of the four doors at cell behaviors 14 to 17:
-/// every placed actor stops, the door opens and the leader walks through
-/// it.
+/// In Tolbi, walking into one of the four doors at cell behaviors 14 to 17
+/// opens it.
+///
+/// Every placed actor stops, the door opens and the leader walks through it.
 static void StuccoRoomsB_EnterDoor(void) {
   u32 actorId;
   struct Actor *actor;
@@ -187,11 +204,15 @@ static void StuccoRoomsB_EnterDoor(void) {
   Import_EventSetExitRequest(*trigger);
 }
 
-/// In Tolbi after Colosso, entering the northeast guest room
-/// (STUCCO_ROOMS_B_GUEST_ROOM_NORTHEAST_FROM_INN_PASSAGE): a woman
-/// finds something on the floor, is startled to see the party and hides it in
-/// the barrel behind the trash pile. "Hey, what's this?" The thing is a Lucky
-/// Medal, found later in that barrel.
+/// In Tolbi after Colosso, a woman in the northeast guest room hides
+/// something as the party enters.
+///
+/// It plays on entering by
+/// STUCCO_ROOMS_B_GUEST_ROOM_NORTHEAST_FROM_INN_PASSAGE. The woman finds
+/// something on the floor and says "Hey, what's this?" She is startled to see
+/// the party and hides it in the barrel behind the trash pile.
+///
+/// The thing is a Lucky Medal, found later in that barrel.
 static void StuccoRoomsB_WatchWomanHideMedal(void) {
   struct Actor *sparkle;
 
@@ -270,10 +291,12 @@ static void StuccoRoomsB_WatchWomanHideMedal(void) {
   Event_End();
 }
 
-/// In Tolbi after Colosso, entering the southeast guest room
-/// (STUCCO_ROOMS_B_GUEST_ROOM_SOUTHEAST_FROM_INN_PASSAGE): three
-/// stranded passengers argue about the captain, who won't sail the ship. "He
-/// won't sail the ship, even though we agreed to do whatever it takes?"
+/// In Tolbi after Colosso, three stranded passengers in the southeast guest
+/// room argue about the captain, who won't sail the ship.
+///
+/// It plays on entering by
+/// STUCCO_ROOMS_B_GUEST_ROOM_SOUTHEAST_FROM_INN_PASSAGE. One says "He won't
+/// sail the ship, even though we agreed to do whatever it takes?"
 static void StuccoRoomsB_WatchPassengersArgue(void) {
   Event_Start();
   Event_SetMessageId(MsgTolbiHeWontSailShipEven);
@@ -308,13 +331,17 @@ static void StuccoRoomsB_WatchPassengersArgue(void) {
   Event_End();
 }
 
-/// Sets up the rooms on entry. After Colosso: a row of three map cells takes
-/// new cell behaviors, two of the passengers are drawn at a fixed priority,
-/// the medal woman stands where she hid the medal, the two short events play
-/// once each on their entrances, and the passenger who rode the ship
-/// with the party and ACTOR_STUCCO_ROOMS_B_COLOSSO_FAN have left once the
-/// party has seen the tour guide on the Tolbi docks tell a passenger his ticket
-/// was refunded.
+/// Sets up the rooms on entry.
+///
+/// After Colosso:
+///
+/// - A row of three map cells takes new cell behaviors.
+/// - Two of the passengers are drawn at a fixed priority.
+/// - The medal woman stands where she hid the medal.
+/// - The two short events play once each on their entrances.
+/// - The passenger who rode the ship with the party and
+///   ACTOR_STUCCO_ROOMS_B_COLOSSO_FAN have left once the party has seen the
+///   tour guide on the Tolbi docks tell a passenger his ticket was refunded.
 s32 StuccoRoomsB_ApplyEntryState(void) {
   s32 clearedPriorityFlags;
   struct Actor *actor;
@@ -362,9 +389,10 @@ s32 StuccoRoomsB_ApplyEntryState(void) {
   return 0;
 }
 
-/// In Tolbi, the item merchant: from across the counter (the leader facing
-/// west) opens STUCCO_ROOMS_B_ITEM_SHOP; from elsewhere talks about the
-/// finals.
+/// In Tolbi, the item merchant sells or chats, by where the leader stands.
+///
+/// From across the counter (the leader facing west) he opens
+/// STUCCO_ROOMS_B_ITEM_SHOP. From elsewhere he talks about the finals.
 static void StuccoRoomsB_TalkToItemMerchant(s32 speaker) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (FACING_NEAREST_CARDINAL(leader->facing) == FACING_WEST) {
@@ -382,8 +410,10 @@ static void StuccoRoomsB_TalkToItemMerchant(s32 speaker) {
   }
 }
 
-/// In Tolbi, the weapon merchant: across the counter (the leader facing
-/// north) opens the shop; otherwise talks about Colosso.
+/// In Tolbi, the weapon merchant sells or chats, by where the leader stands.
+///
+/// Across the counter (the leader facing north) he opens the shop. Otherwise
+/// he talks about Colosso.
 static void StuccoRoomsB_TalkToWeaponMerchant(s32 speaker) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (FACING_NEAREST_CARDINAL(leader->facing) == FACING_NORTH) {
@@ -405,8 +435,10 @@ static void StuccoRoomsB_TalkToWeaponMerchant(s32 speaker) {
   }
 }
 
-/// In Tolbi, the armor merchant: across the counter (the leader facing north)
-/// opens the shop; otherwise talks about the finals.
+/// In Tolbi, the armor merchant sells or chats, by where the leader stands.
+///
+/// Across the counter (the leader facing north) he opens the shop. Otherwise
+/// he talks about the finals.
 static void StuccoRoomsB_TalkToArmorMerchant(s32 speaker) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (FACING_NEAREST_CARDINAL(leader->facing) == FACING_NORTH) {
@@ -451,9 +483,10 @@ static void StuccoRoomsB_TalkToHost(s32 speaker) {
   Event_End();
 }
 
-/// In Tolbi, the woman who hid the Lucky Medal. Until the party takes it from
-/// the barrel she teases; once it is gone she greets them, startled, the first
-/// time, and then claims she is fine.
+/// In Tolbi, the woman who hid the Lucky Medal.
+///
+/// Until the party takes it from the barrel she teases. Once it is gone she
+/// greets them, startled, the first time, and then claims she is fine.
 static void StuccoRoomsB_TalkToMedalWoman(s32 speaker) {
   Event_Start();
   if (GameFlag_Get(FLAG_STUCCO_ROOMS_B_MEDAL_TAKEN) == 0) {
@@ -488,7 +521,8 @@ static void StuccoRoomsB_ReadMedalWomanMind(void) {
 }
 
 /// In Tolbi after Colosso, the angry passenger complains the ships won't sail.
-/// "Grrr! What a scam!"
+///
+/// He says "Grrr! What a scam!"
 static void StuccoRoomsB_TalkToAngryPassenger(s32 speaker) {
   Event_Start();
   Event_SetMessageId(MsgTolbiGrrrScamWhyWontThey);
@@ -499,17 +533,20 @@ static void StuccoRoomsB_TalkToAngryPassenger(s32 speaker) {
   Event_End();
 }
 
-/// The man from the ship asks whether the party remembers him. He's in Tolbi
-/// after Colosso, and rode the ship from Kalay with the party. "Hey! You're the
-/// would-be warrior!"
+/// The man from the ship asks whether the party remembers him.
+///
+/// He's in Tolbi after Colosso, and rode the ship from Kalay with the party.
+/// He says "Hey! You're the would-be warrior!"
 static void StuccoRoomsB_TalkToFellowPassenger(s32 speaker) {
   Event_Start();
   StuccoRoomsB_AskYesNo(MsgTolbiWarriorRemember, speaker);
   Event_End();
 }
 
-/// In Tolbi Sanctum, the healer: across the counter (the leader facing north)
-/// opens the sanctum; otherwise talks about the festival.
+/// In Tolbi Sanctum, the healer heals or chats, by where the leader stands.
+///
+/// Across the counter (the leader facing north) he opens the sanctum.
+/// Otherwise he talks about the festival.
 static void StuccoRoomsB_TalkToHealer(s32 speaker) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (FACING_NEAREST_CARDINAL(leader->facing) == FACING_NORTH) {

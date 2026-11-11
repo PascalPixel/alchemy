@@ -1,62 +1,77 @@
 /// @file
-/// The Bilibin Cave Entrance and Bilibin Cave, two areas between Bilibin
-/// and Imil that share this overlay: the Bilibin Cave Entrance is
-/// SceneId_BilibinCaveEntrance, and Bilibin Cave is SceneId_BilibinCaveRapier
-/// and, beyond it, SceneId_BilibinCaveIce, whose far end opens onto the World
-/// Map farther north. No one speaks here: each scene is a run of Psynergy
-/// puzzles, the getters pick its tables by gMainRoutineWork.next, and
-/// BilibinCave_Initialize restores what the party has already solved in the
-/// scene being entered.
+/// The Bilibin Cave Entrance and Bilibin Cave are two areas between Bilibin
+/// and Imil that share this overlay.
+///
+/// The Bilibin Cave Entrance is SceneId_BilibinCaveEntrance. Bilibin Cave is
+/// SceneId_BilibinCaveRapier and, beyond it, SceneId_BilibinCaveIce, whose far
+/// end opens onto the World Map farther north.
+///
+/// No one speaks here. Each scene is a run of Psynergy puzzles. The getters
+/// pick its tables by gMainRoutineWork.next, and BilibinCave_Initialize
+/// restores what the party has already solved in the scene being entered.
 ///
 /// At the Bilibin Cave Entrance, entered from the World Map, Growth on a sprout
-/// (ACTOR_SPROUT) grows it into a vine and changes the cell behavior of
-/// its cell (BilibinCave_GrowPlant); FLAG_BILIBIN_CAVE_ENTRANCE_SPROUT_GROWN
-/// keeps it grown until the party leaves the Bilibin Cave Entrance, into the
-/// cave beyond or out to the World Map, since both are other areas. Two
-/// exits lead on into Bilibin Cave. The south one's exit cell, at the cave
+/// (ACTOR_SPROUT) grows it into a vine and changes the cell behavior of its
+/// cell (BilibinCave_GrowPlant). FLAG_BILIBIN_CAVE_ENTRANCE_SPROUT_GROWN keeps
+/// it grown until the party leaves the Bilibin Cave Entrance, into the cave
+/// beyond or out to the World Map, since both are other areas.
+///
+/// Two exits lead on into Bilibin Cave. The south one's exit cell, at the cave
 /// mouth, lies under the ledge path that runs above the mouth, since the map
-/// grid has one cell for both: step trigger 10, the ledge cells either side of
-/// it, turns the exit off so the leader can walk the ledge across it, and
-/// step trigger 11, a step further out, turns it back on
-/// (BilibinCave_WalkOntoLedgeOverCaveMouth,
-/// BilibinCave_WalkOffLedgeOverCaveMouth; its recording,
-/// places/bilibin-cave-entrance/events/BilibinCave_WalkOntoLedgeOverCaveMouth.gif).
+/// grid has one cell for both. Step trigger 10, the ledge cells either side of
+/// it, turns the exit off so the leader can walk the ledge across it
+/// (BilibinCave_WalkOntoLedgeOverCaveMouth). Step trigger 11, a step further
+/// out, turns it back on (BilibinCave_WalkOffLedgeOverCaveMouth). Its
+/// recording is
+/// places/bilibin-cave-entrance/events/BilibinCave_WalkOntoLedgeOverCaveMouth.gif.
 ///
 /// In SceneId_BilibinCaveRapier a fire burns between two torches, the west one
-/// cold and the east one lit (ACTOR_RAPIER_ROOM_FIRE), and Douse puts it out
-/// for good (FLAG_BILIBIN_CAVE_SECOND_FIRE_DOUSED). Reveal shows a hidden path,
-/// a strip of tiles and the cells under them, which
-/// BilibinCave_HideRevealedPath takes away again when Reveal wears off. A chest
-/// holds the Elven Rapier.
+/// cold and the east one lit (ACTOR_RAPIER_ROOM_FIRE). Douse puts it out for
+/// good (FLAG_BILIBIN_CAVE_SECOND_FIRE_DOUSED).
 ///
-/// SceneId_BilibinCaveIce holds the cave's one puzzle of several steps, built
-/// from fires, torches and puddles that Frost freezes into ice pillars and the
-/// heat of a fire or a torch melts back (PUDDLE_ANIMATION_MELT). While
-/// ACTOR_ICE_ROOM_FIRE burns, Frost on the puddle beside it only melts back;
-/// Douse puts the fire out (FLAG_BILIBIN_CAVE_FIRST_FIRE_DOUSED), and the
-/// puddle freezes into a pillar drawn underfoot, which the party walks over.
+/// Reveal shows a hidden path, a strip of tiles and the cells under them.
+/// BilibinCave_HideRevealedPath takes it away again when Reveal wears off. A
+/// chest holds the Elven Rapier.
+///
+/// SceneId_BilibinCaveIce holds the cave's one puzzle of several steps. It is
+/// built from fires, torches and puddles. Frost freezes a puddle into an ice
+/// pillar, and the heat of a fire or a torch melts it back
+/// (PUDDLE_ANIMATION_MELT).
+///
+/// While ACTOR_ICE_ROOM_FIRE burns, Frost on the puddle beside it only melts
+/// back. Douse puts the fire out (FLAG_BILIBIN_CAVE_FIRST_FIRE_DOUSED), and
+/// the puddle freezes into a pillar drawn underfoot, which the party walks
+/// over.
+///
 /// The second puddle stands beside a torch that cannot be moved, and Frost on
-/// it always melts back. The third is an ice pillar: two of the six torches
-/// (ACTOR_THIRD_TORCH and ACTOR_FOURTH_TORCH) can be pushed or moved with
-/// Move, and while either stands beside the pillar, on cell (35, 23), the
-/// pillar melts into a puddle and the cells north and south of it change with
-/// it; when both leave it freezes again
-/// (BilibinCave_UpdateThirdPuddleFromTorches). Melting turns the cell
-/// behaviors of cells (36, 22) and (36, 24), north and south of the puddle,
-/// from CELL_BEHAVIOR_ENCOUNTER_GROUND_1 to CELL_BEHAVIOR_JUMP_FORWARD:
-/// encounter ground becomes a jump across.
+/// it always melts back.
+///
+/// The third is an ice pillar. Two of the six torches (ACTOR_THIRD_TORCH and
+/// ACTOR_FOURTH_TORCH) can be pushed or moved with Move. While either stands
+/// beside the pillar, on cell (35, 23), the pillar melts into a puddle and the
+/// cells north and south of it change with it. When both leave it freezes
+/// again (BilibinCave_UpdateThirdPuddleFromTorches).
+///
+/// Melting turns encounter ground into a jump across. The cell behaviors of
+/// cells (36, 22) and (36, 24), north and south of the puddle, go from
+/// CELL_BEHAVIOR_ENCOUNTER_GROUND_1 to CELL_BEHAVIOR_JUMP_FORWARD.
+///
 /// FLAG_BILIBIN_CAVE_THIRD_TORCH_BY_PILLAR and
-/// FLAG_BILIBIN_CAVE_FOURTH_TORCH_BY_PILLAR remember which torch stands there
-/// and FLAG_BILIBIN_CAVE_THIRD_PUDDLE_MELTED that the pillar has melted, so
+/// FLAG_BILIBIN_CAVE_FOURTH_TORCH_BY_PILLAR remember which torch stands there,
+/// and FLAG_BILIBIN_CAVE_THIRD_PUDDLE_MELTED that the pillar has melted. So
 /// coming back from SceneId_BilibinCaveRapier puts the torches and the pillar
-/// back; leaving Bilibin Cave resets them. Nine more pieces of ice only stand
-/// there: five pillars from ACTOR_FIRST_ICE_PILLAR and four lower pieces from
-/// ACTOR_FIRST_LOW_ICE. Step trigger 20 covers the snow blown in at the cave's
-/// mouth to the World Map, around BILIBIN_CAVE_ICE_FROM_WORLD_MAP, and makes
-/// the leader leave footprints; step trigger 21, rimming it, stops them
-/// (BilibinCave_StartFootprints, BilibinCave_StopFootprints; the snow is in
-/// places/bilibin-cave-ice/map-1.png). Its chests hold a Vial, a Psy Crystal
-/// and Water of Life.
+/// back. Leaving Bilibin Cave resets them.
+///
+/// Nine more pieces of ice only stand there: five pillars from
+/// ACTOR_FIRST_ICE_PILLAR and four lower pieces from ACTOR_FIRST_LOW_ICE.
+///
+/// Snow has blown in at the cave's mouth to the World Map, around
+/// BILIBIN_CAVE_ICE_FROM_WORLD_MAP. Step trigger 20 covers it and makes the
+/// leader leave footprints (BilibinCave_StartFootprints). Step trigger 21,
+/// rimming it, stops them (BilibinCave_StopFootprints). The snow is in
+/// places/bilibin-cave-ice/map-1.png.
+///
+/// Its chests hold a Vial, a Psy Crystal and Water of Life.
 
 #include "script_operands.h"
 #include "main_routine_work.h"
@@ -128,8 +143,8 @@ enum {
 /// Actors of SceneId_BilibinCaveRapier, numbered by the rows of
 /// gBilibinCaveRapierActorPlacements.
 enum {
-  /// A torch west of the fire, cold (TORCH_ANIMATION_UNLIT) where its twin
-  /// burns.
+  /// A torch west of the fire. It is cold (TORCH_ANIMATION_UNLIT) where its
+  /// twin burns.
   /// ★ Named from what the player sees: a golden torch on its stand, its bowl
   /// grey with ash, places/bilibin-cave-rapier/map-5.png (its render)
   ACTOR_RAPIER_ROOM_WEST_TORCH = 8,
@@ -150,7 +165,7 @@ enum {
   /// ★ Named from what the player sees: a flickering flame, SPRITE_FIRE (its
   /// render)
   ACTOR_ICE_ROOM_FIRE = 8,
-  /// Six torches, 9 to 14; the second stands beside ACTOR_SECOND_PUDDLE.
+  /// Six torches, 9 to 14. The second stands beside ACTOR_SECOND_PUDDLE.
   /// ★ Named from what the player sees: a golden torch burning on its stand
   /// (its render)
   ACTOR_FIRST_TORCH = 9,
@@ -162,8 +177,8 @@ enum {
   /// ★ Named from what the player sees: a golden torch burning on its stand
   /// (its render)
   ACTOR_FOURTH_TORCH = 12,
-  /// A puddle beside ACTOR_ICE_ROOM_FIRE, which freezes into a pillar the
-  /// party walks over once the fire is out.
+  /// A puddle beside ACTOR_ICE_ROOM_FIRE. It freezes into a pillar the party
+  /// walks over once the fire is out.
   /// ★ Named from what the player sees: a puddle of water, SPRITE_PUDDLE (its
   /// render)
   ACTOR_FIRST_PUDDLE = 15,
@@ -176,13 +191,13 @@ enum {
   /// ★ Named from what the player sees: a puddle of water, SPRITE_PUDDLE (its
   /// render)
   ACTOR_THIRD_PUDDLE = 17,
-  /// Five ice pillars, 18 to 22 (PUDDLE_ANIMATION_PILLAR); nothing acts on
+  /// Five ice pillars, 18 to 22 (PUDDLE_ANIMATION_PILLAR). Nothing acts on
   /// them.
   /// ★ Named from what the player sees: tall pillars of pale blue ice (its
   /// render)
   ACTOR_FIRST_ICE_PILLAR = 18,
   /// Four pieces of ice, 23 to 26, held at the second step of freezing
-  /// (PUDDLE_ANIMATION_LOW_ICE); nothing acts on them.
+  /// (PUDDLE_ANIMATION_LOW_ICE). Nothing acts on them.
   /// ★ Named from what the player sees: low, jagged lumps of pale blue ice
   /// (its render)
   ACTOR_FIRST_LOW_ICE = 23
@@ -247,21 +262,26 @@ const struct Trigger *BilibinCave_GetTriggers(void) {
 }
 
 /// Stepping on step trigger 10 at the Bilibin Cave Entrance, on either side of
-/// the way into Bilibin Cave: the way's cell (21, 14), the exit cell of
-/// BILIBIN_CAVE_ENTRANCE_TO_BILIBIN_CAVE_RAPIER_SOUTH, takes the
-/// cell behavior of source cell (1, 0), which has none.
+/// the way into Bilibin Cave, turns the way's exit off.
+///
+/// The way's cell (21, 14), the exit cell of
+/// BILIBIN_CAVE_ENTRANCE_TO_BILIBIN_CAVE_RAPIER_SOUTH, takes the cell behavior
+/// of source cell (1, 0), which has none.
 static void BilibinCave_WalkOntoLedgeOverCaveMouth(void) {
   MapGrid_CopyCellAttributes(1, 0, 1, 1, 21, 14);
 }
 
 /// Stepping on step trigger 11 at the Bilibin Cave Entrance, a cell further
-/// out: the way's cell (21, 14) takes back the exit, from source cell (0, 0).
+/// out, turns the way's exit back on.
+///
+/// The way's cell (21, 14) takes back the exit, from source cell (0, 0).
 static void BilibinCave_WalkOffLedgeOverCaveMouth(void) {
   MapGrid_CopyCellAttributes(0, 0, 1, 1, 21, 14);
 }
 
-/// Reveal in Bilibin Cave (SceneId_BilibinCaveRapier) shows the hidden path: a
-/// strip of tiles and two rows of the cells under it.
+/// Reveal in Bilibin Cave (SceneId_BilibinCaveRapier) shows the hidden path.
+///
+/// The path is a strip of tiles and two rows of the cells under it.
 static void BilibinCave_RevealHiddenPath(void) {
   {
     s32 width = 1;
@@ -279,7 +299,9 @@ static void BilibinCave_RevealHiddenPath(void) {
 }
 
 /// As Reveal wears off in Bilibin Cave (SceneId_BilibinCaveRapier), the path is
-/// hidden again: the strip's tiles and one row of its cells are restored.
+/// hidden again.
+///
+/// The strip's tiles and one row of its cells are restored.
 static void BilibinCave_HideRevealedPath(void) {
   {
     s32 width = 1;
@@ -297,7 +319,7 @@ static void BilibinCave_HideRevealedPath(void) {
 }
 
 /// Douse on the fire in Bilibin Cave (SceneId_BilibinCaveRapier), until it is
-/// out: it goes out for good.
+/// out, puts it out for good.
 static void BilibinCave_DouseRapierRoomFire(void) {
   Event_Start();
   Actor_SetPosition(ACTOR_RAPIER_ROOM_FIRE, 0, 0);
@@ -305,9 +327,10 @@ static void BilibinCave_DouseRapierRoomFire(void) {
   Event_End();
 }
 
-/// Douse on the fire in Bilibin Cave (SceneId_BilibinCaveIce), until it is out:
-/// it goes out, and the puddle beside it freezes into a pillar the party can
-/// walk over.
+/// Douse on the fire in Bilibin Cave (SceneId_BilibinCaveIce), until it is out,
+/// puts it out.
+///
+/// The puddle beside it then freezes into a pillar the party can walk over.
 static void BilibinCave_DouseIceRoomFire(void) {
   Event_Start();
   Actor_SetPosition(ACTOR_ICE_ROOM_FIRE, 0, 0);
@@ -323,8 +346,10 @@ static void BilibinCave_DouseIceRoomFire(void) {
 }
 
 /// Frost on a puddle in Bilibin Cave (SceneId_BilibinCaveIce) that heat keeps
-/// from freezing: clears the Psynergy's child effect and plays the ice melting
-/// back into a puddle.
+/// from freezing melts straight back.
+///
+/// This clears the Psynergy's child effect and plays the ice melting back into
+/// a puddle.
 static inline void BilibinCave_MeltFrostBack(s32 actorId) {
   Event_Start();
   Actor_SetSpriteColorById(actorId, SPRITE_COLOR_NORMAL);
@@ -352,11 +377,13 @@ static void BilibinCave_FreezeThirdPuddle(void) {
   BilibinCave_MeltFrostBack(ACTOR_THIRD_PUDDLE);
 }
 
-/// A movable torch melts the ice pillar beside it. This runs after a push or
-/// Move in Bilibin Cave (SceneId_BilibinCaveIce): while either movable torch
-/// stands on cell (35, 23) (FLAG_BILIBIN_CAVE_THIRD_TORCH_BY_PILLAR and
+/// A movable torch melts the ice pillar beside it.
+///
+/// This runs after a push or Move in Bilibin Cave (SceneId_BilibinCaveIce).
+/// While either movable torch stands on cell (35, 23)
+/// (FLAG_BILIBIN_CAVE_THIRD_TORCH_BY_PILLAR and
 /// FLAG_BILIBIN_CAVE_FOURTH_TORCH_BY_PILLAR), the ice pillar beside it melts
-/// with a sound, and FLAG_BILIBIN_CAVE_THIRD_PUDDLE_MELTED says so; when both
+/// with a sound, and FLAG_BILIBIN_CAVE_THIRD_PUDDLE_MELTED says so. When both
 /// leave, it freezes again.
 static void BilibinCave_UpdateThirdPuddleFromTorches(void) {
   struct Actor *firstActor;
@@ -406,8 +433,10 @@ static void BilibinCave_UpdateThirdPuddleFromTorches(void) {
   }
 }
 
-/// Growth on the sprout at the Bilibin Cave Entrance, until it has grown: it
-/// grows into a vine and its cell's cell behavior changes;
+/// Growth on the sprout at the Bilibin Cave Entrance, until it has grown, grows
+/// it into a vine.
+///
+/// Its cell's cell behavior changes, and
 /// FLAG_BILIBIN_CAVE_ENTRANCE_SPROUT_GROWN keeps it grown.
 static void BilibinCave_GrowPlant(void) {
 
@@ -415,22 +444,23 @@ static void BilibinCave_GrowPlant(void) {
   GameFlag_Set(FLAG_BILIBIN_CAVE_ENTRANCE_SPROUT_GROWN);
 }
 
-/// Stepping on step trigger 20 in Bilibin Cave (SceneId_BilibinCaveIce): from
-/// here on the leader leaves footprints.
+/// Stepping on step trigger 20 in Bilibin Cave (SceneId_BilibinCaveIce) makes
+/// the leader leave footprints from here on.
 static void BilibinCave_StartFootprints(void) {
   struct MapGridScrollWork *grid = gMapGridWork[0];
   grid->footprints = 1;
 }
 
-/// Stepping on step trigger 21 in Bilibin Cave (SceneId_BilibinCaveIce): the
-/// leader leaves no more footprints.
+/// Stepping on step trigger 21 in Bilibin Cave (SceneId_BilibinCaveIce) stops
+/// the leader leaving footprints.
 static void BilibinCave_StopFootprints(void) {
   struct MapGridScrollWork *grid = gMapGridWork[0];
   grid->footprints = 0;
 }
 
-/// Sets up the scene being entered, with its puzzles already solved. The scene
-/// is the Bilibin Cave Entrance or one of Bilibin Cave's two.
+/// Sets up the scene being entered, with its puzzles already solved.
+///
+/// The scene is the Bilibin Cave Entrance or one of Bilibin Cave's two.
 s32 BilibinCave_Initialize(void) {
   s16 variant = gMainRoutineWork.next;
 
@@ -444,7 +474,8 @@ s32 BilibinCave_Initialize(void) {
   return 0;
 }
 
-/// Sets up the Bilibin Cave Entrance: the vine Growth has grown, with its cell.
+/// Sets up the Bilibin Cave Entrance, with the vine Growth has grown and its
+/// cell.
 static void BilibinCave_RestoreEntrance(void) {
   if (GameFlag_Get(FLAG_BILIBIN_CAVE_ENTRANCE_SPROUT_GROWN) != 0) {
 
@@ -453,8 +484,9 @@ static void BilibinCave_RestoreEntrance(void) {
   }
 }
 
-/// Sets up Bilibin Cave's SceneId_BilibinCaveRapier: its two torches, and its
-/// fire, gone once Douse has put it out.
+/// Sets up Bilibin Cave's SceneId_BilibinCaveRapier.
+///
+/// It places its two torches, and its fire, gone once Douse has put it out.
 static void BilibinCave_RestoreRapierRoom(void) {
 
   gFieldWork->transition =
@@ -476,8 +508,10 @@ static inline void BilibinCave_ClearActorSpriteFlags(s32 actorId) {
   Actor_SetSpriteFlags(actor, 0);
 }
 
-/// Sets up Bilibin Cave's SceneId_BilibinCaveIce: its torches, puddles and
-/// pillars, and the steps of its puzzle already solved.
+/// Sets up Bilibin Cave's SceneId_BilibinCaveIce.
+///
+/// It places its torches, puddles and pillars, with the steps of its puzzle
+/// already solved.
 static void BilibinCave_RestoreIceRoom(void) {
   struct Actor *actor;
   s32 destinationCellX;
@@ -567,7 +601,7 @@ static void BilibinCave_RestoreIceRoom(void) {
 #include "shared/actor_find_at_cell.h"
 
 /// Pushing one of the two movable torches in Bilibin Cave
-/// (SceneId_BilibinCaveIce): it moves only when its next cell and movement
+/// (SceneId_BilibinCaveIce) moves it only when its next cell and movement
 /// probe are clear.
 static void BilibinCave_PushTorch(void) {
   struct Actor *leader;

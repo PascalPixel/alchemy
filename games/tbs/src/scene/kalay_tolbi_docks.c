@@ -1,67 +1,82 @@
 /// @file
 /// Kalay Docks and Tolbi Docks, the two ends of the ship's crossing of the
-/// Karagol Sea, in three scenes that share one overlay: SceneId_KalayDocks,
-/// SceneId_TolbiDocks and SceneId_CottageRoomsE, the sheet that holds a room at
-/// each. The getters pick each scene's tables by gMainRoutineWork.next,
-/// and three story flags choose among them: FLAG_TOLBI_SHIP_REACHED_TOLBI,
-/// whether the ship has made its crossing (set on the World Map,
-/// WorldMap_CompleteTransfer); FLAG_KALAY_COLOSSO_TOUR_LEFT, whether the
-/// Colosso Tour's group has left Kalay; and FLAG_COLOSSO_OVER, whether the
+/// Karagol Sea, in three scenes that share one overlay. The scenes are
+/// SceneId_KalayDocks, SceneId_TolbiDocks and SceneId_CottageRoomsE, the sheet
+/// that holds a room at each.
+///
+/// The getters pick each scene's tables by gMainRoutineWork.next, and three
+/// story flags choose among them. FLAG_TOLBI_SHIP_REACHED_TOLBI says whether
+/// the ship has made its crossing (set on the World Map,
+/// WorldMap_CompleteTransfer). FLAG_KALAY_COLOSSO_TOUR_LEFT says whether the
+/// Colosso Tour's group has left Kalay. FLAG_COLOSSO_OVER says whether the
 /// Colosso finals have been fought.
 ///
-/// Kalay Docks (KalayDocks): the first time the party walks in from the World
-/// Map (KALAY_DOCKS_FROM_WORLD_MAP_SOUTH, FLAG_KALAY_DOCKS_GARET_SAW_KARAGOL)
-/// KalayTolbiDocks_GaretSeesTheKaragol plays. Until the tour's
-/// group has left Kalay, the ship is open to look around and the man at its
-/// plank (ACTOR_CHECKING_TICKETS) checks no tickets; afterwards he stands in
-/// the way and asks for one, takes it if the party has bought it
-/// (FLAG_KALAY_DOCKS_TICKET_HANDED_OVER) and lets the party aboard, and then
-/// offers to let it ashore again until it boards
-/// (FLAG_KALAY_DOCKS_WENT_ASHORE, cleared each time the party comes back off
-/// the ship by KALAY_DOCKS_FROM_TOLBI_SHIP_DECK). A woman
-/// (ACTOR_WOMAN_WITH_A_MESSAGE) asks the party to tell her daughter in Tolbi
-/// that she cannot afford the tickets (FLAG_KALAY_DOCKS_CARRYING_MESSAGE).
-/// She is the daughter's mother, and the man beside her
-/// (ACTOR_MAN_AT_SILK_ROADS_END) her father: the Japanese text of
-/// MsgKalayPassMessageDaughter has her name herself 母, "Mother", as she would
-/// to her daughter, which the English renders `Her mother says that tickets
-/// are too expensive`. Ground, a Venus Djinni (ACTOR_GROUND),
-/// waits on the docks until it joins. Once the ship has crossed, the travellers
-/// are gone and the dock hands wait for a ship that has not returned. The docks
-/// lead to the World Map (KALAY_DOCKS_TO_WORLD_MAP_SOUTH and
-/// KALAY_DOCKS_TO_WORLD_MAP_NORTH), onto the ship
-/// (KALAY_DOCKS_TO_TOLBI_SHIP_DECK, the Tolbi-bound Ship,
-/// SceneId_TolbiShipDeck) and through a door (step trigger 10) into the
-/// building beside them, whose room is on CottageRoomsE.
+/// - Kalay Docks (KalayDocks): the first time the party walks in from the World
+///   Map (KALAY_DOCKS_FROM_WORLD_MAP_SOUTH, FLAG_KALAY_DOCKS_GARET_SAW_KARAGOL)
+///   KalayTolbiDocks_GaretSeesTheKaragol plays.
 ///
-/// Cottage rooms E (CottageRoomsE) is a sheet of rooms drawn as cottages: the
-/// game packs rooms of several places that share a tile style onto one map, and
-/// this one holds a room at each dock, in story order by the exits that lead
-/// in: the room at Kalay Docks (COTTAGE_ROOMS_E_FROM_KALAY_DOCKS), whose area
-/// name is Kalay Docks, and the room at Tolbi Docks
-/// (COTTAGE_ROOMS_E_FROM_TOLBI_DOCKS), whose area name is Tolbi Docks. In the
-/// Kalay room a woman sells the boarding ticket, 600 coins for the four of them
-/// (FLAG_KALAY_DOCKS_TICKET_BOUGHT), until the ship has sailed, when she says
-/// it will not leave again for the monsters at sea; in the Tolbi room no
-/// tickets are sold at all, the sea being too dangerous.
+///   Until the tour's group has left Kalay, the ship is open to look around and
+///   the man at its plank (ACTOR_CHECKING_TICKETS) checks no tickets.
+///   Afterwards he stands in the way and asks for one. He takes it if the party
+///   has bought it (FLAG_KALAY_DOCKS_TICKET_HANDED_OVER) and lets the party
+///   aboard. Then he offers to let it ashore again until it boards
+///   (FLAG_KALAY_DOCKS_WENT_ASHORE, cleared each time the party comes back off
+///   the ship by KALAY_DOCKS_FROM_TOLBI_SHIP_DECK).
 ///
-/// Tolbi Docks (TolbiDocks) is where the ship lands after the crossing.
-/// Stepping off (step trigger 20, FLAG_TOLBI_DOCKS_ARRIVALS_GREETED) the party
-/// is met by a man on the docks who asks about the monster, with a reply for
-/// each answer. The woman's daughter (ACTOR_WAITING_DAUGHTER) watches the sea
-/// for her parents and takes the message (FLAG_TOLBI_DOCKS_MESSAGE_DELIVERED).
-/// Two stacks of crates slide along the pier under Move, a chest holds a Potion
-/// and a box 35 coins, and the docks lead to the World Map toward Tolbi
-/// (TOLBI_DOCKS_TO_WORLD_MAP), back onto the ship
-/// (TOLBI_DOCKS_TO_TOLBI_SHIP_DECK) and into the building beside them (
-/// step trigger 10). After Colosso the Colosso Tour's passengers are stranded
-/// here, the ships not sailing, and the first time the party comes (step
-/// trigger 50, FLAG_TOLBI_DOCKS_TOUR_GROUP_BLAMED) it watches them demand to be
-/// taken home and the tour guide's hired bodyguard knock the angriest flat;
-/// KalayTolbiDocks_PrepareTolbiDocks keeps them where the event left them. Only
-/// the debug scene selector, which exits to any scene and entrance
-/// by number, reaches KALAY_TOLBI_DOCKS_ENTRANCE_AFTER_COLOSSO, which sets
-/// FLAG_COLOSSO_OVER as Babi Palace's BABI_PALACE_AFTER_COLOSSO does.
+///   A woman (ACTOR_WOMAN_WITH_A_MESSAGE) asks the party to tell her daughter
+///   in Tolbi that she cannot afford the tickets
+///   (FLAG_KALAY_DOCKS_CARRYING_MESSAGE). She is the daughter's mother, and the
+///   man beside her (ACTOR_MAN_AT_SILK_ROADS_END) her father. The Japanese text
+///   of MsgKalayPassMessageDaughter has her name herself 母, "Mother", as she
+///   would to her daughter, which the English renders `Her mother says that
+///   tickets are too expensive`.
+///
+///   Ground, a Venus Djinni (ACTOR_GROUND), waits on the docks until it joins.
+///   Once the ship has crossed, the travellers are gone and the dock hands wait
+///   for a ship that has not returned.
+///
+///   The docks lead to the World Map (KALAY_DOCKS_TO_WORLD_MAP_SOUTH and
+///   KALAY_DOCKS_TO_WORLD_MAP_NORTH), onto the ship
+///   (KALAY_DOCKS_TO_TOLBI_SHIP_DECK, the Tolbi-bound Ship,
+///   SceneId_TolbiShipDeck) and through a door (step trigger 10) into the
+///   building beside them, whose room is on CottageRoomsE.
+///
+/// - Cottage rooms E (CottageRoomsE) is a sheet of rooms drawn as cottages. The
+///   game packs rooms of several places that share a tile style onto one map,
+///   and this one holds a room at each dock. In story order by the exits that
+///   lead in, they are the room at Kalay Docks
+///   (COTTAGE_ROOMS_E_FROM_KALAY_DOCKS), whose area name is Kalay Docks, and
+///   the room at Tolbi Docks (COTTAGE_ROOMS_E_FROM_TOLBI_DOCKS), whose area
+///   name is Tolbi Docks.
+///
+///   In the Kalay room a woman sells the boarding ticket, 600 coins for the
+///   four of them (FLAG_KALAY_DOCKS_TICKET_BOUGHT), until the ship has sailed.
+///   Then she says it will not leave again for the monsters at sea. In the
+///   Tolbi room no tickets are sold at all, the sea being too dangerous.
+///
+/// - Tolbi Docks (TolbiDocks) is where the ship lands after the crossing.
+///   Stepping off (step trigger 20, FLAG_TOLBI_DOCKS_ARRIVALS_GREETED) the
+///   party is met by a man on the docks who asks about the monster, with a
+///   reply for each answer.
+///
+///   The woman's daughter (ACTOR_WAITING_DAUGHTER) watches the sea for her
+///   parents and takes the message (FLAG_TOLBI_DOCKS_MESSAGE_DELIVERED). Two
+///   stacks of crates slide along the pier under Move. A chest holds a Potion
+///   and a box 35 coins.
+///
+///   The docks lead to the World Map toward Tolbi (TOLBI_DOCKS_TO_WORLD_MAP),
+///   back onto the ship (TOLBI_DOCKS_TO_TOLBI_SHIP_DECK) and into the building
+///   beside them (step trigger 10).
+///
+///   After Colosso the Colosso Tour's passengers are stranded here, the ships
+///   not sailing. The first time the party comes (step trigger 50,
+///   FLAG_TOLBI_DOCKS_TOUR_GROUP_BLAMED) it watches them demand to be taken
+///   home and the tour guide's hired bodyguard knock the angriest flat.
+///   KalayTolbiDocks_PrepareTolbiDocks keeps them where the event left them.
+///
+///   Only the debug scene selector, which exits to any scene and entrance by
+///   number, reaches KALAY_TOLBI_DOCKS_ENTRANCE_AFTER_COLOSSO. That entrance
+///   sets FLAG_COLOSSO_OVER as Babi Palace's BABI_PALACE_AFTER_COLOSSO does.
 
 #include "main_routine_work.h"
 #include "djinn_ids.h"
@@ -99,10 +114,10 @@
 #include "item_ids.h"
 
 /// Kalay Docks' people, numbering the rows of
-/// gKalayTolbiDocks_KalayActorPlacements from ACTOR_FIRST_PLACED;
-/// Garet's row takes his own actor slot. Once the ship has crossed
-/// (gKalayTolbiDocks_KalayActorPlacementsShipGone) the first four stand
-/// off the map.
+/// gKalayTolbiDocks_KalayActorPlacements from ACTOR_FIRST_PLACED. Garet's row
+/// takes his own actor slot. Once the ship has crossed
+/// (gKalayTolbiDocks_KalayActorPlacementsShipGone) the first four stand off the
+/// map.
 enum KalayDocksActorId {
   /// A young man with brown hair (SPRITE_YOUNG_MAN_WITH_BROWN_HAIR), who walks
   /// over to tell Garet the Karagol is no real ocean.
@@ -140,13 +155,13 @@ enum KalayDocksActorId {
 /// Tolbi Docks' people after the crossing, numbering the rows of
 /// gKalayTolbiDocks_TolbiActorPlacements from ACTOR_FIRST_PLACED.
 enum TolbiDocksActorId {
-  /// A man in a yellow bandana (SPRITE_MAN_IN_YELLOW_BANDANA) who hears of
-  /// the party's scary trip; after Colosso, "There are many here who want to
-  /// return to Kalay since Colosso is over."
+  /// A man in a yellow bandana (SPRITE_MAN_IN_YELLOW_BANDANA) who hears of the
+  /// party's scary trip. After Colosso, "There are many here who want to return
+  /// to Kalay since Colosso is over."
   /// ★ Named from the game: "I hear you had a scary trip."
   /// (MsgKalayHearScaryTrip)
   ACTOR_MAN_HEARING_OF_THE_SCARY_TRIP = ACTOR_FIRST_PLACED,
-  /// A man in a green bandana (SPRITE_MAN_IN_GREEN_BANDANA); after Colosso,
+  /// A man in a green bandana (SPRITE_MAN_IN_GREEN_BANDANA). After Colosso,
   /// "Hanging around here like this and staring out at the sea is boring!"
   /// ★ Named from the game: "I think we're done sailing for a while."
   /// (MsgKalayTolbiDocksSighIThinkWereDoneSailing)
@@ -169,8 +184,8 @@ enum TolbiDocksActorId {
   /// Tour passengers left for Tolbi."
   /// (MsgKalayTolbiDocksItsBeenQuiteSomeTimeSince)
   ACTOR_MAN_ON_THE_TOUR_LONG_GONE,
-  /// The two stacks of wooden crates Move pushes along the pier: SPRITE_CRATES,
-  /// the crates of the Bilibin Barricade (bilibin.c).
+  /// The two stacks of wooden crates Move pushes along the pier. They are
+  /// SPRITE_CRATES, the crates of the Bilibin Barricade (bilibin.c).
   /// ★ Named from what the player sees: a tall stack of wooden crates on the
   /// pier (its render)
   ACTOR_FIRST_CRATES,
@@ -272,7 +287,7 @@ static void KalayTolbiDocks_UpdateCrateCells(void);
 static void KalayTolbiDocks_SettleCrates(s32 actorId);
 static void KalayTolbiDocks_GaretSeesTheKaragol(void);
 
-/// Kalay Docks: talking to Ground, a Venus Djinni, makes it join the party.
+/// At Kalay Docks, talking to Ground, a Venus Djinni, makes it join the party.
 static void KalayTolbiDocks_GroundJoins(void) {
   Djinn_JoinParty(ACTOR_GROUND, ELEMENT_VENUS, DJINNI_INDEX(DJINNI_GROUND));
 }
@@ -297,9 +312,9 @@ const struct SceneEntrance *KalayTolbiDocks_GetEntrances(void) {
 const struct SceneExitRegion *KalayTolbiDocks_GetRegions(void) { return NULL; }
 
 /// The exits of the three scenes, each scene's after its header word (an exit
-/// of kind 0): both docks lead to the World Map, onto the ship
-/// (SceneId_TolbiShipDeck) and into their rooms
-/// (SceneId_CottageRoomsE), which lead back to their docks.
+/// of kind 0). Both docks lead to the World Map, onto the ship
+/// (SceneId_TolbiShipDeck) and into their rooms (SceneId_CottageRoomsE), which
+/// lead back to their docks.
 const u32 *KalayTolbiDocks_GetExits(void) { return gKalayTolbiDocks_Exits; }
 
 /// Each scene's people before the crossing, once the ship has crossed and not
@@ -335,10 +350,11 @@ const struct ActorPlacement *KalayTolbiDocks_GetActorPlacements(void) {
   return gKalayTolbiDocks_NoActorPlacements;
 }
 
-/// Tolbi Docks, stepping off the ship (step trigger 20, until
-/// FLAG_TOLBI_DOCKS_ARRIVALS_GREETED, which coming off the ship by
-/// TOLBI_DOCKS_FROM_TOLBI_SHIP_DECK clears): the leader walks a few steps and
-/// a man on the docks hurries over to stand beside the party.
+/// Stepping off the ship at Tolbi Docks (step trigger 20), the leader walks a
+/// few steps and a man on the docks hurries over to stand beside the party.
+///
+/// This plays until FLAG_TOLBI_DOCKS_ARRIVALS_GREETED is set, which coming off
+/// the ship by TOLBI_DOCKS_FROM_TOLBI_SHIP_DECK clears.
 static void KalayTolbiDocks_GreetArrivals(void) {
   Event_Start();
   GameFlag_Set(FLAG_TOLBI_DOCKS_ARRIVALS_GREETED);
@@ -382,9 +398,9 @@ const struct Trigger *KalayTolbiDocks_GetTriggers(void) {
   return gKalayTolbiDocks_NoTriggers;
 }
 
-/// Kalay Docks: a young man asks whether the party wants to go to Tolbi. Yes,
-/// and he says that past Silk Road's end the way is across the Karagol Sea; no,
-/// and he suggests a long look around the ship.
+/// At Kalay Docks, a young man asks whether the party wants to go to Tolbi.
+/// Told yes, he says that past Silk Road's end the way is across the Karagol
+/// Sea. Told no, he suggests a long look around the ship.
 static void KalayTolbiDocks_AskAboutTolbiCrossing(void) {
   Event_Start();
   Event_SetMessageId(MsgKalayWantGoToTolbi);
@@ -395,10 +411,10 @@ static void KalayTolbiDocks_AskAboutTolbiCrossing(void) {
   Event_End();
 }
 
-/// Kalay Docks: a woman asks whether the party is taking the ship. If it is,
+/// At Kalay Docks, a woman asks whether the party is taking the ship. If it is,
 /// she asks it to tell her daughter in Tolbi that the tickets were too
 /// expensive for the daughter's mother to come (sets
-/// FLAG_KALAY_DOCKS_CARRYING_MESSAGE); afterwards she repeats the message.
+/// FLAG_KALAY_DOCKS_CARRYING_MESSAGE). Afterwards she repeats the message.
 static void KalayTolbiDocks_TalkToWomanWithAMessage(void) {
   Event_Start();
   if (Event_GetFlag(FLAG_KALAY_DOCKS_CARRYING_MESSAGE) == 0) {
@@ -422,7 +438,7 @@ static void KalayTolbiDocks_TalkToWomanWithAMessage(void) {
   Event_End();
 }
 
-/// Kalay Docks: spoken to on the shore after the party has handed over its
+/// At Kalay Docks, spoken to on the shore after the party has handed over its
 /// ticket and gone ashore, the ticket taker asks it to board the ship when it
 /// is finished.
 static void KalayTolbiDocks_RemindBoardShip(void) {
@@ -446,9 +462,11 @@ static void KalayTolbiDocks_RemindBoardShip(void) {
   }
 }
 
-/// Kalay Docks: the ticket taker at the ship's plank. Facing him from the east,
-/// the party is asked for its tickets: with one bought he steps aside, takes it
-/// (sets FLAG_KALAY_DOCKS_TICKET_HANDED_OVER) and lets the party aboard.
+/// At Kalay Docks, the ticket taker at the ship's plank asks for the party's
+/// tickets when it faces him from the east. With one bought he steps aside,
+/// takes it (sets FLAG_KALAY_DOCKS_TICKET_HANDED_OVER) and lets the party
+/// aboard.
+///
 /// Once aboard, he offers to let the party go ashore again
 /// (FLAG_KALAY_DOCKS_WENT_ASHORE).
 static void KalayTolbiDocks_TalkToTicketTaker(void) {
@@ -516,9 +534,9 @@ static void KalayTolbiDocks_TalkToTicketTaker(void) {
   Event_End();
 }
 
-/// Kalay Docks, once the tour's group has left Kalay: the dock worker explains
-/// the tickets: hand one over to board, give it to the ticket taker, or wait
-/// on board for the ship to sail.
+/// At Kalay Docks, once the tour's group has left Kalay, the dock worker
+/// explains the tickets: hand one over to board, give it to the ticket taker,
+/// or wait on board for the ship to sail.
 static void KalayTolbiDocks_TalkToDockWorker(void) {
   Event_Start();
 
@@ -539,11 +557,13 @@ static void KalayTolbiDocks_TalkToDockWorker(void) {
   Event_End();
 }
 
-/// The room at Kalay Docks, until the ship has crossed: the ticket seller
+/// In the room at Kalay Docks, until the ship has crossed, the ticket seller
 /// offers tickets for the four of them at 600 coins, with the party's coins
-/// shown beside the question. Declining, the leader shakes his head; without
-/// enough coins the seller refuses; otherwise the party gets its ticket and
-/// pays (sets FLAG_KALAY_DOCKS_TICKET_BOUGHT).
+/// shown beside the question.
+///
+/// Declining, the leader shakes his head. Without enough coins the seller
+/// refuses. Otherwise the party gets its ticket and pays (sets
+/// FLAG_KALAY_DOCKS_TICKET_BOUGHT).
 static void KalayTolbiDocks_TalkToTicketSeller(void) {
   struct Window *coinsWindow;
   struct MainRoutineWork *state;
@@ -613,8 +633,8 @@ static void KalayTolbiDocks_TalkToTicketSeller(void) {
   }
 }
 
-/// Tolbi Docks: a man on the docks has heard the party was attacked by a
-/// monster on the crossing, and asks whether that is true; told it was nothing,
+/// At Tolbi Docks, a man on the docks has heard the party was attacked by a
+/// monster on the crossing, and asks whether that is true. Told it was nothing,
 /// he will not believe they fought the monsters alone, for Kaja killed the
 /// Kraken.
 static void KalayTolbiDocks_AskAboutRoughCrossing(void) {
@@ -627,7 +647,7 @@ static void KalayTolbiDocks_AskAboutRoughCrossing(void) {
   Event_End();
 }
 
-/// Tolbi Docks: a young man asks whether the upset tourists got seasick.
+/// At Tolbi Docks, a young man asks whether the upset tourists got seasick.
 static void KalayTolbiDocks_AskAboutSeasickTourists(void) {
   Event_Start();
   Event_SetMessageId(MsgKalayTouristsLookUpset);
@@ -638,9 +658,9 @@ static void KalayTolbiDocks_AskAboutSeasickTourists(void) {
   Event_End();
 }
 
-/// Tolbi Docks: the daughter looks for her parents among the passengers. If the
-/// party carries the message from her parents she asks for it and thanks them
-/// once it is given; otherwise she turns back to the sea.
+/// At Tolbi Docks, the daughter looks for her parents among the passengers. If
+/// the party carries the message from her parents she asks for it and thanks
+/// them once it is given. Otherwise she turns back to the sea.
 static void KalayTolbiDocks_TalkToWaitingDaughter(void) {
   Event_Start();
   if (Event_GetFlag(FLAG_TOLBI_DOCKS_MESSAGE_DELIVERED) != 0) {
@@ -687,8 +707,8 @@ static void KalayTolbiDocks_TalkToWaitingDaughter(void) {
   }
 }
 
-/// Kalay Docks or Tolbi Docks: walking north into the door (step trigger 10) of
-/// the building beside them, the door opens and the leader walks in by
+/// At Kalay Docks or Tolbi Docks, walking north into the door (step trigger 10)
+/// of the building beside them opens it, and the leader walks in. He goes by
 /// TOLBI_DOCKS_TO_COTTAGE_ROOMS_E, which in Kalay Docks is
 /// KALAY_DOCKS_TO_COTTAGE_ROOMS_E by the same number.
 static void KalayTolbiDocks_OpenDoorAndLeave(void) {
@@ -711,7 +731,7 @@ static void KalayTolbiDocks_OpenDoorAndLeave(void) {
 }
 
 /// An entrance no exit, table or code leads to, whose arrival sets
-/// FLAG_COLOSSO_OVER; the debug scene selector reaches it.
+/// FLAG_COLOSSO_OVER. The debug scene selector reaches it.
 enum { KALAY_TOLBI_DOCKS_ENTRANCE_AFTER_COLOSSO = 90 };
 
 /// Prepares whichever of the three scenes is entered. Arriving by
@@ -816,7 +836,7 @@ static void KalayTolbiDocks_PrepareInterior(void) {
   GameFlag_Clear(FLAG_SHOW_AREA_NAME);
 }
 
-/// Tolbi Docks, after Move pushes either stack of crates: the pier's cells
+/// At Tolbi Docks, after Move pushes either stack of crates, the pier's cells
 /// under both are rebuilt.
 static void KalayTolbiDocks_UpdateCrateCells(void) {
   s32 firstCratesColumn;
@@ -843,15 +863,18 @@ static void KalayTolbiDocks_SettleCrates(s32 actorId) {
   actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 }
 
-/// Kalay Docks, the first entry from the World Map
-/// (KALAY_DOCKS_FROM_WORLD_MAP_SOUTH, until
-/// FLAG_KALAY_DOCKS_GARET_SAW_KARAGOL): Garet runs to the edge of the docks and
-/// marvels at the sea. "Incredible! So this is the ocean Kraden was talking
-/// about!" Kraden is the scholar who has told Garet of the ocean. The man who
-/// asks travellers about Tolbi (ACTOR_YOUNG_MAN_ASKING_ABOUT_TOLBI) walks
-/// over, shaking his head: the Karagol is surrounded by land, so it is not a
-/// real ocean. Garet means to see a real one someday, nods with the leader and
+/// At Kalay Docks, on the first entry from the World Map, Garet runs to the
+/// edge of the docks and marvels at the sea. "Incredible! So this is the ocean
+/// Kraden was talking about!"
+///
+/// Kraden is the scholar who has told Garet of the ocean. The man who asks
+/// travellers about Tolbi (ACTOR_YOUNG_MAN_ASKING_ABOUT_TOLBI) walks over,
+/// shaking his head. The Karagol is surrounded by land, so it is not a real
+/// ocean. Garet means to see a real one someday, nods with the leader and
 /// rejoins the party.
+///
+/// This plays on arriving by KALAY_DOCKS_FROM_WORLD_MAP_SOUTH, until
+/// FLAG_KALAY_DOCKS_GARET_SAW_KARAGOL is set.
 static void KalayTolbiDocks_GaretSeesTheKaragol(void) {
   struct Actor *actor;
 
@@ -948,13 +971,16 @@ static void KalayTolbiDocks_GaretSeesTheKaragol(void) {
   Event_End();
 }
 
-/// Tolbi Docks after Colosso, the first time the party comes to the pier (
-/// step trigger 50, until FLAG_TOLBI_DOCKS_TOUR_GROUP_BLAMED): it watches the
-/// tour guide tell an angry young man his ticket was refunded. The passengers
-/// demand to be taken home, the ships being stuck and the road blocked; when
-/// the angry one charges, the guides' hired bodyguard steps in, and after a
-/// second try the passenger is knocked flat and the bodyguard spins on the
-/// spot.
+/// At Tolbi Docks after Colosso, the first time the party comes to the pier, it
+/// watches the tour guide tell an angry young man his ticket was refunded.
+///
+/// The passengers demand to be taken home, the ships being stuck and the road
+/// blocked. When the angry one charges, the guides' hired bodyguard steps in.
+/// After a second try the passenger is knocked flat and the bodyguard spins on
+/// the spot.
+///
+/// This is step trigger 50, and it plays until
+/// FLAG_TOLBI_DOCKS_TOUR_GROUP_BLAMED is set.
 static void KalayTolbiDocks_PassengersConfrontTourGuide(void) {
   struct Actor *actor;
 

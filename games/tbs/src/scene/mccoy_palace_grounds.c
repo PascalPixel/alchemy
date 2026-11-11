@@ -1,31 +1,40 @@
-/// @file The grounds of McCoy's Palace in Bilibin: SceneId_McCoyPalaceGrounds,
-/// with the area name McCoy's Palace, which the palace itself shares
-/// (mccoy_palace.c). Workers build Lady McCoy a new palace here, and two
-/// guards keep the gate of McCoy's own. Its people and talk follow two story
-/// flags: FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY, set once McCoy has turned
-/// the party away, and FLAG_KOLIMA_CURSE_LIFTED.
+/// @file The grounds of McCoy's Palace in Bilibin.
+///
+/// The scene is SceneId_McCoyPalaceGrounds, with the area name McCoy's Palace,
+/// which the palace itself shares (mccoy_palace.c). Workers build Lady McCoy a
+/// new palace here, and two guards keep the gate of McCoy's own.
+///
+/// Its people and talk follow two story flags. One is
+/// FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY, set once McCoy has turned the
+/// party away. The other is FLAG_KOLIMA_CURSE_LIFTED.
 ///
 /// Talking to the east guard (McCoyPalaceGrounds_TalkToEastGuard) is the way
-/// in: on yes the guards confer, the gate opens (McCoyPalaceGrounds_OpenGate)
+/// in. On yes the guards confer, the gate opens (McCoyPalaceGrounds_OpenGate)
 /// and the west guard goes in ahead (FLAG_MCCOY_PALACE_ADMITTED). Walking north
 /// into the gate (step trigger 2, McCoyPalaceGrounds_EnterPalace) takes
-/// MCCOY_PALACE_GROUNDS_TO_MCCOY_PALACE into the palace. The guard's scolding
-/// for keeping McCoy waiting is unused (McCoyPalaceGrounds_TalkToEastGuard).
+/// MCCOY_PALACE_GROUNDS_TO_MCCOY_PALACE into the palace.
+///
+/// The guard's scolding for keeping McCoy waiting is unused
+/// (McCoyPalaceGrounds_TalkToEastGuard).
 ///
 /// Once the curse is lifted, the first arrival until McCoy has rewarded the
 /// party (FLAG_MCCOY_PALACE_PARTY_REWARDED) plays
-/// McCoyPalaceGrounds_GuardsArrestParty: the guards repeat their accusation
-/// until the player says yes, then march the party into the palace
+/// McCoyPalaceGrounds_GuardsArrestParty. The guards repeat their accusation
+/// until the player says yes. Then they march the party into the palace
 /// (MCCOY_PALACE_GROUNDS_TO_MCCOY_PALACE_EAST), where McCoy rewards it.
 ///
-/// McCoyPalaceGrounds_RestoreStory places the guards by the same flags and
-/// floats a Nut over the grounds until Catch takes it
-/// (FLAG_MCCOY_PALACE_GROUNDS_NUT_CAUGHT). A dry well can be searched, and
-/// MCCOY_PALACE_GROUNDS_TO_BILIBIN leads back to Bilibin. From TBS_PATCH_3 on
-/// a patch of ivy (SPRITE_IVY) stands at (132, 388), over a dark opening at the
-/// foot of the cliff on the grounds' south edge, which the earlier editions
-/// show bare (renders of tbs-en and tbs-fr); no exit or trigger answers that
-/// opening, so the ivy only hides a way in that leads nowhere.
+/// McCoyPalaceGrounds_RestoreStory places the guards by the same flags. It
+/// also floats a Nut over the grounds until Catch takes it
+/// (FLAG_MCCOY_PALACE_GROUNDS_NUT_CAUGHT).
+///
+/// A dry well can be searched, and MCCOY_PALACE_GROUNDS_TO_BILIBIN leads back
+/// to Bilibin.
+///
+/// From TBS_PATCH_3 on, a patch of ivy (SPRITE_IVY) stands at (132, 388), over
+/// a dark opening at the foot of the cliff on the grounds' south edge. The
+/// earlier editions show the opening bare (renders of tbs-en and tbs-fr). No
+/// exit or trigger answers that opening, so the ivy only hides a way in that
+/// leads nowhere.
 
 #include "main_routine_work.h"
 #include "scene_ids.h"
@@ -69,14 +78,12 @@
 /// gMcCoyPalaceGroundsActorPlacements.
 enum McCoyPalaceGroundsActorId {
   /// A worker with a pickaxe by the new palace, drawn in front. "The lumber I
-  /// ordered from
-  /// Kolima disappeared..."
+  /// ordered from Kolima disappeared..."
   /// ★ Named from the game: "We'd still be working if we hadn't tried building
   /// using the holy tree." (MsgBilibinWedStillBeWorkingIfWe)
   ACTOR_WEST_WORKER = ACTOR_FIRST_PLACED,
   /// The worker with a pickaxe who wanders by the new palace. "Have you seen
-  /// the barricade
-  /// we built on..."
+  /// the barricade we built on..."
   /// ★ Named from the game: "Have you seen the barricade we built on the road
   /// to Kolima?" (MsgBilibinHaveYouSeenBarricadeWe)
   ACTOR_NORTH_WORKER,
@@ -109,8 +116,9 @@ enum {
   /// ★ Named from the game: "Where were you?" (MsgBilibinWhere)
   FLAG_GUARD_SCOLDED = FLAG_SCENE_TEMP_01,
   /// Set by Bilibin (bilibin.c) while the guards have let the party in but it
-  /// has not yet entered the palace. The grounds are in another area
-  /// than Bilibin, so entering them clears it before the guard can read it.
+  /// has not yet entered the palace.
+  /// The grounds are in another area than Bilibin, so entering them clears it
+  /// before the guard can read it.
   /// ★ Named from the game: "The master can be quite cranky. Hurry along,
   /// now!" (MsgBilibinMasterQuiteCranky)
   FLAG_KEEPING_MCCOY_WAITING = FLAG_AREA_TEMP_04
@@ -130,9 +138,10 @@ const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
 const u32 *Scene_GetExits(void) { return gMcCoyPalaceGroundsExits; }
 
-/// The people outside McCoy's Palace. Once McCoy has turned the party away,
-/// the east guard turns back after talking, and once the curse is lifted Lady
-/// McCoy faces the party.
+/// The people outside McCoy's Palace.
+///
+/// Once McCoy has turned the party away, the east guard turns back after
+/// talking. Once the curse is lifted, Lady McCoy faces the party.
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   if (gMainRoutineWork.next == (s32)&SceneId_McCoyPalaceGrounds) {
     if (GameFlag_Get(FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY) != 0)
@@ -186,9 +195,10 @@ static void McCoyPalaceGrounds_TalkToNorthWorker(void) {
 }
 
 /// McCoy's Palace, outside, before the curse is lifted: Lady McCoy asks
-/// whether the party blames her for the curse: on yes she calls herself the
-/// victim, on no she calls the curse a superstition, and either way she wants
-/// her palace.
+/// whether the party blames her for the curse.
+///
+/// On yes she calls herself the victim, and on no she calls the curse a
+/// superstition. Either way she wants her palace.
 static void McCoyPalaceGrounds_TalkToLadyMcCoy(void) {
   Event_Start();
   Event_SetMessageId(MsgBilibinTellingMeImResponsibleFor);
@@ -212,14 +222,16 @@ static void McCoyPalaceGrounds_TalkToWestGuard(void) {
 }
 
 /// McCoy's Palace, outside, until McCoy turns the party away: the east guard
-/// asks whether the party is brave enough to meet his lord and, on yes, the
-/// gate opens and the west guard walks in; once it is admitted, he reminds it
-/// that McCoy is a difficult man.
+/// asks whether the party is brave enough to meet his lord.
 ///
-/// Unused: the branch for a party back from Bilibin, in which he scolds it once
-/// for keeping McCoy waiting (MsgBilibinWhere, `Where were you?`, and
-/// MsgBilibinMasterQuiteCranky), never runs, because FLAG_KEEPING_MCCOY_WAITING
-/// is cleared on entering the grounds.
+/// On yes, the gate opens and the west guard walks in. Once the party is
+/// admitted, he reminds it that McCoy is a difficult man.
+///
+/// Unused: the branch for a party back from Bilibin never runs. In it he
+/// scolds the party once for keeping McCoy waiting (MsgBilibinWhere,
+/// `Where were you?`, and MsgBilibinMasterQuiteCranky). The branch is never
+/// reached because FLAG_KEEPING_MCCOY_WAITING is cleared on entering the
+/// grounds.
 static void McCoyPalaceGrounds_TalkToEastGuard(void) {
   Event_Start();
   // Once admitted, the party only receives the guard's current reminder.
@@ -322,8 +334,10 @@ static void McCoyPalaceGrounds_EnterPalace(void) {
   Event_End();
 }
 
-/// Sets up the grounds outside McCoy's Palace: the west worker drawn in
-/// front, and the guards, Lady McCoy and the arrest as the story stands.
+/// Sets up the grounds outside McCoy's Palace.
+///
+/// The west worker is drawn in front. The guards, Lady McCoy and the arrest
+/// are set as the story stands.
 s32 Scene_Initialize(void) {
   struct FieldWork *work = gFieldWork;
   struct Actor *actor;
@@ -341,9 +355,10 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-/// The guards stand where the party left them; once the curse is lifted,
-/// Lady McCoy stands before the palace and, until McCoy has rewarded the
-/// party, the guards arrest them.
+/// The guards stand where the party left them.
+///
+/// Once the curse is lifted, Lady McCoy stands before the palace and, until
+/// McCoy has rewarded the party, the guards arrest them.
 static void McCoyPalaceGrounds_RestoreStory(void) {
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0) {
     GameFlag_Clear(FLAG_GATE_OPEN);

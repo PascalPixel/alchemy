@@ -1,9 +1,14 @@
 /// @file
-/// Cottage rooms A (SceneId_CottageRoomsA), a sheet of rooms drawn as cottages:
-/// the game packs rooms that share a tile style onto one map, and every room on
-/// this one is Vale's. Each room is an entrance with a camera box of its
-/// own, named for the door it is entered by, and its door takes the exit of the
-/// same number back out. In story order, by the exits that lead in:
+/// Cottage rooms A (SceneId_CottageRoomsA) is a sheet of rooms drawn as
+/// cottages.
+///
+/// The game packs rooms that share a tile style onto one map, and every room
+/// on this one is Vale's.
+///
+/// Each room is an entrance with a camera box of its own, named for the door
+/// it is entered by. Its door takes the exit of the same number back out.
+///
+/// Here are the rooms in story order, by the exits that lead in:
 ///
 /// - From the village (SceneId_Vale, and on the stormy night
 ///   SceneId_ValePrologue): the house of Garet's family
@@ -12,9 +17,8 @@
 ///   (COTTAGE_ROOMS_A_FROM_VALE_NORTH); and two more houses
 ///   (COTTAGE_ROOMS_A_FROM_VALE_SOUTH and COTTAGE_ROOMS_A_FROM_VALE_WEST).
 /// - From the part of Vale with the Psynergy Stone (SceneId_ValePlaza): the
-/// shops
-///   (COTTAGE_ROOMS_A_FROM_VALE_PLAZA_WEST), where the item, weapon and armor
-///   shops each open across a counter, and three houses
+///   shops (COTTAGE_ROOMS_A_FROM_VALE_PLAZA_WEST), where the item, weapon and
+///   armor shops each open across a counter, and three houses
 ///   (COTTAGE_ROOMS_A_FROM_VALE_PLAZA_EAST,
 ///   COTTAGE_ROOMS_A_FROM_VALE_PLAZA_NORTH and
 ///   COTTAGE_ROOMS_A_FROM_VALE_PLAZA_SOUTH).
@@ -23,33 +27,35 @@
 ///
 /// The actor placements and triggers follow the story:
 ///
-/// - The stormy night of the prologue (FLAG_VALE_STORM). Everyone is out:
+/// - The stormy night of the prologue (FLAG_VALE_STORM). Everyone is out.
 ///   CottageRoomsA_Initialize removes every resident and flashes the
-///   lightning outside, and the doors out to the village lead into the
-///   storm's scene (SceneId_ValePrologue) instead (CottageRoomsA_GetExits).
-///   The jars and the barrel are empty, and six more bookcases than by day can
-///   be read, a notebook called "Study of Alchemy" among them.
+///   lightning outside. The doors out to the village lead into the storm's
+///   scene (SceneId_ValePrologue) instead (CottageRoomsA_GetExits). The jars
+///   and the barrel are empty, and six more bookcases than by day can be
+///   read, a notebook called "Study of Alchemy" among them.
 /// - Three years later, the day the story begins. The villagers talk of
 ///   Kraden's visitors and of Vale's law that keeps Psynergy secret from
-///   outsiders, and the jars and the barrel hold coins, an Antidote and a
-///   Smoke Bomb, each found once.
+///   outsiders. The jars and the barrel hold coins, an Antidote and a Smoke
+///   Bomb, each found once.
 /// - After the party has left Vale (FLAG_VALE_PARTY_LEFT), Jenna having been
 ///   taken on Mt. Aleph. Her grandmother lies sick in bed (Initialize, from
-///   COTTAGE_ROOMS_A_FROM_VALE_NORTH), the villagers talk of the quest and
-///   of Felix, and the item merchant gives Isaac a Herb as a farewell gift
+///   COTTAGE_ROOMS_A_FROM_VALE_NORTH). The villagers talk of the quest and of
+///   Felix, and the item merchant gives Isaac a Herb as a farewell gift
 ///   (FLAG_VALE_FAREWELL_HERB_RECEIVED).
 /// - Back from Kalay (FLAG_KALAY_REACHED), with Ivan and Mia in the party. The
 ///   first time the party enters Garet's house, CottageRoomsA_GaretComesHome
-///   plays (FLAG_GARET_CAME_HOME): his parents are wondering whether to look
-///   for him when his grandmother sees him, the family greets him, Ivan and Mia
-///   introduce themselves ("I am Mia, from Imil."), and his father is left
+///   plays (FLAG_GARET_CAME_HOME). His parents are wondering whether to look
+///   for him when his grandmother sees him. The family greets him, Ivan and
+///   Mia introduce themselves ("I am Mia, from Imil."), and his father is left
 ///   pacing. The villagers now worry about Dora, ill since Isaac left.
 ///
 /// While Garet's grandfather dozes in CottageRoomsA_GaretComesHome, three
-/// letters Z (ACTOR_FIRST_SLEEP_Z and the two after it) rise from him, one at
-/// each of frames 10, 20 and 30 of every 180 (CottageRoomsA_SpawnSleepZ): each
-/// starts 24 pixels above him at two fifths of its size and grows a fortieth
-/// a frame as it climbs ever more slowly and drifts right ever faster
+/// letters Z (ACTOR_FIRST_SLEEP_Z and the two after it) rise from him. One
+/// appears at each of frames 10, 20 and 30 of every 180
+/// (CottageRoomsA_SpawnSleepZ).
+///
+/// Each starts 24 pixels above him at two fifths of its size. It grows a
+/// fortieth a frame as it climbs ever more slowly and drifts right ever faster
 /// (CottageRoomsA_AdvanceSleepZ).
 
 #include "script_operands.h"
@@ -76,11 +82,13 @@
 #include "flags.h"
 #include "sounds.h"
 
-/// The placed actors, numbered in the order of the actor placement
-/// tables, which all place them alike;
-/// gCottageRoomsA_ActorPlacementsAfterKalay adds Garet, Ivan and Mia,
-/// who keep their characters' ids, and the drifting sprites. The villagers'
-/// notes quote what they say on the day the story begins.
+/// The placed actors, numbered in the order of the actor placement tables,
+/// which all place them alike.
+///
+/// gCottageRoomsA_ActorPlacementsAfterKalay adds Garet, Ivan and Mia, who keep
+/// their characters' ids, and the drifting sprites.
+///
+/// The villagers' notes quote what they say on the day the story begins.
 enum CottageRoomsAActorId {
   /// Garet's grandfather, the mayor, an old man with white hair and a cane
   /// ("your grandpa's the mayor", vale.c). "Isaac, please take care of my
@@ -117,27 +125,27 @@ enum CottageRoomsAActorId {
   /// ★ Named from the game: "is the spitting image of her mother"
   /// (MsgValeJennaIsTheSpittingImageOf)
   ACTOR_WOMAN_ON_THE_SPITTING_IMAGE,
-  /// A burly grey-haired man: "So Kraden came to Vale to study Mt. Aleph,
+  /// A burly grey-haired man. "So Kraden came to Vale to study Mt. Aleph,
   /// right?"
   /// ★ Named from the game: "It's because Kraden was studying Alchemy..."
   /// (MsgValeItsBecauseKradenWasStudyingAlchemy)
   ACTOR_MAN_ON_KRADENS_STUDIES,
-  /// A woman in a green dress: "If there are visitors in town, we can't use our
+  /// A woman in a green dress. "If there are visitors in town, we can't use our
   /// Psynergy."
   /// ★ Named from the game: "If there are visitors in town, we can't use our
   /// Psynergy." (MsgValeIfThereAreVisitorsInTown)
   ACTOR_WOMAN_ON_VISITORS_IN_TOWN,
-  /// A young man with brown hair: "Do you ever dream of seeing the world
+  /// A young man with brown hair. "Do you ever dream of seeing the world
   /// outside the village?"
   /// ★ Named from the game: "Do you ever dream of seeing the world outside
   /// the village?" (MsgValeDoYouEverDreamOfSeeing)
   ACTOR_YOUNG_MAN_DREAMING_OF_LEAVING,
-  /// A woman with fair hair: "Few people outside of Vale possess the power of
+  /// A woman with fair hair. "Few people outside of Vale possess the power of
   /// Psynergy. That's why we need permission to leave the village..."
   /// ★ Named from the game: "we need permission to leave the village"
   /// (MsgValeFewPeopleOutsideOfValePossess)
   ACTOR_WOMAN_ON_PERMISSION_TO_LEAVE,
-  /// A strongman: "I hear old man Kraden's got some visitors. Let's go use our
+  /// A strongman. "I hear old man Kraden's got some visitors. Let's go use our
   /// Psynergy to scare 'em!"
   /// ★ Named from the game: "Let's go use our"
   /// (MsgValeLetsScareKradensVisitors)
@@ -180,8 +188,8 @@ static void CottageRoomsA_SpawnSleepZ(void);
 
 /// Moves and grows a Z drifting up from Garet's sleeping grandfather.
 ///
-/// Called each frame by gCottageRoomsA_SleepZScript; the actor's
-/// timer and work are its x and y steps in signed 8.8 pixels, set by
+/// Called each frame by gCottageRoomsA_SleepZScript. The actor's timer and
+/// work are its x and y steps in signed 8.8 pixels, set by
 /// CottageRoomsA_SpawnSleepZ.
 static s32 CottageRoomsA_AdvanceSleepZ(struct Actor *interpreter) {
   struct Actor *actor = interpreter;
@@ -208,9 +216,11 @@ const u32 *CottageRoomsA_GetExits(void) {
   return gCottageRoomsA_Exits;
 }
 
-/// Selects the actor placements for the day the story begins, after the
-/// party has left Vale (FLAG_VALE_PARTY_LEFT), or after Kalay
-/// (FLAG_KALAY_REACHED), and marks which of their actors are in view.
+/// Selects the actor placements for the current visit to Vale, and marks
+/// which of their actors are in view.
+///
+/// The visit is the day the story begins, after the party has left Vale
+/// (FLAG_VALE_PARTY_LEFT), or after Kalay (FLAG_KALAY_REACHED).
 const struct ActorPlacement *CottageRoomsA_GetActorPlacements(void) {
   struct ActorPlacement *table;
 
@@ -225,9 +235,10 @@ const struct ActorPlacement *CottageRoomsA_GetActorPlacements(void) {
   return table;
 }
 
-/// Selects the triggers for the current visit to Vale: the stormy night's
-/// (FLAG_VALE_STORM), after Kalay, after the party has left, or the day the
-/// story begins.
+/// Selects the triggers for the current visit to Vale.
+///
+/// The visit is the stormy night (FLAG_VALE_STORM), after Kalay, after the
+/// party has left, or the day the story begins.
 const struct Trigger *CottageRoomsA_GetTriggers(void) {
   if (GameFlag_Get(FLAG_VALE_STORM) != 0)
     return gCottageRoomsA_StormTriggers;
@@ -239,6 +250,7 @@ const struct Trigger *CottageRoomsA_GetTriggers(void) {
 }
 
 /// A burly grey-haired man asks whether Isaac knew why Kraden came to Vale.
+///
 /// He stands in a house of Vale on the day the story begins. Kraden came to
 /// study Mt. Aleph.
 ///
@@ -255,8 +267,9 @@ static void CottageRoomsA_AskAboutKradensStudies(void) {
   Event_End();
 }
 
-/// A strongman asks Isaac to help scare Kraden's visitors with Psynergy. He
-/// stands in a house of Vale on the day the story begins.
+/// A strongman asks Isaac to help scare Kraden's visitors with Psynergy.
+///
+/// He stands in a house of Vale on the day the story begins.
 ///
 /// Reached by talking to ACTOR_STRONGMAN_SCARING_VISITORS on the day the
 /// story begins.
@@ -275,8 +288,8 @@ static void CottageRoomsA_AskToScareVisitors(void) {
 /// Isaac a Herb as a farewell gift, and afterwards urges him to save Jenna.
 ///
 /// Called by CottageRoomsA_TalkToItemMerchant away from the counter, after the
-/// party has left and before Kalay. Gives the Herb and sets
-/// FLAG_VALE_FAREWELL_HERB_RECEIVED once; afterwards the merchant turns to
+/// party has left and before Kalay. It gives the Herb and sets
+/// FLAG_VALE_FAREWELL_HERB_RECEIVED once. Afterwards the merchant turns to
 /// watch the leader.
 static void CottageRoomsA_GiveFarewellHerb(void) {
   s32 gift;
@@ -316,8 +329,9 @@ static void CottageRoomsA_AskAboutStrangePowers(void) {
   Event_End();
 }
 
-/// Garet's father asks whether Isaac heard them talking about Dora. He is in
-/// Garet's house in Vale, back from Kalay.
+/// Garet's father asks whether Isaac heard them talking about Dora.
+///
+/// He is in Garet's house in Vale, back from Kalay.
 ///
 /// Reached by talking to Garet's father after Kalay.
 static void CottageRoomsA_AskAboutDora(void) {
@@ -330,8 +344,9 @@ static void CottageRoomsA_AskAboutDora(void) {
   Event_End();
 }
 
-/// Garet's mother hopes the travelers didn't get sick on the way. She is in
-/// Garet's house in Vale, back from Kalay.
+/// Garet's mother hopes the travelers didn't get sick on the way.
+///
+/// She is in Garet's house in Vale, back from Kalay.
 ///
 /// Reached by talking to Garet's mother after Kalay.
 static void CottageRoomsA_WorryAboutTravelersHealth(void) {
@@ -342,8 +357,10 @@ static void CottageRoomsA_WorryAboutTravelersHealth(void) {
   Event_End();
 }
 
-/// Leaves a house through its door: the exit sound plays and the screen
-/// closes, stopping the lightning first on the stormy night.
+/// Leaves a house through its door.
+///
+/// The exit sound plays and the screen closes. On the stormy night the
+/// lightning stops first.
 static void CottageRoomsA_RequestWindowExit(s32 exitNumber) {
   if (GameFlag_Get(FLAG_VALE_STORM) != 0)
     Weather_StopLightning();
@@ -361,8 +378,9 @@ static void CottageRoomsA_RequestWindowExit(s32 exitNumber) {
 // the exits to SceneId_Vale lead to the storm's scene (SceneId_ValePrologue)
 // instead.
 
-/// Leaves the house where a young man dreams of leaving. It's the room entered
-/// from COTTAGE_ROOMS_A_FROM_VALE_WEST, where
+/// Leaves the house where a young man dreams of leaving.
+///
+/// It's the room entered from COTTAGE_ROOMS_A_FROM_VALE_WEST, where
 /// ACTOR_YOUNG_MAN_DREAMING_OF_LEAVING wanders.
 static void CottageRoomsA_LeaveToValeWest(void) {
   CottageRoomsA_RequestWindowExit(COTTAGE_ROOMS_A_TO_VALE_WEST);
@@ -373,9 +391,10 @@ static void CottageRoomsA_LeaveToValeNorth(void) {
   CottageRoomsA_RequestWindowExit(COTTAGE_ROOMS_A_TO_VALE_NORTH);
 }
 
-/// Leaves the empty house. It's the room entered from
-/// COTTAGE_ROOMS_A_FROM_VALE_PLAZA_NORTH, which no actor placement
-/// table puts anyone in.
+/// Leaves the empty house.
+///
+/// It's the room entered from COTTAGE_ROOMS_A_FROM_VALE_PLAZA_NORTH, which no
+/// actor placement table puts anyone in.
 static void CottageRoomsA_LeaveToValePlazaWest(void) {
   CottageRoomsA_RequestWindowExit(COTTAGE_ROOMS_A_TO_VALE_PLAZA_WEST);
 }
@@ -385,8 +404,9 @@ static void CottageRoomsA_LeaveToValePlazaSouth(void) {
   CottageRoomsA_RequestWindowExit(COTTAGE_ROOMS_A_TO_VALE_PLAZA_SOUTH);
 }
 
-/// Leaves the house where villagers talk of Kraden and his visitors. It's the
-/// room entered from COTTAGE_ROOMS_A_FROM_VALE_SOUTH, where
+/// Leaves the house where villagers talk of Kraden and his visitors.
+///
+/// It's the room entered from COTTAGE_ROOMS_A_FROM_VALE_SOUTH, where
 /// ACTOR_MAN_ON_KRADENS_STUDIES and ACTOR_WOMAN_ON_VISITORS_IN_TOWN stand.
 static void CottageRoomsA_LeaveToValeSouth(void) {
   CottageRoomsA_RequestWindowExit(COTTAGE_ROOMS_A_TO_VALE_SOUTH);
@@ -397,26 +417,30 @@ static void CottageRoomsA_LeaveToValeEast(void) {
   CottageRoomsA_RequestWindowExit(COTTAGE_ROOMS_A_TO_VALE_EAST);
 }
 
-/// Leaves the house where a strongman plans to scare Kraden's visitors. It's
-/// the room entered from COTTAGE_ROOMS_A_FROM_VALE_PLAZA_SOUTH, where
+/// Leaves the house where a strongman plans to scare Kraden's visitors.
+///
+/// It's the room entered from COTTAGE_ROOMS_A_FROM_VALE_PLAZA_SOUTH, where
 /// ACTOR_STRONGMAN_SCARING_VISITORS stands.
 static void CottageRoomsA_LeaveToValePlazaEast(void) {
   CottageRoomsA_RequestWindowExit(COTTAGE_ROOMS_A_TO_VALE_PLAZA_EAST);
 }
 
-/// Leaves the house where a woman talks of permission to leave. It's the room
-/// entered from COTTAGE_ROOMS_A_FROM_VALE_PLAZA_EAST, where
+/// Leaves the house where a woman talks of permission to leave.
+///
+/// It's the room entered from COTTAGE_ROOMS_A_FROM_VALE_PLAZA_EAST, where
 /// ACTOR_WOMAN_ON_PERMISSION_TO_LEAVE stands.
 static void CottageRoomsA_LeaveToValePlazaNorth(void) {
   CottageRoomsA_RequestWindowExit(COTTAGE_ROOMS_A_TO_VALE_PLAZA_NORTH);
 }
 
-/// Arriving in a house of Vale: on the stormy night the residents are gone and
-/// lightning flashes outside; back from Kalay, entering Garet's house the first
-/// time plays his homecoming.
+/// Sets up a house of Vale as the party arrives.
 ///
-/// The scene's initialize entry. Runs CottageRoomsA_GaretComesHome from
-/// COTTAGE_ROOMS_A_FROM_VALE_EAST after Kalay until FLAG_GARET_CAME_HOME
+/// On the stormy night the residents are gone and lightning flashes outside.
+/// Back from Kalay, entering Garet's house the first time plays his
+/// homecoming.
+///
+/// This is the scene's initialize entry. It runs CottageRoomsA_GaretComesHome
+/// from COTTAGE_ROOMS_A_FROM_VALE_EAST after Kalay until FLAG_GARET_CAME_HOME
 /// is set. From COTTAGE_ROOMS_A_FROM_VALE_NORTH, once the party has left
 /// Vale, Jenna's grandmother lies sick in bed.
 s32 CottageRoomsA_Initialize(void) {
@@ -477,7 +501,7 @@ s32 CottageRoomsA_Initialize(void) {
 /// merchant speaks.
 ///
 /// Reached by talking to the weapon merchant in every table but the stormy
-/// night's. Facing north, across the counter, opens shop 1; else the
+/// night's. Facing north, across the counter, opens shop 1. Otherwise the
 /// merchant's line follows the story.
 static void CottageRoomsA_TalkToWeaponMerchant(void) {
   struct Actor *leader;
@@ -511,7 +535,7 @@ static void CottageRoomsA_TalkToWeaponMerchant(void) {
 /// speaks.
 ///
 /// Reached by talking to the armor merchant in every table but the stormy
-/// night's; opens shop 2 when facing north.
+/// night's. It opens shop 2 when facing north.
 static void CottageRoomsA_TalkToArmorMerchant(void) {
   struct Actor *actor;
 
@@ -538,7 +562,7 @@ static void CottageRoomsA_TalkToArmorMerchant(void) {
 /// speaks.
 ///
 /// Reached by talking to the item merchant in every table but the stormy
-/// night's; opens shop 3 when facing north. After the party has left and
+/// night's. It opens shop 3 when facing north. After the party has left and
 /// before Kalay, CottageRoomsA_GiveFarewellHerb speaks instead.
 static void CottageRoomsA_TalkToItemMerchant(void) {
   struct Actor *actor;
@@ -582,16 +606,20 @@ static inline void CottageRoomsA_PlayRepeatedAnimationAndWait(s32 actorId,
   Actor_SetAnimationAndWait(actorId, animation);
 }
 
-/// In Garet's house in Vale, back from Kalay, Garet comes home: his
-/// grandfather dozes, his parents argue over whether to look for him, and his
-/// grandmother spots him first. Garet introduces Ivan and Mia, his mother asks
-/// them to look after him, and his father tells them to enjoy their stay; the
-/// three walk back into Isaac, and the father is left pacing.
+/// In Garet's house in Vale, back from Kalay, Garet comes home.
 ///
-/// Called by CottageRoomsA_Initialize from
-/// COTTAGE_ROOMS_A_FROM_VALE_EAST after Kalay, until FLAG_GARET_CAME_HOME
-/// is set; sets it. Adds and removes the task
-/// CottageRoomsA_SpawnSleepZ, and leaves the father pacing.
+/// - His grandfather dozes, and his parents argue over whether to look for
+///   him.
+/// - His grandmother spots him first.
+/// - Garet introduces Ivan and Mia.
+/// - His mother asks them to look after him, and his father tells them to
+///   enjoy their stay.
+/// - The three walk back into Isaac, and the father is left pacing.
+///
+/// Called by CottageRoomsA_Initialize from COTTAGE_ROOMS_A_FROM_VALE_EAST
+/// after Kalay, until FLAG_GARET_CAME_HOME is set. It sets that flag. It adds
+/// and removes the task CottageRoomsA_SpawnSleepZ, and leaves the father
+/// pacing.
 static void CottageRoomsA_GaretComesHome(void) {
   struct Actor *sleepZ;
   struct Actor *actor;
@@ -924,8 +952,9 @@ static void CottageRoomsA_GaretComesHome(void) {
   Event_End();
 }
 
-/// Sends a sprite drifting up from Garet's sleeping grandfather, one of the
-/// three at frames 10, 20 and 30 of every 180.
+/// Sends a sprite drifting up from Garet's sleeping grandfather.
+///
+/// It sends one of the three at frames 10, 20 and 30 of every 180.
 ///
 /// A task CottageRoomsA_GaretComesHome adds while the grandfather dozes.
 static void CottageRoomsA_SpawnSleepZ(void) {

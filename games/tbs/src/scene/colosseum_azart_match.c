@@ -1,57 +1,61 @@
 /// @file
-/// Colosseum Final 1 (SceneId_ColosseumAzartMatch), the site of the first
-/// finals match, where Isaac races Azart, the second-best of the warriors who
-/// cleared the trials, through four stages to the arena and fights him there.
+/// Colosseum Final 1 (SceneId_ColosseumAzartMatch) is the site of the first
+/// finals match, where Isaac races Azart through four stages to the arena and
+/// fights him there.
 ///
-/// Babi has put Isaac in the finals himself, and only Isaac may race; Garet,
-/// Ivan and Mia help from the stages. The stages, by their attendants'
-/// names, are the Rock Challenge, the Pipeworks, the Broken Bridge and the
-/// Lumber Water Crossing Area. Isaac comes here three times, each time at its
-/// own entrance, and ColosseumAzartMatch_Initialize blocks Retreat and
-/// sets up the visit that entrance stands for after restoring the
-/// stages from their temporary flags (FLAG_PIPES_MOVED,
-/// FLAG_PIPEWORKS_PIPE_PUSHED, FLAG_PLANT_GROWN and the rock's column in
-/// FLAG_SECOND_ROCK_COLUMN), so that what the friends changed stays changed for
-/// the race.
+/// Azart is the second-best of the warriors who cleared the trials. Babi has
+/// put Isaac in the finals himself, and only Isaac may race. Garet, Ivan and
+/// Mia help from the stages.
+///
+/// The stages, by their attendants' names, are the Rock Challenge, the
+/// Pipeworks, the Broken Bridge and the Lumber Water Crossing Area.
+///
+/// Isaac comes here three times, each time at its own entrance.
+/// ColosseumAzartMatch_Initialize blocks Retreat and restores the stages from
+/// their temporary flags (FLAG_PIPES_MOVED, FLAG_PIPEWORKS_PIPE_PUSHED,
+/// FLAG_PLANT_GROWN and the rock's column in FLAG_SECOND_ROCK_COLUMN), so that
+/// what the friends changed stays changed for the race. Then it sets up the
+/// visit that entrance stands for.
 ///
 /// - COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM, the tour, from the Colosseum's east
 ///   passage. The guide (ColosseumAzartMatch_ExplainFinalsRules) tells the
 ///   party that warriors enter without their own equipment and race through the
-///   stages to the arena, where the first to arrive takes the better of two
-///   prizes and keeps it for the next match, and he pans over the stages if
-///   asked. Each stage's attendant names it, the first time with a
-///   demonstration (Isaac appears on the stage to show how it is crossed, or,
-///   at the Pipeworks, a pointer shows how the pipes work), and offers a place
-///   to cheer there: the friend Isaac picks walks to the stage and leaves the
-///   party (Colosso_OfferCheeringSpot). When all three are placed, the guide
-///   sends Isaac on to the Colosseum's waiting room
+///   stages to the arena. There the first to arrive takes the better of two
+///   prizes and keeps it for the next match. He pans over the stages if asked.
+///   Each stage's attendant names it, the first time with a demonstration.
+///   Isaac appears on the stage to show how it is crossed, or, at the
+///   Pipeworks, a pointer shows how the pipes work. The attendant then offers
+///   a place to cheer there. The friend Isaac picks walks to the stage and
+///   leaves the party (Colosso_OfferCheeringSpot). When all three are placed,
+///   the guide sends Isaac on to the Colosseum's waiting room
 ///   (COLOSSEUM_AZART_MATCH_TO_COLOSSEUM_WEST).
 /// - COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM_WEST, after the warriors have marched
 ///   out. The lettering reads `Lend a Hand`, and Garet, Ivan and Mia in turn
 ///   are the party alone, starting where they chose to cheer. Each may use
-///   Psynergy on the stages for Isaac: Douse on the Pipeworks' west pipe fills
-///   it, Growth grows the plant before the Broken Bridge, Move shifts the Rock
-///   Challenge's rocks. Using Psynergy (Colosso_TakePlaceForMatch) or telling a
-///   stage's attendant they are done (Colosso_AskDoneCheering) ends that
-///   friend's turn, and where they stand is kept as their place; after Mia,
-///   COLOSSEUM_AZART_MATCH_LEND_A_HAND_TO_RACE starts the race.
-/// - COLOSSEUM_AZART_MATCH_RACE_FROM_LEND_A_HAND, the race. Isaac runs alone
-///   against Azart, who follows a recorded path (Colosso_StartOpponent), with a
-///   gauge at the top of the screen showing how near each is to the finish
-///   (Colosso_StartRaceGauge), after the lettering `Match 1` and a count of
-///   three. Azart runs east of the finish (1,304 pixels across, where the
-///   prizes stand), his path the mirror of one through Isaac's own stages,
+///   Psynergy on the stages for Isaac. Douse on the Pipeworks' west pipe fills
+///   it, Growth grows the plant before the Broken Bridge, and Move shifts the
+///   Rock Challenge's rocks. A friend's turn ends when they use Psynergy
+///   (Colosso_TakePlaceForMatch) or tell a stage's attendant they are done
+///   (Colosso_AskDoneCheering), and where they stand is kept as their place.
+///   After Mia, COLOSSEUM_AZART_MATCH_LEND_A_HAND_TO_RACE starts the race.
+/// - COLOSSEUM_AZART_MATCH_RACE_FROM_LEND_A_HAND, the race. After the lettering
+///   `Match 1` and a count of three, Isaac runs alone against Azart, who
+///   follows a recorded path (Colosso_StartOpponent). A gauge at the top of the
+///   screen shows how near each is to the finish (Colosso_StartRaceGauge).
+///   Azart runs east of the finish, which is 1,304 pixels across, where the
+///   prizes stand. His path is the mirror of one through Isaac's own stages,
 ///   so he is seen only as he comes into the arena. At the arena
 ///   (ColosseumAzartMatch_ReachArena) the first to arrive takes the Iron Shield
-///   and the second the Padded Gloves, which Isaac is given and equipped with,
-///   and the two fight: the battle is ENCOUNTER_ZONE_COLOSSO's first or second
+///   and the second the Padded Gloves, which Isaac is given and equipped with.
+///   Then the two fight. The battle is ENCOUNTER_ZONE_COLOSSO's first or second
 ///   group, the Azart who has the shield or the one who has not.
 ///
 /// A win returns to COLOSSEUM_AZART_MATCH_AFTER_MATCH_WON, which shows the
 /// result and sends Isaac back to the Colosseum
 /// (COLOSSEUM_AZART_MATCH_TO_COLOSSEUM_EAST, to
-/// COLOSSEUM_FROM_COLOSSEUM_AZART_MATCH_EAST); a loss returns to
-/// COLOSSEUM_AZART_MATCH_AFTER_MATCH_LOST, and
+/// COLOSSEUM_FROM_COLOSSEUM_AZART_MATCH_EAST).
+///
+/// A loss returns to COLOSSEUM_AZART_MATCH_AFTER_MATCH_LOST, and
 /// COLOSSEUM_AZART_MATCH_TO_BABI_PALACE wakes the party in Babi's Palace, where
 /// Isaac's friends tell him he was only dreaming of the finals.
 
@@ -147,9 +151,11 @@ static void ColosseumAzartMatch_PushActorAhead(void);
 typedef void (*MapTask)(void);
 
 /// The first finals match's actors, by the guide's and attendants'
-/// explanations: four stages (the Rock Challenge, the Pipeworks, the Broken
-/// Bridge and the Lumber Water Crossing Area) lead to the arena where the two
-/// warriors fight.
+/// explanations.
+///
+/// Four stages lead to the arena where the two warriors fight: the Rock
+/// Challenge, the Pipeworks, the Broken Bridge and the Lumber Water Crossing
+/// Area.
 enum {
   /// Azart, racing Isaac to the arena.
   /// ★ Named from the game: "The name's Azart."
@@ -222,7 +228,9 @@ enum {
 };
 
 /// The temporary flags that keep what the friends changed on the stages, for
-/// the race (ColosseumAzartMatch_Initialize restores them).
+/// the race.
+///
+/// ColosseumAzartMatch_Initialize restores them.
 enum {
   /// ★ Named from the game: "See the water pipes?"
   /// (MsgColossoAreaCalledPipeworks)
@@ -321,9 +329,10 @@ static void ColosseumAzartMatch_WaitForBridgeOpening(void) {
   }
 }
 
-/// Move on a rock in the Rock Challenge, and after each push: a rock resting on
-/// the floor becomes a step (the second rock's column is kept in the byte of
-/// flags from FLAG_SECOND_ROCK_COLUMN).
+/// Move on a rock in the Rock Challenge, and each push, settles the rocks.
+///
+/// A rock resting on the floor becomes a step. The second rock's column is
+/// kept in the byte of flags from FLAG_SECOND_ROCK_COLUMN.
 static void ColosseumAzartMatch_SettleRocks(void) {
 
   struct Actor *actor;
@@ -363,8 +372,9 @@ static void ColosseumAzartMatch_PushRock(void) {
   ColosseumAzartMatch_SettleRocks();
 }
 
-/// Growth on the plant before the Broken Bridge: it grows and its cell becomes
-/// walkable (FLAG_PLANT_GROWN keeps it grown).
+/// Growth on the plant before the Broken Bridge makes it grow.
+///
+/// Its cell becomes walkable, and FLAG_PLANT_GROWN keeps it grown.
 static void ColosseumAzartMatch_GrowPlant(void) {
   {
 
@@ -373,8 +383,10 @@ static void ColosseumAzartMatch_GrowPlant(void) {
   GameFlag_Set(FLAG_PLANT_GROWN);
 }
 
-/// Douse on the Pipeworks' west pipe: the camera turns to the Pipeworks and the
-/// two pipes move as it fills (FLAG_PIPES_MOVED).
+/// Douse on the Pipeworks' west pipe fills it.
+///
+/// The camera turns to the Pipeworks and the two pipes move as it fills
+/// (FLAG_PIPES_MOVED).
 static void ColosseumAzartMatch_DousePipe(void) {
   struct Actor *actor;
   s32 none;
@@ -442,9 +454,10 @@ static void ColosseumAzartMatch_MoveActorPairByOffset(s32 actorId, s32 dx,
   Event_End();
 }
 
-/// The north-south log carries the leader to the other bank. It's the Lumber
-/// Water Crossing Area's north-south log, and walking into it rolls it, with
-/// the leader, across.
+/// The north-south log carries the leader to the other bank.
+///
+/// It's the Lumber Water Crossing Area's north-south log, and walking into it
+/// rolls it, with the leader, across.
 static void ColosseumAzartMatch_RollLogNorthSouth(void) {
   struct Actor *actor;
   s32 row;
@@ -463,9 +476,10 @@ static void ColosseumAzartMatch_RollLogNorthSouth(void) {
   MapGrid_CopyCellAttributes(64, 24, 3, 1, 64, row);
 }
 
-/// The east-west log carries the leader the way the pad is held. It's the
-/// Lumber Water Crossing Area's east-west log, and walking into it rolls it,
-/// with the leader.
+/// The east-west log carries the leader the way the pad is held.
+///
+/// It's the Lumber Water Crossing Area's east-west log, and walking into it
+/// rolls it, with the leader.
 static void ColosseumAzartMatch_RollLogEastWest(void) {
   struct Actor *actor;
   s32 column;
@@ -520,9 +534,10 @@ static inline void ColosseumAzartMatch_AnimatePipeworksWater(void) {
   MapGrid_CopyCells(100, 29, 1, 3, 34, 38);
 }
 
-/// Walking west into the Pipeworks' pillar pushes it: water runs into the
-/// channel, and the first time the pipes move (FLAG_PIPEWORKS_PIPE_PUSHED,
-/// FLAG_PIPES_MOVED).
+/// Walking west into the Pipeworks' pillar pushes it.
+///
+/// Water runs into the channel, and the first time the pipes move
+/// (FLAG_PIPEWORKS_PIPE_PUSHED, FLAG_PIPES_MOVED).
 static void ColosseumAzartMatch_PushPipeworksPillar(void) {
   s32 leaderId;
   struct Actor *leader;
@@ -595,18 +610,22 @@ static void ColosseumAzartMatch_PushPipeworksPillar(void) {
   MapGrid_CopyCellAttributes(43, 12, 1, 1, 41, 12);
 }
 
-/// Unused: sets FLAG_AREA_TEMP_00; nothing calls it.
+/// Unused: sets FLAG_AREA_TEMP_00. Nothing calls it.
 UNUSED static void ColosseumAzartMatch_SetCourseFlag(void) {
   GameFlag_Set(FLAG_AREA_TEMP_00);
 }
 
-/// Reaching Colosseum Final 1's arena: the leader takes a prize (the Iron
-/// Shield if first, the Padded Gloves if second), and he and Azart face off and
-/// fight; the battle's group follows who took the shield. The arena's
-/// step trigger row, in all three finals stages, waits on
-/// FLAG_COLOSSEUM_ARENA_CLOSED being clear, and nothing in the game sets it: no
-/// scene code, no actor script (none uses SC_FLAG_ON) and none of the main
-/// image's flag writers reaches it, so the arena is never closed.
+/// Reaching Colosseum Final 1's arena, the leader takes a prize and fights
+/// Azart.
+///
+/// The prize is the Iron Shield if he is first, the Padded Gloves if second.
+/// He and Azart face off and fight, and the battle's group follows who took
+/// the shield.
+///
+/// The arena is never closed. Its step trigger row, in all three finals
+/// stages, waits on FLAG_COLOSSEUM_ARENA_CLOSED being clear, and nothing in
+/// the game sets it. No scene code does, no actor script does (none uses
+/// SC_FLAG_ON), and none of the main image's flag writers reaches it.
 static void ColosseumAzartMatch_ReachArena(void) {
   s32 approach;
   s32 n;
@@ -650,8 +669,8 @@ static void ColosseumAzartMatch_ReachArena(void) {
   GameFlag_Set(FLAG_KEEP_MUSIC_ONCE);
 }
 
-/// Walking into something in the Rock Challenge (step trigger 90): a rock is
-/// pushed, anything else is checked.
+/// Walking into something in the Rock Challenge (step trigger 90) pushes a
+/// rock, and checks anything else.
 static void ColosseumAzartMatch_PushRockOrCheckAhead(void) {
 
   if (Colosso_FindActorAhead() == 0) {
@@ -665,8 +684,10 @@ const struct Trigger *ColosseumAzartMatch_GetTriggers(void) {
   return gColosseumAzartMatch_Triggers;
 }
 
-/// Back from the battle (COLOSSEUM_AZART_MATCH_AFTER_MATCH_WON or _LOST): Isaac
-/// and Azart stand in the arena as the result is shown.
+/// Back from the battle, Isaac and Azart stand in the arena as the result is
+/// shown.
+///
+/// The entrance is COLOSSEUM_AZART_MATCH_AFTER_MATCH_WON or _LOST.
 static void ColosseumAzartMatch_RestoreMatchResult(s32 result) {
 
   Actor_ReleaseById(ACTOR_PRIZE_A);
@@ -714,12 +735,16 @@ static void ColosseumAzartMatch_MarkFinishTerrain(s32 actorId) {
   }
 }
 
-/// Sets up Colosseum Final 1: restores the stages as they were left, then by
-/// the arrival: the race (COLOSSEUM_AZART_MATCH_RACE_FROM_LEND_A_HAND), the
-/// friends' turns to lend a hand (COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM_WEST),
-/// the guide's tour (COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM), or the match won
-/// (COLOSSEUM_AZART_MATCH_AFTER_MATCH_WON) or lost
-/// (COLOSSEUM_AZART_MATCH_AFTER_MATCH_LOST).
+/// Sets up Colosseum Final 1 for the visit its entrance stands for.
+///
+/// It restores the stages as they were left, then goes by the arrival:
+///
+/// - the race (COLOSSEUM_AZART_MATCH_RACE_FROM_LEND_A_HAND),
+/// - the friends' turns to lend a hand
+///   (COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM_WEST),
+/// - the guide's tour (COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM),
+/// - the match won (COLOSSEUM_AZART_MATCH_AFTER_MATCH_WON),
+/// - or the match lost (COLOSSEUM_AZART_MATCH_AFTER_MATCH_LOST).
 s32 ColosseumAzartMatch_Initialize(void) {
   struct Actor *actor;
   s32 hit;
@@ -841,10 +866,12 @@ s32 ColosseumAzartMatch_Initialize(void) {
   return 0;
 }
 
-/// The tour of Colosseum Final 1 (COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM): the
-/// guide shows the party the site of the first finals match, the race through
-/// the stages to the arena, the prizes there, and that the companions choose
-/// where to cheer from.
+/// The guide gives the party the tour of Colosseum Final 1
+/// (COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM).
+///
+/// He shows the site of the first finals match, the race through the stages
+/// to the arena, and the prizes there. He also says that the companions
+/// choose where to cheer from.
 static void ColosseumAzartMatch_ExplainFinalsRules(s32 guide) {
   struct Actor *actor;
   s32 x;
@@ -1002,11 +1029,14 @@ static void ColosseumAzartMatch_ExplainFinalsRules(s32 guide) {
   Event_End();
 }
 
-/// The Rock Challenge's attendant, stage 1 of Colosseum Final 1: the first
-/// time, Isaac appears on the stage and pushes the rocks into steps; then the
-/// objective, and a place for a friend to cheer. With a friend alone on the
-/// stages (COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM_WEST) he asks whether they are
-/// done cheering instead.
+/// The Rock Challenge's attendant explains stage 1 of Colosseum Final 1.
+///
+/// The first time, Isaac appears on the stage and pushes the rocks into
+/// steps. Then comes the objective, and a place for a friend to cheer.
+///
+/// With a friend alone on the stages
+/// (COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM_WEST) he asks whether they are done
+/// cheering instead.
 static void ColosseumAzartMatch_TalkToRockAttendant(s32 actorId) {
   s32 path;
 
@@ -1077,9 +1107,10 @@ static inline void ColosseumAzartMatch_SetPipeHeight(struct Actor *actor,
   FieldActor_SetMoveTarget(actor, actor->x.fixed, height, actor->z.fixed);
 }
 
-/// The Pipeworks' attendant, stage 2 of Colosseum Final 1: the first time, a
-/// pointer shows how the pipes rise and fall like scales; then the objective,
-/// and a place for a friend to cheer.
+/// The Pipeworks' attendant explains stage 2 of Colosseum Final 1.
+///
+/// The first time, a pointer shows how the pipes rise and fall like scales.
+/// Then comes the objective, and a place for a friend to cheer.
 static void ColosseumAzartMatch_TalkToPipeworksAttendant(s32 attendant) {
   s32 path;
   struct Actor *second;
@@ -1142,9 +1173,11 @@ static void ColosseumAzartMatch_TalkToPipeworksAttendant(s32 attendant) {
   }
 }
 
-/// The Broken Bridge's attendant, stage 3 of Colosseum Final 1: the first time,
-/// Isaac appears and times his crossing; then that the bridge's operator will
-/// cheer for him, and a place for a friend to cheer.
+/// The Broken Bridge's attendant explains stage 3 of Colosseum Final 1.
+///
+/// The first time, Isaac appears and times his crossing. Then the attendant
+/// says that the bridge's operator will cheer for him, and offers a place for
+/// a friend to cheer.
 static void ColosseumAzartMatch_TalkToBridgeAttendant(s32 actorId) {
   s32 path;
 
@@ -1184,9 +1217,11 @@ static void ColosseumAzartMatch_TalkToBridgeAttendant(s32 actorId) {
   }
 }
 
-/// The Lumber Water Crossing Area's attendant, stage 4 of Colosseum Final 1:
-/// the first time, a pointer shows the water tank and Isaac appears and rolls a
-/// log across; then the objective, and a place for a friend to cheer.
+/// The Lumber Water Crossing Area's attendant explains stage 4 of Colosseum
+/// Final 1.
+///
+/// The first time, a pointer shows the water tank and Isaac appears and rolls
+/// a log across. Then comes the objective, and a place for a friend to cheer.
 static void ColosseumAzartMatch_TalkToLumberAttendant(s32 actorId) {
   s32 path;
 
@@ -1293,8 +1328,10 @@ static void ColosseumAzartMatch_SelectPresentationScript(u32 mode, u32 param) {
   gColosso_LetteringPosition = 0;
 }
 
-/// The lettering a visit opens with: `Lend a Hand` for the friends' turns
-/// (round 0), or for the race `Match 1`, then 3, 2, 1 and `Go!`.
+/// Shows the lettering a visit opens with.
+///
+/// For the friends' turns (round 0) it is `Lend a Hand`. For the race it is
+/// `Match 1`, then 3, 2, 1 and `Go!`.
 static void ColosseumAzartMatch_ShowRoundIntroduction(s32 round) {
   if (round == 0) {
     Event_Start();
@@ -1343,8 +1380,9 @@ static void ColosseumAzartMatch_ShowRoundIntroduction(s32 round) {
   }
 }
 
-/// The result: `Won` or `Lose` in large lettering with its jingle, then the
-/// screen closes.
+/// Shows the result, then the screen closes.
+///
+/// The result is `Won` or `Lose` in large lettering with its jingle.
 static void ColosseumAzartMatch_ShowMatchResult(s32 result) {
 
   s32 loser;
@@ -1617,7 +1655,7 @@ static void ColosseumAzartMatch_PushActorAhead(void) {
 
 #include "shared/colosso_occupant.h"
 
-/// Closes the arena's step trigger; nothing in the game sets it.
+/// Closes the arena's step trigger. Nothing in the game sets it.
 /// ★ Named from the game: "This is the battle arena. After getting here, the
 /// warriors do battle." (MsgColossoWarriorsEnterFinalsWithoutAny)
 #define FLAG_COLOSSEUM_ARENA_CLOSED FLAG_SCENE_TEMP_10

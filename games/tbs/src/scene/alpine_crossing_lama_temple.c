@@ -1,57 +1,77 @@
 /// @file
 /// The Alpine Crossing (SceneId_AlpineCrossing) and Lama Temple
 /// (SceneId_LamaTemple), two scenes on Silk Road west of Xian that share this
-/// overlay. The getters pick each scene's tables by
-/// gMainRoutineWork.next, both scenes share one exit table, and
-/// Scene_Initialize sets up the scene being entered from the story flags of
-/// Hsu's rescue, which runs through both.
+/// overlay.
 ///
-/// At the Alpine Crossing boulders block Silk Road. Once Feizhi has left Xian
-/// (FLAG_FEIZHI_WENT_TO_HSU, set in fuchin_temple.c), stepping onto the road
-/// beside them (CELL_BEHAVIOR_ALPINE_CROSSING_FEIZHI_ARRIVAL) plays
-/// AlpineCrossing_FeizhiArrives and sets FLAG_FEIZHI_SAW_ROCKSLIDE; she then
-/// waits at the end of the path until Hama's lesson. A signpost reads `North:
-/// Altin Mine West: Lama Temple`; the Crossing opens onto the World Map to the
-/// east, north and west, and by
+/// The story of Hsu's rescue runs through both scenes. The getters pick each
+/// scene's tables by gMainRoutineWork.next, and both scenes share one exit
+/// table. Scene_Initialize sets up the scene being entered from the story flags
+/// of the rescue.
+///
+/// At the Alpine Crossing boulders block Silk Road. Feizhi comes here once she
+/// has left Xian (FLAG_FEIZHI_WENT_TO_HSU, set in fuchin_temple.c). From then
+/// on, stepping onto the road beside the boulders
+/// (CELL_BEHAVIOR_ALPINE_CROSSING_FEIZHI_ARRIVAL) plays
+/// AlpineCrossing_FeizhiArrives and sets FLAG_FEIZHI_SAW_ROCKSLIDE. She then
+/// waits at the end of the path until Hama's lesson.
+///
+/// A signpost reads `North: Altin Mine West: Lama Temple`. The Crossing opens
+/// onto the World Map to the east, north and west.
+///
+/// It also leads into Altin Peak's AltinPeakSouthEntrance, by
 /// ALPINE_CROSSING_TO_ALTIN_PEAK_SOUTH_ENTRANCE_WEST and
-/// ALPINE_CROSSING_TO_ALTIN_PEAK_SOUTH_ENTRANCE_EAST into Altin Peak's
-/// AltinPeakSouthEntrance, whose entrances from here the international
-/// editions also call Alpine Crossing. Coming back from the mine
-/// (ALPINE_CROSSING_FROM_ALTIN_PEAK_SOUTH_ENTRANCE_WEST and _EAST) the area
-/// name is not shown again.
+/// ALPINE_CROSSING_TO_ALTIN_PEAK_SOUTH_ENTRANCE_EAST. The international
+/// editions also call that scene's entrances from here Alpine Crossing. Coming
+/// back from the mine (ALPINE_CROSSING_FROM_ALTIN_PEAK_SOUTH_ENTRANCE_WEST and
+/// _EAST) the area name is not shown again.
 ///
 /// In Lama Temple the five monks have one set of lines and thoughts until Hsu
-/// is freed (FLAG_HSU_RESCUED) and another after, and a traveling healer serves
-/// across his counter; a defeat anywhere here returns the party to
-/// LAMA_TEMPLE_AFTER_DEFEAT, in front of him. Walking north into the sliding
-/// door (LamaTemple_EnterHamasRoom) leads into Hama's room, in
-/// LacquerRoomsA (LACQUER_ROOMS_A_HAMAS_ROOM_FROM_LAMA_TEMPLE,
-/// in fuchin_temple.c), whose lesson sets FLAG_XIAN_HEARD_HSU_TRAPPED; coming
-/// back out (LAMA_TEMPLE_FROM_LACQUER_ROOMS_A_HAMAS_ROOM) the area name
-/// is not shown again. Writing on a wall hints at Reveal, which shows a passage
-/// behind a mossy rock (LamaTemple_RevealPassage); LamaTemple_ShowFalseWall
-/// puts the rock back when Reveal wears off and on entry, the rock cell's own
-/// attributes saved at (21, 73). The temple also holds a Psynergy Stone
-/// (FLAG_LAMA_TEMPLE_PSYNERGY_STONE, an area temp flag) and a chest with
-/// Water of Life.
+/// is freed (FLAG_HSU_RESCUED) and another after. A traveling healer serves
+/// across his counter. A defeat anywhere here returns the party to
+/// LAMA_TEMPLE_AFTER_DEFEAT, in front of him.
 ///
-/// Back at the Alpine Crossing after the lesson, until Hsu is freed, Hama and
-/// Feizhi stand by him, pinned between two boulders. Arriving beside him from
-/// AltinPeakSouthEntrance (ALPINE_CROSSING_FROM_ALTIN_PEAK_SOUTH_ENTRANCE_EAST)
-/// the first time plays AlpineCrossing_HamaReachesHsu
-/// (FLAG_HAMA_REACHED_HSU). Lift on the boulder (AlpineCrossing_LiftBoulder)
-/// raises it while Hama and Feizhi pull him free; the event sets
-/// FLAG_HSU_RESCUED and leaves for Lama Temple (ALPINE_CROSSING_TO_LAMA_TEMPLE,
-/// to LAMA_TEMPLE_FROM_ALPINE_CROSSING), where Scene_Initialize plays Hama's
-/// farewell (LamaTemple_RunHamasFarewell). Coming back instead by the World
-/// Map's north side (ALPINE_CROSSING_FROM_WORLD_MAP_NORTH), Hsu has been freed
-/// without the party (FLAG_HSU_RESCUED_WITHOUT_PARTY, which lamakan_desert.c
-/// can set too), and Hama and Feizhi are gone. Once he is free, two workers
-/// from Xian stand by the road they have cleared, and Scene_Initialize copies
-/// the cleared cells over the rocks. The Crossing's other puzzles are kept
-/// only within one visit (scene temp flags): Reveal shows a hidden path, Frost
-/// freezes a puddle into a pillar the party can climb, and Growth grows a
-/// sprout into a vine; a chest holds Power Bread.
+/// Walking north into the sliding door (LamaTemple_EnterHamasRoom) leads into
+/// Hama's room, in LacquerRoomsA (LACQUER_ROOMS_A_HAMAS_ROOM_FROM_LAMA_TEMPLE,
+/// in fuchin_temple.c). Her lesson there sets FLAG_XIAN_HEARD_HSU_TRAPPED.
+/// Coming back out (LAMA_TEMPLE_FROM_LACQUER_ROOMS_A_HAMAS_ROOM) the area name
+/// is not shown again.
+///
+/// Writing on a wall hints at Reveal, which shows a passage behind a mossy rock
+/// (LamaTemple_RevealPassage). LamaTemple_ShowFalseWall puts the rock back when
+/// Reveal wears off and on entry. The rock cell's own attributes are saved at
+/// (21, 73).
+///
+/// The temple also holds a Psynergy Stone (FLAG_LAMA_TEMPLE_PSYNERGY_STONE, an
+/// area temp flag) and a chest with Water of Life.
+///
+/// Back at the Alpine Crossing after the lesson, Hama and Feizhi stand by Hsu
+/// until he is freed. He is pinned between two boulders. Arriving beside him
+/// from AltinPeakSouthEntrance
+/// (ALPINE_CROSSING_FROM_ALTIN_PEAK_SOUTH_ENTRANCE_EAST) the first time plays
+/// AlpineCrossing_HamaReachesHsu (FLAG_HAMA_REACHED_HSU).
+///
+/// Lift on the boulder (AlpineCrossing_LiftBoulder) raises it while Hama and
+/// Feizhi pull him free. The event sets FLAG_HSU_RESCUED and leaves for Lama
+/// Temple (ALPINE_CROSSING_TO_LAMA_TEMPLE, to
+/// LAMA_TEMPLE_FROM_ALPINE_CROSSING). There Scene_Initialize plays Hama's
+/// farewell (LamaTemple_RunHamasFarewell).
+///
+/// The party can instead come back by the World Map's north side
+/// (ALPINE_CROSSING_FROM_WORLD_MAP_NORTH). Then Hsu has been freed without the
+/// party (FLAG_HSU_RESCUED_WITHOUT_PARTY, which lamakan_desert.c can set too),
+/// and Hama and Feizhi are gone.
+///
+/// Once he is free, two workers from Xian stand by the road they have cleared,
+/// and Scene_Initialize copies the cleared cells over the rocks.
+///
+/// The Crossing's other puzzles are kept only within one visit (scene temp
+/// flags):
+///
+/// - Reveal shows a hidden path.
+/// - Frost freezes a puddle into a pillar the party can climb.
+/// - Growth grows a sprout into a vine.
+///
+/// A chest holds Power Bread.
 
 #include "script_operands.h"
 #include "main_routine_work.h"
@@ -82,7 +102,7 @@
 #include "field_effect.h"
 #include "sounds.h"
 
-/// The temple's Psynergy Stone, an area temp flag: it refills once the
+/// The temple's Psynergy Stone. It is an area temp flag, so it refills once the
 /// party has been to another area.
 /// ★ Named from the game: "a Psynergy Stone" (MsgGotPsynergyStone)
 #define FLAG_LAMA_TEMPLE_PSYNERGY_STONE FLAG_AREA_TEMP_50
@@ -90,8 +110,8 @@
 #define MAP_ALPINE_CROSSING ((s32)&SceneId_AlpineCrossing)
 #define MAP_LAMA_TEMPLE ((s32)&SceneId_LamaTemple)
 
-/// Lama Temple's actors. Garet, Ivan and Mia are placed in their own
-/// party slots for Hama's farewell; the others count from ACTOR_FIRST_PLACED.
+/// Lama Temple's actors. Garet, Ivan and Mia are placed in their own party
+/// slots for Hama's farewell. The others count from ACTOR_FIRST_PLACED.
 enum LamaTempleActorId {
   /// Hama, back in her temple for her farewell.
   /// ★ Named from the game: "No, Master Hama"
@@ -171,7 +191,7 @@ enum {
   /// Drops into a crouch, then holds a half crouch with her head bowed
   /// (spr_039.png's frames 33 and 36).
   ANIM_FEIZHI_CROUCH = 5,
-  /// SPRITE_TURNING_ROCK's mossy rock (spr_293.png's frame 1); its first
+  /// SPRITE_TURNING_ROCK's mossy rock (spr_293.png's frame 1). Its first
   /// animations show picture 0, a purple glow.
   TURNING_ROCK_ANIMATION_MOSSY = 2,
   ANIM_HSU_STRUGGLE = 5,
@@ -198,8 +218,8 @@ enum AlpineCrossingCellBehavior {
   CELL_BEHAVIOR_ALPINE_CROSSING_CHEST = 100
 };
 
-/// The door of Hama's room, three cells wide and two high: each step copies
-/// the next door picture onto it for five frames.
+/// The door of Hama's room, three cells wide and two high. Each step copies the
+/// next door picture onto it for five frames.
 enum { DOOR_X = 67, DOOR_Y = 6 };
 
 /// The map object that draws the passage behind the mossy rock.
@@ -255,9 +275,11 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gLamaTemple_ActorPlacements;
 }
 
-/// A monk in Lama Temple, until Hsu is freed, asks whether the party comes
-/// from the east. If not, it must have crossed Lamakan Desert; if so, he asks
-/// whether it stopped in Xian, whose Master Feh is close to Master Hama.
+/// A monk in Lama Temple, until Hsu is freed, asks whether the party comes from
+/// the east.
+///
+/// If not, it must have crossed Lamakan Desert. If so, he asks whether it
+/// stopped in Xian, whose Master Feh is close to Master Hama.
 static void LamaTemple_TalkToMonkAskingAboutTheEast(void) {
 
   Event_Start();
@@ -292,8 +314,8 @@ static void LamaTemple_TalkToMeditatingMonk(void) {
   Event_End();
 }
 
-/// The monk in Lama Temple who, until Hsu is freed, praises Master Hama as the
-/// greatest master of Chi.
+/// A monk in Lama Temple praises Master Hama as the greatest master of Chi,
+/// until Hsu is freed.
 static void LamaTemple_TalkToChiMonk(void) {
   Event_Start();
   Event_SetMessageId(MsgMountainDidKnowMasterHamaGreatest);
@@ -319,11 +341,16 @@ static void LamaTemple_EnterHamasRoom(void) {
   Import_EventSetExitRequest(LAMA_TEMPLE_TO_LACQUER_ROOMS_A_HAMAS_ROOM);
 }
 
-/// Hama's farewell, once the party has freed Hsu and been brought back to Lama
-/// Temple: she thanks the Adepts, Garet and Mia squabble over whose idea
-/// helping was, and Hama goes back to her room. Ivan wonders aloud about what
-/// Hama told him, and Garet, Ivan and Mia rejoin the party. Garet's two
-/// questions are yes or no choices.
+/// Hama says farewell once the party has freed Hsu and been brought back to
+/// Lama Temple.
+///
+/// - She thanks the Adepts.
+/// - Garet and Mia squabble over whose idea helping was.
+/// - Hama goes back to her room.
+/// - Ivan wonders aloud about what Hama told him.
+/// - Garet, Ivan and Mia rejoin the party.
+///
+/// Garet's two questions are yes or no choices.
 static void LamaTemple_RunHamasFarewell(void) {
   Event_Start();
   Actor_SetPosition(ACTOR_TEMPLE_HAMA, PIXELS(136), PIXELS(168));
@@ -556,8 +583,9 @@ static void LamaTemple_ReadWallWriting(void) {
   Event_End();
 }
 
-/// Puts Lama Temple's mossy rock back when Reveal wears off (and on entry):
-/// the wall's cell blocks the way again, the passage's map object is hidden and
+/// Puts Lama Temple's mossy rock back when Reveal wears off, and on entry.
+///
+/// The wall's cell blocks the way again, the passage's map object is hidden and
 /// the rock actor stands in front of it.
 static void LamaTemple_ShowFalseWall(void) {
 
@@ -566,18 +594,20 @@ static void LamaTemple_ShowFalseWall(void) {
   Actor_SetPosition(ACTOR_PASSAGE_ROCK, PIXELS(344), PIXELS(152));
 }
 
-/// Reveal in Lama Temple shows the passage behind the mossy rock: the cell's
-/// original attributes (saved at (21, 73) on entry) come back, the passage's
-/// map object returns to its place and the rock actor is put away.
+/// Reveal in Lama Temple shows the passage behind the mossy rock.
+///
+/// The cell's original attributes, saved at (21, 73) on entry, come back. The
+/// passage's map object returns to its place and the rock actor is put away.
 static void LamaTemple_RevealPassage(void) {
   MapGrid_CopyCellAttributes(21, 73, 1, 1, 21, 9);
   TreasureSpot_SetPosition(TREASURE_SPOT_PASSAGE, -1, -1);
   Actor_SetPosition(ACTOR_PASSAGE_ROCK, 0, 0);
 }
 
-/// The traveling healer in Lama Temple offers the Sanctum's services. He does
-/// when spoken to across his counter, from the south; from any other side he
-/// only greets the party.
+/// The traveling healer in Lama Temple offers the Sanctum's services.
+///
+/// He does when spoken to across his counter, from the south. From any other
+/// side he only greets the party.
 static void LamaTemple_TalkToHealer(void) {
 
   u32 heading = Actor_Get(ACTOR_PARTY_LEADER)->facing;
@@ -593,11 +623,15 @@ static void LamaTemple_TalkToHealer(void) {
   Event_End();
 }
 
-/// Feizhi runs up behind the party and goes ahead to look for Hsu. It happens
-/// at the Alpine Crossing when the party steps onto the road by the boulders
-/// once Feizhi has set out after Hsu: she finds the boulders blocking Silk
-/// Road, says her vision came true, cries out for Hsu and runs ahead along the
-/// path to look for him, the party leader following part of the way.
+/// Feizhi runs up behind the party and goes ahead to look for Hsu.
+///
+/// It happens at the Alpine Crossing when the party steps onto the road by the
+/// boulders, once Feizhi has set out after Hsu.
+///
+/// - She finds the boulders blocking Silk Road.
+/// - She says her vision came true.
+/// - She cries out for Hsu and runs ahead along the path to look for him.
+/// - The party leader follows part of the way.
 static void AlpineCrossing_FeizhiArrives(void) {
   struct Actor *leader;
 
@@ -666,9 +700,11 @@ static void AlpineCrossing_FeizhiArrives(void) {
   }
 }
 
-/// Talking to Feizhi at the Alpine Crossing before Hama's Reveal lesson: she
-/// asks whether she should return to Xian, and either way decides to keep
-/// looking for Hsu.
+/// Feizhi asks whether she should return to Xian, and either way decides to
+/// keep looking for Hsu.
+///
+/// She does when the player talks to her at the Alpine Crossing before Hama's
+/// Reveal lesson.
 static void AlpineCrossing_TalkToFeizhi(void) {
   Event_Start();
   Event_SetMessageId(MsgMountainDoDoWarriorShouldReturn);
@@ -685,11 +721,13 @@ static void AlpineCrossing_TalkToFeizhi(void) {
   Event_End();
 }
 
-/// Arriving at the Alpine Crossing from AltinPeakSouthEntrance by
+/// The camera finds Hsu, and Hama asks if he is okay.
+///
+/// He is unhurt but cannot move, and none of them knows how to free him.
+///
+/// It plays on arriving at the Alpine Crossing from AltinPeakSouthEntrance by
 /// ALPINE_CROSSING_FROM_ALTIN_PEAK_SOUTH_ENTRANCE_EAST while Hsu is trapped,
-/// until this has run once (FLAG_HAMA_REACHED_HSU): the camera finds Hsu, Hama
-/// asks if he is okay, and he is unhurt but cannot move; none of them knows how
-/// to free him.
+/// until it has run once (FLAG_HAMA_REACHED_HSU).
 static void AlpineCrossing_HamaReachesHsu(void) {
   Event_Start();
   // Reveal Hsu's position before Hama and Feizhi discuss freeing him.
@@ -732,11 +770,13 @@ static void AlpineCrossing_HamaReachesHsu(void) {
   GameFlag_Set(FLAG_HAMA_REACHED_HSU);
 }
 
-/// Lift on the boulder at the Alpine Crossing, until Hsu is freed: it floats,
-/// and Hama and Feizhi pull him free in two heaves of two tugs each, asking the
-/// leader in between to hold on. Hsu is free; they will ask Master Feh to tend
-/// him and clear the road, and the event fades out to Hama's farewell at Lama
-/// Temple.
+/// Lift on the boulder at the Alpine Crossing makes it float, until Hsu is
+/// freed.
+///
+/// - Hama and Feizhi pull him free in two heaves of two tugs each, asking the
+///   leader in between to hold on.
+/// - Hsu is free. They will ask Master Feh to tend him and clear the road.
+/// - The event fades out to Hama's farewell at Lama Temple.
 static void AlpineCrossing_LiftBoulder(void) {
 
   Event_Start();
@@ -883,7 +923,7 @@ static void AlpineCrossing_ReadSignpost(void) {
   Event_End();
 }
 
-/// Reveal at the Alpine Crossing shows the path hidden at (5, 13): the revealed
+/// Reveal at the Alpine Crossing shows the path hidden at (5, 13). The revealed
 /// cells, kept at (5, 28), are copied there with their attributes.
 static void AlpineCrossing_RevealPath(void) {
   MapGrid_CopyCellsTo(5, 28, 5, 13, 1, 2);
@@ -930,9 +970,13 @@ static void AlpineCrossing_PrepareFrost(void) {
 }
 
 /// Frost at the Alpine Crossing freezes the puddle into a pillar the party can
-/// climb: it can no longer be pushed or move, sorts itself against the
-/// leader each frame, and the cells beside it (and their copy at (20, 18))
-/// become walkable. Also run on entry while the pillar is already frozen.
+/// climb.
+///
+/// The pillar can no longer be pushed or move, and sorts itself against the
+/// leader each frame. The cells beside it, and their copy at (20, 18), become
+/// walkable.
+///
+/// This also runs on entry while the pillar is already frozen.
 static void AlpineCrossing_FreezePuddle(void) {
   Event_Start();
 
@@ -958,8 +1002,10 @@ static void AlpineCrossing_FreezePuddle(void) {
 }
 
 /// Growth at the Alpine Crossing grows the sprout into a vine the party can
-/// climb: the two cells above it take the climbable attributes kept at
-/// (14, 6). Also run on entry while the vine is already grown.
+/// climb.
+///
+/// The two cells above it take the climbable attributes kept at (14, 6). This
+/// also runs on entry while the vine is already grown.
 static void AlpineCrossing_GrowSprout(void) {
   Event_Start();
   MapGrid_CopyCellAttributes(14, 6, 1, 2, 21, 11);

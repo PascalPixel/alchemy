@@ -1,30 +1,37 @@
 /// @file
-/// Vale (SceneId_ValeEruption) while Mt. Aleph erupts: the ground before the
-/// sanctum's door, on the village's own layout (SceneId_Vale's), where the
-/// villagers wait for Isaac and Garet.
+/// Vale (SceneId_ValeEruption) while Mt. Aleph erupts is the ground before the
+/// sanctum's door, where the villagers wait for Isaac and Garet.
+///
+/// It stands on the village's own layout (SceneId_Vale's).
 ///
 /// The scene falls between Sol Sanctum's eruption (sol_sanctum_eruption.c),
 /// where Jenna and Kraden are carried off, and the party's journey. The path
 /// down the mountain leads here, by VALE_ERUPTION_FROM_SOL_ENTRANCE
 /// (sol_sanctum_entrance.c's SOL_ENTRANCE_TO_VALE after the eruption).
+///
 /// Gathered before the sanctum are the Great Healer, Garet's grandfather the
 /// mayor, Isaac's mother Dora, Garet's sister and brother, and the guard who
 /// saw the two hanging around on his watch.
 ///
 /// The scene has no triggers. ValeEruption_Initialize plays the whole event on
-/// arrival by VALE_ERUPTION_FROM_SOL_ENTRANCE (ValeEruption_ReturnFromMtAleph):
-/// the ground shakes, the villagers wonder where the two are, Isaac and Garet
-/// come down the path and are called over, and Dora's question about Jenna and
-/// Kraden is answered the same way whatever Isaac replies. The Great Healer
-/// then opens the sanctum's door (MapGrid_AnimateCells) and leads everyone in,
-/// and the scene's one exit takes the party into the Vale Sanctum
-/// (SANCTUM_FROM_VALE_ERUPTION), where the Great Healer passes on the Wise
-/// One's quest (Sanctum_RequestQuestAcceptance). The tremors are
-/// MapGrid_SetShake calls, each with a flash (Weather_LastLightning) and
-/// SE_CRASH, over a burst of red flashes on the warm colours
-/// (Weather_StartLightningFlash). The scene sets
-/// FLAG_VALE_RETURNED_FROM_MT_ALEPH but never reads it; Sol Sanctum's entrance
-/// scene does (sol_sanctum_entrance.c).
+/// arrival by VALE_ERUPTION_FROM_SOL_ENTRANCE (ValeEruption_ReturnFromMtAleph).
+///
+/// - The ground shakes, and the villagers wonder where the two are.
+/// - Isaac and Garet come down the path and are called over.
+/// - Dora's question about Jenna and Kraden is answered the same way whatever
+///   Isaac replies.
+/// - The Great Healer then opens the sanctum's door (MapGrid_AnimateCells) and
+///   leads everyone in.
+/// - The scene's one exit takes the party into the Vale Sanctum
+///   (SANCTUM_FROM_VALE_ERUPTION), where the Great Healer passes on the Wise
+///   One's quest (Sanctum_RequestQuestAcceptance).
+///
+/// The tremors are MapGrid_SetShake calls. Each comes with a flash
+/// (Weather_LastLightning) and SE_CRASH, over a burst of red flashes on the
+/// warm colours (Weather_StartLightningFlash).
+///
+/// The scene sets FLAG_VALE_RETURNED_FROM_MT_ALEPH but never reads it. Sol
+/// Sanctum's entrance scene does (sol_sanctum_entrance.c).
 
 #include "main_routine_work.h"
 #include "module/scene/vale_eruption.h"
@@ -50,47 +57,45 @@
 #include "sounds.h"
 #include "fixed_math.h"
 
-/// The placed actors, numbered in the order of
-/// gValeEruption_ActorPlacements; Garet's row places the party's Garet and
-/// takes no number.
+/// The placed actors, numbered in the order of gValeEruption_ActorPlacements.
+/// Garet's row places the party's Garet and takes no number.
 enum ValeEruptionActorId {
-  /// The Great Healer, a man with a white beard in a tall hat and a long
-  /// purple and blue robe (the sprite of sanctum.c's healer), who leads the
-  /// villagers into the sanctum. "Come into the sanctum, both of you."
+  /// The Great Healer is a man with a white beard, in a tall hat and a long
+  /// purple and blue robe. He has the sprite of sanctum.c's healer, and leads
+  /// the villagers into the sanctum. "Come into the sanctum, both of you."
   /// ★ Named from the game: "Come into the sanctum" (MsgValeMtAlephWasInactive)
   ACTOR_GREAT_HEALER = ACTOR_FIRST_PLACED,
-  /// Garet's grandfather, an old man with white hair and a cane, the mayor
-  /// (whom the Great Healer calls Mayor in sanctum.c). "Oooh, my grandson! Will
-  /// Garet be safe in this eruption?!?"
+  /// Garet's grandfather is an old man with white hair and a cane. He is the
+  /// mayor, whom the Great Healer calls Mayor in sanctum.c. "Oooh, my grandson!
+  /// Will Garet be safe in this eruption?!?"
   /// ★ Named from the game: "Oooh, my grandson!" (MsgValeMtAlephWasInactive)
   ACTOR_GARETS_GRANDFATHER = ACTOR_FIRST_PLACED + 1,
-  /// Isaac's mother (Dora in sanctum.c). "Isaac and Garet went to Mr. Kraden's
-  /// house."
+  /// Isaac's mother, who is Dora in sanctum.c. "Isaac and Garet went to Mr.
+  /// Kraden's house."
   /// ★ Named from the game: "your mother, Dora, has been crying"
   /// (MsgValeDoraHasBeenCrying)
   ACTOR_DORA = ACTOR_FIRST_PLACED + 2,
-  /// Garet's sister, a young woman with an orange ponytail, whom Garet calls
+  /// Garet's sister is a young woman with an orange ponytail, whom Garet calls
   /// Sis at the farewell (vale_plaza.c). She calls the mayor Grandpa, and
   /// ACTOR_GARETS_BROTHER calls her Sis. "Grandpa, we don't even know if he's
   /// up there!"
   /// ★ Named from the game: "we don't even know if he's up there"
   /// (MsgValeMtAlephWasInactive)
   ACTOR_GARETS_SISTER = ACTOR_FIRST_PLACED + 3,
-  /// Garet's brother, the small boy with orange hair of vale.c's
-  /// ACTOR_GARETS_BROTHER, who says someone saw Garet climb and is first to
-  /// cry
+  /// Garet's brother is the small boy with orange hair of vale.c's
+  /// ACTOR_GARETS_BROTHER. He says someone saw Garet climb, and is first to cry
   /// "Garet!"
   /// ★ Named from the game: "But, Sis, someone saw him"
   /// (MsgValeMtAlephWasInactive), to Garet's sister
   ACTOR_GARETS_BROTHER = ACTOR_FIRST_PLACED + 4,
-  /// The guard, the man with long brown hair and a beard in a long robe who
+  /// The guard is the man with long brown hair and a beard, in a long robe, who
   /// guards Mt. Aleph in vale.c (ACTOR_MAN_GUARDING_MT_ALEPH). "They were
   /// hanging around here while I was on guard duty."
   /// ★ Named from the game: "on guard duty" (MsgValeMtAlephWasInactive)
   ACTOR_GUARD = ACTOR_FIRST_PLACED + 5,
-  /// The first of the six villagers gathered behind them: a burly grey-haired
-  /// man, a bald muscular man, a woman in a green dress, a little girl with
-  /// pigtails, a young man with brown hair and a strongman.
+  /// The first of the six villagers gathered behind them. They are a burly
+  /// grey-haired man, a bald muscular man, a woman in a green dress, a little
+  /// girl with pigtails, a young man with brown hair and a strongman.
   /// ★ Named from what the player sees: men, a woman and children of Vale in
   /// their sprites (its render)
   ACTOR_FIRST_VILLAGER = ACTOR_FIRST_PLACED + 6
@@ -98,7 +103,7 @@ enum ValeEruptionActorId {
 
 static void ValeEruption_ReturnFromMtAleph(void);
 
-/// Returns where the party appears: VALE_ERUPTION_FROM_SOL_ENTRANCE is the path
+/// Returns where the party appears. VALE_ERUPTION_FROM_SOL_ENTRANCE is the path
 /// down from the mountain, Mt. Aleph.
 const struct SceneEntrance *ValeEruption_GetEntrances(void) {
   return gValeEruption_Entrances;
@@ -115,14 +120,15 @@ const struct ActorPlacement *ValeEruption_GetActorPlacements(void) {
   return gValeEruption_ActorPlacements;
 }
 
-/// The scene has no triggers of its own: everything happens on arrival.
+/// The scene has no triggers of its own, since everything happens on arrival.
 const struct Trigger *ValeEruption_GetTriggers(void) {
   return gValeEruption_Triggers;
 }
 
-/// Arriving in Vale during the eruption: plays the return from the mountain
-/// when the party comes by VALE_ERUPTION_FROM_SOL_ENTRANCE. Called by
-/// FieldSequence_Run once the actors are placed;
+/// Arriving in Vale during the eruption plays the return from the mountain,
+/// when the party comes by VALE_ERUPTION_FROM_SOL_ENTRANCE.
+///
+/// Called by FieldSequence_Run once the actors are placed.
 /// VALE_ERUPTION_FROM_SOL_ENTRANCE is where Sol Sanctum's approach leads after
 /// the eruption and before the party leaves Vale.
 s32 ValeEruption_Initialize(void) {
@@ -132,10 +138,13 @@ s32 ValeEruption_Initialize(void) {
   return 0;
 }
 
-/// In Vale during the eruption, before the sanctum, the volcano shakes the
-/// ground while the villagers wonder where Isaac and Garet are; the two come
-/// down the mountain, tell that Jenna and Kraden were taken away, and follow
-/// the elders into the sanctum. Called by ValeEruption_Initialize on arrival by
+/// In Vale during the eruption, the volcano shakes the ground before the
+/// sanctum while the villagers wonder where Isaac and Garet are.
+///
+/// The two come down the mountain, tell that Jenna and Kraden were taken away,
+/// and follow the elders into the sanctum.
+///
+/// Called by ValeEruption_Initialize on arrival by
 /// VALE_ERUPTION_FROM_SOL_ENTRANCE. Clears FLAG_SHOW_AREA_NAME, sets
 /// FLAG_VALE_RETURNED_FROM_MT_ALEPH and takes VALE_ERUPTION_TO_SANCTUM, where
 /// Sanctum_RequestQuestAcceptance follows.

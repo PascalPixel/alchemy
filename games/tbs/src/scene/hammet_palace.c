@@ -1,41 +1,53 @@
 /// @file
 /// Hammet Palace (SceneId_HammetPalace), the rooms of Lord Hammet's palace in
-/// Kalay. The scene before its door, also Hammet Palace in the game's area
-/// names, is kalay.c's HammetPalaceGrounds.
+/// Kalay.
+///
+/// The scene before its door, also Hammet Palace in the game's area names, is
+/// kalay.c's HammetPalaceGrounds.
 ///
 /// Two events in the room where Lady Layana stands frame the party's part in
-/// Hammet's rescue from Lunpa, and between them three flags pick where she
-/// stands and what she says:
+/// Hammet's rescue from Lunpa. Between them three flags pick where she stands
+/// and what she says:
 ///
 /// - Ivan's report (HAMMET_PALACE_LAYANAS_ROOM_FROM_HAMMET_PALACE_GROUNDS),
-///   when the guards at the door bring the party in (kalay.c); it ends by
+///   when the guards at the door bring the party in (kalay.c). It ends by
 ///   setting FLAG_IVAN_REPORTED_TO_LAYANA.
+///
 /// - Between the two, until the party has heard in Lunpa that Hammet is held
 ///   there (area temp flag FLAG_KALAY_HEARD_HAMMET_HELD_IN_LUNPA, set by
-///   kalay.c's events), Layana talks of Dodonpa's spies. Afterwards she
-///   stands elsewhere in her room, and the first time they speak she scolds
-///   `Isaac, you sneaked into Lunpa? That's far too dangerous!`
-///   (FLAG_KALAY_LAYANA_SAID_LUNPA_TOO_DANGEROUS); from then on she talks of
-///   Dodonpa's greed.
+///   kalay.c's events), Layana talks of Dodonpa's spies.
+///
+///   Afterwards she stands elsewhere in her room, and the first time they
+///   speak she scolds `Isaac, you sneaked into Lunpa? That's far too
+///   dangerous!` (FLAG_KALAY_LAYANA_SAID_LUNPA_TOO_DANGEROUS). From then on
+///   she talks of Dodonpa's greed.
+///
 /// - Hammet's homecoming (HAMMET_PALACE_LAYANAS_ROOM_FROM_ENTRANCE_ROOM, the
 ///   first time once Hammet is free, FLAG_DODONPA_LOCKED_UP;
 ///   FLAG_HAMMET_BACK_HOME_SEEN), in which Hammet sends the party on to
-///   Hesperia. Afterwards Hammet stands beside Layana, and the door to the
-///   underground passage, opened for the party in thanks, is drawn open on
-///   entering by HAMMET_PALACE_PASSAGE_DOOR_FROM_EAST_WING or
+///   Hesperia.
+///
+///   Afterwards Hammet stands beside Layana. The door to the underground
+///   passage, opened for the party in thanks, is drawn open on entering by
+///   HAMMET_PALACE_PASSAGE_DOOR_FROM_EAST_WING or
 ///   HAMMET_PALACE_FROM_KALAY_TUNNEL_TREASURE_ROOM with FLAG_KALAY_TUNNEL_OPEN
 ///   set.
 ///
 /// The people of the palace (ACTOR_WORRIED_ABOUT_THE_TOWNSFOLK to
 /// ACTOR_ASKING_ABOUT_THE_SILK_TRADE) have one line before Hammet is free and
-/// another after. Walking north into a door (step triggers 2, 3, 4 and 14)
-/// opens it; the other exits join the rooms plainly.
+/// another after.
+///
+/// Walking north into a door (step triggers 2, 3, 4 and 14) opens it. The
+/// other exits join the rooms plainly.
+///
 /// HAMMET_PALACE_TO_HAMMET_PALACE_GROUNDS leads out to the front of the palace
 /// (HAMMET_PALACE_GROUNDS_FROM_HAMMET_PALACE), and
 /// HAMMET_PALACE_TO_KALAY_TUNNEL_TREASURE_ROOM down into the Kalay Tunnel
-/// (KALAY_TUNNEL_TREASURE_ROOM_FROM_HAMMET_PALACE). Searching finds a turban,
-/// the symbol of Kalay's soldiers, and two books, `Business and You` and `The
-/// Good Host`; a chest holds a Water Jacket and a barrel a Nut.
+/// (KALAY_TUNNEL_TREASURE_ROOM_FROM_HAMMET_PALACE).
+///
+/// Searching finds a turban, the symbol of Kalay's soldiers, and two books,
+/// `Business and You` and `The Good Host`. A chest holds a Water Jacket and a
+/// barrel a Nut.
 #include "main_routine_work.h"
 #include "scene_ids.h"
 #include "module/scene/hammet_palace.h"
@@ -71,8 +83,9 @@
 #define FLAG_KALAY_HEARD_HAMMET_HELD_IN_LUNPA FLAG_AREA_TEMP_21
 
 /// The palace's actors, numbered in the order of
-/// gHammetPalaceActorPlacements from ACTOR_FIRST_PLACED; its rows for
-/// Garet, Ivan and Mia keep the party's own slots.
+/// gHammetPalaceActorPlacements from ACTOR_FIRST_PLACED.
+///
+/// Its rows for Garet, Ivan and Mia keep the party's own slots.
 enum HammetPalaceActorId {
   /// ★ Named from the game: "Lady Layana was crying again last night."
   /// (MsgHammetPalaceLadyLayanaWasCryingAgainLast)
@@ -92,33 +105,46 @@ enum HammetPalaceActorId {
   // The people of the palace, each with one line before Hammet is free and
   // another after.
   /// A young man with brown hair in a purple shirt who worries that the
-  /// townsfolk will learn Hammet is a hostage. "The townsfolk don't know about
-  /// Lord Hammet yet, do they?" After: "I hear Hammet was saved by you
-  /// people..."
+  /// townsfolk will learn Hammet is a hostage.
+  ///
+  /// "The townsfolk don't know about Lord Hammet yet, do they?"
+  ///
+  /// After: "I hear Hammet was saved by you people..."
   /// ★ Named from the game: "The townsfolk don't know about Lord Hammet yet"
   /// (MsgHammetPalaceTheTownsfolkDontKnowAboutLord)
   ACTOR_WORRIED_ABOUT_THE_TOWNSFOLK,
-  /// A woman with fair hair who asks whether Hammet will be freed. "Lord Hammet
-  /// will be released soon. Right?" After: "They say Hammet's return is
-  /// supposed to be a secret for now."
+  /// A woman with fair hair who asks whether Hammet will be freed.
+  ///
+  /// "Lord Hammet will be released soon. Right?"
+  ///
+  /// After: "They say Hammet's return is supposed to be a secret for now."
   /// ★ Named from the game: "Lord Hammet will be released soon. Right?"
   /// (MsgKalayLordHammetWillReleasedSoon)
   ACTOR_ASKING_IF_HAMMET_WILL_BE_RELEASED,
   /// A grey-haired man in a black suit who tells of Layana's grief, and later
-  /// of the door Layana had opened for the party. "Layana is putting up a
-  /// strong front whenever people are around." After: "I left the door to the
-  /// underground passage open, so go have a look."
+  /// of the door Layana had opened for the party.
+  ///
+  /// "Layana is putting up a strong front whenever people are around."
+  ///
+  /// After: "I left the door to the underground passage open, so go have a
+  /// look."
   /// ★ Named from the game: "I left the door to the underground passage open"
   /// (MsgHammetPalaceILeftTheDoorToThe)
   ACTOR_LEFT_THE_PASSAGE_DOOR_OPEN,
-  /// A bald man in red who fears Dodonpa's men. "Merchants are supposed to be
-  /// protected under the laws of Angara." After: "I wonder if any of Dodonpa's
-  /// thugs have come here after Hammet..."
+  /// A bald man in red who fears Dodonpa's men.
+  ///
+  /// "Merchants are supposed to be protected under the laws of Angara."
+  ///
+  /// After: "I wonder if any of Dodonpa's thugs have come here after
+  /// Hammet..."
   /// ★ Named from the game: "I wonder if any of Dodonpa's thugs have come here"
   /// (MsgHammetPalaceIWonderIfAnyOfDodonpas)
   ACTOR_AFRAID_OF_DODONPAS_THUGS,
   /// A young man with brown hair in green who asks whether Hammet's silk trade
-  /// has ended. "Has the legacy of Lord Hammet's silk trading come to an end?"
+  /// has ended.
+  ///
+  /// "Has the legacy of Lord Hammet's silk trading come to an end?"
+  ///
   /// After: "The secret passage is locked because Hammet's treasure is in
   /// there."
   /// ★ Named from the game: "Has the legacy of Lord Hammet's silk trading come
@@ -175,7 +201,9 @@ const struct Trigger *Scene_GetTriggers(void) {
 }
 
 /// Talking to one of the people of Hammet Palace before Hammet is free: he
-/// hopes for his release. `Lord Hammet will be released soon. Right?`
+/// hopes for his release.
+///
+/// `Lord Hammet will be released soon. Right?`
 static void HammetPalace_AskWhetherHammetWillBeReleased(void) {
   Event_Start();
   Event_SetMessageId(MsgKalayLordHammetWillReleasedSoon);
@@ -187,8 +215,9 @@ static void HammetPalace_AskWhetherHammetWillBeReleased(void) {
 }
 
 /// Talking to one of the people of Hammet Palace before Hammet is free: he
-/// worries for Hammet's silk trade. `Has the legacy of Lord Hammet's silk
-/// trading come to an end?`
+/// worries for Hammet's silk trade.
+///
+/// `Has the legacy of Lord Hammet's silk trading come to an end?`
 static void HammetPalace_AskWhetherSilkTradeHasEnded(void) {
   Event_Start();
   Event_SetMessageId(MsgKalayHasLegacyLordHammetsSilk);
@@ -199,11 +228,16 @@ static void HammetPalace_AskWhetherSilkTradeHasEnded(void) {
   Event_End();
 }
 
-/// Layana scolds Isaac for sneaking into Lunpa. It's the first talk with her in
-/// Hammet Palace after the party has heard in Lunpa that Hammet is held there
-/// (area temp flag FLAG_KALAY_HEARD_HAMMET_HELD_IN_LUNPA). `Isaac, you
-/// sneaked into Lunpa? That's far too dangerous!` She is glad Hammet is unhurt,
-/// but asks the party not to go back, and to fulfill their quest.
+/// Layana scolds Isaac for sneaking into Lunpa.
+///
+/// It's the first talk with her in Hammet Palace after the party has heard in
+/// Lunpa that Hammet is held there (area temp flag
+/// FLAG_KALAY_HEARD_HAMMET_HELD_IN_LUNPA).
+///
+/// `Isaac, you sneaked into Lunpa? That's far too dangerous!`
+///
+/// She is glad Hammet is unhurt, but asks the party not to go back, and to
+/// fulfill their quest.
 static void HammetPalace_LayanaScoldsLunpaVisit(void) {
 
   Event_Start();
@@ -267,15 +301,17 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-/// Sets up the room the party enters by. In Layana's room
-/// (HAMMET_PALACE_LAYANAS_ROOM_FROM_ENTRANCE_ROOM), Hammet stands beside her
-/// once he is free, and his homecoming plays the first time; before that she
-/// stands elsewhere once the party has heard of him in Lunpa
-/// (FLAG_KALAY_HEARD_HAMMET_HELD_IN_LUNPA). By the door to the underground
-/// passage (HAMMET_PALACE_PASSAGE_DOOR_FROM_EAST_WING and
-/// HAMMET_PALACE_FROM_KALAY_TUNNEL_TREASURE_ROOM) the door is drawn open once
-/// FLAG_KALAY_TUNNEL_OPEN is set.
-/// HAMMET_PALACE_LAYANAS_ROOM_FROM_HAMMET_PALACE_GROUNDS is Ivan's report.
+/// Sets up the room the party enters by.
+///
+/// - In Layana's room (HAMMET_PALACE_LAYANAS_ROOM_FROM_ENTRANCE_ROOM), Hammet
+///   stands beside her once he is free, and his homecoming plays the first
+///   time. Before that she stands elsewhere once the party has heard of him
+///   in Lunpa (FLAG_KALAY_HEARD_HAMMET_HELD_IN_LUNPA).
+/// - By the door to the underground passage
+///   (HAMMET_PALACE_PASSAGE_DOOR_FROM_EAST_WING and
+///   HAMMET_PALACE_FROM_KALAY_TUNNEL_TREASURE_ROOM) the door is drawn open
+///   once FLAG_KALAY_TUNNEL_OPEN is set.
+/// - HAMMET_PALACE_LAYANAS_ROOM_FROM_HAMMET_PALACE_GROUNDS is Ivan's report.
 static void HammetPalace_SetUpEntrance(void) {
   struct Actor *actor;
   s32 facing;
@@ -333,10 +369,12 @@ static void HammetPalace_SetUpEntrance(void) {
 
 /// Ivan's report in Hammet Palace, when the guards at the door bring the party
 /// to Layana: she had hoped Hammet came back with him.
-/// The ransom was paid long ago, yet Dodonpa holds Hammet still; Layana will
-/// not risk him by sending the soldiers, nor the party. She tells of the
-/// prophecy, the Jupiter Adept who gave Hammet the Shaman's Rod and Ivan, and
-/// what the rod is to find, then sends everyone back to their posts.
+///
+/// - The ransom was paid long ago, yet Dodonpa holds Hammet still.
+/// - Layana will not risk him by sending the soldiers, nor the party.
+/// - She tells of the prophecy, the Jupiter Adept who gave Hammet the Shaman's
+///   Rod and Ivan, and what the rod is to find.
+/// - Then she sends everyone back to their posts.
 static void HammetPalace_IvanReportsToLayana(void) {
 
   struct FieldWork *work;
@@ -861,10 +899,13 @@ static void HammetPalace_FacePartyNorth(s32 waitFrames) {
 }
 
 /// Hammet's homecoming in Hammet Palace, the first time the party walks into
-/// Layana's room once he is free: Hammet welcomes them, Layana scolds Ivan for
-/// going to Lunpa against her word, and Ivan decides to leave at once on the
-/// quest. Hammet sends them to Hesperia with the Shaman's Rod, as the Jupiter
-/// Adept said.
+/// Layana's room once he is free.
+///
+/// - Hammet welcomes them.
+/// - Layana scolds Ivan for going to Lunpa against her word.
+/// - Ivan decides to leave at once on the quest.
+/// - Hammet sends them to Hesperia with the Shaman's Rod, as the Jupiter Adept
+///   said.
 static void HammetPalace_HammetsHomecoming(void) {
 
   struct Actor *leader;

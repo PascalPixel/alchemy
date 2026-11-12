@@ -3,6 +3,7 @@
 
 #include "types.h"
 #include "system.h"
+#include "scene_tables.h"
 #include "actor.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"
@@ -63,10 +64,10 @@ void Func_02001aec(struct Actor *object);
 void Func_02001cc4(struct Actor *object, s32 layer);
 void Func_02001b64(struct Actor *object);
 
-extern const u8 gData_020032d4[];
-extern const u8 gData_020034f0[];
-extern const u8 gData_02003508[];
-extern const u8 gData_02003598[];
+extern u32 gData_020032d4[];
+extern struct ActorPlacement gData_020034f0[];
+extern struct ActorPlacement gData_02003508[];
+extern struct ActorPlacement gData_02003598[];
 
 extern u16 gData_02003918;
 extern u16 gData_02003920;
@@ -74,12 +75,12 @@ extern u16 gData_02003924;
 extern u16 *gData_02003928;
 extern u16 gData_02003934;
 extern u16 gData_02003938;
-extern const u8 gData_020036b8[];
-extern const u8 gData_020036c8[];
-extern const u8 gData_02003708[];
-extern const u8 gData_02003858[];
-extern const u8 gData_0200387c[];
-extern const u8 gData_02003900[];
+extern struct Trigger gData_020036b8[];
+extern struct Trigger gData_020036c8[];
+extern struct Trigger gData_02003708[];
+extern struct Trigger gData_02003858[];
+extern s32 gData_0200387c[];
+extern u32 gData_02003900[];
 
 s32 Func_020016e8(u16 *list);
 void Func_0200170c(void);

@@ -1836,7 +1836,7 @@ SECTIONS
         "*/games/tla/src/scene/prox/s391c.o"(.text)
         "*/games/tla/src/scene/prox/s4254.o"(.text)
         "*/games/tla/src/scene/prox/import.o"(.text)
-        "*/games/tla/src/scene/prox/data.o"(.data)
+        "*/games/tla/src/scene/prox/s4254.o"(.data)
     }
     .bss :
     {
@@ -1878,7 +1878,6 @@ SECTIONS
         "*/games/tla/src/scene/mars_lighthouse_entrance/s1e60.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_entrance/s20ec.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_entrance/s2270.o"(.text)
-        "*/games/tla/src/scene/mars_lighthouse_entrance/flash.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_entrance/s263c.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_entrance/s2860.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_entrance/ride_active.o"(.text)
@@ -1893,7 +1892,7 @@ SECTIONS
         "*/games/tla/src/scene/mars_lighthouse_entrance/s42f8.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_entrance/s4a60.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_entrance/import.o"(.text)
-        "*/games/tla/src/scene/mars_lighthouse_entrance/data.o"(.data)
+        "*/games/tla/src/scene/mars_lighthouse_entrance/s4a60.o"(.data)
     }
     .bss :
     {
@@ -1915,7 +1914,6 @@ SECTIONS
         "*/games/tla/src/scene/mars_lighthouse_star_room/s1bf8.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_star_room/s1d7c.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_star_room/ride_handle.o"(.text)
-        "*/games/tla/src/scene/mars_lighthouse_star_room/flash.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_star_room/s2148.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_star_room/s236c.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_star_room/ride_active.o"(.text)
@@ -1929,7 +1927,7 @@ SECTIONS
         "*/games/tla/src/field/field_effect/advance_motion.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_star_room/s3e04.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_star_room/import.o"(.text)
-        "*/games/tla/src/scene/mars_lighthouse_star_room/data.o"(.data)
+        "*/games/tla/src/scene/mars_lighthouse_star_room/s3e04.o"(.data)
     }
     .bss :
     {
@@ -1946,15 +1944,13 @@ SECTIONS
         "*/games/tla/src/scene/mars_lighthouse_room_m/s0b64.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_room_m/stop.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_room_m/s1988.o"(.text)
-        "*/games/tla/src/scene/mars_lighthouse_room_m/s1aec.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_room_m/s1b64.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_room_m/s1d08.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_room_m/s1f94.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_room_m/s2118.o"(.text)
-        "*/games/tla/src/scene/mars_lighthouse_room_m/flash.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_room_m/s2708.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_room_m/import.o"(.text)
-        "*/games/tla/src/scene/mars_lighthouse_room_m/data.o"(.data)
+        "*/games/tla/src/scene/mars_lighthouse_room_m/s2708.o"(.data)
     }
     .bss :
     {
@@ -1968,7 +1964,6 @@ SECTIONS
     {
         "*/games/tla/src/scene/mars_lighthouse_room_f/entry.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_room_f.o"(.text)
-        "*/games/tla/src/scene/mars_lighthouse_room_f/s14dc.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_room_f/s167c.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_room_f/s1a54.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_room_f/s1e20.o"(.text)
@@ -1988,7 +1983,7 @@ SECTIONS
         "*/games/tla/src/scene/mars_lighthouse_room_f/s4700.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_room_f/s5048.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_room_f/import.o"(.text)
-        "*/games/tla/src/scene/mars_lighthouse_room_f/data.o"(.data)
+        "*/games/tla/src/scene/mars_lighthouse_room_f/s5048.o"(.data)
         "*/games/tla/src/graphics/field/cached_a.o"(.rodata)
         "*/games/tla/src/graphics/field/cached_b.o"(.rodata)
         "*/games/tla/src/graphics/field/cached_c.o"(.rodata)
@@ -2009,7 +2004,7 @@ SECTIONS
         "*/games/tla/src/scene/mars_lighthouse_aerie/s3370.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_aerie/s53e4.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_aerie/import.o"(.text)
-        "*/games/tla/src/scene/mars_lighthouse_aerie/data.o"(.data)
+        "*/games/tla/src/scene/mars_lighthouse_aerie/s53e4.o"(.data)
     }
     .bss :
     {
@@ -2083,7 +2078,7 @@ SECTIONS
         "*/games/tla/src/scene/anemos_inner_sanctum_entrance/s0588.o"(.text)
         "*/games/tla/src/scene/anemos_inner_sanctum_entrance/list.o"(.text)
         "*/games/tla/src/scene/anemos_inner_sanctum_entrance/import.o"(.text)
-        "*/games/tla/src/scene/anemos_inner_sanctum_entrance/data.o"(.data)
+        "*/games/tla/src/scene/anemos_inner_sanctum_entrance/list.o"(.data)
         "*/games/tla/src/graphics/field/cached_a.o"(.rodata)
         "*/games/tla/src/graphics/field/cached_d.o"(.rodata)
         "*/games/tla/src/scene/anemos_inner_sanctum_entrance/data2.o"(.data)

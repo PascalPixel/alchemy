@@ -7,6 +7,7 @@
 #include "actor.h"
 #include "main_routine_work.h"
 #include "event_inline.h"
+#include "scene_tables.h"
 
 struct Trigger;
 
@@ -22,19 +23,19 @@ void Func_0200560c(void);
 void Func_02005614(void);
 void Func_020057cc(void);
 
-extern const u8 MsgUhhhhnnnICan[];
-extern const u8 MsgKoffKoffYou[];
-extern const u8 MsgUnnnnIAm[];
-extern const u8 MsgIUnderstandYour[];
-extern const u8 gData_0200626c[];
-extern const u8 gData_0200644c[];
-extern const u8 gData_020066bc[];
+extern u8 MsgUhhhhnnnICan[];
+extern u8 MsgKoffKoffYou[];
+extern u8 MsgUnnnnIAm[];
+extern u8 MsgIUnderstandYour[];
+extern s16 gData_0200626c[];
+extern struct ActorPlacement gData_0200644c[];
+extern s16 gData_020066bc[];
 extern u32 gData_02006b64;
 extern u32 gData_02006b6c;
 
 void Func_02004e80(s32 from, s32 to);
 
-extern const u8 MsgDoNotLet[];
+extern u8 MsgDoNotLet[];
 extern u16 gData_02006cd0;
 extern u16 gData_02006cd8;
 extern u16 gData_02006cdc;

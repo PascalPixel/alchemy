@@ -274,3 +274,14 @@ void Func_02001fcc(void) {
 }
 
 #include "../../field/field_effect/advance_spin.c"
+
+void Func_02002120(struct Actor *object) {
+  switch (gFrameCount & 7) {
+  case 0:
+    Animation_ApplyChildValues(object, 10);
+    break;
+  case 4:
+    Animation_ApplyChildValues(object, 0);
+    break;
+  }
+}

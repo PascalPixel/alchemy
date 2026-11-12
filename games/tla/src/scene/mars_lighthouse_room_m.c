@@ -90,7 +90,7 @@ void Func_02000058(s32 id, s32 value) {
 
 #include "mars_lighthouse_room_m/mars_lighthouse_room_m.h"
 
-const u8 *Func_02000080(void) {
+const struct ActorPlacement *Func_02000080(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov6ACRoom6)
@@ -426,7 +426,7 @@ void Func_02000abc(void) {
   FieldTask_Remove(Func_0200055c);
 }
 
-const u8 *Func_02000af4(void) {
+const struct Trigger *Func_02000af4(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov6ACRoom6)

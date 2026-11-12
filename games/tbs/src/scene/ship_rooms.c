@@ -442,6 +442,26 @@ enum TolbiShipRowingDeckActorId {
   ACTOR_ROWING_FIRST_MONSTER = ACTOR_ROWING_FIRST_OAR + 8
 };
 
+/// Animations of the rowing deck's sprites beyond enum ActorAnimation, as
+/// their animation tables and frames under graphics/sprite draw them.
+enum ShipRoomsAnimation {
+  /// Pulling an oar from a seat, as the oarsmen's sheet (spr_144.png) and most
+  /// passengers' sheets draw it.
+  ANIM_ROW = 5,
+  /// The tour guide's sheet rowing again, its oar drawn pink (spr_171.png).
+  ANIM_SECOND_GUIDE_ROW = 6,
+  ANIM_OLD_MAN_ROW = 9,          ///< the old man's rowing (spr_103.png)
+  ANIM_TICKET_GRUMBLER_ROW = 10, ///< the young man's rowing (spr_108.png)
+  /// An oarsman lying on his back, arms flung out (spr_144.png): "An oarsman
+  /// was injured?"
+  ANIM_OARSMAN_INJURED = 6,
+  /// The drummer standing with his drum at his side (spr_147.png).
+  ANIM_DRUMMER_HOLD_DRUM = 5,
+  /// The drummer, seen from behind, striking his drum once, then
+  /// ANIM_DRUMMER_HOLD_DRUM (spr_147.png).
+  ANIM_DRUMMER_BEAT = 7
+};
+
 /// The step triggers and searched containers below decks whose subjects are
 /// more than an exit.
 enum ShipRoomsCellBehavior {
@@ -527,7 +547,7 @@ static void ShipRooms_SwapRowerSelections(s32 firstSeatFlags,
 /// Returns 0.
 static s32 ShipRooms_ResetActor(struct Actor *interpreter) {
   struct Actor *actor = interpreter;
-  Actor_SelectAnimation(actor, 1);
+  Actor_SelectAnimation(actor, ANIM_STAND);
   actor->x.fixed = 0;
   actor->y.fixed = 0;
   actor->z.fixed = 0;
@@ -639,14 +659,14 @@ static void ShipRooms_PaceCaptainsQuarters(struct Actor *updated) {
     actor->riseCounter = 0;
     break;
   case 4:
-    Actor_SelectAnimation(actor, 2);
+    Actor_SelectAnimation(actor, ANIM_WALK);
     FieldActor_SetMoveTarget(actor, 468, 32, 632);
     actor->riseBaseY = 60;
     actor->userValue++;
     break;
   case 5:
     if (ShipRooms_HasArrived(actor) != 0) {
-      Actor_SelectAnimation(actor, 1);
+      Actor_SelectAnimation(actor, ANIM_STAND);
       actor->riseCounter = 0;
       if (captain->paused == 0) {
         actor->riseEnabled = 1;
@@ -656,14 +676,14 @@ static void ShipRooms_PaceCaptainsQuarters(struct Actor *updated) {
     break;
   case 7:
     if (captain->paused == 0) {
-      Actor_SelectAnimation(actor, 3);
+      Actor_SelectAnimation(actor, ANIM_NOD);
       actor->riseEnabled = 2;
     }
     actor->userValue++;
     actor->riseCounter = 0;
     break;
   case 9:
-    Actor_SelectAnimation(actor, 2);
+    Actor_SelectAnimation(actor, ANIM_WALK);
     FieldActor_SetMoveTarget(actor, 480, 32, 600);
     actor->riseBaseY = 60;
     actor->userValue++;
@@ -673,7 +693,7 @@ static void ShipRooms_PaceCaptainsQuarters(struct Actor *updated) {
     break;
   case 10:
     if (ShipRooms_HasArrived(actor) != 0) {
-      Actor_SelectAnimation(actor, 1);
+      Actor_SelectAnimation(actor, ANIM_STAND);
       actor->riseCounter = 0;
       actor->userValue++;
     }
@@ -693,7 +713,7 @@ static void ShipRooms_PaceCaptainsQuarters(struct Actor *updated) {
 
 /// The update of the captain, who watches Kaja pace.
 ///
-/// He turns north-northeast at the first signal, shrugs at the second if still
+/// He turns north-northeast at the first signal, nods at the second if still
 /// turned, and faces east at the third. Does nothing while paused.
 static void ShipRooms_WatchPacer(struct Actor *actor) {
   struct Actor *watcher = (struct Actor *)actor;
@@ -708,7 +728,7 @@ static void ShipRooms_WatchPacer(struct Actor *actor) {
     pacer->riseEnabled = 0;
   } else if (pacer->riseEnabled == 2) {
     if (watcher->riseCounter != 0)
-      Actor_SelectAnimation(watcher, 3);
+      Actor_SelectAnimation(watcher, ANIM_NOD);
     watcher->riseCounter = 0;
     pacer->riseEnabled = 0;
   } else if (pacer->riseEnabled == 3) {
@@ -912,7 +932,7 @@ static void ShipRooms_TalkToCaptainsQuartersCrewman(void) {
       Event_SetMessageId(MsgTolbiShipNowWantSeeCaptainToo);
       // "Now what? You want to see the captain too?"
       Event_OpenMessage(ACTOR_QUARTERS_CREWMAN, 0);
-      if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
+      if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
         ShipRooms_DiscussLaunchingWithoutAnchor();
       } else {
         Actor_StartRepeatedMotion(ACTOR_QUARTERS_CREWMAN, 2);
@@ -955,9 +975,9 @@ static void ShipRooms_TalkToCaptain(void) {
     Event_SetMessageId(MsgTolbiShipOarsmanWasInjured);
     ShipRooms_Say(ACTOR_QUARTERS_CAPTAIN);
     Actor_FaceDirection(ACTOR_QUARTERS_CAPTAIN, FACING_NORTH_NORTHEAST, 60);
-    Actor_SetAnimationAndWait(ACTOR_QUARTERS_CAPTAIN, 4);
+    Actor_SetAnimationAndWait(ACTOR_QUARTERS_CAPTAIN, ANIM_SHAKE_HEAD);
     ShipRooms_Say(ACTOR_QUARTERS_CAPTAIN);
-    Actor_SetAnimationAndWait(ACTOR_QUARTERS_CAPTAIN, 3);
+    Actor_SetAnimationAndWait(ACTOR_QUARTERS_CAPTAIN, ANIM_NOD);
   } else if (Event_GetFlag(FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED) != 0) {
     Event_SetMessageId(MsgTolbiShipWeDontKnowMightHappen);
     // "We don't know what might happen before we arrive. Be ready..."
@@ -990,7 +1010,7 @@ static void ShipRooms_TalkToWaitingWarrior(void) {
     ShipRooms_Say(ACTOR_HOLD_WARRIOR);
     Actor_FaceActor(ACTOR_HOLD_WARRIOR, ACTOR_PARTY_LEADER, 10);
     Event_OpenMessage(ACTOR_HOLD_WARRIOR, 0);
-    if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
+    if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
       Event_Wait(40);
       ShipRooms_Say(ACTOR_HOLD_WARRIOR);
       ShipRooms_Turn(ACTOR_HOLD_WARRIOR, FACING_SOUTH_SOUTHEAST);
@@ -1032,7 +1052,7 @@ static void ShipRooms_TalkToWaitingMuscleAdmirer(void) {
 static inline void ShipRooms_RejoinParty(s32 rowerId) {
   struct Actor *leader;
 
-  Actor_SetAnimation(rowerId, 2);
+  Actor_SetAnimation(rowerId, ANIM_WALK);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != 0) {
     Actor_SetDestination(rowerId, leader->x.part.pixel, leader->z.part.pixel);
@@ -1127,9 +1147,9 @@ static void ShipRooms_AskStaredAtPassengerToRow(void) {
     Event_SetMessageId(MsgTolbiShipOhhhhNooooGoingMakeMe);
     // "What? Ohhhh, noooo... Are you going to make me row?"
     Event_OpenMessage(ACTOR_SEA_HOLD_STARED_AT_PASSENGER, 0);
-    if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
+    if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
       ShipRooms_Say(ACTOR_SEA_HOLD_STARED_AT_PASSENGER);
-      Actor_SetAnimation(ACTOR_SEA_HOLD_STARED_AT_PASSENGER, 2);
+      Actor_SetAnimation(ACTOR_SEA_HOLD_STARED_AT_PASSENGER, ANIM_WALK);
       actor = Actor_Get(ACTOR_PARTY_LEADER);
       if (actor != 0) {
         Actor_SetDestination(ACTOR_SEA_HOLD_STARED_AT_PASSENGER,
@@ -1174,9 +1194,9 @@ static void ShipRooms_AskSecondGuideToRow(void) {
     Actor_RunRepeatedMotion(ACTOR_SEA_HOLD_SECOND_GUIDE, 1);
     // "What? Me? You must be joking! Really?"
     Event_OpenMessage(ACTOR_SEA_HOLD_SECOND_GUIDE, 0);
-    if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
+    if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
       ShipRooms_Say(ACTOR_SEA_HOLD_SECOND_GUIDE);
-      Actor_SetAnimation(ACTOR_SEA_HOLD_SECOND_GUIDE, 2);
+      Actor_SetAnimation(ACTOR_SEA_HOLD_SECOND_GUIDE, ANIM_WALK);
       actor = Actor_Get(ACTOR_PARTY_LEADER);
       if (actor != 0) {
         Actor_SetDestination(ACTOR_SEA_HOLD_SECOND_GUIDE, actor->x.part.pixel,
@@ -1307,14 +1327,14 @@ static void ShipRooms_StepBesideLeader(s32 passengerId) {
                            leaderPosition->z.fixed);
   }
   Actor_SetSpeed(passengerId, 1.6);
-  Actor_SetAnimation(passengerId, 2);
+  Actor_SetAnimation(passengerId, ANIM_WALK);
   {
     s32 offset = gShipRooms_TurnSteps[direction];
 
     Actor_SetDestinationOffset(passengerId, offset >> 16, (offset << 16) >> 16);
   }
   Actor_WaitForMoveById(passengerId);
-  Actor_SetAnimation(passengerId, 1);
+  Actor_SetAnimation(passengerId, ANIM_STAND);
   ShipRooms_Turn(passengerId, leader->facing);
 }
 
@@ -1541,9 +1561,9 @@ static void ShipRooms_AskToRow(s32 speaker, s32 question, s32 seatFlag) {
   Event_Start();
   Event_SetMessageId(question);
   Event_OpenMessage(speaker, 0);
-  if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     ShipRooms_Say(speaker);
-    Actor_SetAnimation(speaker, 2);
+    Actor_SetAnimation(speaker, ANIM_WALK);
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     if (leader != 0) {
       Actor_SetDestination(speaker, leader->x.part.pixel, leader->z.part.pixel);
@@ -1741,13 +1761,13 @@ static void ShipRooms_WatchWarriorsStormOff(void) {
                     30);
     Actor_StartRepeatedMotion(ACTOR_HOLD_SECOND_GUIDE, 1);
     ShipRooms_Say(guideSpeaker);
-    Actor_SetAnimationAndWait(ACTOR_HOLD_OURANOS, 4);
+    Actor_SetAnimationAndWait(ACTOR_HOLD_OURANOS, ANIM_SHAKE_HEAD);
     ShipRooms_Say(SPEAKER(ACTOR_HOLD_OURANOS, SPEAKER_PORTRAIT_RIGHT));
     Actor_StartRepeatedMotion(ACTOR_HOLD_OURANOS, 2);
     ShipRooms_Say(SPEAKER(ACTOR_HOLD_OURANOS, SPEAKER_PORTRAIT_RIGHT));
-    Actor_SetAnimation(ACTOR_HOLD_SECOND_GUIDE, 4);
+    Actor_SetAnimation(ACTOR_HOLD_SECOND_GUIDE, ANIM_SHAKE_HEAD);
     ShipRooms_Say(guideSpeaker);
-    Actor_SetAnimationAndWait(ACTOR_HOLD_SEAN, 4);
+    Actor_SetAnimationAndWait(ACTOR_HOLD_SEAN, ANIM_SHAKE_HEAD);
     ShipRooms_Say(seanSpeaker);
     ShipRooms_Turn(ACTOR_HOLD_SEAN, FACING_WEST);
     Actor_StartRepeatedMotion(ACTOR_HOLD_SEAN, 2);
@@ -1784,16 +1804,16 @@ static void ShipRooms_WatchWarriorsStormOff(void) {
     Event_Wait(60);
     Actor_RunRepeatedMotion(ACTOR_HOLD_OURANOS, 1);
     ShipRooms_Say(ACTOR_HOLD_OURANOS);
-    Actor_SetAnimationAndWait(ACTOR_HOLD_SEAN, 3);
+    Actor_SetAnimationAndWait(ACTOR_HOLD_SEAN, ANIM_NOD);
     ShipRooms_Say(seanSpeaker);
     Actor_ShowEmote(ACTOR_HOLD_SECOND_GUIDE, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
     Actor_RunRepeatedMotion(ACTOR_HOLD_SECOND_GUIDE, 2);
     ShipRooms_Say(guideSpeaker);
-    Actor_SetAnimationAndWait(ACTOR_HOLD_OURANOS, 3);
+    Actor_SetAnimationAndWait(ACTOR_HOLD_OURANOS, ANIM_NOD);
     ShipRooms_Say(ACTOR_HOLD_OURANOS);
     Actor_FaceDirection(ACTOR_HOLD_SEAN, FACING_NORTH_NORTHWEST, 40);
-    Actor_SetAnimation(ACTOR_HOLD_SEAN, 3);
-    Actor_SetAnimationAndWait(ACTOR_HOLD_OURANOS, 3);
+    Actor_SetAnimation(ACTOR_HOLD_SEAN, ANIM_NOD);
+    Actor_SetAnimationAndWait(ACTOR_HOLD_OURANOS, ANIM_NOD);
     Actor_SetSpeed(ACTOR_HOLD_SEAN, 1.6);
     Actor_SetSpeed(ACTOR_HOLD_OURANOS, 1.6);
     action = gShipRooms_LeaveHold;
@@ -1867,16 +1887,16 @@ static void ShipRooms_DiscussLaunchingWithoutAnchor(void) {
   ShipRooms_Say(SPEAKER(ACTOR_QUARTERS_SEAN,
                         SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT));
   Actor_RunRepeatedMotion(ACTOR_QUARTERS_CAPTAIN, 1);
-  Actor_SetAnimation(ACTOR_QUARTERS_CAPTAIN, 3);
+  Actor_SetAnimation(ACTOR_QUARTERS_CAPTAIN, ANIM_NOD);
   ShipRooms_Say(ACTOR_QUARTERS_CAPTAIN);
   ShipRooms_Turn(ACTOR_QUARTERS_SEAN, FACING_SOUTH_SOUTHEAST);
   ShipRooms_Say(SPEAKER(ACTOR_QUARTERS_SEAN,
                         SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT));
   ShipRooms_Turn(ACTOR_QUARTERS_OURANOS, FACING_NORTH_NORTHWEST);
-  Actor_SetAnimationAndWait(ACTOR_QUARTERS_OURANOS, 3);
+  Actor_SetAnimationAndWait(ACTOR_QUARTERS_OURANOS, ANIM_NOD);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_QUARTERS_SECOND_GUIDE, 1);
-  Actor_SetAnimationAndWait(ACTOR_QUARTERS_SECOND_GUIDE, 3);
+  Actor_SetAnimationAndWait(ACTOR_QUARTERS_SECOND_GUIDE, ANIM_NOD);
   ShipRooms_Say(ACTOR_QUARTERS_SECOND_GUIDE);
   Actor_FaceDirection(ACTOR_QUARTERS_SECOND_GUIDE, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_QUARTERS_SEAN, FACING_SOUTH_SOUTHWEST, 0);
@@ -1887,7 +1907,7 @@ static void ShipRooms_DiscussLaunchingWithoutAnchor(void) {
   Actor_WalkTo(ACTOR_QUARTERS_SEAN, 444, 668);
   Actor_WalkToAndWait(ACTOR_QUARTERS_SECOND_GUIDE, 472, 668);
   Actor_WaitForMoveById(ACTOR_QUARTERS_SEAN);
-  Actor_SetAnimation(ACTOR_QUARTERS_SEAN, 1);
+  Actor_SetAnimation(ACTOR_QUARTERS_SEAN, ANIM_STAND);
   Event_Wait(80);
   ShipRooms_Turn(ACTOR_QUARTERS_SEAN, FACING_NORTH_NORTHEAST);
   Actor_ShowEmote(ACTOR_QUARTERS_SEAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
@@ -1900,30 +1920,30 @@ static void ShipRooms_DiscussLaunchingWithoutAnchor(void) {
   ShipRooms_Say(SPEAKER(ACTOR_QUARTERS_OURANOS, SPEAKER_PORTRAIT_LEFT));
   Actor_FaceDirection(ACTOR_QUARTERS_SEAN, FACING_NORTH_NORTHEAST, 0);
   Actor_ShowEmote(ACTOR_QUARTERS_KAJA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-  Actor_SetAnimation(ACTOR_QUARTERS_OURANOS, 4);
+  Actor_SetAnimation(ACTOR_QUARTERS_OURANOS, ANIM_SHAKE_HEAD);
   Event_Wait(20);
   ShipRooms_Say(SPEAKER(ACTOR_QUARTERS_OURANOS, SPEAKER_PORTRAIT_LEFT));
-  Actor_SetAnimation(ACTOR_QUARTERS_KAJA, 3);
+  Actor_SetAnimation(ACTOR_QUARTERS_KAJA, ANIM_NOD);
   ShipRooms_Say(ACTOR_QUARTERS_KAJA);
   Actor_FaceDirection(ACTOR_QUARTERS_SECOND_GUIDE, FACING_NORTH_NORTHEAST, 0);
   Actor_SetAttachedEffect(ACTOR_QUARTERS_SECOND_GUIDE,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_Jump(ACTOR_QUARTERS_SECOND_GUIDE, 2, 20);
   ShipRooms_Say(ACTOR_QUARTERS_SECOND_GUIDE);
-  Actor_SetAnimationAndWait(ACTOR_QUARTERS_KAJA, 3);
+  Actor_SetAnimationAndWait(ACTOR_QUARTERS_KAJA, ANIM_NOD);
   seanSpeech = SPEAKER(ACTOR_QUARTERS_SEAN, SPEAKER_PORTRAIT_LEFT);
   ShipRooms_Say(ACTOR_QUARTERS_KAJA);
   ShipRooms_Turn(ACTOR_QUARTERS_OURANOS, FACING_NORTH_NORTHEAST);
   Actor_RunRepeatedMotion(ACTOR_QUARTERS_SEAN, 1);
   ShipRooms_Say(seanSpeech);
   Actor_ShowEmote(ACTOR_QUARTERS_CAPTAIN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
-  Actor_SetAnimation(ACTOR_QUARTERS_CAPTAIN, 3);
+  Actor_SetAnimation(ACTOR_QUARTERS_CAPTAIN, ANIM_NOD);
   ShipRooms_Say(ACTOR_QUARTERS_CAPTAIN);
   Actor_ShowEmote(ACTOR_QUARTERS_SECOND_GUIDE, EMOTE_IN_FRONT | EMOTE_WINCE,
                   40);
   Actor_Jump(ACTOR_QUARTERS_SECOND_GUIDE, 4, 0);
   ShipRooms_Say(ACTOR_QUARTERS_SECOND_GUIDE);
-  Actor_SetAnimation(ACTOR_QUARTERS_KAJA, 3);
+  Actor_SetAnimation(ACTOR_QUARTERS_KAJA, ANIM_NOD);
   ShipRooms_Say(ACTOR_QUARTERS_KAJA);
   Actor_RunRepeatedMotion(ACTOR_QUARTERS_OURANOS, 1);
   ShipRooms_Say(SPEAKER(ACTOR_QUARTERS_OURANOS, SPEAKER_PORTRAIT_LEFT));
@@ -1936,7 +1956,7 @@ static void ShipRooms_DiscussLaunchingWithoutAnchor(void) {
   Actor_FaceDirection(ACTOR_QUARTERS_KAJA, FACING_SOUTH_SOUTHWEST, 20);
   Actor_StartRepeatedMotion(ACTOR_QUARTERS_KAJA, 2);
   Event_ShowMessageThenWait(ACTOR_QUARTERS_KAJA, 0, 20);
-  Actor_SetAnimation(ACTOR_QUARTERS_OURANOS, 3);
+  Actor_SetAnimation(ACTOR_QUARTERS_OURANOS, ANIM_NOD);
   Event_Wait(20);
   Actor_ShowEmote(ACTOR_QUARTERS_SEAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Actor_StartRepeatedMotion(ACTOR_QUARTERS_SEAN, 2);
@@ -1946,7 +1966,7 @@ static void ShipRooms_DiscussLaunchingWithoutAnchor(void) {
   ShipRooms_Say(ouranosSpeech);
   Actor_StartRepeatedMotion(ACTOR_QUARTERS_SEAN, 2);
   ShipRooms_Say(seanSpeech);
-  Actor_SetAnimationAndWait(ACTOR_QUARTERS_OURANOS, 3);
+  Actor_SetAnimationAndWait(ACTOR_QUARTERS_OURANOS, ANIM_NOD);
   Actor_RunRepeatedMotion(ACTOR_QUARTERS_OURANOS, 1);
   ShipRooms_Say(ouranosSpeech);
   Actor_ShowEmote(ACTOR_QUARTERS_SEAN, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
@@ -1954,7 +1974,7 @@ static void ShipRooms_DiscussLaunchingWithoutAnchor(void) {
   ShipRooms_Say(ACTOR_QUARTERS_KAJA);
   Actor_ShowEmote(ACTOR_QUARTERS_OURANOS, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Actor_FaceDirection(ACTOR_QUARTERS_OURANOS, FACING_NORTH_NORTHEAST, 20);
-  Actor_SetAnimation(ACTOR_QUARTERS_KAJA, 3);
+  Actor_SetAnimation(ACTOR_QUARTERS_KAJA, ANIM_NOD);
   ShipRooms_Say(ACTOR_QUARTERS_KAJA);
   Actor_ShowEmote(ACTOR_QUARTERS_OURANOS, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN,
                   20);
@@ -1963,7 +1983,7 @@ static void ShipRooms_DiscussLaunchingWithoutAnchor(void) {
   Actor_ShowEmote(ACTOR_QUARTERS_KAJA, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
   ShipRooms_Say(ACTOR_QUARTERS_KAJA);
   Actor_RunRepeatedMotion(ACTOR_QUARTERS_CAPTAIN, 1);
-  Actor_SetAnimation(ACTOR_QUARTERS_CAPTAIN, 3);
+  Actor_SetAnimation(ACTOR_QUARTERS_CAPTAIN, ANIM_NOD);
   ShipRooms_Say(ACTOR_QUARTERS_CAPTAIN);
   Actor_FaceDirection(ACTOR_QUARTERS_KAJA, FACING_NORTH_NORTHEAST, 40);
   ShipRooms_Say(ACTOR_QUARTERS_KAJA);
@@ -1977,14 +1997,14 @@ static void ShipRooms_DiscussLaunchingWithoutAnchor(void) {
   Actor_FaceDirection(ACTOR_QUARTERS_CREWMAN, FACING_NORTH_NORTHWEST, 40);
   Actor_RunRepeatedMotion(ACTOR_QUARTERS_OURANOS, 1);
   ShipRooms_Say(ouranosSpeech);
-  Actor_SetAnimation(ACTOR_QUARTERS_SEAN, 3);
+  Actor_SetAnimation(ACTOR_QUARTERS_SEAN, ANIM_NOD);
   Event_ShowMessageThenWait(seanSpeech, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_QUARTERS_KAJA, 2);
   ShipRooms_Say(ACTOR_QUARTERS_KAJA);
   Actor_ShowEmote(ACTOR_QUARTERS_SEAN, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
-  Actor_SetAnimation(ACTOR_QUARTERS_SEAN, 3);
+  Actor_SetAnimation(ACTOR_QUARTERS_SEAN, ANIM_NOD);
   ShipRooms_Say(seanSpeech);
-  Actor_SetAnimationAndWait(ACTOR_QUARTERS_CAPTAIN, 3);
+  Actor_SetAnimationAndWait(ACTOR_QUARTERS_CAPTAIN, ANIM_NOD);
   ShipRooms_Say(ACTOR_QUARTERS_CAPTAIN);
   Actor_FaceDirection(ACTOR_QUARTERS_CAPTAIN, FACING_WEST, 20);
   Sound_Play(MUS_SILENCE);
@@ -2034,7 +2054,7 @@ static void ShipRooms_DiscussLaunchingWithoutAnchor(void) {
                   60);
   ShipRooms_Say(ACTOR_QUARTERS_SECOND_GUIDE);
   ShipRooms_Turn(ACTOR_QUARTERS_CAPTAIN, FACING_SOUTH_SOUTHEAST);
-  Actor_SetAnimationAndWait(ACTOR_QUARTERS_CAPTAIN, 4);
+  Actor_SetAnimationAndWait(ACTOR_QUARTERS_CAPTAIN, ANIM_SHAKE_HEAD);
   ShipRooms_Say(ACTOR_QUARTERS_CAPTAIN);
   // Settle the passengers where the next visit to the captain's quarters needs
   // them.
@@ -2043,7 +2063,7 @@ static void ShipRooms_DiscussLaunchingWithoutAnchor(void) {
   ShipRooms_Say(SPEAKER(ACTOR_QUARTERS_SEAN,
                         SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT));
   Actor_FaceDirection(ACTOR_QUARTERS_CAPTAIN, FACING_SOUTH_SOUTHWEST, 20);
-  Actor_SetAnimationAndWait(ACTOR_QUARTERS_CAPTAIN, 3);
+  Actor_SetAnimationAndWait(ACTOR_QUARTERS_CAPTAIN, ANIM_NOD);
   ShipRooms_Say(ACTOR_QUARTERS_CAPTAIN);
   Actor_ShowEmote(ACTOR_QUARTERS_OURANOS, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   ShipRooms_Say(SPEAKER(ACTOR_QUARTERS_OURANOS, SPEAKER_PORTRAIT_LEFT));
@@ -2052,7 +2072,7 @@ static void ShipRooms_DiscussLaunchingWithoutAnchor(void) {
   Actor_StartRepeatedMotion(ACTOR_QUARTERS_SECOND_GUIDE, 2);
   ShipRooms_Say(ACTOR_QUARTERS_SECOND_GUIDE);
   ShipRooms_Turn(ACTOR_QUARTERS_KAJA, FACING_SOUTH_SOUTHEAST);
-  Actor_SetAnimationAndWait(ACTOR_QUARTERS_KAJA, 4);
+  Actor_SetAnimationAndWait(ACTOR_QUARTERS_KAJA, ANIM_SHAKE_HEAD);
   ShipRooms_Say(SPEAKER(ACTOR_QUARTERS_KAJA, SPEAKER_PORTRAIT_LEFT));
   ShipRooms_Turn(ACTOR_QUARTERS_SEAN, 0);
   Actor_RunRepeatedMotion(ACTOR_QUARTERS_CAPTAIN, 1);
@@ -2087,7 +2107,7 @@ static void ShipRooms_DiscussLaunchingWithoutAnchor(void) {
   Actor_WalkToAndWait(ACTOR_QUARTERS_CREWMAN, 488, 686);
   Actor_FaceDirection(ACTOR_QUARTERS_CREWMAN, FACING_NORTH_NORTHWEST, 0);
   Actor_WaitForMoveById(ACTOR_QUARTERS_SECOND_GUIDE);
-  Actor_SetAnimation(ACTOR_QUARTERS_SECOND_GUIDE, 1);
+  Actor_SetAnimation(ACTOR_QUARTERS_SECOND_GUIDE, ANIM_STAND);
   Actor_FaceDirection(ACTOR_QUARTERS_SECOND_GUIDE, FACING_NORTH_NORTHEAST, 0);
   Scene_PlayMusic();
   GameFlag_Set(FLAG_TOLBI_SHIP_CAPTAIN_DECIDED_TO_SAIL);
@@ -2128,7 +2148,7 @@ static void ShipRooms_ReturnLuckyAnchor(void) {
   Actor_FaceDirection(ACTOR_QUARTERS_CREWMAN, FACING_NORTH_NORTHWEST, 20);
   Actor_RunRepeatedMotion(ACTOR_QUARTERS_CAPTAIN, 1);
   Event_OpenMessage(captainSpeech, 0);
-  if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     Actor_RunRepeatedMotion(ACTOR_QUARTERS_KAJA, 2);
     ShipRooms_Say(SPEAKER(ACTOR_QUARTERS_KAJA,
                           SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT));
@@ -2153,12 +2173,12 @@ static void ShipRooms_ReturnLuckyAnchor(void) {
   ShipRooms_Turn(ACTOR_QUARTERS_SECOND_GUIDE, FACING_NORTH_NORTHWEST);
   ShipRooms_Say(ACTOR_QUARTERS_SECOND_GUIDE);
   ShipRooms_Turn(ACTOR_QUARTERS_CAPTAIN, FACING_SOUTH_SOUTHWEST);
-  Actor_SetAnimationAndWait(ACTOR_QUARTERS_CAPTAIN, 3);
-  Actor_SetAnimationAndWait(ACTOR_QUARTERS_KAJA, 3);
+  Actor_SetAnimationAndWait(ACTOR_QUARTERS_CAPTAIN, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_QUARTERS_KAJA, ANIM_NOD);
   Actor_FaceDirection(ACTOR_QUARTERS_OURANOS, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_QUARTERS_SECOND_GUIDE, FACING_WEST, 20);
-  Actor_SetAnimation(ACTOR_QUARTERS_OURANOS, 3);
-  Actor_SetAnimationAndWait(ACTOR_QUARTERS_SECOND_GUIDE, 3);
+  Actor_SetAnimation(ACTOR_QUARTERS_OURANOS, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_QUARTERS_SECOND_GUIDE, ANIM_NOD);
   Event_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_QUARTERS_SEAN, 1);
   ShipRooms_Turn(ACTOR_QUARTERS_SEAN, FACING_SOUTH_SOUTHEAST);
@@ -2170,7 +2190,7 @@ static void ShipRooms_ReturnLuckyAnchor(void) {
   seanSpeech = SPEAKER(ACTOR_QUARTERS_SEAN,
                        SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT);
   ShipRooms_Turn(ACTOR_QUARTERS_SEAN, FACING_NORTH_NORTHEAST);
-  Actor_SetAnimation(ACTOR_QUARTERS_SEAN, 4);
+  Actor_SetAnimation(ACTOR_QUARTERS_SEAN, ANIM_SHAKE_HEAD);
   ShipRooms_Say(seanSpeech);
   ShipRooms_Turn(ACTOR_QUARTERS_SECOND_GUIDE, FACING_NORTH_NORTHWEST);
   Actor_RunRepeatedMotion(ACTOR_QUARTERS_SECOND_GUIDE, 1);
@@ -2179,12 +2199,12 @@ static void ShipRooms_ReturnLuckyAnchor(void) {
   ShipRooms_Turn(ACTOR_QUARTERS_KAJA, FACING_SOUTH_SOUTHEAST);
   Actor_RunRepeatedMotion(ACTOR_QUARTERS_KAJA, 1);
   ShipRooms_Say(ACTOR_QUARTERS_KAJA);
-  Actor_SetAnimationAndWait(ACTOR_QUARTERS_SEAN, 3);
+  Actor_SetAnimationAndWait(ACTOR_QUARTERS_SEAN, ANIM_NOD);
   ShipRooms_Say(seanSpeech);
   Actor_RunRepeatedMotion(ACTOR_QUARTERS_CAPTAIN, 2);
   ShipRooms_Say(ACTOR_QUARTERS_CAPTAIN);
   ShipRooms_Turn(ACTOR_QUARTERS_SEAN, FACING_NORTH_NORTHEAST);
-  Actor_SetAnimationAndWait(ACTOR_QUARTERS_SEAN, 3);
+  Actor_SetAnimationAndWait(ACTOR_QUARTERS_SEAN, ANIM_NOD);
   ShipRooms_Say(seanSpeech);
   Actor_RunRepeatedMotion(ACTOR_QUARTERS_OURANOS, 2);
   ShipRooms_Turn(ACTOR_QUARTERS_OURANOS, FACING_NORTH_NORTHWEST);
@@ -2224,15 +2244,15 @@ static void ShipRooms_ReturnLuckyAnchor(void) {
   ShipRooms_Say(seanSpeech);
   Actor_RunRepeatedMotion(ACTOR_QUARTERS_KAJA, 1);
   ShipRooms_Say(SPEAKER(ACTOR_QUARTERS_KAJA, SPEAKER_PORTRAIT_LEFT));
-  Actor_SetAnimationAndWait(ACTOR_QUARTERS_CAPTAIN, 3);
+  Actor_SetAnimationAndWait(ACTOR_QUARTERS_CAPTAIN, ANIM_NOD);
   ShipRooms_Turn(ACTOR_QUARTERS_CAPTAIN, FACING_SOUTH_SOUTHWEST);
   ShipRooms_Say(ACTOR_QUARTERS_CAPTAIN);
   ShipRooms_Turn(ACTOR_QUARTERS_CAPTAIN, FACING_SOUTH_SOUTHEAST);
   Event_OpenMessage(ACTOR_QUARTERS_CAPTAIN, 0);
-  if (Event_AskYesNoWithActorAnimation(0, 0) == 1) {
+  if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 1) {
     Actor_StartRepeatedMotion(ACTOR_QUARTERS_CAPTAIN, 2);
     ShipRooms_Say(ACTOR_QUARTERS_CAPTAIN);
-    Actor_SetAnimationAndWait(ACTOR_QUARTERS_SEAN, 3);
+    Actor_SetAnimationAndWait(ACTOR_QUARTERS_SEAN, ANIM_NOD);
     ShipRooms_Say(seanSpeech);
     Actor_StartRepeatedMotion(ACTOR_QUARTERS_KAJA, 1);
     Event_ShowMessageThenWait(
@@ -2254,7 +2274,7 @@ static void ShipRooms_ReturnLuckyAnchor(void) {
   Actor_RunRepeatedMotion(ACTOR_QUARTERS_SECOND_GUIDE, 1);
   ShipRooms_Turn(ACTOR_QUARTERS_SECOND_GUIDE, (value << 8));
   Event_ShowMessageThenWait(ACTOR_QUARTERS_SECOND_GUIDE, 0, 20);
-  Actor_SetAnimationAndWait(ACTOR_QUARTERS_CAPTAIN, 3);
+  Actor_SetAnimationAndWait(ACTOR_QUARTERS_CAPTAIN, ANIM_NOD);
   Actor_SetSpeed(ACTOR_QUARTERS_CAPTAIN, 0.8);
   captainAboveSpeech = SPEAKER(ACTOR_QUARTERS_CAPTAIN, SPEAKER_WINDOW_ABOVE);
   Actor_WalkToAndWait(ACTOR_QUARTERS_CAPTAIN, 472, 632);
@@ -2263,7 +2283,7 @@ static void ShipRooms_ReturnLuckyAnchor(void) {
                   EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 40);
   Actor_StartRepeatedMotion(ACTOR_QUARTERS_SECOND_GUIDE, 2);
   ShipRooms_Say(ACTOR_QUARTERS_SECOND_GUIDE);
-  Actor_SetAnimation(ACTOR_QUARTERS_CAPTAIN, 4);
+  Actor_SetAnimation(ACTOR_QUARTERS_CAPTAIN, ANIM_SHAKE_HEAD);
   Event_ShowMessageThenWait(captainAboveSpeech, 0, 40);
   Actor_RunRepeatedMotion(ACTOR_QUARTERS_OURANOS, 1);
   ShipRooms_Turn(ACTOR_QUARTERS_OURANOS, (value << 8));
@@ -2276,9 +2296,9 @@ static void ShipRooms_ReturnLuckyAnchor(void) {
   Actor_StartRepeatedMotion(ACTOR_QUARTERS_CREWMAN, 2);
   ShipRooms_Say(ACTOR_QUARTERS_CREWMAN);
   ShipRooms_Turn(ACTOR_QUARTERS_KAJA, FACING_SOUTH_SOUTHWEST);
-  Actor_SetAnimationAndWait(ACTOR_QUARTERS_KAJA, 4);
+  Actor_SetAnimationAndWait(ACTOR_QUARTERS_KAJA, ANIM_SHAKE_HEAD);
   ShipRooms_Say(ACTOR_QUARTERS_KAJA);
-  Actor_SetAnimationAndWait(ACTOR_QUARTERS_CAPTAIN, 3);
+  Actor_SetAnimationAndWait(ACTOR_QUARTERS_CAPTAIN, ANIM_NOD);
   ShipRooms_Say(captainAboveSpeech);
   Actor_ShowEmote(ACTOR_QUARTERS_SECOND_GUIDE, EMOTE_IN_FRONT | EMOTE_WINCE,
                   40);
@@ -2297,8 +2317,8 @@ static void ShipRooms_ReturnLuckyAnchor(void) {
   Actor_ShowEmote(ACTOR_QUARTERS_CAPTAIN, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   ShipRooms_Turn(ACTOR_QUARTERS_CAPTAIN, FACING_NORTH_NORTHEAST);
   Event_OpenMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_QUARTERS_CAPTAIN, 0);
-  if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
-    Actor_SetAnimationAndWait(ACTOR_QUARTERS_CAPTAIN, 3);
+  if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
+    Actor_SetAnimationAndWait(ACTOR_QUARTERS_CAPTAIN, ANIM_NOD);
     ShipRooms_Say(SPEAKER(ACTOR_QUARTERS_CAPTAIN, SPEAKER_PORTRAIT_LEFT));
     gFieldWork->message += 1;
   } else {
@@ -2306,14 +2326,14 @@ static void ShipRooms_ReturnLuckyAnchor(void) {
     ShipRooms_Say(SPEAKER(ACTOR_QUARTERS_CAPTAIN, SPEAKER_PORTRAIT_LEFT));
   }
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
-  Actor_SetAnimationAndWait(ACTOR_QUARTERS_CAPTAIN, 3);
+  Actor_SetAnimationAndWait(ACTOR_QUARTERS_CAPTAIN, ANIM_NOD);
   ShipRooms_Say(SPEAKER(ACTOR_QUARTERS_CAPTAIN, SPEAKER_PORTRAIT_LEFT));
   ShipRooms_Turn(ACTOR_QUARTERS_CAPTAIN, FACING_WEST);
   ShipRooms_Say(SPEAKER(ACTOR_QUARTERS_CAPTAIN, SPEAKER_WINDOW_ABOVE));
   ShipRooms_RunEventCommand(SHIP_PLAY_PARTY_ANIMATION, 0, 0);
-  Actor_SetAnimation(ACTOR_QUARTERS_SEAN, 3);
-  Actor_SetAnimation(ACTOR_QUARTERS_OURANOS, 3);
-  Actor_SetAnimation(ACTOR_QUARTERS_KAJA, 3);
+  Actor_SetAnimation(ACTOR_QUARTERS_SEAN, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_QUARTERS_OURANOS, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_QUARTERS_KAJA, ANIM_NOD);
   Actor_StartRepeatedMotion(ACTOR_QUARTERS_CREWMAN, 2);
   Actor_RunRepeatedMotion(ACTOR_QUARTERS_SECOND_GUIDE, 2);
   Event_Wait(20);
@@ -2485,7 +2505,7 @@ s32 ShipRooms_ApplyEntryState(void) {
       if (GameFlag_Get(FLAG_TOLBI_SHIP_KRAKEN_ON_DECK) != 0) {
         gShipRooms_ShakeTimer = 0;
         Task_AddFrame(ShipRooms_ShakeWhileKrakenAboard, TASK_PASS_FRAME);
-        Actor_SetAnimation(ACTOR_ROWING_DRUMMER, 5);
+        Actor_SetAnimation(ACTOR_ROWING_DRUMMER, ANIM_DRUMMER_HOLD_DRUM);
       }
     } else {
       ShipRooms_NoticeShipRocking();
@@ -2632,7 +2652,7 @@ static void ShipRooms_SetUpRowingDeck(void) {
   } else {
     if (GameFlag_Get(FLAG_TOLBI_SHIP_AT_ISLAND) != 0) {
       Actor_SetPosition(ACTOR_ROWING_CREWMAN, 472, 152);
-      Actor_SetAnimation(ACTOR_ROWING_DRUMMER, 5);
+      Actor_SetAnimation(ACTOR_ROWING_DRUMMER, ANIM_DRUMMER_HOLD_DRUM);
       ShipRooms_RunEventCommand(SHIP_HIDE_FIRST_OARSMEN, 4, 0);
     } else {
       if (GameFlag_Get(FLAG_TOLBI_SHIP_KRAKEN_DEFEATED) != 0) {
@@ -2655,7 +2675,7 @@ static void ShipRooms_SetUpRowingDeck(void) {
               Actor_SetPosition(ACTOR_ROWING_FIRST_OARSMAN, 0, 0);
               ShipRooms_IntroduceReplacementOarsman(0);
             } else {
-              Actor_SetAnimation(ACTOR_ROWING_DRUMMER, 5);
+              Actor_SetAnimation(ACTOR_ROWING_DRUMMER, ANIM_DRUMMER_HOLD_DRUM);
               if (GameFlag_Get(FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED) != 0 &&
                   GameFlag_Get(FLAG_TOLBI_SHIP_SAILING_WITHOUT_REPLACEMENT) ==
                       0) {
@@ -2735,7 +2755,7 @@ static void ShipRooms_AskForReplacementOarsmen(void) {
   ShipRooms_PlaceActor(ACTOR_ROWING_KAJA, 440, 164, FACING_SOUTH_SOUTHWEST);
   ShipRooms_PlaceActor(ACTOR_ROWING_CREWMAN, 428, 190, FACING_NORTH_NORTHEAST);
   ShipRooms_PlaceActor(ACTOR_ROWING_DRUMMER, 452, 190, FACING_NORTH_NORTHWEST);
-  Actor_SetAnimation(ACTOR_ROWING_DRUMMER, 1);
+  Actor_SetAnimation(ACTOR_ROWING_DRUMMER, ANIM_STAND);
   mode = 128;
   ShipRooms_PlaceActor(ACTOR_PARTY_LEADER, 440, 134, FACING_WEST);
   gFieldWork->transition = (mode << 1);
@@ -2750,7 +2770,7 @@ static void ShipRooms_AskForReplacementOarsmen(void) {
   ShipRooms_Say(ACTOR_ROWING_KAJA);
   Actor_RunRepeatedMotion(ACTOR_ROWING_CREWMAN, 1);
   ShipRooms_Say(ACTOR_ROWING_CREWMAN);
-  Actor_SetAnimationAndWait(ACTOR_ROWING_KAJA, 3);
+  Actor_SetAnimationAndWait(ACTOR_ROWING_KAJA, ANIM_NOD);
   ShipRooms_Say(ACTOR_ROWING_KAJA);
   ShipRooms_Turn(ACTOR_ROWING_KAJA, FACING_NORTH_NORTHEAST);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
@@ -2785,35 +2805,35 @@ static void ShipRooms_AskForReplacementOarsmen(void) {
   ShipRooms_Say(ACTOR_ROWING_DRUMMER);
   Actor_StartRepeatedMotion(ACTOR_GARET, 3);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 60);
-  Actor_SetAnimationAndWait(ACTOR_ROWING_KAJA, 3);
+  Actor_SetAnimationAndWait(ACTOR_ROWING_KAJA, ANIM_NOD);
   ShipRooms_Say(ACTOR_ROWING_KAJA);
   Actor_RunRepeatedMotion(ACTOR_ROWING_FIRST_OARSMAN, 1);
-  Actor_SetAnimation(ACTOR_ROWING_FIRST_OARSMAN, 3);
+  Actor_SetAnimation(ACTOR_ROWING_FIRST_OARSMAN, ANIM_NOD);
   ShipRooms_Say(ACTOR_ROWING_FIRST_OARSMAN);
-  Actor_SetAnimation(ACTOR_ROWING_CREWMAN, 3);
-  Actor_SetAnimation(ACTOR_ROWING_DRUMMER, 3);
-  Actor_SetAnimation(ACTOR_ROWING_FIRST_OARSMAN + 1, 3);
-  Actor_SetAnimation(ACTOR_ROWING_FIRST_OARSMAN + 2, 3);
-  Actor_SetAnimationAndWait(ACTOR_ROWING_FIRST_OARSMAN + 3, 3);
+  Actor_SetAnimation(ACTOR_ROWING_CREWMAN, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_ROWING_DRUMMER, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_ROWING_FIRST_OARSMAN + 1, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_ROWING_FIRST_OARSMAN + 2, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_ROWING_FIRST_OARSMAN + 3, ANIM_NOD);
   ShipRooms_RunEventCommand(SHIP_FACE_PARTY_EAST_AND_WEST, 0, 40);
   ShipRooms_RunEventCommand(SHIP_PLAY_PARTY_ANIMATION, 1, 0);
   ShipRooms_RunEventCommand(SHIP_FACE_PARTY, FACING_SOUTH, 20);
-  Actor_SetAnimationAndWait(ACTOR_ROWING_KAJA, 4);
+  Actor_SetAnimationAndWait(ACTOR_ROWING_KAJA, ANIM_SHAKE_HEAD);
   ShipRooms_Say(ACTOR_ROWING_KAJA);
   Actor_ShowEmote(ACTOR_ROWING_CREWMAN, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Actor_StartRepeatedMotion(ACTOR_ROWING_CREWMAN, 1);
   ShipRooms_Say(ACTOR_ROWING_CREWMAN);
-  Actor_SetAnimationAndWait(ACTOR_ROWING_KAJA, 3);
+  Actor_SetAnimationAndWait(ACTOR_ROWING_KAJA, ANIM_NOD);
   ShipRooms_Say(ACTOR_ROWING_KAJA);
   Actor_FaceDirection(ACTOR_ROWING_CREWMAN, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_ROWING_DRUMMER, FACING_WEST, 40);
   Actor_ShowEmote(ACTOR_ROWING_CREWMAN, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Actor_ShowEmote(ACTOR_ROWING_CREWMAN, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Actor_RunRepeatedMotion(ACTOR_ROWING_KAJA, 1);
-  Actor_SetAnimation(ACTOR_ROWING_KAJA, 3);
+  Actor_SetAnimation(ACTOR_ROWING_KAJA, ANIM_NOD);
   Event_ShowMessageThenWait(ACTOR_ROWING_KAJA, 0, 20);
-  Actor_SetAnimation(ACTOR_ROWING_CREWMAN, 3);
-  Actor_SetAnimationAndWait(ACTOR_ROWING_DRUMMER, 3);
+  Actor_SetAnimation(ACTOR_ROWING_CREWMAN, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_ROWING_DRUMMER, ANIM_NOD);
   Event_Wait(40);
   Actor_ShowEmote(ACTOR_ROWING_DRUMMER, (mode << 1), 20);
   ShipRooms_Turn(ACTOR_ROWING_DRUMMER, FACING_NORTH_NORTHWEST);
@@ -2823,17 +2843,17 @@ static void ShipRooms_AskForReplacementOarsmen(void) {
   Event_ShowMessageThenWait(ACTOR_ROWING_KAJA, 0, 60);
   Actor_ShowEmote(ACTOR_ROWING_KAJA, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 20);
   ShipRooms_Turn(ACTOR_ROWING_KAJA, FACING_NORTH_NORTHWEST);
-  Actor_SetAnimationAndWait(ACTOR_ROWING_KAJA, 3);
+  Actor_SetAnimationAndWait(ACTOR_ROWING_KAJA, ANIM_NOD);
   ShipRooms_Say(ACTOR_ROWING_KAJA);
   ShipRooms_RunEventCommand(SHIP_SHOW_PARTY_EMOTE, 2, 80);
   ShipRooms_Turn(ACTOR_ROWING_CREWMAN, FACING_NORTH_NORTHEAST);
   Actor_StartRepeatedMotion(ACTOR_ROWING_CREWMAN, 2);
   ShipRooms_Say(ACTOR_ROWING_CREWMAN);
-  Actor_SetAnimationAndWait(ACTOR_ROWING_DRUMMER, 3);
+  Actor_SetAnimationAndWait(ACTOR_ROWING_DRUMMER, ANIM_NOD);
   Actor_StartRepeatedMotion(ACTOR_ROWING_DRUMMER, 2);
   ShipRooms_Say(ACTOR_ROWING_DRUMMER);
   ShipRooms_Turn(ACTOR_ROWING_KAJA, FACING_SOUTH_SOUTHWEST);
-  Actor_SetAnimationAndWait(ACTOR_ROWING_KAJA, 3);
+  Actor_SetAnimationAndWait(ACTOR_ROWING_KAJA, ANIM_NOD);
   Actor_RunRepeatedMotion(ACTOR_ROWING_KAJA, 1);
   ShipRooms_Say(ACTOR_ROWING_KAJA);
   Actor_SetSpeed(ACTOR_ROWING_KAJA, 0.8);
@@ -2870,7 +2890,7 @@ static void ShipRooms_CastOff(void) {
   Sound_Play(SE_RISING_CHIMES);
   Actor_StartScript(anchorCharm, gShipRooms_AnchorCharmPulse);
   Event_Wait(40);
-  Actor_SetAnimationAndWait(ACTOR_QUARTERS_CAPTAIN, 3);
+  Actor_SetAnimationAndWait(ACTOR_QUARTERS_CAPTAIN, ANIM_NOD);
   Event_Wait(20);
   Actor_WalkToAndWait(ACTOR_QUARTERS_CAPTAIN, 466, 624);
   ShipRooms_Turn(ACTOR_QUARTERS_CAPTAIN, FACING_SOUTH_SOUTHWEST);
@@ -2946,7 +2966,7 @@ static void ShipRooms_KajaCallsReplacementToOars(void) {
 /// Restores the rowing deck for the current set of selected passengers.
 static void ShipRooms_ShowRowing(void) {
   Event_Start();
-  Actor_SetAnimation(ACTOR_ROWING_DRUMMER, 5);
+  Actor_SetAnimation(ACTOR_ROWING_DRUMMER, ANIM_DRUMMER_HOLD_DRUM);
   ShipRooms_RunEventCommand(SHIP_RESET_CAMERA, 1, 0);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
   ShipRooms_RunEventCommand(SHIP_HIDE_OARS, 0, 0);
@@ -2955,7 +2975,7 @@ static void ShipRooms_ShowRowing(void) {
   FieldCamera_SetSpeed(0.4);
   FieldCamera_MoveTo(440, CAMERA_KEEP, 176, 1);
   Event_Wait(20);
-  Actor_SetAnimation(ACTOR_ROWING_DRUMMER, 7);
+  Actor_SetAnimation(ACTOR_ROWING_DRUMMER, ANIM_DRUMMER_BEAT);
   Event_Wait(30);
   Sound_Play(SE_THUMP);
   Event_Wait(30);
@@ -2963,7 +2983,7 @@ static void ShipRooms_ShowRowing(void) {
   Event_Wait(80);
   ShipRooms_InstallRowingDeckActors(0);
   Event_Wait(60);
-  Actor_SetAnimation(ACTOR_ROWING_DRUMMER, 7);
+  Actor_SetAnimation(ACTOR_ROWING_DRUMMER, ANIM_DRUMMER_BEAT);
   Event_Wait(30);
   Sound_Play(SE_THUMP);
   Event_Wait(30);
@@ -3039,7 +3059,7 @@ static void ShipRooms_StartFirstAttack(void) {
   ShipRooms_RunEventCommand(SHIP_SETUP_MONSTER_ENCOUNTER,
                             ACTOR_ROWING_FIRST_OARSMAN + 1,
                             ACTOR_ROWING_FIRST_OARSMAN + 2);
-  Actor_SetAnimation(ACTOR_ROWING_FIRST_OARSMAN, 6);
+  Actor_SetAnimation(ACTOR_ROWING_FIRST_OARSMAN, ANIM_OARSMAN_INJURED);
   Actor_SetScript(ACTOR_ROWING_FIRST_OARSMAN + 2, gShipRooms_Shiver);
   entryScript = gShipRooms_MonsterBob;
   Actor_SetScript(ACTOR_ROWING_FIRST_MONSTER, entryScript);
@@ -3108,13 +3128,13 @@ static void ShipRooms_IntroduceReplacementOarsman(s32 seat) {
     Actor_WalkToAndWait(rowerId, 448, 168);
     Actor_FaceDirection(rowerId, FACING_NORTH_NORTHWEST, 20);
     Actor_FaceDirection(ACTOR_ROWING_KAJA, FACING_SOUTH_SOUTHEAST, 20);
-    Actor_SetAnimation(ACTOR_ROWING_KAJA, 3);
+    Actor_SetAnimation(ACTOR_ROWING_KAJA, ANIM_NOD);
     ShipRooms_Say(ACTOR_ROWING_KAJA);
     Actor_ShowEmote(rowerId, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
     Actor_RunRepeatedMotion(ACTOR_ROWING_KAJA, 1);
-    Actor_SetAnimation(ACTOR_ROWING_KAJA, 3);
+    Actor_SetAnimation(ACTOR_ROWING_KAJA, ANIM_NOD);
     ShipRooms_Say(ACTOR_ROWING_KAJA);
-    Actor_SetAnimationAndWait(rowerId, 3);
+    Actor_SetAnimationAndWait(rowerId, ANIM_NOD);
     if (GameFlag_Get(FLAG_TOLBI_SHIP_KRAKEN_DEFEATED) != 0) {
       Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 0);
       Actor_FaceDirection(ACTOR_ROWING_KAJA, FACING_SOUTH_SOUTHEAST, 0);
@@ -3143,7 +3163,7 @@ static void ShipRooms_IntroduceReplacementOarsman(s32 seat) {
     Actor_FaceEachOther(ACTOR_ROWING_KAJA, ACTOR_PARTY_LEADER, 20);
     ShipRooms_Say(SPEAKER(ACTOR_ROWING_KAJA, SPEAKER_PORTRAIT_RIGHT));
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
-    Actor_SetAnimationAndWait(ACTOR_ROWING_KAJA, 3);
+    Actor_SetAnimationAndWait(ACTOR_ROWING_KAJA, ANIM_NOD);
     Actor_SetSpeed(ACTOR_ROWING_KAJA, 1);
     if (leftSeat != 0) {
       Actor_WalkToAndWait(ACTOR_ROWING_KAJA, 428, 164);
@@ -3168,7 +3188,7 @@ static void ShipRooms_IntroduceReplacementOarsman(s32 seat) {
     ShipRooms_Say(KAJA_ROWING_SPEAKER);
     Actor_ShowEmote(ACTOR_ROWING_KAJA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
     ShipRooms_Say(KAJA_ROWING_SPEAKER);
-    Actor_SetAnimationAndWait(ACTOR_ROWING_KAJA, 4);
+    Actor_SetAnimationAndWait(ACTOR_ROWING_KAJA, ANIM_SHAKE_HEAD);
     ShipRooms_Say(KAJA_ROWING_SPEAKER);
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
     Event_Wait(20);
@@ -3262,30 +3282,30 @@ static void ShipRooms_InstallRowingDeckActors(u32 action) {
 static void ShipRooms_PoseActor(s32 id) {
   switch (id) {
   case ACTOR_ROWING_SECOND_GUIDE:
-    Actor_SetAnimation(id, 6);
+    Actor_SetAnimation(id, ANIM_SECOND_GUIDE_ROW);
     Actor_SetAnimationSpeedById(id, 8);
     break;
   case ACTOR_ROWING_HEAD_GUIDE:
   case ACTOR_ROWING_SWEATING_PASSENGER:
-    Actor_SetAnimation(id, 5);
+    Actor_SetAnimation(id, ANIM_ROW);
     Actor_SetAnimationSpeedById(id, 16);
     break;
   case ACTOR_ROWING_STARED_AT_PASSENGER:
   case ACTOR_ROWING_WARRIOR:
-    Actor_SetAnimation(id, 5);
+    Actor_SetAnimation(id, ANIM_ROW);
     Actor_SetAnimationSpeedById(id, 20);
     break;
   case ACTOR_ROWING_TICKET_GRUMBLER:
-    Actor_SetAnimation(id, 10);
+    Actor_SetAnimation(id, ANIM_TICKET_GRUMBLER_ROW);
     Actor_SetAnimationSpeedById(id, 8);
     break;
   case ACTOR_ROWING_LADY:
   case ACTOR_ROWING_MUSCLE_ADMIRER:
-    Actor_SetAnimation(id, 5);
+    Actor_SetAnimation(id, ANIM_ROW);
     Actor_SetAnimationSpeedById(id, 4);
     break;
   case ACTOR_ROWING_OLD_MAN:
-    Actor_SetAnimation(id, 9);
+    Actor_SetAnimation(id, ANIM_OLD_MAN_ROW);
     Actor_SetAnimationSpeedById(id, 4);
     break;
   }
@@ -3381,7 +3401,7 @@ static void ShipRooms_RunEventCommand(s32 step, u32 arg, u32 opt) {
     actor = Actor_Get(arg);
     actor->facing = FACING_SOUTH_SOUTHWEST;
   }
-    Actor_SetAnimation(arg, 5);
+    Actor_SetAnimation(arg, ANIM_ROW);
     Actor_SetAnimationSpeedById(arg, opt);
     break;
   case SHIP_START_MIRRORED_ROWING_ANIMATION: {
@@ -3391,7 +3411,7 @@ static void ShipRooms_RunEventCommand(s32 step, u32 arg, u32 opt) {
     actor->facing = FACING_SOUTH_SOUTHWEST;
     actor->scaleX = -Q16_ONE;
   }
-    Actor_SetAnimation(arg, 5);
+    Actor_SetAnimation(arg, ANIM_ROW);
     Actor_SetAnimationSpeedById(arg, opt);
     break;
   case SHIP_SET_SELECTED_ROWER_POSE: {
@@ -3435,7 +3455,7 @@ static void ShipRooms_RunEventCommand(s32 step, u32 arg, u32 opt) {
     if (arg != 0) {
       struct Actor *actor;
 
-      Actor_SetAnimation(ACTOR_ROWING_FIRST_OARSMAN + 3, 1);
+      Actor_SetAnimation(ACTOR_ROWING_FIRST_OARSMAN + 3, ANIM_STAND);
       actor = Actor_Get(ACTOR_ROWING_FIRST_OARSMAN + 3);
       actor->facing = FACING_SOUTH_SOUTHEAST;
       actor = Actor_Get(ACTOR_ROWING_FIRST_OARSMAN + 3);
@@ -3444,18 +3464,18 @@ static void ShipRooms_RunEventCommand(s32 step, u32 arg, u32 opt) {
     {
       struct Actor *actor;
 
-      Actor_SetAnimation(ACTOR_ROWING_FIRST_OARSMAN + 4, 1);
+      Actor_SetAnimation(ACTOR_ROWING_FIRST_OARSMAN + 4, ANIM_STAND);
       actor = Actor_Get(ACTOR_ROWING_FIRST_OARSMAN + 4);
       actor->facing = FACING_SOUTH_SOUTHWEST;
-      Actor_SetAnimation(ACTOR_ROWING_FIRST_OARSMAN + 5, 1);
+      Actor_SetAnimation(ACTOR_ROWING_FIRST_OARSMAN + 5, ANIM_STAND);
       actor = Actor_Get(ACTOR_ROWING_FIRST_OARSMAN + 5);
       actor->facing = FACING_SOUTH_SOUTHEAST;
       actor = Actor_Get(ACTOR_ROWING_FIRST_OARSMAN + 5);
       actor->scaleX = Q16_ONE;
-      Actor_SetAnimation(ACTOR_ROWING_FIRST_OARSMAN + 6, 1);
+      Actor_SetAnimation(ACTOR_ROWING_FIRST_OARSMAN + 6, ANIM_STAND);
       actor = Actor_Get(ACTOR_ROWING_FIRST_OARSMAN + 6);
       actor->facing = FACING_SOUTH_SOUTHWEST;
-      Actor_SetAnimation(ACTOR_ROWING_FIRST_OARSMAN + 7, 1);
+      Actor_SetAnimation(ACTOR_ROWING_FIRST_OARSMAN + 7, ANIM_STAND);
       actor = Actor_Get(ACTOR_ROWING_FIRST_OARSMAN + 7);
       actor->facing = FACING_SOUTH_SOUTHEAST;
       actor = Actor_Get(ACTOR_ROWING_FIRST_OARSMAN + 7);
@@ -3486,7 +3506,7 @@ static void ShipRooms_RunEventCommand(s32 step, u32 arg, u32 opt) {
     struct Actor *actor;
 
     actor = Actor_Get(arg);
-    Actor_SetAnimation(arg, 1);
+    Actor_SetAnimation(arg, ANIM_STAND);
     if (opt != 0) {
       actor->facing = FACING_SOUTH_SOUTHEAST;
     } else {
@@ -3692,7 +3712,7 @@ static void ShipRooms_StartSecondAttack(void) {
   ShipRooms_SetOarCollision();
   ShipRooms_RunEventCommand(SHIP_SETUP_MONSTER_ENCOUNTER, firstRower,
                             ACTOR_ROWING_FIRST_OARSMAN + 2);
-  Actor_SetAnimation(ACTOR_ROWING_FIRST_OARSMAN, 6);
+  Actor_SetAnimation(ACTOR_ROWING_FIRST_OARSMAN, ANIM_OARSMAN_INJURED);
   rowerScript = gShipRooms_Shiver;
   Actor_SetScript(firstRower, rowerScript);
   Actor_ReleaseById(ACTOR_ROWING_FIRST_OARSMAN + 1);
@@ -3780,7 +3800,7 @@ static void ShipRooms_ReactToMonsterAttack(void) {
   ShipRooms_PlaceActor(ACTOR_ROWING_KAJA, 440, 134, FACING_WEST);
   ShipRooms_PlaceActor(ACTOR_ROWING_FIRST_OARSMAN, 454, 248,
                        FACING_SOUTH_SOUTHEAST);
-  Actor_SetAnimation(ACTOR_ROWING_FIRST_OARSMAN, 6);
+  Actor_SetAnimation(ACTOR_ROWING_FIRST_OARSMAN, ANIM_OARSMAN_INJURED);
   ShipRooms_MoveCameraAndWait(440, CAMERA_KEEP, 308,
                               SHIP_CAMERA_RECENTER_LAYERS | SHIP_CAMERA_JUMP);
   Event_StartScreenTransition();
@@ -3808,40 +3828,40 @@ static void ShipRooms_ReactToMonsterAttack(void) {
   Actor_RunRepeatedMotion(ACTOR_ROWING_KAJA, 1);
   ShipRooms_Say(ACTOR_ROWING_KAJA);
   ShipRooms_RunEventCommand(SHIP_PLAY_PARTY_ANIMATION, 1, 20);
-  Actor_SetAnimationAndWait(ACTOR_ROWING_KAJA, 3);
+  Actor_SetAnimationAndWait(ACTOR_ROWING_KAJA, ANIM_NOD);
   Actor_RunRepeatedMotion(ACTOR_ROWING_KAJA, 1);
   ShipRooms_Say(ACTOR_ROWING_KAJA);
   ShipRooms_RunEventCommand(SHIP_SHOW_PARTY_EMOTE, 2, 60);
   ShipRooms_RunEventCommand(SHIP_FACE_PARTY, FACING_NORTHEAST, 60);
   Actor_FaceDirection(ACTOR_ROWING_KAJA, FACING_EAST, 40);
   Actor_RunRepeatedMotion(ACTOR_ROWING_KAJA, 1);
-  Actor_SetAnimation(ACTOR_ROWING_KAJA, 2);
+  Actor_SetAnimation(ACTOR_ROWING_KAJA, ANIM_WALK);
   Actor_MoveToAndWait(ACTOR_ROWING_KAJA, 432, 268);
   Actor_MoveToAndWait(ACTOR_ROWING_KAJA, 452, 268);
-  Actor_SetAnimation(ACTOR_ROWING_KAJA, 1);
+  Actor_SetAnimation(ACTOR_ROWING_KAJA, ANIM_STAND);
   ShipRooms_Turn(ACTOR_ROWING_KAJA, FACING_NORTH_NORTHEAST);
   Actor_StartRepeatedMotion(ACTOR_ROWING_KAJA, 2);
   Event_ShowMessageThenWait(ACTOR_ROWING_KAJA, 0, 20);
   ShipRooms_RunEventCommand(SHIP_FACE_PARTY, FACING_NORTH, 20);
-  Actor_SetAnimationAndWait(ACTOR_ROWING_KAJA, 4);
+  Actor_SetAnimationAndWait(ACTOR_ROWING_KAJA, ANIM_SHAKE_HEAD);
   Event_Wait(40);
   Event_ShowMessageThenWait(ACTOR_ROWING_KAJA, 0, 80);
   Actor_RunRepeatedMotion(ACTOR_ROWING_KAJA, 1);
   Event_Wait(20);
-  Actor_SetAnimationAndWait(ACTOR_ROWING_KAJA, 3);
+  Actor_SetAnimationAndWait(ACTOR_ROWING_KAJA, ANIM_NOD);
   Event_Wait(10);
   ShipRooms_Turn(ACTOR_ROWING_KAJA, FACING_SOUTH_SOUTHWEST);
   Event_OpenMessage(ACTOR_ROWING_KAJA, 0);
-  if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
-    Actor_SetAnimationAndWait(ACTOR_ROWING_KAJA, 3);
+  if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
+    Actor_SetAnimationAndWait(ACTOR_ROWING_KAJA, ANIM_NOD);
     ShipRooms_Say(ACTOR_ROWING_KAJA);
   } else {
-    Actor_SetAnimationAndWait(ACTOR_ROWING_KAJA, 4);
+    Actor_SetAnimationAndWait(ACTOR_ROWING_KAJA, ANIM_SHAKE_HEAD);
     gFieldWork->message += 1;
     ShipRooms_Say(ACTOR_ROWING_KAJA);
     ShipRooms_RunEventCommand(SHIP_SHOW_PARTY_EMOTE, 2, 40);
     Actor_RunRepeatedMotion(ACTOR_ROWING_KAJA, 1);
-    Actor_SetAnimation(ACTOR_ROWING_KAJA, 3);
+    Actor_SetAnimation(ACTOR_ROWING_KAJA, ANIM_NOD);
     ShipRooms_Say(ACTOR_ROWING_KAJA);
   }
   ShipRooms_RunEventCommand(SHIP_PLAY_PARTY_ANIMATION, 1, 20);
@@ -3894,7 +3914,7 @@ static void ShipRooms_StartThirdAttack(void) {
   ShipRooms_SetOarCollision();
   ShipRooms_RunEventCommand(SHIP_SETUP_MONSTER_ENCOUNTER, firstRower,
                             secondRower);
-  Actor_SetAnimation(ACTOR_ROWING_FIRST_OARSMAN, 6);
+  Actor_SetAnimation(ACTOR_ROWING_FIRST_OARSMAN, ANIM_OARSMAN_INJURED);
   rowerScript = gShipRooms_Shiver;
   Actor_SetScript(firstRower, rowerScript);
   Actor_ReleaseById(ACTOR_ROWING_FIRST_OARSMAN + 1);
@@ -3945,7 +3965,7 @@ static void ShipRooms_NoticeShipRocking(void) {
   ShipRooms_RunEventCommand(SHIP_SETUP_ROWING_PARTY, 0, 0);
   ShipRooms_RunEventCommand(SHIP_HIDE_OARS, 0, 0);
   Actor_SetPosition(ACTOR_ROWING_CREWMAN, 472, 152);
-  Actor_SetAnimation(ACTOR_ROWING_DRUMMER, 5);
+  Actor_SetAnimation(ACTOR_ROWING_DRUMMER, ANIM_DRUMMER_HOLD_DRUM);
   Actor_SetPosition(ACTOR_ROWING_KAJA, 440, 134);
   Actor_SetSpriteColorById(ACTOR_ROWING_KAJA, SPRITE_COLOR_HIDDEN);
   actor = Actor_Get(ACTOR_ROWING_KAJA);
@@ -4096,7 +4116,7 @@ static void ShipRooms_ShowCaptainsQuartersBeforeIsland(void) {
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_QUARTERS_CAPTAIN, FACING_NORTH_NORTHEAST, 80);
   Actor_FaceDirection(ACTOR_QUARTERS_CAPTAIN, FACING_EAST, 20);
-  Actor_SetAnimationAndWait(ACTOR_QUARTERS_CAPTAIN, 3);
+  Actor_SetAnimationAndWait(ACTOR_QUARTERS_CAPTAIN, ANIM_NOD);
   Event_Wait(20);
   ShipRooms_RunEventCommand(SHIP_CLOSE_SCREEN, SHIP_ROOMS_TO_WORLD_MAP, 0);
 }
@@ -4132,7 +4152,7 @@ static void ShipRooms_ReachIsland(void) {
   actor = Actor_Get(ACTOR_ROWING_KAJA);
   Actor_SetSpriteFlags(actor, 0);
   ShipRooms_InstallRowingDeckActors(16);
-  Actor_SetAnimation(ACTOR_ROWING_DRUMMER, 5);
+  Actor_SetAnimation(ACTOR_ROWING_DRUMMER, ANIM_DRUMMER_HOLD_DRUM);
   ShipRooms_MoveCameraAndWait(438, CAMERA_KEEP, 174,
                               SHIP_CAMERA_RECENTER_LAYERS | SHIP_CAMERA_JUMP);
   ShipRooms_RunEventCommand(SHIP_OPEN_SCREEN, 1, 20);
@@ -4173,7 +4193,7 @@ static void ShipRooms_ReachIsland(void) {
   Actor_StartRepeatedMotion(firstRower, 2);
   ShipRooms_Say(firstRower);
   Event_SetMessageId(MsgTolbiShipShipWentOff);
-  Actor_SetAnimationAndWait(ACTOR_ROWING_KAJA, 4);
+  Actor_SetAnimationAndWait(ACTOR_ROWING_KAJA, ANIM_SHAKE_HEAD);
   ShipRooms_Say(ACTOR_ROWING_KAJA);
   Actor_ShowEmote(firstRower, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Actor_ShowEmote(secondRower, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
@@ -4278,28 +4298,28 @@ static void ShipRooms_DismissReplacementRowers(void) {
   Actor_WalkTo(secondRower, 410, 172);
   Actor_WalkTo(thirdRower, 470, 204);
   Actor_WalkToAndWait(fourthRower, 410, 204);
-  Actor_SetAnimation(firstRower, 1);
-  Actor_SetAnimation(secondRower, 1);
-  Actor_SetAnimation(thirdRower, 1);
+  Actor_SetAnimation(firstRower, ANIM_STAND);
+  Actor_SetAnimation(secondRower, ANIM_STAND);
+  Actor_SetAnimation(thirdRower, ANIM_STAND);
   Actor_FaceDirection(secondRower, FACING_NORTH_NORTHEAST, 0);
   Actor_FaceDirection(firstRower, FACING_NORTH_NORTHWEST, 0);
   Actor_FaceDirection(fourthRower, FACING_NORTH_NORTHEAST, 0);
   Actor_FaceDirection(thirdRower, FACING_NORTH_NORTHWEST, 20);
   Actor_RunRepeatedMotion(ACTOR_ROWING_KAJA, 1);
   ShipRooms_Say(ACTOR_ROWING_KAJA);
-  Actor_SetAnimation(firstRower, 3);
-  Actor_SetAnimation(secondRower, 3);
-  Actor_SetAnimation(thirdRower, 3);
-  Actor_SetAnimationAndWait(fourthRower, 3);
+  Actor_SetAnimation(firstRower, ANIM_NOD);
+  Actor_SetAnimation(secondRower, ANIM_NOD);
+  Actor_SetAnimation(thirdRower, ANIM_NOD);
+  Actor_SetAnimationAndWait(fourthRower, ANIM_NOD);
   ShipRooms_Say(ACTOR_ROWING_KAJA);
-  Actor_SetAnimation(firstRower, 3);
-  Actor_SetAnimation(secondRower, 3);
-  Actor_SetAnimation(thirdRower, 3);
-  Actor_SetAnimationAndWait(fourthRower, 3);
+  Actor_SetAnimation(firstRower, ANIM_NOD);
+  Actor_SetAnimation(secondRower, ANIM_NOD);
+  Actor_SetAnimation(thirdRower, ANIM_NOD);
+  Actor_SetAnimationAndWait(fourthRower, ANIM_NOD);
   Actor_FaceDirection(ACTOR_ROWING_KAJA, FACING_EAST, 0);
   ShipRooms_Turn(ACTOR_PARTY_LEADER, FACING_WEST);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
-  Actor_SetAnimationAndWait(ACTOR_ROWING_KAJA, 3);
+  Actor_SetAnimationAndWait(ACTOR_ROWING_KAJA, ANIM_NOD);
   Actor_SetSpeed(ACTOR_ROWING_KAJA, 1);
   Actor_WalkToAndWait(ACTOR_ROWING_KAJA, 408, 132);
   Actor_WalkToAndWait(ACTOR_ROWING_KAJA, 444, 132);

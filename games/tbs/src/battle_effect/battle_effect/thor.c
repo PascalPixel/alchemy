@@ -430,11 +430,9 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
       // The pillar of lightning, frames 8 to 16: its body on frames 9 to
       // 11, its top on 12 to 15, and on frame 10 up to 512 sparks thrown
       // up from its foot.
-      /* LEFTOVER(template): a loop over pillars 128 frames apart whose count is
-       * 1, j being 0; Camelot's template: its body times each pillar by j * 128
-       * as the sibling effects' per-target loops index their targets; as its
-       * body alone, with 0 for j and 8 for start, 509 of 1640 instructions
-       * differ in tbs-en. */
+      /* FAKEMATCH(dead): a loop that runs once, j being 0; as its body alone,
+       * with 0 for j and 8 for start, 535 of 1640 instructions differ in
+       * tbs-en. */
       for (j = 0; j != 1; j++) {
         s32 start = j * 128 + 8;
         if (frame >= start && frame < j * 128 + 17) {

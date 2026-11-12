@@ -235,8 +235,9 @@ struct Window *FieldMessage_ShowAtActor(s32 actorId, s32 unused) {
       else
         handle = Message_OpenWindowFar(message, left, top, (voice << 16) | 1);
     }
-    // DEAD: both arms open the same portrait behind a test of win->mindRead;
-    // the ROM keeps the test and both calls.
+    /* FAKEMATCH(dead): both arms open the same portrait behind a test of
+       win->mindRead; as the one call, 36 of 393 instructions differ in tbs-en.
+     */
     if (win->mindRead != 0)
       portrait = (s32)Portrait_OpenWindowFar(sprite, 0, column, portraitTop);
     else

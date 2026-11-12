@@ -59,7 +59,6 @@ really makes the change, has the game work everything out again, draws
 what came out, and puts the unit back from the copy. That is cheap only
 because stats are always worked out from scratch
 ([Game rules](../game/README.md#why-stats-are-always-worked-out-from-scratch)).
-The item screen's `Equip this item?` does the same.
 
 ### A screen that plays itself
 

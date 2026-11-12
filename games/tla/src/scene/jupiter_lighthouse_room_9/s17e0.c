@@ -1,7 +1,5 @@
 /// @file
-/// Scene code of overlay 0x6a2, in ROM order, from s17e0's offset up to the
-/// next object the overlay links, and the
-/// overlay's data.
+/// Scene code of overlay 0x6a2, in ROM order, from s17e0's offset up to the next object the overlay links, and the overlay's data.
 
 #include "types.h"
 #include "system.h"

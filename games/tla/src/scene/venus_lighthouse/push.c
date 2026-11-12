@@ -1,5 +1,5 @@
 /// @file
-/// Scene code of overlay 0x64e, in ROM order, from push's offset up to the next object the overlay links.
+/// Scene code of overlay 0x64e, in ROM order, from push's offset up to the next object the overlay links, and the overlay's data.
 
 #include "types.h"
 #include "field_event.h"

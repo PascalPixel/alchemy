@@ -1,13 +1,6 @@
 /// @file
-/// The Trial Road link display's scheduled callback, which Func_020055c4
-/// starts. Its fade state falls during events or while flag 262 is set and
-/// otherwise rises to 2 (unke0 holds it at 2); rising from 0 to 1 it loads
-/// the palette and picture again, and at 0 it frees its VRAM. Otherwise it
-/// queues two rows of sprites, each up to four pairs 36 pixels apart down from
-/// the scrolled offset, sliding in 6 pixels per fade step (the right row
-/// mirrored), and on frames 5 to 15 of every 16 a marker over each of the two
-/// watched actors, projected at 1/16 scale from their positions and the
-/// course side. The overlay's data follows it.
+/// Scene code of overlay 0x697, in ROM order, from s51a0's offset up to the
+/// next object the overlay links, and the overlay's data.
 
 #include "types.h"
 #include "actor.h"
@@ -91,6 +84,15 @@ static inline void *TrialRoadLink_AllocPicture(void) {
     Func_02005790(entry++, 255);                                               \
   } while (0)
 
+/// The Trial Road link display's scheduled callback, which Func_020055c4
+/// starts. Its fade state falls during events or while flag 262 is set and
+/// otherwise rises to 2 (unke0 holds it at 2); rising from 0 to 1 it loads
+/// the palette and picture again, and at 0 it frees its VRAM. Otherwise it
+/// queues two rows of sprites, each up to four pairs 36 pixels apart down from
+/// the scrolled offset, sliding in 6 pixels per fade step (the right row
+/// mirrored), and on frames 5 to 15 of every 16 a marker over each of the two
+/// watched actors, projected at 1/16 scale from their positions and the
+/// course side.
 void Func_020051a0(void) {
   struct TrialRoadLinkWork *work = Ram_HeapSlots->unkec[0];
   u32 *cursor = (u32 *)work;

@@ -1,5 +1,5 @@
 /// @file
-/// Scene code of overlay 0x653, in ROM order, from s2ec4's offset up to the next object the overlay links.
+/// Scene code of overlay 0x653, in ROM order, from s2ec4's offset up to the next object the overlay links, and the overlay's data.
 
 #include "local.h"
 #include "field_effect.h"

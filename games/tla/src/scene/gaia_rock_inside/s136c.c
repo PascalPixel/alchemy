@@ -8,13 +8,6 @@
 #include "actor.h"
 #include "system/field_effect.h"
 
-// Steps an orbiting object around its anchor: turns it by half its speed, puts
-// it on the anchor (raised 8 pixels) and pushes it out by its radius; when its
-// countdown runs out returns 0, else, unless its radius is down to 2 pixels,
-// takes a second, shrinking step. Returns 1 while it runs. The same code as
-// overlay 67C's Func_020013bc. The first push goes through Call3 (directly, its
-// offset pointer is set after the angle's load).
-
 struct Orbiter {
   u8 unk00[8];
   s32 x;
@@ -32,6 +25,12 @@ struct Orbiter {
 
 void Func_02001314(struct Orbiter *orbiter);
 
+// Steps an orbiting object around its anchor: turns it by half its speed, puts
+// it on the anchor (raised 8 pixels) and pushes it out by its radius; when its
+// countdown runs out returns 0, else, unless its radius is down to 2 pixels,
+// takes a second, shrinking step. Returns 1 while it runs. The same code as
+// overlay 67C's Func_020013bc. The first push goes through Call3 (directly, its
+// offset pointer is set after the angle's load).
 s32 Func_0200136c(struct Orbiter *orbiter) {
   struct Actor *anchor = orbiter->anchor;
   s16 *angle;

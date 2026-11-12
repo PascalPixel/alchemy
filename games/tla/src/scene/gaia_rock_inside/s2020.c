@@ -395,8 +395,6 @@ void Func_02002718(void) {
   }
 }
 
-// Records which of eleven listed cells persons 10 and 11 stand on, as the two halves of the byte flag 0x210.
-
 extern const s16 gData_0200530c[][2];
 s32 GameFlag_SetByte(s32 flag, s32 value);
 

@@ -68,7 +68,6 @@ void Func_02000668(u16 *list) {
 // For each id of a list ended by 0xffff: clears the object's mark and, on a
 // cell with attribute bit 6, blocks the cells ahead of and behind it and sets
 // the mark.
-
 void Func_020006cc(u16 *ids) {
   struct Actor *object;
   u8 *blocked;

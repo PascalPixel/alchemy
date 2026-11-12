@@ -1,5 +1,5 @@
 /// @file
-/// Scene code of overlay 0x64c, in ROM order, from s1ad0's offset up to the next object the overlay links.
+/// Scene code of overlay 0x64c, in ROM order, from s1ad0's offset up to the next object the overlay links, and the overlay's data.
 
 #include "types.h"
 #include "ram_buffer.h"

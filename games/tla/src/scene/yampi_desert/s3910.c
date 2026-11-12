@@ -1,5 +1,5 @@
 /// @file
-/// Scene code of overlay 0x661, in ROM order, from s3910's offset up to the next object the overlay links.
+/// Scene code of overlay 0x661, in ROM order, from s3910's offset up to the next object the overlay links, and the overlay's data.
 
 #include "scene.h"
 #include "map.h"

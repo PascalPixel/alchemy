@@ -124,7 +124,8 @@ void BattleEffect_StartBufferInterpolation(s32 frames);
 struct Actor *BattleEffect_StartRandomParticleEmitter(s32 actor, s32 item);
 void BattleEffect_UpdateArcEffect(void);
 void BattleLayout_HighlightPartyPanelsFar(u16 *);
-void BattleMotion_ApproachTargetFar(s32, s16, s32, s32);
+void BattleMotion_ApproachTargetFar(s32 actorId, s32 targetId,
+                                    s32 travelDivisor, s32 initialVelocityY);
 void BattleMotion_DestroyAllSlotObjects(void);
 void BattleMotion_ReleaseObjectSlotByValue(s32 objectId);
 void BattleMotion_SetObjectPosition(struct BattleObj *slot);
@@ -144,7 +145,7 @@ struct TriggerEvent;
 struct TriggerEvent *Func_080ce458(s32 filter, s32 kind, s32 selector);
 void Func_080e3074(void);
 void Func_0811b75c(s16 *list, s32 refresh, s32 spawn);
-void Func_0818f620(void *effect, s32 mode);
+void Func_0818f620(struct BattleEffectArgument *effect, u32 mode);
 void GameFlag_ClearBitFar(s32 flag);
 void GameFlag_SetBitFar(s32 flag);
 s32 Map_RenderAnimatedTilePicturesForObjectFar(void *object);

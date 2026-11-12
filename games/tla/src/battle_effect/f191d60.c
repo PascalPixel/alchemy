@@ -508,11 +508,7 @@ struct ModelVertex {
   s8 pad;
 };
 
-struct Vector3 {
-  s32 x;
-  s32 y;
-  s32 z;
-};
+#include "vector3.h"
 
 extern const struct ModelVertex Data_08196f30[6];
 extern const u16 Data_08199f4c[];

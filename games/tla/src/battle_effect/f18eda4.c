@@ -405,8 +405,8 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
 #define Actor_SetAnimationSpeedFar                                             \
   ((s32 (*)(struct FieldActor *, s32))Actor_SetAnimationSpeedFar)
 
-void BattleEffect_RunCanvasModeByCount(s32 *effect) {
-  if (*effect > 199)
+void BattleEffect_RunCanvasModeByCount(struct BattleEffectArgument *effect) {
+  if (effect->kind > 199)
     Func_0818f620(effect, 2);
   else
     Func_0818f620(effect, 1);

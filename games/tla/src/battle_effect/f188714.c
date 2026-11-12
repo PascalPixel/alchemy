@@ -337,7 +337,8 @@ extern u8 gData_08199d31[];
 extern u8 gData_08199d38[];
 
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
-void BattleMotion_ApproachTargetFar(s32, s16, s32, s32);
+void BattleMotion_ApproachTargetFar(s32 actorId, s32 targetId,
+                                    s32 travelDivisor, s32 initialVelocityY);
 
 void Func_08118088(s32 actor, s32 motion);
 

@@ -51,7 +51,7 @@ void BattleEffect_ProbeKeysForExtendedActor(void) {
 }
 
 void Func_0815f16c(struct BattleEffectArgument *effect, s32 index);
-void BattleEffect_RunCanvasModeByCount(s32 *effect);
+void BattleEffect_RunCanvasModeByCount(struct BattleEffectArgument *effect);
 void Func_0815e9f4(struct BattleEffectArgument *effect);
 void Func_0815e3ac(struct BattleEffectArgument *effect);
 

@@ -1,9 +1,9 @@
 #include "types.h"
 #include "iwram_call.h"
 
-static __inline__ s32 CopyWords_(void *destination, const void *source,
-                                 s32 size) {
-  return Iwram_CopyWords(destination, source, size);
+static __inline__ void CopyWords_(void *destination, const void *source,
+                                  s32 size) {
+  Iwram_CopyWords(destination, source, size);
 }
 
 s32 Trig_Sin(s32 angle);
@@ -1574,13 +1574,19 @@ void Func_0814b350(struct BattleEffectArgument *effect) {
   BattleEffect_EndCanvasLayer();
 }
 
-void Func_0814b9e8(s32 effect, s32 mode);
+void Func_0814b9e8(struct BattleEffectArgument *effect, s32 mode);
 
 /// Abilities: Balm (kind 230).
-void BattleEffect_RunBalm(s32 effect) { Func_0814b9e8(effect, 0); }
+void BattleEffect_RunBalm(struct BattleEffectArgument *effect) {
+  Func_0814b9e8(effect, 0);
+}
 
 /// Abilities: Tinder (kind 231).
-void BattleEffect_RunTinder(s32 effect) { Func_0814b9e8(effect, 1); }
+void BattleEffect_RunTinder(struct BattleEffectArgument *effect) {
+  Func_0814b9e8(effect, 1);
+}
 
 /// Abilities: Phoenix, Regen Dance (kind 436).
-void BattleEffect_RunPhoenix(s32 effect) { Func_0814b9e8(effect, 2); }
+void BattleEffect_RunPhoenix(struct BattleEffectArgument *effect) {
+  Func_0814b9e8(effect, 2);
+}

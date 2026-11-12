@@ -2607,11 +2607,7 @@ void Transform_Pop(void);
 #define SLOT_BLITTER 104 // unk64[1]
 
 #include "io_write_queue.h"
-
-struct ResourceTableEntry {
-  u16 unk0;
-  u16 tile;
-};
+#include "vram_tab.h"
 
 struct JudgmentObject {
   u8 unk0[9];
@@ -2639,7 +2635,6 @@ extern char ResourceId_BlueCrescentSheet;
 extern char ResourceId_ExplosionSheet;
 extern char ResourceId_OverlayImageA;
 
-extern struct ResourceTableEntry gResourceTableEntries[];
 extern u8 gData_02014000[];
 
 struct JudgmentScale {
@@ -2684,7 +2679,7 @@ static inline void FillWords(void *dst, s32 size, s32 value) {
   (*(slot))(canvas, sheet, x, y, w, h);                                        \
   HeapSlot_Release(SLOT_ALT)
 #define OBJ_TILES(obj)                                                         \
-  (0x06010000 + gResourceTableEntries[(obj)->resource].tile)
+  (0x06010000 + gResourceTableEntries[(obj)->resource].offset)
 
 // IO_WRITE_QUEUE_PUSH with an empty once-only block before the count store,
 // the value store and the address store: the first tile queue matches only

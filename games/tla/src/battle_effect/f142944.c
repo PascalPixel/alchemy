@@ -38,7 +38,7 @@ struct ModelTexture {
   u32 logWidth : 8;
   u32 logHeight : 8;
   u32 unk02 : 16;
-  u8 *pixels;
+  const u8 *pixels;
 };
 
 // One model for the IWRAM renderer.
@@ -403,7 +403,14 @@ struct CanvasWork {
   u8 unk0000[0x7780];
   s32 transferMode;
   s32 transferValue;
-  u8 unk_7788[0x15c];
+  u8 unk7788[0x18];
+  s32 savedBg1X;
+  s32 savedBg1Y;
+  s32 shakeFrames;
+  u8 unk77ac[8];
+  s32 fadeFrames;
+  s32 fadeStep;
+  u8 unk77bc[0x128];
   s32 vblanksSinceTransfer;
   s32 transferPending;
 };

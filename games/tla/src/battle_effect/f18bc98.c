@@ -594,7 +594,8 @@ void BattleEffect_StartTiledCanvas(s32 bgControl);
 s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
                   u32 mode);
 
-void BattleMotion_ApproachTargetFar(s32, s16, s32, s32);
+void BattleMotion_ApproachTargetFar(s32 actorId, s32 targetId,
+                                    s32 travelDivisor, s32 initialVelocityY);
 
 // The crescent slash of Human Hunt (kind 437, mode 0) and Echo Cut (kind 390,
 // mode 1). The caster closes in on the target; from frame 8 a crescent is cut

@@ -40,7 +40,7 @@ void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantFar
 void Func_081180e8(s32 phase);             // BattlePlayback_StartFar
 void BattleEffect_SetApproachMotion(s32 actor, s32 target, s32 frames,
                                     s32 percent);
-void BattleMotion_ApproachTargetFar(s32 actor, s16 target, s32 frames,
+void BattleMotion_ApproachTargetFar(s32 actor, s32 target, s32 frames,
                                     s32 speed);
 void EffectPosition_ProjectBattler(s32 actor, struct EffectPosition *position);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,

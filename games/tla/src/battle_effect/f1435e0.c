@@ -15,15 +15,19 @@
 
 /// The battle effect work, as far as the canvas layer reads it.
 struct CanvasWork {
-  u8 unk0000[0x77a0];
+  u8 unk0000[0x7780];
+  s32 transferMode;
+  s32 transferValue;
+  u8 unk7788[0x18];
   s32 savedBg1X;
   s32 savedBg1Y;
   s32 shakeFrames;
   u8 unk77ac[8];
   s32 fadeFrames;
   s32 fadeStep;
-  u8 unk77bc[0x12c];
-  s32 unk78e8;
+  u8 unk77bc[0x128];
+  s32 vblanksSinceTransfer;
+  s32 transferPending;
 };
 
 static __inline__ s32 ClearWords_(void *destination, s32 size) {
@@ -105,7 +109,7 @@ void BattleEffect_StartCanvasLayer(s32 bgControl) {
   ClearWords_(canvas, 0x4000);
   ClearWords_(BG_CHAR_BLOCK(1), 0x4000);
   work->shakeFrames = 0;
-  work->unk78e8 = 0;
+  work->transferPending = 0;
   work->savedBg1X = gBgScroll[1].x;
   work->savedBg1Y = gBgScroll[1].y;
   wait(1);
@@ -190,7 +194,7 @@ void BattleEffect_OpenCanvasLayer(s32 bgControl) {
   ClearWords_(canvas, 0x4000);
   ClearWords_(BG_CHAR_BLOCK(1), 0x4000);
   work->shakeFrames = 0;
-  work->unk78e8 = 0;
+  work->transferPending = 0;
   wait(1);
 }
 
@@ -304,8 +308,8 @@ void BattleEffect_HideBg1AndRestoreBackdrop(void) {
   wait(1);
 }
 
-static __inline__ s32 FillWords_(void *destination, s32 size, u32 value) {
-  return Iwram_FillWords(destination, size, value);
+static __inline__ void FillWords_(void *destination, s32 size, u32 value) {
+  Iwram_FillWords(destination, size, value);
 }
 
 void Func_08143d80(void) {

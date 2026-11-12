@@ -631,7 +631,8 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
 
 #include "scene.h"
 
-void BattleMotion_ApproachTargetFar(s32, s16, s32, s32);
+void BattleMotion_ApproachTargetFar(s32 actorId, s32 targetId,
+                                    s32 travelDivisor, s32 initialVelocityY);
 void BattleEffect_RunSparkGroups(struct BattleEffectArgument *effect, s32 kind);
 
 /// Jumps the user toward the first target and emits type 4 sparks after 29

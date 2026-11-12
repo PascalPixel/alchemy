@@ -8,7 +8,7 @@
 // A scale of one in 16.16 on both axes.
 extern const struct SpriteScale gData_08196e4c;
 
-void Animation_ApplyChildArgumentFar(void *object, s32 animation);
+s32 Animation_ApplyChildArgumentFar(void *object, s32 animation);
 
 // A frame callback of summon 17 (BattleEffect_RunUlysses adds and removes it):
 // places effect object 7 at the last particle's point (x across, y in depth)

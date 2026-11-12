@@ -1101,7 +1101,6 @@ SECTIONS
         "*/games/tla/src/scene/tundaria_tower/s00b8.o"(.text)
         "*/games/tla/src/scene/tundaria_tower/script0.o"(.text)
         "*/games/tla/src/field/map/cell_set.o"(.text)
-        "*/games/tla/src/scene/tundaria_tower.o"(.text)
         "*/games/tla/src/field/field_effect/advance_motion.o"(.text)
         "*/games/tla/src/scene/tundaria_tower/s11e0.o"(.text)
         "*/games/tla/src/scene/tundaria_tower/events_e.o"(.text)

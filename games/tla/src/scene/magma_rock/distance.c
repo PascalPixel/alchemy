@@ -3,6 +3,7 @@
 #include "iwram_call.h"
 #include "actor.h"
 #include "event_inline.h"
+#include "map.h"
 
 struct EventObjects {
   u8 unk00[20];
@@ -20,4 +21,23 @@ s32 Func_020005a0(s32 *a, s32 *b) {
   s32 dz = (a[2] - b[2]) >> 16;
 
   return Iwram_Sqrt(dx * dx + dz * dz);
+}
+
+extern u8 gMapCellBuffer[];
+extern u8 gMapShapeGrid[];
+
+s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
+void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
+s32 Func_02003adc(s32 layer, s32 x, s32 z);
+s32 Func_02003c24(s32 layer, s32 shape, s32 height);
+
+s32 Func_020005cc(s32 layer, s32 x, s32 z, s32 height) {
+  struct MapWork *map = Ram_HeapSlots->mapWork;
+  s32 shape = Func_02003adc(layer, x, z);
+  u8 *out = Ram_MapShapeGrid +
+            (map->layers[layer].cells - (struct MapCell *)Ram_MapCellBuffer);
+
+  out += x + (z << 7);
+  *out = Func_02003c24(layer, shape, height);
+  return 0;
 }

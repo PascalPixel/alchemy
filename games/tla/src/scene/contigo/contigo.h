@@ -15,7 +15,7 @@ void Func_0200406c(void);
 void Func_02004074(void);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
-void Actor_WaitForAnimationChange(s32 actor);
+void Actor_WaitForAnimationChange(u32 objectId);
 void Func_0200419c(void);
 void Func_02003e54(struct ContigoObject *object, const void *effect);
 void Func_02003f54(struct ContigoObject *object);

@@ -3,6 +3,7 @@
 #include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "event_inline.h"
+#include "local.h"
 
 s32 Func_02000658(s32 kind, s32 x, s32 z);
 void Func_0200257c(void);
@@ -32,5 +33,13 @@ void Func_020027d4(void) {
     Event_SetFlag(*(s16 *)work + 312);
   } else if (Event_GetFlag(0x200)) {
     Func_020026a4(0x108, row * 8 + 10);
+  }
+}
+
+void Func_02002868(void) {
+  if (!Event_GetFlag(0x305)) {
+    Actor_SetSpriteColor(Actor_Get(11), 15);
+    Actor_SetPosition(11, PIXELS(136), PIXELS(360));
+    Actor_Get(11)->scaleX = Actor_Get(11)->scaleY = 0x1000;
   }
 }

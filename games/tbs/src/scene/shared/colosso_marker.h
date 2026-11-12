@@ -91,6 +91,8 @@ void Colosso_FadeInWarrior(s32 id, s32 x, s32 z) {
 void Colosso_RestoreWarrior(s32 id) {
   struct ActorSystemWork *system;
   struct Actor *actor;
+  /* FAKEMATCH(temporary): zero holds the five stores' 0; as 0 in each store, 13
+   * of 73 instructions differ in tbs-en. */
   s32 zero;
   u8 *control;
 
@@ -259,6 +261,8 @@ void Colosso_WalkActorTo(s32 actorId, s32 x, s32 z) {
 
   if (actor != 0) {
     s32 speed = px(2);
+    /* FAKEMATCH(temporary): zero holds the paused flag's 0; as paused = 0, 8
+     * of 28 instructions differ in tbs-en. */
     s32 zero = 0;
 
     actor->speedLimit = speed;
@@ -277,6 +281,8 @@ void Colosso_WalkActorToAndStand(s32 actorId, s32 x, s32 z) {
 
   if (actor != 0) {
     s32 speed = px(5) / 4;
+    /* FAKEMATCH(temporary): zero holds the paused flag's 0; as paused = 0, 8
+     * of 33 instructions differ in tbs-en. */
     s32 zero = 0;
 
     actor->speedLimit = speed;

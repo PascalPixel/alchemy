@@ -4,6 +4,16 @@
 
 #include "../window_internal.h"
 
+// Pixels added to the page arrow's and the sprite glyphs' screen y, which
+// differ by language.
+#if (LANGUAGE == LANGUAGE_JAPANESE)
+#define PAGE_ARROW_Y_OFFSET 1
+#define GLYPH_SPRITE_Y_OFFSET 0
+#else
+#define PAGE_ARROW_Y_OFFSET (-1)
+#define GLYPH_SPRITE_Y_OFFSET (-2)
+#endif
+
 typedef s32 (*GlyphRoutine)(struct Window *, u32, u32, u32, const u8 *);
 
 /// A window sprite's sprite cell: the link and OAM attributes in its 12 bytes
@@ -131,11 +141,8 @@ s32 Glyph_Draw(struct Window *window, s32 character, s32 x, s32 y, s32 mode) {
       if (work->glyphResource == NO_GLYPH_RESOURCE)
         work->glyphResource = VramCache_FindFreeEntry();
       sprite->x = (window->x << 3) + ((window->width - 2) << 3) + 4;
-#if (LANGUAGE == LANGUAGE_JAPANESE)
-      sprite->y = (window->y << 3) + ((window->height - 2) << 3) + 1;
-#else
-      sprite->y = (window->y << 3) + ((window->height - 2) << 3) - 1;
-#endif
+      sprite->y =
+          (window->y << 3) + ((window->height - 2) << 3) + PAGE_ARROW_Y_OFFSET;
     } else {
       // Copy the glyph's tiles to its sprite tiles (sprite VRAM) and place it:
       // half the line spacing below y and half the letter spacing right of x,
@@ -143,11 +150,8 @@ s32 Glyph_Draw(struct Window *window, s32 character, s32 x, s32 y, s32 mode) {
       // shape a 16x16 sprite.
       Dma_Set(tiles, (void *)(OBJ_VRAM0 + (work->glyphTiles + index) * 32),
               DMA_COPY32(32), REG_DMA3);
-#if (LANGUAGE == LANGUAGE_JAPANESE)
-      ((u16 *)&windowSprite->oam)[0] = y + (spacingY >> 1) + window->y * 8;
-#else
-      ((u16 *)&windowSprite->oam)[0] = y + (spacingY >> 1) + window->y * 8 - 2;
-#endif
+      ((u16 *)&windowSprite->oam)[0] =
+          y + (spacingY >> 1) + window->y * 8 + GLYPH_SPRITE_Y_OFFSET;
       ((u16 *)&windowSprite->oam)[1] =
           (x + (spacingX >> 1) + window->x * 8 + 2) | 0x4000;
       ((u16 *)&windowSprite->oam)[2] = work->glyphTiles + index;
@@ -624,3 +628,6 @@ void WindowSprite_UpdateAll(void) {
     }
   }
 }
+
+#undef PAGE_ARROW_Y_OFFSET
+#undef GLYPH_SPRITE_Y_OFFSET

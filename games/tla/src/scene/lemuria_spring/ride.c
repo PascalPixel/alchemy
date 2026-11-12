@@ -136,3 +136,95 @@ s32 Func_02001184(s32 side) {
   }
   return gData_02001828;
 }
+
+#include "scene_tables.h"
+#include "text/msg_ids.h"
+
+void Func_02000054(void);
+void Func_020000d0(void);
+
+struct SceneEntrance gSceneEntrances[] = {
+    {0, CONDITION_ALWAYS, 288, 0, 454, FACING_NORTH, 0, -1, -1, -1, -1, 0},
+    {SCENE_TABLE_END},
+};
+
+u32 gSceneExits[] = {
+    SCENE_EXITS(205),
+    SCENE_EXIT_IF(1, 202, 5, -1),
+    SCENE_EXITS_END,
+};
+
+struct ActorPlacement gActorPlacements[] = {
+    {669, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 0, 0},
+    {669, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 0, 0},
+    {669, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 0, 0},
+    {669, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 0, 0},
+    {669, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 0, 0},
+    {670, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 0, 0},
+    {670, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 0, 0},
+    {670, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 0, 0},
+    {670, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 0, 0},
+    {670, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 0, 0},
+    {667, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 0, 0},
+    {667, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 0, 0},
+    {668, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 0, 0},
+    {668, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 0, 0},
+    {450, CONDITION_ALWAYS, 7, PIXELS(176), 0, PIXELS(144), FACING_SOUTH, 1, 0},
+    {450, CONDITION_ALWAYS, 7, PIXELS(72), 0, PIXELS(144), FACING_SOUTH, 1, 0},
+    {450, CONDITION_ALWAYS, 7, PIXELS(176), 0, PIXELS(168), FACING_SOUTH, 1, 0},
+    {450, CONDITION_ALWAYS, 7, PIXELS(72), 0, PIXELS(168), FACING_SOUTH, 1, 0},
+    {160, CONDITION_ALWAYS, 1, PIXELS(48), 0, PIXELS(136), FACING_NORTH, 1, 0},
+    {238, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_EAST, 0, 0},
+    {165, CONDITION_ALWAYS, 1, PIXELS(216), 0, PIXELS(96), FACING_WEST, 1, 0},
+    {322, CONDITION_ALWAYS, 1, -0x380000, 0, -0x380000, FACING_WEST, 1, 0},
+    {SCENE_TABLE_END},
+};
+
+// clang-format off
+u32 gData_02001678[] = {
+    0xa08090a, 0xc040b06, 0xe020d03, 0x10000f01,
+};
+
+struct Trigger gSceneEvents[] = {
+    {1, 1, CONDITION_ALWAYS, 1},
+    {0, 22, CONDITION_ALWAYS, MSGNO(MsgReadTheSign)},
+    {0, 23, CONDITION_ALWAYS, MSGNO(MsgReadTheSignThe)},
+    {0, 26, CONDITION_ALWAYS, MSGNO(MsgIfYouFace)},
+    {0x8d15, 26, CONDITION_ALWAYS, MSGNO(MsgIDLove)},
+    {0, 28, CONDITION_ALWAYS, MSGNO(MsgIRememberAn)},
+    {0x8d15, 28, CONDITION_ALWAYS, MSGNO(MsgHeHadSuch)},
+    {3, 25, 0x200, EVENT(Func_02000054)},
+    {3, 80, CONDITION_ALWAYS, EVENT(Func_020000d0)},
+    {TRIGGERS_END},
+};
+
+u32 gData_02001700[] = {
+    280, 359, 335, 380, 302, 342,
+    387, 372, 320, 395, 364, 341,
+    183, 186, 189,
+};
+
+u16 gData_0200173c[] = {
+    20, 10, 2, 1, 0,
+};
+
+u8 gData_02001746[] = {
+    0, 1, 9,
+};
+
+u8 gData_02001749[] = {
+    0, 3, 4,
+};
+
+u8 gData_0200174c[] = {
+    80, 160, 80, 72,
+};
+
+u8 gData_02001750[] = {
+    32, 104, 68, 72,
+};
+
+u16 gData_02001754[] = {
+    0, 1, 0, 0x8000,
+};
+// clang-format on

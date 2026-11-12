@@ -29,9 +29,9 @@ struct WarpTarget {
 #define SCENE_WORK ((struct SceneWork *)Ram_HeapSlots->eventWork)
 
 extern u8 MsgAreWeSetting[];
-extern const u8 gData_0200057c[];
-extern const u8 gData_0200059c[];
-extern const struct WarpTarget gData_02000610;
+extern s32 gData_0200057c[];
+extern s32 gData_0200059c[];
+extern struct WarpTarget gData_02000610;
 
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);

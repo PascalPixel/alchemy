@@ -110,13 +110,13 @@ void Func_02001d44(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
 s32 Func_02001d5c(s32 x, s32 z, s32 layer);
 void Func_02001d64(s32 x, s32 z, s32 layer, s32 value);
 
-extern const struct WarpTarget gData_020021bc;
-extern const struct WarpTarget gData_020021c4;
-extern const struct WarpTarget gData_020021cc;
-extern const struct WarpTarget gData_020021d4;
-extern const struct WarpTarget gData_020021dc;
-extern const struct WarpTarget gData_020021e4;
-extern const struct WarpTarget gData_020021ec;
+extern struct WarpTarget gData_020021bc;
+extern struct WarpTarget gData_020021c4;
+extern struct WarpTarget gData_020021cc;
+extern struct WarpTarget gData_020021d4;
+extern struct WarpTarget gData_020021dc;
+extern struct WarpTarget gData_020021e4;
+extern struct WarpTarget gData_020021ec;
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -212,9 +212,9 @@ void Func_02000278(s32 door) {
   Func_020001f0(warp, door, mode);
 }
 
-/// Actor 18's talk: one message, and Actor_TurnToFaceEachOther with the party leader,
-/// while the event work's halfword at 0x166 is 0, another once it is set; the
-/// actor's angle is restored after.
+/// Actor 18's talk: one message, and Actor_TurnToFaceEachOther with the party
+/// leader, while the event work's halfword at 0x166 is 0, another once it is
+/// set; the actor's angle is restored after.
 void Func_02000308(void) {
   u8 *work = Ram_HeapSlots->eventWork;
   struct Actor *object = Actor_Get(18);
@@ -609,8 +609,8 @@ void Func_02001d3c();
 void Func_02001d4c();
 void Actor_SetWideSprite();
 void Func_02001b3c();
-extern u8 gData_02001d84[];
-extern u8 gData_02001e04[];
+extern u32 gData_02001d84[];
+extern u32 gData_02001e04[];
 
 s32 Func_02000bdc(void) {
   s32 t3, t7, t11, t12, t15, t16, t17, t19, t20, t23, t25, t26, t27, t32, t33,
@@ -789,8 +789,7 @@ void Func_02000e7c(s32 id) {
   Actor_SetAnimation(12, 2);
   leader = Actor_Get(gMainRoutineWork.currentOwner);
   if (leader != 0)
-    Actor_SetDestination(12, ((s16 *)&leader->x)[1],
-                              ((s16 *)&leader->z)[1]);
+    Actor_SetDestination(12, ((s16 *)&leader->x)[1], ((s16 *)&leader->z)[1]);
   FieldActor_WaitForMoveById(12);
   Actor_SetPosition(12, 0, 0);
   FieldEvent_Wait(10);
@@ -817,8 +816,7 @@ void Func_0200109c(void) {
   Actor_SetAnimation(12, 2);
   leader = Actor_Get(gMainRoutineWork.currentOwner);
   if (leader != 0)
-    Actor_SetDestination(12, ((s16 *)&leader->x)[1],
-                              ((s16 *)&leader->z)[1]);
+    Actor_SetDestination(12, ((s16 *)&leader->x)[1], ((s16 *)&leader->z)[1]);
   FieldActor_WaitForMoveById(12);
   Actor_SetPosition(12, 0, 0);
   FieldEvent_Wait(10);
@@ -1095,16 +1093,14 @@ void Func_02001160(void) {
   Actor_SetAnimation(7, 2);
   leader = Actor_Get(gMainRoutineWork.currentOwner);
   if (leader != 0)
-    Actor_SetDestination(7, ((s16 *)&leader->x)[1],
-                              ((s16 *)&leader->z)[1]);
+    Actor_SetDestination(7, ((s16 *)&leader->x)[1], ((s16 *)&leader->z)[1]);
   FieldActor_WaitForMoveById(7);
   Actor_SetPosition(7, 0, 0);
   Actor_SetSpeed(12, 0x13333, 0x9999);
   Actor_SetAnimation(12, 2);
   leader = Actor_Get(gMainRoutineWork.currentOwner);
   if (leader != 0)
-    Actor_SetDestination(12, ((s16 *)&leader->x)[1],
-                              ((s16 *)&leader->z)[1]);
+    Actor_SetDestination(12, ((s16 *)&leader->x)[1], ((s16 *)&leader->z)[1]);
   FieldActor_WaitForMoveById(12);
   Actor_SetPosition(12, 0, 0);
   Func_020001bc();
@@ -1114,3 +1110,201 @@ void Func_02001160(void) {
 void Func_02001d6c(void);
 
 void Func_02001b3c(void) { Func_02001d6c(); }
+
+#include "objcmd.h"
+
+extern s16 gData_02002184[];
+extern s16 gData_0200219a[];
+extern s16 gData_020021b0[];
+
+// clang-format off
+u32 gData_02001d84[] = {
+    SC_ARG(2),
+    SC_SET(SW_SPEED, 0x10000),
+    SC_SET(SW_ACCEL, 0x10000),
+    SC_LABEL(1),
+    SC_MOVE(PIXELS(40), 0, PIXELS(952)),
+    SC_SYNC,
+    SC_MOVE(PIXELS(40), 0, PIXELS(904)),
+    SC_SYNC,
+    SC_MOVE(PIXELS(88), 0, PIXELS(904)),
+    SC_SYNC,
+    SC_MOVE(PIXELS(88), 0, PIXELS(952)),
+    SC_SYNC,
+    SC_LOOP(SC_FOREVER, SC_TO(1)),
+};
+
+u32 gData_02001e04[] = {
+    SC_ARG(2),
+    SC_SET(SW_SPEED, 0x10000),
+    SC_SET(SW_ACCEL, 0x10000),
+    SC_LABEL(1),
+    SC_MOVE(PIXELS(88), 0, PIXELS(904)),
+    SC_SYNC,
+    SC_MOVE(PIXELS(88), 0, PIXELS(952)),
+    SC_SYNC,
+    SC_MOVE(PIXELS(40), 0, PIXELS(952)),
+    SC_SYNC,
+    SC_MOVE(PIXELS(40), 0, PIXELS(904)),
+    SC_SYNC,
+    SC_LOOP(SC_FOREVER, SC_TO(1)),
+};
+
+struct SceneEntrance gSceneEntrances[] = {
+    {0, CONDITION_ALWAYS, 460, 0, 550, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {SCENE_TABLE_END},
+};
+
+u32 gSceneExits[] = {
+    SCENE_EXITS(202),
+    SCENE_EXIT_IF(1, 203, 1, -1),
+    SCENE_EXIT_IF(2, 203, 2, -1),
+    SCENE_EXIT_IF(3, 203, 3, -1),
+    SCENE_EXIT_IF(4, 201, 3, -1),
+    SCENE_EXIT_IF(5, 205, 1, -1),
+    SCENE_EXIT_IF(12, 203, 12, -1),
+    SCENE_EXIT_IF(15, 203, 15, -1),
+    SCENE_EXIT_IF(16, 203, 16, -1),
+    SCENE_EXIT_IF(11, 204, 1, -1),
+    SCENE_EXIT_IF(10, 204, 10, -1),
+    SCENE_EXIT_IF(17, 204, 17, -1),
+    SCENE_EXITS_END,
+};
+
+struct ActorPlacement gActorPlacements[] = {
+    {407, CONDITION_ALWAYS, 1, PIXELS(952), 0, PIXELS(920), FACING_SOUTH, 2, 0},
+    {407, CONDITION_ALWAYS, 1, PIXELS(904), 0, PIXELS(920), FACING_SOUTH, 2, 1},
+    {372, CONDITION_ALWAYS, 1, PIXELS(856), 0, PIXELS(1016), FACING_SOUTH, 2, 0},
+    {450, CONDITION_ALWAYS, 1, PIXELS(128), 0, PIXELS(880), FACING_SOUTH, 2, 0},
+    {157, CONDITION_ALWAYS, 1, PIXELS(488), 0, PIXELS(1256), FACING_WEST, 1, 0},
+    {156, CONDITION_ALWAYS, 1, PIXELS(344), 0, PIXELS(1040), FACING_SOUTH, 1, 0},
+    {160, CONDITION_ALWAYS, 1, PIXELS(568), 0, PIXELS(1064), FACING_SOUTH, 1, 0},
+    {165, CONDITION_ALWAYS, 1, PIXELS(488), 0, PIXELS(856), FACING_SOUTH + FACING_STEP, 1, 0},
+    {164, CONDITION_ALWAYS, 1, PIXELS(408), 0, PIXELS(920), FACING_WEST, 1, 0},
+    {166, CONDITION_ALWAYS, 1, PIXELS(600), 0, PIXELS(920), FACING_SOUTH + FACING_STEP, 1, 0},
+    {167, CONDITION_ALWAYS, 1, PIXELS(40), 0, PIXELS(952), FACING_NORTH, 2, 0},
+    {168, CONDITION_ALWAYS, 1, PIXELS(88), 0, PIXELS(904), FACING_SOUTH, 2, 0},
+    {216, CONDITION_ALWAYS, 2, PIXELS(80), 0, PIXELS(1104), FACING_SOUTH, 0, 0},
+    {189, CONDITION_ALWAYS, 2, PIXELS(392), 0, PIXELS(712), FACING_SOUTH, 0, 0},
+    {80, CONDITION_ALWAYS, 1, PIXELS(840), 0, PIXELS(1080), FACING_EAST, 2, 0},
+    {203, CONDITION_ALWAYS, 2, PIXELS(864), 0, PIXELS(984), FACING_SOUTH, 0, 0},
+    {231, CONDITION_ALWAYS, 1, PIXELS(440), 0, PIXELS(520), FACING_SOUTHEAST + FACING_STEP, 1, 0},
+    {231, CONDITION_ALWAYS, 1, PIXELS(488), 0, PIXELS(520), FACING_SOUTH + FACING_STEP, 1, 0},
+    {166, CONDITION_ALWAYS, 2, PIXELS(552), 0, PIXELS(440), FACING_SOUTH, 0, 0},
+    {7, CONDITION_ALWAYS, 1, -0x380000, 0, -0x380000, FACING_NORTH, 2, 0},
+    {489, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 1},
+    {407, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
+    {157, CONDITION_ALWAYS, 1, PIXELS(488), 0, PIXELS(1008), FACING_WEST, 1, 0},
+    {160, CONDITION_ALWAYS, 1, PIXELS(464), 0, PIXELS(1016), FACING_NORTH + FACING_STEP, 2, 0},
+    {489, CONDITION_ALWAYS, 7, PIXELS(488), 0, PIXELS(984), FACING_WEST, 2, 0},
+    {SCENE_TABLE_END},
+};
+
+s16 gData_02002184[] = {
+    2, 1, 1, 1, 6, 2, 2, 1,
+    1, 6, -1,
+};
+
+s16 gData_0200219a[] = {
+    0, 1, 2, 1, 6, 0, 2, 2,
+    1, 6, -1,
+};
+
+s16 gData_020021b0[] = {
+    3, 1, 1, 1, 0, -1,
+};
+// clang-format on
+
+struct WarpTarget gData_020021bc = {(s32)gData_02002184, 22, 47};
+
+struct WarpTarget gData_020021c4 = {(s32)gData_02002184, 35, 47};
+
+struct WarpTarget gData_020021cc = {(s32)gData_0200219a, 9, 40};
+
+struct WarpTarget gData_020021d4 = {(s32)gData_020021b0, 54, 45};
+
+struct WarpTarget gData_020021dc = {(s32)gData_0200219a, 28, 20};
+
+struct WarpTarget gData_020021e4 = {(s32)gData_0200219a, 28, 13};
+
+struct WarpTarget gData_020021ec = {(s32)gData_02002184, 54, 50};
+
+struct Trigger gSceneEvents[] = {
+    {0xc602, 1, CONDITION_ALWAYS, EVENT(Func_02000278)},
+    {0xc602, 2, CONDITION_ALWAYS, EVENT(Func_02000278)},
+    {0xc602, 3, CONDITION_ALWAYS, EVENT(Func_02000278)},
+    {49, 4, CONDITION_ALWAYS, 4},
+    {0xc401, 5, 0x1908, 5},
+    {0xc602, 12, 0x1966, EVENT(Func_02000278)},
+    {1, 15, CONDITION_ALWAYS, 15},
+    {0xc602, 16, 0x1969, EVENT(Func_02000278)},
+    {0xc602, 11, CONDITION_ALWAYS, EVENT(Func_02000278)},
+    {0xc602, 10, CONDITION_ALWAYS, EVENT(Func_02000278)},
+    {1, 17, CONDITION_ALWAYS, 17},
+    {2, 20, 0x964, EVENT(Func_02001160)},
+    {2, 21, 0x964, EVENT(Func_02000e7c)},
+    {2, 22, 0x964, EVENT(Func_02000e7c)},
+    {2, 23, 0x964, EVENT(Func_0200109c)},
+    {0, 12, CONDITION_ALWAYS, MSGNO(MsgICannotRemember)},
+    {0, 13, CONDITION_ALWAYS, MSGNO(MsgLemuriaHasNo)},
+    {0, 14, CONDITION_ALWAYS, MSGNO(MsgInLemuriaWe)},
+    {0, 15, CONDITION_ALWAYS, MSGNO(MsgLifeNeverChanges)},
+    {0, 16, CONDITION_ALWAYS, MSGNO(MsgIOughtTo)},
+    {0, 17, CONDITION_ALWAYS, MSGNO(MsgHowOldAm)},
+    {0, 18, CONDITION_ALWAYS, EVENT(Func_02000308)},
+    {0, 19, CONDITION_ALWAYS, EVENT(Func_02000398)},
+    {0, 20, CONDITION_ALWAYS, MSGNO(MsgMeowMrrrfle2)},
+    {0, 21, CONDITION_ALWAYS, MSGNO(MsgWoofRrrrrroof2)},
+    {0, 22, CONDITION_ALWAYS, MSGNO(MsgMoo2)},
+    {0, 23, CONDITION_ALWAYS, MSGNO(MsgBukbukbuk2)},
+    {0, 7, CONDITION_ALWAYS, MSGNO(MsgBlank4)},
+    {0x8d15, 12, CONDITION_ALWAYS, MSGNO(MsgMoreOfThe)},
+    {0x8d15, 13, CONDITION_ALWAYS, MSGNO(MsgIHavenT)},
+    {0x8d15, 14, CONDITION_ALWAYS, MSGNO(MsgIVeAged)},
+    {0x8d15, 15, CONDITION_ALWAYS, MSGNO(MsgSometimesIThink)},
+    {0x8d15, 16, CONDITION_ALWAYS, MSGNO(MsgLongAgoA)},
+    {0x8d15, 17, CONDITION_ALWAYS, MSGNO(MsgKingHydrosIs)},
+    {0x8d15, 18, CONDITION_ALWAYS, EVENT(Func_02000308)},
+    {0x8d15, 19, CONDITION_ALWAYS, EVENT(Func_02000398)},
+    {0x8d15, 20, CONDITION_ALWAYS, MSGNO(MsgNoOneIn)},
+    {0x8d15, 21, CONDITION_ALWAYS, MSGNO(MsgThereSSo)},
+    {0x8d15, 22, CONDITION_ALWAYS, MSGNO(MsgLemuriansAreSo)},
+    {0x8d15, 23, CONDITION_ALWAYS, MSGNO(MsgIfItWeren)},
+    {0x8d15, 7, CONDITION_ALWAYS, MSGNO(MsgMotherWhyHave)},
+    {0, 24, 0x196a, MSGNO(MsgIVeNever)},
+    {0, 25, 0x196a, MSGNO(MsgLordConservatoHas)},
+    {0x8d15, 24, 0x196a, MSGNO(MsgIMSureThe)},
+    {0x8d15, 25, 0x196a, MSGNO(MsgHowCouldLord)},
+    {0, 24, 0x1969, MSGNO(MsgKingHydrosAwaits)},
+    {0, 25, 0x1969, MSGNO(MsgHisHighnessThe)},
+    {0x8d15, 24, 0x1969, MSGNO(MsgTheyAreClearly)},
+    {0x8d15, 25, 0x1969, MSGNO(MsgWhatDoesHis)},
+    {0, 24, CONDITION_ALWAYS, MSGNO(MsgTheKingIs)},
+    {0, 25, CONDITION_ALWAYS, MSGNO(MsgTheKingWill)},
+    {0x8d15, 24, CONDITION_ALWAYS, MSGNO(MsgHowMuchLongerWill)},
+    {0x8d15, 25, CONDITION_ALWAYS, MSGNO(MsgIHadHeard)},
+    {0, 26, 0x196a, MSGNO(MsgIfYouAnd)},
+    {0x8d15, 26, 0x196a, MSGNO(MsgIKnowWhy)},
+    {0, 26, CONDITION_ALWAYS, MSGNO(MsgTheSenateHolds)},
+    {0x8d15, 26, CONDITION_ALWAYS, MSGNO(MsgITrustThe)},
+    {0xc400, 11, CONDITION_ALWAYS, MSGNO(MsgHouseOfThe)},
+    {0, 29, CONDITION_ALWAYS, MSGNO(MsgDrinkingFromThis)},
+    {0x8d15, 29, CONDITION_ALWAYS, MSGNO(MsgTheseTurtlesHave)},
+    {0, 30, CONDITION_ALWAYS, EVENT(Func_02000934)},
+    {0x8d15, 30, CONDITION_ALWAYS, MSGNO(MsgNoOneIs)},
+    {0, 31, CONDITION_ALWAYS, EVENT(Func_020008e8)},
+    {3, 25, CONDITION_ALWAYS, EVENT(Func_020008e8)},
+    {3, 40, CONDITION_ALWAYS, EVENT(Func_0200062c)},
+    {0x8515, 8, 0x962, 0},
+    {0xc15, 10, 0x963, EVENT(Func_02000560)},
+    {0x50008905, 30, CONDITION_ALWAYS, EVENT(Func_02000428)},
+    {0x50008905, 31, CONDITION_ALWAYS, EVENT(Func_02000448)},
+    {0x50008905, 32, CONDITION_ALWAYS, EVENT(Func_02000468)},
+    {0x50008905, 33, CONDITION_ALWAYS, EVENT(Func_02000488)},
+    {0x50008905, 38, CONDITION_ALWAYS, EVENT(Func_020004a8)},
+    {0x50008805, 104, 0x303, EVENT(Func_020005dc)},
+    {0x50008805, 105, 0x304, EVENT(Func_020005ec)},
+    {0x50008805, 107, 0x306, EVENT(Func_020005fc)},
+    {0x50008805, 108, 0x307, EVENT(Func_0200060c)},
+    {TRIGGERS_END},
+};

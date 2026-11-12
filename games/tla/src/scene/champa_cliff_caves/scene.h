@@ -9,7 +9,7 @@
 #include "text/msg_ids.h"
 
 struct WarpTarget {
-  s32 scene;
+  const void *scene;
   u16 x;
   u16 z;
 };
@@ -30,7 +30,7 @@ void Actor_CenterOnColumn(u32 objectId, s32 action, s32 z_offset);
 void Actor_OffsetPositionAndResetMotion(s32 id, s32 dx, s32 dz);
 
 void Func_0200016c(const struct WarpTarget *warp, s32 door, s32 mode);
-void Map_PlayMapEdit(s32 scene, s32 x, s32 z);
+void Map_PlayMapEdit(const void *steps, s32 x, s32 y);
 void Map_CopyCellAttributeRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Func_0802b450(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Func_0200345c(void);

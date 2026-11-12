@@ -920,13 +920,8 @@ SECTIONS
     {
         "*/games/tla/src/scene/champa/entry.o"(.text)
         "*/games/tla/src/scene/champa.o"(.text)
-        "*/games/tla/src/scene/champa/s0188.o"(.text)
-        "*/games/tla/src/scene/champa/s05dc.o"(.text)
-        "*/games/tla/src/scene/champa/s0b18.o"(.text)
-        "*/games/tla/src/scene/champa/s0c40.o"(.text)
-        "*/games/tla/src/scene/champa/s0e04.o"(.text)
         "*/games/tla/src/scene/champa/import.o"(.text)
-        "*/games/tla/src/scene/champa/data.o"(.data)
+        "*/games/tla/src/scene/champa.o"(.data)
     }
 }
 #elif OVERLAY == 0x683
@@ -957,22 +952,14 @@ SECTIONS
     .text 0x2008000 :
     {
         "*/games/tla/src/scene/champa_cliff_caves/entry.o"(.text)
-        "*/games/tla/src/scene/champa_cliff_caves/s0038.o"(.text)
-        "*/games/tla/src/scene/champa_cliff_caves/s04d4.o"(.text)
-        "*/games/tla/src/scene/champa_cliff_caves/s0734.o"(.text)
-        "*/games/tla/src/scene/champa_cliff_caves/s0804.o"(.text)
+        "*/games/tla/src/scene/champa_cliff_caves.o"(.text)
         "*/games/tla/src/scene/champa_cliff_caves/s0a34.o"(.text)
-        "*/games/tla/src/scene/champa_cliff_caves/s0f48.o"(.text)
-        "*/games/tla/src/scene/champa_cliff_caves/s115c.o"(.text)
-        "*/games/tla/src/scene/champa_cliff_caves/s29f8.o"(.text)
         "*/games/tla/src/scene/champa_cliff_caves/s2c88.o"(.text)
         "*/games/tla/src/scene/champa_cliff_caves/s2d34.o"(.text)
-        "*/games/tla/src/scene/champa_cliff_caves/s2de4.o"(.text)
         "*/games/tla/src/scene/champa_cliff_caves/s3164.o"(.text)
         "*/games/tla/src/scene/champa_cliff_caves/s320c.o"(.text)
-        "*/games/tla/src/scene/champa_cliff_caves/s32a4.o"(.text)
         "*/games/tla/src/scene/champa_cliff_caves/import.o"(.text)
-        "*/games/tla/src/scene/champa_cliff_caves/s32a4.o"(.data)
+        "*/games/tla/src/scene/champa_cliff_caves/s320c.o"(.data)
         "*/games/tla/src/graphics/field/pal685.o"(.rodata)
         "*/games/tla/src/scene/champa_cliff_caves/data2.o"(.data)
     }
@@ -988,12 +975,7 @@ SECTIONS
         "*/games/tla/src/scene/ankohl_ruins/spawn.o"(.text)
         "*/games/tla/src/field/field_effect/move.o"(.text)
         "*/games/tla/src/scene/ankohl_ruins/s015c.o"(.text)
-        "*/games/tla/src/scene/ankohl_ruins/scene_tables.o"(.text)
-        "*/games/tla/src/scene/ankohl_ruins/events_b.o"(.text)
-        "*/games/tla/src/scene/ankohl_ruins/s10f4.o"(.text)
-        "*/games/tla/src/scene/ankohl_ruins/events_d.o"(.text)
-        "*/games/tla/src/scene/ankohl_ruins/s1420.o"(.text)
-        "*/games/tla/src/scene/ankohl_ruins/s160c.o"(.text)
+        "*/games/tla/src/scene/ankohl_ruins.o"(.text)
         "*/games/tla/src/scene/ankohl_ruins/s2438.o"(.text)
         "*/games/tla/src/scene/ankohl_ruins/import.o"(.text)
         "*/games/tla/src/scene/ankohl_ruins/s2438.o"(.data)
@@ -1014,20 +996,11 @@ SECTIONS
         "*/games/tla/src/scene/sea_of_time/object.o"(.text)
         "*/games/tla/src/field/field_effect/move.o"(.text)
         "*/games/tla/src/scene/sea_of_time/s015c.o"(.text)
-        "*/games/tla/src/scene/sea_of_time/map.o"(.text)
-        "*/games/tla/src/scene/sea_of_time/scene_tables.o"(.text)
-        "*/games/tla/src/scene/sea_of_time/s043c.o"(.text)
-        "*/games/tla/src/scene/sea_of_time/s0818.o"(.text)
-        "*/games/tla/src/scene/sea_of_time/s0a80.o"(.text)
-        "*/games/tla/src/scene/sea_of_time/clock.o"(.text)
+        "*/games/tla/src/scene/sea_of_time.o"(.text)
         "*/games/tla/src/scene/sea_of_time/s0c94.o"(.text)
         "*/games/tla/src/scene/sea_of_time/s0ef0.o"(.text)
-        "*/games/tla/src/scene/sea_of_time/enter.o"(.text)
-        "*/games/tla/src/scene/sea_of_time/s1650.o"(.text)
-        "*/games/tla/src/scene/sea_of_time/s1a14.o"(.text)
-        "*/games/tla/src/scene/sea_of_time/s1cdc.o"(.text)
         "*/games/tla/src/scene/sea_of_time/import.o"(.text)
-        "*/games/tla/src/scene/sea_of_time/data.o"(.data)
+        "*/games/tla/src/scene/sea_of_time/s0ef0.o"(.data)
     }
     .bss :
     {
@@ -1053,7 +1026,7 @@ SECTIONS
         "*/games/tla/src/scene/lemuria_dock/entry.o"(.text)
         "*/games/tla/src/scene/lemuria_dock.o"(.text)
         "*/games/tla/src/scene/lemuria_dock/import.o"(.text)
-        "*/games/tla/src/scene/lemuria_dock/data.o"(.data)
+        "*/games/tla/src/scene/lemuria_dock.o"(.data)
     }
 }
 #elif OVERLAY == 0x68a
@@ -1064,7 +1037,7 @@ SECTIONS
         "*/games/tla/src/scene/ancient_lemuria/entry.o"(.text)
         "*/games/tla/src/scene/ancient_lemuria.o"(.text)
         "*/games/tla/src/scene/ancient_lemuria/import.o"(.text)
-        "*/games/tla/src/scene/ancient_lemuria/data.o"(.data)
+        "*/games/tla/src/scene/ancient_lemuria.o"(.data)
     }
 }
 #elif OVERLAY == 0x68b
@@ -1075,7 +1048,7 @@ SECTIONS
         "*/games/tla/src/scene/lemuria/entry.o"(.text)
         "*/games/tla/src/scene/lemuria.o"(.text)
         "*/games/tla/src/scene/lemuria/import.o"(.text)
-        "*/games/tla/src/scene/lemuria/data.o"(.data)
+        "*/games/tla/src/scene/lemuria.o"(.data)
     }
     .bss :
     {
@@ -1089,7 +1062,6 @@ SECTIONS
     {
         "*/games/tla/src/scene/lemuria_interiors/entry.o"(.text)
         "*/games/tla/src/scene/lemuria_interiors.o"(.text)
-        "*/games/tla/src/scene/lemuria_interiors/s0a5c.o"(.text)
         "*/games/tla/src/scene/lemuria_interiors/s12dc.o"(.text)
         "*/games/tla/src/scene/lemuria_interiors/import.o"(.text)
         "*/games/tla/src/scene/lemuria_interiors/s12dc.o"(.data)
@@ -1103,9 +1075,8 @@ SECTIONS
         "*/games/tla/src/scene/lemuria_palace/entry.o"(.text)
         "*/games/tla/src/scene/lemuria_palace.o"(.text)
         "*/games/tla/src/scene/lemuria_palace/s03a0.o"(.text)
-        "*/games/tla/src/scene/lemuria_palace/s058c.o"(.text)
         "*/games/tla/src/scene/lemuria_palace/import.o"(.text)
-        "*/games/tla/src/scene/lemuria_palace/s058c.o"(.data)
+        "*/games/tla/src/scene/lemuria_palace/s03a0.o"(.data)
         "*/games/tla/src/scene/lemuria_palace/tiles.o"(.rodata)
         "*/games/tla/src/scene/lemuria_palace/data2.o"(.data)
     }
@@ -1121,13 +1092,9 @@ SECTIONS
     {
         "*/games/tla/src/scene/lemuria_spring/entry.o"(.text)
         "*/games/tla/src/scene/lemuria_spring.o"(.text)
-        "*/games/tla/src/scene/lemuria_spring/s012c.o"(.text)
-        "*/games/tla/src/scene/lemuria_spring/prepare.o"(.text)
-        "*/games/tla/src/scene/lemuria_spring/s08f0.o"(.text)
-        "*/games/tla/src/scene/lemuria_spring/s0904.o"(.text)
         "*/games/tla/src/scene/lemuria_spring/ride.o"(.text)
         "*/games/tla/src/scene/lemuria_spring/import.o"(.text)
-        "*/games/tla/src/scene/lemuria_spring/data.o"(.data)
+        "*/games/tla/src/scene/lemuria_spring/ride.o"(.data)
     }
     .bss :
     {

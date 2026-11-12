@@ -1,8 +1,7 @@
 #include "sea_of_time.h"
 
-struct SeaOfTimeObject *Func_020000d0(s32 x, s32 y, s32 z, s32 type) {
-  struct SeaOfTimeObject *object =
-      ((struct SeaOfTimeObject *)Import_ActorCreate(type, x, y, z));
+struct Actor *Func_020000d0(s32 x, s32 y, s32 z, s32 type) {
+  struct Actor *object = Import_ActorCreate(type, x, y, z);
 
   if (object != NULL) {
     Scene_SetActorSpritePriority(object, 1);

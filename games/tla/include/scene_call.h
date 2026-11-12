@@ -26,7 +26,7 @@ void Actor_Jump(s32 actor, s32 speed, s32 frames);
 void Actor_SetPositionAndReset(s32 actor, s32 x, s32 z);
 void Actor_ArmCallback(s32 actor, s32 angle, s32 frames);
 void Actor_SetAngleToward(s32 actor, s32 target, s32 frames);
-void FieldMessage_ShowAtActor(s32 speaker, s32 flags);
+s32 FieldMessage_ShowAtActor(s32 speaker, s32 flags);
 s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 flags);
 void FieldMessage_Show(s32 message, s32 position);
 

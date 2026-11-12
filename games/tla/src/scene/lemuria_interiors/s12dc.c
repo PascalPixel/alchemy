@@ -624,12 +624,12 @@ void Func_020013f0(void) {
   Func_02002834();
 }
 
-void Func_02000058(void);
-void Func_02000104(void);
-void Func_02000154(void);
-void Func_020001a0(void);
-void Func_020001ec(void);
-void Func_02000a5c(void);
+void Func_02000058(s32 arg0);
+void Func_02000104(s32 unused, s32 id);
+void Func_02000154(s32 arg0);
+void Func_020001a0(s32 arg0);
+void Func_020001ec(s32 arg0, s32 arg1);
+void Func_02000a5c(s32 a0, s32 a1, s32 a2);
 
 struct SceneEntrance gSceneEntrances[] = {
     {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},

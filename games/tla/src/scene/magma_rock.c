@@ -1,3 +1,5 @@
+#include "../field/map/cell_get.c"
+
 #include "types.h"
 #include "actor.h"
 #include "event_inline.h"

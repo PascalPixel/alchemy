@@ -7,3 +7,5 @@ void Func_02000280(void) {
 }
 
 #include "../../field/object/wait_until_idle.c"
+
+#include "../../field/map/cell_get.c"

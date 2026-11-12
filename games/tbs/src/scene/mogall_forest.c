@@ -369,10 +369,11 @@ static s32 MogallForest_ClearActorSpriteFlags(struct Actor *interpreter) {
   return 0;
 }
 
-/// Hops an actor to a pixel destination with the requested vertical
-/// speed, in 16.16 fixed point.
-static void MogallForest_HopActorToFixed(s32 actorId, s32 targetX, s32 targetZ,
-                                         s32 verticalSpeed) {
+/// Hops an actor to a destination in whole pixels with a vertical speed in
+/// 16.16 fixed point; scenes call it through MogallForest_HopActorTo.
+static void MogallForest_HopActorToWithSpeedFixed(s32 actorId, s32 targetX,
+                                                  s32 targetZ,
+                                                  s32 verticalSpeed) {
   struct Actor *actor;
 
   actor = Actor_Get(actorId);
@@ -392,7 +393,8 @@ static void MogallForest_HopActorToFixed(s32 actorId, s32 targetX, s32 targetZ,
 /// Hops an actor with a vertical speed in pixels a frame:
 /// `MogallForest_HopActorTo(ACTOR_FIRST_AREA_NORTH_APE, 88, 120, 6)`.
 #define MogallForest_HopActorTo(actorId, targetX, targetZ, verticalSpeed)      \
-  MogallForest_HopActorToFixed(actorId, targetX, targetZ, Q16(verticalSpeed))
+  MogallForest_HopActorToWithSpeedFixed(actorId, targetX, targetZ,             \
+                                        Q16(verticalSpeed))
 
 /// Scatters a complete ring of rising puffs around an actor.
 static void MogallForest_SpawnPuffRing(s32 id) {
@@ -1095,21 +1097,18 @@ static void MogallForest_ThirdArea_UpdateSouthRock(void) {
 static void MogallForest_ThirdArea_ApeAttacks(void) {
 
   struct Actor *creature;
-  s32 jumpSpeed;
   struct Actor *leaderForX;
   s32 leaderX;
   struct Actor *leaderForZ;
 
   creature = Actor_Get(ACTOR_THIRD_AREA_ATTACKING_APE);
-  jumpSpeed = px(8);
   Event_Start();
   MogallForest_ApeComesOut(ACTOR_THIRD_AREA_ATTACKING_APE, SPRITE_COLOR_NORMAL);
-  MogallForest_HopActorToFixed(ACTOR_THIRD_AREA_ATTACKING_APE, 472, 104,
-                               jumpSpeed);
+  MogallForest_HopActorTo(ACTOR_THIRD_AREA_ATTACKING_APE, 472, 104, 8);
   Event_Wait(10);
   FieldEffect_Spawn(creature->x.fixed, creature->y.fixed,
-                    (creature->z.fixed + jumpSpeed), 0, 0, 0,
-                    EFFECT_SCRIPT_MEDIUM, 0);
+                    (creature->z.fixed + px(8)), 0, 0, 0, EFFECT_SCRIPT_MEDIUM,
+                    0);
   FieldCamera_FollowActor(ACTOR_THIRD_AREA_ATTACKING_APE, 1);
   Actor_TurnToFaceEachOther(ACTOR_THIRD_AREA_ATTACKING_APE, ACTOR_PARTY_LEADER,
                             0);

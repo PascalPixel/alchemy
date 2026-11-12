@@ -53,5 +53,7 @@ of the code opens up.
 - [Source](src/README.md) says which folder holds what.
 - [Places](https://alchemy.pascalpixel.com/tbs/places) has a page for every
   town and dungeon, with its map and a recording of each event.
+- [Unused](https://alchemy.pascalpixel.com/tbs/unused) collects what the
+  game keeps but never plays.
 - The [glossary](glossary.md) has every word these pages share.
 - [Building Alchemy](../../INSTALL.md) gets you a ROM you made yourself.

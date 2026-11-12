@@ -278,9 +278,9 @@ void WindowSystem_StartFieldUpdate(void) {
   struct WindowWork *state = WINDOW_WORK;
   s32 priority;
 
-  // VRAM cache entry 95 with no source: 128 << 6 is 8192 bytes, 256 sprite
+  // The glyph sheet, loaded with no source: 128 << 6 is 8192 bytes, 256 sprite
   // tiles, the four of a 16x16 glyph for each of the 64 window sprites.
-  state->glyphTiles = VramCache_Load(95, 128 << 6, 0);
+  state->glyphTiles = VramCache_Load(VRAM_CACHE_ENTRY_GLYPH_SHEET, 128 << 6, 0);
   state->letterSpacing = 9;
   state->lineSpacing = 10;
   state->outline = TEXT_STYLE_PLAIN;
@@ -303,7 +303,8 @@ void WindowSystem_StartBattleUpdate(s32 loadGlyphTiles) {
 
   // As in the field's setup above.
   if (loadGlyphTiles != 0)
-    state->glyphTiles = VramCache_Load(95, 128 << 6, 0);
+    state->glyphTiles =
+        VramCache_Load(VRAM_CACHE_ENTRY_GLYPH_SHEET, 128 << 6, 0);
   state->letterSpacing = 9;
   state->lineSpacing = 10;
   state->outline = TEXT_STYLE_PLAIN;

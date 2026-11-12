@@ -144,7 +144,8 @@ struct WindowWork {
   u16 textBufferEnd;    ///< where the next code goes in textBuffer
   u16 lastMessageStart; ///< where the last decoded message began in textBuffer
   u16 glyphResource;    ///< VRAM cache slot of the page arrow; 99 when none
-  u16 glyphTiles;       ///< first sprite tile of the glyph sheet (picture 95)
+  u16 glyphTiles;       ///< first sprite tile of the glyph sheet
+                        ///< (VRAM_CACHE_ENTRY_GLYPH_SHEET)
   /// Two bytes that align values to a word, in every edition; nothing reads
   /// them.
   u8 padding[WINDOW_WORK_ARGUMENT_VALUES_OFFSET - WINDOW_WORK_COUNTER_OFFSET -

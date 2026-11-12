@@ -2459,7 +2459,7 @@ s32 ItemMenu_SelectGiveQuantity(s32 baseQuantity, s32 quantityRange,
       menu->sideMember[0], menu->selectedItems[0] & INVENTORY_ITEM_ID_MASK);
   // Two dial sprites, left and right of the number.
   block = VramCache_FindFreeEntry();
-  if (block != 96) { // 96 (VRAM_CACHE_ENTRY_COUNT): no free VRAM block
+  if (block != VRAM_CACHE_ENTRY_COUNT) { // no free VRAM block
     VramCache_Load(block, 256, 0);
     WindowSprite_CreateFar(block, OUTPUT_SIZE_32X8, window, 48, 32);
     rightDial = WindowSprite_CreateFar(block, OUTPUT_SIZE_32X8, window, 80, 32);

@@ -56,8 +56,8 @@ void FadeOverlay_DrawMarks(void) {
   terrainFloor = actor->groundHeight >> 16;
   terrainLayer = actor->layer;
   // The first tile of the solid block FieldEffect_StartFadeOverlay loaded (VRAM
-  // cache block 94; tiles are 32 bytes).
-  tile = gVramCacheEntries[94].offset >> 5;
+  // cache entry VRAM_CACHE_ENTRY_FADE_OVERLAY; tiles are 32 bytes).
+  tile = gVramCacheEntries[VRAM_CACHE_ENTRY_FADE_OVERLAY].offset >> 5;
   // The left cell, 8 pixels left of the actor. The ground is read one
   // and two cells (16 and 32 pixels) south, the further one counting 16 pixels
   // lower, and the higher of the two is used.
@@ -107,11 +107,11 @@ void FadeOverlay_DrawMarks(void) {
 /// Starts the fade overlay on object (the party leader when NULL): loads its
 /// solid tiles, sets the blending and draws it each frame. Allocates
 /// HEAP_SLOT_FADE_OVERLAY for its work, borrows HEAP_SLOT_TILE_SCRATCH for the
-/// tiles (512 bytes of colour 1, VRAM cache block 94) and registers
+/// tiles (512 bytes of colour 1, VRAM_CACHE_ENTRY_FADE_OVERLAY) and registers
 /// FadeOverlay_DrawMarks. Called by seven scene overlays (Venus and Mercury
 /// Lighthouses, Kalay, the tunnel ruins, Crossbone Isle, the ice room by Imil
 /// and Fuchin Falls); Crossbone Isle then switches it on and off by setting the
-/// work's actor. No ☀️ code stops it (FadeOverlay_Suspend has no
+/// work's actor. Nothing in the game stops it (FadeOverlay_Suspend has no
 /// named caller): the work and the task last until the next scene change
 /// resets the heap and the task table (MainRoutine_Run).
 void FieldEffect_StartFadeOverlay(void *object) {
@@ -123,7 +123,7 @@ void FieldEffect_StartFadeOverlay(void *object) {
   // Upload the solid sprite tiles before enabling the drawing task.
   tiles = HeapSlot_Alloc(HEAP_SLOT_TILE_SCRATCH, 1024);
   Dma_Fill32Cell(fill, 0x11111111, tiles, 512);
-  VramCache_Load(94, 512, tiles);
+  VramCache_Load(VRAM_CACHE_ENTRY_FADE_OVERLAY, 512, tiles);
   HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
   Task_Add(FadeOverlay_DrawMarks, TASK_PASS_FRAME);
   Io_Write16(BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_TGT1_BG3 |

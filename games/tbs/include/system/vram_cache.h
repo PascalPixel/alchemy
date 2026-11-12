@@ -20,6 +20,14 @@ enum VramCacheLimits {
   VRAM_CACHE_OFFSET_FREE = 0xffff
 };
 
+/// The cache entries kept for one use each, loaded by number.
+enum VramCacheFixedEntry {
+  /// The fade overlay's solid tiles (FieldEffect_StartFadeOverlay).
+  VRAM_CACHE_ENTRY_FADE_OVERLAY = 94,
+  /// The window sprites' glyph tiles (WindowWork.glyphTiles).
+  VRAM_CACHE_ENTRY_GLYPH_SHEET = 95
+};
+
 /// The cache entry that owns each block, or VRAM_BLOCK_OWNER_FREE.
 extern u8 gVramCacheBlockOwners[VRAM_BLOCK_COUNT];
 

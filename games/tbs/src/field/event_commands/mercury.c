@@ -85,8 +85,8 @@ void Djinn_RunMercuryJoinEffect(s32 djinniId) {
   }
 
   // Rise 8 pixels a frame for 15 frames, then remove the Djinni and its
-  // afterimages, and free their shared VRAM cache entry (96,
-  // VRAM_CACHE_ENTRY_COUNT, is none).
+  // afterimages, and free their shared VRAM cache entry
+  // (VRAM_CACHE_ENTRY_COUNT is none).
   resourceId = resource->slot;
   Sound_PlayFar(SE_HIGH_JUMP);
   djinni->motionFlags = 0;
@@ -98,7 +98,7 @@ void Djinn_RunMercuryJoinEffect(s32 djinniId) {
   list = copies;
   for (remaining = MERCURY_AFTERIMAGE_MAX - 1; remaining >= 0; remaining--)
     Actor_ReleaseFar((*list++));
-  if (resourceId != 96)
+  if (resourceId != VRAM_CACHE_ENTRY_COUNT)
     VramCache_FreeEntry(resourceId);
   wait(10);
   Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_SOUTH, 0);

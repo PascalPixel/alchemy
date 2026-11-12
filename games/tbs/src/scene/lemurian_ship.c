@@ -951,20 +951,20 @@ static void Curtain_Close(void) {
     step = sCurtainGap;
     left = -step / 2;
     *entry++ = 0;
-    *entry++ = (left & 0xff) | (i << 21) | 0x80004000;
+    *entry++ = (left & 0xff) | (i << 21) | OBJ_SIZE_32X16;
     *entry++ = tile;
   }
   x = (step / 2 + 136) & 0xff;
   for (i = 0; i < 8; i++) {
     *entry++ = 0;
-    *entry++ = (i << 21) | x | 0x80004000;
+    *entry++ = (i << 21) | x | OBJ_SIZE_32X16;
     *entry++ = tile;
   }
   i = 0;
   x = (sCurtainGap / 2 + 152) & 0xff;
   for (; i < 8; i++) {
     *entry++ = 0;
-    *entry++ = (i << 21) | x | 0x80004000;
+    *entry++ = (i << 21) | x | OBJ_SIZE_32X16;
     *entry++ = tile;
   }
 #ifdef UBFIX

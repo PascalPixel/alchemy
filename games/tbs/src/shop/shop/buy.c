@@ -630,8 +630,8 @@ s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price) {
   if (window != 0) {
     resourceSlot = VramCache_FindFreeEntry();
     if (resourceSlot != VRAM_CACHE_ENTRY_COUNT) {
-      // The bar is one 8-tile entry shown as two 32x8 sprites (shape and size
-      // bits 0x40004000); the second starts at the entry's tile 4
+      // The bar is one 8-tile entry shown as two 32x8 sprites (OBJ_SIZE_32X8);
+      // the second starts at the entry's tile 4
       VramCache_Load(resourceSlot, 8 * TILE_SIZE_4BPP, 0);
       WindowSprite_CreateFar(resourceSlot, OUTPUT_SIZE_32X8, window, 0, 0);
       quantitySprite =

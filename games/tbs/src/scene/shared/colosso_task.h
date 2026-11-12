@@ -210,7 +210,7 @@ commands:
     u32 attr;
     i = 0;
     y = 56;
-    flags = 0x80004000;
+    flags = OBJ_SIZE_32X16;
     attr = matrix << 25;
     for (; i < 4; i++) {
       x = pos + scale * (i * 32 - 48) / 256;
@@ -218,8 +218,10 @@ commands:
       if ((u32)(x + 152) < 304) {
         x = left & 511;
         *write++ = 0;
-        *write++ = (x << 16) | y | flags | attr | 0x700;
-        *write++ = 0xf400 | tile;
+        *write++ = (x << 16) | y | flags | attr |
+                   OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT) | OBJ_DOUBLE_SIZE |
+                   OBJ_AFFINE;
+        *write++ = tile | OBJ_PRIORITY(1) | OBJ_PALETTE(15);
         Oam_AddSpriteAtDepth(sprite++, 236);
       }
       tile += 8;
@@ -230,7 +232,7 @@ commands:
     u32 attr;
     i = 0;
     y = 48;
-    flags = 0x80004000;
+    flags = OBJ_SIZE_32X16;
     attr = matrix << 25;
     for (; i < 2; i++) {
       x = pos + scale * (i * 32 - 16) / 256;
@@ -238,8 +240,11 @@ commands:
       if ((u32)(x + 152) < 304) {
         x = left & 511;
         *write++ = 0;
-        *write++ = (x << 16) | y | flags | attr | 0x700;
-        *write++ = 0xf400 | (tile + gColosso_LetteringParameter);
+        *write++ = (x << 16) | y | flags | attr |
+                   OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT) | OBJ_DOUBLE_SIZE |
+                   OBJ_AFFINE;
+        *write++ = (tile + gColosso_LetteringParameter) | OBJ_PRIORITY(1) |
+                   OBJ_PALETTE(15);
         Oam_AddSpriteAtDepth(sprite++, 236);
       }
       tile += 8;
@@ -251,7 +256,7 @@ commands:
     u32 attr;
     i = 0;
     y = 64;
-    flags = 0x80004000;
+    flags = OBJ_SIZE_32X16;
     attr = matrix << 25;
     for (; i < 2; i++) {
       x = pos + scale * (i * 32 - 16) / 256;
@@ -259,8 +264,11 @@ commands:
       if ((u32)(x + 152) < 304) {
         x = left & 511;
         *write++ = 0;
-        *write++ = (x << 16) | y | flags | attr | 0x700;
-        *write++ = 0xf400 | (tile + gColosso_LetteringParameter);
+        *write++ = (x << 16) | y | flags | attr |
+                   OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT) | OBJ_DOUBLE_SIZE |
+                   OBJ_AFFINE;
+        *write++ = (tile + gColosso_LetteringParameter) | OBJ_PRIORITY(1) |
+                   OBJ_PALETTE(15);
         Oam_AddSpriteAtDepth(sprite++, 236);
       }
       tile += 8;
@@ -270,26 +278,32 @@ commands:
 #else
   case COLOSSO_SHAPE_GO:
     y = 48;
-    flags = 0xc0004000;
+    flags = OBJ_SIZE_64X32;
     left = pos + 56;
     if ((u32)(pos + 120) < 304) {
       x = left & 511;
       *write++ = 0;
-      *write++ = (x << 16) | y | flags | (matrix << 25) | 0x700;
-      *write++ = 0xf400 | (tile + gColosso_LetteringParameter);
+      *write++ = (x << 16) | y | flags | (matrix << 25) |
+                 OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT) | OBJ_DOUBLE_SIZE |
+                 OBJ_AFFINE;
+      *write++ = (tile + gColosso_LetteringParameter) | OBJ_PRIORITY(1) |
+                 OBJ_PALETTE(15);
       Oam_AddSpriteAtDepth(sprite, 236);
     }
     break;
 #endif
   case COLOSSO_SHAPE_DIGIT:
     y = 48;
-    flags = 0x80000000;
+    flags = OBJ_SIZE_32X32;
     left = pos + 88;
     if ((u32)(pos + 152) < 304) {
       x = left & 511;
       *write++ = 0;
-      *write++ = (x << 16) | y | flags | (matrix << 25) | 0x700;
-      *write++ = 0xf400 | (tile + gColosso_LetteringParameter);
+      *write++ = (x << 16) | y | flags | (matrix << 25) |
+                 OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT) | OBJ_DOUBLE_SIZE |
+                 OBJ_AFFINE;
+      *write++ = (tile + gColosso_LetteringParameter) | OBJ_PRIORITY(1) |
+                 OBJ_PALETTE(15);
       Oam_AddSpriteAtDepth(sprite, 236);
     }
     break;

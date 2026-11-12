@@ -296,3 +296,5 @@ s32 Func_02000604(void) {
   BYTE_AT(Actor_Get(12), 0x62) = 1;
   return 0;
 }
+
+#include "shared/scene_set_arrival_flags.h"

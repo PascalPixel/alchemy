@@ -26,7 +26,8 @@ runs, its tables and its [events](../../../tbs/glossary.md#event).
   ([The Lost Age: field](../field/README.md)).
 - The main-image code a scene imports is in the bank folders of this game,
   most of it under `games/tla/src/field/`. The code only overlays link sits in
-  `scene/shared/` (`drift_spawn.c`, `scene_set_arrival_flags.c`).
+  `scene/shared/`: `drift_spawn.c` is its own object, and
+  `scene_set_arrival_flags.h` is compiled inside each scene that links it.
 - The Title (`title/`), the scene in the row after it, `SceneId_Ov64a`
   (`clear/`, `0x64a`), with its password grid and button codes, and the lobby
   where a link battle is arranged (`lobby/`, `0x6b5`) are overlays here, as

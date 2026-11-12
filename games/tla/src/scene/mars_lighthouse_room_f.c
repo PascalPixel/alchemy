@@ -893,3 +893,5 @@ void Func_02001468(void) {
 }
 
 void Func_02001490(void) { Func_0200328c(14, 15, 16, 0x4000, gData_02005d3c); }
+
+#include "shared/scene_set_arrival_flags.h"

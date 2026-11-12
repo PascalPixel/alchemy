@@ -61,3 +61,5 @@ s32 Func_02000288(void) {
     Event_ClearFlag(0xa19);
   return 0;
 }
+
+#include "../shared/scene_set_arrival_flags.h"

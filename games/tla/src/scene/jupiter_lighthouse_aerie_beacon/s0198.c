@@ -2337,3 +2337,5 @@ s32 Scene_PrepareMap(void) {
   Scene_SetArrivalFlags(0);
   return 0;
 }
+
+#include "../shared/scene_set_arrival_flags.h"

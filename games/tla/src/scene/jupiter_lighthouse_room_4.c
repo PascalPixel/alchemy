@@ -250,3 +250,5 @@ s32 Func_020004fc(void) {
   }
   return 0;
 }
+
+#include "shared/scene_set_arrival_flags.h"

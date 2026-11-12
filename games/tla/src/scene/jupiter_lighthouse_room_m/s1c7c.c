@@ -646,7 +646,7 @@ s32 Func_02002c54(void) {
   return 0;
 }
 
-void Scene_SetArrivalFlags();
+void Scene_SetArrivalFlags(s32 unused);
 void Func_02002fc4();
 void Func_02003a38();
 void Func_02003ac0();
@@ -678,3 +678,5 @@ s32 Func_02002e3c(void) {
   }
   return 0;
 }
+
+#include "../shared/scene_set_arrival_flags.h"

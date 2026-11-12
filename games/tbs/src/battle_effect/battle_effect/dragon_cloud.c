@@ -7,9 +7,10 @@
 #define DRAGON_CLOUD_FRAMES 150
 #define DRAGON_CLOUD_STRIKE_FRAME 83 ///< the flame strikes the first target
 #define DRAGON_CLOUD_TRAIL_CELL_BYTES (24 * 39) ///< bytes in each trail copy
-#define DRAGON_CLOUD_FIRST_EMBER 8      ///< the first ember in work->particles
-#define DRAGON_CLOUD_FIRST_FLASH 48     ///< the first flash in work->particles
-#define DRAGON_CLOUD_TRAIL_OFFSETS 5760 ///< the trail picture in the sheet
+#define DRAGON_CLOUD_FIRST_EMBER 8  ///< the first ember in work->particles
+#define DRAGON_CLOUD_FIRST_FLASH 48 ///< the first flash in work->particles
+/// The trail picture, after the five 24x48 flames.
+#define DRAGON_CLOUD_TRAIL_OFFSETS (5 * 24 * 48)
 #define DRAGON_CLOUD_PUFF_OFFSETS 15360 ///< the puff pictures in the sheet
 #define DRAGON_CLOUD_PUFFS 8            ///< puffs, particles 0 to 7
 #define DRAGON_CLOUD_EMBERS 40          ///< embers, from FIRST_EMBER
@@ -242,7 +243,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
       // Embers are motes sized by depth. Only entries 56 to 63 play the
       // six flash pictures, two frames each; the first eight flashes, at 48
       // to 55, are drawn as motes.
-      for (i = 0; i != 56; i++) {
+      for (i = 0; i != DRAGON_CLOUD_EMBERS + DRAGON_CLOUD_FLASHES; i++) {
         struct Particle *ember = &work->particles[DRAGON_CLOUD_FIRST_EMBER + i];
 
         if (ember->y >= 0) {

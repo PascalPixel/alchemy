@@ -15,8 +15,8 @@ the lobby are scene [overlays](../../../tbs/glossary.md#overlay) in
   as parts in `menu/` cut where The Broken Seal's are: `shared.c`, `item.c`,
   `psynergy.c`, `status.c`, `use.c`, `djinn.c`, `djinn_preview.c` and
   `icons.c`. There is no `djinn_figures.c`: this game places its menu icons
-  after the other icons, at the end of `icons.c`. The bank's table data is
-  `menu.c`'s last part, linked after the menu's graphics and strings.
+  after the other icons, at the end of `icons.c`. The bank's table data stays
+  in `menu_tables.c`, linked after the menu's graphics and strings.
 - `title_intro.c` and `credits.c` are one object each, as The Broken Seal's
   are; `credits.c` also holds the scrolling pictures and their border
   strips, which The Broken Seal's credits do not have.

@@ -283,6 +283,8 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
 
   for (frame = 0; frame != frameCount; frame++) {
+    /* FAKEMATCH(temporary): camera copies gBattleCamera; as gBattleCamera at
+     * each use, 268 of 879 instructions differ in tbs-en. */
     struct BattleCamera *camera = gBattleCamera;
 
     if (frame == 40)

@@ -46,6 +46,8 @@ s32 LuckyDice_Start(void) {
 /// Called only by LuckyDice_Run, once the camera's heap block is allocated;
 /// writes gBattleCamera's fields and gProjection.
 void Camera_ResetViewDefaults(void) {
+  /* FAKEMATCH(temporary): camera copies gBattleCamera; as gBattleCamera at each
+   * use, 48 of 53 instructions differ in tbs-en. */
   struct BattleCamera *camera = gBattleCamera;
   s32 offset[3];
   u32 nearPlane;

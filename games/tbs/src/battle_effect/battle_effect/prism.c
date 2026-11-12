@@ -80,6 +80,8 @@ void BattleEffect_RunPrism(struct BattleEffectParams *args) {
     if (work->args->variant == EFFECT_VARIANT_STRONGEST && frame <= 103) {
       // Swing the camera round, slowing from frame 96: 192/65536 turn a
       // frame, 19296/65536 in all, under a third of a turn.
+      /* FAKEMATCH(temporary): camera copies gBattleCamera; as gBattleCamera at
+       * each use, 71 of 488 instructions differ in tbs-en. */
       struct BattleCamera *camera = gBattleCamera;
       s32 speed;
 

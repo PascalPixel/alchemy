@@ -50,6 +50,8 @@ UNUSED void BattleEffect_RunSwirlingStars(struct BattleEffectParams *args) {
   for (frame = 0; frame != SWIRLING_STARS_FRAMES; frame++) {
     struct BattleCamera *camera;
 
+    /* FAKEMATCH(temporary): camera copies gBattleCamera; as gBattleCamera at
+     * each use, 29 of 262 instructions differ in tbs-en. */
     camera = gBattleCamera;
     EFFECT_VIEW_FROM_CAMERA(camera);
     Transform_ApplyPosition(center);
@@ -287,6 +289,8 @@ UNUSED void BattleEffect_RunTargetBursts(struct BattleEffectParams *args) {
     s32 member;
     struct BattleCamera *camera;
 
+    /* FAKEMATCH(temporary): camera copies gBattleCamera; as gBattleCamera at
+     * each use, 146 of 292 instructions differ in tbs-en. */
     camera = gBattleCamera;
     EFFECT_FOR_EACH_TARGET(member, work->args) {
       struct Actor *args;

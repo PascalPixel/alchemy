@@ -91,6 +91,8 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
   for (frame = 0; frame != DEATH_PLUNGE_FRAMES; frame++) {
     struct BattleCamera *camera;
 
+    /* FAKEMATCH(temporary): camera copies gBattleCamera; as gBattleCamera at
+     * each use, 126 of 363 instructions differ in tbs-en. */
     camera = gBattleCamera;
     EFFECT_VIEW_FROM_CAMERA(camera);
 
@@ -388,6 +390,8 @@ void BattleEffect_RunElementPillar(struct BattleEffectParams *args) {
                                                    sizeof *work);
   canvas = (void *)HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
   sheet = (u8 *)HeapSlot_Alloc(HEAP_SLOT_BATTLE_SHEET, 1550);
+  /* FAKEMATCH(temporary): camera copies gBattleCamera; as gBattleCamera at each
+   * use, 157 of 420 instructions differ in tbs-en. */
   camera = gBattleCamera;
   work->args = args;
   BattleEffect_StartCanvasLayer(0);

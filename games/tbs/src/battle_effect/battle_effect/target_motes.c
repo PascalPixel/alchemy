@@ -207,6 +207,8 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
   // Target n's turn starts on frame n * 8; the effect ends 64 frames (wide
   // styles) or 32 after the last one starts.
   for (frame = 0; frame != total; frame++) {
+    /* FAKEMATCH(temporary): camera copies gBattleCamera; as gBattleCamera at
+     * each use, 342 of 755 instructions differ in tbs-en. */
     struct BattleCamera *camera = gBattleCamera;
 
     // Demon Fire: the user steps up to the first target 46 frames before the
@@ -427,6 +429,8 @@ void BattleEffect_RunSleep(struct BattleEffectParams *args) {
   for (frame = 0; frame != SLEEP_FRAMES; frame++) {
     struct BattleCamera *camera;
 
+    /* FAKEMATCH(temporary): camera copies gBattleCamera; as gBattleCamera at
+     * each use, 106 of 272 instructions differ in tbs-en. */
     camera = gBattleCamera;
     if (frame == 80)
       EFFECT_SHOW_DAMAGE(0);

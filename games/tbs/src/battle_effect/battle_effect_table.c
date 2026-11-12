@@ -169,9 +169,9 @@ u8 gTargetStrike_GlintDrawFlags[] = GLINT_FLIPS;
 // death_plunge.c: Blade rain and shattering tile pieces.
 
 // The sword pictures, by how steeply the sword falls.
-u8 gDeathPlunge_CellWidths[] = {20, 21, 22, 25};
-u8 gDeathPlunge_CellHeights[] = {32, 31, 27, 24};
-u16 gDeathPlunge_Cells[] = {0, 640, 1291, 1885};
+u8 gDeathPlunge_SwordWidths[] = {20, 21, 22, 25};
+u8 gDeathPlunge_SwordHeights[] = {32, 31, 27, 24};
+u16 gDeathPlunge_SwordCells[] = {0, 640, 1291, 1885};
 /// The 33 pieces of the TileAnimationMask picture: where each starts on the
 /// canvas, its size, and where its pixels begin in the decoded picture. The
 /// offsets carry one more entry, where the last piece ends.

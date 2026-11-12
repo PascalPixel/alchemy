@@ -6,17 +6,15 @@
 #include "../battle_effect_internal.h"
 
 // - Death Plunge runs the user up to the first target; both leap, turn upside
-//   down, and on the hit bounce apart while a ring of flashes rises from the
-//   user.
+//   down, and on the hit bounce apart while a ball of fire swells over them.
 // - The blade rain drops 16 swords, one every 4 frames, slanting in on the
 //   first target and sticking in the ground. No effect table entry points at
 //   it.
 // - The element pillar (BattleEffect_RunElementPillar) stands a mirrored pillar
 //   of light at a unit's feet while motes spiral up around it.
 // - The element burst (BattleEffect_RunElementBurst) flares sparks at four
-// corners
-//   around a unit, draws motes spiralling in, then plays a burst of light
-//   over it.
+//   corners around a unit, draws motes spiralling in, then plays a burst of
+//   light over it.
 // - BattleEffect_RunShatteringOpening shatters a picture into 33 pieces as a
 //   battle opens.
 // - The element streaks (BattleEffect_StartElementStreaks) draw lines of light
@@ -30,7 +28,8 @@
 
 /// The user runs 9/10 of the way to the first target, then both leap and turn
 /// upside down in the air; on frame 54 the target is hit and both bounce back,
-/// while flashes burst from the user and rise in a widening ring.
+/// while a ring of flashes bursts from the user and, with its trails, swells
+/// into a ball of fire over the two.
 ///
 /// Abilities: Death Plunge (BATTLE_EFFECT_DEATH_PLUNGE).
 void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
@@ -74,6 +73,8 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
   second = GetBattleObjectSlotFar(work->args->targets[0]);
   user = first->actor;
   target = second->actor;
+  /* FAKEMATCH(temporary): percent holds 90; as 90 in the two lines below, 8 of
+   * 363 instructions differ in tbs-en. */
   percent = 90;
   x = user->x.fixed + percent * (target->x.fixed - user->x.fixed) / 100;
   z = user->z.fixed + percent * (target->z.fixed - user->z.fixed) / 100;
@@ -134,7 +135,8 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
 
     // Frames 54 and 55: one big flash on the user. Frames 56 to 67: 16
     // flashes in a ring that widens as it rises, through six images, two
-    // frames each (32x64, 2048 bytes a picture).
+    // frames each (32x64, 2048 bytes a picture). With the trails the ring reads
+    // as one swelling ball of fire.
     if (frame == 54 || frame == 55)
       draw[0](canvas, work->sheet, screen.x - 16, screen.y - 16, 32, 64);
     if (frame >= 56 && frame <= 67) {
@@ -292,16 +294,18 @@ UNUSED void BattleEffect_RunBladeRain(struct BattleEffectParams *args) {
 
         // UB: width is assigned in one argument and read in another.
 #ifdef UBFIX
-        width = gDeathPlunge_CellWidths[cell];
-        height = gDeathPlunge_CellHeights[cell];
-        blit[(u32)drift >> 31](canvas, work->sheet + gDeathPlunge_Cells[cell],
+        width = gDeathPlunge_SwordWidths[cell];
+        height = gDeathPlunge_SwordHeights[cell];
+        blit[(u32)drift >> 31](canvas,
+                               work->sheet + gDeathPlunge_SwordCells[cell],
                                (blade->x >> 16) - (width >> 1),
                                (blade->y >> 16) - (height >> 1), width, height);
 #else
         blit[(u32)drift >> 31](
-            canvas, work->sheet + gDeathPlunge_Cells[cell],
-            (blade->x >> 16) - ((width = gDeathPlunge_CellWidths[cell]) >> 1),
-            (blade->y >> 16) - ((height = gDeathPlunge_CellHeights[cell]) >> 1),
+            canvas, work->sheet + gDeathPlunge_SwordCells[cell],
+            (blade->x >> 16) - ((width = gDeathPlunge_SwordWidths[cell]) >> 1),
+            (blade->y >> 16) -
+                ((height = gDeathPlunge_SwordHeights[cell]) >> 1),
             width, height);
 #endif
         if (frame >= i * 4 + 16) {
@@ -313,17 +317,18 @@ UNUSED void BattleEffect_RunBladeRain(struct BattleEffectParams *args) {
         u32 height;
 
 #ifdef UBFIX
-        width = gDeathPlunge_CellWidths[cell];
-        height = gDeathPlunge_CellHeights[cell];
-        blit[(u32)drift >> 31](canvas, work->sheet + gDeathPlunge_Cells[cell],
-                               (blade->x >> 16) - (width >> 1),
-                               (blade->y >> 16) - (height >> 1), width,
-                               height - 4);
+        width = gDeathPlunge_SwordWidths[cell];
+        height = gDeathPlunge_SwordHeights[cell];
+        blit[(u32)drift >> 31](
+            canvas, work->sheet + gDeathPlunge_SwordCells[cell],
+            (blade->x >> 16) - (width >> 1), (blade->y >> 16) - (height >> 1),
+            width, height - 4);
 #else
         blit[(u32)drift >> 31](
-            canvas, work->sheet + gDeathPlunge_Cells[cell],
-            (blade->x >> 16) - ((width = gDeathPlunge_CellWidths[cell]) >> 1),
-            (blade->y >> 16) - ((height = gDeathPlunge_CellHeights[cell]) >> 1),
+            canvas, work->sheet + gDeathPlunge_SwordCells[cell],
+            (blade->x >> 16) - ((width = gDeathPlunge_SwordWidths[cell]) >> 1),
+            (blade->y >> 16) -
+                ((height = gDeathPlunge_SwordHeights[cell]) >> 1),
             width, height - 4);
 #endif
       }
@@ -447,12 +452,13 @@ void BattleEffect_RunElementPillar(struct BattleEffectParams *args) {
     // 64, keeping the brighter pixel. The pillar (17x64) cycles through four
     // images, two frames each; the glow at its foot (24x43) through three,
     // four frames each.
+    /* FAKEMATCH(dead): frame is always 55 or less here; without the test, 141
+     * of 420 instructions differ in tbs-en. */
     if (frame <= 55) {
       s32 n;
       u8 *glow;
 
-      i = frame / 2;
-      n = i % 4;
+      n = frame / 2 % 4;
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                           COMPOSITE_LIGHTEN);
       draw[1] = gHeapSlots[HEAP_SLOT_RAM_CODE_2];
@@ -465,13 +471,13 @@ void BattleEffect_RunElementPillar(struct BattleEffectParams *args) {
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                           COMPOSITE_LIGHTEN);
       draw[1] = ((DrawRectangle *)gHeapSlots)[HEAP_SLOT_RAM_CODE_2];
-      n = i % 4;
+      n = frame / 2 % 4;
       draw[1](canvas, work->sheet + n * (17 * 64), 64, ground.y - 64, 17, 64);
       draw[1](canvas, glow, 64, ground.y - 36, 24, 43);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
     }
-    // A lookup with no side args whose result is dropped; the ROM keeps
-    // the call.
+    /* FAKEMATCH(dead): a lookup whose result is dropped; without the call, 52
+     * of 420 instructions differ in tbs-en. */
     GetBattleObjectSlotFar(work->args->user);
     EFFECT_VIEW_FROM_CAMERA(camera);
 
@@ -483,6 +489,8 @@ void BattleEffect_RunElementPillar(struct BattleEffectParams *args) {
 
       if (fleck->variant >= 0) {
         s32 size;
+        /* FAKEMATCH(temporary): turnSteps holds 64; as TRIG_TURN / 64, 18 of
+         * 420 instructions differ in tbs-en. */
         s32 turnSteps = 64; // frames a mote takes to circle once
 
         point[0] = fleck->z * Trig_Sin(fleck->x) >> 4;
@@ -536,7 +544,7 @@ void BattleEffect_RunElementPillar(struct BattleEffectParams *args) {
 /// turns white and a grey disc grows from (96, 60) by 32 pixels a frame while
 /// the TileAnimationMask picture breaks into 33 pieces that fly apart and fall;
 /// background palettes 6 to 13 then ease from white back to the battle
-/// battle background's colours, and from frame 51 32 flashes rise. Runs for 128
+/// background's colours, and from frame 51 32 flashes rise. Runs for 128
 /// frames.
 ///
 /// Called through BattleEffect_RunShatteringOpeningFar by
@@ -561,7 +569,6 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
   struct BattleWork *battle;
   struct BattleBackgroundWork *view;
   void **slots;
-  void **slotTable;
   s32 targetRadius;
   struct Particle *piece;
   s32 radius;
@@ -572,7 +579,6 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
   s32 error;
   s32 octantY;
   s32 x1;
-  s32 size;
   s32 leftX;
   s32 innerLeftX;
   s32 y1;
@@ -584,8 +590,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
   s32 centreY;
 
   work = HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(*work));
-  size = CANVAS_BYTES;
-  canvas = HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, size);
+  canvas = HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
   HeapSlot_Alloc(HEAP_SLOT_BATTLE_SHEET, MOTE_SET_BYTES);
   slots = gHeapSlots + HEAP_SLOT_BATTLE;
   battle = slots[0];
@@ -624,8 +629,8 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
     }
   }
 
-  Iwram_ClearWords(canvas, size);
-  Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), size);
+  Iwram_ClearWords(canvas, CANVAS_BYTES);
+  Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), CANVAS_BYTES);
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, EFFECT_DISPCNT, IO_WRITE_16);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   REG_BLDCNT = 0;
@@ -635,11 +640,10 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_TRANSPARENT);
-  slotTable = gHeapSlots;
-  draw[0] = slotTable[HEAP_SLOT_RAM_CODE];
+  draw[0] = gHeapSlots[HEAP_SLOT_RAM_CODE];
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_LIGHTEN);
-  draw[1] = slotTable[HEAP_SLOT_RAM_CODE_2];
+  draw[1] = gHeapSlots[HEAP_SLOT_RAM_CODE_2];
 
   // Each piece flies out from (32, 60) at a quarter of its distance from
   // there a frame, in work->particles 0 to 32.
@@ -749,6 +753,9 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
       v = frame * 4 + 8;
       targetRadius = frame * 32;
       BG_PLTT[2] = RGB(v, v, v);
+      /* FAKEMATCH(temporary): centreX and centreY hold the disc's centre; as
+       * SHATTERING_OPENING_DISC_X and _Y in place, 60 of 1051 instructions
+       * differ in tbs-en. */
       centreX = SHATTERING_OPENING_DISC_X;
       centreY = SHATTERING_OPENING_DISC_Y;
       for (; radius != targetRadius; radius++) {
@@ -852,6 +859,8 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
         s32 v;
 
         v = i / 2;
+        /* FAKEMATCH(dead): v is never below 0; without this test, 29 of 1051
+         * instructions differ in tbs-en. */
         if (v < 0)
           v = 0;
         BG_PLTT[i] = RGB(v, v / 2, v);
@@ -977,9 +986,7 @@ void BattleEffect_RunElementBurst(struct BattleEffectParams *args) {
     palette = Resource_GetTableEntry((s32)&ResourceId_VioletPaletteA);
     break;
   }
-  {
-    Iwram_CopyWords((void *)BG_PLTT, palette, 128);
-  }
+  Iwram_CopyWords((void *)BG_PLTT, palette, 128);
 
   // PARTICLES are set up as for the element pillar but never drawn here.
   // The motes that are drawn, work->particles, start 16 to 47 pixels out
@@ -1023,6 +1030,8 @@ void BattleEffect_RunElementBurst(struct BattleEffectParams *args) {
     // Frames 0 to 14: a spark (32x32) at each corner, flipped to face
     // outwards (gDeathPlunge_DrawFlags), five images, three frames each; a
     // blitter is built for each corner and freed at once.
+    /* FAKEMATCH(dead): frame is never below 0; as frame <= 14, 2 of 349
+     * instructions differ in tbs-en. */
     if (frame >= 0 && frame <= 14) {
       s32 picture = frame / 3 % 5;
       DrawRectangle *slot =
@@ -1039,6 +1048,8 @@ void BattleEffect_RunElementBurst(struct BattleEffectParams *args) {
       }
     }
     // The motes, shrinking as they close in.
+    /* FAKEMATCH(dead): frame is never below 0; without the test, 67 of 349
+     * instructions differ in tbs-en. */
     if (frame >= 0) {
       for (i = 0; i != 64; i++) {
         struct Particle *mote = &work->particles[i];
@@ -1048,6 +1059,8 @@ void BattleEffect_RunElementBurst(struct BattleEffectParams *args) {
           s32 x = (mote->y * Trig_Sin(mote->x) >> 16) + 64;
           s32 y = (mote->y * Trig_Cos(mote->x) >> 16) + ground.y;
 
+          /* FAKEMATCH(dead): size is at least 1 here; without this test, 224
+           * of 349 instructions differ in tbs-en. */
           if (size <= 0)
             size = 1;
           EFFECT_DRAW_FLARE(draw[0], canvas, sheet, x, y, size);
@@ -1103,8 +1116,7 @@ void BattleEffect_DrawStreaks(void) {
   }
   point.y = 0;
   point.z = 0;
-  i = 0;
-  for (; i != 64; i++) {
+  for (i = 0; i != 64; i++) {
     streak = &((struct Streak *)Ram_MapGridCellBuffer)[i];
     if (frame > i / 4 && streak->head > 0) {
       s32 fade;
@@ -1205,9 +1217,7 @@ void BattleEffect_StartElementStreaks(s32 element) {
 void BattleEffect_EndElementStreaks(void) {
   Task_Remove(BattleEffect_DrawStreaks);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  {
-    Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), CANVAS_BYTES);
-  }
+  Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), CANVAS_BYTES);
   Task_Remove(Palette_StepFadeTransfer);
   HeapSlot_Release(HEAP_SLOT_BATTLE_CANVAS);
   HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);

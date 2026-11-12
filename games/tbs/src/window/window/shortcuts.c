@@ -350,13 +350,11 @@ STATIC_ASSERT(sizeof(struct SelectionWorkspace) == 0x1004);
 /// flags. Nothing calls it.
 UNUSED void Menu_AllocateSelectionWorkspace(void) {
   struct SelectionWorkspace *work;
-  u32 zero;
 
   work = HeapSlot_AllocEwram(HEAP_SLOT_SELECTION_WORKSPACE,
                              sizeof(struct SelectionWorkspace));
-  zero = 0;
-  work->firstActive = zero;
-  work->secondActive = zero;
+  work->firstActive = 0;
+  work->secondActive = 0;
 }
 
 /// Closes the window of HEAP_SLOT_SELECTION_WORKSPACE's work block, frees the

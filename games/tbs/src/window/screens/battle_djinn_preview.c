@@ -159,7 +159,6 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *win, s32 member,
   void DjinnMenu_DrawStatArrow(s32 x, s32 y, s32 rising) {
     struct WindowSprite *sprite = WindowSprite_AcquireFree();
     struct PreviewSprite *entry;
-    u32 zero;
     if (sprite) {
       sprite->motion = 1;
       sprite->kind = WINDOW_SPRITE_ICON;
@@ -175,14 +174,12 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *win, s32 member,
 #ifdef UBFIX
       entry->attributes.word =
           OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
-      zero = 0;
-      entry->tile.value = zero;
+      entry->tile.value = 0;
 #else
       *(struct Window **)&entry->attributes =
           (struct Window *)(OBJ_SIZE_16X16 |
                             OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT));
-      zero = 0;
-      *(void **)&entry->tile = (void *)zero;
+      *(void **)&entry->tile = (void *)0;
 #endif
       entry->attributes.bits.x = win->x * 8 + x;
       entry->attributes.bits.y = win->y * 8 + y;

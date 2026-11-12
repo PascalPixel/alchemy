@@ -892,19 +892,14 @@ void ItemMenu_Initialize(s32 x, s32 y, s32 mode, s32 columns) {
   for (memberIndex = 3; memberIndex >= 0; memberIndex--)
     menu->memberY[memberIndex] = 30;
 
-  {
-    u8 zero = 0;
-    s32 style;
-    menu->buttonHelpWindow = NULL;
-    menu->statusWindow = NULL;
-    style = 2;
-    menu->descriptionWindow = Window_CreateFar(0, 17, 30, 3, style);
-    menu->itemWindow = NULL;
-    menu->selectedColumn = zero;
-    menu->selectedRow = zero;
-    menu->columnCount = 8;
-    menu->rowCount = style;
-  }
+  menu->buttonHelpWindow = NULL;
+  menu->statusWindow = NULL;
+  menu->descriptionWindow = Window_CreateFar(0, 17, 30, 3, 2);
+  menu->itemWindow = NULL;
+  menu->selectedColumn = 0;
+  menu->selectedRow = 0;
+  menu->columnCount = 8;
+  menu->rowCount = 2;
 }
 
 /// Creates the 32 item icon sprites in window, off screen until placed: slots 0

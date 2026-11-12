@@ -236,13 +236,11 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second) {
   s32 *firstEntry;
   s32 *secondEntry;
   s32 firstHandle, palette, secondHandle;
-  u32 zero;
   s32 *p;
 
   window = NULL;
   firstEntry = firstOam;
   window = Window_Create(1, 1, 28, 5, 0);
-  zero = 0;
 
   if (window != NULL) {
     // BUG: from (8, 0) to (4, 4) is neither across nor down, so
@@ -259,31 +257,31 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second) {
 
     Icon_LoadWithPalette(
         Portrait_GetForSpeaker(Party_GetMemberPortraitSprite(first)), 0,
-        &firstHandle, &palette, PORTRAIT_PALETTE, zero);
+        &firstHandle, &palette, PORTRAIT_PALETTE, 0);
     // The portrait as a bare OAM entry, pushed onto draw layer 250 each frame:
     // a link word, attributes 0 and 1 and attribute 2.
     p = firstEntry;
-    *p++ = zero;
+    *p++ = 0;
     *p++ = OBJ_SIZE_32X32 | (12 << 16) | 12;
     *p = palette | OBJ_PALETTE(PORTRAIT_PALETTE);
 
     secondEntry = secondOam;
     Icon_LoadWithPalette(
         Portrait_GetForSpeaker(Party_GetMemberPortraitSprite(second)), 0,
-        &secondHandle, &palette, PORTRAIT_PALETTE + 1, zero);
+        &secondHandle, &palette, PORTRAIT_PALETTE + 1, 0);
     p = secondEntry;
-    *p++ = zero;
+    *p++ = 0;
     *p++ = OBJ_SIZE_32X32 | (44 << 16) | 12;
     *p = palette | OBJ_PALETTE(PORTRAIT_PALETTE + 1);
 
-    ((struct WindowWork *)work)->voiceSound = zero;
-    ((struct WindowWork *)work)->voiceCountdown = zero;
+    ((struct WindowWork *)work)->voiceSound = 0;
+    ((struct WindowWork *)work)->voiceCountdown = 0;
 
     MessageArgument_Push(first, MESSAGE_ARGUMENT_ACTOR);
     MessageArgument_Push(second, MESSAGE_ARGUMENT_ACTOR);
 
     JOINED_QUEUE_TEXT(window, Message_DecodeMode1(MsgPairJoinedParty), 68, 2,
-                      zero);
+                      0);
 
     Sound_PlayFar(MUS_JOINED);
 

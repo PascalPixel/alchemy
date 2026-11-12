@@ -80,7 +80,6 @@ s32 DjinnMenu_Run(void) {
   u32 savedMessageSpeed;
   s32 enabled;
   struct DjinnMenuBackdrop *backdrop;
-  s32 zero;
 
   menu = HeapSlot_Alloc(HEAP_SLOT_MENU, MENU_WORK_SIZE);
   savedMessageSpeed = gMainRoutineWork.messageSpeed;
@@ -117,9 +116,8 @@ s32 DjinnMenu_Run(void) {
   Palette_LightenHighlight(HIGHLIGHT_PALETTE);
   menu->helpWindow = Window_CreateFar(13, 0, 17, 5, WINDOW_FLAG_INSTANT);
   menu->pairEntries[0] = 255;
-  zero = 0;
-  menu->selectedColumn[0] = zero;
-  menu->selectedColumn[1] = zero;
+  menu->selectedColumn[0] = 0;
+  menu->selectedColumn[1] = 0;
   menu->selection[0] = 0;
   menu->selection[1] = 0;
   DjinnFigures_InitializeBottomRow((s32)menu->helpWindow, 0);

@@ -163,7 +163,7 @@ void BattleEffect_BuildWindowEdgeTable(void) {
   for (scanline = 0; scanline != DISPLAY_HEIGHT; scanline++) {
     if (scanline >= 8 && scanline <= 135) {
       rightEdge = *baseRightEdge - edgeOffsets[scanline - 8];
-      CLAMP(rightEdge, 0, 240);
+      CLAMP(rightEdge, 0, DISPLAY_WIDTH);
       scanlineEdges[scanline] = rightEdge;
     } else {
       scanlineEdges[scanline] = WIN_RANGE(255, 241);

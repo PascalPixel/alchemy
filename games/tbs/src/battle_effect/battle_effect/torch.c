@@ -6,8 +6,8 @@
 
 #define TORCH_FRAMES 96
 
-/// A fiery disc fades in, its rings running outward while every scanline
-/// ripples, then fades out.
+/// A fiery disc fades in, its rings running outward while every line of
+/// the display ripples, then fades out.
 ///
 /// Abilities: Torch (BATTLE_EFFECT_TORCH).
 ///
@@ -119,8 +119,8 @@ void BattleEffect_RunTorch(struct BattleEffectParams *args) {
   work->transferPending = 1;
   Task_Add(BattleEffect_ArmBg2AffineHBlankDma, TASK_PASS_VBLANK);
 
-  // Fade the radial picture in (frames 0 to 8), ripple each scanline, then
-  // fade it out (frames 89 to 95, from 14 sixteenths down to 2).
+  // Fade the radial picture in (frames 0 to 8), ripple each line of the
+  // display, then fade it out (frames 89 to 95, from 14 sixteenths down to 2).
   for (frame = 0; frame != TORCH_FRAMES; frame++) {
     if (frame <= 8) {
       level = frame * 2;
@@ -132,9 +132,9 @@ void BattleEffect_RunTorch(struct BattleEffectParams *args) {
     if (frame > 88)
       REG_BLDALPHA = BLEND_ALPHA(192 - frame * 2, 16);
 
-    // BG2's x reference for each scanline, in 20.8 texels: line i starts
-    // i + 1 texels in, slanting the picture a texel a line, swayed up to 32
-    // texels either way by a sine of one turn every 128 lines whose phase
+    // BG2's x reference for each line of the display, in 20.8 texels: line i
+    // starts i + 1 texels in, slanting the picture a texel a line, swayed up to
+    // 32 texels either way by a sine of one turn every 128 lines whose phase
     // moves 1/64 turn a frame. The HBlank DMA applies it.
     line = work->bg2xLines;
     for (i = 0, angle = -(wave << 9); i != DISPLAY_HEIGHT; i++) {

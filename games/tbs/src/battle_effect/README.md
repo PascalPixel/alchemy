@@ -111,8 +111,8 @@ then lays it over the battle.
 
 ### A pixel is a brightness
 
-A pixel of the canvas is not a colour. It is a brightness from 0 to 63,
-which the code calls a level.
+A pixel of the canvas is not a colour. It is a brightness, which the code
+calls a level, from 0 up to the brightest level.
 
 Each effect brings a ramp of 64 colours, running from dark to bright, and
 each level is shown as the colour at its place on the ramp. Level 0 is
@@ -196,7 +196,7 @@ Which thing is the effect's choice:
 | nothing                                   | the drawing builds up frame by frame                   |
 
 Fire keeps three quarters, rounded down. Take one pixel drawn at the
-brightest level, 63, and never drawn on again. Frame by frame it goes:
+brightest level and never drawn on again. Frame by frame it goes:
 
 ```
 63  47  35  26  19  14  10  7  5  3  2  1  0
@@ -241,7 +241,7 @@ the canvas pixel already there in one of four ways:
 | copy             | the picture's pixel replaces it                       |
 | transparent      | the picture's pixel replaces it, unless it is level 0 |
 | lighten          | the brighter of the two stays                         |
-| additive         | the two levels are added, up to 63                    |
+| additive         | the two levels are added, up to the brightest level   |
 
 Ray draws all four of its bolts with lighten. Where two cross, the brighter
 pixel wins, and the crossing is no brighter than one bolt.
@@ -563,8 +563,8 @@ around a fighter casting Psynergy, and for the Lucky Wheels.
   ([Battles](../battle/README.md#the-ability-kind)) is a different thing,
   which picks how the damage is worked out.
 - The **canvas** is the 128 by 128 picture an effect draws on. A **level**
-  is a pixel's brightness on it, from 0 to 63, and a **ramp** is the 64
-  colours the levels are shown in.
+  is a pixel's brightness on it, from 0 up to the brightest, and a
+  **ramp** is the 64 colours the levels are shown in.
 - The **transfer** copies the canvas to the screen each frame and then
   wipes or dims it.
 - A **blitter** copies a small picture onto the canvas in one of four ways.

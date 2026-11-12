@@ -1,5 +1,5 @@
 /// @file
-/// Djinn healing.
+/// An unused Mercury Djinni heal, and the camera turn Fire and Froth share.
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
@@ -46,6 +46,8 @@ UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSmallSheet,
                              work->sheet, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
+  /* FAKEMATCH(temporary): draw stands in for callbacks; as callbacks used
+   * directly, 10 of 747 instructions differ in tbs-en. */
   BattleEffect_FetchRectangleBlitters(work->args->side ^ 1, draw = callbacks);
   actor = GetBattleObjectSlotFar(work->args->user)->actor;
   goal = GetBattleObjectSlotFar(work->args->targets[0])->actor;
@@ -61,7 +63,6 @@ UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
                  (Trig_Cos(heading) * speed) >> 5);
     spark->variant = 0;
   }
-  // Trails keep 75% of each pixel a frame.
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   // The swirl: frame 8 plays its sound, frames 30 to 69 carry it in 40
@@ -203,10 +204,11 @@ UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
 
               Projection_Point(spark, &view);
               view.x >>= 1;
+              /* FAKEMATCH(dead): BattleEffect_RunHealingMotes' clamp and size
+               * by depth, copied with its code; nothing reads view.depth after,
+               * and the next line sets cellIndex for real. Without the clamp
+               * and the store, 673 of 747 instructions differ in tbs-en. */
               CLAMP(view.depth, 314, 634);
-              /* FAKEMATCH(dead): BattleEffect_RunHealingMotes' size by depth,
-               * copied with its code, as the next line sets cellIndex for real;
-               * without the store, 479 of 747 instructions differ in tbs-en. */
               cellIndex = 3 - (view.depth - 314) / 128;
               cellIndex = (i * 4 + frame) % 9;
               {

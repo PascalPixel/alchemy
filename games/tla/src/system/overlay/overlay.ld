@@ -2002,7 +2002,6 @@ SECTIONS
     {
         "*/games/tla/src/debug/psynergy_test/entry.o"(.text)
         "*/games/tla/src/debug/psynergy_test.o"(.text)
-        "*/games/tla/src/debug/psynergy_test/s0c4c.o"(.text)
         "*/games/tla/src/debug/psynergy_test/import.o"(.text)
         "*/games/tla/src/debug/psynergy_test.o"(.data)
     }
@@ -2029,7 +2028,6 @@ SECTIONS
     {
         "*/games/tla/src/debug/shop_test/entry.o"(.text)
         "*/games/tla/src/debug/shop_test.o"(.text)
-        "*/games/tla/src/debug/shop_test/s0520.o"(.text)
         "*/games/tla/src/debug/shop_test/import.o"(.text)
         "*/games/tla/src/debug/shop_test.o"(.data)
     }

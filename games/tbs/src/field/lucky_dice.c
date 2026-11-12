@@ -1,3 +1,6 @@
+/// @file
+/// Lucky Dice, the dice game in Tolbi, drawn with the battles' 3D camera.
+
 #include "module/field/lucky_dice.h"
 #include "module/system/system.h"
 #include "battle.h"
@@ -76,12 +79,7 @@ void Camera_ResetViewDefaults(void) {
 }
 
 /// Unused: multiplies two 8.8 fixed-point values, rounding toward zero.
-UNUSED s32 FixedPoint_Multiply8_8(s32 leftValue, s32 rightValue) {
-  /* FAKEMATCH(temporary): left copies leftValue and right copies rightValue;
-   * as (s16)leftValue and (s16)rightValue at their uses, 2 of 14
-   * instructions differ in tbs-en. */
-  s16 left = leftValue;
-  s16 right = rightValue;
+UNUSED s32 FixedPoint_Multiply8_8(s16 left, s16 right) {
   s32 product;
   s32 roundedProduct;
 

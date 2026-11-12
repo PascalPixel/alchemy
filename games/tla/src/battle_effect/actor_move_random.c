@@ -4612,6 +4612,11 @@ void BattleEffect_RunBoostHack(s32 a0) { Func_0816a2d8(a0, 4); }
 /// Abilities: Twin Shear (kind 425).
 void BattleEffect_RunTwinShear(s32 a0) { Func_0816a2d8(a0, 5); }
 
+// Code after this part calls Iwram_CopyWords through iwram_call.h's macro
+// again.
+#undef Iwram_CopyWords
+#define Iwram_CopyWords Iwram_CopyWordsEntry
+
 #undef RESULTS_FRAME
 
 // Each of the four pictures is PICTURE_SIZE pixels square; the reflected

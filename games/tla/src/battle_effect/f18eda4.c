@@ -775,3 +775,12 @@ void Func_0818f620(struct BattleEffectArgument *effect, u32 mode) {
     wait(1);
   }
 }
+
+// Code after this part calls the three routines through iwram_call.h's
+// macros again.
+#undef Iwram_CopyWords
+#define Iwram_CopyWords Iwram_CopyWordsEntry
+#undef Iwram_FillWords
+#define Iwram_FillWords Iwram_FillWordsEntry
+#undef Iwram_ClearWords
+#define Iwram_ClearWords Iwram_ClearWordsEntry

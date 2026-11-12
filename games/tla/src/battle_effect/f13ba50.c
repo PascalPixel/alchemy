@@ -102,8 +102,6 @@ void BattleEffect_ArmWin0HBlankDma(void) {
 #define SLOT_BLITTER 104           // unk64[1]
 #define SLOT_BLITTER_ALTERNATE 188 // unkb8[1]
 
-// ⚓️'s blitter modes run the other way from The Broken Seal's.
-enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
 #define PHASE_RESULTS 133

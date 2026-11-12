@@ -24,8 +24,6 @@ struct Model;
 // 0x78f4 bytes.
 #define BATTLE_EFFECT_WORK_SIZE 0x7b7c
 
-// ⚓️'s blitter modes run the other way from The Broken Seal's.
-enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 #define CLIP (COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y)
 

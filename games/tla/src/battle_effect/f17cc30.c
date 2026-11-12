@@ -85,7 +85,6 @@ extern u8 gData_02014000[];        // the spray sheet
 extern s32 Data_02010018[];
 
 #define BLITTER ((DrawRectangle)Ram_HeapSlots->unk64[1])
-enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 #define BLIT_MODE(mode, flags) ((mode) << 4 | (flags))
 #define BLIT_CLIP (COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y)
 #define HI(v) (((s16 *)&(v))[1])

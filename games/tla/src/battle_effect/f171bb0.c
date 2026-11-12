@@ -94,8 +94,6 @@ void Transform_Pop(void);
 // The blitter's heap slot, as a byte offset into Ram_HeapSlots.
 #define SLOT_BLITTER 104 // unk64[1]
 
-// ⚓️'s blitter modes run the other way from The Broken Seal's.
-enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 // The ring's rows of vertices, two (x, y, z, pad) each. The buffers in this
 // function are constants built from the fixed buffer, not their own symbols.

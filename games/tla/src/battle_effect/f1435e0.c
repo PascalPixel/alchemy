@@ -591,7 +591,6 @@ void BattleEffect_RunHaunt(struct BattleEffectArgument *effect) {
 #define HEAP_BLITTER_ALTERNATE HEAP_OFFSET(unkb8[1])
 
 // The blitter generator's modes, The Broken Seal's in reverse order.
-enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 #define CLIP (COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y)
 

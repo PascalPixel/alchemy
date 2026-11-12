@@ -31,6 +31,10 @@ enum {
   COMPOSITE_MAX,
   COMPOSITE_ADDITIVE
 };
+/// The Lost Age's blitter modes, BattleEffect_LoadBlitter's high nibble: the
+/// other way round from The Broken Seal's COMPOSITE_ADDITIVE, COMPOSITE_MAX,
+/// COMPOSITE_TRANSPARENT and COMPOSITE_COPY.
+enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 s32 BattleEffect_BuildBlitter(s32 slot, s32 width_shift, s32 height_shift,
                               s32 flags, u32 mode);
 

@@ -12,9 +12,6 @@
 // The transfer task runs at this priority, where ☀️'s runs at 0x480.
 #define TASK_PASS_FRAME 0xc80
 
-// ⚓️'s blitter modes count the other way from ☀️'s COMPOSITE_* modes.
-enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
-
 // BattleEffect_LoadBlitter's packed argument: the mode in the high nibble.
 #define BLITTER(flags, mode) ((mode) << 4 | (flags))
 
@@ -84,7 +81,6 @@ extern const u8 Data_081991e0[];
 void BattleEffect_StartTiledCanvas(s32 bgControl);
 void BattleEffect_StartTiledCanvasFilled(s32 bgControl);
 s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags);
-
 
 void Sound_PlayFar(s32 cue);
 void EffectPosition_ProjectSprite(s32 id, struct EffectPosition *position);

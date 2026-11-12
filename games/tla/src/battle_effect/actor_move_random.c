@@ -762,9 +762,6 @@ static __inline__ s32 FillWords_(void *destination, s32 size, u32 value) {
 // down from 3) in the high nibble, the COMPOSITE_ flags in the low one.
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
-// ⚓️'s blitter modes run the other way from The Broken Seal's.
-enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
-
 #define STREAM_FRAMES 192
 #define BLAST_FRAMES 54
 #define BLAST_FLASH_FRAME 16 // the flashes rise from here

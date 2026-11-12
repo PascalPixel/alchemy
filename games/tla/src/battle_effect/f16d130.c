@@ -167,9 +167,7 @@ static inline s16 *Fixed_Halves(s32 *value) {
 }
 #define HI(v) (Fixed_Halves(&(v))[1])
 
-// The Lost Age numbers the blitter modes from the other end of The Broken
-// Seal's COMPOSITE_* list; the packed loader argument is mode << 4 | flags.
-enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
+// BattleEffect_LoadBlitter's packed argument: the mode in the high nibble.
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
 #define ROCKS 21

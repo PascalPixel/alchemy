@@ -95,8 +95,6 @@ typedef DrawRectangle BlitterPair[2];
 
 #define SLOT_BLITTER 104 // unk64[1]
 
-// The Lost Age's blitter modes run the other way from The Broken Seal's.
-enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
 void Func_0818de3c(struct MeshTriangle *triangles, s32 columns, s32 rows,

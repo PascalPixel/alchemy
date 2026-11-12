@@ -18,7 +18,6 @@
 // BattleEffect_LoadBlitter's argument: The Lost Age's blitter mode in the high
 // nibble, the COMPOSITE_ flags in the low one.
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
-#define BLIT_ADDITIVE 0
 
 // Each of the four pictures is PICTURE_SIZE pixels square; the reflected
 // variant's are half as tall.
@@ -247,10 +246,6 @@ void Func_0816a2d8(struct BattleEffectArgument *effect, s32 variant) {
 
 // The pixel half of a 16.16 fixed-point value.
 #define HI(v) (((s16 *)&(v))[1])
-
-// The Lost Age's blitter modes are The Broken Seal's counted down from 3.
-
-#define BLIT_MAX 1
 
 #define SPARK_COUNT 16
 #define SPARK_LIFE 28

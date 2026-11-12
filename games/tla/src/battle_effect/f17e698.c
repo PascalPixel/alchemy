@@ -1587,7 +1587,6 @@ extern const u8 gData_081991b0[];          // their corners
 extern struct EffectStep gData_02014000[]; // the sparks
 
 #define BLITTER ((DrawRectangle)Ram_HeapSlots->unk64[1])
-enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 #define BLIT_MODE(mode, flags) ((mode) << 4 | (flags))
 #define BLIT_CLIP (COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y)
 #define HI(v) (((s16 *)&(v))[1])

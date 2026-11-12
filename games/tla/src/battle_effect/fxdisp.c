@@ -110,10 +110,7 @@ void BattleEffect_DispatchByIdRange(struct BattleEffectArgument *effect) {
 #define HEAP_BLITTER 104
 #define HEAP_BLITTER_ALTERNATE 188
 
-// The Lost Age numbers the blitter modes the other way round from The
-// Broken Seal's COMPOSITE_ modes; BattleEffect_LoadBlitter takes mode << 4 |
-// flags.
-enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
+// BattleEffect_LoadBlitter's packed argument: the mode in the high nibble.
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
 #define SPARK_COUNT 64

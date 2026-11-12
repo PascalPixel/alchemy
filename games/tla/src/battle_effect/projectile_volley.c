@@ -1318,10 +1318,7 @@ void Resource_LoadAndDecompress(s32 id, void *dst, s32 skip_pal, s32 copy_pal) {
   Resource_DecodeType01(res, dst);
 }
 
-// The Lost Age numbers the blitter modes the other way round from The
-// Broken Seal's COMPOSITE_ modes; BattleEffect_LoadBlitter takes mode << 4 |
-// flags.
-enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
+// BattleEffect_LoadBlitter's packed argument: the mode in the high nibble.
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
 #define DOTS_PER_COLUMN 32

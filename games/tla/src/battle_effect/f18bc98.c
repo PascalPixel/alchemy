@@ -14,10 +14,6 @@
 // 0x480.
 #define TASK_PASS_FRAME 0xc80
 
-// The Lost Age's blitter modes count the other way from The Broken Seal's
-// COMPOSITE_* modes.
-enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
-
 // BattleEffect_LoadBlitter's packed argument: the mode in the high nibble.
 #define BLITTER(flags, mode) ((mode) << 4 | (flags))
 

@@ -481,8 +481,9 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
                         COMPOSITE_ADDITIVE);
     draw[1] = *lower;
     /* LEFTOVER(template): a per-target loop whose count is 1, the user only;
-     * Camelot's template, as the loop above: the sibling effects' loops run k
-     * to the target count; as its body alone, with 0 for k, 891 of 1259
+     * Camelot's template, as the loop above: the sibling effects
+     * BattleEffect_RunStreakVolley and BattleEffect_RunDjinnBeams run k to the
+     * target count; as its body alone, with 0 for k, 891 of 1259
      * instructions differ in tbs-en. */
     for (k = 0; k != 1; k++) {
       source = GetBattleObjectSlotFar(work->args->user)->actor;

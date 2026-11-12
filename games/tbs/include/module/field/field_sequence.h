@@ -168,8 +168,6 @@ struct TriggerView {
 /// A 16.16 coordinate's whole pixels, its fraction cleared.
 #define FIELD_PIXEL_MASK 0xffff0000
 
-#define ACTOR_LAST 66 ///< the last actor slot searched
-
 //--------------------------------------------------------------------------
 // The map's treasure spots (chests and Psynergy Stones)
 //--------------------------------------------------------------------------

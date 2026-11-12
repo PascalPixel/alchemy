@@ -385,5 +385,12 @@ void Actor_SetOthersPaused(struct Actor *except, s32 state, s32 value) {
       Actor_SetAnimationSpeedFar(actor, value);
     }
     actorId++;
-  } while (actorId <= ACTOR_LAST);
+    // BUG: one past the actor table: Actor_Lookup(ACTOR_ID_COUNT) is the first
+    // treasure spot's actor, so the map's first chest or Psynergy Stone is
+    // paused too.
+#ifdef BUGFIX
+  } while (actorId < ACTOR_ID_COUNT);
+#else
+  } while (actorId <= ACTOR_ID_COUNT);
+#endif
 }

@@ -157,7 +157,13 @@ static void Colosso_TakePlaceForMatch(void) {
 
   Event_Start();
   // Choose the nearest matching speaker whose Z is at least the supporter's.
-  for (actorId = ACTOR_FIRST_PLACED; actorId <= ACTOR_LAST; actorId++) {
+  // BUG: one past the actor table: Actor_Lookup(ACTOR_ID_COUNT) is the first
+  // treasure spot's actor, which is looked at too; it is never the speaker.
+#ifdef BUGFIX
+  for (actorId = ACTOR_FIRST_PLACED; actorId < ACTOR_ID_COUNT; actorId++) {
+#else
+  for (actorId = ACTOR_FIRST_PLACED; actorId <= ACTOR_ID_COUNT; actorId++) {
+#endif
     struct Actor *actor = Actor_GetById(actorId);
 
     if (actor != 0 && actor->spriteStorageKind == 1 &&

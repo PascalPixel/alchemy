@@ -32,11 +32,9 @@ void SampleFreqSet(u32 mode);
 void m4aSoundVSyncOff(void);
 void m4aSoundVSyncOn(void);
 extern const u16 gPcmSamplesPerVBlankTable[];
-extern MPlayFunc gMPlayJumpTable[36];
 
 void MPlayMain(struct MusicPlayerInfo *player);
 void TrackStop(struct MusicPlayerInfo *player, struct MusicPlayerTrack *track);
-void m4aSoundMode(u32 mode);
 
 struct MusicPlayerInfo;
 

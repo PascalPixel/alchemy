@@ -63,13 +63,9 @@ void MPlayOpen(struct MusicPlayerInfo *player, struct MusicPlayerTrack *tracks,
 void MPlayStart(struct MusicPlayerInfo *player,
                 const struct SongHeader *header);
 void m4aMPlayStop(struct MusicPlayerInfo *player);
-void MPlayFadeOut(struct MusicPlayerInfo *player, u16 speed);
-void MPlayContinue(struct MusicPlayerInfo *player);
 extern struct SoundInfo gSoundInfo;
 extern struct CgbChannel gCgbChans[4];
 extern u8 gMPlayMemAccArea[];
-extern const struct MusicPlayer gMPlayTable[];
-extern const struct Song gSongTable[];
 
 void ply_memacc(struct MusicPlayerInfo *player, struct MusicPlayerTrack *track);
 void ply_lfos(struct MusicPlayerInfo *player, struct MusicPlayerTrack *track);
@@ -83,7 +79,6 @@ void TrkVolPitSet(struct MusicPlayerInfo *player,
 void CgbSound(void);
 void CgbOscOff(u8 channel);
 s32 MidiKeyToCgbFreq(u8 kind, u8 key, u8 fine);
-extern MPlayFunc gMPlayJumpTable[36];
 
 /// Clears the music player's paused flag, raising its ident while it works.
 /// Called by the resume and play-or-resume commands.

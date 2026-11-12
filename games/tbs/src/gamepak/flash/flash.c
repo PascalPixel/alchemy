@@ -1,3 +1,9 @@
+/// @file
+/// The flash chip: which chip the cartridge holds (IdentifyFlash), the timer
+/// that bounds each wait, and reading and verifying a sector. Erasing and
+/// programming are each chip's own: sst.c, atmel.c and
+/// program_flash_sector.c.
+
 #include "../../../include/gamepak/flash.h"
 #include "../../../include/gamepak/flash_data.h"
 #include "../../../include/system/io_reg.h"
@@ -139,7 +145,7 @@ extern u16 gFlashSavedIme;
 void StartFlashTimer(u8 timingIndex) {
   // Row timingIndex of the chip's max-time table (flashsst.s, flashat.s,
   // flashmx.s, in flashset.s's flash_max_time form): interrupts to count, the
-  // timer's reload and its control. Every row in ☀️ but Atmel's
+  // timer's reload and its control. Every row in this game but Atmel's
   // empty row 2 reloads 0xffbd with 0xc2, an interrupt every 67 timer counts of
   // 256 cycles, about a millisecond.
   u16 *timing = (u16 *)((u8 *)gFlashMaxTime + timingIndex * 6);

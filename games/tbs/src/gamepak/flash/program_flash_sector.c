@@ -1,3 +1,6 @@
+/// @file
+/// Programming a sector of the Macronix and Panasonic chips.
+
 #include "../../../include/gamepak/flash.h"
 #include "../../../include/gamepak/flash_data.h"
 #include "../../../include/system/io_reg.h"

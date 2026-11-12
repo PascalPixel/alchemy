@@ -1,3 +1,7 @@
+/// @file
+/// Erasing and programming the SST chip, the routines also installed for an
+/// unknown chip; every chip but Atmel erases through them.
+
 #include "../../../include/gamepak/flash.h"
 #include "../../../include/gamepak/flash_data.h"
 #include "../../../include/system/io_reg.h"
@@ -13,7 +17,7 @@ u16 _call_via_r3(s32 mode, u8 *address, u8 expected,
 /// Issues the chip-erase command and waits for an erased byte. Returns 0, or
 /// 0xc003 when byte 0 has not read 0xff within the chip-erase time. The
 /// erase-chip routine (gEraseFlashChip) of every chip but Atmel; nothing in
-/// ☀️ calls through that cell.
+/// the game calls through that cell.
 u16 EraseFlashChip(void) {
   u8 savedCode[64];
   u16 result;
@@ -158,9 +162,10 @@ u16 ProgramFlashSectorWithEraseRetry(u16 sector, u8 *source) {
   }
 
   // A previously failed erase receives six more conditioning erases; one that
-  // was blank at once receives one. XXX (no evidence): why a sector that
-  // already reads blank is erased again; the reason lies in the SST chip's
-  // behaviour, which neither the ROM nor a render shows.
+  // was blank at once receives one.
+  // XXX (no evidence): why a sector that already reads blank is erased again;
+  // the reason lies in the SST chip's behaviour, which neither the ROM nor a
+  // render shows.
   rounds = 1;
   if (attempt != 0) {
     rounds = 6;

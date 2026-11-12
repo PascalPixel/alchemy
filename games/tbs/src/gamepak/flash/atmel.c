@@ -1,3 +1,7 @@
+/// @file
+/// Erasing and programming the Atmel chip, whose small 128-byte sectors are
+/// erased thirty-two to a standard sector.
+
 #include "../../../include/gamepak/flash.h"
 #include "../../../include/gamepak/flash_data.h"
 #include "../../../include/system/io_reg.h"
@@ -6,8 +10,8 @@ extern FlashWaitProc gWaitForFlashWrite;
 
 /// Erases the Atmel chip and waits for completion with its configured timing.
 /// Returns 0, or 0xc003 when byte 0 has not read 0xff within the chip-erase
-/// time. Atmel's erase-chip routine (gEraseFlashChip); nothing in ☀️ calls
-/// through that cell.
+/// time. Atmel's erase-chip routine (gEraseFlashChip); nothing in the game
+/// calls through that cell.
 u16 EraseAtmelFlashChip(void) {
   u8 savedCode[64];
   u16 result;

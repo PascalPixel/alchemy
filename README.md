@@ -24,9 +24,8 @@ _Golden Sun_, its characters, music, art and original code were made by Camelot 
 
 Thank you to:
 
-- Everyone on [r/GoldenSun](https://www.reddit.com/r/GoldenSun/), for cheering Alchemy on and keeping the love for these games alive.
-- Tarpman and Karathan, who worked out the compiler and flags Camelot used.
-- Coaltergeist, for [camelot-gcc](https://github.com/Coaltergeist/camelot-gcc), the compiler Alchemy first built with.
 - [pret](https://github.com/pret), whose decompilations set the standard Alchemy measures itself against, and whose [agbcc](https://github.com/pret/agbcc) builds the games’ sound and save code.
+- [GBATEK](https://problemkaputt.de/gbatek.htm), Martin Korth’s hardware reference, from which The Lost Age’s `-mtune=gba` tune and Alchemy’s hardware names come.
+- Coaltergeist, Karathan and Tarpman, whose earlier public work identified the compiler and flags behind The Broken Seal.
 - [Simon Lindholm](https://github.com/simonlindholm/decomp-permuter), for decomp-permuter, which Alchemy Devtools reimplements in Rust.
-- [mGBA](https://mgba.io), whose libmgba plays the builds for every picture and recording in the documentation.
+- Everyone at [r/GoldenSun](https://www.reddit.com/r/GoldenSun/) who cheered Alchemy on and builds with it.

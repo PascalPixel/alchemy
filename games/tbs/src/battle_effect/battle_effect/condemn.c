@@ -8,10 +8,11 @@
 #define CONDEMN_SWING_FRAME 88   ///< the reaper swings, in a white flash
 #define CONDEMN_BOUNCE_FRAME 120 ///< the falling target bounces
 
-/// gCondemn_PanelX and _PanelY place each of the seven pictures, by column
-/// and row.
-#define CONDEMN_PICTURE_X(column, stage) gCondemn_PanelX[(column)][(stage)]
-#define CONDEMN_PICTURE_Y(row, stage) gCondemn_PanelY[(row)][(stage)]
+/// Where picture n of the reaper's seven is drawn (REAPER_PICTURE_X), by the
+/// casting side's column and row.
+#define CONDEMN_PICTURE_X(column, picture)                                     \
+  gCondemn_PictureX[(column)][(picture)]
+#define CONDEMN_PICTURE_Y(row, picture) gCondemn_PictureY[(row)][(picture)]
 
 /// A hooded reaper with a scythe sways across the screen three times, each of
 /// the first two passes fading out through a ripple, the last over the first
@@ -172,9 +173,7 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
       // The reaper with its scythe raised until frame 91, and swung from
       // frame 88; a white flash (the brightest level over the whole canvas,
       // covering what was drawn) on frames 88 and 89; then the crescent,
-      // fading through five pictures, two frames each. Stage n of
-      // gCondemn_PanelX and _PanelY places picture n; the row and column
-      // are the side's.
+      // fading through five pictures, two frames each.
       if (frame <= 87) {
         draw[work->args->side](
             canvas, work->sheet, CONDEMN_PICTURE_X(pictureColumn, 0),

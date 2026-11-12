@@ -90,8 +90,8 @@ enum CastingImpact {
   CASTING_IMPACT_IMPACT_TERRA_STRIKE,  ///< a rock spire grows and sinks
   CASTING_IMPACT_IMPACT_POISON_CLOUD,  ///< smoke
   CASTING_IMPACT_IMPACT_DEADLY_POISON, ///< smoke
-  CASTING_IMPACT_IMPACT_MORTAL_DANGER, ///< also Death Size; a large picture
-                                       ///< rises and breaks
+  CASTING_IMPACT_IMPACT_MORTAL_DANGER, ///< also Death Size; the reaper swings
+                                       ///< its scythe
   CASTING_IMPACT_IMPACT_BAD_OMEN,      ///< skulls rise from the target
   CASTING_IMPACT_IMPACT_LIFE_NOURISH,  ///< motes fly back to the caster
   CASTING_IMPACT_IMPACT_AQUA_SOCK,     ///< a blue flame column falls onto the
@@ -1041,9 +1041,10 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
     } else if (mode == CASTING_IMPACT_IMPACT_MORTAL_DANGER) {
       s32 imageY;
       s32 sway;
-      // The 57x98 picture shows until frame 7 and the 99x69 one from frame 4;
-      // the canvas flashes on frames 4 and 5, and from frame 6 five pieces
-      // follow, two frames each.
+      // Condemn's reaper and crescent: the reaper with its scythe raised
+      // shows until frame 7 and swung from frame 4; the canvas flashes white
+      // on frames 4 and 5, and from frame 6 the crescent fades through five
+      // pictures, two frames each.
       // The sine is taken and dropped; only the cosine sways the pictures,
       // up to 4 pixels.
       Trig_Sin(frame * (TRIG_TURN / 128));
@@ -1063,7 +1064,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
                       CASTING_IMPACT_IMAGE_X(work->args->side, 0),
                       imageY + gCastingImpact_ImageY[0], 57, 98);
         }
-        blitters[0](canvas, work->sheet + (57 * 98),
+        blitters[0](canvas, work->sheet + REAPER_SHEET_SWUNG,
                     CASTING_IMPACT_IMAGE_X(work->args->side, 1),
                     imageY + gCastingImpact_ImageY[1], 99, 69);
         if (frame == 4 || frame == 5) {
@@ -1071,27 +1072,27 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
                           CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
         }
         if (frame == 6 || frame == 7) {
-          blitters[0](canvas, work->sheet + (57 * 98 + 99 * 69),
+          blitters[0](canvas, work->sheet + REAPER_SHEET_CRESCENT,
                       CASTING_IMPACT_IMAGE_X(work->args->side, 2),
                       imageY + gCastingImpact_ImageY[2], 128, 91);
         }
         if (frame == 8 || frame == 9) {
-          blitters[0](canvas, pictures,
+          blitters[0](canvas, pictures + RED_CRESCENT_FADE_1,
                       CASTING_IMPACT_IMAGE_X(work->args->side, 3),
                       imageY + gCastingImpact_ImageY[3], 128, 91);
         }
         if (frame == 10 || frame == 11) {
-          blitters[0](canvas, pictures + (128 * 91),
+          blitters[0](canvas, pictures + RED_CRESCENT_FADE_2,
                       CASTING_IMPACT_IMAGE_X(work->args->side, 4),
                       imageY + gCastingImpact_ImageY[4], 128, 59);
         }
         if (frame == 12 || frame == 13) {
-          blitters[0](canvas, pictures + (128 * 91 + 128 * 59),
+          blitters[0](canvas, pictures + RED_CRESCENT_FADE_3,
                       CASTING_IMPACT_IMAGE_X(work->args->side, 5),
                       imageY + gCastingImpact_ImageY[5], 122, 29);
         }
         if (frame == 14 || frame == 15) {
-          blitters[0](canvas, pictures + (128 * 91 + 128 * 59 + 122 * 29),
+          blitters[0](canvas, pictures + RED_CRESCENT_FADE_4,
                       CASTING_IMPACT_IMAGE_X(work->args->side, 6),
                       imageY + gCastingImpact_ImageY[6], 76, 25);
         }

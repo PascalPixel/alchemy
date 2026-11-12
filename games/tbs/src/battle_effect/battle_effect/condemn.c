@@ -5,25 +5,25 @@
 #include "../battle_effect_internal.h"
 
 #define CONDEMN_FRAMES 132
-#define CONDEMN_BREAK_FRAME 88   ///< the panel breaks in a white flash
+#define CONDEMN_SWING_FRAME 88   ///< the reaper swings, in a white flash
 #define CONDEMN_BOUNCE_FRAME 120 ///< the falling target bounces
 
-/// gCondemn_PanelX and _PanelY have seven stages for each column and row.
-#define CONDEMN_PANEL_X(column, stage) gCondemn_PanelX[(column)][(stage)]
-#define CONDEMN_PANEL_Y(row, stage) gCondemn_PanelY[(row)][(stage)]
+/// gCondemn_PanelX and _PanelY place each of the seven pictures, by column
+/// and row.
+#define CONDEMN_PICTURE_X(column, stage) gCondemn_PanelX[(column)][(stage)]
+#define CONDEMN_PICTURE_Y(row, stage) gCondemn_PanelY[(row)][(stage)]
 
-/// A tall panel (57x98) swings across the screen three times, each pass fading
-/// out through a ripple, the last over the first target; on frame 88 it
-/// shatters in a white flash into a burst of larger pieces and the target is
-/// knocked back, bouncing on frame 120.
+/// A hooded reaper with a scythe sways across the screen three times, each of
+/// the first two passes fading out through a ripple, the last over the first
+/// target; on frame 88 the screen flashes white, the reaper swings, and the
+/// red crescent its scythe leaves fades away while the target is knocked
+/// back, bouncing on frame 120.
 ///
 /// Abilities: Condemn (BATTLE_EFFECT_CONDEMN).
 ///
-/// The effect layer ripples throughout.
-///
 /// Opens the tiled canvas (BattleEffect_StartTiledCanvas) and adds
 /// BattleEffect_ArmBg2AffineHBlankDma to feed work->bg2xLines to BG2X; decodes
-/// the burst's pieces into Ram_MapGridCellBuffer; moves the target's actor;
+/// the fading crescent into Ram_MapGridCellBuffer; moves the target's actor;
 /// and reloads the battle background on BG1 before it closes the layer. It
 /// never calls EFFECT_SHOW_DAMAGE, and leaves the flash timers alone.
 void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
@@ -37,10 +37,10 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
   struct Actor *target;
   // Only position[0] is used; the second gives the stack frame its 76 bytes.
   struct ScreenPoint position[2];
-  s32 swing[2];
-  s32 drawPanel;
-  s32 panelColumn;
-  s32 panelRow;
+  s32 swayCenter[2];
+  s32 drawReaper;
+  s32 pictureColumn;
+  s32 pictureRow;
   s32 transferValue;
   s32 frame;
 
@@ -51,9 +51,9 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
   REG_BG2PA = Q_8_8(1);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
 
-  // Setup. The panel and the first two burst pictures in work->sheet, with
-  // their palette; the later pieces in PARTICLES (Ram_MapGridCellBuffer), whose
-  // own palette is skipped.
+  // Setup. The reaper and the crescent in work->sheet (enum ReaperSheetCell),
+  // with their palette; the fading crescent in Ram_MapGridCellBuffer (enum
+  // RedCrescentCell), whose own palette is skipped.
   sheet = Resource_GetTableEntry((s32)&ResourceId_CounterRevealSheet);
   Iwram_CopyWords((void *)BG_PLTT, sheet, 128);
   sheet = sheet + 128;
@@ -72,15 +72,15 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
   Task_Add(BattleEffect_ArmBg2AffineHBlankDma, TASK_PASS_VBLANK);
   // Redraw from blank each frame.
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, transferValue);
-  // swing is the point the panel sways about, in 16.16 pixels: the first
-  // pass high up on the near side.
-  drawPanel = 1;
+  // swayCenter is the point the reaper sways about, in 16.16 pixels: the
+  // first pass high up on the near side.
+  drawReaper = 1;
   if (work->args->side == EFFECT_SIDE_PARTY) {
-    swing[0] = -(80 << 16);
+    swayCenter[0] = -PIXELS(80);
   } else {
-    swing[0] = 112 << 16;
+    swayCenter[0] = PIXELS(112);
   }
-  swing[1] = -(32 << 16);
+  swayCenter[1] = -PIXELS(32);
   for (frame = 0; frame != CONDEMN_FRAMES; frame++) {
     s32 spin;
     s32 screenX;
@@ -91,46 +91,46 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
     s32 i;
     s32 *scanline;
 
-    // Frame loop. The panel sways 16 pixels across and 4 up and down about
-    // the swing point, a full turn every 128 frames.
-    spin = frame << 9;
-    screenX = (swing[0] >> 16) + (((Trig_Sin(spin) * 16)) >> 16) + 48;
-    screenY = (swing[1] >> 16) + (((Trig_Cos(spin) * 4)) >> 16) + 16;
-    if (frame == CONDEMN_BREAK_FRAME) {
+    // Frame loop. The reaper sways 16 pixels across and 4 up and down about
+    // swayCenter, a full turn every 128 frames.
+    spin = frame * (TRIG_TURN / 128);
+    screenX = (swayCenter[0] >> 16) + (((Trig_Sin(spin) * 16)) >> 16) + 48;
+    screenY = (swayCenter[1] >> 16) + (((Trig_Cos(spin) * 4)) >> 16) + 16;
+    if (frame == CONDEMN_SWING_FRAME) {
       Sound_PlayFar(SE_HEAVY_IMPACT);
     }
-    // Frame 32: the second pass, lower and further across; the panel skips
+    // Frame 32: the second pass, lower and further across; the reaper skips
     // a frame while it moves, and comes back opaque on frame 33.
     if (frame == 32) {
       if (work->args->side == EFFECT_SIDE_PARTY) {
-        swing[0] = -(32 << 16);
+        swayCenter[0] = -PIXELS(32);
       } else {
-        swing[0] = 72 << 16;
+        swayCenter[0] = PIXELS(72);
       }
-      swing[1] = 24 << 16;
-      drawPanel = 0;
+      swayCenter[1] = PIXELS(24);
+      drawReaper = 0;
     }
     if (frame == 33) {
       REG_BLDALPHA = BLEND_ALPHA(16, 16);
-      drawPanel = 1;
+      drawReaper = 1;
     }
     // Frame 64: the last pass, on the first target.
     if (frame == 64) {
       Projection_ScaledUnit(work->args->targets[0], position);
       if (work->args->side == EFFECT_SIDE_PARTY) {
-        swing[0] = (position[0].x - 128) << 16;
+        swayCenter[0] = PIXELS(position[0].x - 128);
       } else {
-        swing[0] = (position[0].x - 64) << 16;
+        swayCenter[0] = PIXELS(position[0].x - 64);
       }
-      swing[1] = 0;
-      drawPanel = 0;
+      swayCenter[1] = 0;
+      drawReaper = 0;
     }
     if (frame == 65) {
       REG_BLDALPHA = BLEND_ALPHA(16, 16);
-      drawPanel = 1;
+      drawReaper = 1;
     }
     // The last 16 frames of each of the first two passes ripple harder and
-    // harder (up to 30/4 texels) as the panel fades out.
+    // harder (up to 30/4 texels) as the reaper fades out.
     scanline = work->bg2xLines;
     ripple = 0;
     if (frame <= 31) {
@@ -148,86 +148,90 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
       ripple = 0;
     }
 
-    // Every line's BG2X carries the sway, so the panel moves by scrolling
+    // Every line's BG2X carries the sway, so the reaper moves by scrolling
     // the canvas rather than by where it is drawn. The ripple is a wave 32
     // lines long that moves up a line a frame.
     i = 0;
     lineOffset = (6 - screenX) << 8;
-    angle = frame << 11;
+    angle = frame * (TRIG_TURN / 32);
     for (; i != DISPLAY_HEIGHT; i++) {
       *scanline++ = lineOffset - ((Trig_Sin(angle) * ripple) >> 10);
       angle += TRIG_TURN / 32;
     }
-    if (drawPanel != 0) {
+    if (drawReaper != 0) {
       if (work->args->side == EFFECT_SIDE_ENEMIES) {
-        panelColumn = 0;
-        panelRow = 0;
+        pictureColumn = 0;
+        pictureRow = 0;
       } else {
-        panelColumn = 1;
+        pictureColumn = 1;
         /* FAKEMATCH(dead): i is 160 here, so i >> 31 folds to 0 and only
-         * changes allocation; as panelRow = 0, 200 of 580 instructions differ
+         * changes allocation; as pictureRow = 0, 200 of 580 instructions differ
          * in tbs-en. */
-        panelRow = i >> 31;
+        pictureRow = i >> 31;
       }
-      // The panel until frame 91; from frame 88 the burst: a white flash
-      // (level 63 over the whole canvas, covering what was drawn) on
-      // frames 88 and 89, then larger pieces two frames each. Stage n of
+      // The reaper with its scythe raised until frame 91, and swung from
+      // frame 88; a white flash (the brightest level over the whole canvas,
+      // covering what was drawn) on frames 88 and 89; then the crescent,
+      // fading through five pictures, two frames each. Stage n of
       // gCondemn_PanelX and _PanelY places picture n; the row and column
       // are the side's.
       if (frame <= 87) {
-        draw[work->args->side](canvas, work->sheet,
-                               CONDEMN_PANEL_X(panelColumn, 0),
-                               CONDEMN_PANEL_Y(panelRow, 0) + screenY, 57, 98);
+        draw[work->args->side](
+            canvas, work->sheet, CONDEMN_PICTURE_X(pictureColumn, 0),
+            CONDEMN_PICTURE_Y(pictureRow, 0) + screenY, 57, 98);
       } else {
         if (frame <= 91) {
           draw[work->args->side](
-              canvas, work->sheet, CONDEMN_PANEL_X(panelColumn, 0),
-              CONDEMN_PANEL_Y(panelRow, 0) + screenY, 57, 98);
+              canvas, work->sheet, CONDEMN_PICTURE_X(pictureColumn, 0),
+              CONDEMN_PICTURE_Y(pictureRow, 0) + screenY, 57, 98);
         }
-        draw[work->args->side](canvas, work->sheet + 5586,
-                               CONDEMN_PANEL_X(panelColumn, 1),
-                               CONDEMN_PANEL_Y(panelRow, 1) + screenY, 99, 69);
+        draw[work->args->side](canvas, work->sheet + REAPER_SHEET_SWUNG,
+                               CONDEMN_PICTURE_X(pictureColumn, 1),
+                               CONDEMN_PICTURE_Y(pictureRow, 1) + screenY, 99,
+                               69);
         if ((frame - 88) <= 1U) {
           Iwram_FillWords(canvas, CANVAS_BYTES,
                           CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
         }
         if ((frame - 90) <= 1U) {
-          draw[work->args->side](
-              canvas, work->sheet + 12417, CONDEMN_PANEL_X(panelColumn, 2),
-              CONDEMN_PANEL_Y(panelRow, 2) + screenY, 128, 91);
+          draw[work->args->side](canvas, work->sheet + REAPER_SHEET_CRESCENT,
+                                 CONDEMN_PICTURE_X(pictureColumn, 2),
+                                 CONDEMN_PICTURE_Y(pictureRow, 2) + screenY,
+                                 128, 91);
         }
         if ((frame - 92) <= 1U) {
           draw[work->args->side](
-              canvas, Ram_MapGridCellBuffer, CONDEMN_PANEL_X(panelColumn, 3),
-              CONDEMN_PANEL_Y(panelRow, 3) + screenY, 128, 91);
+              canvas, Ram_MapGridCellBuffer + RED_CRESCENT_FADE_1,
+              CONDEMN_PICTURE_X(pictureColumn, 3),
+              CONDEMN_PICTURE_Y(pictureRow, 3) + screenY, 128, 91);
         }
         if ((frame - 94) <= 1U) {
-          draw[work->args->side](canvas, Ram_MapGridCellBuffer + 11648,
-                                 CONDEMN_PANEL_X(panelColumn, 4),
-                                 CONDEMN_PANEL_Y(panelRow, 4) + screenY, 128,
-                                 59);
+          draw[work->args->side](
+              canvas, Ram_MapGridCellBuffer + RED_CRESCENT_FADE_2,
+              CONDEMN_PICTURE_X(pictureColumn, 4),
+              CONDEMN_PICTURE_Y(pictureRow, 4) + screenY, 128, 59);
         }
         if ((frame - 96) <= 1U) {
-          draw[work->args->side](canvas, Ram_MapGridCellBuffer + 19200,
-                                 CONDEMN_PANEL_X(panelColumn, 5),
-                                 CONDEMN_PANEL_Y(panelRow, 5) + screenY, 122,
-                                 29);
+          draw[work->args->side](
+              canvas, Ram_MapGridCellBuffer + RED_CRESCENT_FADE_3,
+              CONDEMN_PICTURE_X(pictureColumn, 5),
+              CONDEMN_PICTURE_Y(pictureRow, 5) + screenY, 122, 29);
         }
         if ((frame - 98) <= 1U) {
-          draw[work->args->side](canvas, Ram_MapGridCellBuffer + 22738,
-                                 CONDEMN_PANEL_X(panelColumn, 6),
-                                 CONDEMN_PANEL_Y(panelRow, 6) + screenY, 76,
-                                 25);
+          draw[work->args->side](
+              canvas, Ram_MapGridCellBuffer + RED_CRESCENT_FADE_4,
+              CONDEMN_PICTURE_X(pictureColumn, 6),
+              CONDEMN_PICTURE_Y(pictureRow, 6) + screenY, 76, 25);
         }
       }
     }
     // Frame 88: knock the target back, away from the middle of the field,
     // to twice its x at up to 2 pixels a frame.
-    if (frame == CONDEMN_BREAK_FRAME) {
+    if (frame == CONDEMN_SWING_FRAME) {
       target = GetBattleObjectSlotFar(work->args->targets[0])->actor;
-      target->velocityY = 1 << 16;
+      target->velocityY = PIXELS(1);
       target->acceleration = 2 << 16;
-      target->speedLimit = 2 << 16;
+      target->speedLimit = PIXELS(2);
       target->gravity = 0;
       target->steeringFlags = 0;
       target->snapToTarget = 0;
@@ -261,7 +265,7 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
 }
 
 #undef CONDEMN_FRAMES
-#undef CONDEMN_BREAK_FRAME
+#undef CONDEMN_SWING_FRAME
 #undef CONDEMN_BOUNCE_FRAME
-#undef CONDEMN_PANEL_X
-#undef CONDEMN_PANEL_Y
+#undef CONDEMN_PICTURE_X
+#undef CONDEMN_PICTURE_Y

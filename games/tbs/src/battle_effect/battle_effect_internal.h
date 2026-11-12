@@ -269,6 +269,35 @@ static inline void Dma_Stop(volatile u16 *channel) {
       (level) = 0;                                                             \
   }
 
+/// The reaper in CounterRevealSheet, which Condemn and Mortal Danger decode
+/// into work->sheet: the reaper with its scythe raised, then swung, then the
+/// red crescent the swing leaves. Each starts where the one before ends; the
+/// notes give the sizes the draws use.
+/// ★ Named from what the player sees: a hooded skeleton swings its scythe in a
+/// white flash (https://alchemy.pascalpixel.com/abilities/condemn.gif)
+enum ReaperSheetCell {
+  /// 57x98
+  REAPER_SHEET_RAISED = 0,
+  /// 99x69
+  REAPER_SHEET_SWUNG = REAPER_SHEET_RAISED + 57 * 98,
+  /// 128x91
+  REAPER_SHEET_CRESCENT = REAPER_SHEET_SWUNG + 99 * 69
+};
+
+/// RedCrescentSheetA, which Condemn and Mortal Danger decode into
+/// Ram_MapGridCellBuffer: the swing's crescent fading in four pictures, each
+/// starting where the one before ends.
+enum RedCrescentCell {
+  /// 128x91
+  RED_CRESCENT_FADE_1 = 0,
+  /// 128x59
+  RED_CRESCENT_FADE_2 = RED_CRESCENT_FADE_1 + 128 * 91,
+  /// 122x29
+  RED_CRESCENT_FADE_3 = RED_CRESCENT_FADE_2 + 128 * 59,
+  /// 76x25
+  RED_CRESCENT_FADE_4 = RED_CRESCENT_FADE_3 + 122 * 29
+};
+
 /// Closing bolts and lightning columns use the same 24x120 picture cells.
 #define LIGHTNING_BOLT_CELL_BYTES 2880
 

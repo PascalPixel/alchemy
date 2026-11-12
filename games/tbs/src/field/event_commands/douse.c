@@ -4,7 +4,7 @@
 
 #include "../event_commands_internal.h"
 
-/// A Actor as Douse's orb and drops use it; the notes give the
+/// A Actor as Douse's rain cloud and drops use it; the notes give the
 /// Actor fields at the same offsets.
 struct ActorDouseView {
   u8 reserved00[8];
@@ -31,7 +31,7 @@ struct ActorDouseView {
 /// it; the notes give the FieldEffectWork fields at the same offsets.
 struct FieldEffectDouseView {
   s32 angle;            ///< 1/65536 turns: the way the caster faces
-  s32 x, y, z;          ///< the ground under the orb's destination
+  s32 x, y, z;          ///< the ground under the cloud's destination
   struct Actor *caster; ///< mainActor
   s32 targetActor;      ///< child: the target's actor, 0 for none
   u8 reserved18[8];
@@ -40,7 +40,7 @@ struct FieldEffectDouseView {
   /// drops, or 30 swaying particles in Mercury Lighthouse.
   u8 highArc;
   u8 reserved21[19];
-  u8 variant; ///< childOption: set by an event, the orb stops 80 pixels up
+  u8 variant; ///< childOption: set by an event, the cloud stops 80 pixels up
   u8 reserved35[16];
   /// lit: set in two Mercury Lighthouse scenes (setup.c), where swaying
   /// particles (SPRITE_PARTICLE) fall rather than splashing drops.
@@ -109,30 +109,7 @@ void FieldEffect_UpdateDriftingFallActor(struct Actor *actor) {
 /// Abilities: Douse (FIELD_PSYNERGY_DOUSE).
 void FieldPsynergy_DouseOnTarget(s32 unused) { FieldPsynergy_Douse(); }
 
-/// Puts the orb step tenths of the way from one point to the other.
-static inline void Douse_MoveOrbBetween(struct ActorDouseView *orb,
-                                        struct Vector3 *from,
-                                        struct Vector3 *to, s32 step) {
-  /* FAKEMATCH(temporary): e and t reused for x, y and z; as orb->x = from->x
-   * + step * (to->x - from->x) / 10, 48 of 359 instructions differ in tbs-en.
-   */
-  s32 e, t;
-
-  e = to->x;
-  t = from->x;
-  t += step * (e - t) / 10;
-  orb->x = t;
-  e = to->y;
-  t = from->y;
-  t += step * (e - t) / 10;
-  orb->y = t;
-  e = to->z;
-  t = from->z;
-  t += step * (e - t) / 10;
-  orb->z = t;
-}
-
-/// An orb rises from 16 pixels above the caster to 32 pixels above the
+/// A rain cloud rises from 16 pixels above the caster to 32 pixels above the
 /// destination (80 with variant) over 10 frames, growing as it goes, rains
 /// particles, and returns.
 ///
@@ -147,16 +124,16 @@ void FieldPsynergy_Douse(void) {
   struct Vector3 end;
   struct FieldEffectDouseView *work = gFieldEffectWork;
   struct Actor *caster = work->caster;
-  struct ActorDouseView *lightOrb;
+  struct ActorDouseView *cloud;
   s32 step;
   s32 steps = 11;
   s32 count;
   s32 y;
   struct ActorDouseView *particle;
 
-  lightOrb =
+  cloud =
       (struct ActorDouseView *)Actor_Spawn(SPRITE_RAIN_CLOUD, step = 0, 0, 0);
-  if (lightOrb == 0)
+  if (cloud == 0)
     return;
   FieldPsynergy_FadeToCastColor();
   Sound_PlayFar(SE_ITEM_BREAK);
@@ -180,51 +157,32 @@ void FieldPsynergy_Douse(void) {
   for (; step < steps; step++) {
     s32 scale;
 
-    {
-      /* FAKEMATCH(temporary): a holds &start and b holds &end, with e and t
-       * reused as in Douse_MoveOrbBetween; as
-       * Douse_MoveOrbBetween(lightOrb, &start, &end, step), 2 of 359
-       * instructions differ in tbs-en. */
-      struct Vector3 *a = &start;
-      struct Vector3 *b = &end;
-      s32 e, t;
-
-      e = b->x;
-      t = a->x;
-      t += step * (e - t) / 10;
-      lightOrb->x = t;
-      e = b->y;
-      t = a->y;
-      t += step * (e - t) / 10;
-      lightOrb->y = t;
-      e = b->z;
-      t = a->z;
-      t += step * (e - t) / 10;
-      lightOrb->z = t;
-    }
+    SET_POSITION(cloud, start.x + (end.x - start.x) * step / 10,
+                 start.y + (end.y - start.y) * step / 10,
+                 start.z + (end.z - start.z) * step / 10);
     scale = FieldEffect_Interpolate(Q16_ONE, Q16_ONE / 4, step);
-    lightOrb->scaleX = scale;
-    lightOrb->scaleY = scale;
+    cloud->scaleX = scale;
+    cloud->scaleY = scale;
     wait(1);
   }
   wait(10);
 
   if ((s8)work->alternate == 0) {
-    // Drop a particle every 6 frames from 3 to 8 pixels round the orb (the
+    // Drop a particle every 6 frames from 3 to 8 pixels round the cloud (the
     // last right under it).
     count = 10;
     if ((s8)work->highArc == 0)
       count = 24;
     for (step = 0; step < count; step++) {
-      pos.x = lightOrb->x;
-      pos.y = lightOrb->y;
-      pos.z = lightOrb->z;
+      pos.x = cloud->x;
+      pos.y = cloud->y;
+      pos.z = cloud->z;
       Vector_AddPolarOffset(Random16() * 5 + px(3), Random16(), &pos);
       if (step == count - 1) {
         wait(25);
-        pos.x = lightOrb->x;
-        pos.y = lightOrb->y;
-        pos.z = lightOrb->z;
+        pos.x = cloud->x;
+        pos.y = cloud->y;
+        pos.z = cloud->z;
       }
       particle = (struct ActorDouseView *)Actor_Spawn(SPRITE_DROPLET, pos.x,
                                                       pos.y, pos.z);
@@ -239,15 +197,15 @@ void FieldPsynergy_Douse(void) {
     wait(10);
   } else {
     // Every 6 frames, a swaying particle falls from 3 to 8 pixels round the
-    // orb.
+    // cloud.
     if ((s8)work->highArc != 0)
       count = 10;
     else
       count = 30;
     for (step = 0; step < count; step++) {
-      pos.x = lightOrb->x;
-      pos.y = lightOrb->y;
-      pos.z = lightOrb->z;
+      pos.x = cloud->x;
+      pos.y = cloud->y;
+      pos.z = cloud->z;
       Vector_AddPolarOffset(Random16() * 5 + px(3), Random16(), &pos);
       particle = (struct ActorDouseView *)Actor_Spawn(SPRITE_PARTICLE, pos.x,
                                                       pos.y, pos.z);
@@ -264,18 +222,20 @@ void FieldPsynergy_Douse(void) {
     wait(70);
   }
 
-  // Shrink back to a quarter on the way back over the target.
+  // Shrink back to a quarter on the way back to the caster.
   step = 0;
   do {
     s32 scale;
 
-    Douse_MoveOrbBetween(lightOrb, &end, &start, step);
+    SET_POSITION(cloud, end.x + (start.x - end.x) * step / 10,
+                 end.y + (start.y - end.y) * step / 10,
+                 end.z + (start.z - end.z) * step / 10);
     scale = FieldEffect_Interpolate(Q16_ONE / 4, Q16_ONE, step);
-    lightOrb->scaleX = scale;
-    lightOrb->scaleY = scale;
+    cloud->scaleX = scale;
+    cloud->scaleY = scale;
     wait(1);
     step++;
   } while (step < steps);
-  Actor_ReleaseFar((struct Actor *)lightOrb);
+  Actor_ReleaseFar((struct Actor *)cloud);
   FieldPsynergy_FadeFromCastColor();
 }

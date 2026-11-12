@@ -300,6 +300,8 @@ next_state:
 /// When Move is cast with no target, the hand appears beside the caster for 30
 /// frames and then turns into particles.
 void FieldPsynergy_Move(void) {
+  /* FAKEMATCH(dead): an unused local that sizes the stack frame; without it,
+   * 4 of 24 instructions differ in tbs-en. */
   UNUSED s32 work[3];
   struct FieldEffectWork *effectWork;
   void *object;
@@ -307,9 +309,9 @@ void FieldPsynergy_Move(void) {
   effectWork = gFieldEffectWork;
   object = effectWork->mainActor;
 
-  // An empty once-only loop before the call, which keeps the mainActor load
-  // below the stack frame's sub sp; as a plain call, 2 of 24 instructions
-  // differ in tbs-en.
+  /* FAKEMATCH(dead): an empty once-only loop before the call keeps the
+   * mainActor load below the stack frame's sub sp; without it, 2 of 24
+   * instructions differ in tbs-en. */
   do {
   } while (0);
   FieldPsynergy_FadeToCastColor();

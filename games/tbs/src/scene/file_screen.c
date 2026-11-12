@@ -924,8 +924,9 @@ menu_top:;
           }
           for (v7 = pageIndex * PASSWORD_SYMBOLS_PER_PAGE, pageGlyphIndex = 0;
                v7 != v6; v7++, pageGlyphIndex++) {
-            // The block makes each draw call rebuild the glyph's address as the
-            // ROM does; without it, 98 of 921 instructions differ in tbs-en.
+            /* FAKEMATCH(dead): a once-only block round the draw call makes each
+             * call rebuild the glyph's address; as the plain call, 170 of 920
+             * instructions differ in tbs-en. */
             do {
               FileScreen_NameEntryCharacter(password[v7] & PASSWORD_SYMBOL_MASK,
                                             glyph);

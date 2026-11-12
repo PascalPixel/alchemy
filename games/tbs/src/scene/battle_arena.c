@@ -825,9 +825,9 @@ next:
   Heap_Release(heap);
   size = LOBBY_RECOVERY_RECORD_BYTES;
   heap = Heap_AllocEwram(size);
-  // The recovery table's copy in a one-pass block, which gives the copy's
-  // argument order and keeps the list base's copy first after the call; as a
-  // plain call, 6 of 254 instructions differ in tbs-en.
+  /* FAKEMATCH(dead): the recovery table's copy in a once-only block gives the
+   * copy's argument order and keeps the list base's copy first after the call;
+   * as a plain call, 6 of 254 instructions differ in tbs-en. */
   do {
     Iwram_CopyWords(heap, Djinn_GetRecoveryTable(0), size);
   } while (0);
@@ -871,9 +871,9 @@ next:
     wait(1);
     wait(2);
   }
-  // The shared exit in a one-pass block, so loop.c finds no barrier at done to
-  // move the record loop's two failures to; as a plain label, 62 of 254
-  // instructions differ in tbs-en.
+  /* FAKEMATCH(dead): the shared exit in a once-only block, so loop.c finds no
+   * barrier at done to move the record loop's two failures to; as a plain
+   * label, 62 of 254 instructions differ in tbs-en. */
   do {
   done:
     Heap_Release(heap);
@@ -893,9 +893,8 @@ static s32 BattleArena_ExchangePartyRecords(void) {
   s32 receiveFirst;
 
   result = 0;
-  // An empty once-only loop after result's zero, which loads it into r6 ahead
-  // of the call as the ROM does; as a plain statement, 4 of 62 instructions
-  // differ in tbs-en.
+  /* FAKEMATCH(dead): an empty once-only loop after result's zero loads it into
+   * r6 ahead of the call; without it, 4 of 62 instructions differ in tbs-en. */
   do {
   } while (0);
   receiveFirst = GameFlag_Get(FLAG_BATTLE_ARENA_LINK_CHILD);

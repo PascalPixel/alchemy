@@ -48,8 +48,6 @@ UNUSED void BattleEffect_RunSwirlingStars(struct BattleEffectParams *args) {
   // The stars turn about a point 80 pixels up.
   SET_VECTOR(center, 0, 160 << 15, 0);
   for (frame = 0; frame != SWIRLING_STARS_FRAMES; frame++) {
-    /* FAKEMATCH(temporary): camera copies gBattleCamera; as gBattleCamera at
-     * each use, 29 of 262 instructions differ in tbs-en. */
     struct BattleCamera *camera = gBattleCamera;
 
     EFFECT_VIEW_FROM_CAMERA(camera);
@@ -286,8 +284,6 @@ UNUSED void BattleEffect_RunTargetBursts(struct BattleEffectParams *args) {
 
   for (frame = 0; frame != TARGET_BURSTS_FRAMES; frame++) {
     s32 member;
-    /* FAKEMATCH(temporary): camera copies gBattleCamera; as gBattleCamera at
-     * each use, 146 of 292 instructions differ in tbs-en. */
     struct BattleCamera *camera = gBattleCamera;
 
     EFFECT_FOR_EACH_TARGET(member, work->args) {

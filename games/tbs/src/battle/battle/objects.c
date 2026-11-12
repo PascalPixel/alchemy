@@ -606,8 +606,6 @@ void BattleCamera_ApplyTransform(void) {
 #else
 s32 BattleCamera_ApplyTransform(void) {
 #endif
-  /* FAKEMATCH(temporary): camera copies gBattleCamera; as gBattleCamera at each
-   * use, 19 of 23 instructions differ in tbs-en. */
   struct BattleCamera *camera = gBattleCamera;
   Transform_Reset();
   if (GameFlag_GetFar(FLAG_CHOOSING_COMMANDS) != 0) {
@@ -655,8 +653,6 @@ void *GetMotionRecord(struct Actor *actor, s32 recordIndex) {
 /// Battle_GatherActions. Writes the camera's yaw, pitch,
 /// distance, position and eye, and the transform state.
 void BattleCamera_SetDefaultView(void) {
-  /* FAKEMATCH(temporary): camera copies gBattleCamera; as gBattleCamera at each
-   * use, 54 of 41 instructions differ in tbs-en. */
   struct BattleCamera *camera = gBattleCamera;
   struct FixedPointPosition eyeOffset;
 

@@ -532,8 +532,6 @@ void BattleEffect_RunStatReduction(struct BattleEffectParams *args, s32 mode) {
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
   for (frame = 0; frame != work->args->targetCount * 4 + 64; frame++) {
-    /* FAKEMATCH(temporary): camera copies gBattleCamera; as gBattleCamera at
-     * each use, 232 of 531 instructions differ in tbs-en. */
     struct BattleCamera *camera = gBattleCamera;
 
     // The loop runs count * 4 + 64 frames, so frame 72 comes only with three

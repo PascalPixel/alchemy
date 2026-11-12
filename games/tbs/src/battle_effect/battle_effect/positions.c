@@ -115,8 +115,6 @@ void Projection_Unit(s32 id, struct ScreenPoint *position) {
 ///
 /// screen: receives x and y.
 s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen) {
-  /* FAKEMATCH(temporary): camera copies gBattleCamera; as gBattleCamera at each
-   * use, 27 of 52 instructions differ in tbs-en. */
   struct BattleCamera *camera = gBattleCamera;
   struct Actor *actor;
   struct Sprite *info;

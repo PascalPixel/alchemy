@@ -593,8 +593,6 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
   // Outer Space's sprites are released and the battle shows the damage.
   for (frame = 0; frame != 54; frame++) {
     s32 size = (frame + 464) << 8;
-    /* FAKEMATCH(temporary): camera copies gBattleCamera; as gBattleCamera at
-     * each use, 21 of 1532 instructions differ in tbs-en. */
     struct BattleCamera *camera = gBattleCamera;
     s32 elapsed = frame - 16;
     struct SpriteScale scale;

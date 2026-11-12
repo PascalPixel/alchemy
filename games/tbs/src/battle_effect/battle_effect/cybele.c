@@ -151,8 +151,6 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
   height = -px(64);
   speed = 0;
   for (frame = 0; frame != 366; frame++) {
-    /* FAKEMATCH(temporary): camera copies gBattleCamera; as gBattleCamera at
-     * each use, 41 of 1434 instructions differ in tbs-en. */
     struct BattleCamera *camera = gBattleCamera;
 
     // A or B skips the vines straight to the drop.

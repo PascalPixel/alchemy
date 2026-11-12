@@ -93,8 +93,6 @@ void BattleEffect_RunVolcano(struct BattleEffectParams *args) {
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
   for (frame = 0; frame != VOLCANO_FRAMES; frame++) {
-    /* FAKEMATCH(temporary): camera copies gBattleCamera; as gBattleCamera at
-     * each use, 375 of 591 instructions differ in tbs-en. */
     struct BattleCamera *camera = gBattleCamera;
 
     if (work->args->variant == EFFECT_VARIANT_STRONGEST && frame < 64) {

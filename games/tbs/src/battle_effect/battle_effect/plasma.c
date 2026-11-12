@@ -91,8 +91,6 @@ void BattleEffect_RunPlasma(struct BattleEffectParams *args) {
     // its yaw turns 1/256 turn a frame, easing off over the last seven,
     // 16160/65536 in all, nearly a quarter turn.
     if (work->args->variant == EFFECT_VARIANT_STRONGEST && frame <= 63) {
-      /* FAKEMATCH(temporary): camera copies gBattleCamera; as gBattleCamera at
-       * each use, 179 of 466 instructions differ in tbs-en. */
       struct BattleCamera *camera = gBattleCamera;
       s32 speed;
 

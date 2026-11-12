@@ -99,8 +99,6 @@ void BattleEffect_RunPlanetDiver(struct BattleEffectParams *args) {
     dx = px(15);
 
   for (frame = 0; frame != PLANET_DIVER_FRAMES; frame++) {
-    /* FAKEMATCH(temporary): camera copies gBattleCamera; as gBattleCamera at
-     * each use, 53 of 516 instructions differ in tbs-en. */
     struct BattleCamera *camera = gBattleCamera;
 
     EFFECT_VIEW_FROM_CAMERA(camera);
@@ -300,8 +298,6 @@ void BattleEffect_RunHaunt(struct BattleEffectParams *args) {
 
   for (frame = 0; frame != work->args->targetCount * 32 + 96; frame++) {
     s32 *row;
-    /* FAKEMATCH(temporary): camera copies gBattleCamera; as gBattleCamera at
-     * each use, 156 of 379 instructions differ in tbs-en. */
     struct BattleCamera *camera = gBattleCamera;
 
     // Frame loop: 32 frames a target, then 96 more. The battle shows the
@@ -436,8 +432,6 @@ void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectParams *args) {
     offsetX = 0;
   }
   for (frame = 0; frame != (work->args->targetCount * 16) + 48; frame++) {
-    /* FAKEMATCH(temporary): camera copies gBattleCamera; as gBattleCamera at
-     * each use, 24 of 306 instructions differ in tbs-en. */
     struct BattleCamera *camera = gBattleCamera;
     s32 *row;
     s32 i;

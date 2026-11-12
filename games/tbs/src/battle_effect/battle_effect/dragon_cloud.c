@@ -138,8 +138,6 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
   path = Resource_GetTableEntry((s32)&ResourceId_DualStreamPath);
 
   for (frame = 0; frame != DRAGON_CLOUD_FRAMES; frame++) {
-    /* FAKEMATCH(temporary): camera copies gBattleCamera; as gBattleCamera at
-     * each use, 198 of 745 instructions differ in tbs-en. */
     struct BattleCamera *camera = gBattleCamera;
 
     if (frame == DRAGON_CLOUD_STRIKE_FRAME)

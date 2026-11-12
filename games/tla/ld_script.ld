@@ -429,6 +429,7 @@ SECTIONS
         "*/games/tla/src/field/map/f0ea14c.o"(.text)
         "*/games/tla/src/field/map/f0ea8d4.o"(.text)
         "*/games/tla/src/field/map/f0eabd0.o"(.text)
+        "*/games/tla/src/field/event_commands/step_vector.o"(.text)
         "*/games/tla/src/field/event_commands/f0ebf94.o"(.text)
         "*/games/tla/src/field/event_commands/f0ec2b8.o"(.text)
         "*/games/tla/src/field/event_commands/f0ec4d4.o"(.text)

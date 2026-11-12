@@ -614,7 +614,9 @@ SelectionMenu_GetCursorNode(struct SelectionMenuWork *screen) {
 #define NODE_STATUS_SCROLLING 33
 #define NODE_STATUS_SHOWN 1
 
-#define SELECTION_ROWS 4
+/// The row's last place, the fifth: the cursor stepping onto it with more
+/// entries to come scrolls the row instead.
+#define SELECTION_LAST_PLACE 4
 #define ARROW_SCROLL_FRAMES 8
 
 /// Runs the selection row until the player chooses (the chosen entry's index)
@@ -701,7 +703,8 @@ UNUSED void Menu_MoveSelectionForward(struct SelectionMenuWork *screen) {
   screen->status = NODE_STATUS_SCROLLING;
   wait(1);
   screen->cursorIndex++;
-  if (screen->cursorIndex == SELECTION_ROWS && nextEntry + 1 < screen->count) {
+  if (screen->cursorIndex == SELECTION_LAST_PLACE &&
+      nextEntry + 1 < screen->count) {
     screen->cursorIndex--;
     screen->records[1].base = ARROW_SCROLL_FRAMES;
     screen->top++;
@@ -804,7 +807,8 @@ void SelectionMenu_StepRight(struct SelectionMenuWork *state) {
         y += 16;
       }
       state->records[1].kind = TRUE;
-    } else if (state->cursorIndex == SELECTION_ROWS && end + 1 < state->count) {
+    } else if (state->cursorIndex == SELECTION_LAST_PLACE &&
+               end + 1 < state->count) {
       state->cursorIndex--;
       state->records[1].base = ARROW_SCROLL_FRAMES;
       state->top++;
@@ -872,7 +876,7 @@ void SelectionMenu_StepLeft(struct SelectionMenuWork *state) {
         i++;
       node = state->head;
       state->top = i;
-      state->cursorIndex = 4;
+      state->cursorIndex = SELECTION_LAST_PLACE;
       while (node != NULL) {
         SelectionMenu_SetupIcon(state->kinds[i], state->bases[i], node, 1);
         node = node->next;
@@ -975,7 +979,7 @@ void SelectionMenu_Scroll(struct SelectionMenuWork *screen, s32 forward) {
   s32 rowY;
 
   if (forward != 0) {
-    entryIndex = screen->top + SELECTION_ROWS;
+    entryIndex = screen->top + SELECTION_LAST_PLACE;
     base = screen->bases[entryIndex];
     kind = screen->kinds[entryIndex];
     node = SelectionMenu_FindFreeIcon(SELECTION_ICON_ROW);

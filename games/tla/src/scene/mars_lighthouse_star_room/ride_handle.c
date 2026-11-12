@@ -272,3 +272,5 @@ void Func_02001fcc(void) {
     }
   }
 }
+
+#include "../../field/field_effect/advance_spin.c"

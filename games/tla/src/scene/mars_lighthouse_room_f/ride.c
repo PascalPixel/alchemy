@@ -135,3 +135,5 @@ void Func_02002800(void) {
     }
   }
 }
+
+#include "../../field/field_effect/advance_spin.c"

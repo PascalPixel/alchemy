@@ -9,7 +9,7 @@ void Func_02004d40(void);
 void Func_02004d48(void);
 void Func_02004c98(struct Actor *object, s32 mode);
 void Func_02004460(struct Actor *object, struct Actor *to);
-void ObjectVisual_CopyAttributes(s32 id, s32 from);
+void ObjectVisual_CopyAttributes(u32 targetId, u32 sourceId);
 void Func_020046e8(s32 value);
 void Func_020049c0(s32 offset, s32 layer);
 void Func_0200481c(void);

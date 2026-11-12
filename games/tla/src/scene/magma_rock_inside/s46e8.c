@@ -56,3 +56,42 @@ void Func_020046e8(s32 spread) {
     i++;
   } while (i <= 7);
 }
+
+extern const s32 gData_02005668[];
+
+void Func_0200481c(void) {
+  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
+  struct FieldEffect *effect;
+  u32 frame;
+  u32 i;
+
+  if (leader == 0)
+    return;
+  frame = 0;
+  i = 0;
+  do {
+    effect = (struct FieldEffect *)FieldActor_Create(285, leader->x, leader->y,
+                                                     leader->z);
+    if (effect != 0) {
+      frame = Func_02004e98(effect->sprite, frame);
+      effect->motionFlags = 0;
+      effect->collisionFlags = 0;
+      Actor_SetSingleChildFlags(effect, 0);
+      Func_02004c98(effect, 2);
+      Func_02004ca0(effect, gData_02005668);
+      effect->velocity.x = Math_Cosine(i << 12);
+      effect->velocity.y = 0;
+      effect->velocity.z = Math_Sin(i << 12);
+      effect->velocity.x += effect->velocity.x >> 1;
+      effect->velocity.x += ((Random16Far() * 3) << 14 >> 16) - 0x6000;
+      effect->velocity.z += ((Random16Far() * 3) << 13 >> 16) - 0x3000;
+      effect->spin = ((Random16Far() << 12) >> 16) - 0x800;
+      effect->scaleRateX = 0;
+      effect->scaleRateY = 0;
+      effect->update = Effect_AdvanceMotionAtLeaderPriority;
+      effect->sprite->priority =
+          ((struct FieldSprite *)leader->animation)->priority;
+    }
+    i++;
+  } while (i <= 16);
+}

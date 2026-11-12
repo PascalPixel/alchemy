@@ -76,3 +76,21 @@ void Func_02004b18(void) {
   }
   StartTask(Func_020049d8, 0x480);
 }
+
+#include "local.h"
+
+struct MagmaRockInsideSparkWork {
+  u8 unk0000[0x1604];
+  s16 resource;
+};
+
+void Resource_ResetEntry(s32 entry);
+void HeapSlot_Release(s32 slot);
+
+void Func_02004bd4(void) {
+  struct MagmaRockInsideSparkWork *work = Ram_HeapSlots->menuRuntime;
+
+  FieldTask_Remove(Func_020049d8);
+  Resource_ResetEntry(work->resource);
+  HeapSlot_Release(220);
+}

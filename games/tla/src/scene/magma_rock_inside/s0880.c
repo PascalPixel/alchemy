@@ -18,3 +18,18 @@ void Func_02000880(u16 *list) {
                   (height >> 19) + 4);
   }
 }
+
+#include "battle.h"
+#include "game.h"
+#include "graphics.h"
+#include "lib.h"
+#include "menu.h"
+#include "sound.h"
+#include "system.h"
+#include "scene_tables.h"
+
+const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
+
+const struct SceneRegion *Scene_GetRegions(void) { return 0; }
+
+const u32 *Scene_GetExits(void) { return gSceneExits; }

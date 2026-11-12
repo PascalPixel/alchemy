@@ -1,5 +1,6 @@
 /// @file
-/// Scene code of overlay 0x6a5, in ROM order, from s16e8's offset up to the next object the overlay links.
+/// Scene code of overlay 0x6a5, in ROM order, from s16e8's offset up to the
+/// next object the overlay links.
 
 #include "types.h"
 #include "main_routine_work.h"
@@ -131,8 +132,9 @@ void Func_020016e8(void) {
   if (gMainRoutineWork.sequenceResult == -1)
     FieldUnit_AddHp(4, -10);
   /* FAKEMATCH(dead): the byte store kept in a once-only block, whose end
-   * holds the scene id's load behind it, as shaman_village_cave/s0430.c
-   * does with the same store; as the plain store, 4 of 400 instructions
+   * holds the scene id's load behind it, as Func_02000430 in
+   * shaman_village_cave/scene_tables.c does with the same store; as the
+   * plain store, 4 of 400 instructions
    * differ in tla-en. */
   do {
     gMainRoutineWork.battleRule24b = 2;
@@ -194,8 +196,8 @@ static __inline__ void W_Func_020058fc(s32 a0, s32 a1, s32 a2) {
 
 #define ACTOR_SET_MODE_AND_WAIT(id, mode, frames)                              \
   do {                                                                         \
-    Actor_SetAnimation(id, mode);                                               \
-    FieldEvent_Wait(frames);                                                        \
+    Actor_SetAnimation(id, mode);                                              \
+    FieldEvent_Wait(frames);                                                   \
   } while (0)
 
 void Func_02001bc4(void) {
@@ -530,22 +532,19 @@ L_0200a6fe:
   actor = Actor_Get(0);
   if (actor == 0)
     goto L_0200a71e;
-  Actor_SetDestination(2, FIELD_AT(actor, s16, 10),
-                            FIELD_AT(actor, s16, 18));
+  Actor_SetDestination(2, FIELD_AT(actor, s16, 10), FIELD_AT(actor, s16, 18));
 L_0200a71e:
   Actor_SetAnimation(3, 2);
   actor = Actor_Get(0);
   if (actor == 0)
     goto L_0200a73e;
-  Actor_SetDestination(3, FIELD_AT(actor, s16, 10),
-                            FIELD_AT(actor, s16, 18));
+  Actor_SetDestination(3, FIELD_AT(actor, s16, 10), FIELD_AT(actor, s16, 18));
 L_0200a73e:
   Actor_SetAnimation(1, 2);
   actor = Actor_Get(0);
   if (actor == 0)
     goto L_0200a75e;
-  Actor_SetDestination(1, FIELD_AT(actor, s16, 10),
-                            FIELD_AT(actor, s16, 18));
+  Actor_SetDestination(1, FIELD_AT(actor, s16, 10), FIELD_AT(actor, s16, 18));
 L_0200a75e:
   Actor_SetScript(2, (s32)gData_02005ff0);
   Actor_SetScript(3, (s32)gData_02005ff0);
@@ -608,29 +607,25 @@ L_0200a75e:
   v_r5 = (s32)gData_02005ff0;
   if (actor == 0)
     goto L_0200a980;
-  Actor_SetDestination(7, FIELD_AT(actor, s16, 10),
-                            FIELD_AT(actor, s16, 18));
+  Actor_SetDestination(7, FIELD_AT(actor, s16, 10), FIELD_AT(actor, s16, 18));
 L_0200a980:
   Actor_SetAnimation(6, 2);
   actor = Actor_Get(4);
   if (actor == 0)
     goto L_0200a9a0;
-  Actor_SetDestination(6, FIELD_AT(actor, s16, 10),
-                            FIELD_AT(actor, s16, 18));
+  Actor_SetDestination(6, FIELD_AT(actor, s16, 10), FIELD_AT(actor, s16, 18));
 L_0200a9a0:
   Actor_SetAnimation(5, 2);
   actor = Actor_Get(4);
   if (actor == 0)
     goto L_0200a9c0;
-  Actor_SetDestination(5, FIELD_AT(actor, s16, 10),
-                            FIELD_AT(actor, s16, 18));
+  Actor_SetDestination(5, FIELD_AT(actor, s16, 10), FIELD_AT(actor, s16, 18));
 L_0200a9c0:
   Actor_SetAnimation(30, 2);
   actor = Actor_Get(4);
   if (actor == 0)
     goto L_0200a9e0;
-  Actor_SetDestination(30, FIELD_AT(actor, s16, 10),
-                            FIELD_AT(actor, s16, 18));
+  Actor_SetDestination(30, FIELD_AT(actor, s16, 10), FIELD_AT(actor, s16, 18));
 L_0200a9e0:
   Actor_SetScript(7, v_r5);
   Actor_SetScript(6, v_r5);

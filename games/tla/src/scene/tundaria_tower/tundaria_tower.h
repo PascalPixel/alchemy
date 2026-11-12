@@ -35,7 +35,7 @@ struct Actor *Actor_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
-s32 Random16Far(void);
+u32 Random16Far(void);
 void FieldMessage_Show(s32 message, s32 flags);
 void OverlayObject_WaitUntilIdle(struct Actor *object);
 void Task_RemoveFar(void (*func)(void));

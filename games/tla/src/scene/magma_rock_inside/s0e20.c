@@ -45,3 +45,17 @@ void Func_02000e20(s32 mode) {
     object->update = (void (*)(void))Func_02000da4;
   }
 }
+
+void Func_02000ea4(struct Actor *object) {
+  s32 dx, dy, dz;
+
+  object->x += dx = object->bounce;
+  object->y += dy = object->gravity;
+  object->z += dz = object->unk4c;
+  dx -= dx >> 3;
+  dy -= dy >> 3;
+  dz -= dz >> 3;
+  object->bounce = dx;
+  object->gravity = dy;
+  object->unk4c = dz;
+}

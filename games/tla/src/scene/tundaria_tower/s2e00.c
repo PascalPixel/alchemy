@@ -1,6 +1,6 @@
 /// @file
-/// The falling rocks' setup: loads their picture, sets up 64 small sprites, marks each
-/// rock idle and starts the task that spawns them.
+/// The falling rocks' setup: loads their picture, sets up 64 small sprites,
+/// marks each rock idle and starts the task that spawns them.
 #include "types.h"
 #include "ram_buffer.h"
 #include "event_inline.h"
@@ -48,8 +48,7 @@ void Func_02003190(struct RockSprite *sprite, s32 width, s32 height, u32 attr,
 void Func_02002cc0(void);
 
 void Func_02002e00(void) {
-  struct RockWork *work =
-      HeapSlot_AllocFar(220, sizeof(struct RockWork));
+  struct RockWork *work = HeapSlot_AllocFar(220, sizeof(struct RockWork));
   s32 resource;
   s32 tile;
   struct Rock *rock;
@@ -58,8 +57,9 @@ void Func_02002e00(void) {
 
   Func_02002f40(Resource_GetTableEntry((s32)&ResourceId_FallingRock), work);
   resource = Resource_FindFreeEntry();
-  /* FAKEMATCH(wrapper): forwarded, so that its constant goes straight to the argument; as
-   * a direct VramCache_Load call, 41 of 83 instructions differ in tla-en. */
+  /* FAKEMATCH(wrapper): forwarded, so that its constant goes straight to the
+   * argument; as a direct VramCache_Load call, 41 of 83 instructions differ in
+   * tla-en. */
   tile = Vram_Load(resource, sizeof(work->tiles), work);
   work->tileBase = tile;
   work->resource = resource;
@@ -80,7 +80,18 @@ void Func_02002e00(void) {
 
     work->next = zero;
   }
-  /* FAKEMATCH(wrapper): forwarded, so that its constant goes straight to the argument; as
-   * a direct Task_Add call, 6 of 83 instructions differ in tla-en. */
+  /* FAKEMATCH(wrapper): forwarded, so that its constant goes straight to the
+   * argument; as a direct Task_Add call, 6 of 83 instructions differ in tla-en.
+   */
   Task_AddFrame(Func_02002cc0, 0x480);
+}
+
+#include "tundaria_tower.h"
+
+void Func_02002ebc(void) {
+  struct TundariaTowerSparkWork *work = Ram_HeapSlots->menuRuntime;
+
+  Task_RemoveFar(Func_02002cc0);
+  Resource_ResetEntry(work->resource);
+  HeapSlot_Release(220);
 }

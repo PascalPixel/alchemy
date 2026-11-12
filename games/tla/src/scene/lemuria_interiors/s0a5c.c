@@ -259,3 +259,58 @@ L_02008a86:
 L_0200927c:
   return result;
 }
+
+#include "field_event.h"
+
+#define FIELD_AT(base, type, off)                                              \
+  (((struct {                                                                  \
+     u8 pad[off];                                                              \
+     type v;                                                                   \
+   } *)(base))                                                                 \
+       ->v)
+
+extern const u8 gData_02002dec[];
+
+void Func_020027f4(struct FieldActor *object, s32 mode);
+void Func_020027fc(struct FieldActor *object, const void *script);
+
+struct SpritePictures {
+  u8 unk00[5];
+  u8 picture;
+};
+
+struct AnimatedSprite {
+  u8 unk00[0x12];
+  s16 rotation;
+  u8 unk14[5];
+  u8 picture;
+  u8 nextPicture;
+  u8 unk1b[0xd];
+  struct SpritePictures *pictures;
+};
+
+struct SpawnedActor {
+  u8 unk00[0x5e];
+  u16 timer;
+};
+
+void Func_0200128c(s32 x, s32 y, s32 z, s16 rotation, s32 timer) {
+  struct FieldActor *object;
+  struct AnimatedSprite *sprite;
+
+  object = Import_ActorCreate(0x1e8, x, y, z);
+  if (object != 0) {
+    sprite = (struct AnimatedSprite *)object->sprite;
+    Func_020027f4(object, 1);
+    Func_020027fc(object, gData_02002dec);
+    object->motionFlags = 0;
+    {
+      /* FAKEMATCH(barrier): the empty asm before the timer's store; as no asm,
+       * 2 of 32 instructions differ in tla-en. */
+      __asm__("");
+      ((struct SpawnedActor *)object)->timer = timer;
+    }
+    sprite->nextPicture = 0;
+    sprite->rotation = rotation;
+  }
+}

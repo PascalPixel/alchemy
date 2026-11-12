@@ -99,7 +99,7 @@ s32 Icon_CreateStatChangeArrow(struct Window *window, s32 x, s32 y,
   if (object == 0) {
     /* FAKEMATCH(dead): a test whose two arms both return -1, which emits
      * nothing but keeps variant and x live across the call; as a plain
-     * return -1, 10 of 37 instructions differ in tbs-en. */
+     * return -1, 16 of 36 instructions differ in tbs-en. */
     if (variant || targetX)
       return -1;
     else
@@ -137,7 +137,7 @@ s32 Icon_DrawVariantWithTileOffset(struct Window *window, s32 x, s32 y,
   if (object == 0) {
     /* FAKEMATCH(dead): a test whose two arms both return -1, which emits
      * nothing but keeps variant and x live across the call; as a plain
-     * return -1, 13 of 41 instructions differ in tbs-en. */
+     * return -1, 22 of 40 instructions differ in tbs-en. */
     if (selectedVariant || x)
       return -1;
     else

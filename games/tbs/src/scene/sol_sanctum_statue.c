@@ -1710,8 +1710,8 @@ static void SolSanctumStatue_OpenSeal(void) {
       }
     } else if (exitResult == 0 &&
                GameFlag_Get(FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED)) {
-      /* FAKEMATCH(dead): SelectStoryExit returns only 1 or -1, so this branch
-       * cannot run; without it, 51 of 239 instructions differ in tbs-en. */
+      // Unused: SolSanctumStatue_SelectStoryExit returns only 1 or -1, so
+      // this branch cannot run.
       if (GameFlag_Get(FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN) &&
           GameFlag_Get(FLAG_SOL_SANCTUM_SOUTHWEST_SEAL_OPEN) &&
           GameFlag_Get(FLAG_SOL_SANCTUM_SOUTHEAST_SEAL_OPEN)) {

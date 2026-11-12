@@ -262,9 +262,10 @@ void LuckyDice_Run(void) {
   s32 numbers[DICE_RESULT_COUNT];
   s32 groundPoint[3];
   s32 screen[3];
-  /* FAKEMATCH(dead): an unused local that gives the stack frame its 32 bytes
-   * at sp+168 to sp+200; without it, 42 of 2046 instructions differ in
-   * tbs-en. */
+  /* LEFTOVER(frame): an unused local for the 32 bytes at sp+168 to sp+200
+   * that the ROM's frame reserves and no instruction reads; The Lost Age's
+   * LuckyDice_Run declares the same local in the same slot; as without it,
+   * 42 of 2046 instructions differ in tbs-en. */
   UNUSED s32 unused[8];
   /* FAKEMATCH(volatile): four halfwords stored to sp+166..160 and each
    * reloaded with ldrh; as plain u16 locals, 902 of 2046 instructions differ
@@ -588,9 +589,8 @@ void LuckyDice_Run(void) {
     } else if (state == LUCKY_DICE_AIM && frame > 17) {
       // Aiming: Up and Down raise and lower the dice between 32 and 160.
       // B quits, as does running out of coins for a bet; A throws.
-      /* FAKEMATCH(dead): gKeysRepeat is read twice and discarded before the
-       * KEY_UP test; without the two reads, 189 of 2046 instructions differ in
-       * tbs-en. */
+      // DEAD: gKeysRepeat is read twice and discarded before the KEY_UP test;
+      // the ROM keeps both loads.
       (void)gKeysRepeat;
       (void)gKeysRepeat;
       if (gKeysHeld & KEY_UP) {
@@ -636,9 +636,8 @@ void LuckyDice_Run(void) {
                                    sprites->coinsWindow, 0, 0);
         for (index = 0; index != DICE_COUNT; index++) {
           rollingDie = &diceWork->particles[index];
-          /* FAKEMATCH(dead): never true with DICE_COUNT 2 (a third die would
-           * start further back and higher up); without the test and its
-           * stores, 133 of 2046 instructions differ in tbs-en. */
+          // DEAD: never true with DICE_COUNT 2 (a third die would start
+          // further back and higher up); the ROM keeps the test and its stores.
           if (index > 1) {
             rollingDie->z = -px(180);
             rollingDie->y = px(96);

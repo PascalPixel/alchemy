@@ -189,8 +189,8 @@ next:
       }
       SpriteViewer_BuildProbeRing(x, y, ring);
     } else {
-      /* FAKEMATCH(dead): a read of gKeysRepeat whose value goes unused; without
-       * it, 81 of 672 instructions differ in tbs-en. */
+      // DEAD: a read of gKeysRepeat whose value goes unused; the ROM keeps
+      // the load.
       (void)gKeysRepeat;
       if ((*repeatedKeys & KEY_UP) != 0) {
         selectedLayer = (selectedLayer - 1) & (ANIM_LAYER_COUNT - 1);

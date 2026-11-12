@@ -48,8 +48,7 @@ UNUSED void Task_CopyWords(u32 *destination, u32 *source, u32 byteCount) {
 /// interrupts disabled.
 void Task_Sort(void) {
   struct Task saved;
-  /* FAKEMATCH(dead): every pass sets task again; without this initializer,
-   * 28 of 39 instructions differ in tbs-en. */
+  // Default: the table's start, which every pass sets again.
   struct Task *task = gTasks;
   s32 pass;
   s32 index;
@@ -116,8 +115,8 @@ s32 Task_Add(TaskFunc func, s32 order) {
   // entries, a scene's entry table and events, start-up).
   index = -1;
   task = gTasks;
-  /* FAKEMATCH(dead): nothing uses the status read here; without the read, 14
-   * of 61 instructions differ in tbs-en. */
+  // DEAD: nothing uses the status read here; the ROM keeps the load, as The
+  // Lost Age's Task_Add does.
   (void)gTasksRunning;
   IRQ_LOCK(savedInterruptState);
   // Update an existing task before looking for an unused task slot.

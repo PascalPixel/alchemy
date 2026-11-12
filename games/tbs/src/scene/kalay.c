@@ -1510,10 +1510,9 @@ static void Kalay_PrepareTunnel(void) {
     MapGrid_CopyCellAttributes(7, 44, 1, 1, 0, 1);
     MapGrid_CopyCellsTo(74, 58, 78, 41, 1, 5);
     MapGrid_CopyCellsTo(16, 109, 13, 109, 3, 2);
-    /* FAKEMATCH(dead): the draining's stages, drawn a column at a time, twice
-     * over, where the event shows three of them with a wait between, all
-     * covered by the drained floor copied below; without them, 195 of 566
-     * instructions differ in tbs-en. */
+    // DEAD: the draining's stages, drawn a column at a time, twice over,
+    // where the event shows three of them with a wait between, all covered by
+    // the drained floor copied below; the ROM keeps the calls.
     MapGrid_CopyCellsTo(67, 64, 71, 44, 1, 2);
     MapGrid_CopyCellsTo(67, 64, 72, 44, 1, 2);
     MapGrid_CopyCellsTo(67, 68, 73, 43, 1, 2);
@@ -1555,8 +1554,8 @@ static void Kalay_PrepareTunnel(void) {
     Actor_SetPosition(ACTOR_SECOND_STATUE, 696, 732);
     MapGrid_CopyCellsTo(74, 58, 107, 41, 1, 5);
     MapGrid_CopyCellsTo(45, 109, 42, 109, 3, 2);
-    /* FAKEMATCH(dead): the draining's stages again, covered by the drained
-     * floor below; without them, 131 of 566 instructions differ in tbs-en. */
+    // DEAD: the draining's stages again, covered by the drained floor below;
+    // the ROM keeps the calls.
     MapGrid_CopyCellsTo(67, 64, 102, 44, 1, 2);
     MapGrid_CopyCellsTo(67, 64, 103, 44, 1, 2);
     MapGrid_CopyCellsTo(67, 64, 104, 44, 1, 2);

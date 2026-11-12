@@ -21,7 +21,7 @@ OBJECTS := $(patsubst tools/%.c,$(OBJ)/%.o,$(SOURCES))
 all: dependencies $(BINARIES)
 
 dependencies:
-	@command -v $(LIBPNG_CONFIG) >/dev/null || { echo 'Install the libpng development package (see INSTALL.md).' >&2; exit 1; }
+	@command -v $(LIBPNG_CONFIG) >/dev/null || { echo 'Install the libpng development package (see README.md).' >&2; exit 1; }
 	@printf '%s\n' -xc -std=c11 $(PNG_CFLAGS) > tools/compile_flags.txt
 
 $(OBJECTS): | dependencies

@@ -4,7 +4,7 @@ This file is not for humans.
 
 For decompilation work (matching, measuring, humanizing the source, writing its docs), use Alchemy Devtools: install it by cloning https://github.com/PascalPixel/alchemy-devtools into this checkout's `alchemy-devtools/` folder, which git ignores, and running `cargo build --release` there. Its `AGENTS.md` says how to proceed and holds the rules for that work.
 
-This file instructs the agents that help people build with Alchemy: change the game, add to it, read it. People read `README.md` and `INSTALL.md`. The agents keep this file current, wording included. Rule letters are kept, so old citations resolve; the rules not here are in the devtools' `AGENTS.md`. Alchemy rebuilds Golden Sun: **The Broken Seal** (☀️, build `tbs`) and **The Lost Age** (⚓️, `tla`) byte for byte from readable C, assembly and editable assets, in Japanese, English, German, Spanish, French and Italian: twelve editions, `tbs-ja` to `tla-it`. Japanese releases are the source editions; localizations are measured differences. Both games build byte for byte from this repository alone, with no ROM.
+This file instructs the agents that help people build with Alchemy: change the game, add to it, read it. People read `README.md`. The agents keep this file current, wording included. Rule letters are kept, so old citations resolve; the rules not here are in the devtools' `AGENTS.md`. Alchemy rebuilds Golden Sun: **The Broken Seal** (☀️, build `tbs`) and **The Lost Age** (⚓️, `tla`) byte for byte from readable C, assembly and editable assets, in Japanese, English, German, Spanish, French and Italian: twelve editions, `tbs-ja` to `tla-it`. Japanese releases are the source editions; localizations are measured differences. Both games build byte for byte from this repository alone, with no ROM.
 
 ## Where things are
 
@@ -25,7 +25,7 @@ make test              # the build tools' tests, the format and device checks
 make SHIFT=4 tbs-en    # the shift test: everything after the header moves 4 bytes, into out/shift-4/
 ```
 
-Setup is in `INSTALL.md`, and `make help` lists the rest. `make compare-editions` prints a lot: send it to a log file and count the `: OK` lines. After switching branches, delete `out/*/deps.mk` and `out/*/objects.mk`; after renaming sources, delete the editions' `out/` folders; after switching to a branch whose tools differ, `rm -rf tools/out/obj tools/out/ags-* && make tools`.
+Setup is in `README.md`, and `make help` lists the rest. `make compare-editions` prints a lot: send it to a log file and count the `: OK` lines. After switching branches, delete `out/*/deps.mk` and `out/*/objects.mk`; after renaming sources, delete the editions' `out/` folders; after switching to a branch whose tools differ, `rm -rf tools/out/obj tools/out/ags-* && make tools`.
 
 ## Your game or this repository
 

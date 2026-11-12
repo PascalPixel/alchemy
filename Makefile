@@ -398,7 +398,7 @@ bootstrap: tools compilers $(CCAS) $(LIBGCC)
 compilers: $(COMPILER)/xgcc
 
 $(COMPILER)/xgcc:
-	@test -f alchemy-gcc/Makefile || { echo 'alchemy-gcc is empty: run git submodule update --init --recursive (see INSTALL.md).' >&2; exit 1; }
+	@test -f alchemy-gcc/Makefile || { echo 'alchemy-gcc is empty: run git submodule update --init --recursive (see README.md).' >&2; exit 1; }
 	$(MAKE) -C alchemy-gcc
 	$(MAKE) -C alchemy-gcc generated-check
 	$(MAKE) -C alchemy-gcc/arm probe

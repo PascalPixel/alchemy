@@ -56,4 +56,4 @@ of the code opens up.
 - [Unused](https://alchemy.pascalpixel.com/tbs/unused) collects what the
   game keeps but never plays.
 - The [glossary](glossary.md) has every word these pages share.
-- [Building Alchemy](../../INSTALL.md) gets you a ROM you made yourself.
+- [Build](https://github.com/PascalPixel/alchemy#build) gets you a ROM you made yourself.

@@ -40,7 +40,7 @@ events. [Unused](https://alchemy.pascalpixel.com/tbs/unused) collects what
 the game keeps but never plays. And the [glossary](tbs/glossary.md) is there
 whenever a word is new.
 
-To build the games yourself, see [Building Alchemy](../INSTALL.md).
+To build the games yourself, see [Build](https://github.com/PascalPixel/alchemy#build).
 
 ## How far along it is
 

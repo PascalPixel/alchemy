@@ -175,8 +175,6 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
                           TITAN_BLADE_FLASH_PICTURES,
                       x - 16, y + 48, 32, 64);
         }
-        /* FAKEMATCH(dead): life is read again, unchanged; without the read,
-         * 385 of 779 instructions differ in tbs-en. */
         life = flash->variant;
         flash->variant = life > 0 ? life - 1 : -1;
         i++;

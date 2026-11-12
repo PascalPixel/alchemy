@@ -259,9 +259,8 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
           world.z = point[index].z * Trig_Cos(point[index].velocityY);
           Projection_Point(&world.x, &screen);
           screen.x >>= 1;
-          /* FAKEMATCH(dead): always true, as a mote restarts once past 48
-           * pixels up and climbs little more than 2 pixels a frame; without the
-           * test, 70 of 1481 instructions differ in tbs-en. */
+          // DEAD: always true, as a mote restarts once past 48 pixels up and
+          // climbs little more than 2 pixels a frame; the ROM keeps the test.
           if (point[index].y < px(64)) {
             draw[0](canvas, work->sheet + PROCNE_DUST, screen.x - 12,
                     screen.y - 12, 16, 16);

@@ -58,8 +58,8 @@ void BattleEffect_RunPrism(struct BattleEffectParams *args) {
   for (j = 0; j != gPrism_Counts[work->args->variant][PRISM_CRYSTAL_COUNT];
        j++) {
     seed = &work->particles[j];
-    /* FAKEMATCH(dead): x keeps a first random number, drawn and never read;
-     * as Random16() alone, 184 of 488 instructions differ in tbs-en. */
+    // DEAD: x keeps a first random number, drawn and never read; the ROM
+    // keeps the mask and the store.
     x = Random16() & 31;
     seed->y = -px(64);
     if (work->args->side == EFFECT_SIDE_PARTY) {

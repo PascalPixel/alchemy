@@ -552,9 +552,8 @@ void BattleEffect_RunStatReduction(struct BattleEffectParams *args, s32 mode) {
       actor = GetBattleObjectSlotFar(work->args->targets[j])->actor;
       // Each target's timeline starts 4 frames after the one before.
       if (targetFrame > 0) {
-        /* FAKEMATCH(dead): the view set from the camera a first time, which the
-         * second call repeats; as one call, 233 of 531 instructions differ in
-         * tbs-en. */
+        // DEAD: the view set from the camera a first time, which the second
+        // call repeats; the ROM keeps both calls.
         EFFECT_VIEW_FROM_CAMERA(camera);
         // Centre on the point 20 pixels above the target.
         SET_VECTOR(point, actor->x.fixed, 160 << 13, actor->z.fixed);

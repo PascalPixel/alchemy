@@ -37,9 +37,12 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
   void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
-  /* FAKEMATCH(dead): a pair of blitters, of which only draw[0] is used,
-   * gives the stack frame 4 more bytes; as one DrawRectangle, 14 of 363
-   * instructions differ in tbs-en. */
+  /* LEFTOVER(frame): draw[1], the idle half of the pair, for 4 bytes the ROM's
+   * frame reserves that no instruction reads; Camelot's template: BlitterPair
+   * is the blitter set every effect declares, and
+   * BattleEffect_FetchRectangleBlitters and about 35 sibling effects fill and
+   * use its second half; as one DrawRectangle, 14 of 363 instructions differ
+   * in tbs-en. */
   BlitterPair draw;
   struct BattleObject *first;
   struct BattleObject *second;
@@ -476,8 +479,7 @@ void BattleEffect_RunElementPillar(struct BattleEffectParams *args) {
       draw[1](canvas, glow, 64, ground.y - 36, 24, 43);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
     }
-    /* FAKEMATCH(dead): a lookup whose result is dropped; without the call, 52
-     * of 420 instructions differ in tbs-en. */
+    // DEAD: a lookup whose result is dropped; the ROM keeps the call.
     GetBattleObjectSlotFar(work->args->user);
     EFFECT_VIEW_FROM_CAMERA(camera);
 
@@ -559,8 +561,9 @@ void BattleEffect_RunElementPillar(struct BattleEffectParams *args) {
 ///
 /// args : only args->targets[0], the unit that flashes, is read.
 void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
-  /* FAKEMATCH(dead): an unused local that gives the stack frame its 12 bytes at
-   * sp+44; without it, 4 of 1051 instructions differ in tbs-en. */
+  /* LEFTOVER(frame): an unused local for the 12 bytes at sp+44, a ScreenPoint's
+   * size, that the ROM's frame reserves and no instruction reads; as without
+   * it, 4 of 1051 instructions differ in tbs-en. */
   UNUSED struct ScreenPoint position;
   struct BattleEffectWork *work;
   void *canvas;
@@ -859,8 +862,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
         s32 v;
 
         v = i / 2;
-        /* FAKEMATCH(dead): v is never below 0; without this test, 29 of 1051
-         * instructions differ in tbs-en. */
+        // DEAD: v is never below 0; the ROM keeps the test.
         if (v < 0)
           v = 0;
         BG_PLTT[i] = RGB(v, v / 2, v);

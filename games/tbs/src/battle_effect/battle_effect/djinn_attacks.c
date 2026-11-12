@@ -177,9 +177,8 @@ void BattleEffect_RunMercury(struct BattleEffectParams *args) {
 
           if (shot->variant == -1) {
             shot->x = x - 8;
-            /* FAKEMATCH(dead): velocityX keeps the launch x, which nothing
-             * reads; without the store, 247 of 413 instructions differ in
-             * tbs-en. */
+            // DEAD: velocityX keeps the launch x, which nothing reads; the
+            // ROM keeps the store.
             shot->velocityX = x;
             shot->y = y;
             shot->variant = 0;
@@ -565,8 +564,7 @@ void BattleEffect_RunMars(struct BattleEffectParams *args) {
       mote->velocityX = ((Random16() & 127) - 64) << 11;
       mote->velocityY = ((Random16() & 127) - 64) << 10;
       mote->z = Random16() & TRIG_ANGLE_MASK;
-      /* FAKEMATCH(dead): nothing reads velocityZ; as Random16() alone, 161
-       * of 406 instructions differ in tbs-en. */
+      // DEAD: nothing reads velocityZ; the ROM keeps the store.
       mote->velocityZ = Random16() & 0xffff;
     }
     step++;

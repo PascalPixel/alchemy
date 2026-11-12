@@ -189,9 +189,10 @@ enum CastingImpact {
 /// waving impacts; it releases all of them before it returns, or hands them on.
 ///
 /// mode: the impact, an enum CastingImpact (the effect kind less
-///       EFFECT_RANGE_CASTING_IMPACT). The tests against
-///       EFFECT_RANGE_CASTING_IMPACT itself never hold, as the dispatcher
-///       passes only CastingImpact values.
+///       EFFECT_RANGE_CASTING_IMPACT). The tests for mode 100, written as
+///       EFFECT_RANGE_CASTING_IMPACT, the same number, never hold, as this
+///       game's dispatcher passes only the 36 impacts; The Lost Age's
+///       dispatcher passes modes up to 100.
 void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
   void **slots;
   void **slot;
@@ -347,10 +348,10 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
     Resource_LoadAndDecompress((s32)&ResourceId_JupiterDjinnSmallSheet,
                                pictures + CASTING_IMPACT_DJINNI_PICTURE, 1, 1);
     break;
-  /* FAKEMATCH(dead): never reached, as the dispatcher passes only the 36
-   * impacts (BattleEffect_RunByIdRange) and each already has its element's
-   * case above; without the case, 110 of 3070 instructions differ in tbs-en.
-   */
+  // Unused: impact mode 100, which this game never dispatches
+  // (BattleEffect_RunByIdRange passes only the 36 impacts); The Lost Age's
+  // dispatcher reaches it, and its twin of this routine loads the same Mercury
+  // sheet for it.
   case EFFECT_RANGE_CASTING_IMPACT:
     Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSmallSheet,
                                pictures + CASTING_IMPACT_DJINNI_PICTURE, 1, 1);
@@ -433,9 +434,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
               sparkScreen.y = sparkScreen.y + casterScreen->y + 44;
             else
               sparkScreen.y = sparkScreen.y + casterScreen->y + 12;
-            /* FAKEMATCH(dead): the depth is clamped to -60..60 and moved to
-             * 0..120 but never read; without the clamp and the move, 51 of
-             * 3070 instructions differ in tbs-en. */
+            // DEAD: the depth is clamped to -60..60 and moved to 0..120 but
+            // never read; the ROM keeps the clamp and the move.
             CLAMP(sparkScreen.depth, -60, 60);
             sparkScreen.depth += 60;
             EFFECT_DRAW_MOTE(blitters[1], canvas, sprites, sparkScreen.x,
@@ -635,9 +635,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
   }
 
   // The impact lasts 20, 32, 40, 48, 64 or 80 frames, by mode.
-  /* FAKEMATCH(dead): the EFFECT_RANGE_CASTING_IMPACT test never holds, as mode
-   * is never the effect kind itself; without it, 80 of 3070 instructions
-   * differ in tbs-en. */
+  // Unused: the last test, for impact mode 100, which this game never
+  // dispatches; The Lost Age's twin lists mode 100 in the same test.
   if ((mode >= CASTING_IMPACT_IMPACT_FLINT &&
        mode <= CASTING_IMPACT_IMPACT_SQUALL) ||
       mode == CASTING_IMPACT_IMPACT_BARRAGE ||
@@ -1291,9 +1290,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
         }
       }
     } else if (mode != EFFECT_RANGE_CASTING_IMPACT) {
-      /* FAKEMATCH(dead): the test always holds, as mode is never the effect
-       * kind itself; as a plain else, 252 of 3070 instructions differ in
-       * tbs-en. */
+      // Unused: the test leaves impact mode 100 without smoke, a mode this
+      // game never dispatches; The Lost Age's twin makes the same test.
       // The smoke impacts: six 24x48 pictures a puff, four frames each.
       struct Particle *step = CASTING_IMPACT_IMPACT_PARTICLES;
       for (i = 0; i != 16; i++, step++) {
@@ -1339,8 +1337,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
       Sound_PlayFar(SE_HEAVY_IMPACT);
     }
     if (frame == 6) {
-      /* FAKEMATCH(dead): the EFFECT_RANGE_CASTING_IMPACT test never holds;
-       * without it, 24 of 3070 instructions differ in tbs-en. */
+      // Unused: the last test, for impact mode 100, which this game never
+      // dispatches; The Lost Age's twin lists mode 100 in the same test.
       if (mode == CASTING_IMPACT_IMPACT_FLINT ||
           mode == CASTING_IMPACT_IMPACT_SCORCH ||
           mode == CASTING_IMPACT_IMPACT_SAP ||

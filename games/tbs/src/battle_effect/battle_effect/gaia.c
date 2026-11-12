@@ -286,9 +286,8 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
         s32 slot;
 
         if (rock->variant == 0) {
-          /* FAKEMATCH(dead): scale copied from unitScale before both its
-           * fields are set; without the copy, 51 of 936 instructions differ in
-           * tbs-en. */
+          // DEAD: scale copied from unitScale before both its fields are set;
+          // the ROM keeps the copy.
           scale = unitScale;
           if (frame > 71) {
             scale.x = (k << 12) + Q16_ONE / 2;
@@ -302,9 +301,8 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
           position.height = px(512) - px(rock->y);
           position.y = px(512);
           slot = (frame / 2 + k) % 11;
-          /* FAKEMATCH(dead): slot != -1 always holds, slot being a remainder
-           * of a positive count; without the test, 166 of 936 instructions
-           * differ in tbs-en. */
+          // DEAD: slot != -1 always holds, slot being a remainder of a
+          // positive count; the ROM keeps the test.
           if (slot != -1)
             Actor_ApplyProjectedPlacementFar(work->sprites[slot], &position,
                                              &scale, 0);

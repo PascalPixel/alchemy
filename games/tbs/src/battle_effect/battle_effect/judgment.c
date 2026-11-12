@@ -223,9 +223,8 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       Sound_PlayFar(SE_SWIRL);
     }
 
-    /* FAKEMATCH(dead): never true, as frame starts at 0 and only grows, so the
-     * sparks are never drawn; without the test and the stage, 854 of 2455
-     * instructions differ in tbs-en. */
+    // Unused: the sparks stage, never drawn, as frame starts at 0 and only
+    // grows; the ROM keeps its signed test against 0 and the whole stage.
     if (frame < 0) {
       EFFECT_VIEW_FROM_CAMERA(camera);
       for (i = 0; i != 128; i++) {

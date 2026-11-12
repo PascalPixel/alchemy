@@ -125,8 +125,8 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
     PARTICLES[i].variant = -1;
   }
 
-  /* FAKEMATCH(dead): a copy of gBoreas_Points that nothing reads; without
-   * it and crystalPoints, 486 of 1340 instructions differ in tbs-en. */
+  // DEAD: a copy of gBoreas_Points into crystalPoints that nothing reads; the
+  // ROM keeps the loop and its stores.
   // UB: the copy takes 32 rows from a table of 16, so rows 16 to 31 come from
   // the 32 bytes after the table.
 #ifdef UBFIX
@@ -224,8 +224,8 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
                                gBoreas_Animations[(frame / 4) & 3]);
     }
 
-    /* FAKEMATCH(dead): stores of the 1.0 the copy of unitScale already holds;
-     * without them, 65 of 1340 instructions differ in tbs-en. */
+    // DEAD: stores of the 1.0 the copy of unitScale already holds; the ROM
+    // keeps the stores.
     scale.x = Q16_ONE;
     scale.y = Q16_ONE;
     position.groundHeight = 0;
@@ -356,9 +356,8 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
             PARTICLES[i].x = px(72);
             PARTICLES[i].y = px(56);
           }
-          /* FAKEMATCH(dead): a fleck's variant, random from frame 224, is
-           * never read (the second half sets 0 to 63 anew); without the count,
-           * 47 of 1340 instructions differ in tbs-en. */
+          // DEAD: a fleck's variant, random from frame 224, is never read
+          // (the second half sets 0 to 63 anew); the ROM keeps the count.
           PARTICLES[i].variant++;
         }
       }
@@ -467,8 +466,8 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
         work->particles[i].velocityX = ((Random16() & 127) - 63) << 13;
         work->particles[i].velocityY = (-(Random16() & 31) - 16) << 14;
       }
-      /* FAKEMATCH(dead): always true inside the frame 72 test; as the store
-       * alone, 127 of 1340 instructions differ in tbs-en. */
+      // DEAD: always true inside the frame 72 test; the ROM keeps the second
+      // compare.
       if (frame == 72) {
         work->shakeFrames = 4;
       }

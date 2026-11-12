@@ -4,11 +4,8 @@
 
 #include "../battle_effect_internal.h"
 
-#define FROTH_MOTE_CELL 3072  ///< the mote picture in the sheet
-#define FROTH_FIRST_TARGET 32 ///< the first target seat in work->particles
-/// The motes set up in work->particles, before the target seats: no row of
-/// gVortices_Counts may ask for more.
-#define FROTH_MOTES 30
+/// The bubble picture, after the three 16x64 vortex halves.
+#define FROTH_BUBBLE_CELL (3 * 16 * 64)
 
 /// The tornado pictures follow the six glint cells (gBattleEffect_GlintCells)
 /// in the sheet: 40x32 sections, the top and bottom ones' three frames
@@ -16,20 +13,20 @@
 #define WHIRLWIND_TORNADO_OFFSETS GLINT_SET_BYTES
 #define WHIRLWIND_SECTION_BYTES (40 * 32)
 
-/// Motes fly out of the top of the user, hang, and from 48 frames after each
-/// appears home in on the targets in turn; each that reaches the ground strikes
-/// in a burst, flashing and knocking back its target, while the camera swings
-/// round over frames 17 to 63.
+/// Bubbles fly out of the top of the user, hang, and from 48 frames after each
+/// appears home in on the targets in turn; each that reaches the ground bursts
+/// into a swirling vortex, flashing and knocking back its target, while the
+/// camera swings round over frames 17 to 63.
 ///
 /// Abilities: Froth, Froth Sphere, Froth Spiral (BATTLE_EFFECT_FROTH).
 ///
-/// args->variant picks the volley from gVortices_Counts (motes and frames)
+/// args->variant picks the volley from gVortices_Counts (bubbles and frames)
 /// and how hard the screen shakes.
 ///
-/// work->particles 0 to 29 are the motes, battle positions in 16.16 until a
-/// mote strikes and then its burst's canvas pixels; from 32, one seat for
-/// each target. The first 30 bytes of Ram_MapGridCellBuffer mark the motes that
-/// have struck. Loads the vortex palette into the first 64 background
+/// work->particles 0 to 29 are the bubbles, battle positions in 16.16 until a
+/// bubble strikes and then its vortex's canvas pixels; from 32, one seat for
+/// each target. The first 30 bytes of Ram_MapGridCellBuffer mark the bubbles
+/// that have struck. Loads the vortex palette into the first 64 background
 /// colours, sets REG_BLDALPHA and work->shakeFrames, and turns the camera
 /// through BattleCamera_ApplyPhasedDelta (work->cameraDelta and cameraPhase),
 /// which it removes before it returns.
@@ -50,7 +47,7 @@ void BattleEffect_RunFroth(struct BattleEffectParams *args) {
   s32 i;
   s8 *flags;
 
-  // Nonzero once a mote has struck.
+  // Nonzero once a bubble has struck.
   flags = (s8 *)Ram_MapGridCellBuffer;
   work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
@@ -62,16 +59,16 @@ void BattleEffect_RunFroth(struct BattleEffectParams *args) {
   Decompress_TaggedLz(palette, work->sheet);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_LIGHTEN);
-  draw[0] = (DrawRectangle) * (gHeapSlots + HEAP_SLOT_RAM_CODE);
+  draw[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP,
                       COMPOSITE_LIGHTEN);
   REG_BLDALPHA = BLEND_ALPHA(15, 15);
-  draw[1] = (DrawRectangle) * (gHeapSlots + HEAP_SLOT_RAM_CODE_2);
+  draw[1] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2];
   source = GetBattleObjectSlotFar(work->args->user)->actor;
   y = source->y.fixed + BattleUnit_GetEffectHeightFar(work->args->user);
-  // The motes start at the top of the user, flying out up to 4 pixels a
-  // frame across and up to 2 up; variant -1 means no burst yet.
-  for (i = 0; i != FROTH_MOTES; i++) {
+  // The bubbles start at the top of the user, flying out up to 4 pixels a
+  // frame across and up to 2 up; variant -1 means no vortex yet.
+  for (i = 0; i != 30; i++) {
     point = &work->particles[i];
     SET_POSITION(point, source->x.fixed, y, source->z.fixed);
     SET_VELOCITY(point, ((s32)((Random16() & 255) - 127) << 16) >> 5,
@@ -82,7 +79,7 @@ void BattleEffect_RunFroth(struct BattleEffectParams *args) {
   }
   // Where each target stands, on the ground.
   EFFECT_FOR_EACH_TARGET(i, work->args) {
-    seat = &work->particles[FROTH_FIRST_TARGET + i];
+    seat = &work->particles[32 + i];
     actor = GetBattleObjectSlotFar(work->args->targets[i])->actor;
     SET_POSITION(seat, actor->x.fixed, 0, actor->z.fixed);
   }
@@ -101,8 +98,7 @@ void BattleEffect_RunFroth(struct BattleEffectParams *args) {
       work->cameraDelta = TRIG_TURN * 3 / 512;
     else
       work->cameraDelta = 0;
-    // 16 frames before the end the battle shows the damage, with sound 132
-    // on each hit.
+    // 16 frames before the end the battle shows the damage.
     if (frame == gVortices_Counts[work->args->variant][FROTH_FRAMES] - 16)
       EFFECT_SHOW_DAMAGE(SE_WATER);
     EFFECT_VIEW_FROM_CAMERA(camera);
@@ -113,19 +109,18 @@ void BattleEffect_RunFroth(struct BattleEffectParams *args) {
         Projection_Point(point, &screenPosition);
         screenPosition.x >>= 1;
         CLAMP(screenPosition.depth, 160, 799);
-        draw[0](canvas, work->sheet + FROTH_MOTE_CELL, screenPosition.x - 6,
+        draw[0](canvas, work->sheet + FROTH_BUBBLE_CELL, screenPosition.x - 6,
                 screenPosition.y - 12, 12, 24);
         point->x += point->velocityX;
         point->y += point->velocityY;
         point->z += point->velocityZ;
       }
-      // Mote i appears after frame 2i; 48 frames later it starts to home in
+      // Bubble i appears after frame 2i; 48 frames later it starts to home in
       // on target i modulo the target count, gaining 1/512 of the distance
       // to it a frame and damped to 60/64 until frame 2i + 85. Seats are on
-      // the ground (y 0), so a mote strikes when it falls below it.
+      // the ground (y 0), so a bubble strikes when it falls below it.
       if (frame > i * 2 + 48 && flags[i] == 0) {
-        target =
-            &work->particles[FROTH_FIRST_TARGET + i % work->args->targetCount];
+        target = &work->particles[32 + i % work->args->targetCount];
         point->velocityX += (target->x - point->x) >> 9;
         point->velocityY += (target->y - point->y) >> 9;
         point->velocityZ += (target->z - point->z) >> 9;
@@ -133,7 +128,7 @@ void BattleEffect_RunFroth(struct BattleEffectParams *args) {
           SET_VELOCITY(point, point->velocityX * 60 / 64,
                        point->velocityY * 60 / 64, point->velocityZ * 60 / 64);
         }
-        // On the ground it strikes: its burst starts where it was last
+        // On the ground it strikes: its vortex starts where it was last
         // drawn, a little up or down at random, and the target flashes and
         // recoils.
         if (point->y < 0) {
@@ -151,12 +146,12 @@ void BattleEffect_RunFroth(struct BattleEffectParams *args) {
           Sound_PlayFar(SE_WATER);
         }
       }
-      // The burst where a mote struck: two mirrored halves cycling three
-      // images, for 16 frames.
+      // The vortex where a bubble struck: two mirrored 16x64 halves cycling
+      // three pictures, for 16 frames.
       if (point->variant >= 0 && point->variant < 16) {
-        draw[0](canvas, work->sheet + ((point->variant / 2) % 3 << 10),
+        draw[0](canvas, work->sheet + (point->variant / 2) % 3 * (16 * 64),
                 point->x - 16, point->y - 56, 16, 64);
-        draw[1](canvas, work->sheet + ((point->variant / 2) % 3 << 10),
+        draw[1](canvas, work->sheet + (point->variant / 2) % 3 * (16 * 64),
                 point->x, point->y - 56, 16, 64);
         point->variant++;
       }
@@ -324,8 +319,6 @@ void BattleEffect_RunWhirlwind(struct BattleEffectParams *args) {
   BattleEffect_EndCanvasLayer();
 }
 
-#undef FROTH_MOTE_CELL
-#undef FROTH_FIRST_TARGET
-#undef FROTH_MOTES
+#undef FROTH_BUBBLE_CELL
 #undef WHIRLWIND_TORNADO_OFFSETS
 #undef WHIRLWIND_SECTION_BYTES

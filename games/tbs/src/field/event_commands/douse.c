@@ -109,6 +109,26 @@ void FieldEffect_UpdateDriftingFallActor(struct Actor *actor) {
 /// Abilities: Douse (FIELD_PSYNERGY_DOUSE).
 void FieldPsynergy_DouseOnTarget(s32 unused) { FieldPsynergy_Douse(); }
 
+/// Puts the orb step tenths of the way from one point to the other.
+static inline void Douse_MoveOrbBetween(struct ActorDouseView *orb,
+                                        struct Vector3 *from,
+                                        struct Vector3 *to, s32 step) {
+  s32 e, t;
+
+  e = to->x;
+  t = from->x;
+  t += step * (e - t) / 10;
+  orb->x = t;
+  e = to->y;
+  t = from->y;
+  t += step * (e - t) / 10;
+  orb->y = t;
+  e = to->z;
+  t = from->z;
+  t += step * (e - t) / 10;
+  orb->z = t;
+}
+
 /// An orb rises from 16 pixels above the caster to 32 pixels above the
 /// destination (80 with variant) over 10 frames, growing as it goes, rains
 /// particles, and returns.
@@ -158,8 +178,9 @@ void FieldPsynergy_Douse(void) {
     s32 scale;
 
     {
-      /* FAKEMATCH(temporary): a holds &start and b holds &end; as start.x and
-       * end.x read directly, 16 of 359 instructions differ in tbs-en. */
+      /* FAKEMATCH(temporary): a holds &start and b holds &end; as
+       * Douse_MoveOrbBetween(lightOrb, &start, &end, step), 2 of 359
+       * instructions differ in tbs-en. */
       struct Vector3 *a = &start;
       struct Vector3 *b = &end;
       s32 e, t;
@@ -244,26 +265,7 @@ void FieldPsynergy_Douse(void) {
   do {
     s32 scale;
 
-    {
-      /* FAKEMATCH(temporary): a holds &end and b holds &start; as end.x and
-       * start.x read directly, 39 of 359 instructions differ in tbs-en. */
-      struct Vector3 *a = &end;
-      struct Vector3 *b = &start;
-      s32 e, t;
-
-      e = b->x;
-      t = a->x;
-      t += step * (e - t) / 10;
-      lightOrb->x = t;
-      e = b->y;
-      t = a->y;
-      t += step * (e - t) / 10;
-      lightOrb->y = t;
-      e = b->z;
-      t = a->z;
-      t += step * (e - t) / 10;
-      lightOrb->z = t;
-    }
+    Douse_MoveOrbBetween(lightOrb, &end, &start, step);
     scale = FieldEffect_Interpolate(Q16_ONE / 4, Q16_ONE, step);
     lightOrb->scaleX = scale;
     lightOrb->scaleY = scale;

@@ -206,6 +206,8 @@ static __inline__ void Func_020048b4_(s32 id, s32 angle) {
 }
 
 static __inline__ void Camera_MoveWithinMapBounds_(s32 x, s32 y, s32 z, s32 mode) {
+  /* FAKEMATCH(wrapper): forwarded inline; as plain calls, 2 of 237
+   * instructions of Func_020003b8 differ in tla-en. */
   Camera_MoveWithinMapBounds(x, y, z, mode);
 }
 
@@ -334,10 +336,14 @@ void Func_0200060c(void) {
   Func_020047d4();
   Event_ResolvePendingActions(0);
   Sound_Play(124);
+  /* FAKEMATCH(wrapper): forwarded through Camera_MoveWithinMapBounds_ above;
+   * as plain calls, 63 of 292 instructions differ in tla-en. */
   Camera_MoveWithinMapBounds_(194 << 18, -1, PIXELS(208), 1);
   Func_020048f4();
   Event_Wait(6);
   Sound_Play(217);
+  /* FAKEMATCH(wrapper): forwarded through Func_0200474c_ above; as plain
+   * calls, 12 of 292 instructions differ in tla-en. */
   Func_0200474c_(49, 103, 4, 3, 49, 76);
   Event_Wait(6);
   Func_0200474c_(49, 106, 4, 3, 49, 76);
@@ -373,6 +379,8 @@ void Func_0200060c(void) {
           break;
       } while (object->y > object->terrainHeight);
     }
+    /* FAKEMATCH(wrapper): forwarded through Func_0200475c_ above; as plain
+     * calls, 46 of 292 instructions differ in tla-en. */
     Func_0200475c_(0x30000, 0x30000, 0xf333);
     Sound_Play(134);
     object->gravity = 0x10000;
@@ -432,6 +440,9 @@ void Func_020008c8(void) {
   FieldCamera_MoveTo(PIXELS(776), -1, PIXELS(208), 1);
   Func_020048f4();
   FieldEvent_Wait(6);
+  /* FAKEMATCH(wrapper): forwarding through Func_0200474c_ above keeps each
+   * call's own constants, as ☀️'s scene layer does; as a direct call, 12 of
+   * 61 instructions differ in tla-en. */
   Func_0200474c_(49, 103, 4, 3, 49, 76);
   FieldEvent_Wait(6);
   Event_PlaySound(133);
@@ -835,6 +846,9 @@ void Func_02000cac(s32 arg) {
   FieldEvent_Wait(5);
   FieldEvent_ShowMessageThenWait(1, 0, 5);
   FieldActor_StartRepeatedMotion(3, 3);
+  /* FAKEMATCH(wrapper): forwarding through I_Func_020048d4 above keeps the
+   * call's own constants; as a direct call, 16 of 1568 instructions differ in
+   * tla-en. */
   I_Func_020048d4(3, 258);
   FieldEvent_Wait(40);
   FieldEvent_ShowMessageThenWait(3, 0, 5);

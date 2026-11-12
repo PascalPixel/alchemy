@@ -344,6 +344,10 @@ s32 Func_02000be0(void) {
     Actor_Get(party->currentOwner)->priorityFlags |= 0x20;
     Actor_SetAnimation(8, 1);
     Func_020020c4(gData_020020dc);
+    /* FAKEMATCH(wrapper): the call forwarded through AddTask above, as in ☀️'s
+     * scene layer, so the arguments are set up in their own order and each
+     * call keeps its constants; as direct calls, the costly constant is built
+     * first or shared, 18 of 62 instructions differ in tla-en. */
     AddTask(Func_02000188, 0x480);
     if (party->entrance == 99)
       Func_02000210();

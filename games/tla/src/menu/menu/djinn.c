@@ -119,6 +119,9 @@ s32 Func_08100e7c(void) {
   Ram_HeapSlots->objectSystem->suspended = 0;
   Func_08038290();
   Text_UseExtraTilesFar(0);
+  /* FAKEMATCH(wrapper): forwarding through item.c's CopyWords_ inline keeps
+   * each call's own constants; as plain calls, 4 of 201 instructions differ
+   * in tla-en. */
   CopyWords_((void *)0x06004000, backdrop->tiles, 0x2000);
   CopyWords_((void *)&BG_PLTT_COLOR(4, 0), backdrop->palette, 128);
   wait(1);
@@ -477,8 +480,14 @@ void Func_08101638(void) {
 
   Window_UpdateOrCreate(&menu->listWindow, 0, 5, 30, 15, 2);
   wait(1);
+  /* FAKEMATCH(wrapper): forwarding through item.c's CopyWords_ inline keeps
+   * each call's own constants; as direct calls, 134 of 237 instructions
+   * differ in tla-en. */
   CopyWords_(backdrop->tiles, BG_CHAR_BLOCK(1), 0x2000);
   CopyWords_(backdrop->palette, (void *)&BG_PLTT_COLOR(4, 0), 128);
+  /* FAKEMATCH(wrapper): forwarding through item.c's FillWords_ inline keeps
+   * each call's own constants; as direct calls, 2 of 237 instructions differ
+   * in tla-en. */
   FillWords_(BG_CHAR_BLOCK(1), 0x2000, 0x33333333);
   FillWords_((void *)&BG_PLTT_COLOR(4, 0), 128, 0x55555555);
   Graphics_ExpandVramTilesByColorTableFar(BG_CHAR_BLOCK(1) + 0x1000);

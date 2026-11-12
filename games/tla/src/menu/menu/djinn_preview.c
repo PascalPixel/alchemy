@@ -432,10 +432,17 @@ s32 Func_081039fc(u32 mode) {
     }
     Func_080f8a44(confirmationChoice * 56 + 80, 16);
     if ((frame & 3) == 0) {
+      /* FAKEMATCH(wrapper): the copy forwarded through shared.c's CopyWords
+       * inline, so the source loads before the routine and the destination,
+       * as the native does; as a direct call, 6 of 1244 instructions differ
+       * in tla-en. */
       if ((frame & 4) != 0)
         CopyWords(gMenu_BackdropBorderTile, Iwram_CopyWords, (void *)0x060052c0,
                   32);
       else
+        /* FAKEMATCH(wrapper): the fill forwarded through shared.c's FillWords
+         * inline, so the routine loads before its arguments; as a direct
+         * call, 4 of 1244 instructions differ in tla-en. */
         FillWords(Iwram_FillWords, (void *)0x060052c0, 32, 0x44444444);
     }
 

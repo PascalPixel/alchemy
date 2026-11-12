@@ -43,6 +43,10 @@ static inline void ColorBuffer_Interpolate(s32 frames) {
 }
 
 static inline struct Actor *Actor_Create(s32 type, s32 x, s32 y, s32 z) {
+  /* FAKEMATCH(wrapper): the effect created through an inline, which
+   * evaluates the position before the type; as a direct call of
+   * Import_ActorCreate, 2 of 204 instructions of Func_02000198 differ in
+   * tla-en. */
   return ((struct Actor *)Import_ActorCreate(type, x, y, z));
 }
 
@@ -209,6 +213,9 @@ void Func_020004c8(void) {
   if (Event_GetFlag(0x201) == 0 && gFrameCount % 3 != 0)
     return;
   center = Actor_Get(31);
+  /* FAKEMATCH(wrapper): both effects created through Actor_Create above, which
+   * evaluates the position before the type; as direct calls of
+   * Import_ActorCreate, 2 of 94 instructions differ in tla-en. */
   if (Event_GetFlag(0x201) != 0) {
     u32 random;
 

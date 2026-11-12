@@ -51,7 +51,13 @@ s32 Func_080fcab8(void) {
   Window_InitializeWork(0);
 #if TLA_PATCH_2
   Menu_SuspendFieldTasks();
+  /* FAKEMATCH(wrapper): forwarding through item.c's CopyWords_ inline keeps
+   * each call's own constants; as direct calls, 46 of 164 instructions
+   * differ in tla-de. */
   CopyWords_(savedTiles, (void *)0x06004000, 0x2000);
+  /* FAKEMATCH(wrapper): forwarding through item.c's FillWords_ inline keeps
+   * each call's own constants; as a direct call, 68 of 164 instructions
+   * differ in tla-de. */
   FillWords_((void *)0x06004000, 0x2000, 0x33333333);
   Text_UseExtraTilesFar(1);
 #endif

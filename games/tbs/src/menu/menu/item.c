@@ -251,8 +251,8 @@ s32 ItemMenu_RunCommands(s32 *memberOut, s32 *targetOut, s32 *itemOut) {
       Menu_DrawCoins(menu->descriptionWindow);
       command = ItemMenu_SelectMember(0);
       if (command == -1) {
-        /* FAKEMATCH(dead): command cleared with selection though the menu
-         * ends before reading it; as selection = 0, 100 of 1268 instructions
+        /* FAKEMATCH(dead): selection and command cleared though the menu ends
+         * before reading either; with neither store, 18 of 1268 instructions
          * differ in tbs-en. */
         selection = command = 0;
         menuResult = -1;
@@ -262,6 +262,9 @@ s32 ItemMenu_RunCommands(s32 *memberOut, s32 *targetOut, s32 *itemOut) {
       Menu_DrawCoins(menu->descriptionWindow);
       member = ItemMenu_SelectMember(0);
       if (member == -1) {
+        /* FAKEMATCH(dead): chosen, selection and member cleared though the menu
+         * ends before reading them; with no store, 20 of 1272 instructions
+         * differ in tbs-ja. */
         chosen = selection = member = 0;
         menuResult = -1;
         done = 1;

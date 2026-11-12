@@ -276,22 +276,18 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
     if (frame == RAMSES_STRIKE_FRAME) {
       // Throw the sparks from (32, 92) at random angles and speeds, twice as
       // hard up and down as across, each living 32 to 47 frames, at speeds
-      // of 0.25 to 8.2 pixels a frame ((speed + 32) / 128).
+      // of 0.25 to 8.2 pixels a frame (speed / 128).
       for (i = 0; i != RAMSES_SPARKS; i++) {
         struct Particle *spark = &PARTICLES[i];
         s32 speed;
         s32 angle;
 
-        /* FAKEMATCH(temporary): the mask assigned first and the random number
-         * masked in place; as speed = Random16() & 0x3ff, 39 of 818
-         * instructions differ in tbs-en. */
-        speed = 0x3ff;
-        speed &= Random16();
+        speed = (Random16() & 0x3ff) + 32;
         angle = Random16() & TRIG_ANGLE_MASK;
         spark->x = px(32);
         spark->y = px(92);
-        spark->velocityX = Trig_Sin(angle) * (speed + 32) >> 7;
-        spark->velocityY = -(Trig_Cos(angle) * (speed + 32) << 1) >> 7;
+        spark->velocityX = Trig_Sin(angle) * speed >> 7;
+        spark->velocityY = -(Trig_Cos(angle) * speed << 1) >> 7;
         spark->variant = (Random16() & 15) + 32;
       }
     }

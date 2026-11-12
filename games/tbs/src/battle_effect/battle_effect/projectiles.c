@@ -375,16 +375,16 @@ enum VolleyField {
 };
 
 // Where the volley's pictures sit in the sheet.
-#define PROJECTILE_VOLLEY_COMET_OFFSETS 4096  ///< comets: the top half of each
-#define PROJECTILE_VOLLEY_STREAK_OFFSETS 8192 ///< wind streaks
+#define PROJECTILE_VOLLEY_COMET_PICTURES 4096  ///< comets: the top half of each
+#define PROJECTILE_VOLLEY_STREAK_PICTURES 8192 ///< wind streaks
 /// The hit flashes turned on their side, after the upright ones.
 #define PROJECTILE_VOLLEY_FLASH_TURNED                                         \
   (12 * 10 + 18 * 15 + 24 * 18 + 30 * 22 + 36 * 27 + 39 * 28 + 40 * 30)
 /// The yellow spark sheet: the small spark (12x8) first, then the medium one
 /// (18x13), then the large one.
-#define PROJECTILE_VOLLEY_MEDIUM_SPARK_OFFSETS (12 * 8)
-#define PROJECTILE_VOLLEY_LARGE_SPARK_OFFSETS (12 * 8 + 18 * 13)
-#define PROJECTILE_VOLLEY_DJINNI_OFFSETS 26048 ///< the small Mercury Djinni
+#define PROJECTILE_VOLLEY_MEDIUM_SPARK_PICTURE (12 * 8)
+#define PROJECTILE_VOLLEY_LARGE_SPARK_PICTURE (12 * 8 + 18 * 13)
+#define PROJECTILE_VOLLEY_DJINNI_PICTURE 26048 ///< the small Mercury Djinni
 #define PROJECTILE_VOLLEY_FIRST_SPARK 100      ///< the first spark in PARTICLES
 #define PROJECTILE_VOLLEY_FIRST_TRAIL 512      ///< the first trail in PARTICLES
 
@@ -483,15 +483,15 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
       comet = PROJECTILE_VOLLEY_COMET_A;
     if (comet == PROJECTILE_VOLLEY_COMET_A)
       Resource_LoadAndDecompress((s32)&ResourceId_CometSheetA,
-                                 work->sheet + PROJECTILE_VOLLEY_COMET_OFFSETS,
+                                 work->sheet + PROJECTILE_VOLLEY_COMET_PICTURES,
                                  1, 1);
     else if (comet == PROJECTILE_VOLLEY_COMET_B)
       Resource_LoadAndDecompress((s32)&ResourceId_CometSheetB,
-                                 work->sheet + PROJECTILE_VOLLEY_COMET_OFFSETS,
+                                 work->sheet + PROJECTILE_VOLLEY_COMET_PICTURES,
                                  1, 1);
     else
       Resource_LoadAndDecompress((s32)&ResourceId_CometSheetC,
-                                 work->sheet + PROJECTILE_VOLLEY_COMET_OFFSETS,
+                                 work->sheet + PROJECTILE_VOLLEY_COMET_PICTURES,
                                  1, 1);
     // The ice palette is copied twice, before and after the streaks load.
     if (mode == PROJECTILE_VOLLEY_CUTTING_EDGE) {
@@ -499,7 +499,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
       Iwram_CopyWords((void *)BG_PLTT, pal, 128);
     }
     Resource_LoadAndDecompress((s32)&ResourceId_WindStreakSheet,
-                               work->sheet + PROJECTILE_VOLLEY_STREAK_OFFSETS,
+                               work->sheet + PROJECTILE_VOLLEY_STREAK_PICTURES,
                                1, 0);
     if (mode == PROJECTILE_VOLLEY_CUTTING_EDGE) {
       const void *pal = Resource_GetTableEntry((s32)&ResourceId_IceBlockSheet);
@@ -532,7 +532,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
     Resource_LoadAndDecompress((s32)&ResourceId_IceChipSheet, work->sheet, 1,
                                1);
     Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSmallSheet,
-                               work->sheet + PROJECTILE_VOLLEY_DJINNI_OFFSETS,
+                               work->sheet + PROJECTILE_VOLLEY_DJINNI_PICTURE,
                                1, 0);
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   }
@@ -675,9 +675,9 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
                               COMPOSITE_ADDITIVE);
         draw[1] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2];
         if (frame <= 3)
-          draw[1](canvas, work->sheet + PROJECTILE_VOLLEY_DJINNI_OFFSETS, x, y,
+          draw[1](canvas, work->sheet + PROJECTILE_VOLLEY_DJINNI_PICTURE, x, y,
                   20, 40);
-        draw[1](canvas, work->sheet + PROJECTILE_VOLLEY_DJINNI_OFFSETS, x, y,
+        draw[1](canvas, work->sheet + PROJECTILE_VOLLEY_DJINNI_PICTURE, x, y,
                 20, 40);
         HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
       }
@@ -830,7 +830,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
                 EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                                     COMPOSITE_LIGHTEN);
               ((DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2])(
-                  canvas, work->sheet + PROJECTILE_VOLLEY_COMET_OFFSETS,
+                  canvas, work->sheet + PROJECTILE_VOLLEY_COMET_PICTURES,
                   position.x - 16,
                   position.y - gProjectileVolley_CometHeights[comet], 32,
                   gProjectileVolley_CometHeights[comet]);
@@ -844,7 +844,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
                                     EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y,
                                     COMPOSITE_LIGHTEN);
               ((DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2])(
-                  canvas, work->sheet + PROJECTILE_VOLLEY_COMET_OFFSETS,
+                  canvas, work->sheet + PROJECTILE_VOLLEY_COMET_PICTURES,
                   position.x - 16, position.y, 32,
                   gProjectileVolley_CometHeights[comet]);
               HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
@@ -858,21 +858,21 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
                        mode == PROJECTILE_VOLLEY_ICE_BLESSING) {
               s32 cell = j & 3;
               draw[0](canvas,
-                      work->sheet + gProjectileVolley_PelletOffsets[cell],
+                      work->sheet + gProjectileVolley_PelletPictures[cell],
                       position.x - 4, position.y - 4, 8, 8);
             } else if (mode == PROJECTILE_VOLLEY_CRAZY_VOICE) {
               draw[0](canvas, work->sheet + j % 6 * (8 * 16), position.x - 4,
                       position.y - 8, 8, 16);
             } else if (mode == PROJECTILE_VOLLEY_WING_FLUTTER) {
               draw[0](canvas,
-                      work->sheet + PROJECTILE_VOLLEY_MEDIUM_SPARK_OFFSETS,
+                      work->sheet + PROJECTILE_VOLLEY_MEDIUM_SPARK_PICTURE,
                       position.x - 9, position.y - 7, 18, 13);
             } else if (mode == PROJECTILE_VOLLEY_WING_BEAT) {
               draw[0](canvas, work->sheet, position.x - 6, position.y - 4, 12,
                       8);
             } else if (mode == PROJECTILE_VOLLEY_WING_STROKE) {
               draw[0](canvas,
-                      work->sheet + PROJECTILE_VOLLEY_LARGE_SPARK_OFFSETS,
+                      work->sheet + PROJECTILE_VOLLEY_LARGE_SPARK_PICTURE,
                       position.x - 15, position.y - 12, 29, 23);
             } else {
               draw[0](canvas, work->sheet, position.x - 20, position.y - 32, 40,
@@ -898,7 +898,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
               EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                                   COMPOSITE_LIGHTEN);
               ((DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2])(
-                  canvas, work->sheet + gProjectileVolley_FlashOffsets[step],
+                  canvas, work->sheet + gProjectileVolley_FlashPictures[step],
                   flash->x - gProjectileVolley_FlashWidths[step],
                   flash->y - gProjectileVolley_FlashRises[step],
                   gProjectileVolley_FlashWidths[step],
@@ -908,7 +908,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
                                   EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP,
                                   COMPOSITE_LIGHTEN);
               ((DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2])(
-                  canvas, work->sheet + gProjectileVolley_FlashOffsets[step],
+                  canvas, work->sheet + gProjectileVolley_FlashPictures[step],
                   flash->x,
                   flash->y + gProjectileVolley_FlashSteps[step] -
                       gProjectileVolley_FlashRises[step],
@@ -920,7 +920,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
                                   COMPOSITE_LIGHTEN);
               ((DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2])(
                   canvas,
-                  work->sheet + gProjectileVolley_FlashOffsets[step] +
+                  work->sheet + gProjectileVolley_FlashPictures[step] +
                       PROJECTILE_VOLLEY_FLASH_TURNED,
                   flash->x - gProjectileVolley_FlashRises[step],
                   flash->y - gProjectileVolley_FlashWidths[step],
@@ -932,7 +932,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
                                   COMPOSITE_LIGHTEN);
               ((DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2])(
                   canvas,
-                  work->sheet + gProjectileVolley_FlashOffsets[step] +
+                  work->sheet + gProjectileVolley_FlashPictures[step] +
                       PROJECTILE_VOLLEY_FLASH_TURNED,
                   flash->x + gProjectileVolley_FlashSteps[step] -
                       gProjectileVolley_FlashRises[step],
@@ -1053,11 +1053,11 @@ void BattleEffect_SetApproachMotion(s32 id, s32 targetId, s32 frames) {
 #undef PROJECTILE_VOLLEY_ANIMATION_STEP_FAST
 #undef PROJECTILE_VOLLEY_ANIMATION_STEP_NORMAL
 #undef PROJECTILE_VOLLEY_PARTICLE_COUNT
-#undef PROJECTILE_VOLLEY_COMET_OFFSETS
-#undef PROJECTILE_VOLLEY_STREAK_OFFSETS
+#undef PROJECTILE_VOLLEY_COMET_PICTURES
+#undef PROJECTILE_VOLLEY_STREAK_PICTURES
 #undef PROJECTILE_VOLLEY_FLASH_TURNED
-#undef PROJECTILE_VOLLEY_MEDIUM_SPARK_OFFSETS
-#undef PROJECTILE_VOLLEY_LARGE_SPARK_OFFSETS
-#undef PROJECTILE_VOLLEY_DJINNI_OFFSETS
+#undef PROJECTILE_VOLLEY_MEDIUM_SPARK_PICTURE
+#undef PROJECTILE_VOLLEY_LARGE_SPARK_PICTURE
+#undef PROJECTILE_VOLLEY_DJINNI_PICTURE
 #undef PROJECTILE_VOLLEY_FIRST_SPARK
 #undef PROJECTILE_VOLLEY_FIRST_TRAIL

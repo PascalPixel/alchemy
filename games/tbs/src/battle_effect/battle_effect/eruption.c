@@ -36,7 +36,7 @@ enum {
 };
 
 /// The mote pictures in the sheet: two sets, MOTE_SET_BYTES apart.
-#define ERUPTION_FIELD_MOTE_OFFSETS 12800
+#define ERUPTION_FIELD_MOTE_PICTURES 12800
 
 /// A fountain of motes and puffs of smoke bursts up beside the targets and
 /// falls back, hitting the targets one frame apart from frame 6.
@@ -139,7 +139,7 @@ void BattleEffect_RunEruption(struct BattleEffectParams *args, s32 mode) {
     // x is shifted 16 pixels left, or right on EFFECT_SIDE_PARTY. A mote is
     // size 9 at depth 160 or nearer and one smaller for each 64 deeper; from
     // depth 736 the size is 0, which reads the halfword before
-    // gBattleEffect_MoteCells and asks for a picture 0 by 0, which the
+    // gBattleEffect_MotePictures and asks for a picture 0 by 0, which the
     // blitter leaves undrawn. Motes get that deep: one of Blast's 16 and
     // eight of Fiery Blast's 128, each for some of its frames (render probe
     // effect-depth).
@@ -154,12 +154,12 @@ void BattleEffect_RunEruption(struct BattleEffectParams *args, s32 mode) {
         screen.x += work->args->side * 32 - 16;
         CLAMP(screen.depth, 160, 799);
         size = 9 - (screen.depth - 160) / 64;
-        draw[0](
-            canvas,
-            work->sheet +
-                (gBattleEffect_MoteCells[size - 1] + (i & 1) * MOTE_SET_BYTES) +
-                ERUPTION_FIELD_MOTE_OFFSETS,
-            screen.x - size / 2, screen.y - size, size, size * 2);
+        draw[0](canvas,
+                work->sheet +
+                    (gBattleEffect_MotePictures[size - 1] +
+                     (i & 1) * MOTE_SET_BYTES) +
+                    ERUPTION_FIELD_MOTE_PICTURES,
+                screen.x - size / 2, screen.y - size, size, size * 2);
         Particle_AdvanceWithGravity3D(mote, 64, -px(1) / 8);
       }
     }
@@ -181,11 +181,11 @@ void BattleEffect_RunEruption(struct BattleEffectParams *args, s32 mode) {
             // UB: width is assigned in one argument and read in another.
 #ifdef UBFIX
             width = gEruption_PuffSizes[cell];
-            draw[0](canvas, work->sheet + gEruption_PuffCells[cell],
+            draw[0](canvas, work->sheet + gEruption_PuffPictures[cell],
                     screen.x - (width >> 1), screen.y - (width >> 1), width,
                     width);
 #else
-            draw[0](canvas, work->sheet + gEruption_PuffCells[cell],
+            draw[0](canvas, work->sheet + gEruption_PuffPictures[cell],
                     screen.x - ((width = gEruption_PuffSizes[cell]) >> 1),
                     screen.y - (width >> 1), width, width);
 #endif
@@ -259,4 +259,4 @@ void BattleEffect_SpawnObjects(s32 entryCount, s32 source, u32 priority) {
 /// Annihilation, a busy wait.
 void BattleEffect_DoNothing(void) {}
 
-#undef ERUPTION_FIELD_MOTE_OFFSETS
+#undef ERUPTION_FIELD_MOTE_PICTURES

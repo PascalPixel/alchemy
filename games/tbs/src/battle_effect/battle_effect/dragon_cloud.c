@@ -6,23 +6,24 @@
 
 #define DRAGON_CLOUD_FRAMES 150
 #define DRAGON_CLOUD_STRIKE_FRAME 83 ///< the flame strikes the first target
-#define DRAGON_CLOUD_TRAIL_CELL_BYTES (24 * 39) ///< bytes in each trail copy
+#define DRAGON_CLOUD_TRAIL_PICTURE_BYTES (24 * 39) ///< bytes in each trail copy
 #define DRAGON_CLOUD_FIRST_EMBER 8  ///< the first ember in work->particles
 #define DRAGON_CLOUD_FIRST_FLASH 48 ///< the first flash in work->particles
 /// The trail picture, after the five 24x48 flames.
-#define DRAGON_CLOUD_TRAIL_OFFSETS (5 * 24 * 48)
-#define DRAGON_CLOUD_PUFF_OFFSETS 15360 ///< the puff pictures in the sheet
-#define DRAGON_CLOUD_PUFFS 8            ///< puffs, particles 0 to 7
-#define DRAGON_CLOUD_EMBERS 40          ///< embers, from FIRST_EMBER
-#define DRAGON_CLOUD_FLASHES 16         ///< flashes, from FIRST_FLASH
+#define DRAGON_CLOUD_TRAIL_PICTURE (5 * 24 * 48)
+#define DRAGON_CLOUD_PUFF_PICTURES 15360 ///< the puff pictures in the sheet
+#define DRAGON_CLOUD_PUFFS 8             ///< puffs, particles 0 to 7
+#define DRAGON_CLOUD_EMBERS 40           ///< embers, from FIRST_EMBER
+#define DRAGON_CLOUD_FLASHES 16          ///< flashes, from FIRST_FLASH
 
-/// Draws puff picture cell of sheet on canvas at (x, y) with blit, sized by
+/// Draws puff picture `cell` of sheet on canvas at (x, y) with blit, sized by
 /// the puff tables.
 #define DRAGON_CLOUD_DRAW_PUFF(blit, canvas, sheet, cell, x, y)                \
   blit(canvas,                                                                 \
-       &(sheet)[DRAGON_CLOUD_PUFF_OFFSETS] + gBattleEffect_PuffArcCells[cell], \
-       x, y, gBattleEffect_PuffArcCellWidths[cell],                            \
-       gBattleEffect_PuffArcCellHeights[cell])
+       &(sheet)[DRAGON_CLOUD_PUFF_PICTURES] +                                  \
+           gBattleEffect_PuffArcPictures[cell],                                \
+       x, y, gBattleEffect_PuffArcPictureWidths[cell],                         \
+       gBattleEffect_PuffArcPictureHeights[cell])
 
 /// A flame leaves the user along a stored path with a fading trail of 19 copies
 /// behind it, then strikes the first target on DRAGON_CLOUD_STRIKE_FRAME and
@@ -31,7 +32,7 @@
 /// Abilities: Dragon Cloud (BATTLE_EFFECT_DRAGON_CLOUD).
 ///
 /// The trail's last nine copies are darker versions of the trail picture, each
-/// DRAGON_CLOUD_TRAIL_CELL_BYTES long. The camera turns a quarter turn about
+/// DRAGON_CLOUD_TRAIL_PICTURE_BYTES long. The camera turns a quarter turn about
 /// the field's centre over the first 64 of the DRAGON_CLOUD_FRAMES frames,
 /// one way or the other by args->side:
 ///
@@ -71,21 +72,21 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
   // Make nine darker copies after the trail picture, for trail copies 11 to
   // 19, each four shades darker than the last.
   for (i = 1; i != 20; i++) {
-    for (j = 0; j != DRAGON_CLOUD_TRAIL_CELL_BYTES; j++) {
-      s32 shade = work->sheet[DRAGON_CLOUD_TRAIL_OFFSETS + j];
+    for (j = 0; j != DRAGON_CLOUD_TRAIL_PICTURE_BYTES; j++) {
+      s32 shade = work->sheet[DRAGON_CLOUD_TRAIL_PICTURE + j];
 
       if (i > 10) {
         shade = shade - i * 4 + 40;
         if (shade < 0)
           shade = 0;
-        work->sheet[DRAGON_CLOUD_TRAIL_OFFSETS +
-                    (i - 10) * DRAGON_CLOUD_TRAIL_CELL_BYTES + j] = shade;
+        work->sheet[DRAGON_CLOUD_TRAIL_PICTURE +
+                    (i - 10) * DRAGON_CLOUD_TRAIL_PICTURE_BYTES + j] = shade;
       }
     }
   }
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet,
-                             &work->sheet[DRAGON_CLOUD_PUFF_OFFSETS], 1, 1);
+                             &work->sheet[DRAGON_CLOUD_PUFF_PICTURES], 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
                              Ram_MapGridCellBuffer, 1, 0);
   BattleEffect_FetchRectangleBlitters(work->args->side, draw);
@@ -161,9 +162,9 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
       s32 cell = frame / 3;
 
       DRAGON_CLOUD_DRAW_PUFF(draw[0], canvas, work->sheet, cell, 48,
-                             gBattleEffect_PuffArcCellBiasY[cell] + 60);
+                             gBattleEffect_PuffArcPictureBiasY[cell] + 60);
       DRAGON_CLOUD_DRAW_PUFF(draw[1], canvas, work->sheet, cell, 56,
-                             gBattleEffect_PuffArcCellBiasY[cell] + 60);
+                             gBattleEffect_PuffArcPictureBiasY[cell] + 60);
     }
     // The path gives two 16-bit coordinates on frame 18, then a signed byte
     // step for each axis every frame through frame 58. From frame 78 the
@@ -195,17 +196,17 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
         trail[j].y = trail[j - 1].y;
         if (j > 10)
           draw[0](canvas,
-                  &work->sheet[DRAGON_CLOUD_TRAIL_OFFSETS +
-                               (j - 10) * DRAGON_CLOUD_TRAIL_CELL_BYTES],
+                  &work->sheet[DRAGON_CLOUD_TRAIL_PICTURE +
+                               (j - 10) * DRAGON_CLOUD_TRAIL_PICTURE_BYTES],
                   trail[j].x, trail[j].y, 24, 39);
         else
-          draw[0](canvas, &work->sheet[DRAGON_CLOUD_TRAIL_OFFSETS], trail[j].x,
+          draw[0](canvas, &work->sheet[DRAGON_CLOUD_TRAIL_PICTURE], trail[j].x,
                   trail[j].y, 24, 39);
       }
     }
     EFFECT_VIEW_FROM_CAMERA(camera);
     // The flame leans with its smoothed vertical motion (drift, -8 to 8):
-    // one of five 24x48 cells, from rising to falling. Its position is the
+    // one of five 24x48 pictures, from rising to falling. Its position is the
     // path's, halved across for the wide canvas and mirrored on
     // EFFECT_SIDE_PARTY.
     if (frame >= 18 && frame <= DRAGON_CLOUD_STRIKE_FRAME) {
@@ -259,7 +260,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
             position.depth = 799;
           // Nearer is larger: 9 pixels at depth 160 or less. From depth 736
           // on the size is 0: EFFECT_DRAW_MOTE reads the halfword before
-          // gBattleEffect_MoteCells and asks for a picture 0 by 0, which the
+          // gBattleEffect_MotePictures and asks for a picture 0 by 0, which the
           // blitter leaves undrawn, its rows used up before the first. Embers
           // get that far: in a cast eight of the motes do, for up to half of
           // their frames (render probe effect-depth).
@@ -287,7 +288,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
       BattleEffect_TintBattler(work->args->targets[0], SPRITE_COLOR_WHITE,
                                POSE_DAMAGE, 0, 8);
     }
-    // The puffs, mirrored, two frames a cell; each starts when its variant
+    // The puffs, mirrored, two frames a picture; each starts when its variant
     // counts up to zero.
     if (frame > 49) {
       for (i = 0; i != DRAGON_CLOUD_PUFFS; i++) {
@@ -298,8 +299,8 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
 
           DRAGON_CLOUD_DRAW_PUFF(
               draw[1], canvas, work->sheet, cell,
-              puff->x - gBattleEffect_PuffArcCellWidths[cell] / 2,
-              puff->y + gBattleEffect_PuffArcCellBiasY[cell]);
+              puff->x - gBattleEffect_PuffArcPictureWidths[cell] / 2,
+              puff->y + gBattleEffect_PuffArcPictureBiasY[cell]);
         }
         puff->variant++;
       }
@@ -313,11 +314,11 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
 
 #undef DRAGON_CLOUD_FRAMES
 #undef DRAGON_CLOUD_STRIKE_FRAME
-#undef DRAGON_CLOUD_TRAIL_CELL_BYTES
+#undef DRAGON_CLOUD_TRAIL_PICTURE_BYTES
 #undef DRAGON_CLOUD_FIRST_EMBER
 #undef DRAGON_CLOUD_FIRST_FLASH
-#undef DRAGON_CLOUD_TRAIL_OFFSETS
-#undef DRAGON_CLOUD_PUFF_OFFSETS
+#undef DRAGON_CLOUD_TRAIL_PICTURE
+#undef DRAGON_CLOUD_PUFF_PICTURES
 #undef DRAGON_CLOUD_PUFFS
 #undef DRAGON_CLOUD_EMBERS
 #undef DRAGON_CLOUD_FLASHES

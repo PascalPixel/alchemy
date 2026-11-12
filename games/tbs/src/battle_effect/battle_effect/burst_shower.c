@@ -6,7 +6,7 @@
 
 /// Where the burst, lightning or face pictures start in the sheet: after the
 /// six glints that open the tornado sheet, over its tornado strips.
-#define BURST_SHOWER_OFFSETS GLINT_SET_BYTES
+#define BURST_SHOWER_PICTURES GLINT_SET_BYTES
 #define BURST_SHOWER_BURSTS 48     ///< one fired a frame from frame 0
 #define BURST_SHOWER_BURST_LIFE 24 ///< frames each burst lives
 
@@ -152,13 +152,13 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, s32 mode) {
   Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work->sheet, 1, 0);
   if (mode == BURST_SHOWER_MODE_LIGHTNING) {
     Resource_LoadAndDecompress((s32)&ResourceId_VioletLightningSheetA,
-                               (work->sheet + BURST_SHOWER_OFFSETS), 1, 1);
+                               (work->sheet + BURST_SHOWER_PICTURES), 1, 1);
   } else if (mode == BURST_SHOWER_MODE_FACES) {
     Resource_LoadAndDecompress((s32)&ResourceId_DemonFaceSheet,
-                               (work->sheet + BURST_SHOWER_OFFSETS), 1, 1);
+                               (work->sheet + BURST_SHOWER_PICTURES), 1, 1);
   } else {
     Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
-                               (work->sheet + BURST_SHOWER_OFFSETS), 1, 1);
+                               (work->sheet + BURST_SHOWER_PICTURES), 1, 1);
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0,
                                0);
     // The grey mode: a ramp of 16 greys, four entries each, up to level 15
@@ -260,12 +260,12 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, s32 mode) {
     if (mode == BURST_SHOWER_MODE_LIGHTNING) {
       if (work->args->side == EFFECT_SIDE_PARTY) {
         draw[0](canvas,
-                (work->sheet + BURST_SHOWER_OFFSETS) +
+                (work->sheet + BURST_SHOWER_PICTURES) +
                     ((frame / 3 % 3 * 9) << 9),
                 origin.x - 2, origin.y - 32, 72, 62);
       } else {
         draw[0](canvas,
-                (work->sheet + BURST_SHOWER_OFFSETS) +
+                (work->sheet + BURST_SHOWER_PICTURES) +
                     ((frame / 3 % 3 * 9) << 9),
                 origin.x - 70, origin.y - 32, 72, 62);
       }
@@ -301,15 +301,15 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, s32 mode) {
       if (spark->variant >= 0) {
         if (mode == BURST_SHOWER_MODE_FACES) {
           if (spark->variant > 5) {
-            draw[work->args->side](canvas, (work->sheet + BURST_SHOWER_OFFSETS),
-                                   Q_16_16_TO_INT(spark->x) - 16,
-                                   Q_16_16_TO_INT(spark->y) - 32, width,
-                                   height);
+            draw[work->args->side](
+                canvas, (work->sheet + BURST_SHOWER_PICTURES),
+                Q_16_16_TO_INT(spark->x) - 16, Q_16_16_TO_INT(spark->y) - 32,
+                width, height);
           }
         } else if (mode == BURST_SHOWER_MODE_DJINNI) {
           if (spark->variant > 5) {
             draw[0](canvas,
-                    (work->sheet + BURST_SHOWER_OFFSETS) +
+                    (work->sheet + BURST_SHOWER_PICTURES) +
                         ((spark->variant / 4) << 11),
                     Q_16_16_TO_INT(spark->x) - 16,
                     Q_16_16_TO_INT(spark->y) - 32, width, height);
@@ -317,7 +317,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, s32 mode) {
         } else if (mode != BURST_SHOWER_MODE_LIGHTNING) {
           if (spark->variant > 1) {
             draw[0](canvas,
-                    (work->sheet + BURST_SHOWER_OFFSETS) +
+                    (work->sheet + BURST_SHOWER_PICTURES) +
                         ((spark->variant / 4) << 11),
                     Q_16_16_TO_INT(spark->x) - 16,
                     Q_16_16_TO_INT(spark->y) - 32, width, height);
@@ -380,7 +380,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, s32 mode) {
   EFFECT_FINISH_CANVAS();
 }
 
-#undef BURST_SHOWER_OFFSETS
+#undef BURST_SHOWER_PICTURES
 #undef BURST_SHOWER_BURSTS
 #undef BURST_SHOWER_BURST_LIFE
 #undef BURST_SHOWER_FRAMES

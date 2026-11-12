@@ -24,7 +24,7 @@ void BattleEffect_CallDoNothing(s32 count) {
 // Two of the battle's three entry points, BattleEffect_RunSummon and
 // BattleEffect_RunFromTable; README.md describes all three and the heap
 // blocks they lend an effect. Both size the sheet slot for one set of the
-// ten mote cells (MOTE_SET_BYTES), where most effects decode
+// ten mote pictures (MOTE_SET_BYTES), where most effects decode
 // ParticleSpritesA; an effect's own pictures go in work->sheet. The shared
 // helpers after them manage the scanline window and the targets' sprites.
 

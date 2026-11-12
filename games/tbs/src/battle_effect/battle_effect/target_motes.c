@@ -99,7 +99,7 @@ void BattleEffect_RunDrown(struct BattleEffectParams *args) {
   (!((mode) <= TARGET_MOTES_PINK_SMOKE || (mode) == TARGET_MOTES_PARALYZE))
 
 /// Where Paralyze keeps its glint images in work->sheet.
-enum { TARGET_MOTES_GLINT_OFFSETS = 9600 };
+enum { TARGET_MOTES_GLINT_PICTURES = 9600 };
 
 #define TARGET_MOTES 512      ///< motes scattered at the start
 #define TARGET_MOTES_SLOTS 64 ///< particles reserved for each target
@@ -174,7 +174,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
     Resource_LoadAndDecompress((s32)&ResourceId_HeartSheet, work->sheet, 1, 1);
   if (mode == TARGET_MOTES_PARALYZE)
     Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet,
-                               work->sheet + TARGET_MOTES_GLINT_OFFSETS, 1, 0);
+                               work->sheet + TARGET_MOTES_GLINT_PICTURES, 1, 0);
 
   // Wide styles scatter the motes within 64 pixels across and in depth and
   // 32 up or down; the others within 16 across and in depth and up to 32
@@ -252,19 +252,19 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
           angle = Random16() & TRIG_ANGLE_MASK;
           radius = (Random16() & 31) + 4;
           x = base.x / 2 + ((Trig_Sin(angle) * radius) >> 17) -
-              (gBattleEffect_GlintCellWidths[frame & 3] >> 1);
+              (gBattleEffect_GlintPictureWidths[frame & 3] >> 1);
           y = base.y - ((Trig_Cos(angle) * radius) >> 16) -
-              (gBattleEffect_GlintCellHeights[frame & 3] >> 1);
+              (gBattleEffect_GlintPictureHeights[frame & 3] >> 1);
           EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                               EFFECT_CLIP_BOUNDS |
                                   gTargetMotes_GlintFlips[Random16() & 3],
                               COMPOSITE_LIGHTEN);
           ((DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2])(
               canvas,
-              work->sheet + gBattleEffect_GlintCells[frame & 3] +
-                  TARGET_MOTES_GLINT_OFFSETS,
-              x, y + 16, gBattleEffect_GlintCellWidths[frame & 3],
-              gBattleEffect_GlintCellHeights[frame & 3]);
+              work->sheet + gBattleEffect_GlintPictures[frame & 3] +
+                  TARGET_MOTES_GLINT_PICTURES,
+              x, y + 16, gBattleEffect_GlintPictureWidths[frame & 3],
+              gBattleEffect_GlintPictureHeights[frame & 3]);
           HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
         }
       }
@@ -484,7 +484,7 @@ void BattleEffect_RunSleep(struct BattleEffectParams *args) {
   EFFECT_FINISH_CANVAS();
 }
 
-#define CURSE_MARKER_OFFSETS 1728 ///< the marker picture in the sheet
+#define CURSE_MARKER_PICTURE 1728 ///< the marker picture in the sheet
 
 /// A small flame burns above each target in turn, 16 frames apart, for up to
 /// 72 frames each, over a marker at its feet; the battle shows the result on
@@ -562,7 +562,7 @@ void BattleEffect_RunCurse(struct BattleEffectParams *args) {
           screenPosition.y = y - 16;
           // The marker (16x20), then the flame (16x12) above it, cycling
           // through nine images six frames each.
-          draw[0](canvas, work->sheet + CURSE_MARKER_OFFSETS,
+          draw[0](canvas, work->sheet + CURSE_MARKER_PICTURE,
                   screenPosition.x - 8, y - 20, 16, 20);
           if (frame >= start) {
             cell = ((frame - start) + marker->variant) / 6 % 9;
@@ -589,4 +589,4 @@ void BattleEffect_RunCurse(struct BattleEffectParams *args) {
 #undef SLEEP_FRAMES
 #undef SLEEP_SEEDED
 #undef SLEEP_SHEEP
-#undef CURSE_MARKER_OFFSETS
+#undef CURSE_MARKER_PICTURE

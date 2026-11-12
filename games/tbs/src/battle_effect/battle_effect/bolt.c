@@ -19,8 +19,8 @@ enum {
 };
 
 /// Where the bolt pictures start in the sheet: after the six glints that open
-/// the tornado sheet (gBattleEffect_GlintCells), over its tornado strips.
-#define BOLT_OFFSETS GLINT_SET_BYTES
+/// the tornado sheet (gBattleEffect_GlintPictures), over its tornado strips.
+#define BOLT_PICTURES GLINT_SET_BYTES
 
 /// A bolt of lightning strikes each target in turn, 8 frames apart.
 ///
@@ -64,7 +64,7 @@ void BattleEffect_RunBolt(struct BattleEffectParams *args) {
   // The tornado sheet only for its glints.
   Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work->sheet, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet,
-                             work->sheet + BOLT_OFFSETS, 1, 1);
+                             work->sheet + BOLT_PICTURES, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
   // A spark's variant is its life left, 0 when free. work->particles is
   // marked free too, though nothing here uses it.
@@ -108,8 +108,9 @@ void BattleEffect_RunBolt(struct BattleEffectParams *args) {
         for (j = 0; j != gBolt_Counts[work->args->variant][BOLT_STRIKES]; j++) {
           draw[0](canvas,
                   work->sheet +
-                      (((i + frame + j) / 2) & 3) * LIGHTNING_BOLT_CELL_BYTES +
-                      BOLT_OFFSETS,
+                      (((i + frame + j) / 2) & 3) *
+                          LIGHTNING_BOLT_PICTURE_BYTES +
+                      BOLT_PICTURES,
                   screen.x - 12, 0, 24, height);
         }
 
@@ -144,23 +145,23 @@ void BattleEffect_RunBolt(struct BattleEffectParams *args) {
               Random16() % gBolt_Counts[work->args->variant][BOLT_GLINT_SPREAD];
           s32 spread =
               gBolt_Counts[work->args->variant][BOLT_GLINT_SPREAD] - drop + 1;
-          s32 y =
-              screen.y - drop - (gBattleEffect_GlintCellHeights[kind] >> 1) + 8;
+          s32 y = screen.y - drop -
+                  (gBattleEffect_GlintPictureHeights[kind] >> 1) + 8;
           u32 random = Random16();
           s32 x = screen.x;
 
           x += random % spread;
           x -= spread / 2;
-          x -= (gBattleEffect_GlintCellWidths[kind] >> 1);
+          x -= (gBattleEffect_GlintPictureWidths[kind] >> 1);
 
           EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                               gBolt_GlintFlips[Random16() & 3] |
                                   EFFECT_CLIP_BOUNDS,
                               gBolt_GlintModes[work->args->variant]);
           BOLT_GLINT_BLITTER(canvas,
-                             work->sheet + gBattleEffect_GlintCells[kind], x, y,
-                             gBattleEffect_GlintCellWidths[kind],
-                             gBattleEffect_GlintCellHeights[kind]);
+                             work->sheet + gBattleEffect_GlintPictures[kind], x,
+                             y, gBattleEffect_GlintPictureWidths[kind],
+                             gBattleEffect_GlintPictureHeights[kind]);
           HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
         }
       }
@@ -192,4 +193,4 @@ void BattleEffect_RunBolt(struct BattleEffectParams *args) {
 }
 
 #undef BOLT_GLINT_BLITTER
-#undef BOLT_OFFSETS
+#undef BOLT_PICTURES

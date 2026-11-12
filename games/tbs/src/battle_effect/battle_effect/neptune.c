@@ -287,7 +287,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
           s32 r = (i & 3) + 5;
           s = r * 2;
           blit[0](canvas,
-                  work->sheet + gBattleEffect_FlareCells[r - 1] +
+                  work->sheet + gBattleEffect_FlarePictures[r - 1] +
                       NEPTUNE_FLARE_SHEET,
                   fx - r, fy - r, s, s);
           flare->x += flare->velocityX;
@@ -326,10 +326,10 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
       for (i = 0; i != 64; i++) {
         // Two more burst points start each frame, as the smallest flare; one
         // that leaves the top restarts.
-        /* FAKEMATCH(temporary): cells holds gBattleEffect_FlareCells and r
-         * holds 1, the smallest flare; as gBattleEffect_FlareCells[0], 1 and
+        /* FAKEMATCH(temporary): cells holds gBattleEffect_FlarePictures and r
+         * holds 1, the smallest flare; as gBattleEffect_FlarePictures[0], 1 and
          * 2 written out, 110 of 1474 instructions differ in tbs-en. */
-        u16 *cells = gBattleEffect_FlareCells;
+        u16 *cells = gBattleEffect_FlarePictures;
         s32 r = 1;
         if (frame >= i / 2 + 222) {
           blit[0](canvas, work->sheet + cells[r - 1] + NEPTUNE_FLARE_SHEET,
@@ -391,7 +391,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
         z = 4;
       }
       blit[1](canvas,
-              work->sheet + gBattleEffect_FlareCells[z - 1] +
+              work->sheet + gBattleEffect_FlarePictures[z - 1] +
                   NEPTUNE_FLARE_SHEET,
               108 - z, 60 - z, z * 2, z * 2);
     }
@@ -402,7 +402,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
         z = 6;
       }
       blit[1](canvas,
-              work->sheet + gBattleEffect_FlareCells[z - 1] +
+              work->sheet + gBattleEffect_FlarePictures[z - 1] +
                   NEPTUNE_FLARE_SHEET,
               108 - z, 60 - z, z * 2, z * 2);
     }
@@ -414,7 +414,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
         z = 8;
       }
       blit[1](canvas,
-              work->sheet + gBattleEffect_FlareCells[z - 1] +
+              work->sheet + gBattleEffect_FlarePictures[z - 1] +
                   NEPTUNE_FLARE_SHEET,
               108 - z, 60 - z, z * 2, z * 2);
       if (frame <= 213) {
@@ -423,7 +423,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
           z = 4;
         }
         blit[1](canvas,
-                work->sheet + gBattleEffect_FlareCells[z - 1] +
+                work->sheet + gBattleEffect_FlarePictures[z - 1] +
                     NEPTUNE_FLARE_SHEET,
                 100 - z, 52 - z, z * 2, z * 2);
       }

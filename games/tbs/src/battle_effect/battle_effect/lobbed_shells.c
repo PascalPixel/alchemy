@@ -77,7 +77,7 @@ void BattleEffect_RunRottenBlood(struct BattleEffectParams *args) {
 #define LOBBED_SHELLS_BURSTS (PARTICLES + 256)
 #define LOBBED_SHELLS_SLOTS 16        ///< particles reserved for each target
 #define LOBBED_SHELLS_BURST_SLOTS 256 ///< burst particles after the shells
-#define LOBBED_SHELLS_SMOKE_OFFSETS 16000 ///< the smoke pictures in the sheet
+#define LOBBED_SHELLS_SMOKE_PICTURES 16000 ///< the smoke pictures in the sheet
 
 /// Nonzero when the style's shells burst into shards instead of smoke: the
 /// first of the style's two entries in gLobbedShells_Styles; the second is
@@ -124,7 +124,7 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
 
-  // Setup. The shell images, the smoke at LOBBED_SHELLS_SMOKE_OFFSETS and the
+  // Setup. The shell images, the smoke at LOBBED_SHELLS_SMOKE_PICTURES and the
   // style's palette; Decompose shares Rotten Blood's green.
   palette = Resource_GetTableEntry((s32)&ResourceId_GoldShellSheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
@@ -133,7 +133,7 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
   palette = Resource_GetTableEntry((s32)&ResourceId_SmokeSheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   palette += 128;
-  Decompress_TaggedLz(palette, work->sheet + LOBBED_SHELLS_SMOKE_OFFSETS);
+  Decompress_TaggedLz(palette, work->sheet + LOBBED_SHELLS_SMOKE_PICTURES);
   if (mode == LOBBED_SHELLS_BONE_CHILLER)
     palette = Resource_GetTableEntry((s32)&ResourceId_BluePalette);
   else if (mode == LOBBED_SHELLS_STICKY_GOO)
@@ -308,7 +308,7 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
         if (LOBBED_SHELLS_SHATTER(mode) == LOBBED_SHELLS_BONE_CHILLER) {
           draw[1](canvas,
                   work->sheet + burst->variant / 8 * (24 * 48) +
-                      LOBBED_SHELLS_SMOKE_OFFSETS,
+                      LOBBED_SHELLS_SMOKE_PICTURES,
                   position.x - 12, position.y - 24, 24, 48);
         } else {
           s32 picture = burst->variant / 5;
@@ -321,7 +321,7 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
           flip = args->side;
           draw[burst->velocityX > 0 ? flip ^ 1 : flip](
               canvas,
-              work->sheet + gLobbedShells_ShardOffsets[picture] + 10 * 768,
+              work->sheet + gLobbedShells_ShardPictures[picture] + 10 * 768,
               position.x - gLobbedShells_ShardWidths[picture] / 2,
               position.y - gLobbedShells_ShardHeights[picture] / 2,
               gLobbedShells_ShardWidths[picture],
@@ -346,5 +346,5 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
 #undef LOBBED_SHELLS_BURSTS
 #undef LOBBED_SHELLS_SLOTS
 #undef LOBBED_SHELLS_BURST_SLOTS
-#undef LOBBED_SHELLS_SMOKE_OFFSETS
+#undef LOBBED_SHELLS_SMOKE_PICTURES
 #undef LOBBED_SHELLS_SHATTER

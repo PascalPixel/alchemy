@@ -298,12 +298,12 @@ UNUSED void BattleEffect_RunBladeRain(struct BattleEffectParams *args) {
         width = gDeathPlunge_SwordWidths[cell];
         height = gDeathPlunge_SwordHeights[cell];
         blit[(u32)drift >> 31](canvas,
-                               work->sheet + gDeathPlunge_SwordCells[cell],
+                               work->sheet + gDeathPlunge_SwordPictures[cell],
                                (blade->x >> 16) - (width >> 1),
                                (blade->y >> 16) - (height >> 1), width, height);
 #else
         blit[(u32)drift >> 31](
-            canvas, work->sheet + gDeathPlunge_SwordCells[cell],
+            canvas, work->sheet + gDeathPlunge_SwordPictures[cell],
             (blade->x >> 16) - ((width = gDeathPlunge_SwordWidths[cell]) >> 1),
             (blade->y >> 16) -
                 ((height = gDeathPlunge_SwordHeights[cell]) >> 1),
@@ -321,12 +321,12 @@ UNUSED void BattleEffect_RunBladeRain(struct BattleEffectParams *args) {
         width = gDeathPlunge_SwordWidths[cell];
         height = gDeathPlunge_SwordHeights[cell];
         blit[(u32)drift >> 31](
-            canvas, work->sheet + gDeathPlunge_SwordCells[cell],
+            canvas, work->sheet + gDeathPlunge_SwordPictures[cell],
             (blade->x >> 16) - (width >> 1), (blade->y >> 16) - (height >> 1),
             width, height - 4);
 #else
         blit[(u32)drift >> 31](
-            canvas, work->sheet + gDeathPlunge_SwordCells[cell],
+            canvas, work->sheet + gDeathPlunge_SwordPictures[cell],
             (blade->x >> 16) - ((width = gDeathPlunge_SwordWidths[cell]) >> 1),
             (blade->y >> 16) -
                 ((height = gDeathPlunge_SwordHeights[cell]) >> 1),
@@ -382,7 +382,7 @@ void BattleEffect_RunElementPillar(struct BattleEffectParams *args) {
   void *palette;
   s32 i;
 
-  // The sheet slot takes ParticleSpritesD's flare cells, which
+  // The sheet slot takes ParticleSpritesD's flare pictures, which
   // EFFECT_DRAW_FLARE reads: the ten squares of 2x2 to 20x20 are 1540 of its
   // 1550 bytes.
   work = (struct BattleEffectWork *)HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT,
@@ -831,7 +831,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
     if (frame <= 50) {
       for (i = 0; i != SHATTERING_OPENING_PIECES; i++) {
         piece = &work->particles[i];
-        draw[0](canvas, work->imageStorage + gDeathPlunge_PieceCells[i],
+        draw[0](canvas, work->imageStorage + gDeathPlunge_PiecePictures[i],
                 Q_16_16_TO_INT(piece->x), Q_16_16_TO_INT(piece->y),
                 gDeathPlunge_PieceWidths[i], gDeathPlunge_PieceHeights[i]);
         if (frame > 3)

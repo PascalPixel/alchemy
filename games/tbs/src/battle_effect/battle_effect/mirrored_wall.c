@@ -167,15 +167,15 @@ void BattleEffect_RunMirroredWall(struct BattleEffectParams *args, s32 mode) {
       if (cell > 2)
         cell = (cell & 1) + 1;
       if (frame <= 27) {
-        draw[0](canvas, work->sheet + gMirroredWall_Cells[cell],
-                64 - gMirroredWall_CellWidths[cell],
-                (screenPosition.y - gMirroredWall_CellHeights[cell]) + 8,
-                gMirroredWall_CellWidths[cell],
-                gMirroredWall_CellHeights[cell]);
-        draw[1](canvas, work->sheet + gMirroredWall_Cells[cell], 64,
-                (screenPosition.y - gMirroredWall_CellHeights[cell]) + 8,
-                gMirroredWall_CellWidths[cell],
-                gMirroredWall_CellHeights[cell]);
+        draw[0](canvas, work->sheet + gMirroredWall_Pictures[cell],
+                64 - gMirroredWall_PictureWidths[cell],
+                (screenPosition.y - gMirroredWall_PictureHeights[cell]) + 8,
+                gMirroredWall_PictureWidths[cell],
+                gMirroredWall_PictureHeights[cell]);
+        draw[1](canvas, work->sheet + gMirroredWall_Pictures[cell], 64,
+                (screenPosition.y - gMirroredWall_PictureHeights[cell]) + 8,
+                gMirroredWall_PictureWidths[cell],
+                gMirroredWall_PictureHeights[cell]);
       }
     }
     if (mode == MIRRORED_WALL_SPASM)

@@ -4,8 +4,8 @@
 
 #include "../battle_effect_internal.h"
 
-#define HAIL_CHIP_OFFSETS (32 * 32) ///< the ice chips, after the 32x32 wave
-#define HAIL_DJINNI_OFFSETS 26048   ///< the small Mercury Djinni
+#define HAIL_CHIP_PICTURES (32 * 32) ///< the ice chips, after the 32x32 wave
+#define HAIL_DJINNI_PICTURE 26048    ///< the small Mercury Djinni
 
 /// After a Mercury Djinni enters, ice chips burst out of the first target and
 /// waves of water rise along the bottom of the screen; the canvas fades out
@@ -74,12 +74,12 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
     if (frame > 47)
       REG_BLDALPHA = BLEND_ALPHA(64 - frame, 16);
     // The chips and the Djinni load on frame 1, so on frame 0 the prelude
-    // draws whatever the sheet holds at HAIL_DJINNI_OFFSETS.
+    // draws whatever the sheet holds at HAIL_DJINNI_PICTURE.
     if (frame == 1) {
       Resource_LoadAndDecompress((s32)&ResourceId_IceChipSheet,
-                                 work->sheet + HAIL_CHIP_OFFSETS, 1, 1);
+                                 work->sheet + HAIL_CHIP_PICTURES, 1, 1);
       Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSmallSheet,
-                                 work->sheet + HAIL_DJINNI_OFFSETS, 1, 0);
+                                 work->sheet + HAIL_DJINNI_PICTURE, 1, 0);
     }
 
     // Prelude: the small Djinni circles, drawn twice on the first 4 frames.
@@ -96,9 +96,9 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
        * tbs-en. */
       if (frame > 69)
         y = (y - frame * 2) + 138;
-      draw[1](canvas, work->sheet + HAIL_DJINNI_OFFSETS, x, y, 20, 40);
+      draw[1](canvas, work->sheet + HAIL_DJINNI_PICTURE, x, y, 20, 40);
       if (frame <= 3)
-        draw[1](canvas, work->sheet + HAIL_DJINNI_OFFSETS, x, y, 20, 40);
+        draw[1](canvas, work->sheet + HAIL_DJINNI_PICTURE, x, y, 20, 40);
     }
 
     // The chips, four more each frame from frame 4, odd ones mirrored; they
@@ -113,16 +113,17 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
         cell = (chip->z / 128) & 3;
         // UB: width is assigned in one argument and read in another.
 #ifdef UBFIX
-        width = gHail_CellWidths[cell];
-        height = gHail_CellHeights[cell];
-        draw[i & 1](canvas, work->sheet + HAIL_CHIP_OFFSETS + gHail_Cells[cell],
+        width = gHail_PictureWidths[cell];
+        height = gHail_PictureHeights[cell];
+        draw[i & 1](canvas,
+                    work->sheet + HAIL_CHIP_PICTURES + gHail_Pictures[cell],
                     Q_16_16_TO_INT(chip->x) - width / 2,
                     Q_16_16_TO_INT(chip->y) - height / 2, width, height);
 #else
         draw[i & 1](
-            canvas, work->sheet + HAIL_CHIP_OFFSETS + gHail_Cells[cell],
-            Q_16_16_TO_INT(chip->x) - (width = gHail_CellWidths[cell]) / 2,
-            Q_16_16_TO_INT(chip->y) - (height = gHail_CellHeights[cell]) / 2,
+            canvas, work->sheet + HAIL_CHIP_PICTURES + gHail_Pictures[cell],
+            Q_16_16_TO_INT(chip->x) - (width = gHail_PictureWidths[cell]) / 2,
+            Q_16_16_TO_INT(chip->y) - (height = gHail_PictureHeights[cell]) / 2,
             width, height);
 #endif
         Particle_AdvanceWithGravity3D(chip, 63, px(1) / 16);
@@ -163,7 +164,7 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
 }
 
 /// The small Venus Djinni in the portal sheet.
-#define GROUND_DJINNI_OFFSETS 26048
+#define GROUND_DJINNI_PICTURE 26048
 
 /// After a Venus Djinni enters, six glowing portals leave the user one every
 /// 2 frames, crackling, swirl, and close in on the first target, each striking
@@ -212,7 +213,7 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
   draw[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
   Resource_LoadAndDecompress((s32)&ResourceId_PortalSheet, work->sheet, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSmallSheet,
-                             work->sheet + GROUND_DJINNI_OFFSETS, 1, 1);
+                             work->sheet + GROUND_DJINNI_PICTURE, 1, 1);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   user = GetBattleObjectSlotFar(work->args->user)->actor;
   target = GetBattleObjectSlotFar(work->args->targets[0])->actor;
@@ -252,9 +253,9 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
                             COMPOSITE_ADDITIVE);
       if (frame <= 3)
         ((DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2])(
-            canvas, work->sheet + GROUND_DJINNI_OFFSETS, x, y, 20, 40);
+            canvas, work->sheet + GROUND_DJINNI_PICTURE, x, y, 20, 40);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
-      draw[0](canvas, work->sheet + GROUND_DJINNI_OFFSETS, x, y, 20, 40);
+      draw[0](canvas, work->sheet + GROUND_DJINNI_PICTURE, x, y, 20, 40);
     }
     // Every 2 frames each crackle takes a random picture (velocityX, pictures
     // 3 to 8) and flip (velocityY: gHail_CrackleFlips, bit 2 across, bit 3
@@ -285,11 +286,11 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
           // The portal's white core flickers between pictures 1 and 2 every
           // 2 frames.
           if ((frame & 3) <= 1)
-            draw[0](canvas, work->sheet + gHail_PortalCells[1],
+            draw[0](canvas, work->sheet + gHail_PortalPictures[1],
                     x + gHail_PortalX[1], y + gHail_PortalY[1],
                     gHail_PortalWidths[1], gHail_PortalHeights[1]);
           else
-            draw[0](canvas, work->sheet + gHail_PortalCells[2],
+            draw[0](canvas, work->sheet + gHail_PortalPictures[2],
                     x + gHail_PortalX[2], y + gHail_PortalY[2],
                     gHail_PortalWidths[2], gHail_PortalHeights[2]);
           // The four crackles: each loads a blitter with its own flip, and a
@@ -313,7 +314,8 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
                          gHail_PortalY[crackle->velocityX] + 48;
             else
               crackleY = y + gHail_PortalY[crackle->velocityX];
-            draw[1](canvas, work->sheet + gHail_PortalCells[crackle->velocityX],
+            draw[1](canvas,
+                    work->sheet + gHail_PortalPictures[crackle->velocityX],
                     crackleX, crackleY, gHail_PortalWidths[crackle->velocityX],
                     gHail_PortalHeights[crackle->velocityX]);
             HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
@@ -384,6 +386,6 @@ void BattleCamera_Shake(s32 rangeX, u32 rangeY) {
   gProjection.centerY = 120;
 }
 
-#undef HAIL_CHIP_OFFSETS
-#undef HAIL_DJINNI_OFFSETS
-#undef GROUND_DJINNI_OFFSETS
+#undef HAIL_CHIP_PICTURES
+#undef HAIL_DJINNI_PICTURE
+#undef GROUND_DJINNI_PICTURE

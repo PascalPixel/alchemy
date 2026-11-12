@@ -12,11 +12,11 @@
 // mirrored about its x. Both effects fade out over their last 16 frames.
 
 /// The dust pictures in the vine sheet, after the vines.
-#define GROWING_COLUMNS_VINE_DUST_OFFSETS 7769
+#define GROWING_COLUMNS_VINE_DUST_PICTURES 7769
 /// The dust pictures in the pillar sheet, after the pillars.
-#define GROWING_COLUMNS_PILLAR_DUST_OFFSETS 2815
+#define GROWING_COLUMNS_PILLAR_DUST_PICTURES 2815
 /// The small thorn in the thorn sheet, after the 48x80 big one.
-#define THORN_SMALL_OFFSETS (48 * 80)
+#define THORN_SMALL_PICTURE (48 * 80)
 
 /// What the growing columns grow (BattleEffect_RunGrowingColumns).
 enum GrowingColumnsMode {
@@ -215,7 +215,7 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectParams *args, s32 mode) {
               if (mode == GROWING_COLUMNS_VINES) {
                 {
                   s32 side = 1 & i;
-                  s32 cell = gGrowth_VineCells[shape];
+                  s32 cell = gGrowth_VinePictures[shape];
                   shape = gGrowth_VineWidths[shape];
                   ((DrawRectangle)draw[side])(
                       canvas, work->sheet + cell, column->x - (shape >> 1),
@@ -228,7 +228,7 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectParams *args, s32 mode) {
                 }
                 {
                   s32 side = 1 & i;
-                  s32 cell = gGrowth_PillarCells[shape];
+                  s32 cell = gGrowth_PillarPictures[shape];
                   shape = gGrowth_PillarWidths[shape];
                   ((DrawRectangle)draw[side])(
                       canvas, work->sheet + cell, column->x - (shape >> 1),
@@ -286,17 +286,17 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectParams *args, s32 mode) {
         puffAge = puff->variant;
         if (puffAge >= 0) {
           image = puffAge / 2;
-          puffCells = GROWING_COLUMNS_VINE_DUST_OFFSETS;
+          puffCells = GROWING_COLUMNS_VINE_DUST_PICTURES;
           if (mode != GROWING_COLUMNS_VINES) {
-            puffCells = GROWING_COLUMNS_PILLAR_DUST_OFFSETS;
+            puffCells = GROWING_COLUMNS_PILLAR_DUST_PICTURES;
           }
           ((DrawRectangle)rectangle[0])(
-              canvas, work->sheet + (gGrowth_PuffCells[image] + puffCells),
+              canvas, work->sheet + (gGrowth_PuffPictures[image] + puffCells),
               puff->x - gGrowth_PuffWidths[image],
               puff->y - (s8)gGrowth_PuffHeights[image] / 2,
               gGrowth_PuffWidths[image], (s8)gGrowth_PuffHeights[image]);
           ((DrawRectangle)rectangle[1])(
-              canvas, work->sheet + (gGrowth_PuffCells[image] + puffCells),
+              canvas, work->sheet + (gGrowth_PuffPictures[image] + puffCells),
               puff->x, puff->y - (s8)gGrowth_PuffHeights[image] / 2,
               gGrowth_PuffWidths[image], (s8)gGrowth_PuffHeights[image]);
           puff->variant++;
@@ -532,10 +532,10 @@ void BattleEffect_RunThorn(struct BattleEffectParams *args) {
             lean = 8;
           }
           if (gGrowth_Kinds[i] & THORN_MIRRORED) {
-            drawFlip(canvas, work->sheet + THORN_SMALL_OFFSETS,
+            drawFlip(canvas, work->sheet + THORN_SMALL_PICTURE,
                      gGrowth_X[i] - lean, 108 - height, 32, height);
           } else {
-            draw(canvas, work->sheet + THORN_SMALL_OFFSETS, gGrowth_X[i] + lean,
+            draw(canvas, work->sheet + THORN_SMALL_PICTURE, gGrowth_X[i] + lean,
                  108 - height, 32, height);
           }
         }
@@ -576,14 +576,15 @@ void BattleEffect_RunThorn(struct BattleEffectParams *args) {
     for (i = 0; i != 64; i++) {
       if (PARTICLES[i].variant >= 0) {
         s32 cell = PARTICLES[i].variant / 2;
-        draw(canvas, work->sheet + gGrowth_ThornPuffCells[cell],
+        draw(canvas, work->sheet + gGrowth_ThornPuffPictures[cell],
              PARTICLES[i].x - gGrowth_ThornPuffWidths[cell],
              PARTICLES[i].y - (s8)gGrowth_ThornPuffHeights[cell] / 2,
              gGrowth_ThornPuffWidths[cell], (s8)gGrowth_ThornPuffHeights[cell]);
-        drawFlip(
-            canvas, work->sheet + gGrowth_ThornPuffCells[cell], PARTICLES[i].x,
-            PARTICLES[i].y - (s8)gGrowth_ThornPuffHeights[cell] / 2,
-            gGrowth_ThornPuffWidths[cell], (s8)gGrowth_ThornPuffHeights[cell]);
+        drawFlip(canvas, work->sheet + gGrowth_ThornPuffPictures[cell],
+                 PARTICLES[i].x,
+                 PARTICLES[i].y - (s8)gGrowth_ThornPuffHeights[cell] / 2,
+                 gGrowth_ThornPuffWidths[cell],
+                 (s8)gGrowth_ThornPuffHeights[cell]);
         if (++PARTICLES[i].variant == 14) {
           PARTICLES[i].variant = -1;
         }
@@ -596,8 +597,8 @@ void BattleEffect_RunThorn(struct BattleEffectParams *args) {
   EFFECT_FINISH_CANVAS();
 }
 
-#undef GROWING_COLUMNS_VINE_DUST_OFFSETS
-#undef GROWING_COLUMNS_PILLAR_DUST_OFFSETS
-#undef THORN_SMALL_OFFSETS
+#undef GROWING_COLUMNS_VINE_DUST_PICTURES
+#undef GROWING_COLUMNS_PILLAR_DUST_PICTURES
+#undef THORN_SMALL_PICTURE
 #undef VINE_COLUMNS
 #undef VINE_FRAMES

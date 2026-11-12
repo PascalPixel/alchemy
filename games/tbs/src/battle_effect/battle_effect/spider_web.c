@@ -93,19 +93,21 @@ void BattleEffect_RunSwirlSwipe(struct BattleEffectParams *args, s32 mode) {
     frames = 48;
   for (frame = 0; frame != frames; frame++) {
     // Frame loop. The swipe's six images, from x columns chosen by the
-    // side (six a side in gSpiderWeb_CellX); the trail fades after them.
+    // side (six a side in gSpiderWeb_PictureX); the trail fades after them.
     cell = frame / 4;
     if (cell <= 5) {
       if (cell <= 3)
-        draw[0](canvas, work->sheet + gSpiderWeb_Cells[cell],
-                gSpiderWeb_CellX[cell + work->args->side * 6],
-                gSpiderWeb_CellBiasY[cell] + 32, gSpiderWeb_CellWidths[cell],
-                gSpiderWeb_CellHeights[cell]);
+        draw[0](canvas, work->sheet + gSpiderWeb_Pictures[cell],
+                gSpiderWeb_PictureX[cell + work->args->side * 6],
+                gSpiderWeb_PictureBiasY[cell] + 32,
+                gSpiderWeb_PictureWidths[cell],
+                gSpiderWeb_PictureHeights[cell]);
       else
-        draw[0](canvas, Ram_MapGridCellBuffer + gSpiderWeb_Cells[cell],
-                gSpiderWeb_CellX[cell + work->args->side * 6],
-                gSpiderWeb_CellBiasY[cell] + 32, gSpiderWeb_CellWidths[cell],
-                gSpiderWeb_CellHeights[cell]);
+        draw[0](canvas, Ram_MapGridCellBuffer + gSpiderWeb_Pictures[cell],
+                gSpiderWeb_PictureX[cell + work->args->side * 6],
+                gSpiderWeb_PictureBiasY[cell] + 32,
+                gSpiderWeb_PictureWidths[cell],
+                gSpiderWeb_PictureHeights[cell]);
     }
     if (frame == 8) {
       if (mode == SWIRL_SWIPE_POISON_BEAT) {

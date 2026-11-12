@@ -13,7 +13,7 @@
 /// three ice crystals, the one the falling crystals draw. The tables in
 /// battle_effect_table.c read the rest: the three crystals, the shards and
 /// the spray.
-enum IceBlockSheetCell {
+enum IceBlockSheetPicture {
   /// After the three crystals and the four large shards.
   BOREAS_BIG_BLOCK = 24 * 48 + 24 * 38 + 20 * 26 + 12 * 10 + 11 * 16 + 8 * 14 +
       10 * 15,
@@ -204,7 +204,7 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
 
     for (i = 0; i != count; i++) {
       s32 cell = i % 3;
-      draw(canvas, work->sheet + gBoreas_CrystalCells[cell],
+      draw(canvas, work->sheet + gBoreas_CrystalPictures[cell],
            BOREAS_POINT_X(i) - shakeX,
            BOREAS_POINT_Y(i) - gBoreas_CrystalHeights[cell] - shakeY,
            gBoreas_CrystalWidths[cell], gBoreas_CrystalHeights[cell]);
@@ -317,7 +317,7 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
           } else {
             cell = i & 3;
           }
-          drawAlt(canvas, work->sheet + gBoreas_DebrisCells[cell],
+          drawAlt(canvas, work->sheet + gBoreas_DebrisPictures[cell],
                   Q_16_16_TO_INT(PARTICLES[i].x),
                   Q_16_16_TO_INT(PARTICLES[i].y), gBoreas_DebrisWidths[cell],
                   gBoreas_DebrisHeights[cell]);
@@ -347,7 +347,7 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
         if (frame >= i / 4 + 224) {
           s32 cell = i % 3;
           if ((i & 1) == 0) {
-            draw(canvas, work->sheet + gBoreas_SprayCells[cell],
+            draw(canvas, work->sheet + gBoreas_SprayPictures[cell],
                  Q_16_16_TO_INT(PARTICLES[i].x), Q_16_16_TO_INT(PARTICLES[i].y),
                  gBoreas_SprayWidths[cell], gBoreas_SprayHeights[cell]);
           }
@@ -377,7 +377,7 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
         if (frame >= i + 228) {
           s32 cell = trail->variant / 2 % 9;
           s32 size = gBattleEffect_SparkleSizes[cell];
-          draw(canvas, sparkleSheet + gBattleEffect_SparkleCells[cell],
+          draw(canvas, sparkleSheet + gBattleEffect_SparklePictures[cell],
                Q_16_16_TO_INT(trail->x) - size / 2,
                Q_16_16_TO_INT(trail->y) - size / 2, size, size);
           if (++trail->variant == 18) {
@@ -451,7 +451,7 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
     if (frame <= 71) {
       for (i = 0; i != count; i++) {
         s32 cell = i % 3;
-        draw(canvas, work->sheet + gBoreas_RisingCrystalCells[cell],
+        draw(canvas, work->sheet + gBoreas_RisingCrystalPictures[cell],
              BOREAS_POINT_X(i) - 56,
              BOREAS_POINT_Y(i) - gBoreas_RisingCrystalHeights[cell],
              gBoreas_RisingCrystalWidths[cell],
@@ -487,7 +487,7 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
         y = Q_16_16_TO_INT(crystal->y);
         if (y <= 135) {
           s32 cell = i % 3;
-          draw(canvas, work->sheet + gBoreas_FallCells[cell],
+          draw(canvas, work->sheet + gBoreas_FallPictures[cell],
                Q_16_16_TO_INT(crystal->x), y - gBoreas_FallHeights[cell],
                gBoreas_FallWidths[cell], gBoreas_FallHeights[cell]);
           Particle_AdvanceWithGravity2D(crystal, 64, px(1));
@@ -529,7 +529,7 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
         if (PARTICLES[i].variant >= 0 && PARTICLES[i].variant < 18) {
           s32 cell = PARTICLES[i].variant / 2 % 9;
           s32 size = gBattleEffect_SparkleSizes[cell];
-          draw(canvas, sparkleSheet + gBattleEffect_SparkleCells[cell],
+          draw(canvas, sparkleSheet + gBattleEffect_SparklePictures[cell],
                PARTICLES[i].x - size / 2, PARTICLES[i].y - size / 2, size,
                size);
         }

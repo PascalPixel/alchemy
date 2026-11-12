@@ -18,7 +18,7 @@
 #define TITAN_BLADE_DRAWN_DUST 342 ///< dust moved and drawn
 #define TITAN_BLADE_SPARKS 340     ///< sparks after the dust
 /// The flash pictures in the sheet, after the 34x104 fire pillar.
-#define TITAN_BLADE_FLASH_OFFSETS (34 * 104)
+#define TITAN_BLADE_FLASH_PICTURES (34 * 104)
 
 /// A huge gold-hilted sword drops onto the first target and is driven into the
 /// ground amid flashes, golden dust and sparks.
@@ -70,7 +70,7 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_FirePillarSheetA, work->sheet, 1,
                              0);
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
-                             work->sheet + TITAN_BLADE_FLASH_OFFSETS, 1, 0);
+                             work->sheet + TITAN_BLADE_FLASH_PICTURES, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
 
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
@@ -173,8 +173,9 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
         life = flash->variant;
         if (life >= 0 && life <= 17) {
           blitters[0](canvas,
-                      work->sheet + (gTitanBlade_FlashCells[life / 3] << 11) +
-                          TITAN_BLADE_FLASH_OFFSETS,
+                      work->sheet +
+                          (gTitanBlade_FlashPictures[life / 3] << 11) +
+                          TITAN_BLADE_FLASH_PICTURES,
                       x - 16, y + 48, 32, 64);
         }
         /* FAKEMATCH(dead): life is read again, unchanged; without the read,
@@ -364,7 +365,7 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
               u8 *cell;
 
               size = spark->variant / 5 + 1;
-              cell = sheet + gBattleEffect_MoteCells[size - 1];
+              cell = sheet + gBattleEffect_MotePictures[size - 1];
               x >>= 16;
               y >>= 16;
               x -= size / 2;
@@ -414,4 +415,4 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
 #undef TITAN_BLADE_FIRST_DUST
 #undef TITAN_BLADE_DRAWN_DUST
 #undef TITAN_BLADE_SPARKS
-#undef TITAN_BLADE_FLASH_OFFSETS
+#undef TITAN_BLADE_FLASH_PICTURES

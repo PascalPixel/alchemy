@@ -80,9 +80,9 @@ enum FlurryColumn {
 };
 
 /// The flash pictures, packed to half width after the arcs.
-#define FLURRY_FLASH_OFFSETS 20736
+#define FLURRY_FLASH_PICTURES 20736
 /// The wave pictures, in the map grid buffer past the motes.
-#define FLURRY_WAVE_OFFSETS (Ram_MapGridCellBuffer + 24064)
+#define FLURRY_WAVE_PICTURES (Ram_MapGridCellBuffer + 24064)
 
 /// The user closes on the first target and strikes it again and again; each
 /// strike shows an arc (or, with FLURRY_ARCS_AND_WAVES, a wave for the
@@ -137,14 +137,14 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
 
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
 
-  // Pack the flash (40x288) to half width at FLURRY_FLASH_OFFSETS, as
+  // Pack the flash (40x288) to half width at FLURRY_FLASH_PICTURES, as
   // the canvas is shown at double width.
   Resource_LoadAndDecompress((s32)&ResourceId_YellowOrbSheet, work->sheet, 1,
                              0);
   for (row = 0; row != 288; row++) {
     for (col = 0; col != 40; col++) {
       s32 src = row * 40 + col;
-      s32 dst = row * 20 + col / 2 + FLURRY_FLASH_OFFSETS;
+      s32 dst = row * 20 + col / 2 + FLURRY_FLASH_PICTURES;
 
       work->sheet[dst] = work->sheet[src];
     }
@@ -155,8 +155,8 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
   else
     Resource_LoadAndDecompress((s32)&ResourceId_BlueArcSheetB, work->sheet, 1,
                                1);
-  Resource_LoadAndDecompress((s32)&ResourceId_WaveSheet, FLURRY_WAVE_OFFSETS, 1,
-                             0);
+  Resource_LoadAndDecompress((s32)&ResourceId_WaveSheet, FLURRY_WAVE_PICTURES,
+                             1, 0);
   switch (gFlurry_Styles[mode][FLURRY_PALETTE]) {
   case FLURRY_PALETTE_MARS_DJINNI:
     paletteId = (s32)&ResourceId_MarsDjinnSheet;
@@ -243,10 +243,10 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
         } else {
           // The wave: six 48x16 pictures.
           if (work->args->side == EFFECT_SIDE_ENEMIES)
-            draw[i & 1](canvas, FLURRY_WAVE_OFFSETS + step * (48 * 16),
+            draw[i & 1](canvas, FLURRY_WAVE_PICTURES + step * (48 * 16),
                         targetPos.x / 2 - 16, actorPos.y - 8, 48, 16);
           else
-            draw[i & 1](canvas, FLURRY_WAVE_OFFSETS + step * (48 * 16),
+            draw[i & 1](canvas, FLURRY_WAVE_PICTURES + step * (48 * 16),
                         targetPos.x / 2 - 32, actorPos.y - 8, 48, 16);
         }
       }
@@ -276,7 +276,7 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
       if (frame >= start + 2 && frame < start + 14)
         draw[0](canvas,
                 work->sheet + ((frame - start - 2) / 2) * (20 * 48) +
-                    FLURRY_FLASH_OFFSETS,
+                    FLURRY_FLASH_PICTURES,
                 targetPos.x / 2 - 10, targetPos.y - 24, 20, 48);
     }
     EFFECT_RELEASE_BLITTERS();
@@ -319,6 +319,6 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
   BattleEffect_EndCanvasLayer();
 }
 
-#undef FLURRY_FLASH_OFFSETS
-#undef FLURRY_WAVE_OFFSETS
+#undef FLURRY_FLASH_PICTURES
+#undef FLURRY_WAVE_PICTURES
 #undef FLURRY_DEFINE_BY_VARIANT

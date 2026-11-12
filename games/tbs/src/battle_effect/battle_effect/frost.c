@@ -140,11 +140,11 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
 #ifdef UBFIX
             width = gFrost_MoteWidths[cell];
             height = gFrost_MoteHeights[cell];
-            pair[1](canvas, work->sheet + gFrost_MoteCells[cell],
+            pair[1](canvas, work->sheet + gFrost_MotePictures[cell],
                     position->x - (width >> 1), position->y - (height >> 1),
                     width, height);
 #else
-            pair[1](canvas, work->sheet + gFrost_MoteCells[cell],
+            pair[1](canvas, work->sheet + gFrost_MotePictures[cell],
                     position->x - ((width = gFrost_MoteWidths[cell]) >> 1),
                     position->y - ((height = gFrost_MoteHeights[cell]) >> 1),
                     width, height);
@@ -187,12 +187,12 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
           if (frame >= gFrost_Timings[work->args->variant][FROST_FRAME] - 7) {
 #ifdef UBFIX
             height = gFrost_MoundHeights[cell];
-            pair[1](canvas, work->sheet + gFrost_MoundCells[cell],
+            pair[1](canvas, work->sheet + gFrost_MoundPictures[cell],
                     gFrost_MoundSpots[i][FROST_MOUND_X],
                     gFrost_MoundSpots[i][FROST_MOUND_FOOT] - height, 32,
                     height);
 #else
-            pair[1](canvas, work->sheet + gFrost_MoundCells[cell],
+            pair[1](canvas, work->sheet + gFrost_MoundPictures[cell],
                     gFrost_MoundSpots[i][FROST_MOUND_X],
                     gFrost_MoundSpots[i][FROST_MOUND_FOOT] -
                         (height = gFrost_MoundHeights[cell]),
@@ -201,12 +201,12 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
           } else {
 #ifdef UBFIX
             height = gFrost_MoundHeights[cell];
-            pair[0](canvas, work->sheet + gFrost_MoundCells[cell],
+            pair[0](canvas, work->sheet + gFrost_MoundPictures[cell],
                     gFrost_MoundSpots[i][FROST_MOUND_X],
                     gFrost_MoundSpots[i][FROST_MOUND_FOOT] - height, 32,
                     height);
 #else
-            pair[0](canvas, work->sheet + gFrost_MoundCells[cell],
+            pair[0](canvas, work->sheet + gFrost_MoundPictures[cell],
                     gFrost_MoundSpots[i][FROST_MOUND_X],
                     gFrost_MoundSpots[i][FROST_MOUND_FOOT] -
                         (height = gFrost_MoundHeights[cell]),
@@ -246,7 +246,7 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
         if (chip->variant >= 0) {
           s32 cell = i % 8;
 
-          pair[1](canvas, work->sheet + gFrost_ChipCells[cell],
+          pair[1](canvas, work->sheet + gFrost_ChipPictures[cell],
                   Q_16_16_TO_INT(chip->x), Q_16_16_TO_INT(chip->y),
                   gFrost_ChipWidths[cell], gFrost_ChipHeights[cell]);
           chip->x += chip->velocityX;
@@ -296,12 +296,12 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
 
 #ifdef UBFIX
           size = gBattleEffect_SparkleSizes[cell];
-          pair[1](canvas, sparkleSheet + gBattleEffect_SparkleCells[cell],
+          pair[1](canvas, sparkleSheet + gBattleEffect_SparklePictures[cell],
                   Q_16_16_TO_INT(sparkle->velocityX) - (size >> 1),
                   Q_16_16_TO_INT(sparkle->velocityY) - (size >> 1) - rise, size,
                   size);
 #else
-          pair[1](canvas, sparkleSheet + gBattleEffect_SparkleCells[cell],
+          pair[1](canvas, sparkleSheet + gBattleEffect_SparklePictures[cell],
                   Q_16_16_TO_INT(sparkle->velocityX) -
                       ((size = gBattleEffect_SparkleSizes[cell]) >> 1),
                   Q_16_16_TO_INT(sparkle->velocityY) - (size >> 1) - rise, size,

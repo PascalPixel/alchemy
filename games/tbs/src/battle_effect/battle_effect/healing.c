@@ -14,7 +14,7 @@
 // and drawing one in is a step of 2 pixels a frame along the line to the
 // centre.
 
-#define HEALING_DJINNI_OFFSETS 4096 ///< the Djinni picture in the sheet
+#define HEALING_DJINNI_PICTURE 4096 ///< the Djinni picture in the sheet
 
 /// The healing motes' modes (BattleEffect_RunHealingMotes), each named for the
 /// first ability that plays it.
@@ -203,7 +203,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
           Resource_GetTableEntry((s32)&ResourceId_MercuryDjinnSmallSheet);
   }
   resource += 128;
-  Decompress_TaggedLz(resource, work->sheet + HEALING_DJINNI_OFFSETS);
+  Decompress_TaggedLz(resource, work->sheet + HEALING_DJINNI_PICTURE);
   BattleEffect_FetchRectangleBlitters(work->args->side, blit);
 
   // Scatter the motes around the centre (16.16, relative to the point the
@@ -300,18 +300,18 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
 
         if (frame > 32)
           y = y - frame * 2 + 64;
-        blit[0](canvas, work->sheet + HEALING_DJINNI_OFFSETS, x, y, 40, 40);
+        blit[0](canvas, work->sheet + HEALING_DJINNI_PICTURE, x, y, 40, 40);
         if (frame <= 3)
-          blit[1](canvas, work->sheet + HEALING_DJINNI_OFFSETS, x, y, 40, 40);
+          blit[1](canvas, work->sheet + HEALING_DJINNI_PICTURE, x, y, 40, 40);
       } else {
         s32 x = ((Trig_Sin(frame << 11) * 10) >> 16) + originX / 2 - 10;
         s32 y = ((Trig_Cos(frame << 11) * 4) >> 16) + originY - 24;
 
         if (frame > 32)
           y = y - frame * 2 + 64;
-        blit[0](canvas, work->sheet + HEALING_DJINNI_OFFSETS, x, y, 20, 40);
+        blit[0](canvas, work->sheet + HEALING_DJINNI_PICTURE, x, y, 20, 40);
         if (frame <= 3)
-          blit[1](canvas, work->sheet + HEALING_DJINNI_OFFSETS, x, y, 20, 40);
+          blit[1](canvas, work->sheet + HEALING_DJINNI_PICTURE, x, y, 20, 40);
       }
     }
 
@@ -386,7 +386,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
               if (mode == HEALING_MODE_PLY ||
                   mode == HEALING_MODE_CURE_POISON ||
                   mode == HEALING_MODE_RESTORE || mode == HEALING_MODE_TONIC) {
-                u8 *cell = work->sheet + gBattleEffect_SparkleCells[size];
+                u8 *cell = work->sheet + gBattleEffect_SparklePictures[size];
                 u32 edge = gBattleEffect_SparkleSizes[size];
                 u32 half = edge >> 1;
 
@@ -416,4 +416,4 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
   EFFECT_FINISH_CANVAS();
 }
 
-#undef HEALING_DJINNI_OFFSETS
+#undef HEALING_DJINNI_PICTURE

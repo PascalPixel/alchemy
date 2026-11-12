@@ -613,25 +613,27 @@ void BattleEffect_RunMars(struct BattleEffectParams *args) {
       index = 0;
       step = work->particles;
       do {
-        // A flame plays the six puff cells, 8 frames each; its variant counts
-        // its frames, starting below 0 so the flames erupt 2 frames apart.
+        // A flame plays the six puff pictures, 8 frames each; its variant
+        // counts its frames, starting below 0 so the flames erupt 2 frames
+        // apart.
         if (step->variant >= 0 && step->variant <= 47) {
           s32 cell = step->variant / 8;
           u32 width;
 
           // UB: width is assigned in one argument and read in another.
 #ifdef UBFIX
-          width = gBattleEffect_PuffArcCellWidths[cell];
-          blitters[0](canvas, work->sheet + gBattleEffect_PuffArcCells[cell],
+          width = gBattleEffect_PuffArcPictureWidths[cell];
+          blitters[0](canvas, work->sheet + gBattleEffect_PuffArcPictures[cell],
                       step->x - (width >> 1),
-                      step->y + gBattleEffect_PuffArcCellBiasY[cell], width,
-                      gBattleEffect_PuffArcCellHeights[cell]);
+                      step->y + gBattleEffect_PuffArcPictureBiasY[cell], width,
+                      gBattleEffect_PuffArcPictureHeights[cell]);
 #else
           blitters[0](
-              canvas, work->sheet + gBattleEffect_PuffArcCells[cell],
-              step->x - ((width = gBattleEffect_PuffArcCellWidths[cell]) >> 1),
-              step->y + gBattleEffect_PuffArcCellBiasY[cell], width,
-              gBattleEffect_PuffArcCellHeights[cell]);
+              canvas, work->sheet + gBattleEffect_PuffArcPictures[cell],
+              step->x -
+                  ((width = gBattleEffect_PuffArcPictureWidths[cell]) >> 1),
+              step->y + gBattleEffect_PuffArcPictureBiasY[cell], width,
+              gBattleEffect_PuffArcPictureHeights[cell]);
 #endif
         }
         index++;
@@ -652,7 +654,7 @@ void BattleEffect_RunMars(struct BattleEffectParams *args) {
 
         size = (index & 1) + 3;
         x = Q_16_16_TO_INT(step->x) + ((Trig_Sin(step->z) * 4) >> 16);
-        blitters[1](canvas, sheet + gBattleEffect_MoteCells[size - 1],
+        blitters[1](canvas, sheet + gBattleEffect_MotePictures[size - 1],
                     x - ((u32)size >> 1), Q_16_16_TO_INT(step->y) - size, size,
                     size * 2);
         Particle_AdvanceWithGravity2D(step, 64, -px(1) / 8);

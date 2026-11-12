@@ -34,7 +34,7 @@ struct JudgmentWork {
 /// 24x64 beam picture at the sheet's start.
 #define JUDGMENT_SHEET_BURST (24 * 64)
 /// The tornado sheet, after the burst's seven quarter pictures; its six glint
-/// pictures are the burst's shards (gJudgment_ShardCells counts from the
+/// pictures are the burst's shards (gJudgment_ShardPictures counts from the
 /// sheet's start).
 #define JUDGMENT_SHEET_TORNADO                                                 \
   (JUDGMENT_SHEET_BURST + 2 * 4 + 3 * 6 + 4 * 8 + 6 * 12 + 10 * 20 + 11 * 22 + \
@@ -52,7 +52,7 @@ struct JudgmentWork {
 #define JUDGMENT_SHEET_FLASH_LARGE (JUDGMENT_SHEET_FLASH_SMALL + 16 * 17)
 #define JUDGMENT_SHEET_FLASH_GLOW (JUDGMENT_SHEET_FLASH_LARGE + 24 * 41)
 /// Each explosion picture is 32x54.
-#define JUDGMENT_EXPLOSION_CELL_BYTES (32 * 54)
+#define JUDGMENT_EXPLOSION_PICTURE_BYTES (32 * 54)
 #define JUDGMENT_WAVE_SIZE 120 ///< the wave picture is 120x120
 /// DMA word that fills the 128x128 canvas.
 #define JUDGMENT_DMA_FILL_CANVAS DMA_FILL_WORDS(CANVAS_BYTES / 4)
@@ -361,7 +361,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       // Four explicit draws: a shared load, draw and release helper grew
       // this runner by eight bytes in English (5756 to 5764 bytes).
       high = gJudgment_BurstHeights[n];
-      cell = gJudgment_BurstCells[n] + JUDGMENT_SHEET_BURST;
+      cell = gJudgment_BurstPictures[n] + JUDGMENT_SHEET_BURST;
 
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                           COMPOSITE_LIGHTEN);
@@ -393,8 +393,8 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
         s32 angle = Random16() & TRIG_ANGLE_MASK;
         s32 x = ((Trig_Sin(angle) * 16) >> 16) - gJudgment_ShardWidths[k] / 2;
         s32 y = ((Trig_Cos(angle) * 16) >> 16) - gJudgment_ShardHeights[k] / 2;
-        draw[0](canvas, work->sheet + gJudgment_ShardCells[k], x + 60, y + 80,
-                gJudgment_ShardWidths[k], gJudgment_ShardHeights[k]);
+        draw[0](canvas, work->sheet + gJudgment_ShardPictures[k], x + 60,
+                y + 80, gJudgment_ShardWidths[k], gJudgment_ShardHeights[k]);
       }
     }
 
@@ -422,7 +422,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       work->transferValue = CANVAS_FADE_THREE_QUARTERS;
       if (n <= 6) {
         // The 8x16 mote of dimmed copy n in JudgmentWork's ramp.
-        s32 cell = n * MOTE_SET_BYTES + gBattleEffect_MoteCells[7] +
+        s32 cell = n * MOTE_SET_BYTES + gBattleEffect_MotePictures[7] +
                    JUDGMENT_SHEET_BYTES;
         s32 high = 8;
         EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
@@ -762,7 +762,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
         s32 angle = i * (TRIG_TURN / 256);
         s32 x = ((Trig_Sin(angle) * r2) >> 16) - (size >> 1);
         s32 y = (Trig_Cos(angle) * r2) >> 17;
-        draw[0](canvas, ramp + gBattleEffect_MoteCells[size - 1], x + 60,
+        draw[0](canvas, ramp + gBattleEffect_MotePictures[size - 1], x + 60,
                 y + 50, size, size * 2);
       }
     }
@@ -894,7 +894,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
         s32 y = ((frame - 70) * Trig_Cos(angle)) >> 16;
         draw[0](canvas,
                 work->sheet +
-                    ((frame / 2 + i) % 4) * JUDGMENT_EXPLOSION_CELL_BYTES +
+                    ((frame / 2 + i) % 4) * JUDGMENT_EXPLOSION_PICTURE_BYTES +
                     JUDGMENT_SHEET_EXPLOSION,
                 x + 44, y + 17, 32, 54);
       }
@@ -987,7 +987,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
           s32 y = (i / 2) * 32 - (Random16() & 15);
           draw[1](canvas,
                   work->sheet +
-                      ((frame / 2 + i) % 4) * JUDGMENT_EXPLOSION_CELL_BYTES +
+                      ((frame / 2 + i) % 4) * JUDGMENT_EXPLOSION_PICTURE_BYTES +
                       JUDGMENT_SHEET_EXPLOSION,
                   x, y, 32, 54);
         }
@@ -998,7 +998,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
           s32 y = (i / 2) * 32 - (Random16() & 15);
           draw[1](canvas,
                   work->sheet +
-                      ((frame / 2 + i) % 4) * JUDGMENT_EXPLOSION_CELL_BYTES +
+                      ((frame / 2 + i) % 4) * JUDGMENT_EXPLOSION_PICTURE_BYTES +
                       JUDGMENT_SHEET_EXPLOSION,
                   x, y, 32, 54);
         }
@@ -1043,7 +1043,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
 #undef JUDGMENT_SHEET_FLASH_SMALL
 #undef JUDGMENT_SHEET_FLASH_LARGE
 #undef JUDGMENT_SHEET_FLASH_GLOW
-#undef JUDGMENT_EXPLOSION_CELL_BYTES
+#undef JUDGMENT_EXPLOSION_PICTURE_BYTES
 #undef JUDGMENT_WAVE_SIZE
 #undef JUDGMENT_DMA_FILL_CANVAS
 #undef JUDGMENT_DMA_FILL_WAVE

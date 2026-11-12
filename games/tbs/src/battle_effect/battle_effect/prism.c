@@ -4,8 +4,8 @@
 
 #include "../battle_effect_internal.h"
 
-#define PRISM_GROUND_Y px(56)         ///< y 56, where the crystals shatter
-#define PRISM_SHARD_OFFSETS (32 * 64) ///< the shards, after the 32x64 crystal
+#define PRISM_GROUND_Y px(56)          ///< y 56, where the crystals shatter
+#define PRISM_SHARD_PICTURES (32 * 64) ///< the shards, after the 32x64 crystal
 
 /// Crystals drop out of the sky onto the targets' side, 8 frames apart, and
 /// shatter on the ground into 16 spinning shards each, flashing the targets and
@@ -108,7 +108,7 @@ void BattleEffect_RunPrism(struct BattleEffectParams *args) {
           // A shattered crystal: its shards fly and spin, slowing down. A
           // shard draws one of three pictures of its kind (j % 5), stepping
           // every 96 of its spin (variant); shards 0 to 2 draw additively.
-          // Kind 4 (shards 4, 9 and 14) asks for cells 12 to 14, past the
+          // Kind 4 (shards 4, 9 and 14) asks for pictures 12 to 14, past the
           // twelve pictures of the gPrism_Shard tables, and reads what follows
           // each table: its heights are the zero bytes that follow
           // gPrism_ShardHeights, and a blitter given no rows draws nothing,
@@ -120,7 +120,7 @@ void BattleEffect_RunPrism(struct BattleEffectParams *args) {
             shard = &shards[i * 16 + j];
             draw[j <= 2](
                 canvas,
-                work->sheet + gPrism_ShardOffsets[cell] + PRISM_SHARD_OFFSETS,
+                work->sheet + gPrism_ShardPictures[cell] + PRISM_SHARD_PICTURES,
                 Q_16_16_TO_INT(shard->x) - gPrism_ShardWidths[cell] / 2,
                 Q_16_16_TO_INT(shard->y) - gPrism_ShardHeights[cell] / 2,
                 gPrism_ShardWidths[cell], gPrism_ShardHeights[cell]);
@@ -238,4 +238,4 @@ void BattleEffect_UpdatePhasePalette(s32 frame, s32 redPhase, s32 greenPhase,
 }
 
 #undef PRISM_GROUND_Y
-#undef PRISM_SHARD_OFFSETS
+#undef PRISM_SHARD_PICTURES

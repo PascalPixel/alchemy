@@ -9,15 +9,15 @@ gBattleParty_TurnEndSideOrder:
 	.4byte 1 << 16, 0, 0, 0
 	.4byte 1 << 16, 0, 0, 0
 @ Star workspace positions.
-	.global gElementGlow_StarPictureOffsets
-gElementGlow_StarPictureOffsets:
+	.global gElementGlow_StarPictures
+gElementGlow_StarPictures:
 	.4byte 0, 1, 5, 14, 30, 46, 62
 	.global gElementGlow_StarSizes
 gElementGlow_StarSizes:
 	.byte 1, 2, 3, 4, 4, 4, 4
 	.balign 4
-	.global gElementGlow_RingPictureOffsets
-gElementGlow_RingPictureOffsets:
+	.global gElementGlow_RingPictures
+gElementGlow_RingPictures:
 	.4byte 78, 1102, 2126, 3150
 	.4byte 0, 10, 20, 0
 @ {character, portrait} pairs, as in gPortrait_CharacterMap

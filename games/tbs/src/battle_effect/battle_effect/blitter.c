@@ -292,8 +292,8 @@
 /// mode: how source pixels combine with the canvas (COMPOSITE_COPY,
 /// COMPOSITE_TRANSPARENT, COMPOSITE_LIGHTEN or COMPOSITE_ADDITIVE).
 ///
-/// Returns nonzero when the walk ended exactly at gBattleEffect_MoteCells, the
-/// end of the template; no caller reads it.
+/// Returns nonzero when the walk ended exactly at gBattleEffect_MotePictures,
+/// the end of the template; no caller reads it.
 s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
                               s32 flags, u32 mode) {
   const u32 *templateWords;
@@ -386,9 +386,9 @@ s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
 
   // The template is the last thing in blitter_fragments.s, which the
   // linker script places straight before battle_effect_table.c, whose first
-  // table is gBattleEffect_MoteCells: a complete walk ends at that table's
+  // table is gBattleEffect_MotePictures: a complete walk ends at that table's
   // address.
-  codeEnd = (const u32 *)gBattleEffect_MoteCells;
+  codeEnd = (const u32 *)gBattleEffect_MotePictures;
   return templateWords == codeEnd;
 }
 

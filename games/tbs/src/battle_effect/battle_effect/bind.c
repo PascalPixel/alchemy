@@ -276,7 +276,8 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
                   from->velocityY + k * (to->velocityY - from->velocityY) / 24;
 
               draw[0](canvas,
-                      work->sheet + gBattleEffect_FlareCells[size - 1] + 4096,
+                      work->sheet + gBattleEffect_FlarePictures[size - 1] +
+                          4096,
                       x - size, y - size, size * 2, size * 2);
             }
           }
@@ -422,7 +423,8 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectParams *args) {
                   from->velocityY + k * (to->velocityY - from->velocityY) / 24;
 
               draw[0](canvas,
-                      work->sheet + gBattleEffect_FlareCells[size - 1] + 4096,
+                      work->sheet + gBattleEffect_FlarePictures[size - 1] +
+                          4096,
                       x - size, y - size, size * 2, size * 2);
             }
           }

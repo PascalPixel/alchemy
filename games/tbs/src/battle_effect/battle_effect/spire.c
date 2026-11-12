@@ -7,7 +7,7 @@
 #define SPIRE_ROCK_WIDTH 34  ///< the boulder picture, the first in the sheet
 #define SPIRE_ROCK_HEIGHT 62 ///< the boulder picture's height
 /// The shard pictures in the sheet, after the boulder.
-#define SPIRE_SHARD_OFFSETS (SPIRE_ROCK_WIDTH * SPIRE_ROCK_HEIGHT)
+#define SPIRE_SHARD_PICTURES (SPIRE_ROCK_WIDTH * SPIRE_ROCK_HEIGHT)
 #define SPIRE_SHARDS 21 ///< shards per rock
 /// Frames a boulder falls, from its drop frame (gSpire_DropFrames) until it
 /// lands, shakes the screen and strikes the targets.
@@ -105,12 +105,12 @@ void BattleEffect_RunSpire(struct BattleEffectParams *args) {
           width = gSpire_ShardWidths[cell];
           height = gSpire_ShardHeights[cell];
           blit(canvas,
-               work->sheet + gSpire_ShardCells[cell] + SPIRE_SHARD_OFFSETS,
+               work->sheet + gSpire_ShardPictures[cell] + SPIRE_SHARD_PICTURES,
                Q_16_16_TO_INT(shard->x) - (width >> 1),
                Q_16_16_TO_INT(shard->y) - (height >> 1), width, height);
 #else
           blit(canvas,
-               work->sheet + gSpire_ShardCells[cell] + SPIRE_SHARD_OFFSETS,
+               work->sheet + gSpire_ShardPictures[cell] + SPIRE_SHARD_PICTURES,
                Q_16_16_TO_INT(shard->x) -
                    ((width = gSpire_ShardWidths[cell]) >> 1),
                Q_16_16_TO_INT(shard->y) -
@@ -149,6 +149,6 @@ void BattleEffect_RunSpire(struct BattleEffectParams *args) {
 
 #undef SPIRE_ROCK_WIDTH
 #undef SPIRE_ROCK_HEIGHT
-#undef SPIRE_SHARD_OFFSETS
+#undef SPIRE_SHARD_PICTURES
 #undef SPIRE_SHARDS
 #undef SPIRE_FALL_FRAMES

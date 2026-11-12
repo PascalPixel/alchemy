@@ -354,7 +354,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
         if (ember->variant >= 0) {
           u8 size = gTiamat_EmberSizes[i & 3];
 
-          draw[0](canvas, sheet + gBattleEffect_MoteCells[size - 1],
+          draw[0](canvas, sheet + gBattleEffect_MotePictures[size - 1],
                   Q_16_16_TO_INT(ember->x) - size / 2,
                   Q_16_16_TO_INT(ember->y) - size, size, size * 2);
           ember->x += ember->velocityX * dir;
@@ -425,7 +425,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
             s32 cell = fireball->variant / 2;
 
             draw[0](canvas,
-                    work->sheet + gTiamat_FlameOffsets[cell] +
+                    work->sheet + gTiamat_FlamePictures[cell] +
                         DRAGON_FIRE_FLAME_IMAGES,
                     fireball->x - gTiamat_FlameWidths[cell] / 2,
                     fireball->y + gTiamat_FlameDrops[cell],
@@ -443,7 +443,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
           fireball->y += 6;
           if (frame <= 47 && fireball->y > 55)
             Sound_PlayFar(SE_WHOOSH);
-          draw[0](canvas, sheet + gBattleEffect_MoteCells[size - 1],
+          draw[0](canvas, sheet + gBattleEffect_MotePictures[size - 1],
                   fireball->x - size / 2, fireball->y + 30, size, size * 2);
         } else {
           fireball->variant++;

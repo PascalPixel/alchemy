@@ -5,12 +5,12 @@
 #include "../battle_effect_internal.h"
 
 /// The bubble picture, after the three 16x64 vortex halves.
-#define FROTH_BUBBLE_CELL (3 * 16 * 64)
+#define FROTH_BUBBLE_PICTURE (3 * 16 * 64)
 
-/// The tornado pictures follow the six glint cells (gBattleEffect_GlintCells)
-/// in the sheet: 40x32 sections, the top and bottom ones' three frames
-/// interleaved, then the middle one's.
-#define WHIRLWIND_TORNADO_OFFSETS GLINT_SET_BYTES
+/// The tornado pictures follow the six glint pictures
+/// (gBattleEffect_GlintPictures) in the sheet: 40x32 sections, the top and
+/// bottom ones' three frames interleaved, then the middle one's.
+#define WHIRLWIND_TORNADO_PICTURES GLINT_SET_BYTES
 #define WHIRLWIND_SECTION_BYTES (40 * 32)
 
 /// Bubbles fly out of the top of the user, hang, and from 48 frames after each
@@ -109,8 +109,8 @@ void BattleEffect_RunFroth(struct BattleEffectParams *args) {
         Projection_Point(point, &screenPosition);
         screenPosition.x >>= 1;
         CLAMP(screenPosition.depth, 160, 799);
-        draw[0](canvas, work->sheet + FROTH_BUBBLE_CELL, screenPosition.x - 6,
-                screenPosition.y - 12, 12, 24);
+        draw[0](canvas, work->sheet + FROTH_BUBBLE_PICTURE,
+                screenPosition.x - 6, screenPosition.y - 12, 12, 24);
         point->x += point->velocityX;
         point->y += point->velocityY;
         point->z += point->velocityZ;
@@ -267,26 +267,26 @@ void BattleEffect_RunWhirlwind(struct BattleEffectParams *args) {
       segment = (frame / 2) % 3;
       draw[0](canvas,
               work->sheet + segment * (2 * WHIRLWIND_SECTION_BYTES) +
-                  WHIRLWIND_TORNADO_OFFSETS,
+                  WHIRLWIND_TORNADO_PICTURES,
               x, y + 16, 40, 32);
       draw[0](canvas,
               work->sheet + segment * WHIRLWIND_SECTION_BYTES +
-                  (WHIRLWIND_TORNADO_OFFSETS + 6 * WHIRLWIND_SECTION_BYTES),
+                  (WHIRLWIND_TORNADO_PICTURES + 6 * WHIRLWIND_SECTION_BYTES),
               x, y + 48, 40, 32);
       draw[0](canvas,
               work->sheet + segment * (2 * WHIRLWIND_SECTION_BYTES) +
-                  (WHIRLWIND_TORNADO_OFFSETS + WHIRLWIND_SECTION_BYTES),
+                  (WHIRLWIND_TORNADO_PICTURES + WHIRLWIND_SECTION_BYTES),
               x, y + 80, 40, 32);
       for (j = 0; j != 4; j++) {
         point = &work->particles[i * 4 + j];
-        // A glint plays three cells, two frames each: glints 0 and 1 the
+        // A glint plays three pictures, two frames each: glints 0 and 1 the
         // first three, glints 2 and 3 the last three; 1 and 3 are mirrored.
         if (point->variant >= 0) {
           cell = point->variant / 2 + (j / 2) * 3;
-          draw[j & 1](canvas, work->sheet + gBattleEffect_GlintCells[cell],
+          draw[j & 1](canvas, work->sheet + gBattleEffect_GlintPictures[cell],
                       point->x + x, point->y + y,
-                      gBattleEffect_GlintCellWidths[cell],
-                      gBattleEffect_GlintCellHeights[cell]);
+                      gBattleEffect_GlintPictureWidths[cell],
+                      gBattleEffect_GlintPictureHeights[cell]);
         }
         point->variant++;
         if (point->variant == 6) {
@@ -319,6 +319,6 @@ void BattleEffect_RunWhirlwind(struct BattleEffectParams *args) {
   BattleEffect_EndCanvasLayer();
 }
 
-#undef FROTH_BUBBLE_CELL
-#undef WHIRLWIND_TORNADO_OFFSETS
+#undef FROTH_BUBBLE_PICTURE
+#undef WHIRLWIND_TORNADO_PICTURES
 #undef WHIRLWIND_SECTION_BYTES

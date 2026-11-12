@@ -20,8 +20,8 @@ struct Spark {
 /// writes its canvas origin.
 struct SparkWork {
   /// The blue ring sheet's pictures, decoded: the sparks' sizes at
-  /// gElementGlow_StarPictureOffsets, the rings' pictures at
-  /// gElementGlow_RingPictureOffsets.
+  /// gElementGlow_StarPictures, the rings' pictures at
+  /// gElementGlow_RingPictures.
   u8 sheet[4544];
   struct Spark sparks[16];
   struct Ring rings[3];
@@ -139,7 +139,7 @@ s32 ElementGlow_UpdateStarField(void) {
       else if (picture > 6)
         picture = 6;
       size = gElementGlow_StarSizes[picture];
-      draw(canvas, (u8 *)work + gElementGlow_StarPictureOffsets[picture],
+      draw(canvas, (u8 *)work + gElementGlow_StarPictures[picture],
            x - (size >> 1), y - (size >> 1), size, size);
     }
   }
@@ -154,8 +154,8 @@ s32 ElementGlow_UpdateStarField(void) {
     phase = 3 - ring->age / 8;
     if (phase >= 0) {
       ring->age++;
-      draw(canvas, (u8 *)work + gElementGlow_RingPictureOffsets[phase],
-           ringX + 48, ringY + 48, 32, 32);
+      draw(canvas, (u8 *)work + gElementGlow_RingPictures[phase], ringX + 48,
+           ringY + 48, 32, 32);
     }
   }
   work->frames++;

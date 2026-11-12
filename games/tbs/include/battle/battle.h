@@ -119,12 +119,12 @@ extern u8 BitDecoder_Size[];
 extern u8 gBattleCamera_CommandMatrix[];
 /// Where SparkWork.sheet holds the spark's square picture for each frame of
 /// life left, 0 to 6: byte offsets, a byte a pixel.
-extern s32 gElementGlow_StarPictureOffsets[];
+extern s32 gElementGlow_StarPictures[];
 /// The spark's width and height in pixels by life left: 1 to 4, 4 from three.
 extern u8 gElementGlow_StarSizes[];
 /// Where SparkWork.sheet holds the ring's four 32 by 32 frames: byte offsets,
 /// 1,024 apart.
-extern s32 gElementGlow_RingPictureOffsets[];
+extern s32 gElementGlow_RingPictures[];
 /// The highlighted units' BLDY lightening: 15 down to 0 once, then the second
 /// sixteen (a pulse up to 8 and back) over and over.
 extern s8 gBattleHighlight_BlendRamp[];

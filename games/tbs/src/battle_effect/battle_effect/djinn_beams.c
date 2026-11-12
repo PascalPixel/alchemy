@@ -8,8 +8,9 @@
 // light falls from the sky onto each target.
 
 // Images in work->sheet.
-#define DJINN_BEAMS_MOTE_OFFSETS 10000 ///< the motes (CrescentMoonSheet, 24x24)
-#define DJINN_BEAMS_DJINNI_OFFSETS 26048 ///< the Djinni (40x40)
+#define DJINN_BEAMS_MOTE_PICTURES                                              \
+  10000 ///< the motes (CrescentMoonSheet, 24x24)
+#define DJINN_BEAMS_DJINNI_PICTURE 26048 ///< the Djinni (40x40)
 
 /// Motes drift down over each target and a column of light falls on it, in the
 /// Venus Djinni's colours; with a prelude, a Venus Djinni appears first.
@@ -75,14 +76,14 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 element) {
   palette = Resource_GetTableEntry((s32)&ResourceId_CrescentMoonSheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   palette += 128;
-  Decompress_TaggedLz(palette, work->sheet + DJINN_BEAMS_MOTE_OFFSETS);
+  Decompress_TaggedLz(palette, work->sheet + DJINN_BEAMS_MOTE_PICTURES);
   if (element == ELEMENT_VENUS)
     palette = Resource_GetTableEntry((s32)&ResourceId_VenusDjinnSheet);
   else
     palette = Resource_GetTableEntry((s32)&ResourceId_MercuryDjinnSheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   palette += 128;
-  Decompress_TaggedLz(palette, work->sheet + DJINN_BEAMS_DJINNI_OFFSETS);
+  Decompress_TaggedLz(palette, work->sheet + DJINN_BEAMS_DJINNI_PICTURE);
 
   // The motes start 80 pixels up, up to 8 pixels off in z, each at a random
   // point of its sway. Target k uses PARTICLES 64k to 64k + 7 of the 512.
@@ -139,9 +140,9 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 element) {
       BattleEffect_FetchRectangleBlitters(work->args->side ^ k, draw);
       if (frame > 32)
         y = y - frame * 2 + 64;
-      draw[1](canvas, work->sheet + DJINN_BEAMS_DJINNI_OFFSETS, x, y, 40, 40);
+      draw[1](canvas, work->sheet + DJINN_BEAMS_DJINNI_PICTURE, x, y, 40, 40);
       if (frame <= 3)
-        draw[1](canvas, work->sheet + DJINN_BEAMS_DJINNI_OFFSETS, x, y, 40, 40);
+        draw[1](canvas, work->sheet + DJINN_BEAMS_DJINNI_PICTURE, x, y, 40, 40);
       EFFECT_RELEASE_BLITTERS();
     }
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
@@ -181,7 +182,7 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 element) {
                         work->sheet +
                             gDjinnBeams_MotePictures[mote->variant / 8 & 7] *
                                 (24 * 24) +
-                            DJINN_BEAMS_MOTE_OFFSETS,
+                            DJINN_BEAMS_MOTE_PICTURES,
                         screenPosition.x - 12, screenPosition.y - 12, 24, 24);
             mote->y -= px(1);
             mote->variant++;
@@ -224,11 +225,11 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 element) {
             pic = (pic & 1) + 1;
           // The glow at the target's feet.
           if (frame < start + 100) {
-            draw[0](canvas, work->sheet + gDjinnBeams_HeadOffsets[pic],
+            draw[0](canvas, work->sheet + gDjinnBeams_HeadPictures[pic],
                     screenPosition.x - gDjinnBeams_HeadWidths[pic],
                     screenPosition.y - gDjinnBeams_HeadHeights[pic] + 8,
                     gDjinnBeams_HeadWidths[pic], gDjinnBeams_HeadHeights[pic]);
-            draw[1](canvas, work->sheet + gDjinnBeams_HeadOffsets[pic],
+            draw[1](canvas, work->sheet + gDjinnBeams_HeadPictures[pic],
                     screenPosition.x,
                     screenPosition.y - gDjinnBeams_HeadHeights[pic] + 8,
                     gDjinnBeams_HeadWidths[pic], gDjinnBeams_HeadHeights[pic]);
@@ -252,5 +253,5 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 element) {
   BattleEffect_EndCanvasLayer();
 }
 
-#undef DJINN_BEAMS_MOTE_OFFSETS
-#undef DJINN_BEAMS_DJINNI_OFFSETS
+#undef DJINN_BEAMS_MOTE_PICTURES
+#undef DJINN_BEAMS_DJINNI_PICTURE

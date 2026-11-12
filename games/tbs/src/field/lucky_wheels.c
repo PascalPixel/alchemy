@@ -1233,7 +1233,7 @@ void LuckyWheels_Run(void) {
                   s32 size = spark->variant / 12 + 1;
 
                   draw[j & 1](canvas,
-                              sheet + gLuckyWheels_SparkCellOffsets[size - 1],
+                              sheet + gLuckyWheels_SparkPictures[size - 1],
                               drawX - size, drawY - size, size * 2, size * 2);
                 }
               }

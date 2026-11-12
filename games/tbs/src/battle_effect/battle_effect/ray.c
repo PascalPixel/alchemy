@@ -6,8 +6,8 @@
 
 #define RAY_SPARK_COUNT 1024 ///< sparks in PARTICLES
 
-#define RAY_OFFSETS 1550 ///< the bolt pictures in the sheet
-#define RAY_COUNT 4      ///< bolts
+#define RAY_PICTURES 1550 ///< the bolt pictures in the sheet
+#define RAY_COUNT 4       ///< bolts
 
 /// Four bolts close in, turning towards the centre for 16 frames and
 /// scattering sparks from their roots; the sparks fly on until frame 64.
@@ -56,7 +56,7 @@ void BattleEffect_RunRay(struct BattleEffectParams *args) {
                       COMPOSITE_ADDITIVE);
   draw[1] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2];
   Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet,
-                             work->sheet + RAY_OFFSETS, 1, 1);
+                             work->sheet + RAY_PICTURES, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   if (work->args->variant == EFFECT_VARIANT_STRONGEST) {
     if (work->args->side == EFFECT_SIDE_PARTY)
@@ -110,14 +110,15 @@ void BattleEffect_RunRay(struct BattleEffectParams *args) {
         y = -(((Trig_Cos(angle) * 8)) >> 16) - 8;
         if (work->args->variant == EFFECT_VARIANT_BASIC)
           draw[0](canvas,
-                  work->sheet + (Random16() & 3) * LIGHTNING_BOLT_CELL_BYTES +
-                      RAY_OFFSETS,
+                  work->sheet +
+                      (Random16() & 3) * LIGHTNING_BOLT_PICTURE_BYTES +
+                      RAY_PICTURES,
                   x + (Random16() & 7) - 16, y, 24, 120);
         else
           draw[bolt & 1](canvas,
                          work->sheet +
-                             (Random16() & 3) * LIGHTNING_BOLT_CELL_BYTES +
-                             RAY_OFFSETS,
+                             (Random16() & 3) * LIGHTNING_BOLT_PICTURE_BYTES +
+                             RAY_PICTURES,
                          x + (Random16() & 7) - 16, y, 24, 120);
 
         // Throw sparks from the bolt's root, 112 pixels down its 120-pixel
@@ -186,5 +187,5 @@ void BattleEffect_RunRay(struct BattleEffectParams *args) {
 }
 
 #undef RAY_SPARK_COUNT
-#undef RAY_OFFSETS
+#undef RAY_PICTURES
 #undef RAY_COUNT

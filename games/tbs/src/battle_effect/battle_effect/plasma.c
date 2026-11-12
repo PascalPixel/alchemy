@@ -416,12 +416,12 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 mode) {
                 gPlasma_Shapes[work->args->variant][SPARK_GROUPS_OFFSET + i] -
                 28;
           // A ring flash's variant counts down; its last 18 frames step
-          // through the six entries of gPlasma_FlashCells, three frames
+          // through the six entries of gPlasma_FlashPictures, three frames
           // each, a 32x64 picture (2048 bytes) apiece.
           if (point->variant >= 0 && point->variant < SPARK_GROUPS_FLASH_DRAWN)
             draw[0](canvas,
                     work->sheet +
-                        (gPlasma_FlashCells[point->variant / 3] << 11),
+                        (gPlasma_FlashPictures[point->variant / 3] << 11),
                     x - 16, y - 32, 32, 64);
           if (point->variant > 0)
             point->variant--;

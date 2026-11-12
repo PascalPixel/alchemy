@@ -9,7 +9,7 @@ void LuckyWheels_TransferCanvas(void);
 void Palette_DarkenScreenStep(void);
 void Palette_StepTowardResource(s32 resource);
 void LuckyWheels_DrawCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1, s32 color);
-extern const u16 gLuckyWheels_SparkCellOffsets[];
+extern const u16 gLuckyWheels_SparkPictures[];
 extern const u8 gLuckyWheels_SymbolPrizes[];
 extern const u8 gLuckyWheels_MachineSpriteX[];
 extern const u8 gLuckyWheels_MachineSpriteY[];

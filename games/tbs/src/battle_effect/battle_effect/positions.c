@@ -167,7 +167,7 @@ void BattleEffect_RunByIdRange(struct BattleEffectParams *args) {
 
   // One local holds the sheet size, then the kind, then the impact. The
   // largest picture the three runners decode into the sheet slot is
-  // ParticleSpritesD's ten flare cells, 2x2 to 20x20 pixels, 1,540 bytes
+  // ParticleSpritesD's ten flare pictures, 2x2 to 20x20 pixels, 1,540 bytes
   // (2 * MOTE_SET_BYTES); the slot's last 10 bytes are never written.
   value = 1550;
   HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_SHEET, value);

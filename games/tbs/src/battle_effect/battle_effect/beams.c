@@ -191,9 +191,9 @@ void BattleEffect_RunAttackSlash(struct BattleEffectParams *args) {
     if (frame == 4)
       BattleMotion_ApplyKnockbackFar(work->args->targets[0], KNOCKBACK_NUDGE);
     // The picture plays from the user, to its left on EFFECT_SIDE_ENEMIES and
-    // its right on EFFECT_SIDE_PARTY: the wave's six 48x16 cells backwards and
-    // the arc's six 48x72 cells, two frames each; the beam image grows through
-    // its six cells, three frames each.
+    // its right on EFFECT_SIDE_PARTY: the wave's six 48x16 pictures backwards
+    // and the arc's six 48x72 pictures, two frames each; the beam image grows
+    // through its six pictures, three frames each.
     Projection_ScaledUnit(work->args->user, &screenPosition);
     screenPosition.y += 16;
     if (kind == BEAM_WAVE) {
@@ -221,20 +221,20 @@ void BattleEffect_RunAttackSlash(struct BattleEffectParams *args) {
         s32 cell = frame / 3;
 
         if (work->args->side == EFFECT_SIDE_ENEMIES)
-          draw[1](canvas, work->sheet + gBeam_Cells[cell],
-                  screenPosition.x + gBeam_CellReaches[cell] + scrollX - 58,
-                  screenPosition.y - gBeam_CellHeights[cell] / 2,
-                  gBeam_CellWidths[cell], gBeam_CellHeights[cell]);
+          draw[1](canvas, work->sheet + gBeam_Pictures[cell],
+                  screenPosition.x + gBeam_PictureReaches[cell] + scrollX - 58,
+                  screenPosition.y - gBeam_PictureHeights[cell] / 2,
+                  gBeam_PictureWidths[cell], gBeam_PictureHeights[cell]);
         else
-          draw[1](canvas, work->sheet + gBeam_Cells[cell],
-                  screenPosition.x - gBeam_CellReaches[cell] + scrollX -
-                      gBeam_CellWidths[cell] + 58,
-                  screenPosition.y - gBeam_CellHeights[cell] / 2,
-                  gBeam_CellWidths[cell], gBeam_CellHeights[cell]);
+          draw[1](canvas, work->sheet + gBeam_Pictures[cell],
+                  screenPosition.x - gBeam_PictureReaches[cell] + scrollX -
+                      gBeam_PictureWidths[cell] + 58,
+                  screenPosition.y - gBeam_PictureHeights[cell] / 2,
+                  gBeam_PictureWidths[cell], gBeam_PictureHeights[cell]);
       }
     }
     // Frames 4 to 15: the yellow orb flashes over the target, six 40x48
-    // cells, two frames each.
+    // pictures, two frames each.
     if (frame >= 4 && frame <= 15)
       draw[0](canvas, Ram_MapGridCellBuffer + (frame - 4) / 2 * (40 * 48),
               anchor.x - 16, anchor.y - 24, 40, 48);

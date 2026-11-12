@@ -23,7 +23,7 @@ struct RockWallHeights {
 #define QUAKE_PILLAR_WIDTH 40 ///< a pillar's width in pixels
 /// The rock picture in the sheet; the sheet starts with the 40x16 strip of
 /// ground cut from the background.
-#define QUAKE_WALL_OFFSETS 7680
+#define QUAKE_WALL_PICTURE 7680
 
 /// Three rock pillars rise from the left, 4 frames apart, and sink again,
 /// throwing the targets standing on them into the air.
@@ -71,7 +71,7 @@ void BattleEffect_RunQuake(struct BattleEffectParams *args) {
   REG_BG2PA = Q_8_8(1);
   REG_BLDCNT = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_RockWallSheet,
-                             work->sheet + QUAKE_WALL_OFFSETS, 1, 1);
+                             work->sheet + QUAKE_WALL_PICTURE, 1, 1);
 
   // Copy the background tiles (two character blocks from VRAM 0x06008000) and
   // cut the strip at x 32 to 71, y 96 to 111 into the start of the sheet: the
@@ -146,7 +146,7 @@ void BattleEffect_RunQuake(struct BattleEffectParams *args) {
         if (height < 0)
           height = -height;
         top = 112 - height;
-        draw(canvas, work->sheet + QUAKE_WALL_OFFSETS,
+        draw(canvas, work->sheet + QUAKE_WALL_PICTURE,
              column * QUAKE_PILLAR_WIDTH + 8, top, QUAKE_PILLAR_WIDTH, height);
         draw(canvas, work->sheet, column * QUAKE_PILLAR_WIDTH + 8, 96 - height,
              QUAKE_PILLAR_WIDTH, 16);
@@ -202,4 +202,4 @@ void BattleEffect_RunQuake(struct BattleEffectParams *args) {
 }
 
 #undef QUAKE_PILLAR_WIDTH
-#undef QUAKE_WALL_OFFSETS
+#undef QUAKE_WALL_PICTURE

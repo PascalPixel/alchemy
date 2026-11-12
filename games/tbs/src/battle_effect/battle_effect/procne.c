@@ -438,7 +438,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
 
           if (alive > 0) {
             span = alive / 10 + 1;
-            draw[1](canvas, graphics + gBattleEffect_MoteCells[span - 1],
+            draw[1](canvas, graphics + gBattleEffect_MotePictures[span - 1],
                     (wave.x >> 17) - span / 2 + 32, (wave.y >> 16) - span - 4,
                     span, span * 2);
           }
@@ -528,9 +528,9 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
             size = (frame - threshold) / 2;
             if (size > 2)
               size = 2;
-            draw[1](canvas, work->sheet + gProcne_Cells[size], mark->x,
-                    mark->y - gProcne_CellBiasY[size], gProcne_CellWidths[size],
-                    gProcne_CellHeights[size]);
+            draw[1](canvas, work->sheet + gProcne_Pictures[size], mark->x,
+                    mark->y - gProcne_PictureBiasY[size],
+                    gProcne_PictureWidths[size], gProcne_PictureHeights[size]);
             mark->x -= 8;
             mark->y += 2;
 

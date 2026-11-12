@@ -384,7 +384,7 @@ extern char ResourceId_JupiterDjinnSheet;
 extern char ResourceId_ShieldSheet; ///< The stat changes.
 extern char ResourceId_DaggerSheet; ///< The stat changes.
 /// The stat reductions' picture after their shards
-/// (STAT_REDUCTION_SHARD_OFFSETS).
+/// (STAT_REDUCTION_SHARD_PICTURES).
 extern char ResourceId_PaletteRampImage;
 extern char ResourceId_HeartSheet; ///< Heartrender, among the status motes.
 /// Revive and its family (djinn_beams.c).

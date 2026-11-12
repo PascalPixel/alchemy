@@ -210,30 +210,30 @@ static inline void Dma_Stop(volatile u16 *channel) {
   (Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer),                   \
    HeapSlot_Release(HEAP_SLOT_RAM_CODE), BattleEffect_EndCanvasLayer())
 
-/// The bytes of one set of the ten mote cells: 2 * (1 + 4 + ... + 100).
+/// The bytes of one set of the ten mote pictures: 2 * (1 + 4 + ... + 100).
 #define MOTE_SET_BYTES 770
 
-/// The bytes of the six glint cells that open the tornado sheet, the sum of
-/// their pictures in gBattleEffect_GlintCells' order (its widths by its
+/// The bytes of the six glint pictures that open the tornado sheet, the sum of
+/// their pictures in gBattleEffect_GlintPictures' order (its widths by its
 /// heights). The tornado strips, and the bolts or bursts some effects decode
 /// over them, follow.
 #define GLINT_SET_BYTES                                                        \
   (19 * 31 + 23 * 31 + 23 * 31 + 19 * 21 + 16 * 21 + 17 * 24)
 
-/// Particle sheets hold ten mote cells, 1x2 to 10x20 pixels. Draws mote cell
-/// `size` (size pixels wide, twice that tall) of `sheet` through blitter
-/// `draw`, centred across x and standing on y: the motes, sparks and dust of
-/// 29 parts, from the mote fountain to the summons. `size` is 1 to 10.
+/// Particle sheets hold ten mote pictures, 1x2 to 10x20 pixels. Draws mote
+/// picture `size` (size pixels wide, twice that tall) of `sheet` through
+/// blitter `draw`, centred across x and standing on y: the motes, sparks and
+/// dust of 29 parts, from the mote fountain to the summons. `size` is 1 to 10.
 #define EFFECT_DRAW_MOTE(draw, canvas, sheet, x, y, size)                      \
-  (draw)(canvas, (sheet) + gBattleEffect_MoteCells[(size) - 1],                \
+  (draw)(canvas, (sheet) + gBattleEffect_MotePictures[(size) - 1],             \
          (x) - (size) / 2, (y) - (size), size, (size) * 2)
 
-/// Draws flare cell `size` of `sheet`, a square `size` pixels from its centre
-/// to each edge, centred on (x, y): Douse's sparks and the glowing points of
-/// the element pillar and burst, stat boosts, beams and rings.
+/// Draws flare picture `size` of `sheet`, a square `size` pixels from its
+/// centre to each edge, centred on (x, y): Douse's sparks and the glowing
+/// points of the element pillar and burst, stat boosts, beams and rings.
 #define EFFECT_DRAW_FLARE(draw, canvas, sheet, x, y, size)                     \
-  (draw)(canvas, (sheet) + gBattleEffect_FlareCells[(size) - 1], (x) - (size), \
-         (y) - (size), (size) * 2, (size) * 2)
+  (draw)(canvas, (sheet) + gBattleEffect_FlarePictures[(size) - 1],            \
+         (x) - (size), (y) - (size), (size) * 2, (size) * 2)
 
 /// Shows the canvas: the effect display mode, BG2 stretched to twice its
 /// width (the 128-pixel canvas shown 256 pixels wide) and blended over
@@ -276,7 +276,7 @@ static inline void Dma_Stop(volatile u16 *channel) {
 /// swings its scythe in a white flash:
 /// https://alchemy.pascalpixel.com/abilities/condemn.gif
 /// ★ Named from what the player sees: the Grim Reaper's swing (its render)
-enum ReaperSheetCell {
+enum ReaperSheetPicture {
   /// 57x98
   REAPER_SHEET_RAISED = 0,
   /// 99x69
@@ -288,7 +288,7 @@ enum ReaperSheetCell {
 /// RedCrescentSheetA, which Condemn and Mortal Danger decode into
 /// Ram_MapGridCellBuffer: the swing's crescent fading in four pictures, each
 /// starting where the one before ends.
-enum RedCrescentCell {
+enum RedCrescentPicture {
   /// 128x91
   RED_CRESCENT_FADE_1 = 0,
   /// 128x59
@@ -299,8 +299,8 @@ enum RedCrescentCell {
   RED_CRESCENT_FADE_4 = RED_CRESCENT_FADE_3 + 122 * 29
 };
 
-/// Closing bolts and lightning columns use the same 24x120 picture cells.
-#define LIGHTNING_BOLT_CELL_BYTES 2880
+/// Closing bolts and lightning columns use the same 24x120 pictures.
+#define LIGHTNING_BOLT_PICTURE_BYTES 2880
 
 /// Windows 0 and 1 both cover the battle view: the full width, lines 16 to
 /// 135.

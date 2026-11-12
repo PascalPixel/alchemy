@@ -240,7 +240,7 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
         }
       }
     }
-    // Puffs show the last four puff cells, six frames each, as they drift
+    // Puffs show the last four puff pictures, six frames each, as they drift
     // upward (1/4 pixel a frame faster each frame, keeping 60/64 of their
     // speed); each starts at a random point of its first 16 frames.
     for (i = 0; i != 56; i++) {
@@ -252,7 +252,7 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
         if (puff->variant >= 0 && puff->variant <= 23) {
           s32 cell = puff->variant / 6 + 3;
 
-          draw[0](canvas, work->sheet + gRamses_PuffCells[cell],
+          draw[0](canvas, work->sheet + gRamses_PuffPictures[cell],
                   Q_16_16_TO_INT(puff->x) - gRamses_PuffSizes[cell] / 2,
                   Q_16_16_TO_INT(puff->y) - gRamses_PuffSizes[cell] / 2,
                   gRamses_PuffSizes[cell], gRamses_PuffSizes[cell]);

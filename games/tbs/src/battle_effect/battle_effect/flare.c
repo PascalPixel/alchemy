@@ -98,8 +98,8 @@ void BattleEffect_RunFlare(struct BattleEffectParams *args) {
     }
 
     // Each flame shows six pictures, 4 frames each, and goes out; the last
-    // flame (delay -32) is out after frame 55. Each puff cell stands on its
-    // own baseline (gBattleEffect_PuffArcCellBiasY) and is centred across x.
+    // flame (delay -32) is out after frame 55. Each puff picture stands on its
+    // own baseline (gBattleEffect_PuffArcPictureBiasY) and is centred across x.
     i = 0;
     flame = work->particles;
     do {
@@ -107,45 +107,46 @@ void BattleEffect_RunFlare(struct BattleEffectParams *args) {
         cell = flame->variant / 4;
         // UB: width is assigned in one argument and read in another.
 #ifdef UBFIX
-        width = gBattleEffect_PuffArcCellWidths[cell];
-        draw(canvas, work->sheet + gBattleEffect_PuffArcCells[cell],
+        width = gBattleEffect_PuffArcPictureWidths[cell];
+        draw(canvas, work->sheet + gBattleEffect_PuffArcPictures[cell],
              flame->x - (width >> 1),
-             flame->y + gBattleEffect_PuffArcCellBiasY[cell], width,
-             gBattleEffect_PuffArcCellHeights[cell]);
+             flame->y + gBattleEffect_PuffArcPictureBiasY[cell], width,
+             gBattleEffect_PuffArcPictureHeights[cell]);
 #else
-        draw(canvas, work->sheet + gBattleEffect_PuffArcCells[cell],
-             flame->x - ((width = gBattleEffect_PuffArcCellWidths[cell]) >> 1),
-             flame->y + gBattleEffect_PuffArcCellBiasY[cell], width,
-             gBattleEffect_PuffArcCellHeights[cell]);
+        draw(canvas, work->sheet + gBattleEffect_PuffArcPictures[cell],
+             flame->x -
+                 ((width = gBattleEffect_PuffArcPictureWidths[cell]) >> 1),
+             flame->y + gBattleEffect_PuffArcPictureBiasY[cell], width,
+             gBattleEffect_PuffArcPictureHeights[cell]);
 #endif
         if (work->args->variant != EFFECT_VARIANT_BASIC) {
 #ifdef UBFIX
-          width = gBattleEffect_PuffArcCellWidths[cell];
-          draw(canvas, work->sheet + gBattleEffect_PuffArcCells[cell],
+          width = gBattleEffect_PuffArcPictureWidths[cell];
+          draw(canvas, work->sheet + gBattleEffect_PuffArcPictures[cell],
                flame->x - (width >> 1),
-               (flame->y + gBattleEffect_PuffArcCellBiasY[cell]) - 16, width,
-               gBattleEffect_PuffArcCellHeights[cell]);
+               (flame->y + gBattleEffect_PuffArcPictureBiasY[cell]) - 16, width,
+               gBattleEffect_PuffArcPictureHeights[cell]);
 #else
-          draw(canvas, work->sheet + gBattleEffect_PuffArcCells[cell],
+          draw(canvas, work->sheet + gBattleEffect_PuffArcPictures[cell],
                flame->x -
-                   ((width = gBattleEffect_PuffArcCellWidths[cell]) >> 1),
-               (flame->y + gBattleEffect_PuffArcCellBiasY[cell]) - 16, width,
-               gBattleEffect_PuffArcCellHeights[cell]);
+                   ((width = gBattleEffect_PuffArcPictureWidths[cell]) >> 1),
+               (flame->y + gBattleEffect_PuffArcPictureBiasY[cell]) - 16, width,
+               gBattleEffect_PuffArcPictureHeights[cell]);
 #endif
         }
         if (work->args->variant == EFFECT_VARIANT_STRONGEST) {
 #ifdef UBFIX
-          width = gBattleEffect_PuffArcCellWidths[cell];
-          draw(canvas, work->sheet + gBattleEffect_PuffArcCells[cell],
+          width = gBattleEffect_PuffArcPictureWidths[cell];
+          draw(canvas, work->sheet + gBattleEffect_PuffArcPictures[cell],
                flame->x - (width >> 1),
-               (flame->y + gBattleEffect_PuffArcCellBiasY[cell]) - 32, width,
-               gBattleEffect_PuffArcCellHeights[cell]);
+               (flame->y + gBattleEffect_PuffArcPictureBiasY[cell]) - 32, width,
+               gBattleEffect_PuffArcPictureHeights[cell]);
 #else
-          draw(canvas, work->sheet + gBattleEffect_PuffArcCells[cell],
+          draw(canvas, work->sheet + gBattleEffect_PuffArcPictures[cell],
                flame->x -
-                   ((width = gBattleEffect_PuffArcCellWidths[cell]) >> 1),
-               (flame->y + gBattleEffect_PuffArcCellBiasY[cell]) - 32, width,
-               gBattleEffect_PuffArcCellHeights[cell]);
+                   ((width = gBattleEffect_PuffArcPictureWidths[cell]) >> 1),
+               (flame->y + gBattleEffect_PuffArcPictureBiasY[cell]) - 32, width,
+               gBattleEffect_PuffArcPictureHeights[cell]);
 #endif
         }
       }

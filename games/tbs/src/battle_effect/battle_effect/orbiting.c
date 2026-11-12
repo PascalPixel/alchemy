@@ -87,7 +87,7 @@ UNUSED void BattleEffect_RunSwirlingStars(struct BattleEffectParams *args) {
         size = 9 - (screen.depth - 250) / 64;
         draw[0](canvas,
                 work->sheet + ((i & 3) * MOTE_SET_BYTES +
-                               gBattleEffect_MoteCells[size - 1]),
+                               gBattleEffect_MotePictures[size - 1]),
                 screen.x - size / 2, screen.y - size, size, size * 2);
         Particle_AdvanceWithGravity3D(star, 60, 0);
         // From 30 frames after it appears, it accelerates towards the centre
@@ -221,7 +221,7 @@ UNUSED void BattleEffect_RunOrbitingSkulls(void) {
 }
 
 /// The burst picture in the sheet, after the smoke.
-#define TARGET_BURSTS_OFFSETS (6 * (24 * 48))
+#define TARGET_BURST_PICTURE (6 * (24 * 48))
 
 #define TARGET_BURSTS_FRAMES 96
 
@@ -250,7 +250,7 @@ UNUSED void BattleEffect_RunTargetBursts(struct BattleEffectParams *args) {
   BattleEffect_StartCanvasLayer(0);
   Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet, work->sheet, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_TargetBurstImage,
-                             work->sheet + TARGET_BURSTS_OFFSETS, 0, 0);
+                             work->sheet + TARGET_BURST_PICTURE, 0, 0);
   palette = Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
@@ -315,7 +315,7 @@ UNUSED void BattleEffect_RunTargetBursts(struct BattleEffectParams *args) {
           if (i == 5) {
             Particle_AdvanceWithGravity3D(puff, 62, px(1) / 32);
             drawBurst(canvas,
-                      work->sheet + cell * (24 * 48) + TARGET_BURSTS_OFFSETS,
+                      work->sheet + cell * (24 * 48) + TARGET_BURST_PICTURE,
                       screen.x - 12, screen.y - 36, 24, 48);
           } else {
             Particle_AdvanceWithGravity3D(puff, 60, px(1) / 128);
@@ -333,5 +333,5 @@ UNUSED void BattleEffect_RunTargetBursts(struct BattleEffectParams *args) {
 
 #undef SWIRLING_STARS_FRAMES
 #undef SWIRLING_STARS_COUNT
-#undef TARGET_BURSTS_OFFSETS
+#undef TARGET_BURST_PICTURE
 #undef TARGET_BURSTS_FRAMES

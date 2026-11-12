@@ -6,10 +6,10 @@
 
 /// The pictures Gaia rebuilds in work->sheet from the earth wall sheet, each
 /// starting where the one before ends: the rising wall's nine rows
-/// (gGaia_RowCells), each one line of gGaia_RowWidths stretched to 32 lines;
+/// (gGaia_RowPictures), each one line of gGaia_RowWidths stretched to 32 lines;
 /// the standing wall's top and foot; then the three flames of
-/// gGaia_FlameCells.
-enum EarthWallSheetCell {
+/// gGaia_FlamePictures.
+enum EarthWallSheetPicture {
   /// 48x96, stretched from 48x32
   GAIA_WALL_TOP = 32 * (5 + 6 + 9 + 12 + 15 + 18 + 21 + 32 + 40),
   /// 48x21
@@ -101,7 +101,7 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
     *color++ = RGB(red, green, blue);
   }
 
-  // Rebuild the earth wall sheet's pictures (enum EarthWallSheetCell); the
+  // Rebuild the earth wall sheet's pictures (enum EarthWallSheetPicture); the
   // frame loop draws only the first eight wall rows.
   src = Ram_MapGridCellBuffer;
   sheetIndex = 0;
@@ -202,11 +202,11 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
 
       if (cell > 2)
         cell = (cell & 1) + 1;
-      draw[0](canvas, work->sheet + gGaia_FlameCells[cell],
+      draw[0](canvas, work->sheet + gGaia_FlamePictures[cell],
               wallX - gGaia_FlameWidths[cell] + 64,
               116 - gGaia_FlameHeights[cell], gGaia_FlameWidths[cell],
               gGaia_FlameHeights[cell]);
-      draw[1](canvas, work->sheet + gGaia_FlameCells[cell], wallX + 64,
+      draw[1](canvas, work->sheet + gGaia_FlamePictures[cell], wallX + 64,
               116 - gGaia_FlameHeights[cell], gGaia_FlameWidths[cell],
               gGaia_FlameHeights[cell]);
     }
@@ -218,10 +218,10 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
 
       CLAMP(row, 0, 7);
       for (i = 0; i != 4; i++) {
-        draw[0](canvas, work->sheet + gGaia_RowCells[row],
+        draw[0](canvas, work->sheet + gGaia_RowPictures[row],
                 wallX - gGaia_RowWidths[row] + 64, i * 32 - 12,
                 gGaia_RowWidths[row], 32);
-        draw[1](canvas, work->sheet + gGaia_RowCells[row], wallX + 64,
+        draw[1](canvas, work->sheet + gGaia_RowPictures[row], wallX + 64,
                 i * 32 - 12, gGaia_RowWidths[row], 32);
       }
     }
@@ -232,10 +232,10 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
 
       CLAMP(row, 0, 7);
       for (i = 0; i != 4; i++) {
-        draw[0](canvas, work->sheet + gGaia_RowCells[row],
+        draw[0](canvas, work->sheet + gGaia_RowPictures[row],
                 wallX - gGaia_RowWidths[row] + 64, i * 32 - 12,
                 gGaia_RowWidths[row], 32);
-        draw[1](canvas, work->sheet + gGaia_RowCells[row], wallX + 64,
+        draw[1](canvas, work->sheet + gGaia_RowPictures[row], wallX + 64,
                 i * 32 - 12, gGaia_RowWidths[row], 32);
       }
     }

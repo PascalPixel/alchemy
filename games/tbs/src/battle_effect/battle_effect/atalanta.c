@@ -12,7 +12,7 @@
 /// three parts. Each starts where the one before ends; the notes give the
 /// sizes the draws use. A flash picture's number is the frame of the flash it
 /// is drawn on.
-enum SlashSheetCell {
+enum SlashSheetPicture {
   /// 14x28
   ATALANTA_SHAFT_FLASH_1 = 0,
   /// 23x44
@@ -334,21 +334,22 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
 
             // UB: width is assigned in one argument and read in another.
 #ifdef UBFIX
-            width = gBattleEffect_PuffArcCellWidths[cell];
+            width = gBattleEffect_PuffArcPictureWidths[cell];
             draw[i & 1](canvas,
                         Ram_MapGridCellBuffer +
-                            gBattleEffect_PuffArcCells[cell],
+                            gBattleEffect_PuffArcPictures[cell],
                         shaft->x - (width >> 1) - 8,
-                        shaft->y + gBattleEffect_PuffArcCellBiasY[cell] - 40,
-                        width, gBattleEffect_PuffArcCellHeights[cell]);
+                        shaft->y + gBattleEffect_PuffArcPictureBiasY[cell] - 40,
+                        width, gBattleEffect_PuffArcPictureHeights[cell]);
 #else
             draw[i & 1](
                 canvas,
-                Ram_MapGridCellBuffer + gBattleEffect_PuffArcCells[cell],
+                Ram_MapGridCellBuffer + gBattleEffect_PuffArcPictures[cell],
                 shaft->x -
-                    ((width = gBattleEffect_PuffArcCellWidths[cell]) >> 1) - 8,
-                shaft->y + gBattleEffect_PuffArcCellBiasY[cell] - 40, width,
-                gBattleEffect_PuffArcCellHeights[cell]);
+                    ((width = gBattleEffect_PuffArcPictureWidths[cell]) >> 1) -
+                    8,
+                shaft->y + gBattleEffect_PuffArcPictureBiasY[cell] - 40, width,
+                gBattleEffect_PuffArcPictureHeights[cell]);
 #endif
             if (shaft->variant <= 11) {
               draw[0](canvas, work->sheet + ATALANTA_SHAFT_TOP, shaft->x + 4,

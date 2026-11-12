@@ -2,12 +2,12 @@
 /// The Lucky Wheels tables, the same in both games. The includer defines
 /// LUCKY_WHEELS_TITLE_LETTERS, the letters of the title it spells.
 
-/// Where each spark cell (a square 2 to 20 pixels on a side) starts: size s
+/// Where each spark picture (a square 2 to 20 pixels on a side) starts: size s
 /// (1 to 10) is a square 2s pixels a side, after the smaller squares' pixels.
 /// A spark is drawn at size variant / 12 + 1, so it shrinks as its variant
 /// counts down.
-const u16 gLuckyWheels_SparkCellOffsets[] = {0,   4,   20,  56,  120,
-                                             220, 364, 560, 816, 1140};
+const u16 gLuckyWheels_SparkPictures[] = {0,   4,   20,  56,  120,
+                                          220, 364, 560, 816, 1140};
 
 /// The prize of each wheel symbol, kept in gMainRoutineWork.wonPrizes for
 /// each winning line. Symbol 5 matches any other on a line, so a line is won by

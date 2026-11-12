@@ -13,7 +13,7 @@
 #define TARGET_STRIKE_SPARKS (PARTICLES + 512)
 
 /// The smoke pictures in the sheet: six 24x48 puffs.
-#define TARGET_STRIKE_SMOKE_OFFSETS 12800
+#define TARGET_STRIKE_SMOKE_PICTURES 12800
 
 /// Column `field` of style `mode`'s row of gTargetStrike_Styles.
 #define TARGET_STRIKE_VALUE(mode, field) gTargetStrike_Styles[(mode)][(field)]
@@ -157,7 +157,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
 
   // Setup. The images: glints at the start of the sheet, the slashes or the
-  // fangs at 3200, smoke at TARGET_STRIKE_SMOKE_OFFSETS, and the style's
+  // fangs at 3200, smoke at TARGET_STRIKE_SMOKE_PICTURES, and the style's
   // palette.
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, particleSheet,
                              0, 0);
@@ -191,7 +191,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
   }
   Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(resource), 128);
   Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet,
-                             work->sheet + TARGET_STRIKE_SMOKE_OFFSETS, 1, 0);
+                             work->sheet + TARGET_STRIKE_SMOKE_PICTURES, 1, 0);
 
   // Park every particle, idle, where it will start: smoke at the target's
   // feet, motes and sparks 20 pixels up its body, each with a random
@@ -288,7 +288,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
                               EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                               COMPOSITE_LIGHTEN);
           EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE](
-              canvas, work->sheet + gTargetStrike_Offsets[picture],
+              canvas, work->sheet + gTargetStrike_Pictures[picture],
               targetPosition.x / 2 - (gTargetStrike_Reach[picture] / 2) -
                   gTargetStrike_Widths[picture] + 8,
               targetPosition.y - (gTargetStrike_Heights[picture] / 2),
@@ -297,7 +297,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
           EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                               COMPOSITE_LIGHTEN);
           EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE](
-              canvas, work->sheet + gTargetStrike_Offsets[picture],
+              canvas, work->sheet + gTargetStrike_Pictures[picture],
               targetPosition.x / 2 + (gTargetStrike_Reach[picture] / 2) - 8,
               targetPosition.y - (gTargetStrike_Heights[picture] / 2),
               gTargetStrike_Widths[picture], gTargetStrike_Heights[picture]);
@@ -453,16 +453,16 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
         s32 y;
 
         x = targetPosition.x / 2 + (Trig_Sin(angle) * radius >> 17) -
-            (gBattleEffect_GlintCellWidths[image] / 2);
+            (gBattleEffect_GlintPictureWidths[image] / 2);
         y = targetPosition.y - (Trig_Cos(angle) * radius >> 17) -
-            (gBattleEffect_GlintCellHeights[image] / 2);
+            (gBattleEffect_GlintPictureHeights[image] / 2);
         EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                             gTargetStrike_GlintDrawFlags[Random16() & 3] |
                                 EFFECT_CLIP_BOUNDS,
                             COMPOSITE_ADDITIVE);
-        (*lower)(canvas, work->sheet + gBattleEffect_GlintCells[image], x, y,
-                 gBattleEffect_GlintCellWidths[image],
-                 gBattleEffect_GlintCellHeights[image]);
+        (*lower)(canvas, work->sheet + gBattleEffect_GlintPictures[image], x, y,
+                 gBattleEffect_GlintPictureWidths[image],
+                 gBattleEffect_GlintPictureHeights[image]);
         HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
       }
     }
@@ -489,7 +489,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
 
             draw[i & 1](canvas,
                         work->sheet + picture * (24 * 48) +
-                            TARGET_STRIKE_SMOKE_OFFSETS,
+                            TARGET_STRIKE_SMOKE_PICTURES,
                         Q_16_16_TO_INT(step->x) - 12,
                         Q_16_16_TO_INT(step->y) - 24, 24, 48);
             Particle_AdvanceWithGravity2D(step, 62, -px(1) / 64);
@@ -518,7 +518,8 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
           if (step->variant >= 0) {
             Projection_Point(step, &position);
             position.x >>= 1;
-            draw[1](canvas, particleSheet + gBattleEffect_MoteCells[size - 1],
+            draw[1](canvas,
+                    particleSheet + gBattleEffect_MotePictures[size - 1],
                     position.x - ((u32)size >> 1), position.y - size, size,
                     size * 2);
             Particle_AdvanceWithGravity3D(step, 60, 0);
@@ -572,4 +573,4 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
 
 #undef TARGET_STRIKE_SPARKS
 #undef TARGET_STRIKE_VALUE
-#undef TARGET_STRIKE_SMOKE_OFFSETS
+#undef TARGET_STRIKE_SMOKE_PICTURES

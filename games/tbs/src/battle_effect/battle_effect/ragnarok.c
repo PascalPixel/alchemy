@@ -5,7 +5,7 @@
 #include "../battle_effect_internal.h"
 
 /// Where the flash graphics start: after the 64x128 sword image.
-#define RAGNAROK_FLASH_OFFSETS (64 * 128)
+#define RAGNAROK_FLASH_PICTURES (64 * 128)
 
 #define RAGNAROK_FRAMES 80
 #define RAGNAROK_COLUMNS 2  ///< columns that strike
@@ -61,7 +61,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_FlameBladeSheet, work->sheet, 1,
                              1);
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
-                             work->sheet + RAGNAROK_FLASH_OFFSETS, 1, 0);
+                             work->sheet + RAGNAROK_FLASH_PICTURES, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
 
   // Prepare 16 flashes and 340 sparks a column, for three columns although
@@ -179,10 +179,10 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
       if (frame >= start) {
         // Large flash (picture 0) for the first two frames, then 12 small
         // flashes. Each small one shows for the last 18 frames of its life,
-        // stepping through gRagnarok_FlashCells' six entries three frames
+        // stepping through gRagnarok_FlashPictures' six entries three frames
         // apiece: pictures 1 to 4, then 5 for six frames.
         if (frame < start + 2) {
-          blit[0](canvas, work->sheet + RAGNAROK_FLASH_OFFSETS,
+          blit[0](canvas, work->sheet + RAGNAROK_FLASH_PICTURES,
                   gRagnarok_StrikeColumns[work->args->side][col] - 16, 56, 32,
                   64);
         }
@@ -200,8 +200,9 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
           life = flash->variant;
           if (life >= 0 && life <= 17) {
             blit[0](canvas,
-                    work->sheet + gRagnarok_FlashCells[life / 3] * (32 * 64) +
-                        RAGNAROK_FLASH_OFFSETS,
+                    work->sheet +
+                        gRagnarok_FlashPictures[life / 3] * (32 * 64) +
+                        RAGNAROK_FLASH_PICTURES,
                     x - 16, y + 56, 32, 64);
           }
           life = flash->variant;
@@ -240,7 +241,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
                 // the brighter pixel or add.
                 size = spark->variant / 5 + 1;
                 lane = i & 1;
-                cell = sheet + gBattleEffect_MoteCells[size - 1];
+                cell = sheet + gBattleEffect_MotePictures[size - 1];
                 drawX -= size / 2;
                 drawY -= size;
                 blit[lane](canvas, cell, drawX, drawY, size, size * 2);
@@ -273,7 +274,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
   EFFECT_FINISH_CANVAS();
 }
 
-#undef RAGNAROK_FLASH_OFFSETS
+#undef RAGNAROK_FLASH_PICTURES
 #undef RAGNAROK_FRAMES
 #undef RAGNAROK_COLUMNS
 #undef RAGNAROK_SEEDED

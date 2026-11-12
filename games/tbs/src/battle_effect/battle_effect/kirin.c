@@ -247,7 +247,7 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
         if (fire->variant == 0) {
           s32 size = i % 3 + 1;
 
-          blit(canvas, sheet + gBattleEffect_MoteCells[size - 1], fire->x,
+          blit(canvas, sheet + gBattleEffect_MotePictures[size - 1], fire->x,
                Q_16_16_TO_INT(fire->y) - size, size, size * 2);
           fire->x += 2;
           fire->y += fire->velocityY;

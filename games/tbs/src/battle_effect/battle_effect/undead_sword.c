@@ -126,7 +126,7 @@ void BattleEffect_RunUndeadSword(struct BattleEffectParams *args) {
         drawY = Q_16_16_TO_INT(particle->y);
         if (cell > 6)
           cell = 6;
-        src = work->sheet + gUndeadSword_SparkCells[cell] +
+        src = work->sheet + gUndeadSword_SparkPictures[cell] +
               UNDEAD_SWORD_SPARK_SHEET;
         size = gUndeadSword_SparkSizes[cell];
         draw[0](canvas, src, drawX - size / 2, drawY - size / 2, size, size);

@@ -424,7 +424,7 @@ BattleEffect_RunUnusedStatReduction(struct BattleEffectParams *args) {
 }
 /// The shard picture in the sheet, followed by seven copies of it, each
 /// with its colour levels capped 7 lower than the one before.
-#define STAT_REDUCTION_SHARD_OFFSETS 9600
+#define STAT_REDUCTION_SHARD_PICTURES 9600
 #define STAT_REDUCTION_SHARD_BYTES 696 ///< bytes in each copy
 
 /// A dagger (Dull) or a shield (the others) appears over each target, 4
@@ -472,15 +472,15 @@ void BattleEffect_RunStatReduction(struct BattleEffectParams *args, s32 mode) {
     paletteId = (s32)&ResourceId_PinkBurstSheet;
   Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(paletteId), 128);
   Resource_LoadAndDecompress((s32)&ResourceId_PaletteRampImage,
-                             work->sheet + STAT_REDUCTION_SHARD_OFFSETS, 0, 0);
+                             work->sheet + STAT_REDUCTION_SHARD_PICTURES, 0, 0);
 
   // Build the seven darker copies of the shard picture.
   for (i = 1; i != 8; i++) {
     for (j = 0; j != STAT_REDUCTION_SHARD_BYTES; j++) {
-      s32 level = work->sheet[STAT_REDUCTION_SHARD_OFFSETS + j];
+      s32 level = work->sheet[STAT_REDUCTION_SHARD_PICTURES + j];
 
       EFFECT_CAP_LEVEL(level, 64 - i * 7);
-      work->sheet[STAT_REDUCTION_SHARD_OFFSETS +
+      work->sheet[STAT_REDUCTION_SHARD_PICTURES +
                   i * STAT_REDUCTION_SHARD_BYTES + j] = level;
     }
   }
@@ -596,8 +596,8 @@ void BattleEffect_RunStatReduction(struct BattleEffectParams *args, s32 mode) {
             blitters[0](canvas,
                         work->sheet +
                             (level * STAT_REDUCTION_SHARD_BYTES +
-                             gStatChange_ShardCells[cell]) +
-                            STAT_REDUCTION_SHARD_OFFSETS,
+                             gStatChange_ShardPictures[cell]) +
+                            STAT_REDUCTION_SHARD_PICTURES,
                         x, y, gStatChange_ShardWidths[cell],
                         gStatChange_ShardHeights[cell]);
             Particle_AdvanceWithGravity3D(shard, 60, 0);
@@ -611,5 +611,5 @@ void BattleEffect_RunStatReduction(struct BattleEffectParams *args, s32 mode) {
   EFFECT_FINISH_CANVAS();
 }
 
-#undef STAT_REDUCTION_SHARD_OFFSETS
+#undef STAT_REDUCTION_SHARD_PICTURES
 #undef STAT_REDUCTION_SHARD_BYTES

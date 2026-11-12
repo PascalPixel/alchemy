@@ -173,11 +173,11 @@ void BattleEffect_RunFire(struct BattleEffectParams *args) {
         // UB: width is assigned in one argument and read in another.
 #ifdef UBFIX
         width = gFire_FlareWidths[cell];
-        draw[1](canvas, work->sheet + gFire_FlareCells[cell],
+        draw[1](canvas, work->sheet + gFire_FlarePictures[cell],
                 ember->x - (width >> 1), ember->y + gFire_FlareBiasY[cell] - 56,
                 width, gFire_FlareHeights[cell]);
 #else
-        draw[1](canvas, work->sheet + gFire_FlareCells[cell],
+        draw[1](canvas, work->sheet + gFire_FlarePictures[cell],
                 ember->x - ((width = gFire_FlareWidths[cell]) >> 1),
                 ember->y + gFire_FlareBiasY[cell] - 56, width,
                 gFire_FlareHeights[cell]);

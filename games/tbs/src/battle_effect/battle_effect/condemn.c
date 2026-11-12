@@ -54,9 +54,10 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
   REG_BG2PA = Q_8_8(1);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
 
-  // Setup. The reaper and the crescent in work->sheet (enum ReaperSheetCell),
-  // with their palette; the fading crescent in Ram_MapGridCellBuffer (enum
-  // RedCrescentCell), whose own palette is skipped.
+  // Setup. The reaper and the crescent in work->sheet (enum
+  // ReaperSheetPicture), with their palette; the fading crescent in
+  // Ram_MapGridCellBuffer (enum RedCrescentPicture), whose own palette is
+  // skipped.
   sheet = Resource_GetTableEntry((s32)&ResourceId_CounterRevealSheet);
   Iwram_CopyWords((void *)BG_PLTT, sheet, 128);
   sheet = sheet + 128;

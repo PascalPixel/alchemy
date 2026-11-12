@@ -216,7 +216,7 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
           s32 y = puff->y / 8 - (gBattleEffect_SparkleSizes[image] >> 1);
 
           draw[work->args->variant == EFFECT_VARIANT_STRONGEST ? 1 : 0](
-              canvas, sparkles + gBattleEffect_SparkleCells[image], x, y,
+              canvas, sparkles + gBattleEffect_SparklePictures[image], x, y,
               gBattleEffect_SparkleSizes[image],
               gBattleEffect_SparkleSizes[image]);
         }
@@ -254,12 +254,12 @@ struct BoltSparkBuffer {
 #define FALLING_BOLT_SPARKS ((struct BoltSparkBuffer *)Ram_MapGridCellBuffer)
 
 /// The falling bolt picture in the sheet, after ParticleSpritesD's ten flare
-/// cells (2 * MOTE_SET_BYTES).
-#define DOUSE_FALLING_CELL (2 * MOTE_SET_BYTES)
+/// pictures (2 * MOTE_SET_BYTES).
+#define DOUSE_FALLING_PICTURE (2 * MOTE_SET_BYTES)
 /// The 24x24 landing flash picture in the sheet, after the 24x24 bolt.
-#define DOUSE_FLASH_CELL (DOUSE_FALLING_CELL + 24 * 24)
+#define DOUSE_FLASH_PICTURE (DOUSE_FALLING_PICTURE + 24 * 24)
 /// The 42x42 burst picture in the sheet, after the flash.
-#define DOUSE_BURST_CELL (DOUSE_FLASH_CELL + 24 * 24)
+#define DOUSE_BURST_PICTURE (DOUSE_FLASH_PICTURE + 24 * 24)
 
 /// Blue bolts streak down diagonally onto the targets' side of the field, each
 /// bursting into a fountain of falling sparks where it lands, while the targets
@@ -288,11 +288,11 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
 
   EFFECT_GET_SLOTS(slots, cursor, work, canvas);
   work->args = args;
-  // Setup: the bolt pictures go after the spark cells, which the particle
+  // Setup: the bolt pictures go after the spark pictures, which the particle
   // sheet decodes at the start of work->sheet; window 1 hides BG2.
   EFFECT_START_NARROW_CANVAS(BGCNT_WRAP | BGCNT_PRIORITY(1));
   Resource_LoadAndDecompress((s32)&ResourceId_BlueBeamSheet,
-                             work->sheet + DOUSE_FALLING_CELL, 1, 1);
+                             work->sheet + DOUSE_FALLING_PICTURE, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, work->sheet, 0,
                              0);
   BattleEffect_ConfigureEffectDisplay();
@@ -372,7 +372,7 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
       x = bolt->x / 8;
       y = bolt->y / 8;
       if (bolt->variant == -1) {
-        drawBolt(canvas, work->sheet + DOUSE_FALLING_CELL, x, y, 24, 24);
+        drawBolt(canvas, work->sheet + DOUSE_FALLING_PICTURE, x, y, 24, 24);
         if (bolt->y <= FALLING_LAND_Y) {
           if (work->args->side == EFFECT_SIDE_ENEMIES)
             bolt->x -= 32;
@@ -411,9 +411,9 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
         }
       } else {
         if (bolt->variant >= 0 && bolt->variant <= 3)
-          drawBolt(canvas, work->sheet + DOUSE_FLASH_CELL, x, y, 24, 24);
+          drawBolt(canvas, work->sheet + DOUSE_FLASH_PICTURE, x, y, 24, 24);
         else if (bolt->variant <= 7)
-          drawBolt(canvas, work->sheet + DOUSE_BURST_CELL, x - 9, y - 9, 42,
+          drawBolt(canvas, work->sheet + DOUSE_BURST_PICTURE, x - 9, y - 9, 42,
                    42);
         if (bolt->variant <= 14)
           bolt->variant++;
@@ -448,6 +448,6 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
 #undef FALLING_BUILD_SLANTED_WINDOW
 #undef FALLING_LAND_Y
 #undef FALLING_BOLT_SPARKS
-#undef DOUSE_FALLING_CELL
-#undef DOUSE_FLASH_CELL
-#undef DOUSE_BURST_CELL
+#undef DOUSE_FALLING_PICTURE
+#undef DOUSE_FLASH_PICTURE
+#undef DOUSE_BURST_PICTURE

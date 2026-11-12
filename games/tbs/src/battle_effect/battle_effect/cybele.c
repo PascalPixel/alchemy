@@ -12,16 +12,17 @@
 //   the third target's last two (slots 32 and 33) on, they share them with
 //   drawn chips.
 // - 0 on: dust clouds, ten per target, from frame 302.
-#define CYBELE_BLAST_OFFSETS 5760 ///< the blast pictures, after the yellow ring
-#define CYBELE_FIRST_SPARK 16     ///< the first spark in work->particles
-#define CYBELE_FIRST_THORN 32     ///< the first thorn in work->particles
-#define CYBELE_FIRST_CHIP 16      ///< the first chip in work->particles
-#define CYBELE_DUST_CELL 6        ///< the dust cloud in gCybele_BlastOffsets
+#define CYBELE_BLAST_PICTURES                                                  \
+  5760                        ///< the blast pictures, after the yellow ring
+#define CYBELE_FIRST_SPARK 16 ///< the first spark in work->particles
+#define CYBELE_FIRST_THORN 32 ///< the first thorn in work->particles
+#define CYBELE_FIRST_CHIP 16  ///< the first chip in work->particles
+#define CYBELE_DUST_PICTURE 6 ///< the dust cloud in gCybele_BlastPictures
 
 /// The vine pictures in the thorn vine sheet, each starting where the one
 /// before ends, below a 24x8 tip at 0. The flowers, thorns and sparks follow
-/// (gCybele_FlowerOffsets, gCybele_ThornOffsets, gCybele_SparkOffsets).
-enum ThornVineSheetCell {
+/// (gCybele_FlowerPictures, gCybele_ThornPictures, gCybele_SparkPictures).
+enum ThornVineSheetPicture {
   /// 24x64
   CYBELE_VINE_STEM = 24 * 8,
   /// a thinner vine: its 24x8 tip, then its 24x64 stem
@@ -205,7 +206,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
           s32 cellIndex = (frame + i) / 4 % 5;
           s32 x = Q_16_16_TO_INT(thorn->x);
           s32 y = thorn->y >> 16;
-          u8 *cell = work->sheet + gCybele_ThornOffsets[cellIndex];
+          u8 *cell = work->sheet + gCybele_ThornPictures[cellIndex];
           u32 width = gCybele_ThornWidths[cellIndex];
           u32 tall;
 
@@ -293,7 +294,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
             if (y + rows > vine->y)
               rows -= y + rows - vine->y;
             if (rows > 0)
-              draw[i & 1](canvas, work->sheet + gCybele_FlowerOffsets[kind],
+              draw[i & 1](canvas, work->sheet + gCybele_FlowerPictures[kind],
                           vine->x + 8, y, full, rows);
           }
         }
@@ -307,7 +308,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
         if (chip->variant >= 0) {
           s32 cellIndex = i % 5;
 
-          draw[0](canvas, work->sheet + gCybele_ChipOffsets[cellIndex],
+          draw[0](canvas, work->sheet + gCybele_ChipPictures[cellIndex],
                   Q_16_16_TO_INT(chip->x), Q_16_16_TO_INT(chip->y),
                   gCybele_ChipWidths[cellIndex],
                   gCybele_ChipHeights[cellIndex]);
@@ -370,7 +371,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
             spark->y = screen.y + (Random16() & 15) - 40;
           }
           if (spark->variant >= 0 && spark->variant <= 4) {
-            u8 *cell = work->sheet + gCybele_SparkOffsets[spark->variant];
+            u8 *cell = work->sheet + gCybele_SparkPictures[spark->variant];
             u32 size = gCybele_SparkSizes[spark->variant];
             u32 half = size >> 1;
 
@@ -463,7 +464,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
       Resource_LoadAndDecompress((s32)&ResourceId_YellowRingSheet, work->sheet,
                                  1, 0);
       Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet,
-                                 work->sheet + CYBELE_BLAST_OFFSETS, 1, 1);
+                                 work->sheet + CYBELE_BLAST_PICTURES, 1, 1);
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                           COMPOSITE_LIGHTEN);
       draw[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
@@ -522,11 +523,11 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
             Projection_Point(&dust->x, &screen);
             screen.x >>= 1;
             if (dust->variant >= 0 && dust->variant <= 26) {
-              /* FAKEMATCH(temporary): cellIndex holds CYBELE_DUST_CELL; as
-               * CYBELE_DUST_CELL in both reads, 214 of 1434 instructions
+              /* FAKEMATCH(temporary): cellIndex holds CYBELE_DUST_PICTURE; as
+               * CYBELE_DUST_PICTURE in both reads, 214 of 1434 instructions
                * differ in tbs-en. */
-              s32 cellIndex = CYBELE_DUST_CELL;
-              s32 offset = gCybele_BlastOffsets[cellIndex];
+              s32 cellIndex = CYBELE_DUST_PICTURE;
+              s32 offset = gCybele_BlastPictures[cellIndex];
               u32 size = gCybele_BlastSizes[cellIndex];
 
               draw[0](canvas, work->sheet + offset, screen.x - (size >> 1),
@@ -564,5 +565,5 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
 #undef CYBELE_FIRST_SPARK
 #undef CYBELE_FIRST_THORN
 #undef CYBELE_FIRST_CHIP
-#undef CYBELE_DUST_CELL
-#undef CYBELE_BLAST_OFFSETS
+#undef CYBELE_DUST_PICTURE
+#undef CYBELE_BLAST_PICTURES

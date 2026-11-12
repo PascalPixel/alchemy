@@ -15,18 +15,18 @@ enum ParticleStreamsMode {
 /// where the one before ends: six 32x32 flames, then three 24x24 and three
 /// 8x8 glows, each glow brighter at its centre than the one before. The fall
 /// draws only the six and the brightest glow of each size.
-enum ParticleStreamsSheetCell {
+enum ParticleStreamsSheetPicture {
   /// The six 32x32 flames, in a row
-  PARTICLE_STREAMS_FLAME_CELLS = 0,
+  PARTICLE_STREAMS_FLAMES = 0,
   /// The brightest 24x24 glow
-  PARTICLE_STREAMS_LARGE_GLOW_CELL = PARTICLE_STREAMS_FLAME_CELLS +
-      6 * 32 * 32 + 2 * 24 * 24,
+  PARTICLE_STREAMS_LARGE_GLOW = PARTICLE_STREAMS_FLAMES + 6 * 32 * 32 +
+      2 * 24 * 24,
   /// The brightest 8x8 glow
-  PARTICLE_STREAMS_SMALL_GLOW_CELL = PARTICLE_STREAMS_LARGE_GLOW_CELL +
-      24 * 24 + 2 * 8 * 8,
+  PARTICLE_STREAMS_SMALL_GLOW = PARTICLE_STREAMS_LARGE_GLOW + 24 * 24 +
+      2 * 8 * 8,
   /// Past the sheet's end: the backdrop's 160 colours, one a line, that the
   /// fall writes there.
-  PARTICLE_STREAMS_BACKDROP_LINES = PARTICLE_STREAMS_SMALL_GLOW_CELL + 8 * 8
+  PARTICLE_STREAMS_BACKDROP_LINES = PARTICLE_STREAMS_SMALL_GLOW + 8 * 8
 };
 
 /// Adds per-channel steps to background colours 1 to 63, capped at 31.
@@ -97,8 +97,8 @@ void BattleEffect_RunOuterSpace(struct BattleEffectParams *args) {
 #define PARTICLE_STREAMS_EMBERS (&PARTICLES[128])
 
 /// The mote pictures in the blast sheet, after its seven blast pictures
-/// (BLAST_CELL_SIZES): two sets, MOTE_SET_BYTES apart.
-#define PARTICLE_STREAMS_MOTE_OFFSETS (16 * 16 + 32 * 32 + 5 * 48 * 48)
+/// (BLAST_PICTURE_SIZES): two sets, MOTE_SET_BYTES apart.
+#define PARTICLE_STREAMS_MOTE_PICTURES (16 * 16 + 32 * 32 + 5 * 48 * 48)
 
 /// The stream runs in two halves. The fall dissolves the battle map into a
 /// starfield, then for up to 192 frames brings the falling sprite (two in
@@ -493,8 +493,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
         Projection_Point(vector, screenPosition = &spot);
         screenPosition->x = Q_16_16_TO_INT(screenPosition->x) + 128;
         screenPosition->y = Q_16_16_TO_INT(screenPosition->y) + 60;
-        draw(Ram_MapGridCellBuffer,
-             work->sheet + PARTICLE_STREAMS_SMALL_GLOW_CELL,
+        draw(Ram_MapGridCellBuffer, work->sheet + PARTICLE_STREAMS_SMALL_GLOW,
              screenPosition->x - 4, screenPosition->y - 4, 8, 8);
       }
       if (direction == 1)
@@ -508,8 +507,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
         s32 fireballY = gParticleStreams_FireballPoints[i][1] + y;
 
         if (fireballY <= 93)
-          draw(Ram_MapGridCellBuffer,
-               work->sheet + PARTICLE_STREAMS_LARGE_GLOW_CELL,
+          draw(Ram_MapGridCellBuffer, work->sheet + PARTICLE_STREAMS_LARGE_GLOW,
                gParticleStreams_FireballPoints[i][0] + x - 12, fireballY - 12,
                24, 24);
         else if (fireballY <= 95)
@@ -523,7 +521,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
         // 1.25 against the stream each frame, then frees its slot.
         if (flame->variant >= 0) {
           draw(Ram_MapGridCellBuffer,
-               work->sheet + PARTICLE_STREAMS_FLAME_CELLS +
+               work->sheet + PARTICLE_STREAMS_FLAMES +
                    flame->variant * (32 * 32),
                Q_16_16_TO_INT(flame->x) - 16, Q_16_16_TO_INT(flame->y) - 16, 32,
                32);
@@ -635,16 +633,16 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
           screen.depth = 799;
         // Mote size 9 at depth 160, one smaller every 64 units further.
         // UB: from depth 736 the size is 0, a picture 0 pixels wide, and its
-        // cell is read from gBattleEffect_MoteCells[-1], the last halfword of
-        // the blitter template, which ends at the table
+        // picture is read from gBattleEffect_MotePictures[-1], the last
+        // halfword of the blitter template, which ends at the table
         // (BattleEffect_BuildBlitter). No UBFIX form yet.
         size = 9 - (screen.depth - 160) / 64;
-        draw(
-            canvas,
-            work->sheet +
-                (gBattleEffect_MoteCells[size - 1] + (i & 1) * MOTE_SET_BYTES) +
-                PARTICLE_STREAMS_MOTE_OFFSETS,
-            screen.x - size / 2, screen.y - size, size, size * 2);
+        draw(canvas,
+             work->sheet +
+                 (gBattleEffect_MotePictures[size - 1] +
+                  (i & 1) * MOTE_SET_BYTES) +
+                 PARTICLE_STREAMS_MOTE_PICTURES,
+             screen.x - size / 2, screen.y - size, size, size * 2);
         Particle_AdvanceWithGravity3D(ember, 64, -px(1) / 8);
         if (ember->y <= px(20)) {
           ember->x = 0;
@@ -666,8 +664,9 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
 
       draw(canvas,
            work->sheet +
-               (gBattleEffect_MoteCells[size - 1] + (i & 1) * MOTE_SET_BYTES) +
-               PARTICLE_STREAMS_MOTE_OFFSETS,
+               (gBattleEffect_MotePictures[size - 1] +
+                (i & 1) * MOTE_SET_BYTES) +
+               PARTICLE_STREAMS_MOTE_PICTURES,
            mote->x - size / 2, mote->y - size, size, size * 2);
       mote->y = mote->y - rise - 8;
       if (mote->y < -10)
@@ -675,7 +674,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
     }
     for (i = 0; i != 64; i++) {
       // The first 64 flashes, three more released each frame from frame 17:
-      // seven growing cells, two frames each, then a restart at height 20
+      // seven growing pictures, two frames each, then a restart at height 20
       // with a random depth and upward speed.
       struct Particle *flash = &PARTICLES[i];
 
@@ -685,7 +684,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
         if ((u32)flash->variant <= 13) {
           s32 cell = flash->variant / 2;
 
-          draw(canvas, work->sheet + gParticleStreams_FlashCells[cell],
+          draw(canvas, work->sheet + gParticleStreams_FlashPictures[cell],
                screen.x - gParticleStreams_FlashSizes[cell] / 2,
                screen.y - gParticleStreams_FlashSizes[cell] / 2,
                gParticleStreams_FlashSizes[cell],
@@ -740,4 +739,4 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
 }
 
 #undef PARTICLE_STREAMS_EMBERS
-#undef PARTICLE_STREAMS_MOTE_OFFSETS
+#undef PARTICLE_STREAMS_MOTE_PICTURES

@@ -450,7 +450,7 @@ static s32 CrossboneIsleSteppingStones_LowerActorToLedge(s32 id, s32 far) {
 
   found = 0;
   temporaryActor = NULL;
-  Actor_SetSpriteFlags(actor, found);
+  Actor_SetSpriteFlags(actor, 0);
   height = MapGrid_GetTerrainHeight(2, actor->x.fixed, actor->z.fixed);
   level = height / px(16);
   rows = level;

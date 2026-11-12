@@ -14,46 +14,45 @@ void BattleEffect_ResetBg2Pa(void) { REG_BG2PA = Q_8_8(1); }
 /// 0 and from frame 152 on line 96, for its first stage.
 void BattleEffect_SetBg2AffineScaleHalf(void) { REG_BG2PA = Q_8_8(0.5); }
 
-#define NEPTUNE_FLAME_GROUND 112  ///< where the blue flames throw sparks
-#define NEPTUNE_OBJECTS 8         ///< sprites in the formation
-#define NEPTUNE_PARTICLES 1024    ///< PARTICLES slots: spray, then sparks
+#define NEPTUNE_OBJECTS 8         ///< Neptune's sprites
+#define NEPTUNE_PARTICLES 1024    ///< PARTICLES slots: spray, then drops
 #define NEPTUNE_FLARE_SHEET 20000 ///< the flare pictures, after the spray
-/// The 48x48 light pictures (9 * 256 bytes each), after the spray sheet's
-/// 32x32 spray picture.
-#define NEPTUNE_LIGHT_OFFSETS (32 * 32)
-/// The blue flame column's 34x65 head, after its 17x104 shaft.
-#define NEPTUNE_FLAME_HEAD (17 * 104)
+/// The seven 48x48 pictures of the splash where the beam strikes, growing
+/// and then curling, after the spray sheet's 32x32 picture of the sea.
+#define NEPTUNE_SPLASH (32 * 32)
+/// A water column's 34x65 head, after its 17x104 shaft.
+#define NEPTUNE_COLUMN_HEAD (17 * 104)
 
-/// Over dusk clouds a formation of sprites flies in through rising spray,
-/// gathers a ring of flares into a burst of light, then five blue flame columns
-/// drop onto the targets, throwing sparks.
+/// Under storm clouds Neptune leaps out of the sea in a burst of spray, light
+/// gathers at its head and a beam of light strikes it there; then five columns
+/// of water crash down on the targets, throwing up drops.
 ///
 /// Abilities: Neptune (SUMMON_EFFECT_NEPTUNE).
 ///
 /// The effect runs in two stages. The first (244 frames; A or B ends it
-/// after frame 16) places NEPTUNE_OBJECTS sprites at one and a half times their
-/// size, opens the window with an edge table built every frame, sprays
-/// particles under gravity, converges a ring of flares, then breaks into a
-/// burst of light; meanwhile a frame task and an interrupt change BG2's
-/// horizontal scale. The second stage (144 frames) drops five blue flame
-/// columns onto the targets, one every 16 frames; each throws sparks when it
-/// reaches the ground (NEPTUNE_FLAME_GROUND). The battle shows the damage on
-/// its frame 96.
+/// after frame 16) places Neptune, NEPTUNE_OBJECTS sprites of SPRITE_NEPTUNE,
+/// at one and a half times their size, opens the window with an edge table
+/// built every frame, sprays particles under gravity over the sea along the
+/// bottom, converges a ring of flares on Neptune's head, then strikes it with
+/// a beam and a splash; meanwhile a frame task and an interrupt change BG2's
+/// horizontal scale. The second stage (144 frames) drops five columns of water
+/// onto the targets, one every 16 frames; each throws up drops when it
+/// reaches the ground at y 112. The battle shows the damage on its frame 96.
 ///
 /// Reached through BattleEffect_RunSummon, whose sheet slot holds the
 /// mote sheet here. The first stage projects with gProjection.centerY at 240
 /// and holds BG1's scroll from the battle camera; the second gives BG1's x
 /// back, removes the scale task and interrupt, and
 /// BattleEffect_SetupBlendedDisplay puts the centre back at 120, which its
-/// BattleCamera_Shake then moves while the screen shakes. The formation's
+/// BattleCamera_Shake then moves while the screen shakes. Neptune's
 /// sprites are released before the effect returns.
 ///
 /// In the first stage work->particles 0 to 31 are the converging flares, then
 /// from frame 222 0 to 63 the burst points; PARTICLES holds the spray
 /// (variant counts its frames, -1 when free). In the second stage
-/// work->particles 0 to 4 are the flame columns (variant their frames on the
-/// ground) and PARTICLES the sparks (variant their frames left, 0 when free).
-/// The window's edge step, noise and scanline table use the map grid cell
+/// work->particles 0 to 4 are the water columns (variant their frames on the
+/// ground) and PARTICLES the drops (variant their frames left, 0 when free).
+/// The window's edge step, noise and line table use the map grid cell
 /// buffer's first 450 bytes on frames 0 to 15, over spray particles 0 to 16,
 /// which are already launched.
 void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
@@ -70,8 +69,8 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
   s32 savedBg1ScrollX;
   struct BattleBackgroundWork *view;
   s32 j;
-  s32 emittedSparks;
-  s32 sparkOriginX;
+  s32 emittedDrops;
+  s32 dropOriginX;
   u32 *cache;
   struct BattleEffectWork *work;
   s32 frame;
@@ -82,10 +81,12 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
   struct Particle *flareSeed;
   struct Particle *flare;
   struct Particle *burstSeed;
-  struct Particle *flameColumn;
+  struct Particle *column;
   DrawRectangle blit[2];
   struct SpriteScale scale;
-  s32 ground = NEPTUNE_FLAME_GROUND;
+  /* FAKEMATCH(temporary): ground holds 112, where the columns land; as
+   * px(112) at its one use, 38 of 1474 instructions differ in tbs-en. */
+  s32 ground = 112;
 
   cache = (u32 *)&gHeapSlots[HEAP_SLOT_BATTLE_CANVAS];
   canvas = (void *)cache[0];
@@ -105,7 +106,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
   work->transferMode = CANVAS_COPY;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   // Setup: wipe the battle away and close window 0 (its edge opens over the
-  // first 16 frames), swap in the dusk battle background and load the pictures.
+  // first 16 frames), swap in the storm clouds and load the pictures.
   REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_CLR;
   BattleEffect_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_FILL);
   REG_WIN0H = WIN_RANGE(240, 240);
@@ -122,10 +123,10 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD,
                              work->sheet + NEPTUNE_FLARE_SHEET, 0, 0);
   EFFECT_SHOW_WIDE_CANVAS(16);
-  // The formation starts at x 280, 200 deep, and flies in at 4 pixels a
-  // frame across and 8 forward (16.16), slowing as it comes.
+  // Neptune starts at x 280, 200 deep, and leaps in at 4 pixels a frame
+  // across and 8 forward, slowing as it comes.
   windowEdgeStep = 1;
-  formationX = 140 << 17;
+  formationX = px(280);
   formationZ = px(200);
   formationVelocityX = -px(4);
   formationVelocityZ = -px(8);
@@ -147,7 +148,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
   for (i = 0; i != NEPTUNE_PARTICLES; i++) {
     PARTICLES[i].variant = -1;
   }
-  // Seed the flares that converge during the formation burst: each starts
+  // Seed the flares that converge on Neptune's head: each starts
   // 64 to 95 pixels out, in the quarter turn from TRIG_TURN / 2 (up and to
   // the left of the centre), and closes in over 32 frames.
   for (i = 0, flareSeed = work->particles; i != 32; i++, flareSeed++) {
@@ -166,7 +167,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
     s32 r = Random16() & 255;
     s32 a = Random16() & TRIG_ANGLE_MASK;
     PARTICLES[i].x = ((Trig_Sin(a) * r) >> 3) + px(128);
-    PARTICLES[i].y = ((Trig_Cos(a) * r) >> 4) + (192 << 15);
+    PARTICLES[i].y = ((Trig_Cos(a) * r) >> 4) + px(96);
     PARTICLES[i].velocityX = (-(Random16() & 0x1fff) - 0x800) << 5;
     PARTICLES[i].velocityY = (-(Random16() & 0xfff) - 0x1800) << 5;
     PARTICLES[i].variant = 0;
@@ -174,10 +175,10 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
 
   frame = 0;
   do {
-    // The first stage: the window opens (frames 0 to 15), the formation flies
+    // The first stage: the window opens (frames 0 to 15), Neptune leaps in
     // (22 to 170), the spray falls (from 28, a second burst on 76), the flares
     // converge (152 to 239), the beam of lines reaches the burst (from 176)
-    // and the burst breaks into light (from 222).
+    // and the beam strikes it with the splash (from 222).
     if (frame == 24) {
       Sound_PlayFar(SE_WAVE);
     }
@@ -211,9 +212,9 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
       }
     }
 
-    // From frame 22 the formation flies in and settles around depth 132 by
-    // frame 83, then drifts right while settling around depth 138, until
-    // frame 170. Its sprites stand at one and a half times their offsets.
+    // From frame 22 Neptune leaps in and settles around depth 132 by frame
+    // 83, then drifts right while settling around depth 138, until frame 170.
+    // Its sprites stand at one and a half times their offsets.
     if (frame > 21) {
       scale = unitScale;
       if (frame <= 83) {
@@ -261,7 +262,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
           s32 r = Random16() & 255;
           s32 a = Random16() & TRIG_ANGLE_MASK;
           PARTICLES[i].x = ((Trig_Sin(a) * r) >> 3) + px(64);
-          PARTICLES[i].y = ((Trig_Cos(a) * r) >> 4) + (192 << 15);
+          PARTICLES[i].y = ((Trig_Cos(a) * r) >> 4) + px(96);
           PARTICLES[i].velocityX = (32 - (Random16() & 63)) << 12;
           PARTICLES[i].velocityY = (-(Random16() & 31) - 16) << 13;
           PARTICLES[i].variant = 0;
@@ -269,15 +270,15 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
       }
     }
     // Frame 152: only the lines from 96 down stay stretched, and the battle
-    // battle background's colours darken over 24 frames.
+    // background's colours darken over 24 frames.
     if (frame == 152) {
       Irq_SetHandler(IRQ_VCOUNT, 96, BattleEffect_SetBg2AffineScaleHalf);
       work->fadeFrames = 24;
       work->fadeStep = 0;
     }
 
-    // Frames 152 to 239: the 32 flares converge on (112, 62), four more
-    // starting each frame, each shown for 32 frames.
+    // Frames 152 to 239: the 32 flares converge on Neptune's head at
+    // (112, 62), four more starting each frame, each shown for 32 frames.
     t = frame - 152;
     if (t >= 0 && t < 88) {
       for (i = 0, flare = work->particles; i != 32; i++, flare++) {
@@ -326,6 +327,9 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
       for (i = 0; i != 64; i++) {
         // Two more burst points start each frame, as the smallest flare; one
         // that leaves the top restarts.
+        /* FAKEMATCH(temporary): cells holds gBattleEffect_FlareCells and r
+         * holds 1, the smallest flare; as gBattleEffect_FlareCells[0], 1 and
+         * 2 written out, 110 of 1474 instructions differ in tbs-en. */
         u16 *cells = gBattleEffect_FlareCells;
         s32 r = 1;
         if (frame >= i / 2 + 222) {
@@ -356,6 +360,8 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
           n = 40;
         }
       }
+      /* FAKEMATCH(dead): never true, as n is 5, 40 or 60 here; without the
+       * clamp, 61 of 1474 instructions differ in tbs-en. */
       if (n > 60) {
         n = 60;
       }
@@ -378,7 +384,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
     }
 
     // The flare at the centre of the burst grows from frame 152, and from
-    // frame 214 the light pictures cover it.
+    // frame 214 the splash pictures cover it.
     if (t >= 0 && t < 40) {
       s32 z;
       z = t / 2 + 1;
@@ -429,23 +435,25 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
       if (z > 2) {
         z = 2;
       }
-      blit[1](canvas, work->sheet + z * 9 * 256 + NEPTUNE_LIGHT_OFFSETS, 63, 18,
-              48, 48);
+      blit[1](canvas, work->sheet + NEPTUNE_SPLASH + z * (48 * 48), 63, 18, 48,
+              48);
     }
     if (frame > 221) {
       s32 z;
       z = (frame - 222) / 2 % 4 + 3;
-      blit[0](canvas, work->sheet + z * 9 * 256 + NEPTUNE_LIGHT_OFFSETS, 72, 30,
-              48, 48);
+      blit[0](canvas, work->sheet + NEPTUNE_SPLASH + z * (48 * 48), 72, 30, 48,
+              48);
       if (z == 5) {
-        blit[0](canvas, work->sheet + NEPTUNE_LIGHT_OFFSETS + 2 * (48 * 48), 66,
-                22, 48, 48);
+        blit[0](canvas, work->sheet + NEPTUNE_SPLASH + 2 * (48 * 48), 66, 22,
+                48, 48);
       }
     }
 
     // From frame 28 each live spray particle falls under its gravity
     // (gNeptune_Gravity by index); one that falls below y 104 is freed.
     if (frame > 27) {
+      /* FAKEMATCH(temporary): draw holds blit[1]; as blit[1] in the draw,
+       * 643 of 1474 instructions differ in tbs-en. */
       DrawRectangle draw = blit[1];
       for (i = 0; i != NEPTUNE_PARTICLES; i++) {
         if (PARTICLES[i].variant >= 0) {
@@ -464,7 +472,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
       }
     }
     for (i = 0; i != 5; i++) {
-      // The scrolling strip of five spray pictures along the bottom.
+      // The sea: five copies of its 32x32 picture along the bottom, scrolling.
       blit[1](canvas, work->sheet, i * 32 + ((frame / 4) & 31) - 32, 88, 32,
               32);
     }
@@ -472,7 +480,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
   } while (++frame != 244 && (frame <= 16 || !(gKeysRepeat & (KEY_A | KEY_B))));
 
   // The second stage: restore the battle background, the scale tasks and
-  // the display, free the spray as sparks (variant 0), and aim the five flame
+  // the display, free the spray as drops (variant 0), and aim the five water
   // columns: column i drops onto target i's x (halved for the wide canvas)
   // when there is one, otherwise onto a random x from 32 to 63.
   gBgScroll[1].x = savedBg1ScrollX;
@@ -503,55 +511,57 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
   frame = 0;
   do {
     // The second stage, 144 frames: column i starts on frame 16i and lands
-    // on frame 16i + 7, at y 112 (NEPTUNE_FLAME_GROUND); the battle shows
+    // on frame 16i + 7, at y 112; the battle shows
     // the damage on frame 96.
     if (frame == 96) {
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     }
     for (i = 0; i != 5; i++) {
-      flameColumn = &work->particles[i];
+      column = &work->particles[i];
       if (frame == i * 16 + 7) {
         Sound_PlayFar(SE_CAST);
       }
       // A column, a scrolling shaft over a head, falls 16 pixels a frame.
       // Once on the ground it counts its frames there, shakes the screen for
-      // the first eight and throws up to four sparks a frame for about 32
-      // frames. A spark flies up in a half fan, up to 8 pixels a frame across
+      // the first eight and throws up to four drops a frame for about 32
+      // frames. A drop flies up in a half fan, up to 8 pixels a frame across
       // and 16 up, for 32 to 39 frames.
-      if (frame >= i * 16 && flameColumn->variant <= 31) {
+      if (frame >= i * 16 && column->variant <= 31) {
         s32 wobble = frame * 16 % 104;
-        blit[1](canvas, work->sheet, flameColumn->x - 8,
-                flameColumn->y + wobble - 216, 17, 104);
-        blit[1](canvas, work->sheet, flameColumn->x - 8,
-                flameColumn->y + wobble - 112, 17, 104 - wobble);
-        blit[1](canvas, work->sheet + NEPTUNE_FLAME_HEAD, flameColumn->x - 17,
-                flameColumn->y - 65, 34, 65);
-        if (flameColumn->y <= 111) {
-          flameColumn->y += 16;
+        blit[1](canvas, work->sheet, column->x - 8, column->y + wobble - 216,
+                17, 104);
+        blit[1](canvas, work->sheet, column->x - 8, column->y + wobble - 112,
+                17, 104 - wobble);
+        blit[1](canvas, work->sheet + NEPTUNE_COLUMN_HEAD, column->x - 17,
+                column->y - 65, 34, 65);
+        if (column->y <= 111) {
+          column->y += 16;
         } else {
-          flameColumn->variant++;
+          column->variant++;
         }
-        if (flameColumn->y > 111) {
-          emittedSparks = 0;
-          sparkOriginX = flameColumn->x;
-          if (flameColumn->variant <= 7) {
+        if (column->y > 111) {
+          emittedDrops = 0;
+          dropOriginX = column->x;
+          if (column->variant <= 7) {
             work->shakeFrames = 4;
           }
           for (j = 0; j != NEPTUNE_PARTICLES; j++) {
             if (PARTICLES[j].variant == 0) {
+              /* FAKEMATCH(temporary): r holds the mask before Random16() is
+               * masked into it; as s32 r = Random16() & 0x3ff, 25 of 1474
+               * instructions differ in tbs-en. */
               s32 r = 0x3ff;
               s32 a;
-              // Masked in place, the mask assigned first; as Random16() & mask,
-              // 3 instructions differ.
+
               r &= Random16();
               a = (Random16() & 0x7fff) - TRIG_TURN / 4;
-              PARTICLES[j].x = px(sparkOriginX);
+              PARTICLES[j].x = px(dropOriginX);
               PARTICLES[j].y = px(ground);
               r += 32;
               PARTICLES[j].velocityX = (Trig_Sin(a) * r) >> 7;
               PARTICLES[j].velocityY = -(Trig_Cos(a) * r * 2) >> 7;
               PARTICLES[j].variant = (Random16() & 7) + 32;
-              if (++emittedSparks == 4) {
+              if (++emittedDrops == 4) {
                 break;
               }
             }
@@ -571,8 +581,8 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
       if (PARTICLES[i].variant > 0) {
         s32 x;
         s32 y;
-        // Sparks fall under a quarter pixel of gravity and bounce at half
-        // speed below y 120; one off the canvas is not drawn. A spark's mote
+        // Drops fall under a quarter pixel of gravity and bounce at half
+        // speed below y 120; one off the canvas is not drawn. A drop's mote
         // shrinks from size 6 or 7 down to 3 as its life runs out.
         PARTICLES[i].variant--;
         Particle_AdvanceWithGravity2D(&PARTICLES[i], 60, px(1) / 4);
@@ -590,16 +600,15 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
     EFFECT_END_FRAME(work);
   } while (++frame != 144);
 
-  // The finish: release the formation's sprites, then the canvas.
+  // The finish: release Neptune's sprites, then the canvas.
   for (i = 0; i != NEPTUNE_OBJECTS; i++) {
     Sprite_DestroyFar(work->sprites[i]);
   }
   EFFECT_FINISH_CANVAS();
 }
 
-#undef NEPTUNE_FLAME_GROUND
 #undef NEPTUNE_OBJECTS
 #undef NEPTUNE_PARTICLES
 #undef NEPTUNE_FLARE_SHEET
-#undef NEPTUNE_LIGHT_OFFSETS
-#undef NEPTUNE_FLAME_HEAD
+#undef NEPTUNE_SPLASH
+#undef NEPTUNE_COLUMN_HEAD

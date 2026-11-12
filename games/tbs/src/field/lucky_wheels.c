@@ -1205,16 +1205,12 @@ void LuckyWheels_Run(void) {
             s32 speed;
             s32 angle;
 
-            /* FAKEMATCH(temporary): speed holds the mask before Random16; as
-             * speed = Random16() & 255, 51 of 948 instructions differ in
-             * tbs-en. */
-            speed = 255;
-            speed &= Random16();
+            speed = (Random16() & 255) + 64;
             angle = Random16() & 0xffff;
             spark->x = px(x);
             spark->y = px(y);
-            spark->velocityX = Trig_Sin(angle) * (speed + 64) >> 6;
-            spark->velocityY = -(Trig_Cos(angle) * (speed + 64)) >> 6;
+            spark->velocityX = Trig_Sin(angle) * speed >> 6;
+            spark->velocityY = -(Trig_Cos(angle) * speed) >> 6;
             spark->variant = (Random16() & 15) + 16;
             spark++;
           }

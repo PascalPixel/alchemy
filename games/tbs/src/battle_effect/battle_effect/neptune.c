@@ -546,17 +546,12 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
           }
           for (j = 0; j != 1024; j++) {
             if (PARTICLES[j].variant == 0) {
-              /* FAKEMATCH(temporary): r holds the mask before Random16() is
-               * masked into it; as s32 r = Random16() & 0x3ff, 25 of 1474
-               * instructions differ in tbs-en. */
-              s32 r = 0x3ff;
+              s32 r = (Random16() & 0x3ff) + 32;
               s32 a;
 
-              r &= Random16();
               a = (Random16() & 0x7fff) - TRIG_TURN / 4;
               PARTICLES[j].x = px(dropOriginX);
               PARTICLES[j].y = px(ground);
-              r += 32;
               PARTICLES[j].velocityX = (Trig_Sin(a) * r) >> 7;
               PARTICLES[j].velocityY = -(Trig_Cos(a) * r * 2) >> 7;
               PARTICLES[j].variant = (Random16() & 7) + 32;

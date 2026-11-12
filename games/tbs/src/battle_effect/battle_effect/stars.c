@@ -4,21 +4,21 @@
 
 #include "../battle_effect_internal.h"
 
-// Astral Blast flies three ten-pointed rings at the target, knocking it back;
-// Shining Star drops eight ten-pointed stars that bounce near the target.
-// Each outline is drawn from ten corner points, a tenth of a turn (0x199a)
+// Astral Blast flies three five-pointed stars at the target, knocking it back;
+// Shining Star drops eight that bounce near the target. Each outline is
+// drawn from ten corner points, tips and notches, a tenth of a turn (0x199a)
 // apart, projected onto the canvas and stored in the velocity fields of
-// PARTICLES, ten for each ring or star; each edge is sampled at evenly
-// spaced points and a mote is stamped at each.
+// PARTICLES, ten for each star; each edge is sampled at evenly spaced points
+// and a mote is stamped at each.
 
-/// Three star-shaped rings of light fly from 40 pixels above the user at the
-/// first target, 12 frames apart, growing and spinning as they go, while the
-/// camera swings round; each knocks the target back on arrival, and the third
-/// lets the battle show the damage.
+/// Three pink five-pointed stars of light fly from 40 pixels above the user at
+/// the first target, 12 frames apart, growing and spinning as they go, while
+/// the camera swings round; each knocks the target back on arrival, and the
+/// third lets the battle show the damage.
 ///
 /// Abilities: Astral Blast (BATTLE_EFFECT_ASTRAL_BLAST).
 ///
-/// work->particles 0 to 2 are the rings, battle positions in 16.16. Loads the
+/// work->particles 0 to 2 are the stars, battle positions in 16.16. Loads the
 /// rune palette into the first 64 background colours, sets the user's
 /// effect (2, at speed 48, three times the usual, and does not set it
 /// back), turns the camera's yaw, sends the target back with its motion
@@ -74,7 +74,7 @@ void BattleEffect_RunAstralBlast(struct BattleEffectParams *args) {
 
   source = GetBattleObjectSlotFar(work->args->user)->actor;
   target = GetBattleObjectSlotFar(work->args->targets[0])->actor;
-  // Each ring reaches the target in 12 frames; the second and third aim
+  // Each star reaches the target in 12 frames; the second and third aim
   // twice as far across, past it.
   for (i = 0, point = work->particles; i != 3; i++) {
     SET_POSITION(point, source->x.fixed, source->y.fixed + px(40),
@@ -115,9 +115,9 @@ void BattleEffect_RunAstralBlast(struct BattleEffectParams *args) {
           size = 10;
         EFFECT_VIEW_FROM_CAMERA(camera);
         Transform_ApplyPosition(Particle_Coordinates(step));
-        // The ring's ten points, alternately near and far from its centre,
+        // The star's ten corners, tips and notches in turn,
         // projected onto the canvas; peak is the largest projection scale
-        // (16.16), that of the point nearest the camera. The ring spins 1/64
+        // (16.16), that of the point nearest the camera. The star spins 1/64
         // turn a frame and grows from 1/16 of its size to full by 15 frames.
         peak = 0;
         for (j = 0; j != 10; j++) {
@@ -168,9 +168,9 @@ void BattleEffect_RunAstralBlast(struct BattleEffectParams *args) {
         step->x += step->velocityX;
         step->y += step->velocityY;
         step->z += step->velocityZ;
-        // Ring i hits 10 + i frames after its launch: knock the target 40
+        // Star i hits 10 + i frames after its launch: knock the target 40
         // pixels back, away from the middle, and shake the screen. The third
-        // ring lets the battle show the damage; the others flash the target.
+        // star lets the battle show the damage; the others flash the target.
         // The target hops at 5 pixels a frame under the usual gravity and
         // slides at up to 8 pixels a frame.
         if (frame == start + i + 10) {
@@ -275,10 +275,13 @@ void BattleEffect_RunShiningStar(struct BattleEffectParams *args) {
     point++;
   }
 
+  /* FAKEMATCH(temporary): size holds 2; as 2 in EFFECT_DRAW_MOTE, 69 of 415
+   * instructions differ in tbs-en. */
   size = 2;
   trails = PARTICLES;
   for (frame = 0; frame != 128; frame++) {
-    // The three channels sway a third of a turn apart.
+    // The three channels sway a third of a turn apart, so the stars run
+    // through the colours of the rainbow.
     BattleEffect_UpdatePhasePalette(frame, TRIG_TURN - TRIG_TURN / 3,
                                     TRIG_TURN / 3, 0);
     if (frame == 96)
@@ -292,35 +295,32 @@ void BattleEffect_RunShiningStar(struct BattleEffectParams *args) {
         // On the canvas, draw the star: ten points, alternately near and
         // far, turning 1/32 turn a frame as it falls, joined by 12 motes
         // each; x is halved for the canvas.
-        if (screenPosition.x >= -8 && screenPosition.x <= 127) {
-          if (screenPosition.y <= 127) {
-            if (screenPosition.y >= -8) {
-              for (j = 0; j != 10; j++) {
-                trails[i * 10 + j].velocityX =
-                    screenPosition.x +
-                    ((Trig_Sin(j * 0x199a - ((frame - step->variant) << 11)) *
-                      gStar_Radii[j & 1]) /
-                         2 >>
-                     16);
-                trails[i * 10 + j].velocityY =
-                    screenPosition.y -
-                    (Trig_Cos(j * 0x199a - ((frame - step->variant) << 11)) *
-                         gStar_Radii[j & 1] >>
-                     16);
-              }
-              for (j = 0; j != 10; j++) {
-                struct Particle *from = &trails[j + i * 10];
-                struct Particle *to = &trails[i * 10 + (j + 1) % 10];
+        if (screenPosition.x >= -8 && screenPosition.x <= 127 &&
+            screenPosition.y <= 127 && screenPosition.y >= -8) {
+          for (j = 0; j != 10; j++) {
+            trails[i * 10 + j].velocityX =
+                screenPosition.x +
+                ((Trig_Sin(j * 0x199a - ((frame - step->variant) << 11)) *
+                  gStar_Radii[j & 1]) /
+                     2 >>
+                 16);
+            trails[i * 10 + j].velocityY =
+                screenPosition.y -
+                (Trig_Cos(j * 0x199a - ((frame - step->variant) << 11)) *
+                     gStar_Radii[j & 1] >>
+                 16);
+          }
+          for (j = 0; j != 10; j++) {
+            struct Particle *from = &trails[j + i * 10];
+            struct Particle *to = &trails[i * 10 + (j + 1) % 10];
 
-                for (k = 0; k != 12; k++) {
-                  s32 x = from->velocityX +
-                          (to->velocityX - from->velocityX) * k / 12;
-                  s32 y = from->velocityY +
-                          (to->velocityY - from->velocityY) * k / 12;
+            for (k = 0; k != 12; k++) {
+              s32 x =
+                  from->velocityX + (to->velocityX - from->velocityX) * k / 12;
+              s32 y =
+                  from->velocityY + (to->velocityY - from->velocityY) * k / 12;
 
-                  EFFECT_DRAW_MOTE(draw[0], canvas, graphics, x, y, size);
-                }
-              }
+              EFFECT_DRAW_MOTE(draw[0], canvas, graphics, x, y, size);
             }
           }
         }

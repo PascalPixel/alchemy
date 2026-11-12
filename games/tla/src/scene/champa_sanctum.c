@@ -1,5 +1,5 @@
 /// @file
-/// The scene code of overlay 0x684, in ROM order.
+/// Overlay 0x684's scene: its code, then its tables, in the order the ROM has them.
 
 #include "battle.h"
 #include "field.h"
@@ -43,3 +43,31 @@ s32 Func_02000064(void) {
 }
 
 s32 Scene_PrepareMap(void) { return 0; }
+
+#include "text/msg_ids.h"
+
+struct SceneEntrance gSceneEntrances[] = {
+    {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {SCENE_TABLE_END},
+};
+
+u32 gSceneExits[] = {
+    SCENE_EXITS(184),
+    SCENE_EXIT_IF(1, 182, 7, CONDITION_ALWAYS),
+    SCENE_EXITS_END,
+};
+
+struct ActorPlacement gActorPlacements[] = {
+    {202, CONDITION_ALWAYS, 1, PIXELS(720), 0, PIXELS(147), FACING_SOUTH, 1, 0},
+    {SCENE_TABLE_END},
+};
+
+struct Trigger gSceneEvents[] = {
+    {1, 1, CONDITION_ALWAYS, 1},
+    {0xc400, 8, CONDITION_ALWAYS, EVENT(Func_02000054)},
+    {0, 8, 0x197f, MSGNO(MsgChampaTreasureEncouragesLaziness)},
+    {0x8d15, 8, 0x197f, MSGNO(MsgChampaVillagersStoppedWorking)},
+    {0, 8, CONDITION_ALWAYS, MSGNO(MsgChampaCaptainLastHope)},
+    {0x8d15, 8, CONDITION_ALWAYS, MSGNO(MsgChampaNeedsCaptainTreasure)},
+    {TRIGGERS_END},
+};

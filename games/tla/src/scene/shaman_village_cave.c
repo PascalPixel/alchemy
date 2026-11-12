@@ -1,5 +1,5 @@
 /// @file
-/// The scene code of overlay 0x695, in ROM order.
+/// Overlay 0x695's scene: its code, then its tables, in the order the ROM has them.
 
 #include "battle.h"
 #include "field.h"
@@ -437,8 +437,8 @@ void Func_0200087c(void) {
       ->value = 0;
 }
 
-extern const u8 gData_020015e0[];
-extern const u8 gData_0200161c[];
+extern u32 gData_020015e0[];
+extern s32 gData_0200161c[];
 
 void Func_02000a24(void) {
   s16 *target;
@@ -652,3 +652,104 @@ void Func_02001038(void) {
   Func_020011c0();
   return;
 }
+
+extern s32 gData_020012a0[];
+extern u32 gData_020012b8[];
+
+struct SceneEntrance gSceneEntrances[] = {
+    {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {SCENE_TABLE_END},
+};
+
+u32 gSceneExits[] = {
+    SCENE_EXITS(240),
+    SCENE_EXIT_IF(1, 2, 56, EXIT_FLAG_NONE),
+    SCENE_EXIT_IF(2, 240, 5, EXIT_FLAG_NONE),
+    SCENE_EXIT_IF(3, 240, 6, EXIT_FLAG_NONE),
+    SCENE_EXIT_IF(4, 240, 9, EXIT_FLAG_NONE),
+    SCENE_EXIT_IF(5, 240, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_IF(6, 240, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_IF(7, 240, 8, EXIT_FLAG_NONE),
+    SCENE_EXIT_IF(8, 240, 7, EXIT_FLAG_NONE),
+    SCENE_EXIT_IF(9, 240, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_IF(10, 2, 57, EXIT_FLAG_NONE),
+    SCENE_EXITS_END,
+};
+
+s32 gData_020012a0[] = {
+    22, 11, 0x18000, 46, (s32)Func_0200032c, 17,
+};
+
+// clang-format off
+u32 gData_020012b8[] = {
+    22, 26, 0, 17,
+};
+
+struct ActorPlacement gActorPlacements[] = {
+    {307, CONDITION_ALWAYS, (s32)gData_020012a0, PIXELS(40), 0, PIXELS(128),
+     FACING_NORTH, 2, 0},
+    {329, CONDITION_ALWAYS, 1, PIXELS(8), 0, PIXELS(8), FACING_NORTH, 2, 0},
+    {307, CONDITION_ALWAYS, (s32)gData_020012a0, PIXELS(232), 0, PIXELS(608),
+     FACING_NORTH, 2, 0},
+    {329, CONDITION_ALWAYS, 1, PIXELS(136), 0, PIXELS(808), FACING_NORTH, 2, 0},
+    {329, CONDITION_ALWAYS, 1, PIXELS(216), 0, PIXELS(808), FACING_NORTH, 2, 0},
+    {329, CONDITION_ALWAYS, 1, PIXELS(296), 0, PIXELS(792), FACING_NORTH, 2, 0},
+    {329, CONDITION_ALWAYS, 1, PIXELS(360), 0, PIXELS(792), FACING_NORTH, 2, 0},
+    {272, CONDITION_ALWAYS, (s32)gData_020012b8, PIXELS(584), 0, PIXELS(312),
+     FACING_NORTH, 2, 0},
+    {290, CONDITION_ALWAYS, 1, PIXELS(104), 0, PIXELS(680), FACING_SOUTH, 2, 0},
+    {244, 0x53, 1, PIXELS(264), 0, PIXELS(760), FACING_SOUTH, 0, 0},
+    {56, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
+    {239, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
+    {239, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
+    {239, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
+    {489, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_NORTH, 2, 0},
+    {0, CONDITION_ALWAYS, 1, PIXELS(8), 0, PIXELS(8), FACING_SOUTH, 2, 0},
+    {SCENE_TABLE_END},
+};
+
+struct Trigger gSceneEvents[] = {
+    {1, 1, CONDITION_ALWAYS, 1},
+    {0xc402, 2, CONDITION_ALWAYS, EVENT(Func_02000d84)},
+    {0xc402, 3, CONDITION_ALWAYS, EVENT(Func_02000d84)},
+    {0xc402, 4, CONDITION_ALWAYS, EVENT(Func_02000d84)},
+    {1, 5, CONDITION_ALWAYS, 5},
+    {1, 6, CONDITION_ALWAYS, 6},
+    {1, 7, CONDITION_ALWAYS, 7},
+    {0xc402, 8, CONDITION_ALWAYS, EVENT(Func_02000d84)},
+    {1, 9, CONDITION_ALWAYS, 9},
+    {1, 10, CONDITION_ALWAYS, 10},
+    {2, 50, 0x205, EVENT(Func_02000184)},
+    {0x602, 41, 0x201, EVENT(Func_02001038)},
+    {0x8602, 42, 0x201, EVENT(Func_02001038)},
+    {0x602, 43, 0x202, EVENT(Func_02001038)},
+    {0x8602, 44, 0x202, EVENT(Func_02001038)},
+    {2, 100, 0xa70, EVENT(Func_02000430)},
+    {0, 17, CONDITION_ALWAYS, EVENT(Func_0200030c)},
+    {0, 19, CONDITION_ALWAYS, EVENT(Func_0200083c)},
+    {0, 20, CONDITION_ALWAYS, EVENT(Func_0200083c)},
+    {0, 21, CONDITION_ALWAYS, EVENT(Func_0200083c)},
+    {0, 22, CONDITION_ALWAYS, EVENT(Func_0200039c)},
+    {0x4e15, 8, CONDITION_ALWAYS, EVENT(Func_0200004c)},
+    {0x4e15, 10, CONDITION_ALWAYS, EVENT(Func_0200004c)},
+    {0x8f15, 11, 0x200, EVENT(Func_02000358)},
+    {0x8f15, 12, 0x201, EVENT(Func_02000364)},
+    {0x8f15, 13, 0x202, EVENT(Func_02000374)},
+    {0x8f15, 14, 0x203, EVENT(Func_02000384)},
+    {0x1815, 16, 0x302, EVENT(Func_02000148)},
+    {0x10008c15, 15, 0x9a8, EVENT(Func_020000d4)},
+    {0x8c15, 15, 0x9a8, EVENT(Func_020000f0)},
+    {9, 0, CONDITION_ALWAYS, EVENT(Func_020000f0)},
+    {TRIGGERS_END},
+};
+
+u32 gData_020015e0[] = {
+    39, 2, 48, 0xe80000, 0xe30000, 1,
+    48, 0xd90000, 0xf30000, 1, 48, 0xd90000,
+    0x14e0000, 1, 38,
+};
+// clang-format on
+
+s32 gData_0200161c[] = {
+    39, 2, 48, 0xe00000, 0xc30000, 1, 43, (s32)gData_020015e0,
+};

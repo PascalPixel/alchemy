@@ -20,7 +20,7 @@ void Func_02000a30(void);
 void Func_020005e8(void);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
-extern u8 MsgMyThatWas;
-extern u8 MsgNotThatWay;
+extern u8 MsgMyThatWas[];
+extern u8 MsgNotThatWay[];
 
 #endif

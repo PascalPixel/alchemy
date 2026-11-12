@@ -1,5 +1,5 @@
 /// @file
-/// The scene code of overlay 0x688, in ROM order.
+/// Overlay 0x688's scene: its code, then its tables, in the order the ROM has them.
 
 #include "types.h"
 #include "ram_buffer.h"
@@ -36,7 +36,7 @@ struct AnimationRecord26 {
 };
 
 extern u8 MsgFieldAddressCompanion;
-extern const u8 gData_020005e4[];
+extern u32 gData_020005e4[];
 
 s32 BattleEffect_GetResourceId(s32 id);
 void Text_GetMessageSize(s32 id, s32 *a, s32 *b, s32 *c, s32 *d);
@@ -270,3 +270,93 @@ void Func_020003cc(void) {
   gMainRoutineWork.eventMode = saved;
   Func_02000564();
 }
+
+#include "objcmd.h"
+
+extern s32 gData_02000728[];
+
+// clang-format off
+u32 gData_020005e4[] = {
+    SC_MOVE(PIXELS(728), 0, PIXELS(160)),
+    SC_SYNC,
+    SC_MOVE(PIXELS(608), 0, PIXELS(152)),
+    SC_SYNC,
+    SC_MOVE(PIXELS(488), 0, PIXELS(152)),
+    SC_SYNC,
+    SC_MOVE(PIXELS(368), 0, PIXELS(152)),
+    SC_SYNC,
+    SC_MOVE(PIXELS(368), 0, PIXELS(112)),
+    SC_SYNC,
+    SC_MOVE(PIXELS(336), 0, PIXELS(88)),
+    SC_SYNC,
+    SC_MOVE(PIXELS(320), 0, PIXELS(88)),
+    SC_SYNC,
+    SC_MOVE(PIXELS(288), 0, PIXELS(120)),
+    SC_SYNC,
+    SC_MOVE(PIXELS(288), 0, PIXELS(176)),
+    SC_SYNC,
+    SC_MOVE(PIXELS(272), 0, PIXELS(192)),
+    SC_SYNC,
+    SC_MOVE(PIXELS(272), 0, PIXELS(280)),
+    SC_SYNC,
+    SC_MOVE(PIXELS(344), 0, PIXELS(280)),
+    SC_SYNC,
+    SC_MOVE(PIXELS(384), 0, PIXELS(320)),
+    SC_SYNC,
+    SC_MOVE(PIXELS(384), 0, PIXELS(408)),
+    SC_SYNC,
+    SC_MOVE(PIXELS(416), 0, PIXELS(440)),
+    SC_SYNC,
+    SC_MOVE(PIXELS(416), 0, PIXELS(552)),
+    SC_SYNC,
+    SC_END,
+};
+// clang-format on
+
+s32 gData_02000728[] = {
+    SC_CALL(Func_02000038),
+    SC_ARG(7),
+    SC_END,
+};
+
+struct SceneEntrance gSceneEntrances[] = {
+    {0, CONDITION_ALWAYS, 440, 0, 520, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {SCENE_TABLE_END},
+};
+
+u32 gSceneExits[] = {
+    SCENE_EXITS(199),
+    SCENE_EXIT_IF(1, 2, 45, -1),
+    SCENE_EXIT_IF(2, 199, 4, -1),
+    SCENE_EXIT_IF(3, 200, 1, -1),
+    SCENE_EXIT_IF(4, 199, 2, -1),
+    SCENE_EXIT_IF(5, 200, 1, -1),
+    SCENE_EXITS_END,
+};
+
+struct ActorPlacement gActorPlacements[] = {
+    {8, CONDITION_ALWAYS, (s32)gData_02000728, PIXELS(14), 0, PIXELS(4),
+     FACING_NORTH, 2, 0},
+    {342, CONDITION_ALWAYS, 1, PIXELS(636), 0, PIXELS(112), FACING_WEST, 2, 0},
+    {342, CONDITION_ALWAYS, 1, PIXELS(668), 0, PIXELS(112), FACING_EAST, 2, 1},
+    {342, CONDITION_ALWAYS, 1, PIXELS(668), 0, PIXELS(216), FACING_EAST, 2, 1},
+    {342, CONDITION_ALWAYS, 1, PIXELS(732), 0, PIXELS(216), FACING_WEST, 2, 1},
+    {11, CONDITION_ALWAYS, 1, PIXELS(736), 0, PIXELS(104), FACING_SOUTH, 2, 0},
+    {11, CONDITION_ALWAYS, 1, PIXELS(640), 0, PIXELS(208), FACING_SOUTH, 2, 1},
+    {11, CONDITION_ALWAYS, 1, PIXELS(704), 0, PIXELS(208), FACING_SOUTH, 2, 1},
+    {11, CONDITION_ALWAYS, 1, PIXELS(52), 0, PIXELS(796), FACING_WEST, 2, 0},
+    {11, CONDITION_ALWAYS, 1, PIXELS(52), 0, PIXELS(828), FACING_WEST, 2, 1},
+    {11, CONDITION_ALWAYS, 1, PIXELS(52), 0, PIXELS(860), FACING_WEST, 2, 1},
+    {424, CONDITION_ALWAYS, 1, PIXELS(144), 0, PIXELS(160), FACING_SOUTH, 2, 0},
+    {SCENE_TABLE_END},
+};
+
+struct Trigger gSceneEvents[] = {
+    {1, 1, CONDITION_ALWAYS, 1},
+    {1, 2, CONDITION_ALWAYS, 2},
+    {1, 4, CONDITION_ALWAYS, 4},
+    {2, 3, CONDITION_ALWAYS, EVENT(Func_02000060)},
+    {2, 5, CONDITION_ALWAYS, EVENT(Func_020000b0)},
+    {0x9815, 19, CONDITION_ALWAYS, EVENT(Func_02000100)},
+    {TRIGGERS_END},
+};

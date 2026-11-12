@@ -75,11 +75,11 @@ void Event_StartScreenTransition(void);
 
 // ---- this overlay
 
-extern u8 gData_02000c8c[];
-extern u8 gData_02000ca4[];
-extern u8 gData_02000dac[];
-extern u8 gData_02000e84[];
-extern u8 gData_02000ea8[];
-extern u8 gData_02000fe0[];
+extern struct ActorPlacement gData_02000c8c[];
+extern struct ActorPlacement gData_02000ca4[];
+extern struct ActorPlacement gData_02000dac[];
+extern struct Trigger gData_02000e84[];
+extern struct Trigger gData_02000ea8[];
+extern struct Trigger gData_02000fe0[];
 
 #endif

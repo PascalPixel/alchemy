@@ -1,5 +1,5 @@
 /// @file
-/// The scene code of overlay 0x649 that its scene tables belong to, in ROM order; the rest of the overlay is in title/.
+/// Overlay 0x649's scene: its code, then its tables, in the order the ROM has them.
 
 #include "battle.h"
 #include "field.h"
@@ -345,3 +345,22 @@ scroll_pair:
   Dma_Set(gBgScroll, REG_BG0HOFS, DMA_COPY_WORDS(4), REG_DMA3);
   ((struct TitleWork *)Ram_HeapSlots->mapWork)->mode = 0x1400;
 }
+
+struct SceneEntrance gSceneEntrances[] = {
+    {0, CONDITION_ALWAYS, 0, 0, 0, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {SCENE_TABLE_END},
+};
+
+u32 gSceneExits[] = {
+    SCENE_EXITS_END,
+};
+
+struct ActorPlacement gActorPlacements[] = {
+    {SCENE_TABLE_END},
+};
+
+struct Trigger gSceneEvents[] = {
+    {TRIGGERS_END},
+};
+
+s16 gTitleVramBlock = -1;

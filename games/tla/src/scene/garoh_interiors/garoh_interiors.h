@@ -14,16 +14,16 @@ struct EventWork1c4 {
   u16 count;
 };
 
-extern const u8 gData_0200094c[];
-extern const u8 gData_02000964[];
-extern const u8 gData_02000ab4[];
-extern const u8 gData_02000b2c[];
-extern const u8 gData_02000b5c[];
-extern const u8 gData_02000b80[];
-extern const u8 gData_02000d18[];
-extern const u8 gData_02000de4[];
-extern const u8 gData_02000e44[];
-extern const u8 gData_02000fe8[];
+extern struct ActorPlacement gData_0200094c[];
+extern struct ActorPlacement gData_02000964[];
+extern struct ActorPlacement gData_02000ab4[];
+extern struct ActorPlacement gData_02000b2c[];
+extern struct Trigger gData_02000b5c[];
+extern struct Trigger gData_02000b80[];
+extern struct Trigger gData_02000d18[];
+extern struct Trigger gData_02000de4[];
+extern struct Trigger gData_02000e44[];
+extern struct Trigger gData_02000fe8[];
 
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);

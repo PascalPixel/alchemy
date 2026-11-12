@@ -1,5 +1,5 @@
 /// @file
-/// The scene code of overlay 0x660 that its scene tables belong to, in ROM order; the rest of the overlay is in garoh_interiors/.
+/// Overlay 0x660's scene: its code, then its tables, in the order the ROM has them.
 
 #include "battle.h"
 #include "field.h"
@@ -20,7 +20,7 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-const u8 *Func_0200004c(void) {
+const struct ActorPlacement *Func_0200004c(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov660Room1)
@@ -209,7 +209,7 @@ void Func_0200049c(void) {
 
 /// Returns the room's table, chosen by flag 0x91B, the scene and, in the
 /// first room, the entrance.
-const u8 *Func_020004f0(void) {
+const struct Trigger *Func_020004f0(void) {
   s32 moved = GameFlag_Test(0x91b);
   struct MainRoutineWork *party = &gMainRoutineWork;
   s32 room1 = (s32)&SceneId_Ov660Room1;
@@ -323,3 +323,195 @@ void Func_02000710(void) {
   Event_ShowMessageThenWait(15, 0, 10);
   Func_020007fc();
 }
+
+#include "text/msg_ids.h"
+
+struct SceneEntrance gSceneEntrances[] = {
+    {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {SCENE_TABLE_END},
+};
+
+u32 gSceneExits[] = {
+    SCENE_EXITS(64),
+    SCENE_EXIT_IF(1, 59, 1, -1),
+    SCENE_EXIT_IF(3, 59, 3, -1),
+    SCENE_EXIT_IF(4, 59, 4, -1),
+    SCENE_EXIT_IF(5, 59, 5, -1),
+    SCENE_EXIT_IF(6, 62, 7, -1),
+    SCENE_EXIT_IF(7, 62, 8, -1),
+    SCENE_EXITS(65),
+    SCENE_EXIT_IF(3, 62, 5, -1),
+    SCENE_EXIT_IF(4, 59, 2, -1),
+    SCENE_EXIT_IF(5, 62, 6, -1),
+    SCENE_EXITS(66),
+    SCENE_EXIT_IF(2, 59, 6, -1),
+    SCENE_EXITS_END,
+};
+
+// clang-format off
+struct ActorPlacement gData_0200094c[] = {
+    {SCENE_TABLE_END},
+};
+
+struct ActorPlacement gData_02000964[] = {
+    {192, CONDITION_ALWAYS, 2, PIXELS(336), 0, PIXELS(120), FACING_SOUTH, 0, 0},
+    {190, CONDITION_ALWAYS, 1, PIXELS(376), 0, PIXELS(104), FACING_WEST, 0, 0},
+    {191, CONDITION_ALWAYS, 1, PIXELS(360), 0, PIXELS(136), FACING_NORTH, 1, 0},
+    {188, CONDITION_ALWAYS, 1, PIXELS(568), 0, PIXELS(136), FACING_SOUTHEAST, 0, 0},
+    {194, CONDITION_ALWAYS, 1, PIXELS(592), 0, PIXELS(96), FACING_SOUTH, 1, 0},
+    {205, CONDITION_ALWAYS, 1, PIXELS(134), 0, PIXELS(120), FACING_SOUTH, 1, 0},
+    {105, CONDITION_ALWAYS, 1, PIXELS(112), 0, PIXELS(120), FACING_SOUTH, 1, 0},
+    {199, CONDITION_ALWAYS, 1, PIXELS(248), 0, PIXELS(424), FACING_SOUTH, 1, 0},
+    {209, CONDITION_ALWAYS, 1, PIXELS(264), 0, PIXELS(420), FACING_WEST, 0, 0},
+    {239, CONDITION_ALWAYS, 1, PIXELS(280), 0, PIXELS(344), FACING_NORTHEAST, 1, 0},
+    {239, CONDITION_ALWAYS, 1, PIXELS(330), 0, PIXELS(376), FACING_SOUTHWEST, 1, 0},
+    {489, CONDITION_ALWAYS, 1, PIXELS(296), 0, PIXELS(336), FACING_SOUTH, 2, 0},
+    {489, CONDITION_ALWAYS, 1, PIXELS(352), 0, PIXELS(344), FACING_SOUTHWEST, 2, 0},
+    {SCENE_TABLE_END},
+};
+
+struct ActorPlacement gData_02000ab4[] = {
+    {185, CONDITION_ALWAYS, 1, PIXELS(372), 0, PIXELS(406), FACING_SOUTHEAST, 1, 0},
+    {196, CONDITION_ALWAYS, 1, PIXELS(424), 0, PIXELS(424), FACING_NORTHWEST, 0, 0},
+    {186, CONDITION_ALWAYS, 1, PIXELS(352), 0, PIXELS(456), FACING_SOUTH, 1, 0},
+    {198, CONDITION_ALWAYS, 1, PIXELS(200), 0, PIXELS(412), FACING_SOUTH, 0, 0},
+    {SCENE_TABLE_END},
+};
+
+struct ActorPlacement gData_02000b2c[] = {
+    {202, CONDITION_ALWAYS, 1, PIXELS(448), 0, PIXELS(152), FACING_SOUTH, 1, 0},
+    {SCENE_TABLE_END},
+};
+
+struct Trigger gData_02000b5c[] = {
+    {1, 1, CONDITION_ALWAYS, 1},
+    {1, 2, CONDITION_ALWAYS, 2},
+    {TRIGGERS_END},
+};
+// clang-format on
+
+struct Trigger gData_02000b80[] = {
+    {1, 1, CONDITION_ALWAYS, 1},
+    {1, 2, CONDITION_ALWAYS, 2},
+    {1, 3, CONDITION_ALWAYS, 3},
+    {1, 4, CONDITION_ALWAYS, 4},
+    {1, 5, CONDITION_ALWAYS, 5},
+    {0x31, 6, CONDITION_ALWAYS, 6},
+    {0x31, 7, CONDITION_ALWAYS, 7},
+    {0, 8, CONDITION_ALWAYS, EVENT(Func_02000318)},
+    {0, 9, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors02)},
+    {0, 10, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors03)},
+    {0x8d15, 8, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors04)},
+    {0x8d15, 9, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors05)},
+    {0x8d15, 10, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors06)},
+    {0, 11, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors13)},
+    {0, 12, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors14)},
+    {0x8d15, 11, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors15)},
+    {0x8d15, 12, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors16)},
+    {0, 13, CONDITION_ALWAYS, EVENT(Func_0200009c)},
+    {0x8d15, 13, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors18)},
+    {0, 14, CONDITION_ALWAYS, EVENT(Func_02000114)},
+    {0x8d15, 14, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors20)},
+    {0, 15, CONDITION_ALWAYS, EVENT(Func_02000230)},
+    {0, 16, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors24)},
+    {0x8d15, 15, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors27)},
+    {0x8d15, 16, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors28)},
+    {0, 19, CONDITION_ALWAYS, EVENT(Func_0200039c)},
+    {0, 20, CONDITION_ALWAYS, EVENT(Func_020003dc)},
+    {0x8d15, 19, CONDITION_ALWAYS, EVENT(Func_0200041c)},
+    {0x8d15, 20, CONDITION_ALWAYS, EVENT(Func_0200045c)},
+    {0x173, 209, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgGarohInteriors68))},
+    {0x173, 210, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgGarohInteriors69))},
+    {0x173, 212, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgGarohInteriors71))},
+    {0x173, 213, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgGarohInteriors72))},
+    {TRIGGERS_END},
+};
+
+struct Trigger gData_02000d18[] = {
+    {1, 1, CONDITION_ALWAYS, 1},
+    {1, 2, CONDITION_ALWAYS, 2},
+    {1, 3, CONDITION_ALWAYS, 3},
+    {1, 4, CONDITION_ALWAYS, 4},
+    {0x31, 5, CONDITION_ALWAYS, 5},
+    {0x31, 6, CONDITION_ALWAYS, 6},
+    {0x31, 7, CONDITION_ALWAYS, 7},
+    {0, 8, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors07)},
+    {0, 9, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors08)},
+    {0, 10, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors09)},
+    {0x8d15, 8, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors10)},
+    {0x8d15, 9, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors11)},
+    {0x8d15, 10, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors12)},
+    {0, 11, CONDITION_ALWAYS, EVENT(Func_0200018c)},
+    {0x8d15, 11, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors22)},
+    {0x173, 211, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgGarohInteriors70))},
+    {TRIGGERS_END},
+};
+
+struct Trigger gData_02000de4[] = {
+    {1, 2, CONDITION_ALWAYS, 2},
+    {0, 8, CONDITION_ALWAYS, EVENT(Func_02000298)},
+    {0x8d15, 8, 0x91b, MSGNO(MsgGarohInteriors32)},
+    {0x8d15, 8, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors67)},
+    {0, 9, CONDITION_ALWAYS, EVENT(Func_02000298)},
+    {0x8d15, 9, 0x91b, MSGNO(MsgGarohInteriors32)},
+    {0x8d15, 9, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors67)},
+    {TRIGGERS_END},
+};
+
+struct Trigger gData_02000e44[] = {
+    {1, 1, CONDITION_ALWAYS, 1},
+    {1, 2, CONDITION_ALWAYS, 2},
+    {1, 3, CONDITION_ALWAYS, 3},
+    {1, 4, CONDITION_ALWAYS, 4},
+    {1, 5, CONDITION_ALWAYS, 5},
+    {1, 6, CONDITION_ALWAYS, 6},
+    {1, 7, CONDITION_ALWAYS, 7},
+    {0, 8, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors35)},
+    {0, 9, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors36)},
+    {0, 10, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors37)},
+    {0x8d15, 8, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors38)},
+    {0x8d15, 9, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors39)},
+    {0x8d15, 10, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors40)},
+    {0, 11, 0x91a, EVENT(Func_0200049c)},
+    {0, 11, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors48)},
+    {0, 12, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors49)},
+    {0x8d15, 11, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors50)},
+    {0x8d15, 12, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors51)},
+    {0, 13, CONDITION_ALWAYS, EVENT(Func_0200009c)},
+    {0x8d15, 13, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors53)},
+    {0, 14, CONDITION_ALWAYS, EVENT(Func_02000114)},
+    {0x8d15, 14, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors55)},
+    {0, 15, CONDITION_ALWAYS, EVENT(Func_02000230)},
+    {0, 16, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors59)},
+    {0x8d15, 15, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors62)},
+    {0x8d15, 16, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors63)},
+    {0, 17, CONDITION_ALWAYS, EVENT(Func_0200039c)},
+    {0, 18, CONDITION_ALWAYS, EVENT(Func_020003dc)},
+    {0x8d15, 17, CONDITION_ALWAYS, EVENT(Func_0200041c)},
+    {0x8d15, 18, CONDITION_ALWAYS, EVENT(Func_0200045c)},
+    {0x173, 209, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgGarohInteriors68))},
+    {0x173, 210, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgGarohInteriors69))},
+    {0x173, 212, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgGarohInteriors71))},
+    {0x173, 213, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgGarohInteriors72))},
+    {TRIGGERS_END},
+};
+
+struct Trigger gData_02000fe8[] = {
+    {1, 1, CONDITION_ALWAYS, 1},
+    {1, 2, CONDITION_ALWAYS, 2},
+    {1, 3, CONDITION_ALWAYS, 3},
+    {1, 4, CONDITION_ALWAYS, 4},
+    {0x31, 5, CONDITION_ALWAYS, 5},
+    {0x31, 6, CONDITION_ALWAYS, 6},
+    {0x31, 7, CONDITION_ALWAYS, 7},
+    {0, 8, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors41)},
+    {0, 9, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors42)},
+    {0, 10, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors43)},
+    {0x8d15, 8, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors44)},
+    {0x8d15, 9, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors45)},
+    {0x8d15, 10, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors46)},
+    {0, 11, CONDITION_ALWAYS, EVENT(Func_0200018c)},
+    {0x8d15, 11, CONDITION_ALWAYS, MSGNO(MsgGarohInteriors57)},
+    {0x173, 211, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgGarohInteriors70))},
+    {TRIGGERS_END},
+};

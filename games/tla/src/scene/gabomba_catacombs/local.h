@@ -22,7 +22,7 @@ void Func_02001234(s32 a);
 void Func_02001274(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
 void Func_0200127c(s32 a, s32 b, s32 c);
 
-extern const u8 gData_0200128c[];
+extern u32 gData_0200128c[];
 
 extern char SceneId_Ov673Room1;
 extern char SceneId_Ov673Room2;

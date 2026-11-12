@@ -15,7 +15,7 @@ SECTIONS
         "*/games/tla/src/scene/title/entry.o"(.text)
         "*/games/tla/src/scene/title.o"(.text)
         "*/games/tla/src/scene/title/import.o"(.text)
-        "*/games/tla/src/scene/title/data.o"(.data)
+        "*/games/tla/src/scene/title.o"(.data)
     }
     .bss :
     {
@@ -125,7 +125,7 @@ SECTIONS
         "*/games/tla/src/scene/suhalla_gate/entry.o"(.text)
         "*/games/tla/src/scene/suhalla_gate.o"(.text)
         "*/games/tla/src/scene/suhalla_gate/import.o"(.text)
-        "*/games/tla/src/scene/suhalla_gate/data.o"(.data)
+        "*/games/tla/src/scene/suhalla_gate.o"(.data)
     }
 }
 #elif OVERLAY == 0x650
@@ -312,7 +312,7 @@ SECTIONS
         "*/games/tla/src/scene/madra_drawbridge/entry.o"(.text)
         "*/games/tla/src/scene/madra_drawbridge.o"(.text)
         "*/games/tla/src/scene/madra_drawbridge/import.o"(.text)
-        "*/games/tla/src/scene/madra_drawbridge/data.o"(.data)
+        "*/games/tla/src/scene/madra_drawbridge.o"(.data)
     }
 }
 #elif OVERLAY == 0x65c
@@ -323,7 +323,7 @@ SECTIONS
         "*/games/tla/src/scene/osenia_cliffs/entry.o"(.text)
         "*/games/tla/src/scene/osenia_cliffs.o"(.text)
         "*/games/tla/src/scene/osenia_cliffs/import.o"(.text)
-        "*/games/tla/src/scene/osenia_cliffs/data.o"(.data)
+        "*/games/tla/src/scene/osenia_cliffs.o"(.data)
     }
 }
 #elif OVERLAY == 0x65d
@@ -345,7 +345,7 @@ SECTIONS
         "*/games/tla/src/scene/mikasalla_interiors/entry.o"(.text)
         "*/games/tla/src/scene/mikasalla_interiors.o"(.text)
         "*/games/tla/src/scene/mikasalla_interiors/import.o"(.text)
-        "*/games/tla/src/scene/mikasalla_interiors/data.o"(.data)
+        "*/games/tla/src/scene/mikasalla_interiors.o"(.data)
     }
 }
 #elif OVERLAY == 0x65f
@@ -377,7 +377,7 @@ SECTIONS
         "*/games/tla/src/scene/garoh_interiors/entry.o"(.text)
         "*/games/tla/src/scene/garoh_interiors.o"(.text)
         "*/games/tla/src/scene/garoh_interiors/import.o"(.text)
-        "*/games/tla/src/scene/garoh_interiors/data.o"(.data)
+        "*/games/tla/src/scene/garoh_interiors.o"(.data)
     }
 }
 #elif OVERLAY == 0x661
@@ -592,7 +592,7 @@ SECTIONS
         "*/games/tla/src/scene/gondowan_cliffs_hideout/entry.o"(.text)
         "*/games/tla/src/scene/gondowan_cliffs_hideout.o"(.text)
         "*/games/tla/src/scene/gondowan_cliffs_hideout/import.o"(.text)
-        "*/games/tla/src/scene/gondowan_cliffs_hideout/data.o"(.data)
+        "*/games/tla/src/scene/gondowan_cliffs_hideout.o"(.data)
     }
 }
 #elif OVERLAY == 0x66d
@@ -614,7 +614,7 @@ SECTIONS
         "*/games/tla/src/scene/naribwe_interiors/entry.o"(.text)
         "*/games/tla/src/scene/naribwe_interiors.o"(.text)
         "*/games/tla/src/scene/naribwe_interiors/import.o"(.text)
-        "*/games/tla/src/scene/naribwe_interiors/data.o"(.data)
+        "*/games/tla/src/scene/naribwe_interiors.o"(.data)
     }
 }
 #elif OVERLAY == 0x66f
@@ -717,7 +717,7 @@ SECTIONS
         "*/games/tla/src/scene/gabomba_catacombs/entry.o"(.text)
         "*/games/tla/src/scene/gabomba_catacombs.o"(.text)
         "*/games/tla/src/scene/gabomba_catacombs/import.o"(.text)
-        "*/games/tla/src/scene/gabomba_catacombs/data.o"(.data)
+        "*/games/tla/src/scene/gabomba_catacombs.o"(.data)
     }
 }
 #elif OVERLAY == 0x674
@@ -780,7 +780,7 @@ SECTIONS
         "*/games/tla/src/scene/yallam_interiors/entry.o"(.text)
         "*/games/tla/src/scene/yallam_interiors.o"(.text)
         "*/games/tla/src/scene/yallam_interiors/import.o"(.text)
-        "*/games/tla/src/scene/yallam_interiors/data.o"(.data)
+        "*/games/tla/src/scene/yallam_interiors.o"(.data)
     }
 }
 #elif OVERLAY == 0x678
@@ -831,7 +831,7 @@ SECTIONS
         "*/games/tla/src/scene/apojii_islands_cave/entry.o"(.text)
         "*/games/tla/src/scene/apojii_islands_cave.o"(.text)
         "*/games/tla/src/scene/apojii_islands_cave/import.o"(.text)
-        "*/games/tla/src/scene/apojii_islands_cave/data.o"(.data)
+        "*/games/tla/src/scene/apojii_islands_cave.o"(.data)
     }
 }
 #elif OVERLAY == 0x67b
@@ -921,7 +921,7 @@ SECTIONS
         "*/games/tla/src/scene/izumo_interiors/entry.o"(.text)
         "*/games/tla/src/scene/izumo_interiors.o"(.text)
         "*/games/tla/src/scene/izumo_interiors/import.o"(.text)
-        "*/games/tla/src/scene/izumo_interiors/data.o"(.data)
+        "*/games/tla/src/scene/izumo_interiors.o"(.data)
     }
 }
 #elif OVERLAY == 0x67e
@@ -1024,7 +1024,7 @@ SECTIONS
         "*/games/tla/src/scene/champa_interiors/entry.o"(.text)
         "*/games/tla/src/scene/champa_interiors.o"(.text)
         "*/games/tla/src/scene/champa_interiors/import.o"(.text)
-        "*/games/tla/src/scene/champa_interiors/data.o"(.data)
+        "*/games/tla/src/scene/champa_interiors.o"(.data)
     }
 }
 #elif OVERLAY == 0x684
@@ -1035,7 +1035,7 @@ SECTIONS
         "*/games/tla/src/scene/champa_sanctum/entry.o"(.text)
         "*/games/tla/src/scene/champa_sanctum.o"(.text)
         "*/games/tla/src/scene/champa_sanctum/import.o"(.text)
-        "*/games/tla/src/scene/champa_sanctum/data.o"(.data)
+        "*/games/tla/src/scene/champa_sanctum.o"(.data)
     }
 }
 #elif OVERLAY == 0x685
@@ -1130,7 +1130,7 @@ SECTIONS
         "*/games/tla/src/scene/lemuria_entrance/entry.o"(.text)
         "*/games/tla/src/scene/lemuria_entrance.o"(.text)
         "*/games/tla/src/scene/lemuria_entrance/import.o"(.text)
-        "*/games/tla/src/scene/lemuria_entrance/data.o"(.data)
+        "*/games/tla/src/scene/lemuria_entrance.o"(.data)
     }
 }
 #elif OVERLAY == 0x689
@@ -1388,7 +1388,7 @@ SECTIONS
         "*/games/tla/src/scene/shaman_village_cave/entry.o"(.text)
         "*/games/tla/src/scene/shaman_village_cave.o"(.text)
         "*/games/tla/src/scene/shaman_village_cave/import.o"(.text)
-        "*/games/tla/src/scene/shaman_village_cave/data.o"(.data)
+        "*/games/tla/src/scene/shaman_village_cave.o"(.data)
     }
 }
 #elif OVERLAY == 0x696
@@ -1845,7 +1845,7 @@ SECTIONS
         "*/games/tla/src/scene/northern_reaches.o"(.text)
         "*/games/tla/src/scene/northern_reaches/import.o"(.text)
         "*/games/tla/src/graphics/field/pal685.o"(.rodata)
-        "*/games/tla/src/scene/northern_reaches/data.o"(.data)
+        "*/games/tla/src/scene/northern_reaches.o"(.data)
     }
 }
 #elif OVERLAY == 0x6a8

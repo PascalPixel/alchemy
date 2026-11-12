@@ -1,5 +1,5 @@
 /// @file
-/// Suhalla's interiors (Timber Rooms A, B and C).
+/// Timber Rooms A (Suhalla) and Timber Rooms B and C (Lalivero).
 #include "types.h"
 #include "event.h"
 #include "sounds.h"

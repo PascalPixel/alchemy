@@ -1079,14 +1079,19 @@ UNUSED static void Vault_SpawnDriftingEffect(s32 flags) {
     x += baseX;
     baseY = anchor->y.fixed;
     z += baseZ;
-    // XXX (no evidence): what this drift was meant to draw; SPRITE_172's
-    // row in sprites.tsv is empty and nothing calls this routine, so the
-    // running game never shows it.
+    // XXX (no evidence): what this drift was meant to draw; SPRITE_172 has no
+    // image (its row in sprites.tsv is empty) and nothing calls this routine.
     effect = Actor_Create(SPRITE_172, x, baseY, z);
   }
   if (effect == NULL)
     return;
   sprite = effect->sprite;
+  // UB: Sprite_Create makes no sprite for SPRITE_172, which has no image, so
+  // sprite is NULL and the two stores through it below write near address 0.
+#ifdef UBFIX
+  if (sprite == NULL)
+    return;
+#endif
   switch (Import_RandomNext() & 1) {
   case 1:
     Actor_SelectAnimation(effect, 3);

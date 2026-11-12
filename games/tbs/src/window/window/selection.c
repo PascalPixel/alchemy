@@ -870,8 +870,9 @@ void SelectionMenu_StepLeft(struct SelectionMenuWork *state) {
       node = state->head;
       while (node->x != node->targetX)
         wait(1);
-      /* FAKEMATCH(dead): i counted up to count - 5 one at a time; as
-       * i = state->count - 5, 35 of 184 instructions differ in tbs-en. */
+      /* FAKEMATCH(temporary): i counted up to count - 5 rather than
+       * assigned; as i = state->count - 5, 35 of 184 instructions differ in
+       * tbs-en. */
       i = 0;
       while (i != state->count - 5)
         i++;

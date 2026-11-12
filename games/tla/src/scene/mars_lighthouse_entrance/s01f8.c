@@ -1,39 +1,35 @@
 #include "types.h"
 #include "main_routine_work.h"
 #include "event_inline.h"
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
+#include "actor.h"
 
 s32 Func_0200012c();
-void Func_02000168();
+s32 Func_02000168(u32 layer, s32 x, s32 y, s32 value);
 void Func_02004c80();
 s32 Map_GetTerrainHeight();
 void Scene_SetActorSpritePriority();
 
-void Func_020001f8(s32 a0) {
-  s32 t1, t2, t3, t4, v10, v11, v5, v6, v7, v8, v9;
+void Func_020001f8(struct Actor *object) {
+  s32 t1, t2, t3, t4, v10, v6, v7, v8, v9;
+  struct Actor *v5;
+  u8 *v11;
 
-  v5 = a0;
-  v9 = (FIELD_AT(v5, s32, 8) >> 20);
-  v10 = (FIELD_AT(v5, s32, 16) >> 20);
+  v5 = object;
+  v9 = (v5->x >> 20);
+  v10 = (v5->z >> 20);
   t1 = Func_0200012c(0, v9, v10);
   v8 = t1;
   t2 = Func_0200012c(2, v9, v10);
   v6 = t2;
-  v11 = (34 + v5);
-  t3 = Map_GetTerrainHeight(FIELD_AT((34 + v5), u8, 0), FIELD_AT(v5, s32, 8),
-                            FIELD_AT(v5, s32, 16));
+  v11 = &v5->terrainId;
+  t3 = Map_GetTerrainHeight(v5->terrainId, v5->x, v5->z);
   v7 = (t3 >> 19);
-  t4 = Event_GetFlag(FIELD_AT(v5, s16, 100));
+  t4 = Event_GetFlag(v5->timer);
   if (t4 == 0)
     goto L_02008268;
   v6 = (v6 & -0xff01);
   v8 = (v8 & -129);
-  if ((FIELD_AT(v5, s32, 20) >> 19) == v7)
+  if ((v5->terrainHeight >> 19) == v7)
     goto L_02008282;
   v7 = (v7 + -4);
   goto L_02008282;
@@ -46,7 +42,7 @@ L_02008268:
 L_02008282:
   Func_02000168(0, v9, v10, v8);
   Func_02000168(2, v9, v10, v6);
-  Func_02004c80((v9 << 20), (v10 << 20), FIELD_AT(v11, u8, 0), v7);
+  Func_02004c80((v9 << 20), (v10 << 20), *v11, v7);
 }
 
 #include "field_event.h"
@@ -77,4 +73,44 @@ loop:
   row += 3;
   if (row[0] != 0xffff)
     goto loop;
+}
+
+#include "room.h"
+#include "field_effect.h"
+
+struct EffectHolder {
+  u8 unk00[0x1a];
+  s16 objectId;
+};
+
+void Func_02003b30(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                   s32 velocityZ, u32 flags, struct EffectOptions *options);
+
+/// While index is at most 7, spawns effect type 0x117 index steps below the
+/// object the effect work names and shrinks the object a little; mode 1
+/// restores its size, sets its flag, hands it to Func_020001f8 and clears its
+/// position.
+void Func_02000338(s32 mode, s32 index) {
+  struct EffectHolder *holder = Ram_HeapSlots->effectWork;
+  struct Actor *object = Actor_Get(holder->objectId);
+
+  if (index <= 7) {
+    struct EffectOptions options;
+
+    options.priority = 0;
+    options.type = 0x117;
+    options.startScaleX = options.startScaleY = 0x10000;
+    options.targetScaleX = options.targetScaleY = 0x8000;
+    options.rotation = (Random16Far() & 15) << 12;
+    Func_02003b30(object->x, object->y - index * 3 * 0x10000 + 0x100000,
+                  object->z, ((Random16Far() & 15) - 8) << 13, 0, 0, 0x5a0000,
+                  &options);
+    object->scaleY -= 0x1f00;
+  }
+  if (mode == 1) {
+    object->scaleY = 0x10000;
+    Event_SetFlag(object->timer);
+    Func_020001f8(Actor_Get(holder->objectId));
+    object->x = object->y = object->z = 0;
+  }
 }

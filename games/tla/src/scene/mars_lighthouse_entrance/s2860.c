@@ -1,13 +1,10 @@
-#include "../../../../games/tla/src/scene/mars_lighthouse_entrance/room.h"
+#include "room.h"
 
 s32 Func_020024c0(s32 a, s32 b);
 void Func_02004d50(s32 a, s32 b);
 s32 Func_02004c18(s32 layer, s32 x, s32 z);
 void Func_02002614(void);
-void Func_02004ca8(void);
-void Func_02004bc0(struct Actor *object, s32 value);
 extern u8 gData_020023c4[];
-void Animation_ApplyChildValues(struct Actor *object, s32 value);
 
 struct RideEvent {
   u8 unk000[0x15a];
@@ -92,4 +89,318 @@ int Func_02002860(void) {
   leader->update = 0;
   Animation_ApplyChildValues(leader, 0);
   ride->active = 0;
+}
+
+#include "ride.h"
+#include "system.h"
+#include "event_inline.h"
+
+s32 Func_020029a0(void) {
+  if (RIDE_WORK->active) {
+    Func_02002860();
+    return 1;
+  }
+  return 0;
+}
+
+s32 Func_020029bc(void) { return RIDE_WORK->active; }
+
+#include "types.h"
+#include "actor.h"
+#include "iwram_call.h"
+#include "field.h"
+
+struct Sprite {
+  u8 unk00[4];
+  u16 y : 8;
+  u16 affine : 2;
+  u16 blendMode : 2;
+  u16 mosaic : 1;
+  u16 fullColor : 1;
+  u16 shape : 2;
+  u16 x : 9;
+  u16 affineIndex : 5;
+  u16 size : 2;
+  u16 tile : 10;
+  u16 attr2Rest : 6;
+  u8 unk0a[2];
+  s32 scale; ///< 16.16, as FieldSprite (field_sprite.h) has it
+  u8 vramBlock;
+  u8 keepEntry : 1;
+  u8 unk11 : 7;
+  u16 rotation;
+  u8 unk14[2];
+  u8 unk16[5];
+  u8 unk1b;
+  u8 unk1c[12];
+  void *record;
+};
+
+struct Work {
+  u8 unk00[12];
+  u16 vramBlock;
+  u8 unk0e[98];
+  struct Actor *owner;
+};
+
+extern u8 gData_020056d0[];
+s32 Resource_ResetEntry(u32 slot);
+
+#define WORK ((struct Work *)(gData_020023c4 + 0x188))
+
+void Func_020029c8(struct Actor *actor) {
+  struct Work *work = WORK;
+  s32 i;
+
+  if (work->owner == NULL)
+    return;
+  for (i = 0; i >= 0; i--) {
+    struct Actor *object;
+    s32 a, b, c, d, e;
+    s32 x, y, z;
+
+    a = Random16Far();
+    b = Random16Far();
+    x = actor->x + a * 16 - b * 16;
+    c = Random16Far();
+    d = Random16Far();
+    e = Random16Far();
+    z = actor->z + d * 16 - e * 16;
+    y = c * 8 + actor->y + 0x40000;
+    object = (struct Actor *)Import_ActorCreate(0x1e9, x, y, z);
+    if (object != NULL) {
+      s32 angle, radius;
+      u32 sum;
+      s32 scale;
+      struct Sprite *sprite;
+      struct Sprite *source;
+
+      angle = Random16Far();
+      radius = Random16Far() * 8;
+      sum = Random16Far() + Random16Far();
+      scale = (sum >> 2) + 0x8000;
+      Func_02004bd0(object, gData_020056d0);
+      Actor_SetSingleChildFlags(object, 0);
+      object->velocityY = angle * 4 + 0x20000;
+      object->velocityZ = Iwram_MulQ16(radius, Math_Cosine(angle));
+      object->velocityX = Iwram_MulQ16(radius, Math_Sine(angle));
+      object->gravity = 0x547a;
+      object->scaleX = scale;
+      object->scaleY = scale;
+      object->acceleration = 0;
+      object->bounce = 0x8000;
+      sprite = object->sprite;
+      source = work->owner->sprite;
+      Resource_ResetEntry(sprite->vramBlock);
+      sprite->keepEntry = 1;
+      sprite->vramBlock = work->vramBlock;
+      ResourceMetadata_ClearRecord(sprite->record);
+      sprite->record = NULL;
+      sprite->unk1b = 0;
+      sprite->unk14[0] = source->unk14[0];
+      sprite->unk14[1] = source->unk14[1];
+      sprite->shape = source->shape;
+      sprite->size = source->size;
+      sprite->tile = source->tile;
+    }
+  }
+}
+
+extern const u8 gData_02005714[];
+
+/// Throws two sparks (object kind 325) from (x, y, z), each upward at about
+/// speed plus 0x14000 with a random spread, at a random angle and size.
+void Func_02002b4c(s32 x, s32 y, s32 z, s32 speed) {
+  s32 i;
+
+  i = 1;
+next:
+  {
+    struct Actor *object = FieldActor_Create(325, x, y, z);
+
+    if (object != NULL) {
+      s32 angle;
+      s32 rise;
+      s32 radius;
+      u32 size;
+      s32 scale;
+
+      rise = speed + (Random16Far() >> 4) - (Random16Far() >> 4);
+      angle = 0x4000 + rise;
+      radius = Random16Far() * 8;
+      size = Random16Far();
+      Func_02004bd0(object, gData_02005714);
+      Actor_SetSingleChildFlags(object, 0);
+      /* FAKEMATCH(temporary): the scale is taken before the velocity stores, as
+       * in the native; as object->scaleX = (size >> 1) + 0x4000, 14 of 98
+       * instructions differ in tla-en. */
+      scale = (size >> 1) + 0x4000;
+      object->velocityY = rise + 0x14000;
+      object->velocityZ = Iwram_MulQ16(radius, Math_Cosine(angle));
+      object->velocityX = Iwram_MulQ16(radius, Math_Sin(angle));
+      object->acceleration = 0;
+      object->gravity = 0x547a;
+      object->scaleX = scale;
+      object->scaleY = object->scaleX;
+      object->bounce = 0x8000;
+      Animation_ApplyChildValues(object, 1);
+    }
+  }
+  if (--i >= 0)
+    goto next;
+}
+
+void Func_02002c2c(struct Actor *object) {
+  object->movementState = Event_GetFlag(260);
+}
+
+#include "main_routine_work.h"
+#include "ram_buffer.h"
+#include "vector3.h"
+#include "map.h"
+
+#define ABS(x) ((x) < 0 ? -(x) : (x))
+
+struct Work020023c4 {
+  u8 unk00[4];
+  u16 unk04;
+  u8 unk06[4];
+  u16 unk0a;
+  u8 unk0c[0x6c - 0x0c];
+  struct Actor *unk6c;
+};
+
+struct WorkEvent {
+  u8 unk000[340];
+  u16 unk154;
+  u8 unk156[358 - 342];
+  s16 unk166;
+};
+
+void Func_02002c40(struct Actor *actor) {
+  struct Vector3 position;
+  struct WorkEvent *work = Ram_HeapSlots->eventWork;
+  s32 state = actor->timer;
+
+  if (state == 0) {
+    s32 dz;
+    s32 dx;
+    s32 tileX;
+    struct MapCell *cellsA;
+    struct MapCell *cellsB;
+    s32 widthA;
+    s32 widthB;
+    s32 offset;
+    s32 zB;
+    s32 tileZ;
+    s32 heightA;
+    s32 heightB;
+    s32 x;
+    s32 z;
+    s32 xA;
+    s32 xB;
+    s32 zA;
+    s32 flag;
+    struct MapWork *map;
+    struct MapCell *cell;
+    struct WorkEvent *work2;
+    struct Work020023c4 *other;
+    struct Actor *target;
+
+    flag = Event_GetFlag(0x106);
+    if (work->unk166 != 0)
+      flag |= 1;
+    actor->movementState = flag;
+
+    position.x = actor->x;
+    position.y = actor->y;
+    position.z = actor->z;
+    FieldVector_AddPolarOffset(0x80000, actor->facing, &position);
+    if (Func_02004c18(0, position.x, position.z) == 7) {
+      actor->targetZ = 0x80000000;
+      actor->targetY = 0x80000000;
+      actor->targetX = 0x80000000;
+      actor->acceleration = 0x4000;
+      actor->timer = 1;
+      Event_PlaySound(145);
+      /* FAKEMATCH(wrapper): forwarded, so each argument builds its own 0x50000;
+       * as a direct call, 6 of 362 instructions differ in tla-en. */
+      MapGrid_SetShake(0x50000, 0x50000, 0x10000);
+      /* FAKEMATCH(wrapper): forwarded, so each argument builds its own -1; as a
+       * direct call, 17 of 362 instructions differ in tla-en. */
+      MapGrid_SetShake(-1, -1, 0xe666);
+      if (actor->watchedObject != NULL)
+        ((void (*)(struct Actor *))actor->watchedObject)(actor);
+    }
+
+    map = Ram_HeapSlots->mapWork;
+    tileX = actor->x >> 20;
+    tileZ = actor->z >> 20;
+    cellsA = &map->layers[1].cells[tileX + (tileZ << 7)];
+    cellsB = &map->layers[2].cells[tileX + (tileZ << 7)];
+    widthA = *(s32 *)&map->layers[1].unk08[0] >> 20;
+    heightA = *(s32 *)&map->layers[1].unk08[4] >> 20;
+    widthB = *(s32 *)&map->layers[2].unk08[0] >> 20;
+    heightB = *(s32 *)&map->layers[2].unk08[4] >> 20;
+
+    for (dz = -1, zB = tileZ + heightB - 2, z = tileZ - 1,
+        zA = tileZ + heightA - 1;
+         dz <= 1; zB++, z++, zA++, dz++) {
+      for (dx = -1, xB = tileX + widthB - 1, x = tileX - 1,
+          xA = tileX + widthA - 1;
+           dx <= 1; xB++, x++, xA++, dx++) {
+        offset = ((dz << 7) + dx) * 4;
+        cell = (struct MapCell *)(offset + (s32)cellsA);
+        if (cell->collisionCode == 77) {
+          cell->collisionCode = 0;
+          MapGrid_CopyCellsLayered(64, 64, 1, 1, xA, zA);
+          MapGrid_CopyCellAttributes(64, 64, 1, 1, x, z);
+          Event_PlaySound(0x23d);
+          Func_02002b4c((x << 20) + 0x80000, actor->y, (z << 20) + 0x80000,
+                        actor->facing);
+        }
+        cell = (struct MapCell *)(offset + (s32)cellsB);
+        if (cell->collisionCode == 77) {
+          cell->collisionCode = 0;
+          MapGrid_CopyCellsLayered(64, 64, 1, 2, xB, zB);
+          MapGrid_CopyCellAttributes(64, 64, 1, 1, x, z);
+          Event_PlaySound(0x23c);
+          Func_02002b4c((x << 20) + 0x80000, actor->y, (z << 20) + 0x80000,
+                        actor->facing);
+        }
+      }
+    }
+
+    if (actor->scaleX < 0x10000) {
+      actor->scaleX += 0x1000;
+      actor->scaleY += 0x1000;
+    }
+    FieldActor_SetMoveTarget(actor, position.x, position.y, position.z);
+
+    work2 = Ram_HeapSlots->eventWork;
+    other = (struct Work020023c4 *)(gData_020023c4 + 0x188);
+    target = Actor_Get(gMainRoutineWork.currentOwner);
+    if (ABS(actor->x - target->x) < 0x140000 &&
+        (u32)(actor->y - target->y + 0x7ffff) <= 0x1ffffe &&
+        ABS(actor->z - target->z) < 0x140000) {
+      other->unk04 = 2;
+      other->unk6c = actor;
+      work2->unk154 = other->unk0a + 2;
+    }
+  } else if (state == 1) {
+    actor->movementState = 0;
+    if (actor->scaleX > 0) {
+      actor->scaleX -= 0x1000;
+      actor->scaleY -= 0x1000;
+      Func_020029c8(actor);
+    } else {
+      actor->z = 0;
+      actor->y = 0;
+      actor->x = 0;
+      actor->velocityZ = 0;
+      actor->velocityY = 0;
+      actor->velocityX = 0;
+      actor->update = NULL;
+    }
+  }
 }

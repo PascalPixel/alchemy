@@ -205,6 +205,8 @@ static __inline__ void Serial_ResetTransferState(void) {
 
   state = &gSerialTransfer;
   IRQ_LOCK(saved);
+  /* FAKEMATCH(temporary): zero holds the stores' 0; as 0 in each store, 29 of
+   * 62 instructions differ in tbs-en (BattleArena_ExchangePartyRecords). */
   zero = 0;
   /* FAKEMATCH(dead): state set again; as the one assignment above, 14 of 62
    * instructions differ in tbs-en (BattleArena_ExchangePartyRecords). */

@@ -176,6 +176,8 @@ static void Colosso_DrawGauge(void) {
   y &= 255;
   width = segments * 16;
   x = 104 - width;
+  /* FAKEMATCH(temporary): shape holds each sprite's size in turn; as the size
+   * in each word, 276 of 446 instructions differ in tbs-en. */
   shape = OBJ_SIZE_8X16;
   *dst++ = 0;
   *dst++ = (x << 16) | y | shape;

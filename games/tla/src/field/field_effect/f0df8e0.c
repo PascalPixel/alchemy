@@ -19,9 +19,9 @@ struct LayeredSprite {
 
 extern const s32 *gData_080f3978[];
 
-struct Actor *Actor_GetById(s32 id);
+struct Actor *Actor_GetById(u32 objectId);
 struct FieldEffect *Func_080200c0(s32 type, s32 x, s32 y, s32 z);
-void Actor_SetPartAttribute(struct Actor *object, s32 value);
+void Actor_SetPartAttribute(struct Actor *object, s32 attribute);
 void BattleEffect_UpdateObjectMotionScaleAndLinkedAngle(
     union FieldObject *object);
 

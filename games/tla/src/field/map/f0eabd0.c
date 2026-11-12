@@ -23,7 +23,7 @@ struct RestoreMap {
 
 extern u8 gMapShapeGrid[];
 
-struct Actor *Actor_GetById(u32 actor);
+struct Actor *Actor_GetById(u32 objectId);
 s32 Func_080eab70(struct Actor *object);
 u32 Func_080202f0(s32 terrain, s32 x, s32 z);
 #include "field.h"

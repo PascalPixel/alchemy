@@ -43,7 +43,7 @@ void Actor_SetPositionAndResetMotionFar(struct Actor *actor, s32 x, s32 y,
                                         s32 z);
 void Animation_SetIndexAndInitializeObjectsFar(struct Actor *actor, s32 index);
 void Animation_ApplyChildValueToFirstFar(void *animation, s32 value);
-struct Actor *Actor_GetById(u32 actor);
+struct Actor *Actor_GetById(u32 objectId);
 void Camera_FollowActor(s32 actor, s32 mode);
 
 void Func_080e4a34(void) {

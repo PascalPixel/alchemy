@@ -47,7 +47,7 @@ s32 Trig_Sin(s32 angle);
 void BattleEffect_AdvanceHueCycle(void);
 void BattleEffect_ApplyColorToTargetBuffer(u32 color, s32 mode);
 void BattleEffect_StartBufferInterpolation(s32 frames);
-struct Actor *Actor_GetById(s32 id);
+struct Actor *Actor_GetById(u32 objectId);
 void BattleEffect_ApplyFlickerValue(struct Actor *object, s32 value);
 struct WaveFxDescriptor *Scene_FindActorPlacement(s32 id);
 struct WaveFxMetadata *Resource_GetMetadataRecordFarFar(s32 sprite);

@@ -34,7 +34,7 @@ void Event_SetExitRequest(u16 countdown);
 void Event_SetMessageId(s32 message);
 s32 FieldMessage_ShowAtActor(s32 speaker, s32 flags);
 s32 Event_AskYesNoAndShowResponse(s32 speaker, s32 flags);
-struct Actor *Actor_GetById(s32 actorId);
+struct Actor *Actor_GetById(u32 objectId);
 void Actor_SetHorizontalPositionWithTerrain(s32 actorId, s32 x, s32 z);
 void Actor_SetSpeedParameters(s32 actorId, s32 speed, s32 acceleration);
 void Actor_ResetAndSetPosition(u32 objectId, s32 x, s32 z);

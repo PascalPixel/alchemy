@@ -234,7 +234,7 @@ s32 Func_080d4ab4(struct Actor *object) {
   return 0;
 }
 
-struct Actor *Actor_GetById(s32 id);
+struct Actor *Actor_GetById(u32 objectId);
 
 extern const u8 gData_080f34e4[];
 extern const u8 gData_080f3428[];

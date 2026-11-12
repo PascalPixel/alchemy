@@ -151,7 +151,7 @@ void Func_02003648(s32 id) { Actor_GetById(id)->motionFlags = 3; }
 void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
 
 struct Actor;
-void Animation_SetStateFlags(struct Actor *object, s32 flags);
+void Animation_SetStateFlags(struct Actor *object, u32 value);
 void Func_02000610(s32 id);
 void Func_02000640(s32 id);
 s32 Func_0200557c();

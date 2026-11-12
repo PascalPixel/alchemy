@@ -25,7 +25,7 @@ struct ThrowAnimations {
 
 extern const struct ThrowAnimations gData_02003634;
 
-struct Actor *Actor_GetById(s32 id);
+struct Actor *Actor_GetById(u32 objectId);
 void Func_0200345c(void);
 void Event_ResolvePendingActions(s32 mode);
 void Event_SetMessageId(s32 message);

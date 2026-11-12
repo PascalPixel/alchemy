@@ -447,7 +447,7 @@ void Func_080e3074(void) {
   HeapSlot_Release(92);
 }
 
-struct Actor *Actor_GetById(u32 actor);
+struct Actor *Actor_GetById(u32 objectId);
 void Event_Start(void);
 void Event_ResolvePendingActions(s32 skip);
 void Event_StartScreenTransition(void);

@@ -96,7 +96,7 @@ void Func_020031e8(void);
 void Func_020032a0(void);
 s32 Math_Cosine(s32 angle);
 struct Actor;
-void Animation_SetStateFlags(struct Actor *object, s32 flags);
+void Animation_SetStateFlags(struct Actor *object, u32 value);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 

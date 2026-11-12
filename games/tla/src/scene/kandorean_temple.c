@@ -358,7 +358,7 @@ void Func_02000930(struct Actor *object, s32 priority) {
 }
 
 s32 Math_Cosine(s32 angle);
-void Animation_SetStateFlags(struct Actor *object, s32 flags);
+void Animation_SetStateFlags(struct Actor *object, u32 value);
 
 void Func_0200098c(s32 *position, s32 value) {
   struct Actor *object =

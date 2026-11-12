@@ -36,10 +36,10 @@ extern u8 gMapCellBuffer[];
 
 struct Actor *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
 void Scene_SetActorSpritePriority(struct Actor *object, s32 priority);
-void Actor_SetSingleChildFlags(struct Actor *object, s32 value);
-void Actor_SetPartAttribute(struct Actor *object, s32 value);
-void Animation_SetStateFlags(struct Actor *object, s32 value);
-struct Actor *Actor_GetById(s32 id);
+void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
+void Actor_SetPartAttribute(struct Actor *object, s32 attribute);
+void Animation_SetStateFlags(struct Actor *object, u32 value);
+struct Actor *Actor_GetById(u32 objectId);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);

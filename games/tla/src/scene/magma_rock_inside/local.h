@@ -24,7 +24,7 @@ extern char SceneId_Ov692Room7;
 extern char SceneId_Ov692Room8;
 
 void Scene_SetActorSpritePriority(struct Actor *object, s32 priority);
-void Animation_SetStateFlags(struct Actor *object, s32 flags);
+void Animation_SetStateFlags(struct Actor *object, u32 value);
 
 extern const u8 gData_02005534[];
 

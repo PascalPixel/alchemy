@@ -108,7 +108,7 @@ struct FieldSpriteFlags {
 s32 Math_Cosine(s32 angle);
 void *Heap_Alloc(s32 size);
 void Heap_Release(void *block);
-void Animation_SetStateFlags(struct Actor *object, s32 flags);
+void Animation_SetStateFlags(struct Actor *object, u32 value);
 void Func_02003c7c(const void *source, void *destination);
 void Func_02003cc4(struct Actor *object, s32 mode);
 void Func_02003ccc(struct Actor *object, const void *data);

@@ -12,7 +12,7 @@ extern s32 gData_0200567c;
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void wait(s32 frames);
-struct Actor *Actor_GetById(s32 id);
+struct Actor *Actor_GetById(u32 objectId);
 void Func_02000038(const void *data);
 void Func_02001804(void);
 void Func_020019b8(void);

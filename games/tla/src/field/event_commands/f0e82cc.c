@@ -315,7 +315,7 @@ struct BurstEvent {
   u16 unkcae;
 };
 
-struct Actor *Actor_GetById(s32 id);
+struct Actor *Actor_GetById(u32 objectId);
 void Window_LoadGraphics(void);
 void BattleEffect_IntegrateVector3(s32 *vector, s32 damping, s32 gravity);
 extern char ResourceId_SparkleFade;

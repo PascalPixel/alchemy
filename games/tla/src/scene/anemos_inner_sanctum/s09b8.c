@@ -8,7 +8,7 @@ void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
 
 extern s32 gData_02003584[];
 
-void Animation_SetStateFlags(struct Actor *object, s32 flags);
+void Animation_SetStateFlags(struct Actor *object, u32 value);
 void Scene_SetActorSpritePriority(struct Actor *object, s32 priority);
 void Func_020032e0(struct Actor *object, s32 mode);
 void Func_020032e8(struct Actor *object, const void *script);

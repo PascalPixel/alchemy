@@ -53,7 +53,7 @@ void Func_080eb01c(struct EffectSprite *sprite);
 void Camera_WorldToScreen(s32 *position);
 void BattleEffect_IntegrateVector3(struct EffectParticle *particle, s32 frames,
                                    s32 flags);
-struct Actor *Actor_GetById(s32 id);
+struct Actor *Actor_GetById(u32 objectId);
 void wait(s32 frames);
 s32 Trig_Sin(s32 angle);
 

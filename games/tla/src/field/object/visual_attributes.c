@@ -13,7 +13,7 @@
 #include "edition.h"
 #include "actor_view.h"
 
-struct Actor *Actor_GetById(u32);
+struct Actor *Actor_GetById(u32 objectId);
 
 void Actor_ResetTargetAndSetMode1(u32 objectId) {
   struct Actor *object = ObjectTable_Get(objectId);

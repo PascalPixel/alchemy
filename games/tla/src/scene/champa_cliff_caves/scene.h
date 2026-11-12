@@ -24,7 +24,7 @@ struct RiseObject {
 
 extern const struct WarpTarget gData_02003d10;
 
-struct Actor *Actor_GetById(s32 id);
+struct Actor *Actor_GetById(u32 objectId);
 void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
 void Actor_CenterOnColumn(u32 objectId, s32 action, s32 z_offset);
 void Actor_OffsetPositionAndResetMotion(s32 id, s32 dx, s32 dz);

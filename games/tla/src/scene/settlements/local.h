@@ -37,7 +37,7 @@ void Func_0200052c(void);
 void Func_02000714(struct Actor *object);
 void Func_02001fe0(struct Actor *object, s32 a);
 void Func_02002000(struct Actor *object);
-void Animation_SetStateFlags(struct Actor *object, s32 flags);
+void Animation_SetStateFlags(struct Actor *object, u32 value);
 extern s32 gData_02002ce0;
 extern u16 gData_02002ce4;
 extern u16 gData_02002ce6;

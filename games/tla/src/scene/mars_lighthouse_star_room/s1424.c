@@ -2,7 +2,7 @@
 #include "frame.h"
 
 void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
-void Animation_SetStateFlags(struct Actor *object, s32 flags);
+void Animation_SetStateFlags(struct Actor *object, u32 value);
 
 void Func_020013e4(void);
 

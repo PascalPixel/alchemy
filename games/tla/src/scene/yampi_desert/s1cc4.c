@@ -11,7 +11,7 @@
 
 extern u32 gData_020042f0[];
 
-struct Actor *Actor_GetById(s32 id);
+struct Actor *Actor_GetById(u32 objectId);
 struct Actor *Func_02003fc0(s32 kind, s32 x, s32 y, s32 z);
 void Func_02003fa8(struct Actor *object, s32 mode);
 void Func_02003fb8(struct Actor *object, const void *script);

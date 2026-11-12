@@ -140,7 +140,7 @@ void Func_080d9978(struct Actor *object) {
     Func_080d8fa8(0, 12, 13, 0);
 }
 
-struct Actor *Actor_GetById(s32 id);
+struct Actor *Actor_GetById(u32 objectId);
 
 s32 Func_080d99b8(s32 firstId, s32 secondId) {
   struct Actor *owner = Actor_GetById(gMainRoutineWork.currentOwner);

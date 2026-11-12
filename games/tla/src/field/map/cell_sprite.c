@@ -15,7 +15,7 @@
 
 extern struct CellTarget CELL_TABLE;
 
-struct Actor *Actor_GetById(s32 id);
+struct Actor *Actor_GetById(u32 objectId);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 void CELL_PUSH_SLOT_ENTRY(void *entry, s32 priority);
 

@@ -5,7 +5,7 @@
 #include "system/io_reg.h"
 #include "task.h"
 
-struct Actor *Actor_GetById(u32 id);
+struct Actor *Actor_GetById(u32 objectId);
 void Func_02001cc4(void);
 void Event_ResolvePendingActions(s32 skip);
 void Func_02000780(void);

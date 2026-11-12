@@ -3,7 +3,7 @@
 #include "main_routine_work.h"
 #include "ram_buffer.h"
 
-struct Actor *Actor_GetById(u32 id);
+struct Actor *Actor_GetById(u32 objectId);
 void Func_02005e14(void);
 void Func_02005e1c(void);
 void Func_02005f2c(s32 skip);

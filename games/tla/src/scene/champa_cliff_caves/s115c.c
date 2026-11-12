@@ -21,7 +21,7 @@ struct Position {
   s32 z;
 };
 
-void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
+void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
 void Motion_SetVarCbAndRefresh(u32 objectId, s32 variant);
 void Motion_SetModeAndWaitAnimation(s32 actor, s32 mode);
 void Camera_MoveWithinMapBounds(s32 a, s32 b, s32 c, s32 d);

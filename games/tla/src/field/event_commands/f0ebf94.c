@@ -8,7 +8,7 @@
 #include "ram_buffer.h"
 #include "field/world_map.h"
 
-void *Actor_GetById(s32 id);
+struct Actor *Actor_GetById(u32 objectId);
 s32 Resource_LoadFixedBlockBIntoFreeSlotFar(void);
 void *Window_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 mode);
 void Func_080ec1d0(s32 *screenX, s32 *screenY);

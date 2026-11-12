@@ -1,6 +1,6 @@
 #include "mars_lighthouse_star_room.h"
 
-void Animation_SetStateFlags(struct Actor *object, s32 flags);
+void Animation_SetStateFlags(struct Actor *object, u32 value);
 void Func_02001a9c();
 void Func_02001b38(struct Actor *object, s32 priority);
 

@@ -168,7 +168,7 @@ void Func_080dc978(s32 id, s32 value) {
 }
 
 struct Actor;
-struct Actor *Actor_GetById(s32 id);
+struct Actor *Actor_GetById(u32 objectId);
 void BattleEffect_ApplyFlickerValue(struct Actor *object, s32 value);
 void BattleEffect_PrepareBufferInterpolation(void);
 void Func_080dcadc(void);

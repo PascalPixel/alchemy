@@ -16,7 +16,7 @@
 #include "text/msg_ids.h"
 #include "scene_tables.h"
 
-void Actor_SetSingleChildFlags(struct Actor *object, s32 value);
+void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
 
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 void Func_020010cc(s32 x, s32 z, s32 layer, s32 height);

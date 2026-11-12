@@ -147,7 +147,7 @@ void Func_080e9af4(void) {
 
 // Kind 24's work (battle_fx_work[0]).
 
-struct Actor *Actor_GetById(s32 id);
+struct Actor *Actor_GetById(u32 objectId);
 
 void Func_080e9db4(void) {
   struct GlowWork *work = (struct GlowWork *)Ram_HeapSlots->battleFxWork[0];

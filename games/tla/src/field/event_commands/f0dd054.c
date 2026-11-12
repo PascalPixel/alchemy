@@ -28,7 +28,7 @@ s32 Func_08020210(struct Actor *object, struct Vec3 *position);
 struct Actor *ScriptObject_FindOverlappingEntryFar(struct Actor *object,
                                                    struct Vec3 *position);
 s32 Func_080202f0(s32 layer, s32 x, s32 z);
-struct Actor *Actor_GetById(s32 id);
+struct Actor *Actor_GetById(u32 objectId);
 void Actor_SetPositionAndResetMotionFar(struct Actor *object, s32 x, s32 y,
                                         s32 z);
 s32 Field_RunPsynergyEvent(struct PendingEvent *event, s32 mode, s32 target);

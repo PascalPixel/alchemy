@@ -67,7 +67,7 @@ struct Actor *Func_02005680(s32 *position, s32 mode);
 void Func_02005688(void);
 void Func_02005480(struct Actor *object, s32 mode);
 struct Actor;
-void Animation_SetStateFlags(struct Actor *object, s32 flags);
+void Animation_SetStateFlags(struct Actor *object, u32 value);
 s32 Math_Cosine(s32 angle);
 
 void Func_020001f4(s32 unused, s32 id);

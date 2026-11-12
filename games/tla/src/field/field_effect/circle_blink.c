@@ -7,7 +7,7 @@
 
 s32 Math_Cosine(s32 angle);
 s32 Math_Sine(s32 angle);
-void Actor_SetPartAttribute(struct Actor *object, s32 value);
+void Actor_SetPartAttribute(struct Actor *object, s32 attribute);
 
 /// Circles the object around the centre in words 68 and 76, twice as wide
 /// as it is deep, the radius growing with its height, one step of 256 per

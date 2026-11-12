@@ -33,7 +33,7 @@ void Func_0200058c(void);
 void Func_02000404(const u8 *data);
 void Func_020011e0(void);
 void Scene_SetActorSpritePriority(struct Actor *object, s32 priority);
-void Animation_SetStateFlags(struct Actor *object, s32 a);
+void Animation_SetStateFlags(struct Actor *object, u32 value);
 void Func_02003168(const u8 *data);
 
 s32 Func_020013b8(void) {

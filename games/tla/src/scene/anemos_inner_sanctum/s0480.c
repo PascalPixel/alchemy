@@ -14,7 +14,7 @@
 void Func_020032e0(struct Actor *, s32);
 void Func_020032e8(struct Actor *object, const s32 *script);
 extern const s32 *gData_02003840[];
-void Actor_SetSingleChildFlags(struct Actor *, u32);
+void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
 void Scene_SetActorSpritePriority(struct Actor *object, s32 priority);
 
 void Func_02000480(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
@@ -118,7 +118,7 @@ s32 Func_02000660(struct Actor *object) {
 
 extern const u8 gData_02003674[];
 
-void Animation_SetStateFlags(struct Actor *object, s32 flags);
+void Animation_SetStateFlags(struct Actor *object, u32 value);
 
 void Func_020006a4(struct Actor *source) {
   struct Actor *object =

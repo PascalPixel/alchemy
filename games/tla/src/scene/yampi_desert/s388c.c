@@ -7,7 +7,7 @@ struct GabombaStatueEffectWork {
   s16 objectId;
 };
 
-struct Actor *Actor_GetById(s32 id);
+struct Actor *Actor_GetById(u32 objectId);
 void GameFlag_SetBit(s32 flag);
 void Func_02003910(s32 id, s32 a, s32 flag, s32 terrain);
 

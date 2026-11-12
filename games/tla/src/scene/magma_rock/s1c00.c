@@ -20,7 +20,7 @@ struct MagmaRockEffectOptions {
   void (*update)();
 };
 
-struct Actor *Actor_GetById(s32 id);
+struct Actor *Actor_GetById(u32 objectId);
 void Func_02003aec(void);
 void Event_ResolvePendingActions(s32 value);
 void GameFlag_SetBit(s32 flag);

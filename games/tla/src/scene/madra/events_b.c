@@ -8,7 +8,7 @@ void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 void wait(s32 frames);
 void Event_Wait(s32 frames);
-struct Actor *Actor_GetById(s32 id);
+struct Actor *Actor_GetById(u32 objectId);
 void Actor_ArmCallback(s32 id, s32 angle, s32 flags);
 void Actor_OffsetPositionAndResetMotion(s32 id, s32 dx, s32 dz);
 void Actor_WaitForMoveById(s32 id);

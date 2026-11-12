@@ -27,7 +27,7 @@ struct ChainWork {
   struct ChainSlot slots[8];
 };
 
-struct Actor *Actor_GetById(s32 id);
+struct Actor *Actor_GetById(u32 objectId);
 s32 Party_GetLeaderActor(void);
 
 #define CHAIN_WORK ((struct ChainWork *)Ram_HeapSlots->unk84[8])

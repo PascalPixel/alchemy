@@ -20,10 +20,10 @@ union ActorView {
 };
 extern const u8 gData_02004034[], gData_02003fe8[], gData_02004004[],
     gData_02004058[], gData_02004014[], gData_0200407c[], gData_020040ac[];
-void Scene_SetActorSpritePriority(void *object, s32 priority);
+void Scene_SetActorSpritePriority(struct Actor *object, s32 priority);
 void Func_02003cc4(void *object, s32 mode);
-void Actor_SetSingleChildFlags(void *object, u32 value);
-void Animation_SetStateFlags(void *object, s32 flags);
+void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
+void Animation_SetStateFlags(struct Actor *object, u32 value);
 void Func_02003ccc(void *object, const u8 *script);
 void Func_02001598(void);
 void Func_02003ebc(void);

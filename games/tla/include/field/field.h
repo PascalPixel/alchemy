@@ -55,7 +55,7 @@ extern const u8 gActor_BlinkChildValues[4];
 extern const u8 gActor_StepAngleScript[];
 extern u16 gScript_MainScript[];
 s32 Animation_InitializeObjects(struct AnimationObject *);
-void Animation_SetStateFlags(struct Actor *object, s32 flags);
+void Animation_SetStateFlags(struct Actor *object, u32 value);
 void AnimationObject_SetActiveTimerSteps(struct AnimationObject *, s32);
 s32 BattleEffect_ApplyColorToTargetBufferFar(s32, s32);
 void BattleEffect_ClearChildValueOnMismatch(void);

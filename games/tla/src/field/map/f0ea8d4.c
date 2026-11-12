@@ -10,7 +10,7 @@ struct ActorFlag {
   s16 flag;
 };
 
-struct Actor *Actor_GetById(u32 actor);
+struct Actor *Actor_GetById(u32 objectId);
 s32 Func_080eab70(struct Actor *object);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_ClearBit(s32 flag);

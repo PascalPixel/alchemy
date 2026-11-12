@@ -9,7 +9,7 @@ extern const u8 gData_02003fc0[];
 
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
-struct Actor *Actor_GetById(s32 id);
+struct Actor *Actor_GetById(u32 objectId);
 void Func_02000038(const void *data);
 void Func_02000584(const void *data);
 void Func_020012d8(void);

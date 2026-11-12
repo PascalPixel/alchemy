@@ -12,7 +12,7 @@ const struct Trigger *Sanctum_GetTriggers(void);
 s32 Sanctum_Initialize(void);
 extern u32 gSanctum_LeaderCircleScript[];
 extern u32 gSanctum_GaretCircleScript[];
-extern s32 gSanctum_ItemIconGrowScript[];
+extern s32 gItemIcon_GrowScript[];
 extern s32 gSanctum_ItemIconEndScript[];
 extern struct SceneEntrance gSanctum_Entrances[];
 extern u32 gSanctum_Exits[];

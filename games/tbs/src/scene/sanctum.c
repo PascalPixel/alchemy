@@ -2029,7 +2029,7 @@ static void Sanctum_RaiseItemIcon(s32 item, s32 fixedX, s32 fixedY,
   icon = FieldActor_Create(SPRITE_BLANK, fixedX, fixedY, fixedZ);
   zero = 0;
   if (icon != 0) {
-    Actor_StartScript(icon, gSanctum_ItemIconGrowScript);
+    Actor_StartScript(icon, gItemIcon_GrowScript);
     sprite = icon->sprite;
     sprite->flags = zero;
     sprite->count = zero;
@@ -2308,48 +2308,7 @@ u32 gSanctum_GaretCircleScript[] = {
     SC_END,
 };
 
-s32 gSanctum_ItemIconGrowScript[] = {
-    SC_SET(SW_SCALE_X, Q16_ONE / 2),
-    SC_SET(SW_SCALE_Y, Q16_ONE / 2),
-    SC_WAIT(2),
-    SC_SET(SW_SCALE_X, 3 * Q16_ONE / 4),
-    SC_SET(SW_SCALE_Y, 3 * Q16_ONE / 4),
-    SC_WAIT(2),
-    SC_SET(SW_SCALE_X, 7 * Q16_ONE / 8),
-    SC_SET(SW_SCALE_Y, 7 * Q16_ONE / 8),
-    SC_WAIT(2),
-    SC_SET(SW_SCALE_X, 15 * Q16_ONE / 16),
-    SC_SET(SW_SCALE_Y, 15 * Q16_ONE / 16),
-    SC_WAIT(2),
-    SC_SET(SW_SCALE_X, Q16_ONE),
-    SC_SET(SW_SCALE_Y, Q16_ONE),
-    SC_WAIT(16),
-    SC_SET(SW_SCALE_X, 11 * Q16_ONE / 8),
-    SC_SET(SW_SCALE_Y, 11 * Q16_ONE / 8),
-    SC_WAIT(2),
-    SC_SET(SW_SCALE_X, 3 * Q16_ONE / 2),
-    SC_SET(SW_SCALE_Y, 3 * Q16_ONE / 2),
-    SC_WAIT(2),
-    SC_SET(SW_SCALE_X, 9 * Q16_ONE / 8),
-    SC_SET(SW_SCALE_Y, 9 * Q16_ONE / 8),
-    SC_WAIT(2),
-    SC_SET(SW_SCALE_X, Q16_ONE),
-    SC_SET(SW_SCALE_Y, Q16_ONE),
-    SC_WAIT(2),
-    SC_SET(SW_SCALE_X, 11 * Q16_ONE / 8),
-    SC_SET(SW_SCALE_Y, 11 * Q16_ONE / 8),
-    SC_WAIT(2),
-    SC_SET(SW_SCALE_X, 3 * Q16_ONE / 2),
-    SC_SET(SW_SCALE_Y, 3 * Q16_ONE / 2),
-    SC_WAIT(2),
-    SC_SET(SW_SCALE_X, 9 * Q16_ONE / 8),
-    SC_SET(SW_SCALE_Y, 9 * Q16_ONE / 8),
-    SC_WAIT(2),
-    SC_SET(SW_SCALE_X, Q16_ONE),
-    SC_SET(SW_SCALE_Y, Q16_ONE),
-    SC_WAIT(2),
-    SC_END,
-};
+#include "shared/item_icon_grow_script.h"
 
 s32 gSanctum_ItemIconEndScript[] = {
     SC_WAIT(60),

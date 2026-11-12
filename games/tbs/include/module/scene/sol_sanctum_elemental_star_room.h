@@ -16,7 +16,7 @@ extern s32 gFieldEffect_MediumScript[];
 extern s32 gFieldEffect_LongScript[];
 extern const s32 *gFieldEffect_DurationScripts[];
 extern s32 gSolSanctumElementalStarRoom_AngleScript[];
-extern s32 gSolSanctumElementalStarRoom_PresentItemScript[];
+extern s32 gItemIcon_GrowScript[];
 extern struct SceneEntrance gSolSanctumElementalStarRoom_Entrances[];
 extern u32 gSolSanctumElementalStarRoom_Exits[];
 extern struct ActorPlacement gSolSanctumElementalStarRoom_ActorPlacements[];

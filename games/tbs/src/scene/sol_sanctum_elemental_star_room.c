@@ -2229,7 +2229,7 @@ static s32 SolSanctumElementalStarRoom_PresentStarFixed(s32 item, s32 x, s32 y,
   slot = Inventory_Find(member, ITEM_MYTHRIL_BAG);
   if (actor == NULL)
     return member;
-  Actor_StartScript(actor, gSolSanctumElementalStarRoom_PresentItemScript);
+  Actor_StartScript(actor, gItemIcon_GrowScript);
   sprite = actor->sprite;
   sprite->flags = 0;
   sprite->count = 0;
@@ -2333,48 +2333,7 @@ s32 gSolSanctumElementalStarRoom_AngleScript[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-s32 gSolSanctumElementalStarRoom_PresentItemScript[] = {
-    SC_SET(SW_SCALE_X, Q16_ONE / 2),
-    SC_SET(SW_SCALE_Y, Q16_ONE / 2),
-    SC_WAIT(2),
-    SC_SET(SW_SCALE_X, 3 * Q16_ONE / 4),
-    SC_SET(SW_SCALE_Y, 3 * Q16_ONE / 4),
-    SC_WAIT(2),
-    SC_SET(SW_SCALE_X, 7 * Q16_ONE / 8),
-    SC_SET(SW_SCALE_Y, 7 * Q16_ONE / 8),
-    SC_WAIT(2),
-    SC_SET(SW_SCALE_X, 15 * Q16_ONE / 16),
-    SC_SET(SW_SCALE_Y, 15 * Q16_ONE / 16),
-    SC_WAIT(2),
-    SC_SET(SW_SCALE_X, Q16_ONE),
-    SC_SET(SW_SCALE_Y, Q16_ONE),
-    SC_WAIT(16),
-    SC_SET(SW_SCALE_X, 11 * Q16_ONE / 8),
-    SC_SET(SW_SCALE_Y, 11 * Q16_ONE / 8),
-    SC_WAIT(2),
-    SC_SET(SW_SCALE_X, 3 * Q16_ONE / 2),
-    SC_SET(SW_SCALE_Y, 3 * Q16_ONE / 2),
-    SC_WAIT(2),
-    SC_SET(SW_SCALE_X, 9 * Q16_ONE / 8),
-    SC_SET(SW_SCALE_Y, 9 * Q16_ONE / 8),
-    SC_WAIT(2),
-    SC_SET(SW_SCALE_X, Q16_ONE),
-    SC_SET(SW_SCALE_Y, Q16_ONE),
-    SC_WAIT(2),
-    SC_SET(SW_SCALE_X, 11 * Q16_ONE / 8),
-    SC_SET(SW_SCALE_Y, 11 * Q16_ONE / 8),
-    SC_WAIT(2),
-    SC_SET(SW_SCALE_X, 3 * Q16_ONE / 2),
-    SC_SET(SW_SCALE_Y, 3 * Q16_ONE / 2),
-    SC_WAIT(2),
-    SC_SET(SW_SCALE_X, 9 * Q16_ONE / 8),
-    SC_SET(SW_SCALE_Y, 9 * Q16_ONE / 8),
-    SC_WAIT(2),
-    SC_SET(SW_SCALE_X, Q16_ONE),
-    SC_SET(SW_SCALE_Y, Q16_ONE),
-    SC_WAIT(2),
-    SC_END,
-};
+#include "shared/item_icon_grow_script.h"
 
 struct SceneEntrance gSolSanctumElementalStarRoom_Entrances[] = {
     {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 472, 0, 322, FACING_SOUTH, 0, -1, -1,

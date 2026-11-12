@@ -1,14 +1,7 @@
 # Glossary
 
 These are the words the pages about The Broken Seal share. Each entry says
-what the word means, shows it once in the game, and links to the page that
-explains it.
-
-Three plain words come up all through. The code is the game's instructions,
-which the console follows one after another. Memory is where the running
-game keeps what it is working on, and it is wiped when the console is
-switched off. A byte is the unit both are measured in: a KB is about a
-thousand bytes and an MB about a million.
+what the word means and links to the page that explains it.
 
 An entry's `Evidence:` line says where its word comes from. That is Camelot's
 own word where Camelot has one for the thing, else the word programmers of

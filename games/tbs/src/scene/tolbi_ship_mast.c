@@ -378,7 +378,7 @@ s32 TolbiShipMast_Initialize(void) {
       Event_Start();
       Field_ClimbUp();
       leader->y.fixed = PIXELS(56);
-      FieldCamera_MoveTo(-1, -1, -1, 0);
+      FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
       wait(1);
       FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 0);
       MapGrid_CenterOnFollowedPoint();
@@ -418,10 +418,10 @@ s32 TolbiShipMast_Initialize(void) {
 /// Frames the lookout with the leader moved out of view, then announces course.
 static void TolbiShipMast_SetupHiddenLeaderLookout(void) {
   Event_Start();
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   wait(1);
   FieldCamera_GetActor()->motionFlags = 0;
-  FieldCamera_MoveTo(PIXELS(164), PIXELS(64), PIXELS(321), 0);
+  FieldCamera_MoveTo(164, 64, 321, 0);
   MapGrid_CenterOnFollowedPoint();
   wait(1);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);

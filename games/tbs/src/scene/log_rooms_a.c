@@ -3466,7 +3466,7 @@ static void LogRoomsA_UpdateActorStops(void) {
 /// LogRoomsA_UpdateActorStops and the chase music, MUS_DJINN_LESSON.
 static void LogRoomsA_StartActorStops(void) {
   Event_Start();
-  FieldCamera_MoveTo(PIXELS(168), -1, PIXELS(656), 1);
+  FieldCamera_MoveTo(168, CAMERA_KEEP, 656, 1);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.8);
   Actor_SetSpeed(ACTOR_GARET, 0.8);
   Actor_SetSpeed(ACTOR_IVAN, 0.8);

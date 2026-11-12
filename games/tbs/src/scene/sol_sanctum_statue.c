@@ -360,7 +360,7 @@ static void SolSanctumStatue_ExplainTrapDisarmed(void) {
   SolSanctumStatue_SayThenWait(ACTOR_KRADEN, 6);
   Actor_SetPosition(ACTOR_KRADEN, 576, 280);
   FieldCamera_SetSpeed(0.8);
-  FieldCamera_MoveTo(PIXELS(574), -1, PIXELS(180), 1);
+  FieldCamera_MoveTo(574, CAMERA_KEEP, 180, 1);
   Actor_SetSpeed(ACTOR_KRADEN, 1);
   Actor_WalkToAndWait(ACTOR_KRADEN, 576, 216);
   Event_Wait(20);
@@ -373,10 +373,10 @@ static void SolSanctumStatue_ExplainTrapDisarmed(void) {
   Event_Wait(10);
   // The camera swings west to the hole at the centre and back.
   FieldCamera_SetSpeed(5.6);
-  FieldCamera_MoveTo(PIXELS(287), -1, PIXELS(176), 1);
+  FieldCamera_MoveTo(287, CAMERA_KEEP, 176, 1);
   FieldCamera_WaitForMove();
   Event_Wait(60);
-  FieldCamera_MoveTo(PIXELS(574), -1, PIXELS(180), 1);
+  FieldCamera_MoveTo(574, CAMERA_KEEP, 180, 1);
   FieldCamera_WaitForMove();
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
@@ -397,7 +397,7 @@ static void SolSanctumStatue_ExplainTrapDisarmed(void) {
   gFieldWork->transitionFrames = 16;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  FieldCamera_MoveTo(PIXELS(287), -1, PIXELS(176), 0);
+  FieldCamera_MoveTo(287, CAMERA_KEEP, 176, 0);
   MapGrid_CenterOnFollowedPoint();
   wait(1);
   Event_StartScreenTransition();
@@ -409,14 +409,14 @@ static void SolSanctumStatue_ExplainTrapDisarmed(void) {
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Actor_SetPosition(ACTOR_KRADEN, 576, 184);
-  FieldCamera_MoveTo(PIXELS(574), -1, PIXELS(180), 0);
+  FieldCamera_MoveTo(574, CAMERA_KEEP, 180, 0);
   MapGrid_CenterOnFollowedPoint();
   wait(1);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(20);
   FieldCamera_SetSpeed(1.2);
-  FieldCamera_MoveTo(PIXELS(574), -1, PIXELS(157), 1);
+  FieldCamera_MoveTo(574, CAMERA_KEEP, 157, 1);
   FieldCamera_WaitForMove();
   Event_Wait(20);
   // Garet: two beams shot out of the statues Isaac moved, and the hole
@@ -463,7 +463,7 @@ static void SolSanctumStatue_ExplainTrapDisarmed(void) {
   // Kraden: he will observe from the Luna room. He leaves south.
   SolSanctumStatue_SayThenWait(ACTOR_KRADEN, 6);
   FieldCamera_SetSpeed(1.6);
-  FieldCamera_MoveTo(PIXELS(576), -1, PIXELS(215), 1);
+  FieldCamera_MoveTo(576, CAMERA_KEEP, 215, 1);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH, 0);
   Event_Wait(10);
   Actor_Jump(ACTOR_KRADEN, 6, 0);
@@ -472,7 +472,7 @@ static void SolSanctumStatue_ExplainTrapDisarmed(void) {
   Actor_WalkToAndWait(ACTOR_KRADEN, 576, 321);
   Actor_SetPosition(ACTOR_KRADEN, 0, 0);
   FieldCamera_SetSpeed(3.6);
-  FieldCamera_MoveTo(PIXELS(576), -1, PIXELS(136), 1);
+  FieldCamera_MoveTo(576, CAMERA_KEEP, 136, 1);
   FieldCamera_WaitForMove();
   Event_Wait(20);
   // Rejoin the companions to the leader and restore normal field control.
@@ -534,7 +534,7 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   Event_SetMessageId(MsgSolSanctumWait);
   SolSanctumStatue_SayThenWait(ACTOR_KRADEN, 6);
   FieldCamera_SetSpeed(0.8);
-  FieldCamera_MoveTo(PIXELS(574), -1, PIXELS(180), 1);
+  FieldCamera_MoveTo(574, CAMERA_KEEP, 180, 1);
   Actor_SetSpeed(ACTOR_KRADEN, 1);
   Actor_WalkToAndWait(ACTOR_KRADEN, 576, 216);
   Event_Wait(20);
@@ -546,10 +546,10 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST_NORTHWEST, 0);
   Event_Wait(10);
   FieldCamera_SetSpeedParameters(PIXELS(28) / 5, PIXELS(7) / 10);
-  FieldCamera_MoveTo(PIXELS(287), -1, PIXELS(176), 1);
+  FieldCamera_MoveTo(287, CAMERA_KEEP, 176, 1);
   FieldCamera_WaitForMove();
   Event_Wait(60);
-  FieldCamera_MoveTo(PIXELS(574), -1, PIXELS(180), 1);
+  FieldCamera_MoveTo(574, CAMERA_KEEP, 180, 1);
   FieldCamera_WaitForMove();
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
@@ -593,11 +593,11 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   Actor_WalkTo(ACTOR_KRADEN, 432, 200);
   Event_Wait(20);
   FieldCamera_SetSpeed(2.4);
-  FieldCamera_MoveTo(PIXELS(288), -1, PIXELS(171), 1);
+  FieldCamera_MoveTo(288, CAMERA_KEEP, 171, 1);
   FieldCamera_WaitForMove();
   Event_Wait(80);
   Actor_SetAnimation(ACTOR_KRADEN, ANIM_STAND);
-  FieldCamera_MoveTo(PIXELS(574), -1, PIXELS(180), 1);
+  FieldCamera_MoveTo(574, CAMERA_KEEP, 180, 1);
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_EAST, 0);
   Event_Wait(30);
@@ -608,7 +608,7 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH, 0);
   FieldCamera_SetSpeedParameters(PIXELS(4) / 5, PIXELS(1) / 10);
-  FieldCamera_MoveWithinMapBounds(PIXELS(574), -1, PIXELS(171), 1);
+  FieldCamera_MoveTo(574, CAMERA_KEEP, 171, 1);
   Actor_Jump(ACTOR_KRADEN, 6, 0);
   Actor_SetSpeedAndAcceleration(ACTOR_KRADEN, 3, 2);
   Actor_WalkToAndWait(ACTOR_KRADEN, 576, 184);
@@ -668,7 +668,7 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   Actor_WalkToAndWait(ACTOR_KRADEN, 576, 216);
   Event_Wait(40);
   FieldCamera_SetSpeedParameters(PIXELS(4) / 5, PIXELS(1) / 10);
-  FieldCamera_MoveTo(PIXELS(574), -1, PIXELS(191), 1);
+  FieldCamera_MoveTo(574, CAMERA_KEEP, 191, 1);
   Actor_SetSpeed(ACTOR_KRADEN, 1);
   Actor_WalkToAndWait(ACTOR_KRADEN, 576, 232);
   Event_Wait(40);
@@ -680,12 +680,12 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   Event_Wait(30);
   SolSanctumStatue_SayThenWait(ACTOR_KRADEN, 6);
   Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
-  FieldCamera_MoveTo(PIXELS(576), -1, PIXELS(215), 1);
+  FieldCamera_MoveTo(576, CAMERA_KEEP, 215, 1);
   Actor_WalkToAndWait(ACTOR_KRADEN, 574, 323);
   Actor_SetPosition(ACTOR_KRADEN, 0, 0);
   // Leave Isaac in control after Jenna and Garet rejoin him.
   FieldCamera_SetSpeed(3.6);
-  FieldCamera_MoveWithinMapBounds(PIXELS(576), -1, PIXELS(136), 1);
+  FieldCamera_MoveTo(576, CAMERA_KEEP, 136, 1);
   FieldCamera_WaitForMove();
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_JENNA, FACING_EAST, 0);
@@ -1215,7 +1215,7 @@ static void SolSanctumStatue_CenterStatueMoved(void) {
         // The statue slides south into the hole; ACTOR_MOVED_CENTER_STATUE
         // stands in for it there and the room shakes hard, then settles.
         FieldCamera_SetSpeed(2);
-        FieldCamera_MoveTo(PIXELS(286), -1, PIXELS(146), 1);
+        FieldCamera_MoveTo(286, CAMERA_KEEP, 146, 1);
         FieldCamera_WaitForMove();
         Actor_Get(ACTOR_CENTER_STATUE)->steeringFlags &= ~ACTOR_FACES_MOTION;
         Actor_SetSpeedAndAcceleration(ACTOR_CENTER_STATUE, 3, 1);
@@ -1676,7 +1676,7 @@ static void SolSanctumStatue_OpenSeal(void) {
   if (!GameFlag_Get(FLAG_SOL_SANCTUM_ALL_SEALS_OPEN)) {
     // Show the configured seal and flash its two tile states.
     FieldCamera_SetSpeedParameters(PIXELS(2), PIXELS(1) / 4);
-    FieldCamera_MoveWithinMapBounds(PIXELS(576), -1, PIXELS(172), 1);
+    FieldCamera_MoveTo(576, CAMERA_KEEP, 172, 1);
     FieldCamera_WaitForMove();
     Sound_Play(SE_SOL_SANCTUM_LIGHT_UP);
     COPY_CELLS(sSealOpening.open);
@@ -1743,7 +1743,7 @@ static void SolSanctumStatue_ShineLeftBeam(void) {
   if (GameFlag_Get(FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED) == 0) {
     if (Event_GetFlag(FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING) == 0) {
       FieldCamera_SetSpeed(2);
-      FieldCamera_MoveTo(PIXELS(286), -1, PIXELS(146), 1);
+      FieldCamera_MoveTo(286, CAMERA_KEEP, 146, 1);
       FieldCamera_WaitForMove();
       Sound_Play(SE_SOL_SANCTUM_LIGHT_UP);
       MapGrid_CopyCellsTo(0, 59, 15, 38, 4, 3);
@@ -1771,7 +1771,7 @@ static void SolSanctumStatue_ShineRightBeam(void) {
   if (GameFlag_Get(FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED) == 0) {
     if (Event_GetFlag(FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING) == 0) {
       FieldCamera_SetSpeed(2);
-      FieldCamera_MoveTo(PIXELS(286), -1, PIXELS(146), 1);
+      FieldCamera_MoveTo(286, CAMERA_KEEP, 146, 1);
       FieldCamera_WaitForMove();
       Sound_Play(SE_SOL_SANCTUM_LIGHT_UP);
       MapGrid_CopyCellsTo(4, 59, 17, 38, 4, 3);

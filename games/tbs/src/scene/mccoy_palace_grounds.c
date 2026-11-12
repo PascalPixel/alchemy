@@ -397,14 +397,14 @@ static void McCoyPalaceGrounds_GuardsArrestParty(void) {
 
   // Bring the leader into view before the guards interrupt.
   Event_Start();
-  FieldCamera_MoveTo(-1, -1, -1, 0);
-  FieldCamera_MoveTo(PIXELS(320), -1, PIXELS(320), 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
+  FieldCamera_MoveTo(320, CAMERA_KEEP, 320, 0);
   MapGrid_CenterOnFollowedPoint();
   wait(1);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 320, 372);
   Event_StartScreenTransition();
   FieldCamera_SetSpeedParameters(PIXELS(1) / 5, PIXELS(1) / 40);
-  FieldCamera_MoveWithinMapBounds(PIXELS(320), -1, PIXELS(290), 1);
+  FieldCamera_MoveTo(320, CAMERA_KEEP, 290, 1);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.6);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 320, 310);
   Actor_FaceDirection(ACTOR_WEST_GUARD, FACING_SOUTH_SOUTHEAST, 10);

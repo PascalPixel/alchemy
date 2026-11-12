@@ -788,7 +788,7 @@ static void ValePrologue_DoraSendsIsaacToThePlaza(void) {
   wait(60);
   // The camera looks down on the door of Isaac's house; Kyle waits outside.
   FieldCamera_SetSpeed(0.25);
-  FieldCamera_MoveTo(PIXELS(316), PIXELS(160), PIXELS(880), 1);
+  FieldCamera_MoveTo(316, 160, 880, 1);
   Actor_SetPosition(ACTOR_KYLE, 294, 868);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
@@ -1390,7 +1390,7 @@ static void ValePrologue_UnusedGaretJoinsIsaac(void) {
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
     FieldCamera_SetSpeed(0.4);
-    FieldCamera_MoveTo(PIXELS(256), -1, PIXELS(588), 1);
+    FieldCamera_MoveTo(256, CAMERA_KEEP, 588, 1);
     Actor_SetSpeed(ACTOR_GARET_CHILD, 2);
     Actor_RunScriptAndWait(ACTOR_GARET_CHILD,
                            gValePrologue_UnusedGaretRunsUpScript);
@@ -1579,7 +1579,7 @@ static void ValePrologue_WatchBoulderFall(void) {
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
     Actor_FaceDirection(ACTOR_GARET_CHILD, FACING_NORTH, 20);
     FieldCamera_SetSpeed(4);
-    FieldCamera_MoveTo(PIXELS(112), -1, PIXELS(331), 1);
+    FieldCamera_MoveTo(112, CAMERA_KEEP, 331, 1);
     FieldCamera_WaitForMove();
     for (i = 0; i < 40; i++) {
       ValePrologue_FlashPaletteAndSpawnEffects(Actor_Get(ACTOR_ELDER_EAST));
@@ -1668,7 +1668,7 @@ static void ValePrologue_WatchBoulderFall(void) {
     Sound_Play(SOUND_FADE_OUT_ACTION_SE);
     MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
     FieldCamera_SetSpeed(6);
-    FieldCamera_MoveTo(PIXELS(84), -1, PIXELS(564), 1);
+    FieldCamera_MoveTo(84, CAMERA_KEEP, 564, 1);
     FieldCamera_WaitForMove();
     Scene_PlayQueuedMusic();
     Actor_FaceActor(ACTOR_GARET_CHILD, ACTOR_PARTY_LEADER, 0);
@@ -1825,7 +1825,7 @@ static void ValePrologue_WatchAttemptToSaveFelix(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_GARET_CHILD, FACING_SOUTH, 20);
   FieldCamera_SetSpeed(4);
-  FieldCamera_MoveTo(PIXELS(216), -1, PIXELS(1232), 1);
+  FieldCamera_MoveTo(216, CAMERA_KEEP, 1232, 1);
   FieldCamera_WaitForMove();
   Event_Wait(40);
   Actor_RunRepeatedMotion(ACTOR_KYLE, 2);
@@ -1836,7 +1836,7 @@ static void ValePrologue_WatchAttemptToSaveFelix(void) {
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 10);
   Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH_SOUTHEAST, 10);
   FieldCamera_SetSpeed(3);
-  FieldCamera_MoveTo(PIXELS(232), -1, PIXELS(1253), 1);
+  FieldCamera_MoveTo(232, CAMERA_KEEP, 1253, 1);
   FieldCamera_WaitForMove();
   Event_Wait(20);
   Sound_Play(SE_HEAVY_IMPACT);
@@ -1873,7 +1873,7 @@ static void ValePrologue_WatchAttemptToSaveFelix(void) {
   Actor_StartRepeatedMotion(ACTOR_JENNAS_MOTHER, 2);
   Actor_RunRepeatedMotion(ACTOR_JENNA_CHILD, 2);
   FieldCamera_SetSpeed(0.6);
-  FieldCamera_MoveTo(PIXELS(216), -1, PIXELS(1232), 1);
+  FieldCamera_MoveTo(216, CAMERA_KEEP, 1232, 1);
   FieldCamera_WaitForMove();
   Actor_SetAttachedEffect(ACTOR_JENNA_CHILD,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -1888,7 +1888,7 @@ static void ValePrologue_WatchAttemptToSaveFelix(void) {
   Actor_Jump(ACTOR_JENNA_CHILD, 2, 0);
   Actor_SetDestination(ACTOR_JENNA_CHILD, 227, 1201);
   Event_Wait(90);
-  FieldCamera_MoveTo(PIXELS(232), -1, PIXELS(1253), 1);
+  FieldCamera_MoveTo(232, CAMERA_KEEP, 1253, 1);
   FieldCamera_WaitForMove();
   Actor_SetPosition(ACTOR_FELIX_CHILD, 243, 1277);
   wait(1);
@@ -1904,7 +1904,7 @@ static void ValePrologue_WatchAttemptToSaveFelix(void) {
   Scene_PlayQueuedMusic();
   Event_Wait(20);
   FieldCamera_SetSpeedParameters(PIXELS(8) / 5, PIXELS(1) / 5);
-  FieldCamera_MoveWithinMapBounds(PIXELS(216), -1, PIXELS(1232), 1);
+  FieldCamera_MoveTo(216, CAMERA_KEEP, 1232, 1);
   FieldCamera_WaitForMove();
   Actor_RunRepeatedMotion(ACTOR_JENNAS_FATHER, 2);
   Event_Wait(20);
@@ -2025,7 +2025,7 @@ static void ValePrologue_DoraGoesForHelp(void) {
   Actor_SetAnimationAndWait(ACTOR_JENNAS_MOTHER, ANIM_NOD);
   Event_Wait(20);
   FieldCamera_SetSpeed(1);
-  FieldCamera_MoveTo(PIXELS(134), -1, PIXELS(1195), 1);
+  FieldCamera_MoveTo(134, CAMERA_KEEP, 1195, 1);
   Actor_SetSpeed(ACTOR_JENNA_CHILD, 1.6);
   Actor_SetSpeed(ACTOR_DORA, 1.6);
   Actor_SetScript(ACTOR_JENNA_CHILD, gValePrologue_JennaRunsIntoRiversideHouse);
@@ -2062,7 +2062,7 @@ static void ValePrologue_DoraGoesForHelp(void) {
   MapGrid_AnimateCells(gValePrologue_GrandparentsDoorCloses, 38, 72);
   Event_Wait(30);
   Scene_PlayQueuedMusic();
-  FieldCamera_MoveTo(PIXELS(112), -1, PIXELS(1225), 1);
+  FieldCamera_MoveTo(112, CAMERA_KEEP, 1225, 1);
   Sound_Play(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gValePrologue_IsaacsDoorOpens, 35, 73);
   Event_Wait(20);
@@ -2091,7 +2091,7 @@ static void ValePrologue_DoraGoesForHelp(void) {
   Actor_SetScript(ACTOR_JENNA_CHILD, gValePrologue_JennaHeadsForPlaza);
   Event_Wait(40);
   FieldCamera_SetSpeed(2);
-  FieldCamera_MoveTo(PIXELS(105), -1, PIXELS(1086), 1);
+  FieldCamera_MoveTo(105, CAMERA_KEEP, 1086, 1);
   Actor_WaitForScriptEndById(ACTOR_DORA);
   Actor_FaceDirection(ACTOR_DORA, FACING_EAST, 0);
   Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
@@ -2264,12 +2264,12 @@ static void ValePrologue_BoulderSweepsThemAway(void) {
       Event_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_DORA, 0, 10);
       Actor_FaceDirection(ACTOR_JENNA_CHILD, FACING_NORTHWEST, 0);
       FieldCamera_SetSpeedParameters(PIXELS(6) / 5, PIXELS(3) / 20);
-      FieldCamera_MoveTo(PIXELS(101), -1, PIXELS(1197), 1);
+      FieldCamera_MoveTo(101, CAMERA_KEEP, 1197, 1);
       Actor_SetSpeed(ACTOR_DORA, 1.4);
       Actor_SetScript(ACTOR_DORA, gValePrologue_DoraRunsToRiver);
       Event_Wait(60);
       FieldCamera_SetSpeedParameters(PIXELS(3) / 5, PIXELS(3) / 40);
-      FieldCamera_MoveTo(PIXELS(187), -1, PIXELS(1328), 1);
+      FieldCamera_MoveTo(187, CAMERA_KEEP, 1328, 1);
       FieldCamera_WaitForMove();
       Event_Wait(40);
       Actor_RunRepeatedMotion(ACTOR_JENNA_CHILD, 2);
@@ -2279,11 +2279,11 @@ static void ValePrologue_BoulderSweepsThemAway(void) {
       // "I couldn't find anyone who could help... How did you do?"
       Event_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_DORA, 0, 20);
       FieldCamera_SetSpeedParameters(PIXELS(2), PIXELS(1) / 4);
-      FieldCamera_MoveTo(PIXELS(221), -1, PIXELS(1385), 1);
+      FieldCamera_MoveTo(221, CAMERA_KEEP, 1385, 1);
       Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_EXHAUSTED_STRONGMAN, 0);
       Actor_FaceActor(ACTOR_GARET_CHILD, ACTOR_EXHAUSTED_STRONGMAN, 0);
       Actor_FaceDirection(ACTOR_JENNA_CHILD, FACING_SOUTH_SOUTHEAST, 80);
-      FieldCamera_MoveWithinMapBounds(PIXELS(182), -1, PIXELS(1360), 1);
+      FieldCamera_MoveTo(182, CAMERA_KEEP, 1360, 1);
       Actor_WalkToAndWait(ACTOR_EXHAUSTED_STRONGMAN, 182, 1384);
       Actor_FaceActor(ACTOR_EXHAUSTED_STRONGMAN, ACTOR_DORA, 0);
       Event_Wait(30);
@@ -2382,7 +2382,7 @@ static void ValePrologue_ShowBoulderSweepingDownriver(void) {
   actorVisual = actor->sprite;
   boulderShadowSprite = boulderShadow->sprite;
   FieldCamera_SetSpeed(1);
-  FieldCamera_MoveTo(PIXELS(110), -1, PIXELS(1419), 1);
+  FieldCamera_MoveTo(110, CAMERA_KEEP, 1419, 1);
   Actor_SetSpeed(ACTOR_EXHAUSTED_STRONGMAN, 1.2);
   Actor_SetSpeed(ACTOR_JENNA_CHILD, 1.2);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 1.2);
@@ -2400,9 +2400,9 @@ static void ValePrologue_ShowBoulderSweepingDownriver(void) {
   Actor_SetScript(ACTOR_GARET_CHILD, entryActions);
   Event_Wait(128);
   ValePrologue_StepOffBridge();
-  FieldCamera_MoveTo(PIXELS(174), -1, PIXELS(1428), 1);
+  FieldCamera_MoveTo(174, CAMERA_KEEP, 1428, 1);
   Event_Wait(104);
-  FieldCamera_MoveTo(PIXELS(153), -1, PIXELS(1325), 1);
+  FieldCamera_MoveTo(153, CAMERA_KEEP, 1325, 1);
   Actor_WalkToAndWait(ACTOR_DORA, 158, 1272);
   Actor_FaceDirection(ACTOR_DORA, FACING_SOUTHEAST, 0);
   Actor_WaitForScriptEndById(ACTOR_EXHAUSTED_STRONGMAN);
@@ -2467,7 +2467,7 @@ static void ValePrologue_ShowBoulderSweepingDownriver(void) {
   Event_Wait(1);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
   FieldCamera_SetSpeedAndAcceleration(8, 8);
-  FieldCamera_MoveTo(PIXELS(217), -1, PIXELS(1084), 1);
+  FieldCamera_MoveTo(217, CAMERA_KEEP, 1084, 1);
   PaletteFade_ApplyTarget(RGB(0, 0, 0), PALETTES_ALL);
   PaletteFade_StartInterpolation(40);
   wait(40);
@@ -2498,7 +2498,7 @@ static void ValePrologue_ShowBoulderSweepingDownriver(void) {
   currentActor = FieldCamera_GetActor();
   currentActor->velocityZ = stoppedVelocity;
   wait(1);
-  FieldCamera_MoveTo(PIXELS(247), PIXELS(128), PIXELS(917), 0);
+  FieldCamera_MoveTo(247, 128, 917, 0);
   MapGrid_CenterOnFollowedPoint();
   wait(1);
   PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_BG);
@@ -2509,7 +2509,7 @@ static void ValePrologue_ShowBoulderSweepingDownriver(void) {
   Task_AddFrame(ValePrologue_UpdateBoulderShadow, TASK_PASS_FRAME);
   Actor_SetScript(ACTOR_BOULDER, gValePrologue_BoulderRollsDownriver);
   FieldCamera_SetSpeedAndAcceleration(2, 0.03);
-  FieldCamera_MoveTo(PIXELS(175), PIXELS(96), PIXELS(1086), 1);
+  FieldCamera_MoveTo(175, 96, 1086, 1);
   do {
     wait(1);
   } while ((s16)actor->userValue != 8);
@@ -2562,7 +2562,7 @@ static void ValePrologue_ShowBoulderSweepingDownriver(void) {
   Actor_SetPosition(ACTOR_GARET_CHILD, 169, 1384);
   Actor_FaceDirection(ACTOR_GARET_CHILD, FACING_SOUTH, 0);
   Actor_SetAnimation(ACTOR_GARET_CHILD, ANIM_STILL);
-  FieldCamera_MoveTo(PIXELS(166), 0, PIXELS(1337), 0);
+  FieldCamera_MoveTo(166, 0, 1337, 0);
   MapGrid_CenterOnFollowedPoint();
   actor->motionFlags = resetValue;
   actor->targetX = ACTOR_NO_TARGET;
@@ -2570,7 +2570,7 @@ static void ValePrologue_ShowBoulderSweepingDownriver(void) {
   actor->targetZ = ACTOR_NO_TARGET;
   ValePrologue_FlashLightning();
   Actor_SetPosition(ACTOR_BOULDER_SHADOW, 218, 1176);
-  FieldCamera_MoveTo(PIXELS(210), 0, PIXELS(1196), 0);
+  FieldCamera_MoveTo(210, 0, 1196, 0);
   MapGrid_CenterOnFollowedPoint();
   boulderShadow->scaleX = 2 * Q16_ONE;
   boulderShadow->scaleY = 2 * Q16_ONE;
@@ -2684,7 +2684,7 @@ static void ValePrologue_ShowBoulderSweepingDownriver(void) {
   currentActor = Actor_Get(ACTOR_PARTY_LEADER);
   currentActor->facing = FACING_NORTHEAST;
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
-  FieldCamera_MoveTo(PIXELS(181), 0, PIXELS(1273), 0);
+  FieldCamera_MoveTo(181, 0, 1273, 0);
   MapGrid_CenterOnFollowedPoint();
   Actor_SetPosition(ACTOR_KYLE, 0, 0);
   Actor_SetPosition(ACTOR_BOULDER, 0, 0);
@@ -2890,7 +2890,7 @@ static void ValePrologue_StrongmanTriesToGoForHelp(void) {
 /// two meet the strangers on the way (vale_plaza.c).
 static void ValePrologue_GaretFollowsIsaac(void) {
   Event_Start();
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Actor_Stop(ACTOR_GARET_CHILD);
   Task_Remove(ValePrologue_CopyLeaderSpritePriority);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 480, 1392);
@@ -2905,7 +2905,7 @@ static void ValePrologue_GaretFollowsIsaac(void) {
   Actor_SetPosition(ACTOR_GARET_CHILD, 172, 1278);
   wait(1);
   FieldCamera_SetSpeed(4);
-  FieldCamera_MoveTo(PIXELS(162), 0, PIXELS(1285), 1);
+  FieldCamera_MoveTo(162, 0, 1285, 1);
   FieldCamera_WaitForMove();
   Event_Wait(40);
   Actor_SetAnimationAndWait(ACTOR_GARET_CHILD, ANIM_SHAKE_HEAD);

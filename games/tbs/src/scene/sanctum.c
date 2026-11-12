@@ -662,7 +662,7 @@ static void Sanctum_RequestQuestAcceptance(void) {
     Actor_FaceActor(ACTOR_GARETS_GRANDFATHER, ACTOR_PARTY_LEADER, 0);
     Actor_FaceActor(ACTOR_WEST_HEALER, ACTOR_PARTY_LEADER, 0);
     Actor_FaceActor(ACTOR_EAST_HEALER, ACTOR_PARTY_LEADER, 0);
-    FieldCamera_MoveTo(PIXELS(192), -1, PIXELS(160), 1);
+    FieldCamera_MoveTo(192, CAMERA_KEEP, 160, 1);
     FieldCamera_WaitForMove();
     gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     gFieldWork->transitionFrames = 64;
@@ -673,7 +673,7 @@ static void Sanctum_RequestQuestAcceptance(void) {
     PaletteFade_ApplyTarget(PALETTE_TINT_SEPIA, PALETTES_ALL);
     PaletteFade_StartInterpolation(1);
     Event_Wait(1);
-    FieldCamera_MoveTo(PIXELS(192), -1, PIXELS(160), 1);
+    FieldCamera_MoveTo(192, CAMERA_KEEP, 160, 1);
     FieldCamera_WaitForMove();
     gFieldWork->transition =
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
@@ -1236,7 +1236,7 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   Actor_SetSpeed(ACTOR_WEST_HEALER, 0.8);
   Actor_SetSpeed(ACTOR_EAST_HEALER, 0.8);
   Actor_SetSpeed(ACTOR_HEALER, 0.8);
-  FieldCamera_MoveTo(PIXELS(192), -1, PIXELS(160), 1);
+  FieldCamera_MoveTo(192, CAMERA_KEEP, 160, 1);
   FieldCamera_WaitForMove();
   Actor_FaceActor(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
   Actor_FaceActor(ACTOR_GARETS_GRANDFATHER, ACTOR_PARTY_LEADER, 0);
@@ -1296,7 +1296,7 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   PaletteFade_StartInterpolation(60);
   Event_Wait(40);
   FieldCamera_SetSpeed(0.4);
-  FieldCamera_MoveTo(PIXELS(192), -1, PIXELS(104), 1);
+  FieldCamera_MoveTo(192, CAMERA_KEEP, 104, 1);
   Event_Wait(120);
   Sound_Play(MUS_FOREST);
   Event_PlaySound(SE_MATERIALIZE);
@@ -1343,7 +1343,7 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   Actor_SetSpriteColorById(ACTOR_WISE_ONE, SPRITE_COLOR_NORMAL);
   Actor_SetPosition(ACTOR_WISE_ONE, 0, 0);
   Event_Wait(40);
-  FieldCamera_MoveTo(PIXELS(192), -1, PIXELS(160), 1);
+  FieldCamera_MoveTo(192, CAMERA_KEEP, 160, 1);
   FieldCamera_WaitForMove();
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_StartInterpolation(60);

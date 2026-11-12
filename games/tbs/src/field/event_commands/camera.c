@@ -45,9 +45,9 @@ void FieldCamera_SetSpeedParameters(s32 speedLimit, s32 acceleration) {
 }
 
 /// The event command "camera move to": sends the camera to the requested axes,
-/// 16.16 pixels (-1 keeps that axis), kept far enough inside the map that the
-/// screen never shows past its edge. With glide 0 the camera jumps there at
-/// once; otherwise it travels at its own speed.
+/// 16.16 pixels (CAMERA_KEEP keeps that axis), kept far enough inside the map
+/// that the screen never shows past its edge. With glide 0 the camera jumps
+/// there at once; otherwise it travels at its own speed.
 void FieldCamera_MoveWithinMapBounds(s32 requestedX, s32 requestedY,
                                      s32 requestedZ, s32 glide) {
   s32 shouldGlide;
@@ -82,13 +82,13 @@ void FieldCamera_MoveWithinMapBounds(s32 requestedX, s32 requestedY,
   maximumZ = grid->maxY + cameraY - PIXELS(64);
   grid->origin = &camera->x.fixed;
   Actor_StartIdleFar(camera);
-  if (positionX == -1) {
+  if (positionX == CAMERA_KEEP) {
     positionX = camera->x.fixed;
   }
-  if (positionY == -1) {
+  if (positionY == CAMERA_KEEP) {
     positionY = camera->y.fixed;
   }
-  if (positionZ == -1) {
+  if (positionZ == CAMERA_KEEP) {
     positionZ = camera->z.fixed;
   }
   if (positionX < minimumX) {
@@ -123,8 +123,8 @@ void FieldCamera_MoveToActorById(s32 actorId, s32 glide) {
   // The field work, looked up and not used.
   HeapSlot_AllocEwram(HEAP_SLOT_FIELD, 3276);
   if (subject != NULL) {
-    FieldCamera_MoveWithinMapBounds(subject->x.fixed, -1, subject->z.fixed,
-                                    glide);
+    FieldCamera_MoveWithinMapBounds(subject->x.fixed, CAMERA_KEEP,
+                                    subject->z.fixed, glide);
   }
 }
 

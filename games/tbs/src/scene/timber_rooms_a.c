@@ -283,7 +283,7 @@ static void TimberRoomsA_IodemQuestionsWoundedSoldiers(void) {
     Sound_Play(MUS_BABI);
     Event_Start();
     // Frame the speakers and bring the leader over before the dialogue.
-    FieldCamera_MoveTo(PIXELS(368), -1, PIXELS(104), 1);
+    FieldCamera_MoveTo(368, CAMERA_KEEP, 104, 1);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 368, 160);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
     FieldActor_LaunchFromLeader(ACTOR_IODEM, 0, -16, FACING_NORTH);

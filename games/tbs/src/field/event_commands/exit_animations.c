@@ -220,7 +220,8 @@ s32 Entrance_PlayArrival(void) {
         // Suhalla storm, a floor giving way in the Tret tree): start 160 pixels
         // up and let gravity bring the leader down to the ground.
         leader->y.fixed += PIXELS(160);
-        FieldCamera_MoveWithinMapBounds(-1, -1, -1, 0);
+        FieldCamera_MoveWithinMapBounds(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP,
+                                        0);
         // Until the next frame's fall would reach the ground.
         while (leader->y.fixed + leader->velocityY > leader->groundHeight) {
           wait(1);

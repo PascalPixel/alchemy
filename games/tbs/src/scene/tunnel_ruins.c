@@ -1213,7 +1213,7 @@ static void TunnelRuins_SetStoneOnBalance(void) {
       // platforms move.
       FieldCamera_SetSpeedParameters(PIXELS(3), PIXELS(3) / 8);
       FieldCamera_GetActor()->motionFlags = 0;
-      FieldCamera_MoveTo(PIXELS(168), PIXELS(8), PIXELS(184), 1);
+      FieldCamera_MoveTo(168, 8, 184, 1);
       FieldCamera_WaitForMove();
       TunnelRuins_DropStoneOnStack(settledIndex + ACTOR_WEST_CARRY_STONE);
       if ((Actor_Get(settledIndex + ACTOR_WEST_CARRY_STONE)->x.fixed >> 20) ==
@@ -1404,7 +1404,7 @@ static void TunnelRuins_MoveLadyStatue(void) {
     }
     Event_Wait(20);
     FieldCamera_SetSpeed(0.8);
-    FieldCamera_MoveTo(PIXELS(472), -1, PIXELS(780), 1);
+    FieldCamera_MoveTo(472, CAMERA_KEEP, 780, 1);
     FieldCamera_WaitForMove();
     Event_Wait(30);
     GameFlag_Set(FLAG_TUNNEL_RUINS_STATUE_DOOR_OPEN);
@@ -1416,7 +1416,7 @@ static void TunnelRuins_MoveLadyStatue(void) {
     if (Event_GetFlag(FLAG_TUNNEL_RUINS_STATUE_DOOR_OPEN) != 0) {
       Event_Wait(20);
       FieldCamera_SetSpeed(0.8);
-      FieldCamera_MoveTo(PIXELS(472), -1, PIXELS(780), 1);
+      FieldCamera_MoveTo(472, CAMERA_KEEP, 780, 1);
       FieldCamera_WaitForMove();
       Event_Wait(30);
       GameFlag_Clear(FLAG_TUNNEL_RUINS_STATUE_DOOR_OPEN);

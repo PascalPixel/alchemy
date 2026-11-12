@@ -816,7 +816,7 @@ static void VenusLighthouse_ArriveThroughSparkPassage(void) {
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
     Event_Start();
-    FieldCamera_MoveTo(-1, -1, -1, 0);
+    FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
     leader->motionFlags = 0;
     Actor_SetPositionFixed(ACTOR_PARTY_LEADER, leader->x.part.pixel << 16,
                            (leader->z.part.pixel << 16) - px(16));
@@ -874,7 +874,7 @@ static void VenusLighthouse_LandWithRadialDust(void) {
 
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   Event_Start();
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   MapGrid_CenterOnFollowedPoint();
   wait(1);
   leader->y.fixed = PIXELS(130);
@@ -1420,10 +1420,10 @@ static void VenusLighthouse_SearchStatue(void) {
   Event_Wait(40);
   // Follow the revealed path after the statue and color effect have finished.
   FieldCamera_SetSpeed(0.5);
-  FieldCamera_MoveTo(PIXELS(456), -1, PIXELS(542), 1);
+  FieldCamera_MoveTo(456, CAMERA_KEEP, 542, 1);
   FieldCamera_WaitForMove();
   Event_Wait(50);
-  FieldCamera_MoveTo(PIXELS(456), -1, PIXELS(423), 1);
+  FieldCamera_MoveTo(456, CAMERA_KEEP, 423, 1);
   FieldCamera_WaitForMove();
   Event_End();
   work->busy = 0;
@@ -1573,7 +1573,7 @@ static void VenusLighthouse_TalkToScholarByDoor(void) {
   Event_ShowMessageThenWait(ACTOR_DOOR_SCHOLAR, 0, 20);
   Actor_FaceDirection(ACTOR_DOOR_SCHOLAR, FACING_NORTHEAST, 0);
   FieldCamera_SetSpeed(1);
-  FieldCamera_MoveTo(PIXELS(448), -1, PIXELS(432), 1);
+  FieldCamera_MoveTo(448, CAMERA_KEEP, 432, 1);
   FieldCamera_WaitForMove();
   // "They did something to the statue that made the floor light up."
   Event_ShowMessage(ACTOR_DOOR_SCHOLAR, 0);
@@ -1601,7 +1601,7 @@ static void VenusLighthouse_FallThroughFloor(void) {
   zero = 0;
   *motionFlags = zero;
 #endif
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   leaderActor = Actor_Get(ACTOR_PARTY_LEADER);
   Actor_SetSpriteFlags(leaderActor, 0);
   {
@@ -2316,7 +2316,7 @@ static void VenusLighthouse_CarryFloatingPillar(void) {
       FloatingPillar_Settle(other, 0);
       FieldCamera_SetSpeedParameters(PIXELS(3), PIXELS(3) / 8);
       FieldCamera_GetActor()->motionFlags = 0;
-      FieldCamera_MoveWithinMapBounds(PIXELS(136), PIXELS(8), PIXELS(344), 1);
+      FieldCamera_MoveTo(136, 8, 344, 1);
       FieldCamera_WaitForMove();
       // Stack the pillar, then rebalance the two supports and attach the height
       // follower.
@@ -2644,7 +2644,7 @@ static void VenusLighthouse_MoveSocketPillar(void) {
           136, 776, gVenusFourthFloorLightFromStatue);
       Event_Wait(30);
       FieldCamera_SetSpeed(0.4);
-      FieldCamera_MoveTo(PIXELS(216), -1, PIXELS(632), 1);
+      FieldCamera_MoveTo(216, CAMERA_KEEP, 632, 1);
       Actor_WaitForScriptEnd(firstGateEffect);
       Actor_StartScript(firstGateEffect, gVenusFourthFloorLightToSoutheast);
       secondGateEffect = VenusLighthouse_CreateLight(
@@ -3533,7 +3533,7 @@ static void VenusLighthouse_AnimateWestTileWave(void) {
   Event_Wait(40);
   Sound_Play(SE_WAVE);
   FieldCamera_SetSpeedParameters(PIXELS(1) / 2, PIXELS(1) / 16);
-  FieldCamera_MoveWithinMapBounds(PIXELS(440), -1, PIXELS(360), 1);
+  FieldCamera_MoveTo(440, CAMERA_KEEP, 360, 1);
   extraBursts = 0;
   row = 0;
   /* FAKEMATCH(temporary): options holds &optionsStorage; as &optionsStorage
@@ -3569,7 +3569,7 @@ static void VenusLighthouse_AnimateWestTileWave(void) {
   } while (row <= 12);
   MapGrid_CopyCellsTo(81, 41, 89, 14, 9, 2);
   FieldCamera_WaitForMove();
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Event_Wait(60);
   GameFlag_Set(FLAG_VENUS_LIGHTHOUSE_WEST_WALL_MOVED);
   Import_EventSetExitRequest(
@@ -3601,7 +3601,7 @@ static void VenusLighthouse_AnimateEastTileWave(void) {
   Event_Wait(40);
   Sound_Play(SE_WAVE);
   FieldCamera_SetSpeedParameters(PIXELS(1) / 2, PIXELS(1) / 16);
-  FieldCamera_MoveWithinMapBounds(PIXELS(568), -1, PIXELS(360), 1);
+  FieldCamera_MoveTo(568, CAMERA_KEEP, 360, 1);
   extraBursts = 0;
   row = 0;
   /* FAKEMATCH(temporary): options holds &optionsStorage; as &optionsStorage
@@ -3633,7 +3633,7 @@ static void VenusLighthouse_AnimateEastTileWave(void) {
   } while (row <= 12);
   MapGrid_CopyCellsTo(86, 41, 97, 14, 5, 2);
   FieldCamera_WaitForMove();
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Event_Wait(60);
   GameFlag_Set(FLAG_VENUS_LIGHTHOUSE_EAST_WALL_MOVED);
   Import_EventSetExitRequest(
@@ -3693,7 +3693,7 @@ static void VenusLighthouse_RaiseLeaderWithSpray(void) {
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   platform = Actor_Get(ACTOR_RISING_PLATFORM);
   Event_Start();
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   MapGrid_CenterOnFollowedPoint();
   wait(1);
   // Land the leader on the platform, then synchronize their small settling

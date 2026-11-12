@@ -944,7 +944,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Event_Wait(50);
   Event_Wait(10);
-  FieldCamera_MoveTo(PIXELS(264), -1, PIXELS(200), 1);
+  FieldCamera_MoveTo(264, CAMERA_KEEP, 200, 1);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.8);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 264, 208);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
@@ -1304,7 +1304,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Actor_Stop(ACTOR_IVAN);
   AltmillerCave_FacePartyNorth();
   Actor_FaceDirection(ACTOR_BABI, FACING_WEST, 0);
-  FieldCamera_MoveTo(PIXELS(248), -1, PIXELS(216), 1);
+  FieldCamera_MoveTo(248, CAMERA_KEEP, 216, 1);
   FieldCamera_WaitForMove();
   Event_Wait(20);
   Event_Wait(10);
@@ -1498,7 +1498,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Actor_FaceDirection(ACTOR_MIA, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTH, 0);
   Event_Wait(20);
-  FieldCamera_MoveTo(PIXELS(248), -1, PIXELS(248), 1);
+  FieldCamera_MoveTo(248, CAMERA_KEEP, 248, 1);
   FieldCamera_WaitForMove();
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_BABI, FACING_NORTH, 0);
@@ -1746,7 +1746,7 @@ static void AltmillerCave_MeetInvisibleBabi(void) {
   // "You... You can see me?"
   Event_ShowMessage(ACTOR_INVISIBLE_BABI, 0);
   Event_Wait(10);
-  FieldCamera_MoveTo(PIXELS(248), -1, PIXELS(184), 1);
+  FieldCamera_MoveTo(248, CAMERA_KEEP, 184, 1);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.8);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 248, 192);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);

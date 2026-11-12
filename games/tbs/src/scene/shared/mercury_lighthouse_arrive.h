@@ -20,7 +20,7 @@ static void MercuryLighthouse_ArriveWithSparks(void) {
   flag = GameFlag_Get(FLAG_KEEP_PARTY_POSITION);
   if (flag == 0) {
     Event_Start();
-    FieldCamera_MoveTo(-1, -1, -1, 0);
+    FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
     actor->motionFlags = 0;
     Import_ActorSetPosition(0, actor->x.part.pixel << 16,
                             (actor->z.part.pixel << 16) + -PIXELS(16));

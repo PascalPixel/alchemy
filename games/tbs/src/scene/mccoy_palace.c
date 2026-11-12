@@ -697,14 +697,14 @@ static void McCoyPalace_AudienceWithMcCoy(void) {
 
   // Stage the first audience, or place the leader for a return visit.
   Event_Start();
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   wait(1);
   FieldCamera_GetActor()->motionFlags = 0;
-  FieldCamera_MoveTo(PIXELS(894), -1, PIXELS(664), 0);
+  FieldCamera_MoveTo(894, CAMERA_KEEP, 664, 0);
   wait(1);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
   if (Event_GetFlag(FLAG_MCCOY_PALACE_JOB_REFUSED) != 0) {
-    FieldCamera_MoveTo(PIXELS(894), -1, PIXELS(698), 0);
+    FieldCamera_MoveTo(894, CAMERA_KEEP, 698, 0);
     Actor_SetPosition(ACTOR_CAPTAIN, 876, 634);
     Actor_FaceDirection(ACTOR_CAPTAIN, FACING_SOUTH_SOUTHEAST, 0);
     Actor_SetPosition(ACTOR_PARTY_LEADER, 894, 798);
@@ -719,11 +719,11 @@ static void McCoyPalace_AudienceWithMcCoy(void) {
     Event_Wait(80);
     Actor_SetPosition(ACTOR_CAPTAIN, 894, 798);
     FieldCamera_SetSpeed(0.6);
-    FieldCamera_MoveTo(PIXELS(894), -1, PIXELS(698), 1);
+    FieldCamera_MoveTo(894, CAMERA_KEEP, 698, 1);
     Actor_SetSpeed(ACTOR_CAPTAIN, 0.8);
     Actor_WalkTo(ACTOR_CAPTAIN, 894, 696);
     Event_Wait(80);
-    FieldCamera_MoveTo(PIXELS(894), -1, PIXELS(664), 1);
+    FieldCamera_MoveTo(894, CAMERA_KEEP, 664, 1);
     Actor_WaitForMoveById(ACTOR_CAPTAIN);
     Actor_WalkToAndWait(ACTOR_CAPTAIN, 842, 696);
     Actor_WalkToAndWait(ACTOR_CAPTAIN, 842, 636);
@@ -759,7 +759,7 @@ static void McCoyPalace_AudienceWithMcCoy(void) {
     Event_Wait(60);
     Actor_FaceDirection(ACTOR_CAPTAIN, FACING_SOUTH_SOUTHEAST, 10);
     Actor_FaceDirection(ACTOR_LORD_MCCOY, FACING_SOUTH_SOUTHWEST, 10);
-    FieldCamera_MoveTo(PIXELS(894), -1, PIXELS(698), 1);
+    FieldCamera_MoveTo(894, CAMERA_KEEP, 698, 1);
     Actor_SetPosition(ACTOR_PARTY_LEADER, 894, 798);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.6);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 894, 726);
@@ -769,7 +769,7 @@ static void McCoyPalace_AudienceWithMcCoy(void) {
     Actor_RunRepeatedMotion(ACTOR_LORD_MCCOY, 1);
     // "Come closer, laddy."
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_LORD_MCCOY, 0);
-    FieldCamera_MoveTo(PIXELS(894), -1, PIXELS(664), 1);
+    FieldCamera_MoveTo(894, CAMERA_KEEP, 664, 1);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 894, 684);
     actor = Actor_Get(ACTOR_PARTY_LEADER);
     if (actor != 0) {
@@ -871,7 +871,7 @@ static void McCoyPalace_AudienceWithMcCoy(void) {
   Actor_WalkTo(ACTOR_PARTY_LEADER, 894, 684);
   Event_Wait(80);
   FieldCamera_SetSpeedParameters(PIXELS(3) / 5, PIXELS(3) / 40);
-  FieldCamera_MoveWithinMapBounds(PIXELS(894), -1, PIXELS(664), 1);
+  FieldCamera_MoveTo(894, CAMERA_KEEP, 664, 1);
   Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
@@ -1200,7 +1200,7 @@ static void McCoyPalace_CaptainHintsAtBarricade(void) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.6);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 256, 660);
   Event_Wait(20);
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   GameFlag_Set(FLAG_MCCOYS_DOOR_OPEN);
   Sound_Play(SE_THUMP);
   TilesetAnim_Resume(1);
@@ -1278,12 +1278,12 @@ static void McCoyPalace_McCoyRewardsParty(void) {
   Event_Start();
   // Reveal the approach, then walk the leader and the captain into the
   // audience.
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   wait(1);
   viewCenter = FieldCamera_GetActor();
   advanceAlternateReply = 0;
   viewCenter->motionFlags = advanceAlternateReply;
-  FieldCamera_MoveTo(PIXELS(894), -1, PIXELS(664), 0);
+  FieldCamera_MoveTo(894, CAMERA_KEEP, 664, 0);
   wait(1);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
   MapGrid_CenterOnFollowedPoint();
@@ -1299,7 +1299,7 @@ static void McCoyPalace_McCoyRewardsParty(void) {
   Actor_SetPosition(ACTOR_CAPTAIN, 888, 798);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 904, 798);
   FieldCamera_SetSpeed(0.6);
-  FieldCamera_MoveTo(PIXELS(894), -1, PIXELS(698), 1);
+  FieldCamera_MoveTo(894, CAMERA_KEEP, 698, 1);
   Actor_SetSpeed(ACTOR_CAPTAIN, 0.8);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.6);
   Actor_WalkTo(ACTOR_CAPTAIN, 888, 720);
@@ -1326,7 +1326,7 @@ static void McCoyPalace_McCoyRewardsParty(void) {
     gFieldWork->message++;
   }
 
-  FieldCamera_MoveTo(PIXELS(894), -1, PIXELS(664), 1);
+  FieldCamera_MoveTo(894, CAMERA_KEEP, 664, 1);
   Actor_SetScript(ACTOR_CAPTAIN, gPalace_PacingActions);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 894, 684);
 
@@ -1565,9 +1565,9 @@ static void McCoyPalace_PresentRewardChests(void) {
   Event_Start();
   // Restore the chest-row cell behavior patches before presenting the
   // reward.
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   FieldCamera_GetActor()->motionFlags = 0;
-  FieldCamera_MoveWithinMapBounds(PIXELS(628), -1, PIXELS(748), 0);
+  FieldCamera_MoveTo(628, CAMERA_KEEP, 748, 0);
   McCoyPalace_OpenRewardChestRow();
   Actor_Get(ACTOR_PARTY_LEADER)->facing = FACING_EAST;
   Actor_SetPosition(ACTOR_PARTY_LEADER, 577, 760);

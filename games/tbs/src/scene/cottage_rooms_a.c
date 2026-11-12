@@ -630,7 +630,7 @@ static void CottageRoomsA_GaretComesHome(void) {
   // The party walks in while Garet's grandfather dozes, sleep drifting up
   // from him.
   Event_Start();
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   wait(1);
   Actor_SetSpritePriority(ACTOR_MIA, 1);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.4);
@@ -693,7 +693,7 @@ static void CottageRoomsA_GaretComesHome(void) {
   // whether they should look for Garet; Isaac still does not know about
   // Dora. His mother teases that he misses Garet.
   FieldCamera_SetSpeed(0.1);
-  FieldCamera_MoveTo(PIXELS(786), 0, PIXELS(430), 1);
+  FieldCamera_MoveTo(786, 0, 430, 1);
   Event_Wait(240);
   Actor_Stop(ACTOR_GARETS_FATHER);
   Actor_ShowEmote(ACTOR_GARETS_FATHER, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
@@ -791,7 +791,7 @@ static void CottageRoomsA_GaretComesHome(void) {
                                     ACTOR_GARETS_MOTHER, 12, 1, 7, 1, 0);
   Event_Wait(20);
   FieldCamera_SetSpeed(1.6);
-  FieldCamera_MoveTo(PIXELS(777), 0, PIXELS(468), 1);
+  FieldCamera_MoveTo(777, 0, 468, 1);
   FieldCamera_WaitForMove();
   Event_Wait(40);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
@@ -806,7 +806,7 @@ static void CottageRoomsA_GaretComesHome(void) {
   FieldEvent_ShowMessageThenWait(
       SPEAKER_WINDOW_ABOVE | ACTOR_GARETS_GRANDFATHER, 0, 20);
   // The grandfather looks about, then jumps up with Garet's name.
-  FieldCamera_MoveTo(PIXELS(750), 0, PIXELS(451), 1);
+  FieldCamera_MoveTo(750, 0, 451, 1);
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_GARETS_MOTHER, FACING_SOUTH_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_GARETS_FATHER, FACING_SOUTH_SOUTHWEST, 10);
@@ -840,7 +840,7 @@ static void CottageRoomsA_GaretComesHome(void) {
   if (Event_AskYesNoWithActorAnimation(0, 0) == 1) {
     gFieldWork->message++;
   }
-  FieldCamera_MoveTo(PIXELS(777), 0, PIXELS(428), 1);
+  FieldCamera_MoveTo(777, 0, 428, 1);
   Event_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_GARETS_FATHER, 2);
   Event_ShowMessage(ACTOR_GARETS_FATHER, 0);
@@ -851,7 +851,7 @@ static void CottageRoomsA_GaretComesHome(void) {
   Event_SetMessageId(MsgValeYoureLeavingAgainSoon);
   // "You're leaving again soon...aren't you?"
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_GARETS_MOTHER, 0);
-  FieldCamera_MoveTo(PIXELS(777), 0, PIXELS(468), 1);
+  FieldCamera_MoveTo(777, 0, 468, 1);
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH_NORTHEAST, 20);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
@@ -908,7 +908,7 @@ static void CottageRoomsA_GaretComesHome(void) {
   Event_ShowMessageThenWait(ACTOR_MIA, 0, 20);
   CottageRoomsA_FamilyNods();
   Event_Wait(20);
-  FieldCamera_MoveTo(PIXELS(777), 0, PIXELS(428), 1);
+  FieldCamera_MoveTo(777, 0, 428, 1);
   Event_Wait(20);
   // Garet's mother comes forward and asks them to look after young Garet.
   Actor_SetSpeed(ACTOR_GARETS_MOTHER, 0.4);
@@ -917,7 +917,7 @@ static void CottageRoomsA_GaretComesHome(void) {
   Actor_ShowEmote(ACTOR_GARETS_MOTHER, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
   Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_GARETS_MOTHER, 0,
                             20);
-  FieldCamera_MoveTo(PIXELS(777), 0, PIXELS(468), 1);
+  FieldCamera_MoveTo(777, 0, 468, 1);
   Event_Wait(40);
   Actor_FaceDirection(ACTOR_IVAN, FACING_WEST_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_EAST_NORTHEAST, 40);

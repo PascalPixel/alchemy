@@ -517,7 +517,7 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
     // burst; until Ply has been used, the inscription's words appear.
     GameFlag_Set(FLAG_DROP_FROM_ABOVE_SEEN);
     Event_Start();
-    FieldCamera_MoveTo(-1, -1, -1, 0);
+    FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
     MapGrid_CenterOnFollowedPoint();
     wait(1);
     Actor_Get(ACTOR_PARTY_LEADER)->y.fixed = PIXELS(130);
@@ -629,7 +629,7 @@ static void MercuryLighthouseEntrance_LizardManBlocksMia(void) {
   Actor_SetSpeed(ACTOR_LIZARD_MAN, 1.5);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.8);
   FieldCamera_SetSpeedParameters(PIXELS(4) / 5, PIXELS(1) / 10);
-  FieldCamera_MoveWithinMapBounds(PIXELS(136), -1, PIXELS(184), 0);
+  FieldCamera_MoveTo(136, CAMERA_KEEP, 184, 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Actor_RunRepeatedMotion(ACTOR_MIA, 1);

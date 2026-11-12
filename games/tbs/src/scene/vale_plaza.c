@@ -697,7 +697,7 @@ static void ValePlaza_TalkAboutFallenStone(void) {
   Event_SetMessageId(MsgValeTheStoneFellOnThe);
   ValePlaza_SayThenWait(ACTOR_HUT_OWNER, 20);
   FieldCamera_SetSpeedParameters(PIXELS(8) / 5, PIXELS(1) / 5);
-  FieldCamera_MoveWithinMapBounds(PIXELS(337), -1, PIXELS(272), 1);
+  FieldCamera_MoveTo(337, CAMERA_KEEP, 272, 1);
   Event_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_HUT_OWNER, 2);
   Event_Wait(20);
@@ -1114,7 +1114,7 @@ static void ValePlaza_SentToAidElders(void) {
     // aid the elders, the Boulder is too heavy for them.
     Event_Start();
     FieldCamera_SetSpeed(1.6);
-    FieldCamera_MoveWithinMapBounds(PIXELS(197), -1, PIXELS(768), 1);
+    FieldCamera_MoveTo(197, CAMERA_KEEP, 768, 1);
     FieldCamera_WaitForMove();
     Event_SetMessageId(MsgValeGoAidElders);
     Actor_RunRepeatedMotion(ACTOR_STORM_GARETS_GRANDFATHER, 2);
@@ -1215,10 +1215,10 @@ static void ValePlaza_SentToAidElders(void) {
     // Through event.h: called directly, the speeds' copies lengthen
     // speechFlags' life and swap r5 and r6 below.
     FieldCamera_SetSpeed(1.2);
-    FieldCamera_MoveTo(PIXELS(215), -1, PIXELS(758), 1);
+    FieldCamera_MoveTo(215, CAMERA_KEEP, 758, 1);
     FieldCamera_WaitForMove();
     FieldCamera_SetSpeed(0.8);
-    FieldCamera_MoveTo(PIXELS(205), -1, PIXELS(778), 1);
+    FieldCamera_MoveTo(205, CAMERA_KEEP, 778, 1);
     // He hops down to them; asked about his Psynergy, he has enough to save
     // Felix, thanks to the Psynergy Stone.
     Actor_SetScript(ACTOR_STORM_CHARGED_UP_STRONGMAN,
@@ -1277,12 +1277,12 @@ static void ValePlaza_MeetSurvivingTravelers(void) {
 
   camera = FieldCamera_GetActor();
   Event_Start();
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   wait(1);
   // The screen opens on the storm at the west path, where Isaac comes in from
   // the river; the music fades out as he walks up and hears the first
   // traveler.
-  FieldCamera_MoveWithinMapBounds(PIXELS(64), PIXELS(144), PIXELS(350), 0);
+  FieldCamera_MoveTo(64, 144, 350, 0);
   MapGrid_CenterOnFollowedPoint();
   wait(1);
   Event_AddPartyMember(GARET, 0);
@@ -1301,7 +1301,7 @@ static void ValePlaza_MeetSurvivingTravelers(void) {
   Sound_Play(MUS_OMINOUS);
   camera->motionFlags = 0;
   FieldCamera_SetSpeed(3);
-  FieldCamera_MoveWithinMapBounds(PIXELS(109), PIXELS(176), PIXELS(281), 1);
+  FieldCamera_MoveTo(109, 176, 281, 1);
   FieldCamera_WaitForMove();
   Event_Wait(40);
   Actor_SetPosition(ACTOR_SECOND_TRAVELER, 135, 177);
@@ -1371,14 +1371,14 @@ static void ValePlaza_FightTravelers(void) {
   ValePlaza_FaceDirectionAndWait(ACTOR_SECOND_TRAVELER, southSouthwestFacing,
                                  40);
   FieldCamera_SetSpeedParameters(PIXELS(3) / 2, PIXELS(3) / 16);
-  FieldCamera_MoveWithinMapBounds(PIXELS(89), PIXELS(176), PIXELS(313), 1);
+  FieldCamera_MoveTo(89, 176, 313, 1);
   FieldCamera_WaitForMove();
   Event_Wait(40);
   Actor_FaceDirection(ACTOR_FIRST_TRAVELER, FACING_NORTHEAST, 0);
   ValePlaza_FaceDirectionAndWait(ACTOR_SECOND_TRAVELER, FACING_WEST_SOUTHWEST,
                                  40);
   FieldCamera_SetSpeedParameters(PIXELS(4) / 5, PIXELS(1) / 10);
-  FieldCamera_MoveWithinMapBounds(PIXELS(100), PIXELS(144), PIXELS(333), 1);
+  FieldCamera_MoveTo(100, 144, 333, 1);
   Actor_SetSpeed(ACTOR_FIRST_TRAVELER, 1);
   Actor_SetSpeed(ACTOR_SECOND_TRAVELER, 1);
   Actor_WalkTo(ACTOR_FIRST_TRAVELER, 105, 329);
@@ -1474,9 +1474,9 @@ static void ValePlaza_TravelersLeaveAfterBattle(void) {
   // travelers standing over them.
   Sound_Play(SOUND_FADE_OUT_BGM);
   Event_Start();
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   wait(1);
-  FieldCamera_MoveWithinMapBounds(PIXELS(64), PIXELS(144), PIXELS(350), 0);
+  FieldCamera_MoveTo(64, 144, 350, 0);
   MapGrid_CenterOnFollowedPoint();
   wait(1);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 48, 346);
@@ -1566,7 +1566,7 @@ static void ValePlaza_DepartForQuest(void) {
   Party_RestoreHpPp(1);
   Event_Start();
   MapGrid_CopyCellsTo(42, 53, 42, 54, 3, 1);
-  FieldCamera_MoveTo(PIXELS(180), PIXELS(16), PIXELS(618), 0);
+  FieldCamera_MoveTo(180, 16, 618, 0);
   MapGrid_CenterOnFollowedPoint();
   wait(1);
   actor = Actor_Get(ACTOR_FAREWELL_FIRST_CROWD_VILLAGER + 2);
@@ -1753,7 +1753,7 @@ static void ValePlaza_DepartForQuest(void) {
   Event_Wait(10);
   FieldCamera_SetSpeed(2.4);
   FieldCamera_GetActor()->motionFlags = 0;
-  FieldCamera_MoveTo(PIXELS(215), PIXELS(16), PIXELS(801), 1);
+  FieldCamera_MoveTo(215, 16, 801, 1);
   Event_Wait(10);
   Actor_SetScript(ACTOR_FAREWELL_SECOND_CHILD,
                   gValePlaza_FarewellSecondChildActions);
@@ -1936,7 +1936,7 @@ static void ValePlaza_DepartForQuest(void) {
   Actor_SetScript(ACTOR_PARTY_LEADER, departureActions);
   Event_Wait(20);
   FieldCamera_SetSpeed(0.4);
-  FieldCamera_MoveWithinMapBounds(PIXELS(216), PIXELS(16), PIXELS(905), 1);
+  FieldCamera_MoveTo(216, 16, 905, 1);
   Event_Wait(20);
   Actor_SetSpeed(ACTOR_GARET, 0.8);
   Actor_SetScript(ACTOR_GARET, departureActions);

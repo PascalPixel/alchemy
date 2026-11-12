@@ -253,7 +253,7 @@ static void BabiLighthouse_LandWithParticles(void) {
 
   // Start above the room with movement disabled until the fall begins.
   Event_Start();
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   MapGrid_CenterOnFollowedPoint();
   wait(1);
   Actor_Get(ACTOR_PARTY_LEADER)->y.fixed = PIXELS(130);
@@ -303,7 +303,7 @@ static void BabiLighthouse_FallToExit(s32 exit) {
 
   // Start above the room with movement disabled until the fall begins.
   Event_Start();
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   MapGrid_CenterOnFollowedPoint();
   wait(1);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
@@ -439,7 +439,7 @@ static void BabiLighthouse_PushLedgePillarOrClimbDown(void) {
 /// The leader jumps down into the pit ahead (FieldActor_JumpDownLedge),
 /// and the screen closes behind him.
 static void BabiLighthouse_JumpIntoPit(void) {
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   FieldActor_JumpDownLedge(ACTOR_PARTY_LEADER, 6, 0);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
@@ -542,7 +542,7 @@ static void BabiLighthouse_FaranAsksPartyToOpenDoor(void) {
   Event_ShowMessage(ACTOR_FARAN, 0);
   Event_Wait(10);
   FieldCamera_SetSpeed(3);
-  FieldCamera_MoveTo(PIXELS(280), -1, PIXELS(288), 1);
+  FieldCamera_MoveTo(280, CAMERA_KEEP, 288, 1);
   FieldCamera_WaitForMove();
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_WITNESS, ANIM_NOD);
@@ -609,7 +609,7 @@ static void BabiLighthouse_FaranAsksPartyToOpenDoor(void) {
   Event_Wait(30);
   // "Oh! Iodem..."
   Event_ShowMessage(ACTOR_FARAN, 0);
-  FieldCamera_MoveTo(PIXELS(280), -1, PIXELS(320), 1);
+  FieldCamera_MoveTo(280, CAMERA_KEEP, 320, 1);
   FieldCamera_WaitForMove();
   Event_Wait(20);
   // The party learns where the kidnappers went and is asked to pursue them.
@@ -837,7 +837,7 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
   Actor_WaitForMoveById(ACTOR_MIA);
   Event_Wait(20);
   FieldCamera_SetSpeed(3);
-  FieldCamera_MoveTo(PIXELS(280), -1, PIXELS(328), 1);
+  FieldCamera_MoveTo(280, CAMERA_KEEP, 328, 1);
   FieldCamera_WaitForMove();
   Event_Wait(10);
   Event_Wait(10);
@@ -934,7 +934,7 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
   // enters.
   BabiLighthouse_CloseTruthDoor();
   GameFlag_Clear(FLAG_BEYOND_DOOR);
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Event_Start();
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Event_ShowMessage(ACTOR_IODEM, 0);
@@ -954,7 +954,7 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
   Actor_ShowEmote(ACTOR_WORRIED_FOR_SHEBA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
                   0);
   Actor_ShowEmote(ACTOR_FARAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 70);
-  FieldCamera_MoveTo(PIXELS(280), -1, PIXELS(312), 1);
+  FieldCamera_MoveTo(280, CAMERA_KEEP, 312, 1);
   FieldCamera_WaitForMove();
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_DOUBTING_THE_DOOR, EMOTE_IN_FRONT | EMOTE_WINCE, 40);

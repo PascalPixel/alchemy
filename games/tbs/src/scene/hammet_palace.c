@@ -382,7 +382,7 @@ static void HammetPalace_IvanReportsToLayana(void) {
   const s32 *partyScript;
 
   Event_Start();
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   wait(1);
   PaletteFade_ApplySource(PALETTE_TINT_SEPIA, PALETTES_ALL);
   // The report opens in sepia, with the party placed under the closed screen;
@@ -401,7 +401,7 @@ static void HammetPalace_IvanReportsToLayana(void) {
   Actor_SetPosition(ACTOR_MIA, 880, 502);
   Actor_SetPosition(ACTOR_FIRST_SOLDIER, 840, 518);
   Actor_SetPosition(ACTOR_SECOND_SOLDIER, 888, 518);
-  FieldCamera_MoveTo(PIXELS(864), -1, PIXELS(472), 0);
+  FieldCamera_MoveTo(864, CAMERA_KEEP, 472, 0);
   MapGrid_CenterOnFollowedPoint();
   wait(1);
   Event_StartScreenTransition();
@@ -914,9 +914,9 @@ static void HammetPalace_HammetsHomecoming(void) {
   const s32 *partyScript;
 
   Event_Start();
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   wait(1);
-  FieldCamera_MoveTo(PIXELS(864), -1, PIXELS(536), 0);
+  FieldCamera_MoveTo(864, CAMERA_KEEP, 536, 0);
   // Pan from the entrance while the party walks into its speaking positions.
   MapGrid_CenterOnFollowedPoint();
   wait(1);
@@ -925,7 +925,7 @@ static void HammetPalace_HammetsHomecoming(void) {
   gFieldWork->transitionFrames = 40;
   Event_StartScreenTransition();
   FieldCamera_SetSpeed(0.4);
-  FieldCamera_MoveTo(PIXELS(864), -1, PIXELS(472), 1);
+  FieldCamera_MoveTo(864, CAMERA_KEEP, 472, 1);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.8);
   Actor_SetSpeed(ACTOR_GARET, 0.8);
   Actor_SetSpeed(ACTOR_IVAN, 0.8);

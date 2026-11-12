@@ -443,7 +443,7 @@ static void SolSanctumLunaSolRooms_KradenFindsHeartOfSanctum(void) {
     Actor_FaceDirection(ACTOR_GARET, FACING_NORTH_NORTHEAST, 0);
     Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH_NORTHWEST, 30);
     FieldCamera_SetSpeedParameters(PIXELS(3) / 5, PIXELS(3) / 40);
-    FieldCamera_MoveWithinMapBounds(PIXELS(288), -1, PIXELS(213), 1);
+    FieldCamera_MoveTo(288, CAMERA_KEEP, 213, 1);
     Actor_SetSpeed(ACTOR_KRADEN, 0.4);
     Actor_WalkToAndWait(ACTOR_KRADEN, 288, 176);
     Event_Wait(40);
@@ -612,12 +612,12 @@ static void SolSanctumLunaSolRooms_IntroduceSolAndLunaRooms(void) {
   Actor_Jump(ACTOR_KRADEN, 4, 40);
   SolSanctumLunaSolRooms_ShowMessageAndWait(ACTOR_KRADEN, 6);
   FieldCamera_SetSpeed(2.4);
-  FieldCamera_MoveTo(PIXELS(575), -1, PIXELS(181), 1);
+  FieldCamera_MoveTo(575, CAMERA_KEEP, 181, 1);
   FieldCamera_WaitForMove();
   Event_Wait(120);
   SolSanctumLunaSolRooms_ShowMessageAndWait(
       SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 80);
-  FieldCamera_MoveTo(PIXELS(492), -1, PIXELS(168), 1);
+  FieldCamera_MoveTo(492, CAMERA_KEEP, 168, 1);
   FieldCamera_WaitForMove();
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST, 20);
@@ -889,12 +889,12 @@ static void SolSanctumLunaSolRooms_UpdateFourthFallingLight(void) {
 /// FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_BLUE_TINTED and clears the other two tint
 /// flags.
 static void SolSanctumLunaSolRooms_OpenOnKradenInLunaRoom(void) {
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   MapGrid_CopyCellsTo(30, 43, 32, 40, 8, 3);
   MapGrid_CopyCellsTo(30, 43, 33, 39, 8, 1);
   MapGrid_CopyCellsTo(30, 43, 36, 38, 3, 3);
   MapGrid_CopyCellsTo(14, 41, 32, 41, 8, 4);
-  FieldCamera_MoveTo(PIXELS(574), -1, PIXELS(158), 0);
+  FieldCamera_MoveTo(574, CAMERA_KEEP, 158, 0);
   MapGrid_CenterOnFollowedPoint();
   Actor_SetPosition(ACTOR_KRADEN, 574, 120);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
@@ -944,7 +944,7 @@ static void SolSanctumLunaSolRooms_FlashLightsWithTrapDisarmed(void) {
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH, 20);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_Jump(ACTOR_KRADEN, 6, 30);
-  FieldCamera_MoveTo(PIXELS(574), -1, PIXELS(174), 1);
+  FieldCamera_MoveTo(574, CAMERA_KEEP, 174, 1);
   FieldCamera_WaitForMove();
   Event_Wait(30);
   SolSanctumLunaSolRooms_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | ACTOR_KRADEN,
@@ -1007,7 +1007,7 @@ static void SolSanctumLunaSolRooms_SpringTrap(void) {
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH, 20);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_Jump(ACTOR_KRADEN, 6, 30);
-  FieldCamera_MoveTo(PIXELS(574), -1, PIXELS(174), 1);
+  FieldCamera_MoveTo(574, CAMERA_KEEP, 174, 1);
   FieldCamera_WaitForMove();
   Event_Wait(30);
   SolSanctumLunaSolRooms_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | ACTOR_KRADEN,
@@ -1128,7 +1128,7 @@ static void SolSanctumLunaSolRooms_UnusedAnimateSavedStatueLights(void) {
   SolSanctumLunaSolRooms_OpenOnKradenInLunaRoom();
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH, 20);
   Actor_Jump(ACTOR_KRADEN, 6, 30);
-  FieldCamera_MoveTo(PIXELS(574), -1, PIXELS(174), 1);
+  FieldCamera_MoveTo(574, CAMERA_KEEP, 174, 1);
   FieldCamera_WaitForMove();
   Event_Wait(30);
   for (twelveFrameFlashes = 0; twelveFrameFlashes != 4; twelveFrameFlashes++) {
@@ -1184,7 +1184,7 @@ static void SolSanctumLunaSolRooms_KradenSeesLunaPictureChange(void) {
       Event_Start();
       Actor_SetPosition(ACTOR_KRADEN, 577, 147);
       Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH, 1);
-      FieldCamera_MoveTo(PIXELS(574), -1, PIXELS(184), 1);
+      FieldCamera_MoveTo(574, CAMERA_KEEP, 184, 1);
       // Isaac walks up to Kraden, who hops: "The picture of Luna changed to
       // Sol!"
       Event_SetMessageId(MsgSolSanctumThePictureOfLunaChanged);
@@ -1284,7 +1284,7 @@ static void SolSanctumLunaSolRooms_RiseToElementalStarRoom(void) {
     Event_Start();
     // Isaac steps onto the symbol and Kraden comes out beside him.
     FieldCamera_SetSpeed(1);
-    FieldCamera_MoveTo(PIXELS(287), -1, PIXELS(148), 1);
+    FieldCamera_MoveTo(287, CAMERA_KEEP, 148, 1);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 288, 120);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STILL);
     Actor_Jump(ACTOR_PARTY_LEADER, 4, 30);
@@ -1347,7 +1347,7 @@ static void SolSanctumLunaSolRooms_RiseToElementalStarRoom(void) {
     // Raise Isaac first, then shrink his sprite into the passage.
     actor = Actor_Get(ACTOR_PARTY_LEADER);
     FieldCamera_SetSpeedParameters(PIXELS(3) / 5, PIXELS(3) / 40);
-    FieldCamera_MoveWithinMapBounds(PIXELS(287), -1, PIXELS(114), 1);
+    FieldCamera_MoveTo(287, CAMERA_KEEP, 114, 1);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 288, 120);
     Event_Wait(20);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
@@ -1648,7 +1648,7 @@ static void SolSanctumLunaSolRooms_ArriveAfterWiseOnesRescue(void) {
 
   Event_Start();
   // The screen opens all white on Isaac and Garet, then fades to the tint.
-  FieldCamera_MoveTo(PIXELS(286), -1, PIXELS(134), 0);
+  FieldCamera_MoveTo(286, CAMERA_KEEP, 134, 0);
   MapGrid_CenterOnFollowedPoint();
   wait(1);
   PaletteFade_ApplySource(RGB(31, 31, 31), PALETTES_ALL);

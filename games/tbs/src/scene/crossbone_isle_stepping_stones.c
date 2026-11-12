@@ -846,7 +846,7 @@ static void CrossboneIsleSteppingStones_FlipWaterSwitch(void) {
 
   Event_Start();
   FieldCamera_SetSpeed(1);
-  FieldCamera_MoveTo(PIXELS(281), -1, PIXELS(432), 1);
+  FieldCamera_MoveTo(281, CAMERA_KEEP, 432, 1);
   FieldCamera_WaitForMove();
   FieldMessage_Show(MsgFieldFlippedSwitch, 1);
   waterRaised = Event_GetFlag(FLAG_CROSSBONE_ISLE_FLOODGATE_WATER_RAISED);
@@ -1423,7 +1423,7 @@ static void CrossboneIsleSteppingStones_FreezeThirdPuddle(void) {
     GameFlag_Set(FLAG_CROSSBONE_ISLE_DRAGON_STATUE_FIRST_PUDDLE_FROZEN + 2);
     Event_Start();
     FieldCamera_SetSpeedParameters(PIXELS(3) / 5, PIXELS(3) / 40);
-    FieldCamera_MoveWithinMapBounds(PIXELS(312), -1, PIXELS(184), 1);
+    FieldCamera_MoveTo(312, CAMERA_KEEP, 184, 1);
     FieldCamera_WaitForMove();
     Event_Wait(20);
     MapGrid_CopyCellsTo(73, 10, 60, 10, 1, 2);

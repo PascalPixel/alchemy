@@ -724,14 +724,14 @@ static void Imil_TalkToWeaponMerchant(void) {
     if (IMIL_FACES_COUNTER(facing)) {
       Event_Start();
       FieldCamera_SetSpeedParameters(PIXELS(6), PIXELS(3) / 4);
-      FieldCamera_MoveTo(PIXELS(426), -1, PIXELS(492), 1);
+      FieldCamera_MoveTo(426, CAMERA_KEEP, 492, 1);
       FieldCamera_WaitForMove();
       Event_Wait(20);
       Actor_RunScriptAndWait(ACTOR_WEAPON_MERCHANT, gImil_BobScript);
       Event_SetMessageId(MsgMercuryStoreClosedUntilWell);
       // "Our store is closed until we get well..."
       Event_ShowMessage(ACTOR_WEAPON_MERCHANT, 0);
-      FieldCamera_MoveWithinMapBounds(PIXELS(426), -1, PIXELS(616), 1);
+      FieldCamera_MoveTo(426, CAMERA_KEEP, 616, 1);
       FieldCamera_WaitForMove();
       Event_End();
     }
@@ -763,14 +763,14 @@ static void Imil_TalkToArmorMerchant(void) {
     if (IMIL_FACES_COUNTER(facing)) {
       Event_Start();
       FieldCamera_SetSpeedParameters(PIXELS(6), PIXELS(3) / 4);
-      FieldCamera_MoveTo(PIXELS(426), -1, PIXELS(492), 1);
+      FieldCamera_MoveTo(426, CAMERA_KEEP, 492, 1);
       FieldCamera_WaitForMove();
       Event_Wait(20);
       Actor_RunScriptAndWait(ACTOR_ARMOR_MERCHANT, gImil_BobScript);
       Event_SetMessageId(MsgMercuryTooSickBusiness);
       // "Sorry, but I'm too sick to do business today. Try again..."
       Event_ShowMessage(ACTOR_ARMOR_MERCHANT, 0);
-      FieldCamera_MoveWithinMapBounds(PIXELS(426), -1, PIXELS(616), 1);
+      FieldCamera_MoveTo(426, CAMERA_KEEP, 616, 1);
       FieldCamera_WaitForMove();
       Event_End();
     }
@@ -1015,10 +1015,10 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
 
   Event_Start();
   Actor_SetPosition(ACTOR_MIA, 182, 150);
-  FieldCamera_MoveTo(PIXELS(141), -1, PIXELS(221), 0);
+  FieldCamera_MoveTo(141, CAMERA_KEEP, 221, 0);
   wait(1);
   FieldCamera_SetSpeed(0.3);
-  FieldCamera_MoveTo(PIXELS(140), -1, PIXELS(164), 1);
+  FieldCamera_MoveTo(140, CAMERA_KEEP, 164, 1);
   work = gFieldWork;
   work->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   work->transitionFrames = 40;
@@ -1106,7 +1106,7 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   while (Actor_Get(ACTOR_MIA)->timer == 0) {
     wait(1);
   }
-  FieldCamera_MoveTo(PIXELS(140), -1, PIXELS(198), 1);
+  FieldCamera_MoveTo(140, CAMERA_KEEP, 198, 1);
   Actor_WaitForScriptEndById(ACTOR_MIA);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 80);
   Event_ShowMessageThenWait(ACTOR_MIA, 0, 40);
@@ -1457,7 +1457,7 @@ static void Imil_MiaSaysFarewellToApprentices(void) {
 
   FieldCamera_GetActor()->motionFlags = 0;
   FieldCamera_SetSpeedParameters(PIXELS(4) / 5, PIXELS(1) / 10);
-  FieldCamera_MoveTo(PIXELS(690), 0, PIXELS(164), 1);
+  FieldCamera_MoveTo(690, 0, 164, 1);
   work = gFieldWork;
   work->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   work->transitionFrames = 48;

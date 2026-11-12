@@ -115,7 +115,7 @@ void FieldPsynergy_Retreat(void) {
   u32 i;
 
   Event_Start();
-  FieldCamera_MoveWithinMapBounds(-1, -1, -1, 0);
+  FieldCamera_MoveWithinMapBounds(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   FieldPsynergy_FadeToCastColor();
   wait(10);
   Actor_FaceDirectionById(effectWork->firstActorId, FACING_SOUTH, 0);

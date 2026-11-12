@@ -858,10 +858,10 @@ static void SolSanctumEntrance_IntroduceSanctum(void) {
   Event_StartScreenTransition();
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STILL);
   Event_Wait(4);
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   // Gather the followers around the leader for Kraden's introduction.
   FieldCamera_SetSpeed(0.6);
-  FieldCamera_MoveTo(PIXELS(1224), -1, PIXELS(136), 1);
+  FieldCamera_MoveTo(1224, CAMERA_KEEP, 136, 1);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
     Actor_SetPositionFixed(ACTOR_KRADEN, leader->x.fixed, leader->z.fixed);
@@ -905,7 +905,7 @@ static void SolSanctumEntrance_IntroduceSanctum(void) {
   // No: "I doubt that... Few ever get the chance to see this sanctum..."
   Event_AskYesNo(SPEAKER_WINDOW_ABOVE | ACTOR_KRADEN, 0);
   Event_Wait(20);
-  FieldCamera_MoveTo(PIXELS(1224), -1, PIXELS(148), 1);
+  FieldCamera_MoveTo(1224, CAMERA_KEEP, 148, 1);
   Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
@@ -1016,20 +1016,20 @@ static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void) {
 
   // Survey both sides of the room before returning to Kraden.
   FieldCamera_SetSpeed(2);
-  FieldCamera_MoveTo(PIXELS(1585), -1, PIXELS(150), 1);
+  FieldCamera_MoveTo(1585, CAMERA_KEEP, 150, 1);
   FieldCamera_WaitForMove();
   Event_Wait(10);
   FieldCamera_SetSpeed(1.2);
-  FieldCamera_MoveTo(PIXELS(1621), -1, PIXELS(100), 1);
+  FieldCamera_MoveTo(1621, CAMERA_KEEP, 100, 1);
   FieldCamera_WaitForMove();
-  FieldCamera_MoveTo(PIXELS(1718), -1, PIXELS(100), 1);
+  FieldCamera_MoveTo(1718, CAMERA_KEEP, 100, 1);
   FieldCamera_WaitForMove();
   Actor_SetAnimation(ACTOR_KRADEN, ANIM_STAND);
-  FieldCamera_MoveTo(PIXELS(1752), -1, PIXELS(150), 1);
+  FieldCamera_MoveTo(1752, CAMERA_KEEP, 150, 1);
   FieldCamera_WaitForMove();
   Event_Wait(40);
   FieldCamera_SetSpeed(2.4);
-  FieldCamera_MoveTo(PIXELS(1668), -1, PIXELS(256), 1);
+  FieldCamera_MoveTo(1668, CAMERA_KEEP, 256, 1);
   FieldCamera_WaitForMove();
   Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   Event_Wait(10);
@@ -1207,15 +1207,15 @@ static void SolSanctumEntrance_KradenSeesStatuesOutOfReach(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 40);
   FieldCamera_SetSpeed(2.4);
   // Pan across the statues, then return to the party's position.
-  FieldCamera_MoveTo(PIXELS(1672), -1, PIXELS(524), 1);
+  FieldCamera_MoveTo(1672, CAMERA_KEEP, 524, 1);
   FieldCamera_WaitForMove();
   Event_Wait(20);
   FieldCamera_SetSpeed(1.6);
-  FieldCamera_MoveTo(PIXELS(1880), -1, PIXELS(524), 1);
+  FieldCamera_MoveTo(1880, CAMERA_KEEP, 524, 1);
   FieldCamera_WaitForMove();
   Event_Wait(20);
   FieldCamera_SetSpeed(3.2);
-  FieldCamera_MoveTo(PIXELS(1769), -1, PIXELS(548), 1);
+  FieldCamera_MoveTo(1769, CAMERA_KEEP, 548, 1);
   FieldCamera_WaitForMove();
   Event_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);

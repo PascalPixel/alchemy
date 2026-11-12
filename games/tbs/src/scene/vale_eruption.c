@@ -167,7 +167,7 @@ static void ValeEruption_ReturnFromMtAleph(void) {
   Weather_StartLightningFlash(PALETTE_TINT_WARM, PALETTE_TINT_RED);
   Weather_LastLightning();
   wait(60);
-  FieldCamera_MoveTo(PIXELS(256), -1, PIXELS(612), 0);
+  FieldCamera_MoveTo(256, CAMERA_KEEP, 612, 0);
   FieldCamera_WaitForArrival();
   MapGrid_CenterOnFollowedPoint();
   work = gFieldWork;
@@ -177,7 +177,7 @@ static void ValeEruption_ReturnFromMtAleph(void) {
 
   // The camera pans up to the villagers as the ground shakes.
   FieldCamera_SetSpeed(0.8);
-  FieldCamera_MoveTo(PIXELS(256), -1, PIXELS(500), 1);
+  FieldCamera_MoveTo(256, CAMERA_KEEP, 500, 1);
   Event_Wait(20);
   MapGrid_SetShake(PIXELS(1), PIXELS(2), Q16_ONE);
   Weather_LastLightning();
@@ -259,7 +259,7 @@ static void ValeEruption_ReturnFromMtAleph(void) {
   Actor_SetSpeed(ACTOR_GARET, 0.5);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 120, 258);
   FieldCamera_SetSpeed(1.5);
-  FieldCamera_MoveTo(PIXELS(112), -1, PIXELS(320), 1);
+  FieldCamera_MoveTo(112, CAMERA_KEEP, 320, 1);
   Event_Wait(40);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
@@ -340,7 +340,7 @@ static void ValeEruption_ReturnFromMtAleph(void) {
   Event_Wait(40);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH_SOUTHEAST, 0);
-  FieldCamera_MoveTo(PIXELS(112), -1, PIXELS(320), 1);
+  FieldCamera_MoveTo(112, CAMERA_KEEP, 320, 1);
   FieldCamera_WaitForArrival();
   Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Actor_StartRepeatedMotion(ACTOR_GARET, 2);
@@ -353,7 +353,7 @@ static void ValeEruption_ReturnFromMtAleph(void) {
 
   // "Come over here, both of you!" The two walk down to the villagers.
   FieldCamera_SetSpeed(1);
-  FieldCamera_MoveTo(PIXELS(214), -1, PIXELS(472), 1);
+  FieldCamera_MoveTo(214, CAMERA_KEEP, 472, 1);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 1);
   Actor_SetSpeed(ACTOR_GARET, 1);
   Actor_SetScript(ACTOR_PARTY_LEADER, gValeEruption_LeaderWalksDown);

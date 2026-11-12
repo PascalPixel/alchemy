@@ -308,7 +308,7 @@ static void MercuryLighthouseAerie_PartyArrives(void) {
   Actor_SetSpriteFlags(Actor_Get(ACTOR_GARET), 0);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_IVAN), 0);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_MIA), 0);
-  FieldCamera_MoveTo(PIXELS(304), -1, PIXELS(120), 0);
+  FieldCamera_MoveTo(304, CAMERA_KEEP, 120, 0);
   wait(1);
   MapGrid_CenterOnFollowedPoint();
   wait(1);
@@ -323,7 +323,7 @@ static void MercuryLighthouseAerie_PartyArrives(void) {
   Event_Wait(30);
   FieldCamera_GetActor()->motionFlags = 0;
   FieldCamera_SetSpeed(0.8);
-  FieldCamera_MoveTo(PIXELS(512), -PIXELS(24), PIXELS(160), 1);
+  FieldCamera_MoveTo(512, -24, 160, 1);
   FieldCamera_WaitForArrival();
   PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_ApplyTarget(PALETTE_TINT_PALE, PALETTES_ALL);
@@ -533,14 +533,14 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
   Event_Wait(20);
   FieldCamera_SetSpeed(1.5);
-  FieldCamera_MoveTo(PIXELS(328), PIXELS(40), PIXELS(176), 1);
+  FieldCamera_MoveTo(328, 40, 176, 1);
   FieldCamera_GetActor()->motionFlags = 0;
   Actor_SetSpeed(ACTOR_GARET, 1.5);
   Actor_WalkToAndWait(ACTOR_GARET, 328, 216);
   FieldCamera_WaitForArrival();
   Actor_SetSpeed(ACTOR_GARET, 0.8);
   Event_Wait(60);
-  FieldCamera_MoveTo(PIXELS(344), PIXELS(24), PIXELS(232), 1);
+  FieldCamera_MoveTo(344, 24, 232, 1);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHEAST, 20);
   FieldCamera_WaitForArrival();
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_SHAKE_HEAD);
@@ -645,7 +645,7 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
   Event_Wait(20);
   FieldCamera_SetSpeed(3);
-  FieldCamera_MoveTo(PIXELS(120), -PIXELS(24), PIXELS(168), 1);
+  FieldCamera_MoveTo(120, -24, 168, 1);
   FieldCamera_WaitForArrival();
   Event_Wait(40);
   Actor_RunRepeatedMotion(ACTOR_FELIX, 1);
@@ -705,7 +705,7 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   Actor_FaceDirection(ACTOR_JENNA, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_EAST, 0);
   FieldCamera_SetSpeed(1.5);
-  FieldCamera_MoveTo(PIXELS(232), PIXELS(40), PIXELS(152), 1);
+  FieldCamera_MoveTo(232, 40, 152, 1);
   Actor_SetSpeed(ACTOR_SATUROS, 0.8);
   Actor_WalkToAndWait(ACTOR_SATUROS, 272, 128);
   Actor_WalkToAndWait(ACTOR_SATUROS, 264, 152);
@@ -720,7 +720,7 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   Event_Wait(20);
   // "I heard everything."
   Event_ShowMessage(ACTOR_SATUROS, 0);
-  FieldCamera_MoveTo(PIXELS(296), PIXELS(40), PIXELS(216), 1);
+  FieldCamera_MoveTo(296, 40, 216, 1);
   Actor_WalkToAndWait(ACTOR_SATUROS, 304, 176);
   Actor_FaceDirection(ACTOR_SATUROS, FACING_SOUTHEAST, 0);
   FieldCamera_WaitForArrival();
@@ -791,7 +791,7 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   // "Leave me be! Head for the next lighthouse-now!"
   Event_ShowMessageThenWait(ACTOR_SATUROS, 0, 20);
   FieldCamera_SetSpeed(3);
-  FieldCamera_MoveTo(PIXELS(120), -PIXELS(24), PIXELS(168), 1);
+  FieldCamera_MoveTo(120, -24, 168, 1);
   FieldCamera_WaitForArrival();
   Actor_SetAnimationAndWait(ACTOR_MENARDI, 3);
   Event_Wait(10);
@@ -885,7 +885,7 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_SOUTHWEST, 0);
-  FieldCamera_MoveTo(PIXELS(304), PIXELS(32), PIXELS(216), 1);
+  FieldCamera_MoveTo(304, 32, 216, 1);
   FieldCamera_WaitForArrival();
   Actor_SetPosition(ACTOR_KRADEN, 272, 280);
   Event_ShowMessageThenWait(ACTOR_KRADEN, 0, 20);
@@ -997,7 +997,7 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   Actor_SetPosition(ACTOR_SATUROS, 336, 176);
   Actor_SetAnimation(ACTOR_SATUROS, 9);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_SATUROS), 0);
-  FieldCamera_MoveTo(PIXELS(336), -1, PIXELS(208), 0);
+  FieldCamera_MoveTo(336, CAMERA_KEEP, 208, 0);
   wait(1);
   MapGrid_CenterOnFollowedPoint();
   wait(1);
@@ -1038,7 +1038,7 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   Sound_Play(MUS_CONFRONTATION);
   FieldCamera_SetSpeed(0.8);
   FieldCamera_GetActor()->motionFlags = 0;
-  FieldCamera_MoveTo(PIXELS(336), -1, PIXELS(168), 1);
+  FieldCamera_MoveTo(336, CAMERA_KEEP, 168, 1);
   Event_Wait(20);
   Actor_SetSpeed(ACTOR_ALEX, 0.8);
   Actor_WalkToAndWait(ACTOR_ALEX, 344, 136);
@@ -1046,7 +1046,7 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   FieldCamera_WaitForArrival();
   // "Alex!"
   Event_ShowMessageThenWait(ACTOR_MIA, 0, 30);
-  FieldCamera_MoveTo(PIXELS(336), -1, PIXELS(184), 1);
+  FieldCamera_MoveTo(336, CAMERA_KEEP, 184, 1);
   Actor_WalkToAndWait(ACTOR_ALEX, 344, 160);
   Actor_WalkToAndWait(ACTOR_ALEX, 328, 168);
   Actor_WalkToAndWait(ACTOR_ALEX, 312, 176);
@@ -1284,7 +1284,7 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   Actor_FaceDirection(ACTOR_IVAN, FACING_WEST, 5);
   Actor_FaceDirection(ACTOR_MIA, FACING_EAST, 5);
   FieldCamera_GetActor()->motionFlags = 0;
-  FieldCamera_MoveTo(PIXELS(280), -1, PIXELS(232), 1);
+  FieldCamera_MoveTo(280, CAMERA_KEEP, 232, 1);
   FieldCamera_WaitForArrival();
   Actor_SetSpriteColorById(ACTOR_SATUROS, SPRITE_COLOR_HIDDEN);
   Actor_SetSpriteColorById(ACTOR_ALEX, SPRITE_COLOR_HIDDEN);
@@ -1324,7 +1324,7 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   {
     struct MapGridLayerScroll *lift;
     void **cells;
-    FieldCamera_MoveTo(PIXELS(152), -1, PIXELS(216), 1);
+    FieldCamera_MoveTo(152, CAMERA_KEEP, 216, 1);
     lift = &((struct MapGridScrollWork *)gMapGridWork[0])->layers[2];
     lift->offsetY = PIXELS(896);
     cells = gMapGridWork;
@@ -1344,7 +1344,7 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
     Event_Wait(30);
     Actor_FaceDirection(ACTOR_ALEX, FACING_WEST, 20);
     Event_ShowMessageThenWait(ACTOR_ALEX, 0, 20);
-    FieldCamera_MoveTo(PIXELS(280), -1, PIXELS(216), 1);
+    FieldCamera_MoveTo(280, CAMERA_KEEP, 216, 1);
     FieldCamera_WaitForArrival();
     Actor_FaceDirection(ACTOR_ALEX, FACING_SOUTH_SOUTHEAST, 20);
     Actor_SetAnimation(ACTOR_ALEX, 5);
@@ -1394,7 +1394,7 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   Event_Wait(20);
   MercuryLighthouseAerie_SaturosAndAlexWarpOut();
   Event_Wait(20);
-  FieldCamera_MoveTo(PIXELS(128), -1, PIXELS(200), 1);
+  FieldCamera_MoveTo(128, CAMERA_KEEP, 200, 1);
   FieldCamera_WaitForArrival();
   Actor_SetAnimation(ACTOR_SATUROS, 1);
   Actor_SetAnimation(ACTOR_ALEX, 1);
@@ -1432,7 +1432,7 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   Actor_SetSpritePriority(ACTOR_FIRST_LIFT_PLATFORM, 1);
   Actor_SetSpritePriority(ACTOR_SECOND_LIFT_PLATFORM, 1);
   Sound_Play(SOUND_FADE_OUT_BGM);
-  FieldCamera_MoveTo(PIXELS(336), -1, PIXELS(216), 1);
+  FieldCamera_MoveTo(336, CAMERA_KEEP, 216, 1);
   FieldCamera_WaitForArrival();
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_SHAKE_HEAD);
   Event_Wait(20);
@@ -1589,7 +1589,7 @@ static void MercuryLighthouseAerie_CallLift(void) {
   Actor_Get(ACTOR_LIFT_STATUE)->targetY = -PIXELS(32);
   FieldCamera_GetActor()->motionFlags = 0;
   FieldCamera_SetSpeedParameters(PIXELS(4) / 5, PIXELS(1) / 10);
-  FieldCamera_MoveWithinMapBounds(PIXELS(128), -1, PIXELS(184), 1);
+  FieldCamera_MoveTo(128, CAMERA_KEEP, 184, 1);
   FieldCamera_WaitForArrival();
   Event_Wait(30);
   MapGrid_CopyCellsTo(29, 74, 4, 74, 5, 4);
@@ -1617,7 +1617,7 @@ static void MercuryLighthouseAerie_RideLiftDown(void) {
   Actor_SetSpritePriority(ACTOR_FIRST_LIFT_PLATFORM, 0);
   Actor_SetSpritePriority(ACTOR_SECOND_LIFT_PLATFORM, 0);
   MercuryLighthouseAerie_LowerLift();
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Import_EventSetExitRequest(
       MERCURY_LIGHTHOUSE_AERIE_TO_MERCURY_LIGHTHOUSE_EXTERIOR);
   Event_End();

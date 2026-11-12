@@ -765,7 +765,7 @@ static void Kalay_WatchTourGroupDeparture(void) {
     last = Actor_Get(ACTOR_SECOND_GUIDE);
     last->timer = 0;
     Actor_SetScript(ACTOR_SECOND_GUIDE, gKalay_TourGroupWalkScript);
-    FieldCamera_MoveTo(PIXELS(186), -1, PIXELS(272), 1);
+    FieldCamera_MoveTo(186, CAMERA_KEEP, 272, 1);
     Actor_WaitForScriptEndById(ACTOR_HEAD_GUIDE);
     Actor_FaceDirection(ACTOR_HEAD_GUIDE, FACING_EAST, 0);
     do {
@@ -1669,12 +1669,12 @@ static void Kalay_IvanMeetsPalaceGuards(void) {
   struct Actor *actor;
 
   Event_Start();
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   wait(1);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 192, 342);
   wait(1);
   FieldCamera_SetSpeed(0.2);
-  FieldCamera_MoveTo(PIXELS(192), -1, PIXELS(252), 1);
+  FieldCamera_MoveTo(192, CAMERA_KEEP, 252, 1);
   gFieldWork->transitionFrames = 40;
   Event_StartScreenTransition();
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.8);
@@ -1894,23 +1894,23 @@ static void Kalay_HammetReturnsToPalace(void) {
   const s32 *exitActions;
 
   Event_Start();
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   wait(1);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
   Actor_SetPosition(ACTOR_WAGON, 440, 522);
   actor = Actor_Get(ACTOR_WAGON);
   Actor_SetSpriteFlags(actor, 0);
-  FieldCamera_MoveTo(PIXELS(440), -1, PIXELS(522), 0);
+  FieldCamera_MoveTo(440, CAMERA_KEEP, 522, 0);
   MapGrid_CenterOnFollowedPoint();
   wait(1);
   Event_StartScreenTransition();
   FieldCamera_SetSpeed(1.6);
-  FieldCamera_MoveTo(PIXELS(440), -1, PIXELS(400), 1);
+  FieldCamera_MoveTo(440, CAMERA_KEEP, 400, 1);
   Sound_Play(SE_RUMBLE);
   Actor_SetSpeed(ACTOR_WAGON, 1.6);
   Actor_WalkToAndWait(ACTOR_WAGON, 440, 400);
   FieldCamera_SetSpeed(0.75);
-  FieldCamera_MoveTo(PIXELS(440), -1, PIXELS(300), 1);
+  FieldCamera_MoveTo(440, CAMERA_KEEP, 300, 1);
   Actor_SetSpeed(ACTOR_WAGON, 0.8);
   Actor_WalkToAndWait(ACTOR_WAGON, 440, 300);
   Actor_SetAnimation(ACTOR_WAGON, 0);
@@ -1923,7 +1923,7 @@ static void Kalay_HammetReturnsToPalace(void) {
   Actor_WalkToAndWait(ACTOR_BUNZA, 416, 312);
   Actor_WalkToAndWait(ACTOR_BUNZA, 400, 256);
   Actor_FaceDirection(ACTOR_BUNZA, FACING_SOUTH_SOUTHEAST, 40);
-  FieldCamera_MoveTo(PIXELS(410), -1, PIXELS(280), 1);
+  FieldCamera_MoveTo(410, CAMERA_KEEP, 280, 1);
   Actor_SetSpeed(ACTOR_HAMMET, 0.6);
   Actor_SetPosition(ACTOR_HAMMET, 439, 306);
   Actor_Jump(ACTOR_HAMMET, 4, 0);
@@ -2113,7 +2113,7 @@ static void Kalay_HammetReturnsToPalace(void) {
   Actor_FaceDirection(ACTOR_TUNNEL_GUARD, FACING_SOUTH_SOUTHEAST, 0);
   Actor_SetAnimationAndWait(ACTOR_HAMMET, ANIM_NOD);
   FieldCamera_SetSpeed(1);
-  FieldCamera_MoveTo(PIXELS(280), -1, PIXELS(200), 1);
+  FieldCamera_MoveTo(280, CAMERA_KEEP, 200, 1);
   Actor_WalkToAndWait(ACTOR_HAMMET, 333, 222);
   Actor_WalkToAndWait(ACTOR_HAMMET, 284, 198);
   Actor_FaceDirection(ACTOR_HAMMET, FACING_WEST, 10);
@@ -2133,7 +2133,7 @@ static void Kalay_HammetReturnsToPalace(void) {
   Actor_FaceDirection(ACTOR_TUNNEL_GUARD, FACING_EAST, 20);
   FieldCamera_GetActor()->motionFlags = 0;
   FieldCamera_SetSpeed(0.6);
-  FieldCamera_MoveTo(PIXELS(248), -1, PIXELS(170), 1);
+  FieldCamera_MoveTo(248, CAMERA_KEEP, 170, 1);
   Actor_WalkToAndWait(ACTOR_HAMMET, 270, 198);
   Actor_WalkToAndWait(ACTOR_HAMMET, 270, 174);
   Actor_WalkToAndWait(ACTOR_HAMMET, 224, 170);
@@ -2149,7 +2149,7 @@ static void Kalay_HammetReturnsToPalace(void) {
   actor = Actor_Get(ACTOR_WAGON);
   southFacing = FACING_SOUTH;
   actor->facing = southFacing;
-  FieldCamera_MoveTo(PIXELS(380), -1, PIXELS(280), 0);
+  FieldCamera_MoveTo(380, CAMERA_KEEP, 280, 0);
   MapGrid_CenterOnFollowedPoint();
   wait(10);
   Event_StartScreenTransition();
@@ -2171,7 +2171,7 @@ static void Kalay_HammetReturnsToPalace(void) {
   Actor_SetScript(ACTOR_GARET, exitActions);
   Actor_SetScript(ACTOR_IVAN, exitActions);
   Actor_RunScriptAndWait(ACTOR_MIA, exitActions);
-  FieldCamera_MoveTo(PIXELS(410), -1, PIXELS(300), 1);
+  FieldCamera_MoveTo(410, CAMERA_KEEP, 300, 1);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 416, 312);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 439, 312);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 439, 306);
@@ -2179,10 +2179,10 @@ static void Kalay_HammetReturnsToPalace(void) {
   Sound_Play(SE_RUMBLE);
   Actor_SetSpeed(ACTOR_WAGON, 0.8);
   FieldCamera_SetSpeed(1);
-  FieldCamera_MoveTo(PIXELS(440), -1, PIXELS(420), 1);
+  FieldCamera_MoveTo(440, CAMERA_KEEP, 420, 1);
   Actor_WalkToAndWait(ACTOR_WAGON, 440, 420);
   FieldCamera_SetSpeed(2);
-  FieldCamera_MoveTo(PIXELS(440), -1, PIXELS(600), 1);
+  FieldCamera_MoveTo(440, CAMERA_KEEP, 600, 1);
   Actor_SetSpeed(ACTOR_WAGON, 1.6);
   Actor_WalkToAndWait(ACTOR_WAGON, 440, 500);
   Actor_WalkTo(ACTOR_WAGON, 440, 600);

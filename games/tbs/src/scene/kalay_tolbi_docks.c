@@ -893,7 +893,7 @@ static void KalayTolbiDocks_GaretSeesTheKaragol(void) {
   Actor_SetSpeed(ACTOR_GARET, 1.6);
   Actor_WalkToAndWait(ACTOR_GARET, 232, 1424);
   Actor_FaceDirection(ACTOR_GARET, FACING_WEST, 0);
-  FieldCamera_MoveTo(PIXELS(184), -1, PIXELS(1440), 1);
+  FieldCamera_MoveTo(184, CAMERA_KEEP, 1440, 1);
   FieldCamera_WaitForMove();
   Event_Wait(10);
   Actor_Jump(ACTOR_GARET, 6, 15);
@@ -901,7 +901,7 @@ static void KalayTolbiDocks_GaretSeesTheKaragol(void) {
   // "Incredible! So this is the ocean Kraden was talking about!"
   Event_ShowMessage(ACTOR_GARET, 0);
   Event_Wait(20);
-  FieldCamera_MoveTo(PIXELS(264), -1, PIXELS(1448), 1);
+  FieldCamera_MoveTo(264, CAMERA_KEEP, 1448, 1);
   FieldCamera_WaitForMove();
   Event_Wait(20);
   Actor_ShowEmote(ACTOR_YOUNG_MAN_ASKING_ABOUT_TOLBI,
@@ -988,7 +988,7 @@ static void KalayTolbiDocks_PassengersConfrontTourGuide(void) {
   actor->priorityFlags = 0;
   ((u8 *)actor->sprite)[9] |= 12;
   ((u8 *)actor->sprite)[21] |= 12;
-  FieldCamera_MoveTo(PIXELS(232), -1, PIXELS(304), 1);
+  FieldCamera_MoveTo(232, CAMERA_KEEP, 304, 1);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 1);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 216, 272);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 0);

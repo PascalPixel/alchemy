@@ -223,7 +223,7 @@ static void SolSanctumEruption_PlayHostageEvent(void) {
   // four bytes and change this event's register allocation in tbs-en.
   fieldWorkSlot = (struct FieldWork **)((u8 *)particleWorkSlot - 8);
 #endif
-  FieldCamera_MoveTo(PIXELS(232), -1, PIXELS(156), 0);
+  FieldCamera_MoveTo(232, CAMERA_KEEP, 156, 0);
   MapGrid_CenterOnFollowedPoint();
 #ifdef UBFIX
   gFieldWork->transitionFrames = 8;
@@ -304,7 +304,7 @@ static void SolSanctumEruption_PlayHostageEvent(void) {
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH_SOUTHEAST, 10);
   SolSanctumEruption_PlaceHostageGroup();
   FieldCamera_SetSpeed(6.4);
-  FieldCamera_MoveTo(PIXELS(328), -1, PIXELS(299), 1);
+  FieldCamera_MoveTo(328, CAMERA_KEEP, 299, 1);
   FieldCamera_WaitForMove();
   Sound_Play(SE_MAP_TRANSITION);
   PaletteFade_ApplyTarget(PALETTE_TINT_CUSTOM | RGB(20, 20, 20),
@@ -363,8 +363,8 @@ static void SolSanctumEruption_PlayHostageEvent(void) {
   Actor_FaceDirection(ACTOR_FELIX, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_ALEX, FACING_WEST, 0);
   actor = Actor_Get(ACTOR_JENNA);
-  FieldCamera_MoveTo(actor->x.part.pixel * PIXELS(1), -1,
-                     actor->z.part.pixel * PIXELS(1), 1);
+  FieldCamera_MoveToFixed(actor->x.part.pixel * px(1), CAMERA_KEEP,
+                          actor->z.part.pixel * px(1), 1);
   FieldCamera_WaitForMove();
   Event_Wait(40);
   Actor_RunRepeatedMotion(ACTOR_FELIX, 2);
@@ -558,7 +558,7 @@ static void SolSanctumEruption_PlayHostageEvent(void) {
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH_NORTHEAST, 0);
   FieldCamera_SetSpeed(0.5);
-  FieldCamera_MoveTo(PIXELS(472), -1, PIXELS(300), 1);
+  FieldCamera_MoveTo(472, CAMERA_KEEP, 300, 1);
   FieldCamera_WaitForMove();
   Event_Wait(40);
   GameFlag_Set(FLAG_SOL_SANCTUM_ERUPTION_SATUROS_LEAVING);
@@ -1044,29 +1044,29 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   Actor_FaceDirection(ACTOR_GARET, FACING_WEST_SOUTHWEST, 0);
   // Pan around the chamber before another tremor interrupts the conversation.
   FieldCamera_SetSpeed(2);
-  FieldCamera_MoveTo(PIXELS(284), -1, PIXELS(92), 1);
+  FieldCamera_MoveTo(284, CAMERA_KEEP, 92, 1);
   FieldCamera_WaitForMove();
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH_SOUTHWEST, 0);
   FieldCamera_SetSpeed(1.5);
-  FieldCamera_MoveTo(PIXELS(127), -1, PIXELS(162), 1);
+  FieldCamera_MoveTo(127, CAMERA_KEEP, 162, 1);
   FieldCamera_WaitForMove();
   Event_Wait(40);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH_SOUTHEAST, 0);
   FieldCamera_SetSpeed(4);
-  FieldCamera_MoveTo(PIXELS(304), -1, PIXELS(294), 1);
+  FieldCamera_MoveTo(304, CAMERA_KEEP, 294, 1);
   FieldCamera_WaitForMove();
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_EAST_SOUTHEAST, 0);
   FieldCamera_SetSpeed(1);
-  FieldCamera_MoveTo(PIXELS(400), -1, PIXELS(215), 1);
+  FieldCamera_MoveTo(400, CAMERA_KEEP, 215, 1);
   FieldCamera_WaitForMove();
   Event_Wait(60);
   FieldCamera_SetSpeed(4);
-  FieldCamera_MoveTo(PIXELS(273), -1, PIXELS(145), 1);
+  FieldCamera_MoveTo(273, CAMERA_KEEP, 145, 1);
   FieldCamera_WaitForMove();
   Event_Wait(20);
   // Garet: "This really is terrible..." and they have a long way to go.
@@ -1151,7 +1151,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST_SOUTHWEST, 0);
   Event_Wait(10);
   FieldCamera_SetSpeed(2);
-  FieldCamera_MoveTo(PIXELS(217), -1, PIXELS(176), 1);
+  FieldCamera_MoveTo(217, CAMERA_KEEP, 176, 1);
   FieldCamera_WaitForMove();
   Event_Wait(20);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
@@ -1243,7 +1243,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   Actor_ShowEmote(ACTOR_WISE_ONE, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Event_Wait(40);
   FieldCamera_SetSpeed(1);
-  FieldCamera_MoveTo(PIXELS(186), -1, PIXELS(166), 1);
+  FieldCamera_MoveTo(186, CAMERA_KEEP, 166, 1);
   Actor_SetDestination(ACTOR_WISE_ONE, 130, 113);
   Actor_WaitForMoveById(ACTOR_WISE_ONE);
   Actor_FaceDirection(ACTOR_WISE_ONE, FACING_SOUTH_SOUTHEAST, 0);
@@ -1287,7 +1287,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Event_Wait(60);
   FieldCamera_SetSpeed(1);
-  FieldCamera_MoveTo(PIXELS(218), -1, PIXELS(181), 1);
+  FieldCamera_MoveTo(218, CAMERA_KEEP, 181, 1);
   Actor_SetSpeed(ACTOR_WISE_ONE, 1);
   Actor_SetDestination(ACTOR_WISE_ONE, 169, 151);
   Actor_WaitForMoveById(ACTOR_WISE_ONE);
@@ -1303,7 +1303,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH_NORTHWEST, 0);
-  FieldCamera_MoveTo(PIXELS(224), -1, PIXELS(158), 1);
+  FieldCamera_MoveTo(224, CAMERA_KEEP, 158, 1);
   FieldCamera_WaitForMove();
   // Lights rise at the chamber's first corner. The Wise One: the Elemental
   // Djinn have returned; "Take out the Elemental Star..." Refusing, "Isaac
@@ -1420,7 +1420,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   Task_AddFrame(SolSanctumEruption_FlickerSecondCollapseTiles, TASK_PASS_FRAME);
   Event_Wait(20);
   FieldCamera_SetSpeed(1);
-  FieldCamera_MoveTo(PIXELS(184), -1, PIXELS(132), 1);
+  FieldCamera_MoveTo(184, CAMERA_KEEP, 132, 1);
   Actor_Jump(ACTOR_PARTY_LEADER, 6, 0);
   Actor_Jump(ACTOR_GARET, 6, 0);
   Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
@@ -1767,7 +1767,7 @@ static void SolSanctumEruption_FadeCameraTo(s32 x, s32 z) {
   center = FieldCamera_GetActor();
   z *= PIXELS(1);
   x *= PIXELS(1);
-  FieldCamera_MoveWithinMapBounds(x, -1, z, 1);
+  FieldCamera_MoveWithinMapBounds(x, CAMERA_KEEP, z, 1);
   PaletteFade_ApplyTarget(RGB(0, 0, 0), PALETTES_ALL);
   PaletteFade_StartInterpolation(20);
   wait(40);

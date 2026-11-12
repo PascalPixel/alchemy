@@ -391,7 +391,7 @@ static void ColosseumAzartMatch_DousePipe(void) {
   actor = Actor_Get(ACTOR_PIPE_WEST);
   Event_Start();
   FieldCamera_SetSpeed(2);
-  FieldCamera_MoveTo(PIXELS(600), -1, PIXELS(200), 1);
+  FieldCamera_MoveTo(600, CAMERA_KEEP, 200, 1);
   Actor_SelectAnimation(actor, 3);
   FieldCamera_WaitForMove();
   none = 0;
@@ -576,7 +576,7 @@ static void ColosseumAzartMatch_PushPipeworksPillar(void) {
   if (none != 0) {
     Event_Start();
     FieldCamera_SetSpeed(2);
-    FieldCamera_MoveTo(PIXELS(552), -1, PIXELS(200), 1);
+    FieldCamera_MoveTo(552, CAMERA_KEEP, 200, 1);
     FieldCamera_WaitForMove();
     ColosseumAzartMatch_AnimatePipeworksWater();
     Event_Wait(15);
@@ -586,7 +586,7 @@ static void ColosseumAzartMatch_PushPipeworksPillar(void) {
   GameFlag_Set(FLAG_PIPES_MOVED);
   Event_Start();
   FieldCamera_SetSpeed(2);
-  FieldCamera_MoveTo(PIXELS(600), -1, PIXELS(200), 1);
+  FieldCamera_MoveTo(600, CAMERA_KEEP, 200, 1);
   FieldCamera_WaitForMove();
   actor = Actor_Get(ACTOR_PIPE_WEST);
   actor->motionFlags = none;
@@ -709,7 +709,7 @@ static void ColosseumAzartMatch_RestoreMatchResult(s32 result) {
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_ARMS_RAISED);
   }
   wait(1);
-  FieldCamera_MoveTo(PIXELS(1304), 0, PIXELS(128), 0);
+  FieldCamera_MoveTo(1304, 0, 128, 0);
   ColosseumAzartMatch_ShowMatchResult(result);
   Event_End();
 }
@@ -937,26 +937,26 @@ static void ColosseumAzartMatch_ExplainFinalsRules(s32 guide) {
       // "Please look over there."
       Event_ShowMessage(guide, 0);
       FieldCamera_SetSpeed(3);
-      FieldCamera_MoveTo(PIXELS(312), -1, PIXELS(104), 1);
+      FieldCamera_MoveTo(312, CAMERA_KEEP, 104, 1);
       FieldCamera_WaitForMove();
       // "That is the starting point of the first stage of the finals."
       Event_ShowMessage(guide, 0);
       FieldCamera_SetSpeed(1.5);
-      FieldCamera_MoveTo(PIXELS(776), -1, PIXELS(104), 1);
+      FieldCamera_MoveTo(776, CAMERA_KEEP, 104, 1);
       // "You must get through several stages before you reach the arena."
       Event_ShowMessage(guide, 0);
       FieldCamera_WaitForMove();
       // "The chests along the way contain items that may be useful in..."
       Event_ShowMessage(guide, 0);
       FieldCamera_SetSpeed(3);
-      FieldCamera_MoveTo(PIXELS(1240), -1, PIXELS(168), 1);
+      FieldCamera_MoveTo(1240, CAMERA_KEEP, 168, 1);
       FieldCamera_WaitForMove();
       // BUG: FACING_SOUTHWEST is passed where an actor id belongs; no
       // actor has it, so the guide does not turn.
       Actor_FaceActor(guide, FACING_SOUTHWEST, 0);
       // "This is the battle arena. After getting here, the warriors..."
       Event_ShowMessage(guide, 0);
-      FieldCamera_MoveTo(PIXELS(1304), -1, PIXELS(168), 1);
+      FieldCamera_MoveTo(1304, CAMERA_KEEP, 168, 1);
       FieldCamera_WaitForMove();
       Actor_FaceActor(guide, ACTOR_PARTY_LEADER, 0);
       // "You can get weapons in the arena, too, but one is weaker..."
@@ -1042,7 +1042,7 @@ static void ColosseumAzartMatch_TalkToRockAttendant(s32 actorId) {
     if (path == COLOSSO_GUIDE_DESCRIBE) {
       Event_SetMessageId(MsgColossoCallRockChallenge);
       FieldCamera_SetSpeed(3);
-      FieldCamera_MoveTo(PIXELS(328), -1, PIXELS(168), 1);
+      FieldCamera_MoveTo(328, CAMERA_KEEP, 168, 1);
       FieldCamera_WaitForMove();
       // "They call this the Rock Challenge."
       Event_ShowMessage(actorId, 0);
@@ -1118,11 +1118,11 @@ static void ColosseumAzartMatch_TalkToPipeworksAttendant(s32 attendant) {
     if (path == COLOSSO_GUIDE_DESCRIBE) {
       Event_SetMessageId(MsgColossoAreaCalledPipeworks);
       FieldCamera_SetSpeedParameters(PIXELS(3), PIXELS(3) / 8);
-      FieldCamera_MoveTo(PIXELS(592), -1, PIXELS(120), 1);
+      FieldCamera_MoveTo(592, CAMERA_KEEP, 120, 1);
       FieldCamera_WaitForMove();
       Event_Wait(60);
       FieldCamera_SetSpeedParameters(PIXELS(3) / 2, PIXELS(3) / 16);
-      FieldCamera_MoveWithinMapBounds(PIXELS(608), -1, PIXELS(216), 1);
+      FieldCamera_MoveTo(608, CAMERA_KEEP, 216, 1);
       FieldCamera_WaitForMove();
       // "This area is called the Pipeworks."
       Event_ShowMessage(attendant, 0);
@@ -1184,7 +1184,7 @@ static void ColosseumAzartMatch_TalkToBridgeAttendant(s32 actorId) {
       Event_SetMessageId(MsgColossoTheyCallBrokenBridge);
       ColosseumAzartMatch_ResetBrokenBridge();
       FieldCamera_SetSpeed(3);
-      FieldCamera_MoveTo(PIXELS(840), -1, PIXELS(216), 1);
+      FieldCamera_MoveTo(840, CAMERA_KEEP, 216, 1);
       FieldCamera_WaitForMove();
       Event_ShowMessage(actorId, 0);
       ColosseumAzartMatch_StartBrokenBridge();
@@ -1228,7 +1228,7 @@ static void ColosseumAzartMatch_TalkToLumberAttendant(s32 actorId) {
   if (path == COLOSSO_GUIDE_DESCRIBE) {
     Event_SetMessageId(MsgColossoPlaceNormallyCalledLumberWater);
     FieldCamera_SetSpeed(3);
-    FieldCamera_MoveTo(PIXELS(1088), -1, PIXELS(168), 1);
+    FieldCamera_MoveTo(1088, CAMERA_KEEP, 168, 1);
     FieldCamera_WaitForMove();
     // "This place is normally called the Lumber Water Crossing Area."
     Event_ShowMessage(actorId, 0);
@@ -1247,7 +1247,7 @@ static void ColosseumAzartMatch_TalkToLumberAttendant(s32 actorId) {
     Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 1016, 168);
     Event_Wait(15);
     COLOSSEUM_AZART_MATCH_PLACE_STAGED_PAIR(ACTOR_LOG_EAST_WEST, 160, 0);
-    FieldCamera_MoveTo(PIXELS(1088), -1, PIXELS(168), 1);
+    FieldCamera_MoveTo(1088, CAMERA_KEEP, 168, 1);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
     Event_Wait(10);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 1);

@@ -1138,7 +1138,7 @@ static void WorldMap_ShowHammetsCaravan(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   WorldMap_Freeze();
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   wait(1);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 1.6);
   Actor_SetSpeed(ACTOR_GARET, 1.6);
@@ -1203,7 +1203,7 @@ static void WorldMap_ShowHammetsCaravan(void) {
   Actor_SetAnimation(ACTOR_CARAVAN_FIRST_WAGON + 1, ANIM_STAND);
   Actor_SetAnimation(ACTOR_CARAVAN_FIRST_WAGON + 2, ANIM_STAND);
   Actor_SetAnimation(ACTOR_CARAVAN_FIRST_WAGON + 3, ANIM_STAND);
-  FieldCamera_MoveTo(PIXELS(5640), -1, PIXELS(1784), 1);
+  FieldCamera_MoveTo(5640, CAMERA_KEEP, 1784, 1);
   FieldCamera_WaitForMove();
   Event_Wait(20);
   WorldMap_Freeze();
@@ -1279,7 +1279,7 @@ static void WorldMap_ShowHammetsCaravan(void) {
   Actor_FaceDirection(ACTOR_CARAVAN_HAMMET, FACING_NORTH_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_CARAVAN_MAN, FACING_NORTH_NORTHWEST, 0);
   FieldCamera_SetSpeed(1);
-  FieldCamera_MoveTo(PIXELS(5608), -1, PIXELS(1736), 1);
+  FieldCamera_MoveTo(5608, CAMERA_KEEP, 1736, 1);
   FieldCamera_WaitForMove();
   Actor_SetPosition(ACTOR_INVISIBLE_ROCK_GUIDE, 5544, 1704);
   wait(1);
@@ -1318,7 +1318,7 @@ static void WorldMap_ShowHammetsCaravan(void) {
   WorldMap_ShakeCameraWhereRockFalls();
   Event_Wait(60);
   FieldCamera_SetSpeed(2);
-  FieldCamera_MoveTo(PIXELS(5640), -1, PIXELS(1784), 1);
+  FieldCamera_MoveTo(5640, CAMERA_KEEP, 1784, 1);
   FieldCamera_WaitForMove();
   WorldMap_Freeze();
   Actor_SetAttachedEffect(ACTOR_CARAVAN_MAN,
@@ -1370,13 +1370,13 @@ static void WorldMap_ShowHammetsCaravan(void) {
   Actor_SetPosition(ACTOR_PARTY_LEADER, 5900, 1576);
   Actor_SetPosition(ACTOR_GARET, 5908, 1600);
   FieldCamera_SetSpeed(4);
-  FieldCamera_MoveTo(PIXELS(5848), -1, PIXELS(1608), 1);
+  FieldCamera_MoveTo(5848, CAMERA_KEEP, 1608, 1);
   FieldCamera_WaitForMove();
   action = gCaravanWagonHeadsNorth;
   Actor_SetScript(ACTOR_CARAVAN_FIRST_WAGON, action);
   Event_Wait(20);
   FieldCamera_SetSpeed(0.4);
-  FieldCamera_MoveTo(PIXELS(5848), -1, PIXELS(1544), 1);
+  FieldCamera_MoveTo(5848, CAMERA_KEEP, 1544, 1);
   Actor_SetScript(ACTOR_CARAVAN_FIRST_WAGON + 1, action);
   Event_Wait(20);
   Actor_SetScript(ACTOR_CARAVAN_FIRST_WAGON + 2, action);
@@ -1390,7 +1390,7 @@ static void WorldMap_ShowHammetsCaravan(void) {
   Actor_WaitForScriptEndById(ACTOR_CARAVAN_FIRST_WAGON + 3);
   Sound_Play(SOUND_FADE_OUT_ACTION_SE);
   FieldCamera_SetSpeed(4);
-  FieldCamera_MoveTo(PIXELS(5880), -1, PIXELS(1608), 1);
+  FieldCamera_MoveTo(5880, CAMERA_KEEP, 1608, 1);
   FieldCamera_WaitForMove();
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHWEST, 80);
@@ -1406,7 +1406,7 @@ static void WorldMap_ShowHammetsCaravan(void) {
   Actor_WaitForMoveById(ACTOR_GARET);
   Actor_SetPosition(ACTOR_GARET, 0, 0);
   FieldCamera_SetSpeed(0.8);
-  FieldCamera_MoveTo(PIXELS(5848), -1, PIXELS(1608), 1);
+  FieldCamera_MoveTo(5848, CAMERA_KEEP, 1608, 1);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.8);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 5848, 1576);
   Event_FinishScreenTransition();
@@ -1416,42 +1416,43 @@ static void WorldMap_ShowHammetsCaravan(void) {
   Event_End();
 }
 
-/// Moves to the next camera-shake point and holds it for four frames.
+/// Moves to the next camera-shake point, in whole pixels, and holds it for
+/// four frames.
 static inline void WorldMap_MoveShakeCamera(s32 x, s32 z) {
-  FieldCamera_MoveTo(x, -1, z, 1);
+  FieldCamera_MoveToFixed(px(x), CAMERA_KEEP, px(z), 1);
   wait(4);
 }
 
 /// Shakes the camera around Hammet and his man as the ground trembles.
 static void WorldMap_ShakeCameraOverCaravan(void) {
-  WorldMap_MoveShakeCamera(PIXELS(5644), PIXELS(1784));
-  WorldMap_MoveShakeCamera(PIXELS(5636), PIXELS(1788));
-  WorldMap_MoveShakeCamera(PIXELS(5644), PIXELS(1780));
-  WorldMap_MoveShakeCamera(PIXELS(5644), PIXELS(1788));
-  WorldMap_MoveShakeCamera(PIXELS(5636), PIXELS(1780));
-  WorldMap_MoveShakeCamera(PIXELS(5640), PIXELS(1784));
-  WorldMap_MoveShakeCamera(PIXELS(5642), PIXELS(1784));
-  WorldMap_MoveShakeCamera(PIXELS(5638), PIXELS(1786));
-  WorldMap_MoveShakeCamera(PIXELS(5642), PIXELS(1782));
-  WorldMap_MoveShakeCamera(PIXELS(5642), PIXELS(1786));
-  WorldMap_MoveShakeCamera(PIXELS(5638), PIXELS(1782));
-  WorldMap_MoveShakeCamera(PIXELS(5640), PIXELS(1784));
+  WorldMap_MoveShakeCamera(5644, 1784);
+  WorldMap_MoveShakeCamera(5636, 1788);
+  WorldMap_MoveShakeCamera(5644, 1780);
+  WorldMap_MoveShakeCamera(5644, 1788);
+  WorldMap_MoveShakeCamera(5636, 1780);
+  WorldMap_MoveShakeCamera(5640, 1784);
+  WorldMap_MoveShakeCamera(5642, 1784);
+  WorldMap_MoveShakeCamera(5638, 1786);
+  WorldMap_MoveShakeCamera(5642, 1782);
+  WorldMap_MoveShakeCamera(5642, 1786);
+  WorldMap_MoveShakeCamera(5638, 1782);
+  WorldMap_MoveShakeCamera(5640, 1784);
 }
 
 /// Shakes the camera around the spot where the falling rock lands.
 static void WorldMap_ShakeCameraWhereRockFalls(void) {
-  WorldMap_MoveShakeCamera(PIXELS(5612), PIXELS(1736));
-  WorldMap_MoveShakeCamera(PIXELS(5604), PIXELS(1740));
-  WorldMap_MoveShakeCamera(PIXELS(5612), PIXELS(1732));
-  WorldMap_MoveShakeCamera(PIXELS(5612), PIXELS(1740));
-  WorldMap_MoveShakeCamera(PIXELS(5604), PIXELS(1732));
-  WorldMap_MoveShakeCamera(PIXELS(5608), PIXELS(1736));
-  WorldMap_MoveShakeCamera(PIXELS(5610), PIXELS(1736));
-  WorldMap_MoveShakeCamera(PIXELS(5606), PIXELS(1738));
-  WorldMap_MoveShakeCamera(PIXELS(5610), PIXELS(1734));
-  WorldMap_MoveShakeCamera(PIXELS(5610), PIXELS(1738));
-  WorldMap_MoveShakeCamera(PIXELS(5606), PIXELS(1734));
-  WorldMap_MoveShakeCamera(PIXELS(5608), PIXELS(1736));
+  WorldMap_MoveShakeCamera(5612, 1736);
+  WorldMap_MoveShakeCamera(5604, 1740);
+  WorldMap_MoveShakeCamera(5612, 1732);
+  WorldMap_MoveShakeCamera(5612, 1740);
+  WorldMap_MoveShakeCamera(5604, 1732);
+  WorldMap_MoveShakeCamera(5608, 1736);
+  WorldMap_MoveShakeCamera(5610, 1736);
+  WorldMap_MoveShakeCamera(5606, 1738);
+  WorldMap_MoveShakeCamera(5610, 1734);
+  WorldMap_MoveShakeCamera(5610, 1738);
+  WorldMap_MoveShakeCamera(5606, 1734);
+  WorldMap_MoveShakeCamera(5608, 1736);
 }
 
 /// Keeps the falling rock above its guide as it drops, and lands it once.
@@ -1492,7 +1493,7 @@ static void WorldMap_SailToFirstMonsterAttack(void) {
 
   actor = Actor_Get(ACTOR_CROSSING_SHIP);
   Event_Start();
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   wait(1);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
   actor->scaleY = 5 * Q16_ONE / 4;
@@ -1518,7 +1519,7 @@ static inline void WorldMap_SailCrossingLeg(s32 exit) {
 
   actor = Actor_Get(ACTOR_CROSSING_SHIP);
   Event_Start();
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   wait(1);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
   Actor_SetPosition(ACTOR_CROSSING_SHIP, 7944, 200);
@@ -1585,7 +1586,7 @@ static void WorldMap_SailUntilLandSighted(void) {
 
   actor = Actor_Get(ACTOR_CROSSING_SHIP);
   Event_Start();
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   wait(1);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
   Actor_SetPosition(ACTOR_CROSSING_SHIP, 7944, 200);
@@ -1623,7 +1624,7 @@ static void WorldMap_SailIntoTolbi(void) {
 
   actor = Actor_Get(ACTOR_CROSSING_SHIP);
   Event_Start();
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   wait(1);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
   Actor_SetPosition(ACTOR_CROSSING_SHIP, 5096, 2328);
@@ -1915,7 +1916,7 @@ static void WorldMap_StepDownFromBunzasWagon(void) {
 
   actor = Actor_Get(ACTOR_KALAY_WAGON);
   Event_Start();
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   wait(1);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
   wait(1);
@@ -1932,7 +1933,7 @@ static void WorldMap_StepDownFromBunzasWagon(void) {
   Actor_SetAnimation(ACTOR_KALAY_WAGON, ANIM_WALK);
   Actor_MoveToAndWait(ACTOR_KALAY_WAGON, 5485, 2136);
   FieldCamera_SetSpeed(0.4);
-  FieldCamera_MoveTo(PIXELS(5560), -1, PIXELS(2136), 1);
+  FieldCamera_MoveTo(5560, CAMERA_KEEP, 2136, 1);
   Actor_MoveToAndWait(ACTOR_KALAY_WAGON, 5534, 2136);
   Actor_MoveToAndWait(ACTOR_KALAY_WAGON, 5544, 2158);
   Actor_MoveToAndWait(ACTOR_KALAY_WAGON, 5608, 2168);
@@ -1959,7 +1960,7 @@ static void WorldMap_StepDownFromBunzasWagon(void) {
   Actor_SetPosition(ACTOR_KALAY_WAGON, 0, 0);
   Sound_Play(SOUND_FADE_OUT_ACTION_SE);
   Event_Wait(40);
-  FieldCamera_MoveTo(PIXELS(5592), -1, PIXELS(2136), 1);
+  FieldCamera_MoveTo(5592, CAMERA_KEEP, 2136, 1);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.8);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 5592, 2136);
   Event_FinishScreenTransition();
@@ -2002,7 +2003,7 @@ static void WorldMap_RunBlackOrbEvent(void) {
   WorldMap_Unfreeze();
   WorldMap_StartZoom(7 * Q16_ONE / 5, 10);
   FieldCamera_SetSpeedParameters(PIXELS(8), PIXELS(1));
-  FieldCamera_MoveWithinMapBounds(PIXELS(6024), -1, PIXELS(3432), 1);
+  FieldCamera_MoveTo(6024, CAMERA_KEEP, 3432, 1);
   FieldCamera_WaitForMove();
   Event_Wait(40);
   WorldMap_Freeze();
@@ -2187,7 +2188,7 @@ static void WorldMap_UseBlackOrb(void) {
   WorldMap_Unfreeze();
   WorldMap_StartZoom(7 * Q16_ONE / 5, 6);
   FieldCamera_SetSpeed(3);
-  FieldCamera_MoveTo(PIXELS(6024), -1, PIXELS(3432), 1);
+  FieldCamera_MoveTo(6024, CAMERA_KEEP, 3432, 1);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.8);
   iodem = NULL;
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
@@ -2344,7 +2345,7 @@ static void WorldMap_ShowEndingEvent(void) {
                     gMainRoutineWork.windowColor[1]);
   Event_Start();
   WorldMap_StartZoom(Q16_ONE, 300);
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_JENNA_LIE);
   Actor_SetAnimation(ACTOR_KRADEN, ANIM_KRADEN_LIE);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
@@ -2431,7 +2432,7 @@ static void WorldMap_ShowEndingEvent(void) {
   Actor_SetScript(ACTOR_KRADEN, gEndingKradenWalk);
   Event_Wait(20);
   FieldCamera_SetSpeed(0.7);
-  FieldCamera_MoveTo(PIXELS(7736), -1, PIXELS(3528), 1);
+  FieldCamera_MoveTo(7736, CAMERA_KEEP, 3528, 1);
   Actor_SetScript(ACTOR_JENNA, gEndingJennaWalk);
   do {
     Actor_SetAnimation(ACTOR_FELIX, ANIM_FELIX_LIE);
@@ -2451,7 +2452,7 @@ static void WorldMap_ShowEndingEvent(void) {
   Event_Wait(20);
   WorldMap_LoadDefaultCellsAndUpdateBlock();
   FieldCamera_SetSpeed(1);
-  FieldCamera_MoveTo(PIXELS(7768), -1, PIXELS(3528), 1);
+  FieldCamera_MoveTo(7768, CAMERA_KEEP, 3528, 1);
   Actor_FaceDirection(ACTOR_ALEX, FACING_SOUTH_SOUTHEAST, 0);
   Actor_SetSpeed(ACTOR_KRADEN, 1.6);
   Actor_SetSpeed(ACTOR_JENNA, 1.6);
@@ -2542,16 +2543,16 @@ static void WorldMap_UpdateLighthouseQuake(void) {
   if (gFrameCount % 3 == 0) {
     switch (((u32)Import_RandomNext() << 2) >> 16) {
     case 0:
-      FieldCamera_MoveWithinMapBounds(PIXELS(6087), -1, PIXELS(3177), 1);
+      FieldCamera_MoveTo(6087, CAMERA_KEEP, 3177, 1);
       break;
     case 1:
-      FieldCamera_MoveWithinMapBounds(PIXELS(6089), -1, PIXELS(3175), 1);
+      FieldCamera_MoveTo(6089, CAMERA_KEEP, 3175, 1);
       break;
     case 2:
-      FieldCamera_MoveWithinMapBounds(PIXELS(6089), -1, PIXELS(3177), 1);
+      FieldCamera_MoveTo(6089, CAMERA_KEEP, 3177, 1);
       break;
     case 3:
-      FieldCamera_MoveWithinMapBounds(PIXELS(6087), -1, PIXELS(3175), 1);
+      FieldCamera_MoveTo(6087, CAMERA_KEEP, 3175, 1);
       break;
     }
   }
@@ -2570,7 +2571,7 @@ static void WorldMap_SailTolbiShipToIsland(void) {
   struct Actor *actor;
 
   Event_Start();
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   wait(1);
   Actor_SetAnimation(ACTOR_CROSSING_SHIP, ANIM_WALK);
   Actor_SetPosition(ACTOR_CROSSING_SHIP, 4872, 808);
@@ -2840,7 +2841,7 @@ static void WorldMap_StormDropsParty(void) {
   s32 frames;
 
   Event_Start();
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Sound_Play(SE_GUSH);
   Actor_SetSpriteFlags(actor, 0);
   other->motionFlags = 0;
@@ -2892,17 +2893,20 @@ static void WorldMap_JitterTransitionCamera(void) {
     mode = (u32)(Random_Next() << 2) >> 16;
     switch (mode) {
     case 0:
-      FieldCamera_MoveTo((sx << 16) - PIXELS(1), -1, (sy << 16) + PIXELS(1), 1);
+      FieldCamera_MoveToFixed((sx << 16) - px(1), CAMERA_KEEP,
+                              (sy << 16) + px(1), 1);
       break;
     case 1:
-      FieldCamera_MoveWithinMapBounds((sx << 16) + PIXELS(1), -1,
-                                      (sy << 16) - PIXELS(1), 1);
+      FieldCamera_MoveWithinMapBounds((sx << 16) + px(1), CAMERA_KEEP,
+                                      (sy << 16) - px(1), 1);
       break;
     case 2:
-      FieldCamera_MoveTo((sx << 16) + PIXELS(1), -1, (sy << 16) + PIXELS(1), 1);
+      FieldCamera_MoveToFixed((sx << 16) + px(1), CAMERA_KEEP,
+                              (sy << 16) + px(1), 1);
       break;
     case 3:
-      FieldCamera_MoveTo((sx << 16) - PIXELS(1), -1, (sy << 16) - PIXELS(1), 1);
+      FieldCamera_MoveToFixed((sx << 16) - px(1), CAMERA_KEEP,
+                              (sy << 16) - px(1), 1);
       break;
     }
   }

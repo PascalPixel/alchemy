@@ -276,9 +276,9 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   const s32 *shrinkFieldAction;
 
   Event_Start();
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   wait(1);
-  FieldCamera_MoveTo(PIXELS(246), -1, PIXELS(604), 0);
+  FieldCamera_MoveTo(246, CAMERA_KEEP, 604, 0);
   party = &gKolimaForestEntrance_MiaInParty;
   *party = GameFlag_Get(FLAG_IN_PARTY(MIA));
   record = Actor_Get(ACTOR_LEADER_PSYNERGY_FIELD);

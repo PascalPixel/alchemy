@@ -850,7 +850,7 @@ static void BabiPalace_RestInPalaceBeds(void) {
     Actor_WalkByAndWait(ACTOR_MIA, 0, 40);
     Actor_FaceDirection(ACTOR_MIA, FACING_NORTHWEST, 0);
     Event_Wait(20);
-    FieldCamera_MoveTo(-1, -1, -1, 0);
+    FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
     Actor_WalkByAndWait(ACTOR_PARTY_LEADER, -56, 0);
     Actor_WalkByAndWait(ACTOR_PARTY_LEADER, 0, -32);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 0);
@@ -946,7 +946,7 @@ static void BabiPalace_HearSoldiersReport(void) {
   Event_SetMessageId(MsgTolbiIodemIodem);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 520, 424);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 0);
-  FieldCamera_MoveTo(PIXELS(560), -1, PIXELS(368), 1);
+  FieldCamera_MoveTo(560, CAMERA_KEEP, 368, 1);
   FieldCamera_WaitForMove();
   Actor_SetSpeed(ACTOR_IODEM, 1);
   Actor_WalkByAndWait(ACTOR_IODEM, 40, 0);
@@ -1510,7 +1510,7 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Event_SetMessageId(MsgTolbiWaitingCompanions);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  FieldCamera_MoveTo(PIXELS(216), -1, PIXELS(736), 1);
+  FieldCamera_MoveTo(216, CAMERA_KEEP, 736, 1);
   FieldCamera_WaitForMove();
   Event_Wait(20);
   Event_Wait(10);
@@ -1533,7 +1533,7 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 1);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 208, 760);
   Event_Wait(10);
-  FieldCamera_MoveTo(PIXELS(216), -1, PIXELS(736), 1);
+  FieldCamera_MoveTo(216, CAMERA_KEEP, 736, 1);
   FieldActor_LaunchFromLeader(ACTOR_GARET, -16, 16, FACING_NORTH);
   FieldActor_LaunchFromLeader(ACTOR_MIA, 0, 24, FACING_NORTH);
   FieldActor_LaunchFromLeader(ACTOR_IVAN, 16, 16, FACING_NORTH);

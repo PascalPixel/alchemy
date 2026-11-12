@@ -1397,7 +1397,7 @@ static void FuchinTemple_FehSeesChi(void) {
   actor->update = 0;
   Actor_SetAnimation(ACTOR_PUNCHING_STUDENT, ANIM_STAND);
   FieldCamera_SetSpeed(0.5);
-  FieldCamera_MoveTo(PIXELS(232), -1, PIXELS(200), 1);
+  FieldCamera_MoveTo(232, CAMERA_KEEP, 200, 1);
   FieldCamera_WaitForArrival();
   // Continue the Chi discussion with the students gathered around the tree.
   Event_SetMessageId(MsgXianYaTreeFell);

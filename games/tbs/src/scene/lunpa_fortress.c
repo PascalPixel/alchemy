@@ -2636,7 +2636,7 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
   Actor_FaceActor(ACTOR_IVAN, ACTOR_TOADONPA_DONPA, 0);
   Actor_FaceActor(ACTOR_TOADONPA_HAMMET, ACTOR_TOADONPA_DONPA, 0);
   Actor_FaceActor(ACTOR_TOADONPA_DODONPA, ACTOR_TOADONPA_DONPA, 0);
-  FieldCamera_MoveTo(PIXELS(456), -1, PIXELS(240), 1);
+  FieldCamera_MoveTo(456, CAMERA_KEEP, 240, 1);
   Actor_StartRepeatedMotion(ACTOR_TOADONPA_DODONPA, 1);
   Event_Wait(60);
   Sound_Play(MUS_COLOSSO);
@@ -2648,7 +2648,7 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
   Actor_WalkTo(ACTOR_TOADONPA_DONPA, 456, 280);
   Actor_WaitForMoveById(ACTOR_TOADONPA_DONPA);
   Actor_WalkTo(ACTOR_TOADONPA_DONPA, 440, 256);
-  FieldCamera_MoveTo(PIXELS(456), -1, PIXELS(224), 1);
+  FieldCamera_MoveTo(456, CAMERA_KEEP, 224, 1);
   Event_SetMessageId((donpaMessage + 1));
   // "Dodonpa... You pitiful wretch."
   Event_ShowMessage(ACTOR_TOADONPA_DONPA, 0);

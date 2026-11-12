@@ -1036,7 +1036,7 @@ static void AltinPeak_RunBoulderChase(s32 boulderDelay) {
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(40);
   FieldCamera_SetSpeed(1);
-  FieldCamera_MoveTo(PIXELS(784), -1, PIXELS(116), 1);
+  FieldCamera_MoveTo(784, CAMERA_KEEP, 116, 1);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 2);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_SPRING);
   Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 792, 140);
@@ -1088,7 +1088,7 @@ static void AltinPeak_RunBoulderChase(s32 boulderDelay) {
     actor->facing = FACING_SOUTH_SOUTHWEST;
   }
   FieldCamera_SetSpeed(1.25);
-  FieldCamera_MoveTo(PIXELS(786), -1, PIXELS(556), 1);
+  FieldCamera_MoveTo(786, CAMERA_KEEP, 556, 1);
   Event_Wait(boulderDelay);
   Actor_SetSpritePriority(ACTOR_FALLING_BOULDER, 1);
   Actor_SetSpeed(ACTOR_FALLING_BOULDER, 1.585);
@@ -1145,13 +1145,13 @@ static void AltinPeak_RunBoulderChase(s32 boulderDelay) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 40);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
-  FieldCamera_MoveTo(PIXELS(788), -PIXELS(64), PIXELS(610), 1);
+  FieldCamera_MoveTo(788, -64, 610, 1);
   FieldCamera_WaitForMove();
   Sound_Play(SE_BOSS_ROAR);
   Event_Wait(240);
   if (GameFlag_Get(FLAG_ALTIN_PEAK_GARET_WATCHING_ROCKS) != 0) {
     FieldCamera_SetSpeed(4);
-    FieldCamera_MoveTo(PIXELS(854), 0, PIXELS(584), 1);
+    FieldCamera_MoveTo(854, 0, 584, 1);
     FieldCamera_WaitForMove();
     Actor_WalkToAndWait(ACTOR_GARET, 840, 552);
     Actor_WalkToAndWait(ACTOR_GARET, 854, 562);
@@ -1356,13 +1356,13 @@ static void AltinPeak_ShowFirstBeastRoute(void) {
   beast = (struct Actor *)Actor_Get(ACTOR_FIRST_WATER_BEAST);
   Event_Start();
   FieldCamera_SetSpeedParameters(PIXELS(12) / 5, PIXELS(3) / 10);
-  FieldCamera_MoveTo(PIXELS(298), -1, PIXELS(337), 1);
+  FieldCamera_MoveTo(298, CAMERA_KEEP, 337, 1);
   FieldCamera_WaitForMove();
   Sound_Play(SE_BEAST_CRY);
   Actor_RunRepeatedMotion(ACTOR_FIRST_WATER_BEAST, 2);
   Event_Wait(40);
   FieldCamera_SetSpeedParameters(PIXELS(4) / 5, PIXELS(1) / 10);
-  FieldCamera_MoveWithinMapBounds(PIXELS(295), PIXELS(32), PIXELS(212), 1);
+  FieldCamera_MoveTo(295, 32, 212, 1);
   // Run the timed hopping update routine while the beast moves along its route.
   ((struct FieldEffect *)beast)->countdown = 0;
   beast->timer = 0;
@@ -1385,7 +1385,7 @@ static void AltinPeak_ShowFirstBeastRoute(void) {
   Event_Wait(40);
   Actor_FaceDirection(ACTOR_FIRST_WATER_BEAST, FACING_SOUTH_SOUTHWEST, 20);
   Actor_FaceDirection(ACTOR_FIRST_WATER_BEAST, FACING_SOUTH_SOUTHEAST, 40);
-  FieldCamera_MoveTo(PIXELS(334), -1, PIXELS(244), 1);
+  FieldCamera_MoveTo(334, CAMERA_KEEP, 244, 1);
   ((struct FieldEffect *)beast)->countdown = 0;
   beast->timer = 0;
   beast->userValue = 0;
@@ -1412,7 +1412,7 @@ static void AltinPeak_ShowFirstBeastRoute(void) {
   Event_Wait(40);
   Actor_FaceDirection(ACTOR_FIRST_WATER_BEAST, FACING_NORTH_NORTHWEST, 20);
   Actor_FaceDirection(ACTOR_FIRST_WATER_BEAST, FACING_WEST, 40);
-  FieldCamera_MoveTo(PIXELS(304), -1, PIXELS(215), 1);
+  FieldCamera_MoveTo(304, CAMERA_KEEP, 215, 1);
   ((struct FieldEffect *)beast)->countdown = 0;
   beast->timer = 0;
   beast->userValue = 0;
@@ -1482,7 +1482,7 @@ static void AltinPeak_ShowSecondBeastRoute(void) {
   Event_Start();
   Actor_Stop(ACTOR_FIRST_WATER_BEAST);
   FieldCamera_SetSpeed(2.4);
-  FieldCamera_MoveTo(PIXELS(279), PIXELS(64), PIXELS(216), 1);
+  FieldCamera_MoveTo(279, 64, 216, 1);
   FieldCamera_WaitForMove();
   Sound_Play(SE_BEAST_CRY);
   Actor_RunRepeatedMotion(ACTOR_FIRST_WATER_BEAST, 2);
@@ -1491,7 +1491,7 @@ static void AltinPeak_ShowSecondBeastRoute(void) {
   Actor_FaceDirection(ACTOR_FIRST_WATER_BEAST, FACING_SOUTH_SOUTHWEST, 20);
   Actor_FaceDirection(ACTOR_FIRST_WATER_BEAST, FACING_WEST, 40);
   FieldCamera_SetSpeed(0.8);
-  FieldCamera_MoveTo(PIXELS(128), PIXELS(64), PIXELS(202), 1);
+  FieldCamera_MoveTo(128, 64, 202, 1);
   ((struct FieldEffect *)actor)->countdown = 0;
   actor->timer = 0;
   actor->userValue = 0;
@@ -1894,7 +1894,7 @@ static void AltinPeak_RestoreFallingRocksRoom(void) {
       !GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
     Event_Start();
     Actor_Get(ACTOR_PARTY_LEADER)->y.fixed = -PIXELS(88);
-    FieldCamera_MoveWithinMapBounds(PIXELS(792), -PIXELS(88), PIXELS(577), 0);
+    FieldCamera_MoveTo(792, -88, 577, 0);
     MapGrid_CenterOnFollowedPoint();
     wait(1);
     Event_End();
@@ -2116,11 +2116,11 @@ static void AltinPeak_AwardFrostJewelAndDrain(void) {
   Party_GiveItem(ITEM_FROST_JEWEL, 0);
   FieldCamera_GetActor()->motionFlags = 0;
   FieldCamera_SetSpeed(1.6);
-  FieldCamera_MoveTo(PIXELS(100), 0, PIXELS(249), 1);
+  FieldCamera_MoveTo(100, 0, 249, 1);
   FieldCamera_WaitForMove();
   Event_Wait(20);
   AltinPeak_DrainFirstWater();
-  FieldCamera_MoveTo(leader->x.fixed, leader->y.fixed, leader->z.fixed, 1);
+  FieldCamera_MoveToFixed(leader->x.fixed, leader->y.fixed, leader->z.fixed, 1);
   FieldCamera_WaitForMove();
   Event_SetTriggers(gAltinPeak_FirstWaterBeastTriggersDrained);
   gFieldWork->transition =
@@ -2185,7 +2185,7 @@ static void AltinPeak_PlayHydrosRumble(void) {
 static void AltinPeak_StartHydrosBattle(void) {
   Event_Start();
   FieldCamera_SetSpeed(0.6);
-  FieldCamera_MoveTo(PIXELS(328), -1, PIXELS(87), 1);
+  FieldCamera_MoveTo(328, CAMERA_KEEP, 87, 1);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.6);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 328, 116);
   Sound_Play(SE_BOSS_ROAR);

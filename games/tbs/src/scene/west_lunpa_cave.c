@@ -306,7 +306,7 @@ static void WestLunpaCave_HammetFindsBunza(void) {
     Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 1);
     Event_Wait(30);
     FieldCamera_SetSpeed(0.5);
-    FieldCamera_MoveTo(PIXELS(192), -1, PIXELS(432), 1);
+    FieldCamera_MoveTo(192, CAMERA_KEEP, 432, 1);
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     if (leader != NULL) {
       Actor_SetPositionFixed(ACTOR_HAMMET, leader->x.fixed, leader->z.fixed);

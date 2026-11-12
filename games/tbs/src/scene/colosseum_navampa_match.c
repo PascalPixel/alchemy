@@ -1646,7 +1646,7 @@ static void ColosseumNavampaMatch_TalkToScalesAttendant(s32 guideId) {
     // Point out the ledges, demonstrate both heights, then restore the stage.
     Event_SetMessageId(MsgColossoStageCalledScales);
     FieldCamera_SetSpeedParameters(PIXELS(3), PIXELS(3) / 8);
-    FieldCamera_MoveWithinMapBounds(PIXELS(152), -1, PIXELS(200), 1);
+    FieldCamera_MoveTo(152, CAMERA_KEEP, 200, 1);
     FieldCamera_WaitForMove();
     Event_Wait(30);
     // "This stage is called the Scales of Justice."
@@ -1713,7 +1713,7 @@ static void ColosseumNavampaMatch_TalkToSteppingStoneAttendant(s32 guideId) {
   if (promptResult == COLOSSO_GUIDE_DESCRIBE) {
     Event_SetMessageId(MsgColossoSteppingStoneStage);
     FieldCamera_SetSpeed(3);
-    FieldCamera_MoveTo(PIXELS(376), -1, PIXELS(152), 1);
+    FieldCamera_MoveTo(376, CAMERA_KEEP, 152, 1);
     x = 280;
     FieldCamera_WaitForMove();
     Event_Wait(30);
@@ -1725,13 +1725,13 @@ static void ColosseumNavampaMatch_TalkToSteppingStoneAttendant(s32 guideId) {
     Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 296, 152);
     Event_Wait(10);
     Field_TryJumpForward();
-    FieldCamera_MoveTo(-1, -1, -1, 0);
+    FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 15);
     Field_TryJumpForward();
-    FieldCamera_MoveTo(-1, -1, -1, 0);
+    FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 15);
     Field_TryJumpForward();
-    FieldCamera_MoveTo(-1, -1, -1, 0);
+    FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 15);
     Event_ShowMessage(guideId, 0);
     Colosso_ShowPointer(96, 40, 0);
@@ -1776,7 +1776,7 @@ static void ColosseumNavampaMatch_TalkToWallWedgeAttendant(s32 guideId) {
       Event_SetMessageId(MsgColossoPlaceCalledWall);
       ColosseumNavampaMatch_ResetWallWedge();
       FieldCamera_SetSpeedParameters(PIXELS(3), PIXELS(3) / 8);
-      FieldCamera_MoveWithinMapBounds(PIXELS(616), -1, PIXELS(184), 1);
+      FieldCamera_MoveTo(616, CAMERA_KEEP, 184, 1);
       FieldCamera_WaitForMove();
       Event_Wait(30);
       Event_ShowMessage(guideId, 0);
@@ -1836,7 +1836,7 @@ static void ColosseumNavampaMatch_TalkToFreeClimbAttendant(s32 guideId) {
     if (result == COLOSSO_GUIDE_DESCRIBE) {
       Event_SetMessageId(MsgColossoPlaceNormallyCalledFreeClimb);
       FieldCamera_SetSpeed(3);
-      FieldCamera_MoveTo(PIXELS(856), -1, PIXELS(168), 1);
+      FieldCamera_MoveTo(856, CAMERA_KEEP, 168, 1);
       FieldCamera_WaitForMove();
       Event_Wait(30);
       // "This place is normally called the Free- Climb Area."
@@ -1848,7 +1848,7 @@ static void ColosseumNavampaMatch_TalkToFreeClimbAttendant(s32 guideId) {
       Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 840, 200);
       Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
       Field_ClimbUp();
-      FieldCamera_MoveTo(-1, -1, -1, 0);
+      FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
       Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.5);
       actor = Actor_Get(ACTOR_PARTY_LEADER);
       y = actor->y.fixed;
@@ -1932,7 +1932,7 @@ static void ColosseumNavampaMatch_TalkToMovingSidewalkAttendant(s32 guideId) {
       // Walk against the sidewalk, then show how its current pushes the rider.
       Event_SetMessageId(MsgColossoCalledMovingSidewalkStage);
       FieldCamera_SetSpeed(3);
-      FieldCamera_MoveTo(PIXELS(1080), -1, PIXELS(168), 1);
+      FieldCamera_MoveTo(1080, CAMERA_KEEP, 168, 1);
       FieldCamera_WaitForMove();
       Event_Wait(30);
       // "This is called the Moving Sidewalk Stage."
@@ -2001,7 +2001,7 @@ static void ColosseumNavampaMatch_TalkToLogRollingAttendant(s32 actorId) {
   if (state == COLOSSO_GUIDE_DESCRIBE) {
     Event_SetMessageId(MsgColossoAnotherLogRollingArea);
     FieldCamera_SetSpeedParameters(PIXELS(3), PIXELS(3) / 8);
-    FieldCamera_MoveWithinMapBounds(PIXELS(1288), -1, PIXELS(152), 1);
+    FieldCamera_MoveTo(1288, CAMERA_KEEP, 152, 1);
     FieldCamera_WaitForMove();
     Event_Wait(30);
     // "This is another log-rolling area."

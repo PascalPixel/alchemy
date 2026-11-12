@@ -1219,7 +1219,7 @@ static void MogallForest_ThirdArea_EastApeHidesAgain(void) {
 
   Event_Start();
   MogallForest_ApeComesOut(ACTOR_THIRD_AREA_EAST_APE, SPRITE_COLOR_GRB);
-  FieldCamera_MoveTo(PIXELS(744), -1, PIXELS(504), 1);
+  FieldCamera_MoveTo(744, CAMERA_KEEP, 504, 1);
   MogallForest_HopActorTo(ACTOR_THIRD_AREA_EAST_APE, 744, 504, PIXELS(9));
   MogallForest_SpawnPuffRing(ACTOR_THIRD_AREA_EAST_APE);
   Actor_SetSpriteColorById(ACTOR_THIRD_AREA_EAST_APE, SPRITE_COLOR_HIDDEN);
@@ -1334,7 +1334,7 @@ static void MogallForest_KillerApeAttacks(void) {
   Actor_SetSpriteFlags(Actor_Get(ACTOR_THIRD_AREA_EAST_APE), 0);
   Actor_SetPosition(ACTOR_THIRD_AREA_EAST_APE, 136, 360);
   FieldCamera_SetSpeedParameters(PIXELS(1) / 2, PIXELS(1) / 16);
-  FieldCamera_MoveTo(PIXELS(136), -1, PIXELS(392), 1);
+  FieldCamera_MoveTo(136, CAMERA_KEEP, 392, 1);
   FieldCamera_WaitForArrival();
   Event_Wait(60);
   MapGrid_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);

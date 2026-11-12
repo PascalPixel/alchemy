@@ -280,11 +280,22 @@ static inline void FieldCamera_SetSpeedFixed(s32 speed, s32 acceleration) {
   FieldCamera_SetSpeedFixed(EVENT_DECIMAL_FIXED(speed),                        \
                             EVENT_DECIMAL_FIXED(acceleration))
 
-/// Pans the camera to a point in the room, or cuts there when pan is 0.
-static inline void FieldCamera_MoveTo(s32 fixed_x, s32 fixed_y, s32 fixed_z,
-                                      s32 pan) {
-  FieldCamera_MoveWithinMapBounds(fixed_x, fixed_y, fixed_z, pan);
+/// Pans the camera to a point in the room, or cuts there when pan is 0; the
+/// axes are 16.16 fixed-point pixels, or CAMERA_KEEP.
+static inline void FieldCamera_MoveToFixed(s32 x, s32 y, s32 z, s32 pan) {
+  FieldCamera_MoveWithinMapBounds(x, y, z, pan);
 }
+
+/// A camera axis in whole pixels as 16.16 fixed point, CAMERA_KEEP kept; it
+/// reads its argument twice, so the macros below take only constants.
+#define EVENT_CAMERA_FIXED(axis)                                               \
+  ((axis) == CAMERA_KEEP ? CAMERA_KEEP : px(axis))
+
+/// Pans the camera to a point in whole pixels, or cuts there when pan is 0;
+/// CAMERA_KEEP keeps an axis: `FieldCamera_MoveTo(357, CAMERA_KEEP, 738, 1)`.
+#define FieldCamera_MoveTo(x, y, z, pan)                                       \
+  FieldCamera_MoveToFixed(EVENT_CAMERA_FIXED(x), EVENT_CAMERA_FIXED(y),        \
+                          EVENT_CAMERA_FIXED(z), pan)
 
 /// Changes part of the room in place, copying whole cells, picture and
 /// cell behavior alike, from another part of the map.

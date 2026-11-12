@@ -165,6 +165,8 @@ void Message_SetVoiceFromActor(s32 actorId);
 
 void FieldCamera_FollowActor(s32 actorId, s32 keepPosition);
 void FieldCamera_SetSpeedParameters(s32 speedLimit, s32 acceleration);
+/// A camera move's axis that stays where the camera is.
+#define CAMERA_KEEP (-1)
 void FieldCamera_MoveWithinMapBounds(s32 requestedX, s32 requestedY,
                                      s32 requestedZ, s32 glide);
 void FieldCamera_MoveToActorById(s32 actorId, s32 glide);

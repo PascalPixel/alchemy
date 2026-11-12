@@ -969,7 +969,7 @@ static void ColosseumSatrageMatch_StageBattleResult(s32 result) {
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_ARMS_RAISED);
   }
   wait(1);
-  FieldCamera_MoveTo(PIXELS(104), 0, PIXELS(192), 0);
+  FieldCamera_MoveTo(104, 0, 192, 0);
   ColosseumSatrageMatch_ShowBattleResultLettering(result);
   Event_End();
 }
@@ -1270,7 +1270,7 @@ static void ColosseumSatrageMatch_TalkToMiniMazeAttendant(s32 attendant) {
     if (result == COLOSSO_GUIDE_DESCRIBE) {
       Event_SetMessageId(MsgColossoStageDubbedMini);
       FieldCamera_SetSpeedParameters(PIXELS(3), PIXELS(3) / 8);
-      FieldCamera_MoveWithinMapBounds(PIXELS(1224), -1, PIXELS(184), 1);
+      FieldCamera_MoveTo(1224, CAMERA_KEEP, 184, 1);
       FieldCamera_WaitForMove();
       // "This stage is dubbed the Mini-Maze."
       Event_ShowMessage(attendant, 0);
@@ -1321,7 +1321,7 @@ static void ColosseumSatrageMatch_TalkToShiftingFloorAttendant(s32 attendant) {
       Event_SetMessageId(MsgColossoShiftingFloorStage);
       ColosseumSatrageMatch_ResetLifts();
       FieldCamera_SetSpeed(3);
-      FieldCamera_MoveTo(PIXELS(984), -1, PIXELS(232), 1);
+      FieldCamera_MoveTo(984, CAMERA_KEEP, 232, 1);
       FieldCamera_WaitForMove();
       COLOSSEUM_SATRAGE_MATCH_SHOW_MESSAGE(attendant, 0);
       ColosseumSatrageMatch_StartLifts();
@@ -1333,7 +1333,7 @@ static void ColosseumSatrageMatch_TalkToShiftingFloorAttendant(s32 attendant) {
       Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 1064, 216);
       ColosseumSatrageMatch_WaitForLiftCrossingPhase();
       Field_TryJumpForward();
-      FieldCamera_MoveTo(-1, -1, -1, 0);
+      FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
       Event_ShowMessage(attendant, 0);
       Colosso_RestoreWarrior(ACTOR_PARTY_LEADER);
       FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 0);
@@ -1366,11 +1366,11 @@ static void ColosseumSatrageMatch_TalkToLogRollingAttendant(s32 attendant) {
     if (result == COLOSSO_GUIDE_DESCRIBE) {
       Event_SetMessageId(MsgColossoLogRollingStage);
       FieldCamera_SetSpeed(3);
-      FieldCamera_MoveTo(PIXELS(752), -1, PIXELS(192), 1);
+      FieldCamera_MoveTo(752, CAMERA_KEEP, 192, 1);
       FieldCamera_WaitForMove();
       Event_Wait(60);
       FieldCamera_SetSpeed(1);
-      FieldCamera_MoveTo(PIXELS(752), -1, PIXELS(224), 1);
+      FieldCamera_MoveTo(752, CAMERA_KEEP, 224, 1);
       FieldCamera_WaitForMove();
       // "This is the Log- Rolling Stage."
       Event_ShowMessage(attendant, 0);
@@ -1383,7 +1383,7 @@ static void ColosseumSatrageMatch_TalkToLogRollingAttendant(s32 attendant) {
       Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 840, 232);
       Event_Wait(10);
       COLOSSEUM_SATRAGE_MATCH_MOVE_ACTOR_PAIR(ACTOR_RIDING_LOG_SOUTH, -64, 0);
-      FieldCamera_MoveTo(PIXELS(752), -1, PIXELS(216), 1);
+      FieldCamera_MoveTo(752, CAMERA_KEEP, 216, 1);
       Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
       Event_Wait(10);
       Actor_SetSpeed(ACTOR_PARTY_LEADER, 1);
@@ -1424,11 +1424,11 @@ static void ColosseumSatrageMatch_TalkToWallAttendant(s32 attendant) {
   if (result == COLOSSO_GUIDE_DESCRIBE) {
     Event_SetMessageId(MsgColossoFansJustCallWall);
     FieldCamera_SetSpeedParameters(PIXELS(3), PIXELS(3) / 8);
-    FieldCamera_MoveTo(PIXELS(536), -1, PIXELS(240), 1);
+    FieldCamera_MoveTo(536, CAMERA_KEEP, 240, 1);
     FieldCamera_WaitForMove();
     Event_Wait(45);
     FieldCamera_SetSpeed(1);
-    FieldCamera_MoveTo(PIXELS(536), -1, PIXELS(192), 1);
+    FieldCamera_MoveTo(536, CAMERA_KEEP, 192, 1);
     z = 264;
     FieldCamera_WaitForMove();
     // "The fans just call this The Wall."
@@ -1439,7 +1439,7 @@ static void ColosseumSatrageMatch_TalkToWallAttendant(s32 attendant) {
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
     Field_ClimbUp();
     FieldCamera_SetSpeed(0.25);
-    FieldCamera_MoveTo(PIXELS(536), -1, PIXELS(160), 1);
+    FieldCamera_MoveTo(536, CAMERA_KEEP, 160, 1);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.5);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_CLIMB);
     actor = Actor_Get(ACTOR_PARTY_LEADER);
@@ -1447,13 +1447,13 @@ static void ColosseumSatrageMatch_TalkToWallAttendant(s32 attendant) {
                              actor->z.fixed);
     Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
     Field_ClimbUp();
-    FieldCamera_MoveTo(-1, -1, -1, 0);
+    FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
     Event_ShowMessage(attendant, 0);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 1.5);
     Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 488, 248);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 20);
     FieldActor_JumpDownLedge(ACTOR_PARTY_LEADER, 6, 0);
-    FieldCamera_MoveWithinMapBounds(PIXELS(536), -1, PIXELS(160), 1);
+    FieldCamera_MoveTo(536, CAMERA_KEEP, 160, 1);
     Event_ShowMessage(attendant, 0);
     Colosso_RestoreWarrior(ACTOR_PARTY_LEADER);
     FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 0);
@@ -1526,11 +1526,11 @@ static void ColosseumSatrageMatch_TalkToBoardWalkAttendant(s32 attendant) {
   if (result == COLOSSO_GUIDE_DESCRIBE) {
     Event_SetMessageId(MsgColossoPlaceCalledBoard);
     FieldCamera_SetSpeedParameters(PIXELS(2), PIXELS(1) / 4);
-    FieldCamera_MoveTo(PIXELS(328), -1, PIXELS(264), 1);
+    FieldCamera_MoveTo(328, CAMERA_KEEP, 264, 1);
     FieldCamera_WaitForMove();
     Event_Wait(30);
     FieldCamera_SetSpeed(1.5);
-    FieldCamera_MoveTo(PIXELS(312), -1, PIXELS(176), 1);
+    FieldCamera_MoveTo(312, CAMERA_KEEP, 176, 1);
     FieldCamera_WaitForMove();
     // "This place is called the Board Walk."
     Event_ShowMessage(attendant, 0);

@@ -364,7 +364,7 @@ static void KolimaForestTree_RejectHermesWater(void) {
   Task_AddFrame(KolimaForestTree_SpawnRejectionSpark, TASK_PASS_FRAME);
   wait(30);
   gKolimaForestTreePlaySparkSound = 0;
-  FieldCamera_MoveTo(PIXELS(328), -1, PIXELS(235), 1);
+  FieldCamera_MoveTo(328, CAMERA_KEEP, 235, 1);
   Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 1);
   Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_STRIDE);
@@ -495,18 +495,18 @@ static void KolimaForestTree_RestoreTret(void) {
   Event_Wait(40);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHWEST, 20);
   FieldCamera_SetSpeed(3.2);
-  FieldCamera_MoveTo(PIXELS(256), -1, PIXELS(254), 1);
+  FieldCamera_MoveTo(256, CAMERA_KEEP, 254, 1);
   FieldCamera_WaitForArrival();
   Sound_Play(SE_GLITTER);
   Event_Wait(40);
   Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTHEAST, 20);
-  FieldCamera_MoveTo(PIXELS(413), -1, PIXELS(261), 1);
+  FieldCamera_MoveTo(413, CAMERA_KEEP, 261, 1);
   FieldCamera_WaitForArrival();
   Sound_Play(SE_GLITTER);
   Event_Wait(40);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_SOUTH, 20);
-  FieldCamera_MoveTo(PIXELS(326), -1, PIXELS(384), 1);
+  FieldCamera_MoveTo(326, CAMERA_KEEP, 384, 1);
   FieldCamera_WaitForArrival();
   Sound_Play(SE_GLITTER);
   if (*paletteFrame != 24) {
@@ -530,7 +530,7 @@ static void KolimaForestTree_RestoreTret(void) {
   KolimaPalette_Restore(0);
   PaletteFade_StartInterpolation(40);
   wait(80);
-  FieldCamera_MoveTo(PIXELS(328), PIXELS(8), PIXELS(212), 1);
+  FieldCamera_MoveTo(328, 8, 212, 1);
   FieldCamera_WaitForArrival();
   Event_Wait(40);
   KolimaForestTree_PlayGesture(ACTOR_INVISIBLE_TRET, FACE_GESTURE_OPEN_EYES);
@@ -556,7 +556,7 @@ static void KolimaForestTree_RestoreTret(void) {
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
-  FieldCamera_MoveTo(PIXELS(234), 0, PIXELS(232), 1);
+  FieldCamera_MoveTo(234, 0, 232, 1);
   FieldCamera_WaitForArrival();
   Event_Wait(40);
   KolimaForestTree_PlayGesture(ACTOR_INVISIBLE_LAUREL, FACE_GESTURE_OPEN_EYES);
@@ -608,7 +608,7 @@ static void KolimaForestTree_RestoreTret(void) {
     Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_TRET, 0);
   }
   KolimaForestTree_NodTogether();
-  FieldCamera_MoveTo(PIXELS(328), PIXELS(8), PIXELS(212), 1);
+  FieldCamera_MoveTo(328, 8, 212, 1);
   FieldCamera_WaitForArrival();
   Event_Wait(20);
   KolimaForestTree_PlayGesture(ACTOR_INVISIBLE_TRET, FACE_GESTURE_CLOSE_EYES);
@@ -640,7 +640,7 @@ static void KolimaForestTree_RestoreTret(void) {
   // "That should do it. The people of Kolima are cursed no more."
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_TRET, 0);
   KolimaForestTree_NodTogether();
-  FieldCamera_MoveTo(PIXELS(234), 0, PIXELS(232), 1);
+  FieldCamera_MoveTo(234, 0, 232, 1);
   FieldCamera_WaitForArrival();
   Event_Wait(20);
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_LAUREL, 0);

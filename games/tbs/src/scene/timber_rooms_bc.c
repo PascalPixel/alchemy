@@ -436,7 +436,7 @@ static void TimberRoomsBC_IodemCallsOut(void) {
   Event_Start();
   Field_EndBusyAndReveal();
   Event_Wait(10);
-  FieldCamera_MoveWithinMapBounds(PIXELS(120), -1, PIXELS(96), 1);
+  FieldCamera_MoveTo(120, CAMERA_KEEP, 96, 1);
   FieldCamera_WaitForMove();
   Event_Wait(30);
   Event_SetMessageId(MsgLaliveroPleaseWaitForMeOutside);

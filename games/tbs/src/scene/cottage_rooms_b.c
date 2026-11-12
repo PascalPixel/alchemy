@@ -895,7 +895,7 @@ static void CottageRoomsB_HurryToThePlaza(void) {
   // The camera finds Kyle coming up the path: "Isaac, Dora, hurry! The
   // Boulder could fall at any second!"
   FieldCamera_SetSpeed(4);
-  FieldCamera_MoveTo(PIXELS(414), -1, PIXELS(530), 1);
+  FieldCamera_MoveTo(414, CAMERA_KEEP, 530, 1);
   Actor_SetPosition(ACTOR_KYLE, 414, 530);
   Actor_WalkToAndWait(ACTOR_KYLE, 427, 483);
   FieldCamera_WaitForArrival();
@@ -903,7 +903,7 @@ static void CottageRoomsB_HurryToThePlaza(void) {
   // "Isaac, Dora, hurry! The Boulder could fall at any second!"
   Event_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | ACTOR_KYLE, 0, 10);
   FieldCamera_SetSpeedParameters(PIXELS(3) / 2, PIXELS(3) / 16);
-  FieldCamera_MoveWithinMapBounds(PIXELS(480), -1, PIXELS(444), 1);
+  FieldCamera_MoveTo(480, CAMERA_KEEP, 444, 1);
   FieldCamera_WaitForArrival();
   Event_Wait(20);
   // They nod, Kyle runs back down, and the two turn back (SE_RUN_BACK).
@@ -1251,7 +1251,7 @@ static void CottageRoomsB_ShowMythrilBag(void) {
   u8 clear;
 
   Event_Start();
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   wait(1);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
   Actor_SetPosition(ACTOR_KRADEN, 480, 202);

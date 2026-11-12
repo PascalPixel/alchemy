@@ -250,7 +250,7 @@ static void Vault_IvanStaysBehind(void) {
     Actor_WalkToAndWait(ACTOR_IVAN, 400, 448);
   } else {
     FieldCamera_SetSpeed(0.8);
-    FieldCamera_MoveTo(PIXELS(224), -1, PIXELS(162), 1);
+    FieldCamera_MoveTo(224, CAMERA_KEEP, 162, 1);
     Actor_WalkToAndWait(ACTOR_IVAN, 224, 162);
     FieldCamera_WaitForArrival();
   }

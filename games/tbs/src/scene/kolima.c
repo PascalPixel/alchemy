@@ -440,7 +440,7 @@ static void Kolima_LowerBridge(void) {
 
   Event_Start();
   FieldCamera_SetSpeed(2);
-  FieldCamera_MoveTo(PIXELS(168), 0, PIXELS(246), 1);
+  FieldCamera_MoveTo(168, 0, 246, 1);
   FieldCamera_WaitForMove();
   Event_Wait(20);
   Actor_ShowEmote(ACTOR_BRIDGE_VILLAGER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
@@ -450,7 +450,7 @@ static void Kolima_LowerBridge(void) {
   // "Are you going to cross the bridge?"
   Event_ShowMessage(ACTOR_BRIDGE_VILLAGER, 0);
   FieldCamera_SetSpeedParameters(PIXELS(2) / 5, PIXELS(1) / 20);
-  FieldCamera_MoveTo(PIXELS(168), 0, PIXELS(234), 1);
+  FieldCamera_MoveTo(168, 0, 234, 1);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.6);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 174, 278);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 20);
@@ -681,7 +681,7 @@ static void Kolima_WitnessForestCurse(void) {
   Actor_SetSpriteFlags(actor, 0);
   actor = Actor_Get(ACTOR_GARET_PSYNERGY_FIELD);
   Actor_SetSpriteFlags(actor, 0);
-  FieldCamera_MoveTo(PIXELS(104), -1, PIXELS(256), 0);
+  FieldCamera_MoveTo(104, CAMERA_KEEP, 256, 0);
   MapGrid_CenterOnFollowedPoint();
   Actor_SetPosition(ACTOR_PARTY_LEADER, 23, 247);
   wait(1);

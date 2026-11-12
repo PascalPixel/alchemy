@@ -430,7 +430,8 @@ static void Altin_TalkToThirstyOldWoman(void) {
 
       FieldCamera_GetActor()->motionFlags = 0;
       FieldCamera_SetSpeed(1);
-      FieldCamera_MoveTo(beast->x.fixed, beast->y.fixed, beast->z.fixed, 1);
+      FieldCamera_MoveToFixed(beast->x.fixed, beast->y.fixed, beast->z.fixed,
+                              1);
       // BUG: FACING_SOUTH's value is passed as an actor id. No actor has
       // it, so the leader does not turn south toward the beast.
 #ifdef BUGFIX
@@ -442,7 +443,8 @@ static void Altin_TalkToThirstyOldWoman(void) {
       FieldCamera_WaitForArrival();
       Event_Wait(120);
       leader = Actor_Get(ACTOR_PARTY_LEADER);
-      FieldCamera_MoveTo(leader->x.fixed, leader->y.fixed, leader->z.fixed, 1);
+      FieldCamera_MoveToFixed(leader->x.fixed, leader->y.fixed, leader->z.fixed,
+                              1);
       FieldCamera_WaitForArrival();
     }
     Actor_SetAnimationAndWait(ACTOR_THIRSTY_OLD_WOMAN, ANIM_SHAKE_HEAD);
@@ -930,7 +932,7 @@ static void Altin_ApplyWaterLevel(void) {
   // Redraw at the leader after the map and actor state are ready.
   wait(1);
   Event_Start();
-  FieldCamera_MoveTo(leader->x.fixed, leader->y.fixed, leader->z.fixed, 0);
+  FieldCamera_MoveToFixed(leader->x.fixed, leader->y.fixed, leader->z.fixed, 0);
   MapGrid_CenterOnFollowedPoint();
   Event_End();
   wait(1);
@@ -1041,7 +1043,7 @@ static void Altin_BeastSpawnSpray(void) {
 static void Altin_ScareOffBeast(void) {
   Event_Start();
   FieldCamera_SetSpeed(0.4);
-  FieldCamera_MoveTo(PIXELS(63), -1, PIXELS(450), 1);
+  FieldCamera_MoveTo(63, CAMERA_KEEP, 450, 1);
   FieldCamera_WaitForArrival();
   Event_Wait(30);
   Actor_SetAnimation(ACTOR_WATER_BEAST, ANIM_STAND);

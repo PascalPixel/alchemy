@@ -1068,10 +1068,10 @@ UNUSED static void Vale_UnusedRoofMended(void) {
   s32 i;
 
   Event_Start();
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   actor = FieldCamera_GetActor();
   actor->motionFlags = 0;
-  FieldCamera_MoveTo(PIXELS(383), PIXELS(160), PIXELS(877), 0);
+  FieldCamera_MoveTo(383, 160, 877, 0);
   Event_Wait(1);
   MapGrid_CenterOnFollowedPoint();
   MapGrid_CopyCellAttributes(49, 41, 7, 3, 20, 50);
@@ -1279,7 +1279,7 @@ UNUSED static void Vale_UnusedRoofMended(void) {
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 10);
 
   FieldCamera_SetSpeed(0.4);
-  FieldCamera_MoveTo(PIXELS(377), PIXELS(160), PIXELS(860), 1);
+  FieldCamera_MoveTo(377, 160, 860, 1);
   Actor_SetSpeed(ACTOR_JENNA, 1);
   Actor_SetSpeed(ACTOR_GARET, 1);
   Actor_WalkTo(ACTOR_GARET, 369, 904);
@@ -1376,7 +1376,7 @@ UNUSED static void Vale_UnusedRoofMended(void) {
   Event_Wait(30);
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 20);
   FieldCamera_SetSpeed(0.6);
-  FieldCamera_MoveTo(PIXELS(373), PIXELS(160), PIXELS(837), 1);
+  FieldCamera_MoveTo(373, 160, 837, 1);
   Actor_WalkToAndWait(ACTOR_DORA, 364, 816);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH_SOUTHEAST, 30);
@@ -1460,7 +1460,7 @@ UNUSED static void Vale_UnusedRoofMended(void) {
   Event_Wait(20);
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 20);
   FieldCamera_SetSpeed(0.3);
-  FieldCamera_MoveTo(PIXELS(372), PIXELS(160), PIXELS(859), 1);
+  FieldCamera_MoveTo(372, 160, 859, 1);
   Actor_SetSpeed(ACTOR_DORA, 3);
   Actor_Jump(ACTOR_DORA, 6, 0);
   Actor_WalkToAndWait(ACTOR_DORA, 359, 835);
@@ -1601,7 +1601,7 @@ UNUSED static void Vale_UnusedRoofMended(void) {
   Actor_WalkToAndWait(ACTOR_GARET, actor->x.part.pixel, actor->z.part.pixel);
   Actor_SetPosition(ACTOR_GARET, 0, 0);
   Event_AddPartyMemberPair(GARET, JENNA);
-  FieldCamera_MoveTo(PIXELS(377), PIXELS(160), PIXELS(887), 1);
+  FieldCamera_MoveTo(377, 160, 887, 1);
   Vale_MoveActorAlongHigherZPath(ACTOR_PARTY_LEADER,
                                  ANIM_LEADER_CLIMB_DOWN_FROM_TOP,
                                  ANIM_LEADER_CLIMB, 0);
@@ -1776,7 +1776,7 @@ static void Vale_GaretMeetsHisSister(void) {
   // "Ah!"
   Event_ShowMessageThenWait(ACTOR_GARETS_SISTER_AFTER_KALAY, 0, 20);
   FieldCamera_SetSpeed(1);
-  FieldCamera_MoveTo(PIXELS(398), -1, PIXELS(582), 1);
+  FieldCamera_MoveTo(398, CAMERA_KEEP, 582, 1);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.8);
   Actor_SetSpeed(ACTOR_GARET, 0.8);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 420, 608);
@@ -1868,7 +1868,7 @@ static void Vale_GaretAsksToProtectFamily(void) {
   struct Actor *record;
 
   Event_Start();
-  FieldCamera_MoveTo(PIXELS(357), -1, PIXELS(738), 1);
+  FieldCamera_MoveTo(357, CAMERA_KEEP, 738, 1);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 367, 745);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
   record = Actor_Get(ACTOR_PARTY_LEADER);
@@ -2114,7 +2114,7 @@ static void Vale_MendingTheRoof(void) {
 
   // Prepare the damaged house and start Isaac's hammering behind the caption.
   Event_Start();
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   wait(1);
   (FieldCamera_GetActor())->motionFlags = 0;
   wait(1);
@@ -2152,11 +2152,11 @@ static void Vale_MendingTheRoof(void) {
   ActorSystem_ResumeProjectionAndHideLayers();
 
   // Follow Jenna through the village until she notices the repair work.
-  FieldCamera_MoveTo(PIXELS(339), PIXELS(160), PIXELS(1173), 0);
+  FieldCamera_MoveTo(339, 160, 1173, 0);
   MapGrid_CenterOnFollowedPoint();
   wait(1);
   FieldCamera_SetSpeed(0.33);
-  FieldCamera_MoveTo(PIXELS(296), PIXELS(160), PIXELS(921), 1);
+  FieldCamera_MoveTo(296, 160, 921, 1);
   Actor_SetPosition(ACTOR_JENNA, 409, 1134);
   wait(1);
   Actor_SetSpeed(ACTOR_JENNA, 0.7);
@@ -2191,7 +2191,7 @@ static void Vale_MendingTheRoof(void) {
   Actor_RunRepeatedMotion(ACTOR_JENNA, 2);
   Event_Wait(20);
   FieldCamera_SetSpeed(2);
-  FieldCamera_MoveTo(PIXELS(387), PIXELS(160), PIXELS(866), 1);
+  FieldCamera_MoveTo(387, 160, 866, 1);
   FieldCamera_WaitForMove();
   Actor_Jump(ACTOR_OPENING_DORA, 2, 20);
   Event_SetMessageId(message + 1);
@@ -2235,7 +2235,7 @@ static void Vale_MendingTheRoof(void) {
   Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_NOD);
   Event_Wait(10);
   FieldCamera_SetSpeed(4);
-  FieldCamera_MoveTo(PIXELS(396), -1, PIXELS(588), 1);
+  FieldCamera_MoveTo(396, CAMERA_KEEP, 588, 1);
   Actor_WalkToAndWait(ACTOR_JENNA, 456, 739);
   FieldCamera_WaitForMove();
   Event_Wait(10);
@@ -2448,7 +2448,7 @@ static void Vale_RoofMended(void) {
 
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   Event_Start();
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   wait(1);
   MapGrid_CopyCellAttributes(49, 53, 8, 4, 20, 50);
   MapGrid_CopyCellsTo(2, 102, 84, 41, 2, 1);
@@ -2489,7 +2489,7 @@ static void Vale_RoofMended(void) {
   Actor_SetSpriteFlags(actor, 0);
   ((u8 *)FieldCamera_GetActor())[85] = 0;
   wait(1);
-  FieldCamera_MoveTo(PIXELS(383), PIXELS(160), PIXELS(877), 0);
+  FieldCamera_MoveTo(383, 160, 877, 0);
   MapGrid_CenterOnFollowedPoint();
   wait(1);
   gFieldWork->transitionFrames = 32;
@@ -2719,7 +2719,7 @@ static void Vale_RoofMended(void) {
   // "I'm looking forward to seeing where life takes you."
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 10);
   FieldCamera_SetSpeed(0.4);
-  FieldCamera_MoveTo(PIXELS(377), PIXELS(160), PIXELS(860), 1);
+  FieldCamera_MoveTo(377, 160, 860, 1);
   Actor_SetSpeed(ACTOR_JENNA, 1);
   Actor_SetSpeed(ACTOR_GARET, 1);
   Actor_WalkTo(ACTOR_GARET, 369, 904);
@@ -2813,7 +2813,7 @@ static void Vale_RoofMended(void) {
   Actor_RunRepeatedMotion(ACTOR_DORA, 2);
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 20);
   FieldCamera_SetSpeed(0.6);
-  FieldCamera_MoveTo(PIXELS(373), PIXELS(160), PIXELS(837), 1);
+  FieldCamera_MoveTo(373, 160, 837, 1);
   Actor_WalkToAndWait(ACTOR_DORA, 364, 816);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH_SOUTHEAST, 10);
@@ -2900,7 +2900,7 @@ static void Vale_RoofMended(void) {
   Event_Wait(20);
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 20);
   FieldCamera_SetSpeed(0.3);
-  FieldCamera_MoveTo(PIXELS(372), PIXELS(160), PIXELS(859), 1);
+  FieldCamera_MoveTo(372, 160, 859, 1);
   Actor_SetSpeed(ACTOR_DORA, 3);
   Actor_Jump(ACTOR_DORA, 6, 0);
   Actor_WalkToAndWait(ACTOR_DORA, 359, 835);
@@ -3039,7 +3039,7 @@ static void Vale_RoofMended(void) {
   Actor_WalkToAndWait(ACTOR_GARET, actor->x.part.pixel, actor->z.part.pixel);
   Actor_SetPosition(ACTOR_GARET, 0, 0);
   Event_AddPartyMemberPair(GARET, JENNA);
-  FieldCamera_MoveTo(PIXELS(377), PIXELS(160), PIXELS(887), 1);
+  FieldCamera_MoveTo(377, 160, 887, 1);
   Vale_MoveActorAlongHigherZPath(ACTOR_PARTY_LEADER,
                                  ANIM_LEADER_CLIMB_DOWN_FROM_TOP,
                                  ANIM_LEADER_CLIMB, 0);

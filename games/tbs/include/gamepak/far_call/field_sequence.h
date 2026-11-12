@@ -172,8 +172,8 @@ void Actor_CopyGraphicsFar(u32 targetId, u32 sourceId);
 void FieldCamera_FollowActorFar(s32 id, s32 flag);
 /// Sets the camera's top speed and acceleration, in 16.16 pixels per frame.
 void FieldCamera_SetSpeedParametersFar(s32 first, s32 second);
-/// Sends the camera to a point (-1 keeps an axis), kept inside the map so the
-/// screen never shows past its edge; with use_setter 0 it jumps there.
+/// Sends the camera to a point (CAMERA_KEEP keeps an axis), kept inside the map
+/// so the screen never shows past its edge; with use_setter 0 it jumps there.
 void FieldCamera_MoveWithinMapBoundsFar(s32 requested_x, s32 requested_y,
                                         s32 requested_z, s32 use_setter);
 /// Waits, at most 600 frames, for the camera to arrive, then 2 frames more.

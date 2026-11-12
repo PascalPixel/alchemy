@@ -258,7 +258,7 @@ static void KolimaForestFloodgate_FlipFloodgateSwitch(void) {
 
   Event_Start();
   FieldCamera_SetSpeedParameters(PIXELS(1), PIXELS(1) / 8);
-  FieldCamera_MoveWithinMapBounds(PIXELS(264), -1, PIXELS(448), 1);
+  FieldCamera_MoveTo(264, CAMERA_KEEP, 448, 1);
   FieldCamera_WaitForArrival();
   FieldMessage_Show(MsgFieldFlippedSwitch, 1);
   Sound_Play(SE_CRUNCH);

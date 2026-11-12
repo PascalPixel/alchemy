@@ -614,7 +614,7 @@ static void Tolbi_MeetSearchingSoldiers(void) {
   s32 firstMsg;
 
   Event_Start();
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Actor_SetSpeed(ACTOR_TOLBI_SOLDIER_A, 1);
   Actor_SetSpeed(ACTOR_TOLBI_SOLDIER_B, 1);
   firstMsg = MsgTolbiSeenAnyoneWho;

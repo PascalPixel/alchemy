@@ -960,7 +960,7 @@ static void MercuryLighthouse_PushStairAndFountainPipes(void) {
         Actor_MoveAndRedraw(probe);
         if (Event_GetFlag(FLAG_FOUNTAIN_SHOWN) == 0) {
           FieldCamera_SetSpeed(1.5);
-          FieldCamera_MoveTo(PIXELS(714), -1, PIXELS(592), 1);
+          FieldCamera_MoveTo(714, CAMERA_KEEP, 592, 1);
           FieldCamera_WaitForArrival();
           GameFlag_Set(FLAG_FOUNTAIN_SHOWN);
           MercuryLighthouse_OpenFountainWithSpray(5);
@@ -1191,7 +1191,7 @@ static s32 MercuryLighthouse_StartStatueSlide(void) {
   cellX = Actor_Get(ACTOR_SLIDING_STATUE)->x.fixed / PIXELS(16);
   cellZ = Actor_Get(ACTOR_SLIDING_STATUE)->z.fixed / PIXELS(16);
   FieldCamera_SetSpeedParameters(PIXELS(5), PIXELS(5) / 8);
-  FieldCamera_MoveWithinMapBounds(PIXELS(816), -1, PIXELS(712), 1);
+  FieldCamera_MoveTo(816, CAMERA_KEEP, 712, 1);
   FieldCamera_WaitForArrival();
   // Only the recorded pipe arrangements allow the pipe's next push.
   if (!GameFlag_Get(FLAG_MERCURY_LIGHTHOUSE_STATUE_FELL)) {
@@ -1514,7 +1514,7 @@ static void MercuryLighthouse_MiaSensesSomeoneInside(void) {
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 20);
   FieldCamera_SetSpeed(0.8);
-  FieldCamera_MoveTo(PIXELS(840), -1, PIXELS(632), 1);
+  FieldCamera_MoveTo(840, CAMERA_KEEP, 632, 1);
   Actor_WalkToAndWait(ACTOR_MIA, 840, 632);
   FieldCamera_WaitForArrival();
   Event_Wait(20);
@@ -2142,7 +2142,7 @@ static void MercuryLighthouse_EnterRisingPassage(void) {
   if (gMainRoutineWork.next == (s32)&SceneId_MercuryLighthouseLower) {
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 472, 600);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 10);
-    FieldCamera_MoveTo(PIXELS(464), -1, PIXELS(656), 1);
+    FieldCamera_MoveTo(464, CAMERA_KEEP, 656, 1);
     Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
     Actor_Prepare(Actor_Get(ACTOR_PARTY_LEADER)->x.fixed, 0, PIXELS(702),
                   SPRITE_CRATE);
@@ -2708,7 +2708,7 @@ s32 MercuryLighthouse_Initialize(void) {
       Actor_Get(ACTOR_DOOR_STATUE)->motionFlags = keepPartyPosition;
       SetEffectRecordMode(Actor_Get(ACTOR_DOOR_STATUE), 1);
       Event_Start();
-      FieldCamera_MoveTo(-1, -1, -1, 0);
+      FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
       FieldCamera_GetActor()->motionFlags = keepPartyPosition;
       Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 1);
       Actor_SetSpritePriority(ACTOR_LIFT_STATUE, 1);

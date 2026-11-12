@@ -691,7 +691,7 @@ static void ValeKradensCottage_MeetSaturosAndMenardi(void) {
   ValeKradensCottage_FacePartySouth();
   // The camera pans down to the strangers, and the ominous music plays.
   FieldCamera_SetSpeed(6);
-  FieldCamera_MoveTo(PIXELS(215), -1, PIXELS(345), 1);
+  FieldCamera_MoveTo(215, CAMERA_KEEP, 345, 1);
   FieldCamera_WaitForMove();
   Event_Wait(20);
   Sound_Play(MUS_OMINOUS);
@@ -730,7 +730,7 @@ static void ValeKradensCottage_MeetSaturosAndMenardi(void) {
   Actor_WalkToAndWait(ACTOR_MENARDI, 216, 360);
   Actor_WalkTo(ACTOR_MENARDI, 376, 360);
   ValeKradensCottage_FacePartySouth();
-  FieldCamera_MoveTo(PIXELS(393), -1, PIXELS(339), 1);
+  FieldCamera_MoveTo(393, CAMERA_KEEP, 339, 1);
   Actor_WalkTo(ACTOR_SATUROS, 392, 360);
   Actor_WalkToAndWait(ACTOR_MENARDI, 376, 360);
   Actor_SetAnimation(ACTOR_SATUROS, ANIM_STILL);
@@ -914,7 +914,7 @@ static void ValeKradensCottage_OverhearKraden(void) {
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH_NORTHWEST, 0);
     // The camera goes up to the door. Pacing, Kraden says they know more of
     // Sol Sanctum than Vale's elders.
-    FieldCamera_MoveWithinMapBounds(PIXELS(232), -1, PIXELS(240), 1);
+    FieldCamera_MoveTo(232, CAMERA_KEEP, 240, 1);
     FieldCamera_WaitForMove();
     Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST, 20);
     Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
@@ -1109,7 +1109,7 @@ static void ValeKradensCottage_TalkToRockslideSurvivor(void) {
       Event_ShowMessageThenWait(ACTOR_ROCKSLIDE_SURVIVOR, 0, 20);
       Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
                       30);
-      FieldCamera_MoveWithinMapBounds(PIXELS(98), -1, PIXELS(283), 1);
+      FieldCamera_MoveTo(98, CAMERA_KEEP, 283, 1);
       Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 94, 293);
       Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
       leader = Actor_Get(ACTOR_PARTY_LEADER);

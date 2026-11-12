@@ -754,7 +754,7 @@ static void SuhallaDesert_StormCarriesPartyAway(void) {
   selectedActor = Actor_Get(gMainRoutineWork.leaderActorId);
   storm = Actor_Get(stormId);
   Event_Start();
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Sound_Play(SE_GUSH);
   // BUG: the native passes an actor id where the sprite helper needs a pointer.
 #ifdef BUGFIX

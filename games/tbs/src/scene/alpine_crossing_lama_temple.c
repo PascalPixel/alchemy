@@ -674,7 +674,7 @@ static void AlpineCrossing_FeizhiArrives(void) {
     // Feizhi runs down the path with the camera; the leader follows her
     // until the camera arrives.
     Actor_SetScript(ACTOR_FEIZHI, gAlpineCrossing_FeizhiPath);
-    FieldCamera_MoveTo(PIXELS(296), -1, PIXELS(344), 1);
+    FieldCamera_MoveTo(296, CAMERA_KEEP, 344, 1);
     GameFlag_Set(FLAG_FEIZHI_SAW_ROCKSLIDE);
     Actor_WaitForScriptEndById(ACTOR_FEIZHI);
     FieldCamera_WaitForArrival();

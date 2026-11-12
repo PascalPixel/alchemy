@@ -361,7 +361,7 @@ static void TreeRooms_StepOnCocoon(s32 cocoonFlag, s32 sourceColumn,
   Actor_SetAttachedEffect(leaderActorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
   Event_Wait(30);
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   actor->motionFlags = ACTOR_FALLS;
   actor->groundHeight = -PIXELS(160);
   actor->gravity = PIXELS(1) / 2;
@@ -647,7 +647,7 @@ static void TreeRooms_PlayPostBattleConversation(void) {
   Event_WaitTransitionFrames();
   Event_Wait(20);
   FieldCamera_SetSpeed(1.2);
-  FieldCamera_MoveTo(PIXELS(168), -1, PIXELS(152), 1);
+  FieldCamera_MoveTo(168, CAMERA_KEEP, 152, 1);
   FieldCamera_WaitForMove();
   Event_Wait(10);
   // Open the passage in Tret's room before continuing the conversation.
@@ -671,7 +671,7 @@ static void TreeRooms_PlayPostBattleConversation(void) {
   Actor_StartRepeatedMotion(ACTOR_MIA, 2);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
   Event_Wait(20);
-  FieldCamera_MoveTo(PIXELS(168), -1, PIXELS(90), 1);
+  FieldCamera_MoveTo(168, CAMERA_KEEP, 90, 1);
   FieldCamera_WaitForMove();
   Event_Wait(40);
   TreeRooms_PlayGesture(TRET_GESTURE_OPEN_EYES);
@@ -912,7 +912,7 @@ s32 TreeRooms_EnterRoom(void) {
     Actor_SetSpriteFlags(Actor_Get(leaderActorId), 0);
     Actor_SetAttachedEffect(leaderActorId,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
-    FieldCamera_MoveTo(-1, -1, -1, 0);
+    FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
     actor->motionFlags = ACTOR_FALLS;
     actor->y.fixed = PIXELS(100);
     actor->groundHeight = -PIXELS(160);
@@ -1202,7 +1202,7 @@ static void TreeRooms_RunLandingDustEvent(void) {
   s32 velocityZ;
 
   Event_Start();
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   MapGrid_CenterOnFollowedPoint();
   wait(1);
   Actor_Get(ACTOR_PARTY_LEADER)->y.fixed = PIXELS(130);

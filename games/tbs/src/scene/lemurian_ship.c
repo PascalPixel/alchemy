@@ -369,7 +369,7 @@ static void LemurianShip_SetSail(void) {
   struct FieldWork *work;
 
   Event_Start();
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   MapGrid_CopyCellAttributes(18, 0, 3, 1, 18, 12);
   // Garet, Mia and Ivan step out around the leader. Garet: "It looks like
   // it's finally time to leave Gondowan." Ivan and Mia say how much has
@@ -556,7 +556,7 @@ static void LemurianShip_SetSail(void) {
   Actor_SetSpeed(ACTOR_MIA, 1.2);
   Actor_SetScript(ACTOR_PARTY_LEADER, gLeaderBoardsShip);
   Event_Wait(50);
-  FieldCamera_MoveTo(PIXELS(264), -1, PIXELS(200), 1);
+  FieldCamera_MoveTo(264, CAMERA_KEEP, 200, 1);
   Actor_SetScript(ACTOR_GARET, gGaretBoardsShip);
   Event_Wait(50);
   Actor_SetScript(ACTOR_IVAN, gIvanBoardsShip);
@@ -576,7 +576,7 @@ static void LemurianShip_SetSail(void) {
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
   Event_Wait(20);
   // On deck, all four turn west together and nod.
-  FieldCamera_MoveTo(PIXELS(216), -1, PIXELS(168), 1);
+  FieldCamera_MoveTo(216, CAMERA_KEEP, 168, 1);
   FieldCamera_WaitForMove();
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
@@ -607,7 +607,7 @@ static void LemurianShip_SetSail(void) {
   Event_Wait(80);
   Event_Wait(100);
   FieldCamera_SetSpeedParameters(PIXELS(11) / 5, PIXELS(1) / 100);
-  FieldCamera_MoveWithinMapBounds(PIXELS(808), -1, PIXELS(168), 1);
+  FieldCamera_MoveTo(808, CAMERA_KEEP, 168, 1);
   Event_Wait(300);
   // Fade out to the clear screen.
   work = gMapGridWork[19];

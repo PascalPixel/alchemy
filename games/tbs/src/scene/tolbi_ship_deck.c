@@ -1076,7 +1076,7 @@ static void TolbiShipDeck_WatchCrewDecideToSail(void) {
     Field_EndBusyAndReveal();
     Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_KALAY_CREWMAN, 10);
     FieldCamera_SetSpeed(1.6);
-    FieldCamera_MoveTo(PIXELS(190), -1, PIXELS(708), 1);
+    FieldCamera_MoveTo(190, CAMERA_KEEP, 708, 1);
     FieldCamera_WaitForMove();
     Event_Wait(40);
     Actor_RunRepeatedMotion(ACTOR_KALAY_CAPTAIN, 1);
@@ -1148,7 +1148,7 @@ static void TolbiShipDeck_WatchCrewDecideToSail(void) {
     Actor_SetAnimationAndWait(ACTOR_KALAY_CAPTAIN, 3);
     TolbiShipDeck_Say(SPEAKER(ACTOR_KALAY_CAPTAIN, SPEAKER_WINDOW_ABOVE));
     FieldCamera_SetSpeed(0.8);
-    FieldCamera_MoveTo(PIXELS(182), -1, PIXELS(760), 1);
+    FieldCamera_MoveTo(182, CAMERA_KEEP, 760, 1);
     Actor_SetSpeed(ACTOR_KALAY_KAJA, 0.8);
     Actor_SetScript(ACTOR_KALAY_KAJA, gTolbiShipDeck_KajaLeavesActions);
     Actor_SetSpeed(ACTOR_KALAY_CAPTAIN, 0.8);
@@ -1165,7 +1165,7 @@ static void TolbiShipDeck_WatchCrewDecideToSail(void) {
     Actor_Jump(ACTOR_KALAY_CREWMAN, 4, 0);
     Actor_FaceDirection(ACTOR_KALAY_CREWMAN, FACING_SOUTH_SOUTHEAST, 40);
     FieldCamera_SetSpeed(1);
-    FieldCamera_MoveTo(PIXELS(216), -1, PIXELS(790), 1);
+    FieldCamera_MoveTo(216, CAMERA_KEEP, 790, 1);
     {
       struct Actor *record = Actor_Get(ACTOR_KALAY_CREWMAN);
       record->priorityFlags = ACTOR_PRIORITY_AUTOMATIC | record->priorityFlags;
@@ -1291,7 +1291,7 @@ static void TolbiShipDeck_CatchCrewmanFromWest(void) {
 /// denies everything. Records the confrontation.
 static void TolbiShipDeck_ConfrontCrewman(void) {
   FieldCamera_SetSpeed(1.6);
-  FieldCamera_MoveTo(PIXELS(216), -1, PIXELS(824), 1);
+  FieldCamera_MoveTo(216, CAMERA_KEEP, 824, 1);
   FieldCamera_WaitForMove();
   Event_Wait(20);
   TolbiShipDeck_OpenSecondDoor();
@@ -1612,7 +1612,7 @@ static void TolbiShipDeck_DepartFromKalay(void) {
   struct Actor *record;
 
   Event_Start();
-  FieldCamera_MoveTo(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   wait(1);
   Actor_SetPosition(ACTOR_KALAY_CREWMAN, 0, 0);
   Actor_SetPosition(ACTOR_KALAY_CAPTAIN, 0, 0);
@@ -1627,7 +1627,7 @@ static void TolbiShipDeck_DepartFromKalay(void) {
   Actor_SetPosition(ACTOR_KALAY_CREW_MEMBER, 232, 650);
   record = Actor_Get(ACTOR_KALAY_CREW_MEMBER);
   record->facing = FACING_NORTH_NORTHWEST;
-  FieldCamera_MoveTo(PIXELS(232), -1, PIXELS(636), 0);
+  FieldCamera_MoveTo(232, CAMERA_KEEP, 636, 0);
   MapGrid_CenterOnFollowedPoint();
   wait(1);
   TolbiShipDeck_AnnouncePreparationsReady(ACTOR_KALAY_KAJA,
@@ -3151,7 +3151,7 @@ static void TolbiShipDeck_ReturnFromIsland(void) {
 static void TolbiShipDeck_PlaceLeaderOnDeck(void) {
   struct Actor *record;
 
-  FieldCamera_MoveTo(PIXELS(232), -1, PIXELS(676), 0);
+  FieldCamera_MoveTo(232, CAMERA_KEEP, 676, 0);
   MapGrid_CenterOnFollowedPoint();
   Actor_SetPosition(ACTOR_PARTY_LEADER, 232, 676);
   record = Actor_Get(ACTOR_PARTY_LEADER);

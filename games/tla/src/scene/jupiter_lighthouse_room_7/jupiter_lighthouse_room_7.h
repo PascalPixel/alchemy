@@ -15,7 +15,7 @@ struct JupiterLighthouseRoom7Cell {
   s16 z;
 };
 
-extern s16 gData_02002c64[];
+extern s16 gData_02002c64[][2];
 
 void Func_02000060(s32 mode);
 void Func_020005e8(s32 mode);

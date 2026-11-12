@@ -55,6 +55,9 @@ struct EventWork {
   s16 unkcb4;
   u8 unkcb6[2];
   s16 cueState;
+  u8 unkcba[0xd44 - 0xcba];
+  u16 unkd44;
+  u16 unkd46;
 };
 
 STATIC_ASSERT(offsetof(struct EventWork, objects) == 0x14);
@@ -69,5 +72,6 @@ STATIC_ASSERT(offsetof(struct EventWork, currentOwner) == 0x1e0);
 STATIC_ASSERT(offsetof(struct EventWork, actionCounter) == 0xca2);
 STATIC_ASSERT(offsetof(struct EventWork, pendingSecond) == 0xcac);
 STATIC_ASSERT(offsetof(struct EventWork, cueState) == 0xcb8);
+STATIC_ASSERT(offsetof(struct EventWork, unkd44) == 0xd44);
 
 #endif

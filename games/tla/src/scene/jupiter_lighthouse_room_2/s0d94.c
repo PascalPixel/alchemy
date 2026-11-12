@@ -1,5 +1,6 @@
 /// @file
-/// Scene code of overlay 0x69b, in ROM order, from s0d94's offset up to the next object the overlay links.
+/// Scene code of overlay 0x69b, in ROM order, from s0d94's offset up to the
+/// next object the overlay links.
 
 #include "types.h"
 #include "ram_buffer.h"
@@ -136,7 +137,7 @@ struct GustObject *Func_02000f54(struct GustObject *source) {
   position.z = source->z + Value2((s32 (*)())Iwram_MulQ16, 0x80000,
                                   Math_Sin(source->angle));
   object = ((struct GustObject *)FieldActor_Create(280, position.x, source->y,
-                                                    position.z));
+                                                   position.z));
   Func_020021b4(object, 2);
   Actor_SetSingleChildFlags(object, 0);
   object->motionFlags = 0;
@@ -192,10 +193,8 @@ struct PositionedActor {
 
 void Func_020010cc(void) {
   struct PositionedActor *actor9 = ((struct PositionedActor *)Actor_Get(9));
-  struct PositionedActor *actor10 =
-      ((struct PositionedActor *)Actor_Get(10));
-  struct PositionedActor *actor23 =
-      ((struct PositionedActor *)Actor_Get(23));
+  struct PositionedActor *actor10 = ((struct PositionedActor *)Actor_Get(10));
+  struct PositionedActor *actor23 = ((struct PositionedActor *)Actor_Get(23));
   struct FieldSprite *sprite = actor23->animation;
 
   Actor_SetPosition(24, 0x2000000, 0xf80000);
@@ -219,8 +218,7 @@ void Func_020010cc(void) {
     actor23->x.fixed -= 0x28f40;
     sprite->rotation += 0x800;
     Animation_ApplyChildValues(((struct PositionedActor *)Actor_Get(9)), 4);
-    Animation_ApplyChildValues(((struct PositionedActor *)Actor_Get(11)),
-                               4);
+    Animation_ApplyChildValues(((struct PositionedActor *)Actor_Get(11)), 4);
   }
   if (Event_GetFlag(0xa0b)) {
     actor10->y.fixed += 0x66640;
@@ -231,10 +229,8 @@ void Func_020010cc(void) {
     }
     actor23->x.fixed += 0x28f40;
     sprite->rotation -= 0x800;
-    Animation_ApplyChildValues(((struct PositionedActor *)Actor_Get(10)),
-                               4);
-    Animation_ApplyChildValues(((struct PositionedActor *)Actor_Get(12)),
-                               4);
+    Animation_ApplyChildValues(((struct PositionedActor *)Actor_Get(10)), 4);
+    Animation_ApplyChildValues(((struct PositionedActor *)Actor_Get(12)), 4);
   }
   if (Event_GetFlag(0xa0a) && Event_GetFlag(0xa0b)) {
     actor9->y.fixed += 0x199900;
@@ -269,9 +265,10 @@ extern s16 gData_02002cde;
 s32 Func_020022f4(struct FieldActor *actor);
 void Func_0200218c(struct LightOam *oam, s32 depth);
 
-/// Queues the lit actors' sprites: for each listed actor with a position, projects it
-/// from the map's view, skips it off screen, and writes a 16 by 16 sprite, or a 32 by
-/// 64 one when the big switch is set, at its animation picture and depth.
+/// Queues the lit actors' sprites: for each listed actor with a position,
+/// projects it from the map's view, skips it off screen, and writes a 16 by 16
+/// sprite, or a 32 by 64 one when the big switch is set, at its animation
+/// picture and depth.
 void Func_0200125c(void) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
   s32 *view = &map->viewX;
@@ -412,3 +409,5 @@ void Func_020015a0(s32 id, s32 value) {
     }
   }
 }
+
+void Func_020015d0(s32 a0) { gData_02002cde = a0; }

@@ -1,5 +1,6 @@
 /// @file
-/// Scene code of overlay 0x6a0, in ROM order, from s273c's offset up to the next object the overlay links.
+/// Scene code of overlay 0x6a0, in ROM order, from s273c's offset up to the
+/// next object the overlay links.
 
 #include "types.h"
 #include "ram_buffer.h"
@@ -98,10 +99,8 @@ loop:
 extern struct CellTarget gData_02003704;
 
 void GameFlag_SetByte(s32 flag, s32 value);
-void Func_02002534(struct CellTarget *work,
-                   struct CellTargetEntry *entry);
-void Func_020025a4(struct CellTarget *work,
-                   struct CellTargetEntry *entry);
+void Func_02002534(struct CellTarget *work, struct CellTargetEntry *entry);
+void Func_020025a4(struct CellTarget *work, struct CellTargetEntry *entry);
 
 s32 Func_020028d4(void) {
   struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
@@ -129,4 +128,34 @@ s32 Func_020028d4(void) {
     }
   }
   return 0;
+}
+
+struct JupiterLighthouseRoom8EventWork {
+  u8 unk000[0x1ac];
+  s32 screenEffect;
+  u8 unk1b0[0x1c];
+  struct Actor *marker;
+};
+
+void Func_02002984(s32 x, s32 z, s32 effect) {
+  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
+  struct JupiterLighthouseRoom8EventWork *work = Ram_HeapSlots->eventWork;
+  s32 dx = FieldGameFlag_GetByte(gData_02003704.flagByte);
+  s32 dz = FieldGameFlag_GetByte(gData_02003704.flagByte + 8);
+
+  if (dx != 0 || dz != 0) {
+    struct Actor *marker;
+
+    GameFlag_SetByte(gData_02003704.flagByte, 0);
+    GameFlag_SetByte(gData_02003704.flagByte + 8, 0);
+    leader->x = ((dx + x) << 20) + 0x80000;
+    leader->z = ((dz + z) << 20) + 0x80000;
+    marker = work->marker;
+    marker->x = leader->x;
+    marker->z = leader->z;
+    Func_02002afc();
+    Func_0200273c();
+    ((struct JupiterLighthouseRoom8EventWork *)Ram_HeapSlots->eventWork)
+        ->screenEffect = effect;
+  }
 }

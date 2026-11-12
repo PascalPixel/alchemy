@@ -1,5 +1,6 @@
 /// @file
-/// Scene code of overlay 0x69f, in ROM order, from s047c's offset up to the next object the overlay links.
+/// Scene code of overlay 0x69f, in ROM order, from s047c's offset up to the
+/// next object the overlay links.
 
 #include "types.h"
 #include "ram_buffer.h"
@@ -10,18 +11,11 @@
 #include "iwram_call.h"
 #include "field_sprite.h"
 #include "field.h"
+#include "event_work.h"
 
 void Func_02001b44(void);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 void Func_02001b4c(void);
-
-struct EventWork {
-  u8 unk000[0x154];
-  u16 unk154;
-  u8 unk156[0xd44 - 0x156];
-  u16 unkD44;
-  u16 unkD46;
-};
 
 void Func_0200047c(void) {
   /* FAKEMATCH(wrapper): calls forwarded through inlines (call.h's Call and
@@ -38,7 +32,7 @@ void Func_0200047c(void) {
   Func_02001b44();
   FieldEvent_ResolvePendingActions(0);
   i = 0;
-  work->unkD46 = i;
+  work->unkd46 = i;
 
   actor->motionFlags = 4;
   Actor_SetSingleChildFlags(actor, 0);
@@ -54,8 +48,8 @@ void Func_0200047c(void) {
     *p ^= 2 << (gFrameCount & 1);
     System_Wait(1);
   }
-  work->unkD44 = 1;
-  work->unkD46 = 1;
+  work->unkd44 = 1;
+  work->unkd46 = 1;
   angle = linked->angle;
   actor->x = (((linked->x >> 19) & ~1) + (angle >> 13) - 1) << 19;
   actor->z = (((linked->z >> 19) & ~1) - ((angle >> 13) & 2) + 1) << 19;
@@ -68,8 +62,8 @@ void Func_0200047c(void) {
   shadow->speedLimit = 0x80000;
   shadow->acceleration = 0x10000;
   shadow->motionFlags = 0;
-  FieldActor_SetMoveTarget(shadow, actor->x,
-                      Map_GetTerrainHeight(0, actor->x, actor->z), actor->z);
+  FieldActor_SetMoveTarget(
+      shadow, actor->x, Map_GetTerrainHeight(0, actor->x, actor->z), actor->z);
   i = 0;
   if (actor->y > actor->terrainHeight + 0x100000) {
     do {
@@ -92,8 +86,8 @@ void Func_0200047c(void) {
   Actor_WaitForMove(shadow);
   Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 1;
   FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
-  work->unkD46 = 1;
-  work->unk154 = 0;
+  work->unkd46 = 1;
+  work->exit = 0;
   Func_02001b4c();
 }
 

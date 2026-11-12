@@ -1,5 +1,6 @@
 /// @file
-/// Scene code of overlay 0x69d, in ROM order, from s1a20's offset up to the next object the overlay links.
+/// Scene code of overlay 0x69d, in ROM order, from s1a20's offset up to the
+/// next object the overlay links.
 
 #include "types.h"
 #include "ram_buffer.h"
@@ -7,6 +8,7 @@
 #include "main_routine_work.h"
 #include "field_effect.h"
 #include "event_inline.h"
+#include "cell_target.h"
 
 void Func_02001e48(void);
 void Func_02001dd0(void);
@@ -71,40 +73,21 @@ void Func_02001a20(void) {
   Func_02001e50();
 }
 
-struct LightTile {
-  s16 x;
-  s16 z;
-  s16 flag;
-  s16 unk06;
-};
-
-struct LightPuzzle {
-  u8 unk00[2];
-  s16 flagBase;
-  u8 unk04[2];
-  s16 x;
-  s16 z;
-  u16 count;
-  s16 current;
-  u8 unk0e[0x12];
-  struct LightTile tiles[1];
-};
-
-extern struct LightPuzzle gData_02002864;
+extern struct CellTarget gData_02002864;
 
 void GameFlag_SetByte(s32 index, s32 value);
-void Func_02001818(struct LightPuzzle *puzzle, struct LightTile *tile);
-void Func_02001888(struct LightPuzzle *puzzle, struct LightTile *tile);
+void Func_02001818(struct CellTarget *puzzle, struct CellTargetEntry *tile);
+void Func_02001888(struct CellTarget *puzzle, struct CellTargetEntry *tile);
 
 s32 Func_02001bb8(void) {
   struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
   s32 x = object->x >> 20;
   s32 z = object->z >> 20;
-  struct LightPuzzle *puzzle = &gData_02002864;
-  struct LightTile *tile = puzzle->tiles;
+  struct CellTarget *puzzle = &gData_02002864;
+  struct CellTargetEntry *tile = puzzle->entries;
   s32 i;
 
-  for (i = 0; i < (s16)puzzle->count; i++, tile++) {
+  for (i = 0; i < puzzle->count; i++, tile++) {
     if (tile->x == x && tile->z == z) {
       if (!Event_GetFlag(tile->flag)) {
         Func_02001818(puzzle, tile);
@@ -116,10 +99,33 @@ s32 Func_02001bb8(void) {
         break;
       puzzle->current = i;
       Func_02001888(puzzle, tile);
-      GameFlag_SetByte(puzzle->flagBase, x);
-      GameFlag_SetByte(puzzle->flagBase + 8, z);
+      GameFlag_SetByte(puzzle->flagByte, x);
+      GameFlag_SetByte(puzzle->flagByte + 8, z);
       return 1;
     }
   }
   return 0;
+}
+
+void Func_02001c68(s32 dx, s32 dz, s32 value) {
+  struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
+  u8 *event = Ram_HeapSlots->eventWork;
+  struct CellTarget *work = &gData_02002864;
+  s32 x = ((s32)FieldGameFlag_GetByte(work->flagByte));
+  s32 z = ((s32)FieldGameFlag_GetByte(work->flagByte + 8));
+
+  if (x != 0 || z != 0) {
+    struct Actor *shadow;
+
+    GameFlag_SetByte(work->flagByte, 0);
+    GameFlag_SetByte(work->flagByte + 8, 0);
+    object->x = ((x + dx) << 20) + 0x80000;
+    object->z = ((z + dz) << 20) + 0x80000;
+    shadow = *(struct Actor **)(event + 460);
+    shadow->x = object->x;
+    shadow->z = object->z;
+    Func_02001dd0();
+    Func_02001a20();
+    *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 428) = value;
+  }
 }

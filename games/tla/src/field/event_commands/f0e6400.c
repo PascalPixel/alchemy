@@ -255,7 +255,7 @@ struct FxScene {
 // s32 stores but not after an Actor's u8 stores, as the listing has them.
 struct FxEvent {
   struct EventWork work;
-  u8 unkcbc[0x90];
+  u8 unkd48[4];
   /// Bit 0 clear runs Func_080dba5c; bit 1 set fixes the risen object's sprite
   /// priority at 1 directly, else its priority flag is set.
   u16 unkd4c;

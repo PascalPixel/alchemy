@@ -98,10 +98,8 @@ s32 Func_0200180c(void) {
   struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
   s32 x = object->x >> 20;
   s32 z = object->z >> 20;
-  struct CellTarget *work =
-      &gData_02002308;
-  struct CellTargetEntry *entry =
-      work->entries;
+  struct CellTarget *work = &gData_02002308;
+  struct CellTargetEntry *entry = work->entries;
   s32 i;
 
   for (i = 0; i < work->count; i++, entry++) {
@@ -122,4 +120,36 @@ s32 Func_0200180c(void) {
     }
   }
   return 0;
+}
+
+#include "cell_target.h"
+
+struct JupiterLighthouseRoom8EventWork {
+  u8 unk000[0x1ac];
+  s32 screenEffect;
+  u8 unk1b0[0x1c];
+  struct Actor *marker;
+};
+
+void Func_020018bc(s32 x, s32 z, s32 effect) {
+  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
+  struct JupiterLighthouseRoom8EventWork *work = Ram_HeapSlots->eventWork;
+  s32 dx = FieldGameFlag_GetByte(gData_02002308.flagByte);
+  s32 dz = FieldGameFlag_GetByte(gData_02002308.flagByte + 8);
+
+  if (dx != 0 || dz != 0) {
+    struct Actor *marker;
+
+    GameFlag_SetByte(gData_02002308.flagByte, 0);
+    GameFlag_SetByte(gData_02002308.flagByte + 8, 0);
+    leader->x = ((dx + x) << 20) + 0x80000;
+    leader->z = ((dz + z) << 20) + 0x80000;
+    marker = work->marker;
+    marker->x = leader->x;
+    marker->z = leader->z;
+    Func_02001a24();
+    Func_02001674();
+    ((struct JupiterLighthouseRoom8EventWork *)Ram_HeapSlots->eventWork)
+        ->screenEffect = effect;
+  }
 }

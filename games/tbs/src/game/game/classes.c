@@ -24,7 +24,7 @@ s32 Unit_GetElementLevels(s32 record, const u8 *source, s32 output[4]) {
   s32 i;
   s32 *cursor;
 
-  if (record > 7) {
+  if (record > PIERS) {
     u32 index;
 
     index = ((const struct EnemyDefinition *)Enemy_GetDefinition(record))
@@ -35,7 +35,7 @@ s32 Unit_GetElementLevels(s32 record, const u8 *source, s32 output[4]) {
     i = 0;
     cursor = output;
     for (; i < ELEMENT_COUNT; i++)
-      *cursor++ = gEnemy_ElementPresetTable[index].digits[i] * 10;
+      *cursor++ = gEnemy_ElementPresetTable[index].elementLevels[i] * 10;
   } else {
     cursor = output;
     // `source` points at the unit's Djinn bits; the counts of set Djinn by
@@ -48,7 +48,7 @@ s32 Unit_GetElementLevels(s32 record, const u8 *source, s32 output[4]) {
       *cursor++ = value * 10;
     }
 
-    if (record <= 7) {
+    if (record <= PIERS) {
       for (i = 0; i < ELEMENT_COUNT; i++) {
         *output += Character_GetDefinition(record)->elementBonus[i];
         output++;

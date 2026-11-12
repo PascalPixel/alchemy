@@ -12,7 +12,7 @@
 struct EnemyElementPreset {
   s32 first; ///< the element it attacks with (Enemy_GetAttackElement)
   /// Its level in each element; Unit_GetElementLevels returns ten times each.
-  u8 digits[4];
+  u8 elementLevels[4];
   /// Each element's struct BattleElementStats as one word: power in the low
   /// halfword, resistance in the high (Unit_CalculateBaseElements).
   s32 values[4];

@@ -48,6 +48,32 @@ struct ClassAbility {
   u8 padding[2]; ///< padding
 };
 
+/// ClassDefinition.series for the series a character's elements can choose
+/// (gClass_SeriesByElements), each named by its first class. Series 11 holds
+/// the fixed classes 200 to 202, and 12 class 0, the enemies'.
+enum ClassSeries {
+  /// ★ Named from the game: "Squire" (MsgClassName)
+  CLASS_SERIES_SQUIRE = 1,
+  /// ★ Named from the game: "Guard" (MsgClassName)
+  CLASS_SERIES_GUARD,
+  /// ★ Named from the game: "Swordsman" (MsgClassName)
+  CLASS_SERIES_SWORDSMAN,
+  /// ★ Named from the game: "Brute" (MsgClassName)
+  CLASS_SERIES_BRUTE,
+  /// ★ Named from the game: "Apprentice" (MsgClassName)
+  CLASS_SERIES_APPRENTICE,
+  /// ★ Named from the game: "Water Seer" (MsgClassName)
+  CLASS_SERIES_WATER_SEER,
+  /// ★ Named from the game: "Wind Seer" (MsgClassName)
+  CLASS_SERIES_WIND_SEER,
+  /// ★ Named from the game: "Seer" (MsgClassName)
+  CLASS_SERIES_SEER,
+  /// ★ Named from the game: "Pilgrim" (MsgClassName)
+  CLASS_SERIES_PILGRIM,
+  /// ★ Named from the game: "Hermit" (MsgClassName)
+  CLASS_SERIES_HERMIT
+};
+
 /// A class: its series, the element levels it needs, its stat multipliers and
 /// the abilities it teaches.
 struct ClassDefinition {

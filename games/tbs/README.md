@@ -2,17 +2,20 @@
 
 ![The Title: clouds and Mt. Aleph scroll past the sun and its lens flares, and the Golden Sun title card settles over them](https://alchemy.pascalpixel.com/story/title.gif)
 
-Every town, every battle and every line anyone says in Golden Sun: The
-Broken Seal is here as source you can read.
+Welcome to The Broken Seal!
 
-These pages are for a programmer opening it for the first time. They give
-you the shape of each system and a way to think about it. The detail is in
-the code, and the comments there say it better than a page could.
+This is the first Golden Sun, from the stormy night in Vale to the storm on
+top of Venus Lighthouse, and all of it is here to read: 201 scenes, every
+battle, and every line anyone says.
+
+It is a wonderful program to wander around in. Camelot built it in a way
+you rarely see any more, and these pages show you how to think about each
+part of it before you open the code.
 
 ## Start here
 
-Two ideas hold the whole game up, and neither is how most programs are
-built today. Read them first and the rest falls into place.
+Two of Camelot's ideas are worth meeting first. Once they click, the rest
+of the code opens up.
 
 1. [The main routine](system.md#the-main-routine). One routine runs the
    game from switch-on to switch-off, one sequence at a time: the field, a

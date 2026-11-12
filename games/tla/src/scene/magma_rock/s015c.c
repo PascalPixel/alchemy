@@ -7,3 +7,5 @@
 #include "../../field/field_effect/spawn.c"
 
 #include "../venus_lighthouse/distance.c"
+
+#include "../../field/object/find_in_cell.c"

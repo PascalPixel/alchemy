@@ -83,3 +83,5 @@ void Func_02000150(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 }
 
 #include "distance.c"
+
+#include "../../field/object/find_in_cell.c"

@@ -10,3 +10,5 @@ s32 Func_0200033c(s32 *a, s32 *b) {
 
   return Iwram_Sqrt(dxsq + dysq + dzsq);
 }
+
+#include "../../field/object/find_in_cell.c"

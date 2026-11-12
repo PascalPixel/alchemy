@@ -135,7 +135,6 @@ SECTIONS
     {
         "*/games/tla/src/scene/idejima/entry.o"(.text)
         "*/games/tla/src/scene/idejima.o"(.text)
-        "*/games/tla/src/scene/shared/drift_spawn.o"(.text)
         "*/games/tla/src/scene/idejima/s16d8.o"(.text)
         "*/games/tla/src/scene/idejima/import.o"(.text)
         "*/games/tla/src/scene/idejima/data.o"(.data)

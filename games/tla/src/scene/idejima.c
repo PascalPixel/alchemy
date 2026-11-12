@@ -706,3 +706,5 @@ void DriftScene_Prepare(void) {
   MapGrid_CopyCellsTo(72, 10, 75, 8, 1, 1);
   Actor_SetAnimation(9, 2);
 }
+
+#include "shared/drift_spawn.c"

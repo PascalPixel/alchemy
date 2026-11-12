@@ -1,37 +1,36 @@
 /// @file
-/// Beams and the ring and spark effect.
+/// The plain attack's slash, and the critical hit's gathering light and
+/// crescent.
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
 
-/// The beam's pictures, by effect kind: the kinds below
-/// EFFECT_RANGE_CASTING_IMPACT that BattleEffect_RunByIdRange sends here. No
-/// ability's row selects one; the unused BattleStaging_RunPlainAttack plays an
-/// attack's kind, 0 for Attack.
+/// The plain attack's pictures, by effect kind: the attacker's attack effect,
+/// from its class's gBattleSprites row for an enemy, 1 for Isaac, Garet and
+/// Jenna and 4 for Ivan and Mia (BattleActionRun_Build).
 enum BeamKind {
-  BEAM_PLAIN_ATTACK,  ///< blue arc A: Attack's kind
-  BEAM_ARC_A,         ///< blue arc A
-  BEAM_ARC_B,         ///< blue arc B
-  BEAM_IMAGE,         ///< the beam image, growing
-  BEAM_WAVE,          ///< the wave, played backwards
-  BEAM_ARC_A_INVERTED ///< blue arc A, upside down
+  BEAM_PLAIN_ATTACK,  ///< drawn as BEAM_ARC_A; no attack has kind 0
+  BEAM_ARC_A,         ///< one blue slash: Isaac's, Garet's and Jenna's
+  BEAM_ARC_B,         ///< three blue slashes side by side
+  BEAM_IMAGE,         ///< a streak of light, growing
+  BEAM_WAVE,          ///< three short blue arcs, backwards: Ivan's and Mia's
+  BEAM_ARC_A_INVERTED ///< one blue slash, upside down
 };
 
-/// Draws the selected beam and its projected sparks over the first target: a
-/// beam, arc or wave shoots from the user; from frame 4 the target is hit,
-/// a yellow orb flashes over it and sparks fly off, for 32 frames in all.
-/// args->kind picks the picture.
+/// A plain attack's picture: the slash or streak args->kind picks plays from
+/// the user over its first target; from frame 4 the target is hit, a yellow orb
+/// flashes over it and sparks fly off, for 32 frames in all.
 ///
 /// Reached through BattleEffect_RunByIdRange for kinds from
 /// EFFECT_RANGE_BEAM to below EFFECT_RANGE_RING_AND_SPARK and,
 /// through its unsigned test, every kind below EFFECT_RANGE_CASTING_IMPACT;
-/// BattleStaging_RunPlainAttack (battle/staging.c) sends every plain
-/// attack there. Only the kinds of enum BeamKind have pictures. Shows the
-/// canvas on BG1 (BattleEffect_SetupCanvasTileMap), loads palette colours 0 to
-/// 63, scrolls BG1 through gBgScroll[1] and uses work->particles 0 to 63 (only
-/// 0 to 31 fly) and both blitter slots; at the end it removes the transfer
-/// task, frees the blitters, sets gBgScroll[1].y back to 32 and hides BG1
-/// again (BattleEffect_HideBg1AndRestoreBackdrop).
+/// BattleStaging_RunAttack (battle/staging.c) sends every plain attack that is
+/// not a critical hit there. Only the kinds of enum BeamKind have pictures.
+/// Shows the canvas on BG1 (BattleEffect_SetupCanvasTileMap), loads palette
+/// colours 0 to 63, scrolls BG1 through gBgScroll[1] and uses work->particles 0
+/// to 63 (only 0 to 31 fly) and both blitter slots; at the end it removes the
+/// transfer task, frees the blitters, sets gBgScroll[1].y back to 32 and hides
+/// BG1 again (BattleEffect_HideBg1AndRestoreBackdrop).
 void BattleEffect_RunBeam(struct BattleEffectParams *args) {
   struct ScreenPoint screenPosition;
   struct ScreenPoint anchor;
@@ -46,16 +45,16 @@ void BattleEffect_RunBeam(struct BattleEffectParams *args) {
   s32 kind;
   struct Unit *unit;
   BlitterPair draw;
+  /* FAKEMATCH(temporary): slots holds gHeapSlots; as
+   * (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE], 4 of 655 instructions differ
+   * in tbs-en. */
   DrawRectangle *slots;
   struct Actor *target;
-  void *colors = (void *)BG_PLTT;
   s32 half;
   s32 frame;
   s32 i;
 
-  heapCache = &gHeapSlots[HEAP_SLOT_BATTLE_EFFECT];
-  cursor = heapCache;
-  EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
+  EFFECT_GET_SLOTS(heapCache, cursor, work, canvas);
   sheet = EFFECT_SLOT(heapCache, HEAP_SLOT_BATTLE_SHEET);
   camera = EFFECT_SLOT(heapCache, HEAP_SLOT_CAMERA);
   kind = args->kind;
@@ -129,11 +128,12 @@ void BattleEffect_RunBeam(struct BattleEffectParams *args) {
   }
   if (work->args->user > PIERS)
     Iwram_CopyWords(
-        colors, Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSmallSheet),
-        128);
+        (void *)BG_PLTT,
+        Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSmallSheet), 128);
   else
-    Iwram_CopyWords(
-        colors, Resource_GetTableEntry((s32)&ResourceId_CrescentSheet), 128);
+    Iwram_CopyWords((void *)BG_PLTT,
+                    Resource_GetTableEntry((s32)&ResourceId_CrescentSheet),
+                    128);
   wait(1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_YellowOrbSheet,
@@ -270,11 +270,10 @@ void BattleEffect_RunBeam(struct BattleEffectParams *args) {
   BattleEffect_HideBg1AndRestoreBackdrop();
 }
 
-/// Plays the selected ring-and-spark strike, restoring the user motion after
-/// it. Kinds from EFFECT_RANGE_RING_AND_SPARK first gather 64 motes of light
-/// into the user for 32 frames while it stands still; then star burst and
-/// crescent rings flash over the canvas and sparks fly from the first target
-/// for 32 frames, and the background palette fades back in.
+/// A critical hit ("A critical hit!", MsgCritical): 64 motes of light close in
+/// on the attacker for 32 frames while it hangs still in its leap; then a
+/// crescent slash sweeps across the first target, sparks fly from it for 32
+/// frames, and the background palette fades back in.
 ///
 /// Reached through BattleEffect_RunByIdRange for kinds from
 /// EFFECT_RANGE_RING_AND_SPARK, which BattleStaging_RunAttack
@@ -305,20 +304,21 @@ void BattleEffect_RunRingAndSpark(struct BattleEffectParams *args) {
   s32 acceleration;
   s32 strength;
   BlitterPair draw;
+  /* FAKEMATCH(temporary): slots holds gHeapSlots; as
+   * (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE], 4 of 672 instructions differ
+   * in tbs-en. */
   DrawRectangle *slots;
   struct Actor *actor;
   struct Actor *target;
+  /* FAKEMATCH(temporary): background holds &gBattleWork->background; as
+   * gBattleWork->background, 18 of 672 instructions differ in tbs-en. */
   u16 *background;
-  void *colors = (void *)BG_PLTT;
-  s32 canvasBytes = CANVAS_BYTES;
   s32 big;
   s32 half;
   s32 frame;
   s32 i;
 
-  heapCache = &gHeapSlots[HEAP_SLOT_BATTLE_EFFECT];
-  cursor = heapCache;
-  EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
+  EFFECT_GET_SLOTS(heapCache, cursor, work, canvas);
   sheet = EFFECT_SLOT(heapCache, HEAP_SLOT_BATTLE_SHEET);
   camera = EFFECT_SLOT(heapCache, HEAP_SLOT_CAMERA);
   /* FAKEMATCH(dead): never true, as only kinds from
@@ -367,8 +367,8 @@ void BattleEffect_RunRingAndSpark(struct BattleEffectParams *args) {
                              Ram_MapGridCellBuffer, 1, 1);
   if (work->args->user > PIERS)
     Iwram_CopyWords(
-        colors, Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSmallSheet),
-        128);
+        (void *)BG_PLTT,
+        Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSmallSheet), 128);
   BattleCamera_SetViewAtPairMidpointFar(work->args->user,
                                         work->args->firstTarget, 130);
   wait(1);
@@ -428,7 +428,7 @@ void BattleEffect_RunRingAndSpark(struct BattleEffectParams *args) {
           screen.x += 64;
           screen.y = screen.y + screenPosition.y + 24;
           /* FAKEMATCH(dead): the depth is clamped to -60..60 and moved to
-           * 0..120 but never read; without the clamp and the move, 375 of 672
+           * 0..120 but never read; without the clamp and the move, 381 of 672
            * instructions differ in tbs-en. */
           CLAMP(screen.depth, -60, 60);
           screen.depth += 60;
@@ -449,8 +449,8 @@ void BattleEffect_RunRingAndSpark(struct BattleEffectParams *args) {
   // screen, and start 64 sparks at its middle, rising and flying towards the
   // centre of the field (unlike the beam's, whose x speed is
   // turned around once more).
-  Iwram_ClearWords(canvas, canvasBytes);
-  Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), canvasBytes);
+  Iwram_ClearWords(canvas, CANVAS_BYTES);
+  Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), CANVAS_BYTES);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   REG_BG1CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(0) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(31);
@@ -487,8 +487,8 @@ void BattleEffect_RunRingAndSpark(struct BattleEffectParams *args) {
       BattleMotion_ApplyKnockbackFar(work->args->targets[0], KNOCKBACK_NUDGE);
     Projection_ScaledUnit(work->args->user, &screenPosition);
     screenPosition.y += 16;
-    // The rings: two frames each of the two star burst cells, then of the
-    // two crescent cells.
+    // The slash: two frames each of the star burst sheet's star and arc, then
+    // of the crescent sheet's two crescents.
     if (frame <= 1)
       draw[0](canvas, work->imageStorage, 0, 0, 120, 120);
     else if (frame <= 3)

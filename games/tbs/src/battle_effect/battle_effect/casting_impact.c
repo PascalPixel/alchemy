@@ -140,8 +140,8 @@ enum CastingImpact {
 #define ASURA_SHEET_SWUNG (80 * 96)
 #define ASURA_SHEET_CRESCENT (ASURA_SHEET_SWUNG + 80 * 104)
 
-/// Where Mortal Danger draws picture n of the reaper's seven
-/// (REAPER_PICTURE_X), for the casting side.
+/// Where Mortal Danger draws `image`, one of the reaper's seven pictures
+/// (REAPER_PICTURE_X), for the casting `side`.
 #define CASTING_IMPACT_IMAGE_X(side, image)                                    \
   gCastingImpact_ImageX[(side)][(image)]
 

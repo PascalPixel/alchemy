@@ -135,8 +135,8 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
   for (i = 0; i != 16; i++) {
     struct Particle *shaft = &work->particles[i];
 
-    shaft->x = (Random16() % 96 + 12) << 16;
-    shaft->y = ((Random16() & 63) + 32) << 16;
+    shaft->x = px(Random16() % 96 + 12);
+    shaft->y = px((Random16() & 63) + 32);
     shaft->velocityX = 0;
     shaft->velocityY = 0;
     shaft->variant = 0;

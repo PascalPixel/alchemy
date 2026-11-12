@@ -8,8 +8,8 @@
 #define CONDEMN_SWING_FRAME 88   ///< the reaper swings, in a white flash
 #define CONDEMN_BOUNCE_FRAME 120 ///< the falling target bounces
 
-/// Where picture n of the reaper's seven is drawn (REAPER_PICTURE_X), by the
-/// casting side's column and row.
+/// Where `picture`, one of the reaper's seven pictures, is drawn
+/// (REAPER_PICTURE_X), by the casting side's `column` and `row`.
 #define CONDEMN_PICTURE_X(column, picture)                                     \
   gCondemn_PictureX[(column)][(picture)]
 #define CONDEMN_PICTURE_Y(row, picture) gCondemn_PictureY[(row)][(picture)]

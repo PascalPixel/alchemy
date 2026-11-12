@@ -1049,6 +1049,7 @@ UNUSED static void Vault_SpawnDriftingEffect(s32 flags) {
   struct Actor *effect;
   struct Sprite *sprite;
   s32 x;
+  s32 y;
   s32 z;
 
   anchor = Actor_Get(ACTOR_VAULT_DOG);
@@ -1065,21 +1066,12 @@ UNUSED static void Vault_SpawnDriftingEffect(s32 flags) {
   z -= 4;
   x <<= 16;
   z <<= 16;
-  {
-    /* FAKEMATCH(temporary): baseX, baseY and baseZ copy the anchor's
-     * position; as anchor->x.fixed, anchor->y.fixed and anchor->z.fixed, 28 of
-     * 141 instructions differ in tbs-en. */
-    s32 baseX = anchor->x.fixed;
-    s32 baseZ = anchor->z.fixed;
-    s32 baseY;
-
-    x += baseX;
-    baseY = anchor->y.fixed;
-    z += baseZ;
-    // XXX (no evidence): what this drift was meant to draw; SPRITE_172 has no
-    // image (its row in sprites.tsv is empty) and nothing calls this routine.
-    effect = Actor_Create(SPRITE_172, x, baseY, z);
-  }
+  x += anchor->x.fixed;
+  y = anchor->y.fixed;
+  z += anchor->z.fixed;
+  // XXX (no evidence): what this drift was meant to draw; SPRITE_172 has no
+  // image (its row in sprites.tsv is empty) and nothing calls this routine.
+  effect = Actor_Create(SPRITE_172, x, y, z);
   if (effect == NULL)
     return;
   sprite = effect->sprite;

@@ -1,3 +1,6 @@
+/// @file
+/// Scene code of overlay 0x671, in ROM order, from s4d48's offset up to the next object the overlay links.
+
 #include "types.h"
 #include "event_inline.h"
 
@@ -127,3 +130,90 @@ s32 Func_02004d48(s32 first, s32 check) {
   }
   return result;
 }
+
+struct PuzzleCell {
+  u8 kind;
+  u8 blocked;
+  u8 state;
+  u8 occupied;
+};
+
+struct SceneState {
+  struct PuzzleCell cells[88];
+};
+
+extern struct SceneState gSceneState;
+
+void Func_02004f40(u32 *x_out, u32 *z_out) {
+  u32 z;
+  u32 x;
+
+  for (z = 0; z <= 7; z++) {
+    for (x = 0; x <= 10; x++) {
+      if (gSceneState.cells[z * 11 + x].kind == 10 && !(x == 5 && z == 3) &&
+          !(z == 7 && (x == 1 || x == 9))) {
+        *x_out = x;
+        *z_out = z;
+        return;
+      }
+    }
+  }
+}
+
+#include "iwram_call.h"
+
+struct ClockWork {
+  u8 unk00[132];
+  s32 timer;
+  u8 ringing;
+  u8 mode;
+};
+
+extern u8 gData_020023c4[];
+s32 Math_Cosine(s32 angle);
+
+/// Converts the remaining frames into minutes, seconds and tenths
+/// (`MM:SS:T`).
+void Func_02004f84(s32 time, u8 *text) {
+  if (time < 0)
+    time = 0;
+  *text = time / 36000 + '0';
+  time %= 36000;
+  *++text = time / 3600 + '0';
+  time %= 3600;
+  *++text = ':';
+  *++text = time / 600 + '0';
+  time %= 600;
+  *++text = time / 60 + '0';
+  time %= 60;
+  *++text = ':';
+  *++text = time / 6 + '0';
+  text[1] = 0;
+}
+
+s32 Func_02005020(s32 time) {
+  struct ClockWork *clock = (struct ClockWork *)(gData_020023c4 + 0x288);
+  s32 second = time % 60;
+  s32 volume = 512;
+  u8 *ringing = &clock->ringing;
+
+  if (second != 0) {
+    *ringing = 1;
+  } else if (*ringing) {
+    if (clock->timer != 0)
+      Event_PlaySound(236);
+    *ringing = second;
+  }
+  if (second <= 19) {
+    s32 cosine = Math_Cosine((second << 15) / 10);
+    s32 (*mul)(s32 a, s32 b);
+    s32 scale = 128;
+
+    mul = Iwram_MulQ16;
+    volume = mul(scale << 2, cosine);
+  }
+  if (volume <= 16)
+    volume = 16;
+  return volume;
+}
+

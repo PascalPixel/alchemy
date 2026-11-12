@@ -10,14 +10,14 @@ runs, its tables and its [events](../../../tbs/glossary.md#event).
 - Most scenes' overlays are a folder, not a file. The Broken Seal writes each as
   one `<scene>.c` with its [entry and import tables](../../../tbs/glossary.md#entry-table-and-import-table)
   beside it. Here the folder holds `entry.s`, `import.s`, `scene_tables.c`,
-  `data.c`, and its code, one function or family to a file, named for what it
-  does or, until that is known, for its offset in the overlay
-  (`airs_rock_inside/s0128.c`), with a header of its own names where it has
-  any (`airs_rock_inside.h`). Where a scene's code has been gathered, it is
-  one `<scene>.c` beside the folder, as The Broken Seal's are
-  (`mercury_lighthouse.c`), and a later stretch of the overlay that could not
-  join it is one file in the folder, named for its first offset
-  (`mt_aleph_summit/s0478.c`).
+  `data.c`, and its code, with a header of its own names where it has any
+  (`airs_rock_inside.h`). Where a scene's code has been gathered, it is one
+  `<scene>.c` beside the folder, as The Broken Seal's are
+  (`mercury_lighthouse.c`). Where a shared object, or files that disagree
+  about a type, split the overlay's code, each other stretch is one file in
+  the folder, named for its first file (`mt_aleph_summit/s0478.c`,
+  `airs_rock_inside/s0038.c`); a file named for its offset in the overlay
+  waits for what it does to be known.
 - Both games link every overlay through one `overlay.ld`, one block per
   overlay: an overlay's block names its folder's objects in ROM order, and
   where its globals are still written in assembly they are the folder's

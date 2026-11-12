@@ -6,6 +6,7 @@
 #include "actor.h"
 #include "main_routine_work.h"
 #include "event_inline.h"
+#include "field/field.h"
 
 extern char SceneId_Ov66aRoom1;
 extern char SceneId_Ov66aRoom2;
@@ -50,8 +51,6 @@ struct AlhafranCaveSwitch {
   s16 flag;
 };
 
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
 void Actor_ApplyRandomChildValues(void);
 void Func_020013f0(struct Actor *object, s32 mode);
 void Func_02001420(s32 x, s32 z, s32 a, s32 b);

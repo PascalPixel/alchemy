@@ -8,6 +8,7 @@
 #include "text/msg_ids.h"
 #include "field_sprite.h"
 #include "event_inline.h"
+#include "field/field.h"
 
 struct GabombaStatueChamberObject {
   u8 unk00[6];
@@ -67,16 +68,11 @@ void Func_02001da0(void);
 void Func_02001da8(void);
 void Func_02001e80(s32 actor);
 void Func_02001d30(struct GabombaStatueChamberObject *object);
-void Actor_SetSingleChildFlags(
-    struct GabombaStatueChamberObject *object, u32 value);
-void Animation_SetStateFlags(struct GabombaStatueChamberObject *object,
-                             s32 flags);
 void Field_DispatchTypeHandler(s32 type);
 void Event_FinishScreenTransition(void);
-void Event_WaitTransitionFrames(void);
 void Func_02001ea8(void);
 
-void Event_StartScreenTransition(void);
+#include "event_work.h"
 
 void Func_02001e20(s32 actor, s32 target);
 

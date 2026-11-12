@@ -7,6 +7,7 @@
 #include "scene_ids.h"
 #include "text/msg_ids.h"
 #include "field_sprite.h"
+#include "field/field.h"
 
 struct AlhafraInteriorsObject {
   u8 unk00[6];
@@ -67,9 +68,6 @@ void Func_02000a9c(void);
 void Func_02000bc4(s32 shop, s32 keeper);
 void Func_02000bcc(s32 keeper);
 void Func_02000bd4(s32 shop, s32 keeper);
-void Actor_SetSingleChildFlags(struct AlhafraInteriorsObject *object,
-                                        u32 value);
-void Animation_SetStateFlags(struct AlhafraInteriorsObject *object, s32 flags);
 void Field_DispatchTypeHandler(s32 type);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);

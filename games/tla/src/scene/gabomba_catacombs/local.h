@@ -8,9 +8,8 @@
 #include "scene_tables.h"
 #include "frame.h"
 #include "event_inline.h"
+#include "field/field.h"
 
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
 void Func_0200114c(struct Actor *object, s32 mode);
 void Func_02001154(struct Actor *object, const void *script);
 struct GabombaCatacombsVec;

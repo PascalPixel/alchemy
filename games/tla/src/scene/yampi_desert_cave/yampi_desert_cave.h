@@ -28,13 +28,13 @@ extern const u8 gData_02001d28[];
 extern const u8 gData_02001ddc[];
 extern const u8 gData_02001e78[];
 
-s32 Func_020001d4(struct YampiDesertCaveRect *rect);
+s32 Func_020001d4(s32 *position);
 void Func_02000458(struct YampiDesertCaveRect rect);
 void Func_02000898(void);
 void Func_020008fc(void);
 s32 Func_02000978(u16 *list);
 void Func_0200099c(void);
-void Func_02000bc0(const u8 *a, s32 b, s32 c);
+void Func_02000bc0(u16 *list, s32 mode, s32 count);
 void Func_020018d8(s32 scene, s32 entrance);
 void Func_02001920(s32 a, s32 b, s32 c);
 void Func_02001958(void);

@@ -1,20 +1,26 @@
 /// @file
-/// Gaia.
+/// The Gaia and Rockfall Psynergy.
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
 
-/// The standing wall's top in the rebuilt sheet, 48x96 (stretched from 48x32).
-#define GAIA_WALL_TOP_OFFSETS 5056
-/// The standing wall's foot in the rebuilt sheet, 48x21.
-#define GAIA_WALL_FOOT_OFFSETS (GAIA_WALL_TOP_OFFSETS + 48 * 96)
-#define GAIA_WALL_FOOT_BYTES (48 * 21)
-#define GAIA_FRAMES 192
+/// The pictures Gaia rebuilds in work->sheet from the earth wall sheet, each
+/// starting where the one before ends: the rising wall's nine rows
+/// (gGaia_RowCells), each one line of gGaia_RowWidths stretched to 32 lines;
+/// the standing wall's top and foot; then the three flames of
+/// gGaia_MoundCells.
+enum EarthWallSheetCell {
+  /// 48x96, stretched from 48x32
+  GAIA_WALL_TOP = 32 * (5 + 6 + 9 + 12 + 15 + 18 + 21 + 32 + 40),
+  /// 48x21
+  GAIA_WALL_FOOT = GAIA_WALL_TOP + 48 * 96
+};
+
 #define GAIA_ROCKS 11 ///< rocks that tumble up the wall
 
-/// The ground swells on the targets' side of the field under a narrow shaft of
-/// orange light, which widens into a glowing wall and stands while rocks tumble
-/// up through it and the targets are battered, then narrows away again.
+/// Flames flicker at the targets' feet under a narrow shaft of orange light,
+/// which widens into a glowing wall and stands while rocks tumble up through it
+/// and the targets are battered, then narrows away again.
 ///
 /// Abilities: Gaia, Mother Gaia, Grand Gaia, Rockfall, Rockslide, Avalanche
 /// (BATTLE_EFFECT_GAIA).
@@ -40,7 +46,6 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
   struct SpritePlacement position;
   u8 *src;
   u16 *color;
-  void *palette = (void *)BG_PLTT;
   s32 sheetIndex;
   s32 frame;
   s32 i;
@@ -76,13 +81,15 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
   // palette with background colours 1 to 63 each 8 steps darker a channel.
   Resource_LoadAndDecompress((s32)&ResourceId_EarthWallSheet,
                              Ram_MapGridCellBuffer, 1, 0);
-  Iwram_CopyWords(palette,
+  Iwram_CopyWords((void *)BG_PLTT,
                   Resource_GetTableEntry((s32)&ResourceId_OrangePaletteA), 128);
   color = (u16 *)&BG_PLTT[1];
   for (i = 0; i != 63; i++) {
     s32 entry = *color;
     s32 blue = ((u16)entry >> 10) & 31;
     s32 green = ((u16)entry >> 5) & 31;
+    /* FAKEMATCH(temporary): red holds 31 before the mask; as entry & 31, 56 of
+     * 936 instructions differ in tbs-en. */
     s32 red = 31;
 
     red &= entry;
@@ -99,12 +106,8 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
     *color++ = RGB(red, green, blue);
   }
 
-  // Rebuild the pictures in work->sheet:
-  //   the growing wall: nine one-line rows, each stretched to 32 lines (the
-  //   frame loop draws only the first eight);
-  //   the top of the wall (GAIA_WALL_TOP_OFFSETS): 48x32 stretched to 48x96;
-  //   the foot of the wall (GAIA_WALL_FOOT_OFFSETS): 48x21;
-  //   the swelling ground: three frames.
+  // Rebuild the earth wall sheet's pictures (enum EarthWallSheetCell); the
+  // frame loop draws only the first eight wall rows.
   src = Ram_MapGridCellBuffer;
   sheetIndex = 0;
   for (j = 0; j != 9; j++) {
@@ -121,7 +124,7 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
     }
     src += 48;
   }
-  for (i = 0; i != GAIA_WALL_FOOT_BYTES; i++)
+  for (i = 0; i != 48 * 21; i++)
     work->sheet[sheetIndex++] = *src++;
   for (i = 0; i != 3; i++) {
     for (k = 0; k != gGaia_MoundWidths[i] * gGaia_MoundHeights[i]; k++)
@@ -130,7 +133,7 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
 
   // The rock sprites, of SPRITE_BATTLE_ROCKS: sprites 0 to 3 play animation
-  // 0, 4 to 7 effect 1 and 8 to 10 effect 2.
+  // 0, 4 to 7 animation 1 and 8 to 10 animation 2.
   for (i = 0; i != GAIA_ROCKS; i++) {
     struct Sprite *rock = Sprite_CreateFar(SPRITE_BATTLE_ROCKS);
 
@@ -187,7 +190,7 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
   // The screen shakes throughout: 250 frames outlast the effect, and the
   // ranges given to BattleCamera_Shake below set how hard.
   work->shakeFrames = 250;
-  for (frame = 0; frame != GAIA_FRAMES; frame++) {
+  for (frame = 0; frame != 192; frame++) {
     if (frame == 0)
       Sound_PlayFar(SE_POWER_UP);
     if (frame == 40)
@@ -197,7 +200,8 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
     if (frame == 120)
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 
-    // The swelling ground (frames 0 to 81).
+    // The flames at the wall's foot (frames 0 to 81): from frame 12 they
+    // flicker between their second and third pictures.
     if (frame <= 81) {
       s32 cell = frame / 4;
 
@@ -243,16 +247,14 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
 
     // The standing wall (frames 88 to 159).
     if (frame >= 88 && frame <= 159) {
+      /* FAKEMATCH(temporary): width holds 48; as 48 in the four draws, 380 of
+       * 936 instructions differ in tbs-en. */
       s32 width = 48;
 
-      draw[0](canvas, &work->sheet[GAIA_WALL_TOP_OFFSETS], wallX + 16, 0, width,
-              96);
-      draw[1](canvas, &work->sheet[GAIA_WALL_TOP_OFFSETS], wallX + 64, 0, width,
-              96);
-      draw[0](canvas, &work->sheet[GAIA_WALL_FOOT_OFFSETS], wallX + 16, 96,
-              width, 21);
-      draw[1](canvas, &work->sheet[GAIA_WALL_FOOT_OFFSETS], wallX + 64, 96,
-              width, 21);
+      draw[0](canvas, &work->sheet[GAIA_WALL_TOP], wallX + 16, 0, width, 96);
+      draw[1](canvas, &work->sheet[GAIA_WALL_TOP], wallX + 64, 0, width, 96);
+      draw[0](canvas, &work->sheet[GAIA_WALL_FOOT], wallX + 16, 96, width, 21);
+      draw[1](canvas, &work->sheet[GAIA_WALL_FOOT], wallX + 64, 96, width, 21);
     }
 
     // Dust (from frame 88): until frame 159, dust that leaves the top
@@ -278,7 +280,7 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
     // Rocks (from frame 5): six at half size, then from frame 72 all 11, each
     // larger than the last and larger with the variant. The sprites take
     // turns showing the rocks, moving on every 2 frames; four sprites play
-    // each of effects 0 and 1, three effect 2.
+    // each of animations 0 and 1, three animation 2.
     if (frame > 4) {
       s32 rocks = 6;
 
@@ -289,6 +291,9 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
         s32 slot;
 
         if (rock->variant == 0) {
+          /* FAKEMATCH(dead): scale copied from unitScale before both its
+           * fields are set; without the copy, 51 of 936 instructions differ in
+           * tbs-en. */
           scale = unitScale;
           if (frame > 71) {
             scale.x = (k << 12) + Q16_ONE / 2;
@@ -302,8 +307,9 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
           position.height = px(512) - px(rock->y);
           position.y = px(512);
           slot = (frame / 2 + k) % GAIA_ROCKS;
-          // DEAD: always true, as slot is a remainder of a positive count; the
-          // ROM keeps the test.
+          /* FAKEMATCH(dead): slot != -1 always holds, slot being a remainder
+           * of a positive count; without the test, 166 of 936 instructions
+           * differ in tbs-en. */
           if (slot != -1)
             Actor_ApplyProjectedPlacementFar(work->sprites[slot], &position,
                                              &scale, 0);
@@ -363,8 +369,4 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
   BattleEffect_EndCanvasLayer();
 }
 
-#undef GAIA_WALL_TOP_OFFSETS
-#undef GAIA_WALL_FOOT_OFFSETS
-#undef GAIA_WALL_FOOT_BYTES
-#undef GAIA_FRAMES
 #undef GAIA_ROCKS

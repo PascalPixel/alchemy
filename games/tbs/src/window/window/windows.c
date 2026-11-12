@@ -162,6 +162,8 @@ void WindowSystem_InitBattle(s32 loadGlyphTiles) {
   // neither allocated nor shown, but nonzero, so the text tile search skips
   // them and no clear of the shown bits ever frees them.
   {
+    /* FAKEMATCH(temporary): mode holds the 4; as textTileState[tileIndex] = 4,
+     * 2 of 78 instructions differ in tbs-en. */
     u8 mode = 4;
 
     for (tileIndex = 2; tileIndex >= 0; tileIndex--)
@@ -214,10 +216,8 @@ void Window_EraseBorderRect(s32 x, s32 y, u32 width, u32 height) {
   u32 row;
   u8 *inBattle;
 
-  // 240 << 8 is WINDOW_TILE_BLANK.
-  tile = 240;
+  tile = WINDOW_TILE_BLANK;
   bottom = y + height;
-  tile <<= 8;
   if (bottom > 20)
     height = 20 - y;
   if (width <= 1)
@@ -375,8 +375,6 @@ void Window_WaitZoom(struct Window *window) {
 /// back to the pool at once; a message typing into it lets go of it
 /// once it has closed (Message_UpdateAll). Does nothing for NULL.
 void Window_Close(struct Window *window, s32 instant) {
-  u16 zero;
-
   if (window == 0)
     return;
 
@@ -385,28 +383,27 @@ void Window_Close(struct Window *window, s32 instant) {
   window->previousX = window->x;
   window->previousY = window->y;
   window->previousWidth = window->width;
-  zero = 0;
-  window->flags = zero;
+  window->flags = 0;
   window->previousHeight = window->height;
 
   if (instant != 0) {
     Window_EraseBorderRect(window->x, window->y, window->width, window->height);
     window->sprites.head = NULL;
     window->sprites.tailLink = NULL;
-    window->width = zero;
-    window->height = zero;
-    window->x = zero;
-    window->y = zero;
-    window->opened = zero;
-    window->animation = zero;
-    window->state = zero;
-    window->flags = zero;
-    window->zoomStage = zero;
-    window->duration = zero;
-    window->previousX = zero;
-    window->previousY = zero;
-    window->previousWidth = zero;
-    window->previousHeight = zero;
+    window->width = 0;
+    window->height = 0;
+    window->x = 0;
+    window->y = 0;
+    window->opened = 0;
+    window->animation = 0;
+    window->state = 0;
+    window->flags = 0;
+    window->zoomStage = 0;
+    window->duration = 0;
+    window->previousX = 0;
+    window->previousY = 0;
+    window->previousWidth = 0;
+    window->previousHeight = 0;
   } else {
     // Zoom closed over four frames (Window_UpdateZooms), from frame 0:
     // instant is 0 here.
@@ -589,7 +586,6 @@ struct Message *BattleMessage_Continue(struct Window *window, s32 entry,
   struct Message *message;
   struct Message *selected;
   u16 *spacing;
-  u16 zero;
   u32 index;
 
   message = WINDOW_WORK->messages;
@@ -619,22 +615,21 @@ struct Message *BattleMessage_Continue(struct Window *window, s32 entry,
       selected->x = 3 << 8;
     }
 
-    zero = 0;
     selected->startX = 3 << 8;
-    selected->window->state = zero;
+    selected->window->state = 0;
     // Start the next text run without retaining the previous run's style.
     selected->colour = TEXT_DEFAULT_COLOR;
     selected->lineSpacing = TEXT_DEFAULT_LINE_SPACING;
     selected->textIndex = entry;
-    selected->countdown = zero;
-    selected->outline = zero;
-    selected->line = zero;
-    selected->ended = zero;
+    selected->countdown = 0;
+    selected->outline = 0;
+    selected->line = 0;
+    selected->ended = 0;
     index = 0;
     spacing = selected->spacing;
     do {
       index++;
-      *spacing++ = zero;
+      *spacing++ = 0;
     } while (index < MESSAGE_LINE_COUNT);
   }
   return selected;

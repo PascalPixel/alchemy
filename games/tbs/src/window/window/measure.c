@@ -451,8 +451,9 @@ done:
   // first-page measure, Window_FitOnScreen and the pen (typing.c) in German,
   // French, Spanish and Italian alike, and patch 4 puts the widening back
   // here rather than keeping an older copy: this function has the patch 3
-  // outline reset at a page break too. XXX (no evidence): why only here; a
-  // recording shows the window 2 pixels wider, not whether that was meant.
+  // outline reset at a page break too.
+  // XXX (no evidence): why the widening comes back only here; a recording
+  // shows the window 2 pixels wider, not whether that was meant.
 #if !TBS_PATCH_2 || TBS_PATCH_4
   if (work->mindRead != 0)
     maxWidth += 2;

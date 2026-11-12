@@ -323,7 +323,7 @@ void Actor_SetHorizontalPositionWithTerrain(u32 actorId, s32 x, s32 z) {
 /// Puts the actor at (x, y, z), 16.16 pixels, at rest; an actor
 /// that follows the ground (ACTOR_FOLLOWS_TERRAIN) is raised by the ground
 /// height there, read as Actor_SetHorizontalPositionWithTerrain reads
-/// it. Nothing in ☀️ calls it.
+/// it. Nothing in the game calls it.
 void Actor_SetPositionWithTerrain(u32 actorId, s32 x, s32 y, s32 z) {
   struct Actor *actor;
   s32 groundHeight;
@@ -413,7 +413,7 @@ void Actor_SetAnimationAndWait(u32 actorId, s32 animation) {
 }
 
 /// An empty function, reached only through an unnamed veneer in the object
-/// bank's far-call table; nothing in ☀️ names it.
+/// bank's far-call table; nothing in the game names it.
 void Actor_NoOp(void) {}
 
 /// The event command "actor jump": throws the actor upward at
@@ -845,7 +845,7 @@ s32 Actor_StepAngle(struct Actor *actor) {
 
 /// Clears an actor's destination, puts it under script control and
 /// stands it still. Reached only through an unnamed veneer in the field
-/// sequence bank's far-call table; nothing in ☀️ names it.
+/// sequence bank's far-call table; nothing in the game names it.
 void Actor_ResetTargetAndSetMode1(u32 actorId) {
   struct Actor *actor = Actor_Lookup(actorId);
 

@@ -139,7 +139,7 @@ void FieldEffect_StartFadeOverlay(void *object) {
 }
 
 /// Stops drawing the fade overlay, keeping its work. Reached only through a
-/// bare far-call veneer; no ☀️ code names it.
+/// bare far-call veneer; nothing in the game names it.
 void FadeOverlay_Suspend(void) { Task_SuspendAll(FadeOverlay_DrawMarks); }
 
 /// Draws the fade overlay again after FadeOverlay_Suspend. Reached only

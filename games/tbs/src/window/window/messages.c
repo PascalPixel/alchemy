@@ -284,18 +284,16 @@ u32 MessageArgument_Lookup(u32 kind, u32 clear) {
 s32 Text_CheckPauseSkipped(struct Message *message) {
   struct WindowWork *work = WINDOW_WORK;
   s32 cancelKeys = 0;
-  s32 zero;
 
   if (work->waitingForSound != 0 && Sound_GetBgmRestoreDelayFar() == 0)
     cancelKeys = 1;
-  zero = 0;
   if (gKeysHeld & (KEY_A | KEY_B | KEYS_SHOULDERS))
     cancelKeys = 1;
-  if (cancelKeys != zero) {
-    message->countdown = zero;
+  if (cancelKeys != 0) {
+    message->countdown = 0;
     return 1;
   }
-  return zero;
+  return 0;
 }
 
 /// As Text_CheckPauseSkipped, but on a newly pressed button: the latched
@@ -307,18 +305,16 @@ s32 Text_CheckTextDismissed(struct Message *message) {
   struct WindowWork *work = WINDOW_WORK;
   s32 pressedKeys;
   s32 cancelKeys = 0;
-  u8 zero;
 
   if (work->waitingForSound != 0 && Sound_GetBgmRestoreDelayFar() == 0)
     cancelKeys = 1;
   pressedKeys = gKeysPressed;
-  zero = 0;
-  if (work->mindRead != zero)
+  if (work->mindRead != 0)
     pressedKeys = gKeysPressedLatch;
   if (pressedKeys & (KEY_A | KEY_B | KEYS_SHOULDERS))
     cancelKeys = 1;
   if (cancelKeys != 0) {
-    message->countdown = zero;
+    message->countdown = 0;
     return 1;
   }
   return 0;
@@ -580,8 +576,10 @@ struct Window *Portrait_OpenWindow(s32 speaker, s32 portraitOption, s32 x,
   if (Portrait_GetForSpeaker(speaker) == -1) {
     return 0;
   }
+  /* FAKEMATCH(temporary): negativeFour holds the -4 Portrait_Create takes; as
+   * -4 at the call, 29 of 71 instructions differ in tbs-en. */
   negativeFour = -4;
-  offset = negativeFour;
+  offset = -4;
   if (((struct WindowWork *)work)->mindRead != 0) {
     window = Window_Create(x, y, 6, 5, WINDOW_FLAG_INSTANT);
     offset = 0;

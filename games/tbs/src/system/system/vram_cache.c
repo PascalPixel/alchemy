@@ -58,7 +58,7 @@ s32 VramCache_AllocateBlocks(u32 id, u32 size) {
 }
 
 /// Returns the length, in blocks, of the longest run of free blocks. Nothing
-/// in ☀️ calls it.
+/// in the game calls it.
 s32 VramCache_GetLongestFreeRun(void) {
   s32 run = 0;
   u8 *owner = gVramCacheBlockOwners;

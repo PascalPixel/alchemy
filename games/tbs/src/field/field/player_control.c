@@ -890,8 +890,8 @@ s32 Actor_MoveByKeys(struct Actor *interpreter) {
   struct Actor *actor = interpreter;
 
   struct FieldPosition position;
-  // Unused: gives the stack frame 68 bytes, the size of Actor_MoveOnWorldMap's
-  // probe locals.
+  /* FAKEMATCH(dead): an unused local that gives the stack frame its 80 bytes;
+   * without it, 8 of 213 instructions differ in tbs-en. */
   UNUSED u8 unusedProbeLocals[68];
   struct MapGridCell *sourceCell;
   struct MapGridCell *destinationCell;

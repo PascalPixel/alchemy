@@ -99,7 +99,7 @@ void Func_02005a3c(struct KibomboObject *object);
 void Actor_SetSingleChildFlags(struct KibomboObject *object,
                                         u32 value);
 void Animation_SetStateFlags(struct KibomboObject *object, s32 flags);
-void Actor_SetModeById(s32 actor, s32 mode);
+void Actor_SetModeById(u32 actorId, s32 animation);
 void Task_Add(void (*func)(void), s32 priority);
 void Task_RemoveFar(void (*func)(void));
 void Field_DispatchTypeHandler(s32 type);

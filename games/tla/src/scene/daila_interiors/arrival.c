@@ -30,7 +30,7 @@ struct DailaMapWork {
 extern const u8 gData_02000e04[];
 
 struct DailaStartActor *Actor_GetById(s32 id);
-void Actor_SetModeById(s32 actor, s32 mode);
+void Actor_SetModeById(u32 actorId, s32 animation);
 void Actor_SetSingleChildFlags(struct DailaStartActor *object,
                                         s32 value);
 void Func_02000c58(void);

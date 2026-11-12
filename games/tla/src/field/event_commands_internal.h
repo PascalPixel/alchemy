@@ -48,7 +48,6 @@ s32 Func_080d295c(s32 a);
 struct Actor *Actor_GetById(u32 objectId);
 void Actor_SetHorizontalPositionWithTerrain(u32 objectId, s32 x, s32 z);
 void Actor_MoveToObject(u32 objectId, u32 otherId);
-void Actor_SetModeById(u32 objectId, s32 action);
 void Actor_SetAngleToward(s32 firstId, s32 secondId, s32 frames);
 void FacingObject_TurnPairToFaceEachOther(struct FacingObject *first,
                                           struct FacingObject *second);

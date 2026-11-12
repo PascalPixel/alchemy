@@ -41,7 +41,6 @@ s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 flags);
 void Actor_ArmCallback(s32 actor, s32 angle, s32 frames);
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 follow);
 void Func_02003564(void);
-void Actor_SetModeById(u32 id, s32 mode);
 void Func_080d3b28(s32 id, s32 animation);
 void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 x, s32 z);
 void Actor_Jump(s32 actor, s32 speed, s32 frames);

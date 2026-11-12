@@ -75,7 +75,7 @@ void Actor_ArmCallback(s32 actor, s32 angle, s32 frames);
 void Actor_Jump(s32 actor, s32 speed, s32 frames);
 void Actor_SetPositionAndResetMotion(struct ShrineOfTheSeaGodObject *object,
                                       s32 x, s32 y, s32 z);
-void Actor_SetModeById(s32 actor, s32 mode);
+void Actor_SetModeById(u32 actorId, s32 animation);
 void Func_020039d8(void);
 void Func_020039e0(void);
 void Event_ResolvePendingActions(s32 skip);

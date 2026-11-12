@@ -21,7 +21,6 @@ void GameFlag_ClearBit(s32 flag);
 void wait(s32 frames);
 void Event_Wait(s32 frames);
 struct Actor *Actor_GetById(s32 id);
-void Actor_SetModeById(u32 id, s32 mode);
 struct Actor *Import_ActorCreate(s32 kind, s32 x, s32 y, s32 z);
 void Scene_SetActorSpritePriority(struct Actor *object, s32 priority);
 void Actor_SetPartAttribute(struct Actor *object, s32 attribute);

@@ -350,9 +350,10 @@ void Sanctum_ApplyService(s32 unitId, s32 serviceKind) {
   }
 }
 
-/// Shows the chosen party member walking and the others standing, and draws at
-/// seven tenths of their size (Q16_ONE * 7 / 10 in 16.16) the party members who
-/// do not need the service. The sanctum's Shop_DrawParty.
+/// Shows the chosen party member in animation 30, every party sheet's run
+/// cycle, and the others standing, and draws at seven tenths of their size
+/// (Q16_ONE * 7 / 10 in 16.16) the party members who do not need the service.
+/// The sanctum's Shop_DrawParty.
 void Sanctum_HighlightMembers(struct Window *window, s32 selected) {
   struct ShopWork *shop = gMenuWork;
   s32 memberIndex;

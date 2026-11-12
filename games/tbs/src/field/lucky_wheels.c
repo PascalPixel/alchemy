@@ -238,8 +238,9 @@ void LuckyWheels_DrawCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1, s32 color) {
       y0 = y1;
       y1 = tmp;
       dx = x1 - x0;
-      // DEAD: dy is never read again, as in BattleEffect_DrawClippedCanvasLine,
-      // whose code is the same.
+      /* FAKEMATCH(dead): dy is never read again, as in
+       * BattleEffect_DrawClippedCanvasLine, whose code is the same; without the
+       * store, 92 of 189 instructions differ in tbs-en. */
       dy = y1 - y0;
     }
     step = (ABS(x1 - x0) << 8) / ABS(y1 - y0);
@@ -267,8 +268,9 @@ void LuckyWheels_DrawCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1, s32 color) {
       tmp = y0;
       y0 = y1;
       y1 = tmp;
-      // DEAD: dx is never read again, as in BattleEffect_DrawClippedCanvasLine,
-      // whose code is the same.
+      /* FAKEMATCH(dead): dx is never read again, as in
+       * BattleEffect_DrawClippedCanvasLine, whose code is the same; without the
+       * store, 149 of 189 instructions differ in tbs-en. */
       dx = x1 - x0;
       dy = y1 - y0;
     }
@@ -712,8 +714,9 @@ void LuckyWheels_Update(void) {
             struct Window *window;
             s32 message;
 
-            // DEAD: both arms set the out-of-spins state, so the ticket count
-            // cannot change it; the ROM keeps the compare and both stores.
+            /* FAKEMATCH(dead): both arms set the out-of-spins state, so the
+             * ticket count cannot change it; as the one store, 103 of 1729
+             * instructions differ in tbs-en. */
             if (left > 0)
               work->state = LUCKY_WHEELS_OUT_OF_SPINS;
             else

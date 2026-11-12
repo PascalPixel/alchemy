@@ -582,8 +582,9 @@ void LuckyDice_Run(void) {
     } else if (state == LUCKY_DICE_AIM && frame > 17) {
       // Aiming: Up and Down raise and lower the dice between 32 and 160.
       // B quits, as does running out of coins for a bet; A throws.
-      // DEAD: gKeysRepeat is read twice and discarded before the KEY_UP test;
-      // both loads are in the ROM.
+      /* FAKEMATCH(dead): gKeysRepeat is read twice and discarded before the
+       * KEY_UP test; without the two reads, 189 of 2046 instructions differ in
+       * tbs-en. */
       (void)gKeysRepeat;
       (void)gKeysRepeat;
       if (gKeysHeld & KEY_UP) {
@@ -629,8 +630,9 @@ void LuckyDice_Run(void) {
                                    sprites->coinsWindow, 0, 0);
         for (index = 0; index != DICE_COUNT; index++) {
           rollingDie = &diceWork->particles[index];
-          // DEAD: never true with DICE_COUNT 2; a third die would start
-          // further back and higher up.
+          /* FAKEMATCH(dead): never true with DICE_COUNT 2 (a third die would
+           * start further back and higher up); without the test and its
+           * stores, 133 of 2046 instructions differ in tbs-en. */
           if (index > 1) {
             rollingDie->z = -px(180);
             rollingDie->y = px(96);

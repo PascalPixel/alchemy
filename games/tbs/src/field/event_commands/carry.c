@@ -220,7 +220,8 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
   // Shards: 2 to 3 pixels a frame, 8 to 32 pixels in a random direction.
   for (i = 0; i < CARRY_SHARD_MAX; i++) {
     actor = Actor_Spawn(SPRITE_SPARKLE, pos.x, pos.y, pos.z);
-    // DEAD: nothing reads the shards back; the ROM keeps each store.
+    /* FAKEMATCH(dead): nothing reads the shards back; without the store and
+     * the array, 179 of 531 instructions differ in tbs-en. */
     shards[i] = actor;
     if (actor != NULL) {
       Actor_StartScriptFar(actor, gFieldEffect_FragmentScript);

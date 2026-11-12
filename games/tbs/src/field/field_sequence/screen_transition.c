@@ -340,8 +340,9 @@ void ScreenTransition_UpdateScanlineTable(void) {
     actor = Actor_Lookup(gMainRoutineWork.leaderActorId);
     centerX = (actor->x.fixed - ax) / Q16_ONE;
     centerY = ((actor->z.fixed - actor->y.fixed) - cameraY) / Q16_ONE - 16;
-    // DEAD: the frame counter is read here, where WINDOW_TRANSITION_RIPPLE
-    // forms its index, and the value is not used.
+    /* FAKEMATCH(dead): the frame counter is read here, where
+     * WINDOW_TRANSITION_RIPPLE forms its index, and the value is not used;
+     * without the read, 48 of 885 instructions differ in tbs-en. */
     gFrameCount;
     // This mode writes the two masks and folds the progress the other way
     // round from WINDOW_TRANSITION_LEADER.
@@ -457,8 +458,9 @@ void ScreenTransition_UpdateScanlineTable(void) {
     actor = Actor_Lookup(gMainRoutineWork.leaderActorId);
     centerX = (actor->x.fixed - ax) / Q16_ONE;
     centerY = ((actor->z.fixed - actor->y.fixed) - cameraY) / Q16_ONE - 16;
-    // DEAD: as in WINDOW_TRANSITION_LEADER_INVERSE, the frame counter is read
-    // and not used.
+    /* FAKEMATCH(dead): as in WINDOW_TRANSITION_LEADER_INVERSE, the frame
+     * counter is read and not used; without the read, 68 of 885
+     * instructions differ in tbs-en. */
     gFrameCount;
     *scanlineData++ = state->mask;
     *scanlineData++ = state->active;
@@ -509,8 +511,9 @@ void ScreenTransition_UpdateScanlineTable(void) {
     // Centred 8 pixels above the leader's feet, not 16 as in
     // WINDOW_TRANSITION_LEADER.
     centerY = ((actor->z.fixed - actor->y.fixed) - cameraY) / Q16_ONE - 8;
-    // DEAD: as in WINDOW_TRANSITION_LEADER_INVERSE, the frame counter is read
-    // and not used.
+    /* FAKEMATCH(dead): as in WINDOW_TRANSITION_LEADER_INVERSE, the frame
+     * counter is read and not used; without the read, 88 of 885
+     * instructions differ in tbs-en. */
     gFrameCount;
     *scanlineData++ = state->mask;
     *scanlineData++ = state->active;

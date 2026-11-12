@@ -14,7 +14,7 @@
 #define ENEMY_SUFFIX_LAST 25   ///< the last suffix shown, 'Z'
 #endif
 
-/// Fills battle unit `unitId` (FIRST_ENEMY_UNIT to FIRST_ENEMY_UNIT + 6) with
+/// Fills battle unit `unitId` (FIRST_ENEMY_UNIT to FIRST_ENEMY_UNIT + 5) with
 /// enemy `enemyId`: stats, name with its suffix letter, the items it carries,
 /// rewards and elements. The Djinn the party fights (ENEMY_VENUS_DJINNI_QUARTZ
 /// to ENEMY_JUPITER_DJINNI_LUFF) are put on the party's side, so that a beaten
@@ -40,6 +40,8 @@ s32 BattleUnit_Set(s32 unitId, s32 enemyId, s32 suffix) {
   index = enemyId - ENEMY_ID_FIRST;
   if (unitId < FIRST_ENEMY_UNIT)
     return 0;
+  // BUG: one too many: unit FIRST_ENEMY_UNIT + 6 passes, but Unit_Get has no
+  // seventh enemy unit and gives NULL. No caller passes it.
   if (unitId > FIRST_ENEMY_UNIT + 6)
     return 0;
   if (index > 242)

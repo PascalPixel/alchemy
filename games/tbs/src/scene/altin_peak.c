@@ -1355,13 +1355,13 @@ static void AltinPeak_ShowFirstBeastRoute(void) {
 
   beast = (struct Actor *)Actor_Get(ACTOR_FIRST_WATER_BEAST);
   Event_Start();
-  FieldCamera_SetSpeedParameters(PIXELS(12) / 5, PIXELS(3) / 10);
+  FieldCamera_SetSpeed(2.4);
   FieldCamera_MoveTo(298, CAMERA_KEEP, 337, 1);
   FieldCamera_WaitForMove();
   Sound_Play(SE_BEAST_CRY);
   Actor_RunRepeatedMotion(ACTOR_FIRST_WATER_BEAST, 2);
   Event_Wait(40);
-  FieldCamera_SetSpeedParameters(PIXELS(4) / 5, PIXELS(1) / 10);
+  FieldCamera_SetSpeed(0.8);
   FieldCamera_MoveTo(295, 32, 212, 1);
   // Run the timed hopping update routine while the beast moves along its route.
   ((struct FieldEffect *)beast)->countdown = 0;
@@ -1460,7 +1460,7 @@ static void AltinPeak_ShowFirstBeastRoute(void) {
   MapGrid_CopyCellAttributes(2, 0, 1, 1, 18, 13);
   MapGrid_CopyCellAttributes(4, 0, 1, 1, 19, 13);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  FieldCamera_SetSpeedParameters(PIXELS(24) / 5, PIXELS(3) / 5);
+  FieldCamera_SetSpeed(4.8);
   FieldCamera_MoveWithinMapBounds(leader->x.fixed, leader->y.fixed,
                                   leader->z.fixed, 1);
   FieldCamera_WaitForMove();

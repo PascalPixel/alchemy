@@ -723,7 +723,7 @@ static void Imil_TalkToWeaponMerchant(void) {
   } else {
     if (IMIL_FACES_COUNTER(facing)) {
       Event_Start();
-      FieldCamera_SetSpeedParameters(PIXELS(6), PIXELS(3) / 4);
+      FieldCamera_SetSpeed(6);
       FieldCamera_MoveTo(426, CAMERA_KEEP, 492, 1);
       FieldCamera_WaitForMove();
       Event_Wait(20);
@@ -762,7 +762,7 @@ static void Imil_TalkToArmorMerchant(void) {
   } else {
     if (IMIL_FACES_COUNTER(facing)) {
       Event_Start();
-      FieldCamera_SetSpeedParameters(PIXELS(6), PIXELS(3) / 4);
+      FieldCamera_SetSpeed(6);
       FieldCamera_MoveTo(426, CAMERA_KEEP, 492, 1);
       FieldCamera_WaitForMove();
       Event_Wait(20);
@@ -1456,7 +1456,7 @@ static void Imil_MiaSaysFarewellToApprentices(void) {
   Actor_WalkTo(ACTOR_PARTY_LEADER, 690, 200);
 
   FieldCamera_GetActor()->motionFlags = 0;
-  FieldCamera_SetSpeedParameters(PIXELS(4) / 5, PIXELS(1) / 10);
+  FieldCamera_SetSpeed(0.8);
   FieldCamera_MoveTo(690, 0, 164, 1);
   work = gFieldWork;
   work->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);

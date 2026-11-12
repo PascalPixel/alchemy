@@ -1588,7 +1588,7 @@ static void MercuryLighthouseAerie_CallLift(void) {
   Actor_Get(ACTOR_LIFT_STATUE)->y.fixed = -PIXELS(32);
   Actor_Get(ACTOR_LIFT_STATUE)->targetY = -PIXELS(32);
   FieldCamera_GetActor()->motionFlags = 0;
-  FieldCamera_SetSpeedParameters(PIXELS(4) / 5, PIXELS(1) / 10);
+  FieldCamera_SetSpeed(0.8);
   FieldCamera_MoveTo(128, CAMERA_KEEP, 184, 1);
   FieldCamera_WaitForArrival();
   Event_Wait(30);

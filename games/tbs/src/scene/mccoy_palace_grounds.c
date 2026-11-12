@@ -403,7 +403,7 @@ static void McCoyPalaceGrounds_GuardsArrestParty(void) {
   wait(1);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 320, 372);
   Event_StartScreenTransition();
-  FieldCamera_SetSpeedParameters(PIXELS(1) / 5, PIXELS(1) / 40);
+  FieldCamera_SetSpeed(0.2);
   FieldCamera_MoveTo(320, CAMERA_KEEP, 290, 1);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.6);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 320, 310);

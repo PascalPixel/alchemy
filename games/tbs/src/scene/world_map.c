@@ -938,7 +938,7 @@ s32 WorldMap_Initialize(void) {
     gFieldWork->transition = SCENE_TRANSITION(TRANSITION_CENTRE_LINE, 0);
     gFieldWork->transitionFrames = 16;
     wait(1);
-    FieldCamera_SetSpeedParameters(PIXELS(8), PIXELS(1));
+    FieldCamera_SetSpeed(8);
     GameFlag_Clear(FLAG_SHOW_AREA_NAME);
     Task_AddFrame(WorldMap_UpdateAreaContacts, TASK_PASS_FRAME);
     if (GameFlag_Get(FLAG_LAMAKAN_MANTICORE_BEATEN) == 0) {
@@ -2002,7 +2002,7 @@ static void WorldMap_RunBlackOrbEvent(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
   WorldMap_Unfreeze();
   WorldMap_StartZoom(7 * Q16_ONE / 5, 10);
-  FieldCamera_SetSpeedParameters(PIXELS(8), PIXELS(1));
+  FieldCamera_SetSpeed(8);
   FieldCamera_MoveTo(6024, CAMERA_KEEP, 3432, 1);
   FieldCamera_WaitForMove();
   Event_Wait(40);
@@ -2498,7 +2498,7 @@ static void WorldMap_ShakeVenusLighthouse(void) {
   Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
   wait(1);
-  FieldCamera_SetSpeedParameters(PIXELS(4), PIXELS(1) / 2);
+  FieldCamera_SetSpeed(4);
   {
     s32 priority = TASK_PASS_FRAME;
     TaskFunc func = WorldMap_UpdateLighthouseQuake;

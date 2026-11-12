@@ -1903,7 +1903,7 @@ static void ValePrologue_WatchAttemptToSaveFelix(void) {
   Event_Wait(20);
   Scene_PlayQueuedMusic();
   Event_Wait(20);
-  FieldCamera_SetSpeedParameters(PIXELS(8) / 5, PIXELS(1) / 5);
+  FieldCamera_SetSpeed(1.6);
   FieldCamera_MoveTo(216, CAMERA_KEEP, 1232, 1);
   FieldCamera_WaitForMove();
   Actor_RunRepeatedMotion(ACTOR_JENNAS_FATHER, 2);
@@ -2263,12 +2263,12 @@ static void ValePrologue_BoulderSweepsThemAway(void) {
       // "Is that you, Jenna?"
       Event_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_DORA, 0, 10);
       Actor_FaceDirection(ACTOR_JENNA_CHILD, FACING_NORTHWEST, 0);
-      FieldCamera_SetSpeedParameters(PIXELS(6) / 5, PIXELS(3) / 20);
+      FieldCamera_SetSpeed(1.2);
       FieldCamera_MoveTo(101, CAMERA_KEEP, 1197, 1);
       Actor_SetSpeed(ACTOR_DORA, 1.4);
       Actor_SetScript(ACTOR_DORA, gValePrologue_DoraRunsToRiver);
       Event_Wait(60);
-      FieldCamera_SetSpeedParameters(PIXELS(3) / 5, PIXELS(3) / 40);
+      FieldCamera_SetSpeed(0.6);
       FieldCamera_MoveTo(187, CAMERA_KEEP, 1328, 1);
       FieldCamera_WaitForMove();
       Event_Wait(40);
@@ -2278,7 +2278,7 @@ static void ValePrologue_BoulderSweepsThemAway(void) {
       Actor_RunRepeatedMotion(ACTOR_DORA, 2);
       // "I couldn't find anyone who could help... How did you do?"
       Event_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_DORA, 0, 20);
-      FieldCamera_SetSpeedParameters(PIXELS(2), PIXELS(1) / 4);
+      FieldCamera_SetSpeed(2);
       FieldCamera_MoveTo(221, CAMERA_KEEP, 1385, 1);
       Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_EXHAUSTED_STRONGMAN, 0);
       Actor_FaceActor(ACTOR_GARET_CHILD, ACTOR_EXHAUSTED_STRONGMAN, 0);

@@ -1020,7 +1020,7 @@ static void FuchinTemple_ForceTree(void) {
     FuchinTemple_ToppleTreeEast();
   }
 
-  FieldCamera_SetSpeedParameters(PIXELS(1), PIXELS(1) / 8);
+  FieldCamera_SetSpeed(1);
   FieldCamera_MoveToActorById(ACTOR_TRAINING_TREE_TARGET, 1);
   FieldCamera_WaitForArrival();
 

@@ -1422,7 +1422,7 @@ static void CrossboneIsleSteppingStones_FreezeThirdPuddle(void) {
   if (set == 0) {
     GameFlag_Set(FLAG_CROSSBONE_ISLE_DRAGON_STATUE_FIRST_PUDDLE_FROZEN + 2);
     Event_Start();
-    FieldCamera_SetSpeedParameters(PIXELS(3) / 5, PIXELS(3) / 40);
+    FieldCamera_SetSpeed(0.6);
     FieldCamera_MoveTo(312, CAMERA_KEEP, 184, 1);
     FieldCamera_WaitForMove();
     Event_Wait(20);

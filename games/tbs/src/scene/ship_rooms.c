@@ -1660,7 +1660,7 @@ static void ShipRooms_WatchCrewWonderAtDelay(void) {
 
   Event_Start();
   Field_EndBusyAndReveal();
-  FieldCamera_SetSpeedParameters(PIXELS(8) / 5, PIXELS(1) / 5);
+  FieldCamera_SetSpeed(1.6);
   ShipRooms_MoveCameraAndWait(448, CAMERA_KEEP, 638,
                               SHIP_CAMERA_WAIT_FOR_ARRIVAL | 40);
   Event_SetMessageId(MsgTolbiShipWonderCouldHaveHappened);
@@ -2952,7 +2952,7 @@ static void ShipRooms_ShowRowing(void) {
   ShipRooms_RunEventCommand(SHIP_HIDE_OARS, 0, 0);
   ShipRooms_InstallRowingDeckActors(0);
   ShipRooms_RunEventCommand(SHIP_OPEN_SCREEN, 1, 20);
-  FieldCamera_SetSpeedParameters(PIXELS(2) / 5, PIXELS(1) / 20);
+  FieldCamera_SetSpeed(0.4);
   FieldCamera_MoveTo(440, CAMERA_KEEP, 176, 1);
   Event_Wait(20);
   Actor_SetAnimation(ACTOR_ROWING_DRUMMER, 7);

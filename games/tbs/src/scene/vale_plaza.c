@@ -696,7 +696,7 @@ static void ValePlaza_TalkAboutFallenStone(void) {
   Actor_FaceActor(ACTOR_HUT_OWNER, ACTOR_FALLEN_STONE_SPOT, 40);
   Event_SetMessageId(MsgValeTheStoneFellOnThe);
   ValePlaza_SayThenWait(ACTOR_HUT_OWNER, 20);
-  FieldCamera_SetSpeedParameters(PIXELS(8) / 5, PIXELS(1) / 5);
+  FieldCamera_SetSpeed(1.6);
   FieldCamera_MoveTo(337, CAMERA_KEEP, 272, 1);
   Event_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_HUT_OWNER, 2);
@@ -1370,14 +1370,14 @@ static void ValePlaza_FightTravelers(void) {
   southSouthwestFacing = FACING_SOUTH_SOUTHWEST;
   ValePlaza_FaceDirectionAndWait(ACTOR_SECOND_TRAVELER, southSouthwestFacing,
                                  40);
-  FieldCamera_SetSpeedParameters(PIXELS(3) / 2, PIXELS(3) / 16);
+  FieldCamera_SetSpeed(1.5);
   FieldCamera_MoveTo(89, 176, 313, 1);
   FieldCamera_WaitForMove();
   Event_Wait(40);
   Actor_FaceDirection(ACTOR_FIRST_TRAVELER, FACING_NORTHEAST, 0);
   ValePlaza_FaceDirectionAndWait(ACTOR_SECOND_TRAVELER, FACING_WEST_SOUTHWEST,
                                  40);
-  FieldCamera_SetSpeedParameters(PIXELS(4) / 5, PIXELS(1) / 10);
+  FieldCamera_SetSpeed(0.8);
   FieldCamera_MoveTo(100, 144, 333, 1);
   Actor_SetSpeed(ACTOR_FIRST_TRAVELER, 1);
   Actor_SetSpeed(ACTOR_SECOND_TRAVELER, 1);

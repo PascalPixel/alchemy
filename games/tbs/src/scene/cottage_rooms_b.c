@@ -902,7 +902,7 @@ static void CottageRoomsB_HurryToThePlaza(void) {
   Event_SetMessageId(MsgValeDoraHurryBoulder);
   // "Isaac, Dora, hurry! The Boulder could fall at any second!"
   Event_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | ACTOR_KYLE, 0, 10);
-  FieldCamera_SetSpeedParameters(PIXELS(3) / 2, PIXELS(3) / 16);
+  FieldCamera_SetSpeed(1.5);
   FieldCamera_MoveTo(480, CAMERA_KEEP, 444, 1);
   FieldCamera_WaitForArrival();
   Event_Wait(20);
@@ -955,7 +955,7 @@ ramp:
   Actor_SetAnimation(ACTOR_DORA, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Event_Wait(40);
-  FieldCamera_SetSpeedParameters(PIXELS(4) / 5, PIXELS(1) / 10);
+  FieldCamera_SetSpeed(0.8);
   FieldCamera_FollowActor(ACTOR_DORA, 1);
   Actor_SetScript(ACTOR_DORA, gCottageRoomsB_RunToPlazaScript);
   Actor_RunScriptAndWait(ACTOR_PARTY_LEADER, gCottageRoomsB_RunToPlazaScript);

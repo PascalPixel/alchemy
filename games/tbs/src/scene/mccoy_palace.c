@@ -870,7 +870,7 @@ static void McCoyPalace_AudienceWithMcCoy(void) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.6);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 894, 684);
   Event_Wait(80);
-  FieldCamera_SetSpeedParameters(PIXELS(3) / 5, PIXELS(3) / 40);
+  FieldCamera_SetSpeed(0.6);
   FieldCamera_MoveTo(894, CAMERA_KEEP, 664, 1);
   Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);

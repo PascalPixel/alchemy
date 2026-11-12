@@ -1333,7 +1333,7 @@ static void MogallForest_KillerApeAttacks(void) {
   Actor_SetSpriteColorById(ACTOR_THIRD_AREA_EAST_APE, SPRITE_COLOR_HIDDEN);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_THIRD_AREA_EAST_APE), 0);
   Actor_SetPosition(ACTOR_THIRD_AREA_EAST_APE, 136, 360);
-  FieldCamera_SetSpeedParameters(PIXELS(1) / 2, PIXELS(1) / 16);
+  FieldCamera_SetSpeed(0.5);
   FieldCamera_MoveTo(136, CAMERA_KEEP, 392, 1);
   FieldCamera_WaitForArrival();
   Event_Wait(60);

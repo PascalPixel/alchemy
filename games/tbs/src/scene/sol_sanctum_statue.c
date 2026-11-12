@@ -545,7 +545,7 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   Event_Wait(6);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST_NORTHWEST, 0);
   Event_Wait(10);
-  FieldCamera_SetSpeedParameters(PIXELS(28) / 5, PIXELS(7) / 10);
+  FieldCamera_SetSpeed(5.6);
   FieldCamera_MoveTo(287, CAMERA_KEEP, 176, 1);
   FieldCamera_WaitForMove();
   Event_Wait(60);
@@ -607,7 +607,7 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH, 0);
-  FieldCamera_SetSpeedParameters(PIXELS(4) / 5, PIXELS(1) / 10);
+  FieldCamera_SetSpeed(0.8);
   FieldCamera_MoveTo(574, CAMERA_KEEP, 171, 1);
   Actor_Jump(ACTOR_KRADEN, 6, 0);
   Actor_SetSpeedAndAcceleration(ACTOR_KRADEN, 3, 2);
@@ -667,7 +667,7 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   Actor_Jump(ACTOR_KRADEN, 6, 0);
   Actor_WalkToAndWait(ACTOR_KRADEN, 576, 216);
   Event_Wait(40);
-  FieldCamera_SetSpeedParameters(PIXELS(4) / 5, PIXELS(1) / 10);
+  FieldCamera_SetSpeed(0.8);
   FieldCamera_MoveTo(574, CAMERA_KEEP, 191, 1);
   Actor_SetSpeed(ACTOR_KRADEN, 1);
   Actor_WalkToAndWait(ACTOR_KRADEN, 576, 232);
@@ -1675,7 +1675,7 @@ static void SolSanctumStatue_OpenSeal(void) {
   Event_Start();
   if (!GameFlag_Get(FLAG_SOL_SANCTUM_ALL_SEALS_OPEN)) {
     // Show the configured seal and flash its two tile states.
-    FieldCamera_SetSpeedParameters(PIXELS(2), PIXELS(1) / 4);
+    FieldCamera_SetSpeed(2);
     FieldCamera_MoveTo(576, CAMERA_KEEP, 172, 1);
     FieldCamera_WaitForMove();
     Sound_Play(SE_SOL_SANCTUM_LIGHT_UP);

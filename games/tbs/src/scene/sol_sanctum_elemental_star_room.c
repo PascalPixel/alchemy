@@ -247,7 +247,7 @@ static void SolSanctumElementalStarRoom_BagVenusStar(void) {
   }
   MapGrid_SetShake(PIXELS(1), PIXELS(2), Q16_ONE);
   Event_Wait(30);
-  FieldCamera_SetSpeedParameters(PIXELS(12) / 5, PIXELS(3) / 10);
+  FieldCamera_SetSpeed(2.4);
   FieldCamera_MoveTo(664, CAMERA_KEEP, 497, 1);
   FieldCamera_WaitForMove();
   Event_Wait(20);
@@ -258,7 +258,7 @@ static void SolSanctumElementalStarRoom_BagVenusStar(void) {
   OPEN_RISEN_PILLAR(41, 29);
   Event_Wait(40);
   MapGrid_SetScreenShake(0, 0, 0);
-  FieldCamera_SetSpeedParameters(PIXELS(32) / 5, PIXELS(4) / 5);
+  FieldCamera_SetSpeed(6.4);
   FieldCamera_MoveTo(311, CAMERA_KEEP, 497, 1);
   FieldCamera_WaitForMove();
   MapGrid_SetShake(PIXELS(1), PIXELS(2), Q16_ONE);

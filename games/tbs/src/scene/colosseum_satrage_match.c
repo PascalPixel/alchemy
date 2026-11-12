@@ -1269,7 +1269,7 @@ static void ColosseumSatrageMatch_TalkToMiniMazeAttendant(s32 attendant) {
     result = Colosso_GreetAtStage(attendant, 1);
     if (result == COLOSSO_GUIDE_DESCRIBE) {
       Event_SetMessageId(MsgColossoStageDubbedMini);
-      FieldCamera_SetSpeedParameters(PIXELS(3), PIXELS(3) / 8);
+      FieldCamera_SetSpeed(3);
       FieldCamera_MoveTo(1224, CAMERA_KEEP, 184, 1);
       FieldCamera_WaitForMove();
       // "This stage is dubbed the Mini-Maze."
@@ -1423,7 +1423,7 @@ static void ColosseumSatrageMatch_TalkToWallAttendant(s32 attendant) {
   result = Colosso_GreetAtStage(attendant, 4);
   if (result == COLOSSO_GUIDE_DESCRIBE) {
     Event_SetMessageId(MsgColossoFansJustCallWall);
-    FieldCamera_SetSpeedParameters(PIXELS(3), PIXELS(3) / 8);
+    FieldCamera_SetSpeed(3);
     FieldCamera_MoveTo(536, CAMERA_KEEP, 240, 1);
     FieldCamera_WaitForMove();
     Event_Wait(45);
@@ -1525,7 +1525,7 @@ static void ColosseumSatrageMatch_TalkToBoardWalkAttendant(s32 attendant) {
   result = Colosso_GreetAtStage(attendant, 5);
   if (result == COLOSSO_GUIDE_DESCRIBE) {
     Event_SetMessageId(MsgColossoPlaceCalledBoard);
-    FieldCamera_SetSpeedParameters(PIXELS(2), PIXELS(1) / 4);
+    FieldCamera_SetSpeed(2);
     FieldCamera_MoveTo(328, CAMERA_KEEP, 264, 1);
     FieldCamera_WaitForMove();
     Event_Wait(30);

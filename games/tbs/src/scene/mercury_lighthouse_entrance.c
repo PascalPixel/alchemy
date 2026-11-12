@@ -628,7 +628,7 @@ static void MercuryLighthouseEntrance_LizardManBlocksMia(void) {
   Actor_SetSpeed(ACTOR_MIA, 1.5);
   Actor_SetSpeed(ACTOR_LIZARD_MAN, 1.5);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.8);
-  FieldCamera_SetSpeedParameters(PIXELS(4) / 5, PIXELS(1) / 10);
+  FieldCamera_SetSpeed(0.8);
   FieldCamera_MoveTo(136, CAMERA_KEEP, 184, 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();

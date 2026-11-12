@@ -715,7 +715,7 @@ static void ColosseumEntrance_CrowdRecognizesIsaac(void) {
   Actor_FaceDirection(ACTOR_FIRST_GATE_SOLDIER + 2, FACING_SOUTH_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_FIRST_GATE_SOLDIER + 3, FACING_SOUTH_SOUTHEAST, 0);
   FieldCamera_GetActor()->motionFlags = 0;
-  FieldCamera_SetSpeedParameters(PIXELS(8) / 5, PIXELS(1) / 5);
+  FieldCamera_SetSpeed(1.6);
   FieldCamera_MoveTo(256, CAMERA_KEEP, 172, 1);
   FieldCamera_WaitForArrival();
   Event_Wait(20);
@@ -807,7 +807,7 @@ static void ColosseumEntrance_CrowdRecognizesIsaac(void) {
     Actor_SetScript(ACTOR_GARET, gColosseumEntrance_GatherIntoIsaacScript);
     Actor_SetScript(ACTOR_IVAN, gColosseumEntrance_GatherIntoIsaacScript);
     Actor_RunScriptAndWait(ACTOR_MIA, gColosseumEntrance_GatherIntoIsaacScript);
-    FieldCamera_SetSpeedParameters(PIXELS(2) / 5, PIXELS(1) / 20);
+    FieldCamera_SetSpeed(0.4);
     FieldCamera_MoveTo(256, CAMERA_KEEP, 100, 1);
     Actor_SetSpeed(ACTOR_FIRST_GATE_SOLDIER, 1);
     Actor_SetScript(ACTOR_FIRST_GATE_SOLDIER,
@@ -865,7 +865,7 @@ static void ColosseumEntrance_CrowdRecognizesIsaac(void) {
       Actor_SetScript(ACTOR_IVAN, gColosseumEntrance_GatherIntoIsaacScript);
       Actor_RunScriptAndWait(ACTOR_MIA,
                              gColosseumEntrance_GatherIntoIsaacScript);
-      FieldCamera_SetSpeedParameters(PIXELS(2) / 5, PIXELS(1) / 20);
+      FieldCamera_SetSpeed(0.4);
       FieldCamera_MoveTo(256, CAMERA_KEEP, 100, 1);
       Actor_SetSpeed(ACTOR_FIRST_GATE_SOLDIER, 1);
       Actor_SetScript(ACTOR_FIRST_GATE_SOLDIER,
@@ -897,7 +897,7 @@ static void ColosseumEntrance_CrowdRecognizesIsaac(void) {
       ColosseumEntrance_FaceDirection(ACTOR_GARET, FACING_NORTH);
       Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
       ColosseumEntrance_ShowMessageAndPause(ACTOR_GARET);
-      FieldCamera_SetSpeedParameters(PIXELS(2) / 5, PIXELS(1) / 20);
+      FieldCamera_SetSpeed(0.4);
       FieldCamera_MoveTo(256, CAMERA_KEEP, 100, 1);
       Actor_SetSpeed(ACTOR_FIRST_GATE_SOLDIER, 1);
       Actor_SetScript(ACTOR_FIRST_GATE_SOLDIER,

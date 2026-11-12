@@ -606,7 +606,7 @@ static void LemurianShip_SetSail(void) {
   Actor_WalkByAndWait(ACTOR_GANGWAY_NORTH, 60, 0);
   Event_Wait(80);
   Event_Wait(100);
-  FieldCamera_SetSpeedParameters(PIXELS(11) / 5, PIXELS(1) / 100);
+  FieldCamera_SetSpeedAndAcceleration(2.2, 0.01);
   FieldCamera_MoveTo(808, CAMERA_KEEP, 168, 1);
   Event_Wait(300);
   // Fade out to the clear screen.

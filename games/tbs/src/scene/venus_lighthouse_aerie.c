@@ -627,7 +627,7 @@ static void VenusLighthouseAerie_OverhearSaturosAndMenardi(void) {
   Actor_FaceDirection(ACTOR_IVAN, FACING_WEST, 0);
   VenusLighthouseAerie_FaceActor(ACTOR_MIA, FACING_WEST);
   FieldCamera_GetActor()->motionFlags = 0;
-  FieldCamera_SetSpeedParameters(PIXELS(24) / 5, PIXELS(3) / 5);
+  FieldCamera_SetSpeed(4.8);
   FieldCamera_MoveTo(304, 32, 158, 1);
   FieldCamera_WaitForMove();
   Event_Wait(20);
@@ -646,7 +646,7 @@ static void VenusLighthouseAerie_OverhearSaturosAndMenardi(void) {
   Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTH_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_MENARDI, FACING_SOUTH_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_SATUROS, FACING_SOUTH_SOUTHWEST, 20);
-  FieldCamera_SetSpeedParameters(PIXELS(8) / 5, PIXELS(1) / 5);
+  FieldCamera_SetSpeed(1.6);
   FieldCamera_MoveTo(294, CAMERA_KEEP, 194, 1);
   Event_Wait(20);
   Actor_SetSpeed(ACTOR_FELIX, 0.8);
@@ -722,7 +722,7 @@ static void VenusLighthouseAerie_OverhearSaturosAndMenardi(void) {
   Actor_ShowEmote(ACTOR_MENARDI, EMOTE_IN_FRONT | EMOTE_QUESTION, 80);
   Actor_FaceDirection(ACTOR_MENARDI, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_SATUROS, FACING_WEST, 0);
-  FieldCamera_SetSpeedParameters(PIXELS(2) / 5, PIXELS(1) / 20);
+  FieldCamera_SetSpeed(0.4);
   FieldCamera_MoveTo(294, CAMERA_KEEP, 180, 1);
   Actor_WalkToAndWait(ACTOR_FELIX, 262, 176);
   Actor_FaceDirection(ACTOR_FELIX, FACING_WEST, 40);

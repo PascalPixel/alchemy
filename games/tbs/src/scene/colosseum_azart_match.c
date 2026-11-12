@@ -1117,11 +1117,11 @@ static void ColosseumAzartMatch_TalkToPipeworksAttendant(s32 attendant) {
     path = Colosso_GreetAtStage(attendant, 2);
     if (path == COLOSSO_GUIDE_DESCRIBE) {
       Event_SetMessageId(MsgColossoAreaCalledPipeworks);
-      FieldCamera_SetSpeedParameters(PIXELS(3), PIXELS(3) / 8);
+      FieldCamera_SetSpeed(3);
       FieldCamera_MoveTo(592, CAMERA_KEEP, 120, 1);
       FieldCamera_WaitForMove();
       Event_Wait(60);
-      FieldCamera_SetSpeedParameters(PIXELS(3) / 2, PIXELS(3) / 16);
+      FieldCamera_SetSpeed(1.5);
       FieldCamera_MoveTo(608, CAMERA_KEEP, 216, 1);
       FieldCamera_WaitForMove();
       // "This area is called the Pipeworks."

@@ -1645,7 +1645,7 @@ static void ColosseumNavampaMatch_TalkToScalesAttendant(s32 guideId) {
   if (promptResult == COLOSSO_GUIDE_DESCRIBE) {
     // Point out the ledges, demonstrate both heights, then restore the stage.
     Event_SetMessageId(MsgColossoStageCalledScales);
-    FieldCamera_SetSpeedParameters(PIXELS(3), PIXELS(3) / 8);
+    FieldCamera_SetSpeed(3);
     FieldCamera_MoveTo(152, CAMERA_KEEP, 200, 1);
     FieldCamera_WaitForMove();
     Event_Wait(30);
@@ -1775,7 +1775,7 @@ static void ColosseumNavampaMatch_TalkToWallWedgeAttendant(s32 guideId) {
       work = gFieldWork;
       Event_SetMessageId(MsgColossoPlaceCalledWall);
       ColosseumNavampaMatch_ResetWallWedge();
-      FieldCamera_SetSpeedParameters(PIXELS(3), PIXELS(3) / 8);
+      FieldCamera_SetSpeed(3);
       FieldCamera_MoveTo(616, CAMERA_KEEP, 184, 1);
       FieldCamera_WaitForMove();
       Event_Wait(30);
@@ -2000,7 +2000,7 @@ static void ColosseumNavampaMatch_TalkToLogRollingAttendant(s32 actorId) {
 
   if (state == COLOSSO_GUIDE_DESCRIBE) {
     Event_SetMessageId(MsgColossoAnotherLogRollingArea);
-    FieldCamera_SetSpeedParameters(PIXELS(3), PIXELS(3) / 8);
+    FieldCamera_SetSpeed(3);
     FieldCamera_MoveTo(1288, CAMERA_KEEP, 152, 1);
     FieldCamera_WaitForMove();
     Event_Wait(30);

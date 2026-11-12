@@ -524,7 +524,7 @@ s32 Sanctum_Initialize(void) {
 /// village, you cannot take back your decision."
 static void Sanctum_WarnBeforeLeaving(void) {
   Event_Start();
-  FieldCamera_SetSpeedParameters(PIXELS(1), PIXELS(1) / 8);
+  FieldCamera_SetSpeed(1);
   FieldCamera_MoveToActorById(ACTOR_GARET, 1);
   FieldCamera_WaitForMove();
   Event_Wait(20);

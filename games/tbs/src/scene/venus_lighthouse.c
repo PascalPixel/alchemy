@@ -2314,7 +2314,7 @@ static void VenusLighthouse_CarryFloatingPillar(void) {
       }
       other = Actor_Get(settledIndex + ACTOR_FIRST_FLOATING_PILLAR);
       FloatingPillar_Settle(other, 0);
-      FieldCamera_SetSpeedParameters(PIXELS(3), PIXELS(3) / 8);
+      FieldCamera_SetSpeed(3);
       FieldCamera_GetActor()->motionFlags = 0;
       FieldCamera_MoveTo(136, 8, 344, 1);
       FieldCamera_WaitForMove();
@@ -3532,7 +3532,7 @@ static void VenusLighthouse_AnimateWestTileWave(void) {
   Event_WaitTransitionFrames();
   Event_Wait(40);
   Sound_Play(SE_WAVE);
-  FieldCamera_SetSpeedParameters(PIXELS(1) / 2, PIXELS(1) / 16);
+  FieldCamera_SetSpeed(0.5);
   FieldCamera_MoveTo(440, CAMERA_KEEP, 360, 1);
   extraBursts = 0;
   row = 0;
@@ -3600,7 +3600,7 @@ static void VenusLighthouse_AnimateEastTileWave(void) {
   Event_WaitTransitionFrames();
   Event_Wait(40);
   Sound_Play(SE_WAVE);
-  FieldCamera_SetSpeedParameters(PIXELS(1) / 2, PIXELS(1) / 16);
+  FieldCamera_SetSpeed(0.5);
   FieldCamera_MoveTo(568, CAMERA_KEEP, 360, 1);
   extraBursts = 0;
   row = 0;

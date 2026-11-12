@@ -442,7 +442,7 @@ static void SolSanctumLunaSolRooms_KradenFindsHeartOfSanctum(void) {
     Actor_SetAnimation(ACTOR_GARET, ANIM_STAND);
     Actor_FaceDirection(ACTOR_GARET, FACING_NORTH_NORTHEAST, 0);
     Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH_NORTHWEST, 30);
-    FieldCamera_SetSpeedParameters(PIXELS(3) / 5, PIXELS(3) / 40);
+    FieldCamera_SetSpeed(0.6);
     FieldCamera_MoveTo(288, CAMERA_KEEP, 213, 1);
     Actor_SetSpeed(ACTOR_KRADEN, 0.4);
     Actor_WalkToAndWait(ACTOR_KRADEN, 288, 176);
@@ -1346,7 +1346,7 @@ static void SolSanctumLunaSolRooms_RiseToElementalStarRoom(void) {
     Event_Wait(60);
     // Raise Isaac first, then shrink his sprite into the passage.
     actor = Actor_Get(ACTOR_PARTY_LEADER);
-    FieldCamera_SetSpeedParameters(PIXELS(3) / 5, PIXELS(3) / 40);
+    FieldCamera_SetSpeed(0.6);
     FieldCamera_MoveTo(287, CAMERA_KEEP, 114, 1);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 288, 120);
     Event_Wait(20);

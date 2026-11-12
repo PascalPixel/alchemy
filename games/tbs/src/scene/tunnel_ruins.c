@@ -1211,7 +1211,7 @@ static void TunnelRuins_SetStoneOnBalance(void) {
       Actor_Get(settledIndex + ACTOR_WEST_CARRY_STONE)->timer = 0;
       // The camera turns to the balance as the carved stone drops and the
       // platforms move.
-      FieldCamera_SetSpeedParameters(PIXELS(3), PIXELS(3) / 8);
+      FieldCamera_SetSpeed(3);
       FieldCamera_GetActor()->motionFlags = 0;
       FieldCamera_MoveTo(168, 8, 184, 1);
       FieldCamera_WaitForMove();

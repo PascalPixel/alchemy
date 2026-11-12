@@ -257,7 +257,7 @@ static void KolimaForestFloodgate_FlipFloodgateSwitch(void) {
   s32 nextShakeChance;
 
   Event_Start();
-  FieldCamera_SetSpeedParameters(PIXELS(1), PIXELS(1) / 8);
+  FieldCamera_SetSpeed(1);
   FieldCamera_MoveTo(264, CAMERA_KEEP, 448, 1);
   FieldCamera_WaitForArrival();
   FieldMessage_Show(MsgFieldFlippedSwitch, 1);

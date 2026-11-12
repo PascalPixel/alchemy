@@ -1190,7 +1190,7 @@ static s32 MercuryLighthouse_StartStatueSlide(void) {
 
   cellX = Actor_Get(ACTOR_SLIDING_STATUE)->x.fixed / PIXELS(16);
   cellZ = Actor_Get(ACTOR_SLIDING_STATUE)->z.fixed / PIXELS(16);
-  FieldCamera_SetSpeedParameters(PIXELS(5), PIXELS(5) / 8);
+  FieldCamera_SetSpeed(5);
   FieldCamera_MoveTo(816, CAMERA_KEEP, 712, 1);
   FieldCamera_WaitForArrival();
   // Only the recorded pipe arrangements allow the pipe's next push.

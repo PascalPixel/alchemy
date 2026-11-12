@@ -449,7 +449,7 @@ static void Kolima_LowerBridge(void) {
   Event_SetMessageId(MsgKolimaGoingCrossBridge);
   // "Are you going to cross the bridge?"
   Event_ShowMessage(ACTOR_BRIDGE_VILLAGER, 0);
-  FieldCamera_SetSpeedParameters(PIXELS(2) / 5, PIXELS(1) / 20);
+  FieldCamera_SetSpeed(0.4);
   FieldCamera_MoveTo(168, 0, 234, 1);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.6);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 174, 278);

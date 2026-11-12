@@ -491,8 +491,6 @@ void BattleEffect_RunElementPillar(struct BattleEffectParams *args) {
 
       if (fleck->variant >= 0) {
         s32 size;
-        /* FAKEMATCH(temporary): turnSteps holds 64; as TRIG_TURN / 64, 18 of
-         * 420 instructions differ in tbs-en. */
         s32 turnSteps = 64; // frames a mote takes to circle once
 
         point[0] = fleck->z * Trig_Sin(fleck->x) >> 4;
@@ -590,8 +588,8 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
   s32 y2;
   u8 *startY;
   u8 *startX;
-  s32 centreX;
-  s32 centreY;
+  s32 centreX = SHATTERING_OPENING_DISC_X;
+  s32 centreY = SHATTERING_OPENING_DISC_Y;
 
   work = HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(*work));
   canvas = HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
@@ -757,11 +755,6 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
       v = frame * 4 + 8;
       targetRadius = frame * 32;
       BG_PLTT[2] = RGB(v, v, v);
-      /* FAKEMATCH(temporary): centreX and centreY hold the disc's centre; as
-       * SHATTERING_OPENING_DISC_X and _Y in place, 60 of 1051 instructions
-       * differ in tbs-en. */
-      centreX = SHATTERING_OPENING_DISC_X;
-      centreY = SHATTERING_OPENING_DISC_Y;
       for (; radius != targetRadius; radius++) {
         // The midpoint circle algorithm: one point plots all eight
         // octants, and each is drawn twice, one pixel apart, to fill gaps.

@@ -242,8 +242,6 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
 
     // The standing wall (frames 88 to 159).
     if (frame >= 88 && frame <= 159) {
-      /* FAKEMATCH(temporary): width holds 48; as 48 in the four draws, 380 of
-       * 936 instructions differ in tbs-en. */
       s32 width = 48;
 
       draw[0](canvas, &work->sheet[GAIA_WALL_TOP], wallX + 16, 0, width, 96);

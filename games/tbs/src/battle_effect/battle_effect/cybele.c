@@ -522,9 +522,6 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
             Projection_Point(&dust->x, &screen);
             screen.x >>= 1;
             if (dust->variant >= 0 && dust->variant <= 26) {
-              /* FAKEMATCH(temporary): pictureIndex holds CYBELE_DUST_PICTURE;
-               * as CYBELE_DUST_PICTURE in both reads, 214 of 1434 instructions
-               * differ in tbs-en. */
               s32 pictureIndex = CYBELE_DUST_PICTURE;
               s32 offset = gCybele_BlastPictures[pictureIndex];
               u32 size = gCybele_BlastSizes[pictureIndex];

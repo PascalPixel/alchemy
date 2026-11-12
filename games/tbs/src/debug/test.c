@@ -498,8 +498,9 @@ static void MenuTest_GiveConsumableTestStock(void) {
 /// nothing else reads either. The call the string presumably fed is gone from
 /// every edition.
 static void MenuTest_GivePartyDjinn(void) {
-  // Read only by the loop below, which later editions drop; there it gives the
-  // stack frame its 256 bytes.
+  /* FAKEMATCH(dead): read only by the Japanese loop below, so where the loop
+   * is dropped an unused local that gives the stack frame its 256 bytes; as
+   * declared with the loop, 4 of 232 instructions differ in tbs-en. */
   UNUSED u8 fillBuffer[256];
 #if !TBS_PATCH_1
   s32 pass;

@@ -51,8 +51,9 @@ s32 Battle_Run(s32 enemyGroup) {
   u32 copyIndex;
   u32 actingUnit;
   s16 cue;
-  UNUSED u8
-      unused[48]; // never used: the native stack frame keeps these 48 bytes
+  /* FAKEMATCH(dead): an unused local that gives the stack frame its 48 bytes;
+   * without it, 4 of 645 instructions differ in tbs-en. */
+  UNUSED u8 unused[48];
   // The fill word Dma_Fill32Cell reads its zero from.
   volatile u32 fill;
 

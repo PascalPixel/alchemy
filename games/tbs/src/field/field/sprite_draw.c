@@ -406,7 +406,8 @@ void Render_ApplyProjectedPlacement(struct Sprite *sprite,
   s32 screenY = *pos++;
   s32 groundHeight = *pos;
   s32 slot;
-  // Unused: give the stack frame 24 of its 68 bytes.
+  /* FAKEMATCH(dead): two unused locals that give the stack frame 24 of its 68
+   * bytes; without them, 4 of 250 instructions differ in tbs-en. */
   UNUSED s32 ground[3];
   UNUSED s32 screen[3];
   struct AffineTransform effect;

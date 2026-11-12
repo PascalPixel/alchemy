@@ -430,9 +430,8 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
       // The pillar of lightning, frames 8 to 16: its body on frames 9 to
       // 11, its top on 12 to 15, and on frame 10 up to 512 sparks thrown
       // up from its foot.
-      /* FAKEMATCH(dead): a loop that runs once, j being 0; as its body alone,
-       * with 0 for j and 8 for start, 535 of 1640 instructions differ in
-       * tbs-en. */
+      // DEAD: a loop over one pillar, j being 0; the ROM keeps its counter,
+      // the step of start by 128 and its exit test.
       for (j = 0; j != 1; j++) {
         s32 start = j * 128 + 8;
         if (frame >= start && frame < j * 128 + 17) {

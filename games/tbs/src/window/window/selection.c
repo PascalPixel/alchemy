@@ -862,9 +862,8 @@ void SelectionMenu_StepLeft(struct SelectionMenuWork *state) {
       node = state->head;
       while (node->x != node->targetX)
         wait(1);
-      /* FAKEMATCH(temporary): i counted up to count - 5 rather than
-       * assigned; as i = state->count - 5, 35 of 184 instructions differ in
-       * tbs-en. */
+      // DEAD: i counted up to count - 5 where it could be assigned; the ROM
+      // keeps the counting loop's compares, increment and branches.
       i = 0;
       while (i != state->count - 5)
         i++;

@@ -76,12 +76,14 @@ u32 Party_GetAverageLevel(void) {
 struct Unit *Unit_Get(u32 unitId) {
   struct Unit *states;
   struct Unit *unit;
+  // DEAD: the return address, read and never used; the ROM keeps its copy of
+  // lr into r3.
   void *caller = __builtin_return_address(0);
 
   states = gMainRoutineWork.units;
   /* FAKEMATCH(dead): the party return repeated under a test of the return
-   * address, whose copy of lr into r3 outlives the merged test; as one return
-   * and no return address, 7 of 28 instructions differ in tbs-en. */
+   * address keeps the read alive until the merged test; as one return, 7 of 28
+   * instructions differ in tbs-en. */
   if (caller == NULL) {
     if (unitId <= PIERS) {
       unit = &states[unitId];

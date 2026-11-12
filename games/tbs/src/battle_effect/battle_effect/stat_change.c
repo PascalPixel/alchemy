@@ -451,9 +451,6 @@ void BattleEffect_RunStatReduction(struct BattleEffectParams *args, s32 mode) {
   s32 frame;
   s32 j;
   s32 xOffset;
-  /* FAKEMATCH(temporary): draw holds blitters; as blitters[1] in the shield's
-   * draw, 12 of 531 instructions differ in tbs-en. */
-  DrawRectangle *draw;
   s32 origin[3];
   struct ScreenPoint screen;
   s32 point[3];
@@ -528,7 +525,7 @@ void BattleEffect_RunStatReduction(struct BattleEffectParams *args, s32 mode) {
     shard->variant = Random16() & 0xff;
   }
 
-  BattleEffect_FetchRectangleBlitters(work->args->side, draw = blitters);
+  BattleEffect_FetchRectangleBlitters(work->args->side, blitters);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
   for (frame = 0; frame != work->args->targetCount * 4 + 64; frame++) {
@@ -569,8 +566,8 @@ void BattleEffect_RunStatReduction(struct BattleEffectParams *args, s32 mode) {
                         x - 12, y - 20, 24, 40);
         } else {
           if (targetFrame <= 23)
-            draw[1](canvas, work->sheet + targetFrame / 4 % 6 * (40 * 40),
-                    x - 20, y - 20, 40, 40);
+            blitters[1](canvas, work->sheet + targetFrame / 4 % 6 * (40 * 40),
+                        x - 20, y - 20, 40, 40);
         }
         if (targetFrame == 24)
           Sound_PlayFar(SE_CRACK);

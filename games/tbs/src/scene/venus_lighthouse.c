@@ -651,7 +651,7 @@ static void VenusLighthouse_RestoreScriptedChildValues(void) {
   struct Actor *actor;
   u32 actorId;
 
-  for (actorId = ACTOR_FIRST_PLACED; actorId <= 65; actorId++) {
+  for (actorId = ACTOR_FIRST_PLACED; actorId <= ACTOR_LAST_ID; actorId++) {
     actor = actors[actorId - ACTOR_FIRST_PLACED];
     if (actor->timer >> 4 == VENUS_COLOR_MARK_TAG)
       Actor_SetSpriteColor(actor, actor->timer & 15);

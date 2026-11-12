@@ -291,8 +291,10 @@ const struct ActorPlacement *LamakanDesert_GetActorPlacements(void) {
     if (gMainRoutineWork.entrance ==
         LAMAKAN_DESERT_MANTICORE_AFTER_FIGHT_MANTICORE) {
       GameFlag_Set(FLAG_LAMAKAN_MANTICORE_BEATEN);
-      // XXX (no evidence): what this patch fixed; only Camelot's notes for
-      // the patch would say.
+      // XXX: what this patch fixed; every Kalay scene sets the flag on entry
+      // (kalay.c) and Vale, the Vault and the Sanctum read it, so a save in
+      // an unpatched edition that reaches this battle with it clear would
+      // settle it.
 #if TBS_PATCH_3
       GameFlag_Set(FLAG_KALAY_REACHED);
 #endif

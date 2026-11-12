@@ -447,8 +447,6 @@ static void SuhallaDesert_RaiseStorm(s32 stormId) {
   GameFlag_Set((FLAG_SUHALLA_DESERT_FIRST_SANDSTORM_RISEN -
                 ACTOR_FIRST_SANDSTORM + stormIdCopy));
   GameFlag_Set(FLAG_SUHALLA_DESERT_SANDSTORMS_RISEN);
-  // XXX (no evidence): what flag 0x1b7 holds; nothing else in the game sets
-  // or reads it, so the test always passes.
   if (GameFlag_Get(FLAG_IODEM_FOLLOWING_PARTY) != 0 &&
       Event_GetFlag(FLAG_SUHALLA_DESERT_IODEM_WARNED) == 0) {
     GameFlag_Set(FLAG_SUHALLA_DESERT_IODEM_WARNED);

@@ -299,7 +299,7 @@ static void SolSanctumElementalStarRoom_BagVenusStar(void) {
   member = SolSanctumElementalStarRoom_PresentStar(ITEM_VENUS_STAR, PIXELS(712),
                                                    PIXELS(16), PIXELS(464));
   Event_Wait(40);
-  MessageArgument_Push(member, 1);
+  MessageArgument_Push(member, MESSAGE_ARGUMENT_ACTOR);
   message = MsgSolSanctumVenusStarBagged;
   FieldMessage_Show(message, 1);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST, 0);
@@ -404,7 +404,7 @@ static void SolSanctumElementalStarRoom_BagMercuryStar(void) {
   member = SolSanctumElementalStarRoom_PresentStar(
       ITEM_MERCURY_STAR, PIXELS(712), PIXELS(16), PIXELS(144));
   Event_Wait(40);
-  MessageArgument_Push(member, 1);
+  MessageArgument_Push(member, MESSAGE_ARGUMENT_ACTOR);
   message = MsgSolSanctumPutMercuryStar;
   FieldMessage_Show(message, 1);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTHEAST, 0);
@@ -520,7 +520,7 @@ static void SolSanctumElementalStarRoom_BagJupiterStar(void) {
   member = SolSanctumElementalStarRoom_PresentStar(
       ITEM_JUPITER_STAR, PIXELS(232), PIXELS(16), PIXELS(464));
   Event_Wait(40);
-  MessageArgument_Push(member, 1);
+  MessageArgument_Push(member, MESSAGE_ARGUMENT_ACTOR);
   FieldMessage_Show(MsgSolSanctumJupiterStarBagged, 1);
 }
 
@@ -1312,7 +1312,7 @@ static void SolSanctumElementalStarRoom_TakeMarsStar(void) {
   member = SolSanctumElementalStarRoom_PresentStar(ITEM_MARS_STAR, PIXELS(232),
                                                    PIXELS(16), PIXELS(144));
   Event_Wait(40);
-  MessageArgument_Push(member, 1);
+  MessageArgument_Push(member, MESSAGE_ARGUMENT_ACTOR);
   FieldMessage_Show(MsgSolSanctumMarsStarBagged, 1);
   Actor_SetPosition(ACTOR_JENNA, PIXELS(307), PIXELS(277));
   Actor_SetPosition(ACTOR_KRADEN, PIXELS(307), PIXELS(277));

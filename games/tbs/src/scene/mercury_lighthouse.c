@@ -2122,8 +2122,9 @@ static void MercuryLighthouse_FillHermesWaterBottle(void) {
   Sound_Play(MUS_TREASURE_FOUND);
   ItemDisplay_ShowItem(ITEM_HERMES_WATER, 3);
   MercuryLighthouse_ReplaceInventoryItem(ITEM_EMPTY_BOTTLE, ITEM_HERMES_WATER);
-  MessageArgument_Push(PartyInventory_FindMember(ITEM_HERMES_WATER), 1);
-  MessageArgument_Push(ITEM_HERMES_WATER, 2);
+  MessageArgument_Push(PartyInventory_FindMember(ITEM_HERMES_WATER),
+                       MESSAGE_ARGUMENT_ACTOR);
+  MessageArgument_Push(ITEM_HERMES_WATER, MESSAGE_ARGUMENT_ITEM);
   FieldMessage_Show(MSGNO(MsgMercuryLighthouseIsaacGot), 1);
   GameFlag_Set(FLAG_HERMES_WATER_TAKEN);
   Event_End();

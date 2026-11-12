@@ -1079,6 +1079,9 @@ UNUSED static void Vault_SpawnDriftingEffect(s32 flags) {
     x += baseX;
     baseY = anchor->y.fixed;
     z += baseZ;
+    // XXX (no evidence): what this drift was meant to draw; SPRITE_172's
+    // row in sprites.tsv is empty and nothing calls this routine, so the
+    // running game never shows it.
     effect = Actor_Create(SPRITE_172, x, baseY, z);
   }
   if (effect == NULL)

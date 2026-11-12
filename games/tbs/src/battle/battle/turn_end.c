@@ -692,8 +692,9 @@ s32 BattleUnit_ProcessActionEnd(struct BattleActionRun *plan) {
       BattlePlayback_Push(PLAYBACK_UNIT_NAME, unitId);
       BattlePlayback_Push(PLAYBACK_NUMBER, damage);
       PUSH_MESSAGE(MsgPoisonDamage);
-      // DEAD: *poison is nonzero here, so the hit's sound is always
-      // SE_HEAVY_IMPACT; the compare and both stores are in the ROM.
+      /* FAKEMATCH(dead): *poison is nonzero here, so the hit's sound is always
+       * SE_HEAVY_IMPACT; as that one store, 111 of 444 instructions differ in
+       * tbs-en. */
       if (*poison != 0) {
         state->playback.pendingSound = SE_HEAVY_IMPACT;
       } else {

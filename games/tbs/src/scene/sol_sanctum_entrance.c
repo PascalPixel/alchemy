@@ -620,10 +620,8 @@ static void SolSanctumEntrance_RowStatue6Moved(void) {
 static void SolSanctumEntrance_PushStatue(void) {
   struct Actor *leader;
   struct Actor *statue;
-  s32 packedStep;
   u32 direction;
   struct FieldPosition target;
-  struct FieldPosition *destination;
 
   // Find the statue one map cell ahead in the leader's facing direction.
   leader = Actor_Get(ACTOR_PARTY_LEADER);
@@ -633,28 +631,21 @@ static void SolSanctumEntrance_PushStatue(void) {
       (leader->z.part.pixel + (s16)gSolSanctumPushSteps[direction]) >> 4);
   if (statue != NULL) {
     statue->layer = 2;
-    /* FAKEMATCH(temporary): destination holds &target; as &target and target.x,
-     * 44 of 120 instructions differ in tbs-en. */
-    destination = &target;
-    packedStep = gSolSanctumPushSteps[direction];
-    SET_POSITION(destination, statue->x.fixed + (packedStep & -0x10000),
-                 statue->y.fixed, statue->z.fixed + px(packedStep));
+    Actor_StepFrom(&target, statue, gSolSanctumPushSteps[direction]);
     // Move only after the statue's proposed position passes collision.
-    if (FieldActor_CheckMovementCollision(statue, destination) <= 0) {
+    if (FieldActor_CheckMovementCollision(statue, &target) <= 0) {
       Actor_SelectAnimation(leader, ANIM_PUSH);
       wait(15);
       Sound_Play(SE_PUSH);
       statue->speedLimit = px(1) / 5;
       statue->acceleration = px(1) / 5;
-      FieldActor_SetMoveTargetFixed(statue, destination->x, destination->y,
-                                    destination->z);
+      FieldActor_SetMoveTargetFixed(statue, target.x, target.y, target.z);
       leader->speedLimit = px(1) / 5;
       leader->acceleration = px(1) / 5;
-      FieldActor_SetMoveTargetFixed(leader, destination->x, destination->y,
-                                    destination->z);
+      FieldActor_SetMoveTargetFixed(leader, target.x, target.y, target.z);
       Actor_WaitForMove(statue);
-      statue->x.fixed = destination->x;
-      statue->z.fixed = destination->z;
+      statue->x.fixed = target.x;
+      statue->z.fixed = target.z;
       statue->velocityX = 0;
       statue->velocityZ = 0;
       Actor_SelectAnimation(leader, ANIM_STAND);

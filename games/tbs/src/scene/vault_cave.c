@@ -332,6 +332,7 @@ static struct Actor *VaultCave_FindCollidableActorAtCell(s32 column, s32 row) {
   return NULL;
 }
 
+#include "shared/actor_step.h"
 #ifdef UBFIX
 /// The table stores Z then X as halfwords. Build its packed word without
 /// reading a halfword array through an incompatible, more-aligned struct.
@@ -392,11 +393,7 @@ static void VaultCave_PushPillarAhead(void) {
     return;
   }
   pillar->layer = 2;
-  destination.x =
-      pillar->x.fixed + (VAULT_CAVE_DIRECTION_STEP(direction) & 0xffff0000);
-  destination.y = pillar->y.fixed;
-  destination.z =
-      pillar->z.fixed + (s32)(px((u32)VAULT_CAVE_DIRECTION_STEP(direction)));
+  Actor_StepFrom(&destination, pillar, VAULT_CAVE_DIRECTION_STEP(direction));
   if (FieldActor_CheckMovementCollision(pillar, &destination) > 0) {
     return;
   }

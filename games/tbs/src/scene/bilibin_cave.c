@@ -638,11 +638,7 @@ static void BilibinCave_PushTorch(void) {
   // states.
   target->layer = 2;
 
-  destination.x =
-      target->x.fixed + (gPushedActor_DirectionSteps[heading] & 0xffff0000);
-  destination.y = target->y.fixed;
-  destination.z =
-      target->z.fixed + px((s16)gPushedActor_DirectionSteps[heading]);
+  Actor_StepFrom(&destination, target, gPushedActor_DirectionSteps[heading]);
 
   if (FieldActor_CheckMovementCollision(target, &destination) > 0)
     return;

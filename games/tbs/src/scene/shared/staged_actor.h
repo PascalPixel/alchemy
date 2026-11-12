@@ -8,6 +8,7 @@
 #include "menu.h"
 #include "types.h"
 #include "edition.h"
+#include "actor_step.h"
 #include "far_call.h"
 #include "sound.h"
 #include "system.h"
@@ -80,25 +81,16 @@ UNUSED static void PushedActor_AdvancePair(void) {
   struct Actor *next;
   struct Actor *blocker;
   s32 dir;
-  u32 step;
   s32 rate;
 
   lead = Actor_GetById(ACTOR_PARTY_LEADER);
   dir = lead->facing >> 12;
-  step = gPushedActor_DirectionSteps[dir];
-  dst.x = lead->x.fixed + (step & 0xffff0000);
-  dst.y = lead->y.fixed;
-  step <<= 16;
-  dst.z = lead->z.fixed + step;
+  Actor_StepFrom(&dst, lead, gPushedActor_DirectionSteps[dir]);
   next = PushedActor_FindAtTile(&dst, lead);
   if (next == 0)
     return;
 
-  step = gPushedActor_DirectionSteps[dir];
-  dst.x = next->x.fixed + (step & 0xffff0000);
-  dst.y = next->y.fixed;
-  step <<= 16;
-  dst.z = next->z.fixed + step;
+  Actor_StepFrom(&dst, next, gPushedActor_DirectionSteps[dir]);
   blocker = PushedActor_FindAtTile(&dst, next);
   if (blocker != 0 && (blocker->collisionFlags & 1) != 0)
     return;
@@ -111,11 +103,7 @@ UNUSED static void PushedActor_AdvancePair(void) {
     return;
 
   next->layer = 2;
-  step = gPushedActor_DirectionSteps[dir];
-  dst.x = next->x.fixed + (step & 0xffff0000);
-  dst.y = next->y.fixed;
-  step <<= 16;
-  dst.z = next->z.fixed + step;
+  Actor_StepFrom(&dst, next, gPushedActor_DirectionSteps[dir]);
   if (FieldActor_CheckMovementCollision(next, &dst) > 0)
     return;
 
@@ -165,15 +153,10 @@ static s32 PushedActor_StopBlockedMotion(struct Actor *actor) {
 #endif
   struct FieldPosition probe;
   u32 dir;
-  s32 step;
   struct Actor *target;
 
   dir = actor->facing >> 12;
-  step = gPushedActor_DirectionSteps[dir];
-  probe.x = actor->x.fixed + (step & 0xffff0000);
-  probe.y = actor->y.fixed;
-  step <<= 16;
-  probe.z = actor->z.fixed + step;
+  Actor_StepFrom(&probe, actor, gPushedActor_DirectionSteps[dir]);
   target = PushedActor_FindAtTile(&probe, actor);
   if (target != 0) {
     u32 i = 0;
@@ -195,11 +178,7 @@ static s32 PushedActor_StopBlockedMotion(struct Actor *actor) {
     actor->targetX = ACTOR_NO_TARGET;
     actor->targetZ = ACTOR_NO_TARGET;
   }
-  step = gPushedActor_DirectionSteps[dir];
-  probe.x = actor->x.fixed + (step & 0xffff0000);
-  probe.y = actor->y.fixed;
-  step <<= 16;
-  probe.z = actor->z.fixed + step;
+  Actor_StepFrom(&probe, actor, gPushedActor_DirectionSteps[dir]);
   if (FieldActor_CheckMovementCollision(actor, &probe) > 0) {
     actor->velocityX = 0;
     actor->velocityZ = 0;

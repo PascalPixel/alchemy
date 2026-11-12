@@ -555,6 +555,7 @@ enum {
 
 #include "shared/actor_distance.h"
 #include "shared/actor_find_at_position.h"
+#include "shared/actor_step.h"
 
 /// Pushing a pillar moves the pillar ahead of the leader one cell on with him,
 /// leaning into it (ANIM_PUSH). It moves when the cell beyond is free, nothing
@@ -565,27 +566,20 @@ static void VenusLighthouse_PushAdjacentPillar(void) {
   struct Actor *pillar;
   struct Actor *blockingActor;
   s32 directionIndex;
-  u32 packedStep;
   s32 moveRate;
   s32 transitionBusy;
 
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   directionIndex = leader->facing >> 12;
   // Look ahead for a pillar before testing its destination and overhead space.
-  packedStep = gPushedActor_DirectionSteps[directionIndex];
-  targetPosition.x = leader->x.fixed + (packedStep & 0xffff0000);
-  targetPosition.y = leader->y.fixed;
-  packedStep <<= 16;
-  targetPosition.z = leader->z.fixed + packedStep;
+  Actor_StepFrom(&targetPosition, leader,
+                 gPushedActor_DirectionSteps[directionIndex]);
   pillar = Actor_FindAtPosition(&targetPosition, leader);
   if (pillar == 0)
     return;
 
-  packedStep = gPushedActor_DirectionSteps[directionIndex];
-  targetPosition.x = pillar->x.fixed + (packedStep & 0xffff0000);
-  targetPosition.y = pillar->y.fixed;
-  packedStep <<= 16;
-  targetPosition.z = pillar->z.fixed + packedStep;
+  Actor_StepFrom(&targetPosition, pillar,
+                 gPushedActor_DirectionSteps[directionIndex]);
   blockingActor = Actor_FindAtPosition(&targetPosition, pillar);
   if (blockingActor != 0 && (blockingActor->collisionFlags & 1) != 0)
     return;
@@ -598,11 +592,8 @@ static void VenusLighthouse_PushAdjacentPillar(void) {
     return;
 
   pillar->layer = 2;
-  packedStep = gPushedActor_DirectionSteps[directionIndex];
-  targetPosition.x = pillar->x.fixed + (packedStep & 0xffff0000);
-  targetPosition.y = pillar->y.fixed;
-  packedStep <<= 16;
-  targetPosition.z = pillar->z.fixed + packedStep;
+  Actor_StepFrom(&targetPosition, pillar,
+                 gPushedActor_DirectionSteps[directionIndex]);
   if (FieldActor_CheckMovementCollision(pillar, &targetPosition) > 0)
     return;
 
@@ -1040,11 +1031,7 @@ static s32 VenusLighthouse_JumpAcrossGap(void) {
   Vector_AddPolarOffset(px(16), direction, &landing);
 #else
   direction = leader->facing >> 12;
-  step = gPushedActor_DirectionSteps[direction];
-  landing.x = leader->x.fixed + (step & 0xffff0000);
-  landing.y = leader->y.fixed;
-  step <<= 16;
-  landing.z = leader->z.fixed + step;
+  Actor_StepFrom(&landing, leader, gPushedActor_DirectionSteps[direction]);
 #endif
   if (FieldActor_CheckMovementCollision(leader, &landing) != 1 &&
       Actor_FindAtPosition(&landing, leader) == 0) {

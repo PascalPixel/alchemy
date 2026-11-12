@@ -580,11 +580,8 @@ static s32 CrossboneIsleSteppingStones_TryJumpAcrossPillar(void) {
   Vector_AddPolarOffset(px(16), jumpDirection, &destination);
 #else
   jumpDirection = leader->facing >> 12;
-  step = gPushedActor_DirectionSteps[jumpDirection];
-  destination.x = leader->x.fixed + (step & 0xffff0000);
-  destination.y = leader->y.fixed;
-  step <<= 16;
-  destination.z = leader->z.fixed + step;
+  Actor_StepFrom(&destination, leader,
+                 gPushedActor_DirectionSteps[jumpDirection]);
 #endif
   // Require a free intervening cell before testing the two-cell landing.
   if (FieldActor_CheckMovementCollision(leader, &destination) != 1 &&

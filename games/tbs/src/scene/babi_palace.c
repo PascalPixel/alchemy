@@ -1604,7 +1604,7 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
     Actor_SetSpeed(ACTOR_BABI, PIXELS(4) / 5, PIXELS(2) / 5);
     Actor_WalkByAndWait(ACTOR_BABI, 0, 16);
     Event_Wait(40);
-    MessageArgument_Push(ITEM_LURE_CAP, 2);
+    MessageArgument_Push(ITEM_LURE_CAP, MESSAGE_ARGUMENT_ITEM);
     // "Isaac received ...."
     Event_ShowMessage(-1, 0);
     Item_ShowFound(ITEM_LURE_CAP, 3);

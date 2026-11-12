@@ -1758,7 +1758,7 @@ static void WorldMap_MeetFlint(void) {
     Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
     Actor_Jump(ACTOR_VENUS_DJINNI, 4, 30);
-    MessageArgument_Push(300, 4);
+    MessageArgument_Push(ABILITY_DJINNI_FIRST, MESSAGE_ARGUMENT_ABILITY);
     Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
     Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
@@ -1814,7 +1814,7 @@ static void WorldMap_MeetFlint(void) {
     // "Oh, you'll see! You won't regret it!"
     Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
   listened:
-    MessageArgument_Push(300, 4);
+    MessageArgument_Push(ABILITY_DJINNI_FIRST, MESSAGE_ARGUMENT_ABILITY);
     Sound_Play(MUS_JOINED);
     count = MsgWorldMapAbilityVenusDjinni;
     Message_ShowCentered(count++, 3);

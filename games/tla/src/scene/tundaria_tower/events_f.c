@@ -581,3 +581,5 @@ void Func_02002764(const u16 *table) {
       goto next;
   }
 }
+
+#include "../../field/field_effect/advance_motion_priority.c"

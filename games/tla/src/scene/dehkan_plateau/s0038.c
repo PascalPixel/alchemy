@@ -424,7 +424,6 @@ u32 Random16Far(void);
 s32 Math_Cosine(s32 angle);
 void Func_02003ba8(struct Actor *object, const void *script);
 s32 Func_02003d80(void *sprite, s32 frame);
-void Effect_AdvanceMotionAtLeaderPriority(struct Actor *object);
 
 /// The effect fields of an Actor, as field_effect.h names them.
 struct EffectView {
@@ -526,3 +525,5 @@ test:
     goto next;
   }
 }
+
+#include "../../field/field_effect/advance_motion_priority.c"

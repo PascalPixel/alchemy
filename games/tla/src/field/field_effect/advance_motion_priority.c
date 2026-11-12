@@ -1,6 +1,7 @@
 #include "types.h"
 #include "field_effect.h"
 #include "main_routine_work.h"
+#include "event.h"
 
 /// The sprite's priority bits, read as the byte that holds them.
 struct EffectSpriteBits {
@@ -14,8 +15,6 @@ struct EffectSpriteAttributes {
   struct EffectSpriteBits bits;
 };
 
-union FieldObject *Actor_GetById(s32 id);
-
 /// Effect_AdvanceMotion, then gives the effect's sprite the leader's sprite
 /// priority, so the effect is drawn at the leader's depth.
 void Effect_AdvanceMotionAtLeaderPriority(union FieldObject *object) {
@@ -24,7 +23,7 @@ void Effect_AdvanceMotionAtLeaderPriority(union FieldObject *object) {
   s32 velocityZ;
   struct MainRoutineWork *party;
   struct FieldSprite *sprite;
-  union FieldObject *leader;
+  struct Actor *leader;
   struct EffectSpriteAttributes *to;
   struct EffectSpriteAttributes *from;
   struct EffectSpriteBits source;
@@ -45,7 +44,7 @@ void Effect_AdvanceMotionAtLeaderPriority(union FieldObject *object) {
 
   leader = Actor_GetById(party->currentOwner);
   to = (struct EffectSpriteAttributes *)effect->sprite;
-  from = (struct EffectSpriteAttributes *)leader->effect.sprite;
+  from = (struct EffectSpriteAttributes *)leader->animation;
   source = from->bits;
   bits = to->bits;
   bits.priority = source.priority;

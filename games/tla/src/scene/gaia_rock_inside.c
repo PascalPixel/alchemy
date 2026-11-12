@@ -260,3 +260,5 @@ s32 Func_02000748(void) {
   Actor_SetAttachedEffect(0xa, 0x102);
   return 0;
 }
+
+#include "../field/field_effect/advance_motion_priority.c"

@@ -832,3 +832,5 @@ test:
   if (list[0] != 0xffff)
     goto body;
 }
+
+#include "../../field/field_effect/advance_motion_priority.c"

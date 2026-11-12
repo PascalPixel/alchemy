@@ -103,3 +103,5 @@ test:
   if (*table != 0xffff)
     goto next;
 }
+
+#include "../../field/field_effect/advance_motion_priority.c"

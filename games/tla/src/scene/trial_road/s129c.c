@@ -78,3 +78,5 @@ void Func_0200129c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   if ((flags & EFFECT_USE_UPDATE) != 0)
     effect->update = options->update;
 }
+
+#include "../../field/field_effect/advance_motion_priority.c"

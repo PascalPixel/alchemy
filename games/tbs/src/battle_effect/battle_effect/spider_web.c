@@ -47,9 +47,12 @@ void BattleEffect_RunSwirlSwipe(struct BattleEffectParams *args, s32 mode) {
   void *canvas;
   struct Actor *actor;
   struct ScreenPoint position;
-  /* FAKEMATCH(dead): a pair of blitters, of which only draw[0] is used,
-   * gives the stack frame 4 more bytes; as one DrawRectangle, 136 of 256
-   * instructions differ in tbs-en. */
+  /* LEFTOVER(frame): draw[1], the idle half of the pair, for 4 bytes the ROM's
+   * frame reserves that no instruction reads; Camelot's template: BlitterPair
+   * is the blitter set every effect declares, and
+   * BattleEffect_FetchRectangleBlitters and about 35 sibling effects fill and
+   * use its second half; as one DrawRectangle draw[1], 136 of 256 instructions
+   * differ in tbs-en. */
   BlitterPair draw;
   s32 frames;
   s32 frame;

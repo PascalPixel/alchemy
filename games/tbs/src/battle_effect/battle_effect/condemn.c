@@ -36,9 +36,10 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
   void *cells;
   BlitterPair draw;
   struct Actor *target;
-  /* FAKEMATCH(dead): position[1] is never used and only gives the stack frame
-   * its 76 bytes; as one ScreenPoint, 4 of 580 instructions differ in tbs-en.
-   */
+  /* LEFTOVER(frame): position[1], which no instruction reads, for 8 of the 76
+   * bytes the ROM's frame reserves; The Lost Age's BattleEffect_RunCondemn
+   * needs the same second position, 4 of 549 instructions differing in tla-en
+   * without it; as one ScreenPoint, 4 of 580 instructions differ in tbs-en. */
   struct ScreenPoint position[2];
   s32 swayCenter[2];
   s32 drawReaper;

@@ -32,9 +32,12 @@ void BattleEffect_RunAstralBlast(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
-  /* FAKEMATCH(dead): a pair of blitters, of which only draw[0] is used,
-   * gives the stack frame 4 more bytes; as one DrawRectangle, 48 of 490
-   * instructions differ in tbs-en. */
+  /* LEFTOVER(frame): draw[1], the idle half of the pair, for 4 bytes the ROM's
+   * frame reserves that no instruction reads; Camelot's template: BlitterPair
+   * is the blitter set every effect declares, and
+   * BattleEffect_FetchRectangleBlitters and about 35 sibling effects fill and
+   * use its second half; as one DrawRectangle draw[1], 48 of 490 instructions
+   * differ in tbs-en. */
   BlitterPair draw;
   s32 i;
   u8 *graphics;
@@ -219,9 +222,12 @@ void BattleEffect_RunShiningStar(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
-  /* FAKEMATCH(dead): a pair of blitters, of which only draw[0] is used,
-   * gives the stack frame 4 more bytes; as one DrawRectangle, 40 of 415
-   * instructions differ in tbs-en. */
+  /* LEFTOVER(frame): draw[1], the idle half of the pair, for 4 bytes the ROM's
+   * frame reserves that no instruction reads; Camelot's template: BlitterPair
+   * is the blitter set every effect declares, and
+   * BattleEffect_FetchRectangleBlitters and about 35 sibling effects fill and
+   * use its second half; as one DrawRectangle draw[1], 40 of 415 instructions
+   * differ in tbs-en. */
   BlitterPair draw;
   s32 i;
   u8 *graphics;
@@ -275,7 +281,9 @@ void BattleEffect_RunShiningStar(struct BattleEffectParams *args) {
     point++;
   }
 
-  /* FAKEMATCH(temporary): size holds 2; as 2 in EFFECT_DRAW_MOTE, 69 of 415
+  /* LEFTOVER(template): size holds 2; Camelot's template:
+   * BattleEffect_RunAstralBlast above draws the same motes with a size that
+   * grows, (frame - start) / 4 + 2; as 2 in EFFECT_DRAW_MOTE, 69 of 415
    * instructions differ in tbs-en. */
   size = 2;
   trails = PARTICLES;

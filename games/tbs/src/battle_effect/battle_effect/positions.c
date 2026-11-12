@@ -119,8 +119,9 @@ s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen) {
   struct Actor *actor;
   struct Sprite *info;
   s32 scale;
-  /* FAKEMATCH(dead): an unused local that gives the stack frame its 12 bytes;
-   * without it, 6 of 52 instructions differ in tbs-en. */
+  /* LEFTOVER(frame): an unused local for the 12 bytes, the whole of the ROM's
+   * frame (sub sp, #12), that no instruction reads; as without it, 6 of 52
+   * instructions differ in tbs-en. */
   UNUSED s32 unused[3];
 
   actor = GetBattleObjectSlotFar(unit)->actor;

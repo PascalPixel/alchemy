@@ -83,8 +83,12 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
   void *canvas;
   u8 *sprites;
   s32 frame;
-  /* FAKEMATCH(dead): blit[1], never used, gives the stack frame 4 bytes; as
-   * one DrawRectangle, 202 of 1640 instructions differ in tbs-en. */
+  /* LEFTOVER(frame): blit[1], the idle half of the pair, for 4 bytes the ROM's
+   * frame reserves that no instruction reads; Camelot's template: BlitterPair
+   * is the blitter set every effect declares, and
+   * BattleEffect_FetchRectangleBlitters and about 35 sibling effects fill and
+   * use its second half; as one DrawRectangle blit[1], 202 of 1640 instructions
+   * differ in tbs-en. */
   BlitterPair blit;
   s32 size;
   s32 count;
@@ -331,13 +335,13 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
         }
       }
       for (i = 0; i != beamHeight; i++) {
+        // Default: 0, until it is set to the beam's full 32 pixels.
         s32 fullWidth = 0;
+
         // loop.c matches a lone 32 here with the light-fan calls' 32 and hoists
         // it out of the frame loop, where it loses its register and later
         // reloads rotate; set twice in a row, it moves only to this loop's
         // preheader.
-        /* FAKEMATCH(dead): fullWidth set to 0, then to 32; as 32 - inset * 2 in
-         * the call, 128 of 1640 instructions differ in tbs-en. */
         fullWidth = 32;
         blit[0](canvas, ramp + inset, inset + 48, i + 16, fullWidth - inset * 2,
                 1);
@@ -426,9 +430,11 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
       // The pillar of lightning, frames 8 to 16: its body on frames 9 to
       // 11, its top on 12 to 15, and on frame 10 up to 512 sparks thrown
       // up from its foot.
-      /* FAKEMATCH(dead): a loop that runs once, j being 0; as its body alone,
-       * with 0 for j and 8 for start, 509 of 1640 instructions differ in
-       * tbs-en. */
+      /* LEFTOVER(template): a loop over pillars 128 frames apart whose count is
+       * 1, j being 0; Camelot's template: its body times each pillar by j * 128
+       * as the sibling effects' per-target loops index their targets; as its
+       * body alone, with 0 for j and 8 for start, 509 of 1640 instructions
+       * differ in tbs-en. */
       for (j = 0; j != 1; j++) {
         s32 start = j * 128 + 8;
         if (frame >= start && frame < j * 128 + 17) {

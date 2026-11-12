@@ -140,8 +140,8 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
         s32 angle = Random16() & TRIG_ANGLE_MASK;
 
         spark = &sparks[i];
-        spark->x = 64 << 16;
-        spark->y = 80 << 16;
+        spark->x = PIXELS(64);
+        spark->y = PIXELS(80);
         spark->velocityX = (Trig_Sin(angle) * force) >> 7;
         spark->velocityY = -(Trig_Cos(angle) * force) >> 6;
         spark->variant = (Random16() & 15) + 16;
@@ -156,9 +156,9 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
       if (spark->variant > 0) {
         spark->variant--;
         Particle_AdvanceWithGravity2D(spark, 60, 0);
-        if (spark->y > (104 << 16)) {
+        if (spark->y > PIXELS(104)) {
           spark->velocityY = -spark->velocityY / 2;
-        } else if ((spark->x >= 0 && spark->x <= (127 << 16) - 1) &&
+        } else if ((spark->x >= 0 && spark->x <= PIXELS(127) - 1) &&
                    spark->y >= 0) {
           s32 sx = spark->x >> 16;
           s32 sy = spark->y >> 16;
@@ -197,36 +197,35 @@ void BattleEffect_PlaceFormationObjects(s32 formation, s32 x, s32 z) {
   s32 i;
 
   pos.groundHeight = 0;
-  pos.height = 255 << 16;
+  pos.height = PIXELS(255);
   // Render_ApplyProjectedPlacement draws each picture 255 pixels above its
   // y, while its draw slot, and any shadow, still follow y itself.
   switch (formation) {
-  // 1 << 21 is 32 pixels in 16.16.
   case SUMMON_FORMATION_THOR:
     for (i = 0; i != 9; i++) {
-      pos.x = (i % 3 << 21) + x;
-      pos.y = (i / 3 << 21) + z;
+      pos.x = PIXELS(i % 3 * 32) + x;
+      pos.y = PIXELS(i / 3 * 32) + z;
       Actor_ApplyProjectedPlacementFar(work->sprites[i], &pos, &normal, 0);
     }
     break;
   case SUMMON_FORMATION_NEREID:
     for (i = 0; i != 12; i++) {
-      pos.x = (gHelmSplitter_TwelveX[i] << 16) + x - (16 << 16);
-      pos.y = (gHelmSplitter_TwelveZ[i] << 16) + z - (32 << 16);
+      pos.x = PIXELS(gHelmSplitter_TwelveX[i]) + x - PIXELS(16);
+      pos.y = PIXELS(gHelmSplitter_TwelveZ[i]) + z - PIXELS(32);
       Actor_ApplyProjectedPlacementFar(work->sprites[i], &pos, &normal, 0);
     }
     break;
   case SUMMON_FORMATION_CYBELE:
     for (i = 0; i != 8; i++) {
-      pos.x = (gHelmSplitter_RightEightX[i] << 16) + x + (16 << 16);
-      pos.y = (gHelmSplitter_RightEightZ[i] << 16) + z;
+      pos.x = PIXELS(gHelmSplitter_RightEightX[i]) + x + PIXELS(16);
+      pos.y = PIXELS(gHelmSplitter_RightEightZ[i]) + z;
       Actor_ApplyProjectedPlacementFar(work->sprites[i], &pos, &normal, 0);
     }
     break;
   case SUMMON_FORMATION_TIAMAT:
     for (i = 0; i != 8; i++) {
-      pos.x = (gHelmSplitter_SmallEightX[i] << 16) + x;
-      pos.y = (gHelmSplitter_SmallEightZ[i] << 16) + z;
+      pos.x = PIXELS(gHelmSplitter_SmallEightX[i]) + x;
+      pos.y = PIXELS(gHelmSplitter_SmallEightZ[i]) + z;
       Actor_ApplyProjectedPlacementFar(work->sprites[i], &pos, &big, 0);
     }
     break;
@@ -279,7 +278,7 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
   EFFECT_GET_SLOTS(slots, cursor, work, canvas);
   sheet = slots[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_EFFECT];
   orgX = x;
-  x += 40 << 16;
+  x += PIXELS(40);
   x /= 2;
   REG_BG2PA = Q_8_8(0.5);
   REG_BG2X = 0;

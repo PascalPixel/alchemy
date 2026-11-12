@@ -529,7 +529,7 @@ void BattleCommandRow_LoadIcon(struct BattleCommandRowWork *work, s32 index,
 
   BattleCommandRow_LoadIconTiles(&work->palette, icon, index * 16);
   work->entries[index].kind = icon;
-  MenuSprite_Initialize(entry->sprite, 0x80002000);
+  MenuSprite_Initialize(entry->sprite, OBJ_SIZE_32X32 | OBJ_256_COLORS);
   entry->sprite.oam.f.tile =
       Resource_LoadIndexedIntoBuffer(work->entries[index].resource, icon);
 }

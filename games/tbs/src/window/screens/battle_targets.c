@@ -223,9 +223,9 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
           *(u16 *)((u8 *)candidateIds + t),
           ScreenPoint_Coordinates(&selectedPosition));
     }
-    // The cursor: a 16x16, 256-colour sprite of 32 frames (256 bytes each),
-    // a frame every four frames, bobbing 2 pixels each way every 16 frames.
-    ((s32 *)firstSprite)[1] = 0x40002000;
+    // The cursor: 32 frames (256 bytes each), a frame every four frames,
+    // bobbing 2 pixels each way every 16 frames.
+    ((s32 *)firstSprite)[1] = OBJ_SIZE_16X16 | OBJ_256_COLORS;
     ((s32 *)firstSprite)[2] = 0;
     firstSprite->tile =
         VramCache_Reload(cursorSlot, (((gFrameCount >> 2) & 31) << 8) +

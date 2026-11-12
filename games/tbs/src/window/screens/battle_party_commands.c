@@ -253,7 +253,8 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       gBattleMenuWork->commandActor = unitId;
       gBattleMenuWork->commandSelection[1] = 0;
       iconSprite = &gBattleMenuWork->icons[2];
-      iconSprite->oam.word.attr01 = 0x80000400;
+      iconSprite->oam.word.attr01 =
+          OBJ_SIZE_32X32 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
       iconSprite->oam.word.attr23 = 0;
       iconSprite->oam.f.tile = Portrait_Load(unit->id, smallIconSlot);
       iconSprite->oam.f.x = BATTLE_CLASS_ICON_X;
@@ -305,7 +306,8 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       }
       iconSprite = &gBattleMenuWork->icons[0];
       iconSprite->oam.word.attr23 = 0;
-      iconSprite->oam.word.attr01 = 0x80002400;
+      iconSprite->oam.word.attr01 =
+          OBJ_SIZE_32X32 | OBJ_256_COLORS | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
       iconSprite->oam.f.tile =
           Resource_LoadIndexedIntoBuffer(largeIconSlot, mode);
       if (mode == COMMAND_ICON_DJINN) {
@@ -392,7 +394,8 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         work = WINDOW_WORK;
         commandWindow = Window_Create(8, 17, 18, 3, 6);
         state->icons[0].oam.f.x = 40;
-        iconSprite->oam.word.attr01 = 0x40000400;
+        iconSprite->oam.word.attr01 =
+            OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
         iconSprite->oam.word.attr23 = 0;
         iconSprite->oam.f.x = commandWindow->x * 8 + 8;
         iconSprite->oam.f.y = commandWindow->y * 8 + 4;
@@ -480,7 +483,8 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         }
         ok = (j == 4);
         state->icons[0].oam.f.x = 56;
-        iconSprite->oam.word.attr01 = 0x40000400;
+        iconSprite->oam.word.attr01 =
+            OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
         iconSprite->oam.word.attr23 = 0;
         /* FAKEMATCH(barrier): counted as 4 bytes, the empty asm puts the pool
          * after mov r2, r9 as native (constant 56); without it, 12 of 1727
@@ -685,7 +689,8 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         handle = VramCache_AllocEntry(128);
         commandWindow = Window_Create(9, 17, BATTLE_ITEM_WINDOW_WIDTH, 3, 6);
         state->icons[0].oam.f.x = 48;
-        iconSprite->oam.word.attr01 = 0x40000400;
+        iconSprite->oam.word.attr01 =
+            OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
         iconSprite->oam.word.attr23 = 0;
         /* FAKEMATCH(barrier): counted as 4 bytes, the empty asm puts the pool
          * after ldr r1, [sp, #72] as native (constant 48); without it, 10 of

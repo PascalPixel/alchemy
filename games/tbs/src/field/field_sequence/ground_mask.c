@@ -69,11 +69,11 @@ void FadeOverlay_DrawMarks(void) {
   if (secondHeight > height)
     height = secondHeight;
   if (height > 0 && height > terrainFloor) {
-    // Attributes 0 and 1 give a 16 by 16 square (size 1); the sprite mode
-    // and priority set next replace what the two words put there, so the
-    // left and right marks end up alike although their third words differ.
-    ((u32 *)mark)[1] = 0x40000800;
-    ((u32 *)mark)[2] = 0x400;
+    // The sprite mode and priority set next replace what the two words put
+    // there, so the left and right marks end up alike although their third
+    // words differ.
+    ((u32 *)mark)[1] = OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_WINDOW);
+    ((u32 *)mark)[2] = OBJ_PRIORITY(1);
     mark->priority = 0;
     mark->tile = tile;
     mark->objectMode = OBJ_MODE_SEMI_TRANSPARENT;
@@ -93,7 +93,7 @@ void FadeOverlay_DrawMarks(void) {
   if (secondHeight > height)
     height = secondHeight;
   if (height > 0 && height > terrainFloor) {
-    ((u32 *)mark)[1] = 0x40000800;
+    ((u32 *)mark)[1] = OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_WINDOW);
     ((u32 *)mark)[2] = 0;
     mark->priority = 0;
     mark->tile = tile;

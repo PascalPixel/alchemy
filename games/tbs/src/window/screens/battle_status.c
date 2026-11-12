@@ -223,7 +223,8 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
     keys = gKeysRepeat;
 
     // The party member's 32x32 portrait at the top left.
-    nameSprite.oam.word.attr01 = 0x80000400;
+    nameSprite.oam.word.attr01 =
+        OBJ_SIZE_32X32 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
     nameSprite.oam.word.attr23 = 0;
     nameSprite.oam.f.tile = Portrait_Load(member, portraitSlot);
     nameSprite.oam.f.x = 8;
@@ -367,7 +368,8 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
       struct MenuSprite *face =
           (struct MenuSprite *)GetBattleObjectSlotFar(member)->actor->sprite;
 
-      portraitSprite.oam.word.attr01 = 0xC0002400;
+      portraitSprite.oam.word.attr01 =
+          OBJ_SIZE_64X64 | OBJ_256_COLORS | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
       portraitSprite.oam.word.attr23 = 0;
 #if TBS_PATCH_4
       /* FAKEMATCH(barrier): an empty asm, so the move into sl comes between
@@ -381,7 +383,8 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
       Oam_AddSpriteAtDepth((s32 *)&portraitSprite, 240);
     }
 
-    cursorSprite.oam.word.attr01 = 0x40000400;
+    cursorSprite.oam.word.attr01 =
+        OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
     cursorSprite.oam.word.attr23 = 0;
     /* FAKEMATCH(barrier): counted as 4 bytes, the empty asm puts gFrameCount's
      * literal in the next pool, as native; without it, 22 of 1392
@@ -752,7 +755,8 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
       struct VramCacheEntry *entry;
 
       for (i = 0, entry = gVramCacheEntries, iconX = 112; i <= 10; i++) {
-        statusSprite->oam.word.attr01 = 0x40000400;
+        statusSprite->oam.word.attr01 =
+            OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
         statusSprite->oam.word.attr23 = 0;
         statusSprite->oam.f.tile = entry[*statusSlot++].offset >> 5;
         statusSprite->oam.f.x = iconX;

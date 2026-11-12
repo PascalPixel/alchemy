@@ -148,11 +148,10 @@ void Weather_StartRain(void) {
     s32 x;
     s32 z;
 
-    // Semi-transparent, 16 by 16, priority 1, palette 13.
     words = (u32 *)particle;
     *words++ = 0;
-    *words++ = 0x40000400;
-    *words = 0xd400;
+    *words++ = OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
+    *words = OBJ_PRIORITY(1) | OBJ_PALETTE(13);
     x = leader[0];
     z = leader[2];
     particle->positionX = x;
@@ -278,9 +277,9 @@ void FieldMotes_Start(void) {
     s32 z;
     *(s32 *)p = 0;
     p += sizeof(s32);
-    *(s32 *)p = 0x40000400;
+    *(s32 *)p = OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
     p += sizeof(s32);
-    *(s32 *)p = 0xd400;
+    *(s32 *)p = OBJ_PRIORITY(1) | OBJ_PALETTE(13);
     p = pos[0];
     z = pos[2];
     mote->positionX = (s32)p;
@@ -436,9 +435,9 @@ void FieldEffect_InitializeSparkles(void) {
     *(u32 *)attr = 0;
     attr += sizeof(union ParticleLinkWord);
     leader = view->origin;
-    *(u32 *)attr = 0x40000400;
+    *(u32 *)attr = OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
     attr += sizeof(union ParticleLinkWord);
-    *(u32 *)attr = 0xd400;
+    *(u32 *)attr = OBJ_PRIORITY(1) | OBJ_PALETTE(13);
     attr = leader[0];
     z = leader[2];
     sparkle->positionX = 0;

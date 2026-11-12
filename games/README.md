@@ -40,9 +40,20 @@ events. [Unused](https://alchemy.pascalpixel.com/tbs/unused) collects what
 the game keeps but never plays. And the [glossary](tbs/glossary.md) is there
 whenever a word is new.
 
-To build the games yourself, see [Build](https://github.com/PascalPixel/alchemy#build).
-
 ## How far along it is
 
 Both games are fully rebuilt in all six languages they were released in:
 Japanese, English, German, Spanish, French and Italian.
+
+## Build it yourself
+
+Three commands, and you have a ROM you made from source. No cartridge needed.
+
+```bash
+git clone --recurse-submodules https://github.com/PascalPixel/alchemy
+cd alchemy
+make
+```
+
+The [README](https://github.com/PascalPixel/alchemy#build) lists what to
+install first on macOS, Linux and Windows.

@@ -1,5 +1,6 @@
 /// @file
-/// One frame of a sprite particle that grows as it drifts.
+/// A sprite particle that grows as it drifts, and Func_080e4730, which sets up
+/// 64 of them as a dust puff.
 #include "types.h"
 #include "effect_sprite.h"
 #include "fixed_math.h"

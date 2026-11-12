@@ -1,10 +1,8 @@
 /// @file
-/// The 96-particle burst's task (heap slot 0x5c work, started by
-/// Func_080e2acc). Each particle whose delay counter is between 0 and 63 shows
-/// the picture (delay / 8) % 6 of the burst's tiles 48 pixels out along its
-/// heading, then turns by its spin, rises by its speed and spins eight units
-/// faster; every counter advances. The work's flash flag is set on frame 30
-/// only, and the burst stops being active on frame 112.
+/// Field effects that event commands start, in ROM order: the 96-particle
+/// burst, an actor carried from one point to another as it circles, a whirl of
+/// rings, an actor spinning away and back (Func_080e3698, Func_080e37e0) and a
+/// spray of drops and smoke puffs.
 
 #include "types.h"
 #include "ram_buffer.h"
@@ -44,6 +42,12 @@ void Vector_AddPolarOffset(s32 magnitude, s32 angle, s32 *position);
 void Camera_WorldToScreen(s32 *position);
 #include "effect_sprite.h"
 
+/// The 96-particle burst's task (heap slot 0x5c work, started by
+/// Func_080e2acc). Each particle whose delay counter is between 0 and 63 shows
+/// the picture (delay / 8) % 6 of the burst's tiles 48 pixels out along its
+/// heading, then turns by its spin, rises by its speed and spins eight units
+/// faster; every counter advances. The work's flash flag is set on frame 30
+/// only, and the burst stops being active on frame 112.
 void Func_080e2c38(void) {
   struct BurstWork *work;
   struct BurstParticle *particle;

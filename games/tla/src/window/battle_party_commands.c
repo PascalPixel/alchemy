@@ -1,6 +1,8 @@
 /// @file
 /// Collecting the party's battle commands, as The Broken Seal's
-/// Battle_CollectPartyCommands does on this game's work and menus.
+/// Battle_CollectPartyCommands does on this game's work and menus, then
+/// Func_0804cda8, which draws a menu's icons each frame, the selected one
+/// bouncing, and fits the window's lines around it.
 
 #include "types.h"
 #include "ram_buffer.h"

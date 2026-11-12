@@ -1,7 +1,6 @@
 /// @file
-/// Fades BG palette 3's entries 1 to 13 toward RGB(11, 6, 23), one unit per
-/// channel every 10 frames, then hands the rest of the event to Func_02000c50's
-/// task.
+/// Two fades of BG palette 3: toward RGB(11, 6, 23), then, in Func_02000da0,
+/// back to its saved colours.
 #include "iwram_call.h"
 #include "system/io_reg.h"
 #include "actor.h"
@@ -18,6 +17,9 @@ void Func_02000c50(void);
 void Func_02001fac(void);
 s32 Func_02001fb4(void);
 
+/// Fades BG palette 3's entries 1 to 13 toward RGB(11, 6, 23), one unit per
+/// channel every 10 frames, then hands the rest of the event to Func_02000c50's
+/// task.
 s32 Func_02000c94(void) {
   volatile u16 *palette;
   s32 changed;

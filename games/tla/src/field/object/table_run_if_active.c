@@ -1,5 +1,8 @@
 /// @file
-/// Field: finish the speaker display.
+/// Field helpers, in ROM order: ending the window of an actor's speaker, the
+/// field camera (following an actor, its speed, the map bounds it keeps inside,
+/// waiting for it to arrive), copying a watched object's position, spawning an
+/// effect object that follows another, and a test of an actor's animation 108.
 
 #include "types.h"
 #include "ram_buffer.h"

@@ -1,5 +1,6 @@
 /// @file
-/// Builds a chain of nodes around a point.
+/// A slot's chain of nodes built around a point, and Func_080d92a4, which gives
+/// the position of the node at the slot's depth.
 
 #include "types.h"
 #include "fixed_math.h"

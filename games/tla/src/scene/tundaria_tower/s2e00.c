@@ -1,6 +1,6 @@
 /// @file
-/// The falling rocks' setup: loads their picture, sets up 64 small sprites,
-/// marks each rock idle and starts the task that spawns them.
+/// The falling rocks' setup, and Func_02002ebc, which stops their task and
+/// frees their picture and heap slot.
 #include "types.h"
 #include "ram_buffer.h"
 #include "event_inline.h"
@@ -47,6 +47,8 @@ void Func_02003190(struct RockSprite *sprite, s32 width, s32 height, u32 attr,
                    s32 tile);
 void Func_02002cc0(void);
 
+/// The falling rocks' setup: loads their picture, sets up 64 small sprites,
+/// marks each rock idle and starts the task that spawns them.
 void Func_02002e00(void) {
   struct RockWork *work = HeapSlot_AllocFar(220, sizeof(struct RockWork));
   s32 resource;

@@ -1,5 +1,6 @@
 /// @file
-/// Queues the Trial Road movers' sprites.
+/// Trial Road's movers' sprites, the setup of its gauge, a rising platform's
+/// entry and the trap table's setup, in ROM order.
 #include "trial_road.h"
 #include "iwram_call.h"
 #include "frame.h"
@@ -31,6 +32,7 @@ extern struct ResourceTableEntry gResourceTableEntries[];
 
 void Func_02005790(void *entry, s32 priority);
 
+/// Queues the Trial Road movers' sprites.
 void Func_02003f68(void) {
   struct TrialRoadMovers *base =
       (struct TrialRoadMovers *)(gData_020023c4 + 0x188);

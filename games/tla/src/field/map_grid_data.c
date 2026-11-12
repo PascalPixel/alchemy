@@ -1,7 +1,8 @@
 /// @file
 /// Map ground: the height curve of each cell kind, the world map's terrain
 /// behaviour and the small tables after them, then the battle formation's
-/// placement scale.
+/// placement scale; then the field object scripts the field starts by itself,
+/// the script command table and the work value handlers.
 
 #include "types.h"
 

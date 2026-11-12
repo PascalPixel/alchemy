@@ -1,6 +1,5 @@
 /// @file
-/// Sets up the sparkle: loads its picture and its four 16 by 16 sprites, and
-/// hands the object to its update, Func_02003cd8.
+/// The sparkle's setup, and Func_02003f54, which sets byte 0x62 of an object.
 #include "types.h"
 #include "actor.h"
 #include "event_inline.h"
@@ -40,6 +39,8 @@ void Func_02004244(struct SparkleSprite *sprite, s32 width, s32 height,
 s32 Func_02004254(struct Actor *object);
 void Func_02003cd8(void);
 
+/// Sets up the sparkle: loads its picture and its four 16 by 16 sprites, and
+/// hands the object to its update, Func_02003cd8.
 void Func_02003e54(struct Actor *object, struct SparkleWork *work) {
   struct SparkleSprite *sprite;
   s32 tile;

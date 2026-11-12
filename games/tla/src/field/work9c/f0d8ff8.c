@@ -1,5 +1,6 @@
 /// @file
-/// Moves a chain of nodes along a line.
+/// A slot's chain of nodes laid along a line between two points, and
+/// Func_080d9104, which links two objects.
 
 #include "types.h"
 #include "fixed_math.h"

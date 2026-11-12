@@ -438,12 +438,14 @@ static void ColosseumNavampaMatch_GrowPlant(void) {
   }
 }
 
-/// Moves a scale ledge vertically at the shared speed and acceleration.
+/// Moves a scale ledge vertically to a height in whole pixels, at the shared
+/// speed and acceleration.
 static inline void ColosseumNavampaMatch_MoveOnScales(struct Actor *ledge,
                                                       s32 height) {
   ledge->acceleration = PIXELS(2) / 5;
   ledge->speedLimit = PIXELS(4) / 5;
-  FieldActor_SetMoveTargetFixed(ledge, ledge->x.fixed, height, ledge->z.fixed);
+  FieldActor_SetMoveTargetFixed(ledge, ledge->x.fixed, px(height),
+                                ledge->z.fixed);
 }
 
 /// Frost on the target on the Scales of Justice's eastern ledge freezes it.
@@ -458,10 +460,10 @@ static void ColosseumNavampaMatch_FreezeOnScales(void) {
   actor->scaleY = Q16_ONE;
 
   actor = Actor_Get(ACTOR_SCALES_EAST_LEDGE);
-  ColosseumNavampaMatch_MoveOnScales(actor, PIXELS(32));
+  ColosseumNavampaMatch_MoveOnScales(actor, 32);
 
   actor = Actor_Get(ACTOR_SCALES_WEST_LEDGE);
-  ColosseumNavampaMatch_MoveOnScales(actor, PIXELS(4));
+  ColosseumNavampaMatch_MoveOnScales(actor, 4);
 
   GameFlag_Set(FLAG_SCALES_FROZEN);
   MapGrid_CopyCellAttributes(15, 12, 1, 1, 13, 12);
@@ -489,14 +491,14 @@ static void ColosseumNavampaMatch_StepOnScales(void) {
     Actor_WaitForMoveById(actorId);
     log = Actor_Get(ACTOR_SCALES_EAST_LEDGE);
     log->motionFlags = lowered;
-    ColosseumNavampaMatch_MoveOnScales(log, PIXELS(32));
+    ColosseumNavampaMatch_MoveOnScales(log, 32);
     log = Actor_Get(ACTOR_SCALES_WEST_LEDGE);
     log->motionFlags = lowered;
-    ColosseumNavampaMatch_MoveOnScales(log, PIXELS(4));
+    ColosseumNavampaMatch_MoveOnScales(log, 4);
     rider = Actor_Get(actorId);
     flags = &rider->motionFlags;
     *flags = lowered;
-    ColosseumNavampaMatch_MoveOnScales(rider, PIXELS(4));
+    ColosseumNavampaMatch_MoveOnScales(rider, 4);
     Actor_SetSpriteFlags(rider, SPRITE_FLAG_SHADOW);
     Actor_WaitForMoveById(actorId);
     MapGrid_CopyCellAttributes(0, 24, 1, 1, 9, 12);
@@ -516,11 +518,11 @@ static void ColosseumNavampaMatch_StepOffScales(void) {
 
   actor = Actor_Get(ACTOR_SCALES_EAST_LEDGE);
   actor->motionFlags = 0;
-  ColosseumNavampaMatch_MoveOnScales(actor, PIXELS(4));
+  ColosseumNavampaMatch_MoveOnScales(actor, 4);
 
   actor = Actor_Get(ACTOR_SCALES_WEST_LEDGE);
   actor->motionFlags = 0;
-  ColosseumNavampaMatch_MoveOnScales(actor, PIXELS(32));
+  ColosseumNavampaMatch_MoveOnScales(actor, 32);
 
   Actor_WaitForMoveById(ACTOR_SCALES_WEST_LEDGE);
   {
@@ -551,12 +553,12 @@ static void ColosseumNavampaMatch_SetWeightOnScales(void) {
       Actor_SetSpriteFlags(log, 0);
       log->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
       log->motionFlags = 0;
-      ColosseumNavampaMatch_MoveOnScales(log, PIXELS(4));
+      ColosseumNavampaMatch_MoveOnScales(log, 4);
       upper = Actor_Get(ACTOR_SCALES_EAST_LEDGE);
       upper->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
-      ColosseumNavampaMatch_MoveOnScales(upper, PIXELS(32));
+      ColosseumNavampaMatch_MoveOnScales(upper, 32);
       lower = Actor_Get(ACTOR_SCALES_WEST_LEDGE);
-      ColosseumNavampaMatch_MoveOnScales(lower, PIXELS(4));
+      ColosseumNavampaMatch_MoveOnScales(lower, 4);
       GameFlag_Set(FLAG_WEIGHT_ON_SCALES);
       MapGrid_CopyCellAttributes(15, 12, 1, 1, 13, z);
       MapGrid_CopyCellAttributes(1, 25, 1, 1, x, z);
@@ -1660,18 +1662,18 @@ static void ColosseumNavampaMatch_TalkToScalesAttendant(s32 guideId) {
     wait(2);
     westPan = Actor_Get(ACTOR_SCALES_WEST_LEDGE);
     westPan->motionFlags = 0;
-    ColosseumNavampaMatch_MoveOnScales(westPan, PIXELS(4));
+    ColosseumNavampaMatch_MoveOnScales(westPan, 4);
     eastPan = Actor_Get(ACTOR_SCALES_EAST_LEDGE);
     eastPan->motionFlags = 0;
-    ColosseumNavampaMatch_MoveOnScales(eastPan, PIXELS(32));
+    ColosseumNavampaMatch_MoveOnScales(eastPan, 32);
     Actor_WaitForMove(eastPan);
     Event_Wait(45);
     westPanAgain = Actor_Get(ACTOR_SCALES_WEST_LEDGE);
     westPanAgain->motionFlags = 0;
-    ColosseumNavampaMatch_MoveOnScales(westPanAgain, PIXELS(32));
+    ColosseumNavampaMatch_MoveOnScales(westPanAgain, 32);
     eastPanAgain = Actor_Get(ACTOR_SCALES_EAST_LEDGE);
     eastPanAgain->motionFlags = 0;
-    ColosseumNavampaMatch_MoveOnScales(eastPanAgain, PIXELS(4));
+    ColosseumNavampaMatch_MoveOnScales(eastPanAgain, 4);
     Actor_WaitForMove(eastPanAgain);
     Event_Wait(15);
     Event_ShowMessage(guideId, 0);

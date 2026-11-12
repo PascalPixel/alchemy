@@ -4,8 +4,8 @@
 
 #include "../battle_effect_internal.h"
 
-/// 910 sparks from Ram_MapGridCellBuffer + 3160; the smoke pictures come
-/// before them.
+/// 910 sparks from Ram_MapGridCellBuffer + 3160; the glint pictures that draw
+/// the crackles of lightning come before them.
 #define THOR_PARTICLES ((struct Particle *)(Ram_MapGridCellBuffer + 3160))
 
 /// The particle sprites, after the light fan pictures.
@@ -14,9 +14,7 @@
 /// The violet mote in the second part's sheet.
 #define THOR_MOTE_OFFSETS 24576
 
-#define THOR_PARTICLE_COUNT 910 ///< particles in THOR_PARTICLES
-#define THOR_DIMMED_DOTS 10000  ///< the darker copies of the dot pictures
-#define THOR_BOLTS 30           ///< violet bolts after the pillar
+#define THOR_DIMMED_DOTS 10000 ///< the darker copies of the dot pictures
 
 /// Launches up to max sparks from (startX, startY), 16.16, into the free slots
 /// (variant 0) of THOR_PARTICLES, walking them with spark and counting with
@@ -27,8 +25,7 @@
 #define THOR_LAUNCH_SPARKS(spark, index, startX, startY, angleExpr, max)       \
   {                                                                            \
     s32 spawned = 0;                                                           \
-    for (index = 0, spark = THOR_PARTICLES; index != THOR_PARTICLE_COUNT;      \
-         index++, spark++) {                                                   \
+    for (index = 0, spark = THOR_PARTICLES; index != 910; index++, spark++) {  \
       if (spark->variant == 0) {                                               \
         s32 speed = 0x3ff;                                                     \
         s32 angle;                                                             \
@@ -60,7 +57,7 @@
 /// lines across it form over scrolling dusk clouds; the circle turns, sinks
 /// into the sky and a beam of light falls from it. In the lightning part
 /// (192 frames) a pillar of lightning strikes the targets and throws
-/// sparks, Thor appears, THOR_BOLTS violet bolts follow while a violet mote
+/// sparks, Thor appears, 30 violet bolts follow while a violet mote
 /// sways above, and Thor drifts back in crackling lightning until an impact
 /// burst ends the effect. The sparks live in THOR_PARTICLES; a spark whose
 /// variant is 0 is free, and a positive variant counts the frames it has left.
@@ -390,20 +387,20 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesB, sprites, 0, 0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   {
-    s32 formationX;
-    s32 formationY;
-    s32 formationSpeedX;
-    s32 formationSpeedY;
+    s32 thorX;
+    s32 thorY;
+    s32 thorSpeedX;
+    s32 thorSpeedY;
     s32 pillarX;
     s32 pillarY;
 
-    formationX = px(80);
-    formationY = px(64);
+    thorX = px(80);
+    thorY = px(64);
     // The particle loop's counter is set with Thor's starting speeds.
     i = 0;
-    formationSpeedX = 0;
-    formationSpeedY = 0;
-    for (; i != THOR_PARTICLE_COUNT; i++) {
+    thorSpeedX = 0;
+    thorSpeedY = 0;
+    for (; i != 910; i++) {
       THOR_PARTICLES[i].variant = 0;
     }
     // Nothing in Thor reads these 16 particles, and BattleEffect_RunImpactBurst
@@ -439,8 +436,9 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
       // The pillar of lightning, frames 8 to 16: its body on frames 9 to
       // 11, its top on 12 to 15, and on frame 10 up to 512 sparks thrown
       // up from its foot.
-      /* FAKEMATCH(dead): a loop that runs once, j being 0; without it, 533 of
-       * 1640 instructions differ in tbs-en. */
+      /* FAKEMATCH(dead): a loop that runs once, j being 0; as its body alone,
+       * with 0 for j and 8 for start, 509 of 1640 instructions differ in
+       * tbs-en. */
       for (j = 0; j != 1; j++) {
         s32 start = j * 128 + 8;
         if (frame >= start && frame < j * 128 + 17) {
@@ -483,7 +481,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
             Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(16));
           }
         }
-        for (i = 0; i != THOR_BOLTS; i++) {
+        for (i = 0; i != 30; i++) {
           if (frame >= i * 2 + 80) {
             if (frame < i * 2 + 82) {
               s32 boltX = (Random16() & 3) - 3;
@@ -552,8 +550,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
         // at 64 to 127 128ths of a pixel a frame (twice that up and down),
         // living 16 to 23 frames.
         j = 0;
-        for (i = 0, spark = THOR_PARTICLES; i != THOR_PARTICLE_COUNT;
-             i++, spark++) {
+        for (i = 0, spark = THOR_PARTICLES; i != 910; i++, spark++) {
           if (spark->variant == 0) {
             s32 speed = 63;
             s32 angle;
@@ -586,8 +583,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
         // pixels wide to 1 as their life runs out.
         DrawRectangle draw = EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE_2];
         struct Particle *spark;
-        for (i = 0, spark = THOR_PARTICLES; i != THOR_PARTICLE_COUNT;
-             i++, spark++) {
+        for (i = 0, spark = THOR_PARTICLES; i != 910; i++, spark++) {
           if (spark->variant > 0) {
             spark->variant--;
             Particle_AdvanceWithGravity2D(spark, 60, 0);
@@ -609,34 +605,33 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
       // frame.
       if (frame > 15) {
         if (frame == 32) {
-          formationSpeedX = px(4);
-          formationSpeedY = -px(1) / 4;
+          thorSpeedX = px(4);
+          thorSpeedY = -px(1) / 4;
         }
         if (frame > 31) {
-          formationX += formationSpeedX;
-          formationY += formationSpeedY;
-          formationSpeedX = formationSpeedX * 60 / 64;
-          formationSpeedY = formationSpeedY * 60 / 64;
+          thorX += thorSpeedX;
+          thorY += thorSpeedY;
+          thorSpeedX = thorSpeedX * 60 / 64;
+          thorSpeedY = thorSpeedY * 60 / 64;
         }
-        BattleEffect_PlaceFormationObjects(SUMMON_FORMATION_THOR, formationX,
-                                           formationY);
+        BattleEffect_PlaceFormationObjects(SUMMON_FORMATION_THOR, thorX, thorY);
       }
       // Frames 16 to 143: three crackles of lightning a frame around Thor,
       // the first three glint pictures, placed and flipped at random, up to 8
       // pixels across and 40 up or down from canvas line 56, clipped at the
       // canvas edges and drawn where brighter.
       if ((u32)(frame - 16) <= 127) {
-        s32 formationScreenX;
-        for (i = 0, formationScreenX = formationX >> 17; i != 3; i++) {
+        s32 thorScreenX;
+        for (i = 0, thorScreenX = thorX >> 17; i != 3; i++) {
           s32 glint = i & 3;
           s32 angle = Random16() & TRIG_ANGLE_MASK;
-          s32 x = (((Trig_Sin(angle) * 8)) >> 16) + formationScreenX -
+          s32 x = (((Trig_Sin(angle) * 8)) >> 16) + thorScreenX -
                   (gBattleEffect_GlintCellWidths[glint] >> 1);
           s32 y = ((Trig_Cos(angle) * 40) >> 16) -
                   (gBattleEffect_GlintCellHeights[glint] >> 1);
           EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                               EFFECT_CLIP_BOUNDS |
-                                  gThor_SmokeFlips[Random16() & 3],
+                                  gThor_CrackleFlips[Random16() & 3],
                               COMPOSITE_LIGHTEN);
           EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE_2](
               canvas, Ram_MapGridCellBuffer + gBattleEffect_GlintCells[glint],
@@ -655,7 +650,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
 
     HeapSlot_Release(HEAP_SLOT_RAM_CODE);
     Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-    BattleEffect_RunImpactBurst(SUMMON_FORMATION_THOR, formationX, formationY);
+    BattleEffect_RunImpactBurst(SUMMON_FORMATION_THOR, thorX, thorY);
   }
   for (i = 0; i != 9; i++) {
     Sprite_DestroyFar(work->sprites[i]);
@@ -665,8 +660,6 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
 
 #undef THOR_PARTICLES
 #undef THOR_MOTE_OFFSETS
-#undef THOR_PARTICLE_COUNT
 #undef THOR_DIMMED_DOTS
-#undef THOR_BOLTS
 #undef THOR_LAUNCH_SPARKS
 #undef THOR_SPRITES_OFFSETS

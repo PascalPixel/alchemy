@@ -12,17 +12,15 @@
 //   the third target's last two (slots 32 and 33) on, they share them with
 //   drawn chips.
 // - 0 on: dust clouds, ten per target, from frame 302.
-#define CYBELE_CHIP_COUNT 48      ///< chips thrown by the thorns
-#define CYBELE_VINES 10           ///< vines drawn
 #define CYBELE_BLAST_OFFSETS 5760 ///< the blast pictures, after the yellow ring
 #define CYBELE_FIRST_SPARK 16     ///< the first spark in work->particles
 #define CYBELE_FIRST_THORN 32     ///< the first thorn in work->particles
 #define CYBELE_FIRST_CHIP 16      ///< the first chip in work->particles
-#define CYBELE_DUST_CELL 6        ///< the dust cloud in gCybele_EmberOffsets
+#define CYBELE_DUST_CELL 6        ///< the dust cloud in gCybele_BlastOffsets
 
 /// The vine pictures in the thorn vine sheet, each starting where the one
 /// before ends, below a 24x8 tip at 0. The flowers, thorns and sparks follow
-/// (gCybele_LeafOffsets, gCybele_ThornOffsets, gCybele_SparkOffsets).
+/// (gCybele_FlowerOffsets, gCybele_ThornOffsets, gCybele_SparkOffsets).
 enum ThornVineSheetCell {
   /// 24x64
   CYBELE_VINE_STEM = 24 * 8,
@@ -221,7 +219,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
     // waiting 16 to 31 frames to appear, and undo the canvas's 32-pixel
     // shift.
     if (frame == 128) {
-      for (i = 0; i != CYBELE_CHIP_COUNT; i++) {
+      for (i = 0; i != 48; i++) {
         struct Particle *chip = &work->particles[CYBELE_FIRST_CHIP + i];
 
         chip->x = (Random16() % 96) << 16;
@@ -245,7 +243,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
         rise = 80;
       else
         work->shakeFrames = 2;
-      for (i = 0; i != CYBELE_VINES; i++) {
+      for (i = 0; i != 10; i++) {
         struct Particle *vine = &work->particles[i];
 
         if (rise > vine->variant) {
@@ -287,13 +285,13 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
           if ((i & 1) != 0) {
             s32 y = ((vine->y - top) & 127) - 16;
             s32 kind = i % 3;
-            s32 full = gCybele_LeafSizes[kind];
+            s32 full = gCybele_FlowerSizes[kind];
             s32 rows = full;
 
             if (y + rows > vine->y)
               rows -= y + rows - vine->y;
             if (rows > 0)
-              draw[i & 1](canvas, work->sheet + gCybele_LeafOffsets[kind],
+              draw[i & 1](canvas, work->sheet + gCybele_FlowerOffsets[kind],
                           vine->x + 8, y, full, rows);
           }
         }
@@ -526,8 +524,8 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
                * CYBELE_DUST_CELL in both reads, 214 of 1434 instructions
                * differ in tbs-en. */
               s32 cellIndex = CYBELE_DUST_CELL;
-              s32 offset = gCybele_EmberOffsets[cellIndex];
-              u32 size = gCybele_EmberSizes[cellIndex];
+              s32 offset = gCybele_BlastOffsets[cellIndex];
+              u32 size = gCybele_BlastSizes[cellIndex];
 
               draw[0](canvas, work->sheet + offset, screen.x - (size >> 1),
                       screen.y - (size >> 1), size, size);
@@ -561,8 +559,6 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
   BattleEffect_EndCanvasLayer();
 }
 
-#undef CYBELE_CHIP_COUNT
-#undef CYBELE_VINES
 #undef CYBELE_FIRST_SPARK
 #undef CYBELE_FIRST_THORN
 #undef CYBELE_FIRST_CHIP

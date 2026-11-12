@@ -8,15 +8,13 @@
 /// starting where the one before ends: the rising wall's nine rows
 /// (gGaia_RowCells), each one line of gGaia_RowWidths stretched to 32 lines;
 /// the standing wall's top and foot; then the three flames of
-/// gGaia_MoundCells.
+/// gGaia_FlameCells.
 enum EarthWallSheetCell {
   /// 48x96, stretched from 48x32
   GAIA_WALL_TOP = 32 * (5 + 6 + 9 + 12 + 15 + 18 + 21 + 32 + 40),
   /// 48x21
   GAIA_WALL_FOOT = GAIA_WALL_TOP + 48 * 96
 };
-
-#define GAIA_ROCKS 11 ///< rocks that tumble up the wall
 
 /// Flames flicker at the targets' feet under a narrow shaft of orange light,
 /// which widens into a glowing wall and stands while rocks tumble up through it
@@ -127,14 +125,14 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
   for (i = 0; i != 48 * 21; i++)
     work->sheet[sheetIndex++] = *src++;
   for (i = 0; i != 3; i++) {
-    for (k = 0; k != gGaia_MoundWidths[i] * gGaia_MoundHeights[i]; k++)
+    for (k = 0; k != gGaia_FlameWidths[i] * gGaia_FlameHeights[i]; k++)
       work->sheet[sheetIndex++] = *src++;
   }
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
 
   // The rock sprites, of SPRITE_BATTLE_ROCKS: sprites 0 to 3 play animation
   // 0, 4 to 7 animation 1 and 8 to 10 animation 2.
-  for (i = 0; i != GAIA_ROCKS; i++) {
+  for (i = 0; i != 11; i++) {
     struct Sprite *rock = Sprite_CreateFar(SPRITE_BATTLE_ROCKS);
 
     work->sprites[i] = rock;
@@ -161,7 +159,7 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
   // cycles through 1 to 12 but nothing else reads it, and variant is the
   // wait before the rock appears (44 frames for the first, 4 fewer for each
   // after).
-  for (i = 0; i != GAIA_ROCKS; i++) {
+  for (i = 0; i != 11; i++) {
     struct Particle *rock = &work->particles[10 + i];
 
     SET_POSITION(rock, (Random16() & 15) + 88, 128, (Random16() & 15) + 2);
@@ -207,13 +205,13 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
 
       if (cell > 2)
         cell = (cell & 1) + 1;
-      draw[0](canvas, work->sheet + gGaia_MoundCells[cell],
-              wallX - gGaia_MoundWidths[cell] + 64,
-              116 - gGaia_MoundHeights[cell], gGaia_MoundWidths[cell],
-              gGaia_MoundHeights[cell]);
-      draw[1](canvas, work->sheet + gGaia_MoundCells[cell], wallX + 64,
-              116 - gGaia_MoundHeights[cell], gGaia_MoundWidths[cell],
-              gGaia_MoundHeights[cell]);
+      draw[0](canvas, work->sheet + gGaia_FlameCells[cell],
+              wallX - gGaia_FlameWidths[cell] + 64,
+              116 - gGaia_FlameHeights[cell], gGaia_FlameWidths[cell],
+              gGaia_FlameHeights[cell]);
+      draw[1](canvas, work->sheet + gGaia_FlameCells[cell], wallX + 64,
+              116 - gGaia_FlameHeights[cell], gGaia_FlameWidths[cell],
+              gGaia_FlameHeights[cell]);
     }
 
     // The rising wall (frames 12 to 87): its narrowest row until frame 66,
@@ -285,7 +283,7 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
       s32 rocks = 6;
 
       if (frame > 71)
-        rocks = GAIA_ROCKS;
+        rocks = 11;
       for (k = 0; k != rocks; k++) {
         struct Particle *rock = &work->particles[10 + k];
         s32 slot;
@@ -306,7 +304,7 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
           position.x = px(rock->x + rockX * 2);
           position.height = px(512) - px(rock->y);
           position.y = px(512);
-          slot = (frame / 2 + k) % GAIA_ROCKS;
+          slot = (frame / 2 + k) % 11;
           /* FAKEMATCH(dead): slot != -1 always holds, slot being a remainder
            * of a positive count; without the test, 166 of 936 instructions
            * differ in tbs-en. */
@@ -364,9 +362,7 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
   }
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   EFFECT_RELEASE_BLITTERS();
-  for (i = 0; i != GAIA_ROCKS; i++)
+  for (i = 0; i != 11; i++)
     Sprite_DestroyFar(work->sprites[i]);
   BattleEffect_EndCanvasLayer();
 }
-
-#undef GAIA_ROCKS

@@ -4,19 +4,18 @@
 
 #include "../battle_effect_internal.h"
 
-#define KIRIN_OBJECTS 9 ///< Kirin's sprites, work->sprites[0] to [8]
 /// One 48x32 fire blob picture; the fire sheet holds four.
 #define KIRIN_BLOB_BYTES (48 * 32)
 
 /// Over a scrolling forest Kirin bounds in through a hoop of light, trailing
 /// fire; then, unseen behind the battle background, it charges across the
-/// targets, each bursting into embers as it passes, and a wall of fire sweeps
+/// targets, each bursting into motes as it passes, and a wall of fire sweeps
 /// over them and leaves them black.
 ///
 /// Abilities: Kirin (SUMMON_EFFECT_KIRIN).
 ///
 /// The effect runs in two stages. In the sweep (120 frames; A or B ends it
-/// after frame 16), Kirin, KIRIN_OBJECTS sprites of SPRITE_KIRIN, bounds in on
+/// after frame 16), Kirin, nine sprites of SPRITE_KIRIN, bounds in on
 /// a sine wave while the battle background scrolls, a hoop of motes opens in
 /// front of it and a trail of fire follows. In the charge (96 frames) Kirin
 /// slides across the targets behind the battle background; each target it
@@ -75,7 +74,7 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
   // it only window 1 applies, which shows no sprites, so Kirin bounds in from
   // behind that edge until the charge opens window 0 again.
   BattleEffect_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_FILL);
-  BattleEffect_SpawnObjects(KIRIN_OBJECTS, SPRITE_KIRIN, 1);
+  BattleEffect_SpawnObjects(9, SPRITE_KIRIN, 1);
   gProjection.centerY = 240;
   BattleEffect_SelectLivingTargets(work->args);
   REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG1 |
@@ -203,7 +202,7 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
         place.y = px(gKirin_Rows[i] - wave) + px(72);
         Actor_ApplyProjectedPlacementFar(work->sprites[i], &place, &pair, 0);
         i++;
-      } while (i != KIRIN_OBJECTS);
+      } while (i != 9);
     }
 
     // Over the first 27 frames a hoop of motes opens in front of Kirin, eight
@@ -308,7 +307,7 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
 
     sprite->image.priority = 3;
     i++;
-  } while (i != KIRIN_OBJECTS);
+  } while (i != 9);
 
   {
     s32 rowX;
@@ -368,7 +367,7 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
           Actor_ApplyProjectedPlacementFar(work->sprites[i], &chargePlace,
                                            &chargeScaleCopy, 0);
           i++;
-        } while (i != KIRIN_OBJECTS);
+        } while (i != 9);
       }
 
       // Frame 8: BattleCamera_Shake shakes the screen for 8 frames.
@@ -482,9 +481,8 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
   do {
     Sprite_DestroyFar(work->sprites[i]);
     i++;
-  } while (i != KIRIN_OBJECTS);
+  } while (i != 9);
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
-#undef KIRIN_OBJECTS
 #undef KIRIN_BLOB_BYTES

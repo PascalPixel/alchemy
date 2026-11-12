@@ -101,11 +101,12 @@ void BattleEffect_RunOuterSpace(struct BattleEffectParams *args) {
 #define PARTICLE_STREAMS_MOTE_OFFSETS (16 * 16 + 32 * 32 + 5 * 48 * 48)
 
 /// The stream runs in two halves. The fall dissolves the battle map into a
-/// starfield, then for up to 192 frames brings a formation of sprites down
-/// the screen while flames, orbiting sparks and falling fireballs are drawn
-/// into the map buffer over a backdrop coloured line by line. The burst then
-/// switches to a blended half-scale canvas and throws embers, screen motes and
-/// growing flashes from the origin for 54 shaking frames.
+/// starfield, then for up to 192 frames brings the falling sprite (two in
+/// Outer Space) down the screen while flames, orbiting sparks and falling
+/// fireballs are drawn into the map buffer over a backdrop coloured line by
+/// line. The burst then switches to a blended half-scale canvas and throws
+/// embers, screen motes and growing flashes from the origin for 54 shaking
+/// frames.
 ///
 /// Particle slots: the burst's flashes use PARTICLES 0 to 127 and its embers
 /// the 512 after them (PARTICLE_STREAMS_EMBERS); work->particles holds the
@@ -123,7 +124,7 @@ void BattleEffect_RunOuterSpace(struct BattleEffectParams *args) {
 /// then keeps it within 4 pixels of (120, 120) until
 /// BattleEffect_EndCanvasLayer puts it back there at the end. The burst sets
 /// BG2 back to the half-scale canvas and ends the canvas layer. Releases the
-/// formation sprites it spawned (Outer Space's on frame 48 of the burst).
+/// falling sprites it spawned (Outer Space's on frame 48 of the burst).
 void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
                                      s32 mode) {
   volatile u32 fill;
@@ -211,8 +212,8 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   BattleEffect_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_FILL);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  // The falling formation: two animated sprites in Outer Space, otherwise one
-  // spawned sprite.
+  // The falling sprite: one spawned sprite, or two animated ones in Outer
+  // Space.
   if (mode == PARTICLE_STREAMS_OUTER_SPACE) {
     for (i = 0; i != 2; i++) {
       struct Sprite *sprite = Sprite_CreateFar(SPRITE_BATTLE_FUSION_DRAGON +
@@ -432,8 +433,8 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
       else
         x = 64 - frame / 4;
       y = 96 - frame;
-      // Place the formation (both sprites in Outer Space), drifting with the
-      // stream and growing each frame: its 16.16 scale starts at 0.625 in
+      // Place the falling sprite (both sprites in Outer Space), drifting with
+      // the stream and growing each frame: its 16.16 scale starts at 0.625 in
       // Outer Space and 1 otherwise, and gains 1/256 a frame.
       position.groundHeight = 0;
       position.height = px(255);
@@ -457,7 +458,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
                                          0);
       }
       // A new flame starts at a random point on the lower half of a circle
-      // of radius 30 * size beneath the formation.
+      // of radius 30 * size beneath the falling sprite.
       for (i = 0, y = 32 - y; i != 32; i++) {
         struct Particle *flame = &work->particles[i];
 
@@ -503,16 +504,16 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
       // 95 becomes a landing instead.
       y = frame - 96;
       for (i = 0; i != 7; i++) {
-        s32 fireballY = gParticleStreams_DropPoints[i][1] + y;
+        s32 fireballY = gParticleStreams_FireballPoints[i][1] + y;
 
         if (fireballY <= 93)
           draw(Ram_MapGridCellBuffer,
                work->sheet + PARTICLE_STREAMS_LARGE_GLOW_CELL,
-               gParticleStreams_DropPoints[i][0] + x - 12, fireballY - 12, 24,
-               24);
+               gParticleStreams_FireballPoints[i][0] + x - 12, fireballY - 12,
+               24, 24);
         else if (fireballY <= 95)
           ParticleStreams_SpawnLanding(
-              px(gParticleStreams_DropPoints[i][0] + x), px(fireballY), 1);
+              px(gParticleStreams_FireballPoints[i][0] + x), px(fireballY), 1);
       }
       for (i = 0; i != 32; i++) {
         struct Particle *flame = &work->particles[i];
@@ -588,9 +589,9 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
   // Each copy refills the canvas with level 16.
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, CANVAS_FILL_WORD(16));
 
-  // The burst shakes while the formation keeps falling and growing. The
-  // background brightens from frame 36; on frame 48 Outer Space's sprites are
-  // released and the battle shows the damage.
+  // The burst shakes while the falling sprite (two in Outer Space) keeps
+  // falling and growing. The background brightens from frame 36; on frame 48
+  // Outer Space's sprites are released and the battle shows the damage.
   for (frame = 0; frame != 54; frame++) {
     s32 size = (frame + 464) << 8;
     struct BattleCamera *camera = gBattleCamera;
@@ -705,7 +706,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
     else
       x = 56 - frame / 2;
     y = 64 - frame * 2;
-    // The formation keeps growing by 1/256 a frame, from a 16.16 scale of
+    // The falling sprite keeps growing by 1/256 a frame, from a 16.16 scale of
     // about 1.81 in Outer Space (size) and 2 otherwise (grow).
     grow = (frame << 8) + (2 << 16);
     position.groundHeight = 0;

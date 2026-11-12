@@ -204,10 +204,10 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
 
     for (i = 0; i != count; i++) {
       s32 cell = i % 3;
-      draw(canvas, work->sheet + gBoreas_RockCells[cell],
+      draw(canvas, work->sheet + gBoreas_CrystalCells[cell],
            BOREAS_POINT_X(i) - shakeX,
-           BOREAS_POINT_Y(i) - gBoreas_RockHeights[cell] - shakeY,
-           gBoreas_RockWidths[cell], gBoreas_RockHeights[cell]);
+           BOREAS_POINT_Y(i) - gBoreas_CrystalHeights[cell] - shakeY,
+           gBoreas_CrystalWidths[cell], gBoreas_CrystalHeights[cell]);
     }
 
     // Lay out Boreas's 3x3 sprites 32 pixels apart, moved against the shake.
@@ -451,10 +451,11 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
     if (frame <= 71) {
       for (i = 0; i != count; i++) {
         s32 cell = i % 3;
-        draw(canvas, work->sheet + gBoreas_BoulderCells[cell],
+        draw(canvas, work->sheet + gBoreas_RisingCrystalCells[cell],
              BOREAS_POINT_X(i) - 56,
-             BOREAS_POINT_Y(i) - gBoreas_BoulderHeights[cell],
-             gBoreas_BoulderWidths[cell], gBoreas_BoulderHeights[cell]);
+             BOREAS_POINT_Y(i) - gBoreas_RisingCrystalHeights[cell],
+             gBoreas_RisingCrystalWidths[cell],
+             gBoreas_RisingCrystalHeights[cell]);
       }
     }
     // Frame 72: the risen crystals burst, throwing up 64 crystals from where

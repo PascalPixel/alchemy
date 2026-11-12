@@ -695,9 +695,9 @@ u8 gCybele_ObjectPoses[][2] = {
 u16 gCybele_ThornOffsets[] = {3920, 3932, 3947, 3955, 3970};
 u8 gCybele_ThornWidths[] = {2, 5, 2, 5, 3};
 u8 gCybele_ThornHeights[] = {6, 3, 4, 3, 3};
-// The three leaf cells, square.
-u16 gCybele_LeafOffsets[] = {3456, 3712, 3856};
-u8 gCybele_LeafSizes[] = {16, 12, 8};
+// The three flower pictures, square.
+u16 gCybele_FlowerOffsets[] = {3456, 3712, 3856};
+u8 gCybele_FlowerSizes[] = {16, 12, 8};
 // The five chip cells, the thorn cells again.
 u16 gCybele_ChipOffsets[] = {3920, 3932, 3947, 3955, 3970};
 u8 gCybele_ChipWidths[] = {2, 5, 2, 5, 3};
@@ -705,39 +705,39 @@ u8 gCybele_ChipHeights[] = {6, 3, 4, 3, 3};
 // The five pictures of a spark, square.
 u16 gCybele_SparkOffsets[] = {3979, 4043, 4268, 4389, 4470};
 u8 gCybele_SparkSizes[] = {8, 15, 11, 9, 5};
-// The ember cells of the blast sheet, square. Only the last, largest one is
-// drawn.
-u16 gCybele_EmberOffsets[] = {5760, 6016, 7040, 9344, 11648, 13952, 16256};
-u16 gCybele_EmberSizes[] = {16, 32, 48, 48, 48, 48, 48};
-/// Rock and ice effect: where the rocks stand (and later the boulders, 56
-/// pixels further left), by the bottom-left corner.
+// The seven growing pictures of the blast sheet, square. Cybele draws only the
+// last, largest one, as a dust cloud.
+u16 gCybele_BlastOffsets[] = {5760, 6016, 7040, 9344, 11648, 13952, 16256};
+u16 gCybele_BlastSizes[] = {16, 32, 48, 48, 48, 48, 48};
+/// Boreas: where the crystals stand (and in the second half the rising
+/// crystals, 56 pixels further left), by the bottom-left corner.
 u8 gBoreas_Points[][2] = {{57, 130}, {75, 128}, {71, 104}, {101, 130},
                           {86, 126}, {85, 98},  {64, 98},  {98, 96},
                           {77, 87},  {84, 88},  {68, 67},  {81, 49},
                           {94, 70},  {70, 51},  {93, 36},  {81, 50}};
 /// The battle background's jolt on frames 176 to 179.
 s8 gBoreas_ShakeOffsets[] = {-4, -3, -2, 0};
-// The first half's three rock pictures, drawn standing on their points.
-u16 gBoreas_RockCells[] = {0, 1152, 2064};
-u8 gBoreas_RockWidths[] = {24, 24, 20};
-u8 gBoreas_RockHeights[] = {48, 38, 26};
+// The first half's three crystal pictures, drawn standing on their points.
+u16 gBoreas_CrystalCells[] = {0, 1152, 2064};
+u8 gBoreas_CrystalWidths[] = {24, 24, 20};
+u8 gBoreas_CrystalHeights[] = {48, 38, 26};
 /// The third sprite's animations from frame 209, one every 4 frames.
 u8 gBoreas_Animations[] = {2, 9, 10, 11};
-// Rock and ice effect: the chips thrown up as the rocks crumble: four large
+// Boreas: the shards thrown up as the crystals crumble: four large
 // ones, then from frame 192 seven small ones.
 u8 gBoreas_DebrisWidths[] = {12, 11, 8, 10, 8, 12, 5, 7, 7, 6, 7};
 u8 gBoreas_DebrisHeights[] = {10, 16, 14, 15, 4, 4, 3, 4, 6, 12, 10};
 u16 gBoreas_DebrisCells[] = {2584, 2704, 2880, 2992, 5062, 5094,
                              5142, 5157, 5185, 5227, 5299};
-// Rock and ice effect: the three 16x16 spray images.
+// Boreas: the three 16x16 spray pictures.
 u8 gBoreas_SprayWidths[] = {16, 16, 16};
 u8 gBoreas_SprayHeights[] = {16, 16, 16};
 u16 gBoreas_SprayCells[] = {4294, 4550, 4806};
-// The second half's boulders (56 pixels left of the rock points) and the
-// chunks they crumble into: the same three pictures as the rocks.
-u16 gBoreas_BoulderCells[] = {0, 1152, 2064};
-u8 gBoreas_BoulderWidths[] = {24, 24, 20};
-u8 gBoreas_BoulderHeights[] = {48, 38, 26};
+// The second half's rising crystals (56 pixels left of the first half's
+// points) and the crystals they burst into: the same three pictures.
+u16 gBoreas_RisingCrystalCells[] = {0, 1152, 2064};
+u8 gBoreas_RisingCrystalWidths[] = {24, 24, 20};
+u8 gBoreas_RisingCrystalHeights[] = {48, 38, 26};
 u8 gBoreas_FallWidths[] = {24, 24, 20};
 u8 gBoreas_FallHeights[] = {48, 38, 26};
 u16 gBoreas_FallCells[] = {0, 1152, 2064};
@@ -929,8 +929,8 @@ u8 gHail_ChipY[] = {0, 18, 18, 0, 24, 20, 5, 22, 26};
 /// SPRITE_COLOR_ values: white, black, red raised to full, or its colour
 /// channels rotated.
 u8 gThor_TargetPalettes[] = {7, 14, 10, 4};
-/// Flip flags for the smoke puffs, chosen at random.
-u8 gThor_SmokeFlips[] = GLINT_FLIPS;
+/// Flip flags for the crackles of lightning around Thor, chosen at random.
+u8 gThor_CrackleFlips[] = GLINT_FLIPS;
 /// Where each of a rock's 21 shards starts, x then y, before the rock's
 /// offset across.
 u8 gSpire_ShardOffsets[32][2] = {
@@ -983,11 +983,11 @@ u8 gFlurry_Styles[][7] = {
 // Rising wall: the nine rows of the growing wall in the rebuilt sheet.
 u16 gGaia_RowCells[] = {0, 160, 352, 640, 1024, 1504, 2080, 2752, 3776};
 u8 gGaia_RowWidths[] = {5, 6, 9, 12, 15, 18, 21, 32, 40};
-// The swelling ground's three pictures, after the rebuilt rows; they share
-// the earth wall's sizes.
-u16 gGaia_MoundCells[] = {10672, 11505, 12550};
-u8 gGaia_MoundWidths[] = EARTH_WALL_CELL_WIDTHS;
-u8 gGaia_MoundHeights[] = EARTH_WALL_CELL_HEIGHTS;
+// The three pictures of the flames at the wall's foot, after the rebuilt
+// rows; they share the earth wall's sizes.
+u16 gGaia_FlameCells[] = {10672, 11505, 12550};
+u8 gGaia_FlameWidths[] = EARTH_WALL_CELL_WIDTHS;
+u8 gGaia_FlameHeights[] = EARTH_WALL_CELL_HEIGHTS;
 /// BG2's x shift, by side and variant, in canvas pixels written to BG2X: a
 /// positive shift moves the canvas left on the screen.
 s8 gGaia_Bg2Shifts[][3] = {{-8, 0, 12}, {-72, -40, -16}};
@@ -1042,12 +1042,12 @@ u16 gHelmSplitter_ImpactBurstCells[] = {0,     4608,  9216,  13356,
 // particle_streams.c and ramses.c: Particle stream paths and circling effect
 // geometry.
 
-/// The seven sparks that orbit the rising formation.
+/// The seven sparks that orbit the falling sprite.
 s16 gParticleStreams_OrbitPoints[][3] = {
     {-64, -96, 24}, {-48, -120, 32}, {-32, -80, -48}, {-16, -72, -24},
     {16, -80, 16},  {32, -112, -32}, {48, -96, 56}};
-/// Where the seven drops fall, in pixels.
-s16 gParticleStreams_DropPoints[][2] = {
+/// Where the seven fireballs fall, in pixels.
+s16 gParticleStreams_FireballPoints[][2] = {
     {32, 32}, {48, 96}, {80, 80}, {112, 100}, {176, 80}, {196, 64}, {204, 96}};
 // The seven growing flash cells of the blast sheet, square.
 u16 gParticleStreams_FlashCells[] = BLAST_OFFSETS;

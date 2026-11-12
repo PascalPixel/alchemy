@@ -14,31 +14,31 @@
 /// is drawn on.
 enum SlashSheetCell {
   /// 14x28
-  ATALANTA_SLASH_FLASH_1 = 0,
+  ATALANTA_SHAFT_FLASH_1 = 0,
   /// 23x44
-  ATALANTA_SLASH_FLASH_2 = ATALANTA_SLASH_FLASH_1 + 14 * 28,
+  ATALANTA_SHAFT_FLASH_2 = ATALANTA_SHAFT_FLASH_1 + 14 * 28,
   /// 20x30
-  ATALANTA_SLASH_FLASH_3_TOP = ATALANTA_SLASH_FLASH_2 + 23 * 44,
+  ATALANTA_SHAFT_FLASH_3_TOP = ATALANTA_SHAFT_FLASH_2 + 23 * 44,
   /// 22x33
-  ATALANTA_SLASH_FLASH_3_BOTTOM = ATALANTA_SLASH_FLASH_3_TOP + 20 * 30,
+  ATALANTA_SHAFT_FLASH_3_BOTTOM = ATALANTA_SHAFT_FLASH_3_TOP + 20 * 30,
   /// 18x27
-  ATALANTA_SLASH_FLASH_4_TOP = ATALANTA_SLASH_FLASH_3_BOTTOM + 22 * 33,
+  ATALANTA_SHAFT_FLASH_4_TOP = ATALANTA_SHAFT_FLASH_3_BOTTOM + 22 * 33,
   /// 22x22
-  ATALANTA_SLASH_FLASH_4_MIDDLE = ATALANTA_SLASH_FLASH_4_TOP + 18 * 27,
+  ATALANTA_SHAFT_FLASH_4_MIDDLE = ATALANTA_SHAFT_FLASH_4_TOP + 18 * 27,
   /// 19x28
-  ATALANTA_SLASH_FLASH_4_BOTTOM = ATALANTA_SLASH_FLASH_4_MIDDLE + 22 * 22,
+  ATALANTA_SHAFT_FLASH_4_BOTTOM = ATALANTA_SHAFT_FLASH_4_MIDDLE + 22 * 22,
   /// 16x23
-  ATALANTA_SLASH_FLASH_5_TOP = ATALANTA_SLASH_FLASH_4_BOTTOM + 19 * 28,
+  ATALANTA_SHAFT_FLASH_5_TOP = ATALANTA_SHAFT_FLASH_4_BOTTOM + 19 * 28,
   /// 23x28
-  ATALANTA_SLASH_FLASH_5_MIDDLE = ATALANTA_SLASH_FLASH_5_TOP + 16 * 23,
+  ATALANTA_SHAFT_FLASH_5_MIDDLE = ATALANTA_SHAFT_FLASH_5_TOP + 16 * 23,
   /// 20x28
-  ATALANTA_SLASH_FLASH_5_BOTTOM = ATALANTA_SLASH_FLASH_5_MIDDLE + 23 * 28,
+  ATALANTA_SHAFT_FLASH_5_BOTTOM = ATALANTA_SHAFT_FLASH_5_MIDDLE + 23 * 28,
   /// 16x21
-  ATALANTA_SLASH_TOP = ATALANTA_SLASH_FLASH_5_BOTTOM + 20 * 28,
+  ATALANTA_SHAFT_TOP = ATALANTA_SHAFT_FLASH_5_BOTTOM + 20 * 28,
   /// 29x35
-  ATALANTA_SLASH_MIDDLE = ATALANTA_SLASH_TOP + 16 * 21,
+  ATALANTA_SHAFT_MIDDLE = ATALANTA_SHAFT_TOP + 16 * 21,
   /// 21x24
-  ATALANTA_SLASH_BOTTOM = ATALANTA_SLASH_MIDDLE + 29 * 35
+  ATALANTA_SHAFT_BOTTOM = ATALANTA_SHAFT_MIDDLE + 29 * 35
 };
 
 /// Under a violet sky Atalanta flies across the screen while sixteen shafts of
@@ -205,43 +205,43 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
           shaft->y += shaft->velocityY;
           shaft->velocityX -= px(1);
           shaft->velocityY += px(2);
-          draw[0](canvas, work->sheet + ATALANTA_SLASH_TOP, x + 4, y - 40, 16,
+          draw[0](canvas, work->sheet + ATALANTA_SHAFT_TOP, x + 4, y - 40, 16,
                   21);
-          draw[0](canvas, work->sheet + ATALANTA_SLASH_MIDDLE, x - 16, y - 19,
+          draw[0](canvas, work->sheet + ATALANTA_SHAFT_MIDDLE, x - 16, y - 19,
                   29, 35);
-          draw[0](canvas, work->sheet + ATALANTA_SLASH_BOTTOM, x - 20, y + 16,
+          draw[0](canvas, work->sheet + ATALANTA_SHAFT_BOTTOM, x - 20, y + 16,
                   21, 24);
         } else if (frame >= i * 8 + 80) {
           // The flash: five pictures, one a frame, the later ones in parts.
           switch (frame - start - 16) {
           case 0:
-            draw[0](canvas, work->sheet + ATALANTA_SLASH_FLASH_1, x - 7, y - 14,
+            draw[0](canvas, work->sheet + ATALANTA_SHAFT_FLASH_1, x - 7, y - 14,
                     14, 28);
             break;
           case 1:
-            draw[0](canvas, work->sheet + ATALANTA_SLASH_FLASH_2, x - 11,
+            draw[0](canvas, work->sheet + ATALANTA_SHAFT_FLASH_2, x - 11,
                     y - 22, 23, 44);
             break;
           case 2:
-            draw[0](canvas, work->sheet + ATALANTA_SLASH_FLASH_3_TOP, x - 4,
+            draw[0](canvas, work->sheet + ATALANTA_SHAFT_FLASH_3_TOP, x - 4,
                     y - 31, 20, 30);
-            draw[0](canvas, work->sheet + ATALANTA_SLASH_FLASH_3_BOTTOM, x - 16,
+            draw[0](canvas, work->sheet + ATALANTA_SHAFT_FLASH_3_BOTTOM, x - 16,
                     y - 1, 22, 33);
             break;
           case 3:
-            draw[0](canvas, work->sheet + ATALANTA_SLASH_FLASH_4_TOP, x + 1,
+            draw[0](canvas, work->sheet + ATALANTA_SHAFT_FLASH_4_TOP, x + 1,
                     y - 38, 18, 27);
-            draw[0](canvas, work->sheet + ATALANTA_SLASH_FLASH_4_MIDDLE, x - 11,
+            draw[0](canvas, work->sheet + ATALANTA_SHAFT_FLASH_4_MIDDLE, x - 11,
                     y - 11, 22, 22);
-            draw[0](canvas, work->sheet + ATALANTA_SLASH_FLASH_4_BOTTOM, x - 19,
+            draw[0](canvas, work->sheet + ATALANTA_SHAFT_FLASH_4_BOTTOM, x - 19,
                     y + 11, 19, 28);
             break;
           case 4:
-            draw[0](canvas, work->sheet + ATALANTA_SLASH_FLASH_5_TOP, x + 4,
+            draw[0](canvas, work->sheet + ATALANTA_SHAFT_FLASH_5_TOP, x + 4,
                     y - 40, 16, 23);
-            draw[0](canvas, work->sheet + ATALANTA_SLASH_FLASH_5_MIDDLE, x - 10,
+            draw[0](canvas, work->sheet + ATALANTA_SHAFT_FLASH_5_MIDDLE, x - 10,
                     y - 17, 23, 28);
-            draw[0](canvas, work->sheet + ATALANTA_SLASH_FLASH_5_BOTTOM, x - 20,
+            draw[0](canvas, work->sheet + ATALANTA_SHAFT_FLASH_5_BOTTOM, x - 20,
                     y + 11, 20, 28);
             break;
           }
@@ -351,9 +351,9 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
                 gBattleEffect_PuffArcCellHeights[cell]);
 #endif
             if (shaft->variant <= 11) {
-              draw[0](canvas, work->sheet + ATALANTA_SLASH_TOP, shaft->x + 4,
+              draw[0](canvas, work->sheet + ATALANTA_SHAFT_TOP, shaft->x + 4,
                       shaft->y - 40, 16, 21);
-              draw[0](canvas, work->sheet + ATALANTA_SLASH_MIDDLE,
+              draw[0](canvas, work->sheet + ATALANTA_SHAFT_MIDDLE,
                       shaft->x - 16, shaft->y - 19, 29, 35);
             }
           }
@@ -364,12 +364,12 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
           // Falling: the shaft's lower part is cut off below row 96.
           if (shaft->y > 56)
             height = height - shaft->y + 56;
-          draw[0](canvas, work->sheet + ATALANTA_SLASH_TOP, shaft->x + 4,
+          draw[0](canvas, work->sheet + ATALANTA_SHAFT_TOP, shaft->x + 4,
                   shaft->y - 40, 16, 21);
-          draw[0](canvas, work->sheet + ATALANTA_SLASH_MIDDLE, shaft->x - 16,
+          draw[0](canvas, work->sheet + ATALANTA_SHAFT_MIDDLE, shaft->x - 16,
                   shaft->y - 19, 29, 35);
           if (height > 0)
-            draw[0](canvas, work->sheet + ATALANTA_SLASH_BOTTOM, shaft->x - 20,
+            draw[0](canvas, work->sheet + ATALANTA_SHAFT_BOTTOM, shaft->x - 20,
                     shaft->y + 16, 21, height);
           shaft->x -= 6;
           shaft->y += 12;

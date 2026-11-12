@@ -1,3 +1,8 @@
+/// @file
+/// The credits at the end of the game: the staff names, drawn line by line
+/// into a ring of sprite tiles, scroll up over battle backgrounds that
+/// crossfade behind them.
+
 #include "module/menu/credits.h"
 #ifdef UBFIX
 // This object uses the credits' views of the borrowed flash work cells.
@@ -320,10 +325,8 @@ extern s16 gProgramFlashSector;
 #define CREDITS_END_OF_TEXT (*(s16 *)&gProgramFlashSector)
 #endif
 
-/// Blank credits line
 static const u8 sBlankCreditLine[] = "";
 
-// These labels are translated credits content, not gameplay patch selectors.
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define CREDITS_STAFF_TITLE "OUGON NO TAIYO STAFF"
 #define CREDITS_FACES_SUBTITLE "& Faces"

@@ -768,15 +768,15 @@ static void ColosseumEntrance_CrowdRecognizesIsaac(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
-    Actor_SetPosition(ACTOR_GARET, leader->x.fixed, leader->z.fixed);
+    Actor_SetPositionFixed(ACTOR_GARET, leader->x.fixed, leader->z.fixed);
   }
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
-    Actor_SetPosition(ACTOR_IVAN, leader->x.fixed, leader->z.fixed);
+    Actor_SetPositionFixed(ACTOR_IVAN, leader->x.fixed, leader->z.fixed);
   }
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
-    Actor_SetPosition(ACTOR_MIA, leader->x.fixed, leader->z.fixed);
+    Actor_SetPositionFixed(ACTOR_MIA, leader->x.fixed, leader->z.fixed);
   }
   Actor_SetSpeed(ACTOR_GARET, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_SetSpeed(ACTOR_IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
@@ -1514,9 +1514,9 @@ static void ColosseumEntrance_UpdateEntranceCells(void) {
 
 /// Places the three companions behind Isaac for the soldiers' briefing.
 static inline void ColosseumEntrance_PositionPartyForBriefing(void) {
-  Actor_SetPosition(ACTOR_GARET, PIXELS(792), PIXELS(136));
-  Actor_SetPosition(ACTOR_IVAN, PIXELS(824), PIXELS(136));
-  Actor_SetPosition(ACTOR_MIA, PIXELS(808), PIXELS(152));
+  Actor_SetPosition(ACTOR_GARET, 792, 136);
+  Actor_SetPosition(ACTOR_IVAN, 824, 136);
+  Actor_SetPosition(ACTOR_MIA, 808, 152);
 }
 
 /// The Colosseum's briefing, as the party arrives from the gates
@@ -1740,7 +1740,7 @@ static void ColosseumEntrance_EscortToEastExit(void) {
     Party_AddMember(MIA);
   }
   Event_Start();
-  Actor_SetPosition(ACTOR_ESCORTING_SOLDIER, PIXELS(712), PIXELS(588));
+  Actor_SetPosition(ACTOR_ESCORTING_SOLDIER, 712, 588);
   wait(1);
   FieldCamera_FollowActor(ACTOR_ESCORTING_SOLDIER, 1);
   Actor_SetSpeed(ACTOR_ESCORTING_SOLDIER, PIXELS(8) / 5, PIXELS(4) / 5);
@@ -1903,7 +1903,7 @@ static void ColosseumEntrance_EscortToWestExit(void) {
     Party_AddMember(MIA);
   }
   Event_Start();
-  Actor_SetPosition(ACTOR_ESCORTING_SOLDIER, PIXELS(868), PIXELS(588));
+  Actor_SetPosition(ACTOR_ESCORTING_SOLDIER, 868, 588);
   wait(1);
   FieldCamera_FollowActor(ACTOR_ESCORTING_SOLDIER, 1);
   Actor_SetSpeed(ACTOR_ESCORTING_SOLDIER, PIXELS(8) / 5, PIXELS(4) / 5);

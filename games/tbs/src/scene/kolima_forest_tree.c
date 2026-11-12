@@ -467,11 +467,11 @@ static void KolimaForestTree_RestoreTret(void) {
   Actor_SetSpeed(ACTOR_IVAN, PIXELS(1), PIXELS(1) / 2);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != 0) {
-    Actor_SetPosition(ACTOR_GARET, leader->x.fixed, leader->z.fixed);
+    Actor_SetPositionFixed(ACTOR_GARET, leader->x.fixed, leader->z.fixed);
   }
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != 0) {
-    Actor_SetPosition(ACTOR_IVAN, leader->x.fixed, leader->z.fixed);
+    Actor_SetPositionFixed(ACTOR_IVAN, leader->x.fixed, leader->z.fixed);
   }
   Actor_SetScript(ACTOR_GARET, gKolimaForestTree_GaretApproachActions);
   Actor_SetScript(ACTOR_IVAN, gKolimaForestTree_IvanApproachActions);
@@ -479,7 +479,7 @@ static void KolimaForestTree_RestoreTret(void) {
     Actor_SetSpeed(ACTOR_MIA, PIXELS(1), PIXELS(1) / 2);
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     if (leader != 0) {
-      Actor_SetPosition(ACTOR_MIA, leader->x.fixed, leader->z.fixed);
+      Actor_SetPositionFixed(ACTOR_MIA, leader->x.fixed, leader->z.fixed);
     }
     Actor_SetScript(ACTOR_MIA, gKolimaForestTree_MiaApproachActions);
   }

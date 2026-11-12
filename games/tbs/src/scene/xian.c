@@ -448,8 +448,8 @@ static void Xian_TalkToWaterCarrier(void) {
   carrierX = carrier->x.fixed;
   carrier = Actor_Get(ACTOR_WOMAN_CARRYING_WATER);
   carrierCellZ = carrier->z.fixed >> 20;
-  Actor_SetPosition(ACTOR_SPILLED_WATER, ((carrierX >> 20) << 20) + PIXELS(8),
-                    (carrierCellZ << 20) + PIXELS(8));
+  Actor_SetPositionFixed(ACTOR_SPILLED_WATER, ((carrierX >> 20) << 20) + px(8),
+                         (carrierCellZ << 20) + px(8));
   carrier = Actor_Get(ACTOR_WOMAN_CARRYING_WATER);
   carrierColumnX = carrier->x.fixed;
   carrier = Actor_Get(ACTOR_WOMAN_CARRYING_WATER);
@@ -780,7 +780,7 @@ static void Xian_StrikeTrainingTreeWithForce(void) {
                     EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM, 0);
   Task_Remove(rotationFunc);
   Actor_Get(ACTOR_TRAINING_TREE)->sprite->rotation = TRIG_TURN / 2;
-  Actor_SetPosition(ACTOR_FORCE_TARGET, PIXELS(168), PIXELS(312));
+  Actor_SetPosition(ACTOR_FORCE_TARGET, 168, 312);
   Event_Wait(20);
   Actor_FaceActor(ACTOR_KUNG_FU_STUDENT, ACTOR_TRAINING_TREE, 0);
   Actor_RunRepeatedMotion(ACTOR_KUNG_FU_STUDENT, 2);
@@ -860,7 +860,7 @@ s32 Xian_Initialize(void) {
   }
   if (GameFlag_Get(FLAG_XIAN_HEARD_HSU_TRAPPED)) {
     Actor_FaceDirection(ACTOR_BOY_ON_SILK_CLOTHES, FACING_WEST, 0);
-    Actor_SetPosition(ACTOR_KUNG_FU_STUDENT, PIXELS(146), PIXELS(312));
+    Actor_SetPosition(ACTOR_KUNG_FU_STUDENT, 146, 312);
     Actor_FaceDirection(ACTOR_KUNG_FU_STUDENT, FACING_EAST, 0);
     if (GameFlag_Get(FLAG_FEIZHI_WENT_TO_HSU)) {
       Actor_SetPosition(ACTOR_FEIZHI, 0, 0);
@@ -886,7 +886,7 @@ s32 Xian_Initialize(void) {
                            ACTOR_PRIORITY_UNDERFOOT;
   }
   if (GameFlag_Get(FLAG_XIAN_STRIKE_SHOWN)) {
-    Actor_SetPosition(ACTOR_KUNG_FU_STUDENT, PIXELS(146), PIXELS(312));
+    Actor_SetPosition(ACTOR_KUNG_FU_STUDENT, 146, 312);
     Actor_FaceDirection(ACTOR_KUNG_FU_STUDENT, FACING_EAST, 0);
   }
   // Restore the frozen puddle and tasks when re-entering the village.

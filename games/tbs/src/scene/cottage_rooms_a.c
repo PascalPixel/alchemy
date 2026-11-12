@@ -487,7 +487,7 @@ s32 CottageRoomsA_Initialize(void) {
   // Once Jenna is taken, her grandmother lies sick in bed.
   if (gMainRoutineWork.entrance == COTTAGE_ROOMS_A_FROM_VALE_NORTH) {
     if (GameFlag_Get(FLAG_VALE_PARTY_LEFT) != 0) {
-      Actor_SetPosition(ACTOR_JENNAS_GRANDMOTHER, PIXELS(454), PIXELS(150));
+      Actor_SetPosition(ACTOR_JENNAS_GRANDMOTHER, 454, 150);
       actor = Actor_Get(ACTOR_JENNAS_GRANDMOTHER);
       Actor_SetSpriteFlags(actor, 0);
       Actor_SetAnimation(ACTOR_JENNAS_GRANDMOTHER, ANIM_GRANDMOTHER_IN_BED);
@@ -659,15 +659,15 @@ static void CottageRoomsA_GaretComesHome(void) {
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   if (actor != NULL) {
-    Actor_SetPosition(ACTOR_GARET, actor->x.fixed, actor->z.fixed);
+    Actor_SetPositionFixed(ACTOR_GARET, actor->x.fixed, actor->z.fixed);
   }
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   if (actor != NULL) {
-    Actor_SetPosition(ACTOR_IVAN, actor->x.fixed, actor->z.fixed);
+    Actor_SetPositionFixed(ACTOR_IVAN, actor->x.fixed, actor->z.fixed);
   }
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   if (actor != NULL) {
-    Actor_SetPosition(ACTOR_MIA, actor->x.fixed, actor->z.fixed);
+    Actor_SetPositionFixed(ACTOR_MIA, actor->x.fixed, actor->z.fixed);
   }
   Actor_WalkTo(ACTOR_GARET, 792, 512);
   Actor_WalkTo(ACTOR_IVAN, 824, 504);
@@ -983,7 +983,7 @@ static void CottageRoomsA_SpawnSleepZ(void) {
   }
   origin = Actor_Get(ACTOR_GARETS_GRANDFATHER);
   if (origin != NULL) {
-    Actor_SetPosition(actorId, origin->x.fixed, origin->z.fixed);
+    Actor_SetPositionFixed(actorId, origin->x.fixed, origin->z.fixed);
   }
   // Restart this sprite above the origin with a small scale and 8.8 motion.
   actor->scaleX = 2 * Q16_ONE / 5;

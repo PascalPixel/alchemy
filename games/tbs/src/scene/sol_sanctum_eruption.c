@@ -169,12 +169,12 @@ const struct Trigger *SolSanctumEruption_GetTriggers(void) {
 
 /// Stages Saturos, Menardi, Alex and Felix around Jenna and Kraden.
 static inline void SolSanctumEruption_PlaceHostageGroup(void) {
-  Actor_SetPosition(ACTOR_JENNA, PIXELS(475), PIXELS(332));
-  Actor_SetPosition(ACTOR_KRADEN, PIXELS(491), PIXELS(332));
-  Actor_SetPosition(ACTOR_MENARDI, PIXELS(459), PIXELS(348));
-  Actor_SetPosition(ACTOR_SATUROS, PIXELS(507), PIXELS(348));
-  Actor_SetPosition(ACTOR_FELIX, PIXELS(471), PIXELS(306));
-  Actor_SetPosition(ACTOR_ALEX, PIXELS(479), PIXELS(362));
+  Actor_SetPosition(ACTOR_JENNA, 475, 332);
+  Actor_SetPosition(ACTOR_KRADEN, 491, 332);
+  Actor_SetPosition(ACTOR_MENARDI, 459, 348);
+  Actor_SetPosition(ACTOR_SATUROS, 507, 348);
+  Actor_SetPosition(ACTOR_FELIX, 471, 306);
+  Actor_SetPosition(ACTOR_ALEX, 479, 362);
 }
 
 /// Elemental Star Room, collapsing: Saturos's group leaves with its hostages.
@@ -211,8 +211,8 @@ static void SolSanctumEruption_PlayHostageEvent(void) {
   // Reopen the chamber during the first quake and stage the two groups.
   Sound_Play(SE_RUMBLE);
   MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
-  Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(232), PIXELS(156));
-  Actor_SetPosition(ACTOR_GARET, PIXELS(218), PIXELS(172));
+  Actor_SetPosition(ACTOR_PARTY_LEADER, 232, 156);
+  Actor_SetPosition(ACTOR_GARET, 218, 172);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH_NORTHEAST, 0);
   SolSanctumEruption_PlaceHostageGroup();
@@ -286,7 +286,7 @@ static void SolSanctumEruption_PlayHostageEvent(void) {
   // stops.
   actor = Actor_Get(ACTOR_WISE_ONE);
   Actor_SetSpriteFlags(actor, 0);
-  Actor_SetPosition(ACTOR_WISE_ONE, PIXELS(325), PIXELS(302));
+  Actor_SetPosition(ACTOR_WISE_ONE, 325, 302);
   actor = Actor_Get(ACTOR_WISE_ONE);
   actor->motionFlags = 5;
   sparkles->stopped = 1;
@@ -606,7 +606,7 @@ static void SolSanctumEruption_RaiseAndShrinkActor(s32 actorId) {
   Actor_WalkToAndWait(actorId, 471, 290);
   Actor_FaceDirection(actorId, FACING_NORTH, 0);
   Event_Wait(10);
-  Actor_SetPosition(ACTOR_PLATFORM_SHADOW, PIXELS(471), PIXELS(290));
+  Actor_SetPosition(ACTOR_PLATFORM_SHADOW, 471, 290);
   actor = Actor_Get(actorId);
   target = Actor_Get(actorId);
   Actor_SetSpriteFlags(target, 0);
@@ -1140,7 +1140,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
 
   // The Wise One drifts in from the west, unseen by Isaac; Garet walks off
   // and calls him: "I'm over here. Come on, we've gotta go."
-  Actor_SetPosition(ACTOR_WISE_ONE, PIXELS(110), PIXELS(152));
+  Actor_SetPosition(ACTOR_WISE_ONE, 110, 152);
   wait(1);
   Actor_SetSpeed(ACTOR_WISE_ONE, PIXELS(6) / 5, PIXELS(3) / 5);
   Actor_SetDestination(ACTOR_WISE_ONE, 171, 152);
@@ -1391,10 +1391,10 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   SolSanctumEruption_RaiseElementalArcs(CHAMBER_SOUTHEAST);
   Event_ShowMessage(ACTOR_WISE_ONE, 0);
   Actor_FaceDirection(ACTOR_WISE_ONE, FACING_EAST_SOUTHEAST, 0);
-  Actor_SetPosition(ACTOR_GARET, PIXELS(582), PIXELS(345));
+  Actor_SetPosition(ACTOR_GARET, 582, 345);
   Event_Wait(20);
   Event_ShowMessage(ACTOR_GARET, 0);
-  Actor_SetPosition(ACTOR_GARET, PIXELS(231), PIXELS(180));
+  Actor_SetPosition(ACTOR_GARET, 231, 180);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH_NORTHWEST, 0);
   wait(20);
   // Back with the party, the Wise One: misused, Alchemy is dangerous; its
@@ -1555,7 +1555,7 @@ static void SolSanctumEruption_PlaceBeforeStar(s32 actorId) {
   struct Actor *actor;
 
   actor = Actor_Get(actorId);
-  Actor_SetPosition(actorId, PIXELS(232), PIXELS(125));
+  Actor_SetPosition(actorId, 232, 125);
   actor->facing = FACING_SOUTH;
   Actor_SetSpritePriority(actorId, 3);
 }

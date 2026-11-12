@@ -872,8 +872,8 @@ static void FuchinTemple_StudentExplainsChiRules(s32 mode) {
   // Restore the tree and let the student return to the demonstration spot.
   FuchinTemple_StudentWalksAroundTree();
   Actor_RunRepeatedMotion(ACTOR_TREE_STUDENT, 3);
-  Actor_SetPosition(ACTOR_TRAINING_TREE, PIXELS(232), PIXELS(168));
-  Actor_SetPosition(ACTOR_TRAINING_TREE_TARGET, PIXELS(232), PIXELS(168));
+  Actor_SetPosition(ACTOR_TRAINING_TREE, 232, 168);
+  Actor_SetPosition(ACTOR_TRAINING_TREE_TARGET, 232, 168);
   Actor_Get(ACTOR_TRAINING_TREE)->y.fixed = PIXELS(12);
   Actor_Get(ACTOR_TRAINING_TREE)->targetY = ACTOR_NO_TARGET;
   Actor_Get(ACTOR_TRAINING_TREE)->scaleX = 4 * Q16_ONE / 5;
@@ -925,8 +925,8 @@ static void FuchinTemple_StudentsSeeTreeFall(void) {
   Actor_SetSpeed(ACTOR_TREE_STUDENT, PIXELS(4) / 5, PIXELS(2) / 5);
   FuchinTemple_StudentWalksAroundTree();
   Actor_RunRepeatedMotion(ACTOR_TREE_STUDENT, 3);
-  Actor_SetPosition(ACTOR_TRAINING_TREE, PIXELS(232), PIXELS(168));
-  Actor_SetPosition(ACTOR_TRAINING_TREE_TARGET, PIXELS(232), PIXELS(168));
+  Actor_SetPosition(ACTOR_TRAINING_TREE, 232, 168);
+  Actor_SetPosition(ACTOR_TRAINING_TREE_TARGET, 232, 168);
   tree = Actor_Get(ACTOR_TRAINING_TREE);
   tree->y.fixed = PIXELS(12);
   tree = Actor_Get(ACTOR_TRAINING_TREE);
@@ -1105,7 +1105,7 @@ static void FuchinTemple_FeizhiLeavesForHsu(void) {
   actor->steeringFlags = ACTOR_FACES_MOTION | actor->steeringFlags;
   // "Ya! What happened!? The door opened on its own!"
   Event_ShowMessageThenWait(ACTOR_MESSENGER_STUDENT, 0, 50);
-  Actor_SetPosition(ACTOR_FEIZHI, PIXELS(304), PIXELS(216));
+  Actor_SetPosition(ACTOR_FEIZHI, 304, 216);
   Actor_WalkToAndWait(ACTOR_FEIZHI, 304, 248);
   Actor_FaceActor(ACTOR_WELCOMING_STUDENT, ACTOR_FEIZHI, 0);
   Actor_FaceActor(ACTOR_KICKING_STUDENT, ACTOR_FEIZHI, 0);
@@ -1126,7 +1126,7 @@ static void FuchinTemple_FeizhiLeavesForHsu(void) {
   Actor_StartRepeatedMotion(ACTOR_TREE_STUDENT, 2);
   Actor_RunRepeatedMotion(ACTOR_MESSENGER_STUDENT, 2);
   Actor_ShowEmote(ACTOR_FEIZHI, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 60);
-  Actor_SetPosition(ACTOR_FEH, PIXELS(304), PIXELS(216));
+  Actor_SetPosition(ACTOR_FEH, 304, 216);
   Actor_WalkTo(ACTOR_FEH, 304, 248);
   Actor_WalkTo(ACTOR_FEIZHI, 280, 264);
   Actor_WaitForMoveById(ACTOR_FEH);
@@ -1239,7 +1239,7 @@ static void FuchinTemple_FeizhiLeavesForHsu(void) {
   Event_Wait(10);
   Actor_WalkToAndWait(ACTOR_FEIZHI, 256, 280);
   Actor_FaceDirection(ACTOR_FEIZHI, FACING_SOUTH, 20);
-  Actor_SetPosition(ACTOR_FEIZHI, PIXELS(0), PIXELS(0));
+  Actor_SetPosition(ACTOR_FEIZHI, 0, 0);
   Actor_ReleaseById(ACTOR_FEIZHI);
   Event_Wait(30);
   Actor_RunRepeatedMotion(ACTOR_WELCOMING_STUDENT, 2);
@@ -1276,8 +1276,8 @@ static void FuchinTemple_FeizhiLeavesForHsu(void) {
   Actor_WalkToAndWait(ACTOR_FEH, 240, 184);
   Actor_RunRepeatedMotion(ACTOR_FEH, 2);
   Event_Wait(20);
-  Actor_SetPosition(ACTOR_TRAINING_TREE, PIXELS(232), PIXELS(168));
-  Actor_SetPosition(ACTOR_TRAINING_TREE_TARGET, PIXELS(232), PIXELS(168));
+  Actor_SetPosition(ACTOR_TRAINING_TREE, 232, 168);
+  Actor_SetPosition(ACTOR_TRAINING_TREE_TARGET, 232, 168);
   // Restore the tree before leaving the group ready for another demonstration.
   actor = Actor_Get(ACTOR_TRAINING_TREE);
   actor->y.fixed = PIXELS(12);
@@ -1592,7 +1592,7 @@ static void FuchinTemple_FehSeesChi(void) {
   Actor_WalkToAndWait(ACTOR_TREE_STUDENT, 232, 168);
   Actor_FaceDirection(ACTOR_TREE_STUDENT, FACING_NORTH, 20);
   Actor_RunRepeatedMotion(ACTOR_TREE_STUDENT, 3);
-  Actor_SetPosition(ACTOR_TRAINING_TREE, PIXELS(232), PIXELS(168));
+  Actor_SetPosition(ACTOR_TRAINING_TREE, 232, 168);
   actor = Actor_Get(ACTOR_TRAINING_TREE);
   actor->y.fixed = PIXELS(12);
   actor = Actor_Get(ACTOR_TRAINING_TREE);
@@ -1987,15 +1987,15 @@ static void FuchinTemple_RunHamasRevealLesson(void) {
   // Bring the other party members out from the leader for the lesson.
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != 0) {
-    Actor_SetPosition(ACTOR_GARET, leader->x.fixed, leader->z.fixed);
+    Actor_SetPositionFixed(ACTOR_GARET, leader->x.fixed, leader->z.fixed);
   }
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != 0) {
-    Actor_SetPosition(ACTOR_IVAN, leader->x.fixed, leader->z.fixed);
+    Actor_SetPositionFixed(ACTOR_IVAN, leader->x.fixed, leader->z.fixed);
   }
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != 0) {
-    Actor_SetPosition(ACTOR_MIA, leader->x.fixed, leader->z.fixed);
+    Actor_SetPositionFixed(ACTOR_MIA, leader->x.fixed, leader->z.fixed);
   }
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
   Actor_SetSpeed(ACTOR_GARET, PIXELS(1) / 2, PIXELS(1) / 4);
@@ -2339,7 +2339,7 @@ static void FuchinTemple_RunHamasRevealLesson(void) {
   // "However, I saw no change in the girl."
   Event_ShowMessageThenWait(ACTOR_HAMA, 0, 20);
   // Interrupt the discussion with the arrival from the southern path.
-  Actor_SetPosition(ACTOR_FEIZHI_IN_LAMA_TEMPLE, PIXELS(472), PIXELS(608));
+  Actor_SetPosition(ACTOR_FEIZHI_IN_LAMA_TEMPLE, 472, 608);
   // "No! There was change!"
   Event_ShowMessageThenWait(ACTOR_FEIZHI_IN_LAMA_TEMPLE, 0, 20);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
@@ -2528,11 +2528,11 @@ static void FuchinTemple_RunHamasRevealLesson(void) {
   Actor_WalkToAndWait(ACTOR_FEIZHI_IN_LAMA_TEMPLE, 472, 608);
   Actor_WaitForMoveById(ACTOR_HAMAS_BOY_MONK);
   Actor_WalkTo(ACTOR_HAMAS_BOY_MONK, 472, 608);
-  Actor_SetPosition(ACTOR_FEIZHI_IN_LAMA_TEMPLE, PIXELS(0), PIXELS(0));
+  Actor_SetPosition(ACTOR_FEIZHI_IN_LAMA_TEMPLE, 0, 0);
   Actor_WaitForMoveById(ACTOR_HAMA);
-  Actor_SetPosition(ACTOR_HAMA, PIXELS(0), PIXELS(0));
+  Actor_SetPosition(ACTOR_HAMA, 0, 0);
   Actor_WaitForMoveById(ACTOR_HAMAS_BOY_MONK);
-  Actor_SetPosition(ACTOR_HAMAS_BOY_MONK, PIXELS(0), PIXELS(0));
+  Actor_SetPosition(ACTOR_HAMAS_BOY_MONK, 0, 0);
   Actor_WalkToAndWait(ACTOR_IVAN, 488, 520);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Actor_RunRepeatedMotion(ACTOR_MIA, 1);
@@ -2583,9 +2583,9 @@ static void FuchinTemple_RunHamasRevealLesson(void) {
   Event_Wait(20);
   Actor_WalkTo(ACTOR_GARET, 448, 512);
   Actor_WalkToAndWait(ACTOR_MIA, 448, 512);
-  Actor_SetPosition(ACTOR_MIA, PIXELS(0), PIXELS(0));
+  Actor_SetPosition(ACTOR_MIA, 0, 0);
   Actor_WaitForMoveById(ACTOR_GARET);
-  Actor_SetPosition(ACTOR_GARET, PIXELS(0), PIXELS(0));
+  Actor_SetPosition(ACTOR_GARET, 0, 0);
   Event_Wait(20);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_IVAN, 20);
   Event_Wait(30);
@@ -2600,7 +2600,7 @@ static void FuchinTemple_RunHamasRevealLesson(void) {
   Event_Wait(20);
   Event_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
   Actor_WalkToAndWait(ACTOR_IVAN, 448, 512);
-  Actor_SetPosition(ACTOR_IVAN, PIXELS(0), PIXELS(0));
+  Actor_SetPosition(ACTOR_IVAN, 0, 0);
   Event_End();
   GameFlag_Set(FLAG_XIAN_HEARD_HSU_TRAPPED);
 }
@@ -2648,10 +2648,9 @@ s32 Scene_Initialize(void) {
         trainingTree->scaleY = Q16_ONE / 2;
         trainingTree->sprite->rotation = TRIG_TURN / 2;
         if (GameFlag_Get(FLAG_FEIZHI_WENT_TO_HSU)) {
-          Actor_SetPosition(ACTOR_FEH, PIXELS(248), PIXELS(208));
+          Actor_SetPosition(ACTOR_FEH, 248, 208);
           if (!GameFlag_Get(FLAG_FEH_SAW_KI)) {
-            Actor_SetPosition(ACTOR_MESSENGER_STUDENT, PIXELS(256),
-                              PIXELS(240));
+            Actor_SetPosition(ACTOR_MESSENGER_STUDENT, 256, 240);
             Actor_Get(ACTOR_FEH)->update = FuchinTemple_FaceLeader;
             Actor_Get(ACTOR_PROUD_STUDENT)->update = FuchinTemple_FaceLeader;
             Actor_Get(ACTOR_WATCHING_STUDENT)->update = FuchinTemple_FaceLeader;
@@ -2700,7 +2699,7 @@ s32 Scene_Initialize(void) {
       MapGrid_CopyCellAttributes(10, 84, 1, 1, 10, 24);
     }
     if (GameFlag_Get(FLAG_FUCHIN_FALLS_GROTTO_OPENED)) {
-      Actor_SetPosition(ACTOR_FALLS_MONK, PIXELS(152), PIXELS(392));
+      Actor_SetPosition(ACTOR_FALLS_MONK, 152, 392);
       Actor_FaceDirection(ACTOR_FALLS_MONK, FACING_EAST, 0);
       MapGrid_CopyCellAttributes(10, 26, 1, 1, 10, 22);
     }

@@ -417,7 +417,7 @@ static void SolSanctumLunaSolRooms_KradenFindsHeartOfSanctum(void) {
     // Kraden hurries out of the leader to the symbol on the floor.
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     if (leader != 0) {
-      Actor_SetPosition(ACTOR_KRADEN, leader->x.fixed, leader->z.fixed);
+      Actor_SetPositionFixed(ACTOR_KRADEN, leader->x.fixed, leader->z.fixed);
     }
     Actor_SetSpeed(ACTOR_KRADEN, PIXELS(7) / 5, PIXELS(7) / 10);
     Actor_WalkToAndWait(ACTOR_KRADEN, 288, 206);
@@ -429,11 +429,11 @@ static void SolSanctumLunaSolRooms_KradenFindsHeartOfSanctum(void) {
     // Garet and Jenna step out behind the leader.
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     if (leader != 0) {
-      Actor_SetPosition(ACTOR_GARET, leader->x.fixed, leader->z.fixed);
+      Actor_SetPositionFixed(ACTOR_GARET, leader->x.fixed, leader->z.fixed);
     }
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     if (leader != 0) {
-      Actor_SetPosition(ACTOR_JENNA, leader->x.fixed, leader->z.fixed);
+      Actor_SetPositionFixed(ACTOR_JENNA, leader->x.fixed, leader->z.fixed);
     }
     Actor_SetSpeed(ACTOR_GARET, PIXELS(1) / 2, PIXELS(1) / 4);
     Actor_SetSpeed(ACTOR_JENNA, PIXELS(1) / 2, PIXELS(1) / 4);
@@ -603,7 +603,7 @@ static void SolSanctumLunaSolRooms_IntroduceSolAndLunaRooms(void) {
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STILL);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != 0) {
-    Actor_SetPosition(ACTOR_KRADEN, leader->x.fixed, leader->z.fixed);
+    Actor_SetPositionFixed(ACTOR_KRADEN, leader->x.fixed, leader->z.fixed);
   }
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 1);
   Actor_SetSpeed(ACTOR_KRADEN, PIXELS(1), PIXELS(1) / 2);
@@ -694,13 +694,13 @@ static void SolSanctumLunaSolRooms_KradenStopsPartyLeaving(void) {
       GameFlag_Get(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_SEEN) == 0) {
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     if (leader != 0) {
-      Actor_SetPosition(ACTOR_KRADEN, leader->x.fixed, leader->z.fixed);
+      Actor_SetPositionFixed(ACTOR_KRADEN, leader->x.fixed, leader->z.fixed);
     }
     Event_Wait(4);
     Actor_SetSpeed(ACTOR_KRADEN, PIXELS(1), PIXELS(1) / 2);
   } else if (GameFlag_Get(FLAG_SOL_SANCTUM_LUNA_PICTURE_CHANGED) != 0 ||
              kraden->x.fixed > PIXELS(340)) {
-    Actor_SetPosition(ACTOR_KRADEN, PIXELS(392), PIXELS(168));
+    Actor_SetPosition(ACTOR_KRADEN, 392, 168);
     Event_Wait(4);
     Actor_SetSpeed(ACTOR_KRADEN, PIXELS(2), PIXELS(1));
   }
@@ -896,7 +896,7 @@ static void SolSanctumLunaSolRooms_OpenOnKradenInLunaRoom(void) {
   MapGrid_CopyCellsTo(14, 41, 32, 41, 8, 4);
   FieldCamera_MoveTo(PIXELS(574), -1, PIXELS(158), 0);
   MapGrid_CenterOnFollowedPoint();
-  Actor_SetPosition(ACTOR_KRADEN, PIXELS(574), PIXELS(120));
+  Actor_SetPosition(ACTOR_KRADEN, 574, 120);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
   wait(1);
   PaletteFade_ApplyTarget(SOL_SANCTUM_BLUE_TINT, PALETTES_BG);
@@ -1182,7 +1182,7 @@ static void SolSanctumLunaSolRooms_KradenSeesLunaPictureChange(void) {
     if (SolSanctumLunaSolRooms_AreAllStatueLightsLit() == 0) {
     } else {
       Event_Start();
-      Actor_SetPosition(ACTOR_KRADEN, PIXELS(577), PIXELS(147));
+      Actor_SetPosition(ACTOR_KRADEN, 577, 147);
       Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH, 1);
       FieldCamera_MoveTo(PIXELS(574), -1, PIXELS(184), 1);
       // Isaac walks up to Kraden, who hops: "The picture of Luna changed to
@@ -1247,7 +1247,7 @@ static void SolSanctumLunaSolRooms_DiscussFloorSymbolChangingToLuna(void) {
   Sound_Play(MUS_FOREST);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 376, 184);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STILL);
-  Actor_SetPosition(ACTOR_KRADEN, PIXELS(376), PIXELS(184));
+  Actor_SetPosition(ACTOR_KRADEN, 376, 184);
   Actor_SetSpeed(ACTOR_KRADEN, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkToAndWait(ACTOR_KRADEN, 392, 168);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST, 30);
@@ -1260,7 +1260,7 @@ static void SolSanctumLunaSolRooms_DiscussFloorSymbolChangingToLuna(void) {
   Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   SolSanctumLunaSolRooms_ShowMessageAndWait(ACTOR_KRADEN, 6);
   Actor_WalkToAndWait(ACTOR_KRADEN, 376, 184);
-  Actor_SetPosition(ACTOR_KRADEN, PIXELS(1608), PIXELS(1608));
+  Actor_SetPosition(ACTOR_KRADEN, 1608, 1608);
   Event_Wait(4);
   GameFlag_Set(FLAG_SOL_SANCTUM_FLOOR_SYMBOL_SEEN);
 }
@@ -1288,7 +1288,7 @@ static void SolSanctumLunaSolRooms_RiseToElementalStarRoom(void) {
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 288, 120);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STILL);
     Actor_Jump(ACTOR_PARTY_LEADER, 4, 30);
-    Actor_SetPosition(ACTOR_KRADEN, PIXELS(288), PIXELS(120));
+    Actor_SetPosition(ACTOR_KRADEN, 288, 120);
     Actor_SetSpeed(ACTOR_KRADEN, PIXELS(1), PIXELS(1) / 2);
     Actor_WalkToAndWait(ACTOR_KRADEN, 276, 136);
     Actor_WalkTo(ACTOR_KRADEN, 264, 136);
@@ -1477,7 +1477,7 @@ s32 SolSanctumLunaSolRooms_Initialize(void) {
   } else {
     GameFlag_Set(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_UNTINTED);
     if (GameFlag_Get(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_SEEN) != 0) {
-      Actor_SetPosition(ACTOR_KRADEN, PIXELS(576), PIXELS(120));
+      Actor_SetPosition(ACTOR_KRADEN, 576, 120);
     }
   }
   // Play the one-time event this entrance comes back from
@@ -1655,7 +1655,7 @@ static void SolSanctumLunaSolRooms_ArriveAfterWiseOnesRescue(void) {
   PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_ALL);
   PaletteFade_StartInterpolation(1);
   wait(1);
-  Actor_SetPosition(ACTOR_GARET, PIXELS(280), PIXELS(134));
+  Actor_SetPosition(ACTOR_GARET, 280, 134);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHWEST, 0);
   // This event reads its heap slots from one address: HEAP_SLOT_PALETTE_FADE
   // is reached from HEAP_SLOT_FIELD's slot. As gFieldWork and

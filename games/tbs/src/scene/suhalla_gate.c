@@ -348,7 +348,7 @@ static void SuhallaGate_IodemQuestionsGuards(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != 0) {
-    Actor_SetPosition(ACTOR_IODEM, leader->x.fixed, leader->z.fixed);
+    Actor_SetPositionFixed(ACTOR_IODEM, leader->x.fixed, leader->z.fixed);
   }
   wait(1);
   Actor_SetSpeed(ACTOR_IODEM, PIXELS(8) / 5, PIXELS(4) / 5);

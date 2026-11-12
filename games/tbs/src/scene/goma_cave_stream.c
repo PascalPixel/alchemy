@@ -148,7 +148,7 @@ s32 Scene_Initialize(void) {
     } else {
       Actor_Get(ACTOR_STUMP)->collisionFlags |= ACTOR_NEAR_PSYNERGY;
       if (GameFlag_Get(FLAG_GOMA_CAVE_STREAM_STUMP_MOVED) != 0) {
-        Actor_SetPosition(ACTOR_STUMP, PIXELS(346), PIXELS(292));
+        Actor_SetPosition(ACTOR_STUMP, 346, 292);
         stump = Actor_Get(ACTOR_STUMP);
         Actor_SetSpriteFlags(stump, 0);
         Actor_Get(ACTOR_STUMP)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;

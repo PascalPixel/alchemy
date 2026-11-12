@@ -1313,7 +1313,7 @@ static void ColosseumNavampaMatch_SpawnPeriodicParticle(void) {
   }
   source = Actor_Get(ACTOR_PARTY_LEADER);
   if (source != 0) {
-    Actor_SetPosition(kind, source->x.fixed, source->z.fixed);
+    Actor_SetPositionFixed(kind, source->x.fixed, source->z.fixed);
   }
   Actor_SetSpriteFlags(Actor_Get(kind), 0);
   particle->motionFlags = 0;
@@ -1347,14 +1347,14 @@ static void ColosseumNavampaMatch_PlayPostBattleReunion(s32 battleResult) {
   Party_RestoreHpPp(1);
   Sound_Play(SOUND_FADE_OUT_BGM);
   Event_Start();
-  Actor_SetPosition(ACTOR_OPPONENT, PIXELS(1544), PIXELS(192));
+  Actor_SetPosition(ACTOR_OPPONENT, 1544, 192);
   if (battleResult < 0) {
     Actor_SetAnimation(ACTOR_OPPONENT, WARRIOR_ANIMATION_ARMS_RAISED);
   } else {
     Actor_SetAnimation(ACTOR_OPPONENT, WARRIOR_ANIMATION_DEFEATED);
   }
   Actor_SetScript(ACTOR_OPPONENT, gColosseumNavampaMatch_OpponentAfterBattle);
-  Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(1504), PIXELS(192));
+  Actor_SetPosition(ACTOR_PARTY_LEADER, 1504, 192);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   {
     u16 shown = 0;
@@ -1366,9 +1366,9 @@ static void ColosseumNavampaMatch_PlayPostBattleReunion(s32 battleResult) {
   Actor_SetSpeed(ACTOR_GARET, PIXELS(1), PIXELS(1) / 2);
   Actor_SetSpeed(ACTOR_IVAN, PIXELS(1), PIXELS(1) / 2);
   Actor_SetSpeed(ACTOR_MIA, PIXELS(1), PIXELS(1) / 2);
-  Actor_SetPosition(ACTOR_GARET, PIXELS(1464), PIXELS(184));
-  Actor_SetPosition(ACTOR_IVAN, PIXELS(1464), PIXELS(200));
-  Actor_SetPosition(ACTOR_MIA, PIXELS(1448), PIXELS(192));
+  Actor_SetPosition(ACTOR_GARET, 1464, 184);
+  Actor_SetPosition(ACTOR_IVAN, 1464, 200);
+  Actor_SetPosition(ACTOR_MIA, 1448, 192);
   actor = Actor_Get(ACTOR_GARET);
   {
     u16 shown = 0;
@@ -1531,9 +1531,9 @@ static void ColosseumNavampaMatch_PlayPostBattleReunion(s32 battleResult) {
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(30);
-  Actor_SetPosition(ACTOR_GARET, PIXELS(1512), PIXELS(176));
-  Actor_SetPosition(ACTOR_IVAN, PIXELS(1464), PIXELS(192));
-  Actor_SetPosition(ACTOR_MIA, PIXELS(1560), PIXELS(200));
+  Actor_SetPosition(ACTOR_GARET, 1512, 176);
+  Actor_SetPosition(ACTOR_IVAN, 1464, 192);
+  Actor_SetPosition(ACTOR_MIA, 1560, 200);
   ActorSystem_SuspendProjectionAndShowSprites();
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
   PaletteFade_StartInterpolation(1);
@@ -1567,14 +1567,11 @@ static void ColosseumNavampaMatch_IntroduceThirdFinals(s32 guideId) {
   Actor_SetSpeed(ACTOR_GARET, PIXELS(1), PIXELS(1) / 2);
   Actor_SetSpeed(ACTOR_IVAN, PIXELS(1), PIXELS(1) / 2);
   Actor_SetSpeed(ACTOR_MIA, PIXELS(1), PIXELS(1) / 2);
-  Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(guideX),
-                    (PIXELS(guideZ) - PIXELS(48)));
-  Actor_SetPosition(ACTOR_GARET, PIXELS(guideX) - PIXELS(16),
-                    PIXELS(guideZ) - PIXELS(40));
-  Actor_SetPosition(ACTOR_IVAN, PIXELS(guideX) + PIXELS(16),
-                    PIXELS(guideZ) - PIXELS(40));
-  Actor_SetPosition(ACTOR_MIA, PIXELS(guideX), (PIXELS(guideZ) - PIXELS(32)));
-  Actor_SetPosition(guideId, PIXELS(guideX), (PIXELS(guideZ) - PIXELS(80)));
+  Actor_SetPositionFixed(ACTOR_PARTY_LEADER, px(guideX), (px(guideZ) - px(48)));
+  Actor_SetPositionFixed(ACTOR_GARET, px(guideX) - px(16), px(guideZ) - px(40));
+  Actor_SetPositionFixed(ACTOR_IVAN, px(guideX) + px(16), px(guideZ) - px(40));
+  Actor_SetPositionFixed(ACTOR_MIA, px(guideX), (px(guideZ) - px(32)));
+  Actor_SetPositionFixed(guideId, px(guideX), (px(guideZ) - px(80)));
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   actor->facing = FACING_NORTH;
   FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 0);

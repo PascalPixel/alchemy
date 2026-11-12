@@ -492,7 +492,7 @@ static void TimberRoomsBC_ReportToFaran(void) {
   Event_Start();
   Party_RestoreHpPp(1);
   // The party walks in to Faran and Iodem, and the others step out.
-  Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(96), PIXELS(184));
+  Actor_SetPosition(ACTOR_PARTY_LEADER, 96, 184);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_FARAN, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_IODEM, FACING_WEST, 0);

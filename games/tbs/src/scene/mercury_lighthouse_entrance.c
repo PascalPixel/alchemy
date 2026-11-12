@@ -622,9 +622,9 @@ static void MercuryLighthouseEntrance_LizardManBlocksMia(void) {
   actor->scaleX = -Q16_ONE;
   actor = Actor_Get(ACTOR_FIRST_EAST_STATUE + 2);
   actor->scaleX = -Q16_ONE;
-  Actor_SetPosition(ACTOR_MIA, PIXELS(136), PIXELS(184));
-  Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(136), PIXELS(296));
-  Actor_SetPosition(ACTOR_LIZARD_MAN, PIXELS(136), PIXELS(152));
+  Actor_SetPosition(ACTOR_MIA, 136, 184);
+  Actor_SetPosition(ACTOR_PARTY_LEADER, 136, 296);
+  Actor_SetPosition(ACTOR_LIZARD_MAN, 136, 152);
   Actor_SetSpeed(ACTOR_MIA, PIXELS(3) / 2, PIXELS(3) / 4);
   Actor_SetSpeed(ACTOR_LIZARD_MAN, PIXELS(3) / 2, PIXELS(3) / 4);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
@@ -707,7 +707,7 @@ static void MercuryLighthouseEntrance_MiaEntersLighthouse(void) {
     actor->scaleX = -Q16_ONE;
     actor = Actor_Get(ACTOR_FIRST_EAST_STATUE + 2);
     actor->scaleX = -Q16_ONE;
-    Actor_SetPosition(ACTOR_MIA, PIXELS(136), PIXELS(144));
+    Actor_SetPosition(ACTOR_MIA, 136, 144);
     Actor_FaceDirection(ACTOR_MIA, FACING_SOUTH, 10);
     gFieldWork->transition =
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);

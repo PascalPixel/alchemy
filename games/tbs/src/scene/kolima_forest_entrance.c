@@ -305,7 +305,7 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   Actor_SetScript(ACTOR_FIRST_GROUND_SPARKLE + 2, sparkleAction);
   Actor_SetScript(ACTOR_FIRST_GROUND_SPARKLE + 3, sparkleAction);
   Actor_SetScript(ACTOR_LAST_GROUND_SPARKLE, sparkleAction);
-  Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(116), PIXELS(602));
+  Actor_SetPosition(ACTOR_PARTY_LEADER, 116, 602);
   wait(1);
   MapGrid_CenterOnFollowedPoint();
   wait(1);
@@ -319,14 +319,14 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
     struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
     if (leader != 0) {
-      Actor_SetPosition(ACTOR_GARET, leader->x.fixed, leader->z.fixed);
+      Actor_SetPositionFixed(ACTOR_GARET, leader->x.fixed, leader->z.fixed);
     }
   }
   {
     struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
     if (leader != 0) {
-      Actor_SetPosition(ACTOR_IVAN, leader->x.fixed, leader->z.fixed);
+      Actor_SetPositionFixed(ACTOR_IVAN, leader->x.fixed, leader->z.fixed);
     }
   }
   Actor_SetScript(ACTOR_GARET, gKolimaForestEntrance_GaretAction);
@@ -337,7 +337,7 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
       struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
       if (leader != 0) {
-        Actor_SetPosition(ACTOR_MIA, leader->x.fixed, leader->z.fixed);
+        Actor_SetPositionFixed(ACTOR_MIA, leader->x.fixed, leader->z.fixed);
       }
     }
     Actor_SetScript(ACTOR_MIA, gKolimaForestEntrance_MiaAction);
@@ -510,25 +510,25 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   Actor_Get(ACTOR_LEADER_PSYNERGY_FIELD)->priorityFlags &=
       ~ACTOR_PRIORITY_AUTOMATIC;
   Actor_SetSpritePriority(ACTOR_LEADER_PSYNERGY_FIELD, 2);
-  Actor_SetPosition(ACTOR_LEADER_PSYNERGY_FIELD, PIXELS(253), PIXELS(603));
+  Actor_SetPosition(ACTOR_LEADER_PSYNERGY_FIELD, 253, 603);
   growFieldAction = gKolimaForestEntrance_PsynergyFieldGrowAction;
   Actor_SetScript(ACTOR_LEADER_PSYNERGY_FIELD, growFieldAction);
   Actor_Get(ACTOR_IVAN_PSYNERGY_FIELD)->priorityFlags &=
       ~ACTOR_PRIORITY_AUTOMATIC;
   Actor_SetSpritePriority(ACTOR_IVAN_PSYNERGY_FIELD, 2);
-  Actor_SetPosition(ACTOR_IVAN_PSYNERGY_FIELD, PIXELS(233), PIXELS(629));
+  Actor_SetPosition(ACTOR_IVAN_PSYNERGY_FIELD, 233, 629);
   Actor_SetScript(ACTOR_IVAN_PSYNERGY_FIELD, growFieldAction);
   if (gKolimaForestEntrance_MiaInParty != 0) {
     Actor_Get(ACTOR_MIA_PSYNERGY_FIELD)->priorityFlags &=
         ~ACTOR_PRIORITY_AUTOMATIC;
     Actor_SetSpritePriority(ACTOR_MIA_PSYNERGY_FIELD, 2);
-    Actor_SetPosition(ACTOR_MIA_PSYNERGY_FIELD, PIXELS(207), PIXELS(609));
+    Actor_SetPosition(ACTOR_MIA_PSYNERGY_FIELD, 207, 609);
     Actor_SetScript(ACTOR_MIA_PSYNERGY_FIELD, growFieldAction);
   }
   Actor_Get(ACTOR_GARET_PSYNERGY_FIELD)->priorityFlags &=
       ~ACTOR_PRIORITY_AUTOMATIC;
   Actor_SetSpritePriority(ACTOR_GARET_PSYNERGY_FIELD, 2);
-  Actor_SetPosition(ACTOR_GARET_PSYNERGY_FIELD, PIXELS(227), PIXELS(580));
+  Actor_SetPosition(ACTOR_GARET_PSYNERGY_FIELD, 227, 580);
   Actor_SetScript(ACTOR_GARET_PSYNERGY_FIELD, growFieldAction);
   if (gFallingEffectState != KOLIMA_DUST_CENTRED) {
     do {
@@ -560,8 +560,8 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
   Event_Wait(40);
   Event_OpenMessage(ACTOR_GARET, 0);
-  Actor_SetPosition(ACTOR_TRET, PIXELS(220), PIXELS(494));
-  Actor_SetPosition(ACTOR_LAUREL, PIXELS(220), PIXELS(494));
+  Actor_SetPosition(ACTOR_TRET, 220, 494);
+  Actor_SetPosition(ACTOR_LAUREL, 220, 494);
   wait(1);
   if (Event_AskYesNoWithActorAnimation(11, 0) == 1) {
     gFieldWork->message += 1;
@@ -786,16 +786,16 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   Actor_SetSpritePriority(ACTOR_MIA, 3);
   gFallingEffectState = KOLIMA_DUST_CLOSING_WIDE;
   Sound_Play(SE_SHIMMER);
-  Actor_SetPosition(ACTOR_LEADER_PSYNERGY_FIELD, PIXELS(253), PIXELS(603));
+  Actor_SetPosition(ACTOR_LEADER_PSYNERGY_FIELD, 253, 603);
   growFieldAction = gKolimaForestEntrance_PsynergyFieldGrowAction;
   Actor_SetScript(ACTOR_LEADER_PSYNERGY_FIELD, growFieldAction);
-  Actor_SetPosition(ACTOR_IVAN_PSYNERGY_FIELD, PIXELS(233), PIXELS(629));
+  Actor_SetPosition(ACTOR_IVAN_PSYNERGY_FIELD, 233, 629);
   Actor_SetScript(ACTOR_IVAN_PSYNERGY_FIELD, growFieldAction);
   if (gKolimaForestEntrance_MiaInParty != 0) {
-    Actor_SetPosition(ACTOR_MIA_PSYNERGY_FIELD, PIXELS(207), PIXELS(609));
+    Actor_SetPosition(ACTOR_MIA_PSYNERGY_FIELD, 207, 609);
     Actor_SetScript(ACTOR_MIA_PSYNERGY_FIELD, growFieldAction);
   }
-  Actor_SetPosition(ACTOR_GARET_PSYNERGY_FIELD, PIXELS(227), PIXELS(580));
+  Actor_SetPosition(ACTOR_GARET_PSYNERGY_FIELD, 227, 580);
   Actor_SetScript(ACTOR_GARET_PSYNERGY_FIELD, growFieldAction);
   Event_Wait(120);
   gFallingEffectState = KOLIMA_DUST_DRIFTING;

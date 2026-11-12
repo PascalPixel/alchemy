@@ -1030,7 +1030,7 @@ s32 ValePlaza_Initialize(void) {
       }
     } else {
       if (GameFlag_Get(FLAG_VALE_PARTY_LEFT) != 0) {
-        Actor_SetPosition(ACTOR_SECOND_CHILD, PIXELS(180), PIXELS(568));
+        Actor_SetPosition(ACTOR_SECOND_CHILD, 180, 568);
         MapGrid_CopyCellsTo(92, 2, 80, 5, 2, 2);
         MapGrid_CopyCellsTo(42, 53, 42, 54, 3, 1);
         MapGrid_CenterOnFollowedPoint();
@@ -1052,7 +1052,7 @@ s32 ValePlaza_Initialize(void) {
         Actor_SetAnimation(ACTOR_STORM_ROCK_DEFLECTING_YOUNG_MAN, 5);
       } else {
         if (GameFlag_Get(FLAG_VALE_PARTY_LEFT) != 0) {
-          Actor_SetPosition(ACTOR_FALLEN_STONE_SPOT, PIXELS(331), PIXELS(249));
+          Actor_SetPosition(ACTOR_FALLEN_STONE_SPOT, 331, 249);
           actor = Actor_Get(ACTOR_FALLEN_STONE_SPOT);
           Actor_SetSpriteFlags(actor, 0);
         }
@@ -1127,7 +1127,8 @@ static void ValePlaza_SentToAidElders(void) {
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 179, 789);
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     if (leader != NULL) {
-      Actor_SetPosition(ACTOR_STORM_GARET, leader->x.fixed, leader->z.fixed);
+      Actor_SetPositionFixed(ACTOR_STORM_GARET, leader->x.fixed,
+                             leader->z.fixed);
     }
     Actor_WalkToAndWait(ACTOR_STORM_GARET, 179, 804);
     Actor_FaceEachOther(ACTOR_PARTY_LEADER, ACTOR_STORM_GARET, 40);
@@ -1288,7 +1289,7 @@ static void ValePlaza_MeetSurvivingTravelers(void) {
   Event_StartScreenTransition();
   Sound_Play(SOUND_FADE_OUT_BGM);
   Weather_ResumeLightning();
-  Actor_SetPosition(ACTOR_FIRST_TRAVELER, PIXELS(105), PIXELS(267));
+  Actor_SetPosition(ACTOR_FIRST_TRAVELER, 105, 267);
   wait(1);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(6) / 5, PIXELS(3) / 5);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 93, 343);
@@ -1303,7 +1304,7 @@ static void ValePlaza_MeetSurvivingTravelers(void) {
   FieldCamera_MoveWithinMapBounds(PIXELS(109), PIXELS(176), PIXELS(281), 1);
   FieldCamera_WaitForMove();
   Event_Wait(40);
-  Actor_SetPosition(ACTOR_SECOND_TRAVELER, PIXELS(135), PIXELS(177));
+  Actor_SetPosition(ACTOR_SECOND_TRAVELER, 135, 177);
   Actor_SetSpeed(ACTOR_SECOND_TRAVELER, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_WalkTo(ACTOR_SECOND_TRAVELER, 126, 258);
   Event_Wait(40);
@@ -1358,7 +1359,7 @@ static void ValePlaza_FightTravelers(void) {
   Actor_SetSpriteColorById(ACTOR_STORM_GARET, SPRITE_COLOR_HIDDEN);
   actor = Actor_Get(ACTOR_STORM_GARET);
   Actor_SetSpriteFlags(actor, 0);
-  Actor_SetPosition(ACTOR_STORM_GARET, 0, PIXELS(331));
+  Actor_SetPosition(ACTOR_STORM_GARET, 0, 331);
   wait(1);
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_STORM_GARET, 0);
   Actor_ShowEmote(ACTOR_FIRST_TRAVELER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
@@ -1394,7 +1395,7 @@ static void ValePlaza_FightTravelers(void) {
   Actor_SetSpriteColorById(ACTOR_STORM_GARET, SPRITE_COLOR_NORMAL);
   actor = Actor_Get(ACTOR_STORM_GARET);
   Actor_SetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
-  Actor_SetPosition(ACTOR_STORM_GARET, 0, PIXELS(331));
+  Actor_SetPosition(ACTOR_STORM_GARET, 0, 331);
   Actor_SetSpeed(ACTOR_STORM_GARET, PIXELS(6) / 5, PIXELS(3) / 5);
   Actor_WalkToAndWait(ACTOR_STORM_GARET, 37, 339);
   Event_Wait(20);
@@ -1478,10 +1479,10 @@ static void ValePlaza_TravelersLeaveAfterBattle(void) {
   FieldCamera_MoveWithinMapBounds(PIXELS(64), PIXELS(144), PIXELS(350), 0);
   MapGrid_CenterOnFollowedPoint();
   wait(1);
-  Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(48), PIXELS(346));
-  Actor_SetPosition(ACTOR_STORM_GARET, PIXELS(78), PIXELS(358));
-  Actor_SetPosition(ACTOR_FIRST_TRAVELER, PIXELS(103), PIXELS(342));
-  Actor_SetPosition(ACTOR_SECOND_TRAVELER, PIXELS(112), PIXELS(360));
+  Actor_SetPosition(ACTOR_PARTY_LEADER, 48, 346);
+  Actor_SetPosition(ACTOR_STORM_GARET, 78, 358);
+  Actor_SetPosition(ACTOR_FIRST_TRAVELER, 103, 342);
+  Actor_SetPosition(ACTOR_SECOND_TRAVELER, 112, 360);
   Actor_FaceDirection(ACTOR_FIRST_TRAVELER, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_SECOND_TRAVELER, FACING_WEST, 0);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_STRIDE);
@@ -1585,7 +1586,7 @@ static void ValePlaza_DepartForQuest(void) {
   Actor_SetSpritePriority(ACTOR_FAREWELL_GARETS_BROTHER, 1);
   Actor_SetSpritePriority(ACTOR_FAREWELL_GARETS_SISTER, 1);
   Actor_SetSpritePriority(ACTOR_FAREWELL_GARETS_GRANDFATHER, 1);
-  Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(208), PIXELS(814));
+  Actor_SetPosition(ACTOR_PARTY_LEADER, 208, 814);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(80);
@@ -1627,7 +1628,7 @@ static void ValePlaza_DepartForQuest(void) {
   Event_ShowMessage(ACTOR_FAREWELL_SECOND_CHILD, 0);
   Event_Wait(10);
   Actor_SetSpeed(ACTOR_FAREWELL_DOG, PIXELS(12) / 5, PIXELS(6) / 5);
-  Actor_SetPosition(ACTOR_FAREWELL_DOG, PIXELS(110), PIXELS(744));
+  Actor_SetPosition(ACTOR_FAREWELL_DOG, 110, 744);
   wait(2);
   Actor_SetAnimation(ACTOR_FAREWELL_DOG, ANIM_NOD);
   Actor_SetScript(ACTOR_FAREWELL_DOG, gValePlaza_FarewellDogActions);
@@ -1710,7 +1711,8 @@ static void ValePlaza_DepartForQuest(void) {
     struct Actor *actor = Actor_GetById(ACTOR_FAREWELL_DOG);
 
     if (actor != NULL) {
-      Actor_SetPosition(ACTOR_FAREWELL_CAT, actor->x.fixed, actor->z.fixed);
+      Actor_SetPositionFixed(ACTOR_FAREWELL_CAT, actor->x.fixed,
+                             actor->z.fixed);
     }
   }
   priorityFlags = (u8)~ACTOR_PRIORITY_AUTOMATIC;

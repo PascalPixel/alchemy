@@ -805,8 +805,7 @@ static void TunnelRuins_SinkNorthwestPillar(void) {
     Actor_SetAnimation(ACTOR_NORTHWEST_SINKING_PILLAR, 3);
     Actor_Release(overlay);
     MapGrid_CopyCellAttributes(45, 4, 1, 1, 46, 8);
-    Actor_SetPosition(ACTOR_NORTHWEST_PILLAR_FROST_TARGET, PIXELS(744),
-                      PIXELS(136));
+    Actor_SetPosition(ACTOR_NORTHWEST_PILLAR_FROST_TARGET, 744, 136);
     TunnelRuins_AnimateLoweringImpact(58, 49, 8);
     Event_Wait(20);
     TunnelRuins_AnimateLoweringImpact(59, 49, 8);
@@ -890,8 +889,7 @@ static void TunnelRuins_SinkSoutheastPillar(void) {
       Actor_SetAnimation(ACTOR_SOUTHEAST_SINKING_PILLAR, 3);
       Actor_Release(overlay);
       MapGrid_CopyCellAttributes(45, 4, 1, 1, 48, 14);
-      Actor_SetPosition(ACTOR_SOUTHEAST_PILLAR_FROST_TARGET, PIXELS(776),
-                        PIXELS(232));
+      Actor_SetPosition(ACTOR_SOUTHEAST_PILLAR_FROST_TARGET, 776, 232);
       TunnelRuins_AnimateLoweringImpact(58, 45, 14);
       Event_Wait(20);
       TunnelRuins_AnimateLoweringImpact(59, 45, 14);
@@ -1296,8 +1294,8 @@ static void TunnelRuins_ShowFalseStatues(void) {
   MapGrid_CopyCellAttributes(113, 43, 1, 1, 49, 43);
   TreasureSpot_SetPosition(100, 0, 0);
   TreasureSpot_SetPosition(101, 0, 0);
-  Actor_SetPosition(ACTOR_WEST_VANISHING_STATUE, PIXELS(136), PIXELS(792));
-  Actor_SetPosition(ACTOR_EAST_VANISHING_STATUE, PIXELS(792), PIXELS(696));
+  Actor_SetPosition(ACTOR_WEST_VANISHING_STATUE, 136, 792);
+  Actor_SetPosition(ACTOR_EAST_VANISHING_STATUE, 792, 696);
 }
 
 /// Reveal makes the two false statues vanish. As it shows what is hidden, the
@@ -1671,11 +1669,9 @@ s32 TunnelRuins_Initialize(void) {
             ACTOR_PRIORITY_UNDERFOOT;
         Actor_SetAnimation(ACTOR_NORTHWEST_SINKING_PILLAR, 3);
         MapGrid_CopyCellAttributes(45, 4, 1, 1, 46, 8);
-        Actor_SetPosition(ACTOR_NORTHWEST_SINKING_PILLAR, PIXELS(744),
-                          PIXELS(136));
+        Actor_SetPosition(ACTOR_NORTHWEST_SINKING_PILLAR, 744, 136);
         Actor_Get(ACTOR_NORTHWEST_SINKING_PILLAR)->y.fixed = -PIXELS(16);
-        Actor_SetPosition(ACTOR_NORTHWEST_PILLAR_FROST_TARGET, PIXELS(744),
-                          PIXELS(136));
+        Actor_SetPosition(ACTOR_NORTHWEST_PILLAR_FROST_TARGET, 744, 136);
       }
       if (GameFlag_Get(FLAG_SCENE_TEMP_00)) {
         Actor_SetSpriteColorById(ACTOR_NORTHWEST_PILLAR_FROST_TARGET,
@@ -1691,11 +1687,9 @@ s32 TunnelRuins_Initialize(void) {
             ACTOR_PRIORITY_UNDERFOOT;
         Actor_SetAnimation(ACTOR_SOUTHEAST_SINKING_PILLAR, 3);
         MapGrid_CopyCellAttributes(45, 4, 1, 1, 48, 14);
-        Actor_SetPosition(ACTOR_SOUTHEAST_SINKING_PILLAR, PIXELS(776),
-                          PIXELS(232));
+        Actor_SetPosition(ACTOR_SOUTHEAST_SINKING_PILLAR, 776, 232);
         Actor_Get(ACTOR_SOUTHEAST_SINKING_PILLAR)->y.fixed = -PIXELS(16);
-        Actor_SetPosition(ACTOR_SOUTHEAST_PILLAR_FROST_TARGET, PIXELS(776),
-                          PIXELS(232));
+        Actor_SetPosition(ACTOR_SOUTHEAST_PILLAR_FROST_TARGET, 776, 232);
         GameFlag_Set(FLAG_SCENE_TEMP_02);
       }
       if (GameFlag_Get(FLAG_SCENE_TEMP_01)) {
@@ -1735,9 +1729,9 @@ s32 TunnelRuins_Initialize(void) {
       Actor_SetSpriteColorById(ACTOR_EAST_PILLAR_A, SPRITE_COLOR_GREY);
       Actor_SetSpriteColorById(ACTOR_EAST_PILLAR_B, SPRITE_COLOR_GREY);
       if (GameFlag_Get(FLAG_TUNNEL_RUINS_EAST_PILLAR_A_PUSHED_WEST))
-        Actor_SetPosition(ACTOR_EAST_PILLAR_A, PIXELS(728), PIXELS(312));
+        Actor_SetPosition(ACTOR_EAST_PILLAR_A, 728, 312);
       if (GameFlag_Get(FLAG_TUNNEL_RUINS_EAST_PILLAR_B_PUSHED_WEST))
-        Actor_SetPosition(ACTOR_EAST_PILLAR_B, PIXELS(744), PIXELS(312));
+        Actor_SetPosition(ACTOR_EAST_PILLAR_B, 744, 312);
       TunnelRuins_MarkPushPillarCells();
       break;
     case TUNNEL_RUINS_LADY_STATUES_FROM_TUNNEL_RUINS_GREAT_STATUE_SOUTHWEST:
@@ -1796,17 +1790,17 @@ s32 TunnelRuins_Initialize(void) {
         Actor_Get(ACTOR_BALANCE_EAST)->y.fixed = -PIXELS(64);
         Actor_Get(ACTOR_BALANCE_WEST)->timer = 2;
         Actor_Get(ACTOR_BALANCE_EAST)->timer = 4;
-        Actor_SetPosition(ACTOR_WEST_CARRY_STONE, PIXELS(200), PIXELS(152));
+        Actor_SetPosition(ACTOR_WEST_CARRY_STONE, 200, 152);
         Actor_Get(ACTOR_WEST_CARRY_STONE)->timer = ACTOR_BALANCE_EAST;
         Actor_Get(ACTOR_WEST_CARRY_STONE)->update = UPDATE_RIDE_STONE_BELOW;
         Actor_Get(ACTOR_WEST_CARRY_STONE)->priorityFlags |=
             ACTOR_PRIORITY_UNDERFOOT;
-        Actor_SetPosition(ACTOR_MIDDLE_CARRY_STONE, PIXELS(200), PIXELS(152));
+        Actor_SetPosition(ACTOR_MIDDLE_CARRY_STONE, 200, 152);
         Actor_Get(ACTOR_MIDDLE_CARRY_STONE)->timer = ACTOR_WEST_CARRY_STONE;
         Actor_Get(ACTOR_MIDDLE_CARRY_STONE)->update = UPDATE_RIDE_STONE_BELOW;
         Actor_Get(ACTOR_MIDDLE_CARRY_STONE)->priorityFlags |=
             ACTOR_PRIORITY_UNDERFOOT;
-        Actor_SetPosition(ACTOR_EAST_CARRY_STONE, PIXELS(136), PIXELS(152));
+        Actor_SetPosition(ACTOR_EAST_CARRY_STONE, 136, 152);
         Actor_Get(ACTOR_EAST_CARRY_STONE)->timer = ACTOR_BALANCE_WEST;
         Actor_Get(ACTOR_EAST_CARRY_STONE)->update = UPDATE_RIDE_STONE_BELOW;
         Actor_Get(ACTOR_EAST_CARRY_STONE)->priorityFlags |=
@@ -1843,15 +1837,11 @@ s32 TunnelRuins_Initialize(void) {
       // were left.
       if (GameFlag_Get(FLAG_TUNNEL_RUINS_STATUE_DOOR_OPEN)) {
         MapGrid_CopyCells(24, 59, 1, 2, 32, 46);
-        Actor_SetPosition(ACTOR_LADY_STATUE_NORTHWEST, PIXELS(408),
-                          PIXELS(792));
-        Actor_SetPosition(ACTOR_LADY_STATUE_NORTHEAST, PIXELS(376),
-                          PIXELS(792));
-        Actor_SetPosition(ACTOR_LADY_STATUE_SOUTHWEST, PIXELS(408),
-                          PIXELS(760));
-        Actor_SetPosition(ACTOR_LADY_STATUE_SOUTHEAST, PIXELS(376),
-                          PIXELS(760));
-        Actor_SetPosition(ACTOR_LADY_STATUE_SOUTH, PIXELS(392), PIXELS(776));
+        Actor_SetPosition(ACTOR_LADY_STATUE_NORTHWEST, 408, 792);
+        Actor_SetPosition(ACTOR_LADY_STATUE_NORTHEAST, 376, 792);
+        Actor_SetPosition(ACTOR_LADY_STATUE_SOUTHWEST, 408, 760);
+        Actor_SetPosition(ACTOR_LADY_STATUE_SOUTHEAST, 376, 760);
+        Actor_SetPosition(ACTOR_LADY_STATUE_SOUTH, 392, 776);
       }
       Actor_Get(ACTOR_LADY_STATUE_NORTHWEST)->motionFlags &=
           ~ACTOR_FOLLOWS_TERRAIN;

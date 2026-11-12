@@ -353,12 +353,12 @@ static void SolSanctumStatue_ExplainTrapDisarmed(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(20);
-  Actor_SetPosition(ACTOR_KRADEN, PIXELS(576), PIXELS(232));
+  Actor_SetPosition(ACTOR_KRADEN, 576, 232);
   Event_Wait(1);
   // Kraden, from the south: "You found it, Isaac!" Jenna: "Kraden!"
   Event_SetMessageId(MsgSolSanctumKradenYouFoundIt);
   SolSanctumStatue_SayThenWait(ACTOR_KRADEN, 6);
-  Actor_SetPosition(ACTOR_KRADEN, PIXELS(576), PIXELS(280));
+  Actor_SetPosition(ACTOR_KRADEN, 576, 280);
   FieldCamera_SetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
   FieldCamera_MoveTo(PIXELS(574), -1, PIXELS(180), 1);
   Actor_SetSpeed(ACTOR_KRADEN, PIXELS(1), PIXELS(1) / 2);
@@ -403,12 +403,12 @@ static void SolSanctumStatue_ExplainTrapDisarmed(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(40);
-  Actor_SetPosition(ACTOR_KRADEN, PIXELS(424), PIXELS(200));
+  Actor_SetPosition(ACTOR_KRADEN, 424, 200);
   wait(1);
   SolSanctumStatue_SayThenWait(ACTOR_KRADEN, 20);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Actor_SetPosition(ACTOR_KRADEN, PIXELS(576), PIXELS(184));
+  Actor_SetPosition(ACTOR_KRADEN, 576, 184);
   FieldCamera_MoveTo(PIXELS(574), -1, PIXELS(180), 0);
   MapGrid_CenterOnFollowedPoint();
   wait(1);
@@ -528,7 +528,7 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(20);
-  Actor_SetPosition(ACTOR_KRADEN, PIXELS(576), PIXELS(296));
+  Actor_SetPosition(ACTOR_KRADEN, 576, 296);
   Event_Wait(1);
   // Kraden, from the south: "Wait, Isaac!" Jenna: "What's wrong, Kraden?"
   Event_SetMessageId(MsgSolSanctumWait);
@@ -932,24 +932,24 @@ s32 SolSanctumStatue_Initialize(void) {
     Actor_SetPosition(ACTOR_GARET, 0, 0);
   }
   if (GameFlag_Get(FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED) != 0) {
-    Actor_SetPosition(ACTOR_MOVED_CENTER_STATUE, PIXELS(288), PIXELS(178));
-    Actor_SetPosition(ACTOR_CENTER_STATUE, PIXELS(1608), PIXELS(1608));
-    Actor_SetPosition(ACTOR_LEFT_BEAM_STATUE, PIXELS(232), PIXELS(120));
-    Actor_SetPosition(ACTOR_RIGHT_BEAM_STATUE, PIXELS(344), PIXELS(120));
-    Actor_SetPosition(ACTOR_LEFT_BEAM_STATUE, PIXELS(232), PIXELS(120));
+    Actor_SetPosition(ACTOR_MOVED_CENTER_STATUE, 288, 178);
+    Actor_SetPosition(ACTOR_CENTER_STATUE, 1608, 1608);
+    Actor_SetPosition(ACTOR_LEFT_BEAM_STATUE, 232, 120);
+    Actor_SetPosition(ACTOR_RIGHT_BEAM_STATUE, 344, 120);
+    Actor_SetPosition(ACTOR_LEFT_BEAM_STATUE, 232, 120);
     MapGrid_CopyCellsTo(0, 59, 15, 38, 4, 3);
-    Actor_SetPosition(ACTOR_RIGHT_BEAM_STATUE, PIXELS(344), PIXELS(120));
+    Actor_SetPosition(ACTOR_RIGHT_BEAM_STATUE, 344, 120);
     MapGrid_CopyCellsTo(4, 59, 17, 38, 4, 3);
     MapGrid_CopyCellsTo(8, 60, 17, 39, 2, 2);
     MapGrid_CopyCellAttributes(0, 1, 2, 1, 17, 7);
   } else if (GameFlag_Get(FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING) != 0 &&
              GameFlag_Get(FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING) != 0) {
-    Actor_SetPosition(ACTOR_LEFT_BEAM_STATUE, PIXELS(232), PIXELS(120));
-    Actor_SetPosition(ACTOR_RIGHT_BEAM_STATUE, PIXELS(344), PIXELS(120));
+    Actor_SetPosition(ACTOR_LEFT_BEAM_STATUE, 232, 120);
+    Actor_SetPosition(ACTOR_RIGHT_BEAM_STATUE, 344, 120);
     MapGrid_CopyCellsTo(0, 28, 17, 8, 2, 1);
-    Actor_SetPosition(ACTOR_LEFT_BEAM_STATUE, PIXELS(232), PIXELS(120));
+    Actor_SetPosition(ACTOR_LEFT_BEAM_STATUE, 232, 120);
     MapGrid_CopyCellsTo(0, 59, 15, 38, 4, 3);
-    Actor_SetPosition(ACTOR_RIGHT_BEAM_STATUE, PIXELS(344), PIXELS(120));
+    Actor_SetPosition(ACTOR_RIGHT_BEAM_STATUE, 344, 120);
     MapGrid_CopyCellsTo(4, 59, 17, 38, 4, 3);
     MapGrid_CopyCellsTo(8, 60, 17, 39, 2, 2);
     MapGrid_CopyCellAttributes(0, 0, 2, 1, 17, 8);
@@ -957,36 +957,36 @@ s32 SolSanctumStatue_Initialize(void) {
     // The cells SolSanctumStatue_ShineLeftBeam copies as it sets the flag,
     // redrawn on arrival.
     if (GameFlag_Get(FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING) != 0) {
-      Actor_SetPosition(ACTOR_LEFT_BEAM_STATUE, PIXELS(232), PIXELS(120));
+      Actor_SetPosition(ACTOR_LEFT_BEAM_STATUE, 232, 120);
       MapGrid_CopyCellsTo(0, 59, 15, 38, 4, 3);
     }
     // The cells SolSanctumStatue_ShineRightBeam copies as it sets the flag,
     // redrawn on arrival.
     if (GameFlag_Get(FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING) != 0) {
-      Actor_SetPosition(ACTOR_RIGHT_BEAM_STATUE, PIXELS(344), PIXELS(120));
+      Actor_SetPosition(ACTOR_RIGHT_BEAM_STATUE, 344, 120);
       MapGrid_CopyCellsTo(4, 59, 17, 38, 4, 3);
     }
   }
   if (GameFlag_Get(FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN) != 0) {
-    Actor_SetPosition(ACTOR_NORTHWEST_STATUE, PIXELS(504), PIXELS(152));
+    Actor_SetPosition(ACTOR_NORTHWEST_STATUE, 504, 152);
     MapGrid_CopyCellsTo(2, 28, 34, 10, 2, 1);
     MapGrid_CopyCellsTo(2, 30, 16, 10, 2, 1);
     MapGrid_CopyCellsTo(0, 55, 32, 40, 4, 3);
   }
   if (GameFlag_Get(FLAG_SOL_SANCTUM_NORTHEAST_SEAL_OPEN) != 0) {
-    Actor_SetPosition(ACTOR_NORTHEAST_STATUE, PIXELS(648), PIXELS(152));
+    Actor_SetPosition(ACTOR_NORTHEAST_STATUE, 648, 152);
     MapGrid_CopyCellsTo(4, 28, 36, 10, 2, 1);
     MapGrid_CopyCellsTo(4, 30, 18, 10, 2, 1);
     MapGrid_CopyCellsTo(4, 55, 36, 40, 4, 3);
   }
   if (GameFlag_Get(FLAG_SOL_SANCTUM_SOUTHWEST_SEAL_OPEN) != 0) {
-    Actor_SetPosition(ACTOR_SOUTHWEST_STATUE, PIXELS(504), PIXELS(200));
+    Actor_SetPosition(ACTOR_SOUTHWEST_STATUE, 504, 200);
     MapGrid_CopyCellsTo(2, 29, 34, 11, 2, 1);
     MapGrid_CopyCellsTo(2, 31, 16, 11, 2, 1);
     MapGrid_CopyCellsTo(0, 58, 32, 43, 4, 1);
   }
   if (GameFlag_Get(FLAG_SOL_SANCTUM_SOUTHEAST_SEAL_OPEN) != 0) {
-    Actor_SetPosition(ACTOR_SOUTHEAST_STATUE, PIXELS(648), PIXELS(200));
+    Actor_SetPosition(ACTOR_SOUTHEAST_STATUE, 648, 200);
     MapGrid_CopyCellsTo(4, 29, 36, 11, 2, 1);
     MapGrid_CopyCellsTo(4, 31, 18, 11, 2, 1);
     MapGrid_CopyCellsTo(4, 58, 36, 43, 4, 1);
@@ -1224,7 +1224,7 @@ static void SolSanctumStatue_CenterStatueMoved(void) {
         Sound_Play(SE_STONE_GRIND);
         Actor_SetDestination(ACTOR_CENTER_STATUE, 288, 178);
         Event_Wait(8);
-        Actor_SetPosition(ACTOR_MOVED_CENTER_STATUE, PIXELS(288), PIXELS(178));
+        Actor_SetPosition(ACTOR_MOVED_CENTER_STATUE, 288, 178);
         statue->targetX = ACTOR_NO_TARGET;
         statue->targetY = ACTOR_NO_TARGET;
         statue->targetZ = ACTOR_NO_TARGET;

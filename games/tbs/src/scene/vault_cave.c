@@ -1077,7 +1077,7 @@ s32 Scene_Initialize(void) {
     case VAULT_CAVE_VAMBRACE_SOUTH_FROM_FROST_ROOM:
       if (GameFlag_Get(FLAG_VAULT_CAVE_SOUTH_PILLAR_ON_SWITCH) != 0) {
         VaultCave_ApplySouthernSwitchCells();
-        Actor_SetPosition(ACTOR_SOUTHERN_PILLAR, PIXELS(248), PIXELS(876));
+        Actor_SetPosition(ACTOR_SOUTHERN_PILLAR, 248, 876);
       }
       Actor_Get(ACTOR_PILLAR_EAST_OF_SOUTHERN_SWITCH)->priorityFlags =
           ACTOR_PRIORITY_UNDERFOOT;
@@ -1112,7 +1112,7 @@ s32 Scene_Initialize(void) {
       Actor_Get(ACTOR_PILLAR_SOUTH_OF_NORTHERN_SWITCH)->collisionFlags = 1;
       if (GameFlag_Get(FLAG_VAULT_CAVE_NORTH_PILLAR_ON_SWITCH) != 0) {
         VaultCave_ApplyNorthernSwitchCells();
-        Actor_SetPosition(ACTOR_NORTHERN_PILLAR, PIXELS(264), PIXELS(204));
+        Actor_SetPosition(ACTOR_NORTHERN_PILLAR, 264, 204);
       }
       break;
     }

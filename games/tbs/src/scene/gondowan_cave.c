@@ -247,7 +247,7 @@ static void GondowanCave_IodemAsksWhyTurningBack(void) {
     Actor_SetSpeed(ACTOR_IODEM, PIXELS(1), PIXELS(1) / 2);
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     if (leader != 0) {
-      Actor_SetPosition(ACTOR_IODEM, leader->x.fixed, leader->z.fixed);
+      Actor_SetPositionFixed(ACTOR_IODEM, leader->x.fixed, leader->z.fixed);
     }
     Actor_SetDestinationOffset(ACTOR_IODEM, -8, 16);
     Actor_WaitForMoveById(ACTOR_IODEM);
@@ -281,7 +281,7 @@ static void GondowanCave_IodemAsksWhyTurningBack(void) {
                              leader->z.part.pixel);
       }
       Actor_WaitForMoveById(ACTOR_IODEM);
-      Actor_SetPosition(ACTOR_IODEM, PIXELS(0), PIXELS(0));
+      Actor_SetPosition(ACTOR_IODEM, 0, 0);
       Event_Wait(30);
       Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
       Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, 16);
@@ -432,8 +432,8 @@ static void GondowanCave_PushPillar(void) {
 /// Hides the pillar and shows the actor that stands in for it in its
 /// place.
 static inline void GondowanCave_PlaceDroppedPillar(s32 animation) {
-  Actor_SetPosition(ACTOR_PILLAR, PIXELS(0), PIXELS(0));
-  Actor_SetPosition(ACTOR_DROPPED_PILLAR, PIXELS(696), PIXELS(288));
+  Actor_SetPosition(ACTOR_PILLAR, 0, 0);
+  Actor_SetPosition(ACTOR_DROPPED_PILLAR, 696, 288);
   Actor_SetAnimation(ACTOR_DROPPED_PILLAR, animation);
 }
 
@@ -551,7 +551,7 @@ s32 Scene_Initialize(void) {
   if (gMainRoutineWork.next == (s32)&SceneId_GondowanPassage) {
     GameFlag_Set(FLAG_RETREAT_BLOCKED);
     if (GameFlag_Get(FLAG_IODEM_FOLLOWING_PARTY) != 0) {
-      Actor_SetPosition(ACTOR_IODEM, PIXELS(0), PIXELS(0));
+      Actor_SetPosition(ACTOR_IODEM, 0, 0);
     }
   }
   if (gMainRoutineWork.next == (s32)&SceneId_GondowanCave) {
@@ -561,7 +561,7 @@ s32 Scene_Initialize(void) {
       MapGrid_CopyCellAttributes(108, 17, 1, 1, 107, 17);
     }
     if (GameFlag_Get(FLAG_GONDOWAN_CAVE_STUMP_MOVED) != 0) {
-      Actor_SetPosition(ACTOR_STUMP, PIXELS(440), PIXELS(308));
+      Actor_SetPosition(ACTOR_STUMP, 440, 308);
       Actor_SetAnimation(ACTOR_STUMP, STUMP_ANIMATION_SINK);
       MapGrid_CopyCellAttributes(29, 19, 1, 1, 27, 19);
     }

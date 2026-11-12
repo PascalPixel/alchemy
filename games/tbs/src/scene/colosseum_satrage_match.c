@@ -831,14 +831,10 @@ static void ColosseumSatrageMatch_ResetLifts(void) {
   gColosseumSatrageMatch_LiftTimer = 0;
   gColosseumSatrageMatch_LiftPhase = 0;
   Task_Remove(ColosseumSatrageMatch_UpdateLifts);
-  Actor_SetPosition(ACTOR_COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT, PIXELS(936),
-                    PIXELS(216));
-  Actor_SetPosition(ACTOR_COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT + 1, PIXELS(968),
-                    PIXELS(216));
-  Actor_SetPosition(ACTOR_COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT + 2, PIXELS(1000),
-                    PIXELS(216));
-  Actor_SetPosition(ACTOR_COLOSSEUM_SATRAGE_MATCH_LAST_LIFT, PIXELS(1032),
-                    PIXELS(216));
+  Actor_SetPosition(ACTOR_COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT, 936, 216);
+  Actor_SetPosition(ACTOR_COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT + 1, 968, 216);
+  Actor_SetPosition(ACTOR_COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT + 2, 1000, 216);
+  Actor_SetPosition(ACTOR_COLOSSEUM_SATRAGE_MATCH_LAST_LIFT, 1032, 216);
   Actor_SetAnimation(ACTOR_LIFT_OPERATOR, 10);
 }
 
@@ -953,8 +949,8 @@ static void ColosseumSatrageMatch_StageBattleResult(s32 result) {
   Actor_ReleaseById(ACTOR_PRIZE_B);
   Party_RestoreHpPp(1);
   Event_Start();
-  Actor_SetPosition(ACTOR_OPPONENT, PIXELS(88), PIXELS(256));
-  Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(120), PIXELS(256));
+  Actor_SetPosition(ACTOR_OPPONENT, 88, 256);
+  Actor_SetPosition(ACTOR_PARTY_LEADER, 120, 256);
   // BUG: FACING_SOUTH is passed where Actor_FaceActor takes an
   // actor id; Actor_Lookup has no actor past 191, so
   // neither turns.
@@ -1194,16 +1190,16 @@ static void ColosseumSatrageMatch_IntroduceSecondFinals(s32 attendantId) {
   Actor_SetSpeed(ACTOR_GARET, PIXELS(1), PIXELS(1) / 2);
   Actor_SetSpeed(ACTOR_IVAN, PIXELS(1), PIXELS(1) / 2);
   Actor_SetSpeed(ACTOR_MIA, PIXELS(1), PIXELS(1) / 2);
-  Actor_SetPosition(ACTOR_PARTY_LEADER, (attendantX << 16),
-                    ((attendantZ << 16) - PIXELS(48)));
-  Actor_SetPosition(ACTOR_GARET, (attendantX << 16) - PIXELS(16),
-                    (attendantZ << 16) - PIXELS(40));
-  Actor_SetPosition(ACTOR_IVAN, (attendantX << 16) + PIXELS(16),
-                    (attendantZ << 16) - PIXELS(40));
-  Actor_SetPosition(ACTOR_MIA, (attendantX << 16),
-                    ((attendantZ << 16) - PIXELS(32)));
-  Actor_SetPosition(attendantId, (attendantX << 16),
-                    ((attendantZ << 16) - PIXELS(80)));
+  Actor_SetPositionFixed(ACTOR_PARTY_LEADER, (attendantX << 16),
+                         ((attendantZ << 16) - px(48)));
+  Actor_SetPositionFixed(ACTOR_GARET, (attendantX << 16) - px(16),
+                         (attendantZ << 16) - px(40));
+  Actor_SetPositionFixed(ACTOR_IVAN, (attendantX << 16) + px(16),
+                         (attendantZ << 16) - px(40));
+  Actor_SetPositionFixed(ACTOR_MIA, (attendantX << 16),
+                         ((attendantZ << 16) - px(32)));
+  Actor_SetPositionFixed(attendantId, (attendantX << 16),
+                         ((attendantZ << 16) - px(80)));
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   actor->facing = FACING_NORTH;
   FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 0);
@@ -1397,7 +1393,7 @@ static void ColosseumSatrageMatch_TalkToLogRollingAttendant(s32 attendant) {
       Event_ShowMessage(attendant, 0);
       Colosso_RestoreWarrior(ACTOR_PARTY_LEADER);
       FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 0);
-      Actor_SetPosition(ACTOR_RIDING_LOG_SOUTH, PIXELS(840), PIXELS(232));
+      Actor_SetPosition(ACTOR_RIDING_LOG_SOUTH, 840, 232);
       Colosso_RepeatStageNumber(attendant, 3);
     } else if (result == COLOSSO_GUIDE_OFFER_CHEERING) {
       Event_SetMessageId(MsgColossoHereYourObjectiveRideLogs);
@@ -1552,7 +1548,7 @@ static void ColosseumSatrageMatch_TalkToBoardWalkAttendant(s32 attendant) {
     Event_ShowMessage(attendant, 0);
     Colosso_RestoreWarrior(ACTOR_PARTY_LEADER);
     FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 0);
-    Actor_SetPosition(ACTOR_ROLLING_LOG_EAST, PIXELS(392), PIXELS(208));
+    Actor_SetPosition(ACTOR_ROLLING_LOG_EAST, 392, 208);
     Colosso_RepeatStageNumber(attendant, 5);
   } else if (result == COLOSSO_GUIDE_OFFER_CHEERING) {
     Event_SetMessageId(MsgColossoFocusRollingLogs);

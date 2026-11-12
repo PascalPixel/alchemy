@@ -720,8 +720,7 @@ static void AltinPeak_DrainFirstWater(void) {
       puddle->scaleX = Q16_ONE / 10;
       puddle = Actor_Get(ACTOR_FIRST_WATER_BEAST_ROOM_PUDDLE);
       puddle->scaleY = Q16_ONE / 10;
-      Actor_SetPosition(ACTOR_FIRST_WATER_BEAST_ROOM_PUDDLE, PIXELS(152),
-                        PIXELS(216));
+      Actor_SetPosition(ACTOR_FIRST_WATER_BEAST_ROOM_PUDDLE, 152, 216);
       Actor_SetScript(ACTOR_FIRST_WATER_BEAST_ROOM_PUDDLE,
                       gAltinPeak_PuddleGrowScript);
     }
@@ -1084,7 +1083,7 @@ static void AltinPeak_RunBoulderChase(s32 boulderDelay) {
   leader->timer = 0;
   Actor_SetScript(ACTOR_PARTY_LEADER, gAltinPeak_LeaderFleePath);
   if (GameFlag_Get(FLAG_ALTIN_PEAK_GARET_WATCHING_ROCKS) != 0) {
-    Actor_SetPosition(ACTOR_GARET, PIXELS(878), PIXELS(528));
+    Actor_SetPosition(ACTOR_GARET, 878, 528);
     actor = Actor_Get(ACTOR_GARET);
     actor->facing = FACING_SOUTH_SOUTHWEST;
   }
@@ -1192,7 +1191,7 @@ static void AltinPeak_ReadFallingRockSign(void) {
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
     actor = Actor_Get(ACTOR_PARTY_LEADER);
     if (actor != 0) {
-      Actor_SetPosition(ACTOR_GARET, actor->x.fixed, actor->z.fixed);
+      Actor_SetPositionFixed(ACTOR_GARET, actor->x.fixed, actor->z.fixed);
     }
     Actor_SetSpeed(ACTOR_GARET, PIXELS(4) / 5, PIXELS(2) / 5);
     Actor_WalkToAndWait(ACTOR_GARET, 800, 140);
@@ -1630,7 +1629,7 @@ static void AltinPeak_RestoreFirstWaterBeastRoom(void) {
       actor = Actor_Get(ACTOR_FIRST_WATER_BEAST_ROOM_SECOND_PUDDLE);
       actor->y.fixed = PIXELS(32);
       MapGrid_CopyCellAttributes(2, 0, 1, 1, 18, 13);
-      Actor_SetPosition(ACTOR_FIRST_WATER_BEAST, PIXELS(120), PIXELS(215));
+      Actor_SetPosition(ACTOR_FIRST_WATER_BEAST, 120, 215);
       actor = Actor_Get(ACTOR_FIRST_WATER_BEAST);
       actor->facing = opened;
       Actor_SetAnimation(ACTOR_FIRST_WATER_BEAST, WATER_BEAST_ANIMATION_SPIT);
@@ -1647,7 +1646,7 @@ static void AltinPeak_RestoreFirstWaterBeastRoom(void) {
     actor = Actor_Get(ACTOR_FIRST_WATER_BEAST_ROOM_SECOND_PUDDLE);
     actor->y.fixed = PIXELS(32);
     MapGrid_CopyCellAttributes(2, 0, 1, 1, 18, 13);
-    Actor_SetPosition(ACTOR_FIRST_WATER_BEAST, PIXELS(260), PIXELS(215));
+    Actor_SetPosition(ACTOR_FIRST_WATER_BEAST, 260, 215);
     FieldActor_WatchAndStartScript(10,
                                    ACTOR_WATCH_KEEP_MOTION | ACTOR_PARTY_LEADER,
                                    gAltinPeak_FaceLeaderScript);
@@ -1782,7 +1781,7 @@ static void AltinPeak_RestorePoolRoom(void) {
 
   if (gMainRoutineWork.entrance == ALTIN_PEAK_POOL_NORTH_FROM_SOUTHWEST) {
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
-      Actor_SetPosition(ACTOR_CART, PIXELS(358), PIXELS(104));
+      Actor_SetPosition(ACTOR_CART, 358, 104);
     }
   }
   AltinPeak_MarkActorTerrainCell(ACTOR_POOL_ROOM_PUDDLE);
@@ -1948,7 +1947,7 @@ static void AltinPeak_RestoreWestExitRoom(void) {
   Actor_SetSpriteFlags(actor, 0);
   if (gMainRoutineWork.entrance ==
       ALTIN_PEAK_WEST_EXIT_TUNNEL_FROM_CHEST_ROOM) {
-    Actor_SetPosition(ACTOR_WEST_EXIT_ROOM_PILLAR, PIXELS(184), PIXELS(328));
+    Actor_SetPosition(ACTOR_WEST_EXIT_ROOM_PILLAR, 184, 328);
   }
 }
 
@@ -2135,7 +2134,7 @@ static void AltinPeak_AwardFrostJewelAndDrain(void) {
 static void AltinPeak_DrainAfterSecondBeast(void) {
   Event_Start();
   Actor_SetPosition(ACTOR_SECOND_WATER_BEAST, 0, 0);
-  Actor_SetPosition(ACTOR_CART, PIXELS(328), PIXELS(424));
+  Actor_SetPosition(ACTOR_CART, 328, 424);
   GameFlag_Set(FLAG_ALTIN_PEAK_SECOND_WATER_BEAST_ROOM_SWITCH);
   AltinPeak_ToggleSecondWaterBeastRoomSwitchCells();
   MapGrid_CenterOnFollowedPoint();
@@ -2155,7 +2154,7 @@ static void AltinPeak_DrainAfterSecondBeast(void) {
 static void AltinPeak_DrainAfterThirdBeast(void) {
   Event_Start();
   Actor_SetPosition(ACTOR_THIRD_WATER_BEAST, 0, 0);
-  Actor_SetPosition(ACTOR_CART, PIXELS(488), PIXELS(138));
+  Actor_SetPosition(ACTOR_CART, 488, 138);
   GameFlag_Set(FLAG_ALTIN_PEAK_THIRD_WATER_BEAST_ROOM_SWITCH);
   AltinPeak_ToggleThirdWaterBeastRoomSwitchCells();
   MapGrid_CenterOnFollowedPoint();
@@ -2231,8 +2230,8 @@ static void AltinPeak_CelebrateHydrosVictory(void) {
   const s32 *party;
 
   Event_Start();
-  Actor_SetPosition(ACTOR_STATUE, PIXELS(328), PIXELS(88));
-  Actor_SetPosition(ACTOR_STATUE_SHADOW, PIXELS(328), PIXELS(88));
+  Actor_SetPosition(ACTOR_STATUE, 328, 88);
+  Actor_SetPosition(ACTOR_STATUE_SHADOW, 328, 88);
   Actor_SetAnimation(ACTOR_STATUE, 0);
   work = gFieldWork;
   work->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
@@ -2243,15 +2242,15 @@ static void AltinPeak_CelebrateHydrosVictory(void) {
   // Bring the party out for the victory conversation.
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != 0) {
-    Actor_SetPosition(ACTOR_GARET, leader->x.fixed, leader->z.fixed);
+    Actor_SetPositionFixed(ACTOR_GARET, leader->x.fixed, leader->z.fixed);
   }
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != 0) {
-    Actor_SetPosition(ACTOR_IVAN, leader->x.fixed, leader->z.fixed);
+    Actor_SetPositionFixed(ACTOR_IVAN, leader->x.fixed, leader->z.fixed);
   }
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != 0) {
-    Actor_SetPosition(ACTOR_MIA, leader->x.fixed, leader->z.fixed);
+    Actor_SetPositionFixed(ACTOR_MIA, leader->x.fixed, leader->z.fixed);
   }
   Actor_SetSpeed(ACTOR_GARET, PIXELS(3) / 5, PIXELS(3) / 10);
   Actor_SetSpeed(ACTOR_IVAN, PIXELS(3) / 5, PIXELS(3) / 10);

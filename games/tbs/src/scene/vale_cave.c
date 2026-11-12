@@ -930,7 +930,7 @@ static void ValeCave_ApplyEntryState(void) {
         break;
       }
       // Kite waits behind the ledge, watching the leader.
-      Actor_SetPosition(ACTOR_KITE, PIXELS(792), PIXELS(280));
+      Actor_SetPosition(ACTOR_KITE, 792, 280);
       Actor_Get(ACTOR_KITE)->update = VALE_CAVE_FACE_LEADER_CALLBACK;
       break;
     case VALE_CAVE_KITE_SOUTH_FROM_WEST:

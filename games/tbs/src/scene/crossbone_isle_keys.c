@@ -379,7 +379,7 @@ static void CrossboneIsleKeys_BaneSecondEscape(void) {
       Event_Wait(30);
 
       // Leave the Djinni tilted while its scale animation continues.
-      Actor_SetPosition(ACTOR_BANE, PIXELS(888), PIXELS(664));
+      Actor_SetPosition(ACTOR_BANE, 888, 664);
       spinningDjinni = Actor_Get(ACTOR_BANE);
       spinningDjinni->sprite->rotation = TRIG_TURN * 31 / 32;
       spinningDjinni->facing = FACING_EAST;
@@ -433,7 +433,7 @@ static void CrossboneIsleKeys_BaneLastEscape(void) {
     Actor_WalkToAndWait(ACTOR_BANE, 880, 744);
     Actor_WalkToAndWait(ACTOR_BANE, 878, 752);
     Actor_WalkToAndWait(ACTOR_BANE, 880, 760);
-    Actor_SetPosition(ACTOR_BANE, PIXELS(856), PIXELS(824));
+    Actor_SetPosition(ACTOR_BANE, 856, 824);
     Event_Wait(10);
     Actor_FaceDirection(ACTOR_BANE, FACING_NORTH, 20);
     Actor_SetAttachedEffect(ACTOR_BANE,
@@ -650,7 +650,7 @@ static void CrossboneIsleKeys_ShowRedKey(void) {
 
   MapGrid_CopyCells(25, 45, 1, 2, 25, 48);
   if (GameFlag_Get(FLAG_CROSSBONE_ISLE_RED_KEY) == 0)
-    Actor_SetPosition(keyActorId, x, z);
+    Actor_SetPositionFixed(keyActorId, x, z);
   Event_Wait(1);
 }
 
@@ -658,7 +658,7 @@ static void CrossboneIsleKeys_ShowRedKey(void) {
 /// hidden again.
 static void CrossboneIsleKeys_HideRedKey(void) {
   MapGrid_CopyCells(24, 48, 1, 2, 25, 48);
-  Actor_SetPosition(ACTOR_RED_KEY, PIXELS(8), PIXELS(8));
+  Actor_SetPosition(ACTOR_RED_KEY, 8, 8);
 }
 
 /// Collects the selected key, hides its actor and remembers it was
@@ -1118,7 +1118,7 @@ static void CrossboneIsleKeys_PushFirstPillar(void) {
 /// ladder cell is restored.
 static void CrossboneIsleKeys_ReleaseSecondPillarChest(void) {
   Task_Remove(CrossboneIsleKeys_FollowSecondPillar);
-  Actor_SetPosition(ACTOR_SECOND_PILLAR_CHEST, PIXELS(0), PIXELS(0));
+  Actor_SetPosition(ACTOR_SECOND_PILLAR_CHEST, 0, 0);
   if (GameFlag_Get(FLAG_CROSSBONE_ISLE_BANE_LOOKED_EAST) != 0) {
     MapGrid_CopyCellAttributes(58, 36, 1, 1, 45, 43);
   } else {
@@ -1338,16 +1338,16 @@ UNUSED static void CrossboneIsleKeys_UnusedRedrawKeyActors(void) {
   switch (gCrossboneIsleKeys_IconTimer) {
   case 12:
     if (GameFlag_Get(FLAG_CROSSBONE_ISLE_FIRST_BLUE_KEY) == 0) {
-      Actor_SetPosition(ACTOR_FIRST_BLUE_KEY, PIXELS(232), PIXELS(872));
+      Actor_SetPosition(ACTOR_FIRST_BLUE_KEY, 232, 872);
     }
     if (GameFlag_Get(FLAG_CROSSBONE_ISLE_FIRST_BLUE_KEY + 1) == 0) {
-      Actor_SetPosition(ACTOR_SECOND_BLUE_KEY, PIXELS(296), PIXELS(824));
+      Actor_SetPosition(ACTOR_SECOND_BLUE_KEY, 296, 824);
     }
     if (GameFlag_Get(FLAG_CROSSBONE_ISLE_FIRST_BLUE_KEY + 2) == 0) {
-      Actor_SetPosition(ACTOR_THIRD_BLUE_KEY, PIXELS(328), PIXELS(760));
+      Actor_SetPosition(ACTOR_THIRD_BLUE_KEY, 328, 760);
     }
     if (GameFlag_Get(FLAG_CROSSBONE_ISLE_FIRST_BLUE_KEY + 3) == 0) {
-      Actor_SetPosition(ACTOR_FOURTH_BLUE_KEY, PIXELS(360), PIXELS(872));
+      Actor_SetPosition(ACTOR_FOURTH_BLUE_KEY, 360, 872);
     }
     break;
   // XXX (no evidence): why item codes 0 and 1, whose icons are a yellow gem and
@@ -1382,16 +1382,16 @@ static void CrossboneIsleKeys_InitializeKeys(void) {
   Colosso_ShowItemIcon(ACTOR_SECOND_BLUE_KEY, ITEM_BLUE_KEY);
   Colosso_ShowItemIcon(ACTOR_FIRST_BLUE_KEY, ITEM_BLUE_KEY);
   if (GameFlag_Get(FLAG_CROSSBONE_ISLE_FIRST_BLUE_KEY) == 0) {
-    Actor_SetPosition(ACTOR_FIRST_BLUE_KEY, PIXELS(232), PIXELS(872));
+    Actor_SetPosition(ACTOR_FIRST_BLUE_KEY, 232, 872);
   }
   if (GameFlag_Get(FLAG_CROSSBONE_ISLE_FIRST_BLUE_KEY + 1) == 0) {
-    Actor_SetPosition(ACTOR_SECOND_BLUE_KEY, PIXELS(296), PIXELS(824));
+    Actor_SetPosition(ACTOR_SECOND_BLUE_KEY, 296, 824);
   }
   if (GameFlag_Get(FLAG_CROSSBONE_ISLE_FIRST_BLUE_KEY + 2) == 0) {
-    Actor_SetPosition(ACTOR_THIRD_BLUE_KEY, PIXELS(328), PIXELS(760));
+    Actor_SetPosition(ACTOR_THIRD_BLUE_KEY, 328, 760);
   }
   if (GameFlag_Get(FLAG_CROSSBONE_ISLE_FIRST_BLUE_KEY + 3) == 0) {
-    Actor_SetPosition(ACTOR_FOURTH_BLUE_KEY, PIXELS(360), PIXELS(872));
+    Actor_SetPosition(ACTOR_FOURTH_BLUE_KEY, 360, 872);
   }
   if (GameFlag_Get(FLAG_CROSSBONE_ISLE_FIRST_BLUE_DOOR_OPEN) != 0) {
     CrossboneIsleKeys_OpenBlueDoor(0);
@@ -1463,7 +1463,7 @@ static void CrossboneIsleKeys_InitializeBane(void) {
   // Restore the surviving Djinni at the last completed escape stage.
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
     if (GameFlag_Get(FLAG_CROSSBONE_ISLE_BANE_LAST_ESCAPE) != 0) {
-      Actor_SetPosition(ACTOR_BANE, PIXELS(856), PIXELS(824));
+      Actor_SetPosition(ACTOR_BANE, 856, 824);
       djinni = Actor_Get(ACTOR_BANE);
 #ifdef UBFIX
       djinni->update = CrossboneIsleKeys_FaceBaneTowardLeader;
@@ -1472,14 +1472,14 @@ static void CrossboneIsleKeys_InitializeBane(void) {
           (void (*)(struct Actor *))CrossboneIsleKeys_FaceBaneTowardLeader;
 #endif
     } else if (GameFlag_Get(FLAG_CROSSBONE_ISLE_BANE_SECOND_ESCAPE) != 0) {
-      Actor_SetPosition(ACTOR_BANE, PIXELS(888), PIXELS(664));
+      Actor_SetPosition(ACTOR_BANE, 888, 664);
       djinni = Actor_Get(ACTOR_BANE);
       djinni->sprite->rotation = 0;
       Actor_SetAnimationSpeed(djinni, 16);
     } else if (GameFlag_Get(FLAG_CROSSBONE_ISLE_BANE_FIRST_ESCAPE) != 0) {
-      Actor_SetPosition(ACTOR_BANE, PIXELS(584), PIXELS(680));
+      Actor_SetPosition(ACTOR_BANE, 584, 680);
     } else {
-      Actor_SetPosition(ACTOR_BANE, PIXELS(584), PIXELS(664));
+      Actor_SetPosition(ACTOR_BANE, 584, 664);
     }
   }
 }

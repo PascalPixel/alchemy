@@ -459,7 +459,7 @@ L_main:
   Actor_SetSpeed(guide, PIXELS(1), PIXELS(1) / 2);
   leader = Actor_GetById(ACTOR_PARTY_LEADER);
   if (leader != 0) {
-    Actor_SetPosition(friendId, leader->x.fixed, leader->z.fixed);
+    Actor_SetPositionFixed(friendId, leader->x.fixed, leader->z.fixed);
   }
   frontZ = guideZ + 16;
   Actor_WalkToAndWait(friendId, guideX, frontZ);

@@ -576,10 +576,10 @@ static void McCoyPalace_CaptainSeesPartyOff(void) {
 
 /// The four reward chests stand in a row.
 static __inline__ void McCoyPalace_PositionRewardChests(void) {
-  Actor_SetPosition(ACTOR_VIAL_CHEST, PIXELS(616), PIXELS(728));
-  Actor_SetPosition(ACTOR_POTION_CHEST, PIXELS(632), PIXELS(728));
-  Actor_SetPosition(ACTOR_PSY_CRYSTAL_CHEST, PIXELS(648), PIXELS(728));
-  Actor_SetPosition(ACTOR_WATER_OF_LIFE_CHEST, PIXELS(664), PIXELS(728));
+  Actor_SetPosition(ACTOR_VIAL_CHEST, 616, 728);
+  Actor_SetPosition(ACTOR_POTION_CHEST, 632, 728);
+  Actor_SetPosition(ACTOR_PSY_CRYSTAL_CHEST, 648, 728);
+  Actor_SetPosition(ACTOR_WATER_OF_LIFE_CHEST, 664, 728);
 }
 
 /// The cells before the chest row can be walked on.
@@ -705,9 +705,9 @@ static void McCoyPalace_AudienceWithMcCoy(void) {
   Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
   if (Event_GetFlag(FLAG_MCCOY_PALACE_JOB_REFUSED) != 0) {
     FieldCamera_MoveTo(PIXELS(894), -1, PIXELS(698), 0);
-    Actor_SetPosition(ACTOR_CAPTAIN, PIXELS(876), PIXELS(634));
+    Actor_SetPosition(ACTOR_CAPTAIN, 876, 634);
     Actor_FaceDirection(ACTOR_CAPTAIN, FACING_SOUTH_SOUTHEAST, 0);
-    Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(894), PIXELS(798));
+    Actor_SetPosition(ACTOR_PARTY_LEADER, 894, 798);
   }
   MapGrid_CenterOnFollowedPoint();
   wait(1);
@@ -717,7 +717,7 @@ static void McCoyPalace_AudienceWithMcCoy(void) {
   Event_WaitTransitionFrames();
   if (GameFlag_Get(FLAG_MCCOY_PALACE_JOB_REFUSED) == 0) {
     Event_Wait(80);
-    Actor_SetPosition(ACTOR_CAPTAIN, PIXELS(894), PIXELS(798));
+    Actor_SetPosition(ACTOR_CAPTAIN, 894, 798);
     FieldCamera_SetSpeed(PIXELS(3) / 5, PIXELS(3) / 40);
     FieldCamera_MoveTo(PIXELS(894), -1, PIXELS(698), 1);
     Actor_SetSpeed(ACTOR_CAPTAIN, PIXELS(4) / 5, PIXELS(2) / 5);
@@ -760,7 +760,7 @@ static void McCoyPalace_AudienceWithMcCoy(void) {
     Actor_FaceDirection(ACTOR_CAPTAIN, FACING_SOUTH_SOUTHEAST, 10);
     Actor_FaceDirection(ACTOR_LORD_MCCOY, FACING_SOUTH_SOUTHWEST, 10);
     FieldCamera_MoveTo(PIXELS(894), -1, PIXELS(698), 1);
-    Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(894), PIXELS(798));
+    Actor_SetPosition(ACTOR_PARTY_LEADER, 894, 798);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 5, PIXELS(3) / 10);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 894, 726);
     Event_Wait(20);
@@ -773,16 +773,16 @@ static void McCoyPalace_AudienceWithMcCoy(void) {
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 894, 684);
     actor = Actor_Get(ACTOR_PARTY_LEADER);
     if (actor != 0) {
-      Actor_SetPosition(ACTOR_GARET, actor->x.fixed, actor->z.fixed);
+      Actor_SetPositionFixed(ACTOR_GARET, actor->x.fixed, actor->z.fixed);
     }
     actor = Actor_Get(ACTOR_PARTY_LEADER);
     if (actor != 0) {
-      Actor_SetPosition(ACTOR_IVAN, actor->x.fixed, actor->z.fixed);
+      Actor_SetPositionFixed(ACTOR_IVAN, actor->x.fixed, actor->z.fixed);
     }
     if (GameFlag_Get(FLAG_IN_PARTY(MIA)) != 0) {
       actor = Actor_Get(ACTOR_PARTY_LEADER);
       if (actor != 0) {
-        Actor_SetPosition(ACTOR_MIA, actor->x.fixed, actor->z.fixed);
+        Actor_SetPositionFixed(ACTOR_MIA, actor->x.fixed, actor->z.fixed);
       }
     }
     McCoyPalace_PrepareCompanionApproach();
@@ -876,16 +876,16 @@ static void McCoyPalace_AudienceWithMcCoy(void) {
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   if (actor != 0) {
-    Actor_SetPosition(ACTOR_GARET, actor->x.fixed, actor->z.fixed);
+    Actor_SetPositionFixed(ACTOR_GARET, actor->x.fixed, actor->z.fixed);
   }
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   if (actor != 0) {
-    Actor_SetPosition(ACTOR_IVAN, actor->x.fixed, actor->z.fixed);
+    Actor_SetPositionFixed(ACTOR_IVAN, actor->x.fixed, actor->z.fixed);
   }
   if (GameFlag_Get(FLAG_IN_PARTY(MIA)) != 0) {
     actor = Actor_Get(ACTOR_PARTY_LEADER);
     if (actor != 0) {
-      Actor_SetPosition(ACTOR_MIA, actor->x.fixed, actor->z.fixed);
+      Actor_SetPositionFixed(ACTOR_MIA, actor->x.fixed, actor->z.fixed);
     }
   }
   McCoyPalace_PrepareCompanionApproach();
@@ -934,7 +934,7 @@ accepted:
   actor->scaleY = Q16_ONE / 2;
   actor = Actor_Get(ACTOR_LORD_MCCOY);
   if (actor != 0) {
-    Actor_SetPosition(ACTOR_BARRICADE_KEY, actor->x.fixed, actor->z.fixed);
+    Actor_SetPositionFixed(ACTOR_BARRICADE_KEY, actor->x.fixed, actor->z.fixed);
   }
   wait(1);
   Actor_Jump(ACTOR_BARRICADE_KEY, 6, 0);
@@ -1205,7 +1205,7 @@ static void McCoyPalace_CaptainHintsAtBarricade(void) {
   Sound_Play(SE_THUMP);
   TilesetAnim_Resume(1);
   TilesetAnim_Resume(2);
-  Actor_SetPosition(ACTOR_CAPTAIN, PIXELS(256), PIXELS(632));
+  Actor_SetPosition(ACTOR_CAPTAIN, 256, 632);
   wait(1);
   Actor_SetSpeed(ACTOR_CAPTAIN, PIXELS(3) / 5, PIXELS(3) / 10);
   Actor_WalkToAndWait(ACTOR_CAPTAIN, 256, 644);
@@ -1296,8 +1296,8 @@ static void McCoyPalace_McCoyRewardsParty(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(40);
-  Actor_SetPosition(ACTOR_CAPTAIN, PIXELS(888), PIXELS(798));
-  Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(904), PIXELS(798));
+  Actor_SetPosition(ACTOR_CAPTAIN, 888, 798);
+  Actor_SetPosition(ACTOR_PARTY_LEADER, 904, 798);
   FieldCamera_SetSpeed(PIXELS(3) / 5, PIXELS(3) / 40);
   FieldCamera_MoveTo(PIXELS(894), -1, PIXELS(698), 1);
   Actor_SetSpeed(ACTOR_CAPTAIN, PIXELS(4) / 5, PIXELS(2) / 5);
@@ -1332,15 +1332,15 @@ static void McCoyPalace_McCoyRewardsParty(void) {
 
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   if (actor != 0) {
-    Actor_SetPosition(ACTOR_GARET, actor->x.fixed, actor->z.fixed);
+    Actor_SetPositionFixed(ACTOR_GARET, actor->x.fixed, actor->z.fixed);
   }
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   if (actor != 0) {
-    Actor_SetPosition(ACTOR_IVAN, actor->x.fixed, actor->z.fixed);
+    Actor_SetPositionFixed(ACTOR_IVAN, actor->x.fixed, actor->z.fixed);
   }
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   if (actor != 0) {
-    Actor_SetPosition(ACTOR_MIA, actor->x.fixed, actor->z.fixed);
+    Actor_SetPositionFixed(ACTOR_MIA, actor->x.fixed, actor->z.fixed);
   }
 
   McCoyPalace_PrepareCompanionApproach();
@@ -1570,11 +1570,11 @@ static void McCoyPalace_PresentRewardChests(void) {
   FieldCamera_MoveWithinMapBounds(PIXELS(628), -1, PIXELS(748), 0);
   McCoyPalace_OpenRewardChestRow();
   Actor_Get(ACTOR_PARTY_LEADER)->facing = FACING_EAST;
-  Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(577), PIXELS(760));
+  Actor_SetPosition(ACTOR_PARTY_LEADER, 577, 760);
   Actor_Get(ACTOR_CAPTAIN)->facing = FACING_EAST;
-  Actor_SetPosition(ACTOR_CAPTAIN, PIXELS(592), PIXELS(760));
+  Actor_SetPosition(ACTOR_CAPTAIN, 592, 760);
   Actor_Get(ACTOR_SOLDIER_SHOWING_THE_REWARD)->facing = FACING_WEST_NORTHWEST;
-  Actor_SetPosition(ACTOR_SOLDIER_SHOWING_THE_REWARD, PIXELS(662), PIXELS(764));
+  Actor_SetPosition(ACTOR_SOLDIER_SHOWING_THE_REWARD, 662, 764);
   McCoyPalace_PositionRewardChests();
   Actor_SetSpriteFlags(Actor_Get(ACTOR_VIAL_CHEST), 0);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_POTION_CHEST), 0);

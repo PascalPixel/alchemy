@@ -521,7 +521,7 @@ static void IncreaseItemAndLevel_RunMotionTest(void) {
   Import_ActorSetAnimation(ACTOR_PORTRAIT_BROWSER, ANIM_WALK);
   Import_ActorSetAnimation(ACTOR_LEVEL_EDITOR, ANIM_SHAKE_HEAD);
   Actor_WaitForAnimationChange(ACTOR_PORTRAIT_BROWSER);
-  Actor_SetPosition(ACTOR_LEVEL_EDITOR, PIXELS(312), PIXELS(416));
+  Actor_SetPosition(ACTOR_LEVEL_EDITOR, 312, 416);
   Event_End();
 }
 #endif

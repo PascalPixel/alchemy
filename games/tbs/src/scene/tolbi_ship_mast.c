@@ -368,7 +368,7 @@ s32 TolbiShipMast_Initialize(void) {
   }
   if (GameFlag_Get(FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED) != 0 &&
       GameFlag_Get(FLAG_TOLBI_SHIP_REACHED_TOLBI) == 0) {
-    Actor_SetPosition(ACTOR_LOOKOUT, PIXELS(164), PIXELS(328));
+    Actor_SetPosition(ACTOR_LOOKOUT, 164, 328);
   }
   // The ship's scripted entrances resume their matching lookout events.
   switch (gMainRoutineWork.entrance) {
@@ -434,7 +434,7 @@ static void TolbiShipMast_SetupVisibleLeaderLookout(void) {
   struct Actor *leader;
 
   Event_Start();
-  Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(164), PIXELS(321));
+  Actor_SetPosition(ACTOR_PARTY_LEADER, 164, 321);
   Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   Actor_SetSpriteFlags(leader, 0);
@@ -500,7 +500,7 @@ static void TolbiShipMast_RunAvastEvent(void) {
   Event_Wait(20);
   gTolbiShipMast_CameraOrigin[0] = *placement++;
   gTolbiShipMast_CameraOrigin[1] = *placement;
-  Actor_SetPosition(ACTOR_SPARKLE, PIXELS(80), PIXELS(210));
+  Actor_SetPosition(ACTOR_SPARKLE, 80, 210);
   x = PIXELS(80);
   Actor_Get(ACTOR_SPARKLE)->motionFlags = zero;
   gTolbiShipMast_CameraCenter[0] = x;
@@ -517,9 +517,9 @@ static void TolbiShipMast_RunAvastEvent(void) {
   // "Avast!"
   Event_ShowMessageThenWait(ACTOR_LOOKOUT, 0, 10);
   // The three monsters appear where the sparkle turned.
-  Actor_SetPosition(ACTOR_FIRST_SIGHTED_MONSTER, x, PIXELS(210));
-  Actor_SetPosition(ACTOR_FIRST_SIGHTED_MONSTER + 1, x, PIXELS(210));
-  Actor_SetPosition(ACTOR_FIRST_SIGHTED_MONSTER + 2, x, PIXELS(210));
+  Actor_SetPositionFixed(ACTOR_FIRST_SIGHTED_MONSTER, x, px(210));
+  Actor_SetPositionFixed(ACTOR_FIRST_SIGHTED_MONSTER + 1, x, px(210));
+  Actor_SetPositionFixed(ACTOR_FIRST_SIGHTED_MONSTER + 2, x, px(210));
   Actor_SetSpritePriority(ACTOR_FIRST_SIGHTED_MONSTER, 3);
   Actor_SetSpritePriority(ACTOR_FIRST_SIGHTED_MONSTER + 1, 3);
   Actor_SetSpritePriority(ACTOR_FIRST_SIGHTED_MONSTER + 2, 3);
@@ -768,7 +768,7 @@ static void TolbiShipMast_RunMonsterLanding(void) {
   actor = Actor_Get(ACTOR_LANDING_MONSTER_SHADOW);
   actor->scaleX = Q16_ONE / 10;
   actor->scaleY = Q16_ONE / 10;
-  Actor_SetPosition(ACTOR_LANDING_MONSTER_SHADOW, PIXELS(172), PIXELS(340));
+  Actor_SetPosition(ACTOR_LANDING_MONSTER_SHADOW, 172, 340);
   Actor_Stop(ACTOR_LOOKOUT);
   wait(1);
   Actor_RunRepeatedMotion(ACTOR_LOOKOUT, 1);

@@ -432,7 +432,7 @@ static s32 Reveal_ShowSecrets(void) {
     SHOW_SECRET(3, 16, 42);
     SHOW_SECRET(4, 36, 44);
     SHOW_SECRET(5, 14, 55);
-    Actor_SetPosition(ACTOR_FIRST_PIT, PIXELS(400), PIXELS(364));
+    Actor_SetPosition(ACTOR_FIRST_PIT, 400, 364);
   } else if (gMainRoutineWork.next == (s32)&SceneId_LamakanDesertSmog) {
     SHOW_SECRET(0, 42, 5);
     SHOW_SECRET(1, 20, 11);
@@ -452,11 +452,11 @@ static s32 Reveal_ShowSecrets(void) {
     SHOW_SECRET(11, 6, 46);
     SHOW_SECRET(12, 27, 55);
     SHOW_SECRET(13, 43, 56);
-    Actor_SetPosition(ACTOR_FIRST_PIT, PIXELS(352), PIXELS(204));
-    Actor_SetPosition(ACTOR_FIRST_PIT + 1, PIXELS(736), PIXELS(396));
-    Actor_SetPosition(ACTOR_FIRST_PIT + 2, PIXELS(144), PIXELS(380));
-    Actor_SetPosition(ACTOR_LAST_PIT, PIXELS(576), PIXELS(716));
-    Actor_SetPosition(ACTOR_SMOG, PIXELS(648), PIXELS(408));
+    Actor_SetPosition(ACTOR_FIRST_PIT, 352, 204);
+    Actor_SetPosition(ACTOR_FIRST_PIT + 1, 736, 396);
+    Actor_SetPosition(ACTOR_FIRST_PIT + 2, 144, 380);
+    Actor_SetPosition(ACTOR_LAST_PIT, 576, 716);
+    Actor_SetPosition(ACTOR_SMOG, 648, 408);
   } else if (gMainRoutineWork.next == (s32)&SceneId_LamakanDesertManticore) {
     MapGrid_CopyCells(64, 124, 4, 4, 8, 14);
     MapGrid_CopyCells(68, 124, 4, 4, 6, 18);
@@ -466,8 +466,8 @@ static s32 Reveal_ShowSecrets(void) {
     MapGrid_CopyCells(5, 121, 5, 7, 43, 32);
     MapGrid_CopyCells(0, 120, 3, 1, 9, 5);
     MapGrid_CopyCells(3, 120, 3, 1, 44, 5);
-    Actor_SetPosition(ACTOR_MANTICORE, PIXELS(168), PIXELS(92));
-    Actor_SetPosition(ACTOR_FIRST_PIT, PIXELS(128), PIXELS(316));
+    Actor_SetPosition(ACTOR_MANTICORE, 168, 92);
+    Actor_SetPosition(ACTOR_FIRST_PIT, 128, 316);
     MapGrid_CopyCellAttributes(6, 0, 3, 3, 9, 6);
     if (GameFlag_Get(FLAG_LAMAKAN_MANTICORE_BEATEN) == 0) {
       MapGrid_CopyCells(0, 119, 3, 1, 9, 5);

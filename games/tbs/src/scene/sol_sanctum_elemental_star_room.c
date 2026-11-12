@@ -543,7 +543,7 @@ static void SolSanctumElementalStarRoom_RevealSaturosAndMenardi(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 10);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != 0) {
-    Actor_SetPosition(ACTOR_GARET, leader->x.fixed, leader->z.fixed);
+    Actor_SetPositionFixed(ACTOR_GARET, leader->x.fixed, leader->z.fixed);
   }
   Actor_SetSpeed(ACTOR_GARET, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkToAndWait(ACTOR_GARET, 257, 491);
@@ -567,10 +567,10 @@ static void SolSanctumElementalStarRoom_RevealSaturosAndMenardi(void) {
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_Jump(ACTOR_PARTY_LEADER, 6, 0);
   Actor_Jump(ACTOR_GARET, 6, 60);
-  Actor_SetPosition(ACTOR_JENNA, PIXELS(475), PIXELS(332));
-  Actor_SetPosition(ACTOR_KRADEN, PIXELS(491), PIXELS(332));
-  Actor_SetPosition(ACTOR_MENARDI, PIXELS(459), PIXELS(348));
-  Actor_SetPosition(ACTOR_SATUROS, PIXELS(507), PIXELS(348));
+  Actor_SetPosition(ACTOR_JENNA, 475, 332);
+  Actor_SetPosition(ACTOR_KRADEN, 491, 332);
+  Actor_SetPosition(ACTOR_MENARDI, 459, 348);
+  Actor_SetPosition(ACTOR_SATUROS, 507, 348);
   FieldCamera_SetSpeed(PIXELS(36) / 5, PIXELS(9) / 10);
   FieldCamera_MoveTo(PIXELS(485), -1, PIXELS(345), 1);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTHWEST, 0);
@@ -625,7 +625,7 @@ static void SolSanctumElementalStarRoom_DemandElementalStars(void) {
   shadow->scaleX = Q16_ONE / 10;
   shadow->scaleY = Q16_ONE / 10;
   Actor_SetSpriteColorById(ACTOR_FELIX_MASKED, SPRITE_COLOR_BLINK);
-  Actor_SetPosition(ACTOR_FELIX_MASKED, PIXELS(471), PIXELS(290));
+  Actor_SetPosition(ACTOR_FELIX_MASKED, 471, 290);
   motionFlags = &felix->motionFlags;
   *motionFlags = zero;
   felix->y.fixed = PIXELS(40);
@@ -640,7 +640,7 @@ static void SolSanctumElementalStarRoom_DemandElementalStars(void) {
   FieldCamera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
   FieldCamera_MoveTo(PIXELS(471), -1, PIXELS(309), 1);
   FieldCamera_WaitForMove();
-  Actor_SetPosition(ACTOR_PLATFORM_SHADOW, PIXELS(471), PIXELS(290));
+  Actor_SetPosition(ACTOR_PLATFORM_SHADOW, 471, 290);
   Sound_Play(SE_WARP);
   Actor_SetSpritePriority(ACTOR_FELIX_MASKED, 2);
   for (i = 0; i != 90; i++) {
@@ -790,14 +790,14 @@ static void SolSanctumElementalStarRoom_OfferHostageGuarantee(void) {
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_RunRepeatedMotion(ACTOR_FELIX_MASKED, 3);
   Event_Wait(40);
-  Actor_SetPosition(ACTOR_GARET, PIXELS(346), PIXELS(440));
+  Actor_SetPosition(ACTOR_GARET, 346, 440);
   wait(1);
   Event_ShowMessage(ACTOR_GARET, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHWEST, 20);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Actor_SetPosition(ACTOR_GARET, PIXELS(280), PIXELS(470));
+  Actor_SetPosition(ACTOR_GARET, 280, 470);
   FieldCamera_MoveTo(PIXELS(261), -1, PIXELS(466), 0);
   MapGrid_CenterOnFollowedPoint();
   wait(1);
@@ -868,7 +868,7 @@ static void SolSanctumElementalStarRoom_UnmaskFelix(void) {
   Event_Wait(40);
   other = Actor_Get(ACTOR_FELIX_MASKED);
   if (other != 0) {
-    Actor_SetPosition(ACTOR_FELIX, other->x.fixed, other->z.fixed);
+    Actor_SetPositionFixed(ACTOR_FELIX, other->x.fixed, other->z.fixed);
   }
   Actor_SetPosition(ACTOR_FELIX_MASKED, 0, 0);
   Event_Wait(20);
@@ -1057,7 +1057,7 @@ static void SolSanctumElementalStarRoom_AlexTakesStars(void) {
   alex = Actor_Get(ACTOR_ALEX);
   Actor_SetSpriteFlags(alex, 0);
   Actor_SetSpriteColorById(ACTOR_ALEX, SPRITE_COLOR_HIDDEN);
-  Actor_SetPosition(ACTOR_ALEX, PIXELS(392), PIXELS(454));
+  Actor_SetPosition(ACTOR_ALEX, 392, 454);
   SolSanctumElementalStarRoom_AnimateAlexReappearing();
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH_NORTHEAST, 10);
   Actor_StartRepeatedMotion(ACTOR_GARET, 2);
@@ -1068,13 +1068,13 @@ static void SolSanctumElementalStarRoom_AlexTakesStars(void) {
   Event_SetMessageId(MsgSolSanctumPermitRelieveElemental);
   // "Will you permit me to relieve you of those Elemental Stars?"
   Event_ShowMessage(ACTOR_ALEX, 0);
-  Actor_SetPosition(ACTOR_SATUROS, PIXELS(469), PIXELS(348));
+  Actor_SetPosition(ACTOR_SATUROS, 469, 348);
   Event_Wait(20);
   SolSanctumElementalStarRoom_ShowMessageAndWait(
       SPEAKER_PORTRAIT_RIGHT | ACTOR_SATUROS, 10);
   SolSanctumElementalStarRoom_ShowMessageAndWait(
       SPEAKER_PORTRAIT_RIGHT | ACTOR_SATUROS, 40);
-  Actor_SetPosition(ACTOR_SATUROS, PIXELS(507), PIXELS(348));
+  Actor_SetPosition(ACTOR_SATUROS, 507, 348);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
   Event_Wait(40);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
@@ -1244,12 +1244,12 @@ static void SolSanctumElementalStarRoom_LineUpCaptors(void) {
   Actor_SetMovementTypeById(ACTOR_SATUROS, MOVEMENT_TYPE_STAND);
   Actor_SetMovementTypeById(ACTOR_ALEX, MOVEMENT_TYPE_STAND);
   Actor_SetMovementTypeById(ACTOR_FELIX, MOVEMENT_TYPE_STAND);
-  Actor_SetPosition(ACTOR_JENNA, PIXELS(475), PIXELS(332));
-  Actor_SetPosition(ACTOR_KRADEN, PIXELS(491), PIXELS(332));
-  Actor_SetPosition(ACTOR_MENARDI, PIXELS(459), PIXELS(348));
-  Actor_SetPosition(ACTOR_SATUROS, PIXELS(507), PIXELS(348));
-  Actor_SetPosition(ACTOR_ALEX, PIXELS(460), PIXELS(360));
-  Actor_SetPosition(ACTOR_FELIX, PIXELS(471), PIXELS(306));
+  Actor_SetPosition(ACTOR_JENNA, 475, 332);
+  Actor_SetPosition(ACTOR_KRADEN, 491, 332);
+  Actor_SetPosition(ACTOR_MENARDI, 459, 348);
+  Actor_SetPosition(ACTOR_SATUROS, 507, 348);
+  Actor_SetPosition(ACTOR_ALEX, 460, 360);
+  Actor_SetPosition(ACTOR_FELIX, 471, 306);
   actor = Actor_Get(ACTOR_JENNA);
   actor->watchedActor = leader;
   actor->steeringFlags |= 1;
@@ -1314,17 +1314,17 @@ static void SolSanctumElementalStarRoom_TakeMarsStar(void) {
   Event_Wait(40);
   MessageArgument_Push(member, MESSAGE_ARGUMENT_ACTOR);
   FieldMessage_Show(MsgSolSanctumMarsStarBagged, 1);
-  Actor_SetPosition(ACTOR_JENNA, PIXELS(307), PIXELS(277));
-  Actor_SetPosition(ACTOR_KRADEN, PIXELS(307), PIXELS(277));
-  Actor_SetPosition(ACTOR_MENARDI, PIXELS(307), PIXELS(277));
-  Actor_SetPosition(ACTOR_SATUROS, PIXELS(307), PIXELS(277));
-  Actor_SetPosition(ACTOR_ALEX, PIXELS(307), PIXELS(277));
+  Actor_SetPosition(ACTOR_JENNA, 307, 277);
+  Actor_SetPosition(ACTOR_KRADEN, 307, 277);
+  Actor_SetPosition(ACTOR_MENARDI, 307, 277);
+  Actor_SetPosition(ACTOR_SATUROS, 307, 277);
+  Actor_SetPosition(ACTOR_ALEX, 307, 277);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(6) / 5, PIXELS(3) / 5);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 232, 156);
   Event_Wait(10);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
-    Actor_SetPosition(ACTOR_GARET, leader->x.fixed, leader->z.fixed);
+    Actor_SetPositionFixed(ACTOR_GARET, leader->x.fixed, leader->z.fixed);
   }
   Actor_SetSpeed(ACTOR_GARET, PIXELS(6) / 5, PIXELS(3) / 5);
   Actor_WalkToAndWait(ACTOR_GARET, 218, 172);
@@ -1462,10 +1462,10 @@ SolSanctumElementalStarRoom_ShowPedestal(s32 cameraX, s32 cameraZ, s32 actorX,
                                          s32 actorZ, s32 speaker) {
   FieldCamera_MoveTo(cameraX, -1, cameraZ, 1);
   FieldCamera_WaitForMove();
-  Actor_SetPosition(ACTOR_KRADEN, actorX << 16, actorZ << 16);
+  Actor_SetPosition(ACTOR_KRADEN, actorX, actorZ);
   Event_Wait(40);
   Event_ShowMessage(speaker, 0);
-  Actor_SetPosition(ACTOR_KRADEN, PIXELS(471), PIXELS(360));
+  Actor_SetPosition(ACTOR_KRADEN, 471, 360);
   Event_Wait(80);
   FieldCamera_MoveTo(PIXELS(471), -1, PIXELS(370), 1);
   FieldCamera_WaitForMove();
@@ -1510,7 +1510,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   rising->scaleX = Q16_ONE / 10;
   rising->scaleY = Q16_ONE / 10;
   Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_BLINK);
-  Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(471), PIXELS(290));
+  Actor_SetPosition(ACTOR_PARTY_LEADER, 471, 290);
   leaderMotion = &rising->motionFlags;
   *leaderMotion = 0;
   rising->y.fixed = PIXELS(40);
@@ -1520,7 +1520,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(20);
-  Actor_SetPosition(ACTOR_PLATFORM_SHADOW, PIXELS(471), PIXELS(290));
+  Actor_SetPosition(ACTOR_PLATFORM_SHADOW, 471, 290);
   Sound_Play(SE_WARP);
   Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 2);
   for (i = 0; i != 90; i++) {
@@ -1566,11 +1566,11 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   zero = 0;
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
-    Actor_SetPosition(ACTOR_JENNA, leader->x.fixed, leader->z.fixed);
+    Actor_SetPositionFixed(ACTOR_JENNA, leader->x.fixed, leader->z.fixed);
   }
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
-    Actor_SetPosition(ACTOR_GARET, leader->x.fixed, leader->z.fixed);
+    Actor_SetPositionFixed(ACTOR_GARET, leader->x.fixed, leader->z.fixed);
   }
   Actor_SetSpeed(ACTOR_GARET, PIXELS(1) / 2, PIXELS(1) / 4);
   Actor_SetSpeed(ACTOR_JENNA, PIXELS(1) / 2, PIXELS(1) / 4);
@@ -1642,7 +1642,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   shadow->scaleX = Q16_ONE / 10;
   shadow->scaleY = Q16_ONE / 10;
   Actor_SetSpriteColorById(ACTOR_KRADEN, SPRITE_COLOR_BLINK);
-  Actor_SetPosition(ACTOR_KRADEN, PIXELS(471), PIXELS(290));
+  Actor_SetPosition(ACTOR_KRADEN, 471, 290);
   kradenMotion = &rising->motionFlags;
   *kradenMotion = zero;
   rising->y.fixed = PIXELS(40);
@@ -1659,7 +1659,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   FieldCamera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
   FieldCamera_MoveTo(PIXELS(471), -1, PIXELS(309), 1);
   FieldCamera_WaitForMove();
-  Actor_SetPosition(ACTOR_PLATFORM_SHADOW, PIXELS(471), PIXELS(290));
+  Actor_SetPosition(ACTOR_PLATFORM_SHADOW, 471, 290);
   Sound_Play(SE_WARP);
   Actor_SetSpritePriority(ACTOR_KRADEN, 2);
   for (i = 0; i != 90; i++) {
@@ -2175,8 +2175,8 @@ s32 SolSanctumElementalStarRoom_Initialize(void) {
   } while ((u32)ringActorId <= ACTOR_LAST_FLOATING_LIGHT);
   SolSanctum_StartFloatingLights(ACTOR_FIRST_FLOATING_LIGHT, 16);
   if (Event_GetFlag(FLAG_SOL_SANCTUM_STAR_ROOM_EXPLAINED) != 0) {
-    Actor_SetPosition(ACTOR_KRADEN, PIXELS(456), PIXELS(360));
-    Actor_SetPosition(ACTOR_JENNA, PIXELS(440), PIXELS(346));
+    Actor_SetPosition(ACTOR_KRADEN, 456, 360);
+    Actor_SetPosition(ACTOR_JENNA, 440, 346);
   }
   if (GameFlag_Get(FLAG_SOL_SANCTUM_VENUS_STAR_BAGGED) != 0) {
     PUT_OUT_STAR_LIGHT(43, 26);

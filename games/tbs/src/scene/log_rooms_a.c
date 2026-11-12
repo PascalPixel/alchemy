@@ -112,9 +112,9 @@
 #include "sound_driver_symbols.h"
 
 #if TBS_PATCH_3
-#define LOG_ROOMS_A_ENTRY_ACTOR_Z PIXELS(451)
+#define LOG_ROOMS_A_ENTRY_ACTOR_Z 451
 #else
-#define LOG_ROOMS_A_ENTRY_ACTOR_Z PIXELS(464)
+#define LOG_ROOMS_A_ENTRY_ACTOR_Z 464
 #endif
 
 /// A cornering lasts half a second before the chase raises an event.
@@ -1051,7 +1051,7 @@ static void LogRoomsA_MeetIvan(void) {
   Sound_Play(MUS_SILENCE);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 384, 408);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-  Actor_SetPosition(ACTOR_GARET, PIXELS(384), PIXELS(408));
+  Actor_SetPosition(ACTOR_GARET, 384, 408);
   Actor_WalkToAndWait(ACTOR_GARET, 368, 408);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH_NORTHEAST, 20);
   // Introduce Ivan's ability only on the first meeting.
@@ -1358,8 +1358,8 @@ static void LogRoomsA_FreeRooferAndConfrontThieves(void) {
   // Garet and Ivan come out of the leader around the tied-up villager.
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 792, 440);
   LogRoomsA_FaceActorAndWait(ACTOR_PARTY_LEADER, ACTOR_TIED_UP_VILLAGER, 20);
-  Actor_SetPosition(ACTOR_GARET, PIXELS(792), PIXELS(440));
-  Actor_SetPosition(ACTOR_IVAN, PIXELS(792), PIXELS(440));
+  Actor_SetPosition(ACTOR_GARET, 792, 440);
+  Actor_SetPosition(ACTOR_IVAN, 792, 440);
   Actor_WalkTo(ACTOR_GARET, 808, 432);
   Actor_WalkTo(ACTOR_IVAN, 792, 456);
   Actor_WaitForMoveById(ACTOR_GARET);
@@ -1400,7 +1400,7 @@ static void LogRoomsA_FreeRooferAndConfrontThieves(void) {
   LogRoomsA_ShowMessageAndWait(ACTOR_IVAN, 40);
   // The ominous music starts as the thieves' leader appears at the ladder
   // and says "Looks like we've been found out!"; everyone turns to him.
-  Actor_SetPosition(ACTOR_THIEF_LEADER, PIXELS(744), PIXELS(408));
+  Actor_SetPosition(ACTOR_THIEF_LEADER, 744, 408);
   Sound_Play(MUS_OMINOUS);
   LogRoomsA_ShowMessageAndWait(ACTOR_THIEF_LEADER, 20);
   Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
@@ -1416,8 +1416,8 @@ static void LogRoomsA_FreeRooferAndConfrontThieves(void) {
   Actor_SetSpeed(ACTOR_THIEF_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_SetSpeed(ACTOR_FIRST_THIEF, PIXELS(3) / 2, PIXELS(3) / 4);
   Actor_SetSpeed(ACTOR_SECOND_THIEF, PIXELS(3) / 2, PIXELS(3) / 4);
-  Actor_SetPosition(ACTOR_FIRST_THIEF, PIXELS(744), PIXELS(408));
-  Actor_SetPosition(ACTOR_SECOND_THIEF, PIXELS(744), PIXELS(408));
+  Actor_SetPosition(ACTOR_FIRST_THIEF, 744, 408);
+  Actor_SetPosition(ACTOR_SECOND_THIEF, 744, 408);
   Actor_WalkToAndWait(ACTOR_THIEF_LEADER, 792, 416);
   Actor_FaceDirection(ACTOR_THIEF_LEADER, FACING_SOUTH_SOUTHEAST, 0);
   Event_Wait(70);
@@ -1681,8 +1681,8 @@ static void LogRoomsA_DiscussSuspiciousGuests(void) {
   Actor_SetSpeed(ACTOR_IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
   // Outside the room, Garet and Ivan step out of the leader.
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 248, 728);
-  Actor_SetPosition(ACTOR_IVAN, PIXELS(248), PIXELS(728));
-  Actor_SetPosition(ACTOR_GARET, PIXELS(248), PIXELS(728));
+  Actor_SetPosition(ACTOR_IVAN, 248, 728);
+  Actor_SetPosition(ACTOR_GARET, 248, 728);
   Actor_WalkTo(ACTOR_IVAN, 264, 744);
   Actor_WalkToAndWait(ACTOR_GARET, 232, 744);
   Actor_WaitForMoveById(ACTOR_IVAN);
@@ -1737,8 +1737,8 @@ static void LogRoomsA_DiscussSuspiciousGuests(void) {
   Actor_WalkToAndWait(ACTOR_GARET, 248, 728);
   Actor_SetPosition(ACTOR_GARET, 0, 0);
   Actor_SetPosition(ACTOR_IVAN, 0, 0);
-  Actor_SetPosition(ACTOR_SUSPECTED_LEADER, PIXELS(104), PIXELS(696));
-  Actor_SetPosition(ACTOR_SUSPECTED_THIEF, PIXELS(120), PIXELS(696));
+  Actor_SetPosition(ACTOR_SUSPECTED_LEADER, 104, 696);
+  Actor_SetPosition(ACTOR_SUSPECTED_THIEF, 120, 696);
   Actor_FaceDirection(ACTOR_SUSPECTED_LEADER, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_SUSPECTED_THIEF, FACING_WEST, 0);
   MapGrid_CopyCellAttributes(14, 50, 3, 1, 14, 44);
@@ -1950,14 +1950,14 @@ static void LogRoomsA_DiscussMindReading(void) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_SetSpeed(ACTOR_GARET, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_SetSpeed(ACTOR_IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
-  Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(248), PIXELS(728));
-  Actor_SetPosition(ACTOR_IVAN, PIXELS(264), PIXELS(744));
-  Actor_SetPosition(ACTOR_GARET, PIXELS(232), PIXELS(744));
+  Actor_SetPosition(ACTOR_PARTY_LEADER, 248, 728);
+  Actor_SetPosition(ACTOR_IVAN, 264, 744);
+  Actor_SetPosition(ACTOR_GARET, 232, 744);
   LogRoomsA_SetPartyImagePriority();
   Actor_FaceEachOther(ACTOR_PARTY_LEADER, ACTOR_IVAN, 0);
   LogRoomsA_FaceActorAndWait(ACTOR_GARET, ACTOR_IVAN, 30);
-  Actor_SetPosition(ACTOR_SUSPECTED_LEADER, PIXELS(104), PIXELS(696));
-  Actor_SetPosition(ACTOR_SUSPECTED_THIEF, PIXELS(120), PIXELS(696));
+  Actor_SetPosition(ACTOR_SUSPECTED_LEADER, 104, 696);
+  Actor_SetPosition(ACTOR_SUSPECTED_THIEF, 120, 696);
   Actor_FaceEachOther(ACTOR_SUSPECTED_LEADER, ACTOR_SUSPECTED_THIEF, 0);
   FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 0);
   FieldCamera_WaitForMove();
@@ -2168,14 +2168,14 @@ s32 Scene_Initialize(void) {
     // The mayor's house: Ivan waits a step back once met and is gone once he
     // has joined; after the thieves are jailed, the mayor stands by the door.
     if (GameFlag_Get(FLAG_VAULT_MET_IVAN) != 0) {
-      Actor_SetPosition(ACTOR_IVAN, PIXELS(376), PIXELS(376));
+      Actor_SetPosition(ACTOR_IVAN, 376, 376);
       Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTH, 0);
     }
     if (GameFlag_Get(FLAG_VAULT_IVAN_JOINED_ROD_SEARCH) != 0) {
       Actor_SetPosition(ACTOR_IVAN, 0, 0);
     }
     if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) != 0) {
-      Actor_SetPosition(ACTOR_MAYOR, PIXELS(536), LOG_ROOMS_A_ENTRY_ACTOR_Z);
+      Actor_SetPosition(ACTOR_MAYOR, 536, LOG_ROOMS_A_ENTRY_ACTOR_Z);
       Actor_SetMovementTypeById(ACTOR_MAYOR, MOVEMENT_TYPE_STAND);
       Actor_FaceDirection(ACTOR_MAYOR, FACING_SOUTH_SOUTHWEST, 0);
     }
@@ -2186,7 +2186,7 @@ s32 Scene_Initialize(void) {
     // the girl at the inn; after the mind reading and before that, she is
     // out.
     if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) != 0) {
-      Actor_SetPosition(ACTOR_GIRL_AT_THE_INN, PIXELS(568), PIXELS(648));
+      Actor_SetPosition(ACTOR_GIRL_AT_THE_INN, 568, 648);
       Actor_SetMovementTypeById(ACTOR_GIRL_AT_THE_INN, MOVEMENT_TYPE_STAND);
       Actor_FaceDirection(ACTOR_GIRL_AT_THE_INN, FACING_SOUTH, 0);
       Vault_PlaceItemIcon(ITEM_BONE, PIXELS(568), PIXELS(16), PIXELS(672));
@@ -2207,7 +2207,7 @@ s32 Scene_Initialize(void) {
       break;
     }
     if (GameFlag_Get(FLAG_VAULT_IVAN_JOINED_ROD_SEARCH) != 0) {
-      Actor_SetPosition(ACTOR_SUSPECTED_THIEF, PIXELS(120), PIXELS(696));
+      Actor_SetPosition(ACTOR_SUSPECTED_THIEF, 120, 696);
       Actor_FaceDirection(ACTOR_SUSPECTED_THIEF, FACING_WEST, 0);
     }
     // Once approached, the room's doorway cell behavior changes; after the
@@ -2238,7 +2238,7 @@ s32 Scene_Initialize(void) {
     // The cells LogRoomsA_CheckCrateMoved copies as it sets the flag, redrawn
     // on arrival.
     if (GameFlag_Get(FLAG_VAULT_CRATE_MOVED) != 0) {
-      Actor_SetPosition(ACTOR_CRATE, PIXELS(676), PIXELS(411));
+      Actor_SetPosition(ACTOR_CRATE, 676, 411);
       MapGrid_CopyCellAttributes(101, 24, 3, 4, 41, 24);
     }
     break;
@@ -2257,7 +2257,7 @@ s32 Scene_Initialize(void) {
       Actor_SetAnimation(ACTOR_THIRD_CHEST, ANIM_WALK);
       break;
     }
-    Actor_SetPosition(ACTOR_TIED_UP_VILLAGER, PIXELS(824), PIXELS(456));
+    Actor_SetPosition(ACTOR_TIED_UP_VILLAGER, 824, 456);
     if (GameFlag_Get(FLAG_VAULT_THIEVES_ATTACKED) != 0) {
       LogRoomsA_ConfrontThievesAgain();
       Event_End();
@@ -2274,7 +2274,7 @@ s32 Scene_Initialize(void) {
     // Lost to the thieves: they gloat, and the party wakes up elsewhere.
     MapGrid_CopyCells(54, 2, 2, 8, 44, 21);
     MapGrid_CopyCells(54, 2, 2, 8, 44, 81);
-    Actor_SetPosition(ACTOR_TIED_UP_VILLAGER, PIXELS(824), PIXELS(456));
+    Actor_SetPosition(ACTOR_TIED_UP_VILLAGER, 824, 456);
     LogRoomsA_LoseToThieves();
     Import_EventSetExitRequest(LOG_ROOMS_A_TO_SANCTUM);
     break;
@@ -2283,7 +2283,7 @@ s32 Scene_Initialize(void) {
     MapGrid_CopyCells(54, 2, 2, 8, 44, 21);
     MapGrid_CopyCells(54, 2, 2, 8, 44, 81);
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
-      Actor_SetPosition(ACTOR_TIED_UP_VILLAGER, PIXELS(824), PIXELS(456));
+      Actor_SetPosition(ACTOR_TIED_UP_VILLAGER, 824, 456);
       LogRoomsA_DefeatThieves();
       LogRoomsA_ReturnStolenGoods();
       break;
@@ -2327,17 +2327,17 @@ static void LogRoomsA_LoseToThieves(void) {
 
   // The party lies on the floor (animation 19) before the three thieves.
   Event_Start();
-  Actor_SetPosition(ACTOR_THIEF_LEADER, PIXELS(792), PIXELS(416));
-  Actor_SetPosition(ACTOR_FIRST_THIEF, PIXELS(800), PIXELS(400));
-  Actor_SetPosition(ACTOR_SECOND_THIEF, PIXELS(776), PIXELS(416));
+  Actor_SetPosition(ACTOR_THIEF_LEADER, 792, 416);
+  Actor_SetPosition(ACTOR_FIRST_THIEF, 800, 400);
+  Actor_SetPosition(ACTOR_SECOND_THIEF, 776, 416);
   Actor_FaceDirection(ACTOR_THIEF_LEADER, FACING_SOUTH_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_FIRST_THIEF, FACING_SOUTH_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_SECOND_THIEF, FACING_SOUTH_SOUTHEAST, 0);
   Actor_SetSpeed(ACTOR_FIRST_THIEF, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_SetSpeed(ACTOR_SECOND_THIEF, PIXELS(4) / 5, PIXELS(2) / 5);
-  Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(784), PIXELS(448));
-  Actor_SetPosition(ACTOR_GARET, PIXELS(808), PIXELS(432));
-  Actor_SetPosition(ACTOR_IVAN, PIXELS(776), PIXELS(432));
+  Actor_SetPosition(ACTOR_PARTY_LEADER, 784, 448);
+  Actor_SetPosition(ACTOR_GARET, 808, 432);
+  Actor_SetPosition(ACTOR_IVAN, 776, 432);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_COLLAPSE);
   Actor_SetAnimation(ACTOR_GARET, ANIM_COLLAPSE);
   Actor_SetAnimation(ACTOR_IVAN, ANIM_COLLAPSE);
@@ -2388,15 +2388,15 @@ static void LogRoomsA_LoseToThieves(void) {
 static void LogRoomsA_ConfrontThievesAgain(void) {
 
   // The thieves stand over the tied-up villager as the party comes up.
-  Actor_SetPosition(ACTOR_THIEF_LEADER, PIXELS(792), PIXELS(416));
-  Actor_SetPosition(ACTOR_FIRST_THIEF, PIXELS(800), PIXELS(400));
-  Actor_SetPosition(ACTOR_SECOND_THIEF, PIXELS(776), PIXELS(416));
+  Actor_SetPosition(ACTOR_THIEF_LEADER, 792, 416);
+  Actor_SetPosition(ACTOR_FIRST_THIEF, 800, 400);
+  Actor_SetPosition(ACTOR_SECOND_THIEF, 776, 416);
   Actor_FaceDirection(ACTOR_THIEF_LEADER, FACING_SOUTH_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_FIRST_THIEF, FACING_SOUTH_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_SECOND_THIEF, FACING_SOUTH_SOUTHEAST, 0);
-  Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(792), PIXELS(440));
-  Actor_SetPosition(ACTOR_GARET, PIXELS(808), PIXELS(432));
-  Actor_SetPosition(ACTOR_IVAN, PIXELS(792), PIXELS(456));
+  Actor_SetPosition(ACTOR_PARTY_LEADER, 792, 440);
+  Actor_SetPosition(ACTOR_GARET, 808, 432);
+  Actor_SetPosition(ACTOR_IVAN, 792, 456);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH_NORTHWEST, 0);
@@ -2464,9 +2464,9 @@ static void LogRoomsA_DefeatThieves(void) {
   // The beaten thieves lie heaving (animation 9 and the action table's
   // squash) before the party.
   Event_Start();
-  Actor_SetPosition(ACTOR_THIEF_LEADER, PIXELS(792), PIXELS(416));
-  Actor_SetPosition(ACTOR_FIRST_THIEF, PIXELS(800), PIXELS(400));
-  Actor_SetPosition(ACTOR_SECOND_THIEF, PIXELS(776), PIXELS(392));
+  Actor_SetPosition(ACTOR_THIEF_LEADER, 792, 416);
+  Actor_SetPosition(ACTOR_FIRST_THIEF, 800, 400);
+  Actor_SetPosition(ACTOR_SECOND_THIEF, 776, 392);
   actor = Actor_Get(ACTOR_THIEF_LEADER);
   Actor_SetSpriteFlags(actor, 0);
   actor = Actor_Get(ACTOR_FIRST_THIEF);
@@ -2480,9 +2480,9 @@ static void LogRoomsA_DefeatThieves(void) {
   thirdThiefSprite->image.priority = 3;
   actions = gLogRoomsA_ActionTable;
   Actor_SetScript(ACTOR_THIEF_LEADER, actions);
-  Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(792), PIXELS(440));
-  Actor_SetPosition(ACTOR_GARET, PIXELS(808), PIXELS(432));
-  Actor_SetPosition(ACTOR_IVAN, PIXELS(776), PIXELS(440));
+  Actor_SetPosition(ACTOR_PARTY_LEADER, 792, 440);
+  Actor_SetPosition(ACTOR_GARET, 808, 432);
+  Actor_SetPosition(ACTOR_IVAN, 776, 440);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH_NORTHWEST, 0);
@@ -2618,13 +2618,12 @@ static void LogRoomsA_DefeatThieves(void) {
   Actor_SetSpeed(ACTOR_LOFT_ESCORT, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_SetSpeed(ACTOR_STRONGMAN_OPENING_THE_CHESTS, PIXELS(4) / 5,
                  PIXELS(2) / 5);
-  Actor_SetPosition(ACTOR_LOFT_MAYOR, PIXELS(744), PIXELS(408));
+  Actor_SetPosition(ACTOR_LOFT_MAYOR, 744, 408);
   Actor_WalkToAndWait(ACTOR_LOFT_MAYOR, 768, 408);
   LogRoomsA_FaceActorAndWait(ACTOR_LOFT_MAYOR, ACTOR_THIEF_LEADER, 30);
-  Actor_SetPosition(ACTOR_LOFT_ESCORT, PIXELS(744), PIXELS(408));
+  Actor_SetPosition(ACTOR_LOFT_ESCORT, 744, 408);
   Actor_WalkToAndWait(ACTOR_LOFT_ESCORT, 768, 408);
-  Actor_SetPosition(ACTOR_STRONGMAN_OPENING_THE_CHESTS, PIXELS(744),
-                    PIXELS(408));
+  Actor_SetPosition(ACTOR_STRONGMAN_OPENING_THE_CHESTS, 744, 408);
   Actor_WalkTo(ACTOR_STRONGMAN_OPENING_THE_CHESTS, 784, 400);
   Actor_WalkToAndWait(ACTOR_LOFT_ESCORT, 776, 424);
   Actor_WaitForMoveById(ACTOR_STRONGMAN_OPENING_THE_CHESTS);
@@ -2717,9 +2716,9 @@ static void LogRoomsA_ReturnStolenGoods(void) {
   Actor_MoveToAndWait(ACTOR_FIRST_CHEST, 872, 425);
   Actor_MoveToAndWait(ACTOR_SECOND_CHEST, 872, 409);
   Actor_MoveToAndWait(ACTOR_THIRD_CHEST, 872, 377);
-  Actor_SetPosition(ACTOR_FIRST_THIEF, PIXELS(776), PIXELS(392));
-  Actor_SetPosition(ACTOR_THIEF_LEADER, PIXELS(792), PIXELS(392));
-  Actor_SetPosition(ACTOR_SECOND_THIEF, PIXELS(808), PIXELS(392));
+  Actor_SetPosition(ACTOR_FIRST_THIEF, 776, 392);
+  Actor_SetPosition(ACTOR_THIEF_LEADER, 792, 392);
+  Actor_SetPosition(ACTOR_SECOND_THIEF, 808, 392);
   Actor_SetAnimation(ACTOR_THIEF_LEADER, 5);
   Actor_SetAnimation(ACTOR_FIRST_THIEF, 5);
   Actor_SetAnimation(ACTOR_SECOND_THIEF, 5);
@@ -2732,18 +2731,17 @@ static void LogRoomsA_ReturnStolenGoods(void) {
   Actor_SetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
   actor = Actor_Get(ACTOR_SECOND_THIEF);
   Actor_SetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
-  Actor_SetPosition(ACTOR_LOFT_ESCORT, PIXELS(768), PIXELS(408));
-  Actor_SetPosition(ACTOR_STRONGMAN_OPENING_THE_CHESTS, PIXELS(768),
-                    PIXELS(424));
+  Actor_SetPosition(ACTOR_LOFT_ESCORT, 768, 408);
+  Actor_SetPosition(ACTOR_STRONGMAN_OPENING_THE_CHESTS, 768, 424);
   Actor_MoveToAndWait(ACTOR_LOFT_MAYOR, 784, 424);
-  Actor_SetPosition(ACTOR_TIED_UP_VILLAGER, PIXELS(808), PIXELS(408));
+  Actor_SetPosition(ACTOR_TIED_UP_VILLAGER, 808, 408);
   Actor_FaceActor(ACTOR_LOFT_ESCORT, ACTOR_LOFT_MAYOR, 0);
   Actor_FaceActor(ACTOR_TIED_UP_VILLAGER, ACTOR_LOFT_MAYOR, 0);
   Actor_FaceActor(ACTOR_STRONGMAN_OPENING_THE_CHESTS, ACTOR_THIEF_LEADER, 0);
   Actor_FaceActor(ACTOR_LOFT_MAYOR, ACTOR_THIEF_LEADER, 0);
-  Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(792), PIXELS(440));
-  Actor_SetPosition(ACTOR_GARET, PIXELS(808), PIXELS(440));
-  Actor_SetPosition(ACTOR_IVAN, PIXELS(776), PIXELS(440));
+  Actor_SetPosition(ACTOR_PARTY_LEADER, 792, 440);
+  Actor_SetPosition(ACTOR_GARET, 808, 440);
+  Actor_SetPosition(ACTOR_IVAN, 776, 440);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_THIEF_LEADER, 0);
   Actor_FaceActor(ACTOR_GARET, ACTOR_THIEF_LEADER, 0);
   Actor_FaceActor(ACTOR_IVAN, ACTOR_THIEF_LEADER, 0);
@@ -2836,7 +2834,7 @@ static void LogRoomsA_ReturnStolenGoods(void) {
   Actor_RunRepeatedMotion(ACTOR_LOFT_MAYOR, 2);
   Sound_Play(SE_CHEST_OPEN);
   Actor_SetAnimation(ACTOR_FIRST_CHEST, ANIM_SHAKE_HEAD);
-  Actor_SetPosition(ACTOR_FOUND_URN, PIXELS(872), PIXELS(424));
+  Actor_SetPosition(ACTOR_FOUND_URN, 872, 424);
   Actor_SetSpritePriority(ACTOR_FOUND_URN, 1);
   Actor_SetSpeed(ACTOR_FOUND_URN, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_SetDestinationOffset(ACTOR_FOUND_URN, 0, -8);
@@ -2866,7 +2864,7 @@ static void LogRoomsA_ReturnStolenGoods(void) {
   Actor_SetAnimation(ACTOR_SECOND_CHEST, ANIM_SHAKE_HEAD);
   Actor_Get(ACTOR_FOUND_STATUE)->motionFlags = 0;
   Actor_SetSpritePriority(ACTOR_FOUND_STATUE, 1);
-  Actor_SetPosition(ACTOR_FOUND_STATUE, PIXELS(872), PIXELS(408));
+  Actor_SetPosition(ACTOR_FOUND_STATUE, 872, 408);
   Actor_SetSpeed(ACTOR_FOUND_STATUE, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_SetDestinationOffset(ACTOR_FOUND_STATUE, 0, -8);
   Actor_WaitForMoveById(ACTOR_FOUND_STATUE);
@@ -3475,8 +3473,8 @@ static void LogRoomsA_StartActorStops(void) {
   Actor_SetSpeed(ACTOR_GARET, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_SetSpeed(ACTOR_IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 248, 696);
-  Actor_SetPosition(ACTOR_GARET, PIXELS(248), PIXELS(696));
-  Actor_SetPosition(ACTOR_IVAN, PIXELS(248), PIXELS(696));
+  Actor_SetPosition(ACTOR_GARET, 248, 696);
+  Actor_SetPosition(ACTOR_IVAN, 248, 696);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 200, 696);
   Actor_WalkTo(ACTOR_GARET, 248, 712);
   Actor_WalkToAndWait(ACTOR_IVAN, 232, 696);

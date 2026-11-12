@@ -179,10 +179,16 @@ static inline struct Actor *Actor_Get(s32 actorId) {
   return Actor_GetById(actorId);
 }
 
-/// Places an actor at a point at once, without walking it there.
-static inline void Actor_SetPosition(s32 actorId, s32 fixed_x, s32 fixed_z) {
-  Import_ActorSetPosition(actorId, fixed_x, fixed_z);
+/// Places an actor at a point at once, without walking it there; `x` and `z`
+/// are 16.16 fixed-point pixels, as a stored position holds them.
+static inline void Actor_SetPositionFixed(s32 actorId, s32 x, s32 z) {
+  Import_ActorSetPosition(actorId, x, z);
 }
+
+/// Places an actor at a point in whole pixels at once, without walking it
+/// there: `Actor_SetPosition(ACTOR_MIA, 880, 502)`.
+#define Actor_SetPosition(actorId, x, z)                                       \
+  Actor_SetPositionFixed(actorId, px(x), px(z))
 
 /// Sets how fast an actor moves, and how quickly it gets up to speed,
 /// for the event's next moves.

@@ -1624,8 +1624,8 @@ static void MercuryLighthouse_MiaOpensEntranceWithPly(void) {
     SetEffectRecordMode(actor, 1);
     Actor_SetSpeed(ACTOR_GARET, PIXELS(4) / 5, PIXELS(2) / 5);
     Actor_SetSpeed(ACTOR_IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
-    Actor_SetPosition(ACTOR_GARET, PIXELS(872), PIXELS(600));
-    Actor_SetPosition(ACTOR_IVAN, PIXELS(872), PIXELS(600));
+    Actor_SetPosition(ACTOR_GARET, 872, 600);
+    Actor_SetPosition(ACTOR_IVAN, 872, 600);
     Actor_WalkTo(ACTOR_IVAN, 888, 632);
     Actor_WalkToAndWait(ACTOR_GARET, 880, 616);
     Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH_SOUTHWEST, 0);
@@ -1994,7 +1994,7 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
     Actor_SetSpeed(ACTOR_MIA, PIXELS(4) / 5, PIXELS(2) / 5);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 824, 240);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 20);
-    Actor_SetPosition(ACTOR_MIA, PIXELS(824), PIXELS(240));
+    Actor_SetPosition(ACTOR_MIA, 824, 240);
     Actor_WalkToAndWait(ACTOR_MIA, 792, 232);
     Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
     Event_Wait(60);
@@ -2009,8 +2009,8 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
     Event_Wait(30);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 792, 232);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-    Actor_SetPosition(ACTOR_GARET, PIXELS(792), PIXELS(232));
-    Actor_SetPosition(ACTOR_IVAN, PIXELS(792), PIXELS(232));
+    Actor_SetPosition(ACTOR_GARET, 792, 232);
+    Actor_SetPosition(ACTOR_IVAN, 792, 232);
     Actor_WalkTo(ACTOR_GARET, 816, 224);
     Actor_WalkToAndWait(ACTOR_IVAN, 768, 224);
     Actor_WaitForMoveById(ACTOR_GARET);
@@ -2390,9 +2390,9 @@ s32 MercuryLighthouse_Initialize(void) {
     case MERCURY_LIGHTHOUSE_LOWER_FROM_MERCURY_LIGHTHOUSE_ENTRANCE_EAST_NORTHEAST:
       if (GameFlag_Get(FLAG_MERCURY_LIGHTHOUSE_CHANNELS_OPEN)) {
         wait(1);
-        Actor_SetPosition(ACTOR_FIRST_PIPE, PIXELS(672), PIXELS(128));
-        Actor_SetPosition(ACTOR_SECOND_PIPE, PIXELS(704), PIXELS(192));
-        Actor_SetPosition(ACTOR_THIRD_PIPE, PIXELS(648), PIXELS(240));
+        Actor_SetPosition(ACTOR_FIRST_PIPE, 672, 128);
+        Actor_SetPosition(ACTOR_SECOND_PIPE, 704, 192);
+        Actor_SetPosition(ACTOR_THIRD_PIPE, 648, 240);
       } else if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
         GameFlag_Clear(FLAG_PIPE_1_JOINED);
         GameFlag_Clear(FLAG_PIPE_2_JOINED);
@@ -2421,10 +2421,10 @@ s32 MercuryLighthouse_Initialize(void) {
     case MERCURY_LIGHTHOUSE_LOWER_STATUE_FROM_POOL:
     case MERCURY_LIGHTHOUSE_LOWER_STATUE_FROM_WATERFALLS:
       if (!GameFlag_Get(FLAG_MIA_JOINED_PARTY)) {
-        Actor_SetPosition(ACTOR_MIA, PIXELS(696), PIXELS(632));
+        Actor_SetPosition(ACTOR_MIA, 696, 632);
         Actor_FaceDirection(ACTOR_MIA, FACING_EAST, 0);
       } else {
-        Actor_SetPosition(ACTOR_STATUE_BLOCKING_MIA, PIXELS(776), PIXELS(632));
+        Actor_SetPosition(ACTOR_STATUE_BLOCKING_MIA, 776, 632);
         MapGrid_CopyCellAttributes(110, 39, 5, 1, 46, 39);
       }
       break;
@@ -2444,7 +2444,7 @@ s32 MercuryLighthouse_Initialize(void) {
       if (GameFlag_Get(FLAG_STAIRS_RAISED)) {
         wait(1);
         Sound_Play(SE_MERCURY_LIGHTHOUSE_MECHANISM);
-        Actor_SetPosition(ACTOR_STAIR_PIPE, PIXELS(184), PIXELS(528));
+        Actor_SetPosition(ACTOR_STAIR_PIPE, 184, 528);
         MapGrid_CopyCellAttributes(11, 31, 1, 4, 9, 31);
         MapGrid_CopyCellAttributes(7, 30, 1, 4, 11, 31);
         MapGrid_CopyCellsTo(74, 58, 70, 32, 1, 2);
@@ -2470,7 +2470,7 @@ s32 MercuryLighthouse_Initialize(void) {
       // the gate open: the sealed arch north of the dais is drawn as an open
       // doorway.
       if (GameFlag_Get(FLAG_MERCURY_LIGHTHOUSE_GATE_HELD_OPEN)) {
-        Actor_SetPosition(ACTOR_GATE_STATUE, PIXELS(88), PIXELS(216));
+        Actor_SetPosition(ACTOR_GATE_STATUE, 88, 216);
         Actor_Get(ACTOR_GATE_STATUE)->y.fixed += -PIXELS(2);
         Actor_Get(ACTOR_GATE_STATUE)->targetY =
             Actor_Get(ACTOR_GATE_STATUE)->y.fixed;
@@ -2493,7 +2493,7 @@ s32 MercuryLighthouse_Initialize(void) {
         MercuryLighthouse_OpenFountainWithSpray(0);
         MapGrid_CopyCellAttributes(42, 41, 4, 1, 42, 39);
         MapGrid_CopyCellAttributes(42, 40, 4, 1, 42, 41);
-        Actor_SetPosition(ACTOR_FOUNTAIN_PIPE, PIXELS(704), PIXELS(640));
+        Actor_SetPosition(ACTOR_FOUNTAIN_PIPE, 704, 640);
       }
       break;
     }
@@ -2515,21 +2515,21 @@ s32 MercuryLighthouse_Initialize(void) {
       positionFlag = FLAG_FIRST_ROW_STATUE;
       for (; statueIndex <= 3; statueIndex++) {
         if (GameFlag_Get(positionFlag))
-          Actor_SetPosition(statueIndex + ACTOR_FIRST_ROW_STATUE, statueX,
-                            PIXELS(88));
+          Actor_SetPositionFixed(statueIndex + ACTOR_FIRST_ROW_STATUE, statueX,
+                                 px(88));
         else if (GameFlag_Get(positionFlag + 1))
-          Actor_SetPosition(statueIndex + ACTOR_FIRST_ROW_STATUE,
-                            statueX + PIXELS(32), PIXELS(88));
+          Actor_SetPositionFixed(statueIndex + ACTOR_FIRST_ROW_STATUE,
+                                 statueX + px(32), px(88));
         statueX += PIXELS(64);
         positionFlag += 2;
       }
       // The cells MercuryLighthouse_SyncRowStatueFlags copies as it sets the
       // flag, redrawn on arrival.
       if (GameFlag_Get(FLAG_LAST_ROW_STATUE_WEST)) {
-        Actor_SetPosition(ACTOR_LAST_ROW_STATUE, PIXELS(920), PIXELS(88));
+        Actor_SetPosition(ACTOR_LAST_ROW_STATUE, 920, 88);
         MapGrid_CopyCellAttributes(53, 10, 1, 1, 58, 7);
       } else if (GameFlag_Get(FLAG_LAST_ROW_STATUE_EAST)) {
-        Actor_SetPosition(ACTOR_LAST_ROW_STATUE, PIXELS(952), PIXELS(88));
+        Actor_SetPosition(ACTOR_LAST_ROW_STATUE, 952, 88);
         MapGrid_CopyCellAttributes(53, 10, 1, 1, 58, 7);
       }
       break;
@@ -2538,7 +2538,7 @@ s32 MercuryLighthouse_Initialize(void) {
       // The gap statue one column west of the door it hid, and the jump spot
       // that reaches the door (MercuryLighthouse_ChangeCellForGapStatue).
       if (GameFlag_Get(FLAG_PASSAGE_STATUE_MOVED)) {
-        Actor_SetPosition(ACTOR_GAP_STATUE, PIXELS(456), PIXELS(328));
+        Actor_SetPosition(ACTOR_GAP_STATUE, 456, 328);
         MapGrid_CopyCellAttributes(29, 20, 1, 1, 31, 20);
       }
       break;
@@ -2565,7 +2565,7 @@ s32 MercuryLighthouse_Initialize(void) {
       // The upper floors' gate held open the same way: the sealed middle arch
       // is drawn as an open doorway.
       if (GameFlag_Get(FLAG_MERCURY_LIGHTHOUSE_UPPER_GATE_HELD_OPEN)) {
-        Actor_SetPosition(ACTOR_FALLEN_STATUE, PIXELS(168), PIXELS(376));
+        Actor_SetPosition(ACTOR_FALLEN_STATUE, 168, 376);
         Actor_Get(ACTOR_FALLEN_STATUE)->y.fixed += -PIXELS(2);
         Actor_Get(ACTOR_FALLEN_STATUE)->targetY =
             Actor_Get(ACTOR_FALLEN_STATUE)->y.fixed;
@@ -2579,16 +2579,16 @@ s32 MercuryLighthouse_Initialize(void) {
       wait(1);
 #if TBS_PATCH_2
       if (GameFlag_Get(FLAG_DOOR_ROOM_PIPE_PUSHED))
-        Actor_SetPosition(ACTOR_DOOR_ROOM_PIPE, PIXELS(816), PIXELS(608));
+        Actor_SetPosition(ACTOR_DOOR_ROOM_PIPE, 816, 608);
       if (GameFlag_Get(FLAG_DOOR_SWITCH_PIPE_OPENS_SOUTH_DOOR))
-        Actor_SetPosition(ACTOR_DOOR_SWITCH_PIPE, PIXELS(776), PIXELS(576));
+        Actor_SetPosition(ACTOR_DOOR_SWITCH_PIPE, 776, 576);
       else if (GameFlag_Get(FLAG_DOOR_SWITCH_PIPE_OPENS_NORTH_DOOR))
-        Actor_SetPosition(ACTOR_DOOR_SWITCH_PIPE, PIXELS(760), PIXELS(576));
+        Actor_SetPosition(ACTOR_DOOR_SWITCH_PIPE, 760, 576);
       else if (GameFlag_Get(FLAG_DOOR_SWITCH_PIPE_SHUTS_DOORS))
-        Actor_SetPosition(ACTOR_DOOR_SWITCH_PIPE, PIXELS(856), PIXELS(576));
+        Actor_SetPosition(ACTOR_DOOR_SWITCH_PIPE, 856, 576);
 #else
-      Actor_SetPosition(ACTOR_DOOR_ROOM_PIPE, PIXELS(816), PIXELS(608));
-      Actor_SetPosition(ACTOR_DOOR_SWITCH_PIPE, PIXELS(776), PIXELS(576));
+      Actor_SetPosition(ACTOR_DOOR_ROOM_PIPE, 816, 608);
+      Actor_SetPosition(ACTOR_DOOR_SWITCH_PIPE, 776, 576);
 #endif
       SetEffectRecordMode(Actor_Get(ACTOR_PARTY_LEADER), 1);
       MercuryLighthouse_CloseStoneDoor(STONE_DOOR_WEST);
@@ -2703,7 +2703,7 @@ s32 MercuryLighthouse_Initialize(void) {
         MapGrid_CopyCellsTo(45, 91, 40, 91, 5, 4);
         break;
       }
-      Actor_SetPosition(ACTOR_DOOR_STATUE, PIXELS(824), PIXELS(600));
+      Actor_SetPosition(ACTOR_DOOR_STATUE, 824, 600);
       MapGrid_CopyCellAttributes(116, 36, 3, 4, 52, 36);
       Actor_Get(ACTOR_DOOR_STATUE)->motionFlags = keepPartyPosition;
       SetEffectRecordMode(Actor_Get(ACTOR_DOOR_STATUE), 1);
@@ -2738,7 +2738,7 @@ s32 MercuryLighthouse_Initialize(void) {
       // imil.c), she is not here and the door stays shut.
       if (!GameFlag_Get(FLAG_IMIL_MET_MIA)) {
         Actor_SetPosition(ACTOR_MIA, 0, 0);
-        Actor_SetPosition(ACTOR_DOOR_STATUE, PIXELS(824), PIXELS(600));
+        Actor_SetPosition(ACTOR_DOOR_STATUE, 824, 600);
         Actor_SetSpritePriority(ACTOR_DOOR_STATUE, 1);
         MapGrid_CopyCellAttributes(116, 37, 3, 3, 52, 37);
         MapGrid_CopyCellsTo(126, 35, 116, 35, 1, 2);
@@ -2750,7 +2750,7 @@ s32 MercuryLighthouse_Initialize(void) {
           Actor_FaceDirection(ACTOR_MIA, FACING_EAST, 0);
           Actor_SetAnimation(ACTOR_MIA, 16);
         } else {
-          Actor_SetPosition(ACTOR_MIA, PIXELS(840), PIXELS(632));
+          Actor_SetPosition(ACTOR_MIA, 840, 632);
           Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
         }
         SetEffectRecordMode(Actor_Get(ACTOR_MIA), 1);
@@ -2758,7 +2758,7 @@ s32 MercuryLighthouse_Initialize(void) {
         Task_AddFrame(MercuryLighthouse_CycleEntrancePalette, TASK_PASS_FRAME);
       } else {
         Actor_SetPosition(ACTOR_MIA, 0, 0);
-        Actor_SetPosition(ACTOR_DOOR_STATUE, PIXELS(824), PIXELS(600));
+        Actor_SetPosition(ACTOR_DOOR_STATUE, 824, 600);
         MapGrid_CopyCellAttributes(116, 36, 3, 4, 52, 36);
         Actor_Get(ACTOR_DOOR_STATUE)->collisionFlags = 0xff & ~ACTOR_SOLID;
         Event_Wait(1);
@@ -2898,7 +2898,7 @@ static void MercuryLighthouse_RideLift(void) {
   Actor_Get(ACTOR_PARTY_LEADER)->targetZ =
       Actor_Get(ACTOR_PARTY_LEADER)->z.fixed;
   Actor_Get(ACTOR_LIFT_STATUE)->motionFlags = 0;
-  Actor_SetPosition(ACTOR_LIFT_STATUE, PIXELS(680), PIXELS(440));
+  Actor_SetPosition(ACTOR_LIFT_STATUE, 680, 440);
   Actor_Get(ACTOR_LIFT_STATUE)->z.fixed += -PIXELS(137);
   Actor_Get(ACTOR_LIFT_STATUE)->targetZ = Actor_Get(ACTOR_LIFT_STATUE)->z.fixed;
   MapGrid_CenterOnFollowedPoint();
@@ -2979,7 +2979,7 @@ static void MercuryLighthouse_MiaCastsPlyOnEntrance(void) {
   u8 flags;
 
   effectWork = gFieldEffectWork;
-  Actor_SetPosition(ACTOR_PLY_TARGET, PIXELS(840), PIXELS(600));
+  Actor_SetPosition(ACTOR_PLY_TARGET, 840, 600);
   FieldPsynergy_LoadResources(ABILITY_PLY, 1);
   FieldPsynergy_SetupActorPair(ACTOR_MIA, ACTOR_PLY_TARGET);
   flags = (u8)effectWork->messageMode | FIELD_MESSAGE_LOWER;

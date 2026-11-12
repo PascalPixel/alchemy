@@ -726,7 +726,7 @@ static void SolSanctumEntrance_ApplyEntryState(void) {
     MapGrid_CopyCellAttributes(0, 1, 3, 1, 6, 5);
   }
   if (GameFlag_Get(FLAG_VALE_PARTY_LEFT) != 0) {
-    Actor_SetPosition(ACTOR_WARNING_MAN, PIXELS(120), PIXELS(232));
+    Actor_SetPosition(ACTOR_WARNING_MAN, 120, 232);
     MapGrid_CopyCellAttributes(2, 10, 1, 1, 6, 14);
     MapGrid_CopyCellAttributes(2, 10, 1, 1, 7, 14);
     MapGrid_CopyCellAttributes(2, 10, 1, 1, 8, 14);
@@ -805,13 +805,13 @@ static void SolSanctumEntrance_RestoreInteriorState(void) {
     if (GameFlag_Get(FLAG_SEARCHING_FOR_HIDDEN_PASSAGE) == 0)
       SolSanctumEntrance_KradenSuspectsHiddenPassage();
     if (GameFlag_Get(FLAG_SOL_SANCTUM_WEST_STATUE_AT_WEST) != 0)
-      Actor_SetPosition(ACTOR_WEST_STATUE, PIXELS(1496), PIXELS(136));
+      Actor_SetPosition(ACTOR_WEST_STATUE, 1496, 136);
     else if (GameFlag_Get(FLAG_SOL_SANCTUM_WEST_STATUE_AT_EAST) != 0)
-      Actor_SetPosition(ACTOR_WEST_STATUE, PIXELS(1528), PIXELS(136));
+      Actor_SetPosition(ACTOR_WEST_STATUE, 1528, 136);
     if (GameFlag_Get(FLAG_SOL_SANCTUM_EAST_STATUE_AT_WEST) != 0)
-      Actor_SetPosition(ACTOR_EAST_STATUE, PIXELS(1816), PIXELS(136));
+      Actor_SetPosition(ACTOR_EAST_STATUE, 1816, 136);
     else if (GameFlag_Get(FLAG_SOL_SANCTUM_EAST_STATUE_AT_EAST) != 0)
-      Actor_SetPosition(ACTOR_EAST_STATUE, PIXELS(1848), PIXELS(136));
+      Actor_SetPosition(ACTOR_EAST_STATUE, 1848, 136);
     break;
 
   case SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_MAZE_EAST:
@@ -864,15 +864,15 @@ static void SolSanctumEntrance_IntroduceSanctum(void) {
   FieldCamera_MoveTo(PIXELS(1224), -1, PIXELS(136), 1);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
-    Actor_SetPosition(ACTOR_KRADEN, leader->x.fixed, leader->z.fixed);
+    Actor_SetPositionFixed(ACTOR_KRADEN, leader->x.fixed, leader->z.fixed);
   }
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
-    Actor_SetPosition(ACTOR_JENNA, leader->x.fixed, leader->z.fixed);
+    Actor_SetPositionFixed(ACTOR_JENNA, leader->x.fixed, leader->z.fixed);
   }
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
-    Actor_SetPosition(ACTOR_GARET, leader->x.fixed, leader->z.fixed);
+    Actor_SetPositionFixed(ACTOR_GARET, leader->x.fixed, leader->z.fixed);
   }
   Actor_SetSpeed(ACTOR_KRADEN, PIXELS(3) / 5, PIXELS(3) / 10);
   Actor_SetSpeed(ACTOR_JENNA, PIXELS(3) / 5, PIXELS(3) / 10);
@@ -960,13 +960,13 @@ static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void) {
   // Spread the party out while Kraden examines the room.
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL)
-    Actor_SetPosition(ACTOR_KRADEN, leader->x.fixed, leader->z.fixed);
+    Actor_SetPositionFixed(ACTOR_KRADEN, leader->x.fixed, leader->z.fixed);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL)
-    Actor_SetPosition(ACTOR_JENNA, leader->x.fixed, leader->z.fixed);
+    Actor_SetPositionFixed(ACTOR_JENNA, leader->x.fixed, leader->z.fixed);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL)
-    Actor_SetPosition(ACTOR_GARET, leader->x.fixed, leader->z.fixed);
+    Actor_SetPositionFixed(ACTOR_GARET, leader->x.fixed, leader->z.fixed);
 
   Actor_SetSpeed(ACTOR_KRADEN, PIXELS(3) / 5, PIXELS(3) / 10);
   Actor_SetSpeed(ACTOR_JENNA, PIXELS(3) / 5, PIXELS(3) / 10);
@@ -1195,7 +1195,7 @@ static void SolSanctumEntrance_KradenSeesStatuesOutOfReach(void) {
   Event_Wait(20);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
-    Actor_SetPosition(ACTOR_KRADEN, leader->x.fixed, leader->z.fixed);
+    Actor_SetPositionFixed(ACTOR_KRADEN, leader->x.fixed, leader->z.fixed);
   }
   Actor_SetSpeed(ACTOR_KRADEN, PIXELS(1), PIXELS(1) / 2);
   Actor_SetAnimation(ACTOR_KRADEN, ANIM_WALK);
@@ -1258,78 +1258,78 @@ static void SolSanctumEntrance_RestoreRowStatueCells(s32 placeActors) {
   if (GameFlag_Get(FLAG_SOL_SANCTUM_ROW_STATUE_1_AT_WEST) != 0) {
     MapGrid_CopyCellAttributes(121, 20, 1, 1, 100, 32);
     if (placeActors != 0) {
-      Actor_SetPosition(ACTOR_ROW_STATUE_1, PIXELS(1592), PIXELS(520));
+      Actor_SetPosition(ACTOR_ROW_STATUE_1, 1592, 520);
     }
   } else {
     if (GameFlag_Get(FLAG_SOL_SANCTUM_ROW_STATUE_1_AT_EAST) != 0) {
       MapGrid_CopyCellAttributes(121, 20, 1, 1, 100, 32);
       if (placeActors != 0) {
-        Actor_SetPosition(ACTOR_ROW_STATUE_1, PIXELS(1624), PIXELS(520));
+        Actor_SetPosition(ACTOR_ROW_STATUE_1, 1624, 520);
       }
     }
   }
   if (GameFlag_Get(FLAG_SOL_SANCTUM_ROW_STATUE_2_AT_WEST) != 0) {
     MapGrid_CopyCellAttributes(121, 20, 1, 1, 104, 32);
     if (placeActors != 0) {
-      Actor_SetPosition(ACTOR_ROW_STATUE_2, PIXELS(1656), PIXELS(520));
+      Actor_SetPosition(ACTOR_ROW_STATUE_2, 1656, 520);
     }
   } else {
     if (GameFlag_Get(FLAG_SOL_SANCTUM_ROW_STATUE_2_AT_EAST) != 0) {
       MapGrid_CopyCellAttributes(121, 20, 1, 1, 104, 32);
       if (placeActors != 0) {
-        Actor_SetPosition(ACTOR_ROW_STATUE_2, PIXELS(1688), PIXELS(520));
+        Actor_SetPosition(ACTOR_ROW_STATUE_2, 1688, 520);
       }
     }
   }
   if (GameFlag_Get(FLAG_SOL_SANCTUM_ROW_STATUE_3_AT_WEST) != 0) {
     MapGrid_CopyCellAttributes(121, 20, 1, 1, 108, 32);
     if (placeActors != 0) {
-      Actor_SetPosition(ACTOR_ROW_STATUE_3, PIXELS(1720), PIXELS(520));
+      Actor_SetPosition(ACTOR_ROW_STATUE_3, 1720, 520);
     }
   } else {
     if (GameFlag_Get(FLAG_SOL_SANCTUM_ROW_STATUE_3_AT_EAST) != 0) {
       MapGrid_CopyCellAttributes(121, 20, 1, 1, 108, 32);
       if (placeActors != 0) {
-        Actor_SetPosition(ACTOR_ROW_STATUE_3, PIXELS(1752), PIXELS(520));
+        Actor_SetPosition(ACTOR_ROW_STATUE_3, 1752, 520);
       }
     }
   }
   if (GameFlag_Get(FLAG_SOL_SANCTUM_ROW_STATUE_4_AT_WEST) != 0) {
     MapGrid_CopyCellAttributes(121, 20, 1, 1, 112, 32);
     if (placeActors != 0) {
-      Actor_SetPosition(ACTOR_ROW_STATUE_4, PIXELS(1784), PIXELS(520));
+      Actor_SetPosition(ACTOR_ROW_STATUE_4, 1784, 520);
     }
   } else {
     if (GameFlag_Get(FLAG_SOL_SANCTUM_ROW_STATUE_4_AT_EAST) != 0) {
       MapGrid_CopyCellAttributes(121, 20, 1, 1, 112, 32);
       if (placeActors != 0) {
-        Actor_SetPosition(ACTOR_ROW_STATUE_4, PIXELS(1816), PIXELS(520));
+        Actor_SetPosition(ACTOR_ROW_STATUE_4, 1816, 520);
       }
     }
   }
   if (GameFlag_Get(FLAG_SOL_SANCTUM_ROW_STATUE_5_AT_WEST) != 0) {
     MapGrid_CopyCellAttributes(121, 20, 1, 1, 116, 32);
     if (placeActors != 0) {
-      Actor_SetPosition(ACTOR_ROW_STATUE_5, PIXELS(1848), PIXELS(520));
+      Actor_SetPosition(ACTOR_ROW_STATUE_5, 1848, 520);
     }
   } else {
     if (GameFlag_Get(FLAG_SOL_SANCTUM_ROW_STATUE_5_AT_EAST) != 0) {
       MapGrid_CopyCellAttributes(121, 20, 1, 1, 116, 32);
       if (placeActors != 0) {
-        Actor_SetPosition(ACTOR_ROW_STATUE_5, PIXELS(1880), PIXELS(520));
+        Actor_SetPosition(ACTOR_ROW_STATUE_5, 1880, 520);
       }
     }
   }
   if (GameFlag_Get(FLAG_SOL_SANCTUM_ROW_STATUE_6_AT_WEST) != 0) {
     MapGrid_CopyCellAttributes(121, 20, 1, 1, 120, 32);
     if (placeActors != 0) {
-      Actor_SetPosition(ACTOR_ROW_STATUE_6, PIXELS(1912), PIXELS(520));
+      Actor_SetPosition(ACTOR_ROW_STATUE_6, 1912, 520);
     }
   } else {
     if (GameFlag_Get(FLAG_SOL_SANCTUM_ROW_STATUE_6_AT_EAST) != 0) {
       MapGrid_CopyCellAttributes(121, 20, 1, 1, 120, 32);
       if (placeActors != 0) {
-        Actor_SetPosition(ACTOR_ROW_STATUE_6, PIXELS(1944), PIXELS(520));
+        Actor_SetPosition(ACTOR_ROW_STATUE_6, 1944, 520);
       }
     }
   }

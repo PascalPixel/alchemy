@@ -257,7 +257,7 @@ s32 Scene_Initialize(void) {
     MapGrid_CopyCellAttributes(74, 11, 1, 1, 73, 11);
   }
   if (GameFlag_Get(FLAG_GOMA_CAVE_ENTRANCE_STUMP_MOVED) != 0) {
-    Actor_SetPosition(ACTOR_STUMP, PIXELS(136), PIXELS(196));
+    Actor_SetPosition(ACTOR_STUMP, 136, 196);
     Actor_Get(ACTOR_STUMP)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     Actor_SetAnimation(ACTOR_STUMP, STUMP_ANIMATION_SINK);
     MapGrid_CopyCellAttributes(39, 12, 3, 1, 8, 12);
@@ -267,18 +267,18 @@ s32 Scene_Initialize(void) {
   // there are plain ground where they are otherwise a climb; two steps along
   // it has cleared them and the climb is back.
   if (GameFlag_Get(FLAG_GOMA_CAVE_ENTRANCE_WEST_PILLAR_ONE_STEP) != 0) {
-    Actor_SetPosition(ACTOR_WEST_PILLAR, PIXELS(264), PIXELS(312));
+    Actor_SetPosition(ACTOR_WEST_PILLAR, 264, 312);
     MapGrid_CopyCellAttributes(48, 18, 1, 2, 16, 18);
   } else {
     // The cells GomaCaveEntrance_MoveWestPillar copies as it sets the flag,
     // redrawn on arrival.
     if (GameFlag_Get(FLAG_GOMA_CAVE_ENTRANCE_WEST_PILLAR_TWO_STEPS) != 0) {
-      Actor_SetPosition(ACTOR_WEST_PILLAR, PIXELS(280), PIXELS(312));
+      Actor_SetPosition(ACTOR_WEST_PILLAR, 280, 312);
       MapGrid_CopyCellAttributes(47, 18, 1, 2, 16, 18);
     }
   }
   if (GameFlag_Get(FLAG_GOMA_CAVE_ENTRANCE_EAST_PILLAR_IN_PLACE) != 0) {
-    Actor_SetPosition(ACTOR_EAST_PILLAR, PIXELS(376), PIXELS(280));
+    Actor_SetPosition(ACTOR_EAST_PILLAR, 376, 280);
     Actor_Get(ACTOR_EAST_PILLAR)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
     Actor_Get(ACTOR_EAST_PILLAR)->motionFlags = 0;
     movedActor = Actor_Get(ACTOR_EAST_PILLAR);
@@ -310,7 +310,7 @@ static void GomaCaveEntrance_IvanRejoins(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 20);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != 0) {
-    Actor_SetPosition(ACTOR_GARET, leader->x.fixed, leader->z.fixed);
+    Actor_SetPositionFixed(ACTOR_GARET, leader->x.fixed, leader->z.fixed);
   }
   Actor_WalkToAndWait(ACTOR_GARET, 264, 168);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHWEST, 20);
@@ -330,11 +330,11 @@ static void GomaCaveEntrance_IvanRejoins(void) {
                            leader->z.part.pixel);
     }
     Actor_WaitForMoveById(ACTOR_GARET);
-    Actor_SetPosition(ACTOR_GARET, PIXELS(0), PIXELS(0));
+    Actor_SetPosition(ACTOR_GARET, 0, 0);
     Event_End();
   } else {
     // Ivan comes up from the south: "You want to move the stump, right?"
-    Actor_SetPosition(ACTOR_IVAN, PIXELS(360), PIXELS(248));
+    Actor_SetPosition(ACTOR_IVAN, 360, 248);
     Actor_SetSpeed(ACTOR_IVAN, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
     Actor_WalkToAndWait(ACTOR_IVAN, 272, 248);
     Actor_WalkToAndWait(ACTOR_IVAN, 272, 208);
@@ -501,9 +501,9 @@ static void GomaCaveEntrance_IvanRejoins(void) {
     Actor_SetSpeed(ACTOR_IVAN, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
     Actor_WalkTo(ACTOR_GARET, 248, 168);
     Actor_WalkToAndWait(ACTOR_IVAN, 248, 168);
-    Actor_SetPosition(ACTOR_IVAN, PIXELS(0), PIXELS(0));
+    Actor_SetPosition(ACTOR_IVAN, 0, 0);
     Actor_WaitForMoveById(ACTOR_GARET);
-    Actor_SetPosition(ACTOR_GARET, PIXELS(0), PIXELS(0));
+    Actor_SetPosition(ACTOR_GARET, 0, 0);
     MapGrid_CopyCellAttributes(74, 11, 1, 1, 73, 11);
     GameFlag_Set(FLAG_GOMA_CAVE_IVAN_JOINED);
     Event_End();

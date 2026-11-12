@@ -288,7 +288,7 @@ static void Lalivero_WatchWoundedSoldiers(void) {
   Event_Start();
   Event_SetMessageId(MsgLaliveroMoreTolbisSoldiersLayDefeated);
   // The party walks in from the south; the two soldiers lie on the ground.
-  Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(248), PIXELS(424));
+  Actor_SetPosition(ACTOR_PARTY_LEADER, 248, 424);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_SetAnimation(ACTOR_WEST_SOLDIER, ANIM_STILL);
   Actor_SetAnimation(ACTOR_EAST_SOLDIER, ANIM_STILL);
@@ -574,10 +574,10 @@ static void Lalivero_IodemGivesBlackOrb(void) {
   MapGrid_CopyCellsLayered(34, 0, 1, 2, 4, 18);
   Sound_Play(SE_DOOR_OPEN);
   Event_Wait(20);
-  Actor_SetPosition(ACTOR_IODEM, PIXELS(72), PIXELS(312));
+  Actor_SetPosition(ACTOR_IODEM, 72, 312);
 #if TBS_PATCH_2
   Actor_Get(ACTOR_IODEM)->targetZ = ACTOR_NO_TARGET;
-  Actor_SetPosition(ACTOR_IODEM, PIXELS(72), PIXELS(312));
+  Actor_SetPosition(ACTOR_IODEM, 72, 312);
 #endif
   Event_Wait(20);
 #if TBS_PATCH_2
@@ -687,7 +687,7 @@ static void Lalivero_IodemGivesBlackOrb(void) {
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(20);
   // Iodem takes out the Black Orb.
-  Actor_SetPosition(ACTOR_BLACK_ORB, PIXELS(88), PIXELS(332));
+  Actor_SetPosition(ACTOR_BLACK_ORB, 88, 332);
   // "Iodem takes out the Black Orb."
   Event_ShowMessage(-1, 0);
   Event_Wait(10);
@@ -958,7 +958,7 @@ s32 Lalivero_Initialize(void) {
     MapGrid_CopyCellAttributes(WALL_CELL_X, WALL_CELL_Y, 1, 1, 15, 4);
     MapGrid_CopyCellAttributes(WALL_CELL_X, WALL_CELL_Y, 1, 1, 16, 4);
     if (GameFlag_Get(FLAG_LALIVERO_WHARF_OPEN)) {
-      Actor_SetPosition(ACTOR_WHARF_GUARD, PIXELS(56), PIXELS(184));
+      Actor_SetPosition(ACTOR_WHARF_GUARD, 56, 184);
     }
   } else {
     // The first visit: the two soldiers lie on the ground, drawn under the

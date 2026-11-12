@@ -49,6 +49,6 @@ static void UNUSED MercuryLighthouse_DropLeaderToColumn(s32 column) {
   record = Actor_Get(ACTOR_PARTY_LEADER);
   Actor_SetSpriteFlags(record, 0);
   Event_Wait(8);
-  Actor_SetPosition(ACTOR_PARTY_LEADER, ((column << 19) + PIXELS(8)), 0);
+  Actor_SetPositionFixed(ACTOR_PARTY_LEADER, ((column << 19) + px(8)), 0);
   Event_Wait(30);
 }

@@ -719,16 +719,16 @@ static void Kalay_WatchTourGroupDeparture(void) {
   if (GameFlag_Get(FLAG_KALAY_HEARD_OF_COLOSSO_TOUR) != 0 &&
       GameFlag_Get(FLAG_KALAY_COLOSSO_TOUR_LEFT) == 0) {
     Event_AppendActorPlacements(gKalay_TourGroupActorPlacements);
-    Actor_SetPosition(ACTOR_HEAD_GUIDE, PIXELS(252), PIXELS(272));
-    Actor_SetPosition(ACTOR_FIRST_TOURIST, PIXELS(284), PIXELS(264));
-    Actor_SetPosition(ACTOR_FIRST_TOURIST + 1, PIXELS(284), PIXELS(280));
-    Actor_SetPosition(ACTOR_FIRST_TOURIST + 2, PIXELS(300), PIXELS(264));
-    Actor_SetPosition(ACTOR_FIRST_TOURIST + 3, PIXELS(300), PIXELS(280));
-    Actor_SetPosition(ACTOR_FIRST_TOURIST + 5, PIXELS(316), PIXELS(264));
-    Actor_SetPosition(ACTOR_FIRST_TOURIST + 4, PIXELS(316), PIXELS(280));
-    Actor_SetPosition(ACTOR_FIRST_TOURIST + 6, PIXELS(332), PIXELS(264));
-    Actor_SetPosition(ACTOR_OURANOS, PIXELS(332), PIXELS(280));
-    Actor_SetPosition(ACTOR_SECOND_GUIDE, PIXELS(364), PIXELS(272));
+    Actor_SetPosition(ACTOR_HEAD_GUIDE, 252, 272);
+    Actor_SetPosition(ACTOR_FIRST_TOURIST, 284, 264);
+    Actor_SetPosition(ACTOR_FIRST_TOURIST + 1, 284, 280);
+    Actor_SetPosition(ACTOR_FIRST_TOURIST + 2, 300, 264);
+    Actor_SetPosition(ACTOR_FIRST_TOURIST + 3, 300, 280);
+    Actor_SetPosition(ACTOR_FIRST_TOURIST + 5, 316, 264);
+    Actor_SetPosition(ACTOR_FIRST_TOURIST + 4, 316, 280);
+    Actor_SetPosition(ACTOR_FIRST_TOURIST + 6, 332, 264);
+    Actor_SetPosition(ACTOR_OURANOS, 332, 280);
+    Actor_SetPosition(ACTOR_SECOND_GUIDE, 364, 272);
     Sound_Play(SOUND_FADE_OUT_BGM);
     Message_SetVoiceFromActor(ACTOR_HEAD_GUIDE);
     FieldMessage_ShowCentered(MsgKalayOkListeningLets, 1, 0);
@@ -1128,7 +1128,7 @@ static void Kalay_WatchTourGroupDeparture(void) {
     } while (Actor_Get(ACTOR_SECOND_GUIDE)->timer != 1);
     Event_Wait(80);
     // The late tourist finds that the rest of the group has already left.
-    Actor_SetPosition(ACTOR_LATE_TOURIST, PIXELS(340), PIXELS(274));
+    Actor_SetPosition(ACTOR_LATE_TOURIST, 340, 274);
     wait(1);
     Actor_SetSpeed(ACTOR_LATE_TOURIST, PIXELS(1), PIXELS(1) / 2);
     Actor_WalkToAndWait(ACTOR_LATE_TOURIST, 224, 274);
@@ -1155,13 +1155,13 @@ static void Kalay_WatchTourGroupDeparture(void) {
     do {
       wait(1);
     } while (Actor_Get(ACTOR_LATE_TOURIST)->timer != 1);
-    Actor_SetPosition(ACTOR_LATE_TOURIST, PIXELS(359), PIXELS(314));
+    Actor_SetPosition(ACTOR_LATE_TOURIST, 359, 314);
     late = Actor_Get(ACTOR_LATE_TOURIST);
     late->facing = FACING_NORTH_NORTHEAST;
-    Actor_SetPosition(ACTOR_HEAD_GUIDE, PIXELS(455), PIXELS(434));
+    Actor_SetPosition(ACTOR_HEAD_GUIDE, 455, 434);
     headEnd = Actor_Get(ACTOR_HEAD_GUIDE);
     headEnd->facing = FACING_NORTH_NORTHEAST;
-    Actor_SetPosition(ACTOR_SECOND_GUIDE, PIXELS(464), PIXELS(416));
+    Actor_SetPosition(ACTOR_SECOND_GUIDE, 464, 416);
     lastEnd = Actor_Get(ACTOR_SECOND_GUIDE);
     lastEnd->facing = FACING_SOUTH_SOUTHWEST;
     Actor_ReleaseById(ACTOR_FIRST_TOURIST);
@@ -1296,7 +1296,7 @@ static void Kalay_PrepareTown(void) {
     GameFlag_Set(FLAG_KALAY_HEARD_HAMMET_HELD_IN_LUNPA);
   }
   if (gMainRoutineWork.entrance == KALAY_FROM_KALAY_TUNNEL_TREASURE_ROOM) {
-    Actor_SetPosition(ACTOR_TOWN_STATUE, PIXELS(424), PIXELS(88));
+    Actor_SetPosition(ACTOR_TOWN_STATUE, 424, 88);
   }
   // The second guide shares the first's sprite, drawn with its green and blue
   // swapped to tell them apart.
@@ -1472,7 +1472,7 @@ static void Kalay_PrepareTunnel(void) {
   }
 #endif
   if (GameFlag_Get(FLAG_TUNNEL_FIRST_PASSAGE_OPEN) != 0) {
-    Actor_SetPosition(ACTOR_PUDDLE, PIXELS(150), PIXELS(728));
+    Actor_SetPosition(ACTOR_PUDDLE, 150, 728);
     if (GameFlag_Get(FLAG_TUNNEL_PUDDLE_FROZEN) != 0) {
       Actor_Get(ACTOR_PUDDLE);
       column = 9;
@@ -1494,7 +1494,7 @@ static void Kalay_PrepareTunnel(void) {
   Actor_SetSpriteFlags(actor, 0);
   Task_AddFrame(Kalay_UpdateTunnelEmitters, TASK_PASS_FRAME);
   if (GameFlag_Get(FLAG_KALAY_TUNNEL_OPEN) != 0) {
-    Actor_SetPosition(ACTOR_WAITING_MAN, PIXELS(426), PIXELS(730));
+    Actor_SetPosition(ACTOR_WAITING_MAN, 426, 730);
     actor = Actor_Get(ACTOR_WAITING_MAN);
     {
       u16 shown = FACING_SOUTH_SOUTHWEST;
@@ -1511,7 +1511,7 @@ static void Kalay_PrepareTunnel(void) {
     // stands in the arch, the waterfall under it has run dry (the last of its
     // eight pictures, a column of the overhead layer) and the pool has drained
     // to bare floor.
-    Actor_SetPosition(ACTOR_FIRST_STATUE, PIXELS(232), PIXELS(732));
+    Actor_SetPosition(ACTOR_FIRST_STATUE, 232, 732);
     MapGrid_CopyCellAttributes(7, 44, 1, 1, 0, 1);
     MapGrid_CopyCellsTo(74, 58, 78, 41, 1, 5);
     MapGrid_CopyCellsTo(16, 109, 13, 109, 3, 2);
@@ -1556,7 +1556,7 @@ static void Kalay_PrepareTunnel(void) {
   }
   if (GameFlag_Get(FLAG_TUNNEL_SECOND_PASSAGE_OPEN) != 0) {
     // The east pool the same way, the second statue in its arch.
-    Actor_SetPosition(ACTOR_SECOND_STATUE, PIXELS(696), PIXELS(732));
+    Actor_SetPosition(ACTOR_SECOND_STATUE, 696, 732);
     MapGrid_CopyCellsTo(74, 58, 107, 41, 1, 5);
     MapGrid_CopyCellsTo(45, 109, 42, 109, 3, 2);
     // DEAD: the draining's stages again, covered by the drained floor below.
@@ -1671,7 +1671,7 @@ static void Kalay_IvanMeetsPalaceGuards(void) {
   Event_Start();
   FieldCamera_MoveTo(-1, -1, -1, 0);
   wait(1);
-  Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(192), PIXELS(342));
+  Actor_SetPosition(ACTOR_PARTY_LEADER, 192, 342);
   wait(1);
   FieldCamera_SetSpeed(PIXELS(1) / 5, PIXELS(1) / 40);
   FieldCamera_MoveTo(PIXELS(192), -1, PIXELS(252), 1);
@@ -1708,7 +1708,7 @@ static void Kalay_IvanMeetsPalaceGuards(void) {
   Event_Wait(60);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   if (actor != NULL) {
-    Actor_SetPosition(ACTOR_IVAN, actor->x.fixed, actor->z.fixed);
+    Actor_SetPositionFixed(ACTOR_IVAN, actor->x.fixed, actor->z.fixed);
   }
   Actor_SetSpeed(ACTOR_IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_WalkToAndWait(ACTOR_IVAN, 212, 268);
@@ -1897,7 +1897,7 @@ static void Kalay_HammetReturnsToPalace(void) {
   FieldCamera_MoveTo(-1, -1, -1, 0);
   wait(1);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
-  Actor_SetPosition(ACTOR_WAGON, PIXELS(440), PIXELS(522));
+  Actor_SetPosition(ACTOR_WAGON, 440, 522);
   actor = Actor_Get(ACTOR_WAGON);
   Actor_SetSpriteFlags(actor, 0);
   FieldCamera_MoveTo(PIXELS(440), -1, PIXELS(522), 0);
@@ -1917,7 +1917,7 @@ static void Kalay_HammetReturnsToPalace(void) {
   Sound_Play(SOUND_FADE_OUT_ACTION_SE);
   Event_Wait(40);
   Actor_SetSpeed(ACTOR_BUNZA, PIXELS(4) / 5, PIXELS(2) / 5);
-  Actor_SetPosition(ACTOR_BUNZA, PIXELS(439), PIXELS(306));
+  Actor_SetPosition(ACTOR_BUNZA, 439, 306);
   Actor_Jump(ACTOR_BUNZA, 4, 0);
   Actor_WalkToAndWait(ACTOR_BUNZA, 439, 312);
   Actor_WalkToAndWait(ACTOR_BUNZA, 416, 312);
@@ -1925,7 +1925,7 @@ static void Kalay_HammetReturnsToPalace(void) {
   Actor_FaceDirection(ACTOR_BUNZA, FACING_SOUTH_SOUTHEAST, 40);
   FieldCamera_MoveTo(PIXELS(410), -1, PIXELS(280), 1);
   Actor_SetSpeed(ACTOR_HAMMET, PIXELS(3) / 5, PIXELS(3) / 10);
-  Actor_SetPosition(ACTOR_HAMMET, PIXELS(439), PIXELS(306));
+  Actor_SetPosition(ACTOR_HAMMET, 439, 306);
   Actor_Jump(ACTOR_HAMMET, 4, 0);
   Actor_WalkToAndWait(ACTOR_HAMMET, 439, 312);
   Actor_WalkToAndWait(ACTOR_HAMMET, 416, 312);
@@ -1933,7 +1933,7 @@ static void Kalay_HammetReturnsToPalace(void) {
   Actor_FaceDirection(ACTOR_HAMMET, FACING_NORTH_NORTHEAST, 10);
   Actor_FaceDirection(ACTOR_BUNZA, FACING_SOUTH_SOUTHWEST, 10);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
-  Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(439), PIXELS(306));
+  Actor_SetPosition(ACTOR_PARTY_LEADER, 439, 306);
   Actor_Jump(ACTOR_PARTY_LEADER, 4, 0);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 439, 312);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 416, 312);
@@ -1955,15 +1955,15 @@ static void Kalay_HammetReturnsToPalace(void) {
   Actor_SetAnimationAndWait(ACTOR_HAMMET, ANIM_NOD);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   if (actor != 0) {
-    Actor_SetPosition(ACTOR_GARET, actor->x.fixed, actor->z.fixed);
+    Actor_SetPositionFixed(ACTOR_GARET, actor->x.fixed, actor->z.fixed);
   }
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   if (actor != 0) {
-    Actor_SetPosition(ACTOR_IVAN, actor->x.fixed, actor->z.fixed);
+    Actor_SetPositionFixed(ACTOR_IVAN, actor->x.fixed, actor->z.fixed);
   }
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   if (actor != 0) {
-    Actor_SetPosition(ACTOR_MIA, actor->x.fixed, actor->z.fixed);
+    Actor_SetPositionFixed(ACTOR_MIA, actor->x.fixed, actor->z.fixed);
   }
   Actor_SetSpeed(ACTOR_GARET, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_SetSpeed(ACTOR_IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
@@ -2145,7 +2145,7 @@ static void Kalay_HammetReturnsToPalace(void) {
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Actor_SetPosition(ACTOR_WAGON, PIXELS(440), PIXELS(340));
+  Actor_SetPosition(ACTOR_WAGON, 440, 340);
   actor = Actor_Get(ACTOR_WAGON);
   southFacing = FACING_SOUTH;
   actor->facing = southFacing;
@@ -2290,7 +2290,7 @@ static void Kalay_UpdateTunnelPassages(void) {
     Event_Wait(40);
     frostEffect->scaleX = Q16_ONE / 10;
     frostEffect->scaleY = Q16_ONE / 10;
-    Actor_SetPosition(ACTOR_PUDDLE, PIXELS(150), PIXELS(728));
+    Actor_SetPosition(ACTOR_PUDDLE, 150, 728);
     Actor_SetScript(ACTOR_PUDDLE, gKalay_FrostGrowScript);
     height = 1;
     MapGrid_CopyCellsTo(67, 64, 71, 44, height, span);

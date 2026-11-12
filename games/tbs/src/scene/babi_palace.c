@@ -442,7 +442,7 @@ static void BabiPalace_ShowBeds(s32 actorId) {
     Actor_WalkByAndWait(actorId, -64, 0);
     Actor_WalkByAndWait(actorId, 0, 48);
 #if TBS_PATCH_3
-    Actor_SetPosition(actorId, 56 << 16, 120 << 16);
+    Actor_SetPosition(actorId, 56, 120);
 #endif
   }
   Event_End();
@@ -656,9 +656,9 @@ static void BabiPalace_WakeFromFinalsDream(void) {
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_IN_BED_LYING);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   Actor_SetSpriteFlags(leader, 0);
-  Actor_SetPosition(ACTOR_GARET, PIXELS(120), PIXELS(104));
-  Actor_SetPosition(ACTOR_MIA, PIXELS(104), PIXELS(80));
-  Actor_SetPosition(ACTOR_IVAN, PIXELS(120), PIXELS(120));
+  Actor_SetPosition(ACTOR_GARET, 120, 104);
+  Actor_SetPosition(ACTOR_MIA, 104, 80);
+  Actor_SetPosition(ACTOR_IVAN, 120, 120);
   Actor_FaceDirection(ACTOR_GARET, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHEAST, 0);
@@ -1251,9 +1251,9 @@ static void BabiPalace_WakeAfterFinals(void) {
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_IN_BED_LYING);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   Actor_SetSpriteFlags(actor, 0);
-  Actor_SetPosition(ACTOR_GARET, PIXELS(104), PIXELS(104));
-  Actor_SetPosition(ACTOR_MIA, PIXELS(88), PIXELS(120));
-  Actor_SetPosition(ACTOR_IVAN, PIXELS(120), PIXELS(120));
+  Actor_SetPosition(ACTOR_GARET, 104, 104);
+  Actor_SetPosition(ACTOR_MIA, 88, 120);
+  Actor_SetPosition(ACTOR_IVAN, 120, 120);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_WEST, 0);
@@ -2765,7 +2765,7 @@ s32 BabiPalace_ApplyEntryState(void) {
               BABI_PALACE_MEETING_ROOM_FROM_CARPET_ROOM &&
           !Event_GetFlag(FLAG_BABI_SPOKE_AFTER_COLOSSO)) {
         GameFlag_Set(FLAG_BABI_SPOKE_AFTER_COLOSSO);
-        Actor_SetPosition(ACTOR_BABI, PIXELS(208), PIXELS(704));
+        Actor_SetPosition(ACTOR_BABI, 208, 704);
         BabiPalace_MeetBabiAfterColosso();
       }
       // After Colosso Babi lies in his bed, with no shadow
@@ -2774,7 +2774,7 @@ s32 BabiPalace_ApplyEntryState(void) {
       Actor_SetSpriteFlags(Actor_Get(ACTOR_BABI), 0);
     } else if (GameFlag_Get(FLAG_BABI_SAVED) &&
                !GameFlag_Get(FLAG_BABI_PALACE_FINALS_REST_OFFERED)) {
-      Actor_SetPosition(ACTOR_FINALS_ATTENDANT, PIXELS(120), PIXELS(72));
+      Actor_SetPosition(ACTOR_FINALS_ATTENDANT, 120, 72);
     }
     gFieldWork->transition =
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
@@ -2794,7 +2794,7 @@ s32 BabiPalace_ApplyEntryState(void) {
       BabiPalace_RestorePartyAndInventory();
       GameFlag_Set(FLAG_BABI_PALACE_FINALS_REST_OFFERED);
       GameFlag_Set(FLAG_BABI_PALACE_FINALS_BEDS_OPEN);
-      Actor_SetPosition(ACTOR_FINALS_ATTENDANT, PIXELS(56), PIXELS(120));
+      Actor_SetPosition(ACTOR_FINALS_ATTENDANT, 56, 120);
       Actor_FaceDirection(ACTOR_FINALS_ATTENDANT, FACING_EAST_NORTHEAST, 0);
       BabiPalace_WakeFromFinalsDream();
       gMainRoutineWork.entrance = BABI_PALACE_BIG_BEDROOM_FROM_STATUE_ROOM_WEST;

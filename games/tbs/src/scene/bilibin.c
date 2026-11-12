@@ -768,7 +768,7 @@ static void Bilibin_RestoreVillageActors(void) {
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
     entrance = gMainRoutineWork.entrance;
     if (entrance == BILIBIN_FROM_BILIBIN_TREASURY_EAST) {
-      Actor_SetPosition(ACTOR_VILLAGE_STATUE, PIXELS(248), PIXELS(216));
+      Actor_SetPosition(ACTOR_VILLAGE_STATUE, 248, 216);
     }
   }
   Bilibin_UpdateVillageStatueCells();
@@ -879,16 +879,16 @@ static void Bilibin_RestoreRiverActors(void) {
       Actor_Get(ACTOR_FALLEN_TREE_STAND_IN)->collisionFlags |=
           ACTOR_NEAR_PSYNERGY;
       Actor_Get(ACTOR_JILL_TREE)->collisionFlags |= ACTOR_NEAR_PSYNERGY;
-      Actor_SetPosition(ACTOR_FALLEN_TREE_STAND_IN, PIXELS(142), PIXELS(156));
+      Actor_SetPosition(ACTOR_FALLEN_TREE_STAND_IN, 142, 156);
       actor = Actor_Get(ACTOR_FALLEN_TREE_STAND_IN);
       Actor_SetSpriteFlags(actor, 0);
-      Actor_SetPosition(ACTOR_MIDDLE_TREE, PIXELS(142), PIXELS(156));
+      Actor_SetPosition(ACTOR_MIDDLE_TREE, 142, 156);
       fallenTree->sprite->rotation = TRIG_TURN / 4;
       fallenTree->y.fixed += -PIXELS(8);
       if (GameFlag_Get(FLAG_BILIBIN_JILL_RESCUED) != 0) {
-        Actor_SetPosition(ACTOR_JILL_TREE, PIXELS(132), PIXELS(186));
+        Actor_SetPosition(ACTOR_JILL_TREE, 132, 186);
       } else {
-        Actor_SetPosition(ACTOR_JILL_TREE, PIXELS(88), PIXELS(196));
+        Actor_SetPosition(ACTOR_JILL_TREE, 88, 196);
         Actor_SetSpritePriority(ACTOR_JILL_TREE, 3);
         jillTree->collisionFlags |= ACTOR_NEAR_TALK;
       }

@@ -368,8 +368,8 @@ static void McCoyPalaceGrounds_RestoreStory(void) {
     Scene_FloatNut(ACTOR_FLOATING_NUT);
   }
   if (GameFlag_Get(FLAG_MCCOY_PALACE_ADMITTED) != 0) {
-    Actor_SetPosition(ACTOR_WEST_GUARD, PIXELS(308), PIXELS(263));
-    Actor_SetPosition(ACTOR_EAST_GUARD, PIXELS(346), PIXELS(263));
+    Actor_SetPosition(ACTOR_WEST_GUARD, 308, 263);
+    Actor_SetPosition(ACTOR_EAST_GUARD, 346, 263);
     if (GameFlag_Get(FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY) == 0) {
       if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
         Actor_SetPosition(ACTOR_WEST_GUARD, 0, 0);
@@ -381,7 +381,7 @@ static void McCoyPalaceGrounds_RestoreStory(void) {
   }
   // Lady McCoy's new place and the arrest come only after the curse lifts.
   if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) != 0) {
-    Actor_SetPosition(ACTOR_LADY_MCCOY, PIXELS(224), PIXELS(292));
+    Actor_SetPosition(ACTOR_LADY_MCCOY, 224, 292);
     Actor_FaceDirection(ACTOR_LADY_MCCOY, FACING_SOUTH, 0);
     Actor_FaceDirection(ACTOR_WEST_WORKER, FACING_EAST, 0);
     if (GameFlag_Get(FLAG_MCCOY_PALACE_PARTY_REWARDED) == 0) {
@@ -401,7 +401,7 @@ static void McCoyPalaceGrounds_GuardsArrestParty(void) {
   FieldCamera_MoveTo(PIXELS(320), -1, PIXELS(320), 0);
   MapGrid_CenterOnFollowedPoint();
   wait(1);
-  Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(320), PIXELS(372));
+  Actor_SetPosition(ACTOR_PARTY_LEADER, 320, 372);
   Event_StartScreenTransition();
   FieldCamera_SetSpeedParameters(PIXELS(1) / 5, PIXELS(1) / 40);
   FieldCamera_MoveWithinMapBounds(PIXELS(320), -1, PIXELS(290), 1);

@@ -928,7 +928,7 @@ static void Vale_WarnAgainstSneakingUpMtAleph(void) {
   Actor_Jump(ACTOR_PARTY_LEADER, 5, 0);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 215, 403);
   guard->steeringFlags |= ACTOR_FACES_MOTION;
-  Actor_SetPosition(ACTOR_MAN_GUARDING_MT_ALEPH, PIXELS(166), PIXELS(375));
+  Actor_SetPosition(ACTOR_MAN_GUARDING_MT_ALEPH, 166, 375);
   Actor_FaceDirection(ACTOR_MAN_GUARDING_MT_ALEPH, FACING_SOUTHEAST, 20);
   guard->steeringFlags = (guard->steeringFlags ^ 1);
   Actor_SetSpeed(ACTOR_MAN_GUARDING_MT_ALEPH, PIXELS(5) / 2, PIXELS(5) / 2);
@@ -1082,10 +1082,10 @@ UNUSED static void Vale_UnusedRoofMended(void) {
   leaderMotion = &leader->motionFlags;
   leaderMotionFlags = *leaderMotion;
   *leaderMotion = 0;
-  Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(407), PIXELS(690));
-  Actor_SetPosition(ACTOR_DORA, PIXELS(392), PIXELS(896));
-  Actor_SetPosition(ACTOR_GARET, PIXELS(298), PIXELS(736));
-  Actor_SetPosition(ACTOR_JENNA, PIXELS(298), PIXELS(760));
+  Actor_SetPosition(ACTOR_PARTY_LEADER, 407, 690);
+  Actor_SetPosition(ACTOR_DORA, 392, 896);
+  Actor_SetPosition(ACTOR_GARET, 298, 736);
+  Actor_SetPosition(ACTOR_JENNA, 298, 760);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_DORA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_WEST, 0);
@@ -1126,7 +1126,7 @@ UNUSED static void Vale_UnusedRoofMended(void) {
   Event_Wait(80);
   Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_NORMAL);
   Actor_SetSpriteColorById(ACTOR_FIRST_BOARD, SPRITE_COLOR_NORMAL);
-  Actor_SetPosition(ACTOR_FIRST_BOARD, PIXELS(390), PIXELS(842));
+  Actor_SetPosition(ACTOR_FIRST_BOARD, 390, 842);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_HAMMER);
   Actor_SetScript(ACTOR_PARTY_LEADER, gVale_LeaderHammers);
   Event_Wait(200);
@@ -1445,7 +1445,7 @@ UNUSED static void Vale_UnusedRoofMended(void) {
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
   Actor_SetAnimation(ACTOR_DORA, ANIM_DORA_PEEK);
   actor->scaleY = Q16_ONE / 2;
-  Actor_SetPosition(ACTOR_DORA, PIXELS(364), PIXELS(811));
+  Actor_SetPosition(ACTOR_DORA, 364, 811);
   for (i = 0; i != 5; i++) {
     actor->scaleY += Q16_ONE / 10;
     Event_Wait(1);
@@ -1694,8 +1694,7 @@ s32 Vale_Initialize(void) {
       if (set == 0) {
         if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
           if (GameFlag_Get(FLAG_VALE_WARNED_AGAINST_MT_ALEPH)) {
-            Actor_SetPosition(ACTOR_MAN_GUARDING_MT_ALEPH, PIXELS(256),
-                              PIXELS(456));
+            Actor_SetPosition(ACTOR_MAN_GUARDING_MT_ALEPH, 256, 456);
 #ifdef UBFIX
             Actor_Get(ACTOR_MAN_GUARDING_MT_ALEPH)->update =
                 Vale_HaveGuardWatchTheLeader;
@@ -1786,7 +1785,7 @@ static void Vale_GaretMeetsHisSister(void) {
                       0);
   record = Actor_Get(ACTOR_PARTY_LEADER);
   if (record != 0) {
-    Actor_SetPosition(ACTOR_GARET, record->x.fixed, record->z.fixed);
+    Actor_SetPositionFixed(ACTOR_GARET, record->x.fixed, record->z.fixed);
   }
   Actor_WalkToAndWait(ACTOR_GARET, 402, 608);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH_NORTHEAST, 20);
@@ -1874,7 +1873,7 @@ static void Vale_GaretAsksToProtectFamily(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
   record = Actor_Get(ACTOR_PARTY_LEADER);
   if (record != 0) {
-    Actor_SetPosition(ACTOR_GARET, record->x.fixed, record->z.fixed);
+    Actor_SetPositionFixed(ACTOR_GARET, record->x.fixed, record->z.fixed);
   }
   Actor_WalkToAndWait(ACTOR_GARET, 346, 745);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH_NORTHEAST, 20);
@@ -2158,7 +2157,7 @@ static void Vale_MendingTheRoof(void) {
   wait(1);
   FieldCamera_SetSpeed(PIXELS(33) / 100, PIXELS(33) / 800);
   FieldCamera_MoveTo(PIXELS(296), PIXELS(160), PIXELS(921), 1);
-  Actor_SetPosition(ACTOR_JENNA, PIXELS(409), PIXELS(1134));
+  Actor_SetPosition(ACTOR_JENNA, 409, 1134);
   wait(1);
   Actor_SetSpeed(ACTOR_JENNA, PIXELS(7) / 10, PIXELS(7) / 20);
   Actor_WalkTo(ACTOR_JENNA, 420, 1068);
@@ -2455,17 +2454,17 @@ static void Vale_RoofMended(void) {
   MapGrid_CopyCellsTo(2, 102, 84, 41, 2, 1);
   MapGrid_CopyCellsTo(1, 102, 83, 41, 1, 1);
   MapGrid_CopyCellsTo(0, 103, 82, 42, 1, 1);
-  Actor_SetPosition(ACTOR_DORA, PIXELS(392), PIXELS(896));
+  Actor_SetPosition(ACTOR_DORA, 392, 896);
   turned = Actor_Get(ACTOR_DORA);
 
   turned->facing = FACING_EAST;
   turnBack = FACING_NORTH;
   turned->facing = turnBack;
-  Actor_SetPosition(ACTOR_GARET, PIXELS(298), PIXELS(736));
+  Actor_SetPosition(ACTOR_GARET, 298, 736);
   turned = Actor_Get(ACTOR_GARET);
   turnSide = FACING_SOUTH;
   turned->facing = turnSide;
-  Actor_SetPosition(ACTOR_JENNA, PIXELS(298), PIXELS(760));
+  Actor_SetPosition(ACTOR_JENNA, 298, 760);
   turned = Actor_Get(ACTOR_JENNA);
   turned->facing = turnSide;
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_HAMMER);
@@ -2866,7 +2865,7 @@ static void Vale_RoofMended(void) {
   Actor_Jump(ACTOR_GARET, 6, 0);
   Actor_WalkToAndWait(ACTOR_GARET, 374, VALE_GARET_REUNION_Z);
 #if TBS_PATCH_2
-  Actor_SetPosition(ACTOR_GARET, PIXELS(374), PIXELS(VALE_GARET_REUNION_Z));
+  Actor_SetPosition(ACTOR_GARET, 374, VALE_GARET_REUNION_Z);
 #endif
   Event_ShowMessage(ACTOR_JENNA, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH_NORTHWEST, 0);
@@ -2886,7 +2885,7 @@ static void Vale_RoofMended(void) {
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
   Actor_SetAnimation(ACTOR_DORA, ANIM_DORA_PEEK);
   actor->scaleY = Q16_ONE / 2;
-  Actor_SetPosition(ACTOR_DORA, PIXELS(364), PIXELS(811));
+  Actor_SetPosition(ACTOR_DORA, 364, 811);
   for (i = 0; i != 5; i++) {
     actor->scaleY += Q16_ONE / 10;
     Event_Wait(1);

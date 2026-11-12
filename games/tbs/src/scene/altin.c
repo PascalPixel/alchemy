@@ -910,7 +910,7 @@ static void Altin_ApplyWaterLevel(void) {
   }
   MapGrid_CopyCellAttributes(0, 33, 4, 3, 20, 41);
   if (GameFlag_Get(FLAG_ALTIN_PILLAR_MOVED) != 0) {
-    Actor_SetPosition(ACTOR_STONE_STATUE, PIXELS(360), PIXELS(168));
+    Actor_SetPosition(ACTOR_STONE_STATUE, 360, 168);
   }
   Actor_SetSpriteFlags(Actor_Get(ACTOR_STONE_STATUE), 0);
   // Hide the three crates, which stay solid, and draw them under the
@@ -945,17 +945,17 @@ static void CottageRoomsD_PlaceSheltering(void) {
   struct Actor *actor;
 
   if (GameFlag_Get(FLAG_ALTIN_WATER_DROPPED_ONCE) == 0) {
-    Actor_SetPosition(ACTOR_ROOM_ONE_GUEST, PIXELS(808), PIXELS(727));
+    Actor_SetPosition(ACTOR_ROOM_ONE_GUEST, 808, 727);
     Actor_Get(ACTOR_ROOM_ONE_GUEST)->facing = FACING_SOUTH_SOUTHEAST;
-    Actor_SetPosition(ACTOR_ROOM_ONE_SECOND_GUEST, PIXELS(794), PIXELS(825));
+    Actor_SetPosition(ACTOR_ROOM_ONE_SECOND_GUEST, 794, 825);
   }
   if (GameFlag_Get(FLAG_ALTIN_WATER_DROPPED_TWICE) == 0) {
-    Actor_SetPosition(ACTOR_ROOM_TWO_GUEST, PIXELS(560), PIXELS(710));
+    Actor_SetPosition(ACTOR_ROOM_TWO_GUEST, 560, 710);
     Actor_Get(ACTOR_ROOM_TWO_GUEST)->facing = FACING_EAST_SOUTHEAST;
-    Actor_SetPosition(ACTOR_ROOM_TWO_SECOND_GUEST, PIXELS(576), PIXELS(710));
+    Actor_SetPosition(ACTOR_ROOM_TWO_SECOND_GUEST, 576, 710);
   }
   if (GameFlag_Get(FLAG_ALTIN_WATER_DRAINED) == 0) {
-    Actor_SetPosition(ACTOR_WEAPON_MERCHANT, PIXELS(295), PIXELS(744));
+    Actor_SetPosition(ACTOR_WEAPON_MERCHANT, 295, 744);
     Actor_Get(ACTOR_WEAPON_MERCHANT)->facing = FACING_NORTH_NORTHWEST;
   } else {
     actor = Actor_Get(ACTOR_WEAPON_MERCHANT);

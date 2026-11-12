@@ -335,7 +335,7 @@ static void HammetPalace_SetUpEntrance(void) {
     } else {
       Actor_SetPosition(ACTOR_HAMMET, 0, 0);
       if (GameFlag_Get(FLAG_KALAY_HEARD_HAMMET_HELD_IN_LUNPA) != 0) {
-        Actor_SetPosition(ACTOR_LAYANA, waitingX, waitingZ);
+        Actor_SetPositionFixed(ACTOR_LAYANA, waitingX, waitingZ);
         actor = Actor_Get(ACTOR_LAYANA);
         facing = FACING_NORTH_NORTHEAST;
         actor->facing = facing;
@@ -394,13 +394,13 @@ static void HammetPalace_IvanReportsToLayana(void) {
   work->transitionFrames = 24;
   work->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
-  Actor_SetPosition(ACTOR_LAYANA, PIXELS(856), PIXELS(440));
-  Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(856), PIXELS(486));
-  Actor_SetPosition(ACTOR_GARET, PIXELS(848), PIXELS(502));
-  Actor_SetPosition(ACTOR_IVAN, PIXELS(872), PIXELS(486));
-  Actor_SetPosition(ACTOR_MIA, PIXELS(880), PIXELS(502));
-  Actor_SetPosition(ACTOR_FIRST_SOLDIER, PIXELS(840), PIXELS(518));
-  Actor_SetPosition(ACTOR_SECOND_SOLDIER, PIXELS(888), PIXELS(518));
+  Actor_SetPosition(ACTOR_LAYANA, 856, 440);
+  Actor_SetPosition(ACTOR_PARTY_LEADER, 856, 486);
+  Actor_SetPosition(ACTOR_GARET, 848, 502);
+  Actor_SetPosition(ACTOR_IVAN, 872, 486);
+  Actor_SetPosition(ACTOR_MIA, 880, 502);
+  Actor_SetPosition(ACTOR_FIRST_SOLDIER, 840, 518);
+  Actor_SetPosition(ACTOR_SECOND_SOLDIER, 888, 518);
   FieldCamera_MoveTo(PIXELS(864), -1, PIXELS(472), 0);
   MapGrid_CenterOnFollowedPoint();
   wait(1);
@@ -852,8 +852,8 @@ static void HammetPalace_IvanReportsToLayana(void) {
   Actor_SetSpeed(ACTOR_SECOND_SOLDIER, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkTo(ACTOR_FIRST_SOLDIER, 848, 540);
   Actor_WalkToAndWait(ACTOR_SECOND_SOLDIER, 880, 540);
-  Actor_SetPosition(ACTOR_FIRST_SOLDIER, PIXELS(0), PIXELS(0));
-  Actor_SetPosition(ACTOR_SECOND_SOLDIER, PIXELS(0), PIXELS(0));
+  Actor_SetPosition(ACTOR_FIRST_SOLDIER, 0, 0);
+  Actor_SetPosition(ACTOR_SECOND_SOLDIER, 0, 0);
   Actor_SetAnimationAndWait(ACTOR_LAYANA, ANIM_NOD);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
@@ -920,7 +920,7 @@ static void HammetPalace_HammetsHomecoming(void) {
   // Pan from the entrance while the party walks into its speaking positions.
   MapGrid_CenterOnFollowedPoint();
   wait(1);
-  Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(864), PIXELS(630));
+  Actor_SetPosition(ACTOR_PARTY_LEADER, 864, 630);
   gFieldWork->transition = v5 = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   gFieldWork->transitionFrames = 40;
   Event_StartScreenTransition();
@@ -933,15 +933,15 @@ static void HammetPalace_HammetsHomecoming(void) {
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 864, 498);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != 0) {
-    Actor_SetPosition(ACTOR_GARET, leader->x.fixed, leader->z.fixed);
+    Actor_SetPositionFixed(ACTOR_GARET, leader->x.fixed, leader->z.fixed);
   }
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != 0) {
-    Actor_SetPosition(ACTOR_IVAN, leader->x.fixed, leader->z.fixed);
+    Actor_SetPositionFixed(ACTOR_IVAN, leader->x.fixed, leader->z.fixed);
   }
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != 0) {
-    Actor_SetPosition(ACTOR_MIA, leader->x.fixed, leader->z.fixed);
+    Actor_SetPositionFixed(ACTOR_MIA, leader->x.fixed, leader->z.fixed);
   }
   Actor_WalkTo(ACTOR_PARTY_LEADER, 856, 486);
   Actor_WalkTo(ACTOR_GARET, 848, 502);

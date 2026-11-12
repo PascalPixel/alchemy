@@ -454,7 +454,7 @@ static void SuhallaDesert_RaiseStorm(s32 stormId) {
     Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     if ((s32)leader != 0) {
-      Actor_SetPosition(ACTOR_IODEM, leader->x.fixed, leader->z.fixed);
+      Actor_SetPositionFixed(ACTOR_IODEM, leader->x.fixed, leader->z.fixed);
     }
 #ifdef BUGFIX
     Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTH, 0);
@@ -561,7 +561,7 @@ static void SuhallaDesert_IodemAsksWhetherToPressOn(void) {
     Event_SetMessageId(MsgSuhallaNowhereFound);
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     if (leader != 0) {
-      Actor_SetPosition(ACTOR_IODEM, leader->x.fixed, leader->z.fixed);
+      Actor_SetPositionFixed(ACTOR_IODEM, leader->x.fixed, leader->z.fixed);
     }
 #ifdef BUGFIX
     Actor_FaceDirection(ACTOR_IODEM, FACING_NORTH, 0);
@@ -679,7 +679,7 @@ static s32 SuhallaDesert_ChaseLeader(struct Actor *interpreter) {
 static void SuhallaDesert_StormGivesChase(void) {
   if (GameFlag_Get(FLAG_SUHALLA_DESERT_CHASING_SANDSTORM_DOUSED) == 0) {
     GameFlag_Set(FLAG_SUHALLA_DESERT_CHASING_SANDSTORM_SET_OFF);
-    Actor_SetPosition(ACTOR_CHASING_SANDSTORM, PIXELS(120), PIXELS(824));
+    Actor_SetPosition(ACTOR_CHASING_SANDSTORM, 120, 824);
     Actor_SetScript(ACTOR_CHASING_SANDSTORM, gSuhallaDesertChaseScript);
   }
 }
@@ -853,7 +853,7 @@ static s32 SuhallaDesert_RevealStarts(void) {
   if (gMainRoutineWork.next == (s32)&SceneId_SuhallaDesertSouth) {
     Actor_Get(ACTOR_REVEALED_PILLAR)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
     Actor_Get(ACTOR_REVEALED_PILLAR)->motionFlags = 0;
-    Actor_SetPosition(ACTOR_REVEALED_PILLAR, PIXELS(248), PIXELS(712));
+    Actor_SetPosition(ACTOR_REVEALED_PILLAR, 248, 712);
     MapGrid_CopyCellAttributes(31, 95, 1, 1, 15, 44);
     TreasureSpot_SetPosition(TREASURE_SPOT_PSYNERGY_STONE, -1, -1);
     TreasureSpot_MoveLeaderAway();

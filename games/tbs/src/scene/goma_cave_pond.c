@@ -86,7 +86,7 @@ s32 Scene_Initialize(void) {
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   work->transitionFrames = 24;
   if (GameFlag_Get(FLAG_GOMA_CAVE_STUMP_FELL) != 0) {
-    Actor_SetPosition(ACTOR_FALLEN_STUMP, PIXELS(216), PIXELS(136));
+    Actor_SetPosition(ACTOR_FALLEN_STUMP, 216, 136);
     Actor_SetAnimation(ACTOR_FALLEN_STUMP, STUMP_ANIMATION_SINK);
     Actor_SetSpriteFlags(Actor_Get(ACTOR_FALLEN_STUMP), 0);
     Actor_Get(ACTOR_FALLEN_STUMP)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;

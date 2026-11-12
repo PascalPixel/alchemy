@@ -295,8 +295,8 @@ static void ValeKradensCottage_KradenPlansSanctumVisit(void) {
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     x = leader->x.part.pixel;
     z = leader->z.part.pixel;
-    Actor_SetPosition(ACTOR_JENNA, x * Q16_ONE, z * Q16_ONE);
-    Actor_SetPosition(ACTOR_GARET, x * Q16_ONE, z * Q16_ONE);
+    Actor_SetPositionFixed(ACTOR_JENNA, x * Q16_ONE, z * Q16_ONE);
+    Actor_SetPositionFixed(ACTOR_GARET, x * Q16_ONE, z * Q16_ONE);
     Actor_SetSpeed(ACTOR_JENNA, PIXELS(1) / 2, PIXELS(1) / 4);
     Actor_SetSpeed(ACTOR_GARET, PIXELS(1) / 2, PIXELS(1) / 4);
     Actor_WalkTo(ACTOR_JENNA, 248, 264);
@@ -558,8 +558,8 @@ static void ValeKradensCottage_KradenSetsOff(void) {
 
   Event_Start();
   Actor_SetPosition(ACTOR_KRADEN, 0, 0);
-  Actor_SetPosition(ACTOR_GARET, PIXELS(216), PIXELS(264));
-  Actor_SetPosition(ACTOR_JENNA, PIXELS(248), PIXELS(264));
+  Actor_SetPosition(ACTOR_GARET, 216, 264);
+  Actor_SetPosition(ACTOR_JENNA, 248, 264);
   actor = Actor_Get(ACTOR_GARET);
   facing = FACING_NORTH;
   actor->facing = facing;
@@ -573,7 +573,7 @@ static void ValeKradensCottage_KradenSetsOff(void) {
   Event_Wait(40);
   // Kraden comes out of the door: this is their best bet.
   Actor_SetSpeed(ACTOR_KRADEN, PIXELS(4) / 5, PIXELS(2) / 5);
-  Actor_SetPosition(ACTOR_KRADEN, PIXELS(230), PIXELS(220));
+  Actor_SetPosition(ACTOR_KRADEN, 230, 220);
   Actor_WalkToAndWait(ACTOR_KRADEN, 230, 232);
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
@@ -673,8 +673,8 @@ static void ValeKradensCottage_MeetSaturosAndMenardi(void) {
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   x = actor->x.part.pixel;
   z = actor->z.part.pixel;
-  Actor_SetPosition(ACTOR_JENNA, x * Q16_ONE, z * Q16_ONE);
-  Actor_SetPosition(ACTOR_GARET, x * Q16_ONE, z * Q16_ONE);
+  Actor_SetPositionFixed(ACTOR_JENNA, x * Q16_ONE, z * Q16_ONE);
+  Actor_SetPositionFixed(ACTOR_GARET, x * Q16_ONE, z * Q16_ONE);
 
   Actor_SetSpeed(ACTOR_JENNA, PIXELS(6) / 5, PIXELS(3) / 5);
   Actor_SetSpeed(ACTOR_GARET, PIXELS(6) / 5, PIXELS(3) / 5);
@@ -899,8 +899,8 @@ static void ValeKradensCottage_OverhearKraden(void) {
       s32 x = leader->x.part.pixel;
       s32 z = leader->z.part.pixel;
 
-      Actor_SetPosition(ACTOR_JENNA, x * Q16_ONE, z * Q16_ONE);
-      Actor_SetPosition(ACTOR_GARET, x * Q16_ONE, z * Q16_ONE);
+      Actor_SetPositionFixed(ACTOR_JENNA, x * Q16_ONE, z * Q16_ONE);
+      Actor_SetPositionFixed(ACTOR_GARET, x * Q16_ONE, z * Q16_ONE);
     }
     Actor_SetSpeed(ACTOR_JENNA, PIXELS(4) / 5, PIXELS(2) / 5);
     Actor_SetSpeed(ACTOR_GARET, PIXELS(4) / 5, PIXELS(2) / 5);
@@ -1016,7 +1016,7 @@ s32 ValeKradensCottage_Initialize(void) {
 
       actor->collisionFlags = 8 | actor->collisionFlags;
     }
-    Actor_SetPosition(ACTOR_ROCKSLIDE_SURVIVOR, PIXELS(83), PIXELS(265));
+    Actor_SetPosition(ACTOR_ROCKSLIDE_SURVIVOR, 83, 265);
     Actor_WalkToAndWait(ACTOR_ROCKSLIDE_SURVIVOR, 83, 273);
     Actor_SetAnimation(ACTOR_ROCKSLIDE_SURVIVOR, 5);
     actor = Actor_Get(ACTOR_ROCKSLIDE_SURVIVOR);
@@ -1056,8 +1056,8 @@ s32 ValeKradensCottage_Initialize(void) {
       Actor_SetPosition(ACTOR_MENARDI, 0, 0);
     } else {
       if (GameFlag_Get(FLAG_MET_SATUROS_AND_MENARDI) != 0) {
-        Actor_SetPosition(ACTOR_SATUROS, PIXELS(392), PIXELS(376));
-        Actor_SetPosition(ACTOR_MENARDI, PIXELS(376), PIXELS(376));
+        Actor_SetPosition(ACTOR_SATUROS, 392, 376);
+        Actor_SetPosition(ACTOR_MENARDI, 376, 376);
         FieldActor_WatchAndStartScript(
             ACTOR_SATUROS, ACTOR_WATCH_KEEP_MOTION | ACTOR_PARTY_LEADER,
             gValeKradensCottage_FaceTargetActions);
@@ -1067,7 +1067,7 @@ s32 ValeKradensCottage_Initialize(void) {
       }
     }
     if (GameFlag_Get(FLAG_KALAY_REACHED) != 0) {
-      Actor_SetPosition(ACTOR_COTTAGE_VISITOR, PIXELS(132), PIXELS(264));
+      Actor_SetPosition(ACTOR_COTTAGE_VISITOR, 132, 264);
     }
     Event_End();
   }
@@ -1114,7 +1114,7 @@ static void ValeKradensCottage_TalkToRockslideSurvivor(void) {
       Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
       leader = Actor_Get(ACTOR_PARTY_LEADER);
       if (leader != 0) {
-        Actor_SetPosition(ACTOR_GARET, leader->x.fixed, leader->z.fixed);
+        Actor_SetPositionFixed(ACTOR_GARET, leader->x.fixed, leader->z.fixed);
       }
       Actor_WalkToAndWait(ACTOR_GARET, 110, 279);
       Actor_FaceDirection(ACTOR_GARET, FACING_NORTHWEST, 40);

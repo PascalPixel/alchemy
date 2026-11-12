@@ -505,7 +505,7 @@ s32 Tolbi_ApplyEntryState(s32 unused) {
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 
   // The two children run their loop south-east of the fountain.
-  Actor_SetPosition(ACTOR_TOLBI_OLDER_BROTHER, PIXELS(352), PIXELS(352));
+  Actor_SetPosition(ACTOR_TOLBI_OLDER_BROTHER, 352, 352);
   Actor_SetScript(ACTOR_TOLBI_OLDER_BROTHER, gTolbiOlderBrotherRun);
   actor = Actor_Get(ACTOR_TOLBI_OLDER_BROTHER);
 #ifdef UBFIX
@@ -516,7 +516,7 @@ s32 Tolbi_ApplyEntryState(s32 unused) {
   actor->timer = KID_CHASES_YOUNGER;
   actor->update = kidUpdate;
   clearFlags = 0;
-  Actor_SetPosition(ACTOR_TOLBI_YOUNGER_SISTER, PIXELS(368), PIXELS(320));
+  Actor_SetPosition(ACTOR_TOLBI_YOUNGER_SISTER, 368, 320);
   Actor_SetScript(ACTOR_TOLBI_YOUNGER_SISTER, gTolbiYoungerSisterRun);
   actor = Actor_Get(ACTOR_TOLBI_YOUNGER_SISTER);
   actor->timer = clearFlags;
@@ -526,7 +526,7 @@ s32 Tolbi_ApplyEntryState(s32 unused) {
 
   // What the party has already done here.
   if (GameFlag_Get(FLAG_TOLBI_SPRING_OPENED) != 0) {
-    Actor_SetPosition(ACTOR_TOLBI_SPRING_VISITOR, PIXELS(316), PIXELS(328));
+    Actor_SetPosition(ACTOR_TOLBI_SPRING_VISITOR, 316, 328);
   }
   // The puddle is frozen.
   if (GameFlag_Get(FLAG_TOLBI_PUDDLE_FROZEN) != 0) {
@@ -541,16 +541,16 @@ s32 Tolbi_ApplyEntryState(s32 unused) {
   // After Colosso the crowd has gone home and is moved off the map. On finals
   // day the scalper waits by the gate.
   if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
-    Actor_SetPosition(ACTOR_TOLBI_WOULD_BE_FIGHTER, PIXELS(520), PIXELS(560));
-    Actor_SetPosition(ACTOR_TOLBI_XIAN_VISITOR, PIXELS(520), PIXELS(560));
-    Actor_SetPosition(ACTOR_TOLBI_OVERSLEEPER, PIXELS(520), PIXELS(560));
-    Actor_SetPosition(ACTOR_TOLBI_FATHER, PIXELS(520), PIXELS(560));
-    Actor_SetPosition(ACTOR_TOLBI_MOTHER, PIXELS(520), PIXELS(560));
-    Actor_SetPosition(ACTOR_TOLBI_CRYING_BOY, PIXELS(520), PIXELS(560));
-    Actor_SetPosition(ACTOR_TOLBI_SCALPER, PIXELS(520), PIXELS(560));
+    Actor_SetPosition(ACTOR_TOLBI_WOULD_BE_FIGHTER, 520, 560);
+    Actor_SetPosition(ACTOR_TOLBI_XIAN_VISITOR, 520, 560);
+    Actor_SetPosition(ACTOR_TOLBI_OVERSLEEPER, 520, 560);
+    Actor_SetPosition(ACTOR_TOLBI_FATHER, 520, 560);
+    Actor_SetPosition(ACTOR_TOLBI_MOTHER, 520, 560);
+    Actor_SetPosition(ACTOR_TOLBI_CRYING_BOY, 520, 560);
+    Actor_SetPosition(ACTOR_TOLBI_SCALPER, 520, 560);
   } else {
     if (GameFlag_Get(FLAG_BABI_SAVED) != 0) {
-      Actor_SetPosition(ACTOR_TOLBI_SCALPER, PIXELS(280), PIXELS(80));
+      Actor_SetPosition(ACTOR_TOLBI_SCALPER, 280, 80);
       Actor_FaceDirection(ACTOR_TOLBI_SCALPER, FACING_SOUTHEAST, 0);
       Actor_SetAnimation(ACTOR_TOLBI_SCALPER, ANIM_STAND);
     }
@@ -621,12 +621,12 @@ static void Tolbi_MeetSearchingSoldiers(void) {
   Event_SetMessageId(firstMsg);
 
   // The soldiers come up to the party; the poster waits off to the side.
-  Actor_SetPosition(ACTOR_TOLBI_SOLDIER_A, PIXELS(72), PIXELS(208));
-  Actor_SetPosition(ACTOR_TOLBI_SOLDIER_B, PIXELS(56), PIXELS(208));
+  Actor_SetPosition(ACTOR_TOLBI_SOLDIER_A, 72, 208);
+  Actor_SetPosition(ACTOR_TOLBI_SOLDIER_B, 56, 208);
   Actor_SetSpriteColorById(ACTOR_TOLBI_MISSING_PERSON_POSTER,
                            SPRITE_COLOR_HIDDEN);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_TOLBI_MISSING_PERSON_POSTER), 0);
-  Actor_SetPosition(ACTOR_TOLBI_MISSING_PERSON_POSTER, PIXELS(95), PIXELS(40));
+  Actor_SetPosition(ACTOR_TOLBI_MISSING_PERSON_POSTER, 95, 40);
   Actor_WalkTo(ACTOR_TOLBI_SOLDIER_A, 72, 248);
   Actor_WalkTo(ACTOR_TOLBI_SOLDIER_B, 56, 248);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 64, 264);

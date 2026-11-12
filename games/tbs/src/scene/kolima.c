@@ -683,7 +683,7 @@ static void Kolima_WitnessForestCurse(void) {
   Actor_SetSpriteFlags(actor, 0);
   FieldCamera_MoveTo(PIXELS(104), -1, PIXELS(256), 0);
   MapGrid_CenterOnFollowedPoint();
-  Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(23), PIXELS(247));
+  Actor_SetPosition(ACTOR_PARTY_LEADER, 23, 247);
   wait(1);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -693,11 +693,11 @@ static void Kolima_WitnessForestCurse(void) {
   Actor_SetSpeed(ACTOR_IVAN, PIXELS(3) / 5, PIXELS(3) / 10);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   if (actor != NULL) {
-    Actor_SetPosition(ACTOR_GARET, actor->x.fixed, actor->z.fixed);
+    Actor_SetPositionFixed(ACTOR_GARET, actor->x.fixed, actor->z.fixed);
   }
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   if (actor != NULL) {
-    Actor_SetPosition(ACTOR_IVAN, actor->x.fixed, actor->z.fixed);
+    Actor_SetPositionFixed(ACTOR_IVAN, actor->x.fixed, actor->z.fixed);
   }
   Actor_SetScript(ACTOR_GARET, gKolima_GaretWalksIn);
   Actor_SetScript(ACTOR_IVAN, gKolima_IvanWalksIn);
@@ -705,7 +705,7 @@ static void Kolima_WitnessForestCurse(void) {
     Actor_SetSpeed(ACTOR_MIA, PIXELS(3) / 5, PIXELS(3) / 10);
     actor = Actor_Get(ACTOR_PARTY_LEADER);
     if (actor != NULL) {
-      Actor_SetPosition(ACTOR_MIA, actor->x.fixed, actor->z.fixed);
+      Actor_SetPositionFixed(ACTOR_MIA, actor->x.fixed, actor->z.fixed);
     }
     Actor_SetScript(ACTOR_MIA, gKolima_MiaWalksIn);
   }
@@ -993,25 +993,25 @@ static void Kolima_WitnessForestCurse(void) {
   Actor_Get(ACTOR_LEADER_PSYNERGY_FIELD)->priorityFlags &=
       ~ACTOR_PRIORITY_AUTOMATIC;
   Actor_SetSpritePriority(ACTOR_LEADER_PSYNERGY_FIELD, 2);
-  Actor_SetPosition(ACTOR_LEADER_PSYNERGY_FIELD, PIXELS(120), PIXELS(248));
+  Actor_SetPosition(ACTOR_LEADER_PSYNERGY_FIELD, 120, 248);
   growFieldActions = gKolima_ProtectiveFieldGrowActions;
   Actor_SetScript(ACTOR_LEADER_PSYNERGY_FIELD, growFieldActions);
   Actor_Get(ACTOR_IVAN_PSYNERGY_FIELD)->priorityFlags &=
       ~ACTOR_PRIORITY_AUTOMATIC;
   Actor_SetSpritePriority(ACTOR_IVAN_PSYNERGY_FIELD, 2);
-  Actor_SetPosition(ACTOR_IVAN_PSYNERGY_FIELD, PIXELS(100), PIXELS(274));
+  Actor_SetPosition(ACTOR_IVAN_PSYNERGY_FIELD, 100, 274);
   Actor_SetScript(ACTOR_IVAN_PSYNERGY_FIELD, growFieldActions);
   if (gKolima_MiaInParty != 0) {
     Actor_Get(ACTOR_MIA_PSYNERGY_FIELD)->priorityFlags &=
         ~ACTOR_PRIORITY_AUTOMATIC;
     Actor_SetSpritePriority(ACTOR_MIA_PSYNERGY_FIELD, 2);
-    Actor_SetPosition(ACTOR_MIA_PSYNERGY_FIELD, PIXELS(74), PIXELS(254));
+    Actor_SetPosition(ACTOR_MIA_PSYNERGY_FIELD, 74, 254);
     Actor_SetScript(ACTOR_MIA_PSYNERGY_FIELD, growFieldActions);
   }
   Actor_Get(ACTOR_GARET_PSYNERGY_FIELD)->priorityFlags &=
       ~ACTOR_PRIORITY_AUTOMATIC;
   Actor_SetSpritePriority(ACTOR_GARET_PSYNERGY_FIELD, 2);
-  Actor_SetPosition(ACTOR_GARET_PSYNERGY_FIELD, PIXELS(94), PIXELS(225));
+  Actor_SetPosition(ACTOR_GARET_PSYNERGY_FIELD, 94, 225);
   Actor_SetScript(ACTOR_GARET_PSYNERGY_FIELD, growFieldActions);
   if (*mapState != KOLIMA_DUST_CENTRED) {
     do {
@@ -1043,8 +1043,8 @@ static void Kolima_WitnessForestCurse(void) {
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
   Event_Wait(40);
   Event_OpenMessage(ACTOR_GARET, 0);
-  Actor_SetPosition(ACTOR_TRET, PIXELS(87), PIXELS(139));
-  Actor_SetPosition(ACTOR_LAUREL, PIXELS(87), PIXELS(139));
+  Actor_SetPosition(ACTOR_TRET, 87, 139);
+  Actor_SetPosition(ACTOR_LAUREL, 87, 139);
   wait(1);
   if (Event_AskYesNoWithActorAnimation(ACTOR_TRET, 0) == 1) {
     gFieldWork->message++;
@@ -1267,16 +1267,16 @@ static void Kolima_WitnessForestCurse(void) {
   Actor_SetSpritePriority(ACTOR_MIA, 3);
   *secondCurtainState = KOLIMA_DUST_CLOSING_WIDE;
   Sound_Play(SE_SHIMMER);
-  Actor_SetPosition(ACTOR_LEADER_PSYNERGY_FIELD, PIXELS(120), PIXELS(248));
+  Actor_SetPosition(ACTOR_LEADER_PSYNERGY_FIELD, 120, 248);
   growFieldActions = gKolima_ProtectiveFieldGrowActions;
   Actor_SetScript(ACTOR_LEADER_PSYNERGY_FIELD, growFieldActions);
-  Actor_SetPosition(ACTOR_IVAN_PSYNERGY_FIELD, PIXELS(100), PIXELS(274));
+  Actor_SetPosition(ACTOR_IVAN_PSYNERGY_FIELD, 100, 274);
   Actor_SetScript(ACTOR_IVAN_PSYNERGY_FIELD, growFieldActions);
   if (gKolima_MiaInParty != 0) {
-    Actor_SetPosition(ACTOR_MIA_PSYNERGY_FIELD, PIXELS(74), PIXELS(254));
+    Actor_SetPosition(ACTOR_MIA_PSYNERGY_FIELD, 74, 254);
     Actor_SetScript(ACTOR_MIA_PSYNERGY_FIELD, growFieldActions);
   }
-  Actor_SetPosition(ACTOR_GARET_PSYNERGY_FIELD, PIXELS(94), PIXELS(225));
+  Actor_SetPosition(ACTOR_GARET_PSYNERGY_FIELD, 94, 225);
   Actor_SetScript(ACTOR_GARET_PSYNERGY_FIELD, growFieldActions);
   Event_Wait(120);
   *secondCurtainState = KOLIMA_DUST_DRIFTING;

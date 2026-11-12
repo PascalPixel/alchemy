@@ -818,8 +818,8 @@ static void VenusLighthouse_ArriveThroughSparkPassage(void) {
     Event_Start();
     FieldCamera_MoveTo(-1, -1, -1, 0);
     leader->motionFlags = 0;
-    Actor_SetPosition(ACTOR_PARTY_LEADER, leader->x.part.pixel << 16,
-                      (leader->z.part.pixel << 16) - PIXELS(16));
+    Actor_SetPositionFixed(ACTOR_PARTY_LEADER, leader->x.part.pixel << 16,
+                           (leader->z.part.pixel << 16) - px(16));
     Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
     Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
     Event_StartScreenTransition();
@@ -1458,7 +1458,7 @@ static void VenusLighthouse_MovePillarTowardWall(void) {
       GameFlag_Set(conversationFlag);
       actor = Actor_Get(ACTOR_PARTY_LEADER);
       if (actor != 0) {
-        Actor_SetPosition(ACTOR_GARET, actor->x.fixed, actor->z.fixed);
+        Actor_SetPositionFixed(ACTOR_GARET, actor->x.fixed, actor->z.fixed);
       }
       Actor_SetSpeed(ACTOR_GARET, walkSpeed, walkAcceleration);
       Actor_WalkToAndWait(ACTOR_GARET, garetX, 88);
@@ -1958,7 +1958,7 @@ static void VenusLighthouse_MoveGatePillar(void) {
         Actor_Get(ACTOR_GATE_SPARKLE)->collisionFlags = gateOpened;
         Actor_Get(ACTOR_GATE_SPARKLE)->priorityFlags |=
             ACTOR_PRIORITY_UNDERFOOT;
-        Actor_SetPosition(ACTOR_GATE_SPARKLE, PIXELS(808), PIXELS(728));
+        Actor_SetPosition(ACTOR_GATE_SPARKLE, 808, 728);
         Actor_SetScript(ACTOR_GATE_SPARKLE, gVenusSecondFloorLightToGate);
         Actor_WaitForScriptEndById(ACTOR_GATE_SPARKLE);
         Event_Wait(30);
@@ -2849,7 +2849,7 @@ s32 VenusLighthouse_Initialize(void) {
     case VENUS_LIGHTHOUSE_GROUND_FLOOR_PILLARS_FROM_STATUE_ROW_NORTH:
     case VENUS_LIGHTHOUSE_GROUND_FLOOR_PILLARS_FROM_STATUE_ROW_WEST:
       if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_PILLAR_CARRIED)) {
-        Actor_SetPosition(ACTOR_WALL_PILLAR, PIXELS(872), PIXELS(88));
+        Actor_SetPosition(ACTOR_WALL_PILLAR, 872, 88);
         actor = Actor_Get(ACTOR_WALL_PILLAR);
         actor->y.fixed = -PIXELS(24);
         actor->targetY = ACTOR_NO_TARGET;
@@ -2950,7 +2950,7 @@ s32 VenusLighthouse_Initialize(void) {
         wait(1);
         MapGrid_CopyCellsTo(124, 41, 110, 41, 1, 2);
         MapGrid_CopyCellAttributes(46, 41, 1, 1, 46, 42);
-        Actor_SetPosition(ACTOR_GATE_PILLAR, PIXELS(744), PIXELS(728));
+        Actor_SetPosition(ACTOR_GATE_PILLAR, 744, 728);
         actor->motionFlags = 0;
         actor->y.fixed = -PIXELS(16);
         Actor_SetSpritePriority(ACTOR_GATE_PILLAR, 3);
@@ -2961,7 +2961,7 @@ s32 VenusLighthouse_Initialize(void) {
         actor = Actor_Get(ACTOR_GATE_SPARKLE);
         actor->collisionFlags = 0;
         actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
-        Actor_SetPosition(ACTOR_GATE_SPARKLE, PIXELS(743), PIXELS(696));
+        Actor_SetPosition(ACTOR_GATE_SPARKLE, 743, 696);
 #ifdef UBFIX
         actor->update = VenusLighthouse_TrailLight;
 #else
@@ -3059,19 +3059,13 @@ s32 VenusLighthouse_Initialize(void) {
         MapGrid_CopyCellsTo(111, 59, 109, 37, 1, 2);
         MapGrid_CopyCellAttributes(45, 37, 1, 1, 45, 38);
         if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_SOUTHEAST_SOCKET_EMPTY)) {
-          Actor_SetPosition(ACTOR_FIRST_SWITCH_PILLAR, PIXELS(776),
-                            PIXELS(664));
-          Actor_SetPosition(ACTOR_FIRST_SWITCH_PILLAR + 1, PIXELS(840),
-                            PIXELS(664));
-          Actor_SetPosition(ACTOR_FIRST_SWITCH_PILLAR + 2, PIXELS(776),
-                            PIXELS(696));
+          Actor_SetPosition(ACTOR_FIRST_SWITCH_PILLAR, 776, 664);
+          Actor_SetPosition(ACTOR_FIRST_SWITCH_PILLAR + 1, 840, 664);
+          Actor_SetPosition(ACTOR_FIRST_SWITCH_PILLAR + 2, 776, 696);
         } else {
-          Actor_SetPosition(ACTOR_FIRST_SWITCH_PILLAR, PIXELS(840),
-                            PIXELS(664));
-          Actor_SetPosition(ACTOR_FIRST_SWITCH_PILLAR + 1, PIXELS(776),
-                            PIXELS(696));
-          Actor_SetPosition(ACTOR_FIRST_SWITCH_PILLAR + 2, PIXELS(840),
-                            PIXELS(696));
+          Actor_SetPosition(ACTOR_FIRST_SWITCH_PILLAR, 840, 664);
+          Actor_SetPosition(ACTOR_FIRST_SWITCH_PILLAR + 1, 776, 696);
+          Actor_SetPosition(ACTOR_FIRST_SWITCH_PILLAR + 2, 840, 696);
         }
         Actor_SetSpritePriority(ACTOR_FIRST_SWITCH_PILLAR, 3);
         actor = Actor_Get(ACTOR_FIRST_SWITCH_PILLAR);
@@ -3092,7 +3086,7 @@ s32 VenusLighthouse_Initialize(void) {
         actor = Actor_Get(ACTOR_SWITCH_GATE_SPARKLE);
         actor->collisionFlags = 0;
         actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
-        Actor_SetPosition(ACTOR_SWITCH_GATE_SPARKLE, PIXELS(727), PIXELS(632));
+        Actor_SetPosition(ACTOR_SWITCH_GATE_SPARKLE, 727, 632);
 #ifdef UBFIX
         actor->update = VenusLighthouse_TrailLight;
 #else
@@ -3235,25 +3229,22 @@ s32 VenusLighthouse_Initialize(void) {
         wait(1);
         MapGrid_CopyCellsTo(95, 56, 77, 35, 1, 2);
         MapGrid_CopyCellAttributes(13, 35, 1, 1, 13, 36);
-        Actor_SetPosition(ACTOR_FIRST_SOCKET_PILLAR, PIXELS(264), PIXELS(744));
+        Actor_SetPosition(ACTOR_FIRST_SOCKET_PILLAR, 264, 744);
         actor = Actor_Get(ACTOR_FIRST_SOCKET_PILLAR);
         actor->y.fixed = -PIXELS(16);
         actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
         Actor_SetSpritePriority(ACTOR_FIRST_SOCKET_PILLAR, 3);
-        Actor_SetPosition(ACTOR_FIRST_SOCKET_PILLAR + 1, PIXELS(184),
-                          PIXELS(632));
+        Actor_SetPosition(ACTOR_FIRST_SOCKET_PILLAR + 1, 184, 632);
         actor = Actor_Get(ACTOR_FIRST_SOCKET_PILLAR + 1);
         actor->y.fixed = -PIXELS(16);
         actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
         Actor_SetSpritePriority(ACTOR_FIRST_SOCKET_PILLAR + 1, 3);
-        Actor_SetPosition(ACTOR_FIRST_SOCKET_PILLAR + 2, PIXELS(232),
-                          PIXELS(696));
+        Actor_SetPosition(ACTOR_FIRST_SOCKET_PILLAR + 2, 232, 696);
         actor = Actor_Get(ACTOR_FIRST_SOCKET_PILLAR + 2);
         actor->y.fixed = -PIXELS(16);
         actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
         Actor_SetSpritePriority(ACTOR_FIRST_SOCKET_PILLAR + 2, 3);
-        Actor_SetPosition(ACTOR_FIRST_SOCKET_PILLAR + 3, PIXELS(184),
-                          PIXELS(664));
+        Actor_SetPosition(ACTOR_FIRST_SOCKET_PILLAR + 3, 184, 664);
         actor = Actor_Get(ACTOR_FIRST_SOCKET_PILLAR + 3);
         actor->y.fixed = -PIXELS(16);
         actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
@@ -3265,7 +3256,7 @@ s32 VenusLighthouse_Initialize(void) {
         actor = Actor_Get(ACTOR_SOCKET_GATE_SPARKLE);
         actor->collisionFlags = 0;
         actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
-        Actor_SetPosition(ACTOR_SOCKET_GATE_SPARKLE, PIXELS(215), PIXELS(600));
+        Actor_SetPosition(ACTOR_SOCKET_GATE_SPARKLE, 215, 600);
 #ifdef UBFIX
         actor->update = VenusLighthouse_TrailLight;
 #else

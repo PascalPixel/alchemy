@@ -243,7 +243,7 @@ static void Vault_IvanStaysBehind(void) {
   Event_Start();
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   if (actor != 0) {
-    Actor_SetPosition(ACTOR_IVAN, actor->x.fixed, actor->z.fixed);
+    Actor_SetPositionFixed(ACTOR_IVAN, actor->x.fixed, actor->z.fixed);
   }
   Actor_SetSpeed(ACTOR_IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
   if (work->stepTrigger == CELL_BEHAVIOR_VAULT_SOUTH_GATE) {
@@ -807,7 +807,7 @@ static void Vault_JumpActorToAndWait(s32 actorId, s32 x, s32 z,
   actor->velocityY = verticalSpeed;
   Actor_SetSpriteFlags(actor, 0);
   Actor_MoveToAndWait(actorId, x, z);
-  Actor_SetPosition(actorId, x << 16, z << 16);
+  Actor_SetPosition(actorId, x, z);
   for (frames = 60; frames != 0; --frames) {
     wait(1);
     if ((actor->velocityY >> 16) == 0)
@@ -909,7 +909,7 @@ s32 Scene_Initialize(void) {
   actor->update = (void (*)(struct Actor *))Vault_UpdateWalkingVillager;
 #endif
   if (GameFlag_Get(FLAG_VAULT_DOG_SHOWN_PASSAGE) != 0) {
-    Actor_SetPosition(ACTOR_VAULT_DOG, PIXELS(216), PIXELS(392));
+    Actor_SetPosition(ACTOR_VAULT_DOG, 216, 392);
   }
   suspectsMindRead = GameFlag_Get(FLAG_VAULT_SUSPECTS_MIND_READ);
   if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) == 0) {
@@ -933,12 +933,12 @@ s32 Scene_Initialize(void) {
           Event_Start();
           actor = Actor_Get(ACTOR_PARTY_LEADER);
           if (actor != 0) {
-            Actor_SetPosition(ACTOR_IVAN, actor->x.fixed, actor->z.fixed);
+            Actor_SetPositionFixed(ACTOR_IVAN, actor->x.fixed, actor->z.fixed);
           }
           if (gMainRoutineWork.entrance == VAULT_FROM_WORLD_MAP_SOUTH) {
-            Actor_SetPosition(ACTOR_IVAN, PIXELS(400), PIXELS(448));
+            Actor_SetPosition(ACTOR_IVAN, 400, 448);
           } else {
-            Actor_SetPosition(ACTOR_IVAN, PIXELS(224), PIXELS(162));
+            Actor_SetPosition(ACTOR_IVAN, 224, 162);
           }
           Actor_TurnToFaceEachOther(ACTOR_IVAN, ACTOR_PARTY_LEADER, 0);
           Event_StartScreenTransition();
@@ -965,7 +965,7 @@ s32 Scene_Initialize(void) {
     }
   }
   if (GameFlag_Get(FLAG_VAULT_SAP_CALLED_BY_BELL) != 0) {
-    Actor_SetPosition(ACTOR_SAP, PIXELS(408), PIXELS(120));
+    Actor_SetPosition(ACTOR_SAP, 408, 120);
   }
   // The same welcome out of the Vault Sanctum while Ivan is out of the party.
   if (gMainRoutineWork.entrance == VAULT_FROM_SANCTUM) {
@@ -973,7 +973,7 @@ s32 Scene_Initialize(void) {
       if (GameFlag_Get(FLAG_VAULT_IVAN_JOINED_ROD_SEARCH) != 0) {
         if (GameFlag_Get(FLAG_IN_PARTY(IVAN)) == 0) {
           Event_Start();
-          Actor_SetPosition(ACTOR_IVAN, PIXELS(40), PIXELS(310));
+          Actor_SetPosition(ACTOR_IVAN, 40, 310);
           Actor_TurnToFaceEachOther(ACTOR_IVAN, ACTOR_PARTY_LEADER, 0);
           Event_StartScreenTransition();
           Event_WaitTransitionFrames();

@@ -563,19 +563,19 @@ s32 ValePrologue_Initialize(void) {
   }
   // Restore the rocks that have already fallen.
   if (GameFlag_Get(FLAG_VALE_STORM_FIRST_ROCK_FELL) != 0) {
-    Actor_SetPosition(ACTOR_FIRST_ROCK, PIXELS(334), PIXELS(932));
+    Actor_SetPosition(ACTOR_FIRST_ROCK, 334, 932);
     ValePrologue_ApplyFirstRockCollision();
   }
   if (GameFlag_Get(FLAG_VALE_STORM_SECOND_ROCK_FELL) != 0) {
-    Actor_SetPosition(ACTOR_FIRST_ROCK + 1, PIXELS(224), PIXELS(872));
+    Actor_SetPosition(ACTOR_FIRST_ROCK + 1, 224, 872);
     ValePrologue_ApplySecondRockCollision();
   }
   if (GameFlag_Get(FLAG_VALE_STORM_THIRD_ROCK_FELL) != 0) {
-    Actor_SetPosition(ACTOR_FIRST_ROCK + 2, PIXELS(64), PIXELS(703));
+    Actor_SetPosition(ACTOR_FIRST_ROCK + 2, 64, 703);
     ValePrologue_ApplyThirdRockCollision();
   }
   if (GameFlag_Get(FLAG_VALE_STORM_FOURTH_ROCK_FELL) != 0) {
-    Actor_SetPosition(ACTOR_FIRST_ROCK + 3, PIXELS(432), PIXELS(1147));
+    Actor_SetPosition(ACTOR_FIRST_ROCK + 3, 432, 1147);
     ValePrologue_ApplyFourthRockCollision();
   }
   // The rocks are big, so the leader can talk to them from further off: the
@@ -601,7 +601,7 @@ s32 ValePrologue_Initialize(void) {
   }
   // The Boulder lies where it fell, or waits on the mountainside.
   if (GameFlag_Get(FLAG_VALE_BOULDER_FELL) != 0) {
-    Actor_SetPosition(ACTOR_BOULDER, PIXELS(114), PIXELS(333));
+    Actor_SetPosition(ACTOR_BOULDER, 114, 333);
   } else {
     Actor_SetScript(ACTOR_BOULDER, gValePrologue_BoulderWaits);
   }
@@ -610,7 +610,7 @@ s32 ValePrologue_Initialize(void) {
     s32 facing;
     const s32 *table;
     ValePrologue_RebuildRiverbank();
-    Actor_SetPosition(ACTOR_DORA, PIXELS(165), PIXELS(1229));
+    Actor_SetPosition(ACTOR_DORA, 165, 1229);
     {
       struct Actor *actor;
 
@@ -622,7 +622,7 @@ s32 ValePrologue_Initialize(void) {
       actor->userValue = 1;
       Actor_SetScript(ACTOR_DORA, table);
     }
-    Actor_SetPosition(ACTOR_JENNA_CHILD, PIXELS(165), PIXELS(1254));
+    Actor_SetPosition(ACTOR_JENNA_CHILD, 165, 1254);
     {
       struct Actor *actor;
 
@@ -632,7 +632,7 @@ s32 ValePrologue_Initialize(void) {
       actor->userValue = 2;
       Actor_SetScript(ACTOR_JENNA_CHILD, table);
     }
-    Actor_SetPosition(ACTOR_GARET_CHILD, PIXELS(152), PIXELS(1285));
+    Actor_SetPosition(ACTOR_GARET_CHILD, 152, 1285);
     {
       struct Actor *actor;
 
@@ -642,7 +642,7 @@ s32 ValePrologue_Initialize(void) {
       actor->userValue = 3;
       Actor_SetScript(ACTOR_GARET_CHILD, table);
     }
-    Actor_SetPosition(ACTOR_EXHAUSTED_STRONGMAN, PIXELS(184), PIXELS(1304));
+    Actor_SetPosition(ACTOR_EXHAUSTED_STRONGMAN, 184, 1304);
     {
       struct Actor *actor;
 
@@ -668,7 +668,7 @@ s32 ValePrologue_Initialize(void) {
     // Felix in it.
   } else if (GameFlag_Get(FLAG_VALE_STORM_SAW_FELIX_HANGING_ON) != 0) {
     const s32 *table;
-    Actor_SetPosition(ACTOR_KYLE, PIXELS(192), PIXELS(1214));
+    Actor_SetPosition(ACTOR_KYLE, 192, 1214);
     Actor_FaceDirection(ACTOR_KYLE, FACING_SOUTHEAST, 0);
     Actor_SetAnimation(ACTOR_KYLE, ANIM_KYLE_REACH_OUT);
     {
@@ -679,7 +679,7 @@ s32 ValePrologue_Initialize(void) {
     }
     table = gValePrologue_SquashAndStretchScript;
     Actor_SetScript(ACTOR_KYLE, table);
-    Actor_SetPosition(ACTOR_JENNAS_FATHER, PIXELS(227), PIXELS(1214));
+    Actor_SetPosition(ACTOR_JENNAS_FATHER, 227, 1214);
     Actor_FaceDirection(ACTOR_JENNAS_FATHER, FACING_SOUTH, 0);
     Actor_SetAnimation(ACTOR_JENNAS_FATHER, ANIM_PARENT_REACH_OUT);
     {
@@ -689,7 +689,7 @@ s32 ValePrologue_Initialize(void) {
       actor->timer = Math_RemainderUnsigned(Import_RandomNext(), 90) + 60;
     }
     Actor_SetScript(ACTOR_JENNAS_FATHER, table);
-    Actor_SetPosition(ACTOR_JENNAS_MOTHER, PIXELS(247), PIXELS(1214));
+    Actor_SetPosition(ACTOR_JENNAS_MOTHER, 247, 1214);
     Actor_FaceDirection(ACTOR_JENNAS_MOTHER, FACING_SOUTH, 0);
     Actor_SetAnimation(ACTOR_JENNAS_MOTHER, ANIM_PARENT_REACH_OUT);
     {
@@ -699,7 +699,7 @@ s32 ValePrologue_Initialize(void) {
       actor->timer = Math_RemainderUnsigned(Import_RandomNext(), 90) + 60;
     }
     Actor_SetScript(ACTOR_JENNAS_MOTHER, table);
-    Actor_SetPosition(ACTOR_FELIX_CHILD, PIXELS(243), PIXELS(1277));
+    Actor_SetPosition(ACTOR_FELIX_CHILD, 243, 1277);
     Actor_FaceDirection(ACTOR_FELIX_CHILD, FACING_NORTH, 0);
     Actor_SetSpriteFlags(Actor_Get(ACTOR_FELIX_CHILD), 0);
     Actor_SetPosition(ACTOR_FIRST_ROCK + 6, 0, 0);
@@ -747,8 +747,8 @@ s32 ValePrologue_Initialize(void) {
     Event_Start();
     Actor_SetAttachedEffect(ACTOR_GARET_CHILD,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
-    Actor_SetPosition(ACTOR_GARET_CHILD, PIXELS(400), PIXELS(611));
-    Actor_SetPosition(ACTOR_GARETS_CHEST, PIXELS(424), PIXELS(627));
+    Actor_SetPosition(ACTOR_GARET_CHILD, 400, 611);
+    Actor_SetPosition(ACTOR_GARETS_CHEST, 424, 627);
     Actor_WalkTo(ACTOR_GARET_CHILD, 400, 619);
     Actor_WalkToAndWait(ACTOR_GARETS_CHEST, 424, 619);
     Actor_SetAnimation(ACTOR_GARETS_CHEST, ANIM_WALK);
@@ -756,7 +756,7 @@ s32 ValePrologue_Initialize(void) {
     Event_End();
   } else {
     Event_Start();
-    Actor_SetPosition(ACTOR_GARETS_CHEST, PIXELS(424), PIXELS(627));
+    Actor_SetPosition(ACTOR_GARETS_CHEST, 424, 627);
     Actor_WalkToAndWait(ACTOR_GARETS_CHEST, 424, 619);
     Actor_SetAnimation(ACTOR_GARETS_CHEST, ANIM_NOD);
     Event_End();
@@ -789,7 +789,7 @@ static void ValePrologue_DoraSendsIsaacToThePlaza(void) {
   // The camera looks down on the door of Isaac's house; Kyle waits outside.
   FieldCamera_SetSpeed(PIXELS(1) / 4, PIXELS(1) / 32);
   FieldCamera_MoveTo(PIXELS(316), PIXELS(160), PIXELS(880), 1);
-  Actor_SetPosition(ACTOR_KYLE, PIXELS(294), PIXELS(868));
+  Actor_SetPosition(ACTOR_KYLE, 294, 868);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   gFieldWork->transitionFrames = 16;
@@ -804,11 +804,11 @@ static void ValePrologue_DoraSendsIsaacToThePlaza(void) {
   Actor_SetSpeed(ACTOR_DORA, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_SetSpeed(ACTOR_KYLE, PIXELS(4) / 5, PIXELS(2) / 5);
-  Actor_SetPosition(ACTOR_DORA, PIXELS(342), PIXELS(890));
+  Actor_SetPosition(ACTOR_DORA, 342, 890);
   Actor_WalkToAndWait(ACTOR_DORA, 342, 905);
   Scene_PlayQueuedMusic();
   Actor_WalkTo(ACTOR_DORA, 296, 905);
-  Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(342), PIXELS(890));
+  Actor_SetPosition(ACTOR_PARTY_LEADER, 342, 890);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 342, 890);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 342, 905);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 318, 905);
@@ -923,7 +923,7 @@ static void ValePrologue_FirstRockFalls(void) {
       Sound_Play(SE_CRASH);
       rock->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
       rockSprite->image.priority = 1;
-      Actor_SetPosition(ACTOR_FIRST_ROCK, PIXELS(473), PIXELS(932));
+      Actor_SetPosition(ACTOR_FIRST_ROCK, 473, 932);
       rock->speedLimit = PIXELS(3) / 2;
       rock->acceleration = PIXELS(3) / 2;
       targetHeight = (rock->y.fixed + PIXELS(240));
@@ -998,7 +998,7 @@ static void ValePrologue_SecondRockFalls(void) {
       Sound_Play(SE_RUMBLE);
       wait(40);
       Sound_Play(SE_CRASH);
-      Actor_SetPosition(ACTOR_FIRST_ROCK + 1, PIXELS(381), PIXELS(808));
+      Actor_SetPosition(ACTOR_FIRST_ROCK + 1, 381, 808);
       rock->speedLimit = PIXELS(3) / 2;
       rock->acceleration = PIXELS(3) / 2;
       targetHeight = (rock->y.fixed + PIXELS(256));
@@ -1080,7 +1080,7 @@ static void ValePrologue_ThirdRockFalls(void) {
       Sound_Play(SE_CRASH);
       Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 3);
       Actor_Get(ACTOR_PARTY_LEADER)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-      Actor_SetPosition(ACTOR_FIRST_ROCK + 2, 0, PIXELS(703));
+      Actor_SetPosition(ACTOR_FIRST_ROCK + 2, 0, 703);
       actor->speedLimit = PIXELS(3) / 2;
       actor->acceleration = PIXELS(3) / 2;
       actor->y.fixed += PIXELS(80);
@@ -1153,7 +1153,7 @@ static void ValePrologue_FourthRockFalls(void) {
       Sound_Play(SE_RUMBLE);
       wait(40);
       Sound_Play(SE_CRASH);
-      Actor_SetPosition(ACTOR_FIRST_ROCK + 3, PIXELS(474), PIXELS(1147));
+      Actor_SetPosition(ACTOR_FIRST_ROCK + 3, 474, 1147);
       rock->speedLimit = PIXELS(1);
       rock->acceleration = PIXELS(1);
       targetHeight = (rock->y.fixed + PIXELS(72));
@@ -1216,7 +1216,7 @@ static void ValePrologue_BumpIntoShovingMan(void) {
 
   Event_Start();
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 262, 810);
-  Actor_SetPosition(ACTOR_SHOVING_MAN, PIXELS(262), PIXELS(805));
+  Actor_SetPosition(ACTOR_SHOVING_MAN, 262, 805);
   Actor_WalkTo(ACTOR_SHOVING_MAN, 262, 825);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2), PIXELS(1));
   Actor_Jump(ACTOR_PARTY_LEADER, 2, 0);
@@ -1444,8 +1444,8 @@ static void ValePrologue_WarnAboutMtAleph(void) {
   Event_Start();
   initialLeader = Actor_Get(ACTOR_PARTY_LEADER);
   if (initialLeader != NULL) {
-    Actor_SetPosition(ACTOR_GARET_CHILD, initialLeader->x.fixed,
-                      initialLeader->z.fixed);
+    Actor_SetPositionFixed(ACTOR_GARET_CHILD, initialLeader->x.fixed,
+                           initialLeader->z.fixed);
   }
   Actor_SetSpeed(ACTOR_GARET_CHILD, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkToAndWait(ACTOR_GARET_CHILD, 281, 507);
@@ -1484,8 +1484,8 @@ static void ValePrologue_GaretCommentsOnBlockedPath(s32 x, s32 y) {
 
   leaderAtStart = Actor_Get(ACTOR_PARTY_LEADER);
   if (leaderAtStart != 0) {
-    Actor_SetPosition(ACTOR_GARET_CHILD, leaderAtStart->x.fixed,
-                      leaderAtStart->z.fixed);
+    Actor_SetPositionFixed(ACTOR_GARET_CHILD, leaderAtStart->x.fixed,
+                           leaderAtStart->z.fixed);
   }
   Actor_SetSpeed(ACTOR_GARET_CHILD, speed, acceleration);
   Actor_WalkToAndWait(ACTOR_GARET_CHILD, x, y);
@@ -1542,7 +1542,7 @@ static void ValePrologue_WatchBoulderFall(void) {
     Event_Wait(30);
     actor = Actor_Get(ACTOR_PARTY_LEADER);
     if (actor != NULL) {
-      Actor_SetPosition(ACTOR_GARET_CHILD, actor->x.fixed, actor->z.fixed);
+      Actor_SetPositionFixed(ACTOR_GARET_CHILD, actor->x.fixed, actor->z.fixed);
     }
     Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2), PIXELS(1));
     Actor_SetSpeed(ACTOR_GARET_CHILD, PIXELS(2), PIXELS(1));
@@ -1599,7 +1599,7 @@ static void ValePrologue_WatchBoulderFall(void) {
     Event_Wait(40);
     *shakeShift = 1;
     Event_Wait(30);
-    Actor_SetPosition(ACTOR_BOULDER, PIXELS(114), PIXELS(290));
+    Actor_SetPosition(ACTOR_BOULDER, 114, 290);
     movingActor = Actor_Get(ACTOR_BOULDER);
     boulderHeight = movingActor->y.fixed + PIXELS(64);
     movingActor->y.fixed = boulderHeight;
@@ -1764,7 +1764,7 @@ static void ValePrologue_WatchAttemptToSaveFelix(void) {
     return;
   }
   Event_Start();
-  Actor_SetPosition(ACTOR_KYLE, PIXELS(192), PIXELS(1214));
+  Actor_SetPosition(ACTOR_KYLE, 192, 1214);
   Actor_FaceDirection(ACTOR_KYLE, FACING_SOUTHEAST, 0);
   Actor_SetAnimation(ACTOR_KYLE, ANIM_KYLE_REACH_OUT);
   {
@@ -1776,9 +1776,9 @@ static void ValePrologue_WatchAttemptToSaveFelix(void) {
     actor->timer = pulseDelay;
     Actor_SetScript(ACTOR_KYLE, pulseScript);
   }
-  Actor_SetPosition(ACTOR_DORA, PIXELS(192), PIXELS(1189));
+  Actor_SetPosition(ACTOR_DORA, 192, 1189);
   Actor_FaceDirection(ACTOR_DORA, FACING_SOUTHEAST, 0);
-  Actor_SetPosition(ACTOR_JENNAS_FATHER, PIXELS(227), PIXELS(1214));
+  Actor_SetPosition(ACTOR_JENNAS_FATHER, 227, 1214);
   Actor_FaceDirection(ACTOR_JENNAS_FATHER, FACING_SOUTH, 0);
   Actor_SetAnimation(ACTOR_JENNAS_FATHER, ANIM_PARENT_REACH_OUT);
   {
@@ -1789,7 +1789,7 @@ static void ValePrologue_WatchAttemptToSaveFelix(void) {
     actor->timer = pulseDelay;
     Actor_SetScript(ACTOR_JENNAS_FATHER, pulseScript);
   }
-  Actor_SetPosition(ACTOR_JENNAS_MOTHER, PIXELS(250), PIXELS(1214));
+  Actor_SetPosition(ACTOR_JENNAS_MOTHER, 250, 1214);
   Actor_FaceDirection(ACTOR_JENNAS_MOTHER, FACING_SOUTH, 0);
   Actor_SetAnimation(ACTOR_JENNAS_MOTHER, ANIM_PARENT_REACH_OUT);
   {
@@ -1800,9 +1800,9 @@ static void ValePrologue_WatchAttemptToSaveFelix(void) {
     actor->timer = pulseDelay;
     Actor_SetScript(ACTOR_JENNAS_MOTHER, pulseScript);
   }
-  Actor_SetPosition(ACTOR_JENNA_CHILD, PIXELS(227), PIXELS(1189));
+  Actor_SetPosition(ACTOR_JENNA_CHILD, 227, 1189);
   Actor_FaceDirection(ACTOR_JENNA_CHILD, FACING_SOUTH_SOUTHEAST, 0);
-  Actor_SetPosition(ACTOR_FELIX_CHILD, PIXELS(243), PIXELS(1277));
+  Actor_SetPosition(ACTOR_FELIX_CHILD, 243, 1277);
   Actor_FaceDirection(ACTOR_FELIX_CHILD, FACING_NORTH, 0);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_FELIX_CHILD), 0);
   wait(3);
@@ -1815,7 +1815,8 @@ static void ValePrologue_WatchAttemptToSaveFelix(void) {
     struct Actor *leader;
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     if (leader != 0) {
-      Actor_SetPosition(ACTOR_GARET_CHILD, leader->x.fixed, leader->z.fixed);
+      Actor_SetPositionFixed(ACTOR_GARET_CHILD, leader->x.fixed,
+                             leader->z.fixed);
     }
   }
   Actor_WalkToAndWait(ACTOR_GARET_CHILD, 132, 1094);
@@ -1889,7 +1890,7 @@ static void ValePrologue_WatchAttemptToSaveFelix(void) {
   Event_Wait(90);
   FieldCamera_MoveTo(PIXELS(232), -1, PIXELS(1253), 1);
   FieldCamera_WaitForMove();
-  Actor_SetPosition(ACTOR_FELIX_CHILD, PIXELS(243), PIXELS(1277));
+  Actor_SetPosition(ACTOR_FELIX_CHILD, 243, 1277);
   wait(1);
   Sound_Play(SE_DRIP);
   {
@@ -2223,17 +2224,19 @@ static void ValePrologue_BoulderSweepsThemAway(void) {
       Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 217, 1367);
       actor = Actor_Get(ACTOR_PARTY_LEADER);
       if (actor != 0) {
-        Actor_SetPosition(ACTOR_GARET_CHILD, actor->x.fixed, actor->z.fixed);
+        Actor_SetPositionFixed(ACTOR_GARET_CHILD, actor->x.fixed,
+                               actor->z.fixed);
       }
       Actor_WalkToAndWait(ACTOR_GARET_CHILD, 235, 1367);
       Actor_FaceDirection(ACTOR_GARET_CHILD, FACING_NORTH_NORTHWEST, 0);
       actor = Actor_Get(ACTOR_PARTY_LEADER);
       if (actor != 0) {
-        Actor_SetPosition(ACTOR_JENNA_CHILD, actor->x.fixed, actor->z.fixed);
+        Actor_SetPositionFixed(ACTOR_JENNA_CHILD, actor->x.fixed,
+                               actor->z.fixed);
       }
       Actor_WalkToAndWait(ACTOR_JENNA_CHILD, 199, 1367);
       Actor_FaceDirection(ACTOR_JENNA_CHILD, FACING_NORTH_NORTHEAST, 0);
-      Actor_SetPosition(ACTOR_JENNAS_MOTHER, PIXELS(247), PIXELS(1210));
+      Actor_SetPosition(ACTOR_JENNAS_MOTHER, 247, 1210);
       Actor_FaceDirection(ACTOR_JENNAS_MOTHER, FACING_SOUTHWEST, 0);
       actor = Actor_Get(ACTOR_EXHAUSTED_STRONGMAN);
       sprite = actor->sprite;
@@ -2245,8 +2248,8 @@ static void ValePrologue_BoulderSweepsThemAway(void) {
       sprite->image.priority = 2;
       actor = Actor_Get(ACTOR_PARTY_LEADER);
       if (actor != 0) {
-        Actor_SetPosition(ACTOR_EXHAUSTED_STRONGMAN, actor->x.fixed,
-                          actor->z.fixed);
+        Actor_SetPositionFixed(ACTOR_EXHAUSTED_STRONGMAN, actor->x.fixed,
+                               actor->z.fixed);
       }
       Actor_WalkToAndWait(ACTOR_EXHAUSTED_STRONGMAN, 221, 1385);
       Actor_FaceDirection(ACTOR_EXHAUSTED_STRONGMAN, FACING_NORTH_NORTHWEST,
@@ -2255,7 +2258,7 @@ static void ValePrologue_BoulderSweepsThemAway(void) {
       Event_SetMessageId(MsgValeMomDadBack);
       // "Mom! Dad! We're back!"
       Event_ShowMessageThenWait(ACTOR_JENNA_CHILD, 0, 40);
-      Actor_SetPosition(ACTOR_DORA, PIXELS(101), PIXELS(1197));
+      Actor_SetPosition(ACTOR_DORA, 101, 1197);
       Actor_FaceDirection(ACTOR_DORA, FACING_SOUTHEAST, 0);
       // "Is that you, Jenna?"
       Event_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_DORA, 0, 10);
@@ -2544,19 +2547,19 @@ static void ValePrologue_ShowBoulderSweepingDownriver(void) {
   wait(1);
   // Stage the riverbank reactions between lightning flashes.
   Actor_SetAnimation(ACTOR_FELIX_CHILD, ANIM_FELIX_CLING_STILL);
-  Actor_SetPosition(ACTOR_DORA, PIXELS(169), PIXELS(1264));
+  Actor_SetPosition(ACTOR_DORA, 169, 1264);
   Actor_FaceDirection(ACTOR_DORA, FACING_NORTH, 0);
   Actor_SetAnimation(ACTOR_DORA, ANIM_DORA_RUN);
-  Actor_SetPosition(ACTOR_JENNA_CHILD, PIXELS(151), PIXELS(1292));
+  Actor_SetPosition(ACTOR_JENNA_CHILD, 151, 1292);
   Actor_FaceDirection(ACTOR_JENNA_CHILD, FACING_WEST, 0);
   Actor_SetAnimation(ACTOR_JENNA_CHILD, ANIM_JENNA_RUN);
-  Actor_SetPosition(ACTOR_EXHAUSTED_STRONGMAN, PIXELS(170), PIXELS(1313));
+  Actor_SetPosition(ACTOR_EXHAUSTED_STRONGMAN, 170, 1313);
   Actor_FaceDirection(ACTOR_EXHAUSTED_STRONGMAN, FACING_SOUTHWEST, 0);
   Actor_SetAnimation(ACTOR_EXHAUSTED_STRONGMAN, ANIM_STRONGMAN_RUN);
-  Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(185), PIXELS(1333));
+  Actor_SetPosition(ACTOR_PARTY_LEADER, 185, 1333);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 0);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_ISAAC_RECOIL);
-  Actor_SetPosition(ACTOR_GARET_CHILD, PIXELS(169), PIXELS(1384));
+  Actor_SetPosition(ACTOR_GARET_CHILD, 169, 1384);
   Actor_FaceDirection(ACTOR_GARET_CHILD, FACING_SOUTH, 0);
   Actor_SetAnimation(ACTOR_GARET_CHILD, ANIM_STILL);
   FieldCamera_MoveTo(PIXELS(166), 0, PIXELS(1337), 0);
@@ -2566,7 +2569,7 @@ static void ValePrologue_ShowBoulderSweepingDownriver(void) {
   actor->targetY = ACTOR_NO_TARGET;
   actor->targetZ = ACTOR_NO_TARGET;
   ValePrologue_FlashLightning();
-  Actor_SetPosition(ACTOR_BOULDER_SHADOW, PIXELS(218), PIXELS(1176));
+  Actor_SetPosition(ACTOR_BOULDER_SHADOW, 218, 1176);
   FieldCamera_MoveTo(PIXELS(210), 0, PIXELS(1196), 0);
   MapGrid_CenterOnFollowedPoint();
   boulderShadow->scaleX = 2 * Q16_ONE;
@@ -2610,7 +2613,7 @@ static void ValePrologue_ShowBoulderSweepingDownriver(void) {
   actor->targetY = ACTOR_NO_TARGET;
   actor->targetZ = ACTOR_NO_TARGET;
   boulderShadowSprite->image.priority = 1;
-  Actor_SetPosition(ACTOR_BOULDER_SHADOW, PIXELS(214), PIXELS(1216));
+  Actor_SetPosition(ACTOR_BOULDER_SHADOW, 214, 1216);
   Actor_FaceDirection(ACTOR_JENNAS_FATHER, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_JENNAS_MOTHER, FACING_NORTH, 20);
   Event_SetFlag(FLAG_WEATHER_HELD);
@@ -2640,7 +2643,7 @@ static void ValePrologue_ShowBoulderSweepingDownriver(void) {
   TilesetAnim_Resume(5);
   // Restore the riverbank and the idle actor scripts.
   ValePrologue_RebuildRiverbank();
-  Actor_SetPosition(ACTOR_DORA, PIXELS(165), PIXELS(1229));
+  Actor_SetPosition(ACTOR_DORA, 165, 1229);
   Actor_SetAnimation(ACTOR_DORA, ANIM_STAND);
   actor = Actor_Get(ACTOR_DORA);
   actor->facing = FACING_NORTHEAST;
@@ -2649,7 +2652,7 @@ static void ValePrologue_ShowBoulderSweepingDownriver(void) {
   departureActions = gValePrologue_SquashAndStretchScript;
   actor->userValue = 1;
   Actor_SetScript(ACTOR_DORA, departureActions);
-  Actor_SetPosition(ACTOR_JENNA_CHILD, PIXELS(165), PIXELS(1254));
+  Actor_SetPosition(ACTOR_JENNA_CHILD, 165, 1254);
   Actor_SetAnimation(ACTOR_JENNA_CHILD, ANIM_STAND);
   actor = Actor_Get(ACTOR_JENNA_CHILD);
   actor->facing = FACING_NORTHEAST;
@@ -2657,7 +2660,7 @@ static void ValePrologue_ShowBoulderSweepingDownriver(void) {
   actor->timer = Math_RemainderUnsigned(random, 90) + 60;
   actor->userValue = 2;
   Actor_SetScript(ACTOR_JENNA_CHILD, departureActions);
-  Actor_SetPosition(ACTOR_GARET_CHILD, PIXELS(152), PIXELS(1285));
+  Actor_SetPosition(ACTOR_GARET_CHILD, 152, 1285);
   Actor_SetAnimation(ACTOR_GARET_CHILD, ANIM_STAND);
   actor = Actor_Get(ACTOR_GARET_CHILD);
   actor->facing = FACING_NORTHEAST;
@@ -2665,7 +2668,7 @@ static void ValePrologue_ShowBoulderSweepingDownriver(void) {
   actor->timer = Math_RemainderUnsigned(random, 90) + 60;
   actor->userValue = 3;
   Actor_SetScript(ACTOR_GARET_CHILD, departureActions);
-  Actor_SetPosition(ACTOR_EXHAUSTED_STRONGMAN, PIXELS(180), PIXELS(1311));
+  Actor_SetPosition(ACTOR_EXHAUSTED_STRONGMAN, 180, 1311);
   actor = Actor_Get(ACTOR_EXHAUSTED_STRONGMAN);
   actor->facing = FACING_NORTHEAST;
   random = Random_Next();
@@ -2677,7 +2680,7 @@ static void ValePrologue_ShowBoulderSweepingDownriver(void) {
   Actor_Get(ACTOR_EXHAUSTED_STRONGMAN)->priorityFlags &=
       ~ACTOR_PRIORITY_AUTOMATIC;
   Task_AddFrame(ValePrologue_CopyLeaderSpritePriority, TASK_PASS_FRAME);
-  Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(181), PIXELS(1273));
+  Actor_SetPosition(ACTOR_PARTY_LEADER, 181, 1273);
   currentActor = Actor_Get(ACTOR_PARTY_LEADER);
   currentActor->facing = FACING_NORTHEAST;
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
@@ -2689,8 +2692,8 @@ static void ValePrologue_ShowBoulderSweepingDownriver(void) {
   Actor_SetPosition(ACTOR_JENNAS_MOTHER, 0, 0);
   Actor_SetPosition(ACTOR_FELIX_CHILD, 0, 0);
   Actor_SetPosition(ACTOR_BOULDER_SHADOW, 0, 0);
-  Actor_SetPosition(ACTOR_FIRST_ROCK + 6, PIXELS(144), PIXELS(1070));
-  Actor_SetPosition(ACTOR_FIRST_ROCK + 7, PIXELS(276), PIXELS(1270));
+  Actor_SetPosition(ACTOR_FIRST_ROCK + 6, 144, 1070);
+  Actor_SetPosition(ACTOR_FIRST_ROCK + 7, 276, 1270);
   wait(60);
   PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_BG);
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
@@ -2894,12 +2897,12 @@ static void ValePrologue_GaretFollowsIsaac(void) {
   Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
   Actor_FaceDirection(ACTOR_GARET_CHILD, FACING_SOUTH_SOUTHEAST, 20);
   Actor_Get(ACTOR_GARET_CHILD)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
-  Actor_SetPosition(ACTOR_GARET_CHILD, PIXELS(249), PIXELS(1240));
+  Actor_SetPosition(ACTOR_GARET_CHILD, 249, 1240);
   wait(1);
   Event_SetMessageId(MsgValeIsaac);
   // "Isaac..."
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_GARET_CHILD, 0);
-  Actor_SetPosition(ACTOR_GARET_CHILD, PIXELS(172), PIXELS(1278));
+  Actor_SetPosition(ACTOR_GARET_CHILD, 172, 1278);
   wait(1);
   FieldCamera_SetSpeed(PIXELS(4), PIXELS(1) / 2);
   FieldCamera_MoveTo(PIXELS(162), 0, PIXELS(1285), 1);

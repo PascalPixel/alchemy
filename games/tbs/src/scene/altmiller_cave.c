@@ -988,7 +988,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
     x = Actor_Get(ACTOR_INVISIBLE_BABI)->x.part.pixel;
     z = Actor_Get(ACTOR_INVISIBLE_BABI)->z.part.pixel;
     Actor_SetPosition(ACTOR_INVISIBLE_BABI, 0, 0);
-    Actor_SetPosition(ACTOR_BABI, PIXELS(x), PIXELS(z));
+    Actor_SetPosition(ACTOR_BABI, x, z);
   }
   actor->sprite->flags = 0;
   Sound_Play(MUS_BABI);
@@ -1265,8 +1265,8 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
 
     *slot = value;
   }
-  Actor_SetPosition(ACTOR_FIRST_SOLDIER, PIXELS(280), PIXELS(304));
-  Actor_SetPosition(ACTOR_SECOND_SOLDIER, PIXELS(296), PIXELS(304));
+  Actor_SetPosition(ACTOR_FIRST_SOLDIER, 280, 304);
+  Actor_SetPosition(ACTOR_SECOND_SOLDIER, 296, 304);
   Event_ShowMessage(ACTOR_FIRST_SOLDIER, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTH, 0);
   Event_Wait(10);

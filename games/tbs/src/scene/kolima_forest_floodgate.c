@@ -263,7 +263,7 @@ static void KolimaForestFloodgate_FlipFloodgateSwitch(void) {
   FieldMessage_Show(MsgFieldFlippedSwitch, 1);
   Sound_Play(SE_CRUNCH);
   if (*gKolimaForestFloodgateMap == 0) {
-    Actor_SetPosition(ACTOR_FLOODGATE_SPRAY, PIXELS(256), PIXELS(462));
+    Actor_SetPosition(ACTOR_FLOODGATE_SPRAY, 256, 462);
     MapGrid_CopyCells(77, 34, 1, 2, 83, 25);
     wait(3);
     MapGrid_CopyCells(78, 34, 1, 2, 83, 25);
@@ -288,7 +288,7 @@ static void KolimaForestFloodgate_FlipFloodgateSwitch(void) {
     MapGrid_CopyCells(65, 53, 2, 1, 79, 29);
     MapGrid_CopyCells(65, 40, 2, 4, 15, 28);
   } else {
-    Actor_SetPosition(ACTOR_FLOODGATE_SPRAY, PIXELS(256), PIXELS(480));
+    Actor_SetPosition(ACTOR_FLOODGATE_SPRAY, 256, 480);
     MapGrid_CopyCells(78, 34, 1, 2, 83, 25);
     wait(3);
     MapGrid_CopyCells(77, 34, 1, 2, 83, 25);

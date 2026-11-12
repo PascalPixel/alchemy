@@ -244,7 +244,7 @@ static void Lunpa_RevealSecrets(void) {
   }
   MapGrid_CopyCells(47, 4, 1, 1, 46, 4);
   MapGrid_CopyCellAttributes(34, 37, 3, 3, 13, 3);
-  Actor_SetPosition(ACTOR_HIDDEN_PUDDLE, PIXELS(232), PIXELS(72));
+  Actor_SetPosition(ACTOR_HIDDEN_PUDDLE, 232, 72);
   Actor_Get(ACTOR_HIDDEN_PUDDLE)->y.fixed = 0;
 #if TBS_PATCH_4
   if (GameFlag_Get(FLAG_LUNPA_PUDDLE_FROZEN)) {
@@ -255,7 +255,7 @@ static void Lunpa_RevealSecrets(void) {
   if (GameFlag_Get(FLAG_LUNPA_HIDDEN_PASSAGE_OPEN) != 0) {
     Lunpa_DrawHiddenPassagePicture(41, 49);
   } else {
-    Actor_SetPosition(ACTOR_SWITCH_SPARKLE, PIXELS(56), PIXELS(268));
+    Actor_SetPosition(ACTOR_SWITCH_SPARKLE, 56, 268);
     Actor_SetSpriteFlags(Actor_Get(ACTOR_SWITCH_SPARKLE), 0);
     actor = Actor_Get(ACTOR_SWITCH_SPARKLE);
     if (actor != NULL) {
@@ -833,9 +833,9 @@ static void Lunpa_KickUpLeaderDust(void) {
 /// caught in the fortress: the guards throw the leader out and down the steps.
 static void Lunpa_GuardsThrowIsaacOut(void) {
   Event_Start();
-  Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(160), PIXELS(128));
-  Actor_SetPosition(ACTOR_LEFT_GUARD, PIXELS(152), PIXELS(112));
-  Actor_SetPosition(ACTOR_RIGHT_GUARD, PIXELS(168), PIXELS(112));
+  Actor_SetPosition(ACTOR_PARTY_LEADER, 160, 128);
+  Actor_SetPosition(ACTOR_LEFT_GUARD, 152, 112);
+  Actor_SetPosition(ACTOR_RIGHT_GUARD, 168, 112);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
 #ifdef BUGFIX
   Actor_FaceDirection(ACTOR_LEFT_GUARD, FACING_SOUTH_SOUTHEAST, 0);

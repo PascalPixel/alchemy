@@ -530,16 +530,16 @@ static void TreeRooms_FightTret(void) {
   Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 2);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
-    Actor_SetPosition(ACTOR_GARET, leader->x.fixed, leader->z.fixed);
+    Actor_SetPositionFixed(ACTOR_GARET, leader->x.fixed, leader->z.fixed);
   }
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
-    Actor_SetPosition(ACTOR_IVAN, leader->x.fixed, leader->z.fixed);
+    Actor_SetPositionFixed(ACTOR_IVAN, leader->x.fixed, leader->z.fixed);
   }
   if (hasMia != 0) {
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     if (leader != NULL) {
-      Actor_SetPosition(ACTOR_MIA, leader->x.fixed, leader->z.fixed);
+      Actor_SetPositionFixed(ACTOR_MIA, leader->x.fixed, leader->z.fixed);
     }
     Actor_SetScript(ACTOR_MIA, gTreeRooms_MiaGathersActions);
   }
@@ -625,17 +625,17 @@ static void TreeRooms_PlayPostBattleConversation(void) {
   Actor_SetSpeed(ACTOR_GARET, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_SetSpeed(ACTOR_IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_SetSpeed(ACTOR_MIA, PIXELS(4) / 5, PIXELS(2) / 5);
-  Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(166), PIXELS(80));
+  Actor_SetPosition(ACTOR_PARTY_LEADER, 166, 80);
   partyActor = Actor_Get(ACTOR_PARTY_LEADER);
   partyActor->facing = FACING_NORTH;
-  Actor_SetPosition(ACTOR_GARET, PIXELS(148), PIXELS(90));
+  Actor_SetPosition(ACTOR_GARET, 148, 90);
   partyActor = Actor_Get(ACTOR_GARET);
   partyActor->facing = FACING_NORTH;
-  Actor_SetPosition(ACTOR_IVAN, PIXELS(182), PIXELS(90));
+  Actor_SetPosition(ACTOR_IVAN, 182, 90);
   partyActor = Actor_Get(ACTOR_IVAN);
   partyActor->facing = FACING_NORTH;
   if (hasMia != 0) {
-    Actor_SetPosition(ACTOR_MIA, PIXELS(166), PIXELS(104));
+    Actor_SetPosition(ACTOR_MIA, 166, 104);
     partyActor = Actor_Get(ACTOR_MIA);
     partyActor->facing = FACING_NORTH;
   }

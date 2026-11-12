@@ -1424,7 +1424,7 @@ s32 BabiLighthouse_SetupMap(void) {
     if (state->entrance ==
             BABI_LIGHTHOUSE_ENTRY_FROM_TUNNEL_RUINS_LADY_STATUES_SOUTH &&
         GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
-      Actor_SetPosition(ACTOR_RIGHT_PILLAR, PIXELS(312), PIXELS(328));
+      Actor_SetPosition(ACTOR_RIGHT_PILLAR, 312, 328);
     }
     BabiLighthouse_RedrawLedgePillarCells();
     actor = Actor_Get(ACTOR_RIGHT_PILLAR);
@@ -1525,18 +1525,18 @@ s32 BabiLighthouse_SetupMap(void) {
       }
     }
     if (GameFlag_Get(FLAG_BABI_LIGHTHOUSE_ASKED_TO_FOLLOW) == 0) {
-      Actor_SetPosition(ACTOR_IODEM, -PIXELS(64), -PIXELS(64));
-      Actor_SetPosition(ACTOR_WITNESS, PIXELS(280), PIXELS(296));
-      Actor_SetPosition(ACTOR_DOUBTING_THE_DOOR, PIXELS(312), PIXELS(248));
-      Actor_SetPosition(ACTOR_WORRIED_FOR_SHEBA, PIXELS(296), PIXELS(248));
-      Actor_SetPosition(ACTOR_FARAN, PIXELS(320), PIXELS(296));
+      Actor_SetPosition(ACTOR_IODEM, -64, -64);
+      Actor_SetPosition(ACTOR_WITNESS, 280, 296);
+      Actor_SetPosition(ACTOR_DOUBTING_THE_DOOR, 312, 248);
+      Actor_SetPosition(ACTOR_WORRIED_FOR_SHEBA, 296, 248);
+      Actor_SetPosition(ACTOR_FARAN, 320, 296);
       Actor_FaceDirection(ACTOR_WITNESS, FACING_EAST, 0);
       Actor_FaceDirection(ACTOR_DOUBTING_THE_DOOR, FACING_NORTH, 0);
       Actor_FaceDirection(ACTOR_WORRIED_FOR_SHEBA, FACING_NORTH, 0);
       Actor_FaceDirection(ACTOR_FARAN, FACING_WEST, 0);
       Event_Wait(5);
     } else if (GameFlag_Get(FLAG_BABI_LIGHTHOUSE_DOOR_SHOWN) != 0) {
-      Actor_SetPosition(ACTOR_IODEM, PIXELS(312), PIXELS(312));
+      Actor_SetPosition(ACTOR_IODEM, 312, 312);
       Actor_FaceDirection(ACTOR_IODEM, FACING_NORTH_NORTHWEST, 0);
       Actor_FaceDirection(ACTOR_WITNESS, FACING_NORTH_NORTHWEST, 0);
       Actor_FaceDirection(ACTOR_DOUBTING_THE_DOOR, FACING_NORTH_NORTHWEST, 0);
@@ -1545,8 +1545,8 @@ s32 BabiLighthouse_SetupMap(void) {
       Event_Wait(5);
     }
     if (GameFlag_Get(FLAG_BABI_LIGHTHOUSE_DOOR_OPEN) != 0) {
-      Actor_SetPosition(ACTOR_LEFT_DOOR, PIXELS(280), PIXELS(240));
-      Actor_SetPosition(ACTOR_RIGHT_DOOR, PIXELS(328), PIXELS(240));
+      Actor_SetPosition(ACTOR_LEFT_DOOR, 280, 240);
+      Actor_SetPosition(ACTOR_RIGHT_DOOR, 328, 240);
       Actor_FaceDirection(ACTOR_LEFT_DOOR, FACING_WEST, 0);
       Actor_FaceDirection(ACTOR_RIGHT_DOOR, FACING_EAST, 0);
       MapGrid_CopyCellAttributes(81, 14, 4, 1, 17, 14);

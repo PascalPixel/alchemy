@@ -550,11 +550,11 @@ static void VenusLighthouseAerie_OverhearSaturosAndMenardi(void) {
   arrivalPlatform->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   Actor_SetSpriteFlags(Actor_Get(ACTOR_RISING_PLATFORM), 0);
   Actor_SetSpritePriority(ACTOR_RISING_PLATFORM, 1);
-  Actor_SetPosition(ACTOR_RISING_PLATFORM, PIXELS(580), PIXELS(338));
+  Actor_SetPosition(ACTOR_RISING_PLATFORM, 580, 338);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   leader->motionFlags = 0;
   Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 1);
-  Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(581), PIXELS(288));
+  Actor_SetPosition(ACTOR_PARTY_LEADER, 581, 288);
   wait(1);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -873,15 +873,15 @@ static void VenusLighthouseAerie_ConfrontSaturosAndMenardi(void) {
   Actor_SetSpeed(ACTOR_MIA, PIXELS(7) / 5, PIXELS(7) / 10);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   if (actor != 0) {
-    Actor_SetPosition(ACTOR_GARET, actor->x.fixed, actor->z.fixed);
+    Actor_SetPositionFixed(ACTOR_GARET, actor->x.fixed, actor->z.fixed);
   }
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   if (actor != 0) {
-    Actor_SetPosition(ACTOR_IVAN, actor->x.fixed, actor->z.fixed);
+    Actor_SetPositionFixed(ACTOR_IVAN, actor->x.fixed, actor->z.fixed);
   }
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   if (actor != 0) {
-    Actor_SetPosition(ACTOR_MIA, actor->x.fixed, actor->z.fixed);
+    Actor_SetPositionFixed(ACTOR_MIA, actor->x.fixed, actor->z.fixed);
   }
   Actor_WalkTo(ACTOR_GARET, 328, 168);
   Actor_WalkTo(ACTOR_IVAN, 340, 196);
@@ -1399,26 +1399,26 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   Event_Start();
   MapGrid_CopyCellAttributes(17, 10, 4, 2, 17, 8);
   Actor_Get(ACTOR_GARET)->facing = FACING_WEST;
-  Actor_SetPosition(ACTOR_GARET, PIXELS(328), PIXELS(168));
+  Actor_SetPosition(ACTOR_GARET, 328, 168);
   Actor_Get(ACTOR_IVAN)->facing = FACING_WEST;
-  Actor_SetPosition(ACTOR_IVAN, PIXELS(340), PIXELS(196));
+  Actor_SetPosition(ACTOR_IVAN, 340, 196);
   Actor_Get(ACTOR_MIA)->facing = FACING_WEST;
-  Actor_SetPosition(ACTOR_MIA, PIXELS(326), PIXELS(204));
+  Actor_SetPosition(ACTOR_MIA, 326, 204);
   Actor_Get(ACTOR_SHEBA)->facing = FACING_SOUTH_SOUTHEAST;
-  Actor_SetPosition(ACTOR_SHEBA, PIXELS(268), PIXELS(154));
+  Actor_SetPosition(ACTOR_SHEBA, 268, 154);
   Actor_Get(ACTOR_FELIX)->facing = FACING_SOUTH_SOUTHEAST;
-  Actor_SetPosition(ACTOR_FELIX, PIXELS(268), PIXELS(164));
+  Actor_SetPosition(ACTOR_FELIX, 268, 164);
   actor = Actor_Get(ACTOR_SATUROS);
   actor->timer = 10;
   actor->facing = FACING_NORTH_NORTHEAST;
-  Actor_SetPosition(ACTOR_SATUROS, PIXELS(294), PIXELS(212));
+  Actor_SetPosition(ACTOR_SATUROS, 294, 212);
   Actor_SetAnimation(ACTOR_SATUROS, SATUROS_ANIMATION_LIE);
   Actor_SetScript(ACTOR_SATUROS, gVenusLighthouseAerie_ScaleStepAction);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_SATUROS), 0);
   actor = Actor_Get(ACTOR_MENARDI);
   actor->timer = 10;
   actor->facing = FACING_EAST;
-  Actor_SetPosition(ACTOR_MENARDI, PIXELS(286), PIXELS(192));
+  Actor_SetPosition(ACTOR_MENARDI, 286, 192);
   Actor_SetAnimation(ACTOR_MENARDI, MENARDI_ANIMATION_LIE);
   Actor_SetScript(ACTOR_MENARDI, gVenusLighthouseAerie_ScaleStepAction);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_MENARDI), 0);
@@ -2157,9 +2157,9 @@ static void VenusLighthouseAerie_StageShebasFall(void) {
   actor->y.fixed = PIXELS(32);
   actor->z.fixed = PIXELS(222);
   VenusLighthouseAerie_StopActorMotion(actor);
-  Actor_SetPosition(ACTOR_FELIX, PIXELS(196), PIXELS(220));
+  Actor_SetPosition(ACTOR_FELIX, 196, 220);
   Actor_SetAnimation(ACTOR_FELIX, FELIX_ANIMATION_KNEEL);
-  Actor_SetPosition(ACTOR_SHEBA, PIXELS(188), PIXELS(316));
+  Actor_SetPosition(ACTOR_SHEBA, 188, 316);
   Actor_SetAnimation(ACTOR_SHEBA, SHEBA_ANIMATION_HANG_ONE_HAND);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_SHEBA), 0);
   actor = Actor_Get(ACTOR_BEACON_STATUE_SOUTHWEST);
@@ -2198,19 +2198,19 @@ static void VenusLighthouseAerie_ShowSaturosAndMenardiFall(void) {
   MapGrid_CopyCellAttributes(17, 10, 4, 2, 17, 8);
   Actor_Get(ACTOR_PARTY_LEADER)->facing = FACING_NORTHWEST;
   Actor_Get(ACTOR_GARET)->facing = FACING_NORTHWEST;
-  Actor_SetPosition(ACTOR_GARET, PIXELS(328), PIXELS(168));
+  Actor_SetPosition(ACTOR_GARET, 328, 168);
   Actor_Get(ACTOR_IVAN)->facing = FACING_NORTHWEST;
-  Actor_SetPosition(ACTOR_IVAN, PIXELS(340), PIXELS(196));
+  Actor_SetPosition(ACTOR_IVAN, 340, 196);
   Actor_Get(ACTOR_MIA)->facing = FACING_NORTHWEST;
-  Actor_SetPosition(ACTOR_MIA, PIXELS(326), PIXELS(204));
+  Actor_SetPosition(ACTOR_MIA, 326, 204);
   Actor_Get(ACTOR_FELIX)->facing = FACING_NORTH_NORTHEAST;
-  Actor_SetPosition(ACTOR_FELIX, PIXELS(200), PIXELS(216));
+  Actor_SetPosition(ACTOR_FELIX, 200, 216);
   Actor_Get(ACTOR_SHEBA)->facing = FACING_NORTH_NORTHEAST;
-  Actor_SetPosition(ACTOR_SHEBA, PIXELS(200), PIXELS(216));
+  Actor_SetPosition(ACTOR_SHEBA, 200, 216);
   Actor_Get(ACTOR_SATUROS)->facing = FACING_SOUTH_SOUTHEAST;
-  Actor_SetPosition(ACTOR_SATUROS, PIXELS(310), PIXELS(158));
+  Actor_SetPosition(ACTOR_SATUROS, 310, 158);
   Actor_Get(ACTOR_MENARDI)->facing = FACING_SOUTH_SOUTHEAST;
-  Actor_SetPosition(ACTOR_MENARDI, PIXELS(292), PIXELS(158));
+  Actor_SetPosition(ACTOR_MENARDI, 292, 158);
 
   Actor_SetSpriteFlags(Actor_Get(ACTOR_BEAM_BOTTOM), 0);
   Actor_SetSpriteColorById(ACTOR_BEAM_BOTTOM, SPRITE_COLOR_WHITE);
@@ -2517,9 +2517,9 @@ static void VenusLighthouseAerie_EruptBeacon(void) {
   actor->x.fixed += PIXELS(16);
   actor->z.fixed += PIXELS(16);
   VenusLighthouseAerie_StopActorMotion(actor);
-  Actor_SetPosition(ACTOR_FELIX, PIXELS(196), PIXELS(220));
+  Actor_SetPosition(ACTOR_FELIX, 196, 220);
   Actor_SetAnimation(ACTOR_FELIX, FELIX_ANIMATION_KNEEL);
-  Actor_SetPosition(ACTOR_SHEBA, PIXELS(188), PIXELS(316));
+  Actor_SetPosition(ACTOR_SHEBA, 188, 316);
   Actor_SetAnimation(ACTOR_SHEBA, SHEBA_ANIMATION_HANG_ONE_HAND);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_SHEBA), 0);
   MapGrid_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
@@ -3206,11 +3206,11 @@ static void VenusLighthouseAerie_SpawnSideOrbitParticles(void) {
   drift = (u32)(Random_Next() * 48) >> 16 << 16;
   if ((s16)(grid->viewY >> 16) <= 129) {
     if (gFrameCount & 1) {
-      Actor_SetPosition(ACTOR_BEACON_ORB, PIXELS(304), PIXELS(164));
+      Actor_SetPosition(ACTOR_BEACON_ORB, 304, 164);
       Actor_Get(ACTOR_BEACON_ORB)->scaleX = Q16_ONE;
       Actor_Get(ACTOR_BEACON_ORB)->scaleY = Q16_ONE;
     } else {
-      Actor_SetPosition(ACTOR_BEACON_ORB, PIXELS(304), PIXELS(171));
+      Actor_SetPosition(ACTOR_BEACON_ORB, 304, 171);
       Actor_Get(ACTOR_BEACON_ORB)->scaleX = 13 * Q16_ONE / 10;
       Actor_Get(ACTOR_BEACON_ORB)->scaleY = 13 * Q16_ONE / 10;
     }

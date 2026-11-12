@@ -297,7 +297,7 @@ static void WestLunpaCave_HammetFindsBunza(void) {
     // Bring Hammet and the party into view as Bunza leaves his hiding place.
     GameFlag_Set(FLAG_LUNPA_CAVE_REUNION_SEEN);
     Event_Start();
-    Actor_SetPosition(ACTOR_BUNZA, PIXELS(144), PIXELS(400));
+    Actor_SetPosition(ACTOR_BUNZA, 144, 400);
     Actor_SetSpeed(ACTOR_BUNZA, PIXELS(3) / 2, PIXELS(3) / 4);
     Actor_WalkTo(ACTOR_BUNZA, 184, 400);
     Actor_WaitForMoveById(ACTOR_BUNZA);
@@ -309,7 +309,7 @@ static void WestLunpaCave_HammetFindsBunza(void) {
     FieldCamera_MoveTo(PIXELS(192), -1, PIXELS(432), 1);
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     if (leader != NULL) {
-      Actor_SetPosition(ACTOR_HAMMET, leader->x.fixed, leader->z.fixed);
+      Actor_SetPositionFixed(ACTOR_HAMMET, leader->x.fixed, leader->z.fixed);
     }
     Actor_SetSpeed(ACTOR_HAMMET, PIXELS(13) / 10, PIXELS(13) / 20);
     Actor_WalkTo(ACTOR_HAMMET, 168, 464);
@@ -317,7 +317,7 @@ static void WestLunpaCave_HammetFindsBunza(void) {
     Actor_FaceDirection(ACTOR_HAMMET, FACING_NORTH, 0);
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     if (leader != NULL) {
-      Actor_SetPosition(ACTOR_IVAN, leader->x.fixed, leader->z.fixed);
+      Actor_SetPositionFixed(ACTOR_IVAN, leader->x.fixed, leader->z.fixed);
     }
     Actor_SetSpeed(ACTOR_IVAN, PIXELS(13) / 10, PIXELS(13) / 20);
     Actor_WalkTo(ACTOR_IVAN, 152, 488);
@@ -325,7 +325,7 @@ static void WestLunpaCave_HammetFindsBunza(void) {
     Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     if (leader != NULL) {
-      Actor_SetPosition(ACTOR_MIA, leader->x.fixed, leader->z.fixed);
+      Actor_SetPositionFixed(ACTOR_MIA, leader->x.fixed, leader->z.fixed);
     }
     Actor_SetSpeed(ACTOR_MIA, PIXELS(13) / 10, PIXELS(13) / 20);
     Actor_WalkTo(ACTOR_MIA, 168, 488);
@@ -333,7 +333,7 @@ static void WestLunpaCave_HammetFindsBunza(void) {
     Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     if (leader != NULL) {
-      Actor_SetPosition(ACTOR_GARET, leader->x.fixed, leader->z.fixed);
+      Actor_SetPositionFixed(ACTOR_GARET, leader->x.fixed, leader->z.fixed);
     }
     Actor_SetSpeed(ACTOR_GARET, PIXELS(13) / 10, PIXELS(13) / 20);
     Actor_WalkTo(ACTOR_GARET, 184, 488);
@@ -418,12 +418,12 @@ static void Reunion_Converse(void) {
 
   // Arrange the reunion while the screen is closed, then reveal the group.
   Event_Start();
-  Actor_SetPosition(ACTOR_GARET, PIXELS(200), PIXELS(544));
-  Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(184), PIXELS(544));
-  Actor_SetPosition(ACTOR_MIA, PIXELS(168), PIXELS(544));
-  Actor_SetPosition(ACTOR_IVAN, PIXELS(212), PIXELS(528));
-  Actor_SetPosition(ACTOR_HAMMET, PIXELS(200), PIXELS(512));
-  Actor_SetPosition(ACTOR_BUNZA, PIXELS(168), PIXELS(512));
+  Actor_SetPosition(ACTOR_GARET, 200, 544);
+  Actor_SetPosition(ACTOR_PARTY_LEADER, 184, 544);
+  Actor_SetPosition(ACTOR_MIA, 168, 544);
+  Actor_SetPosition(ACTOR_IVAN, 212, 528);
+  Actor_SetPosition(ACTOR_HAMMET, 200, 512);
+  Actor_SetPosition(ACTOR_BUNZA, 168, 512);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);

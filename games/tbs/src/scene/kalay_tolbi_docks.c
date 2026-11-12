@@ -769,7 +769,7 @@ static void KalayTolbiDocks_PrepareKalayDocks(void) {
   }
   if (GameFlag_Get(FLAG_KALAY_COLOSSO_TOUR_LEFT) != 0) {
     if (GameFlag_Get(FLAG_KALAY_DOCKS_WENT_ASHORE) == 0) {
-      Actor_SetPosition(ACTOR_CHECKING_TICKETS, PIXELS(88), PIXELS(1304));
+      Actor_SetPosition(ACTOR_CHECKING_TICKETS, 88, 1304);
       Actor_FaceDirection(ACTOR_CHECKING_TICKETS, FACING_EAST, 0);
     }
   }
@@ -794,18 +794,17 @@ static void KalayTolbiDocks_PrepareTolbiDocks(void) {
     GameFlag_Clear(FLAG_TOLBI_DOCKS_ARRIVALS_GREETED);
   }
   if (GameFlag_Get(FLAG_TOLBI_DOCKS_ARRIVALS_GREETED)) {
-    Actor_SetPosition(ACTOR_MAN_HEARING_OF_THE_SCARY_TRIP, PIXELS(408),
-                      PIXELS(296));
+    Actor_SetPosition(ACTOR_MAN_HEARING_OF_THE_SCARY_TRIP, 408, 296);
     Actor_FaceDirection(ACTOR_MAN_HEARING_OF_THE_SCARY_TRIP, FACING_WEST, 0);
   }
   if (GameFlag_Get(FLAG_TOLBI_DOCKS_TOUR_GROUP_BLAMED)) {
-    Actor_SetPosition(ACTOR_TOUR_GUIDE, PIXELS(280), PIXELS(296));
+    Actor_SetPosition(ACTOR_TOUR_GUIDE, 280, 296);
     Actor_FaceDirection(ACTOR_TOUR_GUIDE, FACING_NORTH, 0);
-    Actor_SetPosition(ACTOR_BODYGUARD, PIXELS(288), PIXELS(280));
+    Actor_SetPosition(ACTOR_BODYGUARD, 288, 280);
     Actor_FaceDirection(ACTOR_BODYGUARD, FACING_NORTHEAST, 0);
-    Actor_SetPosition(ACTOR_ANGRY_YOUNG_MAN, PIXELS(232), PIXELS(304));
+    Actor_SetPosition(ACTOR_ANGRY_YOUNG_MAN, 232, 304);
     Actor_FaceDirection(ACTOR_ANGRY_YOUNG_MAN, FACING_SOUTH, 0);
-    Actor_SetPosition(ACTOR_STRANDED_WOMAN, PIXELS(240), PIXELS(312));
+    Actor_SetPosition(ACTOR_STRANDED_WOMAN, 240, 312);
     Actor_FaceDirection(ACTOR_STRANDED_WOMAN, FACING_NORTH, 0);
     actor = Actor_Get(ACTOR_ANGRY_YOUNG_MAN);
     actor->collisionFlags = 0;
@@ -880,8 +879,7 @@ static void KalayTolbiDocks_GaretSeesTheKaragol(void) {
 
   Event_Start();
   Field_EndBusyAndReveal();
-  Actor_SetPosition(ACTOR_YOUNG_MAN_ASKING_ABOUT_TOLBI, PIXELS(328),
-                    PIXELS(1424));
+  Actor_SetPosition(ACTOR_YOUNG_MAN_ASKING_ABOUT_TOLBI, 328, 1424);
   Actor_Get(ACTOR_YOUNG_MAN_ASKING_ABOUT_TOLBI)->paused = 1;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();

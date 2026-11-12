@@ -927,10 +927,10 @@ s32 Imil_Initialize(void) {
       } else if (GameFlag_Get(FLAG_IMIL_MIA_SENT_FOR) &&
                  GameFlag_Get(FLAG_IMIL_HEARD_MIA_WENT_TO_COUPLE)) {
         Actor_SetSpriteFlags(Actor_Get(ACTOR_OLD_MANS_BED), 0);
-        Actor_SetPosition(ACTOR_OLD_MAN, PIXELS(174), PIXELS(164));
+        Actor_SetPosition(ACTOR_OLD_MAN, 174, 164);
         Actor_SetSpriteFlags(Actor_Get(ACTOR_OLD_MAN), 0);
         Actor_SetAnimation(ACTOR_OLD_MAN, IMIL_ANIMATION_LIE_IN_BED);
-        Actor_SetPosition(ACTOR_OLD_WOMAN, PIXELS(168), PIXELS(152));
+        Actor_SetPosition(ACTOR_OLD_WOMAN, 168, 152);
         Actor_Get(ACTOR_OLD_WOMAN)->facing = FACING_SOUTH_SOUTHEAST;
         if (!GameFlag_Get(FLAG_IMIL_MET_MIA)) {
           Imil_MeetMiaAtOldCouplesHouse();
@@ -941,7 +941,7 @@ s32 Imil_Initialize(void) {
         MapGrid_CenterOnFollowedPoint();
         wait(1);
         if (GameFlag_Get(FLAG_IMIL_MIA_SENT_FOR)) {
-          Actor_SetPosition(ACTOR_OLD_WOMAN, PIXELS(149), PIXELS(116));
+          Actor_SetPosition(ACTOR_OLD_WOMAN, 149, 116);
           Actor_Get(ACTOR_OLD_WOMAN)->facing = FACING_EAST;
           Actor_Get(ACTOR_OLD_MAN)->userValue = 0;
           Actor_SetScript(ACTOR_OLD_MAN, gImil_ShiverScript);
@@ -956,11 +956,11 @@ s32 Imil_Initialize(void) {
       }
     } else if (entrance == ICE_ROOMS_HOUSE_NORTHEAST) {
       if (GameFlag_Get(FLAG_SATUROS_BEATEN_AT_MERCURY)) {
-        Actor_SetPosition(ACTOR_WEAPON_MERCHANT, PIXELS(364), PIXELS(578));
+        Actor_SetPosition(ACTOR_WEAPON_MERCHANT, 364, 578);
         Actor_SetSpritePriority(ACTOR_WEAPON_MERCHANT, 2);
         Actor_Get(ACTOR_WEAPON_MERCHANT)->collisionFlags |= 4;
         MapGrid_CopyCellsTo(6, 125, 22, 88, 3, 3);
-        Actor_SetPosition(ACTOR_ARMOR_MERCHANT, PIXELS(492), PIXELS(578));
+        Actor_SetPosition(ACTOR_ARMOR_MERCHANT, 492, 578);
         Actor_SetSpritePriority(ACTOR_ARMOR_MERCHANT, 2);
         Actor_Get(ACTOR_ARMOR_MERCHANT)->collisionFlags |= 4;
         MapGrid_CopyCellsTo(9, 125, 28, 88, 3, 3);
@@ -973,17 +973,15 @@ s32 Imil_Initialize(void) {
       }
     } else if (entrance == ICE_ROOMS_HOUSE_WEST) {
       if (GameFlag_Get(FLAG_SATUROS_BEATEN_AT_MERCURY)) {
-        Actor_SetPosition(ACTOR_ITEM_MERCHANT, PIXELS(460), PIXELS(258));
+        Actor_SetPosition(ACTOR_ITEM_MERCHANT, 460, 258);
         Actor_SetSpritePriority(ACTOR_ITEM_MERCHANT, 2);
         Actor_Get(ACTOR_ITEM_MERCHANT)->collisionFlags |= 4;
-        Actor_SetPosition(ACTOR_ITEM_MERCHANTS_DAUGHTER, PIXELS(408),
-                          PIXELS(264));
+        Actor_SetPosition(ACTOR_ITEM_MERCHANTS_DAUGHTER, 408, 264);
         Actor_Get(ACTOR_ITEM_MERCHANTS_DAUGHTER)->facing =
             FACING_EAST_SOUTHEAST;
         MapGrid_CopyCellsTo(12, 125, 26, 70, 3, 3);
       } else {
-        Actor_SetPosition(ACTOR_ITEM_MERCHANTS_DAUGHTER, PIXELS(460),
-                          PIXELS(258));
+        Actor_SetPosition(ACTOR_ITEM_MERCHANTS_DAUGHTER, 460, 258);
         Actor_SetSpritePriority(ACTOR_ITEM_MERCHANTS_DAUGHTER, 2);
         Actor_Get(ACTOR_ITEM_MERCHANTS_DAUGHTER)->collisionFlags |= 4;
         Actor_Get(ACTOR_ITEM_MERCHANT)->scaleX = -Q16_ONE;
@@ -994,10 +992,10 @@ s32 Imil_Initialize(void) {
       if (GameFlag_Get(FLAG_SATUROS_BEATEN_AT_MERCURY)) {
         Actor_Get(ACTOR_MEGAN)->facing = FACING_SOUTH_SOUTHEAST;
         if (!GameFlag_Get(FLAG_IMIL_MIA_SAID_FAREWELL)) {
-          Actor_SetPosition(ACTOR_MEGAN, PIXELS(650), PIXELS(161));
+          Actor_SetPosition(ACTOR_MEGAN, 650, 161);
           Imil_MiaSaysFarewellToApprentices();
         } else {
-          Actor_SetPosition(ACTOR_MEGAN, PIXELS(644), PIXELS(166));
+          Actor_SetPosition(ACTOR_MEGAN, 644, 166);
         }
       }
     }
@@ -1016,7 +1014,7 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   struct FieldWork *work;
 
   Event_Start();
-  Actor_SetPosition(ACTOR_MIA, PIXELS(182), PIXELS(150));
+  Actor_SetPosition(ACTOR_MIA, 182, 150);
   FieldCamera_MoveTo(PIXELS(141), -1, PIXELS(221), 0);
   wait(1);
   FieldCamera_SetSpeed(PIXELS(3) / 10, PIXELS(3) / 80);
@@ -1032,11 +1030,11 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH_NORTHEAST, 0);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
-    Actor_SetPosition(ACTOR_GARET, leader->x.fixed, leader->z.fixed);
+    Actor_SetPositionFixed(ACTOR_GARET, leader->x.fixed, leader->z.fixed);
   }
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
-    Actor_SetPosition(ACTOR_IVAN, leader->x.fixed, leader->z.fixed);
+    Actor_SetPositionFixed(ACTOR_IVAN, leader->x.fixed, leader->z.fixed);
   }
   Actor_WalkTo(ACTOR_GARET, 150, 234);
   Actor_WalkToAndWait(ACTOR_IVAN, 134, 234);
@@ -1469,7 +1467,7 @@ static void Imil_MiaSaysFarewellToApprentices(void) {
   Actor_SetSpeed(ACTOR_MIA, PIXELS(3) / 5, PIXELS(3) / 10);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
-    Actor_SetPosition(ACTOR_MIA, leader->x.fixed, leader->z.fixed);
+    Actor_SetPositionFixed(ACTOR_MIA, leader->x.fixed, leader->z.fixed);
   }
   Actor_WalkToAndWait(ACTOR_MIA, 673, 183);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);

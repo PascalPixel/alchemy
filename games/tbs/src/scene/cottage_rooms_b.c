@@ -688,9 +688,9 @@ static void CottageRoomsB_DoraWakesIsaac(void) {
   sprite->rotation = 1365;
   Actor_Get(ACTOR_TUNIC)->motionFlags = 0;
   Actor_SetSpriteFlags(Actor_Get(ACTOR_TUNIC), 0);
-  Actor_SetPosition(ACTOR_TUNIC, PIXELS(576), PIXELS(650));
+  Actor_SetPosition(ACTOR_TUNIC, 576, 650);
   TilesetAnim_Resume(7);
-  Actor_SetPosition(ACTOR_DORA, PIXELS(534), PIXELS(688));
+  Actor_SetPosition(ACTOR_DORA, 534, 688);
   ActorSystem_SuspendProjectionAndShowSprites();
   // On a dark screen, Dora's voice: "Isaac, wake up!" "Please, dear, wake up!"
   Message_SetVoiceFromActor(ACTOR_DORA);
@@ -854,8 +854,8 @@ static void CottageRoomsB_HurryToThePlaza(void) {
   Actor_SetPosition(ACTOR_YOUNG_MAN_SAW_MASK, 0, 0);
   Actor_SetPosition(ACTOR_INN_WORKER, 0, 0);
   Actor_SetPosition(ACTOR_MASKED_MAN, 0, 0);
-  Actor_SetPosition(ACTOR_DORA, PIXELS(431), PIXELS(391));
-  Actor_SetPosition(ACTOR_FLAME_AND_SMOKE, PIXELS(463), PIXELS(404));
+  Actor_SetPosition(ACTOR_DORA, 431, 391);
+  Actor_SetPosition(ACTOR_FLAME_AND_SMOKE, 463, 404);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_FLAME_AND_SMOKE), 0);
   actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   actor->motionFlags = 0;
@@ -896,7 +896,7 @@ static void CottageRoomsB_HurryToThePlaza(void) {
   // Boulder could fall at any second!"
   FieldCamera_SetSpeed(PIXELS(4), PIXELS(1) / 2);
   FieldCamera_MoveTo(PIXELS(414), -1, PIXELS(530), 1);
-  Actor_SetPosition(ACTOR_KYLE, PIXELS(414), PIXELS(530));
+  Actor_SetPosition(ACTOR_KYLE, 414, 530);
   Actor_WalkToAndWait(ACTOR_KYLE, 427, 483);
   FieldCamera_WaitForArrival();
   Event_SetMessageId(MsgValeDoraHurryBoulder);
@@ -1254,7 +1254,7 @@ static void CottageRoomsB_ShowMythrilBag(void) {
   FieldCamera_MoveTo(-1, -1, -1, 0);
   wait(1);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
-  Actor_SetPosition(ACTOR_KRADEN, PIXELS(480), PIXELS(202));
+  Actor_SetPosition(ACTOR_KRADEN, 480, 202);
   wait(1);
   FieldCamera_FollowActor(ACTOR_KRADEN, 1);
   clear = 0;

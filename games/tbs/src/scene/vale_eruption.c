@@ -257,7 +257,7 @@ static void ValeEruption_ReturnFromMtAleph(void) {
   // It's Grandpa and the others."
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
   Actor_SetSpeed(ACTOR_GARET, PIXELS(1) / 2, PIXELS(1) / 4);
-  Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(120), PIXELS(258));
+  Actor_SetPosition(ACTOR_PARTY_LEADER, 120, 258);
   FieldCamera_SetSpeed(PIXELS(3) / 2, PIXELS(3) / 16);
   FieldCamera_MoveTo(PIXELS(112), -1, PIXELS(320), 1);
   Event_Wait(40);

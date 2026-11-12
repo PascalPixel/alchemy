@@ -689,8 +689,8 @@ static void ColosseumAzartMatch_RestoreMatchResult(s32 result) {
   Actor_ReleaseById(ACTOR_PRIZE_B);
   Party_RestoreHpPp(1);
   Event_Start();
-  Actor_SetPosition(ACTOR_OPPONENT, PIXELS(1320), PIXELS(192));
-  Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(1288), PIXELS(192));
+  Actor_SetPosition(ACTOR_OPPONENT, 1320, 192);
+  Actor_SetPosition(ACTOR_PARTY_LEADER, 1288, 192);
   // BUG: FACING_SOUTH is passed where Actor_FaceActor takes an
   // actor id; Actor_Lookup has no actor past 191, so
   // neither turns.
@@ -881,12 +881,11 @@ static void ColosseumAzartMatch_ExplainFinalsRules(s32 guide) {
   Actor_SetSpeed(ACTOR_GARET, PIXELS(1), PIXELS(1) / 2);
   Actor_SetSpeed(ACTOR_IVAN, PIXELS(1), PIXELS(1) / 2);
   Actor_SetSpeed(ACTOR_MIA, PIXELS(1), PIXELS(1) / 2);
-  Actor_SetPosition(ACTOR_PARTY_LEADER, x << 16, (z << 16) - PIXELS(48));
-  Actor_SetPosition(ACTOR_GARET, (x << 16) - PIXELS(16),
-                    (z << 16) - PIXELS(40));
-  Actor_SetPosition(ACTOR_IVAN, (x << 16) + PIXELS(16), (z << 16) - PIXELS(40));
-  Actor_SetPosition(ACTOR_MIA, x << 16, (z << 16) - PIXELS(32));
-  Actor_SetPosition(guide, x << 16, (z << 16) - PIXELS(80));
+  Actor_SetPositionFixed(ACTOR_PARTY_LEADER, x << 16, (z << 16) - px(48));
+  Actor_SetPositionFixed(ACTOR_GARET, (x << 16) - px(16), (z << 16) - px(40));
+  Actor_SetPositionFixed(ACTOR_IVAN, (x << 16) + px(16), (z << 16) - px(40));
+  Actor_SetPositionFixed(ACTOR_MIA, x << 16, (z << 16) - px(32));
+  Actor_SetPositionFixed(guide, x << 16, (z << 16) - px(80));
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   actor->facing = FACING_NORTH;
   FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 0);
@@ -1080,7 +1079,7 @@ static void ColosseumAzartMatch_TalkToRockAttendant(s32 actorId) {
       Event_ShowMessage(actorId, 0);
       Colosso_RestoreWarrior(ACTOR_PARTY_LEADER);
       FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 0);
-      Actor_SetPosition(ACTOR_ROCK_A, PIXELS(312), PIXELS(168));
+      Actor_SetPosition(ACTOR_ROCK_A, 312, 168);
       Colosso_RepeatStageNumber(actorId, 1);
     } else if (path == COLOSSO_GUIDE_OFFER_CHEERING) {
       Event_SetMessageId(MsgColossoObjectiveStageClear);
@@ -1259,7 +1258,7 @@ static void ColosseumAzartMatch_TalkToLumberAttendant(s32 actorId) {
     Event_ShowMessage(actorId, 0);
     Colosso_RestoreWarrior(ACTOR_PARTY_LEADER);
     FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 0);
-    Actor_SetPosition(ACTOR_LOG_EAST_WEST, PIXELS(1016), PIXELS(168));
+    Actor_SetPosition(ACTOR_LOG_EAST_WEST, 1016, 168);
     Colosso_RepeatStageNumber(actorId, 4);
   } else if (path == COLOSSO_GUIDE_OFFER_CHEERING) {
     Event_SetMessageId(MsgColossoLogsKeyClearingStage);

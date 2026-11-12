@@ -383,7 +383,7 @@ static void GomaCavePillar_PushStumpOver(void) {
     Actor_SetSpriteColorById(ACTOR_MASK_FOR_STUMP, SPRITE_COLOR_BLACK);
     blendActor = Actor_Get(ACTOR_MASK_FOR_STUMP);
     Actor_SetBlendMode(blendActor, ACTOR_BLEND_TRANSLUCENT);
-    Actor_SetPosition(ACTOR_MASK_FOR_STUMP, PIXELS(414), PIXELS(240));
+    Actor_SetPosition(ACTOR_MASK_FOR_STUMP, 414, 240);
     Event_Wait(10);
     // Dust falls while the stump rocks on the edge.
     fragmentFunc = GomaCavePillar_SpawnStumpDust;
@@ -599,7 +599,7 @@ static void GomaCavePillar_WitnessCheersForgeCaught(void) {
   Actor_WalkToAndWait(ACTOR_WITNESS, 600, 216);
   Actor_WalkToAndWait(ACTOR_WITNESS, 600, 248);
   Actor_WalkToAndWait(ACTOR_WITNESS, 568, 296);
-  Actor_SetPosition(ACTOR_WITNESS, PIXELS(0), PIXELS(0));
+  Actor_SetPosition(ACTOR_WITNESS, 0, 0);
   Actor_Get(ACTOR_EAST_PILLAR)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   GameFlag_Set(FLAG_GOMA_CAVE_WITNESS_LEFT);
   Event_End();
@@ -620,7 +620,7 @@ s32 Scene_Initialize(void) {
   work->transitionFrames = 24;
   Actor_Get(ACTOR_STUMP)->collisionFlags |= ACTOR_NEAR_PSYNERGY;
   if (GameFlag_Get(FLAG_GOMA_CAVE_WEST_PILLAR_MOVED) != 0) {
-    Actor_SetPosition(ACTOR_WEST_PILLAR, PIXELS(344), PIXELS(104));
+    Actor_SetPosition(ACTOR_WEST_PILLAR, 344, 104);
     GomaCavePillar_CopyWestPillarCells(24);
   } else {
     GomaCavePillar_CopyWestPillarCells(18);
@@ -628,11 +628,11 @@ s32 Scene_Initialize(void) {
   // The cells GomaCavePillar_PushStumpOver copies as it sets the flag, redrawn
   // on arrival.
   if (GameFlag_Get(FLAG_GOMA_CAVE_STUMP_FELL) != 0) {
-    Actor_SetPosition(ACTOR_STUMP, PIXELS(0), PIXELS(0));
+    Actor_SetPosition(ACTOR_STUMP, 0, 0);
     MapGrid_CopyCellAttributes(21, 45, 4, 2, 21, 11);
   }
   if (GameFlag_Get(FLAG_GOMA_CAVE_EAST_PILLAR_IN_PLACE) != 0) {
-    Actor_SetPosition(ACTOR_EAST_PILLAR, PIXELS(616), PIXELS(232));
+    Actor_SetPosition(ACTOR_EAST_PILLAR, 616, 232);
     if (gMainRoutineWork.entrance ==
             GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_STREAM_EAST ||
         gMainRoutineWork.entrance ==
@@ -647,7 +647,7 @@ s32 Scene_Initialize(void) {
   if (gMainRoutineWork.entrance == ENTRANCE_STUMP_FALL) {
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
-    Actor_SetPosition(ACTOR_STUMP, PIXELS(384), PIXELS(192));
+    Actor_SetPosition(ACTOR_STUMP, 384, 192);
     Event_Wait(60);
     Actor_Get(ACTOR_STUMP)->layer = 2;
     Actor_MoveToAndWait(ACTOR_STUMP, 408, 192);

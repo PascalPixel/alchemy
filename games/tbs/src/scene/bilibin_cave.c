@@ -591,10 +591,10 @@ static void BilibinCave_RestoreIceRoom(void) {
     MapGrid_CopyCellAttributes(1, 2, 1, 1, destinationCellX, 24);
   }
   if (GameFlag_Get(FLAG_BILIBIN_CAVE_THIRD_TORCH_BY_PILLAR) != 0) {
-    Actor_SetPosition(ACTOR_THIRD_TORCH, PIXELS(570), PIXELS(376));
+    Actor_SetPosition(ACTOR_THIRD_TORCH, 570, 376);
   }
   if (GameFlag_Get(FLAG_BILIBIN_CAVE_FOURTH_TORCH_BY_PILLAR) != 0) {
-    Actor_SetPosition(ACTOR_FOURTH_TORCH, PIXELS(570), PIXELS(376));
+    Actor_SetPosition(ACTOR_FOURTH_TORCH, 570, 376);
   }
 }
 

@@ -566,7 +566,7 @@ static void LunpaFortress_MoveCrates(void) {
 
 /// The crates stay sunk in their hole.
 static void LunpaFortress_RestoreLoweredCrates(void) {
-  Actor_SetPosition(ACTOR_CAVE_CRATES, PIXELS(248), PIXELS(376));
+  Actor_SetPosition(ACTOR_CAVE_CRATES, 248, 376);
   LunpaFortress_LowerCrates();
 }
 
@@ -1628,10 +1628,9 @@ static void LunpaFortress_FightThreeGuards(void) {
       LUNPA_FORTRESS_UPPER_FLOOR_GUARD_ROOM_AFTER_BATTLE);
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED, 3);
-  Actor_SetPosition(ACTOR_UPPER_FLOOR_THREE_GUARDS_WEST, PIXELS(0), PIXELS(0));
-  Actor_SetPosition(ACTOR_UPPER_FLOOR_THREE_GUARDS_MIDDLE, PIXELS(0),
-                    PIXELS(0));
-  Actor_SetPosition(ACTOR_UPPER_FLOOR_THREE_GUARDS_EAST, PIXELS(0), PIXELS(0));
+  Actor_SetPosition(ACTOR_UPPER_FLOOR_THREE_GUARDS_WEST, 0, 0);
+  Actor_SetPosition(ACTOR_UPPER_FLOOR_THREE_GUARDS_MIDDLE, 0, 0);
+  Actor_SetPosition(ACTOR_UPPER_FLOOR_THREE_GUARDS_EAST, 0, 0);
   Event_End();
   GameFlag_Set(FLAG_LUNPA_FORTRESS_THREE_GUARDS_BEATEN);
 }
@@ -1639,12 +1638,9 @@ static void LunpaFortress_FightThreeGuards(void) {
 /// The three guards lie beaten where they fought.
 static void LunpaFortress_PlaceThreeBeatenGuards(void) {
   Event_Start();
-  Actor_SetPosition(ACTOR_UPPER_FLOOR_THREE_GUARDS_WEST, PIXELS(688),
-                    PIXELS(88));
-  Actor_SetPosition(ACTOR_UPPER_FLOOR_THREE_GUARDS_MIDDLE, PIXELS(704),
-                    PIXELS(88));
-  Actor_SetPosition(ACTOR_UPPER_FLOOR_THREE_GUARDS_EAST, PIXELS(720),
-                    PIXELS(96));
+  Actor_SetPosition(ACTOR_UPPER_FLOOR_THREE_GUARDS_WEST, 688, 88);
+  Actor_SetPosition(ACTOR_UPPER_FLOOR_THREE_GUARDS_MIDDLE, 704, 88);
+  Actor_SetPosition(ACTOR_UPPER_FLOOR_THREE_GUARDS_EAST, 720, 96);
   Actor_SetAnimation(ACTOR_UPPER_FLOOR_THREE_GUARDS_WEST, 5);
   Actor_SetAnimation(ACTOR_UPPER_FLOOR_THREE_GUARDS_MIDDLE, 5);
   Actor_SetAnimation(ACTOR_UPPER_FLOOR_THREE_GUARDS_EAST, 5);
@@ -1840,15 +1836,15 @@ static void LunpaFortress_GatherPartyAroundHammet(void) {
 
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
-    Actor_SetPosition(ACTOR_IVAN, leader->x.fixed, leader->z.fixed);
+    Actor_SetPositionFixed(ACTOR_IVAN, leader->x.fixed, leader->z.fixed);
   }
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
-    Actor_SetPosition(ACTOR_MIA, leader->x.fixed, leader->z.fixed);
+    Actor_SetPositionFixed(ACTOR_MIA, leader->x.fixed, leader->z.fixed);
   }
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
-    Actor_SetPosition(ACTOR_GARET, leader->x.fixed, leader->z.fixed);
+    Actor_SetPositionFixed(ACTOR_GARET, leader->x.fixed, leader->z.fixed);
   }
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
   Actor_SetSpeed(ACTOR_IVAN, PIXELS(7) / 10, PIXELS(7) / 20);
@@ -1956,7 +1952,7 @@ static void LunpaFortress_FindHammet(void) {
     Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH, 0);
     Actor_FaceDirection(ACTOR_MIA, FACING_SOUTH, 0);
     // Dodonpa approaches from the south, then springs the lever trap.
-    Actor_SetPosition(ACTOR_TOADONPA_DODONPA, PIXELS(456), PIXELS(320));
+    Actor_SetPosition(ACTOR_TOADONPA_DODONPA, 456, 320);
     FieldCamera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
     messageBase = MsgLunpaBackMoreGuess;
     Event_SetMessageId(messageBase);
@@ -2075,7 +2071,7 @@ static void LunpaFortress_FindHammet(void) {
     // "You shouldn't have risked yourself, Ivan."
     Event_ShowMessage(ACTOR_TOADONPA_HAMMET, 0);
     // Dodonpa approaches from the south, then springs the lever trap.
-    Actor_SetPosition(ACTOR_TOADONPA_DODONPA, PIXELS(456), PIXELS(320));
+    Actor_SetPosition(ACTOR_TOADONPA_DODONPA, 456, 320);
     Sound_Play(MUS_SILENCE);
     Event_SetMessageId(messageBase + 8);
     // "Hold it right there!"
@@ -2244,23 +2240,22 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
   Event_Start();
   leader = Actor_Get(ACTOR_TOADONPA_HAMMET);
   Actor_SetSpriteFlags(leader, SPRITE_FLAG_SHADOW);
-  Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(456), PIXELS(184));
+  Actor_SetPosition(ACTOR_PARTY_LEADER, 456, 184);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
-  Actor_SetPosition(ACTOR_GARET, PIXELS(440), PIXELS(192));
+  Actor_SetPosition(ACTOR_GARET, 440, 192);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH, 0);
-  Actor_SetPosition(ACTOR_MIA, PIXELS(488), PIXELS(184));
+  Actor_SetPosition(ACTOR_MIA, 488, 184);
   Actor_FaceDirection(ACTOR_MIA, FACING_SOUTH, 0);
-  Actor_SetPosition(ACTOR_IVAN, PIXELS(472), PIXELS(184));
+  Actor_SetPosition(ACTOR_IVAN, 472, 184);
   Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTH, 0);
-  Actor_SetPosition(ACTOR_TOADONPA_HAMMET, PIXELS(520), PIXELS(224));
+  Actor_SetPosition(ACTOR_TOADONPA_HAMMET, 520, 224);
   Actor_FaceDirection(ACTOR_TOADONPA_HAMMET, FACING_NORTH_NORTHWEST, 0);
-  Actor_SetPosition(ACTOR_TOADONPA_BOSS, PIXELS(448), PIXELS(237));
+  Actor_SetPosition(ACTOR_TOADONPA_BOSS, 448, 237);
   Actor_FaceDirection(ACTOR_TOADONPA_BOSS, FACING_WEST, 0);
-  Actor_SetPosition(ACTOR_INVISIBLE_TOADONPA_BOSS_PART, PIXELS(448),
-                    PIXELS(238));
+  Actor_SetPosition(ACTOR_INVISIBLE_TOADONPA_BOSS_PART, 448, 238);
   Actor_SetSpritePriority(ACTOR_INVISIBLE_TOADONPA_BOSS_PART, 3);
   Actor_SetAnimation(ACTOR_TOADONPA_BOSS, 3);
-  Actor_SetPosition(ACTOR_TOADONPA_DODONPA, PIXELS(458), PIXELS(243));
+  Actor_SetPosition(ACTOR_TOADONPA_DODONPA, 458, 243);
   Actor_FaceDirection(ACTOR_TOADONPA_DODONPA, FACING_SOUTH, 0);
   Actor_SetAnimation(ACTOR_TOADONPA_DODONPA, 5);
   Event_StartScreenTransition();
@@ -2623,7 +2618,7 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
   Actor_FaceActor(ACTOR_MIA, ACTOR_PARTY_LEADER, 0);
   Actor_FaceActor(ACTOR_IVAN, ACTOR_PARTY_LEADER, 0);
   Actor_FaceActor(ACTOR_TOADONPA_HAMMET, ACTOR_PARTY_LEADER, 0);
-  Actor_SetPosition(ACTOR_TOADONPA_DONPA, PIXELS(456), PIXELS(304));
+  Actor_SetPosition(ACTOR_TOADONPA_DONPA, 456, 304);
   Actor_SetSpeed(ACTOR_TOADONPA_DONPA, PIXELS(1) / 2, PIXELS(1) / 4);
   if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
     Sound_Play(MUS_SILENCE);
@@ -2904,7 +2899,7 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
                          leader->z.part.pixel);
   }
   Actor_WaitForMoveById(ACTOR_GARET);
-  Actor_SetPosition(ACTOR_GARET, PIXELS(0), PIXELS(0));
+  Actor_SetPosition(ACTOR_GARET, 0, 0);
   Actor_SetAnimation(ACTOR_IVAN, ANIM_WALK);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != 0) {
@@ -2912,14 +2907,14 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
                          leader->z.part.pixel);
   }
   Actor_WaitForMoveById(ACTOR_IVAN);
-  Actor_SetPosition(ACTOR_IVAN, PIXELS(0), PIXELS(0));
+  Actor_SetPosition(ACTOR_IVAN, 0, 0);
   Actor_SetAnimation(ACTOR_MIA, ANIM_WALK);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != 0) {
     Actor_SetDestination(ACTOR_MIA, leader->x.part.pixel, leader->z.part.pixel);
   }
   Actor_WaitForMoveById(ACTOR_MIA);
-  Actor_SetPosition(ACTOR_MIA, PIXELS(0), PIXELS(0));
+  Actor_SetPosition(ACTOR_MIA, 0, 0);
   Event_Wait(30);
   Actor_SetSpeed(ACTOR_TOADONPA_HAMMET, PIXELS(2) / 5, PIXELS(1) / 5);
   Actor_WalkTo(ACTOR_TOADONPA_HAMMET, 472, 184);
@@ -3450,14 +3445,13 @@ s32 Scene_Initialize(void) {
         LUNPA_FORTRESS_TOADONPA_FROM_LUNPA_FORTRESS_CAVE_NORTHWEST) {
       MapGrid_SetShownLayers(LUNPA_FORTRESS_ROOM_LAYERS);
       if (GameFlag_Get(FLAG_DODONPA_LOCKED_UP) != 0) {
-        Actor_SetPosition(ACTOR_TOADONPA_HAMMET, PIXELS(0), PIXELS(0));
-        Actor_SetPosition(ACTOR_TOADONPA_CELL_GUARD, PIXELS(432), PIXELS(344));
+        Actor_SetPosition(ACTOR_TOADONPA_HAMMET, 0, 0);
+        Actor_SetPosition(ACTOR_TOADONPA_CELL_GUARD, 432, 344);
         Actor_FaceDirection(ACTOR_TOADONPA_CELL_GUARD, FACING_SOUTH_SOUTHWEST,
                             0);
-        Actor_SetPosition(ACTOR_TOADONPA_DODONPA, PIXELS(456), PIXELS(288));
+        Actor_SetPosition(ACTOR_TOADONPA_DODONPA, 456, 288);
         Actor_FaceDirection(ACTOR_TOADONPA_DODONPA, FACING_SOUTH_SOUTHWEST, 0);
-        Actor_SetPosition(ACTOR_INVISIBLE_TOADONPA_DODONPA, PIXELS(456),
-                          PIXELS(320));
+        Actor_SetPosition(ACTOR_INVISIBLE_TOADONPA_DODONPA, 456, 320);
         Actor_SetSpriteFlags(Actor_Get(ACTOR_INVISIBLE_TOADONPA_DODONPA), 0);
       }
     }
@@ -3543,16 +3537,16 @@ static void LunpaFortress_InitializeUpperFloor(void) {
   Actor_SetSpriteColorById(ACTOR_UPPER_FLOOR_SECOND_PATROL, SPRITE_COLOR_GRB);
   Actor_SetSpriteColorById(ACTOR_UPPER_FLOOR_HALL_PATROL, SPRITE_COLOR_GRB);
   if (GameFlag_Get(FLAG_LUNPA_FORTRESS_WEST_GUARD_BEATEN)) {
-    Actor_SetPosition(ACTOR_UPPER_FLOOR_WEST_GUARD, PIXELS(0), PIXELS(0));
+    Actor_SetPosition(ACTOR_UPPER_FLOOR_WEST_GUARD, 0, 0);
   }
   if (GameFlag_Get(FLAG_LUNPA_FORTRESS_MIDDLE_GUARD_BEATEN)) {
-    Actor_SetPosition(ACTOR_UPPER_FLOOR_HALL_GUARD, PIXELS(0), PIXELS(0));
+    Actor_SetPosition(ACTOR_UPPER_FLOOR_HALL_GUARD, 0, 0);
   }
   if (GameFlag_Get(FLAG_LUNPA_FORTRESS_EAST_GUARD_BEATEN)) {
-    Actor_SetPosition(ACTOR_UPPER_FLOOR_EAST_GUARD, PIXELS(0), PIXELS(0));
+    Actor_SetPosition(ACTOR_UPPER_FLOOR_EAST_GUARD, 0, 0);
   }
   if (GameFlag_Get(FLAG_LUNPA_FORTRESS_CELL_KEY)) {
-    Actor_SetPosition(ACTOR_UPPER_FLOOR_CELL_KEY, PIXELS(0), PIXELS(0));
+    Actor_SetPosition(ACTOR_UPPER_FLOOR_CELL_KEY, 0, 0);
   }
   switch (gMainRoutineWork.entrance) {
   case LUNPA_FORTRESS_UPPER_FLOOR_FROM_LUNPA_FORTRESS_GROUND_FLOOR_SOUTH:
@@ -3576,7 +3570,7 @@ static void LunpaFortress_InitializeUpperFloor(void) {
     MapGrid_SetShownLayers(LUNPA_FORTRESS_ROOM_LAYERS);
     Actor_SetSpriteFlags(Actor_Get(ACTOR_UPPER_FLOOR_DONPA), 0);
     if (GameFlag_Get(FLAG_LUNPA_FORTRESS_REWARD_SHOWN)) {
-      Actor_SetPosition(ACTOR_UPPER_FLOOR_ATTENDANT, PIXELS(872), PIXELS(120));
+      Actor_SetPosition(ACTOR_UPPER_FLOOR_ATTENDANT, 872, 120);
     }
     break;
   case LUNPA_FORTRESS_UPPER_FLOOR_EAST_PASSAGE_FROM_CELL_KEY_ROOM:
@@ -3636,15 +3630,15 @@ static void LunpaFortress_InitializeCave(void) {
   Event_SetFlag(FLAG_LUNPA_FORTRESS_FIRST_SWITCH_UNDER_IVY);
   Event_SetFlag(FLAG_LUNPA_FORTRESS_SECOND_SWITCH_UNDER_IVY);
   if (GameFlag_Get(FLAG_LUNPA_FORTRESS_FIRST_SWITCH_IVY_BLOWN_AWAY)) {
-    Actor_SetPosition(ACTOR_CAVE_FIRST_SWITCH_IVY, PIXELS(0), PIXELS(0));
+    Actor_SetPosition(ACTOR_CAVE_FIRST_SWITCH_IVY, 0, 0);
     GameFlag_Clear(FLAG_LUNPA_FORTRESS_FIRST_SWITCH_UNDER_IVY);
   }
   if (GameFlag_Get(FLAG_LUNPA_FORTRESS_PASSAGE_IVY_BLOWN_AWAY)) {
-    Actor_SetPosition(ACTOR_CAVE_PASSAGE_IVY, PIXELS(0), PIXELS(0));
+    Actor_SetPosition(ACTOR_CAVE_PASSAGE_IVY, 0, 0);
     LunpaFortress_OpenIvyPassage();
   }
   if (GameFlag_Get(FLAG_LUNPA_FORTRESS_SECOND_SWITCH_IVY_BLOWN_AWAY)) {
-    Actor_SetPosition(ACTOR_CAVE_SECOND_SWITCH_IVY, PIXELS(0), PIXELS(0));
+    Actor_SetPosition(ACTOR_CAVE_SECOND_SWITCH_IVY, 0, 0);
     GameFlag_Clear(FLAG_LUNPA_FORTRESS_SECOND_SWITCH_UNDER_IVY);
   }
   if (GameFlag_Get(FLAG_LUNPA_FORTRESS_FIRST_SWITCH_FLIPPED)) {

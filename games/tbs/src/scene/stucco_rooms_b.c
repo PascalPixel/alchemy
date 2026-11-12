@@ -359,8 +359,7 @@ s32 StuccoRoomsB_ApplyEntryState(void) {
     actor->priorityFlags = clearedPriorityFlags;
     actor->sprite->image.priority = 2;
     if (Event_GetFlag(FLAG_STUCCO_ROOMS_B_MEDAL_HIDDEN) != 0) {
-      Actor_SetPosition(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN, PIXELS(560),
-                        PIXELS(680));
+      Actor_SetPosition(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN, 560, 680);
       Actor_FaceDirection(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN, FACING_WEST, 0);
     }
     // Each short event plays once, only when entering its room.

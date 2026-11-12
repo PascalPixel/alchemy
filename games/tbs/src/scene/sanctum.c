@@ -490,7 +490,7 @@ s32 Sanctum_Initialize(void) {
   case SANCTUM_FROM_VAULT_REVISIT:
   case SANCTUM_FROM_LOG_ROOMS_A:
     if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) != 0) {
-      Actor_SetPosition(ACTOR_GOLD_STATUE, PIXELS(200), PIXELS(80));
+      Actor_SetPosition(ACTOR_GOLD_STATUE, 200, 80);
     }
     GameFlag_Clear(FLAG_SHOW_AREA_NAME);
     break;
@@ -1301,7 +1301,7 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   Sound_Play(MUS_FOREST);
   Event_PlaySound(SE_MATERIALIZE);
   // The Wise One enters while the healer's afterimages appear.
-  Actor_SetPosition(ACTOR_WISE_ONE, PIXELS(200), PIXELS(8));
+  Actor_SetPosition(ACTOR_WISE_ONE, 200, 8);
   Actor_SetSpeed(ACTOR_WISE_ONE, PIXELS(2) / 5, PIXELS(1) / 5);
   Actor_MoveToAndWait(ACTOR_WISE_ONE, 200, 72);
   Sound_Play(SE_STOP_ACTION_SE);
@@ -1610,7 +1610,8 @@ static void Sanctum_ShowHealerAfterimage(void) {
 
   actor = Actor_Get(ACTOR_HEALER);
   if (actor != 0) {
-    Actor_SetPosition(ACTOR_HEALER_AFTERIMAGE, actor->x.fixed, actor->z.fixed);
+    Actor_SetPositionFixed(ACTOR_HEALER_AFTERIMAGE, actor->x.fixed,
+                           actor->z.fixed);
   }
   Actor_SetAnimation(ACTOR_HEALER_AFTERIMAGE, 0);
   afterimage = Actor_Get(ACTOR_HEALER_AFTERIMAGE);

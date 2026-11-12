@@ -860,7 +860,7 @@ static void CrossboneIsleSteppingStones_FlipWaterSwitch(void) {
     Actor_Get(ACTOR_WATER)->motionFlags = waterRaised;
     water = Actor_Get(ACTOR_WATER);
     water->y.fixed = -PIXELS(32);
-    Actor_SetPosition(ACTOR_WATER, PIXELS(272), PIXELS(416));
+    Actor_SetPosition(ACTOR_WATER, 272, 416);
     Actor_SetAnimation(ACTOR_WATER, 1);
     MapGrid_AnimateCells(gCrossboneIsleSteppingStones_FloodgateCloseSteps, 80,
                          24);
@@ -879,7 +879,7 @@ static void CrossboneIsleSteppingStones_FlipWaterSwitch(void) {
     Actor_Get(ACTOR_WATER)->motionFlags = 0;
     water = Actor_Get(ACTOR_WATER);
     water->y.fixed = -PIXELS(32);
-    Actor_SetPosition(ACTOR_WATER, PIXELS(272), PIXELS(436));
+    Actor_SetPosition(ACTOR_WATER, 272, 436);
     Actor_SetAnimation(ACTOR_WATER, 2);
     MapGrid_CopyCellsTo(65, 45, 16, 27, 2, 4);
     MapGrid_AnimateCells(gCrossboneIsleSteppingStones_FloodgateOpenSteps, 80,

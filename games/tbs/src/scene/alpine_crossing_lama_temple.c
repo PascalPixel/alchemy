@@ -353,12 +353,12 @@ static void LamaTemple_EnterHamasRoom(void) {
 /// Garet's two questions are yes or no choices.
 static void LamaTemple_RunHamasFarewell(void) {
   Event_Start();
-  Actor_SetPosition(ACTOR_TEMPLE_HAMA, PIXELS(136), PIXELS(168));
+  Actor_SetPosition(ACTOR_TEMPLE_HAMA, 136, 168);
   Actor_FaceDirection(ACTOR_TEMPLE_HAMA, FACING_SOUTH_SOUTHWEST, 0);
-  Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(144), PIXELS(200));
-  Actor_SetPosition(ACTOR_GARET, PIXELS(160), PIXELS(192));
-  Actor_SetPosition(ACTOR_IVAN, PIXELS(128), PIXELS(200));
-  Actor_SetPosition(ACTOR_MIA, PIXELS(112), PIXELS(192));
+  Actor_SetPosition(ACTOR_PARTY_LEADER, 144, 200);
+  Actor_SetPosition(ACTOR_GARET, 160, 192);
+  Actor_SetPosition(ACTOR_IVAN, 128, 200);
+  Actor_SetPosition(ACTOR_MIA, 112, 192);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
@@ -591,7 +591,7 @@ static void LamaTemple_ShowFalseWall(void) {
 
   MapGrid_CopyCellAttributes(85, 9, 1, 1, 21, 9);
   TreasureSpot_SetActorPosition(TREASURE_SPOT_PASSAGE, 0, 0);
-  Actor_SetPosition(ACTOR_PASSAGE_ROCK, PIXELS(344), PIXELS(152));
+  Actor_SetPosition(ACTOR_PASSAGE_ROCK, 344, 152);
 }
 
 /// Reveal in Lama Temple shows the passage behind the mossy rock.
@@ -637,7 +637,7 @@ static void AlpineCrossing_FeizhiArrives(void) {
 
   if (GameFlag_Get(FLAG_FEIZHI_WENT_TO_HSU)) {
     Event_Start();
-    Actor_SetPosition(ACTOR_FEIZHI, PIXELS(536), PIXELS(216));
+    Actor_SetPosition(ACTOR_FEIZHI, 536, 216);
     Event_SetMessageId(MsgMountainYahhSilkRoadBouldersBlock);
     // "Yahh! Silk Road! Boulders block the road!"
     Event_ShowMessageThenWait(ACTOR_FEIZHI, 0, 20);
@@ -1037,7 +1037,7 @@ s32 Scene_Initialize(void) {
     MapGrid_CopyCellAttributes(21, 9, 1, 1, 21, 73);
     LamaTemple_ShowFalseWall();
     if (GameFlag_Get(FLAG_HSU_RESCUED)) {
-      Actor_SetPosition(ACTOR_CHI_MONK, PIXELS(136), PIXELS(256));
+      Actor_SetPosition(ACTOR_CHI_MONK, 136, 256);
       Actor_FaceDirection(ACTOR_CHI_MONK, FACING_EAST, 0);
     }
     entrance = gMainRoutineWork.entrance;
@@ -1098,16 +1098,16 @@ s32 Scene_Initialize(void) {
         !GameFlag_Get(FLAG_HSU_RESCUED)) {
       Actor_SetPosition(ACTOR_FIRST_WORKER, 0, 0);
       Actor_SetPosition(ACTOR_SECOND_WORKER, 0, 0);
-      Actor_SetPosition(ACTOR_HAMA, PIXELS(192), PIXELS(264));
-      Actor_SetPosition(ACTOR_HSU, PIXELS(164), PIXELS(280));
-      Actor_SetPosition(ACTOR_FEIZHI, PIXELS(184), PIXELS(304));
+      Actor_SetPosition(ACTOR_HAMA, 192, 264);
+      Actor_SetPosition(ACTOR_HSU, 164, 280);
+      Actor_SetPosition(ACTOR_FEIZHI, 184, 304);
       Actor_FaceDirection(ACTOR_HAMA, FACING_SOUTH_SOUTHWEST, 0);
       Actor_FaceDirection(ACTOR_FEIZHI, FACING_NORTH_NORTHWEST, 0);
       Actor_SetScript(ACTOR_HSU, gAlpineCrossing_HsuStruggle);
       Actor_Get(ACTOR_HSU)->scaleX = -Q16_ONE;
     }
     if (!Event_GetFlag(FLAG_HSU_RESCUED)) {
-      Actor_SetPosition(ACTOR_HSU, PIXELS(164), PIXELS(280));
+      Actor_SetPosition(ACTOR_HSU, 164, 280);
       Actor_SetScript(ACTOR_HSU, gAlpineCrossing_HsuStruggle);
       Actor_Get(ACTOR_HSU)->scaleX = -Q16_ONE;
     }

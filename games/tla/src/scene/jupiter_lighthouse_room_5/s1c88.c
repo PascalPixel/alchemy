@@ -1,3 +1,6 @@
+/// @file
+/// Scene code of overlay 0x69e, in ROM order, from s1c88's offset up to the next object the overlay links.
+
 #include "types.h"
 #include "field_effect.h"
 #include "field_sprite.h"
@@ -88,3 +91,8 @@ void Func_02001c88(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   if ((flags & EFFECT_USE_UPDATE) != 0)
     effect->update = options->update;
 }
+
+#define CELL_TABLE Data_0200354c
+#define CELL_SPRITE_DRAW Func_02001e50
+#define CELL_PUSH_SLOT_ENTRY Func_020027d8
+#include "../../field/map/cell_sprite.c"

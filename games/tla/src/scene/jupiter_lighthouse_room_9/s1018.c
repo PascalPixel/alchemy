@@ -1,3 +1,6 @@
+/// @file
+/// Scene code of overlay 0x6a2, in ROM order, from s1018's offset up to the next object the overlay links.
+
 #include "types.h"
 #include "field_effect.h"
 #include "main_routine_work.h"
@@ -78,3 +81,8 @@ void Func_02001018(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   if ((flags & EFFECT_USE_UPDATE) != 0)
     effect->update = options->update;
 }
+
+#define CELL_TABLE Data_02002764
+#define CELL_SPRITE_DRAW Func_020011e0
+#define CELL_PUSH_SLOT_ENTRY Func_02001b40
+#include "../../field/map/cell_sprite.c"

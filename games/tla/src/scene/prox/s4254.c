@@ -1,6 +1,10 @@
+/// @file
+/// Scene code of overlay 0x6a8, in ROM order, from s4254's offset up to the next object the overlay links.
+
 #include "types.h"
 #include "system/task.h"
 #include "event_inline.h"
+#include "ram_buffer.h"
 
 extern char ResourceId_FallingRock;
 
@@ -75,4 +79,21 @@ void Func_02004254(void) {
     work->next = zero;
   }
   StartTask(Func_02004114, 0x480);
+}
+
+struct SparkWork {
+  u8 unk0000[0x1604];
+  s16 resource;
+};
+
+void Resource_ResetEntry(s32 entry);
+void HeapSlot_Release(s32 slot);
+void Func_02004114(void);
+
+void Func_02004310(void) {
+  struct SparkWork *work = Ram_HeapSlots->menuRuntime;
+
+  FieldTask_Remove(Func_02004114);
+  Resource_ResetEntry(work->resource);
+  HeapSlot_Release(220);
 }

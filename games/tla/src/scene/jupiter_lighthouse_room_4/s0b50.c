@@ -1,9 +1,18 @@
+/// @file
+/// Scene code of overlay 0x69d, in ROM order, from s0b50's offset up to the next object the overlay links.
+
 #include "types.h"
 #include "call.h"
 #include "iwram_call.h"
 #include "actor.h"
 #include "field_effect.h"
 #include "event_inline.h"
+#include "field_event.h"
+#include "field_sprite.h"
+#include "ram_buffer.h"
+#include "map.h"
+#include "vram_tab.h"
+#include "task.h"
 
 struct GustObject {
   u8 unk00[6];
@@ -63,3 +72,250 @@ struct GustObject *Func_02000b50(struct GustObject *source) {
                 &options);
   return object;
 }
+
+extern u32 gFrameCount;
+
+u32 Random16Far(void);
+
+s32 Func_02000c28(struct FieldActor *object) {
+  struct EffectOptions options;
+  s32 x;
+  s32 y;
+  s32 velocityY;
+
+  if ((gFrameCount & 7) == 0) {
+    options.priority = 3;
+    options.startScaleX = 0xb333;
+    options.startScaleY = 0xb333;
+    options.palette = 14;
+    x = object->x + ((((Random16Far() * 9) >> 16) - 4) << 16);
+    y = object->y + ((32 - ((Random16Far() * 20) >> 16)) << 16);
+    velocityY = (s32)(((((Random16Far() * 5) >> 16) << 16) + 0x50000)) / 10;
+    Func_02001258(x, y, object->z, 0, velocityY, 0,
+                  EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY |
+                      EFFECT_USE_START_SCALE,
+                  &options);
+  }
+  return 0;
+}
+
+void Animation_ApplyChildValues(struct Actor *object, s32 value);
+
+void Func_02000cc8(void) {
+  /* FAKEMATCH(wrapper): calls forwarded through inlines (call.h's Call and
+   * Value, this file's own); as direct calls, 165 of 165 instructions differ in
+   * tla-en. */
+  struct Actor *left = Actor_Get(9);
+  struct Actor *right = Actor_Get(10);
+  struct Actor *rider = Actor_Get(23);
+  struct FieldSprite *sprite = rider->animation;
+
+  Actor_SetPosition(24, 0x2000000, 0xf80000);
+  Actor_SetPosition(23, 0x2000000, 0xf80000);
+  Actor_SetPosition(9, 0x1d80000, 0x1000000);
+  Actor_SetPosition(10, 0x2280000, 0x1000000);
+  Actor_Get(24)->scaleX = 0;
+  rider->motionFlags = 0;
+  rider->y = rider->terrainHeight;
+  left->motionFlags = 0;
+  left->y = left->terrainHeight;
+  right->motionFlags = 0;
+  right->y = right->terrainHeight;
+  if (Event_GetFlag(0xa0a)) {
+    left->y += 0x66640;
+    rider->y += 0x1eb80;
+    rider->x += -0x28f40;
+    sprite->rotation += 0x800;
+    Animation_ApplyChildValues(Actor_Get(9), 4);
+    Animation_ApplyChildValues(Actor_Get(11), 4);
+  }
+  if (Event_GetFlag(0xa0b)) {
+    right->y += 0x66640;
+    rider->y += 0x1eb80;
+    rider->x += 0x28f40;
+    sprite->rotation -= 0x800;
+    Animation_ApplyChildValues(Actor_Get(10), 4);
+    Animation_ApplyChildValues(Actor_Get(12), 4);
+  }
+  if (Event_GetFlag(0xa0a) && Event_GetFlag(0xa0b)) {
+    left->y += 0x199900;
+    right->y += 0x199900;
+    rider->y += 0x1b8480;
+    left->motionFlags = 4;
+    right->motionFlags = 4;
+    rider->motionFlags = 4;
+  }
+}
+
+struct LightOam {
+  u32 link;
+  u32 attr01;
+  u16 tile : 10;
+  u16 priority : 2;
+  u16 palette : 4;
+  u16 unk0a;
+};
+
+extern s16 gData_0200275c;
+extern s16 gData_0200275e;
+extern struct FieldActor *gData_02002760[];
+extern struct LightOam gData_020027a0[];
+extern s16 gData_02002860;
+extern s16 gData_02002862;
+
+s32 Func_02001ee0(struct FieldActor *actor);
+void Func_02001d80(struct LightOam *oam, s32 depth);
+
+/// Queues the lit actors' sprites: for each listed actor with a position, projects it
+/// from the map's view, skips it off screen, and writes a 16 by 16 sprite, or a 32 by
+/// 64 one when the big switch is set, at its animation picture and depth.
+void Func_02000e58(void) {
+  struct MapWork *map = Ram_HeapSlots->mapWork;
+  s32 *view = &map->viewX;
+  s32 viewX, viewZ, tile, viewY;
+  struct LightOam *oam;
+  s32 i;
+  viewX = view[0] & 0xffff0000;
+  viewZ = view[1] & 0xffff0000;
+  tile = gResourceTableEntries[gData_0200275c].offset >> 5;
+  viewY = map->origin[1];
+  oam = gData_020027a0;
+
+  for (i = 0; i < gData_0200275e; i++) {
+    struct FieldActor *actor = gData_02002760[i];
+    if (actor != 0 && actor->x != 0) {
+      s32 big, ox, y, z, oy, depth;
+      s32 frame;
+      u32 *word;
+      ox = actor->x - viewX;
+      y = actor->y - viewY + 0x80000;
+      z = actor->z - viewZ - viewY;
+      oy = z - y;
+      depth = ((y + z) >> 16) + 58;
+      big = gData_02002860;
+      if (big == 0) {
+        s32 x, sy;
+        frame = (s16)actor->timer;
+        x = ox >> 16;
+        sy = oy >> 16;
+        ox = x - 8;
+        oy = sy - 16;
+        if ((u32)(x + 7) > 334 || oy <= -16 || oy > 239)
+          continue;
+        ox &= 0x1ff;
+        oy &= 0xff;
+        word = (u32 *)oam;
+        *word++ = 0;
+        *word++ = oy | (ox << 16) | 0x40002000;
+        *word = (tile + frame * 8) | 0x800;
+        if (gData_02002862 == -1)
+          oam->priority = Func_02001ee0(actor);
+        else
+          oam->priority = gData_02002862;
+        Func_02001d80(oam, depth);
+        oam++;
+      } else {
+        s32 x, sy;
+        frame = (s16)actor->timer;
+        x = ox >> 16;
+        sy = oy >> 16;
+        ox = x - 8;
+        oy = sy - 64;
+        if ((u32)(x + 23) > 350 || oy <= -64 || oy > 175)
+          continue;
+        ox &= 0x1ff;
+        oy &= 0xff;
+        word = (u32 *)oam;
+        *word++ = 0;
+        *word++ = oy | (ox << 16) | 0xc000a000;
+        *word = (tile + frame * 8) | 0x800;
+        if (gData_02002862 == -1)
+          oam->priority = Func_02001ee0(actor);
+        else
+          oam->priority = gData_02002862;
+        Func_02001d80(oam, depth);
+        oam++;
+      }
+    }
+  }
+}
+
+extern u8 gField_CachedTilesA[];
+extern u8 gField_CachedTilesB[];
+extern u8 gField_CachedTilesC[];
+extern s16 gData_0200275c;
+extern s16 gData_0200275e;
+extern struct FieldActor *gData_02002760[];
+extern s16 gData_02002860;
+extern s16 gData_02002862;
+
+void *Heap_Alloc(s32 size);
+void Func_02001d68(const void *source, void *destination);
+s32 Resource_FindFreeEntry(void);
+void Heap_Release(void *block);
+void Func_02000e58(void);
+
+// The scene's own event inlines: a habit of the whole game written once, as
+// event_inline.h's are, a layer and not a compiler-steering device.
+static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
+
+void Func_02001014(void) {
+  u8 *buffer = BumpAlloc(0xc00);
+
+  Iwram_ClearWords(gData_02002760, 64);
+  Func_02001d68(gField_CachedTilesA, buffer);
+  gData_0200275c = Resource_FindFreeEntry();
+  VramCache_Load(gData_0200275c, 0xc00, buffer);
+  Heap_Release(buffer);
+  Task_Add(Func_02000e58, TASK_PASS_VBLANK);
+  gData_0200275e = 0;
+  gData_02002860 = 0;
+  gData_02002862 = -1;
+}
+
+void Func_02001094(void) {
+  u8 *buffer = Heap_Alloc(0xc00);
+
+  Iwram_ClearWords(gData_02002760, 64);
+  Func_02001d68(gField_CachedTilesB, buffer);
+  gData_0200275c = Resource_FindFreeEntry();
+  Vram_Load(gData_0200275c, 0x800, buffer);
+  Heap_Release(buffer);
+  Task_AddFrame(Func_02000e58, TASK_PASS_VBLANK);
+  gData_0200275e = 0;
+  gData_02002860 = 0;
+  gData_02002862 = -1;
+}
+
+void Func_02001114(void) {
+  u8 *buffer = BumpAlloc(0x800);
+
+  Iwram_ClearWords(gData_02002760, 64);
+  Func_02001d68(gField_CachedTilesC, buffer);
+  gData_0200275c = Resource_FindFreeEntry();
+  Vram_Load(gData_0200275c, 0x800, buffer);
+  Heap_Release(buffer);
+  Task_AddFrame(Func_02000e58, TASK_PASS_VBLANK);
+  gData_0200275e = 0;
+  gData_02002860 = 1;
+  gData_02002862 = -1;
+}
+
+extern s16 gData_0200275e;
+extern struct FieldActor *gData_02002760[];
+extern s16 gData_02002862;
+
+void Func_0200119c(s32 id, s32 value) {
+  struct FieldActor *object = ((struct FieldActor *)Actor_Get(id));
+
+  if (object != NULL) {
+    s16 *count;
+
+    object->timer = value;
+    count = &gData_0200275e;
+    gData_02002760[*count] = object;
+    (*count)++;
+  }
+}
+
+void Func_020011cc(s32 value) { gData_02002862 = value; }

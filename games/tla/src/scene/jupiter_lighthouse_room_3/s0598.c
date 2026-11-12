@@ -1,9 +1,13 @@
+/// @file
+/// Scene code of overlay 0x69c, in ROM order, from s0598's offset up to the next object the overlay links.
+
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
 #include "main_routine_work.h"
 #include "frame.h"
 #include "event_inline.h"
+#include "local.h"
 
 void Func_02002378(void);
 void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
@@ -75,4 +79,13 @@ void Func_02000598(void) {
   work->valueD46 = 1;
   work->value154 = 0;
   Func_02002380();
+}
+
+s32 Func_02000784(s32 *a, s32 *b) {
+  s32 dx = (a[0] - b[0]) >> 16;
+  s32 dz = (a[2] - b[2]) >> 16;
+  s32 dxsq = dx * dx;
+  s32 dzsq = dz * dz;
+
+  return Iwram_Sqrt(dxsq + dzsq);
 }

@@ -1,9 +1,13 @@
+/// @file
+/// Scene code of overlay 0x6a4, in ROM order, from s2640's offset up to the next object the overlay links.
+
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
 #include "main_routine_work.h"
 #include "field_effect.h"
 #include "event_inline.h"
+#include "../../../../games/tla/src/scene/jupiter_lighthouse_aerie/jupiter_lighthouse_aerie.h"
 
 void Func_02002a88(void);
 void Func_02002a18(void);
@@ -12,8 +16,7 @@ void Event_WaitTransitionFrames(void);
 s32 Math_Cosine(s32 angle);
 u32 Random16Far(void);
 void Effect_AdvanceMotion(union FieldObject *object);
-void Func_02001e78(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                   s32 velocityZ, u32 flags, struct EffectOptions *options);
+
 void Func_02002a90(void);
 
 static __inline__ void CamBounds(s32 x, s32 y, s32 z, s32 mode) {
@@ -76,4 +79,56 @@ void Func_02002640(void) {
   FieldEvent_Wait(10);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
   Func_02002a90();
+}
+
+s32 Func_020027d8(void) {
+  struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
+  s32 x = object->x >> 20;
+  s32 z = object->z >> 20;
+  struct JupiterLighthouseAerieWork *work = (struct JupiterLighthouseAerieWork *)gData_02003488;
+  struct JupiterLighthouseAerieEntry *entry = (struct JupiterLighthouseAerieEntry *)(work + 1);
+  s32 i;
+
+  for (i = 0; i < work->count; i++, entry++) {
+    if (entry->x == x && entry->z == z) {
+      if (Event_GetFlag(entry->flag) == 0) {
+        Func_02002438(work, entry);
+        Event_SetFlag(entry->flag);
+        work->current = i;
+        break;
+      }
+      if (i == work->current)
+        break;
+      work->current = i;
+      Func_020024a8(work, entry);
+      GameFlag_SetByte(work->flag, x);
+      GameFlag_SetByte(work->flag + 8, z);
+      return 1;
+    }
+  }
+  return 0;
+}
+
+void Func_02002888(s32 dx, s32 dz, s32 value) {
+  struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
+  u8 *event = Ram_HeapSlots->eventWork;
+  struct JupiterLighthouseAerieWork *work =
+      (struct JupiterLighthouseAerieWork *)gData_02003488;
+  s32 x = FieldGameFlag_GetByte(work->flag);
+  s32 z = FieldGameFlag_GetByte(work->flag + 8);
+
+  if (x != 0 || z != 0) {
+    struct Actor *shadow;
+
+    GameFlag_SetByte(work->flag, 0);
+    GameFlag_SetByte(work->flag + 8, 0);
+    object->x = ((x + dx) << 20) + 0x80000;
+    object->z = ((z + dz) << 20) + 0x80000;
+    shadow = *(struct Actor **)(event + 460);
+    shadow->x = object->x;
+    shadow->z = object->z;
+    Func_02002a18();
+    Func_02002640();
+    *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 428) = value;
+  }
 }

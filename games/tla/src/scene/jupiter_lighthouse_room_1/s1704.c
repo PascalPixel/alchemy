@@ -1,9 +1,13 @@
+/// @file
+/// Scene code of overlay 0x69a, in ROM order, from s1704's offset up to the next object the overlay links.
+
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
 #include "main_routine_work.h"
 #include "field_effect.h"
 #include "event_inline.h"
+#include "../jupiter_lighthouse_aerie/jupiter_lighthouse_aerie.h"
 
 void Func_02001b24(void);
 void Func_02001abc(void);
@@ -90,4 +94,38 @@ loop:
   FieldEvent_Wait(10);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
   Func_02001b2c();
+}
+
+extern u8 gData_020023a0[];
+void Func_020014fc();
+void Func_0200156c();
+
+s32 Func_0200189c(void) {
+  struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
+  s32 x = object->x >> 20;
+  s32 z = object->z >> 20;
+  struct JupiterLighthouseAerieWork *work =
+      (struct JupiterLighthouseAerieWork *)gData_020023a0;
+  struct JupiterLighthouseAerieEntry *entry =
+      (struct JupiterLighthouseAerieEntry *)(work + 1);
+  s32 i;
+
+  for (i = 0; i < work->count; i++, entry++) {
+    if (entry->x == x && entry->z == z) {
+      if (Event_GetFlag(entry->flag) == 0) {
+        Func_020014fc(work, entry);
+        Event_SetFlag(entry->flag);
+        work->current = i;
+        break;
+      }
+      if (i == work->current)
+        break;
+      work->current = i;
+      Func_0200156c(work, entry);
+      GameFlag_SetByte(work->flag, x);
+      GameFlag_SetByte(work->flag + 8, z);
+      return 1;
+    }
+  }
+  return 0;
 }

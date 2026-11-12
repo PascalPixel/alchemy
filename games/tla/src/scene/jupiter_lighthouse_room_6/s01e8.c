@@ -1,8 +1,15 @@
+/// @file
+/// Scene code of overlay 0x69f, in ROM order, from s01e8's offset up to the next object the overlay links.
+
 #include "jupiter_lighthouse_room_6.h"
 #include "iwram_call.h"
 #include "dma.h"
 #include "io_reg.h"
 #include "scene_tables.h"
+#include "types.h"
+#include "actor.h"
+#include "main_routine_work.h"
+#include "event_inline.h"
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 #define HALF_AT(base, offset) (*(u16 *)((u8 *)(base) + (offset)))
@@ -35,5 +42,24 @@ s32 Func_020001e8(void) {
     Func_02001250(43, 0x280, 0x380, 21, 31);
     Func_0200196c(21, -3, 0x204);
   }
+  return 0;
+}
+
+extern s32 gData_020023c0;
+extern s16 gData_0200242a;
+extern struct Actor *gData_0200242c[];
+extern u16 gData_0200252e;
+s32 Func_020018bc(s32 value);
+void Func_020000b4(s32 value);
+void Func_02000108(void);
+void Func_02000154(void);
+void Scene_SetArrivalFlags(s32 value);
+void Func_020003a4(s32 value);
+
+s32 Func_02000288(void) {
+  Scene_SetArrivalFlags(0);
+  Func_020003a4(0);
+  if (!Event_GetFlag(265))
+    Event_ClearFlag(0xa19);
   return 0;
 }

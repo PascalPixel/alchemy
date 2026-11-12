@@ -90,8 +90,8 @@ static s32 Colosso_RaisePrize(struct Actor *warrior) {
 
 /// Isaac reaches the finish: he walks up to the first prize, or the second
 /// when the opponent is there before him, holds it up, is given and equipped
-/// with it, and "Isaac got <item>." is shown. Returns nonzero when the opponent
-/// arrived first.
+/// with it, and MsgColossoIsaacGotItem names him and the item he got. Returns
+/// nonzero when the opponent arrived first.
 static s32 Colosso_TakePrize(s32 firstItem, s32 secondItem) {
   struct ColossoGaugeWork *gauge = (struct ColossoGaugeWork *)gColossoWork;
   struct Actor *leader;

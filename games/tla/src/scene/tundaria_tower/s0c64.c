@@ -1,7 +1,7 @@
 #include "tundaria_tower.h"
 
 void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
-void Script_WaitForEventTimeout(struct Actor *object);
+void Script_WaitForEventTimeout(struct Actor *actor);
 void Func_02003178(void);
 void Camera_FollowActor(u16 actor, s32 value);
 s32 MapCell_GetAttributes(u32 layer, s32 x, s32 z);

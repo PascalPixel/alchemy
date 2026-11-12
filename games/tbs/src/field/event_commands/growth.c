@@ -5,7 +5,7 @@
 #include "../event_commands_internal.h"
 
 #define GROWTH_PARTICLE_MAX 24 ///< particles round the target
-#define GROWTH_FALL_LAST 4     ///< five falling actors, 0 to 4
+#define GROWTH_FALL_COUNT 5    ///< falling actors
 
 /// A point Growth works out round the Psynergy's position.
 struct BurstParticleVector {
@@ -81,33 +81,27 @@ void FieldPsynergy_GrowthOnTarget(s32 unused) {
 void FieldPsynergy_Growth(void) {
   struct FieldEffectWork *effectWork = gFieldEffectWork;
   struct BurstParticleVector pos;
-  struct BurstParticleVector *p;
-  s32 remainingActors;
+  s32 i;
 
   FieldEffect_SpawnBurstParticleField();
   Sound_PlayFar(SE_HEAVY_IMPACT);
-  /* FAKEMATCH(temporary): p holds &pos; as &pos and pos.values directly, 2 of
-   * 63 instructions differ in tbs-en. */
-  p = &pos;
-  remainingActors = GROWTH_FALL_LAST;
-  do {
+  for (i = 0; i < GROWTH_FALL_COUNT; i++) {
     struct Actor *particle;
     s32 radius;
 
-    p->values[0] = effectWork->x;
-    p->values[2] = effectWork->z;
+    pos.values[0] = effectWork->x;
+    pos.values[2] = effectWork->z;
     radius = (Random16() * 6) + px(4);
-    Vector_AddPolarOffset(radius, Random16(), p);
-    p->values[1] = effectWork->y;
+    Vector_AddPolarOffset(radius, Random16(), &pos);
+    pos.values[1] = effectWork->y;
     particle =
-        Actor_Spawn(SPRITE_VINE, p->values[0], p->values[1], p->values[2]);
+        Actor_Spawn(SPRITE_VINE, pos.values[0], pos.values[1], pos.values[2]);
     if (particle != 0) {
       Actor_StartScriptFar(particle, gFieldEffect_BurstParticleActorScript);
       particle->motionFlags = ACTOR_FALLS;
     }
     wait(((Random16() * 2) >> 16) + 2);
-    remainingActors--;
-  } while (remainingActors >= 0);
+  }
   wait(30);
   FieldPsynergy_FadeFromCastColor();
 }
@@ -186,4 +180,4 @@ void FieldEffect_SpawnBurstParticleField(void) {
 
 #undef GROWTH_PARTICLE_MAX
 #undef SPRITE_PARTICLE
-#undef GROWTH_FALL_LAST
+#undef GROWTH_FALL_COUNT

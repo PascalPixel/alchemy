@@ -8,7 +8,7 @@
 #include "scene_tables.h"
 #include "event_inline.h"
 
-extern const u32 gSceneExits[];
+extern u32 gSceneExits[];
 
 void Func_02000620(s32 a);
 void Func_02000648(void);

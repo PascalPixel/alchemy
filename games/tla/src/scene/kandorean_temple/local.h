@@ -14,7 +14,7 @@
 
 void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
 
-extern const u32 gSceneExits[];
+extern u32 gSceneExits[];
 
 u32 Random16Far(void);
 void Func_020051c0(void);

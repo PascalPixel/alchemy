@@ -1,10 +1,25 @@
 /// @file
-/// Scene code of overlay 0x659, in ROM order, from s004c's offset up to the next object the overlay links.
+/// The scene code of overlay 0x659, in ROM order.
 
-#include "madra_interiors.h"
-#include "version.h"
-#include "scene_tables.h"
+#include "battle.h"
+#include "field.h"
+#include "game.h"
+#include "graphics.h"
+#include "lib.h"
+#include "menu.h"
+#include "sound.h"
+#include "system.h"
 #include "types.h"
+#include "scene_tables.h"
+
+const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
+
+const struct SceneRegion *Scene_GetRegions(void) { return 0; }
+
+const u32 *Scene_GetExits(void) { return gSceneExits; }
+
+#include "madra_interiors/madra_interiors.h"
+#include "version.h"
 #include "actor.h"
 #include "field_sprite.h"
 #include "main_routine_work.h"
@@ -12,7 +27,6 @@
 #include "event_work.h"
 #include "text/msg_ids.h"
 #include "event_inline.h"
-#include "field.h"
 
 const u8 *Func_0200004c(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov659Room2)
@@ -32,7 +46,8 @@ void Func_020000a4(void) {
   msg = (s32)MsgMadraInteriors06;
   FieldEvent_SetMessageId(msg);
   Event_OpenMessage(9, 0);
-  if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) == 0) {
+  if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) ==
+      0) {
     FieldEvent_Wait(10);
     FieldEvent_SetMessageId(msg + 1);
   } else {
@@ -64,7 +79,8 @@ void Func_020000fc(void) {
 
       FieldEvent_SetMessageId(msg);
       Event_OpenMessage(22, 0);
-      if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) == 0) {
+      if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(),
+                                                0) == 0) {
         FieldEvent_Wait(10);
         FieldEvent_SetMessageId(msg + 1);
       } else {
@@ -270,7 +286,6 @@ void Func_02000570(void) {
 extern u8 gData_0200349c[];
 extern u8 gData_02003418[];
 extern u8 gData_020033c8[];
-void Field_DispatchTypeHandler();
 void Func_02001e68();
 void Func_02001e90();
 void Func_02001e98();
@@ -573,7 +588,7 @@ L_02008e64:
   if (object14 == 0)
     goto L_02008eb2;
   Actor_SetDestination(11, *(s16 *)((u8 *)object14 + 10),
-                            *(s16 *)((u8 *)object14 + 18));
+                       *(s16 *)((u8 *)object14 + 18));
 L_02008eb2:
   FieldActor_WaitForMoveById(11);
   Actor_SetPosition(11, 0, 0);
@@ -895,7 +910,7 @@ L_02009764:
   if (object2 == 0)
     goto L_02009832;
   Actor_SetDestination(31, *(s16 *)((u8 *)object2 + 10),
-                            *(s16 *)((u8 *)object2 + 18));
+                       *(s16 *)((u8 *)object2 + 18));
 L_02009832:
   FieldActor_WaitForMoveById(31);
   Actor_SetPosition(31, 0, 0);
@@ -905,7 +920,7 @@ L_02009832:
   if (object3 == 0)
     goto L_02009870;
   Actor_SetDestination(6, *(s16 *)((u8 *)object3 + 10),
-                            *(s16 *)((u8 *)object3 + 18));
+                       *(s16 *)((u8 *)object3 + 18));
 L_02009870:
   FieldActor_WaitForMoveById(6);
   Actor_SetPosition(6, 0, 0);
@@ -915,7 +930,7 @@ L_02009870:
   if (object4 == 0)
     goto L_020098ae;
   Actor_SetDestination(7, *(s16 *)((u8 *)object4 + 10),
-                            *(s16 *)((u8 *)object4 + 18));
+                       *(s16 *)((u8 *)object4 + 18));
 L_020098ae:
   FieldActor_WaitForMoveById(7);
   Actor_SetPosition(7, 0, 0);
@@ -925,7 +940,7 @@ L_020098ae:
   if (object5 == 0)
     goto L_020098ec;
   Actor_SetDestination(5, *(s16 *)((u8 *)object5 + 10),
-                            *(s16 *)((u8 *)object5 + 18));
+                       *(s16 *)((u8 *)object5 + 18));
 L_020098ec:
   FieldActor_WaitForMoveById(5);
   Actor_SetPosition(5, 0, 0);

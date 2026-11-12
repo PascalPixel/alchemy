@@ -1,14 +1,98 @@
 /// @file
-/// Scene code of overlay 0x653, in ROM order, from s03d0's offset up to the next object the overlay links.
+/// The scene code of overlay 0x653 that its scene tables belong to, in ROM order; the rest of the overlay is in kandorean_temple/.
 
-#include "local.h"
-#include "event_inline.h"
-#include "../../../../games/tla/src/scene/kandorean_temple/local.h"
-#include "macros.h"
+#include "kandorean_temple/local.h"
+
+void Func_02000280(void) { Func_080d2b4c(11, 27); }
+
+u32 Func_0200028c(struct Actor *object) {
+  s32 left;
+
+  left = --*(s16 *)&object->unk66;
+  return (u32)(-left | left) >> 31;
+}
+
+s32 Func_020002a0(struct Actor *object) {
+  if (object->action != 0) {
+    object->action--;
+  } else {
+    Func_080d47b4((s16)object->unk66, 0x105, 0);
+    object->action = ((Random16Far() * 240) >> 16) + 240;
+  }
+  return 1;
+}
+
+u32 __umodsi3(u32 a, u32 b);
+
+s32 Func_020002dc(struct Actor *object) {
+  switch (object->action) {
+  case 6:
+    object->scaleX -= 0x4000;
+    {
+      s32 scale = object->scaleY;
+
+      object->scaleY = scale + 0x2000;
+    }
+    break;
+  case 4:
+    object->scaleX += 0x2000;
+    object->scaleY -= 0x1000;
+    break;
+  case 2:
+    object->scaleX += 0x1000;
+    object->scaleY -= 0x800;
+    break;
+  case 0:
+    object->scaleX = 0x10000;
+    object->scaleY = 0x10000;
+    object->action = Random16Far() % 90 + 60;
+    break;
+  }
+  object->action--;
+  return 1;
+}
+
+s32 Func_0200035c(struct Actor *object) {
+  object->motionFlags = 0;
+  object->scaleX = 0xcccc;
+  object->scaleY = 0xcccc;
+  object->collisionFlags |= 8;
+  Actor_SetSingleChildFlags(object, 0);
+  return 0;
+}
+
+#include "battle.h"
+
+#include "game.h"
+#include "graphics.h"
+#include "lib.h"
+#include "menu.h"
+#include "sound.h"
+#include "system.h"
 #include "types.h"
+#include "scene_tables.h"
+
+const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
+
+extern u32 gData_020056a0[];
+extern u32 gData_020056c0[];
+
+u32 *Func_02000390(void) {
+  s32 scene = gMainRoutineWork.scene;
+
+  if (scene == (s32)&SceneId_Ov653Room3)
+    return gData_020056a0;
+  if (scene == (s32)&SceneId_Ov653Room5)
+    return gData_020056c0;
+  return 0;
+}
+
+const u32 *Scene_GetExits(void) { return gSceneExits; }
+
+#include "event_inline.h"
+#include "macros.h"
 #include "actor.h"
 #include "main_routine_work.h"
-#include "scene_tables.h"
 #include "io_reg.h"
 #include "version.h"
 #include "task.h"
@@ -1568,4 +1652,102 @@ void Func_02002a84(void) {
   if (gMainRoutineWork.entrance == 2)
     GameFlag_ClearBit(0x12f);
 #endif
+}
+
+#define FIELD_AT(base, type, off)                                              \
+  (((struct {                                                                  \
+     u8 pad[off];                                                              \
+     type v;                                                                   \
+   } *)(base))                                                                 \
+       ->v)
+void Func_02000b78();
+void Func_02002ec4();
+void Func_0200306c();
+void Func_020032c8();
+
+void Func_02002c1c(void) {
+  s32 t1, t2, t9, t19, t21, t39, t44, p_r3;
+
+  t1 = GameFlag_Test(0x109);
+  if (t1 == 0)
+    goto L_0200acd2;
+  t2 = ((s32)Actor_GetById(9));
+  FieldActor_SetPositionAndResetMotion(t2, PIXELS(216), 0, PIXELS(216));
+  Actor_SetHorizontalPositionWithTerrain(11, 0, 0);
+  Actor_SetHorizontalPositionWithTerrain(13, 0, 0);
+  Actor_SetHorizontalPositionWithTerrain(14, 0, 0);
+  Actor_SetHorizontalPositionWithTerrain(15, 0, 0);
+  Actor_SetHorizontalPositionWithTerrain(16, 0, 0);
+  t9 = ((s32)Actor_GetById(10));
+  Actor_SetPositionAndResetMotion(t9, PIXELS(376), 0, PIXELS(248));
+  Actor_SetHorizontalPositionWithTerrain(12, 0, 0);
+  Actor_SetHorizontalPositionWithTerrain(17, 0, 0);
+  Actor_SetHorizontalPositionWithTerrain(18, 0, 0);
+  Actor_SetHorizontalPositionWithTerrain(19, 0, 0);
+  Actor_SetHorizontalPositionWithTerrain(20, 0, 0);
+  GameFlag_ClearBit(0x20e);
+  GameFlag_ClearBit(0x20c);
+  GameFlag_ClearBit(0x20d);
+L_0200acd2:
+  t19 = GameFlag_Test(0x300);
+  if (t19 == 0)
+    goto L_0200acee;
+  Actor_SetPosition(8, PIXELS(216), PIXELS(216));
+  goto L_0200ad0a;
+L_0200acee:
+  t21 = GameFlag_Test(0x301);
+  if (t21 == 0)
+    goto L_0200ad0a;
+  Actor_SetPosition(8, PIXELS(376), PIXELS(248));
+L_0200ad0a:
+  (*(s16 *)0x4000052) = 0xc08;
+  (*(s16 *)0x4000050) = 0x3f10;
+  gData_02006298 = 0;
+  gData_0200629c = 0;
+  Task_AddFrame(Func_02000bf4, 0x480);
+  Task_AddFrame(Func_02000c34, 0x480);
+  Task_Add((s32)Func_02001cc4, 0x480);
+  Func_02000b78(9);
+  Func_02000b78(10);
+  Func_02000bac(11);
+  Func_02000bac(13);
+  Func_02000bac(14);
+  Func_02000bac(15);
+  Func_02000bac(16);
+  Func_02000bac(12);
+  Func_02000bac(17);
+  Func_02000bac(18);
+  Func_02000bac(19);
+  Func_02000bac(20);
+  Func_020053b8(gData_020054e0);
+  t39 = GameFlag_Test(0x109);
+  if (t39 != 0)
+    goto L_0200adda;
+  if (FIELD_AT(&gMainRoutineWork, s16, 482) != 3) {
+    p_r3 = FIELD_AT(&gMainRoutineWork, s16, 482);
+    goto L_0200add2;
+  }
+  Func_0200306c();
+  goto L_0200adda;
+L_0200add2:
+  if (p_r3 != 4)
+    goto L_0200adda;
+  Func_020032c8();
+L_0200adda:
+  gData_020062a0 = 0;
+  gData_020062a4 = 0xfa0;
+  gData_020062a8 = 0;
+  gData_020062aa = 0;
+  Task_AddFrame(Func_02000f60, 0x480);
+  Task_Add((s32)Func_020012c4, 0x480);
+  t44 = GameFlag_Test(0x109);
+  if (t44 != 0)
+    goto L_0200ae24;
+  if (FIELD_AT(&gMainRoutineWork, s16, 482) != 5)
+    goto L_0200ae24;
+  Func_02002ec4();
+L_0200ae24:
+  Task_AddFrame(Func_020019d4, 0x480);
+  Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 2);
+  Func_02005338(0);
 }

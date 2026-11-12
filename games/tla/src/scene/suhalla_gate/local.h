@@ -8,7 +8,7 @@
 #include "scene_tables.h"
 #include "event_inline.h"
 
-extern const u32 gSceneExits[];
+extern u32 gSceneExits[];
 
 void Actor_SetActionCallback(struct Actor *object, s32 a);
 void Func_02000800(void);

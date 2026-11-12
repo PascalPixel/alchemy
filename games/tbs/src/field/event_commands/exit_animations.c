@@ -121,8 +121,8 @@ void Exit_PrepareAnimation(s32 animation) {
   // Positions are 16.16 fixed point and cells 16 pixels: keep the cell and
   // put the leader at its middle in x (8 pixels) and its south edge in z.
   // The coordinates as plain words: through .fixed, the union moves a store.
-  *(s32 *)&actor->x = (*(s32 *)&actor->x & FIELD_CELL_MASK) + PIXELS(8);
-  *(s32 *)&actor->z = (*(s32 *)&actor->z & FIELD_CELL_MASK) + PIXELS(16);
+  *(s32 *)&actor->x = (*(s32 *)&actor->x & FIELD_CELL_MASK) + px(8);
+  *(s32 *)&actor->z = (*(s32 *)&actor->z & FIELD_CELL_MASK) + px(16);
   actor->velocityX = zero;
   actor->velocityZ = zero;
   actor->targetX = ACTOR_NO_TARGET;
@@ -168,7 +168,7 @@ void Entrance_EndArrivalAnimation(s32 animation) {
   spriteAnimation->flags = zero;
   eff->colorMode = SPRITE_COLOR_HIDDEN;
   // The coordinates as plain words: through .fixed, the union moves a store.
-  *(s32 *)&leader->x = (*(s32 *)&leader->x & mask) + PIXELS(8);
+  *(s32 *)&leader->x = (*(s32 *)&leader->x & mask) + px(8);
   *(s32 *)&leader->z &= mask;
   Actor_SelectAnimationFar(leader, animation);
   wait(30);
@@ -181,7 +181,7 @@ void Entrance_EndArrivalAnimation(s32 animation) {
   leader->acceleration = Q16_ONE;
   leader->speedLimit = Q16_ONE;
   Actor_SetMoveTargetFar(leader, leader->x.fixed, leader->y.fixed,
-                         leader->z.fixed + PIXELS(8));
+                         leader->z.fixed + px(8));
   Actor_WaitForMoveFar(leader);
 }
 
@@ -219,7 +219,7 @@ s32 Entrance_PlayArrival(void) {
         // FLAG_ARRIVE_FALLING is set by scenes the party drops out of (the
         // Suhalla storm, a floor giving way in the Tret tree): start 160 pixels
         // up and let gravity bring the leader down to the ground.
-        leader->y.fixed += PIXELS(160);
+        leader->y.fixed += px(160);
         FieldCamera_MoveWithinMapBounds(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP,
                                         0);
         // Until the next frame's fall would reach the ground.

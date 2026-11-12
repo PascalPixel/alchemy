@@ -47,7 +47,7 @@ static void Colosso_PushActorAhead(void) {
   }
 
   position.x = pushed->x.fixed;
-  position.y = pushed->y.fixed + PIXELS(16);
+  position.y = pushed->y.fixed + px(16);
   position.z = pushed->z.fixed;
 
   blocker = Actor_FindAtPosition(&position, pushed);
@@ -71,12 +71,12 @@ static void Colosso_PushActorAhead(void) {
   Actor_SelectAnimation(leader, 8);
   wait(15);
 
-  pushed->speedLimit = PIXELS(1) / 5;
-  pushed->acceleration = PIXELS(1) / 5;
+  pushed->speedLimit = px(1) / 5;
+  pushed->acceleration = px(1) / 5;
   FieldActor_SetMoveTargetFixed(pushed, position.x, position.y, position.z);
 
-  leader->speedLimit = PIXELS(1) / 5;
-  leader->acceleration = PIXELS(1) / 5;
+  leader->speedLimit = px(1) / 5;
+  leader->acceleration = px(1) / 5;
   FieldActor_SetMoveTargetFixed(leader, position.x, position.y, position.z);
 
   Sound_Play(SE_PUSH_STEP);
@@ -104,17 +104,17 @@ void *Colosso_FindActorAhead(void) {
 
   facing = (record->facing + TRIG_TURN / 8) & 0xc000;
 
-  position.x = (record->x.fixed & 0xfff00000) + PIXELS(8);
+  position.x = (record->x.fixed & 0xfff00000) + px(8);
   position.y = record->y.fixed;
-  position.z = (record->z.fixed & 0xfff00000) + PIXELS(8);
-  Vector_AddPolarOffset(PIXELS(16), facing, &position);
+  position.z = (record->z.fixed & 0xfff00000) + px(8);
+  Vector_AddPolarOffset(px(16), facing, &position);
 
   occupant = Actor_FindAtPosition(&position, record);
   if (occupant == 0) {
-    position.x = (record->x.fixed & 0xfff00000) + PIXELS(8);
+    position.x = (record->x.fixed & 0xfff00000) + px(8);
     position.y = record->y.fixed;
-    position.z = (record->z.fixed & 0xfff00000) + PIXELS(8);
-    Vector_AddPolarOffset(PIXELS(32), facing, &position);
+    position.z = (record->z.fixed & 0xfff00000) + px(8);
+    Vector_AddPolarOffset(px(32), facing, &position);
 
     occupant = Actor_FindAtPosition(&position, record);
   }

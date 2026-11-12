@@ -1650,16 +1650,16 @@ static void Sanctum_UpdateHealerAfterimage(struct Actor *updated) {
   healer = Actor_Get(ACTOR_HEALER);
   actor->targetX = actor->x.fixed = healer->x.fixed;
   actor->targetY = actor->y.fixed = healer->y.fixed;
-  actor->targetZ = actor->z.fixed = healer->z.fixed - PIXELS(2);
+  actor->targetZ = actor->z.fixed = healer->z.fixed - px(2);
   switch (gFrameCount & 3) {
   case 0:
-    actor->targetX = actor->x.fixed = healer->x.fixed - PIXELS(7) / 2;
+    actor->targetX = actor->x.fixed = healer->x.fixed - px(7) / 2;
     break;
   case 1:
-    actor->targetX = actor->x.fixed = healer->x.fixed + PIXELS(3);
+    actor->targetX = actor->x.fixed = healer->x.fixed + px(3);
     break;
   case 2:
-    actor->targetY = actor->y.fixed = healer->y.fixed + PIXELS(2);
+    actor->targetY = actor->y.fixed = healer->y.fixed + px(2);
     break;
   case 3:
     actor->targetZ = actor->z.fixed = healer->z.fixed;
@@ -1701,7 +1701,7 @@ static void Sanctum_SpawnOrbitingEffect(s32 actorId, s32 angleStep) {
   center = Actor_Get(actorId);
   if (center != 0) {
     effect = FieldActor_Create(SPRITE_SPARKLE, center->x.fixed,
-                               center->y.fixed + PIXELS(45), center->z.fixed);
+                               center->y.fixed + px(45), center->z.fixed);
     if (effect != 0) {
       sprite = effect->sprite;
       Actor_StartScript(effect, gSanctum_OwnerEffectScript);
@@ -1844,7 +1844,7 @@ static void Sanctum_ReenactSolSanctum(void) {
   Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Event_Wait(10);
   // Illustrate the account with the floating item icon.
-  Sanctum_RaiseItemIcon(ITEM_MARS_STAR, PIXELS(184), PIXELS(27), PIXELS(168));
+  Sanctum_RaiseItemIcon(ITEM_MARS_STAR, px(184), px(27), px(168));
   Actor_FaceActor(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_GARET, 1);
@@ -2035,8 +2035,8 @@ static void Sanctum_RaiseItemIcon(s32 item, s32 fixedX, s32 fixedY,
     sprite->count = zero;
     sprite->image.fullColor = 0;
     sprite->image.palette = 0;
-    icon->velocityY = PIXELS(2);
-    icon->gravity = PIXELS(1) / 4;
+    icon->velocityY = px(2);
+    icon->gravity = px(1) / 4;
     transferBuffer =
         HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
     Icon_DrawItem(item);
@@ -2095,10 +2095,10 @@ static void Sanctum_SpawnActorSpark(s32 id) {
   randomOffset = Math_RemainderUnsigned(Import_RandomNext(), 20);
   x = actor->x.fixed;
   x += randomOffset << 16;
-  x += -PIXELS(10);
+  x += -px(10);
   spark = FieldActor_Create(SPRITE_GLINT, x,
                             actor->y.fixed +
-                                ((Import_RandomNext() & 15) << 16) + -PIXELS(8),
+                                ((Import_RandomNext() & 15) << 16) + -px(8),
                             actor->z.fixed);
   if (spark == 0)
     return;
@@ -2544,8 +2544,8 @@ s32 gSanctum_CursorBob[] = {
 };
 
 s32 gSanctum_OwnerEffectScript[] = {
-    SC_ADD(SW_Y, -PIXELS(1) / 2),
-    SC_ADD(SW_TARGET_Y, -PIXELS(1) / 2),
+    SC_ADD(SW_Y, -px(1) / 2),
+    SC_ADD(SW_TARGET_Y, -px(1) / 2),
     SC_WAIT(1),
     SC_LOOP(96, SC_TOP),
     SC_RELEASE,

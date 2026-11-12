@@ -569,7 +569,7 @@ static void MercuryLighthouse_PushChannelPipes(void) {
         Actor_MoveAndRedraw(probe);
         Event_Wait(20);
         MapGrid_CopyCellsTo(119, 9, 109, 11, 1, 1);
-        MercuryLighthouse_SpawnRandomizedBurst(PIXELS(726), 0, PIXELS(180),
+        MercuryLighthouse_SpawnRandomizedBurst(px(726), 0, px(180),
                                                FACING_WEST);
         GameFlag_Set(FLAG_PIPE_1_JOINED);
       } else {
@@ -588,7 +588,7 @@ static void MercuryLighthouse_PushChannelPipes(void) {
         Event_Wait(10);
         if (Event_GetFlag(FLAG_PIPE_1_JOINED)) {
           MapGrid_CopyCellsTo(118, 9, 104, 13, 1, 1);
-          MercuryLighthouse_SpawnRandomizedBurst(PIXELS(644), 0, PIXELS(210),
+          MercuryLighthouse_SpawnRandomizedBurst(px(644), 0, px(210),
                                                  FACING_SOUTH);
         }
         GameFlag_Set(FLAG_PIPE_2_JOINED);
@@ -671,11 +671,11 @@ static void MercuryLighthouse_OpenGateWithMovedStatue(void) {
   s32 row;
   struct Actor *statue;
 
-  column = Actor_Get(ACTOR_GATE_STATUE)->x.fixed / PIXELS(16);
-  row = Actor_Get(ACTOR_GATE_STATUE)->z.fixed / PIXELS(16);
+  column = Actor_Get(ACTOR_GATE_STATUE)->x.fixed / px(16);
+  row = Actor_Get(ACTOR_GATE_STATUE)->z.fixed / px(16);
   Event_Start();
   if (column == 5 && row == 13) {
-    Actor_Get(ACTOR_GATE_STATUE)->y.fixed += -PIXELS(2);
+    Actor_Get(ACTOR_GATE_STATUE)->y.fixed += -px(2);
     statue = Actor_Get(ACTOR_GATE_STATUE);
     statue->targetY = Actor_Get(ACTOR_GATE_STATUE)->y.fixed;
     MapGrid_CopyCellsTo(5, 2, 5, 11, 1, 1);
@@ -706,7 +706,7 @@ static void MercuryLighthouse_PressGateFloorSwitch(void) {
       Event_Start();
       GameFlag_Set(FLAG_LEADER_ON_FLOOR_SWITCH);
       Event_Wait(5);
-      Actor_Get(ACTOR_PARTY_LEADER)->y.fixed += -PIXELS(2);
+      Actor_Get(ACTOR_PARTY_LEADER)->y.fixed += -px(2);
       leader = Actor_Get(ACTOR_PARTY_LEADER);
       leader->targetY = Actor_Get(ACTOR_PARTY_LEADER)->y.fixed;
       MapGrid_CopyCellsTo(5, 2, 5, 11, 1, 1);
@@ -725,7 +725,7 @@ static void MercuryLighthouse_CloseFloorSwitch(void) {
   if (Event_GetFlag(FLAG_LEADER_ON_FLOOR_SWITCH) != 0) {
     Event_Start();
     GameFlag_Clear(FLAG_LEADER_ON_FLOOR_SWITCH);
-    Actor_Get(ACTOR_PARTY_LEADER)->y.fixed += PIXELS(2);
+    Actor_Get(ACTOR_PARTY_LEADER)->y.fixed += px(2);
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     leader->targetY = Actor_Get(ACTOR_PARTY_LEADER)->y.fixed;
     Event_Wait(5);
@@ -804,7 +804,7 @@ static void MercuryLighthouse_RestoreFountainTiles(s32 delayFrames) {
 
 /// Task: a spray at the fountain's fixed position.
 static void MercuryLighthouse_SprayAtFountain(void) {
-  MercuryLighthouse_SparkleAt(PIXELS(690), 0, PIXELS(584));
+  MercuryLighthouse_SparkleAt(px(690), 0, px(584));
 }
 
 /// Opens the fountain row by row and starts its continuous spray.
@@ -836,18 +836,16 @@ static void MercuryLighthouse_OpenFountainWithSpray(s32 delayFrames) {
     rowOffset = (row << 4);
     particleIndex = 0;
     negativeRowOffset = -(row << 20);
-    particleX = (PIXELS(728) + negativeRowOffset);
+    particleX = (px(728) + negativeRowOffset);
     do {
       if ((particleIndex & 1) != 0) {
         randomX = Random_Next();
-        // The original add/shift tree is multiplication by PIXELS(1) / 5.
-        velocityX =
-            ((u32)(randomX << 3) >> 16) * (PIXELS(1) / 5) - PIXELS(4) / 5;
+        // The original add/shift tree is multiplication by px(1) / 5.
+        velocityX = ((u32)(randomX << 3) >> 16) * (px(1) / 5) - px(4) / 5;
         negativeIndex = -particleIndex;
         randomZ = Random_Next();
-        velocityZ =
-            ((u32)(randomZ << 3) >> 16) * (PIXELS(1) / 5) - PIXELS(4) / 5;
-        FieldEffect_Spawn(particleX, 0, PIXELS(584), velocityX, 0, velocityZ,
+        velocityZ = ((u32)(randomZ << 3) >> 16) * (px(1) / 5) - px(4) / 5;
+        FieldEffect_Spawn(particleX, 0, px(584), velocityX, 0, velocityZ,
                           EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE,
                           &options);
         Event_Wait(1);
@@ -856,10 +854,10 @@ static void MercuryLighthouse_OpenFountainWithSpray(s32 delayFrames) {
       }
       MercuryLighthouse_SparkleAt(
           (MERCURY_LIGHTHOUSE_OFFSET_FIXED(negativeIndex - rowOffset) +
-           PIXELS(728)),
-          0, PIXELS(584));
+           px(728)),
+          0, px(584));
       particleIndex = (particleIndex + 1);
-      particleX = (particleX + -PIXELS(1));
+      particleX = (particleX + -px(1));
     } while ((u32)particleIndex <= 7);
     MapGrid_CopyCellsTo(76, 59, (108 - row), 36, 2, 1);
     nextRow = row + 1;
@@ -890,21 +888,21 @@ static void MercuryLighthouse_StopFountainSpray(void) {
   options.startScaleY = Q16_ONE / 2;
   row = 0;
   do {
-    offsetX = -PIXELS(2);
+    offsetX = -px(2);
     particleIndex = 1;
     do {
       if ((particleIndex & 1) != 0) {
         random = Import_RandomNext();
         particleZ = ((584 - ((u32)((random << 2) + random) >> 16)) & 0xffff)
                     << 16;
-        particleX = (offsetX - (row << 19)) + PIXELS(728);
-        FieldEffect_Spawn(particleX, 0, particleZ, -PIXELS(1) / 4, 0, 0,
+        particleX = (offsetX - (row << 19)) + px(728);
+        FieldEffect_Spawn(particleX, 0, particleZ, -px(1) / 4, 0, 0,
                           EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE,
                           &options);
         Event_Wait(1);
       }
       particleIndex++;
-      offsetX = offsetX + -PIXELS(2);
+      offsetX = offsetX + -px(2);
     } while ((u32)particleIndex <= 7);
     MapGrid_CopyCellsTo(111, 35, (109 - row), 36, 1, 1);
     row++;
@@ -994,13 +992,13 @@ static void MercuryLighthouse_PushStairSwitchStatue(void) {
 /// on the switch at (10, 23), it sinks two pixels and the stair gate opens for
 /// good.
 static void MercuryLighthouse_OpenStairGateWithMovedStatue(void) {
-  s32 column = Actor_Get(ACTOR_FALLEN_STATUE)->x.fixed / PIXELS(16);
-  s32 row = Actor_Get(ACTOR_FALLEN_STATUE)->z.fixed / PIXELS(16);
+  s32 column = Actor_Get(ACTOR_FALLEN_STATUE)->x.fixed / px(16);
+  s32 row = Actor_Get(ACTOR_FALLEN_STATUE)->z.fixed / px(16);
 
   Event_Start();
   if (column == 10 && row == 23) {
     struct Actor *statue;
-    Actor_Get(ACTOR_FALLEN_STATUE)->y.fixed += -PIXELS(2);
+    Actor_Get(ACTOR_FALLEN_STATUE)->y.fixed += -px(2);
     statue = Actor_Get(ACTOR_FALLEN_STATUE);
     statue->targetY = Actor_Get(ACTOR_FALLEN_STATUE)->y.fixed;
     MapGrid_CopyCellsTo(6, 29, 10, 23, 1, 1);
@@ -1031,7 +1029,7 @@ static void MercuryLighthouse_PressStairFloorSwitch(void) {
   Event_Start();
   GameFlag_Set(FLAG_LEADER_ON_FLOOR_SWITCH);
   Event_Wait(5);
-  Actor_Get(ACTOR_PARTY_LEADER)->y.fixed -= PIXELS(2);
+  Actor_Get(ACTOR_PARTY_LEADER)->y.fixed -= px(2);
   Actor_Get(ACTOR_PARTY_LEADER)->targetY =
       Actor_Get(ACTOR_PARTY_LEADER)->y.fixed;
   MapGrid_CopyCellsTo(6, 29, 10, 23, 1, 1);
@@ -1048,7 +1046,7 @@ static void MercuryLighthouse_ReleaseStairFloorSwitch(void) {
   if (Event_GetFlag(FLAG_LEADER_ON_FLOOR_SWITCH) != 0) {
     Event_Start();
     GameFlag_Clear(FLAG_LEADER_ON_FLOOR_SWITCH);
-    Actor_Get(ACTOR_PARTY_LEADER)->y.fixed += PIXELS(2);
+    Actor_Get(ACTOR_PARTY_LEADER)->y.fixed += px(2);
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     leader->targetY = Actor_Get(ACTOR_PARTY_LEADER)->y.fixed;
     Event_Wait(5);
@@ -1071,7 +1069,7 @@ static __inline__ s32 MercuryLighthouse_RandomDoorParticleSpeed(void) {
   // English.
   u32 drift = Import_RandomNext();
 
-  return ((drift << 3) >> 16) * (PIXELS(1) / 5);
+  return ((drift << 3) >> 16) * (px(1) / 5);
 }
 
 /// Opens the selected stone door with particles along its moving edge.
@@ -1099,24 +1097,21 @@ static void MercuryLighthouse_OpenStoneDoor(s32 side) {
       if (particleIndex & 1) {
         if (side == STONE_DOOR_WEST) {
           FieldEffect_Spawn(
-              PIXELS(792), 0,
-              PIXELS(704) + (row * 16 + particleIndex) * PIXELS(1),
-              MercuryLighthouse_RandomDoorParticleSpeed() + -PIXELS(4) / 5, 0,
-              MercuryLighthouse_RandomDoorParticleSpeed() + -PIXELS(4) / 5,
+              px(792), 0, px(704) + (row * 16 + particleIndex) * px(1),
+              MercuryLighthouse_RandomDoorParticleSpeed() + -px(4) / 5, 0,
+              MercuryLighthouse_RandomDoorParticleSpeed() + -px(4) / 5,
               EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE, &options);
         } else if (side == STONE_DOOR_SOUTH) {
           FieldEffect_Spawn(
-              PIXELS(800) + (row * 16 + particleIndex) * PIXELS(1), 0,
-              PIXELS(746),
-              MercuryLighthouse_RandomDoorParticleSpeed() + -PIXELS(4) / 5, 0,
-              MercuryLighthouse_RandomDoorParticleSpeed() + -PIXELS(4) / 5,
+              px(800) + (row * 16 + particleIndex) * px(1), 0, px(746),
+              MercuryLighthouse_RandomDoorParticleSpeed() + -px(4) / 5, 0,
+              MercuryLighthouse_RandomDoorParticleSpeed() + -px(4) / 5,
               EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE, &options);
         } else {
           FieldEffect_Spawn(
-              PIXELS(812) + (row * 16 + particleIndex) * -PIXELS(1), 0,
-              PIXELS(714),
-              MercuryLighthouse_RandomDoorParticleSpeed() + -PIXELS(4) / 5, 0,
-              MercuryLighthouse_RandomDoorParticleSpeed() + -PIXELS(4) / 5,
+              px(812) + (row * 16 + particleIndex) * -px(1), 0, px(714),
+              MercuryLighthouse_RandomDoorParticleSpeed() + -px(4) / 5, 0,
+              MercuryLighthouse_RandomDoorParticleSpeed() + -px(4) / 5,
               EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE, &options);
         }
         Event_Wait(1);
@@ -1153,20 +1148,19 @@ static void MercuryLighthouse_CloseStoneDoor(s32 side) {
         if (side == STONE_DOOR_WEST) {
           FieldEffect_Spawn(
               (793 - (((u32)Import_RandomNext() * 5) >> 16)) << 16, 0,
-              (((row << 2) + particleIndex) << 17) + PIXELS(695), 0, side,
-              PIXELS(1) / 4, EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE,
-              &options);
+              (((row << 2) + particleIndex) << 17) + px(695), 0, side,
+              px(1) / 4, EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE, &options);
         } else if (side == STONE_DOOR_SOUTH) {
           FieldEffect_Spawn(
-              (((row << 2) + particleIndex) << 17) + PIXELS(786), 0,
-              ((((u32)Import_RandomNext() * 5) >> 16) << 16) + PIXELS(744),
-              PIXELS(1) / 4, 0, 0, EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE,
+              (((row << 2) + particleIndex) << 17) + px(786), 0,
+              ((((u32)Import_RandomNext() * 5) >> 16) << 16) + px(744),
+              px(1) / 4, 0, 0, EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE,
               &options);
         } else {
           FieldEffect_Spawn(
-              PIXELS(824) - (particleIndex << 17) - (row << 19), 0,
-              ((((u32)Import_RandomNext() * 5) >> 16) << 16) + PIXELS(712),
-              PIXELS(1) / 4, 0, 0, EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE,
+              px(824) - (particleIndex << 17) - (row << 19), 0,
+              ((((u32)Import_RandomNext() * 5) >> 16) << 16) + px(712),
+              px(1) / 4, 0, 0, EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE,
               &options);
         }
         Event_Wait(1);
@@ -1188,8 +1182,8 @@ static s32 MercuryLighthouse_StartStatueSlide(void) {
   s32 cellX;
   s32 cellZ;
 
-  cellX = Actor_Get(ACTOR_SLIDING_STATUE)->x.fixed / PIXELS(16);
-  cellZ = Actor_Get(ACTOR_SLIDING_STATUE)->z.fixed / PIXELS(16);
+  cellX = Actor_Get(ACTOR_SLIDING_STATUE)->x.fixed / px(16);
+  cellZ = Actor_Get(ACTOR_SLIDING_STATUE)->z.fixed / px(16);
   FieldCamera_SetSpeed(5);
   FieldCamera_MoveTo(816, CAMERA_KEEP, 712, 1);
   FieldCamera_WaitForArrival();
@@ -1294,7 +1288,7 @@ static void MercuryLighthouse_PushStoneDoorPipes(void) {
           s32 x;
 
           MercuryLighthouse_CloseStoneDoor(STONE_DOOR_NORTH);
-          x = PIXELS(840);
+          x = px(840);
 #ifdef UBFIX
           MercuryLighthouse_StopStatueSpray(NULL);
 #else
@@ -1375,8 +1369,7 @@ static void MercuryLighthouse_SyncRowStatueFlags(void) {
   // Four statues use paired flags for their two saved stopping columns.
   for (statueIndex = 0, positionFlag = FLAG_FIRST_ROW_STATUE; statueIndex <= 3;
        statueIndex++, positionFlag += 2) {
-    column =
-        Actor_Get(statueIndex + ACTOR_FIRST_ROW_STATUE)->x.fixed / PIXELS(16);
+    column = Actor_Get(statueIndex + ACTOR_FIRST_ROW_STATUE)->x.fixed / px(16);
     if (column == (statueIndex << 2) + 39) {
       GameFlag_Set(positionFlag);
       GameFlag_Clear(positionFlag + 1);
@@ -1393,7 +1386,7 @@ static void MercuryLighthouse_SyncRowStatueFlags(void) {
   // becomes a jump spot: pushing north from it, the leader jumps the cell
   // between and walks up to the door. With the statue in place the cell is
   // plain ground and the leader stays south of it.
-  column = Actor_Get(ACTOR_LAST_ROW_STATUE)->x.fixed / PIXELS(16);
+  column = Actor_Get(ACTOR_LAST_ROW_STATUE)->x.fixed / px(16);
   if (column == 57) {
     GameFlag_Set(FLAG_LAST_ROW_STATUE_WEST);
     GameFlag_Clear(FLAG_LAST_ROW_STATUE_EAST);
@@ -1422,7 +1415,7 @@ static void MercuryLighthouse_ChangeCellForGapStatue(void) {
   s32 column;
 
   Event_Start();
-  column = Actor_Get(ACTOR_GAP_STATUE)->x.fixed / PIXELS(16);
+  column = Actor_Get(ACTOR_GAP_STATUE)->x.fixed / px(16);
   if (column == 28) {
     GameFlag_Set(FLAG_PASSAGE_STATUE_MOVED);
     {
@@ -1588,7 +1581,7 @@ static void MercuryLighthouse_MiaOpensEntranceWithPly(void) {
   actor = Actor_Get(ACTOR_DOOR_STATUE);
   column = actor->x.fixed;
   if (column < 0)
-    column += PIXELS(16) - 1;
+    column += px(16) - 1;
   column >>= 20;
   Event_Start();
   if (column != 51) {
@@ -1815,17 +1808,16 @@ static void MercuryLighthouse_RaiseActorWithSparks(s32 actorId) {
     if (frame & 1) {
       Sound_Play(SE_GLITTER);
       particleX = actor->x.fixed +
-                  ((((u32)Import_RandomNext() * 24) >> 16) << 16) + -PIXELS(12);
+                  ((((u32)Import_RandomNext() * 24) >> 16) << 16) + -px(12);
       particleY = actor->y.fixed +
-                  ((((u32)Import_RandomNext() << 5) >> 16) << 16) + -PIXELS(16);
-      riseSpeed =
-          ((((u32)Import_RandomNext() << 2) >> 16) << 15) + PIXELS(1) / 2;
+                  ((((u32)Import_RandomNext() << 5) >> 16) << 16) + -px(16);
+      riseSpeed = ((((u32)Import_RandomNext() << 2) >> 16) << 15) + px(1) / 2;
       FieldEffect_Spawn(particleX, particleY, actor->z.fixed, 0, riseSpeed, 0,
                         EFFECT_USE_SCRIPT | EFFECT_USE_TYPE |
                             EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
                         &options);
     }
-    actor->y.fixed += frame * (PIXELS(1) / 10);
+    actor->y.fixed += frame * (px(1) / 10);
     actor->targetY = actor->y.fixed;
     wait(2);
   }
@@ -1875,12 +1867,12 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
     particleX = random * 48;
     particleX >>= 16;
     particleX <<= 16;
-    particleX += PIXELS(768);
+    particleX += px(768);
     random = Import_RandomNext();
     z = random * 56;
     z >>= 16;
     z <<= 16;
-    z += PIXELS(136);
+    z += px(136);
     FieldEffect_Spawn(particleX, 0, z, 0, 0, 0,
                       EFFECT_USE_SCRIPT | EFFECT_USE_TYPE |
                           EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE |
@@ -1903,14 +1895,14 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
     particleX = random * 48;
     particleX >>= 16;
     particleX <<= 16;
-    particleX += PIXELS(768);
+    particleX += px(768);
     random = Import_RandomNext();
     z = random * 56;
     z >>= 16;
     z <<= 16;
-    z += PIXELS(152);
+    z += px(152);
     random = Import_RandomNext();
-    particleSpeed = -((random * 10 >> 16) * (PIXELS(1) / 5)) - PIXELS(1) / 5;
+    particleSpeed = -((random * 10 >> 16) * (px(1) / 5)) - px(1) / 5;
     FieldEffect_Spawn(particleX, 0, z, 0, 0, particleSpeed,
                       EFFECT_USE_SCRIPT | EFFECT_USE_TYPE |
                           EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE |
@@ -1939,16 +1931,14 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
     rowOffset = (wave << 4);
     do {
       random = Import_RandomNext();
-      particleX =
-          ((((((random << 1) + random) << 4) >> 16) << 16) + PIXELS(768));
+      particleX = ((((((random << 1) + random) << 4) >> 16) << 16) + px(768));
       particleVelocityX =
-          ((PIXELS(1) / 10) * ((u32)(Import_RandomNext() << 3) >> 16)) -
-          4 * (PIXELS(1) / 10);
-      particleSpeed =
-          (PIXELS(1) / 10) * ((u32)(Import_RandomNext() << 3) >> 16);
+          ((px(1) / 10) * ((u32)(Import_RandomNext() << 3) >> 16)) -
+          4 * (px(1) / 10);
+      particleSpeed = (px(1) / 10) * ((u32)(Import_RandomNext() << 3) >> 16);
       FieldEffect_Spawn(particleX, 0,
                         ((-((u32)particleIndex >> 1) - rowOffset) << 16) +
-                            PIXELS(192),
+                            px(192),
                         particleVelocityX, 0, particleSpeed,
                         EFFECT_USE_START_SCALE | EFFECT_SCALE_TO_TARGET |
                             EFFECT_USE_PALETTE | EFFECT_SCRIPT_MEDIUM,
@@ -2147,7 +2137,7 @@ static void MercuryLighthouse_EnterRisingPassage(void) {
     Actor_PrepareFixed(Actor_Get(ACTOR_PARTY_LEADER)->x.fixed, 0, px(702),
                        SPRITE_CRATE);
     MapGrid_CopyCellsTo(92, 46, 92, 40, 3, 2);
-    Actor_Get(ACTOR_PARTY_LEADER)->gravity = PIXELS(1) / 2;
+    Actor_Get(ACTOR_PARTY_LEADER)->gravity = px(1) / 2;
     Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 2);
     FieldActor_JumpDownLedge(ACTOR_PARTY_LEADER, 6, -1);
     gFieldWork->transition =
@@ -2177,14 +2167,12 @@ static void MercuryLighthouse_RaiseStairsWithSparkles(void) {
     for (particleIndex = 0; particleIndex <= 7; particleIndex++) {
       if ((particleIndex & 1) != 0) {
         s32 velocityX =
-            (((u32)Import_RandomNext() << 3) >> 16) * (PIXELS(1) / 5) -
-            PIXELS(4) / 5;
+            (((u32)Import_RandomNext() << 3) >> 16) * (px(1) / 5) - px(4) / 5;
         s32 velocityZ =
-            (((u32)Import_RandomNext() << 3) >> 16) * (PIXELS(1) / 5) -
-            PIXELS(4) / 5;
+            (((u32)Import_RandomNext() << 3) >> 16) * (px(1) / 5) - px(4) / 5;
 
         FieldEffect_Spawn(
-            PIXELS(105), 0, ((-particleIndex - (row << 4)) << 16) + PIXELS(544),
+            px(105), 0, ((-particleIndex - (row << 4)) << 16) + px(544),
             velocityX, 0, velocityZ,
             EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE, &options);
         Event_Wait(1);
@@ -2208,24 +2196,23 @@ static void MercuryLighthouse_LowerStairsWithSparkles(void) {
   options.startScaleX = Q16_ONE / 2;
   options.startScaleY = Q16_ONE / 2;
   for (row = 0; row <= 2; row++) {
-    offsetZ = -PIXELS(2);
+    offsetZ = -px(2);
     for (particleIndex = 1; particleIndex <= 7; particleIndex++) {
       if (particleIndex & 1) {
         if (particleIndex & 2) {
           FieldEffect_Spawn(
               (105 - (((u32)Import_RandomNext() * 5) >> 16)) << 16, 0,
-              offsetZ - (row << 19) + PIXELS(558), 0, 0, -PIXELS(1) / 4,
+              offsetZ - (row << 19) + px(558), 0, 0, -px(1) / 4,
               EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE, &options);
         } else {
           FieldEffect_Spawn(
-              (((row << 2) + particleIndex) << 17) + PIXELS(183), 0,
-              (620 - (((u32)Import_RandomNext() * 5) >> 16)) << 16,
-              PIXELS(1) / 4, 0, 0, EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE,
-              &options);
+              (((row << 2) + particleIndex) << 17) + px(183), 0,
+              (620 - (((u32)Import_RandomNext() * 5) >> 16)) << 16, px(1) / 4,
+              0, 0, EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE, &options);
         }
         Event_Wait(1);
       }
-      offsetZ += -PIXELS(2);
+      offsetZ += -px(2);
     }
     MapGrid_CopyCellsTo(71, 59, 70, 34 - row, 1, 1);
     MapGrid_CopyCellsTo(71, 59, row + 75, 38, 1, 1);
@@ -2248,11 +2235,9 @@ static void MercuryLighthouse_SparkleAroundLeader(void) {
     {
       s32 y = leader->y.fixed + ((((u32)Import_RandomNext() << 2) >> 16) << 16);
       s32 velocityX =
-          (((u32)Import_RandomNext() << 3) >> 16) * (PIXELS(1) / 5) -
-          PIXELS(4) / 5;
+          (((u32)Import_RandomNext() << 3) >> 16) * (px(1) / 5) - px(4) / 5;
       s32 velocityY =
-          (((u32)Import_RandomNext() << 3) >> 16) * (PIXELS(1) / 5) -
-          PIXELS(4) / 5;
+          (((u32)Import_RandomNext() << 3) >> 16) * (px(1) / 5) - px(4) / 5;
 
       FieldEffect_Spawn(leader->x.fixed, y, leader->z.fixed, velocityX,
                         velocityY, framePhase,
@@ -2274,11 +2259,9 @@ static void MercuryLighthouse_SparkleAt(s32 x, s32 y, s32 z) {
     options.startScaleY = 7 * Q16_ONE / 10;
     {
       s32 velocityX =
-          (((u32)Import_RandomNext() << 3) >> 16) * (PIXELS(1) / 5) -
-          PIXELS(4) / 5;
+          (((u32)Import_RandomNext() << 3) >> 16) * (px(1) / 5) - px(4) / 5;
       s32 velocityY =
-          (((u32)Import_RandomNext() << 3) >> 16) * (PIXELS(1) / 5) -
-          PIXELS(4) / 5;
+          (((u32)Import_RandomNext() << 3) >> 16) * (px(1) / 5) - px(4) / 5;
 
       FieldEffect_Spawn(x, y, z, velocityX, velocityY, framePhase,
                         EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE, &options);
@@ -2296,10 +2279,8 @@ static void MercuryLighthouse_SparkleNear(s32 x, s32 y, s32 z) {
   options.startScaleX = 7 * Q16_ONE / 10;
   options.startScaleY = 7 * Q16_ONE / 10;
   {
-    s32 particleX =
-        x + ((((u32)Import_RandomNext() << 4) >> 16) << 16) - PIXELS(8);
-    s32 particleZ =
-        z + ((((u32)Import_RandomNext() << 3) >> 16) << 16) - PIXELS(4);
+    s32 particleX = x + ((((u32)Import_RandomNext() << 4) >> 16) << 16) - px(8);
+    s32 particleZ = z + ((((u32)Import_RandomNext() << 3) >> 16) << 16) - px(4);
 
     FieldEffect_Spawn(particleX, y, particleZ, 0, 0, 0,
                       EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY |
@@ -2326,8 +2307,8 @@ static void MercuryLighthouse_SpawnRandomizedBurst(s32 x, s32 y, s32 z,
       options.startScaleX = 3 * Q16_ONE / 5;
       options.startScaleY = 3 * Q16_ONE / 5;
       SET_VECTOR(velocity, 0, 0, 0);
-      Vector_AddPolarOffset((6 - (particleIndex >> 1)) * (PIXELS(1) / 10),
-                            angle, velocity);
+      Vector_AddPolarOffset((6 - (particleIndex >> 1)) * (px(1) / 10), angle,
+                            velocity);
       {
         s32 particleX =
             x + ((6 - (((u32)Import_RandomNext() * 6) >> 16)) << 16);
@@ -2471,7 +2452,7 @@ s32 MercuryLighthouse_Initialize(void) {
       // doorway.
       if (GameFlag_Get(FLAG_MERCURY_LIGHTHOUSE_GATE_HELD_OPEN)) {
         Actor_SetPosition(ACTOR_GATE_STATUE, 88, 216);
-        Actor_Get(ACTOR_GATE_STATUE)->y.fixed += -PIXELS(2);
+        Actor_Get(ACTOR_GATE_STATUE)->y.fixed += -px(2);
         Actor_Get(ACTOR_GATE_STATUE)->targetY =
             Actor_Get(ACTOR_GATE_STATUE)->y.fixed;
         MapGrid_CopyCellsTo(9, 1, 9, 7, 1, 2);
@@ -2511,7 +2492,7 @@ s32 MercuryLighthouse_Initialize(void) {
       SetEffectRecordMode(Actor_Get(ACTOR_LAST_ROW_STATUE), 1);
       SetEffectRecordMode(Actor_Get(ACTOR_PARTY_LEADER), 1);
       statueIndex = 0;
-      statueX = PIXELS(632);
+      statueX = px(632);
       positionFlag = FLAG_FIRST_ROW_STATUE;
       for (; statueIndex <= 3; statueIndex++) {
         if (GameFlag_Get(positionFlag))
@@ -2520,7 +2501,7 @@ s32 MercuryLighthouse_Initialize(void) {
         else if (GameFlag_Get(positionFlag + 1))
           Actor_SetPositionFixed(statueIndex + ACTOR_FIRST_ROW_STATUE,
                                  statueX + px(32), px(88));
-        statueX += PIXELS(64);
+        statueX += px(64);
         positionFlag += 2;
       }
       // The cells MercuryLighthouse_SyncRowStatueFlags copies as it sets the
@@ -2556,7 +2537,7 @@ s32 MercuryLighthouse_Initialize(void) {
     case MERCURY_LIGHTHOUSE_UPPER_GATE_FROM_STONE_DOORS:
       if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) &&
           GameFlag_Get(FLAG_LEADER_ON_FLOOR_SWITCH)) {
-        Actor_Get(ACTOR_PARTY_LEADER)->y.fixed = -PIXELS(2);
+        Actor_Get(ACTOR_PARTY_LEADER)->y.fixed = -px(2);
         Actor_Get(ACTOR_PARTY_LEADER)->targetY =
             Actor_Get(ACTOR_PARTY_LEADER)->y.fixed;
         MapGrid_CopyCellsTo(6, 29, 10, 23, 1, 1);
@@ -2566,7 +2547,7 @@ s32 MercuryLighthouse_Initialize(void) {
       // is drawn as an open doorway.
       if (GameFlag_Get(FLAG_MERCURY_LIGHTHOUSE_UPPER_GATE_HELD_OPEN)) {
         Actor_SetPosition(ACTOR_FALLEN_STATUE, 168, 376);
-        Actor_Get(ACTOR_FALLEN_STATUE)->y.fixed += -PIXELS(2);
+        Actor_Get(ACTOR_FALLEN_STATUE)->y.fixed += -px(2);
         Actor_Get(ACTOR_FALLEN_STATUE)->targetY =
             Actor_Get(ACTOR_FALLEN_STATUE)->y.fixed;
         MapGrid_CopyCellsTo(6, 29, 10, 23, 1, 1);
@@ -2645,10 +2626,10 @@ s32 MercuryLighthouse_Initialize(void) {
       SetEffectRecordMode(Actor_Get(ACTOR_FALLEN_STATUE), 1);
       Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
       Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
-      Actor_Get(ACTOR_FALLEN_STATUE)->y.fixed = PIXELS(144);
+      Actor_Get(ACTOR_FALLEN_STATUE)->y.fixed = px(144);
       Actor_Get(ACTOR_FALLEN_STATUE)->motionFlags = 0;
       Actor_Get(ACTOR_FALLEN_STATUE)->bounce = 0;
-      Actor_Get(ACTOR_FALLEN_STATUE)->gravity = PIXELS(3) / 10;
+      Actor_Get(ACTOR_FALLEN_STATUE)->gravity = px(3) / 10;
       gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
       Event_StartScreenTransition();
       Event_WaitTransitionFrames();
@@ -2783,7 +2764,7 @@ static void MercuryLighthouse_MiaJoinsAfterRescue(void) {
   s32 questionMessage;
   struct Actor *leader;
 
-  pillarColumn = Actor_Get(ACTOR_STATUE_BLOCKING_MIA)->x.fixed / PIXELS(16);
+  pillarColumn = Actor_Get(ACTOR_STATUE_BLOCKING_MIA)->x.fixed / px(16);
   if (pillarColumn != 48) {
     return;
   }
@@ -2891,15 +2872,15 @@ static void MercuryLighthouse_RideLift(void) {
   liftLayer = &((struct MapGridScrollWork *)gMapGridWork[0])
                    ->layers[MAPGRID_LAYER_OVERHEAD];
   liftSpeed = 39976;
-  liftLayer->offsetY = PIXELS(1161);
+  liftLayer->offsetY = px(1161);
   liftLayer->speedY = 0;
   Actor_Get(ACTOR_PARTY_LEADER)->motionFlags = 0;
-  Actor_Get(ACTOR_PARTY_LEADER)->z.fixed += -PIXELS(137);
+  Actor_Get(ACTOR_PARTY_LEADER)->z.fixed += -px(137);
   Actor_Get(ACTOR_PARTY_LEADER)->targetZ =
       Actor_Get(ACTOR_PARTY_LEADER)->z.fixed;
   Actor_Get(ACTOR_LIFT_STATUE)->motionFlags = 0;
   Actor_SetPosition(ACTOR_LIFT_STATUE, 680, 440);
-  Actor_Get(ACTOR_LIFT_STATUE)->z.fixed += -PIXELS(137);
+  Actor_Get(ACTOR_LIFT_STATUE)->z.fixed += -px(137);
   Actor_Get(ACTOR_LIFT_STATUE)->targetZ = Actor_Get(ACTOR_LIFT_STATUE)->z.fixed;
   MapGrid_CenterOnFollowedPoint();
   wait(1);
@@ -2918,7 +2899,7 @@ static void MercuryLighthouse_RideLift(void) {
     Actor_Get(ACTOR_LIFT_STATUE)->z.fixed += liftSpeed;
     Actor_Get(ACTOR_LIFT_STATUE)->targetZ =
         Actor_Get(ACTOR_LIFT_STATUE)->z.fixed;
-    if (liftLayer->offsetY > PIXELS(1024)) {
+    if (liftLayer->offsetY > px(1024)) {
       if ((gFrameCount & 15) == 0 && liftSpeed > 3275)
         liftSpeed += -1376;
       wait(1);
@@ -2926,11 +2907,11 @@ static void MercuryLighthouse_RideLift(void) {
     }
     break;
   }
-  liftLayer->offsetY = PIXELS(1024);
+  liftLayer->offsetY = px(1024);
   MapGrid_CenterOnFollowedPoint();
   wait(2);
   Actor_Get(ACTOR_PARTY_LEADER)->motionFlags = 3;
-  Actor_Get(ACTOR_LIFT_STATUE)->z.fixed = PIXELS(440);
+  Actor_Get(ACTOR_LIFT_STATUE)->z.fixed = px(440);
   Actor_Get(ACTOR_LIFT_STATUE)->targetZ = Actor_Get(ACTOR_LIFT_STATUE)->z.fixed;
   Event_Wait(30);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 704, 584);
@@ -2938,10 +2919,10 @@ static void MercuryLighthouse_RideLift(void) {
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_SPRING);
   Event_Wait(6);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_LEAP);
-  Actor_Get(ACTOR_PARTY_LEADER)->speedLimit = PIXELS(3);
-  Actor_Get(ACTOR_PARTY_LEADER)->acceleration = PIXELS(2);
+  Actor_Get(ACTOR_PARTY_LEADER)->speedLimit = px(3);
+  Actor_Get(ACTOR_PARTY_LEADER)->acceleration = px(2);
   Sound_Play(SE_JUMP);
-  Actor_Get(ACTOR_PARTY_LEADER)->velocityY = PIXELS(4);
+  Actor_Get(ACTOR_PARTY_LEADER)->velocityY = px(4);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
   Actor_SetDestination(ACTOR_PARTY_LEADER, 736, 584);
   Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
@@ -2957,13 +2938,13 @@ static void MercuryLighthouse_RideLift(void) {
     Actor_Get(ACTOR_LIFT_STATUE)->z.fixed -= liftSpeed;
     Actor_Get(ACTOR_LIFT_STATUE)->targetZ =
         Actor_Get(ACTOR_LIFT_STATUE)->z.fixed;
-    if (liftLayer->offsetY >= PIXELS(1161))
+    if (liftLayer->offsetY >= px(1161))
       break;
-    if ((gFrameCount & 7) == 0 && liftSpeed <= PIXELS(4) / 5)
-      liftSpeed += PIXELS(1) / 10;
+    if ((gFrameCount & 7) == 0 && liftSpeed <= px(4) / 5)
+      liftSpeed += px(1) / 10;
     wait(1);
   }
-  liftLayer->offsetY = PIXELS(1024);
+  liftLayer->offsetY = px(1024);
   MapGrid_CopyCellsTo(45, 91, 40, 91, 5, 4);
   MapGrid_CopyCellAttributes(104, 34, 5, 4, 40, 34);
   MapGrid_CenterOnFollowedPoint();

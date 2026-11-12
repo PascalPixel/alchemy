@@ -349,19 +349,19 @@ static void VenusLighthouseAerie_JumpToNextPlatform(void) {
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   angle = (actor->facing + TRIG_TURN / 16) & 0xe000;
   flags = actor->motionFlags;
-  SET_VECTOR(destination.coordinates, (actor->x.fixed & 0xfff00000) + PIXELS(8),
-             actor->y.fixed, (actor->z.fixed & 0xfff00000) + PIXELS(8));
-  Vector_AddPolarOffset(PIXELS(32), angle, destination.coordinates);
+  SET_VECTOR(destination.coordinates, (actor->x.fixed & 0xfff00000) + px(8),
+             actor->y.fixed, (actor->z.fixed & 0xfff00000) + px(8));
+  Vector_AddPolarOffset(px(32), angle, destination.coordinates);
   if (FieldActor_CheckMovementCollision(actor, &destination.position) == 0) {
     GameFlag_Clear(FLAG_VENUS_AERIE_ON_PLATFORM);
     VenusLighthouseAerie_FloatPlatforms();
     Actor_SelectAnimation(actor, ANIM_LEADER_SPRING);
     wait(6);
     Actor_SelectAnimation(actor, ANIM_LEADER_LEAP);
-    actor->speedLimit = PIXELS(3);
-    actor->acceleration = PIXELS(2);
+    actor->speedLimit = px(3);
+    actor->acceleration = px(2);
     Sound_Play(SE_JUMP);
-    actor->velocityY = PIXELS(4);
+    actor->velocityY = px(4);
     actor->motionFlags &= 0x7e;
     Actor_SetSpriteFlags(actor, 0);
     Actor_MoveToAndWait(ACTOR_PARTY_LEADER, destination.coordinates[0] >> 16,
@@ -390,15 +390,15 @@ static void VenusLighthouseAerie_LandOnPlatform(void) {
     platform = Actor_Get(gVenusLighthouseAerie_LandedPlatform);
     platform->motionFlags = 0;
     leader->motionFlags &= ~ACTOR_FOLLOWS_TERRAIN;
-    platform->y.fixed += -PIXELS(3);
-    leader->y.fixed += -PIXELS(3);
-    leader->groundHeight += -PIXELS(3);
+    platform->y.fixed += -px(3);
+    leader->y.fixed += -px(3);
+    leader->groundHeight += -px(3);
     wait(2);
-    platform->y.fixed += -PIXELS(2);
-    leader->y.fixed += -PIXELS(2);
-    leader->groundHeight += -PIXELS(2);
+    platform->y.fixed += -px(2);
+    leader->y.fixed += -px(2);
+    leader->groundHeight += -px(2);
     wait(10);
-    reboundStep = PIXELS(2);
+    reboundStep = px(2);
     platform->y.fixed += reboundStep;
     leader->y.fixed += reboundStep;
     leader->groundHeight += reboundStep;
@@ -407,9 +407,9 @@ static void VenusLighthouseAerie_LandOnPlatform(void) {
     leader->y.fixed += reboundStep;
     leader->groundHeight += reboundStep;
     wait(4);
-    platform->y.fixed += PIXELS(1);
-    leader->y.fixed += PIXELS(1);
-    leader->groundHeight += PIXELS(1);
+    platform->y.fixed += px(1);
+    leader->y.fixed += px(1);
+    leader->groundHeight += px(1);
   }
   Event_End();
 }
@@ -471,7 +471,7 @@ s32 VenusLighthouseAerie_Initialize(void) {
     Actor_SetSpritePriority(platformId, 1);
     platform->motionFlags = ACTOR_FLOATS;
     platform->priorityFlags |= 2;
-    platform->y.fixed = PIXELS(1) / 2;
+    platform->y.fixed = px(1) / 2;
     platformId++;
   } while (platformId <= ACTOR_LAST_PLATFORM);
 
@@ -575,13 +575,13 @@ static void VenusLighthouseAerie_OverhearSaturosAndMenardi(void) {
   Event_Wait(20);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_SPRING);
   Actor_WaitForAnimationChange(ACTOR_PARTY_LEADER);
-  leader->x.fixed = PIXELS(516);
-  leader->y.fixed = PIXELS(8);
-  leader->z.fixed = PIXELS(148);
+  leader->x.fixed = px(516);
+  leader->y.fixed = px(8);
+  leader->z.fixed = px(148);
   leader->facing = FACING_WEST;
   leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   Sound_Play(SE_JUMP);
-  leader->velocityY = PIXELS(4);
+  leader->velocityY = px(4);
   Sound_Play(SE_JUMP);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), SPRITE_FLAG_SHADOW);
   Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 504, 148);
@@ -590,7 +590,7 @@ static void VenusLighthouseAerie_OverhearSaturosAndMenardi(void) {
   {
     u16 shown = FACING_SOUTH;
 
-    leader->y.fixed = -PIXELS(32);
+    leader->y.fixed = -px(32);
     leader->facing = shown;
   }
   Event_Wait(20);
@@ -1565,7 +1565,7 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_EAST, 0);
   star = (struct Actor *)FieldActor_Create(
-      SPRITE_BLANK, actor->x.fixed, actor->y.fixed + PIXELS(8), actor->z.fixed);
+      SPRITE_BLANK, actor->x.fixed, actor->y.fixed + px(8), actor->z.fixed);
   if (star != NULL) {
     sprite = star->sprite;
     sprite->count = 0;
@@ -1575,8 +1575,8 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
     star->priorityFlags &= ~1;
     star->motionFlags = 0;
     star->retainSpriteCache = 1;
-    star->speedLimit = PIXELS(8) / 5;
-    star->acceleration = PIXELS(4) / 5;
+    star->speedLimit = px(8) / 5;
+    star->acceleration = px(4) / 5;
     iconPixels =
         HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
     // Display the Venus Star icon before sending it toward the beacon.
@@ -1587,18 +1587,18 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   Actor_SetSpritePriority(ACTOR_VENUS_STAR_SHADOW, 1);
   starShadow = Actor_Get(ACTOR_VENUS_STAR_SHADOW);
   starShadow->x.fixed = actor->x.fixed;
-  starShadow->y.fixed = PIXELS(32);
+  starShadow->y.fixed = px(32);
   starShadow->z.fixed = actor->z.fixed;
   starShadow->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-  starShadow->speedLimit = PIXELS(8) / 5;
-  starShadow->acceleration = PIXELS(4) / 5;
+  starShadow->speedLimit = px(8) / 5;
+  starShadow->acceleration = px(4) / 5;
   starShadow->scaleX = 3 * Q16_ONE / 4;
   starShadow->scaleY = 3 * Q16_ONE / 4;
   if (star != NULL) {
     star->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-    ((struct FieldEffect *)star)->velocity.y = PIXELS(3) / 5;
-    ((struct FieldEffect *)star)->velocity.x = PIXELS(4) / 5;
-    star->velocityY = PIXELS(8);
+    ((struct FieldEffect *)star)->velocity.y = px(3) / 5;
+    ((struct FieldEffect *)star)->velocity.x = px(4) / 5;
+    star->velocityY = px(8);
     FieldActor_SetMoveTarget(star, 308, 32, 164);
   }
   Actor_MoveToAndWait(ACTOR_VENUS_STAR_SHADOW, 308, 164);
@@ -1607,16 +1607,16 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   if (star != NULL) {
     Event_PlaySound(SE_STAR_BOUNCE);
     Actor_SetSpriteFlags(star, 0);
-    star->velocityY = PIXELS(4);
+    star->velocityY = px(4);
     FieldActor_SetMoveTarget(star, 314, 32, 137);
     Actor_WaitForMove(star);
     Event_PlaySound(SE_STAR_BOUNCE);
     star->sprite->image.priority = 1;
-    star->velocityY = PIXELS(6);
+    star->velocityY = px(6);
     FieldActor_SetMoveTarget(star, 285, 32, 146);
     Actor_WaitForMove(star);
     Sound_Play(SE_STAR_BOUNCE);
-    star->velocityY = PIXELS(5);
+    star->velocityY = px(5);
     FieldActor_SetMoveTarget(star, 300, 32, 154);
     Actor_WaitForMove(star);
     wait(6);
@@ -1668,18 +1668,18 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   actor->scaleY = -Q16_ONE;
   actor->scaleX = Q16_ONE / 10;
   actor->motionFlags = 0;
-  actor->y.fixed = PIXELS(64);
-  actor->x.fixed = PIXELS(304);
-  actor->z.fixed = PIXELS(158);
+  actor->y.fixed = px(64);
+  actor->x.fixed = px(304);
+  actor->z.fixed = px(158);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_BEAM_LOWER), 0);
   Actor_SetSpriteColorById(ACTOR_BEAM_LOWER, SPRITE_COLOR_WHITE);
   actor = Actor_Get(ACTOR_BEAM_LOWER);
   actor->scaleY = -Q16_ONE;
   actor->scaleX = Q16_ONE / 10;
   actor->motionFlags = 0;
-  actor->y.fixed = PIXELS(96);
-  actor->x.fixed = PIXELS(304);
-  actor->z.fixed = PIXELS(158);
+  actor->y.fixed = px(96);
+  actor->x.fixed = px(304);
+  actor->z.fixed = px(158);
   VenusLighthouseAerie_ShowGroupEmote(EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 0);
@@ -1989,12 +1989,12 @@ static void VenusLighthouseAerie_SpawnUpperOrbitParticles(void) {
   if (GameFlag_Get(FLAG_VENUS_AERIE_BEACON_ERUPTED) != 0) {
     effect = FieldActor_Create(SPRITE_PARTICLE, center->x.fixed,
                                (s32)((u32)(Random_Next() << 8) >> 16 << 16) +
-                                   center->y.fixed - PIXELS(28),
+                                   center->y.fixed - px(28),
                                center->z.fixed);
   } else {
     effect = FieldActor_Create(SPRITE_PARTICLE, center->x.fixed,
                                (s32)((u32)(Random_Next() << 6) >> 16 << 16) +
-                                   center->y.fixed - PIXELS(28),
+                                   center->y.fixed - px(28),
                                center->z.fixed);
   }
   if (effect != 0) {
@@ -2057,13 +2057,13 @@ static void VenusLighthouseAerie_UpdateBeamActors(void) {
       }
     }
     if (GameFlag_Get(FLAG_VENUS_AERIE_FUSION_SLIDING) != 0) {
-      if (saturos->x.fixed < PIXELS(312)) {
-        saturos->x.fixed += PIXELS(1) / 16;
-        menardi->x.fixed += PIXELS(1) / 16;
+      if (saturos->x.fixed < px(312)) {
+        saturos->x.fixed += px(1) / 16;
+        menardi->x.fixed += px(1) / 16;
       }
-      if (saturos->z.fixed > PIXELS(182)) {
-        saturos->z.fixed += -PIXELS(1) / 16;
-        menardi->z.fixed += -PIXELS(1) / 16;
+      if (saturos->z.fixed > px(182)) {
+        saturos->z.fixed += -px(1) / 16;
+        menardi->z.fixed += -px(1) / 16;
       }
     }
   }
@@ -2128,34 +2128,34 @@ static void VenusLighthouseAerie_StageShebasFall(void) {
   Actor_ReleaseById(ACTOR_MENARDI);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_KNOCKED_DOWN);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
-  leader->x.fixed = PIXELS(346);
-  leader->z.fixed = PIXELS(205);
-  leader->y.fixed = PIXELS(32);
+  leader->x.fixed = px(346);
+  leader->z.fixed = px(205);
+  leader->y.fixed = px(32);
   leader->facing = FACING_SOUTHWEST;
   VenusLighthouseAerie_StopActorMotion(leader);
   Actor_SetAnimation(ACTOR_GARET, ANIM_PARTY_KNOCKED_DOWN);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_GARET), 0);
   actor = Actor_Get(ACTOR_GARET);
-  actor->x.fixed = PIXELS(356);
-  actor->z.fixed = PIXELS(192);
+  actor->x.fixed = px(356);
+  actor->z.fixed = px(192);
   actor->facing = FACING_NORTHWEST;
-  actor->y.fixed = PIXELS(32);
+  actor->y.fixed = px(32);
   VenusLighthouseAerie_StopActorMotion(actor);
   Actor_SetAnimation(ACTOR_IVAN, ANIM_PARTY_KNOCKED_DOWN);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_IVAN), 0);
   actor = Actor_Get(ACTOR_IVAN);
-  actor->x.fixed = PIXELS(360);
+  actor->x.fixed = px(360);
   actor->facing = FACING_SOUTHEAST;
-  actor->y.fixed = PIXELS(32);
-  actor->z.fixed = PIXELS(222);
+  actor->y.fixed = px(32);
+  actor->z.fixed = px(222);
   VenusLighthouseAerie_StopActorMotion(actor);
   Actor_SetAnimation(ACTOR_MIA, ANIM_PARTY_KNOCKED_DOWN);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_MIA), 0);
   actor = Actor_Get(ACTOR_MIA);
-  actor->x.fixed = PIXELS(334);
+  actor->x.fixed = px(334);
   actor->facing = FACING_WEST;
-  actor->y.fixed = PIXELS(32);
-  actor->z.fixed = PIXELS(222);
+  actor->y.fixed = px(32);
+  actor->z.fixed = px(222);
   VenusLighthouseAerie_StopActorMotion(actor);
   Actor_SetPosition(ACTOR_FELIX, 196, 220);
   Actor_SetAnimation(ACTOR_FELIX, FELIX_ANIMATION_KNEEL);
@@ -2163,22 +2163,22 @@ static void VenusLighthouseAerie_StageShebasFall(void) {
   Actor_SetAnimation(ACTOR_SHEBA, SHEBA_ANIMATION_HANG_ONE_HAND);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_SHEBA), 0);
   actor = Actor_Get(ACTOR_BEACON_STATUE_SOUTHWEST);
-  actor->x.fixed -= PIXELS(16);
+  actor->x.fixed -= px(16);
   VenusLighthouseAerie_StopActorMotion(actor);
   actor = Actor_Get(ACTOR_BEACON_STATUE_NORTHWEST);
-  actor->x.fixed -= PIXELS(16);
+  actor->x.fixed -= px(16);
   VenusLighthouseAerie_StopActorMotion(actor);
   actor = Actor_Get(ACTOR_BEACON_STATUE_NORTHEAST);
-  actor->x.fixed += PIXELS(16);
+  actor->x.fixed += px(16);
   VenusLighthouseAerie_StopActorMotion(actor);
   actor = Actor_Get(ACTOR_BEACON_STATUE_SOUTHEAST);
-  actor->x.fixed += PIXELS(16);
+  actor->x.fixed += px(16);
   VenusLighthouseAerie_StopActorMotion(actor);
   MapGrid_SetShake(1, 1, 1);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_BEACON_ORB), 0);
   Actor_Get(ACTOR_BEACON_ORB)->motionFlags = ACTOR_FLOATS;
   Actor_SetSpriteColorById(ACTOR_BEACON_ORB, SPRITE_COLOR_GBR);
-  Actor_Get(ACTOR_BEACON_ORB)->y.fixed = PIXELS(40);
+  Actor_Get(ACTOR_BEACON_ORB)->y.fixed = px(40);
   Task_AddFrame(VenusLighthouseAerie_SpawnSideOrbitParticles, TASK_PASS_FRAME);
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
   gFieldWork->transitionFrames = 24;
@@ -2219,9 +2219,9 @@ static void VenusLighthouseAerie_ShowSaturosAndMenardiFall(void) {
   actor->scaleY = -Q16_ONE;
   actor->scaleX = Q16_ONE / 5;
   actor->motionFlags = 0;
-  actor->x.fixed = PIXELS(304);
-  actor->y.fixed = PIXELS(2);
-  actor->z.fixed = PIXELS(96);
+  actor->x.fixed = px(304);
+  actor->y.fixed = px(2);
+  actor->z.fixed = px(96);
 
   Actor_SetSpriteFlags(Actor_Get(ACTOR_BEAM_LOWER), 0);
   Actor_SetSpriteColorById(ACTOR_BEAM_LOWER, SPRITE_COLOR_WHITE);
@@ -2230,9 +2230,9 @@ static void VenusLighthouseAerie_ShowSaturosAndMenardiFall(void) {
   actor->scaleY = -Q16_ONE;
   actor->scaleX = Q16_ONE / 5;
   actor->motionFlags = 0;
-  actor->x.fixed = PIXELS(304);
-  actor->y.fixed = PIXELS(34);
-  actor->z.fixed = PIXELS(96);
+  actor->x.fixed = px(304);
+  actor->y.fixed = px(34);
+  actor->z.fixed = px(96);
 
   Task_AddFrame(VenusLighthouseAerie_SpawnUpperOrbitParticles, TASK_PASS_FRAME);
   FieldCamera_GetActor()->motionFlags = 0;
@@ -2255,37 +2255,37 @@ static void VenusLighthouseAerie_ShowSaturosAndMenardiFall(void) {
   Sound_Play(SOUND_FADE_OUT_BGM);
 
   actor = Actor_Get(ACTOR_SATUROS);
-  actor->x.fixed = PIXELS(308);
-  actor->y.fixed = PIXELS(28);
-  actor->z.fixed = PIXELS(152);
+  actor->x.fixed = px(308);
+  actor->y.fixed = px(28);
+  actor->z.fixed = px(152);
   Actor_SetAnimation(ACTOR_SATUROS, SATUROS_ANIMATION_TIP);
   Event_Wait(20);
-  actor->x.fixed = PIXELS(306);
-  actor->y.fixed = PIXELS(28);
-  actor->z.fixed = PIXELS(152);
+  actor->x.fixed = px(306);
+  actor->y.fixed = px(28);
+  actor->z.fixed = px(152);
   Actor_SetAnimation(ACTOR_SATUROS, SATUROS_ANIMATION_SLUMP);
   Event_Wait(12);
-  actor->x.fixed = PIXELS(304);
-  actor->y.fixed = PIXELS(21);
-  actor->z.fixed = PIXELS(152);
+  actor->x.fixed = px(304);
+  actor->y.fixed = px(21);
+  actor->z.fixed = px(152);
   Actor_SetAnimation(ACTOR_SATUROS, SATUROS_ANIMATION_SINK);
   Event_Wait(8);
   Actor_ReleaseById(ACTOR_SATUROS);
 
   actor = Actor_Get(ACTOR_MENARDI);
-  actor->x.fixed = PIXELS(294);
-  actor->y.fixed = PIXELS(28);
-  actor->z.fixed = PIXELS(152);
+  actor->x.fixed = px(294);
+  actor->y.fixed = px(28);
+  actor->z.fixed = px(152);
   Actor_SetAnimation(ACTOR_MENARDI, MENARDI_ANIMATION_TIP);
   Event_Wait(20);
-  actor->x.fixed = PIXELS(300);
-  actor->y.fixed = PIXELS(27);
-  actor->z.fixed = PIXELS(152);
+  actor->x.fixed = px(300);
+  actor->y.fixed = px(27);
+  actor->z.fixed = px(152);
   Actor_SetAnimation(ACTOR_MENARDI, MENARDI_ANIMATION_SLUMP);
   Event_Wait(12);
-  actor->x.fixed = PIXELS(304);
-  actor->y.fixed = PIXELS(17);
-  actor->z.fixed = PIXELS(152);
+  actor->x.fixed = px(304);
+  actor->y.fixed = px(17);
+  actor->z.fixed = px(152);
   Actor_SetAnimation(ACTOR_MENARDI, MENARDI_ANIMATION_SINK);
   Event_Wait(8);
   Actor_ReleaseById(ACTOR_MENARDI);
@@ -2452,8 +2452,8 @@ static void VenusLighthouseAerie_EruptBeacon(void) {
   wait(60);
   Sound_Play(SE_RUMBLE);
   GameFlag_Set(FLAG_VENUS_AERIE_BEACON_ERUPTED);
-  Actor_Get(ACTOR_BEAM_BOTTOM)->y.fixed = -PIXELS(96);
-  Actor_Get(ACTOR_BEAM_LOWER)->y.fixed = -PIXELS(64);
+  Actor_Get(ACTOR_BEAM_BOTTOM)->y.fixed = -px(96);
+  Actor_Get(ACTOR_BEAM_LOWER)->y.fixed = -px(64);
   Actor_SetSpriteColorById(ACTOR_BEAM_MIDDLE, SPRITE_COLOR_WHITE);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_BEAM_MIDDLE), 0);
   // Stack three more beam segments under the rising upper pair.
@@ -2461,27 +2461,27 @@ static void VenusLighthouseAerie_EruptBeacon(void) {
   lower->scaleY = -Q16_ONE;
   lower->scaleX = Actor_Get(ACTOR_BEAM_BOTTOM)->scaleX;
   lower->motionFlags = 0;
-  lower->x.fixed = PIXELS(304);
-  lower->y.fixed = -PIXELS(32);
-  lower->z.fixed = PIXELS(96);
+  lower->x.fixed = px(304);
+  lower->y.fixed = -px(32);
+  lower->z.fixed = px(96);
   Actor_SetSpriteColorById(ACTOR_BEAM_UPPER, SPRITE_COLOR_WHITE);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_BEAM_UPPER), 0);
   middle = Actor_Get(ACTOR_BEAM_UPPER);
   middle->scaleY = -Q16_ONE;
   middle->scaleX = Actor_Get(ACTOR_BEAM_BOTTOM)->scaleX;
   middle->motionFlags = 0;
-  middle->x.fixed = PIXELS(304);
+  middle->x.fixed = px(304);
   middle->y.fixed = 0;
-  middle->z.fixed = PIXELS(96);
+  middle->z.fixed = px(96);
   Actor_SetSpriteColorById(ACTOR_BEAM_TOP, SPRITE_COLOR_WHITE);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_BEAM_TOP), 0);
   upper = Actor_Get(ACTOR_BEAM_TOP);
   upper->scaleY = -Q16_ONE;
   upper->scaleX = Actor_Get(ACTOR_BEAM_BOTTOM)->scaleX;
   upper->motionFlags = 0;
-  upper->x.fixed = PIXELS(304);
-  upper->y.fixed = PIXELS(32);
-  upper->z.fixed = PIXELS(96);
+  upper->x.fixed = px(304);
+  upper->y.fixed = px(32);
+  upper->z.fixed = px(96);
   MapGrid_CopyCellsTo(102, 4, 74, 4, 18, 23);
   MapGrid_CopyCellsTo(39, 72, 11, 72, 16, 21);
   MapGrid_CopyCellAttributes(19, 6, 3, 7, 22, 6);
@@ -2490,32 +2490,32 @@ static void VenusLighthouseAerie_EruptBeacon(void) {
   MapGrid_CopyCellAttributes(19, 6, 3, 7, 13, 13);
   wait(1);
   actor = Actor_Get(ACTOR_BEACON_STATUE_SOUTHWEST);
-  actor->x.fixed -= PIXELS(16);
+  actor->x.fixed -= px(16);
   VenusLighthouseAerie_StopActorMotion(actor);
   actor = Actor_Get(ACTOR_BEACON_STATUE_NORTHWEST);
-  actor->x.fixed -= PIXELS(16);
+  actor->x.fixed -= px(16);
   VenusLighthouseAerie_StopActorMotion(actor);
   actor = Actor_Get(ACTOR_BEACON_STATUE_NORTHEAST);
-  actor->x.fixed += PIXELS(16);
+  actor->x.fixed += px(16);
   VenusLighthouseAerie_StopActorMotion(actor);
   actor = Actor_Get(ACTOR_BEACON_STATUE_SOUTHEAST);
-  actor->x.fixed += PIXELS(16);
+  actor->x.fixed += px(16);
   VenusLighthouseAerie_StopActorMotion(actor);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
-  actor->x.fixed += PIXELS(16);
-  actor->z.fixed += PIXELS(16);
+  actor->x.fixed += px(16);
+  actor->z.fixed += px(16);
   VenusLighthouseAerie_StopActorMotion(actor);
   actor = Actor_Get(ACTOR_GARET);
-  actor->x.fixed += PIXELS(16);
-  actor->z.fixed += PIXELS(16);
+  actor->x.fixed += px(16);
+  actor->z.fixed += px(16);
   VenusLighthouseAerie_StopActorMotion(actor);
   actor = Actor_Get(ACTOR_IVAN);
-  actor->x.fixed += PIXELS(16);
-  actor->z.fixed += PIXELS(16);
+  actor->x.fixed += px(16);
+  actor->z.fixed += px(16);
   VenusLighthouseAerie_StopActorMotion(actor);
   actor = Actor_Get(ACTOR_MIA);
-  actor->x.fixed += PIXELS(16);
-  actor->z.fixed += PIXELS(16);
+  actor->x.fixed += px(16);
+  actor->z.fixed += px(16);
   VenusLighthouseAerie_StopActorMotion(actor);
   Actor_SetPosition(ACTOR_FELIX, 196, 220);
   Actor_SetAnimation(ACTOR_FELIX, FELIX_ANIMATION_KNEEL);
@@ -2649,36 +2649,36 @@ static void VenusLighthouseAerie_RestorePartyOnBrokenAerie(void) {
   Actor_SetSpriteFlags(Actor_Get(ACTOR_MIA), 0);
 
   actor = Actor_Get(ACTOR_PARTY_LEADER);
-  actor->x.fixed = PIXELS(346);
-  actor->y.fixed = PIXELS(32);
-  actor->z.fixed = PIXELS(205);
+  actor->x.fixed = px(346);
+  actor->y.fixed = px(32);
+  actor->z.fixed = px(205);
   VenusLighthouseAerie_StopActorMotion(actor);
   actor->riseEnabled = 0;
-  actor->velocityY = PIXELS(2);
+  actor->velocityY = px(2);
 
   actor = Actor_Get(ACTOR_GARET);
-  actor->x.fixed = PIXELS(356);
-  actor->y.fixed = PIXELS(32);
-  actor->z.fixed = PIXELS(192);
+  actor->x.fixed = px(356);
+  actor->y.fixed = px(32);
+  actor->z.fixed = px(192);
   VenusLighthouseAerie_StopActorMotion(actor);
   actor->riseEnabled = 0;
-  actor->velocityY = PIXELS(2);
+  actor->velocityY = px(2);
 
   actor = Actor_Get(ACTOR_IVAN);
-  actor->x.fixed = PIXELS(360);
-  actor->y.fixed = PIXELS(32);
-  actor->z.fixed = PIXELS(222);
+  actor->x.fixed = px(360);
+  actor->y.fixed = px(32);
+  actor->z.fixed = px(222);
   VenusLighthouseAerie_StopActorMotion(actor);
   actor->riseEnabled = 0;
-  actor->velocityY = PIXELS(2);
+  actor->velocityY = px(2);
 
   actor = Actor_Get(ACTOR_MIA);
-  actor->x.fixed = PIXELS(334);
-  actor->y.fixed = PIXELS(32);
-  actor->z.fixed = PIXELS(222);
+  actor->x.fixed = px(334);
+  actor->y.fixed = px(32);
+  actor->z.fixed = px(222);
   VenusLighthouseAerie_StopActorMotion(actor);
   actor->riseEnabled = 0;
-  actor->velocityY = PIXELS(2);
+  actor->velocityY = px(2);
 
   Actor_Get(ACTOR_FELIX)->riseCounter = 0;
   Actor_Get(ACTOR_SHEBA)->riseCounter = 0;
@@ -2905,25 +2905,25 @@ static void VenusLighthouseAerie_PlayShebasFall(void) {
   MapGrid_CopyCellsTo(92, 86, 11, 72, 16, 20);
   MapGrid_CopyCellsTo(19, 92, 19, 68, 8, 21);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
-  actor->z.fixed -= PIXELS(32);
+  actor->z.fixed -= px(32);
   actor->userValue = 0;
   VenusLighthouseAerie_StopActorMotion(actor);
   actor = Actor_Get(ACTOR_GARET);
-  actor->x.fixed -= PIXELS(4);
-  actor->z.fixed -= PIXELS(32);
+  actor->x.fixed -= px(4);
+  actor->z.fixed -= px(32);
   actor->userValue = 0;
   VenusLighthouseAerie_StopActorMotion(actor);
   actor = Actor_Get(ACTOR_IVAN);
-  actor->x.fixed -= PIXELS(4);
-  actor->z.fixed -= PIXELS(32);
+  actor->x.fixed -= px(4);
+  actor->z.fixed -= px(32);
   actor->userValue = 0;
   VenusLighthouseAerie_StopActorMotion(actor);
   actor = Actor_Get(ACTOR_MIA);
-  actor->x.fixed -= PIXELS(4);
-  actor->z.fixed -= PIXELS(18);
+  actor->x.fixed -= px(4);
+  actor->z.fixed -= px(18);
   actor->userValue = 0;
   VenusLighthouseAerie_StopActorMotion(actor);
-  Actor_Get(ACTOR_BEACON_ORB)->y.fixed = PIXELS(56);
+  Actor_Get(ACTOR_BEACON_ORB)->y.fixed = px(56);
   FieldCamera_MoveTo(338, 32, 180, 0);
   MapGrid_CenterOnFollowedPoint();
   wait(1);
@@ -2949,28 +2949,28 @@ static void VenusLighthouseAerie_PlayShebasFall(void) {
   MapGrid_CopyCellsTo(110, 105, 74, 4, 18, 23);
   MapGrid_CopyCellsTo(92, 86, 11, 68, 16, 20);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
-  actor->x.fixed -= PIXELS(16);
+  actor->x.fixed -= px(16);
   VenusLighthouseAerie_StopActorMotion(actor);
   actor = Actor_Get(ACTOR_GARET);
-  actor->x.fixed -= PIXELS(16);
+  actor->x.fixed -= px(16);
   VenusLighthouseAerie_StopActorMotion(actor);
   actor = Actor_Get(ACTOR_IVAN);
-  actor->x.fixed -= PIXELS(16);
+  actor->x.fixed -= px(16);
   VenusLighthouseAerie_StopActorMotion(actor);
   actor = Actor_Get(ACTOR_MIA);
-  actor->x.fixed -= PIXELS(16);
+  actor->x.fixed -= px(16);
   VenusLighthouseAerie_StopActorMotion(actor);
   actor = Actor_Get(ACTOR_BEACON_STATUE_SOUTHWEST);
-  actor->x.fixed += PIXELS(16);
+  actor->x.fixed += px(16);
   VenusLighthouseAerie_StopActorMotion(actor);
   actor = Actor_Get(ACTOR_BEACON_STATUE_NORTHWEST);
-  actor->x.fixed += PIXELS(16);
+  actor->x.fixed += px(16);
   VenusLighthouseAerie_StopActorMotion(actor);
   actor = Actor_Get(ACTOR_BEACON_STATUE_NORTHEAST);
-  actor->x.fixed -= PIXELS(16);
+  actor->x.fixed -= px(16);
   VenusLighthouseAerie_StopActorMotion(actor);
   actor = Actor_Get(ACTOR_BEACON_STATUE_SOUTHEAST);
-  actor->x.fixed -= PIXELS(16);
+  actor->x.fixed -= px(16);
   VenusLighthouseAerie_StopActorMotion(actor);
   FieldCamera_MoveTo(322, 32, 180, 0);
   MapGrid_CenterOnFollowedPoint();
@@ -3082,9 +3082,9 @@ static void VenusLighthouseAerie_UpdateBeaconRise(void) {
     // Start the lower beam beneath the floor, then pause each rise stage.
 
   case 24:
-    center->x.fixed = PIXELS(304);
-    center->y.fixed = -PIXELS(360);
-    center->z.fixed = PIXELS(164);
+    center->x.fixed = px(304);
+    center->y.fixed = -px(360);
+    center->z.fixed = px(164);
     center->scaleX = Q16_ONE;
     center->scaleY = Q16_ONE;
     VenusLighthouseAerie_StopActorMotion(center);
@@ -3107,12 +3107,12 @@ static void VenusLighthouseAerie_UpdateBeaconRise(void) {
       if ((gFrameCount & 7) == 0)
         Sound_Play(SE_GLITTER);
       spawnParticles = 1;
-      center->y.fixed += PIXELS(9) / 4;
+      center->y.fixed += px(9) / 4;
     }
     break;
   case 26:
     sTransitionStep--;
-    if (center->y.fixed > (PIXELS(40))) {
+    if (center->y.fixed > (px(40))) {
       PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
       PaletteFade_StartInterpolation(40);
       sTransitionStep++;
@@ -3120,7 +3120,7 @@ static void VenusLighthouseAerie_UpdateBeaconRise(void) {
       if ((gFrameCount & 7) == 0)
         Sound_Play(SE_GLITTER);
       spawnParticles = 1;
-      center->y.fixed += PIXELS(9) / 4;
+      center->y.fixed += px(9) / 4;
     }
     break;
   case 27:
@@ -3146,7 +3146,7 @@ static void VenusLighthouseAerie_UpdateBeaconRise(void) {
   if (spawnParticles) {
     randomHeight = ((u32)(Random_Next() * 80) >> 16) << 16;
     effect = FieldActor_Create(SPRITE_PARTICLE, center->x.fixed,
-                               center->y.fixed - randomHeight + -PIXELS(8),
+                               center->y.fixed - randomHeight + -px(8),
                                center->z.fixed);
     if (effect != 0) {
       sprite = effect->sprite;
@@ -3222,10 +3222,9 @@ static void VenusLighthouseAerie_SpawnSideOrbitParticles(void) {
   phase = gFrameCount & 15;
   if (phase != 0)
     return;
-  effect =
-      FieldActor_Create(SPRITE_PARTICLE, center->x.fixed + PIXELS(8),
-                        center->y.fixed + drift + PIXELS(8), center->z.fixed);
-  drift /= PIXELS(6);
+  effect = FieldActor_Create(SPRITE_PARTICLE, center->x.fixed + px(8),
+                             center->y.fixed + drift + px(8), center->z.fixed);
+  drift /= px(6);
   drift <<= 16;
   if (effect == 0)
     return;
@@ -3253,7 +3252,7 @@ static void VenusLighthouseAerie_UpdateOrbitingEffect(struct Actor *actor) {
   spin = ((struct FieldEffect *)actor)->spin;
   ((struct FieldEffect *)actor)->x =
       anchor->x.fixed + Trig_Cos(spin) * (actor->speedLimit + 28);
-  ((struct FieldEffect *)actor)->z = Trig_Sin(spin) * 16 + PIXELS(164);
+  ((struct FieldEffect *)actor)->z = Trig_Sin(spin) * 16 + px(164);
   actor->targetX = ((struct FieldEffect *)actor)->x;
   actor->targetZ = ((struct FieldEffect *)actor)->z;
   ((struct FieldEffect *)actor)->spin -= TRIG_TURN / 128;
@@ -3322,13 +3321,13 @@ s32 gVenusLighthouseAerie_BeamRiseAction[] = {
 };
 
 s32 gVenusLighthouseAerie_BeamCloseAction[] = {
-    SC_ADD(SW_Y, PIXELS(4)), SC_WAIT(1), SC_LOOP(30, SC_TOP),
-    SC_POSITION(0, 0, 0),    SC_WAIT(1), SC_END,
+    SC_ADD(SW_Y, px(4)),  SC_WAIT(1), SC_LOOP(30, SC_TOP),
+    SC_POSITION(0, 0, 0), SC_WAIT(1), SC_END,
 };
 
 s32 gVenusLighthouseAerie_BeamEndAction[] = {
-    SC_ADD(SW_Y, PIXELS(2)), SC_WAIT(1), SC_LOOP(160, SC_TOP),
-    SC_POSITION(0, 0, 0),    SC_WAIT(1), SC_END,
+    SC_ADD(SW_Y, px(2)),  SC_WAIT(1), SC_LOOP(160, SC_TOP),
+    SC_POSITION(0, 0, 0), SC_WAIT(1), SC_END,
 };
 
 s32 gVenusLighthouseAerie_OrbitParticleScript[] = {
@@ -3336,7 +3335,7 @@ s32 gVenusLighthouseAerie_OrbitParticleScript[] = {
     SC_SET(SW_SCALE_Y, 4 * Q16_ONE / 5),
     SC_ANIMATION(1),
     SC_LABEL(1),
-    SC_ADD(SW_Y, PIXELS(1)),
+    SC_ADD(SW_Y, px(1)),
     SC_WAIT(1),
     SC_LOOP(16, SC_TO(1)),
     SC_POSITION(0, 0, 0),
@@ -3349,7 +3348,7 @@ s32 gVenusLighthouseAerie_RiseParticleScript[] = {
     SC_SET(SW_SCALE_Y, 4 * Q16_ONE / 5),
     SC_ANIMATION(1),
     SC_LABEL(1),
-    SC_ADD(SW_Y, -PIXELS(1)),
+    SC_ADD(SW_Y, -px(1)),
     SC_WAIT(1),
     SC_LOOP(16, SC_TO(1)),
     SC_POSITION(0, 0, 0),
@@ -3390,13 +3389,13 @@ s32 gVenusLighthouseAerie_RiseActionScript[] = {
 };
 
 s32 gVenusLighthouseAerie_StepBackAction[] = {
-    SC_ADD(SW_Y, -(PIXELS(3) / 4)), SC_WAIT(1), SC_LOOP(120, SC_TOP),
-    SC_POSITION(0, 0, 0),           SC_WAIT(1), SC_END,
+    SC_ADD(SW_Y, -(px(3) / 4)), SC_WAIT(1), SC_LOOP(120, SC_TOP),
+    SC_POSITION(0, 0, 0),       SC_WAIT(1), SC_END,
 };
 
 s32 gVenusLighthouseAerie_LeapAction[] = {
-    SC_ADD(SW_Y, -(PIXELS(9) / 2)), SC_WAIT(1), SC_LOOP(80, SC_TOP),
-    SC_POSITION(0, 0, 0),           SC_WAIT(1), SC_END,
+    SC_ADD(SW_Y, -(px(9) / 2)), SC_WAIT(1), SC_LOOP(80, SC_TOP),
+    SC_POSITION(0, 0, 0),       SC_WAIT(1), SC_END,
 };
 
 s32 gVenusLighthouseAerie_PartyExitAction[] = {

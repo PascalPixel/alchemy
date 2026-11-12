@@ -162,8 +162,8 @@ struct Actor {
 
 /// Sets an actor's position in one statement, as SET_POSITION does for a
 /// particle.
-#define SET_ACTOR_POSITION(p, px, py, pz)                                      \
-  ((p)->x.fixed = (px), (p)->y.fixed = (py), (p)->z.fixed = (pz))
+#define SET_ACTOR_POSITION(p, fixedX, fixedY, fixedZ)                          \
+  ((p)->x.fixed = (fixedX), (p)->y.fixed = (fixedY), (p)->z.fixed = (fixedZ))
 
 STATIC_ASSERT(sizeof(struct Actor) == 0x70);
 STATIC_ASSERT(offsetof(struct Actor, arrivalAxis) == 0x56);

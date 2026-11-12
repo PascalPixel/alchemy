@@ -159,9 +159,9 @@ void FieldEffect_UpdateDescendingOrbitActor(struct Actor *actor) {
                         (frames << 11) + mote->orbitAngle, &position);
   mote->x.fixed = position.x;
   mote->z.fixed = position.z;
-  y = mote->y.fixed - PIXELS(1);
+  y = mote->y.fixed - px(1);
   mote->y.fixed = y;
-  if (y < leader->y.fixed + PIXELS(20))
+  if (y < leader->y.fixed + px(20))
     Actor_ReleaseFar(mote);
 }
 
@@ -186,7 +186,7 @@ void FieldEffect_UpdateRadialSpread(struct FieldParticle *effect) {
     position.y = source->y.fixed;
     position.z = source->z.fixed;
 
-    random = Random16() * 10 + PIXELS(10);
+    random = Random16() * 10 + px(10);
     Vector_AddPolarOffset(random, Random16(), &position);
     Camera_WorldToScreen(&position);
 
@@ -197,11 +197,11 @@ void FieldEffect_UpdateRadialSpread(struct FieldParticle *effect) {
     position.x = effect->x;
     position.z = effect->z;
 
-    Vector_AddPolarOffset(PIXELS(120), FACING_NORTH, &position);
+    Vector_AddPolarOffset(px(120), FACING_NORTH, &position);
     effect->targetX = position.x;
     effect->targetZ = position.z;
     effect->acceleration = Q16_ONE;
-    effect->speedMax = PIXELS(5);
+    effect->speedMax = px(5);
     effect->turnStepLimited = state;
     effect->state++;
 

@@ -152,8 +152,8 @@ void MapGrid_CopyCellAttributeRectFar(s32 sourceX, s32 sourceY, s32 width,
 void MapGrid_CopyCellIndexRectFar(s32 sourceX, s32 sourceY, s32 width,
                                   s32 height, s32 dst_x, s32 dst_y);
 /// Puts world map tile (x / 16, y / 16) into the tile grid at
-/// (px / 16, py / 16), drawing it at once when it's next to the view.
-void WorldMap_SetWindowCellTileFar(s32 x, s32 y, s32 px, s32 py);
+/// (cellX / 16, cellY / 16), drawing it at once when it's next to the view.
+void WorldMap_SetWindowCellTileFar(s32 x, s32 y, s32 cellX, s32 cellY);
 /// Returns whether an actor can step to `position`, as an enum
 /// Collision: a wall there, or ground too high or too low for one step.
 s32 MapGrid_CheckCollisionFar(struct Actor *actor,

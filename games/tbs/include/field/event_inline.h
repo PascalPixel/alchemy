@@ -94,9 +94,9 @@ static inline void Field_SetCellBehaviorAt(s32 layer, s32 x, s32 y,
 
 /// Changes one 512-pixel tile of the World Map, drawn at once when it's next to
 /// the view (WorldMap_SetWindowCellTile).
-static inline void Field_SetWorldMapWindowCellTile(s32 x, s32 y, s32 px,
-                                                   s32 py) {
-  WorldMap_SetWindowCellTile(x, y, px, py);
+static inline void Field_SetWorldMapWindowCellTile(s32 x, s32 y, s32 cellX,
+                                                   s32 cellY) {
+  WorldMap_SetWindowCellTile(x, y, cellX, cellY);
 }
 
 /// Puts an actor on the leader and sends it walking off by (dx, dz),

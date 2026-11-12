@@ -406,7 +406,7 @@ void WorldMap_InitializePerspective(void);
 #else
 s32 WorldMap_InitializePerspective(void);
 #endif
-void WorldMap_SetWindowCellTile(s32 x, s32 y, s32 px, s32 py);
+void WorldMap_SetWindowCellTile(s32 x, s32 y, s32 cellX, s32 cellY);
 void WorldMap_LoadGraphics(s32 x, s32 z);
 void WorldMap_ApplyAffinePage(void);
 void WorldMap_RenderPaletteMappedRow(u32 tileRow);

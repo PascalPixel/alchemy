@@ -370,8 +370,8 @@ static void KolimaForestTree_RejectHermesWater(void) {
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_STRIDE);
   Actor_SetSpeedAndAcceleration(ACTOR_PARTY_LEADER, 2, 2);
   Sound_Play(SE_IMPACT);
-  leader->velocityY = PIXELS(5);
-  leader->gravity = PIXELS(1) / 4;
+  leader->velocityY = px(5);
+  leader->gravity = px(1) / 4;
   leader->bounce = 5 * Q16_ONE / 8;
   Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 335, 258);
   while (leader->velocityY >= 0) {
@@ -409,7 +409,7 @@ static void KolimaForestTree_RejectHermesWater(void) {
 
     leader->facing = facing;
   }
-  leader->gravity = PIXELS(1);
+  leader->gravity = px(1);
   leader->bounce = Q16_ONE / 4;
   Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Event_Wait(40);
@@ -621,10 +621,10 @@ static void KolimaForestTree_RestoreTret(void) {
   Event_Wait(60);
   gKolimaForestTreeSparkFrame = 0;
   // Tret sends out the power that frees Kolima's villagers.
-  gKolimaForestTreeSparkOrigin[0] = PIXELS(328);
-  gKolimaForestTreeSparkOrigin[1] = PIXELS(48);
+  gKolimaForestTreeSparkOrigin[0] = px(328);
+  gKolimaForestTreeSparkOrigin[1] = px(48);
   spawnOrbitSparks = KolimaForestTree_SpawnOrbitSparks;
-  gKolimaForestTreeSparkOrigin[2] = PIXELS(205);
+  gKolimaForestTreeSparkOrigin[2] = px(205);
   Task_AddFrame(spawnOrbitSparks, TASK_PASS_FRAME);
   Event_Wait(100);
   Task_Remove(spawnOrbitSparks);
@@ -723,10 +723,10 @@ static void KolimaForestTree_RestoreTret(void) {
   Event_Wait(60);
   gKolimaForestTreeSparkFrame = 0;
   // Laurel looks beyond the river and warns of the forest to the south.
-  gKolimaForestTreeSparkOrigin[0] = PIXELS(136);
-  gKolimaForestTreeSparkOrigin[1] = PIXELS(20);
+  gKolimaForestTreeSparkOrigin[0] = px(136);
+  gKolimaForestTreeSparkOrigin[1] = px(20);
   spawnOrbitSparks = KolimaForestTree_SpawnOrbitSparks;
-  gKolimaForestTreeSparkOrigin[2] = PIXELS(258);
+  gKolimaForestTreeSparkOrigin[2] = px(258);
   Task_AddFrame(spawnOrbitSparks, TASK_PASS_FRAME);
   Event_Wait(100);
   KolimaForestTree_FaceParty(FACING_SOUTHWEST, 40);
@@ -845,11 +845,11 @@ s32 KolimaForestTree_Initialize(void) {
   Actor_SetSpritePriority(ACTOR_TRETS_WRATHFUL_SIDE, 2);
   Actor_SetSpritePriority(ACTOR_LAUREL, 2);
   tretBlank->motionFlags = 0;
-  tretBlank->y.fixed = PIXELS(28);
+  tretBlank->y.fixed = px(28);
   laurelBlank->motionFlags = 0;
-  laurelBlank->y.fixed = PIXELS(28);
+  laurelBlank->y.fixed = px(28);
   tretsWrathfulSide->motionFlags = 0;
-  tretsWrathfulSide->y.fixed = PIXELS(28);
+  tretsWrathfulSide->y.fixed = px(28);
   Actor_SetAnimation(ACTOR_LAUREL, LAUREL_FACE_CLOSED);
   Actor_SetAnimation(ACTOR_TRET, TRET_FACE_CLOSED);
   Actor_Get(ACTOR_TRET)->collisionFlags |= ACTOR_NOT_TARGETED;
@@ -868,11 +868,11 @@ static void KolimaForestTree_SpawnRejectionSpark(void) {
   struct Sprite *sprite;
   s32 phase;
   s32 effectFlags;
-  s32 spawnX = PIXELS(326);
-  s32 spawnY = PIXELS(32);
-  s32 spawnZ = PIXELS(192);
-  s32 targetX = PIXELS(326);
-  s32 targetZ = PIXELS(240);
+  s32 spawnX = px(326);
+  s32 spawnY = px(32);
+  s32 spawnZ = px(192);
+  s32 targetX = px(326);
+  s32 targetZ = px(240);
 
   phase = gFrameCount & 3;
   if (phase != 0)
@@ -889,8 +889,8 @@ static void KolimaForestTree_SpawnRejectionSpark(void) {
   effect->priorityFlags = effectFlags;
   sprite->image.priority = 1;
   effect->scaleX = Q16_ONE / 10;
-  effect->speedLimit = PIXELS(4);
-  effect->acceleration = PIXELS(4);
+  effect->speedLimit = px(4);
+  effect->acceleration = px(4);
   effect->motionFlags = phase;
   Actor_SelectAnimation(effect, 2);
   FieldActor_SetMoveTargetFixed(effect, targetX, 0, targetZ);
@@ -1073,7 +1073,7 @@ static void KolimaForestTree_SpawnOrbitSparks(void) {
         spark->targetX = gKolimaForestTreeSparkOrigin[0];
         spark->targetY = gKolimaForestTreeSparkOrigin[1];
         spark->targetZ = gKolimaForestTreeSparkOrigin[2];
-        spark->speedLimit = PIXELS(8) / 5;
+        spark->speedLimit = px(8) / 5;
         spark->update = KolimaForestTree_UpdateOrbitSpark;
       }
     }

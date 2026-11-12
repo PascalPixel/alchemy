@@ -677,9 +677,9 @@ static void BabiPalace_WakeFromFinalsDream(void) {
   Event_ShowMessage(ACTOR_MIA, 0);
   Event_Wait(10);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  leader->z.fixed += -PIXELS(3);
+  leader->z.fixed += -px(3);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  leader->targetZ += -PIXELS(3);
+  leader->targetZ += -px(3);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_IN_BED_SITTING_UP);
   Event_Wait(40);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_IN_BED_SHAKE_HEAD);
@@ -1313,9 +1313,9 @@ static void BabiPalace_WakeAfterFinals(void) {
   Event_Wait(10);
   Event_ShowMessage(ACTOR_MIA, 0);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
-  actor->z.fixed -= PIXELS(3);
+  actor->z.fixed -= px(3);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
-  actor->targetZ -= PIXELS(3);
+  actor->targetZ -= px(3);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_IN_BED_SITTING_UP);
   Event_Wait(40);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_IN_BED_SHAKE_HEAD);
@@ -2750,7 +2750,7 @@ s32 BabiPalace_ApplyEntryState(void) {
         actor->retainSpriteCache = 1;
         actor->motionFlags = set;
         sprite = actor->sprite;
-        actor->y.fixed = PIXELS(4);
+        actor->y.fixed = px(4);
         sprite->count = set;
         sprite->image.fullColor = 0;
         sprite->image.palette = 0;

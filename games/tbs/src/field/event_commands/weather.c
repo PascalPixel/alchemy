@@ -52,8 +52,8 @@ void Weather_UpdateRain(void) {
       // A new spot up to 128 pixels either way of the leader. The height
       // call passes pixels where MapGrid_GetTerrainHeight takes 16.16, as in
       // Actor_SetHorizontalPositionWithTerrain, whose comment explains it.
-      x = leader[0] + (Random16() << 8) - PIXELS(128);
-      y = leader[2] + (Random16() << 8) - PIXELS(128);
+      x = leader[0] + (Random16() << 8) - px(128);
+      y = leader[2] + (Random16() << 8) - px(128);
       particle->positionX = x;
       particle->positionZ = y;
       particle->positionY = MapGrid_GetTerrainHeightFar(0, x >> 16, y >> 16)
@@ -236,8 +236,8 @@ void FieldMotes_Update(void) {
     if (spawned < 8 && mote->timer == 0) {
       s32 *leader = grid->origin;
 
-      x = leader[0] + (Random16() << 8) - PIXELS(128);
-      y = leader[2] + (Random16() << 8) - PIXELS(128);
+      x = leader[0] + (Random16() << 8) - px(128);
+      y = leader[2] + (Random16() << 8) - px(128);
       mote->positionZ = y;
       mote->positionX = x;
       mote->positionY = MapGrid_GetTerrainHeightFar(0, x >> 16, y >> 16) << 16;
@@ -387,8 +387,8 @@ void FieldEffect_UpdateSparkles(void) {
       } else if ((Random16() & 255) == 0) {
         // A burst starts at a random spot.
         leader = grid->origin;
-        spawnX = leader[0] + (Random16() << 8) - PIXELS(128);
-        spawnZ = leader[2] + (Random16() << 8) - PIXELS(128);
+        spawnX = leader[0] + (Random16() << 8) - px(128);
+        spawnZ = leader[2] + (Random16() << 8) - px(128);
         sparkle->positionX = spawnX;
         sparkle->positionZ = spawnZ;
         sparkle->positionY = MapGrid_GetTerrainHeightFar(0, sx >> 16, sy >> 16)

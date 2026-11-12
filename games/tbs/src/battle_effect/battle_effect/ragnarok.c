@@ -238,17 +238,17 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
               if ((x >= 0 && x <= (127 << 16) - 1) && y >= 0) {
                 u8 *cell;
                 s32 lane;
-                s32 py = y >> 16;
-                s32 px = x >> 16;
+                s32 drawY = y >> 16;
+                s32 drawX = x >> 16;
 
                 // Size follows lifetime, 1 to 8 pixels; alternate sparks take
                 // the brighter pixel or add.
                 size = spark->variant / 5 + 1;
                 lane = i & 1;
                 cell = sheet + gBattleEffect_MoteCells[size - 1];
-                px -= size / 2;
-                py -= size;
-                blit[lane](canvas, cell, px, py, size, size * 2);
+                drawX -= size / 2;
+                drawY -= size;
+                blit[lane](canvas, cell, drawX, drawY, size, size * 2);
               }
             }
           }

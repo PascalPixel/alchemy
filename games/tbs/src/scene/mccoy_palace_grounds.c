@@ -265,7 +265,7 @@ static void McCoyPalaceGrounds_TalkToEastGuard(void) {
       gFieldWork->message++;
       // "Hmmm, I see... You seem pretty confident..."
       Event_ShowMessageThenWait(ACTOR_EAST_GUARD, 0, 10);
-      if (Actor_Get(ACTOR_PARTY_LEADER)->z.fixed < PIXELS(270)) {
+      if (Actor_Get(ACTOR_PARTY_LEADER)->z.fixed < px(270)) {
         Actor_SetSpeed(ACTOR_EAST_GUARD, 0.8);
         Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 346, 274);
         Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 328, 282);

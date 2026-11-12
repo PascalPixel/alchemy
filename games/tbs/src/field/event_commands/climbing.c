@@ -48,16 +48,14 @@ again:
   // The middle of the cell in front, then of the cell beyond. The cell
   // jumped over may be a wall or a drop, but not ground too high; the landing
   // must be open.
-  SET_POSITION(position, (leader->x.fixed & FIELD_CELL_MASK) + PIXELS(8),
-               leader->y.fixed,
-               (leader->z.fixed & FIELD_CELL_MASK) + PIXELS(8));
-  Vector_AddPolarOffset(PIXELS(16), angle, position);
+  SET_POSITION(position, (leader->x.fixed & FIELD_CELL_MASK) + px(8),
+               leader->y.fixed, (leader->z.fixed & FIELD_CELL_MASK) + px(8));
+  Vector_AddPolarOffset(px(16), angle, position);
   if (MapGrid_CheckCollisionFar(leader, position) == COLLISION_TOO_HIGH)
     return -1;
-  SET_POSITION(position, (leader->x.fixed & FIELD_CELL_MASK) + PIXELS(8),
-               leader->y.fixed,
-               (leader->z.fixed & FIELD_CELL_MASK) + PIXELS(8));
-  Vector_AddPolarOffset(PIXELS(32), angle, position);
+  SET_POSITION(position, (leader->x.fixed & FIELD_CELL_MASK) + px(8),
+               leader->y.fixed, (leader->z.fixed & FIELD_CELL_MASK) + px(8));
+  Vector_AddPolarOffset(px(32), angle, position);
   if (MapGrid_CheckCollisionFar(leader, position) == COLLISION_NONE) {
     // Suspend ground following and the shadow (sprite flag bit 0) while
     // airborne: 4 pixels a frame up, 3 a frame across. Restore the original
@@ -69,9 +67,9 @@ again:
     wait(6);
     Sound_PlayFar(SE_JUMP);
     Actor_SelectAnimationFar(leader, 7);
-    leader->speedLimit = PIXELS(3);
-    leader->acceleration = PIXELS(2);
-    leader->velocityY = PIXELS(4);
+    leader->speedLimit = px(3);
+    leader->acceleration = px(2);
+    leader->velocityY = px(4);
     *flags &= 0x7e;
     Actor_SetSpriteFlagsFar(leader, spriteFlags & 0xfe);
     Actor_MoveToAndWaitById(
@@ -104,8 +102,7 @@ again:
     *flags = saved;
     Event_End();
     if (work != NULL)
-      work->walkingDistance +=
-          Iwram_MulQ16(work->walkingDistanceScale, PIXELS(32));
+      work->walkingDistance += Iwram_MulQ16(work->walkingDistanceScale, px(32));
     // Landed on another jump spot: stand, then jump again.
     if (MapGrid_GetCellBehaviorAtFar(leader->layer, position->x, position->z) ==
         CELL_BEHAVIOR_JUMP_FORWARD_UNREACHED) {
@@ -151,7 +148,7 @@ s32 Field_ClimbDown(void) {
 
       // The ground under the point 16 pixels lower may not be a wall cell
       // of the overhead layer: the check returns nonzero for a wall.
-      SET_POSITION(position, actor->x.fixed, actor->y.fixed - PIXELS(16),
+      SET_POSITION(position, actor->x.fixed, actor->y.fixed - px(16),
                    actor->z.fixed);
       result = MapGrid_IsWallAtFar((struct WorldPosition *)position);
       if (result != 0)
@@ -167,8 +164,8 @@ s32 Field_ClimbDown(void) {
       actor->motionFlags = 0;
       Actor_SetSpriteFlagsFar(actor, 0);
       Actor_SelectAnimationFar(actor, 13);
-      Actor_SetMoveTargetFar(actor, gridX << 16, actor->y.fixed - PIXELS(16),
-                             (gridZ << 16) + PIXELS(16));
+      Actor_SetMoveTargetFar(actor, gridX << 16, actor->y.fixed - px(16),
+                             (gridZ << 16) + px(16));
       Actor_WaitForMoveById(gMainRoutineWork.leaderActorId);
       gMainRoutineWork.movementMode = LEADER_MOVEMENT_CLIMB;
     } else {
@@ -180,7 +177,7 @@ s32 Field_ClimbDown(void) {
     // where the leader is until the ground is read, and the shadow back.
     Actor_SelectAnimationFar(actor, ANIM_LEADER_CLIMB);
     actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-    actor->velocityY = PIXELS(4);
+    actor->velocityY = px(4);
     actor->groundHeight = actor->y.fixed;
     Actor_SetSpriteFlagsFar(actor, SPRITE_FLAG_SHADOW);
     Event_Wait(6);
@@ -243,7 +240,7 @@ s32 Field_ClimbUp(void) {
       Actor_SelectAnimationFar(actor, 6);
       wait(4);
       Actor_SelectAnimationFar(actor, 7);
-      actor->velocityY = PIXELS(4);
+      actor->velocityY = px(4);
       wait(4);
       actor->motionFlags = 0;
       spriteFlags &= 0xfe;
@@ -262,8 +259,8 @@ s32 Field_ClimbUp(void) {
     // Climb over the top: up 8 pixels and a cell north.
     actor->motionFlags = 0;
     Actor_SelectAnimationFar(actor, 11);
-    Actor_SetMoveTargetFar(actor, gridX << 16, actor->y.fixed + PIXELS(8),
-                           (gridZ << 16) - PIXELS(16));
+    Actor_SetMoveTargetFar(actor, gridX << 16, actor->y.fixed + px(8),
+                           (gridZ << 16) - px(16));
     Actor_WaitForMoveById(gMainRoutineWork.leaderActorId);
     actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     spriteFlags |= 1;

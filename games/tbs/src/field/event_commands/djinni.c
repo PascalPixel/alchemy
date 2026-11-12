@@ -374,7 +374,7 @@ void FieldEffect_RunAngledApproachPhases(struct FieldParticle *particle) {
   } else if (particle->state == DJINNI_LIGHT_DRIFTING) {
     particle->orbitAngle += 1;
     position.x = target->x.fixed;
-    position.y = target->y.fixed + PIXELS(20);
+    position.y = target->y.fixed + px(20);
     position.z = target->z.fixed;
     // The centre moves 1/8 of the way to the leader's screen point a frame.
     Camera_WorldToScreen(&position);

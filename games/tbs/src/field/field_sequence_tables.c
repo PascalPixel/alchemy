@@ -112,7 +112,7 @@ const s32 gFieldEffect_RisingPulseScript[] = {
 /// Sinks a quarter pixel a frame for 60 frames,
 /// then disappears.
 const s32 gFieldEffect_ParticleScript[] = {
-    SC_ADD(SW_Y, -PIXELS(1) / 4),
+    SC_ADD(SW_Y, -px(1) / 4),
     SC_WAIT(1),
     SC_LOOP(60, SC_TOP),
     SC_RELEASE,

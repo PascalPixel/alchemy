@@ -652,13 +652,13 @@ s32 Scene_Initialize(void) {
               Actor_Get(ACTOR_PSY_CRYSTAL_CHEST)->motionFlags = rewardTaken;
               Actor_Get(ACTOR_WATER_OF_LIFE_CHEST)->motionFlags = rewardTaken;
               chest = Actor_Get(ACTOR_VIAL_CHEST);
-              chest->y.fixed = -PIXELS(4);
+              chest->y.fixed = -px(4);
               chest = Actor_Get(ACTOR_POTION_CHEST);
-              chest->y.fixed = -PIXELS(4);
+              chest->y.fixed = -px(4);
               chest = Actor_Get(ACTOR_PSY_CRYSTAL_CHEST);
-              chest->y.fixed = -PIXELS(4);
+              chest->y.fixed = -px(4);
               chest = Actor_Get(ACTOR_WATER_OF_LIFE_CHEST);
-              chest->y.fixed = -PIXELS(4);
+              chest->y.fixed = -px(4);
             } else {
               McCoyPalace_PresentRewardChests();
             }
@@ -1585,10 +1585,10 @@ static void McCoyPalace_PresentRewardChests(void) {
   Actor_Get(ACTOR_POTION_CHEST)->motionFlags = 0;
   Actor_Get(ACTOR_PSY_CRYSTAL_CHEST)->motionFlags = 0;
   Actor_Get(ACTOR_WATER_OF_LIFE_CHEST)->motionFlags = 0;
-  Actor_Get(ACTOR_VIAL_CHEST)->y.fixed = -PIXELS(4);
-  Actor_Get(ACTOR_POTION_CHEST)->y.fixed = -PIXELS(4);
-  Actor_Get(ACTOR_PSY_CRYSTAL_CHEST)->y.fixed = -PIXELS(4);
-  Actor_Get(ACTOR_WATER_OF_LIFE_CHEST)->y.fixed = -PIXELS(4);
+  Actor_Get(ACTOR_VIAL_CHEST)->y.fixed = -px(4);
+  Actor_Get(ACTOR_POTION_CHEST)->y.fixed = -px(4);
+  Actor_Get(ACTOR_PSY_CRYSTAL_CHEST)->y.fixed = -px(4);
+  Actor_Get(ACTOR_WATER_OF_LIFE_CHEST)->y.fixed = -px(4);
   MapGrid_CenterOnFollowedPoint();
   wait(1);
   gFieldWork->transition =

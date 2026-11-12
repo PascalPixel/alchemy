@@ -256,8 +256,8 @@ static void BabiLighthouse_LandWithParticles(void) {
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   MapGrid_CenterOnFollowedPoint();
   wait(1);
-  Actor_Get(ACTOR_PARTY_LEADER)->y.fixed = PIXELS(130);
-  Actor_Get(ACTOR_PARTY_LEADER)->gravity = PIXELS(1) / 2;
+  Actor_Get(ACTOR_PARTY_LEADER)->y.fixed = px(130);
+  Actor_Get(ACTOR_PARTY_LEADER)->gravity = px(1) / 2;
   Actor_Get(ACTOR_PARTY_LEADER)->bounce = 0;
   Actor_Get(ACTOR_PARTY_LEADER)->motionFlags = 0;
   Event_StartScreenTransition();
@@ -291,8 +291,8 @@ static void BabiLighthouse_LandWithParticles(void) {
   MapGrid_WaitForShakeToSettle();
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
-  Actor_Get(ACTOR_PARTY_LEADER)->gravity = PIXELS(1);
-  Actor_Get(ACTOR_PARTY_LEADER)->bounce = PIXELS(1) / 4;
+  Actor_Get(ACTOR_PARTY_LEADER)->gravity = px(1);
+  Actor_Get(ACTOR_PARTY_LEADER)->bounce = px(1) / 4;
   Event_End();
 }
 
@@ -307,9 +307,9 @@ static void BabiLighthouse_FallToExit(s32 exit) {
   MapGrid_CenterOnFollowedPoint();
   wait(1);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  leader->y.fixed = PIXELS(130);
+  leader->y.fixed = px(130);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  leader->gravity = PIXELS(1) / 4;
+  leader->gravity = px(1) / 4;
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   leader->bounce = 0;
   Actor_Get(ACTOR_PARTY_LEADER)->motionFlags = 0;
@@ -321,7 +321,7 @@ static void BabiLighthouse_FallToExit(s32 exit) {
   Actor_Get(ACTOR_PARTY_LEADER)->motionFlags =
       ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  leader->velocityY = -PIXELS(5);
+  leader->velocityY = -px(5);
   Actor_WaitUntilIdle(Actor_Get(ACTOR_PARTY_LEADER));
   Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
   Import_EventSetExitRequest(exit);
@@ -1229,7 +1229,7 @@ static void BabiLighthouse_UpdateMovedPillar(void) {
 
     if (row == 12) {
       pillar->motionFlags = ACTOR_FALLS;
-      pillar->groundHeight = PIXELS(48);
+      pillar->groundHeight = px(48);
       pillar->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
       {
         s32 targetColumn = column, targetRow = row;
@@ -1257,11 +1257,11 @@ static void BabiLighthouse_PushRoadPillar(void) {
 
   if (heightDifference >= 0) {
 
-    if (heightDifference < PIXELS(8)) {
+    if (heightDifference < px(8)) {
     } else {
       return;
     }
-  } else if (leader->y.fixed - ahead->y.fixed >= PIXELS(8)) {
+  } else if (leader->y.fixed - ahead->y.fixed >= px(8)) {
     return;
   }
 

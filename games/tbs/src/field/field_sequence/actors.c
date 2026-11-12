@@ -275,15 +275,15 @@ void Actor_ResetForLeader(struct ActorPlacement *table) {
   // (FieldSequence_Run saves its layer there). Its cell: 16 pixels square, 128
   // to a row, so above is the cell north of it.
   object->layer = gMainRoutineWork.layer;
-  pos = (object->x.fixed / PIXELS(16)) + (object->z.fixed / PIXELS(16)) * 128;
+  pos = (object->x.fixed / px(16)) + (object->z.fixed / px(16)) * 128;
   cell = &MAPGRID_CELLS[pos];
   above = &MAPGRID_CELLS[pos - 128];
   if (gMainRoutineWork.y != 0 && cell->behavior == CELL_BEHAVIOR_CLIMB &&
       above->behavior == CELL_BEHAVIOR_CLIMB) {
     gMainRoutineWork.movementMode = LEADER_MOVEMENT_CLIMB;
     height = MapGrid_GetTerrainHeightFar(0, object->x.fixed,
-                                         object->z.fixed - PIXELS(16)) -
-             PIXELS(32);
+                                         object->z.fixed - px(16)) -
+             px(32);
     object->y.fixed += height;
     object->groundHeight = object->y.fixed;
     object->motionFlags = 0;
@@ -405,11 +405,11 @@ void Actor_ClearOutOfBounds(void) {
 
   camera = work->camera;
   centerX = camera->x.fixed;
-  left = centerX - PIXELS(160);
-  right = centerX + PIXELS(160);
+  left = centerX - px(160);
+  right = centerX + px(160);
   centerZ = camera->z.fixed;
-  top = centerZ - PIXELS(200);
-  bottom = centerZ + PIXELS(100);
+  top = centerZ - px(200);
+  bottom = centerZ + px(100);
   actorSlot = &work->actors[ACTOR_FIRST_PLACED];
   releaseCacheMask = ~1;
 

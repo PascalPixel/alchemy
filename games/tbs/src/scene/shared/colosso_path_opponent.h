@@ -66,20 +66,20 @@ static void Colosso_UpdatePathOpponent(void) {
       rec->mode = PATH_RECORDER_FINISHED;
       Actor_SelectAnimation(actor, 1);
       if (work->gauge.finishX < actor->x.fixed) {
-        x = work->gauge.finishX + PIXELS(12);
+        x = work->gauge.finishX + px(12);
       } else {
-        x = work->gauge.finishX - PIXELS(12);
+        x = work->gauge.finishX - px(12);
       }
       if (GameFlag_Get(FLAG_SCENE_TEMP_11)) {
-        fz = work->gauge.finishZ + PIXELS(16);
+        fz = work->gauge.finishZ + px(16);
         itemActorId = &work->gauge.finishItemActorIdB;
       } else {
-        fz = work->gauge.finishZ - PIXELS(16);
+        fz = work->gauge.finishZ - px(16);
         itemActorId = &work->gauge.finishItemActorIdA;
       }
       actor->timer = *itemActorId;
-      actor->acceleration = PIXELS(1) / 4;
-      actor->speedLimit = PIXELS(1);
+      actor->acceleration = px(1) / 4;
+      actor->speedLimit = px(1);
       FieldActor_SetMoveTargetFixed(actor, x, 0, fz);
       GameFlag_Set(FLAG_SCENE_TEMP_11);
       Actor_StartScript(actor, gColosso_OpponentFinishScript);
@@ -222,9 +222,8 @@ static void Colosso_DrawGauge(void) {
     shape = 0x40000000;
     actor = Actor_Lookup(gauge->opponentActorId);
     if (actor != 0) {
-      x = ((actor->x.fixed - gauge->finishX) / PIXELS(14)) + 112;
-      y = ((actor->z.fixed - gauge->finishZ) / PIXELS(14)) + gauge->level * 6 -
-          4;
+      x = ((actor->x.fixed - gauge->finishX) / px(14)) + 112;
+      y = ((actor->z.fixed - gauge->finishZ) / px(14)) + gauge->level * 6 - 4;
       y &= 255;
       *dst++ = 0;
       y |= x << 16;
@@ -235,9 +234,8 @@ static void Colosso_DrawGauge(void) {
     }
     actor = Actor_Lookup(gauge->playerActorId);
     if (actor != 0) {
-      x = ((actor->x.fixed - gauge->finishX) / PIXELS(14)) + 112;
-      y = ((actor->z.fixed - gauge->finishZ) / PIXELS(14)) + gauge->level * 6 -
-          4;
+      x = ((actor->x.fixed - gauge->finishX) / px(14)) + 112;
+      y = ((actor->z.fixed - gauge->finishZ) / px(14)) + gauge->level * 6 - 4;
       y &= 255;
       *dst++ = 0;
       y |= x << 16;

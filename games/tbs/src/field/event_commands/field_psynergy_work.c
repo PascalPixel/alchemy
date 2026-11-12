@@ -97,7 +97,7 @@ void FieldPsynergy_SetupActorPair(s32 userId, s32 targetId) {
   effectWork->x = user->x.fixed;
   effectWork->z = user->z.fixed;
   effectWork->y = user->y.fixed;
-  Vector_AddPolarOffset(PIXELS(16), dir, &effectWork->x);
+  Vector_AddPolarOffset(px(16), dir, &effectWork->x);
 }
 
 /// Stops the caster's update routine and restores its colours (sprite param

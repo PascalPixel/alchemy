@@ -258,7 +258,7 @@ void Colosso_WalkActorTo(s32 actorId, s32 x, s32 z) {
   struct Actor *actor = Actor_Lookup(actorId);
 
   if (actor != 0) {
-    s32 speed = PIXELS(2);
+    s32 speed = px(2);
     s32 zero = 0;
 
     actor->speedLimit = speed;
@@ -276,7 +276,7 @@ void Colosso_WalkActorToAndStand(s32 actorId, s32 x, s32 z) {
   struct Actor *actor = Actor_Lookup(actorId);
 
   if (actor != 0) {
-    s32 speed = PIXELS(5) / 4;
+    s32 speed = px(5) / 4;
     s32 zero = 0;
 
     actor->speedLimit = speed;

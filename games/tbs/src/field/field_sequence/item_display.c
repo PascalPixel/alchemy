@@ -179,7 +179,7 @@ struct Actor *ItemDisplay_ShowItemInFront(s32 actorId, s32 item) {
     sprite->image.palette = 0;
     sprite->image.priority = 1;
 
-    picture->velocityY = PIXELS(2);
+    picture->velocityY = px(2);
     picture->gravity = Q16_ONE / 4;
 
     // Draw the item's icon into HEAP_SLOT_GLYPH_TRANSFER, then send it to the
@@ -241,7 +241,7 @@ void ItemDisplay_ShowPicture(void *object, s32 flags) {
     if (flags & 1) {
       Actor_SetSpriteFlagsFar(object, 0);
       Actor_StartScriptFar(object, gFieldEffect_ParticleEmitterScript);
-      ((struct Actor *)object)->velocityY = PIXELS(2);
+      ((struct Actor *)object)->velocityY = px(2);
       ((struct Actor *)object)->gravity = Q16_ONE / 4;
       ((struct Actor *)object)->update = ItemDisplay_EmitSparkles;
     }

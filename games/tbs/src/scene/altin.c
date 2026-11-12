@@ -769,7 +769,7 @@ static void Altin_BeastHop(struct Actor *actor) {
   }
   if (beast->velocityY == 0) {
     Actor_SelectAnimation(beast, 1);
-    beast->y.fixed += -PIXELS(3) / 2;
+    beast->y.fixed += -px(3) / 2;
     if (beast->y.fixed < beast->groundHeight) {
       if (((struct FieldEffect *)actor)->countdown != 0) {
         Sound_Play(SE_SPLASH);
@@ -787,7 +787,7 @@ static void Altin_BeastHop(struct Actor *actor) {
     Sound_Play(SE_JUMP);
     ((struct FieldEffect *)actor)->countdown = 1;
     Actor_SelectAnimation(beast, 2);
-    beast->velocityY = PIXELS(3);
+    beast->velocityY = px(3);
   }
   if (++beast->timer == WATER_BEAST_HOP_PERIOD)
     beast->timer = 0;
@@ -800,7 +800,7 @@ static void Altin_BeastHopAway(void) {
   beast = Actor_Get(ACTOR_WATER_BEAST);
   beast->timer = 0;
   beast->userValue = 0;
-  beast->gravity = PIXELS(2) / 5;
+  beast->gravity = px(2) / 5;
   beast->update = Altin_BeastHop;
   Actor_SetSpeed(ACTOR_WATER_BEAST, 1.2);
   Actor_MoveToAndWait(ACTOR_WATER_BEAST, 28, 460);
@@ -997,12 +997,11 @@ static void Altin_SprayDrift(struct Actor *actor) {
   spray->x.fixed += WATER_SPRAY_LATERAL_STEP(
       spray->timer, (s16)((s32)(((u32)Import_RandomNext() * 2) >> 16) - 1));
   if (spray->timer <= 3) {
-    spray->z.fixed +=
-        -(((u32)Import_RandomNext() * (PIXELS(1) / 2)) >> 16) - PIXELS(1);
+    spray->z.fixed += -(((u32)Import_RandomNext() * (px(1) / 2)) >> 16) - px(1);
     spray->scaleX += 3 * Q16_ONE / 20;
     spray->scaleY += -Q16_ONE / 25;
   } else {
-    spray->z.fixed += PIXELS(2);
+    spray->z.fixed += px(2);
     spray->scaleX += 3 * Q16_ONE / 100;
     spray->scaleY += 3 * Q16_ONE / 100;
   }
@@ -1023,8 +1022,8 @@ static void Altin_SprayDrift(struct Actor *actor) {
 static void Altin_BeastSpawnSpray(void) {
   struct Actor *spray;
   if ((gFrameCount & 3) == 0) {
-    spray = ((struct Actor *)FieldActor_Create(SPRITE_DUST_PUFF, PIXELS(64), 0,
-                                               PIXELS(400)));
+    spray = ((struct Actor *)FieldActor_Create(SPRITE_DUST_PUFF, px(64), 0,
+                                               px(400)));
     if (spray != 0) {
       spray->timer = WATER_SPRAY_LIFETIME;
       spray->userValue = 0;

@@ -614,7 +614,7 @@ static void AltmillerCave_HopSelectedActor(void) {
   {
     s32 angle = actor->facing & 0xf000;
 
-    Vector_AddPolarOffset(PIXELS(32), angle, destination.coordinates);
+    Vector_AddPolarOffset(px(32), angle, destination.coordinates);
   }
   if (FieldActor_CheckMovementCollision(actor, &destination.position) == 0) {
     Event_Start();
@@ -622,9 +622,9 @@ static void AltmillerCave_HopSelectedActor(void) {
     wait(6);
     Sound_Play(SE_JUMP);
     Actor_SelectAnimation(actor, ANIM_LEADER_LEAP);
-    actor->speedLimit = PIXELS(3);
-    actor->acceleration = PIXELS(2);
-    actor->velocityY = PIXELS(4);
+    actor->speedLimit = px(3);
+    actor->acceleration = px(2);
+    actor->velocityY = px(4);
     actor->motionFlags &= 126;
     Actor_SetSpriteFlags(actor, 0);
     Actor_MoveToAndWait(ACTOR_PARTY_LEADER, components[0].part.pixel,
@@ -662,9 +662,9 @@ static void AltmillerCave_PulseLight(struct Actor *actor) {
 /// Puts a light on the ring, radius pixels from its center above the rocks, at
 /// the given angle.
 static void AltmillerCave_PlaceLight(s32 actorId, s32 radius, s32 angle) {
-  s32 centreX = PIXELS(504);
-  s32 centreHeight = PIXELS(24);
-  s32 depth = PIXELS(144);
+  s32 centreX = px(504);
+  s32 centreHeight = px(24);
+  s32 depth = px(144);
   struct Actor *light = Actor_Get(actorId);
   s32 coordinates[3];
   s32 *position = coordinates;
@@ -683,7 +683,7 @@ static void AltmillerCave_PlaceLights(s32 angle) {
   s32 i = 0;
 
   do {
-    AltmillerCave_PlaceLight(ACTOR_FIRST_LIGHT + i, PIXELS(24), angle);
+    AltmillerCave_PlaceLight(ACTOR_FIRST_LIGHT + i, px(24), angle);
     angle -= TRIG_TURN / 5;
     i++;
   } while (i < LIGHT_COUNT);
@@ -801,7 +801,7 @@ static void AltmillerCave_TurnRock(s32 rock) {
       wait(30);
       angle = gAltmillerCave_LightWheel->angle;
       for (i = 0; i < LIGHT_COUNT; i++) {
-        AltmillerCave_PlaceLight(ACTOR_FIRST_LIGHT + i, PIXELS(24), angle);
+        AltmillerCave_PlaceLight(ACTOR_FIRST_LIGHT + i, px(24), angle);
         Sound_Play(SE_LIGHT_APPEAR);
         actor = Actor_Get(ACTOR_FIRST_LIGHT + i);
         actor->scaleX = 0;
@@ -876,7 +876,7 @@ static void AltmillerCave_TurnRock(s32 rock) {
       MapGrid_SetShake(4, 4, 1);
       gAltmillerCave_LightWheel->phase = WHEEL_STOPPED;
       Sound_Play(SE_WARP);
-      radius = PIXELS(24);
+      radius = px(24);
       angle = gAltmillerCave_LightWheel->angle;
       do {
         for (i = 0; i < LIGHT_COUNT; i++) {
@@ -886,7 +886,7 @@ static void AltmillerCave_TurnRock(s32 rock) {
           AltmillerCave_PlaceLight(ACTOR_FIRST_LIGHT + i, radius, angle);
           angle -= TRIG_TURN / 5;
         }
-        radius -= PIXELS(1) / 5;
+        radius -= px(1) / 5;
         angle += TRIG_TURN * 3 / 64;
         wait(1);
       } while (radius > 0);
@@ -2318,11 +2318,11 @@ static void AltmillerCave_UpdateWallFragment(struct FieldParticle *fragment) {
     position[2] = z;
     fragment->x = x;
     position[0] = x;
-    Vector_AddPolarOffset(PIXELS(120), Import_RandomNext(), position);
+    Vector_AddPolarOffset(px(120), Import_RandomNext(), position);
     fragment->targetX = position[0];
     fragment->targetZ = position[2];
-    fragment->acceleration = PIXELS(5);
-    fragment->speedMax = PIXELS(5);
+    fragment->acceleration = px(5);
+    fragment->speedMax = px(5);
     fragment->turnStepLimited = currentPhase;
     (*phase)++;
     if ((gVBlankCount & 3) == 0)
@@ -2350,9 +2350,9 @@ static void AltmillerCave_ReleaseWallBurst(void) {
   FieldEffect_InitializeSlots();
   effectWork = (struct FieldEffectWork *)gFieldEffectWork;
   Shop_SaveAndTintFieldPalette(PALETTE_TINT_CUSTOM | RGB(8, 8, 8));
-  position.x = PIXELS(504);
-  position.y = PIXELS(24);
-  position.z = PIXELS(144);
+  position.x = px(504);
+  position.y = px(24);
+  position.z = px(144);
   Camera_WorldToScreen(&position);
   fragment = effectWork->particles;
   for (fragmentIndex = 23; fragmentIndex >= 0; fragmentIndex--) {

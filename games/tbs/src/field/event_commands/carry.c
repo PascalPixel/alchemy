@@ -284,8 +284,8 @@ struct Actor *FieldEffect_SpawnCarryHand(s32 x, s32 y, s32 z, s32 angle) {
   if (fragment != NULL) {
     fragment->scaleY = Q16_ONE / 4;
     fragment->scaleX = Q16_ONE / 4;
-    fragment->speedLimit = PIXELS(3);
-    fragment->acceleration = PIXELS(3);
+    fragment->speedLimit = px(3);
+    fragment->acceleration = px(3);
     fragment->steeringFlags = 0;
     Actor_SelectAnimationFar(fragment, 1);
     scale = fragment->scaleX;

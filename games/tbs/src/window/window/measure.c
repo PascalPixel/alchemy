@@ -9,13 +9,14 @@
 #define FIT_FIXED_LIMIT 1
 #endif
 
-/// Sizes a window for decoded text no and moves (*px, *py) so the window fits
-/// on the screen. flags: bit 0 measures every page (Text_MeasureAllPages)
-/// rather than the first; bit 1 takes the size in *pw and *ph as given, in
-/// tiles, instead of measuring. Measuring returns the size in tiles in *pw and
-/// *ph and fills spacing with each line's extra character gap. An empty text
-/// (size 0 by 0) leaves the position as it was. Under Mind Read (Japanese and
-/// English) the window is 2 tiles wider and kept off the screen's last column.
+/// Sizes a window for decoded text no and moves (*windowX, *windowY) so the
+/// window fits on the screen. flags: bit 0 measures every page
+/// (Text_MeasureAllPages) rather than the first; bit 1 takes the size in
+/// *windowWidth and *windowHeight as given, in tiles, instead of measuring.
+/// Measuring returns the size in tiles in *windowWidth and *windowHeight and
+/// fills spacing with each line's extra character gap. An empty text (size 0 by
+/// 0) leaves the position as it was. Under Mind Read (Japanese and English) the
+/// window is 2 tiles wider and kept off the screen's last column.
 void Window_FitOnScreen(s32 entryIndex, s32 *windowX, s32 *windowY,
                         u32 *windowWidth, u32 *windowHeight, u16 *spacing,
                         u32 flags) {

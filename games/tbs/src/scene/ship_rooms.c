@@ -548,18 +548,18 @@ static s32 ShipRooms_Bob(struct Actor *interpreter) {
   s32 ascendingY;
 
   if ((s16)actor->userValue != 0) {
-    descendingY = (actor->y.fixed - ((u32)(Import_RandomNext() << 15) >> 16)) -
-                  PIXELS(1) / 2;
+    descendingY =
+        (actor->y.fixed - ((u32)(Import_RandomNext() << 15) >> 16)) - px(1) / 2;
     actor->y.fixed = descendingY;
     if (descendingY < 0) {
       verticalMotionDirection = 0;
       actor->userValue = verticalMotionDirection;
     }
   } else {
-    ascendingY = actor->y.fixed + ((u32)(Import_RandomNext() << 15) >> 16) +
-                 PIXELS(1) / 2;
+    ascendingY =
+        actor->y.fixed + ((u32)(Import_RandomNext() << 15) >> 16) + px(1) / 2;
     actor->y.fixed = ascendingY;
-    if (ascendingY > PIXELS(8)) {
+    if (ascendingY > px(8)) {
       verticalMotionDirection = 1;
       actor->userValue = verticalMotionDirection;
     }
@@ -3076,7 +3076,7 @@ static void ShipRooms_IntroduceReplacementOarsman(s32 seat) {
   Event_Start();
   ShipRooms_RunEventCommand(SHIP_RESET_CAMERA, 0, 0);
   x = 432;
-  halfStep = PIXELS(1) / 2;
+  halfStep = px(1) / 2;
   ShipRooms_PlaceActor(ACTOR_PARTY_LEADER, x, 134, FACING_WEST);
   ShipRooms_PlaceFoundActors(1);
   wait(1);
@@ -3188,7 +3188,7 @@ static struct Actor *ShipRooms_PlaceAnchorCharm(void) {
   if (set != 0) {
     return gShipRooms_AnchorObject;
   }
-  actor = FieldActor_Create(SPRITE_BLANK, PIXELS(455), PIXELS(4), PIXELS(544));
+  actor = FieldActor_Create(SPRITE_BLANK, px(455), px(4), px(544));
   actor->motionFlags = set;
   actor->retainSpriteCache = 1;
   sprite = actor->sprite;

@@ -703,13 +703,13 @@ static void CottageRoomsB_DoraWakesIsaac(void) {
   ActorSystem_ResumeProjectionAndHideLayers();
   Event_Wait(40);
   // Widen the camera bounds and reveal the lightning outside.
-  grid->minX = PIXELS(328);
-  grid->minY = PIXELS(600);
-  grid->maxX = PIXELS(624);
-  grid->maxY = PIXELS(816);
-  viewCenter->x.fixed = PIXELS(564);
+  grid->minX = px(328);
+  grid->minY = px(600);
+  grid->maxX = px(624);
+  grid->maxY = px(816);
+  viewCenter->x.fixed = px(564);
   viewCenter->y.fixed = 0;
-  viewCenter->z.fixed = PIXELS(691);
+  viewCenter->z.fixed = px(691);
   MapGrid_CenterOnFollowedPoint();
   wait(1);
   (*eventSlot)->transition =
@@ -1258,10 +1258,10 @@ static void CottageRoomsB_ShowMythrilBag(void) {
   wait(1);
   FieldCamera_FollowActor(ACTOR_KRADEN, 1);
   clear = 0;
-  actor = FieldActor_Create(SPRITE_BLANK, PIXELS(328), PIXELS(2), PIXELS(195));
+  actor = FieldActor_Create(SPRITE_BLANK, px(328), px(2), px(195));
   actor->motionFlags = clear;
   sprite = actor->sprite;
-  actor->y.fixed = PIXELS(5);
+  actor->y.fixed = px(5);
   sprite->count = clear;
   sprite->image.fullColor = 0;
   sprite->image.palette = 0;
@@ -1466,17 +1466,17 @@ s32 gCottageRoomsB_FlameRisesScript[] = {
     SC_WAIT(1),
     SC_LOOP(8, SC_TO(1)),
     SC_LABEL(2),
-    SC_ADD(SW_Y, -PIXELS(1) / 10),
-    SC_ADD(SW_TARGET_Y, -PIXELS(1) / 10),
+    SC_ADD(SW_Y, -px(1) / 10),
+    SC_ADD(SW_TARGET_Y, -px(1) / 10),
     SC_ADD(SW_SCALE_X, -655),
     SC_ADD(SW_SCALE_Y, 2621),
     SC_WAIT(1),
     SC_LOOP(14, SC_TO(2)),
-    SC_SET(SW_Y, PIXELS(8)),
-    SC_SET(SW_TARGET_Y, PIXELS(8)),
+    SC_SET(SW_Y, px(8)),
+    SC_SET(SW_TARGET_Y, px(8)),
     SC_LABEL(3),
-    SC_ADD(SW_Y, PIXELS(9) / 20),
-    SC_ADD(SW_TARGET_Y, PIXELS(9) / 20),
+    SC_ADD(SW_Y, px(9) / 20),
+    SC_ADD(SW_TARGET_Y, px(9) / 20),
     SC_ADD(SW_SCALE_X, 65),
     SC_ADD(SW_SCALE_Y, -1310),
     SC_WAIT(1),
@@ -1497,7 +1497,7 @@ s32 gCottageRoomsB_DoraFacesIsaacScript[] = {
 };
 
 s32 gCottageRoomsB_MythrilBagRisesScript[] = {
-    SC_ADD(SW_Y, PIXELS(1) / 2),
+    SC_ADD(SW_Y, px(1) / 2),
     SC_WAIT(1),
     SC_LOOP(16, SC_TOP),
 };

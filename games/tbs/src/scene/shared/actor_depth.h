@@ -28,7 +28,7 @@ static s32 Actor_SetFlagBitByRelativeDepth(struct Actor *updated) {
   if (ref->z.fixed < actor->z.fixed) {
     s32 lim = actor->z.fixed - ref->z.fixed;
     s32 ay;
-    lim += PIXELS(4);
+    lim += px(4);
     ay = actor->y.fixed;
     ay += lim;
     if (ref->y.fixed <= ay) {

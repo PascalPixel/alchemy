@@ -44,7 +44,7 @@ void Scene_FloatNut(s32 id) {
   actor->mode = zero;
 
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0)
-    actor->y += PIXELS(32);
+    actor->y += px(32);
 
   actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   actor->visible = 1;

@@ -27,7 +27,7 @@ void FieldEffect_UpdateScaledArcActorA(struct Actor *actor) {
   arc->scaleY = scale;
   arc->x.fixed = anchor->x.fixed;
   arc->y.fixed += Q16_ONE;
-  arc->z.fixed = anchor->z.fixed + (Q16_ONE - scale) * 5 + PIXELS(9);
+  arc->z.fixed = anchor->z.fixed + (Q16_ONE - scale) * 5 + px(9);
 }
 
 /// Per-frame update of arc B: arc A upside down, 16 pixels in front of the
@@ -49,7 +49,7 @@ void FieldEffect_UpdateScaledArcActorB(struct Actor *actor) {
   arc->scaleY = -scale;
   arc->x.fixed = anchor->x.fixed;
   arc->y.fixed += Q16_ONE;
-  arc->z.fixed = anchor->z.fixed - (Q16_ONE - scale) * 5 + PIXELS(16);
+  arc->z.fixed = anchor->z.fixed - (Q16_ONE - scale) * 5 + px(16);
 }
 
 /// A sprite (struct Sprite) as the arcs set it up: its image's three

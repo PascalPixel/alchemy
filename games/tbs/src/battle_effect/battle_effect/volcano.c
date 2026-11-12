@@ -191,23 +191,23 @@ void BattleEffect_RunVolcano(struct BattleEffectParams *args) {
       if (life > 0) {
         s32 x;
         s32 y;
-        s32 py;
+        s32 drawY;
 
         spark->variant = life - 1;
         x = spark->x += spark->z;
         y = spark->y += spark->velocityY;
         spark->z = spark->z * 60 / 64;
         spark->velocityY = spark->velocityY * 60 / 64 - 16;
-        py = y / 256;
-        if (py > 120) {
+        drawY = y / 256;
+        if (drawY > 120) {
           spark->velocityY = -spark->velocityY / 2;
         } else if (x >= 0 && x >> 8 <= 126 && y >= 0) {
-          s32 px = x >> 8;
+          s32 drawX = x >> 8;
           s32 size = (life - 17) / 8;
 
           if (size <= 0)
             size = 1;
-          EFFECT_DRAW_MOTE(draw[i & 1], canvas, sheet, px, py, size);
+          EFFECT_DRAW_MOTE(draw[i & 1], canvas, sheet, drawX, drawY, size);
         }
       }
     }

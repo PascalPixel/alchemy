@@ -152,7 +152,7 @@ static void GomaCaveEntrance_MoveWestPillar(void) {
   s32 column;
 
   pillar = Actor_Get(ACTOR_WEST_PILLAR);
-  column = pillar->x.fixed / PIXELS(16);
+  column = pillar->x.fixed / px(16);
   Event_ClearFlag(FLAG_GOMA_CAVE_ENTRANCE_WEST_PILLAR_ONE_STEP);
   Event_ClearFlag(FLAG_GOMA_CAVE_ENTRANCE_WEST_PILLAR_TWO_STEPS);
   if (column == 15) {
@@ -173,7 +173,7 @@ static void GomaCaveEntrance_MoveEastPillar(void) {
   s32 column;
 
   pillar = Actor_Get(ACTOR_EAST_PILLAR);
-  column = pillar->x.fixed / PIXELS(16);
+  column = pillar->x.fixed / px(16);
   if (column == 23) {
     Event_Wait(10);
     Actor_Get(ACTOR_EAST_PILLAR)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
@@ -583,11 +583,11 @@ static void GomaCaveEntrance_LeapStump(s32 stumpId) {
   stump->update = GomaCaveEntrance_SpinStump;
   Actor_SetSpeed(stumpId, 3);
   Actor_SetDestination(stumpId, 160, 192);
-  stump->gravity = 4 * PIXELS(1) / 5;
+  stump->gravity = 4 * px(1) / 5;
   stump->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   stump->layer = 0;
   Actor_WaitForMoveById(stumpId);
-  Actor_WaitBelowHeight(stump, PIXELS(32));
+  Actor_WaitBelowHeight(stump, px(32));
   Sound_Play(SE_THUMP);
   MapGrid_SetShake(5, 5, 1);
   Sound_Play(SE_RUMBLE);
@@ -599,10 +599,10 @@ static void GomaCaveEntrance_LeapStump(s32 stumpId) {
     FieldEffect_Spawn(stump->x.fixed, stump->y.fixed, stump->z.fixed, dir.x,
                       dir.y, dir.z, 0, NULL);
   }
-  stump->velocityY = PIXELS(5);
+  stump->velocityY = px(5);
   Actor_SetDestination(stumpId, 139, 196);
   Actor_WaitForMoveById(stumpId);
-  Actor_WaitBelowHeight(stump, PIXELS(32));
+  Actor_WaitBelowHeight(stump, px(32));
   // UB: the native integer store aliases the update pointer. A typed clear
   // swaps this store with the following sprite-pointer load.
 #ifdef UBFIX

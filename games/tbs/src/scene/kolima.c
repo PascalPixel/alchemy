@@ -271,7 +271,7 @@ static s32 Kolima_UpdateFallingDebris(struct Actor *interpreter) {
   struct Actor *debris = interpreter;
   debris->x.fixed += debris->velocityX;
   debris->z.fixed += debris->velocityZ;
-  debris->velocityZ -= PIXELS(1) / 25;
+  debris->velocityZ -= px(1) / 25;
   debris->scaleX += 3 * Q16_ONE / 128;
   debris->scaleY += 3 * Q16_ONE / 128;
   {
@@ -486,7 +486,7 @@ static void Kolima_LowerBridge(void) {
   // Ten puffs of dust where it lands, thrown alternately left and right.
   for (debrisIndex = 0; debrisIndex < 10; debrisIndex++) {
     struct Actor *debris = FieldActor_Create(
-        SPRITE_DUST_PUFF, PIXELS(148 + debrisIndex * 4), 0, PIXELS(258));
+        SPRITE_DUST_PUFF, px(148 + debrisIndex * 4), 0, px(258));
 
     if (debris != 0) {
       debris->motionFlags = 0;
@@ -497,11 +497,10 @@ static void Kolima_LowerBridge(void) {
 
         debris->timer = delay;
       }
-      debris->velocityX = (s32)((PIXELS(debrisIndex & 3) + PIXELS(1))) >> 1;
-      debris->velocityZ = PIXELS(1);
+      debris->velocityX = (s32)((px(debrisIndex & 3) + px(1))) >> 1;
+      debris->velocityZ = px(1);
       if (debrisIndex & 1) {
-        debris->velocityX =
-            -((s32)(((debrisIndex & 3) << 16) + PIXELS(1)) >> 1);
+        debris->velocityX = -((s32)(((debrisIndex & 3) << 16) + px(1)) >> 1);
       }
       Actor_SelectAnimation(debris, 1);
       Actor_StartScript(debris, gKolima_DebrisScript);
@@ -606,7 +605,7 @@ static __inline__ void Kolima_SetProtectiveFieldHeight(s32 actorId,
     if (visibleOnOddFrames ? (gFrameCount & 1) : !(gFrameCount & 1)) {
       actor->y.fixed = 0;
     } else {
-      actor->y.fixed = PIXELS(500);
+      actor->y.fixed = px(500);
     }
   }
 }
@@ -934,7 +933,7 @@ static void Kolima_WitnessForestCurse(void) {
   // fields.
   gFallingEffectWidth = 0;
   firstCurtainState = &gFallingEffectState;
-  gFallingEffectOffset = PIXELS(128);
+  gFallingEffectOffset = px(128);
   *firstCurtainState = KOLIMA_DUST_CLOSING;
   Task_AddFrame(Kolima_UpdateCurseDust, TASK_PASS_FRAME);
   Event_Wait(180);
@@ -1238,7 +1237,7 @@ static void Kolima_WitnessForestCurse(void) {
   PaletteFade_StartInterpolation(60);
   wait(60);
   gFallingEffectWidth = 0;
-  gFallingEffectOffset = PIXELS(128);
+  gFallingEffectOffset = px(128);
   secondCurtainState = &gFallingEffectState;
   *secondCurtainState = KOLIMA_DUST_CLOSING;
   Task_AddFrame(Kolima_UpdateCurseDust, TASK_PASS_FRAME);
@@ -1594,10 +1593,10 @@ static void Kolima_SpawnCurseSparkle(void) {
   struct Sprite *sprite;
   s32 framePhase;
   s32 priorityFlags;
-  s32 spawnX = PIXELS(98);
-  s32 spawnZ = PIXELS(105);
-  s32 targetX = PIXELS(98);
-  s32 targetZ = PIXELS(269);
+  s32 spawnX = px(98);
+  s32 spawnZ = px(105);
+  s32 targetX = px(98);
+  s32 targetZ = px(269);
 
   framePhase = gFrameCount & 7;
   if (framePhase != 0) {
@@ -1617,8 +1616,8 @@ static void Kolima_SpawnCurseSparkle(void) {
   sparkle->priorityFlags = priorityFlags;
   sprite->image.priority = 1;
   sparkle->scaleX = Q16_ONE / 10;
-  sparkle->speedLimit = PIXELS(8);
-  sparkle->acceleration = PIXELS(8);
+  sparkle->speedLimit = px(8);
+  sparkle->acceleration = px(8);
   sparkle->motionFlags = framePhase;
   Actor_SelectAnimation(sparkle, 2);
   FieldActor_SetMoveTargetFixed(sparkle, targetX, 0, targetZ);
@@ -1631,21 +1630,21 @@ static void Kolima_SpawnCurseSparkle(void) {
 static s32 Kolima_TriggerRegionScript(struct Actor *interpreter) {
   struct Actor *actor = interpreter;
   if (gKolima_MiaInParty != 0) {
-    if ((actor->x.fixed > PIXELS(59) && actor->x.fixed < PIXELS(141) &&
-         actor->z.fixed > PIXELS(211) && actor->z.fixed < PIXELS(257)) ||
-        (actor->x.fixed > PIXELS(69) && actor->x.fixed < PIXELS(122) &&
-         actor->z.fixed > PIXELS(194) && actor->z.fixed < PIXELS(277))) {
+    if ((actor->x.fixed > px(59) && actor->x.fixed < px(141) &&
+         actor->z.fixed > px(211) && actor->z.fixed < px(257)) ||
+        (actor->x.fixed > px(69) && actor->x.fixed < px(122) &&
+         actor->z.fixed > px(194) && actor->z.fixed < px(277))) {
       Sound_Play(SE_DRIP);
       Actor_StartScript(actor, gKolima_RegionScript);
       gKolima_PendingPose = 1;
     }
   } else {
-    if ((actor->x.fixed > PIXELS(59) && actor->x.fixed < PIXELS(111) &&
-         actor->z.fixed > PIXELS(194) && actor->z.fixed < PIXELS(230)) ||
-        (actor->x.fixed > PIXELS(111) && actor->x.fixed < PIXELS(141) &&
-         actor->z.fixed > PIXELS(216) && actor->z.fixed < PIXELS(250)) ||
-        (actor->x.fixed > PIXELS(78) && actor->x.fixed < PIXELS(122) &&
-         actor->z.fixed > PIXELS(241) && actor->z.fixed < PIXELS(277))) {
+    if ((actor->x.fixed > px(59) && actor->x.fixed < px(111) &&
+         actor->z.fixed > px(194) && actor->z.fixed < px(230)) ||
+        (actor->x.fixed > px(111) && actor->x.fixed < px(141) &&
+         actor->z.fixed > px(216) && actor->z.fixed < px(250)) ||
+        (actor->x.fixed > px(78) && actor->x.fixed < px(122) &&
+         actor->z.fixed > px(241) && actor->z.fixed < px(277))) {
       Sound_Play(SE_DRIP);
       Actor_StartScript(actor, gKolima_RegionScript);
       gKolima_PendingPose = 1;
@@ -1751,7 +1750,7 @@ s32 gKolima_ProtectiveFieldGrowActions[] = {
 
 s32 gKolima_ProtectiveFieldShrinkActions[] = {
     SC_ANIMATION(1),
-    SC_ADD(SW_Z, -PIXELS(1) / 10),
+    SC_ADD(SW_Z, -px(1) / 10),
     SC_ADD(SW_SCALE_X, -3 * Q16_ONE / 200),
     SC_ADD(SW_SCALE_Y, -3 * Q16_ONE / 200),
     SC_WAIT(1),
@@ -2019,15 +2018,15 @@ s32 gKolima_RegionScript[] = {
 };
 
 s32 gFallingEffectScript[] = {
-    SC_ADD(SW_Y, -PIXELS(2)),
+    SC_ADD(SW_Y, -px(2)),
     SC_CALL(Kolima_FlickerCurseDust),
     SC_WAIT(1),
-    SC_ADD(SW_Y, -PIXELS(2)),
+    SC_ADD(SW_Y, -px(2)),
     SC_CALL(Kolima_FlickerCurseDust),
     SC_WAIT(1),
     SC_LOOP(30, SC_TOP),
     SC_LABEL(1),
-    SC_ADD(SW_Y, -PIXELS(1)),
+    SC_ADD(SW_Y, -px(1)),
     SC_CALL(Kolima_FlickerCurseDust),
     SC_WAIT(1),
     SC_LOOP(40, SC_TO(1)),

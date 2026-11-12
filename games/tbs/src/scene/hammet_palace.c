@@ -315,8 +315,8 @@ s32 Scene_Initialize(void) {
 static void HammetPalace_SetUpEntrance(void) {
   struct Actor *actor;
   s32 facing;
-  s32 waitingX = PIXELS(906);
-  s32 waitingZ = PIXELS(422);
+  s32 waitingX = px(906);
+  s32 waitingZ = px(422);
 
   TilesetAnim_Pause(1);
   TilesetAnim_Pause(2);

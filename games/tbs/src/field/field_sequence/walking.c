@@ -90,7 +90,7 @@ s32 Field_GetCollisionAheadOfLeader(void) {
   position.vector.x = leader->x.fixed;
   position.vector.y = leader->y.fixed;
   position.vector.z = leader->z.fixed;
-  Vector_AddPolarOffset(PIXELS(16), leader->facing, position.coordinates);
+  Vector_AddPolarOffset(px(16), leader->facing, position.coordinates);
 
   if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
     // World Map cell pictures are 32 pixels square, 32 to a row.
@@ -239,14 +239,14 @@ void Field_UpdateWalking(s32 layer, s32 x, s32 y, s32 z) {
 
   if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
     tile = &(
-        (struct MapGridCell *)Ram_CellPictures)[((x / PIXELS(32)) & 31) +
-                                                (((z / PIXELS(32)) & 31) << 5)];
+        (struct MapGridCell *)
+            Ram_CellPictures)[((x / px(32)) & 31) + (((z / px(32)) & 31) << 5)];
   } else {
     if ((u32)layer <= MAPGRID_LAYER_OVERHEAD)
       tile = gridState->layers[layer].cells;
     else
       tile = (struct MapGridCell *)gMapGridCellBuffer;
-    tile = &tile[(x / PIXELS(16)) + ((z / PIXELS(16)) << 7)];
+    tile = &tile[(x / px(16)) + ((z / px(16)) << 7)];
   }
   event = tile->behavior;
   work->previousCell = work->currentCell;
@@ -357,7 +357,7 @@ void Field_UpdateWalking(s32 layer, s32 x, s32 y, s32 z) {
   if (partyHurt) {
     work->fallenCount = 0;
     work->survivorCount = 0;
-    leader->velocityY = PIXELS(4);
+    leader->velocityY = px(4);
     FieldEffect_SetAttached(leaderId,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     for (i = 0; i < partyCount; i++) {

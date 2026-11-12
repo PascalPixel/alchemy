@@ -422,21 +422,20 @@ s32 Actor_GetTriggerCellAheadOfCurrent(void) {
     probePosition.vector.x = leader->x.fixed;
     probePosition.vector.y = leader->y.fixed;
     probePosition.vector.z = leader->z.fixed;
-    Vector_AddPolarOffset(PIXELS(16), leader->facing,
-                          probePosition.coordinates);
+    Vector_AddPolarOffset(px(16), leader->facing, probePosition.coordinates);
     // World Map cell pictures are 32 pixels square, 32 to a row; map cells 16
     // pixels square, 128 to a row, four bytes each.
     if (((struct FieldWork *)workBytes)->mode == ACTOR_SYSTEM_WORLD_MAP) {
-      cell = Ram_CellPictures +
-             ((((probePosition.vector.x / PIXELS(32)) & 31) +
-               (((probePosition.vector.z / PIXELS(32)) & 31) << 5))
-              << 2);
+      cell =
+          Ram_CellPictures + ((((probePosition.vector.x / px(32)) & 31) +
+                               (((probePosition.vector.z / px(32)) & 31) << 5))
+                              << 2);
     } else {
       // MAPGRID_LAYER_GROUND's cells, MapGridScrollAnimView's layers[0].cells
       // at 0x130.
       cells = *(u8 **)(gridBytes + 0x130);
-      cell = cells + (((probePosition.vector.x / PIXELS(16)) +
-                       ((probePosition.vector.z / PIXELS(16)) << 7))
+      cell = cells + (((probePosition.vector.x / px(16)) +
+                       ((probePosition.vector.z / px(16)) << 7))
                       << 2);
     }
     behavior = cell[2];
@@ -444,7 +443,7 @@ s32 Actor_GetTriggerCellAheadOfCurrent(void) {
       groundHeight = MapGrid_GetTerrainHeightFar(
           leader->layer, probePosition.vector.x, probePosition.vector.z);
       if (groundHeight >= leader->y.fixed &&
-          groundHeight <= leader->y.fixed + PIXELS(64)) {
+          groundHeight <= leader->y.fixed + px(64)) {
         result = behavior;
       }
     } else if (Scene_FindTrigger(TRIGGER_EXAMINE, behavior) != 0) {

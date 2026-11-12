@@ -104,21 +104,21 @@ static s32 Colosso_TakePrize(s32 firstItem, s32 secondItem) {
   opponentFirst = GameFlag_Get(FLAG_ARENA_REACHED);
   leader = Actor_Get(gMainRoutineWork.leaderActorId);
   if (gauge->finishX < leader->x.fixed) {
-    x = gauge->finishX + PIXELS(12);
+    x = gauge->finishX + px(12);
   } else {
-    x = gauge->finishX - PIXELS(12);
+    x = gauge->finishX - px(12);
   }
   if (opponentFirst != 0) {
-    z = gauge->finishZ + PIXELS(16);
+    z = gauge->finishZ + px(16);
     prizeActorId = &gauge->finishItemActorIdB;
   } else {
-    z = gauge->finishZ - PIXELS(16);
+    z = gauge->finishZ - px(16);
     prizeActorId = &gauge->finishItemActorIdA;
   }
   raisedPrizeActorId = &leader->timer;
   *raisedPrizeActorId = *prizeActorId;
-  leader->acceleration = PIXELS(1) / 4;
-  leader->speedLimit = PIXELS(1);
+  leader->acceleration = px(1) / 4;
+  leader->speedLimit = px(1);
   FieldActor_SetMoveTargetFixed(leader, x, 0, z);
   GameFlag_Set(FLAG_ARENA_REACHED);
   Actor_StartScript(leader, gColosso_LeaderFinishScript);

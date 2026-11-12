@@ -208,33 +208,32 @@ FieldEffect_InitializeFallingFragment(struct Actor *fragment) {
     effectWork = gFieldEffectWork;                                             \
     FieldPsynergy_FadeToCastColor();                                           \
     pos.x = effectWork->x;                                                     \
-    pos.y = effectWork->y + PIXELS(16);                                        \
+    pos.y = effectWork->y + px(16);                                            \
     pos.z = effectWork->z;                                                     \
-    pair[0] = spawn(pos.x + PIXELS(32), pos.y, pos.z, FACING_WEST);            \
-    pair[1] = spawn(pos.x - PIXELS(32), pos.y, pos.z, FACING_EAST);            \
+    pair[0] = spawn(pos.x + px(32), pos.y, pos.z, FACING_WEST);                \
+    pair[1] = spawn(pos.x - px(32), pos.y, pos.z, FACING_EAST);                \
                                                                                \
     wait(15);                                                                  \
     walk = pair;                                                               \
     for (n = 0; n < 2; n++) {                                                  \
       obj = *walk++;                                                           \
       if (obj != 0)                                                            \
-        Actor_SetTargetPositionFromMagnitudeAngle(obj, PIXELS(24),             \
-                                                  obj->facing);                \
+        Actor_SetTargetPositionFromMagnitudeAngle(obj, px(24), obj->facing);   \
     }                                                                          \
                                                                                \
     Actor_WaitForMoveFar(pair[0]);                                             \
     Sound_PlayFar(SE_HEAVY_IMPACT);                                            \
     for (n = 0; n < ITEM_BREAK_SHARD_MAX; n++) {                               \
       pos.x = effectWork->x;                                                   \
-      pos.y = effectWork->y + PIXELS(16);                                      \
+      pos.y = effectWork->y + px(16);                                          \
       pos.z = effectWork->z;                                                   \
       obj = Actor_Spawn(SPRITE_SPARKLE, pos.x, pos.y, pos.z);                  \
       if (obj != 0) {                                                          \
         Actor_StartScriptFar(obj, gFieldEffect_FragmentScript);                \
-        obj->speedLimit = Random16() + PIXELS(2);                              \
-        obj->acceleration = PIXELS(2);                                         \
+        obj->speedLimit = Random16() + px(2);                                  \
+        obj->acceleration = px(2);                                             \
         obj->motionFlags = 0;                                                  \
-        dist = Random16() * 24 + PIXELS(8);                                    \
+        dist = Random16() * 24 + px(8);                                        \
         Actor_SetTargetPositionFromMagnitudeAngle(obj, dist, Random16());      \
       }                                                                        \
     }                                                                          \

@@ -112,7 +112,7 @@ static void GomaCaveStream_MoveStump(void) {
   s32 column;
 
   stump = Actor_Get(ACTOR_STUMP);
-  column = stump->x.fixed / PIXELS(16);
+  column = stump->x.fixed / px(16);
   if (column == 24) {
     GomaCaveStream_LeapStump(ACTOR_STUMP);
     Actor_Get(ACTOR_STUMP)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
@@ -192,7 +192,7 @@ static void GomaCaveStream_LeapStump(s32 stumpId) {
   stump->update = GomaCaveStream_SpinStump;
   Actor_SetSpeed(stumpId, 3);
   Actor_SetDestination(stumpId, 376, 288);
-  stump->gravity = 4 * PIXELS(1) / 5;
+  stump->gravity = 4 * px(1) / 5;
   stump->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   stump->layer = 0;
   Actor_WaitForMoveById(stumpId);
@@ -210,7 +210,7 @@ static void GomaCaveStream_LeapStump(s32 stumpId) {
     FieldEffect_Spawn(stump->x.fixed, stump->y.fixed, stump->z.fixed, dir.x,
                       dir.y, dir.z, 0, NULL);
   }
-  stump->velocityY = PIXELS(5);
+  stump->velocityY = px(5);
   Actor_SetDestination(stumpId, 346, 292);
   Actor_WaitForMoveById(stumpId);
   Actor_WaitBelowHeight(stump, 0);

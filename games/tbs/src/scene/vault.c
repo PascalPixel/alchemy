@@ -85,7 +85,7 @@
 #include "character_ids.h"
 #include "sounds.h"
 
-enum { VAULT_DRIFT_RATE = PIXELS(1) / 10 };
+enum { VAULT_DRIFT_RATE = px(1) / 10 };
 
 /// The townspeople, named by what they say.
 enum {
@@ -802,7 +802,7 @@ static void Vault_JumpActorToAndWait(s32 actorId, s32 x, s32 z,
   struct Actor *actor = Actor_Get(actorId);
   int frames;
   Actor_SetSpeed(actorId, 3);
-  actor->gravity = PIXELS(1) / 2;
+  actor->gravity = px(1) / 2;
   actor->bounce = 0;
   actor->velocityY = verticalSpeed;
   Actor_SetSpriteFlags(actor, 0);
@@ -814,7 +814,7 @@ static void Vault_JumpActorToAndWait(s32 actorId, s32 x, s32 z,
       break;
   }
   Actor_SetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
-  actor->gravity = PIXELS(1);
+  actor->gravity = px(1);
 }
 
 /// In Vault, Isaac rings the bell. The first time since the party came in by
@@ -834,7 +834,7 @@ static void Vault_RingBell(void) {
     Event_Wait(12);
     Actor_Jump(ACTOR_SAP, 4, 0);
     Event_Wait(20);
-    Vault_JumpActorToAndWait(ACTOR_SAP, 392, 104, PIXELS(7));
+    Vault_JumpActorToAndWait(ACTOR_SAP, 392, 104, px(7));
     Event_Wait(20);
     Actor_WalkToAndWait(ACTOR_SAP, 408, 104);
     Actor_WalkToAndWait(ACTOR_SAP, 408, 120);
@@ -1038,7 +1038,7 @@ static void Vault_UpdateDriftingEffect(struct Actor *updated) {
   } else {
     effect->z.fixed += effect->acceleration;
     effect->targetZ = effect->z.fixed;
-    effect->y.fixed += PIXELS(1) / 64;
+    effect->y.fixed += px(1) / 64;
     effect->targetY = effect->y.fixed;
   }
 
@@ -1202,7 +1202,7 @@ s32 gVault_WomanWantingTheRoofFixedRoute[] = {
     SC_SPEED(0.4),
     SC_ACCELERATION(0.2),
     SC_SET(SW_COLLISION, 129),
-    SC_SET(SW_RADIUS, PIXELS(40)),
+    SC_SET(SW_RADIUS, px(40)),
     SC_LABEL(1),
     SC_ANIMATION(2),
     SC_WANDER_HOME(8, 16, 24),

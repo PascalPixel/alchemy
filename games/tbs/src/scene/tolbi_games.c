@@ -224,8 +224,8 @@ enum TolbiSpringCellBehavior {
 // FLAG_TOLBI_SPRING_RISEN is set once the spring has risen and faded in.
 
 /// The spring's centre, which the prize rings pull the tossed token toward.
-#define TOLBI_SPRING_CENTER_X PIXELS(120)
-#define TOLBI_SPRING_CENTER_Z PIXELS(71)
+#define TOLBI_SPRING_CENTER_X px(120)
+#define TOLBI_SPRING_CENTER_Z px(71)
 
 // The window of the party's coins and Lucky Medals, and the menu of what to
 // toss, in window cells, with the counts' x in pixels: the European editions'
@@ -568,7 +568,7 @@ static void TolbiSpring_RiseAndFadeIn(void) {
   // This value belongs to layer 1; its individual field remains unnamed.
   springLayer += offsetof(struct MapGridScrollAnimView, layers[1]) + 4;
   for (stepIndex = 0; stepIndex < 16; stepIndex++) {
-    *(s32 *)(springLayer + 12) -= PIXELS(1);
+    *(s32 *)(springLayer + 12) -= px(1);
     wait(4);
   }
   alphaSteps = gTolbiSpring_AlphaSteps;
@@ -1101,20 +1101,18 @@ static void TolbiSpring_UpdateTossSimulation(void) {
         deltaZ = (TOLBI_SPRING_CENTER_Z - toss->trail[0].z) >> 8;
         // BUG: an exact center position leaves a zero divisor below.
         distance = Iwram_Sqrt(deltaX * deltaX + deltaZ * deltaZ);
-        toss->velocity.x += ((PIXELS(1) / 10) * deltaX) / distance;
-        toss->velocity.z += ((PIXELS(1) / 10) * deltaZ) / distance;
+        toss->velocity.x += ((px(1) / 10) * deltaX) / distance;
+        toss->velocity.z += ((px(1) / 10) * deltaZ) / distance;
         toss->velocity.x = toss->velocity.x * 253 / 256;
         toss->velocity.z = toss->velocity.z * 253 / 256;
         toss->attractionFrames = toss->attractionFrames - 1;
       } else {
         toss->velocity.x = toss->velocity.x * 220 / 256;
         toss->velocity.z = toss->velocity.z * 220 / 256;
-        if (toss->velocity.x > -PIXELS(1) / 64 &&
-            toss->velocity.x < PIXELS(1) / 64) {
+        if (toss->velocity.x > -px(1) / 64 && toss->velocity.x < px(1) / 64) {
           toss->velocity.x = 0;
         }
-        if (toss->velocity.z > -PIXELS(1) / 64 &&
-            toss->velocity.z < PIXELS(1) / 64) {
+        if (toss->velocity.z > -px(1) / 64 && toss->velocity.z < px(1) / 64) {
           toss->velocity.z = 0;
         }
         if (toss->velocity.x == 0 && toss->velocity.z == 0) {
@@ -1152,52 +1150,52 @@ static void TolbiSpring_UpdateTossSimulation(void) {
       }
 
       // Narrow the bounds near the spring's sloping corners.
-      minX = PIXELS(48);
-      maxX = PIXELS(192);
-      minZ = PIXELS(24);
-      maxZ = PIXELS(120);
-      if (toss->trail[0].z < PIXELS(42)) {
-        edgeInset = (PIXELS(42) - toss->trail[0].z) * 42 / 18;
-        minX = PIXELS(48) + edgeInset;
-        if (minX > PIXELS(90)) {
-          minX = PIXELS(90);
+      minX = px(48);
+      maxX = px(192);
+      minZ = px(24);
+      maxZ = px(120);
+      if (toss->trail[0].z < px(42)) {
+        edgeInset = (px(42) - toss->trail[0].z) * 42 / 18;
+        minX = px(48) + edgeInset;
+        if (minX > px(90)) {
+          minX = px(90);
         }
-        maxX = PIXELS(192) - edgeInset;
-        if (maxX < PIXELS(150)) {
-          maxX = PIXELS(150);
-        }
-      }
-      if (toss->trail[0].z > PIXELS(102)) {
-        edgeInset = (toss->trail[0].z * 42 - PIXELS(102) * 42) / 18;
-        minX = PIXELS(48) + edgeInset;
-        if (minX > PIXELS(90)) {
-          minX = PIXELS(90);
-        }
-        maxX = PIXELS(192) - edgeInset;
-        if (maxX < PIXELS(150)) {
-          maxX = PIXELS(150);
+        maxX = px(192) - edgeInset;
+        if (maxX < px(150)) {
+          maxX = px(150);
         }
       }
-      if (toss->trail[0].x < PIXELS(90)) {
-        edgeInset = (PIXELS(90) - toss->trail[0].x) * 18 / 42;
-        minZ = PIXELS(24) + edgeInset;
-        if (minZ > PIXELS(42)) {
-          minZ = PIXELS(42);
+      if (toss->trail[0].z > px(102)) {
+        edgeInset = (toss->trail[0].z * 42 - px(102) * 42) / 18;
+        minX = px(48) + edgeInset;
+        if (minX > px(90)) {
+          minX = px(90);
         }
-        maxZ = PIXELS(120) - edgeInset;
-        if (maxZ < PIXELS(102)) {
-          maxZ = PIXELS(102);
+        maxX = px(192) - edgeInset;
+        if (maxX < px(150)) {
+          maxX = px(150);
         }
       }
-      if (toss->trail[0].x > PIXELS(150)) {
-        edgeInset = (toss->trail[0].x * 18 - PIXELS(150) * 18) / 42;
-        minZ = PIXELS(24) + edgeInset;
-        if (minZ > PIXELS(42)) {
-          minZ = PIXELS(42);
+      if (toss->trail[0].x < px(90)) {
+        edgeInset = (px(90) - toss->trail[0].x) * 18 / 42;
+        minZ = px(24) + edgeInset;
+        if (minZ > px(42)) {
+          minZ = px(42);
         }
-        maxZ = PIXELS(120) - edgeInset;
-        if (maxZ < PIXELS(102)) {
-          maxZ = PIXELS(102);
+        maxZ = px(120) - edgeInset;
+        if (maxZ < px(102)) {
+          maxZ = px(102);
+        }
+      }
+      if (toss->trail[0].x > px(150)) {
+        edgeInset = (toss->trail[0].x * 18 - px(150) * 18) / 42;
+        minZ = px(24) + edgeInset;
+        if (minZ > px(42)) {
+          minZ = px(42);
+        }
+        maxZ = px(120) - edgeInset;
+        if (maxZ < px(102)) {
+          maxZ = px(102);
         }
       }
 
@@ -1227,7 +1225,7 @@ static void TolbiSpring_UpdateTossSimulation(void) {
         }
       }
     } else {
-      toss->velocity.y -= PIXELS(1) / 4;
+      toss->velocity.y -= px(1) / 4;
     }
   }
 
@@ -1245,7 +1243,7 @@ static void TolbiSpring_UpdateTossSimulation(void) {
 
     if (index <= 1) {
       speedMode = obstacle->speedMode;
-      motionStep = PIXELS(1);
+      motionStep = px(1);
       if (speedMode == 1) {
         motionStep = motionStep * 2;
       }
@@ -1274,13 +1272,13 @@ static void TolbiSpring_UpdateTossSimulation(void) {
           } else {
             obstacle->position.x = obstacle->position.x - motionStep;
           }
-          if (obstacle->position.x <= PIXELS(64)) {
+          if (obstacle->position.x <= px(64)) {
             obstacle->heading = 0;
             if (index == 1) {
               obstacle->pauseOrPhase = 30;
             }
           }
-          if (obstacle->position.x > (PIXELS(176) - 1)) {
+          if (obstacle->position.x > (px(176) - 1)) {
             obstacle->heading = 1;
             if (index == 1) {
               obstacle->pauseOrPhase = 30;
@@ -1305,8 +1303,8 @@ static void TolbiSpring_UpdateTossSimulation(void) {
       } else {
         Actor_SelectAnimation(Actor_Get(ACTOR_TOLBI_SPRING_FIRST_OBSTACLE + 2),
                               2);
-        obstacle->position.x = Trig_Sin(obstacle->heading) * 48 + PIXELS(112);
-        obstacle->position.z = Trig_Cos(obstacle->heading) * 40 + PIXELS(72);
+        obstacle->position.x = Trig_Sin(obstacle->heading) * 48 + px(112);
+        obstacle->position.z = Trig_Cos(obstacle->heading) * 40 + px(72);
         cycleFrame = (u16)obstacle->heading + motionStep;
         obstacle->heading = cycleFrame;
         obstacle->pauseOrPhase = obstacle->pauseOrPhase + 1;
@@ -1325,8 +1323,8 @@ static void TolbiSpring_UpdateTossSimulation(void) {
         Actor_SelectAnimation(Actor_Get(ACTOR_TOLBI_SPRING_FIRST_OBSTACLE + 3),
                               3);
       } else if (cycleFrame <= 383) {
-        obstacle->position.x = Trig_Sin(obstacle->heading) * 52 + PIXELS(112);
-        obstacle->position.z = Trig_Cos(obstacle->heading) * 24 + PIXELS(72);
+        obstacle->position.x = Trig_Sin(obstacle->heading) * 52 + px(112);
+        obstacle->position.z = Trig_Cos(obstacle->heading) * 24 + px(72);
         obstacle->heading = obstacle->heading + motionStep;
         Actor_SelectAnimation(Actor_Get(ACTOR_TOLBI_SPRING_FIRST_OBSTACLE + 3),
                               2);
@@ -1350,7 +1348,7 @@ static void TolbiSpring_UpdateTossSimulation(void) {
         s32 speed;
         s32 nextMode;
 
-        speed = PIXELS(3);
+        speed = px(3);
         if (index <= 1) {
           if (obstacle->heading == 0) {
             if (toss->velocity.x < speed) {
@@ -1497,9 +1495,9 @@ static void TolbiSpring_InitializeTossSimulation(void) {
     obstacle++;
   } while (obstacleIndex != 4);
 
-  toss->trail[0].x = -PIXELS(30);
+  toss->trail[0].x = -px(30);
   toss->trail[0].y = 0;
-  toss->trail[0].z = PIXELS(100);
+  toss->trail[0].z = px(100);
   toss->velocity.x = 0;
   toss->velocity.y = 0;
   toss->velocity.z = 0;
@@ -1536,12 +1534,12 @@ static s32 TolbiSpring_RunToss(s32 tossKind) {
     if (sTossFrame == 16) {
       Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_LEADER_TOSS);
       toss->launchFrame = 0;
-      toss->velocity.x = 13 * PIXELS(1) / 10;
-      toss->velocity.y = PIXELS(4);
-      toss->velocity.z = -PIXELS(2);
-      toss->trail[0].x = PIXELS(120);
-      toss->trail[0].y = PIXELS(16);
-      toss->trail[0].z = PIXELS(152);
+      toss->velocity.x = 13 * px(1) / 10;
+      toss->velocity.y = px(4);
+      toss->velocity.z = -px(2);
+      toss->trail[0].x = px(120);
+      toss->trail[0].y = px(16);
+      toss->trail[0].z = px(152);
       toss->attractionFrames = 300;
       if (sTossKind == SPRING_TOSS_MEDAL) {
         Actor_SelectAnimation(Actor_Get(ACTOR_TOLBI_SPRING_MEDAL_SHADOW), 3);

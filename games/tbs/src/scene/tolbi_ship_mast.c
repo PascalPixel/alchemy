@@ -250,18 +250,18 @@ static s32 TolbiShipMast_SwayActor(struct Actor *interpreter) {
     actor->riseBaseY = 0;
   } else if (*state != SWAY_INCREASING) {
     actor->riseBaseY -= (u32)(Import_RandomNext() << 11) >> 16;
-    if (actor->riseBaseY < -3 * PIXELS(1) / 4) {
+    if (actor->riseBaseY < -3 * px(1) / 4) {
       next = SWAY_INCREASING;
       *state = next;
     }
   } else {
     actor->riseBaseY += (u32)(Import_RandomNext() << 11) >> 16;
-    if (actor->riseBaseY > 3 * PIXELS(1) / 4) {
+    if (actor->riseBaseY > 3 * px(1) / 4) {
       next = SWAY_DECREASING;
       *state = next;
     }
   }
-  if (actor->x.fixed > PIXELS(40) && actor->x.fixed < PIXELS(320)) {
+  if (actor->x.fixed > px(40) && actor->x.fixed < px(320)) {
     actor->x.fixed += actor->riseBaseY;
   }
   state = (s16 *)&actor->userValue;
@@ -275,7 +275,7 @@ static s32 TolbiShipMast_SwayActor(struct Actor *interpreter) {
     }
   } else {
     actor->y.fixed += ((u32)Import_RandomNext() * 3 << 14) >> 16;
-    if (actor->y.fixed > PIXELS(16)) {
+    if (actor->y.fixed > px(16)) {
       next = SWAY_DECREASING;
       *state = next;
     }
@@ -289,8 +289,8 @@ static s32 TolbiShipMast_ShrinkAndStopActor(struct Actor *interpreter) {
   struct Sprite *sprite = actor->sprite;
 
   sprite->image.priority = 3;
-  actor->speedLimit = PIXELS(2);
-  actor->acceleration = PIXELS(1);
+  actor->speedLimit = px(2);
+  actor->acceleration = px(1);
   if (actor->scaleX > Q16_ONE / 16) {
     actor->scaleX -= Q16_ONE / 64;
     actor->scaleY -= Q16_ONE / 64;
@@ -377,7 +377,7 @@ s32 TolbiShipMast_Initialize(void) {
       leader = Actor_Get(ACTOR_PARTY_LEADER);
       Event_Start();
       Field_ClimbUp();
-      leader->y.fixed = PIXELS(56);
+      leader->y.fixed = px(56);
       FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
       wait(1);
       FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 0);
@@ -501,7 +501,7 @@ static void TolbiShipMast_RunAvastEvent(void) {
   gTolbiShipMast_CameraOrigin[0] = *placement++;
   gTolbiShipMast_CameraOrigin[1] = *placement;
   Actor_SetPosition(ACTOR_SPARKLE, 80, 210);
-  x = PIXELS(80);
+  x = px(80);
   Actor_Get(ACTOR_SPARKLE)->motionFlags = zero;
   gTolbiShipMast_CameraCenter[0] = x;
   gTolbiShipMast_CameraCenter[1] = zero;
@@ -699,10 +699,10 @@ static void TolbiShipMast_InitializeDriftingActor(s32 actorId) {
   randomValue <<= 2;
   randomValue >>= 16;
   randomValue <<= 16;
-  randomValue += PIXELS(6);
+  randomValue += px(6);
   actor->y.fixed = randomValue;
   randomValue = Import_RandomNext();
-  actor->riseBaseY = ((randomValue * 3 << 13) >> 16) - 3 * PIXELS(1) / 16;
+  actor->riseBaseY = ((randomValue * 3 << 13) >> 16) - 3 * px(1) / 16;
   actor->scaleX = 5 * Q16_ONE / 4;
   actor->scaleY = 5 * Q16_ONE / 4;
   Actor_SetScript(actorId, gTolbiShipMast_DriftActions);
@@ -779,12 +779,12 @@ static void TolbiShipMast_RunMonsterLanding(void) {
   actor = Actor_Get(ACTOR_LANDING_MONSTER);
   actor->scaleX = 23 * Q16_ONE / 20;
   actor->scaleY = 23 * Q16_ONE / 20;
-  actor->x.fixed = PIXELS(172);
-  actor->y.fixed = PIXELS(160);
-  actor->z.fixed = PIXELS(340);
+  actor->x.fixed = px(172);
+  actor->y.fixed = px(160);
+  actor->z.fixed = px(340);
   actor->facing = FACING_EAST;
   actor->bounce = 2 * Q16_ONE / 5;
-  actor->gravity = PIXELS(3);
+  actor->gravity = px(3);
   Event_Wait(20);
   Actor_Jump(ACTOR_LOOKOUT, 6, 20);
   Sound_Play(SE_BEAST_CRY);
@@ -796,9 +796,9 @@ static void TolbiShipMast_RunMonsterLanding(void) {
   Actor_SetSpritePriority(ACTOR_LANDING_MONSTER, 1);
   Actor_SetSpeed(ACTOR_LANDING_MONSTER, 1);
   actor->bounce = Q16_ONE / 10;
-  actor->gravity = 7 * PIXELS(1) / 10;
+  actor->gravity = 7 * px(1) / 10;
   Sound_Play(SE_HIGH_JUMP);
-  actor->velocityY = PIXELS(8);
+  actor->velocityY = px(8);
   Actor_SetDestination(ACTOR_LANDING_MONSTER, 132, 360);
   Actor_SetDestination(ACTOR_LANDING_MONSTER_SHADOW, 132, 360);
   Event_Wait(40);

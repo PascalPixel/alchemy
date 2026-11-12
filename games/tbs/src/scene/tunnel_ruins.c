@@ -275,9 +275,9 @@ static s32 TunnelRuins_HopLeaderTo(struct FieldPosition *target) {
   u8 savedMotionFlags = actor->motionFlags;
   struct FieldPosition adjacentTile;
 
-  adjacentTile.x = (actor->x.fixed & 0xfff00000) + PIXELS(8);
+  adjacentTile.x = (actor->x.fixed & 0xfff00000) + px(8);
   adjacentTile.y = actor->y.fixed;
-  adjacentTile.z = (actor->z.fixed & 0xfff00000) + PIXELS(8);
+  adjacentTile.z = (actor->z.fixed & 0xfff00000) + px(8);
 
   FieldVector_AddPolarOffset(16, (actor->facing + TRIG_TURN / 8) & 0xc000,
                              &adjacentTile);
@@ -290,9 +290,9 @@ static s32 TunnelRuins_HopLeaderTo(struct FieldPosition *target) {
     Sound_Play(SE_JUMP);
     Actor_SelectAnimation(actor, ANIM_LEADER_LEAP);
 
-    actor->speedLimit = PIXELS(3);
-    actor->acceleration = PIXELS(2);
-    actor->velocityY = PIXELS(4);
+    actor->speedLimit = px(3);
+    actor->acceleration = px(2);
+    actor->velocityY = px(4);
     actor->motionFlags &= 0x7e;
 
     Actor_SetSpriteFlags(actor, 0);
@@ -320,7 +320,7 @@ static void TunnelRuins_HopSouth(void) {
 
   target.x = leader->x.fixed;
   target.y = leader->y.fixed;
-  target.z = leader->z.fixed + PIXELS(32);
+  target.z = leader->z.fixed + px(32);
   TunnelRuins_HopLeaderTo(&target);
 }
 
@@ -334,7 +334,7 @@ static void TunnelRuins_HopNorth(void) {
 
   target.x = actor->x.fixed;
   target.y = actor->y.fixed;
-  target.z = actor->z.fixed - PIXELS(32);
+  target.z = actor->z.fixed - px(32);
   TunnelRuins_HopLeaderTo(&target);
 }
 
@@ -405,7 +405,7 @@ static s32 TunnelRuins_SplashDousedPillar(struct Actor *updated) {
   options.palette = 5;
   x = actor->x.fixed + ((((u32)(Import_RandomNext() * 7) >> 16) - 3) << 16);
   z = actor->z.fixed + ((((u32)(Import_RandomNext() * 7) >> 16) - 3) << 16);
-  FieldEffect_Spawn(x, actor->y.fixed + PIXELS(16), z, 0, 0, 0,
+  FieldEffect_Spawn(x, actor->y.fixed + px(16), z, 0, 0, 0,
                     EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE |
                         EFFECT_SCRIPT_MEDIUM,
                     &options);
@@ -429,10 +429,10 @@ static s32 TunnelRuins_FrostTargetFollowsPillar(struct Actor *updated) {
   struct Actor *frostTarget = (struct Actor *)updated;
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
-  if (leader->y.fixed > -PIXELS(48) &&
+  if (leader->y.fixed > -px(48) &&
       (Actor_Get(ACTOR_DOUSE_PILLAR)->z.fixed >> 20) == 10) {
     frostTarget->x.fixed = Actor_Get(ACTOR_DOUSE_PILLAR)->x.fixed;
-    frostTarget->y.fixed = -PIXELS(32);
+    frostTarget->y.fixed = -px(32);
     frostTarget->z.fixed = Actor_Get(ACTOR_DOUSE_PILLAR)->z.fixed;
   } else {
     frostTarget->x.fixed = 0;
@@ -492,7 +492,7 @@ static void TunnelRuins_HopDownStep(void) {
   Actor_SetSpriteFlags(leader, 0);
   leader->motionFlags |= ACTOR_FALLS;
   Sound_Play(SE_JUMP);
-  leader->velocityY = PIXELS(4);
+  leader->velocityY = px(4);
   FieldActor_SetMoveTargetFixed(leader, leader->x.fixed, leader->y.fixed,
                                 leader->z.fixed + px(12));
   wait(6);
@@ -501,7 +501,7 @@ static void TunnelRuins_HopDownStep(void) {
   options.update = (void (*)(struct Actor *))FieldEffect_AdvanceMotion;
   Sound_Play(SE_LANDING_THUD);
   for (i = 0; i < 8; i++) {
-    leader->y.fixed -= PIXELS(2);
+    leader->y.fixed -= px(2);
     leader->targetY = leader->y.fixed;
     wait(1);
     if (i & 1) {
@@ -509,8 +509,8 @@ static void TunnelRuins_HopDownStep(void) {
       s32 velocityX = horizontalRoll * 0x3332;
       s32 velocityZ;
 
-      velocityZ = (u32)Import_RandomNext() % 10 * -(PIXELS(1) / 10) -
-                  5 * (PIXELS(1) / 10);
+      velocityZ =
+          (u32)Import_RandomNext() % 10 * -(px(1) / 10) - 5 * (px(1) / 10);
       FieldEffect_Spawn(leader->x.fixed, leader->y.fixed, leader->z.fixed,
                         velocityX, 0, velocityZ,
                         EFFECT_USE_UPDATE | EFFECT_SCRIPT_MEDIUM, &options);
@@ -606,7 +606,7 @@ static void TunnelRuins_HopWest(void) {
   struct FieldPosition target;
   struct Actor *actor = Actor_Get(ACTOR_PARTY_LEADER);
 
-  target.x = actor->x.fixed - PIXELS(32);
+  target.x = actor->x.fixed - px(32);
   target.y = actor->y.fixed;
   target.z = actor->z.fixed;
   TunnelRuins_HopLeaderTo(&target);
@@ -640,7 +640,7 @@ static void TunnelRuins_HopEast(void) {
   struct FieldPosition target;
   struct Actor *actor = Actor_Get(ACTOR_PARTY_LEADER);
 
-  target.x = actor->x.fixed + PIXELS(32);
+  target.x = actor->x.fixed + px(32);
   target.y = actor->y.fixed;
   target.z = actor->z.fixed;
   TunnelRuins_HopLeaderTo(&target);
@@ -668,7 +668,7 @@ static void TunnelRuins_HopSouthOrPushSmallPillars(void) {
 
   target.x = actor->x.fixed;
   target.y = actor->y.fixed;
-  target.z = actor->z.fixed + PIXELS(32);
+  target.z = actor->z.fixed + px(32);
   if (TunnelRuins_HopLeaderTo(&target) != 0) {
     TunnelRuins_PushSmallPillars();
   }
@@ -788,15 +788,14 @@ static void TunnelRuins_SinkNorthwestPillar(void) {
     Sound_Play(SE_PUSH);
     for (i = 0; i < 16; i++) {
       wait(3);
-      Actor_Get(ACTOR_NORTHWEST_SINKING_PILLAR)->y.fixed -= PIXELS(1);
+      Actor_Get(ACTOR_NORTHWEST_SINKING_PILLAR)->y.fixed -= px(1);
       randomX = Random_Next();
-      randomX = ((((u32)(randomX << 4) >> 16) << 16) + PIXELS(736));
+      randomX = ((((u32)(randomX << 4) >> 16) << 16) + px(736));
       randomZ = Import_RandomNext();
       FieldEffect_Spawn(
           randomX, 0,
-          ((((u32)(((randomZ << 3) + randomZ) << 1) >> 16) << 16) +
-           PIXELS(128)),
-          0, 0, 0, EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE, &options);
+          ((((u32)(((randomZ << 3) + randomZ) << 1) >> 16) << 16) + px(128)), 0,
+          0, 0, EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE, &options);
     }
     MapGrid_CopyCellAttributes(51, 8, 1, 1, 49, 8);
     Event_Wait(30);
@@ -872,12 +871,12 @@ static void TunnelRuins_SinkSoutheastPillar(void) {
       Sound_Play(SE_PUSH);
       for (i = 0; i < 16; i++) {
         wait(3);
-        Actor_Get(ACTOR_SOUTHEAST_SINKING_PILLAR)->y.fixed -= PIXELS(1);
+        Actor_Get(ACTOR_SOUTHEAST_SINKING_PILLAR)->y.fixed -= px(1);
         randomX = Import_RandomNext();
-        effectX = ((((u32)(randomX << 4) >> 16) << 16) + PIXELS(768));
+        effectX = ((((u32)(randomX << 4) >> 16) << 16) + px(768));
         randomZ = Import_RandomNext();
-        effectZ = ((((u32)(((randomZ << 3) + randomZ) << 1) >> 16) << 16) +
-                   PIXELS(224));
+        effectZ =
+            ((((u32)(((randomZ << 3) + randomZ) << 1) >> 16) << 16) + px(224));
         FieldEffect_Spawn(effectX, 0, effectZ, 0, 0, 0,
                           EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE,
                           &options);
@@ -1057,7 +1056,7 @@ static s32 TunnelRuins_RideStoneBelow(struct Actor *updated) {
   s16 *supportingActorId = &supportedActor->timer;
   struct Actor *supportingActor = Actor_Get(*supportingActorId);
 
-  supportedActor->y.fixed = supportingActor->y.fixed + PIXELS(16);
+  supportedActor->y.fixed = supportingActor->y.fixed + px(16);
 #ifdef UBFIX
   return;
 #else
@@ -1107,7 +1106,7 @@ static void TunnelRuins_SettleBalance(s32 frames) {
 /// A carried stone drops onto the highest platform or carved stone in its cell
 /// and lands with a thud and a ring of dust.
 static void TunnelRuins_DropStoneOnStack(s32 actorId) {
-  s32 highestHeight = -PIXELS(80);
+  s32 highestHeight = -px(80);
   u32 i;
 
   for (i = 0; i <= 4; i++) {
@@ -1123,10 +1122,10 @@ static void TunnelRuins_DropStoneOnStack(s32 actorId) {
         (Actor_Get(actorId)->z.fixed >> 20))
       continue;
 
-    if (highestHeight > Actor_Get(candidateId)->y.fixed + PIXELS(16))
+    if (highestHeight > Actor_Get(candidateId)->y.fixed + px(16))
       continue;
 
-    highestHeight = Actor_Get(candidateId)->y.fixed + PIXELS(16);
+    highestHeight = Actor_Get(candidateId)->y.fixed + px(16);
     Actor_Get(actorId)->timer = candidateId;
   }
 
@@ -1671,7 +1670,7 @@ s32 TunnelRuins_Initialize(void) {
         Actor_SetAnimation(ACTOR_NORTHWEST_SINKING_PILLAR, 3);
         MapGrid_CopyCellAttributes(45, 4, 1, 1, 46, 8);
         Actor_SetPosition(ACTOR_NORTHWEST_SINKING_PILLAR, 744, 136);
-        Actor_Get(ACTOR_NORTHWEST_SINKING_PILLAR)->y.fixed = -PIXELS(16);
+        Actor_Get(ACTOR_NORTHWEST_SINKING_PILLAR)->y.fixed = -px(16);
         Actor_SetPosition(ACTOR_NORTHWEST_PILLAR_FROST_TARGET, 744, 136);
       }
       if (GameFlag_Get(FLAG_SCENE_TEMP_00)) {
@@ -1689,7 +1688,7 @@ s32 TunnelRuins_Initialize(void) {
         Actor_SetAnimation(ACTOR_SOUTHEAST_SINKING_PILLAR, 3);
         MapGrid_CopyCellAttributes(45, 4, 1, 1, 48, 14);
         Actor_SetPosition(ACTOR_SOUTHEAST_SINKING_PILLAR, 776, 232);
-        Actor_Get(ACTOR_SOUTHEAST_SINKING_PILLAR)->y.fixed = -PIXELS(16);
+        Actor_Get(ACTOR_SOUTHEAST_SINKING_PILLAR)->y.fixed = -px(16);
         Actor_SetPosition(ACTOR_SOUTHEAST_PILLAR_FROST_TARGET, 776, 232);
         GameFlag_Set(FLAG_SCENE_TEMP_02);
       }
@@ -1763,8 +1762,8 @@ s32 TunnelRuins_Initialize(void) {
       if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
         Actor_Get(ACTOR_BALANCE_WEST)->motionFlags = 0;
         Actor_Get(ACTOR_BALANCE_EAST)->motionFlags = 0;
-        Actor_Get(ACTOR_BALANCE_WEST)->y.fixed = -PIXELS(48);
-        Actor_Get(ACTOR_BALANCE_EAST)->y.fixed = -PIXELS(48);
+        Actor_Get(ACTOR_BALANCE_WEST)->y.fixed = -px(48);
+        Actor_Get(ACTOR_BALANCE_EAST)->y.fixed = -px(48);
         Actor_Get(ACTOR_BALANCE_WEST)->priorityFlags |=
             ACTOR_PRIORITY_UNDERFOOT;
         Actor_Get(ACTOR_BALANCE_EAST)->priorityFlags |=
@@ -1787,8 +1786,8 @@ s32 TunnelRuins_Initialize(void) {
         if (gMainRoutineWork.entrance !=
             TUNNEL_RUINS_LADY_STATUES_BALANCE_SOUTH)
           break;
-        Actor_Get(ACTOR_BALANCE_WEST)->y.fixed = -PIXELS(32);
-        Actor_Get(ACTOR_BALANCE_EAST)->y.fixed = -PIXELS(64);
+        Actor_Get(ACTOR_BALANCE_WEST)->y.fixed = -px(32);
+        Actor_Get(ACTOR_BALANCE_EAST)->y.fixed = -px(64);
         Actor_Get(ACTOR_BALANCE_WEST)->timer = 2;
         Actor_Get(ACTOR_BALANCE_EAST)->timer = 4;
         Actor_SetPosition(ACTOR_WEST_CARRY_STONE, 200, 152);
@@ -1893,8 +1892,7 @@ s32 TunnelRuins_Initialize(void) {
 /// A balance platform's height by its weight (its timer). Each carved stone on
 /// it takes it 16 pixels further down, and the other platform up as far.
 u32 gTunnelRuins_BalanceHeights[] = {
-    -PIXELS(16), -PIXELS(16), -PIXELS(32), -PIXELS(48),
-    -PIXELS(64), -PIXELS(80), -PIXELS(80),
+    -px(16), -px(16), -px(32), -px(48), -px(64), -px(80), -px(80),
 };
 
 const s32 *gFieldEffect_DurationScripts[] = {

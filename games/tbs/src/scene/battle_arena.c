@@ -427,7 +427,7 @@ static s32 BattleArena_PollPeerReady(void) {
   result = 1;
   // The leader is south of z 224 (16.16 pixels), towards the way out: the
   // party stops talking about the last battle.
-  if (Actor_Get(ACTOR_PARTY_LEADER)->z.fixed > PIXELS(224)) {
+  if (Actor_Get(ACTOR_PARTY_LEADER)->z.fixed > px(224)) {
     GameFlag_Clear(FLAG_BATTLE_ARENA_LINK_BATTLE_ENDED);
   }
   // While LOBBY_EVENT_DISCONNECTED waits, skip the partner tracking.

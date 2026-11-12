@@ -12,17 +12,17 @@
 /// The World Map's size in field pixels each way, which the picture shows at
 /// 240 by 160.
 #define WORLD_MAP_WORLD_SIZE 4096
-#define WORLD_MAP_X_ORIGIN PIXELS(4096) ///< field x of the picture's left edge
+#define WORLD_MAP_X_ORIGIN px(4096) ///< field x of the picture's left edge
 /// The first ordinary area actor, the first slot with a row of
 /// gWorldPicture_AreaMarkers whatever the leader is.
 #define WORLD_MAP_FIRST_AREA_ACTOR 11
 #define WORLD_MAP_MARKER_CAPACITY 66 ///< one marker per actor slot
 /// The cursor's sprite entry, after the markers'.
 #define WORLD_MAP_CURSOR_PART WORLD_MAP_MARKER_CAPACITY
-#define WORLD_MAP_CURSOR_MIN_SPEED PIXELS(1) ///< screen pixels a frame
-#define WORLD_MAP_CURSOR_MAX_SPEED PIXELS(6) ///< screen pixels a frame
+#define WORLD_MAP_CURSOR_MIN_SPEED px(1) ///< screen pixels a frame
+#define WORLD_MAP_CURSOR_MAX_SPEED px(6) ///< screen pixels a frame
 /// Added to the cursor's speed each frame the d-pad is held.
-#define WORLD_MAP_CURSOR_ACCELERATION (PIXELS(1) / 8)
+#define WORLD_MAP_CURSOR_ACCELERATION (px(1) / 8)
 #define WORLD_MAP_MARKER_BLEND_STEPS 32 ///< gWorldMap_MarkerBlendCycle's rows
 /// The cursor's limits, in screen pixels; y goes from 0.
 ///@{
@@ -289,14 +289,14 @@ void WorldPicture_UpdateMarkers(void) {
       position.y = 0;
       position.z = work->cursorY.fixed;
       Vector_AddPolarOffset(work->cursorSpeed, angle, &position);
-      if (position.x < PIXELS(WORLD_MAP_CURSOR_MIN_X))
-        position.x = PIXELS(WORLD_MAP_CURSOR_MIN_X);
-      if (position.x > PIXELS(WORLD_MAP_CURSOR_MAX_X))
-        position.x = PIXELS(WORLD_MAP_CURSOR_MAX_X);
+      if (position.x < px(WORLD_MAP_CURSOR_MIN_X))
+        position.x = px(WORLD_MAP_CURSOR_MIN_X);
+      if (position.x > px(WORLD_MAP_CURSOR_MAX_X))
+        position.x = px(WORLD_MAP_CURSOR_MAX_X);
       if (position.z < 0)
         position.z = 0;
-      if (position.z > PIXELS(WORLD_MAP_CURSOR_MAX_Y))
-        position.z = PIXELS(WORLD_MAP_CURSOR_MAX_Y);
+      if (position.z > px(WORLD_MAP_CURSOR_MAX_Y))
+        position.z = px(WORLD_MAP_CURSOR_MAX_Y);
       work->cursorX.fixed = position.x;
       work->cursorY.fixed = position.z;
       if (work->cursorSpeed < WORLD_MAP_CURSOR_MAX_SPEED)
@@ -381,8 +381,8 @@ void WorldPicture_UpdateMarkers(void) {
         work->cursorY.fixed = nearestY << 16;
         work->cursorSpeed = WORLD_MAP_CURSOR_MIN_SPEED;
       } else {
-        if (work->cursorSpeed < PIXELS(2))
-          work->cursorSpeed = PIXELS(2);
+        if (work->cursorSpeed < px(2))
+          work->cursorSpeed = px(2);
         angle = ArcTan2(nearestY - cursorY, nearestX - cursorX);
         position.x = work->cursorX.fixed;
         position.y = 0;

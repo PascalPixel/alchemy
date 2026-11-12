@@ -228,8 +228,7 @@ static void Tolbi_GrowSprout(void) {
 /// Its map cell is drawn in and the chest moves into place.
 static void Tolbi_RevealHiddenChest(void) {
   MapGrid_CopyCellAttributes(3, 32, 1, 1, 3, 26);
-  TreasureSpot_SetPosition(CELL_BEHAVIOR_TOLBI_HIDDEN_CHEST, PIXELS(56),
-                           PIXELS(424));
+  TreasureSpot_SetPosition(CELL_BEHAVIOR_TOLBI_HIDDEN_CHEST, px(56), px(424));
 }
 
 /// When Reveal wears off, the chest's cell is covered again and the chest

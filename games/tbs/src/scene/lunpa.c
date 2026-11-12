@@ -260,7 +260,7 @@ static void Lunpa_RevealSecrets(void) {
     actor = Actor_Get(ACTOR_SWITCH_SPARKLE);
     if (actor != NULL) {
       actor->motionFlags = ACTOR_FLOATS_HIGH;
-      actor->y.fixed = PIXELS(16);
+      actor->y.fixed = px(16);
       actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
       actor->scaleX = SPARKLE_SCALE_X;
       actor->scaleY = SPARKLE_SCALE_Y;
@@ -783,8 +783,8 @@ static void Lunpa_CloakFades(void) {
   GameFlag_Clear(FLAG_LUNPA_FORTRESS_GATES_CLOAK_CAST);
   GameFlag_Clear(FLAG_LUNPA_FORTRESS_GATES_GUARDS_AT_DOOR);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader->x.fixed > PIXELS(104) && leader->x.fixed < PIXELS(240) &&
-      leader->z.fixed > PIXELS(160) && leader->z.fixed < PIXELS(248)) {
+  if (leader->x.fixed > px(104) && leader->x.fixed < px(240) &&
+      leader->z.fixed > px(160) && leader->z.fixed < px(248)) {
     Task_Remove(Lunpa_WatchForUncloakedParty);
 #if TBS_PATCH_1
     work->raisedTrigger = RAISED_PARTY_SPOTTED;
@@ -805,8 +805,8 @@ static void Lunpa_WatchForUncloakedParty(void) {
   work = gFieldWork;
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (gMainRoutineWork.cloaked == 0 &&
-      (u32)(leader->x.fixed - PIXELS(144)) <= PIXELS(32) &&
-      leader->z.fixed >= PIXELS(168) && leader->z.fixed < PIXELS(176)) {
+      (u32)(leader->x.fixed - px(144)) <= px(32) &&
+      leader->z.fixed >= px(168) && leader->z.fixed < px(176)) {
     Task_Remove(Lunpa_WatchForUncloakedParty);
     work->raisedTrigger = RAISED_PARTY_SPOTTED;
   }
@@ -874,8 +874,8 @@ static void Lunpa_GuardsThrowIsaacOut(void) {
   Task_Remove(Lunpa_KickUpLeaderDust);
   // Throw the leader down the steps, then wait for the first landing.
   Actor_Get(ACTOR_PARTY_LEADER)->motionFlags |= ACTOR_FALLS;
-  Actor_Get(ACTOR_PARTY_LEADER)->velocityY = PIXELS(6);
-  Actor_Get(ACTOR_PARTY_LEADER)->velocityZ = PIXELS(6);
+  Actor_Get(ACTOR_PARTY_LEADER)->velocityY = px(6);
+  Actor_Get(ACTOR_PARTY_LEADER)->velocityZ = px(6);
   Event_Wait(1);
   while (Actor_Get(ACTOR_PARTY_LEADER)->y.fixed != 0) {
     Event_Wait(1);
@@ -888,7 +888,7 @@ static void Lunpa_GuardsThrowIsaacOut(void) {
   Task_AddFrame(Lunpa_KickUpLeaderDust, TASK_PASS_FRAME);
   Event_Wait(2);
   // A smaller second bounce ends with the guards' final warning.
-  Actor_Get(ACTOR_PARTY_LEADER)->velocityY = PIXELS(3);
+  Actor_Get(ACTOR_PARTY_LEADER)->velocityY = px(3);
   Event_Wait(1);
   while (Actor_Get(ACTOR_PARTY_LEADER)->y.fixed != 0) {
     Event_Wait(1);

@@ -176,7 +176,7 @@ static void KolimaForestFloodgate_DrawWaterLevel(void) {
       piece->priorityFlags =
           ACTOR_PRIORITY_AUTOMATIC | ACTOR_PRIORITY_UNDERFOOT;
       piece->motionFlags = 0;
-      piece->y.fixed = PIXELS(26);
+      piece->y.fixed = px(26);
 
       if (record->vertical != 0) {
         MapGrid_CopyCells(68, 40, 1, 4, record->x + 32, record->z);
@@ -452,11 +452,11 @@ static void KolimaForestFloodgate_CreateLogs(struct FloodgateLog *entry) {
 
   for (; entry->sprite != -1; entry++) {
     if (entry->vertical == 0) {
-      x = (entry->x << 20) + PIXELS(32);
-      z = (entry->z << 20) + PIXELS(8);
+      x = (entry->x << 20) + px(32);
+      z = (entry->z << 20) + px(8);
     } else {
-      x = (entry->x << 20) + PIXELS(8);
-      z = (entry->z << 20) + PIXELS(32);
+      x = (entry->x << 20) + px(8);
+      z = (entry->z << 20) + px(32);
     }
     actor = FieldActor_Create(entry->sprite, x, 0, z);
     if (actor == NULL)
@@ -561,43 +561,43 @@ static void KolimaForestFloodgate_RollLog(struct FloodgateLog *runs) {
   moved = 0;
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   facing = (actor->facing + TRIG_TURN / 8) & 0xc000;
-  SET_VECTOR(point, (actor->x.fixed & 0xfff00000) + PIXELS(8), actor->y.fixed,
-             (actor->z.fixed & 0xfff00000) + PIXELS(8));
-  Vector_AddPolarOffset(PIXELS(16), facing, point);
-  run = KolimaForestFloodgate_FindLogAt(runs, point[0] / PIXELS(16),
-                                        point[2] / PIXELS(16));
+  SET_VECTOR(point, (actor->x.fixed & 0xfff00000) + px(8), actor->y.fixed,
+             (actor->z.fixed & 0xfff00000) + px(8));
+  Vector_AddPolarOffset(px(16), facing, point);
+  run = KolimaForestFloodgate_FindLogAt(runs, point[0] / px(16),
+                                        point[2] / px(16));
   if (run == 0)
     return;
   for (i = 0; i <= 10; i++) {
     point[0] = run->x << 20;
     point[2] = run->z << 20;
-    Vector_AddPolarOffset(PIXELS(16), facing, point);
-    if (KolimaForestFloodgate_CheckLogFits(
-            point[0] / PIXELS(16), point[2] / PIXELS(16), run->vertical) != 0)
+    Vector_AddPolarOffset(px(16), facing, point);
+    if (KolimaForestFloodgate_CheckLogFits(point[0] / px(16), point[2] / px(16),
+                                           run->vertical) != 0)
       break;
     moved = 1;
     if (run->vertical == 0) {
-      x = point[0] + PIXELS(32);
-      z = point[2] + PIXELS(8);
+      x = point[0] + px(32);
+      z = point[2] + px(8);
     } else {
-      x = point[0] + PIXELS(8);
-      z = point[2] + PIXELS(32);
+      x = point[0] + px(8);
+      z = point[2] + px(32);
     }
-    run->x = point[0] / PIXELS(16);
-    run->z = point[2] / PIXELS(16);
+    run->x = point[0] / px(16);
+    run->z = point[2] / px(16);
   }
   if (moved == 0)
     return;
-  SET_VECTOR(point, (actor->x.fixed & 0xfff00000) + PIXELS(8), actor->y.fixed,
-             (actor->z.fixed & 0xfff00000) + PIXELS(8));
-  Vector_AddPolarOffset(PIXELS(8), facing, point);
+  SET_VECTOR(point, (actor->x.fixed & 0xfff00000) + px(8), actor->y.fixed,
+             (actor->z.fixed & 0xfff00000) + px(8));
+  Vector_AddPolarOffset(px(8), facing, point);
   actor = run->actor;
   quarter = facing / (TRIG_TURN / 4);
   Event_Start();
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_PUSH);
   Event_Wait(6);
-  actor->speedLimit = PIXELS(1) / 2;
-  actor->acceleration = PIXELS(1) / 5;
+  actor->speedLimit = px(1) / 2;
+  actor->acceleration = px(1) / 5;
   Sound_Play(SE_HEAVY_MOVE);
   Actor_SelectAnimation(actor, gKolimaForestFloodgate_PushAnimations[quarter]);
   FieldActor_SetMoveTargetFixed(actor, x, 0, z);

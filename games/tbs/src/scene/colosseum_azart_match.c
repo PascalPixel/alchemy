@@ -396,13 +396,13 @@ static void ColosseumAzartMatch_DousePipe(void) {
   FieldCamera_WaitForMove();
   none = 0;
   actor->motionFlags = none;
-  actor->acceleration = PIXELS(2) / 5;
-  actor->speedLimit = PIXELS(4) / 5;
+  actor->acceleration = px(2) / 5;
+  actor->speedLimit = px(4) / 5;
   FieldActor_SetMoveTargetFixed(actor, actor->x.fixed, px(8), actor->z.fixed);
   actor = Actor_Get(ACTOR_PIPE_EAST);
   actor->motionFlags = none;
-  actor->acceleration = PIXELS(2) / 5;
-  actor->speedLimit = PIXELS(4) / 5;
+  actor->acceleration = px(2) / 5;
+  actor->speedLimit = px(4) / 5;
   FieldActor_SetMoveTargetFixed(actor, actor->x.fixed, px(32), actor->z.fixed);
   Actor_WaitForMove(actor);
   Event_Wait(45);
@@ -422,20 +422,20 @@ static void ColosseumAzartMatch_MoveActorPairByOffset(s32 actorId, s32 dx,
   actor = Actor_Get(actorId);
   Event_Start();
   {
-    x = ((leader->x.fixed + (dx << 16)) & 0xFFF00000) + PIXELS(8);
-    z = ((leader->z.fixed + (dz << 16)) & 0xFFF00000) + PIXELS(8);
+    x = ((leader->x.fixed + (dx << 16)) & 0xFFF00000) + px(8);
+    z = ((leader->z.fixed + (dz << 16)) & 0xFFF00000) + px(8);
 
-    leader->speedLimit = PIXELS(1);
-    leader->acceleration = PIXELS(1) / 2;
+    leader->speedLimit = px(1);
+    leader->acceleration = px(1) / 2;
     FieldActor_SetMoveTargetFixed(leader, x, leader->y.fixed, z);
   }
   Actor_SelectAnimation(leader, 27);
   {
-    x = ((actor->x.fixed + (dx << 16)) & 0xFFF00000) + PIXELS(8);
-    z = ((actor->z.fixed + (dz << 16)) & 0xFFF00000) + PIXELS(8);
+    x = ((actor->x.fixed + (dx << 16)) & 0xFFF00000) + px(8);
+    z = ((actor->z.fixed + (dz << 16)) & 0xFFF00000) + px(8);
 
-    actor->speedLimit = PIXELS(1);
-    actor->acceleration = PIXELS(1) / 2;
+    actor->speedLimit = px(1);
+    actor->acceleration = px(1) / 2;
     FieldActor_SetMoveTargetFixed(actor, x, actor->y.fixed, z);
   }
   if (dx < 0 || dz < 0) {
@@ -547,8 +547,8 @@ static void ColosseumAzartMatch_PushPipeworksPillar(void) {
   Event_Start();
   Actor_SetAnimation(leaderId, ANIM_PUSH);
   Event_Wait(6);
-  actor->speedLimit = PIXELS(1) / 2;
-  actor->acceleration = PIXELS(1) / 5;
+  actor->speedLimit = px(1) / 2;
+  actor->acceleration = px(1) / 5;
   Sound_Play(SE_HEAVY_MOVE);
   Actor_SelectAnimation(actor, 2);
   FieldActor_SetMoveTargetFixed(actor, actor->x.fixed - px(48), 0,
@@ -590,15 +590,15 @@ static void ColosseumAzartMatch_PushPipeworksPillar(void) {
   FieldCamera_WaitForMove();
   actor = Actor_Get(ACTOR_PIPE_WEST);
   actor->motionFlags = none;
-  actor->acceleration = PIXELS(2) / 5;
-  actor->speedLimit = PIXELS(4) / 5;
+  actor->acceleration = px(2) / 5;
+  actor->speedLimit = px(4) / 5;
   FieldActor_SetMoveTargetFixed(actor, actor->x.fixed, px(8), actor->z.fixed);
   Actor_SelectAnimation(actor, 3);
   ColosseumAzartMatch_AnimatePipeworksWater();
   actor = Actor_Get(ACTOR_PIPE_EAST);
   actor->motionFlags = none;
-  actor->acceleration = PIXELS(2) / 5;
-  actor->speedLimit = PIXELS(4) / 5;
+  actor->acceleration = px(2) / 5;
+  actor->speedLimit = px(4) / 5;
   FieldActor_SetMoveTargetFixed(actor, actor->x.fixed, px(32), actor->z.fixed);
   Actor_WaitForMove(actor);
   Event_Wait(15);
@@ -762,7 +762,7 @@ s32 ColosseumAzartMatch_Initialize(void) {
     x = 25;
   }
   actor = Actor_Get(ACTOR_ROCK_B);
-  actor->x.fixed = (x << 20) + PIXELS(8);
+  actor->x.fixed = (x << 20) + px(8);
   actor->motionFlags = 0;
   actor->priorityFlags = 2;
   MapGrid_CopyCellAttributes(14, 13, 1, 1, x, 12);
@@ -798,9 +798,9 @@ s32 ColosseumAzartMatch_Initialize(void) {
   if (GameFlag_Get(FLAG_PIPES_MOVED)) {
     MapGrid_CopyCellAttributes(43, 12, 1, 1, 41, 12);
     actor->motionFlags = zero;
-    actor->acceleration = PIXELS(2) / 5;
-    actor->speedLimit = PIXELS(4) / 5;
-    actor->y.fixed = PIXELS(8);
+    actor->acceleration = px(2) / 5;
+    actor->speedLimit = px(4) / 5;
+    actor->y.fixed = px(8);
     Actor_SelectAnimation(actor, 3);
   } else {
     Actor_SelectAnimation(actor, 2);
@@ -811,8 +811,8 @@ s32 ColosseumAzartMatch_Initialize(void) {
   // Select competition, support, explanation, or post-battle arrival.
   switch (gMainRoutineWork.entrance) {
   case COLOSSEUM_AZART_MATCH_RACE_FROM_LEND_A_HAND:
-    Colosso_StartRaceGauge(ACTOR_PARTY_LEADER, ACTOR_OPPONENT, 4, PIXELS(1304),
-                           PIXELS(192), ACTOR_PRIZE_A, ACTOR_PRIZE_B);
+    Colosso_StartRaceGauge(ACTOR_PARTY_LEADER, ACTOR_OPPONENT, 4, px(1304),
+                           px(192), ACTOR_PRIZE_A, ACTOR_PRIZE_B);
     MapGrid_CopyCellsLayered(127, 0, 1, 2, 19, 2);
     Actor_ReleaseById(ACTOR_GUIDE);
     Actor_ReleaseById(ACTOR_ROCK_ATTENDANT);
@@ -1096,8 +1096,8 @@ static void ColosseumAzartMatch_TalkToRockAttendant(s32 actorId) {
 static inline void ColosseumAzartMatch_SetPipeHeight(struct Actor *actor,
                                                      s32 height) {
   actor->motionFlags = 0;
-  actor->acceleration = PIXELS(2) / 5;
-  actor->speedLimit = PIXELS(4) / 5;
+  actor->acceleration = px(2) / 5;
+  actor->speedLimit = px(4) / 5;
   FieldActor_SetMoveTargetFixed(actor, actor->x.fixed, height, actor->z.fixed);
 }
 
@@ -1134,13 +1134,13 @@ static void ColosseumAzartMatch_TalkToPipeworksAttendant(s32 attendant) {
       Colosso_HidePointer();
       wait(2);
       first = Actor_Get(ACTOR_PIPE_WEST);
-      ColosseumAzartMatch_SetPipeHeight(first, PIXELS(8));
+      ColosseumAzartMatch_SetPipeHeight(first, px(8));
       second = Actor_Get(ACTOR_PIPE_EAST);
-      ColosseumAzartMatch_SetPipeHeight(second, PIXELS(32));
+      ColosseumAzartMatch_SetPipeHeight(second, px(32));
       Actor_WaitForMove(second);
       Event_Wait(45);
       first = Actor_Get(ACTOR_PIPE_WEST);
-      ColosseumAzartMatch_SetPipeHeight(first, PIXELS(24));
+      ColosseumAzartMatch_SetPipeHeight(first, px(24));
       second = Actor_Get(ACTOR_PIPE_EAST);
       ColosseumAzartMatch_SetPipeHeight(second, 0);
       Actor_WaitForMove(second);

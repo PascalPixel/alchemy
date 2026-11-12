@@ -314,8 +314,8 @@ static void MercuryLighthouseEntrance_ActivateWithPly(void) {
   struct EffectOptions *effectData;
   struct EffectOptions options;
 
-  leaderColumn = Actor_Get(ACTOR_PARTY_LEADER)->x.fixed / PIXELS(16);
-  leaderRow = Actor_Get(ACTOR_PARTY_LEADER)->z.fixed / PIXELS(16);
+  leaderColumn = Actor_Get(ACTOR_PARTY_LEADER)->x.fixed / px(16);
+  leaderRow = Actor_Get(ACTOR_PARTY_LEADER)->z.fixed / px(16);
   if (leaderColumn == 12 && leaderRow == 32) {
     Event_Start();
     // Fade the event before releasing fifteen sparks above the pool.
@@ -343,7 +343,7 @@ static void MercuryLighthouseEntrance_ActivateWithPly(void) {
       sparkZ = 560 - ((u32)(Random_Next() << 4) >> 16);
       speedRoll = ((u32)(Import_RandomNext() << 2) >> 16);
       velocityY =
-          Math_Divide((((speedRoll << 4) - speedRoll) << 16) + PIXELS(60), 100);
+          Math_Divide((((speedRoll << 4) - speedRoll) << 16) + px(60), 100);
       FieldEffect_Spawn(sparkX << 16, 0, sparkZ << 16, 0, velocityY, velocityZ,
                         EFFECT_USE_PRIORITY | EFFECT_USE_TYPE |
                             EFFECT_USE_SCRIPT | EFFECT_SCRIPT_MEDIUM,
@@ -394,7 +394,7 @@ static void MercuryLighthouseEntrance_LizardManBlocksLeader(void) {
 
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   leaderX = leader->x.fixed;
-  leaderColumn = leaderX / PIXELS(16);
+  leaderColumn = leaderX / px(16);
   GameFlag_Set(FLAG_LIZARD_MAN_STEPPED_ASIDE);
   if (leaderColumn == 7) {
     Actor_SetScript(ACTOR_LIZARD_MAN,
@@ -520,8 +520,8 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
     FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
     MapGrid_CenterOnFollowedPoint();
     wait(1);
-    Actor_Get(ACTOR_PARTY_LEADER)->y.fixed = PIXELS(130);
-    Actor_Get(ACTOR_PARTY_LEADER)->gravity = PIXELS(1) / 2;
+    Actor_Get(ACTOR_PARTY_LEADER)->y.fixed = px(130);
+    Actor_Get(ACTOR_PARTY_LEADER)->gravity = px(1) / 2;
     Actor_Get(ACTOR_PARTY_LEADER)->bounce = arrivalSeen;
     Actor_Get(ACTOR_PARTY_LEADER)->motionFlags = arrivalSeen;
     Event_StartScreenTransition();
@@ -551,7 +551,7 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
     MapGrid_WaitForShakeToSettle();
     Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
-    Actor_Get(ACTOR_PARTY_LEADER)->gravity = PIXELS(1);
+    Actor_Get(ACTOR_PARTY_LEADER)->gravity = px(1);
     Actor_Get(ACTOR_PARTY_LEADER)->bounce = Q16_ONE / 4;
     if (!GameFlag_Get(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED)) {
       PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);

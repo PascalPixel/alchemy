@@ -65,7 +65,7 @@ void FieldEffect_WanderAroundAnchor(struct Actor *actor) {
   s32 dz;
 
   // Random16 is 0 to 1 in 16.16, so 2 to 3 pixels.
-  len = Random16() + PIXELS(2);
+  len = Random16() + px(2);
   angle = effect->facing;
   dx = Iwram_MulQ16(len, Trig_Cos(angle));
   dz = Iwram_MulQ16(len, Trig_Sin(angle));
@@ -112,7 +112,7 @@ void FieldEffect_CircleAnchor(struct Actor *actor) {
     effect->swirlFrames = 0;
     effect->turnFrames = 0;
     effect->gravity = Q16_ONE / 10;
-    effect->velocityY = PIXELS(3);
+    effect->velocityY = px(3);
     effect->facing = Random16();
   }
 }

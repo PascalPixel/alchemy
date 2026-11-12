@@ -351,9 +351,9 @@ static s32 LogRoomsA_TryJumpTo(struct FieldPosition *position) {
     wait(6);
     Sound_Play(SE_JUMP);
     Actor_SelectAnimation(leader, 7);
-    leader->speedLimit = PIXELS(3);
-    leader->acceleration = PIXELS(2);
-    leader->velocityY = PIXELS(4);
+    leader->speedLimit = px(3);
+    leader->acceleration = px(2);
+    leader->velocityY = px(4);
     *flags &= 0x7e;
     Actor_SetSpriteFlags(leader, 0);
     Actor_MoveToAndWait(ACTOR_PARTY_LEADER,
@@ -392,7 +392,7 @@ static void LogRoomsA_JumpAcrossRoofGap(void) {
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     SET_POSITION(&target, leader->x.fixed,
                  Actor_Get(ACTOR_PARTY_LEADER)->y.fixed,
-                 Actor_Get(ACTOR_PARTY_LEADER)->z.fixed - PIXELS(30));
+                 Actor_Get(ACTOR_PARTY_LEADER)->z.fixed - px(30));
     LogRoomsA_TryJumpTo(&target);
 #endif
     x = 42;
@@ -406,7 +406,7 @@ static void LogRoomsA_JumpAcrossRoofGap(void) {
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     SET_POSITION(&target, leader->x.fixed,
                  Actor_Get(ACTOR_PARTY_LEADER)->y.fixed,
-                 Actor_Get(ACTOR_PARTY_LEADER)->z.fixed + PIXELS(30));
+                 Actor_Get(ACTOR_PARTY_LEADER)->z.fixed + px(30));
     LogRoomsA_TryJumpTo(&target);
 #endif
     x = 42;
@@ -1946,7 +1946,7 @@ static void LogRoomsA_DiscussMindReading(void) {
 
     leader->priorityFlags = ACTOR_PRIORITY_AUTOMATIC | leader->priorityFlags;
   }
-  Field_SetCameraBounds(PIXELS(32), PIXELS(576), PIXELS(400), PIXELS(936));
+  Field_SetCameraBounds(px(32), px(576), px(400), px(936));
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.8);
   Actor_SetSpeed(ACTOR_GARET, 0.8);
   Actor_SetSpeed(ACTOR_IVAN, 0.8);
@@ -2189,7 +2189,7 @@ s32 Scene_Initialize(void) {
       Actor_SetPosition(ACTOR_GIRL_AT_THE_INN, 568, 648);
       Actor_SetMovementTypeById(ACTOR_GIRL_AT_THE_INN, MOVEMENT_TYPE_STAND);
       Actor_FaceDirection(ACTOR_GIRL_AT_THE_INN, FACING_SOUTH, 0);
-      Vault_PlaceItemIcon(ITEM_BONE, PIXELS(568), PIXELS(16), PIXELS(672));
+      Vault_PlaceItemIcon(ITEM_BONE, px(568), px(16), px(672));
       Task_AddFrame(Vault_UpdateBoneProximityFlag, TASK_PASS_FRAME);
     } else if (GameFlag_Get(FLAG_VAULT_SUSPECTS_MIND_READ) != 0) {
       Actor_SetPosition(ACTOR_GIRL_AT_THE_INN, 0, 0);
@@ -3213,8 +3213,8 @@ static void LogRoomsA_PlayAnimationAndWait(s32 actorId, s32 animation,
 /// Finds the route node containing the actor's position on the
 /// eight-pixel grid.
 static struct LogRoomsAStop *LogRoomsA_FindStopAtPosition(s32 *position) {
-  s32 gridX = (position[0] - PIXELS(64)) >> 19;
-  s32 gridZ = (position[2] - PIXELS(624)) >> 19;
+  s32 gridX = (position[0] - px(64)) >> 19;
+  s32 gridZ = (position[2] - px(624)) >> 19;
   struct LogRoomsAStop *stop = gLogRoomsA_Stops;
   struct LogRoomsAStop *result = NULL;
   u32 i;
@@ -3323,8 +3323,8 @@ static s32 LogRoomsA_CheckStopOccupancy(struct LogRoomsAStop *stop) {
   if (stop == NULL) {
     return 1;
   }
-  x = (stop->gridX << 19) + PIXELS(72);
-  z = (stop->gridZ << 19) + PIXELS(632);
+  x = (stop->gridX << 19) + px(72);
+  z = (stop->gridZ << 19) + px(632);
   if (LogRoomsA_IsStopTakenByLeader(x, z, ACTOR_PARTY_LEADER) != 0 ||
       LogRoomsA_IsStopTakenByActor(x, z, ACTOR_IVAN) != 0 ||
       LogRoomsA_IsStopTakenByActor(x, z, ACTOR_SUSPECTED_LEADER) != 0 ||
@@ -3482,7 +3482,7 @@ static void LogRoomsA_StartActorStops(void) {
   Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
   Actor_SetAnimation(ACTOR_GARET, 12);
   LogRoomsA_ResetSuspectRoutes();
-  Field_SetCameraBounds(PIXELS(48), PIXELS(576), PIXELS(288), PIXELS(736));
+  Field_SetCameraBounds(px(48), px(576), px(288), px(736));
   Actor_SetSpeed(ACTOR_GARET, 1);
   Actor_SetSpeed(ACTOR_IVAN, 0.75);
   Actor_SetSpeedAndAcceleration(ACTOR_SUSPECTED_LEADER, 1, 1.2);

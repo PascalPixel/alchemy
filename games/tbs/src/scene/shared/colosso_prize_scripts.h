@@ -6,7 +6,7 @@
 
 /// A sparkle beside the raised prize sinks for a second, then is released.
 s32 gColosso_PrizeSparkleScript[] = {
-    SC_ADD(SW_Y, -PIXELS(1) / 4),
+    SC_ADD(SW_Y, -px(1) / 4),
     SC_WAIT(1),
     SC_LOOP(60, SC_TOP),
     SC_RELEASE,

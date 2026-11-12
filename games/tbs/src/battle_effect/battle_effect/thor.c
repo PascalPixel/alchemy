@@ -23,7 +23,7 @@
 #define THOR_BOLT_SIZE 72         ///< each of the three bolt pictures is 72x72
 #define THOR_BOLT_BYTES (THOR_BOLT_SIZE * THOR_BOLT_SIZE)
 
-/// Launches up to max sparks from (px, py), 16.16, into the free slots
+/// Launches up to max sparks from (startX, startY), 16.16, into the free slots
 /// (variant 0) of THOR_PARTICLES, walking them with spark and counting with
 /// index. Each flies at angle (0 straight up, a full turn TRIG_TURN) at a
 /// random speed of 32 to 1055 128ths of a pixel a frame across, twice that
@@ -31,7 +31,7 @@
 /// and each bolt's 16; the mote's sparks are launched inline. The speed is
 /// masked in place, the mask assigned first; as `Random16() & 0x3ff`, 3
 /// instructions differ.
-#define THOR_LAUNCH_SPARKS(spark, index, px, py, angleExpr, max)               \
+#define THOR_LAUNCH_SPARKS(spark, index, startX, startY, angleExpr, max)       \
   {                                                                            \
     s32 spawned = 0;                                                           \
     for (index = 0, spark = THOR_PARTICLES; index != THOR_PARTICLE_COUNT;      \
@@ -41,8 +41,8 @@
         s32 angle;                                                             \
         speed &= Random16();                                                   \
         angle = angleExpr;                                                     \
-        spark->x = px;                                                         \
-        spark->y = py;                                                         \
+        spark->x = startX;                                                     \
+        spark->y = startY;                                                     \
         speed += 32;                                                           \
         spark->velocityX = (Trig_Sin(angle) * speed) >> 7;                     \
         spark->velocityY = -((Trig_Cos(angle) * speed) << 1) >> 7;             \

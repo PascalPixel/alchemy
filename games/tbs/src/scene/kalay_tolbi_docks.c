@@ -955,12 +955,12 @@ static void KalayTolbiDocks_GaretSeesTheKaragol(void) {
   Actor_SetMovementTypeById(ACTOR_YOUNG_MAN_ASKING_ABOUT_TOLBI, 2);
   actor = Actor_Get(ACTOR_YOUNG_MAN_ASKING_ABOUT_TOLBI);
   {
-    s32 pixelX = actor->x.fixed / PIXELS(1);
+    s32 pixelX = actor->x.fixed / px(1);
 
     actor->timer = pixelX;
   }
   {
-    s32 pixelZ = actor->z.fixed / PIXELS(1);
+    s32 pixelZ = actor->z.fixed / px(1);
 
     actor->userValue = pixelZ;
   }

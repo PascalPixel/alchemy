@@ -1313,7 +1313,7 @@ static void Kalay_PrepareTown(void) {
     sprite->state = found;
     nut->active = 1;
     nut->mode = found;
-    nut->y = PIXELS(10);
+    nut->y = px(10);
     nut->visible = 1;
     heap = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 1544);
     Icon_DrawItem(ITEM_NUT);
@@ -2230,7 +2230,7 @@ static void Kalay_PushTunnelStatue(void) {
                  statue->y.fixed, statue->z.fixed + (moveStep << 16));
     if (FieldActor_CheckMovementCollision(statue, target) <= 0) {
       Actor_SelectAnimation(leader, ANIM_PUSH);
-      pushSpeed = PIXELS(1) / 5;
+      pushSpeed = px(1) / 5;
       wait(15);
       Sound_Play(SE_PUSH);
       statue->speedLimit = pushSpeed;
@@ -2464,8 +2464,8 @@ static void Kalay_SpawnTunnelParticle(s32 x, s32 height, s32 z) {
   depth = z;
   random = Import_RandomNext();
   particle = FieldActor_Create(
-      SPRITE_DUST_PUFF, (x - PIXELS(8)),
-      (((((u32)(random << 3) >> 16) << 16) + height) + PIXELS(16)), depth);
+      SPRITE_DUST_PUFF, (x - px(8)),
+      (((((u32)(random << 3) >> 16) << 16) + height) + px(16)), depth);
   if (particle != 0) {
     ((u8 *)particle)[offsetof(struct Actor, motionFlags)] = (attributeMask = 0);
     spriteBytes = (u8 *)particle->sprite;
@@ -2519,7 +2519,7 @@ static void Kalay_FreezePuddle(void) {
   MapGrid_CopyCellAttributes(0, 0, 1, 1, 9, 45);
   if (effect != 0) {
     Actor_SetSpriteFlags(effect, 0);
-    effect->y.fixed -= PIXELS(32);
+    effect->y.fixed -= px(32);
     effect->priorityFlags = 2;
   }
   GameFlag_Set(FLAG_TUNNEL_PUDDLE_FROZEN);

@@ -105,7 +105,7 @@ void Djinn_RunVenusJoinEffect(s32 djinniId) {
   // 24 motes, evenly spread round a circle, 120 pixels above the leader.
   for (remaining = 0; remaining <= 23; remaining++) {
     position.x = leader->x.fixed;
-    position.y = leader->y.fixed + PIXELS(120);
+    position.y = leader->y.fixed + px(120);
     position.z = leader->z.fixed;
     djinni = Actor_Spawn(SPRITE_PARTICLE, position.x, position.y, position.z);
     if (djinni != NULL) {
@@ -126,7 +126,7 @@ void Djinn_RunVenusJoinEffect(s32 djinniId) {
   wait(1);
   Sound_PlayFar(SE_LIGHT_APPEAR);
   position.x = leader->x.fixed;
-  position.y = leader->y.fixed + PIXELS(18);
+  position.y = leader->y.fixed + px(18);
   position.z = leader->z.fixed;
   // 8 sparks from 18 pixels above the leader, each thrown 32 pixels in a
   // random direction at 1.4 to 2.4 pixels a frame and 5 up (gravity is
@@ -139,10 +139,10 @@ void Djinn_RunVenusJoinEffect(s32 djinniId) {
     djinni->scaleY = Q16_ONE * 3 / 5;
     djinni->scaleX = Q16_ONE * 3 / 5;
     djinni->motionFlags = ACTOR_FALLS;
-    djinni->velocityY = PIXELS(5);
+    djinni->velocityY = px(5);
     djinni->groundHeight = djinni->y.fixed;
     djinni->speedLimit = Random16() + Q16_ONE * 7 / 5;
-    Actor_SetTargetPositionFromMagnitudeAngle(djinni, PIXELS(32), Random16());
+    Actor_SetTargetPositionFromMagnitudeAngle(djinni, px(32), Random16());
     Actor_SetSpriteColorModeFar(djinni, SPRITE_COLOR_GREEN_TINT);
     djinni->wait = 8;
     Actor_StartScriptFar(djinni, gFieldEffect_SharedParticleScript);
@@ -172,17 +172,17 @@ void FieldEffect_UpdateRandomTargetParticle(struct FieldParticle *effect) {
 
   if (state == MERCURY_DROPLET_AIM) {
     position.x = source->x.fixed;
-    position.y = source->y.fixed + Random16() * 5 + PIXELS(15);
+    position.y = source->y.fixed + Random16() * 5 + px(15);
     position.z = source->z.fixed;
     Camera_WorldToScreen(&position);
-    Vector_AddPolarOffset(Random16() * 6 + PIXELS(2), Random16(), &position);
+    Vector_AddPolarOffset(Random16() * 6 + px(2), Random16(), &position);
 
     effect->targetX = position.x;
     effect->targetZ = position.z;
     effect->x = position.x;
-    effect->z = position.z - PIXELS(100);
-    effect->acceleration = PIXELS(3);
-    effect->speedMax = Random16() * 3 + PIXELS(3);
+    effect->z = position.z - px(100);
+    effect->acceleration = px(3);
+    effect->speedMax = Random16() * 3 + px(3);
     effect->scaleX = Q16_ONE;
     effect->scaleY = Q16_ONE;
     effect->turnStepLimited = state;
@@ -193,7 +193,7 @@ void FieldEffect_UpdateRandomTargetParticle(struct FieldParticle *effect) {
     if (FieldParticle_HasPendingTarget(effect) == 0) {
       position.x = effect->x;
       position.z = effect->z;
-      Vector_AddPolarOffset(PIXELS(12), Random16(), &position);
+      Vector_AddPolarOffset(px(12), Random16(), &position);
       effect->targetX = position.x;
       effect->targetZ = position.z;
       effect->stopAtTarget = 0;

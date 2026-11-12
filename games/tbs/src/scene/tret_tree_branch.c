@@ -117,8 +117,8 @@ static void TretTreeBranch_ShiftLeaderAndCameraByCells(s32 cellOffsetX,
   actor = Actor_Get(gMainRoutineWork.leaderActorId);
   // Multiplication keeps negative cell offsets defined; every caller is within
   // six cells, so the fixed-point result fits in s32.
-  offsetX *= PIXELS(16);
-  offsetZ *= PIXELS(16);
+  offsetX *= px(16);
+  offsetZ *= px(16);
 
   // Shift the selected actor before the separate camera actor.
   if (actor != 0) {

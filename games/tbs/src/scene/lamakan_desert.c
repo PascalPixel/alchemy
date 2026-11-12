@@ -671,7 +671,7 @@ static void LamakanDesert_BatheInOasis(void) {
 
     FieldActor_SetMoveTargetFixed(actor, spot->x, 0, spot->z);
   }
-  Actor_Get(ACTOR_PARTY_LEADER)->velocityY = PIXELS(6);
+  Actor_Get(ACTOR_PARTY_LEADER)->velocityY = px(6);
   Sound_Play(SE_JUMP);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   Actor_WaitBelowHeight(leader, Actor_Get(ACTOR_PARTY_LEADER)->y.fixed);
@@ -726,7 +726,7 @@ static void LamakanDesert_BatheInOasis(void) {
   }
   Sound_Play(SE_STOP_ACTION_SE);
   Sound_Play(SE_JUMP);
-  Actor_Get(ACTOR_PARTY_LEADER)->velocityY = PIXELS(6);
+  Actor_Get(ACTOR_PARTY_LEADER)->velocityY = px(6);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Event_Wait(10);
   // frames is 0 here, so a running Reveal ends as the leader gets up.
@@ -752,7 +752,7 @@ static void HeatGauge_CountStep(void) {
   if (work->stepTrigger == CELL_BEHAVIOR_LAMAKAN_DESERT_SLOPE) {
     return;
   }
-  if (actor->speedLimit <= PIXELS(1)) {
+  if (actor->speedLimit <= px(1)) {
     if ((gFrameCount & 15) != 0) {
       return;
     }
@@ -762,7 +762,7 @@ static void HeatGauge_CountStep(void) {
     params.spin = ((u32)(Import_RandomNext() << 12) >> 16) + 0xf800;
     if (actor->facing != FACING_EAST && actor->facing != FACING_WEST) {
       z = actor->z.fixed;
-      dx = PIXELS(2) - PIXELS(((z >> 20) & 1) * 5);
+      dx = px(2) - px(((z >> 20) & 1) * 5);
     } else {
       z = actor->z.fixed;
     }
@@ -781,8 +781,8 @@ static void HeatGauge_CountStep(void) {
     params.startScaleY = 4 * Q16_ONE / 5;
     params.spin = ((u32)(Import_RandomNext() << 12) >> 16) + 0xf800;
     FieldEffect_Spawn(
-        actor->x.fixed, actor->y.fixed + PIXELS(2), actor->z.fixed, 0,
-        ((u32)(Import_RandomNext() * 5) >> 16) * (PIXELS(1) / 10), phase,
+        actor->x.fixed, actor->y.fixed + px(2), actor->z.fixed, 0,
+        ((u32)(Import_RandomNext() * 5) >> 16) * (px(1) / 10), phase,
         EFFECT_USE_SPIN | EFFECT_USE_START_SCALE | EFFECT_SCRIPT_MEDIUM,
         &params);
   }
@@ -810,8 +810,8 @@ static void LamakanDesert_FallIntoPit(void) {
     struct Actor *other = Actor_Get(id);
 
     if (other != 0) {
-      dx = (target->x.fixed - other->x.fixed) / PIXELS(1);
-      dz = (target->z.fixed - other->z.fixed) / PIXELS(1);
+      dx = (target->x.fixed - other->x.fixed) / px(1);
+      dz = (target->z.fixed - other->z.fixed) / px(1);
       {
         s32 ax = dx;
 
@@ -892,17 +892,16 @@ static void LamakanDesert_SlideDownDune(void) {
   // First check for a ledge immediately below the sliding actor.
   probePosition.x = actor->x.fixed;
   probePosition.y = actor->y.fixed;
-  probePosition.z = actor->z.fixed + PIXELS(3) / 2;
+  probePosition.z = actor->z.fixed + px(3) / 2;
   hit = FieldActor_CheckMovementCollision(actor, &probePosition);
   phase = gFrameCount & 4;
   if (phase == 0) {
     params.spin = ((u32)(Import_RandomNext() << 12) >> 16) + 0xf800;
     x = actor->x.fixed + (((u32)(Import_RandomNext() * 12) >> 16) << 16) -
-        PIXELS(6);
+        px(6);
     FieldEffect_Spawn(x, actor->y.fixed, actor->z.fixed, 0, phase,
-                      ((u32)(Import_RandomNext() * 5) >> 16) *
-                              (PIXELS(1) / 10) +
-                          5 * (PIXELS(1) / 10),
+                      ((u32)(Import_RandomNext() * 5) >> 16) * (px(1) / 10) +
+                          5 * (px(1) / 10),
                       EFFECT_USE_SPIN, &params);
   }
   if (hit < 0) {
@@ -923,27 +922,27 @@ static void LamakanDesert_SlideDownDune(void) {
   // Probe ahead and on both diagonals before advancing actor and camera.
   probePosition.x = actor->x.fixed;
   probePosition.y = actor->y.fixed;
-  probePosition.z = actor->z.fixed + PIXELS(8);
+  probePosition.z = actor->z.fixed + px(8);
   hit = FieldActor_CheckMovementCollision(actor, &probePosition);
   if (hit > 0) {
     return;
   }
-  probePosition.x = actor->x.fixed + PIXELS(57) / 10;
+  probePosition.x = actor->x.fixed + px(57) / 10;
   probePosition.y = actor->y.fixed;
-  probePosition.z = actor->z.fixed + PIXELS(57) / 10;
+  probePosition.z = actor->z.fixed + px(57) / 10;
   hit = FieldActor_CheckMovementCollision(actor, &probePosition);
   if (hit > 0) {
     return;
   }
-  probePosition.x = actor->x.fixed - PIXELS(57) / 10;
+  probePosition.x = actor->x.fixed - px(57) / 10;
   probePosition.y = actor->y.fixed;
-  probePosition.z = actor->z.fixed + PIXELS(57) / 10;
+  probePosition.z = actor->z.fixed + px(57) / 10;
   hit = FieldActor_CheckMovementCollision(actor, &probePosition);
   if (hit > 0) {
     return;
   }
-  center->z.fixed += PIXELS(3) / 2;
-  actor->z.fixed += PIXELS(3) / 2;
+  center->z.fixed += px(3) / 2;
+  actor->z.fixed += px(3) / 2;
 }
 
 /// In Lamakan Desert, at step trigger 40 in LamakanDesertManticore, the leader
@@ -994,9 +993,8 @@ static void LamakanDesert_MeetManticore(void) {
       FieldVector_AddPolarOffset(-16, record->facing, &backwardOffset);
       Actor_SetSpeed(ACTOR_PARTY_LEADER, 2);
       Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
-      Actor_SetDestinationOffset(ACTOR_PARTY_LEADER,
-                                 backwardOffset.x / PIXELS(1),
-                                 backwardOffset.z / PIXELS(1));
+      Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, backwardOffset.x / px(1),
+                                 backwardOffset.z / px(1));
       Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
       Event_Wait(2);
       Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
@@ -1251,22 +1249,22 @@ static void HeatGauge_SetHeld(u16 value) { gHeatGauge_Held = value; }
 // clang-format off
 /// Each map's oases, the middle of each as x, z pairs.
 const s32 gLamakanDesertEast_Oases[] = {
-    PIXELS(384), PIXELS(128),
-    PIXELS(288), PIXELS(688),
-    PIXELS(608), PIXELS(720),
+    px(384), px(128),
+    px(288), px(688),
+    px(608), px(720),
 };
 
 const s32 gLamakanDesertSmog_Oases[] = {
-    PIXELS(704), PIXELS(96),
-    PIXELS(448), PIXELS(464),
-    PIXELS(832), PIXELS(592),
-    PIXELS(128), PIXELS(752),
-    PIXELS(464), PIXELS(896),
+    px(704), px(96),
+    px(448), px(464),
+    px(832), px(592),
+    px(128), px(752),
+    px(464), px(896),
 };
 
 const s32 gLamakanDesertOasesOther[] = {
-    PIXELS(192), PIXELS(224),
-    PIXELS(192), PIXELS(352),
+    px(192), px(224),
+    px(192), px(352),
 };
 
 const s32 *gFieldEffect_DurationScripts[] = {

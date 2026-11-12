@@ -499,11 +499,11 @@ static void GondowanCave_RunSpinningLeap(s32 actorId) {
   Sound_Play(SE_WHOOSH);
   Actor_SetSpeed(actorId, 2);
   Actor_SetDestination(actorId, 472, 288);
-  actor->gravity = 4 * PIXELS(1) / 5;
+  actor->gravity = 4 * px(1) / 5;
   actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   actor->layer = 0;
   Actor_WaitForMoveById(actorId);
-  GondowanCave_WaitForDescent(actor, PIXELS(32));
+  GondowanCave_WaitForDescent(actor, px(32));
   MapGrid_SetShake(5, 5, 1);
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   // Emit a complete particle fan, including its closing direction.
@@ -521,7 +521,7 @@ static void GondowanCave_RunSpinningLeap(s32 actorId) {
   Actor_SetDestination(actorId, 440, 308);
   // Finish the second movement before restoring the resting animation.
   Actor_WaitForMoveById(actorId);
-  GondowanCave_WaitForDescent(actor, PIXELS(32));
+  GondowanCave_WaitForDescent(actor, px(32));
   actor->update = 0;
   actor->sprite->rotation = TRIG_TURN / 16;
   Sound_Play(SE_CAST);

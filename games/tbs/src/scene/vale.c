@@ -844,7 +844,7 @@ static void Vale_WatchThePuppies(void) {
     frame = 0;
     // Pan down to the puppies while the leader stays in place.
     do {
-      cameraPosition[2] += PIXELS(2);
+      cameraPosition[2] += px(2);
       Event_Wait(1);
       frame++;
       MapGrid_CenterOnFollowedPoint();
@@ -854,7 +854,7 @@ static void Vale_WatchThePuppies(void) {
     frame = 0;
     Event_Wait(6);
     do {
-      cameraPosition[2] -= PIXELS(2);
+      cameraPosition[2] -= px(2);
       Event_Wait(1);
       frame++;
       MapGrid_CenterOnFollowedPoint();
@@ -1420,7 +1420,7 @@ UNUSED static void Vale_UnusedRoofMended(void) {
   Actor_WalkToAndWait(ACTOR_DORA, 364, 815);
   Event_Wait(4);
   for (i = 0; i != 4; i++) {
-    actor->z.fixed += PIXELS(3) / 2;
+    actor->z.fixed += px(3) / 2;
     actor->scaleY -= Q16_ONE / 10;
     Event_Wait(1);
   }
@@ -1657,8 +1657,8 @@ s32 Vale_Initialize(void) {
     } else {
       actor->x.fixed = 189 << 17;
     }
-    actor->z.fixed = PIXELS(584);
-    actor->y.fixed = PIXELS(192);
+    actor->z.fixed = px(584);
+    actor->y.fixed = px(192);
     Vale_MovePillarBelowCliff();
     actor->layer = 3;
     actor->motionFlags = 0;
@@ -2060,7 +2060,7 @@ static void Vale_MoveActorAlongHigherZPath(s32 actorId, s32 approachAnimationId,
   Actor_SetSpeed(actorId, 0.3);
   Actor_SetAnimation(actorId, departureAnimationId);
   Actor_MoveToAndWait(actorId, 392, 890);
-  actor->velocityY = PIXELS(2);
+  actor->velocityY = px(2);
   sprite->flags = SPRITE_FLAG_SHADOW;
   if (resumeMotion != 0) {
     actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
@@ -2080,9 +2080,9 @@ static void Vale_PlaceOrHideBoards(s32 first, u32 count, s32 mode) {
 
       actor->motionFlags = 0;
       Actor_SetSpriteFlags(actor, 0);
-      actor->x.fixed = PIXELS(390);
-      actor->y.fixed = PIXELS(160);
-      actor->z.fixed = PIXELS(842);
+      actor->x.fixed = px(390);
+      actor->y.fixed = px(160);
+      actor->z.fixed = px(842);
       selector++;
     }
     return;
@@ -2124,21 +2124,21 @@ static void Vale_MendingTheRoof(void) {
   MapGrid_CopyCellsTo(0, 103, 82, 42, 1, 1);
   repairActor = Actor_GetById(ACTOR_OPENING_FIRST_BOARD);
   repairActor->motionFlags = 0;
-  repairActor->x.fixed = PIXELS(388);
-  repairActor->y.fixed = PIXELS(160);
-  repairActor->z.fixed = PIXELS(840);
+  repairActor->x.fixed = px(388);
+  repairActor->y.fixed = px(160);
+  repairActor->z.fixed = px(840);
   Actor_SetSpriteFlags(repairActor, 0);
   repairActor = Actor_GetById(ACTOR_OPENING_SECOND_BOARD);
   repairActor->motionFlags = 0;
-  repairActor->y.fixed = PIXELS(160);
-  repairActor->z.fixed = PIXELS(844);
-  repairActor->x.fixed = PIXELS(388);
+  repairActor->y.fixed = px(160);
+  repairActor->z.fixed = px(844);
+  repairActor->x.fixed = px(388);
   Actor_SetSpriteFlags(repairActor, 0);
   repairActor = Actor_GetById(ACTOR_OPENING_THIRD_BOARD);
   repairActor->motionFlags = 0;
-  repairActor->z.fixed = PIXELS(848);
-  repairActor->y.fixed = PIXELS(160);
-  repairActor->x.fixed = PIXELS(388);
+  repairActor->z.fixed = px(848);
+  repairActor->y.fixed = px(160);
+  repairActor->x.fixed = px(388);
   Actor_SetSpriteFlags(repairActor, 0);
   actor = Actor_Get(ACTOR_OPENING_FIRST_BOARD);
   Actor_SetSpriteFlags(actor, 0);
@@ -2259,9 +2259,9 @@ static void Vale_MendingTheRoof(void) {
   actor = Actor_Get(ACTOR_OPENING_MOVE_HAND);
   Actor_SetSpriteFlags(actor, 0);
   moveHand->motionFlags = 0;
-  moveHand->x.fixed = PIXELS(428);
-  moveHand->y.fixed = PIXELS(208);
-  moveHand->z.fixed = PIXELS(584);
+  moveHand->x.fixed = px(428);
+  moveHand->y.fixed = px(208);
+  moveHand->z.fixed = px(584);
   moveHand->facing = FACING_WEST;
   moveHand->update = Vale_TrailSparkles;
   Event_Wait(4);
@@ -2471,21 +2471,21 @@ static void Vale_RoofMended(void) {
   Actor_SetScript(ACTOR_PARTY_LEADER, gVale_LeaderHammers);
   actor = Actor_Get(ACTOR_FIRST_BOARD);
   actor->motionFlags = 0;
-  actor->x.fixed = PIXELS(388);
-  actor->y.fixed = PIXELS(160);
-  actor->z.fixed = PIXELS(840);
+  actor->x.fixed = px(388);
+  actor->y.fixed = px(160);
+  actor->z.fixed = px(840);
   Actor_SetSpriteFlags(actor, 0);
   actor = Actor_Get(ACTOR_SECOND_BOARD);
   actor->motionFlags = 0;
-  actor->x.fixed = PIXELS(388);
-  actor->y.fixed = PIXELS(160);
-  actor->z.fixed = PIXELS(844);
+  actor->x.fixed = px(388);
+  actor->y.fixed = px(160);
+  actor->z.fixed = px(844);
   Actor_SetSpriteFlags(actor, 0);
   actor = Actor_Get(ACTOR_THIRD_BOARD);
   actor->motionFlags = 0;
-  actor->x.fixed = PIXELS(388);
-  actor->y.fixed = PIXELS(160);
-  actor->z.fixed = PIXELS(848);
+  actor->x.fixed = px(388);
+  actor->y.fixed = px(160);
+  actor->z.fixed = px(848);
   Actor_SetSpriteFlags(actor, 0);
   ((u8 *)FieldCamera_GetActor())[85] = 0;
   wait(1);
@@ -2856,7 +2856,7 @@ static void Vale_RoofMended(void) {
   Actor_WalkToAndWait(ACTOR_DORA, 364, 815);
   Event_Wait(4);
   for (i = 0; i != 4; i++) {
-    actor->z.fixed += PIXELS(3) / 2;
+    actor->z.fixed += px(3) / 2;
     actor->scaleY += -Q16_ONE / 10;
     Event_Wait(1);
   }
@@ -3065,7 +3065,7 @@ static void Vale_RoofMended(void) {
   GameFlag_Clear(FLAG_SHOW_AREA_NAME);
 #if TBS_PATCH_1
   leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-  leader->y.fixed = PIXELS(160);
+  leader->y.fixed = px(160);
   leader->targetY = ACTOR_NO_TARGET;
   leader->velocityY = 0;
 #else
@@ -3206,7 +3206,7 @@ static void Vale_TrailSparkles(struct Actor *updated) {
   s32 randomDistance;
   struct Actor *particle;
   SET_VECTOR(spawnPosition, source->x.fixed,
-             source->y.fixed - (Import_RandomNext() << 4) - PIXELS(8),
+             source->y.fixed - (Import_RandomNext() << 4) - px(8),
              source->z.fixed);
   randomDistance = Import_RandomNext();
   Vector_AddPolarOffset(((randomDistance << 1) + randomDistance) << 4,
@@ -3215,7 +3215,7 @@ static void Vale_TrailSparkles(struct Actor *updated) {
                                spawnPosition[1], spawnPosition[2]);
   if (particle != 0) {
     particle->motionFlags = ACTOR_FALLS;
-    particle->gravity = PIXELS(1) / 10;
+    particle->gravity = px(1) / 10;
     particle->wait = 12;
     Actor_SetSpriteFlags(particle, 0);
     Actor_SelectAnimation(particle, 0);
@@ -3239,7 +3239,7 @@ static void Vale_VanishMoveHand(struct Actor *emitter) {
   Sound_Play(SE_CAST);
 
   for (frameCountdown = 30; frameCountdown >= 0; frameCountdown--) {
-    emitter->y.fixed += PIXELS(1);
+    emitter->y.fixed += px(1);
     emitter->facing = (u16)(emitter->facing + TRIG_TURN / 8);
     emitter->scaleX += -2048;
     emitter->scaleY += -2048;
@@ -3256,16 +3256,16 @@ static void Vale_VanishMoveHand(struct Actor *emitter) {
       Actor_SetSpriteFlags(particle, 0);
       Actor_StartScript(particle, (const void *)&gVale_SparkleScript[1]);
 
-      verticalSpeed = Import_RandomNext() + PIXELS(1);
+      verticalSpeed = Import_RandomNext() + px(1);
       particle->acceleration = Q16_ONE;
       particle->speedLimit = verticalSpeed;
       particle->motionFlags = ACTOR_FALLS;
-      particle->gravity = PIXELS(1) / 25;
+      particle->gravity = px(1) / 25;
 
       particle->velocityY = Import_RandomNext() - Import_RandomNext();
 
       Actor_SetTargetPositionFromMagnitudeAngle(
-          particle, ((Import_RandomNext() * 3) << 3) + PIXELS(8),
+          particle, ((Import_RandomNext() * 3) << 3) + px(8),
           Import_RandomNext());
     }
   }
@@ -3372,7 +3372,7 @@ static void Vale_AdjustPillarPriorityForLeaderHeight(void) {
   else
     pillar = Actor_Get(ACTOR_PILLAR);
   if (pillar != 0) {
-    if (leader->y.fixed > PIXELS(200))
+    if (leader->y.fixed > px(200))
       pillar->priorityFlags =
           ACTOR_PRIORITY_AUTOMATIC | ACTOR_PRIORITY_UNDERFOOT;
     else

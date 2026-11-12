@@ -358,7 +358,7 @@ ValeCave_SinkActorWithParticles(s32 actorId, s32 baseX, s32 baseZ,
     FieldEffect_Spawn(particleX, 0, particleZ, 0, 0, 0,
                       EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE,
                       particleOptions);
-    Actor_Get(actorId)->y.fixed -= PIXELS(1) / 2;
+    Actor_Get(actorId)->y.fixed -= px(1) / 2;
     Event_Wait(1);
   }
 }
@@ -381,7 +381,7 @@ static void ValeCave_MoveWestCratesIntoWater(void) {
     // Move the leader aside before the crates start sinking.
     Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 360, 664);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 10);
-    Actor_Get(ACTOR_WEST_CRATES)->x.fixed += PIXELS(2);
+    Actor_Get(ACTOR_WEST_CRATES)->x.fixed += px(2);
     leftEffect = Actor_PrepareFixed(
         Actor_Get(ACTOR_WEST_CRATES)->x.fixed, 0,
         Actor_Get(ACTOR_WEST_CRATES)->z.fixed + px(52), SPRITE_CRATES);
@@ -394,12 +394,12 @@ static void ValeCave_MoveWestCratesIntoWater(void) {
     options.startScaleY = 3 * Q16_ONE / 5;
     options.palette = 7;
     Sound_Play(SE_BURST);
-    ValeCave_SinkActorWithParticles(ACTOR_WEST_CRATES, PIXELS(368), PIXELS(624),
+    ValeCave_SinkActorWithParticles(ACTOR_WEST_CRATES, px(368), px(624),
                                     &options);
     MapGrid_CopyCellAttributes(23, 41, 1, 1, 23, 39);
     Actor_Get(ACTOR_WEST_CRATES)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     GameFlag_Set(FLAG_VALE_CAVE_WEST_CRATES_SUNK);
-    Actor_Get(ACTOR_WEST_CRATES)->y.fixed = -PIXELS(8);
+    Actor_Get(ACTOR_WEST_CRATES)->y.fixed = -px(8);
     Actor_SetAnimation(ACTOR_WEST_CRATES, 2);
     Actor_Release(leftEffect);
     Actor_Release(rightEffect);
@@ -438,12 +438,12 @@ static void ValeCave_MoveEastCratesIntoWater(void) {
     options.startScaleY = 3 * Q16_ONE / 5;
     options.palette = 7;
     Sound_Play(SE_BURST);
-    ValeCave_SinkActorWithParticles(ACTOR_EAST_CRATES, PIXELS(432), PIXELS(656),
+    ValeCave_SinkActorWithParticles(ACTOR_EAST_CRATES, px(432), px(656),
                                     &options);
     MapGrid_CopyCellAttributes(31, 39, 2, 1, 27, 41);
     Actor_Get(ACTOR_EAST_CRATES)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     GameFlag_Set(FLAG_VALE_CAVE_EAST_CRATES_SUNK);
-    Actor_Get(ACTOR_EAST_CRATES)->y.fixed = -PIXELS(8);
+    Actor_Get(ACTOR_EAST_CRATES)->y.fixed = -px(8);
     Actor_SetAnimation(ACTOR_EAST_CRATES, 2);
     Actor_Release(leftEffect);
     Actor_Release(rightEffect);
@@ -480,13 +480,13 @@ static s32 ValeCave_HopDownLedge(s32 unusedArgument) {
   motionFlags = &leader->motionFlags;
   savedMotionFlags = *motionFlags;
 #if TBS_PATCH_1
-  landingPosition[0].fixed = (leader->x.fixed & -0x100000) + PIXELS(8);
+  landingPosition[0].fixed = (leader->x.fixed & -0x100000) + px(8);
   landingPosition[1].fixed = leader->y.fixed;
-  landingPosition[2].fixed = (leader->z.fixed & -0x100000) + PIXELS(40);
+  landingPosition[2].fixed = (leader->z.fixed & -0x100000) + px(40);
 #else
   landingPosition[0].fixed = leader->x.fixed;
   landingPosition[1].fixed = leader->y.fixed;
-  landingPosition[2].fixed = leader->z.fixed + PIXELS(32);
+  landingPosition[2].fixed = leader->z.fixed + px(32);
 #endif
   // Keep the normal motion flags while staging the hop.
   if (FieldActor_CheckMovementCollision(
@@ -496,9 +496,9 @@ static s32 ValeCave_HopDownLedge(s32 unusedArgument) {
     wait(6);
     Sound_Play(SE_JUMP);
     Actor_SelectAnimation(leader, 7);
-    leader->speedLimit = PIXELS(3);
-    leader->acceleration = PIXELS(2);
-    leader->velocityY = PIXELS(4);
+    leader->speedLimit = px(3);
+    leader->acceleration = px(2);
+    leader->velocityY = px(4);
     *motionFlags &= 126;
     Actor_SetSpriteFlags(leader, 0);
     Actor_MoveToAndWait(ACTOR_PARTY_LEADER, landingPosition[0].part.pixel,
@@ -539,7 +539,7 @@ static void ValeCave_KiteRunsOff(void) {
     Actor_WalkToAndWait(ACTOR_KITE, 792, 248);
     Sound_Play(SE_JUMP);
     djinni = Actor_Get(ACTOR_KITE);
-    djinni->velocityY = PIXELS(8);
+    djinni->velocityY = px(8);
     Actor_WalkToAndWait(ACTOR_KITE, 792, 280);
     Event_Wait(20);
     Actor_FaceDirection(ACTOR_KITE, FACING_NORTH, 20);
@@ -879,8 +879,8 @@ static void ValeCave_CenterActorOnCell(s32 actorId, s32 column, s32 row) {
     Actor_SetSpritePriority(actorId, 3);
     actor->layer = 2;
     actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-    actor->x.fixed = (column << 20) + PIXELS(8);
-    actor->z.fixed = (row << 20) + PIXELS(8);
+    actor->x.fixed = (column << 20) + px(8);
+    actor->z.fixed = (row << 20) + px(8);
   }
 }
 

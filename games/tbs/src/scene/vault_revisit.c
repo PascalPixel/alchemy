@@ -428,7 +428,7 @@ static void VaultRevisit_JumpActorToAndWait(int actorId, int x, int z,
   struct Actor *jumpingActor = Actor_Get(actorId);
   int frames;
   Actor_SetSpeed(actorId, 3);
-  jumpingActor->gravity = PIXELS(1) / 2;
+  jumpingActor->gravity = px(1) / 2;
   jumpingActor->bounce = 0;
   jumpingActor->velocityY = velocityY;
   Actor_SetSpriteFlags(jumpingActor, 0);
@@ -440,7 +440,7 @@ static void VaultRevisit_JumpActorToAndWait(int actorId, int x, int z,
       break;
   }
   Actor_SetSpriteFlags(jumpingActor, SPRITE_FLAG_SHADOW);
-  jumpingActor->gravity = PIXELS(1);
+  jumpingActor->gravity = px(1);
 }
 
 /// Searching the bell rings it (SE_BELL). The first ring since the party came
@@ -458,7 +458,7 @@ static void VaultRevisit_RingBell(void) {
     Actor_Jump(ACTOR_SAP, 4, 0);
     Event_Wait(20);
     // Let the Djinni leap from hiding before it walks to the bell.
-    VaultRevisit_JumpActorToAndWait(ACTOR_SAP, 392, 104, PIXELS(7));
+    VaultRevisit_JumpActorToAndWait(ACTOR_SAP, 392, 104, px(7));
     Event_Wait(20);
     Actor_WalkToAndWait(ACTOR_SAP, 408, 104);
     Actor_WalkToAndWait(ACTOR_SAP, 408, 120);

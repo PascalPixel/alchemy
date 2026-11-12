@@ -1164,8 +1164,8 @@ static void FuchinFallsCave_PlaceLogAtCell(s32 id, s32 column, s32 row) {
     Actor_SetSpritePriority(id, 3);
     actor->layer = 2;
     actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-    actor->x.fixed = PIXELS(column * 16) + PIXELS(8);
-    actor->z.fixed = PIXELS(row * 16) + PIXELS(8);
+    actor->x.fixed = px(column * 16) + px(8);
+    actor->z.fixed = px(row * 16) + px(8);
   }
 }
 
@@ -1579,10 +1579,8 @@ static void ImilFuchinFalls_PrepareRoom(void) {
       ImilFuchinFalls_PlaceDragonsEye();
     }
     if ((u16)(gMainRoutineWork.entrance - 2) <= 3) {
-      FuchinFallsCave_CreateForegroundActor(PIXELS(156), 0, PIXELS(452),
-                                            SPRITE_CRATE);
-      FuchinFallsCave_CreateForegroundActor(PIXELS(188), 0, PIXELS(452),
-                                            SPRITE_CRATE);
+      FuchinFallsCave_CreateForegroundActor(px(156), 0, px(452), SPRITE_CRATE);
+      FuchinFallsCave_CreateForegroundActor(px(188), 0, px(452), SPRITE_CRATE);
     }
   } else if (gMainRoutineWork.next ==
              (s32)&SceneId_FuchinFallsCaveDragonStatue) {
@@ -1705,7 +1703,7 @@ static void ImilFuchinFalls_PlaceDragonsEye(void) {
   GlyphTransfer *glyph;
   u8 clear = 0;
 
-  actor = FieldActor_Create(SPRITE_BLANK, PIXELS(248), PIXELS(8), PIXELS(152));
+  actor = FieldActor_Create(SPRITE_BLANK, px(248), px(8), px(152));
   if (actor != NULL) {
     sprite = actor->sprite;
     sprite->flags = clear;
@@ -1834,10 +1832,10 @@ static void ImilFuchinFalls_BlowCaveMouthDust(void) {
   options.targetScaleY = 9 * Q16_ONE / 5;
   if ((gFrameCount & 7) == 0)
     Sound_Play(SE_WHOOSH);
-  velocityX = -PIXELS(1) - ((((u32)Import_RandomNext() << 1) >> 16) << 16);
-  velocityY = -((((u32)Import_RandomNext() * 3) >> 16) * (PIXELS(1) / 5));
+  velocityX = -px(1) - ((((u32)Import_RandomNext() << 1) >> 16) << 16);
+  velocityY = -((((u32)Import_RandomNext() * 3) >> 16) * (px(1) / 5));
   ImilFuchinFalls_SpawnDust(
-      PIXELS(308), PIXELS(64), PIXELS(222), velocityX, velocityY, framePhase,
+      px(308), px(64), px(222), velocityX, velocityY, framePhase,
       1 | EFFECT_USE_PALETTE | EFFECT_USE_START_SCALE | EFFECT_SCALE_TO_TARGET,
       (const struct EffectOptions *)&options);
 }
@@ -2009,9 +2007,9 @@ static void Imil_SlideActorAcrossIce(void) {
     Event_Start();
 
     // Start at the cell center and reject a blocked or raised next cell.
-    probe.x = (actor->x.fixed & 0xfff00000) + PIXELS(8);
+    probe.x = (actor->x.fixed & 0xfff00000) + px(8);
     probe.y = actor->y.fixed;
-    probe.z = (actor->z.fixed & 0xfff00000) + PIXELS(8);
+    probe.z = (actor->z.fixed & 0xfff00000) + px(8);
     z = probe.z;
     x = probe.x;
     startBehavior = MapGrid_GetCellBehaviorAt(actor->layer, x, z);
@@ -2021,15 +2019,15 @@ static void Imil_SlideActorAcrossIce(void) {
     if (nextBehavior == CELL_BEHAVIOR_WALL ||
         MapGrid_GetTerrainHeight(actor->layer, probe.x, probe.z) -
                 actor->y.fixed >
-            PIXELS(8)) {
+            px(8)) {
       actor->facing = heading;
       goto tail;
     }
 
     probe.x = x;
     probe.z = z;
-    actor->speedLimit = PIXELS(2);
-    actor->acceleration = PIXELS(1) / 10;
+    actor->speedLimit = px(2);
+    actor->acceleration = px(1) / 10;
     actor->timer = 0;
     FieldActor_SetMoveTargetFixed(actor, x, actor->y.fixed, z);
 
@@ -2047,13 +2045,13 @@ static void Imil_SlideActorAcrossIce(void) {
       }
       if (MapGrid_GetTerrainHeight(actor->layer, probe.x, probe.z) -
               actor->y.fixed >
-          PIXELS(8)) {
+          px(8)) {
         break;
       }
       x = probe.x;
       z = probe.z;
-      actor->speedLimit = PIXELS(2);
-      actor->acceleration = PIXELS(1) / 10;
+      actor->speedLimit = px(2);
+      actor->acceleration = px(1) / 10;
       FieldActor_SetMoveTargetFixed(actor, probe.x, probe.y, probe.z);
       Actor_WaitForMove(actor);
       if (nextBehavior != startBehavior) {
@@ -2061,8 +2059,8 @@ static void Imil_SlideActorAcrossIce(void) {
       }
     }
 
-    actor->speedLimit = PIXELS(2);
-    actor->acceleration = PIXELS(1);
+    actor->speedLimit = px(2);
+    actor->acceleration = px(1);
     FieldActor_SetMoveTargetFixed(actor, x, actor->y.fixed, z);
     Actor_WaitForMove(actor);
     wait(2);
@@ -2073,7 +2071,7 @@ blocked:
   actor->update = NULL;
   actor->steeringFlags |= ACTOR_FACES_MOTION;
 
-  actor->acceleration = PIXELS(1) / 4;
+  actor->acceleration = px(1) / 4;
 
 tail:
   wait(10);

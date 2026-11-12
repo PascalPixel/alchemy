@@ -275,15 +275,14 @@ s32 WorldMap_InitializePerspective(void) {
     perspective->tileIds[tileIndex] = tileIndex;
 }
 
-/// Puts world map tile (x / 16, y / 16) at cell (px / 16, py / 16) of the
-/// tile id grid, and draws it at once when it is next to the view. px and py
-/// count 32-pixel world map cells, so a grid cell is a 512-pixel tile; it is
-/// next to the view when px / 8 and py / 8, in 256-pixel steps, are within
-/// one step of the followed point's. Layer 1 takes the tile 320
-/// further on. Called by the world map's events
-/// (Field_SetWorldMapWindowCellTile, through WorldMap_SetWindowCellTileFar).
-/// Sets perspective->tileIds.
-void WorldMap_SetWindowCellTile(s32 x, s32 y, s32 px, s32 py) {
+/// Puts world map tile (x / 16, y / 16) at cell (cellX / 16, cellY / 16) of the
+/// tile id grid, and draws it at once when it is next to the view. cellX and
+/// cellY count 32-pixel world map cells, so a grid cell is a 512-pixel tile; it
+/// is next to the view when cellX / 8 and cellY / 8, in 256-pixel steps, are
+/// within one step of the followed point's. Layer 1 takes the tile 320 further
+/// on. Called by the world map's events (Field_SetWorldMapWindowCellTile,
+/// through WorldMap_SetWindowCellTileFar). Sets perspective->tileIds.
+void WorldMap_SetWindowCellTile(s32 x, s32 y, s32 cellX, s32 cellY) {
   struct WorldMapView *perspective;
   s32 *followedPosition;
   s32 originX;
@@ -299,19 +298,19 @@ void WorldMap_SetWindowCellTile(s32 x, s32 y, s32 px, s32 py) {
     originY = followedPosition[1];
   }
 
-  // The followed point and px, py in 256-pixel steps.
+  // The followed point and cellX, cellY in 256-pixel steps.
   originX >>= 24;
   originY >>= 24;
   x >>= 4;
   y >>= 4;
-  px >>= 3;
-  py >>= 3;
+  cellX >>= 3;
+  cellY >>= 3;
   tileId = (y << 4) + x;
-  perspective->tileIds[(((py / 2) & 15) << 4) + ((px / 2) & 15)] = tileId;
+  perspective->tileIds[(((cellY / 2) & 15) << 4) + ((cellX / 2) & 15)] = tileId;
 
-  if (ABS(originX - px) <= 1 && ABS(originY - py) <= 1) {
-    WorldMap_WriteLayerCellTile(0, px / 2, py / 2, tileId, 1);
-    WorldMap_WriteLayerCellTile(1, px / 2, py / 2, tileId + 320, 1);
+  if (ABS(originX - cellX) <= 1 && ABS(originY - cellY) <= 1) {
+    WorldMap_WriteLayerCellTile(0, cellX / 2, cellY / 2, tileId, 1);
+    WorldMap_WriteLayerCellTile(1, cellX / 2, cellY / 2, tileId + 320, 1);
   }
 }
 

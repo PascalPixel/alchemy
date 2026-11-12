@@ -884,7 +884,7 @@ static void Bilibin_RestoreRiverActors(void) {
       Actor_SetSpriteFlags(actor, 0);
       Actor_SetPosition(ACTOR_MIDDLE_TREE, 142, 156);
       fallenTree->sprite->rotation = TRIG_TURN / 4;
-      fallenTree->y.fixed += -PIXELS(8);
+      fallenTree->y.fixed += -px(8);
       if (GameFlag_Get(FLAG_BILIBIN_JILL_RESCUED) != 0) {
         Actor_SetPosition(ACTOR_JILL_TREE, 132, 186);
       } else {
@@ -893,9 +893,9 @@ static void Bilibin_RestoreRiverActors(void) {
         jillTree->collisionFlags |= ACTOR_NEAR_TALK;
       }
     } else {
-      fallenTree->y.fixed = PIXELS(32);
+      fallenTree->y.fixed = px(32);
       jillTree->motionFlags = crossingState;
-      jillTree->y.fixed = PIXELS(48);
+      jillTree->y.fixed = px(48);
     }
   }
   Bilibin_UpdateCratesCells();
@@ -937,7 +937,7 @@ static void Bilibin_SetUpTreasury(void) {
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
       leader = Actor_Get(ACTOR_PARTY_LEADER);
       Event_Start();
-      leader->y.fixed = PIXELS(16);
+      leader->y.fixed = px(16);
       FieldCamera_MoveWithinMapBounds(leader->x.fixed, leader->y.fixed,
                                       leader->z.fixed, 0);
       MapGrid_CenterOnFollowedPoint();
@@ -975,12 +975,12 @@ static void Bilibin_PushStatueOrCrates(void) {
       Actor_SelectAnimation(leader, ANIM_PUSH);
       wait(15);
       Sound_Play(SE_PUSH);
-      pushed->speedLimit = PIXELS(1) / 5;
-      pushed->acceleration = PIXELS(1) / 5;
+      pushed->speedLimit = px(1) / 5;
+      pushed->acceleration = px(1) / 5;
       FieldActor_SetMoveTargetFixed(pushed, destination.x, destination.y,
                                     destination.z);
-      leader->speedLimit = PIXELS(1) / 5;
-      leader->acceleration = PIXELS(1) / 5;
+      leader->speedLimit = px(1) / 5;
+      leader->acceleration = px(1) / 5;
       FieldActor_SetMoveTargetFixed(leader, destination.x, destination.y,
                                     destination.z);
       Actor_WaitForMove(pushed);
@@ -1008,8 +1008,8 @@ static void Bilibin_UpdateWadingRipples(void) {
   struct Actor *actor;
 
   actor = Actor_Get(gMainRoutineWork.leaderActorId);
-  if (actor->x.fixed < PIXELS(142)) {
-    if (actor->y.fixed < PIXELS(8)) {
+  if (actor->x.fixed < px(142)) {
+    if (actor->y.fixed < px(8)) {
       if (gBilibin_RippleTimer.frames == 0)
         Bilibin_SpawnRipple(actor);
       if (++gBilibin_RippleTimer.frames == 30)

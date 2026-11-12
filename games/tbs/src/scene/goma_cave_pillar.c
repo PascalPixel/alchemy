@@ -267,7 +267,7 @@ static void GomaCavePillar_MoveWestPillar(void) {
   actor = Actor_Get(ACTOR_WEST_PILLAR);
   x = actor->x.fixed;
   if (x < 0)
-    x += PIXELS(16) - 1;
+    x += px(16) - 1;
   x >>= 20;
   Event_Start();
   if (x == 20) {
@@ -304,7 +304,7 @@ static void GomaCavePillar_SpawnStumpDust(void) {
     heightSource = Actor_GetById(ACTOR_STUMP);
     firstZSource = Actor_Get(ACTOR_STUMP);
     fixedZ = firstZSource->z.fixed;
-    fixedZ += PIXELS(6);
+    fixedZ += px(6);
     firstRandomSpeed = Import_RandomNext();
     firstSpeedBand = ((u32)((firstRandomSpeed << 2) + firstRandomSpeed) >> 16);
     // These shifts produce speedBand * 6553: a tenth-pixel falling step.
@@ -328,7 +328,7 @@ static void GomaCavePillar_SpawnStumpDust(void) {
       heightSource = Actor_GetById(ACTOR_STUMP);
       secondZSource = Actor_Get(ACTOR_STUMP);
       fixedZ = secondZSource->z.fixed;
-      fixedZ += PIXELS(6);
+      fixedZ += px(6);
       secondRandomSpeed = Import_RandomNext();
       secondSpeedBand =
           ((u32)((secondRandomSpeed << 2) + secondRandomSpeed) >> 16);
@@ -370,7 +370,7 @@ static void GomaCavePillar_PushStumpOver(void) {
   struct Actor *overlayActor;
 
   stump = Actor_Get(ACTOR_STUMP);
-  column = stump->x.fixed / PIXELS(16);
+  column = stump->x.fixed / px(16);
   Event_Start();
   if (column == 25) {
     overlayActor = Actor_Get(ACTOR_MASK_FOR_STUMP);
@@ -397,7 +397,7 @@ static void GomaCavePillar_PushStumpOver(void) {
     bounceActor = Actor_Get(ACTOR_STUMP);
     bounceActor->bounce = zero;
     gravityActor = Actor_Get(ACTOR_STUMP);
-    gravityActor->gravity = PIXELS(3) / 5;
+    gravityActor->gravity = px(3) / 5;
     Event_Wait(3);
     // It tips over the edge.
     Actor_SetSpeedAndAcceleration(ACTOR_STUMP, 2.5, 0.25);
@@ -415,7 +415,7 @@ static void GomaCavePillar_PushStumpOver(void) {
     heightSource = Actor_Get(ACTOR_STUMP);
     zSource = Actor_Get(ACTOR_STUMP);
     fixedZ = zSource->z.fixed;
-    fixedZ += PIXELS(6);
+    fixedZ += px(6);
     randomSpeed = Import_RandomNext();
     speedBand = ((u32)((randomSpeed << 2) + randomSpeed) >> 16);
     // A last piece of dust, with the same tenth-pixel speed bands.
@@ -448,37 +448,37 @@ static void GomaCavePillar_SettleEastPillar(void) {
   s32 x;
   s32 z;
 
-  x = Actor_Get(ACTOR_EAST_PILLAR)->x.fixed / PIXELS(16);
-  z = Actor_Get(ACTOR_EAST_PILLAR)->z.fixed / PIXELS(16);
+  x = Actor_Get(ACTOR_EAST_PILLAR)->x.fixed / px(16);
+  z = Actor_Get(ACTOR_EAST_PILLAR)->z.fixed / px(16);
   if (x == 38 && z == 14) {
-    Actor_Get(ACTOR_EAST_PILLAR)->y.fixed = -PIXELS(2);
+    Actor_Get(ACTOR_EAST_PILLAR)->y.fixed = -px(2);
     Actor_Get(ACTOR_EAST_PILLAR)->targetY =
         Actor_Get(ACTOR_EAST_PILLAR)->y.fixed;
     Sound_Play(SE_THUMP);
     GomaCavePillar_SpawnFragment(Actor_Get(ACTOR_EAST_PILLAR)->x.fixed,
                                  Actor_Get(ACTOR_EAST_PILLAR)->y.fixed,
                                  Actor_Get(ACTOR_EAST_PILLAR)->z.fixed,
-                                 PIXELS(1) / 2, 0, 0, PLANE_XZ);
+                                 px(1) / 2, 0, 0, PLANE_XZ);
     GomaCavePillar_SpawnFragment(Actor_Get(ACTOR_EAST_PILLAR)->x.fixed,
                                  Actor_Get(ACTOR_EAST_PILLAR)->y.fixed,
                                  Actor_Get(ACTOR_EAST_PILLAR)->z.fixed,
-                                 PIXELS(2) / 5, PIXELS(2) / 5, 0, PLANE_XZ);
+                                 px(2) / 5, px(2) / 5, 0, PLANE_XZ);
     GomaCavePillar_SpawnFragment(Actor_Get(ACTOR_EAST_PILLAR)->x.fixed,
                                  Actor_Get(ACTOR_EAST_PILLAR)->y.fixed,
                                  Actor_Get(ACTOR_EAST_PILLAR)->z.fixed,
-                                 -PIXELS(2) / 5, PIXELS(2) / 5, 0, PLANE_XZ);
+                                 -px(2) / 5, px(2) / 5, 0, PLANE_XZ);
     GomaCavePillar_SpawnFragment(Actor_Get(ACTOR_EAST_PILLAR)->x.fixed,
                                  Actor_Get(ACTOR_EAST_PILLAR)->y.fixed,
                                  Actor_Get(ACTOR_EAST_PILLAR)->z.fixed,
-                                 -PIXELS(1) / 2, 0, 0, PLANE_XZ);
+                                 -px(1) / 2, 0, 0, PLANE_XZ);
     GomaCavePillar_SpawnFragment(Actor_Get(ACTOR_EAST_PILLAR)->x.fixed,
                                  Actor_Get(ACTOR_EAST_PILLAR)->y.fixed,
                                  Actor_Get(ACTOR_EAST_PILLAR)->z.fixed,
-                                 PIXELS(2) / 5, -PIXELS(2) / 5, 0, PLANE_XZ);
+                                 px(2) / 5, -px(2) / 5, 0, PLANE_XZ);
     GomaCavePillar_SpawnFragment(Actor_Get(ACTOR_EAST_PILLAR)->x.fixed,
                                  Actor_Get(ACTOR_EAST_PILLAR)->y.fixed,
                                  Actor_Get(ACTOR_EAST_PILLAR)->z.fixed,
-                                 -PIXELS(2) / 5, -PIXELS(2) / 5, 0, PLANE_XZ);
+                                 -px(2) / 5, -px(2) / 5, 0, PLANE_XZ);
     GameFlag_Set(FLAG_GOMA_CAVE_EAST_PILLAR_IN_PLACE);
   }
 }
@@ -517,7 +517,7 @@ static void GomaCavePillar_JumpGapWest(void) {
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   motionFlags = &leader->motionFlags;
   savedMotionFlags = *motionFlags;
-  target.x = Actor_Get(ACTOR_PARTY_LEADER)->x.fixed - PIXELS(32);
+  target.x = Actor_Get(ACTOR_PARTY_LEADER)->x.fixed - px(32);
   /* FAKEMATCH(temporary): destination holds &target; as target.y and &target,
    * 51 of 79 instructions differ in tbs-ja. */
   destination = &target;
@@ -529,9 +529,9 @@ static void GomaCavePillar_JumpGapWest(void) {
     wait(6);
     Sound_Play(SE_JUMP);
     Actor_SelectAnimation(leader, ANIM_LEADER_LEAP);
-    leader->speedLimit = PIXELS(3);
-    leader->acceleration = PIXELS(2);
-    leader->velocityY = PIXELS(4);
+    leader->speedLimit = px(3);
+    leader->acceleration = px(2);
+    leader->velocityY = px(4);
     *motionFlags &= 0x7e;
     Actor_SetSpriteFlags(leader, 0);
     Actor_MoveToAndWait(ACTOR_PARTY_LEADER, *(s16 *)((u8 *)destination + 2),

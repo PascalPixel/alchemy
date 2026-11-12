@@ -1218,13 +1218,13 @@ void LuckyWheels_Run(void) {
 
               if (y <= 0x7fffff) {
                 if (y >= 0) {
-                  s32 px = x >> 16;
-                  s32 py = y >> 16;
+                  s32 drawX = x >> 16;
+                  s32 drawY = y >> 16;
                   s32 size = spark->variant / 12 + 1;
 
                   draw[j & 1](canvas,
                               sheet + gLuckyWheels_SparkCellOffsets[size - 1],
-                              px - size, py - size, size * 2, size * 2);
+                              drawX - size, drawY - size, size * 2, size * 2);
                 }
               }
             }

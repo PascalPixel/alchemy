@@ -44,7 +44,7 @@ void FieldEffect_UpdateMoveHand(struct Actor *actor) {
   // The particle starts 8 to 24 pixels lower and up to 48 pixels away in a
   // random direction.
   position.x = source->x.fixed;
-  position.y = source->y.fixed - (Random16() << 4) - PIXELS(8);
+  position.y = source->y.fixed - (Random16() << 4) - px(8);
   position.z = source->z.fixed;
   radius = Random16() * 3;
   radius <<= 4;

@@ -140,8 +140,8 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
         s32 angle = Random16() & TRIG_ANGLE_MASK;
 
         spark = &sparks[i];
-        spark->x = PIXELS(64);
-        spark->y = PIXELS(80);
+        spark->x = px(64);
+        spark->y = px(80);
         spark->velocityX = (Trig_Sin(angle) * force) >> 7;
         spark->velocityY = -(Trig_Cos(angle) * force) >> 6;
         spark->variant = (Random16() & 15) + 16;
@@ -156,9 +156,9 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
       if (spark->variant > 0) {
         spark->variant--;
         Particle_AdvanceWithGravity2D(spark, 60, 0);
-        if (spark->y > PIXELS(104)) {
+        if (spark->y > px(104)) {
           spark->velocityY = -spark->velocityY / 2;
-        } else if ((spark->x >= 0 && spark->x <= PIXELS(127) - 1) &&
+        } else if ((spark->x >= 0 && spark->x <= px(127) - 1) &&
                    spark->y >= 0) {
           s32 sx = spark->x >> 16;
           s32 sy = spark->y >> 16;
@@ -197,35 +197,35 @@ void BattleEffect_PlaceFormationObjects(s32 formation, s32 x, s32 z) {
   s32 i;
 
   pos.groundHeight = 0;
-  pos.height = PIXELS(255);
+  pos.height = px(255);
   // Render_ApplyProjectedPlacement draws each picture 255 pixels above its
   // y, while its draw slot, and any shadow, still follow y itself.
   switch (formation) {
   case SUMMON_FORMATION_THOR:
     for (i = 0; i != 9; i++) {
-      pos.x = PIXELS(i % 3 * 32) + x;
-      pos.y = PIXELS(i / 3 * 32) + z;
+      pos.x = px(i % 3 * 32) + x;
+      pos.y = px(i / 3 * 32) + z;
       Actor_ApplyProjectedPlacementFar(work->sprites[i], &pos, &normal, 0);
     }
     break;
   case SUMMON_FORMATION_NEREID:
     for (i = 0; i != 12; i++) {
-      pos.x = PIXELS(gHelmSplitter_TwelveX[i]) + x - PIXELS(16);
-      pos.y = PIXELS(gHelmSplitter_TwelveZ[i]) + z - PIXELS(32);
+      pos.x = px(gHelmSplitter_TwelveX[i]) + x - px(16);
+      pos.y = px(gHelmSplitter_TwelveZ[i]) + z - px(32);
       Actor_ApplyProjectedPlacementFar(work->sprites[i], &pos, &normal, 0);
     }
     break;
   case SUMMON_FORMATION_CYBELE:
     for (i = 0; i != 8; i++) {
-      pos.x = PIXELS(gHelmSplitter_RightEightX[i]) + x + PIXELS(16);
-      pos.y = PIXELS(gHelmSplitter_RightEightZ[i]) + z;
+      pos.x = px(gHelmSplitter_RightEightX[i]) + x + px(16);
+      pos.y = px(gHelmSplitter_RightEightZ[i]) + z;
       Actor_ApplyProjectedPlacementFar(work->sprites[i], &pos, &normal, 0);
     }
     break;
   case SUMMON_FORMATION_TIAMAT:
     for (i = 0; i != 8; i++) {
-      pos.x = PIXELS(gHelmSplitter_SmallEightX[i]) + x;
-      pos.y = PIXELS(gHelmSplitter_SmallEightZ[i]) + z;
+      pos.x = px(gHelmSplitter_SmallEightX[i]) + x;
+      pos.y = px(gHelmSplitter_SmallEightZ[i]) + z;
       Actor_ApplyProjectedPlacementFar(work->sprites[i], &pos, &big, 0);
     }
     break;
@@ -278,7 +278,7 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
   EFFECT_GET_SLOTS(slots, cursor, work, canvas);
   sheet = slots[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_EFFECT];
   orgX = x;
-  x += PIXELS(40);
+  x += px(40);
   x /= 2;
   REG_BG2PA = Q_8_8(0.5);
   REG_BG2X = 0;
@@ -376,15 +376,15 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
          i++, particle++) {
       if (frame > i / 2 && particle->variant > 0) {
         s32 size;
-        s32 px;
-        s32 py;
+        s32 drawX;
+        s32 drawY;
 
         particle->variant--;
         Particle_AdvanceWithGravity2D(particle, 60, 0);
         size = particle->variant / 16 + 3;
-        px = Q_16_16_TO_INT(particle->x);
-        py = Q_16_16_TO_INT(particle->y);
-        EFFECT_DRAW_MOTE(additive, canvas, sheet, px, py, size);
+        drawX = Q_16_16_TO_INT(particle->x);
+        drawY = Q_16_16_TO_INT(particle->y);
+        EFFECT_DRAW_MOTE(additive, canvas, sheet, drawX, drawY, size);
       }
     }
 
@@ -393,15 +393,15 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
          i++, particle++) {
       if (frame > 35 && particle->variant > 0) {
         s32 size;
-        s32 px;
-        s32 py;
+        s32 drawX;
+        s32 drawY;
 
         particle->variant--;
         Particle_AdvanceWithGravity2D(particle, 60, 0);
         size = particle->variant / 16 + 1;
-        px = Q_16_16_TO_INT(particle->x);
-        py = Q_16_16_TO_INT(particle->y);
-        EFFECT_DRAW_MOTE(additive, canvas, sheet, px, py, size);
+        drawX = Q_16_16_TO_INT(particle->x);
+        drawY = Q_16_16_TO_INT(particle->y);
+        EFFECT_DRAW_MOTE(additive, canvas, sheet, drawX, drawY, size);
       }
     }
 
@@ -412,20 +412,20 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
 
       if (frame >= 36 && frame <= 63) {
         s32 cell;
-        s32 px;
-        s32 py;
+        s32 drawX;
+        s32 drawY;
 
         Particle_AdvanceWithGravity2D(shard, 64, 0);
         cell = (frame - 36) / 7;
-        px = Q_16_16_TO_INT(shard->x);
-        py = Q_16_16_TO_INT(shard->y);
+        drawX = Q_16_16_TO_INT(shard->x);
+        drawY = Q_16_16_TO_INT(shard->y);
         maxBlend(canvas,
                  work->sheet +
                      cell * (IMPACT_BURST_FRAGMENT_WIDTH *
                              IMPACT_BURST_FRAGMENT_HEIGHT) +
                      IMPACT_BURST_SHARD_OFFSETS,
-                 px - IMPACT_BURST_FRAGMENT_WIDTH / 2,
-                 py - IMPACT_BURST_FRAGMENT_HEIGHT / 2,
+                 drawX - IMPACT_BURST_FRAGMENT_WIDTH / 2,
+                 drawY - IMPACT_BURST_FRAGMENT_HEIGHT / 2,
                  IMPACT_BURST_FRAGMENT_WIDTH, IMPACT_BURST_FRAGMENT_HEIGHT);
       }
     }

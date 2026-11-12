@@ -627,8 +627,8 @@ static s32 SuhallaDesert_ChaseLeader(struct Actor *interpreter) {
   s32 sparkFrame;
 
   selectedActor = Actor_Get(gMainRoutineWork.leaderActorId);
-  actor->acceleration = PIXELS(1) / 4;
-  actor->speedLimit = PIXELS(3) / 2;
+  actor->acceleration = px(1) / 4;
+  actor->speedLimit = px(3) / 2;
   actor->motionFlags = 0;
   Actor_SetSpriteFlags(actor, 0);
   actor->spriteStorageKind ^= 1;
@@ -647,7 +647,7 @@ static s32 SuhallaDesert_ChaseLeader(struct Actor *interpreter) {
     dz = actor->z.fixed - selectedActor->z.fixed;
     if (dx + (dz >= 0 ? actor->z.fixed - selectedActor->z.fixed
                       : selectedActor->z.fixed - actor->z.fixed) <
-        PIXELS(8)) {
+        px(8)) {
       struct FieldWork *work = gFieldWork;
 
       if (selectedActor->motionFlags != 0) {
@@ -769,8 +769,8 @@ static void SuhallaDesert_StormCarriesPartyAway(void) {
   storm->frozen = 1;
   // Both rise faster and faster for a second.
   for (frame = 0; frame < 60; frame++) {
-    selectedActor->velocityY += PIXELS(1) / 5;
-    storm->velocityY += PIXELS(1) / 5;
+    selectedActor->velocityY += px(1) / 5;
+    storm->velocityY += px(1) / 5;
     wait(1);
   }
   Event_FinishScreenTransition();

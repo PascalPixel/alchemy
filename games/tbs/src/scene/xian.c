@@ -209,8 +209,8 @@ static void Xian_SpawnTrainingParticles(void) {
     FieldEffect_Spawn(*(s32 *)(studentActor + offsetof(struct Actor, x)),
                       *(s32 *)(studentActor + offsetof(struct Actor, y)),
                       *(s32 *)(studentActor + offsetof(struct Actor, z)) -
-                          PIXELS(1),
-                      0, -PIXELS(1), -PIXELS(1),
+                          px(1),
+                      0, -px(1), -px(1),
                       EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE |
                           EFFECT_USE_TYPE | EFFECT_USE_SCRIPT,
                       &config);
@@ -571,25 +571,22 @@ static void Xian_TalkToKungFuStudent(void) {
     FieldVector_AddPolarOffset(-8, leader->facing,
                                (struct FieldPosition *)stepBackOffset);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
-    Actor_SetDestinationOffset(ACTOR_PARTY_LEADER,
-                               stepBackOffset[0] / PIXELS(1),
-                               stepBackOffset[2] / PIXELS(1));
+    Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, stepBackOffset[0] / px(1),
+                               stepBackOffset[2] / px(1));
     Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
     Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
     Event_Wait(30);
     Actor_RunRepeatedMotion(ACTOR_KUNG_FU_STUDENT, 2);
     effectParams.priority = 1;
-    FieldEffect_Spawn(PIXELS(192), 0, PIXELS(312), PIXELS(1) / 10,
-                      PIXELS(1) / 5, 0,
+    FieldEffect_Spawn(px(192), 0, px(312), px(1) / 10, px(1) / 5, 0,
                       EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM, 0);
-    FieldEffect_Spawn(PIXELS(192), 0, PIXELS(312), PIXELS(1) / 5,
-                      PIXELS(1) / 10, 0,
+    FieldEffect_Spawn(px(192), 0, px(312), px(1) / 5, px(1) / 10, 0,
                       EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM, 0);
     Sound_Play(SE_WATER);
     particleFunc = Xian_SpawnTrainingParticles;
     Task_AddFrame(particleFunc, TASK_PASS_FRAME);
-    Actor_Get(ACTOR_KUNG_FU_STUDENT)->velocityY = PIXELS(6);
-    Actor_Get(ACTOR_KUNG_FU_STUDENT)->gravity = PIXELS(1);
+    Actor_Get(ACTOR_KUNG_FU_STUDENT)->velocityY = px(6);
+    Actor_Get(ACTOR_KUNG_FU_STUDENT)->gravity = px(1);
     Actor_Get(ACTOR_KUNG_FU_STUDENT)->bounce = 0;
     Actor_SetSpeed(ACTOR_KUNG_FU_STUDENT, 3);
     Actor_SetDestination(ACTOR_KUNG_FU_STUDENT, 168, 312);
@@ -600,7 +597,7 @@ static void Xian_TalkToKungFuStudent(void) {
     effectParams.type = SPRITE_STAR_BURST;
     effectParams.script = gXian_TreeImpactScript;
     effectParams.rotation = TRIG_TURN / 4;
-    FieldEffect_Spawn(PIXELS(168), 0, PIXELS(332), 0, 0, 0,
+    FieldEffect_Spawn(px(168), 0, px(332), 0, 0, 0,
                       EFFECT_USE_PRIORITY | EFFECT_USE_TYPE |
                           EFFECT_USE_SCRIPT | EFFECT_USE_ROTATION,
                       &effectParams);
@@ -608,26 +605,25 @@ static void Xian_TalkToKungFuStudent(void) {
     Actor_WaitForMoveById(ACTOR_KUNG_FU_STUDENT);
     // Finish the impact effects and leave the student in the final pose.
     Task_Remove((void (*)(void))particleFunc);
-    FieldEffect_Spawn(PIXELS(144), 0, PIXELS(312), 0, 0, 0,
+    FieldEffect_Spawn(px(144), 0, px(312), 0, 0, 0,
                       EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM, 0);
-    FieldEffect_Spawn(PIXELS(144), 0, PIXELS(312), -PIXELS(1) / 5,
-                      PIXELS(1) / 10, 0,
+    FieldEffect_Spawn(px(144), 0, px(312), -px(1) / 5, px(1) / 10, 0,
                       EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM, 0);
-    reboundVelocity = -PIXELS(1) / 2;
-    FieldEffect_Spawn(PIXELS(144), 0, PIXELS(312), reboundVelocity, 0, 0,
+    reboundVelocity = -px(1) / 2;
+    FieldEffect_Spawn(px(144), 0, px(312), reboundVelocity, 0, 0,
                       EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM, 0);
     Actor_WaitForScriptEndById(ACTOR_TRAINING_TREE);
     Sound_Play(SE_CHEST_OPEN);
-    FieldEffect_Spawn(PIXELS(168), PIXELS(8), PIXELS(312), 0, 0, 0,
+    FieldEffect_Spawn(px(168), px(8), px(312), 0, 0, 0,
                       EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM, 0);
-    FieldEffect_Spawn(PIXELS(168), PIXELS(8), PIXELS(312), PIXELS(1) / 5, 0, 0,
+    FieldEffect_Spawn(px(168), px(8), px(312), px(1) / 5, 0, 0,
                       EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM, 0);
-    FieldEffect_Spawn(PIXELS(168), PIXELS(8), PIXELS(312), -PIXELS(1) / 5, 0, 0,
+    FieldEffect_Spawn(px(168), px(8), px(312), -px(1) / 5, 0, 0,
                       EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM, 0);
     Task_Remove(Xian_RotateTrainingTree);
     Actor_Get(ACTOR_TRAINING_TREE)->sprite->rotation = reboundVelocity;
     Actor_Get(ACTOR_KUNG_FU_STUDENT)->bounce = Q16_ONE / 4;
-    Actor_Get(ACTOR_KUNG_FU_STUDENT)->gravity = PIXELS(1);
+    Actor_Get(ACTOR_KUNG_FU_STUDENT)->gravity = px(1);
     Event_Wait(30);
     Actor_FaceDirection(ACTOR_KUNG_FU_STUDENT, FACING_EAST, 20);
     Actor_RunRepeatedMotion(ACTOR_KUNG_FU_STUDENT, 2);
@@ -668,9 +664,9 @@ static void Xian_JumpOverSpilledWater(void) {
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   savedMotionFlags = leader->motionFlags;
   if (GameFlag_Get(FLAG_XIAN_WATER_SPILLED) != 0) {
-    landingPosition.x = (leader->x.fixed & -0x100000) + PIXELS(8);
+    landingPosition.x = (leader->x.fixed & -0x100000) + px(8);
     landingPosition.y = leader->y.fixed;
-    landingPosition.z = (leader->z.fixed & -0x100000) + PIXELS(8);
+    landingPosition.z = (leader->z.fixed & -0x100000) + px(8);
     FieldVector_AddPolarOffset(32, (leader->facing + TRIG_TURN / 8) & 0xc000,
                                &landingPosition);
     if (FieldActor_CheckMovementCollision(leader, &landingPosition) == 0) {
@@ -679,9 +675,9 @@ static void Xian_JumpOverSpilledWater(void) {
       wait(6);
       Sound_Play(SE_JUMP);
       Actor_SelectAnimation(leader, ANIM_LEADER_LEAP);
-      leader->speedLimit = PIXELS(3);
-      leader->acceleration = PIXELS(2);
-      leader->velocityY = PIXELS(4);
+      leader->speedLimit = px(3);
+      leader->acceleration = px(2);
+      leader->velocityY = px(4);
       leader->motionFlags &= 126;
       Actor_SetSpriteFlags(leader, 0);
       Actor_MoveToAndWait(ACTOR_PARTY_LEADER, landingPosition.x >> 16,
@@ -771,11 +767,11 @@ static void Xian_StrikeTrainingTreeWithForce(void) {
   Task_AddFrame(rotationFunc, TASK_PASS_FRAME);
   Actor_WaitForScriptEndById(ACTOR_TRAINING_TREE);
   Sound_Play(SE_CHEST_OPEN);
-  FieldEffect_Spawn(PIXELS(168), PIXELS(8), PIXELS(312), 0, 0, 0,
+  FieldEffect_Spawn(px(168), px(8), px(312), 0, 0, 0,
                     EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM, 0);
-  FieldEffect_Spawn(PIXELS(168), PIXELS(8), PIXELS(312), PIXELS(1) / 5, 0, 0,
+  FieldEffect_Spawn(px(168), px(8), px(312), px(1) / 5, 0, 0,
                     EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM, 0);
-  FieldEffect_Spawn(PIXELS(168), PIXELS(8), PIXELS(312), -PIXELS(1) / 5, 0, 0,
+  FieldEffect_Spawn(px(168), px(8), px(312), -px(1) / 5, 0, 0,
                     EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM, 0);
   Task_Remove(rotationFunc);
   Actor_Get(ACTOR_TRAINING_TREE)->sprite->rotation = TRIG_TURN / 2;
@@ -905,8 +901,8 @@ s32 Xian_Initialize(void) {
   Actor_Get(ACTOR_WOMAN_CARRYING_WATER)->update = XIAN_WATER_CARRIER_UPDATE;
   actor = Actor_Get(ACTOR_TRAINING_TREE);
   actor->motionFlags = 0;
-  actor->y.fixed = PIXELS(16);
-  actor->targetY = PIXELS(16);
+  actor->y.fixed = px(16);
+  actor->targetY = px(16);
   actor->scaleX = 11 * Q16_ONE / 20;
   actor->scaleY = 2 * Q16_ONE / 5;
   actor->sprite->rotation = TRIG_TURN / 2;

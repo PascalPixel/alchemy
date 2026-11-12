@@ -619,9 +619,9 @@ static void ValePlaza_DemonstratePsynergy(void) {
     for (i = 0; i != 180; i++) {
       if (Math_RemainderUnsigned(i, 10) == 0) {
         if ((1 & shakes) != 0) {
-          *origin -= PIXELS(1);
+          *origin -= px(1);
         } else {
-          *origin += PIXELS(1);
+          *origin += px(1);
         }
         shakes++;
       }
@@ -743,7 +743,7 @@ static void ValePlaza_BoyLiftsSmallRock(void) {
   savedMotionFlags = rock->motionFlags;
   rock->motionFlags = 0;
   for (i = 0; i < 40; i++) {
-    rock->y.fixed += PIXELS(3) / 32;
+    rock->y.fixed += px(3) / 32;
     wait(1);
   }
   rock->motionFlags = savedMotionFlags;
@@ -2162,7 +2162,7 @@ s32 gValePlaza_ChargedUpStrongmanActions[] = {
     SC_WAIT(40),
     SC_SE(SE_HIGH_JUMP),
     SC_SET(SW_MOTION, 3),
-    SC_SET(SW_VELOCITY_Y, PIXELS(8)),
+    SC_SET(SW_VELOCITY_Y, px(8)),
     SC_ANIMATION(2),
     SC_MOVE(214, 0, 763),
     SC_SYNC,
@@ -2174,7 +2174,7 @@ s32 gValePlaza_SecondTravelerLeapActions[] = {
     SC_SPEED(2),
     SC_ACCELERATION(2),
     SC_SE(SE_HIGH_JUMP),
-    SC_SET(SW_VELOCITY_Y, PIXELS(12)),
+    SC_SET(SW_VELOCITY_Y, px(12)),
     SC_MOVE(114, 144, 360),
     SC_SYNC,
     SC_SET(SW_FACING, FACING_WEST),
@@ -2186,7 +2186,7 @@ s32 gValePlaza_FirstTravelerLeapActions[] = {
     SC_SPEED(2),
     SC_ACCELERATION(2),
     SC_SE(SE_HIGH_JUMP),
-    SC_SET(SW_VELOCITY_Y, PIXELS(12)),
+    SC_SET(SW_VELOCITY_Y, px(12)),
     SC_MOVE(114, 144, 343),
     SC_SYNC,
     SC_SET(SW_FACING, FACING_WEST),
@@ -2198,7 +2198,7 @@ s32 gValePlaza_LeaderActions[] = {
     SC_SPEED(2),
     SC_ACCELERATION(2),
     SC_SE(SE_JUMP),
-    SC_SET(SW_VELOCITY_Y, PIXELS(4)),
+    SC_SET(SW_VELOCITY_Y, px(4)),
     SC_MOVE(82, 144, 343),
     SC_SYNC,
     SC_SET(SW_FACING, FACING_EAST),
@@ -2210,7 +2210,7 @@ s32 gValePlaza_StormGaretLeapActions[] = {
     SC_SPEED(2),
     SC_ACCELERATION(2),
     SC_SE(SE_JUMP),
-    SC_SET(SW_VELOCITY_Y, PIXELS(4)),
+    SC_SET(SW_VELOCITY_Y, px(4)),
     SC_MOVE(82, 144, 360),
     SC_SYNC,
     SC_SET(SW_FACING, FACING_EAST),
@@ -2223,7 +2223,7 @@ s32 gValePlaza_FirstTravelerBounceActions[] = {
     SC_WAIT(10),
     SC_ANIMATION(6),
     SC_SE(SE_HIGH_JUMP),
-    SC_SET(SW_VELOCITY_Y, PIXELS(8)),
+    SC_SET(SW_VELOCITY_Y, px(8)),
     SC_MOVE(65, 0, 328),
     SC_SYNC,
     SC_WAIT(5),
@@ -2231,7 +2231,7 @@ s32 gValePlaza_FirstTravelerBounceActions[] = {
     SC_WAIT(10),
     SC_ANIMATION(6),
     SC_SE(SE_HIGH_JUMP),
-    SC_SET(SW_VELOCITY_Y, PIXELS(6)),
+    SC_SET(SW_VELOCITY_Y, px(6)),
     SC_MOVE(31, 0, 338),
     SC_SYNC,
     SC_WAIT(5),
@@ -2239,7 +2239,7 @@ s32 gValePlaza_FirstTravelerBounceActions[] = {
     SC_WAIT(10),
     SC_ANIMATION(6),
     SC_SE(SE_HIGH_JUMP),
-    SC_SET(SW_VELOCITY_Y, PIXELS(4)),
+    SC_SET(SW_VELOCITY_Y, px(4)),
     SC_MOVE(0, 0, 338),
     SC_SYNC,
     SC_POSITION(0, 0, 0),
@@ -2250,14 +2250,14 @@ s32 gValePlaza_SecondTravelerBounceActions[] = {
     SC_ANIMATION(5),
     SC_WAIT(10),
     SC_ANIMATION(6),
-    SC_SET(SW_VELOCITY_Y, PIXELS(6)),
+    SC_SET(SW_VELOCITY_Y, px(6)),
     SC_MOVE(63, 0, 374),
     SC_SYNC,
     SC_WAIT(5),
     SC_ANIMATION(5),
     SC_WAIT(10),
     SC_ANIMATION(6),
-    SC_SET(SW_VELOCITY_Y, PIXELS(7)),
+    SC_SET(SW_VELOCITY_Y, px(7)),
     SC_MOVE(17, 0, 338),
     SC_SYNC,
     SC_WAIT(5),
@@ -2265,7 +2265,7 @@ s32 gValePlaza_SecondTravelerBounceActions[] = {
     SC_WAIT(10),
     SC_ANIMATION(6),
     SC_SE(SE_HIGH_JUMP),
-    SC_SET(SW_VELOCITY_Y, PIXELS(4)),
+    SC_SET(SW_VELOCITY_Y, px(4)),
     SC_MOVE(0, 0, 338),
     SC_SYNC,
     SC_POSITION(0, 0, 0),

@@ -62,8 +62,8 @@ const struct Trigger *Scene_GetTriggers(void) {
 /// Once Mt. Aleph has erupted (FLAG_SOL_SANCTUM_ERUPTED), the room rumbles
 /// (SE_RUMBLE) and shakes gently, as the rest of the sanctum does.
 s32 Scene_Initialize(void) {
-  s32 shakeX = PIXELS(1);
-  s32 shakeY = PIXELS(1);
+  s32 shakeX = px(1);
+  s32 shakeY = px(1);
   s32 decay = Q16_ONE;
 
   gFieldWork->transition =

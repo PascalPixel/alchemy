@@ -249,7 +249,7 @@ s32 MercuryLighthouseAerie_Initialize(void) {
       Actor_SetSpritePriority(i, 1);
       Actor_Get(i)->motionFlags = 4;
       Actor_Get(i)->priorityFlags |= 2;
-      Actor_Get(i)->y.fixed = -(PIXELS(50) + PIXELS(1) / 2);
+      Actor_Get(i)->y.fixed = -(px(50) + px(1) / 2);
     }
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) &&
         (actorId = Actor_FindNearestFloatingPlatform()) != 0 &&
@@ -275,7 +275,7 @@ s32 MercuryLighthouseAerie_Initialize(void) {
           struct MapGridLayerScroll *lift =
               &((struct MapGridScrollWork *)gMapGridWork[0])->layers[2];
 
-          lift->offsetY = PIXELS(1024);
+          lift->offsetY = px(1024);
         }
         MapGrid_CenterOnFollowedPoint();
         wait(1);
@@ -411,9 +411,9 @@ static void MercuryLighthouseAerie_JumpToPlatform(void) {
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   angle = (actor->facing + TRIG_TURN / 16) & 0xe000;
   flags = actor->motionFlags;
-  SET_POSITION(&position, (actor->x.fixed & 0xfff00000) + PIXELS(8),
-               actor->y.fixed, (actor->z.fixed & 0xfff00000) + PIXELS(8));
-  Vector_AddPolarOffset(PIXELS(32), angle, &position);
+  SET_POSITION(&position, (actor->x.fixed & 0xfff00000) + px(8), actor->y.fixed,
+               (actor->z.fixed & 0xfff00000) + px(8));
+  Vector_AddPolarOffset(px(32), angle, &position);
   if (FieldActor_CheckMovementCollision(actor, &position) == 0) {
     GameFlag_Clear(FLAG_ON_PLATFORM);
     MercuryLighthouseAerie_SettlePlatforms();
@@ -421,9 +421,9 @@ static void MercuryLighthouseAerie_JumpToPlatform(void) {
     wait(6);
     Sound_Play(SE_JUMP);
     Actor_SelectAnimation(actor, 7);
-    actor->speedLimit = PIXELS(3);
-    actor->acceleration = PIXELS(2);
-    actor->velocityY = PIXELS(4);
+    actor->speedLimit = px(3);
+    actor->acceleration = px(2);
+    actor->velocityY = px(4);
     actor->motionFlags &= 0x7e;
     Actor_SetSpriteFlags(actor, 0);
     Actor_MoveToAndWait(ACTOR_PARTY_LEADER, position.x >> 16, position.z >> 16);
@@ -450,25 +450,25 @@ static void MercuryLighthouseAerie_StepOntoPlatform(void) {
     actor = Actor_Get(gMercuryLighthouseAerie_PlatformUnderfoot);
     actor->motionFlags = 0;
     leader->motionFlags &= ~ACTOR_FOLLOWS_TERRAIN;
-    actor->y.fixed -= PIXELS(3);
-    leader->y.fixed -= PIXELS(3);
-    leader->groundHeight -= PIXELS(3);
+    actor->y.fixed -= px(3);
+    leader->y.fixed -= px(3);
+    leader->groundHeight -= px(3);
     wait(2);
-    actor->y.fixed -= PIXELS(2);
-    leader->y.fixed -= PIXELS(2);
-    leader->groundHeight -= PIXELS(2);
+    actor->y.fixed -= px(2);
+    leader->y.fixed -= px(2);
+    leader->groundHeight -= px(2);
     wait(10);
-    actor->y.fixed += PIXELS(2);
-    leader->y.fixed += PIXELS(2);
-    leader->groundHeight += PIXELS(2);
+    actor->y.fixed += px(2);
+    leader->y.fixed += px(2);
+    leader->groundHeight += px(2);
     wait(4);
-    actor->y.fixed += PIXELS(2);
-    leader->y.fixed += PIXELS(2);
-    leader->groundHeight += PIXELS(2);
+    actor->y.fixed += px(2);
+    leader->y.fixed += px(2);
+    leader->groundHeight += px(2);
     wait(4);
-    actor->y.fixed += PIXELS(1);
-    leader->y.fixed += PIXELS(1);
-    leader->groundHeight += PIXELS(1);
+    actor->y.fixed += px(1);
+    leader->y.fixed += px(1);
+    leader->groundHeight += px(1);
   }
   Event_End();
 }
@@ -857,7 +857,7 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   Actor_SetAnimationAndWait(ACTOR_FELIX, 3);
   Event_Wait(40);
   Actor_SetSpeedAndAcceleration(ACTOR_MENARDI, 3, 2);
-  Actor_Get(ACTOR_MENARDI)->velocityY = PIXELS(4);
+  Actor_Get(ACTOR_MENARDI)->velocityY = px(4);
   Sound_Play(SE_JUMP);
   Actor_Get(ACTOR_MENARDI)->motionFlags &= 0x7e;
   Actor_SetSpriteFlags(Actor_Get(ACTOR_MENARDI), 0);
@@ -1326,14 +1326,14 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
     void **cells;
     FieldCamera_MoveTo(152, CAMERA_KEEP, 216, 1);
     lift = &((struct MapGridScrollWork *)gMapGridWork[0])->layers[2];
-    lift->offsetY = PIXELS(896);
+    lift->offsetY = px(896);
     cells = gMapGridWork;
     MapGrid_CenterOnFollowedPoint();
     wait(1);
     Actor_Get(ACTOR_LIFT_STATUE)->motionFlags = 0;
     Actor_SetPosition(ACTOR_LIFT_STATUE, 104, 264);
-    Actor_Get(ACTOR_LIFT_STATUE)->y.fixed = -PIXELS(32);
-    Actor_Get(ACTOR_LIFT_STATUE)->targetY = -PIXELS(32);
+    Actor_Get(ACTOR_LIFT_STATUE)->y.fixed = -px(32);
+    Actor_Get(ACTOR_LIFT_STATUE)->targetY = -px(32);
     MapGrid_CopyCellsTo(29, 74, 4, 74, 5, 4);
     Actor_SetSpritePriority(ACTOR_FIRST_LIFT_PLATFORM, 0);
     Actor_SetSpritePriority(ACTOR_SECOND_LIFT_PLATFORM, 0);
@@ -1562,7 +1562,7 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
     struct MapGridLayerScroll *lift =
         &((struct MapGridScrollWork *)gMapGridWork[0])->layers[2];
 
-    lift->offsetY = PIXELS(1024);
+    lift->offsetY = px(1024);
   }
   MapGrid_CenterOnFollowedPoint();
   wait(1);
@@ -1580,13 +1580,13 @@ static void MercuryLighthouseAerie_CallLift(void) {
 
   lift = &((struct MapGridScrollWork *)gMapGridWork[0])->layers[2];
   Event_Start();
-  lift->offsetY = PIXELS(896);
+  lift->offsetY = px(896);
   MapGrid_CenterOnFollowedPoint();
   wait(1);
   Actor_Get(ACTOR_LIFT_STATUE)->motionFlags = 0;
   Actor_SetPosition(ACTOR_LIFT_STATUE, 104, 264);
-  Actor_Get(ACTOR_LIFT_STATUE)->y.fixed = -PIXELS(32);
-  Actor_Get(ACTOR_LIFT_STATUE)->targetY = -PIXELS(32);
+  Actor_Get(ACTOR_LIFT_STATUE)->y.fixed = -px(32);
+  Actor_Get(ACTOR_LIFT_STATUE)->targetY = -px(32);
   FieldCamera_GetActor()->motionFlags = 0;
   FieldCamera_SetSpeed(0.8);
   FieldCamera_MoveTo(128, CAMERA_KEEP, 184, 1);
@@ -1650,12 +1650,12 @@ static void MercuryLighthouseAerie_SaturosAndAlexWarpOut(void) {
       r = ((((u32)Import_RandomNext() * 24) >> 16) << 16);
       x = left->x.fixed;
       x += r;
-      x += -PIXELS(12);
+      x += -px(12);
       FieldEffect_Spawn(x,
                         left->y.fixed +
                             ((((u32)Import_RandomNext() << 5) >> 16) << 16) +
-                            -PIXELS(16),
-                        left->z.fixed, 0, PIXELS(4), 0,
+                            -px(16),
+                        left->z.fixed, 0, px(4), 0,
                         EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
                             EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
                         &options);
@@ -1663,12 +1663,12 @@ static void MercuryLighthouseAerie_SaturosAndAlexWarpOut(void) {
       r = ((((u32)Import_RandomNext() * 24) >> 16) << 16);
       x = right->x.fixed;
       x += r;
-      x += -PIXELS(12);
+      x += -px(12);
       FieldEffect_Spawn(x,
                         right->y.fixed +
                             ((((u32)Import_RandomNext() << 5) >> 16) << 16) +
-                            -PIXELS(16),
-                        right->z.fixed, 0, PIXELS(4), 0,
+                            -px(16),
+                        right->z.fixed, 0, px(4), 0,
                         EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
                             EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
                         &options);
@@ -1703,12 +1703,12 @@ static void MercuryLighthouseAerie_SaturosAndAlexWarpIn(void) {
       r = ((((u32)Import_RandomNext() * 24) >> 16) << 16);
       x = left->x.fixed;
       x += r;
-      x += -PIXELS(12);
+      x += -px(12);
       FieldEffect_Spawn(x,
                         left->y.fixed +
                             ((((u32)Import_RandomNext() << 5) >> 16) << 16) +
-                            PIXELS(32),
-                        left->z.fixed, 0, -PIXELS(4), 0,
+                            px(32),
+                        left->z.fixed, 0, -px(4), 0,
                         EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
                             EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
                         &options);
@@ -1716,12 +1716,12 @@ static void MercuryLighthouseAerie_SaturosAndAlexWarpIn(void) {
       r = ((((u32)Import_RandomNext() * 24) >> 16) << 16);
       x = right->x.fixed;
       x += r;
-      x += -PIXELS(12);
+      x += -px(12);
       FieldEffect_Spawn(x,
                         right->y.fixed +
                             ((((u32)Import_RandomNext() << 5) >> 16) << 16) +
-                            PIXELS(32),
-                        right->z.fixed, 0, -PIXELS(4), 0,
+                            px(32),
+                        right->z.fixed, 0, -px(4), 0,
                         EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
                             EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
                         &options);
@@ -1770,7 +1770,7 @@ static void MercuryLighthouseAerie_LowerLift(void) {
   struct Actor *actor;
 
   lift = &((struct MapGridScrollWork *)gMapGridWork[0])->layers[2];
-  speed = PIXELS(1) / 10;
+  speed = px(1) / 10;
   n = 0;
   for (i = 0; i <= 4; i++)
     ids[i] = 66;
@@ -1791,9 +1791,9 @@ static void MercuryLighthouseAerie_LowerLift(void) {
       actor->targetZ = Actor_Get(ids[j])->z.fixed;
     }
     if ((i & 3) == 3)
-      speed += PIXELS(1) / 10;
-    if (speed >= PIXELS(3) / 2)
-      speed = PIXELS(3) / 2;
+      speed += px(1) / 10;
+    if (speed >= px(3) / 2)
+      speed = px(3) / 2;
     wait(1);
   }
   for (i = 0; i < n; i++)
@@ -1811,7 +1811,7 @@ static void MercuryLighthouseAerie_RaiseLift(void) {
   struct Actor *actor;
 
   lift = &((struct MapGridScrollWork *)gMapGridWork[0])->layers[2];
-  speed = PIXELS(3) / 2;
+  speed = px(3) / 2;
   n = 0;
   for (i = 0; i <= 4; i++)
     ids[i] = 66;
@@ -1831,12 +1831,12 @@ static void MercuryLighthouseAerie_RaiseLift(void) {
       actor->targetZ = Actor_Get(ids[j])->z.fixed;
     }
     if ((i & 3) == 3 && i > 75)
-      speed += -PIXELS(1) / 5;
-    if (speed < PIXELS(1) / 20)
-      speed = PIXELS(1) / 20;
+      speed += -px(1) / 5;
+    if (speed < px(1) / 20)
+      speed = px(1) / 20;
     wait(1);
   }
-  lift->offsetY = PIXELS(1024);
+  lift->offsetY = px(1024);
   MapGrid_CenterOnFollowedPoint();
   wait(2);
 }
@@ -1868,7 +1868,7 @@ static void MercuryLighthouseAerie_UpdateBeaconSpark(struct Actor *actor) {
   beacon = spark->watchedActor;
   angle = spark->timer;
   spark->x.fixed = beacon->x.fixed + Trig_Cos(angle) * (spark->speedLimit + 28);
-  spark->z.fixed = (Trig_Sin(angle) << 4) + PIXELS(144);
+  spark->z.fixed = (Trig_Sin(angle) << 4) + px(144);
   spark->targetX = spark->x.fixed;
   spark->targetZ = spark->z.fixed;
   spark->timer -= 512;
@@ -1893,11 +1893,11 @@ static void MercuryLighthouseAerie_FlickerBeacon(void) {
   height = ((u32)(Import_RandomNext() * 48) >> 16) << 16;
   if (((union FieldCoordinate *)&grid->viewY)->part.pixel <= 129) {
     if (gFrameCount & 1) {
-      Import_ActorSetPosition(ACTOR_BEACON, PIXELS(304), PIXELS(144));
+      Import_ActorSetPosition(ACTOR_BEACON, px(304), px(144));
       scale = Q16_ONE;
       Actor_Get(ACTOR_BEACON)->scaleX = scale;
     } else {
-      Import_ActorSetPosition(ACTOR_BEACON, PIXELS(304), PIXELS(151));
+      Import_ActorSetPosition(ACTOR_BEACON, px(304), px(151));
       scale = 13 * Q16_ONE / 10;
       Actor_Get(ACTOR_BEACON)->scaleX = scale;
     }
@@ -1912,10 +1912,9 @@ static void MercuryLighthouseAerie_FlickerBeacon(void) {
   if (cycleFrame != 0) {
     return;
   }
-  spark =
-      FieldActor_Create(SPRITE_PARTICLE, beacon->x.fixed + PIXELS(8),
-                        beacon->y.fixed + height + PIXELS(8), beacon->z.fixed);
-  height = height / PIXELS(6);
+  spark = FieldActor_Create(SPRITE_PARTICLE, beacon->x.fixed + px(8),
+                            beacon->y.fixed + height + px(8), beacon->z.fixed);
+  height = height / px(6);
   height <<= 16;
   if (spark == NULL) {
     return;

@@ -424,8 +424,9 @@ u8 *String_FormatNumber(u8 *buffer, s32 input, s32 width);
 u32 Message_AppendArticleName(s32 mode, u16 *name, u32 pos, u16 *entry, s32 no,
                               s32 plural, s32 *suffix);
 s32 Message_Decode(s32 script, s32 clear);
-void Window_FitOnScreen(s32 no, s32 *px, s32 *py, u32 *pw, u32 *ph,
-                        u16 *spacing, u32 flags);
+void Window_FitOnScreen(s32 entryIndex, s32 *windowX, s32 *windowY,
+                        u32 *windowWidth, u32 *windowHeight, u16 *spacing,
+                        u32 flags);
 void Text_MeasureMessage(s32 no, s32 *x, s32 *y);
 s32 Text_GetMessageSize(s32 no, s32 *x, s32 *y, u32 *width, u32 *height);
 s32 Text_GetMessageSizeAlt(s32 no, s32 *x, s32 *y, u32 *width, u32 *height);

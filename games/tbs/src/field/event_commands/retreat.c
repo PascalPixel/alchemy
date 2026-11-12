@@ -185,10 +185,10 @@ void FieldEffect_UpdateDescendingParticlePositiveArc(struct Actor *actor) {
   s32 limit;
   s32 scale;
 
-  limit = particle->groundHeight + PIXELS(10);
+  limit = particle->groundHeight + px(10);
   source = particle->watchedActor;
   if (gMainRoutineWork.mapId == MAP_INDEX_WORLD)
-    limit = particle->groundHeight + PIXELS(4);
+    limit = particle->groundHeight + px(4);
 
   y = particle->y.fixed;
   if (y <= limit) {
@@ -202,8 +202,8 @@ void FieldEffect_UpdateDescendingParticlePositiveArc(struct Actor *actor) {
   particle->scaleX = scale;
   particle->scaleY = scale;
   particle->x.fixed = source->x.fixed;
-  particle->y.fixed = y - PIXELS(2);
-  particle->z.fixed = source->z.fixed + ((Q16_ONE - scale) * 5) + PIXELS(9);
+  particle->y.fixed = y - px(2);
+  particle->z.fixed = source->z.fixed + ((Q16_ONE - scale) * 5) + px(9);
 }
 
 /// As FieldEffect_UpdateDescendingParticlePositiveArc for the arc drawn upside
@@ -215,10 +215,10 @@ void FieldEffect_UpdateDescendingParticleNegativeArc(struct Actor *actor) {
   s32 limit;
   s32 scale;
 
-  limit = particle->groundHeight + PIXELS(10);
+  limit = particle->groundHeight + px(10);
   source = particle->watchedActor;
   if (gMainRoutineWork.mapId == MAP_INDEX_WORLD)
-    limit = particle->groundHeight + PIXELS(4);
+    limit = particle->groundHeight + px(4);
 
   y = particle->y.fixed;
   if (y <= limit) {
@@ -232,8 +232,8 @@ void FieldEffect_UpdateDescendingParticleNegativeArc(struct Actor *actor) {
   particle->scaleX = scale;
   particle->scaleY = -scale;
   particle->x.fixed = source->x.fixed;
-  particle->y.fixed = y - PIXELS(2);
-  particle->z.fixed = source->z.fixed - ((Q16_ONE - scale) * 5) + PIXELS(16);
+  particle->y.fixed = y - px(2);
+  particle->z.fixed = source->z.fixed - ((Q16_ONE - scale) * 5) + px(16);
 }
 
 /// A falling arc's sprite (struct Sprite), seen as the image attributes, VRAM
@@ -291,7 +291,7 @@ void FieldEffect_SpawnDescendingArcParticles(struct Actor *arc) {
 
   for (arcIndex = 0; arcIndex <= 1; arcIndex++) {
     actor = Actor_CreateFar(SPRITE_GOLDEN_RINGS, source->x.fixed,
-                            source->y.fixed + PIXELS(64), source->z.fixed);
+                            source->y.fixed + px(64), source->z.fixed);
     actors[arcIndex] = actor;
     if (actor == NULL)
       continue;

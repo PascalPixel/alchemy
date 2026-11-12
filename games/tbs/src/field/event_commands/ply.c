@@ -124,7 +124,7 @@ void FieldPsynergy_Ply(void) {
   last = 0;
   for (i = 0; i < 8; i++) {
     actor = Actor_Spawn(SPRITE_WINGED_FIGURE, target->x.fixed,
-                        target->y.fixed + PIXELS(32), target->z.fixed);
+                        target->y.fixed + px(32), target->z.fixed);
     if (actor != 0) {
       actor->scaleY = Q16_ONE * 7 / 10;
       actor->scaleX = Q16_ONE * 7 / 10;
@@ -154,7 +154,7 @@ void FieldPsynergy_Ply(void) {
     target->scaleY = Q16_ONE * 7 / 10;
     target->scaleX = Q16_ONE * 7 / 10;
     target->x.fixed = effectWork->x;
-    target->y.fixed = effectWork->y + PIXELS(16);
+    target->y.fixed = effectWork->y + px(16);
     target->z.fixed = effectWork->z;
     target->motionFlags = ACTOR_FLOATS;
     Actor_SetSpriteColorModeFar(target, SPRITE_COLOR_WHITE);
@@ -196,10 +196,10 @@ void FieldPsynergy_Ply(void) {
   // hold it in place.
   if (target != 0) {
     target->timer = -1;
-    target->speedLimit = PIXELS(5);
+    target->speedLimit = px(5);
     target->acceleration = Q16_ONE * 2 / 5;
     target->steeringFlags = 0;
-    Actor_SetTargetPositionFromMagnitudeAngle(target, PIXELS(192),
+    Actor_SetTargetPositionFromMagnitudeAngle(target, px(192),
                                               TRIG_TURN * 29 / 32);
     Actor_WaitForMoveFar(target);
     Actor_ReleaseFar(target);

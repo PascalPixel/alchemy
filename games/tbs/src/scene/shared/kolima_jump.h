@@ -25,9 +25,9 @@ static s32 PushedActor_RunStepEffect(struct FieldPosition *request) {
     wait(6);
     Sound_Play(SE_JUMP);
     Actor_SelectAnimation(actor, 7);
-    actor->speedLimit = PIXELS(3);
-    actor->acceleration = PIXELS(2);
-    actor->velocityY = PIXELS(4);
+    actor->speedLimit = px(3);
+    actor->acceleration = px(2);
+    actor->velocityY = px(4);
     *flags &= 0x7e;
     Actor_SetSpriteFlags(actor, 0);
     Actor_MoveToAndWaitById(ACTOR_PARTY_LEADER,
@@ -37,17 +37,17 @@ static s32 PushedActor_RunStepEffect(struct FieldPosition *request) {
     Actor_SetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
     *flags = ret;
     Import_ActorSetAnimation(ACTOR_FIRST_PLACED + 2, 7);
-    actor->y.fixed += -PIXELS(1);
-    actor->groundHeight += -PIXELS(1);
+    actor->y.fixed += -px(1);
+    actor->groundHeight += -px(1);
     wait(2);
-    actor->y.fixed += -PIXELS(1);
-    actor->groundHeight += -PIXELS(1);
+    actor->y.fixed += -px(1);
+    actor->groundHeight += -px(1);
     wait(10);
-    actor->y.fixed += PIXELS(1);
-    actor->groundHeight += PIXELS(1);
+    actor->y.fixed += px(1);
+    actor->groundHeight += px(1);
     wait(4);
-    actor->y.fixed += PIXELS(1);
-    actor->groundHeight += PIXELS(1);
+    actor->y.fixed += px(1);
+    actor->groundHeight += px(1);
     *flags = saved;
     Event_End();
     return 1;
@@ -61,7 +61,7 @@ static s32 PushedActor_RunStepEffect(struct FieldPosition *request) {
 static void KolimaForest_HopEast(void) {
   struct FieldPosition target;
 #if !TBS_PATCH_1
-  target.x = Actor_GetById(ACTOR_PARTY_LEADER)->x.fixed + PIXELS(30);
+  target.x = Actor_GetById(ACTOR_PARTY_LEADER)->x.fixed + px(30);
   target.y = Actor_GetById(ACTOR_PARTY_LEADER)->y.fixed;
   target.z = Actor_GetById(ACTOR_PARTY_LEADER)->z.fixed;
 #else
@@ -70,10 +70,10 @@ static void KolimaForest_HopEast(void) {
   struct Actor *p = Actor_GetById(*(s32 *)((u8 *)&gMainRoutineWork + off));
   u32 base = p->x.fixed & 0xfff00000;
 
-  target.x = base + PIXELS(8);
+  target.x = base + px(8);
   target.y = p->y.fixed;
-  target.z = (p->z.fixed & 0xfff00000) + PIXELS(8);
-  target.x = base + PIXELS(40);
+  target.z = (p->z.fixed & 0xfff00000) + px(8);
+  target.x = base + px(40);
 #endif
   PushedActor_RunStepEffect(&target);
 }

@@ -566,7 +566,7 @@ static void BilibinCave_RestoreIceRoom(void) {
     Actor_SetPosition(ACTOR_ICE_ROOM_FIRE, 0, 0);
     Actor_SetAnimation(ACTOR_FIRST_PUDDLE, PUDDLE_ANIMATION_PILLAR);
     Actor_Get(ACTOR_FIRST_PUDDLE)->motionFlags = 0;
-    Actor_Get(ACTOR_FIRST_PUDDLE)->y.fixed = -PIXELS(4);
+    Actor_Get(ACTOR_FIRST_PUDDLE)->y.fixed = -px(4);
     Actor_Get(ACTOR_FIRST_PUDDLE)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     Actor_SetSpritePriority(ACTOR_FIRST_PUDDLE, 2);
     MapGrid_CopyCellAttributes(0, 0, 1, 1, 18, 14);
@@ -640,7 +640,7 @@ static void BilibinCave_PushTorch(void) {
       target->x.fixed + (gBilibinCave_PushSteps[heading] & 0xffff0000);
   destination.y = target->y.fixed;
   destination.z =
-      target->z.fixed + (s16)gBilibinCave_PushSteps[heading] * PIXELS(1);
+      target->z.fixed + (s16)gBilibinCave_PushSteps[heading] * px(1);
 
   if (FieldActor_CheckMovementCollision(target, &destination) > 0)
     return;
@@ -649,13 +649,13 @@ static void BilibinCave_PushTorch(void) {
   wait(15);
   Sound_Play(SE_PUSH);
 
-  target->speedLimit = PIXELS(1) / 5;
-  target->acceleration = PIXELS(1) / 5;
+  target->speedLimit = px(1) / 5;
+  target->acceleration = px(1) / 5;
   FieldActor_SetMoveTargetFixed(target, destination.x, destination.y,
                                 destination.z);
 
-  leader->speedLimit = PIXELS(1) / 5;
-  leader->acceleration = PIXELS(1) / 5;
+  leader->speedLimit = px(1) / 5;
+  leader->acceleration = px(1) / 5;
   FieldActor_SetMoveTargetFixed(leader, destination.x, destination.y,
                                 destination.z);
 

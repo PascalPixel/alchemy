@@ -76,11 +76,11 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
   // first pass high up on the near side.
   drawReaper = 1;
   if (work->args->side == EFFECT_SIDE_PARTY) {
-    swayCenter[0] = -PIXELS(80);
+    swayCenter[0] = -px(80);
   } else {
-    swayCenter[0] = PIXELS(112);
+    swayCenter[0] = px(112);
   }
-  swayCenter[1] = -PIXELS(32);
+  swayCenter[1] = -px(32);
   for (frame = 0; frame != CONDEMN_FRAMES; frame++) {
     s32 spin;
     s32 screenX;
@@ -103,11 +103,11 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
     // a frame while it moves, and comes back opaque on frame 33.
     if (frame == 32) {
       if (work->args->side == EFFECT_SIDE_PARTY) {
-        swayCenter[0] = -PIXELS(32);
+        swayCenter[0] = -px(32);
       } else {
-        swayCenter[0] = PIXELS(72);
+        swayCenter[0] = px(72);
       }
-      swayCenter[1] = PIXELS(24);
+      swayCenter[1] = px(24);
       drawReaper = 0;
     }
     if (frame == 33) {
@@ -118,9 +118,9 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
     if (frame == 64) {
       Projection_ScaledUnit(work->args->targets[0], position);
       if (work->args->side == EFFECT_SIDE_PARTY) {
-        swayCenter[0] = PIXELS(position[0].x - 128);
+        swayCenter[0] = px(position[0].x - 128);
       } else {
-        swayCenter[0] = PIXELS(position[0].x - 64);
+        swayCenter[0] = px(position[0].x - 64);
       }
       swayCenter[1] = 0;
       drawReaper = 0;
@@ -229,9 +229,9 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
     // to twice its x at up to 2 pixels a frame.
     if (frame == CONDEMN_SWING_FRAME) {
       target = GetBattleObjectSlotFar(work->args->targets[0])->actor;
-      target->velocityY = PIXELS(1);
+      target->velocityY = px(1);
       target->acceleration = 2 << 16;
-      target->speedLimit = PIXELS(2);
+      target->speedLimit = px(2);
       target->gravity = 0;
       target->steeringFlags = 0;
       target->snapToTarget = 0;

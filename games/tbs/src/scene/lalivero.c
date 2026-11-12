@@ -940,7 +940,7 @@ s32 Lalivero_Initialize(void) {
   actor->retainSpriteCache = 1;
   actor->motionFlags = 0;
   sprite = actor->sprite;
-  actor->y.fixed = PIXELS(10);
+  actor->y.fixed = px(10);
   sprite->count = 0;
   sprite->image.fullColor = 0;
   sprite->image.palette = 0;

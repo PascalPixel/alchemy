@@ -353,8 +353,8 @@ const struct ActorPlacement *Imil_GetActorPlacements(void) {
                          sizeof(struct ActorPlacement) +
                      offsetof(struct ActorPlacement, talkFacing)] =
           TALK_FACING_PARTY;
-      script[ACTOR_SICK_OLD_MAN - ACTOR_FIRST_PLACED].x = PIXELS(182);
-      script[ACTOR_SICK_OLD_MAN - ACTOR_FIRST_PLACED].z = PIXELS(564);
+      script[ACTOR_SICK_OLD_MAN - ACTOR_FIRST_PLACED].x = px(182);
+      script[ACTOR_SICK_OLD_MAN - ACTOR_FIRST_PLACED].z = px(564);
       script[ACTOR_SICK_OLD_MAN - ACTOR_FIRST_PLACED].movement =
           MOVEMENT_TYPE_WANDER;
     }
@@ -1200,7 +1200,7 @@ UNUSED static void Imil_UpdateCountdownArc(struct Actor *actor) {
     if (t != 0) {
       b = buf;
       b[0] = gImil_ArcOrigin[0];
-      b[1] = gImil_ArcOrigin[1] + PIXELS(8);
+      b[1] = gImil_ArcOrigin[1] + px(8);
       b[2] = gImil_ArcOrigin[2];
       Vector_AddPolarOffset(t << 16, (t << 11) + (s16)actor->userValue, b);
       actor->x.fixed = b[0];
@@ -1219,12 +1219,12 @@ UNUSED static void Imil_SwayAndSpark(struct Actor *actor) {
   struct Actor *spark;
   s32 radius;
 
-  actor->x.fixed = gImil_ArcOrigin[0] +
-                   Iwram_MulQ16(PIXELS(6), Trig_Sin(actor->timer << 10));
+  actor->x.fixed =
+      gImil_ArcOrigin[0] + Iwram_MulQ16(px(6), Trig_Sin(actor->timer << 10));
   actor->timer++;
   actor->timer = (actor->timer + 64) % 64;
   if (gFrameCount % 3 == 0) {
-    SET_VECTOR(pos, actor->x.fixed, actor->y.fixed + PIXELS(2), actor->z.fixed);
+    SET_VECTOR(pos, actor->x.fixed, actor->y.fixed + px(2), actor->z.fixed);
     radius = Import_RandomNext();
     Vector_AddPolarOffset(radius * 6, Import_RandomNext(), pos);
     spark = FieldActor_Create(SPRITE_SPARKLE, pos[0], pos[1], pos[2]);
@@ -1284,7 +1284,7 @@ static void Imil_InitializeRisingEffect(struct Actor *work) {
 static void Imil_UpdateRisingEffect(struct Actor *actor) {
   ((struct FieldEffect *)actor)->x += (s16)((struct FieldEffect *)actor)->spin
                                       << 8;
-  ((struct FieldEffect *)actor)->y += PIXELS(1) / 2;
+  ((struct FieldEffect *)actor)->y += px(1) / 2;
   ((struct FieldEffect *)actor)->scaleX += 3 * Q16_ONE / 100;
   ((struct FieldEffect *)actor)->scaleY += 3 * Q16_ONE / 100;
   ((struct FieldEffect *)actor)->spin += 2;
@@ -1313,28 +1313,28 @@ static void Imil_SpawnAmbientEffects(void) {
 
   frame = &gFrameCount;
   if (((u32)*frame % (u32)60) == 0) {
-    actor = (struct Actor *)FieldActor_Create(SPRITE_DUST_PUFF, PIXELS(463), 0,
-                                              PIXELS(292));
+    actor = (struct Actor *)FieldActor_Create(SPRITE_DUST_PUFF, px(463), 0,
+                                              px(292));
     Imil_StartRisingEffect(actor);
   }
   if (((u32)(*frame + 30) % (u32)60) == 0) {
-    actor = (struct Actor *)FieldActor_Create(SPRITE_DUST_PUFF, PIXELS(320),
-                                              PIXELS(32), PIXELS(356));
+    actor = (struct Actor *)FieldActor_Create(SPRITE_DUST_PUFF, px(320), px(32),
+                                              px(356));
     Imil_StartRisingEffect(actor);
   }
   if (((u32)(*frame + 10) % (u32)60) == 0) {
-    actor = (struct Actor *)FieldActor_Create(SPRITE_DUST_PUFF, PIXELS(118), 0,
-                                              PIXELS(70));
+    actor =
+        (struct Actor *)FieldActor_Create(SPRITE_DUST_PUFF, px(118), 0, px(70));
     Imil_StartRisingEffect(actor);
   }
   if (((u32)(*frame + 50) % (u32)60) == 0) {
-    actor = (struct Actor *)FieldActor_Create(SPRITE_DUST_PUFF, PIXELS(342), 0,
-                                              PIXELS(124));
+    actor = (struct Actor *)FieldActor_Create(SPRITE_DUST_PUFF, px(342), 0,
+                                              px(124));
     Imil_StartRisingEffect(actor);
   }
   if (((u32)(*frame + 80) % (u32)60) == 0) {
-    actor = (struct Actor *)FieldActor_Create(SPRITE_DUST_PUFF, PIXELS(431), 0,
-                                              PIXELS(171));
+    actor = (struct Actor *)FieldActor_Create(SPRITE_DUST_PUFF, px(431), 0,
+                                              px(171));
     Imil_StartRisingEffect(actor);
   }
 }
@@ -1371,8 +1371,7 @@ static void Imil_UpdateFootprints(void) {
     GameFlag_Clear(otherZoneFlag);
     return;
   }
-  if (x > PIXELS(232) && actor->y.fixed > PIXELS(30) &&
-      actor->z.fixed > PIXELS(212)) {
+  if (x > px(232) && actor->y.fixed > px(30) && actor->z.fixed > px(212)) {
     grid = gMapGridWork[0];
     grid->footprints = 0;
     Import_GameFlagSet(zoneFlag);
@@ -1653,27 +1652,27 @@ static void Imil_RunIceSlide(void) {
 
     Event_Start();
 
-    probe.x = (subject->x.fixed & 0xfff00000) + PIXELS(8);
+    probe.x = (subject->x.fixed & 0xfff00000) + px(8);
     probe.y = subject->y.fixed;
-    probe.z = (subject->z.fixed & 0xfff00000) + PIXELS(8);
+    probe.z = (subject->z.fixed & 0xfff00000) + px(8);
     z = probe.z;
     x = probe.x;
     layer = &subject->layer;
     startBehavior = MapGrid_GetCellBehaviorAt(*layer, x, z);
-    Vector_AddPolarOffset(PIXELS(16), heading, &probe);
+    Vector_AddPolarOffset(px(16), heading, &probe);
 
     nextBehavior = MapGrid_GetCellBehaviorAt(*layer, probe.x, probe.z);
     if (nextBehavior == CELL_BEHAVIOR_WALL ||
         MapGrid_GetTerrainHeight(*layer, probe.x, probe.z) - subject->y.fixed >
-            PIXELS(8)) {
+            px(8)) {
       subject->facing = heading;
       goto tail;
     }
 
     probe.x = x;
     probe.z = z;
-    subject->speedLimit = PIXELS(2);
-    subject->acceleration = PIXELS(1) / 10;
+    subject->speedLimit = px(2);
+    subject->acceleration = px(1) / 10;
     subject->timer = 0;
     FieldActor_SetMoveTargetFixed(subject, x, subject->y.fixed, z);
     Actor_SelectAnimation(subject, 2);
@@ -1690,13 +1689,13 @@ static void Imil_RunIceSlide(void) {
       }
       if (MapGrid_GetTerrainHeight(*layer, probe.x, probe.z) -
               subject->y.fixed >
-          PIXELS(8)) {
+          px(8)) {
         break;
       }
       x = probe.x;
       z = probe.z;
-      subject->speedLimit = PIXELS(2);
-      subject->acceleration = PIXELS(1) / 10;
+      subject->speedLimit = px(2);
+      subject->acceleration = px(1) / 10;
       FieldActor_SetMoveTargetFixed(subject, probe.x, probe.y, probe.z);
       Actor_WaitForMove(subject);
       if (nextBehavior != startBehavior) {
@@ -1704,8 +1703,8 @@ static void Imil_RunIceSlide(void) {
       }
     }
 
-    subject->speedLimit = PIXELS(2);
-    subject->acceleration = PIXELS(1);
+    subject->speedLimit = px(2);
+    subject->acceleration = px(1);
     FieldActor_SetMoveTargetFixed(subject, x, subject->y.fixed, z);
     Actor_WaitForMove(subject);
     wait(2);
@@ -1715,7 +1714,7 @@ blocked:
   subject->update = NULL;
   subject->steeringFlags |= 1;
 
-  subject->acceleration = PIXELS(1) / 4;
+  subject->acceleration = px(1) / 4;
 
 tail:
   wait(10);
@@ -1803,7 +1802,7 @@ s32 gImil_BobScript[] = {
 };
 
 s32 gImil_SparkScript[] = {
-    SC_ADD(SW_Y, -PIXELS(2) / 5),
+    SC_ADD(SW_Y, -px(2) / 5),
     SC_WAIT(1),
     SC_LOOP(72, SC_TOP),
     SC_RELEASE,

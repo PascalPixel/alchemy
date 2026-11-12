@@ -392,8 +392,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
   // place the Djinni 80 pixels overhead.
   Actor_SetAnimationSpeedFar(casterActor, 0);
   position = &djinnPos;
-  SET_POSITION(position, casterActor->x.fixed,
-               casterActor->y.fixed + PIXELS(80), casterActor->z.fixed);
+  SET_POSITION(position, casterActor->x.fixed, casterActor->y.fixed + px(80),
+               casterActor->z.fixed);
   savedVelocityX = casterActor->velocityX;
   savedVelocityY = casterActor->velocityY;
   savedVelocityZ = casterActor->velocityZ;
@@ -481,11 +481,11 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
       // Scroll the image horizontally; scrollPos is in 16.16 pixels.
       REG_BG2PA = Q_8_8(1);
       if (work->args->side == EFFECT_SIDE_ENEMIES) {
-        scrollPos = -PIXELS(128);
-        scrollSpeed = PIXELS(12);
+        scrollPos = -px(128);
+        scrollSpeed = px(12);
       } else {
-        scrollPos = PIXELS(8);
-        scrollSpeed = -PIXELS(12);
+        scrollPos = px(8);
+        scrollSpeed = -px(12);
       }
       REG_BG2X = (scrollPos >> 16) << 8;
     }
@@ -550,7 +550,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
    * 18 of 3070 instructions differ in tbs-en. */
   motion = &velocity;
   SET_POSITION(motion, (targetActor->x.fixed - position->x) / 6,
-               (targetActor->y.fixed - position->y + PIXELS(30)) / 6,
+               (targetActor->y.fixed - position->y + px(30)) / 6,
                (targetActor->z.fixed - position->z) / 6);
   for (i = 0; i != CASTING_IMPACT_SPARKS; i++) {
     particle = &work->particles[i];
@@ -603,7 +603,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
       mode != CASTING_IMPACT_IMPACT_PSY_LEECH) {
     s32 height = 0;
     if (mode != CASTING_IMPACT_IMPACT_BAD_OMEN)
-      height = PIXELS(20);
+      height = px(20);
     for (i = 0; i != CASTING_IMPACT_IMPACT_PARTICLE_COUNT; i++) {
       particle = &CASTING_IMPACT_IMPACT_PARTICLES[i];
       SET_POSITION(particle, targetActor->x.fixed, height,
@@ -825,7 +825,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
         particle = CASTING_IMPACT_IMPACT_PARTICLES;
         for (i = 0; i != CASTING_IMPACT_IMPACT_PARTICLE_COUNT;
              i++, particle++) {
-          SET_POSITION(particle, targetActor->x.fixed, PIXELS(20),
+          SET_POSITION(particle, targetActor->x.fixed, px(20),
                        targetActor->z.fixed);
           SET_VELOCITY(particle, ((Random16() & 255) - 128) << 10,
                        ((Random16() & 255) - 128) << 10,
@@ -960,7 +960,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
           struct Particle *step;
           for (i = 0; i != CASTING_IMPACT_SPARKS; i++) {
             if ((step = &work->particles[i])->variant == 0) {
-              SET_POSITION(step, targetActor->x.fixed, PIXELS(20),
+              SET_POSITION(step, targetActor->x.fixed, px(20),
                            targetActor->z.fixed);
               SET_VELOCITY(step, ((Random16() & 255) - 127) << 12,
                            ((Random16() & 255) - 64) << 10,

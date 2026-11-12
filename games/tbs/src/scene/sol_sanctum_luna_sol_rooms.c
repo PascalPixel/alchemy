@@ -699,13 +699,13 @@ static void SolSanctumLunaSolRooms_KradenStopsPartyLeaving(void) {
     Event_Wait(4);
     Actor_SetSpeed(ACTOR_KRADEN, 1);
   } else if (GameFlag_Get(FLAG_SOL_SANCTUM_LUNA_PICTURE_CHANGED) != 0 ||
-             kraden->x.fixed > PIXELS(340)) {
+             kraden->x.fixed > px(340)) {
     Actor_SetPosition(ACTOR_KRADEN, 392, 168);
     Event_Wait(4);
     Actor_SetSpeed(ACTOR_KRADEN, 2);
   }
   if (GameFlag_Get(FLAG_SOL_SANCTUM_LUNA_PICTURE_CHANGED) != 0 ||
-      kraden->x.fixed > PIXELS(340)) {
+      kraden->x.fixed > px(340)) {
     Actor_WalkToAndWait(ACTOR_KRADEN, 288, 232);
   } else {
     // The result is unused.
@@ -1362,14 +1362,14 @@ static void SolSanctumLunaSolRooms_RiseToElementalStarRoom(void) {
     frame = 0;
     sprite->flags = 0;
     do {
-      actor->y.fixed += PIXELS(1) / 5;
+      actor->y.fixed += px(1) / 5;
       wait(1);
       frame++;
     } while (frame != 120);
     Sound_Play(SE_WARP);
     frame = 0;
     do {
-      actor->y.fixed += PIXELS(1) / 10;
+      actor->y.fixed += px(1) / 10;
       sprite->scale += -Q16_ONE / 64;
       wait(1);
       frame++;
@@ -1400,14 +1400,14 @@ static void SolSanctumLunaSolRooms_RiseToElementalStarRoom(void) {
     sprite = actor->sprite;
     sprite->flags = 0;
     do {
-      actor->y.fixed += PIXELS(1) / 5;
+      actor->y.fixed += px(1) / 5;
       wait(1);
       frame++;
     } while (frame != 120);
     Sound_Play(SE_WARP);
     frame = 0;
     do {
-      actor->y.fixed += PIXELS(1) / 10;
+      actor->y.fixed += px(1) / 10;
       sprite->scale += -Q16_ONE / 64;
       wait(1);
       frame++;

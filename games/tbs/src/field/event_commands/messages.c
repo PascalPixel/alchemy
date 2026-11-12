@@ -378,26 +378,26 @@ void Event_ShowSpeakerMessage(s32 speaker) {
         positionFound = Actor_GetScreenPosition(speaker, pos) != -1;
     }
     if (positionFound) {
-      s32 px = pos[0];
-      s32 py = pos[1];
+      s32 windowX = pos[0];
+      s32 windowY = pos[1];
       s32 win;
 #else
-    s32 px = pos.x;
-    s32 py = pos.y;
+    s32 windowX = pos.x;
+    s32 windowY = pos.y;
     s32 win;
 #endif
 
-      if (py > 119)
-        py += 32;
+      if (windowY > 119)
+        windowY += 32;
       else
-        py -= 32;
-      px = px < 8 ? 8 : px;
-      if (px > 312)
-        px = 312;
-      py = py < 20 ? 20 : py;
-      if (py > 220)
-        py = 220;
-      win = (s32)Message_OpenWindowFar(state->message, px, py, 1);
+        windowY -= 32;
+      windowX = windowX < 8 ? 8 : windowX;
+      if (windowX > 312)
+        windowX = 312;
+      windowY = windowY < 20 ? 20 : windowY;
+      if (windowY > 220)
+        windowY = 220;
+      win = (s32)Message_OpenWindowFar(state->message, windowX, windowY, 1);
       state->messageWindow = win;
       while (Window_IsClosedFar((struct Window *)win) == 0)
         wait(1);
@@ -420,24 +420,24 @@ void Event_ForwardShowMessageAtPosition(s32 unused0, s32 unused1, s32 x,
 /// index; its units are as unknown as Event_ShowSpeakerMessage's.
 void Event_ShowMessageAtPosition(s32 unused0, s32 unused1, s32 x, s32 y) {
   struct FieldWork *state = gFieldWork;
-  s32 py = y;
-  s32 px = x;
+  s32 windowY = y;
+  s32 windowX = x;
   s32 minX = 8;
   s32 minY = 20;
   s32 window;
 
-  if (py > 119)
-    py += 32;
+  if (windowY > 119)
+    windowY += 32;
   else
-    py -= 32;
+    windowY -= 32;
 
   if (x < minX)
-    px = minX;
-  if (px > 312)
-    px = 312;
-  CLAMP(py, minY, 220);
+    windowX = minX;
+  if (windowX > 312)
+    windowX = 312;
+  CLAMP(windowY, minY, 220);
 
-  window = (s32)Message_OpenWindowFar(state->message, px, py, 1);
+  window = (s32)Message_OpenWindowFar(state->message, windowX, windowY, 1);
   while (Window_IsClosedFar((struct Window *)window) == 0)
     wait(1);
   state->message++;

@@ -1787,11 +1787,11 @@ s32 DjinnMenu_DrawStatPreview(struct Window *window, s32 x, s32 y, s32 memberId,
 #if LANGUAGE != LANGUAGE_JAPANESE
       s32 iconX;
 #endif
-      s32 px;
+      s32 textX;
 
       if (originalUnit->classId != unit->classId) {
-        px = x * 8;
-        Text_DrawMessageAsTilesFar(MsgClassName + unit->classId, window, px,
+        textX = x * 8;
+        Text_DrawMessageAsTilesFar(MsgClassName + unit->classId, window, textX,
                                    y * 8 + 48);
         Window_SetTilemapEntryFar(window, WINDOW_TILE(662), x + 2, 5, 0);
       }

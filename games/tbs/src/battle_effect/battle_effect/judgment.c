@@ -158,8 +158,8 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
   EFFECT_SHOW_WIDE_CANVAS(16);
   // The formation starts 64 pixels back and comes forward 8 pixels a frame;
   // the depth range is kept only by the dead spark stage.
-  depth = -PIXELS(64);
-  zoom = PIXELS(8);
+  depth = -px(64);
+  zoom = px(8);
   minimumDepth = 0xffff;
   maximumDepth = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_PinkBurstSheet, work->sheet, 1,
@@ -207,7 +207,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
     s32 speed = 0;
     JUDGMENT_SPARKS[i].x = (Trig_Sin(angle) * amp) >> 2;
     JUDGMENT_SPARKS[i].z = (Trig_Cos(angle) * amp) >> 2;
-    JUDGMENT_SPARKS[i].y = PIXELS((Random16() & 63) + 32);
+    JUDGMENT_SPARKS[i].y = px((Random16() & 63) + 32);
     JUDGMENT_SPARKS[i].velocityX = speed;
     JUDGMENT_SPARKS[i].velocityY = speed;
     JUDGMENT_SPARKS[i].variant = angle;
@@ -325,8 +325,8 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
     place.groundHeight = 0;
     place.height = 0;
     for (i = 0; i != JUDGMENT_FORMATION_OBJECTS; i++) {
-      place.x = PIXELS(i % 4 * 32) + PIXELS(76);
-      place.y = PIXELS(i / 4 * 32) + depth;
+      place.x = px(i % 4 * 32) + px(76);
+      place.y = px(i / 4 * 32) + depth;
       Actor_ApplyProjectedPlacementFar(work->sprites[i], &place, &pair, 0);
     }
 
@@ -338,7 +338,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       zoom = zoom * 60 / 64;
     }
     if (frame == 144) {
-      zoom = -PIXELS(8);
+      zoom = -px(8);
     }
     if (frame == 146) {
       zoom = Q16_ONE;
@@ -626,8 +626,8 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
                                (s32)&ResourceId_ForestBackdrop, 0);
       for (i = 0; i != JUDGMENT_DEBRIS_OBJECTS; i++) {
         particle = &work->particles[i];
-        particle->x = PIXELS((Random16() & 63) + 32);
-        particle->y = PIXELS((Random16() & 31) + 96);
+        particle->x = px((Random16() & 63) + 32);
+        particle->y = px((Random16() & 31) + 96);
         particle->velocityY = ((Random16() & 15) + 16) << 15;
         particle->z = Q16_ONE / 2 - (particle->x >> 7);
         particle->variant = 1;
@@ -647,8 +647,8 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       REG_BLDALPHA = BLEND_ALPHA(16, 16);
       for (i = 0; i != JUDGMENT_DEBRIS_OBJECTS; i++) {
         particle = &work->particles[i];
-        particle->x = PIXELS((Random16() & 63) + 256);
-        particle->y = PIXELS((Random16() & 31) + 96);
+        particle->x = px((Random16() & 63) + 256);
+        particle->y = px((Random16() & 31) + 96);
         particle->velocityY = ((Random16() & 15) + 16) << 15;
         particle->z = 0;
       }
@@ -978,23 +978,23 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
           }
           scale.y = scale.x;
           debrisPlace.x = particle->x;
-          debrisPlace.height = PIXELS(255);
-          debrisPlace.y = particle->y + PIXELS(255);
+          debrisPlace.height = px(255);
+          debrisPlace.y = particle->y + px(255);
           Actor_ApplyProjectedPlacementFar(work->sprites[i], &debrisPlace,
                                            &scale, 0);
           particle->y -= particle->velocityY;
-          if (particle->y < PIXELS(16)) {
+          if (particle->y < px(16)) {
             if (frame <= 279) {
-              particle->x = PIXELS((Random16() & 63) + shift + 32);
+              particle->x = px((Random16() & 63) + shift + 32);
             } else {
-              particle->x = PIXELS((Random16() & 63) + shift - 32);
+              particle->x = px((Random16() & 63) + shift - 32);
             }
             if (frame > 301) {
               particle->variant = 0;
             } else if (frame > 245) {
-              particle->y = PIXELS(96);
+              particle->y = px(96);
             } else {
-              particle->y = PIXELS(192) - particle->x;
+              particle->y = px(192) - particle->x;
             }
           }
         }

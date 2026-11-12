@@ -415,7 +415,7 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   Event_Wait(20);
   if (gKolimaForestEntrance_MiaInParty != 0) {
     record = Actor_Get(ACTOR_MIA);
-    record->velocityY = PIXELS(2);
+    record->velocityY = px(2);
     Event_Wait(10);
     Actor_SetSpeedAndAcceleration(ACTOR_MIA, 2, 2);
     Actor_SetDestinationOffset(ACTOR_MIA, -2, 0);
@@ -426,7 +426,7 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
     Event_Wait(10);
   }
   record = Actor_Get(ACTOR_PARTY_LEADER);
-  record->velocityY = PIXELS(2);
+  record->velocityY = px(2);
   Event_Wait(10);
   Actor_SetSpeedAndAcceleration(ACTOR_PARTY_LEADER, 2, 2);
   restoreScaleAction = gKolimaForestEntrance_RestoreScaleAction;
@@ -436,7 +436,7 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_COLLAPSE);
   Event_Wait(20);
   record = Actor_Get(ACTOR_GARET);
-  record->velocityY = PIXELS(2);
+  record->velocityY = px(2);
   Event_Wait(10);
   Actor_SetSpeedAndAcceleration(ACTOR_GARET, 2, 2);
   Actor_SetScript(ACTOR_GARET, restoreScaleAction);
@@ -445,7 +445,7 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   Actor_SetAnimation(ACTOR_GARET, ANIM_COLLAPSE);
   Event_Wait(40);
   record = Actor_Get(ACTOR_IVAN);
-  record->velocityY = PIXELS(2);
+  record->velocityY = px(2);
   Event_Wait(10);
   Actor_SetScript(ACTOR_IVAN, restoreScaleAction);
   record = Actor_Get(ACTOR_IVAN);
@@ -459,7 +459,7 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   PaletteFade_StartInterpolation(60);
   wait(60);
   gFallingEffectWidth = 0;
-  gFallingEffectOffset = PIXELS(128);
+  gFallingEffectOffset = px(128);
   gFallingEffectState = KOLIMA_DUST_CLOSING;
   Task_AddFrame(Kolima_UpdateCurseDust, TASK_PASS_FRAME);
   Event_Wait(180);
@@ -759,7 +759,7 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   PaletteFade_StartInterpolation(60);
   wait(60);
   gFallingEffectWidth = 0;
-  gFallingEffectOffset = PIXELS(128);
+  gFallingEffectOffset = px(128);
   gFallingEffectState = KOLIMA_DUST_CLOSING;
   Task_AddFrame(Kolima_UpdateCurseDust, TASK_PASS_FRAME);
   Event_Wait(80);
@@ -1123,10 +1123,10 @@ static void KolimaForestEntrance_SpawnCurseSparkle(void) {
   struct Sprite *sprite;
   s32 framePhase;
   s32 priorityFlags;
-  s32 spawnX = PIXELS(231);
-  s32 spawnZ = PIXELS(460);
-  s32 targetX = PIXELS(231);
-  s32 targetZ = PIXELS(624);
+  s32 spawnX = px(231);
+  s32 spawnZ = px(460);
+  s32 targetX = px(231);
+  s32 targetZ = px(624);
 
   framePhase = gFrameCount & 7;
   if (framePhase != 0)
@@ -1143,8 +1143,8 @@ static void KolimaForestEntrance_SpawnCurseSparkle(void) {
   sparkle->priorityFlags = priorityFlags;
   sprite->image.priority = 1;
   sparkle->scaleX = Q16_ONE / 10;
-  sparkle->speedLimit = PIXELS(8);
-  sparkle->acceleration = PIXELS(8);
+  sparkle->speedLimit = px(8);
+  sparkle->acceleration = px(8);
   sparkle->motionFlags = framePhase;
   Actor_SelectAnimation(sparkle, 2);
   FieldActor_SetMoveTargetFixed(sparkle, targetX, 0, targetZ);
@@ -1162,21 +1162,18 @@ KolimaForestEntrance_BurstOnPsynergyField(struct Actor *interpreter) {
   s32 x;
 
   if (!(gKolimaForestEntrance_MiaInParty != 0
-            ? (x = sparkle->x.fixed, (x > PIXELS(192) && x < PIXELS(274) &&
-                                      sparkle->z.fixed > PIXELS(566) &&
-                                      sparkle->z.fixed < PIXELS(612)) ||
-                                         (x > PIXELS(202) && x < PIXELS(255) &&
-                                          sparkle->z.fixed > PIXELS(549) &&
-                                          sparkle->z.fixed < PIXELS(632)))
-            : (x = sparkle->x.fixed, (x > PIXELS(192) && x < PIXELS(244) &&
-                                      sparkle->z.fixed > PIXELS(549) &&
-                                      sparkle->z.fixed < PIXELS(585)) ||
-                                         (x > PIXELS(244) && x < PIXELS(274) &&
-                                          sparkle->z.fixed > PIXELS(571) &&
-                                          sparkle->z.fixed < PIXELS(605)) ||
-                                         (x > PIXELS(211) && x < PIXELS(255) &&
-                                          sparkle->z.fixed > PIXELS(596) &&
-                                          sparkle->z.fixed < PIXELS(632))))) {
+            ? (x = sparkle->x.fixed,
+               (x > px(192) && x < px(274) && sparkle->z.fixed > px(566) &&
+                sparkle->z.fixed < px(612)) ||
+                   (x > px(202) && x < px(255) && sparkle->z.fixed > px(549) &&
+                    sparkle->z.fixed < px(632)))
+            : (x = sparkle->x.fixed,
+               (x > px(192) && x < px(244) && sparkle->z.fixed > px(549) &&
+                sparkle->z.fixed < px(585)) ||
+                   (x > px(244) && x < px(274) && sparkle->z.fixed > px(571) &&
+                    sparkle->z.fixed < px(605)) ||
+                   (x > px(211) && x < px(255) && sparkle->z.fixed > px(596) &&
+                    sparkle->z.fixed < px(632))))) {
     return 0;
   }
   Sound_Play(SE_DRIP);
@@ -1207,7 +1204,7 @@ static void KolimaForestEntrance_FlickerPsynergyFields(void) {
     if ((gFrameCount & 1) == 0) {
       p->y.fixed = 0;
     } else {
-      p->y.fixed = PIXELS(500);
+      p->y.fixed = px(500);
     }
   }
   p = Actor_Get(ACTOR_IVAN_PSYNERGY_FIELD);
@@ -1216,7 +1213,7 @@ static void KolimaForestEntrance_FlickerPsynergyFields(void) {
     if ((gFrameCount & 1) != 0) {
       p->y.fixed = 0;
     } else {
-      p->y.fixed = PIXELS(500);
+      p->y.fixed = px(500);
     }
   }
   p = Actor_Get(ACTOR_MIA_PSYNERGY_FIELD);
@@ -1225,7 +1222,7 @@ static void KolimaForestEntrance_FlickerPsynergyFields(void) {
     if ((gFrameCount & 1) == 0) {
       p->y.fixed = 0;
     } else {
-      p->y.fixed = PIXELS(500);
+      p->y.fixed = px(500);
     }
   }
   p = Actor_Get(ACTOR_GARET_PSYNERGY_FIELD);
@@ -1234,7 +1231,7 @@ static void KolimaForestEntrance_FlickerPsynergyFields(void) {
     if ((gFrameCount & 1) != 0) {
       p->y.fixed = 0;
     } else {
-      p->y.fixed = PIXELS(500);
+      p->y.fixed = px(500);
     }
   }
 }
@@ -1304,7 +1301,7 @@ s32 gKolimaForestEntrance_PsynergyFieldGrowAction[] = {
 /// A field sinks and shrinks away over 90 frames.
 s32 gKolimaForestEntrance_PsynergyFieldShrinkAction[] = {
     SC_ANIMATION(1),
-    SC_ADD(SW_Z, -PIXELS(1) / 10),
+    SC_ADD(SW_Z, -px(1) / 10),
     SC_ADD(SW_SCALE_X, -983),
     SC_ADD(SW_SCALE_Y, -983),
     SC_WAIT(1),
@@ -1414,15 +1411,15 @@ s32 gKolimaForestEntrance_SparkleBurstScript[] = {
 };
 
 s32 gFallingEffectScript[] = {
-    SC_ADD(SW_Y, PIXELS(-2)),
+    SC_ADD(SW_Y, px(-2)),
     SC_CALL(Kolima_FlickerCurseDust),
     SC_WAIT(1),
-    SC_ADD(SW_Y, PIXELS(-2)),
+    SC_ADD(SW_Y, px(-2)),
     SC_CALL(Kolima_FlickerCurseDust),
     SC_WAIT(1),
     SC_LOOP(30, SC_TOP),
     SC_LABEL(1),
-    SC_ADD(SW_Y, PIXELS(-1)),
+    SC_ADD(SW_Y, px(-1)),
     SC_CALL(Kolima_FlickerCurseDust),
     SC_WAIT(1),
     SC_LOOP(40, SC_TO(1)),

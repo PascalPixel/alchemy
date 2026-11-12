@@ -578,9 +578,9 @@ void Actor_JumpDownLedge(s32 actorId, s32 pose, s32 param) {
       flags |= *objectFlags;
       *objectFlags = flags;
     }
-    actor->velocityY = PIXELS(4);
+    actor->velocityY = px(4);
     Actor_SetMoveTargetFar(actor, actor->x.fixed, actor->y.fixed,
-                           startZ + PIXELS(12));
+                           startZ + px(12));
     wait(6);
 
     // Turn and sink 2 pixels a frame for 14 frames, raising dust, in free
@@ -591,7 +591,7 @@ void Actor_JumpDownLedge(s32 actorId, s32 pose, s32 param) {
     Actor_FaceDirectionById(actorId, FACING_SOUTH_SOUTHWEST, 0);
     *objectFlags = 0;
     do {
-      nextY = actor->y.fixed - PIXELS(2);
+      nextY = actor->y.fixed - px(2);
       actor->y.fixed = nextY;
       actor->targetY = nextY;
       wait(1);
@@ -604,9 +604,9 @@ void Actor_JumpDownLedge(s32 actorId, s32 pose, s32 param) {
     // Jump 16 pixels forward and wait (at most 180 frames) to land, following
     // the ground and falling again.
     *objectFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-    actor->velocityY = PIXELS(3);
+    actor->velocityY = px(3);
     Actor_SetMoveTargetFar(actor, actor->x.fixed, actor->y.fixed,
-                           startZ + PIXELS(16));
+                           startZ + px(16));
     Actor_WaitForMoveFar(actor);
     for (pose = 0; (u32)pose <= 179 && actor->y.fixed > actor->groundHeight;
          pose++) {

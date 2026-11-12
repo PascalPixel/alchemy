@@ -38,13 +38,13 @@ void FieldPsynergy_LiftOnTarget(s32 unused) {
 
   x = effectWork->x;
   pos[0] = x;
-  y = effectWork->y + PIXELS(16); // 16 pixels up
+  y = effectWork->y + px(16); // 16 pixels up
   pos[1] = y;
   z = effectWork->z;
   pos[2] = z;
-  pair[0] = FieldEffect_SpawnLiftHand(x + PIXELS(32), y, z, FACING_WEST);
-  pair[1] = FieldEffect_SpawnLiftHand(pos[0] - PIXELS(32), pos[1], pos[2],
-                                      FACING_EAST);
+  pair[0] = FieldEffect_SpawnLiftHand(x + px(32), y, z, FACING_WEST);
+  pair[1] =
+      FieldEffect_SpawnLiftHand(pos[0] - px(32), pos[1], pos[2], FACING_EAST);
 
   // Each hand faces the target (FACING_WEST on the right, FACING_EAST on the
   // left) and moves 14 pixels that way.
@@ -52,7 +52,7 @@ void FieldPsynergy_LiftOnTarget(s32 unused) {
   for (handIndex = 0; handIndex < 2; handIndex++) {
     struct Actor *hand = pair[handIndex];
     if (hand != NULL)
-      Actor_SetTargetPositionFromMagnitudeAngle(hand, PIXELS(14), hand->facing);
+      Actor_SetTargetPositionFromMagnitudeAngle(hand, px(14), hand->facing);
   }
 
   Actor_WaitForMoveFar(pair[0]);
@@ -62,13 +62,13 @@ void FieldPsynergy_LiftOnTarget(s32 unused) {
 
   // Lift 32 pixels, a quarter pixel at a time.
   startY = target->y.fixed;
-  if (pair[0] != NULL && pair[1] != NULL && startY <= startY + PIXELS(32)) {
+  if (pair[0] != NULL && pair[1] != NULL && startY <= startY + px(32)) {
     do {
       ((struct Actor *)pair[0])->y.fixed += Q16_ONE / 4;
       ((struct Actor *)pair[1])->y.fixed += Q16_ONE / 4;
       target->y.fixed += Q16_ONE / 4;
       wait(1);
-    } while (target->y.fixed <= startY + PIXELS(32));
+    } while (target->y.fixed <= startY + px(32));
   }
 
   // The hands burst into particles; the target stays up.
@@ -99,8 +99,7 @@ struct Actor *FieldEffect_SpawnLiftHand(s32 x, s32 y, s32 z, s32 angle) {
   fragment = Actor_Spawn(SPRITE_MOVE_HAND, x, y, z);
   if (fragment != NULL) {
     fragment->scaleX = fragment->scaleY = Q16_ONE / 4;
-    fragment->acceleration = fragment->speedLimit =
-        PIXELS(3); // 3 pixels a frame
+    fragment->acceleration = fragment->speedLimit = px(3); // 3 pixels a frame
     ((struct Sprite *)fragment->sprite)->image.priority = 0;
     Actor_SelectAnimationFar(fragment, 3);
     scale = fragment->scaleX;

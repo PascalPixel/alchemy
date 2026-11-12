@@ -221,7 +221,7 @@ static void StuccoRoomsB_WatchWomanHideMedal(void) {
 
   // A sparkle on the floor where she finds it.
   Event_Wait(40);
-  sparkle = FieldActor_Create(SPRITE_PARTICLE, PIXELS(600), 0, PIXELS(824));
+  sparkle = FieldActor_Create(SPRITE_PARTICLE, px(600), 0, px(824));
   Actor_SetSpriteFlags(sparkle, 0);
   Actor_SelectAnimation(sparkle, 6);
   Event_Wait(10);

@@ -464,7 +464,7 @@ s32 Scene_Initialize(void) {
              entrance == LOG_ROOMS_B_INN_FROM_INN_UPSTAIRS) {
     // Show the Bone lying in the room, and track whether the leader stands
     // beside it (FLAG_VAULT_LEADER_BESIDE_BONE).
-    Vault_PlaceItemIcon(ITEM_BONE, PIXELS(568), PIXELS(16), PIXELS(672));
+    Vault_PlaceItemIcon(ITEM_BONE, px(568), px(16), px(672));
     Task_AddFrame(Vault_UpdateBoneProximityFlag, TASK_PASS_FRAME);
   }
 

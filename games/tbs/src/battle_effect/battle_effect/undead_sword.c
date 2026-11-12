@@ -118,18 +118,18 @@ void BattleEffect_RunUndeadSword(struct BattleEffectParams *args) {
     BattleEffect_FetchRectangleBlitters(work->args->side, draw);
     for (i = 0, particle = work->particles; i != 16; i++) {
       if (frame >= i / 2 + 8 && particle->variant <= 28) {
-        s32 px;
-        s32 py;
+        s32 drawX;
+        s32 drawY;
 
         cell = particle->variant / 3;
-        px = Q_16_16_TO_INT(particle->x);
-        py = Q_16_16_TO_INT(particle->y);
+        drawX = Q_16_16_TO_INT(particle->x);
+        drawY = Q_16_16_TO_INT(particle->y);
         if (cell > 6)
           cell = 6;
         src = work->sheet + gUndeadSword_SparkCells[cell] +
               UNDEAD_SWORD_SPARK_SHEET;
         size = gUndeadSword_SparkSizes[cell];
-        draw[0](canvas, src, px - size / 2, py - size / 2, size, size);
+        draw[0](canvas, src, drawX - size / 2, drawY - size / 2, size, size);
         particle->variant++;
         Particle_AdvanceWithGravity2D(particle, 62, -Q16_ONE / 8);
       }

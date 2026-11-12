@@ -648,12 +648,12 @@ static void SolSanctumEntrance_PushStatue(void) {
       Actor_SelectAnimation(leader, ANIM_PUSH);
       wait(15);
       Sound_Play(SE_PUSH);
-      statue->speedLimit = PIXELS(1) / 5;
-      statue->acceleration = PIXELS(1) / 5;
+      statue->speedLimit = px(1) / 5;
+      statue->acceleration = px(1) / 5;
       FieldActor_SetMoveTargetFixed(statue, destination->x, destination->y,
                                     destination->z);
-      leader->speedLimit = PIXELS(1) / 5;
-      leader->acceleration = PIXELS(1) / 5;
+      leader->speedLimit = px(1) / 5;
+      leader->acceleration = px(1) / 5;
       FieldActor_SetMoveTargetFixed(leader, destination->x, destination->y,
                                     destination->z);
       Actor_WaitForMove(statue);

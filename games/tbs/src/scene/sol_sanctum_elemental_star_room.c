@@ -245,7 +245,7 @@ static void SolSanctumElementalStarRoom_BagVenusStar(void) {
     PaletteFade_StartInterpolation(8);
     Event_Wait(8);
     if (i == 1) {
-      MapGrid_SetScreenShake(PIXELS(1), PIXELS(1), Q16_ONE);
+      MapGrid_SetScreenShake(px(1), px(1), Q16_ONE);
     }
   }
   MapGrid_SetShake(1, 2, 1);
@@ -631,7 +631,7 @@ static void SolSanctumElementalStarRoom_DemandElementalStars(void) {
   Actor_SetPosition(ACTOR_FELIX_MASKED, 471, 290);
   motionFlags = &felix->motionFlags;
   *motionFlags = zero;
-  felix->y.fixed = PIXELS(40);
+  felix->y.fixed = px(40);
   Event_Wait(1);
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_FELIX_MASKED, 10);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
@@ -647,7 +647,7 @@ static void SolSanctumElementalStarRoom_DemandElementalStars(void) {
   Sound_Play(SE_WARP);
   Actor_SetSpritePriority(ACTOR_FELIX_MASKED, 2);
   for (i = 0; i != 90; i++) {
-    felix->y.fixed -= PIXELS(1) / 10;
+    felix->y.fixed -= px(1) / 10;
     felix->scaleX += Q16_ONE / 100;
     felix->scaleY += Q16_ONE / 100;
     shadow->scaleX += Q16_ONE / 100;
@@ -657,7 +657,7 @@ static void SolSanctumElementalStarRoom_DemandElementalStars(void) {
   *motionFlags = 5;
   Event_Wait(80);
   for (i = 0; i != 60; i++) {
-    felix->y.fixed -= PIXELS(1) / 2;
+    felix->y.fixed -= px(1) / 2;
     Event_Wait(1);
   }
   *motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
@@ -1024,22 +1024,22 @@ static void SolSanctumElementalStarRoom_UnmaskFelix(void) {
   Actor_WalkToAndWait(ACTOR_GARET, 264, 482);
   actor->steeringFlags |= ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(ACTOR_GARET, 278, 480);
-  actor->speedLimit = PIXELS(3);
-  actor->acceleration = PIXELS(2);
+  actor->speedLimit = px(3);
+  actor->acceleration = px(2);
   Sound_Play(SE_HIGH_JUMP);
-  actor->velocityY = PIXELS(6);
+  actor->velocityY = px(6);
   Actor_SetAnimation(ACTOR_GARET, 7);
   Actor_MoveToAndWait(ACTOR_GARET, 312, 470);
   Actor_SetAnimation(ACTOR_GARET, ANIM_STAND);
   Event_Wait(30);
   Sound_Play(SE_HIGH_JUMP);
-  actor->velocityY = PIXELS(6);
+  actor->velocityY = px(6);
   Actor_SetAnimation(ACTOR_GARET, 7);
   Actor_MoveToAndWait(ACTOR_GARET, 342, 470);
   Actor_SetAnimation(ACTOR_GARET, ANIM_STAND);
   Event_Wait(30);
   Sound_Play(SE_HIGH_JUMP);
-  actor->velocityY = PIXELS(6);
+  actor->velocityY = px(6);
   Actor_SetAnimation(ACTOR_GARET, 7);
   Actor_MoveToAndWait(ACTOR_GARET, 376, 470);
   Actor_SetAnimation(ACTOR_GARET, ANIM_STAND);
@@ -1112,7 +1112,7 @@ static void SolSanctumElementalStarRoom_AlexTakesStars(void) {
   actor->motionFlags = none;
   Sound_Play(SE_SHIMMER);
   for (i = 0; i != 30; i++) {
-    actor->y.fixed += PIXELS(1);
+    actor->y.fixed += px(1);
     Event_Wait(1);
   }
   actor->motionFlags = 5;
@@ -1186,22 +1186,22 @@ static void SolSanctumElementalStarRoom_AlexTakesStars(void) {
   Event_Wait(20);
   actor = Actor_Get(ACTOR_GARET);
   actor->steeringFlags |= ACTOR_FACES_MOTION;
-  actor->speedLimit = PIXELS(3);
-  actor->acceleration = PIXELS(2);
+  actor->speedLimit = px(3);
+  actor->acceleration = px(2);
   Sound_Play(SE_HIGH_JUMP);
-  actor->velocityY = PIXELS(6);
+  actor->velocityY = px(6);
   Actor_SetAnimation(ACTOR_GARET, 7);
   Actor_MoveToAndWait(ACTOR_GARET, 342, 470);
   Actor_SetAnimation(ACTOR_GARET, ANIM_STAND);
   Event_Wait(30);
   Sound_Play(SE_HIGH_JUMP);
-  actor->velocityY = PIXELS(6);
+  actor->velocityY = px(6);
   Actor_SetAnimation(ACTOR_GARET, 7);
   Actor_MoveToAndWait(ACTOR_GARET, 312, 470);
   Actor_SetAnimation(ACTOR_GARET, ANIM_STAND);
   Event_Wait(30);
   Sound_Play(SE_HIGH_JUMP);
-  actor->velocityY = PIXELS(6);
+  actor->velocityY = px(6);
   Actor_SetAnimation(ACTOR_GARET, 7);
   Actor_MoveToAndWait(ACTOR_GARET, 278, 480);
   Actor_SetAnimation(ACTOR_GARET, ANIM_STAND);
@@ -1517,7 +1517,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Actor_SetPosition(ACTOR_PARTY_LEADER, 471, 290);
   leaderMotion = &rising->motionFlags;
   *leaderMotion = 0;
-  rising->y.fixed = PIXELS(40);
+  rising->y.fixed = px(40);
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_CIRCLE);
   gFieldWork->transitionFrames = 32;
@@ -1528,7 +1528,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Sound_Play(SE_WARP);
   Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 2);
   for (i = 0; i != 90; i++) {
-    rising->y.fixed += -PIXELS(1) / 10;
+    rising->y.fixed += -px(1) / 10;
     rising->scaleX += Q16_ONE / 100;
     rising->scaleY += Q16_ONE / 100;
     shadow->scaleX += Q16_ONE / 100;
@@ -1540,7 +1540,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   FieldCamera_SetSpeed(0.3);
   FieldCamera_MoveTo(471, CAMERA_KEEP, 290, 1);
   for (i = 0; i != 60; i++) {
-    rising->y.fixed += -PIXELS(1) / 2;
+    rising->y.fixed += -px(1) / 2;
     Event_Wait(1);
   }
   *leaderMotion = 3;
@@ -1649,7 +1649,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Actor_SetPosition(ACTOR_KRADEN, 471, 290);
   kradenMotion = &rising->motionFlags;
   *kradenMotion = zero;
-  rising->y.fixed = PIXELS(40);
+  rising->y.fixed = px(40);
   Event_Wait(1);
   Event_SetMessageId(MsgSolSanctumKradenWhereAreWe);
   // "Wha-Where are we?"
@@ -1667,7 +1667,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Sound_Play(SE_WARP);
   Actor_SetSpritePriority(ACTOR_KRADEN, 2);
   for (i = 0; i != 90; i++) {
-    rising->y.fixed += -PIXELS(1) / 10;
+    rising->y.fixed += -px(1) / 10;
     rising->scaleX += Q16_ONE / 100;
     rising->scaleY += Q16_ONE / 100;
     shadow->scaleX += Q16_ONE / 100;
@@ -1677,7 +1677,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   *kradenMotion = 5;
   Event_Wait(80);
   for (i = 0; i != 60; i++) {
-    rising->y.fixed += -PIXELS(1) / 2;
+    rising->y.fixed += -px(1) / 2;
     Event_Wait(1);
   }
   *kradenMotion = 3;
@@ -1984,8 +1984,8 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   // Kraden demonstrates reaching the platforms, then asks the party to help.
   height = 192;
   wait(6);
-  rising->speedLimit = PIXELS(3);
-  rising->acceleration = PIXELS(2);
+  rising->speedLimit = px(3);
+  rising->acceleration = px(2);
   Sound_Play(SE_HIGH_JUMP);
   rising->velocityY = (height << 11);
   Actor_MoveToAndWait(ACTOR_KRADEN, 471, 395);
@@ -2028,8 +2028,8 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   }
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH, 60);
   wait(6);
-  rising->speedLimit = PIXELS(3);
-  rising->acceleration = PIXELS(2);
+  rising->speedLimit = px(3);
+  rising->acceleration = px(2);
   Sound_Play(SE_HIGH_JUMP);
   rising->velocityY = (height << 11);
   Actor_MoveToAndWait(ACTOR_KRADEN, 471, 360);
@@ -2235,8 +2235,8 @@ static s32 SolSanctumElementalStarRoom_PresentStarFixed(s32 item, s32 x, s32 y,
   sprite->count = 0;
   sprite->image.fullColor = 0;
   sprite->image.palette = 0;
-  actor->velocityY = PIXELS(5) / 2;
-  actor->gravity = PIXELS(1) / 4;
+  actor->velocityY = px(5) / 2;
+  actor->gravity = px(1) / 4;
   glyph = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(*glyph));
   Icon_DrawItem(item);
   VramCache_Load(sprite->slot, 128, glyph->tiles);
@@ -2301,12 +2301,12 @@ static void SolSanctumElementalStarRoom_AnimateAlexReappearing(void) {
       xOffset = (((u32)Import_RandomNext() * 24) >> 16) << 16;
       x = alex->x.fixed;
       x += xOffset;
-      x += -PIXELS(12);
+      x += -px(12);
       FieldEffect_Spawn(x,
                         alex->y.fixed +
                             ((((u32)Import_RandomNext() << 5) >> 16) << 16) +
-                            PIXELS(32),
-                        alex->z.fixed, 0, -PIXELS(4), 0,
+                            px(32),
+                        alex->z.fixed, 0, -px(4), 0,
                         EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
                             EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
                         &options);

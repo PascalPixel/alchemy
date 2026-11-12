@@ -24,10 +24,6 @@ void Func_02002770(void) {
 #include "call.h"
 #include "actor.h"
 #include "main_routine_work.h"
-extern char SceneId_Ov664Room1, SceneId_Ov664Room2, SceneId_Ov664Room3,
-    SceneId_Ov664Room5, SceneId_Ov664Room6, SceneId_Ov664Room7,
-    SceneId_Ov664Room8, SceneId_Ov664Room9;
-
 void Func_02002790(void) {
   struct Actor *actor = Actor_GetById(Func_02005f84());
   s32 x = actor->x >> 20;

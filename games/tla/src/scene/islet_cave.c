@@ -398,7 +398,6 @@ loop:
   Func_0200125c();
 }
 
-extern char SceneId_Ov675Room1, SceneId_Ov675Room2, SceneId_Ov675Room3;
 extern u16 gData_0200134c[], gData_0200135c[], gData_02001388[],
     gData_020013b4[];
 extern u8 gData_02001454[];

@@ -502,8 +502,6 @@ void Func_0200104c(s32 unused, s32 id) {
   }
 }
 
-#include "ram_buffer.h"
-#include "main_routine_work.h"
 #include "map.h"
 
 extern struct MapCell gMapCellBuffer[];

@@ -1633,7 +1633,7 @@ void Func_02002c24(s32 height) {
   }
 }
 
-extern char SceneId_Ov663Room1, SceneId_Ov663Room2, SceneId_Ov663Room3;
+extern char SceneId_Ov663Room3;
 void Func_02003cb0(const u8 *table);
 void Func_02003ca0(const u8 *table);
 void Func_02003c80(s32 a);

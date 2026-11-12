@@ -76,7 +76,7 @@ void BattleEffect_WanderAroundAnchor(struct OrbitEffect *effect) {
   }
   if (++effect->timer == 101)
     Actor_StartScriptFar((struct ActorView *)effect,
-                                 (u32)gBattleEffect_SharedParticleScript);
+                         (u32)gBattleEffect_SharedParticleScript);
 }
 
 /// Per-frame update of a Whirlwind particle: circles the anchor at 8 pixels,
@@ -107,3 +107,32 @@ void BattleEffect_CircleAnchor(struct OrbitEffect *effect) {
     effect->angle = Random16();
   }
 }
+
+#include "battle.h"
+#include "debug.h"
+#include "field.h"
+#include "game.h"
+#include "graphics.h"
+#include "lib.h"
+#include "menu.h"
+#include "sound.h"
+#include "actor.h"
+
+#define Actor_SetPositionAndResetMotionFar                                     \
+  ((s32 (*)(void *, s32, s32, s32))Actor_SetPositionAndResetMotionFar)
+
+s32 FieldEffect_RunWhirlwind();
+
+void BattleEffect_ShrinkObjectScaleUntilHalf(struct Actor *object) {
+  s32 scale;
+
+  scale = object->scaleX - 0x80;
+  object->scaleY = scale;
+  object->scaleX = scale;
+  if (scale < 0x8000) {
+    Actor_SetPositionAndResetMotionFar(object, 0, 0, 0);
+    object->update = 0;
+  }
+}
+
+void FieldEffect_RunWhirlwindOnTarget(void) { FieldEffect_RunWhirlwind(); }

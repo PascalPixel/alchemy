@@ -50,7 +50,6 @@ s32 VramCache_Load(s32 slot, s32 size, const void *data);
 void Resource_ResetEntry(s32 slot);
 u32 Random16(void);
 void wait(s32 frames);
-void Sound_PlayFar(s32 cue);
 void Event_Wait(s32 frames);
 void Actor_StartScriptFar(struct Actor *object, const void *script);
 void Task_Add(void (*func)(void), s32 order);
@@ -304,4 +303,89 @@ void Func_080ea14c(s32 targetId) {
   Resource_ResetEntry(moteEntry);
   Resource_ResetEntry(sparkEntry);
   HeapSlot_Release(92);
+}
+
+#include "main_routine_work.h"
+#include "map.h"
+#include "actor_view.h"
+#include "field/field.h"
+
+struct ActorFlag {
+  u16 actor;
+  s16 flag;
+};
+
+struct Actor *Actor_GetById(u32 actor);
+s32 Func_080eab70(struct Actor *object);
+s32 GameFlag_Test(s32 flag);
+void GameFlag_ClearBit(s32 flag);
+void Func_080eaa14(struct ActorFlag *list);
+
+void Func_080ea7c0(struct ActorFlag *actors) {
+  struct MapWork *map = Ram_HeapSlots->mapWork;
+  struct ActorFlag *list = actors;
+  struct Actor *leader;
+  s32 height;
+
+  for (; actors->actor != 0xffff; actors++) {
+    struct Actor *object = Actor_GetById(actors->actor);
+    u16 flag = actors->flag;
+    s32 slot = Func_080eab70(object);
+    struct MapCell *cell = &map->layers[object->terrainId].cells[slot];
+
+    object->motionFlags = 0;
+    object->collisionFlags &= ~1;
+    Actor_SetSingleChildFlagsFar((struct ActorView *)object, 0);
+    cell->collisionCode = 0xff;
+    if (GameFlag_Test(flag)) {
+      Actor_SetMode(object, 0);
+      GameFlag_ClearBit(flag);
+    } else {
+      Actor_SetMode(object, 1);
+    }
+  }
+  Func_080eaa14(list);
+  leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  height = Map_GetTerrainHeightFar(leader->terrainId, leader->x, leader->z);
+  if (leader->y < height)
+    leader->y = leader->terrainHeight = height;
+}
+
+#include "dma.h"
+#include "io_reg.h"
+
+struct MenuFlagWork {
+  u8 unk000[0x506];
+  u8 busy;
+};
+
+struct FxGroup {
+  u8 unk00[32];
+  struct Actor *objects[8];
+  u16 values[8];
+  s32 count;
+};
+
+struct DescriptorEntry {
+  s16 id;
+  u8 unk02[6];
+};
+
+extern void *gOverlayArea[];
+extern struct DescriptorEntry gData_080eff28[];
+
+void BattleEffect_StartTiledCanvas(s32 mode);
+void BattleEffect_EndCanvasLayer(void);
+void Func_0814ea58(void *effect, s32 mode);
+void PartyStatus_CreateWindow(s32 flags);
+s32 Func_08020310(s32 x, s32 z, s32 layer);
+s32 Func_080dbde8(s32 x, s32 z, s32 layer);
+u8 Func_080dbdf4(s32 x, s32 z, s32 layer, s32 value);
+void Func_08108148(void);
+s32 Inn_RoomPrice(s32 innId);
+void Func_0810824c(void);
+
+void Func_080ea8a8(s32 x, s32 z, s32 layer) {
+  if (Func_08020310(x, z, layer) == 0)
+    Func_080dbdf4(x, z, layer, Func_080dbde8(x, z, layer) | 0x80);
 }

@@ -95,3 +95,91 @@ void Func_080ebf94(void) {
   Ram_WorldMapScroll[0] = screenX;
   Ram_WorldMapScroll[1] = screenY;
 }
+
+#include "battle.h"
+#include "field.h"
+#include "game.h"
+#include "graphics.h"
+#include "lib.h"
+#include "menu.h"
+#include "sound.h"
+#include "system.h"
+
+extern void Window_CloseFar(u32 arg0, u32 arg1);
+
+void BattleEffect_CleanupResourcesAndWindow(void) {
+  Resource_ResetEntry(gWorldMapWork.vramBlock);
+  Resource_ResetEntry(gWorldMapWork.windowSlot);
+  Window_CloseFar((u32)gWorldMapWork.window, 2);
+}
+
+#include "actor.h"
+
+/// Moves the controlled object to (x, z) converted by fixed scale factors
+/// (x / 853, z / 640 after offsets) and puts the camera on it.
+void Func_080ec16c(s32 x, s32 z) {
+  s32 owner = Party_GetLeaderActor();
+  s32 *camera = *(s32 **)Ram_HeapSlots->mapWork;
+  struct Actor *object = ObjectTable_Get(owner);
+
+  if (object != NULL) {
+    x >>= 16;
+    x = ((x << 14) + 0x434000) / 853;
+    z >>= 16;
+    object->x = x << 16;
+    object->z = (((z << 14) + 0x1c0000) / 640) << 16;
+    camera[0] = object->x;
+    camera[2] = object->z;
+  }
+}
+
+#include "version.h"
+
+void Func_080ec1d0(s32 *screenX, s32 *screenY) {
+  s32 leader = Party_GetLeaderActor();
+  u8 *state = Ram_HeapSlots->eventWork;
+  u8 *object;
+  s32 x;
+  s32 z;
+
+  GameFlag_ClearBit(286);
+  if (*(s8 *)(state + 394) == 3) {
+    object = ObjectTable_Get(leader);
+    if (object == 0)
+      return;
+    x = *(s16 *)(object + 10);
+    z = *(s16 *)(object + 18);
+    if (z < 1832) {
+      if (x < 12000) {
+        GameFlag_SetBit(286);
+        // From patch 1 this case is offset from the leader's position; the
+        // Japanese release puts it at one fixed point.
+#if TLA_PATCH_1
+        x += 65;
+        z += 1966;
+#else
+        x = 8872;
+        z = 3320;
+#endif
+      } else {
+        x -= 627;
+        z += 6084;
+      }
+    }
+    *screenX = 853 * x / 16384 - 269;
+    *screenY = z * 640 / 16384 - 112;
+  } else {
+    *screenX = 264;
+    *screenY = 16;
+  }
+}
+
+extern s16 gData_0202a642;
+
+/// Returns entry[1]'s high nibble when gData_0202a642 is set, else its low
+/// nibble.
+u32 Func_080ec298(u8 *entry) {
+  if (gData_0202a642 != 0)
+    return entry[1] >> 4;
+  return entry[1] & 15;
+}

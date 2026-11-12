@@ -17,7 +17,6 @@ struct RevealEvent {
 };
 
 void BattleEffect_RunBusyWaitDelay(s32 value);
-void ScreenTransition_InitializeBattleEffectState(s32 mode);
 void BattleEffect_ApplyColorToSourceBuffer(u32 value, s32 enabled);
 void BattleEffect_ApplyColorToTargetBuffer(u32 value, s32 enabled);
 void BattleEffect_StartBufferInterpolation(s32 frames);
@@ -25,7 +24,7 @@ s32 Func_080ce31c(s32 kind);
 void *Func_080ce458(u32 kind, s32 entry, s32 arg);
 void Field_RunPsynergyEvent(void *event, s32 a, s32 b);
 void Func_080cf554(void);
-void Task_Add(void (*func)(void), s32 order);
+#include "task.h"
 void Func_080dd754(void);
 
 #define FIELD_FX_REVEAL 8
@@ -61,7 +60,7 @@ void Func_080dd820(void) {
                           Func_080ce31c(FIELD_FX_REVEAL));
   if (pending != 0)
     Field_RunPsynergyEvent(pending, scene->firstObjectId,
-                                 scene->secondObjectId);
+                           scene->secondObjectId);
   // Leave the centre (in pixels) and the time in the event work, and put
   // up the markers nearby.
   // The cue and the active flag in a once-only block keep active's store
@@ -84,4 +83,152 @@ void Func_080dd820(void) {
   } while (frame <= 18);
   if ((s8)scene->mode == 0)
     Task_Add(Func_080dd754, 0x480);
+}
+
+// The field event work's Reveal state (eventWork + 0xca4).
+
+#define FIELD_FX_REVEAL 8
+
+void Func_080dd950(void) {
+  struct BattleFxScene *scene = Ram_HeapSlots->effectWork;
+  struct ScreenTransitionState *transition = Ram_HeapSlots->screenTransition;
+  struct RevealEvent *event = Ram_HeapSlots->eventWork;
+  void *pending;
+
+  if (event->active != 0) {
+    Sound_PlayFar(167);
+    Task_Remove(Func_080dd754);
+    event->active = 0;
+    event->frames = 0;
+    BattleEffect_RunBusyWaitDelay(0);
+    BattleEffect_ApplyColorToTargetBuffer(0x10000, 1);
+    BattleEffect_StartBufferInterpolation(1);
+    BattleEffect_ApplyColorToSourceBuffer(0, 0);
+    BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
+    BattleEffect_StartBufferInterpolation(30);
+    wait(1);
+    pending = Func_080ce458(0x40000005, FIELD_FX_REVEAL,
+                            Func_080ce31c(FIELD_FX_REVEAL));
+    if (pending != NULL)
+      Field_RunPsynergyEvent(pending, scene->firstObjectId,
+                             scene->secondObjectId);
+    if (scene->childOption == 0) {
+      transition->nextMode = 0;
+      transition->duration = 1;
+      transition->step = 1;
+      wait(10);
+    }
+  }
+}
+
+#include "edition.h"
+#include "actor_view.h"
+
+struct BurstParticleVector {
+  s32 values[3];
+};
+
+extern u8 gData_080f0ee8[];
+
+void Func_080ddbd8(void);
+void Vector_AddPolarOffset(s32 magnitude, s32 angle,
+                           struct BurstParticleVector *position);
+void *Actor_Spawn(s32 id, s32 x, s32 y, s32 z);
+void Actor_StartScriptFar(void *object, u32 script);
+void BattleEffect_PrepareBufferInterpolation(void);
+// Far call to the target classifier Func_080237c8.
+s32 Func_08020330(struct Actor *object);
+void Func_080daecc(s32 objectId, s32 mode);
+
+#define BURST_FALL_OBJECT 281 ///< the object that falls round the target
+
+// The two kinds of target that do not sink into the ground.
+#define TARGET_KIND_SCATTERS 372 ///< scatters five falling pieces instead
+#define TARGET_KIND_STAYS 394
+
+/// Animation 12 on a target: the burst of particles, then the target sinks
+/// to the underfoot priority. A target of kind 372 instead throws five pieces
+/// round the scene's position; one of kind 394 only plays the cue (sound 126).
+void Func_080dda30(s32 unused) {
+  struct BattleFxScene *scene = Ram_HeapSlots->effectWork;
+  struct Actor *target = scene->child;
+  s32 kind = 0;
+
+  if (target == 0)
+    return;
+
+  Func_080ddbd8();
+  if (Func_08020330(target) == TARGET_KIND_SCATTERS)
+    kind = 1;
+  if (Func_08020330(target) == TARGET_KIND_STAYS)
+    kind = 2;
+
+  if (kind == 0) {
+    Actor_SetMode(target, 2);
+    Actor_SetSingleChildFlagsFar(target, 0);
+    target->collisionFlags = 0;
+    target->priorityFlags |= 2;
+    wait(10);
+    Sound_PlayFar(126);
+    wait(40);
+  } else if (kind == 1) {
+    struct BurstParticleVector position;
+    struct BurstParticleVector *p = &position;
+    s32 n = 4;
+
+    do {
+      struct Actor *piece;
+      s32 distance;
+
+      p->values[0] = scene->x;
+      p->values[2] = scene->z;
+      distance = Random16() * 6 + 0x40000;
+      Vector_AddPolarOffset(distance, Random16(), p);
+      p->values[1] = scene->y;
+      piece = Actor_Spawn(BURST_FALL_OBJECT, p->values[0], p->values[1],
+                          p->values[2]);
+      if (piece != 0) {
+        Actor_StartScriptFar(piece, (u32)gData_080f0ee8);
+        piece->motionFlags = 2;
+      }
+      wait((((u32)Random16() * 2) >> 16) + 2);
+      n--;
+    } while (n >= 0);
+    Func_080daecc(scene->secondObjectId, 1);
+  } else {
+    wait(10);
+    Sound_PlayFar(126);
+  }
+  BattleEffect_PrepareBufferInterpolation();
+}
+
+void FieldEffect_RunGrowth(void) {
+  u8 *state = Ram_HeapSlots->effectWork;
+  struct BurstParticleVector position;
+  struct BurstParticleVector *p;
+  s32 entryCount;
+
+  Func_080ddbd8();
+  Sound_PlayFar(134);
+  p = &position;
+  entryCount = 4;
+  do {
+    void *object;
+    s32 randomValue;
+
+    p->values[0] = *(s32 *)(state + 4);
+    p->values[2] = *(s32 *)(state + 12);
+    randomValue = (Random16() * 6) + 0x40000;
+    Vector_AddPolarOffset(randomValue, Random16(), p);
+    p->values[1] = *(s32 *)(state + 8);
+    object = Actor_Spawn(0x119, p->values[0], p->values[1], p->values[2]);
+    if (object != 0) {
+      Actor_StartScriptFar(object, (u32)gData_080f0ee8);
+      *((u8 *)object + 0x55) = 2;
+    }
+    wait((((u32)Random16() * 2) >> 16) + 2);
+    entryCount--;
+  } while (entryCount >= 0);
+  wait(30);
+  BattleEffect_PrepareBufferInterpolation();
 }

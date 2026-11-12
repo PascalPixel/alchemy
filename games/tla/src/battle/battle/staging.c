@@ -209,8 +209,9 @@ s32 Func_0811d9cc(struct BattleActionRecord *request, s32 delay) {
   {
     s32 param;
     s32 ratio;
-    // Called through a local, as camera/bounds.c calls it: the routine's
-    // address is then loaded ahead of the shift that finishes param.
+    // Called through a local, as field/object/table_run_if_active.c calls it:
+    // the routine's address is then loaded ahead of the shift that finishes
+    // param.
     s32 (*ratioMul)(s32, s32) = Iwram_RatioMulQ14;
 
     param = 255;
@@ -286,8 +287,8 @@ s32 Func_0811d9cc(struct BattleActionRecord *request, s32 delay) {
       swap = battle->plan.actorId;
       battle->plan.actorId = battle->plan.actorId2;
       battle->plan.actorId2 = swap;
-      battle->plan.presentationFlags =
-          Func_0811d79c(((struct BattleUnit *)Unit_Get(battle->plan.actorId))->enemyId);
+      battle->plan.presentationFlags = Func_0811d79c(
+          ((struct BattleUnit *)Unit_Get(battle->plan.actorId))->enemyId);
       if (((battle->plan.actorId ^ battle->plan.targetIds[0]) >> 7) == 0) {
         MessageArgument_PushFar(battle->plan.actorId, 1);
         if (battle->plan.actorId == battle->plan.targetIds[0])

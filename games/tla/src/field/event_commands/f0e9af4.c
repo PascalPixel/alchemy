@@ -44,11 +44,7 @@ extern char ResourceId_RingOrb;
 void wait(s32 frames);
 s32 Func_080dbcc0(s32 x, s32 z, s32 layer);
 s32 Func_080dbe80(s32 *a, s32 radiusA, s32 *b, s32 radiusB);
-void Actor_SetPositionAndResetMotionFar(struct Actor *object, s32 x, s32 y,
-                                        s32 z);
 void BattleEffect_SetObjectUpdateMode(struct Actor *object, s32 mode);
-s32 Resource_ResetEntry(u32 entry);
-void HeapSlot_Release(s32 slot);
 void Func_080e9940(void);
 
 void Func_080e9af4(void) {
@@ -146,5 +142,227 @@ void Func_080e9af4(void) {
     work->fading = 1;
     event->glowHeld = 1;
     event->glow = 112;
+  }
+}
+
+// Kind 24's work (battle_fx_work[0]).
+
+struct Actor *Actor_GetById(s32 id);
+
+void Func_080e9db4(void) {
+  struct GlowWork *work = (struct GlowWork *)Ram_HeapSlots->battleFxWork[0];
+  struct Actor *object = Actor_GetById(Party_GetLeaderActor());
+  s32 i;
+
+  Task_Remove(Func_080e9940);
+  Actor_SetPositionAndResetMotionFar(object, object->x, object->y, object->z);
+  object->motionFlags = 3;
+  gMainRoutineWork.renderMode = 0;
+  for (i = 0; i < 60; i++) {
+    if (object->y <= object->terrainHeight)
+      break;
+    wait(1);
+  }
+  Sound_PlayFar(132);
+  wait(1);
+  for (i = 0; i < 20; i++) {
+    if (object->y <= object->terrainHeight)
+      break;
+    wait(1);
+  }
+  wait(1);
+  for (i = 0; i < 20; i++) {
+    if (object->y <= object->terrainHeight)
+      break;
+    wait(1);
+  }
+  wait(1);
+  object->bounce = 0;
+  object->velocityY = 0;
+  object->y = object->terrainHeight;
+  object->gravity = 0x10000;
+  Resource_ResetEntry(work->resource);
+  HeapSlot_Release(92);
+}
+
+#include "iwram_call.h"
+#include "field_event.h"
+
+struct SpritePictures {
+  u8 unk00[5];
+  u8 picture;
+};
+
+struct AnimatedSprite {
+  u8 unk00[0x12];
+  s16 rotation;
+  u8 unk14[5];
+  u8 picture;
+  u8 nextPicture;
+  u8 unk1b[0xd];
+  struct SpritePictures *pictures;
+};
+
+/// Steps the sprite through a four-picture cycle on the actor's timer, as
+/// overlay 68c's Func_02001398 does, but leaves the next picture alone on the
+/// fourth step.
+void Func_080e9e8c(struct FieldActor *object) {
+  struct AnimatedSprite *sprite = (struct AnimatedSprite *)object->sprite;
+  struct SpritePictures *pictures = sprite->pictures;
+
+  switch (object->timer & 3) {
+  case 0:
+    pictures->picture = 7;
+    sprite->picture = 1;
+    sprite->nextPicture = 2;
+    break;
+  case 1:
+    sprite->picture = 1;
+    sprite->nextPicture = 0;
+    break;
+  case 2:
+    pictures->picture = 7;
+    sprite->picture = 1;
+    sprite->nextPicture = 0;
+    break;
+  case 3:
+    pictures->picture = 0;
+    sprite->picture = 1;
+    break;
+  }
+  object->timer++;
+}
+
+struct Chase {
+  s32 x;
+  s32 z;
+  s32 unk08;
+  s32 targetX;
+  s32 targetZ;
+};
+
+s32 ArcTan2(s32 y, s32 x);
+s32 Trig_Sin(s32 angle);
+s32 Trig_Cos(s32 angle);
+
+/// Moves toward the target by speed, stopping on it on overshoot.
+void Motion_StepTowardTarget(struct Chase *chase, s32 speed) {
+  s32 dx = chase->targetX - chase->x;
+  s32 dz = chase->targetZ - chase->z;
+  u16 angle = ArcTan2(dz, dx);
+
+  chase->x += Iwram_MulQ16(Trig_Cos(angle), speed);
+  chase->z += Iwram_MulQ16(Trig_Sin(angle), speed);
+  {
+    s32 nextDx = chase->targetX - chase->x;
+    s32 nextDz = chase->targetZ - chase->z;
+
+    if ((nextDx ^ dx) & 0x80000000)
+      chase->x = chase->targetX;
+    if ((dz ^ nextDz) & 0x80000000)
+      chase->z = chase->targetZ;
+  }
+}
+
+// One mote: a position chasing its target (Motion_StepTowardTarget's struct
+// Chase) and a frame count, negative before it starts.
+struct Mote {
+  s32 x;
+  s32 z;
+  s32 unk08;
+  s32 targetX;
+  s32 targetZ;
+  s32 unk14;
+  s32 timer;
+};
+
+struct MoteWork {
+  u8 unk0000[0x800];
+  struct Mote sparks[32];
+  struct EffectSprite sparkSprites[32];
+  struct Mote motes[48];
+  struct EffectSprite moteSprites[48];
+  s32 originX;
+  s32 originZ;
+  s32 angle;
+  s32 radius;
+  s32 spacing;
+  s8 state;
+  s8 moving;
+  u16 sparkTile;
+  s32 targetX;
+  s32 targetZ;
+};
+
+void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position);
+void EffectSprite_DrawAtWorldPosition(struct EffectSprite *sprite,
+                                      struct Mote *mote);
+
+void Func_080e9f68(void) {
+  struct MoteWork *work = Ram_HeapSlots->battleFxWork[0];
+  s32 position[3];
+  struct Mote *mote;
+  struct EffectSprite *sprite;
+  s32 i;
+  u16 *tile;
+
+  if (work->moving != 0) {
+    position[0] = work->originX;
+    position[2] = work->originZ;
+    Vector_AddPolarOffset(work->radius, work->angle, position);
+    mote = work->motes;
+    mote->targetX = position[0];
+    mote->targetZ = position[2];
+    work->angle += 0x600;
+    for (i = 0; i < 48; i++, mote++) {
+      if (mote->timer >= 0) {
+        if (i != 0) {
+          mote->targetX = position[0];
+          mote->targetZ = position[2];
+        }
+        position[0] = mote->x;
+        position[2] = mote->z;
+        Vector_AddPolarOffset(work->spacing, 0, position);
+      }
+      mote->timer++;
+    }
+  }
+
+  mote = work->motes;
+  sprite = work->moteSprites;
+  for (i = 47; i >= 0; i--, sprite++, mote++) {
+    if (work->state == 0) {
+      if (mote->timer >= 0) {
+        Motion_StepTowardTarget(mote, 0x40000);
+        sprite->x = mote->x;
+        sprite->y = mote->z;
+        Func_080eb01c(sprite);
+      }
+      mote->timer++;
+    } else if (work->state == 2) {
+      Motion_StepTowardTarget(mote, 0x60000);
+      sprite->x = mote->x;
+      sprite->y = mote->z;
+      Func_080eb01c(sprite);
+    } else if (work->state == 3) {
+      if (mote->x != work->targetX || mote->z != work->targetZ) {
+        Motion_StepTowardTarget(mote, 0x60000);
+        sprite->x = mote->x;
+        sprite->y = mote->z;
+        Func_080eb01c(sprite);
+      }
+    }
+  }
+
+  mote = work->sparks;
+  tile = &work->sparkTile;
+  sprite = work->sparkSprites;
+  for (i = 31; i >= 0; i--, sprite++, mote++) {
+    if ((u32)mote->timer < 20) {
+      sprite->oam.index = *tile + (mote->timer / 5 & 7) * 8;
+      EffectSprite_DrawAtWorldPosition(sprite, mote);
+      BattleEffect_IntegrateVector3(&mote->x, 63, -0x8000);
+      mote->timer++;
+    }
   }
 }

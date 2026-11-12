@@ -52,7 +52,7 @@ struct ModeEvent {
 void Func_080eb01c(struct EffectSprite *sprite);
 void Camera_WorldToScreen(s32 *position);
 void BattleEffect_IntegrateVector3(struct EffectParticle *particle, s32 frames,
-                               s32 flags);
+                                   s32 flags);
 struct Actor *Actor_GetById(s32 id);
 void wait(s32 frames);
 s32 Trig_Sin(s32 angle);
@@ -73,3 +73,22 @@ void BattleEffect_SinkAndShrinkObject(void) {
   }
   work->timer++;
 }
+
+struct ControlEvent {
+  u8 unk000[362];
+  u16 cue;
+};
+
+void Func_080e3d04(void);
+void Func_080e4a34(void);
+void Func_080e572c(void);
+void Func_080e5d5c(void);
+void Func_080e68d0(void);
+void Func_080e7844(void);
+void Func_080e9af4(void);
+void Func_080e74d8(void);
+void BattleEffect_PrepareBufferInterpolation(void);
+s32 Party_GetLeaderActor(void);
+
+/// Runs field effect 18 (Func_080e5d5c) for the request dispatcher.
+void BattleEffect_CallEffect18(void) { Func_080e5d5c(); }

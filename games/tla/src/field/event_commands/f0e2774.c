@@ -102,3 +102,163 @@ void Func_080e2774(s32 x, s32 z, s16 layerIndex, s16 width, s16 height, s32 toX,
     }
   }
 }
+
+#include "fixed_math.h"
+#include "actor_view.h"
+
+struct Actor *Func_080200c0(s32 sprite, s32 x, s32 y, s32 z);
+void FacingObject_TurnPairToFaceEachOther(struct Actor *first,
+                                          struct Actor *second);
+void Event_Wait(s32 frames);
+void Actor_StartRepeatedMotion(s32 actor, s32 variant);
+void Func_080d489c(s32 actor, s32 value);
+
+void Func_080e28d4(s32 sprite, s32 x, s32 z) {
+  s32 ownerId = Party_GetLeaderActor();
+  struct Actor *owner = Actor_GetById(ownerId);
+  struct Actor *object = Func_080200c0(sprite, x << 16, 0, z << 16);
+  s32 from[3];
+  s32 to[3];
+  s32 i;
+  s32 steps;
+
+  if (object == NULL)
+    return;
+  Actor_SetSingleChildFlagsFar(object, 0);
+  object->gravity = 0x5999;
+  object->velocityY = 0x50000;
+  object->scaleY = object->scaleX = 0x6666;
+  do {
+    wait(1);
+    object->scaleY = object->scaleX = object->scaleX + 0x3d7;
+    object->angle += 0x1000;
+  } while (object->scaleX <= 0xffff);
+  object->scaleY = object->scaleX = 0x10000;
+  Actor_SetMode(owner, 1);
+  FacingObject_TurnPairToFaceEachOther(object, owner);
+  owner->action = owner->angle;
+  Event_Wait(10);
+  Actor_StartRepeatedMotion(ownerId, 3);
+  Func_080d489c(ownerId, 258);
+  Event_Wait(32);
+  object->gravity = 0x10000;
+  object->velocityY = 0x60000;
+  Sound_PlayFar(152);
+  Event_Wait(15);
+  object->velocityY = 0x60000;
+  Sound_PlayFar(152);
+  Event_Wait(23);
+  Sound_PlayFar(146);
+
+  from[0] = object->x;
+  from[1] = object->y;
+  from[2] = object->z;
+  to[0] = owner->x;
+  to[1] = owner->y;
+  to[2] = owner->z;
+  steps = 20;
+  for (i = 0; i < steps; i++) {
+    object->x = from[0] + i * (to[0] - from[0]) / 20;
+    object->y =
+        from[1] + i * (to[1] - from[1]) / 20 + Trig_Sin((i << 15) / 20) * 40;
+    object->z = from[2] + i * (to[2] - from[2]) / 20;
+    wait(1);
+  }
+}
+
+void Func_080e2a68(s32 radius, s32 angle, u16 *offsets, u8 *pixels) {
+  s32 i;
+
+  if (radius > 31)
+    radius = 31;
+  for (i = 0; i <= 29; i++) {
+    s32 x = ((radius * Trig_Cos(angle)) >> 16) + 32;
+    s32 y = ((radius * Trig_Sin(angle)) >> 16) + 32;
+    s32 value = i / 2 + 225;
+
+    pixels[offsets[y * 64 + x]] = value;
+    angle += 0x170;
+  }
+}
+
+#include "task.h"
+#include "resource.h"
+#include "system.h"
+#include "effect_sprite.h"
+
+s32 ArcTan2(s32 y, s32 x);
+
+struct BurstParticle {
+  s32 x;
+  s32 y;
+  s32 z;
+  s32 heading;
+  s32 speed;
+  s32 spin;
+  s32 delay;
+};
+
+struct BurstWork {
+  u8 tiles[384];
+  struct EffectSprite sprites[96];
+  struct BurstParticle particles[96];
+  s16 resource;
+  s16 vram;
+  u8 unk1b04[2];
+  s16 frame;
+  s16 active;
+};
+
+struct BurstCell {
+  s16 x;
+  s16 z;
+};
+
+void Vector_AddPolarOffset(s32 magnitude, s32 angle, s32 *position);
+void Func_080e2c38(void);
+extern char ResourceId_Leaves;
+
+void Func_080e2acc(void) {
+  struct BurstWork *work = (struct BurstWork *)Ram_HeapSlots->battleFxWork[0];
+  u8 *effect = Ram_HeapSlots->effectWork;
+  u8 *event = Ram_HeapSlots->eventWork;
+  struct Actor *owner = *(struct Actor **)(effect + 16);
+  struct BurstCell *cell = (struct BurstCell *)(event + 0xcc0);
+  s32 dx = (cell->x << 20) - owner->x + 0x80000;
+  s32 dz = (cell->z << 20) - owner->z + 0x80000;
+  s32 heading = (u16)ArcTan2(dz, dx);
+  struct EffectSprite *sprite;
+  struct BurstParticle *particle;
+  s32 resource;
+  s32 vram;
+  s32 i;
+
+  work->frame = 0;
+  work->active = 1;
+  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_Leaves), work);
+  resource = Resource_FindFreeEntry();
+  vram = VramCache_Load(resource, 384, work);
+  work->resource = resource;
+  work->vram = vram;
+
+  for (i = 0, particle = work->particles; i < 96; i++, particle++) {
+    sprite = &work->sprites[i];
+    Func_080eaf98(sprite, 4, 4, 0, vram);
+    sprite->depth = 250;
+    sprite->oam.priority = 0;
+    sprite->oam.palette256 = 1;
+    sprite->oam.palette = 0;
+    particle->x = owner->x;
+    particle->y = owner->y;
+    particle->z = owner->z;
+    Vector_AddPolarOffset(Random16() * 8 + 0x80000, Random16(), &particle->x);
+    particle->heading = heading;
+    particle->speed = Random16() + 0x10000;
+    particle->spin = (Random16() >> 6) + 384;
+    if (i & 1)
+      particle->spin = -particle->spin;
+    particle->delay = -i / 2;
+  }
+  Sound_PlayFar(220);
+  Task_Add(Func_080e2c38, TASK_PASS_VBLANK);
+}

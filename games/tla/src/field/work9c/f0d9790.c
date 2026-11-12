@@ -121,3 +121,130 @@ s32 Func_080d9790(s32 index, s32 x, s32 y, s32 z) {
 }
 
 void Func_080d9974(void) {}
+
+#include "input.h"
+#include "main_routine_work.h"
+
+extern s32 gData_080f3944;
+
+void Func_080d8fa8(s32 a0, s32 a1, s32 a2, s32 a3);
+
+void Func_080d9978(struct Actor *object) {
+  u8 *parts = object->animation;
+
+  parts[22] = 253;
+  parts[23] = 12;
+  if (gInput.repeat & 0x200)
+    gData_080f3944 = 1;
+  if (gData_080f3944 != 0)
+    Func_080d8fa8(0, 12, 13, 0);
+}
+
+struct Actor *Actor_GetById(s32 id);
+
+s32 Func_080d99b8(s32 firstId, s32 secondId) {
+  struct Actor *owner = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *first = Actor_GetById(firstId);
+  struct Actor *second = Actor_GetById(secondId);
+  s32 x = owner->x >> 20;
+  s32 y = owner->y >> 20;
+  s32 z = owner->z >> 20;
+  s32 firstX = first->x >> 20;
+  s32 firstY = first->y >> 20;
+  s32 firstZ = first->z >> 20;
+  s32 secondX = second->x >> 20;
+  s32 secondY = second->y >> 20;
+  s32 secondZ = second->z >> 20;
+
+  if (y == firstY) {
+    if (x == firstX) {
+      if (z == firstZ - 1 || z == firstZ + 1 || z == firstZ)
+        return 1;
+    } else if (z == firstZ) {
+      if (x == firstX - 1 || x == firstX + 1 || x == firstX)
+        return 1;
+    }
+  }
+  if (y == secondY) {
+    if (x == secondX) {
+      if (z == secondZ - 1 || z == secondZ + 1 || z == secondZ)
+        return 1;
+    } else if (z == secondZ) {
+      if (x == secondX - 1 || x == secondX + 1 || x == secondX)
+        return 1;
+    }
+  }
+  return 0;
+}
+
+#include "work9c.h"
+
+s32 Func_080d9a74(s32 id, s32 *value, s32 *index) {
+  struct Work9c *work = WORK_9C;
+  struct Work9cSlot *slot = work->slots;
+  s32 i;
+
+  for (i = 0; i <= 7; i++) {
+    if (slot->head != NULL && slot->id == id) {
+      *value = slot->value;
+      *index = i;
+      return 0;
+    }
+    slot++;
+  }
+  return -1;
+}
+
+/// Returns the state of slot index of the heap slot 0x9c work, or -1 while the
+/// work is not allocated.
+s32 Func_080d9ab0(s32 index) {
+  struct Work9c *work = WORK_9C;
+  struct Work9cSlot *slot;
+
+  if (work == NULL)
+    return -1;
+  slot = &work->slots[index];
+  return slot->state;
+}
+
+s32 GameFlag_Test(s32 flag);
+void Func_080d8d68(s32 index, s32 a1, s32 a2);
+void Func_080d9104(s32 index, s32 a1, s32 a2);
+
+void Func_080d9ad0(s32 index, s32 flag, s32 a2, s32 a3) {
+  struct Work9c *work = WORK_9C;
+  struct Work9cSlot *slot;
+
+  slot = &work->slots[index];
+  slot->flag = flag;
+  if (!GameFlag_Test(flag))
+    Func_080d9104(index, a2, a3);
+  else
+    Func_080d8d68(index, a2, a3);
+}
+
+#include "worka0.h"
+#include "resource.h"
+#include "task.h"
+#include "dma.h"
+
+// XXX: what the work block in heap slot 40 holds, and what this family does;
+// its callers and the block's readers would settle it.
+
+extern const u8 gData_080f0c04[];
+
+void Func_080d9b80(void);
+void Func_080d9d40(void);
+
+void Func_080d9b08(void) {
+  struct WorkA0 *work = HeapSlot_AllocEwram(160, sizeof(struct WorkA0));
+  void *buffer = Heap_Alloc(0x900);
+
+  Dma_Fill32(0, work, sizeof(struct WorkA0));
+  work->vramEntry = Resource_FindFreeEntry();
+  Resource_DecodeType01(gData_080f0c04, buffer);
+  VramCache_Load(work->vramEntry, 64, buffer);
+  Task_Add(Func_080d9b80, TASK_PASS_VBLANK);
+  Task_Add(Func_080d9d40, TASK_PASS_VBLANK + 15);
+  Heap_Release(buffer);
+}

@@ -43,7 +43,6 @@ void BattleEffect_InitializeSharedScene(void);
 void BattleEffect_SetObjectUpdateMode(void *object, s32 mode);
 void BattleEffect_PrepareBufferInterpolation(void);
 void wait(s32 frames);
-void Sound_PlayFar(s32 cue);
 
 // Sways the view from side to side, with a sound every 16 frames: the swing
 // grows from 2 to 6 pixels, holds, shrinks back to 2 and stops. While the
@@ -133,4 +132,21 @@ void Func_080e9090(void) {
   ViewMove_RestoreNearbySprites();
   BattleEffect_PrepareBufferInterpolation();
   HeapSlot_Release(HEAP_SLOT_VIEW_MOVE);
+}
+
+#include "dma.h"
+
+/// Moves rows 1 to rows - 2 of a buffer down one row by DMA, dropping the
+/// last, then clears row 0 (stride bytes per row).
+void BattleEffect_ShiftRowsDown(u8 *base, s32 stride, s32 rows) {
+  u8 *source = base + (rows - 2) * stride;
+  u8 *destination = base + (rows - 1) * stride;
+  s32 i;
+
+  for (i = rows - 1; i != 1; i--) {
+    Dma_Set(source, destination, DMA_COPY_WORDS(stride / 4), REG_DMA3);
+    source -= stride;
+    destination -= stride;
+  }
+  Iwram_FillWords(base, stride, 0);
 }

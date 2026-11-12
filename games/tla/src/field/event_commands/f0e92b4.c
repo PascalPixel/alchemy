@@ -70,7 +70,6 @@ void Func_080e89e4(s32 direction);
 void Func_080e8b44(s32 direction, s32 phase, s32 amplitude);
 void Func_080e8c9c(void);
 void wait(s32 frames);
-void Sound_PlayFar(s32 cue);
 u32 Random16(void);
 s32 BattleEffect_GetObjectPriority(struct Actor *object);
 s32 BattleEffect_GetObjectDepth(struct Actor *object);
@@ -283,3 +282,250 @@ void Func_080e92b4(void) {
 end:
   HeapSlot_Release(92);
 }
+
+#include "heap_release.h"
+#include "view_move.h"
+
+// Field Psynergy kind 27 (BattleEffect_Run's case 27): the view sways.
+
+#define VIEW_MOVE_WORK_SIZE 0x1920
+
+/// The sway's amplitude (16.16 pixels) and how it ramps.
+#define SWAY_START 0x20000
+#define SWAY_PEAK 0x60000
+#define SWAY_RAMP 0x2666 ///< 0.15 pixels a frame
+#define SWAY_HOLD_FRAMES 10
+
+enum {
+  SWAY_GROW,
+  SWAY_HOLD,
+  SWAY_SHRINK,
+  SWAY_SETTLE,
+  SWAY_DONE = 999,
+};
+
+struct EffectScene {
+  u8 unk00[0x10];
+  void *mainObject;
+};
+
+void BattleEffect_SetObjectUpdateMode(void *object, s32 mode);
+
+/// Sways the view up and down the screen: the swing grows from 2 to 6 pixels,
+/// holds for 10 frames, shrinks back to 2 and stops; then the map's view
+/// bounds come back.
+void BattleEffect_RunViewSway(void) {
+  struct EffectScene *scene;
+  s32 phase;
+  s32 amplitude;
+  s32 state;
+  s32 frames;
+
+  HeapSlot_Alloc(HEAP_SLOT_VIEW_MOVE, VIEW_MOVE_WORK_SIZE);
+  scene = Ram_HeapSlots->effectWork;
+  BattleEffect_InitializeSharedScene();
+  BattleEffect_SetObjectUpdateMode(scene->mainObject, 0);
+  Func_080e89e4(VIEW_MOVE_Z);
+  wait(10);
+
+  phase = 0;
+  amplitude = SWAY_START;
+  state = SWAY_GROW;
+  frames = 0;
+  do {
+    Func_080e8b44(VIEW_MOVE_Z, phase++, amplitude);
+    switch (state) {
+    case SWAY_GROW:
+      amplitude += SWAY_RAMP;
+      if (amplitude >= SWAY_PEAK) {
+        state = SWAY_HOLD;
+        frames = -1;
+      }
+      break;
+    case SWAY_HOLD:
+      if (frames == SWAY_HOLD_FRAMES) {
+        state = SWAY_SHRINK;
+        frames = -1;
+      }
+      break;
+    case SWAY_SHRINK:
+      amplitude -= SWAY_RAMP;
+      if (amplitude <= SWAY_START) {
+        state = SWAY_SETTLE;
+        frames = -1;
+      }
+      break;
+    case SWAY_SETTLE:
+      amplitude = 0;
+      if (frames == 0)
+        state = SWAY_DONE;
+      break;
+    }
+    wait(1);
+    frames++;
+  } while (state != SWAY_DONE);
+
+  Func_080e8c9c();
+  BattleEffect_PrepareBufferInterpolation();
+  HeapSlot_Release(HEAP_SLOT_VIEW_MOVE);
+}
+
+/// A cycle of 96 colour levels (31 down to 0, 32 at 0, then 0 up to 31),
+/// read a third of a turn apart for red, green and blue.
+extern const u8 gData_080f0fe0[];
+
+/// The colour of field Psynergy kind 24's glow (Func_080e9940) for a step of
+/// its 24-step cycle and a brightness level (7 is neutral): three channels of
+/// the wave, each raised or lowered by the level and held to 0..31, packed as
+/// RGB555.
+// ⚓️'s form of ☀️'s GraphicsPalette_SetTintChannelsFromCounters.
+s32 Func_080e989c(s32 counter, s32 level) {
+  s16 phase;
+  s16 bias;
+  s16 red;
+  s16 green;
+  s16 blue;
+  s16 redLevel;
+  s32 step;
+  const u8 *wave;
+
+  step = (counter + 12) % 24;
+  wave = gData_080f0fe0;
+  phase = step * 4;
+  redLevel = wave[(s16)(phase % 96)];
+  bias = level - 7;
+  red = redLevel + bias;
+  green = wave[(phase + 32) % 96] + bias;
+  blue = wave[(phase + 64) % 96] + bias;
+  if (red < 0)
+    red = 0;
+  if (red > 31)
+    red = 31;
+  if (green < 0)
+    green = 0;
+  if (green > 31)
+    green = 31;
+  if (blue < 0)
+    blue = 0;
+  if (blue > 31)
+    blue = 31;
+  return (blue << 10) | (green << 5) | red;
+}
+
+#include "frame.h"
+
+#define OBJ_PALETTE_14 ((u16 *)0x050003c0)
+
+// The glow's strength, in frames: full at 112, and it fades out a frame at a
+// time once the player leaves the place that feeds it.
+#define GLOW_FULL 112
+#define GLOW_SPENT_CUE 0x2099
+
+// Kind 24's work (battle_fx_work[0]).
+struct GlowWork {
+  u8 unk0000[0x1000];
+  struct EffectSprite sprite;
+  s32 scale;
+  u8 unk102c[2];
+  u16 tile;
+  u8 unk1030[2];
+  u16 phase;
+  s16 fading;
+};
+
+struct GlowEvent {
+  u8 unk000[0x166];
+  u16 cue;
+  u8 unk168[0xbdc];
+  s16 glow;
+  s16 glowHeld;
+};
+
+s32 Party_GetLeaderActor(void);
+s32 Func_080dbcc0(s32 x, s32 z, s32 layer);
+void Camera_WorldToScreen(s32 *position);
+
+// Kind 24's frame callback: keeps the glow's strength full while the player
+// stands where Func_080dbcc0 allows, and runs it down otherwise (once it is
+// fading, the glow shrinks with it and the event takes its cue when it is
+// spent). It cycles OBJ palette 14 through Func_080e989c's colours, flickers
+// between two pictures every other frame, and draws the glow under the
+// player, flattened to three quarters of its height.
+void Func_080e9940(void) {
+  struct GlowWork *work = Ram_HeapSlots->battleFxWork[0];
+  struct Actor *player = ObjectTable_Get(Party_GetLeaderActor());
+  struct GlowEvent *event = Ram_HeapSlots->eventWork;
+  u16 *palette;
+  s32 position[3];
+  s32 level;
+  s32 i;
+  s32 scaleX;
+  s32 scaleY;
+  struct EffectSprite *sprite;
+
+  // The glow's strength.
+  if (Func_080dbcc0(player->x, player->z, player->terrainId) == 0) {
+    if (event->glowHeld != 0)
+      event->glow--;
+  } else {
+    event->glow = GLOW_FULL;
+  }
+
+  if (work->fading == 1) {
+    level = event->glow;
+    if (level > GLOW_FULL)
+      level = GLOW_FULL;
+    if (level < 0)
+      level = 0;
+    work->scale = (level << 15) / GLOW_FULL + 0x8000;
+    if (level == 0)
+      event->cue = GLOW_SPENT_CUE;
+  }
+
+  // Cycle the glow's colours; the last takes the 15th's level.
+  palette = OBJ_PALETTE_14;
+  for (i = 0; i < 16; i++) {
+    // The colour's store in a once-only block, which ends the scheduler's
+    // region there; as the plain store, 2 of 194 instructions differ in
+    // tla-en.
+    do {
+      *palette++ = Func_080e989c((((s16)work->phase >> 2) + i / 2) % 24,
+                                 i == 15 ? 14 : i);
+    } while (0);
+  }
+  work->phase++;
+
+  // Draw it under the player.
+  scaleX = work->scale;
+  scaleY = scaleX * 6 / 8;
+  sprite = &work->sprite;
+  sprite->oam.index = work->tile + ((gFrameCount >> 1) & 1) * 32;
+  sprite->oam.priority = BattleEffect_GetObjectPriority(player);
+  sprite->depth = BattleEffect_GetObjectDepth(player) - 1;
+  position[0] = player->x;
+  position[1] = player->y;
+  position[2] = player->z;
+  Camera_WorldToScreen(position);
+  sprite->x = position[0];
+  sprite->y = position[2];
+  sprite->scaleX = scaleX;
+  sprite->scaleY = scaleY;
+  Func_080eb01c(sprite);
+}
+
+struct ControlEvent {
+  u8 unk000[362];
+  u16 cue;
+};
+
+void Func_080e3d04(void);
+void Func_080e4a34(void);
+void Func_080e572c(void);
+void Func_080e5d5c(void);
+void Func_080e68d0(void);
+void Func_080e7844(void);
+void Func_080e9af4(void);
+void Func_080e74d8(void);
+
+/// Runs field Psynergy animation 24 for the dispatcher; the target is unused.
+void BattleEffect_CallEffect24(void) { Func_080e9af4(); }

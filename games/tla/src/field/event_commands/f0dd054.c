@@ -22,7 +22,7 @@ s32 Func_080ce31c(s32 kind);
 struct PendingEvent *Func_080ce458(u32 filter, s32 kind, s32 selector);
 void Actor_StartScriptFar(struct Actor *object, const void *script);
 void Animation_ApplyChildValuesFar(struct Actor *object, u32 values);
-void Vector_AddPolarOffset(s32 radius, s32 angle, struct Vec3 *position);
+void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position);
 u32 BattleEffect_GetCycledTableWord(u32 keys);
 s32 Func_08020210(struct Actor *object, struct Vec3 *position);
 struct Actor *ScriptObject_FindOverlappingEntryFar(struct Actor *object,
@@ -240,4 +240,63 @@ void Func_080dd054(void) {
   }
   BattleEffect_PrepareBufferInterpolation();
   UpdateRisingParticleBurst(pusher);
+}
+
+#include "system.h"
+#include "field_particle.h"
+
+void BattleEffect_ClearOwnedSlot(struct FieldParticle *);
+
+struct Output_08097f80 {
+  s32 x;
+  s32 y;
+  s32 z;
+};
+
+void BattleEffect_UpdateOrbitAndReturn(struct FieldParticle *effect) {
+  struct Output_08097f80 position;
+  s8 *statePointer = &effect->state;
+  s32 state;
+
+next_state:
+  state = *statePointer;
+  if (state == 0) {
+    u32 angle;
+
+    position.x = effect->originX;
+    position.z = effect->originZ;
+    angle = Random16();
+    Vector_AddPolarOffset(0x1e0000, (u16)angle, &position);
+    effect->targetX = position.x;
+    effect->targetZ = position.z;
+    effect->acceleration = 0x40000;
+    effect->maxSpeed = 0x40000;
+    effect->limitTurnStep = state;
+    (*statePointer)++;
+    return;
+  }
+
+  if (state == 1) {
+    if (FieldParticle_HasPendingTarget(effect) == 0) {
+      (*statePointer)++;
+      goto next_state;
+    }
+    return;
+  }
+
+  if (state == 2) {
+    effect->targetX = effect->originX;
+    effect->targetZ = effect->originZ;
+    {
+      u32 value = 0x400;
+
+      effect->maxTurnStep = value;
+    }
+    effect->limitTurnStep = 1;
+    (*statePointer)++;
+    return;
+  }
+
+  if (state == 3 && FieldParticle_HasPendingTarget(effect) == 0)
+    BattleEffect_ClearOwnedSlot(effect);
 }

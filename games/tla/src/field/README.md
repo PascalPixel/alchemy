@@ -6,8 +6,8 @@ the field's code is grouped in: [actor scripts](../../../tbs/glossary.md#actor-s
 (`script/`), the [map](../../../tbs/glossary.md#map)'s cells and animation
 (`map/`), [actors](../../../tbs/glossary.md#actor) (`object/`),
 [events](../../../tbs/glossary.md#event) (`event/`),
-[field effects](../../../tbs/glossary.md#field-effect) (`field_effect/`), the
-camera (`camera/`) and the ground heights (`map/`, their samples in
+[field effects](../../../tbs/glossary.md#field-effect) (`field_effect/`) and
+the ground heights (`map/`, their samples in
 `terrain/`). The bank that runs a scene is `field_sequence/`, the bank of
 event commands and field Psynergy is `event_commands/`, Lucky Dice and Lucky
 Wheels are `lucky_dice.c` and
@@ -20,21 +20,22 @@ explains how this code works.
 - `field_sequence.c` holds the start of the field-sequence bank as parts
   under `field_sequence/`, cut where The Broken Seal's are: encounters,
   actors, walking, the run, the palette editor, triggers, targets, items,
-  Psynergy and the treasure spots. The rest of the bank is still separate
-  files in `field_sequence/` and the family folders.
+  Psynergy and the treasure spots. The rest of the bank follows it as
+  objects of their own in ROM order, in `field_sequence/` and the family
+  folders.
   The main routine, which The Broken Seal also keeps in its System folder, is
   in [The Lost Age: system](../system/README.md).
 - `event_commands.c` holds the start of the event-command bank as parts under
   `event_commands/`: `event.c`, `requests.c` and `actor_commands.c`, as The
   Broken Seal's object begins. `object/step_angle.c` follows it as an object of
-  its own, since an overlay links it too; the rest of the bank is still
-  separate files.
+  its own, since an overlay links it too; the rest of the bank follows as
+  objects of their own in ROM order.
 - `field.c` holds the start of the field bank's C as parts under `field/`,
   cut where The Broken Seal's field.c parts are: `decompress.c` and
   `sprite_draw.c` so far. The rest of the bank's C follows it as 23 objects
   in ROM order, in `object/`, `script/`, `map/` and this folder.
 - The rest of the folder is grouped by family of the field's code rather than by The
-  Broken Seal's objects, one function or small family to a file. A family
+  Broken Seal's objects. A family
   folder holds its files whatever their bank (`object/` holds files of three
   banks). `work9c/` and `worka0/` are named for the
   [heap slot](../../../tbs/glossary.md#heap-slot) their code works in, by its

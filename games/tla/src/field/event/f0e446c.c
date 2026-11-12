@@ -81,3 +81,70 @@ void Func_080e446c(u8 *source, u8 *destination, s32 phase) {
     }
   }
 }
+
+#include "event_work.h"
+
+void Func_080e4510(struct EffectSprite *sprite, s32 tiles) {
+  struct EffectScene *scene = Ram_HeapSlots->effectWork;
+  struct EventWork *event = Ram_HeapSlots->eventWork;
+  s32 position[3];
+
+  Func_080eaf98(sprite, 16, 30, 0x80000000, tiles);
+  sprite->depth = BattleEffect_GetObjectDepth(scene->mainObject);
+  sprite->priority = BattleEffect_GetObjectPriority(scene->mainObject);
+  sprite->color = 1;
+  sprite->palette = 0;
+  if (event->controlMode == 3) {
+    sprite->scaleX = 0xc000;
+    sprite->scaleY = 0xc000;
+  } else {
+    sprite->scaleX = scene->mainObject->scaleX;
+    sprite->scaleY = scene->mainObject->scaleY;
+  }
+  position[0] = scene->mainObject->x;
+  position[1] = scene->mainObject->y;
+  position[2] = scene->mainObject->z;
+  Camera_WorldToScreen(position);
+  sprite->x = position[0];
+  sprite->y = position[2];
+}
+
+/// Forwards to Func_080eb01c, which draws an effect sprite.
+void Func_080e45a0(void *sprite) { Func_080eb01c(sprite); }
+
+void Func_080e45a8(struct EffectSprite *sprite, struct EffectParticle *particle,
+                   s32 unused, s32 tiles, s32 high) {
+  struct Actor *mainObject =
+      ((struct EffectScene *)Ram_HeapSlots->effectWork)->mainObject;
+  s32 position[3];
+  s32 y;
+
+  position[0] = mainObject->x;
+  position[1] = y = mainObject->y;
+  position[2] = mainObject->z;
+  if (high) {
+    position[1] = y + 0x20000;
+    Vector_AddPolarOffset(0x20000, Random16(), position);
+  } else {
+    Vector_AddPolarOffset(0x40000, Random16(), position);
+  }
+  particle->x = position[0];
+  particle->y = position[1];
+  particle->z = position[2];
+  position[2] = 0;
+  position[0] = 0;
+  if (high)
+    Vector_AddPolarOffset(0x3333, Random16(), position);
+  else
+    Vector_AddPolarOffset(0xcccc, Random16(), position);
+  particle->velocityX = position[0];
+  particle->velocityY = 0;
+  particle->velocityZ = position[2];
+  Func_080eaf98(sprite, 8, 8, 0x40000000, tiles);
+  sprite->scaleX = 0x3333;
+  sprite->scaleY = 0x3333;
+  sprite->priority = BattleEffect_GetObjectPriority(mainObject);
+  sprite->depth = BattleEffect_GetObjectDepth(mainObject) + 2;
+  sprite->color = 1;
+  sprite->palette = 0;
+}

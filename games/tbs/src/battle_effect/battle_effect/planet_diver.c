@@ -269,7 +269,6 @@ void BattleEffect_RunHaunt(struct BattleEffectParams *args) {
   void *canvas;
   s32 frame;
   BlitterPair draw;
-  struct BattleCamera *camera;
   u8 *palette;
   s32 i;
   s32 k;
@@ -305,10 +304,10 @@ void BattleEffect_RunHaunt(struct BattleEffectParams *args) {
 
   for (frame = 0; frame != work->args->targetCount * 32 + 96; frame++) {
     s32 *row;
-
     /* FAKEMATCH(temporary): camera copies gBattleCamera; as gBattleCamera at
      * each use, 156 of 379 instructions differ in tbs-en. */
-    camera = gBattleCamera;
+    struct BattleCamera *camera = gBattleCamera;
+
     // Frame loop: 32 frames a target, then 96 more. The battle shows the
     // damage on frame 96, whatever the number of targets.
     if (frame == 96)
@@ -441,7 +440,9 @@ void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectParams *args) {
     offsetX = 0;
   }
   for (frame = 0; frame != (work->args->targetCount * 16) + 48; frame++) {
-    struct BattleCamera *camera;
+    /* FAKEMATCH(temporary): camera copies gBattleCamera; as gBattleCamera at
+     * each use, 24 of 306 instructions differ in tbs-en. */
+    struct BattleCamera *camera = gBattleCamera;
     s32 *row;
     s32 i;
 
@@ -449,9 +450,6 @@ void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectParams *args) {
     // way (16.16 >> 10 is a quarter in BG2X's 20.8; the products keep the
     // signed sine out of a left shift). The wave is 64 lines long (1/64 turn
     // a line) and moves up a line each frame.
-    /* FAKEMATCH(temporary): camera copies gBattleCamera; as gBattleCamera at
-     * each use, 24 of 306 instructions differ in tbs-en. */
-    camera = gBattleCamera;
     row = work->bg2xLines;
     if (work->args->side == EFFECT_SIDE_ENEMIES) {
       s32 angle;

@@ -89,11 +89,10 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
   user->speedLimit = px(8);
   wait(20);
   for (frame = 0; frame != DEATH_PLUNGE_FRAMES; frame++) {
-    struct BattleCamera *camera;
-
     /* FAKEMATCH(temporary): camera copies gBattleCamera; as gBattleCamera at
      * each use, 126 of 363 instructions differ in tbs-en. */
-    camera = gBattleCamera;
+    struct BattleCamera *camera = gBattleCamera;
+
     EFFECT_VIEW_FROM_CAMERA(camera);
 
     // Frame 0: both leap at 15 pixels a frame. Frame 11: both turn upside

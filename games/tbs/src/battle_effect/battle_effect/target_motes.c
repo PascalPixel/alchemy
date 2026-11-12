@@ -427,11 +427,10 @@ void BattleEffect_RunSleep(struct BattleEffectParams *args) {
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   Sound_PlayFar(SE_SWIRL);
   for (frame = 0; frame != SLEEP_FRAMES; frame++) {
-    struct BattleCamera *camera;
-
     /* FAKEMATCH(temporary): camera copies gBattleCamera; as gBattleCamera at
      * each use, 106 of 272 instructions differ in tbs-en. */
-    camera = gBattleCamera;
+    struct BattleCamera *camera = gBattleCamera;
+
     if (frame == 80)
       EFFECT_SHOW_DAMAGE(0);
     EFFECT_FOR_EACH_TARGET(targetIndex, work->args) {

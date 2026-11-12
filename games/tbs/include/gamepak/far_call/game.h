@@ -5,12 +5,10 @@
 /// to recover and the summon flags, or an enemy record read as one for the
 /// enemy side.
 void *Djinn_GetRecoveryTableFar(s32 enemySide);
-#ifndef OWN_Unit_GetFar
 /// Returns the unit of a playable character or of an enemy in the
 /// current battle, or NULL for anything else; nearly every bank reads units
 /// this way.
 struct Unit *Unit_GetFar(u32 owner);
-#endif
 /// Works a unit's stats out again from its base stats, equipment, set Djinn,
 /// class and battle stat levels, keeping its HP and PP at the same fraction.
 void Unit_CalculateFar(s32 owner);

@@ -4,12 +4,6 @@
 /// crossfade behind them.
 
 #include "module/menu/credits.h"
-#ifdef UBFIX
-// This object uses the credits' views of the borrowed flash work cells.
-#define OWN_gProgramFlashSector
-#define OWN_gFlash
-#define OWN_gFlashNumRemainingBytes
-#endif
 #include "module/system/system.h"
 #include "flash.h"
 #include "flash_data.h"
@@ -312,13 +306,21 @@ extern u16 gWaitForFlashWrite;
 // UB: the native casts alias the flash declarations and store a pointer through
 // a declared u16. UBFIX gives these assembler-backed cells their credits views.
 #ifdef UBFIX
-extern struct CreditsOamEntry *gFlashNumRemainingBytes;
-extern s16 gFlash;
-extern s16 gProgramFlashSector;
+/* VIEW(credits): variable gFlashNumRemainingBytes as struct CreditsOamEntry
+ * *gFlashNumRemainingBytes__credits; flash.h has u16 gFlashNumRemainingBytes.
+ */
+extern struct CreditsOamEntry *
+    gFlashNumRemainingBytes__credits __asm__("gFlashNumRemainingBytes");
+/* VIEW(credits): variable gFlash as s16 gFlash__credits; flash_data.h has const
+ * struct FlashType *gFlash. */
+extern s16 gFlash__credits __asm__("gFlash");
+/* VIEW(credits): variable gProgramFlashSector as s16
+ * gProgramFlashSector__credits; flash.h has u32 gProgramFlashSector. */
+extern s16 gProgramFlashSector__credits __asm__("gProgramFlashSector");
 
-#define SCROLL_OBJECTS gFlashNumRemainingBytes
-#define CREDITS_LAST_LINE_POSITION gFlash
-#define CREDITS_END_OF_TEXT gProgramFlashSector
+#define SCROLL_OBJECTS gFlashNumRemainingBytes__credits
+#define CREDITS_LAST_LINE_POSITION gFlash__credits
+#define CREDITS_END_OF_TEXT gProgramFlashSector__credits
 #else
 #define SCROLL_OBJECTS (*(struct CreditsOamEntry **)&gFlashNumRemainingBytes)
 #define CREDITS_LAST_LINE_POSITION (*(s16 *)&gFlash)

@@ -8,12 +8,10 @@ void WindowSystem_InitFieldFar(void);
 /// Sets up the window system for battle; kind set reserves the glyph sprites'
 /// tiles, which Battle_Run asks for only during the Djinn lesson.
 void WindowSystem_InitBattleFar(s32 kind);
-#ifndef OWN_Window_CreateFar
 /// Opens a window at tile (x, y), width by height tiles, and waits for it to
 /// zoom open unless attrs has WINDOW_FLAG_INSTANT. Returns NULL when every
 /// window slot is taken.
 struct Window *Window_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 attrs);
-#endif
 /// Clears a window and closes it, at once with release set, else over four
 /// frames without waiting; Window_IsClosed says when its slot is free. NULL is
 /// ignored.
@@ -60,13 +58,11 @@ void Window_DrawDividerLineFar(struct Window *win, u32 x1, u32 y1, u32 x2,
 /// Decodes message and draws it all at once into window's text canvas at
 /// pixel (x, y), overwriting the ring of decoded text.
 void Text_DrawMessageFar(s32 message, struct Window *window, s32 x, s32 y);
-#ifndef OWN_Text_DrawMessageAsTilesFar
 /// Decodes the message numbered character and draws it as tiles in a window's
 /// interior at pixel (offsetX, offsetY), offsetY rounded down to a tile row;
 /// nothing is drawn off the tilemap.
 void Text_DrawMessageAsTilesFar(s32 character, const struct Window *position,
                                 u32 offsetX, u32 offsetY);
-#endif
 /// Draws a byte string of at most 255 characters into window's text canvas at
 /// pixel (x, y).
 void Text_DrawStringFar(const u8 *text, struct Window *window, s32 x, s32 y);
@@ -221,11 +217,9 @@ s16 DebugSceneSelect_RunFar(void);
 /// Debug: shows the game flags 256 at a time as a grid the player can toggle,
 /// starting on page 8. Returns 0.
 s32 DebugFlagEditor_RunFar(void);
-#ifndef OWN_Resource_LoadByModeIntoSlotFar
 /// Loads the icon of an entry of kind mode into sprite tile slot result, or a
 /// free one when it's -1, and returns the slot, or -1 when none is free.
 s32 Resource_LoadByModeIntoSlotFar(s32 mode, s32 value, s32 result, s32 option);
-#endif
 /// Marks the text tiles the tilemap shows and frees those it no longer shows;
 /// the field and battle menus call it as they redraw.
 void Window_MarkVisibleTextTilesFar(void);

@@ -239,10 +239,8 @@ STATIC_ASSERT(offsetof(struct MainRoutineWork, cloaked) == 0x24c);
 STATIC_ASSERT(offsetof(struct MainRoutineWork, linkTallies) == 0x2a4);
 STATIC_ASSERT(offsetof(struct MainRoutineWork, startStamp) == 0x2b8);
 
-#ifndef OWN_gMainRoutineWork
 /// The game's state (system/ewram.s).
 extern struct MainRoutineWork gMainRoutineWork;
-#endif
 
 /// Sets the battle type.
 // A statement macro (34 sites): written as one, its store stays in

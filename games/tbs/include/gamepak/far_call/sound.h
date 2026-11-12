@@ -7,11 +7,9 @@ void m4aSoundMainFar(void);
 /// Starts the sound driver and clears the music ramps and the sounds' state, at
 /// power-on.
 void Sound_InitializeFar(void);
-#ifndef OWN_Sound_PlayFar
 /// Plays a sound: a fade, a sound effect, a jingle or music. The whole game
 /// plays its sounds this way.
 void Sound_PlayFar(s32 id);
-#endif
 /// Steps the music's volume and tempo ramps once a VBlank and brings the music
 /// back after a jingle.
 void Sound_UpdateBgmRampsFar(void);

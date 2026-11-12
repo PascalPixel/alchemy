@@ -40,9 +40,7 @@ struct FlashSetupInfo {
 };
 
 /// The chip type IdentifyFlash installed.
-#ifndef OWN_gFlash
 extern const struct FlashType *gFlash;
-#endif
 /// The last entry of gFlash_Chips, taken for a chip not listed: SST's
 /// routines and timings with id 0 (pret's agb_flash calls it DefaultFlash).
 extern const struct FlashSetupInfo gFlash_ChipDefault;

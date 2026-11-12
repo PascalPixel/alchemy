@@ -140,11 +140,9 @@ extern const u8 PaletteFade_HalveNonzeroKernel[];
 extern const u8 PaletteFade_ScaleNonzeroThreeQuartersKernel[];
 /// Scales each pixel step to three quarters.
 extern const u8 PaletteFade_ScaleThreeQuartersKernel[];
-#ifndef OWN_gOamDepthLists
 /// The 256 depth slots' list heads that every drawn sprite is linked into
 /// (Oam_AddSpriteAtDepth); Oam_ResetFrame empties them each frame.
 extern void *gOamDepthLists[];
-#endif
 /// HEAP_SLOT_PARTY_STATUS: the party status window's layout (struct
 /// PartyStatusWindow), right after gWindowWork in IWRAM.
 extern u8 gPartyStatusWork[];
@@ -181,11 +179,9 @@ extern u16 gGraphics_ExpandNibbleTable[];
 /// HEAP_SLOT_SPRITES: the actor system's sprite pool, which the
 /// field animation and the sprite viewer walk.
 extern struct Sprite *gSprites;
-#ifndef OWN_Menu_CursorActorTiles
 /// The right-pointing arrow cursor, an 8x16 sprite of 256 colours, beside
 /// its left-pointing twin.
 extern const u8 gMenu_CursorActorTiles[];
-#endif
 /// The Japanese name entry screen's second keyboard, which Select switches to.
 extern const u8 gNameEntry_AlternateKeyboardTilemap[];
 /// Eight offsets, 0 to 3 and back, that make the name entry screen's caret
@@ -306,12 +302,10 @@ extern u8 Message_FindCodeSize[];
 /// The party status window's column lines, ended by -1: the Djinn column's
 /// first, then one between members.
 extern const s8 gWindow_PartyColumnOffsets[];
-#ifndef OWN_FarCall_BattleEffectTable
 /// The battle effect bank's far-call table, declared as a function so that a
 /// call reaches its first stub, BattleEffect_BuildBlitterFar; nothing in this
 /// game calls it by this name.
 s32 FarCall_BattleEffectTable(s32 slot, s32 width_shift, s32 height_shift,
                               s32 flags, u32 mode);
-#endif
 
 #endif

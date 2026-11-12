@@ -59,12 +59,10 @@ void Actor_StartMoveByKeysFar(struct Actor *actor);
 /// Runs SC_KEY_COUNT on an actor every frame, which the leader gets when
 /// gMainRoutineWork.movementMode is 2.
 void Actor_StartKeyCheckFar(struct Actor *actor);
-#ifndef OWN_Actor_CreateFar
 /// Creates an actor at (x, y, z) in 16.16 pixels, or returns 0 when every
 /// slot is in use (Actor_Create). `id / 4096` is its enum ActorCreateKind and
 /// the low 12 bits its sprite's animation id.
 struct Actor *Actor_CreateFar(s32 id, s32 x, s32 y, s32 z);
-#endif
 /// Releases an actor's sprites and zeroes it, so it can be handed out again.
 void Actor_ReleaseFar(struct Actor *actor);
 /// Puts an actor on the camera script (SC_CAMERA); following a leader, it
@@ -104,11 +102,9 @@ void Actor_StartIdleFar(struct Actor *actor);
 /// Waits until an actor's script reaches SC_END, giving up after 300 frames
 /// (five seconds).
 void Actor_WaitForScriptEndFar(void *raw);
-#ifndef OWN_Actor_SetMoveTargetFar
 /// Sends an actor towards (x, y, z) in 16.16 pixels, pulling the target in so
 /// it coasts to a stop there; within a pixel it arrives at once.
 void Actor_SetMoveTargetFar(struct Actor *actor, s32 x, s32 y, s32 z);
-#endif
 /// Waits until an actor reaches its target, giving up after 600 frames
 /// (ten seconds) with the actor still moving.
 void Actor_WaitForMoveFar(void *actor);

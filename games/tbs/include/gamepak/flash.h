@@ -44,35 +44,21 @@ extern u8 (*gFlashReadRoutine)(u8 *source);
 extern u32 gEraseFlashChip;
 /// The chip's erase-sector routine (handlers[2]).
 extern u32 gEraseFlashSector;
-#ifndef OWN_gFlashMaxTime
 /// The chip's wait-time table (FlashSetupInfo.maxTime).
 extern u16 *gFlashMaxTime;
-#endif
-#ifndef OWN_gFlashSavedIme
 /// REG_IME as StartFlashTimer found it, for StopFlashTimer to restore.
 extern u16 gFlashSavedIme;
-#endif
-#ifndef OWN_gFlashTimeoutFlag
 /// Set by FlashTimerIntr when the running operation's time is up.
 extern u8 gFlashTimeoutFlag;
-#endif
 /// The timer, 0 to 3, the flash library times its operations with.
 extern u8 gFlashTimerNum;
-#ifndef OWN_CountRemainingErasedFlashBytes
 s32 CountRemainingErasedFlashBytes(u8 *ptr);
-#endif
 s32 RunFlashEraseVerifier(u8 *sector, s32 (*verify)(u8 *));
-#ifndef OWN_StartFlashTimer
 void StartFlashTimer(u8 index);
-#endif
-#ifndef OWN_gProgramFlashSector
 /// The chip's program routine (FlashSetupInfo.handlers[0]), which
 /// Save_WriteSector calls.
 extern u32 gProgramFlashSector;
-#endif
-#ifndef OWN_gFlashNumRemainingBytes
 /// Bytes left of the sector being programmed.
 extern u16 gFlashNumRemainingBytes;
-#endif
 
 #endif

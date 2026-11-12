@@ -99,17 +99,13 @@ struct FloodgateLog;
 extern struct FloodgateLog *gKolimaForestFloodgateRecords;
 /// The short log's place in gSceneLocalState's first halfword: 1 west, 0 east.
 extern u16 *gKolimaForestFloodgateReturned;
-#ifndef OWN_gActors
 /// Heap slot 5: the 64 actors, 112 bytes each.
 extern struct Actor *gActors;
-#endif
 /// The world map camera's yaw the scanline parameters were built for; the
 /// vertex update rebuilds them when it changes.
 extern u32 gScanlineAngle;
-#ifndef OWN_gScanlinePitch
 /// The world map camera's pitch the scanline parameters were built for.
 extern u32 gScanlinePitch;
-#endif
 /// The lighthouse transition's pictures, packed (tagged LZ), decoded 4 KB
 /// bytes after the tiles (WorldMap_PlayLighthouseTransition).
 extern const u8 gWorldMapPackedPictures[];
@@ -205,24 +201,18 @@ extern const u8 gActor_VariantScripts[];
 extern u8 gHeatGauge_Tiles[];
 /// The gauge's 16 colours, loaded as OBJ palette 14.
 extern const u16 gHeatGauge_Palette[16];
-#ifndef OWN_HeatGauge_Held
 /// 1 while the gauge is held on screen (HeatGauge_SetHeld).
 extern u16 gHeatGauge_Held;
-#endif
 /// The gauge's decoded tiles, which each frame's drawing starts from.
 extern u8 gHeatGauge_TileBuffer[];
-#ifndef OWN_HeatGauge_VramSlot
 /// The VRAM cache entry holding the gauge's tiles.
 extern u16 gHeatGauge_VramSlot;
-#endif
 /// The gauge's five sprites: four 16x32 ones down the screen's left edge and a
 /// 16x16 cap at its foot.
 extern struct MenuSprite gHeatGauge_Sprites[];
-#ifndef OWN_Render_DecodePicture
 /// The sprite picture decoder, ARM code run from a copy in
 /// HEAP_SLOT_FRAME_SCRATCH.
 extern u8 Render_DecodePicture[];
-#endif
 /// The statue scene's three scrolling strips, packed (Decompress_ByteLz).
 extern u8 gSolSanctumStatue_SpriteRowsGraphics[];
 /// The six large things' sprite animations, which pick their footprints in
@@ -239,11 +229,7 @@ extern const s32 gWorldMap_FootprintActions[6];
 extern const s16 gWorldMap_KeyHeadings[16];
 s32 FarCall_LuckyWheelsTable(s32 entrance);
 s32 FarCall_LuckyDiceTable(s32 entrance);
-#ifndef OWN_Map_PrepareActors
-#endif
 void WorldMap_StartStillPicture(void);
-#ifndef OWN_Actor_Destroy
-#endif
 
 // The field effects' scripts and tables (field/field_sequence_tables.c,
 // scripts.s and spark_tiles.s).

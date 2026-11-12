@@ -66,10 +66,8 @@ extern const u8 gMenu_QuantityTiles[];
 extern const char gDjinnMenu_TextLevel[];
 /// `/`, between the Djinn menu's numbers.
 extern const char gDjinnMenu_TextSlash[];
-#ifndef OWN_gActorSystemWork
 /// Heap slot 6: the actor system's work (struct ActorSystemWork).
 extern struct ActorSystemWork *gActorSystemWork;
-#endif
 /// The number text buffer: String_FormatHex writes eight digits and
 /// String_FormatDecimal eleven characters, right-aligned, each with a
 /// terminator. The debug text routines and the Djinn preview's numbers
@@ -77,11 +75,9 @@ extern struct ActorSystemWork *gActorSystemWork;
 extern u8 gNumberBuffer[];
 /// Heap slot 18: the selection screen while it runs.
 extern struct SelectionMenuWork *gSelectionMenuWork;
-#ifndef OWN_gTitleBattleOptionEnabled
 /// Read as a halfword: nonzero offers Battle on the File Screen, when a file
 /// has any of game flags 48 to 127 set.
 extern u8 gTitleBattleOptionEnabled[];
-#endif
 /// The Japanese item menu's help: `L+A:`, before the arrange help.
 extern u8 gItemMenu_ArrangeKeysString[];
 extern s32 gItemMenu_CommandColumnXTable[];
@@ -91,11 +87,9 @@ extern u8 gItemMenu_EquipmentKeyString[];
 /// frame; the Djinn preview blinks it, drawing it and a fill of the window
 /// background (TEXT_CANVAS_BACKGROUND_WORD) in turn every four frames.
 extern const u8 gMenu_BackdropBorderTile[];
-#ifndef OWN_Menu_ColonString
 /// The colon the debug menus' scene and flag rows draw
 /// (window/screens/debug.c): `:`.
 extern const u8 gMenu_ColonString[];
-#endif
 /// The selection screen's left arrow, 8 by 16 at 256 colours
 /// (graphics/ui/sprite_cursors/left).
 extern u8 gMenu_CursorLeftActorTiles[];
@@ -104,10 +98,8 @@ extern const u8 gMenu_HexDigitsString[];
 /// The HP label: `HP`; `KP` in German, `PV` in Spanish and French, `PS` in
 /// Italian.
 extern const u8 gMenu_HpString[];
-#ifndef OWN_Menu_LvString
 /// The Status screen's level label: `Lv`; `Nv.` in Spanish, `Niv` in French.
 extern const u8 gMenu_LvString[];
-#endif
 /// The four Djinn sprites, one per element from SPRITE_VENUS_DJINNI to
 /// SPRITE_JUPITER_DJINNI, that FileList_ShowDjinnSprites shows in a row.
 extern const s32 gFileList_DjinnSpriteIds[4];
@@ -157,9 +149,7 @@ extern u8 gDebugMenu_StatusTitle[];
 extern const u16 gSettingsMenu_SliderPalette[];
 /// The settings menu's slider, 32 by 8 (slider.4bpp32x8).
 extern const u8 gSettingsMenu_SliderTiles[];
-#ifndef OWN_Ability_GetData
 struct AbilityDefinition *Ability_GetData(s32 abilityId);
-#endif
 s32 Item_FindSlot(s32 unitId, s32 item_id);
 void Import_TitleShowCamelotLogo(s32 mode);
 void Import_CreditsRun(s32 mode);

@@ -131,33 +131,23 @@ extern s8 gBattleHighlight_BlendRamp[];
 /// The 104 encounter zones (encounter_zones.c), read as struct EncounterZone
 /// rows.
 extern u16 gEncounterZones[];
-#ifndef OWN_gMindReadWork
 /// The HEAP_SLOT_MIND_READ heap slot: Mind Read's wave work while its effect
 /// runs.
 extern struct MindReadWork *gMindReadWork;
-#endif
-#ifndef OWN_gBattleEffectWork
 /// The heap slots from HEAP_SLOT_BATTLE_EFFECT, then the canvas and sheet:
 /// the running battle effect's BattleEffectWork first.
 extern void *gBattleEffectWork[];
-#endif
-#ifndef OWN_gEnemyUnits
 /// The HEAP_SLOT_ENEMY_UNITS heap slot: the six enemy battle units,
 /// BATTLE_UNIT_SIZE bytes each, that Unit_Get returns for unit ids 128 to 133
 /// during a battle.
 extern u8 *gEnemyUnits;
-#endif
-#ifndef OWN_gRandomSeed
 /// Random16's seed; Lucky Wheels seeds it with the play time, and a link
 /// battle's parent sends it as the turn's gBattleRandomSeed.
 extern u32 gRandomSeed;
-#endif
-#ifndef OWN_gBattleBackgroundWork
 /// The HEAP_SLOT_BATTLE_BACKGROUND heap slot: the camera's turn, which
 /// staging.c, auto_battle.c and turn.c set for each action, and the
 /// background's display mode.
 extern struct BattleBackgroundWork *gBattleBackgroundWork;
-#endif
 /// SC_FACE_WATCHED every frame, forever: the script of an actor told to
 /// keep facing its watched actor.
 extern const u8 gActor_FaceWatchedScript[];
@@ -185,14 +175,10 @@ extern const u8 gWorldMap_MarkerBlendCycle[];
 /// actor id with no marker.
 extern const s32 gWorldPicture_AreaMarkers[];
 u32 __udivsi3(u32 numerator, u32 denominator);
-#ifndef OWN__call_via_r0
 void _call_via_r0(u32 routine);
-#endif
 void BitDecoder_DecodeImage(void);
 void FarCall_WindowTable(void);
 struct Sprite *GetBattleEffectObject(s32 kind);
-#ifndef OWN_Actor_InitializeMode
-#endif
 
 /// BattleMotion_ApplyKnockback's knockbacks, the columns of the
 /// gBattleKnockback_* tables in knockback_tables.s. Each is named by how far

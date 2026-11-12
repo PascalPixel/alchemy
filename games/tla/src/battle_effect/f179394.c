@@ -77,7 +77,7 @@ void Transform_Pop(void);
 #define SLOT_BLITTER 104 // unk64[1]
 
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
-#define HI(v) (((s16 *)&(v))[1])
+#define HI(v) (((s16 *)&(v))[1]) // the pixel half of a 16.16 value
 
 void Func_0815f0a0(s32 palette);
 
@@ -343,8 +343,6 @@ enum {
 
 // The transform entry as The Broken Seal types it.
 #define TransformVector ((s32 (*)(const void *, s32 *))Iwram_TransformVector)
-
-// The pixel half of a 16.16 value.
 
 extern char ResourceId_SmallFlameSheet;
 

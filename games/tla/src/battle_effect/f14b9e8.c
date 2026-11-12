@@ -72,7 +72,7 @@ void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_ProcessPendingGraphicsTransfer(
     void); // ☀️ ProcessPendingGraphicsTransfer
 void BattleEffect_CountDownBattlerTints(void);
-void Func_081180e8(s32 phase); // ☀️ BattleEvent_StartPhaseFar
+void Func_081180e8(s32 phase); // BattlePlayback_StartFar
 s32 BattleEffect_LoadBlitter(s32 slot,
                              s32 flags); // ☀️ BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,

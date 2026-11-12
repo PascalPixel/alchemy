@@ -747,9 +747,6 @@ static __inline__ s32 FillWords_(void *destination, s32 size, u32 value) {
   return Iwram_FillWords(destination, size, value);
 }
 
-// The heap blocks the dispatcher hands every canvas effect, as byte offsets
-// into Ram_HeapSlots (☀️ uses slot indices).
-
 // The map cell buffer: first a 256 x 128 picture the streams draw into (BG1's
 // tiles), then, in the second act, the flashes and the embers.
 #define FLASHES ((struct EffectStep *)Ram_MapCellBuffer)
@@ -3985,12 +3982,8 @@ void Graphics_SetBg2AffineScaleHalf(void) { REG_BG2PA = Q_8_8(0.5); }
 
 #include "irq.h"
 
-struct FxPartyList;
-
-// The pixel half of a 16.16 fixed-point value.
-
-// The map cell buffer holds the spray (and, at the start, the serpent's
-// tiles and the window's column noise).
+// Here PARTICLES, the map cell buffer, holds the spray (and, at the start,
+// the serpent's tiles and the window's column noise).
 
 #define SERPENT_PARTS 8 // four across, two down, 48 pixels apart
 #define SPRAY_COUNT 1024
@@ -4024,8 +4017,6 @@ struct SpriteObject {
   u8 slot;
 };
 
-struct ScaledSprite;
-
 // The Broken Seal's typed inline from iwram_call.h, the layer every call goes
 // through there.
 #undef Iwram_CopyWords
@@ -4040,26 +4031,14 @@ static inline s32 Iwram_CopyWords(volatile void *destination,
 extern u8 gMapCellBuffer[];
 extern char ResourceId_SeaSerpentTiles;
 extern char ResourceId_DuskCloudsBackdrop;
-extern char ResourceId_Data134; // ☀️ ParticleSpritesA
 extern char ResourceId_ParticleSpritesD;
 extern char ResourceId_BlueFlameSheet;
 extern struct Scale Data_08196e8c; // the serpent's scale
 extern u16 Data_08197424[];        // the sparkle cells by size
 extern s32 Data_08198aec[];        // the spray's four gravities
-extern u16 gData_08197410[];       // ☀️ gBattleEffect_MoteCells
 
-s32 BattleEffect_LoadBlitter(
-    s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter(slot,
-                                 // 7, 7, flags, mode)
-void BattleEffect_SelectLivingTargets(struct FxPartyList *party);
 void Func_08143eb4(s32 x0, s32 y0, s32 x1, s32 y1,
                    s32 width); // BattleEffect_DrawClippedCanvasLine
-void Func_0814cca8(void);      // BattleEffect_SetupBlendedDisplay
-void Func_081180e8(s32 phase); // BattlePlayback_StartFar
-void Func_08118088(s32 actor,
-                   s32 variant); // BattleMotion_ApplyVariantMotionFar
-void Func_0814cd48(s32 actor, s32 palette, s32 a, s32 timer,
-                   s32 frames); // BattleEffect_TintBattler
 void BattleEffect_BuildWindowEdgeTable(void);
 
 // Summon 6: at dusk the window opens on a sea; a great serpent rises out of
@@ -4635,12 +4614,6 @@ void BattleEffect_RunTwinShear(s32 a0) { Func_0816a2d8(a0, 5); }
 
 #undef RESULTS_FRAME
 
-// The heap blocks the dispatcher hands every canvas effect, as byte offsets
-// into Ram_HeapSlots (☀️ uses slot indices).
-
-// BattleEffect_LoadBlitter's argument: The Lost Age's blitter mode in the high
-// nibble, the COMPOSITE_ flags in the low one.
-
 // Each of the four pictures is PICTURE_SIZE pixels square; the reflected
 // variant's are half as tall.
 #define PICTURE_SIZE 120
@@ -4662,18 +4635,7 @@ extern char ResourceId_RevealMaskD;
 extern char ResourceId_RevealMaskE;
 extern char ResourceId_RevealMaskF;
 
-s32 BattleEffect_LoadBlitter(
-    s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter(slot,
-                                 // 7, 7, flags, mode)
-void Func_081180e8(s32 phase);   // BattlePlayback_StartFar
-void Func_08118088(s32 actor,
-                   s32 variant); // BattleMotion_ApplyVariantMotionFar
 void SummonEffect_RunCanvasMode2(void *action);
-
-// The target is a whole word here: variant 3 passes the user twice, loaded once
-// and copied, where an s16 parameter would load it again halved.
-void BattleMotion_ApproachTargetFar(s32 actor, s32 target, s32 frames,
-                                    s32 jumpVelocity);
 
 // A picture flashes up over the target (four pictures, four frames each), the
 // canvas floods with one colour, and the target is struck.
@@ -4742,6 +4704,8 @@ void Func_0816a2d8(struct BattleEffectArgument *effect, s32 variant) {
     BattleMotion_ApproachTargetFar(effect->actor, effect->actors[0], 16,
                                    0x80000);
   else if (variant == 3)
+    // The target is a whole word: the user, passed twice, is loaded once and
+    // copied, where an s16 parameter would load it again halved.
     BattleMotion_ApproachTargetFar(effect->actor, effect->actor, 16, 0xa0000);
   else if (variant == 4) {
     struct MotionObject *user = GetBattleObjectSlotFar(effect->actor)->object;
@@ -4852,8 +4816,6 @@ void Func_0816a2d8(struct BattleEffectArgument *effect, s32 variant) {
   }
 }
 
-// The pixel half of a 16.16 fixed-point value.
-
 #define SPARK_COUNT 16
 #define SPARK_LIFE 28
 #define BLAST_SHEET_OFFSET 0x460
@@ -4866,15 +4828,9 @@ void Func_0816a2d8(struct BattleEffectArgument *effect, s32 variant) {
 
 #define PHASE_HIT 212
 
-extern char ResourceId_Data134; // ☀️ ParticleSpritesA
 extern char ResourceId_LimeColumnSheet;
 extern const u16 gData_08198afc[]; // ☀️ gUndeadSword_SparkCells
 extern const u16 gData_08198b0a[]; // ☀️ gUndeadSword_SparkSizes
-
-void Func_0814cd48(s32 actor, s32 palette, s32 a, s32 timer,
-                   s32 frames); // BattleEffect_TintBattler
-s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
-                  u32 mode); // BattleEffect_BuildBlitter
 
 // Two lime columns burst out of the ground under the target and a spray of
 // sparks flies up between them.

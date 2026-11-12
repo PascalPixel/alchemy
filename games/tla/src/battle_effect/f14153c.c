@@ -44,7 +44,7 @@ void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
 void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
 void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
 void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen,
-                   s32 *world);
+                   s32 *world); // BattleEffect_RunDjinniEntrance
 void Func_0818caa8(void *cells, s32 x, s32 y, s32 size);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
@@ -135,7 +135,8 @@ extern struct EffectStep gData_02014000[];
 extern u8 Data_02010400[];
 extern u8 Data_02010800[];
 extern u8 Data_02011000[];
-extern u8 Data_02012000[];
+extern u8
+    Data_02012000[]; // the crystal texture and the flashes, after the map cells
 extern u8 Data_02012800[];
 extern u32 gCameraSceneParameters[];
 extern const struct WordPair Data_08196de0;
@@ -147,10 +148,11 @@ extern const u8 Data_081977a4[];
 extern const u8 Data_081977c4[];
 extern const u8 Data_081977e4[];
 extern const s8 Data_081977e8[];
-extern u16 gData_08197410[];
-extern u16 gData_08197486[];
-extern u8 gData_08197492[];
-extern u8 gData_08197498[];
+extern u16 gData_08197410[]; // ☀️ gBattleEffect_MoteCells: dot sizes 1 to 10,
+                             // cell offsets in the sheet
+extern u16 gData_08197486[]; // ☀️ gBattleEffect_GlintCells
+extern u8 gData_08197492[];  // ☀️ gBattleEffect_GlintCellWidths
+extern u8 gData_08197498[];  // ☀️ gBattleEffect_GlintCellHeights
 extern const u8 gData_081991b0[];
 extern const u8 Data_081991c0[];
 extern const u8 gData_08199210[];
@@ -168,7 +170,7 @@ void VramBlock_Reset93Far(void);
 void BattleBackground_LoadFar(s32 layer, s32 background, s32 palette);
 s32 Resource_DecodeType01(const void *source, void *destination);
 s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
-                  u32 mode);
+                  u32 mode); // BattleEffect_BuildBlitter
 void Func_08020388(void);
 s32 VramCache_AllocEntry(s32 size);
 void Palette_LoadBasicObjColors(void);
@@ -959,23 +961,18 @@ extern u8 Data_081977ec[];
 extern u8 Data_081977f0[];
 extern u8 Data_081977f4[];
 
-// The models: the rings' quad, its corners, the crystal and its corners.
-extern const u8 Data_08199220[];
+// The models: the rings' quad (Data_08199220), its corners, the crystal and its
+// corners.
 extern const u8 gData_081990d0[];
 extern const u8 gData_08199090[];
 
-// The crystal texture and the flashes live in EWRAM after the map cells.
-extern u8 Data_02012000[];
-
-extern char ResourceId_FlashBurstSheet;
-extern char ResourceId_Data0C9;
+extern char ResourceId_FlashBurstSheet; // directory row 0x13e
 extern char ResourceId_Data0DA;
-extern char ResourceId_OrangePaletteB;
+extern char ResourceId_OrangePaletteB; // directory row 0x148
 extern char ResourceId_EffectPalette03;
 
-void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
-                   s32 timerFrames); // BattleEffect_TintBattler
-void Func_08164a4c(s32 blueDelta, s32 greenDelta, s32 redDelta);
+void Func_08164a4c(s32 blueDelta, s32 greenDelta,
+                   s32 redDelta); // Palette_BrightenBgEntries
 void Func_08118150(s32 kind);
 
 // Rings and crystals gather on the user, for the scenes.
@@ -2014,17 +2011,10 @@ void Func_08143eb4(s32 x0, s32 y0, s32 x1, s32 y1, s32 color) {
 // The skulls live in the map buffer, 64 for each target.
 #define PARTICLES ((struct EffectStep *)Ram_MapCellBuffer)
 
-// The canvas routines every effect shares, with their Broken Seal names.
-void BattleEffect_CountDownBattlerTints(void);
-void Func_081180e8(s32 phase); // BattlePlayback_StartFar
-void Func_0814cd48(s32 actor, s32 palette, s32 duration, s32 timer,
-                   s32 frames); // BattleEffect_TintBattler
-void BattleEffect_FetchRectangleBlitters(
-    s32 flip, void **out); // ..FetchRectangleBlitters
 void SceneTransform_ApplyPosition(const s32 *pos);
 
 extern char ResourceId_SkullSheet;
-extern char ResourceId_PinkBurstSheet;
+extern char ResourceId_PinkBurstSheet; // directory row 0x17f
 
 #define SKULLS 8 // per target
 #define SKULL_SIZE 24
@@ -2149,11 +2139,6 @@ void BattleEffect_RunHaunt(struct BattleEffectArgument *effect) {
 #define HEAP_OFFSET(field) ((s32)&((struct HeapSlots *)0)->field)
 #define HEAP_BLITTER HEAP_OFFSET(unk64[1])
 #define HEAP_BLITTER_ALTERNATE HEAP_OFFSET(unkb8[1])
-
-// The blitter generator's modes, The Broken Seal's in reverse order.
-
-s32 BattleEffect_LoadBlitter(s32 slot,
-                             s32 modeAndFlags); // BattleEffect_BuildBlitter
 
 extern char ResourceId_SpiralSheet;
 
@@ -2295,7 +2280,7 @@ void Func_0815b634(void);                // mode 3 only
 
 extern char ResourceId_MemberBurstImage;
 
-extern char ResourceId_MarsDjinnSheet;
+extern char ResourceId_MarsDjinnSheet; // directory row 0x150
 extern char ResourceId_MercuryDjinnSheet;
 // Per mode: how many motes each target gets, and the effect's frame count
 // before the targets' share.
@@ -2542,9 +2527,6 @@ DEFINE_EFFECT_KIND(BattleEffect_RunDew, Func_08144b14, 1)
 DEFINE_EFFECT_KIND(BattleEffect_RunSpark, Func_08144b14, 2)
 
 #include "transform.h"
-
-void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen,
-                   s32 *world); // BattleEffect_RunDjinniEntrance
 
 extern char ResourceId_EarthWallSheet;
 extern char ResourceId_CrescentMoonSheet;
@@ -2797,10 +2779,10 @@ void SummonEffect_RunCanvasMode1(void *action);
 void SummonEffect_RunCanvasMode3(void *action);
 
 extern char ResourceId_GoldShellSheet;
-extern char ResourceId_SmokeSheet;
+extern char ResourceId_SmokeSheet; // directory row 0x161
 extern char ResourceId_BluePalette;
 extern char ResourceId_SpiderWebSheet;
-extern char ResourceId_LimePalette;
+extern char ResourceId_LimePalette; // directory row 0x163
 extern char ResourceId_GreenPalette;
 
 // Each mode's record: whether its shots burst into shards (else into smoke),
@@ -3050,8 +3032,6 @@ void Func_0814512c(struct BattleEffectArgument *effect, s32 mode) {
     BattleEffect_EndCanvasLayer();
   }
 }
-
-void Func_08118088(s32 actor, s32 variant); // ..ApplyVariantMotionFar
 
 extern char ResourceId_CounterRevealSheet;
 extern char ResourceId_RedCrescentSheetA;
@@ -3358,11 +3338,9 @@ void Graphics_ConvertBackgroundToBlueRamp(void) {
 
 void Func_081496c8(s32 frame, s32 redPhase, s32 greenPhase,
                    s32 bluePhase); // Graphics_UpdatePhasePalette
-void Func_080150e4(s32 angle);     // SceneTransform_ApplyRoll
 void Func_080151ac(s32 *scale);    // SceneTransform_ApplyScale
 
 extern char ResourceId_RuneSheet;
-extern char ResourceId_Data134;
 extern char ResourceId_ParticleSpritesD;
 extern char ResourceId_JupiterDjinnSheet;
 extern s32 Data_0819790c[]; // the triangle's first corner: (0, 24, 0)
@@ -3681,7 +3659,6 @@ struct CameraView {
 };
 
 extern s32 gData_08197924[]; // the two ring points, alternating
-extern u16 gData_08197410[]; // dot sizes 1 to 10: cell offsets in the sheet
 
 #define BOLT_COUNT 3
 #define RING_POINTS 10
@@ -4033,13 +4010,7 @@ void BattleEffect_RunShiningStar(struct BattleEffectArgument *effect) {
 // declaration order; wave and drift in a block opened after the blitter fetch,
 // whose spill slots fall below the pointer to draw.
 
-struct FxPartyList;
-
-void BattleEffect_SelectLivingTargets(
-    struct FxPartyList *party); // ..SelectLivingTargets
-void BattleEffect_SpawnObjects(s32 entryCount, s32 kind,
-                               u32 variant); // ..SpawnObjects
-void Func_0814cca8(void);                    // BattleEffect_SetupBlendedDisplay
+void Func_0814cca8(void); // BattleEffect_SetupBlendedDisplay
 
 s32 ArcTan2(s32 x, s32 y);
 u32 Math_UnsignedMulHigh(u32 value, u32 magic);
@@ -4608,21 +4579,20 @@ DEFINE_EFFECT_KIND(BattleEffect_RunTiamat, Func_08147aec, 0)
 // The high halfword of a 16.16 value: its whole pixels.
 #define HI(v) (((s16 *)&(v))[1])
 
-void Func_0816442c(s32 formation, s32 x, s32 y);  // ..PlaceFormationObjects
-void Func_0816467c(s32 formation, s32 x, s32 y);  // ..RunImpactBurst
-void Func_08164a4c(s32 blue, s32 green, s32 red); // Palette_BrightenBgEntries
+void Func_0816442c(s32 formation, s32 x, s32 y); // ..PlaceFormationObjects
+void Func_0816467c(s32 formation, s32 x, s32 y); // ..RunImpactBurst
 void Animation_ApplyChildArgumentFar(void *object, s32 animation);
 
 extern char ResourceId_EmberStreakSheet;
 
-extern char ResourceId_LightningBoltSheet;
-extern u8 Data_08197968[];  // a grain's added speed, by grain
-extern u8 Data_0819796c[];  // a spark's two pixels
-extern u8 Data_0819796e[];  // a grain's size, by grain
-extern u8 Data_08197972[];  // the streak's six pictures: widths
-extern u8 Data_08197978[];  // ... heights
-extern u8 Data_0819797e[];  // ... drops below the streak
-extern u16 Data_08197984[]; // ... cell offsets
+extern char ResourceId_LightningBoltSheet; // directory row 0x188
+extern u8 Data_08197968[];                 // a grain's added speed, by grain
+extern u8 Data_0819796c[];                 // a spark's two pixels
+extern u8 Data_0819796e[];                 // a grain's size, by grain
+extern u8 Data_08197972[];                 // the streak's six pictures: widths
+extern u8 Data_08197978[];                 // ... heights
+extern u8 Data_0819797e[];                 // ... drops below the streak
+extern u16 Data_08197984[];                // ... cell offsets
 
 #define STREAK_SHEET 0x3000 // the ember streaks, after the flashes
 #define FORMATION_RESOURCE 647
@@ -5024,7 +4994,7 @@ void Func_08147aec(struct BattleEffectArgument *effect, s32 mode) {
 // Nereid, summon 2.
 
 extern char ResourceId_WaterSpraySheet;
-extern char ResourceId_FirePillarSheetA;
+extern char ResourceId_FirePillarSheetA; // directory row 0x146
 
 extern u8 Data_08197990[];  // the three columns' feet, x and y
 extern s32 Data_08197998[]; // a falling spark's gravity, by spark
@@ -5440,12 +5410,8 @@ void BattleEffect_RunFroth(struct BattleEffectArgument *effect) {
 #define GLINT_COUNT 16 // four glints for each of up to four funnels
 #define GLINT_CELS 6   // three cels of two frames each
 
-extern char ResourceId_TornadoSheet;
-
 // ☀️ gVortices_Shapes: funnels, sway radius and shake, for each variant.
 extern u8 gData_081979ae[];
-// ☀️ gBattleEffect_GlintCells, Widths and Heights.
-extern u16 gData_08197486[];
 
 // One to four funnels of wind sway across the targets for 80 frames, each
 // drawn as three stacked segments with glints swirling around it; the canvas
@@ -5787,22 +5753,9 @@ struct CameraWork {
 extern char ResourceId_LightningPillarSheet; // directory row 0x194
 extern char ResourceId_VioletPaletteB;       // directory row 0x122
 
-extern u8 Data_081979da[];   // ☀️ gPlasma_Counts
-extern u8 Data_081979cc[];   // ☀️ gPlasma_Columns, 7 for each side
-extern u16 Data_081979c0[];  // ☀️ gPlasma_Sparks: sparks, shake
-extern u16 gData_08197410[]; // ☀️ gBattleEffect_MoteCells
-
-// ☀️ ProcessPendingGraphicsTransfer
-void BattleEffect_ProcessPendingGraphicsTransfer(
-    void); // ☀️ ProcessPendingGraphicsTransfer
-// ☀️ BattleEvent_StartPhaseFar
-void Func_081180e8(s32 phase);             // ☀️ BattleEvent_StartPhaseFar
-void Func_08118088(s32 actor, s32 motion); // ☀️ ApplyVariantMotionFar
-// ☀️ BattleEffect_BuildBlitter
-s32 BattleEffect_LoadBlitter(s32 slot,
-                             s32 flags); // ☀️ BattleEffect_BuildBlitter
-void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
-                   s32 timerFrames); // ☀️ BattleEffect_TintBattler
+extern u8 Data_081979da[];  // ☀️ gPlasma_Counts
+extern u8 Data_081979cc[];  // ☀️ gPlasma_Columns, 7 for each side
+extern u16 Data_081979c0[]; // ☀️ gPlasma_Sparks: sparks, shake
 
 // Pillars of lightning strike the targets' row one after another, eight
 // frames apart; each flashes the screen, throws a fan of sparks up from its
@@ -5977,8 +5930,6 @@ DEFINE_EFFECT_KIND(BattleEffect_RunNova, BattleEffect_RunSparkGroups, 0)
 /// Abilities: Dynamite, Angry Mine (kind 338).
 DEFINE_EFFECT_KIND(BattleEffect_RunDynamite, BattleEffect_RunSparkGroups, 1)
 
-// The pixel half of a 16.16 value.
-
 #define FLASH_POINTS 16 // flash points kept for each group
 #define FLASH_DRAWN 12  // of which the first 12 are drawn
 #define FLASH_FRAMES 18 // six cels of three frames
@@ -5991,21 +5942,10 @@ enum {
   SPARKS_FROM_ACTOR // from the caster, lightning colours, sparks rising
 };
 
-extern char ResourceId_FlashBurstSheet; // directory row 0x13e
-
-extern char ResourceId_OrangePaletteB;     // directory row 0x148
-extern char ResourceId_LightningBoltSheet; // directory row 0x188
-
 // ☀️ gPlasma_Shapes, five halfwords for each variant: sparks in each
 // group, groups, and each group's x offset.
 extern u16 Data_081979de[][5];
 extern u8 Data_08197a1a[]; // ☀️ gPlasma_FlashCells
-
-// The sparks live in the map cell buffer.
-extern u8 gMapCellBuffer[];
-
-void BattleEffect_FetchRectangleBlitters(
-    s32 flip, void **out); // ☀️ FetchRectangleBlitters
 
 #define SHAPE(n) Data_081979de[effect->variant][n]
 #define SPARK_COUNT SHAPE(0)
@@ -6235,10 +6175,6 @@ void BattleEffect_RunSparkGroups(struct BattleEffectArgument *effect,
 }
 
 #define PILLAR_FRAMES 96
-
-// The sparks live in the map cell buffer.
-
-extern char ResourceId_FirePillarSheetA; // directory row 0x146
 
 extern char ResourceId_RedPaletteB; // directory row 0x147
 
@@ -6492,22 +6428,12 @@ DEFINE_EFFECT_KIND(BattleEffect_RunDrown, BattleEffect_RunTargetMotes, 6)
 // Where mode 3 unpacks the tornado's glints in the sheet.
 enum { RENDER_MODE_TORNADO = 0x2580 };
 
-extern char ResourceId_SmokeSheet;     // directory row 0x161
-extern char ResourceId_LimePalette;    // directory row 0x163
-extern char ResourceId_MarsDjinnSheet; // directory row 0x150
-extern char ResourceId_CyanPalette;    // directory row 0x166
-extern char ResourceId_BlastSheet;     // directory row 0x184
-extern char ResourceId_PinkBurstSheet; // directory row 0x17f
-extern char ResourceId_GlowOrbSheet;   // directory row 0x17b
-extern char ResourceId_HeartSheet;     // directory row 0x16e
+extern char ResourceId_CyanPalette;  // directory row 0x166
+extern char ResourceId_BlastSheet;   // directory row 0x184
+extern char ResourceId_GlowOrbSheet; // directory row 0x17b
+extern char ResourceId_HeartSheet;   // directory row 0x16e
 
-extern u16 gData_08197486[]; // ☀️ gBattleEffect_GlintCells
-extern u8 gData_08197492[];  // ☀️ gBattleEffect_GlintCellWidths
-extern u8 gData_08197498[];  // ☀️ gBattleEffect_GlintCellHeights
-extern u8 Data_08197a34[];   // ☀️ gTargetMotes_GlintFlips
-
-s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
-                  u32 mode); // ☀️ BattleEffect_BuildBlitter
+extern u8 Data_08197a34[]; // ☀️ gTargetMotes_GlintFlips
 
 // Motes swirl around each target in turn, eight frames apart, over a
 // rippling canvas: smoke, hearts, glowing orbs or vortex motes by mode,
@@ -6989,16 +6915,12 @@ void BattleEffect_RunCurse(struct BattleEffectArgument *effect) {
   BattleEffect_EndCanvasLayer();
 }
 
-// The sparks live in the map cell buffer.
-
 extern char ResourceId_MercuryDjinnSmallSheet; // directory row 0x155
 
 extern char ResourceId_SparkleDots; // directory row 0x17e
 
 extern u16 Data_0819744c[]; // ☀️ gBattleEffect_PuffCells
 extern u8 Data_0819745e[];  // ☀️ gBattleEffect_PuffSizes
-
-void Func_080150e4(s32 angle); // ☀️ SceneTransform_ApplyRoll
 
 // A Djinn rides a swarm of sparks from the caster to the first target: 32
 // sparks spin around it in four planes while it travels, then it hovers

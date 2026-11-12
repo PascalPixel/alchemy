@@ -1790,8 +1790,6 @@ void BattleEffect_RunHail(struct BattleEffectArgument *effect) {
 
 #include "transform.h"
 
-// The canvas preparer's packed arguments.
-
 #define ROCK_COUNT 6
 #define CHIPS_PER_ROCK 4
 // The chips' shapes and flips live in particles[32..63].
@@ -2690,8 +2688,6 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
 // A boulder shatters this many frames after it starts to fall.
 #define FALL_FRAMES 18
 
-// The pixel half of a 16.16 value.
-
 extern char ResourceId_BoulderSheet;
 // ☀️'s gSpire_RockCounts, by variant.
 extern u8 Data_081985b0[];
@@ -2897,8 +2893,6 @@ void EffectStep_RunAnimationMode6Or7Or8B(struct EffectStep *step) {
   }
   BattleEffect_RunBurstScene(step, 8);
 }
-
-// The canvas preparer's packed arguments.
 
 // The motes live in the map cell buffer, then the wave's, the smoke's and
 // the packed orb's cels.

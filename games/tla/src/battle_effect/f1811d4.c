@@ -79,7 +79,7 @@ void Transform_Pop(void);
 #define SLOT_BLITTER 104 // unk64[1]
 
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
-#define HI(v) (((s16 *)&(v))[1])
+#define HI(v) (((s16 *)&(v))[1]) // the pixel half of a 16.16 value
 
 extern char ResourceId_Data0B0;
 extern const u8 Data_081995f3[][7]; // per level: which blades strike
@@ -1169,8 +1169,6 @@ void Func_0818284c(s32 arg) {
 // The Lost Age numbers its blitter modes from the other end of The Broken
 // Seal's: additive 0, max 1, transparent 2, copy 3.
 #define BLITTER_MAX 1
-
-// The pixel half of a 16.16 value.
 
 #define BUBBLE_COUNT 256
 #define BUBBLE_FRAMES 60

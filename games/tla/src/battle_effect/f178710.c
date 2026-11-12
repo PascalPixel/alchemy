@@ -100,7 +100,7 @@ void Transform_Pop(void);
 #define SLOT_BLITTER 104 // unk64[1]
 
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
-#define HI(v) (((s16 *)&(v))[1])
+#define HI(v) (((s16 *)&(v))[1]) // the pixel half of a 16.16 value
 
 extern char ResourceId_SmokeBandSheet;
 extern char ResourceId_Data134;
@@ -426,8 +426,6 @@ void BattleEffect_RunRisingDragon(struct BattleEffectArgument *effect) {
 #define FIGURE_ARM_RAISED 0x24de  // 48x51
 #define FIGURE_SWING 0x2e6e       // four cels, Data_081993d0 to d8
 #define FIGURE_FIST 0x4e9d        // 32x29, then eight cels in Data_081993e0..f0
-
-// The pixel half of a 16.16 value.
 
 extern char ResourceId_Data0DC;
 

@@ -49,13 +49,14 @@ void BattleEffect_SelectLivingTargets(struct FxPartyList *party);
 void BattleEffect_SpawnObjects(s32 entryCount, s32 kind, u32 variant);
 void Func_0816442c(s32 formation, s32 x, s32 y);
 void Func_0816467c(s32 formation, s32 x, s32 y);
-void Func_0814cd48(s32 actor, s32 palette, s32 mode, s32 timer, s32 frames);
+void Func_0814cd48(s32 actor, s32 palette, s32 mode, s32 timer,
+                   s32 frames); // BattleEffect_TintBattler
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                    s32 speedLimit, s32 velocityY, s32 percent);
 void Func_08164a4c(s32 blue, s32 green, s32 red);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffect_CountDownBattlerTints(void);
-void Func_081180e8(s32 phase);
+void Func_081180e8(s32 phase); // BattlePlayback_StartFar
 void Sound_PlayFar(s32 cue);
 
 void wait(s32 frames);
@@ -64,7 +65,7 @@ s32 Trig_Sin(s32 angle);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_ResetTransformState(void);
 void Func_08015160(s32 x, s32 y, s32 z);
-void Func_080151e4(s32 x, s32 y, s32 z);
+void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
 void SceneTransform_ApplyPitch(s32 angle);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct Model *model);
@@ -583,14 +584,10 @@ void BattleEffect_DrawDiagonalCanvasLine(s32 x, s32 y, s32 w, u8 color) {
 #include "effect_step.h"
 #include "iwram_call.h"
 
-struct FxPartyList;
-struct Model;
 struct StripQuad;
 
 s32 BattleEffect_LoadBlitter(s32 slot,
-                             s32 modeAndFlags); // BattleEffect_BuildBlitter
-void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
-                   s32 timerFrames);              // BattleEffect_TintBattler
+                             s32 modeAndFlags);   // BattleEffect_BuildBlitter
 void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
 void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
 void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen,
@@ -598,16 +595,10 @@ void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen,
 void Func_0818caa8(void *cells, s32 x, s32 y, s32 size);
 void Func_0801521c(s32 scale);
 void SceneTransform_ApplyYaw(s32 angle);
-void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
-void BattleEffect_SpawnObjects(s32 entryCount, s32 kind,
-                               u32 variant); // SpawnObjects
-void BattleEffect_SelectLivingTargets(
-    struct FxPartyList *party); // SelectLivingTargets
-void Func_080150e4(s32 angle);  // SceneTransform_ApplyRoll
+void Func_080150e4(s32 angle); // SceneTransform_ApplyRoll
 
 void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
-void Func_081180e8(s32 phase);             // BattlePlayback_StartFar
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                           s32 drag);
 
@@ -722,10 +713,8 @@ struct Spans4 {
   struct WordPair p[4];
 };
 
-extern char ResourceId_Data134, ResourceId_SunsetBackdrop,
-    ResourceId_StarfieldFlareBackdrop;
-extern char ResourceId_RobedGoddessTiles, ResourceId_PinkPetalsTiles,
-    ResourceId_VioletSkyBackdrop;
+extern char ResourceId_SunsetBackdrop, ResourceId_StarfieldFlareBackdrop;
+extern char ResourceId_RobedGoddessTiles, ResourceId_PinkPetalsTiles;
 extern struct ResourceTableEntry gResourceTableEntries[];
 extern u8 Data_02010578[];
 extern struct IrisSparks Data_02011f40;
@@ -2253,8 +2242,6 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
   BattleEffect_EndCanvasLayer();
 }
 
-// The integer (pixel) half of a 16.16 value, read as the halfword it is.
-
 // Swaps two integers without a temporary.
 #define XOR_SWAP(a, b)                                                         \
   {                                                                            \
@@ -2607,8 +2594,6 @@ void Func_08195a9c(s32 vertexCount, s32 faceCount, s32 (*uvs)[3][2],
     }
   }
 }
-
-// The integer (pixel) half of a 16.16 value, read as the halfword it is.
 
 // A point of the wireframe model, 16.16 fixed point.
 struct WirePoint {

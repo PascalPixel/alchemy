@@ -92,7 +92,7 @@ void Transform_Pop(void);
 #define SLOT_BLITTER 104 // unk64[1]
 
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
-#define HI(v) (((s16 *)&(v))[1])
+#define HI(v) (((s16 *)&(v))[1]) // the pixel half of a 16.16 value
 
 #include "bg_scroll.h"
 #include "dma.h"
@@ -1205,8 +1205,6 @@ void BattleObject_SetRecordPriority(s32 objectId, s32 priority) {
 #define SMOKE_COUNT 32
 #define STAR_COUNT 16
 #define STAR_CELS 0x3e80 // the pink star's six 16x16 cels, after the smoke's
-
-// The pixel half of a 16.16 value.
 
 extern char ResourceId_PinkStarSheet;
 extern char ResourceId_SmokeSheet;

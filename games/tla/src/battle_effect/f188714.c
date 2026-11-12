@@ -317,11 +317,7 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectArgument *effect) {
   BattleEffect_EndCanvasLayer();
 }
 
-// The Lost Age's heap slots, by byte offset into Ram_HeapSlots.
-
 #define HEAP_SLOT_BLITTER_ALTERNATE 188
-
-// The transfer task runs at this priority, where ☀️'s runs at 0x480.
 
 extern char ResourceId_FireSwirlSheet;
 extern char ResourceId_PinkStarSheet;

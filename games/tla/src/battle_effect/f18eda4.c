@@ -443,8 +443,6 @@ static inline s32 Iwram_ClearWords(void *d, s32 n) {
 
 // The ball is the last particle, never a local: the native rereads its address.
 #define ball (&work->particles[63])
-// The integer (pixel) half of a 16.16 value, read as the halfword it is.
-
 extern char ResourceId_BlueFlameSheet;
 extern const u8 Data_08199ec5[];
 

@@ -117,8 +117,6 @@ void Func_080eace8(u16 *actors) {
 
 #include "stddef.h"
 
-// Only so the shape store has an alias set of its own; the grid holds bytes.
-
 // Only for the compiler: see the FAKEMATCH tag in Func_080eadfc.
 static inline s32 ActorX(struct Actor *actor) { return actor->x; }
 

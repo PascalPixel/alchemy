@@ -110,7 +110,7 @@ void Animation_ApplyChildArgumentFar(void *, s32);
 void *GetMotionRecordFar(void *object, s32 index);
 void Render_ResetTransformState(void);
 
-void Func_081180e8(s32 phase); // ☀️ BattleEvent_StartPhaseFar
+void Func_081180e8(s32 phase); // BattlePlayback_StartFar
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                           s32 gravity);
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
@@ -5563,9 +5563,6 @@ extern const s8 Data_08198422[];
 #define PREPARE_KIND 4
 #define PREPARE_ANCHOR 4
 
-// BattleEffect_LoadBlitter(slot, mode << 4 | flags) loads a blitter into a heap
-// slot.
-
 void BattleEffect_RunVine(struct BattleEffectArgument *effect) {
   struct HeapSlots *heap;
   struct BattleEffectWork *work;
@@ -5695,9 +5692,6 @@ extern s8 Data_08198445[];
 #define PUFF_SCAN 64
 
 #define CUE_THORN 133
-
-// BattleEffect_LoadBlitter(slot, mode << 4 | flags) loads a blitter into a heap
-// slot.
 
 void BattleEffect_RunThorn(struct BattleEffectArgument *effect) {
   void *canvas;

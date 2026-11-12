@@ -14,8 +14,8 @@ struct SpriteParts {
 
 extern const u8 gData_02005d8c[];
 
-void Func_02001e20(void);
-void Func_02001ffc(void);
+void Func_02001e20(struct Actor *object);
+void Func_02001ffc(struct Actor *object);
 void Func_020022d0(struct Actor *object);
 extern const u8 gData_02005d8c[];
 

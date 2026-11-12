@@ -36,7 +36,7 @@ s32 Resource_FindFreeEntry(void);
 void Func_020057a4(struct SparkleSprite *sprite, s32 width, s32 height,
                    u32 attributes, s32 tile);
 s32 Func_020057b4(struct Actor *object);
-void Func_02005268(void);
+void Func_02005268(struct Actor *object);
 
 void Func_020053e4(struct Actor *object, struct SparkleWork *work) {
   struct SparkleSprite *sprite;
@@ -69,3 +69,7 @@ void Func_020053e4(struct Actor *object, struct SparkleWork *work) {
     }
   }
 }
+
+#include "mars_lighthouse_aerie.h"
+
+void Func_020054e4(struct Actor *object) { object->unk5c[6] = 1; }

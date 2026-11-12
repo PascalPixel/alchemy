@@ -52,7 +52,7 @@ void Func_02000cf4(void);
 void Func_02000d38(void);
 void Func_0200297c(void);
 void Func_02002b88(void);
-void Func_02002ba0(void);
+s32 Func_02002ba0(void);
 void Func_02002ce0(void);
 void Func_02004140(void);
 

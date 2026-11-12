@@ -4,8 +4,8 @@ void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
 
 extern const u8 gData_02005d8c[];
 
-void Func_02001e20(void);
-void Func_02001ffc(void);
+void Func_02001e20(struct Actor *object);
+void Func_02001ffc(struct Actor *object);
 void Func_02001f84(struct Actor *object, s32 unused) {
   object->motionFlags = 0;
   object->collisionFlags = 0;

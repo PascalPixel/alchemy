@@ -26,7 +26,7 @@ struct WorkEvent {
 
 s32 Func_020054d8(s32 terrain, s32 x, s32 z);
 void Func_02002d08(struct Actor *actor);
-void Func_02002e8c(s32 x, s32 y, s32 z, u32 angle);
+void Func_02002e8c(s32 x, s32 y, s32 z, s32 speed);
 extern u8 gData_020023c4[];
 
 void Func_02002f80(struct Actor *actor) {

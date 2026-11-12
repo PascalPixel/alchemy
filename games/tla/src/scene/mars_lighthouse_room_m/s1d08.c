@@ -8,9 +8,6 @@ struct SpriteParts {
   u8 unk09Low : 2;
   u8 part : 2;
 };
-extern const u8 gData_020032d4[];
-
-void Func_02003120(struct Actor *object, const void *script);
 
 /// Stops the object and sets its sprite part, then restarts its script at
 /// gData_020032d4; Func_02001e1c of the Mars Lighthouse entrance is the same
@@ -90,4 +87,64 @@ s32 Func_02001de0(struct Actor *a, struct Actor *b) {
     }
   }
   return 0;
+}
+
+void Func_02001e38(struct Actor *object) {
+  struct Actor *target = Actor_Get(gMainRoutineWork.currentOwner);
+  s32 vx;
+  s32 vz;
+  s32 rate;
+  struct MarsLighthouseRoomMAnimation *animation;
+
+  vx = object->bounce;
+  object->x += vx;
+  object->y += object->gravity;
+  vz = object->unk4c;
+  object->z += vz;
+  object->bounce = vx - vx / 18;
+  object->unk4c = vz - vz / 16;
+  rate = object->speedLimit;
+  object->scaleX += rate;
+  animation = object->animation;
+  object->scaleY += object->acceleration;
+  animation->angle += object->action;
+  if (target->y == target->terrainHeight && Func_02001de0(object, target)) {
+    object->z -= object->unk4c;
+    object->gravity += object->unk4c >> 2;
+    object->unk4c = 0;
+  }
+}
+
+void Func_02001ed4(struct Actor *object) {
+  object->motionFlags = 0;
+  object->collisionFlags = 0;
+  Actor_SetSingleChildFlags(object, 0);
+  Func_02003118(object, 2);
+  Func_02003120(object, gData_020032d4);
+  Actor_SetSpriteColor(object, 10);
+  object->action = 0;
+  object->speedLimit = 0;
+  object->acceleration = 0;
+}
+
+void Func_02001f14(struct MarsLighthouseRoomMVector *position, s32 value) {
+  struct Actor *object =
+      FieldActor_Create(285, position->x, position->y, position->z + 0xfffe0000);
+  s32 angle;
+
+  if (object != 0) {
+    object->bounce =
+        Math_Cosine(((u32)(Random16Far() * 3 << 12) >> 16) + 0x3000);
+    object->gravity = (u16)Random16Far();
+    object->unk4c = ((u32)(Random16Far() << 17) >> 16) + value;
+    /* FAKEMATCH(temporary): the angle held in an s32 local keeps the zero
+     * extension and the pool word 0xffff8000 (a direct store narrows the add
+     * to 16 bits: movs, lsls for 0x8000, no extension); as a direct store, 10
+     * of 50 instructions differ in tla-en. */
+    angle = (u16)Random16Far() - 0x8000;
+    object->action = angle;
+    ((void (*)())Func_02001ed4)(object, 2);
+    object->update = Func_02001e38;
+    Animation_SetStateFlags(object, 1);
+  }
 }

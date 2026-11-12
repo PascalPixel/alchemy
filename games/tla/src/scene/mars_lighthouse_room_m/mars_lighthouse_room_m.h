@@ -57,10 +57,10 @@ extern char SceneId_Ov6ACRoom6;
 void Func_02003118(struct Actor *object, s32 value);
 void Func_02003120(struct Actor *object, const void *script);
 
-void Func_02001988(void);
+void Func_02001988(struct Actor *object);
 void Func_02001aec(struct Actor *object);
 void Func_02001cc4(struct Actor *object, s32 layer);
-void Func_02001b64(void);
+void Func_02001b64(struct Actor *object);
 
 extern const u8 gData_020032d4[];
 extern const u8 gData_020034f0[];
@@ -88,13 +88,14 @@ s32 Func_02001de0(struct Actor *a, struct Actor *b);
 void Func_02001e38(struct Actor *object);
 void Func_02001ed4(struct Actor *object);
 void Func_020012a4(s32 x, s32 z, s32 kind);
-void Func_02002ad4(void);
+void Func_02002ad4(struct Actor *object);
 void Func_020031e0(void);
 void Func_020031e8(void);
 void Func_020032a0(void);
 u32 Random16Far(void);
 s32 Math_Cosine(s32 angle);
-void Animation_SetStateFlags(struct Actor *object, s32 flags);
+struct FieldActor;
+void Animation_SetStateFlags(struct FieldActor *object, s32 flags);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 

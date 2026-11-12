@@ -33,22 +33,28 @@ struct MapLayers {
   struct MapLayer layers[3];
 };
 
-struct Box {
-  s32 word[6];
+/// Where a pushed object comes to rest, read by the push that follows.
+struct PushTarget {
+  s32 x; ///< 16.16 fixed-point pixels
+  s32 y;
+  s32 z;
+  s32 footprint; ///< index into the footprint table
+  s32 id;
+  void (*callback)(void);
 };
 
 #define SCENE_WORK ((struct SceneWork *)Ram_HeapSlots->eventWork)
 
 void Animation_ApplyChildValues(struct Actor *object, s32 value);
-s32 Map_GetTerrainHeight(s32 terrain, s32 x, s32 z);
+s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 u32 Random16Far(void);
 
 s32 Func_020027ac(s32 index, s32 value);
 s32 Func_020027dc(s32 index);
-s32 Func_02004a8c(struct Box *box);
-void Func_02004d10(struct Box box);
+s32 Func_02004a8c(struct PushTarget *target);
+void Func_02004d10(struct PushTarget target);
 void Func_02005490(struct Actor *object, const void *script);
 void Func_02005560(void);
 void Func_02005568(void);
@@ -59,8 +65,9 @@ void Func_02005608(void);
 void Func_02005660(void);
 struct Actor *Func_02005680(s32 *position, s32 mode);
 void Func_02005688(void);
-void Func_02005480(struct Actor *object, s32 a1);
-void Animation_SetStateFlags(struct Actor *object, s32 flags);
+void Func_02005480(struct Actor *object, s32 mode);
+struct FieldActor;
+void Animation_SetStateFlags(struct FieldActor *object, s32 flags);
 s32 Math_Cosine(s32 angle);
 
 void Func_020001f4(s32 unused, s32 id);

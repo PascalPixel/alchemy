@@ -10,7 +10,7 @@
 
 struct Trigger;
 
-s32 Random16Far(void);
+u32 Random16Far(void);
 s32 Math_Cosine(s32 angle);
 void Func_02000038(struct Actor *object);
 void Func_02004d24(s32 id);

@@ -125,3 +125,5 @@ void Func_0200038c(void) {
   lead->z.fixed = lead->z.part.pixel << 16;
   Func_02001b2c(lead, 1);
 }
+
+#include "../../field/map/cell_fill_byte.c"

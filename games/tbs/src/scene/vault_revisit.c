@@ -240,12 +240,10 @@ static void VaultRevisit_HopeVolcanoStaysCalm(void) {
 static void VaultRevisit_GreetWarriorGuy(void) {
   struct Actor *actor = Actor_Get(ACTOR_BOY_ROUND_THE_WELL);
   u16 facing = actor->facing;
-  s32 text;
 
   actor->timer |= VAULT_PROXIMITY_REACTION_PAUSED;
   Event_Start();
-  text = MsgVaultWarriorGuy;
-  Event_SetMessageId(text);
+  Event_SetMessageId(MsgVaultWarriorGuy);
   Actor_SetAnimation(ACTOR_BOY_ROUND_THE_WELL, 0);
   Actor_TurnToFaceEachOther(ACTOR_BOY_ROUND_THE_WELL, ACTOR_PARTY_LEADER, 2);
   if (Event_GetFlag(FLAG_VAULT_REVISIT_WARRIOR_GUY_GREETED) == 0) {
@@ -257,7 +255,7 @@ static void VaultRevisit_GreetWarriorGuy(void) {
     Event_ShowMessageThenWait(ACTOR_BOY_ROUND_THE_WELL, 0, 10);
     GameFlag_Set(FLAG_VAULT_REVISIT_WARRIOR_GUY_GREETED);
   }
-  Event_SetMessageId(text + 2);
+  Event_SetMessageId(MsgVaultWarriorGuy + 2);
   // "I'm so glad you came back to Vault!"
   Event_ShowMessageThenWait(ACTOR_BOY_ROUND_THE_WELL, 0, 10);
   actor->facing = facing;
@@ -371,19 +369,13 @@ static void VaultRevisit_ReadMindOnFeelingBrave(void) {
 
 /// Mind Read on the girl round the well. Grown-ups always get so scared.
 static void VaultRevisit_ReadMindOnScaredGrownUps(void) {
-  {
-    struct Actor *actor = Actor_Get(ACTOR_GIRL_ROUND_THE_WELL);
-    actor->timer |= VAULT_PROXIMITY_REACTION_PAUSED;
-  }
+  Actor_Get(ACTOR_GIRL_ROUND_THE_WELL)->timer |=
+      VAULT_PROXIMITY_REACTION_PAUSED;
   Event_Start();
   Event_SetMessageId(MsgVaultGrownUpsAlways);
   VaultRevisit_ShowStandingActorMessage(ACTOR_GIRL_ROUND_THE_WELL);
   Event_End();
-  {
-    s32 clear = 0;
-    struct Actor *actor = Actor_Get(ACTOR_GIRL_ROUND_THE_WELL);
-    actor->timer = clear;
-  }
+  Actor_Get(ACTOR_GIRL_ROUND_THE_WELL)->timer = 0;
 }
 
 /// Mind Read on the strongman on watch. Before he has asked about the jail,
@@ -391,7 +383,6 @@ static void VaultRevisit_ReadMindOnScaredGrownUps(void) {
 /// lock.
 static void VaultRevisit_ReadMindOnJailKey(void) {
   s32 requestHeard;
-  s32 unpaused;
 
   requestHeard = Event_GetFlag(FLAG_VAULT_REVISIT_ASKED_ABOUT_JAIL);
   if (requestHeard == 0) {
@@ -408,7 +399,7 @@ static void VaultRevisit_ReadMindOnJailKey(void) {
       gFieldWork->message++;
     }
     Event_ShowMessage(ACTOR_STRONGMAN_ON_WATCH, 0);
-    Actor_Get(ACTOR_STRONGMAN_ON_WATCH)->paused = requestHeard;
+    Actor_Get(ACTOR_STRONGMAN_ON_WATCH)->paused = 0;
     Actor_SetMovementTypeById(ACTOR_STRONGMAN_ON_WATCH, 2);
     Event_End();
     GameFlag_Set(FLAG_VAULT_REVISIT_ASKED_ABOUT_JAIL);
@@ -416,8 +407,7 @@ static void VaultRevisit_ReadMindOnJailKey(void) {
     Event_SetMessageId(MsgVaultNotLikeEasy);
     Actor_Get(ACTOR_STRONGMAN_ON_WATCH)->paused = 1;
     VaultRevisit_ShowStandingActorMessage(ACTOR_STRONGMAN_ON_WATCH);
-    unpaused = 0;
-    Actor_Get(ACTOR_STRONGMAN_ON_WATCH)->paused = unpaused;
+    Actor_Get(ACTOR_STRONGMAN_ON_WATCH)->paused = 0;
   }
 }
 
@@ -436,7 +426,7 @@ static void VaultRevisit_JumpActorToAndWait(int actorId, int x, int z,
   Actor_SetPosition(actorId, x, z);
   for (frames = 60; frames != 0; --frames) {
     wait(1);
-    if ((s16)((u32)jumpingActor->velocityY >> 16) == 0)
+    if ((jumpingActor->velocityY >> 16) == 0)
       break;
   }
   Actor_SetSpriteFlags(jumpingActor, SPRITE_FLAG_SHADOW);
@@ -469,10 +459,8 @@ static void VaultRevisit_RingBell(void) {
 
 /// Walks the leader into a doorway during the sixteen-frame exit delay.
 static void Vault_WalkThroughExit(s32 x, s32 z, s32 exitNumber) {
-  s32 leaderId = ACTOR_PARTY_LEADER;
-
-  Actor_SetSpeed(leaderId, 0.5);
-  Actor_WalkTo(leaderId, x, z);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.5);
+  Actor_WalkTo(ACTOR_PARTY_LEADER, x, z);
   gFieldWork->transitionFrames = 16;
   Import_EventSetExitRequest(exitNumber);
 }

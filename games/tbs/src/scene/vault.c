@@ -295,11 +295,8 @@ const struct Trigger *Scene_GetTriggers(void) {
 /// Asks the current question and selects its ordinary or alternate reply.
 static inline void Vault_AskYesNoAndShowReply(s32 speaker) {
   Event_OpenMessage(speaker, 0);
-  if (Event_AskYesNoWithActorAnimation(0, 0) != 0) {
-    struct FieldWork *work = gFieldWork;
-
-    ++work->message;
-  }
+  if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) != 0)
+    ++gFieldWork->message;
   Event_ShowMessage(speaker, 0);
 }
 
@@ -313,7 +310,7 @@ static void Vault_AskAboutEruption(void) {
   Event_SetMessageId(MsgVaultWasntEruptionMtAlephIncredible);
   Vault_FaceActorAndWait(ACTOR_ERUPTION_WITNESS, ACTOR_PARTY_LEADER, 2);
   Event_OpenMessage(ACTOR_ERUPTION_WITNESS, 0);
-  if (Event_AskYesNoWithActorAnimation(0, 0) != 0) {
+  if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) != 0) {
     gFieldWork->message++;
   }
   Event_ShowMessage(ACTOR_ERUPTION_WITNESS, 0);
@@ -876,8 +873,6 @@ static void Vault_GiveBoneToDog(void) {
 s32 Scene_Initialize(void) {
   s32 suspectsMindRead;
   struct Actor *actor;
-  s32 lowBit;
-  s32 zero;
 
   // Once the party has reached Kalay (FLAG_KALAY_REACHED), the town is its
   // later scene, SceneId_VaultRevisit (vault_revisit.c).
@@ -892,17 +887,15 @@ s32 Scene_Initialize(void) {
   // A still actor on the well that shows nothing (vault_revisit.c's open
   // questions).
   Actor_CreateConfigured(128, 0, 420, SPRITE_CRATE);
-  lowBit = 1;
-  zero = 0;
   actor = Actor_Get(ACTOR_BOY_ROUND_THE_WELL);
-  actor->timer = lowBit;
+  actor->timer = 1;
 #ifdef UBFIX
   actor->update = Vault_UpdateWalkingVillager;
 #else
   actor->update = (void (*)(struct Actor *))Vault_UpdateWalkingVillager;
 #endif
   actor = Actor_Get(ACTOR_GIRL_ROUND_THE_WELL);
-  actor->timer = zero;
+  actor->timer = 0;
 #ifdef UBFIX
   actor->update = Vault_UpdateWalkingVillager;
 #else
@@ -913,7 +906,7 @@ s32 Scene_Initialize(void) {
   }
   suspectsMindRead = GameFlag_Get(FLAG_VAULT_SUSPECTS_MIND_READ);
   if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) == 0) {
-    if ((lowBit & suspectsMindRead) != 0) {
+    if ((suspectsMindRead & 1) != 0) {
       actor = Actor_Get(ACTOR_WOMAN_WANTING_THE_ROOF_FIXED);
 #ifdef UBFIX
       actor->update = Vault_UpdateRoofComplainerProximity;
@@ -1055,7 +1048,6 @@ UNUSED static void Vault_SpawnDriftingEffect(s32 flags) {
   struct Sprite *sprite;
   s32 x;
   s32 z;
-  u8 zero;
 
   anchor = Actor_Get(ACTOR_VAULT_DOG);
   if (anchor == NULL)
@@ -1072,6 +1064,9 @@ UNUSED static void Vault_SpawnDriftingEffect(s32 flags) {
   x <<= 16;
   z <<= 16;
   {
+    /* FAKEMATCH(temporary): baseX, baseY and baseZ copy the anchor's
+     * position; as anchor->x.fixed, anchor->y.fixed and anchor->z.fixed, 28 of
+     * 141 instructions differ in tbs-en. */
     s32 baseX = anchor->x.fixed;
     s32 baseZ = anchor->z.fixed;
     s32 baseY;
@@ -1102,19 +1097,15 @@ UNUSED static void Vault_SpawnDriftingEffect(s32 flags) {
     Actor_StartScript(effect, gVault_DriftScriptB);
     break;
   }
-  {
-    u8 *motionFlags = &effect->motionFlags;
-
-    zero = 0;
-    *motionFlags = zero;
-  }
+  effect->motionFlags = 0;
   // Choose either depth drift with a slow rise or vertical drift.
   if (flags & 2) {
     s32 driftMultiplier;
     s32 directionBias;
 
     driftMultiplier = (u32)Import_RandomNext() % 10 + 5;
-    // x is reused for the direction mask; the literal 1 differs.
+    /* FAKEMATCH(temporary): x reused to hold 1; as the literal 1, 116 of 141
+     * instructions differ in tbs-en. */
     x = 1;
     flags &= x;
     directionBias = flags ^ x;
@@ -1124,7 +1115,7 @@ UNUSED static void Vault_SpawnDriftingEffect(s32 flags) {
         (2 * VAULT_DRIFT_RATE * flags - VAULT_DRIFT_RATE) * driftMultiplier;
     driftMultiplier = (u32)Import_RandomNext() % 15 - 7;
     effect->speedLimit = VAULT_DRIFT_RATE * driftMultiplier;
-    effect->timer = zero;
+    effect->timer = 0;
   } else {
     s32 driftMultiplier;
 
@@ -1137,6 +1128,8 @@ UNUSED static void Vault_SpawnDriftingEffect(s32 flags) {
   }
   // Install the custom motion and share the anchor's drawing priority.
   {
+    /* FAKEMATCH(temporary): spriteFlags holds &sprite->flags; as
+     * sprite->flags, 2 of 141 instructions differ in tbs-en. */
     u8 *spriteFlags = &sprite->flags;
 
     effect->update = Vault_UpdateDriftingEffect;

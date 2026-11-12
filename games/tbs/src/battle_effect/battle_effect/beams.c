@@ -321,9 +321,10 @@ void BattleEffect_RunRingAndSpark(struct BattleEffectParams *args) {
   EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
   sheet = EFFECT_SLOT(heapCache, HEAP_SLOT_BATTLE_SHEET);
   camera = EFFECT_SLOT(heapCache, HEAP_SLOT_CAMERA);
-  // DEAD: the test is never true, as only kinds from
-  // EFFECT_RANGE_RING_AND_SPARK reach this runner
-  // (BattleEffect_RunByIdRange), so big stays 1; the ROM keeps it.
+  /* FAKEMATCH(dead): never true, as only kinds from
+   * EFFECT_RANGE_RING_AND_SPARK reach this runner (BattleEffect_RunByIdRange),
+   * so big stays 1; without the test, 269 of 672 instructions differ in
+   * tbs-en. */
   big = 1;
   if (args->kind < EFFECT_RANGE_RING_AND_SPARK)
     big = 0;
@@ -426,8 +427,9 @@ void BattleEffect_RunRingAndSpark(struct BattleEffectParams *args) {
           Projection_Point(&mote->x, &screen);
           screen.x += 64;
           screen.y = screen.y + screenPosition.y + 24;
-          // DEAD: the depth is clamped to -60..60 and moved to 0..120 but
-          // never read; the ROM keeps the clamp.
+          /* FAKEMATCH(dead): the depth is clamped to -60..60 and moved to
+           * 0..120 but never read; without the clamp and the move, 375 of 672
+           * instructions differ in tbs-en. */
           CLAMP(screen.depth, -60, 60);
           screen.depth += 60;
           EFFECT_DRAW_FLARE(draw[0], canvas, sheet, screen.x, screen.y, size);

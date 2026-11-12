@@ -223,8 +223,9 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       Sound_PlayFar(SE_SWIRL);
     }
 
-    // DEAD: frame starts at 0 and only grows, so the sparks are never drawn;
-    // the ROM keeps the test and the stage.
+    /* FAKEMATCH(dead): never true, as frame starts at 0 and only grows, so the
+     * sparks are never drawn; without the test and the stage, 854 of 2455
+     * instructions differ in tbs-en. */
     if (frame < 0) {
       EFFECT_VIEW_FROM_CAMERA(camera);
       for (i = 0; i != 128; i++) {
@@ -912,8 +913,9 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       shift -= 8;
     }
 
-    // DEAD: never true, as the sweep's last frame is 319; the ROM keeps the
-    // test and the targets' reaction.
+    /* FAKEMATCH(dead): never true, as the sweep's last frame is 319; without
+     * the test and the targets' reaction, 97 of 2455 instructions differ in
+     * tbs-en. */
     if (frame > 319) {
       EFFECT_FOR_EACH_TARGET(i, work->args) {
         BattleEffect_TintBattler(work->args->targets[i], SPRITE_COLOR_BLACK,

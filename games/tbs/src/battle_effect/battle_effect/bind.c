@@ -86,9 +86,10 @@ UNUSED void BattleEffect_ConvertBackgroundToBlueRamp(void) {
     Iwram_CopyWords((void *)BG_CHAR_BLOCK(2), BLUE_RAMP_PIXELS,
                     BATTLE_BACKGROUND_BYTES);
     wait(1);
-    // DEAD: never true, as the edge reaches only line 186 by the 27th frame;
-    // the ROM keeps the test. Every column (120 lines, at most 63 late) is
-    // done once the edge passes line 182.
+    // Every column (120 lines, at most 63 late) is done once the edge passes
+    // line 182.
+    /* FAKEMATCH(dead): never true, as the edge reaches only line 186 by the
+     * 27th frame; without the test, 33 of 175 instructions differ in tbs-en. */
     if (end > 248)
       break;
     i++;

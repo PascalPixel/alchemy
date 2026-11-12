@@ -348,9 +348,10 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
     Resource_LoadAndDecompress((s32)&ResourceId_JupiterDjinnSmallSheet,
                                pictures + CASTING_IMPACT_DJINNI_OFFSETS, 1, 1);
     break;
-  // DEAD: never reached, as the dispatcher passes only the 36 impacts
-  // (BattleEffect_RunByIdRange) and each already has its element's case
-  // above.
+  /* FAKEMATCH(dead): never reached, as the dispatcher passes only the 36
+   * impacts (BattleEffect_RunByIdRange) and each already has its element's
+   * case above; without the case, 110 of 3070 instructions differ in tbs-en.
+   */
   case EFFECT_RANGE_CASTING_IMPACT:
     Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSmallSheet,
                                pictures + CASTING_IMPACT_DJINNI_OFFSETS, 1, 1);
@@ -433,8 +434,9 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
               sparkScreen.y = sparkScreen.y + casterScreen->y + 44;
             else
               sparkScreen.y = sparkScreen.y + casterScreen->y + 12;
-            // DEAD: the depth is clamped to -60..60 and moved to 0..120 but
-            // never read; the ROM keeps the clamp.
+            /* FAKEMATCH(dead): the depth is clamped to -60..60 and moved to
+             * 0..120 but never read; without the clamp and the move, 51 of
+             * 3070 instructions differ in tbs-en. */
             CLAMP(sparkScreen.depth, -60, 60);
             sparkScreen.depth += 60;
             EFFECT_DRAW_MOTE(blitters[1], canvas, sprites, sparkScreen.x,
@@ -637,8 +639,9 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
   }
 
   // The impact lasts 20, 32, 40, 48, 64 or 80 frames, by mode.
-  // DEAD: the EFFECT_RANGE_CASTING_IMPACT test never holds, as mode is never
-  // the effect kind itself; the ROM keeps it.
+  /* FAKEMATCH(dead): the EFFECT_RANGE_CASTING_IMPACT test never holds, as mode
+   * is never the effect kind itself; without it, 80 of 3070 instructions
+   * differ in tbs-en. */
   if ((mode >= CASTING_IMPACT_IMPACT_FLINT &&
        mode <= CASTING_IMPACT_IMPACT_SQUALL) ||
       mode == CASTING_IMPACT_IMPACT_BARRAGE ||
@@ -1290,8 +1293,9 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
         }
       }
     } else if (mode != EFFECT_RANGE_CASTING_IMPACT) {
-      // DEAD: the test always holds, as mode is never the effect kind itself;
-      // the ROM keeps it.
+      /* FAKEMATCH(dead): the test always holds, as mode is never the effect
+       * kind itself; as a plain else, 252 of 3070 instructions differ in
+       * tbs-en. */
       // The smoke impacts: six 24x48 pictures a puff, four frames each.
       struct Particle *step = CASTING_IMPACT_IMPACT_PARTICLES;
       for (i = 0; i != 16; i++, step++) {
@@ -1337,8 +1341,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
       Sound_PlayFar(SE_HEAVY_IMPACT);
     }
     if (frame == 6) {
-      // DEAD: the EFFECT_RANGE_CASTING_IMPACT test never holds; the ROM keeps
-      // it.
+      /* FAKEMATCH(dead): the EFFECT_RANGE_CASTING_IMPACT test never holds;
+       * without it, 24 of 3070 instructions differ in tbs-en. */
       if (mode == CASTING_IMPACT_IMPACT_FLINT ||
           mode == CASTING_IMPACT_IMPACT_SCORCH ||
           mode == CASTING_IMPACT_IMPACT_SAP ||

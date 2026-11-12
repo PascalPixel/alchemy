@@ -125,7 +125,9 @@ void BattleEffect_RunQuake(struct BattleEffectParams *args) {
     for (column = 0; column != 3; column++) {
       s32 riseFrame = column * 4 + 16;
 
-      // Never true: the left side is 32 or more and riseFrame at most 24.
+      /* FAKEMATCH(dead): never true, as the left side is 32 or more and
+       * riseFrame at most 24; without the test and its store, 71 of 462
+       * instructions differ in tbs-en. */
       if ((frame & 31) + 32 == riseFrame)
         heights.column[column] += 32;
       if (frame >= riseFrame &&

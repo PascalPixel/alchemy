@@ -204,8 +204,9 @@ UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
               Projection_Point(spark, &view);
               view.x >>= 1;
               CLAMP(view.depth, 314, 634);
-              // DEAD: BattleEffect_RunHealingMotes' size by depth, copied with
-              // its code; the next line sets cellIndex for real.
+              /* FAKEMATCH(dead): BattleEffect_RunHealingMotes' size by depth,
+               * copied with its code, as the next line sets cellIndex for real;
+               * without the store, 479 of 747 instructions differ in tbs-en. */
               cellIndex = 3 - (view.depth - 314) / 128;
               cellIndex = (i * 4 + frame) % 9;
               {

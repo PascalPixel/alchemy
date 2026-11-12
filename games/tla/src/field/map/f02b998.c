@@ -187,3 +187,74 @@ void Func_0802b998(void) {
   for (tileIndex = 0; tileIndex <= 0x3ff; tileIndex++)
     ((u16 *)(perspective + 0x148))[tileIndex] = tileIndex;
 }
+
+#define ABS(v) ((v) < 0 ? -(v) : (v))
+
+struct MapTileWindow_08010d48 {
+  s32 *position;
+  u8 unk004[0x144];
+  u16 tiles[32][32];
+};
+
+s32 Map_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update);
+
+void Map_SetWindowCellTile(s32 x, s32 y, s32 px, s32 py) {
+  struct MapTileWindow_08010d48 *window;
+  s32 *position;
+  s32 originX;
+  s32 originY;
+  s32 tile;
+
+  window = (struct MapTileWindow_08010d48 *)Ram_HeapSlots->mapWork;
+  originX = 0;
+  originY = 0;
+  position = window->position;
+  if (position != 0) {
+    originX = *position++;
+    originY = position[1];
+  }
+
+  originX >>= 24;
+  originY >>= 24;
+  x >>= 4;
+  y >>= 4;
+  px >>= 3;
+  py >>= 3;
+  tile = (y << 5) + x;
+  window->tiles[(py / 2) & 31][(px / 2) & 31] = tile;
+
+  if (ABS(originX - px) <= 1 && ABS(originY - py) <= 1) {
+    Map_WriteLayerCellTile(0, px / 2, py / 2, tile, 1);
+    Map_WriteLayerCellTile(1, px / 2, py / 2, tile + 0x400, 1);
+  }
+}
+
+/// Map_SetWindowCellTile without its view test: puts world map tile
+/// (x / 16, y / 16) at cell (px / 16, py / 16) of the tile grid and draws it in
+/// both layers.
+void Func_0802bdd0(s32 x, s32 y, s32 px, s32 py) {
+  struct MapTileWindow_08010d48 *window;
+  s32 *position;
+  s32 originX;
+  s32 originY;
+  s32 tile;
+
+  window = (struct MapTileWindow_08010d48 *)Ram_HeapSlots->mapWork;
+  /* FAKEMATCH(dead): the view's origin read as Map_SetWindowCellTile reads
+   * it and never used, which emits nothing but steers register allocation;
+   * without it, 57 of 59 instructions differ in tla-en. */
+  position = window->position;
+  if (position != 0) {
+    originX = *position++;
+    originY = position[1];
+  }
+
+  x >>= 4;
+  y >>= 4;
+  px >>= 3;
+  py >>= 3;
+  tile = (y << 5) + x;
+  window->tiles[(py / 2) & 31][(px / 2) & 31] = tile;
+  Map_WriteLayerCellTile(0, px / 2, py / 2, tile, 1);
+  Map_WriteLayerCellTile(1, px / 2, py / 2, tile + 0x400, 1);
+}

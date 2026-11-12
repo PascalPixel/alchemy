@@ -45,7 +45,7 @@ void Func_02001528(void);
 
 struct AnimationEntry;
 
-/// The sprite as ResourceObject_Create fills it, laid out as resource_obj.c
+/// The sprite as ResourceObject_Create fills it, laid out as vram_block_93.c
 /// declares it.
 struct ResourceSprite {
   u32 imageAttributes[3];

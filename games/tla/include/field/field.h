@@ -101,7 +101,7 @@ void GameFlag_RefreshLureCapFar(void);
 void Map_CenterOnFollowedPointFar(void);
 s32 Map_GetTerrainHeightFar(u8, s32, s32);
 void Motion_SetVarCbAndRefresh(u32 objectId, s32 variant);
-s32 Actor_IsTargetUnset(void *arg0);
+s32 Actor_IsTargetUnset(struct Actor *object);
 #ifndef OWN_Actor_SetPartAttribute
 void Actor_SetPartAttribute(struct Actor *object, s32 attribute);
 #endif

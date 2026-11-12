@@ -7,9 +7,10 @@ the field's code is grouped in: [actor scripts](../../../tbs/glossary.md#actor-s
 (`map/`), [actors](../../../tbs/glossary.md#actor) (`object/`),
 [events](../../../tbs/glossary.md#event) (`event/`),
 [field effects](../../../tbs/glossary.md#field-effect) (`field_effect/`), the
-camera (`camera/`) and the ground heights (`terrain/`). The bank that runs a
-scene is `field_sequence/`, the bank of event commands and field Psynergy is
-`event_commands/`, Lucky Dice and Lucky Wheels are `lucky_dice.c` and
+camera (`camera/`) and the ground heights (`map/`, their samples in
+`terrain/`). The bank that runs a scene is `field_sequence/`, the bank of
+event commands and field Psynergy is `event_commands/`, Lucky Dice and Lucky
+Wheels are `lucky_dice.c` and
 `lucky_wheels.c`, and the casino's dice game, in a bank of its own, is
 `dice_game.c`. The Broken Seal's [Field code](../../../tbs/src/field/README.md)
 explains how this code works.
@@ -30,7 +31,8 @@ explains how this code works.
   separate files.
 - `field.c` holds the start of the field bank's C as parts under `field/`,
   cut where The Broken Seal's field.c parts are: `decompress.c` and
-  `sprite_draw.c` so far. The rest of the bank is still separate files.
+  `sprite_draw.c` so far. The rest of the bank's C follows it as 23 objects
+  in ROM order, in `object/`, `script/`, `map/` and this folder.
 - The rest of the folder is grouped by family of the field's code rather than by The
   Broken Seal's objects, one function or small family to a file. A family
   folder holds its files whatever their bank (`object/` holds files of three
@@ -39,8 +41,8 @@ explains how this code works.
   offset in the slot table (`0x9c` and `0xa0`, slots 39 and 40), and their
   files and functions by address (`Func_080d8d40`) until their meaning is
   read.
-- The ground height functions in `terrain/` keep their older names: `Curve_`
-  where The Broken Seal says `Terrain_` (`Curve_LerpTwoSamples` is
+- The ground height functions in `map/f02c58c.c` keep their older names:
+  `Curve_` where The Broken Seal says `Terrain_` (`Curve_LerpTwoSamples` is
   `Terrain_LerpTwoSamples`), described under
   [How high a step can go](../../../tbs/src/field/README.md#how-high-a-step-can-go).
 - Each row of the scene table is 8 bytes in both games, but here its last

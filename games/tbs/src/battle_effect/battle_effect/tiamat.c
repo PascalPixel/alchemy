@@ -319,7 +319,7 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectParams *args,
           puff->x += puff->velocityX * dir;
           puff->y += puff->velocityY;
           puff->variant++;
-          if (puff->variant == DRAGON_FIRE_BREATH)
+          if (puff->variant == 24)
             puff->variant = -1;
         }
       }

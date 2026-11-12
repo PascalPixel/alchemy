@@ -18,3 +18,5 @@ s32 Func_02000044(struct Actor *object) {
   Actor_SetSingleChildFlags(object, 0);
   return 0;
 }
+
+#include "../venus_lighthouse/distance.c"

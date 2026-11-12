@@ -81,3 +81,5 @@ void Func_02000150(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   if ((flags & EFFECT_USE_UPDATE) != 0)
     effect->update = options->update;
 }
+
+#include "distance.c"

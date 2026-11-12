@@ -5,3 +5,5 @@
 #define EFFECT_SCRIPTS gData_02003e6c
 #define EFFECT_SPRITE_PRIORITY
 #include "../../field/field_effect/spawn.c"
+
+#include "../venus_lighthouse/distance.c"

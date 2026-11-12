@@ -4,12 +4,8 @@
 
 #include "../battle_effect_internal.h"
 
-#define HAIL_CHIP_COUNT 64 ///< ice chips
-
 #define HAIL_CHIP_OFFSETS (32 * 32) ///< the ice chips, after the 32x32 wave
 #define HAIL_DJINNI_OFFSETS 26048   ///< the small Mercury Djinni
-
-#define HAIL_FRAMES 64
 
 /// After a Mercury Djinni enters, ice chips burst out of the first target and
 /// waves of water rise along the bottom of the screen; the canvas fades out
@@ -58,7 +54,7 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
   // fast up as across (up to 10 pixels a frame up, 1.25 across); z picks
   // each chip's picture, a new one every 128, and velocityZ turns it.
   // variant is set but never read.
-  for (i = 0; i != HAIL_CHIP_COUNT; i++) {
+  for (i = 0; i != 64; i++) {
     s32 angle;
     s32 speed;
 
@@ -73,7 +69,7 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
     PARTICLES[i].variant = (Random16() & 0xf) + 32;
   }
 
-  for (frame = 0; frame != HAIL_FRAMES; frame++) {
+  for (frame = 0; frame != 64; frame++) {
     // Fade out over the last 16 frames.
     if (frame > 47)
       REG_BLDALPHA = BLEND_ALPHA(64 - frame, 16);
@@ -108,7 +104,7 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
     // The chips, four more each frame from frame 4, odd ones mirrored; they
     // fall under a gravity of 1/16 pixel a frame per frame, damped to 63/64,
     // and are never retired.
-    for (i = 0, chip = PARTICLES; i != HAIL_CHIP_COUNT; i++, chip++) {
+    for (i = 0, chip = PARTICLES; i != 64; i++, chip++) {
       if (frame >= i / 4 + 4) {
         s32 cell;
         s32 width;
@@ -166,26 +162,21 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
   EFFECT_FINISH_CANVAS();
 }
 
-/// The small Venus Djinni in the rock toss's sheet.
+/// The small Venus Djinni in the portal sheet.
 #define GROUND_DJINNI_OFFSETS 26048
 
-#define GROUND_FRAMES 96
-#define GROUND_LAUNCHED 8       ///< rocks launched
-#define GROUND_CHIPS 32         ///< chip slots
-#define GROUND_ROCKS 6          ///< rocks thrown
-#define GROUND_CHIPS_PER_ROCK 4 ///< chips each rock sheds
-
-/// After a Venus Djinni enters, six rocks rise from the user shedding chips,
-/// swirl, and home in on the first target, each hitting it as it lands.
+/// After a Venus Djinni enters, six glowing portals leave the user one every
+/// 2 frames, crackling, swirl, and close in on the first target, each striking
+/// it as it arrives. They glow in the Djinni's yellow until the background
+/// palette, from frame 17, steps to the portal sheet's violet.
 ///
 /// Abilities: Ground (BATTLE_EFFECT_GROUND).
 ///
-/// A rock's variant is 1 while it flies and 0 once it has hit; the chips are
-/// particles 32 to 63, four for each rock, each with its picture in velocityX
-/// and its blitter flags in velocityY. The Djinni entrance plays whatever the
-/// prelude. From frame 17 the BG palette steps towards the portal sheet's
-/// (BattleEffect_StepPaletteToResource). Writes REG_BLDALPHA, sets
-/// work->shakeFrames on each hit.
+/// A portal's variant is 1 while it flies and 0 once it has struck; its
+/// crackles are particles 32 to 63, four for each portal, each with its
+/// picture in velocityX and its blitter flags in velocityY. The Djinni
+/// entrance plays whatever the prelude. Writes REG_BLDALPHA, sets
+/// work->shakeFrames on each strike.
 ///
 /// args: the user and the targets; prelude 1 keeps the Djinni circling.
 void BattleEffect_RunGround(struct BattleEffectParams *args) {
@@ -225,21 +216,21 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   user = GetBattleObjectSlotFar(work->args->user)->actor;
   target = GetBattleObjectSlotFar(work->args->targets[0])->actor;
-  // The rocks leave the user 66 pixels up, fanning out towards the middle
-  // of the field, rock i at 2.5 i pixels a frame across, up to 1 up or down
-  // and up to 4 in depth. Eight are launched, the first six drawn.
-  for (i = 0; i != GROUND_LAUNCHED; i++) {
-    struct Particle *rock = &work->particles[i];
+  // The portals leave the user 66 pixels up, fanning out towards the middle
+  // of the field, portal i at 2.5 i pixels a frame across, up to 1 up or
+  // down and up to 4 in depth. Eight are set up, the first six drawn.
+  for (i = 0; i != 8; i++) {
+    struct Particle *portal = &work->particles[i];
 
-    SET_POSITION(rock, user->x.fixed, px(66), user->z.fixed);
-    SET_VELOCITY(rock, (i * px(80)) >> 5,
+    SET_POSITION(portal, user->x.fixed, px(66), user->z.fixed);
+    SET_VELOCITY(portal, (i * px(80)) >> 5,
                  (s32)(((Random16() & 127) - 64) << 16) >> 6,
                  (s32)(((Random16() & 255) - 127) << 16) >> 5);
-    if (rock->x > 0)
-      rock->velocityX = -rock->velocityX;
-    rock->variant = 1;
+    if (portal->x > 0)
+      portal->velocityX = -portal->velocityX;
+    portal->variant = 1;
   }
-  for (frame = 0; frame != GROUND_FRAMES; frame++) {
+  for (frame = 0; frame != 96; frame++) {
     if (frame > 16)
       BattleEffect_StepPaletteToResource((s32)&ResourceId_PortalSheet);
     // Prelude: the Djinni circles above the user and from frame 17 rises 2
@@ -265,32 +256,33 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
       draw[0](canvas, work->sheet + GROUND_DJINNI_OFFSETS, x, y, 20, 40);
     }
-    // Every 2 frames each chip takes a random picture (velocityX, chips 3
-    // to 8) and flip (velocityY: gHail_ChipFlips, bit 2 across, bit 3 down).
+    // Every 2 frames each crackle takes a random picture (velocityX, pictures
+    // 3 to 8) and flip (velocityY: gHail_ChipFlips, bit 2 across, bit 3 down).
     if ((frame & 1) == 0) {
-      for (i = 0; i != GROUND_CHIPS; i++) {
-        struct Particle *chip = &work->particles[32 + i];
+      for (i = 0; i != 32; i++) {
+        struct Particle *crackle = &work->particles[32 + i];
 
-        chip->velocityX = Random16() % 6 + 3;
-        chip->velocityY = gHail_ChipFlips[Random16() & 3];
+        crackle->velocityX = Random16() % 6 + 3;
+        crackle->velocityY = gHail_ChipFlips[Random16() & 3];
       }
     }
     EFFECT_VIEW_FROM_CAMERA(camera);
-    // The rocks, one more every 2 frames.
-    for (i = 0; i != GROUND_ROCKS; i++) {
-      struct Particle *rock = &work->particles[i];
+    // The portals, one more every 2 frames.
+    for (i = 0; i != 6; i++) {
+      struct Particle *portal = &work->particles[i];
 
-      if (rock->variant == 1) {
+      if (portal->variant == 1) {
         if (frame > i * 2) {
           s32 x;
           s32 y;
 
-          Projection_Point(&rock->x, &position);
+          Projection_Point(&portal->x, &position);
           position.x >>= 1;
           x = position.x - 12;
           y = position.y - 24;
           draw[0](canvas, work->sheet, x, y, 24, 48);
-          // The rock's crust flickers between chips 1 and 2 every 2 frames.
+          // The portal's white core flickers between pictures 1 and 2 every
+          // 2 frames.
           if ((frame & 3) <= 1)
             draw[0](canvas, work->sheet + gHail_ChipCells[1],
                     x + gHail_ChipX[1], y + gHail_ChipY[1], gHail_ChipWidths[1],
@@ -299,50 +291,51 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
             draw[0](canvas, work->sheet + gHail_ChipCells[2],
                     x + gHail_ChipX[2], y + gHail_ChipY[2], gHail_ChipWidths[2],
                     gHail_ChipHeights[2]);
-          // The four loose chips: each loads a blitter with its own flip,
-          // and a flipped chip is placed from the rock's opposite edge so it
-          // stays on the rock.
-          for (j = 0; j != GROUND_CHIPS_PER_ROCK; j++) {
-            struct Particle *chip = &work->particles[32 + i * 4 + j];
-            s32 chipX;
-            s32 chipY;
+          // The four crackles: each loads a blitter with its own flip, and a
+          // flipped crackle is placed from the portal's opposite edge so it
+          // stays on the portal.
+          for (j = 0; j != 4; j++) {
+            struct Particle *crackle = &work->particles[32 + i * 4 + j];
+            s32 crackleX;
+            s32 crackleY;
 
-            EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, chip->velocityY,
+            EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, crackle->velocityY,
                                 COMPOSITE_LIGHTEN);
             draw[1] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2];
-            if (chip->velocityY & 4)
-              chipX = x - gHail_ChipWidths[chip->velocityX] -
-                      gHail_ChipX[chip->velocityX] + 24;
+            if (crackle->velocityY & 4)
+              crackleX = x - gHail_ChipWidths[crackle->velocityX] -
+                         gHail_ChipX[crackle->velocityX] + 24;
             else
-              chipX = x + gHail_ChipX[chip->velocityX];
-            if (chip->velocityY & 8)
-              chipY = y - gHail_ChipHeights[chip->velocityX] -
-                      gHail_ChipY[chip->velocityX] + 48;
+              crackleX = x + gHail_ChipX[crackle->velocityX];
+            if (crackle->velocityY & 8)
+              crackleY = y - gHail_ChipHeights[crackle->velocityX] -
+                         gHail_ChipY[crackle->velocityX] + 48;
             else
-              chipY = y + gHail_ChipY[chip->velocityX];
-            draw[1](canvas, work->sheet + gHail_ChipCells[chip->velocityX],
-                    chipX, chipY, gHail_ChipWidths[chip->velocityX],
-                    gHail_ChipHeights[chip->velocityX]);
+              crackleY = y + gHail_ChipY[crackle->velocityX];
+            draw[1](canvas, work->sheet + gHail_ChipCells[crackle->velocityX],
+                    crackleX, crackleY, gHail_ChipWidths[crackle->velocityX],
+                    gHail_ChipHeights[crackle->velocityX]);
             HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
           }
-          rock->x += rock->velocityX;
-          rock->y += rock->velocityY;
-          rock->z += rock->velocityZ;
+          portal->x += portal->velocityX;
+          portal->y += portal->velocityY;
+          portal->z += portal->velocityZ;
         }
-        // After 16 frames the rock homes in on a point 20 pixels above the
+        // After 16 frames the portal homes in on a point 20 pixels above the
         // target, 1/256 of the distance a frame, damped to 60/64 until 85
-        // frames after it launched; it hits once below that height.
+        // frames after it set out; it strikes once below that height.
         if (frame > i * 2 + 16) {
-          rock->velocityX += (target->x.fixed - rock->x) >> 8;
-          rock->velocityY += (px(20) - rock->y) >> 8;
-          rock->velocityZ += (target->z.fixed - rock->z) >> 8;
+          portal->velocityX += (target->x.fixed - portal->x) >> 8;
+          portal->velocityY += (px(20) - portal->y) >> 8;
+          portal->velocityZ += (target->z.fixed - portal->z) >> 8;
           if (frame < i * 2 + 85) {
-            SET_VELOCITY(rock, rock->velocityX * 60 / 64,
-                         rock->velocityY * 60 / 64, rock->velocityZ * 60 / 64);
+            SET_VELOCITY(portal, portal->velocityX * 60 / 64,
+                         portal->velocityY * 60 / 64,
+                         portal->velocityZ * 60 / 64);
           }
-          if (rock->y < px(20)) {
+          if (portal->y < px(20)) {
             work->shakeFrames = 8;
-            rock->variant = 0;
+            portal->variant = 0;
             Sound_PlayFar(SE_HEAVY_IMPACT);
             EFFECT_STRIKE_TARGET(work->args, 0, 4, KNOCKBACK_HURL);
           }
@@ -390,13 +383,6 @@ void BattleCamera_Shake(s32 rangeX, u32 rangeY) {
   gProjection.centerY = 120;
 }
 
-#undef HAIL_CHIP_COUNT
 #undef HAIL_CHIP_OFFSETS
 #undef HAIL_DJINNI_OFFSETS
-#undef HAIL_FRAMES
 #undef GROUND_DJINNI_OFFSETS
-#undef GROUND_FRAMES
-#undef GROUND_LAUNCHED
-#undef GROUND_CHIPS
-#undef GROUND_ROCKS
-#undef GROUND_CHIPS_PER_ROCK

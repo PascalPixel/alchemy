@@ -15,26 +15,7 @@ struct FxPartyList;
 struct Model;
 struct StripQuad;
 
-// A texture for the ARM model renderer: its size as powers of two and the
-// address of its pixels.
-struct ModelTexture {
-  u32 logWidth : 8;
-  u32 logHeight : 8;
-  u32 unk02 : 16;
-  const void *pixels;
-};
-
-// A model for the ARM renderer (Render_DrawModelList).
-struct RenderModel {
-  s32 kind;
-  s32 unk04;
-  const void *mesh;
-  void *vertices;
-  struct ModelTexture *texture;
-  s32 shade;
-  u8 scrollU;
-  u8 scrollV;
-};
+#include "render_model.h"
 
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);

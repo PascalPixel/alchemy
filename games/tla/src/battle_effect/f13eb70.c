@@ -888,12 +888,7 @@ struct FxPartyList;
 struct Model;
 struct StripQuad;
 
-struct ModelTexture {
-  u32 logWidth : 8;
-  u32 logHeight : 8;
-  u32 unk02 : 16;
-  const void *pixels;
-};
+#include "render_model.h"
 
 struct ModelTextureB {
   u32 logWidth : 8;
@@ -901,17 +896,6 @@ struct ModelTextureB {
   u32 unk02 : 16;
   const void *pixels;
 };
-struct RenderModel {
-  s32 kind;
-  s32 unk04;
-  const void *mesh;
-  void *vertices;
-  struct ModelTexture *texture;
-  s32 shade;
-  u8 scrollU;
-  u8 scrollV;
-};
-
 void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
 void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
 void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen,

@@ -232,23 +232,7 @@ struct FxPartyList;
 struct Model;
 struct StripQuad;
 
-struct ModelTexture {
-  u32 logWidth : 8;
-  u32 logHeight : 8;
-  u32 unk02 : 16;
-  const void *pixels;
-};
-
-struct RenderModel {
-  s32 kind;
-  s32 unk04;
-  const void *mesh;
-  void *vertices;
-  struct ModelTexture *texture;
-  s32 shade;
-  u8 scrollU;
-  u8 scrollV;
-};
+#include "render_model.h"
 
 // A vertex of the water: three signed bytes, written as bit-fields (a store
 // through a plain byte pointer is scheduled after every earlier load, a

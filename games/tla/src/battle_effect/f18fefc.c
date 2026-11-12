@@ -13,12 +13,7 @@ struct Model;
 struct ScaledSprite;
 struct StripQuad;
 
-struct ModelTexture {
-  u32 logWidth : 8;
-  u32 logHeight : 8;
-  u32 unk02 : 16;
-  const void *pixels;
-};
+#include "render_model.h"
 
 // One model vertex: signed byte coordinates, padded to a word. Written
 // through this struct, its stores are not char stores, so a reload of the
@@ -28,17 +23,6 @@ struct ModelVertex {
   s8 y;
   s8 z;
   s8 pad;
-};
-
-struct RenderModel {
-  s32 kind;
-  s32 unk04;
-  const void *mesh;
-  void *vertices;
-  struct ModelTexture *texture;
-  s32 shade;
-  u8 scrollU;
-  u8 scrollV;
 };
 
 void BattleEffect_StartCanvasLayer(s32 bgControl);

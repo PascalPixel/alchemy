@@ -40,7 +40,7 @@ extern u16 gBilibin_HouseNorthDoorSteps[];
 extern u16 *gBilibin_DoorSteps[];
 extern u32 gBilibin_DoorCells[];
 extern u32 gBilibin_CratesLaneCells[];
-extern s32 gBilibin_FacingCellSteps[];
+extern s32 gPushedActor_DirectionSteps[];
 extern s32 gBilibin_RippleScript[];
 
 #endif

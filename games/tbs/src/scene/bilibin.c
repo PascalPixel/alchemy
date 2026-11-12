@@ -961,14 +961,17 @@ static void Bilibin_PushStatueOrCrates(void) {
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   direction = leader->facing >> 12;
   pushed = Actor_FindAtCell(
-      (leader->x.part.pixel + (gBilibin_FacingCellSteps[direction] >> 16)) >> 4,
-      (leader->z.part.pixel + (s16)gBilibin_FacingCellSteps[direction]) >> 4);
+      (leader->x.part.pixel + (gPushedActor_DirectionSteps[direction] >> 16)) >>
+          4,
+      (leader->z.part.pixel + (s16)gPushedActor_DirectionSteps[direction]) >>
+          4);
   if (pushed != NULL) {
     pushed->layer = 2;
     destination.x =
-        pushed->x.fixed + (gBilibin_FacingCellSteps[direction] & -0x10000);
+        pushed->x.fixed + (gPushedActor_DirectionSteps[direction] & -0x10000);
     destination.y = pushed->y.fixed;
-    destination.z = pushed->z.fixed + px(gBilibin_FacingCellSteps[direction]);
+    destination.z =
+        pushed->z.fixed + px(gPushedActor_DirectionSteps[direction]);
     if (FieldActor_CheckMovementCollision(pushed, &destination) <= 0) {
       // The leader leans on it, then both move together.
       Actor_SelectAnimation(leader, ANIM_PUSH);
@@ -1405,14 +1408,7 @@ u32 gBilibin_CratesLaneCells[] = {
 };
 // clang-format on
 
-s32 gBilibin_FacingCellSteps[] = {
-    DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),
-    DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),
-    DIRECTION_STEP(0, 16),  DIRECTION_STEP(-16, 0), DIRECTION_STEP(-16, 0),
-    DIRECTION_STEP(-16, 0), DIRECTION_STEP(-16, 0), DIRECTION_STEP(0, -16),
-    DIRECTION_STEP(0, -16), DIRECTION_STEP(0, -16), DIRECTION_STEP(0, -16),
-    DIRECTION_STEP(16, 0),
-};
+#include "shared/pushed_actor_direction_steps.h"
 
 s32 gBilibin_RippleScript[] = {
     SC_WAIT(30),

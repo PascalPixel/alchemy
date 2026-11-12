@@ -6,20 +6,7 @@
 /// PUSHED_ACTOR_TABLE_SECTION first.
 
 #include "types.h"
-#include "pushed_actor.h"
-
-#ifndef PUSHED_ACTOR_TABLE_SECTION
-#define PUSHED_ACTOR_TABLE_SECTION
-#endif
-
-s32 gPushedActor_DirectionSteps[] PUSHED_ACTOR_TABLE_SECTION = {
-    DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),
-    DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),
-    DIRECTION_STEP(0, 16),  DIRECTION_STEP(-16, 0), DIRECTION_STEP(-16, 0),
-    DIRECTION_STEP(-16, 0), DIRECTION_STEP(-16, 0), DIRECTION_STEP(0, -16),
-    DIRECTION_STEP(0, -16), DIRECTION_STEP(0, -16), DIRECTION_STEP(0, -16),
-    DIRECTION_STEP(16, 0),
-};
+#include "pushed_actor_direction_steps.h"
 
 u32 gPushedActor_FootprintKinds[] PUSHED_ACTOR_TABLE_SECTION = {
     207, 205, 228, 229, 298, 297,

@@ -28,6 +28,6 @@ extern struct Trigger gBilibinCaveTriggersOther[];
 extern struct Trigger gBilibinCaveEntranceTriggers[];
 extern struct Trigger gBilibinCaveRapierTriggers[];
 extern struct Trigger gBilibinCaveIceTriggers[];
-extern s32 gBilibinCave_PushSteps[];
+extern s32 gPushedActor_DirectionSteps[];
 
 #endif

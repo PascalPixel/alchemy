@@ -617,17 +617,19 @@ static void BilibinCave_PushTorch(void) {
   heading = leader->facing >> 12;
 
   nextCellX =
-      (leader->x.part.pixel + (gBilibinCave_PushSteps[heading] >> 16)) >> 4;
+      (leader->x.part.pixel + (gPushedActor_DirectionSteps[heading] >> 16)) >>
+      4;
   nextCellZ =
-      (leader->z.part.pixel + (s16)gBilibinCave_PushSteps[heading]) >> 4;
+      (leader->z.part.pixel + (s16)gPushedActor_DirectionSteps[heading]) >> 4;
   target = Actor_FindAtCell(nextCellX, nextCellZ);
   if (target == 0)
     return;
 
   nextCellX =
-      (target->x.part.pixel + (gBilibinCave_PushSteps[heading] >> 16)) >> 4;
+      (target->x.part.pixel + (gPushedActor_DirectionSteps[heading] >> 16)) >>
+      4;
   nextCellZ =
-      (target->z.part.pixel + (s16)gBilibinCave_PushSteps[heading]) >> 4;
+      (target->z.part.pixel + (s16)gPushedActor_DirectionSteps[heading]) >> 4;
   blocker = Actor_FindAtCell(nextCellX, nextCellZ);
   if (blocker != 0)
     return;
@@ -637,9 +639,10 @@ static void BilibinCave_PushTorch(void) {
   target->layer = 2;
 
   destination.x =
-      target->x.fixed + (gBilibinCave_PushSteps[heading] & 0xffff0000);
+      target->x.fixed + (gPushedActor_DirectionSteps[heading] & 0xffff0000);
   destination.y = target->y.fixed;
-  destination.z = target->z.fixed + px((s16)gBilibinCave_PushSteps[heading]);
+  destination.z =
+      target->z.fixed + px((s16)gPushedActor_DirectionSteps[heading]);
 
   if (FieldActor_CheckMovementCollision(target, &destination) > 0)
     return;
@@ -885,11 +888,4 @@ struct Trigger gBilibinCaveIceTriggers[] = {
 };
 // clang-format on
 
-s32 gBilibinCave_PushSteps[] = {
-    DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),
-    DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),
-    DIRECTION_STEP(0, 16),  DIRECTION_STEP(-16, 0), DIRECTION_STEP(-16, 0),
-    DIRECTION_STEP(-16, 0), DIRECTION_STEP(-16, 0), DIRECTION_STEP(0, -16),
-    DIRECTION_STEP(0, -16), DIRECTION_STEP(0, -16), DIRECTION_STEP(0, -16),
-    DIRECTION_STEP(16, 0),
-};
+#include "shared/pushed_actor_direction_steps.h"

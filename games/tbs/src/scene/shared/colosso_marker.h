@@ -207,6 +207,8 @@ static void Colosso_UpdateMarker(void) {
     gColosso_MarkerBlink = 0;
   }
   if (++gColosso_MarkerBlink <= 13) {
+    /* FAKEMATCH(temporary): size holds the one sprite size; as OBJ_SIZE_16X16
+     * in the word, 6 of 124 instructions differ in tbs-en. */
     s32 size = OBJ_SIZE_16X16;
 
     x = gColosso_MarkerX;

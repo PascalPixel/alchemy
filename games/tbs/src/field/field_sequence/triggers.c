@@ -220,7 +220,7 @@ s32 Scene_TalkToActor(s32 id) {
 
   if (gMainRoutineWork.haltedActor == id) {
     actorPaused = 1;
-    trigger = Scene_FindTrigger(7, id);
+    trigger = Scene_FindTrigger(TRIGGER_TALK_HALTED, id);
     if (trigger == 0) {
       trigger = Scene_FindTrigger(TRIGGER_TALK, id);
       usePausedDialogue = 1;
@@ -228,13 +228,11 @@ s32 Scene_TalkToActor(s32 id) {
         return -1;
       }
       // A function talk trigger is not run for a stopped actor: it says
-      // one of two lines picked at random from the pair its definition flags
-      // choose.
+      // one of the two lines of its sprite's Halted pair, at random.
       if (trigger->result >= TRIGGER_RESULT_MESSAGE_END) {
-        s32 definitionFlags = Speaker_GetIdleFlags(id);
+        s32 haltedLines = Speaker_GetHaltedLines(id);
         u32 random = Random16();
-        s32 message =
-            MsgPonderEllipsis + definitionFlags * 2 + (random * 2 >> 16);
+        s32 message = MsgPonderEllipsis + haltedLines * 2 + (random * 2 >> 16);
         Event_Start();
         Event_SetMessageId(message);
         Event_ShowMessageAndWait(id, 0);

@@ -84,7 +84,7 @@ void FieldPsynergy_Run(void) {
 
     nearestTargetId =
         Field_FindNearbyPsynergyTarget(gMainRoutineWork.leaderActorId, kind);
-    nearestTargetId = FieldEffect_FilterActorIdByFlags(nearestTargetId);
+    nearestTargetId = FieldPsynergy_FilterHaltTarget(nearestTargetId);
     if (Scene_FindActorTalkTrigger(nearestTargetId) != 0) {
       FieldPsynergy_SetupActorPair(gMainRoutineWork.leaderActorId,
                                    nearestTargetId);

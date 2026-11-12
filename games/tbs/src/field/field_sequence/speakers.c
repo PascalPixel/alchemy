@@ -1,5 +1,5 @@
 /// @file
-/// Speaker definitions: voices and idle lines by sprite.
+/// Speaker definitions: voices and Halted lines by sprite.
 // Part of field_sequence.c.
 
 #include "../field_sequence_internal.h"
@@ -26,7 +26,7 @@ struct SpeakerDefinition *Speaker_FindDefinition(u32 id) {
 /// Returns the sprite id stored by a live actor's animated sprite, or 0
 /// when that actor has no animated sprite or its sprite-id pointer is
 /// absent. The actor must exist: a NULL from Actor_Lookup is
-/// read through. Called by Speaker_GetIdleFlags.
+/// read through. Called by Speaker_GetHaltedLines.
 s32 Speaker_GetActorSprite(s32 id) {
   struct Actor *actor = Actor_Lookup(id);
   struct SpeakerSprite *sprite;
@@ -47,20 +47,19 @@ s32 Speaker_GetActorSprite(s32 id) {
 /// Message_SetVoiceFromActor as the window's voiceSound
 /// (event_commands/messages.c); the shops ask it for their keepers.
 s32 Speaker_GetVoice(u32 id) {
-  u8 portraitId;
+  u8 voice;
 
   if (gMainRoutineWork.speech == 0 ||
-      (portraitId = Speaker_FindDefinition(id)->value) == SPEAKER_VOICE_NONE) {
+      (voice = Speaker_FindDefinition(id)->value) == SPEAKER_VOICE_NONE) {
     return 0;
   }
-  return portraitId + SE_VOICE_FIRST;
+  return voice + SE_VOICE_FIRST;
 }
 
-/// Returns the definition flags of actor id's sprite, which choose its
-/// line when it has nothing to say: Scene_TalkToActor picks a Halted
-/// actor's pair of lines with them, and Halt cast with no trigger
-/// (FieldPsynergy_Run) stops nothing when the nearest actor's flags are
-/// 0xff (FieldEffect_FilterActorIdByFlags).
-s32 Speaker_GetIdleFlags(s32 id) {
-  return Speaker_FindDefinition(Speaker_GetActorSprite(id))->flags;
+/// Returns SpeakerDefinition.haltedLines of actor id's sprite: the pair of
+/// lines Scene_TalkToActor gives it while Halted, or
+/// SPEAKER_HALTED_LINES_NONE when Halt passes it over
+/// (FieldPsynergy_FilterHaltTarget).
+s32 Speaker_GetHaltedLines(s32 id) {
+  return Speaker_FindDefinition(Speaker_GetActorSprite(id))->haltedLines;
 }

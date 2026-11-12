@@ -219,13 +219,13 @@ void FieldPsynergy_ResumeHaltedActor(s32 actorId) {
   }
 }
 
-/// Returns id, or -1 (no target) when actor id's sprite has flags 0xff
-/// in gSpeakerDefinitions (Speaker_GetIdleFlags): the 20 rows before
-/// the default. Called by FieldPsynergy_Run on the nearest Halt target, so Halt
-/// does not stop those actors; an unlisted sprite takes the default
-/// row's flags 0.
-s32 FieldEffect_FilterActorIdByFlags(s32 id) {
-  if (Speaker_GetIdleFlags(id) == 0xff)
+/// Returns id, or -1 (no target) when Halt passes actor id's sprite over
+/// (SPEAKER_HALTED_LINES_NONE in gSpeakerDefinitions): the talking monsters
+/// and the things, the 20 rows before the default. Called by FieldPsynergy_Run
+/// on the nearest Halt target; an unlisted sprite takes the default row's
+/// pair 0, so Halt stops it.
+s32 FieldPsynergy_FilterHaltTarget(s32 id) {
+  if (Speaker_GetHaltedLines(id) == SPEAKER_HALTED_LINES_NONE)
     return -1;
   return id;
 }

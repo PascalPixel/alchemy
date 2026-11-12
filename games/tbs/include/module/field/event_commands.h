@@ -382,7 +382,7 @@ void FieldPsynergy_Halt(void);
 void FieldPsynergy_UpdateHaltedActor(struct Actor *actor);
 void FieldPsynergy_HaltActor(s32 actorId);
 void FieldPsynergy_ResumeHaltedActor(s32 actorId);
-s32 FieldEffect_FilterActorIdByFlags(s32 id);
+s32 FieldPsynergy_FilterHaltTarget(s32 id);
 void FieldPsynergy_CatchOnTarget(s32 unused);
 void FieldPsynergy_Catch(void);
 void FieldEffect_UpdateSpinAngle(struct Actor *actor);

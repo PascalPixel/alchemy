@@ -10,6 +10,7 @@
 #include "event_inline.h"
 #include "field_sprite.h"
 #include "field.h"
+#include "scene_tables.h"
 
 extern u8 gMapShapeGrid[];
 
@@ -262,7 +263,6 @@ const s16 *Func_02000358(void) {
 #include "menu.h"
 #include "sound.h"
 #include "system.h"
-#include "scene_tables.h"
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 

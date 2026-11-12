@@ -50,12 +50,14 @@ enum ColossoLetteringCommand {
 enum ColossoLetteringPicture {
   COLOSSO_PICTURE_LEND_A_HAND = 0,
   COLOSSO_PICTURE_MATCH_1 = 1, ///< "The 1st Match", then the 2nd and 3rd
-  COLOSSO_PICTURE_WON_LOSE = 4,
+  /// ★ Named from what the player sees: WIN in gold, or LOSE in blue, over
+  /// the arena after a match's battle (its render)
+  COLOSSO_PICTURE_WIN_LOSE = 4,
   COLOSSO_PICTURE_COUNT_3_2 = 5, ///< the countdown's 3 and 2
   COLOSSO_PICTURE_COUNT_1 = 6,   ///< the countdown's 1
   COLOSSO_PICTURE_GO = 7,
-  /// COLOSSO_PICTURE_WON_LOSE in the palette a loss shows it in.
-  COLOSSO_PICTURE_WON_LOSE_FOR_LOSS = 8
+  /// COLOSSO_PICTURE_WIN_LOSE in the blue palette a loss shows it in.
+  COLOSSO_PICTURE_WIN_LOSE_FOR_LOSS = 8
 };
 
 /// The bytes of one lettering picture's tiles: 2,048 pixels at 4 bits each, as
@@ -95,8 +97,8 @@ static void Colosso_LoadLettering(s32 id) {
   if (gColosso_LetteringSlot == -1)
     gColosso_LetteringSlot = VramCache_FindFreeEntry();
   off = gColosso_LetteringPaletteOffsets[id];
-  if (id == COLOSSO_PICTURE_WON_LOSE_FOR_LOSS)
-    id = COLOSSO_PICTURE_WON_LOSE;
+  if (id == COLOSSO_PICTURE_WIN_LOSE_FOR_LOSS)
+    id = COLOSSO_PICTURE_WIN_LOSE;
   FieldDecompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_Lettering),
                            buf);
   Dma_Set(buf + off, (void *)&OBJ_PLTT_COLOR(15, 0),

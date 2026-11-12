@@ -126,19 +126,16 @@
 #define COLOSSEUM_AZART_MATCH_FACE_DIRECTION Actor_FaceDirectionById
 #define COLOSSEUM_AZART_MATCH_PLACE_STAGED_PAIR                                \
   ColosseumAzartMatch_MoveActorPairByOffset
-#define COLOSSEUM_AZART_MATCH_SELECT_MODE_BLOCK Colosso_StartLettering
 #else
 #define COLOSSEUM_AZART_MATCH_FACE_DIRECTION                                   \
   ((s32 (*)())Actor_FaceDirectionById)
 #define COLOSSEUM_AZART_MATCH_PLACE_STAGED_PAIR                                \
   ((s32 (*)())ColosseumAzartMatch_MoveActorPairByOffset)
-#define COLOSSEUM_AZART_MATCH_SELECT_MODE_BLOCK                                \
-  ((s32 (*)())Colosso_StartLettering)
 #endif
 
 static void ColosseumAzartMatch_ExplainFinalsRules(s32 guide);
 static void Colosso_ShowOpeningLettering(s32 match);
-static void ColosseumAzartMatch_ShowMatchResult(s32 result);
+static void Colosso_ShowMatchResult(s32 result);
 static void Colosso_NoOp(void);
 static void Colosso_WaitForOpponentToFinish(void);
 static s32 Colosso_TakePrize(s32 firstItem, s32 secondItem);
@@ -710,7 +707,7 @@ static void ColosseumAzartMatch_RestoreMatchResult(s32 result) {
   }
   wait(1);
   FieldCamera_MoveTo(1304, 0, 128, 0);
-  ColosseumAzartMatch_ShowMatchResult(result);
+  Colosso_ShowMatchResult(result);
   Event_End();
 }
 
@@ -1292,45 +1289,6 @@ static __inline__ void AdvanceMessage(s32 amount) {
 #include "shared/colosso_task.h"
 
 #include "shared/colosso_lettering.h"
-
-/// Shows the result, then the screen closes.
-///
-/// The result is `Won` or `Lose` in large lettering with its jingle.
-static void ColosseumAzartMatch_ShowMatchResult(s32 result) {
-
-  s32 loser;
-
-  Sound_Play(SE_COLOSSO_LETTERING);
-  Event_StartScreenTransition();
-  Event_WaitTransitionFrames();
-  gColosso_LetteringWin[13] = result * 60;
-  STORE_CONST(gColosso_LetteringLose[13]) =
-      (result < 0 ? -result : result) * 60;
-  if (result < 0) {
-    Event_Wait(30);
-    Sound_Play(MUS_INN);
-    Colosso_LoadLettering(COLOSSO_PICTURE_WON_LOSE_FOR_LOSS);
-    COLOSSEUM_AZART_MATCH_SELECT_MODE_BLOCK(COLOSSO_SHAPE_RESULT, 1);
-    Event_Wait(-result * 60 + 60);
-    loser = ACTOR_PARTY_LEADER;
-  } else {
-    Event_Wait(30);
-    Sound_Play(result + 90);
-    Colosso_LoadLettering(COLOSSO_PICTURE_WON_LOSE);
-    COLOSSEUM_AZART_MATCH_SELECT_MODE_BLOCK(COLOSSO_SHAPE_RESULT, 0);
-    Event_Wait(result * 60 + 60);
-    loser = ACTOR_OPPONENT;
-  }
-  Actor_ShowEmote(loser, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
-  while (Sound_GetBgmRestoreDelay() != 0) {
-    wait(1);
-  }
-  Sound_Play(MUS_SILENCE);
-  Event_Wait(30);
-  Sound_Play(SOUND_FADE_OUT_ACTION_SE);
-  Event_FinishScreenTransition();
-  Event_WaitTransitionFrames();
-}
 
 #include "shared/colosso_marker.h"
 #include "shared/colosso_item_icon.h"

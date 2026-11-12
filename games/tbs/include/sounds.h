@@ -274,8 +274,8 @@ enum SoundId {
   /// round begins.
   MUS_LEVEL_UP,
   /// A dummy row: the Colosso's result jingle is chosen as 90 plus the match's
-  /// result (ColosseumAzartMatch_ShowMatchResult), which lands here, playing
-  /// nothing, for a result of 0.
+  /// result (Colosso_ShowMatchResult), which lands here, playing nothing, for a
+  /// result of 0.
   MUS_090,
   /// The smallest prize jingle: two pairs in Lucky Dice, a Tolbi Spring prize
   /// under 5,000 coins, and one level from the debug level editor; also an item

@@ -111,21 +111,21 @@
 #include "sounds.h"
 #include "sound_driver_symbols.h"
 
-// UB: each of these calls a void function through an s32 function type, the
-// call the bytes show; UBFIX calls it as declared.
+// UB: this calls a void function through an s32 function type, the call the
+// bytes show; UBFIX calls it as declared.
 #ifdef UBFIX
 #define COLOSSEUM_NAVAMPA_MATCH_FACE_DIRECTION Actor_FaceDirectionById
-#define COLOSSEUM_NAVAMPA_MATCH_INITIALIZE_MODE_TASK Colosso_StartLettering
 #else
 #define COLOSSEUM_NAVAMPA_MATCH_FACE_DIRECTION                                 \
   ((s32 (*)())Actor_FaceDirectionById)
-#define COLOSSEUM_NAVAMPA_MATCH_INITIALIZE_MODE_TASK                           \
-  ((s32 (*)())Colosso_StartLettering)
 #endif
 
 static void ColosseumNavampaMatch_PlayPostBattleReunion(s32 battleResult);
 static void ColosseumNavampaMatch_IntroduceThirdFinals(s32 guideId);
 static void Colosso_ShowOpeningLettering(s32 match);
+// Unused: the third match ends with the party's reunion in the arena
+// (ColosseumNavampaMatch_PlayPostBattleReunion) instead.
+UNUSED static void Colosso_ShowMatchResult(s32 result);
 static void Colosso_NoOp(void);
 static void Colosso_WaitForOpponentToFinish(void);
 static s32 Colosso_TakePrize(s32 firstItem, s32 secondItem);
@@ -2041,46 +2041,6 @@ static void ColosseumNavampaMatch_TalkToLogRollingAttendant(s32 actorId) {
 #include "shared/colosso_task.h"
 
 #include "shared/colosso_lettering.h"
-
-/// Unused: shows the match's result, as in the first two finals sites.
-///
-/// The result is `Won` or `Lose` in large lettering held for the size of
-/// `result` in seconds (negative is a loss), then the loser's ellipsis and the
-/// screen closing. This match ends in a battle, and nothing calls it.
-UNUSED static void ColosseumNavampaMatch_UnusedShowMatchResult(s32 result) {
-  s32 actorId;
-
-  Sound_Play(SE_COLOSSO_LETTERING);
-  Event_StartScreenTransition();
-  Event_WaitTransitionFrames();
-  gColosso_LetteringWin[13] = result * 60;
-  STORE_CONST(gColosso_LetteringLose[13]) =
-      (result < 0 ? -result : result) * 60;
-  if (result < 0) {
-    Event_Wait(30);
-    Sound_Play(MUS_INN);
-    Colosso_LoadLettering(COLOSSO_PICTURE_WON_LOSE_FOR_LOSS);
-    COLOSSEUM_NAVAMPA_MATCH_INITIALIZE_MODE_TASK(COLOSSO_SHAPE_RESULT, 1);
-    Event_Wait(-result * 60 + 60);
-    actorId = ACTOR_PARTY_LEADER;
-  } else {
-    Event_Wait(30);
-    Sound_Play(result + 90);
-    Colosso_LoadLettering(COLOSSO_PICTURE_WON_LOSE);
-    COLOSSEUM_NAVAMPA_MATCH_INITIALIZE_MODE_TASK(COLOSSO_SHAPE_RESULT, 0);
-    Event_Wait(result * 60 + 60);
-    actorId = ACTOR_OPPONENT;
-  }
-  Actor_ShowEmote(actorId, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
-  while (Sound_GetBgmRestoreDelay() != 0) {
-    wait(1);
-  }
-  Sound_Play(MUS_SILENCE);
-  Event_Wait(30);
-  Sound_Play(SOUND_FADE_OUT_ACTION_SE);
-  Event_FinishScreenTransition();
-  Event_WaitTransitionFrames();
-}
 
 #include "shared/colosso_marker.h"
 #include "shared/colosso_item_icon.h"

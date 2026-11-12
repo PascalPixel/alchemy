@@ -1,7 +1,8 @@
 /// @file
 /// The sites of the three Colosso finals matches (Colosseum Final 1, 2 and 3):
 /// the large lettering a visit opens with, `Lend a Hand!` for the friends'
-/// turns, and for the race `The 1st Match` (or 2nd or 3rd), 3, 2, 1 and `GO`.
+/// turns, and for the race `The 1st Match` (or 2nd or 3rd), 3, 2, 1 and `GO`;
+/// and `WIN` or `LOSE` once the match's battle is over.
 #include "types.h"
 #include "task.h"
 
@@ -90,4 +91,55 @@ static void Colosso_ShowOpeningLettering(s32 match) {
   Scene_PlayMusic();
   Event_End();
   GameFlag_Set(FLAG_IN_TOWN);
+}
+
+// UB: the result calls Colosso_StartLettering through an s32 function type,
+// the call the bytes show; UBFIX calls it as declared.
+#ifdef UBFIX
+#define COLOSSO_START_LETTERING Colosso_StartLettering
+#else
+#define COLOSSO_START_LETTERING ((s32 (*)())Colosso_StartLettering)
+#endif
+
+/// Shows how a match ended, back in the arena after its battle: `WIN`, or
+/// `LOSE` in blue, swells over the arena with its jingle, the loser shows an
+/// ellipsis, and the screen closes.
+///
+/// result is the match's number, negative for a loss; the lettering stands
+/// for that many seconds.
+static void Colosso_ShowMatchResult(s32 result) {
+  s32 loser;
+
+  Sound_Play(SE_COLOSSO_LETTERING);
+  Event_StartScreenTransition();
+  Event_WaitTransitionFrames();
+  gColosso_LetteringWin[13] = result * 60;
+  STORE_CONST(gColosso_LetteringLose[13]) =
+      (result < 0 ? -result : result) * 60;
+  if (result < 0) {
+    Event_Wait(30);
+    Sound_Play(MUS_INN);
+    Colosso_LoadLettering(COLOSSO_PICTURE_WIN_LOSE_FOR_LOSS);
+    COLOSSO_START_LETTERING(COLOSSO_SHAPE_RESULT, 1);
+    Event_Wait(-result * 60 + 60);
+    loser = ACTOR_PARTY_LEADER;
+  } else {
+    Event_Wait(30);
+    // The 1st to 3rd match play MUS_JINGLE_SMALL, MUS_JINGLE_MEDIUM and
+    // MUS_JINGLE_LARGE.
+    Sound_Play(result + (MUS_JINGLE_SMALL - 1));
+    Colosso_LoadLettering(COLOSSO_PICTURE_WIN_LOSE);
+    COLOSSO_START_LETTERING(COLOSSO_SHAPE_RESULT, 0);
+    Event_Wait(result * 60 + 60);
+    loser = ACTOR_OPPONENT;
+  }
+  Actor_ShowEmote(loser, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
+  while (Sound_GetBgmRestoreDelay() != 0) {
+    wait(1);
+  }
+  Sound_Play(MUS_SILENCE);
+  Event_Wait(30);
+  Sound_Play(SOUND_FADE_OUT_ACTION_SE);
+  Event_FinishScreenTransition();
+  Event_WaitTransitionFrames();
 }

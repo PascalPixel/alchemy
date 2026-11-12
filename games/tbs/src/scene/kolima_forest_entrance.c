@@ -396,7 +396,7 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
   PaletteFade_StartInterpolation(120);
   wait(60);
-  squashAction = gKolimaForestEntrance_SquashAction;
+  squashAction = gKolima_PartySquashActions;
   Actor_SetScript(ACTOR_PARTY_LEADER, squashAction);
   Actor_SetScript(ACTOR_GARET, squashAction);
   Actor_SetScript(ACTOR_IVAN, squashAction);
@@ -419,7 +419,7 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
     Event_Wait(10);
     Actor_SetSpeedAndAcceleration(ACTOR_MIA, 2, 2);
     Actor_SetDestinationOffset(ACTOR_MIA, -2, 0);
-    Actor_SetScript(ACTOR_MIA, gKolimaForestEntrance_RestoreScaleAction);
+    Actor_SetScript(ACTOR_MIA, gKolima_PartyRestoreScaleActions);
     record = Actor_Get(ACTOR_MIA);
     Actor_SetSpriteFlags(record, 0);
     Actor_SetAnimation(ACTOR_MIA, ANIM_COLLAPSE);
@@ -429,7 +429,7 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   record->velocityY = px(2);
   Event_Wait(10);
   Actor_SetSpeedAndAcceleration(ACTOR_PARTY_LEADER, 2, 2);
-  restoreScaleAction = gKolimaForestEntrance_RestoreScaleAction;
+  restoreScaleAction = gKolima_PartyRestoreScaleActions;
   Actor_SetScript(ACTOR_PARTY_LEADER, restoreScaleAction);
   record = Actor_Get(ACTOR_PARTY_LEADER);
   Actor_SetSpriteFlags(record, 0);
@@ -1259,30 +1259,7 @@ s32 gKolimaForestEntrance_MiaAction[] = {
     SC_ANIMATION(1), SC_END,
 };
 
-/// The glamour presses the party down: each squashes and wobbles until
-/// released.
-s32 gKolimaForestEntrance_SquashAction[] = {
-    SC_ADD(SW_SCALE_X, -Q16_ONE / 4),
-    SC_ADD(SW_SCALE_Y, Q16_ONE / 8),
-    SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, Q16_ONE / 8),
-    SC_ADD(SW_SCALE_Y, -Q16_ONE / 16),
-    SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, Q16_ONE / 16),
-    SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),
-    SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, Q16_ONE / 16),
-    SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),
-    SC_WAIT(2),
-    SC_LOOP(SC_FOREVER, SC_TOP),
-};
-
-s32 gKolimaForestEntrance_RestoreScaleAction[] = {
-    SC_SET(SW_SCALE_X, Q16_ONE),
-    SC_SET(SW_SCALE_Y, Q16_ONE),
-    SC_WAIT(1),
-    SC_END,
-};
+#include "shared/kolima_squash.h"
 
 /// A field grows from a tenth of its size over 70 frames.
 s32 gKolimaForestEntrance_PsynergyFieldGrowAction[] = {

@@ -1712,28 +1712,7 @@ s32 gKolima_MiaWalksIn[] = {
     SC_ANIMATION(1), SC_END,
 };
 
-s32 gKolima_PartySquashActions[] = {
-    SC_ADD(SW_SCALE_X, -Q16_ONE / 4),
-    SC_ADD(SW_SCALE_Y, Q16_ONE / 8),
-    SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, Q16_ONE / 8),
-    SC_ADD(SW_SCALE_Y, -Q16_ONE / 16),
-    SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, Q16_ONE / 16),
-    SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),
-    SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, Q16_ONE / 16),
-    SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),
-    SC_WAIT(2),
-    SC_LOOP(SC_FOREVER, SC_TOP),
-};
-
-s32 gKolima_PartyRestoreScaleActions[] = {
-    SC_SET(SW_SCALE_X, Q16_ONE),
-    SC_SET(SW_SCALE_Y, Q16_ONE),
-    SC_WAIT(1),
-    SC_END,
-};
+#include "shared/kolima_squash.h"
 
 s32 gKolima_ProtectiveFieldGrowActions[] = {
     SC_SET(SW_SCALE_X, Q16_ONE / 10),

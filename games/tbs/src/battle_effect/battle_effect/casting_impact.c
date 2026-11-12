@@ -113,7 +113,7 @@ enum CastingImpact {
   CASTING_IMPACT_IMPACT_MURK,                ///< smoke
   CASTING_IMPACT_IMPACT_CYCLONE_SLASH,  ///< a tornado stands over the target
   CASTING_IMPACT_IMPACT_PSYPHON_SEAL,   ///< a rune opens over the target
-  CASTING_IMPACT_IMPACT_ASURA,          ///< a beast scrolls across and breaks
+  CASTING_IMPACT_IMPACT_ASURA,          ///< a masked swordsman slashes
   CASTING_IMPACT_IMPACT_FORCIBLE_ARM,   ///< a flame falls diagonally
   CASTING_IMPACT_IMPACT_TRUNCHEON_FIST, ///< a flame falls diagonally
   CASTING_IMPACT_IMPACT_SEVERE_BLOW,    ///< hands off
@@ -131,15 +131,14 @@ enum CastingImpact {
   ((struct Particle *)(Ram_MapGridCellBuffer + 16384))
 #define CASTING_IMPACT_IMPACT_PARTICLE_COUNT 64
 
-// Asura's sheet in work->imageStorage, a byte a pixel: the beast's two
-// pictures, then its pieces. Both pictures are drawn 80 by 104, but the second
-// starts 96 rows after the first, so the first's last 8 rows are the second's
-// first 8; the pieces follow a whole 80 by 104 after the second.
-#define ASURA_BEAST_WIDTH 80
-#define ASURA_BEAST_HEIGHT 104
-#define ASURA_SHEET_SECOND_BEAST (ASURA_BEAST_WIDTH * 96)
-#define ASURA_SHEET_PIECES                                                     \
-  (ASURA_SHEET_SECOND_BEAST + ASURA_BEAST_WIDTH * ASURA_BEAST_HEIGHT)
+/// Asura's sheet in work->imageStorage, a byte a pixel: a masked swordsman
+/// with his sword low, then with it swung up, then the red crescent his stroke
+/// leaves. Both swordsman pictures are drawn 80 by 104, but the second starts
+/// 96 rows after the first, so the first's last 8 rows are the second's first
+/// 8; the crescent follows a whole 80 by 104 after the second.
+/// ★ Named from what the player sees: the swordsman's stroke (its render)
+#define ASURA_SHEET_SWUNG (80 * 96)
+#define ASURA_SHEET_CRESCENT (ASURA_SHEET_SWUNG + 80 * 104)
 
 /// gCastingImpact_ImageX has seven pictures for each side.
 #define CASTING_IMPACT_IMAGE_X(side, image)                                    \
@@ -1098,11 +1097,11 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
         }
       }
     } else if (mode == CASTING_IMPACT_IMPACT_ASURA) {
-      // The background scrolls, slowing from frame 7 until it stops, while an
-      // 80x104 beast appears and breaks: its first picture shows until frame
-      // 7 and its second from frame 4, the canvas flashes on frames 4 and 5,
-      // and from frame 6 five pieces follow, two frames each. It fades from
-      // frame 16.
+      // The swordsman slides in on the scrolling canvas, slowing from frame 7
+      // until he stops: his sword low until frame 7 and swung up from frame
+      // 4, the canvas flashing white on frames 4 and 5, and from frame 6 the
+      // red crescent his stroke leaves fading through five pictures, two
+      // frames each. It all fades from frame 16.
       scrollPos += scrollSpeed;
       if (frame > 6) {
         scrollSpeed = (scrollSpeed * 48) / 64;
@@ -1121,31 +1120,27 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
       }
       if (frame <= 3) {
         if (work->args->side == EFFECT_SIDE_PARTY) {
-          blitters[0](canvas, work->imageStorage, 0, 24, ASURA_BEAST_WIDTH,
-                      ASURA_BEAST_HEIGHT);
+          blitters[0](canvas, work->imageStorage, 0, 24, 80, 104);
         } else {
-          blitters[0](canvas, work->imageStorage, 48, 24, ASURA_BEAST_WIDTH,
-                      ASURA_BEAST_HEIGHT);
+          blitters[0](canvas, work->imageStorage, 48, 24, 80, 104);
         }
       } else {
         if (frame <= 7) {
           if (work->args->side == EFFECT_SIDE_PARTY) {
-            blitters[0](canvas, work->imageStorage, 0, 24, ASURA_BEAST_WIDTH,
-                        ASURA_BEAST_HEIGHT);
+            blitters[0](canvas, work->imageStorage, 0, 24, 80, 104);
           } else {
-            blitters[0](canvas, work->imageStorage, 48, 24, ASURA_BEAST_WIDTH,
-                        ASURA_BEAST_HEIGHT);
+            blitters[0](canvas, work->imageStorage, 48, 24, 80, 104);
           }
         }
         if (work->args->side == EFFECT_SIDE_PARTY) {
-          blitters[0](canvas, work->imageStorage + ASURA_SHEET_SECOND_BEAST, 16,
-                      16, ASURA_BEAST_WIDTH, ASURA_BEAST_HEIGHT);
+          blitters[0](canvas, work->imageStorage + ASURA_SHEET_SWUNG, 16, 16,
+                      80, 104);
         } else {
-          blitters[0](canvas, work->imageStorage + ASURA_SHEET_SECOND_BEAST, 32,
-                      16, ASURA_BEAST_WIDTH, ASURA_BEAST_HEIGHT);
+          blitters[0](canvas, work->imageStorage + ASURA_SHEET_SWUNG, 32, 16,
+                      80, 104);
         }
         if (frame == 6 || frame == 7) {
-          blitters[0](canvas, work->imageStorage + ASURA_SHEET_PIECES, 0, 16,
+          blitters[0](canvas, work->imageStorage + ASURA_SHEET_CRESCENT, 0, 16,
                       128, 91);
         }
         if (frame == 8 || frame == 9) {
@@ -1203,11 +1198,12 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
           SET_VELOCITY(particle, Random16() & TRIG_ANGLE_MASK,
                        Random16() & TRIG_ANGLE_MASK, Random16() & 0xffff);
         }
-        // Chip 63's y, not its radius, is set to 159, which sets it up to 159
-        // pixels off its line.
+        // Chip 63's y, not its radius, is set to 159, so it flies up to 159
+        // pixels off its line and the target gives the last flinch with no
+        // chip on it, as the last chip crosses the sky above.
         // XXX (no evidence): whether its radius was meant, as 159 is the
-        // largest the others draw (32 + 127) and chip 63 gives the last
-        // flinch; only the author's intent would say.
+        // largest the others draw (32 + 127); only the author's intent would
+        // say.
         CASTING_IMPACT_IMPACT_PARTICLES[63].y = 159;
       }
       {

@@ -1023,7 +1023,7 @@ void StatusScreen_DrawStatusAilments(struct Window *window, s32 memberId,
   s32 djinnRow;
   s32 hasDjinn;
   s32 keepDrawn;
-  s32 ailmentIndex;
+  s32 i;
   u8 ailments[8];
 
   if (Party_SumDjinnCountsFar(-1) != 0)
@@ -1045,32 +1045,28 @@ void StatusScreen_DrawStatusAilments(struct Window *window, s32 memberId,
   if (keepDrawn == 0)
     Window_ClearInteriorTilesFar(window, 0, 40, 96, 96);
   // The statuses, one a row, or "Normal".
-  ailmentIndex = 0;
+  i = 0;
   if (ailments[CHARACTER_DOWN] != 0) {
     Text_DrawMessageAsTilesFar(MsgDownLabel, window, 16, 40);
-    ailmentIndex = 1;
+    i = 1;
   }
   if (ailments[CHARACTER_POISON] != 0) {
-    Text_DrawMessageAsTilesFar(MsgPoisonLabel, window, 16,
-                               ailmentIndex * 16 + 40);
-    ailmentIndex++;
+    Text_DrawMessageAsTilesFar(MsgPoisonLabel, window, 16, i * 16 + 40);
+    i++;
   }
   if (ailments[CHARACTER_VENOM] != 0) {
-    Text_DrawMessageAsTilesFar(MsgVenomLabel, window, 16,
-                               ailmentIndex * 16 + 40);
-    ailmentIndex++;
+    Text_DrawMessageAsTilesFar(MsgVenomLabel, window, 16, i * 16 + 40);
+    i++;
   }
   if (ailments[CHARACTER_CURSE] != 0) {
-    Text_DrawMessageAsTilesFar(MsgCurseLabel, window, 16,
-                               ailmentIndex * 16 + 40);
-    ailmentIndex++;
+    Text_DrawMessageAsTilesFar(MsgCurseLabel, window, 16, i * 16 + 40);
+    i++;
   }
   if (ailments[CHARACTER_HAUNT] != 0) {
-    Text_DrawMessageAsTilesFar(MsgHauntLabel, window, 16,
-                               ailmentIndex * 16 + 40);
-    ailmentIndex++;
+    Text_DrawMessageAsTilesFar(MsgHauntLabel, window, 16, i * 16 + 40);
+    i++;
   }
-  if (ailmentIndex == 0)
+  if (i == 0)
     Text_DrawMessageAsTilesFar(MsgNormalLabel, window, 0, 40);
   StatusScreen_UpdateSelectionIcons(ailments);
   StatusScreen_ShowStatusIcons(ailments);
@@ -1099,26 +1095,23 @@ void StatusScreen_DrawStatusAilments(struct Window *window, s32 memberId,
     Text_DrawMessageAsTilesFar(MsgPowerLabel + 1, window, 64,
                                djinnRow * 8 + 32);
   }
-  for (ailmentIndex = 0; ailmentIndex <= 3; ailmentIndex++) {
+  for (i = 0; i <= 3; i++) {
     if (hasDjinn)
-      Text_DrawNumberInWindowFar(unit->djinnHeldCounts[ailmentIndex], 1, window,
-                                 ailmentIndex * 32 + 120, djinnRow * 8 + 8);
+      Text_DrawNumberInWindowFar(unit->djinnHeldCounts[i], 1, window,
+                                 i * 32 + 120, djinnRow * 8 + 8);
     if ((mode & 0xff) == 1) {
       if (hasDjinn) {
-        Text_DrawNumberInWindowFar(unit->djinnSetCounts[ailmentIndex], 1,
-                                   window, ailmentIndex * 32 + 104,
+        Text_DrawNumberInWindowFar(unit->djinnSetCounts[i], 1, window,
+                                   i * 32 + 104, djinnRow * 8 + 8);
+        Text_DrawStringInWindowFar(gMenu_SlashString, window, i * 32 + 112,
                                    djinnRow * 8 + 8);
-        Text_DrawStringInWindowFar(gMenu_SlashString, window,
-                                   ailmentIndex * 32 + 112, djinnRow * 8 + 8);
       }
-      Text_DrawNumberInWindowFar(
-          Unit_GetElementLevelFar(memberId, ailmentIndex), 2, window,
-          ailmentIndex * 32 + 112, djinnRow * 8 + 16);
-      Text_DrawNumberInWindowFar(unit->element[ailmentIndex].power, 3, window,
-                                 ailmentIndex * 32 + 104, djinnRow * 8 + 24);
-      Text_DrawNumberInWindowFar(unit->element[ailmentIndex].resistance, 3,
-                                 window, ailmentIndex * 32 + 104,
-                                 djinnRow * 8 + 32);
+      Text_DrawNumberInWindowFar(Unit_GetElementLevelFar(memberId, i), 2,
+                                 window, i * 32 + 112, djinnRow * 8 + 16);
+      Text_DrawNumberInWindowFar(unit->element[i].power, 3, window,
+                                 i * 32 + 104, djinnRow * 8 + 24);
+      Text_DrawNumberInWindowFar(unit->element[i].resistance, 3, window,
+                                 i * 32 + 104, djinnRow * 8 + 32);
     }
   }
 }

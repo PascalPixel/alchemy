@@ -753,20 +753,7 @@ static void MercuryLighthouse_SpawnRipple(struct Actor *source) {
 
 #include "shared/mercury_lighthouse_pillar.h"
 
-s32 gFieldEffect_ShortScript[] = {
-    SC_WAIT(1),           SC_LOOP(22, SC_TOP), SC_WAIT(1),
-    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_RELEASE,
-};
-
-s32 gFieldEffect_MediumScript[] = {
-    SC_WAIT(1),           SC_LOOP(44, SC_TOP), SC_WAIT(1),
-    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_RELEASE,
-};
-
-s32 gFieldEffect_LongScript[] = {
-    SC_WAIT(1),           SC_LOOP(126, SC_TOP), SC_WAIT(1),
-    SC_POSITION(0, 0, 0), SC_WAIT(1),           SC_RELEASE,
-};
+#include "shared/field_effect_duration_scripts.h"
 
 /// Pixel step by direction, with X in the upper halfword and Z in the lower.
 #define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))

@@ -3910,20 +3910,7 @@ static s32 VenusLighthouse_RouteLight(struct Actor *interpreter) {
   return 0;
 }
 
-s32 gFieldEffect_ShortScript[] = {
-    SC_WAIT(1),           SC_LOOP(22, SC_TOP), SC_WAIT(1),
-    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_RELEASE,
-};
-
-s32 gFieldEffect_MediumScript[] = {
-    SC_WAIT(1),           SC_LOOP(44, SC_TOP), SC_WAIT(1),
-    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_RELEASE,
-};
-
-s32 gFieldEffect_LongScript[] = {
-    SC_WAIT(1),           SC_LOOP(126, SC_TOP), SC_WAIT(1),
-    SC_POSITION(0, 0, 0), SC_WAIT(1),           SC_RELEASE,
-};
+#include "shared/field_effect_duration_scripts.h"
 
 // Step for each of 16 directions: X in the upper halfword, Z in the lower.
 // UB: westward rows contain a negative X step; pack its unsigned bits.

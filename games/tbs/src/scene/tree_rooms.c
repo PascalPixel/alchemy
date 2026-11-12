@@ -1249,20 +1249,7 @@ static void TreeRooms_RunLandingDustEvent(void) {
   Event_End();
 }
 
-s32 gFieldEffect_ShortScript[] = {
-    SC_WAIT(1),           SC_LOOP(22, SC_TOP), SC_WAIT(1),
-    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_RELEASE,
-};
-
-s32 gFieldEffect_MediumScript[] = {
-    SC_WAIT(1),           SC_LOOP(44, SC_TOP), SC_WAIT(1),
-    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_RELEASE,
-};
-
-s32 gFieldEffect_LongScript[] = {
-    SC_WAIT(1),           SC_LOOP(126, SC_TOP), SC_WAIT(1),
-    SC_POSITION(0, 0, 0), SC_WAIT(1),           SC_RELEASE,
-};
+#include "shared/field_effect_duration_scripts.h"
 
 /// The torn cocoons redrawn after a battle. Each row is the cocoon's flag,
 /// whether it is redrawn (0 for the four the layout draws torn), the staging

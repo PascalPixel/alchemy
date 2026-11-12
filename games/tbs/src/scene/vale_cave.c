@@ -1003,26 +1003,7 @@ static void ValeCave_TouchRidingLog(void) {
   Actor_SetAnimation(ACTOR_RIDING_LOG, 2);
 }
 
-// The lifetimes FieldEffect_Spawn gives its effects through
-// gFieldEffect_DurationScripts: an effect waits 23, 45 or 127 frames, then is
-// put away and released. FieldEffect_Spawn divides a change of scale by the
-// loop count in each one's fourth word, so that the effect reaches its scale as
-// its time runs out.
-
-s32 gValeCave_ShortEffectScript[] = {
-    SC_WAIT(1),           SC_LOOP(22, SC_TOP), SC_WAIT(1),
-    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_RELEASE,
-};
-
-s32 gValeCave_MediumEffectScript[] = {
-    SC_WAIT(1),           SC_LOOP(44, SC_TOP), SC_WAIT(1),
-    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_RELEASE,
-};
-
-s32 gValeCave_LongEffectScript[] = {
-    SC_WAIT(1),           SC_LOOP(126, SC_TOP), SC_WAIT(1),
-    SC_POSITION(0, 0, 0), SC_WAIT(1),           SC_RELEASE,
-};
+#include "shared/field_effect_duration_scripts.h"
 
 // Pixel step by direction: X in the upper halfword, Z in the lower.
 // UB: negative pixel steps cannot be shifted as signed values.
@@ -1073,9 +1054,9 @@ s32 gValeCave_WalkTargets[] = {
 };
 
 const s32 *gFieldEffect_DurationScripts[] = {
-    gValeCave_ShortEffectScript,
-    gValeCave_MediumEffectScript,
-    gValeCave_LongEffectScript,
+    gFieldEffect_ShortScript,
+    gFieldEffect_MediumScript,
+    gFieldEffect_LongScript,
 };
 
 struct SceneEntrance gValeCave_EntrancesOther[] = {

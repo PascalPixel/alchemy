@@ -1143,28 +1143,12 @@ UNUSED static void Vault_SpawnDriftingEffect(s32 flags) {
   sprite->image.priority = anchor->sprite->image.priority;
 }
 
-// The three scripts of gFieldEffect_DurationScripts, which FieldEffect_Spawn
-// picks by the low bits of its flags: each holds its effect for about 24, 46 or
-// 128 frames, then releases it.
-s32 gVault_ShortEffectScript[] = {
-    SC_WAIT(1),           SC_LOOP(22, SC_TOP), SC_WAIT(1),
-    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_RELEASE,
-};
-
-s32 gVault_MediumEffectScript[] = {
-    SC_WAIT(1),           SC_LOOP(44, SC_TOP), SC_WAIT(1),
-    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_RELEASE,
-};
-
-s32 gVault_LongEffectScript[] = {
-    SC_WAIT(1),           SC_LOOP(126, SC_TOP), SC_WAIT(1),
-    SC_POSITION(0, 0, 0), SC_WAIT(1),           SC_RELEASE,
-};
+#include "shared/field_effect_duration_scripts.h"
 
 const s32 *gFieldEffect_DurationScripts[] = {
-    gVault_ShortEffectScript,
-    gVault_MediumEffectScript,
-    gVault_LongEffectScript,
+    gFieldEffect_ShortScript,
+    gFieldEffect_MediumScript,
+    gFieldEffect_LongScript,
 };
 
 /// ACTOR_WOMAN_WANTING_THE_ROOF_FIXED's search for the young man fixing the

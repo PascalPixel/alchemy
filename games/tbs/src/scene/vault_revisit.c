@@ -734,26 +734,12 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-// The three scripts of gFieldEffect_DurationScripts, as in vault.c.
-s32 gVaultRevisit_ShortEffectScript[] = {
-    SC_WAIT(1),           SC_LOOP(22, SC_TOP), SC_WAIT(1),
-    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_RELEASE,
-};
-
-s32 gVaultRevisit_MediumEffectScript[] = {
-    SC_WAIT(1),           SC_LOOP(44, SC_TOP), SC_WAIT(1),
-    SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_RELEASE,
-};
-
-s32 gVaultRevisit_LongEffectScript[] = {
-    SC_WAIT(1),           SC_LOOP(126, SC_TOP), SC_WAIT(1),
-    SC_POSITION(0, 0, 0), SC_WAIT(1),           SC_RELEASE,
-};
+#include "shared/field_effect_duration_scripts.h"
 
 const s32 *gFieldEffect_DurationScripts[] = {
-    gVaultRevisit_ShortEffectScript,
-    gVaultRevisit_MediumEffectScript,
-    gVaultRevisit_LongEffectScript,
+    gFieldEffect_ShortScript,
+    gFieldEffect_MediumScript,
+    gFieldEffect_LongScript,
 };
 
 s32 gVaultRevisit_BoyRoundTheWellScript[] = {

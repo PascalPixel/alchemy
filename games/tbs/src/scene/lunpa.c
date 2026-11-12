@@ -124,22 +124,7 @@ enum { PALETTE_TRANSLUCENT_EFFECT = 14, PALETTE_EFFECT = 15 };
 /// so how did you get here?" (MsgLunpaGuardsCatchParty)
 #define FLAG_LUNPA_FORTRESS_GATES_GUARDS_CAUGHT_PARTY FLAG_SCENE_TEMP_44
 
-/// How long an effect of shared/field_effect_spawn.h lasts: 22, 44 or 126
-/// frames, then it moves away and is released.
-s32 gFieldEffect_ShortScript[] = {
-    SC_WAIT(1),           SC_LOOP(22, 0), SC_WAIT(1),
-    SC_POSITION(0, 0, 0), SC_WAIT(1),     SC_RELEASE,
-};
-
-s32 gFieldEffect_MediumScript[] = {
-    SC_WAIT(1),           SC_LOOP(44, 0), SC_WAIT(1),
-    SC_POSITION(0, 0, 0), SC_WAIT(1),     SC_RELEASE,
-};
-
-s32 gFieldEffect_LongScript[] = {
-    SC_WAIT(1),           SC_LOOP(126, 0), SC_WAIT(1),
-    SC_POSITION(0, 0, 0), SC_WAIT(1),      SC_RELEASE,
-};
+#include "shared/field_effect_duration_scripts.h"
 
 const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_ShortScript,

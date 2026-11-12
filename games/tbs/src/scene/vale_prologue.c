@@ -2341,10 +2341,11 @@ static __inline__ void ValePrologue_PlaceActor(struct Actor *actor,
   actor->targetZ = groundPosition;
 }
 
-/// One crash of the Boulder coming down, made of a shake, SE_CRASH and a wait.
+/// One crash of the Boulder coming down, made of a shake of shakeAmplitude
+/// pixels, SE_CRASH and a wait.
 static __inline__ void ValePrologue_PlayImpactBeat(s32 shakeAmplitude,
                                                    s32 frames) {
-  MapGrid_SetShakeFixed(shakeAmplitude, shakeAmplitude, Q16_ONE);
+  MapGrid_SetShakeFixed(px(shakeAmplitude), px(shakeAmplitude), Q16_ONE);
   Sound_Play(SE_CRASH);
   Event_Wait(frames);
 }
@@ -2411,7 +2412,7 @@ static void ValePrologue_ShowBoulderSweepingDownriver(void) {
   Actor_SetScript(ACTOR_JENNA_CHILD, gValePrologue_JennaGatherPath);
   Actor_SetScript(ACTOR_PARTY_LEADER, gValePrologue_LeaderGatherPath);
   Actor_RunScriptAndWait(ACTOR_GARET_CHILD, gValePrologue_GaretGatherPath);
-  ValePrologue_PlayImpactBeat(PIXELS(4), 20);
+  ValePrologue_PlayImpactBeat(4, 20);
   MapGrid_SetShake(1, 1, 1);
   Event_Wait(60);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
@@ -2450,16 +2451,16 @@ static void ValePrologue_ShowBoulderSweepingDownriver(void) {
   Actor_SetScript(ACTOR_EXHAUSTED_STRONGMAN, lookAroundActions);
   Event_Wait(10);
   Sound_Play(SOUND_FADE_OUT_BGM);
-  ValePrologue_PlayImpactBeat(PIXELS(3), 30);
+  ValePrologue_PlayImpactBeat(3, 30);
   MapGrid_SetShake(1, 1, 1);
   Event_Wait(120);
-  ValePrologue_PlayImpactBeat(PIXELS(3), 40);
+  ValePrologue_PlayImpactBeat(3, 40);
   MapGrid_SetShake(2, 2, 1);
   Event_Wait(60);
-  ValePrologue_PlayImpactBeat(PIXELS(4), 20);
+  ValePrologue_PlayImpactBeat(4, 20);
   MapGrid_SetShake(1, 1, 1);
   Event_Wait(60);
-  ValePrologue_PlayImpactBeat(PIXELS(3), 40);
+  ValePrologue_PlayImpactBeat(3, 40);
   MapGrid_SetShake(1, 1, 1);
   Event_Wait(60);
   Weather_StopLightning();

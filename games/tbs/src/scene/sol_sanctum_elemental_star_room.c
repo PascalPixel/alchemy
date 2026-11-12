@@ -92,8 +92,11 @@ static void SolSanctumElementalStarRoom_AlexTakesStars(void);
 static void SolSanctumElementalStarRoom_LineUpCaptors(void);
 static void SolSanctumElementalStarRoom_ShowMessageAndWait(s32 speaker,
                                                            s32 frames);
-static s32 SolSanctumElementalStarRoom_PresentStar(s32 item, s32 x, s32 y,
-                                                   s32 z);
+static s32 SolSanctumElementalStarRoom_PresentStarFixed(s32 item, s32 x, s32 y,
+                                                        s32 z);
+/// SolSanctumElementalStarRoom_PresentStarFixed at a point in whole pixels.
+#define SolSanctumElementalStarRoom_PresentStar(item, x, y, z)                 \
+  SolSanctumElementalStarRoom_PresentStarFixed(item, px(x), px(y), px(z))
 static void SolSanctumElementalStarRoom_GiveMythrilBags(void);
 static void SolSanctumElementalStarRoom_AnimateAlexReappearing(void);
 
@@ -296,8 +299,8 @@ static void SolSanctumElementalStarRoom_BagVenusStar(void) {
   PUT_OUT_STAR_LIGHT(43, 26);
   Event_Wait(20);
   // Present the collected star, then return to Kraden's explanation.
-  member = SolSanctumElementalStarRoom_PresentStar(ITEM_VENUS_STAR, PIXELS(712),
-                                                   PIXELS(16), PIXELS(464));
+  member =
+      SolSanctumElementalStarRoom_PresentStar(ITEM_VENUS_STAR, 712, 16, 464);
   Event_Wait(40);
   MessageArgument_Push(member, MESSAGE_ARGUMENT_ACTOR);
   message = MsgSolSanctumVenusStarBagged;
@@ -401,8 +404,8 @@ static void SolSanctumElementalStarRoom_BagMercuryStar(void) {
   PUT_OUT_STAR_LIGHT(43, 6);
   Event_Wait(20);
   // Present the collected star, then return to Kraden's explanation.
-  member = SolSanctumElementalStarRoom_PresentStar(
-      ITEM_MERCURY_STAR, PIXELS(712), PIXELS(16), PIXELS(144));
+  member =
+      SolSanctumElementalStarRoom_PresentStar(ITEM_MERCURY_STAR, 712, 16, 144);
   Event_Wait(40);
   MessageArgument_Push(member, MESSAGE_ARGUMENT_ACTOR);
   message = MsgSolSanctumPutMercuryStar;
@@ -517,8 +520,8 @@ static void SolSanctumElementalStarRoom_BagJupiterStar(void) {
   Event_Wait(20);
   PUT_OUT_STAR_LIGHT(13, 26);
   Event_Wait(20);
-  member = SolSanctumElementalStarRoom_PresentStar(
-      ITEM_JUPITER_STAR, PIXELS(232), PIXELS(16), PIXELS(464));
+  member =
+      SolSanctumElementalStarRoom_PresentStar(ITEM_JUPITER_STAR, 232, 16, 464);
   Event_Wait(40);
   MessageArgument_Push(member, MESSAGE_ARGUMENT_ACTOR);
   FieldMessage_Show(MsgSolSanctumJupiterStarBagged, 1);
@@ -1309,8 +1312,8 @@ static void SolSanctumElementalStarRoom_TakeMarsStar(void) {
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   PUT_OUT_STAR_LIGHT(13, 6);
   Event_Wait(20);
-  member = SolSanctumElementalStarRoom_PresentStar(ITEM_MARS_STAR, PIXELS(232),
-                                                   PIXELS(16), PIXELS(144));
+  member =
+      SolSanctumElementalStarRoom_PresentStar(ITEM_MARS_STAR, 232, 16, 144);
   Event_Wait(40);
   MessageArgument_Push(member, MESSAGE_ARGUMENT_ACTOR);
   FieldMessage_Show(MsgSolSanctumMarsStarBagged, 1);
@@ -1456,11 +1459,12 @@ static void SolSanctumElementalStarRoom_JumpAhead(void) {
   Field_TryJumpForward();
 }
 
-/// Shows a pedestal while Kraden describes it, then returns to the party.
+/// Shows a pedestal while Kraden describes it, then returns to the party; the
+/// camera's point and Kraden's spot are in whole pixels.
 static inline void
 SolSanctumElementalStarRoom_ShowPedestal(s32 cameraX, s32 cameraZ, s32 actorX,
                                          s32 actorZ, s32 speaker) {
-  FieldCamera_MoveToFixed(cameraX, CAMERA_KEEP, cameraZ, 1);
+  FieldCamera_MoveToFixed(px(cameraX), CAMERA_KEEP, px(cameraZ), 1);
   FieldCamera_WaitForMove();
   Actor_SetPosition(ACTOR_KRADEN, actorX, actorZ);
   Event_Wait(40);
@@ -1832,7 +1836,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   FieldCamera_SetSpeed(8);
   // Tour the four pedestals, returning the view to the party after each.
   SolSanctumElementalStarRoom_ShowPedestal(
-      PIXELS(711), PIXELS(464), 589, 353, SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN);
+      711, 464, 589, 353, SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_KRADEN, 3);
   Event_Wait(10);
@@ -1841,7 +1845,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 20);
   SolSanctumElementalStarRoom_ShowPedestal(
-      PIXELS(711), PIXELS(147), 596, 238, SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN);
+      711, 147, 596, 238, SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
   Event_Wait(10);
@@ -1853,9 +1857,8 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHWEST, 20);
-  SolSanctumElementalStarRoom_ShowPedestal(PIXELS(231), PIXELS(147), 308, 250,
-                                           SPEAKER_PORTRAIT_RIGHT |
-                                               ACTOR_KRADEN);
+  SolSanctumElementalStarRoom_ShowPedestal(
+      231, 147, 308, 250, SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_KRADEN, 3);
   Event_Wait(10);
@@ -1867,9 +1870,8 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHWEST, 20);
-  SolSanctumElementalStarRoom_ShowPedestal(PIXELS(231), PIXELS(464), 306, 362,
-                                           SPEAKER_PORTRAIT_RIGHT |
-                                               ACTOR_KRADEN);
+  SolSanctumElementalStarRoom_ShowPedestal(
+      231, 464, 306, 362, SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN);
   Event_Wait(30);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_HEART, 60);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
@@ -2213,8 +2215,8 @@ static void SolSanctumElementalStarRoom_ShowMessageAndWait(s32 speaker,
 }
 
 /// Animates a star's icon and replaces its owner's mythril bag with the star.
-static s32 SolSanctumElementalStarRoom_PresentStar(s32 item, s32 x, s32 y,
-                                                   s32 z) {
+static s32 SolSanctumElementalStarRoom_PresentStarFixed(s32 item, s32 x, s32 y,
+                                                        s32 z) {
   GlyphTransfer *glyph;
   struct Actor *actor;
   struct Sprite *sprite;

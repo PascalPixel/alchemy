@@ -163,7 +163,10 @@ static void AltinPeak_RestoreSpritzRoom(void);
 static void AltinPeak_RestoreFallingRocksRoom(void);
 static void AltinPeak_RestoreHydrosStatueRoom(void);
 static void AltinPeak_RestoreWestExitRoom(void);
-static void AltinPeak_StartSpitting(s32 x, s32 y, s32 z, s32 facing);
+static void AltinPeak_StartSpittingFixed(s32 x, s32 y, s32 z, s32 facing);
+/// AltinPeak_StartSpittingFixed from a point in whole pixels.
+#define AltinPeak_StartSpitting(x, y, z, facing)                               \
+  AltinPeak_StartSpittingFixed(px(x), px(y), px(z), facing)
 static void AltinPeak_SpawnDebris(void);
 static void FieldEffect_UpdateFrostGlint(struct Actor *actor);
 static void AltinPeak_BeastFreezesSecondPuddle(void);
@@ -1331,11 +1334,12 @@ static void AltinPeak_UpdateBeastHops(struct Actor *updated) {
     beast->timer = 0;
 }
 
-/// The beast lands with a splash, shaking the screen for holdFrames.
+/// The beast lands with a splash, shaking the screen by amplitude pixels for
+/// holdFrames.
 static __inline__ void AltinPeak_PlayLandingShake(s32 amplitude,
                                                   s32 holdFrames) {
   Sound_Play(SE_SPLASH);
-  MapGrid_SetShakeFixed(amplitude, 0, Q16_ONE);
+  MapGrid_SetShakeFixed(px(amplitude), 0, Q16_ONE);
   Event_Wait(holdFrames);
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
 }
@@ -1376,7 +1380,7 @@ static void AltinPeak_ShowFirstBeastRoute(void) {
   beast->paused = 0;
   Event_Wait(16);
   Actor_SetAnimation(ACTOR_FIRST_WATER_BEAST, ANIM_STAND);
-  AltinPeak_PlayLandingShake(PIXELS(1), 4);
+  AltinPeak_PlayLandingShake(1, 4);
   Event_Wait(40);
   Actor_FaceDirection(ACTOR_FIRST_WATER_BEAST, FACING_NORTH_NORTHWEST, 20);
   Actor_FaceDirection(ACTOR_FIRST_WATER_BEAST, FACING_WEST, 40);
@@ -1396,7 +1400,7 @@ static void AltinPeak_ShowFirstBeastRoute(void) {
   beast->update = 0;
   Event_Wait(16);
   Actor_SetAnimation(ACTOR_FIRST_WATER_BEAST, ANIM_STAND);
-  AltinPeak_PlayLandingShake(PIXELS(1), 4);
+  AltinPeak_PlayLandingShake(1, 4);
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_FIRST_WATER_BEAST, FACING_EAST_NORTHEAST, 20);
   Actor_FaceDirection(ACTOR_FIRST_WATER_BEAST, FACING_NORTH_NORTHEAST, 40);
@@ -1406,7 +1410,7 @@ static void AltinPeak_ShowFirstBeastRoute(void) {
   Actor_SetAnimation(ACTOR_FIRST_WATER_BEAST, WATER_BEAST_ANIMATION_LEAP);
   Actor_MoveToAndWait(ACTOR_FIRST_WATER_BEAST, 380, 248);
   Event_Wait(10);
-  AltinPeak_PlayLandingShake(PIXELS(1), 4);
+  AltinPeak_PlayLandingShake(1, 4);
   Event_Wait(6);
   Actor_SetAnimation(ACTOR_FIRST_WATER_BEAST, ANIM_STAND);
   Event_Wait(40);
@@ -1421,7 +1425,7 @@ static void AltinPeak_ShowFirstBeastRoute(void) {
   beast->update = 0;
   Actor_SetAnimation(ACTOR_FIRST_WATER_BEAST, ANIM_STAND);
   Event_Wait(16);
-  AltinPeak_PlayLandingShake(PIXELS(1), 4);
+  AltinPeak_PlayLandingShake(1, 4);
   Event_Wait(40);
   Actor_FaceDirection(ACTOR_FIRST_WATER_BEAST, FACING_WEST, 40);
   Actor_Get(ACTOR_FIRST_WATER_BEAST_ROOM_SECOND_PUDDLE)->motionFlags = 0;
@@ -1441,7 +1445,7 @@ static void AltinPeak_ShowFirstBeastRoute(void) {
   Actor_SetAnimation(ACTOR_FIRST_WATER_BEAST, ANIM_STAND);
   actor = Actor_Get(ACTOR_FIRST_WATER_BEAST);
   Actor_SetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
-  AltinPeak_PlayLandingShake(PIXELS(1), 4);
+  AltinPeak_PlayLandingShake(1, 4);
   Event_Wait(40);
   Sound_Play(SE_HIGH_JUMP);
   actor = Actor_Get(ACTOR_FIRST_WATER_BEAST);
@@ -1449,7 +1453,7 @@ static void AltinPeak_ShowFirstBeastRoute(void) {
   Actor_SetAnimation(ACTOR_FIRST_WATER_BEAST, WATER_BEAST_ANIMATION_SPIT);
   Actor_MoveToAndWait(ACTOR_FIRST_WATER_BEAST, 260, 215);
   Actor_SetAnimation(ACTOR_FIRST_WATER_BEAST, ANIM_STAND);
-  AltinPeak_PlayLandingShake(PIXELS(1), 4);
+  AltinPeak_PlayLandingShake(1, 4);
   Event_Wait(40);
   Actor_FaceDirection(ACTOR_FIRST_WATER_BEAST, FACING_SOUTH_SOUTHWEST, 20);
   Actor_FaceDirection(ACTOR_FIRST_WATER_BEAST, FACING_SOUTH_SOUTHEAST, 20);
@@ -1504,7 +1508,7 @@ static void AltinPeak_ShowSecondBeastRoute(void) {
   actor->paused = 0;
   Event_Wait(10);
   Actor_SetAnimation(ACTOR_FIRST_WATER_BEAST, ANIM_STAND);
-  AltinPeak_PlayLandingShake(PIXELS(1), 4);
+  AltinPeak_PlayLandingShake(1, 4);
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_FIRST_WATER_BEAST, FACING_SOUTH_SOUTHWEST, 40);
   Actor_Get(ACTOR_FIRST_WATER_BEAST)->steeringFlags &= ~ACTOR_FACES_MOTION;
@@ -1520,7 +1524,7 @@ static void AltinPeak_ShowSecondBeastRoute(void) {
   movingActor = Actor_Get(ACTOR_FIRST_WATER_BEAST);
   Actor_SetSpriteFlags(movingActor, SPRITE_FLAG_SHADOW);
   Event_Wait(10);
-  AltinPeak_PlayLandingShake(PIXELS(2), 8);
+  AltinPeak_PlayLandingShake(2, 8);
   Event_Wait(40);
   Actor_Get(ACTOR_FIRST_WATER_BEAST)->steeringFlags |= ACTOR_FACES_MOTION;
   Actor_FaceDirection(ACTOR_FIRST_WATER_BEAST, FACING_SOUTH_SOUTHEAST, 20);
@@ -1535,7 +1539,7 @@ static void AltinPeak_ShowSecondBeastRoute(void) {
   actor->paused = 0;
   Actor_SetAnimation(ACTOR_FIRST_WATER_BEAST, ANIM_STAND);
   Event_Wait(16);
-  AltinPeak_PlayLandingShake(PIXELS(1), 4);
+  AltinPeak_PlayLandingShake(1, 4);
   Event_Wait(40);
   Actor_FaceDirection(ACTOR_FIRST_WATER_BEAST, FACING_EAST, 10);
   Sound_Play(SE_BEAST_CRY);
@@ -1543,7 +1547,7 @@ static void AltinPeak_ShowSecondBeastRoute(void) {
   Event_Wait(80);
   Actor_SetAnimation(ACTOR_FIRST_WATER_BEAST, WATER_BEAST_ANIMATION_SPIT);
   // End the route with a spray gust and a short skippable wait.
-  AltinPeak_StartSpitting(PIXELS(130), 0, PIXELS(168), FACING_EAST);
+  AltinPeak_StartSpitting(130, 0, 168, FACING_EAST);
   Event_Wait(60);
   for (waitedFrames = 0; waitedFrames < 60 && gKeysPressed == 0;
        waitedFrames++) {
@@ -1633,7 +1637,7 @@ static void AltinPeak_RestoreFirstWaterBeastRoom(void) {
       actor = Actor_Get(ACTOR_FIRST_WATER_BEAST);
       actor->facing = opened;
       Actor_SetAnimation(ACTOR_FIRST_WATER_BEAST, WATER_BEAST_ANIMATION_SPIT);
-      AltinPeak_StartSpitting(PIXELS(130), 0, PIXELS(168), FACING_EAST);
+      AltinPeak_StartSpitting(130, 0, 168, FACING_EAST);
       return;
     }
     if (GameFlag_Get(FLAG_ALTIN_PEAK_FIRST_BEAST_ROUTE_SEEN) == 0) {
@@ -1696,7 +1700,7 @@ static void AltinPeak_RestoreSecondWaterBeastRoom(void) {
         Actor_SetSpriteColorById(ACTOR_SECOND_WATER_BEAST, SPRITE_COLOR_RBG);
         Actor_SetAnimation(ACTOR_SECOND_WATER_BEAST,
                            WATER_BEAST_ANIMATION_SPIT);
-        AltinPeak_StartSpitting(PIXELS(238), 0, PIXELS(418), FACING_WEST);
+        AltinPeak_StartSpitting(238, 0, 418, FACING_WEST);
       }
     }
   }
@@ -1750,7 +1754,7 @@ static void AltinPeak_RestoreThirdWaterBeastRoom(void) {
     if (GameFlag_Get(FLAG_ALTIN_MINE_THIRD_DRAIN) == 0) {
       Actor_SetSpriteColorById(ACTOR_THIRD_WATER_BEAST, SPRITE_COLOR_RBG);
       Actor_SetAnimation(ACTOR_THIRD_WATER_BEAST, WATER_BEAST_ANIMATION_SPIT);
-      AltinPeak_StartSpitting(PIXELS(748), PIXELS(8), PIXELS(280), FACING_WEST);
+      AltinPeak_StartSpitting(748, 8, 280, FACING_WEST);
     }
   }
   AltinPeak_MarkActorTerrainCell(ACTOR_THIRD_WATER_BEAST_ROOM_PUDDLE);
@@ -2028,9 +2032,10 @@ static void AltinPeak_SpawnSpray(void) {
   Actor_SelectAnimation(spray, 1);
 }
 
-/// A water beast starts spitting water from (x, y, z) toward facing
+/// A water beast starts spitting water from (x, y, z), in 16.16 fixed point,
+/// toward facing
 /// (FACING_EAST or FACING_WEST), with its sound (SE_AMBIENT_WATER).
-static void AltinPeak_StartSpitting(s32 x, s32 y, s32 z, s32 facing) {
+static void AltinPeak_StartSpittingFixed(s32 x, s32 y, s32 z, s32 facing) {
   SET_VECTOR(gAltinPeak_SprayOrigin, x, y, z);
   gAltinPeak_SprayDirection = facing;
 

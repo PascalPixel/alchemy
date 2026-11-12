@@ -657,3 +657,5 @@ L_0200a6e6:
 }
 
 s32 Scene_PrepareMap(void) { return 0; }
+
+#include "../../field/object/set_sprite_priority_b.c"

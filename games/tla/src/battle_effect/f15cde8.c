@@ -1,7 +1,3 @@
-/// @file
-/// Azul: the sea rises into a wall of water, a great serpent coils out of it
-/// and swallows the foes, then the wave breaks over them in a spray.
-
 #include "types.h"
 #include "battle_effect.h"
 #include "battle_effect_work.h"
@@ -44,7 +40,8 @@ void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                    s32 timerFrames);              // BattleEffect_TintBattler
 void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
 void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
-void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen, s32 *world);
+void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen,
+                   s32 *world);
 void Func_0818caa8(void *cells, s32 x, s32 y, s32 size);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
@@ -56,9 +53,11 @@ void SceneTransform_ApplyYaw(s32 angle);
 void Render_ResetTransformState(void);
 void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
-void BattleEffect_SpawnObjects(s32 entryCount, s32 kind, u32 variant); // SpawnObjects
-void BattleEffect_SelectLivingTargets(struct FxPartyList *party); // SelectLivingTargets
-void Func_080150e4(s32 angle);            // SceneTransform_ApplyRoll
+void BattleEffect_SpawnObjects(s32 entryCount, s32 kind,
+                               u32 variant); // SpawnObjects
+void BattleEffect_SelectLivingTargets(
+    struct FxPartyList *party); // SelectLivingTargets
+void Func_080150e4(s32 angle);  // SceneTransform_ApplyRoll
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                    s32 speedLimit, s32 velocityY, s32 percent);
 
@@ -69,19 +68,17 @@ void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                           s32 drag);
 void **GetBattleObjectSlotFar(s32 objectId);
-void *Heap_AllocEwram(s32 size);
-void Resource_LoadAndDecompress(s32 resource, void *destination, s32 a, s32 b);
 void *Resource_GetTableEntry(s32 resource);
 s32 Task_Add(void (*func)(void), s32 order);
 
-void HeapSlot_Release(s32 slot);
 void Sound_PlayFar(s32 cue);
 void wait(s32 frames);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
 
-void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height, s32 count);
+void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height,
+                           s32 count);
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                           s32 gravity);
 s32 BattleUnit_GetEffectHeightFar(s32 unit);
@@ -141,7 +138,6 @@ struct AzulObject {
   u16 shape;
 };
 
-
 extern char ResourceId_Data134;
 extern char ResourceId_BlueBeamSheet;
 extern char ResourceId_WispSheet;
@@ -165,7 +161,8 @@ struct AzulObject *Func_0815b3b0(s32 width, s32 height, u32 shape, s32 mode);
 
 void BattleEffect_ConfigureEffectDisplay(void);
 void BattleEffect_ArmPaletteHBlankDma(void);
-void Func_0818de3c(struct MeshTriangle *triangles, s32 columns, s32 rows, s32 cellWidth, s32 cellHeight);
+void Func_0818de3c(struct MeshTriangle *triangles, s32 columns, s32 rows,
+                   s32 cellWidth, s32 cellHeight);
 void ColorBuffer_ScaleFar(void *source, void *destination, s32 scale,
                           s32 count);
 void BattleBackground_LoadFar(s32 layer, s32 background, s32 palette);
@@ -173,7 +170,6 @@ void ReleaseBattleObjectRecordsFar(s32 actor);
 void *GetMotionRecordFar(void *object, s32 index);
 void ResourceMetadata_UnregisterFar(void *record, s32 entry);
 void Func_08118148(s16 *actors, s32 a, s32 b);
-void Heap_Release(void *buffer);
 
 #define SLOT_ALT 188 // unkb8[1]
 
@@ -188,6 +184,8 @@ void Heap_Release(void *buffer);
 
 // Azul: the sea rises into a wall of water, a great serpent coils out of it
 // and swallows the foes, then the wave breaks over them in a spray.
+/// Azul: the sea rises into a wall of water, a great serpent coils out of it
+/// and swallows the foes, then the wave breaks over them in a spray.
 void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
   u8 *canvas;
   struct BattleEffectWork *work;
@@ -866,4 +864,87 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
     ResourceObject_ReleaseFar(work->objects[i]);
   }
   BattleEffect_EndCanvasLayer();
+}
+
+#include "debug.h"
+#include "field.h"
+#include "game.h"
+#include "graphics.h"
+#include "lib.h"
+#include "menu.h"
+#include "sound.h"
+#include "system.h"
+
+#include "macros.h"
+
+void EffectStep_AdvanceWithGravity3D(struct EffectStep *step, s32 damping,
+                                     s32 gravity) {
+  s32 vx = step->velocityX;
+  s32 vy = step->velocityY;
+  s32 vz = step->velocityZ;
+
+  step->x += vx;
+  step->y += vy;
+  step->z += vz;
+  SET_VELOCITY(step, vx * damping / 64, (vy + gravity) * damping / 64,
+               vz * damping / 64);
+}
+
+void EffectStep_AdvanceWithGravity2D(struct EffectStep *step, s32 damping,
+                                     s32 gravity) {
+  s32 x = step->x;
+  s32 vx = step->velocityX;
+  s32 vy = step->velocityY;
+
+  step->x = x + vx;
+  step->y += vy;
+  step->velocityX = vx * damping / 64;
+  step->velocityY = (vy + gravity) * damping / 64;
+}
+
+s32 EffectPosition_ProjectPoint(const void *point,
+                                struct EffectPosition *position) {
+  s32 result = Render_ProjectPoint(point, EffectPosition_Coordinates(position));
+  position->y -= 16;
+  return result;
+}
+
+void EffectPosition_ProjectSprite(s32 id, struct EffectPosition *position) {
+  BattleUnit_ProjectToScreen(id, EffectPosition_Coordinates(position));
+  position->y -= 16;
+}
+
+void EffectPosition_ProjectScaledBattler(s32 id,
+                                         struct EffectPosition *position) {
+  BattleMotion_ProjectScaledPositionFar(id,
+                                        EffectPosition_Coordinates(position));
+  position->y -= 16;
+}
+
+void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *position) {
+  BattleMotion_ProjectPositionFar(id, EffectPosition_Coordinates(position));
+  position->y -= 16;
+}
+
+struct BattleFxWorkTail {
+  u8 unk0000[0x78e4];
+  s32 active;
+  s32 unk78e8;
+  s32 unk78ec;
+  struct BattleEffectArgument *effect;
+};
+
+// Midpoint between the first and last targets.
+void Func_0815e22c(struct EffectPosition *position) {
+  struct BattleFxWorkTail *work;
+  struct EffectPosition first;
+  struct EffectPosition last;
+
+  work = (struct BattleFxWorkTail *)Ram_HeapSlots->battleFxWork[0];
+  EffectPosition_ProjectBattler(work->effect->actors[0], &first);
+  EffectPosition_ProjectBattler(work->effect->actors[work->effect->count - 1],
+                                &last);
+  position->x = first.x + (last.x - first.x) / 2;
+  position->y = first.y;
+  position->depth = first.depth;
 }

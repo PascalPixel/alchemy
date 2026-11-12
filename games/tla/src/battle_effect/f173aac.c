@@ -40,7 +40,8 @@ void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                    s32 timerFrames);              // BattleEffect_TintBattler
 void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
 void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
-void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen, s32 *world);
+void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen,
+                   s32 *world);
 void Func_0818caa8(void *cells, s32 x, s32 y, s32 size);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
@@ -52,9 +53,11 @@ void SceneTransform_ApplyYaw(s32 angle);
 void Render_ResetTransformState(void);
 void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
-void BattleEffect_SpawnObjects(s32 entryCount, s32 kind, u32 variant); // SpawnObjects
-void BattleEffect_SelectLivingTargets(struct FxPartyList *party); // SelectLivingTargets
-void Func_080150e4(s32 angle);            // SceneTransform_ApplyRoll
+void BattleEffect_SpawnObjects(s32 entryCount, s32 kind,
+                               u32 variant); // SpawnObjects
+void BattleEffect_SelectLivingTargets(
+    struct FxPartyList *party); // SelectLivingTargets
+void Func_080150e4(s32 angle);  // SceneTransform_ApplyRoll
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                    s32 speedLimit, s32 velocityY, s32 percent);
 void Render_ApplyProjectedPlacementFar(struct ScaledSprite *sprite,
@@ -78,7 +81,8 @@ u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
 
-void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height, s32 count);
+void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height,
+                           s32 count);
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                           s32 gravity);
 s32 BattleUnit_GetEffectHeightFar(s32 unit);
@@ -180,12 +184,12 @@ void Heap_Release(void *buffer);
   while (*(volatile u32 *)&(work)->vblanksSinceTransfer,                       \
          *(volatile u32 *)&(work)->vblanksSinceTransfer <= 1)
 
-// The shared body of sixteen abilities' effects (variant_i.c): Gasp (mode
-// 0), Reflux (2), Djinn Counter (3), Mold and Meld (4), Shine (5), Lull (6),
-// Counter-rush (7), Demon Eye (8), Emu and its kind's four other abilities
-// (9), Call Dullahan and Formina Sage (10), Beat Dance (11), Element Swap
-// (12), Cage (13), Clarion Cry (14) and Psy Boost (15). Mode 1 has no
-// caller. Each mode loads its own sheets, then draws a canvas layer and a
+// The shared body of sixteen abilities' effects (its wrappers are in
+// f173588.c): Gasp (mode 0), Reflux (2), Djinn Counter (3), Mold and Meld (4),
+// Shine (5), Lull (6), Counter-rush (7), Demon Eye (8), Emu and its kind's four
+// other abilities (9), Call Dullahan and Formina Sage (10), Beat Dance (11),
+// Element Swap (12), Cage (13), Clarion Cry (14) and Psy Boost (15). Mode 1 has
+// no caller. Each mode loads its own sheets, then draws a canvas layer and a
 // model layer every frame for the mode's length.
 void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
   struct BattleEffectWork *work =

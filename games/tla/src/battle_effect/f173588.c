@@ -50,7 +50,6 @@ extern char ResourceId_RuneSheet;
 extern char ResourceId_JupiterDjinnSheet;
 extern char ResourceId_StarCrossSheet;
 
-
 extern const u8 gData_08199340[]; // a textured square
 extern const u8 gData_08199210[]; // its four corners
 
@@ -58,23 +57,22 @@ extern const u8 gData_08199210[]; // its four corners
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
-s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter, packed
+s32 BattleEffect_LoadBlitter(
+    s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter, packed
 void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
                    s32 frames); // BattleEffect_TintBattler
 void BattleEffect_CountDownBattlerTints(void);
 void Func_081180e8(s32 phase);    // BattlePlayback_StartFar
 void Func_0815f0a0(s32 resource); // BattleEffect_StepPaletteToResource
-void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen, s32 *world); // BattleEffect_RunDjinniEntrance
-void Render_ResetTransformState(void);
+void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen,
+                   s32 *world); // BattleEffect_RunDjinniEntrance
 void Func_08015160(s32 x, s32 y, s32 z);
 void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
 void Func_080151e4(s32 x, s32 y, s32 z);
-void *Heap_AllocEwram(s32 size);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct Model *model);
-void Heap_Release(void *block);
 void Sound_PlayFar(s32 cue);
 
 // Rime and Haze: the Djinni rises swaying through the canvas over the
@@ -266,3 +264,55 @@ void Func_08173588(struct BattleEffectArgument *effect, s32 mode) {
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }
+
+struct BattleEffectArgument;
+
+void Func_08173aac(struct BattleEffectArgument *effect, s32 mode);
+
+/// Abilities: Gasp (kind 242).
+void BattleEffect_RunGasp(s32 a0) { Func_08173aac(a0, 0); }
+
+/// Abilities: Reflux (kind 248).
+void BattleEffect_RunReflux(s32 a0) { Func_08173aac(a0, 2); }
+
+/// Abilities: Djinn Counter (kind 249).
+void BattleEffect_RunDjinnCounter(s32 a0) { Func_08173aac(a0, 3); }
+
+/// Abilities: Counter-rush (kind 396).
+void BattleEffect_RunCounterRush(s32 a0) { Func_08173aac(a0, 7); }
+
+/// Abilities: Mold (kind 250).
+void BattleEffect_RunMold(s32 a0) { Func_08173aac(a0, 4); }
+
+/// Abilities: Meld (kind 251).
+void BattleEffect_RunMeld(s32 a0) { Func_08173aac(a0, 4); }
+
+/// Abilities: Shine (kind 252).
+void BattleEffect_RunShine(s32 a0) { Func_08173aac(a0, 5); }
+
+/// Abilities: Lull (kind 241).
+void BattleEffect_RunLull(s32 a0) { Func_08173aac(a0, 6); }
+
+/// Abilities: Demon Eye (kind 445).
+void BattleEffect_RunDemonEye(s32 a0) { Func_08173aac(a0, 8); }
+
+/// Abilities: Emu, Call Demon, Claw Slash, Mega Slash, Vital Moon (kind 446).
+void BattleEffect_RunEmu(s32 a0) { Func_08173aac(a0, 9); }
+
+/// Abilities: Call Dullahan, Formina Sage (kind 448).
+void BattleEffect_RunCallDullahan(s32 a0) { Func_08173aac(a0, 10); }
+
+/// Abilities: Beat Dance (kind 455).
+void BattleEffect_RunBeatDance(s32 a0) { Func_08173aac(a0, 11); }
+
+/// Abilities: Clarion Cry (kind 467).
+void BattleEffect_RunClarionCry(s32 a0) { Func_08173aac(a0, 14); }
+
+/// Abilities: Element Swap (kind 464).
+void BattleEffect_RunElementSwap(s32 a0) { Func_08173aac(a0, 12); }
+
+/// Abilities: Psy Boost (kind 468).
+void BattleEffect_RunPsyBoost(s32 a0) { Func_08173aac(a0, 15); }
+
+/// Abilities: Cage (kind 435).
+void BattleEffect_RunCage(s32 a0) { Func_08173aac(a0, 13); }

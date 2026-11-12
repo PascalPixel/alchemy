@@ -50,6 +50,8 @@ extern char ResourceId_Data0C1;
 extern char ResourceId_Data134;
 extern u8 gMapCellBuffer[];
 extern const u8 Data_08196f28[];
+// The particle sheet's cell offsets by size (The Broken Seal's
+// gBattleEffect_MoteCells).
 extern u16 gData_08197410[];
 extern const u8 Data_08198ec4[];
 extern const u8 Data_08198cac[];
@@ -74,10 +76,7 @@ void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffect_CountDownBattlerTints(void);
 void Func_081180e8(s32 phase);
 void Sound_PlayFar(s32 cue);
-void Resource_LoadAndDecompress(s32 id, void *target, s32 unpack, s32 wait);
 
-
-void HeapSlot_Release(s32 slot);
 void wait(s32 frames);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
@@ -88,7 +87,6 @@ void Func_080151e4(s32 x, s32 y, s32 z);
 void SceneTransform_ApplyPitch(s32 angle);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct Model *model);
-
 
 // Summon 16. A shower of 256 motes drifts down the screen and, from frame
 // 91, gathers toward the middle; from frame 97 flames rise in twelve columns
@@ -404,4 +402,203 @@ void BattleEffect_RunMoloch(struct BattleEffectArgument *effect) {
       ResourceObject_ReleaseFar(work->objects[i]);
   }
   BattleEffect_EndCanvasLayer();
+}
+
+#include "motobj.h"
+#include "bg_scroll.h"
+#include "battle_display.h"
+
+#include "graphics.h"
+
+extern char ResourceId_VioletSkyBackdrop;
+
+void BattleActor_SpawnObjectsForListFar(s16 *targets, s32 mode);
+void BattleBackground_LoadFar(s32 mode, s32 background, s32 level);
+
+// Summon 25's backdrop change: clears the targets' ground motion and drops
+// each a little above the ground at a random height, empties the actor
+// list, loads the violet sky and recolours its 128 BG palette entries from
+// 96 on: each channel is darkened and the three are rotated (red to green,
+// green to blue, blue to red).
+void Func_0819253c(void) {
+  struct BattlePresentationTransition *transition =
+      Ram_HeapSlots->transitionWork;
+  struct BattleEffectWork *work =
+      (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
+  s16 list[14];
+  u16 *palette;
+  s32 i;
+
+  REG_BG1HOFS = 0;
+  gCameraSceneParameters[4] = 240;
+
+  // The targets fall in from just above the ground, halfway closer in depth.
+  for (i = 0; i != work->effect->count; i++) {
+    struct MotionObject *object =
+        GetBattleObjectSlotFar(work->effect->actors[i])->object;
+
+    object->x = 0;
+    object->y = (16 - (Random16() & 15)) << 16;
+    object->z /= 2;
+    object->verticalMotionStrength = 0;
+  }
+
+  // No actor objects over the new backdrop.
+  list[0] = 0xff;
+  BattleActor_SpawnObjectsForListFar(list, 0);
+  BattleBackground_LoadFar(1, (s32)&ResourceId_VioletSkyBackdrop, 0);
+
+  palette = (u16 *)BG_PLTT + 96;
+  for (i = 0; i != 128; i++) {
+    s32 color = *palette;
+    s32 blue = ((u16)color >> 10) & 31;
+    s32 green = ((u16)color >> 5) & 31;
+    s32 red = 31;
+
+    red &= color;
+    red -= 16;
+    green -= 24;
+    blue -= 20;
+
+    if (red < 0)
+      red = 0;
+    if (green < 0)
+      green = 0;
+    if (blue < 0)
+      blue = 0;
+    *palette++ = green << 10 | red << 5 | blue;
+  }
+  transition->active = 1;
+  gBgScroll[1].x = 0;
+}
+
+// Summon 25: draws one falling drop at (x, y), large (20x40) when small is 0
+// and small (12x24) otherwise, its animation picture chosen by frame / 2, and
+// under it a trail of particles every half size down to row 112.
+void Func_08192648(u32 frame, s32 x, s32 y, s32 small) {
+  DrawRectangle draw[2];
+  struct BattleEffectWork *work;
+  void *canvas;
+  u32 size;
+  u32 half;
+  s32 i;
+  s32 trailY;
+
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
+  canvas = Ram_HeapSlots->battleFxWork[1];
+  draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
+
+  // The drop: one 20x40 or 12x24 cell of its strip in the sheet.
+  if (small == 0)
+    draw[1](canvas, work->sheet + 0x1b12 + frame / 2 * (20 * 40), x - 10,
+            y - 20, 20, 40);
+  else
+    draw[1](canvas, work->sheet + 0x4c12 + frame / 2 * (12 * 24), x - 6, y - 12,
+            12, 24);
+
+  // The trail: particles of size 8 (6 for a small drop), half a size apart.
+  size = 8 - small * 2;
+  half = size / 2;
+  // A goto loop: loop.c leaves it alone, so y + i * half multiplies on every
+  // pass and the table entry and frame / 2 * 0x302 are recomputed; as a for
+  // loop, 111 of 120 instructions differ in tla-en. The argument x - size / 2
+  // is not one GCSE carries out of the loop (as x - half, 83 differ).
+  i = 1;
+  trailY = y + i * half;
+  if (trailY > 112)
+    return;
+next:
+  // The offset grouped before the sheet base: ungrouped, 2 instructions
+  // differ (the base is added before the product).
+  draw[0](canvas, work->sheet + (gData_08197410[size - 1] + frame / 2 * 0x302),
+          x - size / 2, trailY, size, size * 2);
+  i++;
+  trailY = y + i * half;
+  if (trailY <= 112)
+    goto next;
+}
+
+// One model vertex: signed byte coordinates, padded to a word.
+struct ModelVertex {
+  s8 x;
+  s8 y;
+  s8 z;
+  s8 pad;
+};
+
+struct Vector3 {
+  s32 x;
+  s32 y;
+  s32 z;
+};
+
+extern const struct ModelVertex Data_08196f30[6];
+extern const u16 Data_08199f4c[];
+
+void SceneTransform_ApplyPosition(const s32 *pos);
+
+// Summon 25: draws one rising pillar, a textured strip of six vertices whose
+// two lower rows come from Data_08196f30 and whose top row is raised to
+// height. x is the pillar's screen column (63 is the centre); the base sits
+// height pixels below row 63, so the pillar grows upward from there.
+void Func_0819273c(s32 halfWidth, s32 x, s32 height) {
+  u8 *work = Ram_HeapSlots->battleFxWork[0];
+  void *projected;
+  struct RenderModel *model;
+  struct ModelVertex vertices[6];
+  struct ModelTexture texture;
+  struct Vector3 position;
+
+  projected = Heap_AllocEwram(48);
+  model = Render_AllocateModelList(1);
+  memcpy(vertices, Data_08196f30, sizeof(vertices));
+
+  // A 16x16 texture at 0x302 into the sheet.
+  texture.logWidth = 4;
+  texture.logHeight = 4;
+  texture.pixels = work + 0xa02;
+
+  // Each row is halfWidth to either side; the top row reaches height.
+  vertices[0].x = -halfWidth;
+  vertices[1].x = halfWidth;
+  vertices[2].x = -halfWidth;
+  vertices[3].x = halfWidth;
+  vertices[4].x = -halfWidth;
+  vertices[5].x = halfWidth;
+  vertices[5].y = height;
+  vertices[4].y = height;
+
+  Render_ResetTransformState();
+  position.x = (x << 16) - (63 << 16);
+  position.y = (63 - height) << 16;
+  position.z = 0;
+  SceneTransform_ApplyPosition(&position);
+
+  model->kind = 4;
+  model->texture = &texture;
+  model->mesh = Data_08199f4c;
+  model->vertices = projected;
+  Render_TransformVertices(vertices, projected, 6);
+  Render_DrawModelList(model);
+  Heap_Release(model);
+  Heap_Release(projected);
+}
+
+void Func_08143eb4(s32 x0, s32 y0, s32 x1, s32 y1, s32 color);
+
+/// Draws a 45-degree canvas line from (x + w/2, y - w/2) down-left toward
+/// (x, y), at most 48 pixels long, in the given colour.
+void BattleEffect_DrawDiagonalCanvasLine(s32 x, s32 y, s32 w, u8 color) {
+  s32 h = w >> 1;
+  s32 x1;
+  s32 y1;
+
+  x += h;
+  y -= h;
+  if (h > 48)
+    h = 48;
+  y1 = y + h;
+  x1 = x - h;
+  Func_08143eb4(x, y, x1, y1, color);
 }

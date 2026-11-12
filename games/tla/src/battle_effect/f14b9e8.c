@@ -64,9 +64,8 @@ extern char ResourceId_MercuryDjinnSheet; // directory row 0x154
 extern char ResourceId_BlueFlameSheet;    // directory row 0x130
 extern char ResourceId_MarsDjinnSheet;    // directory row 0x150
 
-
-extern const u8 gData_08199210[];    // a quad's four corners, x y z for each
-extern const u8 gData_08199340[];    // the quad's face
+extern const u8 gData_08199210[]; // a quad's four corners, x y z for each
+extern const u8 gData_08199340[]; // the quad's face
 
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);
@@ -78,7 +77,8 @@ s32 BattleEffect_LoadBlitter(s32 slot,
                              s32 flags); // ☀️ BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ☀️ BattleEffect_TintBattler
-void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen, s32 *world); // the canvas preparer
+void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen,
+                   s32 *world); // the canvas preparer
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *pos);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
@@ -87,7 +87,6 @@ void Func_08015160(s32 x, s32 y, s32 z); // translate
 void Func_080151e4(s32 x, s32 y, s32 z); // scale
 void Func_080150e4(s32 angle);           // roll
 void SceneTransform_ApplyPitch(s32 angle);
-void Render_ResetTransformState(void);
 void Sound_PlayFar(s32 cue);
 
 // Sixteen textured quads tumble down over the targets (or, from the first
@@ -288,4 +287,775 @@ void Func_0814b9e8(struct BattleEffectArgument *effect, s32 mode) {
   HeapSlot_Release(HEAP_BLITTER);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
+}
+
+struct FxPartyList;
+
+struct StripQuad;
+
+struct ModelTexture {
+  u32 logWidth : 8;
+  u32 logHeight : 8;
+  u32 unk02 : 16;
+  const void *pixels;
+};
+
+struct RequestPair {
+  s32 x, y;
+};
+
+struct RenderModel {
+  s32 kind;
+  s32 unk04;
+  const void *mesh;
+  void *vertices;
+  struct ModelTexture *texture;
+  s32 shade;
+  u8 scrollU;
+  u8 scrollV;
+};
+
+void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
+void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
+
+void Func_0818caa8(void *cells, s32 x, s32 y, s32 size);
+
+void Func_0801521c(s32 scale);
+
+void SceneTransform_ApplyYaw(s32 angle);
+
+void BattleEffect_SpawnObjects(s32 entryCount, s32 kind,
+                               u32 variant); // SpawnObjects
+void BattleEffect_SelectLivingTargets(
+    struct FxPartyList *party); // SelectLivingTargets
+
+void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
+                                   s32 speedLimit, s32 velocityY, s32 percent);
+
+void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
+void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
+
+void BattleCamera_Shake(s32 rangeX, u32 rangeY);
+void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
+                                          s32 drag);
+
+void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height,
+                           s32 count);
+void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
+                                          s32 gravity);
+s32 BattleUnit_GetEffectHeightFar(s32 unit);
+void Transform_SetLookAt(s32 *eye, s32 *target);
+void BattleEffect_StartTiledCanvas(s32 bgControl);
+void BattleEffect_StartTiledCanvasFilled(s32 bgControl);
+void Transform_Push(void);
+void Transform_Pop(void);
+
+// The blitter's heap slot, as a byte offset into Ram_HeapSlots.
+#define SLOT_BLITTER 104 // unk64[1]
+
+// ⚓️'s blitter modes run the other way from The Broken Seal's.
+enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
+#define BLITTER(mode, flags) ((mode) << 4 | (flags))
+#define HI(v) (((s16 *)&(v))[1])
+
+#include "bg_scroll.h"
+#include "input.h"
+#include "battle.h"
+#include "motobj.h"
+
+void Func_08179e6c(void);
+void Animation_ApplyChildArgumentFar(void *object, s32 animation);
+
+extern char ResourceId_Data134;
+extern char ResourceId_PetalSheet;
+extern char ResourceId_CrescentRowSheet;
+extern char ResourceId_OrangePaletteB;
+extern char ResourceId_Data0C1;
+extern u8 gData_02014000[];
+extern u16 gData_08197410[];
+extern const struct RequestPair Data_08196e0c;
+extern const u16 Data_08197a38[][2]; // the charging Zagan's parts
+extern const u16 Data_08197a64[][2]; // the galloping Zagan's
+extern const u8 Data_08197a94[];     // each ring's start
+extern const u8 Data_08197a98[];     // growth
+extern const s8 Data_08197a9c[];     // height
+extern const u8 Data_08198cac[];
+extern const u8 Data_08198ec4[];
+
+#define ZAGAN_PARTS 12
+
+// Abilities: Zagan.
+//
+// The screen slides over to a white field and petals blow across it; Zagan
+// (twelve objects) gallops in from the right as the backdrop darkens, rears,
+// and at frame 157 swings its axe across the targets, striking four times
+// while the screen shakes and rings of dust spread. Holding A or B draws
+// only every other frame.
+void BattleEffect_RunZagan(struct BattleEffectArgument *effect) {
+  u8 *battle;
+  void *canvas;
+  struct BattleEffectWork *work;
+  u8 *sprites;
+  s32 *transition;
+  s32 savedScroll;
+  DrawRectangle *blit;
+  struct RequestPair position;
+  struct RequestPair velocity;
+  s32 skip;
+  DrawRectangle blitters[2];
+  struct RequestPair request;
+  s32 placement[4];
+  struct ModelTexture texture;
+  struct RenderModel *model;
+  void *vertices;
+  struct EffectStep *p;
+  s32 none;
+  u8 *ringPixels;
+  s32 size;
+  s32 scroll;
+  s32 frame;
+  s32 i;
+  s32 j;
+
+  none = 0;
+  ringPixels = gData_02014000; // the rings' texture, for the whole function
+  battle = (u8 *)Ram_HeapSlots->battleWork;
+  canvas = Ram_HeapSlots->battleFxWork[1];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
+  sprites = Ram_HeapSlots->unk64[0];
+  transition = (s32 *)Ram_HeapSlots->transitionWork;
+  savedScroll = gBgScroll[1].x;
+  BattleEffect_ConfigureEffectDisplay();
+  BattleEffect_StartCanvasLayer(0);
+  Func_08179e6c();
+  work->transferMode = none;
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+
+  // The screen slides over to the field.
+  for (scroll = -80, frame = 0; frame != 28; frame++) {
+    if (frame == 27) {
+      gCameraSceneParameters[4] = 240;
+      BattleEffect_SelectLivingTargets(work->effect);
+      work->scrollStepX = -8;
+      transition[4] = 1;
+      Iwram_FillWords((void *)(BG_PLTT + 96), 256, 0x7fff7fff);
+      Resource_LoadAndDecompress((s32)&ResourceId_Data134, work->sheet, 0, 0);
+      // Ten ever-fainter copies of one mote.
+      for (j = 0; j != 10; j++) {
+        size = 4;
+        for (i = 0; i != size * size * 2; i++) {
+          s32 offset = gData_08197410[size - 1] + i + 0x700;
+          s32 value = ((u8 *)work)[offset];
+
+          if (value != 0) {
+            value -= j * 7;
+            if (value <= 0) {
+              value = 1;
+            }
+          }
+          sprites[size * size * j * 2 + i] = value;
+        }
+      }
+      Resource_LoadAndDecompress((s32)&ResourceId_PetalSheet, work->sheet, 1,
+                                 1);
+      for (i = 0; i != 32; i++) {
+        work->sheet[0x5dc0 + i] = i + 16;
+        work->sheet[0x5de0 + i] = i + 16;
+        work->sheet[0x5e00 + i] = i + 16;
+      }
+    }
+    scroll += 4;
+    REG_BG2X = scroll << 8;
+    work->transferPending = 1;
+    wait(1);
+  }
+  blit = blitters;
+  BattleEffect_FetchRectangleBlitters(0, (void **)blit);
+  work->transferMode = 2;
+  work->transferValue = 50;
+  skip = 0;
+  Iwram_CopyWords((void *)BG_PLTT,
+                  Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
+  BattleEffect_SelectLivingTargets(work->effect);
+  wait(1);
+  BattleEffect_SpawnObjects(ZAGAN_PARTS, 658, 1);
+  REG_BG2X = skip;
+  REG_BG2PA = 0x80;
+
+  for (frame = 0; frame != 200; frame++) {
+    if (gInput.repeat & 3) {
+      skip = 1;
+    }
+    if (frame == 0) {
+      Sound_PlayFar(212);
+    }
+    if (frame == 32) {
+      Sound_PlayFar(191);
+    }
+    if ((u32)(frame - 78) <= 31) {
+      REG_BLDALPHA = (16 - (frame - 78) / 2) | 0x1000;
+    }
+    if (frame == 140) {
+      REG_BLDALPHA = 0x1010;
+    }
+    if (frame == 157) {
+      Func_081180e8(145);
+      goto strike;
+    }
+    if (frame == 161 || frame == 165 || frame == 169) {
+    strike:
+      for (i = 0; i != effect->count; i++) {
+        Func_08118088(effect->actors[i], 4);
+        Func_0814cd48(effect->actors[i], 7, -1, i, 4);
+      }
+    }
+    if (frame == 0) {
+      transition[4] = 1;
+      position.x = 240 << 16;
+      position.y = 0x400000;
+      velocity.x = -0x140000;
+      velocity.y = 0;
+      for (i = 0; i != ZAGAN_PARTS; i++) {
+        Animation_ApplyChildArgumentFar(work->objects[i], i + 12);
+      }
+      REG_BLDALPHA = 0x1010;
+      Iwram_FillWords((void *)(BG_PLTT + 96), 256, 0x7fff7fff);
+      work->scrollStepX = -8;
+      gCameraSceneParameters[3] = -968;
+      gCameraSceneParameters[4] = 120;
+      gBgScroll[1].x = savedScroll + 1128;
+      Resource_LoadAndDecompress((s32)&ResourceId_PetalSheet, work->sheet, 1,
+                                 1);
+      Iwram_CopyWords((void *)BG_PLTT,
+                      Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
+                      128);
+      work->transferMode = 2;
+      work->transferValue = 50;
+    }
+    gCameraSceneParameters[3] -= work->scrollStepX;
+    gBgScroll[1].x += work->scrollStepX;
+
+    // The backdrop darkens toward the battle's palette.
+    if (!(frame & 1) && (u32)(frame - 32) <= 111) {
+      u16 *from = Resource_GetTableEntry(*(u16 *)(battle + 0x670));
+      u16 *to = (u16 *)(BG_PLTT + 96);
+
+      for (i = 0; i != 128; i++, from++, to++) {
+        s32 b = (*to >> 10) & 31;
+        s32 g = (*to >> 5) & 31;
+        s32 r = *to & 31;
+        s32 blue = ((*from >> 10) & 31) - 2;
+        s32 green = ((*from >> 5) & 31) - 10;
+        s32 red = (*from & 31) - 6;
+
+        if (blue < 0) {
+          blue = 0;
+        }
+        if (green < 0) {
+          green = 0;
+        }
+        if (red < 0) {
+          red = 0;
+        }
+        if (b > blue) {
+          b--;
+        }
+        if (g > green) {
+          g--;
+        }
+        if (r > red) {
+          r--;
+        }
+        *to = (b << 10) | (g << 5) | r;
+      }
+    }
+    if ((u32)(frame - 64) <= 35) {
+      velocity.x += 0x8000;
+      velocity.y += -0x1000;
+    }
+    if (frame > 177) {
+      velocity.x += -0x20000;
+      velocity.y += -0x10000;
+    } else if (frame > 139) {
+      velocity.x += -40000;
+      velocity.y += 0x2000;
+    } else if (frame > 99) {
+      velocity.x += -0x2000;
+      velocity.y += 0x800;
+    }
+    if (frame == 156) {
+      Iwram_FillWords(canvas, 0x3c00, 0x3f3f3f3f);
+    }
+    if (frame == 157) {
+      Resource_LoadAndDecompress((s32)&ResourceId_CrescentRowSheet, work->sheet,
+                                 1, 0);
+      work->shakeFrames = 16;
+      for (i = 0; i != ZAGAN_PARTS - 1; i++) {
+        Animation_ApplyChildArgumentFar(work->objects[i], i + 24);
+      }
+      work->transferMode = 2;
+      work->transferValue = 50;
+    }
+    if ((u32)(frame - 156) <= 7) {
+      blitters[0](canvas, work->sheet, 12, 0, 58, 120);
+    }
+    for (i = 0; i != 8; i++) {
+      if (frame == i * 6 + 114) {
+        work->scrollStepX++;
+      }
+    }
+    if (frame == 163) {
+      gBgScroll[1].x += -20;
+    }
+    if (frame == 167) {
+      gBgScroll[1].x += -10;
+    }
+    if (frame == 171) {
+      gBgScroll[1].x += -10;
+    }
+
+    // Petals on the wind.
+    if (frame == 0) {
+      s32 row;
+
+      for (i = 0, row = 3, p = work->particles; i != 20; i++, p++, row += 6) {
+        p->x = (Random16() & 127) - 160;
+        p->y = row;
+        p->variant = Random16() & 1;
+        p->velocityX = (Random16() & 3) + p->variant * 8 + 8;
+      }
+    }
+    if ((u32)frame <= 119) {
+      s32 odd;
+
+      for (i = 0, odd = frame & 1, p = work->particles; i != 20; i++, p++) {
+        if (!odd || !skip) {
+          blitters[0](canvas, work->sheet + 0x5dc0, p->x, p->y, 32,
+                      p->variant + 1);
+        }
+        p->x += p->velocityX;
+        if (p->x > 128) {
+          p->x -= 160;
+        }
+      }
+    }
+    if ((u32)frame > 195) {
+      goto shake;
+    }
+
+    // Zagan.
+    request = Data_08196e0c;
+    placement[3] = 0;
+    placement[1] = 0;
+    if (!(frame & 1) || !skip) {
+      if (frame > 156) {
+        for (i = 0; i != ZAGAN_PARTS - 1; i++) {
+          placement[0] = (Data_08197a38[i][0] << 16) + position.x - 0x200000;
+          placement[2] = (Data_08197a38[i][1] << 16) + position.y + 0x100000;
+          Render_ApplyProjectedPlacementFar(work->objects[i], placement,
+                                            (s32 *)&request, 0);
+        }
+      } else {
+        for (i = 0; i != ZAGAN_PARTS; i++) {
+          placement[0] = (Data_08197a64[i][0] << 16) + position.x;
+          placement[2] = (Data_08197a64[i][1] << 16) + position.y - 0x100000;
+          Render_ApplyProjectedPlacementFar(work->objects[i], placement,
+                                            (s32 *)&request, 0);
+        }
+      }
+    }
+    if (frame > 177) {
+      position.x += velocity.x;
+      position.y += velocity.y;
+      velocity.x = velocity.x * 63 / 64;
+      velocity.y = velocity.y * 63 / 64;
+    } else if (frame > 149) {
+      if (position.y > 0x37ffff) {
+        velocity.x = 0;
+        velocity.y = 0;
+      }
+      position.x += velocity.x;
+      position.y += velocity.y;
+    } else if (frame <= 59) {
+      position.x += velocity.x;
+      position.y += velocity.y;
+      velocity.x = velocity.x * 58 / 64;
+      velocity.y = velocity.y * 62 / 64;
+    } else {
+      position.x += velocity.x;
+      position.y += velocity.y;
+      velocity.x = velocity.x * 58 / 64;
+      velocity.y = velocity.y * 61 / 64;
+    }
+    if ((!(frame & 1) || !skip) && frame <= 119) {
+      blit[1](canvas, work->sheet + ((frame / 3) & 3) * 6000,
+              (position.x / 2 >> 16) - 12, (position.y >> 16) - 58, 60, 100);
+    }
+    if (frame == 157) {
+      Resource_LoadAndDecompress((s32)&ResourceId_Data0C1, ringPixels, 0, 0);
+    }
+    if ((frame & 1) && skip) {
+      goto shake;
+    }
+
+    // Rings of dust from the blow.
+    if (frame <= 156) {
+      goto next;
+    }
+    {
+      s32 k;
+
+      vertices = Heap_AllocEwram(0x400);
+      model = Render_AllocateModelList(1);
+      texture.logWidth = 7;
+      texture.logHeight = 7;
+      texture.pixels = ringPixels;
+      model->texture = &texture;
+      model->kind = 7;
+      model->mesh = Data_08198ec4;
+      model->vertices = vertices;
+      model->scrollU = 0;
+      model->scrollV = 0;
+      for (k = 0; k != 4; k++) {
+        s32 start = Data_08197a94[k] + 157;
+        s32 scale;
+        s32 shade;
+
+        if (frame <= start) {
+          continue;
+        }
+        scale = (((frame - start) * Data_08197a98[k] * 125) << 4) + 0x8000;
+        shade = (start - frame) * 8 + 56;
+        if (shade > 0) {
+          shade = 0;
+        }
+        if (shade <= -64) {
+          continue;
+        }
+        model->shade = shade;
+        Render_ResetTransformState();
+        Func_08015160(-0x100000, Data_08197a9c[k] << 16, 0);
+        Func_080151e4(scale, scale * 4 / 3, scale);
+        SceneTransform_ApplyPitch(3000);
+        model->scrollU = ((frame + k * 5) & 7) * 16;
+        Render_TransformVertices(Data_08198cac, vertices, 32);
+        Render_DrawModelList(model);
+      }
+      Heap_Release(model);
+      Heap_Release(vertices);
+    }
+  shake:
+    if (frame > 156) {
+      if (work->shakeFrames > 0) {
+        s32 offsetX = (Random16() & 3) - 8;
+        s32 randomY = Random16() & 15;
+        s32 offsetY = randomY - 8;
+
+        gBgScroll[1].y = randomY + 24;
+        gCameraSceneParameters[3] = 120 - offsetX;
+        gCameraSceneParameters[4] = 120 - offsetY;
+        work->shakeFrames--;
+      } else {
+        gBgScroll[1].y = work->savedBg1Y;
+        gCameraSceneParameters[3] = 120;
+        gCameraSceneParameters[4] = 120;
+      }
+    }
+  next:
+    BattleEffect_CountDownBattlerTints();
+    if (!(frame & 1) || !skip) {
+      work->transferPending = 1;
+      wait(1);
+    }
+  }
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  HeapSlot_Release(188);
+  HeapSlot_Release(104);
+  transition[4] = 0;
+  for (i = 0; i != ZAGAN_PARTS; i++) {
+    ResourceObject_ReleaseFar(work->objects[i]);
+  }
+  BattleEffect_EndCanvasLayer();
+}
+
+struct ShakeWork {
+  u8 unk0000[54];
+  u16 offset;
+  u8 unk0038[0x7774];
+  s32 amount;
+  s32 phase;
+};
+
+/// A task: turns the camera by the effect's delta, the whole
+/// delta on phase 1 and half of it on the frames in between.
+void Camera_ApplyPhasedDelta(void) {
+  struct ShakeWork *work = (struct ShakeWork *)Ram_HeapSlots->battleFxWork[0];
+  struct ShakeWork *camera = Ram_HeapSlots->cameraWork;
+
+  if (work->phase == 1) {
+    camera->offset += work->amount;
+    work->phase = 0;
+  } else {
+    camera->offset += work->amount / 2;
+    if (work->phase == 2)
+      work->phase = 0;
+    else
+      work->phase = 2;
+  }
+}
+
+// Battle effects: repeat an empty effect.
+
+/// Calls the empty BattleEffect_DoNothing cnt times without waiting for frames.
+/// cnt: call count.
+void BattleEffect_CallDoNothing(s32 cnt) {
+  s32 n;
+
+  n = 0;
+  if (cnt != 0) {
+    do {
+      n += 1;
+      BattleEffect_DoNothing();
+    } while (n != cnt);
+  }
+}
+
+#include "dma.h"
+
+#include "macros.h"
+
+struct SummonArgument;
+
+struct FxRunWork {
+  u8 unk0000[0x78e4];
+  s32 active;
+  u8 unk78e8[8];
+  s32 *script;
+};
+
+struct BattleEffectArgument;
+void BattleEffect_RunRamses(struct BattleEffectArgument *effect);
+void BattleEffect_RunNereid(struct BattleEffectArgument *effect);
+void BattleEffect_RunKirin(struct BattleEffectArgument *effect);
+void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect);
+
+void BattleEffect_RunNeptune(struct BattleEffectArgument *effect);
+void BattleEffect_RunTiamat(s32 *arg);
+void BattleEffect_RunProcne(struct BattleEffectArgument *effect);
+void BattleEffect_RunJudgment(struct BattleEffectArgument *effect);
+void BattleEffect_RunBoreas(struct BattleEffectArgument *effect);
+void BattleEffect_RunThor(struct BattleEffectArgument *effect);
+void BattleEffect_RunMegaera(struct BattleEffectArgument *effect);
+void BattleEffect_RunFlora(struct BattleEffectArgument *effect);
+void BattleEffect_RunMoloch(struct BattleEffectArgument *effect);
+void BattleEffect_RunUlysses(struct BattleEffectArgument *effect);
+void BattleEffect_RunHaures(struct BattleEffectArgument *effect);
+void BattleEffect_RunEclipse(struct BattleEffectArgument *effect);
+void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect);
+void BattleEffect_RunDaedalus(struct SummonArgument *arg);
+void BattleEffect_RunAzul(struct BattleEffectArgument *effect);
+void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect);
+void BattleEffect_RunCharon(struct BattleEffectArgument *arg);
+void BattleEffect_RunIris(struct BattleEffectArgument *effect);
+void BattleEffect_RunDaedalusAlt(struct BattleEffectArgument *effect);
+void BattleEffect_RunTrident(struct BattleEffectArgument *effect);
+void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect);
+void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect);
+
+extern void (*gData_08197aa0[])(s32 *script);
+extern u8 gMapCellBuffer[];
+
+/// Runs the battle effect of mode *arg (1 to 29; 0 and 11 the default one)
+/// with the effect's three work blocks taken.
+void BattleEffect_RunSceneEffect(s32 *arg) {
+  struct FxRunWork *work;
+
+  HeapSlot_Alloc(100, 0x302);
+  HeapSlot_Alloc(92, 0x7b7c);
+  HeapSlot_Alloc(96, 0x4000);
+  work = (struct FxRunWork *)Ram_HeapSlots->battleFxWork[0];
+  work->script = arg;
+  work->active = 1;
+  if (*arg == 0) {
+    BattleEffect_RunMeteor((struct BattleEffectArgument *)arg);
+  } else {
+    switch (*arg) {
+    case 1:
+      BattleEffect_RunRamses(arg);
+      break;
+    case 2:
+      BattleEffect_RunNereid(arg);
+      break;
+    case 3:
+      BattleEffect_RunKirin(arg);
+      break;
+    case 4:
+      BattleEffect_RunAtalanta(arg);
+      break;
+    case 5:
+      BattleEffect_RunCybele(arg);
+      break;
+    case 6:
+      BattleEffect_RunNeptune(arg);
+      break;
+    case 7:
+      BattleEffect_RunTiamat(arg);
+      break;
+    case 8:
+      BattleEffect_RunProcne(arg);
+      break;
+    case 9:
+      BattleEffect_RunJudgment(arg);
+      break;
+    case 10:
+      BattleEffect_RunBoreas(arg);
+      break;
+    case 11:
+      BattleEffect_RunMeteor((struct BattleEffectArgument *)arg);
+      break;
+    case 12:
+      BattleEffect_RunThor(arg);
+      break;
+    case 13:
+      BattleEffect_RunZagan(arg);
+      break;
+    case 14:
+      BattleEffect_RunMegaera(arg);
+      break;
+    case 15:
+      BattleEffect_RunFlora(arg);
+      break;
+    case 16:
+      BattleEffect_RunMoloch(arg);
+      break;
+    case 17:
+      BattleEffect_RunUlysses(arg);
+      break;
+    case 18:
+      BattleEffect_RunHaures(arg);
+      break;
+    case 19:
+      BattleEffect_RunEclipse(arg);
+      break;
+    case 20:
+      BattleEffect_RunCoatlicue(arg);
+      break;
+    case 21:
+      BattleEffect_RunDaedalus(arg);
+      break;
+    case 22:
+      BattleEffect_RunAzul(arg);
+      break;
+    case 23:
+      BattleEffect_RunCatastrophe(arg);
+      break;
+    case 24:
+      BattleEffect_RunCharon(arg);
+      break;
+    case 25:
+      BattleEffect_RunIris(arg);
+      break;
+    case 26:
+      BattleEffect_RunDaedalusAlt(arg);
+      break;
+    case 27:
+      BattleEffect_RunTrident(arg);
+      break;
+    case 28:
+      BattleEffect_RunCruelRuin(arg);
+      break;
+    case 29:
+      BattleEffect_RunMeteorBlow(arg);
+      break;
+    }
+  }
+  HeapSlot_Release(96);
+  HeapSlot_Release(92);
+  HeapSlot_Release(100);
+}
+
+/// Runs one battle effect script: takes the effect's three work blocks, calls
+/// the handler its first word selects, then gives the blocks back.
+void BattleEffect_RunTableEffect(s32 *script) {
+  struct FxRunWork *work;
+
+  HeapSlot_Alloc(100, 0x302);
+  HeapSlot_Alloc(92, 0x7b7c);
+  HeapSlot_Alloc(96, 0x4000);
+  work = (struct FxRunWork *)Ram_HeapSlots->battleFxWork[0];
+  work->script = script;
+  work->active = 1;
+  gData_08197aa0[*script - 1](script);
+  HeapSlot_Release(96);
+  HeapSlot_Release(92);
+  HeapSlot_Release(100);
+}
+
+void BattleEffect_BuildWindowEdgeTable(void) {
+  u16 *edge;
+  u16 *line;
+  u8 *inset;
+  s32 i;
+  s32 right;
+
+  edge = (u16 *)gMapCellBuffer;
+  line = (u16 *)(Ram_MapCellBuffer + 0x82);
+  inset = Ram_MapCellBuffer + 2;
+  for (i = 0; i != 160; i++) {
+    if ((u32)(i - 8) <= 127) {
+      right = *edge - inset[i - 8];
+      CLAMP(right, 0, 240);
+      line[i] = right;
+    } else {
+      line[i] = 0xfff1;
+    }
+  }
+  {
+    volatile u16 *channel = REG_DMA0;
+    u16 control;
+
+    control = channel[5];
+    channel[5] = control & 0xc5ff;
+    channel[5] &= 0x7fff;
+    (void)channel[5];
+    Dma_Set(gMapCellBuffer + 0x82, (void *)&REG_WIN0H,
+            DMA_HBLANK_HALFWORD_PER_LINE, (volatile u32 *)channel);
+  }
+}
+
+#include "actor.h"
+
+struct FxPartyList {
+  u8 unk00[20];
+  s32 count;
+  u8 unk18[12];
+  s16 ids[8];
+};
+
+struct FxUnit {
+  u8 unk00[56];
+  s16 hp;
+};
+
+struct FxBgScroll {
+  u8 unk00[6];
+  u16 y;
+};
+
+void *Unit_Get(s32 owner);
+void BattleActor_SpawnObjectsForListFar(s16 *targets, s32 mode);
+void BattleBackground_LoadFar(s32, s32, s32);
+
+/// Spawns the battle objects of each unit in the list that has HP left.
+void BattleEffect_SelectLivingTargets(struct FxPartyList *party) {
+  s16 list[14];
+  s32 count = 0;
+  s32 i;
+
+  for (i = 0; i != party->count; i++) {
+    if (((struct FxUnit *)Unit_Get(party->ids[i]))->hp > 0)
+      list[count++] = party->ids[i];
+  }
+  list[count] = 0xff;
+  BattleActor_SpawnObjectsForListFar(list, 0);
 }

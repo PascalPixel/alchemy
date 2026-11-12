@@ -1,8 +1,3 @@
-/// @file
-/// The breaths (Beam, Rolling Flame, Ghost Soldier, Pike Assault and Blast
-/// Breath): motes gather at the user's mouth and burst out of it, then each
-/// breath fires its own way.
-
 #include "types.h"
 #include "io_reg.h"
 #include "ram_buffer.h"
@@ -98,7 +93,6 @@ void BattleEffect_StartCanvasLayer(s32 bgControl);
 void *Resource_GetTableEntry(s32 id);
 s32 BattleEffect_LoadBlitter(s32 slot, s32 packed);
 
-
 void BattleEffect_SetApproachMotion(s32 actor, s32 target, s32 frames,
                                     s32 percent);
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *position);
@@ -139,6 +133,9 @@ void BattleEffect_ProcessPendingGraphicsTransfer(void);
 // Breath glows, blasts and jets. With variant 2, four jaws open one after
 // another in front of the user. Each breath hits every target at its frame
 // (Blast Breath strikes them in turn, four frames apart).
+/// The breaths (Beam, Rolling Flame, Ghost Soldier, Pike Assault and Blast
+/// Breath): motes gather at the user's mouth and burst out of it, then each
+/// breath fires its own way.
 void Func_0818bc98(struct BattleEffectArgument *effect, s32 mode) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -566,4 +563,202 @@ void Func_0818bc98(struct BattleEffectArgument *effect, s32 mode) {
   HeapSlot_Release(HEAP_SLOT_BLITTER);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
+}
+
+void Func_0818c7b8(struct BattleEffectArgument *effect, s32 mode);
+
+/// Abilities: Human Hunt (kind 437).
+DEFINE_EFFECT_KIND(BattleEffect_RunHumanHunt, Func_0818c7b8, 0)
+
+/// Abilities: Echo Cut (kind 390).
+DEFINE_EFFECT_KIND(BattleEffect_RunEchoCut, Func_0818c7b8, 1)
+
+// The fill goes through an inline wrapper, as the Broken Seal's iwram_call.h
+// writes it: called straight through the fixed entry, the build loads 0x4000
+// before the routine's address.
+#undef Iwram_FillWords
+static inline s32 Iwram_FillWords(void *destination, s32 size, u32 value) {
+  /* FAKEMATCH(wrapper): the fills through this inline; as direct calls to
+   * Iwram_FillWordsEntry, 4 of 303 instructions of Func_0818c7b8 differ in
+   * tla-en. */
+  return Iwram_FillWordsEntry(destination, size, value);
+}
+
+// Does nothing and gives no value: inlined with its value ignored, it leaves
+// only a clobber of the return register, an insn with no code.
+static inline s32 Nothing(void) {}
+
+struct EffectPosition;
+
+extern char ResourceId_GreyCrescentSheet;
+extern char ResourceId_StarCrescentSheet;
+extern char ResourceId_MarsDjinnSheet;
+
+void BattleEffect_StartTiledCanvas(s32 bgControl);
+s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
+                  u32 mode);
+
+void BattleMotion_ApproachTargetFar(s32, s16, s32, s32);
+
+// The crescent slash of Human Hunt (kind 437, mode 0) and Echo Cut (kind 390,
+// mode 1). The caster closes in on the target; from frame 8 a crescent is cut
+// in five steps of three frames: the star crescent, a blank frame, the two
+// halves of the grey crescent and the star crescent's last cell. Echo Cut
+// cuts it upside down and higher, and throws the target into the air at
+// frame 12. Human Hunt loads the Mars Djinn's colours into the background
+// palette and blends its slash more faintly.
+void Func_0818c7b8(struct BattleEffectArgument *effect, s32 mode) {
+  struct BattleEffectWork *work =
+      (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
+  u8 *canvas = Ram_HeapSlots->battleFxWork[1];
+  u8 *cells = Ram_MapCellBuffer;
+  // The blitter pair, as a two-word array one DImode pseudo: it takes r6 and
+  // r7, the second unused, which is why r7 is saved and effect spilled.
+  DrawRectangle draw[2];
+  s32 flags;
+  s32 frame;
+  s32 position[3];
+
+  // Set up the canvas and a clipped MAX blitter, mirrored to face the target
+  // and flipped upside down for Echo Cut.
+  BattleEffect_StartTiledCanvas(0);
+  if (mode == 0) {
+    flags = COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y;
+    if (effect->side != 0)
+      flags = COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X;
+  } else {
+    flags = COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_Y;
+    if (effect->side != 0)
+      flags = COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP;
+  }
+  /* FAKEMATCH(signature): Nothing() typed s32 though it returns nothing; its
+   * return-register clobber issues in the mode store's second cycle, so the
+   * flags move is picked before r1 and r2; as a void function, or without the
+   * call, 2 of 303 instructions differ in tla-en. */
+  Nothing();
+  Func_08196404(HEAP_SLOT_BLITTER, 7, 7, flags, BLIT_MAX);
+  draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
+
+  // Load both crescents and set the blend.
+  Resource_LoadAndDecompress((s32)&ResourceId_GreyCrescentSheet, cells, 1, 1);
+  Resource_LoadAndDecompress((s32)&ResourceId_StarCrescentSheet, work->sheet, 1,
+                             0);
+  if (mode == 0) {
+    Iwram_CopyWords((void *)0x05000000,
+                    Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet),
+                    128);
+    REG_BLDALPHA = 0x810;
+    work->transferMode = 2;
+    work->transferValue = 50;
+  } else {
+    REG_BLDALPHA = 0x1010;
+    work->transferMode = 2;
+    work->transferValue = 75;
+  }
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+
+  // The caster closes in on the target.
+  BattleMotion_ApproachTargetFar(effect->actor, effect->actors[0], 8, 0x40000);
+
+  for (frame = 0; frame != 32; frame++) {
+    if (frame == 0)
+      EffectPosition_ProjectBattler(effect->actors[0],
+                                    (struct EffectPosition *)position);
+    if (frame == 8)
+      Sound_PlayFar(212);
+
+    // Frame 12: the hit. Echo Cut throws the target up.
+    if (frame == 12) {
+      if (mode == 1)
+        Func_081180e8(144);
+      else
+        Func_081180e8(134);
+      BattleEffect_StartActorMotion(effect->actors[0], 1, 0x40000, 0x100000,
+                                    0x40000, 250);
+      work->shakeFrames = 4;
+    }
+
+    // From frame 8: the slash, one step every three frames.
+    if (frame > 7) {
+      s32 step = (frame - 8) / 3;
+      s32 y = mode != 0 ? 16 : 0;
+      s32 x;
+
+      if (effect->side == 0)
+        x = position[0] / 2 - 48;
+      else
+        x = position[0] / 2 - 80;
+      if (mode == 0) {
+        switch (step) {
+        case 0:
+          draw[0](canvas, work->sheet, x, y, 120, 120);
+          break;
+        case 1:
+          Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
+          break;
+        case 2:
+          draw[0](canvas, cells, x - 4, y, 128, 128);
+          break;
+        case 3:
+          draw[0](canvas, cells + 0x4000, x - 4, y, 128, 128);
+          break;
+        case 4:
+          draw[0](canvas, work->sheet + 0x3840, x, y, 120, 120);
+          break;
+        }
+      } else {
+        switch (step) {
+        case 1:
+          Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
+          break;
+        case 0:
+          draw[0](canvas, work->sheet, x, y, 120, 120);
+          break;
+        case 2:
+          draw[0](canvas, cells, x - 4, y - 8, 128, 128);
+          break;
+        case 3:
+          draw[0](canvas, cells + 0x4000, x - 4, y - 8, 128, 128);
+          break;
+        case 4:
+          draw[0](canvas, work->sheet + 0x3840, x, y, 120, 120);
+          break;
+        }
+      }
+    }
+
+    BattleCamera_Shake(8, 8);
+    BattleEffect_CountDownBattlerTints();
+    work->transferPending = 1;
+    wait(1);
+  }
+
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  HeapSlot_Release(HEAP_SLOT_BLITTER);
+  BattleEffect_EndCanvasLayer();
+}
+
+typedef s32 (*CanvasBlitFunc)(u8 *canvas, void *source, s32 x, s32 y, s32 width,
+                              s32 height);
+
+void Func_0818caa8(void *source, s32 x, s32 y, s32 size) {
+  u8 *canvas = Ram_HeapSlots->battleFxWork[1];
+  s32 half;
+
+  BattleEffect_LoadBlitter(188, 19);
+  half = size / 2;
+  ((CanvasBlitFunc)Ram_HeapSlots->unkb8[1])(canvas, source, x - half, y - size,
+                                            half, size);
+  HeapSlot_Release(188);
+  BattleEffect_LoadBlitter(188, 23);
+  ((CanvasBlitFunc)Ram_HeapSlots->unkb8[1])(canvas, source, x, y - size, half,
+                                            size);
+  HeapSlot_Release(188);
+  BattleEffect_LoadBlitter(188, 27);
+  ((CanvasBlitFunc)Ram_HeapSlots->unkb8[1])(canvas, source, x - half, y, half,
+                                            size);
+  HeapSlot_Release(188);
+  BattleEffect_LoadBlitter(188, 31);
+  ((CanvasBlitFunc)Ram_HeapSlots->unkb8[1])(canvas, source, x, y, half, size);
+  HeapSlot_Release(188);
 }

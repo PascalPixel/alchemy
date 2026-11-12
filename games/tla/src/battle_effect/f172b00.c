@@ -38,12 +38,14 @@ void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void BattleEffect_CountDownBattlerTints(void);
-s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
+s32 BattleEffect_LoadBlitter(s32 slot,
+                             s32 modeAndFlags); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                    s32 timerFrames);              // BattleEffect_TintBattler
 void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
 void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
-void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen, s32 *world);
+void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen,
+                   s32 *world);
 void Func_0818caa8(void *cells, s32 x, s32 y, s32 size);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
@@ -55,13 +57,13 @@ void SceneTransform_ApplyYaw(s32 angle);
 void Render_ResetTransformState(void);
 void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
-void BattleEffect_SpawnObjects(s32 entryCount, s32 kind, u32 variant); // SpawnObjects
-void BattleEffect_SelectLivingTargets(struct FxPartyList *party); // SelectLivingTargets
-void Func_080150e4(s32 angle);            // SceneTransform_ApplyRoll
+void BattleEffect_SpawnObjects(s32 entryCount, s32 kind,
+                               u32 variant); // SpawnObjects
+void BattleEffect_SelectLivingTargets(
+    struct FxPartyList *party); // SelectLivingTargets
+void Func_080150e4(s32 angle);  // SceneTransform_ApplyRoll
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                    s32 speedLimit, s32 velocityY, s32 percent);
-void Render_ApplyProjectedPlacementFar(struct ScaledSprite *sprite,
-                                       s32 *position, s32 *scale, s32 mode);
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
 void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
 void Func_081180e8(s32 phase);             // BattlePlayback_StartFar
@@ -69,19 +71,16 @@ void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                           s32 drag);
 void **GetBattleObjectSlotFar(s32 objectId);
-void *Heap_AllocEwram(s32 size);
-void Resource_LoadAndDecompress(s32 resource, void *destination, s32 a, s32 b);
 void *Resource_GetTableEntry(s32 resource);
-s32 Task_Add(void (*func)(void), s32 order);
 
-void HeapSlot_Release(s32 slot);
 void Sound_PlayFar(s32 cue);
 void wait(s32 frames);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
 
-void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height, s32 count);
+void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height,
+                           s32 count);
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                           s32 gravity);
 s32 BattleUnit_GetEffectHeightFar(s32 unit);
@@ -100,9 +99,10 @@ typedef DrawRectangle BlitterPair[2];
 enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
-
-void Func_0818de3c(struct MeshTriangle *triangles, s32 columns, s32 rows, s32 cellWidth, s32 cellHeight); // builds a grid's mesh
-void Render_ProjectVertices(struct ModelVertex *vertices, struct ProjectedVertex *screen, s32 count);
+void Func_0818de3c(struct MeshTriangle *triangles, s32 columns, s32 rows,
+                   s32 cellWidth, s32 cellHeight); // builds a grid's mesh
+void Render_ProjectVertices(struct ModelVertex *vertices,
+                            struct ProjectedVertex *screen, s32 count);
 void SceneTransform_ApplyPosition(const s32 *pos);
 
 extern char ResourceId_Data134;
@@ -509,3 +509,13 @@ void Func_08172b00(struct BattleEffectArgument *effect, s32 mode) {
   }
   BattleEffect_EndCanvasLayer();
 }
+
+struct BattleEffectArgument;
+
+void Func_08173588(struct BattleEffectArgument *effect, s32 mode);
+
+/// Abilities: Rime (kind 240).
+void BattleEffect_RunRime(s32 a0) { Func_08173588(a0, 0); }
+
+/// Abilities: Haze (kind 238).
+void BattleEffect_RunHaze(s32 a0) { Func_08173588(a0, 1); }

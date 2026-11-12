@@ -105,7 +105,7 @@ void Func_081180e8(s32 phase); // BattlePlayback_StartFar
 void Func_08118088(s32 actor,
                    s32 variant); // BattleMotion_ApplyVariantMotionFar
 void Func_0814cd48(s32 actor, s32 palette, s32 a, s32 timer,
-                   s32 frames);   // BattleEffect_TintBattler
+                   s32 frames); // BattleEffect_TintBattler
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffect_CountDownBattlerTints(void);
 void BattleEffect_EndCanvasLayer(void);
@@ -626,3 +626,73 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
   HeapSlot_Release(104);
   BattleEffect_EndCanvasLayer();
 }
+
+// Battle effects: sparks after approaching the target (type 4).
+
+#include "scene.h"
+
+void BattleMotion_ApproachTargetFar(s32, s16, s32, s32);
+void BattleEffect_RunSparkGroups(struct BattleEffectArgument *effect, s32 kind);
+
+/// Jumps the user toward the first target and emits type 4 sparks after 29
+/// frames.
+/// effect: effect arguments.
+void BattleEffect_RunThrash(struct BattleEffectArgument *effect) {
+  // Jump 3/4 of the distance at displacement / 24, with initial vertical
+  // speed 12.2.
+  BattleMotion_ApproachTargetFar(effect->actor, effect->actors[0], 24, 0xc3333);
+  wait(29);
+  effect->variant = 4;
+  BattleEffect_RunSparkGroups(effect, 2); // 2: from the user's position.
+}
+
+#include "battle.h"
+#include "debug.h"
+#include "field.h"
+#include "game.h"
+#include "graphics.h"
+#include "lib.h"
+#include "menu.h"
+#include "sound.h"
+
+void BattleEffect_LongApproachThenSpark(struct BattleEffectArgument *effect) {
+  BattleMotion_ApproachTargetFar(effect->actor, effect->actors[0], 0x18,
+                                 0xc3333);
+  wait(26);
+  effect->variant = 5;
+  BattleEffect_RunSparkGroups(effect, 2);
+}
+
+// Battle effects: sparks after approaching the target (type 3).
+
+/// Jumps the user toward the first target and emits type 3 sparks after 12
+/// frames.
+/// effect: effect arguments.
+void BattleEffect_RunSparkApproachVariant3(
+    struct BattleEffectArgument *effect) {
+  // Jump 3/4 of the distance at displacement / 24, with initial vertical
+  // speed 7.2.
+  BattleMotion_ApproachTargetFar(effect->actor, effect->actors[0], 24, 0x73333);
+  wait(12);
+  effect->variant = 3;
+  BattleEffect_RunSparkGroups(effect, 2); // 2: from the user's position.
+}
+
+struct BattleEffectArgument;
+
+void Func_0816a2d8(struct BattleEffectArgument *effect, s32 variant);
+
+/// Abilities: Quick Strike (kind 52).
+void BattleEffect_RunQuickStrike(s32 a0) { Func_0816a2d8(a0, 1); }
+
+/// Abilities: Vorpal Slash (kind 65).
+void BattleEffect_RunVorpalSlash(s32 a0) { Func_0816a2d8(a0, 2); }
+
+/// Abilities: Lunar Slash (kind 118).
+void BattleEffect_RunLunarSlash(s32 a0) { Func_0816a2d8(a0, 3); }
+
+/// Abilities: Boost Hack (kind 109).
+void BattleEffect_RunBoostHack(s32 a0) { Func_0816a2d8(a0, 4); }
+
+/// Abilities: Twin Shear (kind 425).
+void BattleEffect_RunTwinShear(s32 a0) { Func_0816a2d8(a0, 5); }

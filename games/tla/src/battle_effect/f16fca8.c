@@ -42,7 +42,8 @@ void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                    s32 timerFrames);              // BattleEffect_TintBattler
 void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
 void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
-void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen, s32 *world);
+void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen,
+                   s32 *world);
 void Func_0818caa8(void *cells, s32 x, s32 y, s32 size);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
@@ -54,9 +55,11 @@ void SceneTransform_ApplyYaw(s32 angle);
 void Render_ResetTransformState(void);
 void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
-void BattleEffect_SpawnObjects(s32 entryCount, s32 kind, u32 variant); // SpawnObjects
-void BattleEffect_SelectLivingTargets(struct FxPartyList *party); // SelectLivingTargets
-void Func_080150e4(s32 angle);            // SceneTransform_ApplyRoll
+void BattleEffect_SpawnObjects(s32 entryCount, s32 kind,
+                               u32 variant); // SpawnObjects
+void BattleEffect_SelectLivingTargets(
+    struct FxPartyList *party); // SelectLivingTargets
+void Func_080150e4(s32 angle);  // SceneTransform_ApplyRoll
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                    s32 speedLimit, s32 velocityY, s32 percent);
 
@@ -67,19 +70,16 @@ void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                           s32 drag);
 
-void *Heap_AllocEwram(s32 size);
-void Resource_LoadAndDecompress(s32 resource, void *destination, s32 a, s32 b);
 void *Resource_GetTableEntry(s32 resource);
 
-
-void HeapSlot_Release(s32 slot);
 void Sound_PlayFar(s32 cue);
 void wait(s32 frames);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
 
-void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height, s32 count);
+void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height,
+                           s32 count);
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                           s32 gravity);
 s32 BattleUnit_GetEffectHeightFar(s32 unit);
@@ -107,13 +107,13 @@ extern struct EffectStep gData_02014000[]; // the sparks
 extern u16 gData_08197410[];               // gBattleEffect_MoteCells
 // Heights not const: a const table's second height read issues two places
 // early (6).
-extern u16 gData_08197486[]; // the flashes' cells: offsets,
-extern u8 gData_08197492[];  // widths
-extern u8 gData_08197498[];        // and heights
-extern const u8 Data_08198bee[4];  // their flips
-extern const u8 gData_08199268[];  // a bolt's mesh
-extern const u8 gData_081991b0[];  // its corners (Thunder Mine)
-extern const u8 Data_081991c0[];   // and (Earth Force)
+extern u16 gData_08197486[];      // the flashes' cells: offsets,
+extern u8 gData_08197492[];       // widths
+extern u8 gData_08197498[];       // and heights
+extern const u8 Data_08198bee[4]; // their flips
+extern const u8 gData_08199268[]; // a bolt's mesh
+extern const u8 gData_081991b0[]; // its corners (Thunder Mine)
+extern const u8 Data_081991c0[];  // and (Earth Force)
 
 static inline s32 CopyWords(void *destination, const void *source, s32 size) {
   return Iwram_CopyWords(destination, source, size);
@@ -405,5 +405,383 @@ void Func_0816fca8(struct BattleEffectArgument *effect, s32 mode) {
   }
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   HeapSlot_Release(SLOT_BLITTER);
+  BattleEffect_EndCanvasLayer();
+}
+
+#define HI(v) (((s16 *)&(v))[1])
+
+#include "input.h"
+
+#include "resource.h"
+void Func_0815f0a0(s32 palette);
+
+void Func_0816442c(s32 formation, s32 x, s32 y); // ..PlaceFormationObjects
+void Func_0816467c(s32 formation, s32 x, s32 y); // ..RunImpactBurst
+
+extern char ResourceId_FlashBurstSheet;
+extern char ResourceId_WhirlBeamSheet;
+
+extern char ResourceId_SparkleDots;
+extern char ResourceId_MarsDjinnSheet;
+extern char ResourceId_OrangePaletteB;
+extern char ResourceId_TanPalette;
+#define SPARKS ((struct EffectStep *)Ram_MapCellBuffer) // 512 sparks
+#define PICTURES (Ram_MapCellBuffer + 0x4000)
+struct Point {
+  s32 x;
+  s32 y;
+};
+extern const struct Point Data_08196e94;
+
+extern u16 Data_0819744c[]; // the sparkles' cells
+extern u8 Data_0819745e[];  // and sizes
+
+extern const u8 Data_08198bf4[];
+extern const u8 Data_08198bf8[];
+
+// Abilities: Megaera.
+//
+// Two bolts of lightning fall at frames 0 and 16, each with a burst of
+// sparks; a whirl of flame turns over the field from 64 while smoke rises,
+// and at 108 Megaera (eleven objects) swoops in across the targets in a
+// trail of sparkles. Holding A or B after frame 10 skips to the swoop.
+void BattleEffect_RunMegaera(struct BattleEffectArgument *effect) {
+  void *canvas;
+  struct BattleEffectWork *work;
+  s32 frame;
+  u8 *sprites;
+  DrawRectangle *rects;
+  struct Point position;
+  struct Point velocity;
+  DrawRectangle blitters[2];
+  struct Point request;
+  s32 placement[4];
+  struct EffectStep *p;
+  u8 *pictures;
+  s32 i;
+  s32 j;
+
+  canvas = Ram_HeapSlots->battleFxWork[1];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
+  sprites = Ram_HeapSlots->unk64[0];
+  pictures = PICTURES;
+  BattleEffect_ConfigureEffectDisplay();
+  BattleEffect_StartCanvasLayer(0);
+  REG_BLDALPHA = 0x1010;
+  rects = blitters;
+  BattleEffect_FetchRectangleBlitters(0, (void **)rects);
+  Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
+                             work->sheet + 0x3800, 1, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_WhirlBeamSheet, work->sheet, 1,
+                             1);
+  Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, pictures, 1, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet,
+                             pictures + 0xc56, 1, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_SparkleDots, pictures + 0x2e16, 0,
+                             0);
+  work->transferMode = 2;
+  work->transferValue = 75;
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  for (i = 0; i != 64; i++) {
+    work->particles[i].variant = -1;
+  }
+  for (i = 0, p = &work->particles[24]; i != 16; i++, p++) {
+    p->x = Random16() & 127;
+    p->y = (Random16() & 7) + 56;
+    p->variant = -(Random16() & 15);
+  }
+  for (i = 0, p = work->particles; i != 32; i++, p++) {
+    p->x = ((Random16() & 31) + 28) << 16;
+    p->y = ((Random16() % 48) + 56) << 16;
+    p->velocityX = ((Random16() & 255) - 128) << 12;
+    p->velocityY = (16 - (Random16() & 127)) << 10;
+    p->variant = ~i;
+  }
+  for (i = 0; i != 512; i++) {
+    SPARKS[i].variant = -1;
+  }
+  Iwram_CopyWords((void *)BG_PLTT,
+                  Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet), 128);
+  BattleEffect_SelectLivingTargets(work->effect);
+  wait(1);
+
+  for (frame = 0; frame != 170; frame++) {
+    if ((gInput.repeat & 3) && frame > 10) {
+      if (frame > 107) {
+        goto skipped;
+      }
+      frame = 107;
+    }
+    if (frame == 107) {
+      Sound_PlayFar(212);
+    }
+  skipped:
+    if (frame == 148) {
+      Func_081180e8(134);
+    }
+    if (frame == 0) {
+      position.x = 0x200000;
+      position.y = 0x480000;
+      velocity.x = 0x90000;
+      velocity.y = -0x20000;
+      BattleEffect_SpawnObjects(2, 657, 2);
+    }
+    if (frame == 108) {
+      ResourceObject_ReleaseFar(work->objects[0]);
+      ResourceObject_ReleaseFar(work->objects[1]);
+      BattleEffect_SpawnObjects(11, 656, 2);
+    }
+
+    // Megaera swoops, trailing sparkles.
+    if (frame > 107) {
+      position.x += velocity.x;
+      position.y += velocity.y;
+      velocity.x = velocity.x * 59 / 64;
+      velocity.y = velocity.y * 59 / 64;
+      Func_0816442c(4, position.x, position.y);
+      if (frame == 108) {
+        for (i = 0; i != 512; i++) {
+          SPARKS[i].variant = -1;
+        }
+      }
+      {
+        s32 t = frame - 108;
+        if ((u32)t <= 23) {
+          s32 count = 10 - t / 2;
+
+          if (count > 0) {
+            s32 half;
+
+            for (i = 0, half = position.x / 2; i != count / 5; i++) {
+              struct EffectStep *cell;
+              s32 angle;
+              s32 radius;
+
+              cell = &SPARKS[((t << 5) + i) & 511];
+              angle = Random16();
+              radius = (Random16() & 31) + 16;
+              cell->x = Trig_Sin(angle) * radius + half + 0x100000;
+              cell->y = Trig_Cos(angle) * radius + position.y - 0x80000;
+              cell->velocityX = 0;
+              cell->velocityY = 0;
+              cell->variant = Random16() & 15;
+            }
+          }
+        }
+      }
+    }
+    if ((u32)(frame - 64) <= 3) {
+      Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
+    }
+    if (frame > 103) {
+      Func_0815f0a0((s32)&ResourceId_TanPalette);
+    }
+    if (frame == 64) {
+      Iwram_CopyWords((void *)BG_PLTT,
+                      Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
+                      128);
+    }
+
+    // The whirl of flame, and smoke.
+    if (frame > 63) {
+      if (frame <= 111) {
+        s32 picture = (frame / 4) % 3;
+        s32 sway = ((Trig_Sin(frame << 11) << 3) >> 16) - 16;
+        s32 which = frame == 108;
+        DrawRectangle *draw = &blitters[which];
+        u8 *cells = work->sheet + picture * 3 * 0x800;
+
+        (*draw)(canvas, cells, sway, 0, 96, 64);
+        (*draw)(canvas, cells, sway, 64, 96, 52);
+        {
+          s32 picture2 = (frame / 2) % 3;
+          u8 *cells2;
+
+          sway = (Trig_Sin((frame << 12) + 0x8000) << 3) >> 16;
+          cells2 = work->sheet + picture2 * 3 * 0x800;
+          (*draw)(canvas, cells2, sway, 0, 96, 64);
+          (*draw)(canvas, cells2, sway, 64, 96, 52);
+        }
+      }
+      for (i = 0, p = work->particles; i != 24; i++, p++) {
+        if ((u32)p->variant <= 15) {
+          s32 row = p->variant / 4;
+          s32 which = i & 1;
+          u8 *smoke = work->sheet + 0x4800 + (row << 11);
+
+          rects[which](canvas, smoke, HI(p->x) - 16, HI(p->y) - 32, 32, 64);
+          BattleEffectKernels_IntegrateVector2(p, 62, -0x4000);
+        }
+        p->variant++;
+        if (frame == 108) {
+          p->velocityX += 0x20000;
+          p->velocityY /= 4;
+        }
+        if (frame <= 107) {
+          s32 v = p->variant;
+
+          if (v == 16) {
+            p->variant = v = 0;
+          }
+          if (v == 0) {
+            p->x = ((Random16() & 31) + 28) << 16;
+            p->y = ((Random16() % 48) + 56) << 16;
+            p->velocityX = ((Random16() & 255) - 128) << 12;
+            p->velocityY = (16 - (Random16() & 127)) << 10;
+          }
+        }
+      }
+    }
+    if (frame == 64) {
+      Sound_PlayFar(163);
+    }
+    {
+      s32 crackle;
+
+      for (i = 0, crackle = 75; i != 8; i++, crackle += 4) {
+        if (frame == crackle) {
+          Sound_PlayFar(134);
+        }
+      }
+    }
+    if (frame == 10) {
+      work->shakeFrames = i;
+      for (i = 0; i != effect->count; i++) {
+        Func_0814cd48(effect->actors[i], 7, 5, i, 16);
+      }
+    }
+    if (frame > 107) {
+      for (i = 0, p = SPARKS; i != 512; i++, p++) {
+        s32 k;
+
+        if ((u32)p->variant > 35) {
+          continue;
+        }
+        k = (p->variant / 2) % 9;
+        blitters[0](canvas, (PICTURES + 0x2e16) + Data_0819744c[k],
+                    HI(p->x) - Data_0819745e[k] / 2,
+                    HI(p->y) - Data_0819745e[k] / 2, Data_0819745e[k],
+                    Data_0819745e[k]);
+        BattleEffectKernels_IntegrateVector2(p, 58, 0);
+        if (i & 1) {
+          p->velocityX += -0x800;
+          p->velocityY += 0x1000;
+        } else {
+          p->velocityX += -0x1000;
+          p->velocityY += 0x800;
+        }
+        p->variant++;
+      }
+    }
+
+    // Two bolts of lightning.
+    if (frame <= 63) {
+      HeapSlot_Release(188);
+      for (i = 0; i != 2; i++) {
+        s32 start = i * 16;
+        s32 column = i * 32 + 24;
+
+        if (frame == start + 5) {
+          Sound_PlayFar(212);
+        }
+        if (frame == start + 9) {
+          work->shakeFrames = 8;
+          Iwram_FillWords(canvas, 0x3c00, 0x3f3f3f3f);
+          Sound_PlayFar(144);
+        }
+        if (frame >= start) {
+          s32 t = frame - start;
+          s32 fall = t * 16 - 16;
+
+          request = Data_08196e94;
+          if (fall > 131) {
+            fall = 132;
+          }
+          placement[3] = 0;
+          placement[1] = 0;
+          placement[0] = column << 17;
+          placement[2] = fall << 16;
+          Render_ApplyProjectedPlacementFar(work->objects[i], placement,
+                                            &request.x, 0);
+          if (t == 9) {
+            Iwram_ClearWords(
+                (u8 *)0x06010e00 +
+                    ((u32)(((u16 *)work->objects[i])[4] << 22) >> 17),
+                0x200);
+          }
+          if (frame == start + 10) {
+            for (j = 0; j != 256; j++) {
+              struct EffectStep *spark = &SPARKS[i * 256 + j];
+              s32 angle = Random16() & 0x7fff;
+              s32 speed = Random16() & 255;
+
+              spark->x = column << 16;
+              spark->y = 0x700000;
+              spark->velocityY = (-Trig_Sin(angle) * speed) >> 5;
+              spark->velocityX = (Trig_Cos(angle) * speed) >> 5;
+              spark->variant = 0;
+            }
+          }
+          if (frame >= start + 10 && frame < start + 18) {
+            blitters[0](canvas,
+                        (PICTURES + 0xc56) + (((frame + i) / 4) & 3) * 2880,
+                        column - 12, 0, 24, 112);
+          }
+          if (frame >= start + 10) {
+            for (j = 0; j != 2;) {
+              s32 k = j & 3;
+              s32 gx = column + (Random16() & 7) - (gData_08197492[k] >> 1);
+              s32 gy = (Random16() & 63) - (gData_08197498[k] >> 1);
+
+              // An empty once-only loop ends CSE's block, so the table reads
+              // stay apart; without it, 188 of 1152 instructions differ in
+              // tla-en.
+              do {
+              } while (0);
+              Func_08196404(188, 7, 7, 3 | Data_08198bf4[Random16() & 3],
+                            Data_08198bf8[effect->variant]);
+              ((DrawRectangle)Ram_HeapSlots->unkb8[1])(
+                  canvas, PICTURES + gData_08197486[k], gx - 4, gy + 40,
+                  gData_08197492[k], gData_08197498[k]);
+              j++;
+              HeapSlot_Release(188);
+            }
+          }
+        }
+      }
+      BattleEffect_LoadBlitter(188, 3);
+      rects[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
+      if (frame <= 69) {
+        for (i = 0, p = SPARKS; i != 512; i++, p++) {
+          s32 size;
+
+          if (p->variant < 0) {
+            continue;
+          }
+          size = i % 3 + 1;
+          blitters[p->velocityY > 0](canvas, sprites + gData_08197410[size - 1],
+                                     HI(p->x) - size / 2, HI(p->y) - size, size,
+                                     size * 2);
+          BattleEffectKernels_IntegrateVector2(p, 62, 0x4000);
+          p->variant++;
+          if (p->velocityY > 0 && HI(p->y) > 104) {
+            p->variant = -1;
+          }
+        }
+      }
+    }
+    BattleCamera_Shake(8, 8);
+    BattleEffect_CountDownBattlerTints();
+    work->transferPending = 1;
+    wait(1);
+  }
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  HeapSlot_Release(188);
+  HeapSlot_Release(104);
+  Func_0816467c(4, position.x, position.y);
+  for (i = 0; i != 11; i++) {
+    ResourceObject_ReleaseFar(work->objects[i]);
+  }
   BattleEffect_EndCanvasLayer();
 }

@@ -1,7 +1,3 @@
-/// @file
-/// Haures: shadowed wings unfold over a dark pool, the demon climbs out of a
-/// vortex and dives through the foes, scattering into black feathers.
-
 #include "types.h"
 #include "battle_effect.h"
 #include "battle_effect_work.h"
@@ -38,12 +34,14 @@ void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void BattleEffect_CountDownBattlerTints(void);
-s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
+s32 BattleEffect_LoadBlitter(s32 slot,
+                             s32 modeAndFlags); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                    s32 timerFrames);              // BattleEffect_TintBattler
 void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
 void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
-void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen, s32 *world);
+void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen,
+                   s32 *world);
 void Func_0818caa8(void *cells, s32 x, s32 y, s32 size);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
@@ -55,9 +53,11 @@ void SceneTransform_ApplyYaw(s32 angle);
 void Render_ResetTransformState(void);
 void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
-void BattleEffect_SpawnObjects(s32 entryCount, s32 kind, u32 variant); // SpawnObjects
-void BattleEffect_SelectLivingTargets(struct FxPartyList *party); // SelectLivingTargets
-void Func_080150e4(s32 angle);            // SceneTransform_ApplyRoll
+void BattleEffect_SpawnObjects(s32 entryCount, s32 kind,
+                               u32 variant); // SpawnObjects
+void BattleEffect_SelectLivingTargets(
+    struct FxPartyList *party); // SelectLivingTargets
+void Func_080150e4(s32 angle);  // SceneTransform_ApplyRoll
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                    s32 speedLimit, s32 velocityY, s32 percent);
 
@@ -68,19 +68,17 @@ void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                           s32 drag);
 
-void *Heap_AllocEwram(s32 size);
-void Resource_LoadAndDecompress(s32 resource, void *destination, s32 a, s32 b);
 void *Resource_GetTableEntry(s32 resource);
 s32 Task_Add(void (*func)(void), s32 order);
 
-void HeapSlot_Release(s32 slot);
 void Sound_PlayFar(s32 cue);
 void wait(s32 frames);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
 
-void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height, s32 count);
+void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height,
+                           s32 count);
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                           s32 gravity);
 s32 BattleUnit_GetEffectHeightFar(s32 unit);
@@ -172,21 +170,19 @@ extern char ResourceId_OrangePaletteB;
 extern char ResourceId_SmokeBandSheet;
 extern char ResourceId_Data134;
 
-
 void Animation_ApplyChildArgumentFar(void *object, s32 argument);
 struct SpriteObject *Func_0815b290(s32 width, s32 height, u32 shape,
                                    u32 attributes);
-void ResourceObject_ReleaseFar(struct ResourceObjectWork *work);
 void BattleEffect_ConfigureEffectDisplay(void);
 void Func_08163c2c(s32 a, s32 b);
 void Func_0814cca8(void); // BattleEffect_SetupBlendedDisplay
 void BattleBackground_LoadFar(s32 layer, s32 background, s32 palette);
 void Func_08164abc(s32 r, s32 g, s32 b);
 void Func_08164b2c(s32 r, s32 g, s32 b);
-s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags, u32 mode);
+s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
+                  u32 mode);
 void BattleEffect_ProcessPendingStampTransfer(
     void); // copies the 0x6780 canvas to the stamp's tiles
-void Heap_Release(void *buffer);
 
 #define SPARKS ((struct EffectStep *)SCRATCH)
 #define SLOT_ALT 188 // unkb8[1]
@@ -203,6 +199,8 @@ static inline s32 ClearWords(void *destination, s32 size) {
 static __inline__ void PLACE(s32 x, s32 y) {
   Func_08015160(x << 16, y << 16, 0);
 }
+/// Haures: shadowed wings unfold over a dark pool, the demon climbs out of a
+/// vortex and dives through the foes, scattering into black feathers.
 void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
   u8 *battle;
   u8 *canvas;
@@ -1158,4 +1156,94 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   HeapSlot_Release(SLOT_BLITTER);
   BattleEffect_EndCanvasLayer();
+}
+
+#include "fixed_math.h"
+
+// The two rings sit at y = -36 and y = -18.
+#define FIRST_RING_Y -36
+#define RING_SPACING 18
+
+// Each side of the band shows an 8 x 16 column of the texture.
+#define COLUMN_WIDTH 8
+#define COLUMN_HEIGHT 16
+
+struct MeshVertex {
+  s8 x;
+  s8 y;
+  s8 z;
+  u8 unk03;
+};
+
+struct MeshTriangle {
+  u8 vertex[3];
+  u8 unk03;
+  u8 texCoord[3][2];
+  u8 unk0a[2];
+};
+
+// Builds the mesh of an open cylinder, the band summon 20 shows: two rings of
+// `segments` vertices of radius 96 around the y axis, and two textured
+// triangles for each side of the band, joining the first ring (texture row 0)
+// to the second (row 15). A triangle whose three vertices are 0 ends the list.
+// Summon 20 builds it with 32 segments into the buffers at 0x02014400 and
+// 0x02014800.
+void Func_081885f0(struct MeshVertex *vertices, struct MeshTriangle *triangles,
+                   s32 segments) {
+  s32 ring;
+  s32 i;
+
+  for (ring = 0; ring != 2; ring++) {
+    for (i = 0; i != segments; i++) {
+      // The vertex: a point on the ring, 96 units out (3 * 0x10000 >> 11).
+      vertices[ring * segments + i].x =
+          (u32)(Trig_Sin(i * (0x10000 / segments)) * 3) >> 11;
+      vertices[ring * segments + i].y = ring * RING_SPACING + FIRST_RING_Y;
+      vertices[ring * segments + i].z =
+          (u32)(Trig_Cos(i * (0x10000 / segments)) * 3) >> 11;
+
+      // The side from this vertex to the next, as two triangles.
+      if (ring < 1) {
+        // A byte offset added to the base: as
+        // &triangles[(ring * segments + i) * 2], 4 of 141 differ (base +
+        // offset, where the native adds offset + base).
+        struct MeshTriangle *triangle =
+            (struct MeshTriangle *)((ring * segments + i) * 24 +
+                                    (u32)triangles);
+        s32 left = i * COLUMN_WIDTH;
+        s32 right = left + COLUMN_WIDTH - 1;
+
+        triangle[0].texCoord[0][0] = right;
+        triangle[0].texCoord[0][1] = 0;
+        triangle[0].texCoord[1][0] = right;
+        triangle[0].texCoord[1][1] = COLUMN_HEIGHT - 1;
+        triangle[0].texCoord[2][0] = left;
+        triangle[0].texCoord[2][1] = COLUMN_HEIGHT - 1;
+        {
+          struct MeshTriangle *second = triangle + 1;
+
+          second->texCoord[0][0] = left;
+          second->texCoord[0][1] = 0;
+          second->texCoord[1][0] = right;
+          second->texCoord[1][1] = 0;
+          second->texCoord[2][0] = left;
+          second->texCoord[2][1] = COLUMN_HEIGHT - 1;
+
+          // (next, next on ring 1, this on ring 1), then (this, next, this on
+          // ring 1).
+          triangle->vertex[0] = (i + 1) % segments + ring * segments;
+          triangle->vertex[1] = (i + 1) % segments + segments + ring * segments;
+          triangle->vertex[2] = i % segments + segments + ring * segments;
+          second->vertex[0] = i % segments + ring * segments;
+          second->vertex[1] = (i + 1) % segments + ring * segments;
+          second->vertex[2] = i % segments + segments + ring * segments;
+        }
+      }
+    }
+  }
+
+  // The end of the list.
+  triangles[segments * 2].vertex[0] = 0;
+  triangles[segments * 2].vertex[1] = 0;
+  triangles[segments * 2].vertex[2] = 0;
 }

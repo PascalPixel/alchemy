@@ -74,8 +74,6 @@ extern const u8 gData_08199090[];
 extern u8 Data_02012000[];
 extern struct EffectStep gData_02014000[];
 
-extern u32 gCameraSceneParameters[];
-
 extern char ResourceId_FlashBurstSheet;
 extern char ResourceId_Data0C9;
 extern char ResourceId_Data0DA;
@@ -86,10 +84,6 @@ void BattleEffect_StartCanvasLayer(s32 control);
 void BattleEffect_EndCanvasLayer(void);
 s32 BattleEffect_LoadBlitter(s32 slot, s32 flags);
 
-void Palette_StepFadeTransfer(void);
-s32 Task_Add(void (*func)(void), s32 order);
-
-void HeapSlot_Release(s32 slot);
 void Sound_PlayFar(s32 cue);
 u32 Random16(void);
 void EffectPosition_ProjectBattler(s32 actor, struct EffectPosition *out);
@@ -387,4 +381,344 @@ void Func_08142944(struct BattleEffectArgument *effect, s32 kind) {
   }
   HeapSlot_Release(SLOT_BATTLE_CANVAS);
   HeapSlot_Release(SLOT_BATTLE_EFFECT);
+}
+
+#include "irq_lock.h"
+
+static __inline__ void CopyWords_(void *destination, const void *source,
+                                  s32 size) {
+  /* FAKEMATCH(wrapper): the copy forwarded through an inline, which keeps each
+   * call's own constants, as the scene layer does; as direct Iwram_CopyWords
+   * calls, 128 of 369 instructions of the four transfer callbacks differ in
+   * tla-en. */
+  Iwram_CopyWords(destination, source, size);
+}
+
+static __inline__ void FillWords_(void *destination, s32 size, u32 value) {
+  /* FAKEMATCH(wrapper): the fill forwarded through an inline, which keeps each
+   * call's own constants, as the scene layer does; as direct Iwram_FillWords
+   * calls, 16 of 369 instructions of the four transfer callbacks differ in
+   * tla-en. */
+  Iwram_FillWords(destination, size, value);
+}
+
+/// The battle effect work, as far as the canvas transfer reads it.
+struct CanvasWork {
+  u8 unk0000[0x7780];
+  s32 transferMode;
+  s32 transferValue;
+  u8 unk_7788[0x15c];
+  s32 vblanksSinceTransfer;
+  s32 transferPending;
+};
+
+void ColorBuffer_Halve(void *source, void *destination, s32 size);
+void ColorBuffer_ScaleThreeQuarters(void *source, void *destination, s32 size);
+void ColorBuffer_Darken(void *source, s32 amount, void *destination, s32 size);
+void ColorBuffer_Brighten(void *source, s32 amount, void *destination,
+                          s32 size);
+
+/// The frame callback that copies the effect canvas to BG character block 1
+/// when a transfer is pending, in the way the transfer mode asks for.
+void BattleEffect_ProcessPendingGraphicsTransfer(void) {
+  struct CanvasWork *work = (struct CanvasWork *)Ram_HeapSlots->battleFxWork[0];
+  void *source = Ram_HeapSlots->battleFxWork[1];
+  u32 ime;
+
+  IRQ_LOCK(ime);
+  if (work->transferPending == 1) {
+    work->transferPending = 0;
+    IRQ_UNLOCK(ime);
+    switch (work->transferMode) {
+    case 0:
+      CopyWords_((void *)0x06004000, source, 0x4000);
+      break;
+    case 1:
+      CopyWords_((void *)0x06004000, source, 0x4000);
+      FillWords_(source, 0x4000, work->transferValue);
+      break;
+    case 2:
+      if (work->transferValue == 50)
+        ColorBuffer_Halve(source, (void *)0x06004000, 0x4000);
+      else
+        ColorBuffer_ScaleThreeQuarters(source, (void *)0x06004000, 0x4000);
+      break;
+    case 3:
+      ColorBuffer_Darken(source, work->transferValue, (void *)0x06004000,
+                         0x4000);
+      break;
+    case 4:
+      ColorBuffer_Brighten(source, work->transferValue, (void *)0x06004000,
+                           0x4000);
+      break;
+    }
+    // DEAD: nothing uses the counter read here; its load is in the ROM.
+    (void)*(volatile s32 *)&work->vblanksSinceTransfer;
+    work->vblanksSinceTransfer = 1;
+  } else {
+    IRQ_UNLOCK(ime);
+    work->vblanksSinceTransfer++;
+  }
+}
+
+/// When a transfer is pending, copies the 0x1000-byte canvas at work 0x6780
+/// to the stamp's tiles (the pointer at work 0x7b74), then clears it.
+void BattleEffect_ProcessPendingStampTransfer(void) {
+  u8 *work = Ram_HeapSlots->battleFxWork[0];
+  u32 ime;
+  s32 *pending;
+
+  IRQ_LOCK(ime);
+  pending = (s32 *)(work + 0x78ec);
+  if (*pending == 1) {
+    *pending = 0;
+    IRQ_UNLOCK(ime);
+    CopyWords_(*(void **)(work + 0x7b74), work + 0x6780, 0x1000);
+    FillWords_(work + 0x6780, 0x1000, 0);
+  } else {
+    IRQ_UNLOCK(ime);
+  }
+}
+
+/// The same callback for the 0x7800-byte canvas in the map cell buffer, copied
+/// to BG character block 2.
+void BattleEffect_FlushPendingGraphicsTransfer(void) {
+  struct CanvasWork *work = (struct CanvasWork *)Ram_HeapSlots->battleFxWork[0];
+  void *source = Ram_MapCellBuffer;
+  u32 ime;
+
+  IRQ_LOCK(ime);
+  if (work->transferPending == 1) {
+    work->transferPending = 0;
+    IRQ_UNLOCK(ime);
+    switch (work->transferMode) {
+    case 0:
+      CopyWords_((void *)0x06008000, source, 0x7800);
+      break;
+    case 1:
+      CopyWords_((void *)0x06008000, source, 0x7800);
+      FillWords_(source, 0x7800, work->transferValue);
+      break;
+    case 2:
+      if (work->transferValue == 50)
+        ColorBuffer_Halve(source, (void *)0x06008000, 0x7800);
+      else
+        ColorBuffer_ScaleThreeQuarters(source, (void *)0x06008000, 0x7800);
+      break;
+    case 3:
+      ColorBuffer_Darken(source, work->transferValue, (void *)0x06008000,
+                         0x7800);
+      break;
+    }
+    // DEAD: nothing uses the counter read here; its load is in the ROM.
+    (void)*(volatile s32 *)&work->vblanksSinceTransfer;
+    work->vblanksSinceTransfer = 1;
+  } else {
+    IRQ_UNLOCK(ime);
+    work->vblanksSinceTransfer++;
+  }
+}
+
+/// The same for the canvas in the second effect work block.
+void BattleEffect_ProcessPendingBlock2Transfer(void) {
+  struct CanvasWork *work = (struct CanvasWork *)Ram_HeapSlots->battleFxWork[0];
+  void *source;
+  u32 ime;
+
+  IRQ_LOCK(ime);
+  if (work->transferPending == 1) {
+    source = Ram_HeapSlots->battleFxWork[1];
+    work->transferPending = 0;
+    IRQ_UNLOCK(ime);
+    switch (work->transferMode) {
+    case 0:
+      CopyWords_((void *)0x06008000, source, 0x7800);
+      break;
+    case 1:
+      CopyWords_((void *)0x06008000, source, 0x7800);
+      FillWords_(source, 0x3c00, work->transferValue);
+      break;
+    case 2:
+      if (work->transferValue == 50)
+        ColorBuffer_Halve(source, (void *)0x06008000, 0x3c00);
+      else
+        ColorBuffer_ScaleThreeQuarters(source, (void *)0x06008000, 0x3c00);
+      break;
+    case 3:
+      ColorBuffer_Darken(source, work->transferValue, (void *)0x06008000,
+                         0x3c00);
+      break;
+    }
+    // DEAD: nothing uses the counter read here; its load is in the ROM.
+    (void)*(volatile s32 *)&work->vblanksSinceTransfer;
+    work->vblanksSinceTransfer = 1;
+  } else {
+    IRQ_UNLOCK(ime);
+    work->vblanksSinceTransfer++;
+  }
+}
+
+void Func_08143354(void) {
+  u32 *map = (u32 *)0x0600f800;
+  u32 tiles;
+  s32 row;
+  s32 column;
+
+  /* FAKEMATCH(wrapper): both fills through FillWords_, which sets each call's
+   * own constants anew; as direct Iwram_FillWords calls, 33 of 40 instructions
+   * differ in tla-en. */
+  FillWords_((void *)map, 0x100, -1);
+  map += 0x40;
+  FillWords_((void *)map, 0x80, 0x03ff03ff);
+  map += 0x20;
+  tiles = (u32)(Ram_MapCellBuffer + 0x200);
+  for (row = 0; row != 16; row++) {
+    for (column = 0; column != 8; column++) {
+      *map++ = tiles;
+      tiles += 0x00020002;
+    }
+    for (column = 0; column != 8; column++)
+      *map++ = 0x03ff03ff;
+  }
+}
+
+#include "battle_fx_work.h"
+
+// The scenes' frame callbacks that copy the display registers the effect
+// keeps in its work to the hardware.
+
+/// Writes the window, display and blend registers, all at once.
+void Graphics_ApplyWindowBlendRegisters(void) {
+  /* FAKEMATCH(pin): the work pointer kept in r2, so the registers' address
+   * takes r1; as a plain local, 31 of 55 instructions differ in tla-en. */
+  register struct BattleFxWork *work asm("r2") =
+      (struct BattleFxWork *)Ram_HeapSlots->battleFxWork[0];
+
+  {
+    u32 value = work->win0h;
+
+    /* FAKEMATCH(barrier): an empty asm through the first value loads it before
+     * the register's address is built; without it, 14 of 55 instructions
+     * differ in tla-en. */
+    __asm__ volatile("" : "+l"(value));
+    REG_WIN0H = value;
+  }
+  REG_WIN0V = work->win0v;
+  REG_WIN1H = work->win1h;
+  REG_WIN1V = work->win1v;
+  REG_WININ = work->winin;
+  REG_WINOUT = work->winout;
+  REG_DISPCNT = work->dispcnt;
+  REG_BLDCNT = work->bldcnt;
+  REG_BLDALPHA = work->bldalpha;
+}
+
+/// Writes background 2's scale (BG2PA and BG2PD) and its reference point.
+void Display_ApplyBg2Affine(void) {
+  /* FAKEMATCH(pin): the work pointer kept in r2, so the registers' address
+   * takes r1; as a plain local, 16 of 30 instructions differ in tla-en. */
+  register struct BattleFxWork *work asm("r2") =
+      (struct BattleFxWork *)Ram_HeapSlots->battleFxWork[0];
+
+  {
+    u32 value = work->bg2pa;
+
+    /* FAKEMATCH(barrier): an empty asm through the first value loads it before
+     * the register's address is built; without it, 14 of 30 instructions
+     * differ in tla-en. */
+    __asm__ volatile("" : "+l"(value));
+    REG_BG2PA = value;
+  }
+  REG_BG2PD = work->bg2pd;
+  /* FAKEMATCH(barrier): an empty asm keeps the next offset's step after the
+   * store before it; without it, 2 of 30 instructions differ in tla-en. */
+  __asm__ volatile("");
+  REG_BG2X = work->bg2x;
+  REG_BG2Y = work->bg2y;
+}
+
+/// Writes background 2's reference point.
+void Display_ApplyBg2Reference(void) {
+  /* FAKEMATCH(pin): the work pointer kept in r2, so the registers' address
+   * takes r1; as a plain local, 20 of 20 instructions differ in tla-en. */
+  register struct BattleFxWork *work asm("r2") =
+      (struct BattleFxWork *)Ram_HeapSlots->battleFxWork[0];
+  u32 hold;
+
+  /* FAKEMATCH(barrier): an empty asm sets hold, which keeps r1 until the
+   * first value is read, so the offset takes r0; without hold and its asm,
+   * 8 of 20 instructions differ in tla-en. */
+  __asm__ volatile("" : "=l"(hold));
+  {
+    u32 value = work->bg2x;
+
+    /* FAKEMATCH(barrier): an empty asm through the first value loads it before
+     * the register's address is built, and ends hold; as an asm on hold
+     * alone, 14 of 20 instructions differ in tla-en. */
+    __asm__ volatile("" : "+l"(value) : "l"(hold));
+    REG_BG2X = value;
+  }
+  REG_BG2Y = work->bg2y;
+}
+
+void ColorBuffer_ScaleFar(void *source, void *destination, s32 scale,
+                          s32 count);
+
+void Palette_StepFadeTransfer(void) {
+  u8 *work = Ram_HeapSlots->battleFxWork[0];
+  s32 *framesLeft;
+  u8 *battle;
+
+  framesLeft = (s32 *)(work + 0x77b4);
+  battle = (u8 *)Ram_HeapSlots->battleWork;
+
+  if (*framesLeft > 0) {
+    s32 *step = (s32 *)(work + 0x77b8);
+
+    (*step)++;
+    ColorBuffer_ScaleFar(battle + 0x56c, (void *)&BG_PLTT_COLOR(6, 0),
+                         0x10000 - *step * 1092, 128);
+    (*framesLeft)--;
+  }
+}
+
+/// Clears every target's flash timer.
+void BattleEffect_ClearActorTimers(void) {
+  Iwram_ClearWords(Ram_HeapSlots->battleFxWork[0] + 0x78dc, 8);
+}
+
+/// Counts down each target's flash timer; when one runs out, the target gets
+/// its own palette back.
+void BattleEffect_CountDownBattlerTints(void) {
+  u8 *base;
+  s32 i;
+  s32 index;
+
+  base = Ram_HeapSlots->battleFxWork[0];
+  i = 0;
+  do {
+    if (base[0x78dc + i] != 0) {
+      if ((base[0x78dc + i] = base[0x78dc + i] - 1) == 0) {
+        index = i * 2 + 36;
+        Func_0814cd48(*(s16 *)(*(u8 **)(base + 0x78f0) + index), 0, -1, -1, 0);
+      }
+    }
+    i += 1;
+  } while (i != 8);
+}
+
+void Func_0814355c(void) {
+  REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
+  REG_BLDALPHA = BLEND_ALPHA(14, 16);
+  REG_BG2X = 0;
+  REG_BG2Y = 0xfffff000;
+  REG_BG2PA = Q_8_8(0.5);
+  REG_BG2PB = 0;
+  REG_BG2PC = 0;
+  REG_BG2PD = Q_8_8(1);
+  REG_WIN0H = WIN_RANGE(0, 240);
+  REG_WIN0V = WIN_RANGE(16, 136);
+  REG_WIN1H = WIN_RANGE(0, 240);
+  REG_WIN1V = WIN_RANGE(16, 136);
+  REG_WINOUT = WINOUT_WINOBJ_ALL | WINOUT_WIN01_CLR | WINOUT_WIN01_BG0;
 }

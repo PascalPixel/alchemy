@@ -1,5 +1,3 @@
-/// @file
-/// Triple Chomp's effect: the caster lunges, three bites close on the target.
 #include "types.h"
 #include "io_reg.h"
 #include "ram_buffer.h"
@@ -67,7 +65,6 @@ extern u16 gData_08197410[];
 
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 
-
 void BattleEffect_SetApproachMotion(s32 actor, s32 target, s32 frames,
                                     s32 percent);
 void wait(s32 frames);
@@ -106,6 +103,7 @@ void BattleEffect_ProcessPendingGraphicsTransfer(void);
 // throws 32 blue sparks that fly off away from the caster, jolts and flashes
 // the target, and draws a jaw: a textured quad tilted back, turned a quarter
 // further each bite, that grows and fades over 16 frames.
+/// Triple Chomp's effect: the caster lunges, three bites close on the target.
 void BattleEffect_RunTripleChomp(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -254,3 +252,23 @@ void BattleEffect_RunTripleChomp(struct BattleEffectArgument *effect) {
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }
+
+void Func_0818bc98(struct BattleEffectArgument *effect, s32 mode);
+
+/// Abilities: Beam, Cycle Beam, Searing Beam (kind 73).
+DEFINE_EFFECT_KIND(BattleEffect_RunBeam, Func_0818bc98, 0)
+
+/// Abilities: Rolling Flame (kind 434).
+void BattleEffect_RunRollingFlame(struct BattleEffectArgument *effect) {
+  effect->variant = 2;
+  Func_0818bc98(effect, 1);
+}
+
+/// Abilities: Ghost Soldier, Pike Assault (kind 449).
+void BattleEffect_RunGhostSoldier(struct BattleEffectArgument *effect) {
+  effect->variant = 2;
+  Func_0818bc98(effect, 2);
+}
+
+/// Abilities: Blast Breath (kind 414).
+DEFINE_EFFECT_KIND(BattleEffect_RunBlastBreath, Func_0818bc98, 3)

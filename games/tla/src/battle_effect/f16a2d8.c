@@ -50,12 +50,11 @@ s32 BattleEffect_LoadBlitter(
                                  // 7, 7, flags, mode)
 void Func_081180e8(s32 phase);   // BattlePlayback_StartFar
 void Func_08118088(s32 actor,
-                   s32 variant);  // BattleMotion_ApplyVariantMotionFar
+                   s32 variant); // BattleMotion_ApplyVariantMotionFar
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffect_CountDownBattlerTints(void);
 void BattleEffect_EndCanvasLayer(void);
 void SummonEffect_RunCanvasMode2(void *action);
-void Sound_PlayFar(s32 cue);
 
 void Actor_SetAnimationSpeedFar(struct Actor *object, s32 value);
 // The target is a whole word here: variant 3 passes the user twice, loaded once
@@ -242,4 +241,179 @@ void Func_0816a2d8(struct BattleEffectArgument *effect, s32 variant) {
                                  16);
     BattleEffect_EndCanvasLayer();
   }
+}
+
+#include "fixed_math.h"
+
+// The pixel half of a 16.16 fixed-point value.
+#define HI(v) (((s16 *)&(v))[1])
+
+// The Lost Age's blitter modes are The Broken Seal's counted down from 3.
+
+#define BLIT_MAX 1
+
+#define SPARK_COUNT 16
+#define SPARK_LIFE 28
+#define BLAST_SHEET_OFFSET 0x460
+
+#define BURST_FRAMES 54
+#define BURST_HIT_FRAME 10
+#define COLUMN_RISE_FRAME 8 // the columns break the ground
+#define COLUMN_PEAK_FRAME 31
+#define COLUMN_MAX_HEIGHT 80
+
+#define PHASE_HIT 212
+
+extern char ResourceId_Data134; // ☀️ ParticleSpritesA
+extern char ResourceId_LimeColumnSheet;
+extern char ResourceId_BlastSheet;
+extern const u16 gData_08198afc[]; // ☀️ gUndeadSword_SparkCells
+extern const u16 gData_08198b0a[]; // ☀️ gUndeadSword_SparkSizes
+
+void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *position);
+
+void Func_0814cd48(s32 actor, s32 palette, s32 a, s32 timer,
+                   s32 frames); // BattleEffect_TintBattler
+s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
+                  u32 mode); // BattleEffect_BuildBlitter
+void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
+void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
+                                          s32 gravity);
+
+// Two lime columns burst out of the ground under the target and a spray of
+// sparks flies up between them.
+//
+// Setup: open the canvas, load the column and blast sheets, line the canvas
+// up with the target, and launch 16 sparks from (64, 112) in random
+// directions. Each frame: from frame 8 the two columns (one drawn flipped)
+// rise 12 pixels a frame to 80, held there with the brighter MAX blitter, and
+// from frame 32 sink 6 a frame; each spark shows its blast picture for its
+// age and falls under gravity. The target is struck at frame 10.
+void BattleEffect_RunUndeadSword(struct BattleEffectArgument *effect) {
+  struct BattleEffectWork *work;
+  void *canvas;
+  void *sprites;
+  DrawRectangle draw[2];
+  struct EffectPosition target;
+  struct EffectStep *spark;
+  struct EffectStep *particle;
+  s32 frame;
+  s32 i;
+  s32 height;
+  s32 mode;
+  s32 x;
+  u8 *picture;
+  s32 speed;
+  s32 angle;
+  s32 cell;
+  s32 size;
+
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
+  canvas = Ram_HeapSlots->battleFxWork[1];
+  sprites = Ram_HeapSlots->unk64[0];
+
+  // Open the canvas and load the pictures.
+  BattleEffect_StartCanvasLayer(0);
+  {
+    REG_BG2PA = 0x100;
+  }
+  Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_LimeColumnSheet, work->sheet, 1,
+                             1);
+  Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet,
+                             work->sheet + BLAST_SHEET_OFFSET, 1, 0);
+  work->transferMode = 2;
+  work->transferValue = 75;
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+
+  // Slide the canvas so that its x = 64 is under the target.
+  EffectPosition_ProjectBattler(effect->actors[0], &target);
+  REG_BG2X = (64 - target.x) << 8;
+
+  // The sparks start together at the columns' foot and fly apart, upward
+  // faster than sideways.
+  for (i = 0, spark = work->particles; i != SPARK_COUNT; i++) {
+    speed = (Random16() & 0x1ff) + 128;
+    angle = Random16() & 0xffff;
+    spark->x = 0x400000;
+    spark->y = 0x700000;
+    spark->velocityX = (Trig_Sin(angle) * speed) >> 8;
+    spark->velocityY = (Trig_Cos(angle) * speed) >> 9;
+    spark->variant = Random16() & 7;
+    spark++;
+  }
+  work->shakeFrames = 8;
+
+  for (frame = 0; frame != BURST_FRAMES; frame++) {
+    // The hit: results phase, shake, knock-back and a flash.
+    if (frame == BURST_HIT_FRAME) {
+      work->shakeFrames = 8;
+      Func_081180e8(PHASE_HIT);
+      Func_08118088(effect->actors[0], 0);
+      Func_0814cd48(effect->actors[0], 7, 5, 0, 8);
+    }
+
+    // The columns: up 12 pixels a frame until frame 31, then down 6.
+    if (frame >= COLUMN_RISE_FRAME) {
+      if (frame <= COLUMN_PEAK_FRAME)
+        height = frame * 12 - 96;
+      else
+        height = 272 - frame * 6;
+      if (height > 0) {
+        if (height > COLUMN_MAX_HEIGHT) {
+          height = COLUMN_MAX_HEIGHT;
+          mode = BLIT_MAX;
+        } else {
+          mode = BLIT_ADDITIVE;
+        }
+        for (i = 0, x = 50; i != 2; i++, x += 14) {
+          if (i == 0)
+            Func_08196404(HEAP_BLITTER, 7, 7,
+                          COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, mode);
+          else
+            Func_08196404(
+                HEAP_BLITTER, 7, 7,
+                COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X, mode);
+          (draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1])(
+              canvas, work->sheet, x, 112 - height, 14, height);
+          HeapSlot_Release(HEAP_BLITTER);
+        }
+      }
+    }
+
+    // The sparks: a new blast picture every third frame, seven in all; the
+    // pairs leave one frame apart from frame 8.
+    BattleEffect_FetchRectangleBlitters(effect->side, draw);
+    for (i = 0, particle = work->particles; i != SPARK_COUNT; i++) {
+      if (frame >= i / 2 + 8 && particle->variant <= SPARK_LIFE) {
+        s32 px;
+        s32 py;
+
+        cell = particle->variant / 3;
+        px = HI(particle->x);
+        py = HI(particle->y);
+        if (cell > 6)
+          cell = 6;
+        picture = work->sheet + gData_08198afc[cell] + BLAST_SHEET_OFFSET;
+        size = gData_08198b0a[cell];
+        draw[0](canvas, picture, px - size / 2, py - size / 2, size, size);
+        particle->variant++;
+        BattleEffectKernels_IntegrateVector2(particle, 62, -0x2000);
+      }
+      particle++;
+    }
+    HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
+    HeapSlot_Release(HEAP_BLITTER);
+
+    if (frame < COLUMN_RISE_FRAME)
+      BattleCamera_Shake(4, 4);
+    else
+      BattleCamera_Shake(16, 16);
+    BattleEffect_CountDownBattlerTints();
+    work->transferPending = 1;
+    wait(1);
+  }
+
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  BattleEffect_EndCanvasLayer();
 }

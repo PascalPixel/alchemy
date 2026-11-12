@@ -43,7 +43,6 @@ void Func_0815e22c(struct EffectPosition *position);
 void Resource_LoadAndDecompress(s32 id, void *target, s32 unpack, s32 wait);
 void *Resource_GetTableEntry(s32 id);
 
-
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
 void HeapSlot_Release(s32 slot);
 void wait(s32 frames);
@@ -86,7 +85,7 @@ static inline void DrawDisc(void *canvas, s16 *discs, s32 cells, s32 x, s32 y,
   HeapSlot_Release(188);
 }
 
-// The canvas burst family (wrappers in canvas_modes.c). A glowing ball (or
+// The canvas burst family (wrappers in f18eda4.c). A glowing ball (or
 // in mode 0 a growing glow at the target, with sixteen rays that close on
 // it) hits the target; at the hit the targets flash and recoil, sixteen
 // flames rise and 47 sparks scatter. Modes:

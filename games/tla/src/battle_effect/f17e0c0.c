@@ -73,7 +73,6 @@ extern u16 gData_08197410[];
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
 void *Resource_GetTableEntry(s32 resourceId);
-s32 Task_Add(void (*func)(void), s32 order);
 
 void BattleEffect_SetApproachMotion(s32 id, s32 targetId, s32 frames, s32 rate);
 
@@ -342,3 +341,19 @@ void Func_0817e0c0(struct BattleEffectArgument *effect, s32 mode) {
   HeapSlot_Release(HEAP_SLOT_BLITTER);
   BattleEffect_EndCanvasLayer();
 }
+
+struct BattleEffectArgument;
+
+void Func_0817e698(struct BattleEffectArgument *effect, s32 mode);
+
+/// Abilities: Spasm (kind 348).
+void BattleEffect_RunSpasm(s32 a0) { Func_0817e698(a0, 0); }
+
+/// Abilities: Berserk (kind 353).
+void BattleEffect_RunBerserk(s32 a0) { Func_0817e698(a0, 1); }
+
+/// Abilities: Recovery (kind 389).
+void BattleEffect_RunRecovery(s32 a0) { Func_0817e698(a0, 2); }
+
+/// Abilities: Sack (kind 431).
+void BattleEffect_RunSack(s32 a0) { Func_0817e698(a0, 3); }

@@ -39,7 +39,8 @@ void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                    s32 timerFrames);              // BattleEffect_TintBattler
 void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
 void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
-void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen, s32 *world);
+void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen,
+                   s32 *world);
 void Func_0818caa8(void *cells, s32 x, s32 y, s32 size);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
@@ -51,9 +52,11 @@ void SceneTransform_ApplyYaw(s32 angle);
 void Render_ResetTransformState(void);
 void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
-void BattleEffect_SpawnObjects(s32 entryCount, s32 kind, u32 variant); // SpawnObjects
-void BattleEffect_SelectLivingTargets(struct FxPartyList *party); // SelectLivingTargets
-void Func_080150e4(s32 angle);            // SceneTransform_ApplyRoll
+void BattleEffect_SpawnObjects(s32 entryCount, s32 kind,
+                               u32 variant); // SpawnObjects
+void BattleEffect_SelectLivingTargets(
+    struct FxPartyList *party); // SelectLivingTargets
+void Func_080150e4(s32 angle);  // SceneTransform_ApplyRoll
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                    s32 speedLimit, s32 velocityY, s32 percent);
 
@@ -64,19 +67,17 @@ void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                           s32 drag);
 
-void *Heap_AllocEwram(s32 size);
-void Resource_LoadAndDecompress(s32 resource, void *destination, s32 a, s32 b);
 void *Resource_GetTableEntry(s32 resource);
 s32 Task_Add(void (*func)(void), s32 order);
 
-void HeapSlot_Release(s32 slot);
 void Sound_PlayFar(s32 cue);
 void wait(s32 frames);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
 
-void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height, s32 count);
+void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height,
+                           s32 count);
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                           s32 gravity);
 s32 BattleUnit_GetEffectHeightFar(s32 unit);
@@ -240,7 +241,6 @@ extern const u8 Data_0819a160[];
 struct SpriteObject *Func_0815b290(s32 width, s32 height, u32 shape,
                                    u32 attributes);
 struct IrisSprite *Func_0815b3b0(s32 width, s32 height, u32 shape, s32 mode);
-void ResourceObject_ReleaseFar(struct ResourceObjectWork *work);
 void BattleEffect_ConfigureEffectDisplay(void);
 void BattleBackground_LoadFar(s32 layer, s32 background, s32 palette);
 
@@ -259,7 +259,6 @@ void BattleEffect_DrawDiagonalCanvasLine(s32 x, s32 y, s32 width, u8 color);
 void SceneTransform_ResetMatrix(void);
 void SceneTransform_ApplyPosition(const s32 *pos);
 void Func_080151ac(s32 *scale); // SceneTransform_ApplyScale
-void Heap_Release(void *buffer);
 
 #define SLOT_ALT 188 // unkb8[1]
 #define OBJ_TILES(obj)                                                         \
@@ -1732,4 +1731,1100 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
     ResourceObject_ReleaseFar(objects[i]);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
+}
+
+// The integer (pixel) half of a 16.16 value, read as the halfword it is.
+#define HI(v) (((s16 *)&(v))[1])
+
+// Swaps two integers without a temporary.
+#define XOR_SWAP(a, b)                                                         \
+  {                                                                            \
+    (a) ^= (b);                                                                \
+    (b) ^= (a);                                                                \
+    (a) ^= (b);                                                                \
+  }
+
+// A triangle of the model: where its three corners start in the vertex
+// buffer (in words) and its colour.
+struct SolidFace {
+  s32 corner[3];
+  u8 unk0c[12];
+  u8 color;
+  u8 unk19[3];
+};
+
+// Fills one scanline of the canvas (8x8 tiles, 16 to a row) from xa to xb,
+// keeping the brighter of each pixel's colour and color.
+#define FILL_SPAN(row, xa, xb)                                                 \
+  {                                                                            \
+    s32 left = (xa) >> 16;                                                     \
+    s32 right = (xb) >> 16;                                                    \
+    s32 rowOffset;                                                             \
+    s32 x;                                                                     \
+                                                                               \
+    if (left > right)                                                          \
+      XOR_SWAP(left, right);                                                   \
+    rowOffset = (((row) & 7) << 3) + (((row) >> 3) << 10);                     \
+    for (x = left; x != right; x++) {                                          \
+      s32 pixel = ((x >> 3) << 6) + (x & 7) + rowOffset;                       \
+                                                                               \
+      if (canvas[pixel] < color)                                               \
+        canvas[pixel] = color;                                                 \
+    }                                                                          \
+  }
+
+// An unused solid renderer, the filled twin of Func_08196248. Transforms the
+// vertexCount points in the sheet block by the current matrix, then fills
+// every face of the effect work's list that faces the camera into the
+// canvas, centred at (64, 64), keeping the brighter colour where faces
+// overlap. Each triangle is sorted by y and filled in two halves, top to
+// middle and middle to bottom, along 16.16 edge slopes.
+void Func_0819574c(s32 vertexCount, s32 faceCount) {
+  u8 *canvas = Ram_HeapSlots->battleFxWork[1];
+  s32 *vertices = Ram_HeapSlots->unk64[0];
+  struct SolidFace *faces = (struct SolidFace *)Ram_HeapSlots->battleFxWork[0];
+  s32 i;
+  s32 *ax, *bx, *cx, *cy, *ay, *by;
+  s32 facing;
+  s32 (*mul)(s32, s32);
+  s32 slopeA, slopeB, top, middle, bottom;
+  u8 color;
+  s32 edgeA, edgeB, row;
+
+  // From here on, the count of words: three to a point.
+  vertexCount *= 3;
+  for (i = 0; i != vertexCount; i += 3)
+    Iwram_TransformVector(&vertices[i], &vertices[i]);
+
+  for (i = 0; i != faceCount; i++) {
+    // The three corners of each face are copied after the vertices.
+    ax = (s32 *)(vertexCount * 4 + (s32)vertices);
+    bx = ax + 3;
+    cx = ax + 6;
+    cy = ax + 7;
+    ay = ax + 1;
+    by = ax + 4;
+    // A local holding the multiply routine's address (one value throughout).
+    mul = Iwram_MulQ16;
+    Dma_Set(&vertices[faces[i].corner[0]], ax, 0x84000003, REG_DMA3);
+    Dma_Set(&vertices[faces[i].corner[1]], bx, 0x84000003, REG_DMA3);
+    Dma_Set(&vertices[faces[i].corner[2]], cx, 0x84000003, REG_DMA3);
+
+    // The z of the edges' cross product: negative for a face turned away.
+    facing = mul(*bx - *ax, *cy - *ay) - mul(*cx - *ax, *by - *ay);
+    if (facing >= 0) {
+      color = faces[i].color;
+      *ax += 64 << 16;
+      *ay += 64 << 16;
+      *bx += 64 << 16;
+      *by += 64 << 16;
+      *cx += 64 << 16;
+      *cy += 64 << 16;
+
+      // Sort the corners by y. bx[1] is *by and cx[1] is *cy: the y swaps
+      // store b's and c's y through their x pointers, as the native does.
+      if (*ay > *by) {
+        XOR_SWAP(*ax, *bx);
+        *ay ^= *by;
+        bx[1] = *by ^ *ay;
+        *ay ^= bx[1];
+      }
+      if (*by > *cy) {
+        XOR_SWAP(*bx, *cx);
+        bx[1] = *by ^ *cy;
+        cx[1] = *cy ^ bx[1];
+        *by ^= cx[1];
+        if (*ay > *by) {
+          XOR_SWAP(*ax, *bx);
+          *ay ^= *by;
+          bx[1] = *by ^ *ay;
+          *ay ^= bx[1];
+        }
+      }
+
+      top = ax[1] >> 16;
+      middle = ax[4] >> 16;
+      bottom = HI(ax[7]);
+      if (top != middle)
+        slopeA = Iwram_RatioMulQ14(ax[4] - ax[1], ax[3] - ax[0]);
+      if (top != bottom)
+        slopeB = Iwram_RatioMulQ14(ax[7] - ax[1], ax[6] - ax[0]);
+
+      // The upper half, between the short edge and the long one.
+      edgeB = ax[0];
+      edgeA = ax[0];
+      for (row = top; row != middle; row++) {
+        FILL_SPAN(row, edgeA, edgeB);
+        edgeA += slopeA;
+        edgeB += slopeB;
+      }
+
+      // The lower half, from the middle corner.
+      if (middle != bottom)
+        slopeA = Iwram_RatioMulQ14(ax[7] - ax[4], ax[6] - ax[3]);
+      edgeA = ax[3];
+      for (row = middle; row != bottom; row++) {
+        FILL_SPAN(row, edgeA, edgeB);
+        edgeA += slopeA;
+        edgeB += slopeB;
+      }
+    }
+  }
+}
+
+// One mesh face: its three corners as word offsets into the vertex buffer
+// (vertex index * 3), padded to an effect step's 28 bytes.
+struct MeshFace {
+  s32 vertex[3];
+  s32 unk0c[4];
+};
+
+#define DIFF_ABS(v) ((v) >= 0 ? (v) : -(v))
+
+// One textured scanline at canvas row y, from xA to xB, keeping the brighter
+// of the canvas and texture colour.
+#define DRAW_SPAN(y)                                                           \
+  {                                                                            \
+    u8 *row = work->sheet;                                                     \
+    s32 left, right, u, v;                                                     \
+    s32 rowOffset;                                                             \
+    s32 x;                                                                     \
+                                                                               \
+    row += ((vA >> 16) << textureShift) + (uA >> 16);                          \
+    left = xA >> 16;                                                           \
+    right = xB >> 16;                                                          \
+    u = 0;                                                                     \
+    v = 0;                                                                     \
+    if (left > right)                                                          \
+      XOR_SWAP(left, right);                                                   \
+    rowOffset = (((y) & 7) << 3) + (((y) >> 3) << 10);                         \
+    for (x = left; x != right; x++) {                                          \
+      s32 texel = (u >> 16) + ((v >> 16) << textureShift);                     \
+      s32 at = ((x >> 3) << 6) + (x & 7) + rowOffset;                          \
+                                                                               \
+      if (canvas[at] < row[texel])                                             \
+        canvas[at] = row[texel];                                               \
+      u += dudx;                                                               \
+      v += dvdx;                                                               \
+    }                                                                          \
+  }
+
+// The texture steps along a scanline, from the middle corner's row.
+#define STEP_RIGHTWARD()                                                       \
+  {                                                                            \
+    width = DIFF_ABS(ax[3] - ax[0] - Iwram_MulQ16(dxB, ax[4] - ax[1]));        \
+    dudx = Iwram_RatioMulQ14(width, uv[1][0] - uv[0][0] -                      \
+                                        Iwram_MulQ16(duB, ax[4] - ax[1]));     \
+    dvdx = Iwram_RatioMulQ14(width, uv[1][1] - uv[0][1] -                      \
+                                        Iwram_MulQ16(dvB, ax[4] - ax[1]));     \
+    XOR_SWAP(duA, duB);                                                        \
+    XOR_SWAP(dvA, dvB);                                                        \
+  }
+#define STEP_LEFTWARD()                                                        \
+  {                                                                            \
+    width = DIFF_ABS(Iwram_MulQ16(dxB, ax[4] - ax[1]) - (ax[3] - ax[0]));      \
+    dudx = Iwram_RatioMulQ14(width, Iwram_MulQ16(duB, ax[4] - ax[1]) -         \
+                                        (uv[1][0] - uv[0][0]));                \
+    dvdx = Iwram_RatioMulQ14(width, Iwram_MulQ16(dvB, ax[4] - ax[1]) -         \
+                                        (uv[1][1] - uv[0][1]));                \
+  }
+
+// Transforms vertexCount vertices (16.16 x, y, z in the heap's vertex
+// buffer) in place, then draws each front-facing face of the mesh at the
+// start of the effect work as an affine-textured triangle: uvs gives each
+// face's three texture corners (16.16), the texture is the effect sheet,
+// textureShift its row length as a power of two. Coordinates are offset by
+// 64 pixels into the canvas.
+void Func_08195a9c(s32 vertexCount, s32 faceCount, s32 (*uvs)[3][2],
+                   s32 textureShift) {
+  s32 i;
+  s32 *vertices;
+  u8 *canvas;
+  struct MeshFace *faces;
+  s32 *ax, *bx, *cx, *cy, *ay, *by;
+  s32 uv[3][2];
+  s32 width;
+  s32 dxA, dxB, duA, dvA, duB, dvB;
+  s32 xA, xB, uA, vA, uB, vB;
+  s32 top, middle, bottom;
+  s32 dudx, dvdx;
+  struct BattleEffectWork *work;
+  u32 y;
+
+  vertices = Ram_HeapSlots->unk64[0];
+  faces = (struct MeshFace *)Ram_HeapSlots->battleFxWork[0];
+  canvas = Ram_HeapSlots->battleFxWork[1];
+  vertexCount *= 3;
+  for (i = 0; i != vertexCount; i += 3)
+    Iwram_TransformVector(&vertices[i], &vertices[i]);
+
+  for (i = 0; i != faceCount; i++) {
+    // As an integer sum, so the scaled count is added first.
+    ax = (s32 *)(vertexCount * 4 + (s32)vertices);
+    bx = &vertices[vertexCount + 3];
+    cx = &vertices[vertexCount + 6];
+    cy = &vertices[vertexCount + 7];
+    ay = &vertices[vertexCount + 1];
+    by = &vertices[vertexCount + 4];
+    Dma_Set(&vertices[faces[i].vertex[0]], ax,
+            (DMA_ENABLE | DMA_32BIT) << 16 | 3, REG_DMA3);
+    Dma_Set(&vertices[faces[i].vertex[1]], bx,
+            (DMA_ENABLE | DMA_32BIT) << 16 | 3, REG_DMA3);
+    Dma_Set(&vertices[faces[i].vertex[2]], cx,
+            (DMA_ENABLE | DMA_32BIT) << 16 | 3, REG_DMA3);
+
+    // Back faces are skipped.
+    if (Iwram_MulQ16(*bx - *ax, *cy - *ay) -
+            Iwram_MulQ16(*cx - *ax, *by - *ay) >=
+        0) {
+      work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
+      Dma_Set(uvs[i], uv, (DMA_ENABLE | DMA_32BIT) << 16 | 6, REG_DMA3);
+      *ax += 64 << 16;
+      *ay += 64 << 16;
+      *bx += 64 << 16;
+      *by += 64 << 16;
+      *cx += 64 << 16;
+      *cy += 64 << 16;
+
+      // Sort the corners from top to bottom. bx[1] is *by and cx[1] is *cy.
+      if (*ay > *by) {
+        XOR_SWAP(*ax, *bx);
+        *ay ^= *by;
+        bx[1] = *by ^ *ay;
+        *ay ^= bx[1];
+        XOR_SWAP(uv[0][0], uv[1][0]);
+        XOR_SWAP(uv[0][1], uv[1][1]);
+      }
+      if (*by > *cy) {
+        XOR_SWAP(*bx, *cx);
+        bx[1] = *by ^ *cy;
+        cx[1] = *cy ^ bx[1];
+        *by ^= cx[1];
+        XOR_SWAP(uv[1][0], uv[2][0]);
+        XOR_SWAP(uv[1][1], uv[2][1]);
+        if (*ay > *by) {
+          XOR_SWAP(*ax, *bx);
+          *ay ^= *by;
+          bx[1] = *by ^ *ay;
+          *ay ^= bx[1];
+          XOR_SWAP(uv[0][0], uv[1][0]);
+          XOR_SWAP(uv[0][1], uv[1][1]);
+        }
+      }
+
+      top = ax[1] >> 16;
+      middle = ax[4] >> 16;
+      bottom = ax[7] >> 16;
+      if (top != middle) {
+        s32 height = ax[4] - ax[1];
+
+        dxA = Iwram_RatioMulQ14(height, ax[3] - ax[0]);
+        duA = Iwram_RatioMulQ14(height, uv[1][0] - uv[0][0]);
+        dvA = Iwram_RatioMulQ14(height, uv[1][1] - uv[0][1]);
+      }
+      if (top != bottom) {
+        s32 height = ax[7] - ax[1];
+
+        dxB = Iwram_RatioMulQ14(height, ax[6] - ax[0]);
+        duB = Iwram_RatioMulQ14(height, uv[2][0] - uv[0][0]);
+        dvB = Iwram_RatioMulQ14(height, uv[2][1] - uv[0][1]);
+      }
+      xB = xA = ax[0];
+      uA = uB = uv[0][0];
+      vA = vB = uv[0][1];
+
+      if (ax[3] >= ax[6])
+        STEP_RIGHTWARD()
+      else
+        STEP_LEFTWARD()
+
+      // The upper half.
+      for (y = top; y != middle; y++) {
+        DRAW_SPAN(y);
+        xA += dxA;
+        xB += dxB;
+        uA += duA;
+        vA += dvA;
+        uB += duB;
+        vB += dvB;
+      }
+
+      // The lower half: edge A now runs from the middle corner to the bottom.
+      if (middle != bottom) {
+        s32 height = ax[7] - ax[4];
+
+        dxA = Iwram_RatioMulQ14(height, ax[6] - ax[3]);
+        if (ax[3] >= ax[6]) {
+          duB = duA;
+          dvB = dvA;
+          uB = uA;
+          vB = vA;
+        }
+        duA = Iwram_RatioMulQ14(height, uv[2][0] - uv[1][0]);
+        dvA = Iwram_RatioMulQ14(height, uv[2][1] - uv[1][1]);
+        xA = ax[3];
+        uA = uv[1][0];
+        vA = uv[1][1];
+        if (ax[0] <= xA) {
+          STEP_RIGHTWARD();
+          uA = uB;
+          vA = vB;
+        } else
+          STEP_LEFTWARD()
+        for (y = middle; y != bottom; y++) {
+          DRAW_SPAN(y);
+          xA += dxA;
+          xB += dxB;
+          uA += duA;
+          vA += dvA;
+          /* FAKEMATCH(dead): edge B's values stepped on though nothing reads
+           * them again; flow deletes both, and cse2 then stores uv[0] to uB
+           * ahead of uA; without them, 4 of 966 instructions differ in
+           * tla-en. */
+          uB += duB;
+          vB += dvB;
+        }
+      }
+    }
+  }
+}
+
+// The integer (pixel) half of a 16.16 value, read as the halfword it is.
+
+// A point of the wireframe model, 16.16 fixed point.
+struct WirePoint {
+  s32 x;
+  s32 y;
+  s32 z;
+};
+
+// A triangle of the wireframe model: where its three corners start in the
+// vertex buffer (in words) and the colour its edges are drawn in.
+struct WireFace {
+  s32 corner[3];
+  u8 unk0c[12];
+  u8 color;
+  u8 unk19[3];
+};
+
+void Func_08143eb4(s32 x0, s32 y0, s32 x1, s32 y1, s32 color);
+
+// An unused wireframe renderer. Transforms the vertexCount points in the
+// sheet block by the current matrix, then draws the three edges of every
+// face of the effect work's list that faces the camera (its corners run
+// counter-clockwise on screen) as clipped lines into the canvas, centred at
+// (64, 64).
+void Func_08196248(s32 vertexCount, s32 faceCount) {
+  s32 *vertices = Ram_HeapSlots->unk64[0];
+  struct WireFace *faces = (struct WireFace *)Ram_HeapSlots->battleFxWork[0];
+  s32 i;
+  s32 facing;
+  s32 color;
+
+  vertexCount *= 3;
+  for (i = 0; i != vertexCount; i += 3)
+    Iwram_TransformVector(&vertices[i], &vertices[i]);
+
+  // The three corners of each face are copied after the vertices.
+  for (i = 0; i != faceCount; i++) {
+    // Spelled through integers: the index comes first in the addition.
+    s32 *x0 = (s32 *)(vertexCount * 4 + (s32)vertices);
+    s32 *x1 = x0 + 3;
+    s32 *x2 = x0 + 6;
+    s32 *y2 = x0 + 7;
+    s32 *y0 = x0 + 1;
+    s32 *y1 = x0 + 4;
+
+    Dma_Set(&vertices[faces[i].corner[0]], x0, 0x84000003, REG_DMA3);
+    Dma_Set(&vertices[faces[i].corner[1]], x1, 0x84000003, REG_DMA3);
+    Dma_Set(&vertices[faces[i].corner[2]], x2, 0x84000003, REG_DMA3);
+
+    // The z of the edges' cross product: negative for a face turned away.
+    facing =
+        Iwram_MulQ16(*x1 - *x0, *y2 - *y0) - Iwram_MulQ16(*x2 - *x0, *y1 - *y0);
+    if (facing >= 0) {
+      color = faces[i].color;
+      *x0 += 64 << 16;
+      *y0 += 64 << 16;
+      *x1 += 64 << 16;
+      *y1 += 64 << 16;
+      *x2 += 64 << 16;
+      *y2 += 64 << 16;
+      Func_08143eb4(HI(*x0), HI(*y0), HI(*x1), HI(*y1), color);
+      Func_08143eb4(HI(*x1), HI(*y1), HI(*x2), HI(*y2), color);
+      Func_08143eb4(HI(*x0), HI(*y0), HI(*x2), HI(*y2), color);
+    }
+  }
+}
+
+s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
+                  u32 mode);
+
+/// BattleEffect_BuildBlitter(slot, 7, 7, flags, mode) for a 128 by 128 canvas,
+/// with the flags and the mode packed into one word: mode << 4 | flags.
+s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags) {
+  return Func_08196404(slot, 7, 7, modeAndFlags & 0xf, (u32)modeAndFlags >> 4);
+}
+
+// Func_08196404 walks The Lost Age's blitter template once and writes the
+// blitter's ARM code into a heap slot: The Broken Seal's step list
+// (battle_effect/blitter.c) with short copies as block moves and longer ones
+// by DMA, modes 0 additive, 1 max, 2 transparent, default copy, and the
+// second run copied from the first by its measured length.
+
+CAMELOT_ASM("ldmia and stmia of two registers from r0 to r1 with scratch from "
+            "r2 up, in the shape of Dma_Set: agscc's block moves leave r0 and "
+            "r1 to the allocator")
+static __inline__ void CopyWords2(const void *source, void *destination) {
+  register const void *from __asm__("r0") = source;
+  register void *to __asm__("r1") = destination;
+  __asm__ volatile("ldmia %0!, {r2, r3}\n\tstmia %1!, {r2, r3}"
+                   : "+r"(from), "+r"(to)
+                   :
+                   : "r2", "r3", "memory");
+}
+
+CAMELOT_ASM("ldmia and stmia of three registers from r0 to r1 with scratch "
+            "from r2 up, in the shape of Dma_Set: agscc's block moves leave r0 "
+            "and r1 to the allocator")
+static __inline__ void CopyWords3(const void *source, void *destination) {
+  register const void *from __asm__("r0") = source;
+  register void *to __asm__("r1") = destination;
+  __asm__ volatile("ldmia %0!, {r2, r3, r4}\n\tstmia %1!, {r2, r3, r4}"
+                   : "+r"(from), "+r"(to)
+                   :
+                   : "r2", "r3", "r4", "memory");
+}
+
+CAMELOT_ASM("ldmia and stmia of four registers: agscc's block moves stop at "
+            "three, so a 16-byte struct copy compiles to 12 and 4")
+static __inline__ void CopyWords4(const void *source, void *destination) {
+  register const void *from __asm__("r0") = source;
+  register void *to __asm__("r1") = destination;
+  __asm__ volatile("ldmia %0!, {r2, r3, r4, r5}\n\tstmia %1!, {r2, r3, r4, r5}"
+                   : "+r"(from), "+r"(to)
+                   :
+                   : "r2", "r3", "r4", "r5", "memory");
+}
+
+extern const u32 BattleEffect_PatchTemplateCode[];
+extern const u32 BattleEffect_Mask[];
+extern const u16 Data_081973f0[];
+extern const u32 BattleEffect_CopyReverse[];
+extern const u32 BattleEffect_CopyForward[];
+extern const u32 BattleEffect_Copy8Reverse[];
+extern const u32 BattleEffect_Copy8Forward[];
+extern const u32 BattleEffect_TransparentReverse[];
+extern const u32 BattleEffect_TransparentForward[];
+extern const u32 BattleEffect_Transparent8Reverse[];
+extern const u32 BattleEffect_Transparent8Forward[];
+extern const u32 BattleEffect_MaxReverse[];
+extern const u32 BattleEffect_MaxForward[];
+extern const u32 BattleEffect_Max4Reverse[];
+extern const u32 BattleEffect_Max4Forward[];
+extern const u32 BattleEffect_AdditiveReverse[];
+extern const u32 BattleEffect_AdditiveForward[];
+extern const u32 BattleEffect_ColorReverse[];
+extern const u32 BattleEffect_ColorForward[];
+
+#define BRANCH_FIELD(site, target)                                             \
+  ((((u32)(target) - (u32)(site) - 8) >> 2) & 0x00FFFFFF)
+
+#define PUT(word)                                                              \
+  do {                                                                         \
+    *dst++ = (word);                                                           \
+  } while (0)
+#define COPY_FROM(from, n)                                                     \
+  CopyWords##n(from, dst);                                                     \
+  dst += (n)
+#define COPY(n)                                                                \
+  do {                                                                         \
+    COPY_FROM(src, n);                                                         \
+    src += (n);                                                                \
+  } while (0)
+#define COPY_LONG(n)                                                           \
+  do {                                                                         \
+    Dma_Set(src, dst, control | (n), REG_DMA3);                                \
+    dst += (n);                                                                \
+    src += (n);                                                                \
+  } while (0)
+#define COPY_DMA(from, n)                                                      \
+  Dma_Set(from, dst, DMA_COPY_WORDS(n), REG_DMA3);                             \
+  dst += (n)
+#define COPY_TWICE(from, n)                                                    \
+  {                                                                            \
+    const u32 *part = (from);                                                  \
+    u32 control = DMA_COPY_WORDS(n);                                           \
+    Dma_Set(part, dst, control, REG_DMA3);                                     \
+    dst += (n);                                                                \
+    Dma_Set(part, dst, control, REG_DMA3);                                     \
+    dst += (n);                                                                \
+  }
+#define PUT_BRANCH(target)                                                     \
+  *dst = *src++ + BRANCH_FIELD(dst, target);                                   \
+  dst++
+#define PATCH(site)                                                            \
+  do {                                                                         \
+    *(site) |= BRANCH_FIELD(site, dst);                                        \
+  } while (0)
+
+s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
+                  u32 mode) {
+  const u32 *src;
+  u32 *dst;
+  u32 *noRows;
+  u32 *noColumns;
+  u32 *row;
+  u32 *skip;
+  u32 *run;
+  s32 runSize;
+  u32 *runCopy;
+  u32 control;
+  // Unused: gives the stack frame its 136 bytes.
+  u32 frame[34];
+
+  src = BattleEffect_PatchTemplateCode;
+  // dst is reused for the block's size; as HeapSlot_Alloc(slot, 436), 31 of
+  // 597 instructions differ in tla-en.
+  dst = (u32 *)436;
+  dst = HeapSlot_Alloc(slot, (s32)dst);
+
+  COPY(4);
+  if (mode == 0) {
+    COPY_FROM(BattleEffect_Mask, 3);
+  }
+
+  if ((flags & 12) == 4) {
+    COPY_FROM(src, 3);
+  }
+  src += 3;
+  if ((flags & 12) == 8) {
+    COPY_FROM(src, 4);
+  }
+  src += 4;
+  if ((flags & 12) == 12) {
+    COPY_FROM(src, 3);
+  }
+  src += 3;
+  if ((flags & 12) == 0) {
+    PUT(src[0]);
+  }
+  src += 1;
+
+  if ((flags & 2) != 0) {
+    COPY(2);
+    if ((flags & 8) != 0) {
+      PUT(src[0]);
+    } else {
+      PUT(src[1]);
+    }
+    src += 2;
+    COPY(2);
+    PUT(src[0] + (1 << heightShift));
+    PUT(src[1] + (1 << heightShift));
+    src -= 6;
+  }
+  src += 8;
+
+  PUT(*src++);
+  noRows = dst;
+  PUT(*src++);
+
+  if ((flags & 1) == 0) {
+    s32 width = 1 << widthShift;
+
+    PUT(src[0] + width - 1);
+  }
+  src += 1;
+  if ((flags & 1) != 0) {
+    PUT(src[0]);
+    PUT(src[1]);
+    if ((flags & 4) != 0) {
+      PUT(src[2]);
+      PUT(src[3]);
+    } else {
+      PUT(src[4]);
+      PUT(src[5]);
+    }
+    PUT(src[6]);
+    PUT(src[7]);
+    PUT(src[8] + Data_081973f0[widthShift]);
+    if ((flags & 4) != 0) {
+      PUT(src[9]);
+    } else {
+      PUT(src[10]);
+    }
+    PUT(src[11] + Data_081973f0[widthShift]);
+  }
+  src += 12;
+
+  PUT(*src++);
+  noColumns = dst;
+  PUT(*src++);
+
+  control = 0x84000000;
+  COPY_LONG(6);
+
+  PUT(*src++);
+  if ((flags & 1) == 0) {
+    PUT(src[0]);
+  }
+  src += 1;
+
+  COPY_LONG(5);
+
+  row = dst;
+  PUT(src[0]);
+  PUT(src[1] + (1 << (heightShift - 3)) - 1);
+  PUT(src[2] + ((widthShift - 3) << 7));
+  PUT(src[3]);
+  src += 4;
+
+  if ((flags & 1) == 0) {
+    PUT(src[0]);
+  }
+  src += 1;
+
+  skip = dst + 1;
+  COPY(2);
+  if ((flags & 4) != 0) {
+    PUT(src[0]);
+  } else {
+    PUT(src[1]);
+  }
+  src += 2;
+
+  run = dst;
+  runCopy = dst;
+  switch (mode) {
+  default: {
+    const u32 *part;
+
+    if ((flags & 4) != 0) {
+      part = BattleEffect_CopyReverse;
+    } else {
+      part = BattleEffect_CopyForward;
+    }
+    COPY_FROM(part, 2);
+    break;
+  }
+  case 2: {
+    const u32 *part;
+
+    if ((flags & 4) != 0) {
+      part = BattleEffect_TransparentReverse;
+    } else {
+      part = BattleEffect_TransparentForward;
+    }
+    COPY_FROM(part, 4);
+    break;
+  }
+  case 1: {
+    const u32 *part;
+
+    if ((flags & 4) != 0) {
+      part = BattleEffect_MaxReverse;
+    } else {
+      part = BattleEffect_MaxForward;
+    }
+    COPY_FROM(part, 4);
+    break;
+  }
+  case 0:
+    if ((flags & 4) != 0) {
+      COPY_DMA(BattleEffect_AdditiveReverse, 6);
+    } else {
+      COPY_DMA(BattleEffect_AdditiveForward, 6);
+    }
+    break;
+  }
+
+  PUT(*src++);
+  PUT_BRANCH(run);
+  runSize = (u8 *)dst - (u8 *)runCopy;
+  PUT(*src++);
+  if ((flags & 1) == 0) {
+    PUT(src[0]);
+    PUT(src[1]);
+  }
+  src += 2;
+  PATCH(skip);
+
+  skip = dst + 1;
+  COPY(2);
+
+  run = dst;
+  switch (mode) {
+  default:
+    if ((flags & 4) != 0) {
+      COPY_DMA(BattleEffect_Copy8Reverse, 16);
+    } else {
+      COPY_DMA(BattleEffect_Copy8Forward, 16);
+    }
+    break;
+  case 2:
+    if ((flags & 4) != 0) {
+      COPY_DMA(BattleEffect_Transparent8Reverse, 25);
+    } else {
+      COPY_DMA(BattleEffect_Transparent8Forward, 25);
+    }
+    break;
+  case 1:
+    if ((flags & 4) != 0) {
+      COPY_TWICE(BattleEffect_Max4Reverse, 16);
+    } else {
+      COPY_TWICE(BattleEffect_Max4Forward, 16);
+    }
+    break;
+  case 0:
+    if ((flags & 4) != 0) {
+      COPY_TWICE(BattleEffect_ColorReverse, 14);
+    } else {
+      COPY_TWICE(BattleEffect_ColorForward, 14);
+    }
+    break;
+  }
+
+  PUT(*src++);
+  if ((flags & 1) == 0) {
+    PUT(src[0]);
+    PUT(src[1]);
+  }
+  src += 2;
+
+  PUT(*src++);
+  PUT_BRANCH(run);
+  PATCH(skip);
+
+  PUT(*src++);
+  skip = dst;
+  PUT(*src++);
+  if ((flags & 4) != 0) {
+    PUT(src[0]);
+  } else {
+    PUT(src[1]);
+  }
+  src += 2;
+  // An empty once-only loop keeps the step before the size's load; without
+  // it, 2 of 597 instructions differ in tla-en.
+  do {
+  } while (0);
+
+  {
+    u32 words = (u32)runSize / 4;
+    /* FAKEMATCH(pin): count fixed in r2, where the rounded size is built; as a
+     * plain local, 35 of 597 instructions differ in tla-en. */
+    register s32 count __asm__("r2") = words * 4;
+    s32 size = count;
+
+    /* FAKEMATCH(barrier): an empty asm that keeps words alive past count's
+     * set; without it, 6 of 597 instructions differ in tla-en. */
+    __asm__("" : : "r"(words));
+    Dma_Set(runCopy, dst, DMA_COPY_WORDS(count / 4), REG_DMA3);
+    dst = (u32 *)((u8 *)dst + size);
+  }
+  PATCH(skip);
+
+  COPY(3);
+
+  PUT_BRANCH(row);
+  PATCH(noRows);
+  PATCH(noColumns);
+
+  COPY(2);
+  {
+    const u32 *end = (const u32 *)Data_081973f0;
+
+    return src == end;
+  }
+}
+
+// The runner for the ARM kernel at Data_081380ac (relocated_kernel_0.s), the
+// same wrapper as Render_TransformVertices (below) and
+// Message_Find, with two arguments. Nothing in the image calls it.
+
+extern const u8 Data_081380ac[];
+extern u8 Data_081380acCodeSize[];
+
+/// Copies the ARM kernel at Data_081380ac into a heap block (DMA 3, words),
+/// runs it there with the caller's two arguments and frees the block.
+void RamCode_RunKernel0(s32 arg0, s32 arg1) {
+  void (*routine)(s32, s32);
+  u32 size;
+
+  // The size's load in a once-only block keeps it after the parameters are
+  // copied; as a plain assignment, 4 of 31 instructions differ in tla-en.
+  do {
+    size = (u32)Data_081380acCodeSize;
+  } while (0);
+  routine = (void (*)(s32, s32))Heap_Alloc(size);
+  Dma_Set((const void *)Data_081380ac, routine, DMA_COPY_WORDS(size >> 2),
+          REG_DMA3);
+  routine(arg0, arg1);
+  Heap_Release(routine);
+}
+
+#include "ram_code.h"
+#include "macros.h"
+
+s32 Render_ProjectPoint(const void *point, s32 *screen);
+
+extern const u8 Data_0813b9a0[];
+extern u8 Data_0813b9a0CodeSize[];
+
+/// Copies the ARM vertex kernel into a heap block and runs it: count packed
+/// s8 vertices through the current transform into screen coordinates.
+void Render_TransformVertices(const void *corners, void *vertices, s32 count) {
+  void (*routine)(const void *, void *, s32);
+  u32 size;
+
+  // The size's load in a once-only block keeps it after the parameters are
+  // copied; as a plain assignment, 4 of 36 instructions differ in tla-en.
+  do {
+    size = (u32)Data_0813b9a0CodeSize;
+  } while (0);
+  routine = (void (*)(const void *, void *, s32))Heap_Alloc(size);
+  Dma_Set((const void *)Data_0813b9a0, routine, DMA_COPY_WORDS(size >> 2),
+          REG_DMA3);
+  routine(corners, vertices, count);
+  Heap_Release(routine);
+}
+
+/// One model vertex: signed byte coordinates, padded to a word.
+struct ModelVertex {
+  s8 x;
+  s8 y;
+  s8 z;
+  s8 pad;
+};
+
+/// One projected vertex, as Render_ProjectPoint leaves it.
+struct ProjectedVertex {
+  s16 x;     ///< screen pixels
+  s16 y;     ///< screen pixels
+  s16 depth; ///< projected depth
+  s16 unk06;
+};
+
+/// Projects count model vertices through Render_ProjectPoint into screen
+/// coordinates.
+void Render_ProjectVertices(struct ModelVertex *vertices,
+                            struct ProjectedVertex *screen, s32 count) {
+  s32 point[3];
+
+  for (; count != 0; count--) {
+    SET_VECTOR(point, vertices->x << 16, vertices->y << 16, vertices->z << 16);
+    Render_ProjectPoint(point, point);
+    screen->x = point[0];
+    screen->y = point[1];
+    screen->depth = point[2];
+    vertices++;
+    screen++;
+  }
+}
+
+struct PoolEntry {
+  s32 head;
+  s32 next;
+  u8 unk08[16];
+  s32 tail;
+};
+
+/// Allocates count model entries plus a cleared one that ends the list.
+struct PoolEntry *Render_AllocateModelList(s32 count) {
+  struct PoolEntry *entries =
+      Heap_AllocEwram((count + 1) * sizeof(struct PoolEntry));
+  s32 i;
+
+  for (i = 0; i < count + 1; i++) {
+    entries[i].head = 0;
+    entries[i].next = 0;
+    entries[i].tail = 0;
+  }
+  return entries;
+}
+
+struct Texture {
+  u8 logWidth;
+  u8 logHeight;
+  u16 unk02;
+  u32 pixels;
+};
+
+u32 Heap_GetRemainingIwram(void);
+
+/// Copies a texture's pixels into a heap block when IWRAM has room for them;
+/// returns 1 with copy set up, 0 when there is no room.
+s32 Render_CopyTextureToIwram(struct Texture *source, struct Texture *copy) {
+  s32 size = (1 << source->logWidth) << source->logHeight;
+  u32 pixels;
+  s32 misalign;
+
+  if (Heap_GetRemainingIwram() < size + 8)
+    return 0;
+  *(u16 *)copy = *(u16 *)source;
+  copy->pixels = (u32)Heap_Alloc(size + 8);
+  pixels = source->pixels;
+  misalign = pixels & 3;
+  Iwram_CopyWords((void *)copy->pixels, (void *)(pixels - misalign),
+                  (size + misalign + 3) & -4);
+  copy->pixels += misalign;
+  return 1;
+}
+
+/// One entry of a model list. Render_AllocateModelList allocates the list with
+/// a cleared entry after the last.
+struct Model {
+  s32 kind; ///< the rasterizer kernel that draws it; 0 ends the list
+  s32 flags;
+  const void *mesh;
+  void *matrix;
+  struct Texture *texture;
+  s32 fade;
+  u8 unk18;
+  u8 frame;
+};
+
+/// The texture stays where it is, even when IWRAM has room for a copy.
+#define MODEL_TEXTURE_IN_PLACE 4
+
+typedef void (*ModelKernel)(struct Model *model);
+
+// The rasterizer kernels, ARM code that runs from IWRAM, with their sizes in
+// bytes and, for three of them, in DMA words.
+extern const u8 Data_08138fc8[];
+extern const u8 Data_081391c8[];
+extern const u8 Data_081393d8[];
+extern const u8 Data_081395f8[];
+extern const u8 Data_08139aac[];
+extern const u8 Data_08139f70[];
+extern const u8 Data_0813a444[];
+extern const u8 Data_0813a924[];
+extern const u8 Data_0813ae14[];
+extern const u8 Data_0813b2ec[];
+extern const u8 Data_0813b7a0[];
+extern u8 Data_08138fc8CodeSize[];
+extern u8 Data_081391c8CodeSize[];
+extern u8 Data_081393d8CodeSize[];
+extern u8 Data_081395f8CodeSize[];
+extern u8 Data_08139aacCodeSize[];
+extern u8 Data_08139f70CodeSize[];
+extern u8 Data_0813a444CodeSize[];
+extern u8 Data_0813a924CodeSize[];
+extern u8 Data_0813ae14CodeSize[];
+extern u8 Data_0813b2ecCodeSize[];
+extern u8 Data_0813b7a0CodeSize[];
+extern u8 Data_081395f8CodeWords[];
+extern u8 Data_0813ae14CodeWords[];
+extern u8 Data_0813b2ecCodeWords[];
+
+/// Copies a kernel whose DMA control is a word of its own.
+// Kernels 8, 9 and 10 read it from the pool, one word each, two of them equal
+// yet stored twice, so it is a symbol of each kernel: written
+// 0x84000000 | (size >> 2) the two fold into one pool entry, and as a number
+// the size is built in three instructions.
+#define LOAD_KERNEL_WORDS(to, code, bytes, words)                              \
+  {                                                                            \
+    (to) = Heap_Alloc((u32)(bytes));                                           \
+    Dma_Set((code), (to), 0x84000000 + (u32)(words), REG_DMA3);                \
+  }
+
+/// Copies the model's texture into IWRAM unless it is to stay in place.
+#define COPY_TEXTURE()                                                         \
+  {                                                                            \
+    if (!(model->flags & MODEL_TEXTURE_IN_PLACE) &&                            \
+        Render_CopyTextureToIwram(texture, &copy))                             \
+      model->texture = &copy;                                                  \
+  }
+
+/// Draws a list of models. A run of models of one kind loads that kind's
+/// rasterizer into IWRAM once, and it is freed when the kind changes. Before
+/// a textured model is drawn, its texture is copied into IWRAM where there is
+/// room, and the copy is freed after the model is drawn.
+void Render_DrawModelList(struct Model *model) {
+  ModelKernel code = NULL;
+  s32 lastKind = 0;
+  struct Texture copy;
+  struct Texture *texture;
+
+  for (;;) {
+    texture = model->texture;
+    if (model->kind != lastKind && code != NULL)
+      Heap_Release(code);
+    if (model->kind == 0)
+      break;
+    switch (model->kind) {
+    case 1:
+      if (model->kind != lastKind)
+        RamCode_Load(code, Data_08138fc8, Data_08138fc8CodeSize);
+      code(model);
+      break;
+    case 11:
+      if (model->kind != lastKind)
+        RamCode_Load(code, Data_0813b7a0, Data_0813b7a0CodeSize);
+      code(model);
+      break;
+    case 2:
+      if (model->kind != lastKind)
+        RamCode_Load(code, Data_081391c8, Data_081391c8CodeSize);
+      code(model);
+      break;
+    case 3:
+      if (model->kind != lastKind)
+        RamCode_Load(code, Data_081393d8, Data_081393d8CodeSize);
+      code(model);
+      break;
+    case 8:
+      if (model->kind != lastKind)
+        LOAD_KERNEL_WORDS(code, Data_081395f8, Data_081395f8CodeSize,
+                          Data_081395f8CodeWords);
+      COPY_TEXTURE();
+      code(model);
+      break;
+    case 9:
+      if (model->kind != lastKind)
+        LOAD_KERNEL_WORDS(code, Data_0813ae14, Data_0813ae14CodeSize,
+                          Data_0813ae14CodeWords);
+      COPY_TEXTURE();
+      code(model);
+      break;
+    case 10:
+      if (model->kind != lastKind)
+        LOAD_KERNEL_WORDS(code, Data_0813b2ec, Data_0813b2ecCodeSize,
+                          Data_0813b2ecCodeWords);
+      COPY_TEXTURE();
+      code(model);
+      break;
+    case 4:
+      if (model->kind != lastKind)
+        RamCode_Load(code, Data_08139aac, Data_08139aacCodeSize);
+      COPY_TEXTURE();
+      code(model);
+      break;
+    case 5:
+      if (model->kind != lastKind)
+        RamCode_Load(code, Data_08139f70, Data_08139f70CodeSize);
+      COPY_TEXTURE();
+      code(model);
+      break;
+    case 6:
+      if (model->kind != lastKind)
+        RamCode_Load(code, Data_0813a444, Data_0813a444CodeSize);
+      COPY_TEXTURE();
+      code(model);
+      break;
+    case 7:
+      if (model->kind != lastKind)
+        RamCode_Load(code, Data_0813a924, Data_0813a924CodeSize);
+      COPY_TEXTURE();
+      code(model);
+      break;
+    }
+    lastKind = model->kind;
+    if (model->texture == &copy) {
+      Heap_Release((void *)(model->texture->pixels & ~3));
+      model->texture = texture;
+    }
+    model++;
+  }
 }

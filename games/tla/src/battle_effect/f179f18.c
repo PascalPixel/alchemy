@@ -1,5 +1,4 @@
-/// @file
-/// Flora, the blossom spirit's summon.
+// Flora, the blossom spirit's summon.
 
 #include "types.h"
 #include "battle_effect.h"
@@ -42,7 +41,8 @@ void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                    s32 timerFrames);              // BattleEffect_TintBattler
 void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
 void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
-void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen, s32 *world);
+void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen,
+                   s32 *world);
 void Func_0818caa8(void *cells, s32 x, s32 y, s32 size);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
@@ -54,9 +54,11 @@ void SceneTransform_ApplyYaw(s32 angle);
 void Render_ResetTransformState(void);
 void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
-void BattleEffect_SpawnObjects(s32 entryCount, s32 kind, u32 variant); // SpawnObjects
-void BattleEffect_SelectLivingTargets(struct FxPartyList *party); // SelectLivingTargets
-void Func_080150e4(s32 angle);            // SceneTransform_ApplyRoll
+void BattleEffect_SpawnObjects(s32 entryCount, s32 kind,
+                               u32 variant); // SpawnObjects
+void BattleEffect_SelectLivingTargets(
+    struct FxPartyList *party); // SelectLivingTargets
+void Func_080150e4(s32 angle);  // SceneTransform_ApplyRoll
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                    s32 speedLimit, s32 velocityY, s32 percent);
 
@@ -67,19 +69,16 @@ void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                           s32 drag);
 
-void *Heap_AllocEwram(s32 size);
-void Resource_LoadAndDecompress(s32 resource, void *destination, s32 a, s32 b);
 void *Resource_GetTableEntry(s32 resource);
 
-
-void HeapSlot_Release(s32 slot);
 void Sound_PlayFar(s32 cue);
 void wait(s32 frames);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
 
-void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height, s32 count);
+void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height,
+                           s32 count);
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                           s32 gravity);
 s32 BattleUnit_GetEffectHeightFar(s32 unit);
@@ -177,12 +176,10 @@ void Func_08179e6c(void);
 void Func_0813baec(void);
 void Func_0814cca8(void);
 void BattleBackground_LoadFar(s32 layer, s32 background, s32 palette);
-s32 Resource_DecodeType01(const void *source, void *destination);
 void Palette_LoadBasicObjColors(void);
 void Graphics_LoadGreyRamp(void);
 void Func_0815f0a0(s32 palette);
 void Func_08143eb4(s32 x0, s32 y0, s32 x1, s32 y1, s32 color);
-void Heap_Release(void *buffer);
 
 #define SLOT_ALT 188 // unkb8[1]
 #define w ((struct FloraWork *)petals)
@@ -970,5 +967,400 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
   }
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   HeapSlot_Release(SLOT_BLITTER);
+  BattleEffect_EndCanvasLayer();
+}
+
+#include "battle_action.h"
+#include "battle_unit.h"
+#include "actor.h"
+
+void *Unit_Get(s32 owner);
+
+/// BattleEffect_StartActorMotion with fixed values: unless the unit is one of
+/// four enemies, the actor steps 15 pixels further from x = 0 on its
+/// anchor's side, its y velocity growing by 0x28000 while y is under 10.
+void BattleEffect_StartActorMotionOutward(s32 id) {
+  struct BattleObj *slot;
+  struct MotionObject *object;
+  u32 enemy;
+  s32 x;
+
+  slot = GetBattleObjectSlotFar(id);
+  object = slot->object;
+  enemy = ((struct BattleUnit *)Unit_Get(id))->enemyId;
+  if (enemy != 357 && enemy != 369 && enemy != 373 && enemy != 376) {
+    object->acceleration = 0x20000;
+    object->speedLimit = 0x80000;
+    if (object->y < 0xa0000)
+      object->velocityY += 0x28000;
+    Actor_ResetMotion(object);
+    if (slot->anchorX > 0)
+      x = object->x + 0xf0000;
+    else
+      x = object->x - 0xf0000;
+    Actor_SetTargetPosition(object, x, 0, slot->anchorZ);
+  }
+  object->verticalMotionStrength = 0x9999;
+  object->verticalMotionPhase = 0;
+  object->autoFaceMotion = 0;
+  Actor_SetMode(object, 5);
+}
+
+#include "graphics.h"
+
+#define DAGGER_FRAMES 96
+#define DAGGER_COUNT 8       // of the 32 steps set up, the first 8 are drawn
+#define DAGGER_FALL_FRAME 80 // the daggers turn and fall on the target
+#define DAGGER_LAST_HIT 90
+
+// A dagger's texture: log2 of its width and height in the first word (32x32
+// here), then its pixels.
+struct DaggerTexture {
+  u32 logWidth : 8;
+  u32 logHeight : 8;
+  u32 rest : 16;
+  void *pixels;
+};
+
+// One entry of the list Render_DrawModelList draws; kind 9 is a textured quad.
+// Render_AllocateModelList allocates the list with an empty entry after it.
+struct RenderPrimitive {
+  s32 kind;
+  s32 unk04;
+  const void *faces;
+  void *vertices;
+  struct DaggerTexture *texture;
+  s32 unk14;
+};
+
+extern char ResourceId_CrossedDaggersSheet;
+
+// The dagger quad: its face list and its four corners, 32x80 pixels from
+// (-16, -16) to (16, 64), the point down.
+extern const u8 gData_08199450[];
+extern const u8 gData_08199474[];
+
+// Crossed daggers. The canvas is moved over the target. Eight daggers rise
+// spinning from below it, and the target is struck eight times, six frames
+// apart from frame 20: each strike shakes the screen, flashes the target and
+// knocks it up. At frame 80 the daggers turn point down in a fan above the
+// target and plunge into it; the last strike, at frame 90, starts the
+// result phase.
+void BattleEffect_RunSabreDance(struct BattleEffectArgument *effect) {
+  struct BattleEffectWork *work =
+      (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
+  struct DaggerTexture texture;
+  struct EffectPosition target;
+  struct EffectStep *dagger;
+  struct RenderPrimitive *quad;
+  void *vertices;
+  s32 frame;
+  s32 i;
+  s32 strikeFrame;
+
+  BattleEffect_StartCanvasLayer(0);
+  Resource_LoadAndDecompress((s32)&ResourceId_CrossedDaggersSheet, work->sheet,
+                             1, 1);
+  work->transferMode = 1;
+  work->transferValue = 0;
+  REG_BLDCNT = 0;
+  Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+
+  // Centre the canvas's x 64 on the target.
+  GetBattleObjectSlotFar(effect->actors[0]);
+  EffectPosition_ProjectBattler(effect->actors[0], &target);
+  REG_BG2PA = 0x100;
+  REG_BG2X = (64 - target.x) << 8;
+
+  for (frame = 0; frame != DAGGER_FRAMES; frame++) {
+    // The first frame lines the daggers up below the canvas, each spinning
+    // the other way from its neighbour.
+    if (frame == 0) {
+      s32 y;
+      s32 zero;
+
+      for (i = 0, zero = 0, y = 128 << 16, dagger = work->particles; i != 32;
+           i++, dagger++) {
+        dagger->x = ((Random16() & 63) + 32) << 16;
+        dagger->y = y;
+        dagger->z = Random16();
+        dagger->velocityX = zero;
+        dagger->velocityY = -((Random16() & 31) + 32) << 10;
+        dagger->velocityZ = (Random16() & 0x3ff) + 0x400;
+        if (i & 1)
+          dagger->velocityZ = -dagger->velocityZ;
+        dagger->variant = zero;
+        y += 8 << 16;
+      }
+    }
+    Render_ResetTransformState();
+    gCameraSceneParameters[4] = 104;
+
+    // The eight strikes.
+    for (i = 0, strikeFrame = 20; i != 8; i++, strikeFrame += 6) {
+      if (frame == strikeFrame) {
+        work->shakeFrames = 4;
+        Sound_PlayFar(133);
+        Func_0814cd48(effect->actors[0], 7, 5, 0, 6);
+        BattleEffect_StartActorMotion(effect->actors[0], 1, 0, 0, 3 << 16, 100);
+      }
+    }
+    if (frame == DAGGER_LAST_HIT) {
+      work->shakeFrames = 4;
+      Func_081180e8(134);
+      Func_0814cd48(effect->actors[0], 7, 5, 0, 10);
+      BattleEffect_StartActorMotion(effect->actors[0], 1, 0, 0, 3 << 16, 100);
+    }
+
+    // One textured quad, drawn once for each dagger.
+    vertices = Heap_AllocEwram(32);
+    quad = Render_AllocateModelList(1);
+    quad->unk14 = 0;
+    texture.logWidth = 5;
+    texture.logHeight = 5;
+    quad->texture = &texture;
+    texture.pixels = work->sheet;
+    quad->kind = 9;
+    quad->faces = gData_08199450;
+    quad->vertices = vertices;
+    for (i = 0, dagger = work->particles; i != DAGGER_COUNT; i++, dagger++) {
+      // The fall: from 48 pixels above the canvas, fanned out by angle and
+      // closing on the middle.
+      if (frame == DAGGER_FALL_FRAME) {
+        s32 angle;
+        s32 drift;
+
+        dagger->y = -48 << 16;
+        angle = (i << 10) + (Random16() & 0x3ff) - 0x1200;
+        dagger->x = (angle << 10) + (64 << 16);
+        dagger->z = angle;
+        drift = -angle << 5;
+        dagger->velocityY = 12 << 16;
+        dagger->velocityX = drift;
+        dagger->velocityZ = 0;
+      }
+      Render_ResetTransformState();
+      Func_08015160(dagger->x - (64 << 16), dagger->y - (64 << 16), 0);
+      Func_0801521c(0x8000);
+      Func_080150e4(dagger->z);
+      Render_TransformVertices(gData_08199474, vertices, 4);
+      Render_DrawModelList(quad);
+      if (frame >= DAGGER_FALL_FRAME)
+        BattleEffectKernels_IntegrateVector3(dagger, 64, 0);
+      else
+        BattleEffectKernels_IntegrateVector3(dagger, 64, -0x1000);
+    }
+    Heap_Release(quad);
+    Heap_Release(vertices);
+    gCameraSceneParameters[3] = 120;
+    gCameraSceneParameters[4] = 120;
+
+    BattleCamera_Shake(4, 4);
+    BattleEffect_CountDownBattlerTints();
+    work->transferPending = 1;
+    wait(1);
+  }
+
+  Task_Remove((s32)BattleEffect_ProcessPendingGraphicsTransfer);
+  BattleEffect_EndCanvasLayer();
+}
+
+struct FxSlot {
+  void *object;
+  u8 unk04[0x26];
+  u8 hidden;
+};
+
+struct FxRecord {
+  u8 unk00[9];
+  u8 low : 2;
+  u8 priority : 2;
+  u8 high : 4;
+};
+
+void *GetMotionRecordFar(void *object, s32 index);
+
+/// Sets the OBJ priority of every motion record of the battle object, unless
+/// its slot is hidden.
+void BattleObject_SetRecordPriority(s32 objectId, s32 priority) {
+  struct FxSlot *slot = GetBattleObjectSlotFar(objectId);
+  struct FxRecord *record;
+  s32 i;
+
+  for (i = 0; (record = GetMotionRecordFar(slot->object, i)) != NULL; i++) {
+    if (slot->hidden == 0)
+      record->priority = priority;
+  }
+}
+
+#define HEAP_SLOT_BLITTER 104 // Ram_HeapSlots->unk64[1]
+
+// The Lost Age's blitter modes run the other way from The Broken Seal's:
+// additive 0, max 1, transparent 2, copy 3.
+#define BLITTER_ADDITIVE 0
+
+#define CLIP_XY 3
+
+#define STAR_FRAMES 60
+#define STAR_LEAP_FRAME 16  // the caster leaps at the target
+#define STAR_BURST_FRAME 32 // and strikes it
+#define SMOKE_COUNT 32
+#define STAR_COUNT 16
+#define STAR_CELS 0x3e80 // the pink star's six 16x16 cels, after the smoke's
+
+// The pixel half of a 16.16 value.
+
+extern char ResourceId_PinkStarSheet;
+extern char ResourceId_SmokeSheet;
+
+void BattleEffect_SetApproachMotion(s32 id, s32 targetId, s32 frames, s32 rate);
+
+// A pink star burst. Smoke puffs from the caster for its first 24 frames
+// while the caster stands just past the target; at frame 16 it leaps at
+// the target, and at frame 32 the palette turns pink, the caster lands
+// beside the target, which is knocked back and flashes, and sixteen pink
+// stars burst from it for 24 frames. Battle work byte 0x866 is set for the
+// whole effect.
+void BattleEffect_RunBackstab(struct BattleEffectArgument *effect) {
+  struct BattleEffectWork *work;
+  u8 *canvas;
+  struct EffectPosition caster;
+  struct EffectPosition target;
+  s32 frame;
+  // Unused: draw[1] gives the stack frame its 4 bytes.
+  DrawRectangle draw[2];
+  struct MotionObject *targetObject;
+  struct MotionObject *casterObject;
+  u8 *battle;
+  struct EffectStep *step;
+  s32 i;
+
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
+  canvas = Ram_HeapSlots->battleFxWork[1];
+  BattleEffect_StartCanvasLayer(0);
+  REG_BLDALPHA = 0x1010;
+  Resource_LoadAndDecompress((s32)&ResourceId_PinkStarSheet,
+                             work->sheet + STAR_CELS, 1, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet, work->sheet, 1, 1);
+  BattleEffect_LoadBlitter(HEAP_SLOT_BLITTER,
+                           BLITTER(BLITTER_ADDITIVE, CLIP_XY));
+  draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  work->transferMode = 2;
+  work->transferValue = 50;
+  Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  targetObject = GetBattleObjectSlotFar(effect->actors[0])->object;
+  casterObject = GetBattleObjectSlotFar(effect->actor)->object;
+  battle = (u8 *)Ram_HeapSlots->battleWork;
+  battle[0x866] = 1;
+
+  for (frame = 0; frame != STAR_FRAMES; frame++) {
+    BattleObject_SetRecordPriority(effect->actor, 3);
+
+    // The first frame sends the smoke out from the caster's feet.
+    if (frame == 0) {
+      EffectPosition_ProjectBattler(effect->actor, &caster);
+      for (i = 0; i != SMOKE_COUNT; i++) {
+        s32 angle;
+        s32 speed;
+
+        step = &work->particles[i];
+        step->variant = 0;
+        step->x = (caster.x / 2) << 16;
+        step->y = (caster.y - 8) << 16;
+        angle = Random16();
+        speed = (Random16() & 255) + 127;
+        step->velocityX = (Trig_Sin(angle) * speed) >> 5;
+        step->velocityY = (Trig_Cos(angle) * speed) >> 5;
+      }
+      Sound_PlayFar(136);
+    }
+
+    // The smoke rises through its six 24x48 cels, slowing; the caster
+    // starts 160 percent of the way out to the target.
+    // DEAD: always true, as frame counts up from 0; the ROM keeps the test.
+    if (frame >= 0) {
+      struct EffectStep *puff;
+
+      for (i = 0, puff = work->particles; i != 24; i++, puff++) {
+        if (frame >= i / 8 && puff->variant <= 23) {
+          draw[0](canvas, work->sheet + (puff->variant / 4) * 0x480,
+                  HI(puff->x) - 12, HI(puff->y) - 24, 24, 48);
+          BattleEffectKernels_IntegrateVector2(puff, 48, -0x2000);
+          puff->variant++;
+        }
+      }
+      if (frame == 0) {
+        casterObject->z = targetObject->z;
+        casterObject->x = targetObject->x * 160 / 100;
+        casterObject->angle = targetObject->angle;
+      }
+    }
+
+    if (frame == STAR_LEAP_FRAME) {
+      BattleEffect_SetApproachMotion(effect->actor, effect->actors[0], 16, 120);
+      casterObject->velocityY = 7 << 16;
+    }
+
+    // The strike: pink palette, the caster lands at 120 percent and the
+    // target is pushed to 80, and the stars burst upward from it.
+    if (frame == STAR_BURST_FRAME) {
+      Iwram_CopyWords((void *)BG_PLTT,
+                      Resource_GetTableEntry((s32)&ResourceId_PinkStarSheet),
+                      128);
+      casterObject->z = targetObject->z;
+      casterObject->x = targetObject->x * 120 / 100;
+      targetObject->x = targetObject->x * 80 / 100;
+      casterObject->angle = targetObject->angle;
+      EffectPosition_ProjectScaledBattler(effect->actors[0], &target);
+      for (i = 0, step = &work->particles[SMOKE_COUNT]; i != STAR_COUNT;
+           i++, step++) {
+        s32 angle;
+        s32 speed;
+
+        step->variant = (Random16() & 15) + 16;
+        step->x = (target.x / 2) << 16;
+        step->y = (target.y - 8) << 16;
+        angle = (Random16() & 0x7fff) + 0x4000;
+        speed = (Random16() & 255) + 127;
+        step->velocityX = (Trig_Sin(angle) * speed) >> 7;
+        step->velocityY = (Trig_Cos(angle) * speed) >> 5;
+      }
+      work->shakeFrames = 4;
+      Func_081180e8(134);
+      Func_0814cd48(effect->actors[0], 7, 5, 0, 16);
+      BattleEffect_StartActorMotion(effect->actors[0], 1, 8 << 16, 20 << 16,
+                                    6 << 16, 10);
+    }
+
+    // The stars twinkle through their six cels as they fly.
+    if (frame >= STAR_BURST_FRAME && frame < STAR_BURST_FRAME + 24) {
+      struct EffectStep *star;
+
+      for (i = 0, star = &work->particles[SMOKE_COUNT]; i != STAR_COUNT;
+           i++, star++) {
+        if (star->variant >= 0) {
+          draw[0](canvas,
+                  work->sheet + STAR_CELS + (((frame + i) / 4) % 6) * 256,
+                  HI(star->x) - 8, HI(star->y) - 8, 16, 16);
+          BattleEffectKernels_IntegrateVector2(star, 56, 0);
+          star->variant--;
+        }
+      }
+    }
+
+    BattleCamera_Shake(4, 4);
+    BattleEffect_CountDownBattlerTints();
+    work->transferPending = 1;
+    wait(1);
+  }
+
+  {
+    // A local for the 0, so the address is built first, in r2.
+    s32 cleared = 0;
+
+    battle[0x866] = cleared;
+  }
+  Task_Remove((s32)BattleEffect_ProcessPendingGraphicsTransfer);
+  HeapSlot_Release(HEAP_SLOT_BLITTER);
   BattleEffect_EndCanvasLayer();
 }

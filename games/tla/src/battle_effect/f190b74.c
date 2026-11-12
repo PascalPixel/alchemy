@@ -74,21 +74,14 @@ extern const s16 Data_08199f2e[];
 void BattleEffect_StartCanvasLayer(s32 layer);
 void BattleEffect_EndCanvasLayer(void);
 s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags);
-void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void Graphics_LoadGreyRamp(void);
 void BattleEffect_BuildRepeatingTilemap(void);
 void BattleEffect_SetApproachMotion(s32 id, s32 targetId, s32 frames, s32 rate);
-void Resource_LoadAndDecompress(s32 id, void *target, s32 unpack, s32 wait);
 
-
-struct BattleObj *GetBattleObjectSlotFar(s32 objectId);
-void EffectPosition_ProjectScaledBattler(s32 id, struct EffectPosition *out);
 void BattleActor_SpawnObjectsForListFar(s16 *targets, s32 mode);
 void BattleActor_CommitPlacementFar(void);
 void BattleBackground_LoadFar(s32 mode, s32 background, s32 level);
 
-
-void HeapSlot_Release(s32 slot);
 void wait(s32 frames);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
@@ -109,7 +102,6 @@ void Func_0814cd48(s32 actor, s32 palette, s32 mode, s32 timer, s32 frames);
 void Func_08164a4c(s32 blue, s32 green, s32 red);
 void Camera_ApplyVerticalShake(s32 range);
 void BattleEffect_CountDownBattlerTints(void);
-void Sound_PlayFar(s32 cue);
 
 // Effect kind 125, 114 frames. The screen turns to a scrolling red haze
 // with only the caster and the target on it (frame 2); two textured flashes
@@ -501,4 +493,386 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   HeapSlot_Release(104);
   BattleEffect_EndCanvasLayer();
+}
+
+#include "io_write_queue.h"
+#include "input.h"
+
+typedef DrawRectangle BlitterPair[2];
+
+// The swirl runs until A is pressed, at most this many frames.
+#define SWIRL_MAX_FRAMES 312000
+
+extern char ResourceId_CloudSwirlSheet;
+extern char ResourceId_EmberStreakSheet;
+extern char ResourceId_BlueFlameSheet;
+
+s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
+                  u32 mode);
+
+void BattleEffect_FlushPendingGraphicsTransfer(void);
+
+void Func_0815f0a0(s32 resource);
+
+void *Resource_GetTableEntry(s32 id);
+s32 Resource_DecodeType01(const void *source, void *destination);
+
+static inline s32 Swirl_CopyPalette(const void *source) {
+  return Iwram_CopyWords((void *)&BG_PLTT[96], source, 128);
+}
+
+static inline s32 Swirl_Draw(DrawRectangle draw, void *buffer,
+                             const void *canvas, s32 x, s32 size) {
+  return draw(buffer, canvas, x, 0, size, size);
+}
+
+// A turning cloud swirl on BG2, shown from Func_0813e7e0. The cloud sheet
+// is drawn once into the canvas (its colours moved to palette entries 96
+// on) and copied twice across the map buffer; then BG2 turns about the
+// screen's centre while BG1 scrolls, the palette flashes white at the start,
+// steps toward the swirl's own colours every fourth frame and from frame
+// 120 dims. B starts it over and A ends it.
+void Func_08191530(struct BattleEffectArgument *effect) {
+  BlitterPair sheetDraw;
+  s32 savedScrollX;
+  u8 *canvas;
+  struct BattleEffectWork *work;
+  struct BattlePresentationTransition *transition;
+  DrawRectangle draw;
+  const u8 *palette;
+  s32 frame;
+  s32 enabled;
+  s32 sine;
+  s32 cosine;
+  s32 i;
+
+  canvas = Ram_HeapSlots->battleFxWork[1];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
+  savedScrollX = gBgScroll[1].x;
+  transition = Ram_HeapSlots->transitionWork;
+  BattleEffect_StartCanvasLayer(3);
+  REG_DISPCNT = 0x7741;
+  REG_BLDALPHA = 0x1010;
+  REG_BLDCNT = 0x3f42;
+  REG_BG2CNT = 0x787;
+  REG_BG1CNT &= ~3;
+  REG_BG1CNT |= 0;
+  work->transferMode = 2;
+  work->transferValue = 50;
+
+  // The cloud sheet, recoloured to palette entries 96 on, drawn into the
+  // canvas through the copy blitter.
+  BattleEffect_LoadBlitter(104, 1 << 4 | 3);
+  sheetDraw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  palette = Resource_GetTableEntry((s32)&ResourceId_CloudSwirlSheet);
+  /* FAKEMATCH(wrapper): the copy through Swirl_CopyPalette; as a direct
+   * Iwram_CopyWords, 22 of 468 instructions differ in tla-en. */
+  Swirl_CopyPalette(palette);
+  palette += 128;
+  Resource_DecodeType01(palette, work->sheet);
+  palette = Resource_GetTableEntry((s32)&ResourceId_EmberStreakSheet);
+  Iwram_CopyWords((void *)&BG_PLTT[96], palette, 128);
+  for (i = 0; i != 0x4000; i++)
+    work->sheet[i] += 96;
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  sheetDraw[0](canvas, work->sheet, 0, 0, 128, 128);
+  work->transferPending = 1;
+  wait(1);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  HeapSlot_Release(104);
+
+  // The swirl itself in the canvas (colour 0 made 1, so none is clear),
+  // copied twice side by side into the map buffer.
+  Resource_LoadAndDecompress((s32)&ResourceId_CloudSwirlSheet, canvas, 1, 1);
+  for (i = 0; i != 0x4000; i++) {
+    if (canvas[i] == 0)
+      canvas[i] = 1;
+  }
+  {
+    s32 mode = 3;
+
+    enabled = 1;
+    Func_08196404(104, 8, 7, mode, mode);
+  }
+  draw = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  Task_Add(BattleEffect_FlushPendingGraphicsTransfer, 0xc80);
+  transition->active = enabled;
+  /* FAKEMATCH(wrapper): the blit through Swirl_Draw with the constant buffer;
+   * as a direct draw, 58 of 468 instructions differ in tla-en. */
+  Swirl_Draw(draw, Ram_MapCellBuffer, canvas, 0, 128);
+  draw(Ram_MapCellBuffer, canvas, 128, 0, 128, 128);
+  work->transferPending = enabled;
+  wait(1);
+
+  for (frame = 0; frame != SWIRL_MAX_FRAMES; frame++) {
+    if (gInput.repeat & 2)
+      frame = 0;
+    if (gInput.repeat & 1)
+      break;
+
+    if (frame == 0)
+      Iwram_FillWords((void *)BG_PLTT, 128, 0x7fff7fff);
+    if (frame > 119)
+      Func_08164a4c(-1, -1, -1);
+    else if ((frame & 3) == 1)
+      Func_0815f0a0((s32)&ResourceId_BlueFlameSheet);
+    gBgScroll[1].x = frame / 2;
+
+    // BG2 turns a 1024th of a circle a frame, at 1/532 of the sine's scale
+    // (about half size), about the screen's centre (120, 72).
+    sine = Trig_Sin(frame << 6) / 532;
+    cosine = Trig_Cos(frame << 6) / 532;
+    IO_WRITE_QUEUE_PUSH((u32)&REG_BG2PA, cosine, 0x20000);
+    IO_WRITE_QUEUE_PUSH((u32)&REG_BG2PB, sine, 0x20000);
+    IO_WRITE_QUEUE_PUSH((u32)&REG_BG2PC, -sine, 0x20000);
+    IO_WRITE_QUEUE_PUSH((u32)&REG_BG2PD, cosine, 0x20000);
+    IO_WRITE_QUEUE_PUSH((u32)&REG_BG2X,
+                        (Iwram_MulQ16(-120 << 24, cosine) +
+                         Iwram_MulQ16(-72 << 24, sine) + 0x400000) >>
+                            8,
+                        0x30000);
+    IO_WRITE_QUEUE_PUSH((u32)&REG_BG2Y,
+                        (Iwram_MulQ16(-120 << 24, -sine) +
+                         Iwram_MulQ16(-72 << 24, cosine) + 0x400000) >>
+                            8,
+                        0x30000);
+    wait(1);
+  }
+
+  gBgScroll[1].x = savedScrollX;
+  transition->active = 0;
+  Task_Remove(BattleEffect_FlushPendingGraphicsTransfer);
+  HeapSlot_Release(104);
+  BattleEffect_EndCanvasLayer();
+}
+
+// Declared as The Broken Seal's five-argument blitter builder, which this game
+// does not link; it serves only the never-taken call below.
+s32 BattleEffect_BuildBlitterFar(s32 slot, s32 widthShift, s32 heightShift,
+                                 s32 flags, u32 mode);
+
+// Summon 25's screen wipe: a soft-edged grey band, drawn once into the
+// canvas, slides across the screen on BG2 at speed pixels per frame, from
+// the left or (when the low bit of side is set) from the right. Halfway
+// through, while the band covers the screen, it calls midpoint to change
+// the scene behind it.
+void Func_08191958(u8 side, u8 speed, void (*midpoint)(void)) {
+  s32 scrollX;
+  u8 *canvas;
+  struct BattleEffectWork *work;
+  u16 ramp[63];
+  s32 half;
+  s32 x;
+  s32 i;
+
+  scrollX = (side & 1) * 192 - 64;
+  canvas = Ram_HeapSlots->battleFxWork[1];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
+  /* FAKEMATCH(dead): a never-taken five-argument call reserves the stack
+   * frame's outgoing argument word at sp+0; as no call, 18 of 185
+   * instructions differ in tla-en. */
+  if (0)
+    BattleEffect_BuildBlitterFar(104, 7, 7, 3, 3);
+  BattleEffect_LoadBlitter(104, 3);
+  work->transferMode = 0;
+  work->transferValue = 75;
+  REG_BG2PA = 0x48;
+
+  // The band: colours 0 to 62 rising over the first 32 rows, 63 through the
+  // middle 64 and falling again over the last 32, in 8x8 256-colour tiles.
+  for (i = 0; i != 128; i++) {
+    for (x = 0; x != 128; x++) {
+      s32 line = i & 7;
+      s32 color;
+      s32 row;
+
+      if (i <= 31)
+        color = i * 2;
+      else {
+        color = 63 - ((i - 96) << 1);
+        if (i <= 95)
+          color = 63;
+      }
+      row = line + (i >> 3) * 64;
+      canvas[row + ((x & 7) << 3) + ((x >> 3) << 10)] = color;
+    }
+  }
+
+  // Colours 1 to 63: a grey ramp from black to half white.
+  for (i = 0; i != 63; i++) {
+    s32 level = i >> 1;
+
+    ramp[i] = level << 10 | level << 5 | level;
+  }
+  IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT[1], (u32)ramp, 0x8000003f);
+
+  REG_BG2X = scrollX << 8;
+  // x, done with the band, now counts the slide's frames.
+  x = 192 / ((s8)speed < 0 ? -(s8)speed : (s8)speed) + 1;
+  half = (x - 1) >> 1;
+  for (i = 0; i != x; i++) {
+    scrollX += (s8)speed;
+    REG_BG2X = scrollX << 8;
+    work->transferPending = 1;
+    wait(1);
+    if (i == half && midpoint != NULL)
+      midpoint();
+  }
+  HeapSlot_Release(104);
+}
+
+struct ChildObject {
+  u8 unk00[5];
+  u8 mode;
+  u8 unk06[10];
+  s32 active;
+};
+
+struct ChildGroup {
+  u8 unk00[25];
+  u8 dirty;
+  u8 unk1a;
+  u8 count;
+  u8 unk1c[12];
+  struct ChildObject *children[1];
+};
+
+/// Sets the draw parameter (byte 5) of each active child of group to mode
+/// and marks the group for redrawing.
+void Actor_SetActiveChildParam(struct ChildGroup *group, s32 mode) {
+  s32 i;
+
+  for (i = 0; i < group->count; i++) {
+    struct ChildObject *child = group->children[i];
+
+    if (child != NULL && child->active != 0)
+      *((u8 *)child + 5) = mode;
+  }
+  group->dirty = 1;
+}
+
+/// Fills count bytes of table with a rising shade ramp (0 to 63, by a step
+/// scaled by scale), then repeats it seven more times.
+void BattleEffect_BuildShadeRamp(u8 *table, u32 count, s32 scale) {
+  u32 step = count * 2;
+  s32 total = 0;
+  u32 i;
+  s32 j;
+
+  if (step > 63)
+    step = 63;
+  step = 63 / step;
+  if (step < 6)
+    step = 6;
+  for (i = 0; i != count; i++) {
+    s32 value;
+
+    total += step;
+    value = (scale * total) >> 16;
+    if (value > 63)
+      value = 63;
+    table[i] = value;
+  }
+  for (j = 1; j != 8; j++) {
+    for (i = 0; i != count; i++)
+      table[j * count + i] = table[i];
+  }
+}
+
+/// Fills table with a shade ramp that rises over count bytes and falls back,
+/// repeated repeats times.
+void BattleEffect_BuildShadeRampWave(u8 *table, u32 count, u32 repeats,
+                                     s32 scale) {
+  s32 total = 0;
+  u32 step = count * 2;
+  u32 i;
+  u32 j;
+
+  if (step > 63)
+    step = 63;
+  step = 63 / step;
+  if (step < 6)
+    step = 6;
+  for (i = 0; i != count; i++) {
+    s32 value;
+
+    total += step;
+    value = (scale * total) >> 16;
+    if (value > 63)
+      value = 63;
+    table[i] = value;
+  }
+  for (i = 0; i != count; i++)
+    table[count + i] = table[count - 1 - i];
+  for (j = 1; j != repeats; j++) {
+    for (i = 0; i != count * 2; i++)
+      table[j * count * 2 + i] = table[i];
+  }
+}
+
+/// As BattleEffect_BuildShadeRampWave, at twice the step.
+void BattleEffect_BuildSteepShadeRampWave(u8 *table, u32 count, u32 repeats,
+                                          s32 scale) {
+  s32 total = 0;
+  u32 step = count * 2;
+  u32 i;
+  u32 j;
+
+  if (step > 63)
+    step = 63;
+  step = 63 / step;
+  if (step < 6)
+    step = 6;
+  step *= 2;
+  for (i = 0; i != count; i++) {
+    s32 value;
+
+    total += step;
+    value = (scale * total) >> 16;
+    if (value > 63)
+      value = 63;
+    table[i] = value;
+  }
+  for (i = 0; i != count; i++)
+    table[count + i] = table[count - 1 - i];
+  for (j = 1; j != repeats; j++) {
+    for (i = 0; i != count * 2; i++)
+      table[j * count * 2 + i] = table[i];
+  }
+}
+
+#include "graphics.h"
+
+void Func_08118088(s32 actor, s32 mode);
+void Palette_LoadBasicObjColors(void);
+
+// Summon 25's teardown: sets each target back on the ground at the battle
+// origin with the usual bounce (The Broken Seal's 0xab85 motion strength)
+// and restarts its idle motion, ends the presentation transition, centres the
+// camera at (120, 120), reloads the battle palette and redraws the battle's
+// own backdrop over the summon's.
+void Func_08191cc4(void) {
+  struct BattleEffectWork *work =
+      (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
+  struct BattlePresentationTransition *transition =
+      Ram_HeapSlots->transitionWork;
+  struct BattleWork *battle = Ram_HeapSlots->battleWork;
+  s32 i;
+
+  for (i = 0; i != work->effect->count; i++) {
+    struct MotionObject *object =
+        GetBattleObjectSlotFar(work->effect->actors[i])->object;
+
+    object->x = 0;
+    object->y = 120 << 16;
+    object->z = 0;
+    object->verticalMotionStrength = 0xab85;
+    Func_08118088(work->effect->actors[i], 1);
+  }
+  transition->active = 0;
+  gCameraSceneParameters[3] = 120;
+  gCameraSceneParameters[4] = 120;
+  Palette_LoadBasicObjColors();
+  // The battle's background (The Broken Seal's battle->background).
+  BattleBackground_LoadFar(1, *(u16 *)battle->unk670, 24);
 }

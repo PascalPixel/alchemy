@@ -1,7 +1,7 @@
 @ Instruction placements written into the compositing routine, not functions.
 @
 @ Why assembly:
-@ Func_08196404 (battle_effect/f196404.c) copies these fragments into
+@ Func_08196404 (battle_effect/f192c9c.c) copies these fragments into
 @ generated ARM routines. r1 is the source, r9 the destination and r5/r8/sl
 @ scratch, changed without callee saves, and no fragment has a return: a
 @ linkage no procedure-call standard produces.

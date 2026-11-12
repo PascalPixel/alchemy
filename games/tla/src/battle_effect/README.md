@@ -9,5 +9,6 @@ effect is drawn in The Broken Seal.
 
 ## What differs from The Broken Seal
 
-- The code is not gathered into one object with parts: each file holds one
-  function or a small family, many still named by address (`f15e22c.c`).
+- The code is not yet one object with parts: each file holds a run of
+  neighbouring routines whose declarations agree, many still named by address
+  (`f14153c.c`).

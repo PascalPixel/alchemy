@@ -88,7 +88,7 @@ struct SummonWork {
   struct SpriteObject *objects[14];
   u8 unk7814[0xd0];
   // volatile: the VBlank handler counts it up; every effect that waits on it
-  // reads it twice per test (canvas_transfer.c, the drafts at 0813fd84,
+  // reads it twice per test (f142944.c, the drafts at 0813fd84,
   // 08173aac).
   volatile u32 frameSync;
   s32 frameDone;
@@ -217,7 +217,6 @@ void BattleEffect_ProcessPendingGraphicsTransfer(void);
 
 void BattleEffect_StartCanvasLayer(s32);
 void BattleEffect_ConfigureEffectDisplay(void);
-s32 Task_Add(void (*func)(void), s32 order);
 void Func_08163c2c(s32, s32);
 void BattleActor_SpawnObjectsForListFar(s16 *list, s32 mode);
 void wait(s32);
@@ -245,10 +244,8 @@ void SceneTransform_ApplyYaw(s32);
 void Func_0801521c(s32);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct Model *);
-void Heap_Release(void *);
 void Graphics_LoadGreyRamp(void);
 void Func_0815b434(u8 *map, s32 size, s32 scale);
-void HeapSlot_Release(s32);
 void Func_0818caa8(void *, s32, s32, s32);
 s32 BattleEffect_LoadBlitter(s32, s32);
 void ColorBuffer_ScaleFar(void *, void *, s32, s32);
@@ -1831,4 +1828,49 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
   HeapSlot_Release(188);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
+}
+
+#include "macros.h"
+
+/// Two triangles of a strip: three vertex indices and a texture coordinate
+/// pair for each corner.
+struct StripTriangle {
+  u8 vertex[3];
+  u8 unk03;
+  u8 uv[3][2];
+  u8 unk0a[2];
+};
+
+struct StripQuad {
+  struct StripTriangle upper;
+  struct StripTriangle lower;
+};
+
+/// Builds count quads of a vertex strip two vertices apart, each width texels
+/// wide and height texels tall, and ends the list with an empty triangle.
+void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height,
+                           s32 count) {
+  s32 i;
+
+  for (i = 0; i != count; i++) {
+    quad[i].upper.uv[0][1] = 1;
+    quad[i].upper.uv[2][1] = 1;
+    quad[i].lower.uv[2][1] = 1;
+    quad[i].upper.vertex[0] = i * 2;
+    quad[i].upper.uv[0][0] = i * width;
+    quad[i].upper.uv[1][0] = i * width;
+    quad[i].upper.uv[2][0] = i * width + width - 1;
+    quad[i].lower.uv[0][0] = i * width;
+    quad[i].lower.uv[1][0] = i * width + width - 1;
+    quad[i].lower.uv[2][0] = i * width + width - 1;
+    quad[i].upper.vertex[1] = i * 2 + 1;
+    quad[i].upper.vertex[2] = i * 2 + 2;
+    quad[i].lower.vertex[0] = i * 2 + 1;
+    quad[i].lower.vertex[2] = i * 2 + 2;
+    quad[i].lower.vertex[1] = i * 2 + 3;
+    quad[i].upper.uv[1][1] = height - 1;
+    quad[i].lower.uv[0][1] = height - 1;
+    quad[i].lower.uv[1][1] = height - 1;
+  }
+  SET_VECTOR(quad[count].upper.vertex, 0, 0, 0);
 }

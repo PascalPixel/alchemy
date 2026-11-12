@@ -194,11 +194,8 @@ extern const u8 gData_08199364[];
 
 s32 Trig_Cos(s32);
 s32 Trig_Sin(s32);
-void HeapSlot_Release(s32);
-void Heap_Release(void *);
 void *Resource_GetTableEntry(s32);
 void wait(s32);
-s32 Task_Add(void (*func)(void), s32 order);
 
 u32 Random16(void);
 void Render_ResetTransformState(void);
@@ -208,7 +205,6 @@ void Func_080150e4(s32);
 void Func_08015160(s32, s32, s32);
 void Func_080151e4(s32, s32, s32);
 void Func_0801521c(s32);
-
 
 void Actor_SetAnimationSpeedFar(struct Actor *object, s32 value);
 s32 BattleUnit_GetEffectHeightFar(s32);
@@ -237,18 +233,17 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *, s32);
 void Resource_LoadAndDecompress(s32, void *, s32, s32);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void Func_0815b434(u8 *map, s32 size, s32 scale);
-s32 EffectPosition_ProjectPoint(const void *point, struct EffectPosition *position);
 
 void BattleEffect_StartActorMotion(s32, s32, s32, s32, s32, s32);
 void Func_0815f0a0(s32);
 void Graphics_PackTileRows(void *, void *, s32, s32);
 void Func_0818caa8(void *, s32, s32, s32);
 s32 BattleEffect_LoadBlitter(s32, s32);
-s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags, u32 mode);
+s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
+                  u32 mode);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_DrawModelList(struct Model *);
-void Sound_PlayFar(s32);
 
 #define PLTT ((void *)0x05000000)
 #define BG_VRAM ((void *)0x06004000)
@@ -2543,5 +2538,263 @@ void Func_0815f16c(struct BattleEffectArgument *action, s32 kind) {
     HeapSlot_Release(188);
     HeapSlot_Release(104);
     BattleEffect_EndCanvasLayer();
+  }
+}
+
+#include "io_reg.h"
+
+#include "system.h"
+#include "fixed_math.h"
+
+#include "io_write_queue.h"
+#include "battle_effect.h"
+#include "battle_effect_work.h"
+
+// The heap blocks the dispatcher hands every canvas effect, as byte offsets
+// into Ram_HeapSlots (☀️ uses slot indices).
+#define HEAP_BLITTER 104
+#define HEAP_BLITTER_ALTERNATE 188
+
+// The disc: a 128 x 128 picture of each pixel's distance from the centre,
+// which the 63-colour ramp turns into rings.
+#define DISC_SIZE 128
+#define DISC_RINGS 63
+
+#define RIPPLE_FRAMES 80
+#define RIPPLE_FADE_IN_FRAMES 8
+#define RIPPLE_FADE_OUT_FRAME 72
+#define RIPPLE_HIT_FRAME 48
+
+#define PHASE_RESULTS 134
+
+void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen,
+                   s32 *world); // BattleEffect_RunDjinniEntrance
+
+void Func_081180e8(s32 phase); // BattlePlayback_StartFar
+void Func_08118088(s32 actor,
+                   s32 variant); // BattleMotion_ApplyVariantMotionFar
+
+/// A disc of rings rises on BG2 over the target's side, its colour ramp
+/// cycling outward one ring a frame while each scanline sways on a sine wave.
+/// Abilities: Torch (kind 214).
+///
+/// Setup: open the canvas, draw the distance map into the sheet and a warm
+/// ramp into BG palette 1-63, blit the disc to the canvas, and arm the
+/// per-scanline BG2 offsets. Each frame: fade in over the first 8 frames,
+/// rebuild the 160 sway offsets, rotate the ramp by one colour, shake the
+/// camera. At frame 48 the target is struck; from frame 72 the disc fades.
+void BattleEffect_RunTorch(struct BattleEffectArgument *effect) {
+  struct BattleEffectWork *work;
+  void *canvas;
+  s32 screenX[3];
+  s32 screenY[3];
+  DrawRectangle draw[2];
+  s32 x;
+  s32 y;
+  s32 dx;
+  s32 dy;
+  s32 centerY;
+  s32 distance;
+  s32 i;
+  s32 shade;
+  s32 red;
+  s32 green;
+  s32 blue;
+  s32 frame;
+  s32 wave;
+  s32 level;
+  u16 *ramp;
+  s32 angle;
+  s32 *line;
+
+  work = Ram_HeapSlots->battleFxWork[0];
+  canvas = Ram_HeapSlots->battleFxWork[1];
+
+  // Open the canvas on BG2 over the target's side.
+  BattleEffect_StartCanvasLayer(0x2000);
+  Func_0815585c(effect, 6 | effect->side << 4 | 2 << 5, screenX, screenY);
+  REG_BG2CNT =
+      BGCNT_WRAP | BGCNT_SCREEN_BASE(7) | BGCNT_256_COLORS | BGCNT_CHAR_BASE(1);
+  REG_BLDALPHA = BLEND_ALPHA(0, 16);
+  REG_BG2PA = 0xaa;
+  BattleEffect_FetchRectangleBlitters(effect->side, draw);
+  work->transferMode = 2;
+  work->transferValue = 75;
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+
+  // The distance map, one quarter at a time mirrored into the other three,
+  // the centre an eighth lower than the middle so the disc leans back.
+  for (y = 0; y != DISC_SIZE / 2; y++) {
+    for (x = 0; x != DISC_SIZE / 2; x++) {
+      centerY = y / 8 + DISC_SIZE / 2;
+      dy = y - centerY;
+      dx = x - DISC_SIZE / 2;
+      distance = Iwram_Sqrt(dx * dx + dy * dy);
+      distance /= 2;
+      if (distance == 0)
+        distance = 1;
+      if (distance > DISC_RINGS)
+        distance = DISC_RINGS;
+      work->sheet[y * DISC_SIZE + x] = distance;
+      work->sheet[y * DISC_SIZE + DISC_SIZE - 1 - x] = distance;
+      work->sheet[(DISC_SIZE - 1 - y) * DISC_SIZE + x] = distance;
+      work->sheet[(DISC_SIZE - 1 - y) * DISC_SIZE + DISC_SIZE - 1 - x] =
+          distance;
+    }
+  }
+
+  // The ramp: dark red at the rim, rising to pale yellow at ring 31 and
+  // back, kept in the map cell buffer and written to the BG palette.
+  ramp = (u16 *)Ram_MapCellBuffer;
+  for (i = 1; i != DISC_RINGS + 1; i++) {
+    if (i > 31)
+      shade = 64 - i;
+    else
+      shade = i;
+    red = shade * 9;
+    green = shade * 7 - 42;
+    blue = shade * 7 - 56;
+    if (red < 0)
+      red = 0;
+    if (green < 0)
+      green = 0;
+    if (blue < 0)
+      blue = 0;
+    if (red > 255)
+      red = 255;
+    if (green > 255)
+      green = 255;
+    if (blue > 250)
+      blue = 250;
+    red >>= 3;
+    green >>= 3;
+    blue >>= 3;
+    ramp[i] = ((u16 *)BG_PLTT)[i] = blue << 10 | green << 5 | red;
+  }
+
+  // Blit the disc once; from here on only the palette and the scanline
+  // offsets move it.
+  draw[0](canvas, work->sheet, 0, 0, DISC_SIZE, DISC_SIZE);
+  work->transferPending = 1;
+  Task_Add(BattleEffect_ArmBg2AffineHBlankDma, TASK_PASS_FRAME);
+
+  for (frame = 0; frame != RIPPLE_FRAMES; frame++) {
+    // Fade in, and the sway grows with the frame.
+    if (frame <= RIPPLE_FADE_IN_FRAMES) {
+      level = frame * 2;
+      wave = level;
+      REG_BLDALPHA = BLEND_ALPHA(level, 16);
+    } else {
+      wave = frame * 2;
+    }
+    if (frame > RIPPLE_FADE_OUT_FRAME)
+      REG_BLDALPHA = BLEND_ALPHA(RIPPLE_FRAMES * 2 - frame * 2, 16);
+
+    // The hit: results phase, shake, and the target knocked back.
+    if (frame == RIPPLE_HIT_FRAME) {
+      Func_081180e8(PHASE_RESULTS);
+      work->shakeFrames = 8;
+      Func_08118088(effect->actors[0], 0);
+    }
+
+    // One BG2 X offset per scanline, a sine wave running down the screen.
+    line = work->bg2xLines;
+    for (i = 0, angle = -(wave << 9); i != 160; i++) {
+      *line++ = ((i << 18) - (Trig_Sin(angle) << 7) + 0x40000) >> 10;
+      angle += 0x200;
+    }
+
+    // Rotate the ramp outward by one ring: the last colour wraps to the
+    // first, DMA shifts the rest up, and the queue writes it at VBlank.
+    if (frame > 127) {
+      work->transferPending = 1;
+    } else {
+      ramp[1] = ramp[DISC_RINGS];
+      Dma_Set(ramp + DISC_RINGS - 1, ramp + DISC_RINGS,
+              (DMA_ENABLE | DMA_DEST_DEC | DMA_SRC_DEC) << 16 | 62, REG_DMA3);
+      IO_WRITE_QUEUE_PUSH((u32)&((u16 *)BG_PLTT)[1], (u32)(ramp + 1),
+                          DMA_COPY_HALFWORDS(63));
+    }
+    BattleCamera_Shake(8, 8);
+    BattleEffect_CountDownBattlerTints();
+    wait(1);
+  }
+
+  Task_Remove(BattleEffect_ArmBg2AffineHBlankDma);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
+  HeapSlot_Release(HEAP_BLITTER);
+  BattleEffect_EndCanvasLayer();
+}
+
+/// Abilities: Kite (kind 217).
+void BattleEffect_RunKite(struct BattleEffectArgument *effect) {
+  s32 b[3];
+  s32 a[3];
+
+  BattleEffect_StartCanvasLayer(0);
+  Func_0815585c(effect, ((effect->side ^ 1) << 4) | 7, b, a);
+  BattleEffect_EndCanvasLayer();
+}
+
+#include "battle_fx_work.h"
+
+void Func_08163c2c(s32 mode, s32 value) {
+  struct BattleFxWork *work;
+  u8 *canvas;
+  u8 delay[128];
+  s32 x;
+  s32 y;
+  s32 pos;
+
+  canvas = Ram_HeapSlots->battleFxWork[1];
+  work = (struct BattleFxWork *)Ram_HeapSlots->battleFxWork[0];
+  for (x = 0; x != 128; x++)
+    delay[x] = Random16() & 0x3f;
+
+  if (mode == 1) {
+    s32 front;
+    s32 speed;
+
+    front = 0;
+    speed = 1;
+    x = 0;
+    do {
+      front += speed;
+      speed++;
+      for (; x != front; x++) {
+        for (y = 0; y != 128; y++) {
+          pos = x - delay[y];
+          if (pos >= 0)
+            if (pos <= 127)
+              canvas[(((y / 8) * 16 + pos / 8) * 8 + (y & 7)) * 8 + (pos & 7)] =
+                  1 - value;
+        }
+      }
+      work->transferPending = 1;
+      wait(1);
+    } while (front <= 256);
+  } else if (mode != 3) {
+    s32 front;
+    s32 speed;
+
+    front = 0;
+    speed = 1;
+    y = 0;
+    do {
+      front += speed / 2;
+      speed += 4;
+      for (; y != front; y++) {
+        for (x = 0; x != 128; x++) {
+          pos = y - delay[x];
+          if (pos >= 0)
+            if (pos <= 127)
+              canvas[(((pos / 8) * 16 + x / 8) * 8 + (pos & 7)) * 8 + (x & 7)] =
+                  1 - value;
+        }
+      }
+      work->transferPending = 1;
+      wait(1);
+    } while (front <= 191);
   }
 }

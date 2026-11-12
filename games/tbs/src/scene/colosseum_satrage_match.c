@@ -845,8 +845,9 @@ static void ColosseumSatrageMatch_StartLifts(void) {
   GameFlag_Clear(FLAG_FIELD_HANDLING_REQUESTS);
 }
 
-/// Waits for the demonstration's crossing phase, with a ten-second timeout.
-static void ColosseumSatrageMatch_WaitForLiftCrossingPhase(void) {
+/// Waits, for up to ten seconds, until the four lifts stand lined up across
+/// the water, for the demonstration to jump onto them.
+static void ColosseumSatrageMatch_WaitForLiftsLinedUp(void) {
   s32 elapsedFrames;
 
   wait(10);
@@ -1332,7 +1333,7 @@ static void ColosseumSatrageMatch_TalkToShiftingFloorAttendant(s32 attendant) {
       Actor_SetSpeed(ACTOR_PARTY_LEADER, 1.5);
       Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 1080, 216);
       Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 1064, 216);
-      ColosseumSatrageMatch_WaitForLiftCrossingPhase();
+      ColosseumSatrageMatch_WaitForLiftsLinedUp();
       Field_TryJumpForward();
       FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
       Event_ShowMessage(attendant, 0);

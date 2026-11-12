@@ -28,18 +28,24 @@ struct JudgmentWork {
 
 #define JUDGMENT_GATHER_FRAMES 160    ///< frames of the gathering
 #define JUDGMENT_SWEEP_FRAMES 320     ///< frames of the sweep
-#define JUDGMENT_SHEET_FLARE_B 16960  ///< the second 24x24 flare picture
 #define JUDGMENT_FORMATION_OBJECTS 16 ///< sprites in the formation, 4x4
 #define JUDGMENT_DEBRIS_OBJECTS 16    ///< debris sprites of the sweep
-#define JUDGMENT_SHEET_BURST 1536     ///< the burst's quarter pictures
-/// The tornado sheet, whose six glint pictures are the burst's shards
-/// (gJudgment_ShardCells counts from the sheet's start).
-#define JUDGMENT_SHEET_TORNADO 2396
+/// The burst's seven quarter pictures (OverlayImageB), after the pink burst's
+/// 24x64 beam picture at the sheet's start.
+#define JUDGMENT_SHEET_BURST (24 * 64)
+/// The tornado sheet, after the burst's seven quarter pictures; its six glint
+/// pictures are the burst's shards (gJudgment_ShardCells counts from the
+/// sheet's start).
+#define JUDGMENT_SHEET_TORNADO                                                 \
+  (JUDGMENT_SHEET_BURST + 2 * 4 + 3 * 6 + 4 * 8 + 6 * 12 + 10 * 20 + 11 * 22 + \
+   12 * 24)
 /// The explosion's four 32x54 pictures, loaded over the flares on the sweep's
 /// frame 64.
 #define JUDGMENT_SHEET_EXPLOSION 16384
 /// The first 24x24 flare picture, from the crescent sheet the sweep loads.
 #define JUDGMENT_SHEET_FLARE_A 16384
+/// The second 24x24 flare picture.
+#define JUDGMENT_SHEET_FLARE_B (JUDGMENT_SHEET_FLARE_A + 24 * 24)
 // OverlayImageA's three flash pictures, a byte a pixel, one after another in
 // the sheet: the small flash, the large flash and the streak.
 #define JUDGMENT_FLASH_SMALL_WIDTH 16
@@ -55,8 +61,11 @@ struct JudgmentWork {
 #define JUDGMENT_SHEET_FLASH_STREAK                                            \
   (JUDGMENT_SHEET_FLASH_LARGE +                                                \
    JUDGMENT_FLASH_LARGE_WIDTH * JUDGMENT_FLASH_LARGE_HEIGHT)
-#define JUDGMENT_EXPLOSION_CELL_BYTES 1728 ///< bytes in each explosion picture
-#define JUDGMENT_WAVE_SIZE 120             ///< the wave picture is 120x120
+#define JUDGMENT_EXPLOSION_WIDTH 32  ///< each explosion picture's width
+#define JUDGMENT_EXPLOSION_HEIGHT 54 ///< and height
+#define JUDGMENT_EXPLOSION_CELL_BYTES                                          \
+  (JUDGMENT_EXPLOSION_WIDTH * JUDGMENT_EXPLOSION_HEIGHT)
+#define JUDGMENT_WAVE_SIZE 120 ///< the wave picture is 120x120
 /// DMA word that fills the 128x128 canvas.
 #define JUDGMENT_DMA_FILL_CANVAS DMA_FILL_WORDS(CANVAS_BYTES / 4)
 /// DMA word that fills the 120x120 wave picture.
@@ -149,10 +158,10 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
   gBgScroll[1].x = 0;
   BattleEffect_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_CLEAR);
   EFFECT_SHOW_WIDE_CANVAS(16);
-  // The formation starts 64 pixels back and comes forward 8 pixels a frame
-  // (16.16); the depth range is kept only by the dead spark stage.
-  depth = -(64 << 16);
-  zoom = 8 << 16;
+  // The formation starts 64 pixels back and comes forward 8 pixels a frame;
+  // the depth range is kept only by the dead spark stage.
+  depth = -PIXELS(64);
+  zoom = PIXELS(8);
   minimumDepth = 0xffff;
   maximumDepth = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_PinkBurstSheet, work->sheet, 1,
@@ -200,7 +209,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
     s32 speed = 0;
     JUDGMENT_SPARKS[i].x = (Trig_Sin(angle) * amp) >> 2;
     JUDGMENT_SPARKS[i].z = (Trig_Cos(angle) * amp) >> 2;
-    JUDGMENT_SPARKS[i].y = ((Random16() & 63) + 32) << 16;
+    JUDGMENT_SPARKS[i].y = PIXELS((Random16() & 63) + 32);
     JUDGMENT_SPARKS[i].velocityX = speed;
     JUDGMENT_SPARKS[i].velocityY = speed;
     JUDGMENT_SPARKS[i].variant = angle;
@@ -288,7 +297,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
         Transform_Reset();
         Transform_ApplyRoll(PARTICLES[i].velocityY);
         Transform_ApplyPitch(PARTICLES[i].velocityX);
-        Transform_ApplyYaw(PARTICLES[i].velocityY + (frame << 9));
+        Transform_ApplyYaw(PARTICLES[i].velocityY + frame * (TRIG_TURN / 128));
         anchor[0] = PARTICLES[i].x;
         PARTICLES[i].x -= 2;
         if (PARTICLES[i].x < 0) {
@@ -310,17 +319,16 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       }
     }
 
-    // Place the 4x4 formation at its natural size, 32 pixels apart (1 << 21
-    // in 16.16), then move it: it slows over the first 48 frames and eases
-    // towards a stop from frame 33, jumps back on frame 144 and drifts
-    // forward from 146. Frames 72 and 76 switch sprite i from animation i to
-    // i + 16 and then i + 32.
+    // Place the 4x4 formation at its natural size, 32 pixels apart, then move
+    // it: it slows over the first 48 frames and eases towards a stop from
+    // frame 33, jumps back on frame 144 and drifts forward from 146. Frames 72
+    // and 76 switch sprite i from animation i to i + 16 and then i + 32.
     pair = unitScale;
     place.groundHeight = 0;
     place.height = 0;
     for (i = 0; i != JUDGMENT_FORMATION_OBJECTS; i++) {
-      place.x = ((i % 4) << 21) + (152 << 15);
-      place.y = ((i / 4) << 21) + depth;
+      place.x = PIXELS(i % 4 * 32) + PIXELS(76);
+      place.y = PIXELS(i / 4 * 32) + depth;
       Actor_ApplyProjectedPlacementFar(work->sprites[i], &place, &pair, 0);
     }
 
@@ -332,7 +340,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       zoom = zoom * 60 / 64;
     }
     if (frame == 144) {
-      zoom = -(8 << 16);
+      zoom = -PIXELS(8);
     }
     if (frame == 146) {
       zoom = Q16_ONE;
@@ -432,7 +440,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
                             COMPOSITE_LIGHTEN);
         blit = slots[HEAP_SLOT_RAM_CODE_2];
         for (i = 0; i != 128; i++) {
-          s32 angle = i << 9;
+          s32 angle = i * (TRIG_TURN / 128);
           s32 x = ((r * Trig_Sin(angle)) >> 16) - high / 2;
           s32 y = (r * Trig_Cos(angle)) >> 17;
           blit(canvas, work->sheet + cell, x + 60, y + 72, high, high * 2);
@@ -581,7 +589,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
 
     // Frames 69, 182 and 238 flash the whole canvas.
     if (frame == 69) {
-      fill = CANVAS_FILL_WORD(63);
+      fill = CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST);
       Dma_Set((const void *)&fill, canvas, JUDGMENT_DMA_FILL_CANVAS, REG_DMA3);
     }
 
@@ -602,7 +610,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       rings = 4;
       squash = 8;
       Dma_Set((const void *)&fill, work, JUDGMENT_DMA_FILL_WAVE, REG_DMA3);
-      fill = CANVAS_FILL_WORD(63);
+      fill = CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST);
       Dma_Set((const void *)&fill, canvas, JUDGMENT_DMA_FILL_CANVAS, REG_DMA3);
       BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
                                (s32)&ResourceId_BeachBackdrop, 0);
@@ -614,14 +622,14 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
     if (frame == 214) {
       fill = 0;
       Dma_Set((const void *)&fill, work, JUDGMENT_DMA_FILL_WAVE, REG_DMA3);
-      fill = CANVAS_FILL_WORD(63);
+      fill = CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST);
       Dma_Set((const void *)&fill, canvas, JUDGMENT_DMA_FILL_CANVAS, REG_DMA3);
       BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
                                (s32)&ResourceId_ForestBackdrop, 0);
       for (i = 0; i != JUDGMENT_DEBRIS_OBJECTS; i++) {
         particle = &work->particles[i];
-        particle->x = ((Random16() & 63) + 32) << 16;
-        particle->y = ((Random16() & 31) + 96) << 16;
+        particle->x = PIXELS((Random16() & 63) + 32);
+        particle->y = PIXELS((Random16() & 31) + 96);
         particle->velocityY = ((Random16() & 15) + 16) << 15;
         particle->z = Q16_ONE / 2 - (particle->x >> 7);
         particle->variant = 1;
@@ -641,8 +649,8 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       REG_BLDALPHA = BLEND_ALPHA(16, 16);
       for (i = 0; i != JUDGMENT_DEBRIS_OBJECTS; i++) {
         particle = &work->particles[i];
-        particle->x = ((Random16() & 63) + 256) << 16;
-        particle->y = ((Random16() & 31) + 96) << 16;
+        particle->x = PIXELS((Random16() & 63) + 256);
+        particle->y = PIXELS((Random16() & 31) + 96);
         particle->velocityY = ((Random16() & 15) + 16) << 15;
         particle->z = 0;
       }
@@ -679,7 +687,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
     }
 
     if (frame == 182) {
-      fill = CANVAS_FILL_WORD(63);
+      fill = CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST);
       Dma_Set((const void *)&fill, canvas, JUDGMENT_DMA_FILL_CANVAS, REG_DMA3);
     }
 
@@ -774,7 +782,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       s32 r2 = (frame << 4) - 1136;
       s32 size = 10;
       for (i = 0; i != 256; i++) {
-        s32 angle = i << 8;
+        s32 angle = i * (TRIG_TURN / 256);
         s32 x = ((Trig_Sin(angle) * r2) >> 16) - (size >> 1);
         s32 y = (Trig_Cos(angle) * r2) >> 17;
         draw[0](canvas, ramp + gBattleEffect_MoteCells[size - 1], x + 60,
@@ -811,7 +819,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
             right = cx + dx;
             /* FAKEMATCH(dead): a branch whose store the next line overwrites
              * restores the label CSE and reload saw between the edges; without
-             * it, 16 of 2455 instructions differ in tbs-en. */
+             * it, 67 of 2455 instructions differ in tbs-en. */
             if (dx > cx) {
               left = 0;
             }
@@ -852,7 +860,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
             right = cx + dx;
             /* FAKEMATCH(dead): a branch whose store the next line overwrites
              * restores the label CSE and reload saw between the edges; without
-             * it, 867 of 2455 instructions differ in tbs-en. */
+             * it, 1954 of 2455 instructions differ in tbs-en. */
             if (dx > cx) {
               left = 0;
             }
@@ -911,7 +919,8 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
                 work->sheet +
                     ((frame / 2 + i) % 4) * JUDGMENT_EXPLOSION_CELL_BYTES +
                     JUDGMENT_SHEET_EXPLOSION,
-                x + 44, y + 17, 32, 54);
+                x + 44, y + 17, JUDGMENT_EXPLOSION_WIDTH,
+                JUDGMENT_EXPLOSION_HEIGHT);
       }
     }
 
@@ -933,12 +942,12 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
     if (frame > 319) {
       EFFECT_FOR_EACH_TARGET(i, work->args) {
         BattleEffect_TintBattler(work->args->targets[i], SPRITE_COLOR_BLACK,
-                                 POSE_DAMAGE, -1, 0);
+                                 POSE_DAMAGE, TINT_KEEP, 0);
       }
     }
 
     if (frame == 238) {
-      fill = CANVAS_FILL_WORD(63);
+      fill = CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST);
       Dma_Set((const void *)&fill, canvas, JUDGMENT_DMA_FILL_CANVAS, REG_DMA3);
     }
 
@@ -972,23 +981,23 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
           }
           scale.y = scale.x;
           debrisPlace.x = particle->x;
-          debrisPlace.height = 255 << 16;
-          debrisPlace.y = particle->y + (255 << 16);
+          debrisPlace.height = PIXELS(255);
+          debrisPlace.y = particle->y + PIXELS(255);
           Actor_ApplyProjectedPlacementFar(work->sprites[i], &debrisPlace,
                                            &scale, 0);
           particle->y -= particle->velocityY;
-          if (particle->y < (16 << 16)) {
+          if (particle->y < PIXELS(16)) {
             if (frame <= 279) {
-              particle->x = ((Random16() & 63) + shift + 32) << 16;
+              particle->x = PIXELS((Random16() & 63) + shift + 32);
             } else {
-              particle->x = ((Random16() & 63) + shift - 32) << 16;
+              particle->x = PIXELS((Random16() & 63) + shift - 32);
             }
             if (frame > 301) {
               particle->variant = 0;
             } else if (frame > 245) {
-              particle->y = 96 << 16;
+              particle->y = PIXELS(96);
             } else {
-              particle->y = (192 << 16) - particle->x;
+              particle->y = PIXELS(192) - particle->x;
             }
           }
         }
@@ -1003,7 +1012,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
                   work->sheet +
                       ((frame / 2 + i) % 4) * JUDGMENT_EXPLOSION_CELL_BYTES +
                       JUDGMENT_SHEET_EXPLOSION,
-                  x, y, 32, 54);
+                  x, y, JUDGMENT_EXPLOSION_WIDTH, JUDGMENT_EXPLOSION_HEIGHT);
         }
       } else {
         for (i = 0; i != 8; i++) {
@@ -1014,7 +1023,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
                   work->sheet +
                       ((frame / 2 + i) % 4) * JUDGMENT_EXPLOSION_CELL_BYTES +
                       JUDGMENT_SHEET_EXPLOSION,
-                  x, y, 32, 54);
+                  x, y, JUDGMENT_EXPLOSION_WIDTH, JUDGMENT_EXPLOSION_HEIGHT);
         }
       }
     }
@@ -1057,6 +1066,8 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
 #undef JUDGMENT_SHEET_FLASH_SMALL
 #undef JUDGMENT_SHEET_FLASH_LARGE
 #undef JUDGMENT_SHEET_FLASH_STREAK
+#undef JUDGMENT_EXPLOSION_WIDTH
+#undef JUDGMENT_EXPLOSION_HEIGHT
 #undef JUDGMENT_EXPLOSION_CELL_BYTES
 #undef JUDGMENT_WAVE_SIZE
 #undef JUDGMENT_DMA_FILL_CANVAS

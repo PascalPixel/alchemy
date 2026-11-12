@@ -58,7 +58,7 @@ void Actor_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
 void Actor_SetPositionAndReset(s32 actor, s32 x, s32 z);
 void Motion_SetModeAndWaitAnimation(s32 actor, s32 mode);
 void Func_02001b2c(struct VenusActor *object, s32 mode);
-void Actor_SetMoveTarget(struct VenusActor *object, s32 x, s32 y, s32 z);
+void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
 void Script_WaitForEventTimeout(struct VenusActor *object);
 s32 Func_02001b64(struct VenusActor *object, s32 *position);
 void Func_080d47b4(s32 actor, s32 height, s32 frames);

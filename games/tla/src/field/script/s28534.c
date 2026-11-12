@@ -55,7 +55,7 @@ s32 Func_0802db88(struct Actor *object, struct FieldPosition *position);
 void GameFlag_ClearBit(s32 flag);
 void Actor_SelectAnimation(struct Actor *object,
                                             s32 argument);
-s32 Actor_SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z);
+void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
 s32 FixedSqrt(s32 value);
 struct Actor *Func_08023220(s32 kind, s32 x, s32 y, s32 z);
 void Actor_StartScript(struct Actor *, const s32 *);

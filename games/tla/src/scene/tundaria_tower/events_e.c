@@ -24,7 +24,7 @@ s32 GetMapCellCollision(s32 layer, s32 x, s32 z);
 void Vector_AddPolarOffsetFar(s32 radius, s32 angle, s32 *vector);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 s32 ArcTan2(s32 y, s32 x);
-void Actor_SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z);
+void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
 void Func_02002f80(struct Actor *object, s32 mode);
 void Actor_SetAnimationSpeed(struct Actor *object, s32 value);
 void Script_WaitForEventTimeout(struct Actor *object);

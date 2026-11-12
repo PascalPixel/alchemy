@@ -340,8 +340,7 @@ union ObjectWord {
 
 extern const u8 gData_02003c58[];
 
-void Actor_SetMoveTarget(struct ShrineOfTheSeaGodObject *object, s32 x, s32 y,
-                         s32 z);
+void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
 void Actor_ArmCallbackAndRefresh(s32 actor, s32 angle);
 
 static inline void ShrineOfTheSeaGod_ObjAngle(s32 actor, s32 angle) {

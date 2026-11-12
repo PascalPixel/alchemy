@@ -33,7 +33,7 @@ s32 ScriptObject_CheckOverlap(struct Actor *object, s32 *values);
 s16 ArcTan2(s32 y, s32 x);
 struct LeaderUnit *Unit_Get(s32 owner);
 void Actor_SelectAnimation(struct Actor *object, s32 argument);
-s32 Actor_SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z);
+void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
 s32 Field_CheckConfiguredKeys(void);
 
 // Two 16.16 coordinates fall in the same 16-pixel cell, rounding to nearest.

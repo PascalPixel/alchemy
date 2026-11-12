@@ -1,7 +1,7 @@
 #include "script.h"
 #include "actor.h"
 
-void Actor_SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z);
+void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
 
 s32 Script_ApplyLocalOffsetPosition(struct Actor *object) {
   s32 offset[3];

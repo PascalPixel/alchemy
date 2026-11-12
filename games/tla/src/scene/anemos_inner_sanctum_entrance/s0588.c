@@ -8,7 +8,7 @@ extern const s8 gData_02000eec[];
 
 void Func_02000388(void);
 void Func_020004b4(void);
-void Actor_SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z);
+void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
 void Script_WaitForEventTimeout(struct Actor *actor);
 s32 GetMapCellCollision(s32 layer, s32 x, s32 z);
 void Actor_ArmCallback(s32 id, s32 angle, s32 a);

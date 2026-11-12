@@ -389,8 +389,9 @@ struct Unit {
   /// The Grim Reaper's countdown: 7 when cursed, down one at the end of each
   /// of the unit's own actions (BattleUnit_ProcessActionEnd); at 0 it falls.
   u8 grimReaper;
-  /// The totals of EQUIP_EFFECT_ADD_UNLEASH_CHANCE and EQUIP_EFFECT_24 that
-  /// Unit_Calculate sums; TBS never reads them back
+  /// The totals of EQUIP_EFFECT_ADD_UNLEASH_CHANCE and
+  /// EQUIP_EFFECT_ADD_COUNTERSTRIKE_RATE that Unit_Calculate sums; nothing
+  /// reads them back.
   u8 equipBonus[2];
   /// Kite's extra action: 2 when cast, down one at each turn's end; while
   /// nonzero Unit_Calculate gives the unit one more action a turn.

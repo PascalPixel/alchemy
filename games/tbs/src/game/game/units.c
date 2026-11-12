@@ -274,7 +274,7 @@ void Unit_Calculate(s32 unitId) {
         case EQUIP_EFFECT_ADD_UNLEASH_CHANCE:
           unit->equipBonus[0] += stats->amount;
           break;
-        case EQUIP_EFFECT_24:
+        case EQUIP_EFFECT_ADD_COUNTERSTRIKE_RATE:
           unit->equipBonus[1] += stats->amount;
           break;
         case EQUIP_EFFECT_CURSE_REMOVABLE:

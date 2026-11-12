@@ -636,8 +636,8 @@ static void AltmillerCave_HopSelectedActor(void) {
   }
 }
 
-/// Walking into one of the three obstacles pushes it, if there is room.
-static void AltmillerCave_MoveStagedActorToClearPosition(void) {
+/// Walking into one of the three fallen columns pushes it, if there is room.
+static void AltmillerCave_PushFallenColumn(void) {
   struct PushedActorProbe probe;
 
   Event_Start();
@@ -2688,7 +2688,7 @@ struct Trigger gAltmillerCave_SquallTriggers[] = {
     {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 73, FLAG_ALTMILLER_CAVE_PUDDLE_FROZEN, EVENT(AltmillerCave_HopSelectedActor)},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 74, FLAG_ALTMILLER_CAVE_PUDDLE_FROZEN, EVENT(AltmillerCave_HopSelectedActor)},
     {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 75, FLAG_ALTMILLER_CAVE_PUDDLE_FROZEN, EVENT(AltmillerCave_HopSelectedActor)},
-    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 71, CONDITION_ALWAYS, EVENT(AltmillerCave_MoveStagedActorToClearPosition)},
+    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 71, CONDITION_ALWAYS, EVENT(AltmillerCave_PushFallenColumn)},
     {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 77, CONDITION_ALWAYS, EVENT(AltmillerCave_AdvanceObstacleAndCheckPassage)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SQUALL_ROOM_PILLAR, CONDITION_ALWAYS, EVENT(AltmillerCave_UpdateMovedObstacle)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_FROST, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_SQUALL_ROOM_PUDDLE, FLAG_ALTMILLER_CAVE_PUDDLE_FROZEN, EVENT(AltmillerCave_CheckFrostTargetCollision)},
@@ -2717,7 +2717,7 @@ struct Trigger gAltmillerCave_DraughtTriggers[] = {
     {TRIGGER_EXIT, 53, CONDITION_ALWAYS, ALTMILLER_CAVE_DRAUGHT_ROCKS_TO_CHEST},
     {TRIGGER_EXIT, 54, CONDITION_ALWAYS, ALTMILLER_CAVE_DRAUGHT_CHEST_TO_ROCKS},
     {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 70, CONDITION_ALWAYS,
-     EVENT(AltmillerCave_MoveStagedActorToClearPosition)},
+     EVENT(AltmillerCave_PushFallenColumn)},
     {TRIGGER_TALK, ACTOR_BLUE_ROCK, CONDITION_ALWAYS,
      EVENT(AltmillerCave_TurnRock)},
     {TRIGGER_TALK, ACTOR_GREEN_ROCK, CONDITION_ALWAYS,

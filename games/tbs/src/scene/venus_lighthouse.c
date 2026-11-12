@@ -1419,7 +1419,7 @@ static void VenusLighthouse_SearchStatue(void) {
   PaletteFade_StartInterpolation(20);
   Event_Wait(40);
   // Follow the revealed path after the statue and color effect have finished.
-  FieldCamera_SetSpeed(PIXELS(1) / 2, PIXELS(1) / 16);
+  FieldCamera_SetSpeed(0.5);
   FieldCamera_MoveTo(PIXELS(456), -1, PIXELS(542), 1);
   FieldCamera_WaitForMove();
   Event_Wait(50);
@@ -1572,7 +1572,7 @@ static void VenusLighthouse_TalkToScholarByDoor(void) {
   // "I thought I'd explore after the door opened. While I was..."
   Event_ShowMessageThenWait(ACTOR_DOOR_SCHOLAR, 0, 20);
   Actor_FaceDirection(ACTOR_DOOR_SCHOLAR, FACING_NORTHEAST, 0);
-  FieldCamera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
+  FieldCamera_SetSpeed(1);
   FieldCamera_MoveTo(PIXELS(448), -1, PIXELS(432), 1);
   FieldCamera_WaitForMove();
   // "They did something to the statue that made the floor light up."
@@ -2637,13 +2637,13 @@ static void VenusLighthouse_MoveSocketPillar(void) {
       struct Actor *firstGateEffect;
       struct Actor *secondGateEffect;
 
-      FieldCamera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
+      FieldCamera_SetSpeed(1);
       FieldCamera_MoveToActorById(ACTOR_SOCKET_STATUE, 1);
       FieldCamera_WaitForMove();
       firstGateEffect = VenusLighthouse_CreateLight(
           136, 776, gVenusFourthFloorLightFromStatue);
       Event_Wait(30);
-      FieldCamera_SetSpeed(PIXELS(2) / 5, PIXELS(1) / 20);
+      FieldCamera_SetSpeed(0.4);
       FieldCamera_MoveTo(PIXELS(216), -1, PIXELS(632), 1);
       Actor_WaitForScriptEnd(firstGateEffect);
       Actor_StartScript(firstGateEffect, gVenusFourthFloorLightToSoutheast);

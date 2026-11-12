@@ -439,7 +439,7 @@ static void Kolima_LowerBridge(void) {
   u32 debrisIndex;
 
   Event_Start();
-  FieldCamera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
+  FieldCamera_SetSpeed(2);
   FieldCamera_MoveTo(PIXELS(168), 0, PIXELS(246), 1);
   FieldCamera_WaitForMove();
   Event_Wait(20);

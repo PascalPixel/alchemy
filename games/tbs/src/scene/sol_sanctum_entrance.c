@@ -860,7 +860,7 @@ static void SolSanctumEntrance_IntroduceSanctum(void) {
   Event_Wait(4);
   FieldCamera_MoveTo(-1, -1, -1, 0);
   // Gather the followers around the leader for Kraden's introduction.
-  FieldCamera_SetSpeed(PIXELS(3) / 5, PIXELS(3) / 40);
+  FieldCamera_SetSpeed(0.6);
   FieldCamera_MoveTo(PIXELS(1224), -1, PIXELS(136), 1);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
@@ -1015,11 +1015,11 @@ static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void) {
   Actor_SetAnimation(ACTOR_KRADEN, ANIM_STAND);
 
   // Survey both sides of the room before returning to Kraden.
-  FieldCamera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
+  FieldCamera_SetSpeed(2);
   FieldCamera_MoveTo(PIXELS(1585), -1, PIXELS(150), 1);
   FieldCamera_WaitForMove();
   Event_Wait(10);
-  FieldCamera_SetSpeed(PIXELS(6) / 5, PIXELS(3) / 20);
+  FieldCamera_SetSpeed(1.2);
   FieldCamera_MoveTo(PIXELS(1621), -1, PIXELS(100), 1);
   FieldCamera_WaitForMove();
   FieldCamera_MoveTo(PIXELS(1718), -1, PIXELS(100), 1);
@@ -1028,7 +1028,7 @@ static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void) {
   FieldCamera_MoveTo(PIXELS(1752), -1, PIXELS(150), 1);
   FieldCamera_WaitForMove();
   Event_Wait(40);
-  FieldCamera_SetSpeed(PIXELS(12) / 5, PIXELS(3) / 10);
+  FieldCamera_SetSpeed(2.4);
   FieldCamera_MoveTo(PIXELS(1668), -1, PIXELS(256), 1);
   FieldCamera_WaitForMove();
   Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
@@ -1205,16 +1205,16 @@ static void SolSanctumEntrance_KradenSeesStatuesOutOfReach(void) {
   Event_Wait(6);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 40);
-  FieldCamera_SetSpeed(PIXELS(12) / 5, PIXELS(3) / 10);
+  FieldCamera_SetSpeed(2.4);
   // Pan across the statues, then return to the party's position.
   FieldCamera_MoveTo(PIXELS(1672), -1, PIXELS(524), 1);
   FieldCamera_WaitForMove();
   Event_Wait(20);
-  FieldCamera_SetSpeed(PIXELS(8) / 5, PIXELS(1) / 5);
+  FieldCamera_SetSpeed(1.6);
   FieldCamera_MoveTo(PIXELS(1880), -1, PIXELS(524), 1);
   FieldCamera_WaitForMove();
   Event_Wait(20);
-  FieldCamera_SetSpeed(PIXELS(16) / 5, PIXELS(2) / 5);
+  FieldCamera_SetSpeed(3.2);
   FieldCamera_MoveTo(PIXELS(1769), -1, PIXELS(548), 1);
   FieldCamera_WaitForMove();
   Event_Wait(20);

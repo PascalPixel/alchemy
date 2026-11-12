@@ -959,7 +959,7 @@ static void MercuryLighthouse_PushStairAndFountainPipes(void) {
       if ((probe.position.z >> 20) == 40) {
         Actor_MoveAndRedraw(probe);
         if (Event_GetFlag(FLAG_FOUNTAIN_SHOWN) == 0) {
-          FieldCamera_SetSpeed(PIXELS(3) / 2, PIXELS(3) / 16);
+          FieldCamera_SetSpeed(1.5);
           FieldCamera_MoveTo(PIXELS(714), -1, PIXELS(592), 1);
           FieldCamera_WaitForArrival();
           GameFlag_Set(FLAG_FOUNTAIN_SHOWN);
@@ -1513,7 +1513,7 @@ static void MercuryLighthouse_MiaSensesSomeoneInside(void) {
   }
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 20);
-  FieldCamera_SetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
+  FieldCamera_SetSpeed(0.8);
   FieldCamera_MoveTo(PIXELS(840), -1, PIXELS(632), 1);
   Actor_WalkToAndWait(ACTOR_MIA, 840, 632);
   FieldCamera_WaitForArrival();

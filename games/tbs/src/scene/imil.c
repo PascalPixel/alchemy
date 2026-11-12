@@ -1017,7 +1017,7 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   Actor_SetPosition(ACTOR_MIA, 182, 150);
   FieldCamera_MoveTo(PIXELS(141), -1, PIXELS(221), 0);
   wait(1);
-  FieldCamera_SetSpeed(PIXELS(3) / 10, PIXELS(3) / 80);
+  FieldCamera_SetSpeed(0.3);
   FieldCamera_MoveTo(PIXELS(140), -1, PIXELS(164), 1);
   work = gFieldWork;
   work->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);

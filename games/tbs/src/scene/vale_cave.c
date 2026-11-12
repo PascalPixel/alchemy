@@ -526,7 +526,7 @@ static void ValeCave_KiteRunsOff(void) {
   if (Event_GetFlag(FLAG_VALE_CAVE_KITE_RAN_OFF) == 0) {
     GameFlag_Set(FLAG_VALE_CAVE_KITE_RAN_OFF);
     Event_Start();
-    FieldCamera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
+    FieldCamera_SetSpeed(1);
     FieldCamera_FollowActor(ACTOR_KITE, 1);
     FieldCamera_WaitForArrival();
     Event_Wait(60);

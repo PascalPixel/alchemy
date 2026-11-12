@@ -690,7 +690,7 @@ static void ValeKradensCottage_MeetSaturosAndMenardi(void) {
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   ValeKradensCottage_FacePartySouth();
   // The camera pans down to the strangers, and the ominous music plays.
-  FieldCamera_SetSpeed(PIXELS(6), PIXELS(3) / 4);
+  FieldCamera_SetSpeed(6);
   FieldCamera_MoveTo(PIXELS(215), -1, PIXELS(345), 1);
   FieldCamera_WaitForMove();
   Event_Wait(20);

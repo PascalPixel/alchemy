@@ -845,7 +845,7 @@ static void CrossboneIsleSteppingStones_FlipWaterSwitch(void) {
   struct Actor *water;
 
   Event_Start();
-  FieldCamera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
+  FieldCamera_SetSpeed(1);
   FieldCamera_MoveTo(PIXELS(281), -1, PIXELS(432), 1);
   FieldCamera_WaitForMove();
   FieldMessage_Show(MsgFieldFlippedSwitch, 1);

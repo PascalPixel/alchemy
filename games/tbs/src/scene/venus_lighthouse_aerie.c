@@ -856,7 +856,7 @@ static void VenusLighthouseAerie_ConfrontSaturosAndMenardi(void) {
 
   Event_Start();
   FieldCamera_GetActor()->motionFlags = 0;
-  FieldCamera_SetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
+  FieldCamera_SetSpeed(0.8);
   FieldCamera_MoveTo(PIXELS(332), PIXELS(32), PIXELS(180), 1);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 1);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 340, 184);
@@ -866,7 +866,7 @@ static void VenusLighthouseAerie_ConfrontSaturosAndMenardi(void) {
   VenusLighthouseAerie_ShowMessage(SPEAKER_WINDOW_BELOW |
                                    SPEAKER_PORTRAIT_LEFT | ACTOR_FELIX);
   FieldCamera_GetActor()->motionFlags = 0;
-  FieldCamera_SetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
+  FieldCamera_SetSpeed(0.8);
   FieldCamera_MoveTo(PIXELS(304), PIXELS(32), PIXELS(180), 1);
   Actor_SetSpeed(ACTOR_GARET, 1);
   Actor_SetSpeed(ACTOR_IVAN, 1);
@@ -2359,7 +2359,7 @@ static void VenusLighthouseAerie_DiscussSaturosAndMenardiDefeat(void) {
   Actor_SetSpeed(ACTOR_FELIX, 0.8);
   Actor_SetDestination(ACTOR_FELIX, 200, 188);
   Actor_SetDestination(ACTOR_SHEBA, 200, 204);
-  FieldCamera_SetSpeed(PIXELS(16) / 5, PIXELS(2) / 5);
+  FieldCamera_SetSpeed(3.2);
   FieldCamera_MoveTo(PIXELS(252), 0, PIXELS(190), 1);
   FieldCamera_WaitForMove();
   Event_Wait(40);
@@ -2699,8 +2699,8 @@ static void VenusLighthouseAerie_TryToPreventFall(void) {
   VenusLighthouseAerie_ShowMessage(ACTOR_FELIX);
   Sound_Play(MUS_SHEBA_HANGS_ON);
   MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
-  FieldCamera_SetSpeed(PIXELS(24) / 5, PIXELS(3) / 5);
-  FieldCamera_SetSpeed(PIXELS(4), PIXELS(1) / 2);
+  FieldCamera_SetSpeed(4.8);
+  FieldCamera_SetSpeed(4);
   FieldCamera_MoveTo(PIXELS(192), -PIXELS(64), PIXELS(238), 1);
   FieldCamera_WaitForMove();
   Event_Wait(40);
@@ -2780,7 +2780,7 @@ static void VenusLighthouseAerie_PlayShebasFall(void) {
   Event_Wait(120);
   VenusLighthouseAerie_ShowMessage(ACTOR_PARTY_LEADER);
   Sound_Play(MUS_FELIX_LEAPS_AFTER_SHEBA);
-  FieldCamera_SetSpeed(PIXELS(4), PIXELS(1) / 2);
+  FieldCamera_SetSpeed(4);
   FieldCamera_MoveTo(PIXELS(342), PIXELS(32), PIXELS(212), 1);
   FieldCamera_WaitForMove();
   Event_Wait(20);

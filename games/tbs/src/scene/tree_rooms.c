@@ -646,7 +646,7 @@ static void TreeRooms_PlayPostBattleConversation(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(20);
-  FieldCamera_SetSpeed(PIXELS(6) / 5, PIXELS(3) / 20);
+  FieldCamera_SetSpeed(1.2);
   FieldCamera_MoveTo(PIXELS(168), -1, PIXELS(152), 1);
   FieldCamera_WaitForMove();
   Event_Wait(10);

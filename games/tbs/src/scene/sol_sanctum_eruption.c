@@ -303,7 +303,7 @@ static void SolSanctumEruption_PlayHostageEvent(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH_SOUTHEAST, 10);
   SolSanctumEruption_PlaceHostageGroup();
-  FieldCamera_SetSpeed(PIXELS(32) / 5, PIXELS(4) / 5);
+  FieldCamera_SetSpeed(6.4);
   FieldCamera_MoveTo(PIXELS(328), -1, PIXELS(299), 1);
   FieldCamera_WaitForMove();
   Sound_Play(SE_MAP_TRANSITION);
@@ -557,7 +557,7 @@ static void SolSanctumEruption_PlayHostageEvent(void) {
   Actor_FaceDirection(ACTOR_ALEX, FACING_NORTH_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH_NORTHEAST, 0);
-  FieldCamera_SetSpeed(PIXELS(1) / 2, PIXELS(1) / 16);
+  FieldCamera_SetSpeed(0.5);
   FieldCamera_MoveTo(PIXELS(472), -1, PIXELS(300), 1);
   FieldCamera_WaitForMove();
   Event_Wait(40);
@@ -1043,29 +1043,29 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_WEST_SOUTHWEST, 0);
   // Pan around the chamber before another tremor interrupts the conversation.
-  FieldCamera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
+  FieldCamera_SetSpeed(2);
   FieldCamera_MoveTo(PIXELS(284), -1, PIXELS(92), 1);
   FieldCamera_WaitForMove();
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH_SOUTHWEST, 0);
-  FieldCamera_SetSpeed(PIXELS(3) / 2, PIXELS(3) / 16);
+  FieldCamera_SetSpeed(1.5);
   FieldCamera_MoveTo(PIXELS(127), -1, PIXELS(162), 1);
   FieldCamera_WaitForMove();
   Event_Wait(40);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH_SOUTHEAST, 0);
-  FieldCamera_SetSpeed(PIXELS(4), PIXELS(1) / 2);
+  FieldCamera_SetSpeed(4);
   FieldCamera_MoveTo(PIXELS(304), -1, PIXELS(294), 1);
   FieldCamera_WaitForMove();
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_EAST_SOUTHEAST, 0);
-  FieldCamera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
+  FieldCamera_SetSpeed(1);
   FieldCamera_MoveTo(PIXELS(400), -1, PIXELS(215), 1);
   FieldCamera_WaitForMove();
   Event_Wait(60);
-  FieldCamera_SetSpeed(PIXELS(4), PIXELS(1) / 2);
+  FieldCamera_SetSpeed(4);
   FieldCamera_MoveTo(PIXELS(273), -1, PIXELS(145), 1);
   FieldCamera_WaitForMove();
   Event_Wait(20);
@@ -1150,7 +1150,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   Actor_WalkTo(ACTOR_GARET, 217, 182);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST_SOUTHWEST, 0);
   Event_Wait(10);
-  FieldCamera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
+  FieldCamera_SetSpeed(2);
   FieldCamera_MoveTo(PIXELS(217), -1, PIXELS(176), 1);
   FieldCamera_WaitForMove();
   Event_Wait(20);
@@ -1242,7 +1242,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_WISE_ONE, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Event_Wait(40);
-  FieldCamera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
+  FieldCamera_SetSpeed(1);
   FieldCamera_MoveTo(PIXELS(186), -1, PIXELS(166), 1);
   Actor_SetDestination(ACTOR_WISE_ONE, 130, 113);
   Actor_WaitForMoveById(ACTOR_WISE_ONE);
@@ -1286,7 +1286,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Event_Wait(60);
-  FieldCamera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
+  FieldCamera_SetSpeed(1);
   FieldCamera_MoveTo(PIXELS(218), -1, PIXELS(181), 1);
   Actor_SetSpeed(ACTOR_WISE_ONE, 1);
   Actor_SetDestination(ACTOR_WISE_ONE, 169, 151);
@@ -1380,7 +1380,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   // return to, and the world is exposed to Alchemy. Garet: "Alchemy? A
   // threat?"
   Actor_FaceDirection(ACTOR_WISE_ONE, FACING_SOUTH, 0);
-  FieldCamera_SetSpeed(PIXELS(4), PIXELS(1) / 2);
+  FieldCamera_SetSpeed(4);
   SolSanctumEruption_FadeCameraTo(232, 464);
   SolSanctumEruption_RaiseElementalArcs(CHAMBER_SOUTHWEST);
   Event_ShowMessage(ACTOR_WISE_ONE, 0);
@@ -1419,7 +1419,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   Sound_Play(SE_TREMOR);
   Task_AddFrame(SolSanctumEruption_FlickerSecondCollapseTiles, TASK_PASS_FRAME);
   Event_Wait(20);
-  FieldCamera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
+  FieldCamera_SetSpeed(1);
   FieldCamera_MoveTo(PIXELS(184), -1, PIXELS(132), 1);
   Actor_Jump(ACTOR_PARTY_LEADER, 6, 0);
   Actor_Jump(ACTOR_GARET, 6, 0);

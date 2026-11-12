@@ -322,7 +322,7 @@ static void MercuryLighthouseAerie_PartyArrives(void) {
   MapGrid_WaitForShakeToSettle();
   Event_Wait(30);
   FieldCamera_GetActor()->motionFlags = 0;
-  FieldCamera_SetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
+  FieldCamera_SetSpeed(0.8);
   FieldCamera_MoveTo(PIXELS(512), -PIXELS(24), PIXELS(160), 1);
   FieldCamera_WaitForArrival();
   PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
@@ -532,7 +532,7 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   Event_Wait(50);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
   Event_Wait(20);
-  FieldCamera_SetSpeed(PIXELS(3) / 2, PIXELS(3) / 16);
+  FieldCamera_SetSpeed(1.5);
   FieldCamera_MoveTo(PIXELS(328), PIXELS(40), PIXELS(176), 1);
   FieldCamera_GetActor()->motionFlags = 0;
   Actor_SetSpeed(ACTOR_GARET, 1.5);
@@ -644,7 +644,7 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   Actor_FaceDirection(ACTOR_GARET, FACING_WEST, 10);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
   Event_Wait(20);
-  FieldCamera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
+  FieldCamera_SetSpeed(3);
   FieldCamera_MoveTo(PIXELS(120), -PIXELS(24), PIXELS(168), 1);
   FieldCamera_WaitForArrival();
   Event_Wait(40);
@@ -704,7 +704,7 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_EAST, 0);
-  FieldCamera_SetSpeed(PIXELS(3) / 2, PIXELS(3) / 16);
+  FieldCamera_SetSpeed(1.5);
   FieldCamera_MoveTo(PIXELS(232), PIXELS(40), PIXELS(152), 1);
   Actor_SetSpeed(ACTOR_SATUROS, 0.8);
   Actor_WalkToAndWait(ACTOR_SATUROS, 272, 128);
@@ -790,7 +790,7 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   Event_Wait(20);
   // "Leave me be! Head for the next lighthouse-now!"
   Event_ShowMessageThenWait(ACTOR_SATUROS, 0, 20);
-  FieldCamera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
+  FieldCamera_SetSpeed(3);
   FieldCamera_MoveTo(PIXELS(120), -PIXELS(24), PIXELS(168), 1);
   FieldCamera_WaitForArrival();
   Actor_SetAnimationAndWait(ACTOR_MENARDI, 3);
@@ -1036,7 +1036,7 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   // "That voice! Could it be?"
   Event_ShowMessageThenWait(ACTOR_MIA, 0, 30);
   Sound_Play(MUS_CONFRONTATION);
-  FieldCamera_SetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
+  FieldCamera_SetSpeed(0.8);
   FieldCamera_GetActor()->motionFlags = 0;
   FieldCamera_MoveTo(PIXELS(336), -1, PIXELS(168), 1);
   Event_Wait(20);
@@ -1320,7 +1320,7 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   Event_ShowMessageThenWait(ACTOR_MIA, 0, 20);
   Actor_FaceDirection(ACTOR_IVAN, FACING_WEST, 20);
   Event_ShowMessageThenWait(ACTOR_ALEX, 0, 20);
-  FieldCamera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
+  FieldCamera_SetSpeed(3);
   {
     struct MapGridLayerScroll *lift;
     void **cells;

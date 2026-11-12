@@ -894,7 +894,7 @@ static void CottageRoomsB_HurryToThePlaza(void) {
   Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH, 10);
   // The camera finds Kyle coming up the path: "Isaac, Dora, hurry! The
   // Boulder could fall at any second!"
-  FieldCamera_SetSpeed(PIXELS(4), PIXELS(1) / 2);
+  FieldCamera_SetSpeed(4);
   FieldCamera_MoveTo(PIXELS(414), -1, PIXELS(530), 1);
   Actor_SetPosition(ACTOR_KYLE, 414, 530);
   Actor_WalkToAndWait(ACTOR_KYLE, 427, 483);

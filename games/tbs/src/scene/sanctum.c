@@ -1295,7 +1295,7 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   PaletteFade_ApplyTarget(PALETTE_TINT_PALE, PALETTES_BG);
   PaletteFade_StartInterpolation(60);
   Event_Wait(40);
-  FieldCamera_SetSpeed(PIXELS(2) / 5, PIXELS(1) / 20);
+  FieldCamera_SetSpeed(0.4);
   FieldCamera_MoveTo(PIXELS(192), -1, PIXELS(104), 1);
   Event_Wait(120);
   Sound_Play(MUS_FOREST);

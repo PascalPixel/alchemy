@@ -429,7 +429,7 @@ static void Altin_TalkToThirstyOldWoman(void) {
       beast = Actor_Get(ACTOR_WATER_BEAST);
 
       FieldCamera_GetActor()->motionFlags = 0;
-      FieldCamera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
+      FieldCamera_SetSpeed(1);
       FieldCamera_MoveTo(beast->x.fixed, beast->y.fixed, beast->z.fixed, 1);
       // BUG: FACING_SOUTH's value is passed as an actor id. No actor has
       // it, so the leader does not turn south toward the beast.
@@ -1040,7 +1040,7 @@ static void Altin_BeastSpawnSpray(void) {
 /// and hops away into the flood.
 static void Altin_ScareOffBeast(void) {
   Event_Start();
-  FieldCamera_SetSpeed(PIXELS(2) / 5, PIXELS(1) / 20);
+  FieldCamera_SetSpeed(0.4);
   FieldCamera_MoveTo(PIXELS(63), -1, PIXELS(450), 1);
   FieldCamera_WaitForArrival();
   Event_Wait(30);

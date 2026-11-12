@@ -249,7 +249,7 @@ static void Vault_IvanStaysBehind(void) {
   if (work->stepTrigger == CELL_BEHAVIOR_VAULT_SOUTH_GATE) {
     Actor_WalkToAndWait(ACTOR_IVAN, 400, 448);
   } else {
-    FieldCamera_SetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
+    FieldCamera_SetSpeed(0.8);
     FieldCamera_MoveTo(PIXELS(224), -1, PIXELS(162), 1);
     Actor_WalkToAndWait(ACTOR_IVAN, 224, 162);
     FieldCamera_WaitForArrival();

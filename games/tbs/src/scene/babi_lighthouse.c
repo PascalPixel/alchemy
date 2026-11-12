@@ -541,7 +541,7 @@ static void BabiLighthouse_FaranAsksPartyToOpenDoor(void) {
   // "You're sure they went through this door?"
   Event_ShowMessage(ACTOR_FARAN, 0);
   Event_Wait(10);
-  FieldCamera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
+  FieldCamera_SetSpeed(3);
   FieldCamera_MoveTo(PIXELS(280), -1, PIXELS(288), 1);
   FieldCamera_WaitForMove();
   Event_Wait(20);
@@ -836,7 +836,7 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
   Actor_LaunchFromLeader(ACTOR_MIA, -16, 24, FACING_EAST);
   Actor_WaitForMoveById(ACTOR_MIA);
   Event_Wait(20);
-  FieldCamera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
+  FieldCamera_SetSpeed(3);
   FieldCamera_MoveTo(PIXELS(280), -1, PIXELS(328), 1);
   FieldCamera_WaitForMove();
   Event_Wait(10);

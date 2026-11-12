@@ -1403,7 +1403,7 @@ static void TunnelRuins_MoveLadyStatue(void) {
       return;
     }
     Event_Wait(20);
-    FieldCamera_SetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
+    FieldCamera_SetSpeed(0.8);
     FieldCamera_MoveTo(PIXELS(472), -1, PIXELS(780), 1);
     FieldCamera_WaitForMove();
     Event_Wait(30);
@@ -1415,7 +1415,7 @@ static void TunnelRuins_MoveLadyStatue(void) {
   } else {
     if (Event_GetFlag(FLAG_TUNNEL_RUINS_STATUE_DOOR_OPEN) != 0) {
       Event_Wait(20);
-      FieldCamera_SetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
+      FieldCamera_SetSpeed(0.8);
       FieldCamera_MoveTo(PIXELS(472), -1, PIXELS(780), 1);
       FieldCamera_WaitForMove();
       Event_Wait(30);

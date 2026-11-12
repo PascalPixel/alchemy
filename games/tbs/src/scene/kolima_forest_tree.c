@@ -494,7 +494,7 @@ static void KolimaForestTree_RestoreTret(void) {
   Task_AddFrame(KolimaForestTree_UpdateHealingPalette, TASK_PASS_FRAME);
   Event_Wait(40);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHWEST, 20);
-  FieldCamera_SetSpeed(PIXELS(16) / 5, PIXELS(2) / 5);
+  FieldCamera_SetSpeed(3.2);
   FieldCamera_MoveTo(PIXELS(256), -1, PIXELS(254), 1);
   FieldCamera_WaitForArrival();
   Sound_Play(SE_GLITTER);

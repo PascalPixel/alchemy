@@ -305,7 +305,7 @@ static void WestLunpaCave_HammetFindsBunza(void) {
     Actor_FaceDirection(ACTOR_BUNZA, FACING_SOUTH_SOUTHEAST, 0);
     Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 1);
     Event_Wait(30);
-    FieldCamera_SetSpeed(PIXELS(1) / 2, PIXELS(1) / 16);
+    FieldCamera_SetSpeed(0.5);
     FieldCamera_MoveTo(PIXELS(192), -1, PIXELS(432), 1);
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     if (leader != NULL) {

@@ -621,7 +621,7 @@ static void Bilibin_JillGivesHardNut(void) {
   Event_Start();
   // The camera moves over to the three; the friend nearer the leader speaks
   // first.
-  FieldCamera_SetSpeed(PIXELS(12) / 5, PIXELS(3) / 10);
+  FieldCamera_SetSpeed(2.4);
   FieldCamera_MoveTo(PIXELS(263), -1, PIXELS(173), 1);
   FieldCamera_WaitForMove();
   eastMember = Actor_Get(ACTOR_GANG_MEMBER_EAST);

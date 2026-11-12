@@ -718,7 +718,7 @@ static void McCoyPalace_AudienceWithMcCoy(void) {
   if (GameFlag_Get(FLAG_MCCOY_PALACE_JOB_REFUSED) == 0) {
     Event_Wait(80);
     Actor_SetPosition(ACTOR_CAPTAIN, 894, 798);
-    FieldCamera_SetSpeed(PIXELS(3) / 5, PIXELS(3) / 40);
+    FieldCamera_SetSpeed(0.6);
     FieldCamera_MoveTo(PIXELS(894), -1, PIXELS(698), 1);
     Actor_SetSpeed(ACTOR_CAPTAIN, 0.8);
     Actor_WalkTo(ACTOR_CAPTAIN, 894, 696);
@@ -1298,7 +1298,7 @@ static void McCoyPalace_McCoyRewardsParty(void) {
   Event_Wait(40);
   Actor_SetPosition(ACTOR_CAPTAIN, 888, 798);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 904, 798);
-  FieldCamera_SetSpeed(PIXELS(3) / 5, PIXELS(3) / 40);
+  FieldCamera_SetSpeed(0.6);
   FieldCamera_MoveTo(PIXELS(894), -1, PIXELS(698), 1);
   Actor_SetSpeed(ACTOR_CAPTAIN, 0.8);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.6);

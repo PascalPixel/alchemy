@@ -260,10 +260,25 @@ static inline void Actor_SetAttachedEffect(s32 actorId, s32 effect) {
   FieldEffect_SetAttached(actorId, effect);
 }
 
-/// Sets how fast the camera pans for the event's next camera moves.
-static inline void FieldCamera_SetSpeed(s32 speed, s32 acceleration) {
+/// Sets how fast the camera pans for the event's next camera moves, and how
+/// quickly it gets up to speed, both in 16.16 fixed point.
+static inline void FieldCamera_SetSpeedFixed(s32 speed, s32 acceleration) {
   FieldCamera_SetSpeedParameters(speed, acceleration);
 }
+
+/// Sets the camera's top panning speed for the event's next camera moves, in
+/// pixels a frame, and an acceleration of an eighth of that:
+/// `FieldCamera_SetSpeed(0.8)`.
+#define FieldCamera_SetSpeed(speed)                                            \
+  FieldCamera_SetSpeedFixed(EVENT_DECIMAL_FIXED(speed),                        \
+                            EVENT_DECIMAL_FIXED(speed) / 8)
+
+/// Sets the camera's top panning speed, in pixels a frame, and its
+/// acceleration, in pixels a frame per frame, where the acceleration isn't an
+/// eighth of the speed.
+#define FieldCamera_SetSpeedAndAcceleration(speed, acceleration)               \
+  FieldCamera_SetSpeedFixed(EVENT_DECIMAL_FIXED(speed),                        \
+                            EVENT_DECIMAL_FIXED(acceleration))
 
 /// Pans the camera to a point in the room, or cuts there when pan is 0.
 static inline void FieldCamera_MoveTo(s32 fixed_x, s32 fixed_y, s32 fixed_z,

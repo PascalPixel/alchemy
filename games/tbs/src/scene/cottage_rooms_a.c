@@ -692,7 +692,7 @@ static void CottageRoomsA_GaretComesHome(void) {
   // The camera pans slowly up to Garet's parents. His father, pacing, asks
   // whether they should look for Garet; Isaac still does not know about
   // Dora. His mother teases that he misses Garet.
-  FieldCamera_SetSpeed(PIXELS(1) / 10, PIXELS(1) / 80);
+  FieldCamera_SetSpeed(0.1);
   FieldCamera_MoveTo(PIXELS(786), 0, PIXELS(430), 1);
   Event_Wait(240);
   Actor_Stop(ACTOR_GARETS_FATHER);
@@ -790,7 +790,7 @@ static void CottageRoomsA_GaretComesHome(void) {
   FieldEvent_ShowTwoMessagesAndWait(ACTOR_GARETS_FATHER, 11, 6, 6, 6,
                                     ACTOR_GARETS_MOTHER, 12, 1, 7, 1, 0);
   Event_Wait(20);
-  FieldCamera_SetSpeed(PIXELS(8) / 5, PIXELS(1) / 5);
+  FieldCamera_SetSpeed(1.6);
   FieldCamera_MoveTo(PIXELS(777), 0, PIXELS(468), 1);
   FieldCamera_WaitForMove();
   Event_Wait(40);

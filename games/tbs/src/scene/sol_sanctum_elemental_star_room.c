@@ -352,7 +352,7 @@ static void SolSanctumElementalStarRoom_BagMercuryStar(void) {
   MapGrid_SetShake(PIXELS(1), PIXELS(2), Q16_ONE);
   Event_Wait(30);
   MapGrid_SetShake(0, 0, 0);
-  FieldCamera_SetSpeed(PIXELS(28) / 5, PIXELS(7) / 10);
+  FieldCamera_SetSpeed(5.6);
   FieldCamera_MoveTo(PIXELS(472), -1, PIXELS(98), 1);
   FieldCamera_WaitForMove();
   MapGrid_SetShake(PIXELS(1), PIXELS(2), Q16_ONE);
@@ -373,7 +373,7 @@ static void SolSanctumElementalStarRoom_BagMercuryStar(void) {
   OPEN_RISEN_PILLAR(21, 21);
   Event_Wait(40);
   MapGrid_SetShake(0, 0, 0);
-  FieldCamera_SetSpeed(PIXELS(16) / 5, PIXELS(2) / 5);
+  FieldCamera_SetSpeed(3.2);
   FieldCamera_MoveTo(PIXELS(343), -1, PIXELS(497), 1);
   FieldCamera_WaitForMove();
   MapGrid_SetShake(PIXELS(1), PIXELS(2), Q16_ONE);
@@ -468,7 +468,7 @@ static void SolSanctumElementalStarRoom_BagJupiterStar(void) {
   }
   MapGrid_SetShake(PIXELS(2), PIXELS(1), Q16_ONE);
   Event_Wait(30);
-  FieldCamera_SetSpeed(PIXELS(12) / 5, PIXELS(3) / 10);
+  FieldCamera_SetSpeed(2.4);
   FieldCamera_MoveTo(PIXELS(167), -1, PIXELS(529), 1);
   FieldCamera_WaitForMove();
   MapGrid_SetShake(PIXELS(1), PIXELS(2), Q16_ONE);
@@ -479,7 +479,7 @@ static void SolSanctumElementalStarRoom_BagJupiterStar(void) {
   OPEN_RISEN_PILLAR(10, 31);
   Event_Wait(40);
   MapGrid_SetShake(0, 0, 0);
-  FieldCamera_SetSpeed(PIXELS(32) / 5, PIXELS(4) / 5);
+  FieldCamera_SetSpeed(6.4);
   FieldCamera_MoveTo(PIXELS(391), -1, PIXELS(177), 1);
   FieldCamera_WaitForMove();
   MapGrid_SetShake(PIXELS(1), PIXELS(2), Q16_ONE);
@@ -490,7 +490,7 @@ static void SolSanctumElementalStarRoom_BagJupiterStar(void) {
   OPEN_RISEN_PILLAR(24, 9);
   Event_Wait(40);
   MapGrid_SetShake(0, 0, 0);
-  FieldCamera_SetSpeed(PIXELS(12) / 5, PIXELS(3) / 10);
+  FieldCamera_SetSpeed(2.4);
   FieldCamera_MoveTo(PIXELS(583), -1, PIXELS(193), 1);
   FieldCamera_WaitForMove();
   MapGrid_SetShake(PIXELS(1), PIXELS(2), Q16_ONE);
@@ -571,7 +571,7 @@ static void SolSanctumElementalStarRoom_RevealSaturosAndMenardi(void) {
   Actor_SetPosition(ACTOR_KRADEN, 491, 332);
   Actor_SetPosition(ACTOR_MENARDI, 459, 348);
   Actor_SetPosition(ACTOR_SATUROS, 507, 348);
-  FieldCamera_SetSpeed(PIXELS(36) / 5, PIXELS(9) / 10);
+  FieldCamera_SetSpeed(7.2);
   FieldCamera_MoveTo(PIXELS(485), -1, PIXELS(345), 1);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST, 0);
@@ -637,7 +637,7 @@ static void SolSanctumElementalStarRoom_DemandElementalStars(void) {
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH_NORTHWEST, 10);
   Actor_FaceDirection(ACTOR_MENARDI, FACING_NORTH_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_SATUROS, FACING_NORTH_NORTHWEST, 0);
-  FieldCamera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
+  FieldCamera_SetSpeed(2);
   FieldCamera_MoveTo(PIXELS(471), -1, PIXELS(309), 1);
   FieldCamera_WaitForMove();
   Actor_SetPosition(ACTOR_PLATFORM_SHADOW, 471, 290);
@@ -1010,7 +1010,7 @@ static void SolSanctumElementalStarRoom_UnmaskFelix(void) {
       Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 30);
     }
   }
-  FieldCamera_SetSpeed(PIXELS(1) / 2, PIXELS(1) / 16);
+  FieldCamera_SetSpeed(0.5);
   FieldCamera_FollowActor(ACTOR_GARET, 1);
   FieldCamera_WaitForMove();
   Actor_FaceDirection(ACTOR_GARET, FACING_WEST, 30);
@@ -1136,7 +1136,7 @@ static void SolSanctumElementalStarRoom_AlexTakesStars(void) {
   Actor_SetAnimationAndWait(ACTOR_SATUROS, ANIM_SHAKE_HEAD);
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_SATUROS, 10);
   Event_OpenMessage(ACTOR_MENARDI, 0);
-  FieldCamera_SetSpeed(PIXELS(32) / 5, PIXELS(4) / 5);
+  FieldCamera_SetSpeed(6.4);
   FieldCamera_MoveTo(PIXELS(374), -1, PIXELS(470), 1);
   FieldCamera_WaitForMove();
   Actor_FaceDirection(ACTOR_ALEX, FACING_SOUTH_SOUTHWEST, 0);
@@ -1203,7 +1203,7 @@ static void SolSanctumElementalStarRoom_AlexTakesStars(void) {
   Actor_MoveToAndWait(ACTOR_GARET, 278, 480);
   Actor_SetAnimation(ACTOR_GARET, ANIM_STAND);
   Event_Wait(30);
-  FieldCamera_SetSpeed(PIXELS(1) / 2, PIXELS(1) / 16);
+  FieldCamera_SetSpeed(0.5);
   FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 1);
   Actor_SetSpeed(ACTOR_GARET, 1.6);
   Actor_FaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GARET, 0);
@@ -1533,7 +1533,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   }
   *leaderMotion = 5;
   Event_Wait(80);
-  FieldCamera_SetSpeed(PIXELS(3) / 10, PIXELS(3) / 80);
+  FieldCamera_SetSpeed(0.3);
   FieldCamera_MoveTo(PIXELS(471), -1, PIXELS(290), 1);
   for (i = 0; i != 60; i++) {
     rising->y.fixed += -PIXELS(1) / 2;
@@ -1656,7 +1656,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH_NORTHWEST, 0);
-  FieldCamera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
+  FieldCamera_SetSpeed(2);
   FieldCamera_MoveTo(PIXELS(471), -1, PIXELS(309), 1);
   FieldCamera_WaitForMove();
   Actor_SetPosition(ACTOR_PLATFORM_SHADOW, 471, 290);
@@ -1750,7 +1750,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   Event_Wait(40);
-  FieldCamera_SetSpeed(PIXELS(1) / 2, PIXELS(1) / 16);
+  FieldCamera_SetSpeed(0.5);
   FieldCamera_MoveTo(PIXELS(533), -1, PIXELS(339), 1);
   Actor_SetSpeed(ACTOR_KRADEN, 0.5);
   Actor_WalkToAndWait(ACTOR_KRADEN, 533, 339);
@@ -1829,7 +1829,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Actor_Stop(ACTOR_PARTY_LEADER);
   Actor_Stop(ACTOR_JENNA);
   Actor_Stop(ACTOR_GARET);
-  FieldCamera_SetSpeed(PIXELS(8), PIXELS(1));
+  FieldCamera_SetSpeed(8);
   // Tour the four pedestals, returning the view to the party after each.
   SolSanctumElementalStarRoom_ShowPedestal(
       PIXELS(711), PIXELS(464), 589, 353, SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN);

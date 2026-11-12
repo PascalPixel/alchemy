@@ -936,7 +936,7 @@ static void ColosseumEntrance_FinalsStart(void) {
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 1);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 872, 120);
     ColosseumEntrance_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST);
-    FieldCamera_SetSpeed(PIXELS(8) / 5, PIXELS(1) / 5);
+    FieldCamera_SetSpeed(1.6);
     FieldCamera_MoveTo(PIXELS(816), -1, PIXELS(112), 1);
     FieldCamera_WaitForArrival();
     Actor_FaceDirection(ACTOR_FINALS_SOLDIER, FACING_SOUTH_SOUTHEAST, 20);
@@ -1090,7 +1090,7 @@ static void ColosseumEntrance_TalkToTrialAttendant(void) {
     Event_ShowMessage(ACTOR_TRIAL_ATTENDANT, 0);
     FieldCamera_GetActor()->motionFlags = clearedTrialSeen;
     wait(1);
-    FieldCamera_SetSpeed(PIXELS(32) / 5, PIXELS(4) / 5);
+    FieldCamera_SetSpeed(6.4);
     FieldCamera_MoveTo(PIXELS(540), -1, PIXELS(208), 1);
     FieldCamera_WaitForArrival();
     gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
@@ -1714,7 +1714,7 @@ static void ColosseumEntrance_ExplainPartySupport(void) {
   Actor_MoveToAndWait(ACTOR_ESCORTING_SOLDIER, 808, 164);
   Actor_SetDestination(ACTOR_ESCORTING_SOLDIER, 808, 312);
   Event_Wait(20);
-  FieldCamera_SetSpeed(PIXELS(2) / 5, PIXELS(1) / 20);
+  FieldCamera_SetSpeed(0.4);
   FieldCamera_MoveTo(PIXELS(808), -1, PIXELS(312), 1);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 808, 164);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 808, 312);
@@ -1880,7 +1880,7 @@ static void ColosseumEntrance_CelebrateAdvancement(void) {
   Actor_MoveToAndWait(ACTOR_ESCORTING_SOLDIER, 808, 164);
   Actor_SetDestination(ACTOR_ESCORTING_SOLDIER, 808, 312);
   Event_Wait(20);
-  FieldCamera_SetSpeed(PIXELS(2) / 5, PIXELS(1) / 20);
+  FieldCamera_SetSpeed(0.4);
   FieldCamera_MoveTo(PIXELS(808), -1, PIXELS(312), 1);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 808, 164);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 808, 312);
@@ -1987,7 +1987,7 @@ static void ColosseumEntrance_CelebrateBothWins(void) {
   Actor_MoveToAndWait(ACTOR_ESCORTING_SOLDIER, 808, 164);
   Actor_SetDestination(ACTOR_ESCORTING_SOLDIER, 808, 312);
   Event_Wait(20);
-  FieldCamera_SetSpeed(PIXELS(2) / 5, PIXELS(1) / 20);
+  FieldCamera_SetSpeed(0.4);
   FieldCamera_MoveTo(PIXELS(808), -1, PIXELS(312), 1);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 808, 164);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 808, 312);

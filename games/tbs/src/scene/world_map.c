@@ -1268,7 +1268,7 @@ static void WorldMap_ShowHammetsCaravan(void) {
   Actor_SetAnimationAndWait(ACTOR_CARAVAN_HAMMET, ANIM_NOD);
   WorldMap_Unfreeze();
   Sound_Play(SE_TREMOR);
-  FieldCamera_SetSpeed(PIXELS(4), PIXELS(4));
+  FieldCamera_SetSpeedAndAcceleration(4, 4);
   // The ground shakes, and a rock falls beside Hammet and his man.
   WorldMap_ShakeCameraOverCaravan();
   Sound_Play(SOUND_FADE_OUT_ACTION_SE);
@@ -1278,7 +1278,7 @@ static void WorldMap_ShowHammetsCaravan(void) {
   Actor_FaceDirection(ACTOR_CARAVAN_MAN, FACING_EAST, 40);
   Actor_FaceDirection(ACTOR_CARAVAN_HAMMET, FACING_NORTH_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_CARAVAN_MAN, FACING_NORTH_NORTHWEST, 0);
-  FieldCamera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
+  FieldCamera_SetSpeed(1);
   FieldCamera_MoveTo(PIXELS(5608), -1, PIXELS(1736), 1);
   FieldCamera_WaitForMove();
   Actor_SetPosition(ACTOR_INVISIBLE_ROCK_GUIDE, 5544, 1704);
@@ -1313,11 +1313,11 @@ static void WorldMap_ShowHammetsCaravan(void) {
   spriteActor = Actor_Get(ACTOR_CARAVAN_HAMMET);
   spriteActor->velocityY = PIXELS(6);
   Sound_Play(SE_CRASH);
-  FieldCamera_SetSpeed(PIXELS(4), PIXELS(4));
+  FieldCamera_SetSpeedAndAcceleration(4, 4);
   WorldMap_ShakeCameraWhereRockFalls();
   WorldMap_ShakeCameraWhereRockFalls();
   Event_Wait(60);
-  FieldCamera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
+  FieldCamera_SetSpeed(2);
   FieldCamera_MoveTo(PIXELS(5640), -1, PIXELS(1784), 1);
   FieldCamera_WaitForMove();
   WorldMap_Freeze();
@@ -1369,13 +1369,13 @@ static void WorldMap_ShowHammetsCaravan(void) {
   WorldMap_Unfreeze();
   Actor_SetPosition(ACTOR_PARTY_LEADER, 5900, 1576);
   Actor_SetPosition(ACTOR_GARET, 5908, 1600);
-  FieldCamera_SetSpeed(PIXELS(4), PIXELS(1) / 2);
+  FieldCamera_SetSpeed(4);
   FieldCamera_MoveTo(PIXELS(5848), -1, PIXELS(1608), 1);
   FieldCamera_WaitForMove();
   action = gCaravanWagonHeadsNorth;
   Actor_SetScript(ACTOR_CARAVAN_FIRST_WAGON, action);
   Event_Wait(20);
-  FieldCamera_SetSpeed(PIXELS(2) / 5, PIXELS(1) / 20);
+  FieldCamera_SetSpeed(0.4);
   FieldCamera_MoveTo(PIXELS(5848), -1, PIXELS(1544), 1);
   Actor_SetScript(ACTOR_CARAVAN_FIRST_WAGON + 1, action);
   Event_Wait(20);
@@ -1389,7 +1389,7 @@ static void WorldMap_ShowHammetsCaravan(void) {
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
   Actor_WaitForScriptEndById(ACTOR_CARAVAN_FIRST_WAGON + 3);
   Sound_Play(SOUND_FADE_OUT_ACTION_SE);
-  FieldCamera_SetSpeed(PIXELS(4), PIXELS(1) / 2);
+  FieldCamera_SetSpeed(4);
   FieldCamera_MoveTo(PIXELS(5880), -1, PIXELS(1608), 1);
   FieldCamera_WaitForMove();
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 0);
@@ -1405,7 +1405,7 @@ static void WorldMap_ShowHammetsCaravan(void) {
   }
   Actor_WaitForMoveById(ACTOR_GARET);
   Actor_SetPosition(ACTOR_GARET, 0, 0);
-  FieldCamera_SetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
+  FieldCamera_SetSpeed(0.8);
   FieldCamera_MoveTo(PIXELS(5848), -1, PIXELS(1608), 1);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.8);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 5848, 1576);
@@ -1931,7 +1931,7 @@ static void WorldMap_StepDownFromBunzasWagon(void) {
   Actor_SetSpeedAndAcceleration(ACTOR_KALAY_WAGON, 1.6, 0.4);
   Actor_SetAnimation(ACTOR_KALAY_WAGON, ANIM_WALK);
   Actor_MoveToAndWait(ACTOR_KALAY_WAGON, 5485, 2136);
-  FieldCamera_SetSpeed(PIXELS(2) / 5, PIXELS(1) / 20);
+  FieldCamera_SetSpeed(0.4);
   FieldCamera_MoveTo(PIXELS(5560), -1, PIXELS(2136), 1);
   Actor_MoveToAndWait(ACTOR_KALAY_WAGON, 5534, 2136);
   Actor_MoveToAndWait(ACTOR_KALAY_WAGON, 5544, 2158);
@@ -2186,7 +2186,7 @@ static void WorldMap_UseBlackOrb(void) {
   Event_Start();
   WorldMap_Unfreeze();
   WorldMap_StartZoom(7 * Q16_ONE / 5, 6);
-  FieldCamera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
+  FieldCamera_SetSpeed(3);
   FieldCamera_MoveTo(PIXELS(6024), -1, PIXELS(3432), 1);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.8);
   iodem = NULL;
@@ -2430,7 +2430,7 @@ static void WorldMap_ShowEndingEvent(void) {
   Actor_SetSpeed(ACTOR_JENNA, 0.6);
   Actor_SetScript(ACTOR_KRADEN, gEndingKradenWalk);
   Event_Wait(20);
-  FieldCamera_SetSpeed(PIXELS(7) / 10, PIXELS(7) / 80);
+  FieldCamera_SetSpeed(0.7);
   FieldCamera_MoveTo(PIXELS(7736), -1, PIXELS(3528), 1);
   Actor_SetScript(ACTOR_JENNA, gEndingJennaWalk);
   do {
@@ -2450,7 +2450,7 @@ static void WorldMap_ShowEndingEvent(void) {
                                     4, 4, 3, 0);
   Event_Wait(20);
   WorldMap_LoadDefaultCellsAndUpdateBlock();
-  FieldCamera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
+  FieldCamera_SetSpeed(1);
   FieldCamera_MoveTo(PIXELS(7768), -1, PIXELS(3528), 1);
   Actor_FaceDirection(ACTOR_ALEX, FACING_SOUTH_SOUTHEAST, 0);
   Actor_SetSpeed(ACTOR_KRADEN, 1.6);

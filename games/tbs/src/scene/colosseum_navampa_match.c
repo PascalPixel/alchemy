@@ -1712,7 +1712,7 @@ static void ColosseumNavampaMatch_TalkToSteppingStoneAttendant(s32 guideId) {
   promptResult = Colosso_GreetAtStage(guideId, 2);
   if (promptResult == COLOSSO_GUIDE_DESCRIBE) {
     Event_SetMessageId(MsgColossoSteppingStoneStage);
-    FieldCamera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
+    FieldCamera_SetSpeed(3);
     FieldCamera_MoveTo(PIXELS(376), -1, PIXELS(152), 1);
     x = 280;
     FieldCamera_WaitForMove();
@@ -1835,7 +1835,7 @@ static void ColosseumNavampaMatch_TalkToFreeClimbAttendant(s32 guideId) {
     result = Colosso_GreetAtStage(guideId, 4);
     if (result == COLOSSO_GUIDE_DESCRIBE) {
       Event_SetMessageId(MsgColossoPlaceNormallyCalledFreeClimb);
-      FieldCamera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
+      FieldCamera_SetSpeed(3);
       FieldCamera_MoveTo(PIXELS(856), -1, PIXELS(168), 1);
       FieldCamera_WaitForMove();
       Event_Wait(30);
@@ -1931,7 +1931,7 @@ static void ColosseumNavampaMatch_TalkToMovingSidewalkAttendant(s32 guideId) {
     if (result == COLOSSO_GUIDE_DESCRIBE) {
       // Walk against the sidewalk, then show how its current pushes the rider.
       Event_SetMessageId(MsgColossoCalledMovingSidewalkStage);
-      FieldCamera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
+      FieldCamera_SetSpeed(3);
       FieldCamera_MoveTo(PIXELS(1080), -1, PIXELS(168), 1);
       FieldCamera_WaitForMove();
       Event_Wait(30);

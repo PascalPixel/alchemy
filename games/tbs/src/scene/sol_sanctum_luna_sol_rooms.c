@@ -611,7 +611,7 @@ static void SolSanctumLunaSolRooms_IntroduceSolAndLunaRooms(void) {
   Actor_FaceDirection(ACTOR_KRADEN, FACING_EAST, 60);
   Actor_Jump(ACTOR_KRADEN, 4, 40);
   SolSanctumLunaSolRooms_ShowMessageAndWait(ACTOR_KRADEN, 6);
-  FieldCamera_SetSpeed(PIXELS(12) / 5, PIXELS(3) / 10);
+  FieldCamera_SetSpeed(2.4);
   FieldCamera_MoveTo(PIXELS(575), -1, PIXELS(181), 1);
   FieldCamera_WaitForMove();
   Event_Wait(120);
@@ -660,7 +660,7 @@ static void SolSanctumLunaSolRooms_IntroduceSolAndLunaRooms(void) {
   Actor_WalkToAndWait(ACTOR_KRADEN, 576, 120);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH, 2);
   // Leave Kraden by the northern wall for the search interactions.
-  FieldCamera_SetSpeed(PIXELS(4), PIXELS(1) / 2);
+  FieldCamera_SetSpeed(4);
   GameFlag_Set(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_SEEN);
 }
 
@@ -1283,7 +1283,7 @@ static void SolSanctumLunaSolRooms_RiseToElementalStarRoom(void) {
   } else {
     Event_Start();
     // Isaac steps onto the symbol and Kraden comes out beside him.
-    FieldCamera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
+    FieldCamera_SetSpeed(1);
     FieldCamera_MoveTo(PIXELS(287), -1, PIXELS(148), 1);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 288, 120);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STILL);

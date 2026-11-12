@@ -1113,7 +1113,7 @@ static void ValePlaza_SentToAidElders(void) {
     // The camera goes to the villagers by the stone. Garet's grandfather: go
     // aid the elders, the Boulder is too heavy for them.
     Event_Start();
-    FieldCamera_SetSpeed(PIXELS(8) / 5, PIXELS(1) / 5);
+    FieldCamera_SetSpeed(1.6);
     FieldCamera_MoveWithinMapBounds(PIXELS(197), -1, PIXELS(768), 1);
     FieldCamera_WaitForMove();
     Event_SetMessageId(MsgValeGoAidElders);
@@ -1214,10 +1214,10 @@ static void ValePlaza_SentToAidElders(void) {
     ValePlaza_FaceDirectionAndWait(ACTOR_STORM_GARET, FACING_NORTHEAST, 10);
     // Through event.h: called directly, the speeds' copies lengthen
     // speechFlags' life and swap r5 and r6 below.
-    FieldCamera_SetSpeed(PIXELS(6) / 5, PIXELS(3) / 20);
+    FieldCamera_SetSpeed(1.2);
     FieldCamera_MoveTo(PIXELS(215), -1, PIXELS(758), 1);
     FieldCamera_WaitForMove();
-    FieldCamera_SetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
+    FieldCamera_SetSpeed(0.8);
     FieldCamera_MoveTo(PIXELS(205), -1, PIXELS(778), 1);
     // He hops down to them; asked about his Psynergy, he has enough to save
     // Felix, thanks to the Psynergy Stone.
@@ -1300,7 +1300,7 @@ static void ValePlaza_MeetSurvivingTravelers(void) {
   // traveler walks in.
   Sound_Play(MUS_OMINOUS);
   camera->motionFlags = 0;
-  FieldCamera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
+  FieldCamera_SetSpeed(3);
   FieldCamera_MoveWithinMapBounds(PIXELS(109), PIXELS(176), PIXELS(281), 1);
   FieldCamera_WaitForMove();
   Event_Wait(40);
@@ -1751,7 +1751,7 @@ static void ValePlaza_DepartForQuest(void) {
   Actor_SetScript(ACTOR_FAREWELL_FIRST_CHILD,
                   gValePlaza_FarewellFirstChildActions);
   Event_Wait(10);
-  FieldCamera_SetSpeed(PIXELS(12) / 5, PIXELS(3) / 10);
+  FieldCamera_SetSpeed(2.4);
   FieldCamera_GetActor()->motionFlags = 0;
   FieldCamera_MoveTo(PIXELS(215), PIXELS(16), PIXELS(801), 1);
   Event_Wait(10);
@@ -1935,7 +1935,7 @@ static void ValePlaza_DepartForQuest(void) {
   departureActions = gValePlaza_PartyDepartureActions;
   Actor_SetScript(ACTOR_PARTY_LEADER, departureActions);
   Event_Wait(20);
-  FieldCamera_SetSpeed(PIXELS(2) / 5, PIXELS(1) / 20);
+  FieldCamera_SetSpeed(0.4);
   FieldCamera_MoveWithinMapBounds(PIXELS(216), PIXELS(16), PIXELS(905), 1);
   Event_Wait(20);
   Actor_SetSpeed(ACTOR_GARET, 0.8);

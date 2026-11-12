@@ -1953,7 +1953,7 @@ static void LunpaFortress_FindHammet(void) {
     Actor_FaceDirection(ACTOR_MIA, FACING_SOUTH, 0);
     // Dodonpa approaches from the south, then springs the lever trap.
     Actor_SetPosition(ACTOR_TOADONPA_DODONPA, 456, 320);
-    FieldCamera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
+    FieldCamera_SetSpeed(2);
     messageBase = MsgLunpaBackMoreGuess;
     Event_SetMessageId(messageBase);
     // "Back for more? I guess you didn't learn your lesson!"
@@ -2084,7 +2084,7 @@ static void LunpaFortress_FindHammet(void) {
     Actor_FaceActor(ACTOR_TOADONPA_HAMMET, ACTOR_TOADONPA_DODONPA, 0);
     Event_Wait(30);
     Sound_Play(MUS_OMINOUS);
-    FieldCamera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
+    FieldCamera_SetSpeed(2);
     FieldCamera_MoveToActorById(ACTOR_TOADONPA_DODONPA, 1);
     FieldCamera_WaitForMove();
     Actor_SetSpeed(ACTOR_TOADONPA_DODONPA, 0.8);

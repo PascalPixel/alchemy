@@ -1075,7 +1075,7 @@ static void TolbiShipDeck_WatchCrewDecideToSail(void) {
     Event_Start();
     Field_EndBusyAndReveal();
     Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_KALAY_CREWMAN, 10);
-    FieldCamera_SetSpeed(PIXELS(8) / 5, PIXELS(1) / 5);
+    FieldCamera_SetSpeed(1.6);
     FieldCamera_MoveTo(PIXELS(190), -1, PIXELS(708), 1);
     FieldCamera_WaitForMove();
     Event_Wait(40);
@@ -1147,7 +1147,7 @@ static void TolbiShipDeck_WatchCrewDecideToSail(void) {
     Event_Wait(40);
     Actor_SetAnimationAndWait(ACTOR_KALAY_CAPTAIN, 3);
     TolbiShipDeck_Say(SPEAKER(ACTOR_KALAY_CAPTAIN, SPEAKER_WINDOW_ABOVE));
-    FieldCamera_SetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
+    FieldCamera_SetSpeed(0.8);
     FieldCamera_MoveTo(PIXELS(182), -1, PIXELS(760), 1);
     Actor_SetSpeed(ACTOR_KALAY_KAJA, 0.8);
     Actor_SetScript(ACTOR_KALAY_KAJA, gTolbiShipDeck_KajaLeavesActions);
@@ -1164,7 +1164,7 @@ static void TolbiShipDeck_WatchCrewDecideToSail(void) {
     Actor_SetAnimationAndWait(ACTOR_KALAY_CREWMAN, 3);
     Actor_Jump(ACTOR_KALAY_CREWMAN, 4, 0);
     Actor_FaceDirection(ACTOR_KALAY_CREWMAN, FACING_SOUTH_SOUTHEAST, 40);
-    FieldCamera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
+    FieldCamera_SetSpeed(1);
     FieldCamera_MoveTo(PIXELS(216), -1, PIXELS(790), 1);
     {
       struct Actor *record = Actor_Get(ACTOR_KALAY_CREWMAN);
@@ -1290,7 +1290,7 @@ static void TolbiShipDeck_CatchCrewmanFromWest(void) {
 /// The camera pans to the door, which opens, and the crewman steps out and
 /// denies everything. Records the confrontation.
 static void TolbiShipDeck_ConfrontCrewman(void) {
-  FieldCamera_SetSpeed(PIXELS(8) / 5, PIXELS(1) / 5);
+  FieldCamera_SetSpeed(1.6);
   FieldCamera_MoveTo(PIXELS(216), -1, PIXELS(824), 1);
   FieldCamera_WaitForMove();
   Event_Wait(20);

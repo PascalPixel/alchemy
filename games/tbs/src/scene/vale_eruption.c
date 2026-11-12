@@ -176,7 +176,7 @@ static void ValeEruption_ReturnFromMtAleph(void) {
   Event_StartScreenTransition();
 
   // The camera pans up to the villagers as the ground shakes.
-  FieldCamera_SetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
+  FieldCamera_SetSpeed(0.8);
   FieldCamera_MoveTo(PIXELS(256), -1, PIXELS(500), 1);
   Event_Wait(20);
   MapGrid_SetShake(PIXELS(1), PIXELS(2), Q16_ONE);
@@ -258,7 +258,7 @@ static void ValeEruption_ReturnFromMtAleph(void) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.5);
   Actor_SetSpeed(ACTOR_GARET, 0.5);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 120, 258);
-  FieldCamera_SetSpeed(PIXELS(3) / 2, PIXELS(3) / 16);
+  FieldCamera_SetSpeed(1.5);
   FieldCamera_MoveTo(PIXELS(112), -1, PIXELS(320), 1);
   Event_Wait(40);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
@@ -321,7 +321,7 @@ static void ValeEruption_ReturnFromMtAleph(void) {
   Actor_FaceDirection(ACTOR_GARETS_BROTHER, FACING_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_GUARD, FACING_NORTHWEST, 0);
   // The camera flies to Dora: "Isaac!" The Great Healer: "You're safe!"
-  FieldCamera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
+  FieldCamera_SetSpeed(3);
   FieldCamera_MoveToActorById(ACTOR_DORA, 1);
   FieldCamera_WaitForArrival();
   Event_Wait(50);
@@ -352,7 +352,7 @@ static void ValeEruption_ReturnFromMtAleph(void) {
   Event_Wait(60);
 
   // "Come over here, both of you!" The two walk down to the villagers.
-  FieldCamera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
+  FieldCamera_SetSpeed(1);
   FieldCamera_MoveTo(PIXELS(214), -1, PIXELS(472), 1);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 1);
   Actor_SetSpeed(ACTOR_GARET, 1);

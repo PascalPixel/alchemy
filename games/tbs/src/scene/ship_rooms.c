@@ -1698,7 +1698,7 @@ static void ShipRooms_WatchWarriorsStormOff(void) {
   } else {
     Event_Start();
     Field_EndBusyAndReveal();
-    FieldCamera_SetSpeed(PIXELS(12) / 5, PIXELS(3) / 10);
+    FieldCamera_SetSpeed(2.4);
     ShipRooms_MoveCameraAndWait(PIXELS(1463), -1, PIXELS(464),
                                 SHIP_CAMERA_WAIT_FOR_ARRIVAL | 20);
     Actor_RunRepeatedMotion(ACTOR_HOLD_OURANOS, 1);
@@ -1832,7 +1832,7 @@ static void ShipRooms_DiscussLaunchingWithoutAnchor(void) {
   // Gather the captain's quarters's attention around the argument about
   // launching.
   Sound_Play(MUS_DUNGEON);
-  FieldCamera_SetSpeed(PIXELS(12) / 5, PIXELS(3) / 10);
+  FieldCamera_SetSpeed(2.4);
   ShipRooms_MoveCameraAndWait(PIXELS(456), -1, PIXELS(648),
                               SHIP_CAMERA_WAIT_FOR_ARRIVAL | 20);
   Actor_RunRepeatedMotion(ACTOR_QUARTERS_KAJA, 1);
@@ -2054,7 +2054,7 @@ static void ShipRooms_DiscussLaunchingWithoutAnchor(void) {
   Actor_FaceDirection(ACTOR_QUARTERS_OURANOS, FACING_EAST, 0);
   Actor_ShowEmote(ACTOR_QUARTERS_SEAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   Actor_ShowEmote(ACTOR_QUARTERS_KAJA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
-  FieldCamera_SetSpeed(PIXELS(6) / 5, PIXELS(3) / 20);
+  FieldCamera_SetSpeed(1.2);
   ShipRooms_MoveCameraAndWait(PIXELS(464), -1, PIXELS(680),
                               SHIP_CAMERA_WAIT_FOR_ARRIVAL);
   Actor_RunRepeatedMotion(ACTOR_QUARTERS_CREWMAN, 1);
@@ -2140,7 +2140,7 @@ static void ShipRooms_ReturnLuckyAnchor(void) {
   }
   Actor_ShowEmote(ACTOR_QUARTERS_SECOND_GUIDE, EMOTE_IN_FRONT | EMOTE_ELLIPSIS,
                   40);
-  FieldCamera_SetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
+  FieldCamera_SetSpeed(0.8);
   FieldCamera_MoveTo(PIXELS(472), -1, PIXELS(636), 1);
   Actor_SetSpeed(ACTOR_QUARTERS_SECOND_GUIDE, 1);
   Actor_WalkToAndWait(ACTOR_QUARTERS_SECOND_GUIDE, 472, 662);
@@ -3744,7 +3744,7 @@ static void ShipRooms_ReportMonstersBelowdecks(void) {
   Event_Wait(10);
   ShipRooms_RunEventCommand(SHIP_FACE_PARTY_EAST_AND_WEST, 0, 40);
   ShipRooms_RunEventCommand(SHIP_FACE_PARTY, FACING_SOUTH, 20);
-  FieldCamera_SetSpeed(PIXELS(18) / 5, PIXELS(9) / 20);
+  FieldCamera_SetSpeed(3.6);
   ShipRooms_MoveCameraAndWait(PIXELS(440), -1, PIXELS(320),
                               SHIP_CAMERA_WAIT_FOR_ARRIVAL | 20);
   Actor_RunRepeatedMotion(ACTOR_ROWING_CREWMAN, 2);
@@ -3788,13 +3788,13 @@ static void ShipRooms_ReactToMonsterAttack(void) {
   Event_SetMessageId(MsgTolbiShipHeyAreYouOk);
   ShipRooms_Say(ACTOR_ROWING_KAJA);
   ShipRooms_RunEventCommand(SHIP_FACE_PARTY, FACING_NORTH, 0);
-  FieldCamera_SetSpeed(PIXELS(12) / 5, PIXELS(3) / 10);
+  FieldCamera_SetSpeed(2.4);
   FieldCamera_MoveTo(PIXELS(440), -1, PIXELS(176), 1);
   Actor_SetSpeed(ACTOR_ROWING_KAJA, 1.6);
   Actor_WalkToAndWait(ACTOR_ROWING_KAJA, 408, 134);
   Actor_WalkToAndWait(ACTOR_ROWING_KAJA, 408, 152);
   Actor_WalkToAndWait(ACTOR_ROWING_KAJA, 424, 164);
-  FieldCamera_SetSpeed(PIXELS(8) / 5, PIXELS(1) / 5);
+  FieldCamera_SetSpeed(1.6);
   FieldCamera_MoveTo(PIXELS(440), -1, PIXELS(300), 1);
   Actor_WalkToAndWait(ACTOR_ROWING_KAJA, 424, 222);
   Actor_WalkToAndWait(ACTOR_ROWING_KAJA, 424, 262);
@@ -3843,7 +3843,7 @@ static void ShipRooms_ReactToMonsterAttack(void) {
   Actor_SetScript(ACTOR_GARET, action);
   Actor_SetScript(ACTOR_IVAN, action);
   Actor_RunScriptAndWait(ACTOR_MIA, action);
-  FieldCamera_SetSpeed(PIXELS(3) / 5, PIXELS(3) / 40);
+  FieldCamera_SetSpeed(0.6);
   FieldCamera_MoveTo(PIXELS(440), -1, PIXELS(176), 1);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 1);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 424, 272);

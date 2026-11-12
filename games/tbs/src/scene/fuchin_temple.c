@@ -571,7 +571,7 @@ static void FuchinTemple_NyunpaOffersTest(void) {
     Event_Wait(30);
     Actor_SetAnimationAndWait(ACTOR_NYUNPA, ANIM_NOD);
     Event_Wait(20);
-    FieldCamera_SetSpeed(PIXELS(1) / 2, PIXELS(1) / 16);
+    FieldCamera_SetSpeed(0.5);
     FieldCamera_MoveToActorById(ACTOR_NYUNPA, 1);
     PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
     PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_BG);
@@ -1396,7 +1396,7 @@ static void FuchinTemple_FehSeesChi(void) {
   actor = Actor_Get(ACTOR_MESSENGER_STUDENT);
   actor->update = 0;
   Actor_SetAnimation(ACTOR_PUNCHING_STUDENT, ANIM_STAND);
-  FieldCamera_SetSpeed(PIXELS(1) / 2, PIXELS(1) / 16);
+  FieldCamera_SetSpeed(0.5);
   FieldCamera_MoveTo(PIXELS(232), -1, PIXELS(200), 1);
   FieldCamera_WaitForArrival();
   // Continue the Chi discussion with the students gathered around the tree.

@@ -1320,7 +1320,7 @@ static void ColosseumSatrageMatch_TalkToShiftingFloorAttendant(s32 attendant) {
     if (result == COLOSSO_GUIDE_DESCRIBE) {
       Event_SetMessageId(MsgColossoShiftingFloorStage);
       ColosseumSatrageMatch_ResetLifts();
-      FieldCamera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
+      FieldCamera_SetSpeed(3);
       FieldCamera_MoveTo(PIXELS(984), -1, PIXELS(232), 1);
       FieldCamera_WaitForMove();
       COLOSSEUM_SATRAGE_MATCH_SHOW_MESSAGE(attendant, 0);
@@ -1365,11 +1365,11 @@ static void ColosseumSatrageMatch_TalkToLogRollingAttendant(s32 attendant) {
     result = Colosso_GreetAtStage(attendant, 3);
     if (result == COLOSSO_GUIDE_DESCRIBE) {
       Event_SetMessageId(MsgColossoLogRollingStage);
-      FieldCamera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
+      FieldCamera_SetSpeed(3);
       FieldCamera_MoveTo(PIXELS(752), -1, PIXELS(192), 1);
       FieldCamera_WaitForMove();
       Event_Wait(60);
-      FieldCamera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
+      FieldCamera_SetSpeed(1);
       FieldCamera_MoveTo(PIXELS(752), -1, PIXELS(224), 1);
       FieldCamera_WaitForMove();
       // "This is the Log- Rolling Stage."
@@ -1427,7 +1427,7 @@ static void ColosseumSatrageMatch_TalkToWallAttendant(s32 attendant) {
     FieldCamera_MoveTo(PIXELS(536), -1, PIXELS(240), 1);
     FieldCamera_WaitForMove();
     Event_Wait(45);
-    FieldCamera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
+    FieldCamera_SetSpeed(1);
     FieldCamera_MoveTo(PIXELS(536), -1, PIXELS(192), 1);
     z = 264;
     FieldCamera_WaitForMove();
@@ -1438,7 +1438,7 @@ static void ColosseumSatrageMatch_TalkToWallAttendant(s32 attendant) {
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 616, z);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
     Field_ClimbUp();
-    FieldCamera_SetSpeed(PIXELS(1) / 4, PIXELS(1) / 32);
+    FieldCamera_SetSpeed(0.25);
     FieldCamera_MoveTo(PIXELS(536), -1, PIXELS(160), 1);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.5);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_CLIMB);
@@ -1529,7 +1529,7 @@ static void ColosseumSatrageMatch_TalkToBoardWalkAttendant(s32 attendant) {
     FieldCamera_MoveTo(PIXELS(328), -1, PIXELS(264), 1);
     FieldCamera_WaitForMove();
     Event_Wait(30);
-    FieldCamera_SetSpeed(PIXELS(3) / 2, PIXELS(3) / 16);
+    FieldCamera_SetSpeed(1.5);
     FieldCamera_MoveTo(PIXELS(312), -1, PIXELS(176), 1);
     FieldCamera_WaitForMove();
     // "This place is called the Board Walk."

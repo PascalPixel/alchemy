@@ -227,17 +227,13 @@ static struct Actor *Scene_FindActorRegion(s32 *direction, s32 *slot,
        i < sizeof(work->actors) / sizeof(work->actors[0]); list++, i++) {
     struct Actor *actor = *list;
     s32 kind;
-    /* FAKEMATCH(dead): j cleared before the footprint loop sets it again; as
-     * no store, 10 of 139 instructions differ in tbs-en. */
-    j = 0;
     // UB: the same empty slots are scanned here; the null guard grows the
     // native English helper from 296 to 308 bytes.
 #ifdef UBFIX
     if (actor == NULL)
       continue;
 #endif
-    kind = actor->sprite->entries[0]->animationId;
-    for (j = 0; j < 6; j++) {
+    for (j = 0, kind = actor->sprite->entries[0]->animationId; j < 6; j++) {
       if (kind == gPushedActor_FootprintKinds[j]) {
         s32 x, z, left, top, right, bottom;
         *footprint = j;

@@ -311,9 +311,7 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
   DrawRectangle *slots;
   struct Actor *actor;
   struct Actor *target;
-  /* FAKEMATCH(temporary): background holds &gBattleWork->background; as
-   * gBattleWork->background, 18 of 672 instructions differ in tbs-en. */
-  u16 *background;
+  struct BattleWork *battle;
   s32 big;
   s32 half;
   s32 frame;
@@ -525,8 +523,9 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
   EFFECT_RELEASE_BLITTERS();
   gBgScroll[1].y = 32;
   // Fade the background palette back in over 7 frames.
-  for (frame = 0, background = &gBattleWork->background; frame != 7; frame++) {
-    BattleBackground_SetPaletteLevelFar(*background, 6 - frame);
+  battle = gBattleWork;
+  for (frame = 0; frame != 7; frame++) {
+    BattleBackground_SetPaletteLevelFar(battle->background, 6 - frame);
     wait(1);
   }
   BattleEffect_HideBg1AndRestoreBackdrop();

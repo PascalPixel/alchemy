@@ -442,24 +442,12 @@ void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectParams *args) {
     // a line) and moves up a line each frame.
     row = work->bg2xLines;
     if (work->args->side == EFFECT_SIDE_ENEMIES) {
-      s32 angle;
-      s32 base;
-
-      /* FAKEMATCH(temporary): base holds 8 << 16; as
-       * (8 << 16) - Trig_Sin(angle) * 8, 4 of 306 instructions differ in
-       * tbs-en. */
-      for (i = 0, base = 8 << 16, angle = frame << 10; i != DISPLAY_HEIGHT;
-           i++) {
-        *row++ = (base - Trig_Sin(angle) * 8) >> 10;
-        angle += 1024;
-      }
+      for (i = 0; i != DISPLAY_HEIGHT; i++)
+        *row++ = (px(8) - Trig_Sin((frame + i) * (TRIG_TURN / 64)) * 8) >> 10;
     } else {
-      s32 angle;
-
-      for (i = 0, angle = frame << 10; i != DISPLAY_HEIGHT; i++) {
-        *row++ = (Trig_Sin(angle) * 8 >> 10) - (112 << 8);
-        angle += 1024;
-      }
+      for (i = 0; i != DISPLAY_HEIGHT; i++)
+        *row++ =
+            (Trig_Sin((frame + i) * (TRIG_TURN / 64)) * 8 >> 10) - (112 << 8);
     }
     EFFECT_VIEW_FROM_CAMERA(camera);
     EFFECT_FOR_EACH_TARGET(member, work->args) {

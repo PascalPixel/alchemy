@@ -568,26 +568,24 @@ s32 Portrait_GetForSpeaker(u32 value) {
 struct Window *Portrait_OpenWindow(s32 speaker, s32 portraitOption, s32 x,
                                    s32 y) {
   struct Window *window;
-  s32 negativeFour;
-  s32 offset;
+  s32 portraitX;
+  s32 portraitY;
   void *work;
 
   work = gWindowWork[0];
   if (Portrait_GetForSpeaker(speaker) == -1) {
     return 0;
   }
-  /* FAKEMATCH(temporary): negativeFour holds the -4 Portrait_Create takes; as
-   * -4 at the call, 29 of 71 instructions differ in tbs-en. */
-  negativeFour = -4;
-  offset = -4;
+  portraitX = -4;
+  portraitY = -4;
   if (((struct WindowWork *)work)->mindRead != 0) {
     window = Window_Create(x, y, 6, 5, WINDOW_FLAG_INSTANT);
-    offset = 0;
+    portraitX = 0;
   } else {
     window = Window_Create(x, y, 5, 5, WINDOW_FLAG_INSTANT);
   }
   if (window != 0) {
-    Portrait_Create(speaker, portraitOption, -1, window, offset, negativeFour);
+    Portrait_Create(speaker, portraitOption, -1, window, portraitX, portraitY);
   }
   return window;
 }

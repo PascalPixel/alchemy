@@ -28,11 +28,8 @@ UNUSED void BattleEffect_ConvertBackgroundToBlueRamp(void) {
   s32 i, x, y, row, end, speed;
   s32 red, green, blue;
   u16 color;
-  u8 *delays, *p, *pixel;
+  u8 *delays, *pixel;
   u16 *palette;
-  /* FAKEMATCH(temporary): delayMask holds 63; as Random16() & 63, 2 of 175
-   * instructions differ in tbs-en. */
-  u32 delayMask;
   // A 32-colour blue ramp at colours 32 to 63, red and green at half the blue.
   palette = (u16 *)&BG_PLTT_COLOR(2, 0);
   i = 0;
@@ -49,11 +46,11 @@ UNUSED void BattleEffect_ConvertBackgroundToBlueRamp(void) {
   speed = 16;
   Iwram_CopyWords(BLUE_RAMP_PIXELS, (void *)BG_CHAR_BLOCK(2),
                   BATTLE_BACKGROUND_BYTES);
-  delayMask = 63;
-  p = delays;
+  x = 0;
   do {
-    *p++ = Random16() & delayMask;
-  } while (p != delays + 256);
+    delays[x] = Random16() & 63;
+    x++;
+  } while (x != 256);
   row = 0;
   i = 0;
   do {

@@ -19,10 +19,19 @@ extern char SceneId_Ov6afRoom1;
 extern char SceneId_Ov6afRoom2;
 extern char SceneId_Ov6afRoom3;
 extern char SceneId_Ov6afRoom4;
-extern u32 gData_0200117c[];
-extern u32 gData_020011cc[];
+/// One entry of the cell lists Func_020005ac walks.
+struct TreasureIsleCell {
+  s32 x; ///< in 16-pixel cells
+  s32 z; ///< in 16-pixel cells
+  s32 unk08;
+  u16 flag; ///< set once the cell has been opened (Func_020003fc)
+  u16 unk0e;
+};
 
-void Func_020003fc(void *cells, s32 index);
+extern struct TreasureIsleCell gData_0200117c[];
+extern struct TreasureIsleCell gData_020011cc[];
+
+void Func_020003fc(struct TreasureIsleCell *cells, s16 index);
 void Func_02000ba0(void);
 void Func_0200105c(void);
 s32 Func_02001064(s32 a, s32 b, s32 c);
@@ -180,16 +189,18 @@ s32 gData_02001170[] = {
     (s32)gData_020010ec,
 };
 
-u32 gData_0200117c[] = {
-    7, 21, 12, 771, 7, 17,
-    13, 772, 12, 15, 14, 773,
-    9, 11, 15, 774, 46, 38,
-    16, 775,
+struct TreasureIsleCell gData_0200117c[] = {
+    {7, 21, 12, 0x303},
+    {7, 17, 13, 0x304},
+    {12, 15, 14, 0x305},
+    {9, 11, 15, 0x306},
+    {46, 38, 16, 0x307},
 };
 
-u32 gData_020011cc[] = {
-    41, 23, 11, 778, 47, 23,
-    12, 779, 53, 23, 13, 780,
+struct TreasureIsleCell gData_020011cc[] = {
+    {41, 23, 11, 0x30a},
+    {47, 23, 12, 0x30b},
+    {53, 23, 13, 0x30c},
 };
 
 struct SceneEntrance gSceneEntrances[] = {

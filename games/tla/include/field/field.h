@@ -50,7 +50,7 @@ extern u32 gSceneExits[];
 extern struct Actor gSnapshotObjects[];
 extern u32 gIdejima_ActorDepartureScript[];
 extern u8 gLinkLobby_SlotColumns[];
-extern const s32 gLinkLobby_SlotValues[];
+extern s32 gLinkLobby_SlotValues[];
 extern const u8 gActor_BlinkChildValues[4];
 extern const u8 gActor_StepAngleScript[];
 extern u16 gScript_MainScript[];

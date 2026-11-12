@@ -1646,7 +1646,7 @@ SECTIONS
         "*/games/tla/src/scene/loho.o"(.text)
         "*/games/tla/src/scene/loho/import.o"(.text)
         "*/games/tla/src/graphics/field/pal685.o"(.rodata)
-        "*/games/tla/src/scene/loho/data.o"(.data)
+        "*/games/tla/src/scene/loho.o"(.data)
     }
 }
 #elif OVERLAY == 0x6a7
@@ -1692,9 +1692,8 @@ SECTIONS
         "*/games/tla/src/field/field_effect/move.o"(.text)
         "*/games/tla/src/scene/caverns/s015c.o"(.text)
         "*/games/tla/src/scene/caverns.o"(.text)
-        "*/games/tla/src/scene/caverns/s0454.o"(.text)
         "*/games/tla/src/scene/caverns/import.o"(.text)
-        "*/games/tla/src/scene/caverns/data.o"(.data)
+        "*/games/tla/src/scene/caverns.o"(.data)
     }
 }
 #elif OVERLAY == 0x6aa
@@ -1853,9 +1852,6 @@ SECTIONS
         "*/games/tla/src/field/field_effect/move.o"(.text)
         "*/games/tla/src/scene/treasure_isle/s015c.o"(.text)
         "*/games/tla/src/scene/treasure_isle/scene_tables.o"(.text)
-        "*/games/tla/src/scene/treasure_isle/s043c.o"(.text)
-        "*/games/tla/src/scene/treasure_isle/s05ac.o"(.text)
-        "*/games/tla/src/scene/treasure_isle/s0880.o"(.text)
         "*/games/tla/src/scene/treasure_isle/s0cf4.o"(.text)
         "*/games/tla/src/scene/treasure_isle/import.o"(.text)
         "*/games/tla/src/scene/treasure_isle/s0cf4.o"(.data)
@@ -1875,11 +1871,7 @@ SECTIONS
         "*/games/tla/src/field/field_effect/move.o"(.text)
         "*/games/tla/src/scene/anemos_inner_sanctum/s0480.o"(.text)
         "*/games/tla/src/scene/anemos_inner_sanctum/scene_tables.o"(.text)
-        "*/games/tla/src/scene/anemos_inner_sanctum/s09b8.o"(.text)
-        "*/games/tla/src/scene/anemos_inner_sanctum/s0a78.o"(.text)
         "*/games/tla/src/scene/anemos_inner_sanctum/s0ac8.o"(.text)
-        "*/games/tla/src/scene/anemos_inner_sanctum/s1398.o"(.text)
-        "*/games/tla/src/scene/anemos_inner_sanctum/s17b4.o"(.text)
         "*/games/tla/src/scene/anemos_inner_sanctum/s1938.o"(.text)
         "*/games/tla/src/scene/anemos_inner_sanctum/move.o"(.text)
         "*/games/tla/src/scene/anemos_inner_sanctum/s2db0.o"(.text)
@@ -1906,9 +1898,8 @@ SECTIONS
         "*/games/tla/src/scene/anemos_inner_sanctum_entrance/s015c.o"(.text)
         "*/games/tla/src/scene/anemos_inner_sanctum_entrance/hide.o"(.text)
         "*/games/tla/src/scene/anemos_inner_sanctum_entrance/s0588.o"(.text)
-        "*/games/tla/src/scene/anemos_inner_sanctum_entrance/list.o"(.text)
         "*/games/tla/src/scene/anemos_inner_sanctum_entrance/import.o"(.text)
-        "*/games/tla/src/scene/anemos_inner_sanctum_entrance/list.o"(.data)
+        "*/games/tla/src/scene/anemos_inner_sanctum_entrance/s0588.o"(.data)
         "*/games/tla/src/graphics/field/cached_a.o"(.rodata)
         "*/games/tla/src/graphics/field/cached_d.o"(.rodata)
         "*/games/tla/src/scene/anemos_inner_sanctum_entrance/data2.o"(.data)
@@ -1940,7 +1931,6 @@ SECTIONS
     {
         "*/games/tla/src/scene/epilogue/entry.o"(.text)
         "*/games/tla/src/scene/epilogue.o"(.text)
-        "*/games/tla/src/scene/epilogue/s0098.o"(.text)
         "*/games/tla/src/scene/epilogue/import.o"(.text)
         "*/games/tla/src/scene/epilogue/pal.o"(.rodata)
         "*/games/tla/src/scene/epilogue.o"(.data)
@@ -1971,13 +1961,12 @@ SECTIONS
     .text 0x2008000 :
     {
         "*/games/tla/src/scene/lobby/entry.o"(.text)
-        "*/games/tla/src/scene/lobby/scene_tables.o"(.text)
         "*/games/tla/src/scene/lobby/lobby.o"(.text)
         "*/games/tla/src/scene/lobby/s0fbc.o"(.text)
         "*/games/tla/src/scene/lobby/talk.o"(.text)
         "*/games/tla/src/scene/lobby/scene_events.o"(.text)
         "*/games/tla/src/scene/lobby/import.o"(.text)
-        "*/games/tla/src/scene/lobby/data.o"(.data)
+        "*/games/tla/src/scene/lobby/scene_events.o"(.data)
     }
     .bss :
     {

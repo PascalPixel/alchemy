@@ -191,10 +191,14 @@ s32 Unit_LearnPsynergy(s32 stateIndex, s32 value) {
   return index;
 }
 
-// Called with one argument, as its bytes need: no prototype is in scope.
-struct LevelUpResult *Unit_TryLevelUp();
+struct LevelUpResult;
+struct LevelUpResult *Unit_TryLevelUp(s32 unitId, struct LevelUpResult *gains);
 
-void Func_080af794(s32 owner) { Unit_TryLevelUp(owner); }
+/// Levels the character up once if it has the experience. Returns `gains`
+/// filled with the gains, or NULL. Only a far-call veneer reaches it.
+struct LevelUpResult *Func_080af794(s32 unitId, struct LevelUpResult *gains) {
+  return Unit_TryLevelUp(unitId, gains);
+}
 
 struct OwnerGrowthRecord {
   u8 unk00[0x50];

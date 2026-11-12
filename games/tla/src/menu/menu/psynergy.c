@@ -414,8 +414,7 @@ extern u8 gData_03001f2c[];
 void Func_080f8ab4(s32 x, s32 y);
 void *Unit_Get(s32 owner);
 s32 Func_080fd6f0(struct BattleUnit *unit, u16 *actions, s32 mode);
-// Called with the arguments its bytes need: no prototype is in scope.
-s32 Func_080fd000();
+s32 Func_080fd000(u16 *ownerIds, u16 *actions);
 
 /// Shows side partySlot's icon, collects the actions of the member chosen
 /// there last (the first when none was) and runs Func_080fd000 on them.
@@ -481,8 +480,7 @@ s32 GameFlag_Test(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 void PsynergyMenu_RefreshOwnerPsynergy(s32 ownerId);
 
-// Called with the arguments its bytes need: no prototype is in scope.
-s32 Func_080fd55c();
+s32 Func_080fd55c(s32 window, s32 owner);
 
 void Menu_CreateOwnerEntryObjects(s32 first);
 void wait(s32 frames);
@@ -496,7 +494,7 @@ void Heap_Release(void *block);
 s32 Func_080fd6f0(struct BattleUnit *unit, u16 *actions, s32 mode);
 s32 Menu_MoveGridCursor(s32 *selection, s32 count, s32 columns);
 
-s32 Func_080fd000(u16 *ownerIds) {
+s32 Func_080fd000(u16 *ownerIds, u16 *actions) {
   struct PsynergyMenuState *menu;
   s32 selection;
   s32 count;
@@ -768,9 +766,9 @@ void *Unit_Get(s32 unit);
 /// label message; German, Spanish, French and Italian leave out the owner's
 /// name when the ability's name is wide. Japanese draws "L" or "L:" (and "R"
 /// or "R:") itself, then the name, dropping the colon for a wide name. Returns
-/// 1.
+/// 1. owner is not used.
 #if LANGUAGE != LANGUAGE_JAPANESE
-s32 Func_080fd55c(s32 window) {
+s32 Func_080fd55c(s32 window, s32 owner) {
   s32 left;
   s32 top;
   s32 width;
@@ -828,7 +826,7 @@ s32 Func_080fd55c(s32 window) {
   return 1;
 }
 #else
-s32 Func_080fd55c(s32 window) {
+s32 Func_080fd55c(s32 window, s32 owner) {
   s32 left;
   s32 top;
   s32 width;

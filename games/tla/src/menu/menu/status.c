@@ -9,8 +9,7 @@ void Window_DrawBorderFar(s32 x, s32 y, s32 width, s32 height);
 void wait(s32 frames);
 void Window_InitializeWork(s32 unused);
 s32 Party_ListActiveOwnersFar(s16 *owners);
-// Called with the arguments its bytes need: no prototype is in scope.
-void Func_080fee04();
+void Func_080fee04(s32 unused0, s32 unused1, s32 unused2, s32 unused3);
 
 s32 Func_080fe240(void);
 
@@ -83,9 +82,6 @@ void Window_EraseBorderRectFar(s32 x, s32 y, s32 width, s32 height);
 void wait(s32 frames);
 void Window_InitializeWork(s32 unused);
 s32 Party_ListActiveOwnersFar(s16 *owners);
-// Called with the arguments its bytes need: no prototype is in scope.
-void Func_080fee04();
-
 s32 Func_080fe49c(void);
 
 void ItemMenu_Close(void);
@@ -422,8 +418,7 @@ void *Unit_Get(s32 owner);
 void Palette_LightenHighlight(s32 paletteNumber);
 s32 GameFlag_Test(s32 flag);
 
-// Called with the arguments its bytes need: no prototype is in scope.
-void Menu_CreateWindowAndEntryObjects();
+void Menu_CreateWindowAndEntryObjects(s32 resource, s32 frame);
 
 void Menu_CreateOwnerEntryObjects(s32 first);
 void wait(s32 frames);
@@ -557,9 +552,6 @@ extern u8 MsgChooseCharacter[];
 
 void *Unit_Get(s32 owner);
 
-// Called with the arguments its bytes need: no prototype is in scope.
-void Menu_CreateWindowAndEntryObjects();
-
 void PsynergyMenu_DrawPsynergyIcons(u16 *list);
 void Func_081005e4(s32 x, s32 y, s32 columns);
 
@@ -686,7 +678,8 @@ struct MenuRuntimeCursor {
 
 void Menu_PlaceOwnerEntryObjects(struct MenuEntryWindow *window, s32 originX, s32 originY);
 
-void Func_080fee04(void) {
+/// Its callers pass four values it does not read.
+void Func_080fee04(s32 unused0, s32 unused1, s32 unused2, s32 unused3) {
   struct MenuRuntimeCursor *work = Ram_HeapSlots->menuRuntime;
 
   Menu_PlaceOwnerEntryObjects(Func_080f88d0(work), 2, 2);
@@ -723,9 +716,9 @@ void Func_080ff370(s32, s32, s32); ///< draws the status ailments
 /// Creates the status window and its side object the first time, spawns the
 /// icon entries in mode 3, then draws the status ailments (with 0x100 when the
 /// window was just made). The work block holds the window at 0x28, the object
-/// at 0x170 and the mode at 0x21c.
+/// at 0x170 and the mode at 0x21c. frame is not used.
 // ☀️'s version also creates eight entry objects.
-void Menu_CreateWindowAndEntryObjects(s32 resource) {
+void Menu_CreateWindowAndEntryObjects(s32 resource, s32 frame) {
   s32 created;
   s32 handle;
   void *object;

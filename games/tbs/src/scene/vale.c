@@ -2007,8 +2007,9 @@ static void Vale_ClimbUpRoofLadder(s32 actorId, s32 approachAnimationId,
   sprite = actor->sprite;
   Actor_SetSpeed(actorId, 1);
   Actor_WalkToAndWait(actorId, 392, 886);
-  // XXX: the leader turns north, not actorId; a render of Vale_RoofMended with
-  // Dora climbing would settle whether Isaac visibly turns.
+  // The leader, not actorId, is turned north. The player sees no turn: Isaac
+  // stays facing south on the roof while Dora climbs, and already faces north
+  // when Jenna and Garet do.
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 10);
   actor->motionFlags = 0;
   sprite->flags = 0;

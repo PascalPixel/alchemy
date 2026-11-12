@@ -200,3 +200,5 @@ void Func_02000328(void) {
 }
 
 #include "../../field/object/set_sprite_priority.c"
+
+#include "../../field/object/prepare_object.c"

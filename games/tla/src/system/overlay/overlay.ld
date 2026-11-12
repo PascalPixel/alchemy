@@ -570,7 +570,6 @@ SECTIONS
     {
         "*/games/tla/src/scene/gondowan_cliffs/entry.o"(.text)
         "*/games/tla/src/scene/gondowan_cliffs.o"(.text)
-        "*/games/tla/src/field/object/prepare_object.o"(.text)
         "*/games/tla/src/scene/gondowan_cliffs/s0160.o"(.text)
         "*/games/tla/src/field/field_effect/move.o"(.text)
         "*/games/tla/src/scene/gondowan_cliffs/s01ec.o"(.text)
@@ -2074,7 +2073,6 @@ SECTIONS
     {
         "*/games/tla/src/scene/anemos_inner_sanctum/entry.o"(.text)
         "*/games/tla/src/scene/anemos_inner_sanctum/s0038.o"(.text)
-        "*/games/tla/src/field/object/prepare_object.o"(.text)
         "*/games/tla/src/field/field_effect/move.o"(.text)
         "*/games/tla/src/scene/anemos_inner_sanctum/s0480.o"(.text)
         "*/games/tla/src/scene/anemos_inner_sanctum/scene_tables.o"(.text)

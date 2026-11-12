@@ -94,3 +94,5 @@ u32 gData_0200139c[] = {
 // clang-format on
 
 #include "../field/object/set_sprite_priority.c"
+
+#include "../field/object/prepare_object.c"

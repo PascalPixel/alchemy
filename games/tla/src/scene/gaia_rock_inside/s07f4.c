@@ -2,6 +2,8 @@
 /// Scene code of overlay 0x681, in ROM order, from s07f4's offset up to the
 /// next object the overlay links.
 
+// ---- games/tla/src/scene/gaia_rock_inside/s07f4.c ----
+
 #include "types.h"
 #include "system.h"
 #include "actor.h"
@@ -433,3 +435,327 @@ void Func_02000fac(void) {
   Actor_SetAnimation(10, Data_020064f4);
   Actor_SetAnimationSpeed(object, gData_020064f8);
 }
+#undef FIELD_AT
+
+// ---- games/tla/src/scene/gaia_rock_inside/s1048.c ----
+// Scene code of overlay 0x681, in ROM order, from s1048's offset up to the next object the overlay links.
+
+#include "text/msg_ids.h"
+
+extern s32 gData_0200559c[];
+extern s32 gData_02005610[];
+extern s32 gData_020056c4[];
+extern s32 gData_02005728[];
+/* VIEW(s1048): variable gData_0200646c as extern s32 gData_0200646c[]; s07f4 has extern struct Actor gData_0200646c. */
+extern s32 gData_0200646c__s1048[] __asm__("gData_0200646c");
+extern s32 gData_020064ec;
+extern s32 gData_020064f0;
+
+void Func_02000f00(void);
+void Func_02000fac(void);
+void Func_02004e5c(void);
+void Func_02004e64(void);
+void Func_02004f54(void);
+
+/// Object 10 turns to the leader, talks and walks to its place while the camera
+/// follows; flag 0x9de is set, and object 9's script decides whether two
+/// words of gData_0200646c are copied into place.
+void Func_02001048(void) {
+  struct Actor *object = Actor_Get(9);
+
+  Func_02004e5c();
+  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_SetMessageId((s32)MsgGaiaRockInside02);
+  FieldCamera_FollowActor(10, 1);
+  if (object->script == gData_02005610 || object->script == gData_0200559c)
+    FieldActor_RefreshSelectorById(9);
+  Func_02000f00();
+  Actor_SetAnimation(10, 1);
+  Actor_FaceActor(10, gMainRoutineWork.currentOwner, 0);
+  Actor_ShowEmote(10, 256, 0);
+  FieldEvent_Wait(30);
+  Event_ShowMessage(10, 0);
+  Actor_WalkTo(10, 496, 456);
+  FieldActor_WaitForMoveById(10);
+  Actor_FaceDirection(10, FACING_EAST + FACING_STEP, 0);
+  FieldEvent_Wait(10);
+  Event_ShowMessage(10, 0);
+  Actor_ShowEmote(10, 261, 0);
+  FieldEvent_Wait(45);
+  Event_ShowMessage(10, 0);
+  Actor_FaceDirection(10, FACING_NORTH + FACING_STEP, 0);
+  FieldEvent_Wait(30);
+  FieldCamera_MoveTo(PIXELS(488), -1, PIXELS(392), 1);
+  Func_02004f54();
+  Event_ShowMessage(10, 0);
+  FieldCamera_FollowActor(10, 1);
+  Func_02004f54();
+  Actor_FaceDirection(10, FACING_EAST + FACING_STEP, 0);
+  FieldEvent_Wait(10);
+  Event_ShowMessage(10, 0);
+  Actor_SetAnimationAndWait(10, 3);
+  FieldCamera_MoveTo(-1, -1, -1, 0);
+  Event_SetFlag(0x9de);
+  if (object->script == gData_020056c4 || object->script == gData_02005728) {
+    gData_0200646c__s1048[2] = gData_020064ec = gData_0200646c__s1048[14];
+    gData_0200646c__s1048[4] = gData_020064f0 = gData_0200646c__s1048[16];
+  }
+  Func_02000fac();
+  Func_02004e64();
+}
+
+/// Talking to object 10 while its byte at 0x60 is at most 2: once flag 0x9ac is
+/// set it says one of two lines, by whether any of flags 0x9bc to 0x9bf is set;
+/// before that it turns to the leader and speaks.
+void Func_020011c8(void) {
+  if (*((u8 *)Actor_Get(10) + 96) > 2)
+    return;
+  Func_02004e5c();
+  FieldEvent_ResolvePendingActions(0);
+  if (Event_GetFlag(0x9ac)) {
+    if (Event_GetFlag(0x9bc) || Event_GetFlag(0x9bd) || Event_GetFlag(0x9be) ||
+        Event_GetFlag(0x9bf))
+      FieldEvent_SetMessageId((s32)MsgGaiaRockInside10);
+    else
+      FieldEvent_SetMessageId((s32)MsgGaiaRockInside06);
+    Event_ShowMessage(10, 0);
+  } else {
+    if (Actor_Get(9)->script == gData_02005610)
+      FieldActor_RefreshSelectorById(9);
+    Func_02000f00();
+    FieldEvent_SetMessageId((s32)MsgGaiaRockInside03);
+    Actor_FaceActor(10, gMainRoutineWork.currentOwner, 0);
+    FieldEvent_Wait(10);
+    Event_ShowMessage(10, 0);
+    Actor_SetAnimationAndWait(10, 3);
+    FieldEvent_Wait(10);
+    Func_02000fac();
+  }
+  Func_02004e64();
+}
+
+// ---- games/tla/src/scene/gaia_rock_inside/s12ac.c ----
+// Scene code of overlay 0x681, in ROM order, from s12ac's offset up to the next object the overlay links.
+
+
+void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
+
+#define FIELD_AT(base, type, off)                                              \
+  (((struct {                                                                  \
+     u8 pad[off];                                                              \
+     type v;                                                                   \
+   } *)(base))                                                                 \
+       ->v)
+
+/* VIEW(s12ac): routine Func_02004e5c as s32 Func_02004e5c(); s1048 has void Func_02004e5c(void). */
+extern s32 Func_02004e5c__s12ac() __asm__("Func_02004e5c");
+/* VIEW(s12ac): routine Func_02000f00 as s32 Func_02000f00(); the definition has void Func_02000f00(void). */
+extern s32 Func_02000f00__s12ac() __asm__("Func_02000f00");
+/* VIEW(s12ac): routine Func_02000fac as s32 Func_02000fac(); the definition has void Func_02000fac(void). */
+extern s32 Func_02000fac__s12ac() __asm__("Func_02000fac");
+/* VIEW(s12ac): routine Func_02004e64 as s32 Func_02004e64(); s1048 has void Func_02004e64(void). */
+extern s32 Func_02004e64__s12ac() __asm__("Func_02004e64");
+extern u8 MsgGaiaRockInside07[];
+/* VIEW(s12ac): variable gData_02005610 as extern u8 gData_02005610[]; s1048 has extern s32 gData_02005610[]. */
+extern u8 gData_02005610__s12ac[] __asm__("gData_02005610");
+extern u8 MsgGaiaRockInside04[];
+
+void Func_020012ac(void) {
+  s32 t5;
+  s32 t2;
+
+  Func_02004e5c__s12ac();
+  FieldEvent_ResolvePendingActions(0);
+  t2 = FieldPartyInventory_FindOwner(0x1c3);
+  if (t2 != -1) {
+    FieldEvent_SetMessageId((s32)MsgGaiaRockInside07);
+    Event_ShowMessage(0xa, 0);
+  } else {
+    t5 = ((s32)Actor_Get(9));
+    if (FIELD_AT(t5, s32, 0) == (s32)gData_02005610__s12ac) {
+      FieldActor_RefreshSelectorById(9);
+    }
+    Func_02000f00__s12ac();
+    FieldEvent_SetMessageId((s32)MsgGaiaRockInside04);
+    Event_ShowMessage(0xa, 0);
+    Func_02000fac__s12ac();
+  }
+  Func_02004e64__s12ac();
+}
+
+/* VIEW(s12ac): routine Scene_SetActorSpritePriority as s32 Scene_SetActorSpritePriority(); field.h has void Scene_SetActorSpritePriority(struct Actor *object, s32 priority). */
+extern s32 Scene_SetActorSpritePriority__s12ac() __asm__("Scene_SetActorSpritePriority");
+/* VIEW(s12ac): routine Func_02004d9c as s32 Func_02004d9c(); s07f4 has void Func_02004d9c(struct Actor *object, s32 mode). */
+extern s32 Func_02004d9c__s12ac() __asm__("Func_02004d9c");
+/* VIEW(s12ac): routine Animation_SetStateFlags as s32 Animation_SetStateFlags(); field.h has void Animation_SetStateFlags(struct Actor *object, u32 value). */
+extern s32 Animation_SetStateFlags__s12ac() __asm__("Animation_SetStateFlags");
+/* VIEW(s12ac): routine Func_02004dac as s32 Func_02004dac(); s07f4 has void Func_02004dac(struct Actor *object, const s32 *script). */
+extern s32 Func_02004dac__s12ac() __asm__("Func_02004dac");
+extern u8 gData_02005208[];
+
+void Func_02001314(s32 a0) {
+  s32 t0;
+
+  t0 = (s32)FieldActor_Create(0x2a0, FIELD_AT(a0, s32, 8),
+                              FIELD_AT(a0, s32, 12), FIELD_AT(a0, s32, 16));
+  FIELD_AT(t0, s32, 28) = 0x6666;
+  FIELD_AT(t0, s32, 24) = 0x6666;
+  FIELD_AT((t0 + 0x55), u8, 0) = 0;
+  Actor_SetSpriteColor(t0, 2);
+  Scene_SetActorSpritePriority__s12ac(t0, 1);
+  Func_02004d9c__s12ac(t0, 1);
+  Actor_SetSingleChildFlags(t0, 0);
+  Animation_SetStateFlags__s12ac(t0, 1);
+  Func_02004dac__s12ac(t0, (s32)gData_02005208);
+}
+#undef FIELD_AT
+
+// ---- games/tla/src/scene/gaia_rock_inside/s136c.c ----
+// Scene code of overlay 0x681, in ROM order, from s136c's offset up to the next object the overlay links.
+
+#include "frame.h"
+#include "system/field_effect.h"
+
+struct Orbiter {
+  u8 unk00[8];
+  s32 x;
+  s32 y;
+  s32 z;
+  u8 unk14[0x38];
+  s32 radius;
+  u8 unk50[0x12];
+  u8 countdown;
+  u8 unk63;
+  s16 angle;
+  u16 speed;
+  struct Actor *anchor;
+};
+
+/* VIEW(s136c): routine Func_02001314 as void Func_02001314(struct Orbiter *orbiter); the definition has void Func_02001314(s32 a0). */
+extern void Func_02001314__s136c(struct Orbiter *orbiter) __asm__("Func_02001314");
+
+// Steps an orbiting object around its anchor: turns it by half its speed, puts
+// it on the anchor (raised 8 pixels) and pushes it out by its radius; when its
+// countdown runs out returns 0, else, unless its radius is down to 2 pixels,
+// takes a second, shrinking step. Returns 1 while it runs. The same code as
+// overlay 67C's Func_020013bc. The first push goes through Call3 (directly, its
+// offset pointer is set after the angle's load).
+s32 Func_0200136c(struct Orbiter *orbiter) {
+  struct Actor *anchor = orbiter->anchor;
+  s16 *angle;
+
+  orbiter->angle += (s32)(orbiter->speed << 16) >> 17;
+  orbiter->x = anchor->x;
+  orbiter->y = anchor->y + 0x80000;
+  orbiter->z = anchor->z;
+  FieldVector_AddPolarOffset(orbiter->radius, orbiter->angle, &orbiter->x);
+  /* FAKEMATCH(temporary): the angle's address, taken after the first push,
+   * sets r2 from r8 before the second push reads it; as orbiter->angle,
+   * 2 of 89 instructions differ in tla-en. */
+  angle = &orbiter->angle;
+  if (--orbiter->countdown == 0)
+    return 0;
+  if (orbiter->radius == 0x20000)
+    return 1;
+  Func_02001314__s136c(orbiter);
+  orbiter->radius -= 0x40000;
+  orbiter->angle += (s32)(orbiter->speed << 16) >> 17;
+  orbiter->x = anchor->x;
+  orbiter->y = anchor->y + 0x80000;
+  orbiter->z = anchor->z;
+  FieldVector_AddPolarOffset(orbiter->radius, *angle, &orbiter->x);
+  Func_02001314__s136c(orbiter);
+  orbiter->radius -= 0x40000;
+  return 1;
+}
+
+struct GaiaRockInsideOrbit {
+  u8 unk00[8];
+  s32 x;
+  s32 y;
+  s32 z;
+  u8 unk14[0x30];
+  s32 centreX;
+  s32 centreZ;
+  s32 radius;
+  u8 unk50[0x12];
+  u8 phase;
+  u8 growth;
+  s16 angle;
+  s16 speed;
+};
+
+s32 Math_Cosine(s32 angle);
+// Called by its linked name: through Iwram_MulQ16's fixed address the
+// multiply's address is loaded one call early (2 of 75 instructions differ in
+// tla-en).
+s32 IwramMulQ16(s32 a, s32 b) __attribute__((long_call));
+
+// Moves around in a circle.
+s32 Func_0200142c(struct GaiaRockInsideOrbit *object) {
+  s32 z;
+
+  object->angle += object->speed;
+  object->x = IwramMulQ16(Math_Cosine(object->angle), object->radius);
+  z = IwramMulQ16(Math_Sin(object->angle), object->radius);
+  object->x += object->centreX;
+  object->z = (z >> 1) + object->centreZ;
+  if (object->growth != 141 && (gFrameCount & 1)) {
+    object->radius = object->growth * Math_Sin(object->phase << 10);
+    object->growth += 10;
+  }
+  if (object->speed == 0)
+    return 0;
+  if (object->growth == 141)
+    object->speed -= 128;
+  return 1;
+}
+
+#define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
+
+s32 Func_020014d0(struct Actor *object) {
+  struct Actor *target = object->watchedObject;
+  s32 steps;
+  s32 from;
+
+  object->bounce = (target->x - object->x) / (steps = 10);
+  from = object->y;
+  object->unk4c = (target->y - from + 0x100000) / steps;
+  object->gravity = (target->z - object->z) / steps;
+  BYTE_AT(object, 98) = steps;
+  return 0;
+}
+
+s32 Func_0200151c(struct Actor *object) {
+  u8 left;
+
+  object->x += object->bounce;
+  object->y += object->unk4c;
+  object->z += object->gravity;
+  left = --BYTE_AT(object, 98);
+  return left != 0;
+}
+
+void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                   s32 velocityZ, u32 flags,
+                   const struct EffectOptions *options);
+
+void Func_02001548(struct Actor *object) {
+  s32 phase = gFrameCount & 7;
+
+  if (phase == 0) {
+    struct EffectOptions options;
+    s32 position[3];
+
+    options.palette = 7;
+    options.type = 0x2a1;
+    options.priority = 1;
+    position[0] = object->x + (((Random16Far() & 31) - 16) << 16);
+    position[1] = object->y + ((Random16Far() & 31) << 16) + 0x80000;
+    position[2] = object->z;
+    Func_0200015c(
+        position[0], position[1], position[2] + 0x40000, 0, 0x8000, phase,
+        EFFECT_USE_TYPE | EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE, &options);
+  }
+}
+#undef BYTE_AT

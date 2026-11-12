@@ -1,6 +1,8 @@
 /// @file
 /// The scene code of overlay 0x69e that its scene tables belong to, in ROM order; the rest of the overlay is in jupiter_lighthouse_room_5/.
 
+// ---- games/tla/src/scene/jupiter_lighthouse_room_5.c ----
+
 #include "battle.h"
 #include "field.h"
 #include "game.h"
@@ -463,13 +465,14 @@ void Func_02000734(void) {
 void Func_02002a00(void);
 void Func_02002a08(void);
 void Func_02002a10(void);
-void Func_02002a18(struct Actor *object, s32 value);
+/* VIEW(jupiter_lighthouse_room_5): routine Func_02002a18 as void Func_02002a18(struct Actor *object, s32 value); jupiter_lighthouse_aerie.h has void Func_02002a18(void). */
+extern void Func_02002a18__jupiter_lighthouse_room_5(struct Actor *object, s32 value) __asm__("Func_02002a18");
 
 void Func_02000810(s32 actor, s32 target) {
   s32 i;
 
   Func_02002a00();
-  Func_02002a18(Actor_Get(actor), 2);
+  Func_02002a18__jupiter_lighthouse_room_5(Actor_Get(actor), 2);
   Event_PlaySound(201);
   System_Wait(50);
   Event_PlaySound(82);
@@ -485,7 +488,7 @@ void Func_02000810(s32 actor, s32 target) {
   }
   Actor_Get(target)->facing = 0xc000;
   Actor_SetSpriteColor(Actor_Get(target), 0);
-  Func_02002a18(Actor_Get(actor), 0);
+  Func_02002a18__jupiter_lighthouse_room_5(Actor_Get(actor), 0);
   Func_02002a10();
   Func_02002a08();
   Actor_SetAnimation(target, 1);
@@ -641,3 +644,517 @@ s32 Func_02000bf0(void) {
 }
 
 #include "shared/scene_set_arrival_flags.h"
+#undef EVENT_WORK
+
+// ---- games/tla/src/scene/jupiter_lighthouse_room_5/s0cb8.c ----
+// Scene code of overlay 0x69e, in ROM order, from s0cb8's offset up to the
+// next object the overlay links.
+
+#include "../../../../games/tla/src/scene/jupiter_lighthouse_aerie/jupiter_lighthouse_aerie.h"
+#include "iwram_call.h"
+#include "dma.h"
+#include "io_reg.h"
+
+extern s32 gData_020033dc;
+
+void Func_02000cb8(s32 value) { gData_020033dc = value; }
+
+extern s32 gData_020033d8;
+extern u16 gData_02003404[];
+
+void Func_02000cc4(void) {
+  u16 colors[16];
+  s32 phase = (gData_020033d8 / 4) % 5;
+  s32 i;
+  s32 offset;
+  u16 *p;
+
+  if (gData_020033dc != 0) {
+    u8 *work = Ram_HeapSlots->eventWork;
+    s16 *state = (s16 *)(work + 358);
+
+    if (*state != 0 && (*state & 0x3ff) != 153)
+      return;
+    if (*(s8 *)(work + 0xca4) != 0)
+      return;
+    if (*(s16 *)(work + 350) != 0)
+      return;
+  }
+  i = 0;
+  offset = 4;
+next:
+  p = colors;
+  {
+    /* FAKEMATCH(temporary): the slot and the table address held in locals;
+     * as colors[(phase + i) % 5] = *(u16 *)((u8 *)gData_02003404 + offset),
+     * 2 of 83 instructions differ in tla-en. */
+    s32 slot = (phase + i) % 5;
+    u8 *table = (u8 *)gData_02003404;
+
+    colors[slot] = *(u16 *)(table + offset);
+  }
+  i++;
+  offset += 2;
+  if (i <= 4)
+    goto next;
+  Dma_Set(p, (void *)0x05000184, 0x84000002, REG_DMA3);
+  gData_020033d8++;
+}
+
+extern u16 gData_02003424[];
+extern u16 gData_02003428[];
+
+s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
+void Func_02002888();
+void Func_02002a30();
+
+void Func_02000d80(s32 mode) {
+  gData_020033dc = 1;
+  if (mode != 2) {
+    Iwram_CopyWords(gData_02003404, (void *)&BG_PLTT_COLOR(12, 0), 32);
+    Iwram_CopyWords(gData_02003424, (void *)&BG_PLTT_COLOR(13, 0), 32);
+  }
+  if (Event_GetFlag(0xa00) || mode == 1) {
+    /* FAKEMATCH(temporary): a local holding 0, so the zero is built in r2
+     * and the counter's address in r3; as the 0 stored directly, 6 of 44
+     * instructions differ in tla-en. */
+    s32 zero = 0;
+
+    gData_020033d8 = zero;
+    Task_Add(Func_02000cc4, 1152);
+  } else {
+    Dma_Set(gData_02003428, (void *)&BG_PLTT_COLOR(12, 2), DMA_COPY_WORDS(2),
+            REG_DMA3);
+  }
+}
+
+void Func_02000e04(s32 id) {
+  struct Actor *object;
+  s32 height;
+
+  object = Actor_Get(id);
+  object->motionFlags = 4;
+  height = object->terrainHeight;
+  WORD_AT(object, 68) = 0;
+  object->y = height + 0x200000;
+  {
+    u8 *flags = &object->priorityFlags;
+    /* FAKEMATCH(temporary): a local holding 128, so the bit is built in the
+     * register it is ORed into; as *flags |= 128, 4 of 38 instructions differ
+     * in tla-en. */
+    s32 bit = 128;
+
+    *flags = bit | *flags;
+  }
+  height = Map_GetTerrainHeight(BYTE_AT(object, 34), object->x, object->z);
+  Func_02002888(object->x, object->z, 0, (height >> 19) + 6);
+  Func_02002a30(object->x, object->z, 0, 128);
+}
+
+#include "field_sprite.h"
+#include "event_work.h"
+
+void Func_020028b0(void);
+void Func_020028b8(void);
+
+void Func_02000e58(void) {
+  /* FAKEMATCH(wrapper): calls forwarded through inlines (call.h's Call and
+   * Value, this file's own); as direct calls, 8 of 216 instructions differ in
+   * tla-en. */
+  struct EventWork *work = Ram_HeapSlots->eventWork;
+  struct Actor *actor = Actor_Get(gMainRoutineWork.currentOwner);
+  struct Actor *linked = actor->watchedObject;
+  struct Actor *shadow;
+  u8 *p;
+  s32 angle;
+  s32 i;
+
+  Func_020028b0();
+  FieldEvent_ResolvePendingActions(0);
+  i = 0;
+  work->unkd46 = i;
+
+  actor->motionFlags = 4;
+  Actor_SetSingleChildFlags(actor, 0);
+
+  while (*((u8 *)linked + 0x63) != 0) {
+    actor->x = linked->x;
+    actor->y = linked->y + i;
+    actor->z = linked->z;
+    if (i <= 0x3ffff)
+      i += 0x1999;
+    actor->facing = (u8)gFrameCount << 12;
+    p = &actor->priorityFlags;
+    *p ^= 2 << (gFrameCount & 1);
+    System_Wait(1);
+  }
+  work->unkd44 = 1;
+  work->unkd46 = 1;
+  angle = linked->facing;
+  actor->x = (((linked->x >> 19) & ~1) + (angle >> 13) - 1) << 19;
+  actor->z = (((linked->z >> 19) & ~1) - ((angle >> 13) & 2) + 1) << 19;
+  actor->velocityY = 0x60000;
+  actor->priorityFlags = 1;
+  actor->motionFlags = 3;
+  Actor_SetSingleChildFlags(actor, 1);
+  FieldCamera_MoveTo(-1, -1, -1, 0);
+  shadow = FieldCamera_GetActor();
+  shadow->speedLimit = 0x80000;
+  shadow->acceleration = 0x10000;
+  shadow->motionFlags = 0;
+  FieldActor_SetMoveTarget(
+      shadow, actor->x, Map_GetTerrainHeight(0, actor->x, actor->z), actor->z);
+  i = 0;
+  if (actor->y > actor->terrainHeight + 0x100000) {
+    do {
+      System_Wait(1);
+      i++;
+      if (i > 59)
+        break;
+    } while (actor->y > actor->terrainHeight + 0x100000);
+  }
+  Event_PlaySound(127);
+  i = 0;
+  if (actor->velocityY != 0) {
+    do {
+      System_Wait(1);
+      i++;
+      if (i > 59)
+        break;
+    } while (actor->velocityY != 0);
+  }
+  Actor_WaitForMove(shadow);
+  Actor_Get(gMainRoutineWork.currentOwner)->priorityFlags |= 1;
+  FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
+  work->unkd46 = 1;
+  work->exit = 0;
+  Func_020028b8();
+}
+
+s32 Func_02001044(s32 *a, s32 *b) {
+  s32 dx = (a[0] - b[0]) >> 16;
+  s32 dz = (a[2] - b[2]) >> 16;
+
+  return Iwram_Sqrt(dx * dx + dz * dz);
+}
+
+extern const s32 gData_020033e0[];
+extern s32 gData_02003400;
+
+void Actor_SetAnimationSpeed(struct Actor *object, s32 speed);
+s32 Func_02002a20(s32 x, s32 z, s32 layer);
+void Func_020029b0(s32 *position);
+/* VIEW(s0cb8): routine Math_Cosine as s32 Math_Cosine(s32 angle); jupiter_lighthouse_room_5 has s32 Math_Cosine(u32 angle). */
+extern s32 Math_Cosine__s0cb8(s32 angle) __asm__("Math_Cosine");
+/* VIEW(s0cb8): routine Func_02002820 as void Func_02002820(struct Actor *object, const s32 *script); jupiter_lighthouse_room_5 has void Func_02002820(struct OrbitEffect *object, const void *script). */
+extern void Func_02002820__s0cb8(struct Actor *object, const s32 *script) __asm__("Func_02002820");
+
+void Func_02001070(struct Actor *self) {
+  u8 *work = Ram_HeapSlots->eventWork;
+  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
+  s32 position[3];
+  s32 distance;
+  s32 near;
+
+  if (*(s16 *)(work + 358) != 0 || *(s16 *)(work + 346) != 0 ||
+      *(s16 *)(work + 350) != 0 || *(s16 *)(work + 360) != 0) {
+    Actor_SetAnimationSpeed(self, 0);
+    return;
+  }
+  Actor_SetAnimationSpeed(self, 16);
+  if ((++*(u16 *)&self->timer & 31) == 31)
+    Event_PlaySound(231);
+  {
+    s8 *to = self->sprite;
+    s8 *from = leader->sprite;
+    u32 a = from[9] & 12;
+    to[9] = (s8)((to[9] & ~12) | a);
+  }
+  if (Func_02002a20(self->x, self->z, 2) != 255) {
+    position[0] = self->x;
+    position[1] = self->y;
+    position[2] = self->z;
+    Func_020029b0(position);
+    distance = position[0];
+    if (distance > 0x1100000)
+      goto stop;
+    if (distance < -0x200000)
+      goto stop;
+    {
+      if (*((u8 *)self + 0x62) == 0) {
+        distance = leader->y - self->y;
+        if (distance < 0)
+          distance = self->y - leader->y;
+        near = 0;
+        if (Func_02001044(&leader->x, &self->x) <= 12 && distance < 0xc0000)
+          near = 1;
+        if (near && !Event_GetFlag(260)) {
+          leader->facing = self->facing;
+          leader->watchedObject = self;
+          leader->priorityFlags &= ~1;
+          {
+            s32 delay = 200;
+            *(u16 *)(work + 362) = delay;
+          }
+          gMainRoutineWork.renderMode = 0;
+          *((u8 *)self + 0x62) = 1;
+          *((u8 *)self + 0x63) = 1;
+        }
+      }
+      {
+        s32 (*multiply)(s32, s32);
+        s32 cosine = Math_Cosine__s0cb8(self->facing);
+        s32 speed = self->speedLimit;
+        /* FAKEMATCH(dead): the routine address taken inside a once-only
+         * block, so the speed loads first; as a plain call, 2 of 197
+         * instructions differ in tla-en. */
+        do {
+          multiply = Iwram_MulQ16;
+        } while (0);
+        self->x += multiply(cosine, speed);
+      }
+      self->z += Iwram_MulQ16(Math_Sin(self->facing), self->speedLimit);
+      return;
+    }
+  }
+stop:
+  {
+    s32 zero = 0;
+    *((u8 *)self + 0x63) = zero;
+    self->update = zero;
+    Func_02002820__s0cb8(self, gData_020033e0);
+    Event_PlaySound(228);
+    gData_02003400 = zero;
+  }
+}
+
+// ---- games/tla/src/scene/jupiter_lighthouse_room_5/s1230.c ----
+// Scene code of overlay 0x69e, in ROM order, from s1230's offset up to the next object the overlay links.
+
+#include "call.h"
+#include "field_effect.h"
+#include "field_coordinate.h"
+
+struct GustObject {
+  u8 unk00[6];
+  u16 angle;
+  s32 x;
+  s32 y;
+  s32 z;
+  u8 unk14[0x0f];
+  u8 priorityFlags;
+  u8 unk24[0x0c];
+  s32 unk30;
+  u8 unk34[0x21];
+  u8 motionFlags;
+  u8 unk56[0x0c];
+  u8 unk62;
+  u8 unk63;
+  u16 unk64;
+  u8 unk66[6];
+  void (*update)(struct GustObject *object);
+};
+
+/* VIEW(s1230): routine Math_Cosine as s32 Math_Cosine(s32 angle); jupiter_lighthouse_room_5 has s32 Math_Cosine(u32 angle). */
+extern s32 Math_Cosine__s1230(s32 angle) __asm__("Math_Cosine");
+void Func_02002810(struct GustObject *object, s32 mode);
+/* VIEW(s1230): routine Actor_SetSingleChildFlags as void Actor_SetSingleChildFlags(struct GustObject *object, u32 flags); field.h has void Actor_SetSingleChildFlags(struct Actor *object, u32 flags). */
+extern void Actor_SetSingleChildFlags__s1230(struct GustObject *object, u32 flags) __asm__("Actor_SetSingleChildFlags");
+/* VIEW(s1230): routine Func_02001070 as void Func_02001070(struct GustObject *object); the definition has void Func_02001070(struct Actor *self). */
+extern void Func_02001070__s1230(struct GustObject *object) __asm__("Func_02001070");
+/* VIEW(s1230): routine Func_02001c88 as void Func_02001c88(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags, struct EffectOptions *options); jupiter_lighthouse_room_5 has void Func_02001c88(s32 x, s32 y, s32 z, s32 a3, s32 a4, s32 a5, s32 a6, struct EffectParams *params). */
+extern void Func_02001c88__s1230(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                   s32 velocityZ, u32 flags, struct EffectOptions *options) __asm__("Func_02001c88");
+
+struct GustObject *Func_02001230(struct GustObject *source) {
+  /* FAKEMATCH(wrapper): calls forwarded through inlines (call.h's Call and
+   * Value, this file's own); as direct calls, 69 of 92 instructions differ in
+   * tla-en. */
+  struct Vector3 position;
+  struct EffectOptions options;
+  struct GustObject *object;
+
+  Event_PlaySound(222);
+  position.x = source->x + Value2((s32 (*)())Iwram_MulQ16, 0x80000,
+                                  Math_Cosine__s1230(source->angle));
+  position.z = source->z + Value2((s32 (*)())Iwram_MulQ16, 0x80000,
+                                  Math_Sin(source->angle));
+  object = ((struct GustObject *)FieldActor_Create(280, position.x, source->y,
+                                                    position.z));
+  Func_02002810(object, 2);
+  Actor_SetSingleChildFlags__s1230(object, 0);
+  object->motionFlags = 0;
+  object->priorityFlags &= ~1;
+  object->angle = source->angle;
+  object->unk64 = 0;
+  object->unk62 = 0;
+  object->unk63 = 0;
+  object->update = Func_02001070__s1230;
+  object->unk30 = 0x18000;
+  options.priority = 1;
+  options.palette = 7;
+  Func_02001c88__s1230(position.x, source->y, position.z - 0x60000, 0, 0, 0, 0x30000,
+                &options);
+  return object;
+}
+
+s32 Func_02001308(struct Actor *object) {
+  struct EffectOptions options;
+  s32 phase, x, y, speed;
+
+  phase = gFrameCount & 7;
+  if (phase != 0)
+    goto done;
+  options.priority = 3;
+  options.startScaleX = 0xb333;
+  options.startScaleY = 0xb333;
+  options.palette = 14;
+  x = object->x + (((s32)((u32)(Random16Far() * 9) >> 16) - 4) << 16);
+  y = object->y + ((32 - (s32)((u32)(Random16Far() * 20) >> 16)) << 16);
+  speed = (((s32)((u32)(Random16Far() * 5) >> 16) << 16) + 0x50000) / 10;
+  Func_02001c88__s1230(x, y, object->z, 0, speed, phase,
+                EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY |
+                    EFFECT_USE_START_SCALE,
+                &options);
+done:
+  return 0;
+}
+
+/// struct Actor as this function reads it, its coordinates as
+/// FieldCoordinate.
+struct PositionedActor {
+  u8 unk00[8];
+  union FieldCoordinate x;
+  union FieldCoordinate y;
+  union FieldCoordinate z;
+  s32 terrainHeight;
+  s32 scaleX;
+  u8 unk1c[0x34];
+  struct FieldSprite *animation;
+  u8 animationKind;
+  u8 motionFlags;
+};
+
+/* VIEW(s1230): routine Animation_ApplyChildValues as void Animation_ApplyChildValues(struct PositionedActor *object, s32 value); jupiter_lighthouse_aerie.h has void Animation_ApplyChildValues(struct Actor *object, s32 value). */
+extern void Animation_ApplyChildValues__s1230(struct PositionedActor *object, s32 value) __asm__("Animation_ApplyChildValues");
+
+void Func_020013a8(void) {
+  struct PositionedActor *actor9 = ((struct PositionedActor *)Actor_Get(9));
+  struct PositionedActor *actor10 =
+      ((struct PositionedActor *)Actor_Get(10));
+  struct PositionedActor *actor23 =
+      ((struct PositionedActor *)Actor_Get(23));
+  struct FieldSprite *sprite = actor23->animation;
+
+  Actor_SetPosition(24, 0x2000000, 0xf80000);
+  Actor_SetPosition(23, 0x2000000, 0xf80000);
+  Actor_SetPosition(9, 0x1d80000, 0x1000000);
+  Actor_SetPosition(10, 0x2280000, 0x1000000);
+  ((struct PositionedActor *)Actor_Get(24))->scaleX = 0;
+  actor23->motionFlags = 0;
+  actor23->y.fixed = actor23->terrainHeight;
+  actor9->motionFlags = 0;
+  actor9->y.fixed = actor9->terrainHeight;
+  actor10->motionFlags = 0;
+  actor10->y.fixed = actor10->terrainHeight;
+  if (Event_GetFlag(0xa0a)) {
+    actor9->y.fixed += 0x66640;
+    {
+      s32 step = 0x1eb80;
+
+      actor23->y.fixed += step;
+    }
+    actor23->x.fixed -= 0x28f40;
+    sprite->rotation += 0x800;
+    Animation_ApplyChildValues__s1230(((struct PositionedActor *)Actor_Get(9)), 4);
+    Animation_ApplyChildValues__s1230(((struct PositionedActor *)Actor_Get(11)),
+                               4);
+  }
+  if (Event_GetFlag(0xa0b)) {
+    actor10->y.fixed += 0x66640;
+    {
+      s32 step = 0x1eb80;
+
+      actor23->y.fixed += step;
+    }
+    actor23->x.fixed += 0x28f40;
+    sprite->rotation -= 0x800;
+    Animation_ApplyChildValues__s1230(((struct PositionedActor *)Actor_Get(10)),
+                               4);
+    Animation_ApplyChildValues__s1230(((struct PositionedActor *)Actor_Get(12)),
+                               4);
+  }
+  if (Event_GetFlag(0xa0a) && Event_GetFlag(0xa0b)) {
+    actor9->y.fixed += 0x199900;
+    actor10->y.fixed += 0x199900;
+    {
+      s32 step = 0x1b8480;
+
+      actor23->y.fixed += step;
+    }
+    actor9->motionFlags = 4;
+    actor10->motionFlags = 4;
+    actor23->motionFlags = 4;
+  }
+}
+
+struct Spark {
+  u8 unk00[0x0c];
+  s32 dx;
+  s32 dy;
+  s32 duration;
+  s32 age;
+};
+
+struct SparkSprite {
+  u8 unk00[0x0c];
+  s32 x;
+  s32 z;
+  u8 unk14[0x14];
+};
+
+/* VIEW(s1230): tag struct SparkWork as struct SparkWork__s1230; jupiter_lighthouse_room_5.c has another definition. */
+struct SparkWork__s1230 {
+  u8 unk0000[0x400];
+  struct Spark sparks[96];
+  struct SparkSprite sprites[96];
+  s32 from[3];
+  s32 to[3];
+  s16 next;
+};
+
+void Func_020029b0(s32 *position);
+void Func_020029e8(struct SparkSprite *sprite);
+
+void Func_02001538(void) {
+  struct SparkWork__s1230 *work = Ram_HeapSlots->menuRuntime;
+  struct Spark *spark = work->sparks;
+  struct SparkSprite *sprite = work->sprites;
+  s32 position[3];
+  s32 duration;
+  s32 i;
+
+  for (i = 95; i >= 0; sprite++, i--, spark++) {
+    duration = spark->duration;
+    if (spark->age < 0 || spark->age > duration)
+      continue;
+    {
+      s32 sine = Math_Sin((s32)((spark->age << 15) / duration));
+      s32 *p = position;
+      p[0] = work->from[0] +
+             (work->to[0] - work->from[0]) * spark->age / duration +
+             sine * spark->dx;
+      sine = Math_Sin((s32)((spark->age << 15) / duration));
+      p[1] = work->from[1] +
+             (work->to[1] - work->from[1]) * spark->age / duration +
+             sine * spark->dy;
+      p[2] =
+          work->from[2] + (work->to[2] - work->from[2]) * spark->age / duration;
+      Func_020029b0(p);
+      sprite->x = p[0];
+      sprite->z = p[2];
+      Func_020029e8(sprite);
+      spark->age++;
+    }
+  }
+}

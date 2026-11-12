@@ -1,6 +1,8 @@
 /// @file
 /// Scene code of overlay 0x655, in ROM order, from s2698's offset up to the next object the overlay links.
 
+// ---- games/tla/src/scene/dehkan_plateau/s2698.c ----
+
 #include "types.h"
 #include "system.h"
 #include "actor.h"
@@ -216,3 +218,935 @@ void Func_02002b68(void) {
                                        0);
   }
 }
+
+// ---- games/tla/src/scene/dehkan_plateau/events_i.c ----
+extern const u8 gData_02003f44[];
+extern const u8 gData_02003f52[];
+extern const u8 gData_02003f80[];
+extern const u8 gData_02003f92[];
+extern const u8 gData_02003f98[];
+extern const u8 gData_02003fa0[];
+extern const u8 gData_02003fa8[];
+extern const u8 gData_02003fb0[];
+extern const u8 gData_02003fb8[];
+extern const u8 gData_02003fc0[];
+extern const u8 gData_02003fc4[];
+
+s32 GameFlag_Test(s32 flag);
+void GameFlag_SetBit(s32 flag);
+void GameFlag_ClearBit(s32 flag);
+void wait(s32 frames);
+struct Actor *Actor_GetById(u32 objectId);
+void Func_020000a4(const void *data, s32 a, s32 b);
+void Func_020002f8(const void *data);
+void Func_02000708(const void *data);
+void Func_02001474(s32 show);
+void Func_02002180(void);
+void Map_CopyCellAttributeRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
+void Func_02003c28(void);
+void Func_02003c30(void);
+void Event_ResolvePendingActions(s32 skip);
+void Func_02003dc0(const void *data);
+void Func_02003dc8(void);
+void Sound_Play(s32 cue);
+void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 x, s32 z);
+void Func_02003de8(void);
+void Map_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX, s32 destY, s32 width,
+                   s32 height);
+void Func_020015b8(struct Actor *object);
+void Func_0200172c(void);
+void Func_02001804(void);
+
+struct CellRecord {
+  u16 present;
+  u16 x;
+  u16 y;
+  u16 unk06[3];
+};
+
+extern const u16 gData_02003fd2[];
+extern const struct CellRecord gData_02004066[];
+
+void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 id, s32 x, s32 z, s32 angle);
+s32 Func_080d47b4(s32 actorId, s32 emote, s32 frames);
+void Func_02003cf0(void);
+struct Actor *Func_080d4568(void);
+void Func_02003d50(s32 a, s32 b);
+void Func_02003d58(s32 a, s32 b);
+void Func_02003d60(void);
+void Func_02003d68(void);
+void Func_02003d70(void);
+void Actor_ArmCallbackAndRefresh(s32 id, s32 value);
+void Func_02003cc0(s32 id);
+void Func_080d489c(s32 id, s32 value);
+void Func_02003d40(struct Actor *object, s32 mode);
+void Func_02003bb8(struct Actor *object);
+void Motion_SetVarCbAndRefresh(u32 objectId, s32 variant);
+/* VIEW(events_i): routine PartyInventory_GiveItem as void PartyInventory_GiveItem(s32 item, s32 mode); event.h has s32 PartyInventory_GiveItem(s32 item, s32 flags). */
+extern void PartyInventory_GiveItem__events_i(s32 item, s32 mode) __asm__("PartyInventory_GiveItem");
+void Func_02002b68(void);
+void Func_02002f08(void);
+
+void Camera_MoveWithinMapBounds(s32 a, s32 b, s32 c, s32 d);
+void Actor_SetAngleToward(s32 id, s32 target, s32 mode);
+void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
+void Actor_SetPositionAndReset(s32 id, s32 x, s32 z);
+void Actor_Jump(s32 id, s32 a, s32 b);
+void Actor_ArmCallback(s32 id, s32 a, s32 b);
+void Actor_WatchAndSetScript(s32 id, s32 target);
+void Event_Wait(s32 frames);
+/* VIEW(events_i): routine Task_Add as void Task_Add(void(*func) (void), s32 priority); task.h has s32 Task_Add(TaskFunc func, s32 order). */
+extern void Task_Add__events_i(void (*func)(void), s32 priority) __asm__("Task_Add");
+void Task_RemoveFar(void (*func)(void));
+void Field_DispatchTypeHandler(s32 type);
+
+void Func_02002bcc(void) {
+  Func_02003d50(134, 1);
+  Task_Add__events_i(Func_02002b68, 0x480);
+  Func_02003d58(9, gMainRoutineWork.currentOwner);
+  Func_02003d70();
+  Field_DispatchTypeHandler(1);
+  Func_02003d60();
+  Task_RemoveFar(Func_02002b68);
+  Func_02003d68();
+}
+
+// ---- games/tla/src/scene/dehkan_plateau/s2c14.c ----
+// Scene code of overlay 0x655, in ROM order, from s2c14's offset up to the next object the overlay links.
+
+#include "map.h"
+#include "iwram_call.h"
+#include "scene_ids.h"
+#include "field.h"
+
+extern u8 gMapShapeGrid[];
+
+s32 Math_Cosine(s32 angle);
+void ObjectVisual_CopyAttributes(s32 id, s32 value);
+s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
+void Func_0200056c(s32 id);
+void Func_020006ec(struct Actor *object, struct Actor *other);
+void Func_02000974(s32 mode);
+void Func_02000aa8(void);
+void Func_02000c4c(s32 level, s32 layer);
+void Func_02003ba0(struct Actor *object, s32 mode);
+void Func_02003ba8(struct Actor *object, const void *script);
+s32 Func_02003c10(s32 layer, s32 x, s32 z);
+void Func_02003c28(void);
+void Func_02003c30(void);
+void Func_02003c78(s32 id, s32 target);
+void Func_02003cc0(s32 id);
+s32 Func_02003d20(void);
+s32 Func_02003d80(void *sprite, s32 frame);
+s32 Func_02003db0(struct Actor *object);
+s32 Func_02003dd0(s32 layer, s32 shape, s32 height);
+struct Actor *Func_02003dd8(s32 *position, s32 mode);
+void Effect_AdvanceMotionAtLeaderPriority(struct Actor *object);
+
+extern struct Actor *gData_02004420;
+
+void Func_020021b4(void);
+void Func_02002bcc(void);
+void Func_02003bc8(void);
+
+void Func_02002c14(void) {
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *helper = Actor_GetById(9);
+
+  Func_02003c28();
+  Event_ResolvePendingActions(0);
+  FieldCamera_MoveTo(-1, -1, -1, 0);
+  Func_02003bc8();
+  wait(1);
+  leader->y = 0x820000;
+  leader->gravity = 0x8000;
+  leader->bounce = 0;
+  leader->motionFlags = 0;
+  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
+  Event_StartScreenTransition();
+  Event_WaitTransitionFrames();
+  Sound_Play(204);
+  leader->motionFlags = 3;
+  Event_Wait(24);
+  Sound_Play(176);
+  Func_020021b4();
+  if (gData_02004420 != NULL) {
+    FieldActor_SetPositionAndResetMotion(gData_02004420, 0xf80000, 0, 0x780000);
+    wait(1);
+    gData_02004420->speedLimit = 0x19999;
+    gData_02004420->acceleration = 0x19999;
+    gData_02004420->velocityY = 0x80000;
+  }
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
+  Actor_SetSpeed(9, 0x19999, 0xcccc);
+  leader->velocityY = 0x60000;
+  helper->velocityY = 0x60000;
+  FieldActor_SetMoveTarget(leader, 0xd80000, 0, 0x780000);
+  FieldActor_SetMoveTarget(helper, 0x1180000, 0, 0x780000);
+  if (gData_02004420 != NULL)
+    FieldActor_SetMoveTarget(gData_02004420, 0xf80000, 0, 0x580000);
+  Script_WaitForEventTimeout(leader);
+  Event_Wait(20);
+  Func_080d47b4(9, 0x103, 0);
+  Actor_ArmCallback(gMainRoutineWork.currentOwner, 0, 0);
+  Actor_ArmCallback(9, 0x8000, 60);
+  Actor_WalkToAndWait(9, 296, 104);
+  Actor_WalkToAndWait(9, 296, 80);
+  Actor_SetHorizontalPositionWithTerrain(9, 0, 0);
+  Event_Wait(20);
+  if (gData_02004420 != NULL) {
+    gData_02004420->motionFlags = 0;
+    MapGrid_CopyCellAttributes(0, 0, 1, 1, 15, 5);
+    wait(1);
+  }
+  GameFlag_SetBit(0x871);
+  Func_02003c30();
+}
+
+void Func_02002698();
+void Func_02003cf0(void);
+
+void Func_02002dd4(void) {
+  struct Actor *actor;
+
+  actor = Actor_GetById(16);
+  Func_02003c28();
+  Event_ResolvePendingActions(0);
+  Actor_WatchAndSetScript(gMainRoutineWork.currentOwner, 16);
+  Func_080d4568()->motionFlags = 0;
+  Camera_MoveWithinMapBounds(PIXELS(760), PIXELS(32), PIXELS(204), 1);
+  Func_02003cf0();
+  Actor_SetAngleToward(16, gMainRoutineWork.currentOwner, 0);
+  // Called for its value, which is unused: as Call3 the actor id is loaded
+  // before the 0x100's shift.
+  Actor_ShowEmote(16, 0x100, 40);
+  Actor_SetSpeedParameters(16, 0x20000, 0x10000);
+  Sound_Play(153);
+  actor->velocityY = 0x80000;
+  Actor_SetSingleChildFlags(Actor_GetById(16), 0);
+  Actor_SetPositionAndReset(16, 760, 200);
+  Actor_SetSingleChildFlags(Actor_GetById(16), 1);
+  Event_Wait(20);
+  Sound_Play(153);
+  actor->velocityY = 0x80000;
+  Actor_SetSingleChildFlags(Actor_GetById(16), 0);
+  Actor_SetPositionAndReset(16, 792, 200);
+  Actor_SetSingleChildFlags(Actor_GetById(16), 1);
+  Func_02002698(9, 16, 0x210);
+  Sound_Play(153);
+  actor->velocityY = 0x80000;
+  Actor_SetSingleChildFlags(Actor_GetById(16), 0);
+  Actor_SetPositionAndReset(16, 824, 200);
+  Actor_SetSingleChildFlags(Actor_GetById(16), 1);
+  Event_Wait(20);
+  Actor_WatchAndSetScript(16, gMainRoutineWork.currentOwner);
+  Actor_Stop(gMainRoutineWork.currentOwner);
+  Event_Wait(20);
+  Func_02003c30();
+}
+
+extern const u8 gData_02003f44[];
+extern const u8 gData_02003f52[];
+extern const u8 gData_02003f80[];
+extern const u8 gData_02003f92[];
+extern const u8 gData_02003f98[];
+extern const u8 gData_02003fa0[];
+extern const u8 gData_02003fa8[];
+extern const u8 gData_02003fb0[];
+extern const u8 gData_02003fb8[];
+extern const u8 gData_02003fc0[];
+extern const u8 gData_02003fc4[];
+
+void Func_020000a4(const void *data, s32 a, s32 b);
+void Func_020002f8(const void *data);
+void Func_02000708(const void *data);
+void Func_02001474(s32 show);
+void Func_02002180(void);
+void Func_02003dc0(const void *data);
+void Func_02003dc8(void);
+void Func_02003de8(void);
+void Func_020015b8(struct Actor *object);
+void Func_0200172c(void);
+void Func_02001804(void);
+
+
+extern const u16 gData_02003fd2[];
+extern const struct CellRecord gData_02004066[];
+
+void Func_02003d50(s32 a, s32 b);
+void Func_02003d58(s32 a, s32 b);
+void Func_02003d60(void);
+void Func_02003d68(void);
+void Func_02003d70(void);
+void Func_02003d40(struct Actor *object, s32 mode);
+void Func_02003bb8(struct Actor *object);
+void Func_02002b68(void);
+void Func_02002f08(void);
+
+
+// The scene's own event inlines: a habit of the whole game written once, as
+// event_inline.h's are, a layer and not a compiler-steering device.
+static __inline__ void Actor_SetAngle(s32 id, s32 angle) {
+  Actor_ArmCallbackAndRefresh(id, angle);
+}
+
+void Func_02002f08(void) {
+  Func_02003c28();
+  Event_ResolvePendingActions(0);
+  Actor_SetAngleToward(16, gMainRoutineWork.currentOwner, 0);
+  Func_080d47b4(16, 0x100, 40);
+  Actor_ArmCallbackAndRefresh(16, FACING_EAST);
+  Event_Wait(20);
+  Motion_SetVarCbAndRefresh(16, 3);
+  Actor_SetAngle(16, FACING_WEST);
+  Actor_WatchAndSetScript(16, gMainRoutineWork.currentOwner);
+  Func_080d489c(16, 0x102);
+  Event_Wait(40);
+  Func_02003c30();
+}
+
+// The scene's own event inlines: a habit of the whole game written once, as
+// event_inline.h's are, a layer and not a compiler-steering device.
+static __inline__ void Map_CopyAttributes(s32 a, s32 b, s32 c, s32 d, s32 e,
+                                          s32 f) {
+  Map_CopyCellAttributeRect(a, b, c, d, e, f);
+}
+
+void Func_02002f74(void) {
+  if (GameFlag_Test(0x207) != 0)
+    Func_02002f08();
+  else
+    Func_02002dd4();
+  GameFlag_SetBit(0x209);
+}
+
+void Func_02002f9c(void) {
+  Func_02003c28();
+  Event_ResolvePendingActions(0);
+  if (gData_02004420 != 0)
+    Func_02003d40(gData_02004420, 3);
+  PartyInventory_GiveItem(199, 0);
+  if (gData_02004420 != 0)
+    Func_02003bb8(gData_02004420);
+  Map_CopyAttributes(1, 0, 1, 1, 15, 5);
+  GameFlag_SetBit(0x878);
+  Func_02003c30();
+}
+
+void Func_020030e4(void);
+void Func_02003164(void);
+void Func_02003284(void);
+void Func_0200369c(void);
+void Func_0200390c(void);
+void Func_02003aa0(void);
+
+void Func_02002ff4(void) {
+  u8 *work = Ram_HeapSlots->eventWork;
+
+  Func_02003c28();
+  Event_ResolvePendingActions(0);
+  if (gMainRoutineWork.scene == (s32)&SceneId_Ov655Room1)
+    Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 3);
+  Sound_Play(123);
+  Event_FinishScreenTransition();
+  Event_WaitTransitionFrames();
+  Import_EventSetExitRequest(*(s16 *)(work + 0x154));
+}
+
+s32 Func_0200304c(void) {
+  s16 scene = gMainRoutineWork.scene;
+
+  if (scene == (s32)&SceneId_Ov655Room1)
+    Func_020030e4();
+  else if (scene == (s32)&SceneId_Ov655Room2)
+    Func_02003164();
+  else if (scene == (s32)&SceneId_Ov655Room3)
+    Func_02003284();
+  else if (scene == (s32)&SceneId_Ov655Room4)
+    Func_0200369c();
+  else if (scene == (s32)&SceneId_Ov655Room5)
+    Func_0200390c();
+  else if (scene == (s32)&SceneId_Ov655Room6)
+    Func_02003aa0();
+  return 0;
+}
+
+struct AnimationFacing {
+  u8 unk00[9];
+  u8 low : 2;
+  u8 facing : 2;
+  u8 high : 4;
+};
+
+void Func_020030c0(void) {
+  Actor_SetSpritePriority(64, ((struct AnimationFacing *)Actor_GetById(
+                                   gMainRoutineWork.currentOwner)
+                                   ->sprite)
+                                  ->facing);
+}
+
+// The scene's own event inlines: a habit of the whole game written once, as
+// event_inline.h's are, a layer and not a compiler-steering device.
+
+void Func_020001d0(const void *data);
+void Func_02000038(const void *data);
+void Func_02001820(void);
+void Func_02001f94(void);
+
+void Func_020030e4(void) {
+  Func_020001d0(gData_02003f44);
+  Actor_SetSpritePriority(8, 3);
+  Func_02000038(gData_02003f98);
+  Func_02003cc0(12);
+  if (GameFlag_Test(0x301) != 0) {
+    Map_CopyAttributes(54, 32, 2, 1, 56, 64);
+    Actor_SetPositionAndResetMotion(Actor_GetById(12), 226 << 18, 128 << 15,
+                                    130 << 18);
+    wait(10);
+  }
+  Func_02001820();
+  Func_02001f94();
+  {
+    s32 priority = 0x480;
+
+    Task_Add(Func_020030c0, priority);
+  }
+}
+
+// ---- games/tla/src/scene/dehkan_plateau/s3164.c ----
+extern const u8 gData_02003f52[];
+extern const u8 gData_02003fa0[];
+extern const u8 gData_02003fc0[];
+
+s32 GameFlag_Test(s32 flag);
+void GameFlag_SetBit(s32 flag);
+struct Actor *Actor_GetById(u32 objectId);
+void Func_02000038(const void *data);
+void Func_02000584(const void *data);
+void Func_020012d8(void);
+void Func_020018a8(void);
+void Func_02001fac(void);
+void Map_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX, s32 destY, s32 width,
+                   s32 height);
+void Map_CopyCellAttributeRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
+void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 x, s32 z);
+void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 id, s32 x, s32 z, s32 angle);
+void Func_02003cc0(s32 id);
+void Func_02003db8(const void *data);
+
+// The scene's own event inlines: a habit of the whole game written once, as
+// event_inline.h's are, a layer and not a compiler-steering device.
+
+/* VIEW(s3164): static Actor_SetPosition as Actor_SetPosition__s3164; the definition has static inline void Actor_SetPosition(s32 actorId, s32 fixed_x, s32 fixed_z). */
+static __inline__ void Actor_SetPosition__s3164(struct Actor *object, s32 x,
+                                         s32 y, s32 z) {
+  Actor_SetPositionAndResetMotion(object, x, y, z);
+}
+
+static __inline__ void Actor_PlaceFacing(s32 id, s32 x, s32 z, s32 angle) {
+  Actor_SetHorizontalPositionAndAngleWithTerrain(id, x, z, angle);
+}
+
+void Func_02003164(void) {
+  if (GameFlag_Test(265) == 0) {
+    Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
+    if (gMainRoutineWork.entrance == 5) {
+      Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 2);
+      Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 1;
+    }
+  }
+  Func_02000584(gData_02003f52);
+  Func_020012d8();
+  Func_02000038(gData_02003fa0);
+  if (GameFlag_Test(0x840) != 0) {
+    Func_02003cc0(23);
+    Map_CopyAttributes(50, 7, 1, 1, 52, 7);
+    Actor_SetPosition__s3164(Actor_GetById(23), 210 << 18, 0, 240 << 15);
+  } else {
+    Func_02003db8(gData_02003fc0);
+  }
+  Func_020018a8();
+  if (GameFlag_Test(0x86c) != 0) {
+    /* FAKEMATCH(temporary): the angle held in a local is started before the two
+     * coordinates, as the native does; as the literal argument, started after
+     * them, 4 of 114 instructions differ in tla-en. */
+    s32 angle = 0x4000;
+
+    Actor_PlaceFacing(24, 222 << 18, 168 << 16, angle);
+    Map_CopyCellPictureIndicesRect(68, 33, 105, 6, 1, 1);
+    Map_CopyCellPictureIndicesRect(69, 33, 105, 4, 1, 1);
+    GameFlag_SetBit(583);
+  }
+  if (GameFlag_Test(0x86d) != 0)
+    Actor_SetHorizontalPositionWithTerrain(24, 0, 0);
+  Func_02001fac();
+}
+
+// ---- games/tla/src/scene/dehkan_plateau/s3284.c ----
+// Scene code of overlay 0x655, in ROM order, from s3284's offset up to the next object the overlay links.
+
+#include "task.h"
+#include "field_effect.h"
+
+extern const u8 gData_02003f80[];
+extern const u8 gData_02003fc4[];
+extern const u8 gData_02003fc8[];
+extern s32 gData_02005678;
+extern s32 gData_0200567c;
+
+void Func_020001d0(const void *data);
+void Func_02000c64(const void *data);
+void Func_020013b0(void);
+void Func_0200172c(void);
+void Func_02001930(void);
+void Func_02001ee8(void);
+void Func_02001fc4(void);
+void Func_02003cc0(s32 id);
+void Func_02003d90(void);
+s32 Func_02003d98(void);
+s32 Func_02003da0(s32 a, s32 b, s32 c);
+void Func_02003da8(s32 a, s32 b, s32 c, s32 d);
+/* VIEW(s3284): routine Func_02003db0 as s32 Func_02003db0(void); s2c14 has s32 Func_02003db0(struct Actor *object). */
+extern s32 Func_02003db0__s3284(void) __asm__("Func_02003db0");
+void Func_02003db8(const void *data);
+
+// The room entry written in the scene layer of Func_02003164 and Func_0200390c:
+// sets actors' variants, links, cells and flags for the room.
+void Func_02003284(void) {
+  struct Actor *object;
+  s32 zero, value;
+
+  if (GameFlag_Test(265) == 0) {
+    Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
+    Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 2);
+    Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 1;
+  }
+  Actor_SetSpritePriority(8, 1);
+  Actor_SetSpritePriority(9, 1);
+  Actor_SetSpritePriority(10, 1);
+  Actor_SetSpritePriority(11, 1);
+  /* FAKEMATCH(dead): an empty once-only block ends the argument loads' tie; as
+   * no block, 2 of 276 instructions differ in tla-en. */
+  do {
+  } while (0);
+  Func_02003d98();
+  Func_02003da0(0, 8, 9);
+  Func_02003da0(1, 10, 11);
+  Actor_SetSpritePriority(12, 1);
+  Actor_SetSpritePriority(13, 1);
+  Func_02003d90();
+  Func_02003da8(0, 520, 12, 13);
+  Func_02003db8(gData_02003fc4);
+  if (Actor_GetById(19)->y > (s32)0xfff80000)
+    Actor_SetSpritePriority(19, 1);
+  else
+    Actor_SetSpritePriority(19, 2);
+  Func_02003cc0(20);
+  Actor_GetById(20)->priorityFlags |= 32;
+  Actor_SetSpritePriority(20, 2);
+  if (GameFlag_Test(0x841) != 0)
+    Func_0200172c();
+  else
+    /* FAKEMATCH(wrapper): forwarded, so each call builds its own constants; as direct
+     * calls, 8 of 276 instructions differ in tla-en. */
+    MapGrid_CopyCellAttributes(38, 32, 1, 1, 38, 33);
+  Actor_GetById(14)->priorityFlags &= ~1;
+  Actor_GetById(15)->priorityFlags &= ~1;
+  Actor_GetById(16)->priorityFlags &= ~1;
+  Actor_GetById(17)->priorityFlags &= ~1;
+  Func_02000c64(gData_02003fc8);
+  value = Actor_GetById(17)->x;
+  zero = 0;
+  if ((value >> 20) == 54) {
+    struct MapCell *cell = Ram_HeapSlots->mapWork->layers[0].cells;
+
+    cell += Func_02003db0__s3284();
+    cell->attributeB &= 0x7f;
+    cell->collisionCode = 11;
+  }
+  Actor_SetSpritePriority(14, 1);
+  Actor_SetSpritePriority(15, 1);
+  Func_02001930();
+  if (GameFlag_Test(0x86e) != 0) {
+    s32 angle = 0x4000;
+
+    /* FAKEMATCH(wrapper): forwarded, so the angle loads ahead of the coordinates; as
+     * direct calls, 4 of 276 instructions differ in tla-en. */
+    Actor_SetPositionAndFacing(25, 212 << 17, 208 << 15, angle);
+  }
+  Actor_SetModeById(18, 3);
+  if (GameFlag_Test(0x86f) != 0) {
+    object = Actor_GetById(18);
+    MapGrid_CopyCellAttributes(27, 8, 1, 1, 27, 9);
+    Actor_SetModeById(18, 4);
+    object->priorityFlags |= 2;
+    *((u8 *)object + 89) &= ~1;
+    GameFlag_SetBit(517);
+    GameFlag_SetBit(577);
+    Map_CopyCellPictureIndicesRect(69, 51, 92, 11, 1, 1);
+    {
+      s32 angle = 0x4000;
+
+      Actor_SetPositionAndFacing(25, 154 << 18, 140 << 17, angle);
+    }
+  }
+  if (GameFlag_Test(0x870) != 0) {
+    GameFlag_SetBit(528);
+    GameFlag_SetBit(534);
+    Actor_SetHorizontalPositionWithTerrain(25, 0, 0);
+  }
+  Func_020001d0(gData_02003f80);
+  Func_020013b0();
+  Func_02001fc4();
+  {
+    struct Actor *last = Actor_GetById(27);
+
+    *((u8 *)last + 85) = zero;
+    last->y = zero;
+  }
+  gData_0200567c = zero;
+  gData_02005678 = zero;
+  Task_Add(Func_02001ee8, TASK_PASS_VBLANK);
+}
+
+extern const u16 gData_02004276[];
+
+void Func_0200353c(void) {
+  /* FAKEMATCH(pin): flag in r5, which leaves r6 to the entry; as a plain
+   * local, 61 of 79 instructions differ in tla-en. */
+  register s32 flag asm("r5") = 800;
+  s32 offset = 0;
+
+  while (1) {
+    if (GameFlag_Test(flag)) {
+      u16 *entry = (u16 *)((u8 *)gData_02004276 + offset);
+      s32 y;
+      s32 x;
+      s32 one;
+
+      flag -= 800;
+      x = *entry++;
+      y = *entry++;
+      one = 1;
+      MapGrid_CopyCellsTo(3, 8, x, y, one, one);
+      x = entry[0];
+      y = entry[1];
+      MapGrid_CopyCellsTo(67, 3, x, y, one, 5);
+      if (flag == 1)
+        MapGrid_CopyCellsTo(67, 4, 69, 3, one, one);
+      x -= 64;
+      y += 66;
+      MapGrid_CopyCellsTo(3, 69, x, y, one, 4);
+      return;
+    }
+    if (flag == 863)
+      return;
+    offset += 8;
+    flag++;
+  }
+}
+
+void Func_020035ec(void) {
+  /* FAKEMATCH(pin): flag in r5, which leaves r6 to the entry; as a plain
+   * local, 61 of 79 instructions differ in tla-en. */
+  register s32 flag asm("r5") = 800;
+  s32 offset = 0;
+
+  while (1) {
+    if (GameFlag_Test(flag)) {
+      u16 *entry = (u16 *)((u8 *)gData_02004276 + offset);
+      s32 y;
+      s32 x;
+      s32 one;
+
+      flag -= 800;
+      x = *entry++;
+      y = *entry++;
+      one = 1;
+      MapGrid_CopyCellsTo(13, 5, x, y, one, one);
+      x = entry[0];
+      y = entry[1];
+      MapGrid_CopyCellsTo(77, 0, x, y, one, 5);
+      if (flag == 1)
+        MapGrid_CopyCellsTo(67, 4, 69, 3, one, one);
+      x -= 64;
+      y += 65;
+      MapGrid_CopyCellsTo(13, 65, x, y, one, 4);
+      return;
+    }
+    if (flag == 863)
+      return;
+    offset += 8;
+    flag++;
+  }
+}
+
+void Func_02001804(void);
+void Func_02001fdc(void);
+void Func_02003764(void);
+
+void Func_0200369c(void) {
+  *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x204;
+  Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
+  Func_02001fdc();
+  if (GameFlag_Test(0x86c) != 0) {
+    Map_CopyCellPictureIndicesRect(3, 8, 30, 33, 1, 1);
+    Map_CopyCellPictureIndicesRect(67, 3, 94, 28, 1, 5);
+    Map_CopyCellPictureIndicesRect(3, 69, 30, 93, 1, 4);
+  }
+  {
+    s32 entrance = *(u16 *)&gMainRoutineWork.entrance;
+
+    if ((u16)(entrance - 11) <= 28) {
+      Func_02001804();
+      entrance <<= 16;
+      entrance >>= 16;
+      entrance += 789;
+      GameFlag_SetBit(entrance);
+    }
+  }
+  Func_0200353c();
+  if (GameFlag_Test(265) == 0) {
+    if (gMainRoutineWork.entrance > 10) {
+      if (gMainRoutineWork.entrance <= 39)
+        Func_02003764();
+    }
+  }
+}
+
+extern u8 gMapShapeGrid[];
+
+s32 Math_Cosine(s32 angle);
+void ObjectVisual_CopyAttributes(s32 id, s32 value);
+s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
+void Func_0200056c(s32 id);
+void Func_020006ec(struct Actor *object, struct Actor *other);
+void Func_02000974(s32 mode);
+void Func_02000aa8(void);
+void Func_02000c4c(s32 level, s32 layer);
+void Func_02003ba0(struct Actor *object, s32 mode);
+void Func_02003ba8(struct Actor *object, const void *script);
+s32 Func_02003c10(s32 layer, s32 x, s32 z);
+void Func_02003c28(void);
+void Func_02003c30(void);
+void Func_02003c78(s32 id, s32 target);
+s32 Func_02003d20(void);
+s32 Func_02003d80(void *sprite, s32 frame);
+
+s32 Func_02003dd0(s32 layer, s32 shape, s32 height);
+struct Actor *Func_02003dd8(s32 *position, s32 mode);
+void Effect_AdvanceMotionAtLeaderPriority(struct Actor *object);
+
+void Func_02000fc4(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                   s32 velocityZ, u32 flags,
+                   const struct EffectOptions *options);
+/* VIEW(s3284): routine Effect_AdvanceMotion as void Effect_AdvanceMotion(union FieldObject *object); s2698 has void Effect_AdvanceMotion(struct Actor *object). */
+extern void Effect_AdvanceMotion__s3284(union FieldObject *object) __asm__("Effect_AdvanceMotion");
+void Func_02003bc8(void);
+
+void Func_02003764(void) {
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct EffectOptions options;
+  u32 i;
+  struct EffectOptions *opts;
+  s32 spawn;
+
+  Func_02003c28();
+  Event_ResolvePendingActions(0);
+  FieldCamera_MoveTo(-1, -1, -1, 0);
+  Func_02003bc8();
+  wait(1);
+  leader->y = 0x820000;
+  leader->gravity = 0x8000;
+  leader->bounce = 0;
+  leader->motionFlags = 0;
+  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
+  Event_StartScreenTransition();
+  Event_WaitTransitionFrames();
+  Sound_Play(204);
+  leader->motionFlags = 3;
+  Event_Wait(24);
+  opts = &options;
+  opts->palette = 7;
+  opts->update = Effect_AdvanceMotion__s3284;
+  opts->startScaleX = 0xa3d7;
+  opts->startScaleY = 0xa3d7;
+  opts = &options;
+  spawn = 1;
+  i = 0;
+loop:
+  {
+    s32 angle;
+    s32 velocity[3];
+    s32 cosine;
+
+    angle = i << 12;
+    cosine = Math_Cosine(angle);
+    if (spawn) {
+      velocity[0] = cosine;
+      velocity[1] = 0;
+      velocity[2] = Math_Sine(angle);
+      velocity[0] += velocity[0] >> 1;
+      velocity[0] += ((Random16Far() * 3) << 14) >> 16;
+      velocity[0] += -0x6000;
+      velocity[2] += (((Random16Far() * 3) << 13) >> 16) + -0x3000;
+      Func_02000fc4(leader->x, leader->y, leader->z, velocity[0], velocity[1],
+                    velocity[2], 0x01090001, opts);
+    }
+    i++;
+  }
+  if (i <= 16)
+    goto loop;
+  Sound_Play(188);
+  Func_080d489c(gMainRoutineWork.currentOwner, 0x101);
+  Actor_SetModeById(gMainRoutineWork.currentOwner, 49);
+  MapGrid_SetShake(0x50000, 0x50000, 0x10000);
+  MapGrid_SetShake(-1, -1, 0xe666);
+  Map_WaitForShakeToSettle();
+  Func_080d489c(gMainRoutineWork.currentOwner, 0x100);
+  leader->gravity = 0x10000;
+  leader->bounce = 0x4000;
+  Event_Wait(10);
+  Actor_SetModeById(gMainRoutineWork.currentOwner, 1);
+  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
+  Func_02003c30();
+}
+
+// ---- games/tla/src/scene/dehkan_plateau/s390c.c ----
+extern const u8 gData_02003fb0[];
+extern struct Actor *gData_02004420;
+extern s32 gData_02005678;
+extern s32 gData_0200567c;
+
+s32 GameFlag_Test(s32 flag);
+void GameFlag_SetBit(s32 flag);
+void wait(s32 frames);
+struct Actor *Actor_GetById(u32 objectId);
+void Func_02000038(const void *data);
+void Func_02001804(void);
+void Func_020019b8(void);
+void Func_02001ee8(void);
+void Func_02002c14(void);
+void Func_020035ec(void);
+void Func_02003764(void);
+void Func_02003a30(void);
+void Map_CopyCellAttributeRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
+void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 x, s32 z);
+
+// The scene's own event inlines: a habit of the whole game written once, as
+// event_inline.h's are, a layer and not a compiler-steering device.
+static __inline__ s32 Flag_Test(s32 flag) {
+  return GameFlag_Test(flag);
+}
+
+
+/* VIEW(s390c): static Actor_SetPosition as Actor_SetPosition__s390c; the definition has static inline void Actor_SetPosition(s32 actorId, s32 fixed_x, s32 fixed_z). */
+static __inline__ void Actor_SetPosition__s390c(struct Actor *object, s32 x,
+                                         s32 y, s32 z) {
+  Actor_SetPositionAndResetMotion(object, x, y, z);
+}
+
+void Func_0200390c(void) {
+  struct Actor *owner = Actor_GetById(gMainRoutineWork.currentOwner);
+  s32 entrance;
+
+  *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x204;
+  owner->priorityFlags |= 32;
+  if (GameFlag_Test(0x878) == 0) {
+    Func_02003a30();
+    if (GameFlag_Test(0x871) != 0) {
+      Map_CopyAttributes(0, 0, 1, 1, 15, 5);
+      if (gData_02004420 != NULL) {
+        Actor_SetPosition__s390c(gData_02004420, 248 << 16, 0, 176 << 15);
+        wait(1);
+      }
+    }
+  }
+  Func_02000038(gData_02003fb0);
+  Func_020019b8();
+  entrance = gMainRoutineWork.entrance;
+  if (entrance > 10) {
+    Func_02001804();
+    GameFlag_SetBit(entrance + 789);
+  }
+  if (Flag_Test(0x871) != 0)
+    Actor_SetHorizontalPositionWithTerrain(9, 0, 0);
+  Func_020035ec();
+  if (GameFlag_Test(265) == 0) {
+    if (gMainRoutineWork.entrance > 16) {
+      if (gMainRoutineWork.entrance == 37 && GameFlag_Test(0x871) == 0)
+        Func_02002c14();
+      else
+        Func_02003764();
+    }
+  }
+  gData_0200567c = 0;
+  gData_02005678 = 0;
+  Task_Add(Func_02001ee8, TASK_PASS_VBLANK);
+}
+
+// ---- games/tla/src/scene/dehkan_plateau/s3a30.c ----
+// Scene code of overlay 0x655, in ROM order, from s3a30's offset up to the next object the overlay links.
+
+
+extern struct Actor *gData_02004420;
+
+void *HeapSlot_AllocFar(s32 slot, s32 size);
+void HeapSlot_Release(s32 slot);
+
+void Func_02003a30(void) {
+  struct Actor **slot = &gData_02004420;
+  /* FAKEMATCH(temporary): one zero held in a local, kept in r7 for the three
+   * byte stores below as the native does; as plain zeros, built in r2 where
+   * they are stored, 22 of 48 instructions differ in tla-en. */
+  s32 zero = 0;
+  struct Actor *object = ((struct Actor *)Import_ActorCreate(489, 0, 0, 0));
+
+  *slot = object;
+  if (object != 0) {
+    struct FieldSprite *sprite = object->sprite;
+    u8 *buffer;
+
+    sprite->fullColor = 0;
+    sprite->palette = 0;
+    object->motionFlags = zero;
+    object->unk5c[0] = 1;
+    sprite->nextFrame = zero;
+    sprite->unk1b[0] = zero;
+    buffer = HeapSlot_AllocFar(68, 0x608);
+    Icon_DrawItem(199);
+    VramCache_Load(sprite->vramBlock, 128, buffer + 0x400);
+    HeapSlot_Release(68);
+  }
+}
+
+extern const u8 gData_02003f92[];
+extern const u8 gData_02003fb8[];
+
+void Func_02000038(const void *data);
+void Func_020001d0(const void *data);
+void Func_02001ff4(void);
+void Func_02002140(void);
+void Func_02003764(void);
+
+void Func_02003aa0(void) {
+  *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x204;
+  Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
+  if (GameFlag_Test(95) != 0)
+    GameFlag_SetBit(521);
+  Func_02000038(gData_02003fb8);
+  Func_020001d0(gData_02003f92);
+  if (GameFlag_Test(519) == 0) {
+    Func_02002140();
+    wait(10);
+  }
+  Func_02001ff4();
+  if (GameFlag_Test(265) == 0) {
+    if (gMainRoutineWork.entrance > 5) {
+      if (gMainRoutineWork.entrance <= 39)
+        Func_02003764();
+    }
+  }
+}
+
+s32 Scene_PrepareMap(void) { return 0; }

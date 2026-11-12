@@ -1,10 +1,127 @@
+// ---- games/tla/src/scene/mars_lighthouse_entrance/s01f8.c ----
 #include "types.h"
+#include "main_routine_work.h"
+#include "event_inline.h"
+#include "actor.h"
 
-void Func_02000338(void);
+s32 Func_0200012c();
+s32 Func_02000168(u32 layer, s32 x, s32 y, s32 value);
+void Func_02004c80();
+s32 Map_GetTerrainHeight();
+void Scene_SetActorSpritePriority();
 
-void Func_0200040c(void) { Func_02000338(); }
+void Func_020001f8(struct Actor *object) {
+  s32 t1, t2, t3, t4, v10, v6, v7, v8, v9;
+  struct Actor *v5;
+  u8 *v11;
+
+  v5 = object;
+  v9 = (v5->x >> 20);
+  v10 = (v5->z >> 20);
+  t1 = Func_0200012c(0, v9, v10);
+  v8 = t1;
+  t2 = Func_0200012c(2, v9, v10);
+  v6 = t2;
+  v11 = &v5->terrainId;
+  t3 = Map_GetTerrainHeight(v5->terrainId, v5->x, v5->z);
+  v7 = (t3 >> 19);
+  t4 = Event_GetFlag(v5->timer);
+  if (t4 == 0)
+    goto L_02008268;
+  v6 = (v6 & -0xff01);
+  v8 = (v8 & -129);
+  if ((v5->terrainHeight >> 19) == v7)
+    goto L_02008282;
+  v7 = (v7 + -4);
+  goto L_02008282;
+L_02008268:
+  v6 = (v6 & 255);
+  v6 = (v6 | 0xff00);
+  v8 = (v8 | 128);
+  v7 = (v7 + 4);
+  Scene_SetActorSpritePriority(v5, 2);
+L_02008282:
+  Func_02000168(0, v9, v10, v8);
+  Func_02000168(2, v9, v10, v6);
+  Func_02004c80((v9 << 20), (v10 << 20), *v11, v7);
+}
+
+#include "field_event.h"
+#include "field.h"
+
+void Func_02004bc0();
+
+void Func_020002bc(u16 *table) {
+  u16 *row;
+  struct FieldActor *object;
+  s16 flag;
+  s16 animation;
+
+  if (table[0] == 0xffff)
+    return;
+  row = table;
+loop:
+  object = (struct FieldActor *)Actor_Get(row[0]);
+  animation = row[1];
+  flag = row[2];
+
+  Actor_SetSingleChildFlags(object, 0);
+  Func_02004bc0(object, (u16)animation + Event_GetFlag((u16)flag));
+  object->motionFlags = 0;
+  object->collisionFlags &= 0xfe;
+  object->timer = flag;
+  Func_020001f8(object);
+  row += 3;
+  if (row[0] != 0xffff)
+    goto loop;
+}
 
 #include "mars_lighthouse_entrance/room.h"
+#include "field_effect.h"
+
+struct EffectHolder {
+  u8 unk00[0x1a];
+  s16 objectId;
+};
+
+void Func_02003b30(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                   s32 velocityZ, u32 flags, struct EffectOptions *options);
+
+/// While index is at most 7, spawns effect type 0x117 index steps below the
+/// object the effect work names and shrinks the object a little; mode 1
+/// restores its size, sets its flag, hands it to Func_020001f8 and clears its
+/// position.
+void Func_02000338(s32 mode, s32 index) {
+  struct EffectHolder *holder = Ram_HeapSlots->effectWork;
+  struct Actor *object = Actor_Get(holder->objectId);
+
+  if (index <= 7) {
+    struct EffectOptions options;
+
+    options.priority = 0;
+    options.type = 0x117;
+    options.startScaleX = options.startScaleY = 0x10000;
+    options.targetScaleX = options.targetScaleY = 0x8000;
+    options.rotation = (Random16Far() & 15) << 12;
+    Func_02003b30(object->x, object->y - index * 3 * 0x10000 + 0x100000,
+                  object->z, ((Random16Far() & 15) - 8) << 13, 0, 0, 0x5a0000,
+                  &options);
+    object->scaleY -= 0x1f00;
+  }
+  if (mode == 1) {
+    object->scaleY = 0x10000;
+    Event_SetFlag(object->timer);
+    Func_020001f8(Actor_Get(holder->objectId));
+    object->x = object->y = object->z = 0;
+  }
+}
+
+// ---- games/tla/src/scene/mars_lighthouse_entrance.c ----
+/* VIEW(mars_lighthouse_entrance): routine Func_02000338 as void Func_02000338(void); the definition has void Func_02000338(s32 mode, s32 index). */
+extern void Func_02000338__mars_lighthouse_entrance(void) __asm__("Func_02000338");
+
+void Func_0200040c(void) { Func_02000338__mars_lighthouse_entrance(); }
+
 #include "iwram_call.h"
 
 void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
@@ -99,7 +216,8 @@ step:
 
 #include "ram_buffer.h"
 
-struct EventWork {
+/* VIEW(mars_lighthouse_entrance): tag struct EventWork as struct EventWork__mars_lighthouse_entrance; event_work.h has another definition. */
+struct EventWork__mars_lighthouse_entrance {
   u8 unk000[0x15a];
   u16 unk15a;
 };
@@ -109,7 +227,7 @@ extern u8 MsgCheckedTheIce[];
 void Func_02000564(void) {
   FieldMessage_Show((s32)MsgCheckedTheIce, 1);
   FieldMessage_Show((s32)MsgCheckedTheIce + 1, 1);
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->unk15a = 1;
+  ((struct EventWork__mars_lighthouse_entrance *)Ram_HeapSlots->eventWork)->unk15a = 1;
 }
 
 #include "scene_tables.h"
@@ -250,7 +368,6 @@ void Func_020008f4(s32 unused, s32 id) {
   }
 }
 
-#include "event_inline.h"
 
 void Func_02000930(void) { GameFlag_SetBit(0x144); }
 
@@ -444,8 +561,6 @@ void Func_02000ce4(s32 unused, s32 id) {
 }
 
 #include "map.h"
-#include "main_routine_work.h"
-#include "actor.h"
 #include "vram_tab.h"
 
 extern u16 gData_020068a2;
@@ -505,7 +620,6 @@ fill:
 }
 
 #include "system/io_reg.h"
-#include "field.h"
 
 // A once-only block with a local that holds one constant, as the native
 // builds the value.
@@ -735,3 +849,1056 @@ void Func_02001234(s32 id) {
     object->motionFlags = 0;
   }
 }
+#undef SET_SPRITE_WINDOW_LAYERS
+
+// ---- games/tla/src/scene/mars_lighthouse_entrance/s1254.c ----
+/// One halfword read as a struct's field.
+struct HalfwordField {
+  s16 value;
+};
+
+extern s16 gData_02006868;
+extern s16 gData_020068a0;
+
+/* VIEW(s1254): routine Func_0200246c as void Func_0200246c(s32 a, s32 b); room.h has s32 Func_0200246c(s32 index, s32 value). */
+extern void Func_0200246c__s1254(s32 a, s32 b) __asm__("Func_0200246c");
+
+void Func_02001254(void) {
+  s16 *state = &gData_02006868;
+
+  if (gData_020068a0 < 60) {
+    if (*state == 0) {
+      Func_0200246c__s1254(0, 3);
+      *state = 1;
+    }
+  } else {
+    // Read through a struct, so PRE does not merge it with the first arm's
+    // read.
+    if (((struct HalfwordField *)state)->value == 1) {
+      Func_0200246c__s1254(0, 67);
+      *state = 0;
+    }
+  }
+  if (++gData_020068a0 > 300)
+    gData_020068a0 = 0;
+}
+
+
+void Func_020012bc(struct Actor *object) {
+  switch (gFrameCount & 7) {
+  case 0:
+    Animation_ApplyChildValues(object, 0);
+    break;
+  case 6:
+    Animation_ApplyChildValues(object, 10);
+    break;
+  }
+}
+
+
+struct Sprite020012e4 {
+  u8 unk00[18];
+  u16 unk12;
+};
+
+void Func_020012e4(struct Actor *actor) {
+  struct Sprite020012e4 *sprite = actor->sprite;
+
+  sprite->unk12 += 0x800;
+  if (++actor->timer == 8)
+    actor->velocityY = 0x40000;
+  if (actor->timer > 9) {
+    actor->x += 0x40000;
+    actor->scaleX -= 0x800;
+    actor->scaleY -= 0x800;
+  }
+  if (actor->timer == 32) {
+    actor->x = 0;
+    actor->z = 0;
+    actor->update = NULL;
+  }
+}
+
+// ---- games/tla/src/scene/mars_lighthouse_entrance/s1344.c ----
+extern char SceneId_Ov6a8Room2;
+extern char SceneId_Ov6ACRoom3;
+extern char SceneId_Ov6aaRoom1;
+extern char SceneId_Ov6aaRoom2;
+extern char SceneId_Ov6aaRoom3;
+extern char SceneId_Ov6aaRoom4;
+extern char SceneId_Ov6aaRoom5;
+extern char SceneId_Ov6aaRoom6;
+extern char SceneId_Ov6aaRoom7;
+extern const u8 gData_0200503c[];
+extern const u8 gData_0200547c[];
+extern const u8 gData_020054cc[];
+extern const u8 gData_02005528[];
+extern const u8 gData_02005578[];
+extern const u8 gData_020055d4[];
+extern const u8 gData_02005644[];
+extern const u8 gData_0200610c[];
+extern const u8 gData_02006118[];
+extern const u8 gData_0200613c[];
+extern const u8 gData_02006250[];
+extern const u8 gData_020063b8[];
+extern const u8 gData_020064fc[];
+extern const u8 gData_02006628[];
+extern const u8 gData_02006778[];
+extern s16 gData_02006868;
+extern s16 gData_020068a0;
+extern u16 gData_020068a2;
+
+s32 Resource_FindFreeEntry(void);
+void Func_02000d18(void);
+void Func_02000fe0(const struct MapCell *cell);
+void Func_020012e4(struct Actor *object);
+void Func_02002f4c(s32 id, s32 a1, s32 a2, s32 a3, const void *script);
+void Func_02002c2c(void);
+void Func_02004c88(s32 scene, s32 a1);
+void Func_02004d98(void);
+
+void Func_02001344(struct Actor *object) {
+  if (ABS(object->x - object->watchedObject->x) > 0x200000)
+    return;
+  object->timer = 0;
+  object->update = (void (*)(void))Func_020012e4;
+}
+
+
+s32 Func_020029bc(void);
+void Func_02003878(s32 value);
+
+void Func_02001378(void) {
+  if (Func_020029bc())
+    Func_02003878(1);
+}
+
+// ---- games/tla/src/scene/mars_lighthouse_entrance/s138c.c ----
+#include "version.h"
+#include "call.h"
+#define FIELD_AT(base, type, off)                                              \
+  (((struct {                                                                  \
+     u8 pad[off];                                                              \
+     type v;                                                                   \
+   } *)(base))                                                                 \
+       ->v)
+/* VIEW(s138c): routine Event_StartScreenTransition as s32 Event_StartScreenTransition(); event_work.h has void Event_StartScreenTransition(void). */
+extern s32 Event_StartScreenTransition__s138c() __asm__("Event_StartScreenTransition");
+/* VIEW(s138c): routine Event_WaitTransitionFrames as s32 Event_WaitTransitionFrames(); room.h has void Event_WaitTransitionFrames(void). */
+extern s32 Event_WaitTransitionFrames__s138c() __asm__("Event_WaitTransitionFrames");
+/* VIEW(s138c): routine Func_020002bc as s32 Func_020002bc(); the definition has void Func_020002bc(u16 *table). */
+extern s32 Func_020002bc__s138c() __asm__("Func_020002bc");
+/* VIEW(s138c): routine Func_02000414 as s32 Func_02000414(); the definition has void Func_02000414(s32 id). */
+extern s32 Func_02000414__s138c() __asm__("Func_02000414");
+void Func_02000798();
+/* VIEW(s138c): routine Func_02000c1c as s32 Func_02000c1c(); the definition has void Func_02000c1c(void). */
+extern s32 Func_02000c1c__s138c() __asm__("Func_02000c1c");
+/* VIEW(s138c): routine Func_02001234 as s32 Func_02001234(); the definition has void Func_02001234(s32 id). */
+extern s32 Func_02001234__s138c() __asm__("Func_02001234");
+s32 Func_02002270();
+s32 Func_020022d8();
+s32 Func_020022e4();
+s32 Func_0200246c();
+s32 Func_0200248c();
+s32 Func_020045f8();
+/* VIEW(s138c): routine Func_02004ca8 as s32 Func_02004ca8(); room.h has void Func_02004ca8(void). */
+extern s32 Func_02004ca8__s138c() __asm__("Func_02004ca8");
+s32 Func_02004d88();
+s32 Func_02004dd8();
+extern u8 Data_02006878[];
+/* VIEW(s138c): routine Func_02001254 as extern u8 Func_02001254[]; the definition has void Func_02001254(void). */
+extern u8 Func_02001254__s138c[] __asm__("Func_02001254");
+/* VIEW(s138c): routine Func_020012bc as extern u8 Func_020012bc[]; the definition has void Func_020012bc(struct Actor *object). */
+extern u8 Func_020012bc__s138c[] __asm__("Func_020012bc");
+/* VIEW(s138c): routine Func_02001344 as extern u8 Func_02001344[]; the definition has void Func_02001344(struct Actor *object). */
+extern u8 Func_02001344__s138c[] __asm__("Func_02001344");
+/* VIEW(s138c): routine Func_02001378 as extern u8 Func_02001378[]; the definition has void Func_02001378(void). */
+extern u8 Func_02001378__s138c[] __asm__("Func_02001378");
+/* VIEW(s138c): routine Func_0200196c as extern u8 Func_0200196c[]; the definition has void Func_0200196c(void). */
+extern u8 Func_0200196c__s138c[] __asm__("Func_0200196c");
+/* VIEW(s138c): routine Func_02001988 as extern u8 Func_02001988[]; the definition has void Func_02001988(void). */
+extern u8 Func_02001988__s138c[] __asm__("Func_02001988");
+/* VIEW(s138c): routine Func_020019a4 as extern u8 Func_020019a4[]; the definition has void Func_020019a4(void). */
+extern u8 Func_020019a4__s138c[] __asm__("Func_020019a4");
+extern u8 gData_02005314[];
+extern u8 gData_020053d8[];
+extern u8 gData_020053e6[];
+extern u8 gData_020053f8[];
+extern u8 gData_020053fe[];
+extern u8 gData_0200540c[];
+extern u8 gData_02005412[];
+extern u8 gData_02005418[];
+extern u8 gData_02005438[];
+extern u8 gData_0200543e[];
+extern u8 gData_02005448[];
+extern u8 gData_0200544e[];
+extern u8 gData_02005454[];
+extern u8 gData_0200586c[];
+extern u8 gData_0200587c[];
+extern u8 gData_020058a8[];
+extern u8 gData_020058d4[];
+/* VIEW(s138c): variable gMainRoutineWork as extern u8 gMainRoutineWork[]; main_routine_work.h has extern struct MainRoutineWork gMainRoutineWork. */
+extern u8 gMainRoutineWork__s138c[] __asm__("gMainRoutineWork");
+extern char SceneId_Ov6aaRoom1;
+extern char SceneId_Ov6aaRoom2;
+extern char SceneId_Ov6aaRoom3;
+extern char SceneId_Ov6aaRoom4;
+extern char SceneId_Ov6aaRoom5;
+extern char SceneId_Ov6aaRoom6;
+extern char SceneId_Ov6aaRoom7;
+
+s32 Func_0200138c(void) {
+  /* FAKEMATCH(wrapper): calls forwarded through inlines (call.h's Call and
+   * Value, this file's own); as direct calls, 103 of 549 instructions differ in
+   * tla-en. */
+  s32 v_r8, v_r7, v_r5, t0, t1, t2, t8, t12, t17, t21;
+  s32 t23, t24, t26, t27, t29, t34, t38, t40, t41, t48;
+  s32 t51, t52, t55, t56, t57, t72, t73, t74, t78, t81;
+  s32 t93, t96, t97, t98, t99, t100, t101, t102, t103, t104;
+  s32 t105, t106, t107, t108, t109, t110, t111;
+
+  t0 = FIELD_AT((s32)gMainRoutineWork__s138c, s16, 480);
+  t1 = FIELD_AT((s32)gMainRoutineWork__s138c, s16, 482);
+  *(s32 *)(s32)Data_02006878 = 0;
+  t2 = (s32)Ram_HeapSlots->eventWork;
+  FIELD_AT(t2, s32, 428) = 0x204;
+  Event_SetFlag(0x112);
+  Func_02002270();
+  v_r7 = t1;
+  v_r8 = t0;
+  if (v_r8 != (s32)&SceneId_Ov6aaRoom1)
+    goto L_020093dc;
+  Call1((void (*)())Func_02004dd8, 1);
+  goto L_020098be;
+L_020093dc:
+  if (v_r8 != (s32)&SceneId_Ov6aaRoom2)
+    goto L_0200944c;
+  Call1((void (*)())Func_02004d88, 0);
+#if !TLA_PATCH_1
+  FieldActor_SetSpritePriority(11, 3);
+#endif
+  Call1((void (*)())Func_02001234__s138c, 10);
+  t8 = Event_GetFlag(0xa30);
+  if (t8 == 0)
+    goto L_02009420;
+  MapGrid_CopyCellsLayered(35, 41, 24, 10, 3, 53);
+  MapGrid_CopyCellsLayered(35, 105, 24, 10, 3, 117);
+L_02009420:
+  Call1((void (*)())Func_020002bc__s138c, (s32)gData_020053d8);
+  t12 = Event_GetFlag(0xa3e);
+  if (t12 != 0)
+    goto L_02009436;
+  goto L_020098be;
+L_02009436:
+  MapGrid_CopyCellsLayered(50, 125, 3, 3, 39, 85);
+  goto L_020098be;
+L_0200944c:
+  if (v_r8 == (s32)&SceneId_Ov6aaRoom3)
+    goto L_02009454;
+  goto L_02009680;
+L_02009454:
+  Call1((void (*)())Func_02004d88, 0);
+  Call4((void (*)())Func_020022e4, (s32)gData_020053e6, (s32)gData_020053f8, 0,
+        88);
+  Call1((void (*)())Func_020002bc__s138c, (s32)gData_020053fe);
+  t17 = Event_GetFlag(0xa3f);
+  if (t17 == 0)
+    goto L_020094ae;
+  MapGrid_CopyCellsLayered(47, 94, 10, 6, 47, 100);
+  MapGrid_CopyCellAttributes(110, 40, 12, 4, 46, 40);
+  Actor_SetPosition(18, 0, 0);
+  goto L_020094e0;
+L_020094ae:
+  t21 = Event_GetFlag(0xa3e);
+  if (t21 == 0)
+    goto L_020094d6;
+  Event_SetFlag(0x230);
+  t23 = (s32)Actor_Get(18);
+  FIELD_AT(t23, u8, 35) |= 2;
+  goto L_020094e0;
+L_020094d6:
+  Actor_SetPosition(18, 0, 0);
+L_020094e0:
+  t26 = (s32)Actor_Get(20);
+  FIELD_AT(t26, u8, 35) |= 2;
+  FieldActor_SetSpritePriority(20, 2);
+  t29 = Event_GetFlag(0xa47);
+  if (t29 == 0)
+    goto L_0200953c;
+  MapGrid_CopyCellsLayered(28, 92, 8, 8, 28, 100);
+  MapGrid_CopyCellAttributes(92, 38, 8, 8, 28, 38);
+  Func_02000798();
+  Actor_SetPosition(20, 0, 0);
+  goto L_02009564;
+L_0200953c:
+  t34 = Event_GetFlag(0xa48);
+  if (t34 == 0)
+    goto L_0200955a;
+  Func_02000798();
+  Event_SetFlag(0x231);
+  goto L_02009564;
+L_0200955a:
+  Actor_SetPosition(20, 0, 0);
+L_02009564:
+  t38 = Event_GetFlag(0xa4f);
+  if (t38 == 0)
+    goto L_0200958c;
+  Actor_SetPosition(8, 0x1480000, 0x780000);
+  t40 = (s32)Actor_Get(8);
+  FIELD_AT(t40, u8, 98) = 1;
+L_0200958c:
+  t41 = Event_GetFlag(0xa30);
+  if (t41 == 0)
+    goto L_020095a4;
+  Actor_SetPosition(19, 0, 0);
+  goto L_020095ae;
+L_020095a4:
+  Actor_SetPosition(15, 0, 0);
+L_020095ae:
+  if (v_r7 == 20)
+    goto L_020095b4;
+  goto L_020098be;
+L_020095b4:
+  Func_02004ca8__s138c();
+  FieldEvent_ResolvePendingActions(0);
+  FieldCamera_MoveTo(-1, -1, -1, 0);
+  MapGrid_SetShake(0, 0x20000, 0x10000);
+  t48 = FIELD_AT((s32)gMainRoutineWork__s138c, s32, 532);
+  Actor_SetPosition(t48, 0, 0);
+  Actor_SetPosition(18, 0, 0);
+  t51 = (s32)Actor_Get(18);
+  FIELD_AT(t51, u8, 35) |= 2;
+  Event_StartScreenTransition__s138c();
+  Event_WaitTransitionFrames__s138c();
+  t55 = (s32)Actor_Get(18);
+  t56 = FIELD_AT(t55, s16, 100);
+  t57 = FIELD_AT(t55, s16, 102);
+  Actor_SetPosition(18, (t56 << 16), (t57 << 16));
+  Event_PlaySound(0x23d);
+  v_r5 = 2;
+L_0200963c:
+  Call1((void (*)())Func_02000414__s138c, 18);
+  System_Wait(1);
+  v_r5 = (v_r5 - 1);
+  if (v_r5 >= 0)
+    goto L_0200963c;
+  Event_SetFlag(0xa3e);
+  MapGrid_SetShake(-1, -1, 0xe666);
+  FieldEvent_Wait(120);
+  FieldEvent_SetExitRequest(20);
+  Event_SetFlag(0x109);
+  goto L_020098be;
+L_02009680:
+  if (v_r8 != (s32)&SceneId_Ov6aaRoom4)
+    goto L_020096b0;
+  Call1((void (*)())Func_02004d88, 0);
+  if (v_r7 == 10)
+    goto L_02009694;
+  if (v_r7 != 1)
+    goto L_020096a8;
+L_02009694:
+  Call4((void (*)())Func_020022e4, (s32)gData_0200540c, (s32)gData_02005412,
+        (s32)Func_020019a4__s138c, 88);
+  Call2((void (*)())Func_0200248c, 0, 1);
+L_020096a8:
+  Call1((void (*)())Func_020002bc__s138c, (s32)gData_02005418);
+  goto L_020098be;
+L_020096b0:
+  if (v_r8 != (s32)&SceneId_Ov6aaRoom5)
+    goto L_02009784;
+  Call1((void (*)())Func_02004d88, 0);
+  t72 = (s32)Actor_Get(12);
+  FIELD_AT(t72, u8, 35) |= 2;
+  t74 = Event_GetFlag(0xa4d);
+  if (t74 == 0)
+    goto L_0200970c;
+  MapGrid_CopyCellsLayered(12, 95, 8, 6, 12, 101);
+  MapGrid_CopyCellAttributes(76, 40, 8, 5, 12, 40);
+  Actor_SetPosition(12, 0, 0);
+  goto L_0200976e;
+L_0200970c:
+  t78 = Event_GetFlag(0xa4c);
+  if (t78 == 0)
+    goto L_02009764;
+  Event_SetFlag(0x232);
+  goto L_0200976e;
+L_02009764:
+  Actor_SetPosition(12, 0, 0);
+L_0200976e:
+  t81 = Event_GetFlag(0xa49);
+  if (t81 != 0)
+    goto L_0200977e;
+  goto L_020098be;
+L_0200977e:
+  Func_02000c1c__s138c();
+  goto L_020098be;
+L_02009784:
+  if (v_r8 == (s32)&SceneId_Ov6aaRoom6)
+    goto L_0200978c;
+  goto L_020098b2;
+L_0200978c:
+  Call1((void (*)())Func_02004d88, 0);
+  if (v_r7 == 2)
+    goto L_020097a2;
+  if (v_r7 == 4)
+    goto L_020097a2;
+  if (v_r7 == 6)
+    goto L_020097a2;
+  if (v_r7 != 13)
+    goto L_020097b6;
+L_020097a2:
+  Call4((void (*)())Func_020022e4, (s32)gData_02005438, (s32)gData_0200543e,
+        (s32)Func_0200196c__s138c, 88);
+  Call2((void (*)())Func_0200248c, 0, 1);
+L_020097b6:
+  if ((u32)(v_r7 - 7) <= (u32)1)
+    goto L_020097c0;
+  if (v_r7 != 11)
+    goto L_02009884;
+L_020097c0:
+  Call4((void (*)())Func_020022e4, (s32)gData_02005448, (s32)gData_0200544e,
+        (s32)Func_02001988__s138c, 88);
+  Call2((void (*)())Func_0200248c, 0, 1);
+  if (v_r7 != 11)
+    goto L_020097fa;
+  Actor_SetScript(11, gData_02005314);
+  Func_0200246c(0, 3);
+  Task_AddFrame(Func_02001254__s138c, 0x480);
+  Event_SetFlag(0x17d);
+L_020097fa:
+  Task_AddFrame(Func_02001378__s138c, 0x480);
+  t93 = (s32)Actor_Get(11);
+  FIELD_AT(t93, s32, 108) = (s32)Func_020012bc__s138c;
+  Func_020022d8(1);
+  Call1((void (*)())Func_020002bc__s138c, (s32)gData_02005454);
+  t96 = (s32)Actor_Get(20);
+  t97 = (s32)Actor_Get(13);
+  FIELD_AT(t97, s32, 108) = (s32)Func_02001344__s138c;
+  t98 = (s32)Actor_Get(14);
+  FIELD_AT(t98, s32, 108) = (s32)Func_02001344__s138c;
+  t99 = (s32)Actor_Get(15);
+  FIELD_AT(t99, s32, 108) = (s32)Func_02001344__s138c;
+  t100 = (s32)Actor_Get(16);
+  FIELD_AT(t100, s32, 108) = (s32)Func_02001344__s138c;
+  t101 = (s32)Actor_Get(17);
+  FIELD_AT(t101, s32, 108) = (s32)Func_02001344__s138c;
+  t102 = (s32)Actor_Get(18);
+  FIELD_AT(t102, s32, 108) = (s32)Func_02001344__s138c;
+  t103 = (s32)Actor_Get(13);
+  FIELD_AT(t103, s32, 104) = t96;
+  t104 = (s32)Actor_Get(14);
+  FIELD_AT(t104, s32, 104) = t96;
+  t105 = (s32)Actor_Get(15);
+  FIELD_AT(t105, s32, 104) = t96;
+  t106 = (s32)Actor_Get(16);
+  FIELD_AT(t106, s32, 104) = t96;
+  t107 = (s32)Actor_Get(17);
+  FIELD_AT(t107, s32, 104) = t96;
+  t108 = (s32)Actor_Get(18);
+  FIELD_AT(t108, s32, 104) = t96;
+L_02009884:
+  t109 = (s32)Actor_Get(9);
+  FIELD_AT(t109, u8, 35) |= 2;
+  t111 = Event_GetFlag(0xa4e);
+  if (t111 == 0)
+    goto L_020098be;
+  Actor_SetPosition(8, 0x580000, 0x2b80000);
+  goto L_020098be;
+L_020098b2:
+  if (v_r8 != (s32)&SceneId_Ov6aaRoom7)
+    goto L_020098be;
+  Call1((void (*)())Func_02004d88, 0);
+L_020098be:
+  if (v_r8 != (s32)&SceneId_Ov6aaRoom6)
+    goto L_020098d0;
+  if (v_r7 != 13)
+    goto L_020098d0;
+  Event_ClearFlag(0x104);
+L_020098d0:
+  Call4((void (*)())Func_020045f8, (s32)gData_0200586c, (s32)gData_0200587c,
+        (s32)gData_020058a8, (s32)gData_020058d4);
+  return 0;
+}
+#undef FIELD_AT
+
+// ---- games/tla/src/scene/mars_lighthouse_entrance/s1930.c ----
+extern char SceneId_Ov6a8Room2;
+extern char SceneId_Ov6ACRoom3;
+extern char SceneId_Ov6aaRoom1;
+extern char SceneId_Ov6aaRoom2;
+extern char SceneId_Ov6aaRoom3;
+extern char SceneId_Ov6aaRoom4;
+extern char SceneId_Ov6aaRoom5;
+extern char SceneId_Ov6aaRoom6;
+extern char SceneId_Ov6aaRoom7;
+extern const u8 gData_0200503c[];
+extern const u8 gData_0200547c[];
+extern const u8 gData_020054cc[];
+extern const u8 gData_02005528[];
+extern const u8 gData_02005578[];
+extern const u8 gData_020055d4[];
+extern const u8 gData_02005644[];
+extern const u8 gData_0200610c[];
+extern const u8 gData_02006118[];
+extern const u8 gData_0200613c[];
+extern const u8 gData_02006250[];
+extern const u8 gData_020063b8[];
+extern const u8 gData_020064fc[];
+extern const u8 gData_02006628[];
+extern const u8 gData_02006778[];
+extern s16 gData_02006868;
+extern s16 gData_020068a0;
+extern u16 gData_020068a2;
+
+s32 Resource_FindFreeEntry(void);
+void Func_02000d18(void);
+/* VIEW(s1930): routine Func_02000fe0 as void Func_02000fe0(u8 *cell); the definition has void Func_02000fe0(const struct MapCell *cell). */
+extern void Func_02000fe0__s1930(u8 *cell) __asm__("Func_02000fe0");
+void Func_020012e4(struct Actor *object);
+/* VIEW(s1930): routine Func_02002f4c as s32 Func_02002f4c(s32 id, s32 a1, s32 a2, s32 a3, const void *script); s1344 has void Func_02002f4c(s32 id, s32 a1, s32 a2, s32 a3, const void *script). */
+extern s32 Func_02002f4c__s1930(s32 id, s32 a1, s32 a2, s32 a3, const void *script) __asm__("Func_02002f4c");
+void Func_02002c2c(void);
+void Func_02004c88(s32 scene, s32 a1);
+void Func_02004d98(void);
+
+s32 Func_02001930(void) {
+  if (Flag_IsSet(0xa30))
+    Func_02004c88(gMainRoutineWork.map +
+                      ((s32)&SceneId_Ov6ACRoom3 - (s32)&SceneId_Ov6a8Room2),
+                  0x5000000);
+  return 0;
+}
+
+void Func_0200196c(void) { Func_02002f4c__s1930(10, 19, 20, 0, gData_0200547c); }
+
+void Func_02001988(void) { Func_02002f4c__s1930(12, 19, 20, 0, gData_020054cc); }
+
+void Func_020019a4(void) { Func_02002f4c__s1930(9, 18, 20, 0x4000, gData_02005528); }
+
+void Func_020019c4(void) { Func_02002f4c__s1930(9, 13, 14, 0, gData_02005578); }
+
+void Func_020019e0(void) { Func_02002f4c__s1930(11, 13, 14, 0x4000, gData_020055d4); }
+
+void Func_02001a00(void) { Func_02002f4c__s1930(13, 21, 22, 0, gData_02005644); }
+
+extern const u8 gData_020056a0[];
+
+void Func_02001f90(struct Actor *object);
+
+s32 Func_02001a1c(struct Actor *a, struct Actor *b) {
+  if (ABS(a->x - b->x) < 0x80000 && ABS(a->y - b->y) < 0x80000 &&
+      ABS(a->z - b->z) < 0x80000)
+    return 1;
+  return 0;
+}
+
+s32 Func_02001a80(struct Actor *a, struct Actor *b) {
+  s32 dy;
+
+  if (ABS(a->x - b->x) < 0xc0000) {
+    dy = a->y - b->y;
+    if (dy > -0x80000 && dy < 0x180000 && ABS(a->z - b->z) < 0xc0000)
+      return 1;
+  }
+  return 0;
+}
+
+#include "field/event_work.h"
+
+/* VIEW(s1930): tag struct RideSlot as struct RideSlot__s1930; ride.h has another definition. */
+struct RideSlot__s1930 {
+  u16 id;
+  u16 blocked;
+};
+
+/* VIEW(s1930): tag struct RideWork as struct RideWork__s1930; ride.h has another definition. */
+struct RideWork__s1930 {
+  u8 unk00[4];
+  u16 landed;
+  u16 blocked;
+  u8 unk08[2];
+  u16 value0a;
+  u8 unk0c[0x48];
+  struct RideSlot__s1930 slots[4];
+  u8 unk64[4];
+  u16 value68;
+  u16 direction;
+};
+
+extern u8 gData_020023c4[];
+
+void Func_02001ae0(struct Actor *object) {
+  struct RideWork__s1930 *work = (struct RideWork__s1930 *)(gData_020023c4 + 0x188);
+  struct Actor *actor = Actor_Get(gMainRoutineWork.currentOwner);
+  struct EventWork *event = Ram_HeapSlots->eventWork;
+  s32 dx = object->bounce;
+  s32 dz;
+  s32 i;
+  s32 direction;
+  s32 id;
+
+  object->x += dx;
+  object->y += object->gravity;
+  dz = object->unk4c;
+  object->z += dz;
+  object->bounce = dx - dx / 18;
+  object->unk4c = dz - dz / 16;
+  object->scaleX += object->speedLimit;
+  object->scaleY += object->acceleration;
+  ((struct SpriteParts *)object->sprite)->unk12 += object->timer;
+  if (actor->y == actor->terrainHeight && Func_02001a1c(object, actor) &&
+      gMainRoutineWork.renderMode == 0) {
+    if (object->unk4c != 0) {
+      work->value68 = 0;
+      {
+        u16 *cell = &work->direction;
+
+        if (object->unk4c > 0) {
+          direction = 1;
+          *cell = direction;
+        } else {
+          direction = 0xffff;
+          *cell = direction;
+        }
+      }
+    }
+    object->priorityFlags = 2;
+    {
+      s32 speed = object->unk4c;
+
+      object->unk4c = 0;
+      object->z -= speed;
+      object->gravity += speed >> 2;
+    }
+    work->landed = 1;
+    event->exit = work->value0a;
+  }
+  for (i = 0; i < 4 && (id = work->slots[i].id) != 0; i++) {
+    actor = Actor_Get(id);
+
+    if (actor->y == actor->terrainHeight && Func_02001a80(object, actor)) {
+      if (work->slots[i].blocked == 0) {
+        s32 speed;
+
+        object->priorityFlags = 2;
+        speed = object->unk4c;
+        object->unk4c = 0;
+        object->z -= speed;
+        object->gravity += speed >> 2;
+      } else {
+        work->blocked = 1;
+      }
+    }
+  }
+}
+
+// ---- games/tla/src/scene/mars_lighthouse_entrance/s1c44.c ----
+void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
+
+extern const u8 gData_020056a0[];
+
+/* VIEW(s1c44): routine Func_02001ae0 as void Func_02001ae0(void); the definition has void Func_02001ae0(struct Actor *object). */
+extern void Func_02001ae0__s1c44(void) __asm__("Func_02001ae0");
+void Func_02001f90(struct Actor *object);
+
+void Func_02001c44(struct Actor *object, s32 unused) {
+  object->motionFlags = 0;
+  object->collisionFlags = 0;
+  Actor_SetSingleChildFlags(object, 0);
+  Func_02004bd0(object, gData_020056a0);
+  object->timer = 0;
+  object->speedLimit = 0;
+  object->acceleration = 0;
+}
+
+void Func_02001c74(s32 *position, s32 speed, s32 mode) {
+  struct Actor *object =
+      Func_02004bd8_(366, position[0], position[1], position[2]);
+
+  if (object != NULL) {
+    object->bounce = 0;
+    object->gravity = 0;
+    object->unk4c = speed;
+    Func_02001c44(object, 2);
+    object->update = Func_02001ae0__s1c44;
+    if (mode)
+      object->unk5c[0] = 2;
+    Func_02004bc0(object, 2);
+  }
+}
+
+
+/* VIEW(s1c44): tag struct RideSlot as struct RideSlot__s1c44; ride.h has another definition. */
+struct RideSlot__s1c44 {
+  u16 id;
+  u16 blocked;
+};
+
+struct RideDirection {
+  u16 unk00;
+  u16 unk02;
+};
+
+/* VIEW(s1c44): tag struct RideWork as struct RideWork__s1c44; ride.h has another definition. */
+struct RideWork__s1c44 {
+  u8 unk00[4];
+  u16 landed;
+  u16 blocked;
+  u8 unk08[2];
+  u16 value0a;
+  u8 unk0c[0x48];
+  struct RideSlot__s1c44 slots[4];
+  u8 unk64[4];
+  struct RideDirection direction;
+};
+
+extern u8 gData_020023c4[];
+
+s32 Func_02001a1c(struct Actor *a, struct Actor *b);
+s32 Func_02001a80(struct Actor *a, struct Actor *b);
+
+void Func_02001cbc(struct Actor *object) {
+  struct RideWork__s1c44 *work = (struct RideWork__s1c44 *)(gData_020023c4 + 0x188);
+  struct Actor *other = Actor_Get(gMainRoutineWork.currentOwner);
+  struct EventWork *event = Ram_HeapSlots->eventWork;
+  s32 dx = object->bounce;
+  s32 dz;
+  s32 i;
+  struct RideDirection *direction;
+
+  object->z += dx;
+  object->y += object->gravity;
+  dz = object->unk4c;
+  object->x += dz;
+  object->bounce = dx - dx / 18;
+  object->unk4c = dz - dz / 16;
+  object->scaleX += object->speedLimit;
+  object->scaleY += object->acceleration;
+  ((struct SpriteParts *)object->sprite)->unk12 += object->timer;
+  if (other->y == other->terrainHeight && Func_02001a1c(object, other) &&
+      gMainRoutineWork.renderMode == 0) {
+    if (object->unk4c != 0) {
+      work->direction.unk02 = 0;
+      direction = &work->direction;
+      if (object->unk4c > 0)
+        direction->unk00 = 1;
+      else
+        direction->unk00 = 0xffff;
+    }
+    object->priorityFlags = 2;
+    object->z -= object->bounce;
+    object->gravity += object->bounce >> 2;
+    object->unk4c = 0;
+    work->landed = 1;
+    event->exit = work->value0a;
+  }
+  for (i = 0; i < 4; i++) {
+    s32 id = work->slots[i].id;
+
+    if (id == 0)
+      break;
+    other = Actor_Get(id);
+    if (other->y == other->terrainHeight && Func_02001a80(object, other)) {
+      if (work->slots[i].blocked == 0) {
+        object->priorityFlags = 2;
+        object->z -= object->unk4c;
+        object->gravity += object->unk4c >> 2;
+        object->unk4c = 0;
+      } else {
+        work->blocked = 1;
+      }
+    }
+  }
+}
+
+// ---- games/tla/src/scene/mars_lighthouse_entrance/s1e60.c ----
+void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
+void Animation_SetStateFlags(struct Actor *object, u32 value);
+
+extern const u8 gData_020056a0[];
+
+/* VIEW(s1e60): routine Func_02001ae0 as void Func_02001ae0(void); the definition has void Func_02001ae0(struct Actor *object). */
+extern void Func_02001ae0__s1e60(void) __asm__("Func_02001ae0");
+/* VIEW(s1e60): routine Func_02001cbc as void Func_02001cbc(void); the definition has void Func_02001cbc(struct Actor *object). */
+extern void Func_02001cbc__s1e60(void) __asm__("Func_02001cbc");
+void Func_02001f90(struct Actor *object);
+
+/// Stops the object and sets its sprite part, then restarts its script at
+/// gData_020056a0. Overlays 6ab, 6ac and 6ad have the same function.
+void Func_02001e1c(struct Actor *object, s32 part) {
+  s32 zero = 0;
+
+  object->motionFlags = zero;
+  object->collisionFlags = zero;
+  ((struct SpriteParts *)object->sprite)->part = part;
+  Actor_SetSingleChildFlags(object, 0);
+  Func_02004bd0(object, gData_020056a0);
+  object->timer = zero;
+  object->speedLimit = zero;
+  object->acceleration = zero;
+}
+
+void Func_02001e60(s32 *position, s32 speed, s32 mode) {
+  struct Actor *object =
+      Func_02004bd8_(366, position[0], position[1], position[2]);
+
+  if (object != NULL) {
+    object->bounce = 0;
+    object->gravity = 0;
+    object->unk4c = -speed;
+    Func_02001e1c(object, 3);
+    object->update = Func_02001ae0__s1e60;
+    if (mode)
+      object->unk5c[0] = 2;
+    Func_02004bc0(object, 2);
+  }
+}
+
+void Func_02001ea8(s32 *position, s32 speed, s32 mode) {
+  struct Actor *object =
+      Func_02004bd8_(366, position[0], position[1], position[2]);
+
+  if (object != NULL) {
+    object->bounce = 0;
+    object->gravity = 0;
+    object->unk4c = speed;
+    Func_02001e1c(object, 3);
+    object->update = Func_02001cbc__s1e60;
+    if (mode)
+      object->unk5c[0] = 2;
+    Func_02004bc0(object, 2);
+  }
+}
+
+void Func_02001ef0(s32 *position, s32 speed, s32 mode) {
+  struct Actor *object =
+      Func_02004bd8_(366, position[0], position[1], position[2]);
+
+  if (object != NULL) {
+    object->bounce = 0;
+    object->gravity = 0;
+    object->unk4c = -speed;
+    Func_02001e1c(object, 3);
+    object->update = Func_02001cbc__s1e60;
+    if (mode)
+      object->unk5c[0] = 2;
+    Func_02004bc0(object, 2);
+  }
+}
+
+s32 Func_02001f38(struct Actor *a, struct Actor *b) {
+  s32 dy;
+
+  if (ABS(a->x - b->x) < 0xc0000) {
+    dy = a->y - b->y;
+    if (dy > 0 && dy < 0x100000 && ABS(a->z - b->z) < 0x80000)
+      return 1;
+  }
+  return 0;
+}
+
+void Func_02001f90(struct Actor *object) {
+  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
+  s32 dx = object->bounce;
+  s32 dz;
+  struct SpriteParts *parts;
+  s32 rate;
+  s32 scale;
+
+  object->x += dx;
+  object->y += object->gravity;
+  dz = object->unk4c;
+  object->z += dz;
+  object->bounce = dx - dx / 18;
+  object->unk4c = dz - dz / 16;
+  rate = object->speedLimit;
+  scale = object->scaleX;
+  parts = object->sprite;
+  object->scaleX = scale + rate;
+  object->scaleY += object->acceleration;
+  parts->unk12 += object->timer;
+  if (leader->y == leader->terrainHeight && Func_02001f38(object, leader)) {
+    object->z -= object->unk4c;
+    object->gravity += object->unk4c >> 2;
+    object->unk4c = 0;
+  }
+}
+
+void Func_0200202c(struct Actor *object, s32 unused) {
+  object->motionFlags = 0;
+  object->collisionFlags = 0;
+  Actor_SetSingleChildFlags(object, 0);
+  Func_02004bc0(object, 2);
+  Func_02004bd0(object, gData_020056a0);
+  Actor_SetSpriteColor(object, 10);
+  object->timer = 0;
+  object->speedLimit = 0;
+  object->acceleration = 0;
+}
+
+void Func_0200206c(s32 *position, s32 speed) {
+  struct Actor *object =
+      Func_02004bd8_(285, position[0], position[1], position[2] + 0xfffe0000);
+  s32 spin;
+
+  if (object != NULL) {
+    object->bounce = Math_Cosine((u16)(Random16Far() * 3 >> 4) + 0x3000);
+    object->gravity = (u16)Random16Far();
+    object->unk4c = (u16)(Random16Far() << 1) + speed;
+    spin = (u16)Random16Far() + 0xffff8000;
+    object->timer = spin;
+    Func_0200202c(object, 2);
+    object->update = (void (*)(void))Func_02001f90;
+    Animation_SetStateFlags(object, 1);
+  }
+}
+
+// ---- games/tla/src/scene/mars_lighthouse_entrance/s20ec.c ----
+/* VIEW(s20ec): tag struct Actor as struct Actor__s20ec; actor.h has another definition. */
+typedef struct Actor__s20ec {
+  u8 pad0[8];
+  s32 x;
+  s32 y;
+  s32 z;
+  u8 pad14[91 - 20];
+  u8 flag5b;
+} Actor;
+
+typedef struct Entry {
+  s16 active;
+  s16 timer;
+  u16 flags;
+  s16 unk_6;
+  Actor *actor;
+  s32 unk_c;
+} Entry;
+
+typedef struct State {
+  u8 pad0[6];
+  s16 unk_6;
+  s16 unk_8;
+  u8 pada[4];
+  s16 unk_e;
+  void (*callback)();
+  Entry entries[4];
+} State;
+
+void Func_02001c74();
+void Func_02001e60();
+void Func_02001ea8();
+void Func_02001ef0();
+/* VIEW(s20ec): routine Func_0200206c as void Func_0200206c(); the parts before it has another declaration. */
+extern void Func_0200206c__s20ec() __asm__("Func_0200206c");
+extern u8 gData_020023c4[];
+
+typedef struct Position {
+  s32 x;
+  s32 z;
+} Position;
+
+typedef struct Camera {
+  u8 pad0[228];
+  Position position;
+} Camera;
+
+typedef struct IwramGlobals {
+  u8 pad0[32];
+  Camera *camera;
+  u8 pad24[108 - 36];
+  union {
+    s32 word;
+    void *pointer;
+  } unk_6c;
+} IwramGlobals;
+
+#define IWRAM ((IwramGlobals *)Ram_HeapSlots)
+
+void Func_020020ec(void) {
+  s32 saved[2];
+  State *state;
+  Entry *entry;
+  Camera *camera;
+  Position *position;
+  s32 cameraX, cameraZ;
+  s32 v;
+  s32 i;
+
+  state = (State *)(gData_020023c4 + 0x188);
+  camera = IWRAM->camera;
+  entry = state->entries;
+  position = &camera->position;
+  cameraX = position->x;
+  cameraX &= 0xffff0000;
+  cameraZ = position->z & 0xffff0000;
+  saved[1] = (*(s32 **)camera)[1];
+  saved[0] = IWRAM->unk_6c.word;
+  if (state->unk_6 != 0 && state->unk_8 == 0 && state->callback != 0)
+    state->callback();
+  v = (u16)state->unk_6;
+  state->unk_8 = v;
+  state->unk_6 = 0;
+  for (i = 3; i >= 0; i--, entry++) {
+    Actor *actor;
+    s32 flag, x, y, unk6, value, dx, dz;
+    u8 *mark;
+
+    if (entry->active == 0)
+      continue;
+    actor = entry->actor;
+    if (actor == 0)
+      continue;
+    flag = GameFlag_Test(0x106);
+    if (*(s16 *)(saved[0] + 358) != 0)
+      flag |= 1;
+    mark = &actor->flag5b;
+    *mark = flag;
+    if (state->unk_e != 0)
+      *mark = GameFlag_Test(0x106);
+    dx = actor->x;
+    dz = actor->z;
+    dx -= cameraX;
+    /* FAKEMATCH(barrier): the empty asm on dx changes its allocation rank; as
+     * no asm, 94 of 182 instructions differ in tla-en. */
+    asm("" : : "r"(dx));
+    y = actor->y;
+    dz -= cameraZ;
+    y = dz - y;
+    unk6 = entry->unk_6;
+    x = dx >> 16;
+    y = (y >> 16) - 8;
+    if (unk6 == 0) {
+      if ((u32)(x + 7) > 334)
+        continue;
+      if (y <= -48)
+        continue;
+      if (y > 239)
+        continue;
+    }
+    y = (u16)entry->timer;
+    if (entry->timer <= 0) {
+      y = entry->flags & 240;
+      switch (y) {
+      case 128:
+        Func_0200206c__s20ec(&entry->actor->x, entry->unk_c, unk6);
+        break;
+      case 48:
+        Func_02001e60(&entry->actor->x, entry->unk_c, unk6);
+        break;
+      case 32:
+        Func_02001ef0(&entry->actor->x, entry->unk_c, unk6);
+        break;
+      case 16:
+        Func_02001ea8(&entry->actor->x, entry->unk_c, unk6);
+        break;
+      case 0:
+        Func_02001c74(&entry->actor->x, entry->unk_c, unk6);
+        break;
+      }
+      value = 8;
+    } else {
+      value = y - 1;
+    }
+    entry->timer = value;
+  }
+}
+#undef IWRAM

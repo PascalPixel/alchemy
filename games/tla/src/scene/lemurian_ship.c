@@ -1,9 +1,64 @@
-/// @file
-/// Scene code of overlay 0x656, in ROM order, from s00b8's offset up to the next object the overlay links.
-
-#include "lemurian_ship.h"
-#include "event_inline.h"
+// ---- games/tla/src/scene/lemurian_ship/scene_tables.c ----
+#include "battle.h"
+#include "field.h"
+#include "game.h"
+#include "graphics.h"
+#include "lib.h"
+#include "menu.h"
+#include "sound.h"
+#include "system.h"
+#include "types.h"
 #include "scene_tables.h"
+#include "scene_ids.h"
+
+/* VIEW(scene_tables): variable gData_02003054 as extern u8 gData_02003054[]; the definition has s32 gData_02003054[] = { - 0x10000, 172, 0x40000095, - 0x10000, - 1, 0xffff, 0xffff, 0, 0, 0, 0, 0, }. */
+extern u8 gData_02003054__scene_tables[] __asm__("gData_02003054");
+/* VIEW(scene_tables): variable gData_02003084 as extern u8 gData_02003084[]; the definition has u32 gData_02003084[] = { 0xffff0009, 406, 0xc0000178, 0x1500000, 0x2680108, 424, 0xffff000a, 550, 0xc0000179, 0x1500000, 0x2680108, 424, 0xf.... */
+extern u8 gData_02003084__scene_tables[] __asm__("gData_02003084");
+/* VIEW(scene_tables): variable gData_0200312c as extern u8 gData_0200312c[]; the definition has s16 gData_0200312c[] = { 0, - 1, 72, 0, 72, 0x4000, 0, - 1, - 1, - 1, - 1, 0, 1, - 1, 72, 0, 72, 0x4000, 0, 8, 16, 248, 256, 0, 2, - 1, 168,.... */
+extern u8 gData_0200312c__scene_tables[] __asm__("gData_0200312c");
+/* VIEW(scene_tables): variable gData_02003234 as extern u8 gData_02003234[]; the definition has u32 gData_02003234[] = { 0xffec01d2, 0x1da0244, 0x24cfff4, 0x13ffff, 0xffff, 0, 0, 0, }. */
+extern u8 gData_02003234__scene_tables[] __asm__("gData_02003234");
+/* VIEW(scene_tables): variable gData_02003254 as extern u8 gData_02003254[]; the definition has u32 gData_02003254[] = { 0x100200, 0x21000be, 0xce0020, 0xaffff, 0xffff, 0, 0, 0, }. */
+extern u8 gData_02003254__scene_tables[] __asm__("gData_02003254");
+
+u8 *Func_02000038(void) {
+  s16 scene = gMainRoutineWork.scene;
+
+  if (scene == (s32)&SceneId_Ov656Room1)
+    return gData_02003084__scene_tables;
+  if (scene == (s32)&SceneId_Ov656Room2)
+    return gData_0200312c__scene_tables;
+  return gData_02003054__scene_tables;
+}
+
+u8 *Func_02000078(void) {
+  s16 scene = gMainRoutineWork.scene;
+
+  if (scene == (s32)&SceneId_Ov656Room1)
+    return gData_02003234__scene_tables;
+  if (scene == (s32)&SceneId_Ov656Room2)
+    return gData_02003254__scene_tables;
+  return 0;
+}
+
+const u32 *Scene_GetExits(void) { return gSceneExits; }
+
+// ---- games/tla/src/scene/lemurian_ship/s00b8.c ----
+// Scene code of overlay 0x656, in ROM order, from s00b8's offset up to the next object the overlay links.
+
+/* VIEW(s00b8): routine Actor_SetSingleChildFlags as void Actor_SetSingleChildFlags(struct LemurianShipObject *object, u32 value); field.h has void Actor_SetSingleChildFlags(struct Actor *object, u32 flags). */
+struct LemurianShipObject;
+extern void Actor_SetSingleChildFlags__s00b8(struct LemurianShipObject *object, u32 value) __asm__("Actor_SetSingleChildFlags");
+#define Actor_SetSingleChildFlags Actor_SetSingleChildFlags__s00b8
+/* VIEW(s00b8): routine Animation_SetStateFlags as void Animation_SetStateFlags(struct LemurianShipObject *object, s32 flags); field.h has void Animation_SetStateFlags(struct Actor *object, u32 value). */
+struct LemurianShipObject;
+extern void Animation_SetStateFlags__s00b8(struct LemurianShipObject *object, s32 flags) __asm__("Animation_SetStateFlags");
+#define Animation_SetStateFlags Animation_SetStateFlags__s00b8
+#include "lemurian_ship/lemurian_ship.h"
+#undef Animation_SetStateFlags
+#undef Actor_SetSingleChildFlags
+#include "event_inline.h"
 #include "version.h"
 #include "macros.h"
 
@@ -850,7 +905,7 @@ void Func_020015c8(void) {
     object->motionFlags = 0;
     *(s32 *)((u8 *)object + 0x30) = 0x20000;
     *(s32 *)((u8 *)object + 0x34) = 0x8000;
-    Actor_SetSingleChildFlags(object, 0);
+    Actor_SetSingleChildFlags__s00b8(object, 0);
     Func_02002bf0(object, 0);
     Actor_SetMoveTarget(object, PIXELS(808), PIXELS(8), PIXELS(140));
     Func_02002bf8(object, gData_02003ef8);
@@ -1481,7 +1536,7 @@ void Func_02002970(void) {
     GameFlag_SetBit(0x202);
     GameFlag_SetBit(0x203);
   }
-  Actor_SetSingleChildFlags(((struct LemurianShipObject *)Actor_GetById(8)), 0);
+  Actor_SetSingleChildFlags__s00b8(((struct LemurianShipObject *)Actor_GetById(8)), 0);
   if (Event_GetFlag(0x202)) {
     object = ((struct LemurianShipObject *)Actor_GetById(8));
     Map_CopyCellPictureIndicesRect(35, 68, 35, 69, 1, 1);
@@ -1499,7 +1554,7 @@ void Func_02002970(void) {
     else
       Actor_SetModeById(8, 2);
   }
-  Actor_SetSingleChildFlags(((struct LemurianShipObject *)Actor_GetById(9)), 0);
+  Actor_SetSingleChildFlags__s00b8(((struct LemurianShipObject *)Actor_GetById(9)), 0);
   if (!GameFlag_Test(0x109))
     GameFlag_SetBit(0x203);
   if (Event_GetFlag(0x203)) {
@@ -1535,7 +1590,6 @@ void Func_02002b98(void) {
     Func_02001650();
 }
 
-#include "types.h"
 #include "text/msg_ids.h"
 #include "objcmd.h"
 
@@ -2000,3 +2054,4 @@ u32 gData_02003ef8[] = {
     38,
 };
 // clang-format on
+#undef RAISE

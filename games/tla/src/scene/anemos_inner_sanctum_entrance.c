@@ -1,13 +1,171 @@
-#include "version.h"
+// ---- games/tla/src/scene/anemos_inner_sanctum_entrance/hide.c ----
+#include "types.h"
+#include "actor.h"
+#include "event_inline.h"
+#include "field.h"
+
+extern s16 gData_02001cde;
+extern struct Actor *gData_02001ce0[];
+extern u16 gData_02001de2;
+extern u16 gData_02001de4;
+s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
+
+s32 Func_0200033c(struct Actor *object) {
+  Actor_SetSingleChildFlags(object, 0);
+  return 0;
+}
+
+#include "battle.h"
+#include "game.h"
+#include "graphics.h"
+#include "lib.h"
+#include "menu.h"
+#include "sound.h"
 #include "system.h"
-#include "anemos_inner_sanctum_entrance.h"
+#include "scene_tables.h"
+
+const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
+
+const struct SceneRegion *Scene_GetRegions(void) { return 0; }
+
+const u32 *Scene_GetExits(void) { return gSceneExits; }
+
+#include "anemos_inner_sanctum_entrance/anemos_inner_sanctum_entrance.h"
+
+extern const u8 gData_020019dc[];
+extern const u8 gData_020019f4[];
+/* VIEW(hide): variable gData_02000e20 as extern const u8 gData_02000e20[]; the definition has s32 gData_02000e20[] = { 23, 9, 0x400, 23, 10, 0x400, 23, 6, - 0x4000, 0, 1, 13, 40, 0, 17, }. */
+extern const u8 gData_02000e20__hide[] __asm__("gData_02000e20");
+/* VIEW(hide): variable gData_02000e5c as extern const u8 gData_02000e5c[]; the definition has s32 gData_02000e5c[] = { 23, 9, - 2048, 23, 10, - 2048, 23, 6, 0x4000, 0, 1, 13, 24, 0, 3, 0, 1, 17, }. */
+extern const u8 gData_02000e5c__hide[] __asm__("gData_02000e5c");
+/* VIEW(hide): variable gData_02000ea4 as extern const u8 gData_02000ea4[]; the definition has s32 gData_02000ea4[] = { 23, 9, - 1024, 23, 10, - 1024, 0, 1, 13, 40, 0, 3, 0, 1, 17, }. */
+extern const u8 gData_02000ea4__hide[] __asm__("gData_02000ea4");
+extern u8 MsgIAmTheShadow;
+
+const u8 *Func_0200035c(void) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_Ov6b1Room1)
+    return gData_020019f4;
+  return gData_020019dc;
+}
+
+void Func_02000388(void) {
+  struct AnemosInnerSanctumEntranceParty *party;
+
+  Func_02000cb4();
+  Event_ResolvePendingActions(0);
+  Actor_StartRepeatedMotion(8, 2);
+  Event_Wait(20);
+  BattleEffect_ApplyColorToSourceBuffer(0x10000, 0);
+  BattleEffect_ApplyColorToTargetBuffer(0x10003, 1);
+  BattleEffect_StartBufferInterpolation(60);
+  Event_Wait(60);
+  Func_0803ce64((s32)&MsgIAmTheShadow, 0, 6);
+  party = (struct AnemosInnerSanctumEntranceParty *)&gMainRoutineWork;
+  party->battleGroup = 0x1a9f;
+  party->battleRule = 2;
+  Func_02000d04(103, 3);
+  GameFlag_SetBit(0x201);
+}
+
+void Func_02000408(void) {
+  struct Actor *object = Actor_GetById(15);
+
+  object->motionFlags = 0;
+  object->scaleX = 0x4000;
+  object->scaleY = 0x4000;
+  Func_02000cb4();
+  Event_ResolvePendingActions(0);
+  Sound_Play(151);
+  Actor_SetPartAttribute(Actor_GetById(8), 7);
+  Actor_SetPartAttribute(Actor_GetById(15), 7);
+  Event_Wait(20);
+  Sound_Play(190);
+  Func_02000cdc(15, 8);
+  wait(1);
+  Actor_SetMovementTypeById(8, gData_02000ea4__hide);
+  Actor_SetMovementTypeAndWaitById(15, gData_02000e20__hide);
+  Actor_SetMovementTypeAndWaitById(15, gData_02000e5c__hide);
+  Event_Wait(10);
+  Func_02000cbc();
+}
+
+void Func_02000494(void) {
+  s32 i;
+
+  for (i = 9; i < 15; i++) {
+    struct Actor *object = Actor_GetById(i);
+    u8 *flag = (u8 *)object + 98;
+    s32 none = 0;
+    s32 on = 1;
+
+    *flag = on;
+    *(s32 *)((u8 *)object + 108) = none;
+  }
+}
+
+void Func_020004b4(struct Actor *object) {
+  if ((object->terrainHeight = Map_GetTerrainHeight(0, object->x, object->z)) >=
+      -0x200000)
+    Actor_SetSingleChildFlags(object, 1);
+  else
+    Actor_SetSingleChildFlags(object, 0);
+}
+
+/* VIEW(hide): variable gData_02000ee0 as extern const s8 gData_02000ee0[]; the definition has u32 gData_02000ee0[] = { 0x1c0b1b0b, 0x1c0c1b0c, 0x1c0d1b0d, }. */
+extern const s8 gData_02000ee0__hide[] __asm__("gData_02000ee0");
+
+void Func_020004e4(s32 a, s32 b) {
+  s32 i;
+
+  const s8 *x = gData_02000ee0__hide;
+  const s8 *z = gData_02000ee0__hide + 1;
+
+  for (i = 9; i <= 14; i++) {
+    struct Actor *object = Actor_GetById(i);
+
+    if (object->x >> 20 != *x)
+      return;
+    {
+      s32 cellZ = *z;
+
+      z += 2;
+      x += 2;
+      if (object->z >> 20 != cellZ)
+        return;
+    }
+  }
+  GameFlag_SetBit(0x200);
+  Sound_Play(201);
+  Func_02000be0(1);
+  Func_02000494();
+}
+
+void Func_02000534(s32 a) {
+  struct MainRoutineWork *party;
+  s32 held = Func_02000d4c();
+
+  party = &gMainRoutineWork;
+  if (held) {
+    if (Func_02000d0c(party->currentOwner) != -1) {
+      Func_02000d54();
+      Func_020004e4(0, a);
+    }
+  } else {
+    if (Actor_GetById(party->currentOwner)->y > -0x1c0000)
+      Func_02000d14();
+  }
+}
+
+// ---- games/tla/src/scene/anemos_inner_sanctum_entrance/s0588.c ----
+#include "version.h"
 
 void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
 
 extern s8 gData_02000eec[];
 
 void Func_02000388(void);
-void Func_020004b4(void);
+/* VIEW(s0588): routine Func_020004b4 as void Func_020004b4(void); the definition has void Func_020004b4(struct Actor *object). */
+extern void Func_020004b4__s0588(void) __asm__("Func_020004b4");
 void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
 void Script_WaitForEventTimeout(struct Actor *actor);
 s32 GetMapCellCollision(s32 layer, s32 x, s32 z);
@@ -55,7 +213,7 @@ next:
     object->speedLimit = 0x20000;
     Actor_SetSingleChildFlags(object, 1);
     Actor_SetMoveTarget(object, object->x, 0xfff80000, object->z);
-    object->update = Func_020004b4;
+    object->update = Func_020004b4__s0588;
     Sound_Play(152);
     wait((Random16Far() * 4 >> 16) + 3);
   }
@@ -176,8 +334,6 @@ s32 Func_02000740(void) {
   return 0;
 }
 
-#include "types.h"
-#include "scene_tables.h"
 
 s32 Scene_PrepareMap(void) { return 0; }
 
@@ -201,8 +357,10 @@ extern s16 gData_02001cde;
 extern struct Actor *gData_02001ce0[];
 extern struct LightOam gData_02001d20[];
 extern s16 gData_02001de0;
-extern s16 gData_02001de2;
-extern s16 gData_02001de4;
+/* VIEW(s0588): variable gData_02001de2 as extern s16 gData_02001de2; hide has extern u16 gData_02001de2. */
+extern s16 gData_02001de2__s0588 __asm__("gData_02001de2");
+/* VIEW(s0588): variable gData_02001de4 as extern s16 gData_02001de4; hide has extern u16 gData_02001de4. */
+extern s16 gData_02001de4__s0588 __asm__("gData_02001de4");
 
 s32 Func_02000d5c(struct Actor *actor);
 void Func_02000c3c(struct LightOam *oam, s32 depth);
@@ -219,7 +377,7 @@ void Func_02000858(void) {
   tile = gResourceTableEntries[gData_02001cdc].offset >> 5;
   viewY = map->origin[1];
   oam = gData_02001d20;
-  picture = gData_02001de4 * ((gFrameCount >> 2) % 5 * 32 + 32);
+  picture = gData_02001de4__s0588 * ((gFrameCount >> 2) % 5 * 32 + 32);
 
   for (i = 0; i < gData_02001cde; i++) {
     struct Actor *actor = gData_02001ce0[i];
@@ -247,10 +405,10 @@ void Func_02000858(void) {
         *word++ = 0;
         *word++ = oy | (ox << 16) | (frame & 0x80) << 21 | 0x40002000;
         *word = (tile + picture + (frame & 7) * 8) | 0x800;
-        if (gData_02001de2 == -1)
+        if (gData_02001de2__s0588 == -1)
           oam->priority = Func_02000d5c(actor);
         else
-          oam->priority = gData_02001de2;
+          oam->priority = gData_02001de2__s0588;
         Func_02000c3c(oam, depth);
         oam++;
       } else {
@@ -267,10 +425,10 @@ void Func_02000858(void) {
         *word++ = 0;
         *word++ = oy | (ox << 16) | 0xc000a000;
         *word = (tile + frame * 8) | 0x800;
-        if (gData_02001de2 == -1)
+        if (gData_02001de2__s0588 == -1)
           oam->priority = Func_02000d5c(actor);
         else
-          oam->priority = gData_02001de2;
+          oam->priority = gData_02001de2__s0588;
         Func_02000c3c(oam, depth);
         oam++;
       }
@@ -280,7 +438,6 @@ void Func_02000858(void) {
 
 #include "iwram_call.h"
 #include "task.h"
-#include "event_inline.h"
 
 extern u8 gField_CachedTilesA[];
 extern u8 gField_CachedTilesD[];
@@ -303,7 +460,7 @@ void Func_02000a98(void) {
   Task_Add(Func_02000858, TASK_PASS_VBLANK);
   gData_02001cde = 0;
   gData_02001de0 = 0;
-  gData_02001de2 = -1;
+  gData_02001de2__s0588 = -1;
 }
 
 void Func_02000b18(void) {
@@ -317,11 +474,10 @@ void Func_02000b18(void) {
   Task_Add(Func_02000858, TASK_PASS_VBLANK);
   gData_02001cde = 0;
   gData_02001de0 = 0;
-  gData_02001de2 = -1;
-  gData_02001de4 = 0;
+  gData_02001de2__s0588 = -1;
+  gData_02001de4__s0588 = 0;
 }
 
-#include "actor.h"
 
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 
@@ -335,9 +491,9 @@ void Func_02000ba4(s32 id, s32 value) {
   }
 }
 
-void Func_02000bd4(u16 value) { gData_02001de2 = value; }
+void Func_02000bd4(u16 value) { gData_02001de2__s0588 = value; }
 
-void Func_02000be0(u16 value) { gData_02001de4 = value; }
+void Func_02000be0(u16 value) { gData_02001de4__s0588 = value; }
 
 // clang-format off
 u32 gData_02000d6c[] = {

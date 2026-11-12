@@ -1,3 +1,4 @@
+// ---- games/tla/src/scene/magma_rock/s0ff4.c ----
 #include "types.h"
 #include "system.h"
 #include "ram_buffer.h"
@@ -16,7 +17,8 @@ struct MagmaRockEventWork {
   u16 value1b2;
 };
 
-void Func_02001738(void);
+/* VIEW(s0ff4): routine Func_02001738 as void Func_02001738(void); the definition has void Func_02001738(struct Actor *object). */
+extern void Func_02001738__s0ff4(void) __asm__("Func_02001738");
 
 void Func_02000ff4(struct Actor *object) {
   struct MagmaRockEventWork *work = Ram_HeapSlots->eventWork;
@@ -32,7 +34,7 @@ void Func_02000ff4(struct Actor *object) {
     else
       Actor_SetSpriteColor(object, 0);
   } else {
-    object->update = Func_02001738;
+    object->update = Func_02001738__s0ff4;
     object->timer = 1;
   }
   if (work->value166 == 0 && work->value15a == 0 && work->value15e == 0 &&
@@ -273,3 +275,793 @@ hit:
   System_Wait(10);
   return Func_02003af4();
 }
+
+// ---- games/tla/src/scene/magma_rock/target.c ----
+#include "macros.h"
+
+/* VIEW(target): routine Func_02000ff4 as void Func_02000ff4(void); the definition has void Func_02000ff4(struct Actor *object). */
+extern void Func_02000ff4__target(void) __asm__("Func_02000ff4");
+/* VIEW(target): routine Func_020011e4 as void Func_020011e4(struct Actor *object); the definition has s32 Func_020011e4(struct Actor *source). */
+extern void Func_020011e4__target(struct Actor *object) __asm__("Func_020011e4");
+void Func_02003820(s32 x, s32 y, s32 z, s32 kind);
+void Func_020038dc(void);
+void Func_02003998(void);
+void Func_02003a54(struct Actor *object, s32 a);
+void Func_02003aec(void);
+/* VIEW(target): routine Func_02003af4 as void Func_02003af4(void); s0ff4 has s32 Func_02003af4(void). */
+extern void Func_02003af4__target(void) __asm__("Func_02003af4");
+
+void Func_02001444(void) {
+  struct MagmaRockWork *work = Ram_HeapSlots->effectWork;
+  struct Actor *object;
+
+  Func_02003aec();
+  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_Wait(10);
+  object = work->target;
+  object->update = NULL;
+  Actor_SetSpriteColor(object, 7);
+  FieldEvent_Wait(3);
+  Actor_SetSpriteColor(work->target, 0);
+  FieldEvent_Wait(1);
+  Func_020011e4__target(work->target);
+  Func_02003af4__target();
+}
+
+void Func_0200148c(void) {
+  struct MagmaRockWork *work = Ram_HeapSlots->effectWork;
+  struct Actor *object;
+
+  Func_02003aec();
+  FieldEvent_ResolvePendingActions(0);
+  object = work->target;
+  object->timer = 0x400;
+  object->update = Func_02000ff4__target;
+  Func_02003af4__target();
+}
+
+void Func_020014bc(s32 mode, s32 cue) {
+  struct MagmaRockWork *work = Ram_HeapSlots->effectWork;
+
+  if (cue == 0)
+    Func_020038dc();
+  if (mode == 2) {
+    struct Actor *object = work->target;
+
+    Func_02003820(object->x, object->y + 0xf0000, object->z, 1);
+  }
+  if (mode == 3) {
+    struct Actor *object = work->target;
+    struct Actor *target;
+
+    Func_02003820(object->x, object->y + 0xf0000, object->z, 8);
+    target = work->target;
+    SET_POSITION(target, 0, 0, 0);
+  }
+  if (cue == 0x3e7)
+    Func_02003998();
+  if (cue == 178)
+    Func_02003a54(work->target, 3);
+}
+
+// One of the four parts Func_02001738 builds: rises and falls with its owner's action counter.
+
+#define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
+
+/// A 16.16 position word, read whole or by halves.
+union Position {
+  s32 word;
+  s16 half[2];
+};
+
+#define PART_Y(part) (((union Position *)&(part)->y)->word)
+
+void Func_02003a6c(struct Actor *part);
+
+/// One of the four parts Func_02001738 builds: rises and falls with its owner's
+/// action counter.
+void Func_02001528(struct Actor *part) {
+  struct Actor *owner = part->watchedObject;
+
+  if (owner->timer > 35 && owner->timer < BYTE_AT(part, 98) * 2 + 36) {
+    PART_Y(part) = owner->y + 0x200000;
+    PART_Y(part) += (owner->timer << 19) + (-35 << 19);
+  } else if (BYTE_AT(part, 98) * 2 + 36 < owner->timer && owner->timer < 332) {
+    PART_Y(part) = owner->y + (BYTE_AT(part, 98) << 20) + 0x200000;
+  } else if (owner->timer > 332 && owner->timer < BYTE_AT(part, 98) * 2 + 333) {
+    PART_Y(part) = owner->y + (BYTE_AT(part, 98) << 20) + 0x200000;
+    PART_Y(part) -= (owner->timer << 19) - (332 << 19);
+  } else if (BYTE_AT(part, 98) * 2 + 333 < owner->timer) {
+    Func_02003a6c(part);
+  }
+}
+
+// The fifth part of Func_02001738's group: follows its owner like the others, throws effect 403 every eighth frame and marks the ground beneath.
+#include "system/field_effect.h"
+#include "system/main_routine_work.h"
+
+struct MagmaRockEffectConfig {
+  s32 kind;
+  s32 variant;
+  s32 unk08;
+  s32 unk0c;
+  u8 unk10[8];
+  u16 id;
+  u8 unk1a[2];
+  const void *data;
+  u8 unk20[4];
+  void (*unk24)(void);
+};
+
+extern u32 gData_02003d50[];
+/* VIEW(target): routine Func_020011b8 as void Func_020011b8(void); the definition has void Func_020011b8(struct Actor *object). */
+extern void Func_020011b8__target(void) __asm__("Func_020011b8");
+/* VIEW(target): routine Func_0200015c as void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags, struct MagmaRockEffectConfig *config); s0ff4 has void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags, struct EffectOptions *options). */
+extern void Func_0200015c__target(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                   s32 velocityZ, u32 flags,
+                   struct MagmaRockEffectConfig *config) __asm__("Func_0200015c");
+void Func_020005cc(s32 layer, s32 x, s32 z, s32 height);
+
+#define EFFECT_Y(object) (((union Position *)&(object)->effect.y)->word)
+
+/// The fifth part of Func_02001738's group: follows its owner like the others,
+/// throws effect 403 every eighth frame and marks the ground beneath.
+void Func_020015e4(union FieldObject *object) {
+  struct Actor *watched = (struct Actor *)object->effect.countdown;
+  struct MagmaRockEffectConfig config;
+  s32 step;
+  s32 mask;
+
+  if (watched->timer >= 35 && watched->timer <= 42) {
+    EFFECT_Y(object) = watched->y + 0x180000;
+    EFFECT_Y(object) = EFFECT_Y(object) + (watched->timer << 19) + (-34 << 19);
+  } else {
+    if (watched->timer >= 9 && watched->timer <= 331) {
+      EFFECT_Y(object) = watched->y + (object->effect.unk5a[8] << 20) + 0x180000;
+    } else if (watched->timer > 332 &&
+               watched->timer < (object->effect.unk5a[8] << 1) + 333) {
+      EFFECT_Y(object) = watched->y + (object->effect.unk5a[8] << 20) + 0x180000;
+      EFFECT_Y(object) -= (watched->timer << 19) - (332 << 19);
+    } else if ((object->effect.unk5a[8] << 1) + 333 < watched->timer) {
+      object->effect.y = object->actor.terrainHeight;
+      object->effect.update = 0;
+    }
+  }
+
+  mask = 7;
+  step = gFrameCount & mask;
+  if (step == 0) {
+    config.id = 403;
+    config.variant = 10;
+    config.kind = 2;
+    config.unk24 = Func_020011b8__target;
+    config.data = gData_02003d50;
+    Func_0200015c__target(object->effect.x + 0x10000, object->effect.y - 0x40000,
+                  object->effect.z, ((Random16Far() & mask) - 3) << 14,
+                  -0x20000, step, 0x1330000, &config);
+  }
+  Func_020005cc(watched->terrainId, watched->x >> 20, watched->z >> 20,
+                (object->effect.y >> 19) + 1);
+}
+#undef BYTE_AT
+#undef PART_Y
+#undef EFFECT_Y
+
+// ---- games/tla/src/scene/magma_rock/s1738.c ----
+#include "system/ram_buffer.h"
+
+void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
+
+/// The native reads these event work halfwords signed (ldrsh).
+
+
+extern u32 gData_02003d50[];
+/* VIEW(s1738): variable gData_02003d9e as extern u8 gData_02003d9e[]; s0ff4 has extern s16 gData_02003d9e[]. */
+extern u8 gData_02003d9e__s1738[] __asm__("gData_02003d9e");
+/* VIEW(s1738): variable gData_02003db2 as extern u8 gData_02003db2[]; s0ff4 has extern s16 gData_02003db2[]. */
+extern u8 gData_02003db2__s1738[] __asm__("gData_02003db2");
+/* VIEW(s1738): variable gData_02003dc4 as extern u8 gData_02003dc4[]; s0ff4 has extern s16 gData_02003dc4[]. */
+extern u8 gData_02003dc4__s1738[] __asm__("gData_02003dc4");
+/* VIEW(s1738): variable gData_02003dd6 as extern u8 gData_02003dd6[]; s0ff4 has extern s16 gData_02003dd6[]. */
+extern u8 gData_02003dd6__s1738[] __asm__("gData_02003dd6");
+/* VIEW(s1738): variable gData_02003dee as extern u8 gData_02003dee[]; s0ff4 has extern s16 gData_02003dee[]. */
+extern u8 gData_02003dee__s1738[] __asm__("gData_02003dee");
+
+/* VIEW(s1738): routine Func_0200015c as void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags, struct MagmaRockEffectConfig *config); s0ff4 has void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags, struct EffectOptions *options). */
+extern void Func_0200015c__s1738(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                   s32 velocityZ, u32 flags,
+                   struct MagmaRockEffectConfig *config) __asm__("Func_0200015c");
+void Scene_SetActorSpritePriority(struct Actor *object, s32 priority);
+void Func_02003a54(struct Actor *object, s32 a);
+void Func_02003c4c(struct Actor *object, s32 a);
+/* VIEW(s1738): routine Func_020010cc as s32 Func_020010cc(s32 x, s32 z, const u8 *data); the definition has s32 Func_020010cc(s32 x, s32 z, u16 *table). */
+extern s32 Func_020010cc__s1738(s32 x, s32 z, const u8 *data) __asm__("Func_020010cc");
+/* VIEW(s1738): routine Func_020011b8 as void Func_020011b8(void); the definition has void Func_020011b8(struct Actor *object). */
+extern void Func_020011b8__s1738(void) __asm__("Func_020011b8");
+/* VIEW(s1738): routine Func_020015e4 as void Func_020015e4(void); the definition has void Func_020015e4(union FieldObject *object). */
+extern void Func_020015e4__s1738(void) __asm__("Func_020015e4");
+/* VIEW(s1738): routine Func_02001528 as void Func_02001528(void); the definition has void Func_02001528(struct Actor *part). */
+extern void Func_02001528__s1738(void) __asm__("Func_02001528");
+
+struct AnimationEntry;
+
+/// The sprite as ResourceObject_Create fills it, laid out as vram_block_93.c
+/// declares it.
+struct ResourceSprite {
+  u32 imageAttributes[3];
+  s32 scale;
+  u8 slot;
+  u8 retainCacheEntry : 1;
+  u8 useOwnScale : 1;
+  u8 unk11 : 6;
+  u16 rotation;
+  u8 width;
+  u8 height;
+  s8 offsetX;
+  s8 offsetY;
+  u8 lastNo;
+  u8 dirty;
+  u8 flags;
+  u8 count;
+  u32 shadowAttributes[3];
+  struct AnimationEntry *entries[4];
+};
+
+void Func_02001738(struct Actor *object) {
+  struct EventWork *work = Ram_HeapSlots->eventWork;
+  // The parts' actor type, held from the top: global allocation leaves it in
+  // no register and reload rebuilds 0x15f in r0 at each call, as the native
+  // does; as the literal, its pseudo takes r0 before the first call's
+  // arguments are built (differ 155).
+  s32 type = 0x15f;
+
+  if ((gFrameCount & 15) == 0)
+    Func_02003c4c(object, 136);
+  Actor_SetPartAttribute(object, 10);
+  if (object->timer <= 31) {
+    u32 phase = gFrameCount & 3;
+
+    if (phase == 0) {
+      struct MagmaRockEffectConfig config;
+      s32 dx;
+      s32 dz;
+
+      config.id = 403;
+      config.variant = 10;
+      config.kind = 2;
+      config.unk24 = Func_020011b8__s1738;
+      config.data = gData_02003d50;
+      dx = Random16Far() & 15;
+      dz = Random16Far() & 15;
+      Func_0200015c__s1738(object->x + 0x10000, object->y + 0x180000, object->z,
+                    (dx - 8) << 14, 0, (dz - 8) << 14, 0x1330000, &config);
+    }
+  } else if (object->timer == 33) {
+    struct Actor *parts[4];
+    struct Actor *fifthPart;
+    s32 id;
+    s32 i;
+
+    Func_02003c4c(object, 144);
+    parts[0] = (FieldActor_Create(type, object->x + 0x10000,
+                                  object->y + 0x200000, object->z));
+    for (i = 1; i != 4; i++) {
+      struct ResourceSprite *first = parts[0]->sprite;
+      struct Actor *part = (FieldActor_Create(type, 0, 0, 0));
+      struct ResourceSprite *sprite;
+
+      parts[i] = part;
+      sprite = part->sprite;
+      sprite->slot = first->slot;
+      sprite->retainCacheEntry = 1;
+      part->x = parts[0]->x;
+      part->y = parts[0]->y;
+      part->z = parts[0]->z;
+      part->motionFlags = 0;
+      Actor_SetSingleChildFlags(part, 0);
+      Func_02003a54(parts[i], 3);
+      /* FAKEMATCH(dead): part set again to parts[i], which it holds; as
+       * parts[i]-> for the uses below, 65 of 294 instructions differ in
+       * tla-en. */
+      part = parts[i];
+      // Byte 98 lies in actor.h's callback. Written as a field, the value is
+      // computed before its address, as the native does (through a u8 *,
+      // differ 34).
+      part->unk5c[6] = 3 - i;
+      part->watchedObject = object;
+      part->update = Func_02001528__s1738;
+      Actor_SetPartAttribute(part, 3);
+    }
+    {
+      struct Actor *part = parts[0];
+
+      part->motionFlags = 0;
+      Actor_SetSingleChildFlags(part, 0);
+      Func_02003a54(parts[0], 3);
+      Scene_SetActorSpritePriority(parts[0], 3);
+      /* FAKEMATCH(dead): part set again to parts[0], which it holds; as
+       * parts[0]-> for the uses below, 45 of 294 instructions differ in
+       * tla-en. */
+      part = parts[0];
+      part->unk5c[6] = 3;
+      part->watchedObject = object;
+      part->update = Func_02001528__s1738;
+      Actor_SetPartAttribute(part, 3);
+    }
+    id = 0;
+    if (gMainRoutineWork.scene == (s32)&SceneId_Ov691Room1) {
+      id = Func_020010cc__s1738(object->x, object->z, gData_02003d9e__s1738);
+    } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov691Room2) {
+      // The native loads x and z once, ahead of the entrance tests.
+      s16 entrance = gMainRoutineWork.entrance;
+      s32 x = object->x;
+      s32 z = object->z;
+
+      if (entrance <= 3)
+        id = Func_020010cc__s1738(x, z, gData_02003db2__s1738);
+      else if (entrance <= 8)
+        id = Func_020010cc__s1738(x, z, gData_02003dc4__s1738);
+      else if (entrance <= 12)
+        id = Func_020010cc__s1738(x, z, gData_02003dd6__s1738);
+      else
+        id = Func_020010cc__s1738(x, z, gData_02003dee__s1738);
+    }
+    fifthPart = Actor_Get(id);
+    fifthPart->unk5c[6] = 4;
+    fifthPart->watchedObject = object;
+    fifthPart->update = Func_020015e4__s1738;
+    object->timer++;
+  } else if (object->timer > 364) {
+    Actor_SetPartAttribute(object, 0);
+    object->update = NULL;
+  }
+  // screenStatus read unsigned: as work->screenStatus, 39 of 294 instructions
+  // differ in tla-en.
+  if (work->unk166 == 0 && *(s16 *)&work->unk15a == 0 &&
+      *(s16 *)&work->unk15c[2] == 0 && *(s16 *)work->unk168 == 0 &&
+      (u16)work->screenStatus != 0)
+    object->timer++;
+}
+
+
+void Func_020014bc(s32 mode, s32 cue);
+
+/// In room 1 or 2, targets actor 15 or 14, runs Func_020014bc and sets flag
+/// 0x200.
+void Func_020019e8(s32 mode, s32 cue) {
+  struct MagmaRockWork *work = Ram_HeapSlots->effectWork;
+  struct MainRoutineWork *party = &gMainRoutineWork;
+
+  {
+    s32 scene = party->scene;
+
+    if (scene == (s32)&SceneId_Ov691Room1)
+      work->target = Actor_Get(15);
+    else if (scene == (s32)&SceneId_Ov691Room2)
+      work->target = Actor_Get(14);
+    Func_020014bc(mode, cue);
+  }
+  Event_SetFlag(0x200);
+}
+
+/// In room 1 or 2, targets actor 16 or 10, runs Func_020014bc and sets flag
+/// 0x201.
+void Func_02001a38(s32 mode, s32 cue) {
+  struct MagmaRockWork *work = Ram_HeapSlots->effectWork;
+  struct MainRoutineWork *party = &gMainRoutineWork;
+
+  {
+    s32 scene = party->scene;
+
+    if (scene == (s32)&SceneId_Ov691Room1)
+      work->target = Actor_Get(16);
+    else if (scene == (s32)&SceneId_Ov691Room2)
+      work->target = Actor_Get(10);
+    Func_020014bc(mode, cue);
+  }
+  Event_SetFlag(0x201);
+}
+
+void Func_02003aec(void);
+/* VIEW(s1738): routine Func_02003af4 as void Func_02003af4(void); s0ff4 has s32 Func_02003af4(void). */
+extern void Func_02003af4__s1738(void) __asm__("Func_02003af4");
+
+void Func_02001a8c(s32 mode, s32 cue) {
+  struct MagmaRockWork *work = Ram_HeapSlots->effectWork;
+
+  work->target = Actor_Get(17);
+  Func_020014bc(mode, cue);
+  Event_SetFlag(0x202);
+}
+
+void Func_02001ac0(s32 mode, s32 cue) {
+  struct MagmaRockWork *work = Ram_HeapSlots->effectWork;
+
+  work->target = Actor_Get(18);
+  Func_020014bc(mode, cue);
+  Event_SetFlag(0x203);
+}
+
+void Func_02001af4(s32 mode, s32 cue) {
+  struct MagmaRockWork *work = Ram_HeapSlots->effectWork;
+
+  work->target = Actor_Get(11);
+  Func_020014bc(mode, cue);
+  Event_SetFlag(0x204);
+}
+
+void Func_02001b24(void) {
+  struct MainRoutineWork *party = &gMainRoutineWork;
+
+  if (party->renderMode != 2)
+    Event_ClearFlag(0x2f8);
+}
+
+void Func_02001b44(void) {
+  struct MainRoutineWork *party = &gMainRoutineWork;
+
+  if (party->renderMode != 2) {
+    Func_02003aec();
+    FieldEvent_ResolvePendingActions(0);
+    Actor_Get(party->currentOwner)->motionFlags = 0;
+    Actor_WalkTo(party->currentOwner, 264, 440);
+    FieldEvent_Wait(5);
+    Event_PlaySound(123);
+    FieldEvent_SetExitRequest(2);
+    Func_02003af4__s1738();
+  }
+  Event_SetFlag(0x2f8);
+}
+
+extern const u8 gData_02003dba[];
+void Func_02002e30(const u8 *data);
+void Func_02003b3c(s32 id);
+void Func_020036f8(s32 a, s32 b, s32 owner);
+
+void Func_02001ba4(void) { Event_ResolvePendingActions(0); }
+
+void Func_02001bb0(void) { Func_02002e30(gData_02003dba); }
+
+void Func_02001bc0(void) {
+  Field_SetCellBehaviorAt(0, 0x1080000, 0x2280000, 30);
+  Event_SetFlag(0x212);
+}
+
+void Func_02001be0(void) {
+  Field_SetCellBehaviorAt(0, 0x1080000, 0x2280000, 0);
+  Event_ClearFlag(0x212);
+}
+
+// ---- games/tla/src/scene/magma_rock/s1c00.c ----
+#include "call.h"
+
+struct MagmaRockEffectOptions {
+  s32 kind;
+  s32 palette;
+  s32 scaleX;
+  s32 scaleY;
+  u8 unk10[8];
+  u16 id;
+  u8 unk1a[2];
+  const void *data;
+  s32 unk20;
+  void (*update)();
+};
+
+struct Actor *Actor_GetById(u32 objectId);
+void Func_02003aec(void);
+void Event_ResolvePendingActions(s32 value);
+void GameFlag_SetBit(s32 flag);
+void GameFlag_ClearBit(s32 flag);
+void Sound_Play(s32 cue);
+void Actor_SetActionById(s32 id, s32 action);
+/* VIEW(s1c00): routine Func_0200015c as void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags, struct MagmaRockEffectOptions *options); s1738 has void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags, struct MagmaRockEffectConfig *config). */
+extern void Func_0200015c__s1c00(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                   s32 velocityZ, u32 flags,
+                   struct MagmaRockEffectOptions *options) __asm__("Func_0200015c");
+void Camera_MoveWithinMapBounds(s32 a, s32 b, s32 c, s32 d);
+void Event_Wait(s32 frames);
+void Map_SetScreenShake(s32 a, s32 b, s32 c);
+void Map_WaitForShakeToSettle(void);
+/* VIEW(s1c00): routine Func_080d452c as void Func_080d452c(s32 a, s32 b); event.h has s32 Func_080d452c(s32 actorId, s32 pan). */
+extern void Func_080d452c__s1c00(s32 a, s32 b) __asm__("Func_080d452c");
+void Func_02003b6c(void);
+/* VIEW(s1c00): routine Func_02003af4 as void Func_02003af4(void); s0ff4 has s32 Func_02003af4(void). */
+extern void Func_02003af4__s1c00(void) __asm__("Func_02003af4");
+
+void Func_02001c00(void) {
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct MagmaRockEffectOptions options;
+  s32 position[3];
+  struct MagmaRockEffectOptions *opt;
+  s32 *offset;
+  s32 i;
+  u32 phase;
+
+  Func_02003aec();
+  Event_ResolvePendingActions(0);
+  GameFlag_SetBit(0x260);
+  Sound_Play(133);
+  Actor_SetPartAttribute(Actor_GetById(gMainRoutineWork.currentOwner), 6);
+  Actor_SetModeById(gMainRoutineWork.currentOwner, 10);
+  Actor_SetActionById(gMainRoutineWork.currentOwner, 32);
+  opt = &options;
+  opt->kind = 1;
+  opt->palette = 14;
+  opt->scaleX = 0xcccc;
+  opt->scaleY = 0xcccc;
+  i = 0;
+first:
+  {
+    s32 r = Random16Far();
+
+    offset = position;
+    offset[0] = ((r & 15) << 16) - 0x80000;
+  }
+  offset[1] = (Random16Far() & 15) << 16;
+  Func_0200015c__s1c00(leader->x + offset[0], leader->y + offset[1], leader->z, 0,
+                0x13333, 0, 0xb0000, opt);
+  wait(5);
+  i++;
+  if (i != 8)
+    goto first;
+  Call4((void (*)())Camera_MoveWithinMapBounds, -1, -1, -1, 0);
+  gMainRoutineWork.renderMode = 0;
+  leader->motionFlags = 3;
+  leader->gravity = 0xcccc;
+  leader->bounce = 0;
+  Event_Wait(1);
+  leader->facing = 0xc000;
+  i = 60;
+second:
+  phase = gFrameCount & 1;
+  if (phase == 0) {
+    offset[0] = ((Random16Far() & 15) << 16) - 0x80000;
+    offset[1] = (Random16Far() & 15) << 16;
+    Func_0200015c__s1c00(leader->x + offset[0], leader->y + offset[1], leader->z, 0,
+                  0x13333, phase, 0xb0000, opt);
+  }
+  wait(1);
+  if (leader->velocityY != 0) {
+    i--;
+    if (i != 0)
+      goto second;
+  }
+  Sound_Play(188);
+  Actor_SetSingleChildFlags(leader, 1);
+  Actor_SetModeById(gMainRoutineWork.currentOwner, 22);
+  Call3((void (*)())Map_SetScreenShake, 0x50000, 0x80000, 0x10000);
+  Call3((void (*)())Map_SetScreenShake, -1, -1, 0xe666);
+  Map_WaitForShakeToSettle();
+  Func_080d452c__s1c00(gMainRoutineWork.currentOwner, 1);
+  Func_02003b6c();
+  Actor_SetModeById(gMainRoutineWork.currentOwner, 4);
+  Actor_SetPartAttribute(Actor_GetById(gMainRoutineWork.currentOwner), 0);
+  Actor_WaitForAnimationChange(gMainRoutineWork.currentOwner);
+  GameFlag_ClearBit(0x260);
+  leader->gravity = 0x10000;
+  leader->bounce = 0x4000;
+  Func_02003af4__s1c00();
+}
+
+// ---- games/tla/src/scene/magma_rock/s1e08.c ----
+#include "fixed_math.h"
+
+extern s16 gData_02003de4[];
+
+struct Actor *Actor_FindInCell(s32 *position, struct Actor *except);
+void Func_0200074c(struct Actor *object);
+void Func_020005cc(s32 layer, s32 x, s32 z, s32 height);
+void Func_020003b4(void);
+void Func_020006cc(s16 *ids);
+
+void Func_02001e08(void) {
+  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
+  s32 position[3];
+  s32 *cell = position;
+  struct Actor *object;
+  u8 *terrainId;
+
+  cell[0] = leader->x + 0x100000;
+  cell[1] = leader->y;
+  cell[2] = leader->z;
+  object = Actor_FindInCell(cell, leader);
+  Func_0200074c(object);
+  terrainId = &object->terrainId;
+  {
+    /* FAKEMATCH(temporary): the three values held in locals; as call arguments,
+     * 2 of 92 instructions differ in tla-en. */
+    s32 x = object->x >> 20;
+    s32 z = object->z >> 20;
+    s32 height = object->terrainHeight >> 19;
+
+    Func_020005cc(*terrainId, x, z, height);
+  }
+  MapGrid_CopyCellAttributes(79, 46, 2, 1, 79, 36);
+  Func_020003b4();
+  *terrainId = 0;
+  MapGrid_CopyCellAttributes(79, 37, 2, 1, 79, 36);
+  Func_020005cc(*terrainId, object->x >> 20, object->z >> 20,
+                (object->terrainHeight >> 19) + 4);
+  Func_020006cc(gData_02003de4);
+  cell[0] = object->x >> 20;
+  cell[2] = object->z >> 20;
+  if (cell[0] == 16 && cell[2] == 36)
+    Event_SetFlag(0x8d9);
+}
+
+extern s16 gData_02003de8[];
+
+void Func_02001edc(void) {
+  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
+  s32 position[3];
+  struct Actor *object;
+  u8 *terrainId;
+
+  position[0] = leader->x - 0x100000;
+  position[1] = leader->y;
+  position[2] = leader->z;
+  object = Actor_FindInCell(position, leader);
+  Func_0200074c(object);
+  terrainId = &object->terrainId;
+  {
+    /* FAKEMATCH(temporary): the three values held in locals; as call arguments,
+     * 2 of 90 instructions differ in tla-en. */
+    s32 x = object->x >> 20;
+    s32 z = object->z >> 20;
+    s32 height = object->terrainHeight >> 19;
+
+    Func_020005cc(*terrainId, x, z, height);
+  }
+  MapGrid_CopyCellAttributes(94, 44, 5, 1, 99, 38);
+  Func_020003b4();
+  *terrainId = 0;
+  MapGrid_CopyCellAttributes(99, 42, 5, 1, 99, 38);
+  Func_020005cc(*terrainId, object->x >> 20, object->z >> 20,
+                (object->terrainHeight >> 19) + 4);
+  Func_020006cc(gData_02003de8);
+  position[0] = object->x >> 20;
+  position[2] = object->z >> 20;
+  if (position[0] == 35 && position[2] == 38)
+    Event_SetFlag(0x8db);
+}
+
+void Func_02001fb0(void) {
+  MapGrid_CopyCellAttributes(121, 48, 1, 3, 123, 48);
+  Event_SetFlag(0x250);
+}
+
+void Func_02001fd4(void) {
+  MapGrid_CopyCellAttributes(121, 48, 1, 3, 125, 48);
+  Event_SetFlag(0x251);
+}
+
+void Func_02001ffc(void) {
+  MapGrid_CopyCellAttributes(108, 56, 1, 3, 109, 56);
+  Event_SetFlag(0x252);
+}
+
+/* VIEW(s1e08): tag struct MagmaRockEffectConfig as struct MagmaRockEffectConfig__s1e08; s0ff4.c has another definition. */
+struct MagmaRockEffectConfig__s1e08 {
+  s32 kind;
+  s32 variant;
+  s32 unk08;
+  s32 unk0c;
+  u8 unk10[8];
+  u16 id;
+  u8 unk1a[2];
+  const void *data;
+  u8 unk20[8];
+};
+
+extern u32 gData_02003d50[];
+
+/* VIEW(s1e08): routine Func_0200015c as void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags, struct MagmaRockEffectConfig__s1e08 *config); s1738 has void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags, struct MagmaRockEffectConfig *config). */
+extern void Func_0200015c__s1e08(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                   s32 velocityZ, u32 flags,
+                   struct MagmaRockEffectConfig__s1e08 *config) __asm__("Func_0200015c");
+
+void Func_02002024(s32 x, s32 z) {
+  struct MagmaRockEffectConfig__s1e08 config;
+  s32 position[3];
+  s32 i;
+  s32 kind;
+
+  config.unk08 = Q16_ONE * 2;
+  config.unk0c = Q16_ONE * 2;
+  config.id = 403;
+  kind = 1; // Holds one constant: the native loads 1 before the data address.
+  config.data = gData_02003d50;
+  config.kind = kind;
+  i = 0;
+loop:
+  position[0] = x + ((Random16Far() & 63) << 16) - Q16_ONE * 32;
+  position[1] = (Random16Far() & 15) << 12;
+  position[2] = z + ((Random16Far() & 63) << 16) - Q16_ONE * 32;
+  Func_0200015c__s1e08(position[0], 0, position[2], 0, position[1], 0, 0x3a0001,
+                &config);
+  i++;
+  if (i != 4)
+    goto loop;
+  Event_SetFlag(0x8dc);
+}
+
+void Func_020020d0(struct Actor *object) {
+  if (gFrameCount & object->unk5c[7])
+    Actor_SetSpriteColor(object, 7);
+  else
+    Actor_SetSpriteColor(object, 0);
+}
+
+#define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
+
+void Func_02003820(s32 x, s32 y, s32 z, s32 kind);
+void Func_020038dc(void);
+void Func_02003998(void);
+
+/// Func_020014bc's counterpart: on cue 0 it hands the target to Func_020020d0;
+/// modes 2 and 3 run Func_02002024 at the target's cell, and mode 3 also clears
+/// its position and copies the cells at columns 32 and 96.
+void Func_020020f8(s32 mode, s32 cue) {
+  struct MagmaRockWork *work = Ram_HeapSlots->effectWork;
+
+  if (cue == 0) {
+    struct Actor *object;
+
+    Func_020038dc();
+    object = work->target;
+    BYTE_AT(object, 99) = 4;
+    object->update = (void *)Func_020020d0;
+  }
+  if (mode == 2) {
+    Func_02002024(work->target->x, work->target->z);
+    Func_02003820(work->target->x, work->target->y + 0xf0000, work->target->z,
+                  1);
+  }
+  if (mode == 3) {
+    struct Actor *target;
+    /* FAKEMATCH(temporary): the attribute copies' last argument as a
+     * local set first keeps it in r6; as the constant 8, 12 of 104
+     * instructions differ in tla-en. */
+    s32 last = 8;
+
+    Func_02002024(work->target->x, work->target->z);
+    Func_02002024(work->target->x, work->target->z);
+    Func_02002024(work->target->x, work->target->z - 0x200000);
+    Func_02003820(work->target->x, work->target->y + 0xf0000, work->target->z,
+                  16);
+    target = work->target;
+    SET_POSITION(target, 0, 0, 0);
+    MapGrid_CopyCellAttributes(0, 32, 5, 8, 42, 17);
+    MapGrid_CopyCellAttributes(0, 96, 5, 8, 42, 81);
+    MapGrid_CopyCellsTo(0, 32, 42, 17, 5, last);
+    MapGrid_CopyCellsTo(0, 96, 42, 81, 5, last);
+  }
+  if (cue == 0x3e7)
+    Func_02003998();
+}
+
+struct Trigger;
+
+extern const u8 gData_0200460c[];
+extern const u8 gData_02004720[];
+extern const u8 gData_020047e0[];
+extern const u8 gData_0200487c[];
+extern const u8 gData_02004930[];
+extern const u8 gData_02004a5c[];
+
+const struct Trigger *Func_020021e8(void) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_Ov691Room2) {
+    if (gMainRoutineWork.entrance <= 3)
+      return (const struct Trigger *)gData_02004720;
+    if (gMainRoutineWork.entrance <= 8)
+      return (const struct Trigger *)gData_020047e0;
+    if (gMainRoutineWork.entrance <= 12)
+      return (const struct Trigger *)gData_0200487c;
+    return (const struct Trigger *)gData_02004930;
+  }
+  if (gMainRoutineWork.scene == (s32)&SceneId_Ov691Room3)
+    return (const struct Trigger *)gData_02004a5c;
+  return (const struct Trigger *)gData_0200460c;
+}
+#undef BYTE_AT

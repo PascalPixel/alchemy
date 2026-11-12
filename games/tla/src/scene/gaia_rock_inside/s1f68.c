@@ -2,6 +2,8 @@
 /// Scene code of overlay 0x681, in ROM order, from s1f68's offset up to the
 /// next object the overlay links.
 
+// ---- games/tla/src/scene/gaia_rock_inside/s1f68.c ----
+
 #include "types.h"
 #include "main_routine_work.h"
 
@@ -516,4 +518,141 @@ const u8 *Func_02002a44(void) {
   if (gMainRoutineWork.entrance > 9)
     return gData_02005fcc;
   return gData_02005ee8;
+}
+#undef FIELD_AT
+
+// ---- games/tla/src/scene/gaia_rock_inside/s2ac8.c ----
+#define FIELD_AT(base, type, off)                                              \
+  (((struct {                                                                  \
+     u8 pad[off];                                                              \
+     type v;                                                                   \
+   } *)(base))                                                                 \
+       ->v)
+
+/* VIEW(s2ac8): routine Actor_GetById as s32 Actor_GetById(); event.h has struct Actor *Actor_GetById(u32 objectId). */
+extern s32 Actor_GetById__s2ac8() __asm__("Actor_GetById");
+/* VIEW(s2ac8): routine Actor_SetAngleToward as s32 Actor_SetAngleToward(); event.h has void Actor_SetAngleToward(s32 actorId, s32 target, s32 frames). */
+extern s32 Actor_SetAngleToward__s2ac8() __asm__("Actor_SetAngleToward");
+s32 ResourceMetadata_Register();
+s32 Func_02004d9c();
+
+void Func_02002ac8(s32 a0, s32 a1) {
+  s32 t2;
+  s32 t0;
+
+  t0 = Actor_GetById__s2ac8();
+  Actor_SetAngleToward__s2ac8(a0, a1, 0);
+  if (t0 != 0) {
+    t2 = ResourceMetadata_Register(FIELD_AT(t0, s32, 80), 0x185);
+    FIELD_AT(t2, u8, 5) = 0;
+    FIELD_AT(t2, u8, 6) = 0;
+    Func_02004d9c(t0, 0);
+    Func_02004d9c(t0, 4);
+  }
+}
+#undef FIELD_AT
+
+// ---- games/tla/src/scene/gaia_rock_inside/s2b04.c ----
+void Func_02002b04(u32 id, s8 mode) {
+  struct Actor *object = Actor_Get(id);
+
+  object->motionFlags = 0;
+  object->priorityFlags |= 0x80;
+  object->acceleration = 0x1000;
+  object->speedLimit = 0x10000;
+  object->y = PIXELS(16);
+  object->timer = object->x >> 16;
+  object->unk66 = object->z >> 16;
+  Actor_SetAnimation(id, mode);
+}
+
+// ---- games/tla/src/scene/gaia_rock_inside/s2b58.c ----
+#define FIELD_AT(base, type, off)                                              \
+  (((struct {                                                                  \
+     u8 pad[off];                                                              \
+     type v;                                                                   \
+   } *)(base))                                                                 \
+       ->v)
+
+#include "call.h"
+/* VIEW(s2b58): routine Actor_GetById as s32 Actor_GetById(); event.h has struct Actor *Actor_GetById(u32 objectId). */
+extern s32 Actor_GetById__s2b58() __asm__("Actor_GetById");
+/* VIEW(s2b58): routine Actor_SetMoveTarget as s32 Actor_SetMoveTarget(); event.h has void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z). */
+extern s32 Actor_SetMoveTarget__s2b58() __asm__("Actor_SetMoveTarget");
+
+void Func_02002b58(s32 a0, s32 a1, s32 a2) {
+  s32 t0;
+
+  t0 = Actor_GetById__s2b58();
+  Call4(Actor_SetMoveTarget__s2b58, t0,
+        (((a1 << 4) + FIELD_AT((t0 + 0x64), s16, 0)) << 16),
+        FIELD_AT(t0, s32, 12),
+        (((a2 << 4) + FIELD_AT((t0 + 0x66), s16, 0)) << 16));
+}
+#undef FIELD_AT
+
+// ---- games/tla/src/scene/gaia_rock_inside/s2b8c.c ----
+// The frame callback of the room where persons 8 to 16 sway: all of them
+// stop while flag 0x106 is set or the event work holds them; otherwise, once
+// per pending step, at frame 60 of every 240 they lean one way and at frame
+// 180 they come back.
+
+#include "event_work.h"
+
+struct SwayState {
+  u16 frame;
+  u16 pending;
+};
+
+extern struct SwayState gSceneState;
+
+void Func_02002b58(s32 id, s32 x, s32 z);
+
+void Func_02002b8c(void) {
+  // Pointers that stay on one global for their whole life.
+  struct SwayState *state = &gSceneState;
+  u16 *pending = &state->pending;
+  u16 *frame = &state->frame;
+  struct EventWork *work = Ram_HeapSlots->eventWork;
+  s32 stopped = Event_GetFlag(0x106);
+  s32 id;
+
+  if (work->unk166 != 0)
+    stopped |= 1;
+  id = 8;
+  do {
+    Actor_Get(id++)->movementState = stopped;
+  } while (id <= 16);
+  if (stopped != 0)
+    return;
+  ++*pending;
+  if (work->unk156 != 0)
+    return;
+  if (*pending == 0)
+    return;
+step:
+  switch (*frame) {
+  case 60:
+    Func_02002b58(8, 0, 3);
+    Func_02002b58(9, 3, 0);
+    Func_02002b58(10, 0, 3);
+    Func_02002b58(11, 0, 3);
+    Func_02002b58(12, 0, -3);
+    Func_02002b58(13, 0, -3);
+    Func_02002b58(14, 0, 3);
+    Func_02002b58(15, 0, -3);
+    Func_02002b58(16, 3, 0);
+    break;
+  case 180:
+    id = 8;
+    do {
+      Func_02002b58(id, 0, 0);
+      id++;
+    } while (id <= 16);
+    break;
+  }
+  if (++*frame == 240)
+    *frame = 0;
+  if (--*pending != 0)
+    goto step;
 }

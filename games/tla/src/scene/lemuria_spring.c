@@ -1,3 +1,4 @@
+// ---- games/tla/src/scene/lemuria_spring.c ----
 #include "battle.h"
 #include "field.h"
 #include "game.h"
@@ -38,7 +39,8 @@ void Func_02000054(void) {
   Func_02001358(1);
 }
 
-extern const u16 gData_02001678[];
+/* VIEW(lemuria_spring): variable gData_02001678 as extern const u16 gData_02001678[]; the definition has u32 gData_02001678[] = { 0xa08090a, 0xc040b06, 0xe020d03, 0x10000f01, }. */
+extern const u16 gData_02001678__lemuria_spring[] __asm__("gData_02001678");
 
 static inline void RegSet(s32 value, s32 reg) {
   /* FAKEMATCH(wrapper): the store forwarded through this inline with s32
@@ -66,7 +68,7 @@ next:
 next2:
   RegSet(BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL,
          (s32)&REG_BLDCNT);
-  RegSet(gData_02001678[i], (s32)&REG_BLDALPHA);
+  RegSet(gData_02001678__lemuria_spring[i], (s32)&REG_BLDALPHA);
   System_Wait(8);
   i++;
   if (i <= 7)
@@ -99,7 +101,8 @@ const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 #include "main_routine_work.h"
 
 s32 Event_StartScreenTransition();
-s32 Func_020010f4();
+/* VIEW(lemuria_spring): routine Func_020010f4 as s32 Func_020010f4(); the definition has void Func_020010f4(void). */
+extern s32 Func_020010f4__lemuria_spring() __asm__("Func_020010f4");
 
 /// Starts the scene: sets the colour blend, puts objects 24 and 25 in mode 2
 /// and starts the screen transition; when gMainRoutineWork's 0x1e2 halfword is
@@ -131,7 +134,7 @@ s32 Func_0200012c(void) {
   FIELD_AT((t4 + 0x23), u8, 0) = 2;
   Event_StartScreenTransition();
   if (gMainRoutineWork.entrance == 1) {
-    Func_020010f4();
+    Func_020010f4__lemuria_spring();
     t7 = Event_GetFlag(0x200);
     if (t7 != 0) {
       FIELD_AT(0x4000050, u16, 0) = blend;
@@ -152,7 +155,8 @@ s32 Scene_PrepareMap(void) { return 0; }
 // The Japanese catalog does not name these yet.
 extern u8 MsgWhatWillYou[], MsgCoins2[], MsgToss2[], MsgYouWonCoin[];
 extern u16 gData_0200173c[];
-extern s32 gData_02001700[];
+/* VIEW(lemuria_spring): variable gData_02001700 as extern s32 gData_02001700[]; the definition has u32 gData_02001700[] = { 280, 359, 335, 380, 302, 342, 387, 372, 320, 395, 364, 341, 183, 186, 189, }. */
+extern s32 gData_02001700__lemuria_spring[] __asm__("gData_02001700");
 s32 PartyInventory_CountItem();
 struct Window *Window_Create();
 void Text_DrawCharacterAtOffset();
@@ -394,7 +398,7 @@ toss:
         }
         if (prize == 15)
           prize = 14;
-        Func_0200049c(gData_02001700[prize]);
+        Func_0200049c(gData_02001700__lemuria_spring[prize]);
         if (WEIGHT(prize) > 1)
           gMainRoutineWork.unk13d[prize] = WEIGHT(prize) / 2;
       }
@@ -985,3 +989,239 @@ void Func_02000904(void) {
     toss->launchFrame = toss->launchFrame + 1;
   }
 }
+#undef FIELD_AT
+#undef COUNT_WINDOW_WIDTH
+#undef COUNT_NUMBER_X
+#undef TOSS_WINDOW_X
+#undef TOSS_WINDOW_WIDTH
+#undef WEIGHT
+
+// ---- games/tla/src/scene/lemuria_spring/ride.c ----
+#include "task.h"
+
+struct SpringPoint {
+  s32 x;
+  s32 y;
+  s32 z;
+};
+
+/* VIEW(ride): tag struct SpringObstacle as struct SpringObstacle__ride; lemuria_spring.c has another definition. */
+struct SpringObstacle__ride {
+  struct SpringPoint position;
+  s16 heading;
+  s16 pauseOrPhase;
+  s16 speedMode;
+  s16 reactionFrames;
+  s16 hitCooldownFrames;
+};
+
+struct SpringRide {
+  u16 unk00;
+  u16 hold;
+  struct SpringPoint trail[5];
+  struct SpringPoint velocity;
+  s32 frames;
+};
+
+/* VIEW(ride): variable gData_02001760 as extern struct SpringRide gData_02001760; lemuria_spring has extern struct SpringTossMotion gData_02001760. */
+extern struct SpringRide gData_02001760__ride __asm__("gData_02001760");
+extern s32 gData_020017b0;
+/* VIEW(ride): variable gData_020017c0 as extern struct SpringObstacle__ride gData_020017c0[]; lemuria_spring has extern struct SpringObstacle gData_020017c0[]. */
+extern struct SpringObstacle__ride gData_020017c0__ride[] __asm__("gData_020017c0");
+extern s32 gData_02001820;
+extern s32 gData_02001824;
+extern s32 gData_02001828;
+extern u8 gData_0200174c[];
+extern u8 gData_02001750[];
+extern u16 gData_02001754[];
+
+void Func_020008f0(s32 actor, s32 active);
+void Func_02000904(void);
+void Func_020012e8(struct Actor *object, s32 mode);
+
+/// Places the four actors from their tables, resets the ride and installs
+/// its task.
+void Func_020010f4(void) {
+  struct SpringRide *ride = &gData_02001760__ride;
+  s32 i = 0;
+  u8 *xtbl;
+  u16 *htbl;
+  struct SpringObstacle__ride *rec;
+  u8 *ztbl;
+  s32 zero;
+
+  htbl = gData_02001754;
+  ztbl = gData_02001750;
+  xtbl = gData_0200174c;
+  rec = gData_020017c0__ride;
+
+  do {
+    zero = 0;
+    rec->position.x = *xtbl << 16;
+    /* FAKEMATCH(barrier): the x store ends the first group, so the z table's
+     * read follows it at once; as plain stores of 0 with no barrier, 2 of 52
+     * instructions differ in tla-en. */
+    __asm__("");
+    rec->position.z = *ztbl << 16;
+    rec->position.y = zero;
+    rec->heading = *htbl;
+    rec->pauseOrPhase = zero;
+    rec->speedMode = zero;
+    rec->reactionFrames = zero;
+    rec->hitCooldownFrames = zero;
+    i++;
+    xtbl++;
+    ztbl++;
+    htbl++;
+    rec++;
+  } while (i != 4);
+
+  ride->trail[0].x = 0xffe20000;
+  ride->trail[0].y = 0;
+  ride->trail[0].z = 0x640000;
+  ride->velocity.x = 0;
+  ride->velocity.y = 0;
+  ride->velocity.z = 0;
+  ride->frames = 0;
+
+  Func_020012e8(Actor_Get(20), 2);
+  Func_020012e8(Actor_Get(21), 2);
+
+  Task_AddFrame((TaskFunc)Func_02000904, TASK_PASS_VBLANK + 3);
+}
+
+/// Runs the spring ride from one side until it ends, and returns its result.
+s32 Func_02001184(s32 side) {
+  struct SpringRide *ride;
+
+  ride = &gData_02001760__ride;
+  ride->trail[0].y = 0;
+  ride->trail[1].y = 0;
+  ride->trail[2].y = 0;
+  ride->trail[3].y = 0;
+  gData_020017b0 = side;
+  gData_02001824 = 0;
+  ride->hold = 0xffff;
+  for (gData_02001820 = 0;; gData_02001820++) {
+  if (gData_02001820 == 50)
+    Event_PlaySound(300);
+  if (gData_02001820 == 16) {
+    Actor_SetAnimation(gMainRoutineWork.currentOwner, 39);
+    ride->hold = 0;
+    ride->velocity.x = 0x14ccc;
+    ride->velocity.y = 0x40000;
+    ride->velocity.z = -0x20000;
+    ride->trail[0].x = 0x780000;
+    ride->trail[0].y = 0x100000;
+    ride->trail[0].z = 0x980000;
+    ride->frames = 300;
+    if (gData_020017b0 == 1) {
+      Func_020012e8(Actor_Get(16), 3);
+      Func_020012e8(Actor_Get(17), 0);
+      Func_020008f0(15, 1);
+      Func_020008f0(14, 1);
+      Func_020008f0(13, 1);
+    } else {
+      Func_020012e8(Actor_Get(11), 3);
+      Func_020012e8(Actor_Get(12), 0);
+      Func_020008f0(10, 1);
+      Func_020008f0(9, 1);
+      Func_020008f0(8, 1);
+    }
+  }
+  System_Wait(1);
+  if (gData_02001824 == 1)
+    break;
+  }
+  return gData_02001828;
+}
+
+
+void Func_02000054(void);
+void Func_020000d0(void);
+
+struct SceneEntrance gSceneEntrances[] = {
+    {0, CONDITION_ALWAYS, 288, 0, 454, FACING_NORTH, 0, -1, -1, -1, -1, 0},
+    {SCENE_TABLE_END},
+};
+
+u32 gSceneExits[] = {
+    SCENE_EXITS(205),
+    SCENE_EXIT_IF(1, 202, 5, -1),
+    SCENE_EXITS_END,
+};
+
+struct ActorPlacement gActorPlacements[] = {
+    {669, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 0, 0},
+    {669, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 0, 0},
+    {669, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 0, 0},
+    {669, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 0, 0},
+    {669, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 0, 0},
+    {670, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 0, 0},
+    {670, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 0, 0},
+    {670, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 0, 0},
+    {670, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 0, 0},
+    {670, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 0, 0},
+    {667, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 0, 0},
+    {667, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 0, 0},
+    {668, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 0, 0},
+    {668, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 0, 0},
+    {450, CONDITION_ALWAYS, 7, PIXELS(176), 0, PIXELS(144), FACING_SOUTH, 1, 0},
+    {450, CONDITION_ALWAYS, 7, PIXELS(72), 0, PIXELS(144), FACING_SOUTH, 1, 0},
+    {450, CONDITION_ALWAYS, 7, PIXELS(176), 0, PIXELS(168), FACING_SOUTH, 1, 0},
+    {450, CONDITION_ALWAYS, 7, PIXELS(72), 0, PIXELS(168), FACING_SOUTH, 1, 0},
+    {160, CONDITION_ALWAYS, 1, PIXELS(48), 0, PIXELS(136), FACING_NORTH, 1, 0},
+    {238, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_EAST, 0, 0},
+    {165, CONDITION_ALWAYS, 1, PIXELS(216), 0, PIXELS(96), FACING_WEST, 1, 0},
+    {322, CONDITION_ALWAYS, 1, -0x380000, 0, -0x380000, FACING_WEST, 1, 0},
+    {SCENE_TABLE_END},
+};
+
+// clang-format off
+u32 gData_02001678[] = {
+    0xa08090a, 0xc040b06, 0xe020d03, 0x10000f01,
+};
+
+struct Trigger gSceneEvents[] = {
+    {1, 1, CONDITION_ALWAYS, 1},
+    {0, 22, CONDITION_ALWAYS, MSGNO(MsgReadTheSign)},
+    {0, 23, CONDITION_ALWAYS, MSGNO(MsgReadTheSignThe)},
+    {0, 26, CONDITION_ALWAYS, MSGNO(MsgIfYouFace)},
+    {0x8d15, 26, CONDITION_ALWAYS, MSGNO(MsgIDLove)},
+    {0, 28, CONDITION_ALWAYS, MSGNO(MsgIRememberAn)},
+    {0x8d15, 28, CONDITION_ALWAYS, MSGNO(MsgHeHadSuch)},
+    {3, 25, 0x200, EVENT(Func_02000054)},
+    {3, 80, CONDITION_ALWAYS, EVENT(Func_020000d0)},
+    {TRIGGERS_END},
+};
+
+u32 gData_02001700[] = {
+    280, 359, 335, 380, 302, 342,
+    387, 372, 320, 395, 364, 341,
+    183, 186, 189,
+};
+
+u16 gData_0200173c[] = {
+    20, 10, 2, 1, 0,
+};
+
+u8 gData_02001746[] = {
+    0, 1, 9,
+};
+
+u8 gData_02001749[] = {
+    0, 3, 4,
+};
+
+u8 gData_0200174c[] = {
+    80, 160, 80, 72,
+};
+
+u8 gData_02001750[] = {
+    32, 104, 68, 72,
+};
+
+u16 gData_02001754[] = {
+    0, 1, 0, 0x8000,
+};
+// clang-format on

@@ -1,6 +1,8 @@
 /// @file
 /// The scene code of overlay 0x64d that its scene tables belong to, in ROM order; the rest of the overlay is in venus_lighthouse_entrance/.
 
+// ---- games/tla/src/scene/venus_lighthouse_entrance.c ----
+
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -15,7 +17,8 @@
 #include "actor.h"
 #include "event_inline.h"
 
-void Func_020023a4(void *object);
+/* VIEW(venus_lighthouse_entrance): routine Func_020023a4 as void Func_020023a4(void *object); the definition has void Func_020023a4(s32 id). */
+extern void Func_020023a4__venus_lighthouse_entrance(void *object) __asm__("Func_020023a4");
 void Func_0200260c(struct Actor *object, s32 x, s32 y, s32 z);
 void Func_02002a34(s32 a, s32 b);
 void Func_02002a44(void);
@@ -38,7 +41,7 @@ void VenusLighthouseEntrance_RunActorSparkBurst(void *object) {
   Func_02002a44();
   Func_02002a5c(Actor_Get(5), 2);
   FieldEvent_Wait(20);
-  Func_020023a4(object);
+  Func_020023a4__venus_lighthouse_entrance(object);
   Func_02002a5c(Actor_Get(5), 0);
   Func_02002a54();
   Func_02002a4c();
@@ -194,7 +197,8 @@ s32 Event_StartScreenTransition();
 s32 Event_WaitTransitionFrames();
 s32 Func_02002864();
 void Func_0200298c(void);
-extern u8 gData_0200b000[];
+/* VIEW(venus_lighthouse_entrance): variable gData_0200b000 as extern u8 gData_0200b000[]; the definition has u32 gData_0200b000[] = { 1, 0, 1, 39, 2, 0, 4, 22, 26, 3, 22, 13, 0, 0, 1, 17, }. */
+extern u8 gData_0200b000__venus_lighthouse_entrance[] __asm__("gData_0200b000");
 
 void Func_0200030c(void) {
   s32 t1;
@@ -225,13 +229,13 @@ void Func_0200030c(void) {
   Actor_SetAnimation(10, 4);
   Event_PlaySound(165);
   FieldActor_SetMoveTarget(t9, PIXELS(352), PIXELS(8), PIXELS(176));
-  Func_02002864(t9, (s32)gData_0200b000);
+  Func_02002864(t9, (s32)gData_0200b000__venus_lighthouse_entrance);
   FieldEvent_Wait(25);
   FieldCamera_MoveTo(PIXELS(376), -1, PIXELS(104), 1);
   t16 = ((s32)Actor_Get(11));
   Actor_SetAnimation(11, 4);
   FieldActor_SetMoveTarget(t16, PIXELS(416), PIXELS(8), PIXELS(152));
-  Func_02002864(t16, (s32)gData_0200b000);
+  Func_02002864(t16, (s32)gData_0200b000__venus_lighthouse_entrance);
   FieldEvent_Wait(60);
   Event_PlaySound(165);
   FieldActor_WaitForMoveById(10);
@@ -239,7 +243,8 @@ void Func_0200030c(void) {
   Func_0200298c();
 }
 
-extern u8 gData_02003040[];
+/* VIEW(venus_lighthouse_entrance): variable gData_02003040 as extern u8 gData_02003040[]; the definition has u32 gData_02003040[] = { 1, 0, 1, 38, }. */
+extern u8 gData_02003040__venus_lighthouse_entrance[] __asm__("gData_02003040");
 
 void Func_02000440(void) {
   s32 t7;
@@ -258,14 +263,14 @@ void Func_02000440(void) {
   FIELD_AT(t7, s32, 52) = 0x8000;
   Actor_SetAnimation(10, 4);
   FieldActor_SetMoveTarget(t7, PIXELS(616), PIXELS(96), PIXELS(176));
-  Func_02002864(t7, (s32)gData_02003040);
+  Func_02002864(t7, (s32)gData_02003040__venus_lighthouse_entrance);
   t11 = Actor_Get(11);
   FIELD_AT((t11 + 0x55), u8, 0) = 0;
   FIELD_AT(t11, s32, 48) = 0x20000;
   FIELD_AT(t11, s32, 52) = 0x8000;
   Actor_SetAnimation(11, 4);
   FieldActor_SetMoveTarget(t11, PIXELS(120), PIXELS(96), PIXELS(176));
-  Call2(Func_02002864, t11, (s32)gData_02003040);
+  Call2(Func_02002864, t11, (s32)gData_02003040__venus_lighthouse_entrance);
   Func_020028bc();
 }
 
@@ -560,7 +565,7 @@ void Func_02000510(void) {
   FieldEvent_Wait(60);
   Event_PlaySound(0x186);
   FieldActor_SetSpritePriority(12, 0);
-  Func_020023a4(12);
+  Func_020023a4__venus_lighthouse_entrance(12);
   Actor_ShowEmote(17, 0x100, 0);
   Actor_ShowEmote(18, 0x100, 0);
   Actor_ShowEmote(19, 0x100, 0);
@@ -569,7 +574,7 @@ void Func_02000510(void) {
   Actor_ShowEmote(14, 0x100, 0);
   Actor_ShowEmote(15, 0x100, 50);
   FieldActor_SetSpritePriority(13, 1);
-  Func_020023a4(13);
+  Func_020023a4__venus_lighthouse_entrance(13);
   FieldEvent_Wait(30);
   record = ((u8 *)Actor_GetById(9));
   Func_02002a5c((s32)record, 0);
@@ -1312,3 +1317,378 @@ void Func_02001fd0(void) {
   }
   work->timer++;
 }
+#undef FIELD_AT
+
+// ---- games/tla/src/scene/venus_lighthouse_entrance/s23a4.c ----
+// Scene code of overlay 0x64d, in ROM order, from s23a4's offset up to the next object the overlay links.
+
+
+void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
+
+
+
+/* VIEW(s23a4): tag struct GlowWork as struct GlowWork__s23a4; venus_lighthouse_entrance.c has another definition. */
+struct GlowWork__s23a4 {
+  u8 unk000[0x400];
+  struct GlowSprite sprites[16];
+  struct GlowState states[16];
+  struct Actor *actor;
+  struct Actor *effect;
+  s32 x;
+  s32 y;
+  s32 z;
+  s16 stage;
+  s16 timer;
+  u16 tileTop;
+  u16 tile;
+  s16 height;
+  s8 follow;
+};
+
+struct GlowAnimation {
+  u32 unk00[4];
+  u32 unk10 : 16;
+  u32 angle : 16;
+};
+
+extern u8 gField_Tiles64D[];
+
+void *HeapSlot_AllocFar(s32 slot, s32 size);
+void Func_02002824(void *source, void *destination);
+s32 Resource_FindFreeEntry(void);
+s32 Resource_ResetEntry(u32 slot);
+void Func_02002a0c(struct GlowSprite *sprite, s32 width, s32 height, s32 attr,
+                   s32 tile);
+s32 Func_02002a24(struct Actor *actor);
+s32 Func_02002a2c(struct Actor *actor);
+void Func_0200285c(struct Actor *actor, s32 mode);
+void Func_02002874(struct Actor *actor);
+void Func_02001fd0(void);
+
+void Func_020023a4(s32 id) {
+  struct GlowWork__s23a4 *work = HeapSlot_AllocFar(220, 0x860);
+  struct Actor *actor = Actor_Get(id);
+  struct Actor *effect;
+  struct GlowSprite *sprite;
+  struct GlowState *state;
+  s32 resource, tile, i;
+  u8 zero = 0; // Holds 0 for its whole life.
+
+  actor->movementState = zero;
+  work->actor = actor;
+  work->x = actor->x;
+  work->y = actor->y;
+  work->z = actor->z + 0x20000;
+  Func_02002824(gField_Tiles64D, work);
+  resource = Resource_FindFreeEntry();
+  tile = Vram_Load(resource, 0x800, work);
+  work->tile = tile;
+  work->tileTop = tile + 32;
+  state = work->states;
+  sprite = work->sprites;
+  for (i = 15; i >= 0;) {
+    Func_02002a0c(sprite, 8, 8, 0x40000000, tile);
+    sprite->unk1e = Func_02002a2c(actor) - 2;
+    sprite->priority = Func_02002a24(actor);
+    sprite->fullColor = 1;
+    sprite->palette = 0;
+    state->frame = -1;
+    i--;
+    sprite++;
+    state++;
+  }
+  effect =
+      (FieldActor_Create(290, actor->x, actor->y, actor->z));
+  work->effect = effect;
+  Func_0200285c(effect, 1);
+  Actor_SetSingleChildFlags(effect, 0);
+  effect->priorityFlags = 2;
+  Actor_SetSingleChildFlags(actor, 0);
+  ((struct GlowAnimation *)actor->sprite)->angle = 0x4000;
+  actor->x += -0xc0000;
+  actor->motionFlags = 0;
+  work->stage = 0;
+  work->timer = 0;
+  work->height = 0;
+  work->follow = 1;
+  Event_PlaySound(221);
+  Task_AddFrame(Func_02001fd0, 0x480);
+  if (work->stage != 999) {
+  wait:
+    System_Wait(1);
+    if (work->stage != 999)
+      goto wait;
+  }
+  FieldTask_Remove(Func_02001fd0);
+  Func_02002874(effect);
+  Resource_ResetEntry(resource);
+  HeapSlot_Release(220);
+}
+
+struct Unk_0200258cState {
+  u8 unk00[24];
+  s32 frame;
+};
+
+struct Unk_0200258cSprite {
+  u8 unk00[8];
+  u16 tile : 10;
+  u16 attributes : 6;
+  u8 unk0a[30];
+};
+
+struct Unk_0200258cWork {
+  u8 unk0000[0x800];
+  struct Unk_0200258cState states[96];
+  struct Unk_0200258cSprite sprites[96];
+  u16 unk2180;
+  u16 unk2182;
+};
+
+/* VIEW(s23a4): routine Func_02002a14 as void Func_02002a14(struct Unk_0200258cSprite *sprite, struct Unk_0200258cState *state); venus_lighthouse_entrance has void Func_02002a14(struct GlowSprite *sprite, struct GlowState *state). */
+extern void Func_02002a14__s23a4(struct Unk_0200258cSprite *sprite, struct Unk_0200258cState *state) __asm__("Func_02002a14");
+void Func_02002a1c(struct Unk_0200258cState *state, s32 a, s32 b);
+
+void Func_0200258c(void) {
+  struct Unk_0200258cWork *work = Ram_HeapSlots->menuRuntime;
+  struct Unk_0200258cState *state = work->states;
+  struct Unk_0200258cSprite *sprite = work->sprites;
+  s32 value;
+  s32 i;
+
+  for (i = 0; i < 96; i++, sprite++, state++) {
+    value = state->frame;
+    if ((u32)value < 16) {
+      sprite->tile = work->unk2182 + ((value >> 1) & 7) * 8;
+      Func_02002a14__s23a4(sprite, state);
+      Func_02002a1c(state, 64, 0);
+      state->frame++;
+    }
+  }
+}
+
+struct SparkState {
+  s32 x;
+  s32 y;
+  s32 z;
+  s32 velocityX;
+  s32 velocityY;
+  s32 velocityZ;
+  s32 frame;
+};
+
+struct SparkSprite {
+  u8 unk00[8];
+  u16 tile : 10;
+  u16 priority : 2;
+  u16 palette : 4;
+  u8 unk0a[20];
+  u16 unk1e;
+  u8 unk20[8];
+};
+
+struct SparkWork {
+  u8 unk0000[0x800];
+  struct SparkState states[96];
+  struct SparkSprite sprites[96];
+  s16 next;
+  u16 tileBase;
+};
+
+void Func_0200260c(struct Actor *source, s32 x, s32 y, s32 z) {
+  struct SparkWork *work = Ram_HeapSlots->menuRuntime;
+  s32 angle = Random16Far();
+  s16 *next = &work->next;
+  struct SparkSprite *sprite = &work->sprites[*next];
+  struct SparkState *state = &work->states[*next];
+
+  sprite->priority = Func_02002a24(source);
+  sprite->unk1e = Func_02002a2c(source);
+  state->frame = 0;
+  state->x = x;
+  state->y = y;
+  state->z = z;
+  FieldVector_AddPolarOffset(Random16Far() * 2 + 0x20000, angle, &state->x);
+  state->velocityX = 0;
+  state->velocityY = (Random16Far() >> 1) + 0xc000;
+  state->velocityZ = 0;
+  FieldVector_AddPolarOffset(Random16Far() >> 2, angle, &state->velocityX);
+  *next = *next + 1;
+  *next = *next % 96;
+}
+
+// ---- games/tla/src/scene/venus_lighthouse_entrance/s26f4.c ----
+/* VIEW(s26f4): tag struct SparkState as struct SparkState__s26f4; venus_lighthouse_entrance.c has another definition. */
+struct SparkState__s26f4 {
+  u8 unk00[24];
+  s32 frame;
+};
+
+/* VIEW(s26f4): tag struct SparkSprite as struct SparkSprite__s26f4; venus_lighthouse_entrance.c has another definition. */
+struct SparkSprite__s26f4 {
+  u8 unk00[4];
+  u16 attr0 : 13;
+  u16 fullColor : 1;
+  u16 shape : 2;
+  u16 attr1;
+  u16 tile : 10;
+  u16 priority : 2;
+  u16 palette : 4;
+  u8 unk0a[20];
+  u16 unk1e;
+  u8 unk20[8];
+};
+
+/* VIEW(s26f4): tag struct SparkWork as struct SparkWork__s26f4; venus_lighthouse_entrance.c has another definition. */
+struct SparkWork__s26f4 {
+  u8 unk0000[0x800];
+  struct SparkState__s26f4 states[96];
+  struct SparkSprite__s26f4 sprites[96];
+  u16 unk2180;
+  u16 tileBase;
+  u16 resource;
+};
+
+extern char ResourceId_DustPuffA;
+
+void *HeapSlot_AllocFar(s32 slot, s32 size);
+void *Resource_GetTableEntry(s32 id);
+void Func_02002824(void *source, void *destination);
+s32 Resource_FindFreeEntry(void);
+/* VIEW(s26f4): routine Func_02002a0c as void Func_02002a0c(struct SparkSprite__s26f4 *sprite, s32 width, s32 height, s32 attr, s32 tile); s23a4 has void Func_02002a0c(struct GlowSprite *sprite, s32 width, s32 height, s32 attr, s32 tile). */
+extern void Func_02002a0c__s26f4(struct SparkSprite__s26f4 *sprite, s32 width, s32 height, s32 attr,
+                   s32 tile) __asm__("Func_02002a0c");
+void Func_0200258c(void);
+
+void Func_020026f4(void) {
+  struct SparkWork__s26f4 *work = HeapSlot_AllocFar(220, 0x2188);
+  s32 resource;
+  s32 tileBase;
+  s32 i; struct SparkState__s26f4 *state; struct SparkSprite__s26f4 *sprite;
+
+  Func_02002824(Resource_GetTableEntry((s32)&ResourceId_DustPuffA), work);
+  resource = Resource_FindFreeEntry();
+  tileBase = Vram_Load(resource, 0x800, work);
+  work->tileBase = tileBase;
+  work->resource = resource;
+  state = work->states;
+  sprite = work->sprites;
+  for (i = 95; i >= 0; i--) {
+    Func_02002a0c__s26f4(sprite, 8, 8, 0x40000000, tileBase);
+    sprite->fullColor = 1;
+    sprite->palette = 0;
+    sprite->priority = 0;
+    sprite->unk1e = 240;
+    state->frame = -1;
+    state++;
+    sprite++;
+  }
+  { s32 zero = 0; work->unk2180 = zero; }
+  Task_AddFrame(Func_0200258c, (s32)(0x480));
+}
+
+// ---- games/tla/src/scene/venus_lighthouse_entrance/sparks.c ----
+#include "resource.h"
+#include "heap_release.h"
+
+void Func_0200258c(void);
+
+/* VIEW(sparks): tag struct SparkWork as struct SparkWork__sparks; venus_lighthouse_entrance.c has another definition. */
+struct SparkWork__sparks {
+  u8 unk0000[0x2102];
+  u16 tileBase;
+  u8 unk2104[0x80];
+  s16 resource;
+};
+
+void VenusLighthouseEntrance_StopSparks(void) {
+  struct SparkWork__sparks *work = Ram_HeapSlots->menuRuntime;
+
+  FieldTask_Remove(Func_0200258c);
+  Resource_ResetEntry(work->resource);
+  HeapSlot_Release(220);
+}
+
+#include "text/msg_ids.h"
+
+/* VIEW(sparks): routine Func_020000c8 as void Func_020000c8(void); the definition has void Func_020000c8(s32 actor). */
+extern void Func_020000c8__sparks(void) __asm__("Func_020000c8");
+void Func_02000440(void);
+void Func_02000510(void);
+void Func_02001a2c(void);
+void Func_02001bb0(void);
+/* VIEW(sparks): routine VenusLighthouseEntrance_RunActorSparkBurst as void VenusLighthouseEntrance_RunActorSparkBurst(void); the definition has void VenusLighthouseEntrance_RunActorSparkBurst(void *object). */
+extern void VenusLighthouseEntrance_RunActorSparkBurst__sparks(void) __asm__("VenusLighthouseEntrance_RunActorSparkBurst");
+
+struct SceneEntrance gSceneEntrances[] = {
+    {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {9, CONDITION_ALWAYS, 376, 0, 104, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {10, CONDITION_ALWAYS, 376, 0, 232, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {11, CONDITION_ALWAYS, 384, 0, 392, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {12, CONDITION_ALWAYS, 112, 0, 272, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {90, CONDITION_ALWAYS, 376, 0, 104, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {98, CONDITION_ALWAYS, 384, 0, 168, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {99, CONDITION_ALWAYS, 72, 0, 264, FACING_WEST, 0, -1, -1, -1, -1, 0},
+    {SCENE_TABLE_END},
+};
+
+u32 gSceneExits[] = {
+    SCENE_EXITS(4),
+    SCENE_EXIT(1, 6, 5),
+    SCENE_EXIT(2, 5, 1),
+    SCENE_EXITS_END,
+};
+
+struct ActorPlacement gActorPlacements[] = {
+    {56, CONDITION_ALWAYS, 1, PIXELS(8), 0, PIXELS(8), FACING_NORTH, 2, 0},
+    {57, CONDITION_ALWAYS, 1, PIXELS(8), 0, PIXELS(8), FACING_NORTH, 2, 0},
+    {92, CONDITION_ALWAYS, 1, PIXELS(352), 0, PIXELS(176), FACING_EAST, 2, 0},
+    {92, CONDITION_ALWAYS, 1, PIXELS(416), 0, PIXELS(152), FACING_WEST, 2, 0},
+    {232, CONDITION_ALWAYS, 1, PIXELS(424), 0, PIXELS(408), FACING_NORTHWEST, 2,
+     0},
+    {232, CONDITION_ALWAYS, 1, PIXELS(440), 0, PIXELS(408), FACING_NORTHWEST, 2,
+     0},
+    {232, CONDITION_ALWAYS, 1, PIXELS(424), 0, PIXELS(424), FACING_NORTHWEST, 2,
+     0},
+    {232, CONDITION_ALWAYS, 1, PIXELS(440), 0, PIXELS(440), FACING_NORTHWEST, 2,
+     0},
+    {232, CONDITION_ALWAYS, 1, PIXELS(456), 0, PIXELS(408), FACING_NORTHWEST, 2,
+     0},
+    {187, CONDITION_ALWAYS, 1, PIXELS(328), 0, PIXELS(408), FACING_NORTHEAST, 2,
+     0},
+    {195, CONDITION_ALWAYS, 1, PIXELS(312), 0, PIXELS(408), FACING_NORTHEAST, 2,
+     0},
+    {187, CONDITION_ALWAYS, 1, PIXELS(328), 0, PIXELS(424), FACING_NORTHEAST, 2,
+     0},
+    {195, CONDITION_ALWAYS, 1, PIXELS(312), 0, PIXELS(440), FACING_NORTHEAST, 2,
+     0},
+    {187, CONDITION_ALWAYS, 1, PIXELS(296), 0, PIXELS(408), FACING_NORTHEAST, 2,
+     0},
+    {93, CONDITION_ALWAYS, 1, PIXELS(24), 0, PIXELS(264), FACING_WEST, 2, 0},
+    {SCENE_TABLE_END},
+};
+
+struct Trigger gSceneEvents[] = {
+    {1, 1, CONDITION_ALWAYS, 1},
+    {1, 2, CONDITION_ALWAYS, 2},
+    {2, 9, 0x892, EVENT(Func_02000440)},
+    {2, 10, 0x890, EVENT(Func_02000510)},
+    {2, 11, 0x893, EVENT(Func_02001a2c)},
+    {2, 12, CONDITION_ALWAYS, EVENT(Func_02001bb0)},
+    {0, 22, CONDITION_ALWAYS, MSGNO(MsgUggghICan)},
+    {0, 14, CONDITION_ALWAYS, EVENT(VenusLighthouseEntrance_RunActorSparkBurst__sparks)},
+    {0, 15, CONDITION_ALWAYS, EVENT(Func_020000c8__sparks)},
+    {TRIGGERS_END},
+};
+
+// clang-format off
+u32 gData_0200b000[] = {
+    1, 0, 1, 39, 2, 0,
+    4, 22, 26, 3, 22, 13,
+    0, 0, 1, 17,
+};
+
+u32 gData_02003040[] = {
+    1, 0, 1, 38,
+};
+// clang-format on

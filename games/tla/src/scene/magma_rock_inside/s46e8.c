@@ -1,3 +1,4 @@
+// ---- games/tla/src/scene/magma_rock_inside/s46e8.c ----
 #include "types.h"
 #include "system.h"
 #include "iwram_call.h"
@@ -7,12 +8,15 @@
 #include "field_effect.h"
 #include "event_inline.h"
 
-extern const s32 gData_02005638[];
+/* VIEW(s46e8): variable gData_02005638 as extern const s32 gData_02005638[]; the definition has u32 gData_02005638[] = { SC_WAIT(33), SC_SET(SW_HOOK, 0), SC_POSITION(0, 0, 0), SC_WAIT(1), SC_FREE, }. */
+extern const s32 gData_02005638__s46e8[] __asm__("gData_02005638");
 
 u32 Func_02004e98(struct FieldSprite *sprite, u32 frame);
 void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags);
-void Func_02004c98(struct FieldEffect *effect, s32 mode);
-void Func_02004ca0(struct FieldEffect *effect, const s32 *script);
+/* VIEW(s46e8): routine Func_02004c98 as void Func_02004c98(struct FieldEffect *effect, s32 mode); local.h has void Func_02004c98(struct Actor *object, s32 a). */
+extern void Func_02004c98__s46e8(struct FieldEffect *effect, s32 mode) __asm__("Func_02004c98");
+/* VIEW(s46e8): routine Func_02004ca0 as void Func_02004ca0(struct FieldEffect *effect, const s32 *script); local.h has void Func_02004ca0(struct Actor *object, const void *data). */
+extern void Func_02004ca0__s46e8(struct FieldEffect *effect, const s32 *script) __asm__("Func_02004ca0");
 s32 Math_Cosine(s32 angle);
 void Effect_AdvanceMotionAtLeaderPriority(union FieldObject *object);
 
@@ -36,8 +40,8 @@ void Func_020046e8(s32 spread) {
       effect->motionFlags = 0;
       effect->collisionFlags = 0;
       Actor_SetSingleChildFlags(effect, 0);
-      Func_02004c98(effect, 2);
-      Func_02004ca0(effect, gData_02005638);
+      Func_02004c98__s46e8(effect, 2);
+      Func_02004ca0__s46e8(effect, gData_02005638__s46e8);
       effect->scaleY = effect->scaleX = 0xb333;
       effect->sprite->priority = 1;
       if (spread != 0) {
@@ -57,7 +61,8 @@ void Func_020046e8(s32 spread) {
   } while (i <= 7);
 }
 
-extern const s32 gData_02005668[];
+/* VIEW(s46e8): variable gData_02005668 as extern const s32 gData_02005668[]; the definition has u32 gData_02005668[] = { SC_WAIT(44), SC_SET(SW_HOOK, 0), SC_POSITION(0, 0, 0), SC_WAIT(1), SC_FREE, }. */
+extern const s32 gData_02005668__s46e8[] __asm__("gData_02005668");
 
 void Func_0200481c(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
@@ -77,8 +82,8 @@ void Func_0200481c(void) {
       effect->motionFlags = 0;
       effect->collisionFlags = 0;
       Actor_SetSingleChildFlags(effect, 0);
-      Func_02004c98(effect, 2);
-      Func_02004ca0(effect, gData_02005668);
+      Func_02004c98__s46e8(effect, 2);
+      Func_02004ca0__s46e8(effect, gData_02005668__s46e8);
       effect->velocity.x = Math_Cosine(i << 12);
       effect->velocity.y = 0;
       effect->velocity.z = Math_Sin(i << 12);
@@ -95,3 +100,977 @@ void Func_0200481c(void) {
     i++;
   } while (i <= 16);
 }
+
+// ---- games/tla/src/scene/magma_rock_inside/s4934.c ----
+#include "../../../../games/tla/src/scene/tundaria_tower/tundaria_tower.h"
+#include "map.h"
+
+s32 Func_02004d20(s32 layer, s32 x, s32 z);
+s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
+s32 Func_02004ef0(s32 layer, s32 shape, s32 height);
+
+void Func_02004934(s32 level, s32 layer, s32 owner) {
+  struct Actor *object = Actor_GetById(owner);
+  u8 *shape = Ram_MapShapeGrid + (Ram_HeapSlots->mapWork->layers[layer].cells -
+                                  (struct MapCell *)Ram_MapCellBuffer);
+  s32 value = Func_02004d20(object->terrainId, object->x, object->z);
+  s32 height =
+      Map_GetTerrainHeight(object->terrainId, object->x, object->z) >> 19;
+
+  height += level;
+
+  shape += object->x / 0x100000 + object->z / 0x100000 * 128;
+  *shape = Func_02004ef0(object->terrainId, value, height);
+}
+
+#include "local.h"
+
+void Func_020049c0(s32 a, s32 b) {
+  Func_02004934(a, b, gMainRoutineWork.currentOwner);
+}
+
+#include "system/ram_buffer.h"
+
+struct Particle {
+  s32 x;
+  s32 y;
+  s32 z;
+  s32 velocityX;
+  s32 velocityY;
+  s32 velocityZ;
+  s32 age;
+};
+
+struct ParticleSprite {
+  u8 unk0[8];
+  u16 attr;
+  u8 unkA[30];
+};
+
+struct ParticleWork {
+  u8 tiles[0x500];
+  struct Particle particles[64];
+  struct ParticleSprite sprites[64];
+  s16 next;
+  u16 tile;
+};
+
+void Func_02004f18(struct ParticleSprite *sprite, struct Particle *particle);
+void Func_02004f20(struct Particle *particle, s32 unk1, s32 step);
+
+void Func_020049d8(void) {
+  struct ParticleWork *work = Ram_HeapSlots->menuRuntime;
+  struct Particle *particle = work->particles;
+  struct ParticleSprite *sprite = work->sprites;
+  s32 i;
+  s32 step = -0x8000;
+
+  i = 63;
+next:
+  if ((u32)particle->age <= 19) {
+    u16 *base = &work->tile;
+    s32 mask = 7;
+    s32 tile = (u16)((*base + ((particle->age >> 2) & mask) * 8) & 0x3ff);
+    s32 attr = sprite->attr;
+
+    sprite->attr = (attr & ~0x3ff) | tile;
+    Func_02004f18(sprite, particle);
+    Func_02004f20(particle, 63, step);
+    particle->age++;
+  }
+  i--;
+  sprite++;
+  particle++;
+  if (i >= 0)
+    goto next;
+}
+
+
+/// One falling rock: where it is, how it moves and how long it has fallen.
+struct Rock {
+  s32 position[3];
+  s32 velocity[3];
+  s32 timer;
+};
+
+/// A falling rock's sprite.
+struct RockSprite {
+  u8 unk00[5];
+  u8 unk05;
+  u8 unk06[2];
+  u16 tile : 10;
+  u16 priority : 2;
+  u16 palette : 4;
+  u8 unk0a[0x14];
+  u16 unk1e;
+  u8 unk20[8];
+};
+
+/// The falling rocks' work: their tiles, 64 rocks and their sprites, in a
+/// ring that next walks round.
+struct RockWork {
+  u8 tiles[0x500];
+  struct Rock rocks[64];
+  struct RockSprite sprites[64];
+  s16 next;
+  u16 tileBase;
+  s16 resource;
+};
+
+/// Spawns count rocks around (x, y, z), each pushed out at a random angle and
+/// thrown up and out along it.
+void Func_02004a5c(s32 x, s32 y, s32 z, s32 count) {
+  struct RockWork *work;
+  s32 i;
+
+  /* FAKEMATCH(barrier): an empty asm before the work is read keeps the spills
+   * of x and y at the entry; as an initializer, 4 of 88 instructions differ in
+   * tla-en. */
+  asm("");
+  work = Ram_HeapSlots->menuRuntime;
+  // A goto loop carries no loop notes, so the offsets are rebuilt on every
+  // pass, as the bytes have them; a for loop hoists them.
+  if (count > 0) {
+    i = count;
+  loop:;
+    {
+      s32 angle = Random16Far();
+      struct Rock *rock = &work->rocks[work->next];
+
+      rock->timer = 0;
+      rock->position[0] = x;
+      rock->position[1] = y;
+      rock->position[2] = z;
+      FieldVector_AddPolarOffset((Random16Far() << 3) + 0x80000, angle,
+                                 rock->position);
+      rock->velocity[0] = 0;
+      rock->velocity[1] = 0x50000;
+      rock->velocity[2] = 0;
+      FieldVector_AddPolarOffset((Random16Far() << 1) + 0x20000, angle,
+                                 rock->velocity);
+      work->next++;
+      work->next &= 63;
+    }
+    i--;
+    if (i != 0)
+      goto loop;
+  }
+}
+
+// ---- games/tla/src/scene/magma_rock_inside/s4b18.c ----
+#include "system/task.h"
+
+extern char ResourceId_FallingRock;
+
+/* VIEW(s4b18): tag struct Rock as struct Rock__s4b18; s46e8.c has another definition. */
+struct Rock__s4b18 {
+  u8 unk00[24];
+  s32 timer;
+};
+
+/* VIEW(s4b18): tag struct RockSprite as struct RockSprite__s4b18; s46e8.c has another definition. */
+struct RockSprite__s4b18 {
+  u8 unk00[5];
+  u8 unk05_0 : 5;
+  u8 unk05_5 : 1;
+  u8 unk05_6 : 2;
+  u8 unk06[3];
+  u8 unk09_0 : 2;
+  u8 priority : 2;
+  u8 palette : 4;
+  u8 unk0a[20];
+  u16 unk1e;
+  u8 unk20[8];
+};
+
+/* VIEW(s4b18): tag struct RockWork as struct RockWork__s4b18; s46e8.c has another definition. */
+struct RockWork__s4b18 {
+  u8 tiles[0x500];
+  struct Rock__s4b18 rocks[64];
+  struct RockSprite__s4b18 sprites[64];
+  s16 next;
+  u16 tileBase;
+  u16 resource;
+};
+
+struct RockWork__s4b18 *HeapSlot_AllocFar(s32 slot, s32 size);
+void *Resource_GetTableEntry(s32 id);
+void Func_02004c58(void *entry, void *destination);
+s32 Resource_FindFreeEntry(void);
+void Func_02004f10(struct RockSprite__s4b18 *sprite, s32 width, s32 height,
+                   u32 attributes, s32 tile);
+void Func_020049d8(void);
+
+static __inline__ void StartTask(void (*func)(void), s32 priority) {
+  /* FAKEMATCH(wrapper): Task_Add forwarded inline; as a direct call, 6 of 83
+   * instructions differ in tla-en. */
+  Task_Add(func, priority);
+}
+
+void Func_02004b18(void) {
+  struct RockWork__s4b18 *work = HeapSlot_AllocFar(220, sizeof(struct RockWork__s4b18));
+  s32 entry;
+  s32 tile;
+  s32 i;
+  struct Rock__s4b18 *rock;
+  struct RockSprite__s4b18 *sprite;
+
+  Func_02004c58(Resource_GetTableEntry((s32)&ResourceId_FallingRock), work);
+  entry = Resource_FindFreeEntry();
+  tile = Vram_Load(entry, 0x500, work);
+  work->tileBase = tile;
+  work->resource = entry;
+  rock = work->rocks;
+  sprite = work->sprites;
+  for (i = 63; i >= 0; i--, sprite++, rock++) {
+    Func_02004f10(sprite, 8, 8, 0x40000000, tile);
+    sprite->unk05_5 = 1;
+    sprite->palette = 0;
+    sprite->priority = 0;
+    sprite->unk1e = 240;
+    rock->timer = -1;
+  }
+  {
+    s32 zero = 0;
+
+    work->next = zero;
+  }
+  StartTask(Func_020049d8, 0x480);
+}
+
+
+struct MagmaRockInsideSparkWork {
+  u8 unk0000[0x1604];
+  s16 resource;
+};
+
+s32 Resource_ResetEntry(u32 slot);
+void HeapSlot_Release(s32 slot);
+
+void Func_02004bd4(void) {
+  struct MagmaRockInsideSparkWork *work = Ram_HeapSlots->menuRuntime;
+
+  FieldTask_Remove(Func_020049d8);
+  Resource_ResetEntry(work->resource);
+  HeapSlot_Release(220);
+}
+
+#include "scene_tables.h"
+#include "objcmd.h"
+
+void Func_02000594(void);
+void Func_020005a0(void);
+void Func_0200099c(void);
+void Func_02000a30(void);
+void Func_02000e14(void);
+void Func_02000e20(void);
+void Func_02001148(void);
+void Func_020011fc(void);
+void Func_02001828(void);
+void Func_02001ca0(void);
+void Func_02001cd0(void);
+void Func_02001d64(void);
+void Func_02002128(void);
+void Func_0200217c(void);
+void Func_020021c0(void);
+void Func_02002318(void);
+void Func_02002364(void);
+void Func_020023e8(void);
+void Func_0200257c(void);
+void Func_02002610(void);
+void Func_020027d4(void);
+void Func_02002868(void);
+void Func_020028ac(void);
+void Func_020029dc(void);
+void Func_02002a6c(void);
+void Func_02002b2c(void);
+void Func_02002bd0(void);
+/* VIEW(s4b18): routine Func_02002c1c as void Func_02002c1c(void); tundaria_tower.h has void Func_02002c1c(s32 a, s32 b, s32 owner). */
+extern void Func_02002c1c__s4b18(void) __asm__("Func_02002c1c");
+void Func_020030cc(void);
+void Func_020032d8(void);
+void Func_02003348(void);
+void Func_020033b0(void);
+
+extern u32 gData_02004f38[];
+extern u32 gData_02004f74[];
+extern u32 gData_02004fb0[];
+
+// clang-format off
+u32 gData_02004f38[] = {
+    SC_WAIT(1),
+    SC_LOOP(22, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
+};
+
+u32 gData_02004f74[] = {
+    SC_WAIT(1),
+    SC_LOOP(44, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
+};
+
+u32 gData_02004fb0[] = {
+    SC_WAIT(1),
+    SC_LOOP(126, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
+};
+
+s16 gData_02004fec[] = {
+    0, 16, 0, 16, 0, 16, 16, 0,
+    16, 0, 16, 0, 16, 0, 0, -16,
+    0, -16, 0, -16, 0, -16, -16, 0,
+    -16, 0, -16, 0, -16, 0, 0, 16,
+};
+
+u32 gData_0200502c[] = {
+    39, 2, 0, 18, 3, 0,
+    1, 38, 17,
+};
+
+u32 gData_02005050[] = {
+    39, 3, 0, 23, 3, 0,
+    1, 38, 17,
+};
+
+s16 gData_02005074[] = {
+    4, 0, 0, 776, 0, 16, 0, 680,
+    1, 0, 4, 0, 0, 744, 0, 16,
+    0, 680, 1, 0, 4, 0, 0, 744,
+    0, 16, 0, 632, 1, 0, 4, 0,
+    0, 776, 0, 16, 0, 632, 1, 0,
+    13, 0, -1, 0, 0, 0, 17, 0,
+};
+
+u32 gData_020050d4[] = {
+    SC_MOVE(PIXELS(216), PIXELS(16), PIXELS(568)),
+    SC_SYNC,
+    SC_MOVE(PIXELS(216), PIXELS(16), PIXELS(584)),
+    SC_SYNC,
+    SC_MOVE(PIXELS(136), PIXELS(16), PIXELS(584)),
+    SC_SYNC,
+    SC_MOVE(PIXELS(136), PIXELS(16), PIXELS(568)),
+    SC_SYNC,
+    SC_LOOP(SC_FOREVER, SC_TOP),
+    SC_END,
+};
+
+u16 gData_02005134[] = {
+    4, 0, 0, 600, 0, 16, 0, 664,
+    1, 0, 4, 0, 0, 728, 0, 16,
+    0, 664, 1, 0, 4, 0, 0, 728,
+    0, 16, 0, 632, 1, 0, 4, 0,
+    0, 760, 0, 16, 0, 632, 1, 0,
+    4, 0, 0, 760, 0, 16, 0, 664,
+    1, 0, 17, 0,
+};
+
+u32 gData_0200519c[] = {
+    SC_MOVE(PIXELS(184), PIXELS(16), PIXELS(232)),
+    SC_SYNC,
+    SC_MOVE(PIXELS(280), PIXELS(16), PIXELS(232)),
+    SC_SYNC,
+    SC_MOVE(PIXELS(280), PIXELS(16), PIXELS(264)),
+    SC_SYNC,
+    SC_MOVE(PIXELS(184), PIXELS(16), PIXELS(264)),
+    SC_SYNC,
+    SC_LOOP(SC_FOREVER, SC_TOP),
+    SC_END,
+};
+
+s16 gData_020051fc[] = {
+    4, 0, 0, 472, 0, 16, 0, 296,
+    1, 0, 4, 0, 0, 424, 0, 16,
+    0, 296, 1, 0, 4, 0, 0, 424,
+    0, 16, 0, 264, 1, 0, 4, 0,
+    0, 472, 0, 16, 0, 264, 1, 0,
+    13, 0, -1, 0, 0, 0, 17, 0,
+};
+
+s16 gData_0200525c[] = {
+    4, 0, 0, 216, 0, 16, 0, 600,
+    1, 0, 4, 0, 0, 280, 0, 16,
+    0, 600, 1, 0, 4, 0, 0, 280,
+    0, 16, 0, 664, 1, 0, 4, 0,
+    0, 216, 0, 16, 0, 664, 1, 0,
+    13, 0, -1, 0, 0, 0, 17, 0,
+};
+
+s16 gData_020052bc[] = {
+    4, 0, 0, 312, 0, 16, 0, 664,
+    1, 0, 4, 0, 0, 376, 0, 16,
+    0, 664, 1, 0, 4, 0, 0, 376,
+    0, 16, 0, 600, 1, 0, 4, 0,
+    0, 312, 0, 16, 0, 600, 1, 0,
+    13, 0, -1, 0, 0, 0, 17, 0,
+};
+
+s16 gData_0200531c[] = {
+    4, 0, 0, 440, 0, 16, 0, 600,
+    1, 0, 4, 0, 0, 504, 0, 16,
+    0, 600, 1, 0, 4, 0, 0, 504,
+    0, 16, 0, 664, 1, 0, 4, 0,
+    0, 440, 0, 16, 0, 664, 1, 0,
+    13, 0, -1, 0, 0, 0, 17, 0,
+};
+
+s16 gData_0200537c[] = {
+    4, 0, 0, 536, 0, 16, 0, 664,
+    1, 0, 4, 0, 0, 600, 0, 16,
+    0, 664, 1, 0, 4, 0, 0, 600,
+    0, 16, 0, 600, 1, 0, 4, 0,
+    0, 536, 0, 16, 0, 600, 1, 0,
+    13, 0, -1, 0, 0, 0, 17, 0,
+};
+
+s16 gData_020053dc[] = {
+    4, 0, 0, 376, 0, 16, 0, 264,
+    1, 0, 4, 0, 0, 376, 0, 16,
+    0, 232, 1, 0, 4, 0, 0, 408,
+    0, 16, 0, 232, 1, 0, 4, 0,
+    0, 408, 0, 16, 0, 264, 1, 0,
+    13, 0, -1, 0, 0, 0, 17, 0,
+};
+
+s16 gData_0200543c[] = {
+    4, 0, 0, 216, 0, 16, 0, 680,
+    1, 0, 4, 0, 0, 280, 0, 16,
+    0, 680, 1, 0, 4, 0, 0, 280,
+    0, 16, 0, 712, 1, 0, 4, 0,
+    0, 216, 0, 16, 0, 712, 1, 0,
+    13, 0, -1, 0, 0, 0, 17, 0,
+};
+
+s16 gData_0200549c[] = {
+    4, 0, 0, 376, 0, 16, 0, 680,
+    1, 0, 4, 0, 0, 312, 0, 16,
+    0, 680, 1, 0, 4, 0, 0, 312,
+    0, 16, 0, 712, 1, 0, 4, 0,
+    0, 376, 0, 16, 0, 712, 1, 0,
+    13, 0, -1, 0, 0, 0, 17, 0,
+};
+
+s16 gData_020054fc[] = {
+    15, -1,
+};
+
+s32 gData_02005500[] = {
+    0x320008, -1,
+};
+
+s16 gData_02005508[] = {
+    11, -1,
+};
+
+s16 gData_0200550c[] = {
+    8, 50, -1, 13, 51, -1, 14, 52,
+    -1, -1,
+};
+
+s16 gData_02005520[] = {
+    23, 24, 25, -1,
+};
+
+s16 gData_02005528[] = {
+    9, 12, -1,
+};
+
+s16 gData_0200552e[] = {
+    23, -1, 0,
+};
+
+u32 gData_02005534[] = {
+    0, 6, 38, 17,
+};
+
+u32 gData_02005544[] = {
+    SC_MOVE_BY(0, PIXELS(160), 0),
+    SC_SYNC,
+    SC_FREE,
+    SC_END,
+};
+
+s32 gData_02005560[] = {
+    SC_CALL(Func_02002a6c),
+    SC_FREE,
+    SC_END,
+};
+
+s32 gData_02005570[] = {
+    SC_CALL(Func_02002b2c),
+    SC_CALL(Func_02002bd0),
+    SC_CALL(Func_02002c1c__s4b18),
+    SC_FREE,
+    SC_END,
+};
+
+u32 gData_02005590[] = {
+    SC_MOVE_BY(0, PIXELS(24), 0),
+    SC_SYNC,
+    SC_SET(SW_MOTION, 4),
+    SC_END,
+};
+
+u32 gData_020055b4[] = {
+    SC_MOVE_BY(0, PIXELS(16), 0),
+    SC_SYNC,
+    SC_SET(SW_MOTION, 4),
+    SC_END,
+};
+
+s32 gData_020055d8[] = {
+    SC_SET(SW_MOTION, 0),
+    SC_MOVE_BY(0, PIXELS(-24), 0),
+    SC_SYNC,
+    SC_SET(SW_MOTION, 0),
+    SC_END,
+};
+
+s32 gData_02005608[] = {
+    SC_SET(SW_MOTION, 0),
+    SC_MOVE_BY(0, PIXELS(-16), 0),
+    SC_SYNC,
+    SC_SET(SW_MOTION, 3),
+    SC_END,
+};
+
+u32 gData_02005638[] = {
+    SC_WAIT(33),
+    SC_SET(SW_HOOK, 0),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+};
+
+u32 gData_02005668[] = {
+    SC_WAIT(44),
+    SC_SET(SW_HOOK, 0),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+};
+
+s32 gData_02005698[] = {
+    (s32)gData_02004f38,
+    (s32)gData_02004f74,
+    (s32)gData_02004fb0,
+};
+
+struct SceneEntrance gSceneEntrances[] = {
+    {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {SCENE_TABLE_END},
+};
+
+u32 gSceneExits[] = {
+    SCENE_EXITS(226),
+    SCENE_EXIT(1, 226, 4),
+    SCENE_EXIT(2, 227, 1),
+    SCENE_EXIT(3, 227, 5),
+    SCENE_EXIT(4, 226, 1),
+    SCENE_EXIT(5, 227, 2),
+    SCENE_EXIT(6, 227, 3),
+    SCENE_EXIT(7, 227, 4),
+    SCENE_EXIT(8, 228, 1),
+    SCENE_EXITS(227),
+    SCENE_EXIT(1, 226, 2),
+    SCENE_EXIT(2, 226, 5),
+    SCENE_EXIT(3, 226, 6),
+    SCENE_EXIT(4, 226, 7),
+    SCENE_EXIT(5, 226, 3),
+    SCENE_EXIT(6, 227, 7),
+    SCENE_EXIT(7, 227, 6),
+    SCENE_EXIT(8, 225, 3),
+    SCENE_EXITS(228),
+    SCENE_EXIT(1, 226, 8),
+    SCENE_EXIT(2, 228, 6),
+    SCENE_EXIT(3, 229, 1),
+    SCENE_EXIT(4, 229, 2),
+    SCENE_EXIT(5, 229, 3),
+    SCENE_EXIT(6, 228, 2),
+    SCENE_EXIT(7, 229, 4),
+    SCENE_EXIT(8, 228, 9),
+    SCENE_EXIT(9, 228, 8),
+    SCENE_EXIT(10, 229, 5),
+    SCENE_EXIT(11, 229, 6),
+    SCENE_EXITS(229),
+    SCENE_EXIT(1, 228, 3),
+    SCENE_EXIT(2, 228, 4),
+    SCENE_EXIT(3, 228, 5),
+    SCENE_EXIT(4, 228, 7),
+    SCENE_EXIT(5, 228, 10),
+    SCENE_EXIT(6, 228, 11),
+    SCENE_EXIT(7, 231, 7),
+    SCENE_EXIT(8, 230, 7),
+    SCENE_EXIT(9, 230, 8),
+    SCENE_EXIT(10, 230, 1),
+    SCENE_EXIT(11, 231, 1),
+    SCENE_EXIT(12, 231, 2),
+    SCENE_EXIT(13, 231, 5),
+    SCENE_EXIT(14, 231, 6),
+    SCENE_EXITS(230),
+    SCENE_EXIT(1, 229, 10),
+    SCENE_EXIT(2, 231, 3),
+    SCENE_EXIT(3, 230, 9),
+    SCENE_EXIT(4, 230, 10),
+    SCENE_EXIT(5, 231, 11),
+    SCENE_EXIT(6, 231, 4),
+    SCENE_EXIT(7, 229, 8),
+    SCENE_EXIT(8, 229, 9),
+    SCENE_EXIT(9, 230, 3),
+    SCENE_EXIT(10, 230, 4),
+    SCENE_EXITS(231),
+    SCENE_EXIT(1, 229, 11),
+    SCENE_EXIT(2, 229, 12),
+    SCENE_EXIT(3, 230, 2),
+    SCENE_EXIT(4, 230, 6),
+    SCENE_EXIT(5, 229, 13),
+    SCENE_EXIT(6, 229, 14),
+    SCENE_EXIT(7, 229, 7),
+    SCENE_EXIT(8, 231, 14),
+    SCENE_EXIT(9, 231, 16),
+    SCENE_EXIT(10, 231, 17),
+    SCENE_EXIT(11, 230, 5),
+    SCENE_EXIT(12, 231, 18),
+    SCENE_EXIT(13, 231, 19),
+    SCENE_EXIT(14, 231, 8),
+    SCENE_EXIT(15, 232, 10),
+    SCENE_EXIT(16, 231, 9),
+    SCENE_EXIT(17, 231, 10),
+    SCENE_EXIT(18, 231, 12),
+    SCENE_EXIT(19, 231, 13),
+    SCENE_EXITS(232),
+    SCENE_EXIT(1, 233, 1),
+    SCENE_EXIT(2, 232, 5),
+    SCENE_EXIT(3, 232, 6),
+    SCENE_EXIT(4, 232, 7),
+    SCENE_EXIT(5, 232, 2),
+    SCENE_EXIT(6, 232, 3),
+    SCENE_EXIT(7, 232, 4),
+    SCENE_EXIT(8, 232, 9),
+    SCENE_EXIT(9, 232, 8),
+    SCENE_EXIT(10, 231, 15),
+    SCENE_EXIT(11, 223, 2),
+    SCENE_EXITS(233),
+    SCENE_EXIT(1, 232, 1),
+    SCENE_EXITS_END,
+};
+
+struct ActorPlacement gData_02005840[] = {
+    {319, CONDITION_ALWAYS, 7, 1, 0, 0, FACING_NORTH, 2, 2},
+    {SCENE_TABLE_END},
+};
+
+struct ActorPlacement gData_02005870[] = {
+    {377, CONDITION_ALWAYS, 7, 1, 0, 0, FACING_WEST, 2, 2},
+    {334, CONDITION_ALWAYS, 7, 2, 0, 0, FACING_NORTH, 2, 2},
+    {334, CONDITION_ALWAYS, 7, 3, 0, 0, FACING_NORTH, 2, 3},
+    {334, CONDITION_ALWAYS, 7, 4, 0, 0, FACING_NORTH, 2, 3},
+    {334, CONDITION_ALWAYS, 7, 5, 0, 0, FACING_NORTH, 2, 3},
+    {334, CONDITION_ALWAYS, 7, 6, 0, 0, FACING_NORTH, 2, 3},
+    {334, CONDITION_ALWAYS, 7, 7, 0, 0, FACING_NORTH, 2, 3},
+    {312, CONDITION_ALWAYS, 7, 8, 0, 0, FACING_NORTH, 2, 2},
+    {489, CONDITION_ALWAYS, 7, 9, 0, 0, FACING_NORTH, 2, 2},
+    {245, 0x6b, 1, PIXELS(296), 0, PIXELS(504), FACING_SOUTH, 0, 0},
+    {SCENE_TABLE_END},
+};
+
+struct ActorPlacement gData_02005978[] = {
+    {377, CONDITION_ALWAYS, 7, 1, 0, 0, FACING_WEST, 2, 2},
+    {489, CONDITION_ALWAYS, 7, 2, 0, 0, FACING_NORTH, 2, 2},
+    {319, CONDITION_ALWAYS, 7, 3, 0, 0, FACING_NORTH, 2, 2},
+    {312, CONDITION_ALWAYS, 7, 4, 0, 0, FACING_NORTH, 2, 2},
+    {319, CONDITION_ALWAYS, 7, 5, 0, 0, FACING_NORTH, 2, 2},
+    {407, CONDITION_ALWAYS, 1, 6, 0, 0, FACING_SOUTH, 2, 2},
+    {407, CONDITION_ALWAYS, 1, 7, 0, 0, FACING_SOUTH, 2, 3},
+    {245, 0x68, 1, PIXELS(456), 0, PIXELS(600), FACING_SOUTH, 0, 0},
+    {SCENE_TABLE_END},
+};
+
+struct ActorPlacement gData_02005a50[] = {
+    {377, CONDITION_ALWAYS, 7, 1, 0, 0, FACING_EAST, 2, 2},
+    {404, 0x350, 1, 2, 0, 0, FACING_NORTH, 2, 2},
+    {319, CONDITION_ALWAYS, 7, 3, 0, 0, FACING_NORTH, 2, 2},
+    {404, 0x351, 1, 4, 0, 0, FACING_NORTH, 2, 2},
+    {319, CONDITION_ALWAYS, 7, 5, 0, 0, FACING_NORTH, 2, 2},
+    {377, CONDITION_ALWAYS, 7, 6, 0, 0, FACING_EAST, 2, 2},
+    {377, CONDITION_ALWAYS, 7, 7, 0, 0, FACING_WEST, 2, 2},
+    {319, CONDITION_ALWAYS, 7, 8, 0, 0, FACING_NORTH, 2, 2},
+    {319, CONDITION_ALWAYS, 7, 9, 0, 0, FACING_NORTH, 2, 3},
+    {319, CONDITION_ALWAYS, 7, 10, 0, 0, FACING_NORTH, 2, 3},
+    {319, CONDITION_ALWAYS, 7, 11, 0, 0, FACING_NORTH, 2, 3},
+    {319, CONDITION_ALWAYS, 7, 12, 0, 0, FACING_NORTH, 2, 3},
+    {319, CONDITION_ALWAYS, 7, 13, 0, 0, FACING_NORTH, 2, 3},
+    {319, CONDITION_ALWAYS, 7, 14, 0, 0, FACING_NORTH, 2, 3},
+    {319, CONDITION_ALWAYS, 7, 15, 0, 0, FACING_NORTH, 2, 3},
+    {312, CONDITION_ALWAYS, 7, 16, 0, 0, FACING_NORTH, 2, 2},
+    {312, CONDITION_ALWAYS, 7, 17, 0, 0, FACING_NORTH, 2, 2},
+    {312, CONDITION_ALWAYS, 7, 18, 0, 0, FACING_NORTH, 2, 2},
+    {334, CONDITION_ALWAYS, 7, 19, 0, 0, FACING_NORTH, 2, 2},
+    {SCENE_TABLE_END},
+};
+
+struct ActorPlacement gData_02005c30[] = {
+    {489, CONDITION_ALWAYS, 7, 1, 0, 0, FACING_NORTH, 2, 2},
+    {489, CONDITION_ALWAYS, 7, 2, 0, 0, FACING_NORTH, 2, 2},
+    {373, CONDITION_ALWAYS, 1, PIXELS(232), 0, PIXELS(392), FACING_SOUTH, 2, 0},
+    {373, CONDITION_ALWAYS, 1, PIXELS(328), 0, PIXELS(392), FACING_SOUTH, 2, 0},
+    {SCENE_TABLE_END},
+};
+
+struct ActorPlacement gData_02005ca8[] = {
+    {319, CONDITION_ALWAYS, 7, 1, 0, 0, FACING_NORTH, 2, 2},
+    {312, CONDITION_ALWAYS, 7, 2, 0, 0, FACING_NORTH, 2, 2},
+    {319, CONDITION_ALWAYS, 7, 3, 0, 0, FACING_NORTH, 2, 2},
+    {319, CONDITION_ALWAYS, 7, 4, 0, 0, FACING_NORTH, 2, 2},
+    {312, CONDITION_ALWAYS, 7, 5, 0, 0, FACING_NORTH, 2, 2},
+    {SCENE_TABLE_END},
+};
+
+struct ActorPlacement gData_02005d38[] = {
+    {312, CONDITION_ALWAYS, 7, 1, 0, 0, FACING_NORTH, 2, 2},
+    {312, CONDITION_ALWAYS, 7, 2, 0, 0, FACING_NORTH, 2, 3},
+    {312, CONDITION_ALWAYS, 7, 3, 0, 0, FACING_NORTH, 2, 3},
+    {312, CONDITION_ALWAYS, 7, 4, 0, 0, FACING_NORTH, 2, 2},
+    {292, CONDITION_ALWAYS, 1, 5, 0, 0, FACING_NORTH, 2, 2},
+    {325, CONDITION_ALWAYS, 1, 6, 0, 0, FACING_NORTH, 2, 2},
+    {325, CONDITION_ALWAYS, 1, 7, 0, 0, FACING_NORTH, 2, 3},
+    {325, CONDITION_ALWAYS, 1, 8, 0, 0, FACING_NORTH, 2, 3},
+    {325, CONDITION_ALWAYS, 1, 9, 0, 0, FACING_NORTH, 2, 3},
+    {364, CONDITION_ALWAYS, 1, 10, 0, 0, FACING_NORTH, 2, 2},
+    {364, CONDITION_ALWAYS, 1, 11, 0, 0, FACING_NORTH, 2, 3},
+    {364, CONDITION_ALWAYS, 1, 12, 0, 0, FACING_NORTH, 2, 3},
+    {364, CONDITION_ALWAYS, 1, 13, 0, 0, FACING_NORTH, 2, 3},
+    {365, CONDITION_ALWAYS, 1, 14, 0, 0, FACING_NORTH, 2, 2},
+    {365, CONDITION_ALWAYS, 1, 15, 0, 0, FACING_NORTH, 2, 2},
+    {312, CONDITION_ALWAYS, 7, 16, 0, 0, FACING_NORTH, 2, 2},
+    {SCENE_TABLE_END},
+};
+
+struct ActorPlacement gData_02005ed0[] = {
+    {323, CONDITION_ALWAYS, 7, 1, 0, 0, FACING_SOUTH, 2, 2},
+    {312, CONDITION_ALWAYS, 7, 2, 0, 0, FACING_NORTH, 2, 2},
+    {365, CONDITION_ALWAYS, 1, 3, 0, 0, FACING_NORTH, 2, 2},
+    {365, CONDITION_ALWAYS, 1, 4, 0, 0, FACING_NORTH, 2, 2},
+    {5, CONDITION_ALWAYS, 1, PIXELS(8), 0, PIXELS(8), FACING_WEST, 2, 0},
+    {SCENE_TABLE_END},
+};
+// clang-format on
+
+struct Trigger gData_02005f60[] = {
+    {1, 1, CONDITION_ALWAYS, 1},
+    {1, 2, CONDITION_ALWAYS, 2},
+    {1, 3, CONDITION_ALWAYS, 3},
+    {1, 4, CONDITION_ALWAYS, 4},
+    {1, 5, CONDITION_ALWAYS, 5},
+    {1, 6, CONDITION_ALWAYS, 6},
+    {1, 7, CONDITION_ALWAYS, 7},
+    {0x31, 8, CONDITION_ALWAYS, 8},
+    {0x202, 70, CONDITION_ALWAYS, EVENT(Func_020011fc)},
+    {0x202, 78, CONDITION_ALWAYS, EVENT(Func_020011fc)},
+    {TRIGGERS_END},
+};
+
+struct Trigger gData_02005fe4[] = {
+    {1, 1, CONDITION_ALWAYS, 1},
+    {1, 2, CONDITION_ALWAYS, 2},
+    {1, 3, CONDITION_ALWAYS, 3},
+    {1, 4, CONDITION_ALWAYS, 4},
+    {1, 5, CONDITION_ALWAYS, 5},
+    {1, 6, CONDITION_ALWAYS, 6},
+    {1, 7, CONDITION_ALWAYS, 7},
+    {1, 8, CONDITION_ALWAYS, 8},
+    {2, 30, CONDITION_ALWAYS, EVENT(Func_02001828)},
+    {0xc400, 17, CONDITION_ALWAYS, EVENT(Func_020005a0)},
+    {8, 0, CONDITION_ALWAYS, EVENT(Func_0200099c)},
+    {9, 0, CONDITION_ALWAYS, EVENT(Func_02000a30)},
+    {0x10008c15, 15, 0x9f0, EVENT(Func_0200099c)},
+    {0x8c15, 15, 0x9f0, EVENT(Func_02000a30)},
+    {0x80009705, 50, CONDITION_ALWAYS, EVENT(Func_02000e14)},
+    {0x50009705, 50, CONDITION_ALWAYS, EVENT(Func_02000e20)},
+    {0x9705, 50, CONDITION_ALWAYS, EVENT(Func_02001148)},
+    {TRIGGERS_END},
+};
+
+struct Trigger gData_020060bc[] = {
+    {0x21, 1, CONDITION_ALWAYS, 1},
+    {1, 2, CONDITION_ALWAYS, 2},
+    {1, 3, CONDITION_ALWAYS, 3},
+    {1, 4, CONDITION_ALWAYS, 4},
+    {1, 5, CONDITION_ALWAYS, 5},
+    {1, 6, CONDITION_ALWAYS, 6},
+    {1, 7, CONDITION_ALWAYS, 7},
+    {1, 8, CONDITION_ALWAYS, 8},
+    {1, 9, CONDITION_ALWAYS, 9},
+    {1, 10, CONDITION_ALWAYS, 10},
+    {1, 11, CONDITION_ALWAYS, 11},
+    {2, 30, CONDITION_ALWAYS, EVENT(Func_02001828)},
+    {0x202, 70, CONDITION_ALWAYS, EVENT(Func_020011fc)},
+    {0, 15, CONDITION_ALWAYS, EVENT(Func_02000594)},
+    {8, 0, CONDITION_ALWAYS, EVENT(Func_0200099c)},
+    {9, 0, CONDITION_ALWAYS, EVENT(Func_02000a30)},
+    {0x10008c15, 11, 0x9f1, EVENT(Func_0200099c)},
+    {0x8c15, 11, 0x9f1, EVENT(Func_02000a30)},
+    {0x80009705, 50, CONDITION_ALWAYS, EVENT(Func_02000e14)},
+    {0x50009705, 50, CONDITION_ALWAYS, EVENT(Func_02000e20)},
+    {0x9705, 50, CONDITION_ALWAYS, EVENT(Func_02001148)},
+    {TRIGGERS_END},
+};
+
+struct Trigger gData_020061c4[] = {
+    {1, 1, CONDITION_ALWAYS, 1},
+    {1, 2, CONDITION_ALWAYS, 2},
+    {1, 3, CONDITION_ALWAYS, 3},
+    {1, 4, CONDITION_ALWAYS, 4},
+    {1, 5, CONDITION_ALWAYS, 5},
+    {1, 6, CONDITION_ALWAYS, 6},
+    {0x31, 7, CONDITION_ALWAYS, 7},
+    {1, 8, CONDITION_ALWAYS, 8},
+    {1, 9, CONDITION_ALWAYS, 9},
+    {1, 10, CONDITION_ALWAYS, 10},
+    {1, 11, CONDITION_ALWAYS, 11},
+    {1, 12, CONDITION_ALWAYS, 12},
+    {1, 13, CONDITION_ALWAYS, 13},
+    {1, 14, CONDITION_ALWAYS, 14},
+    {0x202, 70, CONDITION_ALWAYS, EVENT(Func_020011fc)},
+    {0x202, 71, 0x1301, EVENT(Func_020011fc)},
+    {0x202, 72, CONDITION_ALWAYS, EVENT(Func_020011fc)},
+    {0xc602, 73, CONDITION_ALWAYS, EVENT(Func_020011fc)},
+    {0x8602, 75, CONDITION_ALWAYS, EVENT(Func_020011fc)},
+    {8, 0, CONDITION_ALWAYS, EVENT(Func_0200099c)},
+    {9, 0, CONDITION_ALWAYS, EVENT(Func_02000a30)},
+    {0x10008c15, 23, 0x9f2, EVENT(Func_0200099c)},
+    {0x8c15, 23, 0x9f2, EVENT(Func_02000a30)},
+    {0x10008c15, 24, 0x9f3, EVENT(Func_0200099c)},
+    {0x8c15, 24, 0x9f3, EVENT(Func_02000a30)},
+    {0x10008c15, 25, 0x9f4, EVENT(Func_0200099c)},
+    {0x8c15, 25, 0x9f4, EVENT(Func_02000a30)},
+    {0x50009705, 71, 0x350, EVENT(Func_02001ca0)},
+    {0x50009705, 72, 0x351, EVENT(Func_02001cd0)},
+    {0x80009705, 50, CONDITION_ALWAYS, EVENT(Func_02000e14)},
+    {0x50009705, 50, 0x2f0, EVENT(Func_02000e20)},
+    {0x50009705, 50, CONDITION_ALWAYS, EVENT(Func_02001ca0)},
+    {0x9705, 50, CONDITION_ALWAYS, EVENT(Func_02001148)},
+    {0x80009705, 51, CONDITION_ALWAYS, EVENT(Func_02000e14)},
+    {0x50009705, 51, CONDITION_ALWAYS, EVENT(Func_02000e20)},
+    {0x9705, 51, CONDITION_ALWAYS, EVENT(Func_02001148)},
+    {0x80009705, 52, CONDITION_ALWAYS, EVENT(Func_02000e14)},
+    {0x50009705, 52, CONDITION_ALWAYS, EVENT(Func_02000e20)},
+    {0x9705, 52, CONDITION_ALWAYS, EVENT(Func_02001148)},
+    {TRIGGERS_END},
+};
+
+struct Trigger gData_020063a4[] = {
+    {1, 1, CONDITION_ALWAYS, 1},
+    {1, 2, CONDITION_ALWAYS, 2},
+    {1, 3, CONDITION_ALWAYS, 3},
+    {1, 4, CONDITION_ALWAYS, 4},
+    {1, 5, CONDITION_ALWAYS, 5},
+    {1, 6, CONDITION_ALWAYS, 6},
+    {1, 7, CONDITION_ALWAYS, 7},
+    {1, 8, CONDITION_ALWAYS, 8},
+    {1, 9, CONDITION_ALWAYS, 9},
+    {1, 10, CONDITION_ALWAYS, 10},
+    {2, 30, CONDITION_ALWAYS, EVENT(Func_02001828)},
+    {2, 31, CONDITION_ALWAYS, EVENT(Func_02001828)},
+    {0x4e15, 10, CONDITION_ALWAYS, 0},
+    {0x4e15, 11, CONDITION_ALWAYS, 0},
+    {TRIGGERS_END},
+};
+
+struct Trigger gData_02006458[] = {
+    {1, 1, CONDITION_ALWAYS, 1},
+    {1, 2, CONDITION_ALWAYS, 2},
+    {1, 3, CONDITION_ALWAYS, 3},
+    {1, 4, CONDITION_ALWAYS, 4},
+    {1, 5, CONDITION_ALWAYS, 5},
+    {1, 6, CONDITION_ALWAYS, 6},
+    {0x21, 7, CONDITION_ALWAYS, 7},
+    {1, 8, CONDITION_ALWAYS, 8},
+    {1, 9, CONDITION_ALWAYS, 9},
+    {1, 10, CONDITION_ALWAYS, 10},
+    {1, 11, CONDITION_ALWAYS, 11},
+    {1, 12, CONDITION_ALWAYS, 12},
+    {1, 13, CONDITION_ALWAYS, 13},
+    {1, 14, CONDITION_ALWAYS, 14},
+    {0x31, 15, CONDITION_ALWAYS, 15},
+    {1, 16, CONDITION_ALWAYS, 16},
+    {1, 17, CONDITION_ALWAYS, 17},
+    {1, 18, CONDITION_ALWAYS, 18},
+    {1, 19, CONDITION_ALWAYS, 19},
+    {0x202, 70, 0x1302, EVENT(Func_020011fc)},
+    {8, 0, CONDITION_ALWAYS, EVENT(Func_0200099c)},
+    {9, 0, CONDITION_ALWAYS, EVENT(Func_02000a30)},
+    {0x10008c15, 9, 0x9f5, EVENT(Func_0200099c)},
+    {0x8c15, 9, 0x9f5, EVENT(Func_02000a30)},
+    {0x10008c15, 12, 0x9f6, EVENT(Func_0200099c)},
+    {0x8c15, 12, 0x9f6, EVENT(Func_02000a30)},
+    {TRIGGERS_END},
+};
+
+struct Trigger gData_0200659c[] = {
+    {0xc602, 1, CONDITION_ALWAYS, EVENT(Func_020023e8)},
+    {1, 2, CONDITION_ALWAYS, 2},
+    {1, 3, CONDITION_ALWAYS, 3},
+    {1, 4, CONDITION_ALWAYS, 4},
+    {1, 5, CONDITION_ALWAYS, 5},
+    {1, 6, CONDITION_ALWAYS, 6},
+    {1, 7, CONDITION_ALWAYS, 7},
+    {1, 8, CONDITION_ALWAYS, 8},
+    {1, 9, CONDITION_ALWAYS, 9},
+    {0x21, 10, CONDITION_ALWAYS, 10},
+    {1, 11, CONDITION_ALWAYS, 11},
+    {2, 30, 0x9f8, EVENT(Func_02001d64)},
+    {3, 31, 0x9f9, EVENT(Func_02002364)},
+    {8, 0, CONDITION_ALWAYS, EVENT(Func_0200099c)},
+    {9, 0, CONDITION_ALWAYS, EVENT(Func_02000a30)},
+    {0x10008c15, 23, 0x9f7, EVENT(Func_0200099c)},
+    {0x8c15, 23, 0x9f7, EVENT(Func_02000a30)},
+    {0x10009a15, 17, CONDITION_ALWAYS, EVENT(Func_02002128)},
+    {0x10009a15, 18, CONDITION_ALWAYS, EVENT(Func_02002128)},
+    {0x10009a15, 19, CONDITION_ALWAYS, EVENT(Func_02002128)},
+    {0x10009a15, 20, CONDITION_ALWAYS, EVENT(Func_02002128)},
+    {0x10009a15, 21, CONDITION_ALWAYS, 0},
+    {0x10009a15, 22, CONDITION_ALWAYS, EVENT(Func_0200217c)},
+    {0x20009a15, 22, 0x304, EVENT(Func_020021c0)},
+    {0x20009a15, 21, 0x303, EVENT(Func_020021c0)},
+    {0x9a15, 17, CONDITION_ALWAYS, EVENT(Func_02002318)},
+    {0x9a15, 18, CONDITION_ALWAYS, EVENT(Func_02002318)},
+    {0x9a15, 19, CONDITION_ALWAYS, EVENT(Func_02002318)},
+    {0x9a15, 20, CONDITION_ALWAYS, EVENT(Func_02002318)},
+    {0x9a15, 22, CONDITION_ALWAYS, EVENT(Func_02002318)},
+    {TRIGGERS_END},
+};
+
+s32 gData_02006710 = -1;
+
+struct Trigger gData_02006714[] = {
+    {1, 1, CONDITION_ALWAYS, 1},
+    {2, 80, CONDITION_ALWAYS, EVENT(Func_0200257c)},
+    {2, 81, CONDITION_ALWAYS, EVENT(Func_02002610)},
+    {0xc403, 30, CONDITION_ALWAYS, EVENT(Func_020030cc)},
+    {0x4403, 30, CONDITION_ALWAYS, EVENT(Func_020032d8)},
+    {0x8403, 30, CONDITION_ALWAYS, EVENT(Func_02003348)},
+    {0x403, 30, CONDITION_ALWAYS, EVENT(Func_020033b0)},
+    {6, 202, CONDITION_ALWAYS, EVENT(Func_020027d4)},
+    {6, 203, CONDITION_ALWAYS, EVENT(Func_020027d4)},
+    {6, 204, CONDITION_ALWAYS, EVENT(Func_020027d4)},
+    {6, 205, CONDITION_ALWAYS, EVENT(Func_020027d4)},
+    {6, 206, CONDITION_ALWAYS, EVENT(Func_020027d4)},
+    {0x10009a15, 10, CONDITION_ALWAYS, EVENT(Func_02002868)},
+    {0x10009a15, 11, CONDITION_ALWAYS, 0},
+    {0x20009a15, 11, 0x305, EVENT(Func_020028ac)},
+    {0x9a15, 10, CONDITION_ALWAYS, EVENT(Func_020029dc)},
+    {0x9a15, 11, CONDITION_ALWAYS, EVENT(Func_020029dc)},
+    {TRIGGERS_END},
+};

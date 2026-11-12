@@ -1,6 +1,8 @@
 /// @file
 /// Scene code of overlay 0x671, in ROM order, from s2394's offset up to the next object the overlay links.
 
+// ---- games/tla/src/scene/gabomba_statue/s2394.c ----
+
 #include "types.h"
 #include "system.h"
 #include "ram_buffer.h"
@@ -242,7 +244,8 @@ void Func_020027cc(void) {
 
 #include "field.h"
 
-extern const u8 gData_02005944[];
+/* VIEW(s2394): variable gData_02005944 as extern const u8 gData_02005944[]; the definition has u32 gData_02005944[] = { 38, }. */
+extern const u8 gData_02005944__s2394[] __asm__("gData_02005944");
 extern const u8 gData_02005d7c[];
 extern u32 gData_02005ccc[];
 extern u32 gData_02005d24[];
@@ -252,13 +255,15 @@ void Func_0200533c(void);
 void Func_02005364(void);
 void Func_02001b38(void);
 void Func_02001b68(void);
-void Func_020053bc(const u8 *data);
+/* VIEW(s2394): routine Func_020053bc as void Func_020053bc(const u8 *data); the definition has void Func_020053bc(const u16 *entry). */
+extern void Func_020053bc__s2394(const u8 *data) __asm__("Func_020053bc");
 void Func_02005824(void);
 void Func_0200583c(s32 index, s32 flag, s32 a, s32 b);
 void Func_0200582c(s32 index, s32 a, s32 b);
 s32 Func_02003604(void);
 s32 Func_020048a4(s32 x, s32 z, s32 value, s32 id);
-void Func_02004f40(s32 *x_out, s32 *z_out);
+/* VIEW(s2394): routine Func_02004f40 as void Func_02004f40(s32 *x_out, s32 *z_out); the definition has void Func_02004f40(u32 *x_out, u32 *z_out). */
+extern void Func_02004f40__s2394(s32 *x_out, s32 *z_out) __asm__("Func_02004f40");
 void Func_02005624(struct Actor *object, s32 mode);
 s32 ArcTan2(s32 y, s32 x);
 void Func_02005644(struct Actor *object);
@@ -463,7 +468,7 @@ void Func_02002f70(void) {
   FieldCamera_MoveTo(PIXELS(414), -1, PIXELS(272), 1);
   Func_020057b4();
   Event_ShowMessage(5, 0);
-  Func_02004f40(&x, &z);
+  Func_02004f40__s2394(&x, &z);
   x = (x << 20) + (156 << 17);
   z = (z << 20) + (184 << 16);
   spark = (FieldActor_Create(434, x, 0, z));
@@ -594,11 +599,11 @@ static __inline__ void Exit_Set(s32 index, s32 flag, s32 a, s32 b) {
 
 void Func_020034f4(void) {
   if ((u16)(gMainRoutineWork.entrance - 3) <= 1) {
-    Actor_SetScript(27, gData_02005944);
-    Actor_SetScript(28, gData_02005944);
+    Actor_SetScript(27, gData_02005944__s2394);
+    Actor_SetScript(28, gData_02005944__s2394);
     MapGrid_CopyCellAttributes(33, 24, 3, 3, 27, 29);
   }
-  Func_020053bc(gData_02005d7c);
+  Func_020053bc__s2394(gData_02005d7c);
   if (!Event_GetFlag(0x8ce) || !Event_GetFlag(0x8cf))
     Actor_Get(26)->y = PIXELS(16);
   Func_02005824();
@@ -881,7 +886,8 @@ void Func_02003974(void) {
 
 s32 Func_02003fc0(s32 x0, s32 z0, s32 x1, s32 z1, s32 a, s32 b, s32 c, s32 d);
 void Func_02004270(s32 col, s32 row, s32 a, s32 b);
-s32 Func_02004380(s32 col, s32 row, s32 turn);
+/* VIEW(s2394): routine Func_02004380 as s32 Func_02004380(s32 col, s32 row, s32 turn); the definition has u8 Func_02004380(s32 x, s32 z, s32 direction). */
+extern s32 Func_02004380__s2394(s32 col, s32 row, s32 turn) __asm__("Func_02004380");
 
 s32 Func_02003a64(s32 value) {
   struct SceneState *state = &gSceneState;
@@ -1090,16 +1096,16 @@ turn_col:
     case 0:
     case 1:
     case 2:
-      piece = Func_02004380(col, row, 0);
+      piece = Func_02004380__s2394(col, row, 0);
       break;
     case 3:
     case 4:
     case 5:
-      piece = Func_02004380(col, row, 1);
+      piece = Func_02004380__s2394(col, row, 1);
       break;
     case 6:
-      Func_02004380(col, row, 0);
-      piece = Func_02004380(col, row, 0);
+      Func_02004380__s2394(col, row, 0);
+      piece = Func_02004380__s2394(col, row, 0);
       break;
     }
   }
@@ -1347,3 +1353,938 @@ nextColumn: {
     goto nextRow;
   state->endId = id;
 }
+#undef FIELD_AT
+
+// ---- games/tla/src/scene/gabomba_statue/puzzle_turn.c ----
+
+
+
+extern struct SceneState gSceneState;
+extern const u8 gData_02005ad4[];
+extern const u8 gData_02006ea8[];
+void Func_02004288(s32 id, s32 value);
+void Func_02005624(struct Actor *object, s32 mode);
+u8 Func_02004380(s32 x, s32 z, s32 direction) {
+  s32 i;
+
+  {
+    s32 column = x;
+
+    /* FAKEMATCH(barrier): an empty asm on column that names the cell table, so
+     * the table is loaded before x is added; without it, 12 of 13 instructions
+     * differ in tla-en. */
+    asm("" : "+l"(column) : "l"(gSceneState.cells));
+    i = z * 11 + column;
+  }
+  gSceneState.cells[i].kind =
+      gData_02006ea8[gSceneState.cells[i].kind * 2 + direction];
+  return gSceneState.cells[i].kind;
+}
+
+void Func_020043a4(s32 value, s32 row) {
+  struct Actor *object = Actor_Get(15);
+
+  if (row <= 7)
+    object->scaleY += -0x1f00;
+  if (value == 1) {
+    Func_02004288(gSceneState.firstId, 1);
+    Func_02005624(object, 6);
+    object->scaleY = 0x10000;
+  }
+}
+
+
+void Func_020043ec(s32 mode) {
+  struct SceneState *state;
+  struct Actor *object;
+  struct PuzzleCell *cell;
+  s32 x, z;
+  u32 row, col;
+  s32 found;
+
+  if (mode != 1)
+    return;
+  state = &gSceneState;
+  object = Actor_Get(*(s16 *)((u8 *)Ram_HeapSlots->effectWork + 26));
+  x = (object->x >> 20) - state->originX;
+  z = (object->z >> 20) - state->originZ;
+  {
+    s32 kind = state->cells[z * 11 + x].kind;
+
+    cell = &state->cells[z * 11 + x];
+    cell->occupied = mode;
+    MapGrid_CopyCells(1, kind, 1, 1, state->originX + x, state->originZ + z);
+  }
+  object->x = 0;
+  object->z = 0;
+  found = 0;
+  row = 0;
+  for (row = 0; row <= 7; row++) {
+    for (col = 0; col <= 10; col++) {
+      if (state->cells[row * 11 + col].occupied == 2) {
+        found = 1;
+        break;
+      }
+    }
+    if (found)
+      return;
+  }
+  state->statuesReady = found;
+}
+
+void Func_020044b4(s32 mode) { Actor_SetModeById(gSceneState.firstId, mode); }
+
+void Func_020056b4(void);
+void Func_020056bc(void);
+
+void Func_020044d0(s32 value) {
+  struct SceneState *state = &gSceneState;
+  s32 id;
+
+  for (id = state->firstId; id < state->endId; id++) {
+    struct Actor *object = Actor_Get(id);
+
+    Func_02004380((object->x >> 20) - state->originX,
+                  (object->z >> 20) - state->originZ, value);
+  }
+}
+
+/// Redraws side A once; with the statues ready, moves their offset down by
+/// 0x333 a frame for twenty frames, then clears it.
+void Func_02004530(void) {
+  struct SceneState *state = &gSceneState;
+  s32 i;
+
+  if (state->redrawA == 0) {
+    MapGrid_CopyCellsLayered(1, 13, 1, 1, state->originX + 3,
+                             state->originZ - 2);
+    if (state->statuesReady != 0) {
+      Event_PlaySound(248);
+      Func_020056b4();
+      FieldEvent_ResolvePendingActions(0);
+      Func_020044b4(3);
+      i = 19;
+      do {
+        s32 *offset = &state->statueOffset;
+
+        *offset -= 0x333;
+        System_Wait(1);
+        i--;
+      } while (i >= 0);
+      Func_020044d0(0);
+      Func_020056bc();
+      state->statueOffset = 0;
+    }
+    state->redrawA = 1;
+  }
+}
+
+void Func_020045d8(void) {
+  if (gSceneState.redrawA != 0) {
+    MapGrid_CopyCellsLayered(1, 12, 1, 1, gSceneState.originX + 3,
+                             gSceneState.originZ - 2);
+    gSceneState.redrawA = 0;
+  }
+}
+
+/// Side B's twin of Func_02004530: the offset moves up instead.
+void Func_02004620(void) {
+  struct SceneState *state = &gSceneState;
+  s32 i;
+
+  if (state->redrawB == 0) {
+    MapGrid_CopyCellsLayered(0, 13, 1, 1, state->originX + 7,
+                             state->originZ - 2);
+    if (state->statuesReady != 0) {
+      Event_PlaySound(248);
+      Func_020056b4();
+      FieldEvent_ResolvePendingActions(0);
+      Func_020044b4(2);
+      i = 19;
+      do {
+        s32 *offset = &state->statueOffset;
+
+        *offset += 0x333;
+        System_Wait(1);
+        i--;
+      } while (i >= 0);
+      Func_020044d0(1);
+      Func_020056bc();
+      state->statueOffset = 0;
+    }
+    state->redrawB = 1;
+  }
+}
+
+void Func_020046c8(void) {
+  if (gSceneState.redrawB != 0) {
+    MapGrid_CopyCellsLayered(0, 12, 1, 1, gSceneState.originX + 7,
+                             gSceneState.originZ - 2);
+    gSceneState.redrawB = 0;
+  }
+}
+
+#include "affine.h"
+#include "graphics/vram_tab.h"
+
+void Func_020055ec(struct Sprite *oam, s32 depth);
+
+void Func_02004710(void) {
+  s32 affine = 0;
+  s32 *scroll = (s32 *)((u8 *)Ram_HeapSlots->mapWork + 0xe4);
+  struct SceneState *state = &gSceneState;
+  struct Sprite *oam = state->oam;
+  s32 scrollX = scroll[0] & 0xffff0000;
+  s32 scrollZ = scroll[1] & 0xffff0000;
+  u16 tile = gResourceTableEntries[state->tileEntry].offset >> 5;
+  struct AffineTransform effect;
+  s32 id;
+
+  if (state->statueOffset != 0) {
+    effect.angle = state->statueOffset;
+    effect.scaleX = 0x100;
+    effect.scaleY = 0x100;
+    affine = AffineMatrix_BuildForEffect(&effect);
+  }
+  for (id = state->firstId; id < state->endId; id++) {
+    struct Actor *piece = Actor_Get(id);
+    s32 px = piece->x;
+    if (px != 0) {
+      s32 x = px - scrollX;
+      s32 y = piece->y + 0x100000;
+      s32 pz = piece->z;
+      s32 z = pz - scrollZ;
+      s32 sy = z - y;
+      s32 depth = ((y + z) >> 16) + 58;
+      s32 cellX = (px >> 20) - state->originX;
+      s32 cellZ = (pz >> 20) - state->originZ;
+      s32 kind = state->cells[cellZ * 11 + cellX].kind;
+      u32 *p;
+      x = ((x >> 16) - 8) & 0x1ff;
+      sy = ((sy >> 16) - 8) & 255;
+      p = (u32 *)oam;
+      *p++ = 0;
+      *p++ = sy | (x << 16) | 0x40002000;
+      *p = (tile + (kind << 3)) | 0x800;
+      if (state->statueOffset != 0) {
+        oam->mode = 1;
+        oam->affine = affine;
+      }
+      Func_020055ec(oam, depth);
+      oam++;
+    }
+  }
+}
+
+#include "task.h"
+
+void Func_020038ac(void);
+void Func_02003974(void);
+s32 Func_02003a64(s32 value);
+
+s32 Func_020048a4(s32 x, s32 z, s32 value, s32 id) {
+  struct SceneState *state = &gSceneState;
+  s32 count;
+
+  if (Event_GetFlag(0x109)) {
+    Func_020038ac();
+    Func_02003974();
+    count = state->count;
+    Task_AddFrame(Func_02004710, TASK_PASS_VBLANK);
+  } else {
+    Iwram_ClearWords(state, sizeof(struct SceneState));
+    state->originX = x;
+    state->originZ = z;
+    Func_020038ac();
+    count = Func_02003a64(value);
+    Func_02004288(id, 0);
+    Task_AddFrame(Func_02004710, TASK_PASS_VBLANK);
+  }
+  Actor_Get(id)->unk5c[0] = 2;
+  return count;
+}
+
+#include "call.h"
+
+extern const u8 gData_02006f38[], gData_02006ec0[];
+s32 Math_Cosine(s32 angle);
+void Func_02005634(struct Actor *object, const u8 *script);
+
+void Func_02004938(struct Actor *ball, s32 step) {
+  s16 *colp = (s16 *)((u8 *)ball + 100);
+  s32 col = *colp;
+  s16 *rowp = (s16 *)((u8 *)ball + 102);
+  s32 row = *rowp;
+  u8 *headingp = (u8 *)ball + 98;
+  s32 heading = *headingp;
+  s32 angle = heading << 14;
+  s32 cell = row * 11 + col;
+  struct SceneState *board = &gSceneState;
+  s32 piece = board->cells[cell].kind;
+  s32 goal = board->cells[cell].occupied;
+  s32 key = (heading << 8) + piece;
+  s32 d = step - 8;
+  s32 arc = step << 10;
+  s32 s = Value2((s32 (*)())Iwram_MulQ16, 0x80000, Math_Sine(arc));
+  s32 c = Value2((s32 (*)())Iwram_MulQ16, 0x80000, Math_Cosine(arc));
+  s32 z;
+  s32 x;
+
+  x = ((board->originX + col) << 20) + 0x80000;
+  z = ((board->originZ + row) << 20) + 0x80000;
+  if (goal == 2) {
+    heading = row = col = 0;
+    if (((u8 *)ball)[99] == 1) {
+      Sound_Play(204);
+      Func_02005634(ball, gData_02006f38);
+      ((u8 *)ball)[99] = goal;
+    }
+    goto done;
+  }
+  switch (key) {
+  case 514:
+  case 515:
+    col--;
+    x -= d << 16;
+    break;
+  case 2:
+  case 3:
+    col++;
+    x += d << 16;
+    break;
+  case 257:
+  case 259:
+    row++;
+    z += d << 16;
+    break;
+  case 769:
+  case 771:
+    row--;
+    z -= d << 16;
+    break;
+  case 516:
+  case 520:
+    row++;
+    heading = 1;
+    x = x - s + 0x80000;
+    z = z - c + 0x80000;
+    angle = 0x8000 - arc;
+    break;
+  case 773:
+  case 777:
+    col--;
+    heading = 2;
+    x = x + c - 0x80000;
+    z = z - s + 0x80000;
+    angle = 0xc000 - arc;
+    break;
+  case 6:
+  case 8:
+    row--;
+    heading = 3;
+    x = x + s - 0x80000;
+    z = z + c - 0x80000;
+    angle = -arc;
+    break;
+  case 263:
+  case 265:
+    col++;
+    heading = 0;
+    x = x - c + 0x80000;
+    z = z + s - 0x80000;
+    angle = 0x4000 - arc;
+    break;
+  case 519:
+  case 521:
+    row--;
+    heading = 3;
+    x = x - s + 0x80000;
+    z = z + c - 0x80000;
+    angle = arc + 0x8000;
+    break;
+  case 262:
+  case 264:
+    col--;
+    heading = 2;
+    x = x + c - 0x80000;
+    z = z + s - 0x80000;
+    angle = arc + 0x4000;
+    break;
+  case 5:
+  case 9:
+    row++;
+    heading = 1;
+    x = x + s - 0x80000;
+    z = z - c + 0x80000;
+    angle = arc;
+    break;
+  case 772:
+  case 776:
+    col++;
+    heading = 0;
+    x = x - c + 0x80000;
+    z = z - s + 0x80000;
+    angle = arc + 0xc000;
+    break;
+  case 11:
+    heading = row = col = 0;
+    break;
+  case 267:
+    heading = row = col = 0;
+    break;
+  case 523:
+    heading = row = col = 0;
+    break;
+  case 10:
+  case 266:
+  case 522:
+  case 778:
+    if (((u8 *)ball)[99] == 1) {
+      ball->x = x;
+      ball->y = 0;
+      ball->z = z;
+      ball->facing = angle;
+      if (x >> 20 == 24 && z >> 20 == 14) {
+        ((u8 *)ball)[99] = 7;
+      } else {
+        Sound_Play(204);
+        Func_02005634(ball, gData_02006f38);
+        ((u8 *)ball)[99] = 2;
+      }
+    }
+    break;
+  case 779:
+    heading = row = col = 0;
+    break;
+  default:
+    heading = row = col = 0;
+    if (((u8 *)ball)[99] == 1) {
+      Sound_Play(132);
+      Func_02005634(ball, gData_02006ec0);
+      ((u8 *)ball)[99] = 2;
+    }
+    break;
+  }
+done:
+  if (step == 15) {
+    *colp = col;
+    *rowp = row;
+    *headingp = heading;
+  }
+  if (((u8 *)ball)[99] == 1) {
+    ball->y = 0;
+    ball->x = x;
+    ball->z = z;
+    ball->facing = angle;
+    ball->unk4c++;
+  }
+}
+
+// ---- games/tla/src/scene/gabomba_statue/s4d48.c ----
+// Scene code of overlay 0x671, in ROM order, from s4d48's offset up to the next object the overlay links.
+
+
+struct Unk02004d48 {
+  u8 unk00[8];
+  s32 x;
+  u8 unk0c[76 - 12];
+  u32 unk4c;
+  u8 unk50[98 - 80];
+  u8 unk62;
+  u8 unk63;
+  u16 unk64;
+  u16 unk66;
+};
+
+void Func_02005654();
+void Func_02005624(struct Actor *object, s32 mode);
+/* VIEW(s4d48): routine Func_02004938 as void Func_02004938(); the parts before it has another declaration. */
+extern void Func_02004938__s4d48() __asm__("Func_02004938");
+
+s32 Func_02004d48(s32 first, s32 check) {
+  struct Unk02004d48 *actor;
+  s32 second = first + 1;
+  s32 frame, tries, id;
+  s32 done;
+  s32 result;
+
+  actor = ((struct Unk02004d48 *)Actor_Get(first));
+  actor->unk64 = 0;
+  actor->unk66 = 7;
+  actor->unk62 = 2;
+  actor->unk63 = 1;
+  actor->unk4c = 0;
+  /* FAKEMATCH(signature): Func_02005654, Actor_ResetMotion's veneer, called
+   * without the actor it reads from r0; as Func_02005654(actor), 73 of 230
+   * instructions differ in tla-en. */
+  Func_02005654();
+  Func_02005624(actor, 2);
+  id = second;
+  actor = ((struct Unk02004d48 *)Actor_Get(id++));
+  actor->unk64 = 2;
+  actor->unk66 = 7;
+  actor->unk62 = 0;
+  actor->unk63 = 1;
+  actor->unk4c = 0;
+  Func_02005654(actor);
+  Func_02005624(actor, 2);
+  actor = ((struct Unk02004d48 *)Actor_Get(id++));
+  actor->unk64 = 8;
+  actor->unk66 = 7;
+  actor->unk62 = 2;
+  actor->unk63 = 1;
+  actor->unk4c = 0;
+  Func_02005654(actor);
+  Func_02005624(actor, 2);
+  actor = ((struct Unk02004d48 *)Actor_Get(id));
+  actor->unk64 = 10;
+  actor->unk66 = 7;
+  actor->unk62 = 0;
+  actor->unk63 = 1;
+  actor->unk4c = 0;
+  Func_02005654(actor);
+  Func_02005624(actor, 2);
+  for (tries = 0; tries <= 127; tries++) {
+    done = 1;
+    for (frame = 0; frame <= 15; frame++) {
+      for (id = first; id < first + 4; id++) {
+        actor = ((struct Unk02004d48 *)Actor_Get(id));
+        if (actor->unk63 != 0 && actor->unk63 != 7)
+          done = 0;
+        Func_02004938__s4d48(actor, frame, id);
+      }
+      System_Wait(1);
+    }
+    if (done)
+      break;
+  }
+  System_Wait(20);
+  result = 3;
+  if (check) {
+    u32 a = 0;
+    u32 b = 0;
+    {
+      struct Unk02004d48 *r = ((struct Unk02004d48 *)Actor_Get(first));
+      if (r->x != 0)
+        a = r->unk4c;
+    }
+    {
+      struct Unk02004d48 *r = ((struct Unk02004d48 *)Actor_Get(second));
+      if (r->x != 0) {
+        u32 value = r->unk4c;
+        if (a == 0 || a > value)
+          a = value;
+      }
+    }
+    {
+      struct Unk02004d48 *r = ((struct Unk02004d48 *)Actor_Get(first + 2));
+      if (r->x != 0)
+        b = r->unk4c;
+    }
+    {
+      struct Unk02004d48 *r = ((struct Unk02004d48 *)Actor_Get(first + 3));
+      if (r->x != 0) {
+        u32 value = r->unk4c;
+        if (b == 0 || b > value)
+          b = value;
+      }
+    }
+    if (a != 0) {
+      result = 1;
+      if (b != 0) {
+        result = 0;
+        if (a != b) {
+          if (a < b) {
+            Event_SetFlag(0x9eb);
+            result = 1;
+          } else {
+            Event_SetFlag(0x9eb);
+            result = 2;
+          }
+        }
+      }
+    } else {
+      if (b != 0)
+        return 2;
+      return 3;
+    }
+  }
+  return result;
+}
+
+
+/* VIEW(s4d48): tag struct SceneState as struct SceneState__s4d48; s2394.c has another definition. */
+struct SceneState__s4d48 {
+  struct PuzzleCell cells[88];
+};
+
+/* VIEW(s4d48): variable gSceneState as extern struct SceneState__s4d48 gSceneState; puzzle_turn has extern struct SceneState gSceneState. */
+extern struct SceneState__s4d48 gSceneState__s4d48 __asm__("gSceneState");
+
+void Func_02004f40(u32 *x_out, u32 *z_out) {
+  u32 z;
+  u32 x;
+
+  for (z = 0; z <= 7; z++) {
+    for (x = 0; x <= 10; x++) {
+      if (gSceneState__s4d48.cells[z * 11 + x].kind == 10 && !(x == 5 && z == 3) &&
+          !(z == 7 && (x == 1 || x == 9))) {
+        *x_out = x;
+        *z_out = z;
+        return;
+      }
+    }
+  }
+}
+
+
+
+struct ClockWork {
+  u8 *tiles;  ///< the digit sheet
+  u8 *digits; ///< the five digit pictures, as loaded
+  u8 old[8];
+  u8 now[8];
+  u8 digit[8];
+  struct Sprite oam[8];
+  s32 tileEntry;
+  s32 timer;
+  u8 ringing;
+  u8 mode;
+};
+
+extern u8 gData_020023c4[];
+s32 Math_Cosine(s32 angle);
+
+/// Converts the remaining frames into minutes, seconds and tenths
+/// (`MM:SS:T`).
+void Func_02004f84(s32 time, u8 *text) {
+  if (time < 0)
+    time = 0;
+  *text = time / 36000 + '0';
+  time %= 36000;
+  *++text = time / 3600 + '0';
+  time %= 3600;
+  *++text = ':';
+  *++text = time / 600 + '0';
+  time %= 600;
+  *++text = time / 60 + '0';
+  time %= 60;
+  *++text = ':';
+  *++text = time / 6 + '0';
+  text[1] = 0;
+}
+
+s32 Func_02005020(s32 time) {
+  struct ClockWork *clock = (struct ClockWork *)(gData_020023c4 + 0x288);
+  s32 second = time % 60;
+  s32 volume = 512;
+  u8 *ringing = &clock->ringing;
+
+  if (second != 0) {
+    *ringing = 1;
+  } else if (*ringing) {
+    if (clock->timer != 0)
+      Event_PlaySound(236);
+    *ringing = second;
+  }
+  if (second <= 19) {
+    s32 cosine = Math_Cosine((second << 15) / 10);
+    s32 (*mul)(s32 a, s32 b);
+    s32 scale = 128;
+
+    mul = Iwram_MulQ16;
+    volume = mul(scale << 2, cosine);
+  }
+  if (volume <= 16)
+    volume = 16;
+  return volume;
+}
+
+
+void Func_020055ec(struct Sprite *oam, s32 depth);
+
+/// Draws the clock's five-digit count: copies the pictures of the digits of
+/// timer + 50 out of the digit sheet and loads them, builds a plain and a
+/// scaled affine matrix, and fills five OAM entries, giving the scaled matrix
+/// to the middle digit and to each digit where timer + 60 and timer differ.
+void Func_02005090(void) {
+  struct ClockWork *clock = (struct ClockWork *)(gData_020023c4 + 0x288);
+  u8 *digit = clock->digit;
+  u8 *old = clock->tiles;
+  u8 *now = clock->digits;
+  u32 tile = gResourceTableEntries[clock->tileEntry].offset >> 5;
+  struct Sprite *oam = clock->oam;
+  s32 *timer = &clock->timer;
+  struct AffineTransform effect;
+  s32 plain, scaled, i;
+  s32 scale;
+  u32 *p;
+
+  Func_02004f84(*timer + 50, digit);
+  Func_02004f84(*timer + 60, clock->old);
+  Func_02004f84(*timer, clock->now);
+  // old and now walk the sheet and the pictures here, the digit lists below.
+  for (i = 0; i < 5; i++) {
+    Iwram_CopyWords(now, old + (*digit << 6) - 0xc00, 64);
+    now += 64;
+    digit++;
+  }
+  Vram_Load(clock->tileEntry, 320, clock->digits);
+  effect.angle = 0;
+  effect.scaleX = 0x200;
+  effect.scaleY = 0x200;
+  plain = AffineMatrix_BuildForEffect(&effect);
+  scale = Func_02005020(*timer);
+  effect.angle = 0;
+  effect.scaleX = scale;
+  effect.scaleY = scale;
+  scaled = AffineMatrix_BuildForEffect(&effect);
+  old = clock->old;
+  now = clock->now;
+  for (i = 0; i <= 4; i++, tile += 2, oam++) {
+    p = (u32 *)oam;
+    *p++ = 0;
+    *p++ = (i << 20) | 0x8000;
+    *p = tile | 0x400;
+    oam->mode = 3;
+    if (*old++ != *now++ || i == 2)
+      oam->affine = scaled;
+    else
+      oam->affine = plain;
+    Func_020055ec(oam, 236);
+  }
+}
+
+
+void Func_02005210(void);
+void Func_0200525c(void);
+s32 __divsi3(s32 numerator, s32 denominator);
+s32 __modsi3(s32 numerator, s32 denominator);
+
+void Func_02005210(void) {
+  u8 *event = Ram_HeapSlots->eventWork;
+  struct ClockWork *clock = (struct ClockWork *)(gData_020023c4 + 0x288);
+
+  if (*(s16 *)(event + 358) == 0 && *(s16 *)(event + 346) == 0 &&
+      *(s16 *)(event + 350) == 0 && clock->timer > 0)
+    clock->timer--;
+  Func_02005090();
+}
+
+void Func_0200525c(void) {
+  u8 *event = Ram_HeapSlots->eventWork;
+  struct ClockWork *clock = (struct ClockWork *)(gData_020023c4 + 0x288);
+
+  if (*(s16 *)(event + 358) == 0 && *(s16 *)(event + 346) == 0 &&
+      *(s16 *)(event + 350) == 0 && clock->timer > 0)
+    clock->timer--;
+}
+
+#include "map.h"
+
+void *Heap_AllocEwram(s32 size);
+void *Resource_GetTableEntry(s32 index);
+void Func_020055cc(const u8 *data, void *buffer);
+s32 Resource_FindFreeEntry(void);
+extern char ResourceId_ClockDigits;
+
+void Func_020052a4(s32 mode) {
+  struct ClockWork *clock = (struct ClockWork *)(gData_020023c4 + 0x288);
+  u8 *tiles;
+
+  if (!Event_GetFlag(0x109)) {
+    Iwram_ClearWords(clock, sizeof(struct ClockWork));
+    clock->timer = 3600;
+    clock->ringing = 1;
+  }
+  tiles = Heap_AllocEwram(0x400);
+  Func_020055cc(Resource_GetTableEntry((s32)&ResourceId_ClockDigits), tiles);
+  clock->tiles = tiles;
+  clock->digits = tiles + 0x2c0;
+  clock->tileEntry = Resource_FindFreeEntry();
+  Vram_Load(clock->tileEntry, 320, NULL);
+  clock->mode = mode;
+  if (mode)
+    Task_AddFrame(Func_02005210, TASK_PASS_VBLANK);
+  else
+    Task_AddFrame(Func_0200525c, TASK_PASS_VBLANK);
+}
+
+void Func_0200533c(void) {
+  struct ClockWork *clock = (struct ClockWork *)(gData_020023c4 + 0x288);
+
+  if (clock->mode)
+    FieldTask_Remove(Func_02005210);
+  else
+    FieldTask_Remove(Func_0200525c);
+}
+
+void Func_02005364(void) {
+  struct ClockWork *clock = (struct ClockWork *)(gData_020023c4 + 0x288);
+
+  if (clock->mode)
+    Task_AddFrame(Func_02005210, TASK_PASS_VBLANK);
+  else
+    Task_AddFrame(Func_0200525c, TASK_PASS_VBLANK);
+  clock->timer = 3600;
+}
+
+s32 Func_020053a0(void) {
+  return ((struct ClockWork *)(gData_020023c4 + 0x288))->timer;
+}
+
+void Func_020053ac(void) {
+  ((struct ClockWork *)(gData_020023c4 + 0x288))->timer = 3600;
+}
+
+
+void Func_020054ac(s32 id, u32 mode, s32 flag, s32 layer);
+
+struct EffectWork {
+  u8 unk00[26];
+  s16 target;
+};
+
+// Layer switch table: three words (id, mode, flag), terminated by 0xffff.
+void Func_020053bc(const u16 *entry) {
+  s32 value;
+
+  while ((value = *entry) != 0xffff) {
+    u16 id = *entry++;
+    struct Actor *object = Actor_Get(id);
+    s16 mode = entry[0];
+    s16 flag = entry[1];
+
+    object->collisionFlags &= 0xfe;
+    Actor_SetSingleChildFlags(object, 0);
+    Func_020054ac(id, (u16)mode, (u16)flag, object->terrainId);
+    entry += 2;
+  }
+}
+
+struct GabombaStatueEffectWork {
+  u8 unk00[0x1a];
+  s16 objectId;
+};
+
+// Finds the current target's table row and shrinks it.
+void Func_02005428(u16 *list, s32 mode, s32 count) {
+  struct GabombaStatueEffectWork *work = Ram_HeapSlots->effectWork;
+
+  while (*list != 0xffff) {
+    u32 entry = *list;
+    s32 id = work->objectId;
+
+    if (id == entry) {
+      struct Actor *object = Actor_Get(id);
+      s32 a;
+      s32 flag;
+
+      list++;
+      a = list[0];
+      flag = list[1];
+      if (count < 8)
+        object->scaleY -= 0x1f00;
+      if (mode == 1) {
+        Event_SetFlag(flag);
+        Func_020054ac(id, a, flag, object->terrainId);
+        object->scaleY = 0x10000;
+      }
+      break;
+    }
+    list += 3;
+  }
+}
+
+s32 Func_02005844(struct Actor *object);
+
+void Func_020054ac(s32 id, u32 mode, s32 flag, s32 layer) {
+  struct Actor *object = Actor_Get(id);
+  struct MapCell *cell = Ram_HeapSlots->mapWork->layers[layer].cells;
+
+  cell += Func_02005844(object);
+  if (Event_GetFlag(flag)) {
+    /* FAKEMATCH(temporary): the flags read into a local before the cell store
+     * and a local holding 2, so the flags are ORed into the register that holds
+     * 2; as one priorityFlags |= 2, 8 of 75 instructions differ in tla-en. */
+    u8 flags = object->priorityFlags;
+    s32 bits;
+
+    cell->collisionCode = 0;
+    bits = 2;
+    bits |= flags;
+    object->priorityFlags = bits;
+    switch (mode) {
+    case 0:
+      Func_02005624(object, 2);
+      break;
+    case 1:
+      Func_02005624(object, 4);
+      break;
+    case 2:
+      Func_02005624(object, 6);
+      break;
+    }
+  } else {
+    cell->collisionCode = 255;
+    switch (mode) {
+    case 0:
+      Func_02005624(object, 1);
+      break;
+    case 1:
+      Func_02005624(object, 3);
+      break;
+    case 2:
+      Func_02005624(object, 5);
+      break;
+    }
+  }
+}
+
+#include "objcmd.h"
+
+// clang-format off
+u32 gData_0200585c[] = {
+    SC_WAIT(1),
+    SC_LOOP(22, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
+};
+
+u32 gData_02005898[] = {
+    SC_WAIT(1),
+    SC_LOOP(44, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
+};
+
+u32 gData_020058d4[] = {
+    SC_WAIT(1),
+    SC_LOOP(126, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
+};
+
+u32 gData_02005910[] = {
+    0x20007, 512, 0x20003, 0x20004, 516, 515,
+    0x20101, 0x10201, 0x20102, 0x10202, 0xf800, 0,
+};
+// clang-format on
+
+u16 gData_02005940[] = {
+    259,
+    2,
+};
+
+u32 gData_02005944[] = {
+    38,
+};

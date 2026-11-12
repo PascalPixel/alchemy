@@ -1,6 +1,8 @@
 /// @file
 /// The scene code of overlay 0x679 that its scene tables belong to, in ROM order; the rest of the overlay is in apojii_islands/.
 
+// ---- games/tla/src/scene/apojii_islands.c ----
+
 #include "apojii_islands/local.h"
 #include "types.h"
 #include "main_routine_work.h"
@@ -20,21 +22,25 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-extern const u8 gData_02002200[];
-extern const u8 gData_02002218[];
-extern const u8 gData_02002320[];
-extern const u8 gData_02002458[];
+/* VIEW(apojii_islands): variable gData_02002200 as extern const u8 gData_02002200[]; the definition has u32 gData_02002200[] = { 0xffff, 0, 0, 0, 0, 0, }. */
+extern const u8 gData_02002200__apojii_islands[] __asm__("gData_02002200");
+/* VIEW(apojii_islands): variable gData_02002218 as extern const u8 gData_02002218[]; the definition has u32 gData_02002218[] = { 0xffff0073, 1, 0x380000, 0, 0xa80000, 0x1a000, 0xffff0074, 1, 0x1c80000, 0, 0x580000, 0x3e000, 0xffff0072, 1, 0x238.... */
+extern const u8 gData_02002218__apojii_islands[] __asm__("gData_02002218");
+/* VIEW(apojii_islands): variable gData_02002320 as extern const u8 gData_02002320[]; the definition has s32 gData_02002320[] = { (s32) 0xffff0074, 1, 0x980000, 0, 0x980000, 0x10000, (s32) 0xffff0088, 1, 0x780000, 0, 0x680000, 0x22000, (s32) 0xf.... */
+extern const u8 gData_02002320__apojii_islands[] __asm__("gData_02002320");
+/* VIEW(apojii_islands): variable gData_02002458 as extern const u8 gData_02002458[]; the definition has u32 gData_02002458[] = { 0xffff0197, 1, 0x1080000, 0, 0x1180000, 0x2c000, 0xffff0197, 1, 0xd80000, 0, 0x1180000, 0x2c000, 0x7700f6, 1, 0x178.... */
+extern const u8 gData_02002458__apojii_islands[] __asm__("gData_02002458");
 
 const u8 *Func_02000360(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov679Room1)
-    return gData_02002218;
+    return gData_02002218__apojii_islands;
   if (scene == (s32)&SceneId_Ov679Room3)
-    return gData_02002320;
+    return gData_02002320__apojii_islands;
   if (scene == (s32)&SceneId_Ov679Room2)
-    return gData_02002458;
-  return gData_02002200;
+    return gData_02002458__apojii_islands;
+  return gData_02002200__apojii_islands;
 }
 
 void Func_020003b0(void) {
@@ -45,7 +51,8 @@ void Func_020003cc(void) {
   Actor_Get(gMainRoutineWork.currentOwner)->terrainId = 0;
 }
 
-extern s32 gData_020024c4;
+/* VIEW(apojii_islands): variable gData_020024c4 as extern s32 gData_020024c4; the definition has s32 gData_020024c4[] = { - 1, }. */
+extern s32 gData_020024c4__apojii_islands __asm__("gData_020024c4");
 extern u16 Data_02002958[], Data_02002978[], gData_02002998[], gData_020029b8[];
 
 void Func_020003e8(void) {
@@ -57,14 +64,14 @@ void Func_020003e8(void) {
     return;
   if (*(s8 *)(work + 0xca4) != 0)
     return;
-  if (gData_020024c4 == -1) {
+  if (gData_020024c4__apojii_islands == -1) {
     Call3((void (*)())Iwram_CopyWords, Data_02002958, (void *)0x05000060, 32);
     Iwram_CopyWords(Data_02002978, Data_02002958, 32);
     Iwram_CopyWords(gData_02002998, (void *)0x05000080, 32);
     Iwram_CopyWords(gData_020029b8, gData_02002998, 32);
-    gData_020024c4 = 0;
+    gData_020024c4__apojii_islands = 0;
   }
-  phase = gData_020024c4 / 8 % 4;
+  phase = gData_020024c4__apojii_islands / 8 % 4;
   k = 0;
   firstCopy = Data_02002978;
   secondCopy = gData_020029b8;
@@ -75,10 +82,11 @@ void Func_020003e8(void) {
   }
   IO_WRITE_QUEUE_PUSH(0x05000060, (u32)firstCopy, 0x84000008);
   IO_WRITE_QUEUE_PUSH(0x05000080, (u32)secondCopy, 0x84000008);
-  gData_020024c4++;
+  gData_020024c4__apojii_islands++;
 }
 
-extern s32 gData_020024c8;
+/* VIEW(apojii_islands): variable gData_020024c8 as extern s32 gData_020024c8; the definition has s32 gData_020024c8[] = { - 1, }. */
+extern s32 gData_020024c8__apojii_islands __asm__("gData_020024c8");
 extern u16 Data_020029d8[], Data_020029f8[], Data_02002a18[], Data_02002a38[];
 
 void Func_02000540(void) {
@@ -90,14 +98,14 @@ void Func_02000540(void) {
   busy = *(s8 *)(work + 0xca4);
   if (busy != 0)
     return;
-  if (gData_020024c8 == -1) {
+  if (gData_020024c8__apojii_islands == -1) {
     Call3((void (*)())Iwram_CopyWords, (s32)Data_020029d8, 0x05000060, 32);
     Iwram_CopyWords(Data_020029f8, Data_020029d8, 32);
     Iwram_CopyWords(Data_02002a18, (void *)0x050001a0, 32);
     Iwram_CopyWords(Data_02002a38, Data_02002a18, 32);
-    gData_020024c8 = busy;
+    gData_020024c8__apojii_islands = busy;
   }
-  phase = gData_020024c8 / 8 % 4;
+  phase = gData_020024c8__apojii_islands / 8 % 4;
   for (k = 0; k <= 3; k++) {
     /* FAKEMATCH(dead): the phase and the first colour in a once-only block,
      * whose end holds the order around it; as plain statements, 6 of 152
@@ -110,7 +118,7 @@ void Func_02000540(void) {
   }
   IO_WRITE_QUEUE_PUSH(0x05000060, (u32)Data_020029f8, 0x84000008);
   IO_WRITE_QUEUE_PUSH(0x050001a0, (u32)Data_02002a38, 0x84000008);
-  gData_020024c8++;
+  gData_020024c8__apojii_islands++;
 }
 
 void Func_02000694(void) {
@@ -123,7 +131,8 @@ void Func_020006a8(void) {
   System_Wait(3);
 }
 
-extern volatile s32 gData_020024cc[];
+/* VIEW(apojii_islands): variable gData_020024cc as extern volatile s32 gData_020024cc[]; the definition has s32 gData_020024cc[] = { - 1, }. */
+extern volatile s32 gData_020024cc__apojii_islands[] __asm__("gData_020024cc");
 extern u16 gData_02002a58[16];
 extern u16 gData_02002a78[16];
 
@@ -133,15 +142,15 @@ void Func_020006bc(void) {
   s32 base;
   s32 i;
 
-  if (gData_020024cc[0] == -1) {
+  if (gData_020024cc__apojii_islands[0] == -1) {
     Iwram_CopyWords(gData_02002a58, (void *)0x05000080, 32);
-    gData_020024cc[0] = 0;
+    gData_020024cc__apojii_islands[0] = 0;
   }
-  base = (gData_020024cc[0] / 2) % 15;
+  base = (gData_020024cc__apojii_islands[0] / 2) % 15;
   for (i = 0; i < 15; i++)
     gData_02002a78[(base + i) % 15 + 1] = gData_02002a58[i + 1];
   IO_WRITE_QUEUE_PUSH(0x050003c0, (u32)gData_02002a78, 0x84000008);
-  gData_020024cc[0]++;
+  gData_020024cc__apojii_islands[0]++;
 }
 
 void Func_02000770(struct Actor *object) {
@@ -155,3 +164,1519 @@ void Func_02000780(struct Actor *object) {
   else
     Animation_ApplyChildValues(object, 0);
 }
+
+// ---- games/tla/src/scene/apojii_islands/s07a4.c ----
+#include "scene_tables.h"
+#include "actor.h"
+#include "task.h"
+
+struct Actor *Actor_GetById(u32 objectId);
+void Func_02001cc4(void);
+void Event_ResolvePendingActions(s32 skip);
+/* VIEW(s07a4): routine Func_02000780 as void Func_02000780(void); the definition has void Func_02000780(struct Actor *object). */
+extern void Func_02000780__s07a4(void) __asm__("Func_02000780");
+void Sound_Play(s32 cue);
+void wait(s32 frames);
+void Func_02001ad8(void);
+void Func_02001ba0(s32 a);
+void Func_02001dec(s32 a);
+/* VIEW(s07a4): routine Random16Far as u16 Random16Far(void); system.h has u32 Random16Far(void). */
+extern u16 Random16Far__s07a4(void) __asm__("Random16Far");
+/* VIEW(s07a4): routine BattleEffect_ApplyColorToTargetBuffer as s32 BattleEffect_ApplyColorToTargetBuffer(s32 a, s32 b); event.h has void BattleEffect_ApplyColorToTargetBuffer(s32 value, s32 mode). */
+extern s32 BattleEffect_ApplyColorToTargetBuffer__s07a4(s32 a, s32 b) __asm__("BattleEffect_ApplyColorToTargetBuffer");
+void BattleEffect_StartBufferInterpolation(s32 frames);
+void Func_02001de4(void);
+void Task_RemoveFar(TaskFunc func);
+void Func_02000540(void);
+void Func_020006bc(void);
+void Func_020017bc(void);
+void Func_020017f8(u32 base, s32 a, s32 b);
+void GameFlag_SetBit(s32 flag);
+void Camera_SetSpeedParameters(s32 a, s32 b);
+void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
+s32 Func_080d47b4(s32 actorId, s32 emote, s32 frames);
+void Func_02001d8c(void);
+void Import_EventSetExitRequest(s32 cue);
+
+static inline void ApojiiIslands_Flash(s32 strength, s32 mode) {
+  BattleEffect_ApplyColorToTargetBuffer__s07a4(strength, mode);
+}
+
+static inline void ApojiiIslands_CamMove(s32 x, s32 y, s32 z, s32 mode) {
+  Camera_MoveWithinMapBounds(x, y, z, mode);
+}
+
+/// An Apojii Islands scene inside an event: the actor takes Func_02000780 as
+/// its update, cues 78 and 21 play, a sparkle setup (Func_02001ad8) runs and
+/// four flashes of random strength follow; then the screen blends in over six
+/// steps while the palette cycle gives way to Func_020006bc and the cell
+/// markers are rebuilt (Func_020017f8). Flags 0x95f and 0x95e are set and the
+/// camera pans through three points before cue 77.
+void Func_020007a4(s32 unused, s32 id) {
+  struct Actor *actor = Actor_GetById(id);
+  s32 i;
+
+  Func_02001cc4();
+  Event_ResolvePendingActions(0);
+  actor->update = Func_02000780__s07a4;
+  Sound_Play(78);
+  wait(30);
+  Sound_Play(21);
+  Func_02001ad8();
+  Func_02001ba0(17);
+  Func_02001dec(170);
+  i = 3;
+  /* FAKEMATCH(wrapper): both flashes forwarded through ApojiiIslands_Flash,
+   * which keeps each call's own constants; as direct calls, 10 of 188
+   * instructions differ in tla-en. */
+  /* FAKEMATCH(signature): BattleEffect_ApplyColorToTargetBuffer declared
+   * returning s32, though its target returns nothing; as void, 2 of 188
+   * instructions differ in tla-en. */
+flash:
+  ApojiiIslands_Flash(Random16Far__s07a4() & 0x7fff, 0);
+  BattleEffect_StartBufferInterpolation(15);
+  wait(10);
+  ApojiiIslands_Flash(0x10000, 0);
+  BattleEffect_StartBufferInterpolation(10);
+  i--;
+  wait(10);
+  if (i >= 0)
+    goto flash;
+  Func_02001de4();
+  IO_WRITE_QUEUE_PUSH(0x04000050, 0xf00, 0x20000);
+  IO_WRITE_QUEUE_PUSH(0x04000052, 0x1000, 0x20000);
+  wait(1);
+  Task_RemoveFar(Func_02000540);
+  Task_Add(Func_020006bc, TASK_PASS_VBLANK);
+  Func_020017bc();
+  Func_020017f8(33, 0, 0);
+  i = 1;
+blend:
+  IO_WRITE_QUEUE_PUSH(0x04000052, 0x1000 | i, 0x20000);
+  wait(4);
+  i++;
+  if (i <= 6)
+    goto blend;
+  GameFlag_SetBit(0x95f);
+  GameFlag_SetBit(0x95e);
+  Camera_SetSpeedParameters(0x10000, 0x2000);
+  /* FAKEMATCH(wrapper): the camera moves forwarded through
+   * ApojiiIslands_CamMove, so each builds its own -1; as direct calls, 25 of
+   * 188 instructions differ in tla-en. */
+  ApojiiIslands_CamMove(PIXELS(360), -1, PIXELS(328), 1);
+  Func_080d47b4(16, 256, 20);
+  Func_02001d8c();
+  ApojiiIslands_CamMove(PIXELS(440), -1, PIXELS(376), 1);
+  Func_02001d8c();
+  ApojiiIslands_CamMove(PIXELS(472), -1, PIXELS(408), 1);
+  Import_EventSetExitRequest(77);
+}
+
+// ---- games/tla/src/scene/apojii_islands/events_d.c ----
+// Scene code of overlay 0x679, in ROM order, from events_d's offset up to the next object the overlay links.
+
+#include "map.h"
+#include "event_work.h"
+
+void Func_02000974(void) {
+  Func_02001cc4();
+  FieldEvent_ResolvePendingActions(0);
+  Actor_Get(17)->update = (void (*)(void))Func_02000770;
+  FieldEvent_SetMessageId((s32)&MsgWhatWhatJust);
+  Actor_FaceActor(gMainRoutineWork.currentOwner, 16, 0);
+  Event_StartScreenTransition();
+  Event_WaitTransitionFrames();
+  Actor_FaceDirection(16, FACING_EAST, 0);
+  Actor_SetAnimationAndWait(16, 3);
+  Actor_ArmCallback_(16, FACING_WEST, 0);
+  Actor_SetAnimationAndWait(16, 3);
+  Actor_ArmCallback_(16, FACING_NORTHEAST, 0);
+  Actor_SetAnimationAndWait(16, 3);
+  FieldActor_ShowEmote(16, 0x102, 20);
+  Event_ShowMessage(16, 0);
+  FieldActor_Jump(16, 2, 25);
+  Event_ShowMessage(16, 0);
+  Actor_RunRepeatedMotion(16, 1);
+  Event_ShowMessage(16, 0);
+  Actor_SetAnimationAndWait(16, 3);
+  Event_ShowMessage(16, 0);
+  Func_02001ccc();
+  Event_ClearFlag(0x95e);
+}
+
+void Func_02000a48(void) { Func_02001e0c_(68, 38, 39, 24, 68, 4, 1); }
+
+void Func_02000a68(void) {
+  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
+
+  Func_02001e0c_(68, 38, 38, 21, 68, 4, 1);
+  if (Event_GetFlag(0xf9b) == 0) {
+    Func_02001d04_(65, PIXELS(376), PIXELS(376));
+    if (leader->x >> 20 == 23 && leader->z >> 20 == 23) {
+      Func_02001cc4();
+      FieldEvent_ResolvePendingActions(0);
+      Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x102);
+      Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, 16, 0);
+      leader->velocityY = 0x60000;
+      FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
+      Func_02001ccc();
+    }
+  }
+}
+
+void Func_02000af8(void) {
+  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
+
+  Func_02001e0c_(68, 38, 38, 21, 68, 4, 1);
+  if (Event_GetFlag(0xf9a) == 0) {
+    Func_02001d04_(64, PIXELS(600), PIXELS(408));
+    if (leader->x >> 20 == 37 && leader->z >> 20 == 25) {
+      Func_02001cc4();
+      FieldEvent_ResolvePendingActions(0);
+      Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x102);
+      Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, 16, 0);
+      leader->velocityY = 0x60000;
+      FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
+      Func_02001ccc();
+    }
+  }
+}
+
+void Func_02000b88(void) { Func_02001e0c_(67, 38, 11, 6, 67, 8, 1); }
+
+void Func_02000ba8(void) {
+  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
+
+  Func_02001e0c_(67, 38, 11, 6, 67, 8, 1);
+  if (Event_GetFlag(0xf9e) == 0) {
+    Func_02001d04_(64, PIXELS(200), PIXELS(152));
+    if (leader->x >> 20 == 12 && leader->z >> 20 == 9) {
+      Func_02001cc4();
+      FieldEvent_ResolvePendingActions(0);
+      Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x102);
+      Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, 16, 0);
+      leader->velocityY = 0x60000;
+      FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
+      Func_02001ccc();
+    }
+  }
+}
+
+void Func_02000c38(void) {
+  u8 *work = Ram_HeapSlots->eventWork;
+
+  Func_02001cc4();
+  FieldEvent_ResolvePendingActions(0);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
+  FieldActor_SetSpritePriority(gMainRoutineWork.currentOwner, 2);
+  Actor_Get(gMainRoutineWork.currentOwner)->motionFlags = 0;
+  Event_PlaySound(123);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
+  Actor_CenterOnColumn_(gMainRoutineWork.currentOwner, 2, -6);
+  FieldEvent_Wait(10);
+  FieldEvent_SetExitRequest(*(s16 *)(work + 0x154));
+  Event_FinishScreenTransition();
+  Event_WaitTransitionFrames();
+  Func_02001ccc();
+}
+
+s32 Func_02000cb4(void) {
+  u16 facing;
+
+  facing = (s16)((Actor_Get(gMainRoutineWork.currentOwner)->facing + 0x2000) &
+                 0xc000);
+  Func_02001cc4();
+  FieldEvent_ResolvePendingActions(0);
+  if (facing) {
+    Actor_FaceActor(9, gMainRoutineWork.currentOwner, 0);
+    FieldEvent_SetMessageId((s32)&MsgWhyDoesMy);
+    Event_ShowMessage(9, 0);
+    Actor_ArmCallback_(9, FACING_SOUTHEAST, 0);
+  }
+  Func_02001ccc();
+  return 0;
+}
+
+s32 Func_02000d20(void) {
+  u16 facing;
+
+  facing = (s16)((Actor_Get(gMainRoutineWork.currentOwner)->facing + 0x2000) &
+                 0xc000);
+  Func_02001cc4();
+  FieldEvent_ResolvePendingActions(0);
+  if (facing) {
+    FieldEvent_SetMessageId((s32)&MsgICanTEver);
+    Event_ShowMessage(9, 0);
+  }
+  Func_02001ccc();
+  return 0;
+}
+
+void Func_02000d74(void) { Func_02001d2c(gMainRoutineWork.currentOwner, 1, 5); }
+
+/* VIEW(events_d): variable gData_020024b8 as extern const u8 gData_020024b8[]; the definition has s32 gData_020024b8[] = { - 1, 0, 0, }. */
+extern const u8 gData_020024b8__events_d[] __asm__("gData_020024b8");
+/* VIEW(events_d): variable gData_020024d0 as extern const u8 gData_020024d0[]; the definition has s32 gData_020024d0[] = { 1, (s32) 0xffff0001, 1, 1, (s32) 0xffff0002, 2, 1, (s32) 0xffff0003, 3, 2, (s32) 0xffff0004, (s32) Func_02000c38, 2.... */
+extern const u8 gData_020024d0__events_d[] __asm__("gData_020024d0");
+/* VIEW(events_d): variable gData_02002698 as extern const u8 gData_02002698[]; the definition has s32 gData_02002698[] = { 1, (s32) 0xffff0001, 1, 1, (s32) 0xffff0002, 2, 1, (s32) 0xffff0003, 3, 1, (s32) 0xffff0004, 4, 1, (s32) 0xffff0005.... */
+extern const u8 gData_02002698__events_d[] __asm__("gData_02002698");
+/* VIEW(events_d): variable gData_0200280c as extern const u8 gData_0200280c[]; the definition has s32 gData_0200280c[] = { 1, (s32) 0xffff0001, 1, 1, (s32) 0xffff0002, 2, 2, (s32) 0xffff0003, (s32) Func_02001464, 2, (s32) 0xffff0004, (s32.... */
+extern const u8 gData_0200280c__events_d[] __asm__("gData_0200280c");
+
+const u8 *Func_02000d90(void) {
+  s16 scene = gMainRoutineWork.scene;
+
+  if (scene == (s32)&SceneId_Ov679Room1)
+    return gData_020024d0__events_d;
+  if (scene == (s32)&SceneId_Ov679Room3)
+    return gData_02002698__events_d;
+  if (scene == (s32)&SceneId_Ov679Room2)
+    return gData_0200280c__events_d;
+  return gData_020024b8__events_d;
+}
+
+void Func_02000de0(s32 actor) {
+  if ((u16)((Actor_Get(gMainRoutineWork.currentOwner)->facing + 0x2000) &
+            0xc000) == 0xc000) {
+    Func_02001e24(8, actor);
+    return;
+  }
+  Func_02001cc4();
+  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_SetMessageId((s32)&MsgWowYouLook);
+  Event_ShowMessage(actor, 0);
+  Func_02001ccc();
+}
+
+void Func_02000e40(s32 actor) {
+  s32 msg;
+
+  Func_02001cc4();
+  FieldEvent_ResolvePendingActions(0);
+  msg = (s32)&MsgYouGuysAren;
+  FieldEvent_SetMessageId(msg);
+  Event_OpenMessage(actor, 0);
+  if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) == 0) {
+    FieldEvent_Wait(10);
+    FieldEvent_SetMessageId(msg + 1);
+  } else {
+    FieldEvent_Wait(20);
+    FieldEvent_SetMessageId(msg + 2);
+  }
+  Event_ShowMessage(actor, 0);
+  Func_02001ccc();
+}
+
+void Func_02000e98(s32 actor) {
+  if ((u16)((Actor_Get(gMainRoutineWork.currentOwner)->facing + 0x2000) &
+            0xc000) == 0xc000) {
+    Func_02001e1c(23, actor);
+    return;
+  }
+  Func_02001cc4();
+  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_SetMessageId((s32)&MsgItDBe);
+  Event_ShowMessage(actor, 0);
+  Func_02001ccc();
+}
+
+void Func_02000ef8(void) {
+  u32 value;
+
+  if (REG_VCOUNT < gData_02002a98) {
+    value = gData_02002a9c;
+    REG_BG1HOFS = value;
+    REG_BLDCNT = 0;
+  } else {
+    value = gData_02002a9e;
+    /* FAKEMATCH(dead): the once-only block orders this statement; as a plain
+     * statement, 9 of 35 instructions differ in tla-en. */
+    do {
+      REG_BG1HOFS = value;
+    } while (0);
+    REG_BLDALPHA = 0x100c;
+    REG_BLDCNT = 0x3f42;
+  }
+}
+
+void Func_02000f58(void) {
+  struct MapLayer *layer = &Ram_HeapSlots->mapWork->layers[2];
+  s16 y = layer->y >> 16;
+
+  gData_02002a98 = 1448 - y;
+  gData_02002a9c = layer->x >> 16;
+  gData_02002a9e = (s16)(layer->x >> 16) - (gFrameCount >> 2);
+}
+
+void Func_02000f98(void) {
+  s32 priority;
+
+  Func_02001c0c(1, 0, Func_02000ef8);
+  priority = 0xc80;
+  FieldTask_AddFrame(Func_02000f58, priority);
+}
+
+struct MapBits {
+  u8 unk00[23];
+  u8 low : 2;
+  u8 mode : 2;
+  u8 high : 4;
+};
+
+/// The overlay's entry: sets the map mode and screen effect 0x202, then starts
+/// each room's own setup.
+s32 Func_02000fb8(void) {
+  s32 *effect;
+  s16 scene;
+  struct MainRoutineWork *party;
+
+  ((struct MapBits *)Ram_HeapSlots->mapWork)->mode = 1;
+  effect = &((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect;
+  *effect = 0x202;
+  party = &gMainRoutineWork;
+  scene = party->scene;
+  if (scene == (s32)&SceneId_Ov679Room2) {
+    Func_02001054();
+  } else if (scene == (s32)&SceneId_Ov679Room1) {
+    FieldTask_AddFrame(Func_02000540, 0x480);
+    if (Event_GetFlag(0x95e))
+      Func_02000974();
+  } else if (scene == (s32)&SceneId_Ov679Room3) {
+    *effect = 0x100;
+    if (party->entrance == 6)
+      Func_020010b4();
+  }
+  return 0;
+}
+
+s32 Scene_PrepareMap(void) { return 0; }
+
+void Func_02001054(void) {
+  Task_AddFrame(Func_020003e8, TASK_PASS_VBLANK);
+  Func_02001dfc();
+  Func_02001e04(0, 0x200, 8, 9);
+  Func_02001dec(170);
+  Func_02000f98();
+  if (gMainRoutineWork.entrance == 3)
+    Func_02001500();
+  if (gMainRoutineWork.entrance == 4)
+    Func_02001500();
+  if (gMainRoutineWork.entrance == 5)
+    Func_02001500();
+}
+
+void Func_020010b4(void) {
+  *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x209;
+  Event_ClearFlag(0x12f);
+}
+
+void Func_020010d0(void) { Func_02001d9c(); }
+
+#include "field_sprite.h"
+
+
+
+void Func_020010d8(struct Actor *object) {
+  struct Actor *child;
+  struct FieldSprite *parent;
+  struct FieldSprite *sprite;
+
+  child = (FieldActor_Create(14, object->x, object->y + 0x40000,
+                              object->z + 0x40000));
+  parent = object->sprite;
+  if (child != NULL) {
+    sprite = child->sprite;
+    child->terrainHeight = object->terrainHeight;
+    Func_02001c74(child, gData_02001ee8);
+    child->motionFlags = 0;
+    if (sprite != NULL) {
+      Animation_ApplyChildArgument(sprite, 1);
+      sprite->nextFrame = 0;
+      sprite->priority = parent->priority;
+    }
+  }
+}
+
+// ---- games/tla/src/scene/apojii_islands/events_h.c ----
+// Scene code of overlay 0x679, in ROM order, from events_h's offset up to the next object the overlay links.
+
+
+void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
+
+void Func_02001140(struct Actor *object) {
+  s32 phase = gFrameCount & 15;
+
+  if (phase == 0) {
+    struct Actor *child =
+        Import_ActorCreate_(0x10d, object->x, object->y, object->z);
+
+    if (child != 0) {
+      struct FieldSprite *sprite = child->sprite;
+
+      Func_02001c74(child, gData_02001ef4);
+      child->motionFlags = 0;
+      child->y = -0x78000;
+      child->terrainId = 1;
+      if (sprite != 0) {
+        Animation_ApplyChildArgument(sprite, 2);
+        sprite->nextFrame = 0;
+        sprite->priority = 2;
+      }
+    }
+  }
+}
+
+struct EventWork1cc {
+  u8 unk000[0x1cc];
+  struct Actor *object;
+};
+
+void Func_020011a8(void) {
+  struct EventWork1cc *work = Ram_HeapSlots->eventWork;
+  s32 owner = gMainRoutineWork.currentOwner;
+  struct Actor *anchor = work->object;
+  struct Actor *leader = Actor_Get(owner);
+  s32 position[3];
+  s32 result;
+
+  if (gMainRoutineWork.scene != (s32)&SceneId_Ov67bRoom1 ||
+      leader->terrainHeight != 0) {
+    position[0] = leader->x;
+    position[1] = leader->y;
+    position[2] = leader->z + 0x20000;
+    result = Func_02001c9c(leader, position);
+    if ((gFrameCount & 4) == 0)
+      Func_020010d8(leader);
+    if (result < 0) {
+      /* FAKEMATCH(wrapper): Call2 kept; as a direct call, 2 of 151 instructions
+       * differ in tla-en. */
+      Actor_SetAttachedEffect(owner, 0x102);
+      FieldActor_SetMoveTarget(leader, leader->x, leader->y, leader->z + 0x80000);
+      Func_02001c6c(leader, 49);
+      Actor_WaitForMove(leader);
+      do {
+        System_Wait(1);
+      } while (leader->y != leader->terrainHeight);
+      Func_020010d8(leader);
+      Func_02001c6c(leader, 49);
+      System_Wait(3);
+    } else {
+      position[0] = leader->x;
+      position[1] = leader->y;
+      position[2] = leader->z + 0x80000;
+      result = Func_02001c9c(leader, position);
+      if (result <= 0) {
+        position[0] = leader->x + 0x5b333;
+        position[1] = leader->y;
+        position[2] = leader->z + 0x5b333;
+        result = Func_02001c9c(leader, position);
+        if (result <= 0) {
+          position[0] = leader->x - 0x5b333;
+          position[1] = leader->y;
+          position[2] = leader->z + 0x5b333;
+          result = Func_02001c9c(leader, position);
+          if (result <= 0) {
+            anchor->z += 0x20000;
+            leader->z += 0x20000;
+            leader->facing = 0x4000;
+          }
+        }
+      }
+    }
+  }
+}
+
+void Func_02001308(s32 id) {
+  struct Actor *object = Actor_Get(id);
+
+  if (object != 0) {
+    u8 *meta = ResourceMetadata_Register(object->sprite, 0x17d);
+
+    meta[5] = 0;
+    meta[6] = 0;
+    Func_02001c6c(object, 0);
+    Func_02001c6c(object, 2);
+  }
+}
+
+void Func_02001338(s32 entrance) {
+  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
+  s32 i;
+
+  Func_02001cc4();
+  FieldEvent_ResolvePendingActions(0);
+  FieldActor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);
+  leader->motionFlags = 0;
+  leader->priorityFlags |= 0x20;
+  Event_PlaySound(215);
+  Func_02001c6c(leader, 18);
+  Event_PlaySound(612);
+  for (i = 0; i < 60; i++) {
+    s32 angle;
+
+    if (i == 30)
+      Event_FinishScreenTransition();
+    leader->y -= 0x4000;
+    angle = leader->facing;
+    leader->facing = angle + 0x1000;
+    if ((i & 7) == 0)
+      Func_020010d8(Actor_Get(15));
+    System_Wait(1);
+  }
+  Func_02001ccc();
+  FieldEvent_SetExitRequest(entrance);
+}
+
+/// Every other frame, emits particle 7 (5 on every other such frame) from the
+/// object, 26 pixels up, swaying with the frame count and drifting by a random
+/// amount.
+s32 Func_020013d8(struct Actor *object) {
+  s32 params[10];
+
+  if (gFrameCount & 1) {
+    s32 drift;
+    s32 x;
+    s32 y;
+
+    params[1] = 7;
+    if ((gFrameCount & 2) == 0)
+      params[1] = 5;
+    params[2] = 0xcccc;
+    params[3] = 0xcccc;
+    params[0] = 0;
+    drift = ((u32)(Random16Far() << 3) >> 16) * 0x3333;
+    x = object->x;
+    y = object->y;
+    Func_0200015c(x + ((8 - (gFrameCount & 15)) << 16), y + 0x1a0000, object->z,
+                  0, -drift, 0, 0xb0000, params);
+  }
+  return 0;
+}
+
+void Func_02001464(s32 entrance) {
+  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
+  s32 *owner = &gMainRoutineWork.currentOwner;
+
+  Func_02001cc4();
+  FieldEvent_ResolvePendingActions(0);
+  Event_PlaySound(228);
+  leader->update = (void (*)(void))Func_020013d8;
+  leader->motionFlags = 0;
+  leader->speedLimit = 0x3333;
+  Actor_SetAnimation(*owner, 2);
+  Actor_SetDestinationOffset(*owner, 0, -8);
+  FieldActor_WaitForMoveById(*owner);
+  Actor_SetSpriteColor(Actor_Get(*owner), 9);
+  Actor_SetSingleChildFlags(Actor_Get(*owner), 0);
+  leader->update = 0;
+  Event_FinishScreenTransition();
+  Event_WaitTransitionFrames();
+  FieldEvent_SetExitRequest(entrance);
+  Func_02001ccc();
+}
+
+void Func_02001500(void) {
+  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
+  s32 flag = Event_GetFlag(0x109);
+  s32 *owner = &gMainRoutineWork.currentOwner;
+  s32 offset;
+
+  if (flag == 0) {
+    Func_02001cc4();
+    FieldEvent_ResolvePendingActions(0);
+    Camera_MoveWithinMapBounds_(-1, -1, -1, 0);
+    leader->motionFlags = flag;
+    Actor_SetPosition(*owner, ((s16 *)&leader->x)[1] << 16,
+                                           (((s16 *)&leader->z)[1] << 16) -
+                                               0x100000);
+    Actor_SetSpriteColor(Actor_Get(*owner), 9);
+    Actor_SetSingleChildFlags(Actor_Get(*owner), 0);
+    Event_StartScreenTransition();
+    Event_PlaySound(228);
+    leader->update = (void (*)(void))Func_020013d8;
+    Actor_SetSpeed(*owner, 0x6666, 0x3333);
+    Actor_WalkByAndWait(*owner, 0, 8);
+    Actor_SetSpriteColor(Actor_Get(*owner), 0);
+    Actor_SetSingleChildFlags(Actor_Get(*owner), 1);
+    ((struct FieldSprite *)leader->sprite)->priority = 1;
+    offset = 10;
+    Actor_WalkByAndWait(*owner, 0, offset);
+    leader->motionFlags = 3;
+    leader->update = (void (*)(void))flag;
+    Func_02001df4();
+    Event_WaitTransitionFrames();
+    Func_02001ccc();
+  }
+}
+
+#include "graphics/vram_tab.h"
+#include "system/dma.h"
+
+void Func_02001c3c(void *entry, s32 slot);
+
+#define COPY_PICTURE(from, to)                                                 \
+  Dma_Set((void *)(from), (void *)(offset + (to)), DMA_COPY_WORDS(16), REG_DMA3)
+
+void Func_020015f8(void) {
+  struct MapWork *map = Ram_HeapSlots->mapWork;
+  // viewZ read through a pointer to viewX, its neighbour; as map->viewZ, 30
+  // of 189 instructions differ in tla-en.
+  s32 *view = &map->viewX;
+  s32 viewX = view[0] & 0xffff0000;
+  s32 viewZ = view[1] & 0xffff0000;
+  // DEAD: viewY is subtracted from both height and z and cancels in dy; the
+  // source keeps its load and a store to the stack that nothing reads.
+  s32 viewY = map->origin[1];
+  struct CellMarkers *table = &gData_02002aa0;
+  struct VramBlockCacheEntry *entry = &gResourceTableEntries[table->block];
+  u32 tile = entry->offset >> 5;
+  u32 offset = entry->offset;
+  struct CellMarker *record;
+  s32 i;
+
+  COPY_PICTURE(0x0600f000, 0x06010000);
+  COPY_PICTURE(0x0600f400, 0x06010040);
+  COPY_PICTURE(0x0600f040, 0x06010080);
+  COPY_PICTURE(0x0600f440, 0x060100c0);
+  COPY_PICTURE(0x0600f080, 0x06010100);
+  COPY_PICTURE(0x0600f480, 0x06010140);
+  COPY_PICTURE(0x0600f080, 0x06010180);
+  COPY_PICTURE(0x0600f480, 0x060101c0);
+  record = table->markers;
+  for (i = 127; i >= 0; i--, record++) {
+    s32 dx, dy, height, z, palette, flip, kind;
+    s32 x, y, left, top, picture;
+    u32 clear;
+    u32 *attr;
+
+    if (record->state == 0)
+      continue;
+    dx = record->x - viewX;
+    height = record->y - viewY;
+    z = record->z - viewZ - viewY;
+    dy = z - height;
+    if (record->y == record->rest && record->state != 2)
+      palette = 0xec00;
+    else
+      palette = 0xe800;
+    y = dy >> 16;
+    clear = 0;
+    x = dx >> 16;
+    left = x - 8;
+    top = y - 8;
+    if ((u32)(x + 7) > 334)
+      continue;
+    if ((u32)(y + 39) > 286)
+      continue;
+    left &= 0x1ff;
+    /* FAKEMATCH(dead): a self-update of Ram_HeapSlots->mapWork after left's
+     * mask; as nothing, 82 of 189 instructions differ in tla-en. */
+    Ram_HeapSlots->mapWork += 0;
+    top &= 255;
+    attr = record->oam;
+    kind = record->kind;
+    picture = kind * 4;
+    flip = 0;
+    if (kind == 2)
+      flip = 0x10000000;
+    *attr++ = clear;
+    *attr++ = top | (left << 16) | flip | 0x40000400;
+    *attr = palette | (tile + picture);
+    Func_02001c3c(record->oam, 0);
+  }
+}
+
+/// Clears the effect table, takes a free VRAM entry for it with a 0x200-byte
+/// block and no source, then schedules Func_020015f8.
+void Func_020017bc(void) {
+  Iwram_ClearWords(&gData_02002aa0, 0x1004);
+  gData_02002aa0.block = Resource_FindFreeEntry();
+  Vram_Load(gData_02002aa0.block, 0x200, 0);
+  FieldTask_AddFrame(Func_020015f8, 0x480);
+}
+
+#include "system.h"
+#include "heap_release.h"
+#include "io_reg.h"
+#include "resource.h"
+
+extern u8 Data_0202c001[];
+
+void Func_020017f8(u32 base, s32 a, s32 b) {
+  struct MapWork *map = Ram_HeapSlots->mapWork;
+  struct MapLayer *second = &map->layers[1];
+  struct MapLayer *layer = &map->layers[0];
+  struct MapCell *cells = second->cells;
+  s32 left = *(s32 *)&layer->unk08[0] + map->minX;
+  s32 top = *(s32 *)&layer->unk08[4] + map->minZ;
+  struct CellMarkers *markers = &gData_02002aa0;
+  s32 width = (map->maxX - map->minX) >> 20;
+  s32 height = (map->maxZ - map->minZ) >> 20;
+  struct CellMarker *entry = &markers->markers[markers->count];
+  s32 *slot = (s32 *)(Data_0202c001 + 0x1df);
+  s32 origin = ((map->minZ >> 20) << 7) + (map->minX >> 20);
+  struct MapCell *cell;
+  s16 x, z;
+  u32 value;
+
+  *slot = a << 8;
+  cells += origin;
+  z = 0;
+  if (z < height) {
+  outer:
+    cell = cells + ((u16)z << 7);
+    x = 0;
+    if (x < width) {
+    inner:
+      value = cell->collisionCode;
+      if (value != 0 && value >= base && value < base + 4) {
+        entry->x = ((u16)x << 20) + left + 0x80000;
+        entry->z = ((u16)z << 20) + top + 0x80000;
+        entry->rest = b << 19;
+        entry->y = a << 19;
+        entry->kind = value - base;
+        entry->state = 1;
+        entry++;
+        markers->count++;
+        // Layer 0's row base in its own local (written inline, 10 of 159
+        // differ).
+        {
+          u8 *terrain = map->layers[0].terrainIds + origin;
+
+          terrain[(u16)x + ((u16)z << 7)] = 120;
+        }
+      }
+      // The step spelled as a halfword sum (as x++, 40 of 159 instructions
+      // differ in tla-en).
+      x = ((x << 16) + 0x10000) >> 16;
+      cell++;
+      if ((u16)x < width)
+        goto inner;
+    }
+    // The same halfword-sum spelling (as z++, 16 of 159 differ).
+    z = ((z << 16) + 0x10000) >> 16;
+    if ((u16)z < height)
+      goto outer;
+  }
+}
+
+struct GroundParticle {
+  u8 unk00[4];
+  u16 y : 8;
+  u16 affine : 2;
+  u16 blendMode : 2;
+  u16 mosaic : 1;
+  u16 fullColor : 1;
+  u16 shape : 2;
+  u16 x : 9;
+  u16 affineIndex : 5;
+  u16 size : 2;
+  u16 tile : 10;
+  u16 priority : 2;
+  u16 palette : 4;
+  u8 unk0a[2];
+  s32 posX;
+  s32 posY;
+  s32 posZ;
+  s32 delay;
+  u16 timer;
+  u8 unk1e[2];
+};
+
+struct GroundParticleWork {
+  s32 entry;
+  s32 tileBase;
+  struct GroundParticle particles[64];
+  s32 *leader;
+};
+
+extern s16 gData_02001f18[];
+
+void Func_02001940(void) {
+  struct MapWork *view = Ram_HeapSlots->mapWork;
+  struct GroundParticleWork *work = Ram_HeapSlots->unk70[1];
+  s32 *camera = &view->viewX;
+  struct GroundParticle *particle = work->particles;
+  s32 cameraX = camera[0];
+  s32 cameraZ = camera[1];
+  u32 i;
+
+  for (i = 0; i < 64; i++, particle++) {
+    s16 *frame;
+    s32 x;
+    s32 y;
+
+    if (--particle->timer == 0xffff)
+      continue;
+    if (GameFlag_Test(0x166))
+      particle->timer++;
+    frame = &gData_02001f18[5 * particle->timer];
+    x = (particle->posX - cameraX) / 0x10000 + *frame++;
+    y = (particle->posZ - particle->posY - cameraZ) / 0x10000 + *frame++;
+    if ((x >= -16 && x <= 239) && y >= -32 && y <= 159) {
+      particle->priority = 1;
+      particle->x = x;
+      particle->y = y;
+      particle->tile = work->tileBase + *(u16 *)frame;
+      frame++;
+      particle->shape = *(u8 *)frame;
+      particle->size = *(u8 *)(frame + 1);
+      Func_02001c3c(particle, 240);
+    }
+    if (particle->timer == 0) {
+      s32 *leader = work->leader;
+
+      if (leader != NULL) {
+        x = leader[0] + Random16Far() * 240 - 0x780000;
+        y = leader[2] + Random16Far() * 160 - 0x500000;
+        particle->posX = x;
+        particle->posZ = y;
+        particle->posY = Map_GetTerrainHeight(0, x, y);
+        particle->timer = 16;
+      } else {
+        particle->posX = 0;
+        particle->posZ = 0;
+        particle->posY = 0;
+        particle->timer = 16;
+      }
+    }
+  }
+}
+
+struct DustParticle {
+  u32 link;
+  u32 attr01;
+  u32 attr2;
+  s32 posX;
+  s32 posY;
+  s32 posZ;
+  u8 pad18[4];
+  u16 timer;
+  u8 pad1e[2];
+};
+
+struct DustWork {
+  s32 vramEntry;
+  s32 tileBase;
+  struct DustParticle particles[64];
+  u32 field808;
+  u8 pad80c[8];
+};
+
+/// Starts the sparkles: 64 sprites on the ground at the origin, their tiles
+/// decoded into VRAM, and Func_02001940 scheduled at priority 0x480 to move
+/// them; the overlay's copy of FieldEffect_InitializeSparkles.
+void Func_02001ad8(void) {
+  struct DustWork *work = HeapSlot_AllocEwram(116, sizeof(struct DustWork));
+  struct DustParticle *p = work->particles;
+  u8 *buf;
+  u32 i;
+  u32 size;
+  volatile u32 zero;
+
+  /* FAKEMATCH(temporary): one local is the fill word, the end word and each
+   * particle's attribute cursor, so it lives on the stack and every step of
+   * the cursor is stored there, as the native's; with a separate cursor, 55 of
+   * 81 instructions differ in tla-en. */
+  size = 0;
+  zero = size;
+  Dma_Set((const void *)&zero, work,
+          (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 517, REG_DMA3);
+  buf = HeapSlot_AllocEwram(56, 0x400);
+  Func_02001c24(gField_Tiles679, buf);
+  work->vramEntry = Resource_FindFreeEntry();
+  work->tileBase = Vram_Load(work->vramEntry, 0x300, buf);
+  HeapSlot_Release(56);
+  work->field808 = size;
+  i = 0;
+loop:
+  size = (u32)p;
+  *(u32 *)size = 0;
+  size += 4;
+  *(u32 *)size = 0x40000400;
+  size += 4;
+  *(u32 *)size = 0xb400;
+  p->posX = 0;
+  p->posZ = 0;
+  p->posY = Map_GetTerrainHeight(0, 0, 0) << 16;
+  p->timer = (i & 15) + 1;
+  i++;
+  p++;
+  if (i < 64)
+    goto loop;
+  Task_AddFrame(Func_02001940, TASK_PASS_VBLANK);
+}
+
+void Func_02001ba0(s32 id) {
+  u8 *work = Ram_HeapSlots->unk70[1];
+  struct Actor *object = Actor_Get(id);
+  s32 *slot = (s32 *)(work + 0x808);
+
+  *slot = 0;
+  if (id != 0 && object != 0)
+    *slot = (s32)&object->x;
+}
+
+#include "text/msg_ids.h"
+#include "version.h"
+
+#if !TLA_PATCH_1
+// The Japanese table holds 131 where later editions hold MsgFieldOff's number,
+// which the Japanese text numbers alike: a changed value, from patch 1.
+// XXX: is it a message at all; what reads gData_02002044 would settle it.
+#define UNK_02002044_VALUE 131
+#else
+#define UNK_02002044_VALUE MSGNO(MsgFieldOff)
+#endif
+
+void Func_0200033c(void);
+void Func_020003b0(void);
+void Func_020003cc(void);
+void Func_02000694(void);
+void Func_020006a8(void);
+/* VIEW(events_h): routine Func_020007a4 as void Func_020007a4(void); the definition has void Func_020007a4(s32 unused, s32 id). */
+extern void Func_020007a4__events_h(void) __asm__("Func_020007a4");
+void Func_02000a48(void);
+void Func_02000a68(void);
+void Func_02000af8(void);
+void Func_02000b88(void);
+void Func_02000ba8(void);
+void Func_02000c38(void);
+/* VIEW(events_h): routine Func_02000cb4 as void Func_02000cb4(void); the definition has s32 Func_02000cb4(void). */
+extern void Func_02000cb4__events_h(void) __asm__("Func_02000cb4");
+/* VIEW(events_h): routine Func_02000d20 as void Func_02000d20(void); the definition has s32 Func_02000d20(void). */
+extern void Func_02000d20__events_h(void) __asm__("Func_02000d20");
+void Func_02000d74(void);
+/* VIEW(events_h): routine Func_02000de0 as void Func_02000de0(void); the definition has void Func_02000de0(s32 actor). */
+extern void Func_02000de0__events_h(void) __asm__("Func_02000de0");
+/* VIEW(events_h): routine Func_02000e40 as void Func_02000e40(void); the definition has void Func_02000e40(s32 actor). */
+extern void Func_02000e40__events_h(void) __asm__("Func_02000e40");
+/* VIEW(events_h): routine Func_02000e98 as void Func_02000e98(void); the definition has void Func_02000e98(s32 actor). */
+extern void Func_02000e98__events_h(void) __asm__("Func_02000e98");
+void Func_020010d0(void);
+
+extern u32 gData_02001e34[];
+extern u32 gData_02001e70[];
+extern u32 gData_02001eac[];
+extern s32 gData_02002044[];
+
+// clang-format off
+u32 gData_02001e34[] = {
+    0, 1, 13, 22, 0, 0,
+    1, 2, 0, 0, 0, 0,
+    1, 38, 17,
+};
+
+u32 gData_02001e70[] = {
+    0, 1, 13, 44, 0, 0,
+    1, 2, 0, 0, 0, 0,
+    1, 38, 17,
+};
+
+u32 gData_02001eac[] = {
+    0, 1, 13, 126, 0, 0,
+    1, 2, 0, 0, 0, 0,
+    1, 38, 17,
+};
+
+u32 gData_02001ee8[] = {
+    0, 20, 38,
+};
+
+u32 gData_02001ef4[] = {
+    23, 6, 0x4000, 0, 1, 13,
+    30, 0, 38,
+};
+
+s16 gData_02001f18[] = {
+    -8, -12, 20, 0, 1, -8, -12, 20,
+    0, 1, -8, -12, 20, 0, 1, -8,
+    -12, 16, 0, 1, -8, -12, 16, 0,
+    1, -8, -12, 12, 0, 1, -8, -12,
+    8, 0, 1, 0, -32, 0, 2, 2,
+    8, -48, 0, 2, 2, 16, -64, 0,
+    2, 2, 24, -80, 0, 2, 2, 32,
+    -96, 0, 2, 2, 40, -112, 0, 2,
+    2, 48, -128, 0, 2, 2, 56, -144,
+    0, 2, 2, 64, -160, 0, 2, 2,
+    -2, 12, -4, 12, -6, 12, -8, 8,
+    -10, 8, -12, 8, -14, 8, -16, 8,
+    -19, 4, -21, 4, -24, 4, -27, 4,
+    -30, 4, -33, 4, -36, 4, -40, 4,
+    -44, 4, -48, 0, -52, 0, -56, 0,
+    -60, 0, -64, 0, -68, 0, -72, 0,
+    -76, 0, -80, 0, -85, 0, -90, 0,
+    -95, 0, -100, 0, -110, 0, -120, 0,
+};
+
+s32 gData_02002038[] = {
+    (s32)gData_02001e34,
+    (s32)gData_02001e70,
+    (s32)gData_02001eac,
+};
+
+s32 gData_02002044[] = {
+    22,
+    30,
+    UNK_02002044_VALUE,
+    22,
+    16,
+    0x3333,
+    22,
+    15,
+    0x9999,
+    (s32)0x80010000,
+    39,
+    2,
+    4,
+    0x1280000,
+    0,
+    0x880000,
+    1,
+    4,
+    0x1280000,
+    0,
+    0x680000,
+    1,
+    39,
+    1,
+    0,
+    60,
+    0,
+    10,
+    0,
+    60,
+    39,
+    2,
+    4,
+    0x1280000,
+    0,
+    0x880000,
+    1,
+    4,
+    0x1180000,
+    0,
+    0x880000,
+    1,
+    39,
+    1,
+    0,
+    60,
+    0,
+    10,
+    0,
+    60,
+    13,
+    0xffff,
+    (s32)0xc0010000,
+    17,
+};
+
+struct SceneEntrance gSceneEntrances[] = {
+    {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {SCENE_TABLE_END},
+};
+
+u32 gSceneExits[] = {
+    SCENE_EXITS(154),
+    SCENE_EXIT_IF(1, 2, 36, CONDITION_ALWAYS),
+    SCENE_EXIT_IF(2, 155, 1, CONDITION_ALWAYS),
+    SCENE_EXIT_IF(3, 155, 2, CONDITION_ALWAYS),
+    SCENE_EXIT_IF(4, 156, 1, CONDITION_ALWAYS),
+    SCENE_EXIT_IF(5, 156, 2, CONDITION_ALWAYS),
+    SCENE_EXIT_IF(6, 156, 3, CONDITION_ALWAYS),
+    SCENE_EXIT_IF(7, 156, 4, CONDITION_ALWAYS),
+    SCENE_EXIT_IF(8, 156, 5, CONDITION_ALWAYS),
+    SCENE_EXIT_IF(9, 58, 5, CONDITION_ALWAYS),
+    SCENE_EXIT(77, 2, 78),
+    SCENE_EXITS(156),
+    SCENE_EXIT_IF(1, 154, 4, CONDITION_ALWAYS),
+    SCENE_EXIT_IF(2, 154, 5, CONDITION_ALWAYS),
+    SCENE_EXIT_IF(3, 154, 6, CONDITION_ALWAYS),
+    SCENE_EXIT_IF(4, 154, 7, CONDITION_ALWAYS),
+    SCENE_EXIT_IF(5, 154, 8, CONDITION_ALWAYS),
+    SCENE_EXIT_IF(6, 135, 2, CONDITION_ALWAYS),
+    SCENE_EXITS(155),
+    SCENE_EXIT_IF(1, 154, 2, CONDITION_ALWAYS),
+    SCENE_EXIT_IF(2, 154, 3, CONDITION_ALWAYS),
+    SCENE_EXIT_IF(3, 157, 3, CONDITION_ALWAYS),
+    SCENE_EXIT_IF(4, 157, 4, CONDITION_ALWAYS),
+    SCENE_EXIT_IF(5, 157, 5, CONDITION_ALWAYS),
+    SCENE_EXITS_END,
+};
+
+u32 gData_02002200[] = {
+    0xffff, 0, 0, 0, 0, 0,
+};
+
+u32 gData_02002218[] = {
+    0xffff0073, 1, 0x380000, 0, 0xa80000, 0x1a000,
+    0xffff0074, 1, 0x1c80000, 0, 0x580000, 0x3e000,
+    0xffff0072, 1, 0x2380000, 0, 0x1380000, 0x1e000,
+    0xffff0080, 2, 0x1f80000, 0, 0xc80000, 0xc000,
+    0xffff0070, 1, 0x2680000, 0, 0x1080000, 0x12000,
+    0xffff0071, 2, 0xb80000, 0, 0x980000, 0x1e000,
+    0xffff0088, 3, 0xd80000, 0, 0x1780000, 0x4000,
+    0xffff008a, 3, 0x680000, 0, 0x1580000, 0x2000,
+    0xffff0073, 1, 0x1580000, 0, 0x1180000, 0x1c000,
+    0xffff017f, 1, 0x1600000, 0, 0xe80000, 0x24000,
+    0xffff, 0, 0, 0, 0, 0,
+};
+
+s32 gData_02002320[] = {
+    (s32)0xffff0074,
+    1,
+    0x980000,
+    0,
+    0x980000,
+    0x10000,
+    (s32)0xffff0088,
+    1,
+    0x780000,
+    0,
+    0x680000,
+    0x22000,
+    (s32)0xffff0072,
+    1,
+    0x1080000,
+    0,
+    0x680000,
+    0x12000,
+    (s32)0xffff0080,
+    (s32)gData_02002044,
+    0x1180000,
+    0,
+    0x880000,
+    0x10000,
+    (s32)0xffff0088,
+    1,
+    0x1980000,
+    0,
+    0x680000,
+    0x14000,
+    (s32)0xffff008a,
+    2,
+    0x1580000,
+    0,
+    0x780000,
+    0x1e000,
+    (s32)0xffff0070,
+    3,
+    0x2500000,
+    0,
+    0x780000,
+    0x12000,
+    (s32)0xffff0071,
+    1,
+    0x2280000,
+    0,
+    0x880000,
+    0x14000,
+    (s32)0xffff006e,
+    1,
+    0x1a00000,
+    0,
+    0x1680000,
+    0x14000,
+    (s32)0xffff0086,
+    1,
+    0x900000,
+    0,
+    0x1680000,
+    0x14000,
+    (s32)0xffff0087,
+    1,
+    0xd80000,
+    0,
+    0x1780000,
+    0x16000,
+    (s32)0xffff0070,
+    3,
+    0x800000,
+    0,
+    0x26c0000,
+    0x4000,
+    0xffff,
+    0,
+    0,
+    0,
+    0,
+    0,
+};
+
+u32 gData_02002458[] = {
+    0xffff0197, 1, 0x1080000, 0, 0x1180000, 0x2c000,
+    0xffff0197, 1, 0xd80000, 0, 0x1180000, 0x2c000,
+    0x7700f6, 1, 0x1780000, 0, 0xc80000, 0x8000,
+    0xffff, 0, 0, 0, 0, 0,
+};
+// clang-format on
+
+s32 gData_020024b8[] = {
+    -1,
+    0,
+    0,
+};
+
+s32 gData_020024c4[] = {
+    -1,
+};
+
+s32 gData_020024c8[] = {
+    -1,
+};
+
+s32 gData_020024cc[] = {
+    -1,
+};
+
+s32 gData_020024d0[] = {
+    1,
+    (s32)0xffff0001,
+    1,
+    1,
+    (s32)0xffff0002,
+    2,
+    1,
+    (s32)0xffff0003,
+    3,
+    2,
+    (s32)0xffff0004,
+    (s32)Func_02000c38,
+    2,
+    (s32)0xffff0005,
+    (s32)Func_02000c38,
+    2,
+    (s32)0xffff0006,
+    (s32)Func_02000c38,
+    2,
+    (s32)0xffff0007,
+    (s32)Func_02000c38,
+    2,
+    (s32)0xffff0008,
+    (s32)Func_02000c38,
+    1,
+    (s32)0xffff0009,
+    9,
+    0xc602,
+    (s32)0xffff0021,
+    (s32)Func_020010d0,
+    0xc602,
+    (s32)0xffff0015,
+    (s32)Func_020010d0,
+    0,
+    (s32)0xffff0008,
+    MSGNO(MsgThisIsApojii),
+    0,
+    (s32)0xffff0009,
+    MSGNO(MsgWhateverYouDo),
+    0,
+    (s32)0xffff000a,
+    MSGNO(MsgTheHugeWaterfall),
+    0,
+    (s32)0xffff000b,
+    MSGNO(MsgOnAquaIsland),
+    0,
+    (s32)0xffff000c,
+    MSGNO(MsgHaveYouAny),
+    0,
+    (s32)0xffff000d,
+    MSGNO(MsgIDonTKnowWhat),
+    0,
+    (s32)0xffff000e,
+    MSGNO(MsgWhenTheyCome),
+    0,
+    (s32)0xffff000f,
+    MSGNO(MsgDoYouThink),
+    0,
+    (s32)0xffff0010,
+    MSGNO(MsgIfThereS),
+    0x8d15,
+    (s32)0xffff0008,
+    MSGNO(MsgLookingOverGaia),
+    0x8d15,
+    (s32)0xffff0009,
+    MSGNO(MsgTheCurrentsNear),
+    0x8d15,
+    (s32)0xffff000a,
+    MSGNO(MsgAllOfThe),
+    0x8d15,
+    (s32)0xffff000b,
+    MSGNO(MsgWhyWouldAnyone),
+    0x8d15,
+    (s32)0xffff000c,
+    MSGNO(MsgWellAtLeast),
+    0x8d15,
+    (s32)0xffff000d,
+    MSGNO(MsgApojiiHasSo),
+    0x8d15,
+    (s32)0xffff000e,
+    MSGNO(MsgAquaIslandIs),
+    0x8d15,
+    (s32)0xffff000f,
+    MSGNO(MsgIWonderWhere),
+    0x8d15,
+    (s32)0xffff0010,
+    MSGNO(MsgAquaRockMust),
+    0x2115,
+    0x95f0011,
+    (s32)Func_020007a4__events_h,
+    0x8b85,
+    -0x10000,
+    (s32)Func_020003b0,
+    0x40008b85,
+    -0x10000,
+    (s32)Func_020003cc,
+    0x50009085,
+    -0x10000,
+    (s32)Func_02000694,
+    0x40009085,
+    -0x10000,
+    (s32)Func_020006a8,
+    0x50008905,
+    (s32)0xffff0015,
+    (s32)Func_02000a48,
+    0x50008905,
+    (s32)0xffff0016,
+    (s32)Func_02000a68,
+    0x50008905,
+    (s32)0xffff0017,
+    (s32)Func_02000af8,
+    -1,
+    0,
+    0,
+};
+
+s32 gData_02002698[] = {
+    1,
+    (s32)0xffff0001,
+    1,
+    1,
+    (s32)0xffff0002,
+    2,
+    1,
+    (s32)0xffff0003,
+    3,
+    1,
+    (s32)0xffff0004,
+    4,
+    1,
+    (s32)0xffff0005,
+    5,
+    1,
+    (s32)0xffff0006,
+    6,
+    0,
+    (s32)0xffff0008,
+    MSGNO(MsgThereSThis),
+    0,
+    (s32)0xffff0009,
+    (s32)Func_02000cb4__events_h,
+    0,
+    (s32)0xffff000a,
+    MSGNO(MsgIAbsolutelyRefuse),
+    0,
+    (s32)0xffff000b,
+    MSGNO(MsgTheCurrentsAround),
+    0,
+    (s32)0xffff000c,
+    MSGNO(MsgIMNotAllowed),
+    0,
+    (s32)0xffff000d,
+    MSGNO(MsgHeyMisterDid),
+    0,
+    (s32)0xffff000e,
+    MSGNO(MsgThatOldAqua),
+    0,
+    (s32)0xffff000f,
+    MSGNO(MsgHeSToo),
+    0,
+    (s32)0xffff0010,
+    (s32)Func_02000e98__events_h,
+    0,
+    (s32)0xffff0011,
+    (s32)Func_02000de0__events_h,
+    0,
+    (s32)0xffff0012,
+    (s32)Func_02000e40__events_h,
+    0x8d15,
+    (s32)0xffff0008,
+    MSGNO(MsgIJustWish),
+    0x8d15,
+    (s32)0xffff0009,
+    (s32)Func_02000d20__events_h,
+    0x8d15,
+    (s32)0xffff000a,
+    MSGNO(MsgISinkLike),
+    0x8d15,
+    (s32)0xffff000b,
+    MSGNO(MsgPoorBoyHis),
+    0x8d15,
+    (s32)0xffff000c,
+    MSGNO(MsgItSStupid),
+    0x8d15,
+    (s32)0xffff000d,
+    MSGNO(MsgWowHeSwam),
+    0x8d15,
+    (s32)0xffff000e,
+    MSGNO(MsgYouUnlockThe),
+    0x8d15,
+    (s32)0xffff000f,
+    MSGNO(MsgHeAlwaysWanted),
+    0x8d15,
+    (s32)0xffff0010,
+    MSGNO(MsgNoOneShips),
+    0x8d15,
+    (s32)0xffff0011,
+    MSGNO(MsgIMSure),
+    0x8d15,
+    (s32)0xffff0012,
+    MSGNO(MsgThoseGuysOn),
+    0,
+    (s32)0xffff0013,
+    MSGNO(MsgTheTemperatureOf),
+    0x8d15,
+    (s32)0xffff0013,
+    MSGNO(MsgLongAgoPoseidon),
+    -1,
+    0,
+    0,
+};
+
+s32 gData_0200280c[] = {
+    1,
+    (s32)0xffff0001,
+    1,
+    1,
+    (s32)0xffff0002,
+    2,
+    2,
+    (s32)0xffff0003,
+    (s32)Func_02001464,
+    2,
+    (s32)0xffff0004,
+    (s32)Func_02001464,
+    2,
+    (s32)0xffff0005,
+    (s32)Func_02001464,
+    0x4602,
+    (s32)0xffff0028,
+    (s32)Func_02000d74,
+    0,
+    (s32)0xffff000a,
+    (s32)Func_0200033c,
+    0x8515,
+    0x2000008,
+    0,
+    0x50008905,
+    (s32)0xffff0015,
+    (s32)Func_02000b88,
+    0x50008905,
+    (s32)0xffff0016,
+    (s32)Func_02000ba8,
+    -1,
+    0,
+    0,
+};
+#undef COPY_PICTURE
+#undef UNK_02002044_VALUE

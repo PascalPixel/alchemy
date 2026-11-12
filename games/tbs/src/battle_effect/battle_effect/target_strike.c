@@ -440,7 +440,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
 
     // Glints: three a frame, scattered at random around the target in
     // random flips; a blitter is built for one flip, so each glint builds
-    // its own. radius + 4 is 4 to 35 and the >> 17 halves it, so a
+    // its own. radius is 4 to 35 and the >> 17 halves it, so a
     // glint lands 2 to 17 canvas pixels from the strike point each way,
     // twice that across on the wide screen.
     if ((TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_FLAGS) & STRIKE_GLINTS) &&
@@ -448,16 +448,13 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
       for (i = 0; i != 3; i++) {
         s32 image = frame & 3;
         s32 angle = Random16() & TRIG_ANGLE_MASK;
-        /* FAKEMATCH(temporary): range holds 31; as Random16() & 31, 47 of 1259
-         * instructions differ in tbs-en. */
-        s32 range = 31;
-        s32 radius = Random16() & range;
+        s32 radius = (Random16() & 31) + 4;
         s32 x;
         s32 y;
 
-        x = targetPosition.x / 2 + (Trig_Sin(angle) * (radius + 4) >> 17) -
+        x = targetPosition.x / 2 + (Trig_Sin(angle) * radius >> 17) -
             (gBattleEffect_GlintCellWidths[image] / 2);
-        y = targetPosition.y - (Trig_Cos(angle) * (radius + 4) >> 17) -
+        y = targetPosition.y - (Trig_Cos(angle) * radius >> 17) -
             (gBattleEffect_GlintCellHeights[image] / 2);
         EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                             gTargetStrike_GlintDrawFlags[Random16() & 3] |

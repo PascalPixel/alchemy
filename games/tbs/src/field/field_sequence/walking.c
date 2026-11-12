@@ -73,7 +73,7 @@ s32 Field_CountRequests(void) {
 s32 Field_GetCollisionAheadOfLeader(void) {
   struct FieldWork *work;
   struct Actor *leader;
-  struct MapGridScrollAnimView *gridState;
+  struct MapGridScrollWork *gridState;
   union PolarOffsetPosition position;
   u8 *tile;
   s32 fixedX;
@@ -205,7 +205,7 @@ void Field_UpdateWalking(s32 layer, s32 x, s32 y, s32 z) {
    * alias set keeps the load order and the 44-byte stack frame; as struct Unit,
    * 2 of 472 instructions differ in tbs-en. */
   struct FieldWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD);
-  struct MapGridScrollAnimView *gridState = HEAP_SLOT_BLOCK(HEAP_SLOT_MAP_GRID);
+  struct MapGridScrollWork *gridState = HEAP_SLOT_BLOCK(HEAP_SLOT_MAP_GRID);
   s32 leaderId = gMainRoutineWork.leaderActorId;
   struct Actor *leader = work->actors[leaderId];
   s16 previousHp[8];

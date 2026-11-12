@@ -251,9 +251,8 @@ s32 ItemMenu_RunCommands(s32 *memberOut, s32 *targetOut, s32 *itemOut) {
       Menu_DrawCoins(menu->descriptionWindow);
       command = ItemMenu_SelectMember(0);
       if (command == -1) {
-        /* FAKEMATCH(dead): command cleared with selection though the menu
-         * ends before reading it; as selection = 0, 100 of 1268 instructions
-         * differ in tbs-en. */
+        // DEAD: the menu ends before command is read; the reset is the
+        // original's, as in the patch 0 arm below.
         selection = command = 0;
         menuResult = -1;
         done = 1;
@@ -819,13 +818,12 @@ s32 ItemMenu_RunCommands(s32 *memberOut, s32 *targetOut, s32 *itemOut) {
       state = ITEM_STEP_COMMAND;
       break;
 
-    // Not reached from any command: choose a quantity, then do nothing with
-    // it.
+    // Unused: not reached from any command. Chooses a quantity and keeps it in
+    // heldCount, which nothing reads.
     case ITEM_STEP_QUANTITY:
       result = ItemMenu_SelectGiveQuantity(0, 30, 0);
       if (result != -1) {
-        /* FAKEMATCH(dead): heldCount takes the quantity chosen, which nothing
-         * reads; as no store, 74 of 1268 instructions differ in tbs-en. */
+        // DEAD: nothing reads heldCount after this step.
         heldCount = result;
       }
       state = ITEM_STEP_ITEM;

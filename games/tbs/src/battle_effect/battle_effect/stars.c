@@ -292,8 +292,8 @@ void BattleEffect_RunShiningStar(struct BattleEffectParams *args) {
         EFFECT_VIEW_FROM_CAMERA(camera);
         Projection_Point(step, &screenPosition);
         screenPosition.x >>= 1;
-        // On the canvas, draw the star: ten points, alternately near and
-        // far, turning 1/32 turn a frame as it falls, joined by 12 motes
+        // On the canvas, draw the star: its ten corners, tips and notches in
+        // turn, turning 1/32 turn a frame as it falls, joined by 12 motes
         // each; x is halved for the canvas.
         if (screenPosition.x >= -8 && screenPosition.x <= 127 &&
             screenPosition.y <= 127 && screenPosition.y >= -8) {

@@ -80,7 +80,7 @@ void Serial_Initialize(void) {
 }
 
 /// Lets the timer start transfers again once a link mode is set, by setting
-/// gSerialWork.transferEnabled. Nothing in ☀️ calls it; wait() does the
+/// gSerialWork.transferEnabled. Nothing in the game calls it; wait() does the
 /// same inline.
 void Serial_EnableTransferTimer(void) {
   struct SerialWork *state = &gSerialWork;
@@ -90,7 +90,7 @@ void Serial_EnableTransferTimer(void) {
 }
 
 /// Disables the serial and timer 3 interrupts, stops the transfer timer and
-/// clears gSerialWork.transferEnabled. Nothing in ☀️ calls it.
+/// clears gSerialWork.transferEnabled. Nothing in the game calls it.
 void Serial_DisableTransfer(void) {
   struct SerialWork *state;
 
@@ -566,7 +566,7 @@ void Serial_StepBlockTransfer(void) {
   struct SerialTransferState *own;
   u32 gap;
   /* FAKEMATCH(temporary): the 1 kept in a halfword record, loaded from the
-   * pool into r8 at entry; as the constant 1 at both stores, 44 of 257
+   * pool into r8 at entry; as the constant 1 at both stores, 105 of 257
    * instructions differ in tbs-en. */
   struct SerialHalfword one;
 
@@ -686,7 +686,8 @@ void SerialTest_Delay(void) {}
 
 /// A link cable test left in the game: it shows a row of tiles, receives blocks
 /// into the map grid cell buffer and shows them as tiles, and sends a part of
-/// the ROM when A or B is held. It never returns. Nothing in ☀️ reaches it.
+/// the ROM when A or B is held. It never returns. Nothing in the game reaches
+/// it.
 void SerialTest_Run(void) {
   // An outer receive loop with an inner completion break changes 9 bytes in
   // tbs-en: the key-address load is hoisted and the restart retargeted.

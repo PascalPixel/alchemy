@@ -72,6 +72,8 @@ static inline void CopyCells(s32 srcX, s32 srcZ, s32 width, s32 height,
    * argument in a register before the stack arguments are stored; as direct
    * calls to Func_02005db4, 24 of 59 instructions of Func_02002980 differ in
    * tla-en (24 of 59 in Func_02002a14, 12 of 59 in Func_02003d40). */
+  /* FAKEMATCH(wrapper): CopyCells forwarded inline; as direct calls to
+   * Func_02005db4, 12 of 70 instructions of Func_020026c0 differ in tla-en. */
   Func_02005db4(srcX, srcZ, width, height, destX, destZ);
 }
 

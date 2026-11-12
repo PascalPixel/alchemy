@@ -1,9 +1,0 @@
-#include "airs_rock_inside.h"
-
-void Func_02004f3c(void);
-
-s32 Func_02005cb8(void) {
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room1)
-    Func_02004f3c();
-  return 0;
-}

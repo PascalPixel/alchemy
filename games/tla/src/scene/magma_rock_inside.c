@@ -1,15 +1,106 @@
-#include "local.h"
-#include "system.h"
-#include "io_reg.h"
+#include "types.h"
+#include "actor.h"
+#include "event_inline.h"
+#include "field.h"
 
-extern const u8 gData_02005528[];
-extern const u8 gData_0200552e[];
+s32 Map_GetTerrainHeight(s32 terrain, s32 x, s32 z);
+s32 Func_020005dc(s32 terrain, s32 x, s32 z, s32 height);
+
+void Func_02000880(u16 *list) {
+  for (; *list != 0xffff; list += 3) {
+    struct Actor *object = Actor_Get(*list);
+    s32 height = Map_GetTerrainHeight(object->terrainId, object->x, object->z);
+
+    object->motionFlags = 0;
+    object->collisionFlags = 0;
+    Actor_SetSingleChildFlags(object, 0);
+    Func_020005dc(object->terrainId, object->x >> 20, object->z >> 20,
+                  (height >> 19) + 4);
+  }
+}
+
+#include "battle.h"
+#include "game.h"
+#include "graphics.h"
+#include "lib.h"
+#include "menu.h"
+#include "sound.h"
+#include "system.h"
+#include "scene_tables.h"
+
+const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
+
+const struct SceneRegion *Scene_GetRegions(void) { return 0; }
+
+const u32 *Scene_GetExits(void) { return gSceneExits; }
+
+#include "magma_rock_inside/local.h"
+
+extern u8 gData_02005840[];
+extern u8 gData_02005870[];
+extern u8 gData_02005978[];
+extern u8 gData_02005a50[];
+extern u8 gData_02005c30[];
+extern u8 gData_02005ca8[];
+extern u8 gData_02005d38[];
+extern u8 gData_02005ed0[];
+
+extern s16 gData_020054fc[];
+extern s16 gData_02005508[];
+extern s16 gData_02005520[];
+extern s16 gData_02005528[];
+extern s16 gData_0200552e[];
+
+void Func_0200075c(s32 value);
+void Func_02004ee0(s16 *cells);
+
+u8 *Func_020008f8(void) {
+  s16 scene = gMainRoutineWork.scene;
+
+  if (scene != (s32)&SceneId_Ov692Room1) {
+    if (scene == (s32)&SceneId_Ov692Room2)
+      return gData_02005870;
+    if (scene == (s32)&SceneId_Ov692Room3)
+      return gData_02005978;
+    if (scene == (s32)&SceneId_Ov692Room4)
+      return gData_02005a50;
+    if (scene == (s32)&SceneId_Ov692Room5)
+      return gData_02005c30;
+    if (scene == (s32)&SceneId_Ov692Room6)
+      return gData_02005ca8;
+    if (scene == (s32)&SceneId_Ov692Room7)
+      return gData_02005d38;
+    if (scene == (s32)&SceneId_Ov692Room8)
+      return gData_02005ed0;
+  }
+  return gData_02005840;
+}
+
+void Func_0200099c(void) {
+  u8 *work;
+  s16 scene;
+
+  work = (u8 *)Ram_HeapSlots->eventWork;
+  scene = gMainRoutineWork.scene;
+  if (scene == (s32)&SceneId_Ov692Room2)
+    Func_02004ee0(gData_020054fc);
+  else if (scene == (s32)&SceneId_Ov692Room3)
+    Func_02004ee0(gData_02005508);
+  else if (scene == (s32)&SceneId_Ov692Room4)
+    Func_02004ee0(gData_02005520);
+  else if (scene == (s32)&SceneId_Ov692Room6)
+    Func_02004ee0(gData_02005528);
+  else if (scene == (s32)&SceneId_Ov692Room7)
+    Func_02004ee0(gData_0200552e);
+  Func_0200075c(*(s32 *)(work + 0xcbc));
+}
+
+#include "io_reg.h"
 
 void Func_02004d40(void);
 void Func_02004d48(void);
 void Func_02004ee8(void);
-void Func_020006dc(const u8 *data);
-s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
+void Func_020006dc(u16 *ids);
 struct Actor *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type);
 void Func_0200063c(struct Actor *object);
 void Func_02004cb0(struct Actor *object);
@@ -117,14 +208,11 @@ void Func_02000a30(void) {
   Func_02004d48();
 }
 
-#include "types.h"
-#include "actor.h"
 #include "frame.h"
 #include "field_effect.h"
 
 void Func_02004e70(s32 a, s32 b);
 void Func_02004e78(s32 owner, u16 value);
-s32 Field_DispatchTypeHandler(s32 type);
 s32 Func_02004e80(void);
 s32 Func_02004e88(void);
 

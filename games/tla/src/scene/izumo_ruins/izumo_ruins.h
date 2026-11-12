@@ -9,6 +9,7 @@
 #include "text/msg_ids.h"
 #include "event_inline.h"
 #include "frame.h"
+#include "scene_tables.h"
 
 struct IzumoRuinsEventWork {
   u8 unk000[0x154];
@@ -66,18 +67,18 @@ void Func_02001500(const void *data);
 void Func_02001518(const void *data);
 void Func_02001520(void);
 
-extern u8 gData_02001654[];
-extern u8 gData_02001658[];
-extern u8 gData_02001674[];
-extern u8 gData_02001688[];
-extern u8 gData_02001696[];
-extern u8 gData_020016d0[];
-extern u8 gData_020016f0[];
-extern u8 gData_02001754[];
-extern u8 gData_0200176c[];
-extern u8 gData_02001814[];
-extern u8 gData_020018ec[];
-extern u8 gData_020019ac[];
+extern s16 gData_02001654[];
+extern s16 gData_02001658[];
+extern s16 gData_02001674[];
+extern s16 gData_02001688[];
+extern s16 gData_02001696[];
+extern u32 gData_020016d0[];
+extern u32 gData_020016f0[];
+extern struct ActorPlacement gData_02001754[];
+extern struct ActorPlacement gData_0200176c[];
+extern struct ActorPlacement gData_02001814[];
+extern struct Trigger gData_020018ec[];
+extern struct Trigger gData_020019ac[];
 
 void Func_0200100c(u16 *list);
 void Func_02000974(s32 mode);

@@ -76,7 +76,7 @@ s32 Projection_Point(const void *point, struct ScreenPoint *position) {
 /// The screen position of a unit's sprite, at its scaled height, 16
 /// pixels higher.
 ///
-/// Called by BattleEffect_RunBeam (beams.c), for the first target, and
+/// Called by BattleEffect_RunAttackSlash (beams.c), for the first target, and
 /// BattleEffect_RunBurstShower (burst_shower.c), for the user. Leaves the view
 /// set to the battle camera (BattleUnit_ProjectToScreen).
 void Projection_Sprite(s32 id, struct ScreenPoint *position) {
@@ -180,9 +180,9 @@ void BattleEffect_RunByIdRange(struct BattleEffectParams *args) {
   if ((u32)value < EFFECT_RANGE_BEAM - EFFECT_RANGE_CASTING_IMPACT) {
     BattleEffect_RunCastingImpact(args, value);
   } else if (kind >= EFFECT_RANGE_RING_AND_SPARK) {
-    BattleEffect_RunRingAndSpark(args);
+    BattleEffect_RunCriticalHit(args);
   } else {
-    BattleEffect_RunBeam(args);
+    BattleEffect_RunAttackSlash(args);
   }
   HeapSlot_Release(HEAP_SLOT_BATTLE_CANVAS);
   HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);

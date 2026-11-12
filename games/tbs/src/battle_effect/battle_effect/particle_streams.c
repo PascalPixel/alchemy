@@ -34,7 +34,7 @@ enum ParticleStreamsSheetCell {
 ///
 /// Called once a frame to whiten the colours over a few frames: by
 /// BattleEffect_RunParticleStreams from frame 36 of its burst, and by Tiamat's
-/// BattleEffect_RunPaletteParticles. Rewrites background palette RAM.
+/// BattleEffect_RunDragonFire. Rewrites background palette RAM.
 void Palette_BrightenBgEntries(s32 blueStep, s32 greenStep, s32 redStep) {
   u16 *color = (u16 *)&BG_PLTT[1];
   s32 i;

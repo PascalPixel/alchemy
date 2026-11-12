@@ -250,7 +250,7 @@ void BattleEffect_PlaceFormationObjects(s32 formation, s32 x, s32 z) {
 /// effect's sprites in formation for the first 36 frames.
 ///
 /// The close of four summons: Thor, Nereid, Cybele and Tiamat's
-/// BattleEffect_RunPaletteParticles call it once their own frames are over,
+/// BattleEffect_RunDragonFire call it once their own frames are over,
 /// each with its own formation. Builds and frees both blitters, starts and
 /// stops the canvas transfer, sets REG_BG2PA, REG_BG2X and REG_BLDCNT, loads
 /// pictures into the sheet slot and work->sheet and overwrites

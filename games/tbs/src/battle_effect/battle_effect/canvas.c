@@ -242,7 +242,7 @@ void Display_ApplyBg2Reference(void) {
 ///
 /// Runs each frame as a task added by
 /// BattleEffect_StartCanvasLayer and BattleEffect_OpenCanvasLayer, and by
-/// BattleEffect_RunRingAndSpark; BattleEffect_EndCanvasLayer and
+/// BattleEffect_RunCriticalHit; BattleEffect_EndCanvasLayer and
 /// BattleEffect_EndElementStreaks remove it. It does nothing until the effect
 /// sets work->fadeFrames, which it counts down while counting
 /// work->fadeStep up.
@@ -540,8 +540,8 @@ void BattleEffect_EndCanvasLayer(void) {
 /// Hides BG1 and the windows and starts bringing the battle background's
 /// palette back.
 ///
-/// Called by BattleEffect_RunBeam and
-/// BattleEffect_RunRingAndSpark (beams.c). Sets the background view's
+/// Called by BattleEffect_RunAttackSlash and
+/// BattleEffect_RunCriticalHit (beams.c). Sets the background view's
 /// secondMode to BATTLE_BACKGROUND_FIXED, queues DISPCNT for VBlank,
 /// starts the battle's palette fade to BATTLE_BACKGROUND_ZOOMED and waits two
 /// frames.
@@ -570,8 +570,8 @@ void BattleEffect_HideBg1AndRestoreBackdrop(void) {
 /// full-screen Ram_MapGridCellBuffer effects use
 /// BattleEffect_FlushPendingGraphicsTransfer instead.
 ///
-/// Called by BattleEffect_RunBeam and
-/// BattleEffect_RunRingAndSpark (beams.c). Clears work->actorTimers,
+/// Called by BattleEffect_RunAttackSlash and
+/// BattleEffect_RunCriticalHit (beams.c). Clears work->actorTimers,
 /// starts the battle's palette fade to BATTLE_BACKGROUND_ZOOMED, clears tile
 /// 255 of character block 0 and writes BG1's map in screen block 31; writes
 /// DISPCNT, BG1CNT, BLDCNT, BLDALPHA, the windows, WININ and WINOUT directly;

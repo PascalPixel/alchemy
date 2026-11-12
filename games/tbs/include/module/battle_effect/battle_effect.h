@@ -388,8 +388,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args);
 // tiamat.c
 void BattleEffect_RunDragonDriver(struct BattleEffectParams *args);
 void BattleEffect_RunTiamat(struct BattleEffectParams *args);
-void BattleEffect_RunPaletteParticles(struct BattleEffectParams *args,
-                                      s32 mode);
+void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode);
 
 // nereid.c
 void BattleEffect_RunNereid(struct BattleEffectParams *args);
@@ -604,8 +603,8 @@ void BattleEffect_ProbeKeysForExtendedActor(void);
 void BattleEffect_RunByIdRange(struct BattleEffectParams *args);
 
 // beams.c
-void BattleEffect_RunBeam(struct BattleEffectParams *args);
-void BattleEffect_RunRingAndSpark(struct BattleEffectParams *args);
+void BattleEffect_RunAttackSlash(struct BattleEffectParams *args);
+void BattleEffect_RunCriticalHit(struct BattleEffectParams *args);
 
 // casting_impact.c
 void BattleEffect_StepPaletteToResource(s32 resourceId);

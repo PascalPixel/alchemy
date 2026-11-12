@@ -4,7 +4,7 @@
 
 #include "../battle_effect_internal.h"
 
-/// Who breathes the dragon's fire (BattleEffect_RunPaletteParticles).
+/// Who breathes the dragon's fire (BattleEffect_RunDragonFire).
 /// ★ Named from what the player sees: Tiamat's fire (its render)
 enum DragonFireMode {
   DRAGON_FIRE_TIAMAT,       ///< Tiamat lands beside the targets and breathes
@@ -20,14 +20,14 @@ enum DragonFireMode {
 ///
 /// Abilities: Dragon Driver (BATTLE_EFFECT_DRAGON_DRIVER), the Fusion Dragon's.
 void BattleEffect_RunDragonDriver(struct BattleEffectParams *args) {
-  BattleEffect_RunPaletteParticles(args, DRAGON_FIRE_DRAGON_DRIVER);
+  BattleEffect_RunDragonFire(args, DRAGON_FIRE_DRAGON_DRIVER);
 }
 /// Tiamat lands while fireballs rain on the targets, breathes fire across
 /// them, and bursts away.
 ///
 /// Abilities: Tiamat (SUMMON_EFFECT_TIAMAT).
 void BattleEffect_RunTiamat(struct BattleEffectParams *args) {
-  BattleEffect_RunPaletteParticles(args, DRAGON_FIRE_TIAMAT);
+  BattleEffect_RunDragonFire(args, DRAGON_FIRE_TIAMAT);
 }
 #define DRAGON_FIRE_FRAMES 208
 /// Falling fireballs, work->particles 24 to 39.
@@ -70,8 +70,7 @@ void BattleEffect_RunTiamat(struct BattleEffectParams *args) {
 /// eight sprites and releases them after the impact burst.
 ///
 /// mode: Tiamat's or Dragon Driver's (enum DragonFireMode).
-void BattleEffect_RunPaletteParticles(struct BattleEffectParams *args,
-                                      s32 mode) {
+void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
   struct ScreenPoint origin;
   void **cursor;
   void *canvas;

@@ -31,7 +31,7 @@ enum BeamKind {
 /// to 63 (only 0 to 31 fly) and both blitter slots; at the end it removes the
 /// transfer task, frees the blitters, sets gBgScroll[1].y back to 32 and hides
 /// BG1 again (BattleEffect_HideBg1AndRestoreBackdrop).
-void BattleEffect_RunBeam(struct BattleEffectParams *args) {
+void BattleEffect_RunAttackSlash(struct BattleEffectParams *args) {
   struct ScreenPoint screenPosition;
   struct ScreenPoint anchor;
   struct ScreenPoint screen;
@@ -286,7 +286,7 @@ void BattleEffect_RunBeam(struct BattleEffectParams *args) {
 /// motion, and restores both after. At the end it removes the transfer task,
 /// frees the blitters, sets gBgScroll[1].y back to 32, steps the background
 /// palette level from 6 back to 0 and hides BG1 again.
-void BattleEffect_RunRingAndSpark(struct BattleEffectParams *args) {
+void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
   struct ScreenPoint screenPosition;
   struct ScreenPoint anchor;
   struct ScreenPoint screen;

@@ -132,7 +132,7 @@ void FieldPsynergy_SteerPushedTarget(s32 targetId) {
       position.z = target->z.fixed;
       Vector_AddPolarOffset(px(16), angle, &position);
       Actor_SetMoveTargetFar(pusher, position.x, position.y, position.z);
-      Actor_SelectAnimationFar(pusher, 1);
+      Actor_SelectAnimationFar(pusher, MOVE_HAND_ANIMATION_OPEN);
       SET_VELOCITY(pusher, 0, 0, 0);
       continue;
     }
@@ -158,7 +158,7 @@ void FieldPsynergy_SteerPushedTarget(s32 targetId) {
     // level ground or a drop does not.
     if (MapGrid_CheckCollisionFar(target, (struct FieldPosition *)&position) >
         0) {
-      Actor_SelectAnimationFar(pusher, 4);
+      Actor_SelectAnimationFar(pusher, MOVE_HAND_ANIMATION_FLEX);
       if ((gFrameCount & 15) == 0)
         Sound_PlayFar(SE_MENU_ERROR);
       continue;
@@ -166,7 +166,7 @@ void FieldPsynergy_SteerPushedTarget(s32 targetId) {
     hit = ActorScript_FindOverlappingEntryFar(target, (s32 *)&position);
     if (hit != NULL) {
       if (hit != user) {
-        Actor_SelectAnimationFar(pusher, 4);
+        Actor_SelectAnimationFar(pusher, MOVE_HAND_ANIMATION_FLEX);
         if ((gFrameCount & 15) == 0)
           Sound_PlayFar(SE_MENU_ERROR);
         continue;
@@ -179,7 +179,7 @@ void FieldPsynergy_SteerPushedTarget(s32 targetId) {
       cellZ = user->z.fixed & MOVE_CELL_MASK;
       if (cellX == (position.x & MOVE_CELL_MASK) &&
           cellZ == (position.z & MOVE_CELL_MASK)) {
-        Actor_SelectAnimationFar(pusher, 4);
+        Actor_SelectAnimationFar(pusher, MOVE_HAND_ANIMATION_FLEX);
         if ((gFrameCount & 15) == 0)
           Sound_PlayFar(SE_MENU_ERROR);
         continue;
@@ -189,7 +189,7 @@ void FieldPsynergy_SteerPushedTarget(s32 targetId) {
         // The caster can be pushed only onto flat ground.
         if (MapGrid_GetCellAttributeLowNibbleFar(user->layer, beyond.x,
                                                  beyond.z) != TERRAIN_FLAT) {
-          Actor_SelectAnimationFar(pusher, 4);
+          Actor_SelectAnimationFar(pusher, MOVE_HAND_ANIMATION_FLEX);
           if ((gFrameCount & 15) == 0)
             Sound_PlayFar(SE_MENU_ERROR);
           continue;
@@ -318,7 +318,7 @@ void FieldPsynergy_Move(void) {
   hand = FieldEffect_SpawnMoveHand(caster);
   FieldEffect_SnapScaleToFull(hand);
   if (hand != 0) {
-    Actor_SelectAnimationFar(hand, 4);
+    Actor_SelectAnimationFar(hand, MOVE_HAND_ANIMATION_FLEX);
     wait(30);
   }
   FieldPsynergy_FadeFromCastColor();
@@ -352,7 +352,7 @@ struct Actor *FieldEffect_SpawnMoveHand(struct Actor *caster) {
   parent->speedLimit = px(2);
   parent->acceleration = px(2);
   parent->motionFlags = 0;
-  Actor_SelectAnimationFar(parent, 3);
+  Actor_SelectAnimationFar(parent, MOVE_HAND_ANIMATION_GRIP);
   Actor_SetTargetPositionFromMagnitudeAngle(parent, px(16), angle);
 
   // Particles: 8 to 32 pixels within 1/8 turn of the way it faces, at 1 to 2

@@ -77,7 +77,7 @@ void FieldPsynergy_Force(void) {
   projectile->speedLimit = px(4);
   projectile->acceleration = px(4);
   projectile->motionFlags = 0;
-  Actor_SelectAnimationFar(projectile, 5);
+  Actor_SelectAnimationFar(projectile, MOVE_HAND_ANIMATION_FIST);
   Actor_SetSpriteColorModeFar(projectile, SPRITE_COLOR_BGR);
   scale = projectile->scaleX;
   if (scale < Q16_ONE) {
@@ -103,7 +103,7 @@ void FieldPsynergy_Force(void) {
       copy->speedLimit = px(4);
       copy->acceleration = px(4);
       copy->motionFlags = 0;
-      Actor_SelectAnimationFar(copy, 5);
+      Actor_SelectAnimationFar(copy, MOVE_HAND_ANIMATION_FIST);
       Actor_SetSpriteColorModeFar(copy, SPRITE_COLOR_RBG);
       sharedAnimation = Sprite_ShareVramCacheEntry(
           (struct Sprite *)copy->sprite, sharedAnimation);

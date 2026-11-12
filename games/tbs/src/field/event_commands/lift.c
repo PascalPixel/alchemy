@@ -89,8 +89,9 @@ DEFINE_ITEM_BREAK_EFFECT(FieldPsynergy_Lift, FieldEffect_SpawnLiftHand)
 /// full size over 24 frames; angle is the way it faces once grown. Makes Lift's
 /// two hands, for FieldPsynergy_LiftOnTarget and FieldPsynergy_Lift; returns
 /// NULL when no actor could be spawned. Unlike Carry's
-/// (FieldEffect_SpawnCarryHand) it takes animation 3, not 1, and keeps
-/// autoFaceMotion as created; both are at sprite priority 0 (Actor_Spawn).
+/// (FieldEffect_SpawnCarryHand) it takes MOVE_HAND_ANIMATION_GRIP, not
+/// MOVE_HAND_ANIMATION_OPEN, and keeps autoFaceMotion as created; both are at
+/// sprite priority 0 (Actor_Spawn).
 struct Actor *FieldEffect_SpawnLiftHand(s32 x, s32 y, s32 z, s32 angle) {
   struct Actor *fragment;
   s32 scale;
@@ -101,7 +102,7 @@ struct Actor *FieldEffect_SpawnLiftHand(s32 x, s32 y, s32 z, s32 angle) {
     fragment->scaleX = fragment->scaleY = Q16_ONE / 4;
     fragment->acceleration = fragment->speedLimit = px(3); // 3 pixels a frame
     ((struct Sprite *)fragment->sprite)->image.priority = 0;
-    Actor_SelectAnimationFar(fragment, 3);
+    Actor_SelectAnimationFar(fragment, MOVE_HAND_ANIMATION_GRIP);
     scale = fragment->scaleX;
     if (scale < Q16_ONE) {
       do {

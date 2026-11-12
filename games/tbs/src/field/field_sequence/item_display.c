@@ -254,7 +254,7 @@ void ItemDisplay_ShowPicture(void *object, s32 flags) {
     if (flags == 3) {
       wait(80);
     }
-    Actor_SelectAnimationFar(leader, 1);
+    Actor_SelectAnimationFar(leader, ANIM_STAND);
   }
 }
 
@@ -289,7 +289,7 @@ void ItemDisplay_ShowItem(s32 item, s32 flags) {
       ItemDisplay_RaiseAboveLeader(actor);
 
     wait(80);
-    Actor_SelectAnimationFar(leader, 1);
+    Actor_SelectAnimationFar(leader, ANIM_STAND);
     Actor_ReleaseFar(actor);
   }
 }

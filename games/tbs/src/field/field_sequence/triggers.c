@@ -406,7 +406,7 @@ s32 Field_RunPushCell(s32 behavior) {
   switch (behavior) {
   case CELL_BEHAVIOR_LEDGE:
     if (work->blockedSteps > 12 && (gKeysHeld & KEY_DOWN)) {
-      Actor_JumpDownLedge(leader, 6, 0);
+      Actor_JumpDownLedge(leader, ANIM_LEADER_SPRING, 0);
       work->blockedSteps = 0;
     }
     break;

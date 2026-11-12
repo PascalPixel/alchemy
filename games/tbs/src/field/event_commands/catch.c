@@ -57,7 +57,7 @@ void FieldPsynergy_Catch(void) {
   object->facing = actor->facing;
   object->speedLimit = px(13) / 10;
   object->motionFlags = 0;
-  Actor_SelectAnimationFar(object, 5);
+  Actor_SelectAnimationFar(object, MOVE_HAND_ANIMATION_FIST);
   Actor_SetSpriteColorModeFar(object, SPRITE_COLOR_GRB);
 
   // Reach out to the goal: steps 0 to 10 of an 11-step loop, a tenth of the
@@ -76,7 +76,7 @@ void FieldPsynergy_Catch(void) {
     step++;
   } while (step < steps);
   wait(10);
-  Actor_SelectAnimationFar(object, 6);
+  Actor_SelectAnimationFar(object, MOVE_HAND_ANIMATION_CLENCH);
   wait(15);
 
   // Press down 2 pixels a frame for 10 frames.
@@ -84,7 +84,7 @@ void FieldPsynergy_Catch(void) {
     object->y.fixed -= px(2);
     wait(1);
   }
-  Actor_SelectAnimationFar(object, 5);
+  Actor_SelectAnimationFar(object, MOVE_HAND_ANIMATION_FIST);
   Sound_PlayFar(SE_WATER);
   // As the hand presses down, the caught actor vanishes: (-9, -9) pixels is
   // just off the map's corner, where no view reaches. The scene's after event

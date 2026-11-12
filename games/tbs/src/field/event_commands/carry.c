@@ -137,8 +137,8 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
       pos.z = target->z.fixed;
       Actor_SetMoveTargetFar(hands[0], pos.x + px(16), pos.y, pos.z);
       Actor_SetMoveTargetFar(hands[1], pos.x - px(16), pos.y, pos.z);
-      Actor_SelectAnimationFar(hands[0], 1);
-      Actor_SelectAnimationFar(hands[1], 1);
+      Actor_SelectAnimationFar(hands[0], MOVE_HAND_ANIMATION_OPEN);
+      Actor_SelectAnimationFar(hands[1], MOVE_HAND_ANIMATION_OPEN);
       continue;
     }
 
@@ -163,8 +163,8 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
       goto blocked;
     if (FieldEffect_CheckRaisedTargetCollision(target, &pos) > 0) {
     blocked: // the way is blocked: a buzzer every 16 frames
-      Actor_SelectAnimationFar(hands[0], 4);
-      Actor_SelectAnimationFar(hands[1], 4);
+      Actor_SelectAnimationFar(hands[0], MOVE_HAND_ANIMATION_FLEX);
+      Actor_SelectAnimationFar(hands[1], MOVE_HAND_ANIMATION_FLEX);
       if ((gFrameCount & 15) == 0)
         Sound_PlayFar(SE_MENU_ERROR);
       continue;
@@ -178,8 +178,8 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
       Sound_PlayFar(SE_NOTE_HIGH);
       x = pos.x;
       z = pos.z;
-      Actor_SelectAnimationFar(hands[0], 4);
-      Actor_SelectAnimationFar(hands[1], 4);
+      Actor_SelectAnimationFar(hands[0], MOVE_HAND_ANIMATION_FLEX);
+      Actor_SelectAnimationFar(hands[1], MOVE_HAND_ANIMATION_FLEX);
       wait(15);
       // i is the overlap test's 0 here: unpause the target and, once it is
       // on the cell, stop it dead. It moves at 0.2 pixels a frame.
@@ -208,8 +208,8 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
   // Shards fly from the target, the hands vanish, and the target hops and
   // drops.
   //------------------------------------------------------------------
-  Actor_SelectAnimationFar(hands[0], 4);
-  Actor_SelectAnimationFar(hands[1], 4);
+  Actor_SelectAnimationFar(hands[0], MOVE_HAND_ANIMATION_FLEX);
+  Actor_SelectAnimationFar(hands[1], MOVE_HAND_ANIMATION_FLEX);
   Task_Remove(FieldEffect_SpawnFallingParticles);
   Sound_PlayFar(SE_CLICK);
   wait(15);
@@ -270,11 +270,10 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
 /// Abilities: Carry (FIELD_PSYNERGY_CARRY).
 DEFINE_ITEM_BREAK_EFFECT(FieldPsynergy_Carry, FieldEffect_SpawnCarryHand)
 
-/// Spawns a hand (SPRITE_MOVE_HAND) with the item break sound, in animation 1,
-/// and grows it, spinning 1/8 turn a frame, from a quarter to full size over 24
-/// frames; angle is the way it faces once grown. Returns the hand, or NULL
-/// when it cannot be spawned (Actor_Spawn); Carry and its no-target cast
-/// release it.
+/// Spawns a hand (SPRITE_MOVE_HAND) with the item break sound and grows it,
+/// spinning 1/8 turn a frame, from a quarter to full size over 24 frames; angle
+/// is the way it faces once grown. Returns the hand, or NULL when it cannot be
+/// spawned (Actor_Spawn); Carry and its no-target cast release it.
 struct Actor *FieldEffect_SpawnCarryHand(s32 x, s32 y, s32 z, s32 angle) {
   struct Actor *fragment;
   s32 scale;
@@ -287,7 +286,7 @@ struct Actor *FieldEffect_SpawnCarryHand(s32 x, s32 y, s32 z, s32 angle) {
     fragment->speedLimit = px(3);
     fragment->acceleration = px(3);
     fragment->steeringFlags = 0;
-    Actor_SelectAnimationFar(fragment, 1);
+    Actor_SelectAnimationFar(fragment, MOVE_HAND_ANIMATION_OPEN);
     scale = fragment->scaleX;
     if (scale < Q16_ONE) {
       do {

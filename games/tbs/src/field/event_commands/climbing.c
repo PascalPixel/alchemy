@@ -63,10 +63,10 @@ again:
     if (leader->spriteStorageKind == ACTOR_SPRITE_ONE)
       spriteFlags = leader->sprite->flags;
     Event_Start();
-    Actor_SelectAnimationFar(leader, 6);
+    Actor_SelectAnimationFar(leader, ANIM_LEADER_SPRING);
     wait(6);
     Sound_PlayFar(SE_JUMP);
-    Actor_SelectAnimationFar(leader, 7);
+    Actor_SelectAnimationFar(leader, ANIM_LEADER_LEAP);
     leader->speedLimit = px(3);
     leader->acceleration = px(2);
     leader->velocityY = px(4);
@@ -76,7 +76,7 @@ again:
         gMainRoutineWork.leaderActorId,
         ((union FieldCoordinate *)&position->x)->part.pixel,
         ((union FieldCoordinate *)&position->z)->part.pixel);
-    Actor_SelectAnimationFar(leader, 6);
+    Actor_SelectAnimationFar(leader, ANIM_LEADER_SPRING);
     Actor_SetSpriteFlagsFar(leader, spriteFlags);
 
     // A log underfoot dips 2 pixels with the leader and comes back up.
@@ -106,7 +106,7 @@ again:
     // Landed on another jump spot: stand, then jump again.
     if (MapGrid_GetCellBehaviorAtFar(leader->layer, position->x, position->z) ==
         CELL_BEHAVIOR_JUMP_FORWARD_UNREACHED) {
-      Actor_SelectAnimationFar(leader, 1);
+      Actor_SelectAnimationFar(leader, ANIM_STAND);
       wait(6);
       goto again;
     }
@@ -163,7 +163,7 @@ s32 Field_ClimbDown(void) {
       actor->steeringFlags = ACTOR_FACES_MOTION;
       actor->motionFlags = 0;
       Actor_SetSpriteFlagsFar(actor, 0);
-      Actor_SelectAnimationFar(actor, 13);
+      Actor_SelectAnimationFar(actor, ANIM_LEADER_CLIMB_DOWN_FROM_TOP);
       Actor_SetMoveTargetFar(actor, px(gridX), actor->y.fixed - px(16),
                              px(gridZ) + px(16));
       Actor_WaitForMoveById(gMainRoutineWork.leaderActorId);
@@ -237,9 +237,9 @@ s32 Field_ClimbUp(void) {
       // Step to the middle of the cell, crouch, jump and grab the wall.
       actor->steeringFlags = 0;
       Actor_MoveToAndWaitById(gMainRoutineWork.leaderActorId, gridX, gridZ);
-      Actor_SelectAnimationFar(actor, 6);
+      Actor_SelectAnimationFar(actor, ANIM_LEADER_SPRING);
       wait(4);
-      Actor_SelectAnimationFar(actor, 7);
+      Actor_SelectAnimationFar(actor, ANIM_LEADER_LEAP);
       actor->velocityY = px(4);
       wait(4);
       actor->motionFlags = 0;
@@ -258,7 +258,7 @@ s32 Field_ClimbUp(void) {
   } else {
     // Climb over the top: up 8 pixels and a cell north.
     actor->motionFlags = 0;
-    Actor_SelectAnimationFar(actor, 11);
+    Actor_SelectAnimationFar(actor, ANIM_LEADER_CLIMB_OVER_TOP);
     Actor_SetMoveTargetFar(actor, px(gridX), actor->y.fixed + px(8),
                            px(gridZ) - px(16));
     Actor_WaitForMoveById(gMainRoutineWork.leaderActorId);

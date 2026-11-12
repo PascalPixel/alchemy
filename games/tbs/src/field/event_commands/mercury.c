@@ -76,7 +76,7 @@ void Djinn_RunMercuryJoinEffect(s32 djinniId) {
       copy->update = FieldEffect_HalveDistanceToTarget;
       copy->facing = djinni->facing;
       Actor_SetSpriteColorModeFar(copy, SPRITE_COLOR_BLUE_TINT);
-      Actor_SelectAnimationFar(copy, 0);
+      Actor_SelectAnimationFar(copy, ANIM_STILL);
       Actor_SetSpriteFlagsFar(copy, 0);
       resource = Sprite_ShareVramCacheEntry(copy->sprite, resource);
       copy->watchedActor = previous;

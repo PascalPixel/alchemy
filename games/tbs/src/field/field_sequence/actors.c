@@ -151,12 +151,12 @@ void Event_SpawnActorPlacements(struct ActorPlacement *entry, s32 slot) {
     }
 
     if (object) {
-      Actor_SelectAnimationFar(object, 1);
+      Actor_SelectAnimationFar(object, ANIM_STAND);
       // lastNo is the animation last selected, which selecting again skips: a
-      // random 0 to 29 makes the second selection below restart animation 1
-      // from its first frame, unless it happens to be 1. The first selection
-      // has just started it from that frame, so the idle looks the same
-      // either way.
+      // random 0 to 29 makes the second selection below restart ANIM_STAND
+      // from its first frame, unless it happens to be ANIM_STAND. The first
+      // selection has just started it from that frame, so the idle looks the
+      // same either way.
       // XXX (no evidence): why the value is random when only whether it is 1
       // matters; nothing else reads lastNo before the selection.
       if (object->spriteStorageKind == ACTOR_SPRITE_ONE &&
@@ -166,7 +166,7 @@ void Event_SpawnActorPlacements(struct ActorPlacement *entry, s32 slot) {
       // Solid.
       object->collisionFlags = 1;
       Actor_SetMovementType(object, entry->movement);
-      Actor_SelectAnimationFar(object, 1);
+      Actor_SelectAnimationFar(object, ANIM_STAND);
       (object)->homeX = object->x.fixed / Q16_ONE;
       (object)->homeZ = object->z.fixed / Q16_ONE;
       // An actor placement with a height is lifted half a pixel more and

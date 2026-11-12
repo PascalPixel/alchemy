@@ -498,8 +498,8 @@ s32 FieldCamera_FollowLeaderInBounds(struct Actor *interpreter) {
 }
 
 /// SC_APPROACH_WATCHED: follows the watched actor at its speed. More than 16
-/// pixels away it walks to 16 pixels short of it (animation 2) and runs on;
-/// within 16 it stands (animation 1) and waits for the next frame.
+/// pixels away it walks to 16 pixels short of it and runs on;
+/// within 16 it stands and waits for the next frame.
 ///
 /// Run each frame by gActor_ApproachWatchedScript, which
 /// Actor_StartApproachWatched starts. Copies the watched actor's speed
@@ -535,11 +535,11 @@ s32 Actor_ApproachWatchedActor(struct Actor *interpreter) {
     moveZ = dz * remainingDistance / distancePixels;
     Actor_SetMoveTarget(actor, actor->x.fixed + moveX, actor->y.fixed,
                         actor->z.fixed + moveZ);
-    Actor_SelectAnimation(actor, 2);
+    Actor_SelectAnimation(actor, ANIM_WALK);
     actor->scriptCursor = (actor->scriptCursor + 1);
     return 1;
   }
-  Actor_SelectAnimation(actor, 1);
+  Actor_SelectAnimation(actor, ANIM_STAND);
   return 0;
 }
 

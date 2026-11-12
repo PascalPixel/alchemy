@@ -49,9 +49,9 @@ s32 Actor_MoveTowardTarget(struct Actor *actor) {
       newX = actor->x.fixed + (s32)((u32)pixelsX << 20) / step;
       newZ = actor->z.fixed + (s32)((u32)pixelsZ << 20) / step;
       Actor_SetMoveTargetFar(actor, newX, actor->y.fixed, newZ);
-      Actor_SelectAnimationFar(actor, 2);
+      Actor_SelectAnimationFar(actor, ANIM_WALK);
     } else {
-      Actor_SelectAnimationFar(actor, 1);
+      Actor_SelectAnimationFar(actor, ANIM_STAND);
     }
   }
   return 1;

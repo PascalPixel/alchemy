@@ -169,7 +169,7 @@ void FieldPsynergy_Frost(void) {
 
     if (effectWork->childOption == 0) {
       Sound_PlayFar(SE_SHIMMER);
-      Actor_SelectAnimationFar(target, 2);
+      Actor_SelectAnimationFar(target, PUDDLE_ANIMATION_FREEZE);
     }
 
     target->update = FieldEffect_UpdateFrostGlint;

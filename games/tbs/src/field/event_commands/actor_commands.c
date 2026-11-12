@@ -126,34 +126,33 @@ void Actor_MoveToAndWaitById(u32 actorId, s32 x, s32 z) {
   }
 }
 
-/// The event command "walk actor to": the actor walks (animation
-/// 2) toward (x, z), in pixels. Events reach it (ACTOR_WALK,
-/// Actor_WalkTo); the Battle Arena calls it too.
+/// The event command "walk actor to": the actor walks toward (x, z), in
+/// pixels. Events reach it (ACTOR_WALK, Actor_WalkTo); the Battle Arena calls
+/// it too.
 void Actor_WalkToById(u32 actorId, s32 x, s32 z) {
   struct Actor *actor = Actor_Lookup(actorId);
 
   if (actor != NULL) {
     actor->paused = 0;
     Actor_StartIdleFar(actor);
-    Actor_SelectAnimationFar(actor, 2);
+    Actor_SelectAnimationFar(actor, ANIM_WALK);
     Actor_SetMoveTargetFar(actor, px(x), actor->y.fixed, px(z));
   }
 }
 
 /// The event command "walk actor to and wait": walks the actor
-/// to (x, z), in pixels, waits for it to arrive and stands it still (animation
-/// 1). Events reach it
-/// (Actor_WalkToAndWait).
+/// to (x, z), in pixels, waits for it to arrive and stands it still. Events
+/// reach it (Actor_WalkToAndWait).
 void Actor_WalkToAndWaitById(u32 actorId, s32 x, s32 z) {
   struct Actor *actor = Actor_Lookup(actorId);
 
   if (actor != NULL) {
     actor->paused = 0;
     Actor_StartIdleFar(actor);
-    Actor_SelectAnimationFar(actor, 2);
+    Actor_SelectAnimationFar(actor, ANIM_WALK);
     Actor_SetMoveTargetFar(actor, px(x), actor->y.fixed, px(z));
     Actor_WaitForMoveFar(actor);
-    Actor_SelectAnimationFar(actor, 1);
+    Actor_SelectAnimationFar(actor, ANIM_STAND);
   }
 }
 
@@ -182,7 +181,7 @@ void Actor_CenterOnColumn(u32 actorId, s32 priority, s32 zOffset) {
     offsetInColumn = pixelX - columnX;
     actor->paused = 0;
     Actor_StartIdleFar(actor);
-    Actor_SelectAnimationFar(actor, 2);
+    Actor_SelectAnimationFar(actor, ANIM_WALK);
     Actor_SetMoveTargetFar(actor, actor->x.fixed + px(8 - offsetInColumn),
                            actor->y.fixed, actor->z.fixed);
     Actor_WaitForMoveFar(actor);
@@ -207,16 +206,15 @@ void Actor_SetDestinationOffsetById(u32 actorId, s32 xOffset, s32 zOffset) {
   }
 }
 
-/// Walks the actor (animation 2) (xOffset, zOffset) pixels from where it
-/// stands. Events reach it
-/// (Actor_WalkBy); Actor_WalkByAndWaitById calls it too.
+/// Walks the actor (xOffset, zOffset) pixels from where it stands. Events
+/// reach it (Actor_WalkBy); Actor_WalkByAndWaitById calls it too.
 void Actor_WalkByById(u32 actorId, s32 xOffset, s32 zOffset) {
   struct Actor *actor = Actor_Lookup(actorId);
 
   if (actor != NULL) {
     actor->paused = 0;
     Actor_StartIdleFar(actor);
-    Actor_SelectAnimationFar(actor, 2);
+    Actor_SelectAnimationFar(actor, ANIM_WALK);
     Actor_SetMoveTargetFar(actor, actor->x.fixed + px(xOffset), actor->y.fixed,
                            actor->z.fixed + px(zOffset));
   }
@@ -231,7 +229,7 @@ void Actor_WalkByAndWaitById(u32 actorId, s32 xOffset, s32 zOffset) {
   Actor_WalkByById(actorId, xOffset, zOffset);
   if (actor != NULL) {
     Actor_WaitForMoveFar(actor);
-    Actor_SelectAnimationFar(actor, 1);
+    Actor_SelectAnimationFar(actor, ANIM_STAND);
   }
 }
 
@@ -251,7 +249,7 @@ void Actor_LaunchFromLeader(u32 actorId, s32 xOffset, s32 zOffset, s32 action) {
       Actor_SetHorizontalPositionWithTerrain(actorId, leader->x.fixed,
                                              leader->z.fixed);
     actor->paused = 0;
-    Actor_SelectAnimationFar(actor, 2);
+    Actor_SelectAnimationFar(actor, ANIM_WALK);
     Actor_SetDestinationOffsetById(actorId, xOffset, zOffset);
     Actor_StartScriptFar(actor, (const s32 *)&gActor_LaunchScript);
     actor->timer = action;
@@ -267,7 +265,7 @@ void Actor_WaitForMoveById(u32 actorId) {
 
   if (actor != NULL) {
     Actor_WaitForMoveFar(actor);
-    Actor_SelectAnimationFar(actor, 1);
+    Actor_SelectAnimationFar(actor, ANIM_STAND);
   }
 }
 
@@ -555,8 +553,8 @@ void FieldEffect_SpawnDustPuff(struct Actor *source, s32 param) {
 /// other frame (none when param is -1), then jumps on to 16 pixels south of
 /// where it started and lands. The landing plays the queued sound
 /// (Scene_PlayQueuedMusic). Called by Field_RunPushCell for a ledge
-/// (CELL_BEHAVIOR_LEDGE) with pose 6 and param 0, and by seven scenes through
-/// FieldActor_JumpDownLedge; Mercury Lighthouse passes -1.
+/// (CELL_BEHAVIOR_LEDGE) with pose ANIM_LEADER_SPRING and param 0, and by seven
+/// scenes through FieldActor_JumpDownLedge; Mercury Lighthouse passes -1.
 void Actor_JumpDownLedge(s32 actorId, s32 pose, s32 param) {
   s32 nextY;
   s32 startZ;
@@ -572,7 +570,7 @@ void Actor_JumpDownLedge(s32 actorId, s32 pose, s32 param) {
 
     // Hop up and forward 12 pixels.
     objectFlags = &actor->motionFlags;
-    Actor_SelectAnimationFar(actor, 1);
+    Actor_SelectAnimationFar(actor, ANIM_STAND);
     {
       u8 flags = 2;
       flags |= *objectFlags;
@@ -854,7 +852,7 @@ void Actor_ResetTargetAndSetMode1(u32 actorId) {
     actor->targetY = ACTOR_NO_TARGET;
     actor->targetZ = ACTOR_NO_TARGET;
     Actor_StartIdleFar(actor);
-    Actor_SelectAnimationFar(actor, 1);
+    Actor_SelectAnimationFar(actor, ANIM_STAND);
   }
 }
 

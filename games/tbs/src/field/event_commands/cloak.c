@@ -101,7 +101,7 @@ void FieldPsynergy_EndCloak(void) {
 
   Sound_PlayFar(SE_CAST);
   Task_Remove(FieldPsynergy_CheckCloakTile);
-  Actor_SelectAnimationFar(actor, 0);
+  Actor_SelectAnimationFar(actor, ANIM_STILL);
   actor->update = 0;
 
   for (i = 0; i < 5; ++i) {
@@ -154,7 +154,7 @@ void FieldPsynergy_StartCloak(void) {
   void (*check)(void);
 
   Sound_PlayFar(SE_PSYNERGY_START);
-  Actor_SelectAnimationFar(leader, 0);
+  Actor_SelectAnimationFar(leader, ANIM_STILL);
   leader->update = 0;
   n = 0;
   do {

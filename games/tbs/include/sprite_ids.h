@@ -1430,4 +1430,17 @@ enum TorchAnimation {
       3 ///< the flame dies in smoke, then TORCH_ANIMATION_UNLIT
 };
 
+/// SPRITE_MOVE_HAND's animations (spr_215.tsv).
+enum MoveHandAnimation {
+  MOVE_HAND_ANIMATION_OPEN = 1, ///< open, its fingers spread
+  MOVE_HAND_ANIMATION_GRIP = 3, ///< its fingers bent as if gripping
+  /// MOVE_HAND_ANIMATION_OPEN and MOVE_HAND_ANIMATION_GRIP in turn, as it
+  /// strains against what it pushes.
+  MOVE_HAND_ANIMATION_FLEX = 4,
+  MOVE_HAND_ANIMATION_FIST = 5,
+  /// Open, then gripping, then MOVE_HAND_ANIMATION_FIST, as it closes on what
+  /// Catch catches.
+  MOVE_HAND_ANIMATION_CLENCH = 6
+};
+
 #endif

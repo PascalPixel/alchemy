@@ -83,7 +83,7 @@ void Leader_StopMoving(void) {
     Actor_SelectAnimationFar(actor, ANIM_LEADER_CLING);
     return;
   }
-  Actor_SelectAnimationFar(actor, 1);
+  Actor_SelectAnimationFar(actor, ANIM_STAND);
 }
 
 /// Begins an event: closes any area name window, stops the leader, resets the
@@ -414,8 +414,8 @@ void Actor_WaitForAnimationEnd(s32 actorId, s32 animation) {
 
 /// The event command "choose yes or no": once the message on screen has been
 /// read, asks yes or no below it, or above it when the message windows reach
-/// past row 15 or forceBottom is set. The speaker nods (animation 3) at yes
-/// and shakes its head (animation 4) at no. Returns 0 for yes, 1 for no.
+/// past row 15 or forceBottom is set. The speaker nods at yes and shakes its
+/// head at no. Returns 0 for yes, 1 for no.
 /// Events reach it (about
 /// 54 of them); the Battle Arena and Event_AskYesNoAndShowResponse call
 /// it too.
@@ -454,15 +454,15 @@ s32 Event_AskYesNoWithActorAnimation(s32 actorId, s32 forceBottom) {
   answer =
       YesNoMenu_RunFar(useBottom, work->choiceMessage, work->choiceWidth, 0);
   if (answer != 0) {
-    Actor_SetAnimationById(actorId, 4);
+    Actor_SetAnimationById(actorId, ANIM_SHAKE_HEAD);
     Portrait_CloseWindowFar(sprite);
     Message_CloseFinishedWindowsFar();
-    Actor_WaitForAnimationEnd(actorId, 4);
+    Actor_WaitForAnimationEnd(actorId, ANIM_SHAKE_HEAD);
   } else {
-    Actor_SetAnimationById(actorId, 3);
+    Actor_SetAnimationById(actorId, ANIM_NOD);
     Portrait_CloseWindowFar(sprite);
     Message_CloseFinishedWindowsFar();
-    Actor_WaitForAnimationEnd(actorId, 3);
+    Actor_WaitForAnimationEnd(actorId, ANIM_NOD);
   }
 
   return answer;

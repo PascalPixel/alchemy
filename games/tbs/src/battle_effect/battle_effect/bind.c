@@ -4,9 +4,9 @@
 
 #include "../battle_effect_internal.h"
 
-// The triangle effects (Bind, Luff and BattleEffect_RunUnusedTriangleStrike)
-// spin a shrinking triangle onto the first target for 64 frames and then stand
-// a rune there. The triangle is drawn as the ring and star effects draw
+// Bind and Luff spin a shrinking triangle onto the first target for 64 frames
+// and then stand a rune there; BattleEffect_RunUnusedTriangleStrike runs the
+// same frame loop. The triangle is drawn as the ring and star effects draw
 // their outlines: its corners are projected onto the canvas and stored in the
 // velocity fields of Particles, then each edge is sampled at evenly
 // spaced points and a flare is stamped at each. Both runners write the same
@@ -30,6 +30,8 @@ UNUSED void BattleEffect_ConvertBackgroundToBlueRamp(void) {
   u16 color;
   u8 *delays, *p, *pixel;
   u16 *palette;
+  /* FAKEMATCH(temporary): delayMask holds 63; as Random16() & 63, 2 of 175
+   * instructions differ in tbs-en. */
   u32 delayMask;
   // A 32-colour blue ramp at colours 32 to 63, red and green at half the blue.
   palette = (u16 *)&BG_PLTT_COLOR(2, 0);
@@ -114,7 +116,8 @@ UNUSED void BattleEffect_ConvertBackgroundToBlueRamp(void) {
 }
 
 /// A triangle of light spins and shrinks onto the first target for 64 frames,
-/// then a rune stands on the target; the battle shows the result on frame 64.
+/// changing colour and leaving a fading trail, then a rune stands on the
+/// target; the battle shows the result on frame 64.
 ///
 /// Abilities: Bind (BATTLE_EFFECT_BIND); Luff (BATTLE_EFFECT_LUFF).
 ///
@@ -129,7 +132,9 @@ UNUSED void BattleEffect_ConvertBackgroundToBlueRamp(void) {
 /// work->particles 0 to 2, and builds and frees its blitters every frame.
 void BattleEffect_RunBind(struct BattleEffectParams *args) {
   struct ScreenPoint anchor;
-  // World input and projected vertices reuse one coordinate workspace.
+  /* FAKEMATCH(temporary): one workspace for the target's position and each
+   * projected corner; as two locals, 166 of 524 instructions differ in tbs-en.
+   */
   union {
     struct Vector3 world;
     struct ScreenPoint projected;
@@ -156,9 +161,7 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
   s32 j;
   s32 k;
 
-  slots = &gHeapSlots[HEAP_SLOT_BATTLE_EFFECT];
-  cursor = slots;
-  EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
+  EFFECT_GET_SLOTS(slots, cursor, work, canvas);
   graphics = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
   work->args = args;
@@ -223,7 +226,7 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                         COMPOSITE_LIGHTEN);
-    draw[1] = (DrawRectangle)HEAP_SLOT_BLOCK(HEAP_SLOT_RAM_CODE_2);
+    draw[1] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2];
     if (frame > 16 && (frame & 15) == 0)
       work->transferValue += CANVAS_FILL_WORD(1);
 
@@ -299,9 +302,9 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
 
 /// Unused: no row of gAbilityBattleEffects in either game names its kind, and
 /// the handler table is reached with no other kind (BattleEffect_RunFromTable),
-/// so the player never sees it. It would show the spinning triangle and rune of
-/// BattleEffect_RunBind without the Djinni, with the user stepping up to the
-/// first target on frame 46.
+/// so the player never sees it. Its frame loop is BattleEffect_RunBind's,
+/// without the Djinni prelude, and on frame 46 it starts the user's approach to
+/// the first target.
 ///
 /// Abilities: none (BATTLE_EFFECT_UNUSED_TRIANGLE_STRIKE).
 ///
@@ -311,7 +314,9 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
 /// user's approach through BattleMotion_ApproachTargetFar.
 void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectParams *args) {
   struct ScreenPoint anchor;
-  // World input and projected vertices reuse one coordinate workspace.
+  /* FAKEMATCH(temporary): one workspace for the target's position and each
+   * projected corner; as two locals, 211 of 436 instructions differ in tbs-en.
+   */
   union {
     struct Vector3 world;
     struct ScreenPoint projected;
@@ -336,9 +341,7 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectParams *args) {
   s32 j;
   s32 k;
 
-  slots = &gHeapSlots[HEAP_SLOT_BATTLE_EFFECT];
-  cursor = slots;
-  EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
+  EFFECT_GET_SLOTS(slots, cursor, work, canvas);
   graphics = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
   work->args = args;
@@ -377,7 +380,7 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectParams *args) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                         COMPOSITE_LIGHTEN);
-    draw[1] = (DrawRectangle)HEAP_SLOT_BLOCK(HEAP_SLOT_RAM_CODE_2);
+    draw[1] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2];
     if (frame > 16 && (frame & 15) == 0)
       work->transferValue += CANVAS_FILL_WORD(1);
 

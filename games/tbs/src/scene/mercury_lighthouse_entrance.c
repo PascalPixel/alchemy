@@ -305,13 +305,11 @@ const struct Trigger *MercuryLighthouseEntrance_GetTriggers(void) {
 static void MercuryLighthouseEntrance_ActivateWithPly(void) {
   s32 leaderColumn;
   s32 leaderRow;
-  s32 velocityZ;
   s32 sparkIndex;
   s32 sparkX;
   s32 sparkZ;
   s32 speedRoll;
   s32 velocityY;
-  struct EffectOptions *effectData;
   struct EffectOptions options;
 
   leaderColumn = Actor_Get(ACTOR_PARTY_LEADER)->x.fixed / px(16);
@@ -326,23 +324,19 @@ static void MercuryLighthouseEntrance_ActivateWithPly(void) {
     PaletteFade_StartInterpolation(60);
     Event_Wait(40);
     sparkIndex = 0;
-    /* FAKEMATCH(temporary): effectData holds &options; as options.field and
-       &options, 2 of 143 instructions differ in tbs-en. */
-    effectData = &options;
-    velocityZ = 0;
     do {
-      effectData->priority = 1;
-      effectData->type = SPRITE_GLINT;
-      effectData->script = gGlint_TwinkleScript;
+      options.priority = 1;
+      options.type = SPRITE_GLINT;
+      options.script = gGlint_TwinkleScript;
       Sound_Play(SE_GLITTER);
       sparkX = 208 - ((u32)(Random_Next() << 4) >> 16);
       sparkZ = 560 - ((u32)(Random_Next() << 4) >> 16);
       speedRoll = ((u32)(Import_RandomNext() << 2) >> 16);
       velocityY = Math_Divide(px((speedRoll << 4) - speedRoll) + px(60), 100);
-      FieldEffect_Spawn(px(sparkX), 0, px(sparkZ), 0, velocityY, velocityZ,
+      FieldEffect_Spawn(px(sparkX), 0, px(sparkZ), 0, velocityY, 0,
                         EFFECT_USE_PRIORITY | EFFECT_USE_TYPE |
                             EFFECT_USE_SCRIPT | EFFECT_SCRIPT_MEDIUM,
-                        effectData);
+                        &options);
       Event_Wait(4);
       sparkIndex++;
     } while ((u32)sparkIndex <= 14);

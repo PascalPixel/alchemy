@@ -10,7 +10,7 @@ u8 *MenuTest_GetExits(void);
 u8 *MenuTest_GetActorPlacements(void);
 s32 MenuTest_GetTriggers(void);
 s32 MenuTest_Initialize(void);
-extern u32 gDebugItemPromptHead[];
+extern u32 gTest_UnusedRows[];
 extern char gDebugItemPrompt[12];
 extern char gDebugItemCapacityLabel[24];
 extern char gDebugItemFullLabel[20];

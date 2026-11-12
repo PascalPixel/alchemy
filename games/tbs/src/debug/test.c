@@ -865,19 +865,7 @@ static s32 MenuTest_ConfirmShopAction(s32 unitId) {
 }
 #endif
 
-/// Eight rows of seven words that nothing reads by name, the same 56 words as
-/// the test scenes' gTest_EntrancesHead (test_scenes.c), which says why their
-/// meaning is unknown.
-u32 gDebugItemPromptHead[] = {
-    0x500050, 0, 80,  0x500000, 0x10003, 2, 0,
-    0x780078, 0, 120, 0x780000, 0x10003, 2, 0,
-    0x28003c, 0, 128, 0x800000, 0x10002, 1, 0,
-    0x28003c, 0, 128, 0x800000, 0x10002, 3, 0,
-    0x800080, 0, 128, 0x800000, 0x20003, 1, 0,
-    0x800080, 0, 128, 0x800000, 0x20003, 1, 0,
-    0x200020, 0, 0,   0,        0,       0, 0,
-    0x800080, 0, 128, 0x800000, 0x20003, 1, 0,
-};
+#include "test_rows.h"
 
 char gDebugItemPrompt[12] = "Item No:";
 

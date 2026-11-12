@@ -85,21 +85,7 @@ u8 *Test_GetTriggers(void) { return (u8 *)gTest_Triggers; }
 /// to set up.
 s32 Test_Initialize(void) { return 0; }
 
-// XXX (no evidence): what they hold; no code reads them.
-/// Eight rows of seven words that nothing reads; the Menu test scene keeps the
-/// same 56 words (gDebugItemPromptHead, test.c), and no other data in the ROM
-/// has their layout. Overlay data is reached only through the scene's entries,
-/// and none returns them.
-u32 gTest_EntrancesHead[] = {
-    0x500050, 0, 80,  0x500000, 0x10003, 2, 0,
-    0x780078, 0, 120, 0x780000, 0x10003, 2, 0,
-    0x28003c, 0, 128, 0x800000, 0x10002, 1, 0,
-    0x28003c, 0, 128, 0x800000, 0x10002, 3, 0,
-    0x800080, 0, 128, 0x800000, 0x20003, 1, 0,
-    0x800080, 0, 128, 0x800000, 0x20003, 1, 0,
-    0x200020, 0, 0,   0,        0,       0, 0,
-    0x800080, 0, 128, 0x800000, 0x20003, 1, 0,
-};
+#include "test_rows.h"
 
 struct SceneEntrance gTest_Entrances[] = {
     {0, CONDITION_ALWAYS, 192, 0, 192, FACING_WEST, 0, -1, -1, -1, -1, 0},

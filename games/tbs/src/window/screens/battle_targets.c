@@ -215,7 +215,8 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
 
       /* FAKEMATCH(dead): the switch arms, which emit no branch, end CSE before
        * the call and keep the offset reload ahead of the ids load; as
-       * candidateIds[targetIndex], 1 of 1585 instructions differ in tbs-en. */
+       * candidateIds[targetIndex], 102 of 1585 instructions differ in tbs-en.
+       */
       switch (t) {
       case 0:
         t = targetIndex * 2;
@@ -277,7 +278,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
     effect.angle = 0;
 #if !TBS_PATCH_4
     /* FAKEMATCH(dead): seventeen dead stores restore the native stack frame's
-     * spill slots at sp+36 to sp+24; without them, 65 of 1585 instructions
+     * spill slots at sp+36 to sp+24; without them, 102 of 1585 instructions
      * differ in tbs-en, each a spill offset. */
     effect.angle = 0;
     effect.angle = 0;
@@ -353,11 +354,11 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
             anchor = selectedPosition.x / 8;
             helpColumn = anchor - 4;
 #if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
-            if (System_GetLanguage() == 4) {
+            if (System_GetLanguage() == CARTRIDGE_LANGUAGE_ITALIAN) {
               if (anchor + 6 > 29)
                 helpColumn = 20;
               conditionWindow = Window_Create(helpColumn, 8, 10, 3, 6);
-            } else if (System_GetLanguage() == 3) {
+            } else if (System_GetLanguage() == CARTRIDGE_LANGUAGE_SPANISH) {
               if (anchor + 7 > 29)
                 helpColumn = 19;
               conditionWindow = Window_Create(helpColumn, 8, 11, 3, 6);
@@ -486,7 +487,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
               anchor = selectedPosition.x / 8;
               helpColumn = anchor - 7;
 #if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
-              if (System_GetLanguage() == 3) {
+              if (System_GetLanguage() == CARTRIDGE_LANGUAGE_SPANISH) {
                 if (anchor + 10 > 29)
                   helpColumn = 13;
                 conditionWindow =
@@ -567,7 +568,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
               anchor = selectedPosition.x / 8;
               helpColumn = anchor - 7;
 #if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
-              if (System_GetLanguage() == 3) {
+              if (System_GetLanguage() == CARTRIDGE_LANGUAGE_SPANISH) {
                 if (anchor + 10 > 29)
                   helpColumn = 13;
                 conditionWindow =

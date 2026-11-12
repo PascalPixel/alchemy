@@ -14,7 +14,7 @@
 // and drawing one in is a step of 2 pixels a frame along the line to the
 // centre.
 
-#define HEALING_DJINNI_OFFSETS 4096 ///< the djinni picture in the sheet
+#define HEALING_DJINNI_OFFSETS 4096 ///< the Djinni picture in the sheet
 
 /// The healing motes' modes (BattleEffect_RunHealingMotes), each named for the
 /// first ability that plays it.
@@ -90,13 +90,6 @@ void BattleEffect_RunTonic(struct BattleEffectParams *args) {
 void BattleEffect_RunPsyCrystal(struct BattleEffectParams *args) {
   BattleEffect_RunHealingMotes(args, HEALING_MODE_PSY_CRYSTAL);
 }
-#define HEALING_MOTES 512 ///< motes in PARTICLES
-#define HEALING_SLOTS 64  ///< particles reserved for each target
-#define HEALING_STAGGER 8 ///< frames between one target's start and the next
-#define HEALING_SOUND_DELAY 20  ///< frames from a target's start to its sound
-#define HEALING_TINT_DELAY 36   ///< frames from a target's start to its tint
-#define HEALING_TINT_FRAMES 28  ///< frames a target stays tinted white
-#define HEALING_DAMAGE_FRAME 40 ///< the frame the battle shows the recovery
 
 /// Motes of light scattered around each target swirl in towards it, one target
 /// every 8 frames, with the recovery sound on each target's 20th frame and a
@@ -106,12 +99,12 @@ void BattleEffect_RunPsyCrystal(struct BattleEffectParams *args) {
 ///
 /// Sets work->args, overwrites PARTICLES 0 to 511 and the first 64 colours
 /// of the background palette, decodes into the battle sheet slot and
-/// work->sheet, and for Ply writes REG_BG2X and REG_BG2PA. After a djinni
+/// work->sheet, and for Ply writes REG_BG2X and REG_BG2PA. After a Djinni
 /// prelude it clears args->variant, so the mote count and resource fall
 /// back to the basic variant's. The transfer task it adds is
 /// removed again at the end, with the blitters and the canvas layer.
 ///
-/// args: the targets. With prelude 1, a djinni (Mars for Psy Crystal,
+/// args: the targets. With prelude 1, a Djinni (Mars for Psy Crystal,
 ///         Mercury otherwise) appears first, sways and rises. variant picks
 ///         the motes per target (32 for the basic variant, 128 for the
 ///         strongest, otherwise 64) and, in every mode but Cure and Psy
@@ -133,7 +126,6 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
   s32 motesPerTarget;
   s32 canvasShiftX;
   s32 doubleWidth;
-  DrawRectangle *draw;
   s32 frame;
   s32 i;
   u8 *resource;
@@ -150,7 +142,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
   work->args = args;
   BattleEffect_StartCanvasLayer(0);
 
-  // Bring out the djinni, Mars for Psy Crystal and Mercury otherwise; origin
+  // Bring out the Djinni, Mars for Psy Crystal and Mercury otherwise; origin
   // receives where it ends. Ply and Psy Crystal place it over the first
   // target, the others at the first target's x at depth 0.
   if (work->args->prelude == 1) {
@@ -196,7 +188,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
   }
   Iwram_CopyWords((void *)BG_PLTT, resource, 128);
 
-  // The djinni: 40x40 at the canvas's own width, the small 20x40 picture at
+  // The Djinni: 40x40 at the canvas's own width, the small 20x40 picture at
   // double width.
   if (doubleWidth == 0) {
     if (mode == HEALING_MODE_PSY_CRYSTAL)
@@ -212,15 +204,14 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
   }
   resource += 128;
   Decompress_TaggedLz(resource, work->sheet + HEALING_DJINNI_OFFSETS);
-  BattleEffect_FetchRectangleBlitters(work->args->side,
-                                      draw = blit); // [0] maximum, [1] additive
+  BattleEffect_FetchRectangleBlitters(work->args->side, blit);
 
   // Scatter the motes around the centre (16.16, relative to the point the
   // frame loop centres on). Cure Poison, Restore and Tonic end 16 frames sooner
   // than the others, as their motes go out rather than travel in.
   if (mode == HEALING_MODE_PLY || mode == HEALING_MODE_PSY_CRYSTAL) {
     // x and z within 64 pixels, y 32 to 95 pixels up.
-    for (i = 0; i != HEALING_MOTES; i++) {
+    for (i = 0; i != 512; i++) {
       struct Particle *spark = &PARTICLES[i];
 
       SET_POSITION(spark, ((Random16() & 0xff) - 127) << 15,
@@ -228,10 +219,10 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
                    ((Random16() & 0xff) - 127) << 15);
       spark->variant = 0;
     }
-    frameCount = work->args->targetCount * HEALING_STAGGER + 88;
+    frameCount = work->args->targetCount * 8 + 88;
   } else if (mode == HEALING_MODE_WISH) {
     // All three within 64 pixels.
-    for (i = 0; i != HEALING_MOTES; i++) {
+    for (i = 0; i != 512; i++) {
       struct Particle *spark = &PARTICLES[i];
 
       SET_POSITION(spark, ((Random16() & 0xff) - 127) << 15,
@@ -239,11 +230,11 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
                    ((Random16() & 0xff) - 127) << 15);
       spark->variant = 0;
     }
-    frameCount = work->args->targetCount * HEALING_STAGGER + 88;
+    frameCount = work->args->targetCount * 8 + 88;
   } else if (mode == HEALING_MODE_CURE) {
     // A ring of radius 32 to 95 pixels, 50 pixels down. velocityY is set,
     // but the frame loop moves the motes only along the line to the centre.
-    for (i = 0; i != HEALING_MOTES; i++) {
+    for (i = 0; i != 512; i++) {
       struct Particle *spark = &PARTICLES[i];
       s32 heading = Random16() & TRIG_ANGLE_MASK;
       s32 radius = (Random16() & 63) + 32;
@@ -253,10 +244,10 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
       spark->velocityY = ((Random16() & 31) + 32) << 13;
       spark->variant = 0;
     }
-    frameCount = work->args->targetCount * HEALING_STAGGER + 88;
+    frameCount = work->args->targetCount * 8 + 88;
   } else if (mode == HEALING_MODE_CURE_POISON) {
     // x and z within 64 pixels, y within 32.
-    for (i = 0; i != HEALING_MOTES; i++) {
+    for (i = 0; i != 512; i++) {
       struct Particle *spark = &PARTICLES[i];
 
       SET_POSITION(spark, ((Random16() & 0xff) - 127) << 15,
@@ -264,10 +255,10 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
                    ((Random16() & 0xff) - 127) << 15);
       spark->variant = 0;
     }
-    frameCount = work->args->targetCount * HEALING_STAGGER + 72;
+    frameCount = work->args->targetCount * 8 + 72;
   } else {
     // All three within 64 pixels.
-    for (i = 0; i != HEALING_MOTES; i++) {
+    for (i = 0; i != 512; i++) {
       struct Particle *spark = &PARTICLES[i];
 
       SET_POSITION(spark, ((Random16() & 0xff) - 127) << 15,
@@ -275,7 +266,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
                    ((Random16() & 0xff) - 127) << 15);
       spark->variant = 0;
     }
-    frameCount = work->args->targetCount * HEALING_STAGGER + 72;
+    frameCount = work->args->targetCount * 8 + 72;
   }
 
   // Motes for each target: 32 for the basic variant, 128 for the strongest,
@@ -294,10 +285,10 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
   for (frame = 0; frame != frameCount; frame++) {
     struct BattleCamera *camera = gBattleCamera;
 
-    if (frame == HEALING_DAMAGE_FRAME)
+    if (frame == 40)
       EFFECT_SHOW_DAMAGE(0);
 
-    // The djinni sways from side to side and, after 32 frames, rises 2 pixels
+    // The Djinni sways from side to side and, after 32 frames, rises 2 pixels
     // a frame. For the first 4 frames it is also added on top.
     if (work->args->prelude == 1) {
       if (doubleWidth == 0) {
@@ -309,7 +300,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
           y = y - frame * 2 + 64;
         blit[0](canvas, work->sheet + HEALING_DJINNI_OFFSETS, x, y, 40, 40);
         if (frame <= 3)
-          draw[1](canvas, work->sheet + HEALING_DJINNI_OFFSETS, x, y, 40, 40);
+          blit[1](canvas, work->sheet + HEALING_DJINNI_OFFSETS, x, y, 40, 40);
       } else {
         s32 x = ((Trig_Sin(frame << 11) * 10) >> 16) + originX / 2 - 10;
         s32 y = ((Trig_Cos(frame << 11) * 4) >> 16) + originY - 24;
@@ -318,48 +309,47 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
           y = y - frame * 2 + 64;
         blit[0](canvas, work->sheet + HEALING_DJINNI_OFFSETS, x, y, 20, 40);
         if (frame <= 3)
-          draw[1](canvas, work->sheet + HEALING_DJINNI_OFFSETS, x, y, 20, 40);
+          blit[1](canvas, work->sheet + HEALING_DJINNI_OFFSETS, x, y, 20, 40);
       }
     }
 
     EFFECT_FOR_EACH_TARGET(member, work->args) {
       struct Actor *actor =
           GetBattleObjectSlotFar(work->args->targets[member])->actor;
-      s32 start = member * HEALING_STAGGER;
+      s32 start = member * 8;
 
       // Centre on the point 40 pixels above the target.
       EFFECT_VIEW_FROM_CAMERA(camera);
       SET_VECTOR(point, actor->x.fixed, px(40), actor->z.fixed);
       Transform_ApplyPosition(point);
-      if (frame == start + HEALING_SOUND_DELAY)
+      if (frame == start + 20)
         Sound_PlayFar(SE_RECOVERY);
-      if (frame == start + HEALING_TINT_DELAY)
+      if (frame == start + 36)
         BattleEffect_TintBattler(work->args->targets[member],
-                                 SPRITE_COLOR_WHITE, TINT_KEEP, member,
-                                 HEALING_TINT_FRAMES);
+                                 SPRITE_COLOR_WHITE, TINT_KEEP, member, 28);
 
       // From the target's start, its frame of reference turns 1/128 of a
       // circle a frame. Cure offsets the yaw by 40 frames a target where the
       // others offset it by their start, and Wish does not offset it.
       if (frame > start) {
         if (mode == HEALING_MODE_PLY || mode == HEALING_MODE_PSY_CRYSTAL) {
-          Transform_ApplyYaw((frame - member * HEALING_STAGGER) << 9);
+          Transform_ApplyYaw((frame - start) << 9);
         } else if (mode == HEALING_MODE_WISH) {
           Transform_ApplyPitch(frame << 9);
           Transform_ApplyRoll(frame << 9);
         } else if (mode == HEALING_MODE_CURE) {
           Transform_ApplyYaw((frame - member * 40) << 9);
         } else if (mode == HEALING_MODE_CURE_POISON) {
-          Transform_ApplyYaw((frame - member * HEALING_STAGGER) << 9);
+          Transform_ApplyYaw((frame - start) << 9);
         } else {
-          Transform_ApplyYaw((frame - member * HEALING_STAGGER) << 9);
-          Transform_ApplyPitch((frame - member * HEALING_STAGGER) << 9);
+          Transform_ApplyYaw((frame - start) << 9);
+          Transform_ApplyPitch((frame - start) << 9);
         }
 
         // Four motes appear each frame; for Cure Poison, Restore and Tonic mote
         // i goes out at frame start + i / 2 + 32.
         for (i = 0; i != motesPerTarget; i++) {
-          struct Particle *spark = &PARTICLES[member * HEALING_SLOTS + i];
+          struct Particle *spark = &PARTICLES[member * 64 + i];
           s32 endFrame;
 
           if (mode == HEALING_MODE_CURE_POISON ||
@@ -398,10 +388,10 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
                 u32 edge = gBattleEffect_PuffSizes[size];
                 u32 half = edge >> 1;
 
-                draw[1](canvas, cell, screen.x - half, screen.y - half, edge,
+                blit[1](canvas, cell, screen.x - half, screen.y - half, edge,
                         edge);
               } else {
-                EFFECT_DRAW_MOTE(draw[1], canvas, sprites, screen.x, screen.y,
+                EFFECT_DRAW_MOTE(blit[1], canvas, sprites, screen.x, screen.y,
                                  size);
               }
 
@@ -425,10 +415,3 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
 }
 
 #undef HEALING_DJINNI_OFFSETS
-#undef HEALING_MOTES
-#undef HEALING_SLOTS
-#undef HEALING_STAGGER
-#undef HEALING_SOUND_DELAY
-#undef HEALING_TINT_DELAY
-#undef HEALING_TINT_FRAMES
-#undef HEALING_DAMAGE_FRAME

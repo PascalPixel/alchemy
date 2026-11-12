@@ -144,8 +144,9 @@ void SelectionMenu_BuildEntries(u32 unused) {
   // Icons are 16 pixels apart: the row is centred on x 100, at y 140.
   screen->baseX = 100 - rowPosition * 8;
   screen->baseY = 140;
-  // Reuse the count as a pixel offset while placing the completed row.
-  // Separate count/offset locals change the native English object.
+  /* FAKEMATCH(temporary): rowPosition, the row's icon count, reused as the
+   * pixel offset; as a separate offset, 34 of 129 instructions differ in
+   * tbs-en. */
   for (previous = screen->head, rowPosition = 0; previous != 0;
        previous = previous->next) {
     s32 x = screen->baseX + rowPosition;
@@ -869,8 +870,8 @@ void SelectionMenu_StepLeft(struct SelectionMenuWork *state) {
       node = state->head;
       while (node->x != node->targetX)
         wait(1);
-      // Keep the native count-up: assigning count - 5 directly removes
-      // 20 bytes from the English object.
+      /* FAKEMATCH(dead): i counted up to count - 5 one at a time; as
+       * i = state->count - 5, 35 of 184 instructions differ in tbs-en. */
       i = 0;
       while (i != state->count - 5)
         i++;

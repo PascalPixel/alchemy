@@ -477,9 +477,9 @@ static s32 CrossboneIsleSteppingStones_LowerActorToLedge(s32 id, s32 far) {
       }
       temporaryActor = Actor_Prepare(x, y, z, kind);
       height = actor->z.fixed - z + y;
-      // An empty once-only loop after the height arithmetic, which keeps
-      // found's constant after it; as no asm, 2 of 117 instructions differ in
-      // tbs-en.
+      /* FAKEMATCH(dead): an empty once-only loop after the height arithmetic,
+       * which keeps found's constant after it; as no loop, 2 of 117
+       * instructions differ in tbs-en. */
       do {
       } while (0);
       found = 1;

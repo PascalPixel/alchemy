@@ -174,8 +174,6 @@ static void SolSanctumLunaSolRooms_ShowMessageAndWait(s32 speaker,
                                                       s32 waitFrames);
 static void SolSanctumLunaSolRooms_ArriveAfterWiseOnesRescue(void);
 
-void FieldEffect_InitializeSparkles(void);
-
 const struct SceneEntrance *SolSanctumLunaSolRooms_GetEntrances(void) {
   return gSolSanctumLunaSolRoomsEntrances;
 }

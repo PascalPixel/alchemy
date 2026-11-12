@@ -234,8 +234,6 @@ static u16 sSuhallaDesertSavedColor;
 /// sandstorm winds up here." (MsgSuhallaInteriorsForSomeReasonAnyoneWhoGets)
 #define FLAG_SUHALLA_DESERT_CATCHING_SANDSTORM FLAG_SCENE_TEMP_18
 
-void Scene_QueueMusic(s32 cue);
-
 /// In SuhallaDesertSouth, talking to Flash, a Mars Djinni, starts its battle.
 static void SuhallaDesert_FightFlash(void) {
   Field_RequestDjinnBattle(ACTOR_FLASH, DJINNI_FLASH);

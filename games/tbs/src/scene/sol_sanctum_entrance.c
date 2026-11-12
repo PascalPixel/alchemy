@@ -200,8 +200,6 @@ static void SolSanctumEntrance_UpdateEruptionRumbles(void);
 
 s32 gSolSanctumEntrance_RumbleTimer __attribute__((section(".bss")));
 
-void FieldEffect_InitializeSparkles();
-
 /// Returns Sol Entrance's entrances (SceneId_SolEntrance) or Sol
 /// Sanctum's (SceneId_SolSanctumReliefs).
 const struct SceneEntrance *SolSanctumEntrance_GetEntrances(void) {

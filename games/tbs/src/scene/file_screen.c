@@ -423,10 +423,6 @@ struct SaveLinkGreeting {
   u8 reserved[16]; ///< the rest of the 24 bytes; not read
 };
 
-/// The compiler library's signed division, which FileScreen_Run calls by name
-/// at one site.
-s32 __divsi3(s32, s32);
-
 /// The overlay's initialize entry: the File Screen.
 ///
 /// At entrance 2, after the credits, it offers to save the cleared game and

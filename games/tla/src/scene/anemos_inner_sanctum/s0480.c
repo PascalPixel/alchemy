@@ -12,9 +12,9 @@
 #include "macros.h"
 
 void Func_020032e0(struct Actor *, s32);
-void Func_020032e8(struct ActorView *object, const s32 *script);
+void Func_020032e8(struct Actor *object, const s32 *script);
 extern const s32 *gData_02003840[];
-void Actor_SetSingleChildFlags(struct ActorView *, u32);
+void Actor_SetSingleChildFlags(struct Actor *, u32);
 void Scene_SetActorSpritePriority(struct Actor *object, s32 priority);
 
 void Func_02000480(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,

@@ -485,7 +485,7 @@ void Func_080d82e0(s32 arg) {
     Motion_SetTargetPositionFromMagnitudeAngle(djinni, 0x200000, Random16());
     Animation_ApplyChildValuesFar(djinni, 11);
     djinni->lifetime = 8;
-    Actor_StartScriptFar((struct ActorView *)djinni,
+    Actor_StartScriptFar((struct Actor *)djinni,
                          gBattleEffect_SharedParticleScript);
   }
 

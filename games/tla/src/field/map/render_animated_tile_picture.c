@@ -243,19 +243,21 @@ void *Actor_FindFreeObject(void) {
 
 /// Releases the object's graphics and zeroes the object to free it.
 /// obj: object.
-void Actor_Release(struct ActorView *obj) {
+void Actor_Release(struct Actor *obj) {
   volatile u32 zero;
   volatile u32 *src;
   s32 n;
   struct ResourceObjectWork **child;
 
   if (obj) {
-    switch (obj->kind & 15) {
+    switch (obj->animationKind & 15) {
     case 1: // One graphic.
-      ResourceObject_Release((struct ResourceObjectWork *)obj->target.child);
+      ResourceObject_Release(
+          (struct ResourceObjectWork *)((struct ActorSpriteView *)obj->sprite));
       break;
     case 2: // Up to four graphics.
-      child = (struct ResourceObjectWork **)obj->target.children;
+      child = (struct ResourceObjectWork **)((struct ActorSpriteView **)
+                                                 obj->sprite);
       n = 3;
       do {
         struct ResourceObjectWork *res = *child++;
@@ -343,28 +345,29 @@ struct Actor *Func_08023220(s32 id, s32 x, s32 y, s32 z) {
 }
 
 /// Points an object at its script and clears its script state.
-void Actor_StartScript(struct ActorView *object, const s32 *script) {
+void Actor_StartScript(struct Actor *object, const s32 *script) {
   if (object != 0) {
-    object->value04 = 0;
-    object->value00 = (u32)script;
-    object->value5b = 0;
-    object->value5d = 0;
-    object->value57 = 0;
+    object->step = 0;
+    object->script = script;
+    object->movementState = 0;
+    object->unk5c[1] = 0;
+    object->unk57 = 0;
   }
 }
 
-void Actor_SelectAnimation(struct ActorView *object, s32 argument) {
+void Actor_SelectAnimation(struct Actor *object, s32 argument) {
   struct ActorSpriteView **items;
   struct ActorSpriteView *item;
   s32 count;
 
   if (object != 0) {
-    switch (object->kind & 0xf) {
+    switch (object->animationKind & 0xf) {
     case 1:
-      Animation_ApplyChildArgument(object->target.child, argument);
+      Animation_ApplyChildArgument(((struct ActorSpriteView *)object->sprite),
+                                   argument);
       break;
     case 2:
-      items = object->target.children;
+      items = ((struct ActorSpriteView **)object->sprite);
       count = 3;
       do {
         item = *items++;
@@ -377,18 +380,19 @@ void Actor_SelectAnimation(struct ActorView *object, s32 argument) {
   }
 }
 
-void Actor_SetAnimationSpeed(struct ActorView *object, s32 value) {
+void Actor_SetAnimationSpeed(struct Actor *object, s32 value) {
   s32 count;
   struct ActorSpriteView *child;
   struct ActorSpriteView **children;
 
   if (object != 0) {
-    switch (object->kind & 0xf) {
+    switch (object->animationKind & 0xf) {
     case 1:
-      Animation_ApplyChildValue(object->target.child, value);
+      Animation_ApplyChildValue(((struct ActorSpriteView *)object->sprite),
+                                value);
       return;
     case 2:
-      children = object->target.children;
+      children = ((struct ActorSpriteView **)object->sprite);
       count = 3;
       do {
         child = *children++;
@@ -401,20 +405,21 @@ void Actor_SetAnimationSpeed(struct ActorView *object, s32 value) {
   }
 }
 
-void Actor_SetAnimationAndSpeed(struct ActorView *object, s32 argument,
-                                s32 value) {
+void Actor_SetAnimationAndSpeed(struct Actor *object, s32 argument, s32 value) {
   struct ActorSpriteView **items;
   struct ActorSpriteView *item;
   s32 count;
 
   if (object != 0) {
-    switch (object->kind & 0xf) {
+    switch (object->animationKind & 0xf) {
     case 1:
-      Animation_ApplyChildArgument(object->target.child, argument);
-      Animation_ApplyChildValue(object->target.child, value);
+      Animation_ApplyChildArgument(((struct ActorSpriteView *)object->sprite),
+                                   argument);
+      Animation_ApplyChildValue(((struct ActorSpriteView *)object->sprite),
+                                value);
       break;
     case 2:
-      items = object->target.children;
+      items = ((struct ActorSpriteView **)object->sprite);
       for (count = 3; count >= 0; count--) {
         item = *items++;
         if (item != 0) {
@@ -427,17 +432,16 @@ void Actor_SetAnimationAndSpeed(struct ActorView *object, s32 argument,
   }
 }
 
-void Actor_SetSpriteRotation(struct ActorView *object, u32 value) {
-  if (object != 0 && (object->kind & 0xf) == 1)
-    object->target.child->value12 = value;
+void Actor_SetSpriteRotation(struct Actor *object, u32 value) {
+  if (object != 0 && (object->animationKind & 0xf) == 1)
+    ((struct ActorSpriteView *)object->sprite)->value12 = value;
 }
 
-void Animation_SetIndexAndInitializeObjects(struct ActorView *object,
-                                            s32 index) {
+void Animation_SetIndexAndInitializeObjects(struct Actor *object, s32 index) {
   struct ActorSpriteView *child;
 
-  if (object != NULL && (object->kind & 0xf) == 1) {
-    child = object->target.child;
+  if (object != NULL && (object->animationKind & 0xf) == 1) {
+    child = ((struct ActorSpriteView *)object->sprite);
     if (index >= 0) {
       child->entries[0]->animId = index;
       InitializeAnimationObjects(child);
@@ -445,9 +449,9 @@ void Animation_SetIndexAndInitializeObjects(struct ActorView *object,
   }
 }
 
-void Actor_RegisterSpriteMetadata(struct ActorView *object, s32 value) {
-  if (object != 0 && (object->kind & 0xf) == 1) {
-    struct ActorSpriteView *child = object->target.child;
+void Actor_RegisterSpriteMetadata(struct Actor *object, s32 value) {
+  if (object != 0 && (object->animationKind & 0xf) == 1) {
+    struct ActorSpriteView *child = ((struct ActorSpriteView *)object->sprite);
     if (value >= 0)
       ResourceMetadata_Register(child, value);
   }
@@ -471,16 +475,15 @@ extern const s32 gData_0802f1b8[];
 extern const s32 gData_0802f1e8[];
 
 /// Starts an actor on the script that approaches its watched actor
-/// (SC_APPROACH_WATCHED), watching watchedActorHandle.
-void Actor_StartApproachWatched(struct ActorView *actor,
-                                s32 watchedActorHandle) {
+/// (SC_APPROACH_WATCHED), watching watched.
+void Actor_StartApproachWatched(struct Actor *actor, struct Actor *watched) {
   Actor_StartScript(actor, gData_0802f1e8);
-  actor->argument = watchedActorHandle;
+  actor->watchedObject = watched;
 }
 
 /// Starts the dispatch script for gMainRoutineWork's render mode, waiting a
 /// frame first in mode 9.
-void Func_08023524(struct ActorView *object) {
+void Func_08023524(struct Actor *object) {
   const s32 *script;
   struct MainRoutineWork *party = &gMainRoutineWork;
 
@@ -532,36 +535,36 @@ void Func_08023524(struct ActorView *object) {
   Actor_StartScript(object, script);
 }
 
-void Actor_StartIdle(struct ActorView *object) {
-  Actor_StartScript(object, (u32)gActorScript_EndScript);
+void Actor_StartIdle(struct Actor *object) {
+  Actor_StartScript(object, gActorScript_EndScript);
 }
 
-void Actor_StartCamera(struct ActorView *object, s32 argument) {
-  Actor_StartScript(object, (u32)gActor_CameraScript);
-  if (argument != 0) {
-    object->value34 = 0x8000;
-    object->value30 = 0x40000;
-    object->argument = argument;
-    object->value64 = 0;
+void Actor_StartCamera(struct Actor *object, struct Actor *watched) {
+  Actor_StartScript(object, gActor_CameraScript);
+  if (watched != NULL) {
+    object->acceleration = 0x8000;
+    object->speedLimit = 0x40000;
+    object->watchedObject = watched;
+    object->timer = 0;
   }
 }
 
-void Actor_WaitForCommandEnd(struct ActorView *object) {
+void Actor_WaitForCommandEnd(struct Actor *object) {
   s32 cnt = 0;
 
-  if (object->value00 != 0 &&
-      ((const s32 *)object->value00)[object->value04] != 17) {
+  if (object->script != 0 &&
+      ((const s32 *)object->script)[object->step] != 17) {
     do {
       wait(1);
       cnt++;
       if (cnt > 599)
         break;
-    } while (object->value00 != 0 &&
-             ((const s32 *)object->value00)[object->value04] != 17);
+    } while (object->script != 0 &&
+             ((const s32 *)object->script)[object->step] != 17);
   }
 }
 
-void Actor_SetChildByteValue(struct ActorView *object, u32 value) {
-  if (object != NULL && (object->kind & 0xf) == 1)
-    object->target.child->value1a = value;
+void Actor_SetChildByteValue(struct Actor *object, u32 value) {
+  if (object != NULL && (object->animationKind & 0xf) == 1)
+    ((struct ActorSpriteView *)object->sprite)->value1a = value;
 }

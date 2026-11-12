@@ -384,11 +384,11 @@ s32 Script_ToggleFlag(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-struct ActorView;
-void Actor_SelectAnimation(struct ActorView *object, s32 argument);
+struct Actor;
+void Actor_SelectAnimation(struct Actor *object, s32 argument);
 
 s32 Script_SetAnimation(struct ScriptInterpreter *interpreter) {
-  Actor_SelectAnimation((struct ActorView *)interpreter,
+  Actor_SelectAnimation((struct Actor *)interpreter,
                         interpreter->script[interpreter->cursor + 1]);
   interpreter->cursor += 2;
   return 1;

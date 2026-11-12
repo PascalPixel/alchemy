@@ -89,8 +89,7 @@ void Func_080ddbd8(void) {
       obj->motionFlags = 0;
       Animation_ApplyChildValuesFar(obj, 11);
       Actor_SetMode(obj, 7);
-      Actor_StartScriptFar((struct ActorView *)obj,
-                           gBattleEffect_SharedParticleScript + 1);
+      Actor_StartScriptFar(obj, gBattleEffect_SharedParticleScript + 1);
 
       Actor_SetSingleChildFlagsFar(obj, 1);
 
@@ -101,7 +100,7 @@ void Func_080ddbd8(void) {
         Vector_AddPolarOffset(0xe0000, *(u16 *)&work->angle, p);
       dist = Random16() * 6 + 0x40000;
       Vector_AddPolarOffset(dist, Random16(), p);
-      Actor_SetTargetPosition((struct Actor *)obj, p[0], p[1], p[2]);
+      Actor_SetTargetPosition(obj, p[0], p[1], p[2]);
     }
     Sound_PlayFar(131);
     wait(2);
@@ -154,7 +153,7 @@ void FieldEffect_RunLiftOnTarget(void) {
 
   BattleEffect_InitializeSharedScene();
   *(void **)((u8 *)mainObject + 0x68) = child;
-  Actor_StartScriptFar((struct ActorView *)mainObject, gData_080f0e60);
+  Actor_StartScriptFar(mainObject, gData_080f0e60);
 
   x = scene->x;
   position[0] = x;
@@ -240,7 +239,7 @@ void Func_080ddea8(void) {
     pos.z = work->z;
     obj = Actor_Spawn(673, pos.x, pos.y, pos.z);
     if (obj != 0) {
-      Actor_StartScriptFar((struct ActorView *)obj, gData_080f0e78);
+      Actor_StartScriptFar(obj, gData_080f0e78);
       obj->speedLimit = Random16() + 0x20000;
       obj->acceleration = 0x20000;
       obj->motionFlags = 0;
@@ -399,14 +398,13 @@ s32 Func_080de154(struct Actor *src) {
   if (obj != NULL) {
     obj->motionFlags = 0;
     ((struct ParticleTimer *)obj)->timer = 20;
-    Actor_StartScriptFar((struct ActorView *)obj,
-                         gBattleEffect_SharedParticleScript);
+    Actor_StartScriptFar(obj, gBattleEffect_SharedParticleScript);
   }
 
   for (i = 0; i < 12; i++) {
     frag = Actor_Spawn(673, pos.x, pos.y, pos.z);
     if (frag != NULL) {
-      Actor_StartScriptFar((struct ActorView *)frag, gData_080f0e78);
+      Actor_StartScriptFar(frag, gData_080f0e78);
       frag->speedLimit = Random16() + (1 << 16);
       frag->acceleration = 1 << 16;
       frag->motionFlags = 0;

@@ -110,7 +110,7 @@ struct FallingObject {
 void BattleEffect_LandFallingObject(struct FallingObject *object) {
   if (object->y <= object->floor) {
     object->dispatchState = 2;
-    Actor_StartScriptFar((struct ActorView *)object,
+    Actor_StartScriptFar((struct Actor *)object,
                          (u32)gBattleEffect_SharedParticleScript);
     object->update = 0;
   }
@@ -123,7 +123,7 @@ void BattleEffect_UpdateDriftingFallObject(struct Actor *object) {
   r = Random16();
   object->x += r - Random16();
   if (object->y <= object->terrainHeight) {
-    Actor_StartScriptFar((struct ActorView *)object,
+    Actor_StartScriptFar((struct Actor *)object,
                          (u32)gBattleEffect_SharedParticleScript);
   }
 }
@@ -301,7 +301,7 @@ void FieldEffect_RunDouse(void) {
         mote->motionFlags = 0;
         ((struct Effect05Sprite *)mote->sprite)->mode = 2;
         Actor_SetMode(mote, 8);
-        Animation_ApplyChildValuesFar((struct ActorView *)mote, 7);
+        Animation_ApplyChildValuesFar((struct Actor *)mote, 7);
       }
       wait(6);
     }
@@ -336,7 +336,7 @@ void FieldEffect_RunDouse(void) {
     wait(1);
     i++;
   } while (i < steps);
-  Actor_Destroy((struct ActorView *)orb);
+  Actor_Destroy((struct Actor *)orb);
   BattleEffect_PrepareBufferInterpolation();
 }
 
@@ -373,7 +373,7 @@ void BattleEffect_SpawnFallingParticles(void) {
     obj->gravity = 0x1999;
     Actor_SetMode(obj, 0);
     ((struct ParticleTimer *)obj)->timer = 12;
-    Actor_StartScriptFar((struct ActorView *)obj,
+    Actor_StartScriptFar((struct Actor *)obj,
                          gBattleEffect_SharedParticleScript);
   }
 }
@@ -474,7 +474,7 @@ void BattleEffect_SteerLiftedTarget(s32 targetId) {
     return;
   BattleEffect_InitializeSharedScene();
   source->linked = target;
-  Actor_StartScriptFar((struct ActorView *)source, (u32)gData_080f0e60);
+  Actor_StartScriptFar((struct Actor *)source, (u32)gData_080f0e60);
   /* FAKEMATCH(temporary): p holds &position everywhere but the steering
      loop's first part, which gives the shards loop's 19 r8 and its 0x20000
      r9; as position used directly, 10 of 551 instructions differ in tla-en. */
@@ -507,7 +507,7 @@ void BattleEffect_SteerLiftedTarget(s32 targetId) {
   Task_Add((s32)BattleEffect_SpawnFallingParticles, TASK_PASS_VBLANK);
   Sound_PlayFar(130);
   target->flag = 4;
-  Actor_SetSingleChildFlagsFar((struct ActorView *)target, 0);
+  Actor_SetSingleChildFlagsFar((struct Actor *)target, 0);
   if (anchors[0] != NULL && anchors[1] != NULL) {
     while (target->y - target->ground <= 0x180000) {
       object->y += 0x6000;
@@ -620,7 +620,7 @@ void BattleEffect_SteerLiftedTarget(s32 targetId) {
       object = Actor_Spawn(0x2a1, p->x, p->y, p->z);
       *walk++ = object;
       if (object != NULL) {
-        Actor_StartScriptFar((struct ActorView *)object, (u32)gData_080f0e78);
+        Actor_StartScriptFar((struct Actor *)object, (u32)gData_080f0e78);
         object->speed = Random16() + 0x20000;
         object->lift = 0x20000;
         object->flag = 0;
@@ -633,15 +633,15 @@ void BattleEffect_SteerLiftedTarget(s32 targetId) {
   Sound_PlayFar(131);
   Actor_Destroy(anchors[0]);
   Actor_Destroy(anchors[1]);
-  Animation_ApplyChildValuesFar((struct ActorView *)target, work->palette);
-  Actor_StartScriptFar((struct ActorView *)target, (u32)(work->script));
+  Animation_ApplyChildValuesFar((struct Actor *)target, work->palette);
+  Actor_StartScriptFar((struct Actor *)target, (u32)(work->script));
   target->callback = work->callback;
   target->flag = 3;
   target->velocityY = 0xa0000;
   target->gravity = 0x3333;
   target->mode = 0;
   source->callback = NULL;
-  Animation_ApplyChildValuesFar((struct ActorView *)source, 0);
+  Animation_ApplyChildValuesFar((struct Actor *)source, 0);
   if ((s8)work->falls != 0) {
     for (i = 0; i < 90 && target->velocityY >= 0; i++)
       wait(1);

@@ -197,7 +197,7 @@ struct PairScene {
   s16 secondObjectId;
   u8 unk1c[0x1c];
   void *savedCallback;
-  s32 *savedScript;
+  const s32 *savedScript;
   u8 savedPalette;
   u8 unk41[0x6d7];
   u8 savedTerrain;

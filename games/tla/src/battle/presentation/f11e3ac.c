@@ -161,7 +161,7 @@ struct SavedBattleObj *Func_0811e3ac(struct BattlePlan *plan,
   work->actor = saved->unitId;
   actor = BattleObject_Get(plan->actorId)->object;
   Actor_SetMode(actor, 3);
-  Actor_SetAnimationSpeedFar((struct ActorView *)actor, 16);
+  Actor_SetAnimationSpeedFar((struct Actor *)actor, 16);
   QueueIoWriteDelay2(0x04000050, 0x3f40);
   Sound_PlayFar(154);
   wait(10);
@@ -438,10 +438,10 @@ s32 Func_0811ea0c(struct BattlePlan *plan, s32 mode) {
             ((struct BattleUnit *)Unit_Get(plan->actorId2))->enemyId)
             << 16);
     Actor_SetAnimationSpeedFar(
-        (struct ActorView *)((struct BattleObj *)object)->object, 16);
+        (struct Actor *)((struct BattleObj *)object)->object, 16);
   }
   Actor_SetAnimationSpeedFar(
-      (struct ActorView *)BattleObject_Get(work.actor)->object, 16);
+      (struct Actor *)BattleObject_Get(work.actor)->object, 16);
 
   if ((u16)work.actors[0] <= 7)
     work.side = 1;
@@ -586,7 +586,7 @@ s32 Func_0811edb0(struct BattlePlan *plan, s32 unused,
     object = slot->object;
     Actor_SetMode(object, *mode);
   }
-  Actor_SetAnimationSpeedFar((struct ActorView *)object, 16);
+  Actor_SetAnimationSpeedFar((struct Actor *)object, 16);
   if (plan->targetIds[0] <= 7)
     work.side = 1;
   else
@@ -798,7 +798,7 @@ s32 Func_0811f088(struct BattlePlan *plan, s32 mode) {
   saved = Func_0811e3ac(plan, &work);
   object = BattleObject_Get(work.actor)->object;
   Actor_SetMode(object, ((u8 *)heap->battleWork)[0x869]);
-  Actor_SetAnimationSpeedFar((struct ActorView *)object, 16);
+  Actor_SetAnimationSpeedFar((struct Actor *)object, 16);
   Sound_PlayFar(154);
   if (mode & 2)
     Func_08127308(work.actor, plan->element, 1, 0);

@@ -337,7 +337,7 @@ s32 AutoBattle_RunApproachAttack(struct BattleActionRecord *input) {
   Message_ShowAndWaitCoreFar((s32)MsgActorAttacks);
   BattleMotion_ApproachTarget(work.actor, work.actors[0], 13, 0);
   Actor_SetAnimationSpeedFar(
-      (struct ActorView *)BattleObject_Get(work.actor)->object, 16);
+      (struct Actor *)BattleObject_Get(work.actor)->object, 16);
   BattleObject_Get(work.actors[0]);
 
   work.count = 1;
@@ -390,7 +390,7 @@ s32 Func_0811ca54(struct BattleActionRecord *action) {
   PartyStatus_DrawFar(Ram_HeapSlots->battleWork->partyStatus & ~1);
   object = BattleObject_Get(work.actor)->object;
   Actor_SetMode((struct Actor *)object, 3);
-  Actor_SetAnimationSpeedFar((struct ActorView *)object, 16);
+  Actor_SetAnimationSpeedFar((struct Actor *)object, 16);
   if ((u16)action->target <= 7) {
     work.side = 1;
     BattleParty_ListLivingUnits(1, (u16 *)work.actors);

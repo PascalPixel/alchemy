@@ -51,7 +51,7 @@ void BattleObject_Reset(struct BattleObj *actor, s32 keep) {
   object->unk59 = 3;
   object->motionFlags = 2;
   actor->visible = 1;
-  Actor_StartScriptFar((struct ActorView *)object, Data_0812cacc);
+  Actor_StartScriptFar((struct Actor *)object, Data_0812cacc);
 }
 
 s32 Inventory_GetEquippedItemFar(struct BattleUnit *unit, s32 slot);
@@ -439,7 +439,7 @@ void BattleObject_Make(struct BattleObj *actor, s32 unitId, s32 x, s32 y) {
     object->scaleX = 0x10000;
     object->scaleY = 0x10000;
   }
-  Actor_StartScriptFar((struct ActorView *)object, Data_0812cacc);
+  Actor_StartScriptFar((struct Actor *)object, Data_0812cacc);
 }
 
 void BattlePlacement_GetStepPair(s32 index, s32 *x, s32 *y) {

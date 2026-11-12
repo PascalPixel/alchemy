@@ -603,7 +603,7 @@ s32 BattleActor_DestroyTemporaryObject(s32 arg0) {
     BattleActor_RemoveFromLists(arg0);
     BattleObject_MarkForRelease(arg0);
     runtime = BattleObject_Get(arg0);
-    Actor_Destroy((struct ActorView *)runtime->object);
+    Actor_Destroy((struct Actor *)runtime->object);
     runtime->object = 0;
     runtime->active = 0;
   }
@@ -3595,7 +3595,7 @@ s32 Func_0812381c(struct BattleActionRecord *request, struct BattlePlan *plan) {
         Sound_PlayFar(212);
         Actor_SetMode(BattleObject_Get(request->unitId)->object, 3);
         Actor_SetAnimationSpeedFar(
-            (struct ActorView *)BattleObject_Get(request->unitId)->object, 32);
+            (struct Actor *)BattleObject_Get(request->unitId)->object, 32);
         Func_08127308(request->unitId, (request->parameter >> 8) & 15, 3, 0);
         BattlePlayback_WaitForReady();
         return -2;
@@ -4195,7 +4195,7 @@ s32 Func_08124cc4(s32 side) {
           if (BattleParty_IsUnitListed(id)) {
             Actor_SetMode((struct Actor *)BattleObject_Get(id)->object, 3);
             Actor_SetAnimationSpeedFar(
-                (struct ActorView *)BattleObject_Get(id)->object, 32);
+                (struct Actor *)BattleObject_Get(id)->object, 32);
           }
           element = entry->element;
           Djinn_ActivateFar(id, element, entry->index);
@@ -4332,7 +4332,7 @@ void Func_08124e20(void) {
             if (BattleParty_IsUnitListed(unitId)) {
               Actor_SetMode(BattleObject_Get(unitId)->object, 3);
               Actor_SetAnimationSpeedFar(
-                  (struct ActorView *)BattleObject_Get(unitId)->object, 32);
+                  (struct Actor *)BattleObject_Get(unitId)->object, 32);
             }
             element = expiredEntry->element;
             Djinn_ActivateFar(unitId, element, expiredEntry->index);
@@ -4665,7 +4665,7 @@ void Func_0812561c(struct BattlePlan *plan) {
         Sound_PlayFar(212);
         Actor_SetMode(BattleObject_Get(unitId)->object, 3);
         Actor_SetAnimationSpeedFar(
-            (struct ActorView *)BattleObject_Get(unitId)->object, 32);
+            (struct Actor *)BattleObject_Get(unitId)->object, 32);
         Func_08127308(unitId, i, 2, -1);
         BattlePlayback_WaitForReady();
       }

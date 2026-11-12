@@ -151,7 +151,7 @@ void BattleEffect_SpawnRandomParticleAtPosition(
     s32 mask;
     u8 flags;
 
-    Actor_StartScriptFar((struct ActorView *)object,
+    Actor_StartScriptFar((struct Actor *)object,
                          (u32)gBattleEffect_ParticleScript);
     Actor_SetMode(object, 0);
     mask = 13;
@@ -171,7 +171,7 @@ void BattleEffect_SpawnRandomParticleAtPosition(
 #include "flag_call.h"
 #include "ram_buffer.h"
 
-struct ActorView;
+struct Actor;
 
 s16 *Func_080ceba8(void);
 s32 Func_080cec24(s32 value, s32 *out);
@@ -246,8 +246,8 @@ void Func_080cf554(void) {
     object = Func_080200c0(673, x, y, z);
     if (object != NULL) {
       object->motionFlags = 0;
-      Actor_StartScriptFar((struct ActorView *)object, Data_080f01b8);
-      Actor_SetSingleChildFlagsFar((struct ActorView *)object, 0);
+      Actor_StartScriptFar((struct Actor *)object, Data_080f01b8);
+      Actor_SetSingleChildFlagsFar((struct Actor *)object, 0);
       Actor_SetMode(object, 1);
       ((struct FieldSprite *)object->sprite)->priority = 1;
     }

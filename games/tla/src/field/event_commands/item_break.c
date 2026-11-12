@@ -79,7 +79,7 @@ void *BattleEffect_StartItemBreak(void *object) {
   for (fragmentIndex = 7; fragmentIndex >= 0; fragmentIndex--) {
     child = Actor_Spawn(673, source->x, source->y + (16 << 16), source->z);
     if (child != 0) {
-      Actor_StartScriptFar((struct ActorView *)child, gData_080f0e78);
+      Actor_StartScriptFar(child, gData_080f0e78);
       speed = Random16() + Q16_ONE;
       child->acceleration = 1 << 16;
       child->speedLimit = speed;
@@ -143,7 +143,7 @@ void UpdateRisingParticleBurst(void *object) {
       // each use differs.
       s32 unit = 0x10000;
 
-      Actor_StartScriptFar((struct ActorView *)child, gData_080f0e78);
+      Actor_StartScriptFar(child, gData_080f0e78);
       speed = Random16();
       child->acceleration = unit;
       child->speedLimit = speed + unit;

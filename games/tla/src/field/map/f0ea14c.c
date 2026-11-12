@@ -334,7 +334,7 @@ void Func_080ea7c0(struct ActorFlag *actors) {
 
     object->motionFlags = 0;
     object->collisionFlags &= ~1;
-    Actor_SetSingleChildFlagsFar((struct ActorView *)object, 0);
+    Actor_SetSingleChildFlagsFar(object, 0);
     cell->collisionCode = 0xff;
     if (GameFlag_Test(flag)) {
       Actor_SetMode(object, 0);

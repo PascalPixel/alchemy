@@ -26,7 +26,7 @@ struct LinkedEffectObject {
 };
 
 struct LinkedEffectObject *Func_080200c0(s32 kind, s32 x, s32 y, s32 z);
-void Actor_StartScriptFar(struct ActorView *object, const s32 *script);
+void Actor_StartScriptFar(struct Actor *object, const s32 *script);
 void Actor_Destroy(struct LinkedEffectObject *object);
 s32 Actor_IsOutsideAnimation108(struct LinkedEffectObject *object);
 void BattleEffect_CopyWatchedObjectPosition(void);
@@ -115,13 +115,13 @@ void Func_080d489c(s32 id, s32 flags) {
 s32 __divsi3(s32, s32);
 
 s32 Actor_ClearChildAndCollisionFlags(struct Actor *obj) {
-  Actor_SetSingleChildFlagsFar((struct ActorView *)obj, 0);
+  Actor_SetSingleChildFlagsFar((struct Actor *)obj, 0);
   obj->collisionFlags = 0;
   return 0;
 }
 
 s32 Actor_ClearChildFlags(struct Actor *obj) {
-  Actor_SetSingleChildFlagsFar((struct ActorView *)obj, 0);
+  Actor_SetSingleChildFlagsFar((struct Actor *)obj, 0);
   return 0;
 }
 

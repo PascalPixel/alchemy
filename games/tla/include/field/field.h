@@ -5,7 +5,7 @@
 #include "edition.h"
 #include "actor.h"
 
-struct ActorView;
+struct Actor;
 struct EffectPosition;
 
 extern const s32 gCamera_FixedViewMatrix[];

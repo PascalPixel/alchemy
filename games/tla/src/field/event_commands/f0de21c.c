@@ -217,9 +217,9 @@ s32 BattleEffect_UpdateOrbitingParticleMain(struct OrbitingParticle *particle) {
   s32 phase = gFrameCount & 7;
 
   if (phase == 0) {
-    Animation_ApplyChildValuesFar((struct ActorView *)particle, 2);
+    Animation_ApplyChildValuesFar((struct Actor *)particle, 2);
   } else if (phase == 2) {
-    Animation_ApplyChildValuesFar((struct ActorView *)particle, 0);
+    Animation_ApplyChildValuesFar((struct Actor *)particle, 0);
   }
   return 0;
 }
@@ -232,7 +232,7 @@ void BattleEffect_UpdateOrbitingParticleFade(struct Actor *object) {
     object->scaleY -= 0x1000;
     object->scaleX = scale;
     if (scale <= 0x1000)
-      Actor_StartScriptFar((struct ActorView *)object,
+      Actor_StartScriptFar((struct Actor *)object,
                            (u32)gBattleEffect_SharedParticleScript);
   }
 }
@@ -345,7 +345,7 @@ void FieldEffect_RunFrost(void) {
       particle->facing = Random16();
       particle->timer = 60;
       particle->unk66 = Random16();
-      Animation_ApplyChildValuesFar((struct ActorView *)particle, 9);
+      Animation_ApplyChildValuesFar((struct Actor *)particle, 9);
 
       SET_POSITION(p, scene->x, scene->y, scene->z);
       dist = (Random16() << 2) + (2 << 16);
@@ -368,9 +368,9 @@ void FieldEffect_RunFrost(void) {
 
     cnt = 7;
     do {
-      Animation_ApplyChildValuesFar((struct ActorView *)target, 7);
+      Animation_ApplyChildValuesFar((struct Actor *)target, 7);
       wait(1);
-      Animation_ApplyChildValuesFar((struct ActorView *)target, 0);
+      Animation_ApplyChildValuesFar((struct Actor *)target, 0);
       wait(4);
       cnt--;
     } while (cnt >= 0);
@@ -442,7 +442,7 @@ void BattleEffect_UpdateShrinkingOrbitObject(struct Actor *object) {
       Vector_AddPolarOffset(radius, (s16)object->unk66 + (life << 11), &pos);
       SET_POSITION(object, pos.x, pos.y, pos.z);
     } else {
-      Actor_StartScriptFar((struct ActorView *)object,
+      Actor_StartScriptFar((struct Actor *)object,
                            gBattleEffect_SharedParticleScript);
     }
   }
@@ -502,7 +502,7 @@ void Func_080de8d0(struct SparkObject *obj) {
       spark->anchorX = spark->x;
       Animation_ApplyChildValuesFar(spark, 9);
       spark->unk5e = 72;
-      Actor_StartScriptFar((struct ActorView *)spark,
+      Actor_StartScriptFar((struct Actor *)spark,
                            gBattleEffect_SharedParticleScript);
     }
   }

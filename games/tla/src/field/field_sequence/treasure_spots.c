@@ -253,7 +253,7 @@ void Actor_ShakeAngle(u32 objectId) {
   object->facing = angle;
 }
 
-struct ActorView;
+struct Actor;
 
 void ObjectEvent_SetMode5WithCue(u32 objectId) {
   Actor_SetMode(ObjectTable_Get(objectId), 5);
@@ -270,7 +270,7 @@ void ObjectEvent_Spring(u32 objectId) {
   Sound_PlayFar(146);
   if (object != 0) {
     object->velocityY = 0x80000;
-    Actor_SetSingleChildFlagsFar((struct ActorView *)object, 1);
+    Actor_SetSingleChildFlagsFar(object, 1);
   }
 }
 

@@ -94,7 +94,7 @@ void BattleEffect_SetCallbackWhenTargetUnset(struct Actor *target) {
   if (tx == 0x80000000) {
     ty = target->targetY;
     if ((ty == tx) && (target->targetZ == ty)) {
-      Actor_StartScriptFar((struct ActorView *)target,
+      Actor_StartScriptFar((struct Actor *)target,
                            (u32)gBattleEffect_UntargetedObjectScript);
     }
   }
@@ -213,7 +213,7 @@ void BattleEffect_UpdateItemBreakFragment(struct ItemBreakFragmentSource *src) {
     obj->field48 = 0x1999;
     Actor_SetMode(obj, 0);
     obj->field5e = 12;
-    Actor_StartScriptFar((struct ActorView *)obj,
+    Actor_StartScriptFar((struct Actor *)obj,
                          gBattleEffect_SharedParticleScript);
   }
 }

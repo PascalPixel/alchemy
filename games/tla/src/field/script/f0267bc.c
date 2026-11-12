@@ -447,7 +447,7 @@ void Func_08026fc8(struct Actor *object, s32 mode) {
     struct Child *child = created->sprite;
 
     created->terrainHeight = object->terrainHeight;
-    Actor_StartScript((struct ActorView *)created, gData_0802ec88);
+    Actor_StartScript(created, gData_0802ec88);
     created->motionFlags = 0;
     if (child != NULL) {
       Animation_ApplyChildArgument((struct ActorSpriteView *)child, 1);

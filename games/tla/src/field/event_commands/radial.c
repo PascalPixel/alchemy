@@ -75,7 +75,7 @@ void BattleEffect_WanderAroundAnchor(struct OrbitEffect *effect) {
     effect->pause = ((Random16() << 4) >> 16) + 8;
   }
   if (++effect->timer == 101)
-    Actor_StartScriptFar((struct ActorView *)effect,
+    Actor_StartScriptFar((struct Actor *)effect,
                          (u32)gBattleEffect_SharedParticleScript);
 }
 

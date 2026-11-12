@@ -115,9 +115,9 @@ void BattleEffect_RunMercuryDjinnCapture(s32 arg) {
       copy->collisionFlags |= 1;
       copy->callback = (void *)Actor_MoveHalfwayTowardTargetCopy;
       copy->facing = djinni->facing;
-      Animation_ApplyChildValuesFar((struct ActorView *)copy, 9);
+      Animation_ApplyChildValuesFar((struct Actor *)copy, 9);
       Actor_SetMode(copy, 0);
-      Actor_SetSingleChildFlagsFar((struct ActorView *)copy, 0);
+      Actor_SetSingleChildFlagsFar((struct Actor *)copy, 0);
       resource = Sprite_ShareVramCacheEntry(copy->sprite, resource);
       copy->linked = previous;
       previous = copy;

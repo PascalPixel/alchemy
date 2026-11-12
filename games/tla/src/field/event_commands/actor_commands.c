@@ -182,8 +182,7 @@ void Actor_OffsetPositionAndReset(u32 objectId, s32 xOffset,
 
   if (object != NULL) {
     object->movementState = 0;
-    Actor_StartScriptFar((struct ActorView *)object,
-                                 (u32)gActor_OffsetScript);
+    Actor_StartScriptFar(object, (u32)gActor_OffsetScript);
     Actor_SetMode(object, 2);
     Actor_SetTargetPosition(object, object->x + (xOffset << 16), object->y,
                        object->z + (zOffset << 16));
@@ -214,8 +213,7 @@ void Func_080d3070(u32 objectId, s32 xOffset, s32 zOffset, s32 action) {
     object->movementState = 0;
     Actor_SetMode(object, 2);
     Actor_OffsetPositionAndResetMotion(objectId, xOffset, zOffset);
-    Actor_StartScriptFar((struct ActorView *)object,
-                                 gData_080f32e0);
+    Actor_StartScriptFar(object, gData_080f32e0);
     object->timer = action;
   }
 }
@@ -380,9 +378,8 @@ void Actor_StartRepeatedMotion(u32 objectId, s32 variant) {
   if (object != NULL && variant > 0) {
     if (variant > 3)
       variant = 3;
-    Actor_StartScriptFar(
-        (struct ActorView *)object,
-        (u32)(gActor_VariantScripts + ((3 - variant) << 7)));
+    Actor_StartScriptFar(object,
+                         (u32)(gActor_VariantScripts + ((3 - variant) << 7)));
   }
 }
 
@@ -434,11 +431,11 @@ void Func_080d3378(struct Actor *source, s32 param) {
     switch (Random16() & 1) {
     case 1:
       Actor_SetMode(object, 2);
-      Actor_StartScriptFar((struct ActorView *)object, Data_080f085c);
+      Actor_StartScriptFar(object, Data_080f085c);
       break;
     default:
       Actor_SetMode(object, 1);
-      Actor_StartScriptFar((struct ActorView *)object, Data_080f0874);
+      Actor_StartScriptFar(object, Data_080f0874);
       break;
     }
 
@@ -603,7 +600,7 @@ void ObjectTable_DestroyById(s32 id) {
 }
 
 void Actor_ConfigureSpriteColor(s32 objectId, s32 value) {
-  struct ActorView *object;
+  struct Actor *object;
 
   object = ObjectTable_Get(objectId);
   if (object != NULL) {
@@ -612,7 +609,7 @@ void Actor_ConfigureSpriteColor(s32 objectId, s32 value) {
       return;
     }
     object->update = NULL;
-    Actor_SetPartAttribute((struct Actor *)object, value);
+    Actor_SetPartAttribute(object, value);
   }
 }
 

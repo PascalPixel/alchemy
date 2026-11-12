@@ -6,10 +6,10 @@
 
 struct EffectSceneWork {
   u8 reserved00[16];
-  struct ActorView *mainObject;
+  struct Actor *mainObject;
 };
 
-void BattleEffect_SetObjectUpdateMode(struct ActorView *object, s32 mode);
+void BattleEffect_SetObjectUpdateMode(struct Actor *object, s32 mode);
 
 void BattleEffect_StopMainActor(void) {
   struct EffectSceneWork *work = Ram_HeapSlots->effectWork;

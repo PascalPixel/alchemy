@@ -3,8 +3,8 @@
 
 #include "types.h"
 #include "system.h"
+#include "actor.h"
 
-struct Actor;
 struct AnimationObject;
 struct AnimationEntry;
 
@@ -30,7 +30,9 @@ struct ActorSpriteView {
 
 struct FieldSprite;
 
-/// An actor as the far calls that start its script and set its sprite take it.
+/// struct Actor as BattleEffect_SetRandomTableValueOnObject and its restorer
+/// read it (age_and_cue.c): as struct Actor, its update hook's type
+/// disagrees with the routine it stores there.
 struct ActorView {
   u32 value00;      ///< the object script's address
   s16 value04;      ///< the script cursor, in words
@@ -64,13 +66,13 @@ s32 Animation_ApplyChildArgument(struct ActorSpriteView *, s32);
 void Animation_ApplyChildValue(struct ActorSpriteView *, s32);
 s32 InitializeAnimationObjects(struct ActorSpriteView *);
 s32 ResourceMetadata_Register(struct ActorSpriteView *, s32);
-void Actor_StartScript(struct ActorView *, const s32 *);
+void Actor_StartScript(struct Actor *, const s32 *);
 void Actor_SetSingleChildFlagsFar(struct Actor *object, u32 flags);
 void Animation_ApplyChildValuesToRecord(struct ActorSpriteView *, u32);
 void Animation_ApplyChildValuesToRecordFar(struct ActorSpriteView *, u32);
-void Animation_ApplyChildValues(struct ActorView *, u32);
-void Animation_ApplyChildValuesFar(struct ActorView *, u32);
-void Actor_SetSpritePriorityDirect(struct ActorView *, s32);
+void Animation_ApplyChildValues(struct Actor *, u32);
+void Animation_ApplyChildValuesFar(struct Actor *, u32);
+void Actor_SetSpritePriorityDirect(struct Actor *, s32);
 
 extern const s32 gActor_CameraScript[];
 extern const s32 gActorScript_EndScript[];

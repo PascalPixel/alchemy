@@ -14,9 +14,9 @@
 extern u32 gData_02003e0c[];
 
 struct ResourceEntry *Func_02003bd4(void *sprite, struct ResourceEntry *last);
-void Actor_SetSingleChildFlags(struct ActorView *object, u32 value);
+void Actor_SetSingleChildFlags(struct Actor *object, u32 value);
 void Func_02003a54(struct FieldEffect *effect, s32 mode);
-void Func_02003a5c(struct ActorView *object, const s32 *script);
+void Func_02003a5c(struct Actor *object, const s32 *script);
 s32 Math_Cosine(s32 angle);
 void Effect_AdvanceMotionAtLeaderPriority(union FieldObject *object);
 

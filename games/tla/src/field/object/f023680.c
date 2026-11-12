@@ -1,29 +1,30 @@
 #include "actor_view.h"
 
-void Animation_SetStateFlags(struct ActorView *object, u32 value) {
-  if (object != NULL && object->kind == 1)
-    object->target.child->stateFlags = value;
+void Animation_SetStateFlags(struct Actor *object, u32 value) {
+  if (object != NULL && object->animationKind == 1)
+    ((struct ActorSpriteView *)object->sprite)->stateFlags = value;
 }
 
-void Animation_SetDisplayFlag(struct ActorView *object, u32 value) {
-  if (object != NULL && object->kind == 1)
-    object->target.child->displayFlag = value;
+void Animation_SetDisplayFlag(struct Actor *object, u32 value) {
+  if (object != NULL && object->animationKind == 1)
+    ((struct ActorSpriteView *)object->sprite)->displayFlag = value;
 }
 
 #include "field_sprite.h"
 
-void Animation_ApplyChildValues(struct ActorView *object, u32 value) {
-  if (object != NULL && object->kind == 1)
-    Animation_ApplyChildValuesToRecord(object->target.child, value);
+void Animation_ApplyChildValues(struct Actor *object, u32 value) {
+  if (object != NULL && object->animationKind == 1)
+    Animation_ApplyChildValuesToRecord(
+        ((struct ActorSpriteView *)object->sprite), value);
 }
 
-void Actor_SetSpritePriorityDirect(struct ActorView *object, s32 priority) {
+void Actor_SetSpritePriorityDirect(struct Actor *object, s32 priority) {
   struct FieldSprite *sprite;
 
-  if (object == NULL || object->kind != 1) {
+  if (object == NULL || object->animationKind != 1) {
     return;
   }
-  sprite = object->target.sprite;
+  sprite = ((struct FieldSprite *)object->sprite);
   sprite->priority = priority;
   sprite->partPriority = priority;
   object->priorityFlags &= ~1;

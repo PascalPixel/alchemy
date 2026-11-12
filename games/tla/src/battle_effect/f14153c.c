@@ -3706,7 +3706,7 @@ void BattleEffect_RunAstralBlast(struct BattleEffectArgument *effect) {
                   Resource_GetTableEntry((s32)&ResourceId_RuneSheet), 128);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, graphics, 0, 0);
   Actor_SetMode(caster, 2);
-  Actor_SetAnimationSpeedFar((struct ActorView *)caster, 48);
+  Actor_SetAnimationSpeedFar(caster, 48);
   BattleEffect_LoadBlitter(
       HEAP_BLITTER, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
   work->transferMode = 2;

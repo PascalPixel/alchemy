@@ -305,7 +305,7 @@ struct OrbitEffect {
 };
 
 s32 Math_Cosine(s32 angle);
-void Func_02003ff4(struct ActorView *obj);
+void Func_02003ff4(struct Actor *obj);
 
 void Func_020009d0(struct OrbitEffect *effect) {
   s32 radius;

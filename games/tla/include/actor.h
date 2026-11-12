@@ -13,7 +13,7 @@ struct ObjectAnimationState {
 /// A field object: its script, position, motion toward a target, sprites and
 /// update hook.
 struct Actor {
-  s32 *script; ///< the object script it runs; null when the object is free
+  const s32 *script; ///< the object script it runs; null when it is free
   s16 step;    ///< the script cursor, in words
   u16 facing;  ///< 1/65536 turns
   s32 x;       ///< 16.16 fixed-point pixels

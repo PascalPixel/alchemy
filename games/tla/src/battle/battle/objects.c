@@ -153,7 +153,7 @@ void BattleObject_UpdatePose(s32 id) {
   }
 
   Actor_SetMode((struct Actor *)BattleObject_Get(id)->object, value);
-  Actor_SetAnimationSpeedFar((struct ActorView *)BattleObject_Get(id)->object,
+  Actor_SetAnimationSpeedFar((struct Actor *)BattleObject_Get(id)->object,
                              (id & 3) + 14);
 }
 
@@ -525,7 +525,7 @@ void BattleMotion_DestroyAllSlotObjects(void) {
     }
     slot = BattleObject_FindSlot(no);
     if ((slot != NULL) && (slot->active != 0)) {
-      Actor_Destroy((struct ActorView *)slot->object);
+      Actor_Destroy((struct Actor *)slot->object);
       slot->object = NULL;
       slot->active = 0;
     }

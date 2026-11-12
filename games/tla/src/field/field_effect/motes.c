@@ -559,7 +559,7 @@ void Actor_ArmCallback(s32 id, s32 angle, s32 frames);
 void Actor_Jump(s32 id, s32 speed, s32 frames);
 s32 Func_080d47b4(s32 actorId, s32 emote, s32 frames);
 struct Actor *Func_080200c0(s32 kind, s32 x, s32 y, s32 z);
-void Animation_ApplyChildValuesFar(struct ActorView *object, u32 value);
+void Animation_ApplyChildValuesFar(struct Actor *object, u32 value);
 void *Sprite_ShareVramCacheEntry(void *sprite, void *last);
 void Motion_SetTargetPositionFromMagnitudeAngle(struct Actor *object,
                                                 s32 magnitude, s32 angle);

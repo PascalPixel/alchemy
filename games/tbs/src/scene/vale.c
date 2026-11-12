@@ -456,24 +456,16 @@ const struct ActorPlacement *Vale_GetActorPlacements(void) {
   return gVale_ActorPlacements;
 }
 
+#include "shared/catch_nut.h"
+
 /// Catch on the Nut in Vale gives it to the party.
 static void Vale_CatchNut(void) {
-  Event_Start();
-  Actor_SetPosition(ACTOR_NUT, 0, 0);
-  GameFlag_Set(FLAG_VALE_NUT_CAUGHT);
-  Item_ShowFound(ITEM_NUT, 3);
-  Party_GiveItem(ITEM_NUT, 0);
-  Event_End();
+  Scene_CatchNut(ACTOR_NUT, FLAG_VALE_NUT_CAUGHT);
 }
 
 /// The same Nut after Kalay, where it is ACTOR_NUT_AFTER_KALAY.
 static void Vale_CatchNutAfterKalay(void) {
-  Event_Start();
-  Actor_SetPosition(ACTOR_NUT_AFTER_KALAY, 0, 0);
-  GameFlag_Set(FLAG_VALE_NUT_CAUGHT);
-  Item_ShowFound(ITEM_NUT, 3);
-  Party_GiveItem(ITEM_NUT, 0);
-  Event_End();
+  Scene_CatchNut(ACTOR_NUT_AFTER_KALAY, FLAG_VALE_NUT_CAUGHT);
 }
 
 /// Vale's triggers for the story so far: before leaving, after leaving, or

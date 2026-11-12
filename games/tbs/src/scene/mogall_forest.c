@@ -700,17 +700,14 @@ static void MogallForest_FirstArea_EastApeShowsWay(void) {
   Event_End();
 }
 
+#include "shared/catch_nut.h"
+
 /// Mogall Forest, the first area: Catch on the Nut floating over the river
 /// brings it to the party.
 ///
 /// Sets FLAG_MOGALL_FOREST_NUT_CAUGHT.
 static void MogallForest_CatchNut(void) {
-  Event_Start();
-  Actor_SetPosition(ACTOR_NUT, 0, 0);
-  GameFlag_Set(FLAG_MOGALL_FOREST_NUT_CAUGHT);
-  ItemDisplay_ShowItem(ITEM_NUT, 3);
-  PartyInventory_GiveItem(ITEM_NUT, 0);
-  Event_End();
+  Scene_CatchNut(ACTOR_NUT, FLAG_MOGALL_FOREST_NUT_CAUGHT);
 }
 
 /// Mogall Forest, the second area: walking into a log (cell behavior 20) pushes

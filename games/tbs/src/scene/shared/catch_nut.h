@@ -1,0 +1,19 @@
+/// @file
+/// The Nuts floating in Vale, Kolima Forest, Mogall Forest, Kalay, Crossbone
+/// Isle, Lunpa and McCoy's Palace.
+#include "types.h"
+#include "event.h"
+#include "item_ids.h"
+
+/// Catch on a floating Nut: the hand takes it off the map, its flag is set so
+/// it stays gone, and the leader holds it up and the party gets it.
+static inline void Scene_CatchNut(s32 actorId, s32 flag) {
+  Event_Start();
+  Actor_SetPosition(actorId, 0, 0);
+  GameFlag_Set(flag);
+  // By their own names: Item_ShowFound and Party_GiveItem are not inlined
+  // inside this inline.
+  ItemDisplay_ShowItem(ITEM_NUT, 3);
+  PartyInventory_GiveItem(ITEM_NUT, 0);
+  Event_End();
+}

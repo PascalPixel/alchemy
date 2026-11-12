@@ -171,14 +171,11 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gLunpaActorPlacements;
 }
 
+#include "shared/catch_nut.h"
+
 /// Lunpa: Catch on the Nut floating over the town gives it to the party.
 static void Lunpa_CatchFloatingNut(void) {
-  Event_Start();
-  Actor_SetPosition(ACTOR_FLOATING_NUT, 0, 0);
-  GameFlag_Set(FLAG_LUNPA_NUT_CAUGHT);
-  ItemDisplay_ShowItem(ITEM_NUT, 3);
-  PartyInventory_GiveItem(ITEM_NUT, 0);
-  Event_End();
+  Scene_CatchNut(ACTOR_FLOATING_NUT, FLAG_LUNPA_NUT_CAUGHT);
 }
 
 /// Restores the cell behaviors of the frozen pillar's three cells,

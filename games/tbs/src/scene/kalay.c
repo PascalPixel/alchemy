@@ -471,15 +471,13 @@ static void Kalay_SearchWell(void) {
   Event_End();
 }
 
+#include "shared/catch_nut.h"
+
 /// Catch at the Kalay Tunnel Entrance pulls in the Nut floating there, until it
 /// is caught (FLAG_KALAY_TUNNEL_ENTRANCE_NUT_CAUGHT).
 static void Kalay_CatchTunnelEntranceNut(void) {
-  Event_Start();
-  Actor_SetPosition(ACTOR_TUNNEL_ENTRANCE_NUT, 0, 0);
-  GameFlag_Set(FLAG_KALAY_TUNNEL_ENTRANCE_NUT_CAUGHT);
-  ItemDisplay_ShowItem(ITEM_NUT, 3);
-  PartyInventory_GiveItem(ITEM_NUT, 0);
-  Event_End();
+  Scene_CatchNut(ACTOR_TUNNEL_ENTRANCE_NUT,
+                 FLAG_KALAY_TUNNEL_ENTRANCE_NUT_CAUGHT);
 }
 
 /// The conversations, exits and Psynergy targets of each scene.

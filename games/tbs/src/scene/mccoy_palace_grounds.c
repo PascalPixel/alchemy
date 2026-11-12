@@ -155,15 +155,12 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gMcCoyPalaceGroundsNoActorPlacements;
 }
 
+#include "shared/catch_nut.h"
+
 /// McCoy's Palace, outside: Catch on the Nut floating over the grounds gives
 /// it to the party.
 static void McCoyPalaceGrounds_CatchFloatingNut(void) {
-  Event_Start();
-  Actor_SetPosition(ACTOR_FLOATING_NUT, 0, 0);
-  GameFlag_Set(FLAG_MCCOY_PALACE_GROUNDS_NUT_CAUGHT);
-  Item_ShowFound(ITEM_NUT, 3);
-  Party_GiveItem(ITEM_NUT, 0);
-  Event_End();
+  Scene_CatchNut(ACTOR_FLOATING_NUT, FLAG_MCCOY_PALACE_GROUNDS_NUT_CAUGHT);
 }
 
 /// McCoy's Palace, outside: searching the dry well.

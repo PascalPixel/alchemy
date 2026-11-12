@@ -367,15 +367,12 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gCrossboneIsle_CorridorTriggers;
 }
 
+#include "shared/catch_nut.h"
+
 /// Catch on the Nut circling on Crossbone Isle: the party gets it
 /// (FLAG_CROSSBONE_ISLE_NUT_CAUGHT).
 static void CrossboneIsle_CatchNut(void) {
-  Event_Start();
-  Actor_SetPosition(ACTOR_ISLE_NUT, 0, 0);
-  GameFlag_Set(FLAG_CROSSBONE_ISLE_NUT_CAUGHT);
-  Item_ShowFound(ITEM_NUT, 3);
-  Party_GiveItem(ITEM_NUT, 0);
-  Event_End();
+  Scene_CatchNut(ACTOR_ISLE_NUT, FLAG_CROSSBONE_ISLE_NUT_CAUGHT);
 }
 
 /// Restores each scene's puzzles from its flags.

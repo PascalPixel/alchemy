@@ -88,16 +88,13 @@ static void KolimaForestGlade_PushLog(void) {
   Event_End();
 }
 
+#include "shared/catch_nut.h"
+
 /// In Kolima Forest (SceneId_KolimaForestGlade), Catch on the floating Nut
 /// makes it vanish, and the party finds a Nut. This works until
 /// FLAG_KOLIMA_FOREST_NUT_CAUGHT.
 static void KolimaForestGlade_CatchNut(void) {
-  Event_Start();
-  Actor_SetPosition(ACTOR_NUT, 0, 0);
-  GameFlag_Set(FLAG_KOLIMA_FOREST_NUT_CAUGHT);
-  ItemDisplay_ShowItem(ITEM_NUT, 3);
-  PartyInventory_GiveItem(ITEM_NUT, 0);
-  Event_End();
+  Scene_CatchNut(ACTOR_NUT, FLAG_KOLIMA_FOREST_NUT_CAUGHT);
 }
 
 /// The logs, the Nut and the two ways out.

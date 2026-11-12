@@ -10,9 +10,9 @@
                        TITAN_BLADE_DUST * sizeof(struct Particle)))
 
 #define TITAN_BLADE_FRAMES 102
-#define TITAN_BLADE_SWORD_IMAGE 20000 ///< the sword picture in the sheet
-#define TITAN_BLADE_FLASHES 32        ///< flashes scattered
-#define TITAN_BLADE_RING 16           ///< of which drawn as the ring
+#define TITAN_BLADE_SWORD_PICTURE 20000 ///< the sword picture in the sheet
+#define TITAN_BLADE_FLASHES 32          ///< flashes scattered
+#define TITAN_BLADE_RING 16             ///< of which drawn as the ring
 #define TITAN_BLADE_DUST 684 ///< dust slots in PARTICLES, before the sparks
 #define TITAN_BLADE_FIRST_DUST 256 ///< dust lit at once on frame 28
 #define TITAN_BLADE_DRAWN_DUST 342 ///< dust moved and drawn
@@ -66,7 +66,7 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
   blitters[1] = slots[HEAP_SLOT_RAM_CODE_2 - HEAP_SLOT_BATTLE_EFFECT];
 
   Resource_LoadAndDecompress((s32)&ResourceId_SwordSheet,
-                             work->sheet + TITAN_BLADE_SWORD_IMAGE, 1, 1);
+                             work->sheet + TITAN_BLADE_SWORD_PICTURE, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_FirePillarSheetA, work->sheet, 1,
                              0);
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
@@ -312,7 +312,7 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
         high = high - top - 12;
       }
       if (high > 0) {
-        blitters[1](canvas, work->sheet + TITAN_BLADE_SWORD_IMAGE, x, top, 36,
+        blitters[1](canvas, work->sheet + TITAN_BLADE_SWORD_PICTURE, x, top, 36,
                     high);
       }
     }
@@ -384,7 +384,7 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
 
 #undef TITAN_BLADE_SWORD_SPARKS
 #undef TITAN_BLADE_FRAMES
-#undef TITAN_BLADE_SWORD_IMAGE
+#undef TITAN_BLADE_SWORD_PICTURE
 #undef TITAN_BLADE_FLASHES
 #undef TITAN_BLADE_RING
 #undef TITAN_BLADE_DUST

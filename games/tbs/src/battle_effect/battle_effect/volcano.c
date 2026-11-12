@@ -16,8 +16,8 @@
 #define VOLCANO_TRICKLE 4       ///< and each frame after
 #define VOLCANO_SPARK_POOL 1024 ///< sparks in PARTICLES
 /// The flame on odd frames, then on even frames, after the 34x104 column.
-#define VOLCANO_FLAME_IMAGE_ODD (34 * 104)
-#define VOLCANO_FLAME_IMAGE_EVEN (VOLCANO_FLAME_IMAGE_ODD + 20 * 37)
+#define VOLCANO_FLAME_PICTURE_ODD (34 * 104)
+#define VOLCANO_FLAME_PICTURE_EVEN (VOLCANO_FLAME_PICTURE_ODD + 20 * 37)
 
 /// One, two or four columns of fire (gVolcano_Counts by args->variant) rise
 /// among the targets, at the depths of gVolcano_Depths, starting at
@@ -125,14 +125,14 @@ void BattleEffect_RunVolcano(struct BattleEffectParams *args) {
           draw[pillar & 1](canvas, work->sheet, screen.x - 17,
                            screen.y - scroll, 34, scroll);
           if (frame & 1) {
-            draw[0](canvas, work->sheet + VOLCANO_FLAME_IMAGE_ODD,
+            draw[0](canvas, work->sheet + VOLCANO_FLAME_PICTURE_ODD,
                     screen.x - 20, screen.y - 24, 20, 37);
-            draw[1](canvas, work->sheet + VOLCANO_FLAME_IMAGE_ODD, screen.x,
+            draw[1](canvas, work->sheet + VOLCANO_FLAME_PICTURE_ODD, screen.x,
                     screen.y - 24, 20, 37);
           } else {
-            draw[0](canvas, work->sheet + VOLCANO_FLAME_IMAGE_EVEN,
+            draw[0](canvas, work->sheet + VOLCANO_FLAME_PICTURE_EVEN,
                     screen.x - 20, screen.y - 24, 20, 37);
-            draw[1](canvas, work->sheet + VOLCANO_FLAME_IMAGE_EVEN, screen.x,
+            draw[1](canvas, work->sheet + VOLCANO_FLAME_PICTURE_EVEN, screen.x,
                     screen.y - 24, 20, 37);
           }
         }
@@ -225,5 +225,5 @@ void BattleEffect_RunVolcano(struct BattleEffectParams *args) {
 #undef VOLCANO_ERUPTION
 #undef VOLCANO_TRICKLE
 #undef VOLCANO_SPARK_POOL
-#undef VOLCANO_FLAME_IMAGE_ODD
-#undef VOLCANO_FLAME_IMAGE_EVEN
+#undef VOLCANO_FLAME_PICTURE_ODD
+#undef VOLCANO_FLAME_PICTURE_EVEN

@@ -15,7 +15,7 @@
 
 #define PLASMA_SPACING 8 ///< frames between pillars
 /// The second picture in the sheet, after the first 48x112 one.
-#define PLASMA_SECOND_IMAGE (48 * 112)
+#define PLASMA_SECOND_PICTURE (48 * 112)
 
 /// gPlasma_Columns has seven pillars for each side.
 #define PLASMA_COLUMN_X(side, pillar) gPlasma_Columns[(side)][(pillar)]
@@ -122,7 +122,7 @@ void BattleEffect_RunPlasma(struct BattleEffectParams *args) {
           draw[0](canvas, work->sheet,
                   PLASMA_COLUMN_X(work->args->side, i) - 24, 0, 48, 112);
         if (frame >= start + 2 && frame < start + 4)
-          draw[0](canvas, work->sheet + PLASMA_SECOND_IMAGE,
+          draw[0](canvas, work->sheet + PLASMA_SECOND_PICTURE,
                   PLASMA_COLUMN_X(work->args->side, i) - 24, 0, 48, 112);
 
         // Throw sparks from the pillar's foot (y 104), anywhere in the
@@ -484,7 +484,7 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 mode) {
 
 #undef PLASMA_SPARK_COUNT
 #undef PLASMA_SPACING
-#undef PLASMA_SECOND_IMAGE
+#undef PLASMA_SECOND_PICTURE
 #undef PLASMA_COLUMN_X
 #undef SPARK_GROUPS_FLASHES
 #undef SPARK_GROUPS_SPACING

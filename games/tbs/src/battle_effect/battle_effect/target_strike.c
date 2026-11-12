@@ -20,14 +20,14 @@
 
 /// The columns of gTargetStrike_Styles.
 enum {
-  TARGET_STRIKE_KIND,         ///< STRIKE_KIND_SLASH or STRIKE_KIND_BITE
-  TARGET_STRIKE_HITS,         ///< how many times the target is struck
-  TARGET_STRIKE_FLAGS,        ///< STRIKE_SMOKE and so on
-  TARGET_STRIKE_COLOR,        ///< background palette, a STRIKE_COLOR_
-  TARGET_STRIKE_IMAGE_FRAMES, ///< frames each strike image is shown
-  TARGET_STRIKE_COMPOSITE,    ///< how the fangs are drawn (COMPOSITE_LIGHTEN or
-                              ///< _ADDITIVE)
-  TARGET_STRIKE_FRAMES        ///< length of the effect in frames
+  TARGET_STRIKE_KIND,           ///< STRIKE_KIND_SLASH or STRIKE_KIND_BITE
+  TARGET_STRIKE_HITS,           ///< how many times the target is struck
+  TARGET_STRIKE_FLAGS,          ///< STRIKE_SMOKE and so on
+  TARGET_STRIKE_COLOR,          ///< background palette, a STRIKE_COLOR_
+  TARGET_STRIKE_PICTURE_FRAMES, ///< frames each strike picture is shown
+  TARGET_STRIKE_COMPOSITE, ///< how the fangs are drawn (COMPOSITE_LIGHTEN or
+                           ///< _ADDITIVE)
+  TARGET_STRIKE_FRAMES     ///< length of the effect in frames
 };
 // STRIKE_KIND_*, the STRIKE_SMOKE flags, the STRIKE_COLOR_ palettes and enum
 // TargetStrikeStyle are in battle_effect_table.h.
@@ -266,9 +266,9 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
        frame++) {
     // Frame loop: the strike, then glints, then smoke, motes and sparks,
     // each drawn over the last. Hit n lights particle group n, found as
-    // frame / (6 * IMAGE_FRAMES).
+    // frame / (6 * PICTURE_FRAMES).
     s32 span = TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_HITS) *
-               TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_IMAGE_FRAMES);
+               TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_PICTURE_FRAMES);
     s32 length = span * 4;
     s32 glint = 0;
 
@@ -277,7 +277,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
       // once per hit; the fifth image of each sweep is the hit.
       if (frame < span * 6) {
         s32 picture =
-            frame / TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_IMAGE_FRAMES) % 6;
+            frame / TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_PICTURE_FRAMES) % 6;
 
         // The picture's left edge stands Reach / 2 - 8 pixels right of the
         // target's centre, 21 for the first picture down to -8 for the last,
@@ -304,8 +304,8 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
         }
         HeapSlot_Release(HEAP_SLOT_RAM_CODE);
         if (frame %
-                (TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_IMAGE_FRAMES) * 6) ==
-            TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_IMAGE_FRAMES) * 4) {
+                (TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_PICTURE_FRAMES) * 6) ==
+            TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_PICTURE_FRAMES) * 4) {
           if (mode == TARGET_STRIKE_STYLE_MARS_HEAVY_SLASH) {
             EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
           } else {
@@ -329,7 +329,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
                   &TARGET_STRIKE_SPARKS[frame /
                                             (TARGET_STRIKE_VALUE(
                                                  mode,
-                                                 TARGET_STRIKE_IMAGE_FRAMES) *
+                                                 TARGET_STRIKE_PICTURE_FRAMES) *
                                              6) *
                                             32 +
                                         i];
@@ -341,7 +341,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
             struct Particle *step =
                 &work->particles[frame /
                                      (TARGET_STRIKE_VALUE(
-                                          mode, TARGET_STRIKE_IMAGE_FRAMES) *
+                                          mode, TARGET_STRIKE_PICTURE_FRAMES) *
                                       6) *
                                      16 +
                                  i];
@@ -362,7 +362,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
 
       if (frame < length) {
         s32 picture =
-            frame / TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_IMAGE_FRAMES);
+            frame / TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_PICTURE_FRAMES);
 
         // Pictures above 4 wrap back by 4, so each later hit reads pictures
         // 4, 1, 2 and 3 (gTargetStrike_BiteStages).
@@ -385,12 +385,13 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
           canvas, work->sheet + stage * (18 * 48) + 3200, targetPosition.x / 2,
           56, 18, 48);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-      if (frame % (TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_IMAGE_FRAMES) * 4) ==
-          TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_IMAGE_FRAMES) * 3) {
+      if (frame %
+              (TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_PICTURE_FRAMES) * 4) ==
+          TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_PICTURE_FRAMES) * 3) {
         // A hit: the target flashes; the last hit lets the battle show the
         // damage, the others only play the hit sound. Each hit lights a
         // group of 64 sparks, 8 smoke puffs and 16 motes.
-        // The group is frame / (6 * IMAGE_FRAMES), a slash's period, though
+        // The group is frame / (6 * PICTURE_FRAMES), a slash's period, though
         // bite hits are four images apart, so a three-hit bite's third
         // hit relights its second's group. Lighting sets only the lives, not
         // the positions, so the third hit throws nothing new: Acid Bite's
@@ -400,7 +401,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
                                  POSE_DAMAGE, 0, 8);
         work->shakeFrames = 4;
         if (frame > (TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_HITS) * 4 - 4) *
-                        TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_IMAGE_FRAMES))
+                        TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_PICTURE_FRAMES))
           EFFECT_SHOW_DAMAGE(SE_IMPACT);
         else
           Sound_PlayFar(SE_IMPACT);
@@ -408,7 +409,8 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
           struct Particle *step =
               &TARGET_STRIKE_SPARKS[frame /
                                         (TARGET_STRIKE_VALUE(
-                                             mode, TARGET_STRIKE_IMAGE_FRAMES) *
+                                             mode,
+                                             TARGET_STRIKE_PICTURE_FRAMES) *
                                          6) *
                                         64 +
                                     i];
@@ -419,7 +421,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
           struct Particle *step =
               &work->particles[frame /
                                    (TARGET_STRIKE_VALUE(
-                                        mode, TARGET_STRIKE_IMAGE_FRAMES) *
+                                        mode, TARGET_STRIKE_PICTURE_FRAMES) *
                                     6) *
                                    16 +
                                i];
@@ -428,7 +430,8 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
         }
         for (i = 0; i != 16; i++)
           PARTICLES[frame /
-                        (TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_IMAGE_FRAMES) *
+                        (TARGET_STRIKE_VALUE(mode,
+                                             TARGET_STRIKE_PICTURE_FRAMES) *
                          6) *
                         16 +
                     i]

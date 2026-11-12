@@ -140,10 +140,10 @@ enum CastingImpact {
 #define ASURA_SHEET_SWUNG (80 * 96)
 #define ASURA_SHEET_CRESCENT (ASURA_SHEET_SWUNG + 80 * 104)
 
-/// Where Mortal Danger draws `image`, one of the reaper's seven pictures
+/// Where Mortal Danger draws `picture`, one of the reaper's seven pictures
 /// (REAPER_PICTURE_X), for the casting `side`.
-#define CASTING_IMPACT_IMAGE_X(side, image)                                    \
-  gCastingImpact_ImageX[(side)][(image)]
+#define CASTING_IMPACT_PICTURE_X(side, picture)                                \
+  gCastingImpact_PictureX[(side)][(picture)]
 
 /// Gathers sparks around the caster, launches the Djinni and draws the
 /// impact on the first target.
@@ -1056,45 +1056,45 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
       imageY = (targetScreen->y >> 16) + sway + 16;
       if (frame <= 3) {
         blitters[0](canvas, work->sheet,
-                    CASTING_IMPACT_IMAGE_X(work->args->side, 0),
-                    imageY + gCastingImpact_ImageY[0], 57, 98);
+                    CASTING_IMPACT_PICTURE_X(work->args->side, 0),
+                    imageY + gCastingImpact_PictureY[0], 57, 98);
       } else {
         if (frame <= 7) {
           blitters[0](canvas, work->sheet,
-                      CASTING_IMPACT_IMAGE_X(work->args->side, 0),
-                      imageY + gCastingImpact_ImageY[0], 57, 98);
+                      CASTING_IMPACT_PICTURE_X(work->args->side, 0),
+                      imageY + gCastingImpact_PictureY[0], 57, 98);
         }
         blitters[0](canvas, work->sheet + REAPER_SHEET_SWUNG,
-                    CASTING_IMPACT_IMAGE_X(work->args->side, 1),
-                    imageY + gCastingImpact_ImageY[1], 99, 69);
+                    CASTING_IMPACT_PICTURE_X(work->args->side, 1),
+                    imageY + gCastingImpact_PictureY[1], 99, 69);
         if (frame == 4 || frame == 5) {
           Iwram_FillWords(canvas, CANVAS_BYTES,
                           CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
         }
         if (frame == 6 || frame == 7) {
           blitters[0](canvas, work->sheet + REAPER_SHEET_CRESCENT,
-                      CASTING_IMPACT_IMAGE_X(work->args->side, 2),
-                      imageY + gCastingImpact_ImageY[2], 128, 91);
+                      CASTING_IMPACT_PICTURE_X(work->args->side, 2),
+                      imageY + gCastingImpact_PictureY[2], 128, 91);
         }
         if (frame == 8 || frame == 9) {
           blitters[0](canvas, pictures + RED_CRESCENT_FADE_1,
-                      CASTING_IMPACT_IMAGE_X(work->args->side, 3),
-                      imageY + gCastingImpact_ImageY[3], 128, 91);
+                      CASTING_IMPACT_PICTURE_X(work->args->side, 3),
+                      imageY + gCastingImpact_PictureY[3], 128, 91);
         }
         if (frame == 10 || frame == 11) {
           blitters[0](canvas, pictures + RED_CRESCENT_FADE_2,
-                      CASTING_IMPACT_IMAGE_X(work->args->side, 4),
-                      imageY + gCastingImpact_ImageY[4], 128, 59);
+                      CASTING_IMPACT_PICTURE_X(work->args->side, 4),
+                      imageY + gCastingImpact_PictureY[4], 128, 59);
         }
         if (frame == 12 || frame == 13) {
           blitters[0](canvas, pictures + RED_CRESCENT_FADE_3,
-                      CASTING_IMPACT_IMAGE_X(work->args->side, 5),
-                      imageY + gCastingImpact_ImageY[5], 122, 29);
+                      CASTING_IMPACT_PICTURE_X(work->args->side, 5),
+                      imageY + gCastingImpact_PictureY[5], 122, 29);
         }
         if (frame == 14 || frame == 15) {
           blitters[0](canvas, pictures + RED_CRESCENT_FADE_4,
-                      CASTING_IMPACT_IMAGE_X(work->args->side, 6),
-                      imageY + gCastingImpact_ImageY[6], 76, 25);
+                      CASTING_IMPACT_PICTURE_X(work->args->side, 6),
+                      imageY + gCastingImpact_PictureY[6], 76, 25);
         }
       }
     } else if (mode == CASTING_IMPACT_IMPACT_ASURA) {
@@ -1406,4 +1406,4 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
 #undef CASTING_IMPACT_SPARKS
 #undef CASTING_IMPACT_IMPACT_PARTICLES
 #undef CASTING_IMPACT_IMPACT_PARTICLE_COUNT
-#undef CASTING_IMPACT_IMAGE_X
+#undef CASTING_IMPACT_PICTURE_X

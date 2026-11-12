@@ -126,7 +126,7 @@ s8 gStreaks_Tremble[] = {-1, -1, 1, 1, 1, 1, -1, -1};
 /// (target_strike.c).
 // clang-format off
 u8 gTargetStrike_Styles[][7] = {
-    // TARGET_STRIKE_: KIND, HITS, FLAGS, COLOUR, IMAGE_FRAMES, COMPOSITE,
+    // TARGET_STRIKE_: KIND, HITS, FLAGS, COLOUR, PICTURE_FRAMES, COMPOSITE,
     // FRAMES
     [TARGET_STRIKE_STYLE_BLUE_SPARK_BITES] =
         {STRIKE_KIND_BITE, 2, STRIKE_SPARKS, STRIKE_COLOR_BLUE, 6, COMPOSITE_ADDITIVE, 70},
@@ -1014,8 +1014,8 @@ u8 gBeam_PictureReaches[] = SLASH_PICTURE_REACH;
 
 /// The flips a glint may take, picked at random.
 u8 gCastingImpact_GlintDrawFlags[] = GLINT_FLIPS;
-u8 gCastingImpact_ImageX[][7] = REAPER_PICTURE_X;
-u8 gCastingImpact_ImageY[] = REAPER_PICTURE_Y;
+u8 gCastingImpact_PictureX[][7] = REAPER_PICTURE_X;
+u8 gCastingImpact_PictureY[] = REAPER_PICTURE_Y;
 /// The four ice chip pictures, 8x8.
 u16 gCastingImpact_IceChipPictures[] = {2308, 2372, 2436, 2500, 0};
 

@@ -39,7 +39,7 @@ void BattleEffect_RunTiamat(struct BattleEffectParams *args) {
 #define DRAGON_FIRE_BREATH 24      ///< puffs of breath, work->particles 0 to 23
 #define DRAGON_FIRE_SPARKS 24      ///< sparks, work->particles 40 to 63
 /// The flames a fireball burns with where it lands, in the sheet.
-#define DRAGON_FIRE_FLAME_IMAGES 12288
+#define DRAGON_FIRE_FLAME_PICTURES 12288
 
 /// Fireballs rain on the targets and burn where they land while embers rise
 /// from the ground; pressing A or B during frames 49 to 159 skips to frame 160.
@@ -109,7 +109,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
   Decompress_TaggedLz(palette, work->sheet);
   palette = Resource_GetTableEntry((s32)&ResourceId_EmberStreakSheet);
   palette += 128;
-  Decompress_TaggedLz(palette, work->sheet + DRAGON_FIRE_FLAME_IMAGES);
+  Decompress_TaggedLz(palette, work->sheet + DRAGON_FIRE_FLAME_PICTURES);
   Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA),
                       sheet);
   if (mode == DRAGON_FIRE_DRAGON_DRIVER)
@@ -426,7 +426,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
 
             draw[0](canvas,
                     work->sheet + gTiamat_FlamePictures[picture] +
-                        DRAGON_FIRE_FLAME_IMAGES,
+                        DRAGON_FIRE_FLAME_PICTURES,
                     fireball->x - gTiamat_FlameWidths[picture] / 2,
                     fireball->y + gTiamat_FlameDrops[picture],
                     gTiamat_FlameWidths[picture],
@@ -473,4 +473,4 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
 #undef DRAGON_FIRE_EMBERS
 #undef DRAGON_FIRE_BREATH
 #undef DRAGON_FIRE_SPARKS
-#undef DRAGON_FIRE_FLAME_IMAGES
+#undef DRAGON_FIRE_FLAME_PICTURES

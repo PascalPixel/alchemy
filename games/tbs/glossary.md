@@ -565,6 +565,7 @@ A picture is one drawing in a [sprite animation](#sprite-animation) or in
 the animation of a map's tiles, such as one pose of Isaac's walk. It is
 shown for a number of [frames](#frame) before the next one takes its place
 ([Field code](src/field/README.md#sprites-and-their-animation)).
+Picture is the one word for a single drawing on a sheet of drawings.
 
 Evidence: plain English; the time's パターン and コマ each mean other things too.
 

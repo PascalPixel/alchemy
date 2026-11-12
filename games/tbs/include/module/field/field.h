@@ -478,7 +478,7 @@ void WorldMap_BuildScanlineTable(s32 depth, s32 *position,
                                  struct WorldMapScanline *scanline);
 
 void SpriteViewer_Run(void);
-s32 SpriteViewer_FindNextSpriteWithImage(s32 spriteId, s32 direction);
+s32 SpriteViewer_FindNextSpriteWithPictures(s32 spriteId, s32 direction);
 void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
                                  struct SpritePlacement *positions);
 void SpriteViewer_StartStaggeredAnimations(s32 layerIndex, s32 animationIndex);

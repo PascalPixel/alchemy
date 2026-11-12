@@ -89,7 +89,7 @@ void SpriteViewer_Run(void) {
 
   // All four sprite animations start on the first sprite with an image,
   // animation 1, priority 1; only sprite animation 0 is shown.
-  spriteId = SpriteViewer_FindNextSpriteWithImage(-1, 1);
+  spriteId = SpriteViewer_FindNextSpriteWithPictures(-1, 1);
   for (i = 0; i < ANIM_LAYER_COUNT; i++) {
     layers[i].animationIndex = 1;
     layers[i].priority = 1;
@@ -259,15 +259,17 @@ next:
       }
       if ((*repeatedKeys & KEY_L) != 0) {
         for (i = 0; i < spriteSteps; i++) {
-          layers[selectedLayer].spriteId = SpriteViewer_FindNextSpriteWithImage(
-              layers[selectedLayer].spriteId, -1);
+          layers[selectedLayer].spriteId =
+              SpriteViewer_FindNextSpriteWithPictures(
+                  layers[selectedLayer].spriteId, -1);
         }
         changed = 1;
       }
       if ((*repeatedKeys & KEY_R) != 0) {
         for (i = 0; i < spriteSteps; i++) {
-          layers[selectedLayer].spriteId = SpriteViewer_FindNextSpriteWithImage(
-              layers[selectedLayer].spriteId, 1);
+          layers[selectedLayer].spriteId =
+              SpriteViewer_FindNextSpriteWithPictures(
+                  layers[selectedLayer].spriteId, 1);
         }
         changed = 1;
       }
@@ -398,7 +400,7 @@ next:
 /// Returns the next sprite id after spriteId, stepping by direction (1 or
 /// -1) and wrapping within 0-511, whose metadata has an image (a nonzero
 /// width). Called by SpriteViewer_Run.
-s32 SpriteViewer_FindNextSpriteWithImage(s32 spriteId, s32 direction) {
+s32 SpriteViewer_FindNextSpriteWithPictures(s32 spriteId, s32 direction) {
   for (;;) {
     spriteId += direction;
     // Past either end, jump to just beyond the other, so the next step

@@ -15,8 +15,8 @@
 /// Wrapping columns of water; gNereid_Columns has a fourth row that nothing
 /// draws.
 #define NEREID_COLUMNS 3
-#define NEREID_DROPS 1024        ///< drops of spray in PARTICLES
-#define NEREID_COLUMN_IMAGE 1764 ///< the column of water in the sheet
+#define NEREID_DROPS 1024          ///< drops of spray in PARTICLES
+#define NEREID_COLUMN_PICTURE 1764 ///< the column of water in the sheet
 
 /// Nereid rides in on her turtle over rising waves, columns of water and spray
 /// rise over the targets, and she bursts away.
@@ -65,7 +65,7 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
   Decompress_TaggedLz(palette, work->sheet);
   palette = Resource_GetTableEntry((s32)&ResourceId_FirePillarSheetA);
   palette += 128;
-  Decompress_TaggedLz(palette, work->sheet + NEREID_COLUMN_IMAGE);
+  Decompress_TaggedLz(palette, work->sheet + NEREID_COLUMN_PICTURE);
   Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA),
                       graphics);
   // Trails keep 75% of each pixel a frame.
@@ -175,10 +175,10 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
         for (k = 0; k != NEREID_COLUMNS; k++) {
           s32 span = (frame * 16 - 256 + k * 25) % 104;
 
-          draw[0](canvas, work->sheet + NEREID_COLUMN_IMAGE,
+          draw[0](canvas, work->sheet + NEREID_COLUMN_PICTURE,
                   gNereid_Columns[k][NEREID_COLUMN_X] - 17,
                   gNereid_Columns[k][NEREID_COLUMN_Y] - span - 104, 34, 104);
-          draw[0](canvas, work->sheet + NEREID_COLUMN_IMAGE,
+          draw[0](canvas, work->sheet + NEREID_COLUMN_PICTURE,
                   gNereid_Columns[k][NEREID_COLUMN_X] - 17,
                   gNereid_Columns[k][NEREID_COLUMN_Y] - span, 34, span);
         }
@@ -264,4 +264,4 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
 #undef NEREID_OBJECTS
 #undef NEREID_COLUMNS
 #undef NEREID_DROPS
-#undef NEREID_COLUMN_IMAGE
+#undef NEREID_COLUMN_PICTURE

@@ -768,18 +768,22 @@ void MapGrid_PlayMapEdit(u16 *steps, s32 destinationX, u32 destinationY) {
   struct MapGridCellAnimationStep *copyCommand =
       (struct MapGridCellAnimationStep *)steps;
   u32 sourceX = copyCommand->source;
-  u32 endMarker = MAPGRID_ANIMATION_STEPS_END;
+  /* FAKEMATCH(temporary): firstSourceCopy copies sourceX for the first test;
+   * as sourceX there, 5 of 53 instructions differ in tbs-en. */
   u32 firstSourceCopy = sourceX;
 
   /* FAKEMATCH(dead): the updates that cancel out emit nothing but end CSE
    * before the comparison, keeping its ip copy while source stays in r0;
-   * without them, 2 of 53 instructions differ in tbs-en. */
+   * without them, 5 of 53 instructions differ in tbs-en. */
   if (copyCommand) {
     sourceX ^= firstSourceCopy;
     sourceX ^= firstSourceCopy;
   }
-  if (firstSourceCopy != endMarker) {
-    u32 endMarkerCopy = endMarker;
+  if (firstSourceCopy != MAPGRID_ANIMATION_STEPS_END) {
+    /* FAKEMATCH(temporary): endMarker holds the one constant the loop
+     * compares with; as MAPGRID_ANIMATION_STEPS_END there, 30 of 53
+     * instructions differ in tbs-en. */
+    u32 endMarker = MAPGRID_ANIMATION_STEPS_END;
     s16 *rectangleArgs = (s16 *)(steps + 1);
 
     while (1) {
@@ -802,6 +806,8 @@ void MapGrid_PlayMapEdit(u16 *steps, s32 destinationX, u32 destinationY) {
         sourceX--;
       }
       {
+        /* FAKEMATCH(temporary): nextSourceCopy copies sourceX for the test;
+         * as sourceX there, 9 of 53 instructions differ in tbs-en. */
         u32 nextSourceCopy = sourceX;
 
         /* FAKEMATCH(dead): updates that cancel out after the copy end CSE's
@@ -811,7 +817,7 @@ void MapGrid_PlayMapEdit(u16 *steps, s32 destinationX, u32 destinationY) {
           sourceX++;
           sourceX--;
         }
-        if (nextSourceCopy == endMarkerCopy)
+        if (nextSourceCopy == endMarker)
           break;
       }
     }

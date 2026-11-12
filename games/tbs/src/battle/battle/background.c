@@ -188,7 +188,7 @@ void BattleBackground_Load(s32 mode, s32 resourceId, s32 level) {
 
     /* FAKEMATCH(dead): two updates that cancel, under a test that emits
      * nothing, end a CSE block so the VRAM address loads before the data's
-     * add; without them, 2 of 103 instructions differ in tbs-en. */
+     * add; without them, 4 of 103 instructions differ in tbs-en. */
     if (battle) {
       offset++;
       offset--;

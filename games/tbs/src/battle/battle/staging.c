@@ -479,7 +479,7 @@ s32 BattleStaging_RunAttack(struct BattleActionRun *plan, s32 mode) {
 
     /* FAKEMATCH(dead): plan cleared and restored under tests that emit
      * nothing, ending a CSE block so the first read of plan reloads it;
-     * without them, 5 of 289 instructions differ in tbs-en. */
+     * without them, 17 of 289 instructions differ in tbs-en. */
     if (view)
       plan = NULL;
     if (view)

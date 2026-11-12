@@ -38,6 +38,26 @@ enum FieldShortcutKind {
 /// A shortcut key's request id: the assignment's low 14 bits, below its kind.
 #define FIELD_SHORTCUT_ID_MASK 0x3fff
 
+/// What stopped the leader's step this frame (Actor_UpdatePlayerControl,
+/// Actor_MoveOnWorldMap). A step blocked either way counts towards
+/// gFieldWork->blockedSteps, which the step triggers that need pushing, the
+/// ledges and the jumps wait on.
+enum PlayerStepBlock {
+  PLAYER_STEP_BLOCKED_BY_MAP = 1, ///< every heading tried runs into the map
+  /// A solid actor ahead, or one with no room to be pushed.
+  PLAYER_STEP_BLOCKED_BY_ACTOR = 2,
+  PLAYER_STEP_BLOCKED = 3,     ///< either of the two
+  PLAYER_STEP_NO_DIRECTION = 4 ///< the direction pad is not held
+};
+
+/// FIELD_SPRITE_FOOTPRINT's animations (spr_025.png), and the leader's
+/// userValue that asks for the pair next.
+enum FootprintAnimation {
+  FOOTPRINT_ONE_FOOT = 1, ///< one print, fading
+  /// Two prints side by side, fading: laid first after a stop.
+  FOOTPRINT_BOTH_FEET = 2
+};
+
 /// Unused: stores value as a word in the actor's update routine.
 UNUSED void Actor_SetUpdateValue(void *rawActor, s32 value) {
   struct Actor *actor = rawActor;
@@ -224,31 +244,29 @@ s32 Actor_UpdatePlayerControl(struct Actor *interpreter) {
         goto wait_d;
     }
   }
-  // Walk, or run with the dash keys (animation 5 instead of 2); with
-  // FLAG_FAST_WALK, B moves faster still.
+  // Walk, or run with the dash keys; with FLAG_FAST_WALK, B moves faster
+  // still.
   if (gKeysHeld & gMainRoutineWork.dashKeys) {
     actor->speedLimit = FIELD_RUN_SPEED;
     actor->acceleration = FIELD_ACCELERATION;
-    movementAnimation = 5;
+    movementAnimation = ANIM_LEADER_RUN;
   } else {
     actor->speedLimit = FIELD_WALK_SPEED;
     actor->acceleration = FIELD_ACCELERATION;
-    movementAnimation = 2;
+    movementAnimation = ANIM_WALK;
   }
   if (GameFlag_GetFar(FLAG_FAST_WALK) != 0 && (gKeysHeld & KEY_B)) {
     actor->speedLimit = FIELD_FAST_WALK_SPEED;
     actor->acceleration = FIELD_FAST_WALK_ACCELERATION;
-    movementAnimation = 5;
+    movementAnimation = ANIM_LEADER_RUN;
   }
 
   // Step 8 pixels the way the direction pad points, when that step and the
   // ones 22.5 and 45 degrees either side are clear (debug L walks through
-  // walls); otherwise try headings up to 67.5 degrees off. Bit 2 of
-  // collision means no direction is held, bit 0 that every heading is
-  // blocked.
+  // walls); otherwise try headings up to 67.5 degrees off.
   angle = gWorldMap_KeyHeadings[(gKeysHeld >> 4) & 15];
   if ((u16)angle == WORLD_MAP_KEY_HEADING_NONE) {
-    collision |= 4;
+    collision |= PLAYER_STEP_NO_DIRECTION;
   } else {
     collision = 0;
     position.x = actor->x.fixed;
@@ -344,7 +362,7 @@ s32 Actor_UpdatePlayerControl(struct Actor *interpreter) {
       position.x = actor->x.fixed;
       position.y = actor->y.fixed;
       position.z = actor->z.fixed;
-      collision |= 1;
+      collision |= PLAYER_STEP_BLOCKED_BY_MAP;
 
     push_objects:
       // Push the movable actors (ACTOR_PUSHABLE) just ahead 4 pixels
@@ -417,7 +435,7 @@ s32 Actor_UpdatePlayerControl(struct Actor *interpreter) {
             }
           }
         }
-        collision |= 2;
+        collision |= PLAYER_STEP_BLOCKED_BY_ACTOR;
       }
       // Pushing: a quarter pixel a frame.
       if (collision == 0 && pushed != 0) {
@@ -426,38 +444,38 @@ s32 Actor_UpdatePlayerControl(struct Actor *interpreter) {
       }
     }
   }
-  // Count the blocked steps, and pick the animation: push (8), bump (9, or
-  // 22 when the leader is down) or walk / run.
+  // Count the blocked steps, and pick the animation: pushing; stopped,
+  // standing and in time glancing about (leaning back when the leader has no
+  // HP); or walking or running.
   if (gFieldWork != NULL) {
-    if (collision & 3)
+    if (collision & PLAYER_STEP_BLOCKED)
       gFieldWork->blockedSteps++;
     else
       gFieldWork->blockedSteps = 0;
   }
   if (pushed != 0) {
-    Actor_SelectAnimation(actor, 8);
+    Actor_SelectAnimation(actor, ANIM_PUSH);
   } else if (collision != 0) {
     s32 action;
 
-    action = 9;
+    action = ANIM_LEADER_LOOK_AROUND;
     if (Unit_GetFar(gMainRoutineWork.leaderActorId)->hp == 0)
-      action = 22;
+      action = ANIM_LEADER_LEAN_BACK;
     Actor_SelectAnimation(actor, action);
   } else {
     Actor_SelectAnimation(actor, movementAnimation);
   }
 
-  // Blocked: stop and turn towards the pad, at most 22.5 degrees a frame.
-  // Otherwise move to the step, keeping the speed but along the heading.
-  // userValue, the footprint side, set to 2 marks a stop; the next footprint
-  // then takes animation 2.
+  // Blocked: stop and turn towards the pad, at most 22.5 degrees a frame; the
+  // next footprint is the pair. Otherwise move to the step, keeping the speed
+  // but along the heading.
   if (collision != 0) {
     actor->targetX = TARGET_UNSET;
     actor->targetY = TARGET_UNSET;
     actor->targetZ = TARGET_UNSET;
     actor->velocityX = 0;
     actor->velocityZ = 0;
-    if (collision & 3) {
+    if (collision & PLAYER_STEP_BLOCKED) {
       s32 difference;
 
       difference = (u16)angle - actor->facing;
@@ -469,7 +487,7 @@ s32 Actor_UpdatePlayerControl(struct Actor *interpreter) {
       actor->facing += difference;
     }
     actor->timer = 0;
-    actor->userValue = 2;
+    actor->userValue = FOOTPRINT_BOTH_FEET;
   } else {
     s32 speed;
 
@@ -508,21 +526,21 @@ s32 Actor_UpdatePlayerControl(struct Actor *interpreter) {
       effect->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
       effect->motionFlags = collision;
       if (animation != 0) {
-        Sprite_StartAnimation(animation, 1);
+        Sprite_StartAnimation(animation, FOOTPRINT_ONE_FOOT);
         animation->flags = collision;
         animation->rotation = footprintAngle + TRIG_TURN / 4;
         animation->image.priority = 3;
       }
-      // The first footprint after a stop takes animation 2 and restarts the
+      // The first footprint after a stop is the pair and restarts the
       // sides; each second one faces a half turn round.
       // Read signed: the footprint side was a signed halfword here.
-      if (*(s16 *)&actor->userValue == 2) {
-        Sprite_StartAnimation(animation, 2);
+      if (*(s16 *)&actor->userValue == FOOTPRINT_BOTH_FEET) {
+        Sprite_StartAnimation(animation, FOOTPRINT_BOTH_FEET);
         actor->userValue = collision;
       }
       if (*(s16 *)&actor->userValue != 0)
         effect->facing = TRIG_TURN / 2;
-      if (movementAnimation == 5)
+      if (movementAnimation == ANIM_LEADER_RUN)
         actor->timer = 12;
       else
         actor->timer = 18;
@@ -572,7 +590,7 @@ s32 Actor_MoveOnWorldMap(struct Actor *interpreter) {
   struct Actor *ripple;
   struct Sprite *rippleSprite;
 
-  movementAnimation = 2;
+  movementAnimation = ANIM_WALK;
   collision = 0;
 #if !TBS_PATCH_1
   count = 0;
@@ -582,7 +600,7 @@ s32 Actor_MoveOnWorldMap(struct Actor *interpreter) {
   if (gKeysHeld & gMainRoutineWork.dashKeys) {
     actor->speedLimit = WORLD_MAP_RUN_SPEED;
     actor->acceleration = WORLD_MAP_RUN_ACCELERATION;
-    movementAnimation = 5;
+    movementAnimation = ANIM_LEADER_RUN;
   } else {
     actor->speedLimit = WORLD_MAP_WALK_SPEED;
     actor->acceleration = WORLD_MAP_ACCELERATION;
@@ -593,7 +611,7 @@ s32 Actor_MoveOnWorldMap(struct Actor *interpreter) {
   angle = gWorldMap_KeyHeadings[(gKeysHeld >> 4) & 15];
   direction = angle;
   if (direction == WORLD_MAP_KEY_HEADING_NONE) {
-    collision |= 4;
+    collision |= PLAYER_STEP_NO_DIRECTION;
   } else {
     collision = 0;
     position.x = actor->x.fixed;
@@ -694,7 +712,7 @@ s32 Actor_MoveOnWorldMap(struct Actor *interpreter) {
         angle = (s16)direction;
         goto update_object;
       }
-      collision |= 1;
+      collision |= PLAYER_STEP_BLOCKED_BY_MAP;
 
 #else
       leftPosition.x = actor->x.fixed;
@@ -744,7 +762,7 @@ s32 Actor_MoveOnWorldMap(struct Actor *interpreter) {
           angle = (s16)direction;
           goto update_object;
         }
-        collision |= 1;
+        collision |= PLAYER_STEP_BLOCKED_BY_MAP;
       }
 #endif
     }
@@ -752,13 +770,13 @@ s32 Actor_MoveOnWorldMap(struct Actor *interpreter) {
 
 update_object:
   if (gFieldWork != NULL) {
-    if ((collision & 3) != 0)
+    if ((collision & PLAYER_STEP_BLOCKED) != 0)
       gFieldWork->blockedSteps++;
     else
       gFieldWork->blockedSteps = 0;
   }
   if (collision != 0)
-    Actor_SelectAnimation(actor, 9);
+    Actor_SelectAnimation(actor, ANIM_LEADER_LOOK_AROUND);
   else
     Actor_SelectAnimation(actor, movementAnimation);
 
@@ -768,7 +786,7 @@ update_object:
     actor->targetZ = TARGET_UNSET;
     actor->velocityX = 0;
     actor->velocityZ = 0;
-    if ((collision & 3) != 0) {
+    if ((collision & PLAYER_STEP_BLOCKED) != 0) {
       direction = angle;
       difference = (s16)(direction - actor->facing);
       if (difference > TRIG_TURN / 16)
@@ -778,7 +796,7 @@ update_object:
       actor->facing += difference;
     }
     actor->timer = 0;
-    actor->userValue = 2;
+    actor->userValue = FOOTPRINT_BOTH_FEET;
   } else {
     Actor_SetMoveTarget(actor, position.x, position.y, position.z);
     speed = FixedSqrt(Iwram_MulQ16(actor->velocityX, actor->velocityX) +

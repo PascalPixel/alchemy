@@ -248,7 +248,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
       s32 heading = Random16() & TRIG_ANGLE_MASK;
       s32 radius = (Random16() & 63) + 32;
 
-      SET_POSITION(spark, Trig_Sin(heading) * radius, -50 << 16,
+      SET_POSITION(spark, Trig_Sin(heading) * radius, -px(50),
                    Trig_Cos(heading) * radius);
       spark->velocityY = ((Random16() & 31) + 32) << 13;
       spark->variant = 0;
@@ -329,7 +329,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
 
       // Centre on the point 40 pixels above the target.
       EFFECT_VIEW_FROM_CAMERA(camera);
-      SET_VECTOR(point, actor->x.fixed, 40 << 16, actor->z.fixed);
+      SET_VECTOR(point, actor->x.fixed, px(40), actor->z.fixed);
       Transform_ApplyPosition(point);
       if (frame == start + HEALING_SOUND_DELAY)
         Sound_PlayFar(SE_RECOVERY);

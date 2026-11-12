@@ -123,7 +123,7 @@ void BattleEffect_RunBolt(struct BattleEffectParams *args) {
             s32 angle = (Random16() & 0x7fff) - TRIG_TURN / 4;
 
             spark->x = screen.x << 16;
-            spark->y = 104 << 16;
+            spark->y = px(104);
             spark->velocityX = (Trig_Sin(angle) * speed) >> 5;
             spark->velocityY = -(Trig_Cos(angle) * speed) >> 6;
             spark->variant = (Random16() & 7) + 32;
@@ -172,9 +172,9 @@ void BattleEffect_RunBolt(struct BattleEffectParams *args) {
       if (spark->variant > 0) {
         spark->variant--;
         Particle_AdvanceWithGravity2D(spark, 60, Q16_ONE / 16);
-        if (spark->y > 104 << 16) {
+        if (spark->y > px(104)) {
           spark->velocityY = -spark->velocityY / 2;
-        } else if ((spark->x >= 0 && spark->x < 127 << 16) && spark->y >= 0) {
+        } else if ((spark->x >= 0 && spark->x < px(127)) && spark->y >= 0) {
           s32 size = spark->variant / 16 + 1;
           s32 x = spark->x >> 16;
           s32 y = spark->y >> 16;

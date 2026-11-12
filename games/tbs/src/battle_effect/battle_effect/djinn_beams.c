@@ -88,7 +88,7 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 element) {
   // point of its sway. Target k uses PARTICLES 64k to 64k + 7 of the 512.
   for (i = 0; i != 512; i++) {
     PARTICLES[i].x = 0;
-    PARTICLES[i].y = 80 << 16;
+    PARTICLES[i].y = px(80);
     PARTICLES[i].z = (Random16() | -32) << 14;
     PARTICLES[i].variant = Random16() & 255;
   }
@@ -165,7 +165,7 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 element) {
         for (i = 0; i != 8; i++) {
           struct Particle *mote = &PARTICLES[k * 64 + i];
 
-          if (frame > i * 8 + start && mote->y > 8 << 16) {
+          if (frame > i * 8 + start && mote->y > px(8)) {
             s32 sway;
 
             Projection_Point(mote, &screenPosition);
@@ -181,7 +181,7 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 element) {
                                 (24 * 24) +
                             DJINN_BEAMS_MOTE_OFFSETS,
                         screenPosition.x - 12, screenPosition.y - 12, 24, 24);
-            mote->y -= 1 << 16;
+            mote->y -= px(1);
             mote->variant++;
           }
         }

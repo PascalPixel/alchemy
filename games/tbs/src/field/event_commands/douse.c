@@ -76,9 +76,9 @@ void FieldEffect_UpdateDouseDrop(struct Actor *actor) {
       p->scaleY = Q16_ONE / 2;
       p->scaleX = Q16_ONE / 2;
       p->flag = 2;
-      p->velocityY = 1 << 16;
+      p->velocityY = px(1);
       p->speed = Random16() + Q16_ONE * 6 / 5;
-      Actor_SetTargetPositionFromMagnitudeAngle((struct Actor *)p, 32 << 16,
+      Actor_SetTargetPositionFromMagnitudeAngle((struct Actor *)p, px(32),
                                                 Random16());
       pp = &p->wait;
       splashWait = 6;
@@ -141,17 +141,17 @@ void FieldPsynergy_Douse(void) {
   if (work->targetActor == 0) {
     work->x = caster->x.fixed;
     work->z = caster->z.fixed;
-    Vector_AddPolarOffset(16 << 16, work->angle, (struct Vector3 *)&work->x);
+    Vector_AddPolarOffset(px(16), work->angle, (struct Vector3 *)&work->x);
     work->y = MapGrid_GetTerrainHeightFar(0, work->x, work->z);
   }
-  SET_POSITION(&start, caster->x.fixed, caster->y.fixed + (16 << 16),
+  SET_POSITION(&start, caster->x.fixed, caster->y.fixed + px(16),
                caster->z.fixed);
   end.x = work->x;
   y = work->y;
-  end.y = y + (32 << 16);
+  end.y = y + px(32);
   end.z = work->z;
   if ((s8)work->variant != 0)
-    end.y = y + (80 << 16);
+    end.y = y + px(80);
 
   // Grow from a quarter to full size on the way.
   for (; step < steps; step++) {
@@ -194,7 +194,7 @@ void FieldPsynergy_Douse(void) {
       pos.x = lightOrb->x;
       pos.y = lightOrb->y;
       pos.z = lightOrb->z;
-      Vector_AddPolarOffset(Random16() * 5 + (3 << 16), Random16(), &pos);
+      Vector_AddPolarOffset(Random16() * 5 + px(3), Random16(), &pos);
       if (step == count - 1) {
         wait(25);
         pos.x = lightOrb->x;
@@ -204,7 +204,7 @@ void FieldPsynergy_Douse(void) {
       particle = (struct ActorDouseView *)Actor_Spawn(SPRITE_DROPLET, pos.x,
                                                       pos.y, pos.z);
       if (particle != 0) {
-        particle->altitude = pos.y - (32 << 16);
+        particle->altitude = pos.y - px(32);
         particle->callback = FieldEffect_UpdateDouseDrop;
         particle->flag = 2;
       }
@@ -223,7 +223,7 @@ void FieldPsynergy_Douse(void) {
       pos.x = lightOrb->x;
       pos.y = lightOrb->y;
       pos.z = lightOrb->z;
-      Vector_AddPolarOffset(Random16() * 5 + (3 << 16), Random16(), &pos);
+      Vector_AddPolarOffset(Random16() * 5 + px(3), Random16(), &pos);
       particle = (struct ActorDouseView *)Actor_Spawn(SPRITE_PARTICLE, pos.x,
                                                       pos.y, pos.z);
       if (particle != 0) {

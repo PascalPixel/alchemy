@@ -139,7 +139,7 @@ void FieldPsynergy_Frost(void) {
       Actor_SetSpriteColorModeFar(particle, SPRITE_COLOR_BLUE_TINT);
 
       SET_POSITION(p, effectWork->x, effectWork->y, effectWork->z);
-      radius = (Random16() << 2) + (2 << 16);
+      radius = (Random16() << 2) + px(2);
       Vector_AddPolarOffset(radius, Random16(), p);
       particle->targetX = p->x;
       particle->targetY = p->y;

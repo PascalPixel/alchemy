@@ -105,8 +105,8 @@ s32 Battle_Run(s32 enemyGroup) {
   // The camera's starting view, in 16.16 pixels and 1/65536 turns: the focus
   // 64 pixels up, the eye at (0, 180, 64), a yaw of 5/32 of a turn and a
   // distance of 256 pixels. Then the enemies.
-  SET_VECTOR(focus, 0, 64 << 16, 0);
-  SET_VECTOR(camera->eye, 0, 180 << 16, 64 << 16);
+  SET_VECTOR(focus, 0, px(64), 0);
+  SET_VECTOR(camera->eye, 0, px(180), px(64));
   camera->yaw = TRIG_TURN * 5 / 32;
   camera->pitch = TRIG_TURN * 5 / 16;
   camera->distance = 256 << 16;
@@ -183,7 +183,7 @@ s32 Battle_Run(s32 enemyGroup) {
   // zoom (BattleTransition_Run). With the background
   // BATTLE_BACKGROUND_FIXED, BattleCamera_SetRange builds no plane page; it
   // sets at most BG1's horizontal scroll from the camera's yaw.
-  BattleCamera_SetRange(160 << 16, 80 << 16, 0, 0, 2 << 16);
+  BattleCamera_SetRange(px(160), px(80), 0, 0, 2 << 16);
   BattleCamera_SetView(0, 0, 0, 190);
   Party_BattleSetupNoOp(1);
   REG_BLDCNT = 0;

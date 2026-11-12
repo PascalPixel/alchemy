@@ -4,7 +4,7 @@
 
 #include "../battle_effect_internal.h"
 
-#define PRISM_GROUND_Y (56 << 16)     ///< y 56, where the crystals shatter
+#define PRISM_GROUND_Y px(56)         ///< y 56, where the crystals shatter
 #define PRISM_SHARD_OFFSETS (32 * 64) ///< the shards, after the 32x64 crystal
 
 /// Crystals drop out of the sky onto the targets' side, 8 frames apart, and
@@ -61,7 +61,7 @@ void BattleEffect_RunPrism(struct BattleEffectParams *args) {
     /* FAKEMATCH(dead): x keeps a first random number, drawn and never read;
      * as Random16() alone, 184 of 488 instructions differ in tbs-en. */
     x = Random16() & 31;
-    seed->y = -(64 << 16);
+    seed->y = -px(64);
     if (work->args->side == EFFECT_SIDE_PARTY) {
       x = ((Random16() & 31) + 80) << 16;
       seed->velocityX = (Random16() & 63) << 12;

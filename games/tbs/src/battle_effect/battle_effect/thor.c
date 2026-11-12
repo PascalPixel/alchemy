@@ -222,7 +222,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
       if (sinkFrame > 22) {
         sinkFrame = 20;
       }
-      SET_VECTOR(position, 0, -sinkFrame << 17, 512 << 16);
+      SET_VECTOR(position, 0, -sinkFrame << 17, px(512));
       size = (sinkFrame >> 2) + 2;
       if (size > 8) {
         size = 8;
@@ -241,7 +241,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
       }
       Transform_ApplyScale(scale);
     } else {
-      SET_VECTOR(position, 0, 0, 256 << 16);
+      SET_VECTOR(position, 0, 0, px(256));
       Transform_ApplyPosition(position);
       Transform_ApplyPitch(-TRIG_TURN / 16);
       Transform_ApplyRoll(frame << 8);
@@ -399,8 +399,8 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
     s32 pillarX;
     s32 pillarY;
 
-    formationX = 80 << 16;
-    formationY = 64 << 16;
+    formationX = px(80);
+    formationY = px(64);
     // The particle loop's counter starts with the formation's defaults.
     i = 0;
     formationSpeedX = 0;
@@ -493,7 +493,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
               HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
             }
             if (frame == i * 2 + 80) {
-              THOR_LAUNCH_SPARKS(spark, j, 16 << 16, 80 << 16,
+              THOR_LAUNCH_SPARKS(spark, j, px(16), px(80),
                                  Random16() & TRIG_ANGLE_MASK, 16);
               work->shakeFrames = 8;
               EFFECT_FOR_EACH_TARGET(j, work->args) {
@@ -586,9 +586,9 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
           if (spark->variant > 0) {
             spark->variant--;
             Particle_AdvanceWithGravity2D(spark, 60, 0);
-            if (spark->y > (120 << 16)) {
+            if (spark->y > px(120)) {
               spark->velocityY = -spark->velocityY / 2;
-            } else if ((u32)spark->x <= (127 << 16) - 1 && spark->y >= 0) {
+            } else if ((u32)spark->x <= px(127) - 1 && spark->y >= 0) {
               s32 x = spark->x >> 16;
               s32 y = spark->y >> 16;
               s32 dotSize = spark->variant / 16 + 1;
@@ -604,7 +604,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
       // push slowing by 1/16 each frame.
       if (frame > 15) {
         if (frame == 32) {
-          formationSpeedX = 4 << 16;
+          formationSpeedX = px(4);
           formationSpeedY = -Q16_ONE / 4;
         }
         if (frame > 31) {

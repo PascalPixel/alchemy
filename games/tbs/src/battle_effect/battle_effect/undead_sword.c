@@ -60,8 +60,8 @@ void BattleEffect_RunUndeadSword(struct BattleEffectParams *args) {
   for (i = 0, spark = work->particles; i != 16; i++) {
     speed = (Random16() & 0x1ff) + 128;
     angle = Random16() & TRIG_ANGLE_MASK;
-    spark->x = 64 << 16;
-    spark->y = 112 << 16;
+    spark->x = px(64);
+    spark->y = px(112);
     spark->velocityX = (Trig_Sin(angle) * speed) >> 8;
     spark->velocityY = (Trig_Cos(angle) * speed) >> 9;
     spark->variant = Random16() & 7;

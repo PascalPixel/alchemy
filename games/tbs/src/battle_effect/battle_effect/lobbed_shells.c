@@ -155,7 +155,7 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
   // first of each target's 16 is drawn.
   EFFECT_FREE_PARTICLES(i, PARTICLES, 1024);
   source = GetBattleObjectSlotFar(work->args->user)->actor;
-  height = 4 << 16;
+  height = px(4);
   EFFECT_FOR_EACH_TARGET(k, work->args) {
     struct Actor *target =
         GetBattleObjectSlotFar(work->args->targets[k])->actor;
@@ -164,7 +164,7 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
       struct Particle *shot = &PARTICLES[k * LOBBED_SHELLS_SLOTS + i];
 
       SET_POSITION(shot, source->x.fixed, height, source->z.fixed);
-      SET_VELOCITY(shot, (target->x.fixed - source->x.fixed) >> 4, 4 << 16,
+      SET_VELOCITY(shot, (target->x.fixed - source->x.fixed) >> 4, px(4),
                    (target->z.fixed - source->z.fixed) >> 4);
       shot->variant = 0;
     }

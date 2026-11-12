@@ -88,7 +88,7 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
     actor->acceleration = distance;
     actor->speedLimit = distance;
     actor->snapToTarget = 1;
-    actor->velocityY = 7 << 16;
+    actor->velocityY = px(7);
     actor->gravity = Q16_ONE * 87 / 100;
     actor->bounce = 0;
     actor->steeringFlags = 1;

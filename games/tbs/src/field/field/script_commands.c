@@ -14,14 +14,14 @@ enum {
   SCRIPT_WANDER_TRIES = 7,          ///< random points a wander tries a frame
   /// The wander probes' distance, 8 pixels in 16.16: past the point for
   /// ground, and along the heading for solid actors (SC_WANDER_HOME).
-  SCRIPT_WANDER_PROBE_DISTANCE = 8 * Q16_ONE,
+  SCRIPT_WANDER_PROBE_DISTANCE = px(8),
   SCRIPT_WANDER_DIAGONAL_ANGLE = TRIG_TURN / 8, ///< one eighth of a turn
   SCRIPT_WANDER_SIDE_ANGLE = TRIG_TURN / 4,     ///< one quarter of a turn
   SCRIPT_HALF_TURN = TRIG_TURN / 2,
   /// Whole pixels SC_APPROACH_WATCHED stays short of its watched actor.
   SCRIPT_APPROACH_DISTANCE = 16,
   /// Under 64 pixels (16.16) SC_CAMERA measures its distance in 16.16.
-  CAMERA_FOLLOW_FINE_DISTANCE = 64 * Q16_ONE,
+  CAMERA_FOLLOW_FINE_DISTANCE = px(64),
   /// Within a quarter pixel (16.16) SC_CAMERA lands on its point.
   CAMERA_FOLLOW_SNAP_DISTANCE = Q16_ONE / 4,
   /// Within half a pixel (16.16) SC_CAMERA takes the leader's height at once.

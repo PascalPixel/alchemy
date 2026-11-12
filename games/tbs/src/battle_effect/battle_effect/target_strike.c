@@ -204,7 +204,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
       struct Particle *step = &work->particles[i];
 
       Projection_Unit(work->args->targets[k], &ground);
-      SET_POSITION(step, (ground.x / 2) << 16, 80 << 16, 0);
+      SET_POSITION(step, (ground.x / 2) << 16, px(80), 0);
       SET_VELOCITY(step, ((Random16() & 255) - 128) << 9,
                    ((Random16() & 255) - 128) << 9, 0);
       step->variant = -1;
@@ -216,7 +216,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
     for (i = 0; i != 128; i++) {
       struct Particle *step = &PARTICLES[k * 128 + i];
 
-      SET_POSITION(step, target->x.fixed, 20 << 16, target->z.fixed);
+      SET_POSITION(step, target->x.fixed, px(20), target->z.fixed);
       SET_VELOCITY(step, ((Random16() & 255) - 128) << 11,
                    ((Random16() & 255) - 128) << 11,
                    ((Random16() & 255) - 128) << 11);
@@ -224,7 +224,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
     }
     for (i = 0; i != 512; i++) {
       TARGET_STRIKE_SPARKS[i].x = target->x.fixed;
-      TARGET_STRIKE_SPARKS[i].y = 20 << 16;
+      TARGET_STRIKE_SPARKS[i].y = px(20);
       TARGET_STRIKE_SPARKS[i].z = target->z.fixed;
       if (TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_KIND) == STRIKE_KIND_COLUMN) {
         TARGET_STRIKE_SPARKS[i].velocityX = ((Random16() & 255) - 128) << 11;
@@ -521,7 +521,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
             step->variant++;
             if (step->variant > 10) {
               s32 dx = (source->x.fixed - step->x) >> 8;
-              s32 dy = (source->y.fixed - step->y + (20 << 16)) >> 8;
+              s32 dy = (source->y.fixed - step->y + px(20)) >> 8;
               s32 dz = (source->z.fixed - step->z) >> 8;
 
               step->velocityX += dx;

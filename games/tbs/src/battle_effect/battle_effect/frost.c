@@ -80,13 +80,13 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
 
     // The range of heights the smoke will rise over, in 16.16 pixels,
     // gathered from the motes and chips below.
-    lowest = 120 << 16;
+    lowest = px(120);
     highest = 0;
     if (frame == gFrost_Timings[work->args->variant][FROST_FRAME] + 11)
       EFFECT_SHOW_DAMAGE(SE_WATER);
     // The motes turn about (0, 0, 512), not about a target. That point is
     // behind the eye, so they are never projected (see the motes below).
-    SET_VECTOR(point, 0, 0, 512 << 16);
+    SET_VECTOR(point, 0, 0, px(512));
     Transform_Reset();
     Transform_ApplyPosition(point);
     // A chime every 4 frames while the columns spring up.
@@ -124,7 +124,7 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
           s32 cell = i % 8;
 
           mote = &work->particles[i];
-          if (mote->y < (48 - i / 2) << 16 && mote->y > -(48 << 16)) {
+          if (mote->y < (48 - i / 2) << 16 && mote->y > -px(48)) {
             struct ScreenPoint *position;
             u32 width;
             u32 height;
@@ -152,8 +152,8 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
             if (frame > i + 16) {
               if (mote->z > 4)
                 mote->z -= 2;
-              if (mote->y < 48 << 16)
-                mote->y += 5 << 16;
+              if (mote->y < px(48))
+                mote->y += px(5);
               mote->x += TRIG_TURN / 128;
             }
           } else {
@@ -169,8 +169,8 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
     }
     // Mote heights are relative to their centre: 64 rows down the canvas
     // puts them beside the chips' canvas rows.
-    lowest += 64 << 16;
-    highest += 64 << 16;
+    lowest += px(64);
+    highest += px(64);
 
     // Columns (32 wide), standing at gFrost_ColumnSpots: one more every 3
     // frames from frame 36; over the last 7 frames before the burst they are

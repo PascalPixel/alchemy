@@ -12,7 +12,7 @@ void FieldEffect_SwayParticle(struct Actor *actor) {
   s16 *phase;
 
   phase = &obj->timer;
-  obj->x.fixed = obj->targetX + Iwram_MulQ16(4 << 16, Trig_Sin(*phase << 9));
+  obj->x.fixed = obj->targetX + Iwram_MulQ16(px(4), Trig_Sin(*phase << 9));
   (*phase)++;
   *phase = (*phase + 128) % 128;
 }
@@ -35,7 +35,7 @@ void FieldEffect_UpdateShrinkingOrbitActor(struct Actor *actor) {
     if (remainingFrames != 0) {
       // The angle turns 1/32 of a circle (TRIG_TURN / 32) each frame left.
       pos.x = effectWork->x;
-      pos.y = effectWork->y + (10 << 16);
+      pos.y = effectWork->y + px(10);
       pos.z = effectWork->z;
       Vector_AddPolarOffset(remainingFrames << 16,
                             (s16)particle->userValue + (remainingFrames << 11),
@@ -65,14 +65,14 @@ void FieldEffect_RunSparkEmitter(struct Actor *actor) {
   effectWork = gFieldEffectWork;
   if (*phase != -1) {
     SET_ACTOR_POSITION(
-        emitter, effectWork->x + Iwram_MulQ16(6 << 16, Trig_Sin(*phase << 10)),
+        emitter, effectWork->x + Iwram_MulQ16(px(6), Trig_Sin(*phase << 10)),
         effectWork->y + ABOVE, effectWork->z);
     (*phase)++;
     *phase = (*phase + 64) % 64;
   }
   if (gFrameCount % 3 == 0) {
     // From 2 pixels up, 0 to 6 pixels in a random direction.
-    SET_VECTOR(pos, emitter->x.fixed, emitter->y.fixed + (2 << 16),
+    SET_VECTOR(pos, emitter->x.fixed, emitter->y.fixed + px(2),
                emitter->z.fixed);
     Vector_AddPolarOffset(Random16() * 6, Random16(), pos);
     spark = Actor_Spawn(SPRITE_SPARKLE, pos[0], pos[1], pos[2]);

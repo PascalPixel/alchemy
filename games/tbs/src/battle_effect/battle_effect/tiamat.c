@@ -138,8 +138,8 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectParams *args,
 
   // The formation's corner starts at (212, -60) and comes to rest at
   // (148, 68) after the sweep of frames 40 to 47.
-  focus.x = 212 << 16;
-  focus.y = -(60 << 16);
+  focus.x = px(212);
+  focus.y = -px(60);
   EFFECT_FREE_PARTICLES(i, work->particles, 64);
   for (i = 0; i != PALETTE_PARTICLES_STREAKS; i++) {
     struct Particle *streak =
@@ -219,7 +219,7 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectParams *args,
 
         if (grain->variant == -1) {
           grain->x = ((Random16() & 255) - 32) << 16;
-          grain->y = 112 << 16;
+          grain->y = px(112);
           grain->velocityX = ((Random16() & 127) + gTiamat_DropSpeeds[i & 3])
                              << 9;
           grain->velocityY = -((Random16() & 127) + gTiamat_DropSpeeds[i & 3])
@@ -248,7 +248,7 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectParams *args,
 
             if (mode == PALETTE_PARTICLES_TIAMAT) {
               spark->x = ((Random16() & 7) + 78) << 16;
-              spark->y = 70 << 16;
+              spark->y = px(70);
             } else {
               spark->x = ((Random16() & 7) + origin.x - 8) << 16;
               spark->y = origin.y << 16;
@@ -280,8 +280,8 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectParams *args,
           s32 angle = (Random16() & 0x1fff) - 20000;
 
           if (mode == PALETTE_PARTICLES_TIAMAT) {
-            flash->x = 68 << 16;
-            flash->y = 64 << 16;
+            flash->x = px(68);
+            flash->y = px(64);
           } else {
             flash->x = origin.x << 16;
             flash->y = origin.y << 16;
@@ -375,8 +375,8 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectParams *args,
     // Over frames 40 to 47 the formation moves 8 pixels left and 16 down a
     // frame; from 128 to 175 four of its sprites play animations 8 to 11.
     if (frame >= 40 && frame <= 47) {
-      focus.x += -(8 << 16);
-      focus.y += 16 << 16;
+      focus.x += -px(8);
+      focus.y += px(16);
     }
     if (mode == PALETTE_PARTICLES_TIAMAT) {
       if (frame == 128) {

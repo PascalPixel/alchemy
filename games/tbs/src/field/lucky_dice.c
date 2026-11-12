@@ -423,12 +423,12 @@ void LuckyDice_Run(void) {
   do {
     luckyNumbers[1] = Random16() % DICE_FACE_COUNT;
   } while (luckyNumbers[0] == luckyNumbers[1]);
-  diceWork->particles[0].x = 40 << 16;
-  diceWork->particles[0].y = 96 << 16;
-  diceWork->particles[0].z = -(160 << 16);
-  diceWork->particles[1].x = -(40 << 16);
-  diceWork->particles[1].y = 96 << 16;
-  diceWork->particles[1].z = -(160 << 16);
+  diceWork->particles[0].x = px(40);
+  diceWork->particles[0].y = px(96);
+  diceWork->particles[0].z = -px(160);
+  diceWork->particles[1].x = -px(40);
+  diceWork->particles[1].y = px(96);
+  diceWork->particles[1].z = -px(160);
 
   // Open the coins window and the Throw / Quit help.
   WindowSystem_InitFieldFar();
@@ -587,24 +587,24 @@ void LuckyDice_Run(void) {
       (void)gKeysRepeat;
       (void)gKeysRepeat;
       if (gKeysHeld & KEY_UP) {
-        diceWork->particles[0].y += 4 << 16;
-        diceWork->particles[1].y += 4 << 16;
+        diceWork->particles[0].y += px(4);
+        diceWork->particles[1].y += px(4);
       }
       if (gKeysHeld & KEY_DOWN) {
-        diceWork->particles[0].y += -(4 << 16);
-        diceWork->particles[1].y += -(4 << 16);
+        diceWork->particles[0].y += -px(4);
+        diceWork->particles[1].y += -px(4);
       }
-      if (diceWork->particles[0].y < 32 << 16) {
-        diceWork->particles[0].y = 32 << 16;
+      if (diceWork->particles[0].y < px(32)) {
+        diceWork->particles[0].y = px(32);
       }
-      if (diceWork->particles[0].y > 160 << 16) {
-        diceWork->particles[0].y = 160 << 16;
+      if (diceWork->particles[0].y > px(160)) {
+        diceWork->particles[0].y = px(160);
       }
-      if (diceWork->particles[1].y < 32 << 16) {
-        diceWork->particles[1].y = 32 << 16;
+      if (diceWork->particles[1].y < px(32)) {
+        diceWork->particles[1].y = px(32);
       }
-      if (diceWork->particles[1].y > 160 << 16) {
-        diceWork->particles[1].y = 160 << 16;
+      if (diceWork->particles[1].y > px(160)) {
+        diceWork->particles[1].y = px(160);
       }
       if (gMainRoutineWork.coins <
           (u32)(Party_GetAverageLevelFar() * DICE_BET_PER_LEVEL)) {
@@ -632,8 +632,8 @@ void LuckyDice_Run(void) {
           // DEAD: never true with DICE_COUNT 2; a third die would start
           // further back and higher up.
           if (index > 1) {
-            rollingDie->z = -(180 << 16);
-            rollingDie->y = 96 << 16;
+            rollingDie->z = -px(180);
+            rollingDie->y = px(96);
           }
           SET_VELOCITY(rollingDie, ((Random16() & 127) - 64) << 12,
                        ((Random16() & 15) + 48) << 13,
@@ -646,12 +646,12 @@ void LuckyDice_Run(void) {
 
     // Back to the throwing line, with two new lucky numbers.
     if (resetDice == 1) {
-      diceWork->particles[0].x = 40 << 16;
-      diceWork->particles[0].y = 96 << 16;
-      diceWork->particles[0].z = -(160 << 16);
-      diceWork->particles[1].x = -(40 << 16);
-      diceWork->particles[1].y = 96 << 16;
-      diceWork->particles[1].z = -(160 << 16);
+      diceWork->particles[0].x = px(40);
+      diceWork->particles[0].y = px(96);
+      diceWork->particles[0].z = -px(160);
+      diceWork->particles[1].x = -px(40);
+      diceWork->particles[1].y = px(96);
+      diceWork->particles[1].z = -px(160);
       luckyNumbers[0] = Random16() % DICE_FACE_COUNT;
       do {
         luckyNumbers[1] = Random16() % DICE_FACE_COUNT;
@@ -794,20 +794,20 @@ void LuckyDice_Run(void) {
           }
         }
         // Bounce off the board's sides and back wall.
-        if (rollingDie->x < -(200 << 16)) {
-          rollingDie->x = -(200 << 16);
+        if (rollingDie->x < -px(200)) {
+          rollingDie->x = -px(200);
           rollingDie->velocityX = -rollingDie->velocityX * 48 / 64;
         }
-        if (rollingDie->x > 200 << 16) {
-          rollingDie->x = 200 << 16;
+        if (rollingDie->x > px(200)) {
+          rollingDie->x = px(200);
           rollingDie->velocityX = -rollingDie->velocityX * 48 / 64;
         }
-        if (rollingDie->z < -(150 << 16)) {
-          rollingDie->z = -(150 << 16);
+        if (rollingDie->z < -px(150)) {
+          rollingDie->z = -px(150);
           rollingDie->velocityZ = -rollingDie->velocityZ * 48 / 64;
         }
-        if (rollingDie->z > rollingDie->y + (180 << 16)) {
-          rollingDie->z = rollingDie->y + (180 << 16);
+        if (rollingDie->z > rollingDie->y + px(180)) {
+          rollingDie->z = rollingDie->y + px(180);
           if (rollingDie->velocityZ > 0) {
             rollingDie->velocityY += rollingDie->velocityZ / 2;
             rollingDie->velocityZ = -rollingDie->velocityZ * 48 / 64;
@@ -839,7 +839,7 @@ void LuckyDice_Run(void) {
           if (spinRate[index] > 19) {
             spinRate[index] -= 20;
           }
-          if (rollingDie->velocityY < 3 << 16) {
+          if (rollingDie->velocityY < px(3)) {
             SET_VELOCITY(rollingDie, 0, 0, 0);
             spinRate[index] = 0;
             rollAngle = rollingDie->variant;

@@ -98,7 +98,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
       speed = (Random16() & 0x1ff) + 32;
       angle = Random16() & TRIG_ANGLE_MASK;
       spark->x = RAGNAROK_COLUMN_X(work->args->side, col) << 16;
-      spark->y = 88 << 16;
+      spark->y = px(88);
       spark->velocityX = (Trig_Sin(angle) * speed) >> 6;
       spark->velocityY = -(Trig_Cos(angle) * speed * 2) >> 6;
       spark->variant = (Random16() & 7) + 32;
@@ -231,11 +231,11 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
             Particle_AdvanceWithGravity2D(spark, 64, Q16_ONE / 16);
             spark->variant--;
             y = spark->y;
-            if (y > (108 << 16)) {
+            if (y > px(108)) {
               spark->velocityY = -spark->velocityY / 2;
             } else {
               x = spark->x;
-              if ((x >= 0 && x <= (127 << 16) - 1) && y >= 0) {
+              if ((x >= 0 && x <= px(127) - 1) && y >= 0) {
                 u8 *cell;
                 s32 lane;
                 s32 drawY = y >> 16;

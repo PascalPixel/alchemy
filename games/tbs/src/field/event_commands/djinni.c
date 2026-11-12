@@ -55,7 +55,7 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
   djinni->motionFlags = ACTOR_FALLS;
 
   // Hop 16 pixels away from the leader, three times.
-  dist = 16 << 16;
+  dist = px(16);
   Actor_SetTargetPositionFromMagnitudeAngle(djinni, dist, dir);
   Sound_PlayFar(SE_JUMP);
   Actor_Jump(djinniId, 4, 0);
@@ -109,7 +109,7 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
 
   // Leap 64 pixels at the leader, 12 pixels a frame upward, and after 24
   // frames freeze wherever it is, landed or not.
-  Actor_SetTargetPositionFromMagnitudeAngle(djinni, 64 << 16,
+  Actor_SetTargetPositionFromMagnitudeAngle(djinni, px(64),
                                             dir + TRIG_TURN / 2);
   Sound_PlayFar(SE_WHOOSH);
   Actor_Jump(djinniId, 12, 0);
@@ -222,7 +222,7 @@ void Djinn_RestoreActorAfterBattle(void) {
 
           Actor_SetPositionAndResetMotionFar(object, leader->x.fixed,
                                              leader->y.fixed,
-                                             leader->z.fixed - (32 << 16));
+                                             leader->z.fixed - px(32));
         }
         Actor_SelectAnimationFar(object, 1);
       }

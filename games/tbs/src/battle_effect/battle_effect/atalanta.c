@@ -170,7 +170,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
         path += 2;
       }
       position.groundHeight = 0;
-      position.height = 255 << 16;
+      position.height = px(255);
       for (row = 0; row != 3; row++) {
         for (column = 0; column != 3; column++) {
           position.x = (pathX + 80 + column * 32) << 16;
@@ -204,8 +204,8 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
         if (frame >= i * 8 + 85) {
           slash->x += slash->velocityX;
           slash->y += slash->velocityY;
-          slash->velocityX -= 1 << 16;
-          slash->velocityY += 2 << 16;
+          slash->velocityX -= px(1);
+          slash->velocityY += px(2);
           draw[0](canvas, work->sheet + ATALANTA_SLASH_TOP, x + 4, y - 40, 16,
                   21);
           draw[0](canvas, work->sheet + ATALANTA_SLASH_MIDDLE, x - 16, y - 19,

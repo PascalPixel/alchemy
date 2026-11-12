@@ -268,7 +268,7 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
                            Q_16_16_TO_INT(dust->y), size);
           dust->y -= dust->velocityY;
           if (dust->y < 0 && frame <= 159)
-            dust->y = 96 << 16;
+            dust->y = px(96);
         } else {
           dust->variant--;
         }
@@ -299,8 +299,8 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
           scale.y = scale.x;
           position.groundHeight = 0;
           position.x = (rock->x + rockX * 2) << 16;
-          position.height = (512 << 16) - (rock->y << 16);
-          position.y = 512 << 16;
+          position.height = px(512) - (rock->y << 16);
+          position.y = px(512);
           slot = (frame / 2 + k) % GAIA_ROCKS;
           // DEAD: always true, as slot is a remainder of a positive count; the
           // ROM keeps the test.

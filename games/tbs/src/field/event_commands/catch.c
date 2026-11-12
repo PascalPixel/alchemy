@@ -34,20 +34,20 @@ void FieldPsynergy_Catch(void) {
   s32 steps = 11;
 
   origin.x = actor->x.fixed;
-  origin.y = actor->y.fixed + (16 << 16);
+  origin.y = actor->y.fixed + px(16);
   origin.z = actor->z.fixed;
   if (effectWork->enabled) {
     target.x = actor->x.fixed;
-    target.y = actor->y.fixed + (32 << 16);
+    target.y = actor->y.fixed + px(32);
     target.z = actor->z.fixed;
-    Vector_AddPolarOffset(32 << 16, effectWork->angle, &target.x);
+    Vector_AddPolarOffset(px(32), effectWork->angle, &target.x);
   } else {
     target.x = effectWork->x;
-    target.y = effectWork->y + (32 << 16);
+    target.y = effectWork->y + px(32);
     target.z = effectWork->z;
   }
   spawn.x = effectWork->x;
-  spawn.y = effectWork->y + (32 << 16);
+  spawn.y = effectWork->y + px(32);
   spawn.z = effectWork->z;
   object = Actor_Spawn(SPRITE_MOVE_HAND, spawn.x, spawn.y, spawn.z);
   if (object == 0)
@@ -81,7 +81,7 @@ void FieldPsynergy_Catch(void) {
 
   // Press down 2 pixels a frame for 10 frames.
   for (i = 0; i < 10; i++) {
-    object->y.fixed -= 2 << 16;
+    object->y.fixed -= px(2);
     wait(1);
   }
   Actor_SelectAnimationFar(object, 5);
@@ -91,8 +91,7 @@ void FieldPsynergy_Catch(void) {
   // then puts it away for good, as Vale_CatchNut moves the Nut
   // to (0, 0) and sets FLAG_VALE_NUT_CAUGHT so that it is not placed again.
   if (child != 0)
-    Actor_SetPositionAndResetMotionFar(child, -(9 << 16), child->y.fixed,
-                                       -(9 << 16));
+    Actor_SetPositionAndResetMotionFar(child, -px(9), child->y.fixed, -px(9));
   wait(20);
 
   // Rise 1.5 pixels a frame for 13 frames.

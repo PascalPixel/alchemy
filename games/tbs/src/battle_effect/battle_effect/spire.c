@@ -62,7 +62,7 @@ void BattleEffect_RunSpire(struct BattleEffectParams *args) {
   rockCount = gSpire_RockCounts[work->args->variant];
   for (i = 0; i != rockCount; i++) {
     rock = &work->particles[i];
-    rock->y = -(64 << 16);
+    rock->y = -px(64);
     rock->velocityY = 0;
   }
   // Each rock breaks into 21 shards, thrown up from where it lands: under a
@@ -132,9 +132,9 @@ void BattleEffect_RunSpire(struct BattleEffectParams *args) {
                Q_16_16_TO_INT(rock->y), SPIRE_ROCK_WIDTH, SPIRE_ROCK_HEIGHT);
         rock->y += rock->velocityY;
         if (frame > gSpire_DropFrames[i])
-          rock->velocityY += 1 << 16;
-        if (rock->y > (50 << 16))
-          rock->y = 50 << 16;
+          rock->velocityY += px(1);
+        if (rock->y > px(50))
+          rock->y = px(50);
       }
       if (frame == gSpire_DropFrames[i] + SPIRE_FALL_FRAMES) {
         EFFECT_FOR_EACH_TARGET(j, work->args)

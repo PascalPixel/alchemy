@@ -561,8 +561,8 @@ void MapGrid_UpdateLayerScroll(void) {
     // x and y are in 8-pixel tiles. A new tile column (the 8-pixel bit) or
     // cell picture row (the 16-pixel bit) has come into view: draw it at the
     // leading edge, 30 tiles to the right or 20 below when scrolling that way.
-    x = baseX / (8 << 16);
-    y = baseY / (8 << 16);
+    x = baseX / px(8);
+    y = baseY / px(8);
     if ((layer->x ^ baseX) & (8 << 16)) {
       if (layer->x < baseX)
         MapGrid_RenderCellPictureColumn(layerIndex, x + 30, y);
@@ -630,8 +630,8 @@ void MapGrid_SetCameraCenter(s32 x, s32 y) {
       // Divided by 8 pixels in 16.16, x and y become tiles. A cell picture
       // is 2 by 2 tiles: the grid, 128 cell pictures a row, is read at half of
       // them, and the screen map's offsets step 2 tiles and wrap at 32.
-      x /= 8 << 16;
-      y /= 8 << 16;
+      x /= px(8);
+      y /= px(8);
       screenMap = BG_SCREEN_BLOCK(5) + (layerIndex << 11);
       sourceRow = ((y / 2) & 127) << 7;
       screenRowOffset = (y & 30) << 5;

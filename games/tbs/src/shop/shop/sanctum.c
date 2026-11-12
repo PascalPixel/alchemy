@@ -415,15 +415,15 @@ void Sanctum_UpdateBurstSparkle(struct FieldParticle *effect) {
   if (state == SANCTUM_SPARKLE_START) {
     position.x = effect->originX;
     position.z = effect->originZ;
-    Vector_AddPolarOffset(40 << 16, Random16(), &position);
+    Vector_AddPolarOffset(px(40), Random16(), &position);
     FieldParticle_SetPositionFar(effect, position.x, position.z);
     position.x = effect->originX;
     position.z = effect->originZ;
-    Vector_AddPolarOffset(4 << 16, Random16(), &position);
+    Vector_AddPolarOffset(px(4), Random16(), &position);
     effect->targetX = position.x;
     effect->targetZ = position.z;
     // 16.16 pixels: at most 2 a frame, gaining 0.4 a frame
-    effect->speedMax = 2 << 16;
+    effect->speedMax = px(2);
     effect->acceleration = Q16_ONE * 2 / 5;
     effect->turnStepLimited = state;
     *statePointer = *statePointer + 1;
@@ -498,7 +498,7 @@ void Sanctum_RunMemberIconBurst(s32 member) {
 
   // The burst's centre, in 16.16 pixels: 12 above the party member's icon
   position.x = shop->partyMemberX[member] << 16;
-  position.z = (shop->partyMemberY[member] << 16) - (12 << 16);
+  position.z = (shop->partyMemberY[member] << 16) - px(12);
 
   // Spawn eighteen particles while the task continues updating all twenty-four.
   effectIndex = 0;

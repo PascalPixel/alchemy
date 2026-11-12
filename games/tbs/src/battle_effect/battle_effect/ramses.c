@@ -100,15 +100,15 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   // The formation's corner at (188, 92) and the orb at (160, 92); the rocks
   // wait 16 pixels apart above the field at random columns.
-  base.x = 188 << 16;
-  base.y = 92 << 16;
-  orb.x = 160 << 16;
-  orb.y = 92 << 16;
+  base.x = px(188);
+  base.y = px(92);
+  orb.x = px(160);
+  orb.y = px(92);
   for (i = 0; i != RAMSES_ROCKS; i++) {
     struct Particle *rock = &work->particles[i];
 
     rock->x = (Random16() & 127) << 16;
-    rock->y = i * -(16 << 16);
+    rock->y = i * -px(16);
     rock->velocityX = 0;
     rock->velocityY = 0;
     rock->variant = 0;
@@ -147,15 +147,15 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
     position.groundHeight = 0;
     position.height = 0;
     for (i = 0; i != 7; i++) {
-      position.x = (gRamses_ObjectColumns[i] << 16) + base.x - (32 << 16);
-      position.y = (gRamses_ObjectRows[i] << 16) + base.y - (32 << 16);
+      position.x = (gRamses_ObjectColumns[i] << 16) + base.x - px(32);
+      position.y = (gRamses_ObjectRows[i] << 16) + base.y - px(32);
       Actor_ApplyProjectedPlacementFar(work->sprites[i], &position, &scale, 0);
     }
     // The orb circles until frame 90, 16 pixels around (156, 92), a 128th
     // of a turn a frame.
     if (frame <= 90) {
-      orb.x = Trig_Sin(frame << 9) * 16 + (156 << 16);
-      orb.y = Trig_Cos(frame << 9) * 16 + (92 << 16);
+      orb.x = Trig_Sin(frame << 9) * 16 + px(156);
+      orb.y = Trig_Cos(frame << 9) * 16 + px(92);
     }
     // Then it drops 32 pixels three times, 40 frames apart, throwing four
     // puffs as it lands and rising back over 16 frames. The puffs start at
@@ -165,26 +165,26 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
 
       for (i = 0, start = 91; i != 3; start += 40, i++) {
         if (frame >= start && frame < start + 4)
-          orb.y += 8 << 16;
+          orb.y += px(8);
         if (frame == start + 3) {
           for (k = 0; k != 4; k++) {
             struct Particle *puff =
                 &work->particles[RAMSES_FIRST_PUFF + i * 8 + k];
 
-            puff->x = 64 << 16;
-            puff->y = 96 << 16;
+            puff->x = px(64);
+            puff->y = px(96);
             puff->velocityX = ((Random16() & 255) - 127) << 10;
             puff->velocityY = ((Random16() & 255) - 127) << 10;
             puff->variant = Random16() & 15;
           }
         }
         if (frame >= start + 20 && frame < start + 36)
-          orb.y -= 2 << 16;
+          orb.y -= px(2);
       }
     }
     // From frame 244 it flies off to the left, faster each frame from 252.
     if (frame >= 244 && frame <= 251)
-      orb.x -= 1 << 16;
+      orb.x -= px(1);
     if (frame >= 252 && frame <= 275)
       orb.x -= (frame - 250) << 16;
     // The orb's two sprites, 32 pixels apart, drawn at the orb: a height of
@@ -193,10 +193,10 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
     // cancel on the screen.
     if (frame <= 259) {
       position.x = orb.x;
-      position.height = -(256 << 16);
-      position.y = orb.y - (256 << 16);
+      position.height = -px(256);
+      position.y = orb.y - px(256);
       Actor_ApplyProjectedPlacementFar(work->sprites[7], &position, &scale, 0);
-      position.x = orb.x + (32 << 16);
+      position.x = orb.x + px(32);
       Actor_ApplyProjectedPlacementFar(work->sprites[8], &position, &scale, 0);
     }
     position.height = 0;
@@ -217,7 +217,7 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
         rock->y += rock->velocityY;
         if (frame > 96)
           rock->velocityY += Q16_ONE / 4;
-        if (rock->y > (120 << 16)) {
+        if (rock->y > px(120)) {
           rock->variant++;
           if (rock->variant == 1) {
             rock->velocityY = -rock->velocityY / 2;
@@ -226,7 +226,7 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
                   &work->particles[RAMSES_FIRST_ROCK_PUFF + i * 2 + k];
 
               puff->x = rock->x / 2;
-              puff->y = rock->y - (32 << 16);
+              puff->y = rock->y - px(32);
               puff->velocityX = ((Random16() & 255) - 127) << 10;
               puff->velocityY = ((Random16() & 255) - 127) << 10;
               puff->variant = Random16() & 15;
@@ -283,8 +283,8 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
         // instructions differ.
         speed &= Random16();
         angle = Random16() & TRIG_ANGLE_MASK;
-        spark->x = 32 << 16;
-        spark->y = 92 << 16;
+        spark->x = px(32);
+        spark->y = px(92);
         spark->velocityX = Trig_Sin(angle) * (speed + 32) >> 7;
         spark->velocityY = -(Trig_Cos(angle) * (speed + 32) << 1) >> 7;
         spark->variant = (Random16() & 15) + 32;

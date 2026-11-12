@@ -800,11 +800,11 @@ void LuckyWheels_Update(void) {
       p->y += p->velocityY;
       p->velocityY += Q16_ONE / 4;
       if (work->timer % 256 == i * 4 + 200) {
-        p->velocityY = 6 << 16;
+        p->velocityY = px(6);
         p->variant = 0;
       }
-      if (p->y > (64 << 16)) {
-        p->y = 64 << 16;
+      if (p->y > px(64)) {
+        p->y = px(64);
         if (p->variant <= 1)
           p->velocityY = -p->velocityY / 2;
         p->variant++;
@@ -926,7 +926,7 @@ void LuckyWheels_InitializeTitle(void) {
     LUCKY_WHEELS_SPARKS[i].variant = 0;
 
   letter = work->particles;
-  y = -(32 << 16);
+  y = -px(32);
   width = gLuckyWheels_TitleLetterWidths;
   for (i = 0; i != LUCKY_WHEELS_TITLE_LETTERS; i++) {
     letter[i].x = (left + LUCKY_WHEELS_TITLE_X) << 16;
@@ -936,7 +936,7 @@ void LuckyWheels_InitializeTitle(void) {
     letter[i].y = y;
     letter[i].velocityY = 0;
     letter[i].variant = 0;
-    y += -(8 << 16);
+    y += -px(8);
   }
 
   for (i = 0; i != DISPLAY_HEIGHT; i++)

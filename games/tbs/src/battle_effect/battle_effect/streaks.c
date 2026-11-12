@@ -104,7 +104,7 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
   s32 frame;
   s32 streakIndex;
   s32 streaks = STREAKS_MAX;
-  s32 lift = 20 << 16; // 20 pixels, 16.16
+  s32 lift = px(20); // 20 pixels, 16.16
 
   EFFECT_GET_SLOTS(slots, cursor, work, canvas);
   camera = EFFECT_SLOT(slots, HEAP_SLOT_CAMERA);
@@ -378,7 +378,7 @@ void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
     // instructions differ.
     speed &= Random16();
     angle = Random16() & TRIG_ANGLE_MASK;
-    SET_POSITION(mote, source->x.fixed, source->y.fixed + (5 << 16),
+    SET_POSITION(mote, source->x.fixed, source->y.fixed + px(5),
                  source->z.fixed);
     SET_VELOCITY(mote, Trig_Sin(angle) * (speed + 32) >> 8,
                  ((Random16() & 255) - 32) << 9,

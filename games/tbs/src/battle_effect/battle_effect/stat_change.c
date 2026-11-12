@@ -524,10 +524,10 @@ void BattleEffect_RunStatReduction(struct BattleEffectParams *args, s32 mode) {
       shard->z = (i % 4 * 8 - 16) << 16;
     }
     if (work->args->side == EFFECT_SIDE_PARTY)
-      shard->velocityX = 2 << 16;
+      shard->velocityX = px(2);
     else
-      shard->velocityX = -(2 << 16);
-    shard->velocityY = ((Trig_Cos(angle) * radius) >> 6) + (1 << 16);
+      shard->velocityX = -px(2);
+    shard->velocityY = ((Trig_Cos(angle) * radius) >> 6) + px(1);
     shard->velocityZ = (Trig_Sin(angle) * radius) >> 6;
     shard->variant = Random16() & 0xff;
   }

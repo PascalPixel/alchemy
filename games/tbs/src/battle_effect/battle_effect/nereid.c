@@ -83,10 +83,10 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
     // The formation comes in from (256, 88), heading left at 16 pixels a
     // frame and up at 4.
     rise = 0;
-    focus.x = 256 << 16;
-    focus.y = 88 << 16;
-    velocity.x = -(16 << 16);
-    velocity.y = -(4 << 16);
+    focus.x = px(256);
+    focus.y = px(88);
+    velocity.x = -px(16);
+    velocity.y = -px(4);
     // work->particles 24 to 39 are given a place and a delay that nothing in
     // the effect reads again.
     EFFECT_FREE_PARTICLES(k, work->particles, 64);
@@ -122,7 +122,7 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
         focus.y += velocity.y;
         velocity.x = velocity.x * 58 / 64;
         velocity.y = velocity.y * 56 / 64;
-        if (focus.x < 120 << 16)
+        if (focus.x < px(120))
           velocity.x += Q16_ONE / 2;
       }
       BattleEffect_PlaceFormationObjects(SUMMON_FORMATION_NEREID, focus.x,
@@ -140,8 +140,8 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
             s32 radius = Random16() & 63;
             s32 angle = Random16() & TRIG_ANGLE_MASK;
 
-            spark->x = ((Trig_Sin(angle) * radius) >> 3) + (32 << 16);
-            spark->y = ((Trig_Cos(angle) * radius) >> 2) + (96 << 16);
+            spark->x = ((Trig_Sin(angle) * radius) >> 3) + px(32);
+            spark->y = ((Trig_Cos(angle) * radius) >> 2) + px(96);
             spark->velocityX = ((Random16() & 63) - 32) << 14;
             spark->velocityY = (-(Random16() & 63) - 8) << 13;
             spark->variant = 0;
@@ -157,8 +157,8 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
             s32 radius = Random16() & 63;
             s32 angle = Random16() & TRIG_ANGLE_MASK;
 
-            spark->x = ((Trig_Sin(angle) * radius) >> 3) + (32 << 16);
-            spark->y = ((Trig_Cos(angle) * radius) >> 2) + (96 << 16);
+            spark->x = ((Trig_Sin(angle) * radius) >> 3) + px(32);
+            spark->y = ((Trig_Cos(angle) * radius) >> 2) + px(96);
             spark->velocityX = ((Random16() & 63) - 32) << 14;
             spark->velocityY = (-(Random16() & 63) - 8) << 13;
             spark->variant = 0;

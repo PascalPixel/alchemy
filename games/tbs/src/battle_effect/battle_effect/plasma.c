@@ -141,7 +141,7 @@ void BattleEffect_RunPlasma(struct BattleEffectParams *args) {
               angle = (Random16() & 0x7fff) - TRIG_TURN / 4;
 
               spark->x = PLASMA_COLUMN_X(work->args->side, i) << 16;
-              spark->y = 104 << 16;
+              spark->y = px(104);
               spark->velocityX = (Trig_Sin(angle) * speed) >> 7;
               spark->velocityY = -((Trig_Cos(angle) * speed) << 1) >> 7;
               spark->variant = (Random16() & 7) + 32;
@@ -172,7 +172,7 @@ void BattleEffect_RunPlasma(struct BattleEffectParams *args) {
       if (spark->variant > 0) {
         spark->variant--;
         Particle_AdvanceWithGravity2D(spark, 60, Q16_ONE / 16);
-        if (spark->y > 104 << 16) {
+        if (spark->y > px(104)) {
           spark->velocityY = -spark->velocityY / 2;
         } else {
           s32 x = spark->x >> 16;
@@ -450,10 +450,9 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 mode) {
           if (spark->variant > 0) {
             Particle_AdvanceWithGravity2D(spark, 60, gravity);
             spark->variant--;
-            if (spark->y > (108 << 16)) {
+            if (spark->y > px(108)) {
               spark->velocityY = -spark->velocityY / 2;
-            } else if (spark->x >= 0 && spark->x < (127 << 16) &&
-                       spark->y >= 0) {
+            } else if (spark->x >= 0 && spark->x < px(127) && spark->y >= 0) {
               // A spark's position on the canvas in whole pixels: the tests
               // above keep x in 0 to 126 and y in 0 to 108, so s16 holds them
               // exactly. As s32, the reload register before the frame loop

@@ -195,7 +195,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
 
     // The leap: 10 pixels a frame upwards, against a gravity of Q16_ONE * 57 /
     // 100, about 0.57 pixels a frame lost each frame.
-    actor->velocityY = 10 << 16;
+    actor->velocityY = px(10);
     actor->gravity = Q16_ONE * 57 / 100;
     BattleEffect_TintBattler(work->args->user, -1, POSE_LEAP, -1, 0);
     Sound_PlayFar(SE_CRASH);
@@ -438,12 +438,12 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
       // stream and growing each frame: its 16.16 scale starts at 0.625 in
       // Outer Space and 1 otherwise, and gains 1/256 a frame.
       position.groundHeight = 0;
-      position.height = 255 << 16;
+      position.height = px(255);
       if (mode == PARTICLE_STREAMS_OUTER_SPACE) {
         size = angle + Q16_ONE * 5 / 8;
         scale.x = size;
         scale.y = size;
-        position.x = (x << 16) + (80 << 16);
+        position.x = (x << 16) + px(80);
         position.y = (64 - y) << 16;
         Actor_ApplyProjectedPlacementFar(work->sprites[0], &position, &scale,
                                          0);
@@ -453,7 +453,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
         size = angle + Q16_ONE;
         scale.x = size;
         scale.y = size;
-        position.x = (x << 16) + (96 << 16);
+        position.x = (x << 16) + px(96);
         position.y = (96 - y) << 16;
         Actor_ApplyProjectedPlacementFar(work->sprites[0], &position, &scale,
                                          0);
@@ -481,7 +481,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
       // leaves the transformed point, read back as 16.16 and centred by hand.
       screen.x = 0;
       screen.y = 0;
-      screen.depth = 512 << 16;
+      screen.depth = px(512);
       Transform_Reset();
       Transform_ApplyPosition(ScreenPoint_Coordinates(&screen));
       Transform_ApplyRoll(TRIG_TURN / 32);
@@ -527,7 +527,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
                Q_16_16_TO_INT(mote->x) - 16, Q_16_16_TO_INT(mote->y) - 16, 32,
                32);
           mote->x -= direction * (Q16_ONE * 5 / 4);
-          mote->y -= 5 << 16;
+          mote->y -= px(5);
           mote->variant++;
           if (mote->variant == 6)
             mote->variant = -1;
@@ -644,10 +644,10 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
                 PARTICLE_STREAMS_MOTE_OFFSETS,
             screen.x - size / 2, screen.y - size, size, size * 2);
         Particle_AdvanceWithGravity3D(ember, 64, -Q16_ONE / 8);
-        if (ember->y <= (20 << 16)) {
+        if (ember->y <= px(20)) {
           ember->x = 0;
           ember->z = 0;
-          ember->y = 20 << 16;
+          ember->y = px(20);
           SET_VELOCITY(ember, ((Random16() & 63) - 32) << 15,
                        (Random16() & 63) << 13, ((Random16() & 63) - 32) << 15);
         }
@@ -691,7 +691,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
         }
         flash->variant++;
         if (flash->variant == 14) {
-          flash->y = 20 << 16;
+          flash->y = px(20);
           flash->x = 0;
           flash->z = ((Random16() & 255) - 127) << 16;
           SET_VELOCITY(flash, 0, (Random16() & 255) << 11, 0);
@@ -711,18 +711,18 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
     // about 1.81 in Outer Space (size) and 2 otherwise (grow).
     grow = (frame << 8) + (2 << 16);
     position.groundHeight = 0;
-    position.height = 255 << 16;
+    position.height = px(255);
     if (mode == PARTICLE_STREAMS_OUTER_SPACE) {
       scale.x = size;
       scale.y = size;
-      position.x = (x << 16) + (96 << 16);
+      position.x = (x << 16) + px(96);
       position.y = (96 - y) << 16;
       Actor_ApplyProjectedPlacementFar(work->sprites[0], &position, &scale, 0);
       Actor_ApplyProjectedPlacementFar(work->sprites[1], &position, &scale, 0);
     } else {
       scale.x = grow;
       scale.y = grow;
-      position.x = (x << 16) + (96 << 16);
+      position.x = (x << 16) + px(96);
       position.y = (96 - y) << 16;
       Actor_ApplyProjectedPlacementFar(work->sprites[0], &position, &scale, 0);
     }

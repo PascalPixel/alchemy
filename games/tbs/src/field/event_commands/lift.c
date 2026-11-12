@@ -135,11 +135,11 @@ again:
     // 25 pixels from the origin, in a random direction.
     pos.x = effect->originX;
     pos.z = effect->originZ;
-    Vector_AddPolarOffset(25 << 16, (u16)Random16(), &pos);
+    Vector_AddPolarOffset(px(25), (u16)Random16(), &pos);
     effect->targetX = pos.x;
     effect->targetZ = pos.z;
-    effect->acceleration = 3 << 16;
-    effect->speedMax = 3 << 16;
+    effect->acceleration = px(3);
+    effect->speedMax = px(3);
     effect->turnStepLimited = 0;
     effect->state++;
     return;
@@ -160,11 +160,11 @@ again:
     struct Actor *caster = effectWork->mainActor;
 
     pos.x = caster->x.fixed;
-    pos.y = caster->y.fixed + (16 << 16);
+    pos.y = caster->y.fixed + px(16);
     pos.z = caster->z.fixed;
-    Vector_AddPolarOffset(8 << 16, effectWork->angle, &pos);
+    Vector_AddPolarOffset(px(8), effectWork->angle, &pos);
     Camera_WorldToScreen(&pos);
-    Vector_AddPolarOffset(4 << 16, Random16(), &pos);
+    Vector_AddPolarOffset(px(4), Random16(), &pos);
     effect->targetX = pos.x;
     effect->targetZ = pos.z;
     effect->turnStepMax = TRIG_TURN / 32;
@@ -194,7 +194,7 @@ s32 SpawnHeavyImpactEffect(struct Actor *interpreter) {
   pos.x = source->x.fixed;
   pos.y = source->y.fixed;
   pos.z = source->z.fixed;
-  impact = Actor_Spawn(SPRITE_STAR_BURST, pos.x, pos.y - (32 << 16), pos.z);
+  impact = Actor_Spawn(SPRITE_STAR_BURST, pos.x, pos.y - px(32), pos.z);
   if (impact != NULL) {
     impact->motionFlags = 0;
     impact->wait = 20;
@@ -206,11 +206,11 @@ s32 SpawnHeavyImpactEffect(struct Actor *interpreter) {
     fragment = Actor_Spawn(SPRITE_SPARKLE, pos.x, pos.y, pos.z);
     if (fragment != NULL) {
       Actor_StartScriptFar(fragment, gFieldEffect_FragmentScript);
-      fragment->speedLimit = Random16() + (1 << 16);
-      fragment->acceleration = 1 << 16;
+      fragment->speedLimit = Random16() + px(1);
+      fragment->acceleration = px(1);
       fragment->motionFlags = 0;
       Actor_SetTargetPositionFromMagnitudeAngle(
-          fragment, Random16() * 24 + (8 << 16), Random16());
+          fragment, Random16() * 24 + px(8), Random16());
     }
   }
   return 0;

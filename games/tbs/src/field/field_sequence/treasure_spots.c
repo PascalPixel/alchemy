@@ -224,7 +224,7 @@ void TreasureSpot_LaunchMimic(s32 id) {
       Actor_SelectAnimationFar(actor, TREASURE_SPOT_CHEST_MIMIC);
     Sound_PlayFar(SE_ENEMY_CRY);
     if (actor != NULL) {
-      actor->velocityY = 8 << 16;
+      actor->velocityY = px(8);
       Actor_SetSpriteFlagsFar(actor, 1);
     }
   }

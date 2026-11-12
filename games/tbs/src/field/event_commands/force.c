@@ -65,7 +65,7 @@ void FieldPsynergy_Force(void) {
   pos.x = caster->x.fixed;
   pos.y = caster->y.fixed + ABOVE;
   pos.z = caster->z.fixed;
-  Vector_AddPolarOffset(8 << 16, effectWork->angle, &pos);
+  Vector_AddPolarOffset(px(8), effectWork->angle, &pos);
   projectile = Actor_Spawn(SPRITE_MOVE_HAND, pos.x, pos.y, pos.z);
   if (projectile == NULL) {
     FieldPsynergy_FadeFromCastColor();
@@ -74,8 +74,8 @@ void FieldPsynergy_Force(void) {
   projectile->scaleY = Q16_ONE / 4;
   projectile->scaleX = Q16_ONE / 4;
   projectile->facing = effectWork->angle;
-  projectile->speedLimit = 4 << 16;
-  projectile->acceleration = 4 << 16;
+  projectile->speedLimit = px(4);
+  projectile->acceleration = px(4);
   projectile->motionFlags = 0;
   Actor_SelectAnimationFar(projectile, 5);
   Actor_SetSpriteColorModeFar(projectile, SPRITE_COLOR_BGR);
@@ -100,8 +100,8 @@ void FieldPsynergy_Force(void) {
       copy->scaleY = Q16_ONE * 15 / 16;
       copy->scaleX = Q16_ONE * 15 / 16;
       copy->facing = effectWork->angle;
-      copy->speedLimit = 4 << 16;
-      copy->acceleration = 4 << 16;
+      copy->speedLimit = px(4);
+      copy->acceleration = px(4);
       copy->motionFlags = 0;
       Actor_SelectAnimationFar(copy, 5);
       Actor_SetSpriteColorModeFar(copy, SPRITE_COLOR_RBG);
@@ -122,7 +122,7 @@ void FieldPsynergy_Force(void) {
     pos.x = caster->x.fixed;
     pos.y = caster->y.fixed + ABOVE;
     pos.z = caster->z.fixed;
-    Vector_AddPolarOffset(56 << 16, effectWork->angle, &pos);
+    Vector_AddPolarOffset(px(56), effectWork->angle, &pos);
   } else {
     pos.x = effectWork->x;
     pos.y = effectWork->y + ABOVE;
@@ -149,16 +149,16 @@ void FieldPsynergy_Force(void) {
   // event's childMode leaves it be.
   if (target != NULL && effectWork->childMode == 0) {
     if (effectWork->childOption != 0)
-      target->velocityY = 8 << 16;
+      target->velocityY = px(8);
     pos.x = target->x.fixed;
     pos.y = target->y.fixed;
     pos.z = target->z.fixed;
-    Vector_AddPolarOffset(16 << 16, effectWork->angle, &pos);
+    Vector_AddPolarOffset(px(16), effectWork->angle, &pos);
     if (MapGrid_CheckCollisionFar(target, (struct FieldPosition *)&pos) ==
             COLLISION_NONE &&
         ActorScript_CheckOverlapFar(target, (s32 *)&pos) == 0) {
-      target->acceleration = 1 << 16;
-      target->speedLimit = 1 << 16;
+      target->acceleration = px(1);
+      target->speedLimit = px(1);
       Actor_SetMoveTargetFar(target, pos.x, pos.y, pos.z);
     }
   }

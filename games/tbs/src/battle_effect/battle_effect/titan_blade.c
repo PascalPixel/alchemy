@@ -351,7 +351,7 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
             spark->velocityY = -spark->velocityY / 2;
           } else {
             x = spark->x;
-            if ((x >= 0 && x <= (127 << 16) - 1) && y >= 0) {
+            if ((x >= 0 && x <= px(127) - 1) && y >= 0) {
               u8 *cell;
 
               size = spark->variant / 5 + 1;

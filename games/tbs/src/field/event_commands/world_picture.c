@@ -543,11 +543,11 @@ void Field_UpdateActorVisibilityBounds(void) {
   Actor_GetById(gMainRoutineWork.leaderActorId);
   object = gFieldWork->camera;
   x = object->x.fixed;
-  left = x - (320 << 16);
-  right = x + (320 << 16);
+  left = x - px(320);
+  right = x + px(320);
   y = object->z.fixed;
-  top = y - (600 << 16);
-  bottom = y + (400 << 16);
+  top = y - px(600);
+  bottom = y + px(400);
 
   id = ACTOR_FIRST_PLACED;
   do {

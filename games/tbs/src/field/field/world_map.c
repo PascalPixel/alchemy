@@ -143,8 +143,8 @@ s32 WorldMap_InitializePerspective(void) {
   perspective->viewY = 0;
   perspective->scaleX = Q16_ONE * 32;
   perspective->scaleY = Q16_ONE * 64;
-  perspective->limitX = 8160 << 16;
-  perspective->limitY = 8160 << 16;
+  perspective->limitX = px(8160);
+  perspective->limitY = px(8160);
   perspective->script = NULL;
   perspective->tiles =
       Resource_GetTableEntry((s32)&ResourceId_PerspectiveDataA);
@@ -340,8 +340,8 @@ void WorldMap_LoadGraphics(s32 x, s32 z) {
   buffer = Heap_Alloc(512);
   perspective = gMapGridWork[0];
   // The 32-pixel cell under (x, z), 32 cells to a row.
-  if (WORLD_MAP_CELLS[((x / (32 << 16)) & 31) + (((z / (32 << 16)) & 31) << 5)]
-          .kind == WORLD_MAP_ENCOUNTER_REGION_SNOWFIELD)
+  if (WORLD_MAP_CELLS[((x / px(32)) & 31) + (((z / px(32)) & 31) << 5)].kind ==
+      WORLD_MAP_ENCOUNTER_REGION_SNOWFIELD)
     graphicsSet = 1;
   resources = gWorldMap_GraphicsResources[graphicsSet];
   perspective->resources = resources;
@@ -566,8 +566,8 @@ void WorldMap_UpdateView(void) {
     }
     // On crossing a 16-pixel line, draw the column 16 on that side, or the
     // row 12 on when y grows and 18 back when it falls.
-    tileColumn = x / (16 << 16);
-    tileRow = y / (16 << 16);
+    tileColumn = x / px(16);
+    tileRow = y / px(16);
     if ((perspective->viewX ^ x) & (16 << 16)) {
       if (perspective->viewX < x)
         WorldMap_RenderPaletteMappedColumn(tileColumn + 16);
@@ -642,8 +642,8 @@ void WorldMap_UpdateCurrentTileBlock(void) {
   }
   // The top left of the 2x2 tiles (512 pixels each, >> 25) around the
   // point, 256 pixels left of it and 320 above.
-  firstQuarterX = (firstQuarterX - (256 << 16)) >> 25;
-  firstQuarterY = (firstQuarterY - (320 << 16)) >> 25;
+  firstQuarterX = (firstQuarterX - px(256)) >> 25;
+  firstQuarterY = (firstQuarterY - px(320)) >> 25;
   layer = 0;
   layerTileBase = 0;
   for (; layer < 2; layer++) {
@@ -680,8 +680,8 @@ void WorldMap_PreloadCurrentTileBlock(void) {
     firstQuarterX = *followedPosition++;
     firstQuarterY = followedPosition[1];
   }
-  firstQuarterX = (firstQuarterX - (256 << 16)) >> 25;
-  firstQuarterY = (firstQuarterY - (320 << 16)) >> 25;
+  firstQuarterX = (firstQuarterX - px(256)) >> 25;
+  firstQuarterY = (firstQuarterY - px(320)) >> 25;
   for (layer = 0; layer < 2; layer++) {
     for (row = 0; row < 2; row++) {
       for (col = 0; col < 2; col++) {

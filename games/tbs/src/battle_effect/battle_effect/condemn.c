@@ -230,7 +230,7 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
     if (frame == CONDEMN_SWING_FRAME) {
       target = GetBattleObjectSlotFar(work->args->targets[0])->actor;
       target->velocityY = px(1);
-      target->acceleration = 2 << 16;
+      target->acceleration = px(2);
       target->speedLimit = px(2);
       target->gravity = 0;
       target->steeringFlags = 0;

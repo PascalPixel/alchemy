@@ -144,8 +144,7 @@ s32 MapGrid_GetScreenRelativePosition(struct Actor *actor,
   y = actor->z.fixed - viewZ;
   // Across, from 32 pixels left of the screen to 32 past its 240; down,
   // below the view's top and above 224.
-  if ((x >= -((32 << 16) - 1) && x <= (272 << 16) - 1) && y > 0 &&
-      y < 224 << 16) {
+  if ((x >= -(px(32) - 1) && x <= px(272) - 1) && y > 0 && y < px(224)) {
     *screenPosition++ = x >> 16;
     *screenPosition = y >> 16;
     return 0;
@@ -323,7 +322,7 @@ struct Actor *Actor_Create(s32 encodedSprite, s32 x, s32 y, s32 z) {
     // speed when it bounces; facing down the screen (FACING_SOUTH, the
     // heading gWorldMap_KeyHeadings gives Down).
     object->script = (s32 *)gActor_DefaultScript;
-    object->speedLimit = 2 << 16;
+    object->speedLimit = px(2);
     object->scriptCursor = 0;
     actor->scaleX = Q16_ONE;
     actor->scaleY = Q16_ONE;
@@ -502,7 +501,7 @@ void Actor_StartCamera(struct Actor *actor, s32 watchedActorHandle) {
   Actor_StartScript(actor, gActor_CameraScript);
   if (watchedActorHandle != 0) {
     actor->acceleration = Q16_ONE / 2;
-    actor->speedLimit = 4 << 16;
+    actor->speedLimit = px(4);
     actor->watchedActor = (struct Actor *)watchedActorHandle;
     actor->timer = 0;
   }

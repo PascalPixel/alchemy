@@ -126,9 +126,9 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
   // frame across and 8 forward (16.16), slowing as it comes.
   windowEdgeStep = 1;
   formationX = 140 << 17;
-  formationZ = 200 << 16;
-  formationVelocityX = -(4 << 16);
-  formationVelocityZ = -(8 << 16);
+  formationZ = px(200);
+  formationVelocityX = -px(4);
+  formationVelocityZ = -px(8);
   savedBg1ScrollX = gBgScroll[1].x;
   view = (struct BattleBackgroundWork *)CANVAS_SLOT(
       cache, HEAP_SLOT_BATTLE_BACKGROUND);
@@ -165,7 +165,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
   for (i = 0; i != 712; i++) {
     s32 r = Random16() & 255;
     s32 a = Random16() & TRIG_ANGLE_MASK;
-    PARTICLES[i].x = ((Trig_Sin(a) * r) >> 3) + (128 << 16);
+    PARTICLES[i].x = ((Trig_Sin(a) * r) >> 3) + px(128);
     PARTICLES[i].y = ((Trig_Cos(a) * r) >> 4) + (192 << 15);
     PARTICLES[i].velocityX = (-(Random16() & 0x1fff) - 0x800) << 5;
     PARTICLES[i].velocityY = (-(Random16() & 0xfff) - 0x1800) << 5;
@@ -221,7 +221,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
           formationVelocityX = formationVelocityX * 60 / 64;
         }
         formationVelocityZ = formationVelocityZ * 60 / 64;
-        if (formationZ > (132 << 16)) {
+        if (formationZ > px(132)) {
           formationVelocityZ -= Q16_ONE / 8;
         } else {
           formationVelocityZ += Q16_ONE / 8;
@@ -235,7 +235,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
         formationVelocityX = formationVelocityX * 60 / 64;
         formationX += formationVelocityX;
         if (frame <= 117) {
-          if (formationZ > (138 << 16)) {
+          if (formationZ > px(138)) {
             formationVelocityZ -= Q16_ONE / 8;
           } else {
             formationVelocityZ += Q16_ONE / 8;
@@ -247,10 +247,8 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
       pos.groundHeight = 0;
       pos.height = 0;
       for (i = 0; i != NEPTUNE_OBJECTS; i++) {
-        pos.x =
-            (((gNeptune_ObjectX[i] * 3) >> 1) << 16) + formationX - (32 << 16);
-        pos.y =
-            (((gNeptune_ObjectY[i] * 3) >> 1) << 16) + formationZ - (24 << 16);
+        pos.x = (((gNeptune_ObjectX[i] * 3) >> 1) << 16) + formationX - px(32);
+        pos.y = (((gNeptune_ObjectY[i] * 3) >> 1) << 16) + formationZ - px(24);
         Actor_ApplyProjectedPlacementFar(work->sprites[i], &pos, &scale, 0);
       }
     }
@@ -262,7 +260,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
         if (PARTICLES[i].variant == -1) {
           s32 r = Random16() & 255;
           s32 a = Random16() & TRIG_ANGLE_MASK;
-          PARTICLES[i].x = ((Trig_Sin(a) * r) >> 3) + (64 << 16);
+          PARTICLES[i].x = ((Trig_Sin(a) * r) >> 3) + px(64);
           PARTICLES[i].y = ((Trig_Cos(a) * r) >> 4) + (192 << 15);
           PARTICLES[i].velocityX = (32 - (Random16() & 63)) << 12;
           PARTICLES[i].velocityY = (-(Random16() & 31) - 16) << 13;

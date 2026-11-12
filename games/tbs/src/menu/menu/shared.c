@@ -635,7 +635,7 @@ void Menu_PlacePartyFigures(void) {
     // which puts every figure in the same depth slot ((482 >> 1) + 10 = 251,
     // Render_ApplyProjectedPlacement), and raising the image by this height
     // brings it back up to its row.
-    s32 placeY = (482 << 16) - (menu->rowPositions[i] << 16);
+    s32 placeY = px(482) - (menu->rowPositions[i] << 16);
 
     if (figure != 0) {
       figure->image.priority = 0;

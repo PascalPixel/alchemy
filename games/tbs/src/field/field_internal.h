@@ -101,10 +101,10 @@ enum {
 /// Layered-map viewport distances in 16.16 pixels. The followed point is below
 /// the vertical centre; scroll bounds and camera following share this origin.
 enum {
-  FIELD_VIEW_FOCUS_X = 120 * Q16_ONE, ///< followed point from the left edge
-  FIELD_VIEW_FOCUS_Y = 96 * Q16_ONE,  ///< followed point from the top edge
-  FIELD_VIEW_WIDTH = 240 * Q16_ONE,   ///< the screen's width
-  FIELD_VIEW_HEIGHT = 160 * Q16_ONE   ///< the screen's height
+  FIELD_VIEW_FOCUS_X = px(120), ///< followed point from the left edge
+  FIELD_VIEW_FOCUS_Y = px(96),  ///< followed point from the top edge
+  FIELD_VIEW_WIDTH = px(240),   ///< the screen's width
+  FIELD_VIEW_HEIGHT = px(160)   ///< the screen's height
 };
 
 /// Sprite ids the field's own code creates actors of.

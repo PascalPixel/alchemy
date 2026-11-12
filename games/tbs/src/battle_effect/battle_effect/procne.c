@@ -102,8 +102,8 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
 
   // wave is where the block of sprites sways, from (128, 40); drift is a
   // push from each comet.
-  wave.x = 128 << 16;
-  wave.y = 40 << 16;
+  wave.x = px(128);
+  wave.y = px(40);
   drift.x = 0;
   drift.y = 0;
 
@@ -186,11 +186,11 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
           if (frame > index * 16 + 16)
             spin[index] += 48;
           if (radius[index] <= 31)
-            actor->y.fixed += 6 << 16;
+            actor->y.fixed += px(6);
           else
             actor->y.fixed += Q16_ONE / 2;
-          if (actor->y.fixed > (124 << 16))
-            actor->y.fixed = 124 << 16;
+          if (actor->y.fixed > px(124))
+            actor->y.fixed = px(124);
         }
 
         if (frame <= 490) {
@@ -262,7 +262,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
           screen.x >>= 1;
           // Always true: a mote restarts once past 48 pixels up, and climbs
           // little more than 2 pixels a frame.
-          if (point[index].y <= (64 << 16) - 1) {
+          if (point[index].y <= px(64) - 1) {
             draw[0](canvas, work->sheet + PROCNE_DUST_OFFSETS, screen.x - 12,
                     screen.y - 12, 16, 16);
           }
@@ -276,7 +276,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
             point[index].velocityX = 4096;
           point[index].velocityY += 2048;
           point[index].y += point[index].velocityY * 2;
-          if (point[index].y > (48 << 16)) {
+          if (point[index].y > px(48)) {
             point[index].y = 0;
             point[index].z = 100;
             point[index].velocityY = 0;
@@ -374,8 +374,8 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
       // Oam_AddSpriteAtDepth stops at 255).
       index = 0;
       do {
-        place.x = (gProcne_GridX[index] << 16) + wave.x + (40 << 16);
-        place.height = (255 << 16) + index * (64 << 16);
+        place.x = (gProcne_GridX[index] << 16) + wave.x + px(40);
+        place.height = px(255) + index * px(64);
         place.y = ((gProcne_GridY[index] + index * 64) << 16) + wave.y;
         Actor_ApplyProjectedPlacementFar(work->sprites[index], &place, &scale,
                                          0);
@@ -392,7 +392,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
       if (frame > 255) {
         s32 threshold;
 
-        depthOffset.z = 256 << 16;
+        depthOffset.z = px(256);
         alive = 0;
         depthOffset.x = 0;
         depthOffset.y = 0;
@@ -517,8 +517,8 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
               slot++;
             } while (slot != 28);
 
-            drift.x = 8 << 16;
-            drift.y = -(2 << 16);
+            drift.x = px(8);
+            drift.y = -px(2);
             work->shakeFrames = 8;
           }
 

@@ -26,8 +26,8 @@ void BattleMotion_ReturnToSpot(s32 unitId) {
   battleObject = BattleObject_Get(unitId);
   actor = battleObject->actor;
   stopped = 0;
-  actor->acceleration = 2 << 16;
-  actor->speedLimit = 8 << 16;
+  actor->acceleration = px(2);
+  actor->speedLimit = px(8);
   actor->gravity = BATTLE_UNIT_GRAVITY;
   actor->velocityY = stopped;
   actor->bounce = stopped;
@@ -52,9 +52,9 @@ void BattleMotion_SetupEscapeObject(s32 unitId) {
 
   battleObject = BattleObject_Get(unitId);
   actor = battleObject->actor;
-  actor->acceleration = 2 << 16;
-  actor->speedLimit = 8 << 16;
-  actor->velocityY = 5 << 16;
+  actor->acceleration = px(2);
+  actor->speedLimit = px(8);
+  actor->velocityY = px(5);
   actor->gravity = Q16_ONE * 47 / 100;
   actor->bounce = 0;
   actor->steeringFlags = 0;
@@ -85,9 +85,9 @@ void BattleMotion_LeapToward(struct BattleObject *startSlot,
   startZ = start->z.fixed;
   zStep = progress * (endZ - startZ) / 100;
   REG_BLDCNT = 0;
-  start->acceleration = 2 << 16;
-  start->speedLimit = 8 << 16;
-  start->velocityY = 4 << 16;
+  start->acceleration = px(2);
+  start->speedLimit = px(8);
+  start->velocityY = px(4);
   start->gravity = BATTLE_UNIT_GRAVITY;
   start->bounce = 0;
   start->steeringFlags = 1;
@@ -99,8 +99,8 @@ void BattleMotion_LeapToward(struct BattleObject *startSlot,
 void BattleMotion_ReturnObjectToSpot(struct BattleObject *battleObject) {
   struct Actor *actor = battleObject->actor;
 
-  actor->acceleration = 2 << 16;
-  actor->speedLimit = 8 << 16;
+  actor->acceleration = px(2);
+  actor->speedLimit = px(8);
   actor->gravity = BATTLE_UNIT_GRAVITY;
   actor->bounce = 0;
   actor->steeringFlags = 0;
@@ -119,8 +119,8 @@ void BattleMotion_HopBack(s32 unitId) {
   battleObject = BattleObject_Get(unitId);
   actor = battleObject->actor;
   actor->acceleration = Q16_ONE;
-  actor->speedLimit = 4 << 16;
-  actor->velocityY = 3 << 16;
+  actor->speedLimit = px(4);
+  actor->velocityY = px(3);
   actor->gravity = Q16_ONE * 3 / 5;
   actor->bounce = 0;
   actor->steeringFlags = 0;
@@ -356,9 +356,9 @@ s32 BattleUnit_GetEffectHeight(s32 unitId) {
   if (height == 0) {
     classId = Unit_GetFar(unitId)->id;
     if (BattleSprite_IsSmall(classId) != 0) {
-      height = 24 << 16;
+      height = px(24);
     } else {
-      height = 48 << 16;
+      height = px(48);
     }
   }
   return height;

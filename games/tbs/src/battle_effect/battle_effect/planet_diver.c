@@ -94,9 +94,9 @@ void BattleEffect_RunPlanetDiver(struct BattleEffectParams *args) {
   target = GetBattleObjectSlotFar(work->args->targets[0])->actor;
   // The ball falls 15 pixels a frame towards the middle of the field.
   if (actor->x.fixed > 0)
-    dx = -(15 << 16);
+    dx = -px(15);
   else
-    dx = 15 << 16;
+    dx = px(15);
 
   for (frame = 0; frame != PLANET_DIVER_FRAMES; frame++) {
     struct BattleCamera *camera = gBattleCamera;
@@ -129,9 +129,9 @@ void BattleEffect_RunPlanetDiver(struct BattleEffectParams *args) {
     // pixels a frame lost each frame), and outwards at up to 3 pixels a frame
     // towards three times its x, away from the middle (x 0).
     if (frame == 4) {
-      actor->velocityY = 20 << 16;
-      actor->acceleration = 1 << 16;
-      actor->speedLimit = 3 << 16;
+      actor->velocityY = px(20);
+      actor->acceleration = px(1);
+      actor->speedLimit = px(3);
       actor->gravity = BATTLE_UNIT_GRAVITY;
       actor->steeringFlags = 0;
       actor->snapToTarget = 0;
@@ -160,7 +160,7 @@ void BattleEffect_RunPlanetDiver(struct BattleEffectParams *args) {
     if (frame > 17) {
       if (actor->y.fixed > 0) {
         actor->x.fixed += dx;
-        actor->y.fixed -= 8 << 16;
+        actor->y.fixed -= px(8);
         // The nudge after drawing lasts only to this frame's landing test,
         // where the chips start; the next frame projects the user afresh.
         // On EFFECT_SIDE_PARTY the nudge moves y, so the chips start 8 pixels
@@ -220,9 +220,9 @@ void BattleEffect_RunPlanetDiver(struct BattleEffectParams *args) {
         chip->y = y;
         chip->velocityX = chip->velocityX * 56 / 64;
         chip->velocityY = chip->velocityY * 56 / 64 + Q16_ONE / 8;
-        if (chip->y > 112 << 16) {
+        if (chip->y > px(112)) {
           chip->velocityY = -chip->velocityY / 2;
-        } else if ((chip->x >= 0 && chip->x < 127 << 16) && chip->y >= 0) {
+        } else if ((chip->x >= 0 && chip->x < px(127)) && chip->y >= 0) {
           s32 size = chip->life / 8 + 1;
 
           EFFECT_DRAW_MOTE(draw[i & 1], canvas, sprites, (chip->x >> 16),
@@ -332,7 +332,7 @@ void BattleEffect_RunHaunt(struct BattleEffectParams *args) {
       // frame 32k, its skull i on frame 4 * (8k + i), and it flashes 32
       // frames into its turn.
       EFFECT_VIEW_FROM_CAMERA(camera);
-      SET_VECTOR(point, target->x.fixed, 20 << 16, target->z.fixed);
+      SET_VECTOR(point, target->x.fixed, px(20), target->z.fixed);
       Transform_ApplyPosition(point);
       if (frame > k * 32) {
         Transform_ApplyPitch(frame << 9);
@@ -479,7 +479,7 @@ void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectParams *args) {
                                      SPRITE_COLOR_NORMAL, POSE_DAMAGE,
                                      TINT_KEEP, 0);
           }
-          SET_VECTOR(point, actor->x.fixed, 40 << 16, actor->z.fixed);
+          SET_VECTOR(point, actor->x.fixed, px(40), actor->z.fixed);
           Projection_Point(point, &screen);
 
           // The spirals (32x32) a quarter turn apart, circling once every 128

@@ -353,7 +353,7 @@ UNUSED void BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y) {
   Transform_SetLookAt(camera->eye, focus);
   Transform_ProjectPoint(sourceBounds, measuredBounds);
 
-  BattleCamera_SetRange(120 << 16, 120 << 16, (120 - measuredBounds[0]) << 8,
+  BattleCamera_SetRange(px(120), px(120), (120 - measuredBounds[0]) << 8,
                         (120 - measuredBounds[1]) << 8, scale);
   half = scale * 255;
   width = half * 2;
@@ -410,7 +410,7 @@ void BattleCamera_SetView(s32 x, s32 depth, s32 y, s32 zoom) {
   Transform_SetLookAt(camera->eye, focus);
   Transform_ProjectPoint(sourceBounds, measuredBounds);
 
-  BattleCamera_SetRange(120 << 16, 120 << 16, (120 - measuredBounds[0]) << 8,
+  BattleCamera_SetRange(px(120), px(120), (120 - measuredBounds[0]) << 8,
                         (120 - measuredBounds[1]) << 8, scale);
   // The zoom then scales the focal length (510 pixels at 100 percent) and
   // the far depth, twice it.

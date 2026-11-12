@@ -42,14 +42,14 @@ void TreasureSpot_MoveLeaderAway(void) {
     z = leader->z.fixed;
     for (;;) {
       cellX = marker->column << 20;
-      dx = x - cellX - (8 << 16);
+      dx = x - cellX - px(8);
       cellZ = marker->row << 20;
-      dz = z - cellZ - (8 << 16);
+      dz = z - cellZ - px(8);
       if ((dx >= -0xfffff && dx <= 0xfffff) &&
           (dz >= -0xfffff && dz <= 0xfffff)) {
-        leader->x.fixed = cellX + (8 << 16);
-        leader->z.fixed = cellZ + (8 << 16);
-        Vector_AddPolarOffset(20 << 16, (u16)ArcTan2(dz, dx),
+        leader->x.fixed = cellX + px(8);
+        leader->z.fixed = cellZ + px(8);
+        Vector_AddPolarOffset(px(20), (u16)ArcTan2(dz, dx),
                               (struct Vector3 *)&leader->x.fixed);
         leader->targetX = ACTOR_NO_TARGET;
         leader->targetY = ACTOR_NO_TARGET;
@@ -134,11 +134,11 @@ struct Actor *ItemDisplay_ShowItemInFront(s32 actorId, s32 item) {
   picturePosition.vector.x = ((struct Actor *)srcZ)->x.fixed;
   picturePosition.vector.y = ((struct Actor *)srcZ)->y.fixed;
   picturePosition.vector.z = ((struct Actor *)srcZ)->z.fixed;
-  Vector_AddPolarOffset(16 << 16, ((struct Actor *)srcZ)->facing,
+  Vector_AddPolarOffset(px(16), ((struct Actor *)srcZ)->facing,
                         picturePosition.coordinates);
-  pictureX = (picturePosition.vector.x & FIELD_CELL_MASK) + (8 << 16);
+  pictureX = (picturePosition.vector.x & FIELD_CELL_MASK) + px(8);
   // srcZ now holds the cell's z.
-  srcZ = (picturePosition.vector.z & FIELD_CELL_MASK) + (8 << 16);
+  srcZ = (picturePosition.vector.z & FIELD_CELL_MASK) + px(8);
 
   if (((struct FieldWork *)work)->revealActive != 0) {
     // Stop both the marker emitters and the sparkle actors they already made.
@@ -162,7 +162,7 @@ struct Actor *ItemDisplay_ShowItemInFront(s32 actorId, s32 item) {
   }
 
   wait(3);
-  picture = Actor_CreateFar(SPRITE_BLANK, pictureX, 16 << 16, srcZ);
+  picture = Actor_CreateFar(SPRITE_BLANK, pictureX, px(16), srcZ);
   if (picture == 0)
     return 0;
 
@@ -217,10 +217,10 @@ void ItemDisplay_RaiseAboveLeader(struct Actor *actor) {
   leader = Actor_Lookup(gMainRoutineWork.leaderActorId);
   // Up to 2 pixels a frame, gaining 1 a frame, in free flight: no motion
   // flags, so it neither falls nor follows the ground.
-  actor->acceleration = 1 << 16;
-  actor->speedLimit = 2 << 16;
+  actor->acceleration = px(1);
+  actor->speedLimit = px(2);
   actor->motionFlags = 0;
-  Actor_SetMoveTargetFar(actor, leader->x.fixed, leader->y.fixed + (36 << 16),
+  Actor_SetMoveTargetFar(actor, leader->x.fixed, leader->y.fixed + px(36),
                          leader->z.fixed);
   wait(3);
   Actor_SelectAnimationFar(leader, ANIM_LEADER_ARMS_RAISED);
@@ -267,9 +267,8 @@ void ItemDisplay_ShowPicture(void *object, s32 flags) {
 void ItemDisplay_ShowItem(s32 item, s32 flags) {
   struct Actor *leader = Actor_Lookup(gMainRoutineWork.leaderActorId);
   void *iconBuffer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 1544);
-  struct Actor *actor =
-      Actor_CreateFar(SPRITE_BLANK, leader->x.fixed,
-                      leader->y.fixed + (36 << 16), leader->z.fixed);
+  struct Actor *actor = Actor_CreateFar(
+      SPRITE_BLANK, leader->x.fixed, leader->y.fixed + px(36), leader->z.fixed);
 
   if (actor != 0) {
     struct Sprite *sprite = actor->sprite;
@@ -426,8 +425,8 @@ void FieldEffect_SpawnRevealMarkers(void) {
                 GameFlag_GetFar(entry->condition) == 0) {
               // actor is reused for the spawned marker; a local of its own
               // differs.
-              actor = Actor_CreateFar(SPRITE_BLANK, (column << 20) + (8 << 16),
-                                      0, (row << 20) + (8 << 16));
+              actor = Actor_CreateFar(SPRITE_BLANK, (column << 20) + px(8), 0,
+                                      (row << 20) + px(8));
               if (actor != 0) {
                 Actor_StartScriptFar(actor, gFieldEffect_MarkerParticleScript);
                 Actor_SetSpriteFlagsFar(actor, 0);

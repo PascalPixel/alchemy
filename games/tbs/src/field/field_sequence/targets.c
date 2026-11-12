@@ -63,9 +63,9 @@ s32 Field_FindNearbyTalkTarget(s32 id) {
       // y is height: an actor more than 48 pixels above or below is out
       // of reach.
       if (candidate->y.fixed - source->y.fixed >= 0) {
-        if (candidate->y.fixed - source->y.fixed >= 48 << 16)
+        if (candidate->y.fixed - source->y.fixed >= px(48))
           continue;
-      } else if (source->y.fixed - candidate->y.fixed >= 48 << 16) {
+      } else if (source->y.fixed - candidate->y.fixed >= px(48)) {
         continue;
       }
 
@@ -144,13 +144,13 @@ s32 Field_FindNearbyPsynergyTarget(s32 id, s32 kind) {
 
     // The height allowed: 8 pixels, or 48 for Catch, 64 for Douse, 16 for
     // Mind Read.
-    heightLimit = 8 << 16;
+    heightLimit = px(8);
     if (kind == FIELD_PSYNERGY_CATCH)
-      heightLimit = 48 << 16;
+      heightLimit = px(48);
     if (kind == FIELD_PSYNERGY_DOUSE)
-      heightLimit = 64 << 16;
+      heightLimit = px(64);
     if (kind == FIELD_PSYNERGY_MIND_READ)
-      heightLimit = 16 << 16;
+      heightLimit = px(16);
 
     {
       s32 dy = candidate->y.fixed - source->y.fixed;

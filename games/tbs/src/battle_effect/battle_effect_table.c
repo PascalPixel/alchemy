@@ -279,8 +279,8 @@ struct Vector3 gBind_TriangleStrikeVertex[] = {{.x = 0, .y = 24, .z = 0}};
 // stars.c and procne.c: Ring bolt, spinning star and whirlwind comet paths.
 
 /// The two star points, 48 and 28 pixels up (16.16).
-struct Vector3 gStar_Points[] = {{.x = 0, .y = 48 << 16, .z = 0},
-                                 {.x = 0, .y = 28 << 16, .z = 0}};
+struct Vector3 gStar_Points[] = {{.x = 0, .y = px(48), .z = 0},
+                                 {.x = 0, .y = px(28), .z = 0}};
 u8 gStar_Radii[] = {32, 16};
 u8 gProcne_GridX[] = {0, 32, 64, 0, 32, 64, 0, 32, 64};
 u8 gProcne_GridY[] = {0, 0, 0, 32, 32, 32, 64, 64, 64};

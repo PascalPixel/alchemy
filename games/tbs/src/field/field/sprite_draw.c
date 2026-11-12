@@ -439,7 +439,7 @@ void Render_ApplyProjectedPlacement(struct Sprite *sprite,
     shadowHalfHeight = 8;
   }
   // Draw slot by screen row, one slot per two rows from slot 10.
-  if (height <= -(100 << 16)) {
+  if (height <= -px(100)) {
     slot = 1;
     depth = 0;
   } else {

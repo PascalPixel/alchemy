@@ -157,9 +157,9 @@ void BattleEffect_RunRay(struct BattleEffectParams *args) {
       if (spark->variant > 0) {
         spark->variant--;
         Particle_AdvanceWithGravity2D(spark, 60, -Q16_ONE / 32);
-        if (spark->y > (120 << 16)) {
+        if (spark->y > px(120)) {
           spark->velocityY = -spark->velocityY / 2;
-        } else if (spark->x >= 0 && spark->x < (127 << 16) && spark->y >= 0) {
+        } else if (spark->x >= 0 && spark->x < px(127) && spark->y >= 0) {
           s32 x = spark->x >> 16;
           s32 y = spark->y >> 16;
           s32 size = spark->variant / 8 + 1;

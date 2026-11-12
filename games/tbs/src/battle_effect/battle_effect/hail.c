@@ -229,8 +229,8 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
   for (i = 0; i != GROUND_LAUNCHED; i++) {
     struct Particle *rock = &work->particles[i];
 
-    SET_POSITION(rock, user->x.fixed, 66 << 16, user->z.fixed);
-    SET_VELOCITY(rock, (i * (80 << 16)) >> 5,
+    SET_POSITION(rock, user->x.fixed, px(66), user->z.fixed);
+    SET_VELOCITY(rock, (i * px(80)) >> 5,
                  (s32)(((Random16() & 127) - 64) << 16) >> 6,
                  (s32)(((Random16() & 255) - 127) << 16) >> 5);
     if (rock->x > 0)
@@ -332,13 +332,13 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
         // frames after it launched; it hits once below that height.
         if (frame > i * 2 + 16) {
           rock->velocityX += (target->x.fixed - rock->x) >> 8;
-          rock->velocityY += ((20 << 16) - rock->y) >> 8;
+          rock->velocityY += (px(20) - rock->y) >> 8;
           rock->velocityZ += (target->z.fixed - rock->z) >> 8;
           if (frame < i * 2 + 85) {
             SET_VELOCITY(rock, rock->velocityX * 60 / 64,
                          rock->velocityY * 60 / 64, rock->velocityZ * 60 / 64);
           }
-          if (rock->y < (20 << 16)) {
+          if (rock->y < px(20)) {
             work->shakeFrames = 8;
             rock->variant = 0;
             Sound_PlayFar(SE_HEAVY_IMPACT);

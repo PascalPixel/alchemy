@@ -17,7 +17,7 @@ void FieldEffect_SpawnFallingParticles(void) {
 
   liftedActor = ((struct FieldEffectWork *)gFieldEffectWork)->child;
   position.x = liftedActor->x.fixed;
-  position.y = liftedActor->y.fixed - Random16() * 16 + (24 << 16);
+  position.y = liftedActor->y.fixed - Random16() * 16 + px(24);
   position.z = liftedActor->z.fixed;
 
   radius = Random16() * 3;
@@ -37,10 +37,10 @@ FieldEffect_CheckRaisedTargetCollision(struct Actor *target,
                                        struct Vector3 *position) {
   s32 collision;
 
-  target->groundHeight += 16 << 16;
+  target->groundHeight += px(16);
   collision =
       MapGrid_CheckCollisionFar(target, (struct FieldPosition *)position);
-  target->groundHeight -= 16 << 16;
+  target->groundHeight -= px(16);
   return collision;
 }
 
@@ -74,26 +74,25 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
   Actor_StartScriptFar(src, gFieldEffect_SourceHoldScript);
 
   // The hands appear 32 pixels to either side and move to 16 pixels.
-  SET_POSITION(&pos, effectWork->x, effectWork->y + (16 << 16), effectWork->z);
-  actor =
-      FieldEffect_SpawnCarryHand(pos.x + (32 << 16), pos.y, pos.z, FACING_WEST);
+  SET_POSITION(&pos, effectWork->x, effectWork->y + px(16), effectWork->z);
+  actor = FieldEffect_SpawnCarryHand(pos.x + px(32), pos.y, pos.z, FACING_WEST);
   hands[0] = actor;
-  right = FieldEffect_SpawnCarryHand(pos.x - (32 << 16), pos.y, pos.z, 0);
+  right = FieldEffect_SpawnCarryHand(pos.x - px(32), pos.y, pos.z, 0);
   hands[1] = right;
   if (hands[0] == NULL || right == NULL) {
     FieldPsynergy_FadeFromCastColor();
     return;
   }
   wait(15);
-  SET_POSITION(&pos, target->x.fixed, target->y.fixed + (16 << 16),
+  SET_POSITION(&pos, target->x.fixed, target->y.fixed + px(16),
                target->z.fixed);
-  Actor_SetMoveTargetFar(actor, pos.x + (16 << 16), pos.y, pos.z);
-  Actor_SetMoveTargetFar(right, pos.x - (16 << 16), pos.y, pos.z);
+  Actor_SetMoveTargetFar(actor, pos.x + px(16), pos.y, pos.z);
+  Actor_SetMoveTargetFar(right, pos.x - px(16), pos.y, pos.z);
   Actor_WaitForMoveFar(actor);
   Actor_WaitForMoveFar(right);
-  actor->x.fixed = pos.x + (16 << 16);
+  actor->x.fixed = pos.x + px(16);
   actor->velocityX = 0;
-  right->x.fixed = pos.x - (16 << 16);
+  right->x.fixed = pos.x - px(16);
   right->velocityX = 0;
 
   // Lift to 24 pixels above the ground, 3/8 pixel a frame, floating (motion
@@ -104,16 +103,16 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
   target->motionFlags = ACTOR_FLOATS;
   Actor_SetSpriteFlagsFar(target, 0);
   if (hands[0] != NULL && hands[1] != NULL) {
-    while (target->y.fixed - target->groundHeight <= 24 << 16) {
+    while (target->y.fixed - target->groundHeight <= px(24)) {
       actor->y.fixed += Q16_ONE * 3 / 8;
       right->y.fixed += Q16_ONE * 3 / 8;
       target->y.fixed += Q16_ONE * 3 / 8;
       wait(1);
     }
   }
-  hands[0]->speedLimit = 4 << 16;
+  hands[0]->speedLimit = px(4);
   hands[0]->acceleration = Q16_ONE / 2;
-  hands[1]->speedLimit = 4 << 16;
+  hands[1]->speedLimit = px(4);
   hands[1]->acceleration = Q16_ONE / 2;
   // As in Move: the target keeps its facing and reads its ground from layer
   // 2 while it is carried.
@@ -134,10 +133,10 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
     angle = (u16)Input_GetDpadAngle(gKeysHeld);
     if (angle == DPAD_ANGLE_NONE) {
       pos.x = target->x.fixed;
-      pos.y = target->y.fixed + (16 << 16);
+      pos.y = target->y.fixed + px(16);
       pos.z = target->z.fixed;
-      Actor_SetMoveTargetFar(hands[0], pos.x + (16 << 16), pos.y, pos.z);
-      Actor_SetMoveTargetFar(hands[1], pos.x - (16 << 16), pos.y, pos.z);
+      Actor_SetMoveTargetFar(hands[0], pos.x + px(16), pos.y, pos.z);
+      Actor_SetMoveTargetFar(hands[1], pos.x - px(16), pos.y, pos.z);
       Actor_SelectAnimationFar(hands[0], 1);
       Actor_SelectAnimationFar(hands[1], 1);
       continue;
@@ -145,17 +144,17 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
 
     // The hands lean 2 pixels that way; check the ground 16 pixels on.
     pos.x = target->x.fixed;
-    pos.y = target->y.fixed + (16 << 16);
+    pos.y = target->y.fixed + px(16);
     pos.z = target->z.fixed;
-    Vector_AddPolarOffset(2 << 16, angle, &pos);
-    Actor_SetMoveTargetFar(hands[0], pos.x + (16 << 16), pos.y, pos.z);
-    Actor_SetMoveTargetFar(hands[1], pos.x - (16 << 16), pos.y, pos.z);
+    Vector_AddPolarOffset(px(2), angle, &pos);
+    Actor_SetMoveTargetFar(hands[0], pos.x + px(16), pos.y, pos.z);
+    Actor_SetMoveTargetFar(hands[1], pos.x - px(16), pos.y, pos.z);
     Actor_WaitForMoveFar(hands[0]);
     Actor_WaitForMoveFar(hands[1]);
     pos.x = target->x.fixed;
     pos.y = target->groundHeight;
     pos.z = target->z.fixed;
-    Vector_AddPolarOffset(16 << 16, angle, &pos);
+    Vector_AddPolarOffset(px(16), angle, &pos);
     i = ActorScript_CheckOverlapFar(target, (s32 *)&pos);
     // Both tests jump into the blocked path, which keeps it ahead of the drop
     // path as the ROM lays them out; written as one || test, 407 of 531
@@ -193,8 +192,8 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
       second = hands[1];
       second->speedLimit = Q16_ONE / 5;
       second->acceleration = Q16_ONE / 5;
-      Actor_SetMoveTargetFar(hands[0], pos.x + (16 << 16), pos.y, pos.z);
-      Actor_SetMoveTargetFar(second, pos.x - (16 << 16), pos.y, pos.z);
+      Actor_SetMoveTargetFar(hands[0], pos.x + px(16), pos.y, pos.z);
+      Actor_SetMoveTargetFar(second, pos.x - px(16), pos.y, pos.z);
       Actor_WaitForMoveFar(target);
       target->x.fixed = x;
       target->z.fixed = z;
@@ -216,7 +215,7 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
   wait(15);
   Sound_PlayFar(SE_CLICK);
   wait(15);
-  SET_POSITION(&pos, target->x.fixed, target->y.fixed + (16 << 16),
+  SET_POSITION(&pos, target->x.fixed, target->y.fixed + px(16),
                target->z.fixed);
   // Shards: 2 to 3 pixels a frame, 8 to 32 pixels in a random direction.
   for (i = 0; i < CARRY_SHARD_MAX; i++) {
@@ -225,10 +224,10 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
     shards[i] = actor;
     if (actor != NULL) {
       Actor_StartScriptFar(actor, gFieldEffect_FragmentScript);
-      actor->speedLimit = Random16() + (2 << 16);
-      actor->acceleration = 2 << 16;
+      actor->speedLimit = Random16() + px(2);
+      actor->acceleration = px(2);
       actor->motionFlags = 0;
-      dist = Random16() * 24 + (8 << 16);
+      dist = Random16() * 24 + px(8);
       Actor_SetTargetPositionFromMagnitudeAngle(actor, dist, Random16());
     }
   }
@@ -243,7 +242,7 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
   Actor_StartScriptFar(target, effectWork->savedScript);
   target->update = effectWork->savedCallback;
   target->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-  target->velocityY = 10 << 16;
+  target->velocityY = px(10);
   target->bounce = Q16_ONE / 5;
   target->layer = 0;
   src->update = 0;

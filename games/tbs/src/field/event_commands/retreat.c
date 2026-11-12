@@ -30,7 +30,7 @@ void FieldEffect_UpdateRetreatCaster(struct Actor *updated) {
   actor->scaleY -= 640;
   scale = actor->scaleX - 640;
   actor->facing += TRIG_TURN / 8;
-  actor->y.fixed += 1 << 16;
+  actor->y.fixed += px(1);
   actor->scaleX = scale;
   if ((s32)scale < Q16_ONE * 3 / 16)
     actor->spriteStorageKind = ACTOR_SPRITE_NONE;
@@ -64,22 +64,22 @@ void FieldEffect_UpdateRadialLaunch(struct FieldParticle *effect) {
     Camera_WorldToScreen(&pos);
 
     effect->x = pos.x;
-    effect->z = pos.z + (8 << 16);
+    effect->z = pos.z + px(8);
     effect->originZ = effect->z;
     effect->originX = effect->x;
     pos.z = effect->originZ;
     pos.x = effect->originX;
 
     spread = Random16();
-    Vector_AddPolarOffset(120 << 16,
+    Vector_AddPolarOffset(px(120),
                           ((spread << 13) >> 16) - ((Random16() << 13) >> 16) +
                               FACING_NORTH,
                           &pos);
 
     effect->targetX = pos.x;
     effect->targetZ = pos.z;
-    effect->acceleration = 5 << 16;
-    effect->speedMax = 5 << 16;
+    effect->acceleration = px(5);
+    effect->speedMax = px(5);
     effect->turnStepLimited = state;
     effect->state++;
 

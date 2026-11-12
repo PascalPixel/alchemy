@@ -82,8 +82,8 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
   Actor_SelectAnimationFar(user, POSE_LEAP);
   user->snapToTarget = 1;
   user->steeringFlags = 1;
-  user->acceleration = 2 << 16;
-  user->speedLimit = 8 << 16;
+  user->acceleration = px(2);
+  user->speedLimit = px(8);
   wait(20);
   for (frame = 0; frame != DEATH_PLUNGE_FRAMES; frame++) {
     struct BattleCamera *camera;
@@ -98,9 +98,9 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
     // * 57 / 100 here is about 0.57, the bounce's BATTLE_UNIT_GRAVITY and
     // Q16_ONE * 47 / 100 about 0.67 and 0.47.
     if (frame == 0) {
-      target->velocityY = 15 << 16;
+      target->velocityY = px(15);
       target->gravity = Q16_ONE * 57 / 100;
-      user->velocityY = 15 << 16;
+      user->velocityY = px(15);
       user->gravity = Q16_ONE * 57 / 100;
     }
     if (frame == 11) {
@@ -115,12 +115,12 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
     if (frame == 54) {
       BattleEffect_TintBattler(work->args->targets[0], SPRITE_COLOR_WHITE,
                                POSE_DAMAGE, 0, 10);
-      target->velocityY = 8 << 16;
+      target->velocityY = px(8);
       target->gravity = BATTLE_UNIT_GRAVITY;
-      user->velocityY = 5 << 16;
+      user->velocityY = px(5);
       user->gravity = Q16_ONE * 47 / 100;
-      user->acceleration = 1 << 16;
-      user->speedLimit = 2 << 16;
+      user->acceleration = px(1);
+      user->speedLimit = px(2);
       user->steeringFlags = 0;
       Actor_StartIdleFar(user);
       Actor_SetMoveTargetFar(user, 0, 0, user->z.fixed);
@@ -251,7 +251,7 @@ UNUSED void BattleEffect_RunBladeRain(struct BattleEffectParams *args) {
     else
       blade->velocityX = -3;
     blade->velocityX <<= 17;
-    blade->velocityY = 8 << 16;
+    blade->velocityY = px(8);
     blade->x <<= 16;
   }
   Sound_PlayFar(SE_POWER_UP);
@@ -487,7 +487,7 @@ void BattleEffect_RunElementPillar(struct BattleEffectParams *args) {
         point[2] = -(fleck->z * Trig_Cos(fleck->x) >> 4);
         point[1] = fleck->y;
         fleck->x += TRIG_TURN / turnSteps;
-        fleck->y += 5 << 16;
+        fleck->y += px(5);
         fleck->z += 64;
         Projection_Point(point, &screenPosition);
         screenPosition.x /= 2;
@@ -651,8 +651,8 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
     y = *startY++ << 16;
     piece->x = x;
     piece->y = y;
-    vx = (x - (32 << 16)) >> 2;
-    vy = (y - (60 << 16)) >> 2;
+    vx = (x - px(32)) >> 2;
+    vy = (y - px(60)) >> 2;
     piece->velocityX = vx;
     piece->velocityY = vy;
     piece++;
@@ -983,7 +983,7 @@ void BattleEffect_RunElementBurst(struct BattleEffectParams *args) {
   // (y) at a random angle (x) and close in 2 pixels a frame for 16 to 31
   // frames (variant).
   for (i = 0; i != 128; i++) {
-    PARTICLES[i].y = 128 << 16;
+    PARTICLES[i].y = px(128);
     PARTICLES[i].x = Random16() & TRIG_ANGLE_MASK;
     PARTICLES[i].z = (Random16() & 0x1ff) + 1024;
     PARTICLES[i].variant = -i;

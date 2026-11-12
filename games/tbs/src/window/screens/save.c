@@ -659,8 +659,8 @@ void FileList_PlacePartySprites(void) {
       scale.x = menu->partyMemberScale[index];
       scale.y = menu->partyMemberScale[index];
       position.x = menu->partyMemberX[index] << 16;
-      position.height = 500 << 16;
-      position.y = (menu->partyMemberY[index] << 16) + (500 << 16);
+      position.height = px(500);
+      position.y = (menu->partyMemberY[index] << 16) + px(500);
       position.groundHeight = 0;
       Actor_ApplyProjectedPlacementFar(sprite, &position, &scale, FACING_SOUTH);
     }
@@ -726,7 +726,7 @@ void FileList_PlaceDjinnSprites(void) {
 
     if (sprite != NULL) {
       s32 one = Q16_ONE;
-      s32 height = 500 << 16;
+      s32 height = px(500);
 
       scale.x = one;
       scale.y = one;

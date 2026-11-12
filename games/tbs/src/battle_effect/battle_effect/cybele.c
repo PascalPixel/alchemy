@@ -131,15 +131,15 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
   for (i = 0; i != 16; i++) {
     struct Particle *thorn = &work->particles[CYBELE_FIRST_THORN + i];
 
-    thorn->x = 128 << 16;
-    thorn->y = 64 << 16;
+    thorn->x = px(128);
+    thorn->y = px(64);
     thorn->velocityX = -((Random16() & 255) + 200) << 9;
     thorn->velocityY = 0;
     thorn->variant = 0;
   }
   BattleEffect_SelectLivingTargets(work->args);
 
-  height = -(64 << 16);
+  height = -px(64);
   speed = 0;
   for (frame = 0; frame != CYBELE_FRAMES; frame++) {
     struct BattleCamera *camera = gBattleCamera;
@@ -173,9 +173,9 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
     // her mouth opens as the thorns fly and shuts again.
     speed += Q16_ONE / 4;
     height += speed;
-    if (height > 64 << 16)
-      height = 64 << 16;
-    BattleEffect_PlaceFormationObjects(SUMMON_FORMATION_CYBELE, 128 << 16,
+    if (height > px(64))
+      height = px(64);
+    BattleEffect_PlaceFormationObjects(SUMMON_FORMATION_CYBELE, px(128),
                                        height);
     if (frame >= 48 && frame <= 96) {
       s32 pose = (frame - 48) / 24 % 3;
@@ -192,7 +192,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
       for (i = 0; i != 16; i++) {
         struct Particle *thorn = &work->particles[CYBELE_FIRST_THORN + i];
 
-        if (frame >= i + 72 && thorn->y < (104 << 16)) {
+        if (frame >= i + 72 && thorn->y < px(104)) {
           s32 cellIndex = (frame + i) / 4 % 5;
           s32 x = Q_16_16_TO_INT(thorn->x);
           s32 y = thorn->y >> 16;
@@ -305,7 +305,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
           chip->x += chip->velocityX;
           chip->y += chip->velocityY;
           chip->velocityY += Q16_ONE / 4;
-          if ((chip->y < 0 || chip->y > 120 << 16) && frame <= 159) {
+          if ((chip->y < 0 || chip->y > px(120)) && frame <= 159) {
             chip->x = (Random16() % 96) << 16;
             chip->y = ((Random16() & 7) + 88) << 16;
             chip->velocityX = ((Random16() & 255) - 128) << 11;
@@ -416,9 +416,9 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
           void *record;
           s32 n;
 
-          actor->y.fixed += 8 << 16;
-          if (actor->y.fixed > 128 << 16)
-            actor->y.fixed = 128 << 16;
+          actor->y.fixed += px(8);
+          if (actor->y.fixed > px(128))
+            actor->y.fixed = px(128);
           actor->gravity = 0;
           for (n = 0; (record = GetMotionRecordFar(slot->actor, n)) != 0; n++)
             Sprite_StartAnimationFar(record, 5);
@@ -434,7 +434,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
 
         // BATTLE_UNIT_GRAVITY is the battle units' usual gravity, which the
         // lift cleared (battle/motion.c sets the same).
-        actor->y.fixed = 96 << 16;
+        actor->y.fixed = px(96);
         actor->gravity = BATTLE_UNIT_GRAVITY;
       }
       if (frame == i * 5 + 302) {
@@ -475,9 +475,9 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
         for (j = 0; j != 10; j++) {
           struct Particle *ember = &work->particles[i * 10 + j];
 
-          SET_POSITION(ember, actor->x.fixed, 20 << 16, actor->z.fixed);
+          SET_POSITION(ember, actor->x.fixed, px(20), actor->z.fixed);
           SET_VELOCITY(ember, (Trig_Sin(j * 0x3334) * 4),
-                       (Random16() & 0x7fff) + (1 << 16),
+                       (Random16() & 0x7fff) + px(1),
                        (Trig_Cos(j * 0x3334) * 4));
           ember->variant = 0;
         }
@@ -543,7 +543,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   EFFECT_RELEASE_BLITTERS();
   EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
-  BattleEffect_RunImpactBurst(SUMMON_FORMATION_CYBELE, 128 << 16, height);
+  BattleEffect_RunImpactBurst(SUMMON_FORMATION_CYBELE, px(128), height);
   for (i = 0; i != 8; i++)
     Sprite_DestroyFar(work->sprites[i]);
   BattleEffect_EndCanvasLayer();

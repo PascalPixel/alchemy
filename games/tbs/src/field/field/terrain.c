@@ -468,9 +468,9 @@ s32 MapGrid_CheckCollision(struct Actor *actor,
 #endif
   // Up to 8 pixels up or 12 down is a step the actor can take.
   stepHeight = targetGround - actor->groundHeight;
-  if (stepHeight > 8 << 16)
+  if (stepHeight > px(8))
     return COLLISION_TOO_HIGH;
-  if (stepHeight < -(12 << 16))
+  if (stepHeight < -px(12))
     return COLLISION_TOO_LOW;
   return COLLISION_NONE;
 }

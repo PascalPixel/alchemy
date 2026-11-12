@@ -249,9 +249,9 @@ void BattleEffect_RunWhirlwind(struct BattleEffectParams *args) {
     // point 32 pixels right of the canvas's x 40 when the targets are the
     // party, left otherwise.
     if (work->args->side == EFFECT_SIDE_PARTY)
-      wave += 32 << 16;
+      wave += px(32);
     else
-      wave -= 32 << 16;
+      wave -= px(32);
     // Fade in over 16 frames and out over the last 16.
     if (frame <= 16)
       REG_BLDALPHA = BLEND_ALPHA(frame, 16);

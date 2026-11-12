@@ -8,7 +8,7 @@ enum {
   WHIRLWIND_RADIAL_DIRECTIONS = 16,
   WHIRLWIND_RADIAL_ANGLE_SHIFT = 12,
   WHIRLWIND_ORBIT_PARTICLES = 16,
-  WHIRLWIND_ORBIT_RADIUS = 8 << 16,
+  WHIRLWIND_ORBIT_RADIUS = px(8),
   WHIRLWIND_ORBIT_ANGLE_STEP = TRIG_TURN / 32,
   WHIRLWIND_ORBIT_FRAMES = 121,
   WHIRLWIND_WANDER_FRAMES = 101,
@@ -171,7 +171,7 @@ void FieldPsynergy_Whirlwind(void) {
   from.y = src->y.fixed;
   from.z = src->z.fixed;
   to.x = effectWork->x;
-  to.y = effectWork->y - (4 << 16);
+  to.y = effectWork->y - px(4);
   to.z = effectWork->z;
   // Include both endpoints of the ten-frame interpolation.
   ball = Actor_Spawn(SPRITE_WHIRLWIND, 0, 0, 0);
@@ -209,9 +209,9 @@ void FieldPsynergy_Whirlwind(void) {
       s32 dist;
 
       pos.x = ball->x.fixed;
-      pos.y = ball->y.fixed + step * (Q16_ONE * 4 / 5) + (4 << 16);
+      pos.y = ball->y.fixed + step * (Q16_ONE * 4 / 5) + px(4);
       pos.z = ball->z.fixed;
-      dist = Random16() * 5 + (3 << 16);
+      dist = Random16() * 5 + px(3);
       Vector_AddPolarOffset(dist, Random16(), &pos);
       particle = Actor_Spawn(SPRITE_LEAF, pos.x, pos.y, pos.z);
       if (particle != 0) {

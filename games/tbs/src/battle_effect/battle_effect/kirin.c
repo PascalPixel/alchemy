@@ -194,10 +194,10 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
         }
       }
       place.groundHeight = 0;
-      place.height = 255 << 16;
+      place.height = px(255);
       i = 0;
       do {
-        place.x = ((baseX + gKirin_Columns[i] - lift) << 16) + (224 << 16);
+        place.x = ((baseX + gKirin_Columns[i] - lift) << 16) + px(224);
         place.y = ((gKirin_Rows[i] - wave) << 16) + (144 << 15);
         Actor_ApplyProjectedPlacementFar(work->sprites[i], &place, &pair, 0);
         i++;
@@ -362,7 +362,7 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
           rise = ((Trig_Sin(ang) * 32)) >> 16;
         }
         risePlace.groundHeight = 0;
-        risePlace.height = 255 << 16;
+        risePlace.height = px(255);
         i = 0;
         do {
           risePlace.x = (rowX + gKirin_Columns[i]) << 16;

@@ -166,7 +166,7 @@ void BattleEffect_RunQuake(struct BattleEffectParams *args) {
               screen.y >= top) {
             // 12 pixels a frame upwards, under the gravity the battle's own
             // motions use (BattleMotion_ReturnToSpot in battle/motion.c).
-            actor->velocityY = 12 << 16;
+            actor->velocityY = px(12);
             actor->gravity = BATTLE_UNIT_GRAVITY;
           }
           if (actor->y.fixed < 0)

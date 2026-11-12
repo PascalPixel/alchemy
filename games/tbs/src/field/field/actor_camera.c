@@ -116,8 +116,8 @@ void ActorSystem_PlaceSprites(void) {
       sprite = actor->sprite;
       // From 32 pixels left of the screen to 32 past its 240, and from 32
       // pixels above it to 224.
-      if (dx > -(32 << 16) && dx < 272 << 16 && screenTop > -(32 << 16) &&
-          screenTop < 224 << 16) {
+      if (dx > -px(32) && dx < px(272) && screenTop > -px(32) &&
+          screenTop < px(224)) {
         // The cell under the actor: x and z >> 20 are 16-pixel cells, and a
         // row holds 128 of them.
         tile = &(
@@ -148,14 +148,14 @@ void ActorSystem_PlaceSprites(void) {
         // pixels up crosses that function's 100-pixel line into its lowest
         // slot; bit 2 moves it 160 on.
         if (actor->priorityFlags & ACTOR_PRIORITY_UNDERFOOT) {
-          drawPosition.height += -(320 << 16);
-          drawPosition.y += -(320 << 16);
-          drawPosition.groundHeight += -(320 << 16);
+          drawPosition.height += -px(320);
+          drawPosition.y += -px(320);
+          drawPosition.groundHeight += -px(320);
         }
         if (actor->priorityFlags & 4) {
-          drawPosition.height += 320 << 16;
-          drawPosition.y += 320 << 16;
-          drawPosition.groundHeight += 320 << 16;
+          drawPosition.height += px(320);
+          drawPosition.y += px(320);
+          drawPosition.groundHeight += px(320);
         }
         Render_ApplyProjectedPlacement(sprite, &drawPosition, &scale,
                                        actor->facing);

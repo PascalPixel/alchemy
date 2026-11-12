@@ -997,9 +997,9 @@ UNUSED void BattleEffect_InitializeRisingObject(s32 id) {
   struct BattleObject *slot = GetBattleObjectSlotFar(id);
   struct Actor *actor = slot->actor;
 
-  actor->acceleration = 2 << 16;
-  actor->speedLimit = 8 << 16;
-  actor->velocityY = 4 << 16;
+  actor->acceleration = px(2);
+  actor->speedLimit = px(8);
+  actor->velocityY = px(4);
   actor->gravity = BATTLE_UNIT_GRAVITY;
   actor->bounce = 0;
   actor->steeringFlags = 0;

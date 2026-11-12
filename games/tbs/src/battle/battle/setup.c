@@ -82,7 +82,7 @@ void BattleCamera_Update(void) {
 
   // The view centred at (120, 120) in 16.16 pixels, at scale 1.
   if (view->flag == 0) {
-    BattleCamera_SetRange(120 << 16, 120 << 16, 0, 0, Q16_ONE);
+    BattleCamera_SetRange(px(120), px(120), 0, 0, Q16_ONE);
   }
 }
 

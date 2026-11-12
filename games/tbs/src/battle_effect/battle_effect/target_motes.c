@@ -323,7 +323,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
                 mote->y -= mote->y / distance;
                 mote->z -= mote->z / distance;
               } else {
-                mote->y += 1 << 16;
+                mote->y += px(1);
               }
               mote->variant++;
               if (mote->variant == TARGET_MOTES_CYCLE) {
@@ -413,7 +413,7 @@ void BattleEffect_RunSleep(struct BattleEffectParams *args) {
   for (particleIndex = 0; particleIndex != SLEEP_SEEDED; particleIndex++) {
     current = &sheep[particleIndex];
     current->x = ((Random16() & 63) + 32) << 16;
-    current->y = -(32 << 16);
+    current->y = -px(32);
     current->velocityY = Random16() & 0;
     current->z = Random16() & 3;
     current->variant = Random16() & 255;
@@ -445,7 +445,7 @@ void BattleEffect_RunSleep(struct BattleEffectParams *args) {
     current = sheep;
     for (particleIndex = 0; particleIndex != SLEEP_SHEEP;
          particleIndex++, current++) {
-      if (frame > particleIndex * 4 && current->y <= (128 << 16) - 1) {
+      if (frame > particleIndex * 4 && current->y <= px(128) - 1) {
         s32 cell;
 
         // Eight 32x32 images (1024 bytes each), the last four drawn from the
@@ -465,12 +465,12 @@ void BattleEffect_RunSleep(struct BattleEffectParams *args) {
         // so the sheep almost always fall on through. BUGFIX bounces any sheep
         // that is falling.
 #ifdef BUGFIX
-        if (current->y > (92 << 16) && current->velocityY > 0) {
+        if (current->y > px(92) && current->velocityY > 0) {
 #else
-        if (current->y > (92 << 16) && current->velocityY == 0) {
+        if (current->y > px(92) && current->velocityY == 0) {
 #endif
           s32 speed = current->velocityY + 1;
-          current->y = 92 << 16;
+          current->y = px(92);
           current->z += 4;
           current->velocityY = -speed / 2;
         }

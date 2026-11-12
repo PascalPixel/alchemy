@@ -101,9 +101,9 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
     struct Particle *ember = &work->particles[DRAGON_CLOUD_FIRST_EMBER + j];
 
     if (work->args->side == EFFECT_SIDE_ENEMIES)
-      ember->x = -(56 << 16);
+      ember->x = -px(56);
     else
-      ember->x = 56 << 16;
+      ember->x = px(56);
     ember->y = 0;
     ember->z = 0;
     SET_VELOCITY(ember, ((Random16() & 63) - 32) << 14, (Random16() & 63) << 13,
@@ -114,10 +114,10 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
     struct Particle *flash = &work->particles[DRAGON_CLOUD_FIRST_FLASH + j];
 
     if (work->args->side == EFFECT_SIDE_ENEMIES)
-      flash->x = -(56 << 16);
+      flash->x = -px(56);
     else
-      flash->x = 56 << 16;
-    flash->y = 20 << 16;
+      flash->x = px(56);
+    flash->y = px(20);
     flash->z = 0;
     SET_VELOCITY(flash, ((Random16() & 63) - 32) << 14, (Random16() & 63) << 12,
                  ((Random16() & 63) - 32) << 14);

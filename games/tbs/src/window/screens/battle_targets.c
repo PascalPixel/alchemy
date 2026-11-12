@@ -207,24 +207,18 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   window = Window_Create(0, 12, 30, 4,
                          WINDOW_FLAG_INSTANT | WINDOW_FLAG_TEXT_CANVAS |
                              WINDOW_FLAG_OUTLINED_TEXT);
-  while (1) {
+  do {
     firstSprite = cursorSprites;
     drawCursors = 0;
     {
       s32 t = targetIndex * 2;
 
-      /* FAKEMATCH(dead): the switch arms, which emit no branch, end CSE before
-       * the call and keep the offset reload ahead of the ids load; as
-       * candidateIds[targetIndex], 102 of 1585 instructions differ in tbs-en.
-       */
-      switch (t) {
-      case 0:
-        t = targetIndex * 2;
-        break;
-      default:
-        t = targetIndex * 2;
-        break;
-      }
+      /* FAKEMATCH(dead): a test that cannot change t, which puts the
+       * offset's reload ahead of the ids' address and, with the dead stores
+       * below, sets the spill slots; as candidateIds[targetIndex], 102 of
+       * 1585 instructions differ in tbs-en. */
+      if (t == 0)
+        t = 0;
       BattleMotion_ProjectConditionalPositionFar(
           *(u16 *)((u8 *)candidateIds + t),
           ScreenPoint_Coordinates(&selectedPosition));
@@ -277,9 +271,10 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
     }
     effect.angle = 0;
 #if !TBS_PATCH_4
-    /* FAKEMATCH(dead): seventeen dead stores restore the native stack frame's
-     * spill slots at sp+36 to sp+24; without them, 102 of 1585 instructions
+    /* FAKEMATCH(dead): eighteen dead stores restore the native stack frame's
+     * spill slots from sp+16 to sp+36; without them, 102 of 1585 instructions
      * differ in tbs-en, each a spill offset. */
+    effect.angle = 0;
     effect.angle = 0;
     effect.angle = 0;
     effect.angle = 0;
@@ -771,9 +766,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
       break;
     }
     wait(1);
-    if (redraw == 0)
-      break;
-  }
+  } while (redraw != 0);
   wait(1);
   VramCache_FreeEntry(cursorSlot);
   if (conditionWindow != 0)

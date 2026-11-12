@@ -1,3 +1,8 @@
+/// @file
+/// The sound driver's core: its start-up and sound mode, stopping and fading
+/// the music players, the four CGB channels, the track controls (tempo,
+/// volume, pitch, pan and modulation) and the songs' extended commands.
+
 #include "../../include/sound/sound_driver.h"
 #include "types.h"
 #include "../../include/system/io_reg.h"
@@ -7,20 +12,15 @@
 void ClearChain(struct SoundChannel *note) {
   // Taking the entry address folds its slot into a literal address. Direct
   // indexing adds an address-adjustment instruction with the library compiler.
-  void (*detachNote)(struct SoundChannel *) =
-      MPLAY_FUNC_CAST(void (*)(struct SoundChannel *),
-                      *(&gMPlayJumpTable[MPLAY_JUMP_CLEAR_CHAIN]));
-
-  detachNote(note);
+  MPLAY_FUNC_CAST(void (*)(struct SoundChannel *),
+                  *(&gMPlayJumpTable[MPLAY_JUMP_CLEAR_CHAIN]))(note);
 }
 
 /// Clears a 64-byte music player or track prefix through the driver's jump
 /// table (SoundMainBTM). Called by MPlayOpen and m4aMPlayImmInit.
 void Clear64byte(void *block) {
-  void (*clearWork)(void *) = MPLAY_FUNC_CAST(
-      void (*)(void *), *(&gMPlayJumpTable[MPLAY_JUMP_CLEAR_64BYTE]));
-
-  clearWork(block);
+  MPLAY_FUNC_CAST(void (*)(void *),
+                  *(&gMPlayJumpTable[MPLAY_JUMP_CLEAR_64BYTE]))(block);
 }
 
 s32 __divsi3(s32 numerator, s32 denominator);
@@ -181,7 +181,7 @@ void m4aSoundMode(u32 mode) {
 }
 
 /// Unused: silences every PCM and CGB channel with the sound work's ident
-/// raised. Nothing in ☀️ calls it.
+/// raised. Nothing in the game calls it.
 UNUSED void SoundClear(void) {
   // Splitting the counter or typed iterators changes the native EN registers.
   struct SoundInfo *work = SOUND_INFO_PTR;
@@ -305,7 +305,7 @@ void MPlayStart(struct MusicPlayerInfo *player,
 
   // Preserve a higher-priority song unless the music player is idle.
   // checkPriority is 0 for every music player (sound/music_player_table.s), so
-  // in ☀️ a new song always replaces the one playing.
+  // in this game a new song always replaces the one playing.
   if (player->checkPriority != 0 &&
       ((player->header != NULL && (player->tracks[0].flags & MPT_FLG_START)) ||
        ((player->status & MUSICPLAYER_STATUS_TRACK) != 0 &&
@@ -817,8 +817,9 @@ void CgbSound(void) {
         *triggerRegister = note->trigger | 0x80;
         // CGB_CHANNEL_SQUARE_1 is restarted a second time unless NR10 bit 3 is
         // set (a falling sweep, or 8 alone, no sweep), as in pret's m4a.c.
-        // XXX (no evidence): why; the reason lies in how the sound hardware
-        // starts a rising sweep, which neither the ROM nor a render shows.
+        // XXX (no evidence): why; GBATEK's channel 1 page says nothing of a
+        // second restart, and neither the ROM nor a render shows how the
+        // hardware starts a rising sweep.
         if (channel == CGB_CHANNEL_SQUARE_1 && !(*sweepOrWaveControl & 8))
           *triggerRegister = note->trigger | 0x80;
       }
@@ -902,8 +903,8 @@ void m4aMPlayPitchControl(struct MusicPlayerInfo *player, u16 mask, s16 pitch) {
   player->ident = ID_NUMBER;
 }
 
-/// Unused: sets the stereo pan offset of selected active tracks. Nothing in ☀️
-/// calls it.
+/// Unused: sets the stereo pan offset of selected active tracks. Nothing in the
+/// game calls it.
 UNUSED void m4aMPlayPanpotControl(struct MusicPlayerInfo *player, u16 mask,
                                   s8 pan) {
   s32 tracksRemaining;
@@ -943,7 +944,7 @@ void ClearModM(struct MusicPlayerTrack *track) {
 }
 
 /// Sets modulation depth on selected active tracks, resetting zero-depth
-/// modulation. Nothing in ☀️ calls it; songs set the depth with their own
+/// modulation. Nothing in the game calls it; songs set the depth with their own
 /// command (ply_mod).
 void m4aMPlayModDepthSet(struct MusicPlayerInfo *player, s32 selectedTracks,
                          s32 depthArgument) {
@@ -976,7 +977,7 @@ void m4aMPlayModDepthSet(struct MusicPlayerInfo *player, s32 selectedTracks,
 }
 
 /// Sets LFO speed on selected active tracks, resetting modulation when stopped.
-/// Nothing in ☀️ calls it; songs set the speed with their own command
+/// Nothing in the game calls it; songs set the speed with their own command
 /// (ply_lfos).
 void m4aMPlayLFOSpeedSet(struct MusicPlayerInfo *player, u32 selectedTracks,
                          u32 speedArgument) {

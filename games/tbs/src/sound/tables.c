@@ -1,8 +1,9 @@
-#include "types.h"
+/// @file
+/// The sound driver's tables: the song commands' jump table, the PCM and CGB
+/// pitch tables, the CGB wave channel's volumes, the note lengths and the
+/// extended commands.
 
-//--------------------------------------------------------------------------
-// Sound library tables.
-//--------------------------------------------------------------------------
+#include "types.h"
 
 struct MusicPlayerInfo;
 struct MusicPlayerTrack;

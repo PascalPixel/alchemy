@@ -1,3 +1,8 @@
+/// @file
+/// The game's own sound code over the sound driver: Sound_Play, which takes
+/// every sound number, the music's volume and tempo ramps, the music's return
+/// after a jingle, and a sound test nothing in the game names.
+
 #include "module/sound/sound.h"
 #include "module/system/system.h"
 #include "battle.h"
@@ -186,11 +191,10 @@ void Sound_UpdateBgmRamps(void) {
 /// 10, and A plays it; B plays MUS_SILENCE, Start fades the music,
 /// and Select both steps the reverb code (SOUND_REVERB_NORMAL at first) and
 /// fades MUSIC_PLAYER_ACTION_SE. Never returns. Reached only through the sound
-/// far-call table's veneer; nothing in ☀️ names it.
+/// far-call table's veneer; nothing in the game names it.
 void SoundTest_Run(void) {
-  // One row each for music, jingles (from SOUND_JINGLE_FIRST) and sound
-  // effects (from SOUND_SE_FIRST).
-  s32 cues[3] = {0, 80, 100};
+  // One row each for music, jingles and sound effects.
+  s32 cues[3] = {0, SOUND_JINGLE_FIRST, SOUND_SE_FIRST};
   s32 reverbCode;
   s32 row;
   s32 clipTimer;
@@ -340,7 +344,7 @@ void Sound_ResumeAllMusicPlayers(void) { m4aMPlayAllContinue(); }
 
 /// Replaces the audio command mask, or toggles its requested bits when
 /// flagged. Reached only through the sound far-call table's veneer; nothing
-/// in ☀️ reads gSoundCommandMask by name.
+/// in the game reads gSoundCommandMask by name.
 void Sound_UpdateCommandMask(u32 command) {
   u32 toggle = command & SOUND_COMMAND_MASK_TOGGLE;
 
@@ -374,7 +378,7 @@ void Sound_WaitForBgmRestore(void) {
 
 /// Unused: returns the reverb code Sound_Play gives music `command`:
 /// SOUND_REVERB_LONG for MUS_ENDING, MUS_TITLE and MUS_ENDING_LOGO,
-/// SOUND_REVERB_NORMAL for the rest. Nothing in ☀️ calls it.
+/// SOUND_REVERB_NORMAL for the rest. Nothing in the game calls it.
 UNUSED s32 Sound_GetReverbCode(s32 command) {
   if (command == MUS_TITLE || command == MUS_ENDING_LOGO ||
       command == MUS_ENDING)

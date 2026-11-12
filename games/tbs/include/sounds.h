@@ -127,8 +127,8 @@ enum SoundId {
   MUS_037,
   MUS_038,
   MUS_039,
-  /// Unused: nothing in ☀️ plays it; TRACKS_ALL names it among the songs of
-  /// nine or more tracks.
+  /// Unused: nothing in the game plays it; TRACKS_ALL names it among the
+  /// songs of nine or more tracks.
   MUS_UNUSED,
   /// Field music of the Tolbi-bound ship, and of the world map reached from
   /// seven of its entrances.

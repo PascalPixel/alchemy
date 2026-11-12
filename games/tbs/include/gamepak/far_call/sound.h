@@ -1,7 +1,8 @@
 /// @file
 /// Audio mixing, playback commands and music-player updates.
 
-/// Runs the sound driver for one VBlank. Nothing in ☀️ calls it by this name.
+/// Runs the sound driver for one VBlank. Nothing in the game calls it by this
+/// name.
 void m4aSoundMainFar(void);
 /// Starts the sound driver and clears the music ramps and the sounds' state, at
 /// power-on.

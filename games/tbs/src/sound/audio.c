@@ -1,3 +1,8 @@
+/// @file
+/// The sound driver's entry points: its start-up (m4aSoundInit,
+/// MPlayExtender), the work it does each VBlank, PCM pitch, and the commands
+/// that start, stop, resume and fade a music player's song.
+
 #include "types.h"
 #include "../../include/sound/sound_driver.h"
 #include "../../include/system/ram_buffer.h"
@@ -38,8 +43,8 @@ s32 MidiKeyToFreq(void *wave, u8 key, u8 pitch) {
           umul3232H32(upperFrequency - lowerFrequency, pitchScale));
 }
 
-/// Does nothing; nothing in ☀️ refers to it. The driver's empty callback is
-/// DummyFunc (empty_callback.c).
+/// Does nothing; nothing in the game refers to it. The driver's empty callback
+/// is DummyFunc (empty_callback.c).
 void UnusedDummyFunc(void) {}
 
 // The music player table supplies the music player count and the mixer's line
@@ -142,8 +147,8 @@ void m4aSoundInit(void) {
 }
 
 /// Runs the sound driver for one VBlank through SoundMain. Exported first in
-/// the sound far-call table as m4aSoundMainFar; nothing in ☀️ calls it by that
-/// name, and the VBlank handler mixes through Mixer_Enter instead.
+/// the sound far-call table as m4aSoundMainFar; nothing in the game calls it by
+/// that name, and the VBlank handler mixes through Mixer_Enter instead.
 void m4aSoundMain(void) { SoundMain(); }
 
 /// Starts the song on the music player its song-table entry names. Called by
@@ -159,7 +164,7 @@ void m4aSongNumStart(u16 songId) {
 }
 
 /// Unused: starts the song unless its music player is already playing it.
-/// Nothing in ☀️ calls it.
+/// Nothing in the game calls it.
 UNUSED void m4aSongNumStartOrChange(u16 songId) {
   const struct MusicPlayer *mplayTable = gMPlayTable;
   const struct Song *songTable = gSongTable;
@@ -174,7 +179,7 @@ UNUSED void m4aSongNumStartOrChange(u16 songId) {
 }
 
 /// Unused: starts a different or finished song, or resumes the same paused
-/// song. Nothing in ☀️ calls it.
+/// song. Nothing in the game calls it.
 UNUSED void m4aSongNumStartOrContinue(u16 songId) {
   const struct MusicPlayer *mplayTable = gMPlayTable;
   const struct Song *songTable = gSongTable;
@@ -190,7 +195,7 @@ UNUSED void m4aSongNumStartOrContinue(u16 songId) {
 }
 
 /// Unused: stops the song's music player only when it holds this song. Nothing
-/// in ☀️ calls it.
+/// in the game calls it.
 UNUSED void m4aSongNumStop(u16 songId) {
   const struct MusicPlayer *mplayTable = gMPlayTable;
   const struct Song *songTable = gSongTable;
@@ -202,7 +207,7 @@ UNUSED void m4aSongNumStop(u16 songId) {
 }
 
 /// Unused: resumes the song's music player only when it holds this song.
-/// Nothing in ☀️ calls it.
+/// Nothing in the game calls it.
 UNUSED void m4aSongNumContinue(u16 songId) {
   const struct MusicPlayer *mplayTable = gMPlayTable;
   const struct Song *songTable = gSongTable;
@@ -214,7 +219,8 @@ UNUSED void m4aSongNumContinue(u16 songId) {
 }
 
 /// Unused: stops every music player. Only Sound_StopAllMusicPlayers calls it,
-/// and only a bare far-call veneer, which no ☀️ code names, leads there.
+/// and only a bare far-call veneer, which no code in the game names, leads
+/// there.
 UNUSED void m4aMPlayAllStop(void) {
   s32 playerIndex;
 
@@ -222,13 +228,14 @@ UNUSED void m4aMPlayAllStop(void) {
     m4aMPlayStop(gMPlayTable[playerIndex].info);
 }
 
-/// Unused: resumes `player`. Nothing in ☀️ calls it.
+/// Unused: resumes `player`. Nothing in the game calls it.
 UNUSED void m4aMPlayContinue(struct MusicPlayerInfo *player) {
   MPlayContinue(player);
 }
 
 /// Unused: resumes every music player. Only Sound_ResumeAllMusicPlayers calls
-/// it, and only a bare far-call veneer, which no ☀️ code names, leads there.
+/// it, and only a bare far-call veneer, which no code in the game names, leads
+/// there.
 UNUSED void m4aMPlayAllContinue(void) {
   s32 playerIndex;
 
@@ -243,21 +250,21 @@ void m4aMPlayFadeOut(struct MusicPlayerInfo *player, u16 speed) {
 }
 
 /// Unused: begins a fade that pauses the music player at zero volume, keeping
-/// its tracks' state for a later resume. Nothing in ☀️ calls it.
+/// its tracks' state for a later resume. Nothing in the game calls it.
 UNUSED void m4aMPlayFadeOutTemporarily(struct MusicPlayerInfo *player,
                                        u16 speed) {
   MPlayStartFade(player, speed, SOUND_FADE_FULL_VOLUME | TEMPORARY_FADE);
 }
 
 /// Unused: starts a fade from zero volume and resumes the music player. Nothing
-/// in ☀️ calls it.
+/// in the game calls it.
 UNUSED void m4aMPlayFadeIn(struct MusicPlayerInfo *player, u16 speed) {
   MPlayStartFade(player, speed, FADE_IN);
 }
 
 /// Unused: initializes active tracks still carrying their reset flag: clears
 /// their settings and gives them the default bend range, volume and LFO speed.
-/// Nothing in ☀️ calls it.
+/// Nothing in the game calls it.
 UNUSED void m4aMPlayImmInit(struct MusicPlayerInfo *player) {
   s32 count = player->trackCount;
   struct MusicPlayerTrack *track = player->tracks;

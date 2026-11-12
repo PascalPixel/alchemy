@@ -365,7 +365,7 @@ void *FieldEffect_SpawnMoveHand(void *object) {
       speed = Random16() + Q16_ONE;
       child->acceleration = 1 << 16;
       child->speedLimit = speed;
-      child->motionFlags = 2;
+      child->motionFlags = ACTOR_FALLS;
       child->gravity = Q16_ONE / 50;
       spread = Random16();
       child->velocityY = spread - Random16();
@@ -427,7 +427,7 @@ void UpdateRisingParticleBurst(void *object) {
       Actor_StartScriptFar(child, gFieldEffect_FragmentScript);
       child->speedLimit = Random16() + Q16_ONE;
       child->acceleration = Q16_ONE;
-      child->motionFlags = 2;
+      child->motionFlags = ACTOR_FALLS;
       child->gravity = Q16_ONE / 25;
       spread = Random16();
       child->velocityY = spread - Random16();

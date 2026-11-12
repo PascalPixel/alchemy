@@ -51,7 +51,7 @@ void Weather_UpdateRain(void) {
 
       // A new spot up to 128 pixels either way of the leader. The height
       // call passes pixels where MapGrid_GetTerrainHeight takes 16.16, as in
-      // Actor_SetHorizontalPositionWithTerrain (see the XXX there).
+      // Actor_SetHorizontalPositionWithTerrain, whose comment explains it.
       x = leader[0] + (Random16() << 8) - PIXELS(128);
       y = leader[2] + (Random16() << 8) - PIXELS(128);
       particle->positionX = x;
@@ -179,8 +179,8 @@ union ParticleLinkWord {
 /// slowing to 3/4 pixel a frame for its last 90 frames and 1/4 for its last
 /// 60, jittering sideways and changing tiles as it ages. It lasts 120
 /// frames, ending about 52 pixels above its spot, or until it leaves the
-/// screen. They freeze while FLAG_WEATHER_HELD is set. Nothing in ☀️ starts them
-/// (FieldMotes_Start has only its overlay veneer).
+/// screen. They freeze while FLAG_WEATHER_HELD is set. Nothing in the game
+/// starts them (FieldMotes_Start has only its overlay veneer).
 void FieldMotes_Update(void) {
   struct WeatherWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_WEATHER);
   struct MapGridScrollWork *grid = HEAP_SLOT_BLOCK(HEAP_SLOT_MAP_GRID);
@@ -374,8 +374,8 @@ void FieldEffect_UpdateSparkles(void) {
         // read at sx >> 16 and sy >> 16, the last live sparkle's screen
         // point shifted down 16 bits (0, or -1 off the left or top), where
         // MapGrid_GetTerrainHeight takes 16.16 pixels; the burst's first
-        // sparkle reads it the same way (see the XXX in
-        // Actor_SetHorizontalPositionWithTerrain).
+        // sparkle reads it the same way, as
+        // Actor_SetHorizontalPositionWithTerrain's comment explains.
         sparkle->positionX = spawnX;
         sparkle->positionZ = spawnZ;
         sparkle->positionY = MapGrid_GetTerrainHeightFar(0, sx >> 16, sy >> 16)

@@ -1,3 +1,7 @@
+#include "../../field/object/set_sprite_priority.c"
+
+#include "../../field/object/prepare_object.c"
+
 #include "types.h"
 #include "ram_buffer.h"
 #include "iwram_call.h"

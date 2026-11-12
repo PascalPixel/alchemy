@@ -1,3 +1,7 @@
+#include "../../field/object/set_sprite_priority.c"
+
+#include "../../field/object/prepare_object.c"
+
 #include "caverns.h"
 
 void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);

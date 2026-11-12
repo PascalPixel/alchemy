@@ -449,7 +449,6 @@ SECTIONS
     {
         "*/games/tla/src/scene/airs_rock_inside/entry.o"(.text)
         "*/games/tla/src/scene/airs_rock_inside/s0038.o"(.text)
-        "*/games/tla/src/field/object/prepare_object.o"(.text)
         "*/games/tla/src/scene/airs_rock_inside/object.o"(.text)
         "*/games/tla/src/field/field_effect/move.o"(.text)
         "*/games/tla/src/scene/airs_rock_inside/s02f4.o"(.text)
@@ -797,8 +796,6 @@ SECTIONS
     .text 0x2008000 :
     {
         "*/games/tla/src/scene/apojii_islands/entry.o"(.text)
-        "*/games/tla/src/field/object/set_sprite_priority.o"(.text)
-        "*/games/tla/src/field/object/prepare_object.o"(.text)
         "*/games/tla/src/scene/apojii_islands/object.o"(.text)
         "*/games/tla/src/field/field_effect/move.o"(.text)
         "*/games/tla/src/scene/apojii_islands/s015c.o"(.text)
@@ -1284,8 +1281,6 @@ SECTIONS
     .text 0x2008000 :
     {
         "*/games/tla/src/scene/magma_rock/entry.o"(.text)
-        "*/games/tla/src/field/object/set_sprite_priority.o"(.text)
-        "*/games/tla/src/field/object/prepare_object.o"(.text)
         "*/games/tla/src/scene/magma_rock/create.o"(.text)
         "*/games/tla/src/field/field_effect/move.o"(.text)
         "*/games/tla/src/scene/magma_rock/s015c.o"(.text)
@@ -1310,8 +1305,6 @@ SECTIONS
     .text 0x2008000 :
     {
         "*/games/tla/src/scene/magma_rock_inside/entry.o"(.text)
-        "*/games/tla/src/field/object/set_sprite_priority.o"(.text)
-        "*/games/tla/src/field/object/prepare_object.o"(.text)
         "*/games/tla/src/scene/magma_rock_inside/s00d0.o"(.text)
         "*/games/tla/src/field/field_effect/move.o"(.text)
         "*/games/tla/src/scene/magma_rock_inside/s015c.o"(.text)
@@ -1417,7 +1410,6 @@ SECTIONS
         "*/games/tla/src/scene/trial_road/entry.o"(.text)
         "*/games/tla/src/scene/trial_road.o"(.text)
         "*/games/tla/src/scene/trial_road/s0218.o"(.text)
-        "*/games/tla/src/field/object/set_sprite_priority.o"(.text)
         "*/games/tla/src/field/field_effect/move.o"(.text)
         "*/games/tla/src/scene/trial_road/s129c.o"(.text)
         "*/games/tla/src/scene/trial_road/s15a8.o"(.text)
@@ -1849,8 +1841,6 @@ SECTIONS
     .text 0x2008000 :
     {
         "*/games/tla/src/scene/caverns/entry.o"(.text)
-        "*/games/tla/src/field/object/set_sprite_priority.o"(.text)
-        "*/games/tla/src/field/object/prepare_object.o"(.text)
         "*/games/tla/src/scene/caverns/object.o"(.text)
         "*/games/tla/src/field/field_effect/move.o"(.text)
         "*/games/tla/src/scene/caverns/s015c.o"(.text)

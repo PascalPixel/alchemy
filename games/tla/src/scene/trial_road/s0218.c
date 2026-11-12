@@ -772,3 +772,5 @@ void Func_020011f8(void) {
   MapGrid_CopyCellAttributes(12, 21, 1, 1, 19, 21);
   GameFlag_SetBit(0x374);
 }
+
+#include "../../field/object/set_sprite_priority.c"

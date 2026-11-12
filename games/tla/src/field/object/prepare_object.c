@@ -10,12 +10,6 @@
 #include "types.h"
 #include "field_event.h"
 
-#define Actor_SetSingleChildFlags                                              \
-  ((void (*)(struct Actor *, s32))Actor_SetSingleChildFlags)
-
-#define Actor_SetPartAttribute                                                 \
-  ((void (*)(struct Actor *, s32))Actor_SetPartAttribute)
-
 struct Actor *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type) {
   struct Actor *object = Import_ActorCreate(type, x, y, z);
 

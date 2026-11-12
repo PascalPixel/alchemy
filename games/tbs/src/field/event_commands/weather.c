@@ -259,7 +259,8 @@ void FieldMotes_Start(void) {
   size = sizeof(struct WeatherWork);
   work = HeapSlot_AllocEwram(HEAP_SLOT_WEATHER, size);
   mote = work->particles;
-  // size is reused for the fill's zero; a zero of its own differs.
+  /* FAKEMATCH(temporary): size reused for the fill's zero; as sizeof in the
+   * allocation and 0 in the fill, 4 of 83 instructions differ in tbs-en. */
   size = 0;
   Dma_Fill32(size, work, sizeof(*work));
   tiles = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 1024);

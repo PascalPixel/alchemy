@@ -608,7 +608,7 @@ void Func_02001d24();
 void Func_02001d3c();
 void Func_02001d4c();
 void Actor_SetWideSprite();
-void Func_02001b3c();
+void Func_02001b3c(void);
 extern u32 gData_02001d84[];
 extern u32 gData_02001e04[];
 

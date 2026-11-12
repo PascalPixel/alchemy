@@ -74,7 +74,7 @@ next2:
 }
 
 void Func_02001380(void);
-s32 Func_020001e4();
+s32 Func_020001e4(void);
 void Func_02001388(void);
 
 void Func_020000d0(void) {
@@ -165,7 +165,7 @@ s32 Party_AdjustCoins(s32 amount);
 s32 PartyInventory_Remove();
 s32 Func_02001184();
 void Func_02001328();
-void Func_0200049c();
+void Func_0200049c(s32 a0);
 
 // French draws the count window two tiles wider, its numbers 16 pixels further
 // right; Japanese draws them 16 pixels further left, each followed by its

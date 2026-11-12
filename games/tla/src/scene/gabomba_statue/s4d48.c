@@ -17,7 +17,7 @@ struct Unk02004d48 {
 };
 
 void Func_02005654();
-void Func_02005624();
+void Func_02005624(struct Actor *object, s32 mode);
 void Func_02004938();
 
 s32 Func_02004d48(s32 first, s32 check) {
@@ -437,7 +437,6 @@ void Func_02005428(u16 *list, s32 mode, s32 count) {
 }
 
 s32 Func_02005844(struct Actor *object);
-void Func_02005624(struct Actor *object, s32 mode);
 
 void Func_020054ac(s32 id, u32 mode, s32 flag, s32 layer) {
   struct Actor *object = Actor_Get(id);

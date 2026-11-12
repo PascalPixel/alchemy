@@ -176,7 +176,7 @@ void Func_020000c4(void) {
   Func_0200475c_(0, 0, 0);
 }
 
-void Func_02004774();
+void Func_02004774(s32 x, s32 z, s32 a, s32 b);
 
 void Func_0200039c(s32 unused, s32 id) {
   struct Actor *object = Actor_Get(id);
@@ -188,7 +188,6 @@ void Func_020047d4(void);
 void Func_020047dc(void);
 void Func_020048f4(void);
 void Func_02002efc(s32 value);
-void Func_02004774(s32 x, s32 z, s32 a, s32 b);
 
 static __inline__ void Func_02004774_(s32 x, s32 z, s32 a, s32 b) {
   Func_02004774(x, z, a, b);

@@ -109,7 +109,7 @@ extern s32 gData_020023bc;
 extern u16 gData_020023e8[];
 
 s32 __modsi3();
-s32 Map_GetTerrainHeight();
+s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 void Func_02001b34();
 void Func_02001be4();
 void Func_02001250(s32 a, s32 b, s32 c, s32 d, s32 e);
@@ -238,8 +238,6 @@ void Func_02000428(s32 id) {
 #include "frame.h"
 #include "field_sprite.h"
 #include "event_work.h"
-
-s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 
 void Func_0200047c(void) {
   /* FAKEMATCH(wrapper): calls forwarded through inlines (call.h's Call and

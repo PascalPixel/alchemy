@@ -16,7 +16,7 @@
 #include "event_inline.h"
 #include "version.h"
 
-void Func_0200031c();
+void Func_0200031c(void);
 void Func_0200282c();
 void Func_02002834();
 

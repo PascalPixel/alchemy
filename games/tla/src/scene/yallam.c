@@ -1474,7 +1474,7 @@ wait3:
    } *)(base))                                                                 \
        ->v)
 
-void Func_02001ec0();
+void Func_02001ec0(void);
 extern u8 MsgIfYouWant[];
 
 void Func_02001d14(void) {

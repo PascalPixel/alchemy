@@ -91,13 +91,12 @@ void Func_02000178(void) {
      type v;                                                                   \
    } *)(base))                                                                 \
        ->v)
-void Func_020000ac();
 s32 Func_02001248();
 s32 Func_02001268();
 s32 Func_02001278();
 s32 Func_02001280();
 
-void Func_020012e8();
+void Func_020012e8(void);
 void Func_020013c8();
 
 s32 Resource_FindFreeEntry();
@@ -652,7 +651,6 @@ extern struct LohoPicture gData_02001f14;
 
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
-void Func_020012e8(void);
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.

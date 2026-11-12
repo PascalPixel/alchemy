@@ -23,7 +23,7 @@ struct Vector3 {
   s32 z;
 };
 
-void Event_WaitTransitionFrames();
+void Event_WaitTransitionFrames(void);
 void Func_0200088c();
 void Func_020009b8();
 void Func_02000a78();
@@ -34,7 +34,7 @@ void Func_02003338();
 void Func_02003380(s32 x, s32 z, s32 a, s32 b);
 void Func_02003398(void);
 void Func_020033a0(void);
-void Func_02003430();
+void Func_02003430(void);
 extern u8 gData_020035cc[];
 extern u8 gData_02003620[];
 extern s32 gData_020036fc[][2];
@@ -386,7 +386,6 @@ extern const s32 gData_02003574[];
 
 void Func_020032e0(struct Actor *object, s32 value);
 void Func_020032e8(struct Actor *object, const s32 *script);
-void Func_02003430(void);
 void Func_02003438(s32 id, s32 a);
 
 static __inline__ struct Actor *Create(s32 type, s32 x, s32 y, s32 z) {
@@ -449,7 +448,6 @@ void Func_02001398(void) {
 }
 
 void Event_FinishScreenTransition(void);
-void Event_WaitTransitionFrames(void);
 
 /// Centres the party leader on its cell and raises actor 8 (in Ov6B0Room4) or
 /// actor 9 with cue 198, 4 pixels at once and then 128 more, before the screen

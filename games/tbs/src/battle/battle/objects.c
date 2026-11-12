@@ -468,9 +468,11 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses) {
     unitIndex = 0;
     if ((spriteId = unitIds[0]) != BATTLE_UNIT_LIST_END) {
       for (;;) {
-        /* FAKEMATCH(dead): actor = battleObject->actor, never read; as
-         * battleObject->actor != 0, 62 of 272 instructions differ in
-         * tbs-en. */
+        /* LEFTOVER(template): actor = battleObject->actor, never read here;
+         * Camelot's template: the sibling loop above runs the same chain of
+         * tests (removed, no battle object, actor = battleObject->actor, no
+         * actor) and reads actor after it; as battleObject->actor != 0, 62 of
+         * 272 instructions differ in tbs-en. */
         if (unitIds[unitIndex] != BATTLE_UNIT_REMOVED &&
             (battleObject = BattleObject_Get(spriteId)) != 0 &&
             (actor = (struct BattleActor *)battleObject->actor) != 0)

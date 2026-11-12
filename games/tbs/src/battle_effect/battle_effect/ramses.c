@@ -247,8 +247,8 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
       struct Particle *puff = &work->particles[RAMSES_FIRST_PUFF + i];
 
       if (puff->variant >= 0) {
-        /* FAKEMATCH(dead): the first half of the test is always true here; as
-         * puff->variant <= 23 alone, 2 of 818 instructions differ in tbs-en. */
+        // The puff's picture window, frames 0 to 23, tested whole although
+        // the test above already holds its first half.
         if (puff->variant >= 0 && puff->variant <= 23) {
           s32 picture = puff->variant / 6 + 3;
 
@@ -271,8 +271,8 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
       }
       work->shakeFrames = 8;
     }
-    /* FAKEMATCH(dead): the strike frame tested a second time; as one block
-     * with the strike above, 53 of 818 instructions differ in tbs-en. */
+    // DEAD: the strike frame tested a second time; the ROM keeps the second
+    // compare.
     if (frame == RAMSES_STRIKE_FRAME) {
       // Throw the sparks from (32, 92) at random angles and speeds, twice as
       // hard up and down as across, each living 32 to 47 frames, at speeds

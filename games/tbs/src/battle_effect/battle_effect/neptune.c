@@ -326,9 +326,11 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
       for (i = 0; i != 64; i++) {
         // Two more burst points start each frame, as the smallest flare; one
         // that leaves the top restarts.
-        /* FAKEMATCH(temporary): pictures holds gBattleEffect_FlarePictures and
-         * r holds 1, the smallest flare; as gBattleEffect_FlarePictures[0], 1
-         * and 2 written out, 110 of 1474 instructions differ in tbs-en. */
+        /* LEFTOVER(template): pictures holds gBattleEffect_FlarePictures and
+         * r holds 1, the smallest flare; Camelot's template, from a sibling
+         * loop: the flares from frame 152 above run the same draw with a size
+         * that varies, (i & 3) + 5; as gBattleEffect_FlarePictures[0], 1 and 2
+         * written out, 110 of 1474 instructions differ in tbs-en. */
         u16 *pictures = gBattleEffect_FlarePictures;
         s32 r = 1;
         if (frame >= i / 2 + 222) {
@@ -359,8 +361,8 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
           n = 40;
         }
       }
-      /* FAKEMATCH(dead): never true, as n is 5, 40 or 60 here; without the
-       * clamp, 61 of 1474 instructions differ in tbs-en. */
+      // DEAD: never true, as n is 5, 40 or 60 here; the ROM keeps the compare
+      // and the store.
       if (n > 60) {
         n = 60;
       }
@@ -451,8 +453,11 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
     // From frame 28 each live spray particle falls under its gravity
     // (gNeptune_Gravity by index); one that falls below y 104 is freed.
     if (frame > 27) {
-      /* FAKEMATCH(temporary): draw holds blit[1]; as blit[1] in the draw,
-       * 643 of 1474 instructions differ in tbs-en. */
+      /* LEFTOVER(form): draw holds blit[1], the blitter cached before the
+       * 1024-particle loop; The Lost Age's BattleEffect_RunNeptune caches it
+       * the same way, and its ROM needs it (as draw[1], 178 of 1632 differ in
+       * tla-en); as blit[1] in the draw, 643 of 1474 instructions differ in
+       * tbs-en. */
       DrawRectangle draw = blit[1];
       for (i = 0; i != 1024; i++) {
         if (PARTICLES[i].variant >= 0) {

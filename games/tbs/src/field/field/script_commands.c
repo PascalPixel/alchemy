@@ -458,9 +458,12 @@ s32 FieldCamera_FollowLeaderInBounds(struct Actor *interpreter) {
       // The distance in the XZ plane: dy is computed as in
       // Actor_SetMoveTarget but not used for the distance.
       dx = (x - cameraActor->x.fixed) / Q16_ONE;
-      /* FAKEMATCH(dead): this dy, overwritten below, ranks y above the bounds
-       * in global allocation and keeps it in r5 as native; without it, 52 of
-       * 224 instructions differ in tbs-en. */
+      /* LEFTOVER(template): this whole-pixel dy, overwritten below and not
+       * used for the distance; Camelot's template: the sibling routine
+       * Actor_SetMoveTarget
+       * (actor_motion.c) computes the same three whole-pixel deltas and uses
+       * y's in its distance; without it, 52 of 224 instructions differ in
+       * tbs-en. */
       dy = (y - cameraActor->y.fixed) / Q16_ONE;
       dz = (z - cameraActor->z.fixed) / Q16_ONE;
       distance = px(Iwram_Sqrt(dx * dx + dz * dz));

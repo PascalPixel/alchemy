@@ -420,8 +420,11 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
         struct Particle *burst = &PARTICLES[i];
 
         if (burst->variant > 0) {
-          /* FAKEMATCH(temporary): size holds 3, the mote's size; as 3 in
-           * EFFECT_DRAW_MOTE, 77 of 1026 instructions differ in tbs-en. */
+          /* LEFTOVER(template): size holds 3, the mote's size; Camelot's
+           * template, from a sibling loop: the same routine's first motes
+           * above draw through EFFECT_DRAW_MOTE with a size that grows, grow +
+           * 4; as 3 in EFFECT_DRAW_MOTE, 77 of 1026 instructions differ in
+           * tbs-en. */
           s32 size = 3;
 
           EFFECT_DRAW_MOTE(blit, canvas, sheet, Q_16_16_TO_INT(burst->x),

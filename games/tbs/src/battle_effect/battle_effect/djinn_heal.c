@@ -204,10 +204,13 @@ UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
 
               Projection_Point(spark, &view);
               view.x >>= 1;
-              /* FAKEMATCH(dead): BattleEffect_RunHealingMotes' clamp and size
-               * by depth, copied with its code; nothing reads view.depth after,
-               * and the next line sets pictureIndex for real. Without the clamp
-               * and the store, 673 of 747 instructions differ in tbs-en. */
+              /* LEFTOVER(template): the clamp and size by depth, idle here:
+               * nothing reads view.depth after, and the next line sets
+               * pictureIndex for real; Camelot's template: the sibling routine
+               * BattleEffect_RunHealingMotes (healing.c) clamps the depth and
+               * sizes its motes by it the same way, then replaces the size in
+               * Ply's mode as here; without the clamp and the store, 673 of 747
+               * instructions differ in tbs-en. */
               CLAMP(view.depth, 314, 634);
               pictureIndex = 3 - (view.depth - 314) / 128;
               pictureIndex = (i * 4 + frame) % 9;

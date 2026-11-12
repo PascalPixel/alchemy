@@ -196,8 +196,11 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
   // Park every particle, idle, where it will start: smoke at the target's
   // feet, motes and sparks 20 pixels up its body, each with a random
   // velocity.
-  /* FAKEMATCH(dead): a loop that runs once, for the first target only; as its
-   * body alone, with 0 for k, 967 of 1259 instructions differ in tbs-en. */
+  /* LEFTOVER(template): a per-target loop whose count is 1, the first target
+   * only; Camelot's template: the sibling effects BattleEffect_RunStreakVolley
+   * and BattleEffect_RunDjinnBeams open the same loop, run to the target count,
+   * with the same lookup of targets[k]; as its body alone, with 0 for k, 967 of
+   * 1259 instructions differ in tbs-en. */
   for (k = 0; k != 1; k++) {
     target = GetBattleObjectSlotFar(work->args->targets[k])->actor;
     // Smoke works on the canvas: x under the target, line 80, drifting up
@@ -477,8 +480,10 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                         COMPOSITE_ADDITIVE);
     draw[1] = *lower;
-    /* FAKEMATCH(dead): a loop that runs once, for the user only; as its body
-     * alone, with 0 for k, 891 of 1259 instructions differ in tbs-en. */
+    /* LEFTOVER(template): a per-target loop whose count is 1, the user only;
+     * Camelot's template, as the loop above: the sibling effects' loops run k
+     * to the target count; as its body alone, with 0 for k, 891 of 1259
+     * instructions differ in tbs-en. */
     for (k = 0; k != 1; k++) {
       source = GetBattleObjectSlotFar(work->args->user)->actor;
       // Smoke puffs rise and spread through six images over 24 frames,

@@ -291,8 +291,8 @@ void SpriteViewer_SetGridColumnPriority(s32 slot, s32 value);
 
 s32 MapGrid_GetScreenRelativePosition(struct Actor *actor, s32 *screenPosition);
 void ActorSystem_Initialize(s32 controlMode);
-void nullsub_0800C0C4(void);
-void nullsub_0800C0C8(void);
+void ActorSystem_ReservedNoOpA(void);
+void ActorSystem_ReservedNoOpB(void);
 void *Actor_FindFree(void);
 void Actor_Release(struct Actor *actor);
 struct Actor *Actor_Create(s32 encodedSprite, s32 x, s32 y, s32 z);

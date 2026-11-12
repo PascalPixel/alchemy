@@ -200,9 +200,9 @@ void ActorSystem_Initialize(s32 controlMode) {
   system->fill = 0;
 }
 
-UNUSED void nullsub_0800C0C4(void) {}
+UNUSED void ActorSystem_ReservedNoOpA(void) {}
 
-UNUSED void nullsub_0800C0C8(void) {}
+UNUSED void ActorSystem_ReservedNoOpB(void) {}
 
 /// Returns the first of the 64 actors not in use (with no script), or 0.
 /// Called by Actor_Create.

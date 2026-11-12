@@ -8,7 +8,7 @@
 /// particles in PARTICLES (28 bytes each, so they end at 10752).
 #define ATALANTA_MATRICES (Ram_MapGridCellBuffer + 14336)
 
-/// The pictures in the slash sheet: five flash pictures, then the slash in
+/// The pictures in the slash sheet: five flash pictures, then the shaft in
 /// three parts. Each starts where the one before ends; the notes give the
 /// sizes the draws use. A flash picture's number is the frame of the flash it
 /// is drawn on.
@@ -41,18 +41,18 @@ enum SlashSheetCell {
   ATALANTA_SLASH_BOTTOM = ATALANTA_SLASH_MIDDLE + 29 * 35
 };
 
-/// Under a violet sky, a 3x3 formation of sprites flies along a stored path
-/// while sixteen blades gather trails of light, flash and fly off; then 24
-/// blades rain down diagonally on the targets and burst into flame, hitting
-/// each target as they land.
+/// Under a violet sky Atalanta flies across the screen while sixteen shafts of
+/// light gather trails of motes, flash and fly off; then 24 shafts rain down
+/// diagonally on the targets and burst in light, hitting each target as they
+/// land.
 ///
 /// Abilities: Atalanta (SUMMON_EFFECT_ATALANTA).
 ///
 /// A or B skips the rest of the gathering, which lasts up to 220 frames; the
-/// fall lasts 88. work->particles holds the 16 gathering blades and then the
-/// falling ones; PARTICLES holds 24 trail particles for each gathering blade,
-/// with their rotations in ATALANTA_MATRICES. The formation is nine sprites in
-/// work->effects, released between the parts. Loads the violet sky into BG1
+/// fall lasts 88. work->particles holds the 16 gathering shafts and then the
+/// falling ones; PARTICLES holds 24 trail particles for each gathering shaft,
+/// with their rotations in ATALANTA_MATRICES. Atalanta is nine sprites in
+/// work->sprites, released between the parts. Loads the violet sky into BG1
 /// and scrolls it with BattleEffect_AdvanceScrollOnInterval during the
 /// gathering, holding view->busy; restores gBgScroll[1].x and gives BG1 back
 /// with BattleEffect_SetupBlendedDisplay between the parts. Leaves the ember
@@ -90,7 +90,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
   scrollX = gBgScroll[1].x;
   work->args = args;
   // Setup: the canvas, with colours 0 and 1 black, is wiped to colour 1 from
-  // the top, so the screen goes black before the formation is spawned.
+  // the top, so the screen goes black before Atalanta is spawned.
   EFFECT_START_NARROW_CANVAS(BGCNT_WRAP);
   BattleEffect_ConfigureEffectDisplay();
   BG_PLTT[0] = 0;
@@ -99,7 +99,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   BattleEffect_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_FILL);
   BattleEffect_SelectLivingTargets(work->args);
-  // The formation: nine sprites of SPRITE_ATALANTA, sprite priority 1.
+  // Atalanta: nine sprites of SPRITE_ATALANTA, sprite priority 1.
   BattleEffect_SpawnObjects(9, SPRITE_ATALANTA, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_SlashSheet, work->sheet, 1, 1);
   Iwram_CopyWords((void *)BG_PLTT,
@@ -129,17 +129,17 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
   EFFECT_SHOW_WIDE_CANVAS(16);
   pathX = 0;
   pathY = 0;
-  // Each blade starts at a random spot on the canvas, x 12 to 107 and y 32
+  // Each shaft starts at a random spot on the canvas, x 12 to 107 and y 32
   // to 95, with 24 trail particles, each on a random rotation kept in
   // ATALANTA_MATRICES.
   for (i = 0; i != 16; i++) {
-    struct Particle *slash = &work->particles[i];
+    struct Particle *shaft = &work->particles[i];
 
-    slash->x = (Random16() % 96 + 12) << 16;
-    slash->y = ((Random16() & 63) + 32) << 16;
-    slash->velocityX = 0;
-    slash->velocityY = 0;
-    slash->variant = 0;
+    shaft->x = (Random16() % 96 + 12) << 16;
+    shaft->y = ((Random16() & 63) + 32) << 16;
+    shaft->velocityX = 0;
+    shaft->velocityY = 0;
+    shaft->variant = 0;
     for (j = 0; j != 24; j++) {
       PARTICLES[i * 24 + j].x = (Random16() & 15) + 48;
       Transform_Reset();
@@ -155,10 +155,9 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
                BGCNT_SCREEN_BASE(7);
   // The gathering: 220 frames, or until A or B is pressed.
   for (frame = 0; frame != 220 && !(gKeysRepeat & (KEY_A | KEY_B)); frame++) {
-    // The formation follows the path through frame 209: two 16-bit
-    // coordinates, then a signed byte step for each axis every frame. Its
-    // nine sprites stand 32 pixels apart, the top-left one at the path
-    // position.
+    // Atalanta follows the path through frame 209: two 16-bit coordinates,
+    // then a signed byte step for each axis every frame. Her nine sprites stand
+    // 32 pixels apart, the top-left one at the path position.
     if (frame <= 209) {
       if (frame == 0) {
         pathX = (path[0] << 8) + (u8)path[1];
@@ -188,24 +187,24 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
       work->fadeFrames = 24;
       work->fadeStep = 0;
     }
-    // Blade i appears at frame i * 8 + 64: its trails close in for 16
+    // Shaft i appears at frame i * 8 + 64: its trails close in for 16
     // frames, it flashes for 5 (with a sound on the last), and from frame
     // i * 8 + 85 it flies off, accelerating down and to the left.
     for (i = 0; i != 16; i++) {
       s32 start = i * 8 + 64;
 
       if (frame >= start) {
-        struct Particle *slash = &work->particles[i];
-        s32 x = Q_16_16_TO_INT(slash->x);
-        s32 y = Q_16_16_TO_INT(slash->y);
+        struct Particle *shaft = &work->particles[i];
+        s32 x = Q_16_16_TO_INT(shaft->x);
+        s32 y = Q_16_16_TO_INT(shaft->y);
 
         if (frame == i * 8 + 84)
           Sound_PlayFar(SE_POWER_UP);
         if (frame >= i * 8 + 85) {
-          slash->x += slash->velocityX;
-          slash->y += slash->velocityY;
-          slash->velocityX -= px(1);
-          slash->velocityY += px(2);
+          shaft->x += shaft->velocityX;
+          shaft->y += shaft->velocityY;
+          shaft->velocityX -= px(1);
+          shaft->velocityY += px(2);
           draw[0](canvas, work->sheet + ATALANTA_SLASH_TOP, x + 4, y - 40, 16,
                   21);
           draw[0](canvas, work->sheet + ATALANTA_SLASH_MIDDLE, x - 16, y - 19,
@@ -247,17 +246,17 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
             break;
           }
         } else {
-          // The trails: a particle's x is its distance from the blade (48 to
+          // The trails: a particle's x is its distance from the shaft (48 to
           // 63, plain pixels, not 16.16); while it is positive the particle is
           // drawn on its stored rotation and moves 4 closer, so all are in
-          // within the blade's 16 gathering frames.
+          // within the shaft's 16 gathering frames.
           for (j = 0; j != 24; j++) {
             struct Particle *trail = &PARTICLES[i * 24 + j];
 
             if (trail->x > 0) {
               Transform_Load(ATALANTA_MATRICES + (i * 24 + j) * 48);
               point[0] = trail->x;
-              // The Japanese release draws the blade trails 16 pixels higher;
+              // The Japanese release draws the trails 16 pixels higher;
               // the later releases move them 16 pixels down.
 #if !TBS_PATCH_1
               {
@@ -276,8 +275,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
               screen.y = screen.y + y + 16;
 #endif
               trail->x -= 4;
-              draw[1](canvas, sheet + gBattleEffect_MoteCells[4], screen.x - 2,
-                      screen.y - 5, 5, 10);
+              EFFECT_DRAW_MOTE(draw[1], canvas, sheet, screen.x, screen.y, 5);
             }
           }
         }
@@ -286,8 +284,8 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
     EFFECT_PRESENT_CANVAS(work);
   }
   // Between the parts: stop the scroll, give BG1 back to the battle, release
-  // the formation and load the ember streak sheet into the map grid cell buffer
-  // for the flames.
+  // Atalanta's sprites and load the ember streak sheet into the map grid cell
+  // buffer for the bursts.
   Task_Remove(BattleEffect_AdvanceScrollOnInterval);
   view->busy = 0;
   gBgScroll[1].x = scrollX;
@@ -298,40 +296,40 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
   REG_DISPCNT = EFFECT_DISPCNT;
   Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet,
                              Ram_MapGridCellBuffer, 1, 0);
-  // Second part: aim 32 blades above the field, in pixels, to fall
-  // diagonally: blade i on target i % 6 where there is one, on a random
+  // Second part: aim 32 shafts above the field, in pixels, to fall
+  // diagonally: shaft i on target i % 6 where there is one, on a random
   // column otherwise. Only the first 24 fall. The x start allows for the
-  // blade's fall of 6 across for every 12 down, to land on the target's
+  // shaft's fall of 6 across for every 12 down, to land on the target's
   // half-width x.
   for (i = 0; i != 32; i++) {
-    struct Particle *slash = &work->particles[i];
+    struct Particle *shaft = &work->particles[i];
     s32 member = i % 6;
 
     if (member < work->args->targetCount) {
       Projection_ScaledUnit(work->args->targets[member], &target);
-      slash->y = -((Random16() & 31) + 40);
-      slash->x = target.x / 2 + (80 - slash->y) / 2;
+      shaft->y = -((Random16() & 31) + 40);
+      shaft->x = target.x / 2 + (80 - shaft->y) / 2;
     } else {
-      slash->x = (Random16() & 63) + 80;
-      slash->y = -((Random16() & 31) + 40);
+      shaft->x = (Random16() & 63) + 80;
+      shaft->y = -((Random16() & 31) + 40);
     }
-    slash->variant = -1;
+    shaft->variant = -1;
   }
-  // 88 frames: 24 blades fall, blade i from frame 2i (all of them from
+  // 88 frames: 24 shafts fall, shaft i from frame 2i (all of them from
   // frame 41), the lower part cut short near the ground. Past row 79 a
-  // blade lands, shaking the screen and hitting target i % 6 if there is
-  // one, and bursts into flame for 24 frames, its slash still standing for
+  // shaft lands, shaking the screen and hitting target i % 6 if there is
+  // one, and bursts in light for 24 frames, the shaft still standing for
   // the first 12.
   for (frame = 0; frame != 88; frame++) {
     for (i = 0; i != 24; i++) {
-      struct Particle *slash = &work->particles[i];
+      struct Particle *shaft = &work->particles[i];
 
       if (frame >= i * 2 || frame > 40) {
-        // Landed (variant counts the frames since): the flame's six
-        // pictures, 4 frames each, the two blitters alternating by blade.
-        if (slash->variant >= 0) {
-          if (slash->variant <= 23) {
-            s32 cell = slash->variant / 4;
+        // Landed (variant counts the frames since): the burst's six
+        // pictures, 4 frames each, the two blitters alternating by shaft.
+        if (shaft->variant >= 0) {
+          if (shaft->variant <= 23) {
+            s32 cell = shaft->variant / 4;
             u32 width;
 
             // UB: width is assigned in one argument and read in another.
@@ -340,45 +338,45 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
             draw[i & 1](canvas,
                         Ram_MapGridCellBuffer +
                             gBattleEffect_PuffArcCells[cell],
-                        slash->x - (width >> 1) - 8,
-                        slash->y + gBattleEffect_PuffArcCellBiasY[cell] - 40,
+                        shaft->x - (width >> 1) - 8,
+                        shaft->y + gBattleEffect_PuffArcCellBiasY[cell] - 40,
                         width, gBattleEffect_PuffArcCellHeights[cell]);
 #else
             draw[i & 1](
                 canvas,
                 Ram_MapGridCellBuffer + gBattleEffect_PuffArcCells[cell],
-                slash->x -
+                shaft->x -
                     ((width = gBattleEffect_PuffArcCellWidths[cell]) >> 1) - 8,
-                slash->y + gBattleEffect_PuffArcCellBiasY[cell] - 40, width,
+                shaft->y + gBattleEffect_PuffArcCellBiasY[cell] - 40, width,
                 gBattleEffect_PuffArcCellHeights[cell]);
 #endif
-            if (slash->variant <= 11) {
-              draw[0](canvas, work->sheet + ATALANTA_SLASH_TOP, slash->x + 4,
-                      slash->y - 40, 16, 21);
+            if (shaft->variant <= 11) {
+              draw[0](canvas, work->sheet + ATALANTA_SLASH_TOP, shaft->x + 4,
+                      shaft->y - 40, 16, 21);
               draw[0](canvas, work->sheet + ATALANTA_SLASH_MIDDLE,
-                      slash->x - 16, slash->y - 19, 29, 35);
+                      shaft->x - 16, shaft->y - 19, 29, 35);
             }
           }
-          slash->variant++;
+          shaft->variant++;
         } else {
           s32 height = 24;
 
-          // Falling: the blade's lower part is cut off below row 96.
-          if (slash->y > 56)
-            height = height - slash->y + 56;
-          draw[0](canvas, work->sheet + ATALANTA_SLASH_TOP, slash->x + 4,
-                  slash->y - 40, 16, 21);
-          draw[0](canvas, work->sheet + ATALANTA_SLASH_MIDDLE, slash->x - 16,
-                  slash->y - 19, 29, 35);
+          // Falling: the shaft's lower part is cut off below row 96.
+          if (shaft->y > 56)
+            height = height - shaft->y + 56;
+          draw[0](canvas, work->sheet + ATALANTA_SLASH_TOP, shaft->x + 4,
+                  shaft->y - 40, 16, 21);
+          draw[0](canvas, work->sheet + ATALANTA_SLASH_MIDDLE, shaft->x - 16,
+                  shaft->y - 19, 29, 35);
           if (height > 0)
-            draw[0](canvas, work->sheet + ATALANTA_SLASH_BOTTOM, slash->x - 20,
-                    slash->y + 16, 21, height);
-          slash->x -= 6;
-          slash->y += 12;
-          if (slash->y > 79) {
+            draw[0](canvas, work->sheet + ATALANTA_SLASH_BOTTOM, shaft->x - 20,
+                    shaft->y + 16, 21, height);
+          shaft->x -= 6;
+          shaft->y += 12;
+          if (shaft->y > 79) {
             s32 member;
 
-            slash->variant = 0;
+            shaft->variant = 0;
             work->shakeFrames = 2;
             Sound_PlayFar(SE_HEAVY_IMPACT);
             member = i % 6;

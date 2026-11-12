@@ -115,7 +115,9 @@ void Projection_Unit(s32 id, struct ScreenPoint *position) {
 ///
 /// screen: receives x and y.
 s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen) {
-  struct BattleCamera *camera;
+  /* FAKEMATCH(temporary): camera copies gBattleCamera; as gBattleCamera at each
+   * use, 27 of 52 instructions differ in tbs-en. */
+  struct BattleCamera *camera = gBattleCamera;
   struct Actor *actor;
   struct Sprite *info;
   s32 scale;
@@ -123,9 +125,6 @@ s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen) {
    * without it, 6 of 52 instructions differ in tbs-en. */
   UNUSED s32 unused[3];
 
-  /* FAKEMATCH(temporary): camera copies gBattleCamera; as gBattleCamera at each
-   * use, 27 of 52 instructions differ in tbs-en. */
-  camera = gBattleCamera;
   actor = GetBattleObjectSlotFar(unit)->actor;
   info = GetMotionRecordFar(actor, 0);
   EFFECT_VIEW_FROM_CAMERA(camera);

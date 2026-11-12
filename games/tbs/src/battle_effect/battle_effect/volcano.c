@@ -48,7 +48,6 @@ void BattleEffect_RunVolcano(struct BattleEffectParams *args) {
   struct ScreenPoint screen;
   BlitterPair draw;
   struct Actor *actor;
-  struct BattleCamera *camera;
   s32 i;
 
   EFFECT_GET_SLOTS(slots, cursor, work, canvas);
@@ -96,7 +95,8 @@ void BattleEffect_RunVolcano(struct BattleEffectParams *args) {
   for (frame = 0; frame != VOLCANO_FRAMES; frame++) {
     /* FAKEMATCH(temporary): camera copies gBattleCamera; as gBattleCamera at
      * each use, 375 of 591 instructions differ in tbs-en. */
-    camera = gBattleCamera;
+    struct BattleCamera *camera = gBattleCamera;
+
     if (work->args->variant == EFFECT_VARIANT_STRONGEST && frame < 64) {
       if (work->args->side == EFFECT_SIDE_ENEMIES)
         camera->yaw = camera->yaw + 192;

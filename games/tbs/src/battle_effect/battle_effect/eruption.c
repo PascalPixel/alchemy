@@ -124,11 +124,10 @@ void BattleEffect_RunEruption(struct BattleEffectParams *args, s32 mode) {
 
   for (frame = 0; frame != gEruption_Counts[variant][ERUPTION_FIELD_FRAMES];
        frame++) {
-    struct BattleCamera *camera;
-
     /* FAKEMATCH(temporary): camera copies gBattleCamera; as gBattleCamera at
      * each use, 61 of 470 instructions differ in tbs-en. */
-    camera = gBattleCamera;
+    struct BattleCamera *camera = gBattleCamera;
+
     EFFECT_VIEW_FROM_CAMERA(camera);
     if (frame == 2)
       Sound_PlayFar(SE_CLATTER);

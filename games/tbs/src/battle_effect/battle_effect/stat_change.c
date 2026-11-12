@@ -449,7 +449,6 @@ void BattleEffect_RunStatReduction(struct BattleEffectParams *args, s32 mode) {
   /* FAKEMATCH(temporary): draw holds blitters; as blitters[1] in the shield's
    * draw, 12 of 531 instructions differ in tbs-en. */
   DrawRectangle *draw;
-  struct BattleCamera *camera;
   s32 origin[3];
   struct ScreenPoint screen;
   s32 point[3];
@@ -530,7 +529,8 @@ void BattleEffect_RunStatReduction(struct BattleEffectParams *args, s32 mode) {
   for (frame = 0; frame != work->args->targetCount * 4 + 64; frame++) {
     /* FAKEMATCH(temporary): camera copies gBattleCamera; as gBattleCamera at
      * each use, 232 of 531 instructions differ in tbs-en. */
-    camera = gBattleCamera;
+    struct BattleCamera *camera = gBattleCamera;
+
     // The loop runs count * 4 + 64 frames, so frame 72 comes only with three
     // or more targets. With one or two, BattlePlayback_WaitForReady starts
     // playback once the effect returns, so the messages follow the shards

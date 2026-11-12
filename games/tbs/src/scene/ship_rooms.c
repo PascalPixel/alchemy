@@ -453,7 +453,7 @@ enum ShipRoomsAnimation {
   ANIM_OLD_MAN_ROW = 9,          ///< the old man's rowing (spr_103.png)
   ANIM_TICKET_GRUMBLER_ROW = 10, ///< the young man's rowing (spr_108.png)
   /// An oarsman lying on his back, arms flung out (spr_144.png): "An oarsman
-  /// was injured?"
+  /// was injured by a sea monster?"
   ANIM_OARSMAN_INJURED = 6,
   /// The drummer standing with his drum at his side (spr_147.png).
   ANIM_DRUMMER_HOLD_DRUM = 5,

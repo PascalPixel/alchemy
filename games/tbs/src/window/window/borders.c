@@ -396,7 +396,9 @@ s32 Message_OpenDecoded(struct Window *window, s32 message) {
   struct WindowWork *work = WINDOW_WORK;
   s32 entry;
   s32 typing = 0;
-  // Unused: gives the stack frame its 8 bytes above the outgoing arguments.
+  /* FAKEMATCH(dead): an unused local that gives the stack frame its 8 bytes
+   * above the outgoing arguments; without it, 4 of 42 instructions differ in
+   * tbs-en. */
   UNUSED u16 frameReserve[4];
 
   work->voiceSound = 0;

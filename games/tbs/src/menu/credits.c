@@ -1112,7 +1112,8 @@ s32 Credits_DrawLine(const u8 *text, s32 firstTile, s32 alignment) {
   u32 glyphBits;
   u32 glyphMask;
 
-  // Unused: gives the stack frame its 32 bytes.
+  /* FAKEMATCH(dead): an unused local that gives the stack frame its 32 bytes;
+   * without it, 4 of 277 instructions differ in tbs-en. */
   UNUSED u32 unused[8];
 
   if (text == NULL) {
@@ -1138,9 +1139,10 @@ s32 Credits_DrawLine(const u8 *text, s32 firstTile, s32 alignment) {
     Iwram_FillWords(linePixels + 256, 2048, 0);
   }
 
-  // Measure text with the actual credits font before choosing its start.
-  // A previous character/pixel cursor split grew the frame 44 -> 48 bytes
-  // and changed native registers; retain the shared byte cursors here.
+  // Measure the line in the credits font, then choose where it starts.
+  /* FAKEMATCH(temporary): sourceBytes, the measuring loop's cursor, is reused
+   * as the glyph rows' cursor below; as a cursor of its own, 163 of 277
+   * instructions differ in tbs-en. */
   sourceBytes = text;
   textAdvance = 0;
   while ((sourceValue = *sourceBytes++) != 0) {

@@ -1060,7 +1060,8 @@ static void TolbiSpring_UpdateTossSimulation(void) {
   s32 maxX;
   s32 minZ;
   s32 maxZ;
-  // Unused: gives the stack frame its 12 bytes.
+  /* FAKEMATCH(dead): an unused local that gives the stack frame its 12 bytes;
+   * without it, 4 of 947 instructions differ in tbs-en. */
   UNUSED struct Vector3 spare;
 
   toss = &sToss;

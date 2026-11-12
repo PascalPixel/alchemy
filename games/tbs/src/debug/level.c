@@ -531,7 +531,8 @@ static void IncreaseItemAndLevel_RunMotionTest(void) {
 /// at ACTOR_PORTRAIT_BROWSER, outside Japanese. The window is left open.
 static void IncreaseItemAndLevel_ShowGlyphCaptions(void) {
   struct Window *window;
-  // Unused: gives the stack frame its 32 bytes.
+  /* FAKEMATCH(dead): an unused local that gives the stack frame its 32 bytes;
+   * without it, 4 of 29 instructions differ in tbs-en. */
   UNUSED u8 text[32];
 
   window = Window_Create(0, 13, 30, 6, WINDOW_FLAG_INSTANT);

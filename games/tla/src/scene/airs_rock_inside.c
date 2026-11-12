@@ -1,6 +1,5 @@
 /// @file
-/// Scene code of overlay 0x664, in ROM order, from s0550's offset up to the
-/// next object the overlay links.
+/// The scene code of overlay 0x664 that its scene tables belong to, in ROM order; the rest of the overlay is in airs_rock_inside/.
 
 #include "airs_rock_inside/airs_rock_inside.h"
 #include "system.h"

@@ -1,3 +1,6 @@
+/// @file
+/// The scene code of overlay 0x692 that its scene tables belong to, in ROM order; the rest of the overlay is in magma_rock_inside/.
+
 #include "types.h"
 #include "actor.h"
 #include "event_inline.h"

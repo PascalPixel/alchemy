@@ -11,7 +11,6 @@
 #include "ram_buffer.h"
 #include "text/msg_ids.h"
 
-
 struct AnkohlRuinsFloatWork {
   s16 unk00;
   s16 tile;
@@ -295,7 +294,6 @@ s32 Func_02002438(s32 a0) {
 #include "ram_buffer.h"
 #include "text/msg_ids.h"
 
-
 struct AnkohlRuinsFloatWork {
   s16 unk00;
   s16 tile;
@@ -561,3 +559,8 @@ s32 Func_02002438(s32 a0) {
 }
 
 #endif
+
+#include "types.h"
+#include "scene_tables.h"
+
+s32 Scene_PrepareMap(void) { return 0; }

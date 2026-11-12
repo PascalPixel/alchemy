@@ -42,9 +42,10 @@ void BattleBackground_SetPaletteLevel(s32 unused, s32 level) {
   struct BattleWork *battle = gBattleWork;
   u16 *palette = battle->palette;
   u32 ime;
-  /* FAKEMATCH(temporary): a pointer to ime, which keeps the save in a stack
-   * slot stored through r6; as ime directly, 17 of 43 instructions differ in
-   * tbs-en. */
+  /* LEFTOVER(form): the save stored through a pointer to ime; The Lost Age's
+   * BattleBackground_SetPaletteLevel saves it the same way, and its ROM needs
+   * it (as ime directly, 33 of 54 differ in tla-en); as ime directly, 17 of
+   * 43 instructions differ in tbs-en. */
   u32 *savedInterruptEnable = &ime;
 
   /* FAKEMATCH(dead): updates that cancel out end CSE's knowledge that the

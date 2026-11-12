@@ -576,7 +576,9 @@ struct Window *Portrait_OpenWindow(s32 speaker, s32 portraitOption, s32 x,
   if (Portrait_GetForSpeaker(speaker) == -1) {
     return 0;
   }
-  /* FAKEMATCH(temporary): negativeFour holds the -4 Portrait_Create takes; as
+  /* LEFTOVER(form): the -4 Portrait_Create takes, held in a named local; The
+   * Lost Age's twin of this routine (Func_0803d3c0) holds it the same way,
+   * and its ROM needs it (as -4 at the call, 25 of 68 differ in tla-en); as
    * -4 at the call, 29 of 71 instructions differ in tbs-en. */
   negativeFour = -4;
   offset = -4;

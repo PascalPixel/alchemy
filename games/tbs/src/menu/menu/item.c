@@ -251,9 +251,11 @@ s32 ItemMenu_RunCommands(s32 *memberOut, s32 *targetOut, s32 *itemOut) {
       Menu_DrawCoins(menu->descriptionWindow);
       command = ItemMenu_SelectMember(0);
       if (command == -1) {
-        /* FAKEMATCH(dead): selection and command cleared though the menu ends
-         * before reading either; with neither store, 18 of 1268 instructions
-         * differ in tbs-en. */
+        /* LEFTOVER(form): the choice cleared on cancel, though the menu ends
+         * before reading it; the other edition's arm below clears its own, and
+         * The Lost Age's ItemMenu_RunCommands clears the same pair, which its
+         * ROM needs (104 of 1355 differ in tla-en); with neither store, 18 of
+         * 1268 instructions differ in tbs-en. */
         selection = command = 0;
         menuResult = -1;
         done = 1;
@@ -262,9 +264,11 @@ s32 ItemMenu_RunCommands(s32 *memberOut, s32 *targetOut, s32 *itemOut) {
       Menu_DrawCoins(menu->descriptionWindow);
       member = ItemMenu_SelectMember(0);
       if (member == -1) {
-        /* FAKEMATCH(dead): chosen, selection and member cleared though the menu
-         * ends before reading them; with no store, 20 of 1272 instructions
-         * differ in tbs-ja. */
+        /* LEFTOVER(form): the choice cleared on cancel, though the menu ends
+         * before reading it; the other edition's arm above clears its own, and
+         * The Lost Age's ItemMenu_RunCommands clears its choice on the same
+         * cancel, which its ROM needs (104 of 1355 differ in tla-en); with no
+         * store, 20 of 1272 instructions differ in tbs-ja. */
         chosen = selection = member = 0;
         menuResult = -1;
         done = 1;
@@ -827,8 +831,8 @@ s32 ItemMenu_RunCommands(s32 *memberOut, s32 *targetOut, s32 *itemOut) {
     case ITEM_STEP_QUANTITY:
       result = ItemMenu_SelectGiveQuantity(0, 30, 0);
       if (result != -1) {
-        /* FAKEMATCH(dead): heldCount takes the quantity chosen, which nothing
-         * reads; as no store, 74 of 1268 instructions differ in tbs-en. */
+        // Unused: the quantity chosen, which nothing reads. In The Lost Age the
+        // finished step sets how many of a stacked item are given.
         heldCount = result;
       }
       state = ITEM_STEP_ITEM;

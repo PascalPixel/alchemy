@@ -696,22 +696,22 @@ struct ActorPlacement gSuhallaGateCheckpointActorPlacements[] = {
 
 struct ActorPlacement gSuhallaGateCheckpointActorPlacementsAfterAudience[] = {
 #if !TBS_PATCH_3
-    { SPRITE_SOLDIER, CONDITION_ALWAYS, (s32)gSuhallaGateWoundedFlipped,
-        px(136), 0, px(408), FACING_SOUTH, TALK_FACING_PARTY, 0 },
-    { SPRITE_SOLDIER, CONDITION_ALWAYS, (s32)gSuhallaGateWounded,
-        px(168), 0, px(424), FACING_SOUTH, TALK_FACING_PARTY, 0 },
-    { SPRITE_SOLDIER, CONDITION_ALWAYS, (s32)gSuhallaGateWounded,
-        px(472), 0, px(304), FACING_SOUTH, TALK_FACING_PARTY, 0 },
+    ACTOR_PLACEMENT(SPRITE_SOLDIER, CONDITION_ALWAYS, (s32)gSuhallaGateWoundedFlipped,
+        136, 0, 408, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_SOLDIER, CONDITION_ALWAYS, (s32)gSuhallaGateWounded,
+        168, 0, 424, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_SOLDIER, CONDITION_ALWAYS, (s32)gSuhallaGateWounded,
+        472, 0, 304, FACING_SOUTH, TALK_FACING_PARTY, 0),
 #else
-    { SPRITE_SOLDIER, CONDITION_ALWAYS, (s32)gSuhallaGateWoundedFlippedNoCollision,
-        px(140), 0, px(408), FACING_SOUTH, TALK_FACING_PARTY, 0 },
-    { SPRITE_SOLDIER, CONDITION_ALWAYS, (s32)gSuhallaGateWoundedNoCollision,
-        px(164), 0, px(424), FACING_SOUTH, TALK_FACING_PARTY, 0 },
-    { SPRITE_SOLDIER, CONDITION_ALWAYS, (s32)gSuhallaGateWoundedNoCollision,
-        px(476), 0, px(300), FACING_SOUTH, TALK_FACING_PARTY, 0 },
+    ACTOR_PLACEMENT(SPRITE_SOLDIER, CONDITION_ALWAYS, (s32)gSuhallaGateWoundedFlippedNoCollision,
+        140, 0, 408, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_SOLDIER, CONDITION_ALWAYS, (s32)gSuhallaGateWoundedNoCollision,
+        164, 0, 424, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_SOLDIER, CONDITION_ALWAYS, (s32)gSuhallaGateWoundedNoCollision,
+        476, 0, 300, FACING_SOUTH, TALK_FACING_PARTY, 0),
 #endif
-    { SPRITE_IODEM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0 },
+    ACTOR_PLACEMENT(SPRITE_IODEM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+        0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0),
     { SCENE_TABLE_END },
 };
 

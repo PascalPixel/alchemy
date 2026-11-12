@@ -1,3 +1,7 @@
+/// @file
+/// The debug room Menu test, whose actors each run a test of the menus, the
+/// shops or the bags when talked to.
+
 #include "main_routine_work.h"
 #include "module/import.h"
 #include "module/debug/test.h"
@@ -42,6 +46,14 @@
 #define DEBUG_ITEM_COUNT 270
 #define DEBUG_ITEM_ROW_STEP 10  ///< Right and Left move ten numbers.
 #define DEBUG_ITEM_PAGE_STEP 30 ///< R and L move thirty.
+
+// The level MenuTest_Initialize raises Isaac to, which the international
+// editions changed.
+#if TBS_PATCH_1
+#define DEBUG_ISAAC_LEVEL 50
+#else
+#define DEBUG_ISAAC_LEVEL 30
+#endif
 
 /// The placed actors, numbered in the order of
 /// gMenuTest_ActorPlacements
@@ -825,11 +837,7 @@ s32 MenuTest_Initialize(void) {
 #if !TBS_PATCH_1
   gMainRoutineWork.coins = 777777;
 #endif
-#if TBS_PATCH_1
-  Unit_LevelUpTo(ISAAC, 50);
-#else
-  Unit_LevelUpTo(ISAAC, 30);
-#endif
+  Unit_LevelUpTo(ISAAC, DEBUG_ISAAC_LEVEL);
   Unit_LevelUpTo(GARET, 30);
   Unit_LevelUpTo(MIA, 30);
   Unit_LevelUpTo(IVAN, 30);

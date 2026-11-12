@@ -1,3 +1,7 @@
+/// @file
+/// The debug room Increase item and level, whose actors raise the party's
+/// levels, give any item and show the game's icons and portraits.
+
 #include "main_routine_work.h"
 #include "module/debug/level.h"
 #include "module/field/field_sequence.h"
@@ -51,6 +55,14 @@
 #define ABILITY_COUNT 270   ///< The ability browser's numbers, 0 to 269.
 #define BROWSER_ROW_STEP 10 ///< Right and Left move ten numbers.
 #define BROWSER_PAGE_STEP 30 ///< R and L move thirty.
+
+// ACTOR_LEVEL_EDITOR's scale in 16.16, which the international editions
+// changed (IncreaseItemAndLevel_Initialize).
+#if TBS_PATCH_1
+#define LEVEL_EDITOR_SCALE (Q16_ONE * 8 / 5)
+#else
+#define LEVEL_EDITOR_SCALE (Q16_ONE * 17 / 10)
+#endif
 
 /// The scene's actors, numbering the rows of
 /// gIncreaseItemAndLevel_ActorPlacements; the game names none of them, so
@@ -489,14 +501,11 @@ UNUSED static void IncreaseItemAndLevel_RequestExit(void) {
 s32 IncreaseItemAndLevel_Initialize(void) {
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   gFieldWork->transitionFrames = 24;
+  Actor_GetById(ACTOR_LEVEL_EDITOR)->scaleY = LEVEL_EDITOR_SCALE;
+  Actor_GetById(ACTOR_LEVEL_EDITOR)->scaleX = LEVEL_EDITOR_SCALE;
 #if TBS_PATCH_1
-  Actor_GetById(ACTOR_LEVEL_EDITOR)->scaleY = Q16_ONE * 8 / 5;
-  Actor_GetById(ACTOR_LEVEL_EDITOR)->scaleX = Q16_ONE * 8 / 5;
   Import_ActorSetAnimation(ACTOR_FIRST_EMOTE_TESTER, 5);
   Import_ActorSetAnimation(ACTOR_SECOND_EMOTE_TESTER, 2);
-#else
-  Actor_GetById(ACTOR_LEVEL_EDITOR)->scaleY = Q16_ONE * 17 / 10;
-  Actor_GetById(ACTOR_LEVEL_EDITOR)->scaleX = Q16_ONE * 17 / 10;
 #endif
   return 0;
 }

@@ -1,3 +1,7 @@
+/// @file
+/// The debug rooms Test 0 to Test 7, all one room, where talking to Flint,
+/// Fizz, Forge or Gust gives that Djinni.
+
 #include "module/debug/test_scenes.h"
 #include "module/field/field_sequence.h"
 #include "module/field/event_commands.h"

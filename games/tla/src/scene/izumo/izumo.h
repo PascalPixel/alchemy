@@ -6,15 +6,16 @@
 #include "ram_buffer.h"
 #include "field_event.h"
 #include "main_routine_work.h"
+#include "scene_tables.h"
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 #define WORD_AT(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
 
-extern const u8 gData_02000e10[];
-extern const u8 gData_02001644[];
-extern const u8 gData_02001494[];
-extern const u8 gData_02001b00[];
-extern const u8 gData_020018b4[];
+extern s16 gData_02000e10[];
+extern struct ActorPlacement gData_02001644[];
+extern struct ActorPlacement gData_02001494[];
+extern s32 gData_02001b00[];
+extern struct Trigger gData_020018b4[];
 extern u8 MsgCanYouImagine[];
 extern u8 MsgSeeThisRing[];
 extern u8 MsgButItS[];
@@ -56,8 +57,8 @@ void Func_02000da0(void);
 void Func_02000da8(s32 id, s32 value);
 void Func_02000db0(s32 value);
 void Func_02000dd0(s32 value);
-void Func_02000de0(const u8 *data);
-void Func_02000de8(const u8 *data);
+void Func_02000de0(const s16 *data);
+void Func_02000de8(const s16 *data);
 void Func_02000df0(void);
 void Func_02000df8(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
 s32 Func_02000e00(void);

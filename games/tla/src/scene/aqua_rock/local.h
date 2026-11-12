@@ -39,7 +39,7 @@ void Actor_Jump(s32 id, s32 a, s32 b);
 void Motion_SetModeAndWaitAnimation(s32 id, s32 mode);
 void Motion_SetVarCbAndRefresh(u32 objectId, s32 variant);
 void Camera_MoveWithinMapBounds(s32 x, s32 a, s32 z, s32 b);
-void FieldMessage_ShowAtActor(s32 id, s32 flags);
+s32 FieldMessage_ShowAtActor(s32 speaker, s32 flags);
 s32 Event_AskYesNoWithActorAnimation(s32 id, s32 flags);
 void Event_StartScreenTransition(void);
 void Event_FinishScreenTransition(void);
@@ -53,11 +53,22 @@ s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 
 #include "scene_ids.h"
 
+struct Bubble {
+  s32 x;
+  s32 y;
+  s32 z;
+  // volatile: the listing reads age again after the OAM stores.
+  volatile s32 age;
+  u32 oam[3];
+};
+
 struct AquaRockWork {
   struct Actor *object;
   u16 vramEntry;
-  u16 unk06;
+  u16 next;
   s16 direction;
+  u8 unk0a[2];
+  struct Bubble bubbles[64];
 };
 
 s32 Math_Sine(s32 angle);
@@ -102,16 +113,12 @@ extern const u8 gData_020032d4[];
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
-static __inline__ s32 GameFlag_Test_(s32 flag) {
-  return GameFlag_Test(flag);
-}
+static __inline__ s32 GameFlag_Test_(s32 flag) { return GameFlag_Test(flag); }
 
-static __inline__ void GameFlag_ClearBit_(s32 flag) {
-  GameFlag_ClearBit(flag);
-}
+static __inline__ void GameFlag_ClearBit_(s32 flag) { GameFlag_ClearBit(flag); }
 
-static __inline__ struct Actor *Import_ActorCreate_(s32 kind, s32 x,
-                                                             s32 y, s32 z) {
+static __inline__ struct Actor *Import_ActorCreate_(s32 kind, s32 x, s32 y,
+                                                    s32 z) {
   return Import_ActorCreate(kind, x, y, z);
 }
 
@@ -137,8 +144,6 @@ static __inline__ void Actor_ResetAndSetPosition_(s32 id, s32 x, s32 z) {
   Actor_ResetAndSetPosition(id, x, z);
 }
 
-static __inline__ void *MemAlloc_(s32 size) {
-  return Heap_Alloc(size);
-}
+static __inline__ void *MemAlloc_(s32 size) { return Heap_Alloc(size); }
 
 #endif

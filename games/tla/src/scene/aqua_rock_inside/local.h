@@ -36,10 +36,11 @@ struct PillarEntry {
   s32 height;
   s32 z;
   s32 base;
-  s16 kind;
-  s16 state;
+  u16 kind;
+  u16 state;
   s32 *position;
-  u8 unk18[24];
+  u32 top[3];
+  u32 column[3];
 };
 
 struct PillarWork {
@@ -52,14 +53,24 @@ struct BeamEntry {
   s32 x;
   s32 y;
   s32 z;
-  s16 unk0c;
-  s16 kind;
+  u16 unk0c;
+  u16 direction;
+};
+
+struct Splash {
+  s32 x;
+  s32 y;
+  s32 z;
+  u16 active;
+  u16 direction;
+  u32 sprite[3];
 };
 
 struct BeamWork {
   u16 vramEntry;
-  u16 unk02;
+  u16 count;
   struct BeamEntry entries[2];
+  struct Splash splashes[32];
 };
 
 struct VentEntry {
@@ -155,14 +166,14 @@ extern const u8 gData_0200414c[];
 extern const u8 gData_02004351[];
 extern const u8 gData_020044c8[];
 
-extern const u8 MsgCheckedTheColumn[];
-extern const u8 MsgCheckedThePsynergy[];
-extern const u8 MsgCheckedTheTabletIt[];
+extern u8 MsgCheckedTheColumn[];
+extern u8 MsgCheckedThePsynergy[];
+extern u8 MsgCheckedTheTabletIt[];
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
-static __inline__ struct Actor *Import_ActorCreate_(s32 kind, s32 x,
-                                                             s32 y, s32 z) {
+static __inline__ struct Actor *Import_ActorCreate_(s32 kind, s32 x, s32 y,
+                                                    s32 z) {
   return Import_ActorCreate(kind, x, y, z);
 }
 
@@ -189,8 +200,6 @@ static __inline__ void Func_02003d24_(s32 a, s32 b, s32 c, s32 d, s32 e,
   Func_0802b450(a, b, c, d, e, f);
 }
 
-static __inline__ void *MemAlloc_(s32 size) {
-  return Heap_Alloc(size);
-}
+static __inline__ void *MemAlloc_(s32 size) { return Heap_Alloc(size); }
 
 #endif

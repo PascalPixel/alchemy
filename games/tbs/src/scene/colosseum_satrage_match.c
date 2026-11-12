@@ -147,7 +147,7 @@
 
 // Forward declarations.
 static void ColosseumSatrageMatch_IntroduceSecondFinals(s32 attendantId);
-static void Colosso_ShowRoundStartLettering(s32 match);
+static void Colosso_ShowOpeningLettering(s32 match);
 static void ColosseumSatrageMatch_ShowBattleResultLettering(s32 result);
 static void Colosso_NoOp(void);
 static void Colosso_WaitForOpponentToFinish(void);
@@ -1140,7 +1140,7 @@ s32 ColosseumSatrageMatch_Initialize(void) {
       Sound_Play(SOUND_FADE_OUT_BGM);
       Colosso_ControlCharacterAlone(ISAAC);
       Colosso_PlaceFriendsAtCheeringSpots();
-      Colosso_ShowRoundStartLettering(2);
+      Colosso_ShowOpeningLettering(2);
     }
     Actor_WatchAndSetScript(ACTOR_GARET, ACTOR_PARTY_LEADER);
     Actor_WatchAndSetScript(ACTOR_IVAN, ACTOR_PARTY_LEADER);
@@ -1154,7 +1154,7 @@ s32 ColosseumSatrageMatch_Initialize(void) {
     if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
       Colosso_PlaceFriendsAtCheeringSpots();
       Colosso_ControlCharacterAlone(GARET);
-      Colosso_ShowRoundStartLettering(0);
+      Colosso_ShowOpeningLettering(0);
     }
     break;
   case COLOSSEUM_SATRAGE_MATCH_FROM_COLOSSEUM_WEST:

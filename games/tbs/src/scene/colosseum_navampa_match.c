@@ -125,7 +125,7 @@
 
 static void ColosseumNavampaMatch_PlayPostBattleReunion(s32 battleResult);
 static void ColosseumNavampaMatch_IntroduceThirdFinals(s32 guideId);
-static void Colosso_ShowRoundStartLettering(s32 match);
+static void Colosso_ShowOpeningLettering(s32 match);
 static void Colosso_NoOp(void);
 static void Colosso_WaitForOpponentToFinish(void);
 static s32 Colosso_TakePrize(s32 firstItem, s32 secondItem);
@@ -1219,7 +1219,7 @@ s32 ColosseumNavampaMatch_Initialize(void) {
       Colosso_ControlCharacterAlone(ISAAC);
       Colosso_PlaceFriendsAtCheeringSpots();
       Actor_WatchAndSetScript(ACTOR_GARET, ACTOR_PARTY_LEADER);
-      Colosso_ShowRoundStartLettering(3);
+      Colosso_ShowOpeningLettering(3);
     }
     Actor_WatchAndSetScript(ACTOR_GARET, ACTOR_PARTY_LEADER);
     Actor_WatchAndSetScript(ACTOR_IVAN, ACTOR_PARTY_LEADER);
@@ -1236,7 +1236,7 @@ s32 ColosseumNavampaMatch_Initialize(void) {
     }
     Colosso_PlaceFriendsAtCheeringSpots();
     Colosso_ControlCharacterAlone(GARET);
-    Colosso_ShowRoundStartLettering(0);
+    Colosso_ShowOpeningLettering(0);
     break;
 
   case COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_NORTH:

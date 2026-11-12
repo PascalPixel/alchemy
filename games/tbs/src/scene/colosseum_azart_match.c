@@ -137,7 +137,7 @@
 #endif
 
 static void ColosseumAzartMatch_ExplainFinalsRules(s32 guide);
-static void Colosso_ShowRoundStartLettering(s32 match);
+static void Colosso_ShowOpeningLettering(s32 match);
 static void ColosseumAzartMatch_ShowMatchResult(s32 result);
 static void Colosso_NoOp(void);
 static void Colosso_WaitForOpponentToFinish(void);
@@ -826,7 +826,7 @@ s32 ColosseumAzartMatch_Initialize(void) {
       ColosseumAzartMatch_MarkFinishTerrain(ACTOR_GARET);
       ColosseumAzartMatch_MarkFinishTerrain(ACTOR_IVAN);
       ColosseumAzartMatch_MarkFinishTerrain(ACTOR_MIA);
-      Colosso_ShowRoundStartLettering(1);
+      Colosso_ShowOpeningLettering(1);
     }
     Actor_WatchAndSetScript(ACTOR_GARET, ACTOR_PARTY_LEADER);
     Actor_WatchAndSetScript(ACTOR_IVAN, ACTOR_PARTY_LEADER);
@@ -840,7 +840,7 @@ s32 ColosseumAzartMatch_Initialize(void) {
     if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
       Colosso_PlaceFriendsAtCheeringSpots();
       Colosso_ControlCharacterAlone(GARET);
-      Colosso_ShowRoundStartLettering(0);
+      Colosso_ShowOpeningLettering(0);
     }
     break;
   case COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM:

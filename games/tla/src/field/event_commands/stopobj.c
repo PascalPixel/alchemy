@@ -1,4 +1,5 @@
 #include "types.h"
+#include "task.h"
 #include "frame.h"
 #include "actor_view.h"
 #include "ram_buffer.h"
@@ -119,7 +120,6 @@ void Func_080dc954(void) {
     *((u8 *)slots->mapWork + 0x970) = mode;
 }
 
-#include "task.h"
 #include "heap_release.h"
 #include "dma.h"
 

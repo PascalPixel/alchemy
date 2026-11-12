@@ -1,4 +1,5 @@
 #include "types.h"
+#include "task.h"
 #include "ram_buffer.h"
 #include "actor.h"
 #include "effect_sprite.h"
@@ -285,7 +286,6 @@ void Func_080e82cc(void) {
 }
 
 #include "main_routine_work.h"
-#include "task.h"
 #include "io_reg.h"
 
 // One mote: a position and a velocity (BattleEffect_IntegrateVector3's vector)

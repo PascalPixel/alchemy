@@ -108,15 +108,12 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
     s32 mag;
     s32 ang;
 
-    /* FAKEMATCH(temporary): mag holds 0x1ff before the mask; as
-     * Random16() & 0x1ff, 41 of 779 instructions differ in tbs-en. */
-    mag = 0x1FF;
-    mag &= Random16();
+    mag = (Random16() & 0x1ff) + 32;
     ang = Random16() & TRIG_ANGLE_MASK;
     spark->x = sparkOriginX;
     spark->y = px(88);
-    spark->velocityX = (Trig_Sin(ang) * (mag + 32)) >> 5;
-    spark->velocityY = -(Trig_Cos(ang) * (mag + 32)) >> 6;
+    spark->velocityX = (Trig_Sin(ang) * mag) >> 5;
+    spark->velocityY = -(Trig_Cos(ang) * mag) >> 6;
     spark->variant = (Random16() & 7) + 32;
     i++;
   } while (i != TITAN_BLADE_SPARKS);

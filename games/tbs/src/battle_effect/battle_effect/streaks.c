@@ -372,16 +372,13 @@ void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
 
     mote = &PARTICLES[i];
 
-    speed = 0x3ff;
-    // Masked in place, the mask assigned first; as Random16() & mask, 3
-    // instructions differ.
-    speed &= Random16();
+    speed = (Random16() & 0x3ff) + 32;
     angle = Random16() & TRIG_ANGLE_MASK;
     SET_POSITION(mote, source->x.fixed, source->y.fixed + px(5),
                  source->z.fixed);
-    SET_VELOCITY(mote, Trig_Sin(angle) * (speed + 32) >> 8,
+    SET_VELOCITY(mote, Trig_Sin(angle) * speed >> 8,
                  ((Random16() & 255) - 32) << 9,
-                 -(Trig_Cos(angle) * (speed + 32) << 1) >> 8);
+                 -(Trig_Cos(angle) * speed << 1) >> 8);
     mote->variant = (Random16() & 31) + 48;
     if (mode == MOTE_FOUNTAIN_FOUNTAIN_HEALING) {
       mote->velocityX /= 2;

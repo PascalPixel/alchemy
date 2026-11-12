@@ -188,16 +188,12 @@ void BattleEffect_RunPlanetDiver(struct BattleEffectParams *args) {
           s32 speed;
           s32 angle;
 
-          speed = 0x3ff;
-          /* FAKEMATCH(temporary): speed holds the mask before the draw; as
-           * speed = Random16() & 0x3ff, 23 of 516 instructions differ in
-           * tbs-en. */
-          speed &= Random16();
+          speed = (Random16() & 0x3ff) + 32;
           angle = Random16() & TRIG_ANGLE_MASK;
           chip->x = px(screenPosition.x);
           chip->y = px(screenPosition.y - 24);
-          chip->velocityX = Trig_Sin(angle) * (speed + 32) >> 6;
-          chip->velocityY = -(Trig_Cos(angle) * (speed + 32) << 1) >> 6;
+          chip->velocityX = Trig_Sin(angle) * speed >> 6;
+          chip->velocityY = -(Trig_Cos(angle) * speed << 1) >> 6;
           chip->life = (Random16() & 7) + 32;
         }
         work->shakeFrames = 8;

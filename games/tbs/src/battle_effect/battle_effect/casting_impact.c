@@ -1,5 +1,8 @@
 /// @file
-/// The casting impact effect and its helpers.
+/// The casting impacts, the Djinn attacks and the enemy abilities that open
+/// the same way: sparks close in on the caster, a streak shoots at the target
+/// and a ring of light bursts over it in a spray of sparks, and then each
+/// impact plays its own effect over the target (enum CastingImpact).
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
@@ -116,8 +119,9 @@ enum CastingImpact {
   CASTING_IMPACT_IMPACT_SEVERE_BLOW,    ///< hands off
 };
 
-/// The impact orb, 20x48 pictures packed at half width.
-#define CASTING_IMPACT_ORB_OFFSETS 20736
+/// The impact orb, 20x48 pictures packed at half width, after the six 48x72
+/// pictures over the caster.
+#define CASTING_IMPACT_ORB_OFFSETS (6 * 48 * 72)
 /// The Djinni's 20x40 picture, in Ram_MapGridCellBuffer after the impact's own.
 #define CASTING_IMPACT_DJINNI_OFFSETS 15446
 #define CASTING_IMPACT_GATHER_FRAMES 32 ///< frames the sparks gather
@@ -219,8 +223,6 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
   s32 savedVerticalStrength;
   struct Actor *targetActor;
   struct FixedPointPosition *motion;
-  s32 kindFromTwo;
-  s32 kindFromFour;
   struct FixedPointPosition *position;
   struct Actor *casterActor;
   struct Particle *particle;
@@ -391,7 +393,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
   Actor_SetAnimationSpeedFar(casterActor, 0);
   position = &djinnPos;
   SET_POSITION(position, casterActor->x.fixed,
-               casterActor->y.fixed + (80 << 16), casterActor->z.fixed);
+               casterActor->y.fixed + PIXELS(80), casterActor->z.fixed);
   savedVelocityX = casterActor->velocityX;
   savedVelocityY = casterActor->velocityY;
   savedVelocityZ = casterActor->velocityZ;
@@ -479,11 +481,11 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
       // Scroll the image horizontally; scrollPos is in 16.16 pixels.
       REG_BG2PA = Q_8_8(1);
       if (work->args->side == EFFECT_SIDE_ENEMIES) {
-        scrollPos = -(128 << 16);
-        scrollSpeed = 12 << 16;
+        scrollPos = -PIXELS(128);
+        scrollSpeed = PIXELS(12);
       } else {
-        scrollPos = 8 << 16;
-        scrollSpeed = -(12 << 16);
+        scrollPos = PIXELS(8);
+        scrollSpeed = -PIXELS(12);
       }
       REG_BG2X = (scrollPos >> 16) << 8;
     }
@@ -548,7 +550,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
    * 18 of 3070 instructions differ in tbs-en. */
   motion = &velocity;
   SET_POSITION(motion, (targetActor->x.fixed - position->x) / 6,
-               (targetActor->y.fixed - position->y + (30 << 16)) / 6,
+               (targetActor->y.fixed - position->y + PIXELS(30)) / 6,
                (targetActor->z.fixed - position->z) / 6);
   for (i = 0; i != CASTING_IMPACT_SPARKS; i++) {
     particle = &work->particles[i];
@@ -601,7 +603,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
       mode != CASTING_IMPACT_IMPACT_PSY_LEECH) {
     s32 height = 0;
     if (mode != CASTING_IMPACT_IMPACT_BAD_OMEN)
-      height = 20 << 16;
+      height = PIXELS(20);
     for (i = 0; i != CASTING_IMPACT_IMPACT_PARTICLE_COUNT; i++) {
       particle = &CASTING_IMPACT_IMPACT_PARTICLES[i];
       SET_POSITION(particle, targetActor->x.fixed, height,
@@ -625,8 +627,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
   }
   // Mist, Fever, Bad Omen, Heat Mirage, Blinding Smog and Murk wave BG2 by
   // scanline.
-  kindFromTwo = mode - 2;
-  if ((kindFromTwo >= 0 && kindFromTwo <= 1) ||
+  if ((mode >= CASTING_IMPACT_IMPACT_MIST &&
+       mode <= CASTING_IMPACT_IMPACT_FEVER) ||
       mode == CASTING_IMPACT_IMPACT_BAD_OMEN ||
       mode == CASTING_IMPACT_IMPACT_HEAT_MIRAGE ||
       mode == CASTING_IMPACT_IMPACT_MURK ||
@@ -635,8 +637,10 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
   }
 
   // The impact lasts 20, 32, 40, 48, 64 or 80 frames, by mode.
-  kindFromFour = mode - 4;
-  if ((kindFromFour >= 0 && kindFromFour <= 2) ||
+  // DEAD: the EFFECT_RANGE_CASTING_IMPACT test never holds, as mode is never
+  // the effect kind itself; the ROM keeps it.
+  if ((mode >= CASTING_IMPACT_IMPACT_FLINT &&
+       mode <= CASTING_IMPACT_IMPACT_SQUALL) ||
       mode == CASTING_IMPACT_IMPACT_BARRAGE ||
       mode == CASTING_IMPACT_IMPACT_CYCLONE_SLASH ||
       mode == CASTING_IMPACT_IMPACT_STUN_VOLTAGE ||
@@ -682,7 +686,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
         scanline = work->bg2xLines;
         i = 0;
         base = 4 << 16;
-        phase = frame << 12;
+        phase = frame * (TRIG_TURN / 16);
         for (; i != DISPLAY_HEIGHT; i++) {
           // 1 - sin pixels (0 to 2), in BG2X's 20.8 format: a wave 32 lines
           // long that moves up two lines a frame.
@@ -821,7 +825,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
         particle = CASTING_IMPACT_IMPACT_PARTICLES;
         for (i = 0; i != CASTING_IMPACT_IMPACT_PARTICLE_COUNT;
              i++, particle++) {
-          SET_POSITION(particle, targetActor->x.fixed, 20 << 16,
+          SET_POSITION(particle, targetActor->x.fixed, PIXELS(20),
                        targetActor->z.fixed);
           SET_VELOCITY(particle, ((Random16() & 255) - 128) << 10,
                        ((Random16() & 255) - 128) << 10,
@@ -956,7 +960,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
           struct Particle *step;
           for (i = 0; i != CASTING_IMPACT_SPARKS; i++) {
             if ((step = &work->particles[i])->variant == 0) {
-              SET_POSITION(step, targetActor->x.fixed, 20 << 16,
+              SET_POSITION(step, targetActor->x.fixed, PIXELS(20),
                            targetActor->z.fixed);
               SET_VELOCITY(step, ((Random16() & 255) - 127) << 12,
                            ((Random16() & 255) - 64) << 10,
@@ -1003,7 +1007,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
       if (frame > 5) {
         stripX = targetScreen->x / 2 - 20;
         image = frame / 2 % 3;
-        cellOffset = image * 2560;
+        cellOffset = image * (2 * 40 * 32);
         blitters[0](canvas, pictures + GLINT_SET_BYTES + cellOffset, stripX, 16,
                     40, 32);
         blitters[0](canvas,
@@ -1025,7 +1029,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
             s32 image = age / 2;
             Projection_Point(step, &projected);
             projected.x /= 2;
-            blitters[0](canvas, pictures + (image << 11), projected.x - 16,
+            blitters[0](canvas, pictures + image * (32 * 64), projected.x - 16,
                         projected.y - 32, 32, 64);
             Particle_AdvanceWithGravity3D(step, 60, Q16_ONE / 16);
             step->variant++;
@@ -1042,8 +1046,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
       // follow, two frames each.
       // The sine is taken and dropped; only the cosine sways the pictures,
       // up to 4 pixels.
-      Trig_Sin(frame << 9);
-      sway = Trig_Cos(frame << 9);
+      Trig_Sin(frame * (TRIG_TURN / 128));
+      sway = Trig_Cos(frame * (TRIG_TURN / 128));
       sway <<= 2;
       sway >>= 16;
       // targetScreen->y is in whole pixels, so the shift leaves 0 for any
@@ -1288,6 +1292,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
         }
       }
     } else if (mode != EFFECT_RANGE_CASTING_IMPACT) {
+      // DEAD: the test always holds, as mode is never the effect kind itself;
+      // the ROM keeps it.
       // The smoke impacts: six 24x48 pictures a puff, four frames each.
       struct Particle *step = CASTING_IMPACT_IMPACT_PARTICLES;
       for (i = 0; i != 16; i++, step++) {
@@ -1333,6 +1339,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
       Sound_PlayFar(SE_HEAVY_IMPACT);
     }
     if (frame == 6) {
+      // DEAD: the EFFECT_RANGE_CASTING_IMPACT test never holds; the ROM keeps
+      // it.
       if (mode == CASTING_IMPACT_IMPACT_FLINT ||
           mode == CASTING_IMPACT_IMPACT_SCORCH ||
           mode == CASTING_IMPACT_IMPACT_SAP ||

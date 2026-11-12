@@ -87,9 +87,11 @@ UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
     Transform_ApplyPosition(position);
     // The user glows white for the first 24 frames.
     if (frame == 0)
-      BattleEffect_TintBattler(work->args->user, SPRITE_COLOR_WHITE, -1, -1, 0);
+      BattleEffect_TintBattler(work->args->user, SPRITE_COLOR_WHITE, TINT_KEEP,
+                               TINT_KEEP, 0);
     if (frame == 24)
-      BattleEffect_TintBattler(work->args->user, 0, -1, -1, 0);
+      BattleEffect_TintBattler(work->args->user, SPRITE_COLOR_NORMAL, TINT_KEEP,
+                               TINT_KEEP, 0);
     // The swirl: 32 motes, mote i from frame i + 1, each turning about its
     // own axis (by i & 3: yaw, pitch, roll, or pitch and roll), its speed
     // damped to 60/64 each frame and, from 30 frames after it appears,
@@ -182,9 +184,10 @@ UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
         Sound_PlayFar(SE_RECOVERY);
       if (frame == start + 40)
         BattleEffect_TintBattler(work->args->targets[member],
-                                 SPRITE_COLOR_WHITE, -1, -1, 0);
+                                 SPRITE_COLOR_WHITE, TINT_KEEP, TINT_KEEP, 0);
       if (frame == start + 64)
-        BattleEffect_TintBattler(work->args->targets[member], 0, -1, -1, 0);
+        BattleEffect_TintBattler(work->args->targets[member],
+                                 SPRITE_COLOR_NORMAL, TINT_KEEP, TINT_KEEP, 0);
       if (frame > start) {
         Transform_ApplyYaw((frame - start) << 9);
         for (i = 0; i != 64; i++) {

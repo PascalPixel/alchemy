@@ -99,7 +99,7 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
     EFFECT_FOR_EACH_TARGET(i, work->args) {
       if (frame == i * 4 + 40)
         BattleEffect_TintBattler(work->args->targets[i], SPRITE_COLOR_BLUE_TINT,
-                                 POSE_DAMAGE, -1, 0);
+                                 POSE_DAMAGE, TINT_KEEP, 0);
     }
 
     // Motes: mote i appears at frame i and, from 16 frames later, turns a

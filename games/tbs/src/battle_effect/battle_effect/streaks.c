@@ -249,8 +249,8 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
               struck->x.fixed += Q16_ONE / 2;
             else
               struck->x.fixed -= Q16_ONE / 2;
-            BattleEffect_TintBattler(work->args->targets[k], -1, POSE_DAMAGE,
-                                     -1, 0);
+            BattleEffect_TintBattler(work->args->targets[k], TINT_KEEP,
+                                     POSE_DAMAGE, TINT_KEEP, 0);
           }
 
           // The hit: the first streak plays the hit sound and flashes the
@@ -441,7 +441,7 @@ void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
           Sound_PlayFar(SE_RECOVERY);
           EFFECT_SHOW_DAMAGE(-1);
           BattleEffect_TintBattler(work->args->targets[i], SPRITE_COLOR_WHITE,
-                                   -1, i, 8);
+                                   TINT_KEEP, i, 8);
         }
       }
     }

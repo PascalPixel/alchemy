@@ -244,12 +244,13 @@ void BattleEffect_SetupBlendedDisplay(void) {
 /// Updates every effect group of one unit's battle object.
 ///
 /// unitId: the unit whose battle object is updated.
-/// palette: the colour mode each sprite part takes (enum SpriteColorMode), 0
-///          for the unit's own, or -1 to leave the parts alone. A part
-///          that changes colours also restarts its frame.
-/// animation: the pose each group switches to (enum BattlePose), or -1 for
-///            none.
-/// timerSlot: the actor timer (gBattleEffectWork's actorTimers) to set, or -1;
+/// palette: the colour mode each sprite part takes (enum SpriteColorMode),
+///          SPRITE_COLOR_NORMAL for the unit's own, or TINT_KEEP to leave the
+///          parts alone. A part that changes colours also restarts its frame.
+/// animation: the pose each group switches to (enum BattlePose), or TINT_KEEP
+///            for none.
+/// timerSlot: the actor timer (gBattleEffectWork's actorTimers) to set, or
+///            TINT_KEEP;
 ///            BattleEffect_CountDownBattlerTints restores the unit's palette
 ///            when it runs out.
 /// timerFrames: the frames that timer counts.
@@ -272,11 +273,11 @@ void BattleEffect_TintBattler(s32 unitId, s32 palette, s32 animation,
 
   while ((group = GetMotionRecordFar(slot->actor, groupIndex)) != NULL) {
     // The timer's low byte, read through memory as the original does.
-    if (timerSlot != -1) {
+    if (timerSlot != TINT_KEEP) {
       work->actorTimers[timerSlot] = ((u8 *)&timerFrames)[0];
     }
     if (slot->fading == 0) {
-      if (palette != -1) {
+      if (palette != TINT_KEEP) {
         s32 partIndex;
 
         partIndex = 0;
@@ -292,7 +293,7 @@ void BattleEffect_TintBattler(s32 unitId, s32 palette, s32 animation,
             if (part != NULL &&
                 part != (struct SpriteAnimation *)slot->shadowEntry &&
                 part != (struct SpriteAnimation *)slot->animationEntry) {
-              if (palette == 0)
+              if (palette == SPRITE_COLOR_NORMAL)
                 part->colorMode = BattleObject_GetPaletteFar(unitId);
               else
                 part->colorMode = palette;
@@ -302,7 +303,7 @@ void BattleEffect_TintBattler(s32 unitId, s32 palette, s32 animation,
           } while (partIndex != group->count);
         }
       }
-      if (animation != -1)
+      if (animation != TINT_KEEP)
         Sprite_StartAnimationFar(group, animation);
     }
     groupIndex++;

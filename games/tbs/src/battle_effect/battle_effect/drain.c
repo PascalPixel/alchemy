@@ -95,7 +95,7 @@ void BattleEffect_RunBreak(struct BattleEffectParams *args) {
       if (frame == member * 20) {
         Sound_PlayFar(SE_CRACK);
         BattleEffect_TintBattler(work->args->targets[member],
-                                 SPRITE_COLOR_WHITE, -1, member, 20);
+                                 SPRITE_COLOR_WHITE, TINT_KEEP, member, 20);
       }
       // A shard falls with one of four gravities by its index (1/8 to 1/2
       // pixel a frame per frame, gDrain_Gravities) and goes out once it
@@ -217,9 +217,11 @@ void BattleEffect_RunDrain(struct BattleEffectParams *args) {
       EFFECT_SHOW_DAMAGE(SE_IMPACT);
     EFFECT_VIEW_FROM_CAMERA(camera);
     if (frame == 40)
-      BattleEffect_TintBattler(work->args->user, SPRITE_COLOR_WHITE, -1, -1, 0);
+      BattleEffect_TintBattler(work->args->user, SPRITE_COLOR_WHITE, TINT_KEEP,
+                               TINT_KEEP, 0);
     if (frame == work->args->targetCount * 20 + 52)
-      BattleEffect_TintBattler(work->args->user, 0, -1, -1, 0);
+      BattleEffect_TintBattler(work->args->user, SPRITE_COLOR_NORMAL, TINT_KEEP,
+                               TINT_KEEP, 0);
     EFFECT_FOR_EACH_TARGET(member, work->args) {
       if (frame == member * 20)
         BattleEffect_TintBattler(work->args->targets[member],

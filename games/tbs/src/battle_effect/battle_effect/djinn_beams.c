@@ -202,10 +202,11 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 element) {
 
         EFFECT_VIEW_FROM_CAMERA(camera);
         if (frame == start + 72)
-          BattleEffect_TintBattler(work->args->targets[i], SPRITE_COLOR_GRB, -1,
-                                   -1, 0);
+          BattleEffect_TintBattler(work->args->targets[i], SPRITE_COLOR_GRB,
+                                   TINT_KEEP, TINT_KEEP, 0);
         if (frame == start + 88)
-          BattleEffect_TintBattler(work->args->targets[i], 0, -1, -1, 0);
+          BattleEffect_TintBattler(work->args->targets[i], SPRITE_COLOR_NORMAL,
+                                   TINT_KEEP, TINT_KEEP, 0);
         SET_VECTOR(ground, target->x.fixed, 0, target->z.fixed);
         Projection_Point(ground, &screenPosition);
         screenPosition.x += offsetX;

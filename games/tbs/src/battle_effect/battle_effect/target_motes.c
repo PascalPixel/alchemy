@@ -438,8 +438,9 @@ void BattleEffect_RunSleep(struct BattleEffectParams *args) {
       SET_VECTOR(anchor, target->x.fixed, 160 << 14, target->z.fixed);
       Transform_ApplyPosition(anchor);
       if (frame == targetIndex * 16 + 64)
-        BattleEffect_TintBattler(work->args->targets[targetIndex], 0,
-                                 POSE_DAMAGE, -1, 0);
+        BattleEffect_TintBattler(work->args->targets[targetIndex],
+                                 SPRITE_COLOR_NORMAL, POSE_DAMAGE, TINT_KEEP,
+                                 0);
     }
     current = sheep;
     for (particleIndex = 0; particleIndex != SLEEP_SHEEP;

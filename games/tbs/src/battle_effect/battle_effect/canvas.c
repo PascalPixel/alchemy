@@ -288,7 +288,8 @@ void BattleEffect_CountDownBattlerTints(void) {
     if (work->actorTimers[actorIndex] != 0) {
       if ((work->actorTimers[actorIndex] = work->actorTimers[actorIndex] - 1) ==
           0) {
-        BattleEffect_TintBattler(work->args->targets[actorIndex], 0, -1, -1, 0);
+        BattleEffect_TintBattler(work->args->targets[actorIndex],
+                                 SPRITE_COLOR_NORMAL, TINT_KEEP, TINT_KEEP, 0);
       }
     }
     actorIndex += 1;

@@ -176,7 +176,7 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectParams *args,
       }
       EFFECT_FOR_EACH_TARGET(i, work->args) {
         BattleEffect_TintBattler(work->args->targets[i], SPRITE_COLOR_RED_TINT,
-                                 POSE_DAMAGE, -1, 0);
+                                 POSE_DAMAGE, TINT_KEEP, 0);
         BattleMotion_ApplyKnockbackFar(work->args->targets[i], KNOCKBACK_HURL);
       }
       frame = 160;
@@ -397,7 +397,7 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectParams *args,
     if (frame == 138) {
       EFFECT_FOR_EACH_TARGET(i, work->args) {
         BattleEffect_TintBattler(work->args->targets[i], SPRITE_COLOR_RED_TINT,
-                                 POSE_DAMAGE, -1, 0);
+                                 POSE_DAMAGE, TINT_KEEP, 0);
         BattleMotion_ApplyKnockbackFar(work->args->targets[i], KNOCKBACK_HURL);
       }
     }

@@ -438,8 +438,8 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
         actor->gravity = BATTLE_UNIT_GRAVITY;
       }
       if (frame == i * 5 + 302) {
-        BattleEffect_TintBattler(work->args->targets[i], SPRITE_COLOR_WHITE, -1,
-                                 i, 8);
+        BattleEffect_TintBattler(work->args->targets[i], SPRITE_COLOR_WHITE,
+                                 TINT_KEEP, i, 8);
         Sound_PlayFar(SE_HEAVY_IMPACT);
         work->shakeFrames = 8;
       }

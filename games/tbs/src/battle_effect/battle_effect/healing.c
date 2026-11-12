@@ -335,7 +335,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
         Sound_PlayFar(SE_RECOVERY);
       if (frame == start + HEALING_TINT_DELAY)
         BattleEffect_TintBattler(work->args->targets[member],
-                                 SPRITE_COLOR_WHITE, -1, member,
+                                 SPRITE_COLOR_WHITE, TINT_KEEP, member,
                                  HEALING_TINT_FRAMES);
 
       // From the target's start, its frame of reference turns 1/128 of a

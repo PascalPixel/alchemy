@@ -464,7 +464,7 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
       if (frame == 58) {
         EFFECT_FOR_EACH_TARGET(i, work->args) {
           BattleEffect_TintBattler(work->args->targets[i], SPRITE_COLOR_BLACK,
-                                   POSE_DAMAGE, -1, 0);
+                                   POSE_DAMAGE, TINT_KEEP, 0);
         }
       }
 

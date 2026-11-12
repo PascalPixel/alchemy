@@ -253,13 +253,15 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
                   GetBattleObjectSlotFar(work->args->targets[k])->actor;
 
               BattleEffect_TintBattler(work->args->targets[k],
-                                       SPRITE_COLOR_WHITE, POSE_DAMAGE, -1, 0);
+                                       SPRITE_COLOR_WHITE, POSE_DAMAGE,
+                                       TINT_KEEP, 0);
               actor->velocityY = Q16_ONE * 9 / 2;
               actor->gravity = BATTLE_UNIT_GRAVITY;
             }
             if (phase == 6)
-              BattleEffect_TintBattler(work->args->targets[k], 0, POSE_DAMAGE,
-                                       -1, 0);
+              BattleEffect_TintBattler(work->args->targets[k],
+                                       SPRITE_COLOR_NORMAL, POSE_DAMAGE,
+                                       TINT_KEEP, 0);
           }
         }
       }

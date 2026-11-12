@@ -438,8 +438,8 @@ void BattleEffect_RunElementPillar(struct BattleEffectParams *args) {
     if (frame > 49)
       REG_BLDALPHA = BLEND_ALPHA(112 - frame * 2, 16);
     if (frame == 16)
-      BattleEffect_TintBattler(work->args->targets[0], SPRITE_COLOR_WHITE, -1,
-                               0, 20);
+      BattleEffect_TintBattler(work->args->targets[0], SPRITE_COLOR_WHITE,
+                               TINT_KEEP, 0, 20);
 
     // The pillar: its left half at x 47 and its mirrored right half at x
     // 64, keeping the brighter pixel. The pillar (17x64) cycles through four
@@ -688,7 +688,8 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
     if (frame == 3)
       Sound_PlayFar(SE_POWER_UP);
     if (frame == 28)
-      BattleEffect_TintBattler(work->args->targets[0], -1, POSE_CAST, -1, 0);
+      BattleEffect_TintBattler(work->args->targets[0], TINT_KEEP, POSE_CAST,
+                               TINT_KEEP, 0);
     if (frame == 32)
       Sound_PlayFar(SE_MONSTER_ROAR);
     if (frame == 5)
@@ -894,7 +895,8 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
   // fade, then free the slots in the reverse of the order they were taken.
   EFFECT_RELEASE_BLITTERS();
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  BattleEffect_TintBattler(work->args->targets[0], -1, POSE_STANDING, -1, 0);
+  BattleEffect_TintBattler(work->args->targets[0], TINT_KEEP, POSE_STANDING,
+                           TINT_KEEP, 0);
   gBgScroll[1].x = work->savedBg1X;
   gBgScroll[1].y = 32;
   BattleBackground_SetModeFar(BATTLE_BACKGROUND_ZOOMED, battle->background, 0);
@@ -1007,8 +1009,8 @@ void BattleEffect_RunElementBurst(struct BattleEffectParams *args) {
       REG_BLDALPHA = BLEND_ALPHA(112 - frame * 2, 16);
     if (frame == 26) {
       Sound_PlayFar(SE_POWER_UP);
-      BattleEffect_TintBattler(work->args->targets[0], SPRITE_COLOR_WHITE, -1,
-                               0, 20);
+      BattleEffect_TintBattler(work->args->targets[0], SPRITE_COLOR_WHITE,
+                               TINT_KEEP, 0, 20);
     }
     // Frames 28 to 48: the burst of light (48x48), seven images, three
     // frames each.

@@ -174,10 +174,10 @@ void BattleEffect_RunAnnihilation(struct BattleEffectParams *args) {
     // The target glows red on frames 6 and 14.
     if (frame == 6)
       BattleEffect_TintBattler(work->args->targets[0], SPRITE_COLOR_RED_TINT,
-                               -1, -1, 0);
+                               TINT_KEEP, TINT_KEEP, 0);
     if (frame == 14)
       BattleEffect_TintBattler(work->args->targets[0], SPRITE_COLOR_RED_TINT,
-                               -1, -1, 0);
+                               TINT_KEEP, TINT_KEEP, 0);
     BattleCamera_Shake(16, 16);
     EFFECT_END_FRAME(work);
   }

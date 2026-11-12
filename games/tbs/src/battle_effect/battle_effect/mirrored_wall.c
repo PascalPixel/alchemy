@@ -147,11 +147,11 @@ void BattleEffect_RunMirroredWall(struct BattleEffectParams *args, s32 mode) {
     // Recovery, red otherwise.
     if (frame == 0) {
       if (mode == MIRRORED_WALL_RECOVERY)
-        BattleEffect_TintBattler(work->args->targets[0], SPRITE_COLOR_WHITE, -1,
-                                 0, 32);
+        BattleEffect_TintBattler(work->args->targets[0], SPRITE_COLOR_WHITE,
+                                 TINT_KEEP, 0, 32);
       else
         BattleEffect_TintBattler(work->args->targets[0], SPRITE_COLOR_RED_TINT,
-                                 -1, 0, 32);
+                                 TINT_KEEP, 0, 32);
     }
     if (frame == 24)
       EFFECT_SHOW_DAMAGE(0);

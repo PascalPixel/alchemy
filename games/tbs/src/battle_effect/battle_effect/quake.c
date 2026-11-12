@@ -170,8 +170,9 @@ void BattleEffect_RunQuake(struct BattleEffectParams *args) {
             actor->gravity = BATTLE_UNIT_GRAVITY;
           }
           if (actor->y.fixed < 0)
-            BattleEffect_TintBattler(work->args->targets[member], 0,
-                                     POSE_DAMAGE, -1, 0);
+            BattleEffect_TintBattler(work->args->targets[member],
+                                     SPRITE_COLOR_NORMAL, POSE_DAMAGE,
+                                     TINT_KEEP, 0);
         }
       }
     }

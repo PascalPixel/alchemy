@@ -474,8 +474,9 @@ void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectParams *args) {
           s32 spin;
 
           if (frame == (member * 16) + 32) {
-            BattleEffect_TintBattler(work->args->targets[member], 0,
-                                     POSE_DAMAGE, -1, 0);
+            BattleEffect_TintBattler(work->args->targets[member],
+                                     SPRITE_COLOR_NORMAL, POSE_DAMAGE,
+                                     TINT_KEEP, 0);
           }
           SET_VECTOR(point, actor->x.fixed, 40 << 16, actor->z.fixed);
           Projection_Point(point, &screen);

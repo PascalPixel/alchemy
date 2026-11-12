@@ -494,7 +494,7 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
     EFFECT_FOR_EACH_TARGET(i, work->args) {
       if (frame == i * 8 + 32) {
         BattleEffect_TintBattler(work->args->targets[i], SPRITE_COLOR_BLUE_TINT,
-                                 POSE_DAMAGE, -1, 0);
+                                 POSE_DAMAGE, TINT_KEEP, 0);
       }
     }
 

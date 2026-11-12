@@ -503,10 +503,11 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
         if (mode == TARGET_STRIKE_STYLE_MARS_ADDITIVE_DRAIN_COLUMNS)
           size = 8;
         if (frame == 55)
-          BattleEffect_TintBattler(work->args->user, SPRITE_COLOR_WHITE, -1, -1,
-                                   0);
+          BattleEffect_TintBattler(work->args->user, SPRITE_COLOR_WHITE,
+                                   TINT_KEEP, TINT_KEEP, 0);
         if (frame == 90)
-          BattleEffect_TintBattler(work->args->user, 0, -1, -1, 0);
+          BattleEffect_TintBattler(work->args->user, SPRITE_COLOR_NORMAL,
+                                   TINT_KEEP, TINT_KEEP, 0);
         for (i = 0; i != 64; i++) {
           struct Particle *step = &PARTICLES[i];
 

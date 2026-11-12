@@ -436,6 +436,9 @@ void BattleEffect_RunFromTable(struct BattleEffectParams *args);
 void BattleEffect_BuildWindowEdgeTable(void);
 void BattleEffect_SelectLivingTargets(struct BattleEffectParams *args);
 void BattleEffect_SetupBlendedDisplay(void);
+/// Passed to BattleEffect_TintBattler as its palette, animation or timerSlot:
+/// leave that one as it is.
+#define TINT_KEEP (-1)
 void BattleEffect_TintBattler(s32 actorId, s32 palette, s32 animation,
                               s32 timerSlot, s32 timerFrames);
 void BattleEffect_InitializeTilemapAndFlushQueue(void);

@@ -207,8 +207,8 @@ void BattleEffect_RunSpiderWeb(struct BattleEffectParams *args) {
       EFFECT_SHOW_DAMAGE(SE_CRACK);
     EFFECT_FOR_EACH_TARGET(i, work->args) {
       if (frame == 10)
-        BattleEffect_TintBattler(work->args->targets[i], SPRITE_COLOR_WHITE, -1,
-                                 i, 8);
+        BattleEffect_TintBattler(work->args->targets[i], SPRITE_COLOR_WHITE,
+                                 TINT_KEEP, i, 8);
     }
     BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;

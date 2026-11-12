@@ -810,11 +810,12 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
       // across and in depth (a 256th of the distance under 4096); only the
       // first 32 are drawn.
       if (frame == 50) {
-        BattleEffect_TintBattler(work->args->user, SPRITE_COLOR_WHITE, -1, -1,
-                                 0);
+        BattleEffect_TintBattler(work->args->user, SPRITE_COLOR_WHITE,
+                                 TINT_KEEP, TINT_KEEP, 0);
       }
       if (frame == 79) {
-        BattleEffect_TintBattler(work->args->user, 0, -1, -1, 0);
+        BattleEffect_TintBattler(work->args->user, SPRITE_COLOR_NORMAL,
+                                 TINT_KEEP, TINT_KEEP, 0);
       }
       if (frame == 12) {
         particle = CASTING_IMPACT_IMPACT_PARTICLES;

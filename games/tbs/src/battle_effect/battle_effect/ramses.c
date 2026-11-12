@@ -263,8 +263,8 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
       // shakes.
       EFFECT_FOR_EACH_TARGET(i, work->args) {
         BattleMotion_ApplyKnockbackFar(work->args->targets[i], KNOCKBACK_HURL);
-        BattleEffect_TintBattler(work->args->targets[i], SPRITE_COLOR_WHITE, -1,
-                                 i, 8);
+        BattleEffect_TintBattler(work->args->targets[i], SPRITE_COLOR_WHITE,
+                                 TINT_KEEP, i, 8);
       }
       work->shakeFrames = 8;
     }

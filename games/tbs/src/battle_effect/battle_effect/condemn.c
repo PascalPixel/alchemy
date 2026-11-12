@@ -231,7 +231,8 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
       target->steeringFlags = 0;
       target->snapToTarget = 0;
       Actor_SetMoveTargetFar(target, target->x.fixed << 1, 0, target->z.fixed);
-      BattleEffect_TintBattler(work->args->targets[0], -1, POSE_DAMAGE, -1, 0);
+      BattleEffect_TintBattler(work->args->targets[0], TINT_KEEP, POSE_DAMAGE,
+                               TINT_KEEP, 0);
     }
     // Frame 120: the target, sent up at a pixel a frame with no gravity on
     // frame 88, gets the battle units' usual gravity back (BATTLE_UNIT_GRAVITY,

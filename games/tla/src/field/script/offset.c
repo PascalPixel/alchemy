@@ -129,8 +129,6 @@ s32 Func_08025160(struct Actor *interpreter) {
 
 #include "fixed_math.h"
 
-#define TARGET_UNSET ((s32)0x80000000)
-
 s32 Func_08025428(struct Actor *cameraObject) {
   struct Actor *leader;
   struct MapWork *bounds;

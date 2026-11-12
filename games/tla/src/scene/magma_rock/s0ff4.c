@@ -142,8 +142,6 @@ void Func_020011b8(struct Actor *object) {
 }
 
 #include "field/event_work.h"
-#include "system/main_routine_work.h"
-#include "system/ram_buffer.h"
 #include "field_effect.h"
 #include "frame.h"
 #include "field.h"

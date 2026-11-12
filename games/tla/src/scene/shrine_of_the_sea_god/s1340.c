@@ -1,7 +1,6 @@
 /// @file
 /// Scene code of overlay 0x654, in ROM order, from s1340's offset up to the next object the overlay links.
 
-#include "../../../../games/tla/src/scene/shrine_of_the_sea_god/shrine_of_the_sea_god.h"
 #include "shrine_of_the_sea_god.h"
 #include "macros.h"
 #include "call.h"

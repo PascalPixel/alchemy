@@ -142,8 +142,6 @@ void Func_020001d8(struct Actor *object) {
   object->y += object->speedLimit;
 }
 
-#define OBJECT_BYTE(object, offset) (((u8 *)(object))[offset])
-
 void Func_02000298(void) {
   s32 i;
   s32 next;
@@ -181,8 +179,6 @@ void Func_02000298(void) {
     i = next;
   } while (i != 16);
 }
-
-#define OBJECT_BYTE(object, offset) (((u8 *)(object))[offset])
 
 s32 Func_02000324(void) {
   ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->value = 0x204;

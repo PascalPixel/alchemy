@@ -262,7 +262,6 @@ void Func_0802386c(void) {
   HeapSlot_Release(80);
 }
 
-#include "sprite.h"
 #include "graphics.h"
 #include "transform.h"
 
@@ -419,7 +418,6 @@ s32 Script_SetByte54(struct ScriptInterpreter *sc) {
 
 #include "battle.h"
 #include "debug.h"
-#include "field.h"
 #include "game.h"
 #include "lib.h"
 #include "menu.h"
@@ -912,8 +910,6 @@ void Actor_SetPositionAndResetMotion(struct Actor *obj, s32 x, s32 y, s32 z) {
 }
 
 #include "fixed_math.h"
-
-#define TARGET_UNSET ((s32)0x80000000)
 
 void Actor_SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z) {
   s32 dx;

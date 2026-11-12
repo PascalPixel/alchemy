@@ -4,7 +4,7 @@ void Func_02000338(void);
 
 void Func_0200040c(void) { Func_02000338(); }
 
-#include "../../../../games/tla/src/scene/mars_lighthouse_entrance/room.h"
+#include "mars_lighthouse_entrance/room.h"
 #include "iwram_call.h"
 
 void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
@@ -51,8 +51,6 @@ next:
   if (--i >= 0)
     goto next;
 }
-
-#include "mars_lighthouse_entrance/room.h"
 
 extern char SceneId_Ov6aaRoom1;
 extern char SceneId_Ov6aaRoom2;
@@ -630,8 +628,6 @@ void Func_02000fd4(void) {
   Func_02003564();
   Func_020029a0();
 }
-
-#include "io_reg.h"
 
 void GameFlag_SetByte(s32 flag, s32 value);
 

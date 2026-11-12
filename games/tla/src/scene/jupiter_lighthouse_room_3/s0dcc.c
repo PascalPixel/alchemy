@@ -167,8 +167,6 @@ struct HeapSlotWords {
   u32 mapWork;
 };
 
-#define ABS(x) ((x) < 0 ? -(x) : (x))
-
 void Func_02001050(struct PushTarget target) {
   u8 *map = (u8 *)((struct HeapSlotWords *)Ram_HeapSlots)->mapWork;
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);

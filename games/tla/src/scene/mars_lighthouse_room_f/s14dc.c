@@ -55,9 +55,6 @@ next:
 #include "ram_buffer.h"
 #include "field_event.h"
 
-#define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
-#define WORD_AT(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
-
 extern u16 gData_02007088[];
 extern u16 gData_0200708c[];
 

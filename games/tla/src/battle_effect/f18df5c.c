@@ -70,12 +70,8 @@ void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                           s32 drag);
 
-void *Heap_AllocEwram(s32 size);
-void Resource_LoadAndDecompress(s32 resource, void *destination, s32 a, s32 b);
 void *Resource_GetTableEntry(s32 resource);
 
-
-void HeapSlot_Release(s32 slot);
 void Sound_PlayFar(s32 cue);
 void wait(s32 frames);
 u32 Random16(void);
@@ -141,7 +137,6 @@ extern const u8 gData_08199090[];
 extern const u8 Data_08198ec4[];
 extern const u8 Data_08198cac[];
 
-
 void BattleEffect_FlushPendingGraphicsTransfer(void);
 void BattleEffect_ArmMeteorBlowPaletteDma(void);
 void BattleEffect_ConfigureEffectDisplay(void);
@@ -154,7 +149,6 @@ void Func_0818de3c(struct MeshTriangle *triangles, s32 columns, s32 rows, s32 ce
 s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags, u32 mode);
 void SceneTransform_ApplyPosition(const s32 *pos);
 s32 Render_ProjectPoint(const void *point, s32 *screen);
-
 
 static __inline__ s32 FillWords_(void *destination, s32 size, u32 value) {
   return Iwram_FillWords(destination, size, value);

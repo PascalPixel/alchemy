@@ -367,12 +367,6 @@ void BattleEffect_UpdateRadialSpread(struct FieldParticle *effect) {
 
 struct BattleFxScene;
 
-#define Actor_SetChildValueUnlessFifteenFar                                    \
-  ((void (*)(s32, s32))Animation_ApplyChildValuesToRecordFar)
-#define Actor_ReleaseFar Actor_Destroy
-#define gBattleEffect_PulseScales gData_080f0bfc
-#define gEffectWork Ram_HeapSlots->effectWork
-
 void Func_080d82e0(s32 arg) {
   struct CaptureObject *leader;
   struct CaptureObject *djinni;
@@ -501,12 +495,6 @@ void Func_080d82e0(s32 arg) {
 }
 
 struct BattleFxScene;
-
-#define Actor_SetChildValueUnlessFifteenFar                                    \
-  ((void (*)(s32, s32))Animation_ApplyChildValuesToRecordFar)
-#define Actor_ReleaseFar Actor_Destroy
-#define gBattleEffect_PulseScales gData_080f0bfc
-#define gEffectWork Ram_HeapSlots->effectWork
 
 void BattleEffect_UpdateDescendingOrbitObject(
     struct DescendingOrbitObject *arg);

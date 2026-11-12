@@ -17,9 +17,6 @@ extern const u8 gData_02005d8c[];
 void Func_02001e20(struct Actor *object);
 void Func_02001ffc(struct Actor *object);
 void Func_020022d0(struct Actor *object);
-extern const u8 gData_02005d8c[];
-
-void Func_02005490(struct Actor *object, const void *script);
 
 /// Stops the object and sets its sprite part, then restarts its script at
 /// gData_02005d8c; Func_02001e1c of the Mars Lighthouse entrance is the same

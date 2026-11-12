@@ -295,9 +295,6 @@ void Func_080eb6a0(void) {
 #include "task.h"
 #include "window.h"
 
-#define OBJ_TILES ((u8 *)0x06010000)
-#define TILE_SIZE 32
-
 /// Starts the canvas sprite of the field Psynergy scenes: its work, a cleared
 /// 64x64 canvas copied into the sprite's tiles, and a map from each canvas
 /// pixel (row by row) to its place in the tiles. Func_080eb6a0 draws the

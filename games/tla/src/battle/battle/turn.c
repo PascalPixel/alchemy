@@ -5,9 +5,6 @@
 
 #include "../battle_internal.h"
 
-void SceneTransform_ApplyYaw(s32 yaw);
-void SceneTransform_ApplyPitch(s32 pitch);
-
 void Camera_ConfigureScene(s32 pos) {
   struct BattleCamera *state = Ram_HeapSlots->cameraWork;
   struct BattlePresentationTransition *secondary =
@@ -63,9 +60,6 @@ void BattleUnit_ResetGuardLevels(void) {
     Unit_CalculateFar(ids[index]);
   }
 }
-
-s32 __divsi3(s32, s32);
-u32 Random16(void);
 
 struct BattleEscapeState {
   u8 reserved00[0x45];
@@ -260,12 +254,6 @@ void BattleQueue_SortByPriority(struct BattleActionRecord *entries, s32 count) {
   } while (swapped != 0);
 }
 
-s32 Serial_StartSend(void *source, s32 size);
-s32 Serial_GetActiveTransfers(void);
-void Heap_Release(void *block);
-
-extern volatile u16 gLinkStatus;
-
 struct BattleLinkedActionState {
   s32 count;
   s32 check;
@@ -424,11 +412,6 @@ fail:
 }
 
 extern struct BattlePresentationTransition *gTransitionWork;
-
-void GameFlag_SetBit(s32 flag);
-void GameFlag_ClearBit(s32 flag);
-void GameFlag_SetBitFar(s32 flag);
-void GameFlag_ClearBitFar(s32 flag);
 
 /// Copies BG palettes 15 to 14 and 5 to 4, adjusting brightness.
 /// offset: amount added to each RGB component, clamped to 0-31.

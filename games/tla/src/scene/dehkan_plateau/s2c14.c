@@ -207,7 +207,6 @@ struct EffectWork7c4 {
   s16 active;
   s16 timer;
 };
-void Field_DispatchTypeHandler(s32 type);
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.

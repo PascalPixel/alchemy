@@ -3174,8 +3174,6 @@ struct DjinnRecoveryListDraft {
   s32 count;
 };
 
-#define KEYS_HELD (*(volatile u32 *)&gInput.held)
-
 extern const u32 Data_08128c50[];
 extern u8 Data_08128972[];
 extern u8 Data_0812896c[];

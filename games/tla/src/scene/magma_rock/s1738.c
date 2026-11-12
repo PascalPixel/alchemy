@@ -183,8 +183,6 @@ void Func_02001738(struct Actor *object) {
     object->action++;
 }
 
-#include "ram_buffer.h"
-#include "main_routine_work.h"
 #include "magma_rock.h"
 
 void Func_020014bc(s32 mode, s32 cue);

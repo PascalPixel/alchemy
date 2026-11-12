@@ -10,8 +10,6 @@
   ((void (*)(struct MotionObject *, s32, s32, s32))Actor_SetTargetPosition)
 #define Actor_SetMode ((void (*)(struct MotionObject *, s32))Actor_SetMode)
 
-s32 ArcTan2(s32, s32);
-
 void ObjMotRst(s32 slotId) {
   s32 z;
   s32 zero;
@@ -224,8 +222,6 @@ void BattleMotion_ResetSlotObjectMode2(s32 id) {
 
 void BattleMotion_NoOp(void *position, s32 speed) {}
 
-void BattleMotion_NoOp(void *, s32);
-
 void BattleMotion_ApplyPairMidpoint(s32 firstId, s32 secondId) {
   struct BattleObj *secondSlot;
   struct MotionObject *first;
@@ -278,8 +274,6 @@ struct SlotEffectEntry {
   struct SlotEffectObject *object;
 };
 
-void wait(s32 frames);
-
 void BattleMotion_SpawnSlotEffectAndWait(s32 slot) {
   struct SlotEffectEntry *entry = (struct SlotEffectEntry *)BattleObject_Get(slot);
   u8 *effect;
@@ -301,7 +295,6 @@ struct SlotMotionRecord {
   s32 height;
 };
 
-s32 Camera_ApplyTransformByFlag(void);
 s32 Func_0811c37c(s32 owner);
 
 s32 Func_0811c2b4(s32 slot, s32 *screen) {

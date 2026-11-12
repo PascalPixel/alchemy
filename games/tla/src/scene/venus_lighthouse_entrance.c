@@ -190,13 +190,6 @@ s32 Func_02000128(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-
 s32 Event_StartScreenTransition();
 s32 Event_WaitTransitionFrames();
 s32 Func_02002864();
@@ -245,13 +238,6 @@ void Func_0200030c(void) {
   FieldActor_WaitForMoveById(11);
   Func_0200298c();
 }
-
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
 
 extern u8 gData_02003040[];
 
@@ -962,13 +948,6 @@ void Func_02000510(void) {
   Func_020028bc();
 }
 
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-
 s32 Func_020029a4();
 extern u8 MsgWhyDoI[];
 
@@ -1017,13 +996,6 @@ void Func_02001a2c(void) {
   Func_020028bc();
 }
 
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-
 extern u8 MsgNotThatWayThe[];
 
 void Func_02001bb0(void) {
@@ -1048,13 +1020,6 @@ void Func_02001bb0(void) {
 }
 
 #include "iwram_call.h"
-
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
 
 extern u8 MsgAreAreYou[];
 

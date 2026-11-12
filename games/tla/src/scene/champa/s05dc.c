@@ -14,7 +14,6 @@
        ->v)
 
 #include "call.h"
-#include "event_inline.h"
 s32 Func_02002a44();
 s32 Func_02002a5c();
 s32 Func_02002a4c();
@@ -44,7 +43,6 @@ void Func_0200060c(void) {
 }
 
 #include "version.h"
-#include "event_inline.h"
 #include "frame.h"
 s32 Func_02002b3c();
 extern u8 MsgChampa52[];

@@ -191,8 +191,6 @@ void Func_020002b4(void) {
   Import_EventEnd();
 }
 
-void Import_EventStart(void);
-
 extern const u8 gData_02003650[];
 extern const u8 gData_02003734[];
 extern const u8 gData_02003790[];

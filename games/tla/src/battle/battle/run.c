@@ -77,11 +77,7 @@ struct BattleFxRequest {
 
 void Func_08138050(struct BattleFxRequest *request, s32 value);
 
-s32 BattleObject_MarkForRelease(s32 objectId);
-s32 BattleEnemy_ClaimNameLetter(s32 classId, s32 n);
 s32 BattleUnit_SetFar(s32 slot, s32 unit, s32 mask);
-struct BattleObj *BattleObject_Get(s32 objectId);
-void BattleObject_Put(void);
 
 void Func_08119734(s32 id) {
   struct BattleWork *work = Ram_HeapSlots->battleWork;
@@ -165,74 +161,44 @@ struct EncounterWork {
   u8 nextExtraCount;
   u8 unk866[0x16];
 };
-extern s32 gBattleRandomSeed;
-extern volatile u16 gLinkStatus;
 extern u8 gCpuLoadDisplayEnabled;
 /// The actor sprite slot buffers, 0x4000 bytes a slot.
 extern u8 Data_02018000[];
-extern u8 MsgDowned[];
 // Messages 3203 and 3209, not yet named in this game's catalog.
 extern u8 MsgPartyDefeated[];
-extern u8 MsgGoesDownInDefeat[];
 
-void *HeapSlot_AllocEwram(s32 slot, s32 size);
-s32 GameFlag_Test(s32 flag);
 // The ROM's call here keeps the whole return register, as an s32 return
 // does; system/system/flags.c defines it returning u8.
 s32 GameFlag_GetByte(s32 flag);
-void Render_ResetTransformState(void);
 s32 Event_GetSpecialValueFar(void);
 void ObjectSystem_InitializeFar(s32 mode);
 void WindowSystem_InitBattleFar(s32 mode);
-void BattleCamera_Create(void);
 s32 Func_08127cd4(s32 enemyGroup);
 s32 Task_Add(void (*func)(void), s32 order);
-void Sound_PlayFar(s32 cue);
 void Sound_LoadPresetParameters(s32 preset);
-void Func_08118c68(void);
 void BattleUnit_RefreshPlacement(void);
-void Func_08118eb0(void);
-void Func_08118f6c(void);
-void Func_081185c4(void);
 void PartyStatus_CreateWindowFar(s32 layout);
-void Camera_InitializeDefaultTransform(void);
 void Func_081263c4(void);
 void Func_081263fc(s32 mode, s32 background, s32 value);
-void BattleCamera_SetRange(s32 cx, s32 cy, s32 ox, s32 oy, s32 scale);
-void BattleCamera_SetView(s32 a, s32 b, s32 c, s32 d);
-void Party_ReservedNoOp5B14(s32 value);
 void BattleSpoils_Clear(void);
-s32 VramCache_AllocEntry(s32 size);
 s32 Func_0811a39c(s32 groups, u16 *dst);
 void Func_08125d74(s32 enemyCount, s32 enemyGroup);
-void Func_08118adc(void);
 void Func_0811b9fc(void);
-void Func_081195ec(void);
 void Func_0811d7e4(void);
-void PartyStatus_DrawFar(s32 mode);
 s32 Battle_GatherActions(struct BattleActionRecord *actions);
 struct BattleSortedUnitEntry;
 s32 AutoBattle_BuildActions(struct BattleSortedUnitEntry *entries);
 s32 Func_0811d9cc(struct BattleActionRecord *action, s32 delay);
 s32 AutoBattle_RunAction(s16 *action);
-s32 BattleParty_ListLivingUnits(s32 side, u16 *unitIds);
-void Func_081197a8(s32 enemyGroup);
 s32 Battle_FindTaggedSlotByValue(u32 id);
-s32 LinkBattle_SyncTurn(void);
-void Func_08118e64(void);
 void Func_08124cc0(void);
 void Func_08124e20(void);
-void BattleMotion_DestroyAllSlotObjects(void);
-s32 Tutorial_GetDjinnGiveMessage(void);
-s32 Message_OpenWindowFar(s32 message, s32 x, s32 y, s32 mode);
 s32 Message_AllTypedFar(void);
 void Window_CloseFar(s32 window, s32 mode);
 void Func_08120060(s32 x, s32 y);
-void BattleStaging_ClearLinkPayload(void);
 void Battle_AwardSpoils(void);
 void Fade_ToBlack(s32 vblanks);
 void Fade_Wait(void);
-void Func_0811843c(void);
 void Func_081263f0(void);
 
 s32 Func_081197f0(s32 enemyGroup) {

@@ -65,10 +65,9 @@ struct GustObject *Func_02000d08(struct GustObject *source) {
   return object;
 }
 
-#include "../../../../games/tla/src/scene/jupiter_lighthouse_aerie/jupiter_lighthouse_aerie.h"
+#include "jupiter_lighthouse_aerie.h"
 #include "field_coordinate.h"
 #include "field_sprite.h"
-#include "jupiter_lighthouse_aerie.h"
 #include "ram_buffer.h"
 
 s32 Func_02000de0(struct Actor *object) {

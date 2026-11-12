@@ -62,8 +62,6 @@ s32 Func_02000b18(void) {
   return 0;
 }
 
-#include "event_inline.h"
-
 s32 Func_02000c04(void) {
   s32 t0;
 

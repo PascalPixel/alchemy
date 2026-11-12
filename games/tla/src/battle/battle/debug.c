@@ -181,14 +181,8 @@ struct DebugPartyEntry {
 
 extern struct DebugPartyEntry gData_0812a174[];
 
-void Party_RemoveActiveOwnerFar(s32 owner);
-s32 Party_AddActiveOwnerFar(s32 owner);
 void Unit_LevelUpToFar(s32 owner, s32 level);
 void Unit_LearnPsynergyFar(s32 owner, s32 action);
-s32 Djinn_AddToOwnerFar(s32 owner, s32 element, s32 index);
-s32 Djinn_ActivateFar(s32 owner, s32 element, s32 index);
-s32 Inventory_RemoveFar(s32 owner, s32 slot);
-s32 Inventory_AddItemFar(s32 owner, s32 item);
 s32 Inventory_EquipFar(s32 owner, s32 slot);
 void Unit_UpdateClassFar(s32 owner);
 
@@ -281,13 +275,9 @@ extern char ResourceId_ColossoBackdrop;
 void Func_080ad090(void);
 void Window_LoadGraphics(void);
 void DebugText_Clear(void);
-void Task_ResetAll(void);
-void Heap_Initialize(void);
 void VramCache_Reset(void);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
-void wait(s32 frames);
-void Unit_CalculateFar(s32 unitId);
 
 void Func_08118958(void) {
   s32 startModeSet = 0;

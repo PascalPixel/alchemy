@@ -44,7 +44,6 @@ void Func_020012ac(void) {
   Func_02004e64();
 }
 
-#include "event_inline.h"
 s32 Scene_SetActorSpritePriority();
 s32 Func_02004d9c();
 s32 Animation_SetStateFlags();

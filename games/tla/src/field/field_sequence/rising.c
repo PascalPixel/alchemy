@@ -1223,9 +1223,6 @@ void BattlePalette_UpdateBlend(void) {
   }
 }
 
-#include "system/dma.h"
-#include "system/io_reg.h"
-
 #define COLOR_MAX 448
 #define COLOR_HALF 224
 

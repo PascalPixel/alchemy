@@ -71,8 +71,6 @@ void Func_02000520(void) {
   Func_02000dc0();
 }
 
-s32 Djinn_AddToLeastLoadedOwner(s32 element, s32 djinn);
-
 void Func_020005fc(s32 owner, s32 element, s32 djinn, s32 activate) {
   GameFlag_SetBit(element * 20 + djinn + 48);
   Djinn_AddToOwner(owner, element, djinn);
@@ -182,7 +180,6 @@ void Text_DrawStringInWindow(const void *text, void *window, s32 x, s32 y);
 void Text_DrawNumberInWindow(s32 value, s32 a, void *window, s32 x, s32 y);
 void WindowSprite_RedrawSavedRect(void *window);
 void Window_Close(void *window, s32 mode);
-void Func_02000704(s32 levels);
 
 /// The level-raising window: shows the current member's name and level,
 /// raises every active member 5 levels on Start or Select and 1 on A, and
@@ -227,8 +224,6 @@ void Func_02000748(void) {
 extern const u8 gData_02000e84[];
 extern const u8 gData_02000e90[];
 extern const u8 gData_02000ea8[];
-extern u8 MsgItemName[];
-extern u8 MsgItemPlainName[];
 
 struct ItemSummary {
   u8 unk00[6];
@@ -241,7 +236,6 @@ void Text_DrawCharacterAtOffset(s32 message, void *window, s32 x, s32 y);
 s32 PartyInventory_HasSpace(void);
 s32 PartyInventory_Add(s32 item);
 void ItemMenu_DrawItemDetails(void *window, s32 item);
-void Window_Close(void *window, s32 release);
 
 #define ITEM_COUNT 500
 

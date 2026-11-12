@@ -46,7 +46,6 @@ void Shop_RestoreSceneTilesFar(s32 value);
 void Motion_SetVarCbAndRefresh(s32 id, s32 value);
 void Actor_Jump(s32 id, s32 height, s32 frames);
 struct CaptureObject *Func_080200c0(s32 kind, s32 x, s32 y, s32 z);
-#include "actor.h"
 struct CaptureResource *
 Sprite_ShareVramCacheEntry(struct CaptureSprite *sprite,
                            struct CaptureResource *resource);

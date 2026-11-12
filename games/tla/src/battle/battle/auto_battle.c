@@ -77,11 +77,8 @@ s32 AutoBattle_BuildActions(
   return count;
 }
 
-void MessageArgument_ClearAllFar(void);
 s32 AutoBattle_ShowDefend(s16 *);
 s32 BattleStaging_RunUnitAction(s16 *);
-s32 BattleStaging_RunPairedUnitTransition(struct BattleActionRecord *);
-void BattleMotion_SetupEscapeObject(s32);
 
 void BattleCamera_AdjustByShoulderKeys(void) {
   struct BattleCamera *cam = Ram_HeapSlots->cameraWork;

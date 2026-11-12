@@ -1,4 +1,4 @@
-#include "../../../../games/tla/src/scene/mars_lighthouse_star_room/mars_lighthouse_star_room.h"
+#include "mars_lighthouse_star_room.h"
 
 extern struct Actor *Data_02004cec;
 
@@ -144,7 +144,6 @@ void Func_02000d88(void) {
   MapGrid_CopyCellAttributes(104, 9, 5, 6, 40, 9);
 }
 
-#include "mars_lighthouse_star_room.h"
 #include "scene_tables.h"
 
 void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);

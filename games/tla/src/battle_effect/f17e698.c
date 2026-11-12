@@ -237,7 +237,6 @@ void Graphics_PackTileRows(u8 *src, u8 *dst, s32 stride) {
 
 #include "resource.h"
 #include "heap_release.h"
-#include "system/iwram_call.h"
 #include "system/irq.h"
 
 struct EffectStep;

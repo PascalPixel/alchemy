@@ -1,10 +1,9 @@
 /// @file
 /// Scene code of overlay 0x6a9, in ROM order, from s0454's offset up to the next object the overlay links.
 
-#include "../../../../games/tla/src/scene/caverns/caverns.h"
+#include "caverns.h"
 #include "event_inline.h"
 #include "actor.h"
-#include "caverns.h"
 #include "field_sprite.h"
 #include "types.h"
 #include "ram_buffer.h"

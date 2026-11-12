@@ -2,10 +2,9 @@
 /// Scene code of overlay 0x681, in ROM order, from s2cb4's offset up to the
 /// next object the overlay links.
 
-#include "../../../../games/tla/include/types.h"
-#include "../../../../games/tla/include/actor.h"
-#include "event_inline.h"
 #include "types.h"
+#include "actor.h"
+#include "event_inline.h"
 
 // Starts the room where persons 8 to 16 sway: unless flag 265 is set, clears
 // the sway state and places each person, then starts the sway's task.
@@ -110,9 +109,7 @@ void Func_02002d30(void) {
 
 #if TLA_PATCH_1
 
-#include "types.h"
 #include "call.h"
-#include "actor.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "io_reg.h"
@@ -829,9 +826,7 @@ end:
 // Func_02005004, room 3 has no flag 0x109 check calling Func_0200042c, and the
 // room pointer is a plain local.
 
-#include "types.h"
 #include "call.h"
-#include "actor.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "io_reg.h"
@@ -1539,7 +1534,6 @@ end:
 
 #endif
 
-#include "actor.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "iwram_call.h"
@@ -2055,10 +2049,6 @@ s32 Func_02004904(void) {
   return -1;
 }
 
-#include "../../../../games/tla/include/system/ram_buffer.h"
-#include "../../../../games/tla/include/map.h"
-#include "system/ram_buffer.h"
-#include "system/main_routine_work.h"
 #include "field.h"
 
 void Func_0200495c(s32 layer, s32 keep) {

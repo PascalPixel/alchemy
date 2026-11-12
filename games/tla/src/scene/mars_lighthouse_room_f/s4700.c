@@ -299,7 +299,6 @@ s32 Func_02004a8c(struct PushTarget *target) {
   return 0;
 }
 
-#include "main_routine_work.h"
 #include "event_work.h"
 
 #undef PIXELS

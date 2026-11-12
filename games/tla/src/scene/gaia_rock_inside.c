@@ -147,7 +147,6 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
    } *)(base))                                                                 \
        ->v)
 
-#include "event_inline.h"
 s32 Func_02004d9c();
 s32 Actor_SetAnimationSpeed();
 
@@ -159,8 +158,6 @@ s32 Func_020005dc(void) {
   Actor_SetAnimationSpeed(t0, 0);
   return 0;
 }
-
-#include "event_inline.h"
 
 s32 Func_020005f8(void) {
   s32 t0;
@@ -224,7 +221,6 @@ s32 Func_02000678(void) {
   return 0;
 }
 
-#include "event_inline.h"
 extern u8 gData_02005544[];
 
 s32 Func_020006e0(void) {
@@ -232,7 +228,6 @@ s32 Func_020006e0(void) {
   return 0;
 }
 
-#include "event_inline.h"
 extern u8 gData_0200559c[];
 
 s32 Func_020006f8(void) {
@@ -241,7 +236,6 @@ s32 Func_020006f8(void) {
   return 0;
 }
 
-#include "event_inline.h"
 extern u8 gData_020055c0[];
 
 s32 Func_02000718(void) {
@@ -255,7 +249,6 @@ s32 Func_02000718(void) {
   return 0;
 }
 
-#include "event_inline.h"
 extern u8 gData_02005610[];
 
 s32 Func_02000748(void) {

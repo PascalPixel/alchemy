@@ -33,7 +33,6 @@ void Func_02001c74(s32 *position, s32 speed, s32 mode) {
   }
 }
 
-#include "../../../../games/tla/src/scene/mars_lighthouse_entrance/room.h"
 #include "field/event_work.h"
 
 struct RideSlot {

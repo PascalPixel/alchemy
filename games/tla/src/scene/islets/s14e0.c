@@ -185,7 +185,6 @@ void Func_020014e0(void) {
   Func_02003e6c();
 }
 
-#include "islets.h"
 #include "scene_tables.h"
 
 extern const u8 gData_020045a4[];
@@ -583,8 +582,6 @@ void Func_020021d0(void) {
   }
 }
 
-#include "../../../../games/tla/src/scene/islets/islets.h"
-
 void Func_02002430(void) {
   struct Actor *first = Actor_Get(12);
   struct Actor *second = Actor_Get(13);
@@ -803,7 +800,6 @@ void Func_02002830(void) {
 
 extern const u8 gData_02004508[];
 extern const u8 gData_02004554[];
-void Func_02003fb4(void);
 
 /// The Islets' arrival by entrance 4: actor 9 joins the leader and actor 10
 /// is placed, the screen fades in, both run their action scripts

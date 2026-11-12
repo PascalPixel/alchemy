@@ -82,7 +82,6 @@ void Event_End(void) {
 
 void Event_EmptyCallback(void) {}
 
-void wait(s32 frames);
 void Func_080caa4c(s32 object);
 
 void Event_EmptyObjectHook(void) {}
@@ -239,12 +238,10 @@ s32 PartyInventory_AddFar(s32 item);
 s32 Func_08108068(s32 *member, s32 *slot);
 void Message_CloseFinishedWindowsFar(void);
 s32 Item_AdjustCounterFar(s32 item, s32 delta);
-void *Unit_Get(s32 owner);
 s32 Inventory_GetQuantityFar(s32 member, s32 slot);
 s32 Inventory_CountItemFar(s32 member, s32 item);
 void Inventory_DiscardFar(s32 member, s32 slot);
 void Unit_RefreshPsynergyFar(s32 member);
-void Unit_CalculateFar(s32 member);
 
 s32 PartyInventory_GiveItem(s32 item, s32 unused) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
@@ -325,8 +322,6 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
 
 // Inventory: give an item and return its owner.
 
-s32 Inventory_AddItemFar(s32, s32);
-
 /// Gives the item. Returns the character ID on success, or -1 if the
 /// inventory is full.
 /// item: item ID.
@@ -359,7 +354,6 @@ void Actor_WaitForAnimationEnd(s32 objectId, s32 value) {
 }
 
 s32 Message_AllTypedFar(void);
-void wait(s32 count);
 s32 Menu_RunConfirmSelectionFar(s32 useBottom, s32 name, s32 width, s32 third);
 void Window_CloseMatchingIdFar(s32 sprite);
 

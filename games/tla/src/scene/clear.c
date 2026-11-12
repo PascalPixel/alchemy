@@ -282,12 +282,6 @@ s32 Menu_RunConfirmSelection(s32 a, s32 b, s32 c, s32 d);
 s32 Menu_SelectSaveSlotAction(void);
 void Party_AddActiveOwner(s32 id);
 
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
 #define PARTY_WORD(party, index) FIELD_AT(party, u32, 4 * (index))
 
 #define MAP_CELL_BACKUP (Ram_MapCellBuffer + 0x3000)
@@ -695,7 +689,6 @@ extern u16 gLinkPeerSignatures[][12];
 extern u16 gSerialReceivedSize;
 extern s32 gSerialReceiveDest;
 extern u16 gData_02003a74[4];
-#define MAP_CELL_BACKUP (Ram_MapCellBuffer + 0x3000)
 #define RECEIVED_FLAGS (Ram_MapCellBuffer + 0x3040)
 #define RECEIVED_UNITS (Ram_MapCellBuffer + 0x3240)
 
@@ -904,7 +897,6 @@ void Func_02000db4(const struct Window *object, s32 x, s32 y, s32 width,
 #include "heap_release.h"
 #include "battle/battle_unit.h"
 #include "owner_state.h"
-#include "battle_unit.h"
 
 /// A selection cursor, as the shops keep theirs (struct ShopCursor).
 struct ShopCursor {

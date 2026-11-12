@@ -64,12 +64,8 @@ void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                           s32 drag);
 
-void *Heap_AllocEwram(s32 size);
-void Resource_LoadAndDecompress(s32 resource, void *destination, s32 a, s32 b);
 void *Resource_GetTableEntry(s32 resource);
 
-
-void HeapSlot_Release(s32 slot);
 void Sound_PlayFar(s32 cue);
 void wait(s32 frames);
 u32 Random16(void);
@@ -193,12 +189,8 @@ extern const s16 Data_081999a6[];
 extern const u8 Data_081999ee[];
 extern const s16 Data_081999f2[];
 
-s32 Resource_ResetEntry(u32 entry);
 void VramBlock_Reset93Far(void);
 void Func_08020388(void);
-s32 VramCache_AllocEntry(s32 size);
-void Transform_Push(void);
-void Transform_Pop(void);
 struct SpriteObject *Func_0815b290(s32 width, s32 height, u32 shape,
                                    u32 attributes);
 struct SpriteObject *Func_0815b3b0(s32 width, s32 height, u32 shape, s32 mode);
@@ -208,7 +200,6 @@ void Func_08163c2c(s32 a, s32 b);
 void Func_0814cca8(void); // BattleEffect_SetupBlendedDisplay
 void BattleActor_SpawnObjectsForListFar(s16 *list, s32 mode);
 void BattleBackground_LoadFar(s32 layer, s32 background, s32 palette);
-s32 Resource_DecodeType01(const void *source, void *destination);
 void Palette_LoadBasicObjColors(void);
 void Graphics_LoadGreyRamp(void);
 void Func_0815f0a0(s32 resource); // BattleEffect_StepPaletteToResource
@@ -218,7 +209,6 @@ void Func_08164b2c(s32 r, s32 g, s32 b);
 s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags, u32 mode);
 void ColorBuffer_ScaleFar(void *source, void *destination, s32 scale,
                           s32 count);
-void Heap_Release(void *buffer);
 
 // Copies words through the IWRAM routine as one statement.
 static inline s32 COPY_WORDS(void *dst, const void *src, s32 size) {

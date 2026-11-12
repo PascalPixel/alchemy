@@ -172,8 +172,6 @@ struct EffectView {
 // One-field view: the shape store is memory of its own to sched2, which sinks
 // it past the cell read; a plain store keeps its order.
 
-#define HELD_OBJECT(work) (*(struct Actor **)((u8 *)(work) + 0xcbc))
-
 void Func_02000270(void) {
   struct Actor *held = HELD_OBJECT(Ram_HeapSlots->eventWork);
   u8 *layer;

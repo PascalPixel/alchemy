@@ -3,8 +3,6 @@
 
 #include "airs_rock_inside.h"
 
-#include "airs_rock_inside.h"
-
 struct FieldActor *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type);
 void Func_02005e84(s32 owner, s32 a, s32 b);
 void Func_02005efc(s32 countdown);
@@ -266,8 +264,6 @@ s32 Func_02003f94(struct Orbit *object) {
   return 1;
 }
 
-#define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
-
 s32 Func_02004038(struct Actor *object) {
   struct Actor *target = object->watchedObject;
   s32 steps;
@@ -327,9 +323,6 @@ union SparkView {
   struct Actor actor;
   struct SparkBytes bytes;
 };
-
-#define REG_BLDCNT (*(volatile u16 *)0x04000050)
-#define REG_BLDALPHA (*(volatile u16 *)0x04000052)
 
 extern const u8 gData_020060e0[], gData_02006094[], gData_020060b0[],
     gData_02006104[], gData_020060c0[], gData_02006128[], gData_02006158[];

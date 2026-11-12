@@ -54,7 +54,6 @@ struct BattleSpriteSlots {
   s16 spriteSlots[6];
 };
 
-s32 BattleClass_IsSmall(s32 index);
 s32 BattleClass_GetSprite(s32 index);
 s32 BattleClass_GetPalette(s32 index);
 s32 ResourceSlot_LoadFar(u32 slot, u32 *buffer, s32 number, u32 variant);

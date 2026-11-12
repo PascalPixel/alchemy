@@ -524,8 +524,6 @@ void Func_02003ce4(void) {
 
 void Func_0200482c(void);
 
-#define EVENT_WORK ((struct ShamanVillageEventWork *)Ram_HeapSlots->eventWork)
-
 void Func_02003d30(void) {
   s32 angle;
 

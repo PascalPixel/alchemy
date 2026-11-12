@@ -238,7 +238,7 @@ void Func_02002b88(void) {
     Func_0200297c();
 }
 
-#include "../../../../games/tla/src/scene/mars_lighthouse_room_f/room.h"
+#include "room.h"
 #include "event_work.h"
 
 void Func_02005610(s32 mode, s32 frames);
@@ -420,8 +420,6 @@ void Func_02002d08(struct Actor *actor) {
     }
   }
 }
-
-#include "room.h"
 
 extern const u8 gData_02005e00[];
 

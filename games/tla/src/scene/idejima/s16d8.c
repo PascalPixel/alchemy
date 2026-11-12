@@ -336,10 +336,6 @@ void Func_02001ee0(void) {
   FieldEvent_SetExitRequest(12);
 }
 
-void Event_StartScreenTransition(void);
-void Event_FinishScreenTransition(void);
-void Event_WaitTransitionFrames(void);
-
 extern const u8 gData_02003534[];
 extern const u8 gData_02003578[];
 extern const u8 gData_020035bc[];

@@ -63,13 +63,6 @@ void Func_08118adc(void) {
   }
 }
 
-s32 BattleEnemy_List(s16 *unit_ids);
-void MessageArgument_ClearAllFar(void);
-void Window_CloseSharedFar(void);
-void MessageArgument_PushFar(s32 value, s32 slot);
-void Message_ShowAndWaitCoreFar(s32 message);
-void BattleMessage_WaitForAdvance(void);
-
 /// Announces each enemy that appears, then who strikes first. The Broken
 /// Seal's BattleIntro_AnnounceEncounter.
 void Func_08118bcc(s32 enemyCount) {
@@ -211,10 +204,6 @@ s32 BattleParty_ResetActiveRuntimeFields(void) {
     } while (i < count);
   }
 }
-
-s32 BattleParty_PrepareActiveOwners(u16 *ids);
-s32 BattleParty_PrepareReserveOwners(u16 *ids);
-s32 BattleParty_ListActorIds(s32 side, u16 *ids);
 
 void Func_08118e64(void) {
   u16 ids[16];

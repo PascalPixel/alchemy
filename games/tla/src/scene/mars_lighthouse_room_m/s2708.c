@@ -1,4 +1,4 @@
-#include "../../../../games/tla/src/scene/mars_lighthouse_room_m/mars_lighthouse_room_m.h"
+#include "mars_lighthouse_room_m.h"
 #include "event_inline.h"
 
 s32 Func_02002368(s32 a, s32 b);
@@ -264,8 +264,6 @@ void Func_02002870(struct Actor *actor) {
   }
 }
 
-#include "mars_lighthouse_room_m.h"
-
 extern const u8 gData_02003348[];
 
 /// Throws two sparks (object kind 325) from (x, y, z), each upward at about
@@ -482,7 +480,6 @@ void Func_02002df4(s32 sourceId, s32 id, s32 value, s32 angle,
 
 #include "field_sprite.h"
 #include "scene_tables.h"
-#include "system/vector3.h"
 
 /// Sets up the actor whose id self keeps in byte 0x62: places it 32 pixels out
 /// from self, 12 pixels up, along self's angle (unk66), faces it that way,

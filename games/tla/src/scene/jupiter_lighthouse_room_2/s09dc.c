@@ -74,9 +74,6 @@ void Func_02000aa4(s32 mode) {
   }
 }
 
-#define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
-#define WORD_AT(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
-
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 void Func_0200223c();
 void Func_0200230c();

@@ -30,8 +30,6 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 #define CLIP (COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y)
 
-#define TASK_PASS_FRAME 0xc80
-
 // The pixel half of a 16.16 value.
 #define HI(value) (((s16 *)&(value))[1])
 

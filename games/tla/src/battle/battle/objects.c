@@ -62,8 +62,6 @@ struct StatusIconEntry {
   u8 priority;
 };
 
-void *GetMotionRecord(struct MotionObject *object, s32 record_index);
-
 #define ICON_MAX 14
 
 /// Cycles the status icon over the slot's conditions every 80 frames, and
@@ -195,8 +193,6 @@ struct TlaSpriteRecord {
   u8 unk1b[13];
   struct SpriteEntry *entries[1];
 };
-
-s32 BattlePlacement_ContainsId(s16 *unitIds, s32 id);
 
 void Func_0811b75c(s16 *unitIds, s32 refreshPoses, s32 releaseOthers) {
   s32 unitIndex;
@@ -549,11 +545,8 @@ s32 Battle_GetWorkEntryPair(s32 no, struct FixedPointPosition *out) {
   return result;
 }
 
-void Render_ResetTransformState(void);
-s32 GameFlag_Test(s32 flag);
 s32 Transform_ApplyLookAt(void *, void *);
 s32 Transform_SetLookAt(void *, void *);
-s32 Render_ProjectPoint(const void *, s32 *);
 extern const s32 gData_08128868[];
 
 struct MotionRecordScale {
@@ -612,7 +605,6 @@ void *GetMotionRecord(struct MotionObject *object, s32 recordIndex) {
 }
 
 void SceneTransform_ApplyYaw(s32);
-void SceneTransform_ApplyPitch(s32);
 
 void Camera_InitializeDefaultTransform(void) {
   struct BattleCamera *state = Ram_HeapSlots->cameraWork;

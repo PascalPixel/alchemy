@@ -106,7 +106,6 @@ void BattleEffect_ArmWin0HBlankDma(void) {
 enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
-#define TASK_PASS_FRAME 0xc80
 #define PHASE_RESULTS 133
 
 // Shards and frames for each variant (The Broken Seal's

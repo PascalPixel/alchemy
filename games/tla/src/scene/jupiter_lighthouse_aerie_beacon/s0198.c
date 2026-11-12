@@ -14,7 +14,6 @@
 #include "call.h"
 #include "system/main_routine_work.h"
 #include "text/msg_ids.h"
-#include "main_routine_work.h"
 #include "scene_ids.h"
 #include "frame.h"
 #include "field.h"
@@ -504,12 +503,6 @@ void Func_0200065c(void) {
   }
 }
 
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void Func_0200577c(void);
@@ -802,13 +795,6 @@ L_02009260:
   return;
 }
 
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-
 static __inline__ void W_Func_020058fc(s32 a0, s32 a1, s32 a2) {
   /* FAKEMATCH(wrapper): W_Func_020058fc forwarded inline; as direct calls to
    * Func_080d47b4, 71 of 1518 instructions differ in tla-en. */
@@ -1084,13 +1070,6 @@ void Func_020016e8(void) {
   Func_0200593c(13, 7);
 }
 
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-
 s32 Func_020059c4();
 s32 Func_020059dc();
 s32 Func_020059d4();
@@ -1107,12 +1086,6 @@ void Func_02001ac4(s32 a0, s32 a1) {
   Actor_SetAnimation(a1, 1);
 }
 
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
 void Event_FinishScreenTransition(void);
 
 void Func_02003a6c(s32 mode);
@@ -1123,12 +1096,6 @@ extern u8 gData_02005ff0[];
 extern u8 gData_02005ff8[];
 extern u8 gData_02006088[];
 extern u8 gData_020061e0[];
-
-#define ACTOR_SET_MODE_AND_WAIT(id, mode, frames)                              \
-  do {                                                                         \
-    Actor_SetAnimation(id, mode);                                              \
-    FieldEvent_Wait(frames);                                                   \
-  } while (0)
 
 void Func_02001bc4(void) {
   s32 fast;
@@ -1588,13 +1555,6 @@ L_0200a9e0:
   Func_0200581c();
   return;
 }
-
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
 
 static __inline__ void W_Func_020058ec(s32 a0, s32 a1) {
   Actor_ArmCallbackAndRefresh(a0, a1);
@@ -2291,13 +2251,6 @@ void Func_02003c58(s32 mode) {
   Func_0200577c();
   System_Wait(2);
 }
-
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
 
 s32 Func_020059b4();
 s32 Func_02004644();

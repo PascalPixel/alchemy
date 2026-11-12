@@ -18,8 +18,6 @@
 #include "event_work.h"
 #include "call.h"
 
-#include "system/ram_buffer.h"
-
 void Func_020001e0(s32 x, s32 y, s32 z, s32 count);
 void Func_0200029c(void);
 void Func_02000358(void);

@@ -193,17 +193,11 @@ struct TalkEvent {
   s32 script;
 };
 
-extern const u8 gActor_StepAngleScript[];
-
-void Event_Start(void);
-void Event_End(void);
 void PartyStatus_CreateWindowFar(s32 layout);
 void PartyStatus_CloseFar(void);
-void Event_Wait(s32 frames);
 void Func_080ea14c(s32 targetId);
 void Func_08038340(s32 value);
 void Func_080ad2f8(s32 value);
-void Party_AdjustCoinsFar(s32 amount);
 s32 PartyInventory_AddFar(s32 item);
 s32 BattleEffect_GetFlags(s32 id);
 void Actor_TurnToFaceEachOther(s32 first, s32 second, s32 mode);

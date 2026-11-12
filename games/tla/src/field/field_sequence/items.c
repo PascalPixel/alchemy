@@ -117,8 +117,6 @@ struct ItemFieldWork {
 
 typedef void (*ItemTriggerCallback)(s32 item, s32 actor, s32 slot);
 
-void Event_SetMessageId(s32 message);
-void Event_ShowMessageAndWait(s32 actor, s32 flags);
 s32 Func_080d295c(s32 mode);
 void Message_CloseFinishedWindowsFar(void);
 void BattleEffect_CleanupSceneObjects(void);

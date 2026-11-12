@@ -4,15 +4,8 @@
 
 #include "../field_sequence_internal.h"
 
-struct BattleAct *BattleAction_Get(s32 actionId);
-s32 Func_080d295c(s32 cursor);
 s32 Func_080dbcd8(s32 x, s32 z, s32 terrain);
-void BattleEffect_SetupObjectPair(s32 caster, s32 target);
 void Func_080dc6d8(void);
-void BattleEffect_DispatchRequestKind(void);
-void BattleEffect_Run(void);
-void BattleEffect_StopMainActor(void);
-void BattleEffect_ClearChildValueOnMismatch(void);
 
 #define FIELD_PSYNERGY_MESSAGE(user, ability, message)                         \
   (MessageArgument_PushFar((user), 1), MessageArgument_PushFar((ability), 4),          \

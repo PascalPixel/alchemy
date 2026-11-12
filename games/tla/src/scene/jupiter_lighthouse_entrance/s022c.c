@@ -52,9 +52,6 @@ next:
 #include "field_event.h"
 #include "event_inline.h"
 
-#define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
-#define WORD_AT(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
-
 extern u16 gData_020021e0[];
 extern u16 gData_020021e4[];
 

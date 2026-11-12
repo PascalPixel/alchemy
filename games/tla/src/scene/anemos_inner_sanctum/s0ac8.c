@@ -264,7 +264,6 @@ void Func_02000ac8(void) {
 
 void Func_02001090(void) { GameFlag_ClearBit(0x200); }
 
-#include "main_routine_work.h"
 s32 Func_02003498();
 extern u8 MsgHat[];
 extern u8 gData_020036e4[];

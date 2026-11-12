@@ -96,8 +96,6 @@ void Func_020000fc(s32 door) {
   }
 }
 
-#include "event_inline.h"
-
 void Func_0200014c(void) {
   s32 t2;
   s32 t1;
@@ -108,7 +106,5 @@ void Func_0200014c(void) {
   t2 = ((s32)Actor_Get(64));
   FIELD_AT(t2, s32, 12) = 0x200000;
 }
-
-#include "event_inline.h"
 
 void Func_02000178(void) { TreasureSpot_SetPosition(0x40, 0, 0); }

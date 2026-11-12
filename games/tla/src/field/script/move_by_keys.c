@@ -163,7 +163,6 @@ struct SpriteAngle {
   u16 angle;
 };
 
-#define INPUT_HELD (((volatile struct InputState *)&gInput)->held)
 #define CHAIN_WORK (*(struct ChainWork **)&Ram_HeapSlots->unk84[6])
 
 struct Actor *Actor_GetByIdFar(s32 id);

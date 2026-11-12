@@ -21,7 +21,6 @@
 #include "call.h"
 #include "prox/local.h"
 #include "input.h"
-#include "prox/local.h"
 #include "frame.h"
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
@@ -230,13 +229,6 @@ const u8 *Func_02000598(void) {
   return gData_0200554c;
 }
 
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-
 void Func_02004464(void);
 s32 Func_0200446c();
 extern u8 MsgProx33[];
@@ -259,13 +251,6 @@ s32 Func_02000644(void) {
     facing = 0;
   return facing;
 }
-
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
 
 s32 Func_02004634();
 extern u8 MsgProx135[];
@@ -292,13 +277,6 @@ void Func_02000674(void) {
   }
 }
 
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-
 s32 Func_02004624();
 extern u8 MsgProx132[];
 extern u8 MsgProx53[];
@@ -323,13 +301,6 @@ void Func_020006c4(void) {
     Func_0200446c();
   }
 }
-
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
 
 s32 Func_0200462c();
 extern u8 MsgProx139[];
@@ -435,13 +406,6 @@ void Func_02000884(void) {
   Func_0200446c();
 }
 
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-
 extern u8 MsgProx47[];
 
 void Func_02000914(void) {
@@ -498,13 +462,6 @@ void Func_02000914(void) {
     Func_0200446c();
   }
 }
-
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
 
 void Func_0200457c(void);
 extern u8 MsgProx62[];
@@ -860,13 +817,6 @@ void Func_020015d0(void) {
   Func_0200446c();
 }
 
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-
 void Func_02001770(void) {
   if (Event_GetFlag(0xa3d) == 0 && Event_GetFlag(64) == 0) {
     u8 *work = Ram_HeapSlots->eventWork;
@@ -886,21 +836,7 @@ void Func_02001770(void) {
   }
 }
 
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-
 void Func_020017e4(void) { MapGrid_CopyCellAttributes(0x19, 2, 1, 1, 0x19, 9); }
-
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
 
 void Func_02001800(void) { MapGrid_CopyCellAttributes(0x19, 3, 1, 1, 0x19, 9); }
 
@@ -928,13 +864,6 @@ void Func_0200181c(struct RisingObject *object) {
   if (--object->life == 0)
     Func_020043e4(object);
 }
-
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
 
 void Func_02001860(s32 a0, s32 a1, s32 a2) {
   s32 t0;
@@ -1018,75 +947,19 @@ void Func_020019a4(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f) {
   FieldEvent_SetExitRequest(work->returnEntrance);
 }
 
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-
 void Func_02001a9c(void) { Func_020019a4(0x30, 0x27, 0x39, 0x1a, 1, 2); }
-
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
 
 void Func_02001ab8(void) { Func_020019a4(0x31, 0x27, 0x41, 0x18, 1, 2); }
 
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-
 void Func_02001ad4(void) { Func_020019a4(0x32, 0x27, 0x38, 0x13, 1, 2); }
-
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
 
 void Func_02001af0(void) { Func_020019a4(0x33, 0x27, 0x3d, 0xd, 1, 2); }
 
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-
 void Func_02001b0c(void) { Func_020019a4(0x33, 0x27, 0x50, 0x10, 1, 2); }
-
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
 
 void Func_02001b28(void) { Call6(Func_020019a4, 0x34, 0x27, 0x32, 9, 2, 2); }
 
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-
 void Func_02001b44(void) { Func_020019a4(0x57, 2, 0x50, 7, 1, 2); }
-
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
 
 void Func_02001b60(void) { Func_020019a4(0x59, 0, 0x4d, 0x10, 1, 2); }
 
@@ -1116,13 +989,6 @@ void Func_02001b7c(void) {
   Event_WaitTransitionFrames();
   FieldEvent_SetExitRequest(entrance);
 }
-
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
 
 void Func_02001c24(s32 a0) {
   s32 t0;

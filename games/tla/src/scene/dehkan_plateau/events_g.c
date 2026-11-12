@@ -76,7 +76,6 @@ void Actor_WatchAndSetScript(s32 id, s32 target);
 void Event_Wait(s32 frames);
 void Task_Add(void (*func)(void), s32 priority);
 void Task_RemoveFar(void (*func)(void));
-void Field_DispatchTypeHandler(s32 type);
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.

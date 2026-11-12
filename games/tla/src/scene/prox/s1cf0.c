@@ -381,13 +381,6 @@ void Func_0200279c(s32 actor, s32 x, s32 z, s32 frames) {
   Actor_SetPosition(actor, x << 16, z << 16);
 }
 
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-
 extern u8 gData_020047ac[];
 extern u8 gData_02004848[];
 extern u8 gData_020048e4[];
@@ -413,13 +406,6 @@ void Func_020027e4(void) {
   FieldActor_SetSpritePriority(20, 1);
   Actor_SetSpriteColor(((s32)Actor_Get(20)), 0xf);
 }
-
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
 
 void Func_02002878(void) {
   s32 t9;
@@ -470,13 +456,6 @@ void Func_02002878(void) {
   }
 }
 
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-
 void Func_020029a4(void) {
   s32 t0;
 
@@ -484,13 +463,6 @@ void Func_020029a4(void) {
   FieldActor_SetSpritePriority(
       16, ((u32)(FIELD_AT(FIELD_AT(t0, s32, 80), u8, 9) << 28) >> 30));
 }
-
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
 
 void Func_020029c8(void) {
   s32 t2;
@@ -956,13 +928,6 @@ void Func_0200385c(struct Actor *object) {
   Func_020043c4(object, 2);
   Actor_SetAnimationSpeed(object, 48);
 }
-
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
 
 void Func_02004594(void);
 void Func_020045e4(void);

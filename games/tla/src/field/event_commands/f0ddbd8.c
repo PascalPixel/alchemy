@@ -38,7 +38,6 @@ void BattleEffect_InitializeSharedScene(void);
 struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, s32 *pos);
 #include "actor_view.h"
-#include "actor_view.h"
 
 void Func_080ddbd8(void) {
   struct BattleFxScene *work;

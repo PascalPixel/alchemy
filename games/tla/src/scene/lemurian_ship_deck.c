@@ -130,8 +130,6 @@ void Func_02000188(void) {
   }
 }
 
-#define OBJ_PALETTE ((volatile u16 *)&BG_PLTT_COLOR(11, 0))
-
 void Func_020001cc(void) {
   if ((gFrameCount & 7) == 0) {
     s16 last = OBJ_PALETTE[9];

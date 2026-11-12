@@ -102,7 +102,6 @@ const u8 *Func_02000080(void) {
 
 #include "iwram_call.h"
 #include "io_write_queue.h"
-#include "system/main_routine_work.h"
 
 struct Overlay6acEventWork {
   u8 unk000[0x166];

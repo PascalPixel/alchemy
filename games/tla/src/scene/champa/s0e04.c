@@ -29,12 +29,6 @@ void Func_02000e04(s32 a0, s32 a1) {
 void Func_02000e24(void) { GameFlag_SetBit(0x970); }
 
 #include "ram_buffer.h"
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
 
 #include "call.h"
 

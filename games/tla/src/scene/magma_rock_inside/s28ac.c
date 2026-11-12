@@ -1,4 +1,4 @@
-#include "../../../../games/tla/src/scene/magma_rock_inside/local.h"
+#include "local.h"
 #include "io_reg.h"
 
 struct FieldActor;
@@ -60,7 +60,6 @@ void Func_020028ac(void) {
   Func_02004d48();
 }
 
-#include "local.h"
 #include "types.h"
 #include "event_inline.h"
 #include "frame.h"

@@ -982,8 +982,6 @@ void Func_02004d24(s32 id) {
 // From patch 1; the Japanese overlay has no such function.
 #if TLA_PATCH_1
 
-#include "mars_lighthouse_aerie.h"
-
 /// A halfword held in its own local: its load, the pool's mask and its store
 /// keep their halfword forms.
 struct HeldHalfword {
@@ -1072,8 +1070,6 @@ void Func_02004e50(void) {
 #endif
   Func_02005614();
 }
-
-#include "main_routine_work.h"
 
 // From patch 1; the Japanese overlay has no such function.
 #if TLA_PATCH_1

@@ -1,4 +1,4 @@
-#include "../../../../games/tla/src/scene/mars_lighthouse_entrance/room.h"
+#include "room.h"
 #include "field_effect.h"
 
 void Effect_AdvanceMotion(union FieldObject *object);
@@ -186,7 +186,6 @@ void Func_020045f8(u16 *slots, u16 *colours, u16 *a, u16 *b) {
     Func_020048e8();
 }
 
-#include "room.h"
 #include "task.h"
 
 extern u16 gData_0200687c;

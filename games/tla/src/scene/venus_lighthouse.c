@@ -76,8 +76,6 @@ done:
 #define Actor_SetSingleChildFlags                                     \
   ((void (*)(void *, s32))Actor_SetSingleChildFlags)
 
-#define Actor_SetSpriteColor ((void (*)(void *, s32))Actor_SetPartAttribute)
-
 enum { ENTRANCE_ALTERNATE_PLACEMENTS = 99 };
 
 extern const struct ActorPlacement gActorPlacementsEntrance99[];

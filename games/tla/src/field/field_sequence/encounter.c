@@ -4,8 +4,6 @@
 
 #include "../field_sequence_internal.h"
 
-void GameFlag_SetBit(s32 flag);
-
 void Func_080c9de0(s32 id, s32 variant) {
   struct FlagEntry *entry = FlagEntries_GetTable();
 
@@ -132,7 +130,6 @@ struct EncounterWork {
 };
 
 s32 Party_GetAverageLevelFar(void);
-u32 Random16(void);
 extern const struct EncounterZone gEncounter_EnemyGroupTable[];
 
 #define ENCOUNTER_STEPS (gMainRoutineWork.encounterSteps)

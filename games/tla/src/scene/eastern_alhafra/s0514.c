@@ -4,7 +4,6 @@
 #include "field/field.h"
 
 #include "battle.h"
-#include "field.h"
 #include "game.h"
 #include "graphics.h"
 #include "lib.h"

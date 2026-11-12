@@ -548,7 +548,6 @@ void Func_080e0978(s32 value) {
 #include "graphics/resource.h"
 #include "system/task.h"
 #include "system/heap_release.h"
-#include "system/system.h"
 
 void Func_080dbed0(struct Actor *object, s32 x, s32 y, s32 z);
 struct Actor *BattleEffect_SpawnScatterParticle(s32 x, s32 y, s32 z);

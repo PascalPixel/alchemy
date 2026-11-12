@@ -573,13 +573,6 @@ void Func_02000e20(void) { Func_02002bec(); }
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-
 void Func_020019dc();
 void Func_02001db0();
 void Func_02001eb8();

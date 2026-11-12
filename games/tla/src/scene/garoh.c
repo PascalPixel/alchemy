@@ -21,7 +21,6 @@ void Func_02000280(void) {
 #include "dma.h"
 #include "io_reg.h"
 #include "palette_buffers.h"
-#include "system/io_reg.h"
 #include "frame.h"
 #include "field.h"
 

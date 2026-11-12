@@ -135,8 +135,6 @@ struct MapRegion {
 
 // The overlay's entry table; entry 11 returns the map's region list.
 
-void Sound_PlayFar(s32 cue);
-
 struct MapFocusObject {
   u8 padding00[6];
   u16 kind;

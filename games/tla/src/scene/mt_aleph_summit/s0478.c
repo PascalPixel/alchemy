@@ -66,7 +66,6 @@ struct EventWorkView {
   s32 unk1ac;
 };
 
-void Field_StartPaletteTransition(s32 a);
 void Func_020002a4(u16 *colors, u16 *target, s32 count);
 void Func_0200032c(u16 *colors, s32 count, s32 delta);
 void Func_02000394(void);

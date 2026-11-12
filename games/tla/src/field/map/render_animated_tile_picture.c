@@ -8,7 +8,6 @@
 #include "system.h"
 #include "types.h"
 #include "scene.h"
-#include "system.h"
 
 #include "vram_tab.h"
 #include "ram_buffer.h"

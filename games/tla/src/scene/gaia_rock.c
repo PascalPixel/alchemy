@@ -29,8 +29,6 @@
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-#include "scene_ids.h"
-
 extern const u8 gData_02000f5c[];
 extern const u8 gData_02000f8c[];
 

@@ -75,7 +75,7 @@ void Func_02003d80(void) {
   Func_02005568();
 }
 
-#include "../../../../games/tla/src/scene/mars_lighthouse_room_f/room.h"
+#include "room.h"
 
 struct WarpEntry {
   s16 x;
@@ -138,8 +138,6 @@ top:
 end:
   return 0;
 }
-
-#include "room.h"
 
 void Func_02003fc8(s32 dx, s32 dz, s32 value) {
   struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
@@ -214,8 +212,6 @@ void Func_0200410c(void) {
 #include "fixed_math.h"
 #include "scene_tables.h"
 #include "system/iwram_call.h"
-#include "system/input.h"
-#include "system/main_routine_work.h"
 
 /// A point on the map: 16.16 fixed-point pixels.
 struct Position {
@@ -370,7 +366,6 @@ done:
 
 #include "version.h"
 
-#include "iwram_call.h"
 #include "call.h"
 
 extern volatile s16 gData_020074c8;

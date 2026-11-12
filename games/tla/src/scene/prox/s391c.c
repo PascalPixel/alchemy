@@ -11,9 +11,6 @@
 #include "system/main_routine_work.h"
 #include "event_inline.h"
 #include "version.h"
-#include "main_routine_work.h"
-#include "iwram_call.h"
-#include "input.h"
 #include "call.h"
 
 /// A point on the map: 16.16 fixed-point pixels.
@@ -333,8 +330,6 @@ end:
   object->acceleration = 0x4000;
   Func_020043c4(object, 1);
 }
-
-#include "system/ram_buffer.h"
 
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \

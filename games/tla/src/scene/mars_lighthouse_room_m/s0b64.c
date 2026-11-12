@@ -112,7 +112,7 @@ s32 Func_02000b64(void) {
   return 0;
 }
 
-#include "../../../../games/tla/src/scene/mars_lighthouse_room_m/mars_lighthouse_room_m.h"
+#include "mars_lighthouse_room_m.h"
 
 extern char SceneId_Ov6a8Room2;
 
@@ -214,7 +214,6 @@ s32 Func_02000e84(void) {
   return 0;
 }
 
-#include "mars_lighthouse_room_m.h"
 #include "version.h"
 #include "scene_tables.h"
 #include "io_reg.h"

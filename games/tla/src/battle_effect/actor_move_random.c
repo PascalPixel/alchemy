@@ -759,7 +759,9 @@ static __inline__ s32 FillWords_(void *destination, s32 size, u32 value) {
 // BattleEffect_LoadBlitter's argument: The Lost Age's blitter mode (☀️'s counted
 // down from 3) in the high nibble, the COMPOSITE_ flags in the low one.
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
-#define BLIT_MAX 1
+
+// ⚓️'s blitter modes run the other way from The Broken Seal's.
+enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 
 #define STREAM_FRAMES 192
 #define BLAST_FRAMES 54
@@ -1422,11 +1424,6 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
 #undef SCENE_FRAMES
 
 #include "render_placement.h"
-
-// BattleEffect_LoadBlitter's argument: The Lost Age's blitter mode (☀️'s counted
-// down from 3) in the high nibble, the COMPOSITE_ flags in the low one.
-
-#define BLIT_ADDITIVE 0
 
 // The map cell buffer holds the sparks of the final blow.
 #define SPARKS ((struct EffectStep *)Ram_MapCellBuffer)
@@ -2213,8 +2210,6 @@ DEFINE_EFFECT_KIND(BattleEffect_RunAcheronsGrief, Func_08166b10, 1)
 
 #include "effect_step.h"
 
-#define BLIT_TRANSPARENT 2
-
 // The sheet: the fire pillar, the flashes after it, the sword far after.
 #define FLASH_SHEET (221 << 4)
 #define SWORD_SHEET 20000
@@ -2583,10 +2578,6 @@ void Func_08166b10(struct BattleEffectArgument *effect, s32 mode) {
   BattleEffect_EndCanvasLayer();
 }
 
-#undef BLIT_MAX
-#undef BLIT_ADDITIVE
-#undef BLIT_TRANSPARENT
-
 struct Model;
 struct StripQuad;
 
@@ -2635,9 +2626,6 @@ void Transform_Pop(void);
 
 // The blitter's heap slot, as a byte offset into Ram_HeapSlots.
 #define SLOT_BLITTER 104 // unk64[1]
-
-// ⚓️'s blitter modes run the other way from The Broken Seal's.
-enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 
 #include "io_write_queue.h"
 
@@ -3577,15 +3565,8 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
 #undef FORMATION
 #undef SE_HIT
 
-// The pixel half of a 16.16 fixed-point value.
-
 // The map cell buffer holds the hit bursts, 32 for each target.
 #define PARTICLES ((struct EffectStep *)Ram_MapCellBuffer)
-
-// BattleEffect_LoadBlitter's argument: The Lost Age's blitter mode (☀️'s counted
-// down from 3) in the high nibble, the COMPOSITE_ flags in the low one.
-
-#define BLIT_ADDITIVE 0
 
 #define FORMATION 644
 

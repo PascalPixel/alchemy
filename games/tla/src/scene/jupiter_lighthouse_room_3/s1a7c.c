@@ -8,7 +8,6 @@
 #include "iwram_call.h"
 #include "event_inline.h"
 #include "local.h"
-#include "../../../../games/tla/src/scene/jupiter_lighthouse_room_3/local.h"
 #include "io_reg.h"
 #include "cell_target.h"
 

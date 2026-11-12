@@ -54,11 +54,6 @@ void BattleObject_Reset(struct BattleObj *actor, s32 keep) {
   Actor_StartScriptFar((struct ActorView *)object, Data_0812cacc);
 }
 
-struct MotionObject *Func_080200c0(s32 kind, s32 x, s32 y, s32 z);
-s32 SummonSlot_RegisterActorSprites(s32 unitId);
-s32 BattleClass_GetSprite(s32 index);
-s32 BattleClass_GetPalette(s32 index);
-s32 BattleUnit_LookupWeaponValueByClass(s32 unitId);
 s32 Inventory_GetEquippedItemFar(struct BattleUnit *unit, s32 slot);
 
 void BattleObject_Make(struct BattleObj *actor, s32 unitId, s32 x, s32 y) {
@@ -453,8 +448,6 @@ void BattlePlacement_GetStepPair(s32 index, s32 *x, s32 *y) {
   *y = gBattlePlacement_StepPairs[index + 1];
 }
 
-s32 BattleClass_IsSmall(s32 index);
-
 /// Lays out the actors of a summon in a column: each stands at x = -80
 /// (nearer, at -50, for a few large enemies) and z steps down by half the
 /// width of each actor on either side, centred on the column's middle.
@@ -518,7 +511,6 @@ s32 Enemy_GetFreeSlot(void) {
 // the last live one.
 
 void Summon_LayoutPositions(u16 *unit_ids, s32 count, s32 *x, s32 *z);
-struct BattleObj *BattleObject_Get(s32 id);
 
 void Enemy_Update(void) {
   struct BattleWork *work = Ram_HeapSlots->battleWork;
@@ -557,10 +549,6 @@ void Enemy_Update(void) {
 // BattleUnit_RefreshPlacement: The Broken Seal's source plus the reserve
 // owners; the second fill loop needs its pointer set inside the for
 // initialiser.
-
-extern const s8 gBattlePlacement_StepPairs[];
-s32 BattleParty_PrepareActiveOwners(u16 *ids);
-s32 BattleParty_PrepareReserveOwners(u16 *ids);
 
 void BattleUnit_RefreshPlacement(void) {
   u16 ids[14];

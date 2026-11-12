@@ -381,7 +381,6 @@ void BattleEffect_SpawnFallingParticles(void) {
 #include "actor_view.h"
 #include "input.h"
 #include "battle_effect.h"
-#include "task.h"
 #include "frame.h"
 
 struct FxPosition {

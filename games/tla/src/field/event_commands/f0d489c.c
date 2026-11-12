@@ -27,7 +27,6 @@ struct LinkedEffectObject {
 
 struct LinkedEffectObject *Func_080200c0(s32 kind, s32 x, s32 y, s32 z);
 void Actor_StartScriptFar(struct ActorView *object, const s32 *script);
-#include "actor.h"
 void Actor_Destroy(struct LinkedEffectObject *object);
 s32 Actor_IsOutsideAnimation108(struct LinkedEffectObject *object);
 void BattleEffect_CopyWatchedObjectPosition(void);

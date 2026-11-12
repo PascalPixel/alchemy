@@ -65,9 +65,6 @@ struct SpawnActor {
 };
 
 struct Actor *Func_080200c0(s32 kind, s32 x, s32 y, s32 z);
-s32 Resource_ResetEntry(u32 slot);
-void Actor_SetPositionAndResetMotionFar(struct Actor *object, s32 x, s32 y,
-                                        s32 z);
 
 void Event_SpawnObjectTable(struct ActorPlacement *entry, s32 slot) {
   struct FieldStepWork *work = Ram_HeapSlots->eventWork;
@@ -221,7 +218,6 @@ struct EventWorkPlacements {
 
 extern const struct ActorPlacement gData_080f21d4[];
 
-void Actor_StartCameraFar(void *object, void *effect);
 u8 *ResourceMetadata_RegisterFar(void *resource, s32 id);
 
 void Func_080caa4c(s32 table) {
@@ -355,8 +351,6 @@ struct MapViewBounds {
   s32 maxY;
 };
 
-void GameFlag_ClearBit(s32 flag);
-
 void Scene_AssignViewFlags(struct SceneRegionEntry *entry) {
   struct MapViewBounds *view = (struct MapViewBounds *)Ram_HeapSlots->mapWork;
 
@@ -441,8 +435,6 @@ void ObjectTable_Snapshot(void) {
   for (i = count; i < 32; i++)
     *indices++ = 255;
 }
-
-extern struct Actor gSnapshotObjects[];
 
 void ObjectTable_Restore(void) {
   struct Actor *copy = gSnapshotObjects;

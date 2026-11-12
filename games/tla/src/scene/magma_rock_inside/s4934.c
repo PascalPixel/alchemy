@@ -82,7 +82,6 @@ next:
     goto next;
 }
 
-#include "ram_buffer.h"
 #include "event_inline.h"
 
 /// One falling rock: where it is, how it moves and how long it has fallen.

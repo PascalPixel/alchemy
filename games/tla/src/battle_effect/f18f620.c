@@ -40,7 +40,6 @@ void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void Palette_StepFadeTransfer(void);
 void Func_0815b434(u8 *map, s32 size, s32 scale);
 void Func_0815e22c(struct EffectPosition *position);
-void Resource_LoadAndDecompress(s32 id, void *target, s32 unpack, s32 wait);
 void *Resource_GetTableEntry(s32 id);
 
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);

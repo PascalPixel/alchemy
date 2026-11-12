@@ -104,7 +104,6 @@ void Func_02001690(void);
 void Func_02004eb0(void);
 void Func_02005e6c(s32 id, s32 x, s32 z);
 void Func_02005f6c(const u8 *pillars);
-void Actor_SetPartAttribute(struct Actor *object, s32 value);
 void Func_02001084(struct Actor *object, s32 a, s32 b);
 void Func_02001420(struct Actor *object, s32 a, s32 b);
 void Func_02005d9c(s32 x, s32 z, s32 width, s32 height, s32 a, s32 b);

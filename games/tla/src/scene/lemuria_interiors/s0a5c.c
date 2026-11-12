@@ -262,13 +262,6 @@ L_0200927c:
 
 #include "field_event.h"
 
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-
 extern const u8 gData_02002dec[];
 
 void Func_020027f4(struct FieldActor *object, s32 mode);

@@ -8,7 +8,6 @@
 #include "sound.h"
 #include "system.h"
 #include "types.h"
-#include "system.h"
 #include "ram_buffer.h"
 #include "field_event.h"
 

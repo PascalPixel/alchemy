@@ -28,9 +28,6 @@ s32 Func_0811d79c(s32 kind) {
 
 void Func_0811d7e4(void) {}
 
-s32 BattleParty_ListActorIds();
-void ObjMotRst();
-
 struct ActionTargets {
   u8 side;
   u8 count;
@@ -50,9 +47,6 @@ struct ActionTargets {
   s32 unk64;
 };
 
-s32 BattleParty_PrepareReserveOwners(u16 *unit_ids);
-
-s32 Func_0811a39c(s32 side, u16 *unit_ids);
 s32 Func_0811f4d4();
 
 void Func_0811d7e8(u16 *source, struct ActionTargets *targets) {
@@ -172,12 +166,9 @@ s32 Func_0811f088(struct BattlePlan *plan, s32 mode);
 s32 Func_0811edb0(struct BattlePlan *plan, s32 unused,
                   struct BattleActionRecord *selection);
 s32 Func_0811de78(struct BattlePlan *plan);
-s32 Func_0811d79c(s32 classId);
 s32 Func_08124cc4(s32 party);
 void Func_0812561c(struct BattlePlan *plan);
-void Func_0811d9a4(void);
 void Func_0812628c(s32 mode, s32 background, s32 value);
-void Sound_PlayFar(s32 cue);
 
 s32 Func_0811d9cc(struct BattleActionRecord *request, s32 delay) {
   struct BattlePresentationTransition *view;
@@ -359,8 +350,6 @@ finish:
   return fled;
 }
 
-u32 BattleParty_IsUnitListed(u32 id);
-
 void Func_0811ddd8(struct BattlePlan *plan,
                    struct BattlePresentationWork *effect) {
   s16 *outputTarget;
@@ -404,15 +393,6 @@ struct EscapeTransition {
   s32 unk04[3];
   s32 active;
 };
-
-extern u8 MsgNoEscape[];
-
-void BattleHighlight_SetModes(u16 *actors, s32 mode);
-void BattleMessage_WaitForAdvance(void);
-void Message_ShowAndWaitCoreFar(s32 messageId);
-s32 BattleParty_ListLivingUnits(s32 side_mask, u16 *unit_ids);
-void BattleMotion_SetupEscapeObject(s32 objectId);
-u32 Random16(void);
 
 /// Plays a flee action, The Broken Seal's BattleStaging_RunFlee without its
 /// last wait: the party runs unless encounterMode is 2, and an enemy gets away
@@ -484,13 +464,9 @@ struct CastAnimation {
   struct CastAnimationEntry *entries[1];
 };
 
-void PartyStatus_DrawFar(s32 flags);
 void Func_08127308(s32 unitId, s32 element, s32 mode, s32 value);
 void BattleBackground_RestorePalette(void);
-void Func_08138008(struct BattlePresentationWork *work);
-void Func_08138018(struct BattlePresentationWork *work);
 void BattlePlayback_WaitForReady(void);
-void BattleEvent_Playback(void);
 
 s32 Func_0811df70(struct BattlePlan *plan, s32 mode) {
   u16 units[14];

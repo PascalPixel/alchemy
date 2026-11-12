@@ -50,9 +50,6 @@ next:
   gData_02002cc0++;
 }
 
-#define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
-#define WORD_AT(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
-
 void Func_020004c0(s32 mode) {
   gData_02002cc4 = 1;
   if (mode != 2) {

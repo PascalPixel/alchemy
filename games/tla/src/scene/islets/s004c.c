@@ -4,7 +4,6 @@
 #include "text/msg_ids.h"
 #include "islets.h"
 
-#include "islets.h"
 #include "scene_tables.h"
 #include "event_inline.h"
 #include "field.h"
@@ -349,8 +348,6 @@ void Func_02000568(void) {
 // block: a do-while(0) ends CSE's block and loses the owner address and
 // message bases in the refusals.
 
-void Func_02003e64(void);
-void Func_02003e6c(void);
 void Func_02003f74(void);
 void Func_02003fc4(void);
 void Func_02003fbc(void);

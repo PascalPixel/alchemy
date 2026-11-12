@@ -201,8 +201,6 @@ void Actor_CommitPositionAndActivate(u32 objectId, s32 xOffset,
   }
 }
 
-void Actor_SetPositionAndResetMotionFar(struct Actor *object, s32 x,
-                                         s32 y, s32 z);
 extern const s32 gData_080f32e0[];
 
 void Func_080d3070(u32 objectId, s32 xOffset, s32 zOffset, s32 action) {

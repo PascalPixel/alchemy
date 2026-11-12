@@ -12,7 +12,6 @@
 #include "call.h"
 #include "iwram_call.h"
 #include "task.h"
-#include "resource.h"
 #include "frame.h"
 
 struct LinkedDetail {

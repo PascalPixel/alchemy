@@ -58,12 +58,9 @@ void SceneTransform_ApplyYaw(s32 angle);
 void Render_ResetTransformState(void);
 
 struct BattleObjectPosition **GetBattleObjectSlotFar(s32 objectId);
-void *Heap_AllocEwram(s32 size);
-void Resource_LoadAndDecompress(s32 resource, void *destination, s32 a, s32 b);
 void *Resource_GetTableEntry(s32 resource);
 s32 Task_Add(void (*func)(void), s32 order);
 
-void HeapSlot_Release(s32 slot);
 void Sound_PlayFar(s32 cue);
 void wait(s32 frames);
 u32 Random16(void);

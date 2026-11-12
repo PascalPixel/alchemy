@@ -168,7 +168,6 @@ void Func_02000660(void) {
     Func_02001214();
   }
 }
-#undef FIELD_AT
 
 #include "scene_ids.h"
 
@@ -371,13 +370,6 @@ s32 Func_02000988(void) {
 done:
   return 0;
 }
-
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
 
 extern const u8 gData_02001ac8[];
 

@@ -106,15 +106,11 @@ struct Orbiter *Func_02000624(struct Orbiter *origin, s32 id) {
   }
   return NULL;
 }
-#undef DIFF_WITHIN
 
 #include "actor.h"
 
 void Func_020057d4(struct Actor *object);
 void Func_02005624(struct Actor *object, s32 mode);
-
-#define DIFF_WITHIN(a, b, limit)                                               \
-  ((a) - (b) >= 0 ? (a) - (b) <= (limit) : (b) - (a) <= (limit))
 
 void Func_020006ac(struct Actor *object, s32 dx, s32 dz, s32 velocity) {
   u8 *flags = &object->motionFlags;

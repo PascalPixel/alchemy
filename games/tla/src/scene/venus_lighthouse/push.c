@@ -170,9 +170,6 @@ s32 VenusLighthouse_Start(void) {
 
 void Func_02000d30(void);
 
-#define Actor_SetPartAttribute                                                 \
-  ((void (*)(struct FieldActor *, s32))Actor_SetPartAttribute)
-
 // The Japanese edition has no form of this function here.
 #if TLA_PATCH_1
 s32 VenusLighthouse_Start(void) {

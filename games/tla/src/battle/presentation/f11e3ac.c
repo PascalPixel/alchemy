@@ -861,7 +861,6 @@ s32 Func_0811f088(struct BattlePlan *plan, s32 mode) {
 #include "menu.h"
 #include "sound.h"
 #include "system.h"
-#include "system.h"
 #include "owner_state.h"
 #include "field_event.h"
 

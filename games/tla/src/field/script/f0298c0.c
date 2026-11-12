@@ -34,7 +34,6 @@ struct Unk_ClimbEventWork {
   u16 unkd4b : 8;
 };
 
-extern u8 gDebugMode;
 // The heading of each direction-pad combination, -1 for none.
 extern const s16 gData_0802ec5c[16];
 extern const s32 gData_0802ed28[];
@@ -53,7 +52,6 @@ u32 Random16(void);
 struct Actor *Func_08023220(s32 kind, s32 x, s32 y, s32 z);
 void Actor_StartScript(struct Actor *, const s32 *);
 s32 Animation_ApplyChildArgument(struct PlayerSprite *, s32);
-void Sound_PlayFar(s32 cue);
 void Func_08029810(void);
 s32 Func_08029838(struct Actor *actor);
 

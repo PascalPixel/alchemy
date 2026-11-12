@@ -1,4 +1,4 @@
-#include "../../../../games/tla/src/scene/mars_lighthouse_star_room/mars_lighthouse_star_room.h"
+#include "mars_lighthouse_star_room.h"
 #include "frame.h"
 
 void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
@@ -73,8 +73,6 @@ void Func_020014f4(void) {
   Func_02002a58(9, 18, 20, 0, gData_020044b8);
   Func_02002a58(9, 17, 19, 0x8000, gData_020045b8);
 }
-
-#include "mars_lighthouse_star_room.h"
 
 s32 Func_02001528(struct Actor *a, struct Actor *b) {
   if (DIFF(a->x, b->x) < 0x80000) {

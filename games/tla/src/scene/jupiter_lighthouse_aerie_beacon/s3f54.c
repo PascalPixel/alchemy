@@ -54,9 +54,6 @@ next:
   gData_020069f4++;
 }
 
-#define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
-#define WORD_AT(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
-
 extern u16 gData_02006a4c[];
 extern u16 gData_02006a50[];
 

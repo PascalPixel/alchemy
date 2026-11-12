@@ -40,8 +40,6 @@ u8 *Func_0200004c(void) {
    } *)(base))                                                                 \
        ->v)
 
-#include "event_inline.h"
-
 s32 Func_0200008c(void) {
   s32 t2;
 
@@ -57,8 +55,6 @@ s32 Func_0200008c(void) {
   Func_020009b8();
   return 0;
 }
-
-#include "event_inline.h"
 
 s32 Func_020000cc(void) {
   s32 t2;
@@ -76,8 +72,6 @@ s32 Func_020000cc(void) {
   return 0;
 }
 
-#include "event_inline.h"
-
 s32 Func_0200010c(void) {
   s32 t2;
 
@@ -93,8 +87,6 @@ s32 Func_0200010c(void) {
   Func_020009b8();
   return 0;
 }
-
-#include "event_inline.h"
 
 s32 Func_0200014c(void) {
   s32 t2;
@@ -112,8 +104,6 @@ s32 Func_0200014c(void) {
   return 0;
 }
 
-#include "event_inline.h"
-
 s32 Func_0200018c(void) {
   Func_020009b0();
   Event_ResolvePendingActions(0);
@@ -123,8 +113,6 @@ s32 Func_0200018c(void) {
   return 0;
 }
 
-#include "event_inline.h"
-
 s32 Func_020001b4(void) {
   Func_020009b0();
   Event_ResolvePendingActions(0);
@@ -133,8 +121,6 @@ s32 Func_020001b4(void) {
   Func_020009b8();
   return 0;
 }
-
-#include "event_inline.h"
 
 s32 Func_020001dc(void) {
   Func_020009b0();

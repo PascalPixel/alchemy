@@ -1001,8 +1001,6 @@ void Func_02003274(void) {
   Func_02004a9c();
 }
 
-#include "system/ram_buffer.h"
-
 struct Particle {
   s32 x;
   s32 y;

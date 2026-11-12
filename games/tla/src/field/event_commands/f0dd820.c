@@ -85,10 +85,6 @@ void Func_080dd820(void) {
     Task_Add(Func_080dd754, 0x480);
 }
 
-// The field event work's Reveal state (eventWork + 0xca4).
-
-#define FIELD_FX_REVEAL 8
-
 void Func_080dd950(void) {
   struct BattleFxScene *scene = Ram_HeapSlots->effectWork;
   struct ScreenTransitionState *transition = Ram_HeapSlots->screenTransition;

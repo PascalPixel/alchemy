@@ -46,13 +46,6 @@ void Func_02000054(void) {
   }
 }
 
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-
 s32 Func_0200231c();
 extern s32 gData_02002b88[3];
 extern const u8 gData_02002b60[];
@@ -230,23 +223,9 @@ void Func_02000410(void) {
   effect[52] = 1;
 }
 
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-
 void Func_0200042c(void) {
   FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x16a), u16, 0) = 0x20;
 }
-
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
 
 void Func_02000440(void) {
   FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x16a), u16, 0) = 0x21;
@@ -279,13 +258,6 @@ void Func_02000454(void) {
     FieldEvent_SetExitRequest(12);
   }
 }
-
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
 
 void Func_020004d0(s32 a0, s32 a1) {
   s32 t0;
@@ -357,13 +329,6 @@ void Func_02000500(s32 unused, s32 id) {
   }
 }
 
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-
 void Func_02000674(s32 a0, s32 a1) { Actor_SetSpritePriority(a1, 2); }
 
 void Func_02000b28(s32 id);
@@ -389,13 +354,6 @@ void Func_020006dc(void) {
   if (party->renderMode == 10)
     MapGrid_SetCellBehavior(0x1500000, 0x2500000, 0, 255);
 }
-
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
 
 void Func_02000704(void) { Func_080dbdd4(0x1500000, 0x2500000, 0, 4); }
 

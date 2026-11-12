@@ -83,7 +83,6 @@ struct EffectWork7c4 {
   s16 active;
   s16 timer;
 };
-void Field_DispatchTypeHandler(s32 type);
 
 void Func_02000c4c(s32 a, s32 b) {
   Func_02000bc0(a, b, gMainRoutineWork.currentOwner);
@@ -234,8 +233,6 @@ void Func_02000d78(u16 *list) {
 
 // One-field view: the shape store is memory of its own to sched2, which sinks
 // it past the cell read; a plain store keeps its order.
-
-#define HELD_OBJECT(work) (*(struct Actor **)((u8 *)(work) + 0xcbc))
 
 void Func_02000e9c(void) {
   struct Actor *held = HELD_OBJECT(Ram_HeapSlots->eventWork);

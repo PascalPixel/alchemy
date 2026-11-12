@@ -42,7 +42,6 @@ void Camera_WorldToScreen(struct Effect04Vector *position);
 void FieldParticle_Initialize(struct FieldParticle *slot, s32 kind, s32 x,
                               s32 z);
 #include "actor_view.h"
-#include "actor_view.h"
 void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position);
 struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
 struct ResourceEntry *Sprite_ShareVramCacheEntry(void *sprite,

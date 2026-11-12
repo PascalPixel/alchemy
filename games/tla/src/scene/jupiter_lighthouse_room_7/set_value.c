@@ -69,9 +69,6 @@ next:
   gData_02003590++;
 }
 
-#define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
-#define WORD_AT(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
-
 extern u16 gData_020035dc[];
 extern u16 gData_020035e0[];
 
@@ -97,9 +94,6 @@ void Func_02001224(s32 mode) {
             REG_DMA3);
   }
 }
-
-#define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
-#define WORD_AT(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
 
 void Func_020012a8(s32 id) {
   struct FieldActor *object;

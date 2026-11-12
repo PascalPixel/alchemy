@@ -12,7 +12,6 @@ struct PushEvent {
 };
 
 void Func_02002cb8(void);
-void Map_CopyCellsRect(s32 x, s32 z, s32 a, s32 b, s32 cellX, s32 cellZ);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 

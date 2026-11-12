@@ -168,8 +168,6 @@ void Func_080dc978(s32 id, s32 value) {
   Task_Add((TaskFunc)Func_080dcb44, TASK_PASS_VBLANK);
 }
 
-#define WAVE_FX_SLOT 88
-
 struct Actor;
 struct Actor *Actor_GetById(s32 id);
 void BattleEffect_ApplyFlickerValue(struct Actor *object, s32 value);
@@ -223,9 +221,6 @@ void Palette_FillNumber15Grey(void) {
 }
 
 #include "main_routine_work.h"
-
-#define BG_PLTT_COLOR(bank, color)                                             \
-  (*(volatile u16 *)(0x05000000 + ((bank) * 16 + (color)) * 2))
 
 void Func_08038348(s32 first, s32 second);
 

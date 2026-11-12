@@ -60,7 +60,6 @@ void *Resource_GetTableEntry(s32 resourceId);
 s32 Resource_DecodeType01(const void *source, void *destination);
 s32 Resource_FindFreeEntry(void);
 #include "resource.h"
-#include "resource.h"
 s32 Task_Add(void (*func)(void), s32 order);
 void Func_080e807c(void);
 void Func_080e7f94(u8 *canvas, s32 radius, s32 angle, s32 color);

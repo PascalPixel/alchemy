@@ -55,14 +55,11 @@ extern u8 ResourceId_Data134[];
 // The Broken Seal's gBattleEffect_MoteCells: each spark size's cel.
 extern u16 gData_08197410[];
 
-
-s32 Resource_DecodeType01(const void *source, void *destination);
 s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags);
 struct BattleObj *GetBattleObjectSlotFar(s32 id);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
-
 
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void Func_08164abc(s32 red, s32 green, s32 blue);

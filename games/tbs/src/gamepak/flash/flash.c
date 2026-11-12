@@ -61,10 +61,6 @@ s32 ReadFlashId(void) {
 
 extern const struct FlashSetupInfo *const gFlash_Chips[];
 extern FlashWaitProc gWaitForFlashWrite;
-extern u32 gProgramFlashSector;
-extern u32 gEraseFlashChip;
-extern u32 gEraseFlashSector;
-extern u16 *gFlashMaxTime;
 
 /// Selects matching chip handlers, falling back to the final table entry when
 /// unknown. Returns 0 when the chip's id is one of gFlash_Chips' SST, Atmel,
@@ -102,8 +98,6 @@ s32 IdentifyFlash(void) {
 }
 
 extern volatile u16 gFlashTimerCount;
-extern u8 gFlashTimeoutFlag;
-extern u8 gFlashTimerNum;
 extern u16 *gFlashTimerReg;
 
 /// Counts down the active flash timeout and marks its expiration. The timer
@@ -135,8 +129,6 @@ s32 SetFlashTimerIntr(u8 timerIndex, void (**callback)(void)) {
   *callback = FlashTimerIntr;
   return 0;
 }
-
-extern u16 gFlashSavedIme;
 
 /// Starts the selected operation timeout, saving the interrupt-enable state.
 /// timingIndex is the operation's phase (WaitForFlashWrite). Interrupts are
@@ -210,8 +202,6 @@ void CopyFlashReadRoutineToRam(void *destination) {
     halfwordsRemaining--;
   }
 }
-
-void StartFlashTimer(u8 index);
 
 /// Polls for the expected byte until success or timeout, returning an operation
 /// error. Every chip's wait routine (gWaitForFlashWrite). timingIndex is the

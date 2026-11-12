@@ -5,8 +5,6 @@
 #include "../../../include/gamepak/flash_data.h"
 #include "../../../include/system/io_reg.h"
 
-extern u16 gFlashNumRemainingBytes;
-
 /// Erases a standard sector and programs bytes until completion or an error.
 /// The program routine (gProgramFlashSector) of the Macronix and Panasonic
 /// chips, which Save_WriteSector calls with 4 KB at `source`. Returns 0, 0x80ff

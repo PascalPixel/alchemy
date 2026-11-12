@@ -149,8 +149,6 @@ u16 ProgramAtmelFlashSector(u32 sector, const u8 *source) {
   return gWaitForFlashWrite(1, destination, *input);
 }
 
-extern u16 gFlashNumRemainingBytes;
-
 /// Programs an Atmel block in small sectors, trying each sector at most twice.
 /// Writes standard sector `sector` (4 KB) from `source` 128 bytes at a time,
 /// gFlashNumRemainingBytes counting what is left. Atmel's program routine

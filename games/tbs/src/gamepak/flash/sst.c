@@ -6,9 +6,6 @@
 #include "../../../include/gamepak/flash_data.h"
 #include "../../../include/system/io_reg.h"
 
-s32 CountRemainingErasedFlashBytes(u8 *ptr);
-s32 RunFlashEraseVerifier(u8 *ptr, s32 (*verify)(u8 *));
-
 extern FlashWaitProc gWaitForFlashWrite;
 
 u16 _call_via_r3(s32 mode, u8 *address, u8 expected,
@@ -102,8 +99,6 @@ u16 ProgramFlashByte(u8 *source, u8 *destination) {
   waitForWrite = &gWaitForFlashWrite;
   return (*waitForWrite)(1, destination, *source);
 }
-
-extern u16 gFlashNumRemainingBytes;
 
 /// Erases and verifies a sector with retries, then programs its bytes. The
 /// program routine (gProgramFlashSector) of the SST and unknown chips, which

@@ -212,8 +212,8 @@ void Field_UpdateWalking(s32 layer, s32 x, s32 y, s32 z) {
   struct MapGridCell *tile;
 #ifdef UBFIX
   // The defined form reads the struct Unit Unit_GetFar returns, rather
-  // than through the unrelated struct UnitHpPoisonView; it compiles to the same
-  // size with a different register allocation (see the tag above).
+  // than through the unrelated struct UnitHpPoisonView; one load is scheduled
+  // an instruction earlier (see the tag above).
   struct Unit *unitVitals;
 #else
   struct UnitHpPoisonView *unitVitals;
@@ -328,8 +328,8 @@ void Field_UpdateWalking(s32 layer, s32 x, s32 y, s32 z) {
     }
   }
 
-  // With HAZARD_COUNT_FRAMES, which no ☀️ code sets, the count rises by one each
-  // call, that is each frame the field sequence runs. Half way,
+  // With HAZARD_COUNT_FRAMES, which nothing in the game sets, the count rises
+  // by one each call, that is each frame the field sequence runs. Half way,
   // SPRITE_ATTACHED_EFFECT is attached to the leader until removed
   // (ATTACHED_EFFECT_ATTACH, at sprite priority 1); at the limit it is removed
   // (ATTACHED_EFFECT_REMOVE) and the party takes the hazard's damage.

@@ -9,14 +9,14 @@
 #define BOREAS_SPRAY_SPARKLES (PARTICLES + 128)
 
 /// The pictures in the ice block sheet that this file draws, each starting
-/// where the pictures before it end. The tables in battle_effect_table.c
-/// read the rest: the three crystals, the shards and the spray.
+/// where the pictures before it end. The sheet opens with the tallest of the
+/// three ice crystals, the one the falling crystals draw. The tables in
+/// battle_effect_table.c read the rest: the three crystals, the shards and
+/// the spray.
 enum IceBlockSheetCell {
-  /// The tallest of the three ice crystals.
-  BOREAS_CRYSTAL = 0,
   /// After the three crystals and the four large shards.
-  BOREAS_BIG_BLOCK = BOREAS_CRYSTAL + 24 * 48 + 24 * 38 + 20 * 26 + 12 * 10 +
-      11 * 16 + 8 * 14 + 10 * 15,
+  BOREAS_BIG_BLOCK = 24 * 48 + 24 * 38 + 20 * 26 + 12 * 10 + 11 * 16 + 8 * 14 +
+      10 * 15,
   /// After the big block, the three spray pictures and the seven small shards.
   BOREAS_STREAK = BOREAS_BIG_BLOCK + 24 * 48 + 3 * (16 * 16) + 8 * 4 + 12 * 4 +
       5 * 3 + 7 * 4 + 7 * 6 + 6 * 12 + 7 * 10
@@ -503,8 +503,7 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
     // the top.
     if (frame <= 71) {
       for (i = 0; i != 64; i++) {
-        draw(canvas, work->sheet + BOREAS_CRYSTAL,
-             Q_16_16_TO_INT(work->particles[i].x) - 12,
+        draw(canvas, work->sheet, Q_16_16_TO_INT(work->particles[i].x) - 12,
              Q_16_16_TO_INT(work->particles[i].y) - 24, 24, 48);
         work->particles[i].x += work->particles[i].velocityX;
         work->particles[i].y += work->particles[i].velocityY;

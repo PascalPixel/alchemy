@@ -267,3 +267,5 @@ void Func_02000e9c(void) {
   cells += 0x200;
   ((struct MapCell *)cells)->attributeB |= 64;
 }
+
+#include "../../field/object/set_sprite_priority.c"

@@ -198,3 +198,5 @@ void Func_02000328(void) {
   }
   work->value1ac = saved;
 }
+
+#include "../../field/object/set_sprite_priority.c"

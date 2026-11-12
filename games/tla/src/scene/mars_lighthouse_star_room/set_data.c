@@ -164,3 +164,5 @@ done:
   actor->acceleration = PIXELS(1) / 4;
   Func_020041cc(actor, 1);
 }
+
+#include "../../field/object/set_sprite_priority.c"

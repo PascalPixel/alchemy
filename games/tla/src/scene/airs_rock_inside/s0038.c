@@ -108,3 +108,5 @@ void Func_02000128(s32 id, u32 kind, s32 flag, s32 layer) {
     }
   }
 }
+
+#include "../../field/object/set_sprite_priority.c"

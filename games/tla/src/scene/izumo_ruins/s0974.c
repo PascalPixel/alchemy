@@ -125,3 +125,5 @@ void Func_02000bc0(s32 heightOffset, s32 layer, s32 id) {
 void Func_02000c4c(s32 a, s32 b) {
   Func_02000bc0(a, b, gMainRoutineWork.currentOwner);
 }
+
+#include "../../field/object/set_sprite_priority.c"

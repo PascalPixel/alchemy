@@ -185,3 +185,5 @@ s32 Func_0200351c(struct Actor *object) {
   SET_VELOCITY(object, 0, 0, 0);
   return 0;
 }
+
+#include "../../field/object/set_sprite_priority.c"

@@ -117,3 +117,5 @@ s32 Func_02000168(u32 layer, s32 x, s32 y, s32 value) {
   cell->attributeB = value;
   return old;
 }
+
+#include "../../field/object/set_sprite_priority.c"

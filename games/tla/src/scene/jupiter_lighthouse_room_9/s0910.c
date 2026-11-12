@@ -329,3 +329,5 @@ void Func_02000f5c(s32 id, s32 value) {
 }
 
 void Func_02000f8c(s32 value) { gData_02002762 = value; }
+
+#include "../../field/object/set_sprite_priority.c"

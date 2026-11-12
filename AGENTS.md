@@ -9,7 +9,7 @@ This file instructs the agents that help people build with Alchemy: change the g
 ## Where things are
 
 - `games/<game>/src`, `include`, `sound`, `text`: each game owns its copy of what it uses. ☀️'s code sits in one folder per bank, grouped by the credits' divisions, with a scene's overlay one file; `games/tbs/src/README.md` maps the folders, and module headers follow the same paths under `include/module`.
-- Each game links from one linker script, `games/<game>/ld_script.ld`, run through the C preprocessor with the edition defined as its C is: it lists every object of the main image in link order, and includes `games/<game>/src/system/overlay/overlay.ld`, one block per overlay, when the build defines `OVERLAY`.
+- Each game links from one linker script, `games/<game>/ld_script.ld`, run through the C preprocessor with the edition defined as its C is: it lists every object of the main image in link order, and includes `games/<game>/src/system/overlay/overlay.ld`, one block per overlay, when the build defines `OVERLAY`. An overlay's globals still written in assembly are ☀️'s `scene/bss/<name>.s` and ⚓️'s `<scene folder>/bss.s`. Neither game has a `recon/`.
 - The docs start at `games/README.md` and `games/tbs/README.md`; a folder's README is its page, and `games/tbs/glossary.md` defines the words. The site, <https://alchemy.pascalpixel.com/>, is built from them in `alchemy-docs`.
 - The `Makefile` builds everything; `tools/` holds its small C programs (`ags-*`). `out/` and `tools/out/` are build output.
 
@@ -29,7 +29,7 @@ Setup is in `INSTALL.md`, and `make help` lists the rest. `make compare-editions
 
 ## Your game or this repository
 
-A change in your own game may move bytes freely: it no longer matches `rom.sha1`, and `compare` says so, as it should. Please don't share built ROMs, original or modified (L1). A change sent back to this repository keeps every edition byte-identical (W5): `make compare-editions` prints OK for all twelve, `make modern` and `make test` pass. Ask Pascal first for any compiler, option or routing change, or for deleting what cannot be restored.
+A change in your own game may move bytes freely: it no longer matches `rom.sha1`, and `compare` says so, as it should. Please don't share built ROMs, original or modified (L1). A change sent back to this repository keeps every edition byte-identical (W5): `make compare-editions` prints OK for all twelve, `make modern` and `make test` pass. Where such a change moves bytes, it is reshaped in source until it does not, measured with the devtools' `diff` as their `AGENTS.md` describes. Ask Pascal first for any compiler, option or routing change, or for deleting what cannot be restored.
 
 ## Marks in the source
 

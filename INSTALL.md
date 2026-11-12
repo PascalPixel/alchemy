@@ -51,7 +51,7 @@ Every edition has its own `compare-` target, such as `compare-tbs-ja`, and `comp
 
 Edit, run `make` again, and play your version. A changed game no longer matches the original, so `compare` will report a difference, which is exactly what it should do. Please don't share built ROMs, original or modified.
 
-CI checks formatting with clang-format 21, available from [LLVM's packages](https://apt.llvm.org/). To use the same check locally, run `make format-check CLANG_FORMAT=clang-format-21`, or set `CLANG_FORMAT` to the path of your clang-format 21 executable.
+`make test` checks formatting with clang-format 21, available from [LLVM's packages](https://apt.llvm.org/). To use the same check locally, run `make format-check CLANG_FORMAT=clang-format-21`, or set `CLANG_FORMAT` to the path of your clang-format 21 executable.
 
 ## Reconstruction tools (optional)
 

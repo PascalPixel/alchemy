@@ -384,8 +384,8 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
               if (mode == HEALING_MODE_PLY ||
                   mode == HEALING_MODE_CURE_POISON ||
                   mode == HEALING_MODE_RESTORE || mode == HEALING_MODE_TONIC) {
-                u8 *cell = work->sheet + gBattleEffect_PuffCells[size];
-                u32 edge = gBattleEffect_PuffSizes[size];
+                u8 *cell = work->sheet + gBattleEffect_SparkleCells[size];
+                u32 edge = gBattleEffect_SparkleSizes[size];
                 u32 half = edge >> 1;
 
                 blit[1](canvas, cell, screen.x - half, screen.y - half, edge,

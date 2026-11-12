@@ -212,8 +212,8 @@ UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
               cellIndex = 3 - (view.depth - 314) / 128;
               cellIndex = (i * 4 + frame) % 9;
               {
-                u8 *cell = sheet + gBattleEffect_PuffCells[cellIndex];
-                u32 edge = gBattleEffect_PuffSizes[cellIndex];
+                u8 *cell = sheet + gBattleEffect_SparkleCells[cellIndex];
+                u32 edge = gBattleEffect_SparkleSizes[cellIndex];
                 u32 half = edge >> 1;
 
                 draw[1](canvas, cell, view.x - half, view.y - half, edge, edge);

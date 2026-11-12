@@ -65,11 +65,13 @@ u16 gBattleEffect_MoteCells[] = {0, 2, 10, 28, 60, 110, 182, 280, 408, 570};
 u16 gBattleEffect_FlareCells[] = {0,   4,   20,   56,   120,  220, 364,
                                   560, 816, 1140, 0,    8,    40,  112,
                                   240, 440, 728,  1120, 1632, 2280};
-/// Nine square puff cells, read by the falling, frost, healing, Djinni heal
-/// and Boreas parts.
-u16 gBattleEffect_PuffCells[] = {0, 25, 74, 123, 172, 221, 246, 255, 256};
-/// Each puff cell's side.
-u8 gBattleEffect_PuffSizes[] = {5, 7, 7, 7, 7, 5, 3, 1, 1};
+/// Nine square sparkle cells (sparkle_dots_00 to _08), read by the falling,
+/// frost, healing, Djinni heal and Boreas parts.
+/// ★ Named from what the player sees: four-pointed sparkles rise after Frost's
+/// burst (its render)
+u16 gBattleEffect_SparkleCells[] = {0, 25, 74, 123, 172, 221, 246, 255, 256};
+/// Each sparkle cell's side.
+u8 gBattleEffect_SparkleSizes[] = {5, 7, 7, 7, 7, 5, 3, 1, 1};
 // The six cells of an erupting flame puff: width, height, how far below its
 // anchor its top goes (so that all six stand on about the same line) and
 // where each begins in the sheet. Each is drawn centred across x; the Mars
@@ -290,21 +292,21 @@ u8 gProcne_CellHeights[] = {14, 19, 24};
 u8 gProcne_CellBiasY[] = {8, 12, 17};
 u16 gProcne_Cells[] = {13824, 14020, 14476};
 
-// tiamat.c and nereid.c: Palette particle and ember column layouts.
+// tiamat.c and nereid.c: Tiamat's embers and flames; Nereid's columns.
 
 /// Ember speeds, by ember index & 3: added to a random 0 to 127, in 128ths
 /// of a pixel a frame across and 32nds up.
-u8 gTiamat_DropSpeeds[] = {0, 8, 12, 16};
+u8 gTiamat_EmberSpeeds[] = {0, 8, 12, 16};
 /// A spark's 1x2 picture, drawn additively, so a spark adds 32 of the ramp's
 /// 63 levels to what it covers.
 u8 gTiamat_SparkPixels[] = {32, 32};
 /// Ember sizes, by ember index & 3: mote cells 1x2, 1x2, 2x4 and 3x6.
-u8 gTiamat_DropSizes[] = {1, 1, 2, 3};
-// The six streak pictures: size, drop below the streak and sheet offset.
-u8 gTiamat_StreakWidths[] = FLAME_PUFF_CELL_WIDTHS;
-u8 gTiamat_StreakHeights[] = FLAME_PUFF_CELL_HEIGHTS;
-u8 gTiamat_StreakDrops[] = FLAME_PUFF_CELL_BIAS_Y;
-u16 gTiamat_StreakOffsets[] = FLAME_PUFF_OFFSETS;
+u8 gTiamat_EmberSizes[] = {1, 1, 2, 3};
+// The six flame pictures: size, drop below the flame and sheet offset.
+u8 gTiamat_FlameWidths[] = FLAME_PUFF_CELL_WIDTHS;
+u8 gTiamat_FlameHeights[] = FLAME_PUFF_CELL_HEIGHTS;
+u8 gTiamat_FlameDrops[] = FLAME_PUFF_CELL_BIAS_Y;
+u16 gTiamat_FlameOffsets[] = FLAME_PUFF_OFFSETS;
 /// Nereid's four columns of fire (NEREID_COLUMN_X, NEREID_COLUMN_Y).
 u8 gNereid_Columns[][2] = {
     // the foot of each column of fire: x, y
@@ -321,7 +323,7 @@ s32 gNereid_Gravity[] = {px(1) / 2, px(1) / 4, px(1) / 4, px(1) / 8};
 
 /// Froth, by variant: motes and frames.
 u8 gVortices_Counts[][2] = {
-    // motes (at most FROTH_MOTES, vortices.c), frames
+    // bubbles (at most 30, vortices.c), frames
     [EFFECT_VARIANT_BASIC] = {6, 140},      // Froth
     [EFFECT_VARIANT_STRONGER] = {12, 160},  // Froth Sphere
     [EFFECT_VARIANT_STRONGEST] = {30, 200}, // Froth Spiral
@@ -769,15 +771,17 @@ u8 gFire_FlareHeights[] = FLAME_PUFF_CELL_HEIGHTS;
 u8 gFire_FlareBiasY[] = FLAME_PUFF_CELL_BIAS_Y;
 u16 gFire_FlareCells[] = FLAME_PUFF_OFFSETS;
 
-// frost.c: Rising mote geometry and timing.
+// frost.c: Frost's motes, ice mounds and chips.
 
-/// Where each ice column stands: x, then the y of its foot.
-u8 gFrost_ColumnSpots[][2] = {
+/// Where each ice mound stands: x, then the y of its foot.
+/// ★ Named from what the player sees: heaps of ice build at the targets' feet
+/// (its render)
+u8 gFrost_MoundSpots[][2] = {
     {53, 108}, {73, 110}, {29, 110}, {73, 108}, {33, 104}, {96, 106}, {8, 109},
     {62, 98},  {33, 100}, {87, 100}, {21, 95},  {53, 90},  {33, 90},  {72, 91},
     {82, 91},  {77, 86},  {52, 84},  {18, 92},  {56, 81},
 };
-/// Motes, ice columns and the burst frame, for each variant.
+/// Motes, ice mounds and the burst frame, for each variant.
 u8 gFrost_Timings[][3] = {
     {32, 8, 85},
     {48, 12, 97},
@@ -787,9 +791,9 @@ u8 gFrost_Timings[][3] = {
 u8 gFrost_MoteWidths[] = {12, 10, 7, 10, 8, 8, 8, 8};
 u8 gFrost_MoteHeights[] = {9, 16, 14, 15, 8, 8, 8, 8};
 u16 gFrost_MoteCells[] = {1792, 1900, 2060, 2158, 2308, 2372, 2436, 2500};
-// The three ice column pictures, 32 wide.
-u16 gFrost_ColumnCells[] = {0, 768, 1280};
-u8 gFrost_ColumnHeights[] = {24, 16, 16};
+// The three ice mound pictures, 32 wide.
+u16 gFrost_MoundCells[] = {0, 768, 1280};
+u8 gFrost_MoundHeights[] = {24, 16, 16};
 // The eight chip pictures (the same as the motes).
 u8 gFrost_ChipWidths[] = {12, 10, 7, 10, 8, 8, 8, 8};
 u8 gFrost_ChipHeights[] = {9, 16, 14, 15, 8, 8, 8, 8};
@@ -906,22 +910,25 @@ u16 gProjectileVolley_PelletOffsets[] = {2308, 2372, 2436, 2500};
 /// The frames on which the Djinni fires each of its five flames.
 u8 gDjinnAttacks_LaunchFrames[] = {4, 7, 10, 21, 34};
 
-// hail.c: Particle reveal and rock toss chips.
+// hail.c: Hail's ice chips; Ground's portal and crackles.
 
 // The four ice chip cells.
 u8 gHail_CellWidths[] = {8, 8, 8, 8};
 u8 gHail_CellHeights[] = {8, 8, 8, 8};
 u16 gHail_Cells[] = {2308, 2372, 2436, 2500};
-/// The blitter flags a chip may take, chosen at random: clipped at the canvas
-/// edges, and drawn as is, mirrored across, mirrored down or both.
-u8 gHail_ChipFlips[] = {3, 7, 11, 15};
-// The rock (cell 0) and its chips in the portal sheet: size, where each begins
-// in the sheet, and its offset from the rock's corner.
-u8 gHail_ChipWidths[] = {24, 7, 7, 8, 6, 13, 10, 11, 7};
-u8 gHail_ChipHeights[] = {48, 13, 14, 24, 24, 17, 20, 14, 20};
-u16 gHail_ChipCells[] = {0, 1152, 1243, 1341, 1533, 1677, 1898, 2098, 2252};
-u8 gHail_ChipX[] = {0, 9, 9, 11, 10, 0, 3, 13, 7};
-u8 gHail_ChipY[] = {0, 18, 18, 0, 24, 20, 5, 22, 26};
+/// The blitter flags a crackle may take, chosen at random: clipped at the
+/// canvas edges, and drawn as is, mirrored across, mirrored down or both.
+u8 gHail_CrackleFlips[] = {3, 7, 11, 15};
+/// The portal (cell 0), its white core (1 and 2) and its crackles (3 to 8) in
+/// the portal sheet: size, where each begins in the sheet, and its offset from
+/// the portal's corner.
+/// ★ Named from what the player sees: glowing violet portals with white
+/// crackles close in on the target (its render)
+u8 gHail_PortalWidths[] = {24, 7, 7, 8, 6, 13, 10, 11, 7};
+u8 gHail_PortalHeights[] = {48, 13, 14, 24, 24, 17, 20, 14, 20};
+u16 gHail_PortalCells[] = {0, 1152, 1243, 1341, 1533, 1677, 1898, 2098, 2252};
+u8 gHail_PortalX[] = {0, 9, 9, 11, 10, 0, 3, 13, 7};
+u8 gHail_PortalY[] = {0, 18, 18, 0, 24, 20, 5, 22, 26};
 
 // spire.c and thor.c: Storm effect colours and shattering rocks.
 
@@ -1052,9 +1059,9 @@ s16 gParticleStreams_FireballPoints[][2] = {
 // The seven growing flash cells of the blast sheet, square.
 u16 gParticleStreams_FlashCells[] = BLAST_OFFSETS;
 u16 gParticleStreams_FlashSizes[] = BLAST_CELL_SIZES;
-// Where the formation's sprites stand, in pixels from its corner.
-u8 gRamses_ObjectColumns[] = {12, 44, 28, 60, 0, 32, 64, 0, 32};
-u8 gRamses_ObjectRows[] = {0, 0, 32, 32, 64, 64, 64, 32, 32};
+// Where the statue's sprites stand, in pixels from its corner.
+u8 gRamses_StatueColumns[] = {12, 44, 28, 60, 0, 32, 64, 0, 32};
+u8 gRamses_StatueRows[] = {0, 0, 32, 32, 64, 64, 64, 32, 32};
 // The puff cells of the blast sheet, square; only the last four are used.
 u16 gRamses_PuffCells[] = BLAST_OFFSETS;
 u16 gRamses_PuffSizes[] = BLAST_CELL_SIZES;

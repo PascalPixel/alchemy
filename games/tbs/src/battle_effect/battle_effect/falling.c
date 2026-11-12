@@ -214,12 +214,13 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
       if (puff->variant != -1) {
         if (puff->variant <= 17) {
           s32 image = puff->variant / 2;
-          s32 x = puff->x / 8 - (gBattleEffect_PuffSizes[image] >> 1);
-          s32 y = puff->y / 8 - (gBattleEffect_PuffSizes[image] >> 1);
+          s32 x = puff->x / 8 - (gBattleEffect_SparkleSizes[image] >> 1);
+          s32 y = puff->y / 8 - (gBattleEffect_SparkleSizes[image] >> 1);
 
           draw[work->args->variant == EFFECT_VARIANT_STRONGEST ? 1 : 0](
-              canvas, sparkles + gBattleEffect_PuffCells[image], x, y,
-              gBattleEffect_PuffSizes[image], gBattleEffect_PuffSizes[image]);
+              canvas, sparkles + gBattleEffect_SparkleCells[image], x, y,
+              gBattleEffect_SparkleSizes[image],
+              gBattleEffect_SparkleSizes[image]);
         }
         if (puff->variant > -1)
           puff->variant--;

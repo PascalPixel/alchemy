@@ -147,8 +147,8 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
     position.groundHeight = 0;
     position.height = 0;
     for (i = 0; i != 7; i++) {
-      position.x = px(gRamses_ObjectColumns[i]) + base.x - px(32);
-      position.y = px(gRamses_ObjectRows[i]) + base.y - px(32);
+      position.x = px(gRamses_StatueColumns[i]) + base.x - px(32);
+      position.y = px(gRamses_StatueRows[i]) + base.y - px(32);
       Actor_ApplyProjectedPlacementFar(work->sprites[i], &position, &scale, 0);
     }
     // The fist circles until frame 90, 16 pixels around (156, 92), a 128th

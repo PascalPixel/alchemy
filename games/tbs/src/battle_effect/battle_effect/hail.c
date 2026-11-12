@@ -257,13 +257,14 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
       draw[0](canvas, work->sheet + GROUND_DJINNI_OFFSETS, x, y, 20, 40);
     }
     // Every 2 frames each crackle takes a random picture (velocityX, pictures
-    // 3 to 8) and flip (velocityY: gHail_ChipFlips, bit 2 across, bit 3 down).
+    // 3 to 8) and flip (velocityY: gHail_CrackleFlips, bit 2 across, bit 3
+    // down).
     if ((frame & 1) == 0) {
       for (i = 0; i != 32; i++) {
         struct Particle *crackle = &work->particles[32 + i];
 
         crackle->velocityX = Random16() % 6 + 3;
-        crackle->velocityY = gHail_ChipFlips[Random16() & 3];
+        crackle->velocityY = gHail_CrackleFlips[Random16() & 3];
       }
     }
     EFFECT_VIEW_FROM_CAMERA(camera);
@@ -284,13 +285,13 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
           // The portal's white core flickers between pictures 1 and 2 every
           // 2 frames.
           if ((frame & 3) <= 1)
-            draw[0](canvas, work->sheet + gHail_ChipCells[1],
-                    x + gHail_ChipX[1], y + gHail_ChipY[1], gHail_ChipWidths[1],
-                    gHail_ChipHeights[1]);
+            draw[0](canvas, work->sheet + gHail_PortalCells[1],
+                    x + gHail_PortalX[1], y + gHail_PortalY[1],
+                    gHail_PortalWidths[1], gHail_PortalHeights[1]);
           else
-            draw[0](canvas, work->sheet + gHail_ChipCells[2],
-                    x + gHail_ChipX[2], y + gHail_ChipY[2], gHail_ChipWidths[2],
-                    gHail_ChipHeights[2]);
+            draw[0](canvas, work->sheet + gHail_PortalCells[2],
+                    x + gHail_PortalX[2], y + gHail_PortalY[2],
+                    gHail_PortalWidths[2], gHail_PortalHeights[2]);
           // The four crackles: each loads a blitter with its own flip, and a
           // flipped crackle is placed from the portal's opposite edge so it
           // stays on the portal.
@@ -303,18 +304,18 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
                                 COMPOSITE_LIGHTEN);
             draw[1] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2];
             if (crackle->velocityY & 4)
-              crackleX = x - gHail_ChipWidths[crackle->velocityX] -
-                         gHail_ChipX[crackle->velocityX] + 24;
+              crackleX = x - gHail_PortalWidths[crackle->velocityX] -
+                         gHail_PortalX[crackle->velocityX] + 24;
             else
-              crackleX = x + gHail_ChipX[crackle->velocityX];
+              crackleX = x + gHail_PortalX[crackle->velocityX];
             if (crackle->velocityY & 8)
-              crackleY = y - gHail_ChipHeights[crackle->velocityX] -
-                         gHail_ChipY[crackle->velocityX] + 48;
+              crackleY = y - gHail_PortalHeights[crackle->velocityX] -
+                         gHail_PortalY[crackle->velocityX] + 48;
             else
-              crackleY = y + gHail_ChipY[crackle->velocityX];
-            draw[1](canvas, work->sheet + gHail_ChipCells[crackle->velocityX],
-                    crackleX, crackleY, gHail_ChipWidths[crackle->velocityX],
-                    gHail_ChipHeights[crackle->velocityX]);
+              crackleY = y + gHail_PortalY[crackle->velocityX];
+            draw[1](canvas, work->sheet + gHail_PortalCells[crackle->velocityX],
+                    crackleX, crackleY, gHail_PortalWidths[crackle->velocityX],
+                    gHail_PortalHeights[crackle->velocityX]);
             HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
           }
           portal->x += portal->velocityX;

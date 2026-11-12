@@ -46,8 +46,8 @@ enum TargetStrikeStyle {
 // columns is a two-dimensional array, its columns named by the enum above it.
 extern u16 gBattleEffect_MoteCells[];
 extern u16 gBattleEffect_FlareCells[];
-extern u16 gBattleEffect_PuffCells[];
-extern u8 gBattleEffect_PuffSizes[];
+extern u16 gBattleEffect_SparkleCells[];
+extern u8 gBattleEffect_SparkleSizes[];
 extern u8 gBattleEffect_PuffArcCellWidths[];
 extern u8 gBattleEffect_PuffArcCellHeights[];
 extern u8 gBattleEffect_PuffArcCellBiasY[];
@@ -137,13 +137,13 @@ extern u8 gProcne_CellWidths[];
 extern u8 gProcne_CellHeights[];
 extern u8 gProcne_CellBiasY[];
 extern u16 gProcne_Cells[];
-extern u8 gTiamat_DropSpeeds[];
+extern u8 gTiamat_EmberSpeeds[];
 extern u8 gTiamat_SparkPixels[];
-extern u8 gTiamat_DropSizes[];
-extern u8 gTiamat_StreakWidths[];
-extern u8 gTiamat_StreakHeights[];
-extern u8 gTiamat_StreakDrops[];
-extern u16 gTiamat_StreakOffsets[];
+extern u8 gTiamat_EmberSizes[];
+extern u8 gTiamat_FlameWidths[];
+extern u8 gTiamat_FlameHeights[];
+extern u8 gTiamat_FlameDrops[];
+extern u16 gTiamat_FlameOffsets[];
 
 /// The foot of each of Nereid's columns of fire.
 enum {
@@ -156,8 +156,8 @@ extern s32 gNereid_Gravity[];
 
 /// Each Froth variant: its motes and frames.
 enum {
-  FROTH_MOTE_COUNT, ///< motes, at most FROTH_MOTES (vortices.c)
-  FROTH_FRAMES      ///< the effect's frames; the damage shows 16 before
+  FROTH_BUBBLE_COUNT, ///< bubbles, at most 30 (vortices.c)
+  FROTH_FRAMES        ///< the effect's frames; the damage shows 16 before
 };
 extern u8 gVortices_Counts[][2];
 
@@ -271,19 +271,19 @@ extern u8 gFire_FlareHeights[];
 extern u8 gFire_FlareBiasY[];
 extern u16 gFire_FlareCells[];
 
-/// Where each rising-motes ice column stands: x and the y of its foot.
+/// Where each ice mound of Frost stands: x and the y of its foot.
 enum {
-  RISING_MOTES_COLUMN_X,   ///< canvas x of the column's left edge
-  RISING_MOTES_COLUMN_FOOT ///< canvas y of its foot
+  FROST_MOUND_X,   ///< canvas x of the mound's left edge
+  FROST_MOUND_FOOT ///< canvas y of its foot
 };
-extern u8 gFrost_ColumnSpots[][2];
+extern u8 gFrost_MoundSpots[][2];
 
 extern u8 gFrost_Timings[][3];
 extern u8 gFrost_MoteWidths[];
 extern u8 gFrost_MoteHeights[];
 extern u16 gFrost_MoteCells[];
-extern u16 gFrost_ColumnCells[];
-extern u8 gFrost_ColumnHeights[];
+extern u16 gFrost_MoundCells[];
+extern u8 gFrost_MoundHeights[];
 extern u8 gFrost_ChipWidths[];
 extern u8 gFrost_ChipHeights[];
 extern u16 gFrost_ChipCells[];
@@ -357,12 +357,12 @@ extern u8 gDjinnAttacks_LaunchFrames[];
 extern u8 gHail_CellWidths[];
 extern u8 gHail_CellHeights[];
 extern u16 gHail_Cells[];
-extern u8 gHail_ChipFlips[];
-extern u8 gHail_ChipWidths[];
-extern u8 gHail_ChipHeights[];
-extern u16 gHail_ChipCells[];
-extern u8 gHail_ChipX[];
-extern u8 gHail_ChipY[];
+extern u8 gHail_CrackleFlips[];
+extern u8 gHail_PortalWidths[];
+extern u8 gHail_PortalHeights[];
+extern u16 gHail_PortalCells[];
+extern u8 gHail_PortalX[];
+extern u8 gHail_PortalY[];
 extern u8 gThor_TargetPalettes[];
 extern u8 gThor_CrackleFlips[];
 
@@ -440,8 +440,8 @@ extern s16 gParticleStreams_OrbitPoints[][3];
 extern s16 gParticleStreams_FireballPoints[][2];
 extern u16 gParticleStreams_FlashCells[];
 extern u16 gParticleStreams_FlashSizes[];
-extern u8 gRamses_ObjectColumns[];
-extern u8 gRamses_ObjectRows[];
+extern u8 gRamses_StatueColumns[];
+extern u8 gRamses_StatueRows[];
 extern u16 gRamses_PuffCells[];
 extern u16 gRamses_PuffSizes[];
 extern u8 gRagnarok_StrikeColumns[][3];

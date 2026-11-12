@@ -376,8 +376,8 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
            i++, trail++, spray++) {
         if (frame >= i + 228) {
           s32 cell = trail->variant / 2 % 9;
-          s32 size = gBattleEffect_PuffSizes[cell];
-          draw(canvas, sparkleSheet + gBattleEffect_PuffCells[cell],
+          s32 size = gBattleEffect_SparkleSizes[cell];
+          draw(canvas, sparkleSheet + gBattleEffect_SparkleCells[cell],
                Q_16_16_TO_INT(trail->x) - size / 2,
                Q_16_16_TO_INT(trail->y) - size / 2, size, size);
           if (++trail->variant == 18) {
@@ -529,8 +529,8 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
       for (i = 0; i != 64; i++) {
         if (PARTICLES[i].variant >= 0 && PARTICLES[i].variant < 18) {
           s32 cell = PARTICLES[i].variant / 2 % 9;
-          s32 size = gBattleEffect_PuffSizes[cell];
-          draw(canvas, sparkleSheet + gBattleEffect_PuffCells[cell],
+          s32 size = gBattleEffect_SparkleSizes[cell];
+          draw(canvas, sparkleSheet + gBattleEffect_SparkleCells[cell],
                PARTICLES[i].x - size / 2, PARTICLES[i].y - size / 2, size,
                size);
         }

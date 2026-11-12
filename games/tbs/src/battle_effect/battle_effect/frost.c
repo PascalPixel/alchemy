@@ -174,7 +174,7 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
     lowest += px(64);
     highest += px(64);
 
-    // Ice mounds (32 wide), at gFrost_ColumnSpots: one more every 3 frames
+    // Ice mounds (32 wide), at gFrost_MoundSpots: one more every 3 frames
     // from frame 36; over the last 7 frames before the burst they are
     // drawn additively (the pair's second blitter), a flash before they
     // break.
@@ -186,30 +186,30 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
 
           if (frame >= gFrost_Timings[work->args->variant][FROST_FRAME] - 7) {
 #ifdef UBFIX
-            height = gFrost_ColumnHeights[cell];
-            pair[1](canvas, work->sheet + gFrost_ColumnCells[cell],
-                    gFrost_ColumnSpots[i][RISING_MOTES_COLUMN_X],
-                    gFrost_ColumnSpots[i][RISING_MOTES_COLUMN_FOOT] - height,
-                    32, height);
+            height = gFrost_MoundHeights[cell];
+            pair[1](canvas, work->sheet + gFrost_MoundCells[cell],
+                    gFrost_MoundSpots[i][FROST_MOUND_X],
+                    gFrost_MoundSpots[i][FROST_MOUND_FOOT] - height, 32,
+                    height);
 #else
-            pair[1](canvas, work->sheet + gFrost_ColumnCells[cell],
-                    gFrost_ColumnSpots[i][RISING_MOTES_COLUMN_X],
-                    gFrost_ColumnSpots[i][RISING_MOTES_COLUMN_FOOT] -
-                        (height = gFrost_ColumnHeights[cell]),
+            pair[1](canvas, work->sheet + gFrost_MoundCells[cell],
+                    gFrost_MoundSpots[i][FROST_MOUND_X],
+                    gFrost_MoundSpots[i][FROST_MOUND_FOOT] -
+                        (height = gFrost_MoundHeights[cell]),
                     32, height);
 #endif
           } else {
 #ifdef UBFIX
-            height = gFrost_ColumnHeights[cell];
-            pair[0](canvas, work->sheet + gFrost_ColumnCells[cell],
-                    gFrost_ColumnSpots[i][RISING_MOTES_COLUMN_X],
-                    gFrost_ColumnSpots[i][RISING_MOTES_COLUMN_FOOT] - height,
-                    32, height);
+            height = gFrost_MoundHeights[cell];
+            pair[0](canvas, work->sheet + gFrost_MoundCells[cell],
+                    gFrost_MoundSpots[i][FROST_MOUND_X],
+                    gFrost_MoundSpots[i][FROST_MOUND_FOOT] - height, 32,
+                    height);
 #else
-            pair[0](canvas, work->sheet + gFrost_ColumnCells[cell],
-                    gFrost_ColumnSpots[i][RISING_MOTES_COLUMN_X],
-                    gFrost_ColumnSpots[i][RISING_MOTES_COLUMN_FOOT] -
-                        (height = gFrost_ColumnHeights[cell]),
+            pair[0](canvas, work->sheet + gFrost_MoundCells[cell],
+                    gFrost_MoundSpots[i][FROST_MOUND_X],
+                    gFrost_MoundSpots[i][FROST_MOUND_FOOT] -
+                        (height = gFrost_MoundHeights[cell]),
                     32, height);
 #endif
           }
@@ -295,15 +295,15 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
           u32 size;
 
 #ifdef UBFIX
-          size = gBattleEffect_PuffSizes[cell];
-          pair[1](canvas, sparkleSheet + gBattleEffect_PuffCells[cell],
+          size = gBattleEffect_SparkleSizes[cell];
+          pair[1](canvas, sparkleSheet + gBattleEffect_SparkleCells[cell],
                   Q_16_16_TO_INT(sparkle->velocityX) - (size >> 1),
                   Q_16_16_TO_INT(sparkle->velocityY) - (size >> 1) - rise, size,
                   size);
 #else
-          pair[1](canvas, sparkleSheet + gBattleEffect_PuffCells[cell],
+          pair[1](canvas, sparkleSheet + gBattleEffect_SparkleCells[cell],
                   Q_16_16_TO_INT(sparkle->velocityX) -
-                      ((size = gBattleEffect_PuffSizes[cell]) >> 1),
+                      ((size = gBattleEffect_SparkleSizes[cell]) >> 1),
                   Q_16_16_TO_INT(sparkle->velocityY) - (size >> 1) - rise, size,
                   size);
 #endif

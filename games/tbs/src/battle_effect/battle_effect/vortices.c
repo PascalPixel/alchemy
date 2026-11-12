@@ -102,7 +102,7 @@ void BattleEffect_RunFroth(struct BattleEffectParams *args) {
     if (frame == gVortices_Counts[work->args->variant][FROTH_FRAMES] - 16)
       EFFECT_SHOW_DAMAGE(SE_WATER);
     EFFECT_VIEW_FROM_CAMERA(camera);
-    for (i = 0; i != gVortices_Counts[work->args->variant][FROTH_MOTE_COUNT];
+    for (i = 0; i != gVortices_Counts[work->args->variant][FROTH_BUBBLE_COUNT];
          i++) {
       point = &work->particles[i];
       if (frame > i * 2 && flags[i] == 0) {

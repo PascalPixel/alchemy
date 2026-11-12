@@ -211,7 +211,7 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectParams *args,
     // Start new particles.
 
     // Embers: from y 112 at x -32 to 223, moving up; a random 0 to 127 plus
-    // a base from gTiamat_DropSpeeds by index gives the speed, in 128ths of
+    // a base from gTiamat_EmberSpeeds by index gives the speed, in 128ths of
     // a pixel a frame across and 32nds up, so they climb four times as fast
     // as they drift.
     if (frame >= 33 && frame <= 175) {
@@ -226,9 +226,9 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectParams *args,
         if (ember->variant == -1) {
           ember->x = ((Random16() & 255) - 32) << 16;
           ember->y = px(112);
-          ember->velocityX = ((Random16() & 127) + gTiamat_DropSpeeds[i & 3])
+          ember->velocityX = ((Random16() & 127) + gTiamat_EmberSpeeds[i & 3])
                              << 9;
-          ember->velocityY = -((Random16() & 127) + gTiamat_DropSpeeds[i & 3])
+          ember->velocityY = -((Random16() & 127) + gTiamat_EmberSpeeds[i & 3])
                              << 11;
           ember->variant = 0;
           spawned++;
@@ -353,7 +353,7 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectParams *args,
         struct Particle *ember = &PARTICLES[i];
 
         if (ember->variant >= 0) {
-          u8 size = gTiamat_DropSizes[i & 3];
+          u8 size = gTiamat_EmberSizes[i & 3];
 
           draw[0](canvas, sheet + gBattleEffect_MoteCells[size - 1],
                   Q_16_16_TO_INT(ember->x) - size / 2,
@@ -426,11 +426,11 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectParams *args,
             s32 cell = fireball->variant / 2;
 
             draw[0](canvas,
-                    work->sheet + gTiamat_StreakOffsets[cell] +
+                    work->sheet + gTiamat_FlameOffsets[cell] +
                         DRAGON_FIRE_FLAME_IMAGES,
-                    fireball->x - gTiamat_StreakWidths[cell] / 2,
-                    fireball->y + gTiamat_StreakDrops[cell],
-                    gTiamat_StreakWidths[cell], gTiamat_StreakHeights[cell]);
+                    fireball->x - gTiamat_FlameWidths[cell] / 2,
+                    fireball->y + gTiamat_FlameDrops[cell],
+                    gTiamat_FlameWidths[cell], gTiamat_FlameHeights[cell]);
           }
           fireball->variant++;
           if (fireball->variant == 12)

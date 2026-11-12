@@ -245,7 +245,7 @@ static void VaultRevisit_GreetWarriorGuy(void) {
   actor->timer |= VAULT_PROXIMITY_REACTION_PAUSED;
   Event_Start();
   Event_SetMessageId(MsgVaultWarriorGuy);
-  Actor_SetAnimation(ACTOR_BOY_ROUND_THE_WELL, 0);
+  Actor_SetAnimation(ACTOR_BOY_ROUND_THE_WELL, ANIM_STILL);
   Actor_TurnToFaceEachOther(ACTOR_BOY_ROUND_THE_WELL, ACTOR_PARTY_LEADER, 2);
   if (Event_GetFlag(FLAG_VAULT_REVISIT_WARRIOR_GUY_GREETED) == 0) {
     Actor_ShowEmote(ACTOR_BOY_ROUND_THE_WELL,
@@ -276,7 +276,7 @@ static void VaultRevisit_WishEldersWereBrave(void) {
   actor->timer |= VAULT_PROXIMITY_REACTION_PAUSED;
   Event_Start();
   Event_SetMessageId(MsgVaultWishVaultsElders);
-  Actor_SetAnimation(ACTOR_GIRL_ROUND_THE_WELL, 0);
+  Actor_SetAnimation(ACTOR_GIRL_ROUND_THE_WELL, ANIM_STILL);
   Actor_TurnToFaceEachOther(ACTOR_GIRL_ROUND_THE_WELL, ACTOR_PARTY_LEADER, 2);
   // "I wish Vault's elders were as brave as you!"
   Event_ShowMessageThenWait(ACTOR_GIRL_ROUND_THE_WELL, 0, 10);

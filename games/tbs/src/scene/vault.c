@@ -400,7 +400,7 @@ static void Vault_PityIvan(void) {
   actor->timer |= 2;
   Event_Start();
   Event_SetMessageId(MsgVaultPoorGuyLeft);
-  Actor_SetAnimation(ACTOR_BOY_ROUND_THE_WELL, 0);
+  Actor_SetAnimation(ACTOR_BOY_ROUND_THE_WELL, ANIM_STILL);
   Vault_FaceActorAndWait(ACTOR_BOY_ROUND_THE_WELL, ACTOR_PARTY_LEADER, 2);
   Vault_ShowMessageAndWait(ACTOR_BOY_ROUND_THE_WELL, 10);
   actor->facing = savedFacing;
@@ -418,7 +418,7 @@ static void Vault_TalkOfHammetsCaravan(void) {
   actor->timer |= 2;
   Event_Start();
   Event_SetMessageId(MsgVaultMasterHammetsCaravan);
-  Actor_SetAnimation(ACTOR_GIRL_ROUND_THE_WELL, 0);
+  Actor_SetAnimation(ACTOR_GIRL_ROUND_THE_WELL, ANIM_STILL);
   Vault_FaceActorAndWait(ACTOR_GIRL_ROUND_THE_WELL, ACTOR_PARTY_LEADER, 2);
   Vault_ShowMessageAndWait(ACTOR_GIRL_ROUND_THE_WELL, 10);
   actor->facing = savedFacing;
@@ -509,7 +509,7 @@ static void Vault_AskWhetherIvanWentToLunpa(void) {
   Event_SetMessageId(MsgVaultDidntGoLunpa);
   if (GameFlag_Get(FLAG_IN_PARTY(IVAN)) != 0)
     ++gFieldWork->message;
-  Actor_SetAnimation(ACTOR_BOY_ROUND_THE_WELL, 0);
+  Actor_SetAnimation(ACTOR_BOY_ROUND_THE_WELL, ANIM_STILL);
   Vault_FaceActorAndWait(ACTOR_BOY_ROUND_THE_WELL, ACTOR_PARTY_LEADER, 2);
   Vault_ShowMessageAndWait(ACTOR_BOY_ROUND_THE_WELL, 10);
   actor->facing = savedFacing;
@@ -527,7 +527,7 @@ static void Vault_ThankForCapturingThieves(void) {
   actor->timer |= 2;
   Event_Start();
   Event_SetMessageId(MsgVaultEveryoneGratefulCaptured);
-  Actor_SetAnimation(ACTOR_GIRL_ROUND_THE_WELL, 0);
+  Actor_SetAnimation(ACTOR_GIRL_ROUND_THE_WELL, ANIM_STILL);
   Vault_FaceActorAndWait(ACTOR_GIRL_ROUND_THE_WELL, ACTOR_PARTY_LEADER, 2);
   Vault_ShowMessageAndWait(ACTOR_GIRL_ROUND_THE_WELL, 10);
   actor->facing = savedFacing;

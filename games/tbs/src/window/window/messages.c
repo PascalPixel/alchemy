@@ -576,6 +576,8 @@ struct Window *Portrait_OpenWindow(s32 speaker, s32 portraitOption, s32 x,
   if (Portrait_GetForSpeaker(speaker) == -1) {
     return 0;
   }
+  /* FAKEMATCH(temporary): portraitY holds the -4 Portrait_Create takes; as -4
+   * at the call, 29 of 71 instructions differ in tbs-en. */
   portraitX = -4;
   portraitY = -4;
   if (((struct WindowWork *)work)->mindRead != 0) {

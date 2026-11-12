@@ -860,8 +860,7 @@ void SelectionMenu_StepLeft(struct SelectionMenuWork *state) {
       node = state->head;
       while (node->x != node->targetX)
         wait(1);
-      // DEAD: i counted up to count - 5 where it could be assigned; the ROM
-      // keeps the counting loop's compares, increment and branches.
+      // The ROM counts i up to count - 5 here rather than assigning it.
       i = 0;
       while (i != state->count - 5)
         i++;

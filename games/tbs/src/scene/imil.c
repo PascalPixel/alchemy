@@ -1236,7 +1236,7 @@ UNUSED static void Imil_SwayAndSpark(struct Actor *actor) {
       Actor_SelectAnimation(spark, 1);
       spark->scaleX = 3 * Q16_ONE / 5;
       spark->scaleY = 3 * Q16_ONE / 5;
-      spark->priorityFlags = 2;
+      spark->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
       spark->motionFlags = 0;
       Actor_SetSpriteColor(spark, SPRITE_COLOR_BLUE_TINT);
       Actor_StartScript(spark, gImil_SparkScript);

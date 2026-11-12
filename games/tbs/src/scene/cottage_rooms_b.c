@@ -1377,7 +1377,7 @@ static void CottageRoomsB_SpawnEffectPair(struct Actor *actor) {
 
     effectSprite->image.priority = 2;
     effectActor->update = FieldEffect_AnimateVerticalPositive;
-    effectActor->priorityFlags = 2;
+    effectActor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   }
 }
 

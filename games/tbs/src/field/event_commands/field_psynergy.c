@@ -366,8 +366,8 @@ struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z) {
       return NULL;
     }
     actor->groundHeight = ((struct Actor *)effectWork->mainActor)->groundHeight;
-    actor->motionFlags = 4;
-    actor->priorityFlags = 4;
+    actor->motionFlags = ACTOR_FLOATS;
+    actor->priorityFlags = ACTOR_PRIORITY_OVERHEAD;
     actor->sprite->image.priority = 0;
     Actor_SetSpriteFlagsFar(actor, 0);
     Actor_SelectAnimationFar(actor, 1);

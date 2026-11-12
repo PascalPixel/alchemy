@@ -2014,15 +2014,9 @@ UNUSED static void Vale_UnusedWaterBurstsByTheRiver(void) {
 static void Vale_MoveActorAlongLowerZPath(s32 actorId, s32 approachAnimationId,
                                           s32 departureAnimationId,
                                           s32 resumeMotion) {
-  s32 departureAnimation;
-  s32 approachAnimation;
-  s32 restoreMotion;
   struct Actor *actor;
   struct Sprite *sprite;
 
-  restoreMotion = resumeMotion;
-  approachAnimation = approachAnimationId;
-  departureAnimation = departureAnimationId;
   actor = Actor_Get(actorId);
   sprite = actor->sprite;
   Actor_SetSpeed(actorId, PIXELS(1), PIXELS(1) / 2);
@@ -2030,16 +2024,16 @@ static void Vale_MoveActorAlongLowerZPath(s32 actorId, s32 approachAnimationId,
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 10);
   actor->motionFlags = 0;
   sprite->flags = 0;
-  Actor_SetAnimation(actorId, approachAnimation);
+  Actor_SetAnimation(actorId, approachAnimationId);
   Actor_SetSpeed(actorId, PIXELS(3) / 10, PIXELS(3) / 20);
   Actor_MoveToAndWait(actorId, 392, 875);
   Event_Wait(10);
-  Actor_SetAnimation(actorId, departureAnimation);
+  Actor_SetAnimation(actorId, departureAnimationId);
   Actor_SetSpeed(actorId, PIXELS(1), PIXELS(1) / 2);
   Actor_MoveToAndWait(actorId, 392, 859);
-  sprite->flags = 1;
-  if (restoreMotion != 0) {
-    actor->motionFlags = 3;
+  sprite->flags = SPRITE_FLAG_SHADOW;
+  if (resumeMotion != 0) {
+    actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   }
   Event_Wait(10);
   Actor_SetAnimation(actorId, ANIM_STAND);
@@ -2050,15 +2044,9 @@ static void Vale_MoveActorAlongLowerZPath(s32 actorId, s32 approachAnimationId,
 static void Vale_MoveActorAlongHigherZPath(s32 actorId, s32 approachAnimationId,
                                            s32 departureAnimationId,
                                            s32 resumeMotion) {
-  s32 departureAnimation;
-  s32 approachAnimation;
-  s32 restoreMotion;
   struct Actor *actor;
   struct Sprite *sprite;
 
-  restoreMotion = resumeMotion;
-  approachAnimation = approachAnimationId;
-  departureAnimation = departureAnimationId;
   actor = Actor_Get(actorId);
   sprite = actor->sprite;
   Actor_SetSpeed(actorId, PIXELS(1), PIXELS(1) / 2);
@@ -2066,17 +2054,17 @@ static void Vale_MoveActorAlongHigherZPath(s32 actorId, s32 approachAnimationId,
   Actor_FaceDirection(actorId, FACING_NORTH, 10);
   actor->motionFlags = 0;
   sprite->flags = 0;
-  Actor_SetAnimation(actorId, approachAnimation);
+  Actor_SetAnimation(actorId, approachAnimationId);
   Actor_SetSpeed(actorId, PIXELS(1), PIXELS(1) / 2);
   Actor_MoveToAndWait(actorId, 392, 875);
   Event_Wait(10);
   Actor_SetSpeed(actorId, PIXELS(3) / 10, PIXELS(3) / 20);
-  Actor_SetAnimation(actorId, departureAnimation);
+  Actor_SetAnimation(actorId, departureAnimationId);
   Actor_MoveToAndWait(actorId, 392, 890);
   actor->velocityY = PIXELS(2);
-  sprite->flags = 1;
-  if (restoreMotion != 0) {
-    actor->motionFlags = 3;
+  sprite->flags = SPRITE_FLAG_SHADOW;
+  if (resumeMotion != 0) {
+    actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   }
   Actor_SetAnimation(actorId, ANIM_STAND);
 }
@@ -3077,12 +3065,13 @@ static void Vale_RoofMended(void) {
   GameFlag_Set(FLAG_VALE_ROOF_JUST_MENDED);
   GameFlag_Clear(FLAG_SHOW_AREA_NAME);
 #if TBS_PATCH_1
-  leader->motionFlags = 3;
+  leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   leader->y.fixed = PIXELS(160);
   leader->targetY = ACTOR_NO_TARGET;
   leader->velocityY = 0;
 #else
-  Actor_Get(ACTOR_PARTY_LEADER)->motionFlags = 3;
+  Actor_Get(ACTOR_PARTY_LEADER)->motionFlags =
+      ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 #endif
   Event_End();
 }
@@ -3226,7 +3215,7 @@ static void Vale_TrailSparkles(struct Actor *updated) {
   particle = FieldActor_Create(SPRITE_SPARKLE, spawnPosition[0],
                                spawnPosition[1], spawnPosition[2]);
   if (particle != 0) {
-    particle->motionFlags = 2;
+    particle->motionFlags = ACTOR_FALLS;
     particle->gravity = PIXELS(1) / 10;
     particle->wait = 12;
     Actor_SetSpriteFlags(particle, 0);
@@ -3271,7 +3260,7 @@ static void Vale_VanishMoveHand(struct Actor *emitter) {
       verticalSpeed = Import_RandomNext() + PIXELS(1);
       particle->acceleration = Q16_ONE;
       particle->speedLimit = verticalSpeed;
-      particle->motionFlags = 2;
+      particle->motionFlags = ACTOR_FALLS;
       particle->gravity = PIXELS(1) / 25;
 
       particle->velocityY = Import_RandomNext() - Import_RandomNext();
@@ -3434,31 +3423,9 @@ static void Vale_CycleActorPalette(struct Actor *actor) {
 #include "shared/field_effect_vertical.h"
 #include "shared/world_map_attached_effects.h"
 
-/// Pixel step by direction: X in the upper halfword, Z in the lower.
-#define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))
-
-s32 gPushedActor_DirectionSteps[] = {
-    DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),
-    DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),
-    DIRECTION_STEP(0, 16),  DIRECTION_STEP(-16, 0), DIRECTION_STEP(-16, 0),
-    DIRECTION_STEP(-16, 0), DIRECTION_STEP(-16, 0), DIRECTION_STEP(0, -16),
-    DIRECTION_STEP(0, -16), DIRECTION_STEP(0, -16), DIRECTION_STEP(0, -16),
-    DIRECTION_STEP(16, 0),
-};
+#include "shared/pushed_actor_tables.h"
 
 // clang-format off
-u32 gPushedActor_FootprintKinds[] = {
-    207, 205, 228, 229, 298, 297,
-};
-
-s32 gPushedActor_FootprintBounds[] = {
-    -32, -8, 32, 8,
-    -8, -32, 8, 32,
-    -32, -16, 32, 0,
-    -8, -32, 8, 32,
-    -32, -8, 32, 8,
-    -8, -32, 8, 32,
-};
 
 /// The man guarding Mt. Aleph walks his beat below the path once he has warned
 /// Isaac, looking about at each stop. SW_TIMER says which stretch he is on,

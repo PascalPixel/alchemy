@@ -2057,7 +2057,7 @@ static void ValePlaza_SpawnEffectPair(struct Actor *parent) {
 
     effectSprite->image.priority = 2;
     effect->update = FieldEffect_AnimateVerticalPositive;
-    effect->priorityFlags = 2;
+    effect->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   }
 }
 

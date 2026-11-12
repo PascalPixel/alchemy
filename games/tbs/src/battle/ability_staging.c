@@ -1,7 +1,8 @@
 /// @file
 /// How each ability is staged in battle: the outcome staging
 /// BattleActionRun_Build gives it and the effect it plays, by ability id.
-/// The ability names in the comments are the English release's.
+/// The ability names in the comments are the English release's; `?` is the
+/// name MsgAbilityName gives those ids.
 
 #include "ability_staging.h"
 #include "module/battle_effect/battle_effect.h"

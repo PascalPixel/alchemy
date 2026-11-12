@@ -2,8 +2,9 @@
 #define ALCHEMY_ABILITY_STAGING_H
 
 /// @file
-/// The battle command names: auto battle and the battle options (aliases of
-/// debug and key globals), and the actions' flag and status tables.
+/// How each ability is staged in battle: the staging and effect tables
+/// (ability_staging.c), the values of BattleActionRun.staging and
+/// battleEffect, and the battle's names for two debug and key globals.
 
 #include "playback_queue.h"
 #include "battle_action_run.h"

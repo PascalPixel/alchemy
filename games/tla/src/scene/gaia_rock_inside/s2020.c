@@ -11,22 +11,22 @@
      type v;                                                                   \
    } *)(base))                                                                 \
        ->v)
-void Func_02004e3c();
+void Func_02004e3c(struct Actor *object, s32 value);
 void Func_02004e5c(void);
 void Func_02004e64(void);
 void Func_02004ec4(s32 id, s32 target);
 extern u8 MsgGaiaRockInside01[];
 
 void Func_02002020(void) {
-  s32 t1, t2, t3, t26, t27, t28, t34, t35, t37, t38, t43, t44, t50, v_r10, v_r5,
-      v_r6, v_r7, v_r8;
+  s32 t1, t2, t26, t27, t28, t34, t35, t37, t38, t43, t44, t50, v_r5, v_r6, v_r7,
+      v_r8;
+  struct Actor *v_r10;
 
   t1 = ((s32)Actor_Get(8));
   v_r7 = t1;
   t2 = ((s32)Actor_Get(9));
   v_r8 = t2;
-  t3 = ((s32)Actor_Get(13));
-  v_r10 = t3;
+  v_r10 = Actor_Get(13);
   Func_02004e5c();
   FieldEvent_ResolvePendingActions(0);
   Message_ShowCentered((s32)&MsgGaiaRockInside01, 1);
@@ -126,7 +126,6 @@ L_0200a22e:
 #include "iwram_call.h"
 #include "ram_buffer.h"
 
-void Func_02004e3c(struct Actor *object, s32 value);
 void Func_02004fdc(void);
 
 /// Three scene events of one shape, for objects 8 and 12, 9 and 12, and 8 and

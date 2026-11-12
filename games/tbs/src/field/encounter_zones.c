@@ -1,710 +1,713 @@
 /// @file
-/// The 104 encounter zones, by zone number: the zone names in the comments
-/// say where each is used.
+/// The 104 encounter zones, by zone number. A field zone's comment gives its
+/// area name (gArea_NameRules) and the scenes and entrances that take it
+/// (gScene_EncounterRules); a World Map zone's, its encounter region and the
+/// battle environments that take it (gWorldMap_EncounterRules); a zone that
+/// code names, its name (enum EncounterZoneId).
 
 #include "field/encounter_zone.h"
 
 // clang-format off
 const struct EncounterZone gEncounterZones[] = {
-    // No encounters
+    // ENCOUNTER_ZONE_NONE
     {0},
-    // Sol Sanctum Corridor
+    // Sol Sanctum: SceneId_SolSanctumCorridor
     {
         .rate = 37,
         .level = 1,
-        .enemies = {7, 8, 9, 10},
+        .formations = {7, 8, 9, 10},
         .weights = {4, 8, 8, 4},
     },
-    // SolSanctumReliefs (entrances 1, 2)
+    // Sol Sanctum: SceneId_SolSanctumReliefs entrances 1 and 2
     {
         .rate = 35,
         .level = 1,
-        .enemies = {7, 8, 9, 10},
+        .formations = {7, 8, 9, 10},
         .weights = {8, 4, 4, 8},
     },
-    // SolSanctumReliefs (entrances 3, 6, 7)
+    // Sol Sanctum: SceneId_SolSanctumReliefs entrances 3, 6 and 7
     {
         .rate = 35,
         .level = 1,
-        .enemies = {11, 12, 13, 14},
+        .formations = {11, 12, 13, 14},
         .weights = {8, 8, 4, 4},
     },
-    // Sol Sanctum Maze
+    // Sol Sanctum: SceneId_SolSanctumMaze
     {
         .rate = 35,
         .level = 1,
-        .enemies = {11, 12, 13, 14},
+        .formations = {11, 12, 13, 14},
         .weights = {4, 4, 8, 8},
     },
-    // SolSanctumReliefs (entrance 10)
+    // Sol Sanctum: SceneId_SolSanctumReliefs entrance 10
     {
         .rate = 35,
         .level = 2,
-        .enemies = {15, 16, 17, 18},
+        .formations = {15, 16, 17, 18},
         .weights = {12, 8, 4, 4},
     },
-    // Sol Sanctum Luna Sol Rooms
+    // Sol Sanctum: SceneId_SolSanctumLunaSolRooms
     {
         .rate = 35,
         .level = 2,
-        .enemies = {15, 16, 17, 18},
+        .formations = {15, 16, 17, 18},
         .weights = {4, 4, 12, 8},
     },
-    // World Map: terrain kind 1, grassland and beach
+    // World Map, encounter region 1: beach, shallows and grassland
     {
         .rate = 25,
         .level = 3,
-        .enemies = {20, 21, 22, 23, 24, 25, 26, 27},
+        .formations = {20, 21, 22, 23, 24, 25, 26, 27},
         .weights = {4, 4, 4, 4, 2, 2, 2, 2},
     },
-    // World Map: terrain kind 1, forest
+    // World Map, encounter region 1: forest
     {
         .rate = 9,
         .level = 3,
-        .enemies = {20, 21, 22, 23, 24, 25, 26, 27},
+        .formations = {20, 21, 22, 23, 24, 25, 26, 27},
         .weights = {2, 2, 2, 2, 3, 7, 2, 3},
     },
-    // Goma Cave Pond
+    // Goma Cave: SceneId_GomaCavePond
     {
         .rate = 30,
         .level = 4,
-        .enemies = {31, 32, 33, 34, 35},
+        .formations = {31, 32, 33, 34, 35},
         .weights = {3, 3, 9, 3, 6},
     },
-    // Goma Cave Pillar
+    // Goma Cave: SceneId_GomaCavePillar
     {
         .rate = 30,
         .level = 5,
-        .enemies = {31, 32, 33, 34, 35, 36, 37},
+        .formations = {31, 32, 33, 34, 35, 36, 37},
         .weights = {2, 2, 2, 2, 8, 5, 2},
     },
-    // GomaCaveStream
+    // Goma Cave: SceneId_GomaCaveStream
     {
         .rate = 30,
         .level = 5,
-        .enemies = {31, 32, 33, 34, 35, 36, 37},
+        .formations = {31, 32, 33, 34, 35, 36, 37},
         .weights = {2, 2, 5, 2, 8, 8, 14},
     },
-    // Event battles: Vale, Vault, World Map
+    // ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT
     {
-        .enemies = {1, 2, 3, 4, 5, 29, 28},
+        .formations = {1, 2, 3, 4, 5, 29, 28},
         .weights = {10, 10, 10, 10, 10, 10, 1},
     },
-    // World Map: terrain kind 2, grassland and beach
+    // World Map, encounter region 2: beach, shallows and grassland
     {
         .rate = 25,
         .level = 6,
-        .enemies = {50, 51, 52, 53, 54, 55, 56, 57},
+        .formations = {50, 51, 52, 53, 54, 55, 56, 57},
         .weights = {4, 4, 4, 4, 4, 2, 2, 2},
     },
-    // World Map: terrain kind 2, forest
+    // World Map, encounter region 2: forest
     {
         .rate = 9,
         .level = 6,
-        .enemies = {50, 51, 52, 53, 54, 55, 56, 57},
+        .formations = {50, 51, 52, 53, 54, 55, 56, 57},
         .weights = {1, 1, 1, 1, 1, 2, 2, 2},
     },
-    // KolimaTunnel
+    // Kolima Tunnel: SceneId_KolimaTunnel
     {
         .rate = 35,
         .level = 6,
-        .enemies = {50, 51, 52, 53, 54, 55, 56, 57},
+        .formations = {50, 51, 52, 53, 54, 55, 56, 57},
         .weights = {1, 2, 2, 1, 1, 5, 5, 5},
     },
-    // Kolima Forest Bridge
+    // Kolima Forest: SceneId_KolimaForestEntrance
     {
         .rate = 40,
         .level = 6,
-        .enemies = {59, 60, 61, 62, 63, 64, 65, 66},
+        .formations = {59, 60, 61, 62, 63, 64, 65, 66},
         .weights = {10, 5, 1, 1, 1, 1},
     },
-    // Kolima Forest Clearing
+    // Kolima Forest: SceneId_KolimaForestGlade
     {
         .rate = 40,
         .level = 7,
-        .enemies = {59, 60, 61, 62, 63, 64, 65, 66},
+        .formations = {59, 60, 61, 62, 63, 64, 65, 66},
         .weights = {2, 6, 2, 2, 8, 6, 2, 2},
     },
-    // Kolima Forest River
+    // Kolima Forest: SceneId_KolimaForestCliff
     {
         .rate = 40,
         .level = 7,
-        .enemies = {59, 60, 61, 62, 63, 64, 65, 66},
+        .formations = {59, 60, 61, 62, 63, 64, 65, 66},
         .weights = {1, 1, 2, 2, 3, 3, 8, 12},
     },
-    // Kolima Forest Tree
+    // Kolima Forest: SceneId_KolimaForestTree
     {
         .rate = 40,
         .level = 7,
-        .enemies = {59, 60, 61, 62, 63, 64, 65, 66},
+        .formations = {59, 60, 61, 62, 63, 64, 65, 66},
         .weights = {1, 1, 2, 2, 3, 3, 5, 12},
     },
-    // Tret Tree Branch (entrances 1 to 3)
+    // Tret Tree: SceneId_TretTreeBranch entrances 1 to 3
     {
         .rate = 45,
         .level = 7,
-        .enemies = {68, 69, 70, 71, 72, 73, 74, 75},
+        .formations = {68, 69, 70, 71, 72, 73, 74, 75},
         .weights = {8, 5, 6, 2, 1, 2, 1, 1},
     },
-    // Tret Tree Interiors (entrances 1, 11, 16, 21 to 29)
+    // Tret Tree: SceneId_TreeRooms entrances 1, 11, 16 and 21 to 29
     {
         .rate = 45,
         .level = 7,
-        .enemies = {68, 69, 70, 71, 72, 73, 74, 75},
+        .formations = {68, 69, 70, 71, 72, 73, 74, 75},
         .weights = {6, 6, 6, 3, 2, 1},
     },
-    // Tret Tree Interiors (entrances 2 to 5, 12, 13, 31, 32)
+    // Tret Tree: SceneId_TreeRooms entrances 2 to 5, 12, 13, 31 and 32
     {
         .rate = 45,
         .level = 8,
-        .enemies = {68, 69, 70, 71, 72, 73, 74, 75},
+        .formations = {68, 69, 70, 71, 72, 73, 74, 75},
         .weights = {3, 5, 5, 5, 3, 2, 1, 1},
     },
-    // Tret Tree Branch (any entrance)
+    // Tret Tree: SceneId_TretTreeBranch, its other entrances
     {
         .rate = 45,
         .level = 8,
-        .enemies = {68, 69, 70, 71, 72, 73, 74, 75},
+        .formations = {68, 69, 70, 71, 72, 73, 74, 75},
         .weights = {2, 1, 5, 8, 1, 8, 1, 5},
     },
-    // Tret Tree Interiors (entrances 6 to 9, 14, 51 to 59)
+    // Tret Tree: SceneId_TreeRooms entrances 6 to 9, 14 and 51 to 59
     {
         .rate = 45,
         .level = 8,
-        .enemies = {68, 69, 70, 71, 72, 73, 74, 75},
+        .formations = {68, 69, 70, 71, 72, 73, 74, 75},
         .weights = {1, 1, 1, 1, 2, 4, 12, 8},
     },
-    // BilibinCaveRapier (any entrance)
+    // Bilibin Cave: SceneId_BilibinCaveRapier, its other entrances
     {
         .rate = 30,
         .level = 8,
-        .enemies = {77, 78, 79, 80, 81, 82, 83, 84},
+        .formations = {77, 78, 79, 80, 81, 82, 83, 84},
         .weights = {6, 6, 4, 4, 2, 2, 1, 1},
     },
-    // BilibinCaveIce (any entrance)
+    // Bilibin Cave: SceneId_BilibinCaveIce, its other entrances
     {
         .rate = 30,
         .level = 8,
-        .enemies = {77, 78, 79, 80, 81, 82, 83, 84},
+        .formations = {77, 78, 79, 80, 81, 82, 83, 84},
         .weights = {2, 2, 2, 4, 4, 5, 7, 7},
     },
-    // BilibinCaveRapier (entrances 5, 6)
+    // Bilibin Cave: SceneId_BilibinCaveRapier entrances 5 and 6
     {
         .rate = 30,
         .level = 9,
-        .enemies = {77, 78, 79, 80, 81, 82, 83, 84},
+        .formations = {77, 78, 79, 80, 81, 82, 83, 84},
         .weights = {1, 1, 1, 1, 1, 2, 2, 2},
     },
-    // BilibinCaveIce (entrance 5)
+    // Bilibin Cave: SceneId_BilibinCaveIce entrance 5
     {
         .rate = 30,
         .level = 9,
-        .enemies = {77, 78, 79, 80, 81, 82, 83, 84},
+        .formations = {77, 78, 79, 80, 81, 82, 83, 84},
         .weights = {1, 1, 1, 1, 1, 2, 2, 2},
     },
-    // World Map: terrain kind 21, snowfield (behavior 5)
+    // World Map, WORLD_MAP_ENCOUNTER_REGION_SNOWFIELD: snowfield
     {
         .rate = 25,
         .level = 9,
-        .enemies = {86, 87, 88, 89, 90},
+        .formations = {86, 87, 88, 89, 90},
         .weights = {3, 3, 5, 5, 5},
     },
-    // World Map: terrain kind 21, snowfield (behavior 6)
+    // World Map, WORLD_MAP_ENCOUNTER_REGION_SNOWFIELD: snow forest
     {
         .rate = 9,
         .level = 9,
-        .enemies = {86, 87, 88, 89, 90},
+        .formations = {86, 87, 88, 89, 90},
         .weights = {2, 2, 4, 4, 4},
     },
-    // Mercury Lighthouse Entrance, MercuryLighthouseLower
+    // Mercury Lighthouse: SceneId_MercuryLighthouseEntrance entrances 7 to 12 and 16 to 20, SceneId_MercuryLighthouseLower entrances 1 to 3
     {
         .rate = 40,
         .level = 9,
-        .enemies = {92, 93, 94, 95, 96, 97, 98, 99},
+        .formations = {92, 93, 94, 95, 96, 97, 98, 99},
         .weights = {4, 4, 4, 2, 2, 2, 2, 2},
     },
-    // MercuryLighthouseLower and MercuryLighthouseMiddle
+    // Mercury Lighthouse: SceneId_MercuryLighthouseLower entrances 5 to 8 and 11, SceneId_MercuryLighthouseMiddle entrances 3 and 4
     {
         .rate = 40,
         .level = 9,
-        .enemies = {92, 93, 94, 95, 96, 97, 98, 99},
+        .formations = {92, 93, 94, 95, 96, 97, 98, 99},
         .weights = {2, 2, 2, 4, 4, 2, 2, 2},
     },
-    // MercuryLighthouseMiddle and MercuryLighthouseUpper
+    // Mercury Lighthouse: SceneId_MercuryLighthouseUpper entrances 1 to 3, SceneId_MercuryLighthouseMiddle entrances 5, 6 and 10
     {
         .rate = 40,
         .level = 10,
-        .enemies = {97, 98, 99, 100, 101, 102, 103, 104},
+        .formations = {97, 98, 99, 100, 101, 102, 103, 104},
         .weights = {2, 2, 2, 4, 4, 4, 2, 2},
     },
-    // MercuryLighthouseUpper and MercuryLighthouseExterior
+    // Mercury Lighthouse: SceneId_MercuryLighthouseExterior entrances 1 and 2, SceneId_MercuryLighthouseUpper entrances 12 and 13
     {
         .rate = 40,
         .level = 11,
-        .enemies = {97, 98, 99, 100, 101, 102, 103, 104},
+        .formations = {97, 98, 99, 100, 101, 102, 103, 104},
         .weights = {1, 1, 1, 2, 2, 2, 4, 4},
     },
-    // MercuryLighthouseExterior (entrances 3, 4)
+    // Mercury Lighthouse: SceneId_MercuryLighthouseExterior entrances 3 and 4
     {
         .rate = 40,
         .level = 11,
-        .enemies = {97, 98, 99, 100, 101, 102, 103, 104},
+        .formations = {97, 98, 99, 100, 101, 102, 103, 104},
         .weights = {1, 1, 1, 2, 2, 2, 4, 4},
     },
-    // Event battles: Tret Tree, Mercury Lighthouse
+    // ENCOUNTER_ZONE_SCRIPTED_TRET_MERCURY
     {
-        .enemies = {106, 107, 108},
+        .formations = {106, 107, 108},
         .weights = {10, 10, 10},
     },
-    // World Map: terrain kind 31, grassland
+    // World Map, encounter region 31: grassland
     {
         .rate = 20,
         .level = 11,
-        .enemies = {120, 121, 122, 123},
+        .formations = {120, 121, 122, 123},
         .weights = {3, 3, 3, 3},
     },
-    // World Map: terrain kind 31, forest
+    // World Map, encounter region 31: forest
     {
         .rate = 9,
         .level = 11,
-        .enemies = {120, 121, 122, 123},
+        .formations = {120, 121, 122, 123},
         .weights = {1, 1, 1, 1},
     },
-    // FuchinFallsCaveEntrance and FuchinFallsCaveZephyr
+    // Fuchin Falls Cave: SceneId_FuchinFallsCaveEntrance, SceneId_FuchinFallsCaveZephyr
     {
         .rate = 38,
         .level = 11,
-        .enemies = {120, 121, 122, 123, 124, 125, 126, 127},
+        .formations = {120, 121, 122, 123, 124, 125, 126, 127},
         .weights = {4, 4, 4, 8, 6, 4, 2, 1},
     },
-    // FuchinFallsCaveDragonsEye
+    // Fuchin Falls Cave: SceneId_FuchinFallsCaveDragonsEye
     {
         .rate = 38,
         .level = 11,
-        .enemies = {120, 121, 122, 123, 124, 125, 126, 127},
+        .formations = {120, 121, 122, 123, 124, 125, 126, 127},
         .weights = {1, 2, 2, 3, 6, 6, 3, 2},
     },
-    // FuchinFallsCaveDragonStatue
+    // Fuchin Falls Cave: SceneId_FuchinFallsCaveDragonStatue
     {
         .rate = 38,
         .level = 11,
-        .enemies = {120, 121, 122, 123, 124, 125, 126, 127},
+        .formations = {120, 121, 122, 123, 124, 125, 126, 127},
         .weights = {1, 1, 2, 3, 4, 4, 6, 8},
     },
-    // MogallForestSign
+    // Mogall Forest: SceneId_MogallForestSign
     {
         .rate = 42,
         .level = 11,
-        .enemies = {129, 130, 131, 132, 133, 134, 135, 136},
+        .formations = {129, 130, 131, 132, 133, 134, 135, 136},
         .weights = {6, 6, 6, 3, 2, 1, 1, 1},
     },
-    // MogallForestQuartz
+    // Mogall Forest: SceneId_MogallForestQuartz
     {
         .rate = 42,
         .level = 12,
-        .enemies = {129, 130, 131, 132, 133, 134, 135, 136},
+        .formations = {129, 130, 131, 132, 133, 134, 135, 136},
         .weights = {1, 1, 3, 6, 6, 3, 1, 1},
     },
-    // MogallForestKillerApe
+    // Mogall Forest: SceneId_MogallForestKillerApe
     {
         .rate = 42,
         .level = 12,
-        .enemies = {129, 130, 131, 132, 133, 134, 135, 136},
+        .formations = {129, 130, 131, 132, 133, 134, 135, 136},
         .weights = {1, 1, 2, 2, 3, 4, 5, 5},
     },
-    // World Map: terrain kind 3, grassland, desert and beach
+    // World Map, encounter region 3: desert, beach, shallows and grassland
     {
         .rate = 25,
         .level = 12,
-        .enemies = {141, 142, 143, 144, 145, 146},
+        .formations = {141, 142, 143, 144, 145, 146},
         .weights = {3, 3, 1, 3, 1, 1},
     },
-    // World Map: terrain kind 3, forest
+    // World Map, encounter region 3: forest
     {
         .rate = 9,
         .level = 12,
-        .enemies = {141, 142, 143, 144, 145, 146},
+        .formations = {141, 142, 143, 144, 145, 146},
         .weights = {1, 1, 2, 1, 2, 2},
     },
-    // AltinPeakRailTunnel, AltinPeakSecondWaterBeast, AltinPeakSouthEntrance
+    // Altin Peak: SceneId_AltinPeakRailTunnel, SceneId_AltinPeakSecondWaterBeast, SceneId_AltinPeakSouthEntrance
     {
         .rate = 45,
         .level = 12,
-        .enemies = {148, 149, 150, 151, 152, 153, 154, 155},
+        .formations = {148, 149, 150, 151, 152, 153, 154, 155},
         .weights = {6, 6, 4, 2, 1, 1, 1, 1},
     },
-    // AltinPeakThirdWaterBeast and AltinPeakPool
+    // Altin Peak: SceneId_AltinPeakThirdWaterBeast, SceneId_AltinPeakPool
     {
         .rate = 45,
         .level = 13,
-        .enemies = {148, 149, 150, 151, 152, 153, 154, 155},
+        .formations = {148, 149, 150, 151, 152, 153, 154, 155},
         .weights = {1, 1, 2, 4, 3, 4, 2, 2},
     },
-    // AltinPeakSpritz, AltinPeakJunction, AltinPeakFallingRocks and AltinPeakWestExit
+    // Altin Peak: SceneId_AltinPeakSpritz, SceneId_AltinPeakJunction, SceneId_AltinPeakFallingRocks entrances 1 and 2, SceneId_AltinPeakWestExit
     {
         .rate = 42,
         .level = 13,
-        .enemies = {148, 149, 150, 151, 152, 153, 154, 155},
+        .formations = {148, 149, 150, 151, 152, 153, 154, 155},
         .weights = {1, 1, 2, 3, 4, 4, 8, 8},
     },
-    // LamakanDesertEast
+    // Lamakan Desert: SceneId_LamakanDesertEast
     {
         .rate = 40,
         .level = 13,
-        .enemies = {160, 161, 162, 163, 164, 165, 166, 167},
+        .formations = {160, 161, 162, 163, 164, 165, 166, 167},
         .weights = {5, 5, 4, 3, 3, 2, 1, 1},
     },
-    // LamakanDesertSmog
+    // Lamakan Desert: SceneId_LamakanDesertSmog
     {
         .rate = 40,
         .level = 14,
-        .enemies = {160, 161, 162, 163, 164, 165, 166, 167},
+        .formations = {160, 161, 162, 163, 164, 165, 166, 167},
         .weights = {1, 2, 3, 6, 6, 4, 2, 1},
     },
-    // LamakanDesertManticore
+    // Lamakan Desert: SceneId_LamakanDesertManticore
     {
         .rate = 40,
         .level = 14,
-        .enemies = {160, 161, 162, 163, 164, 165, 166, 167},
+        .formations = {160, 161, 162, 163, 164, 165, 166, 167},
         .weights = {1, 1, 1, 2, 3, 4, 4, 5},
     },
-    // Event battles: Mogall Forest, Altin Peak, Lamakan Desert
+    // ENCOUNTER_ZONE_SCRIPTED_MOGALL_ALTIN_LAMAKAN
     {
-        .enemies = {138, 139, 157, 158, 169, 170},
+        .formations = {138, 139, 157, 158, 169, 170},
         .weights = {10, 10, 10, 10, 10, 10},
     },
-    // World Map: terrain kind 4, grassland, desert and beach
+    // World Map, encounter region 4: desert, beach, shallows and grassland
     {
         .rate = 25,
         .level = 15,
-        .enemies = {180, 181, 182, 183, 184, 185, 186, 187},
+        .formations = {180, 181, 182, 183, 184, 185, 186, 187},
         .weights = {4, 4, 4, 4, 4, 2, 2, 2},
     },
-    // World Map: terrain kind 4, forest
+    // World Map, encounter region 4: forest
     {
         .rate = 9,
         .level = 15,
-        .enemies = {180, 181, 182, 183, 184, 185, 186, 187},
+        .formations = {180, 181, 182, 183, 184, 185, 186, 187},
         .weights = {2, 2, 2, 2, 3, 4, 4, 4},
     },
-    // ValeCaveKite (entrances 1 to 4)
+    // Vale Cave: SceneId_ValeCaveKite entrances 1 to 4
     {
         .rate = 40,
         .level = 15,
-        .enemies = {189, 190, 191, 192, 193, 194, 195, 196},
+        .formations = {189, 190, 191, 192, 193, 194, 195, 196},
         .weights = {6, 6, 6, 4, 4, 1, 1, 1},
     },
-    // ValeCaveKite (entrances 8 to 10)
+    // Vale Cave: SceneId_ValeCaveKite entrances 8 to 10
     {
         .rate = 40,
         .level = 15,
-        .enemies = {189, 190, 191, 192, 193, 194, 195, 196},
+        .formations = {189, 190, 191, 192, 193, 194, 195, 196},
         .weights = {4, 4, 4, 6, 6, 2, 2, 2},
     },
-    // ValeCaveLogs (entrances 1 to 3)
+    // Vale Cave: SceneId_ValeCaveLogs entrances 1 to 3
     {
         .rate = 40,
         .level = 15,
-        .enemies = {189, 190, 191, 192, 193, 194, 195, 196},
+        .formations = {189, 190, 191, 192, 193, 194, 195, 196},
         .weights = {2, 2, 2, 3, 3, 5, 5, 5},
     },
-    // ValeCaveLogs (entrances 4, 5)
+    // Vale Cave: SceneId_ValeCaveLogs entrances 4 and 5
     {
         .rate = 40,
         .level = 15,
-        .enemies = {189, 190, 191, 192, 193, 194, 195, 196},
+        .formations = {189, 190, 191, 192, 193, 194, 195, 196},
         .weights = {1, 1, 1, 2, 2, 5, 5, 5},
     },
-    // VaultCavePassage
+    // Vault Cave: SceneId_VaultCavePassage
     {
         .rate = 40,
         .level = 16,
-        .enemies = {201, 202, 203, 204, 205, 206, 207, 208},
+        .formations = {201, 202, 203, 204, 205, 206, 207, 208},
         .weights = {8, 8, 8, 4, 4, 4, 2, 2},
     },
-    // VaultCaveVambrace and VaultCaveMouth
+    // Vault Cave: SceneId_VaultCaveVambrace, SceneId_VaultCaveMouth
     {
         .rate = 40,
         .level = 16,
-        .enemies = {201, 202, 203, 204, 205, 206, 207, 208},
+        .formations = {201, 202, 203, 204, 205, 206, 207, 208},
         .weights = {2, 2, 2, 4, 4, 4, 8, 8},
     },
-    // Event battles: Tolbi ship
+    // ENCOUNTER_ZONE_TOLBI_SHIP
     {
         .level = 17,
-        .enemies = {210, 211, 212, 213},
+        .formations = {210, 211, 212, 213},
         .weights = {10, 10, 10, 10},
     },
-    // Event battles: Crossbone Isle
+    // ENCOUNTER_ZONE_CROSSBONE_ISLE_FIRST_GUARDS
     {
         .level = 17,
-        .enemies = {291, 292, 293, 294},
+        .formations = {291, 292, 293, 294},
         .weights = {10, 10, 10, 10},
     },
-    // World Map: terrain kind 5, grassland, desert and beach
+    // World Map, encounter region 5: desert, beach, shallows and grassland
     {
         .rate = 25,
         .level = 18,
-        .enemies = {220, 221, 222, 223, 224, 225, 226, 227},
+        .formations = {220, 221, 222, 223, 224, 225, 226, 227},
         .weights = {6, 6, 6, 6, 3, 3, 3, 3},
     },
-    // World Map: terrain kind 5, forest
+    // World Map, encounter region 5: forest
     {
         .rate = 9,
         .level = 18,
-        .enemies = {220, 221, 222, 223, 224, 225, 226, 227},
+        .formations = {220, 221, 222, 223, 224, 225, 226, 227},
         .weights = {3, 3, 3, 3, 6, 6, 6, 6},
     },
-    // AltmillerCaveEntrance
+    // Altmiller Cave: SceneId_AltmillerCaveEntrance
     {
         .rate = 40,
         .level = 17,
-        .enemies = {229, 230, 231, 232, 233, 234, 235, 236},
+        .formations = {229, 230, 231, 232, 233, 234, 235, 236},
         .weights = {6, 6, 4, 4, 4, 2, 1, 1},
     },
-    // AltmillerCaveBabi
+    // Altmiller Cave: SceneId_AltmillerCaveBabi
     {
         .rate = 40,
         .level = 17,
-        .enemies = {229, 230, 231, 232, 233, 234, 235, 236},
+        .formations = {229, 230, 231, 232, 233, 234, 235, 236},
         .weights = {4, 4, 6, 6, 4, 4, 2, 1},
     },
-    // AltmillerCaveVialChest
+    // Altmiller Cave: SceneId_AltmillerCaveVialChest
     {
         .rate = 40,
         .level = 18,
-        .enemies = {229, 230, 231, 232, 233, 234, 235, 236},
+        .formations = {229, 230, 231, 232, 233, 234, 235, 236},
         .weights = {3, 3, 4, 6, 6, 4, 2, 1},
     },
-    // AltmillerCaveSquall
+    // Altmiller Cave: SceneId_AltmillerCaveSquall
     {
         .rate = 40,
         .level = 18,
-        .enemies = {229, 230, 231, 232, 233, 234, 235, 236},
+        .formations = {229, 230, 231, 232, 233, 234, 235, 236},
         .weights = {2, 2, 4, 4, 6, 5, 5, 3},
     },
-    // AltmillerCaveCookieChest
+    // Altmiller Cave: SceneId_AltmillerCaveCookieChest
     {
         .rate = 40,
         .level = 18,
-        .enemies = {229, 230, 231, 232, 233, 234, 235, 236},
+        .formations = {229, 230, 231, 232, 233, 234, 235, 236},
         .weights = {2, 2, 3, 3, 4, 6, 6, 4},
     },
-    // AltmillerCaveDraught (entrances 50, 51)
+    // Altmiller Cave: SceneId_AltmillerCaveDraught entrances 50 and 51
     {
         .rate = 40,
         .level = 18,
-        .enemies = {229, 230, 231, 232, 233, 234, 235, 236},
+        .formations = {229, 230, 231, 232, 233, 234, 235, 236},
         .weights = {1, 1, 1, 2, 2, 4, 6, 6},
     },
-    // Event battles: Colosso
+    // ENCOUNTER_ZONE_COLOSSO
     {
         .level = 19,
-        .enemies = {238, 239, 240, 241, 242, 243},
+        .formations = {238, 239, 240, 241, 242, 243},
         .weights = {10, 10, 10, 10, 10, 10},
     },
-    // GondowanCave (any entrance)
+    // Gondowan Cave: SceneId_GondowanCave, its other entrances
     {
         .rate = 30,
         .level = 19,
-        .enemies = {250, 251, 252, 253, 254, 255, 256, 257},
+        .formations = {250, 251, 252, 253, 254, 255, 256, 257},
         .weights = {3, 3, 4, 4, 5, 5, 6, 6},
     },
-    // GondowanCaveRiver (any entrance)
+    // Gondowan Cave: SceneId_GondowanCaveRiver, its other entrances
     {
         .rate = 30,
         .level = 20,
-        .enemies = {250, 251, 252, 253, 254, 255, 256, 257},
+        .formations = {250, 251, 252, 253, 254, 255, 256, 257},
         .weights = {3, 3, 4, 4, 5, 5, 6, 6},
     },
-    // GondowanCaveRiver (entrances 1, 2)
+    // Gondowan Cave: SceneId_GondowanCaveRiver entrances 1 and 2
     {
         .rate = 30,
         .level = 20,
-        .enemies = {250, 251, 252, 253, 254, 255, 256, 257},
+        .formations = {250, 251, 252, 253, 254, 255, 256, 257},
         .weights = {3, 3, 4, 4, 5, 5, 6, 6},
     },
-    // GondowanCave (entrances 1 to 3)
+    // Gondowan Cave: SceneId_GondowanCave entrances 1 to 3
     {
         .rate = 30,
         .level = 20,
-        .enemies = {250, 251, 252, 253, 254, 255, 256, 257},
+        .formations = {250, 251, 252, 253, 254, 255, 256, 257},
         .weights = {3, 3, 4, 4, 5, 5, 6, 6},
     },
-    // LunpaFortressCave (entrances 1, 2)
+    // Lunpa Fortress: SceneId_LunpaFortressCave entrances 1 and 2
     {
         .rate = 35,
         .level = 21,
-        .enemies = {259, 260, 261, 262},
+        .formations = {259, 260, 261, 262},
         .weights = {2, 2, 2, 2},
     },
-    // LunpaFortressCave (any entrance)
+    // Lunpa Fortress: SceneId_LunpaFortressCave, its other entrances
     {
         .rate = 35,
         .level = 21,
-        .enemies = {259, 260, 261, 262},
+        .formations = {259, 260, 261, 262},
         .weights = {2, 2, 2, 2},
     },
-    // LunpaFortressToadonpa (entrances 1, 2)
+    // Lunpa Fortress: SceneId_LunpaFortressToadonpa entrances 1 and 2
     {
         .rate = 35,
         .level = 21,
-        .enemies = {259, 260, 261, 262},
+        .formations = {259, 260, 261, 262},
         .weights = {2, 2, 2, 2},
     },
-    // World Map: terrain kind 6, grassland, desert and beach
+    // World Map, encounter region 6: desert, beach, shallows and grassland
     {
         .rate = 25,
         .level = 22,
-        .enemies = {268, 269, 270, 271, 272, 273, 274, 275},
+        .formations = {268, 269, 270, 271, 272, 273, 274, 275},
         .weights = {4, 4, 3, 3, 3, 3, 3, 3},
     },
-    // World Map: terrain kind 6, forest
+    // World Map, encounter region 6: forest
     {
         .rate = 9,
         .level = 22,
-        .enemies = {268, 269, 270, 271, 272, 273, 274, 275},
+        .formations = {268, 269, 270, 271, 272, 273, 274, 275},
         .weights = {2, 2, 3, 3, 3, 4, 4, 4},
     },
-    // SuhallaDesertNorth
+    // Suhalla Desert: SceneId_SuhallaDesertNorth
     {
         .rate = 40,
         .level = 22,
-        .enemies = {277, 278, 279, 280, 281, 282, 284, 285},
+        .formations = {277, 278, 279, 280, 281, 282, 284, 285},
         .weights = {4, 4, 4, 5, 3, 4, 2, 2},
     },
-    // SuhallaDesertSouth
+    // Suhalla Desert: SceneId_SuhallaDesertSouth
     {
         .rate = 40,
         .level = 22,
-        .enemies = {277, 278, 279, 280, 281, 282, 284, 285},
+        .formations = {277, 278, 279, 280, 281, 282, 284, 285},
         .weights = {2, 2, 2, 4, 3, 4, 4, 4},
     },
-    // Event battles: Crossbone Isle
+    // ENCOUNTER_ZONE_CROSSBONE_ISLE_LAST_GUARDS
     {
         .level = 17,
-        .enemies = {296, 297, 298, 300, 301, 302},
+        .formations = {296, 297, 298, 300, 301, 302},
         .weights = {10, 10, 10, 10, 10, 10},
     },
-    // SuhallaGateDew (entrances 1, 2)
+    // Suhalla Gate: SceneId_SuhallaGateDew entrances 1 and 2
     {
         .rate = 30,
         .level = 23,
-        .enemies = {310, 311, 312, 313, 314, 315, 316, 317},
+        .formations = {310, 311, 312, 313, 314, 315, 316, 317},
         .weights = {6, 6, 6, 3, 3, 2, 2, 2},
     },
-    // SuhallaGateDew (any entrance)
+    // Suhalla Gate: SceneId_SuhallaGateDew, its other entrances
     {
         .rate = 30,
         .level = 24,
-        .enemies = {310, 311, 312, 313, 314, 315, 316, 317},
+        .formations = {310, 311, 312, 313, 314, 315, 316, 317},
         .weights = {2, 3, 3, 6, 6, 3, 3, 3},
     },
-    // GatewayCave (entrances 1, 2)
+    // Gateway Cave: SceneId_GatewayCave entrances 1 and 2
     {
         .rate = 30,
         .level = 24,
-        .enemies = {310, 311, 312, 313, 314, 315, 316, 317},
+        .formations = {310, 311, 312, 313, 314, 315, 316, 317},
         .weights = {1, 1, 2, 2, 2, 3, 3, 3},
     },
-    // GatewayCave (any entrance)
+    // Gateway Cave: SceneId_GatewayCave, its other entrances
     {
         .rate = 30,
         .level = 24,
-        .enemies = {310, 311, 312, 313, 314, 315, 316, 317},
+        .formations = {310, 311, 312, 313, 314, 315, 316, 317},
         .weights = {2, 2, 3, 3, 3, 6, 6, 6},
     },
-    // VenusLighthouseGroundFloor (any entrance)
+    // Venus Lighthouse: SceneId_VenusLighthouseGroundFloor, its other entrances
     {
         .rate = 40,
         .level = 25,
-        .enemies = {319, 320, 321, 322, 323},
+        .formations = {319, 320, 321, 322, 323},
         .weights = {4, 4, 4, 4, 4},
     },
-    // VenusLighthouseGroundFloor (entrances 20 to 26, 30 to 32)
+    // Venus Lighthouse: SceneId_VenusLighthouseGroundFloor entrances 20 to 26 and 30 to 32
     {
         .rate = 40,
         .level = 25,
-        .enemies = {319, 320, 321, 322, 323},
+        .formations = {319, 320, 321, 322, 323},
         .weights = {4, 4, 4, 4, 4},
     },
-    // BabiLighthouseEntry, BabiLighthouseLuff, BabiLighthouseStoneDoor, TunnelRuinsLadyStatues (entrances 1 to 3)
+    // Babi Lighthouse Entry and Babi Lighthouse: SceneId_BabiLighthouseEntry, SceneId_BabiLighthouseLuff, SceneId_BabiLighthouseStoneDoor, SceneId_TunnelRuinsLadyStatues entrances 1 to 3
     {
         .rate = 35,
         .level = 25,
-        .enemies = {328, 329, 330, 331, 332, 333, 334, 335},
+        .formations = {328, 329, 330, 331, 332, 333, 334, 335},
         .weights = {6, 6, 6, 4, 4, 4, 2, 2},
     },
-    // TunnelRuinsGreatStatue, TunnelRuinsLadyStatues (entrances 8 to 11)
+    // Tunnel Ruins: SceneId_TunnelRuinsGreatStatue entrances 1, 2, 5 to 7 and 14 to 18, SceneId_TunnelRuinsLadyStatues entrances 8 to 11
     {
         .rate = 35,
         .level = 25,
-        .enemies = {328, 329, 330, 331, 332, 333, 334, 335},
+        .formations = {328, 329, 330, 331, 332, 333, 334, 335},
         .weights = {3, 3, 4, 6, 6, 4, 3, 3},
     },
-    // TunnelRuinsLadyStatues (entrances 12, 15 to 17)
+    // Tunnel Ruins: SceneId_TunnelRuinsLadyStatues entrances 12 and 15 to 17
     {
         .rate = 35,
         .level = 26,
-        .enemies = {328, 329, 330, 331, 332, 333, 334, 335},
+        .formations = {328, 329, 330, 331, 332, 333, 334, 335},
         .weights = {3, 3, 3, 4, 4, 4, 6, 6},
     },
-    // VenusLighthouseFirstFloor (any entrance)
+    // Venus Lighthouse: SceneId_VenusLighthouseFirstFloor, its other entrances
     {
         .rate = 34,
         .level = 27,
-        .enemies = {337, 338, 339, 340, 341, 342, 343, 344},
+        .formations = {337, 338, 339, 340, 341, 342, 343, 344},
         .weights = {4, 4, 3, 3, 3, 3, 2, 2},
     },
-    // VenusLighthouseFirstFloor (entrances 19, 20), VenusLighthouseSecondFloor
+    // Venus Lighthouse: SceneId_VenusLighthouseFirstFloor entrances 19 and 20, SceneId_VenusLighthouseSecondFloor
     {
         .rate = 32,
         .level = 28,
-        .enemies = {337, 338, 339, 340, 341, 342, 343, 344},
+        .formations = {337, 338, 339, 340, 341, 342, 343, 344},
         .weights = {3, 3, 4, 4, 3, 3, 2, 2},
     },
-    // VenusLighthouseThirdFloor
+    // Venus Lighthouse: SceneId_VenusLighthouseThirdFloor
     {
         .rate = 30,
         .level = 29,
-        .enemies = {337, 338, 339, 340, 341, 342, 343, 344},
+        .formations = {337, 338, 339, 340, 341, 342, 343, 344},
         .weights = {2, 2, 3, 3, 4, 4, 3, 3},
     },
-    // VenusLighthouseFourthFloor
+    // Venus Lighthouse: SceneId_VenusLighthouseFourthFloor
     {
         .rate = 30,
         .level = 30,
-        .enemies = {337, 338, 339, 340, 341, 342, 343, 344},
+        .formations = {337, 338, 339, 340, 341, 342, 343, 344},
         .weights = {2, 2, 2, 3, 3, 3, 4, 4},
     },
-    // Event battles: Suhalla Desert, Venus Lighthouse Aerie, World Map
+    // ENCOUNTER_ZONE_SCRIPTED
     {
-        .enemies = {347, 346, 264, 265, 266, 287, 288, 289},
+        .formations = {347, 346, 264, 265, 266, 287, 288, 289},
         .weights = {10, 10, 30, 10, 10, 80, 10, 10},
     },
-    // Mimic chests
+    // ENCOUNTER_ZONE_MIMIC
     {
-        .enemies = {350, 351, 352, 353, 354, 355, 356, 357},
+        .formations = {350, 351, 352, 353, 354, 355, 356, 357},
         .weights = {10, 10, 10, 10, 10, 10, 10, 10},
     },
-    // Venus Djinn battles
+    // ENCOUNTER_ZONE_VENUS_DJINN
     {
-        .enemies = {360, 360, 360, 361, 361, 361, 362},
+        .formations = {360, 360, 360, 361, 361, 361, 362},
         .weights = {10, 10, 10, 10, 10, 10, 10},
     },
-    // Mercury Djinn battles
+    // ENCOUNTER_ZONE_MERCURY_DJINN
     {
-        .enemies = {365, 365, 365, 366, 367, 367, 368},
+        .formations = {365, 365, 365, 366, 367, 367, 368},
         .weights = {10, 10, 10, 10, 10, 10, 10},
     },
-    // Mars Djinn battles
+    // ENCOUNTER_ZONE_MARS_DJINN
     {
-        .enemies = {371, 371, 372, 372, 372, 373, 373},
+        .formations = {371, 371, 372, 372, 372, 373, 373},
         .weights = {10, 10, 10, 10, 10, 10, 10},
     },
-    // Jupiter Djinn battles
+    // ENCOUNTER_ZONE_JUPITER_DJINN
     {
-        .enemies = {376, 376, 377, 377, 377, 378, 379},
+        .formations = {376, 376, 377, 377, 377, 378, 379},
         .weights = {10, 10, 10, 10, 10, 10, 10},
     },
 };

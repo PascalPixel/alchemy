@@ -84,8 +84,8 @@ enum EncounterZoneId {
   /// The monsters behind the east doors of Crossbone Isle Cave's next five
   /// floors, one slot a floor, then Deadbeard on the Pirate Ship.
   ENCOUNTER_ZONE_CROSSBONE_ISLE_LAST_GUARDS = 84,
-  /// The event battles: Suhalla Desert, Venus Lighthouse Aerie and the
-  /// World Map; its first slot is the Aerie's second battle.
+  /// The event battles: Lunpa Fortress, Suhalla Desert, Venus Lighthouse
+  /// Aerie and the World Map; its first slot is the Aerie's second battle.
   ENCOUNTER_ZONE_SCRIPTED = 98,
   ENCOUNTER_ZONE_MIMIC = 99, ///< mimic chests, by the chest's slot
   /// The Djinn battles, one zone for each element in element order.

@@ -17,8 +17,8 @@ struct EncounterZone {
   /// scripted battles, mimics and Djinn use.
   u16 rate;
   u16 level; ///< the party level the zone is made for
-  /// The formations that can appear, rows of battle/formations.c.
-  u16 enemies[ENCOUNTER_GROUP_COUNT];
+  /// The formations that can appear, by formation id (battle/formations.c).
+  u16 formations[ENCOUNTER_GROUP_COUNT];
   u8 weights[ENCOUNTER_GROUP_COUNT]; ///< each formation's relative chance
 };
 

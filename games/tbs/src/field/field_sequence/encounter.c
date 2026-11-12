@@ -227,7 +227,7 @@ s32 Encounter_CountStepsAndSelectFormation(s32 zone, s32 steps) {
       pick -= entry->weights[i];
     } while (pick >= 0);
   }
-  sum = entry->enemies[i];
+  sum = entry->formations[i];
   Encounter_SelectBattleMusic(zone, i);
   return sum;
 }

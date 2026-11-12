@@ -51,7 +51,7 @@ struct ShakeWork {
   struct ShakeParticle particles[SHAKE_SPRITE_COUNT];
 };
 
-// An object's sprite.
+// An object's sprite; the sway shakes it sideways by its offset.
 struct ObjectSprite {
   u8 unk00[0x12];
   u16 offsetX;
@@ -79,7 +79,6 @@ void BattleEffect_PrepareBufferInterpolation(void);
 void Animation_ApplyChildValueFar(void *sprite, s32 value);
 void Func_080e43a4(void *source, void *buffer, s32 size);
 void wait(s32 frames);
-void Sound_PlayFar(s32 cue);
 
 // Sways the view from side to side around the chosen object, as kind 19 does
 // with no object: the swing grows from 2 to 12 pixels, holds 40 frames,
@@ -217,4 +216,125 @@ void Func_080e8db0(void) {
   BattleEffect_PrepareBufferInterpolation();
 release:
   HeapSlot_Release(HEAP_SLOT_VIEW_MOVE);
+}
+
+#undef SWAY_PEAK
+#undef SWAY_RAMP
+#undef SWAY_HOLD_FRAMES
+
+// Field Psynergy kind 19 (BattleEffect_Run's case 19).
+
+#define VIEW_MOVE_WORK_SIZE 0x2154
+
+// The sway's amplitude (16.16 pixels) and how it ramps.
+#define SWAY_PEAK 0x60000
+#define SWAY_RAMP 0x2666 // 0.15 pixels a frame
+#define SWAY_HOLD_FRAMES 10
+#define SWAY_SHAKE_FRAMES 50 // the hold while objects shake
+
+// Sways the view from side to side, with a sound every 16 frames: the swing
+// grows from 2 to 6 pixels, holds, shrinks back to 2 and stops. While the
+// field is in control mode 2 the nearby objects' sprites shake with it; when
+// there are any, the hold lasts 50 frames instead of 10. Then the view bounds
+// and the sprites come back.
+void Func_080e9090(void) {
+  struct ViewMoveWork *work =
+      HeapSlot_Alloc(HEAP_SLOT_VIEW_MOVE, VIEW_MOVE_WORK_SIZE);
+  struct EffectScene *scene = Ram_HeapSlots->effectWork;
+  struct EventWork *event = Ram_HeapSlots->eventWork;
+  s32 frameCount;
+  s32 phase;
+  s32 i;
+  s32 amplitude;
+  s32 state;
+  s32 frames;
+
+  BattleEffect_InitializeSharedScene();
+  BattleEffect_SetObjectUpdateMode(scene->mainObject, 0);
+  Func_080e89e4(VIEW_MOVE_X);
+  ViewMove_SaveNearbySprites();
+  wait(10);
+
+  phase = 0;
+  frameCount = 0;
+  amplitude = SWAY_START;
+  state = SWAY_GROW;
+  frames = 0;
+  do {
+    if ((frameCount & 15) == 15)
+      Sound_PlayFar(SE_SWAY);
+
+    // Shake the gathered objects' sprites with the view.
+    if (event->controlMode == 2) {
+      for (i = 0; i < work->count; i++) {
+        struct ObjectSprite *sprite = work->objects[i]->animation;
+        s32 offset = work->spriteOffsets[i];
+
+        if (amplitude > 0)
+          sprite->offsetX =
+              offset + Iwram_MulQ16(Trig_Sin(phase * 3 << 11), amplitude / 384);
+        else
+          sprite->offsetX = offset;
+      }
+    }
+
+    Func_080e8b44(VIEW_MOVE_X, phase++, amplitude);
+    switch (state) {
+    case SWAY_GROW:
+      amplitude += SWAY_RAMP;
+      if (amplitude >= SWAY_PEAK) {
+        state = SWAY_HOLD;
+        frames = -1;
+      }
+      break;
+    case SWAY_HOLD:
+      if (work->count != 0) {
+        if (frames == SWAY_SHAKE_FRAMES) {
+          state = SWAY_SHRINK;
+          frames = -1;
+        }
+      } else if (frames == SWAY_HOLD_FRAMES) {
+        state = SWAY_SHRINK;
+        frames = -1;
+      }
+      break;
+    case SWAY_SHRINK:
+      amplitude -= SWAY_RAMP;
+      if (amplitude <= SWAY_START) {
+        state = SWAY_SETTLE;
+        frames = -1;
+      }
+      break;
+    case SWAY_SETTLE:
+      amplitude = 0;
+      if (frames == 0)
+        state = SWAY_DONE;
+      break;
+    }
+    wait(1);
+    frames++;
+    frameCount++;
+  } while (state != SWAY_DONE);
+
+  Func_080e8c9c();
+  ViewMove_RestoreNearbySprites();
+  BattleEffect_PrepareBufferInterpolation();
+  HeapSlot_Release(HEAP_SLOT_VIEW_MOVE);
+}
+
+#include "dma.h"
+
+/// Moves rows 1 to rows - 2 of a buffer down one row by DMA, dropping the
+/// last, then clears row 0 (stride bytes per row).
+void BattleEffect_ShiftRowsDown(u8 *base, s32 stride, s32 rows) {
+  u8 *source = base + (rows - 2) * stride;
+  u8 *destination = base + (rows - 1) * stride;
+  s32 i;
+
+  for (i = rows - 1; i != 1; i--) {
+    Dma_Set(source, destination, DMA_COPY_WORDS(stride / 4), REG_DMA3);
+    source -= stride;
+    destination -= stride;
+  }
+  Iwram_FillWords(base, stride, 0);
 }

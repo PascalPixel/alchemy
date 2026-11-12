@@ -119,7 +119,7 @@ s32 Encounter_ResolveWorldMapZoneAndBackdrop(void *);
 void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
                                        u32 mode);
 void BattleEffect_RunSparkGroups(struct BattleEffectArgument *effect, s32 kind);
-void BattleEffect_SnapScaleToFull(void *object);
+void BattleEffect_SnapScaleToFull(struct Actor *object);
 void BattleEffect_StartBufferInterpolation(s32 frames);
 struct Actor *BattleEffect_StartRandomParticleEmitter(s32 actor, s32 item);
 void BattleEffect_UpdateArcEffect(void);

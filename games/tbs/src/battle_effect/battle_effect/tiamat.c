@@ -186,8 +186,8 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectParams *args,
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 
     // From frame 128 the trails keep only half; over frames 160 to 175 the
-    // canvas is filled each frame, with level 16 and on the last two frames
-    // level 63, while the palette brightens; from 176 the pixels fade 2
+    // canvas is filled each frame, with level 16 and on the last two frames at
+    // its brightest, while the palette brightens; from 176 the pixels fade 2
     // levels a frame.
     if (frame == 128)
       work->transferValue = CANVAS_FADE_HALF;
@@ -198,7 +198,7 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectParams *args,
     } else if (frame >= 160 && frame <= 175) {
       EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, CANVAS_FILL_WORD(16));
       if (frame > 173)
-        work->transferValue = CANVAS_FILL_WORD(63);
+        work->transferValue = CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST);
       Palette_BrightenBgEntries(2, 2, 2);
     }
 

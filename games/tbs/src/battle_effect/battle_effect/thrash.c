@@ -73,7 +73,7 @@ void BattleEffect_RunVorpalSlash(struct BattleEffectParams *args) {
 ///
 /// The user steps up to the first target over 16 frames. Then four 120x120
 /// pictures show for four frames each (mirrored when args->side is
-/// EFFECT_SIDE_PARTY), the canvas fills with colour 63 on frames 16 to 19,
+/// EFFECT_SIDE_PARTY), the canvas fills at its brightest on frames 16 to 19,
 /// the battle shows the damage on frame 18, and on frame 20 the target reels
 /// and the screen shakes. 21 frames.
 ///
@@ -142,7 +142,8 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectParams *args, s32 mode) {
       draw[0](canvas, Ram_MapGridCellBuffer + FLASHING_STRIKE_PICTURE_BYTES, 0,
               0, 120, 120);
     if (frame >= 16 && frame <= 19)
-      Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
+      Iwram_FillWords(canvas, CANVAS_BYTES,
+                      CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
     if (frame == 18)
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     if (frame == 20) {

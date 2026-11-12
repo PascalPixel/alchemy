@@ -29,7 +29,7 @@
 /// over it; the sword drops in, holds, sinks and plunges after frame 60. A ring
 /// of flashes bursts from frame 64, sparks fly from frame 60 as the battle
 /// shows the damage, and every target flashes and recoils on frame 68. The
-/// whole canvas flashes, filled with level 63, on frames 9 and 60.
+/// whole canvas flashes, filled at its brightest, on frames 9 and 60.
 ///
 /// Uses work->particles 0 to 31 for the flashes and PARTICLES for the dust
 /// (0 to 683) and the sparks after it. Opens and closes the canvas layer and
@@ -377,13 +377,15 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
       }
     }
 
-    // The canvas flashes, filled with level 63, as the sword lands and as it
-    // strikes.
+    // The canvas flashes, filled at its brightest, as the sword lands and as
+    // it strikes.
     if (frame == 9) {
-      Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
+      Iwram_FillWords(canvas, CANVAS_BYTES,
+                      CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
     }
     if (frame == 60) {
-      Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
+      Iwram_FillWords(canvas, CANVAS_BYTES,
+                      CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
     }
 
     BattleCamera_Shake(16, 16);

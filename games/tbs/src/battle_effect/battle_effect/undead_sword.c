@@ -131,7 +131,7 @@ void BattleEffect_RunUndeadSword(struct BattleEffectParams *args) {
         size = gUndeadSword_SparkSizes[cell];
         draw[0](canvas, src, drawX - size / 2, drawY - size / 2, size, size);
         particle->variant++;
-        Particle_AdvanceWithGravity2D(particle, 62, -Q16_ONE / 8);
+        Particle_AdvanceWithGravity2D(particle, 62, -px(1) / 8);
       }
       particle++;
     }

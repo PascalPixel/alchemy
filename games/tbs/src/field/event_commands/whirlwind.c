@@ -111,7 +111,7 @@ void FieldEffect_CircleAnchor(struct Actor *actor) {
     effect->update = FieldEffect_WanderAroundAnchor;
     effect->swirlFrames = 0;
     effect->turnFrames = 0;
-    effect->gravity = Q16_ONE / 10;
+    effect->gravity = px(1) / 10;
     effect->velocityY = px(3);
     effect->facing = Random16();
   }
@@ -209,7 +209,7 @@ void FieldPsynergy_Whirlwind(void) {
       s32 dist;
 
       pos.x = ball->x.fixed;
-      pos.y = ball->y.fixed + step * (Q16_ONE * 4 / 5) + px(4);
+      pos.y = ball->y.fixed + step * (px(4) / 5) + px(4);
       pos.z = ball->z.fixed;
       dist = Random16() * 5 + px(3);
       Vector_AddPolarOffset(dist, Random16(), &pos);

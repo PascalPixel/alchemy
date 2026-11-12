@@ -64,9 +64,9 @@ void FieldPsynergy_LiftOnTarget(s32 unused) {
   startY = target->y.fixed;
   if (pair[0] != NULL && pair[1] != NULL && startY <= startY + px(32)) {
     do {
-      ((struct Actor *)pair[0])->y.fixed += Q16_ONE / 4;
-      ((struct Actor *)pair[1])->y.fixed += Q16_ONE / 4;
-      target->y.fixed += Q16_ONE / 4;
+      ((struct Actor *)pair[0])->y.fixed += px(1) / 4;
+      ((struct Actor *)pair[1])->y.fixed += px(1) / 4;
+      target->y.fixed += px(1) / 4;
       wait(1);
     } while (target->y.fixed <= startY + px(32));
   }

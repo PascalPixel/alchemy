@@ -94,14 +94,14 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
     // Frame 0: both leap at 15 pixels a frame. Frame 11: both turn upside
     // down, raised by their own heights so they flip about their middles.
     // Actor.gravity is taken off velocityY each frame the actor is above
-    // the ground (Actor_UpdateAll), in 16.16 pixels a frame per frame: Q16_ONE
-    // * 57 / 100 here is about 0.57, the bounce's BATTLE_UNIT_GRAVITY and
-    // Q16_ONE * 47 / 100 about 0.67 and 0.47.
+    // the ground (Actor_UpdateAll), in 16.16 pixels a frame per frame:
+    // px(57) / 100 here is about 0.57, the bounce's BATTLE_UNIT_GRAVITY and
+    // px(47) / 100 about 0.67 and 0.47.
     if (frame == 0) {
       target->velocityY = px(15);
-      target->gravity = Q16_ONE * 57 / 100;
+      target->gravity = px(57) / 100;
       user->velocityY = px(15);
-      user->gravity = Q16_ONE * 57 / 100;
+      user->gravity = px(57) / 100;
     }
     if (frame == 11) {
       target->scaleY = -target->scaleY;
@@ -118,7 +118,7 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
       target->velocityY = px(8);
       target->gravity = BATTLE_UNIT_GRAVITY;
       user->velocityY = px(5);
-      user->gravity = Q16_ONE * 47 / 100;
+      user->gravity = px(47) / 100;
       user->acceleration = px(1);
       user->speedLimit = px(2);
       user->steeringFlags = 0;
@@ -822,7 +822,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
                 Q_16_16_TO_INT(piece->x), Q_16_16_TO_INT(piece->y),
                 gDeathPlunge_PieceWidths[i], gDeathPlunge_PieceHeights[i]);
         if (frame > 3)
-          Particle_AdvanceWithGravity2D(piece, 64, Q16_ONE / 4);
+          Particle_AdvanceWithGravity2D(piece, 64, px(1) / 4);
       }
     }
 
@@ -882,7 +882,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
           draw[1](canvas, work->sheet + (cell << 11),
                   Q_16_16_TO_INT(piece->x) - 16, Q_16_16_TO_INT(piece->y) - 32,
                   32, 64);
-          Particle_AdvanceWithGravity2D(piece, 60, -Q16_ONE / 16);
+          Particle_AdvanceWithGravity2D(piece, 60, -px(1) / 16);
           piece->variant++;
         }
       }

@@ -796,7 +796,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
             projected.x /= 2;
             EFFECT_DRAW_MOTE(blitters[index & 1], canvas, sprites, projected.x,
                              projected.y, size);
-            Particle_AdvanceWithGravity3D(step, 60, -Q16_ONE / 16);
+            Particle_AdvanceWithGravity3D(step, 60, -px(1) / 16);
             step->variant--;
           }
         }
@@ -1031,7 +1031,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
             projected.x /= 2;
             blitters[0](canvas, pictures + image * (32 * 64), projected.x - 16,
                         projected.y - 32, 32, 64);
-            Particle_AdvanceWithGravity3D(step, 60, Q16_ONE / 16);
+            Particle_AdvanceWithGravity3D(step, 60, px(1) / 16);
             step->variant++;
           }
         }
@@ -1308,9 +1308,9 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
             blitters[i & 1](canvas, pictures + image * (24 * 48),
                             projected.x - 12, projected.y - 24, 24, 48);
             if (mode == CASTING_IMPACT_IMPACT_ACID_BATH)
-              Particle_AdvanceWithGravity3D(step, 60, Q16_ONE / 64);
+              Particle_AdvanceWithGravity3D(step, 60, px(1) / 64);
             else
-              Particle_AdvanceWithGravity3D(step, 60, Q16_ONE / 16);
+              Particle_AdvanceWithGravity3D(step, 60, px(1) / 16);
             step->variant++;
           }
         }

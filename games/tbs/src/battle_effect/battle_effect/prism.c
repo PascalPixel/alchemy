@@ -125,7 +125,7 @@ void BattleEffect_RunPrism(struct BattleEffectParams *args) {
             // Shards gain 1/8 pixel a frame of downward speed each frame.
             // Their spin starts at 32 and slows by 1 every other frame, down
             // to 1.
-            Particle_AdvanceWithGravity2D(shard, 64, Q16_ONE / 8);
+            Particle_AdvanceWithGravity2D(shard, 64, px(1) / 8);
             shard->variant += shard->z;
             if (shard->z > 1 && (frame & 1))
               shard->z--;

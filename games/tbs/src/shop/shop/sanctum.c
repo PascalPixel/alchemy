@@ -424,7 +424,7 @@ void Sanctum_UpdateBurstSparkle(struct FieldParticle *effect) {
     effect->targetZ = position.z;
     // 16.16 pixels: at most 2 a frame, gaining 0.4 a frame
     effect->speedMax = px(2);
-    effect->acceleration = Q16_ONE * 2 / 5;
+    effect->acceleration = px(2) / 5;
     effect->turnStepLimited = state;
     *statePointer = *statePointer + 1;
   } else if (state == SANCTUM_SPARKLE_FLYING) {

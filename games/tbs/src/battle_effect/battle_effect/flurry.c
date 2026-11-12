@@ -305,7 +305,7 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
         size++;
         EFFECT_DRAW_MOTE(draw[(i / 2) & 1], canvas, sprites, screen.x, screen.y,
                          size);
-        Particle_AdvanceWithGravity3D(mote, 60, -Q16_ONE / 64);
+        Particle_AdvanceWithGravity3D(mote, 60, -px(1) / 64);
         if (mote->y < px(8))
           mote->velocityY = -mote->velocityY / 2;
         mote->variant--;

@@ -915,7 +915,7 @@ static void VenusLighthouse_LandWithRadialDust(void) {
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
   Scene_PlayQueuedMusic();
   leader->gravity = px(1);
-  leader->bounce = px(1) / 4;
+  leader->bounce = Q16_ONE / 4;
   Event_End();
 }
 

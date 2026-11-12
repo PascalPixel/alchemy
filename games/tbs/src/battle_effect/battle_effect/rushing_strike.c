@@ -211,7 +211,7 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
           sparkScreen.x >>= 1;
           EFFECT_DRAW_MOTE(draw[0], canvas, sheet, sparkScreen.x, sparkScreen.y,
                            size);
-          Particle_AdvanceWithGravity3D(spark, 60, -Q16_ONE / 128);
+          Particle_AdvanceWithGravity3D(spark, 60, -px(1) / 128);
           spark->variant--;
         }
       }

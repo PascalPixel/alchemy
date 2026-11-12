@@ -816,7 +816,7 @@ void LuckyDice_Run(void) {
         // Gravity; on the board a die bounces, loses speed, sometimes kicks
         // off in a random direction, and spins less. Once it barely bounces
         // it stops, turned to the nearest face.
-        rollingDie->velocityY += -Q16_ONE / 2;
+        rollingDie->velocityY += -px(1) / 2;
         if (rollingDie->y <= 0) {
           rollingDie->y = 0;
           rollingDie->velocityY = -rollingDie->velocityY * 48 / 64;

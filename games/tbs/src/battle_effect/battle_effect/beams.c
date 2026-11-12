@@ -256,7 +256,7 @@ void BattleEffect_RunBeam(struct BattleEffectParams *args) {
           size += 2;
           EFFECT_DRAW_FLARE(draw[pair & 1], canvas, sheet, screen.x, screen.y,
                             size);
-          Particle_AdvanceWithGravity3D(spark, 60, -Q16_ONE / 64);
+          Particle_AdvanceWithGravity3D(spark, 60, -px(1) / 64);
           spark->variant--;
         }
       }
@@ -512,7 +512,7 @@ void BattleEffect_RunRingAndSpark(struct BattleEffectParams *args) {
           spot.y += 16;
           EFFECT_DRAW_FLARE(draw[pair & 1], canvas, sheet, spot.x, spot.y,
                             size);
-          Particle_AdvanceWithGravity3D(spark, 60, -Q16_ONE / 64);
+          Particle_AdvanceWithGravity3D(spark, 60, -px(1) / 64);
           spark->variant--;
         }
       }

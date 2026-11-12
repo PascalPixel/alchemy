@@ -236,7 +236,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
       BattleMotion_ApplyKnockbackFar(work->args->targets[0], KNOCKBACK_HOP);
     }
     // After the strike the embers rise and fall back under a gravity of 1/8
-    // pixel a frame per frame (Q16_ONE / 8), undamped, until they drop below
+    // pixel a frame per frame (px(1) / 8), undamped, until they drop below
     // the ground.
     if (frame > DRAGON_CLOUD_STRIKE_FRAME) {
       // Embers are motes sized by depth. Only entries 56 to 63 play the
@@ -275,7 +275,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
           ember->x += ember->velocityX;
           ember->y += ember->velocityY;
           ember->z += ember->velocityZ;
-          ember->velocityY -= Q16_ONE / 8;
+          ember->velocityY -= px(1) / 8;
         }
       }
     }

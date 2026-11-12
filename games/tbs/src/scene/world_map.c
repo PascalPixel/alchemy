@@ -1287,7 +1287,7 @@ static void WorldMap_ShowHammetsCaravan(void) {
   Event_Wait(160);
   // The falling rock drops from 64 pixels up, and bounces as it lands.
   actor->gravity = px(1) / 10;
-  actor->bounce = px(1) / 10;
+  actor->bounce = Q16_ONE / 10;
   actor->scaleX = 3 * Q16_ONE / 2;
   actor->scaleY = 3 * Q16_ONE / 2;
   actor->timer = 0;

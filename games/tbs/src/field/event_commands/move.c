@@ -111,11 +111,11 @@ void FieldPsynergy_SteerPushedTarget(s32 targetId) {
   // target cycles its colours, keeps its facing while it moves, and reads
   // its ground from the overhead layer.
   pusher->speedLimit = px(4);
-  pusher->acceleration = Q16_ONE / 2;
+  pusher->acceleration = px(1) / 2;
   pusher->motionFlags = ACTOR_FLOATS;
   target->update = Actor_CycleSpriteColors;
-  target->speedLimit = Q16_ONE * 2 / 5;
-  target->acceleration = Q16_ONE / 5;
+  target->speedLimit = px(2) / 5;
+  target->acceleration = px(1) / 5;
   target->steeringFlags = moved;
   target->layer = 2;
   for (;;) {
@@ -209,19 +209,19 @@ void FieldPsynergy_SteerPushedTarget(s32 targetId) {
         pusher, gFieldEffect_QuadrantModes[(u16)(angle - direction) >> 14]);
     wait(15);
     target->paused = 0;
-    target->speedLimit = Q16_ONE / 5;
-    target->acceleration = Q16_ONE / 5;
+    target->speedLimit = px(1) / 5;
+    target->acceleration = px(1) / 5;
     Actor_SetMoveTargetFar(target, position.x, position.y, position.z);
     pusher->motionFlags = 0;
-    pusher->speedLimit = Q16_ONE / 5;
-    pusher->acceleration = Q16_ONE / 5;
+    pusher->speedLimit = px(1) / 5;
+    pusher->acceleration = px(1) / 5;
     Vector_AddPolarOffset(px(16), direction, &position);
     Actor_SetMoveTargetFar(pusher, position.x, position.y + px(16), position.z);
     if (moved == 1) {
       Actor_GetById(effectWork->firstActorId)->steeringFlags &=
           ~ACTOR_FACES_MOTION;
-      user->speedLimit = Q16_ONE / 5;
-      user->acceleration = Q16_ONE / 5;
+      user->speedLimit = px(1) / 5;
+      user->acceleration = px(1) / 5;
       Actor_SetMoveTargetFar(user, beyond.x, beyond.y, beyond.z);
     }
     // Land exactly on the cell, whatever the braking left.
@@ -365,7 +365,7 @@ void *FieldEffect_SpawnMoveHand(void *object) {
       child->acceleration = px(1);
       child->speedLimit = speed;
       child->motionFlags = ACTOR_FALLS;
-      child->gravity = Q16_ONE / 50;
+      child->gravity = px(1) / 50;
       spread = Random16();
       child->velocityY = spread - Random16();
       radius = Random16() * 24 + px(8);
@@ -427,7 +427,7 @@ void UpdateRisingParticleBurst(void *object) {
       child->speedLimit = Random16() + Q16_ONE;
       child->acceleration = Q16_ONE;
       child->motionFlags = ACTOR_FALLS;
-      child->gravity = Q16_ONE / 25;
+      child->gravity = px(1) / 25;
       spread = Random16();
       child->velocityY = spread - Random16();
       dist = Random16() * 24 + px(8);

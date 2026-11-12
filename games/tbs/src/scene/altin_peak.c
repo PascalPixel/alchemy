@@ -1059,7 +1059,7 @@ static void AltinPeak_RunBoulderChase(s32 boulderDelay) {
   shadow->update = (void (*)(struct Actor *))AltinPeak_ShadowFollowBoulder;
 #endif
   Actor_SetAnimation(ACTOR_FALLING_BOULDER, 4);
-  boulder->bounce = px(1) / 2;
+  boulder->bounce = Q16_ONE / 2;
   boulder->x.fixed = px(786);
   boulder->y.fixed = px(32);
   boulder->z.fixed = px(90);
@@ -1114,7 +1114,7 @@ static void AltinPeak_RunBoulderChase(s32 boulderDelay) {
   shadow->y.fixed = -px(64);
   // Let the rolling actor bounce before the final collapse.
   Actor_SetSpeed(ACTOR_FALLING_BOULDER, 1.6);
-  boulder->bounce = px(1) / 10;
+  boulder->bounce = Q16_ONE / 10;
   boulder->gravity = px(1) / 5;
   boulder->velocityY = px(4);
   Actor_MoveToAndWait(ACTOR_FALLING_BOULDER, 786, 604);

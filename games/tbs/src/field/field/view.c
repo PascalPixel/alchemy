@@ -5,7 +5,7 @@
 #include "../field_internal.h"
 
 #define MAPGRID_SHAKE_SETTLE_FRAMES 300
-#define MAPGRID_SHAKE_SETTLE_MAX_AMPLITUDE (Q16_ONE / 256 - 1)
+#define MAPGRID_SHAKE_SETTLE_MAX_AMPLITUDE (px(1) / 256 - 1)
 #define TILEMAP_TILE_BANK_BYTES (256 * (8 * 8))
 #define TILEMAP_MAP_BANK_BYTES (64 * 64)
 

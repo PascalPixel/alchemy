@@ -222,23 +222,23 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
         }
         formationVelocityZ = formationVelocityZ * 60 / 64;
         if (formationZ > px(132)) {
-          formationVelocityZ -= Q16_ONE / 8;
+          formationVelocityZ -= px(1) / 8;
         } else {
-          formationVelocityZ += Q16_ONE / 8;
+          formationVelocityZ += px(1) / 8;
         }
         formationX += formationVelocityX;
         formationZ += formationVelocityZ;
       } else if (frame <= 170) {
         if (frame <= 107) {
-          formationVelocityX += Q16_ONE / 8;
+          formationVelocityX += px(1) / 8;
         }
         formationVelocityX = formationVelocityX * 60 / 64;
         formationX += formationVelocityX;
         if (frame <= 117) {
           if (formationZ > px(138)) {
-            formationVelocityZ -= Q16_ONE / 8;
+            formationVelocityZ -= px(1) / 8;
           } else {
-            formationVelocityZ += Q16_ONE / 8;
+            formationVelocityZ += px(1) / 8;
           }
           formationVelocityZ = formationVelocityZ * 56 / 64;
           formationZ += formationVelocityZ;
@@ -575,7 +575,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
         // speed below y 120; one off the canvas is not drawn. A spark's mote
         // shrinks from size 6 or 7 down to 3 as its life runs out.
         PARTICLES[i].variant--;
-        Particle_AdvanceWithGravity2D(&PARTICLES[i], 60, Q16_ONE / 4);
+        Particle_AdvanceWithGravity2D(&PARTICLES[i], 60, px(1) / 4);
         y = PARTICLES[i].y >> 16;
         if (y > 120) {
           PARTICLES[i].velocityY = -PARTICLES[i].velocityY / 2;

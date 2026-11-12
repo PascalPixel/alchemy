@@ -458,7 +458,7 @@ void BattleEffect_RunSleep(struct BattleEffectParams *args) {
           drawFlipped(canvas, work->sheet + (cell << 10) - 4096,
                       (current->x >> 16) - 16, (current->y >> 16) - 16, 32, 32);
         current->y += current->velocityY;
-        current->velocityY += Q16_ONE / 8;
+        current->velocityY += px(1) / 8;
         current->variant += current->z;
         // BUG: meant to bounce a sheep off the ground (y 92), tumbling faster,
         // but it tests for a speed of exactly 0 just after gravity was added,

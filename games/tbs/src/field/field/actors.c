@@ -500,7 +500,7 @@ void Actor_StartIdle(struct Actor *actor) {
 void Actor_StartCamera(struct Actor *actor, s32 watchedActorHandle) {
   Actor_StartScript(actor, gActor_CameraScript);
   if (watchedActorHandle != 0) {
-    actor->acceleration = Q16_ONE / 2;
+    actor->acceleration = px(1) / 2;
     actor->speedLimit = px(4);
     actor->watchedActor = (struct Actor *)watchedActorHandle;
     actor->timer = 0;

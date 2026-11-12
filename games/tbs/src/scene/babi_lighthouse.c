@@ -292,7 +292,7 @@ static void BabiLighthouse_LandWithParticles(void) {
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
   Actor_Get(ACTOR_PARTY_LEADER)->gravity = px(1);
-  Actor_Get(ACTOR_PARTY_LEADER)->bounce = px(1) / 4;
+  Actor_Get(ACTOR_PARTY_LEADER)->bounce = Q16_ONE / 4;
   Event_End();
 }
 

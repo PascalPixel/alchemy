@@ -113,7 +113,7 @@ void ItemDisplay_EmitSparkles(struct Actor *actor) {
 /// with sparkles. While Reveal is active, its marks and sparkles are cleared
 /// first. Returns the picture's actor, or 0 without the actor or
 /// an empty actor slot. The picture is sprite 22, thrown up (velocityY 2 << 16,
-/// gravity Q16_ONE / 4: it rises for 8 frames) while it grows to full size, its
+/// gravity px(1) / 4: it rises for 8 frames) while it grows to full size, its
 /// icon drawn through HEAP_SLOT_GLYPH_TRANSFER, which is released again, and
 /// loaded into VRAM. The caller owns the picture: Field_ExamineCell releases it
 /// once the find is told. Called by Field_ExamineCell for coins and items
@@ -180,7 +180,7 @@ struct Actor *ItemDisplay_ShowItemInFront(s32 actorId, s32 item) {
     sprite->image.priority = 1;
 
     picture->velocityY = px(2);
-    picture->gravity = Q16_ONE / 4;
+    picture->gravity = px(1) / 4;
 
     // Draw the item's icon into HEAP_SLOT_GLYPH_TRANSFER, then send it to the
     // sprite's tiles: 128 bytes from byte 1,024 of the block.
@@ -242,7 +242,7 @@ void ItemDisplay_ShowPicture(void *object, s32 flags) {
       Actor_SetSpriteFlagsFar(object, 0);
       Actor_StartScriptFar(object, gFieldEffect_ParticleEmitterScript);
       ((struct Actor *)object)->velocityY = px(2);
-      ((struct Actor *)object)->gravity = Q16_ONE / 4;
+      ((struct Actor *)object)->gravity = px(1) / 4;
       ((struct Actor *)object)->update = ItemDisplay_EmitSparkles;
     }
     if (flags == 3) {

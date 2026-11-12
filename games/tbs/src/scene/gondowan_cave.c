@@ -499,7 +499,7 @@ static void GondowanCave_RunSpinningLeap(s32 actorId) {
   Sound_Play(SE_WHOOSH);
   Actor_SetSpeed(actorId, 2);
   Actor_SetDestination(actorId, 472, 288);
-  actor->gravity = 4 * px(1) / 5;
+  actor->gravity = px(4) / 5;
   actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   actor->layer = 0;
   Actor_WaitForMoveById(actorId);

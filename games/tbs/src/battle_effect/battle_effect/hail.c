@@ -127,7 +127,7 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
             Q_16_16_TO_INT(chip->y) - (height = gHail_CellHeights[cell]) / 2,
             width, height);
 #endif
-        Particle_AdvanceWithGravity3D(chip, 63, Q16_ONE / 16);
+        Particle_AdvanceWithGravity3D(chip, 63, px(1) / 16);
       }
     }
 

@@ -1534,7 +1534,7 @@ static s32 TolbiSpring_RunToss(s32 tossKind) {
     if (sTossFrame == 16) {
       Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_LEADER_TOSS);
       toss->launchFrame = 0;
-      toss->velocity.x = 13 * px(1) / 10;
+      toss->velocity.x = px(13) / 10;
       toss->velocity.y = px(4);
       toss->velocity.z = -px(2);
       toss->trail[0].x = px(120);

@@ -126,8 +126,8 @@ void FieldPsynergy_UpdateMindReadWave(void) {
       if (particle != 0) {
         sprite = (struct WaveEffectSprite *)particle->sprite;
         particle->motionFlags = 0;
-        particle->speedLimit = Q16_ONE * 16 / 25; // 0.64 pixels a frame
-        particle->acceleration = Q16_ONE * 16 / 25;
+        particle->speedLimit = px(16) / 25; // 0.64 pixels a frame
+        particle->acceleration = px(16) / 25;
         particle->facing = ArcTan2(from.z - to.z, from.x - to.x);
         particle->update = FieldEffect_ReleaseOnArrival;
         // No shadow or outline, sprite priority 1.

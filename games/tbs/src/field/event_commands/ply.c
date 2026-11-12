@@ -197,7 +197,7 @@ void FieldPsynergy_Ply(void) {
   if (target != 0) {
     target->timer = -1;
     target->speedLimit = px(5);
-    target->acceleration = Q16_ONE * 2 / 5;
+    target->acceleration = px(2) / 5;
     target->steeringFlags = 0;
     Actor_SetTargetPositionFromMagnitudeAngle(target, px(192),
                                               TRIG_TURN * 29 / 32);

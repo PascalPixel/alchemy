@@ -104,20 +104,20 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
   Actor_SetSpriteFlagsFar(target, 0);
   if (hands[0] != NULL && hands[1] != NULL) {
     while (target->y.fixed - target->groundHeight <= px(24)) {
-      actor->y.fixed += Q16_ONE * 3 / 8;
-      right->y.fixed += Q16_ONE * 3 / 8;
-      target->y.fixed += Q16_ONE * 3 / 8;
+      actor->y.fixed += px(3) / 8;
+      right->y.fixed += px(3) / 8;
+      target->y.fixed += px(3) / 8;
       wait(1);
     }
   }
   hands[0]->speedLimit = px(4);
-  hands[0]->acceleration = Q16_ONE / 2;
+  hands[0]->acceleration = px(1) / 2;
   hands[1]->speedLimit = px(4);
-  hands[1]->acceleration = Q16_ONE / 2;
+  hands[1]->acceleration = px(1) / 2;
   // As in Move: the target keeps its facing and reads its ground from layer
   // 2 while it is carried.
-  target->speedLimit = Q16_ONE * 2 / 5;
-  target->acceleration = Q16_ONE / 5;
+  target->speedLimit = px(2) / 5;
+  target->acceleration = px(1) / 5;
   target->steeringFlags = 0;
   target->layer = 2;
 
@@ -184,14 +184,14 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
       // i is the overlap test's 0 here: unpause the target and, once it is
       // on the cell, stop it dead. It moves at 0.2 pixels a frame.
       target->paused = i;
-      target->speedLimit = Q16_ONE / 5;
-      target->acceleration = Q16_ONE / 5;
+      target->speedLimit = px(1) / 5;
+      target->acceleration = px(1) / 5;
       Actor_SetMoveTargetFar(target, pos.x, pos.y, pos.z);
-      hands[0]->speedLimit = Q16_ONE / 5;
-      hands[0]->acceleration = Q16_ONE / 5;
+      hands[0]->speedLimit = px(1) / 5;
+      hands[0]->acceleration = px(1) / 5;
       second = hands[1];
-      second->speedLimit = Q16_ONE / 5;
-      second->acceleration = Q16_ONE / 5;
+      second->speedLimit = px(1) / 5;
+      second->acceleration = px(1) / 5;
       Actor_SetMoveTargetFar(hands[0], pos.x + px(16), pos.y, pos.z);
       Actor_SetMoveTargetFar(second, pos.x - px(16), pos.y, pos.z);
       Actor_WaitForMoveFar(target);

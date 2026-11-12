@@ -175,7 +175,7 @@ void Event_SpawnActorPlacements(struct ActorPlacement *entry, s32 slot) {
       // ground below.
       if (object->y.fixed != 0) {
         object->motionFlags = ACTOR_FLOATS;
-        object->y.fixed += Q16_ONE / 2;
+        object->y.fixed += px(1) / 2;
       }
       if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
         // World Map actor placements use single sprites and do not follow

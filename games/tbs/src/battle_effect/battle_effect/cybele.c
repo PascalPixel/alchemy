@@ -171,7 +171,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
     // Drop the formation sprites to a height of 64 pixels, and from frame
     // 48 to 96 take the two halves of Cybele's face through three poses:
     // her mouth opens as the thorns fly and shuts again.
-    speed += Q16_ONE / 4;
+    speed += px(1) / 4;
     height += speed;
     if (height > px(64))
       height = px(64);
@@ -204,7 +204,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
           tall = gCybele_ThornHeights[cellIndex];
           y -= tall >> 1;
           draw[0](canvas, cell, x, y, width, tall);
-          Particle_AdvanceWithGravity2D(thorn, 64, Q16_ONE / 16);
+          Particle_AdvanceWithGravity2D(thorn, 64, px(1) / 16);
         }
       }
     }
@@ -304,7 +304,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
                   gCybele_ChipHeights[cellIndex]);
           chip->x += chip->velocityX;
           chip->y += chip->velocityY;
-          chip->velocityY += Q16_ONE / 4;
+          chip->velocityY += px(1) / 4;
           if ((chip->y < 0 || chip->y > px(120)) && frame <= 159) {
             chip->x = (Random16() % 96) << 16;
             chip->y = ((Random16() & 7) + 88) << 16;
@@ -520,7 +520,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
               draw[0](canvas, work->sheet + offset, screen.x - (size >> 1),
                       screen.y - (size >> 1), size, size);
             }
-            Particle_AdvanceWithGravity2D(ember, 60, Q16_ONE / 16);
+            Particle_AdvanceWithGravity2D(ember, 60, px(1) / 16);
             ember->variant++;
           }
         }

@@ -25,8 +25,7 @@ enum FlashingStrikeMode {
 /// at 12.2 pixels a frame (16.16); after 29 frames the spark group plays with
 /// args->variant set to SPARK_GROUPS_THRASH, overriding the ability's own.
 void BattleEffect_RunThrash(struct BattleEffectParams *args) {
-  BattleMotion_ApproachTargetFar(args->user, args->targets[0], 24,
-                                 Q16_ONE * 61 / 5);
+  BattleMotion_ApproachTargetFar(args->user, args->targets[0], 24, px(61) / 5);
   wait(29);
   args->variant = SPARK_GROUPS_THRASH;
   BattleEffect_RunSparkGroups(args, SPARK_GROUPS_RISING);
@@ -45,8 +44,7 @@ void BattleEffect_RunThrash(struct BattleEffectParams *args) {
 /// after 12 frames with args->variant set to SPARK_GROUPS_SEVERE_BLOW,
 /// overriding the ability's own.
 void BattleEffect_RunUnusedSevereBlowLeap(struct BattleEffectParams *args) {
-  BattleMotion_ApproachTargetFar(args->user, args->targets[0], 24,
-                                 Q16_ONE * 36 / 5);
+  BattleMotion_ApproachTargetFar(args->user, args->targets[0], 24, px(36) / 5);
   wait(12);
   args->variant = SPARK_GROUPS_SEVERE_BLOW;
   BattleEffect_RunSparkGroups(args, SPARK_GROUPS_RISING);

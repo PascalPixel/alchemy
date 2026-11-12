@@ -798,7 +798,7 @@ void LuckyWheels_Update(void) {
           ((gLuckyWheels_TitleLetterTiles[i] << 4) + LUCKY_WHEELS_TITLE_TILES) |
           0xf000;
       p->y += p->velocityY;
-      p->velocityY += Q16_ONE / 4;
+      p->velocityY += px(1) / 4;
       if (work->timer % 256 == i * 4 + 200) {
         p->velocityY = px(6);
         p->variant = 0;

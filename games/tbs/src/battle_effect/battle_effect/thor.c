@@ -605,7 +605,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
       if (frame > 15) {
         if (frame == 32) {
           formationSpeedX = px(4);
-          formationSpeedY = -Q16_ONE / 4;
+          formationSpeedY = -px(1) / 4;
         }
         if (frame > 31) {
           formationX += formationSpeedX;

@@ -181,7 +181,7 @@ FieldEffect_InitializeFallingFragment(struct Actor *fragment) {
   // moves the kind load after the coordinate loads in the native English build.
   if (fragment != NULL) {
     fragment->motionFlags = ACTOR_FALLS;
-    fragment->gravity = Q16_ONE / 10;
+    fragment->gravity = px(1) / 10;
     Actor_SelectAnimationFar(fragment, 0);
     fragment->wait = 12;
     Actor_StartScriptFar(fragment, gFieldEffect_SharedParticleScript);

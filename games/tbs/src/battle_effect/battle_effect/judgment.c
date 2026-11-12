@@ -241,7 +241,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
         s32 z;
         s32 size;
 
-        Particle_AdvanceWithGravity3D(&JUDGMENT_SPARKS[i], 60, -Q16_ONE / 64);
+        Particle_AdvanceWithGravity3D(&JUDGMENT_SPARKS[i], 60, -px(1) / 64);
         Projection_Point(&JUDGMENT_SPARKS[i], &projectedPosition);
         projectedPosition.x >>= 1;
         projectedPosition.y -= 120;
@@ -629,7 +629,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
         particle->x = px((Random16() & 63) + 32);
         particle->y = px((Random16() & 31) + 96);
         particle->velocityY = ((Random16() & 15) + 16) << 15;
-        particle->z = Q16_ONE / 2 - (particle->x >> 7);
+        particle->z = px(1) / 2 - (particle->x >> 7);
         particle->variant = 1;
       }
     }

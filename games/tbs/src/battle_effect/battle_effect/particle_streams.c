@@ -196,7 +196,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
     // The leap: 10 pixels a frame upwards, against a gravity of Q16_ONE * 57 /
     // 100, about 0.57 pixels a frame lost each frame.
     actor->velocityY = px(10);
-    actor->gravity = Q16_ONE * 57 / 100;
+    actor->gravity = px(57) / 100;
     BattleEffect_TintBattler(work->args->user, -1, POSE_LEAP, -1, 0);
     Sound_PlayFar(SE_CRASH);
     direction = work->args->side == EFFECT_SIDE_PARTY ? mode : -1;
@@ -526,7 +526,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
                    mote->variant * (32 * 32),
                Q_16_16_TO_INT(mote->x) - 16, Q_16_16_TO_INT(mote->y) - 16, 32,
                32);
-          mote->x -= direction * (Q16_ONE * 5 / 4);
+          mote->x -= direction * (px(5) / 4);
           mote->y -= px(5);
           mote->variant++;
           if (mote->variant == 6)
@@ -643,7 +643,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
                 (gBattleEffect_MoteCells[size - 1] + (i & 1) * MOTE_SET_BYTES) +
                 PARTICLE_STREAMS_MOTE_OFFSETS,
             screen.x - size / 2, screen.y - size, size, size * 2);
-        Particle_AdvanceWithGravity3D(ember, 64, -Q16_ONE / 8);
+        Particle_AdvanceWithGravity3D(ember, 64, -px(1) / 8);
         if (ember->y <= px(20)) {
           ember->x = 0;
           ember->z = 0;

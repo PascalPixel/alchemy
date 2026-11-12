@@ -171,7 +171,7 @@ void BattleEffect_RunPlasma(struct BattleEffectParams *args) {
       spark = &sparks[k];
       if (spark->variant > 0) {
         spark->variant--;
-        Particle_AdvanceWithGravity2D(spark, 60, Q16_ONE / 16);
+        Particle_AdvanceWithGravity2D(spark, 60, px(1) / 16);
         if (spark->y > px(104)) {
           spark->velocityY = -spark->velocityY / 2;
         } else {
@@ -438,9 +438,9 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 mode) {
         s32 gravity;
 
         if (mode == SPARK_GROUPS_RISING)
-          gravity = -Q16_ONE / 16;
+          gravity = -px(1) / 16;
         else
-          gravity = Q16_ONE / 16;
+          gravity = px(1) / 16;
         for (j = 0;
              j != gPlasma_Shapes[work->args->variant][SPARK_GROUPS_SPARKS];
              j++) {

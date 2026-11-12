@@ -303,7 +303,7 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
                   gBoreas_DebrisHeights[cell]);
           PARTICLES[i].x += PARTICLES[i].velocityX;
           PARTICLES[i].y += PARTICLES[i].velocityY;
-          PARTICLES[i].velocityY += Q16_ONE / 8;
+          PARTICLES[i].velocityY += px(1) / 8;
         }
       }
     }

@@ -77,7 +77,7 @@ void FieldEffect_UpdateDouseDrop(struct Actor *actor) {
       p->scaleX = Q16_ONE / 2;
       p->flag = 2;
       p->velocityY = px(1);
-      p->speed = Random16() + Q16_ONE * 6 / 5;
+      p->speed = Random16() + px(6) / 5;
       Actor_SetTargetPositionFromMagnitudeAngle((struct Actor *)p, px(32),
                                                 Random16());
       pp = &p->wait;
@@ -96,7 +96,7 @@ void FieldEffect_UpdateDriftingFallActor(struct Actor *actor) {
   struct Actor *particle = (struct Actor *)actor;
   s32 drift;
 
-  particle->y.fixed -= Q16_ONE * 3 / 10;
+  particle->y.fixed -= px(3) / 10;
   drift = Random16();
   particle->x.fixed += drift - Random16();
   if (particle->y.fixed <= particle->groundHeight) {

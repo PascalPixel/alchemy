@@ -45,7 +45,7 @@ void Djinn_RunVenusJoinEffect(s32 djinniId) {
   Sound_PlayFar(SE_HIGH_JUMP);
   Actor_Jump(djinniId, 8, 22);
   Sound_PlayFar(SE_SPIN);
-  MapGrid_SetScreenShakeFar(Q16_ONE * 13 / 10, Q16_ONE * 13 / 10, Q16_ONE);
+  MapGrid_SetScreenShakeFar(px(13) / 10, px(13) / 10, Q16_ONE);
   djinni->update = FieldEffect_ShrinkActorAndDestroyFast;
   Actor_SelectAnimationFar(djinni, 3);
   // The leader turns to face the camera (FACING_SOUTH).
@@ -55,7 +55,7 @@ void Djinn_RunVenusJoinEffect(s32 djinniId) {
   Actor_SelectAnimationFar(Actor_GetById(gMainRoutineWork.leaderActorId),
                            ANIM_LEADER_ARMS_RAISED);
   wait(30);
-  MapGrid_SetScreenShakeFar(Q16_ONE * 8 / 5, Q16_ONE * 8 / 5, Q16_ONE);
+  MapGrid_SetScreenShakeFar(px(8) / 5, px(8) / 5, Q16_ONE);
 
   position.x = djinni->x.fixed;
   position.y = djinni->y.fixed;
@@ -141,7 +141,7 @@ void Djinn_RunVenusJoinEffect(s32 djinniId) {
     djinni->motionFlags = ACTOR_FALLS;
     djinni->velocityY = px(5);
     djinni->groundHeight = djinni->y.fixed;
-    djinni->speedLimit = Random16() + Q16_ONE * 7 / 5;
+    djinni->speedLimit = Random16() + px(7) / 5;
     Actor_SetTargetPositionFromMagnitudeAngle(djinni, px(32), Random16());
     Actor_SetSpriteColorModeFar(djinni, SPRITE_COLOR_GREEN_TINT);
     djinni->wait = 8;
@@ -199,7 +199,7 @@ void FieldEffect_UpdateRandomTargetParticle(struct FieldParticle *effect) {
       effect->stopAtTarget = 0;
       effect->speed = Q16_ONE;
       effect->acceleration = 0;
-      effect->speedMax = Random16() + Q16_ONE * 11 / 5;
+      effect->speedMax = Random16() + px(11) / 5;
       effect->scaleX = Q16_ONE / 2;
       effect->scaleY = Q16_ONE / 2;
       Sound_PlayFar(SE_CRACK);

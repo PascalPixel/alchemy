@@ -124,7 +124,7 @@ void BattleEffect_RunSwirlSwipe(struct BattleEffectParams *args, s32 mode) {
     if (mode == SWIRL_SWIPE_SPINNING_BEAT) {
       if (frame == 13) {
         actor->velocityY = px(12);
-        actor->gravity = Q16_ONE * 47 / 100;
+        actor->gravity = px(47) / 100;
         actor->bounce = Q16_ONE / 4;
       }
       if (frame == 65) {

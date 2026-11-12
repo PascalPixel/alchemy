@@ -123,7 +123,7 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
         velocity.x = velocity.x * 58 / 64;
         velocity.y = velocity.y * 56 / 64;
         if (focus.x < px(120))
-          velocity.x += Q16_ONE / 2;
+          velocity.x += px(1) / 2;
       }
       BattleEffect_PlaceFormationObjects(SUMMON_FORMATION_NEREID, focus.x,
                                          focus.y);
@@ -227,7 +227,7 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
           spark->x += spark->velocityX;
           spark->y += spark->velocityY;
           if (frame > 80)
-            spark->velocityY += -Q16_ONE / 2;
+            spark->velocityY += -px(1) / 2;
           else
             spark->velocityY += gNereid_Gravity[k & 3];
           spark->velocityX = spark->velocityX * 62 / 64;
@@ -255,7 +255,7 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
               BattleEffect_TintBattler(work->args->targets[k],
                                        SPRITE_COLOR_WHITE, POSE_DAMAGE,
                                        TINT_KEEP, 0);
-              actor->velocityY = Q16_ONE * 9 / 2;
+              actor->velocityY = px(9) / 2;
               actor->gravity = BATTLE_UNIT_GRAVITY;
             }
             if (phase == 6)

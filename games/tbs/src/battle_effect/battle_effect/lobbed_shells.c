@@ -254,7 +254,7 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
                       position.y - 16, 24, 32);
             // Half a pixel of gravity a frame while it flies.
             if (shot->variant == 0)
-              Particle_AdvanceWithGravity3D(shot, 63, -Q16_ONE / 2);
+              Particle_AdvanceWithGravity3D(shot, 63, -px(1) / 2);
             // On the ground: the shell stops, stays drawn where it lies, and
             // bursts into target k's run of LOBBED_SHELLS_BURSTS.
             if (shot->y < 0) {
@@ -330,9 +330,9 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
         // Smoke rises, gaining 1/32 pixel a frame each frame; shards fall,
         // gaining half a pixel.
         if (LOBBED_SHELLS_SHATTER(mode) == LOBBED_SHELLS_BONE_CHILLER)
-          Particle_AdvanceWithGravity3D(burst, 62, Q16_ONE / 32);
+          Particle_AdvanceWithGravity3D(burst, 62, px(1) / 32);
         else
-          Particle_AdvanceWithGravity3D(burst, 62, -Q16_ONE / 2);
+          Particle_AdvanceWithGravity3D(burst, 62, -px(1) / 2);
         burst->variant++;
       }
     }

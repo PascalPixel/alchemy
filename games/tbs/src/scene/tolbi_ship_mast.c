@@ -250,13 +250,13 @@ static s32 TolbiShipMast_SwayActor(struct Actor *interpreter) {
     actor->riseBaseY = 0;
   } else if (*state != SWAY_INCREASING) {
     actor->riseBaseY -= (u32)(Import_RandomNext() << 11) >> 16;
-    if (actor->riseBaseY < -3 * px(1) / 4) {
+    if (actor->riseBaseY < -px(3) / 4) {
       next = SWAY_INCREASING;
       *state = next;
     }
   } else {
     actor->riseBaseY += (u32)(Import_RandomNext() << 11) >> 16;
-    if (actor->riseBaseY > 3 * px(1) / 4) {
+    if (actor->riseBaseY > px(3) / 4) {
       next = SWAY_DECREASING;
       *state = next;
     }
@@ -702,7 +702,7 @@ static void TolbiShipMast_InitializeDriftingActor(s32 actorId) {
   randomValue += px(6);
   actor->y.fixed = randomValue;
   randomValue = Import_RandomNext();
-  actor->riseBaseY = ((randomValue * 3 << 13) >> 16) - 3 * px(1) / 16;
+  actor->riseBaseY = ((randomValue * 3 << 13) >> 16) - px(3) / 16;
   actor->scaleX = 5 * Q16_ONE / 4;
   actor->scaleY = 5 * Q16_ONE / 4;
   Actor_SetScript(actorId, gTolbiShipMast_DriftActions);
@@ -796,7 +796,7 @@ static void TolbiShipMast_RunMonsterLanding(void) {
   Actor_SetSpritePriority(ACTOR_LANDING_MONSTER, 1);
   Actor_SetSpeed(ACTOR_LANDING_MONSTER, 1);
   actor->bounce = Q16_ONE / 10;
-  actor->gravity = 7 * px(1) / 10;
+  actor->gravity = px(7) / 10;
   Sound_Play(SE_HIGH_JUMP);
   actor->velocityY = px(8);
   Actor_SetDestination(ACTOR_LANDING_MONSTER, 132, 360);

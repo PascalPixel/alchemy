@@ -192,7 +192,7 @@ static void GomaCaveStream_LeapStump(s32 stumpId) {
   stump->update = GomaCaveStream_SpinStump;
   Actor_SetSpeed(stumpId, 3);
   Actor_SetDestination(stumpId, 376, 288);
-  stump->gravity = 4 * px(1) / 5;
+  stump->gravity = px(4) / 5;
   stump->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   stump->layer = 0;
   Actor_WaitForMoveById(stumpId);

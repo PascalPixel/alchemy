@@ -216,7 +216,7 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
         rock->x += rock->velocityX;
         rock->y += rock->velocityY;
         if (frame > 96)
-          rock->velocityY += Q16_ONE / 4;
+          rock->velocityY += px(1) / 4;
         if (rock->y > px(120)) {
           rock->variant++;
           if (rock->variant == 1) {
@@ -254,7 +254,7 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
                   Q_16_16_TO_INT(puff->y) - gRamses_PuffSizes[cell] / 2,
                   gRamses_PuffSizes[cell], gRamses_PuffSizes[cell]);
         }
-        Particle_AdvanceWithGravity2D(puff, 60, -Q16_ONE / 4);
+        Particle_AdvanceWithGravity2D(puff, 60, -px(1) / 4);
         puff->variant++;
       }
     }
@@ -301,7 +301,7 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
 
         EFFECT_DRAW_MOTE(draw[i & 1], canvas, sheet, Q_16_16_TO_INT(spark->x),
                          Q_16_16_TO_INT(spark->y), size);
-        Particle_AdvanceWithGravity2D(spark, 62, Q16_ONE / 16);
+        Particle_AdvanceWithGravity2D(spark, 62, px(1) / 16);
         spark->variant--;
       }
     }

@@ -55,7 +55,7 @@ void FieldPsynergy_Catch(void) {
   FieldPsynergy_FadeToCastColor();
   Sound_PlayFar(SE_ITEM_BREAK);
   object->facing = actor->facing;
-  object->speedLimit = Q16_ONE * 13 / 10;
+  object->speedLimit = px(13) / 10;
   object->motionFlags = 0;
   Actor_SelectAnimationFar(object, 5);
   Actor_SetSpriteColorModeFar(object, SPRITE_COLOR_GRB);
@@ -96,7 +96,7 @@ void FieldPsynergy_Catch(void) {
 
   // Rise 1.5 pixels a frame for 13 frames.
   for (i = 0; i < 13; i++) {
-    object->y.fixed += Q16_ONE * 3 / 2;
+    object->y.fixed += px(3) / 2;
     wait(1);
   }
   wait(10);

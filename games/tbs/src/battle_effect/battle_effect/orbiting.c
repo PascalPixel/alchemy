@@ -309,12 +309,12 @@ UNUSED void BattleEffect_RunTargetBursts(struct BattleEffectParams *args) {
           Projection_Point(puff, &screen);
           screen.x >>= 1;
           if (i == 5) {
-            Particle_AdvanceWithGravity3D(puff, 62, Q16_ONE / 32);
+            Particle_AdvanceWithGravity3D(puff, 62, px(1) / 32);
             drawBurst(canvas,
                       work->sheet + cell * (24 * 48) + TARGET_BURSTS_OFFSETS,
                       screen.x - 12, screen.y - 36, 24, 48);
           } else {
-            Particle_AdvanceWithGravity3D(puff, 60, Q16_ONE / 128);
+            Particle_AdvanceWithGravity3D(puff, 60, px(1) / 128);
             drawSmoke(canvas, work->sheet + cell * (24 * 48), screen.x - 12,
                       screen.y - 36, 24, 48);
           }

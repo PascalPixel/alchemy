@@ -74,7 +74,7 @@ void Leader_StopMoving(void) {
 
   actor = Actor_Lookup(gMainRoutineWork.leaderActorId);
   actor->speedLimit = Q16_ONE;
-  actor->acceleration = Q16_ONE / 2;
+  actor->acceleration = px(1) / 2;
   actor->targetX = ACTOR_NO_TARGET;
   actor->targetZ = ACTOR_NO_TARGET;
   actor->velocityX = 0;

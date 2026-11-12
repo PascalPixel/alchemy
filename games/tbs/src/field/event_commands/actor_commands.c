@@ -245,7 +245,7 @@ void Actor_LaunchFromLeader(u32 actorId, s32 xOffset, s32 zOffset, s32 action) {
   if (actor != NULL) {
     struct Actor *leader;
 
-    Actor_SetSpeedParameters(actorId, Q16_ONE * 3 / 5, Q16_ONE * 3 / 10);
+    Actor_SetSpeedParameters(actorId, px(3) / 5, px(3) / 10);
     leader = Actor_GetById(gMainRoutineWork.leaderActorId);
     if (leader != NULL)
       Actor_SetHorizontalPositionWithTerrain(actorId, leader->x.fixed,
@@ -491,7 +491,7 @@ void FieldEffect_UpdateDustPuff(struct Actor *actor) {
   z = particle->z.fixed + velocityZ;
   particle->z.fixed = z;
   particle->targetZ = z;
-  y = particle->y.fixed + Q16_ONE / 64;
+  y = particle->y.fixed + px(1) / 64;
   particle->y.fixed = y;
   particle->targetY = y;
   particle->speedLimit = (velocityX - velocityX / 18);
@@ -533,14 +533,14 @@ void FieldEffect_SpawnDustPuff(struct Actor *source, s32 param) {
       Actor_SetSpriteColor(actor, param);
 
     // speed and acceleration hold the puff's x and z velocity, in steps of
-    // Q16_ONE / 10 (0.1 pixel): z is -0.5 to -1.4, x -1.4 to 1.4 in steps of
+    // px(1) / 10 (0.1 pixel): z is -0.5 to -1.4, x -1.4 to 1.4 in steps of
     // 0.2.
     actor->motionFlags = 0;
     speed = Random16() % 10 + 5;
-    actor->acceleration = -(Q16_ONE / 10) * speed;
+    actor->acceleration = -(px(1) / 10) * speed;
     speed = Random16() % 15 - 7;
     speed <<= 1;
-    actor->speedLimit = Q16_ONE / 10 * speed;
+    actor->speedLimit = px(1) / 10 * speed;
     actor->timer = 0;
     actor->update = FieldEffect_UpdateDustPuff;
     child->flags = 0;

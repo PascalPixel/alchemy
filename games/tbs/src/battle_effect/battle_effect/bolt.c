@@ -171,7 +171,7 @@ void BattleEffect_RunBolt(struct BattleEffectParams *args) {
 
       if (spark->variant > 0) {
         spark->variant--;
-        Particle_AdvanceWithGravity2D(spark, 60, Q16_ONE / 16);
+        Particle_AdvanceWithGravity2D(spark, 60, px(1) / 16);
         if (spark->y > px(104)) {
           spark->velocityY = -spark->velocityY / 2;
         } else if ((spark->x >= 0 && spark->x < px(127)) && spark->y >= 0) {

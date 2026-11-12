@@ -433,7 +433,7 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
         EFFECT_DRAW_FLARE(drawSpark, canvas, work->sheet,
                           Q_16_16_TO_INT(spark->x), Q_16_16_TO_INT(spark->y),
                           size);
-        Particle_AdvanceWithGravity2D(spark, 60, Q16_ONE / 8);
+        Particle_AdvanceWithGravity2D(spark, 60, px(1) / 8);
         spark->variant--;
       }
     }

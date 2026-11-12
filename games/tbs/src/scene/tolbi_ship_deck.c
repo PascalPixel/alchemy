@@ -2086,7 +2086,7 @@ static void TolbiShipDeck_JumpIntoKrakenBattle(void) {
   Actor_SetAnimation(ACTOR_SEA_SEAN, 5);
   actor = Actor_Get(ACTOR_SEA_SEAN);
   actor->velocityY = px(8);
-  actor->gravity = 7 * px(1) / 10;
+  actor->gravity = px(7) / 10;
   actor->scaleX = 13 * Q16_ONE / 8;
   actor->scaleY = 13 * Q16_ONE / 8;
   actor->update = TolbiShipDeck_ShrinkToNormalSize;

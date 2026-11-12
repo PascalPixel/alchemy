@@ -188,7 +188,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
           if (radius[index] <= 31)
             actor->y.fixed += px(6);
           else
-            actor->y.fixed += Q16_ONE / 2;
+            actor->y.fixed += px(1) / 2;
           if (actor->y.fixed > px(124))
             actor->y.fixed = px(124);
         }

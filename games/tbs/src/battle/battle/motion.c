@@ -11,7 +11,7 @@
 // The motion values below are 16.16 fixed point, in pixels and frames:
 // acceleration and speedLimit per frame, velocityY the hop's upward speed,
 // and verticalMotionStrength the gravity taken from it each frame
-// (BATTLE_UNIT_GRAVITY about 0.67, Q16_ONE * 3 / 5, and Q16_ONE * 47 / 100).
+// (BATTLE_UNIT_GRAVITY about 0.67, px(3) / 5, and px(47) / 100).
 
 /// Sends unitId back to its spot, landing exactly there (snapToTarget), and
 /// turns it to face the centre at once. Called after an action by the
@@ -55,7 +55,7 @@ void BattleMotion_SetupEscapeObject(s32 unitId) {
   actor->acceleration = px(2);
   actor->speedLimit = px(8);
   actor->velocityY = px(5);
-  actor->gravity = Q16_ONE * 47 / 100;
+  actor->gravity = px(47) / 100;
   actor->bounce = 0;
   actor->steeringFlags = 0;
   Actor_StartIdleFar(actor);
@@ -121,7 +121,7 @@ void BattleMotion_HopBack(s32 unitId) {
   actor->acceleration = Q16_ONE;
   actor->speedLimit = px(4);
   actor->velocityY = px(3);
-  actor->gravity = Q16_ONE * 3 / 5;
+  actor->gravity = px(3) / 5;
   actor->bounce = 0;
   actor->steeringFlags = 0;
   Actor_StartIdleFar(actor);
@@ -141,7 +141,7 @@ void BattleMotion_LeapBack(s32 unitId) {
   actor->acceleration = 128 << 9;
   actor->speedLimit = 128 << 11;
   actor->velocityY = 128 << 11;
-  actor->gravity = Q16_ONE * 3 / 5;
+  actor->gravity = px(3) / 5;
   actor->bounce = 0;
   actor->steeringFlags = 0;
   Actor_StartIdleFar(actor);
@@ -170,7 +170,7 @@ void BattleMotion_ApplyKnockback(s32 unitId, s32 variant) {
     // A unit already in the air keeps its hop, except from KNOCKBACK_SKID on.
     if (actor->y.fixed == 0 || variant > KNOCKBACK_HURL)
       actor->velocityY = gBattleKnockback_VelocityY[variant];
-    actor->gravity = Q16_ONE * 3 / 5;
+    actor->gravity = px(3) / 5;
     actor->bounce = 0;
     actor->steeringFlags = 0;
     Actor_StartIdleFar(actor);

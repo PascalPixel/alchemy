@@ -246,9 +246,9 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
                 gStreaks_Tremble[(frame - k * STREAKS_TARGET_DELAY - 30) % 8]
                 << 16;
             if (struck->x.fixed > 0)
-              struck->x.fixed += Q16_ONE / 2;
+              struck->x.fixed += px(1) / 2;
             else
-              struck->x.fixed -= Q16_ONE / 2;
+              struck->x.fixed -= px(1) / 2;
             BattleEffect_TintBattler(work->args->targets[k], TINT_KEEP,
                                      POSE_DAMAGE, TINT_KEEP, 0);
           }
@@ -414,14 +414,14 @@ void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
         EFFECT_DRAW_MOTE(draw[0], canvas, sheet, position.x, position.y, size);
         // Damped by 62/64 a frame, with a slight lift (y grows upwards) of
         // 1/64 pixel a frame each frame.
-        Particle_AdvanceWithGravity3D(mote, 62, Q16_ONE / 64);
+        Particle_AdvanceWithGravity3D(mote, 62, px(1) / 64);
         // The drifting mode pushes every mote towards the other side of the
         // field, 1/8 pixel a frame faster each frame.
         if (mode == MOTE_FOUNTAIN_DRIFTING) {
           if (source->x.fixed < 0)
-            mote->velocityX += Q16_ONE / 8;
+            mote->velocityX += px(1) / 8;
           else
-            mote->velocityX -= Q16_ONE / 8;
+            mote->velocityX -= px(1) / 8;
         }
         mote->variant--;
       }

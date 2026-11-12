@@ -23,9 +23,9 @@ enum {
   /// Under 64 pixels (16.16) SC_CAMERA measures its distance in 16.16.
   CAMERA_FOLLOW_FINE_DISTANCE = px(64),
   /// Within a quarter pixel (16.16) SC_CAMERA lands on its point.
-  CAMERA_FOLLOW_SNAP_DISTANCE = Q16_ONE / 4,
+  CAMERA_FOLLOW_SNAP_DISTANCE = px(1) / 4,
   /// Within half a pixel (16.16) SC_CAMERA takes the leader's height at once.
-  CAMERA_FOLLOW_HEIGHT_SNAP = Q16_ONE / 2
+  CAMERA_FOLLOW_HEIGHT_SNAP = px(1) / 2
 };
 
 /// SC_LABEL and SC_TO differ only in bit 30; a jump searches for the label.

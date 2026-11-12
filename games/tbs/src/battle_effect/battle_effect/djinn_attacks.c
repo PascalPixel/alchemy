@@ -59,7 +59,7 @@ void BattleEffect_TransposeCopy(const u8 *src, u8 *dst, s32 w, s32 h) {
 // PARTICLES (Venus's columns fill 16 of them), and the motes move through all
 // DJINN_ATTACKS_MOTE_SLOTS. A mote's variant is its life left, -1 when free;
 // at life 0 it still draws once before its slot is freed. Each frame a mote
-// falls under a gravity of 1/8 pixel a frame per frame (Q16_ONE / 8), its speed
+// falls under a gravity of 1/8 pixel a frame per frame (px(1) / 8), its speed
 // damped to 62/64, and it shrinks a size every 16 frames of life it loses.
 #define DJINN_ATTACKS_MOTES_PER_FLAME 32 ///< slots for each flame's motes
 #define DJINN_ATTACKS_MOTE_SLOTS 512
@@ -189,7 +189,7 @@ void BattleEffect_RunMercury(struct BattleEffectParams *args) {
 
         EFFECT_DRAW_MOTE(draw[1], canvas, sheet, Q_16_16_TO_INT(mote->x),
                          Q_16_16_TO_INT(mote->y), size);
-        Particle_AdvanceWithGravity2D(mote, 62, Q16_ONE / 8);
+        Particle_AdvanceWithGravity2D(mote, 62, px(1) / 8);
         mote->variant--;
       }
     }
@@ -312,7 +312,7 @@ void BattleEffect_RunJupiter(struct BattleEffectParams *args) {
 
         EFFECT_DRAW_MOTE(draw[1], canvas, sheet, Q_16_16_TO_INT(mote->x),
                          Q_16_16_TO_INT(mote->y), size);
-        Particle_AdvanceWithGravity2D(mote, 62, Q16_ONE / 8);
+        Particle_AdvanceWithGravity2D(mote, 62, px(1) / 8);
         mote->variant--;
       }
     }
@@ -456,7 +456,7 @@ void BattleEffect_RunVenus(struct BattleEffectParams *args) {
 
         EFFECT_DRAW_MOTE(draw[1], canvas, sheet, Q_16_16_TO_INT(mote->x),
                          Q_16_16_TO_INT(mote->y), size);
-        Particle_AdvanceWithGravity2D(mote, 62, Q16_ONE / 8);
+        Particle_AdvanceWithGravity2D(mote, 62, px(1) / 8);
         mote->variant--;
       }
     }
@@ -636,7 +636,7 @@ void BattleEffect_RunMars(struct BattleEffectParams *args) {
         draw[1](canvas, sheet + gBattleEffect_MoteCells[size - 1],
                 x - ((u32)size >> 1), Q_16_16_TO_INT(step->y) - size, size,
                 size * 2);
-        Particle_AdvanceWithGravity2D(step, 64, -Q16_ONE / 8);
+        Particle_AdvanceWithGravity2D(step, 64, -px(1) / 8);
         angle = step->z;
         step->z = angle + TRIG_TURN / 32;
         // The wrap takes off one less than a turn, so a wrapped phase lands a

@@ -488,7 +488,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
             draw[i & 1](canvas, work->sheet + picture * (24 * 48) + wispSheet,
                         Q_16_16_TO_INT(step->x) - 12,
                         Q_16_16_TO_INT(step->y) - 24, 24, 48);
-            Particle_AdvanceWithGravity2D(step, 62, -Q16_ONE / 64);
+            Particle_AdvanceWithGravity2D(step, 62, -px(1) / 64);
             step->variant++;
           }
         }

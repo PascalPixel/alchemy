@@ -957,7 +957,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
 
           EFFECT_DRAW_MOTE(draw[0], canvas, sheet, Q_16_16_TO_INT(particle->x),
                            Q_16_16_TO_INT(particle->y), size);
-          Particle_AdvanceWithGravity2D(particle, 60, Q16_ONE / 16);
+          Particle_AdvanceWithGravity2D(particle, 60, px(1) / 16);
           if (particle->y > px(112))
             particle->velocityY = -particle->velocityY / 2;
           particle->variant--;
@@ -975,7 +975,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
 
           EFFECT_DRAW_MOTE(draw[0], canvas, sheet, Q_16_16_TO_INT(particle->x),
                            Q_16_16_TO_INT(particle->y), size);
-          Particle_AdvanceWithGravity2D(particle, 60, -Q16_ONE / 4);
+          Particle_AdvanceWithGravity2D(particle, 60, -px(1) / 4);
           particle->variant--;
         }
       }

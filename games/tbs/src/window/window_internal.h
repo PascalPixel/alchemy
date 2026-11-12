@@ -168,8 +168,19 @@ enum {
   /// The message runs the codes below it as control codes and draws the rest.
   TEXT_COMMANDS = 31,
   TEXT_SPACE = 32,
-  TEXT_VOICED_MARK = 222,    ///< dakuten
-  TEXT_SEMIVOICED_MARK = 223 ///< handakuten
+  // Characters the decoder and the measure test by code, as the fonts draw
+  // them: the Japanese one by charmap_ja.tsv, the others by Latin-1 and its
+  // CP1252 extension (tools/ags-text). The English decoder keeps the Japanese
+  // one's tests of the Japanese punctuation and kana marks, codes its text
+  // never holds.
+  TEXT_OPENING_QUOTE = 142,             ///< “, outside Japanese
+  TEXT_INVERTED_EXCLAMATION_MARK = 161, ///< ¡, outside Japanese
+  TEXT_JAPANESE_FULL_STOP = 161,        ///< 。
+  TEXT_JAPANESE_COMMA = 164,            ///< 、
+  TEXT_JAPANESE_MIDDLE_DOT = 165,       ///< ・
+  TEXT_INVERTED_QUESTION_MARK = 191,    ///< ¿, outside Japanese
+  TEXT_VOICED_MARK = 222,               ///< dakuten
+  TEXT_SEMIVOICED_MARK = 223            ///< handakuten
 };
 
 /// The last code the main font draws (gFont_Glyphs, from TEXT_SPACE) and the

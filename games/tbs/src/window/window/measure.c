@@ -144,37 +144,36 @@ void Text_MeasureDecoded(s32 entryIndex, u32 *outWidth, u32 *outHeight,
     code = work->textBuffer[entryIndex];
     entryIndex = (entryIndex + 1) & TEXT_BUFFER_MASK;
     // A character adds its width. Spaces (in Japanese every character) are
-    // counted as the points the line can be stretched at. A space is
-    // WINDOW_SPRITE_SPACE_WIDTH pixels. Style 1 (outlined) draws a glyph a
-    // pixel wider. Style 5 (spinning) is counted a pixel wider too, though
-    // Text_DrawGlyphPair widens only style 1. XXX (no evidence): whether that
-    // pixel is meant; no message in the six catalogs uses style 5
-    // ({text_effect:6}), so the game never shows it.
+    // counted as the points the line can be stretched at. TEXT_STYLE_OUTLINED
+    // draws a glyph a pixel wider. TEXT_STYLE_SPIN is counted a pixel wider
+    // too, though Text_DrawGlyphPair widens only TEXT_STYLE_OUTLINED.
+    // XXX (no evidence): whether the spinning style's extra pixel is meant; no
+    // message in the six catalogs uses it ({text_effect:6}), so the game never
+    // shows it.
     if (code > 31) {
 #if (LANGUAGE != LANGUAGE_JAPANESE)
       if (code == 32) {
-        lineWidth += 5;
+        lineWidth += WINDOW_SPRITE_SPACE_WIDTH;
         count++;
       } else {
         glyph = gFont_Glyphs[code - 32].width;
         style = work->outline;
-        if (style == 1 || style == 5)
+        if (style == TEXT_STYLE_OUTLINED || style == TEXT_STYLE_SPIN)
           glyph++;
         lineWidth += glyph;
       }
 #else
       if (code != TEXT_VOICED_MARK && code != TEXT_SEMIVOICED_MARK) {
         if (code == 32) {
-          lineWidth += 7;
+          lineWidth += WINDOW_SPRITE_SPACE_WIDTH;
         } else {
-          // Punctuation at the end of a line takes less room than its cell:
-          // 1 pixel less for code 165, 3 for code 33 and 6 for codes 161
-          // and 164.
-          if (code == 165)
+          // Punctuation at the end of a line takes less room than its cell.
+          if (code == TEXT_JAPANESE_MIDDLE_DOT)
             trailing = -1;
-          else if (code == 33)
+          else if (code == '!')
             trailing = -3;
-          else if (code == 161 || code == 164)
+          else if (code == TEXT_JAPANESE_FULL_STOP ||
+                   code == TEXT_JAPANESE_COMMA)
             trailing = -6;
           else
             trailing = 0;
@@ -182,7 +181,7 @@ void Text_MeasureDecoded(s32 entryIndex, u32 *outWidth, u32 *outHeight,
           if (code <= TEXT_LAST_FONT_CODE)
             glyph = gFont_Glyphs[code - 32].width;
           style = work->outline;
-          if (style == 1 || style == 5)
+          if (style == TEXT_STYLE_OUTLINED || style == TEXT_STYLE_SPIN)
             glyph++;
           lineWidth += glyph;
         }
@@ -349,7 +348,7 @@ void Text_MeasureAllPages(s32 entryIndex, u32 *outWidth, u32 *outHeight,
     if (code >= 32) {
 #if (LANGUAGE != LANGUAGE_JAPANESE)
       if (code == 32) {
-        width += 5;
+        width += WINDOW_SPRITE_SPACE_WIDTH;
         count++;
       } else {
         glyph = gFont_Glyphs[code - 32].width;
@@ -361,13 +360,14 @@ void Text_MeasureAllPages(s32 entryIndex, u32 *outWidth, u32 *outHeight,
 #else
       if (code != TEXT_VOICED_MARK && code != TEXT_SEMIVOICED_MARK) {
         if (code == 32) {
-          width += 7;
+          width += WINDOW_SPRITE_SPACE_WIDTH;
         } else {
-          if (code == 165)
+          if (code == TEXT_JAPANESE_MIDDLE_DOT)
             trailing = -1;
-          else if (code == 33)
+          else if (code == '!')
             trailing = -3;
-          else if (code == 161 || code == 164)
+          else if (code == TEXT_JAPANESE_FULL_STOP ||
+                   code == TEXT_JAPANESE_COMMA)
             trailing = -6;
           else
             trailing = 0;

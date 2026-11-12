@@ -280,9 +280,9 @@ enum {
 /// Halting speech (haltingSpeech): a short pause before each decoded code; in
 /// English and Japanese not at a line's start or before a kana mark.
 #define ENTRY_NARROW_GAP TEXT_PAUSE_SHORT
-/// With spacingAfter (English and Japanese): code 222 after a character of
-/// codes 128 to 256, other than the kana marks and codes 161, 164 and 165,
-/// unless the code after it is a kana mark.
+/// With spacingAfter (English and Japanese): TEXT_VOICED_MARK after a character
+/// of codes 128 to 256, other than the kana marks and the Japanese full stop,
+/// comma and middle dot, unless the code after it is a kana mark.
 #define ENTRY_WIDE_GAP TEXT_VOICED_MARK
 
 #if (LANGUAGE == LANGUAGE_ENGLISH) || (LANGUAGE == LANGUAGE_GERMAN) ||         \
@@ -400,9 +400,9 @@ s32 Message_Decode(s32 script, s32 clear) {
 #endif
       code = (u32)decode(messageReader);
       // These editions have no characters above 255: such a symbol becomes
-      // code 64.
+      // '@'.
       if (code > 255)
-        code = 64;
+        code = '@';
 
       // Once halting speech has broken off, the rest of the message is
       // skipped, though its arguments are still taken from the table.
@@ -461,7 +461,8 @@ s32 Message_Decode(s32 script, s32 clear) {
         // Halting speech pauses before each code.
         if (work->haltingSpeech != 0
 #if (LANGUAGE == LANGUAGE_ENGLISH)
-            && lineStart == 0 && code != 222 && code != 223
+            && lineStart == 0 && code != TEXT_VOICED_MARK &&
+            code != TEXT_SEMIVOICED_MARK
 #endif
         ) {
           entry[writePosition] = ENTRY_NARROW_GAP;
@@ -469,10 +470,14 @@ s32 Message_Decode(s32 script, s32 clear) {
         }
 
 #if (LANGUAGE == LANGUAGE_ENGLISH)
-        if (work->spacingAfter != 0 && lineStart == 0 && code != 222 &&
-            code != 223 && previousCode <= 256 && previousCode > 127 &&
-            previousCode != 222 && previousCode != 223 && previousCode != 32 &&
-            previousCode != 165 && previousCode != 161 && previousCode != 164) {
+        if (work->spacingAfter != 0 && lineStart == 0 &&
+            code != TEXT_VOICED_MARK && code != TEXT_SEMIVOICED_MARK &&
+            previousCode <= 256 && previousCode > 127 &&
+            previousCode != TEXT_VOICED_MARK &&
+            previousCode != TEXT_SEMIVOICED_MARK && previousCode != 32 &&
+            previousCode != TEXT_JAPANESE_MIDDLE_DOT &&
+            previousCode != TEXT_JAPANESE_FULL_STOP &&
+            previousCode != TEXT_JAPANESE_COMMA) {
           entry[writePosition] = ENTRY_WIDE_GAP;
           writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
         }
@@ -492,11 +497,12 @@ s32 Message_Decode(s32 script, s32 clear) {
             if (decodedCount > 10)
               code = 32;
           }
-          // Every other double quote, the opening one, becomes code 142.
-          if (code == 34) {
+          // Every other double quote, the opening one, becomes
+          // TEXT_OPENING_QUOTE.
+          if (code == '"') {
             quote ^= 1;
             if (quote != 0)
-              code = 142;
+              code = TEXT_OPENING_QUOTE;
           }
           entry[writePosition] = (u16)code;
           writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
@@ -505,7 +511,8 @@ s32 Message_Decode(s32 script, s32 clear) {
 #else
           if (code != ' '
 #if (LANGUAGE == LANGUAGE_SPANISH)
-              && code != 161 && code != 191
+              && code != TEXT_INVERTED_EXCLAMATION_MARK &&
+              code != TEXT_INVERTED_QUESTION_MARK
 #endif
           ) {
             suffix = 0;
@@ -976,35 +983,39 @@ s32 Message_Decode(s32 script, s32 clear) {
         }
       } else {
         // Halting speech pauses before each character.
-        if (work->haltingSpeech != 0 && lineStart == 0 && code != 222 &&
-            code != 223) {
-          entry[writePosition] = 5;
+        if (work->haltingSpeech != 0 && lineStart == 0 &&
+            code != TEXT_VOICED_MARK && code != TEXT_SEMIVOICED_MARK) {
+          entry[writePosition] = ENTRY_NARROW_GAP;
           writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
         }
-        if (work->spacingAfter != 0 && lineStart == 0 && code != 222 &&
-            code != 223 && previousCode <= 256 && previousCode > 127 &&
-            previousCode != 222 && previousCode != 223 && previousCode != 32 &&
-            previousCode != 165 && previousCode != 161 && previousCode != 164) {
-          entry[writePosition] = 222;
+        if (work->spacingAfter != 0 && lineStart == 0 &&
+            code != TEXT_VOICED_MARK && code != TEXT_SEMIVOICED_MARK &&
+            previousCode <= 256 && previousCode > 127 &&
+            previousCode != TEXT_VOICED_MARK &&
+            previousCode != TEXT_SEMIVOICED_MARK && previousCode != 32 &&
+            previousCode != TEXT_JAPANESE_MIDDLE_DOT &&
+            previousCode != TEXT_JAPANESE_FULL_STOP &&
+            previousCode != TEXT_JAPANESE_COMMA) {
+          entry[writePosition] = ENTRY_WIDE_GAP;
           writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
         }
         // A character. Halting speech breaks off with an ellipsis at the
         // first space or after 11 characters.
         if (code > 31) {
-          // A battle message doubles each space. The ellipsis here is three
-          // of code 165, then code 161.
+          // A battle message doubles each space. The ellipsis here is
+          // ・・・。.
           if (mode != 0 && code == ' ') {
             entry[writePosition] = code;
             writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
           }
           if (work->haltingSpeech != 0 && (code == 32 || decodedCount > 10)) {
-            entry[writePosition] = 165;
+            entry[writePosition] = TEXT_JAPANESE_MIDDLE_DOT;
             writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
-            entry[writePosition] = 165;
+            entry[writePosition] = TEXT_JAPANESE_MIDDLE_DOT;
             writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
-            entry[writePosition] = 165;
+            entry[writePosition] = TEXT_JAPANESE_MIDDLE_DOT;
             writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
-            entry[writePosition] = 161;
+            entry[writePosition] = TEXT_JAPANESE_FULL_STOP;
             writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
             overflow = 1;
             if (decodedCount > 10)

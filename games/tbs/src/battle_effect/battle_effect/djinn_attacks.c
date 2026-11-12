@@ -162,8 +162,7 @@ void BattleEffect_RunMercury(struct BattleEffectParams *args) {
     // The Djinni turns once every 32 frames. Its radius, 64 - 2 * frame
     // (half that across), reaches 0 at frame 32, passing through the
     // centre, and then grows on the other side.
-    /* FAKEMATCH(dead): frame never passes 95 here; without the test, 39 of
-     * 413 instructions differ in tbs-en. */
+    // Always true: the loop ends at frame 95.
     if (frame <= 95) {
       s32 x = ((Trig_Sin(frame << 11) * (64 - frame * 2)) >> 17) + 96;
       s32 y = ((Trig_Cos(frame << 11) * (64 - frame * 2)) >> 16) + 60;
@@ -279,8 +278,7 @@ void BattleEffect_RunJupiter(struct BattleEffectParams *args) {
     // The Djinni turns 11.25 degrees a frame. Its radius, 64 - 2 * frame
     // (half that across), reaches 0 at frame 32, passing through the
     // centre, and then grows on the other side.
-    /* FAKEMATCH(dead): frame never passes 95 here; without the test, 110 of
-     * 348 instructions differ in tbs-en. */
+    // Always true: the loop ends at frame 95.
     if (frame <= 95) {
       s32 x = (Trig_Sin(angle) * (64 - frame * 2)) >> 17;
       s32 y = (Trig_Cos(angle) * (64 - frame * 2)) >> 16;

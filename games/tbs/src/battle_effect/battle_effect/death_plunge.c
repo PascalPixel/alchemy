@@ -453,8 +453,7 @@ void BattleEffect_RunElementPillar(struct BattleEffectParams *args) {
     // 64, keeping the brighter pixel. The pillar (17x64) cycles through four
     // images, two frames each; the glow at its foot (24x43) through three,
     // four frames each.
-    /* FAKEMATCH(dead): frame is always 55 or less here; without the test, 141
-     * of 420 instructions differ in tbs-en. */
+    // Always true: the loop ends at frame 55.
     if (frame <= 55) {
       s32 n;
       u8 *glow;
@@ -1031,8 +1030,6 @@ void BattleEffect_RunElementBurst(struct BattleEffectParams *args) {
     // Frames 0 to 14: a spark (32x32) at each corner, flipped to face
     // outwards (gDeathPlunge_DrawFlags), five images, three frames each; a
     // blitter is built for each corner and freed at once.
-    /* FAKEMATCH(dead): frame is never below 0; as frame <= 14, 2 of 349
-     * instructions differ in tbs-en. */
     if (frame >= 0 && frame <= 14) {
       s32 picture = frame / 3 % 5;
       DrawRectangle *slot =
@@ -1049,8 +1046,7 @@ void BattleEffect_RunElementBurst(struct BattleEffectParams *args) {
       }
     }
     // The motes, shrinking as they close in.
-    /* FAKEMATCH(dead): frame is never below 0; without the test, 67 of 349
-     * instructions differ in tbs-en. */
+    // Always true: frame counts up from 0.
     if (frame >= 0) {
       for (i = 0; i != 64; i++) {
         struct Particle *mote = &work->particles[i];

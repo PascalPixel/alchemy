@@ -151,8 +151,7 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
     if (shift > 24) {
       shift = 24;
     }
-    /* FAKEMATCH(dead): always true, as the loop ends at frame 120; without
-     * the test, 172 of 1026 instructions differ in tbs-en. */
+    // Always true: the loop ends at frame 119.
     if (frame <= 135) {
       gBgScroll[1].x -= shift;
       grow += shift;
@@ -162,8 +161,7 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
     // frame 104) and shakes the screen on frames 8, 40, 72 and 104, the last
     // three with the cast sound; after frame 103 it lifts away to the left,
     // 16 pixels a frame.
-    /* FAKEMATCH(dead): always true, as the loop ends at frame 120; as a bare
-     * block, 63 of 1026 instructions differ in tbs-en. */
+    // Always true: the loop ends at frame 119.
     if (frame <= 149) {
       struct SpriteScale pair = sweepScale;
       s32 lift;

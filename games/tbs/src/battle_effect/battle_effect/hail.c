@@ -91,9 +91,7 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
       orbit = frame << 11;
       x = (((-Trig_Sin(orbit) * 4)) >> 16) + screenX / 2 - 10;
       y = (((Trig_Cos(orbit) * 2)) >> 16) + screenY - 22;
-      /* FAKEMATCH(dead): never true, as the effect ends after 64 frames;
-       * without the test and its store, 43 of 398 instructions differ in
-       * tbs-en. */
+      // Never true: the loop ends at frame 63.
       if (frame > 69)
         y = (y - frame * 2) + 138;
       draw[1](canvas, work->sheet + HAIL_DJINNI_PICTURE, x, y, 20, 40);

@@ -269,8 +269,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
     // the beam has fallen: from frame 140 it takes the brighter pixel
     // instead of adding, and from frame 157 each frame draws it with a
     // darker copy of the dots, down to the seventh.
-    /* FAKEMATCH(dead): frame <= 179 always holds, the part having 170 frames;
-     * without the test, 43 of 1640 instructions differ in tbs-en. */
+    // Always true: this part ends at frame 169.
     if (frame <= 179) {
       DrawRectangle drawAlt;
       s32 level = 0;

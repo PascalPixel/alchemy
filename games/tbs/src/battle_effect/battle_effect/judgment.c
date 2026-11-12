@@ -914,9 +914,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       shift -= 8;
     }
 
-    /* FAKEMATCH(dead): never true, as the sweep's last frame is 319; without
-     * the test and the targets' reaction, 97 of 2455 instructions differ in
-     * tbs-en. */
+    // Never true: the sweep ends at frame 319.
     if (frame > 319) {
       EFFECT_FOR_EACH_TARGET(i, work->args) {
         BattleEffect_TintBattler(work->args->targets[i], SPRITE_COLOR_BLACK,

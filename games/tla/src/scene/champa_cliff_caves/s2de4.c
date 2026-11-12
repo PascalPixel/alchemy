@@ -151,7 +151,7 @@ void Func_02002f58(const s32 *position) {
   } while (state != 999);
 }
 
-s32 Resource_ResetEntry(u32 entry);
+s32 Resource_ResetEntry(u32 slot);
 void HeapSlot_Release(s32 slot);
 
 void Func_02003078(void) {

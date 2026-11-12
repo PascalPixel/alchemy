@@ -56,7 +56,7 @@ extern u8 gData_020056d0[];
 void Func_02004bd0(struct Actor *object, const void *script);
 s32 Math_Cosine(s32 angle);
 void ResourceMetadata_ClearRecord(void *record);
-void Resource_ResetEntry(s32 entry);
+s32 Resource_ResetEntry(u32 slot);
 
 #define WORK ((struct Work *)(gData_020023c4 + 0x188))
 

@@ -4,7 +4,7 @@
 #include "system/vector3.h"
 #include "event_inline.h"
 
-void Resource_ResetEntry(s32 block);
+s32 Resource_ResetEntry(u32 slot);
 void Func_02005a3c(struct Actor *object);
 
 union Whirl {

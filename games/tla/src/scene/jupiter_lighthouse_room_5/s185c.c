@@ -15,7 +15,7 @@ struct SparkWork {
   s16 resource;
 };
 
-void Resource_ResetEntry(s32 entry);
+s32 Resource_ResetEntry(u32 slot);
 void HeapSlot_Release(s32 slot);
 void Func_02001538(void);
 

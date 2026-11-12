@@ -320,7 +320,7 @@ void Func_0200029c(void) {
 
 #include "fixed_math.h"
 
-void Resource_ResetEntry(s32 entry);
+s32 Resource_ResetEntry(u32 slot);
 
 void Func_02000358(void) {
   struct SparkWork *work = Ram_HeapSlots->menuRuntime;

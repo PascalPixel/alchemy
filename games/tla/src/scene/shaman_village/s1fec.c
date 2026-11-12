@@ -422,7 +422,7 @@ extern s16 gData_020064ac;
 extern s16 gData_020064b0;
 extern s16 gData_02006494;
 
-void Resource_ResetEntry(s32 entry);
+s32 Resource_ResetEntry(u32 slot);
 void Func_020047cc(void *entry, s32 slot);
 
 /// The portrait mode task: reads its command script, eases the portrait's

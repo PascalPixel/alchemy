@@ -86,7 +86,7 @@ void Func_020003a0(void) {
   Heap_Release(buffer);
 }
 
-void Resource_ResetEntry(s32 entry);
+s32 Resource_ResetEntry(u32 slot);
 
 void Func_020004e8(void) {
   FieldTask_Remove(Func_020002b4);

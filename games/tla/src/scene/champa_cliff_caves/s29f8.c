@@ -41,7 +41,7 @@ void Func_020035fc(struct FlashSprite *sprite, s32 width, s32 height,
                    u32 attributes, s32 tile);
 void Func_020035c4(s32 *position);
 void Func_02003604(struct FlashSprite *sprite);
-s32 Resource_ResetEntry(u32 entry);
+s32 Resource_ResetEntry(u32 slot);
 void HeapSlot_Release(s32 slot);
 
 static __inline__ void Place(struct FlashSprite *a, s32 b, s32 c, u32 d,

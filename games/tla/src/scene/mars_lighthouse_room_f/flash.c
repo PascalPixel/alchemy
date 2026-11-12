@@ -354,7 +354,7 @@ struct Work {
 
 extern u8 gData_02005dbc[];
 void ResourceMetadata_ClearRecord(void *record);
-void Resource_ResetEntry(s32 entry);
+s32 Resource_ResetEntry(u32 slot);
 
 #define WORK ((struct Work *)(gData_020023c4 + 0x188))
 

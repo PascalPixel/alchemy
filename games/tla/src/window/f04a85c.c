@@ -133,7 +133,7 @@ void Text_DrawWideStringAtOffset(u16 *text, struct TargetWindow *window, s32 x,
                                  s32 y);
 void Sound_PlayFar(s32 cue);
 void wait(s32 frames);
-void Resource_ResetEntry(s32 slot);
+s32 Resource_ResetEntry(u32 slot);
 
 // The help window's column beside the aimed member, kept on screen.
 #define TARGET_HELP_COLUMN(back, width, last)                                  \

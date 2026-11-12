@@ -54,7 +54,7 @@ s32 ScriptObject_CheckOverlapFar(struct Actor *object,
 s32 Func_080ce31c(s32 kind);
 #include "battle.h"
 s32 Field_RunPsynergyEvent(struct PendingEvent *event, s32 mode, s32 target);
-s32 Resource_ResetEntry(u32 entry);
+s32 Resource_ResetEntry(u32 slot);
 void Func_080de060(struct FieldParticle *slot);
 
 extern const u8 gData_080f0ef8[];

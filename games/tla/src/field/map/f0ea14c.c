@@ -48,7 +48,7 @@ void *Resource_GetTableEntry(s32 resourceId);
 s32 Resource_DecodeType01(const void *source, void *destination);
 s32 Resource_FindFreeEntry(void);
 s32 VramCache_Load(u32 slot, u32 size, const void *source);
-void Resource_ResetEntry(s32 slot);
+s32 Resource_ResetEntry(u32 slot);
 u32 Random16(void);
 void wait(s32 frames);
 void Event_Wait(s32 frames);

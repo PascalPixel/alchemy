@@ -389,7 +389,7 @@ struct SparkWork {
 
 extern s32 gData_020033dc;
 
-void Resource_ResetEntry(s32 entry);
+s32 Resource_ResetEntry(u32 slot);
 void Func_02001538(void);
 void Func_020028b0(void);
 void Func_020028b8(void);

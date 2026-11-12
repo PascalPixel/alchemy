@@ -62,7 +62,7 @@ void *HeapSlot_AllocFar(s32 slot, s32 size);
 void HeapSlot_Release(s32 slot);
 void Func_02002824(void *source, void *destination);
 s32 Resource_FindFreeEntry(void);
-void Resource_ResetEntry(s32 entry);
+s32 Resource_ResetEntry(u32 slot);
 void Func_02002a0c(struct GlowSprite *sprite, s32 width, s32 height, s32 attr,
                    s32 tile);
 s32 Func_02002a24(struct Actor *actor);

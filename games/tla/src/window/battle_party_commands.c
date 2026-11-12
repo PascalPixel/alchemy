@@ -175,7 +175,7 @@ void Text_DrawNumberAtOffset(s32 value, s32 digits, struct Window *window,
                              s32 x, s32 y);
 void Window_SetTilemapEntry(struct Window *window, s32 entry, s32 x, s32 y,
                             s32 flags);
-void Resource_ResetEntry(s32 slot);
+s32 Resource_ResetEntry(u32 slot);
 s32 Func_08049154(s32 unused0, s32 unused1, const u8 *standby);
 void Func_0803c274(struct Window *window, s32 character, s32 x, s32 y,
                    s32 mode);

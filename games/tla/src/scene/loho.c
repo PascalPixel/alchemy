@@ -103,7 +103,7 @@ void Func_020013c8();
 
 s32 Resource_FindFreeEntry();
 s32 Resource_GetTableEntry();
-s32 Resource_ResetEntry();
+s32 Resource_ResetEntry(u32 slot);
 
 extern char ResourceId_FieldEffectExplosion;
 extern u8 Field_Palette685[];

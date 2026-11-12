@@ -2136,7 +2136,7 @@ struct CounterBits {
 };
 
 void Animation_ApplyChildValues(struct Actor *, u32);
-s32 Resource_ResetEntry(u32 entry);
+s32 Resource_ResetEntry(u32 slot);
 void Func_0200421c(struct Vector3 *v);
 void Func_0200424c(struct SparkleSprite *sprite);
 s32 Func_0200425c(struct Actor *object);

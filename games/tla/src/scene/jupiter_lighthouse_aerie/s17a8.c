@@ -47,7 +47,7 @@ void HeapSlot_Release(s32 slot);
 void *Resource_GetTableEntry(s32 id);
 void Func_020029a0(void *resource, void *destination);
 s32 Resource_FindFreeEntry(void);
-void Resource_ResetEntry(s32 entry);
+s32 Resource_ResetEntry(u32 slot);
 void Func_02002b30(struct EffectSprite *sprite, s32 pivotX, s32 pivotY,
                    u32 attributes, s32 tile);
 void Func_02002a20(struct Actor *object);

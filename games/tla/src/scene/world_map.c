@@ -109,7 +109,7 @@ void Func_020036a8(void);
 void Func_020048f4(void);
 void Func_02003bb8(struct Actor *object, s32 value);
 void Func_02004aa8(const u8 *a, u8 *b);
-void Resource_ResetEntry(s32 entry);
+s32 Resource_ResetEntry(u32 slot);
 u32 __umodsi3(u32 a, u32 b);
 
 struct TileSprite {

@@ -2470,52 +2470,5 @@ u16 gSolSanctumElementalStarRoom_StarCells[] = {
     MAPGRID_ANIMATION_STEP(59, 40, 3, 4, 6), MAPGRID_ANIMATION_STEP(62, 40, 3, 4, 6), MAPGRID_ANIMATION_STEP(65, 40, 3, 4, 6), MAPGRID_ANIMATION_STEP(68, 40, 3, 4, 6), MAPGRID_ANIMATION_STEP(71, 40, 3, 4, 6), MAPGRID_ANIMATION_STEP(74, 40, 3, 4, 6), MAPGRID_ANIMATION_STEP(77, 40, 3, 4, 6), MAPGRID_ANIMATION_STEP(80, 40, 3, 4, 6), MAPGRID_ANIMATION_STEP(83, 40, 3, 4, 0), MAPGRID_ANIMATION_STEPS_END,
 };
 
-u8 gSolSanctum_RingDrift[][3] = {
-    { 4, 4, 4 },
-    { 4, 0, 3 },
-    { 4, 0, 4 },
-    { 4, 0, 4 },
-    { 3, 0, 4 },
-    { 4, 6, 4 },
-    { 6, 0, 4 },
-    { 4, 0, 3 },
-    { 2, 0, 1 },
-    { 2, 0, 2 },
-};
-
-u8 gSolSanctum_RingSwing[][3] = {
-    { 1, 1, 2 },
-    { 1, 0, 2 },
-    { 1, 0, 2 },
-    { 1, 0, 1 },
-    { 1, 0, 2 },
-    { 1, 1, 2 },
-    { 1, 0, 2 },
-    { 1, 0, 2 },
-    { 1, 0, 2 },
-    { 1, 0, 2 },
-};
-
-s8 gSolSanctum_RingDirection[][3] = {
-    { 1, 1, 1 },
-    { 1, 0, 1 },
-    { 1, 0, 1 },
-    { -1, 0, 1 },
-    { -1, 0, -1 },
-    { 1, 1, 1 },
-    { -1, 0, -1 },
-    { -1, 0, -1 },
-    { -1, 0, -1 },
-    { -1, 0, -1 },
-};
-
-s32 gSolSanctumRing_MaxScales[] = {
-    3 * Q16_ONE / 5, 4 * Q16_ONE / 5, 7 * Q16_ONE / 10, 3 * Q16_ONE / 5, 4 * Q16_ONE / 5,
-    3 * Q16_ONE / 5, 7 * Q16_ONE / 10, 3 * Q16_ONE / 5, 3 * Q16_ONE / 5, 7 * Q16_ONE / 10,
-};
-
-s32 gSolSanctumRing_ScaleSteps[] = {
-    10 * Q16_ONE / 1000, 7 * Q16_ONE / 1000, 10 * Q16_ONE / 1000, 7 * Q16_ONE / 1000, 10 * Q16_ONE / 1000,
-    7 * Q16_ONE / 1000, 10 * Q16_ONE / 1000, 10 * Q16_ONE / 1000, 8 * Q16_ONE / 1000, 10 * Q16_ONE / 1000,
-};
+#include "shared/sol_sanctum_elemental_star_ring_tables.h"
 // clang-format on

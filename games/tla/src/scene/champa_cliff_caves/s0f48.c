@@ -1,4 +1,7 @@
-#include "../../../../games/tla/src/scene/champa_cliff_caves/scene.h"
+/// @file
+/// Scene code of overlay 0x685, in ROM order, from s0f48's offset up to the next object the overlay links.
+
+#include "scene.h"
 
 struct EventFlags685 {
   u8 unk000[0x15a];
@@ -84,4 +87,13 @@ chosen:
     Event_ShowMessageAndWait(actor, 0);
     Actor_ArmCallback_(actor, 0x5000, 0);
   }
+}
+
+void Func_02001138(struct RiseObject *object) {
+  object->scale += 0xc00;
+  if (object->scale >= 0x10000) {
+    object->scale = 0x10000;
+    object->update = 0;
+  }
+  object->scaleCopy = object->scale;
 }

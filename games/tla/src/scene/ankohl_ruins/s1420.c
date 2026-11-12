@@ -1,3 +1,6 @@
+/// @file
+/// Scene code of overlay 0x686, in ROM order, from s1420's offset up to the next object the overlay links.
+
 #include "iwram_call.h"
 #include "main_routine_work.h"
 #include "map.h"
@@ -8,6 +11,7 @@
 #include "system/task.h"
 #include "types.h"
 #include "event_inline.h"
+#include "ankohl_ruins.h"
 
 struct AnkohlRuinsFloatSprite {
   s32 x;
@@ -115,5 +119,24 @@ fill:
     sprite->z = 0x1780000;
     sprite->y = 0;
     sprite->kind = 4;
+  }
+}
+
+extern s16 gData_02003782;
+extern s16 gData_02003784;
+extern s32 gData_0200378c;
+
+void Func_020015ac(void) {
+  struct AnkohlRuinsEventWork *work =
+      (struct AnkohlRuinsEventWork *)Ram_HeapSlots->eventWork;
+
+  if (Event_GetFlag(0x104) == 0) {
+    if (++gData_02003782 >= gData_02003784) {
+      FieldTask_Remove(Func_020015ac);
+      if (gData_0200378c == 1)
+        work->alarm = 68;
+      else
+        work->alarm = 69;
+    }
   }
 }

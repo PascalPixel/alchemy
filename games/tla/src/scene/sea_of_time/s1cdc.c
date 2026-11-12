@@ -1,10 +1,12 @@
 /// @file
-/// The overlay's start: sets the screen effect, restores the clock and palette in the first room, draws the unlit cells in the second, and schedules the frame callback.
+/// Scene code of overlay 0x687, in ROM order, from s1cdc's offset up to the next object the overlay links.
+
 #include "sea_of_time.h"
 #include "main_routine_work.h"
 #include "scene_ids.h"
 #include "event_inline.h"
 
+// The overlay's start: sets the screen effect, restores the clock and palette in the first room, draws the unlit cells in the second, and schedules the frame callback.
 extern u16 gData_020026c0[];
 
 void Func_02000c50(void);
@@ -71,5 +73,13 @@ s32 Func_02001cdc(void) {
 
     Task_Add(Func_02001650, priority);
   }
+  return 0;
+}
+
+s32 Func_02001ec8(void) {
+  void *block = Ram_HeapSlots->block32;
+
+  Dma_Fill32(-1, block, 0x1c0);
+  BattleEffect_ApplyColorToSourceBuffer(0x10000, 0);
   return 0;
 }

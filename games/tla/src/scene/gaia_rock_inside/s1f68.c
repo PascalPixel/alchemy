@@ -1,4 +1,8 @@
+/// @file
+/// Scene code of overlay 0x681, in ROM order, from s1f68's offset up to the next object the overlay links.
+
 #include "types.h"
+
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
      u8 pad[off];                                                              \
@@ -14,4 +18,55 @@ void Func_02001f68(void) {
 
   t0 = ((s32)Actor_Get(FIELD_AT(gMainRoutineWork, s32, 532)));
   FIELD_AT((t0 + 0x22), u8, 0) = 2;
+}
+
+#include "event_inline.h"
+
+void Func_02001f84(void) {
+  s32 t0;
+
+  t0 = ((s32)Actor_Get(FIELD_AT(gMainRoutineWork, s32, 532)));
+  FIELD_AT((t0 + 0x22), u8, 0) = 0;
+}
+
+#include "ram_buffer.h"
+#include "event_inline.h"
+s32 Func_02004f8c();
+
+struct GaiaRockInsideEventWork {
+  u8 unk000[0x15a];
+  u16 unk15a;
+};
+
+extern const u8 MsgCheckedTheAltar[];
+
+void Func_02001fa0(void) {
+  s32 t0;
+
+  t0 = ((s32)Actor_Get(66));
+  FIELD_AT(t0, s32, 8) = 0x2280000;
+  FIELD_AT(t0, s32, 16) = 0x1280000;
+  FIELD_AT(t0, s32, 12) = -1966080;
+  FIELD_AT(t0, s32, 20) = -2097152;
+  Event_ClearFlag(0x142);
+  Func_02004f8c(0x1042);
+}
+
+/// Examines the altar.
+void Func_02001fd8(void) {
+  const u8 *message = MsgCheckedTheAltar;
+  const u8 *next;
+  s32 owner;
+
+  Message_ShowCentered(message, 1);
+  owner = FieldPartyInventory_FindOwner(451);
+  next = message + 2;
+  if (owner != -1) {
+    struct GaiaRockInsideEventWork *work = Ram_HeapSlots->eventWork;
+
+    Message_ShowCentered(next, 1);
+    work->unk15a = 1;
+  } else {
+    Message_ShowCentered(next, 1);
+  }
 }

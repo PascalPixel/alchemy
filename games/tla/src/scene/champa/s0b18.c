@@ -1,5 +1,9 @@
+/// @file
+/// Scene code of overlay 0x682, in ROM order, from s0b18's offset up to the next object the overlay links.
+
 #include "types.h"
 #include "ram_buffer.h"
+
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
      u8 pad[off];                                                              \
@@ -53,6 +57,19 @@ s32 Func_02000b18(void) {
   t23 = Event_GetFlag(0xa74);
   if (t23 != 0) {
     Func_0200060c();
+  }
+  return 0;
+}
+
+#include "event_inline.h"
+
+s32 Func_02000c04(void) {
+  s32 t0;
+
+  t0 = Event_GetFlag(0x97f);
+  if (t0 != 0) {
+    MapGrid_CopyCellsLayered(0xb, 0x33, 5, 4, 0x10, 0x17);
+    MapGrid_CopyCellAttributes(11, 51, 5, 6, 16, 23);
   }
   return 0;
 }

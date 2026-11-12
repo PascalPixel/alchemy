@@ -1,6 +1,24 @@
+/// @file
+/// The scene code of overlay 0x67c that its scene tables belong to, in ROM order; the rest of the overlay is in aqua_rock_inside/.
+
+#include "battle.h"
+#include "field.h"
+#include "game.h"
+#include "graphics.h"
+#include "lib.h"
+#include "menu.h"
+#include "sound.h"
+#include "system.h"
 #include "types.h"
+#include "scene_tables.h"
 #include "main_routine_work.h"
 #include "scene_ids.h"
+
+const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
+
+const struct SceneRegion *Scene_GetRegions(void) { return 0; }
+
+const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 extern const u8 gData_02004688[];
 extern const u8 gData_020046a0[];

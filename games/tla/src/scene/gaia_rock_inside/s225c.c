@@ -1,9 +1,14 @@
+/// @file
+/// Scene code of overlay 0x681, in ROM order, from s225c's offset up to the next object the overlay links.
+
 #include "types.h"
 #include "actor.h"
 #include "main_routine_work.h"
 #include "text/msg_ids.h"
 #include "scene_tables.h"
 #include "event_inline.h"
+#include "iwram_call.h"
+#include "ram_buffer.h"
 
 u32 Random16Far(void);
 void Func_02004e3c(struct Actor *object, s32 value);
@@ -278,4 +283,75 @@ void Func_02002718(void) {
     Actor_SetHorizontalPositionWithTerrain(14, 0, 0);
     Func_02004e64();
   }
+}
+
+// Records which of eleven listed cells persons 10 and 11 stand on, as the two halves of the byte flag 0x210.
+#define FIELD_AT(base, type, off)                                              \
+  (((struct {                                                                  \
+     u8 pad[off];                                                              \
+     type v;                                                                   \
+   } *)(base))                                                                 \
+       ->v)
+
+extern const s16 gData_0200530c[][2];
+s32 GameFlag_SetByte(s32 flag, s32 value);
+
+s32 Func_02002974(void) {
+  struct Actor *first = Actor_Get(10);
+  s8 firstIndex = 0;
+  s32 firstX = first->x >> 19;
+  s8 secondIndex = 0;
+  s32 firstZ = first->z >> 19;
+  struct Actor *second = Actor_Get(11);
+  s32 secondX = second->x >> 19;
+  s32 secondZ = second->z >> 19;
+  s8 i;
+
+  for (i = 1; i <= 11; i++) {
+    if (firstX == gData_0200530c[i][0] && firstZ == gData_0200530c[i][1])
+      firstIndex = i;
+    if (secondX == gData_0200530c[i][0] && secondZ == gData_0200530c[i][1])
+      secondIndex = i;
+  }
+  {
+    u32 high = secondIndex << 28;
+    return GameFlag_SetByte(0x210, (s32)((firstIndex << 24) | high) >> 24);
+  }
+}
+
+s32 Func_02004af0();
+
+void Func_02002a14(void) { Func_02004af0(0xb, 0x303); }
+
+void Func_02002a24(void) { Func_02004af0(0xc, 0x304); }
+
+void Func_02002a34(void) { Func_02004af0(0xd, 0x305); }
+
+extern char SceneId_Ov681Room2;
+extern char SceneId_Ov681Room3;
+extern char SceneId_Ov681Room4;
+extern char SceneId_Ov681Room5;
+extern const u8 gData_02005ee8[];
+extern const u8 gData_02005f30[];
+extern const u8 gData_02005fcc[];
+extern const u8 gData_02006038[];
+extern const u8 gData_020060f8[];
+extern const u8 gData_02006164[];
+extern const u8 gData_020061a0[];
+
+/// Returns the current room's table.
+const u8 *Func_02002a44(void) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_Ov681Room2)
+    return gData_02006038;
+  if (gMainRoutineWork.scene == (s32)&SceneId_Ov681Room3)
+    return gData_020060f8;
+  if (gMainRoutineWork.scene == (s32)&SceneId_Ov681Room4)
+    return gData_02006164;
+  if (gMainRoutineWork.scene == (s32)&SceneId_Ov681Room5)
+    return gData_020061a0;
+  if (gMainRoutineWork.entrance == 9)
+    return gData_02005f30;
+  if (gMainRoutineWork.entrance > 9)
+    return gData_02005fcc;
+  return gData_02005ee8;
 }

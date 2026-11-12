@@ -1,12 +1,14 @@
 /// @file
-/// The Sea of Time's frame callback: rotates two runs of the background palette, pulses
-/// the red of colour 15 (or steps it with the alarm), copies the palette and ripples the
-/// layer's horizontal scroll line by line.
+/// Scene code of overlay 0x687, in ROM order, from s1650's offset up to the next object the overlay links.
+
 #include "sea_of_time.h"
 #include "map.h"
 #include "io_reg.h"
 #include "event_inline.h"
 
+// The Sea of Time's frame callback: rotates two runs of the background palette, pulses
+// the red of colour 15 (or steps it with the alarm), copies the palette and ripples the
+// layer's horizontal scroll line by line.
 /// The event work's fields this function reads that SeaOfTimeEventWork lacks.
 struct EventWork_02001650 {
   u8 unk000[0x166];
@@ -18,7 +20,6 @@ struct EventWork_02001650 {
 extern u16 Data_02002580[160];
 extern u16 gData_020026c0[14];
 extern s16 gData_0200257c[1];
-
 
 void Func_02001650(void) {
   u16 *line = Data_02002580;
@@ -112,4 +113,45 @@ void Func_02001650(void) {
   line = Data_02002580;
   REG_BG1HOFS = *line;
   Dma_Set(line + 1, (void *)&REG_BG1HOFS, 0xa2600001, (volatile u32 *)REG_DMA0);
+}
+
+void Func_020018a8(s32 x, s32 z, s32 actor) {
+  ((struct SeaOfTimeObject *)Actor_GetById(actor))->collisionFlags |= 16;
+  Actor_SetHorizontalPositionWithTerrain(actor, (x << 19) + 0x80000,
+                                         (z << 19) + 0x80000);
+  x >>= 1;
+  z >>= 1;
+  Func_02000388(1, x, z, 0xff00);
+  Func_02000388(1, x + 1, z, 0xff00);
+  Func_02000388(1, x, z + 1, 0xff00);
+  Func_02000388(1, x + 1, z + 1, 0xff00);
+}
+
+void Func_02001928(s32 x, s32 z, s32 actor) {
+  struct SeaOfTimeSpark spark;
+  s32 px;
+  s32 pz;
+  s32 i;
+
+  Camera_SetSpeedParameters(0x60000, 0xc000);
+  px = (x << 19) + 0x80000;
+  pz = (z << 19) + 0x80000;
+  FieldCamera_MoveTo(px, -1, pz, 1);
+  Func_02001ffc();
+  Sound_Play(144);
+  MapGrid_SetShake(0, 0x100000, 0x10000);
+  MapGrid_SetShake(-1, -1, 0xe666);
+  spark.scaleX = 0x13333;
+  spark.scaleY = 0x18000;
+  spark.mode = 1;
+  spark.life = 276;
+  Func_0200015c(px, 0, pz, 0, 0, 0, 0x1a0000, &spark);
+  ((struct SeaOfTimeObject *)Actor_GetById(actor))->scale = 0x1999;
+  Func_020018a8(x, z, actor);
+  for (i = 0; i != 10; i++) {
+    ((struct SeaOfTimeObject *)Actor_GetById(actor))->scale += 0x1999;
+    Event_Wait(1);
+  }
+  ((struct SeaOfTimeObject *)Actor_GetById(actor))->scale = 0x10000;
+  Event_Wait(20);
 }

@@ -1,4 +1,8 @@
+/// @file
+/// Scene code of overlay 0x686, in ROM order, from events_a's offset up to the next object the overlay links.
+
 #include "ankohl_ruins.h"
+#include "version.h"
 
 void Func_02002e7c(s32 id, s32 a, s32 b);
 
@@ -15,3 +19,9 @@ void Func_02000384(void) {
   Event_SetFlag(0x122);
   FieldEvent_SetExitRequest(13);
 }
+
+// Includes the shared Effect_AdvanceMotion in this scene.
+// Neither it nor its caller Func_02000418 exists in the Japanese scene.
+#if TLA_PATCH_1
+#include "../../field/field_effect/advance_motion.c"
+#endif

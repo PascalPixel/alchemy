@@ -1,5 +1,11 @@
+/// @file
+/// Scene code of overlay 0x682, in ROM order, from s0188's offset up to the next object the overlay links.
+
 #include "types.h"
 #include "scene_tables.h"
+#include "text/msg_ids.h"
+#include "event_inline.h"
+
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
      u8 pad[off];                                                              \
@@ -85,4 +91,93 @@ void Func_02000188(void) {
   Actor_WalkByAndWait(33, 0, -16);
   Actor_SetPosition(33, 0, 0);
   Func_02002a4c();
+}
+
+void Actor_SetActionCallback(s32 *object, s32 action);
+
+void Func_02000430(s32 actor) {
+  s32 *object = ((s32 *)Actor_Get(actor));
+
+  object[7] = 0x10000;
+  object[6] = 0x10000;
+  FieldEvent_SetMessageId((s32)MsgChampa07);
+  Event_ShowMessage(actor, 0);
+  Actor_FaceDirectionAndWait(actor, FACING_EAST);
+  Actor_SetActionCallback(object, 8);
+}
+
+void Func_02000468(s32 actor) {
+  s32 msg = (s32)&MsgChampa29;
+
+  FieldEvent_SetMessageId(msg);
+  Event_OpenMessage(actor, 0);
+  if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) == 0) {
+    FieldEvent_Wait(10);
+    FieldEvent_SetMessageId(msg + 1);
+  } else {
+    FieldEvent_Wait(20);
+    FieldEvent_SetMessageId(msg + 2);
+  }
+  Event_ShowMessage(actor, 0);
+}
+
+extern u8 MsgChampa30[];
+extern u8 MsgChampa05[];
+
+void Func_020004b4(s32 actor) {
+  if (Event_GetFlag(0x97f)) {
+    FieldEvent_SetMessageId((s32)MsgChampa30);
+    Event_OpenMessage(actor, 0);
+    if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) == 0) {
+      FieldEvent_Wait(10);
+      FieldEvent_SetMessageId((s32)MsgChampa30 + 1);
+    } else {
+      FieldEvent_Wait(20);
+      FieldEvent_SetMessageId((s32)MsgChampa30 + 2);
+    }
+    Event_ShowMessage(actor, 0);
+  } else {
+    FieldEvent_SetMessageId((s32)MsgChampa05);
+    Event_OpenMessage(actor, 0);
+    if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) == 0) {
+      FieldEvent_Wait(10);
+      FieldEvent_SetMessageId((s32)MsgChampa05 + 1);
+    } else {
+      FieldEvent_Wait(20);
+      FieldEvent_SetMessageId((s32)MsgChampa05 + 2);
+    }
+    Event_ShowMessage(actor, 0);
+  }
+}
+
+#include "event_inline.h"
+extern u8 MsgChampa35[];
+extern u8 MsgChampa36[];
+
+void Func_02000554(s32 a0) {
+  s32 t0;
+
+  t0 = Event_GetFlag(0x972);
+  if (t0 == 0) {
+    Event_SetFlag(0x972);
+    FieldEvent_SetMessageId((s32)MsgChampa35);
+  } else {
+    FieldEvent_SetMessageId((s32)MsgChampa36);
+  }
+  Event_ShowMessage(a0, 0);
+}
+
+void Func_02000590(s32 actor) {
+  s32 msg = (s32)&MsgChampa11;
+
+  FieldEvent_SetMessageId(msg);
+  Event_OpenMessage(actor, 0);
+  if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) == 0) {
+    FieldEvent_Wait(10);
+    FieldEvent_SetMessageId(msg + 1);
+  } else {
+    FieldEvent_Wait(20);
+    FieldEvent_SetMessageId(msg + 2);
+  }
+  Event_ShowMessage(actor, 0);
 }

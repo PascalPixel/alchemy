@@ -1,6 +1,11 @@
-#include "../../../../games/tla/src/scene/champa_cliff_caves/scene.h"
+/// @file
+/// Scene code of overlay 0x685, in ROM order, from s04d4's offset up to the next object the overlay links.
+
+#include "scene.h"
 #include "scene_ids.h"
 #include "version.h"
+#include "types.h"
+#include "scene_tables.h"
 
 struct EventTransition {
   u8 unk000[0x1ac];
@@ -60,4 +65,61 @@ s32 Func_020004d4(void) {
     }
   }
   return 0;
+}
+
+s32 Scene_PrepareMap(void) { return 0; }
+
+/// The byte at 0x5a of an actor, as the field its bit 0 is set through.
+struct ActorSolid {
+  u8 unk00[0x5a];
+  u8 solid : 8;
+};
+
+void Motion_SetModeAndWaitAnimation(s32 actor, s32 mode);
+void Actor_CommitPositionAndActivate(s32 actor, s32 dx, s32 dz);
+void Actor_SetHorizontalPositionWithTerrain(s32 a, s32 b, s32 c);
+
+// The scene's own event inlines: a habit of the whole game written once, as
+// event_inline.h's are, a layer and not a compiler-steering device.
+static __inline__ void Actor_CommitPositionAndActivate_(s32 actor,
+                                                               s32 dx, s32 dz) {
+  Actor_CommitPositionAndActivate(actor, dx, dz);
+}
+
+void Func_020005e8(s32 actor) {
+  Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 648, 200);
+  Actor_ArmCallbackAndRefresh(gMainRoutineWork.currentOwner, FACING_EAST);
+  Event_Wait(5);
+  Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, 6);
+  Event_Wait(7);
+  Func_080d3b28(10, actor);
+  Actor_SetHorizontalPositionWithTerrain(10, 648 << 16, 196 << 16);
+  Actor_GetById(gMainRoutineWork.currentOwner)->unk5a[0] &= ~1;
+  Actor_CommitPositionAndActivate(gMainRoutineWork.currentOwner, -16, -8);
+  Event_Wait(1);
+  Actor_GetById(gMainRoutineWork.currentOwner)->unk5a[0] |= 1;
+  Actor_ArmCallbackAndRefresh(gMainRoutineWork.currentOwner, FACING_EAST);
+  Event_Wait(10);
+}
+
+void Func_0200067c(s32 value) {
+  Actor_SetSpeedParameters(8, 0xcccc, 0x6666);
+  Actor_GetById(8)->unk5a[0] &= 0xfe;
+  Actor_CommitPositionAndActivate(8, 0, 6);
+  Event_Wait(1);
+  ((struct ActorSolid *)Actor_GetById(8))->solid |= 1;
+  Event_Wait(10);
+  Actor_SetModeById(8, 8);
+  Event_Wait(15);
+  Actor_SetHorizontalPositionWithTerrain(10, 0, 0);
+  Event_Wait(15);
+  Actor_SetModeById(8, 1);
+  Event_Wait(15);
+  if (value == 0) {
+    Actor_GetById(8)->unk5a[0] &= 0xfe;
+    Actor_CommitPositionAndActivate_(8, 0, -6);
+    Event_Wait(1);
+    ((struct ActorSolid *)Actor_GetById(8))->solid |= 1;
+    Event_Wait(10);
+  }
 }

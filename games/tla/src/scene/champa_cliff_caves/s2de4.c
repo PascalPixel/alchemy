@@ -1,10 +1,11 @@
 /// @file
-/// The glow's frame callback.
+/// Scene code of overlay 0x685, in ROM order, from s2de4's offset up to the next object the overlay links.
 
 #include "types.h"
 #include "ram_buffer.h"
 #include "event_inline.h"
 
+// The glow's frame callback.
 struct GlowSprite {
   u8 unk_0[12];
   s32 x;
@@ -84,4 +85,114 @@ loop:
   work->trailingScale = work->scale * 31 / 40;
   work->trailingScale2 = work->scale2 * 31 / 40;
   work->frame++;
+}
+
+#define FIELD_AT(base, type, off)                                              \
+  (((struct {                                                                  \
+     u8 pad[off];                                                              \
+     type v;                                                                   \
+   } *)(base))                                                                 \
+       ->v)
+
+u8 *HeapSlot_AllocFar(s32 slot, s32 size);
+void Func_02002c88(void);
+void Func_02002d34(void);
+void Func_02002de4(void);
+
+void Func_02002f58(const s32 *position) {
+  u8 *work = HeapSlot_AllocFar(220, 0x1078);
+  s32 time;
+  s32 state;
+
+  FIELD_AT(work, s32, 4096) = position[0];
+  FIELD_AT(work, s32, 4100) = position[1];
+  FIELD_AT(work, s32, 4104) = position[2];
+  Func_02002c88();
+  Func_02002d34();
+  FIELD_AT(work, u16, 4212) = 0;
+  time = 0;
+  {
+    s32 priority = 0x480;
+
+    Task_Add(Func_02002de4, priority);
+  }
+  MapGrid_SetShake(0x40000, 0x40000, 0x10000);
+  state = 0;
+  do {
+    switch (state) {
+    case 0:
+      if ((FIELD_AT(work, s32, 4196) += 0x600) > 0x14ccb) {
+        FIELD_AT(work, s32, 4196) = 0x14ccc;
+        state = 1;
+        time = -1;
+      }
+      break;
+    case 1:
+      if (time == 10) {
+        state = 2;
+        time = -1;
+      }
+      break;
+    case 2:
+      if ((FIELD_AT(work, s32, 4204) += 0x400) > 0x6665) {
+        FIELD_AT(work, s32, 4204) = 0x6666;
+        state = 3;
+        time = -1;
+      }
+      break;
+    case 3:
+      if ((FIELD_AT(work, s32, 4204) += 0x3000) > 0x14ccb) {
+        FIELD_AT(work, s32, 4204) = 0x14ccc;
+        state = 999;
+      }
+      break;
+    }
+    System_Wait(1);
+    time++;
+  } while (state != 999);
+}
+
+s32 Resource_ResetEntry(u32 entry);
+void HeapSlot_Release(s32 slot);
+
+void Func_02003078(void) {
+  u8 *work = Ram_HeapSlots->menuRuntime;
+  s32 position[3];
+  s32 state;
+  s32 time;
+
+  position[0] = FIELD_AT(work, s32, 4096);
+  position[1] = FIELD_AT(work, s32, 4100) - 0x200000;
+  state = 0;
+  time = 0;
+  position[2] = FIELD_AT(work, s32, 4104);
+  do {
+    switch (state) {
+    case 0:
+      if ((FIELD_AT(work, s32, 4204) -= 0x1000) < 0) {
+        FIELD_AT(work, s32, 4204) = 0;
+        time = -1;
+        state = 1;
+      }
+      break;
+    case 1:
+      if ((FIELD_AT(work, s32, 4196) -= 0x800) < 0) {
+        FIELD_AT(work, s32, 4196) = 0;
+        state = 2;
+        time = -1;
+      }
+      break;
+    case 2:
+      if (time == 1)
+        state = 999;
+      break;
+    }
+    wait(1);
+    time++;
+  } while (state != 999);
+  Task_RemoveFar(Func_02002de4);
+  Map_SetScreenShake(0, 0, 0);
+  Resource_ResetEntry(FIELD_AT(work, s16, 4188));
+  Resource_ResetEntry(FIELD_AT(work, s16, 4192));
+  HeapSlot_Release(220);
 }

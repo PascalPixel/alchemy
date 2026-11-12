@@ -1,6 +1,10 @@
+/// @file
+/// Scene code of overlay 0x67b, in ROM order, from s17f4's offset up to the next object the overlay links.
+
 #include "scene_tables.h"
 #include "local.h"
 #include "call.h"
+#include "types.h"
 
 struct MapBits {
   u8 unk00[23];
@@ -176,4 +180,25 @@ s32 Func_020017f4(void) {
     }
   }
   return 0;
+}
+
+s32 Scene_PrepareMap(void) { return 0; }
+
+void Func_02001d30(struct Actor *object) {
+  struct Actor *child = Import_ActorCreate(
+      14, object->x, object->y + 0x40000, object->z + 0x40000);
+  struct FieldSprite *parentSprite = object->animation;
+
+  if (child != 0) {
+    struct FieldSprite *sprite = child->animation;
+
+    child->terrainHeight = object->terrainHeight;
+    Func_02002918(child, gData_02002c44);
+    child->motionFlags = 0;
+    if (sprite != 0) {
+      Animation_ApplyChildArgument(sprite, 1);
+      sprite->nextFrame = 0;
+      sprite->priority = parentSprite->priority;
+    }
+  }
 }

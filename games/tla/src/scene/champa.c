@@ -1,8 +1,47 @@
+/// @file
+/// The scene code of overlay 0x682 that its scene tables belong to, in ROM order; the rest of the overlay is in champa/.
+
+#include "battle.h"
+#include "field.h"
+#include "game.h"
+#include "graphics.h"
+#include "lib.h"
+#include "menu.h"
+#include "sound.h"
+#include "system.h"
 #include "types.h"
+#include "scene_tables.h"
+#include "event_inline.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "field_event.h"
-#include "event_inline.h"
+
+const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
+
+const struct SceneRegion *Scene_GetRegions(void) { return 0; }
+
+const u32 *Scene_GetExits(void) { return gSceneExits; }
+
+extern s16 gData_02002c5c[];
+extern s16 gData_02002efc[];
+
+const s16 *Func_0200004c(void) {
+  if (Event_GetFlag(0x97f))
+    return gData_02002efc;
+  return gData_02002c5c;
+}
+
+#define FIELD_AT(base, type, off)                                              \
+  (((struct {                                                                  \
+     u8 pad[off];                                                              \
+     type v;                                                                   \
+   } *)(base))                                                                 \
+       ->v)
+
+void Func_0200006c(s32 a0) {
+  FIELD_AT(a0, s32, 24) = (FIELD_AT(a0, s32, 24) + -1536);
+  FIELD_AT(a0, s32, 28) = (FIELD_AT(a0, s32, 28) + -1536);
+}
 
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
@@ -59,3 +98,20 @@ void Func_020000fc(s32 door) {
     Func_02000080(table + 2, door, 0);
   }
 }
+
+#include "event_inline.h"
+
+void Func_0200014c(void) {
+  s32 t2;
+  s32 t1;
+
+  TreasureSpot_SetPosition(0x40, 0x1880000, 0x2380000);
+  t1 = ((s32)Actor_Get(64));
+  FIELD_AT((t1 + 0x55), u8, 0) = 0;
+  t2 = ((s32)Actor_Get(64));
+  FIELD_AT(t2, s32, 12) = 0x200000;
+}
+
+#include "event_inline.h"
+
+void Func_02000178(void) { TreasureSpot_SetPosition(0x40, 0, 0); }

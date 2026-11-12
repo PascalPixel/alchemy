@@ -646,8 +646,8 @@ s32 PartyMemberChooser_MoveEntry(s32 selectedIndex, s32 direction) {
 #ifdef UBFIX
     s32 clearIndex = 13;
 
-    // Avoid forming reordered - 1 after the final store. The plain indexed
-    // clear adds four native bytes, so matching builds retain the old cursor.
+    // UB: the pointer walk below forms reordered - 1 after its last store;
+    // this clear counts an index down instead.
     do {
       reordered[clearIndex] = zero;
       clearIndex--;
@@ -655,6 +655,8 @@ s32 PartyMemberChooser_MoveEntry(s32 selectedIndex, s32 direction) {
 #else
     u32 *clear = &reordered[13];
 
+    /* FAKEMATCH(temporary): the loop test compares the pointers as s32; as
+     * clear >= reordered, 2 of 113 instructions differ in tbs-en. */
     do {
       *clear = zero;
       clear--;

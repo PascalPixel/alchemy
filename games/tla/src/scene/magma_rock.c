@@ -1,12 +1,45 @@
-#include "../field/map/cell_get.c"
-
 #include "types.h"
+#include "ram_buffer.h"
+#include "iwram_call.h"
 #include "actor.h"
 #include "event_inline.h"
-#include "field.h"
+#include "map.h"
 
-s32 Map_GetTerrainHeight(s32 terrain, s32 x, s32 z);
-s32 Func_020005cc(s32 layer, s32 x, s32 z, s32 height);
+struct EventObjects {
+  u8 unk00[20];
+  struct Actor *objects[64];
+};
+
+void Func_02000594(void) { Func_080d2b4c(8, 56); }
+
+s32 Func_020005a0(s32 *a, s32 *b) {
+  s32 dx = (a[0] - b[0]) >> 16;
+  s32 dz = (a[2] - b[2]) >> 16;
+
+  return Iwram_Sqrt(dx * dx + dz * dz);
+}
+
+extern u8 gMapCellBuffer[];
+extern u8 gMapShapeGrid[];
+
+s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
+s32 Func_02003adc(s32 layer, s32 x, s32 z);
+s32 Func_02003c24(s32 layer, s32 shape, s32 height);
+
+s32 Func_020005cc(s32 layer, s32 x, s32 z, s32 height) {
+  struct MapWork *map = Ram_HeapSlots->mapWork;
+  s32 shape = Func_02003adc(layer, x, z);
+  u8 *out = Ram_MapShapeGrid +
+            (map->layers[layer].cells - (struct MapCell *)Ram_MapCellBuffer);
+
+  out += x + (z << 7);
+  *out = Func_02003c24(layer, shape, height);
+  return 0;
+}
+
+#include "../field/map/cell_get.c"
+
+#include "field.h"
 
 void Func_02000668(u16 *list) {
   for (; *list != 0xffff; list += 3) {
@@ -30,14 +63,12 @@ void Func_02000668(u16 *list) {
 #include "system.h"
 #include "scene_tables.h"
 #include "magma_rock/magma_rock.h"
-#include "ram_buffer.h"
 #include "main_routine_work.h"
 #include "scene_ids.h"
 
 // For each id of a list ended by 0xffff: clears the object's mark and, on a
 // cell with attribute bit 6, blocks the cells ahead of and behind it and sets
 // the mark.
-#include "map.h"
 
 void Func_020006cc(u16 *ids) {
   struct Actor *object;
@@ -109,7 +140,6 @@ void Func_0200074c(struct Object0200074c *object) {
 // For each id of a list ended by 0xffff: settles the object on its ground,
 // copies the cell under it, and blocks the cells ahead of and behind it on a
 // cell with attribute bit 6.
-#include "iwram_call.h"
 #include "text/msg_ids.h"
 
 /// For each id of a list ended by 0xffff: settles the object on its ground,

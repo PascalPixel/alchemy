@@ -1174,7 +1174,7 @@ SECTIONS
         "*/games/tla/src/scene/lemuria_interiors/s0a5c.o"(.text)
         "*/games/tla/src/scene/lemuria_interiors/s12dc.o"(.text)
         "*/games/tla/src/scene/lemuria_interiors/import.o"(.text)
-        "*/games/tla/src/scene/lemuria_interiors/data.o"(.data)
+        "*/games/tla/src/scene/lemuria_interiors/s12dc.o"(.data)
     }
 }
 #elif OVERLAY == 0x68d
@@ -1187,7 +1187,7 @@ SECTIONS
         "*/games/tla/src/scene/lemuria_palace/s03a0.o"(.text)
         "*/games/tla/src/scene/lemuria_palace/s058c.o"(.text)
         "*/games/tla/src/scene/lemuria_palace/import.o"(.text)
-        "*/games/tla/src/scene/lemuria_palace/data.o"(.data)
+        "*/games/tla/src/scene/lemuria_palace/s058c.o"(.data)
         "*/games/tla/src/scene/lemuria_palace/tiles.o"(.rodata)
         "*/games/tla/src/scene/lemuria_palace/data2.o"(.data)
     }
@@ -1290,7 +1290,6 @@ SECTIONS
         "*/games/tla/src/field/field_effect/move.o"(.text)
         "*/games/tla/src/scene/magma_rock/s015c.o"(.text)
         "*/games/tla/src/scene/magma_rock/s03b4.o"(.text)
-        "*/games/tla/src/scene/magma_rock/distance.o"(.text)
         "*/games/tla/src/scene/magma_rock.o"(.text)
         "*/games/tla/src/scene/magma_rock/s0c08.o"(.text)
         "*/games/tla/src/scene/magma_rock/s0ff4.o"(.text)
@@ -1302,7 +1301,7 @@ SECTIONS
         "*/games/tla/src/scene/magma_rock/s22ac.o"(.text)
         "*/games/tla/src/scene/magma_rock/s34ac.o"(.text)
         "*/games/tla/src/scene/magma_rock/import.o"(.text)
-        "*/games/tla/src/scene/magma_rock/data.o"(.data)
+        "*/games/tla/src/scene/magma_rock/s34ac.o"(.data)
     }
 }
 #elif OVERLAY == 0x692
@@ -1319,8 +1318,6 @@ SECTIONS
         "*/games/tla/src/scene/magma_rock_inside/s033c.o"(.text)
         "*/games/tla/src/scene/magma_rock_inside/s03b4.o"(.text)
         "*/games/tla/src/scene/magma_rock_inside/s0594.o"(.text)
-        "*/games/tla/src/scene/magma_rock_inside/s05dc.o"(.text)
-        "*/games/tla/src/scene/magma_rock_inside/map.o"(.text)
         "*/games/tla/src/scene/magma_rock_inside/s0800.o"(.text)
         "*/games/tla/src/scene/magma_rock_inside/s0880.o"(.text)
         "*/games/tla/src/scene/magma_rock_inside/s08f8.o"(.text)
@@ -1367,7 +1364,7 @@ SECTIONS
         "*/games/tla/src/scene/contigo.o"(.text)
         "*/games/tla/src/scene/contigo/s3e54.o"(.text)
         "*/games/tla/src/scene/contigo/import.o"(.text)
-        "*/games/tla/src/scene/contigo/data.o"(.data)
+        "*/games/tla/src/scene/contigo/s3e54.o"(.data)
     }
     .bss :
     {
@@ -1423,21 +1420,17 @@ SECTIONS
         "*/games/tla/src/field/object/set_sprite_priority.o"(.text)
         "*/games/tla/src/field/field_effect/move.o"(.text)
         "*/games/tla/src/scene/trial_road/s129c.o"(.text)
-        "*/games/tla/src/scene/trial_road/s14e4.o"(.text)
         "*/games/tla/src/scene/trial_road/s15a8.o"(.text)
         "*/games/tla/src/scene/trial_road/s1fc4.o"(.text)
         "*/games/tla/src/scene/trial_road/s3f68.o"(.text)
-        "*/games/tla/src/scene/trial_road/s4418.o"(.text)
-        "*/games/tla/src/scene/trial_road/s45ac.o"(.text)
         "*/games/tla/src/scene/trial_road/s4828.o"(.text)
         "*/games/tla/src/scene/trial_road/s4a94.o"(.text)
-        "*/games/tla/src/scene/trial_road/s4ce0.o"(.text)
         "*/games/tla/src/scene/trial_road/s4d6c.o"(.text)
         "*/games/tla/src/scene/trial_road/balance.o"(.text)
         "*/games/tla/src/scene/trial_road/s4ddc.o"(.text)
         "*/games/tla/src/scene/trial_road/s51a0.o"(.text)
         "*/games/tla/src/scene/trial_road/import.o"(.text)
-        "*/games/tla/src/scene/trial_road/data.o"(.data)
+        "*/games/tla/src/scene/trial_road/s51a0.o"(.data)
         "*/games/tla/src/graphics/field/tiles64d.o"(.rodata)
         "*/games/tla/src/scene/trial_road/data2.o"(.data)
         "*/games/tla/src/scene/trial_road/picture.o"(.rodata)

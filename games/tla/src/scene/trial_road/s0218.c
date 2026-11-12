@@ -534,7 +534,7 @@ void Func_02000c84(void) {
   }
 }
 
-extern const u8 gData_02007734[];
+extern s16 gData_02007734[];
 
 void Func_02000cc0(void) { Func_02004418(gData_02007734); }
 

@@ -80,3 +80,31 @@ void Func_0200129c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 }
 
 #include "../../field/field_effect/advance_motion_priority.c"
+
+#include "system.h"
+#include "actor.h"
+#include "frame.h"
+
+void Func_020014e4(void) {
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct EffectOptions options;
+  s32 velocity[3];
+
+  if (gMainRoutineWork.renderMode == 4)
+    return;
+  leader->z += 0x10000;
+  if ((gFrameCount & 7) != 0)
+    return;
+  if (leader->velocityZ == 0 && leader->velocityX == 0)
+    return;
+  options.update = Effect_AdvanceMotionAtLeaderPriority;
+  options.startScaleX = 0xcccc;
+  options.startScaleY = 0xcccc;
+  velocity[1] = 0;
+  velocity[2] = 0x10000;
+  velocity[0] = 0;
+  velocity[0] += ((Random16Far() << 17) >> 16) - 0x10000;
+  velocity[2] += ((Random16Far() << 16) >> 16) - 0x8000;
+  Func_0200129c(leader->x, leader->y, leader->z, velocity[0], velocity[1],
+                velocity[2], 0x1000001, &options);
+}

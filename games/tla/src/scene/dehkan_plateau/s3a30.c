@@ -1,7 +1,13 @@
+/// @file
+/// Scene code of overlay 0x655, in ROM order, from s3a30's offset up to the next object the overlay links.
+
 #include "types.h"
 #include "actor.h"
 #include "field_sprite.h"
 #include "event_inline.h"
+#include "ram_buffer.h"
+#include "main_routine_work.h"
+#include "scene_tables.h"
 
 extern struct Actor *gData_02004420;
 
@@ -33,3 +39,34 @@ void Func_02003a30(void) {
     HeapSlot_Release(68);
   }
 }
+
+extern const u8 gData_02003f92[];
+extern const u8 gData_02003fb8[];
+
+void Func_02000038(const void *data);
+void Func_020001d0(const void *data);
+void Func_02001ff4(void);
+void Func_02002140(void);
+void Func_02003764(void);
+
+void Func_02003aa0(void) {
+  *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x204;
+  Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
+  if (GameFlag_Test(95) != 0)
+    GameFlag_SetBit(521);
+  Func_02000038(gData_02003fb8);
+  Func_020001d0(gData_02003f92);
+  if (GameFlag_Test(519) == 0) {
+    Func_02002140();
+    wait(10);
+  }
+  Func_02001ff4();
+  if (GameFlag_Test(265) == 0) {
+    if (gMainRoutineWork.entrance > 5) {
+      if (gMainRoutineWork.entrance <= 39)
+        Func_02003764();
+    }
+  }
+}
+
+s32 Scene_PrepareMap(void) { return 0; }

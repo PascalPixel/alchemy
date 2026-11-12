@@ -1,10 +1,15 @@
 /// @file
-/// Flashes an actor, then raises eight puffs over another and sets a flag.
+/// Scene code of overlay 0x655, in ROM order, from s2698's offset up to the next object the overlay links.
+
 #include "types.h"
 #include "actor.h"
 #include "field_sprite.h"
 #include "fixed_math.h"
 #include "event_inline.h"
+#include "scene_tables.h"
+#include "main_routine_work.h"
+#include "ram_buffer.h"
+#include "event_work.h"
 
 u32 Random16Far(void);
 void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
@@ -80,4 +85,140 @@ void Func_02002698(s32 id, s32 center, s32 flag) {
   }
   GameFlag_SetBit(flag);
   Event_Wait(20);
+}
+
+void Func_020021b4();
+void Func_02002698();
+void Func_02003c28();
+void Func_02003c30();
+void Func_02003cf0();
+void Actor_SetSingleChildFlags();
+
+void Func_020027e0(void) {
+  struct Actor *actor;
+
+  actor = Actor_GetById(25);
+  Func_02003c28();
+  Event_ResolvePendingActions(0);
+  Actor_WatchAndSetScript(gMainRoutineWork.currentOwner, 25);
+  Func_080d4568()->motionFlags = 0;
+  FieldCamera_MoveTo(PIXELS(616), -1, PIXELS(280), 1);
+  Func_02003cf0();
+  Actor_SetAngleToward(25, gMainRoutineWork.currentOwner, 0);
+  // A direct call: as Call3 the actor id is loaded before the 0x100's shift.
+  Func_080d47b4(25, 0x100, 40);
+  Actor_SetSpritePriority(25, 1);
+  Actor_SetSpeed(25, 0x19999, 0xcccc);
+  Actor_WalkToAndWait(25, 632, 280);
+  Actor_SetSpeed(25, 0x20000, 0x10000);
+  Sound_Play(153);
+  actor->velocityY = 0x80000;
+  Actor_SetSingleChildFlags(Actor_GetById(25), 0);
+  Actor_WalkToAndWait(25, 664, 280);
+  Actor_SetSingleChildFlags(Actor_GetById(25), 1);
+  Func_02002698(21, 25, 0x210);
+  Sound_Play(153);
+  actor->velocityY = 0x80000;
+  Actor_SetSingleChildFlags(Actor_GetById(25), 0);
+  Actor_WalkToAndWait(25, 696, 280);
+  Actor_SetSingleChildFlags(Actor_GetById(25), 1);
+  Event_Wait(10);
+  Actor_SetSpeed(25, 0x19999, 0xcccc);
+  Actor_WalkToAndWait(25, 712, 280);
+  Camera_SetSpeedParameters(0x26666, 0x4ccc);
+  Camera_MoveWithinMapBounds(PIXELS(712), -1, PIXELS(136), 1);
+  Map_CopyCellPictureIndicesRect(112, 6, 110, 4, 1, 1);
+  Actor_SetSpritePriority(25, 1);
+  Actor_WalkToAndWait(25, 712, 200);
+  Actor_SetPositionAndReset(25, 712, 168);
+  Actor_Stop(gMainRoutineWork.currentOwner);
+  Actor_ArmCallbackAndRefresh(25, FACING_EAST);
+  Actor_SetSpeedParameters(25, 0x20000, 0x10000);
+  Sound_Play(153);
+  actor->velocityY = 0x80000;
+  Actor_SetSingleChildFlags(Actor_GetById(25), 0);
+  Actor_WalkToAndWait(25, 744, 168);
+  Actor_SetSingleChildFlags(Actor_GetById(25), 1);
+  Func_02002698(24, 25, 0x216);
+  Actor_ArmCallbackAndRefresh(25, FACING_NORTH);
+  Sound_Play(153);
+  actor->velocityY = 0x80000;
+  Actor_SetSingleChildFlags(Actor_GetById(25), 0);
+  Actor_WalkToAndWait(25, 744, 136);
+  Actor_SetSingleChildFlags(Actor_GetById(25), 1);
+  Event_Wait(10);
+  Actor_WalkToAndWait(25, 744, 72);
+  Map_CopyCellPictureIndicesRect(66, 51, 110, 4, 1, 1);
+  Sound_Play(229);
+  Func_020021b4();
+  Event_Wait(10);
+  Actor_Jump(25, 6, 16);
+  Actor_SetHorizontalPositionWithTerrain(25, 0, 0);
+  Event_Wait(20);
+  GameFlag_SetBit(0x870);
+  Func_02003c30();
+}
+
+void Func_020021b4(void);
+void Func_02002bcc(void);
+void Func_02003c28(void);
+
+void Func_02002a5c(void) {
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  u32 i;
+  s32 angle;
+
+  Func_02003c28();
+  Event_ResolvePendingActions(0);
+  /* FAKEMATCH(temporary): the angle named before the call, so it is built
+   * before the two coordinates; as the literal argument FACING_NORTH, 4 of
+   * 102 instructions differ in tla-en. */
+  angle = FACING_NORTH;
+  Actor_SetHorizontalPositionAndAngleWithTerrain(
+      gMainRoutineWork.currentOwner, PIXELS(248), PIXELS(136), angle);
+  Map_CopyCellPictureIndicesRect(65, 64, 15, 8, 1, 1);
+  GameFlag_SetBit(0x245);
+  Sound_Play(161);
+  Func_020021b4();
+  Actor_SetAngleToward(9, gMainRoutineWork.currentOwner, 0);
+  Func_080d47b4(9, 0x100, 20);
+  Func_02002bcc();
+  Event_Wait(20);
+  leader->angle = FACING_SOUTH;
+  leader->motionFlags = 0;
+  Actor_SetSpritePriority(9, 3);
+  Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 3);
+  Actor_SetModeById(gMainRoutineWork.currentOwner, 28);
+  Event_Wait(16);
+  for (i = 0; i < 40; i++) {
+    if (i == 5)
+      Sound_Play(204);
+    leader->scaleX -= 0x400;
+    leader->scaleY -= 0x300;
+    leader->y -= 0x9999;
+    wait(1);
+  }
+  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
+  Event_FinishScreenTransition();
+  Event_WaitTransitionFrames();
+  Import_EventSetExitRequest(23);
+}
+
+void Actor_SetSingleChildFlags(struct Actor *object,
+                                        s32 flags);
+
+struct EffectWork7c4 {
+  u8 unk000[0x7c4];
+  s16 active;
+  s16 timer;
+};
+
+void Func_02002b68(void) {
+  if (((struct EffectWork7c4 *)Ram_HeapSlots->effectWork)->active != 0) {
+    Sound_Play(229);
+    Map_CopyCellPictureIndicesRect(64, 64, 15, 8, 1, 1);
+    Map_CopyCellPictureIndicesRect(64, 66, 15, 72, 1, 2);
+    Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
+                                       0);
+  }
 }

@@ -1,4 +1,12 @@
+/// @file
+/// Scene code of overlay 0x656, in ROM order, from s00b8's offset up to the next object the overlay links.
+
 #include "lemurian_ship.h"
+#include "../../../../games/tla/src/scene/lemurian_ship/lemurian_ship.h"
+#include "event_inline.h"
+#include "scene_tables.h"
+#include "version.h"
+#include "macros.h"
 
 extern u32 gData_02003380[];
 extern u32 gData_02003398[];
@@ -54,4 +62,1499 @@ u32 *Func_020000b8(void) {
     }
   }
   return gData_02003380;
+}
+
+struct LemurianShipWarp {
+  u16 exit;
+  s32 value;
+  u16 x;
+  u16 z;
+};
+
+extern struct LemurianShipWarp gData_02003904[];
+extern struct LemurianShipWarp gData_0200397c[];
+
+void Func_0200021c(void) {
+  struct LemurianShipEventWork *work = Ram_HeapSlots->eventWork;
+  struct LemurianShipObject *object;
+  u8 *entry;
+  s32 offset;
+  u32 found;
+  u32 i;
+
+  Func_02002c68();
+  Event_ResolvePendingActions(0);
+  found = 0;
+  i = 8;
+next:
+  object = ((struct LemurianShipObject *)Actor_GetById(i));
+  if (object != NULL)
+    object->motionFlags = 0;
+  i++;
+  if (i < 64)
+    goto next;
+  entry = (u8 *)gData_02003904;
+  i = 0;
+  offset = 0;
+next2:
+  if (work->exit == *(u16 *)(entry + offset))
+    found = i;
+  i++;
+  offset += 12;
+  if (i < 10)
+    goto next2;
+  Sound_Play(158);
+  Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);
+  MapGrid_CopyCellsTo(0, 0, gData_02003904[found].x, gData_02003904[found].z, 1,
+                      2);
+  Map_PlayMapEdit(gData_02003904[found].value, gData_02003904[found].x,
+                  gData_02003904[found].z + 60);
+  Actor_SetModeById(gMainRoutineWork.currentOwner, 2);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
+  {
+    s32 owner = gMainRoutineWork.currentOwner;
+
+    if (found == 12)
+      Actor_SetDestinationOffset(owner, 0, -4);
+    else
+      Actor_CenterAndWalk(owner, 2, -4);
+  }
+  Event_Wait(4);
+  Import_EventSetExitRequest(work->exit);
+}
+
+extern struct LemurianShipWarp gData_02003904[];
+extern struct LemurianShipWarp gData_0200397c[];
+
+void Func_02000324(void) {
+  struct LemurianShipEventWork *work = Ram_HeapSlots->eventWork;
+  struct LemurianShipObject *object;
+  u8 *entry;
+  s32 offset;
+  u32 found;
+  u32 i;
+
+  Func_02002c68();
+  Event_ResolvePendingActions(0);
+  found = 0;
+  i = 8;
+next:
+  object = ((struct LemurianShipObject *)Actor_GetById(i));
+  if (object != NULL)
+    object->motionFlags = 0;
+  i++;
+  if (i < 64)
+    goto next;
+  entry = (u8 *)gData_0200397c;
+  i = 0;
+  offset = 0;
+next2:
+  if (work->exit == *(u16 *)(entry + offset))
+    found = i;
+  i++;
+  offset += 12;
+  if (i < 4)
+    goto next2;
+  if (found < 2 && GameFlag_Test(0x93f) && GameFlag_Test(0x9e4) == 0)
+    found += 4;
+  Sound_Play(158);
+  Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);
+  MapGrid_CopyCellsTo(0, 0, gData_0200397c[found].x, gData_0200397c[found].z, 1,
+                      2);
+  Map_PlayMapEdit(gData_0200397c[found].value, gData_0200397c[found].x,
+                  gData_0200397c[found].z + 60);
+  Actor_SetModeById(gMainRoutineWork.currentOwner, 2);
+  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
+  Actor_CenterOnColumn(gMainRoutineWork.currentOwner, 2, -4);
+  Event_Wait(4);
+  Import_EventSetExitRequest(work->exit);
+}
+
+extern const u8 gData_02002de8[];
+
+void Func_02000438(void) {
+  if (GameFlag_Test(0x982)) {
+    struct LemurianShipEventWork *work = Ram_HeapSlots->eventWork;
+    struct MainRoutineWork *party = &gMainRoutineWork;
+    struct LemurianShipObject *leader;
+    s32 x;
+    s32 cell;
+
+    
+    leader = ((struct LemurianShipObject *)Actor_GetById(party->currentOwner));
+    Func_02002c68();
+    Event_ResolvePendingActions(0);
+    FieldCamera_MoveTo(-1, -1, -1, 0);
+    Actor_SetModeById(party->currentOwner, 2);
+    Actor_SetSpeedParameters(party->currentOwner, 0x8000, 0x4000);
+    x = leader->x;
+    cell = x >> 16;
+    Actor_SetMoveTarget(leader, ((8 - cell % 16) << 16) + x, leader->y, leader->z);
+    Script_WaitForEventTimeout(leader);
+    leader->facing = 0xc000;
+    Actor_SetMovementTypeById(party->currentOwner,
+                                            gData_02002de8);
+    wait(12);
+    Sound_Play(123);
+    Event_FinishScreenTransition();
+    Event_WaitTransitionFrames();
+    Import_EventSetExitRequest(work->exit);
+  }
+}
+
+extern s32 gData_020039c4[];
+extern s32 gData_020039d0[];
+extern s32 gData_02003a84[];
+extern s32 gData_02003ae4[];
+extern s32 gData_02003c10[];
+extern s32 gData_02003c7c[];
+extern s32 gData_02003d9c[];
+extern s32 gData_02003dfc[];
+extern s32 gData_02003ebc[];
+
+s32 *Func_020004f4(void) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_Ov656Room1) {
+    switch (gMainRoutineWork.entrance) {
+    case 3:
+    case 4:
+    case 5:
+      return gData_02003a84;
+    case 25:
+    case 26:
+    case 27:
+    case 28:
+      return gData_02003ae4;
+    case 15:
+    case 16:
+    case 17:
+    case 18:
+      return gData_02003c10;
+    case 29:
+    case 30:
+      return gData_02003c7c;
+    default:
+      return gData_020039d0;
+    }
+  } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov656Room2) {
+    switch (gMainRoutineWork.entrance) {
+    case 1:
+    case 2:
+    case 3:
+    case 4:
+    case 11:
+    case 12:
+    case 13:
+    case 14:
+    case 15:
+    case 16:
+    case 17:
+    case 18:
+    case 20:
+      return gData_02003d9c;
+    case 6:
+    case 10:
+      return gData_02003dfc;
+    default:
+      return gData_02003ebc;
+    }
+  }
+  return gData_020039c4;
+}
+
+/// A switch that toggles flag 0x207 and its map edits once flag 0x983 is set;
+/// before that, it does nothing. "There's no reaction... It doesn't seem to be
+/// running."
+void Func_0200065c(void) {
+  Func_02002c68();
+  Event_ResolvePendingActions(0);
+  if (GameFlag_Test(0x983)) {
+    if (Event_GetFlag(0x207)) {
+      Sound_Play(232);
+      FieldActor_SetPositionAndResetMotion(
+          ((struct LemurianShipObject *)Actor_GetById(15)), PIXELS(824),
+          PIXELS(-32), PIXELS(72));
+      ((struct LemurianShipObject *)Actor_GetById(15))->height = 0xffe00000;
+      Map_CopyCellPictureIndicesRect(72, 68, 50, 64, 3, 3);
+      Map_CopyCellAttributeRect(106, 16, 3, 2, 110, 4);
+      Map_CopyCellAttributeRect(50, 1, 3, 1, 50, 4);
+      GameFlag_ClearBit(0x207);
+    } else if (GameFlag_Test(0x212)) {
+      Sound_Play(117);
+    } else {
+      Sound_Play(232);
+      Actor_SetHorizontalPositionWithTerrain(15, 0, 0);
+      Map_CopyCellPictureIndicesRect(68, 68, 50, 64, 3, 3);
+      Map_CopyCellAttributeRect(102, 16, 3, 2, 110, 4);
+      Map_CopyCellAttributeRect(50, 0, 3, 1, 50, 4);
+      GameFlag_SetBit(0x207);
+    }
+  } else {
+    FieldMessage_Show((s32)MsgLemurianShip02, 1);
+  }
+  Func_02002c70();
+}
+
+void Func_02000770(void) { Func_02002dd0(gData_02003010); }
+
+void Func_02000780(void) { Func_02002dd8(); }
+
+void Func_02000788(void) { Func_02002dd0(gData_02003010); }
+
+void Func_02000798(void) {
+  struct LemurianShipObject *object;
+  s32 x;
+  u8 *flags;
+  s32 moving;
+
+  Func_02002dd8();
+  object = ((struct LemurianShipObject *)Actor_GetById(8));
+  x = object->x >> 20;
+  if (x == 16) {
+    Func_02002c68();
+    Event_ResolvePendingActions(0);
+    Map_CopyCellAttributeRect(16, 47, 1, 1, x, 46);
+    wait(1);
+    flags = &object->motionFlags;
+    *flags = 3;
+    do {
+      wait(1);
+      moving = object->velocityY;
+    } while (moving != 0);
+    Sound_Play(188);
+    wait(10);
+    *flags = moving;
+    GameFlag_SetBit(0x200);
+    MapGrid_CopyCellAttributes(14, 46, 1, 1, 16, 46);
+    Func_02002c70();
+  }
+}
+
+void Func_02000818(void) { Func_02002dc0(gData_02003014); }
+
+void Func_02000828(void) { Func_02002dc0(gData_0200301e); }
+
+void Func_02000838(void) {
+  MapGrid_CopyCellAttributes(110, 1, 3, 1, 110, 4);
+  GameFlag_SetBit(0x212);
+}
+
+void Func_02000860(void) { Func_02002dc0(gData_02003034); }
+
+void Func_02000870(void) {
+  /* FAKEMATCH(wrapper): Map_SetScreenShake through LemurianShip_SetWork; as a direct
+   * call, 54 of 260 instructions differ in tla-en. */
+  struct LemurianShipObject *leader;
+  struct LemurianShipObject *helper;
+  s32 opened;
+  u8 *state;
+
+  if (!GameFlag_Test(0x983)) {
+    leader = ((struct LemurianShipObject *)Actor_GetById(gMainRoutineWork.currentOwner));
+    Func_02002c68();
+    Event_ResolvePendingActions(0);
+    Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
+    Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 840, 72);
+    opened = GameFlag_Test(0x932);
+    state = &leader->field22;
+    if (opened) {
+      Sound_Play(243);
+      Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x102);
+      MapGrid_SetShake(0, 0x20000, 0x10000);
+      Event_Wait(20);
+      MapGrid_SetShake(0, 0, 0);
+      MapGrid_CopyCellsTo(68, 68, 50, 64, 3, 3);
+      *state = 2;
+      Event_Wait(20);
+      Actor_Jump(gMainRoutineWork.currentOwner, 4, 0);
+      Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
+      Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 840, 88);
+      Event_Wait(20);
+      Sound_Play(232);
+      MapGrid_CopyCellsTo(72, 68, 50, 64, 3, 3);
+      Event_Wait(20);
+      *state = 1;
+    } else {
+      helper = ((struct LemurianShipObject *)Actor_GetById(9));
+      Actor_SetSpritePriority(9, 2);
+      Actor_SetSpeed(9, 0x26666, 0x13333);
+      ((struct LemurianShipObject *)Actor_GetById(9))->unk5a[0] &= ~1;
+      Actor_WalkToAndWait(9, 824, 88);
+      Event_Wait(1);
+      {
+        /* FAKEMATCH(temporary): the bit in a local the byte is or'ed into; as
+         * unk5a[0] |= 1, 47 of 260 instructions differ in tla-en. */
+        u8 *bits = &((struct LemurianShipObject *)Actor_GetById(9))->unk5a[0];
+        s32 value = 1;
+
+        value |= *bits;
+        *bits = value;
+      }
+      Sound_Play(243);
+      Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x102);
+      MapGrid_SetShake(0, 0x20000, 0x10000);
+      Event_Wait(20);
+      MapGrid_SetShake(0, 0, 0);
+      MapGrid_CopyCellsTo(68, 68, 50, 64, 3, 3);
+      { s32 two = 2;
+      *state = two;
+      Event_Wait(20);
+      Actor_FaceDirection(gMainRoutineWork.currentOwner, 0x6000, 20);
+      Actor_Jump(gMainRoutineWork.currentOwner, 4, 0);
+      Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
+      Actor_MoveToAndWait(gMainRoutineWork.currentOwner, 840, 88);
+      Actor_FaceDirectionAndWait(gMainRoutineWork.currentOwner, 0x8000);
+      Actor_WatchAndSetScript(gMainRoutineWork.currentOwner, 9);
+      helper->field48 = 0x10000;
+      helper->field22 = two; }
+      Actor_Jump(9, 4, 0);
+      Actor_MoveToAndWait(9, 832, 74);
+      Actor_Jump(9, 4, 0);
+      Actor_MoveToAndWait(9, 856, 88);
+      Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x102);
+      Event_Wait(20);
+      Sound_Play(232);
+      MapGrid_CopyCellsTo(72, 68, 50, 64, 3, 3);
+      Event_Wait(20);
+      Actor_Stop(gMainRoutineWork.currentOwner);
+      *state = 1;
+      helper->field22 = 0;
+      wait(1);
+      GameFlag_ClearBit(0x201);
+    }
+    Func_02002c70();
+  }
+}
+
+void Func_02000af4(void) {
+  struct LemurianShipObject *leader;
+
+  if (!GameFlag_Test(0x983)) {
+    leader = ((struct LemurianShipObject *)Actor_GetById(
+        gMainRoutineWork.currentOwner));
+    Func_02002c68();
+    Event_ResolvePendingActions(0);
+    Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
+    Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 812, 72);
+    Sound_Play(243);
+    Func_080d489c(gMainRoutineWork.currentOwner, 0x102);
+    Map_SetScreenShake(0, 0x20000, 0x10000);
+    Event_Wait(20);
+    Map_SetScreenShake(0, 0, 0);
+    Map_CopyCellPictureIndicesRect(68, 68, 50, 64, 3, 3);
+    leader->field22 = 2;
+    Event_Wait(20);
+    Actor_Jump(gMainRoutineWork.currentOwner, 4, 0);
+    Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x33333, 0x19999);
+    Actor_SetPositionAndCommit(gMainRoutineWork.currentOwner, 812, 88);
+    Event_Wait(20);
+    Sound_Play(232);
+    Map_CopyCellPictureIndicesRect(72, 68, 50, 64, 3, 3);
+    Event_Wait(20);
+    leader->field22 = 1;
+  }
+}
+
+void Func_02000bf0(s32 id) {
+  Func_02002c68();
+  Event_ResolvePendingActions(0);
+  Actor_SetAngleToward(id, gMainRoutineWork.currentOwner, 0);
+  Actor_StartRepeatedMotion(id, 2);
+  Actor_SetAttachedEffect(id, 0x102);
+  Event_Wait(20);
+  gMainRoutineWork.battleRule24b = 2;
+  Func_02002d78(11, 0);
+  GameFlag_SetBit(id + 0x2f8);
+}
+
+void Func_02000c50(s32 id) {
+  Func_02002c68();
+  Event_ResolvePendingActions(0);
+  Actor_SetAngleToward(id, gMainRoutineWork.currentOwner, 0);
+  Actor_StartRepeatedMotion(id, 2);
+  Actor_SetAttachedEffect(id, 0x102);
+  Event_Wait(20);
+  gMainRoutineWork.battleRule24b = 2;
+  Func_02002d78(11, 0);
+  GameFlag_SetBit(id + 0x2f9);
+}
+
+void Func_02000cb0(s32 id) {
+  Func_02002c68();
+  Event_ResolvePendingActions(0);
+  Actor_SetAngleToward(id, gMainRoutineWork.currentOwner, 0);
+  Actor_StartRepeatedMotion(id, 2);
+  Actor_SetAttachedEffect(id, 0x102);
+  Event_Wait(20);
+  gMainRoutineWork.battleRule24b = 2;
+  Func_02002d78(11, 0);
+  GameFlag_SetBit(id + 0x2ff);
+}
+
+void Func_02000d10(s32 id) {
+  struct LemurianShipObject *object =
+      ((struct LemurianShipObject *)Actor_GetById(id));
+
+  Actor_SetSpeedParameters(id, 0x33333, 0x19999);
+  object->field48 = 0x8000;
+  object->velocityY = 0x80000;
+  Actor_ResetAndSetPosition(id, 120, 120);
+}
+
+void Func_02000d44(void) {
+  Func_02002c68();
+  Event_ResolvePendingActions(0);
+  Sound_Play(0);
+  Actor_StartRepeatedMotion(9, 2);
+  Actor_StartRepeatedMotion(10, 2);
+  Actor_StartRepeatedMotion(11, 2);
+  Actor_StartRepeatedMotion(12, 2);
+  Motion_SetVarCbAndRefresh(13, 2);
+  Event_Wait(20);
+  Sound_Play(147);
+  Func_02000d10(9);
+  Func_02000d10(10);
+  Func_02000d10(11);
+  Func_02000d10(12);
+  Func_02000d10(13);
+  Actor_WaitForMoveById(13);
+  Actor_SetHorizontalPositionWithTerrain(9, 0, 0);
+  Actor_SetHorizontalPositionWithTerrain(10, 0, 0);
+  Actor_SetHorizontalPositionWithTerrain(11, 0, 0);
+  Actor_SetHorizontalPositionWithTerrain(12, 0, 0);
+  Actor_SetHorizontalPositionWithTerrain(13, 0, 0);
+  Event_Wait(20);
+  Sound_Play(52);
+  Actor_SetMovementTypeAndWaitById(8, gData_02002e9c);
+
+  gMainRoutineWork.battleRule24b = 2;
+  Party_SetFields1eeAnd1f0((s32)&SceneId_Ov656Room2, 15);
+  Func_02002d78(11, 1);
+  GameFlag_SetBit(0x30f);
+}
+
+/// When actor 8 or 9 stands on its switch cell (column 35 or 29, row 9), lowers
+/// it, edits the map and sets flag 0x202 or 0x203; once both are set, the last
+/// map edit sets flag 0x982.
+void Func_02000e2c(void) {
+  struct LemurianShipObject *object;
+  struct LemurianShipObject *leader;
+  s32 column;
+  s32 row;
+  u32 i;
+  s32 done;
+
+  done = GameFlag_Test(0x202);
+  if (!done && GameFlag_Test(0x204)) {
+    object = ((struct LemurianShipObject *)Actor_GetById(8));
+    column = object->x >> 20;
+    if (column == 35) {
+      row = object->z >> 20;
+      if (row == 9) {
+        leader = ((struct LemurianShipObject *)Actor_GetById(
+            gMainRoutineWork.currentOwner));
+        Func_02002c68();
+        Event_ResolvePendingActions(0);
+        Event_Wait(20);
+        Sound_Play(183);
+        Map_CopyCellPictureIndicesRect(35, 68, 35, 69, 1, 1);
+        Map_CopyCellAttributeRect(35, 0, 1, 1, column, row);
+        object->motionFlags = done;
+        Actor_SetSpritePriority(8, 3);
+        if (object->z > leader->z)
+          Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 3);
+        for (i = 0; i < 128; i++) {
+          object->y += 0xffffe000;
+          wait(1);
+        }
+        Actor_SetModeById(8, 3);
+        Actor_SetHorizontalPositionWithTerrain(10, PIXELS(568), PIXELS(152));
+        Event_Wait(20);
+        GameFlag_SetBit(0x202);
+        if (object->z > leader->z) {
+          Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 2);
+          ((struct LemurianShipObject *)Actor_GetById(
+               gMainRoutineWork.currentOwner))
+              ->priorityFlags |= 1;
+        }
+        Func_02002c70();
+      }
+    }
+  }
+  done = GameFlag_Test(0x203);
+  if (!done && GameFlag_Test(0x205)) {
+    object = ((struct LemurianShipObject *)Actor_GetById(9));
+    column = object->x >> 20;
+    if (column == 29) {
+      row = object->z >> 20;
+      if (row == 9) {
+        leader = ((struct LemurianShipObject *)Actor_GetById(
+            gMainRoutineWork.currentOwner));
+        Func_02002c68();
+        Event_ResolvePendingActions(0);
+        Event_Wait(20);
+        Sound_Play(183);
+        Map_CopyCellPictureIndicesRect(29, 68, 29, 69, 1, 1);
+        Map_CopyCellAttributeRect(35, 0, 1, 1, column, row);
+        object->motionFlags = done;
+        Actor_SetSpritePriority(9, 3);
+        if (object->z > leader->z)
+          Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 3);
+        for (i = 0; i < 128; i++) {
+          object->y += 0xffffe000;
+          wait(1);
+        }
+        Actor_SetModeById(9, 3);
+        Actor_SetHorizontalPositionWithTerrain(11, PIXELS(472), PIXELS(152));
+        Event_Wait(20);
+        GameFlag_SetBit(0x203);
+        if (object->z > leader->z) {
+          Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 2);
+          ((struct LemurianShipObject *)Actor_GetById(
+               gMainRoutineWork.currentOwner))
+              ->priorityFlags |= 1;
+        }
+        Func_02002c70();
+      }
+    }
+  }
+  if (GameFlag_Test(0x202) && GameFlag_Test(0x203)) {
+    Func_02002c68();
+    Event_ResolvePendingActions(0);
+    Sound_Play(188);
+    MapGrid_CopyCellsTo(4, 124, 31, 64, 3, 2);
+    Event_Wait(20);
+    GameFlag_SetBit(0x982);
+    Func_02002c70();
+  }
+}
+
+void Func_020010bc(void) { Func_02002dd0(gData_0200304e); }
+
+void Func_020010cc(void) {
+  Func_02002dd8();
+  Func_02000e2c();
+}
+
+void Func_020010d8(void) {
+  Sound_Play(106);
+  Actor_SetModeById(8, 2);
+  GameFlag_SetBit(0x204);
+  Func_02000e2c();
+}
+
+void Func_020010f8(void) {
+  Sound_Play(106);
+  Actor_SetModeById(9, 2);
+  GameFlag_SetBit(0x205);
+  Func_02000e2c();
+}
+
+void Func_02001118(void) {
+  Actor_SetPartAttribute(((struct LemurianShipObject *)Actor_GetById(10)), 0);
+}
+
+void Func_02001128(void) {
+  Actor_SetPartAttribute(((struct LemurianShipObject *)Actor_GetById(11)), 0);
+}
+
+void Func_02001138(void) {
+  struct LemurianShipEventWork *work = Ram_HeapSlots->eventWork;
+  struct LemurianShipObject *object =
+      ((struct LemurianShipObject *)Actor_GetById(8));
+  u32 i;
+
+  Func_02002c68();
+  Event_ResolvePendingActions(0);
+  work->field16a = 0;
+  GameFlag_ClearBit(0x202);
+  GameFlag_ClearBit(0x204);
+  Event_Wait(20);
+  Sound_Play(186);
+  for (i = 0; i <= 63; i++) {
+    object->y += 0x4000;
+    wait(1);
+  }
+  Actor_SetSpritePriority(8, 2);
+  Map_CopyCellPictureIndicesRect(4, 123, 35, 69, 1, 1);
+  MapGrid_CopyCellAttributes(36, 0, 1, 1, 35, 9);
+  Sound_Play(188);
+  MapGrid_CopyCellsTo(7, 124, 31, 64, 3, 2);
+  GameFlag_ClearBit(0x982);
+  Event_Wait(20);
+  Func_02002c70();
+}
+
+void Func_020011f4(void) {
+  struct LemurianShipEventWork *work = Ram_HeapSlots->eventWork;
+  struct LemurianShipObject *object =
+      ((struct LemurianShipObject *)Actor_GetById(9));
+  u32 i;
+
+  Func_02002c68();
+  Event_ResolvePendingActions(0);
+  work->field16a = 0;
+  GameFlag_ClearBit(0x203);
+  GameFlag_ClearBit(0x205);
+  Event_Wait(20);
+  Sound_Play(186);
+  for (i = 0; i <= 63; i++) {
+    object->y += 0x4000;
+    wait(1);
+  }
+  Actor_SetSpritePriority(9, 2);
+  Map_CopyCellPictureIndicesRect(4, 123, 29, 69, 1, 1);
+  MapGrid_CopyCellAttributes(36, 0, 1, 1, 29, 9);
+  Sound_Play(188);
+  MapGrid_CopyCellsTo(7, 124, 31, 64, 3, 2);
+  GameFlag_ClearBit(0x982);
+  Event_Wait(20);
+  Func_02002c70();
+}
+
+/// Places the leader and object 64 304 pixels back along z (Actor_SetHorizontalPositionWithTerrain),
+/// lets the camera follow the leader, starts a blend and sets flag 0x9e4.
+void Func_020012b4(void) {
+  struct LemurianShipObject *leader = ((struct LemurianShipObject *)Actor_GetById(gMainRoutineWork.currentOwner));
+  struct LemurianShipObject *object;
+
+  Func_02002c68();
+  Event_ResolvePendingActions(0);
+  Field_SetCameraBounds(0x80000, 0x100000, 0xf80000, 0x1000000);
+  Actor_SetHorizontalPositionWithTerrain(gMainRoutineWork.currentOwner, leader->x, leader->z + 0xfed00000);
+  object = ((struct LemurianShipObject *)Actor_GetById(64));
+  Actor_SetHorizontalPositionWithTerrain(64, object->x, object->z + 0xfed00000);
+  Actor_SetPartAttribute(((struct LemurianShipObject *)Actor_GetById(64)), 0);
+  wait(10);
+  Camera_FollowActor(gMainRoutineWork.currentOwner, 0);
+  wait(1);
+  MapGrid_CopyCellAttributes(6, 0, 1, 2, 6, 4);
+  Func_02002c10();
+  wait(1);
+  GameFlag_SetBit(0x9e4);
+  BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
+  Func_02002c70();
+}
+
+void Func_02001368(void) {
+  Func_02002c68();
+  Event_ResolvePendingActions(0);
+  Event_ResolvePendingActions(0);
+  Func_02002c70();
+}
+
+void Func_02001380(s32 id) {
+  struct LemurianShipObject *object =
+      ((struct LemurianShipObject *)Actor_GetById(id));
+
+  ((struct LemurianShipObject *)Actor_GetById(id))->priorityFlags |= 0x20;
+  Actor_SetSpritePriority(id, 1);
+  object->priorityFlags &= ~2;
+  object->timer = 1;
+}
+
+// From patch 1; in the Japanese release actors 10 and 11 also use action 1.
+#if TLA_PATCH_1
+void Func_020013b8(s32 id) {
+  struct LemurianShipObject *object =
+      ((struct LemurianShipObject *)Actor_GetById(id));
+
+  ((struct LemurianShipObject *)Actor_GetById(id))->priorityFlags |= 0x20;
+  Actor_SetSpritePriority(id, 2);
+  object->priorityFlags &= ~2;
+  object->timer = 1;
+}
+#endif
+
+void Func_020013f0(void) {
+  ((struct LemurianShipObject *)Actor_GetById(15))->priorityFlags |= 0x20;
+  Actor_SetSpritePriority(15, 3);
+  ((struct LemurianShipObject *)Actor_GetById(15))->priorityFlags &= ~2;
+  Func_02001380(16);
+  Func_02001380(17);
+  Func_02001380(18);
+  Func_02001380(19);
+  Func_02001380(20);
+}
+
+void Func_0200143c(void) {
+  Func_02001380(16);
+  Func_02001380(17);
+  Func_02001380(18);
+  Func_02001380(19);
+  Func_02001380(20);
+  Func_02001380(22);
+}
+
+void Func_02001464(void) {
+#if !TLA_PATCH_1
+  Func_02001380(10);
+  Func_02001380(11);
+#else
+  Func_020013b8(10);
+  Func_020013b8(11);
+#endif
+}
+
+void Func_02001474(void) {
+  struct LemurianShipObject *leader = ((
+      struct LemurianShipObject *)Actor_GetById(gMainRoutineWork.currentOwner));
+  s32 x = leader->x >> 20;
+  s32 z = leader->z >> 20;
+
+  MapGrid_CopyCellsTo(74, 105, 4, 85, 8, 6);
+  if (z == 25) {
+    if (x == 4)
+      MapGrid_CopyCellsTo(18, 126, 4, 85, 1, 2);
+  } else if (z == 26) {
+    if (x == 7)
+      Map_CopyCellPictureIndicesRect(18, 126, 7, 86, 1, 1);
+  } else if (z == 27) {
+    if (x == 4)
+      MapGrid_CopyCellsTo(18, 126, 4, 87, 1, 2);
+    else if (x == 6)
+      MapGrid_CopyCellsTo(18, 126, 6, 87, 1, 2);
+    else if (x == 7)
+      MapGrid_CopyCellsTo(18, 126, 7, 87, 1, 2);
+    else if (x == 9)
+      MapGrid_CopyCellsTo(18, 126, 9, 87, 1, 2);
+  } else if (z == 29) {
+    if (x == 6)
+      MapGrid_CopyCellsTo(18, 126, 6, 89, 1, 2);
+  }
+}
+
+void Func_0200155c(void) {
+  struct LemurianShipEventWork *work = Ram_HeapSlots->eventWork;
+  struct LemurianShipObject *object;
+
+  if (GameFlag_Test(0x202)) {
+    object = ((struct LemurianShipObject *)Actor_GetById(10));
+    if ((object->x | object->z) == 0) {
+      work->field16a = 200;
+      Actor_SetModeById(8, 1);
+    }
+  }
+  if (GameFlag_Test(0x203)) {
+    object = ((struct LemurianShipObject *)Actor_GetById(11));
+    if ((object->x | object->z) == 0) {
+      work->field16a = 201;
+      Actor_SetModeById(9, 1);
+    }
+  }
+}
+
+void Func_020015c8(void) {
+  s32 position[3];
+  struct LemurianShipObject *object;
+
+  SET_VECTOR(position, 0x3280000, 0x80000, 0x8c0000);
+  Vector_AddPolarOffsetFar(0x200000, Random16Far(), position);
+  object = ((struct LemurianShipObject *)Import_ActorCreate(
+      0x2a2, position[0], position[1], position[2]));
+  if (object != NULL) {
+    object->motionFlags = 0;
+    *(s32 *)((u8 *)object + 0x30) = 0x20000;
+    *(s32 *)((u8 *)object + 0x34) = 0x8000;
+    Actor_SetSingleChildFlags(object, 0);
+    Func_02002bf0(object, 0);
+    Actor_SetMoveTarget(object, PIXELS(808), PIXELS(8), PIXELS(140));
+    Func_02002bf8(object, gData_02003ef8);
+  }
+}
+
+extern const u8 gData_02002f1c[];
+extern const u8 gData_02002f44[];
+extern const u8 gData_02002f88[];
+extern const u8 gData_02002fcc[];
+
+void Func_020015c8(void);
+void PartyInventory_Remove(s32 item);
+
+/// The scene that clears the ship and sets its flags.
+/// "How did all these monsters get on board?"
+void Func_02001650(void) {
+  Func_02002c68();
+  Event_ResolvePendingActions(0);
+  Event_SetMessageId((s32)MsgLemurianShip01);
+  Sound_Play(78);
+  Event_StartScreenTransition();
+  Event_WaitTransitionFrames();
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
+  Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 808, 208);
+  FieldCamera_SetSpeed(0xcccc, 0x1999);
+  FieldCamera_MoveTo(PIXELS(808), -1, PIXELS(176), 1);
+  Func_02002cd8(7, gMainRoutineWork.currentOwner);
+  Func_02002cd8(6, gMainRoutineWork.currentOwner);
+  Func_02002cd8(5, gMainRoutineWork.currentOwner);
+  Func_02002cd8(8, gMainRoutineWork.currentOwner);
+  wait(1);
+  Actor_SetSpeed(7, 0xcccc, 0x6666);
+  Actor_SetSpeed(6, 0xcccc, 0x6666);
+  Actor_SetSpeed(5, 0xcccc, 0x6666);
+  Actor_SetSpeed(8, 0xcccc, 0x6666);
+  Actor_SetMovementTypeById(6, gData_02002f44);
+  Actor_SetMovementTypeById(5, gData_02002f88);
+  Actor_SetMovementTypeById(8, gData_02002fcc);
+  Actor_SetMovementTypeAndWaitById(7, gData_02002f1c);
+  Event_Wait(20);
+  Event_ShowMessageAndWait(7, 0);
+  Actor_FaceDirectionAndWait(7, FACING_SOUTH);
+  Event_ShowMessageAndWait(7, 0);
+  Actor_SetModeById(7, 3);
+  Event_ShowMessageAndWait(7, 0);
+  Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, 3);
+  Actor_WalkToAndWait(7, 808, 148);
+  Motion_SetVarCbAndRefresh(7, 2);
+  Actor_SetSpritePriority(7, 1);
+  Sound_Play(220);
+  Task_Add(Func_020015c8, 0x480);
+  Event_Wait(60);
+  Sound_Play(390);
+  Event_Wait(20);
+  Task_RemoveFar(Func_020015c8);
+  Sound_Play(251);
+  Field_SetCameraBounds(0x2b00000, 0, 0x3a00000, 0x2200000);
+  FieldCamera_MoveTo(PIXELS(808), -1, PIXELS(448), 0);
+  Actor_SetPosition(gMainRoutineWork.currentOwner, PIXELS(808), PIXELS(480));
+  Actor_SetPosition(7, PIXELS(808), PIXELS(420));
+  Actor_SetPosition(6, PIXELS(784), PIXELS(468));
+  Actor_SetPosition(5, PIXELS(832), PIXELS(468));
+  Actor_SetHorizontalPositionWithTerrain(8, PIXELS(792), PIXELS(488));
+  Func_02002c10();
+  Event_Wait(20);
+  Sound_Play(246);
+  Event_Wait(80);
+  ((struct LemurianShipEventWork *)Ram_HeapSlots->eventWork)->screenEffect =
+      513;
+  Event_FinishScreenTransition();
+  Event_WaitTransitionFrames();
+  PartyInventory_Remove(242);
+  GameFlag_SetBit(0x983);
+  GameFlag_SetBit(0x930);
+  GameFlag_SetBit(0x931);
+  GameFlag_SetBit(0x933);
+  GameFlag_SetBit(0x934);
+  GameFlag_SetBit(0x935);
+  GameFlag_SetBit(0x936);
+  GameFlag_SetBit(0x937);
+  GameFlag_SetBit(0x938);
+  GameFlag_SetBit(0x939);
+  GameFlag_SetBit(0x93a);
+  GameFlag_SetBit(0x93b);
+  GameFlag_SetBit(0x93c);
+  GameFlag_SetBit(0x93e);
+  GameFlag_SetBit(0x932);
+  GameFlag_SetBit(0x93f);
+  gMainRoutineWork.ownerOverride = 1;
+  Import_EventSetExitRequest(90);
+}
+
+void Func_02001944(s32 actor, s32 id) {
+  struct LemurianShipObject *object =
+      ((struct LemurianShipObject *)Actor_GetById(id));
+
+  Func_02002c68();
+  Event_ResolvePendingActions(0);
+  object->scaleX = 0x1000;
+  object->scaleY = 0x1000;
+  wait(1);
+  Event_StartScreenTransition();
+  Event_WaitTransitionFrames();
+  Event_Wait(20);
+  Sound_Play(103);
+  Actor_SetMovementTypeById(actor, gData_02002e30);
+  Actor_SetMovementTypeAndWaitById(id, gData_02002e6c);
+  Event_Wait(20);
+  Func_02002c70();
+}
+
+void Func_020019ac(void) {
+  if (GameFlag_Test(0x932) == 0) {
+    Func_02002c68();
+    Event_ResolvePendingActions(0);
+    Event_StartScreenTransition();
+    Event_WaitTransitionFrames();
+    Event_Wait(20);
+    Func_02001a04();
+    Func_02002c70();
+  }
+}
+
+void Func_020019e0(void) {
+  if (GameFlag_Test(0x932) == 0) {
+    Func_02002c68();
+    Event_ResolvePendingActions(0);
+    Func_02001a04();
+    Func_02002c70();
+  }
+}
+
+void Func_02001a04(void) {
+  struct LemurianShipObject *object =
+      ((struct LemurianShipObject *)Actor_GetById(9));
+
+  Func_080d47b4(9, 0x100, 0);
+  Motion_SetVarCbAndRefresh(9, 2);
+  object->field48 = 0x8000;
+  Actor_SetSpritePriority(9, 1);
+  Actor_SetSpeed(9, 0xcccc, 0x6666);
+  Actor_Jump(9, 6, 0);
+  Actor_SetPositionAndCommit(9, 832, 88);
+  Event_Wait(20);
+  Actor_SetSpeed(9, 0x19999, 0xcccc);
+  Actor_SetSpritePriority(9, 3);
+  Actor_MoveToAndWait(9, 824, 72);
+  Actor_FaceDirection(9, FACING_SOUTHEAST + FACING_STEP, 40);
+  GameFlag_SetBit(0x201);
+}
+
+void Func_02001a9c(void) {
+  Func_02002c68();
+  Event_ResolvePendingActions(0);
+  Sound_Play(164);
+  Event_Wait(120);
+  Func_02002c70();
+}
+
+void Func_02001c88(void);
+void Func_020027e4(void);
+void Func_02001e0c(void);
+void Func_0200241c(void);
+void Func_02002498(void);
+void Func_02002820(void);
+void Func_02002970(void);
+void Func_02002b98(void);
+
+s32 Func_02001abc(void) {
+  ((struct LemurianShipEventWork *)Ram_HeapSlots->eventWork)->screenEffect =
+      0x209;
+  if (GameFlag_Test(0x9b4))
+    GameFlag_SetBit(0x144);
+  if (gMainRoutineWork.scene == (s32)&SceneId_Ov656Room1) {
+    switch (gMainRoutineWork.entrance) {
+    case 3:
+    case 4:
+    case 5:
+      Func_02001c88();
+      break;
+    case 6:
+    case 7:
+    case 8:
+      Func_020027e4();
+      break;
+    case 25:
+    case 26:
+    case 27:
+    case 28:
+      Func_02001e0c();
+      break;
+    case 15:
+    case 16:
+    case 17:
+    case 18:
+      Func_0200241c();
+      break;
+    case 29:
+    case 30:
+      Func_02002498();
+      break;
+    }
+  } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov656Room2) {
+    switch (gMainRoutineWork.entrance) {
+    case 1:
+    case 2:
+    case 3:
+    case 4:
+    case 11:
+    case 12:
+    case 13:
+    case 14:
+    case 15:
+    case 16:
+    case 17:
+    case 18:
+    case 20:
+      Func_02002820();
+      break;
+    case 6:
+    case 10:
+      Func_02002970();
+      break;
+    case 9:
+      Func_02002b98();
+      break;
+    }
+  }
+  return 0;
+}
+
+s32 Func_02001c38(void) {
+  u32 i;
+
+  i = 0;
+next:
+  if (GameFlag_Test(i + 0x300)) {
+    struct MainRoutineWork *party = &gMainRoutineWork;
+
+    
+    if (party->sequenceResult == 1) {
+      GameFlag_SetBit(i + 0x930);
+      GameFlag_SetBit(i + 0x220);
+    }
+  }
+  GameFlag_ClearBit(i + 0x300);
+  i++;
+  if (i < 16)
+    goto next;
+  return 0;
+}
+
+void Func_02001944(s32 actor, s32 target);
+
+/// Places actors 10 and 11 as flags 0x930 and 0x931 say, then runs the pending
+/// step of flag 0x220 or 0x221.
+void Func_02001c88(void) {
+  s32 flag;
+
+  if (GameFlag_Test(0x930)) {
+    flag = GameFlag_Test(0x220);
+    if (flag != 0) {
+      MapGrid_CopyCellAttributes(0, 25, 1, 3, 6, 25);
+      Actor_SetPositionAndResetMotion(
+          ((struct LemurianShipObject *)Actor_GetById(10)), PIXELS(104), 0,
+          PIXELS(424));
+      ((struct LemurianShipObject *)Actor_GetById(10))->height = 0;
+    } else {
+      Actor_SetHorizontalPositionWithTerrain(8, 0, 0);
+      MapGrid_CopyCellAttributes(0, 25, 1, 3, 6, 25);
+      FieldActor_SetPositionAndResetMotion(
+          ((struct LemurianShipObject *)Actor_GetById(10)), PIXELS(104), 0,
+          PIXELS(424));
+      ((struct LemurianShipObject *)Actor_GetById(10))->height = 0;
+    }
+    wait(1);
+  }
+  if (GameFlag_Test(0x931)) {
+    if (GameFlag_Test(0x221))
+      Actor_SetSpritePriority(9, 1);
+    else
+      Actor_SetHorizontalPositionWithTerrain(9, 0, 0);
+    FieldActor_SetPositionAndResetMotion(
+        ((struct LemurianShipObject *)Actor_GetById(11)), PIXELS(104),
+        PIXELS(-32), PIXELS(536));
+    ((struct LemurianShipObject *)Actor_GetById(11))->height = 0xffe00000;
+    Actor_SetSpritePriority(11, 1);
+    wait(1);
+  }
+  Func_02002db8(gData_02003014);
+  if (Event_GetFlag(0x220)) {
+    Func_02001944(8, 10);
+    GameFlag_ClearBit(0x220);
+  } else if (Event_GetFlag(0x221)) {
+    Func_02001944(9, 11);
+    GameFlag_ClearBit(0x221);
+  }
+}
+
+void Func_02001dc8(s32 id) {
+  struct LemurianShipObject *object =
+      ((struct LemurianShipObject *)Actor_GetById(id));
+
+  ((struct LemurianShipObject *)Actor_GetById(id))->priorityFlags |= 0x20;
+  Actor_SetSpritePriority(id, 1);
+  object->motionFlags = 0;
+  object->y = -0x200000;
+  object->height = -0x200000;
+}
+
+void Func_020013f0(void);
+void Func_02001944(s32 id, s32 platform);
+void Func_020019ac(void);
+void Func_02001dc8(s32 id);
+
+/// Places a platform object at its raised position.
+#define RAISE(id, x, z)                                                        \
+  {                                                                            \
+    FieldActor_SetPositionAndResetMotion(                                      \
+        ((struct LemurianShipObject *)Actor_GetById(id)), x, PIXELS(-32), z);  \
+    ((struct LemurianShipObject *)Actor_GetById(id))->height = -0x200000;      \
+  }
+
+void Func_02001e0c(void) {
+  ((struct LemurianShipObject *)Actor_GetById(gMainRoutineWork.currentOwner))
+      ->priorityFlags |= 32;
+  Func_02002dc8(gData_02003010);
+  ((struct LemurianShipObject *)Actor_GetById(8))->priorityFlags |= 32;
+  Actor_SetSpritePriority(8, 1);
+  ((struct LemurianShipObject *)Actor_GetById(9))->priorityFlags |= 32;
+  if (GameFlag_Test(0x932)) {
+    struct LemurianShipObject *object =
+        ((struct LemurianShipObject *)Actor_GetById(15));
+
+    object->motionFlags = 0;
+    FieldActor_SetPositionAndResetMotion(
+        ((struct LemurianShipObject *)Actor_GetById(15)), 206 << 18,
+        PIXELS(-32), 144 << 15);
+    object->height = -0x200000;
+    if (GameFlag_Test(0x212))
+      MapGrid_CopyCellAttributes(110, 1, 3, 1, 110, 4);
+    else
+      MapGrid_CopyCellAttributes(110, 0, 3, 1, 110, 4);
+    if (!GameFlag_Test(0x222))
+      Actor_SetHorizontalPositionWithTerrain(9, 0, 0);
+  }
+  if (GameFlag_Test(0x983)) {
+    if (GameFlag_Test(0x207)) {
+      Actor_SetHorizontalPositionWithTerrain(15, 0, 0);
+      Map_CopyCellPictureIndicesRect(68, 68, 50, 64, 3, 3);
+      MapGrid_CopyCellAttributes(102, 16, 3, 2, 110, 4);
+      Map_CopyCellAttributeRect(50, 0, 3, 1, 50, 4);
+    } else {
+      RAISE(15, 206 << 18, 144 << 15)
+      Map_CopyCellPictureIndicesRect(72, 68, 50, 64, 3, 3);
+      Map_CopyCellAttributeRect(106, 16, 3, 2, 110, 4);
+      Map_CopyCellAttributeRect(50, 1, 3, 1, 50, 4);
+      if (GameFlag_Test(0x212))
+        Map_CopyCellAttributeRect(110, 1, 3, 1, 110, 4);
+      else
+        Map_CopyCellAttributeRect(110, 0, 3, 1, 110, 4);
+    }
+  }
+  if (GameFlag_Test(0x933)) {
+    Map_CopyCellAttributeRect(42, 0, 1, 1, 46, 5);
+    Map_CopyCellAttributeRect(43, 0, 1, 1, 45, 5);
+    Map_CopyCellAttributeRect(43, 0, 1, 1, 47, 5);
+    RAISE(16, 186 << 18, 176 << 15)
+    if (!GameFlag_Test(0x223))
+      Actor_SetHorizontalPositionWithTerrain(10, 0, 0);
+  } else {
+    Func_02001dc8(10);
+  }
+  if (GameFlag_Test(0x934)) {
+    struct LemurianShipObject *block =
+        ((struct LemurianShipObject *)Actor_GetById(8));
+
+    Map_CopyCellAttributeRect(42, 0, 1, 1, 47, 9);
+    Map_CopyCellAttributeRect(43, 0, 1, 1, 46, 9);
+    Map_CopyCellAttributeRect(43, 0, 1, 1, 48, 9);
+    Map_CopyCellAttributeRect(43, 0, 1, 1, 47, 10);
+    Map_CopyCellAttributeRect(43, 0, 1, 1, 47, 8);
+    RAISE(17, 190 << 18, 152 << 16)
+    if (block->x >> 20 == 47 && block->z >> 20 == 8)
+      Func_02002dc8(gData_02003010);
+    if (!GameFlag_Test(0x224))
+      Actor_SetHorizontalPositionWithTerrain(11, 0, 0);
+  } else {
+    Func_02001dc8(11);
+  }
+  if (GameFlag_Test(0x935)) {
+    struct LemurianShipObject *block =
+        ((struct LemurianShipObject *)Actor_GetById(8));
+    s32 x = block->x >> 20;
+    s32 z = block->z >> 20;
+
+    Map_CopyCellAttributeRect(42, 0, 1, 1, 49, 7);
+    Map_CopyCellAttributeRect(43, 0, 1, 1, 49, 6);
+    Map_CopyCellAttributeRect(43, 0, 1, 1, 50, 7);
+    Map_CopyCellAttributeRect(43, 0, 1, 1, 48, 7);
+    Map_CopyCellAttributeRect(43, 0, 1, 1, 49, 8);
+    RAISE(18, 198 << 18, 240 << 15)
+    if ((x == 48 && z == 7) || (x == 49 && z == 8))
+      Func_02002dc8(gData_02003010);
+    if (!GameFlag_Test(0x225))
+      Actor_SetHorizontalPositionWithTerrain(12, 0, 0);
+  } else {
+    Func_02001dc8(12);
+  }
+  if (GameFlag_Test(0x936)) {
+    MapGrid_CopyCellAttributes(42, 0, 1, 1, 51, 7);
+    RAISE(19, 206 << 18, 240 << 15)
+    if (!GameFlag_Test(0x226))
+      Actor_SetHorizontalPositionWithTerrain(13, 0, 0);
+  } else {
+    Func_02001dc8(13);
+  }
+  if (GameFlag_Test(0x937)) {
+    Map_CopyCellAttributeRect(42, 0, 1, 1, 51, 9);
+    Map_CopyCellAttributeRect(43, 0, 1, 1, 51, 8);
+    Map_CopyCellAttributeRect(43, 0, 1, 1, 50, 9);
+    Map_CopyCellAttributeRect(43, 0, 1, 1, 52, 9);
+    Map_CopyCellAttributeRect(43, 0, 1, 1, 51, 10);
+    RAISE(20, 206 << 18, 152 << 16)
+    if (!GameFlag_Test(0x227))
+      Actor_SetHorizontalPositionWithTerrain(14, 0, 0);
+  } else {
+    Func_02001dc8(14);
+  }
+  Func_02002db8(gData_0200301e);
+  Task_Add(Func_020013f0, 0x480);
+  if (Event_GetFlag(0x222)) {
+    Func_02001944(9, 15);
+    Event_ClearFlag(0x222);
+  } else if (Event_GetFlag(0x223)) {
+    Func_02001944(10, 16);
+    Event_ClearFlag(0x223);
+  } else if (Event_GetFlag(0x224)) {
+    Func_02001944(11, 17);
+    Event_ClearFlag(0x224);
+  } else if (Event_GetFlag(0x225)) {
+    Func_02001944(12, 18);
+    Event_ClearFlag(0x225);
+  } else if (Event_GetFlag(0x226)) {
+    Func_02001944(13, 19);
+    Event_ClearFlag(0x226);
+  } else if (Event_GetFlag(0x227)) {
+    Func_02001944(14, 20);
+    Event_ClearFlag(0x227);
+  }
+  if (gMainRoutineWork.entrance == 26 && !GameFlag_Test(0x109))
+    Func_020019ac();
+}
+
+void Func_020023f8(void) {
+  struct LemurianShipObject *leader = ((struct LemurianShipObject *)Actor_GetById(gMainRoutineWork.currentOwner));
+
+  Actor_SetSpritePriority(8, leader->sprite->priority);
+}
+
+void Func_0200241c(void) {
+  if (GameFlag_Test(8))
+    MapGrid_CopyCellAttributes(14, 46, 1, 1, 16, 46);
+  Func_02002dc8(gData_02003010);
+  LEMURIAN_SHIP_TASK_ADD(Func_020023f8, 0x480);
+}
+
+void Func_0200245c(s32 id) {
+  struct LemurianShipObject *object = ((struct LemurianShipObject *)Actor_GetById(id));
+
+  ((struct LemurianShipObject *)Actor_GetById(id))->priorityFlags |= 0x20;
+  Actor_SetSpritePriority(id, 1);
+  object->motionFlags = 0;
+  object->y = 0;
+  object->height = 0;
+}
+
+void Func_0200143c(void);
+void Func_02001944(s32 actor, s32 id);
+void Func_0200245c(s32 actor);
+
+/// Restores six of the scene's map edits and actors 16 to 22 from flags 0x938
+/// to 0x93e, then runs the pending step of one of flags 0x228 to 0x22e.
+void Func_02002498(void) {
+  ((struct LemurianShipObject *)Actor_GetById(gMainRoutineWork.currentOwner))
+      ->priorityFlags |= 32;
+  Func_02002dc8(gData_02003010);
+  ((struct LemurianShipObject *)Actor_GetById(8))->priorityFlags |= 32;
+  Actor_SetSpritePriority(8, 1);
+  if (GameFlag_Test(0x938)) {
+    MapGrid_CopyCellAttributes(44, 0, 1, 1, 48, 32);
+    Actor_SetPositionAndResetMotion(
+        ((struct LemurianShipObject *)Actor_GetById(16)), PIXELS(776), 0,
+        PIXELS(520));
+    ((struct LemurianShipObject *)Actor_GetById(16))->height = 0;
+    if (!GameFlag_Test(0x228))
+      Actor_SetHorizontalPositionWithTerrain(9, 0, 0);
+  } else {
+    Func_0200245c(9);
+  }
+  if (GameFlag_Test(0x939)) {
+    MapGrid_CopyCellAttributes(44, 0, 1, 1, 53, 32);
+    Actor_SetPositionAndResetMotion(
+        ((struct LemurianShipObject *)Actor_GetById(17)), PIXELS(856), 0,
+        PIXELS(520));
+    ((struct LemurianShipObject *)Actor_GetById(17))->height = 0;
+    if (!GameFlag_Test(0x229))
+      Actor_SetHorizontalPositionWithTerrain(10, 0, 0);
+  } else {
+    Func_0200245c(10);
+  }
+  if (GameFlag_Test(0x93a)) {
+    MapGrid_CopyCellAttributes(44, 0, 1, 1, 43, 37);
+    Actor_SetPositionAndResetMotion(
+        ((struct LemurianShipObject *)Actor_GetById(18)), PIXELS(696), 0,
+        PIXELS(600));
+    ((struct LemurianShipObject *)Actor_GetById(18))->height = 0;
+    if (!GameFlag_Test(0x22a))
+      Actor_SetHorizontalPositionWithTerrain(11, 0, 0);
+  } else {
+    Func_0200245c(11);
+  }
+  if (GameFlag_Test(0x93b)) {
+    MapGrid_CopyCellAttributes(44, 0, 1, 1, 48, 37);
+    Actor_SetPositionAndResetMotion(
+        ((struct LemurianShipObject *)Actor_GetById(19)), PIXELS(776), 0,
+        PIXELS(600));
+    ((struct LemurianShipObject *)Actor_GetById(19))->height = 0;
+    if (!GameFlag_Test(0x22b))
+      Actor_SetHorizontalPositionWithTerrain(12, 0, 0);
+  } else {
+    Func_0200245c(12);
+  }
+  if (GameFlag_Test(0x93c)) {
+    MapGrid_CopyCellAttributes(44, 0, 1, 1, 50, 37);
+    Actor_SetPositionAndResetMotion(
+        ((struct LemurianShipObject *)Actor_GetById(20)), PIXELS(808), 0,
+        PIXELS(600));
+    ((struct LemurianShipObject *)Actor_GetById(20))->height = 0;
+    if (!GameFlag_Test(0x22c))
+      Actor_SetHorizontalPositionWithTerrain(13, 0, 0);
+  } else {
+    Func_0200245c(13);
+  }
+  if (GameFlag_Test(0x93e)) {
+    MapGrid_CopyCellAttributes(44, 0, 1, 1, 48, 43);
+    Actor_SetPositionAndResetMotion(
+        ((struct LemurianShipObject *)Actor_GetById(22)), PIXELS(776), 0,
+        PIXELS(696));
+    ((struct LemurianShipObject *)Actor_GetById(22))->height = 0;
+    if (!GameFlag_Test(0x22e))
+      Actor_SetHorizontalPositionWithTerrain(15, 0, 0);
+  } else {
+    Func_0200245c(15);
+  }
+  Func_02002db8(gData_02003034);
+  LemurianShip_TaskAdd(Func_0200143c, 0x480);
+  if (Event_GetFlag(0x228)) {
+    Func_02001944(9, 16);
+    GameFlag_ClearBit(0x228);
+  } else if (Event_GetFlag(0x229)) {
+    Func_02001944(10, 17);
+    GameFlag_ClearBit(0x229);
+  } else if (Event_GetFlag(0x22a)) {
+    Func_02001944(11, 18);
+    GameFlag_ClearBit(0x22a);
+  } else if (Event_GetFlag(0x22b)) {
+    Func_02001944(12, 19);
+    GameFlag_ClearBit(0x22b);
+  } else if (Event_GetFlag(0x22c)) {
+    Func_02001944(13, 20);
+    GameFlag_ClearBit(0x22c);
+  } else if (Event_GetFlag(0x22e)) {
+    Func_02001944(15, 22);
+    GameFlag_ClearBit(0x22e);
+  }
+}
+
+void Func_020027e4(void) {
+  if (GameFlag_Test(0x983)) {
+    Map_CopyCellPictureIndicesRect(17, 125, 27, 63, 3, 3);
+    MapGrid_CopyCellAttributes(25, 0, 5, 3, 25, 4);
+  }
+}
+
+void Func_02001474(void);
+void Func_02001a9c(void);
+
+/// Sets up the scene by flags 0x93f, 0x9e4 and 0x22f: actor 64, actors 8 to 13
+/// and the camera.
+void Func_02002820(void) {
+  struct LemurianShipObject *object;
+
+  ((struct LemurianShipObject *)Actor_GetById(gMainRoutineWork.currentOwner))
+      ->priorityFlags |= 32;
+  LEMURIAN_SHIP_TASK_ADD(Func_02001474, 0x480);
+  if (GameFlag_Test(0x93f)) {
+    object = ((struct LemurianShipObject *)Actor_GetById(64));
+    object->motionFlags = 0;
+    Actor_SetPositionAndResetMotion(
+        ((struct LemurianShipObject *)Actor_GetById(64)), PIXELS(136),
+        PIXELS(-32), PIXELS(392));
+    object->height = 0xfff00000;
+    Actor_SetSpritePriority(64, 3);
+    Actor_SetPartAttribute(((struct LemurianShipObject *)Actor_GetById(64)), 1);
+    Actor_SetHorizontalPositionWithTerrain(8, 0, 0);
+    Actor_SetHorizontalPositionWithTerrain(9, 0, 0);
+    Actor_SetHorizontalPositionWithTerrain(10, 0, 0);
+    Actor_SetHorizontalPositionWithTerrain(11, 0, 0);
+    Actor_SetHorizontalPositionWithTerrain(12, 0, 0);
+    Actor_SetHorizontalPositionWithTerrain(13, 0, 0);
+    wait(1);
+  }
+  if (GameFlag_Test(0x9e4)) {
+    struct LemurianShipObject *marker =
+        ((struct LemurianShipObject *)Actor_GetById(64));
+
+    Actor_SetHorizontalPositionWithTerrain(64, marker->x,
+                                           marker->z + 0xfed00000);
+    Actor_SetPartAttribute(((struct LemurianShipObject *)Actor_GetById(64)), 0);
+    MapGrid_CopyCellAttributes(6, 0, 1, 2, 6, 4);
+    MapGrid_SetCameraBounds(0x80000, 0x100000, 0xf80000, 0x1000000);
+    Camera_FollowActor(gMainRoutineWork.currentOwner, 0);
+    Func_02002c10();
+    wait(1);
+  }
+  if (Event_GetFlag(0x22f)) {
+    Func_02001a9c();
+    GameFlag_ClearBit(0x22f);
+  }
+}
+
+void Func_02001464(void);
+void Func_0200155c(void);
+
+/// Restores the scene from its flags: two map edits, actors 8 to 11 and two
+/// scheduled tasks.
+void Func_02002970(void) {
+  struct LemurianShipObject *object;
+
+  ((struct LemurianShipObject *)Actor_GetById(gMainRoutineWork.currentOwner))
+      ->priorityFlags |= 32;
+  Func_02002dc8(gData_0200304e);
+  if (GameFlag_Test(0x982)) {
+    MapGrid_CopyCellsTo(4, 124, 31, 64, 3, 2);
+    GameFlag_SetBit(0x202);
+    GameFlag_SetBit(0x203);
+  }
+  Actor_SetSingleChildFlags(((struct LemurianShipObject *)Actor_GetById(8)), 0);
+  if (Event_GetFlag(0x202)) {
+    object = ((struct LemurianShipObject *)Actor_GetById(8));
+    Map_CopyCellPictureIndicesRect(35, 68, 35, 69, 1, 1);
+    MapGrid_CopyCellAttributes(35, 0, 1, 1, 35, 9);
+    object->motionFlags = 0;
+    FieldActor_SetPositionAndResetMotion(object, PIXELS(568), PIXELS(-16),
+                                         PIXELS(152));
+    Actor_SetSpritePriority(8, 3);
+    GameFlag_SetBit(0x204);
+    Actor_SetPosition(10, PIXELS(568), PIXELS(152));
+  }
+  if (GameFlag_Test(0x204)) {
+    if (GameFlag_Test(0x202))
+      Actor_SetModeById(8, 3);
+    else
+      Actor_SetModeById(8, 2);
+  }
+  Actor_SetSingleChildFlags(((struct LemurianShipObject *)Actor_GetById(9)), 0);
+  if (!GameFlag_Test(0x109))
+    GameFlag_SetBit(0x203);
+  if (Event_GetFlag(0x203)) {
+    object = ((struct LemurianShipObject *)Actor_GetById(9));
+    Map_CopyCellPictureIndicesRect(29, 68, 29, 69, 1, 1);
+    MapGrid_CopyCellAttributes(35, 0, 1, 1, 29, 9);
+    object->motionFlags = 0;
+    object->y = 0xfff00000;
+    Actor_SetSpritePriority(9, 3);
+    GameFlag_SetBit(0x205);
+    Actor_SetPosition(11, PIXELS(472), PIXELS(152));
+  }
+  if (GameFlag_Test(0x205)) {
+    if (GameFlag_Test(0x203))
+      Actor_SetModeById(9, 3);
+    else
+      Actor_SetModeById(9, 2);
+  }
+  wait(1);
+  Func_02002db8(gData_02003014);
+  LemurianShip_TaskAdd(Func_02001464, 0x480);
+  if (!GameFlag_Test(0x210))
+    Actor_SetPartAttribute(((struct LemurianShipObject *)Actor_GetById(10)),
+                           15);
+  if (!GameFlag_Test(0x211))
+    Actor_SetPartAttribute(((struct LemurianShipObject *)Actor_GetById(11)),
+                           15);
+  LEMURIAN_SHIP_TASK_ADD(Func_0200155c, 0x480);
+}
+
+void Func_02002b98(void) {
+  if (GameFlag_Test(0x983) == 0)
+    Func_02001650();
 }

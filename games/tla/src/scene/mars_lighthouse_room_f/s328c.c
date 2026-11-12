@@ -14,7 +14,7 @@ void Func_0200328c(s32 id, s32 target, s32 kind, s32 a3, const void *script) {
   object->motionFlags = 0;
   Func_02005480(object, 1);
   object->watchedObject = source;
-  object->action = 0;
+  object->timer = 0;
   object->unk66 = a3;
   BYTE_AT(object, 98) = kind;
   object->update = Func_02002f6c;
@@ -37,7 +37,7 @@ void Func_02002f80(struct Actor *actor);
 void Func_02003304(struct Actor *self) {
   struct Actor *actor = Actor_Get(((u8 *)self)[0x62]);
   s32 angle = (s16)self->unk66;
-  struct FieldSprite *sprite = actor->animation;
+  struct FieldSprite *sprite = actor->sprite;
   // volatile: the call reads position[0] before [1] and [2] (as a plain
   // array, 2 of 86 differ in tla-en).
   volatile s32 position[3];
@@ -46,7 +46,7 @@ void Func_02003304(struct Actor *self) {
   position[1] = self->y - PIXELS(12);
   position[2] = self->z;
   FieldVector_AddPolarOffset(PIXELS(32), angle, (struct Vector3 *)position);
-  actor->angle = angle;
+  actor->facing = angle;
   actor->motionFlags = 0;
   FieldActor_SetPositionAndResetMotion(actor, position[0], position[1], position[2]);
   actor->update = Func_02002f80;
@@ -60,7 +60,7 @@ void Func_02003304(struct Actor *self) {
   do {
     actor->scaleY = 0;
   } while (0);
-  actor->action = 0;
+  actor->timer = 0;
   actor->watchedObject = self->watchedObject;
   Event_PlaySound(104);
 }
@@ -68,7 +68,7 @@ void Func_02003304(struct Actor *self) {
 void Func_02005528(struct Actor *object, s32 mode);
 
 s32 Func_020033cc(struct Actor *object) {
-  s32 frame = object->action;
+  s32 frame = object->timer;
 
   if (frame == 0) {
     object->y = Map_GetTerrainHeight(0, object->x, object->z) + 0x100000;
@@ -86,7 +86,7 @@ s32 Func_020033cc(struct Actor *object) {
     object->scaleX = 0x10000;
     object->scaleY = 0x10000;
     {
-      s32 half = (object->action / 2) & 1;
+      s32 half = (object->timer / 2) & 1;
 
       Animation_ApplyChildValues(object->watchedObject, half * 7);
     }
@@ -97,12 +97,12 @@ s32 Func_020033cc(struct Actor *object) {
     object->watchedObject = 0;
     return 0;
   }
-  object->action++;
+  object->timer++;
   return 1;
 }
 
 s32 Func_02003478(struct Actor *object) {
-  s32 frame = object->action;
+  s32 frame = object->timer;
 
   if (frame == 0) {
     Event_PlaySound(136);
@@ -117,7 +117,7 @@ s32 Func_02003478(struct Actor *object) {
     object->scaleX = 0x10000;
     object->scaleY = 0x10000;
     {
-      s32 half = (object->action / 2) & 1;
+      s32 half = (object->timer / 2) & 1;
 
       Animation_ApplyChildValues(object->watchedObject, half * 7);
     }
@@ -128,7 +128,7 @@ s32 Func_02003478(struct Actor *object) {
     object->watchedObject = 0;
     return 0;
   }
-  object->action++;
+  object->timer++;
   return 1;
 }
 

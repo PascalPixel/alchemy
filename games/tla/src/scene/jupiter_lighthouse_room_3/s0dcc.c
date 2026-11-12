@@ -115,14 +115,14 @@ struct Actor *Func_02000f34(s32 *direction, s32 *slot, s32 *kind) {
   u32 i, k;
   s32 x, z, left, top, right, bottom;
 
-  *direction = leader->angle >> 12;
+  *direction = leader->facing >> 12;
   i = 8;
   entry = &work->objects[8];
 outer:
   object = *entry;
   k = 0;
 inner:
-  if (((struct ObjectAnimationState *)object->animation)->value28[0] ==
+  if (((struct ObjectAnimationState *)object->sprite)->value28[0] ==
       gData_02002478[k]) {
     x = (PIXELS(leader->x) + (gData_0200249c[*direction] >> 16)) >> 4;
     z = (PIXELS(leader->z) + (s16)gData_0200249c[*direction]) >> 4;
@@ -181,7 +181,7 @@ void Func_02001050(struct PushTarget target) {
   s32 speed;
   s32 acceleration;
 
-  direction = leader->angle >> 16;
+  direction = leader->facing >> 16;
   footprint = target.footprint;
   speed = leader->speedLimit;
   acceleration = leader->acceleration;

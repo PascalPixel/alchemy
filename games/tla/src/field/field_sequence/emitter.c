@@ -124,7 +124,7 @@ struct Actor *BattleEffect_StartRandomParticleEmitter(s32 actor, s32 item) {
   position[1] = picture->y;
   position[2] = picture->z;
   if (actor == Party_GetLeaderActor()) {
-    Vector_AddPolarOffset(0x100000, picture->angle, position);
+    Vector_AddPolarOffset(0x100000, picture->facing, position);
     position[0] = (position[0] & 0xfff00000) + 0x80000;
     position[2] = (position[2] & 0xfff00000) + 0x80000;
   }
@@ -148,7 +148,7 @@ struct Actor *BattleEffect_StartRandomParticleEmitter(s32 actor, s32 item) {
   if (picture == NULL)
     return NULL;
   Actor_StartScriptFar(picture, gData_080effd8);
-  visual = picture->animation;
+  visual = picture->sprite;
   zero = 0;
   visual->value1a = zero;
   visual->value1b = zero;

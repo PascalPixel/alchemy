@@ -85,7 +85,7 @@ void Func_02000d18(void) {
   OverlayObject_PrepareObject(181 << 18, 0, 0x1ea0000, 286);
   Event_PlaySound(204);
   guard->motionFlags = 3;
-  ((struct BoulderSprite *)guard->animation)->layer = 3;
+  ((struct BoulderSprite *)guard->sprite)->layer = 3;
   FieldEvent_Wait(10);
   Actor_SetPosition(15, 0, 0);
   Func_02004fdc();
@@ -126,7 +126,7 @@ void Actor_SetAnimationSpeed(struct Actor *object, s32 value);
 void Func_02000f00(void) {
   struct Actor *walker = Actor_Get(9);
   struct Actor *object = Actor_Get(10);
-  u8 *sprite = object->animation;
+  u8 *sprite = object->sprite;
   u8 *animation = FIELD_AT(sprite, u8 *, 40);
 
   Iwram_CopyWords(&gData_0200646c, object, 128);

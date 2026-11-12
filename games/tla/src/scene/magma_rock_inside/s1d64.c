@@ -22,7 +22,7 @@ static __inline__ void Arrive(s32 id, s32 x, s32 z) {
   Actor_ResetAndSetPosition(id, x, z);
   Actor_GetById(id)->velocityY = 0xc0000;
   Actor_GetById(id)->gravity = 0x8000;
-  Actor_GetById(id)->action = 0;
+  Actor_GetById(id)->timer = 0;
   Actor_GetById(id)->update = Func_02001d04;
 }
 
@@ -75,7 +75,7 @@ loop:
     FieldCamera_MoveTo(174 << 18, -1, 232 << 16, 1);
     Actor_GetById(12)->velocityY = 0xd0000;
     Actor_GetById(12)->gravity = 0x8000;
-    Actor_GetById(12)->action = 0;
+    Actor_GetById(12)->timer = 0;
     Actor_GetById(12)->update = Func_02001d04;
     MapGrid_SetShake(-1, -1, 0xe666);
   }
@@ -113,16 +113,16 @@ void Func_0200217c(void) {
   }
 }
 
-struct FieldActor;
+struct Actor;
 
-struct FieldActor *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type);
-void Func_02004cb0(struct FieldActor *actor);
+struct Actor *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type);
+void Func_02004cb0(struct Actor *actor);
 s32 Func_02000694(u32 layer, s32 x, s32 y, s32 value);
 
 void Func_020021c0(void) {
   u8 *work = Ram_HeapSlots->eventWork;
   struct Actor *object;
-  struct FieldActor *actor;
+  struct Actor *actor;
   struct Actor *other;
   s32 i;
 
@@ -150,7 +150,7 @@ void Func_020021c0(void) {
     REG_BLDALPHA = 0x1000;
     REG_BLDCNT = 0x3f10;
     {
-      struct FieldActor *prepared = OverlayObject_PrepareObject(
+      struct Actor *prepared = OverlayObject_PrepareObject(
           other->x, other->terrainHeight, other->z + 0x300000, 312);
 
       other->motionFlags = 0;

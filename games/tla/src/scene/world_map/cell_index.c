@@ -40,7 +40,7 @@ s32 Func_02003988(s32 x, s32 z) { return x / 0x100000 + (z / 0x100000) * 128; }
 
 s32 Func_020039a8(struct Actor *object) {
   struct Actor *parent = object->watchedObject;
-  s32 step = ++object->action;
+  s32 step = ++object->timer;
   s32 scale;
 
   if (step > 31)

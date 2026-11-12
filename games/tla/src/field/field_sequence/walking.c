@@ -74,7 +74,7 @@ s32 Func_080cb09c(void) {
   position[0] = object->x;
   position[1] = object->y;
   position[2] = object->z;
-  Vector_AddPolarOffset(0x100000, object->angle, position);
+  Vector_AddPolarOffset(0x100000, object->facing, position);
   if (block->mode == 3) {
     s32 x, z;
 

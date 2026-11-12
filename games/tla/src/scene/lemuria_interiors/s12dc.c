@@ -27,7 +27,7 @@ struct AnimatedSprite {
 };
 
 void Func_020012dc(s32 id) {
-  struct FieldActor *object = ((struct FieldActor *)Actor_GetById(id));
+  struct Actor *object = Actor_GetById(id);
 
   Func_0200128c(object->x + 0x80000, object->y + 0x1c0000, object->z, 0x1000,
                 15);
@@ -47,7 +47,7 @@ void Func_020012dc(s32 id) {
   Event_Wait(15);
 }
 
-void Func_02001398(struct FieldActor *object) {
+void Func_02001398(struct Actor *object) {
   struct AnimatedSprite *sprite = (struct AnimatedSprite *)object->sprite;
   struct SpritePictures *pictures = sprite->pictures;
 
@@ -539,7 +539,7 @@ void Func_020013f0(void) {
   Actor_Jump(18, 6, 15);
   Actor_Jump(18, 6, 23);
   object = Actor_GetById(18);
-  object->action = 0;
+  object->timer = 0;
   object->update = (void (*)(void))Func_02001398;
   FieldEvent_ShowMessageThenWait(0x1012, 0, 10);
   Actor_SetSpeed(18, 0x23333, 0x11999);
@@ -551,7 +551,7 @@ void Func_020013f0(void) {
   Actor_CommitPositionAndActivate(18, 0, -16);
   Event_Wait(1);
   Actor_GetById(18)->actionFlags |= 1;
-  target->action = 3;
+  target->timer = 3;
   wait(1);
   target->update = 0;
   Actor_SetSingleChildFlags((s32)Actor_GetById(18), 1);

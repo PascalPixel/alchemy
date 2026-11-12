@@ -47,7 +47,7 @@ s32 Func_020002d8(struct Actor *object, struct Actor *target, s32 range,
     u32 left = (angle - 0x1000) & 0xf000;
     u32 right = (angle + 0x1000) & 0xf000;
     u32 ahead = angle & 0xf000;
-    u32 facing = object->angle & 0xf000;
+    u32 facing = object->facing & 0xf000;
 
     if (ahead == facing || right == facing || left == facing || force != 0) {
       /* FAKEMATCH(temporary): the count and movementState's address held in
@@ -99,15 +99,15 @@ s32 Func_020003bc(struct Actor *actor) {
     Func_020043c4(actor, 2);
     return 0;
   }
-  if (actor->action == 0)
+  if (actor->timer == 0)
     target = Actor_Get(18);
-  else if (actor->action == 1)
+  else if (actor->timer == 1)
     target = Actor_Get(16);
   else
     target = Actor_Get(17);
   if (Func_020002d8(actor, target, 24, 0) == 0) {
     target = Actor_Get(gMainRoutineWork.currentOwner);
-    if ((*(s16 *)(work + 352) != 0 || tiles[4] != 0) && (actor->action & 2))
+    if ((*(s16 *)(work + 352) != 0 || tiles[4] != 0) && (actor->timer & 2))
       flag = 1;
     Func_020002d8(actor, target, 32, flag);
   }
@@ -122,7 +122,7 @@ s32 Func_020002d8(struct Actor *actor, struct Actor *target, s32 distance,
 s32 Func_020003bc(struct Actor *actor) {
   u8 *tiles = Ram_HeapSlots->windowTiles;
   u8 *work = Ram_HeapSlots->eventWork;
-  s16 *action = &actor->action;
+  s16 *action = &actor->timer;
   s32 flag = 0;
   struct Actor *target;
 
@@ -245,7 +245,7 @@ s32 Func_02000644(void) {
   u16 turn;
   s32 facing;
 
-  turn = Actor_Get(gMainRoutineWork.currentOwner)->angle + 0x5fff;
+  turn = Actor_Get(gMainRoutineWork.currentOwner)->facing + 0x5fff;
   facing = 1;
   if (turn >= 0x3fff)
     facing = 0;
@@ -936,7 +936,7 @@ void Func_020019a4(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f) {
     FieldActor_SetMoveTarget(object, ((8 - cell % 16) << 16) + object->x, object->y,
                   object->z);
     Actor_WaitForMove(object);
-    object->angle = 0xc000;
+    object->facing = 0xc000;
   }
   Actor_SetScript(gMainRoutineWork.currentOwner,
                                           gData_020046f8);
@@ -975,7 +975,7 @@ void Func_02001b7c(void) {
   FieldActor_SetMoveTarget(object, ((8 - cell % 16) << 16) + object->x, object->y,
                 object->z - 0x40000);
   Actor_WaitForMove(object);
-  object->angle = 0xc000;
+  object->facing = 0xc000;
   Event_PlaySound(128);
   Actor_SetSingleChildFlags(Actor_Get(gMainRoutineWork.currentOwner),
                                      0);

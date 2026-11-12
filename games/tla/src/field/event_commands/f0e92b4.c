@@ -83,7 +83,7 @@ void Func_080e92b4(void) {
   struct FxScene *scene = Ram_HeapSlots->effectWork;
   struct Actor *caster = scene->mainObject;
   struct Actor *child = scene->child;
-  struct SplashAnimation *animation = child->animation;
+  struct SplashAnimation *animation = child->sprite;
   struct EffectSprite *sprite;
   struct SplashParticle *particle;
   void *source;

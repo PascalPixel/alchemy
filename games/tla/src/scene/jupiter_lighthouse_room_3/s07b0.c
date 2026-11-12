@@ -39,10 +39,10 @@ void Func_020007b0(struct Actor *self) {
     return;
   }
   Actor_SetAnimationSpeed(self, 16);
-  if ((++*(u16 *)&self->action & 31) == 31)
+  if ((++*(u16 *)&self->timer & 31) == 31)
     Event_PlaySound(231);
-  ((struct FieldSprite *)self->animation)->priority =
-      ((struct FieldSprite *)leader->animation)->priority;
+  ((struct FieldSprite *)self->sprite)->priority =
+      ((struct FieldSprite *)leader->sprite)->priority;
   if (Func_02002450(self->x, self->z, 2) != 255) {
     position[0] = self->x;
     position[1] = self->y;
@@ -62,7 +62,7 @@ void Func_020007b0(struct Actor *self) {
         if (Func_02000784(&leader->x, &self->x) <= 12 && distance < 0xc0000)
           near = 1;
         if (near && !Event_GetFlag(260)) {
-          leader->angle = self->angle;
+          leader->facing = self->facing;
           leader->watchedObject = self;
           leader->priorityFlags &= ~1;
           work->unk16a = 200;
@@ -75,9 +75,9 @@ void Func_020007b0(struct Actor *self) {
       // the address is a linked word read after the cosine, as the native
       // reads it after the speed (at Iwram_MulQ16 it is built before).
       self->x += ((s32 (*)(s32, s32))(IwramIrqMain + Iwram_MulQ16Offset))(
-          Math_Cosine(self->angle), self->speedLimit);
+          Math_Cosine(self->facing), self->speedLimit);
       self->z += ((s32 (*)(s32, s32))(IwramIrqMain + Iwram_MulQ16Offset))(
-          Math_Sin(self->angle), self->speedLimit);
+          Math_Sin(self->facing), self->speedLimit);
       return;
     }
   }
@@ -268,7 +268,7 @@ extern const s8 gData_02002484[][4];
 s32 Func_02000c78(s32 id) {
   u8 *map = (u8 *)Ram_HeapSlots->mapWork;
   struct Actor *actor = Actor_Get(id);
-  s16 shape = *(s16 *)((struct FieldSprite *)actor->animation)->record;
+  s16 shape = *(s16 *)((struct FieldSprite *)actor->sprite)->record;
   s16 i = 0;
   u32 j;
   s32 width;

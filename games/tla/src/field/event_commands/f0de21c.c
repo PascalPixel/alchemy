@@ -112,7 +112,7 @@ void Func_080de21c(void) {
   }
   object->scaleY = 0x4000;
   object->scaleX = 0x4000;
-  object->angle = scene->angle;
+  object->facing = scene->angle;
   object->speedLimit = 0x40000;
   object->acceleration = 0x40000;
   object->motionFlags = 0;
@@ -136,13 +136,13 @@ void Func_080de21c(void) {
     if (copy != NULL) {
       copy->scaleY = 0xf000;
       copy->scaleX = 0xf000;
-      copy->angle = scene->angle;
+      copy->facing = scene->angle;
       copy->speedLimit = 0x40000;
       copy->acceleration = 0x40000;
       copy->motionFlags = 0;
       Actor_SetMode(copy, 5);
       Animation_ApplyChildValuesFar(copy, 2);
-      resource = Sprite_ShareVramCacheEntry(copy->animation, resource);
+      resource = Sprite_ShareVramCacheEntry(copy->sprite, resource);
     }
   }
   marker = resource->vramBlock;
@@ -249,8 +249,8 @@ void BattleEffect_UpdateOrbitingParticleLeft(struct Actor *particle) {
   s32 count;
 
   if (particle != NULL) {
-    count = (u16)particle->action - 1;
-    particle->action = count;
+    count = (u16)particle->timer - 1;
+    particle->timer = count;
     life = count;
     if (life != 0) {
       pos.x = particle->targetX;
@@ -272,8 +272,8 @@ void BattleEffect_UpdateOrbitingParticleRight(struct Actor *particle) {
   s32 count;
 
   if (particle != NULL) {
-    count = (u16)particle->action - 1;
-    particle->action = count;
+    count = (u16)particle->timer - 1;
+    particle->timer = count;
     life = count;
     if (life != 0) {
       pos.x = particle->targetX;
@@ -342,8 +342,8 @@ void FieldEffect_RunFrost(void) {
         particle->update =
             (void (*)(void))BattleEffect_UpdateOrbitingParticleRight;
 
-      particle->angle = Random16();
-      particle->action = 60;
+      particle->facing = Random16();
+      particle->timer = 60;
       particle->unk66 = Random16();
       Animation_ApplyChildValuesFar((struct ActorView *)particle, 9);
 
@@ -429,8 +429,8 @@ void BattleEffect_UpdateShrinkingOrbitObject(struct Actor *object) {
   s32 lift;
 
   if (object != NULL) {
-    count = (u16)object->action - 1;
-    object->action = count;
+    count = (u16)object->timer - 1;
+    object->timer = count;
     life = count;
     if (life != 0) {
       pos.x = scene->x;
@@ -537,10 +537,10 @@ void FieldEffect_RunPly(void) {
       object->scaleY = 0xb333;
       object->scaleX = 0xb333;
       object->update = (void (*)(void))BattleEffect_UpdateShrinkingOrbitObject;
-      object->action = 120;
+      object->timer = 120;
       object->unk66 = i << 13;
       object->motionFlags = 4;
-      last = Sprite_ShareVramCacheEntry(object->animation, last);
+      last = Sprite_ShareVramCacheEntry(object->sprite, last);
     }
     wait(1);
   }
@@ -579,7 +579,7 @@ void FieldEffect_RunPly(void) {
   Sound_PlayFar(84);
   if (object != 0) {
     target->update = (void (*)(void))Func_080de8d0;
-    target->action = 0;
+    target->timer = 0;
     if (scene->enabled != 0)
       wait(128);
     else
@@ -587,7 +587,7 @@ void FieldEffect_RunPly(void) {
   }
 
   if (target != 0) {
-    target->action = -1;
+    target->timer = -1;
     target->speedLimit = 0x50000;
     target->acceleration = 0x6666;
     target->actionFlags = 0;

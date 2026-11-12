@@ -38,11 +38,11 @@ s32 Func_020007f4(void) {
         Actor_SetSingleChildFlags(dust, 0);
         Func_02004d9c(dust, 1);
         Func_02004dac(dust, gData_020050f4);
-        ((struct DustSprite *)dust->animation)->layer = 1;
+        ((struct DustSprite *)dust->sprite)->layer = 1;
         dust->bounce = Math_Cosine(((Random16Far() << 3) >> 16) << 14) >> 1;
         dust->unk4c = Math_Sin(((Random16Far() << 3) >> 16) << 14) >> 1;
         dust->gravity = 0;
-        dust->action = ((Random16Far() << 9) >> 16) - 0x100;
+        dust->timer = ((Random16Far() << 9) >> 16) - 0x100;
         dust->speedLimit = 0;
         dust->acceleration = 0;
         dust->update = Effect_AdvanceMotionAtLeaderPriority;

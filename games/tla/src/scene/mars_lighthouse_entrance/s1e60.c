@@ -16,10 +16,10 @@ void Func_02001e1c(struct Actor *object, s32 part) {
 
   object->motionFlags = zero;
   object->collisionFlags = zero;
-  ((struct SpriteParts *)object->animation)->part = part;
+  ((struct SpriteParts *)object->sprite)->part = part;
   Actor_SetSingleChildFlags(object, 0);
   Func_02004bd0(object, gData_020056a0);
-  object->action = zero;
+  object->timer = zero;
   object->speedLimit = zero;
   object->acceleration = zero;
 }
@@ -99,10 +99,10 @@ void Func_02001f90(struct Actor *object) {
   object->unk4c = dz - dz / 16;
   rate = object->speedLimit;
   scale = object->scaleX;
-  parts = object->animation;
+  parts = object->sprite;
   object->scaleX = scale + rate;
   object->scaleY += object->acceleration;
-  parts->unk12 += object->action;
+  parts->unk12 += object->timer;
   if (leader->y == leader->terrainHeight && Func_02001f38(object, leader)) {
     object->z -= object->unk4c;
     object->gravity += object->unk4c >> 2;
@@ -117,7 +117,7 @@ void Func_0200202c(struct Actor *object, s32 unused) {
   Func_02004bc0(object, 2);
   Func_02004bd0(object, gData_020056a0);
   Actor_SetSpriteColor(object, 10);
-  object->action = 0;
+  object->timer = 0;
   object->speedLimit = 0;
   object->acceleration = 0;
 }
@@ -132,7 +132,7 @@ void Func_0200206c(s32 *position, s32 speed) {
     object->gravity = (u16)Random16Far();
     object->unk4c = (u16)(Random16Far() << 1) + speed;
     spin = (u16)Random16Far() + 0xffff8000;
-    object->action = spin;
+    object->timer = spin;
     Func_0200202c(object, 2);
     object->update = (void (*)(void))Func_02001f90;
     Animation_SetStateFlags(object, 1);

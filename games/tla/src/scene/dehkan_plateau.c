@@ -648,7 +648,7 @@ void Func_02001a30(void) {
       }
     }
     Event_Wait(12);
-    leader->angle = 0x4000;
+    leader->facing = 0x4000;
     leader->motionFlags = 0;
     Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
     {
@@ -659,7 +659,7 @@ void Func_02001a30(void) {
         Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 2);
       } else if (scene == SCENE(Ov655Room5)) {
         if (gData_02004420 != NULL)
-          ((struct FieldSprite *)gData_02004420->animation)->priority = 3;
+          ((struct FieldSprite *)gData_02004420->sprite)->priority = 3;
         Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 3);
       }
     }

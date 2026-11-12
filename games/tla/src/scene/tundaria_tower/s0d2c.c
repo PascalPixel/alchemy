@@ -53,7 +53,7 @@ void Func_02000de4(void) {
     Map_CopyCellPictureIndicesRect(39, 100, 53, 100, 3, 3);
     Call6((void (*)())Map_CopyCellAttributeRect, 43, 41, 3, 3, 53, 37);
     if (Actor_GetById(gMainRoutineWork.currentOwner)->z >> 20 == 38) {
-      s16 angle = Actor_GetById(gMainRoutineWork.currentOwner)->angle;
+      s16 angle = Actor_GetById(gMainRoutineWork.currentOwner)->facing;
       s32 owner = gMainRoutineWork.currentOwner;
 
       if (angle < 0)
@@ -159,8 +159,8 @@ struct ReflectionAnimation {
 
 void Func_020010d4(struct Actor *object) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
-  struct ReflectionAnimation *leaderAnimation = leader->animation;
-  struct ReflectionAnimation *animation = object->animation;
+  struct ReflectionAnimation *leaderAnimation = leader->sprite;
+  struct ReflectionAnimation *animation = object->sprite;
 
   if (leader->z <= object->unk4c) {
     object->z = 0;
@@ -180,7 +180,7 @@ void Func_020010d4(struct Actor *object) {
       object->x = leader->x;
       object->y = leader->y;
       object->z = object->unk4c - (leader->z - object->unk4c);
-      object->angle = ~leader->angle;
+      object->facing = ~leader->facing;
       source = leaderAnimation->sprite;
       sprite->unk10 = source->unk10;
       sprite->unk02 = source->unk02;

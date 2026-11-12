@@ -63,9 +63,9 @@ void Func_020029f8(s32 id, s32 mode) {
 
   if (mode == 0) {
     for (i = 15; i >= 0; i--) {
-      s32 angle = object->angle;
+      s32 angle = object->facing;
       angle += 0x2000;
-      object->angle = angle;
+      object->facing = angle;
       wait(1);
     }
   }

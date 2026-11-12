@@ -16,7 +16,7 @@
 #include "text/msg_ids.h"
 #include "scene_tables.h"
 
-void Actor_SetSingleChildFlags(struct FieldActor *object, s32 value);
+void Actor_SetSingleChildFlags(struct Actor *object, s32 value);
 
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 void Func_020010cc(s32 x, s32 z, s32 layer, s32 height);
@@ -25,8 +25,7 @@ s32 Func_020003f0(u32 layer, s32 x, s32 y, s32 value);
 
 void Func_02000454(const u8 *data) {
   const u16 *ids = (const u16 *)data;
-  struct Actor *leader = (struct Actor *)((struct FieldActor *)Actor_GetById(
-      gMainRoutineWork.currentOwner));
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   struct Actor *object;
   s32 height;
   s32 cell;
@@ -34,11 +33,11 @@ void Func_02000454(const u8 *data) {
   if (*ids == 0xffff)
     goto done;
 loop:
-  object = (struct Actor *)((struct FieldActor *)Actor_GetById(*ids));
+  object = Actor_GetById(*ids);
   object->motionFlags = 0;
   object->collisionFlags = 0;
   object->bounce = 0;
-  Actor_SetSingleChildFlags((struct FieldActor *)object, 0);
+  Actor_SetSingleChildFlags((struct Actor *)object, 0);
   height = (Map_GetTerrainHeight(0, object->x, object->z) >> 19) + 2;
   Func_020010cc(object->x, object->z, 0, height);
   Func_020010cc(object->x, object->z, 2, height);
@@ -125,9 +124,8 @@ void Func_020006a8(void) {
     if (current->unk1c != 147)
       Func_0200053c(1);
   } else {
-    leader = (struct Actor *)((struct FieldActor *)Actor_GetById(
-        gMainRoutineWork.currentOwner));
-    angle = (leader->angle + 0x2000) & 0xc000;
+    leader = Actor_GetById(gMainRoutineWork.currentOwner);
+    angle = (leader->facing + 0x2000) & 0xc000;
     position[0] = leader->x;
     position[1] = leader->y;
     position[2] = leader->z;
@@ -135,7 +133,7 @@ void Func_020006a8(void) {
     if (*ids == 0xffff)
       goto search_done;
   search:
-    object = (struct Actor *)((struct FieldActor *)Actor_GetById(*ids));
+    object = Actor_GetById(*ids);
     if (position[0] >> 20 == object->x >> 20 &&
         position[1] / 0x10000 == object->y / 0x10000 &&
         position[2] >> 20 == object->z >> 20)
@@ -164,12 +162,11 @@ void Func_020007ec(struct Actor *object) {
   object->unk4c -= object->unk4c / 10;
   object->scaleX += object->speedLimit;
   object->scaleY += object->acceleration;
-  ((struct FieldSprite *)object->animation)->rotation += object->action;
+  ((struct FieldSprite *)object->sprite)->rotation += object->timer;
 }
 
-void Func_02000848(struct FieldActor *object) {
-  struct FieldActor *leader =
-      ((struct FieldActor *)Actor_GetById(gMainRoutineWork.currentOwner));
+void Func_02000848(struct Actor *object) {
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   s32 leaderZ = leader->z;
   s32 z = object->z;
   u8 *flags = &leader->priorityFlags;
@@ -194,7 +191,7 @@ void Func_02000848(struct FieldActor *object) {
    } *)(base))                                                                 \
        ->v)
 
-struct FieldActor;
+struct Actor;
 
 void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
@@ -339,13 +336,13 @@ s32 Func_02000b64(void) {
 }
 
 void Func_02000ba8(void) {
-  struct FieldActor *object;
+  struct Actor *object;
   s32 arg;
 
-  ((struct FieldActor *)Actor_GetById(4))->priorityFlags |= 0x20;
+  Actor_GetById(4)->priorityFlags |= 0x20;
   Func_0200114c();
   Func_02001154(0, 0x200, 8, 9);
-  object = ((struct FieldActor *)Actor_GetById(10));
+  object = Actor_GetById(10);
   object->motionFlags = 0;
 
   arg = 10;
@@ -353,14 +350,14 @@ void Func_02000ba8(void) {
 }
 
 void Func_02000bf8(s32 unused, s32 id) {
-  struct FieldActor *object = ((struct FieldActor *)Actor_GetById(id));
+  struct Actor *object = Actor_GetById(id);
 
   object->motionFlags = 0;
   Map_CopyCellAttributeRect(13, 12, 2, 1, 13, 10);
   Map_CopyCellAttributeRect(16, 10, 1, 1, object->x >> 20, 10);
 }
 
-s32 Func_02000c38(struct FieldActor *object, s16 *position) {
+s32 Func_02000c38(struct Actor *object, s16 *position) {
   u8 *flags = &object->motionFlags;
   s32 saved = *flags;
   s32 blocked = Func_020010b4(object, position);
@@ -372,7 +369,7 @@ s32 Func_02000c38(struct FieldActor *object, s16 *position) {
     wait(6);
     Sound_Play(152);
     Func_02001074(object, 7);
-    object->speed = 0x30000;
+    object->speedLimit = 0x30000;
     object->acceleration = 0x20000;
     object->velocityY = 0x40000;
     *flags &= 0x7e;
@@ -395,8 +392,7 @@ s32 Func_02000c38(struct FieldActor *object, s16 *position) {
 }
 
 void Func_02000cdc(void) {
-  struct FieldActor *leader =
-      ((struct FieldActor *)Actor_GetById(gMainRoutineWork.currentOwner));
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   s32 position[3];
   s32 x;
 
@@ -435,11 +431,11 @@ void Func_02000d68(void) {
     Actor_SetPosition(8, PIXELS(224), PIXELS(224));
   Actor_ArmCallback(4, FACING_NORTH, 0);
   Event_Wait(10);
-  BYTE_AT(((struct FieldActor *)Actor_GetById(4)), 90) &= ~1;
+  BYTE_AT(Actor_GetById(4), 90) &= ~1;
   MapGrid_CopyCellsTo(96, 14, 72, 14, 2, 1);
   Actor_OffsetPositionAndResetMotion(4, 0, 4);
   Actor_WaitForMoveById(4);
-  Actor_SetSingleChildFlags(((struct FieldActor *)Actor_GetById(4)), 0);
+  Actor_SetSingleChildFlags(Actor_GetById(4), 0);
   Actor_OffsetPositionAndResetMotion(4, 0, 16);
   Actor_WaitForMoveById(4);
   Actor_SetModeById(4, 13);
@@ -513,10 +509,10 @@ void Func_02000f50(void) {
 
 void Func_02000f98(void) {
   Func_02000454(gData_02001220);
-  ((struct FieldActor *)Actor_GetById(8))->priorityFlags |= 0x20;
-  ((struct FieldActor *)Actor_GetById(9))->priorityFlags |= 0x20;
-  ((struct FieldActor *)Actor_GetById(10))->collisionFlags |= 8;
-  ((struct FieldActor *)Actor_GetById(11))->collisionFlags |= 8;
+  Actor_GetById(8)->priorityFlags |= 0x20;
+  Actor_GetById(9)->priorityFlags |= 0x20;
+  Actor_GetById(10)->collisionFlags |= 8;
+  Actor_GetById(11)->collisionFlags |= 8;
 }
 
 void Func_02000fe4(void) {

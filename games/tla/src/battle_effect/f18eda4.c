@@ -403,7 +403,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
 #include "field_event.h"
 
 #define Actor_SetAnimationSpeedFar                                             \
-  ((s32 (*)(struct FieldActor *, s32))Actor_SetAnimationSpeedFar)
+  ((s32 (*)(struct Actor *, s32))Actor_SetAnimationSpeedFar)
 
 void BattleEffect_RunCanvasModeByCount(struct BattleEffectArgument *effect) {
   if (effect->kind > 199)
@@ -416,9 +416,9 @@ DEFINE_EFFECT_KIND(BattleEffect_RunCanvasMode0, Func_0818f620, 0)
 
 void BattleEffect_RunCanvasMode3WithAction(
     struct BattleEffectArgument *effect) {
-  struct FieldActor *object;
+  struct Actor *object;
 
-  object = (struct FieldActor *)GetBattleObjectSlotFar(effect->actor)->object;
+  object = (struct Actor *)GetBattleObjectSlotFar(effect->actor)->object;
   Actor_SetMode(object, 2);
   Actor_SetAnimationSpeedFar(object, 0x1c);
   Func_0818f620(effect, 3);

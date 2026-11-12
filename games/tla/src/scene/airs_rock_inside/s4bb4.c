@@ -101,7 +101,7 @@ void Func_02004cc8(void) {
   Func_02005f94(137);
   Event_StartScreenTransition();
   while (!Func_02005dec(leader)) {
-    leader->angle = (u8)gFrameCount << 12;
+    leader->facing = (u8)gFrameCount << 12;
     leader->priorityFlags ^= 2 << (gFrameCount & 1);
     wait(1);
   }
@@ -150,7 +150,7 @@ void Func_02004eb0(void) {
 
 do {
   object = Import_ActorCreate(672, 0, 0, 0);
-  sprite = object->animation;
+  sprite = object->sprite;
   sprite->priority = 1;
   ((u8 *)object)[0x63] = i << 4;
   { s32 zero = 0;
@@ -161,10 +161,10 @@ do {
   Actor_SetSingleChildFlags(object, 0);
   Actor_SetPartAttribute(object, 2);
   if (i & 1) {
-    object->action = 212;
+    object->timer = 212;
     object->unk66 = 0;
   } else {
-    object->action = 116;
+    object->timer = 116;
     object->unk66 = 0;
   }
   Animation_SetStateFlags(object, 1);

@@ -50,7 +50,7 @@ s32 Func_02000070(struct Actor *self, struct Actor *other, s32 range) {
     u32 left = (angle - 0x1000) & 0xf000;
     u32 right = (angle + 0x1000) & 0xf000;
     u32 ahead = angle & 0xf000;
-    u32 facing = self->angle & 0xf000;
+    u32 facing = self->facing & 0xf000;
 
     if (ahead == facing || right == facing || left == facing)
       result = 1;
@@ -77,7 +77,7 @@ s32 Func_020000e8(struct Actor *self) {
     if (effect[0x713] != 0)
       goto near;
   }
-  if (self->action == 1)
+  if (self->timer == 1)
     goto near;
   other = Actor_Get(gMainRoutineWork.currentOwner);
   if (Func_02000038(&self->x, &other->x) <= 11)
@@ -218,9 +218,9 @@ void Func_02000278(s32 door) {
 void Func_02000308(void) {
   u8 *work = Ram_HeapSlots->eventWork;
   struct Actor *object = Actor_Get(18);
-  s16 angle = object->angle;
+  s16 angle = object->facing;
 
-  object->action = 1;
+  object->timer = 1;
   Func_02001bcc();
   FieldEvent_ResolvePendingActions(0);
   if (*(s16 *)(work + 0x166) == 0) {
@@ -232,8 +232,8 @@ void Func_02000308(void) {
   Actor_SetAnimation(18, 0);
   FieldEvent_ShowMessageThenWait(18, 0, 10);
   Func_02001bd4();
-  object->action = 0;
-  object->angle = angle;
+  object->timer = 0;
+  object->facing = angle;
   System_Wait(1);
 }
 
@@ -241,9 +241,9 @@ void Func_02000308(void) {
 void Func_02000398(void) {
   u8 *work = Ram_HeapSlots->eventWork;
   struct Actor *object = Actor_Get(19);
-  s16 angle = object->angle;
+  s16 angle = object->facing;
 
-  object->action = 1;
+  object->timer = 1;
   Func_02001bcc();
   FieldEvent_ResolvePendingActions(0);
   if (*(s16 *)(work + 0x166) == 0) {
@@ -255,8 +255,8 @@ void Func_02000398(void) {
   Actor_SetAnimation(19, 0);
   FieldEvent_ShowMessageThenWait(19, 0, 10);
   Func_02001bd4();
-  object->action = 0;
-  object->angle = angle;
+  object->timer = 0;
+  object->facing = angle;
   System_Wait(1);
 }
 

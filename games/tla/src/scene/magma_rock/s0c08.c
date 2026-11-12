@@ -40,7 +40,7 @@ void Func_02000dc0(struct Actor *object);
 
 void Func_02000c40(struct Actor *object) {
   struct Actor *linked = object->watchedObject;
-  s16 *timer = &object->action;
+  s16 *timer = &object->timer;
 
   if (*timer < 50) {
     u32 phase = gFrameCount & 3;
@@ -144,7 +144,7 @@ void Func_02000dc0(struct Actor *object) {
   struct Actor *partner;
   struct Actor *leader;
 
-  step = Math_Cosine(object->angle);
+  step = Math_Cosine(object->facing);
   partner = Actor_Get(HALF_AT(object, 102) + BYTE_AT(object, 98));
   leader = Actor_Get(gMainRoutineWork.currentOwner);
   object->x += step * 2;
@@ -165,11 +165,11 @@ void Func_02000dc0(struct Actor *object) {
       object->y >> 20 == partner->y >> 20) {
     object->x = 0;
     object->update = NULL;
-    object->angle ^= 0x9000;
+    object->facing ^= 0x9000;
     object->y = 0;
     object->z = 0;
     BYTE_AT(object, 98) ^= 1;
-    partner->action = 0;
+    partner->timer = 0;
     partner->update = (void *)Func_02000c40;
     partner->watchedObject = object;
   }
@@ -213,16 +213,16 @@ void Func_02000ee4(u16 id, s16 first, s16 side) {
     a = Actor_Get(left);
     b = Actor_Get(next);
     if (a->x < b->x)
-      object->angle = FACING_WEST;
+      object->facing = FACING_WEST;
     else
-      object->angle = 0;
+      object->facing = 0;
   } else {
     a = Actor_Get(left);
     b = Actor_Get(next);
     if (a->x > b->x)
-      object->angle = FACING_WEST;
+      object->facing = FACING_WEST;
     else
-      object->angle = 0;
+      object->facing = 0;
   }
   *flags = 0;
 }

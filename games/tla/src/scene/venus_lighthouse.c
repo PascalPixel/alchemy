@@ -211,7 +211,7 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-s32 SceneActor_ApplyCounterLowBitsAsMode(struct FieldActor *actor) {
+s32 SceneActor_ApplyCounterLowBitsAsMode(struct Actor *actor) {
   Actor_SetSpriteColor(actor, actor->timer & 15);
   return 0;
 }

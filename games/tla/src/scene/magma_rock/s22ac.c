@@ -177,10 +177,10 @@ static inline void BuildParts(struct Actor *anchor) {
       0x15f, anchor->x + 0x10000, anchor->y + 0x200000, anchor->z));
   i = 1;
 next:
-  first = parts[0]->animation;
+  first = parts[0]->sprite;
   part = ((struct Actor *)Import_ActorCreate(0x15f, 0, 0, 0));
   parts[i] = part;
-  sprite = part->animation;
+  sprite = part->sprite;
   sprite->slot = first->slot;
   sprite->retainCacheEntry = 1;
   part->x = parts[0]->x;

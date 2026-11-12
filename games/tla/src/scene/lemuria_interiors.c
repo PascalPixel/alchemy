@@ -137,7 +137,7 @@ void Func_020001ec(s32 arg0, s32 arg1) {
   s32 result3;
 
   object0 = Actor_GetById(arg1);
-  value1 = object0->angle;
+  value1 = object0->facing;
   GameFlag_SetBit(0x967);
   Func_0200282c();
   Event_ResolvePendingActions(0);
@@ -188,7 +188,7 @@ s32 Func_02000284(void) {
   object->y = 0;
   if (GameFlag_Test(0x966)) {
     Actor_SetPositionAndReset(10, 100, 112);
-    Actor_GetById(10)->angle = FACING_SOUTHEAST + FACING_STEP;
+    Actor_GetById(10)->facing = FACING_SOUTHEAST + FACING_STEP;
     wait(1);
   }
   if (GameFlag_Test(0x969))

@@ -39,7 +39,7 @@ void Func_02002270(void) {
   object = (struct Actor *)FieldActor_Create(365, 1, 0, 0);
   object->unk5c[0] = 2;
   Func_02004bc0(object, 1);
-  animation = object->animation;
+  animation = object->sprite;
   work->handle = object;
   work->value0c = animation->value10;
   animation->flag11 = 1;

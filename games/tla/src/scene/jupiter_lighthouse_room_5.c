@@ -40,10 +40,10 @@ void Func_02000e04(s32 id);
 void Func_020029d8(void);
 
 void Func_02000064(s32 unused, s32 id) {
-  struct FieldActor *object;
+  struct Actor *object;
   s32 i;
 
-  object = ((struct FieldActor *)Actor_Get(id));
+  object = Actor_Get(id);
   if (id == 11) {
     if (!Event_GetFlag(0xa00) || object->x >> 20 != 13 || object->z >> 20 != 34)
       return;
@@ -75,7 +75,7 @@ struct AnimatedSprite {
   struct SpritePictures *pictures;
 };
 
-void Func_020000c8(struct FieldActor *object) {
+void Func_020000c8(struct Actor *object) {
   struct AnimatedSprite *sprite = (struct AnimatedSprite *)object->sprite;
   struct SpritePictures *pictures = sprite->pictures;
 
@@ -103,7 +103,7 @@ void Func_020000c8(struct FieldActor *object) {
   object->timer++;
 }
 
-void Func_02000120(struct FieldActor *object) {
+void Func_02000120(struct Actor *object) {
   u32 frameCount = gFrameCount;
 
   if (frameCount & 1)
@@ -114,14 +114,14 @@ s32 Math_Cosine(u32 angle);
 
 /// Circles the object around actor 23, as overlay 6a5's Func_02000090 circles
 /// actor 31.
-void Func_02000148(struct FieldActor *self) {
-  struct FieldActor *centre = ((struct FieldActor *)Actor_Get(23));
+void Func_02000148(struct Actor *self) {
+  struct Actor *centre = Actor_Get(23);
   u16 angle = self->timer;
   s32 sine;
   s32 x;
   s32 z;
 
-  self->x = centre->x + Math_Cosine(angle) * (self->speed + 3);
+  self->x = centre->x + Math_Cosine(angle) * (self->speedLimit + 3);
   sine = Math_Sin(angle);
   z = centre->z;
   x = self->x;
@@ -134,7 +134,7 @@ void Func_02000148(struct FieldActor *self) {
   do {
   } while (0);
   self->targetZ = z;
-  *(s16 *)&self->timer += -0x800;
+  self->timer += -0x800;
 }
 
 struct OrbitEffect {
@@ -170,14 +170,14 @@ static inline struct OrbitEffect *CreateOrbitEffect(s32 type, s32 x, s32 y,
 /// Every third frame, or every frame once flag 0x201 is set, starts a particle
 /// circling actor 23 at a random height above it.
 void Func_020001a4(void) {
-  struct FieldActor *center;
+  struct Actor *center;
   struct OrbitEffect *effect;
   struct FieldSprite *sprite;
   s32 angle;
 
   if (Event_GetFlag(0x201) == 0 && gFrameCount % 3 != 0)
     return;
-  center = ((struct FieldActor *)Actor_Get(23));
+  center = Actor_Get(23);
   if (Event_GetFlag(0x201) != 0) {
     u32 random;
 
@@ -274,7 +274,7 @@ void Func_020002b8(void) {
   Actor_SetAnimationSpeed(leader, 64);
   FieldEvent_Wait(50);
   Event_PlaySound(178);
-  leader->action = 0;
+  leader->timer = 0;
   leader->update = Func_020000c8;
   FieldEvent_Wait(30);
   from[0] = leader->x;
@@ -321,7 +321,7 @@ void Func_020002b8(void) {
   Func_02000d80(2);
   Event_PlaySound(144);
   System_Wait(30);
-  leader->action = 3;
+  leader->timer = 3;
   System_Wait(1);
   leader->update = 0;
   Actor_SetAnimationSpeed(leader, 16);
@@ -463,29 +463,29 @@ void Func_02000734(void) {
 void Func_02002a00(void);
 void Func_02002a08(void);
 void Func_02002a10(void);
-void Func_02002a18(struct FieldActor *object, s32 value);
+void Func_02002a18(struct Actor *object, s32 value);
 
 void Func_02000810(s32 actor, s32 target) {
   s32 i;
 
   Func_02002a00();
-  Func_02002a18(((struct FieldActor *)Actor_Get(actor)), 2);
+  Func_02002a18(Actor_Get(actor), 2);
   Event_PlaySound(201);
   System_Wait(50);
   Event_PlaySound(82);
   for (i = 0; i < 120; i++) {
     {
-      struct FieldActor *object = ((struct FieldActor *)Actor_Get(target));
+      struct Actor *object = Actor_Get(target);
       u32 facing = object->facing;
 
       object->facing = facing + 0x1000;
     }
-    Actor_SetSpriteColor(((struct FieldActor *)Actor_Get(target)), (i & 4) ? 7 : 0);
+    Actor_SetSpriteColor(Actor_Get(target), (i & 4) ? 7 : 0);
     System_Wait(1);
   }
-  ((struct FieldActor *)Actor_Get(target))->facing = 0xc000;
-  Actor_SetSpriteColor(((struct FieldActor *)Actor_Get(target)), 0);
-  Func_02002a18(((struct FieldActor *)Actor_Get(actor)), 0);
+  Actor_Get(target)->facing = 0xc000;
+  Actor_SetSpriteColor(Actor_Get(target), 0);
+  Func_02002a18(Actor_Get(actor), 0);
   Func_02002a10();
   Func_02002a08();
   Actor_SetAnimation(target, 1);

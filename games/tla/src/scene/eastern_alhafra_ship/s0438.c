@@ -299,7 +299,7 @@ void Func_02000c5c(void) {
   object1 = Actor_GetById(9);
   Actor_SetSingleChildFlags((s32)object1, 0);
   object2 = Actor_GetById(9);
-  object2->angle = FACING_SOUTH;
+  object2->facing = FACING_SOUTH;
   Actor_SetPosition(22, PIXELS(456), PIXELS(460));
   Actor_SetSpriteRotationById(22, 0x8000);
   object3 = Actor_GetById(22);

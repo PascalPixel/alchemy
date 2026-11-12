@@ -62,5 +62,5 @@ void Func_02001e00(void) {
     return;
   anchor->z += 0x20000;
   leader->z += 0x20000;
-  leader->angle = 0x4000;
+  leader->facing = 0x4000;
 }

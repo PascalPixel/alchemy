@@ -100,7 +100,7 @@ void Func_080dcb44(void) {
       metadata = Resource_GetMetadataRecordFarFar(spriteId);
       from.y = source->y + (metadata->boxX << 16) - 0x20000;
       from.z = source->z;
-      sprite = target->animation;
+      sprite = target->sprite;
       descriptor = Scene_FindActorPlacement(work->targetId);
       spriteId = descriptor->sprite;
       to.x = target->x;
@@ -124,11 +124,11 @@ void Func_080dcb44(void) {
       }
       object = Func_080200c0(677, to.x, to.y, to.z);
       if (object != NULL) {
-        sprite = object->animation;
+        sprite = object->sprite;
         object->motionFlags = 0;
         object->speedLimit = 0xa3d7;
         object->acceleration = 0xa3d7;
-        object->angle = ArcTan2(from.z - to.z, from.x - to.x);
+        object->facing = ArcTan2(from.z - to.z, from.x - to.x);
         object->update = (void (*)(void))BattleEffect_SetCallbackWhenTargetUnset;
         sprite->palette = 0;
         sprite->mode = 1;

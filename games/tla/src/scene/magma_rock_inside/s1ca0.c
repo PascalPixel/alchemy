@@ -32,9 +32,9 @@ void Func_0200015c(s32 x, s32 y, s32 z, s32 a, s32 b, s32 c, s32 d,
                    struct EffectConfig *config);
 
 void Func_02001d04(struct Actor *object) {
-  if (++object->action > 64)
+  if (++object->timer > 64)
     object->update = 0;
-  if ((object->action & 1) == 0) {
+  if ((object->timer & 1) == 0) {
     struct EffectConfig config;
 
     config.id = 403;

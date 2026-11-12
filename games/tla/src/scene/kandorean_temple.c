@@ -13,11 +13,11 @@ u32 Func_0200028c(struct Actor *object) {
 }
 
 s32 Func_020002a0(struct Actor *object) {
-  if (object->action != 0) {
-    object->action--;
+  if (object->timer != 0) {
+    object->timer--;
   } else {
     Func_080d47b4((s16)object->unk66, 0x105, 0);
-    object->action = ((Random16Far() * 240) >> 16) + 240;
+    object->timer = ((Random16Far() * 240) >> 16) + 240;
   }
   return 1;
 }
@@ -25,7 +25,7 @@ s32 Func_020002a0(struct Actor *object) {
 u32 __umodsi3(u32 a, u32 b);
 
 s32 Func_020002dc(struct Actor *object) {
-  switch (object->action) {
+  switch (object->timer) {
   case 6:
     object->scaleX -= 0x4000;
     {
@@ -45,10 +45,10 @@ s32 Func_020002dc(struct Actor *object) {
   case 0:
     object->scaleX = 0x10000;
     object->scaleY = 0x10000;
-    object->action = Random16Far() % 90 + 60;
+    object->timer = Random16Far() % 90 + 60;
     break;
   }
-  object->action--;
+  object->timer--;
   return 1;
 }
 
@@ -233,7 +233,7 @@ void Func_020006b0(struct Actor *object) {
   struct FieldSprite *sprite;
 
   if (steam) {
-    sprite = steam->animation;
+    sprite = steam->sprite;
     Func_02005138(steam, gData_020054e4);
     steam->motionFlags = 0;
     steam->terrainId = 1;
@@ -322,10 +322,10 @@ void Func_02000864(struct Actor *object) {
   object->unk4c = vz - vz / 16;
   rate = object->speedLimit;
   scale = object->scaleX;
-  sprite = object->animation;
+  sprite = object->sprite;
   object->scaleX = scale + rate;
   object->scaleY += object->acceleration;
-  sprite->rotation += object->action;
+  sprite->rotation += object->timer;
   if (leader->y == 0) {
     if (Func_02000824(object, leader)) {
       object->z -= object->unk4c;
@@ -346,13 +346,13 @@ void Func_02000930(struct Actor *object, s32 priority) {
   object->motionFlags = 0;
   object->collisionFlags = 0;
   object->priorityFlags = 2;
-  sprite = object->animation;
+  sprite = object->sprite;
   sprite->priority = priority;
   Actor_SetSingleChildFlags(object, 0);
   Func_02005130(object, 2);
   Func_02005138(object, gData_02005494);
   Actor_SetPartAttribute(object, 9);
-  object->action = 0;
+  object->timer = 0;
   object->speedLimit = 0;
   object->acceleration = 0;
 }
@@ -371,7 +371,7 @@ void Func_0200098c(s32 *position, s32 value) {
     object->gravity = (u16)Random16Far();
     object->unk4c = (u16)(Random16Far() * 2) + value;
     timer = (u16)Random16Far() - 0x8000;
-    object->action = timer;
+    object->timer = timer;
     Func_02000930(object, 3);
     object->update = (void (*)(void))Func_02000864;
     Animation_SetStateFlags(object, 1);
@@ -400,7 +400,7 @@ void Func_02000a0c(struct Actor *object) {
   } while (0);
   rate = object->speedLimit;
   scale = object->scaleX;
-  sprite = object->animation;
+  sprite = object->sprite;
   object->scaleX = scale + rate;
   {
     /* FAKEMATCH(pin): the call's first argument pinned to r0, so it is copied
@@ -414,16 +414,16 @@ void Func_02000a0c(struct Actor *object) {
      * instructions differ in tla-en. */
     do {
     } while (0);
-    sprite->rotation += object->action;
+    sprite->rotation += object->timer;
     if (Func_02000824(first, leader)) {
-      ((struct FieldSprite *)object->animation)->priority = 3;
+      ((struct FieldSprite *)object->sprite)->priority = 3;
       object->z -= object->unk4c;
       object->gravity += object->unk4c >> 2;
       object->unk4c = 0;
     }
   }
   if (Func_02000824(object, other)) {
-    ((struct FieldSprite *)object->animation)->priority = 3;
+    ((struct FieldSprite *)object->sprite)->priority = 3;
     object->z -= object->unk4c;
     object->gravity += object->unk4c >> 3;
     object->unk4c = 0;
@@ -441,7 +441,7 @@ void Func_02000adc(void) {
     object->gravity = (u16)Random16Far();
     object->unk4c = (u16)(Random16Far() * 2) + 0x58000;
     timer = (u16)Random16Far() - 0x8000;
-    object->action = timer;
+    object->timer = timer;
     Func_02000930(object, 1);
     object->update = (void (*)(void))Func_02000a0c;
     Animation_SetStateFlags(object, 1);
@@ -1105,7 +1105,7 @@ struct MapWork170 {
 
 void Func_02001c8c(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
-  s32 priority = ((struct FieldSprite *)leader->animation)->priority;
+  s32 priority = ((struct FieldSprite *)leader->sprite)->priority;
 
   Actor_SetSpritePriority(13, priority);
   Actor_SetSpritePriority(14, priority);
@@ -1146,7 +1146,7 @@ void Func_02001d40(void) {
   Actor_SetAngleToward(9, gMainRoutineWork.currentOwner, 0);
   Event_SetMessageId((s32)&MsgKandoreanTemple02);
   Event_AskYesNoAndShowResponse(9, 0);
-  Actor_GetById(9)->angle = FACING_SOUTHEAST + FACING_STEP;
+  Actor_GetById(9)->facing = FACING_SOUTHEAST + FACING_STEP;
   wait(1);
   Actor_SetMovementTypeById(9, gData_02005514);
   wait(1);
@@ -1160,7 +1160,7 @@ void Func_02001db4(void) {
   Actor_SetAngleToward(10, gMainRoutineWork.currentOwner, 0);
   Event_SetMessageId((s32)&MsgKandoreanTemple03);
   Event_ShowMessageAndWait(10, 0);
-  Actor_GetById(10)->angle = FACING_SOUTH + FACING_STEP;
+  Actor_GetById(10)->facing = FACING_SOUTH + FACING_STEP;
   wait(1);
   Func_020051c8();
   GameFlag_SetBit(0x846);
@@ -1403,7 +1403,7 @@ void Func_020023e8(void) {
   /* FAKEMATCH(wrapper): calls forwarded through inlines (call.h's Call and
    * Value, this file's own); as direct calls, 180 of 260 instructions differ in
    * tla-en. */
-  s16 angle = *(s16 *)&Actor_GetById(gMainRoutineWork.currentOwner)->angle;
+  s16 angle = *(s16 *)&Actor_GetById(gMainRoutineWork.currentOwner)->facing;
   struct Actor *object;
   struct FieldSprite *sprite;
 
@@ -1434,7 +1434,7 @@ void Func_020023e8(void) {
   FieldCamera_SetSpeed(0x6666, 0xccc);
   FieldCamera_MoveTo(0x1a80000, 0, 0x1900000, 1);
   object = Actor_GetById(12);
-  sprite = object->animation;
+  sprite = object->sprite;
   Actor_SetSpeed(12, 0xcccc, 0x6666);
   Actor_WalkToAndWait(12, 424, 376);
   FieldActor_SetSpritePriority(12, 1);

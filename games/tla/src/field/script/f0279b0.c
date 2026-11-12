@@ -167,14 +167,14 @@ update_object:
     object->velocityZ = 0;
     if ((collision & 3) != 0) {
       direction = angle;
-      difference = (s16)(direction - object->angle);
+      difference = (s16)(direction - object->facing);
       if (difference > 0x1000)
         difference = 0x1000;
       if (difference < -0x1000)
         difference = -0x1000;
-      object->angle += difference;
+      object->facing += difference;
     }
-    object->action = 0;
+    object->timer = 0;
     object->unk66 = 2;
   } else {
     Actor_SetMoveTarget(object, position.x, position.y, position.z);
@@ -184,8 +184,8 @@ update_object:
     object->velocityZ = collision;
     Vector_AddPolarOffset(speed, (u16)angle,
                           (struct FieldPosition *)&object->velocityX);
-    if (object->action != 0)
-      object->action--;
+    if (object->timer != 0)
+      object->timer--;
   }
 
   camera = (struct WorldCamera *)Ram_HeapSlots->mapWork;
@@ -200,7 +200,7 @@ update_object:
   camera->yaw += yawStep;
 
   if (object->animationKind == 1) {
-    playerSprite = object->animation;
+    playerSprite = object->sprite;
     terrainCollision = GetWorldMapCollision((struct WorldPosition *)&object->x);
     if (terrainCollision == 9) {
       playerSprite->entry[6] = 1;
@@ -209,10 +209,10 @@ update_object:
       playerSprite->entry[6] = 9;
       playerSprite->flags = 1;
     }
-    if (terrainCollision == 6 && object->action == 0 && collision == 0) {
+    if (terrainCollision == 6 && object->timer == 0 && collision == 0) {
       ripple = Func_08023220(0x10d, object->x, object->y, object->z);
       if (ripple != 0) {
-        rippleSprite = ripple->animation;
+        rippleSprite = ripple->sprite;
         Actor_StartScript(ripple, gData_0802ec94);
         ripple->motionFlags = collision;
         ripple->terrainId = 1;
@@ -222,7 +222,7 @@ update_object:
           rippleSprite->objectMode = 1;
           rippleSprite->priority = 2;
         }
-        object->action = 10;
+        object->timer = 10;
       }
     }
   }
@@ -522,14 +522,14 @@ counted:
     object->velocityX = 0;
     object->velocityZ = 0;
     if (collision & 3) {
-      difference = (s16)((u16)angle - object->angle);
+      difference = (s16)((u16)angle - object->facing);
       if (difference > 0x1000)
         difference = 0x400;
       if (difference < -0x1000)
         difference = -0x400;
-      object->angle += difference;
+      object->facing += difference;
     }
-    object->action = 0;
+    object->timer = 0;
     object->unk66 = 2;
   } else {
     s32 speed;
@@ -541,15 +541,15 @@ counted:
     object->velocityZ = collision;
     Vector_AddPolarOffset(speed, (u16)heading,
                           (struct FieldPosition *)&object->velocityX);
-    if (object->action != 0)
-      object->action--;
+    if (object->timer != 0)
+      object->timer--;
     object->actionFlags &= ~1;
-    difference = (s16)((u16)angle - object->angle);
+    difference = (s16)((u16)angle - object->facing);
     if (difference > 0x1000)
       difference = 0x400;
     if (difference < -0x1000)
       difference = -0x400;
-    object->angle += difference;
+    object->facing += difference;
   }
   if (object->animationKind == 1)
     GetWorldMapCollision((struct WorldPosition *)&object->x);

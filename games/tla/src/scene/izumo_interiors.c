@@ -93,7 +93,7 @@ const struct Trigger *Func_020000f0(void) {
 }
 
 void Func_0200012c(s32 actor) {
-  u16 facing = Actor_GetById(gMainRoutineWork.currentOwner)->angle;
+  u16 facing = Actor_GetById(gMainRoutineWork.currentOwner)->facing;
 
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
     Func_0200230c(actor);
@@ -112,7 +112,7 @@ void Func_0200012c(s32 actor) {
 }
 
 void Func_020001a8(s32 actor) {
-  u16 facing = Actor_GetById(gMainRoutineWork.currentOwner)->angle;
+  u16 facing = Actor_GetById(gMainRoutineWork.currentOwner)->facing;
 
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
     Func_02002314(9, actor);
@@ -129,7 +129,7 @@ void Func_020001a8(s32 actor) {
 }
 
 void Func_02000220(s32 actor) {
-  u16 facing = Actor_GetById(gMainRoutineWork.currentOwner)->angle;
+  u16 facing = Actor_GetById(gMainRoutineWork.currentOwner)->facing;
 
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
     Func_02002304(24, actor);

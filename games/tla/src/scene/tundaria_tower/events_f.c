@@ -37,7 +37,7 @@ void Func_02001e68(void) {
   u8 *flags;
 
   object = ObjectTable_Get(gMainRoutineWork.currentOwner);
-  angle = (object->angle + 0x2000) & 0xc000;
+  angle = (object->facing + 0x2000) & 0xc000;
 retry:
   Func_02001868();
   object->speedLimit = 0x10000;
@@ -58,7 +58,7 @@ retry:
   cell = GetMapCellCollision(*layer, p[0], p[2]);
   if (cell == 255 ||
       Map_GetTerrainHeight(*layer, p[0], p[2]) - object->y > 0x80000) {
-    object->angle = angle;
+    object->facing = angle;
     object->velocityX = 0;
     object->velocityZ = 0;
     object->x = x;
@@ -69,7 +69,7 @@ retry:
   p[2] = z;
   object->speedLimit = 0x20000;
   object->acceleration = 0x1999;
-  object->action = 0;
+  object->timer = 0;
   Func_02002f80(object, 2);
   Actor_SetAnimationSpeed(object, 48);
   object->update = Func_020017dc;
@@ -132,7 +132,7 @@ void Func_02002184(s32 id, u32 kind, s32 flag, s32 layer);
 void Func_02002094(u16 *table) {
   u16 *row;
   s32 id;
-  struct FieldActor *object;
+  struct Actor *object;
   s16 x, z;
 
   if (table[0] == 0xffff)
@@ -140,7 +140,7 @@ void Func_02002094(u16 *table) {
   row = table;
 loop:
   id = row[0];
-  object = ((struct FieldActor *)Actor_GetById(id));
+  object = Actor_GetById(id);
   x = row[1];
   z = row[2];
 
@@ -196,7 +196,7 @@ s32 Func_02003160(struct Actor *object);
 #include "map.h"
 
 void Func_02002184(s32 id, u32 kind, s32 flag, s32 layer) {
-  struct FieldActor *object = ((struct FieldActor *)Actor_GetById(id));
+  struct Actor *object = Actor_GetById(id);
   struct MapCell *cell = Ram_HeapSlots->mapWork->layers[layer].cells;
 
   cell += Func_02003160(object);

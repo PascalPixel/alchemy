@@ -91,7 +91,7 @@ void Func_080e8db0(void) {
   struct EffectScene *scene = Ram_HeapSlots->effectWork;
   struct EventWork *event = Ram_HeapSlots->eventWork;
   struct Actor *target = scene->target;
-  struct ObjectSprite *targetSprite = target->animation;
+  struct ObjectSprite *targetSprite = target->sprite;
   s32 tiles;
   s32 shown;
   s32 width;
@@ -150,7 +150,7 @@ void Func_080e8db0(void) {
     // Shake the gathered objects' sprites with the view.
     if (event->controlMode == 2) {
       for (i = 0; i < work->view.count; i++) {
-        struct ObjectSprite *sprite = work->view.objects[i]->animation;
+        struct ObjectSprite *sprite = work->view.objects[i]->sprite;
         s32 offset = work->view.spriteOffsets[i];
 
         if (amplitude > SWAY_SHAKE)
@@ -208,7 +208,7 @@ void Func_080e8db0(void) {
 
   if (target != NULL && targetSprite != NULL) {
     Animation_ApplyChildValueFar(targetSprite, 16);
-    ((struct ObjectSprite *)target->animation)->unk19 = 1;
+    ((struct ObjectSprite *)target->sprite)->unk19 = 1;
   }
   Func_080e8c9c();
   ViewMove_RestoreNearbySprites();
@@ -267,7 +267,7 @@ void Func_080e9090(void) {
     // Shake the gathered objects' sprites with the view.
     if (event->controlMode == 2) {
       for (i = 0; i < work->count; i++) {
-        struct ObjectSprite *sprite = work->objects[i]->animation;
+        struct ObjectSprite *sprite = work->objects[i]->sprite;
         s32 offset = work->spriteOffsets[i];
 
         if (amplitude > 0)

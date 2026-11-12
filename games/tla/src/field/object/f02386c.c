@@ -126,13 +126,13 @@ void Func_0802386c(void) {
       if (kind != 1)
         continue;
       if ((u16)system->suspended != 0 && !(object->unk5c[0] & 1)) {
-        struct PlacedSprite *frozen = object->animation;
+        struct PlacedSprite *frozen = object->sprite;
 
         VramCache_ReleaseVram(frozen->slot);
         frozen->dirty = kind;
         continue;
       }
-      sprite = object->animation;
+      sprite = object->sprite;
       dx = object->x - viewX;
       dz = object->z - viewZ;
       screenTop = dz - object->y;
@@ -205,7 +205,7 @@ void Func_0802386c(void) {
             }
           }
           if (priority != 0 && object->animationKind == 1) {
-            struct PlacedSprite *placed = object->animation;
+            struct PlacedSprite *placed = object->sprite;
 
             if ((u32)priority > 3)
               priority = 3;
@@ -233,15 +233,15 @@ void Func_0802386c(void) {
           point.groundHeight += 0x1400000;
         }
         if (*priorityFlags & 8)
-          Func_08022318(sprite, &point, scale.values, object->angle,
+          Func_08022318(sprite, &point, scale.values, object->facing,
                         ((u8 *)object)[0x63]);
         else
           Render_ApplyProjectedPlacement(sprite, SpritePlacement_Values(&point),
-                                         scale.values, object->angle);
+                                         scale.values, object->facing);
         continue;
       }
       if (object->unk5c[0] & 2) {
-        Func_08021a84(sprite, object->angle);
+        Func_08021a84(sprite, object->facing);
       } else if (!(object->unk5c[0] & 1) && !(sprite->retainCacheEntry & 1)) {
         VramCache_ReleaseVram(sprite->slot);
         sprite->dirty = 1;
@@ -250,7 +250,7 @@ void Func_0802386c(void) {
       // At (0, 0): not placed; only the sprite's VRAM is given up.
       kind = object->animationKind & 15;
       if (kind == 1) {
-        struct PlacedSprite *frozen = object->animation;
+        struct PlacedSprite *frozen = object->sprite;
 
         if (object->unk5c[0] == 0 && !(frozen->retainCacheEntry & 1)) {
           VramCache_ReleaseVram(frozen->slot);

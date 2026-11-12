@@ -26,14 +26,14 @@ struct Actor *Func_0200033c(s32 *direction, s32 *slot, s32 *kind) {
   u32 i, k;
   s32 x, z, left, top, right, bottom;
 
-  *direction = leader->angle >> 12;
+  *direction = leader->facing >> 12;
   i = 8;
   entry = &work->objects[8];
 outer:
   object = *entry;
   k = 0;
 inner:
-  if (((struct ObjectAnimationState *)object->animation)->value28[0] ==
+  if (((struct ObjectAnimationState *)object->sprite)->value28[0] ==
       gData_02001968[k]) {
     x = (PIXELS(leader->x) + (gData_0200198c[*direction] >> 16)) >> 4;
     z = (PIXELS(leader->z) + (s16)gData_0200198c[*direction]) >> 4;
@@ -88,7 +88,7 @@ void Func_02000458(struct YampiDesertCaveRect rect) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   struct Actor *object = Actor_GetById(rect.word[4]);
   // Always 0: angle is a u16. Direction 0 of the table of steps.
-  s32 i = leader->angle >> 16;
+  s32 i = leader->facing >> 16;
   s32 kind = rect.word[3];
   s32 speed = leader->speedLimit;
   s32 acceleration = leader->acceleration;
@@ -171,7 +171,7 @@ void Func_02000754(struct Actor *object) {
   s32 position[3];
   struct Actor *hit;
   u32 i;
-  s32 angle = object->angle >> 12;
+  s32 angle = object->facing >> 12;
 
   angle = ((angle + 2) & 12) << 12;
   position[0] = object->x;
@@ -182,7 +182,7 @@ void Func_02000754(struct Actor *object) {
   if (hit != 0) {
     i = 0;
   next:
-    if (*((struct ObjectAnimationState *)hit->animation)->value28 ==
+    if (*((struct ObjectAnimationState *)hit->sprite)->value28 ==
         gData_02001968[i])
       return;
     i++;
@@ -428,10 +428,10 @@ void Func_02000bc0(u16 *list, s32 mode, s32 count) {
 
 #include "field_event.h"
 
-s32 Func_02001940(struct FieldActor *object);
+s32 Func_02001940(struct Actor *object);
 
 void Func_02000c44(s32 id, u32 kind, s32 flag, s32 layer) {
-  struct FieldActor *object = ((struct FieldActor *)Actor_GetById(id));
+  struct Actor *object = Actor_GetById(id);
   struct MapCell *cell = Ram_HeapSlots->mapWork->layers[layer].cells;
 
   cell += Func_02001940(object);

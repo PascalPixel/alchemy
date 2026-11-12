@@ -7,7 +7,7 @@
 
 struct ActorPlacement;
 struct Trigger;
-struct FieldActor;
+struct Actor;
 struct Actor;
 struct TriggerView;
 

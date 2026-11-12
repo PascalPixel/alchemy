@@ -72,7 +72,7 @@ struct GustObject *Func_02001230(struct GustObject *source) {
   return object;
 }
 
-s32 Func_02001308(struct FieldActor *object) {
+s32 Func_02001308(struct Actor *object) {
   struct EffectOptions options;
   s32 phase, x, y, speed;
 

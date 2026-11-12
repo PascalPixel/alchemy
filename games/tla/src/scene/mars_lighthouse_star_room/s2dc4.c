@@ -83,7 +83,7 @@ top:
   if (nextBehavior == 255 ||
       Map_GetTerrainHeight(*layer, position->x, position->z) - actor->y >
           PIXELS(8)) {
-    actor->angle = heading;
+    actor->facing = heading;
     actor->velocityX = 0;
     actor->velocityZ = 0;
     actor->x = startX;
@@ -94,7 +94,7 @@ top:
   position->z = startZ;
   actor->speedLimit = PIXELS(2);
   actor->acceleration = 0x1999;
-  actor->action = 0;
+  actor->timer = 0;
   FieldActor_SetMoveTarget(actor, startX, actor->y, startZ);
   Func_020041cc(actor, 2);
   Actor_SetAnimationSpeed(actor, 48);

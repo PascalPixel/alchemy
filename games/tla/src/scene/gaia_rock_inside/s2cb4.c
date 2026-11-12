@@ -393,7 +393,7 @@ s32 Func_02002f30(void) {
         object = FieldActor_Create(412, 0x1e80000, -0x100000, 0x1590000);
         C2(Actor_SetSingleChildFlags, object, 0);
         C2(Func_02004dac, object, gData_02005360);
-        ((struct GaiaRockAnimation *)object->animation)->angle = 0x2000;
+        ((struct GaiaRockAnimation *)object->sprite)->angle = 0x2000;
         object->speedLimit = 0x18000;
         *(u8 *)&object->motionFlags = 0;
         object->targetX = 0x1c80000;
@@ -764,7 +764,7 @@ s32 Func_02002f30(void) {
         C2(Func_02004dac, other, gData_020053d8);
         C2(Func_02004d9c, other, 1);
         C2(Animation_ApplyChildValues, other, 14);
-        ((u8 *)other->animation)[9] |= 12;
+        ((u8 *)other->sprite)[9] |= 12;
         other->scaleX = 0x13333;
         other->scaleY = 0x13333;
       }
@@ -1105,7 +1105,7 @@ s32 Func_02002f30(void) {
         object = FieldActor_Create(412, 0x1e80000, -0x100000, 0x1590000);
         C2(Actor_SetSingleChildFlags, object, 0);
         C2(Func_02004dac, object, gData_02005360);
-        ((struct GaiaRockAnimation *)object->animation)->angle = 0x2000;
+        ((struct GaiaRockAnimation *)object->sprite)->angle = 0x2000;
         object->speedLimit = 0x18000;
         *(u8 *)&object->motionFlags = 0;
         object->targetX = 0x1c80000;
@@ -1477,7 +1477,7 @@ s32 Func_02002f30(void) {
         C2(Func_02004dac, other, gData_020053d8);
         C2(Func_02004d9c, other, 1);
         C2(Animation_ApplyChildValues, other, 14);
-        ((u8 *)other->animation)[9] |= 12;
+        ((u8 *)other->sprite)[9] |= 12;
         other->scaleX = 0x13333;
         other->scaleY = 0x13333;
       }

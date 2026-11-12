@@ -143,7 +143,7 @@ void Func_02000188(void) {
   if (Event_GetFlag(0x238) == 0 && Event_GetFlag(0xa4b) == 0) {
 #endif
     Event_PlaySound(0x23d);
-    object->x = object->action << 16;
+    object->x = object->timer << 16;
     object->z = *(s16 *)((u8 *)object + 0x66) << 16;
     if (Event_GetFlag(0xa4a) == 0) {
       object->scaleX = 0x9999;
@@ -164,7 +164,7 @@ void Func_020001e8(void) {
 #endif
     Event_PlaySound(0x23d);
     Event_SetFlag(0x233);
-    object->x = object->action << 16;
+    object->x = object->timer << 16;
     object->z = *(s16 *)((u8 *)object + 0x66) << 16;
     object->scaleX = 0x10000;
     object->scaleY = 0x10000;
@@ -544,8 +544,8 @@ struct SpriteAttributes {
 
 void Func_02000ab4(struct Actor *object) {
   struct Actor *owner = Actor_Get(gMainRoutineWork.currentOwner);
-  struct SpriteAttributes *to = (struct SpriteAttributes *)object->animation;
-  struct SpriteAttributes *from = (struct SpriteAttributes *)owner->animation;
+  struct SpriteAttributes *to = (struct SpriteAttributes *)object->sprite;
+  struct SpriteAttributes *from = (struct SpriteAttributes *)owner->sprite;
   struct SpriteBits source = from->bits;
   struct SpriteBits bits;
 

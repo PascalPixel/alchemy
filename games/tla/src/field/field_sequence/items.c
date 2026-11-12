@@ -58,7 +58,7 @@ s32 Item_MatchesFilter(s32 filter, s32 item_id) {
 s32 Event_FindFacingTrigger(s32 source) {
   struct FieldStepWork *work = Ram_HeapSlots->eventWork;
   const struct Trigger *trigger = work->triggers;
-  s32 facing = ObjectTable_Get(Party_GetLeaderActor())->angle;
+  s32 facing = ObjectTable_Get(Party_GetLeaderActor())->facing;
   s32 selected = Field_FindNearbyTalkTarget(Party_GetLeaderActor());
   s32 collision;
 
@@ -260,7 +260,7 @@ struct PendingAction {
 s32 Func_080ce31c(s32 kind) {
   struct TriggerWork *work = Ram_HeapSlots->eventWork;
   struct TriggerEvent *event = work->events;
-  u32 facing = ObjectTable_Get(Party_GetLeaderActor())->angle;
+  u32 facing = ObjectTable_Get(Party_GetLeaderActor())->facing;
   s32 focused = Func_080cb09c();
   s32 special = Func_080cb144();
   s32 best = 9999;
@@ -325,7 +325,7 @@ s32 Func_080ce31c(s32 kind) {
 struct TriggerEvent *Func_080ce458(s32 filter, s32 kind, s32 selector) {
   struct TriggerWork *work = Ram_HeapSlots->eventWork;
   struct TriggerEvent *event = work->events;
-  u32 facing = ObjectTable_Get(Party_GetLeaderActor())->angle;
+  u32 facing = ObjectTable_Get(Party_GetLeaderActor())->facing;
   s32 flags;
 
   if (selector == -1)

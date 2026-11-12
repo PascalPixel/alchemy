@@ -259,7 +259,7 @@ void Func_02002f70(void) {
   Func_02005624(spark, 1);
   System_Wait(1);
   actor = Actor_Get(5);
-  actor->angle = ArcTan2(spark->z - actor->z, spark->x - actor->x);
+  actor->facing = ArcTan2(spark->z - actor->z, spark->x - actor->x);
   FieldCamera_MoveTo(spark->x, -1, spark->z, 1);
   Func_020057b4();
   Event_ShowMessage(5, 0);

@@ -34,7 +34,7 @@ void Func_02001d3c(void) {
   u8 *flags;
 
   object = ObjectTable_Get(gMainRoutineWork.currentOwner);
-  angle = (object->angle + 0x2000) & 0xc000;
+  angle = (object->facing + 0x2000) & 0xc000;
 retry:
   Func_0200173c();
   object->speedLimit = 0x10000;
@@ -55,7 +55,7 @@ retry:
   cell = MapGrid_GetCellBehaviorAt(*layer, p[0], p[2]);
   if (cell == 255 ||
       Map_GetTerrainHeight(*layer, p[0], p[2]) - object->y > 0x80000) {
-    object->angle = angle;
+    object->facing = angle;
     object->velocityX = 0;
     object->velocityZ = 0;
     object->x = x;
@@ -66,7 +66,7 @@ retry:
   p[2] = z;
   object->speedLimit = 0x20000;
   object->acceleration = 0x1999;
-  object->action = 0;
+  object->timer = 0;
   Func_02001fe0(object, 2);
   Actor_SetAnimationSpeed(object, 48);
   object->update = Func_020016b0;

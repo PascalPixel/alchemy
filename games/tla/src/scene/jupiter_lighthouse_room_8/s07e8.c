@@ -177,7 +177,7 @@ extern const s8 gData_020022dc[][4];
 s32 Func_02000af0(s32 id) {
   u8 *map = (u8 *)Ram_HeapSlots->mapWork;
   struct Actor *object = Actor_Get(id);
-  s16 shape = *(s16 *)((struct FieldSprite *)object->animation)->record;
+  s16 shape = *(s16 *)((struct FieldSprite *)object->sprite)->record;
   s16 i = 0;
   u32 j;
   s32 width;

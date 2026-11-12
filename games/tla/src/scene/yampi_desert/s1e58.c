@@ -97,7 +97,7 @@ void Func_02001e58(void) {
 }
 
 void Func_02002010(void) {
-  struct FieldActor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   s32 x;
   s32 y;
   s32 z;
@@ -108,7 +108,8 @@ void Func_02002010(void) {
   else
     gMainRoutineWork.unk2c3 = 0;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov661Room3) {
-    Actor_SetSpritePriority(18, leader->sprite->priority);
+    Actor_SetSpritePriority(18,
+                            ((struct FieldSprite *)leader->sprite)->priority);
     x = leader->x;
     if (x > 0x1d80000) {
       z = leader->z;
@@ -123,7 +124,7 @@ void Func_02002010(void) {
 }
 
 void Func_020020a8(void) {
-  struct FieldActor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
 
   if (leader->y > -0x100000)
     gMainRoutineWork.unk2c3 = 1;
@@ -132,7 +133,7 @@ void Func_020020a8(void) {
 }
 
 void Func_020020e4(void) {
-  struct FieldActor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   struct MapWork *map = Ram_HeapSlots->mapWork;
   s32 index = Func_020041e0(leader);
   struct MapCell *cell = map->layers[0].cells + index;
@@ -151,7 +152,7 @@ void Func_020020e4(void) {
 }
 
 void Func_02002140(void) {
-  struct FieldActor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   u32 x = leader->x >> 20;
   u32 z = leader->z >> 20;
 
@@ -176,7 +177,7 @@ void Func_020021d4(void) {
   gData_02004808 = 0;
 }
 
-s32 Func_020021f0(struct FieldActor *object) {
+s32 Func_020021f0(struct Actor *object) {
   s32 x = object->targetX;
 
   if (x == ACTOR_NO_TARGET && object->targetZ == x)
@@ -242,25 +243,25 @@ void Func_02001c5c(void);
 /// Readies actors 16 and 17 and the room's callbacks; actor 17 becomes the
 /// followed actor (gData_0200480c).
 void Func_02002318(void) {
-  struct Actor *leader = (struct Actor *)Actor_GetById(16);
+  struct Actor *leader = Actor_GetById(16);
   struct Actor *object;
-  struct FieldActor **followed;
+  struct Actor **followed;
 
   Scene_TaskAdd(Func_02002180, 0x480);
   /* FAKEMATCH(temporary): a pointer to gData_0200480c, taken here, loads its
    * address before the call that fetches actor 17, as in the native; as the
    * global named at each use, 2 of 66 instructions differ in tla-en. */
   followed = &gData_0200480c;
-  object = (struct Actor *)Actor_GetById(17);
+  object = Actor_GetById(17);
   object->priorityFlags |= 2;
-  *followed = (struct FieldActor *)object;
+  *followed = (struct Actor *)object;
   object->scaleX = 0x14ccc;
   object->scaleY = 0x14ccc;
   Func_020040f8(17);
   (*followed)->motionFlags = 3;
   Actor_SetSpritePriority(17, 3);
   Scene_SetSpeed(16, 0x19999, 0xcccc);
-  Actor_SetPartAttribute((struct FieldActor *)leader, 15);
+  Actor_SetPartAttribute((struct Actor *)leader, 15);
   Actor_SetSpritePriority(16, 3);
   Func_020040f8(16);
   Actor_GetById(16)->motionFlags = 3;
@@ -345,9 +346,9 @@ void Func_020023cc(struct Actor *object) {
 /// followed actor, and until flag 0x109 actor 21 is placed and given the
 /// update Func_020023cc.
 void Func_020026a0(void) {
-  struct Actor *leader = (struct Actor *)Actor_GetById(21);
+  struct Actor *leader = Actor_GetById(21);
   struct Actor *object;
-  struct FieldActor **followed;
+  struct Actor **followed;
 
   Scene_TaskAdd(Func_02002180, 0x480);
   /* FAKEMATCH(temporary): a pointer to gData_0200480c, taken here, loads its
@@ -355,16 +356,16 @@ void Func_020026a0(void) {
    * Func_02002318; as the global named at each use, 2 of 74 instructions
    * differ in tla-en. */
   followed = &gData_0200480c;
-  object = (struct Actor *)Actor_GetById(22);
+  object = Actor_GetById(22);
   object->priorityFlags |= 2;
-  *followed = (struct FieldActor *)object;
+  *followed = (struct Actor *)object;
   object->scaleX = 0x14ccc;
   object->scaleY = 0x14ccc;
   Func_020040f8(22);
   (*followed)->motionFlags = 3;
   Actor_SetSpritePriority(22, 3);
   Scene_SetSpeed(21, 0x19999, 0xcccc);
-  Actor_SetPartAttribute((struct FieldActor *)leader, 15);
+  Actor_SetPartAttribute((struct Actor *)leader, 15);
   Actor_SetSpritePriority(21, 3);
   Func_020040f8(21);
   Actor_GetById(21)->motionFlags = 3;
@@ -470,25 +471,25 @@ void Func_02002764(struct Actor *object) {
 /// 0x88b actor 21 is placed facing 0x4000; otherwise, until flag 0x109, it
 /// is placed and given the update Func_02002764.
 void Func_02002b84(void) {
-  struct Actor *leader = (struct Actor *)Actor_GetById(21);
+  struct Actor *leader = Actor_GetById(21);
   struct Actor *object;
-  struct FieldActor **followed;
+  struct Actor **followed;
   s32 angle;
 
   /* FAKEMATCH(temporary): a pointer to gData_0200480c, taken here, loads its
    * address before the call that fetches actor 22, as in the native; as the
    * global named at each use, 2 of 89 instructions differ in tla-en. */
   followed = &gData_0200480c;
-  object = (struct Actor *)Actor_GetById(22);
+  object = Actor_GetById(22);
   object->priorityFlags |= 2;
   object->scaleX = 0x14ccc;
   object->scaleY = 0x14ccc;
-  *followed = (struct FieldActor *)object;
+  *followed = (struct Actor *)object;
   Func_020040f8(22);
   Actor_SetSpritePriority(22, 3);
   (*followed)->motionFlags = 3;
   Scene_SetSpeed(21, 0x19999, 0xcccc);
-  Actor_SetPartAttribute((struct FieldActor *)leader, 15);
+  Actor_SetPartAttribute((struct Actor *)leader, 15);
   Actor_SetSpritePriority(21, 3);
   Func_020040f8(21);
   Actor_GetById(21)->motionFlags = 3;
@@ -553,7 +554,7 @@ void Func_02002d54(void) {
   Func_02002d10();
 }
 
-void Func_02002d6c(struct FieldActor *object, s32 x, s32 z, s32 mode) {
+void Func_02002d6c(struct Actor *object, s32 x, s32 z, s32 mode) {
   struct MainRoutineWork *party;
   s32 zero;
   u8 *flags;
@@ -579,7 +580,7 @@ void Func_02002d6c(struct FieldActor *object, s32 x, s32 z, s32 mode) {
 }
 
 void Func_02002e14(void) {
-  struct FieldActor *object;
+  struct Actor *object;
   s32 x;
   s32 z;
 
@@ -773,7 +774,10 @@ void Func_020031b4(void) {
 }
 
 void Func_020032c4(void) {
-  s32 variant = Actor_GetById(gMainRoutineWork.currentOwner)->sprite->priority;
+  s32 variant =
+      ((struct FieldSprite *)Actor_GetById(gMainRoutineWork.currentOwner)
+           ->sprite)
+          ->priority;
 
   Actor_SetSpritePriority(13, variant);
   Actor_SetSpritePriority(14, variant);
@@ -881,7 +885,7 @@ static inline void Scene_StoreU16(u16 *field, s32 value) {
 /// Room 8's setup. Entered at entrance 4 (not in the Japanese edition), it
 /// sets gMainRoutineWork's pair at 0x260 to the room whose flag is set.
 void Func_020035d8(void) {
-  struct Actor *object = (struct Actor *)Actor_GetById(64);
+  struct Actor *object = Actor_GetById(64);
   s32 scene;
 
   Func_020041c8(137);
@@ -889,7 +893,7 @@ void Func_020035d8(void) {
   Scene_Call41d8(0, 524, 8, 9);
   if (object != NULL)
     Func_02004090(64, 0, 0);
-  object = (struct Actor *)Actor_GetById(10);
+  object = Actor_GetById(10);
   object->scaleX = 0xb333;
   object->scaleY = 0xb333;
   object->radius = 8;
@@ -973,7 +977,7 @@ void Func_02003820(const void *script) {
 loop:
   {
     s32 id = entry[0];
-    struct FieldActor *object = Actor_GetById(id);
+    struct Actor *object = Actor_GetById(id);
     s32 kind = (s16)entry[1];
     s32 flag = (s16)entry[2];
 

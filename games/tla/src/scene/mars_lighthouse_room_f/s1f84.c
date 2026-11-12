@@ -11,7 +11,7 @@ void Func_02001f84(struct Actor *object, s32 unused) {
   object->collisionFlags = 0;
   Actor_SetSingleChildFlags(object, 0);
   Func_02005490(object, gData_02005d8c);
-  object->action = 0;
+  object->timer = 0;
   object->speedLimit = 0;
   object->acceleration = 0;
 }

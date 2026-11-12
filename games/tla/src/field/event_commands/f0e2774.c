@@ -131,12 +131,12 @@ void Func_080e28d4(s32 sprite, s32 x, s32 z) {
   do {
     wait(1);
     object->scaleY = object->scaleX = object->scaleX + 0x3d7;
-    object->angle += 0x1000;
+    object->facing += 0x1000;
   } while (object->scaleX <= 0xffff);
   object->scaleY = object->scaleX = 0x10000;
   Actor_SetMode(owner, 1);
   FacingObject_TurnPairToFaceEachOther(object, owner);
-  owner->action = owner->angle;
+  owner->timer = owner->facing;
   Event_Wait(10);
   Actor_StartRepeatedMotion(ownerId, 3);
   Func_080d489c(ownerId, 258);

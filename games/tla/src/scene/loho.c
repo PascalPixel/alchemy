@@ -583,7 +583,7 @@ const u8 *Func_02000cc0(void) {
 void Func_02000d00(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
 
-  u16 facing = (leader->angle + 0x2000) & ~0x3fff;
+  u16 facing = (leader->facing + 0x2000) & ~0x3fff;
 
   if (facing == 0xc000)
     FieldMessage_Show((s32)&MsgLoho57, 1);
@@ -622,7 +622,7 @@ void Func_02000d4c(void) {
 void Func_02000da4(s32 actor) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
 
-  u16 facing = (leader->angle + 0x2000) & ~0x3fff;
+  u16 facing = (leader->facing + 0x2000) & ~0x3fff;
 
   if (facing == 0xc000) {
     Func_02001438(actor);
@@ -851,7 +851,7 @@ s32 Func_020010c0(void) {
       Func_02001350_(16, PIXELS(459), PIXELS(254), FACING_NORTHEAST);
       Func_02001350_(18, PIXELS(442), PIXELS(203), FACING_WEST);
       Func_02001350_(17, PIXELS(490), PIXELS(188), FACING_SOUTHEAST);
-      Actor_GetById(17)->action = Actor_GetById(17)->x >> 16;
+      Actor_GetById(17)->timer = Actor_GetById(17)->x >> 16;
       Actor_GetById(17)->unk66 = Actor_GetById(17)->z >> 16;
       Actor_SetMovementTypeById(17, 2);
     }

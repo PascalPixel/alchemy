@@ -119,7 +119,7 @@ extern u8 MsgDidYouCome;
 extern u8 MsgIsThereBy;
 
 void Func_02000108(s32 arg) {
-  if ((u16)((Actor_GetById(gMainRoutineWork.currentOwner)->angle + 0x2000) &
+  if ((u16)((Actor_GetById(gMainRoutineWork.currentOwner)->facing + 0x2000) &
             0xc000) == 0xc000) {
     Func_02002c88(4, arg);
     return;
@@ -134,7 +134,7 @@ void Func_02000108(s32 arg) {
 }
 
 void Func_0200018c(s32 arg) {
-  if ((u16)((Actor_GetById(gMainRoutineWork.currentOwner)->angle + 0x2000) &
+  if ((u16)((Actor_GetById(gMainRoutineWork.currentOwner)->facing + 0x2000) &
             0xc000) == 0xc000) {
     Func_02002c88(5, arg);
     return;
@@ -149,7 +149,7 @@ void Func_0200018c(s32 arg) {
 }
 
 void Func_02000210(s32 arg) {
-  if ((u16)((Actor_GetById(gMainRoutineWork.currentOwner)->angle + 0x2000) &
+  if ((u16)((Actor_GetById(gMainRoutineWork.currentOwner)->facing + 0x2000) &
             0xc000) == 0xc000) {
     Func_02002c88(6, arg);
     return;

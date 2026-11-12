@@ -50,9 +50,9 @@ void Func_02001ad0(struct Actor *parent) {
     pair[i] = child;
     if (child != NULL) {
       child->terrainHeight = parent->terrainHeight;
-      sprite = child->animation;
+      sprite = child->sprite;
       child->motionFlags = 0;
-      child->action = 0;
+      child->timer = 0;
       child->watchedObject = parent;
       if (sprite != NULL) {
         Animation_ApplyChildArgument((struct ActorSpriteView *)sprite, 0);
@@ -75,14 +75,14 @@ void Func_02001ad0(struct Actor *parent) {
   }
   {
     struct Actor *p = pair[0];
-    struct FieldSprite *sp = p->animation;
+    struct FieldSprite *sp = p->sprite;
 
     p->update = (void *)Func_02001a80;
     sp->priority = 1;
   }
   {
     struct Actor *p = pair[1];
-    struct FieldSprite *sp = p->animation;
+    struct FieldSprite *sp = p->sprite;
 
     sp->priority = 1;
     p->update = (void *)Func_02001a34;

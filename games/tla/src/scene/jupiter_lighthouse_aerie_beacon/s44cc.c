@@ -71,7 +71,7 @@ struct GustObject *Func_020044cc(struct GustObject *source) {
   return object;
 }
 
-s32 Func_020045a4(struct FieldActor *object) {
+s32 Func_020045a4(struct Actor *object) {
   s32 params[10];
 
   if ((gFrameCount & 7) == 0) {
@@ -106,7 +106,7 @@ void Func_02004644(void) {
   struct Actor *left = Actor_GetById(9);
   struct Actor *right = Actor_GetById(10);
   struct Actor *rider = Actor_GetById(23);
-  struct FieldSprite *sprite = rider->animation;
+  struct FieldSprite *sprite = rider->sprite;
 
   Func_02001c10_(24, 0x2000000, 0xf80000);
   Func_02001c10_(23, 0x2000000, 0xf80000);
@@ -156,12 +156,12 @@ struct LightOam {
 
 extern s16 gData_02006a6c;
 extern s16 gData_02006a6e;
-extern struct FieldActor *gData_02006a70[];
+extern struct Actor *gData_02006a70[];
 extern struct LightOam Data_02006ab0[];
 extern s16 gData_02006b70;
 extern s16 gData_02006b72;
 
-s32 Func_020059bc(struct FieldActor *actor);
+s32 Func_020059bc(struct Actor *actor);
 void Func_0200571c(struct LightOam *oam, s32 depth);
 
 /// Queues the lit actors' sprites: for each listed actor with a position, projects it
@@ -180,7 +180,7 @@ void Func_020047d4(void) {
   oam = Data_02006ab0;
 
   for (i = 0; i < gData_02006a6e; i++) {
-    struct FieldActor *actor = gData_02006a70[i];
+    struct Actor *actor = gData_02006a70[i];
     if (actor != 0 && actor->x != 0) {
       s32 big, ox, y, z, oy, depth;
       s32 frame;
@@ -193,7 +193,7 @@ void Func_020047d4(void) {
       big = gData_02006b70;
       if (big == 0) {
         s32 x, sy;
-        frame = (s16)actor->timer;
+        frame = actor->timer;
         x = ox >> 16;
         sy = oy >> 16;
         ox = x - 8;
@@ -214,7 +214,7 @@ void Func_020047d4(void) {
         oam++;
       } else {
         s32 x, sy;
-        frame = (s16)actor->timer;
+        frame = actor->timer;
         x = ox >> 16;
         sy = oy >> 16;
         ox = x - 8;
@@ -292,7 +292,7 @@ void Func_02004a90(void) {
 }
 
 void Func_02004b18(s32 id, s32 value) {
-  struct FieldActor *object = ((struct FieldActor *)Actor_Get(id));
+  struct Actor *object = Actor_Get(id);
 
   if (object != NULL) {
     object->timer = value;

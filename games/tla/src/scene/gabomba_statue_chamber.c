@@ -149,7 +149,7 @@ void Func_02000184(void) {
   Actor_SetModeById(8, 3);
   Actor_ArmCallback(10, 0x3000, 20);
   object = OBJECT(14);
-  object->angle = OBJECT(10)->angle;
+  object->facing = OBJECT(10)->facing;
   wait(1);
   Func_02001e20(14, 10);
   Actor_SetHorizontalPositionWithTerrain(10, 0, 0);

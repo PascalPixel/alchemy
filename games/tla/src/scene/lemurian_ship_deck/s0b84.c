@@ -572,7 +572,7 @@ struct Actor *Func_02001210(void) {
 
   if (object == 0)
     return 0;
-  sprite = object->animation;
+  sprite = object->sprite;
   sprite->fullColor = 0;
   sprite->palette = 0;
   sprite->priority = 1;

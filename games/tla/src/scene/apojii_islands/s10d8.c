@@ -15,9 +15,9 @@ void Func_020010d8(struct Actor *object) {
 
   child = (FieldActor_Create(14, object->x, object->y + 0x40000,
                               object->z + 0x40000));
-  parent = object->animation;
+  parent = object->sprite;
   if (child != NULL) {
-    sprite = child->animation;
+    sprite = child->sprite;
     child->terrainHeight = object->terrainHeight;
     Func_02001c74(child, gData_02001ee8);
     child->motionFlags = 0;

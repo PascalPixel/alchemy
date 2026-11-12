@@ -216,7 +216,7 @@ void Func_080d3070(u32 objectId, s32 xOffset, s32 zOffset, s32 action) {
     Actor_OffsetPositionAndResetMotion(objectId, xOffset, zOffset);
     Actor_StartScriptFar((struct ActorView *)object,
                                  gData_080f32e0);
-    object->action = action;
+    object->timer = action;
   }
 }
 
@@ -257,7 +257,7 @@ void Actor_SetHorizontalPositionAndAngleWithTerrain(u32 objectId, s32 x,
   if (object != NULL) {
     Actor_ResetMotion(object);
     Actor_SetPositionAndResetMotionFar(object, x, object->y, z);
-    object->angle = angle;
+    object->facing = angle;
     if (object->motionFlags & 1) {
       terrainHeight =
           Map_GetTerrainHeightFar(object->terrainId, object->x, object->z);
@@ -333,7 +333,7 @@ void Actor_WaitForAnimationChange(u32 objectId) {
   s32 elapsedFrames;
 
   if (object != NULL && object->animationKind == 1) {
-    group = object->animation;
+    group = object->sprite;
     saved = group->lastNo;
     for (elapsedFrames = 0; elapsedFrames <= 89; elapsedFrames++) {
       wait(1);
@@ -430,7 +430,7 @@ void Func_080d3378(struct Actor *source, s32 param) {
 
   object = Func_080200c0(285, source->x, source->y, source->z);
   if (object != NULL) {
-    child = object->animation;
+    child = object->sprite;
     switch (Random16() & 1) {
     case 1:
       Actor_SetMode(object, 2);
@@ -451,12 +451,12 @@ void Func_080d3378(struct Actor *source, s32 param) {
     speed = Random16() % 15 - 7;
     speed <<= 1;
     object->speedLimit = 0x1999 * speed;
-    object->action = 0;
+    object->timer = 0;
     object->priorityFlags |= 2;
     ((u8 *)object)[0x61] = 1;
     object->update = (void (*)(void))FieldEffect_UpdateParticleLinearMotion;
     child->flags = 0;
-    child->priority = ((struct ParticleSprite *)source->animation)->priority;
+    child->priority = ((struct ParticleSprite *)source->sprite)->priority;
   }
 }
 
@@ -481,7 +481,7 @@ void Actor_JumpDownLedge(s32 id, s32 mode, s32 particle) {
 
   if (object == NULL)
     return;
-  frame = ((struct FieldSprite *)object->animation)->nextFrame;
+  frame = ((struct FieldSprite *)object->sprite)->nextFrame;
   Actor_SetMode(object, mode);
   wait(10);
   Actor_SetMode(object, 1);
@@ -639,7 +639,7 @@ void Actor_ApplyIndexedChildValue(struct Actor *object) {
   s32 i;
 
   if ((object->animationKind & 0xf) == 1) {
-    list = object->animation;
+    list = object->sprite;
     attribute = gActor_BlinkChildValues[(gFrameCount >> 1) & 3];
     for (i = 0; i < list->count; i++) {
       part = list->parts[i];
@@ -657,7 +657,7 @@ void Actor_SetPartAttribute(struct Actor *object, s32 attribute) {
   s32 i;
 
   if ((object->animationKind & 0xf) == 1) {
-    list = object->animation;
+    list = object->sprite;
     for (i = 0; i < list->count; i++) {
       part = list->parts[i];
       if (part != 0 && part->graphics != 0) {
@@ -683,7 +683,7 @@ void Actor_SetTargetAndCallback(u32 objectId, s32 targetId,
     if (!(targetId & 0x10000)) {
       u16 none = 0;
 
-      follower->action = 40;
+      follower->timer = 40;
       follower->acceleration = target->acceleration * 2;
       follower->speedLimit = target->speedLimit;
       follower->collisionFlags = none;

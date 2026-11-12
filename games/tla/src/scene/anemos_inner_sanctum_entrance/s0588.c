@@ -198,13 +198,13 @@ struct LightOam {
 
 extern s16 gData_02001cdc;
 extern s16 gData_02001cde;
-extern struct FieldActor *gData_02001ce0[];
+extern struct Actor *gData_02001ce0[];
 extern struct LightOam gData_02001d20[];
 extern s16 gData_02001de0;
 extern s16 gData_02001de2;
 extern s16 gData_02001de4;
 
-s32 Func_02000d5c(struct FieldActor *actor);
+s32 Func_02000d5c(struct Actor *actor);
 void Func_02000c3c(struct LightOam *oam, s32 depth);
 
 void Func_02000858(void) {
@@ -222,7 +222,7 @@ void Func_02000858(void) {
   picture = gData_02001de4 * ((gFrameCount >> 2) % 5 * 32 + 32);
 
   for (i = 0; i < gData_02001cde; i++) {
-    struct FieldActor *actor = gData_02001ce0[i];
+    struct Actor *actor = gData_02001ce0[i];
 
     if (actor != 0 && actor->x != 0) {
       s32 ox = actor->x - viewX;
@@ -234,7 +234,7 @@ void Func_02000858(void) {
       u32 *word;
 
       if (mode == 0) {
-        s32 frame = (s16)actor->timer;
+        s32 frame = actor->timer;
         s32 x = ox >> 16;
         s32 sy = oy >> 16;
         ox = x - 8;
@@ -254,7 +254,7 @@ void Func_02000858(void) {
         Func_02000c3c(oam, depth);
         oam++;
       } else {
-        s32 frame = (s16)actor->timer;
+        s32 frame = actor->timer;
         s32 x = ox >> 16;
         s32 sy = oy >> 16;
         ox = x - 8;

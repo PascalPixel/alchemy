@@ -93,7 +93,7 @@ void Func_020001a8(void) {
 }
 
 void Func_020001f0(s32 actor) {
-  if ((u16)((Actor_GetById(gMainRoutineWork.currentOwner)->angle + 0x2000) &
+  if ((u16)((Actor_GetById(gMainRoutineWork.currentOwner)->facing + 0x2000) &
             0xc000) == 0x8000) {
     Func_020005e4(16, actor);
     return;
@@ -106,7 +106,7 @@ void Func_020001f0(s32 actor) {
 }
 
 void Func_02000250(s32 actor) {
-  if ((u16)((Actor_GetById(gMainRoutineWork.currentOwner)->angle + 0x2000) &
+  if ((u16)((Actor_GetById(gMainRoutineWork.currentOwner)->facing + 0x2000) &
             0xc000) == 0x8000) {
     Func_020005e4(16, actor);
     return;
@@ -119,7 +119,7 @@ void Func_02000250(s32 actor) {
 }
 
 void Func_020002b0(s32 actor) {
-  if ((u16)((Actor_GetById(gMainRoutineWork.currentOwner)->angle + 0x2000) &
+  if ((u16)((Actor_GetById(gMainRoutineWork.currentOwner)->facing + 0x2000) &
             0xc000) == 0xc000) {
     Func_020005ec(actor);
     return;
@@ -132,7 +132,7 @@ void Func_020002b0(s32 actor) {
 }
 
 void Func_0200030c(s32 actor) {
-  if ((u16)((Actor_GetById(gMainRoutineWork.currentOwner)->angle + 0x2000) &
+  if ((u16)((Actor_GetById(gMainRoutineWork.currentOwner)->facing + 0x2000) &
             0xc000) == 0xc000) {
     Func_020005ec(actor);
     return;

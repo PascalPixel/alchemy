@@ -68,7 +68,7 @@ s32 Func_02002708(void) {
   FieldEvent_ResolvePendingActions(0);
   Event_ClearFlag(0x106);
   leader->update = (void (*)(void))Func_020024bc;
-  leader->angle = 0x4000;
+  leader->facing = 0x4000;
   Func_02003118(leader, 49);
   while (ride->car->stopped == 0) {
     s32 kind = Func_02003168(0, leader->x, leader->z);
@@ -242,11 +242,11 @@ void Func_02002870(struct Actor *actor) {
       object->gravity = 0x547a;
       object->scaleX = scale;
       object->scaleY = scale;
-      sprite = object->animation;
+      sprite = object->sprite;
       object->velocityX = velocity;
       object->acceleration = 0;
       object->bounce = Q16_ONE / 2;
-      source = work->owner->animation;
+      source = work->owner->sprite;
       Resource_ResetEntry(sprite->vramBlock);
       sprite->unk11_0 = 1;
       sprite->vramBlock = work->vramBlock;
@@ -335,7 +335,7 @@ struct WorkEvent {
 void Func_02002ae8(struct Actor *actor) {
   struct Vector3 position;
   struct WorkEvent *work = Ram_HeapSlots->eventWork;
-  s32 state = actor->action;
+  s32 state = actor->timer;
 
   if (state == 0) {
     s32 dz;
@@ -370,13 +370,13 @@ void Func_02002ae8(struct Actor *actor) {
     position.x = actor->x;
     position.y = actor->y;
     position.z = actor->z;
-    FieldVector_AddPolarOffset(0x80000, actor->angle, &position);
+    FieldVector_AddPolarOffset(0x80000, actor->facing, &position);
     if (Func_02003168(0, position.x, position.z) == 7) {
       actor->targetZ = 0x80000000;
       actor->targetY = 0x80000000;
       actor->targetX = 0x80000000;
       actor->acceleration = 0x4000;
-      actor->action = 1;
+      actor->timer = 1;
       Event_PlaySound(145);
       /* FAKEMATCH(wrapper): forwarded, so each argument builds its own 0x50000;
        * as a direct call, 6 of 362 instructions differ in tla-en. */
@@ -412,7 +412,7 @@ void Func_02002ae8(struct Actor *actor) {
           MapGrid_CopyCellAttributes(64, 64, 1, 1, x, z);
           Event_PlaySound(0x23d);
           Func_020029f4((x << 20) + 0x80000, actor->y, (z << 20) + 0x80000,
-                        actor->angle);
+                        actor->facing);
         }
         cell = (struct MapCell *)(offset + (s32)cellsB);
         if (cell->collisionCode == 77) {
@@ -421,7 +421,7 @@ void Func_02002ae8(struct Actor *actor) {
           MapGrid_CopyCellAttributes(64, 64, 1, 1, x, z);
           Event_PlaySound(0x23c);
           Func_020029f4((x << 20) + 0x80000, actor->y, (z << 20) + 0x80000,
-                        actor->angle);
+                        actor->facing);
         }
       }
     }
@@ -471,7 +471,7 @@ void Func_02002df4(s32 sourceId, s32 id, s32 value, s32 angle,
   object->motionFlags = 0;
   Func_02003118(object, 1);
   object->watchedObject = source;
-  object->action = 0;
+  object->timer = 0;
   object->unk66 = angle;
   ((u8 *)object)[0x62] = value;
   object->update = Func_02002ad4;
@@ -488,7 +488,7 @@ void Func_02002df4(s32 sourceId, s32 id, s32 value, s32 angle,
 void Func_02002e6c(struct Actor *self) {
   struct Actor *actor = Actor_Get(((u8 *)self)[0x62]);
   s32 angle = (s16)self->unk66;
-  struct FieldSprite *sprite = actor->animation;
+  struct FieldSprite *sprite = actor->sprite;
   // volatile: the call reads position[0] before [1] and [2] (as a plain
   // array, 2 of 86 differ in tla-en).
   volatile s32 position[3];
@@ -497,7 +497,7 @@ void Func_02002e6c(struct Actor *self) {
   position[1] = self->y - PIXELS(12);
   position[2] = self->z;
   FieldVector_AddPolarOffset(PIXELS(32), angle, (struct Vector3 *)position);
-  actor->angle = angle;
+  actor->facing = angle;
   actor->motionFlags = 0;
   FieldActor_SetPositionAndResetMotion(actor, position[0], position[1], position[2]);
   actor->update = (void (*)(void))Func_02002ae8;
@@ -511,7 +511,7 @@ void Func_02002e6c(struct Actor *self) {
   do {
     actor->scaleY = 0;
   } while (0);
-  actor->action = 0;
+  actor->timer = 0;
   actor->watchedObject = self->watchedObject;
   Event_PlaySound(104);
 }
@@ -520,7 +520,7 @@ s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 void Func_020031a8(struct Actor *object, s32 mode);
 
 s32 Func_02002f34(struct Actor *object) {
-  s32 frame = object->action;
+  s32 frame = object->timer;
 
   if (frame == 0) {
     object->y = Map_GetTerrainHeight(0, object->x, object->z) + 0x100000;
@@ -538,7 +538,7 @@ s32 Func_02002f34(struct Actor *object) {
     object->scaleX = 0x10000;
     object->scaleY = 0x10000;
     {
-      s32 half = (object->action / 2) & 1;
+      s32 half = (object->timer / 2) & 1;
 
       Animation_ApplyChildValues(object->watchedObject, half * 7);
     }
@@ -549,12 +549,12 @@ s32 Func_02002f34(struct Actor *object) {
     object->watchedObject = 0;
     return 0;
   }
-  object->action++;
+  object->timer++;
   return 1;
 }
 
 s32 Func_02002fe0(struct Actor *object) {
-  s32 frame = object->action;
+  s32 frame = object->timer;
 
   if (frame == 0) {
     Event_PlaySound(136);
@@ -569,7 +569,7 @@ s32 Func_02002fe0(struct Actor *object) {
     object->scaleX = 0x10000;
     object->scaleY = 0x10000;
     {
-      s32 half = (object->action / 2) & 1;
+      s32 half = (object->timer / 2) & 1;
 
       Animation_ApplyChildValues(object->watchedObject, half * 7);
     }
@@ -580,7 +580,7 @@ s32 Func_02002fe0(struct Actor *object) {
     object->watchedObject = 0;
     return 0;
   }
-  object->action++;
+  object->timer++;
   return 1;
 }
 

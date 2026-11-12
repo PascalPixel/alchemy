@@ -39,7 +39,7 @@ void Func_02000478(s32 radius, u32 count) {
   options.update = Effect_AdvanceMotion;
   options.startScaleX = 0xcccc;
   options.startScaleY = 0xcccc;
-  options.priority = ((struct FieldSprite *)object->animation)->priority;
+  options.priority = ((struct FieldSprite *)object->sprite)->priority;
   i = 0;
 next:
   angle = i * (0x10000 / (s32)count);
@@ -201,7 +201,7 @@ s32 Func_02000564(void) {
     Actor_SetAnimation(8, 14);
     object = ACTOR(8);
     scale = 0;
-    object->angle = scale;
+    object->facing = scale;
     ACTOR(8)->x = 0xf80000;
     ACTOR(8)->z = 0x980000;
     IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT, 0x27f, 0x20000);

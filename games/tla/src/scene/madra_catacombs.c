@@ -585,9 +585,9 @@ void Func_02000958(void) {
 void Func_02000a28(void) {
   struct Actor *lever = Actor_GetById(8);
   struct Actor *rock = Actor_GetById(64);
-  struct AnimationRecord18 *animation = rock->animation;
+  struct AnimationRecord18 *animation = rock->sprite;
 
-  animation->frame = ((struct AnimationRecord18 *)lever->animation)->frame;
+  animation->frame = ((struct AnimationRecord18 *)lever->sprite)->frame;
   if (Event_GetFlag(0x204) != 0 && animation->frame == 0) {
     Sound_Play(0x217);
     rock->x += PIXELS(-2);
@@ -614,7 +614,7 @@ void Func_02000a88(void) {
   Actor_SetMoveTarget(object, ((8 - cell % 16) << 16) + object->x, object->y,
                 object->z);
   Script_WaitForEventTimeout(object);
-  object->angle = FACING_NORTH;
+  object->facing = FACING_NORTH;
   Actor_SetMovementTypeById(party->currentOwner, gData_0200121c);
   wait(12);
   Sound_Play(123);
@@ -643,7 +643,7 @@ void Func_02000b38(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f) {
     Actor_SetMoveTarget(object, ((8 - cell % 16) << 16) + object->x, object->y,
                         object->z);
     Script_WaitForEventTimeout(object);
-    object->angle = FACING_NORTH;
+    object->facing = FACING_NORTH;
   }
   Actor_SetMovementTypeById(gMainRoutineWork.currentOwner, gData_0200121c);
   wait(12);

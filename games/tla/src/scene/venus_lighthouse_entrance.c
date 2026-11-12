@@ -47,7 +47,7 @@ void VenusLighthouseEntrance_RunActorSparkBurst(void *object) {
 
 void VenusLighthouseEntrance_UpdateSparkTrail(struct Actor *object) {
   Func_0200260c(object, object->x, object->y, object->z);
-  if (++object->action % 8 == 0)
+  if (++object->timer % 8 == 0)
     Event_PlaySound(125);
 }
 
@@ -1280,7 +1280,7 @@ void Func_02001fd0(void) {
     break;
   }
   }
-  object->angle += 0x1000;
+  object->facing += 0x1000;
   if (work->height > 0) {
     for (i = 0, y = 0; i < 16 && y < work->height - 8; i++, y += 16) {
       state = &work->states[i];

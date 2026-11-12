@@ -47,7 +47,7 @@ void Func_02000ed0(struct Actor *source) {
   struct Actor *other;
   s32 position[3];
   struct EffectOptions options;
-  s32 step = Math_Cosine(source->angle) << 1;
+  s32 step = Math_Cosine(source->facing) << 1;
   s32 cell;
   s32 id;
   s32 bit;
@@ -79,7 +79,7 @@ inner:
     goto skip;
   if (other->y >> 20 != position[1] >> 20)
     goto skip;
-  if (*(s16 *)(*(u8 **)((u8 *)other->animation + 40)) == 272)
+  if (*(s16 *)(*(u8 **)((u8 *)other->sprite + 40)) == 272)
     goto end;
   goto hit;
 skip:

@@ -138,10 +138,10 @@ void Func_0200253c(void) {
   Actor_FaceDirection(5, FACING_NORTHWEST, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTHWEST, 0);
   Actor_FaceDirection(7, FACING_SOUTHEAST, 40);
-  Actor_Get(7)->angle = FACING_SOUTH;
-  Actor_Get(gMainRoutineWork.currentOwner)->angle = 0x4000;
-  Actor_Get(6)->angle = FACING_SOUTH;
-  Actor_Get(5)->angle = FACING_SOUTH;
+  Actor_Get(7)->facing = FACING_SOUTH;
+  Actor_Get(gMainRoutineWork.currentOwner)->facing = 0x4000;
+  Actor_Get(6)->facing = FACING_SOUTH;
+  Actor_Get(5)->facing = FACING_SOUTH;
   Actor_Get(7)->actionFlags &= 0xfe;
   Actor_Get(gMainRoutineWork.currentOwner)->actionFlags &= 0xfe;
   Actor_Get(6)->actionFlags &= 0xfe;

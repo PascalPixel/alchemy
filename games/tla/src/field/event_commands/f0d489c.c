@@ -156,7 +156,7 @@ s32 Actor_MoveTowardTarget(struct Actor *object) {
       deltaY += 0xffff;
     cellY = deltaY >> 16;
     distance = Iwram_Sqrt(cellX * cellX + cellY * cellY);
-    step = object->action;
+    step = object->timer;
     if (distance >= step) {
       newX = object->x + __divsi3(cellX << 20, step);
       Actor_SetTargetPosition(object, newX, object->y,
@@ -222,10 +222,10 @@ struct ObjectLayerAnimation {
 /// Gives the object the party leader's display layer.
 s32 Func_080d4ab4(struct Actor *object) {
   struct Actor *leader = ObjectTable_Get(gMainRoutineWork.currentOwner);
-  s32 layer = ((struct ObjectLayerAnimation *)leader->animation)->layer;
+  s32 layer = ((struct ObjectLayerAnimation *)leader->sprite)->layer;
 
   if ((object->animationKind & 0xf) == 1) {
-    struct ObjectLayerAnimation *animation = object->animation;
+    struct ObjectLayerAnimation *animation = object->sprite;
 
     animation->layer = layer;
     animation->shadowLayer = layer;
@@ -342,7 +342,7 @@ struct Actor *Actor_FindNearestFacingTarget(struct Actor *self, s32 id) {
       continue;
     angle = (u16)ArcTan2(entry->z - self->z, entry->x - self->x);
     if (dist > 23) {
-      turn = (s16)(angle - self->angle);
+      turn = (s16)(angle - self->facing);
       if (turn < -0x2fff)
         continue;
       if (turn > 0x2fff)
@@ -353,7 +353,7 @@ struct Actor *Actor_FindNearestFacingTarget(struct Actor *self, s32 id) {
   }
   if (found == NULL)
     return NULL;
-  if (((struct ObjectAnimation *)found->animation)->entries[0]->animId != id)
+  if (((struct ObjectAnimation *)found->sprite)->entries[0]->animId != id)
     return NULL;
   return found;
 }
@@ -402,7 +402,7 @@ s32 GetMapCellCollisionFar(s32 layer, s32 x, s32 z);
 s32 Func_080d4d08(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   s32 result = -1;
-  s32 angle = leader->angle;
+  s32 angle = leader->facing;
   u8 *flags = &leader->motionFlags;
   u8 saved = *flags;
   struct JumpEventWork *work = Ram_HeapSlots->eventWork;
@@ -500,7 +500,7 @@ again:
 
     // Crouch, then jump there.
     if (leader->animationKind == 1)
-      spriteFlags = ((struct JumpSprite *)leader->animation)->flags;
+      spriteFlags = ((struct JumpSprite *)leader->sprite)->flags;
     Event_Start();
     Actor_SetMode(leader, 6);
     wait(6);
@@ -565,7 +565,7 @@ again:
     }
     result = 0;
   }
-  leader->action = 8;
+  leader->timer = 8;
   leader->unk66 = 0;
   return result;
 }
@@ -599,7 +599,7 @@ s32 Func_080d50f8(void) {
   gridZ = 8 + ((leader->z >> 16) & 0xfff0);
   Event_Start();
   if (leader->animationKind == 1)
-    spriteFlags = ((struct ClimbSprite *)leader->animation)->flags;
+    spriteFlags = ((struct ClimbSprite *)leader->sprite)->flags;
   if (gMainRoutineWork.renderMode == 0) {
     struct Actor *entry;
     struct MapCell *cell;
@@ -667,8 +667,8 @@ s32 Func_080d50f8(void) {
     Event_Wait(6);
     gMainRoutineWork.renderMode = 0;
     leader->actionFlags = 1;
-    leader->angle = 0xc000;
-    leader->action = 0;
+    leader->facing = 0xc000;
+    leader->timer = 0;
     leader->unk66 = 0;
   }
   Event_End();
@@ -692,7 +692,7 @@ s32 Func_080d53b8(void) {
 
   Event_Start();
   if (leader->animationKind == 1)
-    spriteFlags = ((struct ClimbSprite *)leader->animation)->flags;
+    spriteFlags = ((struct ClimbSprite *)leader->sprite)->flags;
   if (gMainRoutineWork.renderMode == 0) {
     struct MapCell *cell;
     struct MapCell *north;
@@ -770,7 +770,7 @@ s32 Func_080d53b8(void) {
     Event_Wait(4);
     gMainRoutineWork.renderMode = 0;
     leader->actionFlags = 1;
-    leader->action = 0;
+    leader->timer = 0;
     leader->unk66 = 0;
   }
   Event_End();
@@ -840,7 +840,7 @@ struct EventWorkGrab {
 
 s32 Func_080d5720(void) {
   struct Actor *leader = ObjectTable_Get(gMainRoutineWork.currentOwner);
-  struct FieldSprite *sprite = leader->animation;
+  struct FieldSprite *sprite = leader->sprite;
   struct Work9cItemPosition *item = Func_080d5670(&leader->x);
   u8 *flags;
 
@@ -855,7 +855,7 @@ s32 Func_080d5720(void) {
   Actor_SetMode(leader, 2);
   Actor_SetTargetPosition(leader, item->x, item->y, item->z);
   Actor_CommitPosition(leader);
-  leader->action = leader->motionFlags;
+  leader->timer = leader->motionFlags;
   flags = &leader->priorityFlags;
   leader->unk66 = sprite->nextFrame;
   ((struct GrabSave *)leader)->priority = sprite->priority;
@@ -874,7 +874,7 @@ extern const u16 Data_080f0890[];
 
 s32 Func_080d57e4(void) {
   struct Actor *leader = ObjectTable_Get(gMainRoutineWork.currentOwner);
-  struct FieldSprite *sprite = leader->animation;
+  struct FieldSprite *sprite = leader->sprite;
   s32 position[3];
   u32 angle;
 
@@ -892,9 +892,9 @@ s32 Func_080d57e4(void) {
   if (Func_080201d0(leader->terrainId, position[0], position[2]) ||
       Func_08020210(leader, position))
     return 0;
-  leader->angle = angle;
+  leader->facing = angle;
   leader->priorityFlags |= 1;
-  leader->motionFlags = leader->action;
+  leader->motionFlags = leader->timer;
   leader->scaleX = 0x10000;
   sprite->nextFrame = leader->unk66;
   sprite->rotation = 0;
@@ -950,7 +950,7 @@ struct WorkA0Node *Func_080d5930(s32 *position) {
 s32 Func_080d59dc(void) {
   struct MainRoutineWork *work = &gMainRoutineWork;
   struct Actor *leader = ObjectTable_Get(work->currentOwner);
-  struct FieldSprite *sprite = leader->animation;
+  struct FieldSprite *sprite = leader->sprite;
   struct Work9cItemPosition *item = Func_080d5930(&leader->x);
   u8 *flags;
 
@@ -965,7 +965,7 @@ s32 Func_080d59dc(void) {
   Actor_SetMode(leader, 2);
   Actor_SetTargetPosition(leader, item->x, item->y, item->z);
   Actor_CommitPosition(leader);
-  leader->action = leader->motionFlags;
+  leader->timer = leader->motionFlags;
   leader->unk66 = sprite->nextFrame;
   ((struct GrabSave *)leader)->priority = sprite->priority;
   flags = &leader->priorityFlags;
@@ -978,7 +978,7 @@ s32 Func_080d59dc(void) {
 
 s32 Func_080d5aa0(void) {
   struct Actor *leader = ObjectTable_Get(gMainRoutineWork.currentOwner);
-  struct FieldSprite *sprite = leader->animation;
+  struct FieldSprite *sprite = leader->sprite;
   s32 position[3];
   u32 angle;
 
@@ -996,9 +996,9 @@ s32 Func_080d5aa0(void) {
   if (Func_080201d0(leader->terrainId, position[0], position[2]) ||
       Func_08020210(leader, position))
     return 0;
-  leader->angle = angle;
+  leader->facing = angle;
   leader->priorityFlags |= 1;
-  leader->motionFlags = leader->action;
+  leader->motionFlags = leader->timer;
   sprite->nextFrame = leader->unk66;
   sprite->rotation = 0;
   Sound_PlayFar(152);
@@ -1047,10 +1047,9 @@ s32 Func_080d5bec(s32 objectId, s32 *position) {
   *position++ = x / Q16_ONE;
   *position = z / Q16_ONE;
   if ((object->animationKind & 15) == 1)
-    *position -=
-        (s8)Resource_GetMetadataRecordFarFar(
-            *((struct ObjectAnimationState *)object->animation)->value28)
-            ->boxX;
+    *position -= (s8)Resource_GetMetadataRecordFarFar(
+                     *((struct ObjectAnimationState *)object->sprite)->value28)
+                     ->boxX;
   return 0;
 }
 
@@ -1116,7 +1115,7 @@ void Func_080d5d70(s32 id, s32 side) {
   s32 mode;
 
   object = ObjectTable_Get(id);
-  context = object->animation;
+  context = object->sprite;
   mode = (side != 1);
   mode = 26 - mode;
   effect = ResourceMetadata_RegisterFar(context, 267);

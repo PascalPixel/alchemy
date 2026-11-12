@@ -246,7 +246,7 @@ void Func_02003584(void) {
   object->motionFlags = 0;
   Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);
   Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
-  object->angle = 0;
+  object->facing = 0;
   Actor_SetModeById(gMainRoutineWork.currentOwner, 16);
   for (i = 0; i <= 7; i++) {
     Actor_SetPositionAndResetMotion(object, object->x, object->y,
@@ -255,7 +255,7 @@ void Func_02003584(void) {
   }
   Event_Wait(20);
   party = &gMainRoutineWork;
-  object->angle = FACING_SOUTH;
+  object->facing = FACING_SOUTH;
   Func_080d489c(party->currentOwner, 258);
   Actor_SetModeById(party->currentOwner, 27);
   Event_Wait(30);
@@ -467,7 +467,7 @@ void Func_02003ae4(s32 id, s32 base) {
   struct Actor *object = Actor_GetById(id);
 
   Actor_SetModeById(id, 5);
-  object->action = base + ((Random16Far() * 400) >> 16);
+  object->timer = base + ((Random16Far() * 400) >> 16);
   object->unk66 = id;
   Actor_SetMovementTypeById(id, gData_02005548);
 }
@@ -648,7 +648,7 @@ void Func_02003e8c(void) {
   Actor_ConfigureSpriteColor(13, 0);
   Event_Wait(20);
   object = Actor_GetById(13);
-  sprite = object->animation;
+  sprite = object->sprite;
   object->motionFlags = 0;
   i = 0;
 rise13:
@@ -736,7 +736,7 @@ rise14:
   Actor_ConfigureSpriteColor(15, 0);
   Event_Wait(20);
   object = Actor_GetById(15);
-  sprite = object->animation;
+  sprite = object->sprite;
   object->motionFlags = 0;
   i = 0;
 rise15:
@@ -822,7 +822,7 @@ void Func_020044d4(void) {
                                          PIXELS(328), PIXELS(360));
   angle = 0x5000;
   Actor_SetPositionAndFacing(12, PIXELS(472), PIXELS(408), angle);
-  Actor_GetById(16)->angle = 0xc000;
+  Actor_GetById(16)->facing = 0xc000;
   wait(1);
   Event_StartScreenTransition();
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
@@ -1048,7 +1048,7 @@ void Func_0200482c(void) {
   Actor_WalkToAndWait(12, 504, 376);
   Actor_ArmCallback(12, 0x8000, 20);
   object = Actor_GetById(12);
-  sprite = object->animation;
+  sprite = object->sprite;
   Actor_SetSpritePriority(12, 1);
   Actor_SetSpeed(12, 0x19999, 0xcccc);
   Actor_Jump(12, 4, 0);
@@ -1116,7 +1116,7 @@ void Func_02004fb4(void) {
 
   *slot = object;
   if (object) {
-    struct FieldSprite *sprite = object->animation;
+    struct FieldSprite *sprite = object->sprite;
     u8 *buffer;
 
     sprite->fullColor = 0;

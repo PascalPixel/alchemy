@@ -24,7 +24,7 @@ struct RiseObject {
 
 extern const struct WarpTarget gData_02003d10;
 
-struct FieldActor *Actor_GetById(s32 id);
+struct Actor *Actor_GetById(s32 id);
 void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
 void Actor_CenterOnColumn(u32 objectId, s32 action, s32 z_offset);
 void Actor_OffsetPositionAndResetMotion(s32 id, s32 dx, s32 dz);
@@ -37,7 +37,7 @@ void Func_0200345c(void);
 void Func_02003464(void);
 void Func_02003474(s32 a, s32 b, s32 c);
 void Actor_ArmCallbackAndRefresh(s32 actor, s32 angle);
-void Func_02003624(struct FieldActor *object, struct FieldActor *target);
+void Func_02003624(struct Actor *object, struct Actor *target);
 void Sound_Play(s32 cue);
 
 // The scene's own event inlines: a habit of the whole game written once, as

@@ -417,13 +417,13 @@ void Func_02000884(s32 id, s32 *pos, s32 dir, s32 palette, s32 value) {
     object->x = *pos++;
     object->y = *pos++;
     object->z = *pos;
-    object->angle = dir;
+    object->facing = dir;
     zero.v = 0;
     object->motionFlags = zero.v;
-    ((u8 *)object->animation)[26] = zero.v;
+    ((u8 *)object->sprite)[26] = zero.v;
     Actor_SetAnimationSpeed(object, value);
   }
-  sprite = object->animation;
+  sprite = object->sprite;
   i = 0;
   if (i >= sprite[27])
     return;

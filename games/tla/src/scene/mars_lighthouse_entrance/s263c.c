@@ -47,7 +47,7 @@ void Func_0200263c(void) {
     Func_02004ca8();
     FieldEvent_ResolvePendingActions(0);
     actor->update = Func_02002614;
-    actor->angle = TRIG_TURN / 4;
+    actor->facing = TRIG_TURN / 4;
     Func_02004bc0(actor, 49);
     for (;;) {
       if (Func_02004c18(actor->terrainId, actor->x, actor->z) == 7) {
@@ -111,7 +111,7 @@ void Func_0200263c(void) {
         if (result > 0)
           break;
         if (result < 0) {
-          actor->angle = TRIG_TURN / 4;
+          actor->facing = TRIG_TURN / 4;
           Func_02004ce8(gMainRoutineWork.currentOwner, 6, -1);
           break;
         }

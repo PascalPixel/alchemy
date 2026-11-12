@@ -68,7 +68,7 @@ void Func_080e4a34(void) {
   savedY = owner->y;
   motionFlags = &owner->motionFlags;
   savedFlags = *motionFlags;
-  if (*(u16 *)((u8 *)owner->animation + 20) != 0x2020)
+  if (*(u16 *)((u8 *)owner->sprite + 20) != 0x2020)
     goto end;
   Func_080dc954();
   Actor_SetOthersPaused(owner, 1, 0);
@@ -102,12 +102,12 @@ void Func_080e4a34(void) {
       owner->y += 0x3999;
     if (frame & 31)
       Sound_PlayFar(566);
-    owner->angle += 0x2000;
+    owner->facing += 0x2000;
     wait(1);
   }
-  owner->angle = 0x4000;
+  owner->facing = 0x4000;
   wait(1);
-  Func_080e43a4(*(void **)((u8 *)owner->animation + 40), work, 0x400);
+  Func_080e43a4(*(void **)((u8 *)owner->sprite + 40), work, 0x400);
   pictureEntry = Resource_FindFreeEntry();
   pictureTiles = VramCache_Load(pictureEntry, 0x400, NULL);
   Func_080e4510(work + 0x1900, pictureTiles);
@@ -126,13 +126,13 @@ void Func_080e4a34(void) {
       particle += 28;
     }
     if (frame == 16)
-      Animation_ApplyChildValueToFirstFar(owner->animation, 15);
+      Animation_ApplyChildValueToFirstFar(owner->sprite, 15);
     if (frame == 45)
       Sound_PlayFar(136);
     if (frame == 60) {
       Animation_SetIndexAndInitializeObjectsFar(owner, 251);
-      ((u8 *)owner->animation)[5] &= 63;
-      ((u8 *)owner->animation)[7] = (((u8 *)owner->animation)[7] & 63) | 64;
+      ((u8 *)owner->sprite)[5] &= 63;
+      ((u8 *)owner->sprite)[7] = (((u8 *)owner->sprite)[7] & 63) | 64;
       Actor_SetMode(owner, 1);
       Actor_SetSingleChildFlagsFar(Actor_GetById(effect->firstObjectId), 0);
       Camera_FollowActor(effect->firstObjectId, 1);
@@ -140,14 +140,14 @@ void Func_080e4a34(void) {
       *motionFlags = savedFlags;
     }
     if (frame == 61)
-      Animation_ApplyChildValueToFirstFar(owner->animation, 0);
+      Animation_ApplyChildValueToFirstFar(owner->sprite, 0);
     wait(1);
   }
   if (event->mode == 3)
     gMainRoutineWork.renderMode = 9;
   else
     gMainRoutineWork.renderMode = 5;
-  owner->action = 0;
+  owner->timer = 0;
   owner->unk66 = 0;
   event->phase = 3;
   gMainRoutineWork.pendingThird = 1;

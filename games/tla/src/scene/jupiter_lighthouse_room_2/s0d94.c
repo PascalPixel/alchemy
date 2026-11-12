@@ -43,10 +43,10 @@ void Func_02000d94(struct Actor *self) {
     return;
   }
   Actor_SetAnimationSpeed(self, 16);
-  if ((++*(u16 *)&self->action & 31) == 31)
+  if ((++*(u16 *)&self->timer & 31) == 31)
     Event_PlaySound(231);
-  ((struct FieldSprite *)self->animation)->priority =
-      ((struct FieldSprite *)leader->animation)->priority;
+  ((struct FieldSprite *)self->sprite)->priority =
+      ((struct FieldSprite *)leader->sprite)->priority;
   if (Func_020022fc(self->x, self->z, 2) != 255) {
     position[0] = self->x;
     position[1] = self->y;
@@ -66,7 +66,7 @@ void Func_02000d94(struct Actor *self) {
         if (Func_02000d68(&leader->x, &self->x) <= 12 && distance < 0xc0000)
           near = 1;
         if (near && !Event_GetFlag(260)) {
-          leader->angle = self->angle;
+          leader->facing = self->facing;
           leader->watchedObject = self;
           leader->priorityFlags &= ~1;
           work->unk16a = 200;
@@ -79,9 +79,9 @@ void Func_02000d94(struct Actor *self) {
       // the address is a linked word read after the cosine, as the native
       // reads it after the speed (at Iwram_MulQ16 it is built before).
       self->x += ((s32 (*)(s32, s32))(IwramIrqMain + Iwram_MulQ16Offset))(
-          Math_Cosine(self->angle), self->speedLimit);
+          Math_Cosine(self->facing), self->speedLimit);
       self->z += ((s32 (*)(s32, s32))(IwramIrqMain + Iwram_MulQ16Offset))(
-          Math_Sin(self->angle), self->speedLimit);
+          Math_Sin(self->facing), self->speedLimit);
       return;
     }
   }
@@ -257,12 +257,12 @@ struct LightOam {
 
 extern s16 gData_02002bd8;
 extern s16 gData_02002bda;
-extern struct FieldActor *gData_02002bdc[];
+extern struct Actor *gData_02002bdc[];
 extern struct LightOam Data_02002c1c[];
 extern s16 gData_02002cdc;
 extern s16 gData_02002cde;
 
-s32 Func_020022f4(struct FieldActor *actor);
+s32 Func_020022f4(struct Actor *actor);
 void Func_0200218c(struct LightOam *oam, s32 depth);
 
 /// Queues the lit actors' sprites: for each listed actor with a position,
@@ -282,7 +282,7 @@ void Func_0200125c(void) {
   oam = Data_02002c1c;
 
   for (i = 0; i < gData_02002bda; i++) {
-    struct FieldActor *actor = gData_02002bdc[i];
+    struct Actor *actor = gData_02002bdc[i];
     if (actor != 0 && actor->x != 0) {
       s32 big, ox, y, z, oy, depth;
       s32 frame;
@@ -295,7 +295,7 @@ void Func_0200125c(void) {
       big = gData_02002cdc;
       if (big == 0) {
         s32 x, sy;
-        frame = (s16)actor->timer;
+        frame = actor->timer;
         x = ox >> 16;
         sy = oy >> 16;
         ox = x - 8;
@@ -316,7 +316,7 @@ void Func_0200125c(void) {
         oam++;
       } else {
         s32 x, sy;
-        frame = (s16)actor->timer;
+        frame = actor->timer;
         x = ox >> 16;
         sy = oy >> 16;
         ox = x - 8;
@@ -397,7 +397,7 @@ void Func_020015a0(s32 id, s32 value) {
   struct Actor *object = Actor_Get(id);
 
   if (object) {
-    object->action = value;
+    object->timer = value;
     {
       s16 *count;
 

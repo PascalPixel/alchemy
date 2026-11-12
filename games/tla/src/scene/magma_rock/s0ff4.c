@@ -21,23 +21,23 @@ void Func_02001738(void);
 void Func_02000ff4(struct Actor *object) {
   struct MagmaRockEventWork *work = Ram_HeapSlots->eventWork;
 
-  if (object->action > 528) {
-    if (object->action & 2)
+  if (object->timer > 528) {
+    if (object->timer & 2)
       Actor_SetSpriteColor(object, 10);
     else
       Actor_SetSpriteColor(object, 0);
-  } else if (object->action > 400) {
-    if (object->action & 16)
+  } else if (object->timer > 400) {
+    if (object->timer & 16)
       Actor_SetSpriteColor(object, 10);
     else
       Actor_SetSpriteColor(object, 0);
   } else {
     object->update = Func_02001738;
-    object->action = 1;
+    object->timer = 1;
   }
   if (work->value166 == 0 && work->value15a == 0 && work->value15e == 0 &&
       work->value168 == 0 && work->value1b2 != 0)
-    object->action--;
+    object->timer--;
 }
 
 #include "magma_rock.h"
@@ -180,7 +180,7 @@ s32 Func_020011e4(struct Actor *source) {
 
     object = FieldActor_Create(403, x, y, z);
   }
-  step = Math_Cosine(source->angle) << 1;
+  step = Math_Cosine(source->facing) << 1;
   object->motionFlags = 0;
   Func_02003a54(object, 1);
   Actor_SetSingleChildFlags(object, 0);
@@ -208,7 +208,7 @@ s32 Func_020011e4(struct Actor *source) {
         continue;
       if (other->y >> 20 != position[1] >> 20)
         continue;
-      if (*((struct ObjectAnimationState *)other->animation)->value28 == 0x110)
+      if (*((struct ObjectAnimationState *)other->sprite)->value28 == 0x110)
         goto stop;
       goto hit;
     }

@@ -178,7 +178,7 @@ struct FieldAnimation {
   struct FieldPartBytes *part;
 };
 
-s32 Func_02000364(struct FieldActor *actor) {
+s32 Func_02000364(struct Actor *actor) {
   u32 frame = gFrameCount;
 
   if (frame % 10 == 0)
@@ -299,7 +299,7 @@ s32 Func_0200047c(struct Actor *object) {
     object->x = owner->x;
     object->y = owner->y + 0x100000;
     object->z = owner->z;
-    object->angle = *phase << 8;
+    object->facing = *phase << 8;
     FieldVector_AddPolarOffset(0x60000, *phase << 8, &object->x);
     *phase += 16;
   }

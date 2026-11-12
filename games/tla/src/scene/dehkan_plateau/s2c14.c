@@ -302,10 +302,10 @@ struct AnimationFacing {
 };
 
 void Func_020030c0(void) {
-  Actor_SetSpritePriority(
-      64, ((struct AnimationFacing *)Actor_GetById(gMainRoutineWork.currentOwner)
-               ->animation)
-              ->facing);
+  Actor_SetSpritePriority(64, ((struct AnimationFacing *)Actor_GetById(
+                                   gMainRoutineWork.currentOwner)
+                                   ->sprite)
+                                  ->facing);
 }
 
 // The scene's own event inlines: a habit of the whole game written once, as

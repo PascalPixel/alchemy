@@ -85,10 +85,10 @@ s32 Func_080298c0(struct Actor *actor) {
   terrainId = &actor->terrainId;
   groundHere = Func_0802d45c(*terrainId, cellX, cellZ);
   groundAhead = Func_0802d45c(*terrainId, cellX, cellZ + 0xfff00000);
-  if (actor->action != 0) {
+  if (actor->timer != 0) {
     if (actor->targetX != 0x80000000)
       goto done;
-    actor->action = 0;
+    actor->timer = 0;
     actor->terrainHeight = groundHere;
   }
   if ((s16)actor->unk66 != 0) {
@@ -100,7 +100,7 @@ s32 Func_080298c0(struct Actor *actor) {
         actor->y -= 0x10000;
       } else {
         Actor_SetMoveTarget(actor, actor->x, groundAhead, topZ);
-        actor->action = 1;
+        actor->timer = 1;
         actor->unk66 = 0;
         goto done;
       }
@@ -204,7 +204,7 @@ s32 Func_080298c0(struct Actor *actor) {
       effect = Func_08023220(0x11d, spawn.x, spawn.y, spawn.z);
       if (effect != NULL) {
         effect->terrainHeight = actor->terrainHeight;
-        sprite = effect->animation;
+        sprite = effect->sprite;
         Actor_StartScript(effect, gData_0802ed28);
         effect->update = Func_08029810;
         effect->motionFlags = 2;
@@ -342,7 +342,7 @@ s32 Func_080298c0(struct Actor *actor) {
         Func_080c8770(cellX, cellZ, 2)) {
       actor->motionFlags = 0;
       Actor_SetMoveTarget(actor, actor->x, groundHere + 0xfffe0000, cellZ);
-      actor->action = 1;
+      actor->timer = 1;
       actor->unk66 = 1;
       actor->velocityX = 0;
       actor->velocityY = 0;
@@ -375,12 +375,12 @@ counted:
       s32 difference;
       u16 turn = angle;
 
-      difference = (s16)(turn - actor->angle);
+      difference = (s16)(turn - actor->facing);
       if (difference > 0x1000)
         difference = 0x1000;
       if (difference < -0x1000)
         difference = -0x1000;
-      actor->angle += difference;
+      actor->facing += difference;
     }
     wakeTimer = (u8 *)actor + 98;
     *wakeTimer = 0;
@@ -404,7 +404,7 @@ counted:
     effect = Func_08023220(0x164, actor->x, actor->y, actor->z - 0x20000);
     if (effect != NULL) {
       effect->terrainHeight = actor->terrainHeight;
-      sprite = effect->animation;
+      sprite = effect->sprite;
       Actor_StartScript(effect, gData_0802ece0);
       effect->priorityFlags = 8;
       // Through a struct member: as a byte offset the store holds back the
@@ -479,7 +479,7 @@ s32 Func_0802a124(struct Actor *object) {
   collision = 0;
   count = 0;
   object->unk66 = collision;
-  object->action = 1;
+  object->timer = 1;
   object->speedLimit = 0x8000;
   object->acceleration = 0x4000;
   if (gInput.repeat & 0x200)
@@ -564,12 +564,12 @@ update_object:
     object->velocityZ = 0;
     if ((collision & 3) != 0) {
       direction = angle;
-      difference = (s16)(direction - object->angle);
+      difference = (s16)(direction - object->facing);
       if (difference > 0x1000)
         difference = 0x1000;
       if (difference < -0x1000)
         difference = -0x1000;
-      object->angle += difference;
+      object->facing += difference;
     }
     timer = (u8 *)object + 98;
     *timer = 0;
@@ -599,7 +599,7 @@ update_object:
   camera->yaw += yawStep;
 
   if (object->animationKind == 1) {
-    playerSprite = object->animation;
+    playerSprite = object->sprite;
     terrainCollision = GetWorldMapCollision((struct WorldPosition *)&object->x);
     if (terrainCollision == 9)
       playerSprite->entry[6] = 1;
@@ -610,7 +610,7 @@ update_object:
     ripple = Func_08023220(0x164, object->x, object->y, object->z - 0x20000);
     if (ripple != 0) {
       ripple->terrainHeight = object->terrainHeight;
-      rippleSprite = ripple->animation;
+      rippleSprite = ripple->sprite;
       Actor_StartScript(ripple, gData_0802ece0);
       ripple->priorityFlags = 8;
       ((struct Unk0802a124Actor *)ripple)->unk63 = 100;

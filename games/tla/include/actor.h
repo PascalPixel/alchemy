@@ -3,7 +3,7 @@
 
 #include "types.h"
 
-/// A field object's sprite animation, which Actor.animation points to
+/// A field object's sprite animation, which Actor.sprite points to
 /// when animationKind is 1.
 struct ObjectAnimationState {
   u8 unk00[0x28];
@@ -15,7 +15,7 @@ struct ObjectAnimationState {
 struct Actor {
   s32 *script; ///< the object script it runs; null when the object is free
   s16 step;    ///< the script cursor, in words
-  u16 angle;   ///< 1/65536 turns
+  u16 facing;  ///< 1/65536 turns
   s32 x;       ///< 16.16 fixed-point pixels
   s32 y;       ///< 16.16 fixed-point pixels
   s32 z;       ///< 16.16 fixed-point pixels
@@ -46,8 +46,14 @@ struct Actor {
   /// Not read by the motion update; field code keeps its own values here (a
   /// drifting speed, a 0x31415927 marker).
   s32 unk4c;
-  void *animation;  ///< its sprite, or its list of sprites, by animationKind
-  u8 animationKind; ///< 1 one sprite, 2 a group of sprites
+  /// Its sprite (a struct FieldSprite) when animationKind is 1, or its list of
+  /// sprites when it is 2. Code that reads one kind converts it: typed, or as a
+  /// union of the two, this pointer compiles differently where a store comes
+  /// between two of its reads.
+  void *sprite;
+  /// 1 one sprite, 2 a group of sprites, in the low four bits, which is all
+  /// the field and the scenes test.
+  u8 animationKind;
   u8 motionFlags;   ///< bit 1: falls by its gravity and bounces
   /// The axis watched for arrival at the target; zero once it arrives, and
   /// cleared with the target.
@@ -60,10 +66,19 @@ struct Actor {
   u8 actionFlags; ///< bit 0: turns toward its velocity, 1/16 turn a frame
   u8 movementState;
   u8 unk5c[0x04];
-  void *callback;
+  /// The field's effects keep a hook here; a scene whose actor bobs keeps its
+  /// own frame count in the third byte instead.
+  union {
+    void *callback;
+    struct {
+      u8 unk60[2];
+      u8 riseCounter; ///< frames into the bob, its low six bits a cycle
+      u8 unk63;
+    };
+  };
   /// The parameter its action script reads (a follow distance or an angle to
   /// face).
-  s16 action;
+  s16 timer;
   u16 unk66;
   /// The object its action script follows or faces.
   struct Actor *watchedObject;

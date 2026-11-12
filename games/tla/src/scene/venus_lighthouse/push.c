@@ -28,7 +28,7 @@ void Func_02001c94(void);
 void Func_02001c9c(void);
 
 void SceneState_RunActor13AtColumn42Setup(void) {
-  struct FieldActor *obj;
+  struct Actor *obj;
   s32 val;
   s32 a;
   s32 b;
@@ -109,8 +109,8 @@ void SceneState_ApplySixRectsAfterFlag161(void) {
 
 void Func_02000b2c(void);
 
-#define Actor_SetPartAttribute                                                \
-  ((void (*)(struct FieldActor *, s32))Actor_SetPartAttribute)
+#define Actor_SetPartAttribute                                                 \
+  ((void (*)(struct Actor *, s32))Actor_SetPartAttribute)
 
 enum { ENTRANCE_OPENING = 99 };
 

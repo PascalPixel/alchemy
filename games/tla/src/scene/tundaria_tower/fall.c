@@ -193,7 +193,7 @@ void Func_02000a48(s32 arg0, s32 arg1) {
   }
   if (arg0 == 1) {
     object->scaleY = 0x10000;
-    GameFlag_SetBit(object->action);
+    GameFlag_SetBit(object->timer);
     Func_02000338(Actor_GetById(effectWork[13]));
     Map_CopyCellPictureIndicesRect(67, 23, (object->x >> 20) + 64,
                                    object->z >> 20, 1, 1);

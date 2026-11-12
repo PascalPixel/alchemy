@@ -14,7 +14,7 @@ void Func_02001140(struct Actor *object) {
         Import_ActorCreate_(0x10d, object->x, object->y, object->z);
 
     if (child != 0) {
-      struct FieldSprite *sprite = child->animation;
+      struct FieldSprite *sprite = child->sprite;
 
       Func_02001c74(child, gData_02001ef4);
       child->motionFlags = 0;
@@ -81,7 +81,7 @@ void Func_020011a8(void) {
           if (result <= 0) {
             anchor->z += 0x20000;
             leader->z += 0x20000;
-            leader->angle = 0x4000;
+            leader->facing = 0x4000;
           }
         }
       }
@@ -93,7 +93,7 @@ void Func_02001308(s32 id) {
   struct Actor *object = Actor_Get(id);
 
   if (object != 0) {
-    u8 *meta = ResourceMetadata_Register(object->animation, 0x17d);
+    u8 *meta = ResourceMetadata_Register(object->sprite, 0x17d);
 
     meta[5] = 0;
     meta[6] = 0;
@@ -120,8 +120,8 @@ void Func_02001338(s32 entrance) {
     if (i == 30)
       Event_FinishScreenTransition();
     leader->y -= 0x4000;
-    angle = leader->angle;
-    leader->angle = angle + 0x1000;
+    angle = leader->facing;
+    leader->facing = angle + 0x1000;
     if ((i & 7) == 0)
       Func_020010d8(Actor_Get(15));
     System_Wait(1);
@@ -201,7 +201,7 @@ void Func_02001500(void) {
     Actor_WalkByAndWait(*owner, 0, 8);
     Actor_SetSpriteColor(Actor_Get(*owner), 0);
     Actor_SetSingleChildFlags(Actor_Get(*owner), 1);
-    ((struct FieldSprite *)leader->animation)->priority = 1;
+    ((struct FieldSprite *)leader->sprite)->priority = 1;
     offset = 10;
     Actor_WalkByAndWait(*owner, 0, offset);
     leader->motionFlags = 3;

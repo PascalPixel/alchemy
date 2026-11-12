@@ -42,7 +42,7 @@ void Func_020036a8(void) {
   struct WorldMapPlacement *placement = Func_02004e08();
   struct Actor *leader = Actor_GetById(Party_GetLeaderActor());
   s32 leaderReach =
-      ((struct WorldMapSprite *)leader->animation)->scale * leader->radius;
+      ((struct WorldMapSprite *)leader->sprite)->scale * leader->radius;
   u32 i;
   s32 next;
   s32 left, right, top, bottom;
@@ -107,14 +107,14 @@ void Func_020036a8(void) {
           Func_02004b20(object, gData_02006bd4);
           object->motionFlags = 0;
           object->collisionFlags = 1;
-          object->angle = placement->angle;
+          object->facing = placement->angle;
           Func_02004b18(object, 1);
-          sprite = object->animation;
+          sprite = object->sprite;
           sprite->scale = Iwram_MulQ16(sprite->scale, 0xc000);
           *slot = object;
         }
         if (gMainRoutineWork.ownerOverride == 0) {
-          s32 scale = ((struct WorldMapSprite *)object->animation)->scale;
+          s32 scale = ((struct WorldMapSprite *)object->sprite)->scale;
           s32 dx;
           s32 reach, dz;
 

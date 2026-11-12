@@ -28,9 +28,9 @@ void Func_02003308(struct Actor *actor) {
   s32 turn;
 
   if (*timer != 0)
-    wobble = Math_Sine((actor->action + (s16)actor->unk66) * 9 << 9) * 6;
+    wobble = Math_Sine((actor->timer + (s16)actor->unk66) * 9 << 9) * 6;
   object = (union Whirl *)actor;
-  action = &object->actor.action;
+  action = &object->actor.timer;
   centre.x = object->actor.targetX;
   centre.y = object->actor.targetY;
   centre.z = object->actor.targetZ;
@@ -47,19 +47,19 @@ void Func_02003308(struct Actor *actor) {
   case 0:
     *action += 4;
     object->actor.unk4c = 1;
-    ((struct FieldSprite *)object->actor.animation)->rotation += 0x1000;
+    ((struct FieldSprite *)object->actor.sprite)->rotation += 0x1000;
     object->actor.scaleX += 0x666;
     object->actor.scaleY += 0x666;
     if (object->actor.scaleX > 0x18000 &&
-        ((struct FieldSprite *)object->actor.animation)->rotation == 0) {
+        ((struct FieldSprite *)object->actor.sprite)->rotation == 0) {
       *stage = 1;
       *timer = 1;
     }
     break;
   case 1:
     *action += 4;
-    ((struct FieldSprite *)object->actor.animation)->rotation += 0x1000;
-    if (((struct FieldSprite *)object->actor.animation)->rotation == 0 &&
+    ((struct FieldSprite *)object->actor.sprite)->rotation += 0x1000;
+    if (((struct FieldSprite *)object->actor.sprite)->rotation == 0 &&
         --*timer == 0) {
       Sound_Play(220);
       *stage = 2;
@@ -95,7 +95,7 @@ void Func_02003308(struct Actor *actor) {
     break;
   case 6:
     *action += 4;
-    ((struct FieldSprite *)object->actor.animation)->rotation += 0x1000;
+    ((struct FieldSprite *)object->actor.sprite)->rotation += 0x1000;
     object->actor.scaleX += -0x1000;
     object->actor.scaleY += -0x1000;
     if (object->actor.scaleX < 0x1200) {
@@ -105,7 +105,8 @@ void Func_02003308(struct Actor *actor) {
     }
     break;
   case 7:
-    Resource_ResetEntry(((struct FieldSprite *)object->actor.animation)->vramBlock);
+    Resource_ResetEntry(
+        ((struct FieldSprite *)object->actor.sprite)->vramBlock);
     Func_02005a3c(&object->actor);
     break;
   }

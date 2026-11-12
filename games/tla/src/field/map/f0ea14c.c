@@ -141,7 +141,7 @@ void Func_080ea14c(s32 targetId) {
   Sound_PlayFar(139);
   Actor_SetMode(target, 2);
   Event_Wait(60);
-  target->action = 0;
+  target->timer = 0;
   target->update = Func_080e9e8c;
   Sound_PlayFar(142);
   Event_Wait(80);

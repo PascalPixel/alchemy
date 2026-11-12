@@ -147,8 +147,8 @@ void Func_02000f24(void) {
       if (object != NULL) {
         object->speedLimit = 0x12000;
         object->acceleration = 0x8000;
-        Actor_SetSingleChildFlags((struct FieldActor *)object, 0);
-        Func_02003fa8((struct FieldActor *)object, 1);
+        Actor_SetSingleChildFlags((struct Actor *)object, 0);
+        Func_02003fa8((struct Actor *)object, 1);
         Func_02003fb8(object, gData_02005828);
       }
     }
@@ -257,7 +257,7 @@ step_5:
 }
 
 void Func_02001288(s32 mode) {
-  struct FieldActor *object;
+  struct Actor *object;
   s32 height;
 
   if (mode == 1) {
@@ -282,8 +282,8 @@ s32 Func_020012d4(s32 cell) { return cell * 16 + 8; }
   }
 
 void Func_020012dc(void) {
-  struct FieldActor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
-  struct FieldActor *object = Actor_GetById(64);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *object = Actor_GetById(64);
   s32 column = leader->x >> 20;
   s32 row = leader->z >> 20;
 
@@ -324,8 +324,7 @@ s32 Func_020012d4(s32 cell) __attribute__((const));
   }
 
 void Func_020013f8(void) {
-  struct Actor *leader =
-      (struct Actor *)Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   s32 column = leader->x >> 20;
   s32 row = leader->z >> 20;
 
@@ -348,8 +347,8 @@ void Func_020013f8(void) {
 }
 
 void Func_02001518(void) {
-  struct FieldActor *object = Actor_GetById(64);
-  struct FieldActor *leader;
+  struct Actor *object = Actor_GetById(64);
+  struct Actor *leader;
 
   if (object != 0) {
     leader = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -401,7 +400,7 @@ void Func_02001650(s32 show, s32 first, u32 count) {
   u32 i;
 
   for (i = 0; i < count; i++) {
-    struct FieldActor *actor = Actor_GetById(first + i);
+    struct Actor *actor = Actor_GetById(first + i);
 
     if (show)
       actor->priorityFlags &= ~0x10;

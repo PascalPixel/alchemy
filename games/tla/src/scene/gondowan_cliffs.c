@@ -20,7 +20,7 @@ struct TileSprite {
 
 s32 Func_02000038(struct Actor *object) {
   u16 *tile = (u16 *)((u8 *)Ram_HeapSlots->mapWork + 286);
-  struct TileSprite *sprite = object->animation;
+  struct TileSprite *sprite = object->sprite;
 
   sprite->tile = *tile;
   sprite->frame = 0;

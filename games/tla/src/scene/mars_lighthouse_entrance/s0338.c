@@ -33,7 +33,7 @@ void Func_02000338(s32 mode, s32 index) {
   }
   if (mode == 1) {
     object->scaleY = 0x10000;
-    Event_SetFlag(object->action);
+    Event_SetFlag(object->timer);
     Func_020001f8(Actor_Get(holder->objectId));
     object->x = object->y = object->z = 0;
   }

@@ -109,7 +109,7 @@ void Func_020023a4(s32 id) {
   Actor_SetSingleChildFlags(effect, 0);
   effect->priorityFlags = 2;
   Actor_SetSingleChildFlags(actor, 0);
-  ((struct GlowAnimation *)actor->animation)->angle = 0x4000;
+  ((struct GlowAnimation *)actor->sprite)->angle = 0x4000;
   actor->x += -0xc0000;
   actor->motionFlags = 0;
   work->stage = 0;

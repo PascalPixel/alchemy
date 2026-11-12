@@ -67,10 +67,10 @@ void Func_020000c0(void) {
 void Func_02000108(s32 unused, s32 id) { Actor_SetSpritePriority(id, 2); }
 
 void Func_02000114(s32 unused, s32 id) {
-  struct FieldActor *object;
+  struct Actor *object;
   s32 i;
 
-  object = ((struct FieldActor *)Actor_Get(id));
+  object = Actor_Get(id);
   if (object->x >> 20 == 10 && object->z >> 20 == 32) {
     object->motionFlags = 0;
     for (i = 15; i >= 0; i--) {
@@ -126,7 +126,7 @@ void Func_02001da8(struct Actor *object, s32 mode);
 /// phase 38 and starting over once above the ground; drawn in front while the
 /// sine is negative and behind otherwise.
 void Func_02000244(struct Actor *object) {
-  s16 angle = object->action;
+  s16 angle = object->timer;
   s16 height = object->unk66;
 
   SET_POSITION(object,
@@ -140,10 +140,10 @@ void Func_02000244(struct Actor *object) {
   if (object->y > 0)
     object->unk66 = 0xffff;
   if (Math_Sin(angle) < 0)
-    ((struct FieldSprite *)object->animation)->priority = 1;
+    ((struct FieldSprite *)object->sprite)->priority = 1;
   else
-    ((struct FieldSprite *)object->animation)->priority = 3;
-  object->action += object->acceleration;
+    ((struct FieldSprite *)object->sprite)->priority = 3;
+  object->timer += object->acceleration;
   object->unk66++;
 }
 
@@ -160,11 +160,11 @@ void Func_02000300(void) {
     object->speedLimit = (Random16Far() << 2) + 0x60000;
     object->acceleration = ((Random16Far() << 11) >> 16) + 0x800;
     object->update = (void (*)(void))Func_02000244;
-    object->action = Random16Far();
+    object->timer = Random16Far();
     object->unk66 = phase;
     Actor_SetSingleChildFlags(object, 0);
     Actor_SetSpriteColor(object, 2);
-    ((struct FieldSprite *)object->animation)->priority = 1;
+    ((struct FieldSprite *)object->sprite)->priority = 1;
     phase += 5;
   }
 }
@@ -201,11 +201,11 @@ s32 Func_02000384(void) {
     FieldEvent_Wait(10);
     for (i = 0; i <= 89 && leader->y < 0; i++) {
       leader->terrainHeight = leader->y = leader->y + 0x30000;
-      leader->angle += 0x1800;
+      leader->facing += 0x1800;
       System_Wait(2);
     }
     leader->terrainHeight = leader->y = 0;
-    leader->angle = 0x4000;
+    leader->facing = 0x4000;
     leader->motionFlags = 3;
     leader->velocityY = 0x30000;
     leader->gravity = 0x8000;
@@ -328,10 +328,10 @@ void Func_020006a0(s32 mode) {
 }
 
 void Func_02000724(s32 id) {
-  struct FieldActor *object;
+  struct Actor *object;
   s32 height;
 
-  object = ((struct FieldActor *)Actor_Get(id));
+  object = Actor_Get(id);
   object->motionFlags = 4;
   height = object->terrainHeight;
   WORD_AT(object, 68) = 0;
@@ -379,14 +379,14 @@ void Func_02000778(void) {
     actor->z = linked->z;
     if (i <= 0x3ffff)
       i += 0x1999;
-    actor->angle = (u8)gFrameCount << 12;
+    actor->facing = (u8)gFrameCount << 12;
     p = &actor->priorityFlags;
     *p ^= 2 << (gFrameCount & 1);
     System_Wait(1);
   }
   work->unkd44 = 1;
   work->unkd46 = 1;
-  angle = linked->angle;
+  angle = linked->facing;
   actor->x = (((linked->x >> 19) & ~1) + (angle >> 13) - 1) << 19;
   actor->z = (((linked->z >> 19) & ~1) - ((angle >> 13) & 2) + 1) << 19;
   actor->velocityY = 0x60000;
@@ -454,11 +454,11 @@ void Func_02000990(struct Actor *self) {
     return;
   }
   Actor_SetAnimationSpeed(self, 16);
-  if ((++*(u16 *)&self->action & 31) == 31)
+  if ((++*(u16 *)&self->timer & 31) == 31)
     Event_PlaySound(231);
   {
-    s8 *to = self->animation;
-    s8 *from = leader->animation;
+    s8 *to = self->sprite;
+    s8 *from = leader->sprite;
     u32 a = from[9] & 12;
     to[9] = (s8)((to[9] & ~12) | a);
   }
@@ -481,7 +481,7 @@ void Func_02000990(struct Actor *self) {
         if (Func_02000964(&leader->x, &self->x) <= 12 && distance < 0xc0000)
           near = 1;
         if (near && !Event_GetFlag(260)) {
-          leader->angle = self->angle;
+          leader->facing = self->facing;
           leader->watchedObject = self;
           leader->priorityFlags &= ~1;
           {
@@ -495,7 +495,7 @@ void Func_02000990(struct Actor *self) {
       }
       {
         s32 (*multiply)(s32, s32);
-        s32 cosine = Math_Cosine(self->angle);
+        s32 cosine = Math_Cosine(self->facing);
         s32 speed = self->speedLimit;
         /* FAKEMATCH(dead): the routine address taken inside a once-only
          * block, so the speed loads first; as a plain call, 2 of 197
@@ -505,7 +505,7 @@ void Func_02000990(struct Actor *self) {
         } while (0);
         self->x += multiply(cosine, speed);
       }
-      self->z += Iwram_MulQ16(Math_Sin(self->angle), self->speedLimit);
+      self->z += Iwram_MulQ16(Math_Sin(self->facing), self->speedLimit);
       return;
     }
   }

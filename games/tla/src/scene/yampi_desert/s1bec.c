@@ -4,7 +4,7 @@
 #include "scene.h"
 
 void Func_02001bec(void) {
-  struct FieldActor *object;
+  struct Actor *object;
 
   Func_02004040();
   Func_020041b8(0);
@@ -25,7 +25,7 @@ void Func_02001bec(void) {
 }
 
 void Func_02001c5c(void) {
-  struct FieldActor *object;
+  struct Actor *object;
   s16 scene;
 
   ((struct SceneEventWork *)Ram_HeapSlots->eventWork)->unk16a = gData_02004808;

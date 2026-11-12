@@ -12,7 +12,7 @@ void Func_02002118(void) {
   object = (struct Actor *)FieldActor_Create(365, 1, 0, 0);
   object->unk5c[0] = 2;
   Func_02003118(object, 1);
-  animation = object->animation;
+  animation = object->sprite;
   work->handle = object;
   work->value0c = animation->value10;
   animation->flag11 = 1;
@@ -304,7 +304,7 @@ void Func_020024e4(void) {
     Func_020031e0();
     FieldEvent_ResolvePendingActions(0);
     actor->update = Func_020024bc;
-    actor->angle = TRIG_TURN / 4;
+    actor->facing = TRIG_TURN / 4;
     Func_02003118(actor, 49);
     for (;;) {
       if (Func_02003168(actor->terrainId, actor->x, actor->z) == 7) {
@@ -368,7 +368,7 @@ void Func_020024e4(void) {
         if (result > 0)
           break;
         if (result < 0) {
-          actor->angle = TRIG_TURN / 4;
+          actor->facing = TRIG_TURN / 4;
           Func_02003200(gMainRoutineWork.currentOwner, 6, -1);
           break;
         }

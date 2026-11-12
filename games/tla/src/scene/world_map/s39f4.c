@@ -34,10 +34,10 @@ void Func_020039f4(struct Actor *object) {
   spark = Func_02004b30_(271, object->x, object->y, object->z);
   if (spark != NULL) {
     spark->terrainHeight = object->terrainHeight;
-    sprite = spark->animation;
+    sprite = spark->sprite;
     Func_02004b20(spark, gData_02004f90);
     spark->motionFlags = 0;
-    spark->action = 0;
+    spark->timer = 0;
     spark->watchedObject = object;
     if (sprite != NULL) {
       Animation_ApplyChildArgument(sprite, 2);
@@ -48,10 +48,10 @@ void Func_020039f4(struct Actor *object) {
   spark = Func_02004b30_(271, object->x, object->y, object->z);
   if (spark != NULL) {
     spark->terrainHeight = object->terrainHeight;
-    sprite = spark->animation;
+    sprite = spark->sprite;
     Func_02004b20(spark, gData_02004f90);
     spark->motionFlags = 0;
-    spark->action = 0;
+    spark->timer = 0;
     spark->watchedObject = object;
     spark->terrainId = 1;
     if (sprite != NULL) {
@@ -75,7 +75,7 @@ void Func_02003aac(struct Actor *object) {
   particle = (FieldActor_Create(674, position[0], position[1], position[2]));
   if (particle != NULL) {
     particle->terrainHeight = object->terrainHeight;
-    sprite = particle->animation;
+    sprite = particle->sprite;
     Func_02004b20(particle, gData_02004f9c);
     Animation_ApplyChildArgument(sprite, 2);
     particle->gravity = 0x200;

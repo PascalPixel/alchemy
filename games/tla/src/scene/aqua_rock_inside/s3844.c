@@ -17,12 +17,12 @@ void Func_02003994(struct Actor *object, s32 priority) {
   object->motionFlags = 0;
   object->collisionFlags = 0;
   object->priorityFlags = 2;
-  ((struct FieldSprite *)object->animation)->priority = priority;
+  ((struct FieldSprite *)object->sprite)->priority = priority;
   Actor_SetSingleChildFlags(object, 0);
   Func_02003cc4(object, 2);
   Func_02003ccc(object, gData_020044c8);
   Actor_SetSpriteColor(object, 10);
-  object->action = 0;
+  object->timer = 0;
   object->speedLimit = 0;
   object->acceleration = 0;
 }
@@ -42,7 +42,7 @@ void Func_020039f0(s32 *position, s32 base) {
      * lsls for 0x8000, no extension), 10 of 50 instructions differ in
      * tla-en. */
     angle = (u16)Random16Far() - 0x8000;
-    object->action = angle;
+    object->timer = angle;
     Func_02003994(object, 3);
     object->update = (void (*)(void))Func_0200389c;
     Animation_SetStateFlags(object, 1);

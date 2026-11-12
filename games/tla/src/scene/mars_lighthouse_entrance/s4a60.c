@@ -4,11 +4,11 @@
 #include "map.h"
 #include "event_inline.h"
 
-void Func_02004bc0(struct FieldActor *object, s32 value);
-s32 Func_02004db8(struct FieldActor *object);
+void Func_02004bc0(struct Actor *object, s32 value);
+s32 Func_02004db8(struct Actor *object);
 
 void Func_02004a60(s32 id, u32 kind, s32 flag, s32 layer) {
-  struct FieldActor *object = (struct FieldActor *)Actor_Get(id);
+  struct Actor *object = Actor_Get(id);
   struct MapCell *cell = Ram_HeapSlots->mapWork->layers[layer].cells;
 
   cell += Func_02004db8(object);

@@ -11,7 +11,7 @@
 #include "event.h"
 
 void DriftScene_SpawnObject(s32 x, s32 y, s32 z, s16 value) {
-  struct FieldActor *object;
+  struct Actor *object;
   struct FieldSprite *sprite;
 
   object = Import_ActorCreate(0x1e8, x, y, z);

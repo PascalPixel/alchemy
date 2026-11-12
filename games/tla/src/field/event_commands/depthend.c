@@ -357,7 +357,7 @@ struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z) {
     object->motionFlags = 4;
     object->priorityFlags = 4;
     mask = ~0xc;
-    part = object->animation;
+    part = object->sprite;
     part[9] &= mask;
     Actor_SetSingleChildFlagsFar(object, 0);
     Actor_SetMode(object, 1);

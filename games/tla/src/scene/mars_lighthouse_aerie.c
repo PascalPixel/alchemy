@@ -7,7 +7,7 @@ void Func_02000038(struct Actor *object) {
     (*timer)--;
   } else {
     *timer = (((u32)Random16Far() * 80) >> 16) + 60;
-    object->angle = Random16Far();
+    object->facing = Random16Far();
   }
 }
 
@@ -46,7 +46,7 @@ void Func_0200008c(struct Actor *object) {
 // The twin of ☀️'s SceneEffect_UpdateCounterDrivenOrbit.
 void Func_020000e4(struct Actor *object) {
   struct Actor *anchor = Actor_GetById(8);
-  u16 *pangle = (u16 *)&object->action;
+  u16 *pangle = (u16 *)&object->timer;
   s32 angle = *pangle;
   s32 cosine;
   s32 sine;
@@ -125,7 +125,7 @@ extern const u8 gData_02005ae0[];
 extern const u8 gData_02005b0c[];
 
 void Animation_ApplyChildValues(struct Actor *object, s32 value);
-struct FieldActor;
+struct Actor;
 void Func_02004ef0(const u8 *a, const u8 *b, const u8 *c, const u8 *d);
 void Func_020004a4(void);
 
@@ -279,7 +279,7 @@ void Func_020004a4(void) {
     if (object != NULL) {
       u8 zero;
 
-      sprite = object->animation;
+      sprite = object->sprite;
       Func_0200556c(object, gData_02006ad0);
       Actor_SetSpriteColor(object, 10);
       object->motionFlags = phase;
@@ -289,7 +289,7 @@ void Func_020004a4(void) {
          * differ in tla-en. */
         s32 action = Random16Far() & 0x0ffff000;
 
-        object->action = action;
+        object->timer = action;
       }
       object->unk66 = phase;
       object->update = Func_020005a0;
@@ -298,7 +298,7 @@ void Func_020004a4(void) {
       object->speedLimit = Math_Sin((offset & 0xfffff) >> 4) * 24 >> 16;
       ((u8 *)sprite)[26] = zero;
       sprite->layer =
-          ((struct MarsLighthouseAerieSprite *)anchor->animation)->layer;
+          ((struct MarsLighthouseAerieSprite *)anchor->sprite)->layer;
     }
   }
   Data_0200eb60++;
@@ -309,7 +309,7 @@ void Func_020004a4(void) {
 /// Swings the object along an arc beside its watched object, drawing it behind
 /// (priority 2) while its z is short of 0x108 and in front (priority 1) after.
 void Func_020005a0(struct Actor *object) {
-  u16 *pangle = (u16 *)&object->action;
+  u16 *pangle = (u16 *)&object->timer;
   u16 angle = *pangle;
   struct Actor *parent = object->watchedObject;
 
@@ -318,9 +318,9 @@ void Func_020005a0(struct Actor *object) {
   object->targetX = object->x;
   object->targetZ = object->z;
   if (object->z < 0x1080000)
-    ((struct FieldSprite *)object->animation)->priority = 2;
+    ((struct FieldSprite *)object->sprite)->priority = 2;
   else
-    ((struct FieldSprite *)object->animation)->priority = 1;
+    ((struct FieldSprite *)object->sprite)->priority = 1;
   *pangle -= 0x200;
 }
 
@@ -1926,19 +1926,19 @@ void Func_020029ac(void) {
 
 #include "field_event.h"
 
-void Func_02003210(struct FieldActor *self);
+void Func_02003210(struct Actor *self);
 
 /// Circles the actor around actor 23 by its timer, at its speed plus 3 in x
 /// and twice the sine in z, and turns the timer back by 0x800; Func_02000148
 /// of the Jupiter Lighthouse's fifth room is the same function.
-void Func_02003210(struct FieldActor *self) {
-  struct FieldActor *centre = (struct FieldActor *)Actor_Get(23);
+void Func_02003210(struct Actor *self) {
+  struct Actor *centre = Actor_Get(23);
   u16 angle = self->timer;
   s32 sine;
   s32 x;
   s32 z;
 
-  self->x = centre->x + Math_Cosine(angle) * (self->speed + 3);
+  self->x = centre->x + Math_Cosine(angle) * (self->speedLimit + 3);
   sine = Math_Sin(angle);
   z = centre->z;
   x = self->x;
@@ -1950,7 +1950,7 @@ void Func_02003210(struct FieldActor *self) {
   do {
   } while (0);
   self->targetZ = z;
-  *(s16 *)&self->timer += -0x800;
+  self->timer += -0x800;
 }
 
 #include "frame.h"
@@ -1987,14 +1987,14 @@ static inline struct OrbitEffect *CreateOrbitEffect(s32 type, s32 x, s32 y,
 /// circling actor 23 at a random height above it, as overlay 69e's
 /// Func_020001a4 does under flag 0x201.
 void Func_0200326c(void) {
-  struct FieldActor *center;
+  struct Actor *center;
   struct OrbitEffect *effect;
   struct FieldSprite *sprite;
   s32 angle;
 
   if (Event_GetFlag(0x200) == 0 && gFrameCount % 3 != 0)
     return;
-  center = (struct FieldActor *)Actor_Get(23);
+  center = Actor_Get(23);
   if (Event_GetFlag(0x200) != 0) {
     u32 random;
 

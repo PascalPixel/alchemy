@@ -8,7 +8,7 @@ void Func_02001d98(struct Actor *object) {
         Import_ActorCreate_(0x10d, object->x, object->y, object->z);
 
     if (child != 0) {
-      struct FieldSprite *sprite = child->animation;
+      struct FieldSprite *sprite = child->sprite;
 
       Func_02002918(child, gData_02002c50);
       child->motionFlags = 0;

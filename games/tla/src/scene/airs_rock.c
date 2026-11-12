@@ -287,7 +287,7 @@ s32 Math_Cosine(s32 angle);
 
 /// Circles the object around the centre in words 68 and 76, the radius
 /// growing with its height, one step of 256 per lap.
-void Func_02000840(struct FieldActor *object) {
+void Func_02000840(struct Actor *object) {
   s32 radius = object->y;
   s32 step = WORD_AT(object, 48);
 
@@ -304,7 +304,7 @@ void Func_02000840(struct FieldActor *object) {
 
 /// The same circle on a smaller radius, twice as wide, blinking the part
 /// attribute every other frame.
-void Func_020008ac(struct FieldActor *object) {
+void Func_020008ac(struct Actor *object) {
   s32 radius = object->y;
   s32 step = WORD_AT(object, 48);
 
@@ -394,8 +394,8 @@ void Func_0200095c(void) {
   // Stored through a bit field view: its alias set frees the load after it, as
   // the native orders it (as gust->motionFlags, 2 of 632 differ in tla-en).
   ((struct MotionView *)gust)->flags = flag;
-  ((struct FieldSprite *)gust->animation)->priority =
-      ((struct FieldSprite *)effect->target->animation)->priority;
+  ((struct FieldSprite *)gust->sprite)->priority =
+      ((struct FieldSprite *)effect->target->sprite)->priority;
   Actor_SetMoveTarget(gust, effect->target->x, effect->target->y,
                       effect->target->z + 0xffff0000);
   while (gust->scaleY <= 0x14ccb) {
@@ -434,7 +434,7 @@ void Func_0200095c(void) {
   Sound_Play(136);
   cell.x = effect->target->x >> 20;
   cell.z = effect->target->z >> 20;
-  angle = (leader->angle + 0x2000) & 0xc000;
+  angle = (leader->facing + 0x2000) & 0xc000;
   delta.x = Math_Cosine(angle) >> 16;
   delta.z = Math_Sine(angle) >> 16;
   do {
@@ -450,7 +450,7 @@ void Func_0200095c(void) {
   steps -= 2;
   newX = ((s16 *)&effect->target->x)[1] + ((steps * delta.x) << 3);
   newZ = ((s16 *)&effect->target->z)[1] + ((steps * delta.z) << 3);
-  ((struct FieldSprite *)gust->animation)->priority = 1;
+  ((struct FieldSprite *)gust->sprite)->priority = 1;
   cell.x = newX;
   cell.z = newZ;
   gust->speedLimit = 0x40000;
@@ -578,7 +578,7 @@ void Func_02000f9c(struct Actor *object) {
     Scene_SetActorSpritePriority(object, 1);
   else
     Scene_SetActorSpritePriority(object, 2);
-  ((struct FieldSprite *)object->animation)->rotation += 0x1800;
+  ((struct FieldSprite *)object->sprite)->rotation += 0x1800;
 }
 
 #include "system/dma.h"
@@ -660,9 +660,9 @@ row:
       spark = FieldActor_Create(
           0x2a0, Actor_Get(8)->x, Actor_Get(8)->y, Actor_Get(8)->z);
       {
-        s32 priority = ((s8 *)Actor_Get(8)->animation)[9] & 12;
+        s32 priority = ((s8 *)Actor_Get(8)->sprite)[9] & 12;
 
-        cell = spark->animation;
+        cell = spark->sprite;
         ((struct SpriteParts *)cell)->part = priority >> 2;
       }
       ((struct ObjBits *)spark)->flags |= 1;
@@ -809,12 +809,12 @@ void Func_02001560(void) {
     leader->z = ride->z;
     if (rise <= 0xbffff)
       rise += 0x1999;
-    leader->angle = (u8)gFrameCount << 12;
+    leader->facing = (u8)gFrameCount << 12;
     leader->priorityFlags ^= 2 << (gFrameCount & 1);
     wait(1);
   }
   Sound_Play(0x120);
-  facing = ride->angle;
+  facing = ride->facing;
   if (facing == 0xc000) {
     rider = ride->watchedObject;
     dx = 0;
@@ -829,18 +829,18 @@ void Func_02001560(void) {
       if (gInput.held & 0x40) {
         dx = 0;
         dz = 0xfff00000;
-        leader->angle = 0xc000;
+        leader->facing = 0xc000;
         moved = 1;
       }
       if (gInput.held & 0x10) {
         dx = 0x100000;
         dz = 0;
-        leader->angle = dz;
+        leader->facing = dz;
         moved = 1;
       }
       if (gInput.held & 0x20) {
         dx = 0xfff00000;
-        leader->angle = 0x8000;
+        leader->facing = 0x8000;
         dz = 0;
         moved = 1;
       }
@@ -851,20 +851,20 @@ void Func_02001560(void) {
       if (++i != 60)
         goto waiting;
     dx = 0;
-    leader->angle = 0xc000;
+    leader->facing = 0xc000;
     dz = 0xfff00000;
     if ((u32)(Func_02000348(2, ride->x >> 20, (ride->z - ride->y + dz) >> 20)
               << 8) >> 16 != 255)
       goto found;
     dx = 0x100000;
     dz = 0;
-    leader->angle = dz;
+    leader->facing = dz;
     if ((u32)(Func_02000348(2, (ride->x + dx) >> 20,
                             (ride->z - ride->y) >> 20)
               << 8) >> 16 != 255)
       goto found;
     dx = 0xfff00000;
-    leader->angle = 0x8000;
+    leader->facing = 0x8000;
   found:
     height = Map_GetTerrainHeight(((u8 *)rider)[98], ride->x + dx,
                                   ride->z + dz);
@@ -886,7 +886,7 @@ void Func_02001560(void) {
     Actor_SetSingleChildFlags(leader, 1);
     *motion = 3;
   } else {
-    angle = ride->angle;
+    angle = ride->facing;
     leader->x = (((ride->x >> 19) & ~1) + (angle >>= 13) - 1) << 19;
     leader->z = (((ride->z >> 19) & ~1) - (angle & 2) + 1) << 19;
     still = 0;
@@ -962,7 +962,7 @@ void Func_02001908(struct Actor *shot) {
     Func_02003cd0(shot, cue);
     ((struct Shot *)shot)->unk63 = 0;
     shot->update = 0;
-    if (shot->angle == 0xc000)
+    if (shot->facing == 0xc000)
       Func_02003b38(shot, gData_02003de0);
     else
       Func_02003b38(shot, gData_02003dcc);
@@ -984,11 +984,11 @@ void Func_02001908(struct Actor *shot) {
         i = 1;
     }
     if (i && !GameFlag_Test(0x104)) {
-      leader->angle = shot->angle;
+      leader->facing = shot->facing;
       leader->watchedObject = shot;
       leader->priorityFlags &= ~1;
-      ((struct FieldSprite *)leader->animation)->priority =
-          ((struct FieldSprite *)shot->animation)->priority;
+      ((struct FieldSprite *)leader->sprite)->priority =
+          ((struct FieldSprite *)shot->sprite)->priority;
       ((struct EventWork *)work)->unk16a = 200;
       gMainRoutineWork.renderMode = 0;
       ((struct Shot *)shot)->unk62 = 1;
@@ -1009,12 +1009,12 @@ void Func_02001908(struct Actor *shot) {
       }
     }
   }
-  if (shot->angle == 0xc000) {
-    shot->x += Iwram_MulQ16(Math_Cosine(shot->angle), speed);
-    shot->y -= Iwram_MulQ16(Math_Sin(shot->angle), speed);
+  if (shot->facing == 0xc000) {
+    shot->x += Iwram_MulQ16(Math_Cosine(shot->facing), speed);
+    shot->y -= Iwram_MulQ16(Math_Sin(shot->facing), speed);
   } else {
-    shot->x += Iwram_MulQ16(Math_Cosine(shot->angle), speed);
-    shot->z += Iwram_MulQ16(Math_Sin(shot->angle), speed);
+    shot->x += Iwram_MulQ16(Math_Cosine(shot->facing), speed);
+    shot->z += Iwram_MulQ16(Math_Sin(shot->facing), speed);
   }
 }
 
@@ -1033,10 +1033,10 @@ void Func_02001b54(struct Actor *object) {
   if (*(s16 *)(work + 0x166) != 0 || *(s16 *)(work + 0x15a) != 0 ||
       *(s16 *)(work + 0x15e) != 0 || *(s16 *)(work + 0x168) != 0)
     return;
-  if (object->action == 240) {
+  if (object->timer == 240) {
     if (!Event_GetFlag(0x250))
       Func_02003cd0(object, 202);
-    if (object->angle == 0xc000) {
+    if (object->facing == 0xc000) {
       position.x = object->x;
       position.z = object->z;
     } else {
@@ -1044,28 +1044,28 @@ void Func_02001b54(struct Actor *object) {
        * they share the routine's address; as direct calls, 106 of 153
        * instructions differ in tla-en. */
       position.x = object->x + Value2((s32 (*)())Iwram_MulQ16, 0x80000,
-                                      Math_Cosine(object->angle));
+                                      Math_Cosine(object->facing));
       position.z = object->z + Value2((s32 (*)())Iwram_MulQ16, 0x80000,
-                                      Math_Sin(object->angle));
+                                      Math_Sin(object->facing));
     }
     shot = FieldActor_Create(280, position.x,
                                                        object->y, position.z);
     Func_02003b28(shot, 2);
     Actor_SetSingleChildFlags(shot, 0);
-    ((struct FieldSprite *)shot->animation)->priority = 1;
+    ((struct FieldSprite *)shot->sprite)->priority = 1;
     shot->motionFlags = 0;
     ((u8 *)shot)[0x62] = 0;
     ((u8 *)shot)[0x63] = 0;
-    shot->angle = object->angle;
+    shot->facing = object->facing;
     shot->update = Func_02001908;
     shot->watchedObject = object;
-    object->action = 0;
+    object->timer = 0;
     options.priority = 1;
     options.palette = 7;
     Func_0200015c(position.x, object->y, position.z - 0x60000, 0, 0, 0,
                   EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE, &options);
   }
-  object->action++;
+  object->timer++;
 }
 
 struct AirsRockEventWork {
@@ -1160,7 +1160,7 @@ void Func_02001dc4(s32 x, s32 z) {
     rock = first;
     if (i != 0) {
       rock = FieldActor_Create(255, x, 0, z);
-      Func_02003c90(rock->animation, first->animation);
+      Func_02003c90(rock->sprite, first->sprite);
     }
     Actor_SetSingleChildFlags(rock, 0);
     Func_02003b38(rock, gData_02003dfc);
@@ -1174,7 +1174,7 @@ void Func_02001dc4(s32 x, s32 z) {
     scatter.y = Random16Far() & 7;
     scatter.x = Iwram_MulQ16(Math_Cosine(scatter.y << 12), radius);
     scatter.z = Iwram_MulQ16(Math_Sin(scatter.y << 12), radius);
-    ((struct FieldSprite *)rock->animation)->priority = 1;
+    ((struct FieldSprite *)rock->sprite)->priority = 1;
     FieldActor_SetMoveTarget(rock, rock->x + scatter.x, rock->y,
                         rock->z + scatter.z);
   }
@@ -1257,11 +1257,11 @@ row:
       spark = (FieldActor_Create(0x2a0, Actor_Get(14)->x,
                                   Actor_Get(14)->y, Actor_Get(14)->z));
       {
-        s32 priority = ((s8 *)Actor_Get(14)->animation)[9] & 12;
+        s32 priority = ((s8 *)Actor_Get(14)->sprite)[9] & 12;
 
         /* FAKEMATCH(temporary): the sprite held in the row pointer; as
          * spark->animation, 20 of 520 instructions differ in tla-en. */
-        cell = spark->animation;
+        cell = spark->sprite;
         ((struct SpriteAttr2High *)cell)->priority = priority >> 2;
       }
       // Through the bit-field views the flags' load is issued before the
@@ -1299,7 +1299,7 @@ row:
   PaletteFade_ApplySource(0x10003, 0);
   PaletteFade_ApplyTarget(0x7fff, 0);
   PaletteFade_Interpolate(1);
-  Actor_Get(gMainRoutineWork.currentOwner)->angle = FACING_SOUTH;
+  Actor_Get(gMainRoutineWork.currentOwner)->facing = FACING_SOUTH;
   System_Wait(1);
   PaletteFade_ApplySource(0x7fff, 0);
   PaletteFade_ApplyTarget(0x10003, 0);
@@ -1497,9 +1497,9 @@ void Func_020026b8(void) {
                                                   Actor_Get(12)->y,
                                                   Actor_Get(12)->z));
       {
-        s32 priority = ((s8 *)Actor_Get(12)->animation)[9] & 12;
+        s32 priority = ((s8 *)Actor_Get(12)->sprite)[9] & 12;
 
-        cell = spark->animation;
+        cell = spark->sprite;
         ((struct SpriteParts *)cell)->part = priority >> 2;
       }
       ((struct ObjBits *)spark)->flags |= 1;
@@ -1643,7 +1643,7 @@ void Func_02003c80(s32 a);
 
 /// An object that sways (Func_02001b54) from the given phase.
 #define SWAY(id, phase)                                                        \
-  (Actor_GetById(id)->action = (phase),                                        \
+  (Actor_GetById(id)->timer = (phase),                                         \
    Actor_GetById(id)->update = Func_02001b54,                                  \
    Actor_SetSingleChildFlags(Actor_GetById(id), 0))
 
@@ -1775,7 +1775,7 @@ s32 Func_02002ca0(void) {
       Actor_GetById(21)->y = 0xff700000;
       Actor_SetSpritePriority(21, 2);
       Actor_GetById(21)->priorityFlags |= 2;
-      Actor_GetById(21)->action = 180;
+      Actor_GetById(21)->timer = 180;
       ((u8 *)Actor_GetById(21))[98] = 1;
       Actor_GetById(21)->update = Func_02001b54;
       Actor_SetSingleChildFlags(Actor_GetById(21), 0);
@@ -1791,14 +1791,14 @@ s32 Func_02002ca0(void) {
       Actor_GetById(8)->motionFlags = 0;
       Actor_GetById(8)->y = 0xfff80000;
       Actor_SetSpritePriority(8, 2);
-      Actor_GetById(8)->action = 60;
+      Actor_GetById(8)->timer = 60;
       ((u8 *)Actor_GetById(8))[98] = 0;
       Actor_GetById(8)->update = Func_02001b54;
       Actor_SetSingleChildFlags(Actor_GetById(8), 0);
       Actor_GetById(9)->motionFlags = 0;
       Actor_GetById(9)->y = 0xfff80000;
       Actor_SetSpritePriority(9, 2);
-      Actor_GetById(9)->action = 180;
+      Actor_GetById(9)->timer = 180;
       ((u8 *)Actor_GetById(9))[98] = 0;
       Actor_GetById(9)->update = Func_02001b54;
       Actor_SetSingleChildFlags(Actor_GetById(9), 0);

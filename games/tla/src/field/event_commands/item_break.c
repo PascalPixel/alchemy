@@ -63,7 +63,7 @@ void *BattleEffect_StartItemBreak(void *object) {
   u32 spread;
   u32 jitter;
 
-  angle = (source->angle + 0x2000) & 0xc000;
+  angle = (source->facing + 0x2000) & 0xc000;
   parent = Actor_Spawn(278, source->x, source->y + (16 << 16), source->z);
   if (parent == 0)
     return 0;
@@ -90,7 +90,7 @@ void *BattleEffect_StartItemBreak(void *object) {
       radius = Random16() * 24 + (8 << 16);
       jitter = Random16();
       Motion_SetTargetPositionFromMagnitudeAngle(
-          child, radius, ((jitter - Random16()) >> 3) + source->angle);
+          child, radius, ((jitter - Random16()) >> 3) + source->facing);
     }
   }
   Sound_PlayFar(SE_ITEM_BREAK);
@@ -130,7 +130,7 @@ void UpdateRisingParticleBurst(void *object) {
   Sound_PlayFar(154);
   for (i = 30; i >= 0; i--) {
     src->y += 1 << 16;
-    src->angle += 0x2000; // 1/8 turn
+    src->facing += 0x2000; // 1/8 turn
     src->scaleX += -Q16_ONE / 32;
     src->scaleY += -Q16_ONE / 32;
     wait(1);

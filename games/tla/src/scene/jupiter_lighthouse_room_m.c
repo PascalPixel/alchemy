@@ -45,7 +45,7 @@ void Func_02003474();
 
 void Func_02000060(void) {
   if (gData_02005a3c == 0) {
-    Func_02003474(((struct FieldActor *)Actor_Get(24)));
+    Func_02003474(Actor_Get(24));
     gData_02005a3c = 1;
   }
 }
@@ -55,13 +55,12 @@ void Func_02000080(void) {
     struct MainRoutineWork *party = &gMainRoutineWork;
 
     if (party->renderMode == 10) {
-      struct FieldActor *object =
-          ((struct FieldActor *)Actor_Get(party->currentOwner));
+      struct Actor *object = Actor_Get(party->currentOwner);
 
       party->renderMode = 12;
       WORD_AT(object, 48) = 0;
       WORD_AT(object, 52) = 0;
-      Func_02003474(((struct FieldActor *)Actor_Get(25)));
+      Func_02003474(Actor_Get(25));
       gData_02005a3c = 1;
     }
   }
@@ -180,7 +179,7 @@ void Func_020000c4(void) {
 void Func_02004774();
 
 void Func_0200039c(s32 unused, s32 id) {
-  struct FieldActor *object = (struct FieldActor *)Actor_Get(id);
+  struct Actor *object = Actor_Get(id);
 
   Call4(Func_02004774, object->x, object->z, 0, -8);
 }
@@ -490,7 +489,7 @@ s32 Func_02000a78(void) {
   struct Actor *object = Actor_Get(1);
 
   if (object != NULL) {
-    struct FieldSprite *sprite = object->animation;
+    struct FieldSprite *sprite = object->sprite;
 
     if ((gFrameCount & 127) == 0)
       I_Func_020048d4(29, 258);

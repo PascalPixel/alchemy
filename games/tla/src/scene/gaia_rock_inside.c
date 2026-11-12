@@ -30,9 +30,9 @@ const u8 *Func_02000344(void) {
   return 0;
 }
 
-struct FieldActor;
+struct Actor;
 
-struct FieldActor *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 kind);
+struct Actor *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 kind);
 void Func_02004eec(s32 id, s32 a, s32 b);
 
 // The scene's own event inlines: a habit of the whole game written once, as
@@ -172,7 +172,7 @@ extern const u8 gData_020050d0[];
 void Func_02004dac(struct Actor *object, const u8 *script);
 
 s32 Func_02000610(void) {
-  struct FieldSprite *sprite = Actor_Get(9)->animation;
+  struct FieldSprite *sprite = Actor_Get(9)->sprite;
 
   sprite->rotation -= 0x300;
   return 0;
@@ -212,7 +212,7 @@ s32 Func_02000678(void) {
   Func_02004dac(object, gData_020050d0);
   object->scaleX = 0x6666;
   object->scaleY = 0x6666;
-  sprite = object->animation;
+  sprite = object->sprite;
   sprite->priority = 1;
   object->bounce = 0;
   object->unk4c = 0;

@@ -121,7 +121,7 @@ s32 Func_0200297c(void) {
     Func_02005560();
     FieldEvent_ResolvePendingActions(0);
     actor->update = Func_02002954;
-    actor->angle = TRIG_TURN / 4;
+    actor->facing = TRIG_TURN / 4;
     Func_02005480(actor, 49);
     for (;;) {
       if (Func_020054d8(actor->terrainId, actor->x, actor->z) == 7) {
@@ -168,7 +168,7 @@ s32 Func_0200297c(void) {
         if (result > 0)
           break;
         if (result < 0) {
-          actor->angle = TRIG_TURN / 4;
+          actor->facing = TRIG_TURN / 4;
           Func_020055a8(gMainRoutineWork.currentOwner, 6, -1);
           break;
         }
@@ -282,9 +282,9 @@ s32 Func_02002ba0(void) {
   FieldEvent_ResolvePendingActions(0);
   Flag_Clear(0x106);
   leader->update = (void (*)(void))Func_02002954;
-  leader->angle = 0x4000;
+  leader->facing = 0x4000;
   Func_02005480(leader, 49);
-  while (ride->unk6c->action == 0) {
+  while (ride->unk6c->timer == 0) {
     if (Func_020054d8(0, leader->x, leader->z) != 7) {
       leader->x += ((s32 *)ride->unk6c->unk70)[0];
       leader->z += ((s32 *)ride->unk6c->unk70)[2];
@@ -402,8 +402,8 @@ void Func_02002d08(struct Actor *actor) {
       object->scaleX = scale;
       object->scaleY = scale;
       object->bounce = Q16_ONE / 2;
-      sprite = object->animation;
-      source = work->owner->animation;
+      sprite = object->sprite;
+      source = work->owner->sprite;
       Resource_ResetEntry(sprite->vramBlock);
       sprite->retainCacheEntry = 1;
       sprite->vramBlock = work->vramBlock;

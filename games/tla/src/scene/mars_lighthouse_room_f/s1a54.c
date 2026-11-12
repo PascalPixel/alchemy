@@ -66,7 +66,7 @@ struct GustObject *Func_02001a54(struct GustObject *source) {
 #include "frame.h"
 #include "field_event.h"
 
-s32 Func_02001b2c(struct FieldActor *object) {
+s32 Func_02001b2c(struct Actor *object) {
   s32 params[10];
 
   if ((gFrameCount & 7) == 0) {

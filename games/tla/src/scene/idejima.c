@@ -66,7 +66,7 @@ void Func_02000098(s32 id) {
   Actor_SetAnimation(id, 1);
   Actor_SetSingleChildFlags(Actor_Get(id), 1);
   object->x -= PIXELS(12);
-  ((struct ActorSprite *)object->animation)->rotation = 0;
+  ((struct ActorSprite *)object->sprite)->rotation = 0;
   System_Wait(1);
   Actor_SetSingleChildFlags(Actor_Get(id), 1);
   object->velocityY = PIXELS(4);

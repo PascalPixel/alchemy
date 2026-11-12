@@ -100,7 +100,7 @@ void Func_020035e0(void) {
       effect->scaleRateY = zero;
       effect->update = Effect_AdvanceMotionAtLeaderPriority;
       effect->sprite->priority =
-          ((struct FieldSprite *)leader->animation)->priority;
+          ((struct FieldSprite *)leader->sprite)->priority;
     }
   }
 }

@@ -30,8 +30,7 @@ void Func_02003fe4(struct FieldEffect *effect, const s32 *script);
 void Func_02000430(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options) {
-  struct FieldActor *party =
-      ((struct FieldActor *)Actor_GetById(gMainRoutineWork.currentOwner));
+  struct Actor *party = Actor_GetById(gMainRoutineWork.currentOwner);
   struct FieldEffect *effect;
   struct FieldSprite *sprite;
   const s32 *script;
@@ -52,7 +51,8 @@ void Func_02000430(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   effect->velocity.x = velocityX;
   effect->velocity.y = velocityY;
   effect->velocity.z = velocityZ;
-  Scene_SetActorSpritePriority(effect, party->sprite->priority);
+  Scene_SetActorSpritePriority(effect,
+                               ((struct FieldSprite *)party->sprite)->priority);
   effect->scaleRateX = 0;
   effect->scaleRateY = 0;
   effect->spin = 0;
@@ -128,7 +128,7 @@ s32 Func_02000658(struct Actor *self, struct Actor *other, s32 range) {
     u32 left = (angle - 0x1000) & 0xf000;
     u32 right = (angle + 0x1000) & 0xf000;
     u32 ahead = angle & 0xf000;
-    u32 facing = self->angle & 0xf000;
+    u32 facing = self->facing & 0xf000;
 
     if (ahead == facing || right == facing || left == facing)
       result = 1;
@@ -341,11 +341,11 @@ void Func_02000a80(void) {
       Actor_SetSingleChildFlags(object, 0);
       object->update = Func_020009d0;
       object->motionFlags = 0;
-      object->action = -(s32)((u32)(Random16Far() * 16) >> 16) * 2 + 20;
+      object->timer = -(s32)((u32)(Random16Far() * 16) >> 16) * 2 + 20;
       object->unk66 = 0;
       object->gravity = 0x1999;
       object->velocityY = 0x30000;
-      object->angle = Random16Far();
+      object->facing = Random16Far();
     }
   }
 }
@@ -448,7 +448,7 @@ s32 Func_02000cc4(void) {
   u16 turn;
   s32 facing;
 
-  turn = Actor_GetById(gMainRoutineWork.currentOwner)->angle + 0x5fff;
+  turn = Actor_GetById(gMainRoutineWork.currentOwner)->facing + 0x5fff;
   facing = 1;
   if (turn >= 0x3fff)
     facing = 0;
@@ -1836,7 +1836,7 @@ void Func_020036f0(void) {
     struct Actor *owner = Actor_GetById(gMainRoutineWork.currentOwner);
 
     Actor_SetSpritePriority(
-        65, ((struct SpriteAttributes *)owner->animation)->priority);
+        65, ((struct SpriteAttributes *)owner->sprite)->priority);
   }
 }
 
@@ -1935,7 +1935,7 @@ void Func_02003880(void) {
       Actor_SetHorizontalPositionWithTerrain(16, 0, 0);
       Actor_SetHorizontalPositionWithTerrain(17, 0, 0);
     } else {
-      Actor_GetById(10)->angle = 0xd000;
+      Actor_GetById(10)->facing = 0xd000;
       wait(1);
     }
   } else {

@@ -21,7 +21,7 @@
 
 void Func_02000038(void) { Func_080d7788(12, 1, 13); }
 
-void Func_02000048(struct FieldActor *object) {
+void Func_02000048(struct Actor *object) {
   struct FieldSprite *sprite = object->sprite;
   s16 time = object->timer++;
 
@@ -31,7 +31,7 @@ void Func_02000048(struct FieldActor *object) {
 }
 
 void Func_02000080(s32 id) {
-  struct FieldActor *object = ((struct FieldActor *)Actor_GetById(id));
+  struct Actor *object = Actor_GetById(id);
   struct FieldSprite *sprite = object->sprite;
 
   WORD_AT(object, 108) = 0;
@@ -56,7 +56,7 @@ void Func_020000c4(void) { WORD_AT(Ram_HeapSlots->mapWork, 240) = 0x01600000; }
 void Func_020000d4(void) {}
 
 void Func_020000d8(s32 unused, s32 id) {
-  struct FieldActor *object = ((struct FieldActor *)Actor_GetById(id));
+  struct Actor *object = Actor_GetById(id);
   s32 x = object->x >> 20;
   s32 z = object->z >> 20;
 
@@ -95,7 +95,7 @@ void Func_02000110(void) {
   object->scaleY = 0x8000;
   object->scaleX = 0x8000;
   for (i = 29; i >= 0; i--) {
-    object->angle += 0x1000;
+    object->facing += 0x1000;
     {
       /* FAKEMATCH(pin): the limit's first half stays in r2; as a plain
        * local, 30 of 273 instructions differ in tla-en. */
@@ -111,7 +111,7 @@ void Func_02000110(void) {
     object->scaleY = object->scaleX;
     wait(1);
   }
-  object->angle = 0x3000;
+  object->facing = 0x3000;
   object->scaleY = 0x10000;
   object->scaleX = 0x10000;
   Actor_SetSingleChildFlags(Actor_GetById(12), 1);
@@ -140,7 +140,7 @@ void Func_02000110(void) {
   Hop(16, 0);
   Actor_SetHorizontalPositionWithTerrain(12, 0, 0);
   Actor_GetById(13)->update = Func_02000048;
-  Actor_GetById(13)->action = 0;
+  Actor_GetById(13)->timer = 0;
 }
 
 void Func_020003bc(void) { MapCopy(9, 9, 2, 3, 8, 9, 0); }
@@ -188,7 +188,7 @@ void Func_02000468(void) {
        * 0x2000, 24 of 85 instructions differ in tla-en. */
       s32 turn = 0x2000;
 
-      object->angle += turn;
+      object->facing += turn;
     }
     /* FAKEMATCH(temporary): the object read again through p after the
      * turn, so the scale is reloaded after its test; as object throughout, 13
@@ -199,7 +199,7 @@ void Func_02000468(void) {
     p->scaleY = p->scaleX;
     wait(1);
   }
-  p->angle = 0x3000;
+  p->facing = 0x3000;
   p->scaleY = 0x10000;
   p->scaleX = 0x10000;
   Actor_WaitForMoveById(12);
@@ -296,7 +296,7 @@ s32 Func_020006bc(void) {
     *(void (**)(void))(((u8 *)Actor_GetById(13)) + 108) = Func_02000048;
     *(u16 *)(((u8 *)Actor_GetById(13)) + 100) = 0;
   }
-  Actor_SetSingleChildFlags(((struct Actor *)Actor_GetById(13)), 0);
+  Actor_SetSingleChildFlags(Actor_GetById(13), 0);
   return 0;
 }
 

@@ -732,7 +732,7 @@ void Func_02001104(s32 id, s32 a, s32 frame) {
     struct Actor *object = Actor_GetById(id);
     s32 height;
 
-    object->x = object->action << 16;
+    object->x = object->timer << 16;
     object->z = (s16)object->unk66 << 16;
     height = Map_GetTerrainHeight(0, object->x, object->z);
     object->terrainHeight = height;

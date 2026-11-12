@@ -90,7 +90,7 @@ void Func_02002898(void) {
 /// When the controlled object steps onto a new cell, saves the 1 by 3 cells
 /// below it at (73, 72) and stamps the cells kept at (72, 72) in their place.
 void Func_02002980(void) {
-  struct FieldActor *object = Actor_GetById(Func_02005f84());
+  struct Actor *object = Actor_GetById(Func_02005f84());
   s32 x = object->x >> 20;
   s32 y = object->y >> 20;
   s32 z = object->z >> 20;
@@ -110,7 +110,7 @@ void Func_02002980(void) {
 
 /// As Func_02002980, one row nearer.
 void Func_02002a14(void) {
-  struct FieldActor *object = Actor_GetById(Func_02005f84());
+  struct Actor *object = Actor_GetById(Func_02005f84());
   s32 x = object->x >> 20;
   s32 y = object->y >> 20;
   s32 z = object->z >> 20;
@@ -207,7 +207,7 @@ next:
 s32 Math_Cosine(s32 angle);
 s32 Math_Sine(s32 angle);
 
-void Func_02002bd0(struct FieldActor *object) {
+void Func_02002bd0(struct Actor *object) {
   s32 radius = ((object->y - object->terrainHeight) >> 1) + 0x100000;
 
   object->x =
@@ -223,7 +223,7 @@ void Func_02002bd0(struct FieldActor *object) {
 /// Circles the object around its centre (fields 68 and 76) on an ellipse twice
 /// as wide as deep, the radius growing with its height; it rises by field 72
 /// each frame and switches its part attribute between 0 and 9 every two frames.
-void Func_02002c40(struct FieldActor *object) {
+void Func_02002c40(struct Actor *object) {
   s32 y = object->y;
   s32 phase;
   s32 radius;
@@ -245,7 +245,7 @@ void Func_02002c40(struct FieldActor *object) {
   Actor_SetPartAttribute(object, ((gFrameCount & 2) >> 1) * 9);
 }
 
-void Func_02002cc0(struct FieldActor *object) {
+void Func_02002cc0(struct Actor *object) {
   s32 bit = ((gFrameCount & 3) >> BYTE_AT(object, 99)) & 1;
 
   Actor_SetPartAttribute(object, (u8)(bit * BYTE_AT(object, 98)));

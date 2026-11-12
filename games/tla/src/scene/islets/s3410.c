@@ -170,7 +170,7 @@ static __inline__ s32 Abs(s32 value) { return value < 0 ? -value : value; }
 s32 Func_02003684(s32 id) {
   u8 *map = (u8 *)Ram_HeapSlots->mapWork;
   struct Actor *actor = Actor_GetById(id);
-  s16 kind = *((struct ObjectAnimationState *)actor->animation)->value28;
+  s16 kind = *((struct ObjectAnimationState *)actor->sprite)->value28;
   s16 i = 0;
   s32 next;
   u32 index;

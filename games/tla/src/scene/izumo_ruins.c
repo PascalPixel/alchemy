@@ -71,12 +71,12 @@ void Func_02000f30(struct Actor *object) {
   s32 height =
       Map_GetTerrainHeight(object->terrainId, object->x, object->z) >> 19;
 
-  if (Event_GetFlag(object->action)) {
+  if (Event_GetFlag(object->timer)) {
     upper |= 0xff00;
     lower &= ~0x80;
     if (object->terrainHeight >> 19 != height)
       height -= 4;
-    Scene_SetActorSpritePriority((struct FieldActor *)object, 3);
+    Scene_SetActorSpritePriority((struct Actor *)object, 3);
   } else {
     if (lower >> 8 != 232)
       upper = (upper & 0xff) | 0xff00;
@@ -84,7 +84,7 @@ void Func_02000f30(struct Actor *object) {
       upper = (upper & 0xff) | (232 << 8);
     lower |= 0x80;
     height += 4;
-    Scene_SetActorSpritePriority((struct FieldActor *)object, 2);
+    Scene_SetActorSpritePriority((struct Actor *)object, 2);
   }
   Func_02000ee8(0, column, row, lower);
   Func_02000ee8(2, column, row, upper);
@@ -102,7 +102,7 @@ void Func_0200100c(u16 *list) {
     Func_02001428(object, Event_GetFlag((u16)flag) + 1);
     object->motionFlags = 0;
     object->collisionFlags &= 0xfe;
-    object->action = flag;
+    object->timer = flag;
     Func_02000f30(object);
     list += 3;
   }

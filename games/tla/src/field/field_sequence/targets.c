@@ -63,7 +63,7 @@ s32 Field_FindNearbyTalkTarget(s32 id) {
 
       angle = (u16)ArcTan2(obj->z - src->z, obj->x - src->x);
       if (dist > 11) {
-        s32 diff = (s16)(angle - src->angle);
+        s32 diff = (s16)(angle - src->facing);
 
         if (diff < -0x2fff)
           continue;
@@ -165,7 +165,7 @@ s32 Func_080cdac0(s32 animation, s32 selfId, s32 otherId) {
     width = rule->width;
     if (distance > 19)
       width = width * 2 / 3;
-    facing = (self->angle + 0x2000) & 0xc000;
+    facing = (self->facing + 0x2000) & 0xc000;
     angle = (u16)ArcTan2(other->z - self->z, other->x - self->x);
     diff = (s16)(angle - facing);
     if (diff < 0)
@@ -232,7 +232,7 @@ s32 Func_080cdc74(void) {
   s32 terrain;
   s32 result;
   s32 half;
-  s32 angle = owner->angle >> 12;
+  s32 angle = owner->facing >> 12;
 
   angle = ((angle + 2) & 12) << 12;
   position[0] = owner->x;
@@ -284,7 +284,7 @@ void Func_080cdd80(void) {
   s32 result;
   s32 speed;
   s32 acceleration;
-  s32 angle = owner->angle >> 12;
+  s32 angle = owner->facing >> 12;
 
   angle = ((angle + 2) & 12) << 12;
   position[0] = owner->x;

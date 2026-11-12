@@ -9,8 +9,8 @@ void Func_02000468(struct Actor *object) {
   struct FieldSprite *sprite;
   s32 angle;
 
-  angle = object->angle;
-  sprite = object->animation;
+  angle = object->facing;
+  sprite = object->sprite;
   sprite->rotation = angle + 0x4000;
 }
 

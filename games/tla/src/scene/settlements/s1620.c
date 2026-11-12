@@ -50,8 +50,8 @@ void Func_020016b0(struct Actor *object) {
   s32 angle;
   s32 turn;
 
-  if (object->action != 0) {
-    object->action--;
+  if (object->timer != 0) {
+    object->timer--;
     return;
   }
   *(u8 *)((u8 *)object + 0x5a) = 0;
@@ -63,12 +63,12 @@ void Func_020016b0(struct Actor *object) {
     Func_02001fe0(object, 9);
     return;
   }
-  turn = (s16)(angle - object->angle);
+  turn = (s16)(angle - object->facing);
   if (turn > 0x1000)
     turn = 0x1000;
   if (turn < -0x1000)
     turn = -0x1000;
-  object->angle += turn;
+  object->facing += turn;
   Func_02001fe0(object, 2);
   Actor_SetAnimationSpeed(object, 48);
 }

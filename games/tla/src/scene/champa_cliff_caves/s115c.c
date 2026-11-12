@@ -21,7 +21,7 @@ struct Position {
   s32 z;
 };
 
-void Actor_SetSingleChildFlags(struct FieldActor *object, s32 flags);
+void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 void Motion_SetVarCbAndRefresh(u32 objectId, s32 variant);
 void Motion_SetModeAndWaitAnimation(s32 actor, s32 mode);
 void Camera_MoveWithinMapBounds(s32 a, s32 b, s32 c, s32 d);
@@ -96,7 +96,7 @@ void Func_0200115c(void) {
   struct Position position;
   const u16 *colour;
   struct MainRoutineWork *party;
-  struct FieldActor *object = Actor_GetById(13);
+  struct Actor *object = Actor_GetById(13);
 
   if (Flag_IsSet(0x97e))
     return;
@@ -356,7 +356,7 @@ void Func_02001868(void) {
   const u8 *scriptA, *scriptB, *scriptC, *scriptD;
   s32 *owner;
   u8 *party;
-  struct FieldActor *leader;
+  struct Actor *leader;
 
   Func_0200345c();
   Event_ResolvePendingActions(0);

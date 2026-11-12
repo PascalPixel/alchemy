@@ -121,7 +121,7 @@ struct TileSprite {
 
 s32 Func_020002a4(struct Actor *object) {
   u16 *tile = (u16 *)((u8 *)Ram_HeapSlots->mapWork + 286);
-  struct TileSprite *sprite = object->animation;
+  struct TileSprite *sprite = object->sprite;
 
   sprite->tile = *tile;
   sprite->frame = 0;
@@ -185,7 +185,7 @@ s32 StoryActor_Initialize(struct Actor *actor) {
   }
   actor->update = (void (*)(void))WorldMap_UpdateBobbingMarker;
   actor->motionFlags = 0;
-  actor->action = 0;
+  actor->timer = 0;
   actor->unk66 = 0;
   actor->scaleX = 0x8000;
   actor->scaleY = 0x8000;
@@ -194,7 +194,7 @@ s32 StoryActor_Initialize(struct Actor *actor) {
 
 s32 Func_02000388(struct Actor *object) {
   u16 *tile = (u16 *)((u8 *)Ram_HeapSlots->mapWork + 286);
-  struct TileSprite *sprite = object->animation;
+  struct TileSprite *sprite = object->sprite;
 
   sprite->tile = *tile;
   sprite->frame = 0;
@@ -352,7 +352,7 @@ void Func_02000574(void) {
   Event_SetFlag(0x176);
   gMainRoutineWork.savedX = ship->x;
   gMainRoutineWork.savedZ = ship->z;
-  gMainRoutineWork.unk280 = ship->angle;
+  gMainRoutineWork.unk280 = ship->facing;
   Event_PlaySound(78);
   Func_02004b18(leader, 6);
   System_Wait(6);
@@ -400,7 +400,7 @@ void Func_020006d0(void) {
   position[0] = ship->x;
   position[1] = ship->y;
   position[2] = ship->z;
-  Vector_AddPolarOffsetFar(0x180000, ship->angle, position);
+  Vector_AddPolarOffsetFar(0x180000, ship->facing, position);
   blocked = 0;
   block = blocks + ((((position[0] / 0x200000) & 31) +
                      ((position[2] / 0x200000) & 31) * 32) *
@@ -436,7 +436,7 @@ void Func_020006d0(void) {
     Event_ClearFlag(0x176);
     gMainRoutineWork.savedX = ship->x;
     gMainRoutineWork.savedZ = ship->z;
-    gMainRoutineWork.unk280 = ship->angle;
+    gMainRoutineWork.unk280 = ship->facing;
     flags = leader->motionFlags;
     leader->x = ship->x;
     leader->y = 0x40000;
@@ -604,7 +604,7 @@ void Func_02000be0(void) {
     position[0] = leader->x;
     position[1] = leader->y;
     position[2] = leader->z;
-    FieldVector_AddPolarOffset(0x100000, leader->angle, position);
+    FieldVector_AddPolarOffset(0x100000, leader->facing, position);
     object = Actor_Get(79);
     x = position[0];
     if (object == NULL) {
@@ -650,7 +650,7 @@ void Func_02000d4c(void) {
 
   Actor_ShowItemIconById(19, 0x198);
   object = Actor_Get(19);
-  animation = object->animation;
+  animation = object->sprite;
   animation[17] |= 1;
   Actor_SetSingleChildFlags(Actor_Get(19), 0);
   a = 0x4000;
@@ -695,8 +695,8 @@ s32 Func_02000dc4(void) {
 
     ship->x = gMainRoutineWork.savedX;
     ship->z = gMainRoutineWork.savedZ;
-    ship->angle = gMainRoutineWork.unk280;
-    ship->action = 0;
+    ship->facing = gMainRoutineWork.unk280;
+    ship->timer = 0;
     ship->unk66 = 0;
   }
   if (gMainRoutineWork.ownerOverride != 0)
@@ -1406,7 +1406,7 @@ void Func_02001e34(void) {
     djinni->motionFlags = 0;
     SetMoveTarget(djinni, x, 0x100000, z);
     while (i >= 0) {
-      *(u16 *)&djinni->angle += 0x1000;
+      *(u16 *)&djinni->facing += 0x1000;
       wait(1);
       i--;
     }
@@ -1417,7 +1417,7 @@ void Func_02001e34(void) {
     djinni->terrainHeight = 0;
     i = 7;
     while (i >= 0) {
-      *(u16 *)&djinni->angle += 0x1000;
+      *(u16 *)&djinni->facing += 0x1000;
       wait(1);
       i--;
     }
@@ -1559,7 +1559,7 @@ void Func_02002594(void) {
   obj = (FieldActor_Create(285, x + 0x7b80000, 0,
                                             z + 0x1c5c0000));
   if (obj != NULL) {
-    sprite = obj->animation;
+    sprite = obj->sprite;
     scale = ((Random16Far() << 15) >> 16) + 0x13333;
     sprite->nextFrame = 0;
     sprite->priority = 2;
@@ -1706,7 +1706,7 @@ void Func_020028cc(void) {
     return;
   obj->scaleX = Q16_ONE / 2;
   obj->scaleY = Q16_ONE / 2;
-  spr = obj->animation;
+  spr = obj->sprite;
   if ((Random16Far() * 2) >> 16) {
     s32 back = ((Random16Far() * 48) >> 16) << 16;
 
@@ -1719,7 +1719,7 @@ void Func_020028cc(void) {
     obj->z += value;
   }
   spr->nextFrame = 0;
-  spr->priority = ((struct FieldSprite *)leader->animation)->priority;
+  spr->priority = ((struct FieldSprite *)leader->sprite)->priority;
   obj->priorityFlags |= 2;
   obj->motionFlags = leader->motionFlags;
   Actor_SetSpriteColor(obj, 9);
@@ -1748,7 +1748,7 @@ void Func_020029a4(void) {
                                      0);
   Actor_SetSingleChildFlags(Actor_Get(8), 0);
   Actor_SetSpeedParameters_(8, 0x6666, 0x3333);
-  actor->action = 0;
+  actor->timer = 0;
   Actor_SetScript(8, gData_02004eb8);
   Task_AddFrame(Func_020028cc, TASK_PASS_VBLANK);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
@@ -1792,7 +1792,7 @@ void Func_02002ab0(void) {
                                      0);
   Actor_SetSingleChildFlags(Actor_Get(10), 0);
   Actor_SetSpeed(10, 0x6666, 0x3333);
-  boat->action = 0;
+  boat->timer = 0;
   boat->acceleration = 0x2000;
   boat->speedLimit = 0x2000;
   FieldActor_SetMoveTarget(boat, 0x27ff0000, boat->y, 0x1ecc0000);
@@ -2163,7 +2163,7 @@ void Func_02003490(void) {
 
 s32 Func_020035e0(struct Actor *object) {
   u16 *tile = (u16 *)((u8 *)Ram_HeapSlots->mapWork + 286);
-  struct TileSprite *sprite = object->animation;
+  struct TileSprite *sprite = object->sprite;
 
   sprite->tile = *tile;
   sprite->frame = 0;

@@ -26,7 +26,7 @@ void Func_02001300(struct Actor *object) {
   u32 i;
   s32 angle;
 
-  angle = object->angle >> 12;
+  angle = object->facing >> 12;
   angle = ((angle + 2) & 12) << 12;
   position[0] = object->x;
   position[1] = object->y;
@@ -36,7 +36,7 @@ void Func_02001300(struct Actor *object) {
   if (other != NULL) {
     i = 0;
   next:
-    if (*((struct ObjectAnimationState *)other->animation)->value28 ==
+    if (*((struct ObjectAnimationState *)other->sprite)->value28 ==
         gData_02002478[i])
       return;
     i++;
@@ -62,12 +62,12 @@ struct LightOam {
 
 extern s16 gData_02002d2c;
 extern s16 gData_02002d2e;
-extern struct FieldActor *gData_02002d30[];
+extern struct Actor *gData_02002d30[];
 extern struct LightOam Data_02002d70[];
 extern s16 gData_02002e30;
 extern s16 gData_02002e32;
 
-s32 Func_02002448(struct FieldActor *actor);
+s32 Func_02002448(struct Actor *actor);
 void Func_020022b8(struct LightOam *oam, s32 depth);
 
 /// Queues the lit actors' sprites: for each listed actor with a position, projects it
@@ -86,7 +86,7 @@ void Func_02001388(void) {
   oam = Data_02002d70;
 
   for (i = 0; i < gData_02002d2e; i++) {
-    struct FieldActor *actor = gData_02002d30[i];
+    struct Actor *actor = gData_02002d30[i];
     if (actor != 0 && actor->x != 0) {
       s32 big, ox, y, z, oy, depth;
       s32 frame;
@@ -99,7 +99,7 @@ void Func_02001388(void) {
       big = gData_02002e30;
       if (big == 0) {
         s32 x, sy;
-        frame = (s16)actor->timer;
+        frame = actor->timer;
         x = ox >> 16;
         sy = oy >> 16;
         ox = x - 8;
@@ -120,7 +120,7 @@ void Func_02001388(void) {
         oam++;
       } else {
         s32 x, sy;
-        frame = (s16)actor->timer;
+        frame = actor->timer;
         x = ox >> 16;
         sy = oy >> 16;
         ox = x - 8;
@@ -200,7 +200,7 @@ void Func_02001644(void) {
 }
 
 void Func_020016cc(s32 id, s32 value) {
-  struct FieldActor *object = ((struct FieldActor *)Actor_Get(id));
+  struct Actor *object = Actor_Get(id);
 
   if (object != NULL) {
     s16 *count;

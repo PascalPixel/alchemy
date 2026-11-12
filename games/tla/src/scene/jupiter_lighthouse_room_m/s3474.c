@@ -178,12 +178,12 @@ struct LightOam {
 
 extern s16 gData_02005a80;
 extern s16 gData_02005a82;
-extern struct FieldActor *gData_02005a84[];
+extern struct Actor *gData_02005a84[];
 extern struct LightOam Data_02005ac4[];
 extern s16 gData_02005b84;
 extern s16 gData_02005b86;
 
-s32 Func_0200499c(struct FieldActor *actor);
+s32 Func_0200499c(struct Actor *actor);
 void Func_020046ac(struct LightOam *oam, s32 depth);
 
 /// Queues the lit actors' sprites: for each listed actor with a position, projects it
@@ -202,7 +202,7 @@ void Func_0200377c(void) {
   oam = Data_02005ac4;
 
   for (i = 0; i < gData_02005a82; i++) {
-    struct FieldActor *actor = gData_02005a84[i];
+    struct Actor *actor = gData_02005a84[i];
     if (actor != 0 && actor->x != 0) {
       s32 big, ox, y, z, oy, depth;
       s32 frame;
@@ -215,7 +215,7 @@ void Func_0200377c(void) {
       big = gData_02005b84;
       if (big == 0) {
         s32 x, sy;
-        frame = (s16)actor->timer;
+        frame = actor->timer;
         x = ox >> 16;
         sy = oy >> 16;
         ox = x - 8;
@@ -236,7 +236,7 @@ void Func_0200377c(void) {
         oam++;
       } else {
         s32 x, sy;
-        frame = (s16)actor->timer;
+        frame = actor->timer;
         x = ox >> 16;
         sy = oy >> 16;
         ox = x - 8;
@@ -314,7 +314,7 @@ void Func_02003a38(void) {
 }
 
 void Func_02003ac0(s32 id, s32 value) {
-  struct FieldActor *object = ((struct FieldActor *)Actor_Get(id));
+  struct Actor *object = Actor_Get(id);
 
   if (object != NULL) {
     s16 *count;

@@ -59,7 +59,7 @@ void Func_020000a4(void) {
 }
 
 void Func_020000fc(void) {
-  u16 facing = Actor_Get(gMainRoutineWork.currentOwner)->angle;
+  u16 facing = Actor_Get(gMainRoutineWork.currentOwner)->facing;
 
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
     Func_02001f08(1, 22);
@@ -100,7 +100,7 @@ void Func_020000fc(void) {
 }
 
 void Func_020001b8(s32 actor) {
-  u16 facing = Actor_Get(gMainRoutineWork.currentOwner)->angle;
+  u16 facing = Actor_Get(gMainRoutineWork.currentOwner)->facing;
 
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
     Func_02001f00(actor);
@@ -327,10 +327,10 @@ s32 Func_02000624(void) {
     } else {
       Actor_SetSpriteRotationById(10, 0xc000);
       Actor_SetSingleChildFlags(Actor_Get(10), 0);
-      ((struct FieldSprite *)Actor_Get(10)->animation)->nextFrame |= 8;
-      sprite = Actor_Get(10)->animation;
+      ((struct FieldSprite *)Actor_Get(10)->sprite)->nextFrame |= 8;
+      sprite = Actor_Get(10)->sprite;
       sprite->unk11 = (sprite->unk11 & 3) | 32;
-      ((struct FieldSprite *)Actor_Get(10)->animation)->unk19 = 1;
+      ((struct FieldSprite *)Actor_Get(10)->sprite)->unk19 = 1;
     }
   }
   Func_02000534();
@@ -346,7 +346,7 @@ s32 Scene_PrepareMap(void) { return 0; }
 s32 Func_020007ac(struct Actor *object) {
   struct FieldSprite *sprite;
 
-  sprite = object->animation;
+  sprite = object->sprite;
   if (object != NULL && sprite != NULL)
     sprite->rotation -= 0x800;
   return 0;
@@ -355,7 +355,7 @@ s32 Func_020007ac(struct Actor *object) {
 s32 Func_020007c8(struct Actor *object) {
   struct FieldSprite *sprite;
 
-  sprite = object->animation;
+  sprite = object->sprite;
   if (object != NULL && sprite != NULL)
     sprite->rotation = 0;
   return 0;

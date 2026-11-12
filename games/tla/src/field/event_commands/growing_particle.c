@@ -141,19 +141,19 @@ void Func_080e4730(void) {
                                      owner->z);
   party = gMainRoutineWork;
   Animation_SetIndexAndInitializeObjectsFar(owner, *(s32 *)(party + 532));
-  ((u8 *)owner->animation)[5] &= mask;
-  mask &= ((u8 *)owner->animation)[7];
+  ((u8 *)owner->sprite)[5] &= mask;
+  mask &= ((u8 *)owner->sprite)[7];
   mask |= 128;
-  ((u8 *)owner->animation)[7] = mask;
+  ((u8 *)owner->sprite)[7] = mask;
   if (*(s8 *)(event + 394) == 3)
-    *(s32 *)((u8 *)owner->animation + 12) = 0xc000;
-  owner->angle = 0x4000;
+    *(s32 *)((u8 *)owner->sprite + 12) = 0xc000;
+  owner->facing = 0x4000;
   Actor_SetMode(owner, 0);
-  Animation_ApplyChildValueToFirstFar(owner->animation, 15);
+  Animation_ApplyChildValueToFirstFar(owner->sprite, 15);
   wait(1);
-  Animation_ApplyChildValueToFirstFar(owner->animation, 0);
+  Animation_ApplyChildValueToFirstFar(owner->sprite, 0);
   {
-    void *source = *(void **)((u8 *)owner->animation + 40);
+    void *source = *(void **)((u8 *)owner->sprite + 40);
 
     sprite = 0x400;
     {
@@ -165,7 +165,7 @@ void Func_080e4730(void) {
       Func_080e43a4(source, work, size);
     }
   }
-  Animation_ApplyChildValueToFirstFar(owner->animation, 15);
+  Animation_ApplyChildValueToFirstFar(owner->sprite, 15);
   /* FAKEMATCH(barrier): an empty asm reading party, which nothing reads after
    * the animation's set, keeps it live in r6 to here; without it, 79 of 332
    * instructions differ in tla-en. */
@@ -190,7 +190,7 @@ void Func_080e4730(void) {
     }
     if (frame == 66) {
       Actor_SetMode(owner, 1);
-      Animation_ApplyChildValueToFirstFar(owner->animation, 0);
+      Animation_ApplyChildValueToFirstFar(owner->sprite, 0);
       Actor_SetSingleChildFlagsFar(Actor_GetById(*(s16 *)(effect + 24)), 1);
       Camera_FollowActor(*(s16 *)(effect + 24), 1);
       Sound_PlayFar(539);

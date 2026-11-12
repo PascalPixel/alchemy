@@ -35,7 +35,7 @@ void Func_02002db0(struct PushEvent *event) {
   {
     u32 zero = 0;
 
-    object->angle = 0x4000;
+    object->facing = 0x4000;
     object->motionFlags = zero;
   }
   Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);

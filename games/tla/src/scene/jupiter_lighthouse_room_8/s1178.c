@@ -26,7 +26,7 @@ void Func_02001178(struct Actor *object) {
   struct IsletsVector position;
   struct Actor *hit;
   u32 i;
-  s32 angle = object->angle >> 12;
+  s32 angle = object->facing >> 12;
 
   angle = ((angle + 2) & 12) << 12;
   position.x = object->x;
@@ -37,7 +37,7 @@ void Func_02001178(struct Actor *object) {
   if (hit != 0) {
     i = 0;
   next:
-    if (*((struct ObjectAnimationState *)hit->animation)->value28 ==
+    if (*((struct ObjectAnimationState *)hit->sprite)->value28 ==
         gData_020022d0[i])
       return;
     i++;
@@ -63,12 +63,12 @@ struct LightOam {
 
 extern s16 gData_02002af0;
 extern s16 gData_02002af2;
-extern struct FieldActor *gData_02002af4[];
+extern struct Actor *gData_02002af4[];
 extern struct LightOam gData_02002b34[];
 extern s16 gData_02002bf4;
 extern s16 gData_02002bf6;
 
-s32 Func_020022b0(struct FieldActor *actor);
+s32 Func_020022b0(struct Actor *actor);
 void Func_02002130(struct LightOam *oam, s32 depth);
 
 /// Queues the lit actors' sprites: for each listed actor with a position, projects it
@@ -87,7 +87,7 @@ void Func_02001200(void) {
   oam = gData_02002b34;
 
   for (i = 0; i < gData_02002af2; i++) {
-    struct FieldActor *actor = gData_02002af4[i];
+    struct Actor *actor = gData_02002af4[i];
     if (actor != 0 && actor->x != 0) {
       s32 big, ox, y, z, oy, depth;
       s32 frame;
@@ -100,7 +100,7 @@ void Func_02001200(void) {
       big = gData_02002bf4;
       if (big == 0) {
         s32 x, sy;
-        frame = (s16)actor->timer;
+        frame = actor->timer;
         x = ox >> 16;
         sy = oy >> 16;
         ox = x - 8;
@@ -121,7 +121,7 @@ void Func_02001200(void) {
         oam++;
       } else {
         s32 x, sy;
-        frame = (s16)actor->timer;
+        frame = actor->timer;
         x = ox >> 16;
         sy = oy >> 16;
         ox = x - 8;
@@ -201,7 +201,7 @@ void Func_020014bc(void) {
 }
 
 void Func_02001544(s32 id, s32 value) {
-  struct FieldActor *object = ((struct FieldActor *)Actor_Get(id));
+  struct Actor *object = Actor_Get(id);
 
   if (object != NULL) {
     s16 *count;

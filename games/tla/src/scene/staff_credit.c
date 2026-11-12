@@ -535,7 +535,7 @@ s32 Scene_PrepareMap(void) { return 0; }
 
 s32 Func_02000c9c(struct Actor *object) {
   u16 *tile = (u16 *)((u8 *)Ram_HeapSlots->mapWork + 286);
-  struct TileSprite *sprite = object->animation;
+  struct TileSprite *sprite = object->sprite;
 
   sprite->tile = *tile;
   sprite->frame = 0;
@@ -576,8 +576,8 @@ s32 Func_02001064(struct Actor *object) {
   s32 frame;
   s32 scale;
 
-  object->action++;
-  frame = object->action;
+  object->timer++;
+  frame = object->timer;
   if (frame > 31)
     return 0;
   scale = Iwram_MulQ16(Math_Sin(frame << 10), 0x14000);
@@ -864,7 +864,7 @@ void Func_02001a0c(struct Actor *object) {
 
 void Func_02001a34(struct Actor *object) {
   struct Actor *parent = object->watchedObject;
-  s32 step = ++object->action;
+  s32 step = ++object->timer;
   s32 scale;
   s32 rise;
 
@@ -884,7 +884,7 @@ void Func_02001a34(struct Actor *object) {
 
 void Func_02001a80(struct Actor *object) {
   struct Actor *parent = object->watchedObject;
-  s32 step = ++object->action;
+  s32 step = ++object->timer;
   s32 scale;
   s32 rise;
 

@@ -11,7 +11,7 @@ void Func_02002b04(u32 id, s8 mode) {
   object->acceleration = 0x1000;
   object->speedLimit = 0x10000;
   object->y = PIXELS(16);
-  object->action = object->x >> 16;
+  object->timer = object->x >> 16;
   object->unk66 = object->z >> 16;
   Actor_SetAnimation(id, mode);
 }

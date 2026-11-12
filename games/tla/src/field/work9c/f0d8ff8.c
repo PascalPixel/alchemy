@@ -95,7 +95,7 @@ void Func_080d9104(s32 slot, s32 firstId, s32 secondId) {
     s32 lift;
 
     if (first->animationKind == 1)
-      layer = ((struct LinkAnimation *)first->animation)->layer;
+      layer = ((struct LinkAnimation *)first->sprite)->layer;
     ends = &entries[slot].ends;
     ends->first = firstId;
     ends->second = secondId;

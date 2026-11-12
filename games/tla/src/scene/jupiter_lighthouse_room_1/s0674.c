@@ -43,10 +43,10 @@ void Func_02000674(struct Actor *self) {
     return;
   }
   Actor_SetAnimationSpeed(self, 16);
-  if ((++*(u16 *)&self->action & 31) == 31)
+  if ((++*(u16 *)&self->timer & 31) == 31)
     Event_PlaySound(231);
-  ((struct FieldSprite *)self->animation)->priority =
-      ((struct FieldSprite *)leader->animation)->priority;
+  ((struct FieldSprite *)self->sprite)->priority =
+      ((struct FieldSprite *)leader->sprite)->priority;
   if (Func_02001bbc(self->x, self->z, 2) != 255) {
     position[0] = self->x;
     position[1] = self->y;
@@ -66,7 +66,7 @@ void Func_02000674(struct Actor *self) {
         if (Func_02000648(&leader->x, &self->x) <= 12 && distance < 0xc0000)
           near = 1;
         if (near && !Event_GetFlag(260)) {
-          leader->angle = self->angle;
+          leader->facing = self->facing;
           leader->watchedObject = self;
           leader->priorityFlags &= ~1;
           work->unk16a = 200;
@@ -79,9 +79,9 @@ void Func_02000674(struct Actor *self) {
       // the address is a linked word read after the cosine, as the native
       // reads it after the speed (at Iwram_MulQ16 it is built before).
       self->x += ((s32 (*)(s32, s32))(IwramIrqMain + Iwram_MulQ16Offset))(
-          Math_Cosine(self->angle), self->speedLimit);
+          Math_Cosine(self->facing), self->speedLimit);
       self->z += ((s32 (*)(s32, s32))(IwramIrqMain + Iwram_MulQ16Offset))(
-          Math_Sin(self->angle), self->speedLimit);
+          Math_Sin(self->facing), self->speedLimit);
       return;
     }
   }
@@ -155,7 +155,7 @@ struct GustObject *Func_02000834(struct GustObject *source) {
   return object;
 }
 
-s32 Func_0200090c(struct FieldActor *object) {
+s32 Func_0200090c(struct Actor *object) {
   s32 params[10];
 
   if ((gFrameCount & 7) == 0) {
@@ -263,12 +263,12 @@ struct LightOam {
 
 extern s16 gData_02002298;
 extern s16 gData_0200229a;
-extern struct FieldActor *gData_0200229c[];
+extern struct Actor *gData_0200229c[];
 extern struct LightOam gData_020022dc[];
 extern s16 gData_0200239c;
 extern s16 gData_0200239e;
 
-s32 Func_02001bb4(struct FieldActor *actor);
+s32 Func_02001bb4(struct Actor *actor);
 void Func_02001a64(struct LightOam *oam, s32 depth);
 
 /// Queues the lit actors' sprites: for each listed actor with a position, projects it
@@ -287,7 +287,7 @@ void Func_02000b3c(void) {
   oam = gData_020022dc;
 
   for (i = 0; i < gData_0200229a; i++) {
-    struct FieldActor *actor = gData_0200229c[i];
+    struct Actor *actor = gData_0200229c[i];
     if (actor != 0 && actor->x != 0) {
       s32 big, ox, y, z, oy, depth;
       s32 frame;
@@ -300,7 +300,7 @@ void Func_02000b3c(void) {
       big = gData_0200239c;
       if (big == 0) {
         s32 x, sy;
-        frame = (s16)actor->timer;
+        frame = actor->timer;
         x = ox >> 16;
         sy = oy >> 16;
         ox = x - 8;
@@ -321,7 +321,7 @@ void Func_02000b3c(void) {
         oam++;
       } else {
         s32 x, sy;
-        frame = (s16)actor->timer;
+        frame = actor->timer;
         x = ox >> 16;
         sy = oy >> 16;
         ox = x - 8;
@@ -399,7 +399,7 @@ void Func_02000df8(void) {
 }
 
 void Func_02000e80(s32 id, s32 value) {
-  struct FieldActor *object = ((struct FieldActor *)Actor_Get(id));
+  struct Actor *object = Actor_Get(id);
 
   if (object != NULL) {
     s16 *count;

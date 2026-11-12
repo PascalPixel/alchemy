@@ -295,13 +295,12 @@ void Func_0200077c(void) {
 }
 
 void Func_020007ac(void) {
-  struct FieldActor *object;
+  struct Actor *object;
   s32 moved;
 
   MapCopy(9, 23, 1, 1, 7, 23, 0);
   if (!GameFlag_Test(63)) {
-    object =
-        ((struct FieldActor *)Actor_GetById(gMainRoutineWork.currentOwner));
+    object = Actor_GetById(gMainRoutineWork.currentOwner);
     Func_02001010();
     Event_ResolvePendingActions(0);
     moved = 0;
@@ -400,8 +399,9 @@ void Func_0200097c(void) {
 
 void Func_02000bb8(void) {
   s32 variant =
-      ((struct FieldActor *)Actor_GetById(gMainRoutineWork.currentOwner))
-          ->sprite->priority;
+      ((struct FieldSprite *)Actor_GetById(gMainRoutineWork.currentOwner)
+           ->sprite)
+          ->priority;
 
   Actor_SetSpritePriority(16, variant);
   Actor_SetSpritePriority(8, variant);
@@ -410,8 +410,9 @@ void Func_02000bb8(void) {
 
 void Func_02000bf0(void) {
   Actor_SetSpritePriority(
-      13, ((struct FieldActor *)Actor_GetById(gMainRoutineWork.currentOwner))
-              ->sprite->priority);
+      13, ((struct FieldSprite *)Actor_GetById(gMainRoutineWork.currentOwner)
+               ->sprite)
+              ->priority);
 }
 
 /// Rotates palette colours 5-9 and 13-15 by one entry every eight frames.

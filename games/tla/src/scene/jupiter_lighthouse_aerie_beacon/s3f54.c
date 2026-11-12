@@ -82,10 +82,10 @@ void Func_0200401c(s32 mode) {
 }
 
 void Func_020040a0(s32 id) {
-  struct FieldActor *object;
+  struct Actor *object;
   s32 height;
 
-  object = ((struct FieldActor *)Actor_Get(id));
+  object = Actor_Get(id);
   object->motionFlags = 4;
   height = object->terrainHeight;
   WORD_AT(object, 68) = 0;
@@ -145,14 +145,14 @@ void Func_020040f4(void) {
     actor->z = linked->z;
     if (i <= 0x3ffff)
       i += 0x1999;
-    actor->angle = (u8)gFrameCount << 12;
+    actor->facing = (u8)gFrameCount << 12;
     p = &actor->priorityFlags;
     *p ^= 2 << (gFrameCount & 1);
     System_Wait(1);
   }
   work->unkd44 = 1;
   work->unkd46 = 1;
-  angle = linked->angle;
+  angle = linked->facing;
   actor->x = (((linked->x >> 19) & ~1) + (angle >> 13) - 1) << 19;
   actor->z = (((linked->z >> 19) & ~1) - ((angle >> 13) & 2) + 1) << 19;
   actor->velocityY = 0x60000;
@@ -261,7 +261,7 @@ void Func_0200430c(struct Object6a5 *object) {
   if ((timer & 31) == 31)
     Event_PlaySound(231);
   {
-    s8 *from = leader->animation;
+    s8 *from = leader->sprite;
     s8 *to = object->sprite;
     s32 priority = from[9] & 12;
     to[9] = (to[9] & ~12) | priority;
@@ -282,7 +282,7 @@ void Func_0200430c(struct Object6a5 *object) {
             near = 1;
           if (near != 0 && Event_GetFlag(0x104) == 0) {
             leader->watchedObject = (struct Actor *)object;
-            leader->angle = object->angle;
+            leader->facing = object->angle;
             flags = &leader->priorityFlags;
             *flags &= ~1;
             work->unk16a = 200;

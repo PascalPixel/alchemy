@@ -145,12 +145,12 @@ void Func_02000740(void) {
     struct Actor *near = Func_020005b4(leader, 358);
 
     if (near != NULL) {
-      u16 angle = near->angle;
+      u16 angle = near->facing;
 
       if (angle == 0x8000)
         delta = turn;
     }
-    leader->angle += delta;
+    leader->facing += delta;
   }
 }
 
@@ -176,7 +176,7 @@ void Func_02000784(void) {
   if (table != 0) {
     if (table->y + 0x100000 > actor->y)
       return;
-    if (table->angle == 0x8000)
+    if (table->facing == 0x8000)
       turn = -turn;
     dx = actor->x - table->x;
     dz = actor->z - table->z;
@@ -215,7 +215,7 @@ void Func_02000784(void) {
       }
     }
   }
-  actor->angle += turn;
+  actor->facing += turn;
 }
 
 // Moves the controlled character with the platform kind 359 along x by the
@@ -233,7 +233,7 @@ void Func_02000978(void) {
     if (found != NULL) {
       s32 diff, x, foundX;
 
-      if (found->angle == 0x8000)
+      if (found->facing == 0x8000)
         dx = -dx;
       if (found->z - actor->z < -0x20000)
         actor->z = found->z + 0x20000;
@@ -275,7 +275,7 @@ void Func_02000a20(struct Actor *object) {
   object->motionFlags = 0;
   object->y = PIXELS(6);
   object->z = 0xf741cf;
-  object->angle = FACING_SOUTH;
+  object->facing = FACING_SOUTH;
   party = &gMainRoutineWork;
   Actor_SetAttachedEffect(party->currentOwner, 258);
   Actor_SetAnimation(party->currentOwner, 27);

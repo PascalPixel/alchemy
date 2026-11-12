@@ -37,12 +37,12 @@ extern const u8 gData_0200149c[];
 extern const u8 gData_020014d8[];
 extern const u8 gData_020014fc[];
 
-void Scene_SetActorSpritePriority(struct FieldActor *object, s32 priority);
+void Scene_SetActorSpritePriority(struct Actor *object, s32 priority);
 void Func_02000454(const u8 *data);
 void Func_02000d10(void);
 void Func_02000ea0(void);
-void Func_02001074(struct FieldActor *object, s32 value);
-s32 Func_020010b4(struct FieldActor *object, s16 *position);
+void Func_02001074(struct Actor *object, s32 value);
+s32 Func_020010b4(struct Actor *object, s16 *position);
 void Func_020010dc(void);
 void Func_020010e4(void);
 void Func_0200114c(void);
@@ -50,6 +50,6 @@ void Func_02001154(s32 a, s32 b, s32 c, s32 d);
 void Func_02000ba8(void);
 void Func_02000f50(void);
 void Func_02000f98(void);
-s32 Func_02000c38(struct FieldActor *object, s16 *position);
+s32 Func_02000c38(struct Actor *object, s16 *position);
 
 #endif

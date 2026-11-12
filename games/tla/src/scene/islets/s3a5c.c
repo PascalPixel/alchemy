@@ -46,7 +46,7 @@ void Func_02003a5c(struct PushTarget target) {
   s32 speed;
   s32 acceleration;
 
-  direction = leader->angle >> 16;
+  direction = leader->facing >> 16;
   footprint = target.footprint;
   speed = leader->speedLimit;
   acceleration = leader->acceleration;

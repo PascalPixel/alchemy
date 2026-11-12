@@ -43,7 +43,7 @@ void Func_020016d8(void) {
   {
     struct Actor *ship = Actor_Get(8);
 
-    ship->angle = FACING_WEST;
+    ship->facing = FACING_WEST;
   }
   Actor_SetPosition(10, PIXELS(186), PIXELS(164));
   Actor_SetSpriteColor(Actor_Get(10), 15);
@@ -310,11 +310,11 @@ void Func_02001ee0(void) {
   FieldEvent_Wait(40);
   FieldCamera_SetSpeed(0xcccc, 0x1999);
   FieldCamera_MoveTo(PIXELS(368), -1, PIXELS(210), 1);
-  actor->action = 0;
+  actor->timer = 0;
   Actor_SetScript(5, gData_0200346c);
   do {
     System_Wait(1);
-  } while (actor->action == 0);
+  } while (actor->timer == 0);
   FieldEvent_Wait(10);
   Actor_SetAttachedEffect(8, 258);
   Actor_SetAttachedEffect(5, 258);
@@ -557,14 +557,14 @@ void Func_02002304(void) {
   Actor_SetSpeed(6, 0xcccc, 0x6666);
   Actor_SetSpeed(8, 0xcccc, 0x6666);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
-  leader->action = 0;
+  leader->timer = 0;
   Actor_SetScript(8, gData_020035bc);
   Actor_SetScript(5, gData_02003534);
   Actor_SetScript(gMainRoutineWork.currentOwner, gData_02003600);
   Actor_SetScript(6, gData_02003578);
   do
     System_Wait(1);
-  while (leader->action == 0);
+  while (leader->timer == 0);
   Func_020032e0();
   Actor_ShowEmote(5, 0x100, 20);
   Event_ShowMessage(0x1005, 0);
@@ -742,12 +742,12 @@ void Func_02002f88(s32 id) {
   struct Actor *object = Actor_Get(id);
 
   Actor_SetSingleChildFlags(Actor_Get(id), 0);
-  object->angle = FACING_SOUTH;
+  object->facing = FACING_SOUTH;
   object->motionFlags = 0;
   object->x += 0xc0000;
   object->y = PIXELS(16);
   object->collisionFlags = 0;
-  ((struct ActorSprite *)object->animation)->rotation = 0xc000;
+  ((struct ActorSprite *)object->sprite)->rotation = 0xc000;
 }
 
 void Func_02002fd4(void) {
@@ -760,7 +760,7 @@ void Func_02002fd4(void) {
     MapGrid_CopyCellAttributes(38, 32, 2, 1, 25, 42);
     actor = Actor_Get(8);
     Actor_SetSingleChildFlags(Actor_Get(8), 0);
-    actor->angle = FACING_SOUTH;
+    actor->facing = FACING_SOUTH;
     actor->motionFlags = 0;
     actor->y = PIXELS(12);
     actor->collisionFlags = 0;
@@ -773,7 +773,7 @@ void Func_02002fd4(void) {
     MapGrid_CopyCellAttributes(38, 33, 2, 1, 17, 46);
     actor = Actor_Get(5);
     Actor_SetSingleChildFlags(Actor_Get(5), 0);
-    actor->angle = FACING_SOUTH;
+    actor->facing = FACING_SOUTH;
     actor->motionFlags = 0;
     actor->y = PIXELS(12);
     actor->collisionFlags = 0;

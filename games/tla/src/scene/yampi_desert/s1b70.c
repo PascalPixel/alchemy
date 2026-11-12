@@ -30,7 +30,7 @@ struct Actor *Func_02001b70(void) {
   if (object == 0)
     return 0;
   {
-    visual = object->animation;
+    visual = object->sprite;
 
     {
       s32 keep = 33;

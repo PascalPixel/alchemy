@@ -95,16 +95,16 @@ row:
       spark = (struct Actor *)Import_ActorCreate(0x2a0, Actor_GetById(14)->x,
                                                  Actor_GetById(14)->y,
                                                  Actor_GetById(14)->z);
-      ((struct SpriteAttr2High *)spark->animation)->priority =
-          (((s8 *)Actor_GetById(14)->animation)[9] & 12) >> 2;
+      ((struct SpriteAttr2High *)spark->sprite)->priority =
+          (((s8 *)Actor_GetById(14)->sprite)[9] & 12) >> 2;
       spark->priorityFlags |= 1;
       spark->motionFlags = 0;
       spark->bounce = spark->x;
       spark->gravity = 0x18000;
       spark->unk4c = spark->z;
       spark->speedLimit = Random16Far() & 0xffff;
-      Import_ActorSetMode((struct FieldActor *)spark, 7);
-      Import_ActorSetScript((struct FieldActor *)spark, gData_02004ae0);
+      Import_ActorSetMode((struct Actor *)spark, 7);
+      Import_ActorSetScript((struct Actor *)spark, gData_02004ae0);
       Actor_SetSingleChildFlags(spark, 0);
       Actor_SetPartAttribute(spark, 2);
       spark->update = Effect_CircleAndBlink;

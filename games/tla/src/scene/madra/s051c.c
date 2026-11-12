@@ -143,13 +143,13 @@ s32 Func_020006ac(void) {
     Actor_SetSingleChildFlags(Actor_GetById(26), 0);
     object = Actor_GetById(26);
     object->radius = Actor_GetById(26)->radius * 4 / 3;
-    ((struct FieldSprite *)Actor_GetById(26)->animation)->nextFrame |= 8;
+    ((struct FieldSprite *)Actor_GetById(26)->sprite)->nextFrame |= 8;
     {
-      struct FieldSprite *sprite = Actor_GetById(26)->animation;
+      struct FieldSprite *sprite = Actor_GetById(26)->sprite;
 
       sprite->unk11 = (sprite->unk11 & 3) | 32;
     }
-    ((struct FieldSprite *)Actor_GetById(26)->animation)->unk19 = 1;
+    ((struct FieldSprite *)Actor_GetById(26)->sprite)->unk19 = 1;
     if (Event_GetFlag(0x8ff) == 0 && Event_GetFlag(0x8ab) != 0) {
       Actor_SetHorizontalPositionWithTerrain(27, 0, 0);
       Actor_SetHorizontalPositionWithTerrain(28, 0, 0);

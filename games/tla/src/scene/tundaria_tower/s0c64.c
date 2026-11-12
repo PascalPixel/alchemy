@@ -21,8 +21,8 @@ void Func_02000c64(s32 unused, s32 actorArg) {
   object = *(struct Actor **)(work + 0xcbc);
   Func_02003048();
   Event_ResolvePendingActions(0);
-  dx = (object->x >> 20) - (object->action >> 8);
-  dz = (object->z >> 20) - (object->action & 0xff);
+  dx = (object->x >> 20) - (object->timer >> 8);
+  dz = (object->z >> 20) - (object->timer & 0xff);
   object->speedLimit = 0x8000;
   while ((MapCell_GetAttributes(1, (object->x >> 20) + dx,
                                 (object->z >> 20) + dz) >>

@@ -89,7 +89,7 @@ top:
   if (nextBehavior == 255 ||
       Map_GetTerrainHeight(*layer, position->x, position->z) - actor->y >
           PIXELS(8)) {
-    actor->angle = heading;
+    actor->facing = heading;
     actor->velocityX = 0;
     actor->velocityZ = 0;
     actor->x = startX;
@@ -100,7 +100,7 @@ top:
   position->z = startZ;
   actor->speedLimit = PIXELS(2);
   actor->acceleration = 0x1999;
-  actor->action = 0;
+  actor->timer = 0;
   FieldActor_SetMoveTarget(actor, startX, actor->y, startZ);
   Func_020043c4(actor, 2);
   Actor_SetAnimationSpeed(actor, 48);
@@ -236,7 +236,7 @@ retry:
   cell = GetMapCellCollision(*layer, p[0], p[2]);
   if (cell == 255 ||
       Map_GetTerrainHeight(*layer, p[0], p[2]) - object->y > 0x80000) {
-    object->angle = angle;
+    object->facing = angle;
     object->velocityX = 0;
     object->velocityZ = 0;
     object->x = x;
@@ -247,7 +247,7 @@ retry:
   p[2] = z;
   object->speedLimit = 0x20000;
   object->acceleration = 0x1999;
-  object->action = 0;
+  object->timer = 0;
   Actor_SetMoveTarget(object, x, object->y, z);
   Func_020043c4(object, 2);
   Actor_SetAnimationSpeed(object, 48);
@@ -364,7 +364,7 @@ void Func_02003ee8(void) {
   s32 startZ;
 
   actor = ObjectTable_Get(gMainRoutineWork.currentOwner);
-  heading = (s16)((actor->angle + 0x2000) & -0x4000);
+  heading = (s16)((actor->facing + 0x2000) & -0x4000);
 
 top:
   Func_020038e8();
@@ -394,7 +394,7 @@ top:
   nextBehavior = MapGrid_GetCellBehaviorAt(*layer, position->x, position->z);
   if (nextBehavior == 255 ||
       Map_GetTerrainHeight(*layer, position->x, position->z) - actor->y > i) {
-    actor->angle = heading;
+    actor->facing = heading;
     actor->velocityX = 0;
     actor->velocityZ = 0;
     actor->x = startX;
@@ -405,7 +405,7 @@ top:
   position->z = z;
   actor->speedLimit = PIXELS(2);
   actor->acceleration = 0x1999;
-  actor->action = zero;
+  actor->timer = zero;
   Func_020043c4(actor, 2);
   Actor_SetAnimationSpeed(actor, 48);
   actor->update = Func_0200385c;

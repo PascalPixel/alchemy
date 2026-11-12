@@ -92,7 +92,7 @@ void Func_0200013c(s32 unused, s32 id) {
   actor->motionFlags = 0;
   actor->velocityY = 0;
   actor->y = 0x40000;
-  sprite = actor->animation;
+  sprite = actor->sprite;
   i = 0;
 do {
     ((struct Charge *)sprite)->level = i;
@@ -106,7 +106,7 @@ do {
       z = actor->z + Random16Far() * 2 - Random16Far() * 2;
       splash = (FieldActor_Create(14, x, actor->y, z));
       if (splash != 0) {
-        splashSprite = splash->animation;
+        splashSprite = splash->sprite;
         splash->terrainHeight = actor->terrainHeight;
         Func_02002800(splash, gData_02002ae8);
         splash->motionFlags = 0;
@@ -128,7 +128,7 @@ do {
   for (i = 1; i >= 0; i--) {
     spark = (FieldActor_Create(269, actor->x, actor->y, actor->z));
     if (spark != 0) {
-      sparkSprite = spark->animation;
+      sparkSprite = spark->sprite;
       Func_02002800(spark, gData_02002ae8);
       {
         u8 *flags = &spark->motionFlags;
@@ -259,7 +259,7 @@ void Func_020004c8(s32 hole) {
   goto test;
 sink:
   if (result < 0) {
-    leader->angle = 0x4000;
+    leader->facing = 0x4000;
     Func_02000428(hole);
     return;
   }
@@ -277,7 +277,7 @@ sink:
       slip = -0x10000;
   }
   leader->x -= slip;
-  leader->angle += 0x1000;
+  leader->facing += 0x1000;
   System_Wait(1);
 test:
   position.x = leader->x;
@@ -497,7 +497,7 @@ void Func_02000b90(s32 a, s32 id) {
 }
 
 void Func_02000c14(struct Actor *object) {
-  *(s16 *)((u8 *)object->animation + 18) -= 0x800;
+  *(s16 *)((u8 *)object->sprite + 18) -= 0x800;
 }
 
 void Func_02000c24(void) {
@@ -549,8 +549,8 @@ void Func_02000d2c(void) {
   FieldEvent_ResolvePendingActions(0);
   for (i = 9; i >= 0; i--) {
     System_Wait(1);
-    ((struct FieldSprite *)rock->animation)->rotation += turn;
-    rock->x -= Math_Cosine(((struct FieldSprite *)rock->animation)->rotation) / 2;
+    ((struct FieldSprite *)rock->sprite)->rotation += turn;
+    rock->x -= Math_Cosine(((struct FieldSprite *)rock->sprite)->rotation) / 2;
     rock->targetX = 0x80000000;
   }
   rock->update = Func_02000c14;
@@ -563,7 +563,7 @@ void Func_02000d2c(void) {
   rock->velocityY = 0;
   rock->y = rock->terrainHeight;
   Actor_SetPosition(19, 0x1e00000, 0xf80000);
-  ((struct FieldSprite *)rock->animation)->rotation = 0;
+  ((struct FieldSprite *)rock->sprite)->rotation = 0;
   Event_PlaySound(188);
   MapGrid_SetShake(0x50000, 0x50000, 0x10000);
   Event_PlaySound(141);
@@ -1534,7 +1534,7 @@ extern volatile u32 gInput;
 void Func_02002144(void) {
   struct SceneState *state = &gSceneState;
   struct Actor *actor = Actor_Get(FieldParty_GetLeaderActor());
-  struct SpriteWork *sprite = actor->animation;
+  struct SpriteWork *sprite = actor->sprite;
   struct Actor *spark;
   struct FieldSprite *sparkSprite;
   s32 charge, step, i;
@@ -1564,7 +1564,7 @@ void Func_02002144(void) {
   for (i = 1; i >= 0; i--) {
     spark = (FieldActor_Create(269, actor->x, actor->y, actor->z));
     if (spark != 0) {
-      sparkSprite = spark->animation;
+      sparkSprite = spark->sprite;
       Func_02002800(spark, gData_02002ae8);
       spark->motionFlags = 0;
       spark->terrainId = 1;
@@ -1594,7 +1594,7 @@ void Func_020022ac(void) {
 
   if (state->mode != 2) {
     object = Actor_Get(FieldParty_GetLeaderActor());
-    sprite = object->animation;
+    sprite = object->sprite;
     Func_02002898();
     FieldEvent_ResolvePendingActions(0);
     Func_02002818_(object, (object->x & 0xfff00000) + 0x80000, object->y,
@@ -1619,7 +1619,7 @@ void Func_02002334(void) {
 
   Func_0200237c();
   if (state->mode != 0) {
-    sprite = Actor_Get(FieldParty_GetLeaderActor())->animation;
+    sprite = Actor_Get(FieldParty_GetLeaderActor())->sprite;
     if (sprite->child)
       sprite->child[6] = 9;
     sprite->mode = (sprite->mode & 0xf7) | 1;
@@ -1646,12 +1646,12 @@ void Func_020024f8(struct Actor *object, s32 priority) {
   object->motionFlags = 0;
   object->collisionFlags = 0;
   object->priorityFlags = 2;
-  ((struct FieldSprite *)object->animation)->priority = priority;
+  ((struct FieldSprite *)object->sprite)->priority = priority;
   Actor_SetSingleChildFlags(object, 0);
   Func_020027f8(object, 2);
   Func_02002800(object, gData_02002af4);
   Actor_SetSpriteColor(object, 10);
-  object->action = 0;
+  object->timer = 0;
   object->speedLimit = 0;
   object->acceleration = 0;
 }
@@ -1671,7 +1671,7 @@ void Func_02002554(s32 *position, s32 base) {
      * bits (movs, lsls for 0x8000, no extension), 10 of 50 instructions differ
      * in tla-en. */
     angle = (u16)Random16Far() - 0x8000;
-    object->action = angle;
+    object->timer = angle;
     Func_020024f8(object, 3);
     object->update = (void (*)(void))Func_02002400;
     Animation_SetStateFlags(object, 1);

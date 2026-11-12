@@ -82,7 +82,7 @@ retry:
   cell = GetMapCellCollision(*layer, p[0], p[2]);
   if (cell == 255 ||
       Map_GetTerrainHeight(*layer, p[0], p[2]) - object->y > 0x80000) {
-    object->angle = angle;
+    object->facing = angle;
     object->velocityX = 0;
     object->velocityZ = 0;
     object->x = x;
@@ -93,7 +93,7 @@ retry:
   p[2] = z;
   object->speedLimit = 0x20000;
   object->acceleration = 0x1999;
-  object->action = 0;
+  object->timer = 0;
   Actor_SetMoveTarget(object, x, object->y, z);
   Func_020041cc(object, 2);
   Actor_SetAnimationSpeed(object, 48);

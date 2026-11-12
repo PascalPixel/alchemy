@@ -14,8 +14,8 @@ s32 Func_020002b0(struct Actor *object) {
   return 0;
 }
 
-s32 Func_020002bc(struct FieldActor *object) {
-  s32 step = object->unk5a[8] & 63;
+s32 Func_020002bc(struct Actor *object) {
+  s32 step = object->riseCounter & 63;
   struct FieldSprite *sprite = object->sprite;
 
   object->motionFlags = 3;
@@ -26,6 +26,6 @@ s32 Func_020002bc(struct FieldActor *object) {
   if (step == 24)
     object->velocityY = PIXELS(3);
   sprite->rotation = Math_Cosine(step << 12) / 64;
-  object->unk5a[8]++;
+  object->riseCounter++;
   return -1;
 }

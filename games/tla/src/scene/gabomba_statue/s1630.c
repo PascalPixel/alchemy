@@ -300,8 +300,7 @@ next:
     struct Actor *object = Actor_Get(i);
 
     if (object != NULL && object->animationKind == 1) {
-      struct FieldPart *part =
-          ((struct FieldAnimation *)object->animation)->part;
+      struct FieldPart *part = ((struct FieldAnimation *)object->sprite)->part;
 
       if (part != NULL) {
         switch (part->kind) {
@@ -359,7 +358,7 @@ void Func_02001c10(void) {
       continue;
     if (object->animationKind != 1)
       continue;
-    frames = *(s16 **)((u8 *)object->animation + 40);
+    frames = *(s16 **)((u8 *)object->sprite + 40);
     if (frames == 0)
       continue;
     found = 0;
@@ -458,7 +457,7 @@ void Func_0200561c(void *animation, s32 a);
 
 void Func_020020b0(s32 id, s32 direction, s32 value) {
   struct Actor *object = Actor_Get(id);
-  void *animation = object->animation;
+  void *animation = object->sprite;
 
   Func_02005624(object, gData_02005940[(direction + 1) & 3]);
   object->unk5c[0] = 2;

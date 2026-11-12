@@ -220,7 +220,7 @@ void Func_080da938(s32 index) {
 }
 
 void Func_080da968(struct Actor *object) {
-  u8 *parts = object->animation;
+  u8 *parts = object->sprite;
 
   parts[22] = 253;
   parts[23] = 12;

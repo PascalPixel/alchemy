@@ -10,7 +10,7 @@
 #include "call.h"
 
 void Func_02003910(s32 id, u32 kind, s32 flag, s32 layer) {
-  struct FieldActor *object = Actor_GetById(id);
+  struct Actor *object = Actor_GetById(id);
   struct MapCell *cell = Ram_HeapSlots->mapWork->layers[layer].cells;
 
   cell += Func_020041e0(object);

@@ -314,10 +314,10 @@ void Func_020012a4(s32 x, s32 z, s32 kind) {
     Actor_SetSingleChildFlags(object, 0);
     Func_02003118(object, 3);
     if (kind != 0) {
-      ((struct MarsLighthouseRoomMAnimation *)object->animation)->layer = 2;
+      ((struct MarsLighthouseRoomMAnimation *)object->sprite)->layer = 2;
       Func_02003120(object, gData_0200387c);
     } else {
-      ((struct MarsLighthouseRoomMAnimation *)object->animation)->layer = 1;
+      ((struct MarsLighthouseRoomMAnimation *)object->sprite)->layer = 1;
       object->velocityX = (((u32)(Random16Far() * 8) >> 16) - 4) << 16;
       object->velocityY = PIXELS(4);
       Func_02003120(object, gData_02003900);

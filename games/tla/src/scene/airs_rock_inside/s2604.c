@@ -12,10 +12,10 @@ extern u32 gData_02006aec[];
 extern u32 gData_02006bac[];
 
 s32 Math_Cosine(s32 angle);
-void Actor_SetAnimationSpeed(struct FieldActor *object, s32 value);
+void Actor_SetAnimationSpeed(struct Actor *object, s32 value);
 void Map_EnableUpdateCallback(void);
 void Map_DisableUpdateCallback(void);
-void Func_020004d4(struct FieldActor *object);
+void Func_020004d4(struct Actor *object);
 
 u32 *Func_02002604(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room1)

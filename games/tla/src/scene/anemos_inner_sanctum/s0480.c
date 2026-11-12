@@ -15,7 +15,7 @@ void Func_020032e0(struct Actor *, s32);
 void Func_020032e8(struct ActorView *object, const s32 *script);
 extern const s32 *gData_02003840[];
 void Actor_SetSingleChildFlags(struct ActorView *, u32);
-void Scene_SetActorSpritePriority(struct FieldActor *object, s32 priority);
+void Scene_SetActorSpritePriority(struct Actor *object, s32 priority);
 
 void Func_02000480(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
@@ -104,9 +104,9 @@ s32 Func_02000654(s32 a0) {
 s32 Func_02000660(struct Actor *object) {
   s32 radius;
 
-  object->action += object->unk66;
+  object->timer += object->unk66;
   SET_POSITION(object, object->bounce, object->gravity, 0x980000);
-  FieldVector_AddPolarOffset(object->unk4c, object->action, &object->x);
+  FieldVector_AddPolarOffset(object->unk4c, object->timer, &object->x);
   radius = object->unk4c - 0x10000;
   object->unk4c = radius;
   if (radius)

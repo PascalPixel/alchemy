@@ -34,13 +34,13 @@ void VENT_BOUNCE(struct Actor *object) {
   object->bounce = dx - dx / 18;
   object->unk4c = dz - dz / 16;
   object->scaleX += object->speedLimit;
-  sprite = object->animation;
+  sprite = object->sprite;
   {
     s32 acceleration = object->acceleration;
 
     object->scaleY += acceleration;
   }
-  sprite->rotation += object->action;
+  sprite->rotation += object->timer;
   if (other->y == other->terrainHeight && VENT_TOUCHING(object, other)) {
     object->z -= object->unk4c;
     object->gravity += object->unk4c >> 2;

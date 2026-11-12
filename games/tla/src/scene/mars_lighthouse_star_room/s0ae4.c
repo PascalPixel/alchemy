@@ -18,7 +18,7 @@ void Func_02000ae4(s32 rise) {
   *slot = object;
   if (object == NULL)
     return;
-  sprite = object->animation;
+  sprite = object->sprite;
   sprite->fullColor = 0;
   sprite->palette = 0;
   sprite->priority = 1;
@@ -229,7 +229,7 @@ void Func_02000e80(void) {
   object = FieldActor_Create(0x1e9, 0x2a80000, 0x80000, 0x930000);
   *slot = object;
   if (object != 0) {
-    sprite = object->animation;
+    sprite = object->sprite;
     sprite->nextFrame = 0;
     sprite->fullColor = 0;
     sprite->palette = 0;
@@ -348,7 +348,7 @@ L_02008ea2:
   object = (struct Actor *)FieldActor_Create(0x1e9, 0x2a80000, 0x80000, 0x930000);
   *slot = object;
   if (object != 0) {
-    sprite = object->animation;
+    sprite = object->sprite;
     sprite->nextFrame = 0;
     sprite->fullColor = 0;
     sprite->palette = 0;
@@ -408,7 +408,7 @@ L_0200905c:
   object2 = FieldActor_Create(0x1e9, 0x2a80000, 0x80000, 0x930000);
   *slot2 = object2;
   if (object2 != 0) {
-    sprite2 = object2->animation;
+    sprite2 = object2->sprite;
     sprite2->nextFrame = 0;
     sprite2->unk1b[0] = 0;
     sprite2->fullColor = 0;

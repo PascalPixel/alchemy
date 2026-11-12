@@ -332,13 +332,13 @@ void Func_080e68d0(void) {
   object->motionFlags = 0;
   if (event->unkd4c & 2) {
     if ((object->animationKind & 15) == 1) {
-      ((struct EffectSprite *)object->animation)->oam.priority = 1;
+      ((struct EffectSprite *)object->sprite)->oam.priority = 1;
       object->priorityFlags &= 254;
     }
   } else {
     object->priorityFlags = 1;
   }
-  object->angle = caster->angle;
+  object->facing = caster->facing;
   Actor_SetMode(object, 0);
   alternate = &scene->alternate;
   if (*alternate != 0)
@@ -373,7 +373,7 @@ void Func_080e68d0(void) {
     target = event->work.objects[i];
     if (target != NULL && target->script != NULL &&
         (Func_08020330(target) == 406 || (target->collisionFlags & 1)) &&
-        target != scene->mainObject && ((u8 *)target->animation)[27] != 0 &&
+        target != scene->mainObject && ((u8 *)target->sprite)[27] != 0 &&
         Func_080dbe80(&scene->x, 4, &target->x, target->radius - 2) >= 0) {
       failed = 1;
       break;
@@ -777,7 +777,7 @@ void Func_080e7238(void) {
       }
       break;
     case 1:
-      object->angle += 0x2000;
+      object->facing += 0x2000;
       object->scaleX = (frame << 16) / 30;
       if (object->scaleX > 0x10000)
         object->scaleX = 0x10000;
@@ -789,7 +789,7 @@ void Func_080e7238(void) {
       break;
     case 2:
       if (frame == 0) {
-        object->angle = 0x4000;
+        object->facing = 0x4000;
         Actor_SetSingleChildFlagsFar(object, 1);
         count = 3;
       }
@@ -874,7 +874,7 @@ void Func_080e74d8(void) {
   Sound_PlayFar(220);
   Actor_SetMode(object, 3);
   for (spin = 0, frame = 49; frame >= 0; frame--, spin += 60) {
-    object->angle += spin + 0x1000;
+    object->facing += spin + 0x1000;
     wait(1);
   }
 
@@ -933,7 +933,7 @@ void Func_080e74d8(void) {
     case 0:
       if (frame == 10)
         Sound_PlayFar(198);
-      object->angle += 0x2000;
+      object->facing += 0x2000;
       if (frame == 40)
         count = 3;
       if (frame == 50)
@@ -945,7 +945,7 @@ void Func_080e74d8(void) {
       }
       break;
     case 1:
-      object->angle += 0x2000;
+      object->facing += 0x2000;
       object->scaleX = 0x10000 - (frame << 16) / 30;
       if (object->scaleX < 0)
         object->scaleX = 0;
@@ -1086,7 +1086,7 @@ void Func_080e7844(void) {
   slots = Ram_HeapSlots;
   for (offset = 20; i < 80; i++, offset += 4) {
     object = *(struct Actor **)((u8 *)slots->eventWork + offset);
-    animation = object->animation;
+    animation = object->sprite;
     if (object->script != NULL && animation->definition[0] == kind &&
         animation->unk18 == 1 &&
         Func_080dbe80(pos, 4, &object->x, object->radius - 2) >= 0) {

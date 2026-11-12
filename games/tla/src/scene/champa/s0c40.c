@@ -8,12 +8,12 @@
 
 extern const u8 gData_02003620[];
 
-void Func_020029dc(struct FieldActor *object, s32 mode);
-void Func_020029e4(struct FieldActor *object, const void *script);
+void Func_020029dc(struct Actor *object, s32 mode);
+void Func_020029e4(struct Actor *object, const void *script);
 
 void Func_02000c40(s32 x, s32 y, s32 z, s32 angle, s32 frames) {
   s16 value = angle;
-  struct FieldActor *object;
+  struct Actor *object;
   struct FieldSprite *sprite;
 
   object = FieldActor_Create(0x1e8, x, y, z);
@@ -34,8 +34,8 @@ void Func_02000c40(s32 x, s32 y, s32 z, s32 angle, s32 frames) {
 }
 
 void Func_02000c90(s32 firstId, s32 secondId) {
-  struct FieldActor *first = ((struct FieldActor *)Actor_Get(firstId));
-  struct FieldActor *second = ((struct FieldActor *)Actor_Get(secondId));
+  struct Actor *first = Actor_Get(firstId);
+  struct Actor *second = Actor_Get(secondId);
   s32 rise = 0x1c0000;
   s32 y;
 

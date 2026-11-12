@@ -265,7 +265,7 @@ done:
 /// collision code 255.
 void Func_02000918(u16 *list) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
-  struct FieldActor *object;
+  struct Actor *object;
   /* FAKEMATCH(pin): the limit in r2, so the next id takes r3; as a plain
    * local, 10 of 31 instructions differ in tla-en. */
   register s32 limit asm("r2");
@@ -324,8 +324,7 @@ void Func_02000994(void) {
 }
 
 void Func_02000a10(void) {
-  struct Actor *leader =
-      (struct Actor *)Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   s16 scene;
 
   leader->terrainId = 0;

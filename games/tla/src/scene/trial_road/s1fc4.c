@@ -246,7 +246,7 @@ void Func_0200223c(void) {
       break;
     case 653:
     case 708:
-      Actor_GetById(8)->angle = 0xc000;
+      Actor_GetById(8)->facing = 0xc000;
       break;
     case 50:
     case 710:

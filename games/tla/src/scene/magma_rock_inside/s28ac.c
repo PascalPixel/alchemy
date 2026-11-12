@@ -2,18 +2,18 @@
 #include "system.h"
 #include "io_reg.h"
 
-struct FieldActor;
+struct Actor;
 
 void Func_02004d40(void);
 void Func_02004d48(void);
 void Func_02004e20(void);
-struct FieldActor *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type);
-void Func_02004cb0(struct FieldActor *actor);
+struct Actor *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type);
+void Func_02004cb0(struct Actor *actor);
 s32 Func_02000694(u32 layer, s32 x, s32 y, s32 value);
 
 void Func_020028ac(void) {
   struct Actor *object;
-  struct FieldActor *actor;
+  struct Actor *actor;
   struct Actor *other;
   s32 i;
 
@@ -40,7 +40,7 @@ void Func_020028ac(void) {
   REG_BLDALPHA = 0x1000;
   REG_BLDCNT = 0x3f10;
   {
-    struct FieldActor *prepared = OverlayObject_PrepareObject(
+    struct Actor *prepared = OverlayObject_PrepareObject(
         other->x, other->terrainHeight, other->z + 0x300000, 312);
 
     other->motionFlags = 0;
@@ -331,7 +331,7 @@ burst:
 spiral:
   spark = FieldActor_Create(672, second->x, second->y, second->z);
   Sound_Play(195);
-  spark->action = (Random16Far() & 0x7fff) + 0x8000;
+  spark->timer = (Random16Far() & 0x7fff) + 0x8000;
   spark->unk66 = (((i & 1) << 1) - 1) << ((Random16Far() & 3) + 9);
   noMotion = 0;
   spark->motionFlags = noMotion;
@@ -343,7 +343,7 @@ spiral:
   Func_02004c98(spark, 7);
   Actor_SetSingleChildFlags(spark, 0);
   Animation_SetStateFlags(spark, 1);
-  FieldVector_AddPolarOffset(spark->unk4c, spark->action, &spark->x);
+  FieldVector_AddPolarOffset(spark->unk4c, spark->timer, &spark->x);
   Func_02004ca0(spark, gData_02005560);
   if (i == 3) {
     Actor_SetSpriteColorById(b, 256);
@@ -363,7 +363,7 @@ tail:
 column:
   riser = FieldActor_Create(672, second->x, second->y + i * 0x10000 - 0x80000,
                             second->z);
-  riser->action = Random16Far();
+  riser->timer = Random16Far();
   riser->unk66 = 0x800;
   ((union ActorView *)riser)->bytes.unk62 = i;
   ((union ActorView *)riser)->bytes.unk63 = 1;

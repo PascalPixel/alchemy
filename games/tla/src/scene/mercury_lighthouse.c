@@ -50,19 +50,19 @@ void Func_02000060(struct Actor *object) {
   state = (u8 *)object + 99;
   switch (*state) {
   case 0:
-    object->angle = FACING_WEST;
+    object->facing = FACING_WEST;
     *state = 1;
     break;
   case 1:
-    object->angle = FACING_NORTHWEST + FACING_STEP;
+    object->facing = FACING_NORTHWEST + FACING_STEP;
     *state = 0;
     break;
   case 2:
-    object->angle = 0;
+    object->facing = 0;
     *state = 3;
     break;
   case 3:
-    object->angle = FACING_NORTH + FACING_STEP;
+    object->facing = FACING_NORTH + FACING_STEP;
     *state = 2;
     break;
   }
@@ -99,7 +99,7 @@ void Func_020000f4(void) {
   if (phase == 0) {
     object = ((struct Actor *)Import_ActorCreate(0x2a2, 0, 0, 0));
     if (object != NULL) {
-      sprite = object->animation;
+      sprite = object->sprite;
       x = Random16Far() * 40 + 0x32c0000;
       /* FAKEMATCH(temporary): z is built before the motion flag and x are
        * stored, as in the native; as object->z = 0x2b80000, 12 of 76

@@ -48,9 +48,9 @@ void Func_02001424(void) {
     asm("" : : : "r0");
     object->unk5c[0] = 2;
     object->motionFlags = 0;
-    object->action = 0;
+    object->timer = 0;
     object->priorityFlags &= 0xfe;
-    sprite = object->animation;
+    sprite = object->sprite;
     sprite->priority = 2;
     Actor_SetSingleChildFlags(object, 0);
     object->scaleX = 0x8000;
@@ -136,7 +136,7 @@ void Func_020015ec(struct Actor *object) {
   object->unk4c = dz - dz / 16;
   object->scaleX += object->speedLimit;
   object->scaleY += object->acceleration;
-  ((struct SpriteParts *)object->animation)->unk12 += object->action;
+  ((struct SpriteParts *)object->sprite)->unk12 += object->timer;
   if (actor->y == actor->terrainHeight && Func_02001528(object, actor) &&
       gMainRoutineWork.renderMode == 0) {
     if (object->unk4c != 0) {

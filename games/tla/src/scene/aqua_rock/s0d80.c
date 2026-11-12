@@ -73,7 +73,7 @@ void Func_02000d80(void) {
       Event_Wait(5);
       for (i = 59; i >= 0; i--) {
         leader->y += 0x20000;
-        leader->angle += 0x1000;
+        leader->facing += 0x1000;
         if (Random16Far() <= 0xfff)
           Func_02001d30(leader);
         wait(1);

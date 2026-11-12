@@ -32,7 +32,7 @@ void Func_080cf350(struct Actor *object) {
   wait(3);
   Actor_SetMode(owner, 28);
   Actor_StartScriptFar(object, gData_080f0074);
-  owner->angle = 0x4000;
+  owner->facing = 0x4000;
 }
 
 void BattleEffect_RunActorRiseAndDescent(struct Actor *object, s32 flags) {
@@ -80,7 +80,7 @@ void BattleEffect_StartEffectObject22(s32 item, s32 flags) {
       Func_080200c0(489, owner->x, owner->y + 0x240000, owner->z);
 
   if (object != 0) {
-    struct EffectVisual *visual = object->animation;
+    struct EffectVisual *visual = object->sprite;
 
     s32 mask;
     s32 zero = 0;
@@ -221,7 +221,7 @@ void Func_080cf554(void) {
       continue;
     // A tile event's object holds its map cell, marked by this value.
     if (object->unk4c == 0x31415927) {
-      x = object->action << 16;
+      x = object->timer << 16;
       z = (s16)object->unk66 << 16;
       y = Map_GetTerrainHeightFar(0, x, z);
     } else {
@@ -249,7 +249,7 @@ void Func_080cf554(void) {
       Actor_StartScriptFar((struct ActorView *)object, Data_080f01b8);
       Actor_SetSingleChildFlagsFar((struct ActorView *)object, 0);
       Actor_SetMode(object, 1);
-      ((struct FieldSprite *)object->animation)->priority = 1;
+      ((struct FieldSprite *)object->sprite)->priority = 1;
     }
   }
 }

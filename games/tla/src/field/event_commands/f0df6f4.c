@@ -45,7 +45,7 @@ void Func_080df6f4(void) {
   for (n = 0; n < 2; n++) {
     obj = *walk++;
     if (obj != 0)
-      Motion_SetTargetPositionFromMagnitudeAngle(obj, 0x180000, obj->angle);
+      Motion_SetTargetPositionFromMagnitudeAngle(obj, 0x180000, obj->facing);
   }
 
   Actor_CommitPosition(pair[0]);
@@ -93,12 +93,12 @@ struct Actor *BattleEffect_SpawnItemBreakMode1(s32 x, s32 y, s32 z, s32 angle) {
         scale += 0x800;
         object->scaleY = scale;
         object->scaleX = scale;
-        object->angle += 0x2000;
+        object->facing += 0x2000;
         wait(1);
         scale = object->scaleX;
       } while (scale <= 0xffff);
     }
-    object->angle = angle;
+    object->facing = angle;
   }
   return object;
 }

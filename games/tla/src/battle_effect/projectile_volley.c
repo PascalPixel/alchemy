@@ -13,7 +13,7 @@
 #include "field_event.h"
 
 #define Actor_SetAnimationSpeedFar                                             \
-  ((s32 (*)(struct FieldActor *, s32))Actor_SetAnimationSpeedFar)
+  ((s32 (*)(struct Actor *, s32))Actor_SetAnimationSpeedFar)
 
 DEFINE_EFFECT_KIND(BattleEffect_RunSlash, BattleEffect_RunProjectileVolley, 0)
 
@@ -33,9 +33,9 @@ DEFINE_EFFECT_KIND(BattleEffect_RunWingBeat, BattleEffect_RunProjectileVolley,
                    4)
 
 void BattleEffect_RunCuttingEdge(struct BattleEffectArgument *effect) {
-  struct FieldActor *object;
+  struct Actor *object;
 
-  object = (struct FieldActor *)GetBattleObjectSlotFar(effect->actor)->object;
+  object = (struct Actor *)GetBattleObjectSlotFar(effect->actor)->object;
   Actor_SetMode(object, 2);
   Actor_SetAnimationSpeedFar(object, 0x30);
   BattleEffect_RunProjectileVolley(effect, 5);
@@ -43,9 +43,9 @@ void BattleEffect_RunCuttingEdge(struct BattleEffectArgument *effect) {
 }
 
 void BattleEffect_RunHeatWave(struct BattleEffectArgument *effect) {
-  struct FieldActor *object;
+  struct Actor *object;
 
-  object = (struct FieldActor *)GetBattleObjectSlotFar(effect->actor)->object;
+  object = (struct Actor *)GetBattleObjectSlotFar(effect->actor)->object;
   Actor_SetMode(object, 2);
   Actor_SetAnimationSpeedFar(object, 0x30);
   BattleEffect_RunProjectileVolley(effect, 6);
@@ -55,9 +55,9 @@ void BattleEffect_RunHeatWave(struct BattleEffectArgument *effect) {
 DEFINE_EFFECT_KIND(BattleEffect_RunSleet, BattleEffect_RunProjectileVolley, 7)
 
 void BattleEffect_RunBlizzard(struct BattleEffectArgument *effect) {
-  struct FieldActor *object;
+  struct Actor *object;
 
-  object = (struct FieldActor *)GetBattleObjectSlotFar(effect->actor)->object;
+  object = (struct Actor *)GetBattleObjectSlotFar(effect->actor)->object;
   Actor_SetMode(object, 2);
   Actor_SetAnimationSpeedFar(object, 0x30);
   BattleEffect_RunProjectileVolley(effect, 9);
@@ -66,9 +66,9 @@ void BattleEffect_RunBlizzard(struct BattleEffectArgument *effect) {
 
 void BattleEffect_RunProjectileVolleyMode12WithAction(
     struct BattleEffectArgument *effect) {
-  struct FieldActor *object;
+  struct Actor *object;
 
-  object = (struct FieldActor *)GetBattleObjectSlotFar(effect->actor)->object;
+  object = (struct Actor *)GetBattleObjectSlotFar(effect->actor)->object;
   Actor_SetMode(object, 2);
   Actor_SetAnimationSpeedFar(object, 0x30);
   BattleEffect_RunProjectileVolley(effect, 12);
@@ -77,9 +77,9 @@ void BattleEffect_RunProjectileVolleyMode12WithAction(
 
 void BattleEffect_RunProjectileVolleyMode13WithAction(
     struct BattleEffectArgument *effect) {
-  struct FieldActor *object;
+  struct Actor *object;
 
-  object = (struct FieldActor *)GetBattleObjectSlotFar(effect->actor)->object;
+  object = (struct Actor *)GetBattleObjectSlotFar(effect->actor)->object;
   Actor_SetMode(object, 2);
   Actor_SetAnimationSpeedFar(object, 0x30);
   BattleEffect_RunProjectileVolley(effect, 13);
@@ -88,9 +88,9 @@ void BattleEffect_RunProjectileVolleyMode13WithAction(
 
 void BattleEffect_RunProjectileVolleyMode14WithAction(
     struct BattleEffectArgument *effect) {
-  struct FieldActor *object;
+  struct Actor *object;
 
-  object = (struct FieldActor *)GetBattleObjectSlotFar(effect->actor)->object;
+  object = (struct Actor *)GetBattleObjectSlotFar(effect->actor)->object;
   Actor_SetMode(object, 2);
   Actor_SetAnimationSpeedFar(object, 0x30);
   BattleEffect_RunProjectileVolley(effect, 14);

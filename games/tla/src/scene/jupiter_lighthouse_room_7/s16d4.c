@@ -243,10 +243,10 @@ top:
     goto top;
 }
 
-s32 Func_02002c1c(struct FieldActor *object);
+s32 Func_02002c1c(struct Actor *object);
 
 void Func_02001acc(s32 id, u32 kind, s32 flag, s32 layer) {
-  struct FieldActor *object = ((struct FieldActor *)Actor_Get(id));
+  struct Actor *object = Actor_Get(id);
   struct MapCell *cell = Ram_HeapSlots->mapWork->layers[layer].cells;
 
   cell += Func_02002c1c(object);
@@ -291,12 +291,12 @@ struct LightOam {
 
 extern s16 gData_020035fc;
 extern s16 gData_020035fe;
-extern struct FieldActor *gData_02003600[];
+extern struct Actor *gData_02003600[];
 extern struct LightOam Data_02003640[];
 extern s16 gData_02003700;
 extern s16 gData_02003702;
 
-s32 Func_02002c2c(struct FieldActor *actor);
+s32 Func_02002c2c(struct Actor *actor);
 void Func_02002aa4(struct LightOam *oam, s32 depth);
 
 /// Queues the lit actors' sprites: for each listed actor with a position, projects it
@@ -315,7 +315,7 @@ void Func_02001b74(void) {
   oam = Data_02003640;
 
   for (i = 0; i < gData_020035fe; i++) {
-    struct FieldActor *actor = gData_02003600[i];
+    struct Actor *actor = gData_02003600[i];
     if (actor != 0 && actor->x != 0) {
       s32 big, ox, y, z, oy, depth;
       s32 frame;
@@ -328,7 +328,7 @@ void Func_02001b74(void) {
       big = gData_02003700;
       if (big == 0) {
         s32 x, sy;
-        frame = (s16)actor->timer;
+        frame = actor->timer;
         x = ox >> 16;
         sy = oy >> 16;
         ox = x - 8;
@@ -349,7 +349,7 @@ void Func_02001b74(void) {
         oam++;
       } else {
         s32 x, sy;
-        frame = (s16)actor->timer;
+        frame = actor->timer;
         x = ox >> 16;
         sy = oy >> 16;
         ox = x - 8;
@@ -441,7 +441,7 @@ void Func_02001eb8(s32 id, s32 value) {
   struct Actor *object = Actor_Get(id);
 
   if (object != NULL) {
-    object->action = value;
+    object->timer = value;
     gData_02003600[gData_020035fe] = object;
     gData_020035fe++;
   }

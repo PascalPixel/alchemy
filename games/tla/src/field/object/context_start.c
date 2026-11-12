@@ -41,7 +41,7 @@ void ObjectEffect_PrepareContextEffect(s32 animation) {
   party = &gMainRoutineWork;
   mode = animation;
   object = ObjectTable_Get(party->currentOwner);
-  context = object->animation;
+  context = object->sprite;
   effect = ResourceMetadata_RegisterFar(context, 267);
   zero = 0;
   context->flags = zero;
@@ -91,7 +91,7 @@ void ResourceMetadata_ClearRecordFar(void *record);
 void ObjectEffect_EndContextEffect(s32 mode) {
   s32 zero;
   struct Actor *obj = ObjectTable_Get(gMainRoutineWork.currentOwner);
-  struct ContextSprite *ctx = obj->animation;
+  struct ContextSprite *ctx = obj->sprite;
   struct ContextEffectEntry *eff = ResourceMetadata_RegisterFar(ctx, 0x10b);
 
   zero = 0;

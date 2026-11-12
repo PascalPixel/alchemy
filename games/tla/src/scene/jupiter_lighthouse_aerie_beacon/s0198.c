@@ -136,12 +136,12 @@ void Func_02000198(void) {
     effect =
         Actor_Create(672, center->x, center->y - rise + 0xfff80000, center->z);
     if (effect != 0) {
-      sprite = effect->animation;
+      sprite = effect->sprite;
       Func_02005764(effect, gData_02006470);
       Actor_SetSpriteColor(effect, 1);
       effect->motionFlags = 0;
       angle = Random16Far() & 0xffff000;
-      effect->action = angle;
+      effect->timer = angle;
       effect->unk66 = 0;
       {
         u32 counter = Random16Far() >> 13;
@@ -232,12 +232,12 @@ void Func_020004c8(void) {
                           center->z);
   }
   if (effect != 0) {
-    sprite = effect->animation;
+    sprite = effect->sprite;
     Func_02005764(effect, gData_020068b0);
     Actor_SetSpriteColor(effect, 1);
     effect->motionFlags = 0;
     angle = Random16Far() & 0xffff000;
-    effect->action = angle;
+    effect->timer = angle;
     effect->unk66 = 0;
     effect->update = Func_02000090;
     effect->speedLimit =
@@ -274,7 +274,7 @@ void Func_020005b8(void) {
     return;
 #endif
   if (((struct FixedHalves *)&map->viewZ)->whole <= 177) {
-    ((struct SpriteRecord *)((struct FieldSprite *)Actor_Get(36)->animation)
+    ((struct SpriteRecord *)((struct FieldSprite *)Actor_Get(36)->sprite)
          ->record)
         ->unk05 = 1;
     if (gFrameCount & 1) {
@@ -336,7 +336,7 @@ void Func_0200065c(void) {
       created =
           FieldActor_Create(0x1e9, actor4->x, actor4->y + 0x80000, actor4->z);
       if (created != 0) {
-        sprite = created->animation;
+        sprite = created->sprite;
         sprite->unk1b[0] = 0;
         sprite->fullColor = 0;
         sprite->palette = 0;
@@ -403,7 +403,7 @@ void Func_0200065c(void) {
         actor37->velocityX = 0;
         actor37->velocityY = 0;
         actor37->velocityZ = 0;
-        actor37->action = 0;
+        actor37->timer = 0;
         Actor_WaitForMove(created);
         *flags = state;
         FieldEvent_Wait(90);
@@ -419,7 +419,7 @@ void Func_0200065c(void) {
         created->velocityX = 0;
         created->velocityY = 0;
         created->velocityZ = 0;
-        created->action = 0;
+        created->timer = 0;
       }
       FieldEvent_Wait(40);
       PaletteFade_ApplyTarget(0x10000, 0);

@@ -2,7 +2,7 @@
 #include "field_event.h"
 #include "macros.h"
 
-void SceneActor_ParkRecord(struct FieldActor *actor) {
+void SceneActor_ParkRecord(struct Actor *actor) {
   actor->targetX = ACTOR_NO_TARGET;
   actor->targetY = ACTOR_NO_TARGET;
   actor->targetZ = ACTOR_NO_TARGET;

@@ -402,16 +402,17 @@ void Func_02000468(s32 mode, s32 x, s32 z, s32 scene, s32 entrance) {
            * is built inside the loop as in the native; as
            * object->angle += 0x1000, 22 of 86 instructions differ in
            * tla-en. */
-          s32 angle = object->angle + 0x1000;
+          s32 angle = object->facing + 0x1000;
 
-          object->angle = angle;
+          object->facing = angle;
         }
         object->scaleX = scale;
         object->scaleY = scale;
       }
       object->scaleX = Q16_ONE;
       object->scaleY = Q16_ONE;
-      object->angle = Actor_Get(gMainRoutineWork.currentOwner)->angle + 0x8000;
+      object->facing =
+          Actor_Get(gMainRoutineWork.currentOwner)->facing + 0x8000;
       Func_020005d8(scene, entrance);
     }
   }

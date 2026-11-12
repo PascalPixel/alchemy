@@ -50,7 +50,7 @@ void Func_02000564(void);
 void Func_02000310(s32 kind, s32 frames);
 
 s32 Func_02000038(struct Actor *object) {
-  ((struct AnimationRecord26 *)object->animation)->frame = 0;
+  ((struct AnimationRecord26 *)object->sprite)->frame = 0;
   return 1;
 }
 

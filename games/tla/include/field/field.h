@@ -36,7 +36,7 @@ struct AnimationObject;
 struct EffectPosition;
 struct EffectStep;
 struct FacingObject;
-struct FieldActor;
+struct Actor;
 struct Actor;
 struct SceneEntrance;
 struct Trigger;
@@ -55,7 +55,7 @@ extern const u8 gActor_BlinkChildValues[4];
 extern const u8 gActor_StepAngleScript[];
 extern u16 gScript_MainScript[];
 s32 Animation_InitializeObjects(struct AnimationObject *);
-void Animation_SetStateFlags(struct FieldActor *object, s32 flags);
+void Animation_SetStateFlags(struct Actor *object, s32 flags);
 void AnimationObject_SetActiveTimerSteps(struct AnimationObject *, s32);
 s32 BattleEffect_ApplyColorToTargetBufferFar(s32, s32);
 void BattleEffect_ClearChildValueOnMismatch(void);
@@ -92,7 +92,7 @@ s32 Actor_IsTargetUnset(struct Actor *object);
 #ifndef OWN_Actor_SetPartAttribute
 void Actor_SetPartAttribute(struct Actor *object, s32 attribute);
 #endif
-void Scene_SetActorSpritePriority(struct FieldActor *object, s32 priority);
+void Scene_SetActorSpritePriority(struct Actor *object, s32 priority);
 void Actor_StartCameraFar(void *object, void *effect);
 void ObjectEffect_EndContextEffect(s32 effect);
 void ObjectEffect_PrepareContextEffect(s32 effect);

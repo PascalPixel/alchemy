@@ -64,7 +64,7 @@ void Func_02000080(const void *warp, s32 door, s32 mode) {
   Func_02002a44();
   FieldEvent_ResolvePendingActions(0);
   Event_PlaySound(158);
-  ((struct FieldActor *)Actor_Get(gMainRoutineWork.currentOwner))->motionFlags = 2;
+  Actor_Get(gMainRoutineWork.currentOwner)->motionFlags = 2;
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
   id = gMainRoutineWork.currentOwner;
@@ -86,7 +86,7 @@ void Func_020000fc(s32 door) {
   s32 *table = gData_020031fc;
 
   if ((u32)(door - 1) <= 1)
-    *(void **)((u8 *)((struct FieldActor *)Actor_Get(gMainRoutineWork.currentOwner)) + 108) =
+    *(void **)((u8 *)Actor_Get(gMainRoutineWork.currentOwner) + 108) =
         Func_0200006c;
   if (door == 7) {
     Func_020029f4(8);

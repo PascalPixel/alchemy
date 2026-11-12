@@ -95,8 +95,7 @@ L_02008138:
 void Func_0200014c(s32 actor) {
   u16 facing;
 
-  facing =
-      (Actor_Get(gMainRoutineWork.currentOwner)->angle + 0x2000) & 0xc000;
+  facing = (Actor_Get(gMainRoutineWork.currentOwner)->facing + 0x2000) & 0xc000;
   if (facing == 0xc000) {
     Func_0200063c(13, actor);
   } else {
@@ -108,8 +107,7 @@ void Func_0200014c(s32 actor) {
 void Func_0200019c(s32 actor) {
   u16 facing;
 
-  facing =
-      (Actor_Get(gMainRoutineWork.currentOwner)->angle + 0x2000) & 0xc000;
+  facing = (Actor_Get(gMainRoutineWork.currentOwner)->facing + 0x2000) & 0xc000;
   if (facing == 0xc000) {
     Func_0200064c(4, actor);
   } else {
@@ -124,8 +122,7 @@ void Func_0200019c(s32 actor) {
 void Func_020001fc(s32 actor) {
   u16 facing;
 
-  facing =
-      (Actor_Get(gMainRoutineWork.currentOwner)->angle + 0x2000) & 0xc000;
+  facing = (Actor_Get(gMainRoutineWork.currentOwner)->facing + 0x2000) & 0xc000;
   if (facing == 0xc000) {
     Func_02000644(actor);
   } else {
@@ -149,8 +146,7 @@ void Func_020001fc(s32 actor) {
 void Func_02000288(s32 actor) {
   u16 facing;
 
-  facing =
-      (Actor_Get(gMainRoutineWork.currentOwner)->angle + 0x2000) & 0xc000;
+  facing = (Actor_Get(gMainRoutineWork.currentOwner)->facing + 0x2000) & 0xc000;
   if (facing == 0xc000) {
     Func_02000644(actor);
   } else {
@@ -165,8 +161,7 @@ void Func_02000288(s32 actor) {
 void Func_020002e4(s32 actor) {
   u16 facing;
 
-  facing =
-      (Actor_Get(gMainRoutineWork.currentOwner)->angle + 0x2000) & 0xc000;
+  facing = (Actor_Get(gMainRoutineWork.currentOwner)->facing + 0x2000) & 0xc000;
   if (facing == 0xc000) {
     Func_02000644(actor);
   } else {

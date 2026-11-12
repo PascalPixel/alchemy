@@ -1,10 +1,10 @@
 #include "types.h"
 #include "field_event.h"
 
-void Scene_SetActorSpritePriority(struct FieldActor *object, s32 priority) {
+void Scene_SetActorSpritePriority(struct Actor *object, s32 priority) {
   struct FieldSprite *sprite;
 
-  if (object == 0 || object->animationKind == 0) {
+  if (object == 0 || (object->animationKind & 15) == 0) {
     return;
   }
   sprite = object->sprite;

@@ -29,7 +29,7 @@ void Func_020009b8(s32 x, s32 y, s16 part, s16 a3) {
     s32 angle = i << 12;
 
     Vector_AddPolarOffsetFar_(0x200000, angle, &object->x);
-    object->action = angle;
+    object->timer = angle;
     object->unk66 = a3;
     BYTE_AT(object, 98) = i;
     BYTE_AT(object, 99) = part;

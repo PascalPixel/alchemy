@@ -13,7 +13,7 @@ void Actor_SetSpritePriorityB(struct FieldEffect *effect, s32 priority);
 void Func_02003b30(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options) {
-  struct FieldActor *party = (struct FieldActor *)Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *party = Actor_GetById(gMainRoutineWork.currentOwner);
   struct FieldEffect *effect;
   struct FieldSprite *sprite;
   const s32 *script;
@@ -34,7 +34,8 @@ void Func_02003b30(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   effect->velocity.x = velocityX;
   effect->velocity.y = velocityY;
   effect->velocity.z = velocityZ;
-  Actor_SetSpritePriorityB(effect, party->sprite->priority);
+  Actor_SetSpritePriorityB(effect,
+                           ((struct FieldSprite *)party->sprite)->priority);
   effect->scaleRateX = 0;
   effect->scaleRateY = 0;
   effect->spin = 0;

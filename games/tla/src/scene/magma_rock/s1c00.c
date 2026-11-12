@@ -80,7 +80,7 @@ first:
   leader->gravity = 0xcccc;
   leader->bounce = 0;
   Event_Wait(1);
-  leader->angle = 0xc000;
+  leader->facing = 0xc000;
   i = 60;
 second:
   phase = gFrameCount & 1;

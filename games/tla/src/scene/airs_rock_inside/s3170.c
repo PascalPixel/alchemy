@@ -10,7 +10,7 @@ void Actor_ResetAndSetPositionInMode2(s32 actor, s32 x, s32 z);
 /// When layer 1's cell at the leader's x and z - 1 reads 30, runs the four
 /// steps 65, 66, 67 and 62 and moves the leader to (312, 792).
 void Func_02003170(void) {
-  struct FieldActor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   s32 width;
   s32 height;
 
@@ -30,7 +30,7 @@ void Func_02003170(void) {
   Func_02005d9c(62, 76, 19, 92, width, height);
   FieldEvent_Wait(15);
   Actor_GetById(gMainRoutineWork.currentOwner)->motionFlags = 0;
-  Actor_GetById(gMainRoutineWork.currentOwner)->speed =
+  Actor_GetById(gMainRoutineWork.currentOwner)->speedLimit =
       Actor_GetById(gMainRoutineWork.currentOwner)->acceleration = 0x8000;
   Func_02005f94(123);
   Actor_ResetAndSetPositionInMode2(gMainRoutineWork.currentOwner, 312, 792);

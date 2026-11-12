@@ -70,7 +70,7 @@ void Func_020011fc(void) {
   s32 stepX;
   s32 stepZ;
   s32 i;
-  s32 angle = (leader->angle + 0x2000) & 0xc000;
+  s32 angle = (leader->facing + 0x2000) & 0xc000;
 
   position[0] = (leader->x & 0xfff00000) + 0x80000;
   position[1] = leader->y - 0x100000;
@@ -362,7 +362,7 @@ void Func_02000694(s32 layer, s32 x, s32 z, s32 mask);
 /// over 64 steps. Then the cells close again and the leader steps back a cell.
 void Func_02001828(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
-  u32 facing = (leader->angle + 0x2000) & 0xc000;
+  u32 facing = (leader->facing + 0x2000) & 0xc000;
   s32 position[3];
   struct EffectOptions options;
   s32 baseX = 0;
@@ -518,7 +518,7 @@ void Func_02001828(void) {
   p[1] = leader->y;
   p[2] = (leader->z & 0xfff00000) + 0x80000;
   FieldVector_AddPolarOffset(0x100000, (s32)facing ^ 0x8000, p);
-  leader->angle = facing;
+  leader->facing = facing;
   Actor_WalkToAndWait(*(s32 *)j, ((s16 *)p)[1], ((s16 *)p)[5]);
   Actor_Get(*(s32 *)j)->actionFlags |= 1;
   Func_02004d48();

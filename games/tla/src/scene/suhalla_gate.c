@@ -90,11 +90,11 @@ void Func_02000168(void) {
     Actor_SetPosition(13, PIXELS(590), PIXELS(920));
     Actor_SetPosition(14, PIXELS(624), PIXELS(939));
     Actor_SetHorizontalPositionWithTerrain(15, PIXELS(632), PIXELS(920));
-    Actor_GetById(13)->angle = 0x4000;
+    Actor_GetById(13)->facing = 0x4000;
     Func_02000a90(13, 0x6000);
-    Actor_GetById(14)->angle = 0;
+    Actor_GetById(14)->facing = 0;
     Func_02000a90(14, 0);
-    Actor_GetById(15)->angle = 0xc000;
+    Actor_GetById(15)->facing = 0xc000;
     Func_02000a90(15, 0);
     Actor_GetById(13)->collisionFlags = 1;
     Actor_GetById(14)->collisionFlags = 1;

@@ -120,7 +120,7 @@ static __inline__ s32 Abs(s32 value) { return value < 0 ? -value : value; }
 s32 Func_020040ec(s32 id) {
   u8 *map = (u8 *)Ram_HeapSlots->mapWork;
   struct Actor *actor = Actor_GetById(id);
-  s16 kind = *((struct ObjectAnimationState *)actor->animation)->value28;
+  s16 kind = *((struct ObjectAnimationState *)actor->sprite)->value28;
   s16 i = 0;
   s32 next;
   u32 index;
@@ -255,14 +255,14 @@ struct Actor *Func_020043a8(s32 *direction, s32 *slot, s32 *kind) {
   u32 i, k;
   s32 x, z, left, top, right, bottom;
 
-  *direction = leader->angle >> 12;
+  *direction = leader->facing >> 12;
   i = 8;
   entry = &work->objects[8];
 outer:
   object = *entry;
   k = 0;
 inner:
-  if (((struct ObjectAnimationState *)object->animation)->value28[0] ==
+  if (((struct ObjectAnimationState *)object->sprite)->value28[0] ==
       gData_02004ca4[k]) {
     x = (PIXELS(leader->x) + (gData_02004cc8[*direction] >> 16)) >> 4;
     z = (PIXELS(leader->z) + (s16)gData_02004cc8[*direction]) >> 4;

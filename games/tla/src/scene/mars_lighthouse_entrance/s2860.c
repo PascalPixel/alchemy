@@ -73,7 +73,7 @@ int Func_02002860(void) {
   FieldEvent_ResolvePendingActions(0);
   Flag_Clear(0x106);
   leader->update = Func_02002614;
-  leader->angle = 0x4000;
+  leader->facing = 0x4000;
   Func_02004bc0(leader, 49);
   while (ride->car->stopped == 0) {
     if (Func_02004c18(0, leader->x, leader->z) != 7) {

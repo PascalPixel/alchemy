@@ -54,7 +54,7 @@ void Func_020000ec(void) {
 }
 
 void Func_02000178(void) {
-  struct FieldActor *object = ((struct FieldActor *)Actor_Get(10));
+  struct Actor *object = Actor_Get(10);
 
   if (!Event_GetFlag(0xa01) && object->x >> 20 == 17 && object->z >> 20 == 33) {
     Event_SetFlag(0xa01);
@@ -182,10 +182,10 @@ void Func_02000384(s32 mode) {
 }
 
 void Func_02000408(s32 id) {
-  struct FieldActor *object;
+  struct Actor *object;
   s32 height;
 
-  object = ((struct FieldActor *)Actor_Get(id));
+  object = Actor_Get(id);
   object->motionFlags = 4;
   height = object->terrainHeight;
   WORD_AT(object, 68) = 0;
@@ -231,13 +231,13 @@ void Func_0200045c(void) {
     actor->z = linked->z;
     if (i <= 0x3ffff)
       i += 0x1999;
-    actor->angle = (u8)gFrameCount << 12;
+    actor->facing = (u8)gFrameCount << 12;
     actor->priorityFlags ^= 2 << (gFrameCount & 1);
     System_Wait(1);
   }
   work->unkd44 = 1;
   work->unkd46 = 1;
-  facing = linked->angle;
+  facing = linked->facing;
   actor->x = (((linked->x >> 19) & ~1) + (facing >> 13) - 1) << 19;
   actor->z = (((linked->z >> 19) & ~1) - ((facing >> 13) & 2) + 1) << 19;
   actor->velocityY = 0x60000;

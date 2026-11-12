@@ -78,9 +78,9 @@ s32 Actor_MoveByKeys(struct Actor *object) {
     position.x += object->x;
     deltaZ = position.z;
     if (deltaZ < 0)
-      object->angle = 0xc000;
+      object->facing = 0xc000;
     if (deltaZ > 0)
-      object->angle = 0x4000;
+      object->facing = 0x4000;
     position.y = object->y - position.z;
     position.z = object->z;
     map = Ram_HeapSlots->mapWork;
@@ -186,7 +186,7 @@ s32 Func_080292fc(struct Actor *object) {
   struct Actor *second;
   struct EventWork *work;
 
-  sprite = object->animation;
+  sprite = object->sprite;
   chain = CHAIN_WORK;
   speed = 0x10000;
   collisionFlags = 0;
@@ -295,13 +295,13 @@ done:
 #include "worka0.h"
 
 static inline void TurnToward(struct Actor *object, u16 angle) {
-  s16 delta = angle - object->angle;
+  s16 delta = angle - object->facing;
 
   if (delta > 0x1000)
     delta = 0x1000;
   if (delta < -0x1000)
     delta = -0x1000;
-  object->angle += delta;
+  object->facing += delta;
 }
 
 s32 Func_08029570(struct Actor *object) {
@@ -318,7 +318,7 @@ s32 Func_08029570(struct Actor *object) {
   s32 count;
   struct EventWork *work;
 
-  sprite = object->animation;
+  sprite = object->sprite;
   argument = 1;
   collisionFlags = 0;
   object->speedLimit = 0x8000;
@@ -431,7 +431,7 @@ s32 Func_08029570(struct Actor *object) {
 
 u32 Random16(void);
 
-void Func_08029810(struct FieldActor *object) {
+void Func_08029810(struct Actor *object) {
   u32 first;
   u32 second;
   s32 x;

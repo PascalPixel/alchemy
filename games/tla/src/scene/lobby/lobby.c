@@ -767,7 +767,7 @@ void Func_020019e4(s32 value, s32 digits);
 
 // Tells the leader's win count, total or in a row by the way the lead faces.
 s32 Func_02000da0(s32 actor) {
-  u32 facing = Actor_GetById(4)->angle;
+  u32 facing = Actor_GetById(4)->facing;
   u16 *count;
   s32 base;
 

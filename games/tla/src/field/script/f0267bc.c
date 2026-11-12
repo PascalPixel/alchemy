@@ -302,19 +302,19 @@ counted:
     if (collision & 3) {
       s32 difference;
 
-      difference = (s16)(angle - object->angle);
+      difference = (s16)(angle - object->facing);
       if (difference > 0x1000)
         difference = 0x1000;
       if (difference < -0x1000)
         difference = -0x1000;
-      object->angle += difference;
+      object->facing += difference;
     }
-    object->action = 0;
+    object->timer = 0;
     object->unk66 = 2;
   } else {
     Actor_SetMoveTarget(object, position.x, position.y, position.z);
-    if (object->action != 0)
-      object->action--;
+    if (object->timer != 0)
+      object->timer--;
   }
   Field_CheckConfiguredKeys();
   object->step++;
@@ -440,11 +440,11 @@ void Func_08026fc8(struct Actor *object, s32 mode) {
   struct Child *sprite;
 
   created = Func_08023220(14, object->x, object->y + 0x40000, object->z);
-  sprite = object->animation;
+  sprite = object->sprite;
   if (!(object->unk66 & 1))
     Sound_PlayFar(623);
   if (created != NULL) {
-    struct Child *child = created->animation;
+    struct Child *child = created->sprite;
 
     created->terrainHeight = object->terrainHeight;
     Actor_StartScript((struct ActorView *)created, gData_0802ec88);

@@ -35,8 +35,8 @@ void Func_02000ef0(void) {
     options.palette = 7;
     options.startScaleX = 0x16666;
     options.startScaleY = 0x13333;
-    cosine = Math_Cosine(actor->angle);
-    sine = Math_Sine(actor->angle);
+    cosine = Math_Cosine(actor->facing);
+    sine = Math_Sine(actor->facing);
     sides[0] = cosine * 12;
     sides[1] = sine * 12;
     sides[2] = -(cosine * 12);

@@ -39,7 +39,7 @@ void Func_0200148c(void) {
   Func_02003aec();
   FieldEvent_ResolvePendingActions(0);
   object = work->target;
-  object->action = 0x400;
+  object->timer = 0x400;
   object->update = Func_02000ff4;
   Func_02003af4();
 }
@@ -87,15 +87,15 @@ void Func_02003a6c(struct Actor *part);
 void Func_02001528(struct Actor *part) {
   struct Actor *owner = part->watchedObject;
 
-  if (owner->action > 35 && owner->action < BYTE_AT(part, 98) * 2 + 36) {
+  if (owner->timer > 35 && owner->timer < BYTE_AT(part, 98) * 2 + 36) {
     PART_Y(part) = owner->y + 0x200000;
-    PART_Y(part) += (owner->action << 19) + (-35 << 19);
-  } else if (BYTE_AT(part, 98) * 2 + 36 < owner->action && owner->action < 332) {
+    PART_Y(part) += (owner->timer << 19) + (-35 << 19);
+  } else if (BYTE_AT(part, 98) * 2 + 36 < owner->timer && owner->timer < 332) {
     PART_Y(part) = owner->y + (BYTE_AT(part, 98) << 20) + 0x200000;
-  } else if (owner->action > 332 && owner->action < BYTE_AT(part, 98) * 2 + 333) {
+  } else if (owner->timer > 332 && owner->timer < BYTE_AT(part, 98) * 2 + 333) {
     PART_Y(part) = owner->y + (BYTE_AT(part, 98) << 20) + 0x200000;
-    PART_Y(part) -= (owner->action << 19) - (332 << 19);
-  } else if (BYTE_AT(part, 98) * 2 + 333 < owner->action) {
+    PART_Y(part) -= (owner->timer << 19) - (332 << 19);
+  } else if (BYTE_AT(part, 98) * 2 + 333 < owner->timer) {
     Func_02003a6c(part);
   }
 }
@@ -135,17 +135,17 @@ void Func_020015e4(union FieldObject *object) {
   s32 step;
   s32 mask;
 
-  if (watched->action >= 35 && watched->action <= 42) {
+  if (watched->timer >= 35 && watched->timer <= 42) {
     EFFECT_Y(object) = watched->y + 0x180000;
-    EFFECT_Y(object) = EFFECT_Y(object) + (watched->action << 19) + (-34 << 19);
+    EFFECT_Y(object) = EFFECT_Y(object) + (watched->timer << 19) + (-34 << 19);
   } else {
-    if (watched->action >= 9 && watched->action <= 331) {
+    if (watched->timer >= 9 && watched->timer <= 331) {
       EFFECT_Y(object) = watched->y + (object->effect.unk5a[8] << 20) + 0x180000;
-    } else if (watched->action > 332 &&
-               watched->action < (object->effect.unk5a[8] << 1) + 333) {
+    } else if (watched->timer > 332 &&
+               watched->timer < (object->effect.unk5a[8] << 1) + 333) {
       EFFECT_Y(object) = watched->y + (object->effect.unk5a[8] << 20) + 0x180000;
-      EFFECT_Y(object) -= (watched->action << 19) - (332 << 19);
-    } else if ((object->effect.unk5a[8] << 1) + 333 < watched->action) {
+      EFFECT_Y(object) -= (watched->timer << 19) - (332 << 19);
+    } else if ((object->effect.unk5a[8] << 1) + 333 < watched->timer) {
       object->effect.y = object->actor.terrainHeight;
       object->effect.update = 0;
     }

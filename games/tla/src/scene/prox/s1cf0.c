@@ -483,8 +483,8 @@ void Func_020029c8(void) {
 
 void Func_02002a08(void) {
   s32 variant =
-      ((struct FieldActor *)Actor_Get(gMainRoutineWork.currentOwner))
-          ->sprite->priority;
+      ((struct FieldSprite *)Actor_Get(gMainRoutineWork.currentOwner)->sprite)
+          ->priority;
 
   FieldActor_SetSpritePriority(8, variant);
   FieldActor_SetSpritePriority(10, variant);
@@ -906,8 +906,8 @@ void Func_0200385c(struct Actor *object) {
   s32 angle;
   s32 turn;
 
-  if (object->action != 0) {
-    object->action--;
+  if (object->timer != 0) {
+    object->timer--;
     return;
   }
   *(u8 *)((u8 *)object + 0x5a) = 0;
@@ -919,12 +919,12 @@ void Func_0200385c(struct Actor *object) {
     Func_020043c4(object, 9);
     return;
   }
-  turn = (s16)(angle - object->angle);
+  turn = (s16)(angle - object->facing);
   if (turn > 0x1000)
     turn = 0x1000;
   if (turn < -0x1000)
     turn = -0x1000;
-  object->angle += turn;
+  object->facing += turn;
   Func_020043c4(object, 2);
   Actor_SetAnimationSpeed(object, 48);
 }

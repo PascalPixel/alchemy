@@ -250,7 +250,7 @@ void Func_02001790(void) {
   FieldActor_SetPositionAndResetMotion(object, (x << 20) + PIXELS(8), object->y,
                                        (z << 20) + PIXELS(8));
   FieldEvent_Wait(4);
-  ((struct FieldActor *)FieldCamera_GetActor())->y += 0xfff80000;
+  ((struct Actor *)FieldCamera_GetActor())->y += 0xfff80000;
 }
 
 /// Centers the leader on its cell, plays sound 161 and copies the cell below

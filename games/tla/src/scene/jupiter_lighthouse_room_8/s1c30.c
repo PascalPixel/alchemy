@@ -34,7 +34,7 @@ void Func_02001c30(struct CellTarget *table, struct CellTargetEntry *entry) {
   Event_PlaySound(229);
   MapGrid_CopyCells(table->x, table->z + 2, 1, 1, x, z);
   FieldEvent_Wait(12);
-  leader->angle = 0x4000;
+  leader->facing = 0x4000;
   leader->motionFlags = 0;
   Actor_SetSingleChildFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);
   Io_Write16(0xf1f, &REG_WINOUT);

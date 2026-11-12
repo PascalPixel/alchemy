@@ -41,7 +41,7 @@ void Vector_AddPolarOffset(s32 magnitude, s32 angle, s32 *pos);
 
 void Func_080ddbd8(void) {
   struct BattleFxScene *work;
-  struct FieldActor *user;
+  struct Actor *user;
   s32 pos[3];
   s32 n;
   s32 *p;
@@ -52,7 +52,7 @@ void Func_080ddbd8(void) {
 
   p = pos;
   for (n = 23; n >= 0; n--) {
-    struct FieldActor *obj;
+    struct Actor *obj;
     struct BurstParticleVisual *visual;
     struct BurstParticleVisual *child;
     s32 dist;
@@ -85,7 +85,7 @@ void Func_080ddbd8(void) {
       ((s32 *)obj)[7] = 0xb333;
       ((s32 *)obj)[6] = 0xb333;
       obj->acceleration = 0x18000;
-      obj->speed = 0x18000;
+      obj->speedLimit = 0x18000;
       obj->motionFlags = 0;
       Animation_ApplyChildValuesFar(obj, 11);
       Actor_SetMode(obj, 7);
@@ -229,7 +229,7 @@ void Func_080ddea8(void) {
   for (n = 0; n < 2; n++) {
     obj = *walk++;
     if (obj != 0)
-      Motion_SetTargetPositionFromMagnitudeAngle(obj, 0x180000, obj->angle);
+      Motion_SetTargetPositionFromMagnitudeAngle(obj, 0x180000, obj->facing);
   }
 
   Actor_CommitPosition(pair[0]);
@@ -268,7 +268,7 @@ struct Actor *BattleEffect_SpawnItemBreakMode3(s32 x, s32 y, s32 z, s32 angle) {
   if (object != NULL) {
     object->scaleX = object->scaleY = 0x4000;
     object->acceleration = object->speedLimit = 0x30000;
-    ((struct FieldSprite *)object->animation)->priority = 0;
+    ((struct FieldSprite *)object->sprite)->priority = 0;
     Actor_SetMode(object, 3);
     scale = object->scaleX;
     if (scale < Q16_ONE) {
@@ -276,12 +276,12 @@ struct Actor *BattleEffect_SpawnItemBreakMode3(s32 x, s32 y, s32 z, s32 angle) {
         scale += 0x800;
         object->scaleY = scale;
         object->scaleX = scale;
-        object->angle += 0x2000;
+        object->facing += 0x2000;
         wait(1);
         scale = object->scaleX;
       } while (scale <= 0xffff);
     }
-    object->angle = angle;
+    object->facing = angle;
   }
   return object;
 }

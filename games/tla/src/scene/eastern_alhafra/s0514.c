@@ -53,7 +53,8 @@ void Func_02000514(void) {
 
   actor15 = Actor_GetById(15);
   actor16 = Actor_GetById(16);
-  facing = (Actor_GetById(gMainRoutineWork.currentOwner)->angle + 0x2000) & 0xc000;
+  facing =
+      (Actor_GetById(gMainRoutineWork.currentOwner)->facing + 0x2000) & 0xc000;
   if (actor16 != NULL && Event_GetFlag(0x8a4) == 0)
     Func_080dbdd4(actor16->x, actor16->z, 2, 255);
   if (Func_02004240(&unk) != 0) {

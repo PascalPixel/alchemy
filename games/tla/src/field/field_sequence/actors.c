@@ -129,10 +129,10 @@ void Event_SpawnObjectTable(struct ActorPlacement *entry, s32 slot) {
         if (previous->animationKind == 1 && object->animationKind == 1) {
           u8 resource;
 
-          sprite = previous->animation;
+          sprite = previous->sprite;
           sprite->displayFlags |= 1;
           resource = sprite->slot;
-          sprite = object->animation;
+          sprite = object->sprite;
           sprite->displayFlags |= 1;
           Resource_ResetEntry(sprite->slot);
           sprite->slot = resource;
@@ -144,7 +144,7 @@ void Event_SpawnObjectTable(struct ActorPlacement *entry, s32 slot) {
       Actor_SetPositionAndResetMotionFar(object, entry->x, entry->y, entry->z);
     }
     if (object != NULL) {
-      sprite = object->animation;
+      sprite = object->sprite;
       Actor_SetMode(object, 1);
       if (object->animationKind == 1 && sprite != NULL) {
         for (i = 0; i < sprite->partCount; i++) {
@@ -155,7 +155,7 @@ void Event_SpawnObjectTable(struct ActorPlacement *entry, s32 slot) {
         }
         sprite->unk19 = 1;
       }
-      object->angle = entry->facing;
+      object->facing = entry->facing;
       object->collisionFlags = 1;
       Actor_SetActionCallback(object, entry->behavior);
       ((struct SpawnActor *)object)->homeX = object->x / 0x10000;
@@ -261,7 +261,7 @@ void Func_080caa4c(s32 table) {
 
   object = work->objects[leader];
   object->terrainId = gMainRoutineWork.turn;
-  object->action = 0;
+  object->timer = 0;
   object->unk66 = 0;
   if (work->controlMode == 3) {
     if (gMainRoutineWork.ownerOverride != 0)
@@ -299,7 +299,7 @@ void Func_080caa4c(s32 table) {
     stand->y = object->y;
     stand->z = object->z;
     stand->terrainHeight = object->terrainHeight;
-    stand->angle = object->angle;
+    stand->facing = object->facing;
     object->x = 0;
     object->z = 0;
     object = stand;
@@ -309,7 +309,7 @@ void Func_080caa4c(s32 table) {
   camera->terrainHeight = object->terrainHeight;
   Actor_StartCameraFar(camera, object);
   if (work->controlMode == 3) {
-    u8 *effect = ResourceMetadata_RegisterFar(object->animation, 266);
+    u8 *effect = ResourceMetadata_RegisterFar(object->sprite, 266);
 
     effect[5] = 15;
     effect[6] = 9;
@@ -415,7 +415,7 @@ void ObjectTable_Snapshot(void) {
     *indices++ = i;
     Dma_Set(object, copy, DMA_COPY_WORDS(sizeof(struct Actor) / 4), REG_DMA3);
     if (object->animationKind == 1) {
-      sprite = object->animation;
+      sprite = object->sprite;
       frame = sprite->frame;
       next = sprite->nextFrame;
       priority = sprite->priority;
@@ -456,9 +456,9 @@ void ObjectTable_Restore(void) {
   while (index != 255) {
     object = ObjectTable_Get(index);
     if (object != NULL) {
-      sprite = object->animation;
+      sprite = object->sprite;
       Dma_Set(copy, object, DMA_COPY_WORDS(sizeof(struct Actor) / 4), REG_DMA3);
-      object->animation = sprite;
+      object->sprite = sprite;
       Actor_SetMode(object, *frames);
       Actor_SetSingleChildFlagsFar(object, *nextFrames);
       priority = *priorities;

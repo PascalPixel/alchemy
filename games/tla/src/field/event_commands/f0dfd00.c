@@ -70,7 +70,7 @@ void FieldEffect_RunWhirlwind(void) {
   struct BattleFxScene *scene = Ram_HeapSlots->effectWork;
   struct Actor *caster = scene->mainObject;
   struct Actor *target = scene->child;
-  struct OrbTargetSprite *sprite = target->animation;
+  struct OrbTargetSprite *sprite = target->sprite;
   struct EffectVector position;
   struct EffectVector from;
   struct EffectVector to;

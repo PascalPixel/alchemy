@@ -91,8 +91,8 @@ void Func_0200015c(struct Actor *object) {
     FieldVector_AddPolarOffset((radius << 5) + 0x80000, angle, position);
     SET_POSITION(object, position[0], position[1], position[2]);
   }
-  object->unk66 = object->action;
-  if (object->action == 212)
+  object->unk66 = object->timer;
+  if (object->timer == 212)
     Func_02001bec(object, 9);
   else
     Func_02001bec(object, 10);
@@ -161,9 +161,9 @@ void Func_02000298(void) {
     OBJECT_BYTE(object, 99) = i << 3;
     Actor_SetSingleChildFlags(object, 0);
     Actor_SetSpriteColor(object, 2);
-    ((struct FieldSprite *)object->animation)->priority = 1;
+    ((struct FieldSprite *)object->sprite)->priority = 1;
     Animation_SetStateFlags(object, 1);
-    action = &object->action;
+    action = &object->timer;
     timer = (s16 *)&object->unk66;
     next = i + 1;
     if (i & 1) {
@@ -280,10 +280,10 @@ void Func_020004dc(s32 mode) {
 }
 
 void Func_02000560(s32 id) {
-  struct FieldActor *object;
+  struct Actor *object;
   s32 height;
 
-  object = ((struct FieldActor *)Actor_Get(id));
+  object = Actor_Get(id);
   object->motionFlags = 4;
   height = object->terrainHeight;
   WORD_AT(object, 68) = 0;
@@ -327,13 +327,13 @@ void Func_020005b4(void) {
     actor->z = linked->z;
     if (i <= 0x3ffff)
       i += 0x1999;
-    actor->angle = (u8)gFrameCount << 12;
+    actor->facing = (u8)gFrameCount << 12;
     actor->priorityFlags ^= 2 << (gFrameCount & 1);
     System_Wait(1);
   }
   work->unkd44 = 1;
   work->unkd46 = 1;
-  facing = linked->angle;
+  facing = linked->facing;
   actor->x = (((linked->x >> 19) & ~1) + (facing >> 13) - 1) << 19;
   actor->z = (((linked->z >> 19) & ~1) - ((facing >> 13) & 2) + 1) << 19;
   actor->velocityY = 0x60000;
@@ -395,10 +395,10 @@ void Func_020007cc(struct Actor *self) {
     return;
   }
   Actor_SetAnimationSpeed(self, 16);
-  if ((++*(u16 *)&self->action & 31) == 31)
+  if ((++*(u16 *)&self->timer & 31) == 31)
     Event_PlaySound(231);
-  ((struct FieldSprite *)self->animation)->priority =
-      ((struct FieldSprite *)leader->animation)->priority;
+  ((struct FieldSprite *)self->sprite)->priority =
+      ((struct FieldSprite *)leader->sprite)->priority;
   if (Func_02001d2c(self->x, self->z, 2) != 255) {
     position[0] = self->x;
     position[1] = self->y;
@@ -418,7 +418,7 @@ void Func_020007cc(struct Actor *self) {
         if (Func_020007a0(&leader->x, &self->x) <= 12 && distance < 0xc0000)
           near = 1;
         if (near && !Event_GetFlag(260)) {
-          leader->angle = self->angle;
+          leader->facing = self->facing;
           leader->watchedObject = self;
           leader->priorityFlags &= ~1;
           work->unk16a = 200;
@@ -431,9 +431,9 @@ void Func_020007cc(struct Actor *self) {
       // the address is a linked word read after the cosine, as the native
       // reads it after the speed (at Iwram_MulQ16 it is built before).
       self->x += ((s32 (*)(s32, s32))(IwramIrqMain + Iwram_MulQ16Offset))(
-          Math_Cosine(self->angle), self->speedLimit);
+          Math_Cosine(self->facing), self->speedLimit);
       self->z += ((s32 (*)(s32, s32))(IwramIrqMain + Iwram_MulQ16Offset))(
-          Math_Sin(self->angle), self->speedLimit);
+          Math_Sin(self->facing), self->speedLimit);
       return;
     }
   }

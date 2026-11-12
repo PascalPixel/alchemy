@@ -6,30 +6,13 @@
 #include "event_work.h"
 
 #include "actor.h"
-#define Actor_SetMode ((void (*)(struct FieldActor *, s32))Actor_SetMode)
 
+/// struct Actor as the two scene routines that keep a flag number at 0x64 read
+/// it: as Actor.timer, the s16, their store of that number compiles
+/// differently (Tundaria Tower's and the Mars Lighthouse entrance's
+/// placement tables).
 struct FieldActor {
-  u8 unk00[6];
-  u16 facing;
-  s32 x;
-  s32 y;
-  s32 z;
-  s32 terrainHeight;
-  u8 unk18[0x0a];
-  u8 terrainId; ///< the map layer its ground height is read from
-  u8 priorityFlags;
-  s32 velocityX;
-  s32 velocityY;
-  s32 velocityZ;
-  s32 speed;
-  s32 acceleration;
-  s32 targetX;
-  s32 targetY;
-  s32 targetZ;
-  u8 unk44[0x0c];
-  struct FieldSprite *sprite;
-  u8 animationKind : 4;
-  u8 unk54High : 4;
+  u8 unk00[0x55];
   u8 motionFlags;
   u8 unk56[3];
   u8 collisionFlags;
@@ -43,7 +26,7 @@ void Task_Wait(s32 frames);
 void Event_Wait(s32 frames);
 void Event_Start(void);
 void Event_End(void);
-struct FieldActor *Actor_Create(s32 type, s32 x, s32 y, s32 z);
+struct Actor *Actor_Create(s32 type, s32 x, s32 y, s32 z);
 void Sound_PlayFar(s32 cue);
 
 void Import_EventStart(void);
@@ -58,7 +41,7 @@ void Import_EventSetExitRequest(s32 countdown);
 void Import_EventFinishScreenTransition(void);
 void Import_EventWaitTransitionFrames(void);
 s32 Import_PartyGetLeaderActor(void);
-struct FieldActor *Import_ActorGet(s32 actor);
+struct Actor *Import_ActorGet(s32 actor);
 void Import_ActorSetSpeed(s32 actor, s32 speed, s32 acceleration);
 void Import_ActorCenterAndWalk(s32 actor, s32 priority, s32 dz);
 void Import_ActorSetAnimation(s32 actor, s32 animation);
@@ -73,8 +56,8 @@ void Import_MapCopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX, s32 des
                            s32 height);
 void Import_MapCopyCellAttributeRect(s32 srcX, s32 srcY, s32 width, s32 height,
                                   s32 destX, s32 destY);
-struct FieldActor *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
-void Import_ActorSetMode(struct FieldActor *object, s32 mode);
-void Import_ActorSetScript(struct FieldActor *object, const void *script);
+struct Actor *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
+void Import_ActorSetMode(struct Actor *object, s32 mode);
+void Import_ActorSetScript(struct Actor *object, const void *script);
 
 #endif

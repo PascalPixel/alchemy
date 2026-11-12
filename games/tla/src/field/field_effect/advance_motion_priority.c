@@ -44,7 +44,7 @@ void Effect_AdvanceMotionAtLeaderPriority(union FieldObject *object) {
 
   leader = Actor_GetById(party->currentOwner);
   to = (struct EffectSpriteAttributes *)effect->sprite;
-  from = (struct EffectSpriteAttributes *)leader->animation;
+  from = (struct EffectSpriteAttributes *)leader->sprite;
   source = from->bits;
   bits = to->bits;
   bits.priority = source.priority;

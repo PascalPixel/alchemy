@@ -4,7 +4,7 @@
 #include "airs_rock_inside.h"
 #include "system.h"
 
-struct FieldActor *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type);
+struct Actor *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type);
 void Func_02005e84(s32 owner, s32 a, s32 b);
 void Func_02005efc(s32 countdown);
 
@@ -62,7 +62,7 @@ void Func_02003b7c(s32 x, s32 y) {
   REG_BLDCNT = 0x3f44;
   Scene_SetActorSpritePriority(marker, 0);
   Actor_SetSingleChildFlags(marker, 0);
-  sprite = marker->animation;
+  sprite = marker->sprite;
   sprite->blendMode = 2;
   Func_02005e14();
   Func_02005f2c(0);
@@ -130,7 +130,7 @@ void Func_02003cac(void) {
 /// from the controlled object at (73, 72) and stamps the cells kept at
 /// (70, 74) in their place.
 void Func_02003d40(void) {
-  struct FieldActor *object = Actor_GetById(Func_02005f84());
+  struct Actor *object = Actor_GetById(Func_02005f84());
   s32 x = object->x >> 20;
   s32 y = object->y >> 20;
   s32 z = object->z >> 20;
@@ -164,8 +164,8 @@ void Func_02003e28(void) {
   Func_02005d9c(89, 17, 88, 19, 1, 2);
 }
 
-void Func_02003e7c(struct FieldActor *source) {
-  struct FieldActor *object = (struct FieldActor *)Value4(
+void Func_02003e7c(struct Actor *source) {
+  struct Actor *object = (struct Actor *)Value4(
       (s32 (*)())Import_ActorCreate, 0x2a0, source->x, source->y, source->z);
 
   WORD_AT(object, 28) = 0x6666;
@@ -406,7 +406,7 @@ second:
     struct Actor *spark = (struct Actor *)Value4((s32 (*)())Import_ActorCreate,
                                                  0x2a0, b->x, b->y, b->z);
     Func_02005f94(195);
-    angle = &spark->action;
+    angle = &spark->timer;
     *angle = (Random16Far() & 0x7fff) + 0x8000;
     spark->unk66 = ((i & 1) * 2 - 1) << ((Random16Far() & 3) + 9);
     spark->motionFlags = 0;
@@ -444,7 +444,7 @@ third:
     struct Actor *spark =
         (struct Actor *)Value4((s32 (*)())Import_ActorCreate, 0x2a0, b->x,
                                b->y + i * 65536 - 0x80000, b->z);
-    spark->action = Random16Far();
+    spark->timer = Random16Far();
     spark->unk66 = 0x800;
     ((union SparkView *)spark)->bytes.unk62 = i;
     ((union SparkView *)spark)->bytes.unk63 = 1;
@@ -522,7 +522,7 @@ static inline void Call0(void (*f)()) {
 /// the scene with actor 6 follows, as Func_020030cc of Magma Rock does with
 /// the Blaze tablet.
 void Func_02004534(void) {
-  struct FieldActor *object;
+  struct Actor *object;
 
   Func_02005e14();
   Func_02005f2c(0);
@@ -583,7 +583,7 @@ void Func_02004534(void) {
                                 FIELD_AT(object, s16, 18));
     Actor_WaitForMoveById(6);
     Func_02005e6c(6, 0, 0);
-    Actor_SetActionCallback((struct Actor *)Actor_GetById(8), 9);
+    Actor_SetActionCallback(Actor_GetById(8), 9);
     Func_02005e1c();
   }
 }
@@ -684,8 +684,8 @@ found:
     return;
   Func_02005e14();
   Func_02005f2c(0);
-  firstSprite = first->animation;
-  secondSprite = second->animation;
+  firstSprite = first->sprite;
+  secondSprite = second->sprite;
   second->motionFlags = busy;
   second->y += -0x1c0000;
   wait(1);
@@ -718,10 +718,10 @@ step:
   leader->motionFlags = 3;
   first->scaleY = 0x10000;
   second->y = second->terrainHeight;
-  GameFlag_SetBit(first->action);
-  GameFlag_ClearBit(second->action);
-  Func_02005d5c(first, ((struct FieldSprite *)first->animation)->frame + 1);
-  Func_02005d5c(second, ((struct FieldSprite *)second->animation)->frame - 1);
+  GameFlag_SetBit(first->timer);
+  GameFlag_ClearBit(second->timer);
+  Func_02005d5c(first, ((struct FieldSprite *)first->sprite)->frame + 1);
+  Func_02005d5c(second, ((struct FieldSprite *)second->sprite)->frame - 1);
   Func_020006cc(first);
   Func_020006cc(second);
   FieldEvent_Wait(10);

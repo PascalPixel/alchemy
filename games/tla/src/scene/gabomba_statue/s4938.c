@@ -156,7 +156,7 @@ void Func_02004938(struct Actor *ball, s32 step) {
       ball->x = x;
       ball->y = 0;
       ball->z = z;
-      ball->angle = angle;
+      ball->facing = angle;
       if (x >> 20 == 24 && z >> 20 == 14) {
         ((u8 *)ball)[99] = 7;
       } else {
@@ -188,7 +188,7 @@ done:
     ball->y = 0;
     ball->x = x;
     ball->z = z;
-    ball->angle = angle;
+    ball->facing = angle;
     ball->unk4c++;
   }
 }

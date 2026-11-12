@@ -328,7 +328,7 @@ s32 FieldSequence_Run(void) {
     party->x = leader->x;
     party->y = 0;
     party->z = leader->z;
-    party->heading = leader->angle;
+    party->heading = leader->facing;
     *turn = leader->terrainId;
     while (BattleEffect_SumCounters() != 0) {
       if (work->warp != 0) {
@@ -564,7 +564,7 @@ s32 FieldSequence_Run(void) {
         // unk66 read signed (ldrsh), as its other readers read it; as
         // leader->unk66 == 0, 39 of 1300 instructions differ in tla-en.
         if (*pending == 0 ||
-            (leader->action == 0 && *(s16 *)&leader->unk66 == 0))
+            (leader->timer == 0 && *(s16 *)&leader->unk66 == 0))
           Func_080cb2b8(leader->terrainId, leader->x, leader->y, leader->z);
       }
     } while (BattleEffect_SumCounters() == 0);

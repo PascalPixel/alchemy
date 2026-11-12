@@ -64,7 +64,7 @@ void Func_020017b4(struct Actor *self) {
   }
   if (ahead[2] >> 16 > 248)
     return;
-  AddPolar(0x70000, 0x8000 - leader->angle, ahead);
+  AddPolar(0x70000, 0x8000 - leader->facing, ahead);
   if (MapGrid_GetCellBehaviorAt(self->terrainId, ahead[0], ahead[2]) == 255)
     return;
   {

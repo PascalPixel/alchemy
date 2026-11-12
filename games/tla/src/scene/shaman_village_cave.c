@@ -158,7 +158,7 @@ void Func_0200030c(void) {
 
 s32 Func_0200032c(struct Actor *object) {
   Actor_SetSingleChildFlags(object, 0);
-  ((struct FieldSprite *)object->animation)->priority = 2;
+  ((struct FieldSprite *)object->sprite)->priority = 2;
   object->motionFlags = 0;
   return 0;
 }

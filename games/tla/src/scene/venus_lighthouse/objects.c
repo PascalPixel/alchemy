@@ -11,22 +11,21 @@
 #include "field_event.h"
 #include "event_inline.h"
 
-#define Actor_SetSingleChildFlags                                     \
-  ((void (*)(struct FieldActor *, s32))Actor_SetSingleChildFlags)
+#define Actor_SetSingleChildFlags                                              \
+  ((void (*)(struct Actor *, s32))Actor_SetSingleChildFlags)
 
-#define Actor_SetPartAttribute                                                \
-  ((void (*)(struct FieldActor *, s32))Actor_SetPartAttribute)
+#define Actor_SetPartAttribute                                                 \
+  ((void (*)(struct Actor *, s32))Actor_SetPartAttribute)
 
-void ConfigureOverlayObject(struct FieldActor *object, s32 parameter) {
+void ConfigureOverlayObject(struct Actor *object, s32 parameter) {
   object->motionFlags = 0;
   object->collisionFlags = 8;
   Actor_SetSingleChildFlags(object, 0);
   Actor_SetSpriteColor(object, parameter);
 }
 
-struct FieldActor *OverlayObject_SpawnWithMode14(s32 x, s32 y, s32 z,
-                                                 s32 kind) {
-  struct FieldActor *object = FieldActor_Create(kind, x, y, z);
+struct Actor *OverlayObject_SpawnWithMode14(s32 x, s32 y, s32 z, s32 kind) {
+  struct Actor *object = FieldActor_Create(kind, x, y, z);
 
   if (object != 0) {
     Scene_SetActorSpritePriority(object, 0);
@@ -37,9 +36,9 @@ struct FieldActor *OverlayObject_SpawnWithMode14(s32 x, s32 y, s32 z,
   return 0;
 }
 
-struct FieldActor *OverlayObject_PrepareObjectWithCommand15(s32 x, s32 y, s32 z,
-                                                            s32 kind) {
-  struct FieldActor *object = FieldActor_Create(kind, x, y, z);
+struct Actor *OverlayObject_PrepareObjectWithCommand15(s32 x, s32 y, s32 z,
+                                                       s32 kind) {
+  struct Actor *object = FieldActor_Create(kind, x, y, z);
 
   if (object != 0) {
     Scene_SetActorSpritePriority(object, 1);

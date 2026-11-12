@@ -91,7 +91,7 @@ void Func_02003370(void) {
       u8 zero;
       s32 mask;
 
-      sprite = object->animation;
+      sprite = object->sprite;
       Func_0200556c(object, gData_02006180);
       Actor_SetSpriteColor(object, 1);
       object->motionFlags = 0;
@@ -101,7 +101,7 @@ void Func_02003370(void) {
          * differ in tla-en. */
         s32 action = Random16Far() & 0x0ffff000;
 
-        object->action = action;
+        object->timer = action;
       }
       zero = 0;
       object->unk66 = 0;
@@ -150,8 +150,8 @@ void Func_02003648(s32 id) { Actor_GetById(id)->motionFlags = 3; }
 
 void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
 
-struct FieldActor;
-void Animation_SetStateFlags(struct FieldActor *object, s32 flags);
+struct Actor;
+void Animation_SetStateFlags(struct Actor *object, s32 flags);
 void Func_02000610(s32 id);
 void Func_02000640(s32 id);
 s32 Func_0200557c();
@@ -553,22 +553,22 @@ void Func_02003ff4(void) {
   quarterTurn = 0x4000;
   t2 = *(s32 *)owner;
   t3 = Actor_Get(t2);
-  ((struct Actor *)t3)->angle = quarterTurn;
+  ((struct Actor *)t3)->facing = quarterTurn;
   t4 = Actor_Get(7);
-  ((struct Actor *)t4)->angle = quarterTurn;
+  ((struct Actor *)t4)->facing = quarterTurn;
   t5 = Actor_Get(5);
-  ((struct Actor *)t5)->angle = quarterTurn;
+  ((struct Actor *)t5)->facing = quarterTurn;
   t6 = Actor_Get(6);
-  ((struct Actor *)t6)->angle = quarterTurn;
+  ((struct Actor *)t6)->facing = quarterTurn;
   t7 = Actor_Get(19);
   threeSixteenthsTurn = 0x3000;
-  ((struct Actor *)t7)->angle = threeSixteenthsTurn;
+  ((struct Actor *)t7)->facing = threeSixteenthsTurn;
   t8 = Actor_Get(0);
-  ((struct Actor *)t8)->angle = quarterTurn;
+  ((struct Actor *)t8)->facing = quarterTurn;
   t9 = Actor_Get(1);
-  ((struct Actor *)t9)->angle = quarterTurn;
+  ((struct Actor *)t9)->facing = quarterTurn;
   t10 = Actor_Get(2);
-  ((struct Actor *)t10)->angle = quarterTurn;
+  ((struct Actor *)t10)->facing = quarterTurn;
   System_Wait(1);
   Actor_SetAnimation(20, 8);
   Actor_SetAnimation(21, 8);
@@ -674,7 +674,7 @@ void Func_02003ff4(void) {
   Event_ShowMessage(28, 0);
   Func_02005794();
   actor = Actor_Get(5);
-  ((struct Actor *)actor)->angle = 0x6000;
+  ((struct Actor *)actor)->facing = 0x6000;
   Actor_SetAnimation(5, 22);
   FieldEvent_Wait(10);
   FieldActor_StartRepeatedMotion(5, 2);
@@ -682,7 +682,7 @@ void Func_02003ff4(void) {
   FieldPsynergy_StartMindReadWave(23, 24);
   Event_ShowMessage(28, 0);
   Func_02005794();
-  ((struct Actor *)actor)->angle = quarterTurn;
+  ((struct Actor *)actor)->facing = quarterTurn;
   Actor_SetAnimation(5, 1);
   W_Func_02005714(5, 0x100, 20);
   Event_ShowMessage(5, 0);

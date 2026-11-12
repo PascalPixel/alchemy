@@ -254,7 +254,7 @@ void Func_080e3074(void) {
   Func_080e2264();
   BattleEffect_SetObjectUpdateMode(*(struct Actor **)(effect + 16), 0);
   owner->update = BattleEffect_SpinObject;
-  owner->action = owner->angle;
+  owner->timer = owner->facing;
   palette = (u16 *)0x050003c0;
   blue = 31 << 10;
   for (j = 0; j < 16; j++) {
@@ -419,7 +419,7 @@ void Func_080e3074(void) {
       wait(1);
     }
     owner->update = NULL;
-    owner->angle = owner->action;
+    owner->facing = owner->timer;
     frame = 0;
     while (work->count != 0) {
       if (frame == 30)
@@ -433,7 +433,7 @@ void Func_080e3074(void) {
     Sound_PlayFar(136);
     Actor_SetMode(ring, 6);
     for (i = 0; i < 16; i++) {
-      owner->angle += 0x1000;
+      owner->facing += 0x1000;
       canvas->angle += 0x400;
       canvas->command = 3;
       wait(1);
@@ -442,7 +442,7 @@ void Func_080e3074(void) {
   Sound_PlayFar(136);
   Actor_Destroy(ring);
   owner->update = NULL;
-  owner->angle = owner->action;
+  owner->facing = owner->timer;
   BattleEffect_EndCanvasSprite();
   HeapSlot_Release(92);
 }
@@ -455,7 +455,7 @@ void Event_Wait(s32 frames);
 
 void Func_080e3698(s32 actor) {
   struct Actor *object = Actor_GetById(actor);
-  s32 angle = object->angle;
+  s32 angle = object->facing;
   u8 motionFlags = object->motionFlags;
   struct Actor *ring;
   s32 x, y, z;
@@ -497,7 +497,7 @@ void Func_080e3698(s32 actor) {
   Event_Wait(15);
   Actor_Destroy(ring);
   object->update = NULL;
-  object->angle = angle;
+  object->facing = angle;
   object->motionFlags = motionFlags;
   wait(1);
   Camera_FollowActor(actor, 1);
@@ -513,7 +513,7 @@ void Event_WaitTransitionFrames(void);
 /// are restored.
 void Func_080e37e0(s32 actor) {
   struct Actor *object = Actor_GetById(actor);
-  s32 angle = object->angle;
+  s32 angle = object->facing;
   struct Actor *ring;
   s32 i;
 
@@ -546,7 +546,7 @@ void Func_080e37e0(s32 actor) {
   Event_Wait(10);
   Actor_Destroy(ring);
   object->update = NULL;
-  object->angle = angle;
+  object->facing = angle;
 }
 
 // The spray's drops and smoke puffs, moved and drawn each frame.

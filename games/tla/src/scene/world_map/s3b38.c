@@ -370,7 +370,7 @@ void Func_02004b38(struct Actor *object);
 
 void Func_02004598(struct Actor *object) {
   struct Actor *parent = object->watchedObject;
-  s32 step = ++object->action;
+  s32 step = ++object->timer;
   s32 scale;
   s32 rise;
 
@@ -390,7 +390,7 @@ void Func_02004598(struct Actor *object) {
 
 void Func_020045e4(struct Actor *object) {
   struct Actor *parent = object->watchedObject;
-  s32 step = ++object->action;
+  s32 step = ++object->timer;
   s32 scale;
   s32 rise;
 
@@ -445,9 +445,9 @@ void Func_02004634(struct Actor *parent) {
     pair[i] = child;
     if (child != NULL) {
       child->terrainHeight = parent->terrainHeight;
-      sprite = child->animation;
+      sprite = child->sprite;
       child->motionFlags = 0;
-      child->action = 0;
+      child->timer = 0;
       child->watchedObject = parent;
       if (sprite != NULL) {
         Animation_ApplyChildArgument(sprite, 0);
@@ -468,14 +468,14 @@ void Func_02004634(struct Actor *parent) {
   }
   {
     struct Actor *p = pair[0];
-    struct FieldSprite *sp = p->animation;
+    struct FieldSprite *sp = p->sprite;
 
     p->update = (void *)Func_020045e4;
     sp->priority = 1;
   }
   {
     struct Actor *p = pair[1];
-    struct FieldSprite *sp = p->animation;
+    struct FieldSprite *sp = p->sprite;
 
     sp->priority = 1;
     p->update = (void *)Func_02004598;

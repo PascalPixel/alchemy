@@ -75,7 +75,7 @@ void Func_020019a8(void) {
       OverlayObject_PrepareObject(object->x, 0, position[2] + 0x3b0000, 286);
   effect->scaleX = 0x18000;
   effect->scaleY = 0x18000;
-  sprite = effect->animation;
+  sprite = effect->sprite;
   ((struct SpriteView *)sprite)->mode = 2;
   REG_WINOUT = WINOUT_WIN01_ALL | WINOUT_WINOBJ_BG0 | WINOUT_WINOBJ_BG1 |
                WINOUT_WINOBJ_BG2 | WINOUT_WINOBJ_BG3 | WINOUT_WINOBJ_CLR;

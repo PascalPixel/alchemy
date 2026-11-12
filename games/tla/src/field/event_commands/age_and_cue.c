@@ -305,7 +305,7 @@ void Func_080e03cc(void) {
     return;
   BattleEffect_InitializeSharedScene();
   Sound_PlayFar(138);
-  object->angle = mainObject->angle;
+  object->facing = mainObject->facing;
   object->speedLimit = 0x14ccc;
   object->motionFlags = 0;
   Actor_SetMode(object, 5);
@@ -576,7 +576,7 @@ void Func_080e09c0(void) {
   BattleEffect_InitializeSharedScene();
   object = Actor_Spawn(363, 0, 0, 0);
   if (object != 0) {
-    object->angle = caster->angle;
+    object->facing = caster->facing;
     object->motionFlags = 0;
     if (caster->priorityFlags & 0x20)
       object->priorityFlags |= 0x20;
@@ -655,10 +655,10 @@ void Func_080e09c0(void) {
 void BattleEffect_AdvanceAngleWithRamp(struct Actor *object) {
   u32 step;
 
-  step = object->action * 0x50;
-  object->angle += step + 0x1000;
+  step = object->timer * 0x50;
+  object->facing += step + 0x1000;
   if (step < 0x1000)
-    object->action++;
+    object->timer++;
 }
 
 /// Per-frame update: spins 1/8 turn a frame as it shrinks, rising a pixel a
@@ -672,7 +672,7 @@ void BattleEffect_UpdateDescendingObject(struct Actor *obj) {
   obj->scaleY += step;
   scaleX = obj->scaleX;
   scale = scaleX + step;
-  obj->angle += 0x2000;
+  obj->facing += 0x2000;
   obj->y += 1 << 16;
   obj->scaleX = scale;
   if ((s32)scale < 0x3000) {

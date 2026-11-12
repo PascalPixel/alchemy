@@ -19,7 +19,7 @@ void Func_02001b78(s32 *position, s32 base) {
      * to 16 bits: movs, lsls for 0x8000, no extension); as a direct store, 10
      * of 50 instructions differ in tla-en. */
     angle = (u16)Random16Far() - 0x8000;
-    object->action = angle;
+    object->timer = angle;
     Func_02001b38(object, 2);
     object->update = Func_02001a9c;
     Animation_SetStateFlags(object, 1);

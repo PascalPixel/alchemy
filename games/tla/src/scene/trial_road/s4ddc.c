@@ -61,12 +61,12 @@ void Func_02004ddc(void) {
       dx = x - rival->x;
       dz = z - rival->z;
       heading = ArcTan2(dz, dx);
-      turn = (s16)(heading - rival->angle);
+      turn = (s16)(heading - rival->facing);
       if (turn > 0x1000)
         turn = 0x1000;
       if (turn < -0x1000)
         turn = -0x1000;
-      rival->angle += turn;
+      rival->facing += turn;
       rival->x = x;
       rival->z = z;
     }
@@ -99,10 +99,10 @@ void Func_02004ddc(void) {
         x = work->linkX - 0xc0000;
       if (!GameFlag_Test(530)) {
         z = work->linkZ + 0x100000;
-        rival->action = work->linkAngle;
+        rival->timer = work->linkAngle;
       } else {
         z = work->linkZ - 0x100000;
-        rival->action = work->unke6;
+        rival->timer = work->unke6;
       }
       rival->acceleration = 0x4000;
       rival->speedLimit = 0x10000;
@@ -111,7 +111,7 @@ void Func_02004ddc(void) {
     } else {
       x <<= 16;
       z <<= 16;
-      rival->angle = angle;
+      rival->facing = angle;
       rival->x = x;
       rival->z = z;
       Func_020057c8(rival, ok);
@@ -127,7 +127,7 @@ void Func_02004ddc(void) {
     if (rival == 0)
       return;
     rival->x = x << 16;
-    rival->angle = angle;
+    rival->facing = angle;
     rival->z = z << 16;
     Func_020057c8(rival, ok);
   } else if (state->mode == 1) {
@@ -155,12 +155,12 @@ void Func_02004ddc(void) {
       dx = x - rival->x;
       dz = z - rival->z;
       heading = ArcTan2(dz, dx);
-      turn = (s16)(heading - rival->angle);
+      turn = (s16)(heading - rival->facing);
       if (turn > 0x1000)
         turn = 0x1000;
       if (turn < -0x1000)
         turn = -0x1000;
-      rival->angle += turn;
+      rival->facing += turn;
       rival->x = x;
       rival->z = z;
       state->still = 0;

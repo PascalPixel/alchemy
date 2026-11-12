@@ -208,7 +208,7 @@ void Func_020013f8(void) {
     struct FieldSprite *sprite;
     s32 priority;
 
-    sprite = object->animation;
+    sprite = object->sprite;
     priority = gMainRoutineWork.renderMode == 2 ? 2 : 1;
     sprite->priority = priority;
     sprite->partPriority = priority;
@@ -237,9 +237,9 @@ void Func_02001460(void) {
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x20000, 0x10000);
   for (i = 15; i >= 0; i--) {
     object->y += 0x10000;
-    angle = object->angle;
+    angle = object->facing;
     angle += 0x2000;
-    object->angle = angle;
+    object->facing = angle;
     wait(1);
   }
   Func_02001d30(object);
@@ -270,9 +270,9 @@ void Func_0200153c(void) {
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x20000, 0x10000);
   for (i = 23; i >= 0; i--) {
     object->y += 0x20000;
-    angle = object->angle;
+    angle = object->facing;
     angle += 0x2000;
-    object->angle = angle;
+    object->facing = angle;
     wait(1);
   }
   Func_02001d30(object);
@@ -284,35 +284,35 @@ void Func_0200153c(void) {
 }
 
 void Func_020015e8(struct Actor *object) {
-  struct FieldSprite *sprite = object->animation;
+  struct FieldSprite *sprite = object->sprite;
   s16 *amplitude;
 
-  object->action += 0x2000;
+  object->timer += 0x2000;
   amplitude = (s16 *)&object->unk66;
   *amplitude += 32;
   if (*amplitude > 0x200)
     *amplitude = 0x200;
-  sprite->rotation = Iwram_MulQ16(Math_Sine(object->action), *amplitude);
+  sprite->rotation = Iwram_MulQ16(Math_Sine(object->timer), *amplitude);
 }
 
 void Func_02001630(struct Actor *object) {
-  struct FieldSprite *sprite = object->animation;
+  struct FieldSprite *sprite = object->sprite;
   s16 *amplitude;
 
-  object->action += 0x2000;
+  object->timer += 0x2000;
   amplitude = (s16 *)&object->unk66;
   *amplitude -= 16;
   if (*amplitude < 0) {
     *amplitude = 0;
   }
-  sprite->rotation = Iwram_MulQ16(Math_Sine(object->action), *amplitude);
+  sprite->rotation = Iwram_MulQ16(Math_Sine(object->timer), *amplitude);
 }
 
 void Func_02001670(struct Actor *object) {
-  struct FieldSprite *sprite = object->animation;
+  struct FieldSprite *sprite = object->sprite;
 
-  object->action += 0x100;
-  sprite->rotation = Math_Sine(object->action) / 64 + 0x600;
+  object->timer += 0x100;
+  sprite->rotation = Math_Sine(object->timer) / 64 + 0x600;
 }
 
 /// Scatters objects 17 to 21 under cue 184, lines them up 32 pixels apart
@@ -338,7 +338,7 @@ scatter:
     object->speedLimit = 0x4000;
     object->acceleration = 0x400;
     object->update = (void (*)(void))Func_020015e8;
-    object->action = Random16Far();
+    object->timer = Random16Far();
     object->unk66 = 0;
   }
   if (++i <= 21)
@@ -363,7 +363,7 @@ settle:
     struct Actor *object = Actor_GetById(21);
 
     object->update = (void (*)(void))Func_02001670;
-    object->action = 0;
+    object->timer = 0;
   }
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();

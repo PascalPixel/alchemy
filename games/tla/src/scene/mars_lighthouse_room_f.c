@@ -53,7 +53,7 @@ void Func_020000bc(void) {
 
 void Func_020000d0(void) {
   struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
-  u32 facing = object->angle;
+  u32 facing = object->facing;
 
   if (facing == 0 || facing == 0x8000) {
     s32 x = object->x >> 20;
@@ -98,7 +98,7 @@ extern const u8 gData_02006a0c[];
 void Func_02000170(void) {
   s32 position[3];
   struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
-  s32 angle = object->angle >> 12;
+  s32 angle = object->facing >> 12;
 
   angle = ((angle + 2) & 12) << 12;
   position[0] = object->x;
@@ -180,7 +180,7 @@ void Func_020002b8(s32 unused, s32 id) {
   x = object->x;
   offset = (id - 18) * 2;
   kind = *(s16 *)((u8 *)table + offset);
-  if (x >> 20 == object->action >> 4)
+  if (x >> 20 == object->timer >> 4)
     Actor_SetPosition(kind, 0, 0);
 }
 
@@ -978,10 +978,10 @@ void Func_020015a4(s32 mode) {
 #include "event_inline.h"
 
 void Func_02001628(s32 id) {
-  struct FieldActor *object;
+  struct Actor *object;
   s32 height;
 
-  object = (struct FieldActor *)Actor_Get(id);
+  object = Actor_Get(id);
   object->motionFlags = 4;
   height = object->terrainHeight;
   WORD_AT(object, 68) = 0;

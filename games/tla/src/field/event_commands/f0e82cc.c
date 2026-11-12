@@ -655,7 +655,7 @@ void ViewMove_SaveNearbySprites(void) {
                       i) == -1)
       continue;
     group->objects[group->count] = obj;
-    group->values[group->count] = ((union FxSprite *)obj->animation)->halves[9];
+    group->values[group->count] = ((union FxSprite *)obj->sprite)->halves[9];
     if (++group->count == 8)
       break;
   }
@@ -667,6 +667,5 @@ void ViewMove_RestoreNearbySprites(void) {
   s32 i;
 
   for (i = 0; i < group->count; i++)
-    ((union FxSprite *)group->objects[i]->animation)->halves[9] =
-        group->values[i];
+    ((union FxSprite *)group->objects[i]->sprite)->halves[9] = group->values[i];
 }

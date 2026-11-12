@@ -138,7 +138,7 @@ void Func_020010d4(void) {
                              turnB = FACING_NORTHWEST);
   Actor_SetPositionAndFacing(5, PIXELS(408), PIXELS(184), turnB);
   if (statue != 0) {
-    sprite = statue->animation;
+    sprite = statue->sprite;
     sprite->nextFrame = 0;
     sprite->unk1b[0] = 0;
     sprite->fullColor = 0;

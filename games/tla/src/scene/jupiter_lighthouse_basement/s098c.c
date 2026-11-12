@@ -180,12 +180,12 @@ struct LightOam {
 
 extern s16 gData_020023f0;
 extern s16 gData_020023f2;
-extern struct FieldActor *gData_020023f4[];
+extern struct Actor *gData_020023f4[];
 extern struct LightOam Data_02002434[];
 extern s16 gData_020024f4;
 extern s16 gData_020024f6;
 
-s32 Func_02001d24(struct FieldActor *actor);
+s32 Func_02001d24(struct Actor *actor);
 void Func_02001bc4(struct LightOam *oam, s32 depth);
 
 void Func_02000c94(void) {
@@ -201,7 +201,7 @@ void Func_02000c94(void) {
   oam = Data_02002434;
 
   for (i = 0; i < gData_020023f2; i++) {
-    struct FieldActor *actor = gData_020023f4[i];
+    struct Actor *actor = gData_020023f4[i];
     if (actor != 0 && actor->x != 0) {
       s32 big, ox, y, z, oy, depth;
       s32 frame;
@@ -215,7 +215,7 @@ void Func_02000c94(void) {
       big = gData_020024f4;
       if (big == 0) {
         s32 x, sy;
-        frame = (s16)actor->timer;
+        frame = actor->timer;
         x = ox >> 16;
         sy = oy >> 16;
         ox = x - 8;
@@ -236,7 +236,7 @@ void Func_02000c94(void) {
         oam++;
       } else {
         s32 x, sy;
-        frame = (s16)actor->timer;
+        frame = actor->timer;
         x = ox >> 16;
         sy = oy >> 16;
         ox = x - 8;
@@ -314,7 +314,7 @@ void Func_02000f50(void) {
 }
 
 void Func_02000fd8(s32 id, s32 value) {
-  struct FieldActor *object = ((struct FieldActor *)Actor_Get(id));
+  struct Actor *object = Actor_Get(id);
 
   if (object != NULL) {
     s16 *count;

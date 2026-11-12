@@ -22,7 +22,7 @@
 void Func_02000038(void) { Func_02000de8(gData_02000e10); }
 
 void Func_02000048(void) {
-  struct FieldActor *actor = Actor_GetById(12);
+  struct Actor *actor = Actor_GetById(12);
   s32 x = actor->x >> 20;
   s32 z = actor->z >> 20;
 
@@ -86,7 +86,7 @@ void Func_020001cc(void) {
 }
 
 void Func_020001ec(void) {
-  struct FieldActor *object = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *object = Actor_GetById(gMainRoutineWork.currentOwner);
 
   Call7((void (*)())Func_02000df8, 53, 5, 8, 9, 23, 30, 0);
   if (!GameFlag_Test(3999)) {
@@ -104,7 +104,7 @@ void Func_020001ec(void) {
 }
 
 void Func_0200027c(void) {
-  struct FieldActor *object = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *object = Actor_GetById(gMainRoutineWork.currentOwner);
 
   Call7((void (*)())Func_02000df8, 53, 5, 8, 9, 23, 30, 0);
   if (!GameFlag_Test(4000)) {
@@ -135,7 +135,7 @@ void Func_0200034c(void) {
 }
 
 void Func_0200036c(void) {
-  struct FieldActor *object = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *object = Actor_GetById(gMainRoutineWork.currentOwner);
 
   Call7((void (*)())Func_02000df8, 42, 0, 6, 2, 9, 18, 0);
   if (!GameFlag_Test(4001)) {
@@ -450,7 +450,7 @@ s32 Func_020009d0(void) {
 s32 Scene_PrepareMap(void) { return 0; }
 
 void Func_02000b08(void) {
-  struct FieldActor *object = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *object = Actor_GetById(gMainRoutineWork.currentOwner);
   s32 x = object->x >> 20;
   s32 z = object->z >> 20;
 

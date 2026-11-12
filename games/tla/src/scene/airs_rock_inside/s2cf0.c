@@ -114,11 +114,11 @@ row:
       spark = Import_ActorCreate(0x2a0, Actor_GetById(11)->x,
                                   Actor_GetById(11)->y, Actor_GetById(11)->z);
       {
-        s32 priority = ((s8 *)Actor_GetById(11)->animation)[9] & 12;
+        s32 priority = ((s8 *)Actor_GetById(11)->sprite)[9] & 12;
 
         /* FAKEMATCH(temporary): the sprite held in the row pointer; as
          * spark->animation, 28 of 446 instructions differ in tla-en. */
-        cell = spark->animation;
+        cell = spark->sprite;
         ((struct SpriteAttr2High *)cell)->priority = priority >> 2;
       }
       // Through the bit-field views the flags' load is issued before the

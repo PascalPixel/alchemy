@@ -100,7 +100,7 @@ void Func_02000728(void) {
 /// four rooms, sets a flag when object 8 to 11 is at a given x; object 11 at
 /// a given x and z in the second room runs Func_02000728 instead.
 void Func_02000760(s32 unused, s32 id) {
-  struct FieldActor *object = ((struct FieldActor *)Actor_Get(id));
+  struct Actor *object = Actor_Get(id);
 
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6afRoom1) {
     if (id == 8 && object->x >> 20 == 16)

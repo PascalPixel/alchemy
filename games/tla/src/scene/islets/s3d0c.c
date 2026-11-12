@@ -5,7 +5,7 @@ void Func_02003d0c(struct Actor *object) {
   struct IsletsVector position;
   struct Actor *hit;
   u32 i;
-  s32 angle = object->angle >> 12;
+  s32 angle = object->facing >> 12;
 
   angle = ((angle + 2) & 12) << 12;
   position.x = object->x;
@@ -16,7 +16,7 @@ void Func_02003d0c(struct Actor *object) {
   if (hit != 0) {
     i = 0;
   next:
-    if (*((struct ObjectAnimationState *)hit->animation)->value28 ==
+    if (*((struct ObjectAnimationState *)hit->sprite)->value28 ==
         gData_02004070[i])
       return;
     i++;

@@ -6,8 +6,8 @@
 
 #include "actor.h"
 
-s32 Func_02005f64(struct FieldActor *object);
-void Func_020006cc(struct FieldActor *object);
+s32 Func_02005f64(struct Actor *object);
+void Func_020006cc(struct Actor *object);
 void Func_02000128(s32 id, u32 kind, s32 flag, s32 layer);
 
 void Func_02000038(s16 *list) {
@@ -19,7 +19,7 @@ void Func_02000038(s16 *list) {
 next:
   {
     s32 id = (u16)entry[0];
-    struct FieldActor *object = Actor_GetById(id);
+    struct Actor *object = Actor_GetById(id);
     s32 kind = entry[1];
     s32 flag = entry[2];
 
@@ -74,7 +74,7 @@ void Func_020000a4(u16 *list, s32 mode, s32 count) {
 #include "map.h"
 
 void Func_02000128(s32 id, u32 kind, s32 flag, s32 layer) {
-  struct FieldActor *object = Actor_GetById(id);
+  struct Actor *object = Actor_GetById(id);
   struct MapCell *cell = Ram_HeapSlots->mapWork->layers[layer].cells;
 
   cell += Func_02005f64(object);

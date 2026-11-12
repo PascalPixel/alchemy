@@ -12,7 +12,7 @@ extern s8 gData_02001974[][4];
 s32 Func_02000038(s32 id) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
   struct Actor *object = Actor_GetById(id);
-  s16 sprite = ((struct ObjectAnimationState *)object->animation)->value28[0];
+  s16 sprite = ((struct ObjectAnimationState *)object->sprite)->value28[0];
   s16 i;
   u32 kind;
   s32 w, h, x, z;

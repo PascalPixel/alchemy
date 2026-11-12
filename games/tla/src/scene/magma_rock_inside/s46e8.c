@@ -90,7 +90,7 @@ void Func_0200481c(void) {
       effect->scaleRateY = 0;
       effect->update = Effect_AdvanceMotionAtLeaderPriority;
       effect->sprite->priority =
-          ((struct FieldSprite *)leader->animation)->priority;
+          ((struct FieldSprite *)leader->sprite)->priority;
     }
     i++;
   } while (i <= 16);

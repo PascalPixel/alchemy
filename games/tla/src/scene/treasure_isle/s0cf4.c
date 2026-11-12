@@ -93,7 +93,7 @@ s32 Func_02000cf4(void) {
     i = 0;
   next:
     {
-      u8 *flags = (u8 *)Actor_Get(i + 9)->animation + 37;
+      u8 *flags = (u8 *)Actor_Get(i + 9)->sprite + 37;
 
       *flags |= 12;
     }

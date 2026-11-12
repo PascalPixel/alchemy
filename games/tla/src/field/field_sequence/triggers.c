@@ -82,7 +82,7 @@ struct TriggerView *Func_080ccd78(s32 kind, s32 target) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
   struct TriggerView *trigger = work->triggers;
   s32 flags;
-  u32 facing = ObjectTable_Get(gMainRoutineWork.currentOwner)->angle;
+  u32 facing = ObjectTable_Get(gMainRoutineWork.currentOwner)->facing;
 
   flags = trigger->flags;
   while (flags != -1) {
@@ -464,7 +464,7 @@ s32 Func_080ccec8(s32 id) {
   if (!paused) {
     ((u8 *)object)[91] = 1;
     Actor_SetAnimationSpeedFar(object, 0);
-    savedAngle = object->angle;
+    savedAngle = object->facing;
     if ((u8)placement->talkFacing <= 1 || (s8)placement->talkFacing == 3) {
       leader = Actor_GetById(gMainRoutineWork.currentOwner);
       Actor_SetPositionAndResetMotionFar(leader, leader->x, leader->y,
@@ -486,7 +486,7 @@ s32 Func_080ccec8(s32 id) {
         object->actionFlags |= 1;
         Actor_SetActionCallback(object, (s32)gActor_FaceWatchedScript);
       } else if ((s8)placement->talkFacing == 1) {
-        object->action = savedAngle;
+        object->timer = savedAngle;
         Actor_StartScriptFar(object, gActor_StepAngleScript);
       }
     }

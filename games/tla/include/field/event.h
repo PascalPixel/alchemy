@@ -22,7 +22,7 @@
 #include "task.h"
 
 struct Actor;
-struct FieldActor;
+struct Actor;
 
 void Event_ShowMessageAndWait(s32 actor, s32 flags);
 void Event_ResolvePendingActions(s32 skip);
@@ -57,7 +57,7 @@ void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 void Sound_Play(s32 sound);
 void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
-struct FieldActor *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
+struct Actor *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
 void Map_PlayMapEdit(const void *steps, s32 x, s32 y);
 void ObjectEvent_PlaceOnGround(s32 object, s32 x, s32 z);
 void Actor_CenterOnColumn(u32 objectId, s32 action, s32 z_offset);

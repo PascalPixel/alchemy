@@ -32,7 +32,7 @@ extern u8 gData_020023c4[];
 void Func_02002f80(struct Actor *actor) {
   struct Vector3 position;
   struct WorkEvent *work = Ram_HeapSlots->eventWork;
-  s32 state = actor->action;
+  s32 state = actor->timer;
 
   if (state == 0) {
     s32 dz;
@@ -67,13 +67,13 @@ void Func_02002f80(struct Actor *actor) {
     position.x = actor->x;
     position.y = actor->y;
     position.z = actor->z;
-    FieldVector_AddPolarOffset(0x80000, actor->angle, &position);
+    FieldVector_AddPolarOffset(0x80000, actor->facing, &position);
     if (Func_020054d8(0, position.x, position.z) == 7) {
       actor->targetZ = 0x80000000;
       actor->targetY = 0x80000000;
       actor->targetX = 0x80000000;
       actor->acceleration = 0x4000;
-      actor->action = 1;
+      actor->timer = 1;
       Event_PlaySound(145);
       /* FAKEMATCH(wrapper): forwarded, so each argument builds its own 0x50000;
        * as a direct call, 6 of 362 instructions differ in tla-en. */
@@ -109,7 +109,7 @@ void Func_02002f80(struct Actor *actor) {
           MapGrid_CopyCellAttributes(64, 64, 1, 1, x, z);
           Event_PlaySound(0x23d);
           Func_02002e8c((x << 20) + 0x80000, actor->y, (z << 20) + 0x80000,
-                        actor->angle);
+                        actor->facing);
         }
         cell = (struct MapCell *)(offset + (s32)cellsB);
         if (cell->collisionCode == 77) {
@@ -118,7 +118,7 @@ void Func_02002f80(struct Actor *actor) {
           MapGrid_CopyCellAttributes(64, 64, 1, 1, x, z);
           Event_PlaySound(0x23c);
           Func_02002e8c((x << 20) + 0x80000, actor->y, (z << 20) + 0x80000,
-                        actor->angle);
+                        actor->facing);
         }
       }
     }

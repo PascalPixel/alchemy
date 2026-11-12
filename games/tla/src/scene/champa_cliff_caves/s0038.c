@@ -171,7 +171,7 @@ void Func_02000304(s32 actor) {
 }
 
 void Func_02000350(s32 actor) {
-  struct FieldActor *object;
+  struct Actor *object;
 
   Event_SetMessageId((s32)MsgAllRightI);
   Event_ShowMessageAndWait(actor, 0);
@@ -183,7 +183,7 @@ void Func_0200038c(s32 actor) {
   Event_SetMessageId((s32)MsgAwComeOn);
   Event_ShowMessageAndWait(actor, 0);
   Func_02003534_(actor, 0xd000);
-  Actor_SetActionCallback((struct Actor *)Actor_GetById(actor), 8);
+  Actor_SetActionCallback(Actor_GetById(actor), 8);
 }
 
 void Func_020003bc(void) {
@@ -192,7 +192,7 @@ void Func_020003bc(void) {
 }
 
 void Func_020003ec(void) {
-  struct FieldActor *object;
+  struct Actor *object;
   s32 x;
   s32 z;
 

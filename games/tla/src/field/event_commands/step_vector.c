@@ -399,7 +399,7 @@ void Func_080eb960(s32 objectId) {
   s32 spawning;
   struct Actor *object = ObjectTable_Get(objectId);
   s32 depth = BattleEffect_GetObjectDepth(object);
-  s32 angle = (u16)object->angle;
+  s32 angle = (u16)object->facing;
   struct Spark *spark;
   struct EffectSprite *sprite;
   s32 i;
@@ -495,13 +495,13 @@ void Func_080eb960(s32 objectId) {
       break;
     case 1:
       if (frame < 64) {
-        object->angle -= 0x1000;
+        object->facing -= 0x1000;
         object->scaleX = frame << 10;
         if (object->scaleX > 0x10000)
           object->scaleX = 0x10000;
       }
       if (frame == 64) {
-        object->angle = angle;
+        object->facing = angle;
         Actor_SetSingleChildFlagsFar(object, 1);
       }
       if (frame == 10)

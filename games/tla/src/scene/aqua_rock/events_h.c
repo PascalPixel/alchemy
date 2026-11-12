@@ -9,7 +9,7 @@ void Func_02001f60(s32 id) {
   struct Actor *object = Actor_GetById(id);
 
   if (object != 0) {
-    u8 *meta = ResourceMetadata_Register(object->animation, 0x17d);
+    u8 *meta = ResourceMetadata_Register(object->sprite, 0x17d);
 
     meta[5] = 0;
     meta[6] = 0;
@@ -39,9 +39,9 @@ void Func_02001f90(s32 arg0) {
     if (i == 30)
       Event_FinishScreenTransition();
     object->y -= 0x4000;
-    angle = object->angle;
+    angle = object->facing;
     angle += 0x1000;
-    object->angle = angle;
+    object->facing = angle;
     if ((i & 7) == 0)
       Func_02001d30(Actor_GetById(15));
     wait(1);
@@ -121,7 +121,7 @@ void Func_02002158(void) {
     Actor_CommitPositionAndActivate(*owner, 0, 8);
     Actor_SetPartAttribute(Actor_GetById(*owner), 0);
     Actor_SetSingleChildFlags(Actor_GetById(*owner), 1);
-    ((struct FieldSprite *)leader->animation)->priority = 1;
+    ((struct FieldSprite *)leader->sprite)->priority = 1;
     offset = 10;
     Actor_CommitPositionAndActivate(*owner, 0, offset);
     leader->motionFlags = 3;

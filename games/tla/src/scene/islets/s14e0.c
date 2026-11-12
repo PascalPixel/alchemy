@@ -700,7 +700,7 @@ void Func_0200267c(void) {
   FieldActor_SetMoveTarget(object, ((8 - (object->x >> 16) % 16) << 16) + object->x,
                       object->y, object->z);
   Actor_WaitForMove(object);
-  object->angle = FACING_NORTH;
+  object->facing = FACING_NORTH;
   exit = &work->exit;
   index = *exit;
   Event_PlaySound(158);
@@ -740,7 +740,7 @@ void Func_02002780(void) {
   FieldActor_SetMoveTarget(object, ((8 - (object->x >> 16) % 16) << 16) + object->x,
                       object->y, object->z);
   Actor_WaitForMove(object);
-  object->angle = FACING_NORTH;
+  object->facing = FACING_NORTH;
   Actor_SetScript(party->currentOwner, gData_02004028);
   System_Wait(12);
   Event_PlaySound(123);
@@ -757,7 +757,7 @@ void Func_02002830(void) {
   Func_02003eec(9, gMainRoutineWork.currentOwner);
   Actor_SetPosition(10, PIXELS(273), PIXELS(520));
   System_Wait(1);
-  object->angle = FACING_NORTH;
+  object->facing = FACING_NORTH;
   owner->update = (void (*)(void))Func_02001278;
   Actor_SetSpriteColor(Actor_Get(gMainRoutineWork.currentOwner), 15);
   Actor_SetAnimation(9, 3);
@@ -813,7 +813,7 @@ void Func_020029c4(void) {
   Func_02003eec(9, gMainRoutineWork.currentOwner);
   Actor_SetPosition(10, PIXELS(240), PIXELS(540));
   System_Wait(1);
-  guide->angle = FACING_SOUTH;
+  guide->facing = FACING_SOUTH;
   leader->update = Func_02001278;
   Actor_SetSpriteColor(((s32)Actor_Get(gMainRoutineWork.currentOwner)),
                          15);
@@ -906,7 +906,7 @@ void Func_02002c38(void) {
       spawned->collisionFlags = 9;
       spawned->unk5c[0] = 1;
     }
-    Actor_Get(11)->angle = FACING_NORTH + FACING_STEP;
+    Actor_Get(11)->facing = FACING_NORTH + FACING_STEP;
   } else {
     Actor_SetAnimation(11, 5);
   }
@@ -926,7 +926,7 @@ void Func_02002d0c(s32 id) {
 
 void Func_02002d48(s32 id, s32 column, s32 row) {
   struct Actor *object = Actor_Get(id);
-  s32 x = (column * 32 + object->action) << 16;
+  s32 x = (column * 32 + object->timer) << 16;
   s32 z = (row * 32 + (s16)object->unk66) << 16;
 
   FieldActor_SetMoveTarget(object, x, object->y, z);
@@ -1044,7 +1044,7 @@ void Func_02002f1c(void) {
     Actor_Get(19)->actionFlags &= ~1;
   } else if (!Event_GetFlag(0x109)) {
     other = Actor_Get(9);
-    other->angle = FACING_SOUTH + FACING_STEP;
+    other->facing = FACING_SOUTH + FACING_STEP;
     other->collisionFlags |= 0x80;
     /* FAKEMATCH(temporary): the angle held in a local is built before the
      * position; as the constant argument 0x3000, 4 of 166 instructions differ

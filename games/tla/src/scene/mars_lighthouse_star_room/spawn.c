@@ -14,7 +14,7 @@ void Func_02001750(struct Actor *object) {
   object->collisionFlags = 0;
   Actor_SetSingleChildFlags(object, 0);
   Func_020041dc(object, gData_02004744);
-  object->action = 0;
+  object->timer = 0;
   object->speedLimit = 0;
   object->acceleration = 0;
 }
@@ -81,7 +81,7 @@ void Func_020017c8(struct Actor *object) {
   object->unk4c = dz - dz / 16;
   object->scaleX += object->speedLimit;
   object->scaleY += object->acceleration;
-  ((struct SpriteParts *)object->animation)->unk12 += object->action;
+  ((struct SpriteParts *)object->sprite)->unk12 += object->timer;
   if (other->y == other->terrainHeight && Func_02001528(object, other) &&
       gMainRoutineWork.renderMode == 0) {
     if (object->unk4c != 0) {
@@ -131,10 +131,10 @@ void Func_02001928(struct Actor *object, s32 part) {
   object->motionFlags = zero;
   object->collisionFlags = zero;
 
-  ((struct SpriteParts *)object->animation)->part = part;
+  ((struct SpriteParts *)object->sprite)->part = part;
   Actor_SetSingleChildFlags(object, 0);
   Func_020041dc(object, gData_02004744);
-  object->action = zero;
+  object->timer = zero;
   object->speedLimit = zero;
   object->acceleration = zero;
 }

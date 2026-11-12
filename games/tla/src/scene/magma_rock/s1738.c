@@ -78,7 +78,7 @@ void Func_02001738(struct Actor *object) {
   if ((gFrameCount & 15) == 0)
     Func_02003c4c(object, 136);
   Actor_SetPartAttribute(object, 10);
-  if (object->action <= 31) {
+  if (object->timer <= 31) {
     u32 phase = gFrameCount & 3;
 
     if (phase == 0) {
@@ -96,7 +96,7 @@ void Func_02001738(struct Actor *object) {
       Func_0200015c(object->x + 0x10000, object->y + 0x180000, object->z,
                     (dx - 8) << 14, 0, (dz - 8) << 14, 0x1330000, &config);
     }
-  } else if (object->action == 33) {
+  } else if (object->timer == 33) {
     struct Actor *parts[4];
     struct Actor *fifthPart;
     s32 id;
@@ -106,12 +106,12 @@ void Func_02001738(struct Actor *object) {
     parts[0] = (FieldActor_Create(type, object->x + 0x10000,
                                   object->y + 0x200000, object->z));
     for (i = 1; i != 4; i++) {
-      struct ResourceSprite *first = parts[0]->animation;
+      struct ResourceSprite *first = parts[0]->sprite;
       struct Actor *part = (FieldActor_Create(type, 0, 0, 0));
       struct ResourceSprite *sprite;
 
       parts[i] = part;
-      sprite = part->animation;
+      sprite = part->sprite;
       sprite->slot = first->slot;
       sprite->retainCacheEntry = 1;
       part->x = parts[0]->x;
@@ -170,8 +170,8 @@ void Func_02001738(struct Actor *object) {
     fifthPart->unk5c[6] = 4;
     fifthPart->watchedObject = object;
     fifthPart->update = Func_020015e4;
-    object->action++;
-  } else if (object->action > 364) {
+    object->timer++;
+  } else if (object->timer > 364) {
     Actor_SetPartAttribute(object, 0);
     object->update = NULL;
   }
@@ -180,7 +180,7 @@ void Func_02001738(struct Actor *object) {
   if (work->unk166 == 0 && *(s16 *)&work->unk15a == 0 &&
       *(s16 *)&work->unk15c[2] == 0 && *(s16 *)work->unk168 == 0 &&
       (u16)work->screenStatus != 0)
-    object->action++;
+    object->timer++;
 }
 
 #include "magma_rock.h"

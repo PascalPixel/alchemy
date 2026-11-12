@@ -31,7 +31,7 @@ void Actor_ArmCallback(s32 objectId, s32 angle, s32 frames) {
   struct Actor *object = ObjectTable_Get(objectId);
 
   if (object != NULL) {
-    object->action = angle;
+    object->timer = angle;
     Actor_StartScriptFar((struct ActorView *)object,
                          (u32)gActor_StepAngleScript);
     Event_Wait(frames);
@@ -42,7 +42,7 @@ void Actor_ArmCallbackAndRefresh(s32 objectId, s32 angle) {
   struct Actor *object = ObjectTable_Get(objectId);
 
   if (object != NULL) {
-    object->action = angle;
+    object->timer = angle;
     Actor_StartScriptFar((struct ActorView *)object,
                          (u32)gActor_StepAngleScript);
     Actor_RefreshSelectorById(objectId);
@@ -53,7 +53,7 @@ void Actor_SetSpritePriority(u32 objectId, s32 priority) {
   struct Actor *object = ObjectTable_Get(objectId);
 
   if (object != NULL && (object->animationKind & 0xF) == 1) {
-    struct FieldSprite *sprite = object->animation;
+    struct FieldSprite *sprite = object->sprite;
 
     sprite->priority = priority;
     sprite->partPriority = priority;
@@ -67,12 +67,12 @@ void ObjectVisual_CopyAttributes(u32 targetId, u32 sourceId) {
   u32 tile;
 
   sprite = (struct FieldSprite *)Actor_GetById(sourceId);
-  sprite = ((struct Actor *)sprite)->animation;
+  sprite = ((struct Actor *)sprite)->sprite;
   block = sprite->vramBlock;
   tile = sprite->tile;
 
   sprite = (struct FieldSprite *)Actor_GetById(targetId);
-  sprite = ((struct Actor *)sprite)->animation;
+  sprite = ((struct Actor *)sprite)->sprite;
   sprite->vramBlock = block;
   sprite->tile = tile;
 }
@@ -87,7 +87,7 @@ void Func_080d390c(u32 id) {
 
 void Func_080d3928(u32 id, s32 rotation) {
   struct Actor *object = Actor_GetById(id);
-  struct FieldSprite *sprite = object->animation;
+  struct FieldSprite *sprite = object->sprite;
 
   if (object != NULL && sprite != NULL)
     sprite->rotation = rotation;
@@ -132,7 +132,7 @@ struct ObjectSprite {
 void Func_080d3940(u32 id, u32 angle) {
   s32 position[3];
   struct Actor *object = Actor_GetById(id);
-  struct ObjectSprite *sprite = object->animation;
+  struct ObjectSprite *sprite = object->sprite;
 
   if (object != NULL && sprite != NULL) {
     Actor_SetMode(object, 0);
@@ -167,7 +167,7 @@ void Func_080d3940(u32 id, u32 angle) {
 
 void Func_080d3a10(s32 id, u32 angle, s32 mode) {
   struct Actor *object = Actor_GetById(id);
-  struct FieldSprite *sprite = object->animation;
+  struct FieldSprite *sprite = object->sprite;
   s32 position[3];
 
   if (object == NULL || sprite == NULL)
@@ -227,7 +227,7 @@ void Func_080d3b28(u32 id, s32 resource) {
   if (object != NULL) {
     kind = object->animationKind;
     if (kind == 1) {
-      sprite = object->animation;
+      sprite = object->sprite;
       if (resource & 0x8000)
         resource = 0;
       buffer = HeapSlot_Alloc(68, 0x608);
@@ -261,7 +261,7 @@ s32 ObjectTable_ReadActiveValue(s32 key) {
   struct Actor *object = event->objects[key & 0x0fff];
 
   if (object != NULL && object->animationKind == 1)
-    result = *((struct ObjectAnimationState *)object->animation)->value28;
+    result = *((struct ObjectAnimationState *)object->sprite)->value28;
   return result;
 }
 
@@ -272,7 +272,7 @@ s32 ObjectTable_FindActiveByValue(s32 value) {
   struct Actor *object = event->objects[index];
 
   if (object != NULL && object->animationKind == 1 &&
-      *((struct ObjectAnimationState *)object->animation)->value28 == value) {
+      *((struct ObjectAnimationState *)object->sprite)->value28 == value) {
     result = index;
   } else {
   next:
@@ -280,7 +280,7 @@ s32 ObjectTable_FindActiveByValue(s32 value) {
     if (index <= 79) {
       object = event->objects[index];
       if (object == NULL || object->animationKind != 1 ||
-          *((struct ObjectAnimationState *)object->animation)->value28 != value)
+          *((struct ObjectAnimationState *)object->sprite)->value28 != value)
         goto next;
       result = index;
     }

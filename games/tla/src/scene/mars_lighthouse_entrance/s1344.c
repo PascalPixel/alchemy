@@ -42,7 +42,7 @@ void Func_02004d98(void);
 void Func_02001344(struct Actor *object) {
   if (ABS(object->x - object->watchedObject->x) > 0x200000)
     return;
-  object->action = 0;
+  object->timer = 0;
   object->update = (void (*)(void))Func_020012e4;
 }
 

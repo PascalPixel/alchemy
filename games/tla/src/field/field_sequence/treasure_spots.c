@@ -133,7 +133,7 @@ void Func_080cec34(void) {
         if (GameFlag_Test(flag))
           Actor_SetMode(object, 2);
         Actor_ResetMotion(object);
-        object->action = object->x / 0x10000;
+        object->timer = object->x / 0x10000;
         object->unk66 = object->z / 0x10000;
         object->priorityFlags = 1;
         object->collisionFlags = 1;
@@ -175,7 +175,7 @@ void Actor_SetWideSprite(u32 objectId, s32 mode) {
     object->unk4c = 0x31415927;
     return;
   }
-  sprite = object->animation;
+  sprite = object->sprite;
   if (sprite == 0)
     return;
   sprite->yOffset += 4;
@@ -190,7 +190,7 @@ void Actor_SetSquareSprite(u32 objectId) {
   object = ObjectTable_Get(objectId);
   if (object == 0)
     return;
-  sprite = object->animation;
+  sprite = object->sprite;
   if (sprite == 0)
     return;
   sprite->yOffset = 8;
@@ -205,7 +205,7 @@ s32 Actor_GetSpriteShape(u32 objectId) {
 
   object = ObjectTable_Get(objectId);
   if (object != 0) {
-    sprite = object->animation;
+    sprite = object->sprite;
     if (sprite != 0)
       shape = sprite->attr0High >> 6;
   }
@@ -238,19 +238,19 @@ void Actor_ShakeAngle(u32 objectId) {
   object = ObjectTable_Get(objectId);
   if (object == 0)
     return;
-  angle = object->angle;
+  angle = object->facing;
   for (i = 15; i >= 0; i--) {
     u32 a = Random16();
     u32 b = Random16();
     u32 cur;
 
-    cur = object->angle;
+    cur = object->facing;
     b >>= 4;
     a >>= 4;
-    object->angle = cur + (a - b);
+    object->facing = cur + (a - b);
     wait(1);
   }
-  object->angle = angle;
+  object->facing = angle;
 }
 
 struct ActorView;

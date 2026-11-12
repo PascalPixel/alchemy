@@ -104,7 +104,7 @@ spiral:
    * direct call, 105 of 402 instructions differ in tla-en. */
   spark = FieldActor_Create(672, second->x, second->y, second->z);
   Sound_Play(195);
-  spark->action = (Random16Far() & 0x7fff) + 0x8000;
+  spark->timer = (Random16Far() & 0x7fff) + 0x8000;
   spark->unk66 = (((i & 1) << 1) - 1) << ((Random16Far() & 3) + 9);
   noMotion = 0;
   spark->motionFlags = noMotion;
@@ -118,7 +118,7 @@ spiral:
   Animation_SetStateFlags(spark, 1);
   /* FAKEMATCH(wrapper): forwarded for its argument order; as a direct call, 2
    * of 402 instructions differ in tla-en. */
-  FieldVector_AddPolarOffset(spark->unk4c, spark->action, &spark->x);
+  FieldVector_AddPolarOffset(spark->unk4c, spark->timer, &spark->x);
   Func_02003ccc(spark, gData_02004004);
   if (i == 3) {
     /* FAKEMATCH(wrapper): forwarded for its argument order; as a direct call, 2
@@ -142,7 +142,7 @@ column:
    * direct call, 116 of 402 instructions differ in tla-en. */
   riser = FieldActor_Create(672, second->x, second->y + i * 0x10000 - 0x80000,
                             second->z);
-  riser->action = Random16Far();
+  riser->timer = Random16Far();
   riser->unk66 = 0x800;
   ((union ActorView *)riser)->bytes.unk62 = i;
   ((union ActorView *)riser)->bytes.unk63 = 1;

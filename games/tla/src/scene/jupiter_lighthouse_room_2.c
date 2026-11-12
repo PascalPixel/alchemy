@@ -101,10 +101,10 @@ void Func_020000d0(s32 kind) {
   Func_020021b4(effect, 2);
   effect->scaleX = 0x18000;
   effect->scaleY = 0x10000;
-  ((struct FieldSprite *)effect->animation)->priority = 1;
+  ((struct FieldSprite *)effect->sprite)->priority = 1;
   while (leader->y > 0x200000) {
     leader->y += -0x10000;
-    leader->angle += 0x2000;
+    leader->facing += 0x2000;
     effect->x = leader->x;
     effect->y = leader->y + -0x60000;
     effect->z = leader->z;
@@ -113,13 +113,13 @@ void Func_020000d0(s32 kind) {
   Func_020021b4(effect, 6);
   i = 14;
   do {
-    leader->angle += 0x2000;
+    leader->facing += 0x2000;
     System_Wait(1);
     i--;
   } while (i >= 0);
   Func_020021d4(effect);
   Actor_SetSingleChildFlags(Actor_Get(owner), 1);
-  leader->angle = 0x4000;
+  leader->facing = 0x4000;
   leader->terrainId = 0;
   leader->motionFlags = 3;
   FieldTask_Remove(Func_020000b4);
@@ -158,10 +158,10 @@ void Func_02000230(s32 kind) {
   Func_020021b4(effect, 2);
   effect->scaleX = 0x18000;
   effect->scaleY = 0x10000;
-  ((struct FieldSprite *)effect->animation)->priority = 1;
+  ((struct FieldSprite *)effect->sprite)->priority = 1;
   while (leader->y < 0x6c0000) {
     leader->y += 0x10000;
-    leader->angle += 0x2000;
+    leader->facing += 0x2000;
     effect->x = leader->x;
     effect->y = leader->y + -0x60000;
     effect->z = leader->z;
@@ -188,7 +188,7 @@ void Func_02000230(s32 kind) {
   leader->scaleY = 0x6000;
   i = 19;
 spin:
-  leader->angle += 0x2000;
+  leader->facing += 0x2000;
   leader->scaleX += 0x800;
   leader->scaleY = leader->scaleX;
   System_Wait(1);
@@ -197,7 +197,7 @@ spin:
     goto spin;
   Func_020021d4(effect);
   Actor_SetSingleChildFlags(Actor_Get(owner), 1);
-  leader->angle = 0x4000;
+  leader->facing = 0x4000;
   leader->terrainId = 1;
   leader->motionFlags = 3;
   leader->y = 0x900000;
@@ -250,9 +250,9 @@ void Func_02000454(void) {
     object->motionFlags = 0;
     for (i = 109; i >= 0; i--) {
       object->y += PIXELS(3);
-      angle = object->angle;
+      angle = object->facing;
       angle += 0x1800;
-      object->angle = angle;
+      object->facing = angle;
       System_Wait(2);
     }
     FieldEvent_SetExitRequest(12);
@@ -334,7 +334,7 @@ void Func_02000674(s32 a0, s32 a1) { Actor_SetSpritePriority(a1, 2); }
 void Func_02000b28(s32 id);
 
 void Func_02000680(s32 unused, s32 id) {
-  struct FieldActor *object = ((struct FieldActor *)Actor_Get(id));
+  struct Actor *object = Actor_Get(id);
   s32 i;
 
   if (Event_GetFlag(0xa00) && object->x >> 20 == 18 && object->z >> 20 == 6) {
@@ -365,7 +365,7 @@ s32 Math_Cosine(s32 angle);
 /// rises with its phase (unk66), drawn in front while the sine is
 /// negative and behind otherwise.
 void Func_02000720(struct Actor *object) {
-  s16 angle = object->action;
+  s16 angle = object->timer;
   s16 height = object->unk66;
 
   SET_POSITION(object,
@@ -378,10 +378,10 @@ void Func_02000720(struct Actor *object) {
   if (object->y > 170 << 17)
     object->unk66 = 0xffff;
   if (Math_Sin(angle) < 0)
-    ((struct FieldSprite *)object->animation)->priority = 1;
+    ((struct FieldSprite *)object->sprite)->priority = 1;
   else
-    ((struct FieldSprite *)object->animation)->priority = 2;
-  object->action += object->acceleration;
+    ((struct FieldSprite *)object->sprite)->priority = 2;
+  object->timer += object->acceleration;
   object->unk66++;
 }
 
@@ -397,11 +397,11 @@ void Func_020007d0(void) {
     object->speedLimit = (Random16Far() << 2) + 0x60000;
     object->acceleration = ((Random16Far() << 11) >> 16) + 0x800;
     object->update = Func_02000720;
-    object->action = Random16Far();
+    object->timer = Random16Far();
     object->unk66 = phase;
     Actor_SetSingleChildFlags(object, 0);
     Actor_SetSpriteColor(object, 2);
-    ((struct FieldSprite *)object->animation)->priority = 1;
+    ((struct FieldSprite *)object->sprite)->priority = 1;
   }
 }
 
@@ -534,10 +534,10 @@ void Func_0200223c();
 void Func_0200230c();
 
 void Func_02000b28(s32 id) {
-  struct FieldActor *object;
+  struct Actor *object;
   s32 height;
 
-  object = ((struct FieldActor *)Actor_Get(id));
+  object = Actor_Get(id);
   object->motionFlags = 4;
   height = object->terrainHeight;
   WORD_AT(object, 68) = 0;
@@ -578,13 +578,13 @@ void Func_02000b7c(void) {
     actor->z = linked->z;
     if (i <= 0x3ffff)
       i += 0x1999;
-    actor->angle = (u8)gFrameCount << 12;
+    actor->facing = (u8)gFrameCount << 12;
     actor->priorityFlags ^= 2 << (gFrameCount & 1);
     System_Wait(1);
   }
   work->unkd44 = 1;
   work->unkd46 = 1;
-  facing = linked->angle;
+  facing = linked->facing;
   actor->x = (((linked->x >> 19) & ~1) + (facing >> 13) - 1) << 19;
   actor->z = (((linked->z >> 19) & ~1) - ((facing >> 13) & 2) + 1) << 19;
   actor->velocityY = 0x60000;

@@ -549,7 +549,7 @@ void Func_02000e3c(s32 arg) {
   Func_02004bc0(actor, 27);
   Actor_SetAnimationSpeed(actor, 48);
   System_Wait(30);
-  actor->angle = FACING_SOUTH;
+  actor->facing = FACING_SOUTH;
   actor->motionFlags = 0;
   buffer = gMapCellBuffer;
   x = actor->x >> 20;
@@ -648,7 +648,7 @@ void Func_02000fe0(const struct MapCell *cell) {
   Func_02004bc0(leader, 27);
   Actor_SetAnimationSpeed(leader, 48);
   System_Wait(30);
-  leader->angle = FACING_SOUTH;
+  leader->facing = FACING_SOUTH;
   leader->motionFlags = 0;
   if ((cell->attributeB & 64) == 0) {
     {

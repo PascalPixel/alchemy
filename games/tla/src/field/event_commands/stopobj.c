@@ -100,7 +100,7 @@ void BattleEffect_CleanupSceneObjects(void) {
   map->shakeDecay = work->savedShakeDecay;
   if (owner != NULL) {
     owner->priorityFlags = work->ownerByte;
-    ((struct FieldSprite *)owner->animation)->priority = work->layer;
+    ((struct FieldSprite *)owner->sprite)->priority = work->layer;
   }
   if (work->animation != 8)
     event->unkca5 = 1;

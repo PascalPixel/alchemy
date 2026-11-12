@@ -430,7 +430,7 @@ void Func_080d8d68(s32 index, s32 id, s32 other) {
     s32 lift;
 
     if (first->animationKind == 1)
-      priority = ((struct FieldSprite *)first->animation)->priority;
+      priority = ((struct FieldSprite *)first->sprite)->priority;
     slot = &work->slots[index];
     slot->id = id;
     slot->value = other;

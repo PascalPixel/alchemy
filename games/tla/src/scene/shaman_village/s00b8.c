@@ -11,7 +11,7 @@ void Scene_SetActorSpritePriority(struct FieldEffect *effect, s32 priority);
 void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options) {
-  struct FieldActor *party = ((struct FieldActor *)Actor_GetById(gMainRoutineWork.currentOwner));
+  struct Actor *party = Actor_GetById(gMainRoutineWork.currentOwner);
   struct FieldEffect *effect;
   struct FieldSprite *sprite;
   const s32 *script;
@@ -24,15 +24,17 @@ void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     return;
 
   sprite = effect->sprite;
-  Import_ActorSetMode((struct FieldActor *)effect, (flags + 1) & EFFECT_SCRIPT_MASK);
-  Import_ActorSetScript((struct FieldActor *)effect, gData_02004c50[flags & EFFECT_SCRIPT_MASK]);
+  Import_ActorSetMode((struct Actor *)effect, (flags + 1) & EFFECT_SCRIPT_MASK);
+  Import_ActorSetScript((struct Actor *)effect,
+                        gData_02004c50[flags & EFFECT_SCRIPT_MASK]);
   effect->motionFlags = 0;
   Actor_SetSingleChildFlags(effect, 0);
   effect->update = BattleEffect_UpdateObjectMotionScaleAndLinkedAngle;
   effect->velocity.x = velocityX;
   effect->velocity.y = velocityY;
   effect->velocity.z = velocityZ;
-  Scene_SetActorSpritePriority(effect, party->sprite->priority);
+  Scene_SetActorSpritePriority(effect,
+                               ((struct FieldSprite *)party->sprite)->priority);
   effect->scaleRateX = 0;
   effect->scaleRateY = 0;
   effect->spin = 0;
@@ -65,8 +67,8 @@ void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     }
   }
   if ((flags & EFFECT_USE_SCRIPT) != 0) {
-    Import_ActorSetMode((struct FieldActor *)effect, 1);
-    Import_ActorSetScript((struct FieldActor *)effect, options->script);
+    Import_ActorSetMode((struct Actor *)effect, 1);
+    Import_ActorSetScript((struct Actor *)effect, options->script);
   }
   if ((flags & EFFECT_USE_ROTATION) != 0)
     sprite->rotation = options->rotation;

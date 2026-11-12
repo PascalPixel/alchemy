@@ -10,10 +10,10 @@ void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
 void Func_02002bd4(struct Actor *object) {
   struct Actor *child = FieldActor_Create(
       14, object->x, object->y + 0x40000, object->z + 0x40000);
-  struct FieldSprite *source = object->animation;
+  struct FieldSprite *source = object->sprite;
 
   if (child != 0) {
-    struct FieldSprite *sprite = child->animation;
+    struct FieldSprite *sprite = child->sprite;
 
     child->terrainHeight = object->terrainHeight;
     Func_02003ccc(child, gData_0200411c);
@@ -34,7 +34,7 @@ void Func_02002c3c(struct Actor *object) {
         Import_ActorCreate_(0x10d, object->x, object->y, object->z);
 
     if (child != 0) {
-      struct FieldSprite *sprite = child->animation;
+      struct FieldSprite *sprite = child->sprite;
 
       Func_02003ccc(child, gData_02004128);
       child->motionFlags = 0;
@@ -114,14 +114,14 @@ void Func_02002ca4(void) {
     return;
   center->z += 0x20000;
   actor->z += 0x20000;
-  actor->angle = 0x4000;
+  actor->facing = 0x4000;
 }
 
 void Func_02002e04(s32 id) {
   struct Actor *object = Actor_Get(id);
 
   if (object != 0) {
-    u8 *meta = ResourceMetadata_Register(object->animation, 0x17d);
+    u8 *meta = ResourceMetadata_Register(object->sprite, 0x17d);
 
     meta[5] = 0;
     meta[6] = 0;
@@ -148,8 +148,8 @@ void Func_02002e34(s32 entrance) {
     if (i == 30)
       Event_FinishScreenTransition();
     leader->y -= 0x4000;
-    angle = leader->angle;
-    leader->angle = angle + 0x1000;
+    angle = leader->facing;
+    leader->facing = angle + 0x1000;
     if ((i & 7) == 0)
       Func_02002bd4(Actor_Get(15));
     System_Wait(1);
@@ -231,7 +231,7 @@ void Func_02002ffc(void) {
     Actor_WalkByAndWait(*owner, 0, 8);
     Actor_SetSpriteColor(Actor_Get(*owner), 0);
     Actor_SetSingleChildFlags(Actor_Get(*owner), 1);
-    ((struct FieldSprite *)leader->animation)->priority = 1;
+    ((struct FieldSprite *)leader->sprite)->priority = 1;
     offset = 10;
     Actor_WalkByAndWait(*owner, 0, offset);
     leader->motionFlags = 3;

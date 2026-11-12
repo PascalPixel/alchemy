@@ -16,15 +16,15 @@ extern u32 gData_02006aec[];
 extern u32 gData_02006bac[];
 
 s32 Math_Cosine(s32 angle);
-void Actor_SetAnimationSpeed(struct FieldActor *object, s32 value);
+void Actor_SetAnimationSpeed(struct Actor *object, s32 value);
 void Map_EnableUpdateCallback(void);
 void Map_DisableUpdateCallback(void);
 
 /// On most frames, moves the object to a random spot: x 176 to 431 pixels, y
 /// and z up to 31 and 127 pixels past the leader's. Then it keeps its action as
 /// the previous one and sets mode 9 after action 212, mode 10 otherwise.
-void Func_020004d4(struct FieldActor *object) {
-  struct FieldActor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+void Func_020004d4(struct Actor *object) {
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   struct Actor *self = (struct Actor *)object;
 
   if (Random16Far() & 0xff) {
@@ -48,14 +48,14 @@ void Func_020004d4(struct FieldActor *object) {
       object->z = z + ((r & 127) << 16);
     }
   }
-  self->unk66 = self->action;
-  if (self->action == 212)
+  self->unk66 = self->timer;
+  if (self->timer == 212)
     Func_02005d5c(object, 9);
   else
     Func_02005d5c(object, 10);
 }
 
-void Func_02000550(struct FieldActor *object) {
+void Func_02000550(struct Actor *object) {
   u8 *work = Ram_HeapSlots->eventWork;
 
   if (*(s16 *)(work + 358) != 0 || *(s16 *)(work + 346) != 0 ||

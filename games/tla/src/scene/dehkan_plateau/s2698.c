@@ -181,7 +181,7 @@ void Func_02002a5c(void) {
   Func_080d47b4(9, 0x100, 20);
   Func_02002bcc();
   Event_Wait(20);
-  leader->angle = FACING_SOUTH;
+  leader->facing = FACING_SOUTH;
   leader->motionFlags = 0;
   Actor_SetSpritePriority(9, 3);
   Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 3);

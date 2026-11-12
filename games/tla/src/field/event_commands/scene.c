@@ -217,8 +217,8 @@ void BattleEffect_SetupObjectPair(s32 userId, s32 targetId) {
   scene->secondObjectId = targetId;
   scene->mainObject = user;
   target = ObjectTable_Get((s16)targetId);
-  scene->angle = (user->angle + 0x2000) & 0xc000; // Round to four directions.
-  scene->angle8 = (user->angle + 0x1000) & 0xe000;
+  scene->angle = (user->facing + 0x2000) & 0xc000; // Round to four directions.
+  scene->angle8 = (user->facing + 0x1000) & 0xe000;
   scene->child = target;
   if (user != NULL) {
     u8 terrain;
@@ -226,14 +226,14 @@ void BattleEffect_SetupObjectPair(s32 userId, s32 targetId) {
     terrain = user->priorityFlags;
 
     scene->savedTerrain = terrain;
-    scene->savedPriority = (u32)(((u8 *)user->animation)[9] << 28) >> 30;
+    scene->savedPriority = (u32)(((u8 *)user->sprite)[9] << 28) >> 30;
   }
   if (target != NULL) {
     // Save target motion and colors for later restoration.
     scene->savedCallback = target->update;
     scene->savedScript = target->script;
     scene->savedPalette =
-        ((struct AnimationObject *)target->animation)->entries[0]->param;
+        ((struct AnimationObject *)target->sprite)->entries[0]->param;
     scene->x = target->x;
     scene->z = target->z;
     scene->y = target->y;

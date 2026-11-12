@@ -89,7 +89,7 @@ s32 Func_08027064(struct Actor *object) {
   s32 oldFlags;
   u32 attribute;
 
-  sprite = object->animation;
+  sprite = object->sprite;
   movementAnimation = 2;
   onObject = 0;
   work = Ram_HeapSlots->eventWork;
@@ -339,14 +339,14 @@ counted:
     if (collision & 3) {
       s32 difference;
 
-      difference = (s16)((u16)angle - object->angle);
+      difference = (s16)((u16)angle - object->facing);
       if (difference > 0x1000)
         difference = 0x1000;
       if (difference < -0x1000)
         difference = -0x1000;
-      object->angle += difference;
+      object->facing += difference;
     }
-    object->action = 0;
+    object->timer = 0;
     object->unk66 = 2;
   } else {
     s32 speed;
@@ -358,8 +358,8 @@ counted:
     object->velocityZ = collision;
     Vector_AddPolarOffset(speed, (u16)heading,
                           (struct FieldPosition *)&object->velocityX);
-    if (object->action != 0)
-      object->action--;
+    if (object->timer != 0)
+      object->timer--;
   }
 
   // Ground that wades: hide the lower half of the sprite while on it, and
@@ -381,12 +381,12 @@ counted:
         sprite->shape11 = (sprite->shape11 & 3) | 16;
         sprite->flags = ((u8)oldFlags | 4) & ~1;
       }
-      if (object->action == 0 && collision == 0 && !onObject) {
+      if (object->timer == 0 && collision == 0 && !onObject) {
         Func_08026fc8(object, (u32)(map->groundEffects << 28) >> 30);
         if (movementAnimation == 5)
-          object->action = 8;
+          object->timer = 8;
         else
-          object->action = 12;
+          object->timer = 12;
         object->unk66 ^= 1;
       }
     } else if (!(oldFlags & 8)) {
@@ -398,7 +398,7 @@ counted:
 
   // Footprints on maps that show them, alternating left and right.
   footprintAngle = (u16)angle;
-  if ((map->groundEffects & 3) && object->action == 0 && collision == 0) {
+  if ((map->groundEffects & 3) && object->timer == 0 && collision == 0) {
     struct Actor *effect;
 
     effect = Func_08023220(0x10e, object->x, object->y, object->z);
@@ -406,7 +406,7 @@ counted:
       struct PlayerSprite *effectSprite;
 
       effect->terrainHeight = object->terrainHeight;
-      effectSprite = effect->animation;
+      effectSprite = effect->sprite;
       Actor_StartScript(effect, gData_0802ec7c);
       effect->priorityFlags = 2;
       effect->motionFlags = collision;
@@ -421,11 +421,11 @@ counted:
         object->unk66 = collision;
       }
       if (*(s16 *)&object->unk66 != 0)
-        effect->angle = 0x8000;
+        effect->facing = 0x8000;
       if (movementAnimation == 5)
-        object->action = 12;
+        object->timer = 12;
       else
-        object->action = 18;
+        object->timer = 18;
       object->unk66 ^= 1;
     }
   }

@@ -1,7 +1,7 @@
 #include "airs_rock_inside.h"
 
-struct FieldActor *Func_02000268(s32 x, s32 y, s32 z, s32 type) {
-  struct FieldActor *object = Import_ActorCreate(type, x, y, z);
+struct Actor *Func_02000268(s32 x, s32 y, s32 z, s32 type) {
+  struct Actor *object = Import_ActorCreate(type, x, y, z);
 
   if (object != NULL) {
     Scene_SetActorSpritePriority(object, 1);

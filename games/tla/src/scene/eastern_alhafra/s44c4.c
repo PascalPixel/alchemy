@@ -49,7 +49,7 @@ void Func_020044c4(struct PushTarget target) {
   s32 speed;
   s32 acceleration;
 
-  direction = leader->angle >> 16;
+  direction = leader->facing >> 16;
   footprint = target.footprint;
   speed = leader->speedLimit;
   acceleration = leader->acceleration;
@@ -129,7 +129,7 @@ void Func_02004774(struct Actor *object) {
   s32 position[3];
   struct Actor *hit;
   u32 i;
-  s32 angle = object->angle >> 12;
+  s32 angle = object->facing >> 12;
 
   angle = ((angle + 2) & 12) << 12;
   position[0] = object->x;
@@ -140,7 +140,7 @@ void Func_02004774(struct Actor *object) {
   if (hit != 0) {
     i = 0;
   next:
-    if (*((struct ObjectAnimationState *)hit->animation)->value28 ==
+    if (*((struct ObjectAnimationState *)hit->sprite)->value28 ==
         gData_02004ca4[i])
       return;
     i++;
@@ -223,10 +223,10 @@ void Func_02004868(u16 *list, s32 mode, s32 count) {
 
 #include "field_event.h"
 
-s32 Func_02004c34(struct FieldActor *object);
+s32 Func_02004c34(struct Actor *object);
 
 void Func_020048ec(s32 id, u32 kind, s32 flag, s32 layer) {
-  struct FieldActor *object = ((struct FieldActor *)Actor_Get(id));
+  struct Actor *object = Actor_Get(id);
   struct MapCell *cell = Ram_HeapSlots->mapWork->layers[layer].cells;
 
   cell += Func_02004c34(object);

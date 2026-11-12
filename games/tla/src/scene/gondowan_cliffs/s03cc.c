@@ -12,7 +12,7 @@ struct TileSprite {
 };
 
 void Func_020003cc(struct Actor *object) {
-  struct TileSprite *sprite = object->animation;
+  struct TileSprite *sprite = object->sprite;
 
   sprite->tile -= 0x800;
 }
@@ -55,10 +55,10 @@ void Func_020003f8(s32 unk0, s32 id) {
     actor->collisionFlags = 0;
     for (i = 0; i <= 17; i++) {
       System_Wait(1);
-      sprite = actor->animation;
+      sprite = actor->sprite;
       sprite->rotation -= 256;
       actor->x -=
-          Math_Cosine(((struct FieldSprite *)actor->animation)->rotation) / 2;
+          Math_Cosine(((struct FieldSprite *)actor->sprite)->rotation) / 2;
       actor->targetX = 0x80000000;
     }
     actor->update = Func_020003cc;
@@ -73,7 +73,7 @@ void Func_020003f8(s32 unk0, s32 id) {
     MapGrid_SetShake(0x50000, 0x50000, 0x10000);
     Event_PlaySound(141);
     MapGrid_SetShake(-1, -1, 0xe666);
-    ((struct FieldSprite *)actor->animation)->rotation = 0x1000;
+    ((struct FieldSprite *)actor->sprite)->rotation = 0x1000;
     // Cleared through a word: as a function pointer the store sinks below the
     // effect options.
     *(u32 *)&actor->update = 0;
@@ -155,7 +155,7 @@ void Func_02000660(void) {
   out[0] = object->x;
   out[1] = object->y;
   out[2] = object->z;
-  FieldVector_AddPolarOffset(0x100000, object->angle, out);
+  FieldVector_AddPolarOffset(0x100000, object->facing, out);
   if ((position.x >> 20) == 119 && (position.z >> 20) == 45) {
     FIELD_AT(Ram_HeapSlots->eventWork, u16, 346) = 1;
   } else {

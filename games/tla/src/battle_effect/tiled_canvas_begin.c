@@ -3785,7 +3785,7 @@ void BattleEffect_ArmBg1HBlankDma(void) {
 #include "field_event.h"
 
 #define Actor_SetAnimationSpeedFar                                             \
-  ((s32 (*)(struct FieldActor *, s32))Actor_SetAnimationSpeedFar)
+  ((s32 (*)(struct Actor *, s32))Actor_SetAnimationSpeedFar)
 
 DEFINE_EFFECT_KIND(BattleEffect_RunVolleyBMode0,
                    BattleEffect_RunProjectileVolleyB, 0)
@@ -3855,9 +3855,9 @@ DEFINE_EFFECT_KIND(BattleEffect_RunVolleyBMode20,
 
 void BattleEffect_RunVolleyBMode10WithAction(
     struct BattleEffectArgument *effect) {
-  struct FieldActor *object;
+  struct Actor *object;
 
-  object = (struct FieldActor *)GetBattleObjectSlotFar(effect->actor)->object;
+  object = (struct Actor *)GetBattleObjectSlotFar(effect->actor)->object;
   Actor_SetMode(object, 2);
   Actor_SetAnimationSpeedFar(object, 0x30);
   BattleEffect_RunProjectileVolleyB(effect, 10);
@@ -3866,9 +3866,9 @@ void BattleEffect_RunVolleyBMode10WithAction(
 
 void BattleEffect_RunVolleyBMode11WithAction(
     struct BattleEffectArgument *effect) {
-  struct FieldActor *object;
+  struct Actor *object;
 
-  object = (struct FieldActor *)GetBattleObjectSlotFar(effect->actor)->object;
+  object = (struct Actor *)GetBattleObjectSlotFar(effect->actor)->object;
   Actor_SetMode(object, 2);
   Actor_SetAnimationSpeedFar(object, 0x30);
   BattleEffect_RunProjectileVolleyB(effect, 11);

@@ -75,7 +75,7 @@ struct GustObject *Func_02000b50(struct GustObject *source) {
   return object;
 }
 
-s32 Func_02000c28(struct FieldActor *object) {
+s32 Func_02000c28(struct Actor *object) {
   struct EffectOptions options;
   s32 x;
   s32 y;
@@ -106,7 +106,7 @@ void Func_02000cc8(void) {
   struct Actor *left = Actor_Get(9);
   struct Actor *right = Actor_Get(10);
   struct Actor *rider = Actor_Get(23);
-  struct FieldSprite *sprite = rider->animation;
+  struct FieldSprite *sprite = rider->sprite;
 
   Actor_SetPosition(24, 0x2000000, 0xf80000);
   Actor_SetPosition(23, 0x2000000, 0xf80000);
@@ -156,12 +156,12 @@ struct LightOam {
 
 extern s16 gData_0200275c;
 extern s16 gData_0200275e;
-extern struct FieldActor *gData_02002760[];
+extern struct Actor *gData_02002760[];
 extern struct LightOam gData_020027a0[];
 extern s16 gData_02002860;
 extern s16 gData_02002862;
 
-s32 Func_02001ee0(struct FieldActor *actor);
+s32 Func_02001ee0(struct Actor *actor);
 void Func_02001d80(struct LightOam *oam, s32 depth);
 
 /// Queues the lit actors' sprites: for each listed actor with a position, projects it
@@ -180,7 +180,7 @@ void Func_02000e58(void) {
   oam = gData_020027a0;
 
   for (i = 0; i < gData_0200275e; i++) {
-    struct FieldActor *actor = gData_02002760[i];
+    struct Actor *actor = gData_02002760[i];
     if (actor != 0 && actor->x != 0) {
       s32 big, ox, y, z, oy, depth;
       s32 frame;
@@ -193,7 +193,7 @@ void Func_02000e58(void) {
       big = gData_02002860;
       if (big == 0) {
         s32 x, sy;
-        frame = (s16)actor->timer;
+        frame = actor->timer;
         x = ox >> 16;
         sy = oy >> 16;
         ox = x - 8;
@@ -214,7 +214,7 @@ void Func_02000e58(void) {
         oam++;
       } else {
         s32 x, sy;
-        frame = (s16)actor->timer;
+        frame = actor->timer;
         x = ox >> 16;
         sy = oy >> 16;
         ox = x - 8;
@@ -292,7 +292,7 @@ void Func_02001114(void) {
 }
 
 void Func_0200119c(s32 id, s32 value) {
-  struct FieldActor *object = ((struct FieldActor *)Actor_Get(id));
+  struct Actor *object = Actor_Get(id);
 
   if (object != NULL) {
     s16 *count;

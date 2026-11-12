@@ -220,14 +220,14 @@ update_object:
     object->velocityZ = 0;
     if ((collision & 3) != 0) {
       direction = angle;
-      difference = (s16)(direction - object->angle);
+      difference = (s16)(direction - object->facing);
       if (difference > 0x1000)
         difference = 0x1000;
       if (difference < -0x1000)
         difference = -0x1000;
-      object->angle += difference;
+      object->facing += difference;
     }
-    object->action = 0;
+    object->timer = 0;
     object->unk66 = 2;
   } else {
     Actor_SetMoveTarget(object, position.x, position.y, position.z);
@@ -238,15 +238,15 @@ update_object:
     direction = angle;
     Vector_AddPolarOffset(speed, direction,
                           (struct FieldPosition *)&object->velocityX);
-    if (object->action != 0)
-      object->action--;
+    if (object->timer != 0)
+      object->timer--;
     object->actionFlags &= ~1;
-    difference = (s16)(direction - object->angle);
+    difference = (s16)(direction - object->facing);
     if (difference > 0x1000)
       difference = 0x400;
     if (difference < -0x1000)
       difference = -0x400;
-    object->angle += difference;
+    object->facing += difference;
   }
 
   camera = (struct WorldCamera *)Ram_HeapSlots->mapWork;
@@ -263,10 +263,10 @@ update_object:
   kind = object->animationKind;
   if (kind == 1) {
     GetWorldMapCollision((struct WorldPosition *)&object->x);
-    if (object->action == 0 && collision == 0) {
+    if (object->timer == 0 && collision == 0) {
       ripple = Func_08023220(0x10d, object->x, object->y, object->z);
       if (ripple != 0) {
-        rippleSprite = ripple->animation;
+        rippleSprite = ripple->sprite;
         Actor_StartScript(ripple, gData_0802ec94);
         ripple->motionFlags = 0;
         ripple->terrainId = kind;
@@ -276,7 +276,7 @@ update_object:
           rippleSprite->objectMode = 0;
           rippleSprite->priority = 2;
         }
-        object->action = 10;
+        object->timer = 10;
       }
     }
   }

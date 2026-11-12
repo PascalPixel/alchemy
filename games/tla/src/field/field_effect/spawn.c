@@ -13,7 +13,7 @@
 #include "fixed_math.h"
 
 extern struct FieldEffect *Actor_GetById(s32 id);
-extern struct FieldActor *EFFECT_CREATE(s32 type, s32 x, s32 y, s32 z);
+extern struct Actor *EFFECT_CREATE(s32 type, s32 x, s32 y, s32 z);
 #ifdef EFFECT_SPRITE_PRIORITY
 static inline struct FieldEffect *Effect_CreateActor(s32 type, s32 x, s32 y,
                                                      s32 z) {

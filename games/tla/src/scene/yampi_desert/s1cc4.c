@@ -43,7 +43,7 @@ void Func_02001cc4(struct Actor *object, s32 dx, s32 dz) {
         Actor_SetSingleChildFlags(dust, 0);
         Func_02003fa8(dust, 1);
         Func_02003fb8(dust, gData_020042f0);
-        sprite = dust->animation;
+        sprite = dust->sprite;
         sprite->mode = 1;
         /* FAKEMATCH(dead): an empty once-only block after the sprite store
          * keeps gInput's address load after it; as the store alone, 2 of 174
@@ -66,7 +66,7 @@ void Func_02001cc4(struct Actor *object, s32 dx, s32 dz) {
               (Math_Sine(((Random16Far() << 3) >> 16) << 14) >> 1) + dz;
         }
         FIELD32(dust, 72) = 0;
-        dust->action = ((Random16Far() << 9) >> 16) - 256;
+        dust->timer = ((Random16Far() << 9) >> 16) - 256;
         dust->speedLimit = 0;
         dust->acceleration = 0;
         dust->update = Effect_AdvanceMotionAtLeaderPriority;

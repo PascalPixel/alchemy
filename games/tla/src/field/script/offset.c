@@ -86,7 +86,7 @@ s32 Func_08025160(struct Actor *interpreter) {
         region += 4;
       }
     }
-    if (cameraObject->action != 0) {
+    if (cameraObject->timer != 0) {
       cameraObject->x = x;
       cameraObject->y = y;
       cameraObject->z = z;
@@ -167,7 +167,7 @@ s32 Func_08025428(struct Actor *cameraObject) {
       x = maxX;
     if (z > maxZ)
       z = maxZ;
-    if (cameraObject->action != 0) {
+    if (cameraObject->timer != 0) {
       cameraObject->x = x;
       cameraObject->y = y;
       cameraObject->z = z;
@@ -1332,20 +1332,20 @@ s32 Func_0802632c(struct Actor *object) {
     if (collision & 3) {
       s32 difference;
 
-      difference = (u16)angle - object->angle;
+      difference = (u16)angle - object->facing;
       difference = (s16)difference;
       if (difference > 0x1000)
         difference = 0x1000;
       if (difference < -0x1000)
         difference = -0x1000;
-      object->angle += difference;
+      object->facing += difference;
     }
-    object->action = 0;
+    object->timer = 0;
     object->unk66 = 2;
   } else {
     Actor_SetMoveTarget(object, position.x, position.y, position.z);
-    if (object->action != 0)
-      object->action--;
+    if (object->timer != 0)
+      object->timer--;
   }
 
   pressed = 0;

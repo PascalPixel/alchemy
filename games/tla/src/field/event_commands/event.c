@@ -341,7 +341,7 @@ void Actor_WaitForAnimationEnd(s32 objectId, s32 value) {
 
   if (obj != 0 && obj->animationKind == 1) {
     s32 cnt = 0;
-    u8 *anim = (u8 *)obj->animation;
+    u8 *anim = (u8 *)obj->sprite;
 
     while (cnt <= 89) {
       wait(1);

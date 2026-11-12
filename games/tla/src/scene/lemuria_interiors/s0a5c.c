@@ -168,13 +168,13 @@ L_02008a86:
     actor->x = pos[0];
     actor->y = pos[1];
     actor->z = pos[2];
-    actor->angle = angle + 16384;
+    actor->facing = angle + 16384;
     if (i == 128) {
       Actor_FaceDirection(10, 0x3000, 0);
     }
     System_Wait(1);
   }
-  actor->angle = 0x8000;
+  actor->facing = 0x8000;
   FieldEvent_Wait(30);
   Actor_SetAnimation(11, 1);
   FieldEvent_Wait(20);
@@ -227,14 +227,14 @@ L_02008a86:
     actor->x = pos[0];
     actor->y = pos[1];
     actor->z = pos[2];
-    actor->angle = angle + 16384;
+    actor->facing = angle + 16384;
     if (i == 153) {
       Actor_FaceDirection(10, 0x7000, 0);
     }
     System_Wait(1);
   }
   Actor_FaceDirection(10, 0xb000, 0);
-  actor->angle = 0xd000;
+  actor->facing = 0xd000;
   start[0] = actor->x;
   start[1] = actor->y;
   start[2] = actor->z;
@@ -264,8 +264,8 @@ L_0200927c:
 
 extern const u8 gData_02002dec[];
 
-void Func_020027f4(struct FieldActor *object, s32 mode);
-void Func_020027fc(struct FieldActor *object, const void *script);
+void Func_020027f4(struct Actor *object, s32 mode);
+void Func_020027fc(struct Actor *object, const void *script);
 
 struct SpritePictures {
   u8 unk00[5];
@@ -288,7 +288,7 @@ struct SpawnedActor {
 };
 
 void Func_0200128c(s32 x, s32 y, s32 z, s16 rotation, s32 timer) {
-  struct FieldActor *object;
+  struct Actor *object;
   struct AnimatedSprite *sprite;
 
   object = Import_ActorCreate(0x1e8, x, y, z);

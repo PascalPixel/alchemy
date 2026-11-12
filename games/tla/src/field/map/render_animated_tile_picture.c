@@ -292,7 +292,7 @@ struct Actor *Func_08023220(s32 id, s32 x, s32 y, s32 z) {
       sprite = ResourceObject_Create(id);
       if (sprite != NULL) {
         object->animationKind = 1;
-        object->animation = sprite;
+        object->sprite = sprite;
         object->radius = Resource_GetMetadataRecordFar(id)->boxY >> 1;
       } else {
         object->animationKind = 0;
@@ -302,7 +302,7 @@ struct Actor *Func_08023220(s32 id, s32 x, s32 y, s32 z) {
       entry = (void **)((u32 *)Ram_HeapSlots->objectSystem +
                         Ram_HeapSlots->objectSystem->count++ + 2);
       object->animationKind = kind;
-      object->animation = entry;
+      object->sprite = entry;
       zero = 0;
       Dma_Set(&zero, entry, 0x85000004, REG_DMA3);
       sprite = ResourceObject_Create(id);
@@ -330,9 +330,9 @@ struct Actor *Func_08023220(s32 id, s32 x, s32 y, s32 z) {
     object->bounce = 0x4000;
     object->collisionFlags = 0;
     object->actionFlags = 1;
-    object->angle = 0x4000;
+    object->facing = 0x4000;
     object->unk4c = 0;
-    object->action = x / 65536;
+    object->timer = x / 65536;
     object->unk66 = z / 65536;
     *(s32 *)&object->unk70[12] = 0;
     *(s32 *)&object->unk70[0] = 0;

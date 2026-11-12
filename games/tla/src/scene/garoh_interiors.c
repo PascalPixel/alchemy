@@ -35,7 +35,7 @@ const struct ActorPlacement *Func_0200004c(void) {
 void Func_0200009c(s32 actor) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
 
-  u16 facing = (leader->angle + 0x2000) & ~0x3fff;
+  u16 facing = (leader->facing + 0x2000) & ~0x3fff;
 
   if (facing == 0xc000 && GameFlag_Test(0x91b)) {
     Func_0200089c(10, actor);
@@ -51,7 +51,7 @@ void Func_0200009c(s32 actor) {
 void Func_02000114(s32 actor) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
 
-  u16 facing = (leader->angle + 0x2000) & ~0x3fff;
+  u16 facing = (leader->facing + 0x2000) & ~0x3fff;
 
   if (facing == 0xc000 && GameFlag_Test(0x91b)) {
     Func_0200089c(11, actor);
@@ -67,7 +67,7 @@ void Func_02000114(s32 actor) {
 void Func_0200018c(s32 actor) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
 
-  u16 facing = (leader->angle + 0x2000) & ~0x3fff;
+  u16 facing = (leader->facing + 0x2000) & ~0x3fff;
 
   if (facing == 0xc000) {
     Func_0200089c(12, actor);
@@ -93,7 +93,7 @@ void Func_0200018c(s32 actor) {
 void Func_02000230(s32 actor) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
 
-  u16 facing = (leader->angle + 0x2000) & ~0x3fff;
+  u16 facing = (leader->facing + 0x2000) & ~0x3fff;
 
   if (facing == 0xc000) {
     Func_020008ac(3, actor);
@@ -109,7 +109,7 @@ void Func_02000230(s32 actor) {
 void Func_02000298(void) {
   s16 facing;
 
-  facing = ((Actor_GetById(gMainRoutineWork.currentOwner)->angle) + 0x2000) &
+  facing = ((Actor_GetById(gMainRoutineWork.currentOwner)->facing) + 0x2000) &
            ~0x3fff;
   Actor_SetAngleToward(8, gMainRoutineWork.currentOwner, 0);
   if ((u16)facing == 0xc000) {

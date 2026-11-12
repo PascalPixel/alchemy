@@ -157,13 +157,13 @@ void Func_080e5d5c(void) {
   shine->motionFlags = 0;
   if (*(u16 *)((u8 *)event + 0xd4c) & 2) {
     if ((shine->animationKind & 15) == 1) {
-      ((struct EffectSprite *)shine->animation)->oam.priority = 1;
+      ((struct EffectSprite *)shine->sprite)->oam.priority = 1;
       ((u8 *)shine)[35] &= 254;
     }
   } else {
     ((u8 *)shine)[35] = 1;
   }
-  shine->angle = caster->angle;
+  shine->facing = caster->facing;
   Actor_SetMode(shine, 2);
   if (!(*(u16 *)((u8 *)event + 0xd4c) & 1))
     Func_080dba5c();

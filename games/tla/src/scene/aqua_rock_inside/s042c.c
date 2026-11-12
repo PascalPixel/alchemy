@@ -191,7 +191,7 @@ void Func_020007a8(void) {
 
   Actor_ShowItemIconById(10, 0x1c8);
   object = Actor_Get(20);
-  sprite = object->animation;
+  sprite = object->sprite;
   sprite->flag0 = 1;
   object->motionFlags = 0;
   object->y = 0x180000;

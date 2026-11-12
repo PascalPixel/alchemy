@@ -43,7 +43,7 @@ void Func_02003884(void) {
   s32 startZ;
 
   actor = ObjectTable_Get(gMainRoutineWork.currentOwner);
-  heading = (s16)((actor->angle + 0x2000) & -0x4000);
+  heading = (s16)((actor->facing + 0x2000) & -0x4000);
 
 top:
   Func_02003284();
@@ -72,7 +72,7 @@ top:
   nextBehavior = MapGrid_GetCellBehaviorAt(*layer, position->x, position->z);
   if (nextBehavior == 255 ||
       Map_GetTerrainHeight(*layer, position->x, position->z) - actor->y > i) {
-    actor->angle = heading;
+    actor->facing = heading;
     actor->velocityX = 0;
     actor->velocityZ = 0;
     actor->x = startX;
@@ -83,7 +83,7 @@ top:
   position->z = z;
   actor->speedLimit = PIXELS(2);
   actor->acceleration = 0x1999;
-  actor->action = zero;
+  actor->timer = zero;
   Func_02004bc0(actor, 2);
   Actor_SetAnimationSpeed(actor, 48);
   actor->update = Func_020031f8;

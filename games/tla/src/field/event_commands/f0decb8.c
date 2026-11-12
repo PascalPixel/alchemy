@@ -299,7 +299,7 @@ void FieldEffect_RunDouse(void) {
       if (mote != 0) {
         mote->update = (void (*)(void))BattleEffect_UpdateDriftingFallObject;
         mote->motionFlags = 0;
-        ((struct Effect05Sprite *)mote->animation)->mode = 2;
+        ((struct Effect05Sprite *)mote->sprite)->mode = 2;
         Actor_SetMode(mote, 8);
         Animation_ApplyChildValuesFar((struct ActorView *)mote, 7);
       }

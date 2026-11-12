@@ -198,7 +198,7 @@ s32 Func_020003dc(void) {
   u16 turn;
   s32 facing;
 
-  turn = Actor_Get(gMainRoutineWork.currentOwner)->angle + 0x5fff;
+  turn = Actor_Get(gMainRoutineWork.currentOwner)->facing + 0x5fff;
   facing = 1;
   if (turn >= 0x3fff)
     facing = 0;
@@ -646,7 +646,7 @@ void Func_02000e38(void) {
     PartyInventory_Remove(454);
     Party_GiveItem(giftItem, 0);
     Func_02003fbc();
-    Actor_GetById(gMainRoutineWork.currentOwner)->angle = 0x4000;
+    Actor_GetById(gMainRoutineWork.currentOwner)->facing = 0x4000;
     if (gift != 0) {
       Func_02003dfc(gift);
       Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
@@ -674,7 +674,7 @@ void Func_02001278(struct Actor *object) {
 
   FieldActor_SetPositionAndResetMotion(object, source->x, source->y + PIXELS(16),
                                   source->z);
-  object->angle = source->angle;
+  object->facing = source->facing;
 }
 
 #include "version.h"

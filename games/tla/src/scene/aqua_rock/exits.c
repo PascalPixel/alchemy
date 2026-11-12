@@ -42,11 +42,11 @@ again:
     distance = Iwram_MulQ16(Random16Far(), 0x80000) + 0x40000;
     a = Random16Far();
     b = Random16Far();
-    Vector_AddPolarOffsetFar(distance, object->angle + (a >> 2) - (b >> 2), p);
+    Vector_AddPolarOffsetFar(distance, object->facing + (a >> 2) - (b >> 2), p);
     x = p->x;
     if (x < 0)
       x += 0xffff;
-    dx = (x >> 16) - object->action;
+    dx = (x >> 16) - object->timer;
     coordinate = p->z;
     if (coordinate < 0)
       coordinate += 0xffff;
@@ -55,7 +55,7 @@ again:
       goto again;
     goto found;
   }
-  object->angle += 0x8000;
+  object->facing += 0x8000;
   ((struct ActorTail *)object)->unk5e = 1;
   goto end;
 found:

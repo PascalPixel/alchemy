@@ -47,7 +47,7 @@ void Func_0200470c(void) {
   s32 startZ;
 
   actor = ObjectTable_Get(gMainRoutineWork.currentOwner);
-  heading = (s16)((actor->angle + 0x2000) & -0x4000);
+  heading = (s16)((actor->facing + 0x2000) & -0x4000);
 
 top:
   Func_0200410c();
@@ -76,7 +76,7 @@ top:
   nextBehavior = MapGrid_GetCellBehaviorAt(*layer, position->x, position->z);
   if (nextBehavior == 255 ||
       Map_GetTerrainHeight(*layer, position->x, position->z) - actor->y > i) {
-    actor->angle = heading;
+    actor->facing = heading;
     actor->velocityX = 0;
     actor->velocityZ = 0;
     actor->x = startX;
@@ -87,7 +87,7 @@ top:
   position->z = z;
   actor->speedLimit = PIXELS(2);
   actor->acceleration = 0x1999;
-  actor->action = zero;
+  actor->timer = zero;
   Func_02005480(actor, 2);
   Actor_SetAnimationSpeed(actor, 48);
   actor->update = Func_02004080;
@@ -170,7 +170,7 @@ void Func_02004a44(s32 layer, s32 x, s32 z, u32 width, u32 height, s32 value);
 s32 Func_02004938(s32 id) {
   u8 *map = (u8 *)Ram_HeapSlots->mapWork;
   struct Actor *object = Actor_Get(id);
-  s16 shape = *(s16 *)((struct FieldSprite *)object->animation)->record;
+  s16 shape = *(s16 *)((struct FieldSprite *)object->sprite)->record;
   s16 i = 0;
   u32 j;
   s32 width;
@@ -313,14 +313,14 @@ struct Actor *Func_02004bf4(s32 *direction, s32 *slot, s32 *kind) {
   u32 i, k;
   s32 x, z, left, top, right, bottom;
 
-  *direction = leader->angle >> 12;
+  *direction = leader->facing >> 12;
   i = 8;
   entry = &work->objects[8];
 outer:
   object = *entry;
   k = 0;
 inner:
-  if (((struct ObjectAnimationState *)object->animation)->value28[0] ==
+  if (((struct ObjectAnimationState *)object->sprite)->value28[0] ==
       gData_02005f58[k]) {
     x = (PIXELS(leader->x) + (gData_02005f7c[*direction] >> 16)) >> 4;
     z = (PIXELS(leader->z) + (s16)gData_02005f7c[*direction]) >> 4;
@@ -380,7 +380,7 @@ void Func_02004d10(struct PushTarget target) {
   s32 speed;
   s32 acceleration;
 
-  direction = leader->angle >> 16;
+  direction = leader->facing >> 16;
   footprint = target.footprint;
   speed = leader->speedLimit;
   acceleration = leader->acceleration;
@@ -454,7 +454,7 @@ void Func_02004fc0(struct Actor *object) {
   s32 position[3];
   struct Actor *hit;
   u32 i;
-  s32 angle = object->angle >> 12;
+  s32 angle = object->facing >> 12;
 
   angle = ((angle + 2) & 12) << 12;
   position[0] = object->x;
@@ -465,7 +465,7 @@ void Func_02004fc0(struct Actor *object) {
   if (hit != 0) {
     i = 0;
   next:
-    if (*((struct ObjectAnimationState *)hit->animation)->value28 ==
+    if (*((struct ObjectAnimationState *)hit->sprite)->value28 ==
         gData_02005f58[i])
       return;
     i++;

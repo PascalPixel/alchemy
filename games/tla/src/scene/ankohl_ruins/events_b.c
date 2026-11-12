@@ -12,7 +12,7 @@
 
 s32 Func_020005c0(struct Actor *object) {
   Actor_SetSingleChildFlags(object, 0);
-  ((struct FieldSprite *)object->animation)->priority = 2;
+  ((struct FieldSprite *)object->sprite)->priority = 2;
   object->priorityFlags &= 0xfe;
   object->motionFlags = 0;
   object->y -= 0x40000;

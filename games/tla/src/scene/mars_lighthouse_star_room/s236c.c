@@ -78,7 +78,7 @@ s32 Func_0200236c(void) {
   FieldEvent_ResolvePendingActions(0);
   Event_ClearFlag(0x106);
   leader->update = (void (*)(void))Func_02002120;
-  leader->angle = 0x4000;
+  leader->facing = 0x4000;
   Func_020041cc(leader, 49);
   while (ride->car->stopped == 0) {
     if (Func_0200422c(0, leader->x, leader->z) != 7) {

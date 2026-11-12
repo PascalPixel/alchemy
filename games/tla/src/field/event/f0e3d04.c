@@ -96,7 +96,7 @@ void BattleEffect_PrepareBufferInterpolation(void);
 void Func_080e38c8(void);
 
 #define OBJECT_DEFINITION(object)                                              \
-  (((struct ObjectAnimation *)(object)->animation)->definition)
+  (((struct ObjectAnimation *)(object)->sprite)->definition)
 
 void Func_080e3d04(void) {
   struct SprayWork *work;
@@ -375,7 +375,7 @@ void Func_080e42d4(void) {
   if (Func_080dbcd8(object->x, object->z, object->terrainId) == 0)
     reason = 2;
   if (party[530] == 5 && *(s16 *)((u8 *)object + 102) != 0 &&
-      object->action == 0) {
+      object->timer == 0) {
     s32 x;
     s32 z;
     s32 back;

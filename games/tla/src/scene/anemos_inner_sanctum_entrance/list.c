@@ -12,7 +12,7 @@ void Func_02000ba4(s32 id, s32 value) {
   struct Actor *object = Actor_GetById(id);
 
   if (object != NULL) {
-    object->action = value;
+    object->timer = value;
     gData_02001ce0[gData_02001cde] = object;
     gData_02001cde++;
   }

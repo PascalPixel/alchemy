@@ -579,7 +579,7 @@ void Func_080d7524(s32 djinniId) {
 
   djinni = Actor_GetById(djinniId);
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
-  dir = (leader->angle + 0x2000) & 0xc000;
+  dir = (leader->facing + 0x2000) & 0xc000;
   Event_Start();
   wait(10);
   Sound_PlayFar(173);
@@ -590,7 +590,7 @@ void Func_080d7524(s32 djinniId) {
   back = dir + 0x8000;
   Actor_ArmCallback(djinniId, back, 0);
   wait(10);
-  djinni->angle = back;
+  djinni->facing = back;
   Func_080d47b4(djinniId, 0x103, 50);
   Actor_GetById(djinniId)->actionFlags &= ~1;
   djinni->motionFlags = 2;
@@ -601,7 +601,7 @@ void Func_080d7524(s32 djinniId) {
   djinni->gravity = 0x4000;
   djinni->velocityY = 0x48000;
   wait(33);
-  ((struct AnimationObject *)djinni->animation)->image.priority = 0;
+  ((struct AnimationObject *)djinni->sprite)->image.priority = 0;
 #if TLA_PATCH_1
   Sound_PlayFar(152);
 #endif
@@ -614,8 +614,8 @@ void Func_080d7524(s32 djinniId) {
   wait(38);
 
   djinni->update = NULL;
-  djinni->angle = back;
-  sprite = ((struct AnimationObject *)djinni->animation)->entries[0]->animId;
+  djinni->facing = back;
+  sprite = ((struct AnimationObject *)djinni->sprite)->entries[0]->animId;
   tint = 9;
   if (sprite == 243)
     tint = 2;
@@ -637,12 +637,12 @@ void Func_080d7524(s32 djinniId) {
       copy->priorityFlags = 2;
       copy->actionFlags |= 1;
       copy->update = (void (*)(void))Actor_MoveHalfwayTowardTarget;
-      copy->angle = djinni->angle;
-      ((struct AnimationObject *)copy->animation)->image.priority = 0;
+      copy->facing = djinni->facing;
+      ((struct AnimationObject *)copy->sprite)->image.priority = 0;
       Animation_ApplyChildValuesFar(copy, tint);
       Actor_SetMode(copy, 0);
       Actor_SetSingleChildFlagsFar(copy, 0);
-      sharedSprite = Sprite_ShareVramCacheEntry(copy->animation, sharedSprite);
+      sharedSprite = Sprite_ShareVramCacheEntry(copy->sprite, sharedSprite);
       copy->watchedObject = prev;
       prev = copy;
     }
@@ -667,7 +667,7 @@ void Func_080d7524(s32 djinniId) {
   djinni->targetZ = 0x80000000;
   djinni->targetY = 0x80000000;
   Actor_SetMode(djinni, 0);
-  ((struct AnimationObject *)djinni->animation)->image.priority = 2;
+  ((struct AnimationObject *)djinni->sprite)->image.priority = 2;
 #if TLA_PATCH_1
   djinni->gravity = 0x10000;
 #endif

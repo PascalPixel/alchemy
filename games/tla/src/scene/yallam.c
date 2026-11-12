@@ -11,7 +11,7 @@ struct TileSprite {
 };
 
 s32 Func_02000038(struct Actor *object) {
-  struct TileSprite *sprite = object->animation;
+  struct TileSprite *sprite = object->sprite;
 
   sprite->tile = 0x8000;
   return 0;
@@ -59,7 +59,7 @@ s32 Func_02000088(struct Actor *object, struct Actor *target,
     u32 left = (angle - 0x1000) & 0xf000;
     u32 right = (angle + 0x1000) & 0xf000;
     u32 ahead = angle & 0xf000;
-    u32 facing = object->angle & 0xf000;
+    u32 facing = object->facing & 0xf000;
 
     if (ahead == facing || right == facing || left == facing || force != 0) {
       object->movementState = 1;
@@ -102,7 +102,7 @@ s32 Func_0200014c(struct Actor *object) {
     Func_02002448(arg, 2);
   } else {
     struct Actor *target;
-    u16 *flags = (u16 *)&object->action;
+    u16 *flags = (u16 *)&object->timer;
 
     if (*flags & 1)
       target = Actor_Get(10);
@@ -123,7 +123,7 @@ s32 Func_0200014c(struct Actor *object) {
   u8 *event = Ram_HeapSlots->eventWork;
   s32 force = 0;
   struct Actor *target;
-  u16 *flags = (u16 *)&object->action;
+  u16 *flags = (u16 *)&object->timer;
 
   if (*flags & 1)
     target = Actor_Get(10);
@@ -1257,27 +1257,27 @@ void Func_02001730(void) {
   struct Actor *object;
 
   object = Actor_Get(8);
-  gData_02002fc0[0].action = object->action;
+  gData_02002fc0[0].action = object->timer;
   gData_02002fc0[0].mode = (s16)object->unk66;
   gData_02002fc0[0].byte98 = BYTE_AT(object, 98);
   gData_02002fc0[0].byte99 = BYTE_AT(object, 99);
   object = Actor_Get(10);
-  gData_02002fc0[1].action = object->action;
+  gData_02002fc0[1].action = object->timer;
   gData_02002fc0[1].mode = (s16)object->unk66;
   gData_02002fc0[1].byte98 = BYTE_AT(object, 98);
   gData_02002fc0[1].byte99 = BYTE_AT(object, 99);
   object = Actor_Get(9);
-  gData_02002fc0[2].action = object->action;
+  gData_02002fc0[2].action = object->timer;
   gData_02002fc0[2].mode = (s16)object->unk66;
   gData_02002fc0[2].byte98 = BYTE_AT(object, 98);
   gData_02002fc0[2].byte99 = BYTE_AT(object, 99);
   object = Actor_Get(11);
-  gData_02002fc0[3].action = object->action;
+  gData_02002fc0[3].action = object->timer;
   gData_02002fc0[3].mode = (s16)object->unk66;
   gData_02002fc0[3].byte98 = BYTE_AT(object, 98);
   gData_02002fc0[3].byte99 = BYTE_AT(object, 99);
   object = Actor_Get(gMainRoutineWork.currentOwner);
-  gData_02002fc0[4].action = object->action;
+  gData_02002fc0[4].action = object->timer;
   gData_02002fc0[4].mode = (s16)object->unk66;
   gData_02002fc0[4].byte98 = BYTE_AT(object, 98);
   gData_02002fc0[4].byte99 = BYTE_AT(object, 99);
@@ -1288,27 +1288,27 @@ void Func_0200182c(void) {
   struct Actor *object;
 
   object = Actor_Get(8);
-  object->action = gData_02002fc0[0].action;
+  object->timer = gData_02002fc0[0].action;
   object->unk66 = gData_02002fc0[0].mode;
   BYTE_AT(object, 98) = gData_02002fc0[0].byte98;
   BYTE_AT(object, 99) = gData_02002fc0[0].byte99;
   object = Actor_Get(10);
-  object->action = gData_02002fc0[1].action;
+  object->timer = gData_02002fc0[1].action;
   object->unk66 = gData_02002fc0[1].mode;
   BYTE_AT(object, 98) = gData_02002fc0[1].byte98;
   BYTE_AT(object, 99) = gData_02002fc0[1].byte99;
   object = Actor_Get(9);
-  object->action = gData_02002fc0[2].action;
+  object->timer = gData_02002fc0[2].action;
   object->unk66 = gData_02002fc0[2].mode;
   BYTE_AT(object, 98) = gData_02002fc0[2].byte98;
   BYTE_AT(object, 99) = gData_02002fc0[2].byte99;
   object = Actor_Get(11);
-  object->action = gData_02002fc0[3].action;
+  object->timer = gData_02002fc0[3].action;
   object->unk66 = gData_02002fc0[3].mode;
   BYTE_AT(object, 98) = gData_02002fc0[3].byte98;
   BYTE_AT(object, 99) = gData_02002fc0[3].byte99;
   object = Actor_Get(gMainRoutineWork.currentOwner);
-  object->action = gData_02002fc0[4].action;
+  object->timer = gData_02002fc0[4].action;
   object->unk66 = gData_02002fc0[4].mode;
   BYTE_AT(object, 98) = gData_02002fc0[4].byte98;
   BYTE_AT(object, 99) = gData_02002fc0[4].byte99;
@@ -1415,7 +1415,7 @@ wait1:
   {
     s16 *count;
     System_Wait(1);
-    if ((*(&actor->action)) != 34) {
+    if ((*(&actor->timer)) != 34) {
       goto wait1;
     }
   }
@@ -1427,7 +1427,7 @@ wait1:
 wait2:
   System_Wait(1);
 
-  if (actor->action != 42) {
+  if (actor->timer != 42) {
     goto wait2;
   }
   actor->unk66 = 2;
@@ -1437,7 +1437,7 @@ wait2:
 wait3:
   System_Wait(1);
 
-  if (actor->action != 108) {
+  if (actor->timer != 108) {
     goto wait3;
   }
   actor->unk66 = 3;
@@ -1715,7 +1715,7 @@ void Func_020022f8(void) {
   s32 step;
   s32 i;
   struct Actor *object = Actor_Get(9);
-  struct TileSprite *sprite = object->animation;
+  struct TileSprite *sprite = object->sprite;
 
   Event_SetFlag(0x300);
   object->acceleration = 0x18000;

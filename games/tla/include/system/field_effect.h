@@ -8,34 +8,34 @@
 /// A field effect: a small object on the field that moves at its velocity and
 /// grows and spins at its rates, run by its script and update hook.
 struct FieldEffect {
-  /// FieldActor's unk00 and facing; not named by this view.
+  /// Actor's script, cursor and facing; not named by this view.
   u8 unk00[8];
   s32 x;       ///< 16.16 fixed-point pixels
   s32 y;       ///< 16.16 fixed-point pixels
   s32 z;       ///< 16.16 fixed-point pixels
-  u8 unk14[4]; ///< FieldActor's terrainHeight; not named by this view
+  u8 unk14[4]; ///< Actor's terrainHeight; not named by this view
   s32 scaleX;  ///< 16.16 fixed point, 0x10000 full size
   s32 scaleY;  ///< 16.16 fixed point, 0x10000 full size
   u8 unk20[3]; ///< not named by this view
   /// The spawner clears bit 0 when EFFECT_USE_PRIORITY sets the sprite's
   /// priority.
   u8 priorityFlags;
-  /// FieldActor's velocityX to velocityZ; effects move by velocity instead.
+  /// Actor's velocityX to velocityZ; effects move by velocity instead.
   u8 unk24[0x0c];
   /// Added to scaleX each frame by the update hooks, in 16.16 fixed point a
   /// frame; zeroed by the spawner.
   s32 scaleRateX;
   s32 scaleRateY; ///< as scaleRateX, for scaleY
-  u8 unk38[0x0c]; ///< FieldActor's targetX to targetZ; not named by this view
+  u8 unk38[0x0c]; ///< Actor's targetX to targetZ; not named by this view
   /// Added to x, y and z each frame by the update hooks, in 16.16 fixed-point
   /// pixels per frame.
   struct Vector3 velocity;
   struct FieldSprite *sprite; ///< the sprite spin turns
-  u8 unk54;          ///< FieldActor's animationKind; not named by this view
-  u8 motionFlags;    ///< zeroed by the spawner
-  u8 unk56[3];       ///< FieldActor's unk56; not named by this view
-  u8 collisionFlags; ///< FieldActor's collisionFlags; not named by this view
-  u8 unk5a[0x0a];    ///< FieldActor's unk5a; not named by this view
+  u8 unk54;                   ///< Actor's animationKind; not named by this view
+  u8 motionFlags;             ///< zeroed by the spawner
+  u8 unk56[3];                ///< Actor's unk56; not named by this view
+  u8 collisionFlags; ///< Actor's collisionFlags; not named by this view
+  u8 unk5a[0x0a];    ///< Actor's unk5a; not named by this view
   /// Added to the sprite's rotation each frame by the update hooks, in
   /// 1/65536 turns per frame; zeroed by the spawner.
   u16 spin;
@@ -55,7 +55,7 @@ STATIC_ASSERT(offsetof(struct FieldEffect, update) == 0x6c);
 
 /// An object on the field, read as an actor or as an effect.
 union FieldObject {
-  struct FieldActor actor;
+  struct Actor actor;
   struct FieldEffect effect;
 };
 

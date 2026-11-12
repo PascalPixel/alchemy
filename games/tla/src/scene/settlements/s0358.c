@@ -196,14 +196,14 @@ u8 *Func_02000668(void) {
 void Func_02000714(struct Actor *object) {
   s32 step;
 
-  object->x += object->action << 8;
+  object->x += object->timer << 8;
 
   object->y += 0x8000;
 
   step = 0x51e;
   object->scaleX += step;
   object->scaleY += step;
-  object->action += 2;
+  object->timer += 2;
   if (--*(s32 *)&object->watchedObject == 0)
     Func_02002000(object);
 }
@@ -216,10 +216,10 @@ void Func_02000758(s32 x, s32 y, s32 z) {
 
     object->unk5c[0] = 2;
     object->motionFlags = 0;
-    object->action = 0;
+    object->timer = 0;
     object->priorityFlags &= 0xfe;
     Actor_SetSpriteColor(object, 7);
-    animation = object->animation;
+    animation = object->sprite;
     animation[9] = (animation[9] & -13) | 4;
     Actor_SetSingleChildFlags(object, 0);
     object->scaleX = 0x8000;

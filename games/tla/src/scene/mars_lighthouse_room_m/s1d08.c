@@ -20,10 +20,10 @@ void Func_02001cc4(struct Actor *object, s32 part) {
   object->motionFlags = zero;
   object->collisionFlags = zero;
 
-  ((struct SpriteParts *)object->animation)->part = part;
+  ((struct SpriteParts *)object->sprite)->part = part;
   Actor_SetSingleChildFlags(object, 0);
   Func_02003120(object, gData_020032d4);
-  object->action = zero;
+  object->timer = zero;
   object->speedLimit = zero;
   object->acceleration = zero;
 }
@@ -105,9 +105,9 @@ void Func_02001e38(struct Actor *object) {
   object->unk4c = vz - vz / 16;
   rate = object->speedLimit;
   object->scaleX += rate;
-  animation = object->animation;
+  animation = object->sprite;
   object->scaleY += object->acceleration;
-  animation->angle += object->action;
+  animation->angle += object->timer;
   if (target->y == target->terrainHeight && Func_02001de0(object, target)) {
     object->z -= object->unk4c;
     object->gravity += object->unk4c >> 2;
@@ -122,7 +122,7 @@ void Func_02001ed4(struct Actor *object) {
   Func_02003118(object, 2);
   Func_02003120(object, gData_020032d4);
   Actor_SetSpriteColor(object, 10);
-  object->action = 0;
+  object->timer = 0;
   object->speedLimit = 0;
   object->acceleration = 0;
 }
@@ -142,7 +142,7 @@ void Func_02001f14(struct MarsLighthouseRoomMVector *position, s32 value) {
      * to 16 bits: movs, lsls for 0x8000, no extension); as a direct store, 10
      * of 50 instructions differ in tla-en. */
     angle = (u16)Random16Far() - 0x8000;
-    object->action = angle;
+    object->timer = angle;
     ((void (*)())Func_02001ed4)(object, 2);
     object->update = Func_02001e38;
     Animation_SetStateFlags(object, 1);

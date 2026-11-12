@@ -75,8 +75,8 @@ void Func_02000818(void) {
         spark.kind = 7;
         spark.scaleX = 0x16666;
         spark.scaleY = 0x13333;
-        cosine = Math_Cosine(actor->angle);
-        sine = Math_Sine(actor->angle);
+        cosine = Math_Cosine(actor->facing);
+        sine = Math_Sine(actor->facing);
         pos[0] = cosine * 12;
         pos[1] = sine * 12;
         pos[2] = -(cosine * 12);

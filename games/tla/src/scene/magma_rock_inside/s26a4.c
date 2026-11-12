@@ -22,7 +22,7 @@ void Func_020026a4(s32 x, s32 z) {
   REG_BLDCNT = 0x3f44;
   Scene_SetActorSpritePriority(object, 0);
   Actor_SetSingleChildFlags(object, 0);
-  ((struct FieldSprite *)object->animation)->blendMode = 2;
+  ((struct FieldSprite *)object->sprite)->blendMode = 2;
   Func_02004d40();
   FieldEvent_ResolvePendingActions(0);
   REG_WINOUT = 0x3f1f;

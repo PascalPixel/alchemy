@@ -101,7 +101,7 @@ void Func_02001e78(s32 id) {
   struct Actor *object = Actor_Get(id);
 
   if (object != 0) {
-    u8 *meta = ResourceMetadata_Register(object->animation, 0x17d);
+    u8 *meta = ResourceMetadata_Register(object->sprite, 0x17d);
 
     meta[5] = 0;
     meta[6] = 0;
@@ -117,7 +117,7 @@ void Func_02001ea0(struct Actor *object) {
         Import_ActorCreate_(0x10d, object->x, object->y, object->z);
 
     if (child != 0) {
-      struct FieldSprite *sprite = child->animation;
+      struct FieldSprite *sprite = child->sprite;
 
       Func_02003ccc(child, gData_020040dc);
       child->motionFlags = 0;
@@ -151,7 +151,7 @@ void Func_02001f04(void) {
   i = 31;
 fall:
   object->y -= speed;
-  object->angle += 0x2000;
+  object->facing += 0x2000;
   speed += -0xccc;
   Actor_SetSingleChildFlags(object, 0);
   System_Wait(1);

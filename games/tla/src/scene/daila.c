@@ -144,9 +144,8 @@ void Daila_TalkBoat(void) {
 }
 
 void Func_02000288(s32 keeper) {
-  u16 facing = ((struct FieldActor *)Actor_GetById(gMainRoutineWork.currentOwner))->facing;
+  u16 facing = Actor_GetById(gMainRoutineWork.currentOwner)->facing;
 
-  
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
     Import_ShopOpen(3, keeper);
   } else {
@@ -178,9 +177,8 @@ void Daila_TalkHip(void) {
 }
 
 void Func_02000340(s32 keeper) {
-  u16 facing = ((struct FieldActor *)Actor_GetById(gMainRoutineWork.currentOwner))->facing;
+  u16 facing = Actor_GetById(gMainRoutineWork.currentOwner)->facing;
 
-  
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
     Import_ShopOpen(3, keeper);
   } else {
@@ -194,7 +192,7 @@ void Func_02000340(s32 keeper) {
 
 /// Brings the actor to the player character's position.
 static inline void Actor_JoinLeader(s32 actor) {
-  struct FieldActor *leader;
+  struct Actor *leader;
 
   Actor_SetModeById(actor, 2);
   leader = Actor_GetById(gMainRoutineWork.currentOwner);

@@ -24,7 +24,7 @@ void Func_02003a30(void) {
 
   *slot = object;
   if (object != 0) {
-    struct FieldSprite *sprite = object->animation;
+    struct FieldSprite *sprite = object->sprite;
     u8 *buffer;
 
     sprite->fullColor = 0;

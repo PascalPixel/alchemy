@@ -196,7 +196,7 @@ void Func_080db0b0(s32 id) {
   if (leader == NULL || anchor == NULL)
     return;
   motionFlags = leader->motionFlags;
-  heldSprite = leader->animation;
+  heldSprite = leader->sprite;
   if (leader->x < anchor->x)
     side = 1;
   slot = (void *)Func_080dae70(id);
@@ -221,7 +221,7 @@ void Func_080db0b0(s32 id) {
     wait(1);
   }
 
-  sprite = leader->animation;
+  sprite = leader->sprite;
   dir = 1;
   if (side) {
     letGo = KEY_DOWN | KEY_LEFT | KEY_B;
@@ -699,7 +699,7 @@ void Actor_ApplyRandomChildValues(struct Actor *owner) {
 
   state = owner->animationKind;
   if (state == 1) {
-    target = owner->animation;
+    target = owner->sprite;
     if (target != 0 && (target->displayFlags & state) == 0) {
       initialCount = target->count;
       if (initialCount != 0) {
@@ -757,13 +757,13 @@ void Func_080eb01c(void *work);
 
 s32 Func_080db9a8(struct Actor *object, s32 kind) {
   if (kind == 0xc000)
-    return ((struct DepthPart *)object->animation)->priority;
+    return ((struct DepthPart *)object->sprite)->priority;
   return 0;
 }
 
 /// Returns the 2-bit OBJ priority of the object's animation record.
 s32 BattleEffect_GetObjectPriority(struct Actor *object) {
-  return ((struct DepthPart *)object->animation)->priority;
+  return ((struct DepthPart *)object->sprite)->priority;
 }
 
 /// Returns the object's sort depth: from its projected z on the world map

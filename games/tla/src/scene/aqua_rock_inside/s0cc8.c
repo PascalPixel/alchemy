@@ -44,7 +44,7 @@ void Func_02000cc8(s32 trigger) {
   goto test;
 step:
   if (result < 0) {
-    object->angle = 0x4000;
+    object->facing = 0x4000;
     Func_02000ca8(trigger);
     return;
   }
@@ -67,7 +67,7 @@ step:
     }
     object->x = x - offset;
   }
-  object->angle += 0x1000;
+  object->facing += 0x1000;
   System_Wait(1);
 test:
   target.x = object->x;
@@ -147,7 +147,7 @@ void Func_02000ecc(s32 unused, s32 id) {
     i = 13;
   place:
     object = Actor_GetById(i);
-    object->x = object->action << 16;
+    object->x = object->timer << 16;
     object->z = *(s16 *)((u8 *)object + 102) << 16;
     object->motionFlags = 0;
     object->terrainHeight = -0x200000;

@@ -189,10 +189,10 @@ s32 Scene_PrepareMap(void) { return 0; }
 void Func_02001d30(struct Actor *object) {
   struct Actor *child = Import_ActorCreate(
       14, object->x, object->y + 0x40000, object->z + 0x40000);
-  struct FieldSprite *parentSprite = object->animation;
+  struct FieldSprite *parentSprite = object->sprite;
 
   if (child != 0) {
-    struct FieldSprite *sprite = child->animation;
+    struct FieldSprite *sprite = child->sprite;
 
     child->terrainHeight = object->terrainHeight;
     Func_02002918(child, gData_02002c44);

@@ -89,7 +89,7 @@ void Func_080eaa14(struct ActorFlag *list) {
   for (; list->actor != 0xffff; list++) {
     s32 change = 0;
     struct Actor *object = Actor_GetById(list->actor);
-    u8 frame = ((u8 *)object->animation)[24];
+    u8 frame = ((u8 *)object->sprite)[24];
     u16 flag = list->flag;
 
     if (GameFlag_Test(flag)) {

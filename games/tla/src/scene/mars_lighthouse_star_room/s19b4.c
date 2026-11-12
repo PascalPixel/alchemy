@@ -65,10 +65,10 @@ void Func_02001a9c(struct Actor *object) {
   object->unk4c = dz - dz / 16;
   rate = object->speedLimit;
   scale = object->scaleX;
-  parts = object->animation;
+  parts = object->sprite;
   object->scaleX = scale + rate;
   object->scaleY += object->acceleration;
-  parts->unk12 += object->action;
+  parts->unk12 += object->timer;
   if (leader->y == leader->terrainHeight && Func_02001a44(object, leader)) {
     object->z -= object->unk4c;
     object->gravity += object->unk4c >> 2;
@@ -90,7 +90,7 @@ void Func_02001b38(struct Actor *object) {
   Func_020041cc(object, 2);
   Func_020041dc(object, gData_02004744);
   Actor_SetSpriteColor(object, 10);
-  object->action = 0;
+  object->timer = 0;
   object->speedLimit = 0;
   object->acceleration = 0;
 }

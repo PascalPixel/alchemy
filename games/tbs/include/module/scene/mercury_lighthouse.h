@@ -27,7 +27,7 @@ extern s32 gMercuryLighthouse_ScaleCounterScript[];
 extern s32 gMercuryLighthouse_PillarScript[];
 extern u16 gMercuryLighthouse_MoveAngles[];
 extern const s32 *gFieldEffect_DurationScripts[];
-extern s32 gMercuryLighthouse_SparkBurstScript[];
+extern s32 gGlint_TwinkleScript[];
 extern s32 gMercuryLighthouse_PushScriptA[];
 extern s32 gMercuryLighthouse_PushScriptB[];
 extern s32 gMercuryLighthouse_PushScriptD[];

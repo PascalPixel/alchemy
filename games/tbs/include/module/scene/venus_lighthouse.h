@@ -33,7 +33,7 @@ extern s32 gVenusGreyStatueScript[];
 extern s32 gVenusGreyPillarScript[];
 extern s32 gVenusLeaderDazedScript[];
 extern s32 gVenusMiniatureLighthouseScript[];
-extern s32 gVenusSprayScript[];
+extern s32 gGlint_TwinkleScript[];
 extern s32 gVenusTrackNorthSouthScript[];
 extern s32 gVenusTrackNorthWestScript[];
 extern s32 gVenusTrackNorthEastScript[];

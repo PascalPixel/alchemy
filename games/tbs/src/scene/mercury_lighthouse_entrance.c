@@ -337,7 +337,7 @@ static void MercuryLighthouseEntrance_ActivateWithPly(void) {
 
         effectData->type = effectType;
       }
-      effectData->script = gMercuryLighthouseEntrance_SparkBurstScript;
+      effectData->script = gGlint_TwinkleScript;
       Sound_Play(SE_GLITTER);
       sparkX = 208 - ((u32)(Random_Next() << 4) >> 16);
       sparkZ = 560 - ((u32)(Random_Next() << 4) >> 16);
@@ -965,24 +965,5 @@ struct Trigger gMercuryLighthouseEntrance_Triggers[] = {
     { TRIGGERS_END },
 };
 
-/// Each spark pulses in size four times, then is released.
-s32 gMercuryLighthouseEntrance_SparkBurstScript[] = {
-    SC_SET(SW_SCALE_Y, Q16_ONE),
-    SC_SET(SW_SCALE_X, Q16_ONE),
-    SC_WAIT(6),
-    SC_SET(SW_SCALE_Y, 5 * Q16_ONE / 8),
-    SC_SET(SW_SCALE_X, 5 * Q16_ONE / 8),
-    SC_WAIT(6),
-    SC_SET(SW_SCALE_Y, Q16_ONE / 4),
-    SC_SET(SW_SCALE_X, Q16_ONE / 4),
-    SC_WAIT(6),
-    SC_SET(SW_SCALE_Y, 5 * Q16_ONE / 8),
-    SC_SET(SW_SCALE_X, 5 * Q16_ONE / 8),
-    SC_WAIT(6),
-    SC_LOOP(4, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_RELEASE,
-};
+#include "shared/glint_twinkle_script.h"
 // clang-format on

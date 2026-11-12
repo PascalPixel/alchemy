@@ -1800,7 +1800,7 @@ static void MercuryLighthouse_RaiseActorWithSparks(s32 actorId) {
   options.priority = 1;
   options.palette = 5;
   options.type = SPRITE_GLINT;
-  options.script = gMercuryLighthouse_SparkBurstScript;
+  options.script = gGlint_TwinkleScript;
   for (frame = 0; frame <= 47; frame++) {
     if (frame <= 31)
       MercuryLighthouse_SparkleNear(actor->x.fixed, actor->y.fixed,
@@ -1853,7 +1853,7 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
   options.priority = 1;
   options.palette = 5;
   options.type = SPRITE_GLINT;
-  options.script = gMercuryLighthouse_SparkBurstScript;
+  options.script = gGlint_TwinkleScript;
   zero = 0;
   wave = zero;
   // Two bursts spread sparks across the water before it begins to part.
@@ -3054,25 +3054,7 @@ const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_LongScript,
 };
 
-s32 gMercuryLighthouse_SparkBurstScript[] = {
-    SC_SET(SW_SCALE_Y, Q16_ONE),
-    SC_SET(SW_SCALE_X, Q16_ONE),
-    SC_WAIT(6),
-    SC_SET(SW_SCALE_Y, 5 * Q16_ONE / 8),
-    SC_SET(SW_SCALE_X, 5 * Q16_ONE / 8),
-    SC_WAIT(6),
-    SC_SET(SW_SCALE_Y, Q16_ONE / 4),
-    SC_SET(SW_SCALE_X, Q16_ONE / 4),
-    SC_WAIT(6),
-    SC_SET(SW_SCALE_Y, 5 * Q16_ONE / 8),
-    SC_SET(SW_SCALE_X, 5 * Q16_ONE / 8),
-    SC_WAIT(6),
-    SC_LOOP(4, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_RELEASE,
-};
+#include "shared/glint_twinkle_script.h"
 
 s32 gMercuryLighthouse_PushScriptA[] = {
     SC_WAIT(45),

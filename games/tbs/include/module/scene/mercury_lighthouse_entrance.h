@@ -33,6 +33,6 @@ extern struct SceneEntrance gMercuryLighthouseEntrance_Entrances[];
 extern u32 gMercuryLighthouseEntrance_Exits[];
 extern struct ActorPlacement gMercuryLighthouseEntrance_ActorPlacements[];
 extern struct Trigger gMercuryLighthouseEntrance_Triggers[];
-extern s32 gMercuryLighthouseEntrance_SparkBurstScript[];
+extern s32 gGlint_TwinkleScript[];
 
 #endif

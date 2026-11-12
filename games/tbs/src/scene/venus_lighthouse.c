@@ -3656,7 +3656,7 @@ static s32 VenusLighthouse_UpdateRisingSpray(struct Actor *updated) {
   options.priority = 1;
   options.palette = 5;
   options.type = SPRITE_GLINT;
-  options.script = gVenusSprayScript;
+  options.script = gGlint_TwinkleScript;
   framePhase = gFrameCount & 3;
   if (framePhase == 0) {
     if ((gFrameCount & 7) == 0) {
@@ -4010,27 +4010,7 @@ s32 gVenusMiniatureLighthouseScript[] = {
     SC_END,
 };
 
-/// A drop of the spray that carries the leader up to the aerie. It pulses
-/// from full size to a quarter four times, then is released.
-s32 gVenusSprayScript[] = {
-    SC_SET(SW_SCALE_Y, Q16_ONE),
-    SC_SET(SW_SCALE_X, Q16_ONE),
-    SC_WAIT(6),
-    SC_SET(SW_SCALE_Y, 5 * Q16_ONE / 8),
-    SC_SET(SW_SCALE_X, 5 * Q16_ONE / 8),
-    SC_WAIT(6),
-    SC_SET(SW_SCALE_Y, Q16_ONE / 4),
-    SC_SET(SW_SCALE_X, Q16_ONE / 4),
-    SC_WAIT(6),
-    SC_SET(SW_SCALE_Y, 5 * Q16_ONE / 8),
-    SC_SET(SW_SCALE_X, 5 * Q16_ONE / 8),
-    SC_WAIT(6),
-    SC_LOOP(4, SC_TOP),
-    SC_WAIT(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_RELEASE,
-};
+#include "shared/glint_twinkle_script.h"
 
 /// The actor scripts that give a spiral pillar its piece of track.
 s32 gVenusTrackNorthSouthScript[] = {

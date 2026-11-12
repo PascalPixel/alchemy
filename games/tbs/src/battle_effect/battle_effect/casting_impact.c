@@ -1063,7 +1063,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
                     CASTING_IMPACT_IMAGE_X(work->args->side, 1),
                     imageY + gCastingImpact_ImageY[1], 99, 69);
         if (frame == 4 || frame == 5) {
-          Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
+          Iwram_FillWords(canvas, CANVAS_BYTES,
+                          CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
         }
         if (frame == 6 || frame == 7) {
           blitters[0](canvas, work->sheet + (57 * 98 + 99 * 69),
@@ -1110,7 +1111,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
         }
       }
       if (frame == 4 || frame == 5) {
-        Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
+        Iwram_FillWords(canvas, CANVAS_BYTES,
+                        CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
       }
       if (frame <= 3) {
         if (work->args->side == EFFECT_SIDE_PARTY) {

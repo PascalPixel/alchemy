@@ -135,10 +135,11 @@ void BattleEffect_RunAnnihilation(struct BattleEffectParams *args) {
       BattleEffect_CallDoNothing(10000);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE);
     }
-    // The strike fills the canvas with level 63, a flash that the transfer
+    // The strike fills the canvas at its brightest, a flash that the transfer
     // then fades.
     if (frame == 8) {
-      Dma_Fill32(CANVAS_FILL_WORD(63), canvas, CANVAS_BYTES);
+      Dma_Fill32(CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST), canvas,
+                 CANVAS_BYTES);
     }
     EFFECT_VIEW_FROM_CAMERA(camera);
     // Shards shrink as their lives run down, from mote size 7 to 2, and fall

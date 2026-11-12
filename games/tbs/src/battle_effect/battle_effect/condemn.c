@@ -188,7 +188,8 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
                                CONDEMN_PANEL_X(panelColumn, 1),
                                CONDEMN_PANEL_Y(panelRow, 1) + screenY, 99, 69);
         if ((frame - 88) <= 1U) {
-          Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
+          Iwram_FillWords(canvas, CANVAS_BYTES,
+                          CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
         }
         if ((frame - 90) <= 1U) {
           draw[work->args->side](

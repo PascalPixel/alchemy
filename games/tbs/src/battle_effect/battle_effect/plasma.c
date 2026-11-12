@@ -360,9 +360,11 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 mode) {
       else
         camera->yaw -= 256;
     }
-    // Severe Blow's flash: the whole canvas at level 63, the top of the ramp.
+    // Severe Blow's flash: the whole canvas at its brightest, the top of the
+    // ramp.
     if (work->args->variant == SPARK_GROUPS_SEVERE_BLOW && frame == 4)
-      Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
+      Iwram_FillWords(canvas, CANVAS_BYTES,
+                      CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
     if (mode == SPARK_GROUPS_DYNAMITE || mode == SPARK_GROUPS_RISING) {
       if (frame == 2)
         EFFECT_SHOW_DAMAGE(SE_CRASH);

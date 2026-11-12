@@ -166,16 +166,15 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
   EFFECT_SHOW_WIDE_CANVAS(15);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
-  // One row of the beam: brightest in the middle, darker to each side,
-  // capped at level 63.
+  // One row of the beam: brightest in the middle, darker to each side.
   for (i = 0; i != 16; i++) {
     ramp[i] = i * 8 + 3;
     ramp[31 - i] = i * 8 + 3;
-    if (ramp[i] > 63) {
-      ramp[i] = 63;
+    if (ramp[i] > CANVAS_LEVEL_BRIGHTEST) {
+      ramp[i] = CANVAS_LEVEL_BRIGHTEST;
     }
-    if (ramp[31 - i] > 63) {
-      ramp[31 - i] = 63;
+    if (ramp[31 - i] > CANVAS_LEVEL_BRIGHTEST) {
+      ramp[31 - i] = CANVAS_LEVEL_BRIGHTEST;
     }
   }
   REG_BG2CNT = BGCNT_PRIORITY(0) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |

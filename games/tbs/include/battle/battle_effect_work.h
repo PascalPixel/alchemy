@@ -41,8 +41,8 @@ enum CanvasTransferMode {
   CANVAS_COPY_AND_DARKEN,  ///< copy, then lower each level by a byte of
                            ///< transferValue, stopping at 0
   CANVAS_COPY_AND_BRIGHTEN ///< copy, then raise each level by a byte of
-                           ///< transferValue, stopping at 63; no effect
-                           ///< uses it
+                           ///< transferValue, stopping at
+                           ///< CANVAS_LEVEL_BRIGHTEST; no effect uses it
 };
 
 /// CANVAS_COPY_AND_FADE's transferValue: the percentage of each pixel's level
@@ -53,6 +53,10 @@ enum CanvasFadeShare { CANVAS_FADE_HALF = 50, CANVAS_FADE_THREE_QUARTERS = 75 };
 /// CANVAS_COPY_AND_CLEAR or a step for CANVAS_COPY_AND_DARKEN, one byte per
 /// pixel.
 #define CANVAS_FILL_WORD(level) ((level) * 0x01010101)
+
+/// The brightest canvas level: the additive blitters and
+/// CANVAS_COPY_AND_BRIGHTEN stop at it.
+#define CANVAS_LEVEL_BRIGHTEST 63
 
 /// The running battle effect's work: its canvas image, 64 particles, the
 /// display registers it stages and its sprites. It lives in the
@@ -179,7 +183,8 @@ extern const u32 BattleEffect_ColorForward[];
 extern const u32 BattleEffect_AdditiveReverse[];
 /// Additive, one pixel, left to right.
 extern const u32 BattleEffect_AdditiveForward[];
-/// Sets 0x40 in every byte of sl, which caps an additive word's pixels at 63.
+/// Sets 0x40 in every byte of sl, which caps an additive word's pixels at
+/// CANVAS_LEVEL_BRIGHTEST.
 extern const u32 BattleEffect_Mask[];
 /// Transparent, a full cell's eight pixels, right to left.
 extern const u32 BattleEffect_Transparent8Reverse[];

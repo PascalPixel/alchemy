@@ -98,7 +98,6 @@ extern char SceneId_Ov664Room1, SceneId_Ov664Room2, SceneId_Ov664Room3,
     SceneId_Ov664Room9;
 void Func_02005f7c(void);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-void OverlayObject_WaitUntilIdle(struct Actor *object);
 void Func_0200062c(s32 layer, s32 x, s32 z, s32 cell);
 
 /// After the pushed object (the event work's object at 0xcbc) comes to rest:

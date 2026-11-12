@@ -106,3 +106,4 @@ s32 Func_0200062c(u32 layer, s32 x, s32 y, s32 value) {
   return old;
 }
 
+#include "../../field/object/wait_until_idle.c"

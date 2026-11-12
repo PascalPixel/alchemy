@@ -195,3 +195,5 @@ s32 Func_02000794(struct Actor *object) {
   MapGrid_CopyCellsTo(x, y + 26, x, y, 1, 1);
   return 0;
 }
+
+#include "../../field/object/wait_until_idle.c"

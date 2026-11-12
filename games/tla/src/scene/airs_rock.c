@@ -828,7 +828,6 @@ fade:
 #include "input.h"
 
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-void OverlayObject_WaitUntilIdle(struct Actor *object);
 
 void Func_02001560(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);

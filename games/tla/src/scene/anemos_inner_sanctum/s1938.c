@@ -38,7 +38,6 @@ void Func_02001938(void) {
 #include "io_reg.h"
 
 struct Actor *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type);
-void OverlayObject_WaitUntilIdle(struct Actor *object);
 void Func_02003398(void);
 void Func_020033a0(void);
 void Func_020032f8(struct Actor *object);

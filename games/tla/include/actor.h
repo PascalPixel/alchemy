@@ -89,6 +89,7 @@ void Actor_SetMode(struct Actor *, s32);
 void Actor_RefreshSelector(struct Actor *);
 void Actor_SetActionCallback(struct Actor *, s32);
 void Actor_SetSpritePriority(u32, s32);
+void OverlayObject_WaitUntilIdle(struct Actor *object);
 void Actor_WaitForAnimationChange(u32);
 void Actor_SetModeById(u32, s32);
 void Actor_RefreshSelectorById(u32);

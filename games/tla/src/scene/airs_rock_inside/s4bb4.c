@@ -71,7 +71,6 @@ s32 Func_02005dec(struct Actor *object);
 void wait(s32 frames);
 void Actor_ArmCallback(s32 actor, s32 angle, s32 frames);
 s32 Map_GetTerrainHeight(s32 terrain, s32 x, s32 z);
-void OverlayObject_WaitUntilIdle(struct Actor *object);
 void Func_02005d94(struct Actor *object);
 void Func_02005d7c(struct Actor *object);
 

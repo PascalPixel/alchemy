@@ -172,7 +172,6 @@ void Func_02005ee4(void);
 struct Actor *Func_02005ef4(void);
 void Func_02005d8c(struct Actor *object, s32 x, s32 y, s32 z);
 void Func_02005d94(struct Actor *object);
-void OverlayObject_WaitUntilIdle(struct Actor *object);
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 s32 Camera_FollowActor(s32 id, s32 a);
 

@@ -37,7 +37,6 @@ void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 u32 Random16Far(void);
 void FieldMessage_Show(s32 message, s32 flags);
-void OverlayObject_WaitUntilIdle(struct Actor *object);
 void Task_RemoveFar(void (*func)(void));
 s32 MapCell_SetAttributes(u32 layer, s32 x, s32 z, s32 value);
 void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,

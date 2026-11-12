@@ -377,16 +377,17 @@ void Shop_DrawMessage(struct Window *window, s32 message) {
   }
 }
 
-/// Shows the chosen party member in animation 30, every party sheet's run
-/// cycle, and the others standing, and draws at four fifths of their size the
-/// party members who cannot equip `itemId`. Called by every counter's party
-/// member choice.
+/// Shows the chosen party member in animation 30 and the others standing, and
+/// draws at four fifths of their size the party members who cannot equip
+/// `itemId`. Called by every counter's party member choice.
 void Shop_DrawParty(struct Window *window, s32 selected, s32 itemId) {
   struct ShopWork *shop = gMenuWork;
   s32 memberIndex;
 
   if (window != 0) {
     for (memberIndex = 0; memberIndex < shop->partyMemberCount; memberIndex++) {
+      // XXX: which animation is 30, a run or the walk at another pace; a
+      // render of buying a weapon, with a party member chosen, would settle it.
       if (memberIndex == selected)
         Sprite_StartAnimationFar(shop->partyMemberIcons[memberIndex], 30);
       else

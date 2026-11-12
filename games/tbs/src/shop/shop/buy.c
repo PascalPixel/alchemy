@@ -250,7 +250,6 @@ void Shop_DrawStock(struct Window *window, s32 selected) {
   s32 stockIndex;
   s32 pageSlot;
   s32 priceX;
-  s32 zero;
   s32 highlightFrame;
   s16 itemId;
   struct ItemDefinition *item;
@@ -265,18 +264,16 @@ void Shop_DrawStock(struct Window *window, s32 selected) {
     if (stockIndex != 0) {
       icon = WindowSprite_CreateFar(shop->previousPageIcon, OUTPUT_SIZE_16X16,
                                     window, 216, -16);
-      zero = 0;
-      icon->kind = zero;
+      icon->kind = 0;
       icon->motion = WINDOW_SPRITE_MOTION_HOP_UP;
-      icon->animationStep = zero;
+      icon->animationStep = 0;
     }
     if (stockIndex + SHOP_STOCK_PAGE_ITEMS < itemCount) {
       icon = WindowSprite_CreateFar(shop->nextPageIcon, OUTPUT_SIZE_16X16,
                                     window, 216, 24);
-      zero = 0;
-      icon->kind = zero;
+      icon->kind = 0;
       icon->motion = WINDOW_SPRITE_MOTION_HOP_DOWN_NEXT_PAGE;
-      icon->animationStep = zero;
+      icon->animationStep = 0;
     }
     pageSlot = 0;
     if (stockIndex < (u32)itemCount) {

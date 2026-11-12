@@ -101,12 +101,11 @@ void FieldPsynergy_FrostOnTarget(s32 unused) {
 void FieldPsynergy_Frost(void) {
   s32 eventTarget;
   struct Vector3 pos;
-  struct Vector3 *p;
   struct FieldEffectWork *effectWork;
   struct Actor *target;
   struct Actor *particle;
   void *event;
-  s32 remainingCycles;
+  s32 i;
 
   effectWork = gFieldEffectWork;
   target = effectWork->child;
@@ -115,11 +114,7 @@ void FieldPsynergy_Frost(void) {
 
   // A particle every 3 frames, 0.5 to 1 size, turning either way at random,
   // centred 2 to 6 pixels from the Psynergy's position.
-  /* FAKEMATCH(temporary): p holds &pos; as &pos and pos.x directly, 2 of 161
-   * instructions differ in tbs-en. */
-  p = &pos;
-  remainingCycles = 15;
-  do {
+  for (i = 0; i < 16; i++) {
     particle = Actor_Spawn(SPRITE_SNOWFLAKE, 0, 0, 0);
     if (particle != NULL) {
       u32 scale;
@@ -138,17 +133,16 @@ void FieldPsynergy_Frost(void) {
       particle->userValue = Random16();
       Actor_SetSpriteColorModeFar(particle, SPRITE_COLOR_BLUE_TINT);
 
-      SET_POSITION(p, effectWork->x, effectWork->y, effectWork->z);
+      SET_POSITION(&pos, effectWork->x, effectWork->y, effectWork->z);
       radius = (Random16() << 2) + px(2);
-      Vector_AddPolarOffset(radius, Random16(), p);
-      particle->targetX = p->x;
-      particle->targetY = p->y;
-      particle->targetZ = p->z;
+      Vector_AddPolarOffset(radius, Random16(), &pos);
+      particle->targetX = pos.x;
+      particle->targetY = pos.y;
+      particle->targetZ = pos.z;
     }
 
     wait(3);
-    remainingCycles--;
-  } while (remainingCycles >= 0);
+  }
 
   wait(10);
   Sound_PlayFar(SE_ICE);
@@ -158,14 +152,12 @@ void FieldPsynergy_Frost(void) {
     Sound_PlayFar(SE_POWER_UP);
 
     // Flash for 1 frame in every 5.
-    remainingCycles = 15;
-    do {
+    for (i = 0; i < 16; i++) {
       Actor_SetSpriteColorModeFar(target, SPRITE_COLOR_WHITE);
       wait(1);
       Actor_SetSpriteColorModeFar(target, SPRITE_COLOR_NORMAL);
       wait(4);
-      remainingCycles--;
-    } while (remainingCycles >= 0);
+    }
 
     if (effectWork->childOption == 0) {
       Sound_PlayFar(SE_SHIMMER);

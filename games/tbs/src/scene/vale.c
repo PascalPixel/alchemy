@@ -2002,8 +2002,7 @@ UNUSED static void Vale_UnusedWaterBurstsByTheRiver(void) {
 
 /// Walks an actor to the foot of the ladder beside Isaac's house and climbs it
 /// onto the roof, in `approachAnimationId` on the rungs and
-/// `departureAnimationId` over the eaves. At the foot it turns the leader
-/// north, whoever climbs.
+/// `departureAnimationId` over the eaves.
 static void Vale_ClimbUpRoofLadder(s32 actorId, s32 approachAnimationId,
                                    s32 departureAnimationId, s32 resumeMotion) {
   struct Actor *actor;
@@ -2013,6 +2012,8 @@ static void Vale_ClimbUpRoofLadder(s32 actorId, s32 approachAnimationId,
   sprite = actor->sprite;
   Actor_SetSpeed(actorId, 1);
   Actor_WalkToAndWait(actorId, 392, 886);
+  // XXX: the leader turns north, not actorId; a render of Vale_RoofMended with
+  // Dora climbing would settle whether Isaac visibly turns.
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 10);
   actor->motionFlags = 0;
   sprite->flags = 0;

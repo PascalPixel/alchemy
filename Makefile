@@ -192,7 +192,7 @@ CPPFLAGS_ARMCC := $(CPPFLAGS_ARM) -Igames/$(GAME)/include $(filter-out -Igames/$
                   -D__GNUC__=2 -D__GNUC_MINOR__=95 -D__GNUC_PATCHLEVEL__=2 -Darm -D__arm__ -D$(DEFINE)=1 -I$(BUILD)
 SOUND_C := games/tbs/src/sound/audio.c games/tbs/src/sound/tables.c games/tbs/src/sound/driver.c \
            games/tla/src/sound/sound.c games/tla/src/sound/tables.c games/tla/src/sound/player_work_copy.c \
-           $(wildcard games/tla/src/sound/driver.c games/tla/src/sound/tail.c games/tla/src/sound/music_track_*.c)
+           games/tla/src/sound/driver.c
 FLASH_C := $(addprefix games/tbs/src/gamepak/flash/,flash.c sst.c atmel.c program_flash_sector.c) \
            $(addprefix games/tla/src/gamepak/flash/,flash.c sst.c atmel.c program_flash_sector.c)
 ARM_C   := games/tbs/src/window/glyph_arm.c games/tbs/src/field/actor_update_arm.c games/tbs/src/field/world_map_lines.c \

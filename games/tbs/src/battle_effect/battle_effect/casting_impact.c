@@ -222,7 +222,6 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
   s32 savedAcceleration;
   s32 savedVerticalStrength;
   struct Actor *targetActor;
-  struct FixedPointPosition *motion;
   struct FixedPointPosition *position;
   struct Actor *casterActor;
   struct Particle *particle;
@@ -368,7 +367,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   /* FAKEMATCH(temporary): targetScreen holds &targetPos, casterScreen
    * &casterPos and drawPair blitters, each set inside the call that fills
-   * what it names; as &targetPos, &casterPos and blitters used directly, 136
+   * what it names; as &targetPos, &casterPos and blitters used directly, 118
    * of 3070 instructions differ in tbs-en. */
   Projection_ScaledUnit(work->args->targets[0], targetScreen = &targetPos);
   Projection_ScaledUnit(work->args->user, casterScreen = &casterPos);
@@ -462,7 +461,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
   } while (frame != CASTING_IMPACT_GATHER_FRAMES);
   /* FAKEMATCH(dead): position set again to the &djinnPos it holds, so the
    * gathering's projection takes the address from sp, not a spill; as one
-   * assignment, 132 of 3070 instructions differ in tbs-en. */
+   * assignment, 150 of 3070 instructions differ in tbs-en. */
   position = &djinnPos;
 
   // Phase 2: place BG2 for the impacts that need it, at its unstretched
@@ -548,10 +547,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
   // The Djinni's step a frame, to reach 30 pixels above the target in six
   // frames.
   targetActor = GetBattleObjectSlotFar(work->args->targets[0])->actor;
-  /* FAKEMATCH(temporary): motion holds &velocity; as velocity used directly,
-   * 18 of 3070 instructions differ in tbs-en. */
-  motion = &velocity;
-  SET_POSITION(motion, (targetActor->x.fixed - position->x) / 6,
+  SET_POSITION(&velocity, (targetActor->x.fixed - position->x) / 6,
                (targetActor->y.fixed - position->y + px(30)) / 6,
                (targetActor->z.fixed - position->z) / 6);
   for (i = 0; i != CASTING_IMPACT_SPARKS; i++) {
@@ -1325,9 +1321,9 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
         djinnX = projected.x;
         drawPair[1](canvas, pictures + CASTING_IMPACT_DJINNI_OFFSETS,
                     djinnX - 10, projected.y - 4, 20, 40);
-        position->x += motion->x;
-        position->y += motion->y;
-        position->z += motion->z;
+        position->x += velocity.x;
+        position->y += velocity.y;
+        position->z += velocity.z;
       }
     }
     // The cues: the damage shows on frame 3 with no sound of its own (a sound

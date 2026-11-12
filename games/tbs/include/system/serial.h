@@ -75,8 +75,8 @@ struct SerialWork {
   u8 phase;        ///< an enum SerialPhase
   u8 receivedMask; ///< the consoles heard from since the link began
   u8 currentMask;  ///< the consoles heard from this frame
-  /// Set by the interrupt for each console and cleared each frame.
-  /// bits: 1 heard while transferError was set | 0 a packet completed
+  /// Each console's enum SerialChannelFlag bits, set by the transfer interrupt
+  /// and cleared each frame.
   u8 channelFlags[4];
   /// Nonzero lets a new packet restart timer 3.
   u8 transferEnabled;
@@ -115,6 +115,14 @@ STATIC_ASSERT(offsetof(struct SerialWork, mode) == 0);
 STATIC_ASSERT(offsetof(struct SerialWork, transferEnabled) == 8);
 STATIC_ASSERT(offsetof(struct SerialWork, sendIndex) == 0x14);
 STATIC_ASSERT(offsetof(struct SerialWork, storage) == 0x60);
+
+/// SerialWork.channelFlags: what the transfer interrupts saw of a console's
+/// packets since the last frame.
+enum SerialChannelFlag {
+  SERIAL_CHANNEL_PACKET_COMPLETE = 1, ///< its fourteenth halfword arrived
+  /// a transfer interrupt found SIOCNT's error bit (SIO_ERROR) set
+  SERIAL_CHANNEL_ERROR = 2
+};
 
 /// SerialTransferState.flags: how far this console's receive has got.
 enum SerialReceiveState {

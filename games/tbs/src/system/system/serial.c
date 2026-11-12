@@ -331,8 +331,8 @@ u8 Serial_CollectReceivedPayloads(void *payload) {
       sum += packet[k];
     // A good packet's halfwords, its complemented checksum included, sum to
     // 0xffff. Its payload is taken only when the packet completed since the
-    // last frame with flag bit 1 (transferError at a transfer) never set.
-    if (flags[i] == 1 && (s16)sum == -1) {
+    // last frame with SERIAL_CHANNEL_ERROR never set.
+    if (flags[i] == SERIAL_CHANNEL_PACKET_COMPLETE && (s16)sum == -1) {
       Dma_Set(gSerialWork.pendingBuffer[i] + 2,
               (u8 *)payload + i * SERIAL_PAYLOAD_BYTES, DMA_COPY_WORDS(6),
               REG_DMA3);
@@ -354,9 +354,6 @@ u8 Serial_CollectReceivedPayloads(void *payload) {
 void Serial_HandleTransferInterrupt(void) {
   // The receive channels share one backedge; a do/while for each adds 50 bytes
   // in tbs-en.
-  struct SerialWork *sendState;
-  struct SerialWork *receiveState;
-  struct SerialWork *tailState;
   u16 recv[4];
   volatile u32 *sioControl;
   s32 channel;
@@ -376,26 +373,24 @@ void Serial_HandleTransferInterrupt(void) {
   *(u64 *)recv = *(volatile u64 *)REG_SIODATA32;
 #endif
   sioControl = &REG_SIOCNT;
-  sendState = &gSerialWork;
   // SIOCNT's error bit (SIO_ERROR): a packet heard while it is set is refused
-  // (flag bit 1, below)
-  sendState->transferError = (*sioControl << 25) >> 31;
+  // (SERIAL_CHANNEL_ERROR, below)
+  gSerialWork.transferError = (*sioControl << 25) >> 31;
 
-  if (sendState->sendIndex == -1) {
+  if (gSerialWork.sendIndex == -1) {
     u32 idleWord = SERIAL_IDLE_HALFWORD;
     u16 *swap;
 
     ((volatile u16 *)sioControl)[1] = idleWord;
-    swap = sendState->sendBuffer[1];
-    sendState->sendBuffer[1] = sendState->sendBuffer[0];
-    sendState->sendBuffer[0] = swap;
-  } else if (sendState->sendIndex >= 0) {
+    swap = gSerialWork.sendBuffer[1];
+    gSerialWork.sendBuffer[1] = gSerialWork.sendBuffer[0];
+    gSerialWork.sendBuffer[0] = swap;
+  } else if (gSerialWork.sendIndex >= 0) {
     ((volatile u16 *)sioControl)[1] =
-        sendState->sendBuffer[1][sendState->sendIndex];
+        gSerialWork.sendBuffer[1][gSerialWork.sendIndex];
   }
-  receiveState = &gSerialWork;
-  if (receiveState->sendIndex <= SERIAL_PACKET_HALFWORDS)
-    receiveState->sendIndex++;
+  if (gSerialWork.sendIndex <= SERIAL_PACKET_HALFWORDS)
+    gSerialWork.sendIndex++;
 
   channel = 0;
   // Written with goto: as do { } while, tbs-en does not match.
@@ -406,34 +401,32 @@ receive_loop:
     u16 *incoming;
 
     if (recv[channel] == SERIAL_IDLE_HALFWORD &&
-        receiveState->receiveIndex[channel] >= SERIAL_PACKET_HALFWORDS) {
-      receiveState->receiveIndex[channel] = -1;
+        gSerialWork.receiveIndex[channel] >= SERIAL_PACKET_HALFWORDS) {
+      gSerialWork.receiveIndex[channel] = -1;
     } else {
-      receiveIndex = receiveState->receiveIndex[channel];
-      incoming = receiveState->incomingBuffer[channel];
+      receiveIndex = gSerialWork.receiveIndex[channel];
+      incoming = gSerialWork.incomingBuffer[channel];
       incoming[receiveIndex] = recv[channel];
       if (receiveIndex == SERIAL_PACKET_HALFWORDS - 1) {
-        u16 *swap = receiveState->readyBuffer[channel];
+        u16 *swap = gSerialWork.readyBuffer[channel];
 
-        receiveState->readyBuffer[channel] = incoming;
-        receiveState->incomingBuffer[channel] = swap;
-        receiveState->channelFlags[channel] |= 1;
+        gSerialWork.readyBuffer[channel] = incoming;
+        gSerialWork.incomingBuffer[channel] = swap;
+        gSerialWork.channelFlags[channel] |= SERIAL_CHANNEL_PACKET_COMPLETE;
       }
     }
   }
-  tailState = &gSerialWork;
-  if (tailState->transferError != 0)
-    tailState->channelFlags[channel] |= 2;
-  if (tailState->receiveIndex[channel] <= SERIAL_PACKET_HALFWORDS)
-    tailState->receiveIndex[channel]++;
+  if (gSerialWork.transferError != 0)
+    gSerialWork.channelFlags[channel] |= SERIAL_CHANNEL_ERROR;
+  if (gSerialWork.receiveIndex[channel] <= SERIAL_PACKET_HALFWORDS)
+    gSerialWork.receiveIndex[channel]++;
   channel++;
-  receiveState = tailState;
   if (channel <= 1)
     goto receive_loop;
 
   // The console that clocks the transfers starts the next one, and restarts
   // timer 3 so its count reloads
-  if (tailState->mode == SERIAL_MODE_CLOCKING) {
+  if (gSerialWork.mode == SERIAL_MODE_CLOCKING) {
     REG_TM3CNT_H = 0;
     REG_SIOCNT16 |= SIO_START;
     REG_TM3CNT_H = TIMER_ENABLE | TIMER_INTR_ENABLE;

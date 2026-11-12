@@ -146,13 +146,14 @@ s32 Glyph_Draw(struct Window *window, s32 character, s32 x, s32 y, s32 mode) {
     } else {
       // Copy the glyph's tiles to its sprite tiles (sprite VRAM) and place it:
       // half the line spacing below y and half the letter spacing right of x,
-      // in screen pixels.
+      // in screen pixels. 0x4000 in attribute 1 is size 1, with the square
+      // shape a 16x16 sprite.
       Dma_Set(tiles, (void *)(OBJ_VRAM0 + (work->glyphTiles + index) * 32),
               DMA_COPY32(32), REG_DMA3);
       ((u16 *)&windowSprite->oam)[0] =
           y + (spacingY >> 1) + window->y * 8 + GLYPH_SPRITE_Y_OFFSET;
       ((u16 *)&windowSprite->oam)[1] =
-          (x + (spacingX >> 1) + window->x * 8 + 2) | (OBJ_SIZE_16X16 >> 16);
+          (x + (spacingX >> 1) + window->x * 8 + 2) | 0x4000;
       ((u16 *)&windowSprite->oam)[2] = work->glyphTiles + index;
       sprite = SPRITE_CELL(windowSprite);
     }

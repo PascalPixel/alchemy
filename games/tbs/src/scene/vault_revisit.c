@@ -675,7 +675,6 @@ static inline s32 VaultRevisit_ShouldKeepBellDjinniPosition(void) {
 s32 Scene_Initialize(void) {
 
   struct Actor *actor;
-  s32 mode;
 
   // Keep the bridge deck after a battle, and mend the inn's roof.
   if (GameFlag_Get(FLAG_VAULT_ON_BRIDGE))
@@ -693,19 +692,14 @@ s32 Scene_Initialize(void) {
 #else
   actor->update = (void (*)(struct Actor *))Vault_UpdateWalkingVillager;
 #endif
-  {
-    struct Actor *actor = Actor_Get(ACTOR_BOY_ROUND_THE_WELL);
-    s32 mode = 1;
-    actor->timer = mode;
-  }
-  mode = 0;
+  Actor_Get(ACTOR_BOY_ROUND_THE_WELL)->timer = 1;
   actor = Actor_Get(ACTOR_GIRL_ROUND_THE_WELL);
 #ifdef UBFIX
   actor->update = Vault_UpdateWalkingVillager;
 #else
   actor->update = (void (*)(struct Actor *))Vault_UpdateWalkingVillager;
 #endif
-  Actor_Get(ACTOR_GIRL_ROUND_THE_WELL)->timer = mode;
+  Actor_Get(ACTOR_GIRL_ROUND_THE_WELL)->timer = 0;
   // Restore the dog's clue position and Sap's on the cliff top.
   if (GameFlag_Get(FLAG_VAULT_DOG_SHOWN_PASSAGE))
     Actor_SetPosition(ACTOR_VAULT_DOG, 216, 392);

@@ -435,7 +435,7 @@ static void VaultRevisit_JumpActorToAndWait(int actorId, int x, int z,
 }
 
 /// Searching the bell rings it (SE_BELL). The first ring since the party came
-/// in from the World Map makes Sap jump out of the tree east of the bell tower
+/// in by a gate makes Sap jump out of the tree east of the bell tower
 /// onto the cliff top above the cave mouth. It also sets
 /// FLAG_VAULT_SAP_CALLED_BY_BELL.
 static void VaultRevisit_RingBell(void) {

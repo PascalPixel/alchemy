@@ -1660,7 +1660,6 @@ void Func_02002a84(void) {
      type v;                                                                   \
    } *)(base))                                                                 \
        ->v)
-void Func_02000b78();
 void Func_02002ec4();
 void Func_0200306c();
 void Func_020032c8();

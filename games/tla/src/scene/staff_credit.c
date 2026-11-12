@@ -560,7 +560,6 @@ s32 Func_02000c9c(struct Actor *object) {
 #define Func_02004b20 Func_02001fc4
 #define Func_02004b18 Func_02001fbc
 #define Func_02004b38 Func_02001fd4
-#define gData_02006c08 gData_02003dc0
 #define gData_02006bd4 gData_02003da8
 #include "world_map/s36a8.c"
 
@@ -568,8 +567,6 @@ s32 Func_02000c9c(struct Actor *object) {
 /// has, under this overlay's names.
 #define Func_020038e4 Func_02000fa0
 #define Func_02003960 Func_0200101c
-#define Func_020036a8 Func_02000d64
-#define gData_02006c08 gData_02003dc0
 #include "world_map/s3960.c"
 
 s32 Func_02001044(s32 x, s32 z) { return x / 0x100000 + (z / 0x100000) * 128; }
@@ -596,14 +593,11 @@ s32 Func_02001064(struct Actor *object) {
 /// has, under this overlay's names.
 #define Func_020039f4 Func_020010b0
 #define Func_02003aac Func_02001168
-#define Func_02004b30 Import_ActorCreate
-#define Func_02004b20 Func_02001fc4
 #define gData_02004f90 gData_02002e74
 #define gData_02004f9c gData_02002e80
 #include "world_map/s39f4.c"
 
 void Animation_ApplyChildValues(struct Actor *object, s32 value);
-void Func_020010b0(struct Actor *object);
 
 void Func_020011f4(struct Actor *object) {
   if ((gFrameCount & 2) != 0) {
@@ -618,7 +612,6 @@ void Func_020011f4(struct Actor *object) {
 
 extern s32 gData_02003db8;
 extern const s32 gData_02002eac[];
-void Func_02001168(struct Actor *object);
 
 void Func_0200122c(struct Actor *object) {
   if (gFrameCount & 1) {
@@ -868,8 +861,6 @@ void Func_02001a0c(struct Actor *object) {
   if (frame & 1)
     Animation_ApplyChildValues(object, (frame >> 1) % 6);
 }
-
-void Func_02001fd4(struct Actor *object);
 
 void Func_02001a34(struct Actor *object) {
   struct Actor *parent = object->watchedObject;

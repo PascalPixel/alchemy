@@ -139,8 +139,8 @@ struct AerieEventWork {
   s32 mode;
 };
 
-// The Japanese form; from patch 1, the form in s0a54.c also saves this scene
-// and entrance 22.
+// The Japanese form; from patch 1, the form below also saves this scene and
+// entrance 22.
 #if !TLA_PATCH_1
 s32 VenusLighthouse_Start(void) {
   ((struct AerieEventWork *)Ram_HeapSlots->eventWork)->mode = 0x204;

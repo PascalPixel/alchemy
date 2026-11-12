@@ -1094,7 +1094,7 @@ static void HeatGauge_Draw(void) {
   u32 blue;
   s32 level;
   u32 attributes;
-  s32 x;
+  s32 y;
   u32 offset;
 
   tile = gVramCacheEntries[(*(s16 *)&gHeatGauge_VramSlot)].offset >> 5;
@@ -1203,24 +1203,23 @@ static void HeatGauge_Draw(void) {
   VramCache_Load((*(s16 *)&gHeatGauge_VramSlot), 1152, buffer);
 
   // Submit four 16x32 sprites down the screen's left edge and the 16x16 cap
-  // at the gauge's foot; x counts down the screen, since attr01 puts it in
-  // attr0's row.
-  attributes = 0x80008000;
+  // at the gauge's foot.
+  attributes = OBJ_SIZE_16X32;
   sprite = gHeatGauge_Sprites;
-  for (i = 0, offset = 0, x = 8; i < 5; i++) {
-    u32 y = (gHeatGaugeSlide * 8 - 16) & 0x1ff;
+  for (i = 0, offset = 0, y = 8; i < 5; i++) {
+    u32 x = (gHeatGaugeSlide * 8 - 16) & 0x1ff;
 
     if (i == 4) {
-      attributes = 0x40000000;
+      attributes = OBJ_SIZE_16X16;
     }
     sprite->next = NULL;
-    sprite->oam.word.attr01 = (y << 16) | x | attributes;
-    sprite->oam.word.attr23 = 0xe400 | tile;
+    sprite->oam.word.attr01 = (x << 16) | y | attributes;
+    sprite->oam.word.attr23 = tile | OBJ_PRIORITY(1) | OBJ_PALETTE(14);
     Oam_AddSpriteAtDepth(((u8 *)gHeatGauge_Sprites + offset), 255);
     sprite++;
     tile += 8;
     offset += 12;
-    x += 32;
+    y += 32;
   }
   Heap_Release(buffer);
 }

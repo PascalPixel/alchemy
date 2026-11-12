@@ -307,6 +307,34 @@ enum ObjMode {
   OBJ_MODE_SEMI_TRANSPARENT = 1, ///< blended as BLDCNT's first target
   OBJ_MODE_WINDOW = 2            ///< drawn into the OBJ window, not shown
 };
+
+/// A sprite's attributes 0 and 1 as one word, attr0 | attr1 << 16, the way
+/// routines that build their own sprite lists write them; x, 0 to 511, is
+/// shifted into the high half and y, 0 to 255, is the low byte. The sizes give
+/// GBATEK's shape and size bits together, width by height in pixels.
+#define OBJ_SIZE_8X8 0x00000000
+#define OBJ_SIZE_16X16 0x40000000
+#define OBJ_SIZE_32X32 0x80000000
+#define OBJ_SIZE_64X64 0xc0000000
+#define OBJ_SIZE_16X8 0x00004000
+#define OBJ_SIZE_32X8 0x40004000
+#define OBJ_SIZE_32X16 0x80004000
+#define OBJ_SIZE_64X32 0xc0004000
+#define OBJ_SIZE_8X16 0x00008000
+#define OBJ_SIZE_16X32 0x80008000
+#define OBJ_SIZE_32X64 0xc0008000
+#define OBJ_AFFINE 0x00000100 ///< drawn through its affine matrix
+/// An affine sprite drawn in a box twice its size, so turning never clips it.
+#define OBJ_DOUBLE_SIZE 0x00000200
+#define OBJ_MODE(mode) ((mode) << 10) ///< an enum ObjMode
+#define OBJ_256_COLORS 0x00002000     ///< 8bpp tiles, as BGCNT_256_COLORS
+#define OBJ_HFLIP 0x10000000          ///< a plain sprite mirrored left to right
+#define OBJ_VFLIP 0x20000000          ///< a plain sprite mirrored top to bottom
+/// Attribute 2 above its tile number: the sprite's priority, 0 in front to 3
+/// behind, and its 16-colour palette.
+#define OBJ_PRIORITY(n) ((n) << 10)
+#define OBJ_PALETTE(n) ((n) << 12)
+
 /// The keys' bits as REG_KEYINPUT and REG_KEYCNT lay them out; the game's
 /// key state (gKeysHeld and the rest) holds them set for a pressed key.
 enum KeyMask {

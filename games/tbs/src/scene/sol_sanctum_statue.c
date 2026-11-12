@@ -66,6 +66,7 @@
 #include "battle_sprite_id.h"
 #include "heap_release.h"
 #include "heap_slots.h"
+#include "io_reg.h"
 #include "types.h"
 #include "event.h"
 #include "scene_tables.h"
@@ -646,7 +647,7 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH, 0);
-  if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     Event_SetMessageId(MsgSolSanctumHonestlyDoubtUnderstand);
   } else {
     Event_SetMessageId(MsgSolSanctumHmphWellTold);
@@ -1020,9 +1021,6 @@ s32 SolSanctumStatue_Initialize(void) {
 }
 
 /// Loads the three strips of graphics and fills in a row of sprites for each.
-///
-/// The sprites are 32 by 8 pixels (attributes 0 and 1, 0x40004000: the wide
-/// shape, size 1), at the lowest priority (3), in palettes 10, 13 and 0.
 static void SolSanctumStatue_InitializeScrollingSprites(void) {
   u32 column;
   s32 tile;
@@ -1037,27 +1035,27 @@ static void SolSanctumStatue_InitializeScrollingSprites(void) {
     s32 *attributeWords = spriteWords;
 
     *attributeWords++ = 0;
-    *attributeWords++ = 0x40004000;
+    *attributeWords++ = OBJ_SIZE_32X8;
     spriteWords += 3;
-    *attributeWords = tile | 0xac00;
+    *attributeWords = tile | OBJ_PRIORITY(3) | OBJ_PALETTE(10);
   }
   tile = VramCache_Load(VramCache_FindFreeEntry(), 128, pixels + 128);
   for (column = 0; column < SOL_SANCTUM_STATUE_ROW_SPRITE_COUNT; column++) {
     s32 *attributeWords = spriteWords;
 
     *attributeWords++ = 0;
-    *attributeWords++ = 0x40004000;
+    *attributeWords++ = OBJ_SIZE_32X8;
     spriteWords += 3;
-    *attributeWords = tile | 0xdc00;
+    *attributeWords = tile | OBJ_PRIORITY(3) | OBJ_PALETTE(13);
   }
   tile = VramCache_Load(VramCache_FindFreeEntry(), 128, pixels + 256);
   for (column = 0; column < SOL_SANCTUM_STATUE_ROW_SPRITE_COUNT; column++) {
     s32 *attributeWords = spriteWords;
 
     *attributeWords++ = 0;
-    *attributeWords++ = 0x40004000;
+    *attributeWords++ = OBJ_SIZE_32X8;
     spriteWords += 3;
-    *attributeWords = tile | 0xc00;
+    *attributeWords = tile | OBJ_PRIORITY(3);
   }
   HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
   {

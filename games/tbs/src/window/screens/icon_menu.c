@@ -94,13 +94,16 @@ void IconMenu_DrawIcons(void) {
         spriteY = (pulseScale * 15 / 256 - 30) & 255;
 #ifdef UBFIX
       entry->link = 0;
-      entry->attr01 = (affineIndex << 25) | spriteY | (left << 16) | 0x80002300;
+      entry->attr01 = (affineIndex << 25) | spriteY | (left << 16) |
+                      OBJ_SIZE_32X32 | OBJ_256_COLORS | OBJ_DOUBLE_SIZE |
+                      OBJ_AFFINE;
       entry->attr2 = gVramCacheEntries[entry->slot].offset >> 5;
 #else
       nativeAttributes = &entry->link;
       *nativeAttributes++ = 0;
-      *nativeAttributes++ =
-          (affineIndex << 25) | spriteY | (left << 16) | 0x80002300;
+      *nativeAttributes++ = (affineIndex << 25) | spriteY | (left << 16) |
+                            OBJ_SIZE_32X32 | OBJ_256_COLORS | OBJ_DOUBLE_SIZE |
+                            OBJ_AFFINE;
       *nativeAttributes = gVramCacheEntries[entry->slot].offset >> 5;
 #endif
       drawLayer = 246;
@@ -118,7 +121,7 @@ void IconMenu_DrawIcons(void) {
       spriteY = entry->y;
       entry->link = 0;
 #endif
-      packedAttributes = spriteY | (x << 16) | 0x80002000;
+      packedAttributes = spriteY | (x << 16) | OBJ_SIZE_32X32 | OBJ_256_COLORS;
       vramOffset = gVramCacheEntries[entry->slot].offset;
 #ifdef UBFIX
       entry->attr01 = packedAttributes;

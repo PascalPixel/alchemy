@@ -385,7 +385,7 @@ void LuckyWheels_Update(void) {
            gBattleEffectWork)[LUCKY_WHEELS_HEAP_SLOT - HEAP_SLOT_BATTLE_EFFECT];
   fx = gBattleEffectWork[0];
   sprite = 0;
-  objMode = OBJ_MODE_SEMI_TRANSPARENT << 10;
+  objMode = OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
 
   Random16();
 
@@ -771,15 +771,16 @@ void LuckyWheels_Update(void) {
       y = 32;
     }
     work->oam[sprite].attr01 =
-        ((x - 12) << 16) | objMode | (y + 8) | 0x80006000;
-    work->oam[sprite].attr2 = (v << 4) + 0x2b0;
+        ((x - 12) << 16) | objMode | (y + 8) | OBJ_SIZE_32X16 | OBJ_256_COLORS;
+    work->oam[sprite].attr2 = (v << 4) + 688;
+    sprite++;
+    work->oam[sprite].attr01 = ((x + 12) << 16) | objMode | (y + 8) |
+                               OBJ_SIZE_32X16 | OBJ_256_COLORS | OBJ_HFLIP;
+    work->oam[sprite].attr2 = (v << 4) + 688;
     sprite++;
     work->oam[sprite].attr01 =
-        ((x + 12) << 16) | objMode | (y + 8) | 0x90006000;
-    work->oam[sprite].attr2 = (v << 4) + 0x2b0;
-    sprite++;
-    work->oam[sprite].attr01 = (x << 16) | objMode | y | 0x80002000;
-    work->oam[sprite].attr2 = 0x1f0;
+        (x << 16) | objMode | y | OBJ_SIZE_32X32 | OBJ_256_COLORS;
+    work->oam[sprite].attr2 = 496;
     sprite++;
   }
 
@@ -791,15 +792,16 @@ void LuckyWheels_Update(void) {
       if (i == 0)
         work->oam[sprite].attr01 =
             (((*(s16 *)((u8 *)&p->x + 2) + 0x1f0) & 0x1ff) << 16) | objMode |
-            ((*(s16 *)((u8 *)&p->y + 2) + 0x108) & 255) | 0xb0000000;
+            ((*(s16 *)((u8 *)&p->y + 2) + 0x108) & 255) | OBJ_SIZE_32X32 |
+            OBJ_HFLIP | OBJ_VFLIP;
       else
 #endif
         work->oam[sprite].attr01 = (*(s16 *)((u8 *)&p->x + 2) << 16) | objMode |
                                    ((*(s16 *)((u8 *)&p->y + 2) + 256) & 255) |
-                                   0x80000000;
+                                   OBJ_SIZE_32X32;
       work->oam[sprite].attr2 =
           ((gLuckyWheels_TitleLetterTiles[i] << 4) + LUCKY_WHEELS_TITLE_TILES) |
-          0xf000;
+          OBJ_PALETTE(15);
       p->y += p->velocityY;
       p->velocityY += px(1) / 4;
       if (work->timer % 256 == i * 4 + 200) {
@@ -819,41 +821,45 @@ void LuckyWheels_Update(void) {
   for (k = 0; k != 14; k++) {
     work->oam[sprite].attr01 = (gLuckyWheels_MachineSpriteX[k] << 16) |
                                objMode | gLuckyWheels_MachineSpriteY[k] |
-                               0x80006000;
+                               OBJ_SIZE_32X16 | OBJ_256_COLORS;
     if (k <= 3)
-      work->oam[sprite].attr2 = 0x4e0;
+      work->oam[sprite].attr2 = OBJ_PRIORITY(1) | 224;
     else
-      work->oam[sprite].attr2 = 0x4e8;
+      work->oam[sprite].attr2 = OBJ_PRIORITY(1) | 232;
     sprite++;
   }
 
   for (i = 0; i != 5; i++) {
     if (work->reels[i].held == 0) {
-      work->oam[sprite].attr01 = objMode | ((i * 36 + 32) << 16) | 0x8000207c;
-      work->oam[sprite].attr2 = 0x460;
+      work->oam[sprite].attr01 = objMode | ((i * 36 + 32) << 16) | 124 |
+                                 OBJ_SIZE_32X32 | OBJ_256_COLORS;
+      work->oam[sprite].attr2 = OBJ_PRIORITY(1) | 96;
     } else {
-      work->oam[sprite].attr01 = objMode | ((i * 36 + 32) << 16) | 0x8000207c;
-      work->oam[sprite].attr2 = 0x480;
+      work->oam[sprite].attr01 = objMode | ((i * 36 + 32) << 16) | 124 |
+                                 OBJ_SIZE_32X32 | OBJ_256_COLORS;
+      work->oam[sprite].attr2 = OBJ_PRIORITY(1) | 128;
     }
     sprite++;
   }
 
   for (i = 0; i != 5; i++) {
-    work->oam[sprite].attr01 = objMode | ((i * 16 + 32) << 16) | 0x80006003;
+    work->oam[sprite].attr01 =
+        objMode | ((i * 16 + 32) << 16) | 3 | OBJ_SIZE_32X16 | OBJ_256_COLORS;
     if (i == work->spins)
-      work->oam[sprite].attr2 = (i * 32 + 0x210) | 0x400;
+      work->oam[sprite].attr2 = (i * 32 + 528) | OBJ_PRIORITY(1);
     else
-      work->oam[sprite].attr2 = (i * 32 + 0x220) | 0x400;
+      work->oam[sprite].attr2 = (i * 32 + 544) | OBJ_PRIORITY(1);
     sprite++;
   }
 
   for (col = 0; col != 7; col++) {
     work->oam[sprite].attr01 = (((0x204 - ((col & 1) << 3)) & 0x1ff) << 16) |
-                               objMode | (col * 16 + 5) | 0x80002000;
+                               objMode | (col * 16 + 5) | OBJ_SIZE_32X32 |
+                               OBJ_256_COLORS;
     if (col > 3 - work->bet && col < work->bet + 3)
-      work->oam[sprite].attr2 = 0x5d0;
+      work->oam[sprite].attr2 = OBJ_PRIORITY(1) | 464;
     else
-      work->oam[sprite].attr2 = 0x510;
+      work->oam[sprite].attr2 = OBJ_PRIORITY(1) | 272;
     sprite++;
   }
 
@@ -862,9 +868,11 @@ void LuckyWheels_Update(void) {
 
     for (col = 0; col != 7; col++) {
       work->oam[sprite].attr01 = (col * 16 + reel->position % 16 + 4) |
-                                 ((i * 32 + 40) << 16) | 0x80006000;
+                                 ((i * 32 + 40) << 16) | OBJ_SIZE_32X16 |
+                                 OBJ_256_COLORS;
       work->oam[sprite].attr2 =
-          (reel->symbols[(col - reel->position / 16 + 21) % 21] << 4) | 0x800;
+          (reel->symbols[(col - reel->position / 16 + 21) % 21] << 4) |
+          OBJ_PRIORITY(2);
       sprite++;
     }
   }
@@ -876,27 +884,29 @@ void LuckyWheels_Update(void) {
     else if (work->timer <= 55)
       lever = ((Trig_Sin((work->timer << 12) - TRIG_TURN * 3) << 2) >> 16) + 40;
   }
-  work->oam[sprite].attr01 = lever | objMode | 0x80d06000;
-  work->oam[sprite].attr2 = 0x500;
+  work->oam[sprite].attr01 =
+      lever | objMode | (208 << 16) | OBJ_SIZE_32X16 | OBJ_256_COLORS;
+  work->oam[sprite].attr2 = OBJ_PRIORITY(1) | 256;
   sprite++;
 
   for (k = 0; k != 8; k++) {
-    work->oam[sprite].attr01 = objMode | (k * 16 + 12) | 0x80ce6000;
+    work->oam[sprite].attr01 =
+        objMode | (k * 16 + 12) | (206 << 16) | OBJ_SIZE_32X16 | OBJ_256_COLORS;
     if (k == 0)
-      work->oam[sprite].attr2 = 0x540;
+      work->oam[sprite].attr2 = OBJ_PRIORITY(1) | 320;
     else if (k == 1)
-      work->oam[sprite].attr2 = 0x550;
+      work->oam[sprite].attr2 = OBJ_PRIORITY(1) | 336;
     else if (k == 6)
-      work->oam[sprite].attr2 = 0x570;
+      work->oam[sprite].attr2 = OBJ_PRIORITY(1) | 368;
     else if (k == 7)
-      work->oam[sprite].attr2 = 0x580;
+      work->oam[sprite].attr2 = OBJ_PRIORITY(1) | 384;
     else
-      work->oam[sprite].attr2 = 0x560;
+      work->oam[sprite].attr2 = OBJ_PRIORITY(1) | 352;
     sprite++;
   }
 
   while (sprite != 128) {
-    work->oam[sprite].attr01 = 0x40f02000;
+    work->oam[sprite].attr01 = (240 << 16) | OBJ_SIZE_16X16 | OBJ_256_COLORS;
     work->oam[sprite].attr2 = 0;
     sprite++;
   }

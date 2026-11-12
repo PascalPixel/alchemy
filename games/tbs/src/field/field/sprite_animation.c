@@ -6,11 +6,9 @@
 
 enum {
   ANIM_SHADOW_TILE_BYTES = 16 * 8, ///< 16x8 pixels, 256 colours
-  ANIM_OAM_FULL_COLOR = 1 << 13,
   /// Priority 2, the field's for its sprites: in front of a map layer at 3, or
   /// at 2 since a sprite wins a tie, and behind one at 1.
-  ANIM_OAM_FIELD_PRIORITY = 2 << 10,
-  ANIM_OAM_WIDE = 1 << 14
+  ANIM_OAM_FIELD_PRIORITY = OBJ_PRIORITY(2)
 };
 
 /// A row of gSpritePictureCache_Sources: the packed resource that holds an
@@ -572,51 +570,50 @@ struct Sprite *Sprite_Create(s32 id) {
   // The OAM shape and size bits (attributes 0 and 1) for the image's width
   // and height in pixels.
   switch ((u32)((metadata->width << 8) + metadata->height)) {
-  case 0x0808: // 8x8
-    shape = 0;
+  case 0x0808:
+    shape = OBJ_SIZE_8X8;
     break;
-  case 0x0810: // 8x16
-    shape = 0x8000;
+  case 0x0810:
+    shape = OBJ_SIZE_8X16;
     break;
-  case 0x1008: // 16x8
-    shape = 0x4000;
+  case 0x1008:
+    shape = OBJ_SIZE_16X8;
     break;
-  case 0x1010: // 16x16
-    shape = 0x40000000;
+  case 0x1010:
+    shape = OBJ_SIZE_16X16;
     break;
-  case 0x1020: // 16x32
-    shape = 0x80008000;
+  case 0x1020:
+    shape = OBJ_SIZE_16X32;
     break;
-  case 0x2010: // 32x16
-    shape = 0x80004000;
+  case 0x2010:
+    shape = OBJ_SIZE_32X16;
     break;
-  case 0x2020: // 32x32
-    shape = 0x80000000;
+  case 0x2020:
+    shape = OBJ_SIZE_32X32;
     break;
-  case 0x2040: // 32x64
-    shape = 0xc0008000;
+  case 0x2040:
+    shape = OBJ_SIZE_32X64;
     break;
-  case 0x4020: // 64x32
-    shape = 0xc0004000;
+  case 0x4020:
+    shape = OBJ_SIZE_64X32;
     break;
-  case 0x4040: // 64x64
-    shape = 0xc0000000;
+  case 0x4040:
+    shape = OBJ_SIZE_64X64;
     break;
   default:
     shape = 0;
     break;
   }
 
-  // Part 0 is the image: 256 colours, priority 2. Part 1 is its shadow: a
-  // 16x8, 256-colour sprite of the shared shadow tiles, priority 2.
+  // Part 0 is the image; part 1 is its shadow, from the shared shadow tiles.
   // UB: the native word cursor aliases the sprite and crosses its members.
   // UBFIX copies the same representation from an actual word array.
 #ifdef UBFIX
   attributes[0] = 0;
-  attributes[1] = shape | ANIM_OAM_FULL_COLOR;
+  attributes[1] = shape | OBJ_256_COLORS;
   attributes[2] = tile | ANIM_OAM_FIELD_PRIORITY;
   attributes[3] = 0;
-  attributes[4] = ANIM_OAM_FULL_COLOR | ANIM_OAM_WIDE;
+  attributes[4] = OBJ_SIZE_16X8 | OBJ_256_COLORS;
   attributes[5] =
       (gVramCacheEntries[VRAM_CACHE_ENTRY_ACTOR_SHADOW].offset >> 5) |
       ANIM_OAM_FIELD_PRIORITY;
@@ -624,10 +621,10 @@ struct Sprite *Sprite_Create(s32 id) {
 #else
   attribute = (u32 *)freeSprite;
   *attribute++ = 0;
-  *attribute++ = shape | ANIM_OAM_FULL_COLOR;
+  *attribute++ = shape | OBJ_256_COLORS;
   *attribute++ = tile | ANIM_OAM_FIELD_PRIORITY;
   *attribute++ = 0;
-  *attribute++ = ANIM_OAM_FULL_COLOR | ANIM_OAM_WIDE;
+  *attribute++ = OBJ_SIZE_16X8 | OBJ_256_COLORS;
   *attribute = (gVramCacheEntries[VRAM_CACHE_ENTRY_ACTOR_SHADOW].offset >> 5) |
                ANIM_OAM_FIELD_PRIORITY;
 #endif

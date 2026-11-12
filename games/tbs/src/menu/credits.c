@@ -986,7 +986,7 @@ void Credits_UpdateTextSprites(void) {
 
     for (column = 0; column < CREDITS_COLUMNS; column++) {
       *oamWords++ = (row * 8 + 16 - scrollWithinTile) |
-                    ((column * 32 + 24) << 16) | 0x40004000;
+                    ((column * 32 + 24) << 16) | OBJ_SIZE_32X8;
       *oamWords++ = tileIndex;
       tileIndex += 4;
       if (tileIndex == CREDITS_RING_TILES)
@@ -1052,17 +1052,17 @@ void Credits_InitTextSprites(void) {
   // the strips are drawn over the text.
   oamWords = (u32 *)SCROLL_OBJECTS;
   for (row = 0; row < 8; row++) {
-    *oamWords++ = (row << 21) | 0x80004000;
+    *oamWords++ = (row << 21) | OBJ_SIZE_32X16;
     *oamWords++ = CREDITS_RING_TILES;
   }
   // The bottom strip: eight 32x16 sprites at y 136 and eight 32x8 at y 152,
   // over y 136 to 159.
   for (row = 0; row < 8; row++) {
-    *oamWords++ = (row << 21) | 0x80004088;
+    *oamWords++ = (row << 21) | 136 | OBJ_SIZE_32X16;
     *oamWords++ = CREDITS_RING_TILES;
   }
   for (row = 0; row < 8; row++) {
-    *oamWords++ = (row << 21) | 0x40004098;
+    *oamWords++ = (row << 21) | 152 | OBJ_SIZE_32X8;
     *oamWords++ = CREDITS_RING_TILES;
   }
   // The text sprites, as Credits_UpdateTextSprites rebuilds them each
@@ -1070,13 +1070,13 @@ void Credits_InitTextSprites(void) {
   for (row = 0; row < CREDITS_VISIBLE_ROWS; row++) {
     for (column = 0; column < CREDITS_COLUMNS; column++) {
       u32 tileIndex = (row * 3) * 8 + column * 4;
-      *oamWords++ = (row * 8 + 16) | ((column * 32 + 24) << 16) | 0x40004000;
+      *oamWords++ = (row * 8 + 16) | ((column * 32 + 24) << 16) | OBJ_SIZE_32X8;
       *oamWords++ = tileIndex;
     }
   }
-  // The last eight entries are parked off screen at (192, 192).
+  // The last eight entries are parked off screen.
   for (row = 0; row < 8; row++) {
-    *oamWords++ = 0x00c000c0;
+    *oamWords++ = (192 << 16) | 192;
     *oamWords++ = CREDITS_RING_TILES;
   }
   gWaitForFlashWrite = 0;

@@ -107,13 +107,17 @@ const u8 gTitle_PromptBlendLevels[60] = {
 /// Writes OAM entries i to i + 3: four sprites of `size` pixels, mirrored into
 /// the four quarters of one picture at (x, y)
 #define MIRRORED_QUAD(i, size, shape, tile)                                    \
-  INTRO_OBJ(i).attr01 = ((x + 4) << 16) | y | ((shape) + 0x00002400);          \
-  INTRO_OBJ((i) + 1).attr01 =                                                  \
-      ((x + 4 + (size)) << 16) | y | ((shape) + 0x10002400);                   \
-  INTRO_OBJ((i) + 2).attr01 =                                                  \
-      ((x + 4) << 16) | (u8)(y + (size)) | ((shape) + 0x20002400);             \
-  INTRO_OBJ((i) + 3).attr01 =                                                  \
-      ((x + 4 + (size)) << 16) | (u8)(y + (size)) | ((shape) + 0x30002400);    \
+  INTRO_OBJ(i).attr01 = ((x + 4) << 16) | y | (shape) |                        \
+                        OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT) | OBJ_256_COLORS;  \
+  INTRO_OBJ((i) + 1).attr01 = ((x + 4 + (size)) << 16) | y | (shape) |         \
+                              OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT) |            \
+                              OBJ_256_COLORS | OBJ_HFLIP;                      \
+  INTRO_OBJ((i) + 2).attr01 = ((x + 4) << 16) | (u8)(y + (size)) | (shape) |   \
+                              OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT) |            \
+                              OBJ_256_COLORS | OBJ_VFLIP;                      \
+  INTRO_OBJ((i) + 3).attr01 = ((x + 4 + (size)) << 16) | (u8)(y + (size)) |    \
+                              (shape) | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT) |  \
+                              OBJ_256_COLORS | OBJ_HFLIP | OBJ_VFLIP;          \
   INTRO_OBJ(i).attr2 = (tile);                                                 \
   INTRO_OBJ((i) + 1).attr2 = (tile);                                           \
   INTRO_OBJ((i) + 2).attr2 = (tile);                                           \
@@ -147,29 +151,31 @@ void Title_UpdateIntroSprites(void) {
   if (work->frame < 280) {
     if ((work->frameCount & 1) == 0) {
       PLACE_ON_SLOPE(0, 16);
-      MIRRORED_QUAD(spriteCount, 16, 0x40000000, 232);
+      MIRRORED_QUAD(spriteCount, 16, OBJ_SIZE_16X16, 232);
       spriteCount += 4;
       PLACE_ON_SLOPE(2, 16);
-      INTRO_OBJ(spriteCount).attr01 = ((x + 4) << 16) | y | 0x80002400;
+      INTRO_OBJ(spriteCount).attr01 = ((x + 4) << 16) | y | OBJ_SIZE_32X32 |
+                                      OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT) |
+                                      OBJ_256_COLORS;
       INTRO_OBJ(spriteCount).attr2 = 128;
       spriteCount++;
       PLACE_ON_SLOPE(4, 32);
-      MIRRORED_QUAD(spriteCount, 32, 0x80000000, 192);
+      MIRRORED_QUAD(spriteCount, 32, OBJ_SIZE_32X32, 192);
       spriteCount += 4;
     } else {
       PLACE_ON_SLOPE(1, 16);
-      MIRRORED_QUAD(spriteCount, 16, 0x40000000, 232);
+      MIRRORED_QUAD(spriteCount, 16, OBJ_SIZE_16X16, 232);
       spriteCount += 4;
       PLACE_ON_SLOPE(3, 16);
-      MIRRORED_QUAD(spriteCount, 16, 0x40000000, 224);
+      MIRRORED_QUAD(spriteCount, 16, OBJ_SIZE_16X16, 224);
       spriteCount += 4;
       PLACE_ON_SLOPE(5, 32);
-      MIRRORED_QUAD(spriteCount, 32, 0x80000000, 160);
+      MIRRORED_QUAD(spriteCount, 32, OBJ_SIZE_32X32, 160);
       spriteCount += 4;
     }
   }
   for (; spriteCount <= 119; spriteCount++)
-    INTRO_OBJ(spriteCount).attr01 = 0x400020a0;
+    INTRO_OBJ(spriteCount).attr01 = 160 | OBJ_SIZE_16X16 | OBJ_256_COLORS;
   REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_BLDALPHA = BLEND_ALPHA(14, 14);
   Dma_Set(&INTRO_OBJ(0), OAM, DMA_COPY_WORDS((spriteCount * 8) >> 2), REG_DMA3);
@@ -177,8 +183,8 @@ void Title_UpdateIntroSprites(void) {
   // beyond the 120-entry list; it reuses a hidden shadow-buffer entry.
   stripY = 32 - gBgScroll[1].y;
   WRAP_TO_BYTE(stripY);
-  INTRO_OBJ(12).attr01 = stripY | 0xc05c2000;
-  INTRO_OBJ(12).attr2 = 0x800;
+  INTRO_OBJ(12).attr01 = stripY | (92 << 16) | OBJ_SIZE_64X64 | OBJ_256_COLORS;
+  INTRO_OBJ(12).attr2 = OBJ_PRIORITY(2);
   Dma_Set(&INTRO_OBJ(12), (u8 *)OAM + spriteCount * 8, DMA_COPY_WORDS(2),
           REG_DMA3);
   Dma_Set(&INTRO_OBJ(0), OAM, DMA_COPY_WORDS(8), REG_DMA3);
@@ -458,7 +464,7 @@ s32 Title_ShowIntro(s32 prompt) {
 
       *spriteWords++ = 0;
       sprite++;
-      *spriteWords++ = 0x40004000;
+      *spriteWords++ = OBJ_SIZE_32X8;
       *spriteWords = vramBlock;
     }
     HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);

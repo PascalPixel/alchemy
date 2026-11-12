@@ -458,24 +458,29 @@ void LuckyDice_Run(void) {
 
     // The fixed sprites: the board frame and the two lucky numbers.
     spriteCount = 0;
-    sprites->oam[spriteCount].attr01 = 0xc0006000;
-    sprites->oam[spriteCount].attr2 = 0x358;
+    sprites->oam[spriteCount].attr01 = OBJ_SIZE_64X32 | OBJ_256_COLORS;
+    sprites->oam[spriteCount].attr2 = 856;
     spriteCount++;
-    sprites->oam[spriteCount].attr01 = 0x40102020;
-    sprites->oam[spriteCount].attr2 = 0x398;
+    sprites->oam[spriteCount].attr01 =
+        (16 << 16) | 32 | OBJ_SIZE_16X16 | OBJ_256_COLORS;
+    sprites->oam[spriteCount].attr2 = 920;
     spriteCount++;
-    sprites->oam[spriteCount].attr01 = 0x40102030;
-    sprites->oam[spriteCount].attr2 = 0x3a0;
+    sprites->oam[spriteCount].attr01 =
+        (16 << 16) | 48 | OBJ_SIZE_16X16 | OBJ_256_COLORS;
+    sprites->oam[spriteCount].attr2 = 928;
     spriteCount++;
-    sprites->oam[spriteCount].attr01 = 0x40042020;
-    sprites->oam[spriteCount].attr2 = 0x3a8;
+    sprites->oam[spriteCount].attr01 =
+        (4 << 16) | 32 | OBJ_SIZE_16X16 | OBJ_256_COLORS;
+    sprites->oam[spriteCount].attr2 = 936;
     spriteCount++;
-    sprites->oam[spriteCount].attr01 = 0x40042030;
-    sprites->oam[spriteCount].attr2 = 0x3a8;
+    sprites->oam[spriteCount].attr01 =
+        (4 << 16) | 48 | OBJ_SIZE_16X16 | OBJ_256_COLORS;
+    sprites->oam[spriteCount].attr2 = 936;
     spriteCount++;
     for (index = 0; index != DICE_COUNT; index++) {
-      sprites->oam[spriteCount].attr01 = (32 + index * 16) | 0x40202000;
-      sprites->oam[spriteCount].attr2 = luckyNumbers[index] * 8 + 0x3b0;
+      sprites->oam[spriteCount].attr01 =
+          (32 + index * 16) | (32 << 16) | OBJ_SIZE_16X16 | OBJ_256_COLORS;
+      sprites->oam[spriteCount].attr2 = luckyNumbers[index] * 8 + 944;
       spriteCount++;
     }
 
@@ -488,7 +493,7 @@ void LuckyDice_Run(void) {
         }
         if (resultTimer >= index * 5) {
           sprites->oam[spriteCount].attr01 =
-              0x80002040 | ((56 + index * 32) << 16);
+              64 | OBJ_SIZE_32X32 | OBJ_256_COLORS | ((56 + index * 32) << 16);
           sprites->oam[spriteCount].attr2 = numbers[index] * 32 + 152;
           spriteCount++;
         }
@@ -502,7 +507,8 @@ void LuckyDice_Run(void) {
                    index * 32;
           labelY = 96;
           sprites->oam[spriteCount].attr01 =
-              (((labelX & 0x1ff) << 16) | labelY) | 0x80002000;
+              (((labelX & 0x1ff) << 16) | labelY) | OBJ_SIZE_32X32 |
+              OBJ_256_COLORS;
           sprites->oam[spriteCount].attr2 =
               gLuckyDice_LabelTiles[resultKind] * 8 + 152 + index * 32;
           spriteCount++;
@@ -695,18 +701,17 @@ void LuckyDice_Run(void) {
       halfSize = 2048 / (spriteDepth[drawOrder[index]] / 2 + 128);
       dieX = screen[0] - halfSize;
       dieY = screen[1] - halfSize;
-      // An affine, double-size, 256-colour sprite using the die's own
-      // affine matrix (attr1 bits 9 to 13); 632 and 352 wrap in OAM's 9-
-      // and 8-bit fields to 120 across and 96 down.
+      // Each die has its own affine matrix (attr1 bits 9 to 13); 632 and 352
+      // wrap in OAM's 9- and 8-bit fields to 120 across and 96 down.
       if (dieY + 96 > -16) {
         sprites->oam[spriteCount].attr01 =
             ((drawOrder[index] << 25) | (((dieX + 632) & 0x1ff) << 16) |
              ((dieY + 352) & 255)) |
-            0x40002300;
+            OBJ_SIZE_16X16 | OBJ_256_COLORS | OBJ_DOUBLE_SIZE | OBJ_AFFINE;
         sprites->oam[spriteCount].attr2 =
             (gLuckyDice_FaceTiles[rollingDie->variant / DICE_ROLL_PER_TILE]
              << 3) |
-            0x400;
+            OBJ_PRIORITY(1);
         spriteCount++;
       }
     }
@@ -718,11 +723,12 @@ void LuckyDice_Run(void) {
         x = screen[0] - 2048 / (spriteDepth[drawOrder[index]] / 2 + 128);
         y = screen[1] + 768 / (spriteDepth[drawOrder[index]] / 2 + 128);
         sprites->oam[spriteCount].attr01 =
-            ((((x + 632) & 0x1ff) << 16) | ((y + 352) & 255)) | 0x80002000;
+            ((((x + 632) & 0x1ff) << 16) | ((y + 352) & 255)) | OBJ_SIZE_32X32 |
+            OBJ_256_COLORS;
         if (index == 1) {
-          sprites->oam[spriteCount].attr01 |= 0x10000000;
+          sprites->oam[spriteCount].attr01 |= OBJ_HFLIP;
         }
-        sprites->oam[spriteCount].attr2 = 0x958;
+        sprites->oam[spriteCount].attr2 = OBJ_PRIORITY(2) | 344;
         spriteCount++;
       }
     }
@@ -749,8 +755,9 @@ void LuckyDice_Run(void) {
       if (shadowY + 88 > -16) {
         sprites->oam[spriteCount].attr01 =
             (((index + 2) << 25) | (((shadowX + 624) & 0x1ff) << 16)) |
-            ((shadowY + 344) & 255) | 0x40002300;
-        sprites->oam[spriteCount].attr2 = 0x890;
+            ((shadowY + 344) & 255) | OBJ_SIZE_16X16 | OBJ_256_COLORS |
+            OBJ_DOUBLE_SIZE | OBJ_AFFINE;
+        sprites->oam[spriteCount].attr2 = OBJ_PRIORITY(2) | 144;
         spriteCount++;
       }
     }
@@ -948,7 +955,8 @@ void LuckyDice_Run(void) {
     // and shadow, scaled by depth) and copy the sprites to OAM.
     // An unused sprite is parked at x 240, just past the right edge.
     for (; spriteCount != 128; spriteCount++) {
-      sprites->oam[spriteCount].attr01 = 0x40f02000;
+      sprites->oam[spriteCount].attr01 =
+          (240 << 16) | OBJ_SIZE_16X16 | OBJ_256_COLORS;
       sprites->oam[spriteCount].attr2 = 0;
     }
 

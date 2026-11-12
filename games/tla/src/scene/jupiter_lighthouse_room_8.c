@@ -130,10 +130,6 @@ s32 Func_02000110(void) {
   return 0;
 }
 
-void Scene_SetArrivalFlags(s32 value);
-void Func_020021e0(s32 x, s32 z, s32 a, s32 b);
-void Func_020022c0(s32 x, s32 z, s32 a, s32 b);
-
 s32 Func_020001d4(void) {
   Scene_SetArrivalFlags(0);
   if (Event_GetFlag(0x109) == 0)

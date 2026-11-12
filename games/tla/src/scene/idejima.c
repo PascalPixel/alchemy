@@ -73,9 +73,6 @@ void Func_02000098(s32 id) {
   System_Wait(40);
 }
 
-void Import_EventStart();
-void Import_EventEnd();
-
 /// A scene of actor 8 and the leader that ends by setting flag 0x863.
 void Func_020000f0(void) {
   s32 message;
@@ -194,10 +191,6 @@ void Func_020002b4(void) {
 }
 
 void Import_EventStart(void);
-void Import_EventEnd();
-void Event_FinishScreenTransition(void);
-void Event_WaitTransitionFrames(void);
-void Func_02000098();
 
 extern const u8 gData_02003650[];
 extern const u8 gData_02003734[];
@@ -654,7 +647,6 @@ void Func_0200153c(void) {
   gData_02003c10 = 0;
 }
 
-extern s16 gData_02003c14;
 extern s16 gData_02003990[2][160];
 
 /// The water's wave scroll: each scanline's vertical offset for BG3 from the
@@ -686,10 +678,6 @@ struct MapWork {
   u8 unk000[0x108];
   struct MapLayer layer;
 };
-
-extern s32 gData_02003c10;
-extern s16 gData_02003c14;
-extern s16 gData_02003990[2][160];
 
 void Func_020015a0(void) {
   struct MapLayer *layer = &Ram_HeapSlots->mapWork->layer;

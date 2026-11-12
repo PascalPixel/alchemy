@@ -134,10 +134,7 @@ void Func_02002e78(void) {
   }
 }
 
-void Event_StartScreenTransition(void);
-void Event_WaitTransitionFrames(void);
 void Event_FinishScreenTransition(void);
-void Func_02004c20(void);
 
 void Func_0200310c(void) {
   Func_02004c20();
@@ -152,12 +149,7 @@ void Func_0200310c(void) {
 
 extern s32 Data_02006be8[8];
 
-void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 void Func_0200050c(void);
-void Func_02004c20(void);
-void Func_02004c28(void);
-void Func_02004da8(void);
-void Func_02004db0(void);
 void Func_02004dc0(void);
 
 void Func_02003144(void) {
@@ -270,17 +262,10 @@ extern const u8 gWorldMapPackedTilesC[];
 extern u8 gData_02006f20[];
 extern u8 gData_02006e0e[];
 extern u8 gData_02006e0c[];
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
 void Animation_ApplyChildValues(struct Actor *object, s32 value);
 u32 Random16Far(void);
-void Func_02004c20(void);
-void Func_02004c28(void);
 s32 Func_02004c38(s32 a, s32 b, s32 c);
 void Func_02003654(s32 a, s32 b, s32 c);
-void Event_StartScreenTransition(void);
-void Event_WaitTransitionFrames(void);
-void Event_FinishScreenTransition(void);
 void Func_020036a8(void);
 void Func_020048f4(void);
 void Func_02003bb8(struct Actor *object, s32 value);
@@ -303,8 +288,6 @@ s32 Func_02003418(struct Actor *object) {
 
 extern const u8 gData_02004f70[];
 
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
 void Func_02004b18(struct Actor *object, s32 a);
 void Func_02004b20(struct Actor *object, const u8 *data);
 
@@ -325,15 +308,6 @@ void Func_0200343c(struct Actor *parent) {
     }
   }
 }
-
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
-void Event_StartScreenTransition(void);
-void Event_FinishScreenTransition(void);
-void Event_WaitTransitionFrames(void);
-
-void Func_02004c20(void);
-void Func_02004c28(void);
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -371,29 +345,6 @@ void Func_02003490(void) {
   Func_02004c28();
   FieldEvent_SetExitRequest(78);
 }
-
-extern u8 gData_02006c08[];
-extern const u8 gWorldMapPackedTilesC[];
-extern u8 gData_02006f20[];
-extern u8 gData_02006e0e[];
-extern u8 gData_02006e0c[];
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
-void Animation_ApplyChildValues(struct Actor *object, s32 value);
-u32 Random16Far(void);
-void Func_02004c20(void);
-void Func_02004c28(void);
-s32 Func_02004c38(s32 a, s32 b, s32 c);
-void Func_02003654(s32 a, s32 b, s32 c);
-void Event_StartScreenTransition(void);
-void Event_WaitTransitionFrames(void);
-void Event_FinishScreenTransition(void);
-void Func_020036a8(void);
-void Func_020048f4(void);
-void Func_02003bb8(struct Actor *object, s32 value);
-void Func_02004aa8(const u8 *a, u8 *b);
-void Resource_ResetEntry(s32 entry);
-u32 __umodsi3(u32 a, u32 b);
 
 s32 Func_020035e0(struct Actor *object) {
   u16 *tile = (u16 *)((u8 *)Ram_HeapSlots->mapWork + 286);

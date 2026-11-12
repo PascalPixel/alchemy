@@ -7,7 +7,6 @@
 extern char SceneId_Ov690Room1;
 extern char SceneId_Ov690Room2;
 extern char SceneId_Ov690Room4;
-extern char SceneId_Ov690Room5;
 extern char SceneId_Ov690Room7;
 extern char SceneId_Ov690Room8;
 extern char SceneId_Ov690Room9;
@@ -157,15 +156,6 @@ void Func_02000644(void) {
   CopyCells2(0, 3, 1, 1, 3, 15);
   Event_SetFlag(0x230);
 }
-
-extern char SceneId_Ov690Room1;
-extern char SceneId_Ov690Room2;
-extern char SceneId_Ov690Room4;
-extern char SceneId_Ov690Room5;
-extern char SceneId_Ov690Room7;
-extern char SceneId_Ov690Room8;
-extern char SceneId_Ov690Room9;
-extern char SceneId_Ov690Room10;
 
 extern u8 gData_0200289c[];
 extern u8 gData_020028f0[];
@@ -320,8 +310,6 @@ void Func_02002180(s32 a, s32 b, s32 c, s32 d);
 void Func_02002170(void);
 u8 *HeapSlot_AllocFar(s32 slot, s32 size);
 void HeapSlot_Release(s32 slot);
-void Func_020007d8(void);
-s32 Func_020007fc(s32 *p);
 
 static __inline__ void Settlements_Func_02002180(s32 a, s32 b, s32 c, s32 d) {
   Func_02002180(a, b, c, d);
@@ -372,15 +360,10 @@ void Func_02000860(void) {
   actor->state = 0;
 }
 
-extern char SceneId_Ov690Room3;
-extern char SceneId_Ov690Room4;
 extern char SceneId_Ov690Room6;
-extern char SceneId_Ov690Room7;
-extern char SceneId_Ov690Room9;
 
 extern const u8 gData_02002272[];
 
-void Func_02000860(void);
 void Func_02000e04(void);
 void Func_0200125c(void);
 void Func_02002140(s32 a);

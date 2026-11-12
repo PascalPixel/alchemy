@@ -10,11 +10,7 @@
 #include "../../../../games/tla/src/scene/jupiter_lighthouse_aerie/jupiter_lighthouse_aerie.h"
 
 void Func_02002a88(void);
-void Func_02002a18(void);
-void Event_StartScreenTransition(void);
-void Event_WaitTransitionFrames(void);
 s32 Math_Cosine(s32 angle);
-u32 Random16Far(void);
 void Effect_AdvanceMotion(union FieldObject *object);
 
 void Func_02002a90(void);

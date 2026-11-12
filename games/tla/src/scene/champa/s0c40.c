@@ -33,8 +33,6 @@ void Func_02000c40(s32 x, s32 y, s32 z, s32 angle, s32 frames) {
   }
 }
 
-void Func_02000c40(s32 x, s32 y, s32 z, s32 angle, s32 frames);
-
 void Func_02000c90(s32 firstId, s32 secondId) {
   struct FieldActor *first = ((struct FieldActor *)Actor_Get(firstId));
   struct FieldActor *second = ((struct FieldActor *)Actor_Get(secondId));

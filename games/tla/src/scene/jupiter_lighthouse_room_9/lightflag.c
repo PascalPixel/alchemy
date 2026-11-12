@@ -15,7 +15,6 @@ extern s32 gData_020025f4;
 void Func_02000398(s32 value) { gData_020025f4 = value; }
 
 extern s32 gData_020025f0;
-extern s32 gData_020025f4;
 extern u16 gData_0200261c[];
 
 void Func_020003a4(void) {
@@ -60,16 +59,12 @@ next:
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 #define WORD_AT(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
 
-extern s32 gData_020025f0;
-extern s32 gData_020025f4;
-extern u16 gData_0200261c[];
 extern u16 gData_0200263c[];
 extern u16 gData_02002640[];
 
 s32 Map_GetTerrainHeight();
 void Func_02001bd8();
 void Func_02001c98();
-void Func_020003a4(void);
 
 void Func_02000460(s32 mode) {
   gData_020025f4 = 1;

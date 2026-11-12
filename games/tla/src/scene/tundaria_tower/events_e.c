@@ -20,7 +20,6 @@ void Func_02001868(void) {
 
 extern s16 gData_020032b2[];
 void Func_020017dc(void);
-void Func_02001868(void);
 s32 GetMapCellCollision(s32 layer, s32 x, s32 z);
 void Vector_AddPolarOffsetFar(s32 radius, s32 angle, s32 *vector);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);

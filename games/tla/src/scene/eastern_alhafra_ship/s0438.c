@@ -35,9 +35,6 @@ void Func_02000438(s32 id) {
 #include "text/msg_ids.h"
 
 extern u8 gData_020033c8[];
-void Event_StartScreenTransition();
-void Event_WaitTransitionFrames();
-void Func_02000438();
 void Func_02003130();
 void Func_02003138();
 void Func_02003218();
@@ -1302,4 +1299,3 @@ L_0200b0b8:
   Func_02003138();
   return;
 }
-

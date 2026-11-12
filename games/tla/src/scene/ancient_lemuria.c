@@ -158,10 +158,6 @@ void Func_0200043c(void) { MapCopy(39, 0, 4, 3, 25, 8, 0); }
 
 void Func_0200045c(void) { Func_02000080(13); }
 
-extern u8 MsgLemuriaStayExploring[];
-extern u8 MsgLemuriaStayExploringAlternate[];
-
-void Func_02000080(s32 id);
 void Func_02001914(void);
 void Func_0200191c(void);
 
@@ -284,7 +280,6 @@ s32 Func_02000630(void) {
   }
 }
 
-
 s32 Func_020006bc(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 513;
   Task_Add(Func_02000630, 0xc80);
@@ -336,11 +331,8 @@ struct EventWork1c4 {
   u16 count;
 };
 
-void Func_02001914();
-void Func_0200191c();
 void Func_02001964();
 void Func_020019e4();
-void Func_020019f4();
 void Message_CloseFinishedWindows();
 
 void Func_02000838(void) {

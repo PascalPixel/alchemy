@@ -96,17 +96,10 @@ void Func_02003254(void) {
 extern char SceneId_Ov664Room1, SceneId_Ov664Room2, SceneId_Ov664Room3,
     SceneId_Ov664Room4, SceneId_Ov664Room7, SceneId_Ov664Room8,
     SceneId_Ov664Room9;
-void Func_02005e14(void);
-void Func_02005f2c(s32 skip);
 void Func_02005f7c(void);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 void OverlayObject_WaitUntilIdle(struct Actor *object);
-void Func_02005f94(s32 cue);
-void GameFlag_SetBit(s32 flag);
-void GameFlag_ClearBit(s32 flag);
-void Func_02005df4(s32 x, s32 z, s32 terrain, s32 height);
 void Func_0200062c(s32 layer, s32 x, s32 z, s32 cell);
-void Func_02005e1c(void);
 
 /// After the pushed object (the event work's object at 0xcbc) comes to rest:
 /// if it stopped above the ground it drops onto it with cue 188; then, by
@@ -197,4 +190,3 @@ void Func_0200332c(void) {
   }
   Func_02005e1c();
 }
-

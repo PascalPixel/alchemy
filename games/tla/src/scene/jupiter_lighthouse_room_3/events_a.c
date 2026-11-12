@@ -13,9 +13,6 @@
 
 void Func_020003f8(s32 value) { gData_02002cc4 = value; }
 
-extern s32 gData_02002cc0;
-extern s32 gData_02002cc4;
-
 void Func_02000404(void) {
   u16 colors[16];
   s32 phase = (gData_02002cc0 / 4) % 5;
@@ -54,14 +51,6 @@ next:
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 #define WORD_AT(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
-
-extern s32 gData_02002cc0;
-extern s32 gData_02002cc4;
-
-s32 Map_GetTerrainHeight();
-void Func_02002368();
-void Func_02002460();
-void Func_02000404(void);
 
 void Func_020004c0(s32 mode) {
   gData_02002cc4 = 1;

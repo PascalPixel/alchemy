@@ -32,7 +32,6 @@ struct ShamanVillageObject *Func_02001fec(void) {
   return object;
 }
 
-struct ShamanVillageObject *Func_02001fec(void);
 void DriftScene_SpawnObject(s32 x, s32 y, s32 z, u16 value);
 
 extern const u8 gData_02004cfc[];

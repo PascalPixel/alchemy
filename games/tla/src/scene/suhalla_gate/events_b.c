@@ -52,10 +52,6 @@ extern char SceneId_SuhallaGate1;
 extern char SceneId_SuhallaGate2;
 extern char SceneId_SuhallaGate3;
 
-void Func_02000110(void);
-void Func_02000168(void);
-void Func_02000264(void);
-
 s32 Func_0200028c(void) {
   struct EventWork *work;
   s16 scene;
@@ -101,7 +97,6 @@ void Func_02000378(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-extern char SceneId_SuhallaGate1;
 extern char SceneId_VenusLighthouseEntrance;
 extern u8 MsgWaahhhItS[];
 

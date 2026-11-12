@@ -68,11 +68,8 @@ void Func_02002ec4(void) {
   Func_020051c8();
 }
 
-extern s32 gData_02006298;
-
 void Func_02000cd8(s32 id, s32 offset, s32 limit);
 void Func_02000d64(void);
-void Func_02005158(void);
 
 void Func_0200306c(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -146,11 +143,7 @@ do {
   Func_020051c8();
 }
 
-extern s32 gData_0200629c;
-
-void Func_02000cd8(s32 id, s32 offset, s32 limit);
 void Func_02000e60(void);
-void Func_02005158(void);
 
 void Func_020032c8(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -288,7 +281,6 @@ void Func_02003584(void) {
   Import_EventSetExitRequest(5);
 }
 
-void Func_02000cd8(s32 id, s32 dy, s32 scale);
 extern s32 gData_020062a0;
 extern s32 gData_020062a4;
 
@@ -480,8 +472,6 @@ void Func_02003ae4(s32 id, s32 base) {
   Actor_SetMovementTypeById(id, gData_02005548);
 }
 
-void Func_02003ae4(s32 id, s32 base);
-
 void Func_02003b2c(void) {
   ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->value = 0x100;
   if (GameFlag_Test(0x842)) {
@@ -629,11 +619,6 @@ void Func_02003e60(struct Actor *object, u32 frames, s32 step) {
 }
 
 extern u8 MsgKandoreanTemple04;
-
-void Func_020052e8(void);
-
-void Func_02001f3c(void);
-void Func_02001c8c(void);
 
 void Func_02003e8c(void) {
   struct Actor *object;
@@ -924,7 +909,6 @@ extern const u8 gData_020055a0[];
 extern const u8 gData_020055e4[];
 
 void Func_02000bcc(void);
-void Func_020047f0(void);
 
 #define WORK ((struct EventWork *)Ram_HeapSlots->eventWork)
 

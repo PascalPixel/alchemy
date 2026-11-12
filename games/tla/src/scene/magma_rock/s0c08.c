@@ -32,7 +32,6 @@ struct MagmaRockEffectParams {
   u8 unk20[8];
 };
 
-extern u32 gFrameCount;
 extern const u8 gData_02003d74[];
 
 u32 Random16Far(void);
@@ -103,7 +102,6 @@ struct MagmaRockEffectConfig {
 
 extern u32 gData_02003d50[];
 
-u32 Random16Far(void);
 void Func_02003c4c(struct Actor *object, s32 value);
 
 /// Every fourth frame, spawns effect 403 at the object with a random z offset
@@ -136,8 +134,6 @@ struct MagmaRockEventWork {
 };
 
 s32 Math_Cosine(s32 angle);
-void Func_02000c40(struct Actor *object);
-void Func_02000d40(struct Actor *object);
 s32 Func_020005a0(s32 *a, s32 *b);
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
@@ -233,9 +229,6 @@ void Func_02000ee4(u16 id, s16 first, s16 side) {
   }
   *flags = 0;
 }
-
-void Func_02003bac(s32 a, s32 b);
-void Func_02003bb4(s32 owner, u16 value);
 
 void Func_02000fcc(struct Actor *object) {
   if (gFrameCount & object->unk5c[7])

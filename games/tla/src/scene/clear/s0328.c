@@ -467,7 +467,6 @@ extern volatile u16 gLinkStatus;
 extern u16 gLinkPeerSignatures[][12];
 extern u16 gSerialReceivedSize;
 extern s32 gSerialReceiveDest;
-extern u32 gInput[];
 extern u16 gData_02003a74[4];
 extern u8 gGameFlagBytes[];
 #define MAP_CELL_BACKUP (Ram_MapCellBuffer + 0x3000)

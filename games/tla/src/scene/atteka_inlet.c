@@ -67,8 +67,6 @@ const u8 *Func_020000e0(void) {
   return gData_0200171c;
 }
 
-extern u8 MsgAreWeSetting[];
-
 void Func_02001010(void);
 void Func_02001018(void);
 
@@ -110,9 +108,6 @@ void Func_02000120(void) {
     Func_02001018();
   }
 }
-
-void Func_02001010(void);
-void Func_02001018(void);
 
 /// Once flag 0x9d0 is set and while flag 0x9b2 is clear, objects 9 and 10 are
 /// placed, jump in and talk, four cells of the map change and flag 0x9b0 is
@@ -174,8 +169,6 @@ void Func_02000208(void) {
   }
 }
 
-void Func_02001010(void);
-void Func_02001018(void);
 void Func_020010e0(void);
 
 /// Once flag 0x9d0 is set, the camera pans over object 23, who greets the
@@ -242,10 +235,6 @@ void Func_020003e4(void) {
   }
 }
 
-extern u8 MsgAreWeSetting[];
-
-void Func_02001010(void);
-void Func_02001018(void);
 void Func_02001070(s32 id, s32 target);
 
 /// Object 18 comes to the party leader and asks whether to set out, as in
@@ -290,8 +279,6 @@ void Func_02000640(void) {
 }
 
 void Func_0200097c(void);
-void Func_02001010(void);
-void Func_02001018(void);
 void Func_02001120(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
                    s32 destY, s32 layer);
 
@@ -350,9 +337,6 @@ void Func_0200091c(void) { MapCopy(9, 23, 1, 1, 21, 6, 0); }
 void Func_0200093c(void) { MapCopy(9, 23, 1, 1, 22, 6, 0); }
 
 void Func_0200095c(void) { MapCopy(9, 23, 1, 1, 23, 7, 0); }
-
-void Func_02001010(void);
-void Func_02001018(void);
 
 /// Object 24 calls out to the party, jumps down to it and talks with object
 /// 23; flag 0x9ad is set.
@@ -464,10 +448,6 @@ void Func_02000c14(void) {
   }
 }
 
-void Event_FinishScreenTransition(void);
-void Event_WaitTransitionFrames(void);
-void Func_02001010(void);
-
 void Func_02000c8c(void) {
   u8 *work = Ram_HeapSlots->eventWork;
 
@@ -515,11 +495,6 @@ struct MapBits {
   u8 low : 2;
   u8 mode : 2;
 };
-
-void Func_02000c14(void);
-void Func_02000bb8(void);
-
-void Func_02000bf0(void);
 
 static __inline__ void Task_Add_(void (*func)(void), s32 priority) {
   /* FAKEMATCH(wrapper): the call forwarded through an inline, which keeps each

@@ -87,14 +87,10 @@ next:
   Func_02002b30();
 }
 
-void Func_02002b28(void);
-void Func_02002b30(void);
 void Func_02002c88(s32 a, s32 b);
 void Func_02000f80(void);
 void Func_020019d8(void);
 
-extern const u8 gData_02002d38[];
-extern const u8 gData_02002ff0[];
 extern const u8 gData_02003358[];
 extern const u8 gData_0200367c[];
 extern const u8 gData_0200394c[];

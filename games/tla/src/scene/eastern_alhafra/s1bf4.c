@@ -45,10 +45,6 @@ extern s32 gData_02005670[];
 
 void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
-void Event_StartScreenTransition();
-void Func_02001bf4();
-void Event_FinishScreenTransition();
-void Event_WaitTransitionFrames();
 void Func_02004a94();
 void Func_02004a9c();
 void Func_02004b94();
@@ -1134,4 +1130,3 @@ void Func_02003f48(s32 x, s32 y, s32 z, s32 count) {
       goto loop;
   }
 }
-

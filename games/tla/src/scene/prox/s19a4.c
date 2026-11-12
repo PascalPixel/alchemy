@@ -59,8 +59,6 @@ void Func_020019a4(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f) {
    } *)(base))                                                                 \
        ->v)
 
-void Func_020019a4(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-
 void Func_02001a9c(void) { Func_020019a4(0x30, 0x27, 0x39, 0x1a, 1, 2); }
 
 #define FIELD_AT(base, type, off)                                              \
@@ -69,8 +67,6 @@ void Func_02001a9c(void) { Func_020019a4(0x30, 0x27, 0x39, 0x1a, 1, 2); }
      type v;                                                                   \
    } *)(base))                                                                 \
        ->v)
-
-void Func_020019a4(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 
 void Func_02001ab8(void) { Func_020019a4(0x31, 0x27, 0x41, 0x18, 1, 2); }
 
@@ -81,8 +77,6 @@ void Func_02001ab8(void) { Func_020019a4(0x31, 0x27, 0x41, 0x18, 1, 2); }
    } *)(base))                                                                 \
        ->v)
 
-void Func_020019a4(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-
 void Func_02001ad4(void) { Func_020019a4(0x32, 0x27, 0x38, 0x13, 1, 2); }
 
 #define FIELD_AT(base, type, off)                                              \
@@ -92,8 +86,6 @@ void Func_02001ad4(void) { Func_020019a4(0x32, 0x27, 0x38, 0x13, 1, 2); }
    } *)(base))                                                                 \
        ->v)
 
-void Func_020019a4(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-
 void Func_02001af0(void) { Func_020019a4(0x33, 0x27, 0x3d, 0xd, 1, 2); }
 
 #define FIELD_AT(base, type, off)                                              \
@@ -102,8 +94,6 @@ void Func_02001af0(void) { Func_020019a4(0x33, 0x27, 0x3d, 0xd, 1, 2); }
      type v;                                                                   \
    } *)(base))                                                                 \
        ->v)
-
-void Func_020019a4(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 
 void Func_02001b0c(void) { Func_020019a4(0x33, 0x27, 0x50, 0x10, 1, 2); }
 
@@ -123,8 +113,6 @@ void Func_02001b28(void) { Call6(Func_020019a4, 0x34, 0x27, 0x32, 9, 2, 2); }
    } *)(base))                                                                 \
        ->v)
 
-void Func_020019a4(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-
 void Func_02001b44(void) { Func_020019a4(0x57, 2, 0x50, 7, 1, 2); }
 
 #define FIELD_AT(base, type, off)                                              \
@@ -134,14 +122,10 @@ void Func_02001b44(void) { Func_020019a4(0x57, 2, 0x50, 7, 1, 2); }
    } *)(base))                                                                 \
        ->v)
 
-void Func_020019a4(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-
 void Func_02001b60(void) { Func_020019a4(0x59, 0, 0x4d, 0x10, 1, 2); }
 
 void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
-void Event_FinishScreenTransition(void);
-void Event_WaitTransitionFrames(void);
 
 void Func_02001b7c(void) {
   struct EventWork154 *work = Ram_HeapSlots->eventWork;

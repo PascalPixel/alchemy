@@ -114,7 +114,6 @@ void Actor_SetAnimationSpeed(struct Actor *object,
                                          s32 value);
 void Map_EnableUpdateCallback(void);
 void Map_DisableUpdateCallback(void);
-void Func_0200015c(struct Actor *object);
 void Func_020004dc(s32 mode);
 void Func_02001d3c(s32 id);
 
@@ -147,15 +146,6 @@ void Func_020001d8(struct Actor *object) {
   object->x += Math_Cosine(((object->z >> 14) + (object->y >> 15)) << 8) / 2;
   object->y += object->speedLimit;
 }
-
-s32 Math_Cosine(s32 angle);
-void Actor_SetAnimationSpeed(struct Actor *object, s32 value);
-void Map_EnableUpdateCallback(void);
-void Map_DisableUpdateCallback(void);
-void Func_0200015c(struct Actor *object);
-void Func_020001d8(struct Actor *object);
-void Func_020004dc(s32 mode);
-void Func_02001d3c(s32 id);
 
 #define OBJECT_BYTE(object, offset) (((u8 *)(object))[offset])
 
@@ -196,15 +186,6 @@ void Func_02000298(void) {
     i = next;
   } while (i != 16);
 }
-
-s32 Math_Cosine(s32 angle);
-void Actor_SetAnimationSpeed(struct Actor *object,
-                                         s32 value);
-void Map_EnableUpdateCallback(void);
-void Map_DisableUpdateCallback(void);
-void Func_0200015c(struct Actor *object);
-void Func_020004dc(s32 mode);
-void Func_02001d3c(s32 id);
 
 #define OBJECT_BYTE(object, offset) (((u8 *)(object))[offset])
 

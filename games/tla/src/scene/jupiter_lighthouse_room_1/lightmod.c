@@ -15,7 +15,6 @@ extern s32 gData_02002230;
 void Func_020002bc(s32 value) { gData_02002230 = value; }
 
 extern s32 gData_0200222c;
-extern s32 gData_02002230;
 extern u16 gData_02002258[];
 
 void Func_020002c8(void) {
@@ -54,13 +53,9 @@ next:
   gData_0200222c++;
 }
 
-extern s32 gData_0200222c;
-extern s32 gData_02002230;
-extern u16 gData_02002258[];
 extern u16 gData_02002278[];
 extern u16 gData_0200227c[];
 
-void Func_020002c8(void);
 s32 Map_GetTerrainHeight();
 void Func_02001b14();
 void Func_02001bc4();

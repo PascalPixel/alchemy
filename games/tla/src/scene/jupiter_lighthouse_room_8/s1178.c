@@ -148,17 +148,11 @@ void Func_02001200(void) {
 extern u8 gField_CachedTilesA[];
 extern u8 gField_CachedTilesB[];
 extern u8 gField_CachedTilesC[];
-extern s16 gData_02002af0;
-extern s16 gData_02002af2;
-extern struct FieldActor *gData_02002af4[];
-extern s16 gData_02002bf4;
-extern s16 gData_02002bf6;
 
 void *Heap_Alloc(s32 size);
 void Func_02002118(const void *source, void *destination);
 s32 Resource_FindFreeEntry(void);
 void Heap_Release(void *block);
-void Func_02001200(void);
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -205,10 +199,6 @@ void Func_020014bc(void) {
   gData_02002bf4 = 1;
   gData_02002bf6 = -1;
 }
-
-extern s16 gData_02002af2;
-extern struct FieldActor *gData_02002af4[];
-extern s16 gData_02002bf6;
 
 void Func_02001544(s32 id, s32 value) {
   struct FieldActor *object = ((struct FieldActor *)Actor_Get(id));

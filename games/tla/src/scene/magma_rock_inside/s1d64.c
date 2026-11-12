@@ -115,9 +115,6 @@ void Func_0200217c(void) {
 
 struct FieldActor;
 
-void Func_02004d40(void);
-void Func_02004d48(void);
-void Func_02004e20(void);
 struct FieldActor *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type);
 void Func_02004cb0(struct FieldActor *actor);
 s32 Func_02000694(u32 layer, s32 x, s32 y, s32 value);
@@ -186,8 +183,6 @@ void Func_02002318(void) {
 
 extern const u8 MsgBlazeStoneEmber[];
 
-void Func_02004d40(void);
-void Func_02004d48(void);
 void Func_02004e58(s32 item, s32 mode);
 
 void Func_02002364(void) {
@@ -211,9 +206,6 @@ void Func_02002364(void) {
   }
   Func_02004d48();
 }
-
-void Func_02004d40(void);
-void Func_02004d48(void);
 
 void Func_020023e8(void) {
   s32 width = 1;

@@ -65,14 +65,10 @@ struct EventWorkView {
   s32 unk1ac;
 };
 
-void Event_FinishScreenTransition(void);
-void Event_StartScreenTransition(void);
-void Event_WaitTransitionFrames(void);
 void Field_StartPaletteTransition(s32 a);
 void Func_020002a4(u16 *colors, u16 *target, s32 count);
 void Func_0200032c(u16 *colors, s32 count, s32 delta);
 void Func_02000394(void);
-void Func_02000478(s32 radius, u32 count);
 void Func_02001454(void);
 void Func_0200152c(void);
 void Func_02001534(s32 scene, s32 entrance);

@@ -202,7 +202,6 @@ void Func_02000754(struct Actor *object) {
 #include "dma.h"
 #include "io_reg.h"
 
-extern u16 *gData_02001fd8;
 extern u16 *gData_02001fdc;
 extern u16 *gData_02001fe0;
 extern u16 *gData_02001fcc;
@@ -340,10 +339,6 @@ struct YampiDesertCaveEventWork {
   s32 value1ac;
 };
 
-void Event_StartScreenTransition(void);
-void Event_WaitTransitionFrames(void);
-void Func_020008fc(void);
-void Func_0200091c(void);
 void Func_02001950(void);
 
 void Func_02000acc(void) {
@@ -701,8 +696,6 @@ void Func_020011e0(void) {
 
 #include "version.h"
 
-void Func_020011e0(void);
-
 /// The chest that follows the step count: when the tracked object stands on
 /// its cell, mode 1 stops the follower and mode 2 drops the chest.
 void Func_02001238(s32 mode) {
@@ -817,7 +810,6 @@ extern u16 gData_02001a54[];
 
 void Actor_SetWideSprite(s32 id, s32 wide);
 s32 Func_02000038(s32 id);
-void Func_020007dc(u16 *slots, u16 *colours, u16 *a, u16 *b);
 void Func_020018c8(s32 id);
 void Func_02001928(s32 value);
 
@@ -933,4 +925,3 @@ s32 Func_02001418(void) {
 }
 
 s32 Scene_PrepareMap(void) { return 0; }
-

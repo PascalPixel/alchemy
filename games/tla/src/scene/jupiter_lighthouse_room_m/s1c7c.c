@@ -16,8 +16,6 @@
 extern const u8 MsgIMSorry[];
 
 void Func_020047d4(void);
-void Event_StartScreenTransition(void);
-void Event_WaitTransitionFrames(void);
 void Func_020048f4(void);
 void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 void Party_RemoveActiveOwner(s32 owner);
@@ -127,8 +125,6 @@ void Func_02001c7c(void) {
 
 extern u32 gData_02005548[];
 
-void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
-
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
 
@@ -163,17 +159,9 @@ extern u32 gData_02004a90[];
 extern u32 gData_02004ab4[];
 extern u32 gData_02004ae8[];
 extern u32 gData_02004b1c[];
-extern u32 gData_02005548[];
 extern u32 gData_020059a4[];
 extern u32 gData_02005a00[];
 
-void Func_020047d4(void);
-void Party_RemoveActiveOwner(s32 owner);
-s32 Party_AddActiveOwner(s32 owner);
-void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
-void Event_StartScreenTransition(void);
-void Event_WaitTransitionFrames(void);
-void Func_020048f4(void);
 void PartyInventory_Remove(s32 a);
 s32 PartyInventory_Add(s32 item);
 void *Unit_Get(s32 owner);
@@ -581,10 +569,7 @@ void Func_02004994(s32 id, s32 mode);
 void Func_02004984(void);
 void Func_0200498c(s32 a, s32 b, s32 c, s32 d);
 void Func_02000c08(void);
-void Func_02001e38(void);
 void Func_02000cac(s32 value);
-void Func_02001c7c(void);
-void Func_02001ed0(void);
 void Func_02000b48(void);
 
 static __inline__ s32 GameFlag_Test_(s32 flag) {

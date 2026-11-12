@@ -72,7 +72,6 @@ void Func_0200030c(void) {
        ->v)
 
 s32 Func_020028b4();
-s32 Func_02002864();
 s32 Func_020028bc();
 extern u8 gData_02003040[];
 

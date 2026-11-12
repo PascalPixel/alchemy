@@ -182,13 +182,7 @@ void Func_020048bc(void) { Func_020007b4(); }
 #include "system/dma.h"
 
 extern u16 gData_0200621c[];
-void Func_02005e14(void);
-void Func_02005e1c(void);
-void Func_02005f2c(s32 skip);
 void wait(s32 frames);
-void FieldEvent_Wait(s32 frames);
-void GameFlag_SetBit(s32 flag);
-void GameFlag_ClearBit(s32 flag);
 void Func_020006cc(struct Actor *object);
 
 void Func_020048c4(void) {
@@ -262,4 +256,3 @@ step:
   FieldEvent_Wait(10);
   Func_02005e1c();
 }
-

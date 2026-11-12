@@ -24,12 +24,9 @@ void Func_02000b58(struct Actor *object) {
 
 void Func_02002834(s32 id);
 void Func_020025a8(s32 id);
-void BattleEffect_ApplyColorToTargetBuffer(s32 a, s32 b);
 void BattleEffect_StartBufferInterpolation(s32 frames);
 void Func_02002948(s32 layer);
 void Func_02002940(s32 layer);
-void Func_02000b10(struct Actor *object);
-void Func_02000b58(struct Actor *object);
 
 /// Toggles flag 0xa68 and with it which of two layer pairs is shown: four
 /// rounds of a random colour value, then one pair's blend scripts and layer

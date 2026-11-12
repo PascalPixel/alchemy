@@ -47,7 +47,6 @@ struct SavedColors {
 
 extern struct SavedColors gData_020026c0;
 
-void Func_020010a8(struct SeaOfTimeObject *object);
 void Func_02001f4c(struct SeaOfTimeObject *object, s32 value);
 void Func_0200200c(s32 a, s32 b);
 

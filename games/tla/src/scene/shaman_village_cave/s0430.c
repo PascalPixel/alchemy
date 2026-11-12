@@ -11,9 +11,7 @@
 #include "actor.h"
 #include "event_work.h"
 
-void Func_02001080();
 void Func_02001180();
-void Func_020011a0();
 
 void Func_02000430(void) {
   s32 angle;
@@ -132,8 +130,6 @@ void Func_02000430(void) {
   Func_020011a0(102, 2);
 }
 
-extern char SceneId_Ov695;
-
 void Func_0200083c(void) {
   Func_02001080();
   FieldEvent_ResolvePendingActions(0);
@@ -152,9 +148,6 @@ void Func_0200083c(void) {
   Func_020011a0(102, 2);
 }
 
-void Event_StartScreenTransition();
-void Event_WaitTransitionFrames();
-void Func_02001080();
 void Func_02001190();
 void Func_02001208();
 void Message_CloseFinishedWindows();
@@ -224,18 +217,7 @@ void Func_0200087c(void) {
       ->value = 0;
 }
 
-void Event_StartScreenTransition();
-void Event_WaitTransitionFrames();
 void Func_02000404();
-void Func_02001080();
-void Func_02001088();
-
-#define EVENT_MESSAGE                                                          \
-  (((struct {                                                                  \
-      u8 unk000[0x1c4];                                                        \
-      s16 message;                                                             \
-    } *)Ram_HeapSlots->eventWork)                                              \
-       ->message)
 
 extern const u8 gData_020015e0[];
 extern const u8 gData_0200161c[];
@@ -373,8 +355,6 @@ struct ShamanVillageCaveSceneWork {
 
 void Func_020003cc(void);
 void Func_02000404(void);
-void Func_02000a24(void);
-void Func_0200087c(void);
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.

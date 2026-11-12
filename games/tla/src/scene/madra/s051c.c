@@ -77,8 +77,6 @@ void Func_020005b8(void) {
 
 void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
-void Func_02002b28(void);
-void Func_02002b30(void);
 void Func_02002c88(s32 a, s32 b);
 void Func_02000f80(void);
 void Func_020019d8(void);
@@ -128,18 +126,10 @@ const u8 *Func_02000638(void) {
 
 void Func_02000670(void) { CopyCells(109, 14, 3, 3, 45, 14); }
 
-void Func_02000670(void);
-
 void Func_0200068c(void) {
   MapGrid_CopyCellsLayered(51, 10, 3, 3, 45, 10);
   Func_02000670();
 }
-
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
-void Func_0200068c(void);
-void Func_02000f80(void);
-void Func_020019d8(void);
 
 /// Madra's prepare step: sets up actor 26 (larger, its sprite flags set)
 /// and places actors 26 to 28, 33 and 66 by the story flags, then runs
@@ -185,42 +175,6 @@ s32 Func_020006ac(void) {
   }
   return 0;
 }
-
-void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
-void Func_02002b28(void);
-void Func_02002b30(void);
-void Func_02002c88(s32 a, s32 b);
-void Func_02000f80(void);
-void Func_020019d8(void);
-
-extern const u8 gData_02002d38[];
-extern const u8 gData_02002ff0[];
-extern const u8 gData_02003358[];
-extern const u8 gData_0200367c[];
-extern const u8 gData_0200394c[];
-
-extern u8 MsgItLooksLikeThe;
-extern u8 MsgTheArmorerAnd;
-extern u8 MsgAfterTheChampa;
-extern u8 MsgPeopleAreSaying;
-extern u8 MsgIKnewThere;
-extern u8 MsgOwOwOw;
-extern u8 MsgMyBoyfriendShin;
-extern u8 MsgAllMyInjuries;
-extern u8 MsgMySisterWas;
-extern u8 MsgIfYouDon;
-extern u8 MsgHaveYouBy;
-extern u8 MsgUsingPsynergyOn;
-extern u8 MsgWhereCouldMenardi;
-extern u8 MsgEveryoneHereIn;
-extern u8 MsgYeahWellWe;
-extern u8 MsgYouCominThrough;
-extern u8 MsgYeahUhWe;
-extern u8 MsgOhUhYou;
-extern u8 MsgWasIJust;
-extern u8 MsgHeyMisterAre;
-extern u8 MsgDidYouCome;
-extern u8 MsgIsThereBy;
 
 s32 Scene_PrepareMap(void) { return 0; }
 

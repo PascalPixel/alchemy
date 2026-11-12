@@ -277,8 +277,6 @@ extern struct SceneState gSceneState;
 extern const s8 gData_02005940[];
 extern const u8 gData_02005948[];
 
-void *Heap_Alloc(s32 size);
-void Heap_Release(void *block);
 s32 Resource_FindFreeEntry(void);
 struct Actor *Func_020005b4(struct Actor *origin, s32 id);
 void Func_02001950(s32 show, s32 first, u32 count);
@@ -337,4 +335,3 @@ const u8 *Func_020004b8(void) {
     table = gData_02006a90;
   return table;
 }
-

@@ -223,8 +223,6 @@ void Func_02000784(void) {
   actor->angle += turn;
 }
 
-void Func_020006ac(struct Actor *object, s32 dx, s32 dz, s32 velocity);
-
 // Moves the controlled character with the platform kind 359 along x by the
 // speed in gData_02005af0, backward when the platform faces half a turn; it
 // stays within 2 pixels of the platform's z, and past 20 pixels on x it steps
@@ -304,8 +302,6 @@ void Func_02000a20(struct Actor *object) {
 }
 
 extern char SceneId_Ov671Room4;
-void Func_020006ac(struct Actor *object, s32 dx, s32 dz, s32 speed);
-void Func_02000a20(struct Actor *object);
 
 // Moves the controlled character with the moving platforms (Func_020005b4 finds
 // the one under it, 360 forward and 361 back): it stays within 2 pixels of the
@@ -486,4 +482,3 @@ void Func_02000cf0(struct Actor *object) {
   Event_SetFlag(0xa6c);
   Func_020056bc();
 }
-

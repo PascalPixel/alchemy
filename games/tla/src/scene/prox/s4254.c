@@ -88,7 +88,6 @@ struct SparkWork {
 
 void Resource_ResetEntry(s32 entry);
 void HeapSlot_Release(s32 slot);
-void Func_02004114(void);
 
 void Func_02004310(void) {
   struct SparkWork *work = Ram_HeapSlots->menuRuntime;

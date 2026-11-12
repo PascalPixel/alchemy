@@ -25,7 +25,6 @@ s32 Func_02000690(u32 layer, s32 x, s32 y) {
 
 void Func_0200062c(s32 layer, s32 x, s32 z, s32 cell);
 s32 Map_GetTerrainHeight(s32 terrain, s32 x, s32 z);
-s32 GameFlag_Test(s32 flag);
 void Func_02005df4(s32 x, s32 z, s32 terrain, s32 height);
 
 /// Sets an object's cells by its flag (its action parameter): when the flag is
@@ -73,9 +72,6 @@ void Func_020006cc(struct Actor *object) {
 #include "system/dma.h"
 
 void wait(s32 frames);
-void GameFlag_SetBit(s32 flag);
-void GameFlag_ClearBit(s32 flag);
-void Func_020006cc(struct Actor *object);
 
 /// One step of two paired objects trading places: the effect work's halfword
 /// at 26 names the first, and its partner is the other id of its even and odd
@@ -171,15 +167,9 @@ void Func_02000908(u16 *list) {
 #include "main_routine_work.h"
 #include "input.h"
 
-extern char SceneId_Ov664Room1;
 void Func_02005efc(s32 a);
-void Func_02005e14(void);
-void Func_02005e1c(void);
-void Func_02005f2c(s32 skip);
-void Func_02005f94(s32 cue);
 void Func_02005ee4(void);
 struct Actor *Func_02005ef4(void);
-s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 void Func_02005d8c(struct Actor *object, s32 x, s32 y, s32 z);
 void Func_02005d94(struct Actor *object);
 void OverlayObject_WaitUntilIdle(struct Actor *object);
@@ -363,8 +353,6 @@ struct Shot {
 
 void Actor_SetAnimationSpeed(struct Actor *object, s32 speed);
 void Func_02005f8c(struct Actor *object, s32 cue);
-s32 Func_02000d18(s32 *a, s32 *b);
-s32 Func_02000cec(s32 *a, s32 *b);
 s32 Math_Cosine(s32 angle);
 s32 Math_Sine(s32 angle);
 
@@ -720,8 +708,6 @@ void Func_0200160c(s32 x, s32 y, s32 z) {
   WORD_AT(object, 108) = (s32)Func_02001458;
 }
 
-void Func_0200160c(s32 x, s32 y, s32 z);
-
 /// Every eighth frame pair, while none of the event work's four busy counters
 /// is set, starts a drip (Func_0200160c) at a place chosen by scene and frame:
 /// in one room one of two spots by flag 0x89b, in the other one of six by the
@@ -791,13 +777,9 @@ void Func_020017f4(struct FieldActor *object) {
 extern char SceneId_Ov664Room4, SceneId_Ov664Room6, SceneId_Ov664Room7,
     SceneId_Ov664Room8, SceneId_Ov664Room9;
 extern const u8 gData_02005fd8[];
-void FieldEvent_Wait(s32 frames);
 void Func_02002bd0(void);
 void Func_02005ed4(s32 a, s32 b);
 s32 Func_02005dec(struct Actor *object);
-void Func_02005d9c(s32 x, s32 z, s32 width, s32 height, s32 a, s32 b);
-void Func_02005dac(s32 srcX, s32 srcZ, s32 width, s32 height, s32 destX,
-                   s32 destZ);
 void Func_02005d84(void);
 void Func_02005dcc(s32 a, s32 b, s32 c);
 void Func_02005eec(s32 actor, s32 a);
@@ -1182,4 +1164,3 @@ const u8 *Func_020025cc(void) {
     return gData_02006268;
   return gData_02006238;
 }
-

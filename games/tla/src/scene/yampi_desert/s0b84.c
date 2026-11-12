@@ -38,7 +38,6 @@ void Func_02000b84(s32 x, s32 y, s32 z) {
   }
 }
 
-void Func_02000b84(s32 x, s32 y, s32 z);
 void Func_02001c5c(void);
 
 void Func_02000c34(void) {
@@ -126,7 +125,6 @@ void Func_02000e78(void) {
 extern u32 gData_020042b4[];
 extern u32 gData_02005828[];
 
-u32 Random16Far(void);
 struct Actor *Func_02003fc0(s32 kind, s32 x, s32 y, s32 z);
 void Func_02003fb8(struct Actor *object, const void *script);
 
@@ -158,13 +156,9 @@ void Func_02000f24(void) {
   Func_02003ff0(74, 71, 77, 9, 3, 3);
 }
 
-void Func_02000b84(s32 x, s32 y, s32 z);
-void Func_02000f24(void);
 void Func_02002ca0(void);
 void Func_02004100(s32 actor, s32 a, s32 b);
 void Func_02004108(s32 actor, s32 a);
-void Actor_SetSpritePriority(u32 id, s32 variant);
-void Actor_SetModeById(u32 id, s32 mode);
 
 #define OBJ(p) ((struct Actor *)(p))
 
@@ -278,8 +272,6 @@ void Func_02001288(s32 mode) {
 }
 
 s32 Func_020012d4(s32 cell) { return cell * 16 + 8; }
-
-s32 Func_020012d4(s32 cell);
 
 /// Moves the leader to the centre of a cell, in pixels.
 #define MOVE_LEADER_TO(column, row)                                            \

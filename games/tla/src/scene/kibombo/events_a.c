@@ -16,7 +16,6 @@ extern u8 gData_02007434[];
 extern u8 gData_020074dc[];
 extern u8 gData_02007698[];
 extern u8 gData_02006ee8[];
-extern const u8 gData_02006324[];
 
 u8 *Func_0200012c(void) {
   s16 scene = gMainRoutineWork.scene;
@@ -470,7 +469,6 @@ void Func_020032b0(void);
 void Func_020032c8(void);
 void Func_020032e0(void);
 void Func_02003610(void);
-void Actor_ResetAndSetPositionInMode2(s32 actor, s32 x, s32 z);
 
 void Func_02000d74(void) {
   Func_020032c8();
@@ -624,4 +622,3 @@ void Func_02001218(void) {
   Party_RemoveOwnerRestored(7);
   Func_02005aa4();
 }
-

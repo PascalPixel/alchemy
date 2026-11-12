@@ -42,10 +42,6 @@ u8 *Func_0200004c(void) {
        ->v)
 
 #include "event_inline.h"
-void Func_020009b0(void);
-void Func_020009b8(void);
-extern u8 MsgYallamInteriors37[];
-extern u8 MsgYallamInteriors33[];
 
 s32 Func_0200008c(void) {
   s32 t2;
@@ -64,8 +60,6 @@ s32 Func_0200008c(void) {
 }
 
 #include "event_inline.h"
-extern u8 MsgYallamInteriors38[];
-extern u8 MsgYallamInteriors34[];
 
 s32 Func_020000cc(void) {
   s32 t2;
@@ -84,8 +78,6 @@ s32 Func_020000cc(void) {
 }
 
 #include "event_inline.h"
-extern u8 MsgYallamInteriors39[];
-extern u8 MsgYallamInteriors35[];
 
 s32 Func_0200010c(void) {
   s32 t2;
@@ -104,8 +96,6 @@ s32 Func_0200010c(void) {
 }
 
 #include "event_inline.h"
-extern u8 MsgYallamInteriors36[];
-extern u8 MsgYallamInteriors32[];
 
 s32 Func_0200014c(void) {
   s32 t2;
@@ -124,7 +114,6 @@ s32 Func_0200014c(void) {
 }
 
 #include "event_inline.h"
-extern u8 MsgYallamInteriors22[];
 
 s32 Func_0200018c(void) {
   Func_020009b0();
@@ -136,7 +125,6 @@ s32 Func_0200018c(void) {
 }
 
 #include "event_inline.h"
-extern u8 MsgYallamInteriors24[];
 
 s32 Func_020001b4(void) {
   Func_020009b0();
@@ -148,7 +136,6 @@ s32 Func_020001b4(void) {
 }
 
 #include "event_inline.h"
-extern u8 MsgYallamInteriors26[];
 
 s32 Func_020001dc(void) {
   Func_020009b0();
@@ -378,7 +365,6 @@ void Func_02000524(void) {
   }
 }
 
-
 void Party_AdjustCoins(s32 amount);
 void Func_02000980(s32 value, s32 slot);
 u16 *Func_02000988(s32 item);
@@ -425,8 +411,6 @@ void Func_0200077c(s32 actor) {
     Event_ShowMessageAndWait(actor, 0);
   }
 }
-
-void Func_02000a60(s32 id, s32 a);
 
 /// The scene's start entry: the screen effect 0x209, then the actors of
 /// rooms 1 and 2.

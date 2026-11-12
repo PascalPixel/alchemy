@@ -287,8 +287,6 @@ void Func_02001dd4(void) {
 
 extern s32 gData_02007e24;
 
-void Func_02001dd4(void);
-
 /// Unless flag 123 is set, readies object 8: before flag 0x288 it raises it
 /// 0x88000 with motion 5, after it grounds it with motion 3; then schedules
 /// Func_02001dd4.
@@ -312,7 +310,6 @@ void Func_02001eb0(void) {
 void Func_02001efc(s32 value) { gData_02007e24 = value; }
 
 extern s32 gData_02007e20;
-extern s32 gData_02007e24;
 extern u16 gData_02007e28[];
 
 void Func_02001f08(void) {

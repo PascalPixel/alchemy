@@ -282,13 +282,6 @@ s32 Func_02000fb8(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-void Func_020003e8(void);
-void Func_02000f98(void);
-void Func_02001500(void);
-void Func_02001dec(s32 value);
-void Func_02001dfc(void);
-void Func_02001e04(s32 a, s32 b, s32 c, s32 d);
-
 void Func_02001054(void) {
   Task_AddFrame(Func_020003e8, TASK_PASS_VBLANK);
   Func_02001dfc();

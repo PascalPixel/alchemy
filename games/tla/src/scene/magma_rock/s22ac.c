@@ -154,7 +154,6 @@ struct LayeredSprite {
   struct AnimationEntry *entries[4];
 };
 
-void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 void Scene_SetActorSpritePriority(struct Actor *object, s32 priority);
 void Func_02003a54(struct Actor *object, s32 a);
 void Func_020015e4(void);
@@ -220,7 +219,6 @@ extern u8 gData_02003dd6[];
 extern u8 gData_02003dee[];
 extern u8 gData_02003de8[];
 extern u8 gData_02003e02[];
-void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 s32 Func_02000668();
 void Func_02000ee4();
 void Func_02003c0c();
@@ -228,12 +226,9 @@ s32 Func_020006cc();
 void Func_02002d08();
 void Func_02003bec();
 void Func_02003bf4();
-void Func_0200244c();
-void Func_020022ac();
 void Func_02003be4();
 void Func_02003bfc();
 void Func_0200079c();
-void Func_020024c8();
 
 s32 Func_02002618(void) {
   struct MainRoutineWork *work;
@@ -480,10 +475,8 @@ extern u8 gMapShapeGrid[];
 
 s32 Func_02003c04(struct Actor *object);
 s32 Func_02003adc(s32 layer, s32 x, s32 z);
-s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 void Func_02003b3c(s32 id);
 u8 Func_02003c24(s32 layer, s32 shape, s32 height);
-void Func_02003a54(struct Actor *object, s32 mode);
 
 void Func_02002d08(const u16 *table) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
@@ -539,9 +532,6 @@ done:
 
 s32 Func_02003b8c(void);
 struct Actor *Func_02003c2c(s32 *position, s32 flags);
-void Func_02003aec(void);
-void Func_02003af4(void);
-void Func_02003a54(struct Actor *object, s32 mode);
 void Func_020034ac(s32 mode);
 void Func_02003784(s32 level, s32 layer);
 void Func_020035e0(void);
@@ -622,12 +612,7 @@ struct Func_02002fc4_Entry {
   u16 flag;
 };
 
-void Func_02003aec(void);
-void Func_02003af4(void);
-void Func_02003a54(struct Actor *object, s32 a);
-void Func_020034ac(s32 a);
 void Func_020036f8(s32 a, s32 b, s32 c);
-void Func_020035e0(void);
 
 void Func_02002fc4(struct Func_02002fc4_Entry *entry, s32 id) {
   struct Actor *target;

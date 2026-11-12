@@ -123,9 +123,6 @@ next2:
   Import_EventSetExitRequest(work->exit);
 }
 
-extern struct LemurianShipWarp gData_02003904[];
-extern struct LemurianShipWarp gData_0200397c[];
-
 void Func_02000324(void) {
   struct LemurianShipEventWork *work = Ram_HeapSlots->eventWork;
   struct LemurianShipObject *object;
@@ -180,7 +177,6 @@ void Func_02000438(void) {
     s32 x;
     s32 cell;
 
-    
     leader = ((struct LemurianShipObject *)Actor_GetById(party->currentOwner));
     Func_02002c68();
     Event_ResolvePendingActions(0);
@@ -867,7 +863,6 @@ extern const u8 gData_02002f44[];
 extern const u8 gData_02002f88[];
 extern const u8 gData_02002fcc[];
 
-void Func_020015c8(void);
 void PartyInventory_Remove(s32 item);
 
 /// The scene that clears the ship and sets its flags.
@@ -1096,7 +1091,6 @@ next:
   if (GameFlag_Test(i + 0x300)) {
     struct MainRoutineWork *party = &gMainRoutineWork;
 
-    
     if (party->sequenceResult == 1) {
       GameFlag_SetBit(i + 0x930);
       GameFlag_SetBit(i + 0x220);
@@ -1108,8 +1102,6 @@ next:
     goto next;
   return 0;
 }
-
-void Func_02001944(s32 actor, s32 target);
 
 /// Places actors 10 and 11 as flags 0x930 and 0x931 say, then runs the pending
 /// step of flag 0x220 or 0x221.
@@ -1166,11 +1158,6 @@ void Func_02001dc8(s32 id) {
   object->y = -0x200000;
   object->height = -0x200000;
 }
-
-void Func_020013f0(void);
-void Func_02001944(s32 id, s32 platform);
-void Func_020019ac(void);
-void Func_02001dc8(s32 id);
 
 /// Places a platform object at its raised position.
 #define RAISE(id, x, z)                                                        \
@@ -1334,10 +1321,6 @@ void Func_0200245c(s32 id) {
   object->height = 0;
 }
 
-void Func_0200143c(void);
-void Func_02001944(s32 actor, s32 id);
-void Func_0200245c(s32 actor);
-
 /// Restores six of the scene's map edits and actors 16 to 22 from flags 0x938
 /// to 0x93e, then runs the pending step of one of flags 0x228 to 0x22e.
 void Func_02002498(void) {
@@ -1442,9 +1425,6 @@ void Func_020027e4(void) {
   }
 }
 
-void Func_02001474(void);
-void Func_02001a9c(void);
-
 /// Sets up the scene by flags 0x93f, 0x9e4 and 0x22f: actor 64, actors 8 to 13
 /// and the camera.
 void Func_02002820(void) {
@@ -1488,9 +1468,6 @@ void Func_02002820(void) {
     GameFlag_ClearBit(0x22f);
   }
 }
-
-void Func_02001464(void);
-void Func_0200155c(void);
 
 /// Restores the scene from its flags: two map edits, actors 8 to 11 and two
 /// scheduled tasks.

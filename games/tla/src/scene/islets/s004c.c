@@ -75,8 +75,6 @@ const u8 *Func_0200019c(void) {
 #include "event_work.h"
 #include "text/msg_ids.h"
 
-void Func_02003e64();
-void Func_02003e6c();
 void Func_02003ff4();
 void Func_02003dfc();
 void Func_02003fbc();
@@ -553,7 +551,6 @@ void Func_02000df8(struct Actor *object) {
 #include "call.h"
 
 extern const u8 gData_020043f8[], gData_02004300[];
-struct Actor *Func_02000da0(struct Actor *holder, s32 item);
 
 #define STEP(actor, x, z)                                                      \
   (Actor_GetById(actor)->actionFlags &= ~1, Actor_WalkToAndWait(actor, x, z),  \
@@ -690,12 +687,7 @@ struct ActionScript {
 };
 
 extern struct ActionScript gData_02004004;
-extern u8 MsgAtLongLast[];
-void Func_02003de4(struct Actor *object, s32 mode);
 u8 *HeapSlot_AllocEwram(s32 block, s32 size);
-void Func_020034ec(void);
-void Event_FinishScreenTransition(void);
-void Event_WaitTransitionFrames(void);
 
 void Func_0200129c(struct Actor *gift) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
@@ -758,4 +750,3 @@ void Func_0200129c(struct Actor *gift) {
   FieldEvent_SetExitRequest(3);
   Event_SetFlag(0xaa5);
 }
-

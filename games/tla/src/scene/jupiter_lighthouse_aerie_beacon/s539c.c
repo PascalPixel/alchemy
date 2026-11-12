@@ -8,8 +8,6 @@
 #include "field_effect.h"
 #include "event_inline.h"
 
-void Event_StartScreenTransition(void);
-void Event_WaitTransitionFrames(void);
 u32 Random16Far(void);
 s32 Math_Cosine(s32 angle);
 void Effect_AdvanceMotion(union FieldObject *object);

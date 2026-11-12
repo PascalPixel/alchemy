@@ -165,7 +165,6 @@ void Func_02000198(void) {
 
 s32 Func_02005814();
 s32 Func_0200581c();
-extern u8 MsgYouReLate[];
 
 void Func_0200045c(void) {
   s32 t0;
@@ -195,11 +194,8 @@ void Func_0200045c(void) {
   }
 }
 
-extern u32 gFrameCount;
 extern const u8 gData_020068b0[];
 
-u32 Random16Far(void);
-void Func_02005764(struct Actor *object, const void *script);
 void Func_02000090(void);
 
 /// Every third frame, or every frame once flag 0x201 is set, spawns a particle
@@ -262,8 +258,6 @@ struct SpriteRecord {
   u8 unk05; ///< XXX: set to 1 here; the resource metadata code would say why.
 };
 
-extern u32 gFrameCount;
-
 /// While the view's z is at most 177 pixels, sets object 36 at y 0x6f8000 and
 /// full size on odd frames, or at y 0x688000 and 1.3 times the size on even
 /// ones; beyond it, calls Actor_SetPosition(36, 0, 0).
@@ -297,8 +291,6 @@ void Func_020005b8(void) {
   }
 }
 
-s32 Func_02005814();
-s32 Func_0200581c();
 s32 Func_02005894();
 void Func_02005924();
 s32 Actor_SetSingleChildFlags();

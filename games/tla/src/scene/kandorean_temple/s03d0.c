@@ -275,7 +275,6 @@ void Func_02000930(struct Actor *object, s32 priority) {
 
 s32 Math_Cosine(s32 angle);
 void Animation_SetStateFlags(struct Actor *object, s32 flags);
-void Func_02000930(struct Actor *object, s32 priority);
 
 void Func_0200098c(s32 *position, s32 value) {
   struct Actor *object =
@@ -294,8 +293,6 @@ void Func_0200098c(s32 *position, s32 value) {
     Animation_SetStateFlags(object, 1);
   }
 }
-
-s32 Func_02000824(struct Actor *a, struct Actor *b);
 
 void Func_02000a0c(struct Actor *object) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -348,11 +345,6 @@ void Func_02000a0c(struct Actor *object) {
     object->unk4c = 0;
   }
 }
-
-s32 Math_Cosine(s32 angle);
-void Animation_SetStateFlags(struct Actor *object, s32 flags);
-void Func_02000930(struct Actor *object, s32 priority);
-void Func_02000a0c(struct Actor *object);
 
 void Func_02000adc(void) {
   struct Actor *object =
@@ -528,12 +520,6 @@ void Func_02000e60(void) {
 
 extern s32 gData_020062a0;
 extern u16 gData_020062a8;
-extern s32 gData_02006298;
-
-void Func_02000cd8(s32 id, s32 offset, s32 limit);
-void Func_02000cf8(s32 id, s32 offset, s32 limit);
-s32 Func_02000d18(void);
-void Func_02000d64(void);
 
 void Func_02000f60(void) {
   s32 *timer = &gData_020062a0;
@@ -672,12 +658,6 @@ count:
 
 extern s32 gData_020062a4;
 extern u16 gData_020062aa;
-extern s32 gData_0200629c;
-
-void Func_02000cd8(s32 id, s32 offset, s32 limit);
-void Func_02000cf8(s32 id, s32 offset, s32 limit);
-s32 Func_02000d3c(void);
-void Func_02000e60(void);
 
 // Bob the statue on a sine.
 #define BOB(statue, phase)                                                     \
@@ -811,13 +791,6 @@ void Func_020012c4(void) {
   gData_020062a4++;
 }
 
-extern s32 gData_020062a0;
-extern u16 gData_020062a8;
-
-void Func_02005388(s32 cue);
-void Func_02000cd8(s32 id, s32 offset, s32 limit);
-void Func_02000cf8(s32 id, s32 offset, s32 limit);
-
 void Func_02001634(void) {
   struct Actor *lift = Actor_GetById(13);
   struct Actor *base = Actor_GetById(15);
@@ -882,13 +855,6 @@ void Func_02001634(void) {
   gData_020062a0++;
 }
 
-extern s32 gData_020062a4;
-extern u16 gData_020062aa;
-
-void Func_02005388(s32 cue);
-void Func_02000cd8(s32 id, s32 offset, s32 limit);
-void Func_02000cf8(s32 id, s32 offset, s32 limit);
-
 void Func_02001804(void) {
   struct Actor *lift = Actor_GetById(14);
   struct Actor *base = Actor_GetById(16);
@@ -952,11 +918,6 @@ void Func_02001804(void) {
   }
   gData_020062a4++;
 }
-
-void Func_02000778(struct Actor *object, s32 dz);
-void Func_02005388(s32 cue);
-extern s32 gData_02006298;
-extern s32 gData_0200629c;
 
 void Func_020019d4(void) {
   struct Actor *leader;
@@ -1507,18 +1468,8 @@ s32 Scene_PrepareMap(void) { return 0; }
 void Func_02005398(void);
 s32 Func_020053a0(s32 a, s32 b, s32 c);
 void Func_020053b8(const void *data);
-void Func_02000b78(s32 id);
-void Func_02000bac(s32 id);
-void Func_02000c74(void);
-void Func_02001634(void);
-void Func_02001804(void);
-void Func_02001b50(void);
 void Func_02003684(void);
 void Func_020037e0(void);
-extern s32 gData_020062a0;
-extern s32 gData_020062a4;
-extern u16 gData_020062a8;
-extern u16 gData_020062aa;
 
 void Func_0200290c(void) {
   Func_02005398();
@@ -1567,7 +1518,6 @@ void Func_02002a5c(void) {
 #endif
 }
 
-void Func_020053b8(const void *data);
 void Func_02005028(void);
 
 void Func_02002a84(void) {

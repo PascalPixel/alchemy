@@ -764,7 +764,6 @@ void Func_02001a2c(void) {
        ->v)
 
 void Func_020028b4(void);
-void Func_020028bc(void);
 extern u8 MsgNotThatWayThe[];
 
 void Func_02001bb0(void) {

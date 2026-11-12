@@ -43,11 +43,6 @@ void Func_0200006c(s32 a0) {
   FIELD_AT(a0, s32, 28) = (FIELD_AT(a0, s32, 28) + -1536);
 }
 
-void Event_FinishScreenTransition(void);
-void Event_WaitTransitionFrames(void);
-void Func_02002a44(void);
-void Func_02002a4c(void);
-
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void Actor_CenterOnColumn_(s32 id, s32 column,
@@ -82,7 +77,6 @@ void Func_02000080(const void *warp, s32 door, s32 mode) {
 }
 
 extern s32 gData_020031fc[];
-void Func_0200006c(s32 object);
 void Func_020029f4(s32 a);
 
 void Func_020000fc(s32 door) {

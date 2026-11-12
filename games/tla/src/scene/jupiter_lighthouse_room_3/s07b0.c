@@ -115,7 +115,6 @@ struct GustObject {
   void (*update)(struct GustObject *object);
 };
 
-s32 Math_Cosine(s32 angle);
 void Func_020022e0(struct GustObject *object, s32 mode);
 void Actor_SetSingleChildFlags(struct GustObject *object, u32 flags);
 

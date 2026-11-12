@@ -26,7 +26,6 @@ extern s32 gData_020021bc;
 void Actor_SetAnimationSpeed(struct Actor *object, s32 speed);
 s32 Func_02001b2c(s32 x, s32 z, s32 layer);
 void Func_02001b14(s32 *position);
-s32 Func_020005b8(s32 *from, s32 *to);
 s32 Math_Cosine(s32 angle);
 void Func_02001a0c(struct Actor *object, const s32 *script);
 
@@ -120,7 +119,6 @@ struct GustObject {
   void (*update)(struct GustObject *object);
 };
 
-s32 Math_Cosine(s32 angle);
 void Func_020019fc(struct GustObject *object, s32 mode);
 void Actor_SetSingleChildFlags(struct GustObject *object, u32 flags);
 void Func_02000eac(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags, const struct EffectOptions *options);
@@ -366,17 +364,11 @@ void Func_02000aac(void) {
 extern u8 gField_CachedTilesA[];
 extern u8 gField_CachedTilesB[];
 extern u8 gField_CachedTilesC[];
-extern s16 gData_02002200;
-extern s16 gData_02002202;
-extern struct FieldActor *gData_02002204[];
-extern s16 gData_02002304;
-extern s16 gData_02002306;
 
 void *Heap_Alloc(s32 size);
 void Func_020019bc(const void *source, void *destination);
 s32 Resource_FindFreeEntry(void);
 void Heap_Release(void *block);
-void Func_02000aac(void);
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -423,10 +415,6 @@ void Func_02000d68(void) {
   gData_02002304 = 1;
   gData_02002306 = -1;
 }
-
-extern s16 gData_02002202;
-extern struct FieldActor *gData_02002204[];
-extern s16 gData_02002306;
 
 void Func_02000df0(s32 id, s32 value) {
   struct FieldActor *object = ((struct FieldActor *)Actor_Get(id));

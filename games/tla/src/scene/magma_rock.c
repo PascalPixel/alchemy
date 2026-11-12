@@ -94,8 +94,6 @@ void Func_0200074c(struct Object0200074c *object) {
 #include "text/msg_ids.h"
 
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-s32 MapCell_GetAttributes(u32 layer, s32 x, s32 z);
-void Actor_SetSingleChildFlags();
 void Func_020005cc(s32 layer, s32 x, s32 z, s32 height);
 
 void Func_0200079c(u16 *ids) {

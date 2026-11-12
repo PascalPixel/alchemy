@@ -119,7 +119,6 @@ struct GustObject {
   void (*update)(struct GustObject *object);
 };
 
-s32 Math_Cosine(s32 angle);
 void Func_02001a94(struct GustObject *object, s32 mode);
 void Actor_SetSingleChildFlags(struct GustObject *object, u32 flags);
 
@@ -350,17 +349,11 @@ void Func_02000b3c(void) {
 extern u8 gField_CachedTilesA[];
 extern u8 gField_CachedTilesB[];
 extern u8 gField_CachedTilesC[];
-extern s16 gData_02002298;
-extern s16 gData_0200229a;
-extern struct FieldActor *gData_0200229c[];
-extern s16 gData_0200239c;
-extern s16 gData_0200239e;
 
 void *Heap_Alloc(s32 size);
 void Func_02001a4c(const void *source, void *destination);
 s32 Resource_FindFreeEntry(void);
 void Heap_Release(void *block);
-void Func_02000b3c(void);
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -407,10 +400,6 @@ void Func_02000df8(void) {
   gData_0200239c = 1;
   gData_0200239e = -1;
 }
-
-extern s16 gData_0200229a;
-extern struct FieldActor *gData_0200229c[];
-extern s16 gData_0200239e;
 
 void Func_02000e80(s32 id, s32 value) {
   struct FieldActor *object = ((struct FieldActor *)Actor_Get(id));

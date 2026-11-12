@@ -45,8 +45,6 @@ void Func_02000148(void) {
   Func_02001060_(8, 42, 1, 1, 6, 42);
 }
 
-void Func_02001080();
-void Func_02001088();
 void Func_02001188();
 
 /// Pushes Shaman Village cave's object 17 away from the leader, unless the two

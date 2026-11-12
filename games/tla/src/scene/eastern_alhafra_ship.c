@@ -79,7 +79,6 @@ void Func_02000128(s32 arg0) {
   return;
 }
 
-void Field_StartPaletteTransition();
 void Func_02003130();
 void Func_02003138();
 void Func_02003268();
@@ -230,4 +229,3 @@ void Func_020003e8(s32 x, s32 y, s32 z, s16 value, s32 fifth) {
     sprite->rotation = value;
   }
 }
-

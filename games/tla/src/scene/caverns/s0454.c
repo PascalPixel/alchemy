@@ -57,9 +57,6 @@ done:
   }
 }
 
-s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-void Func_020010cc(s32 x, s32 z, s32 layer, s32 height);
-
 static __inline__ s32 GetHeight(s32 x, s32 z) {
   return Map_GetTerrainHeight(2, x, z);
 }
@@ -109,11 +106,6 @@ struct CurrentUnit {
   u8 unk18[4];
   s16 unk1c;
 };
-
-s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-void Func_020010cc(s32 x, s32 z, s32 layer, s32 height);
-s32 Func_020003f0(u32 layer, s32 x, s32 y, s32 value);
-void Func_0200053c(s32 offset);
 
 void Func_020006a8(void) {
   s32 position[3];
@@ -205,19 +197,12 @@ struct FieldActor;
 void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options);
-s32 Func_020003b4(u32 layer, s32 x, s32 y);
-s32 Func_020003f0(u32 layer, s32 x, s32 y, s32 value);
-void Func_0200053c(s32 offset);
 void Func_0200108c(struct Actor *object);
-void Func_020010cc(s32 x, s32 z, s32 layer, s32 height);
 struct Actor *Func_0200115c(s32 *position, s32 mode);
-s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 s32 Math_Cosine(s32 angle);
 struct Actor *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type);
 void OverlayObject_WaitUntilIdle(struct Actor *object);
 u32 Random16Far(void);
-void Func_020007ec(struct Actor *object);
-void Func_02000848(struct FieldActor *object);
 
 void Func_0200087c(void) {
   s32 velocity[3];
@@ -462,12 +447,6 @@ void Func_02000d68(void) {
   Event_Wait(14);
   Import_EventSetExitRequest(value);
 }
-
-void Func_020010dc();
-void Func_020010e4();
-
-void Func_02000d68();
-void Func_02000d28();
 
 void Func_02000e20(void) {
   Actor_WalkByAndWait(4, 0, -14);

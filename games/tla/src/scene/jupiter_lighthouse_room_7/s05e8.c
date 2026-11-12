@@ -94,10 +94,8 @@ extern s32 gData_02003594;
 extern s16 gData_020035fe;
 extern struct Actor *gData_02003600[];
 extern u16 gData_02003702;
-void Func_02000060(s32 value);
 void Func_020000b4(void);
 void Func_02000100(void);
-void Func_02002b54(s32 x, s32 z, s32 a, s32 b);
 void Func_02002c54(s32 x, s32 z, s32 a, s32 b);
 void Func_02001a48(const u8 *data, s32 a, s32 b);
 void Func_02002bec(void);
@@ -123,15 +121,12 @@ void Func_02000778(s32 unused, s32 id) {
 
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 s32 Func_02000194(void);
-void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 void Func_020002f0(void);
 s32 Func_02000290(void);
 void Func_02002b6c(void);
 void Func_02002b74(void);
 void Func_02002bd4(void);
 void Func_02002ad4(struct Actor *object, s32 mode);
-void Func_020005e8(s32 value);
-void Func_02002b54(s32 x, s32 z, s32 a, s32 b);
 void Func_02002c4c(s32 x, s32 z, s32 a, s32 b);
 
 void Func_020007a4(s32 unused, s32 id) {
@@ -215,19 +210,6 @@ void Func_020007a4(s32 unused, s32 id) {
   }
 }
 
-extern const u8 gData_020031c4[];
-extern s32 gData_02003594;
-extern s16 gData_020035fe;
-extern struct Actor *gData_02003600[];
-extern u16 gData_02003702;
-void Func_02000060(s32 value);
-void Func_020000b4(void);
-void Func_02000100(void);
-void Func_02002b54(s32 x, s32 z, s32 a, s32 b);
-void Func_02002c54(s32 x, s32 z, s32 a, s32 b);
-void Func_02001a48(const u8 *data, s32 a, s32 b);
-void Func_02002bec(void);
-
 void Func_020009d8(void) { Event_ResolvePendingActions(0); }
 
 void Func_020009e4(s32 a, s32 b) { Func_02001a48(gData_020031c4, a, b); }
@@ -245,10 +227,6 @@ void Func_020009f8(s32 id, s32 x, s32 z, s32 dx, s32 dz) {
   Actor_SetDestinationOffset(id, dx, dz);
   Event_PlaySound(222);
 }
-
-void Func_02002bd4(void);
-void Func_020009f8(s32 id, s32 x, s32 z, s32 dz, s32 dx);
-void Func_020002f0(void);
 
 /// Drops objects 18 and 19 once any of flags 2576 to 2581 is set: the camera
 /// moves to (592, 248), each object drops (Func_020009f8) at the spot whose
@@ -331,7 +309,6 @@ void Func_02000c7c(void) {
   object->motionFlags = 0;
 }
 
-void Func_02002bec(void);
 void Func_02002c24(void);
 
 void Func_02000cec(void) {
@@ -370,18 +347,5 @@ void Func_02000cec(void) {
   if (found == 1)
     Func_02002c24();
 }
-
-extern const u8 gData_020031c4[];
-extern s32 gData_02003594;
-extern s16 gData_020035fe;
-extern struct Actor *gData_02003600[];
-extern u16 gData_02003702;
-void Func_02000060(s32 value);
-void Func_020000b4(void);
-void Func_02000100(void);
-void Func_02002b54(s32 x, s32 z, s32 a, s32 b);
-void Func_02002c54(s32 x, s32 z, s32 a, s32 b);
-void Func_02001a48(const u8 *data, s32 a, s32 b);
-void Func_02002bec(void);
 
 void Func_02000e20(void) { Func_02002bec(); }

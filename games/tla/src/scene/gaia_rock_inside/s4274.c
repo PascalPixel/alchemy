@@ -33,7 +33,6 @@ s32 Func_02004904(void);
 void Func_02004d9c(struct Actor *object, s32 mode);
 void Func_02004dc4(void);
 void Func_02004de4(u16 *script);
-void Func_02004274(s32 song);
 void Func_02000aac(void);
 void Func_02000a60(void);
 

@@ -114,7 +114,6 @@ s32 Func_02000620(s32 *a, s32 *b) {
   return Iwram_Sqrt(dxsq + dysq + dzsq);
 }
 
-s32 Func_02000620(s32 *a, s32 *b);
 s32 ArcTan2(s32 y, s32 x);
 
 s32 Func_02000658(struct Actor *self, struct Actor *other, s32 range) {
@@ -139,9 +138,6 @@ s32 Func_02000658(struct Actor *self, struct Actor *other, s32 range) {
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 
-s32 Func_02000620(s32 *a, s32 *b);
-s32 Func_02000658(struct Actor *object, struct Actor *other,
-                  s32 range);
 void Func_0200402c(struct Actor *object, s32 value);
 s32 Func_02004254(struct Actor *object);
 
@@ -247,9 +243,6 @@ u8 *Func_02000874(void) {
   return gData_020054e0;
 }
 
-void Func_0200406c(void);
-void Func_02004074(void);
-
 void Func_020008ec(void) {
   Func_0200406c();
   Event_ResolvePendingActions(0);
@@ -339,7 +332,6 @@ void Func_020009d0(struct OrbitEffect *effect) {
 }
 
 struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
-u32 Random16Far(void);
 
 void Func_02000a80(void) {
   if ((gFrameCount & 7) == 0) {
@@ -373,7 +365,6 @@ void Func_02004264(void);
 void Func_0200426c(void);
 void Func_02004274(void);
 void Func_0200427c(struct ContigoObject *object, s32 mode);
-void Func_02000a80(void);
 
 /// The glow that grows over actor 17 and sinks away again, then the scene goes
 /// on.
@@ -450,8 +441,6 @@ void Func_02000af4(void) {
   Func_02004074();
 }
 
-void Func_0200406c(void);
-void Func_02004074(void);
 void Func_02004294(s32 a, s32 b);
 void Func_0200429c(s32 a);
 void Func_020042a4(s32 a, s32 b);
@@ -546,9 +535,6 @@ void Func_02000e50(void) {
   }
 }
 
-void Func_0200406c(void);
-void Func_02004074(void);
-
 void Func_02000eb8(void) {
   Func_0200406c();
   Event_ResolvePendingActions(0);
@@ -642,9 +628,6 @@ void Func_0200102c(void) {
   Func_02004074();
 }
 
-void Func_0200406c(void);
-void Func_02004074(void);
-
 void Func_02001070(void) {
   Func_0200406c();
   Event_ResolvePendingActions(0);
@@ -661,9 +644,6 @@ struct TalkActor {
   u8 unk08[0x5b];
   u8 unk63; ///< Func_020006d0 reads it
 };
-
-void Func_0200406c(void);
-void Func_02004074(void);
 
 void Func_02001094(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
@@ -702,9 +682,6 @@ struct ContigoObject {
   u8 unk08[0x5b];
   u8 unk63;
 };
-
-void Func_0200406c(void);
-void Func_02004074(void);
 
 void Func_0200118c(void) {
   struct EventWork *event = Ram_HeapSlots->eventWork;
@@ -751,10 +728,6 @@ void Func_02001250(void) {
 void Func_02001284(void) { Contigo_Tiles(3, 50, 1, 1, 8, 54, 0); }
 
 void Func_020012a4(void) { Contigo_Tiles(4, 43, 2, 1, 2, 43, 0); }
-
-void Func_0200406c(void);
-void Func_02004074(void);
-void Func_0200423c(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -843,13 +816,6 @@ void Func_0200156c(void) {
   MapGrid_CopyCellAttributes(48, 0, 2, 1, 48, 19);
 }
 
-void Func_0200406c(void);
-void Func_02004074(void);
-s32 Math_Cosine(s32 angle);
-void Func_02000430(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                   s32 velocityZ, u32 flags,
-                   const struct EffectOptions *options);
-
 void Func_020015ac(void) {
   struct Actor *object = Actor_GetById(17);
   struct Actor *leader;
@@ -914,8 +880,6 @@ void Func_020017bc(s32 id) {
   object->motionFlags = 0;
   object->y = 0x400000;
 }
-
-void Func_020017bc(s32 id);
 
 /// Sets up actors 19 to 33: their modes, Func_020017bc for 19 to 26, and child
 /// and collision flags for 27 to 33.
@@ -1028,8 +992,6 @@ struct ContigoTopicState {
 
 extern s32 gData_02004630[];
 
-u32 Random16Far(void);
-
 s32 Func_02001a60(s32 topic) {
   struct ContigoTopicState *state;
   s32 cursor;
@@ -1056,12 +1018,7 @@ struct ContigoEventCount {
 
 extern u8 gSceneState[];
 
-void Field_SetDestination(s32 scene, s32 entrance);
-void Func_0200403c(s32 value, s32 digits);
 u32 Func_0200404c(void);
-void Func_0200406c(void);
-void Func_02004074(void);
-void Func_0200422c(void);
 
 /// The dice game attendant: the fee is ten coins a level.
 void Func_02001abc(void) {
@@ -1141,10 +1098,6 @@ void Func_02001c44(s32 id) {
 }
 
 extern const u8 gData_0200466c[];
-
-void Event_FinishScreenTransition(void);
-void Event_WaitTransitionFrames(void);
-void Func_0200406c(void);
 
 void Func_02001c5c(s32 a, s32 b, s32 c, s32 d) {
   Func_0200406c();
@@ -1896,9 +1849,6 @@ extern const u8 gData_020046d8[];
 extern const u8 gData_02004704[];
 
 void Func_02000038(const u8 *a, const u8 *b, const u8 *c, const u8 *d);
-s32 Func_020006d0(struct Actor *object);
-void Func_02001724(void);
-void Func_020036f0(void);
 void Func_02003ffc(void);
 
 /// Schedules Func_020036f0 and gives objects 14 and 15 their flag bytes and
@@ -1957,9 +1907,6 @@ void Func_02003720(void) {
   Func_02000038(gData_0200469c, gData_020046ac, gData_020046d8, gData_02004704);
 }
 
-void Func_020017f4(void);
-void Func_02001c44(s32 a);
-
 void Func_02003880(void) {
   Func_02001c44(18);
   if (GameFlag_Test(0xa21) != 0) {
@@ -2005,8 +1952,6 @@ struct ContigoEventWork {
 };
 
 extern const u8 gData_02004a1c[];
-
-void Func_02001d50(void);
 
 void Func_020039d4(void) {
   ((struct ContigoEventWork *)Ram_HeapSlots->eventWork)->value1ac = 0x209;
@@ -2054,13 +1999,7 @@ struct ContigoPrizes {
   s8 list[8];
 };
 
-extern u8 gSceneState[];
-
-void Func_02001c44(s32 id);
-s32 Func_02001a60(s32 topic);
-void Func_0200403c(s32 value, s32 digits);
 void Func_020041fc(s32 item, s32 count);
-void Sound_WaitForJingle(void);
 
 void Func_02003a8c(void) {
   s32 diff;

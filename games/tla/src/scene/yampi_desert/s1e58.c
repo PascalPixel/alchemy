@@ -14,8 +14,6 @@
 #include "fixed_math.h"
 #include "version.h"
 
-extern s32 gInput;
-
 void Actor_SetAnimationSpeed(struct Actor *object, s32 speed);
 void Map_EnableUpdateCallback(void);
 void Map_DisableUpdateCallback(void);
@@ -186,10 +184,6 @@ s32 Func_020021f0(struct FieldActor *object) {
   return 0;
 }
 
-extern s32 gData_02004808;
-
-s32 GameFlag_Test(s32 flag);
-
 void Func_02002208(struct Actor *object) {
   u8 *state = (u8 *)object + 98;
 
@@ -278,12 +272,6 @@ void Func_02002318(void) {
   Task_Add(Func_02001c5c, TASK_PASS_VBLANK);
 }
 
-extern s32 gData_02004808;
-
-s32 GameFlag_Test(s32 flag);
-
-void Func_020021d4(void);
-
 /// Sends the object toward a point and moves to the next state.
 #define WALK(state_, x, z)                                                     \
   case state_:                                                                 \
@@ -353,8 +341,6 @@ void Func_020023cc(struct Actor *object) {
   }
 }
 
-void Func_02001c5c(void);
-
 /// Func_02002318's counterpart for actors 21 and 22: actor 22 becomes the
 /// followed actor, and until flag 0x109 actor 21 is placed and given the
 /// update Func_020023cc.
@@ -390,12 +376,6 @@ void Func_020026a0(void) {
   Func_020021d4();
   Task_Add(Func_02001c5c, TASK_PASS_VBLANK);
 }
-
-extern s32 gData_02004808;
-
-s32 GameFlag_Test(s32 flag);
-
-void Func_020021d4(void);
 
 /// Sends the object toward a point and moves to the next state.
 #define WALK(state_, x, z)                                                     \
@@ -485,8 +465,6 @@ void Func_02002764(struct Actor *object) {
     ARRIVE(55, 48)
   }
 }
-
-void Func_02001c5c(void);
 
 /// Func_02002318's counterpart for actors 21 and 22 in Room 5: after flag
 /// 0x88b actor 21 is placed facing 0x4000; otherwise, until flag 0x109, it
@@ -630,27 +608,12 @@ void Func_02002e98(void) {
   Func_02002d6c(Actor_GetById(gMainRoutineWork.currentOwner), 408, 432, 2);
 }
 
-extern char SceneId_Ov661Room10;
-
-void Camera_MoveWithinMapBounds(s32 x, s32 a, s32 z, s32 b);
-void Event_StartScreenTransition(void);
-void Event_WaitTransitionFrames(void);
-void FieldEvent_Wait(s32 frames);
-void wait(s32 frames);
 void Motion_SetModeAndWaitAnimation(s32 id, s32 mode);
-void Actor_ArmCallback(s32 id, s32 angle, s32 flags);
-void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
-void Actor_SetPositionAndCommit(s32 id, s32 x, s32 z);
-void Actor_SetModeById(u32 id, s32 mode);
 void Party_SetFields1eeAnd1f0(s32 scene, s32 entrance);
 void Func_02000b84(s32 x, s32 y, s32 z);
 void Func_02003fd8(void);
-void Func_02004040(void);
-void Func_02004098(s32 actor, s32 x, s32 z, s32 angle);
 void Func_02004108(s32 actor, s32 a);
 void Func_02004140(s32 a, s32 b);
-void Func_020041b8(s32 skip);
-void Func_020041f8(s32 cue);
 
 void Func_02002ebc(void) {
   struct MainRoutineWork *party = &gMainRoutineWork;
@@ -854,9 +817,6 @@ void Func_02003364(void) {
     Task_Add(Func_020020a8, TASK_PASS_VBLANK);
 }
 
-void Func_020026a0(void);
-void Func_02002b84(void);
-
 /// Room 5's setup: from entrances other than 1 and 2 it places actors 11 to
 /// 20 and copies the map cells flags 0x88c and 0x8ed select.
 void Func_02003404(void) {
@@ -900,8 +860,6 @@ void Func_02003404(void) {
     }
   }
 }
-
-void Func_02002d40(void);
 
 /// A halfword of gMainRoutineWork that has no field name yet.
 #define MAIN_ROUTINE_WORK_U16(offset) (*(u16 *)((u8 *)&gMainRoutineWork + (offset)))
@@ -972,7 +930,6 @@ void Func_020036d0(void) {
 }
 
 void Func_02001bec(void);
-void Func_02002ebc(void);
 void Func_02003da0(s32 unused, s32 value);
 void Func_02003e3c(s32 a, s32 b, s32 c, s32 d, s32 e);
 

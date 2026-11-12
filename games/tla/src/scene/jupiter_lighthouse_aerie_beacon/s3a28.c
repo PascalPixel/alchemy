@@ -156,7 +156,6 @@ struct ScrollWork {
   s32 height;
 };
 
-extern s32 Data_02006a1c;
 extern s32 gData_02005a20[];
 
 void Func_0200577c(void);

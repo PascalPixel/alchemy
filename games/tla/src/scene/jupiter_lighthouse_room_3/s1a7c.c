@@ -249,7 +249,6 @@ struct PushEvent {
   u16 busy;
 };
 
-void Func_02001cc0(void);
 void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
 void Event_FinishScreenTransition(void);

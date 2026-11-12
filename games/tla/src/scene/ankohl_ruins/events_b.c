@@ -227,7 +227,6 @@ struct AnkohlRuinsEffectParams {
   u8 unk1a[0xe];
 };
 
-s32 Random16Far(void);
 void Func_0200015c(s32 x, s32 y, s32 z, s32 unused, s32 speed, s32 phase,
                    s32 life, struct AnkohlRuinsEffectParams *params);
 
@@ -263,8 +262,6 @@ void Func_02000b78(s32 rows, s32 frames, s32 x, s32 y, s32 startZ, s32 count) {
       goto next_row;
   }
 }
-
-void Func_02000b78(s32 kind, s32 a, s32 x, s32 y, s32 z, s32 b);
 
 /// When the objects with ids 9 and 10 stand on cells (12, 45) and (14, 45),
 /// each sets its flag (0x9d9, 0x9da); once both are set, shakes the screen,

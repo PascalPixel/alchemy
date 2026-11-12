@@ -150,8 +150,6 @@ extern const u8 gData_02001264[];
 extern const u8 gData_020012f4[];
 
 void PartyInventory_Remove(s32 item);
-void Func_0200110c(void);
-void Func_02001114(void);
 void Func_02001174(void);
 void Func_02000958(void);
 
@@ -226,16 +224,12 @@ struct AnimationRecord18 {
 };
 
 extern u8 MsgFieldEyesOfTruth;
-extern const u8 gData_020013c0[];
-extern const u8 gData_020013c4[];
 extern const u8 gData_020013ca[];
 extern const u8 gData_0200121c[];
 
 void Event_StartScreenTransition(void);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
-void Func_0200110c(void);
-void Func_02001114(void);
 void Func_0200113c(s32 id, s32 value);
 void Func_0200115c(s32 id);
 s32 Func_02001184(s32 owner);
@@ -249,7 +243,6 @@ void Func_02000038(const void *data);
 void Func_0200014c(const void *data);
 void Func_02000270(struct Actor *object);
 void Func_020008d0(struct Actor *object);
-void Func_02000958(void);
 void Func_02000a28(void);
 void Func_02000c94(void);
 void Func_02000cf4(void);
@@ -292,35 +285,6 @@ void Func_020007a0(void) {
   }
 }
 
-extern u8 MsgFieldEyesOfTruth;
-extern const u8 gData_020013c0[];
-extern const u8 gData_020013c4[];
-extern const u8 gData_020013ca[];
-extern const u8 gData_0200121c[];
-
-void Event_StartScreenTransition(void);
-void Event_FinishScreenTransition(void);
-void Event_WaitTransitionFrames(void);
-void Func_0200110c(void);
-void Func_02001114(void);
-void Func_0200113c(s32 id, s32 value);
-void Func_0200115c(s32 id);
-s32 Func_02001184(s32 owner);
-void Func_020011b4(void);
-void Func_020011bc(s32 a, s32 b, s32 c, s32 d);
-void Func_020011c4(const void *data);
-void Func_020011dc(const void *data);
-s32 Func_020011fc(void);
-void Func_02001204(void);
-void Func_02000038(const void *data);
-void Func_0200014c(const void *data);
-void Func_02000270(struct Actor *object);
-void Func_020008d0(struct Actor *object);
-void Func_02000958(void);
-void Func_02000a28(void);
-void Func_02000c94(void);
-void Func_02000cf4(void);
-
 void Func_02000874(void) {
   struct Actor *object;
   s32 x;
@@ -340,35 +304,6 @@ void Func_02000874(void) {
     }
   }
 }
-
-extern u8 MsgFieldEyesOfTruth;
-extern const u8 gData_020013c0[];
-extern const u8 gData_020013c4[];
-extern const u8 gData_020013ca[];
-extern const u8 gData_0200121c[];
-
-void Event_StartScreenTransition(void);
-void Event_FinishScreenTransition(void);
-void Event_WaitTransitionFrames(void);
-void Func_0200110c(void);
-void Func_02001114(void);
-void Func_0200113c(s32 id, s32 value);
-void Func_0200115c(s32 id);
-s32 Func_02001184(s32 owner);
-void Func_020011b4(void);
-void Func_020011bc(s32 a, s32 b, s32 c, s32 d);
-void Func_020011c4(const void *data);
-void Func_020011dc(const void *data);
-s32 Func_020011fc(void);
-void Func_02001204(void);
-void Func_02000038(const void *data);
-void Func_0200014c(const void *data);
-void Func_02000270(struct Actor *object);
-void Func_020008d0(struct Actor *object);
-void Func_02000958(void);
-void Func_02000a28(void);
-void Func_02000c94(void);
-void Func_02000cf4(void);
 
 void Func_020008d0(struct Actor *object) {
   Func_02000270(object);
@@ -394,15 +329,6 @@ struct EventWorkCbc {
   void *active;
 };
 
-extern const u8 gData_020013c0[];
-extern const u8 gData_020013c4[];
-extern const u8 gData_020013ca[];
-
-void Func_020011e4(const void *data);
-void Func_020011cc(const void *data);
-void Func_020011ec(void);
-void Func_0200014c(const void *data);
-
 void Func_02000b38(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 
 void Func_0200093c(void) {
@@ -411,8 +337,6 @@ void Func_0200093c(void) {
   if (work->active != 0)
     Func_020008d0(work->active);
 }
-
-void Func_0200113c(s32 actor, s32 target);
 
 /// Places actors 10 to 19 in two columns, then sends actors 20 to 29 to them
 /// one each.
@@ -447,35 +371,6 @@ void Func_02000958(void) {
   wait(1);
 }
 
-extern u8 MsgFieldEyesOfTruth;
-extern const u8 gData_020013c0[];
-extern const u8 gData_020013c4[];
-extern const u8 gData_020013ca[];
-extern const u8 gData_0200121c[];
-
-void Event_StartScreenTransition(void);
-void Event_FinishScreenTransition(void);
-void Event_WaitTransitionFrames(void);
-void Func_0200110c(void);
-void Func_02001114(void);
-void Func_0200113c(s32 id, s32 value);
-void Func_0200115c(s32 id);
-s32 Func_02001184(s32 owner);
-void Func_020011b4(void);
-void Func_020011bc(s32 a, s32 b, s32 c, s32 d);
-void Func_020011c4(const void *data);
-void Func_020011dc(const void *data);
-s32 Func_020011fc(void);
-void Func_02001204(void);
-void Func_02000038(const void *data);
-void Func_0200014c(const void *data);
-void Func_02000270(struct Actor *object);
-void Func_020008d0(struct Actor *object);
-void Func_02000958(void);
-void Func_02000a28(void);
-void Func_02000c94(void);
-void Func_02000cf4(void);
-
 void Func_02000a28(void) {
   struct Actor *lever = Actor_GetById(8);
   struct Actor *rock = Actor_GetById(64);
@@ -491,35 +386,6 @@ void Func_02000a28(void) {
   if (animation->frame != 0)
     GameFlag_SetBit(0x204);
 }
-
-extern u8 MsgFieldEyesOfTruth;
-extern const u8 gData_020013c0[];
-extern const u8 gData_020013c4[];
-extern const u8 gData_020013ca[];
-extern const u8 gData_0200121c[];
-
-void Event_StartScreenTransition(void);
-void Event_FinishScreenTransition(void);
-void Event_WaitTransitionFrames(void);
-void Func_0200110c(void);
-void Func_02001114(void);
-void Func_0200113c(s32 id, s32 value);
-void Func_0200115c(s32 id);
-s32 Func_02001184(s32 owner);
-void Func_020011b4(void);
-void Func_020011bc(s32 a, s32 b, s32 c, s32 d);
-void Func_020011c4(const void *data);
-void Func_020011dc(const void *data);
-s32 Func_020011fc(void);
-void Func_02001204(void);
-void Func_02000038(const void *data);
-void Func_0200014c(const void *data);
-void Func_02000270(struct Actor *object);
-void Func_020008d0(struct Actor *object);
-void Func_02000958(void);
-void Func_02000a28(void);
-void Func_02000c94(void);
-void Func_02000cf4(void);
 
 void Func_02000a88(void) {
   struct EventWork154 *work = Ram_HeapSlots->eventWork;
@@ -545,35 +411,6 @@ void Func_02000a88(void) {
   Event_WaitTransitionFrames();
   Import_EventSetExitRequest(work->returnEntrance);
 }
-
-extern u8 MsgFieldEyesOfTruth;
-extern const u8 gData_020013c0[];
-extern const u8 gData_020013c4[];
-extern const u8 gData_020013ca[];
-extern const u8 gData_0200121c[];
-
-void Event_StartScreenTransition(void);
-void Event_FinishScreenTransition(void);
-void Event_WaitTransitionFrames(void);
-void Func_0200110c(void);
-void Func_02001114(void);
-void Func_0200113c(s32 id, s32 value);
-void Func_0200115c(s32 id);
-s32 Func_02001184(s32 owner);
-void Func_020011b4(void);
-void Func_020011bc(s32 a, s32 b, s32 c, s32 d);
-void Func_020011c4(const void *data);
-void Func_020011dc(const void *data);
-s32 Func_020011fc(void);
-void Func_02001204(void);
-void Func_02000038(const void *data);
-void Func_0200014c(const void *data);
-void Func_02000270(struct Actor *object);
-void Func_020008d0(struct Actor *object);
-void Func_02000958(void);
-void Func_02000a28(void);
-void Func_02000c94(void);
-void Func_02000cf4(void);
 
 void Func_02000b38(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f) {
   struct EventWork154 *work = Ram_HeapSlots->eventWork;
@@ -639,35 +476,6 @@ void Func_02000cf4(void) {
   Import_EventSetExitRequest(8);
 }
 
-extern char SceneId_Ov65aRoom1;
-extern char SceneId_Ov65aRoom2;
-extern char SceneId_Ov65aRoom3;
-extern char SceneId_Ov65aRoom4;
-extern char SceneId_Ov65aRoom5;
-extern char SceneId_Ov65aRoom6;
-extern const u8 gData_020013d0[];
-extern const u8 gData_02001400[];
-extern const u8 gData_02001430[];
-extern const u8 gData_020014a8[];
-extern const u8 gData_0200159c[];
-extern const u8 gData_020015b4[];
-extern const u8 gData_0200165c[];
-extern const u8 gData_020016bc[];
-extern const u8 gData_020016ec[];
-extern const u8 gData_02001914[];
-extern const u8 gData_02001920[];
-extern const u8 gData_020019f8[];
-extern const u8 gData_02001a1c[];
-extern const u8 gData_02001aac[];
-extern const u8 gData_02001b54[];
-extern const u8 gData_02001bcc[];
-
-void Func_02000dcc(void);
-void Func_02000f2c(void);
-void Func_02000fbc(void);
-void Func_02000fd8(void);
-void Func_0200102c(void);
-
 s32 Func_02000d54(void) {
   ((struct SceneWork *)Ram_HeapSlots->eventWork)->unk1ac = 0x204;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov65aRoom1)
@@ -684,35 +492,6 @@ s32 Func_02000d54(void) {
 }
 
 s32 Scene_PrepareMap(void) { return 0; }
-
-extern u8 MsgFieldEyesOfTruth;
-extern const u8 gData_020013c0[];
-extern const u8 gData_020013c4[];
-extern const u8 gData_020013ca[];
-extern const u8 gData_0200121c[];
-
-void Event_StartScreenTransition(void);
-void Event_FinishScreenTransition(void);
-void Event_WaitTransitionFrames(void);
-void Func_0200110c(void);
-void Func_02001114(void);
-void Func_0200113c(s32 id, s32 value);
-void Func_0200115c(s32 id);
-s32 Func_02001184(s32 owner);
-void Func_020011b4(void);
-void Func_020011bc(s32 a, s32 b, s32 c, s32 d);
-void Func_020011c4(const void *data);
-void Func_020011dc(const void *data);
-s32 Func_020011fc(void);
-void Func_02001204(void);
-void Func_02000038(const void *data);
-void Func_0200014c(const void *data);
-void Func_02000270(struct Actor *object);
-void Func_020008d0(struct Actor *object);
-void Func_02000958(void);
-void Func_02000a28(void);
-void Func_02000c94(void);
-void Func_02000cf4(void);
 
 void Func_02000dcc(void) {
   s32 a;
@@ -804,8 +583,6 @@ void Func_02000fd8(void) {
     Actor_GetById(8)->scaleY = 0xcccc;
   }
 }
-
-void Func_02000958(void);
 
 /// Mirrors actors 8 and 9 and puts them on the ground; once flag 0x8c9 is set,
 /// each steps 12 pixels outward unless flag 0x109 is set too, and Func_02000958

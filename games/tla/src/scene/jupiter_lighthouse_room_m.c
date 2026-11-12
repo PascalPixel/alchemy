@@ -19,7 +19,6 @@
 #include "dma.h"
 #include "io_write.h"
 #include "call.h"
-#include "../../../../games/tla/src/scene/jupiter_lighthouse_room_m/jupiter_lighthouse_room_m.h"
 #include "field_sprite.h"
 #include "frame.h"
 
@@ -68,13 +67,10 @@ void Func_02000080(void) {
   }
 }
 
-extern u8 gCpuLoadDisplayEnabled;
 extern char ResourceId_LightningTiles;
 extern char ResourceId_LightningMap;
 extern s16 gBgScroll[];
 
-void *Heap_Alloc(s32 size);
-void Heap_Release(void *block);
 void *Resource_GetTableEntry(s32 id);
 void Func_0200468c(void *resource, void *destination);
 void Func_020046b4(void);
@@ -193,8 +189,6 @@ void Func_020047d4(void);
 void Func_020047dc(void);
 void Func_020048f4(void);
 void Func_02002efc(s32 value);
-void Func_020000c4(void);
-void Sound_WaitForJingle(void);
 void Func_02004774(s32 x, s32 z, s32 a, s32 b);
 
 static __inline__ void Func_02004774_(s32 x, s32 z, s32 a, s32 b) {
@@ -289,10 +283,6 @@ void Func_020003b8(s32 unused, s32 id) {
   }
   Func_02004774_(object->x, object->z, 0, -6);
 }
-
-void Func_020047d4(void);
-void Func_020047dc(void);
-void Func_020048f4(void);
 
 static __inline__ void Actor_OffsetPositionAndResetMotion_(s32 id, s32 dx,
                                                            s32 dz) {
@@ -426,10 +416,6 @@ void Func_0200060c(void) {
   Func_020047dc();
 }
 
-void Func_020047d4(void);
-void Func_020047dc(void);
-void Func_020048f4(void);
-
 void Func_020008c8(void) {
   if (Event_GetFlag(0xa1f) != 0)
     return;
@@ -460,9 +446,6 @@ extern const u8 MsgDonTWorry[];
 extern const u8 MsgWeHaveTo[];
 extern const u8 MsgIDonT[];
 extern const u8 MsgYouVeBeen[];
-
-void Func_020047d4(void);
-void Func_020047dc(void);
 
 /// Talking to one of the party: each answers with its own message.
 void Func_02000970(s32 actor) {
@@ -560,8 +543,6 @@ extern u32 gData_020055ec[];
 extern u32 gData_02005644[];
 extern u32 gData_0200569c[];
 
-s32 Func_02000a78(void);
-
 static __inline__ void ObjPlace(s32 id, s32 x, s32 z, s32 angle) {
   /* FAKEMATCH(wrapper): forwarding through the inline keeps each call's own
    * constants, as ☀️'s scene layer does; as direct calls, 30 of 57
@@ -627,8 +608,6 @@ void Func_02000c08(void) {
   Actor_SetAnimation(3, 9);
 }
 
-extern u32 gData_02005548[];
-
 extern const u8 MsgAhhhh2[];
 extern u32 gData_020056ec[];
 extern u32 gData_02005748[];
@@ -649,12 +628,6 @@ extern u32 gData_02004a18[];
 extern u32 gData_02004a34[];
 extern u32 gData_02004a50[];
 extern u32 gData_0200599c[];
-
-void Func_020047d4(void);
-void Func_020047dc(void);
-void Func_020048f4(void);
-void Event_StartScreenTransition(void);
-void Event_WaitTransitionFrames(void);
 
 static __inline__ void I_Func_020048bc(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
                                        s32 g, s32 h, s32 i, s32 j, s32 k) {

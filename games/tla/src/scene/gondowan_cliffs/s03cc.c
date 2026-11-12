@@ -33,7 +33,6 @@ void Func_020003dc(struct Actor *object, s32 height) {
 void Func_0200120c(void);
 void Func_02001214(void);
 s32 Math_Cosine(s32 angle);
-void Func_020003dc(struct Actor *object, s32 mode);
 void Func_020001ec(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options);
@@ -211,7 +210,6 @@ void Func_02000738(void) {
 void Func_020012b4(s32, s32);
 void Func_020012fc(void);
 void Func_02001304();
-void Func_02000738(void);
 
 void Func_02000768(void) {
   if (gMainRoutineWork.entrance == 99) {
@@ -225,9 +223,6 @@ void Func_02000768(void) {
   Task_AddFrame(Func_02000738, 0x480);
 }
 
-void Event_StartScreenTransition(void);
-void Event_WaitTransitionFrames(void);
-void Event_FinishScreenTransition(void);
 void Func_02001254(s32 actor, s32 target);
 
 static inline void GondowanCliffs_ObjWalk(s32 actor, s32 x, s32 z) {
@@ -300,15 +295,12 @@ struct MapLayerBits {
 };
 
 extern char SceneId_Ov66bRoom1, SceneId_Ov66bRoom2;
-void Func_02000768(void);
-void Func_020007d8(void);
 void Func_020012f4(void);
 void Func_0200130c(s32 a, s32 b, s32 c, s32 d);
 void Func_02001304(s32 a, s32 b, s32 c);
 void Func_02000fcc(s32 a, s32 b);
 struct RideEntry *Func_02001068(s32 slot, s32 id, s32 timer, s32 low,
                                 s32 high);
-s32 Map_GetTerrainHeight(s32 terrain, s32 x, s32 z);
 
 /// Gondowan Cliffs' setup: Ov66bRoom2 runs Func_02000768 and returns; with
 /// flag 0x8f3 set and 0x8ef clear it runs Func_020007d8; otherwise in
@@ -528,7 +520,6 @@ struct SwingWork {
   u32 *oam;
 };
 
-extern u32 gFrameCount;
 void Func_0200119c(u32 *oam, s32 depth);
 
 // Draws the swinging actors' ropes and heads (the 16 records of gData_020023c4
@@ -628,8 +619,6 @@ void *Heap_AllocEwram(s32 size);
 void Func_02001184(const void *source, void *destination);
 s32 Resource_FindFreeEntry(void);
 void Heap_Release(void *block);
-void Func_02000be4(void);
-void Func_02000dac(void);
 
 void Func_02000fcc(s32 unused, s32 value) {
   struct GondowanCliffsWork *work =
@@ -692,4 +681,3 @@ struct RideEntry *Func_02001068(s32 slot, s32 id, s32 timer, s32 low,
   entry->rider = rider;
   return entry;
 }
-

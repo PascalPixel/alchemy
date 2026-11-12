@@ -197,9 +197,6 @@ void Func_02000328(void) {
 
 void Func_0200036c(void) { Yallam_02002598(67, 25, 2, 1, 79, 22, 1); }
 
-void Func_02002488(void);
-void Func_02002490(void);
-
 void Func_0200038c(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
 
@@ -339,7 +336,6 @@ struct YallamActor {
   u8 unk68[4];
   void (*update)(struct YallamActor *actor);
 };
-
 
 void Func_020006bc(s32 actor) {
   /* FAKEMATCH(pin): the object in r5, as the native keeps it; as a plain local,
@@ -1322,12 +1318,7 @@ extern const u8 gData_02002948[];
 extern const u8 gData_02002998[];
 extern const u8 gData_020029c0[];
 extern const u8 gData_02002a04[];
-void Func_02001904();
-void Func_02001688(void);
-void Func_02001730(void);
 void Func_02001d14(void);
-void Event_FinishScreenTransition(void);
-void Event_WaitTransitionFrames(void);
 
 void Func_02001944(void) {
   struct Actor *actor = Actor_Get(8);
@@ -1463,10 +1454,6 @@ wait3:
    } *)(base))                                                                 \
        ->v)
 
-void Event_FinishScreenTransition();
-void Event_WaitTransitionFrames();
-void Func_02001730();
-void Func_0200182c();
 void Func_02001ec0();
 extern u8 MsgIfYouWant[];
 
@@ -1747,7 +1734,6 @@ void Func_020022f8(void) {
 }
 
 /// Yallam's view of the two objects Func_020023c8 restarts.
-
 
 /// Hands objects 9 and 10 to Func_0200014c's update, object 9 with its timer
 /// at 1 and object 10 at 0.

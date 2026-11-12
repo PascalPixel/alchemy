@@ -64,9 +64,6 @@ void Func_02002fb0(s32 graphic) {
 
 extern u16 gData_0200515a[];
 
-void Func_02002f20(s32 a, s32 b);
-void Func_02002fb0(s32 a);
-
 void Func_02003040(void) {
   gData_0200515a[15] = 180;
   Event_Wait(30);
@@ -466,8 +463,6 @@ void Func_02003cac(void) { Func_02003b6c(43, 40, 28, 17, 1, 2); }
 
 void Func_02003cc8(void) { Func_02003b6c(43, 42, 10, 8, 1, 2); }
 
-void Func_02003b6c(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-
 void Func_02003ce4(void) {
   if (GameFlag_Test(0x202)) {
     Func_020048c4();
@@ -551,7 +546,6 @@ void Func_02003d30(void) {
   Func_020048cc();
 }
 
-void Func_0200482c(void);
 void Func_02004060(void);
 void Func_020041b8(void);
 void Func_020043f8(void);
@@ -595,9 +589,6 @@ s32 Func_02003ff8(void) {
 }
 
 s32 Scene_PrepareMap(void) { return 0; }
-
-void Func_02003d30(void);
-void Func_02003f78(void);
 
 void Func_02004060(void) {
   if (GameFlag_Test(0x94c)) {
@@ -683,8 +674,6 @@ void Func_020042c8(struct ShamanVillageObject *object) {
     Func_0200481c(object);
 }
 
-void Func_020042c8(struct ShamanVillageObject *object);
-
 void Func_0200430c(s32 x, s32 y, s32 z) {
   struct ShamanVillageObject *object =
       ((struct ShamanVillageObject *)Import_ActorCreate(285, x, y, z));
@@ -707,8 +696,6 @@ void Func_0200430c(s32 x, s32 y, s32 z) {
   }
 }
 
-void Func_0200430c(s32 x, s32 y, s32 z);
-
 void Func_02004394(void) {
   if ((gFrameCount & 63) == 0) {
     Func_0200430c(0x480000, 0x420000, 0x1780000);
@@ -727,8 +714,6 @@ void Func_020043c8(void) {
 
 void Func_020048ac(s32 mode);
 void Func_02002878(void);
-void Func_020043c8(void);
-void Func_02004394(void);
 
 struct IoReg16 {
   u16 value;
@@ -853,8 +838,6 @@ void Func_020046bc(void) {
   Actor_SetSpritePriority(9, variant);
   Actor_SetSpritePriority(10, variant);
 }
-
-void Func_020046bc(void);
 
 void Func_020046ec(void) {
   struct ShamanVillageEventWork *work = Ram_HeapSlots->eventWork;

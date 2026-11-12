@@ -13,8 +13,6 @@ extern const s32 *gData_0200ea10[];
 extern void Actor_SetSingleChildFlags(struct FieldEffect *effect,
                                                u32 flags);
 extern void Scene_SetActorSpritePriority(struct FieldEffect *effect, s32 priority);
-extern void
-BattleEffect_UpdateObjectMotionScaleAndLinkedAngle(union FieldObject *object);
 void Func_02004bd4(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options) {

@@ -87,12 +87,9 @@ struct DailaEventWork {
   s16 message;
 };
 
-s32 PartyInventory_Add(s32 item);
-void Func_02000ccc(s32 value, s32 slot);
 struct ItemDefinition *Func_02000ce4(s32 item);
 s32 Func_02000df4(s32 *member, s32 *slot);
 s32 Func_02000dbc(s32 mode);
-void Func_02000dfc(s32 cue);
 void FieldMessage_Show(s32 msg, s32 mode);
 void Message_CloseFinishedWindows(void);
 u8 *Unit_Get(s32 owner);

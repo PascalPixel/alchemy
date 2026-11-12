@@ -131,8 +131,6 @@ void Func_02000138(u8 *grid, s32 count, s32 scale) {
   } while (i != count - 1);
 }
 
-extern u16 gData_02003dbc;
-extern u16 gData_02003dbe;
 extern s16 gData_02003d20[][2];
 extern s16 gData_02003d34[][2];
 extern s16 gData_02003d48[][2];
@@ -148,26 +146,17 @@ extern u8 gData_0200215c[];
 extern u8 Data_0200217c[];
 extern u8 Data_02002469[];
 
-void *Heap_AllocEwram(s32 size);
-
 static __inline__ void Camera_MoveWithinMapBounds_(s32 x, s32 z, s32 mode) {
   Camera_MoveWithinMapBounds(x, -1, z, mode);
 }
 void Func_02001fdc(void);
-void Event_StartScreenTransition(void);
-void Event_FinishScreenTransition(void);
-void Event_WaitTransitionFrames(void);
 void Func_02002074(void);
 // The veneer of Resource_DecodeType01Far.
 s32 Func_02001f54(const void *source, void *destination);
 void Func_02002024(void);
-void Func_0200005c(void);
 
-void Func_020000c0(u16 *colors, s32 count, s32 red, s32 green, s32 blue);
-void Func_02000138(u8 *grid, s32 count, s32 scale);
 void Func_0200207c(void);
 void Func_02001f74(void);
-void Heap_Release(void *pointer);
 
 struct WorldCamera {
   u8 unk000[0x11c];
@@ -473,7 +462,6 @@ extern char ResourceId_FarCall00A;
 extern char SceneId_Ov64c;
 extern char SceneId_Ov6b4;
 
-void Func_0200020c(s32 stage);
 void Func_0200101c(void);
 void Func_02001f8c(s32 resource);
 void Func_02002054(s32 scene, s32 entrance);

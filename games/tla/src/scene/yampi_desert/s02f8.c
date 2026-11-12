@@ -169,15 +169,8 @@ void Func_02000684(s32 a, s32 b) {
   }
 }
 
-extern char SceneId_Ov661Room3;
-extern char SceneId_Ov661Room4;
-extern char SceneId_Ov661Room5;
-
 extern u8 gMapShapeGrid[];
 
-s32 GameFlag_Test(s32 flag);
-void GameFlag_SetBit(s32 flag);
-s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 s32 Func_02004020(s32 layer, s32 x, s32 z);
 
 s32 Func_020041e8(s32 layer, s32 shape, s32 height);
@@ -219,19 +212,6 @@ void Func_020006ac(void) {
   }
   GameFlag_SetBit(0x20b);
 }
-
-extern char SceneId_Ov661Room3;
-extern char SceneId_Ov661Room4;
-extern char SceneId_Ov661Room5;
-
-extern u8 gMapShapeGrid[];
-
-s32 GameFlag_Test(s32 flag);
-void GameFlag_ClearBit(s32 flag);
-s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-s32 Func_02004020(s32 layer, s32 x, s32 z);
-
-s32 Func_020041e8(s32 layer, s32 shape, s32 height);
 
 void Func_020007e0(void) {
   struct MapWork *map = Ram_HeapSlots->mapWork;

@@ -160,8 +160,6 @@ struct IsletCaveEventWork {
 
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
-void Func_02000158(void);
-void Func_02000178(void);
 void Func_0200132c(void);
 
 void Func_02000328(void) {
@@ -270,7 +268,6 @@ const u8 *Func_0200046c(void) {
   return gData_02001788;
 }
 
-void Func_020000f4(void);
 void Func_02001334(void);
 
 void Func_020004ac(void) {
@@ -357,7 +354,6 @@ extern const struct IsletCaveEntry gData_020019ec[];
 
 void Func_02001254(void);
 void Func_0200125c(void);
-void Event_FinishScreenTransition(void);
 
 void Func_020005fc(void) {
   u8 *work = Ram_HeapSlots->eventWork;
@@ -410,8 +406,6 @@ extern u16 gData_0200134c[], gData_0200135c[], gData_02001388[],
 extern u8 gData_02001454[];
 void Func_0200131c(s32 mode);
 void Func_020008c8(void);
-void Func_02000038(u16 *slots, u16 *colours, u16 *a, u16 *b);
-void Func_02000580(s32 scale);
 void Func_0200133c(void);
 
 s32 Func_0200069c(void) {
@@ -587,8 +581,6 @@ void Func_020009f8(s32 actorId, s32 dx, s32 dz) {
   Sound_Play(298);
   Func_0200125c();
 }
-
-void Func_020009f8();
 
 void Func_02000aec(void) {
   struct Actor *object0;
@@ -911,7 +903,6 @@ void Func_02001034(void) {
        ->v)
 
 s32 Func_020012d4();
-extern u8 MsgSummonGuardianOfWind[];
 
 void Func_020010ac(void) {
   s32 t12, cue;
@@ -960,4 +951,3 @@ void Func_0200115c(void) {
     Actor_TurnToFaceEachOther(gMainRoutineWork.currentOwner, 9, 0);
   }
 }
-

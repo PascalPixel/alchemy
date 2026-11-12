@@ -111,8 +111,6 @@ struct RockWork {
   s16 resource;
 };
 
-s32 Random16Far(void);
-
 /// Spawns count rocks around (x, y, z), each pushed out at a random angle and
 /// thrown up and out along it.
 void Func_02002d44(s32 x, s32 y, s32 z, s32 count) {

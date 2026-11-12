@@ -22,9 +22,6 @@ extern const u8 gData_0200218c[];
 extern const u8 gData_020021e8[];
 extern const u8 gData_0200221c[];
 
-void Event_StartScreenTransition(void);
-void Event_FinishScreenTransition(void);
-void Event_WaitTransitionFrames(void);
 void Func_02000188(void);
 void Func_020001cc(void);
 void Func_02000258(void);
@@ -303,10 +300,7 @@ void Func_02000b84(void) {
 extern const u8 gData_020020dc[];
 
 void Func_020020c4(const void *data);
-void Func_02000188(void);
-void Func_020001cc(void);
 void Func_02000210(void);
-void Func_02000b84(void);
 
 struct MapMode {
   u8 unk00[23];
@@ -357,9 +351,7 @@ s32 Func_02000be0(void) {
   return 0;
 }
 
-void Func_02001f5c(void);
 void Func_02001f64(void);
-void Func_0200206c(void);
 
 static __inline__ void Func_02001f2c_(s32 a, s32 b, s32 c, s32 d, s32 e,
                                       s32 f) {
@@ -486,13 +478,10 @@ void Func_02000ce0(void) {
   Event_SetFlag(0x980);
 }
 
-extern const u8 gData_020020dc[];
 void Func_020020cc(const void *data);
 
 void Func_02001064(void) { Func_020020cc(gData_020020dc); }
 
-void Func_02001f5c(void);
-void Func_02001f64(void);
 void Func_02001fd4(s32 id, s32 target);
 
 static __inline__ void SetSpeed(s32 id, s32 speed, s32 acceleration) {
@@ -598,14 +587,9 @@ struct Actor *Func_02001210(void) {
   return object;
 }
 
-extern u8 MsgAtLastI[];
 extern const u8 gData_02002120[];
 
-void Func_02001188(void);
 void Func_02001f14(struct Actor *object);
-void Func_02001f5c(void);
-void Func_02001f64(void);
-void Func_02001fd4(s32 id, s32 target);
 
 /// Once flag 7 is set, and only until flag 0x985 is: a scene of actor 7 and the
 /// leader, which ends by setting flags 0x201 and 0x985.
@@ -905,11 +889,6 @@ void Func_020014c0(void) {
 extern u32 gFrameCount;
 extern const u8 gData_02002498[];
 
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
-void Func_02001efc(struct Actor *object, s32 value);
-void Func_02001f04(struct Actor *object, const void *data);
-
 void Func_02001d60(struct Actor *object) {
   struct Actor *spawned;
 
@@ -922,11 +901,6 @@ void Func_02001d60(struct Actor *object) {
     }
   }
 }
-
-void Func_02001f5c(void);
-void Func_02001f64(void);
-void Func_02001d60(struct Actor *object);
-void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 
 static __inline__ void Func_020020b4_(s32 id, s32 a, s32 b, s32 c) {
   /* FAKEMATCH(wrapper): the call forwarded through this inline, as in ☀️'s

@@ -429,19 +429,11 @@ s32 Func_02003604(void) {
    } *)(base))                                                                 \
        ->v)
 void Event_StartScreenTransition();
-void Event_WaitTransitionFrames();
 void Func_0200253c();
 void Func_020027cc();
-void Func_02002a64();
-void Func_02002f70();
-void Func_02003338();
-s32 Func_02003604();
 void Func_020052a4();
 void Func_020053ac();
-void Func_0200564c();
-void Func_020056b4();
 void Func_020056bc();
-void Actor_SetSingleChildFlags();
 void Func_02001ac0();
 void Func_02002074();
 
@@ -579,10 +571,6 @@ struct SceneState {
   u16 tileEntry;
 };
 
-void *Heap_Alloc(s32 size);
-void Heap_Release(void *block);
-s32 Resource_FindFreeEntry(void);
-
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void *Mem_Alloc(s32 size) { return Heap_Alloc(size); }
@@ -624,4 +612,3 @@ s32 Func_02003934(s32 x, s32 z) {
   found = Func_020038f4(x + 1, z);
   return (u32)(-found | found) >> 31;
 }
-

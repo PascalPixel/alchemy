@@ -108,7 +108,6 @@ void Func_02000190(s32 unused, s32 id) {
 extern const u8 gData_02001404[];
 
 void Actor_ResetTargetsAndVelocity(s32 actor);
-void Func_0200015c(s32 id);
 void Func_02001044(struct Actor *object, const u8 *script);
 void Func_0200104c(struct Actor *object);
 
@@ -246,8 +245,6 @@ void Func_020004f4(s32 id, s32 a, s32 b) {
 
   MapGrid_CopyCellAttributes(a, b, 1, 1, x, z);
 }
-
-void Func_020004f4(s32 id, s32 x, s32 z);
 
 void Func_0200051c(s32 unused, s32 cell) {
   if (cell == 20) {
@@ -468,10 +465,6 @@ void Func_02000ad4(s32 id) {
 
 extern u8 MsgHereTheIntruder[];
 
-void Event_StartScreenTransition(void);
-void Event_WaitTransitionFrames(void);
-void Func_02000ad4(s32 actor);
-
 void Func_02000af0(void) {
   s32 owner = gMainRoutineWork.currentOwner;
 
@@ -551,7 +544,6 @@ void Func_02000af0(void) {
 extern const u8 MsgGuardsAnIntruder[];
 extern const u8 MsgGrrrrrRrrruffRrufff[];
 
-void Actor_ResetTargetsAndVelocity(s32 id);
 void Func_0200113c(s32 scene, s32 entrance);
 
 void Func_02000d80(void) {
@@ -658,4 +650,3 @@ void Func_02000ff4(void) {
   if (!Event_GetFlag(515) && !Event_GetFlag(514))
     Func_02000e28(10);
 }
-

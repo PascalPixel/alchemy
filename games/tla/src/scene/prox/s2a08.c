@@ -25,7 +25,6 @@ void Func_02002a08(void) {
 
 void Func_02001c24(s32 value);
 void Func_020045dc(s32 value);
-void Func_02002a08(void);
 
 void Func_02002a38(void) {
   s32 priority;

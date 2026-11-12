@@ -9,7 +9,6 @@ s32 Func_02004e38(void);
 struct Actor *Func_02004ef8(s32 *position, s32 mode);
 void Func_02004d40(void);
 void Func_02004d48(void);
-void Func_02004c98(struct Actor *object, s32 mode);
 void Func_020046e8(s32 value);
 void Func_020049c0(s32 offset, s32 layer);
 void Func_0200481c(void);
@@ -97,13 +96,6 @@ struct TrapEntry {
   u16 actor;
   u16 flag;
 };
-
-void Func_02004c98(struct Actor *object, s32 a);
-void Func_02004d40(void);
-void Func_02004d48(void);
-void Func_020046e8(s32 value);
-void Func_0200481c(void);
-void Func_02004934(s32 a, s32 b, s32 c);
 
 static __inline__ void Func_02005838_(s32 a, s32 b, s32 c) {
   /* FAKEMATCH(wrapper): forwarding through the inline keeps each call's own

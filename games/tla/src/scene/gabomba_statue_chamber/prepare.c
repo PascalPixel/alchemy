@@ -124,7 +124,6 @@ void Func_02001ba8(void) {
 #include "version.h"
 
 extern char SceneId_Ov671Room7, SceneId_Ov672Room1;
-void Func_02001e80(s32 id);
 void Func_02001094(void);
 void Func_02000f88(void);
 
@@ -166,4 +165,3 @@ void Func_02001c44(void) {
   }
 #endif
 }
-

@@ -174,8 +174,6 @@ void Func_020007d0(void) {
 extern const u8 gData_02002b60[];
 
 void Func_02000054(void);
-void Func_020007d0(void);
-void Func_02000b28(s32 id);
 void Func_02001498(void);
 void Func_020015a0(s32 id, s32 value);
 void Func_02002314(s32 a);

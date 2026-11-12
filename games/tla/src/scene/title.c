@@ -42,7 +42,6 @@ struct TitleSprite {
   u32 attr[3];
 };
 
-extern char SceneId_Title;
 extern char SceneId_Ov650;
 extern char ResourceId_FarCall00B;
 extern char ResourceId_IntroTilesB;
@@ -232,11 +231,7 @@ void Func_02000278(void) {
   gData_020006dc++;
 }
 
-extern s16 gData_020006dc;
-
 void Title_LoadBackground(void);
-void Func_02000278(void);
-void Title_LoadSprites(s32 unused);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 
@@ -285,8 +280,6 @@ struct TitleWork {
 };
 
 extern char ResourceId_LogoOnBlack;
-
-void Fade_ToBlack(s32 vblanks);
 
 static __inline__ void Decode_(void *source, void *destination) {
   /* FAKEMATCH(wrapper): the decode forwarded through this inline keeps the

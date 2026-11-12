@@ -139,7 +139,6 @@ struct GateEventWork {
 };
 
 extern const u8 gData_02005d7c[];
-void Func_020018ec(s32 open);
 void Func_02005428(const u8 *data, s32 a, s32 b);
 
 void Func_02001928(void) {
@@ -211,7 +210,6 @@ void Func_020043a4(s32 value);
 void Func_02005624(struct Actor *object, s32 mode);
 s32 Func_020053a0(void);
 void Func_02005784(s32 id);
-void Func_0200193c(void);
 void Actor_SetAnimationSpeed(struct Actor *object, s32 value);
 void Func_02001a6c(s32 value) {
   Func_020043a4(value);
@@ -331,7 +329,6 @@ next:
 
 extern u32 gData_02005910[];
 extern u8 Data_0202c001[];
-void Func_02001b98(void);
 
 #define MARK(at, cellPicture, shape)                                           \
   (cell = (at), layerA[cell] = (cellPicture), layerB[cell] = (cellPicture),    \
@@ -469,7 +466,6 @@ void Func_020020b0(s32 id, s32 direction, s32 value) {
 }
 
 extern s32 gData_02005af0;
-void Func_020020b0(s32 id, s32 direction, s32 value);
 
 void Func_020020f0(s32 direction) {
   s16 scene;
@@ -550,4 +546,3 @@ void Func_020022d0(s32 slot, s32 value, s32 targetId, s32 angle) {
   object->slot = slot;
   Animation_ApplyChildValues(object, value);
 }
-

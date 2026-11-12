@@ -306,12 +306,6 @@ void Func_02000808(void) {
   }
 }
 
-extern char SceneId_Ov65FRoom1;
-extern char SceneId_Ov65FRoom2;
-extern char SceneId_Ov65FRoom3;
-extern char SceneId_Ov65FRoom4;
-extern char SceneId_Ov65FRoom5;
-
 extern s32 gData_02005e10[];
 extern s32 gData_02005e34[];
 extern s32 gData_02005f78[];
@@ -378,8 +372,6 @@ const void *Func_020009dc(void) {
     return gData_02006278;
   return gData_02005e10;
 }
-
-extern s32 gData_0200632c;
 
 void Func_02000a68(void) {
   if (!Flag_IsSet(0x91b) && Flag_IsSet(0x310)) {

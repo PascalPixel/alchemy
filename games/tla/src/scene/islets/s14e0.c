@@ -19,18 +19,11 @@
 #define STORED_AT_1AC 521
 #endif
 
-extern const u8 gData_020044f0[];
-void Func_02003e64(void);
-void Func_02003e6c(void);
 void Func_02003fc4(void);
 void Func_02003fbc(void);
-void Func_02003de4(struct Actor *object, s32 a);
 void Func_02003dfc(struct Actor *object);
 void Func_0200129c(struct Actor *object);
 void *HeapSlot_AllocEwram(s32 slot, s32 size);
-void Func_020034ec(void);
-void Event_FinishScreenTransition(void);
-void Event_WaitTransitionFrames(void);
 
 #define STEP(actor, x, z)                                                      \
   (Actor_GetById(actor)->actionFlags &= ~1,                                    \
@@ -194,7 +187,6 @@ void Func_020014e0(void) {
 #include "islets.h"
 #include "scene_tables.h"
 
-void *HeapSlot_AllocEwram(s32 id, s32 size);
 extern const u8 gData_020045a4[];
 extern const u8 gData_020045f0[];
 
@@ -340,10 +332,6 @@ void Func_02001d90(void) {
   Task_AddFrame(Func_02001cac, 0xc80);
 }
 
-void Func_02003fb4();
-void Func_02003fbc();
-void Func_02003fc4();
-
 /// When object 19 stands in its target area, actor 9 and the leader react and
 /// the party is given item 0x1c4.
 void Func_02001db0(void) {
@@ -440,8 +428,6 @@ void Func_02001f74(void) {
 #include "event_work.h"
 #include "text/msg_ids.h"
 
-void Func_02003e64();
-void Func_02003e6c();
 void Func_02003f0c();
 
 void Func_0200208c(void) {
@@ -518,7 +504,6 @@ void Func_02002144(void) {
 }
 
 extern s32 gData_0200519c, gData_02005194, gData_02005198, gData_02005190;
-void Func_020020ec(s32 x, s32 z, s32 layer, s32 value);
 
 void Func_020021d0(void) {
   struct Actor *first = Actor_Get(12);
@@ -817,10 +802,7 @@ void Func_02002830(void) {
 
 extern const u8 gData_02004508[];
 extern const u8 gData_02004554[];
-void Func_02003eec();
-void Event_StartScreenTransition(void);
 void Func_02003fb4(void);
-void Func_020034d8(void);
 
 /// The Islets' arrival by entrance 4: actor 9 joins the leader and actor 10
 /// is placed, the screen fades in, both run their action scripts
@@ -955,8 +937,6 @@ void Func_02002d48(s32 id, s32 column, s32 row) {
   FieldActor_SetMoveTarget(object, x, object->y, z);
 }
 
-void Func_02002d48(s32 id, s32 dx, s32 dz);
-
 // The Islets' marching guards (objects 11 to 18): while the event work is busy
 // or flag 0x218 is set they stand still; once the controlled character drops
 // below height -12 they stand and the event work's counter 0x16a becomes 200;
@@ -1024,8 +1004,6 @@ void Func_02002d7c(void) {
   } while (--*owed != 0);
 }
 
-void Func_02002d0c(s32 id);
-void Func_02002d7c(void);
 void Func_02003684(s32 actor);
 extern const u8 gData_02004274[];
 
@@ -1345,4 +1323,3 @@ void Func_0200329c(void) {
 #endif
 
 s32 Scene_PrepareMap(void) { return 0; }
-

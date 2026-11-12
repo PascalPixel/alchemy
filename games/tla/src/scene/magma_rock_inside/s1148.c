@@ -14,7 +14,6 @@ void Func_02000ed0(struct Actor *object);
 void Func_02004a5c(s32 x, s32 y, s32 z, s32 kind);
 void Func_02004b18(void);
 void Func_02004bd4(void);
-void Func_02004c98(struct Actor *object, s32 a);
 void Func_02004d40(void);
 void Func_02004d48(void);
 
@@ -60,8 +59,6 @@ void Func_02001190(s32 mode, s32 cue) {
 }
 
 struct Actor *Actor_FindInCell(s32 *position, struct Actor *self);
-void Func_02004d40(void);
-void Func_02004d48(void);
 
 void Func_020011fc(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);

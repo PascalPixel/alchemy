@@ -193,9 +193,7 @@ extern const s32 gData_02005570[];
 extern const u8 gData_020055d8[];
 extern const u8 gData_02005608[];
 
-u32 Random16Far(void);
 void Func_02004ea0(void);
-void Func_02002c48(struct Actor *object);
 
 void Func_02002cd0(s32 a, s32 b) {
   struct Actor *first = Actor_GetById(a);
@@ -424,10 +422,6 @@ void Func_020030cc(void) {
   }
 }
 
-extern const u8 MsgBlazeTabletInscription[];
-
-void Func_020030cc(void);
-
 void Func_020032d8(void) {
   if (Event_GetFlag(0x9fa)) {
     Func_02004d40();
@@ -473,15 +467,6 @@ void Func_020033b0(void) {
     Func_020030cc();
   }
 }
-
-extern char SceneId_Ov692Room1;
-extern char SceneId_Ov692Room2;
-extern char SceneId_Ov692Room3;
-extern char SceneId_Ov692Room4;
-extern char SceneId_Ov692Room5;
-extern char SceneId_Ov692Room6;
-extern char SceneId_Ov692Room7;
-extern char SceneId_Ov692Room8;
 
 extern u8 gData_02005f60[];
 extern u8 gData_02005fe4[];

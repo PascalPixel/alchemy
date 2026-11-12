@@ -38,11 +38,7 @@ u8 *Func_0200004c(void) {
    } *)(base))                                                                 \
        ->v)
 
-void Func_02000a94(void);
 void Func_02000b84(s32 a, s32 b);
-void Func_02000b7c(void);
-void Func_02000a9c(void);
-extern u8 MsgAlhafraInteriors31[];
 
 void Func_02000084(void) {
   Event_SetFlag(0x8b2);
@@ -78,4 +74,3 @@ void Func_02000084(void) {
   Func_02000b7c();
   Func_02000a9c();
 }
-

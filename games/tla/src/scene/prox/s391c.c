@@ -173,13 +173,7 @@ done:
 }
 
 extern volatile s16 gData_020062a4;
-extern s16 gData_02004780[];
 
-void Func_020038e8(void);
-
-s32 ArcTan2(s32 y, s32 x);
-void Func_020043c4(struct Actor *object, s32 mode);
-void Actor_SetAnimationSpeed(struct Actor *object, s32 value);
 s32 Func_0200444c(struct Actor *object);
 
 void Func_02003bc8(void) {

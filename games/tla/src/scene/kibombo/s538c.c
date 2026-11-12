@@ -42,8 +42,6 @@ void Func_0200538c(void) {
   Actor_SetSpritePriority(14, 1);
 }
 
-void Func_0200538c(void);
-
 void Func_020054e0(void) {
   s16 entrance;
 
@@ -262,4 +260,3 @@ void Func_02005898(void) {
 }
 
 void Func_02005994(void) { Func_02005bcc(); }
-

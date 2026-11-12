@@ -100,8 +100,6 @@ s32 Func_02000dcc(struct PushTarget *target) {
 #define PIXELS(v) (((s16 *)&(v))[1])
 
 extern u16 gData_02002478[];
-extern s8 gData_02002484[][4];
-extern s32 gData_0200249c[];
 
 /// Finds the object the leader is pushing: among objects 8 to 63 whose sprite
 /// shape is in the six-entry footprint table, the one whose footprint holds the

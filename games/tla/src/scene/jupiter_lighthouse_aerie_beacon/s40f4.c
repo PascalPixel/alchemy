@@ -146,7 +146,6 @@ struct Vector3 {
   s32 z;
 };
 
-s32 Func_020042e0(s32 *a, s32 *b);
 void Func_02005764(struct Object6a5 *object, const void *script);
 void Func_02005994(struct Vector3 *position);
 s32 Func_020059e4();

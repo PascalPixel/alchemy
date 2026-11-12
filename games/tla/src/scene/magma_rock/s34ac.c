@@ -63,11 +63,6 @@ void Func_020034ac(s32 spread) {
 
 extern const u8 gData_02003e3c[];
 
-u32 Random16Far(void);
-s32 Math_Cosine(s32 angle);
-void Func_02003a54(struct FieldEffect *object, s32 mode);
-void Effect_AdvanceMotionAtLeaderPriority(union FieldObject *object);
-
 void Func_020035e0(void) {
   struct Actor *leader;
   struct FieldEffect *effect;
@@ -135,7 +130,6 @@ void Func_020036f8(s32 heightOffset, s32 layer, s32 id) {
 extern const u8 gData_02003dba[];
 void Func_02002e30(const u8 *data);
 void Func_02003b3c(s32 id);
-void Func_020036f8(s32 a, s32 b, s32 owner);
 
 void Func_02003784(s32 a, s32 b) {
   Func_020036f8(a, b, gMainRoutineWork.currentOwner);
@@ -212,8 +206,6 @@ struct EntryWork {
   s16 unk1600;
 };
 
-u32 Random16Far(void);
-
 void Func_02003820(s32 x, s32 y, s32 z, s32 count) {
   struct EntryWork *work;
   s32 i;
@@ -284,12 +276,9 @@ struct RockWork {
 };
 
 struct RockWork *HeapSlot_AllocFar(s32 slot, s32 size);
-void *Resource_GetTableEntry(s32 id);
 void Func_02003a14(void *entry, void *destination);
-s32 Resource_FindFreeEntry(void);
 void Func_02003c34(struct RockSprite *sprite, s32 width, s32 height,
                    u32 attributes, s32 tile);
-void Func_0200379c(void);
 
 void Func_020038dc(void) {
   struct RockWork *work = HeapSlot_AllocFar(220, sizeof(struct RockWork));
@@ -332,8 +321,6 @@ struct MagmaRockSparkWork {
   u8 unk0000[0x1604];
   s16 resource;
 };
-
-void Func_0200379c(void);
 
 void Func_02003998(void) {
   struct MagmaRockSparkWork *work = Ram_HeapSlots->menuRuntime;

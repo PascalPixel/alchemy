@@ -16,7 +16,6 @@ extern char SceneId_Ov65FRoom4;
 extern char SceneId_Ov65FRoom5;
 extern char SceneId_Ov660Room3;
 
-void Event_StartScreenTransition(void);
 void Func_02000a68(void);
 void Func_02000be4(void);
 void Func_02000d30(void);
@@ -70,10 +69,6 @@ s32 Func_02000aa8(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-void Event_StartScreenTransition(void);
-void Func_02000a68(void);
-void Func_0200538c(void);
-
 void Func_02000be4(void) {
   FieldTask_AddFrame(Func_02000a68, 0x480);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0;
@@ -119,15 +114,12 @@ void Func_02000be4(void) {
    } *)(base))                                                                 \
        ->v)
 
-void Event_WaitTransitionFrames();
 void Func_02000280();
 void Func_02000390();
 void Func_020003d8();
 void Func_0200535c();
 void Func_02005364();
-void Func_0200538c();
 void Func_020002a4();
-void Func_02000a68();
 
 void Func_02000d30(void) {
   s32 t4;
@@ -181,8 +173,6 @@ void Func_02000e00(void) {
 void Func_02000e58(void) { Func_02005374(gData_02005450); }
 
 void Func_02000e68(void) { Func_02005374(gData_02005450); }
-
-extern struct MainRoutineWork gMainRoutineWork;
 
 struct GarohEventWork {
   u8 unk000[0xca4];

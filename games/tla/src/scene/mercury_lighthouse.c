@@ -124,8 +124,6 @@ void Func_020000f4(void) {
 extern u8 MsgImilVoicesDisbeliefReply[];
 
 void Event_FinishScreenTransition(void);
-void Func_02000060(struct Actor *object);
-void Func_020000f4(void);
 void Func_02000608(void);
 
 void Func_020001b0(void) {

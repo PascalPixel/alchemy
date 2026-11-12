@@ -27,7 +27,6 @@ void Func_02003b38(struct Actor *object) {
 
 extern s32 gData_02006be4;
 extern const s32 gData_02004fc8[];
-void Animation_ApplyChildValues(struct Actor *object, s32 value);
 void Func_02003aac(struct Actor *object);
 
 void Func_02003b70(struct Actor *object) {
@@ -39,10 +38,6 @@ void Func_02003b70(struct Actor *object) {
     Func_02003aac(object);
   }
 }
-
-void Animation_ApplyChildValues(struct Actor *object, s32 value);
-void Func_02003b38(struct Actor *object);
-void Func_02003b70(struct Actor *object);
 
 void Func_02003bb8(struct Actor *object, s32 mode) {
   if (mode == 0) {
@@ -57,7 +52,6 @@ void Func_02003bb8(struct Actor *object, s32 mode) {
   }
 }
 
-void Func_02003bb8(struct Actor *object, s32 mode);
 s32 Func_02004b90(s32 *position);
 s32 Func_02004e20(s32 a, s32 b);
 
@@ -84,7 +78,6 @@ extern u8 gData_02006e0e[];
 extern u8 gData_02006e0c[];
 void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
-void Animation_ApplyChildValues(struct Actor *object, s32 value);
 u32 Random16Far(void);
 void Func_02004c20(void);
 void Func_02004c28(void);
@@ -95,7 +88,6 @@ void Event_WaitTransitionFrames(void);
 void Event_FinishScreenTransition(void);
 void Func_020036a8(void);
 void Func_020048f4(void);
-void Func_02003bb8(struct Actor *object, s32 value);
 void Func_02004aa8(const u8 *a, u8 *b);
 void Resource_ResetEntry(s32 entry);
 u32 __umodsi3(u32 a, u32 b);
@@ -109,7 +101,6 @@ struct TileSprite {
 
 void Func_02003c3c(void) { Func_02003bb8(Actor_GetById(Party_GetLeaderActor()), 0); }
 
-extern u32 gFrameCount;
 extern u16 gData_02006e08;
 
 static inline void QueueBlend(u32 address, u32 value) {
@@ -131,10 +122,6 @@ void Func_02003c50(void) {
   else
     QueueBlend((u32)&REG_BLDALPHA, gData_02006e08 | 16);
 }
-
-extern u32 gFrameCount;
-
-u32 Random16Far(void);
 
 static inline void CameraMove(s32 x, s32 y, s32 z, s32 mode) {
   /* FAKEMATCH(wrapper): as in the scene layer of The Broken Seal, forwarding

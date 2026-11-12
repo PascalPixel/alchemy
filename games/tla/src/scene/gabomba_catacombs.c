@@ -294,8 +294,6 @@ void Func_020008a0(struct Actor *object, s32 dz) {
   }
 }
 
-void Func_020008a0(struct Actor *object, s32 dz);
-
 void Func_0200094c(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   struct Actor *steam;
@@ -326,8 +324,6 @@ s32 Func_020009bc(struct Actor *object) {
 
 extern const u8 MsgByReachingThis[];
 extern const u8 gData_020012a4[];
-void Func_0200119c(void);
-void Func_020011a4(void);
 void Animation_ApplyChildValues(struct Actor *object, s32 value);
 void Func_020011d4(s32 actor, s32 target);
 s32 Func_02001264(void);
@@ -577,4 +573,3 @@ s32 Func_02000ecc(void) {
 }
 
 s32 Scene_PrepareMap(void) { return 0; }
-

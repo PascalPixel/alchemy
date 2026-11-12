@@ -11,7 +11,6 @@
 #include "system.h"
 #include "scene_tables.h"
 
-void Actor_SetSingleChildFlags();
 void Func_02002f80();
 void Func_02000338();
 

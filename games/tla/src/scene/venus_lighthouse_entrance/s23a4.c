@@ -199,8 +199,6 @@ struct SparkWork {
 };
 
 u32 Random16Far(void);
-s32 Func_02002a24(struct Actor *object);
-s32 Func_02002a2c(struct Actor *object);
 
 void Func_0200260c(struct Actor *source, s32 x, s32 y, s32 z) {
   struct SparkWork *work = Ram_HeapSlots->menuRuntime;

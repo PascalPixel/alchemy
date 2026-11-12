@@ -85,8 +85,6 @@ void Func_02001010(void) {
 #include "types.h"
 #include "actor.h"
 
-void Func_02000a98(s32 a, s32 b);
-
 void Func_02001064(void) {
   Map_CopyCellAttributeRect(23, 1, 3, 1, 23, 9);
   Map_CopyCellAttributeRect(23, 0, 3, 1, 25, 9);
@@ -108,13 +106,7 @@ void Func_02001094(void) {
 #define EVENT_WORK ((u8 *)Ram_HeapSlots->eventWork)
 
 extern const u8 gData_02001f18[];
-void Func_02001da0(void);
-void HeapSlot_Release();
-void Func_02001010(void);
-void Event_StartScreenTransition(void);
-void Event_WaitTransitionFrames(void);
 void Func_02001ef0(void);
-void Event_FinishScreenTransition(void);
 
 /// Places the party around the statue object (its sprite reloaded with item
 /// 242's picture), raises and moves the statue while the camera follows, has
@@ -299,4 +291,3 @@ void Func_020010d4(void) {
   GameFlag_SetBit(265);
   Import_EventSetExitRequest(2);
 }
-

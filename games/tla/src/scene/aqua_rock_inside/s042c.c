@@ -200,7 +200,6 @@ void Func_020007a8(void) {
 extern const u8 gData_02003fb8[];
 
 void Sound_WaitForBgmRestore(void);
-void Func_020007a8(void);
 void Func_02003ebc(void);
 
 static __inline__ void Func_02003d44_(s32 a, s32 b, s32 c) {

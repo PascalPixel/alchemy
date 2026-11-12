@@ -41,7 +41,6 @@ const u8 *Func_02000050(void) {
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-extern char SceneId_Ov6A6Room2;
 extern char MsgLoho23;
 extern char MsgLoho27;
 extern const u8 gData_02001900[];
@@ -522,15 +521,6 @@ void Func_02000c24(void) {
   Event_ShowMessageAndWait(11, 0);
 }
 
-extern const u8 gData_020017d8[];
-extern const u8 gData_020017a4[];
-extern const u8 gData_0200171c[];
-
-void Func_020013f0(s32 a, s32 b, s32 c);
-void Func_02001440(s32 a, s32 b);
-void Func_020012e0(void);
-void Func_02000f38(void);
-
 void Func_02000c54(s32 id) {
   s32 high = 192;
   s32 kind = 64;
@@ -565,7 +555,6 @@ void Func_02000c74(s32 id) {
 }
 
 extern char SceneId_Ov6A6Room1;
-extern char SceneId_Ov6A6Room2;
 extern char MsgLoho57;
 extern const u8 gData_02001ae0[];
 extern const u8 gData_02001aec[];
@@ -600,15 +589,6 @@ void Func_02000d00(void) {
   if (facing == 0xc000)
     FieldMessage_Show((s32)&MsgLoho57, 1);
 }
-
-extern const u8 gData_020017d8[];
-extern const u8 gData_020017a4[];
-extern const u8 gData_0200171c[];
-
-void Func_020013f0(s32 a, s32 b, s32 c);
-void Func_02001440(s32 a, s32 b);
-void Func_020012e0(void);
-void Func_02000f38(void);
 
 void Func_02000d40(void) {
   s32 count = 8;
@@ -656,15 +636,6 @@ void Func_02000da4(s32 actor) {
   }
 }
 
-extern const u8 gData_020017d8[];
-extern const u8 gData_020017a4[];
-extern const u8 gData_0200171c[];
-
-void Func_020013f0(s32 a, s32 b, s32 c);
-void Func_02001440(s32 a, s32 b);
-void Func_020012e0(void);
-void Func_02000f38(void);
-
 void Func_02000e0c(void) {
   Actor_SetMovementTypeById(8, gData_020017d8);
   GameFlag_SetBit(800);
@@ -695,7 +666,6 @@ extern const struct LohoPicture gData_02001f14;
 
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
-void Func_020012e0(void);
 void Func_020012e8(void);
 
 // The scene's own event inlines: a habit of the whole game written once, as
@@ -742,13 +712,6 @@ loop:
   Func_020012e8();
 }
 
-extern const struct LohoPicture gData_02001f14;
-
-void Event_FinishScreenTransition(void);
-void Event_WaitTransitionFrames(void);
-void Func_020012e0(void);
-void Func_020012e8(void);
-
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
 
@@ -767,8 +730,6 @@ void Func_02000eec(void) {
   Offset_(gMainRoutineWork.currentOwner, 0, -4);
   Import_EventSetExitRequest(work->value);
 }
-
-void Func_020012e8(void);
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -800,15 +761,6 @@ void Func_02000f38(void) {
   Import_EventSetExitRequest(value);
   Func_020012e8();
 }
-
-extern const u8 gData_020017d8[];
-extern const u8 gData_020017a4[];
-extern const u8 gData_0200171c[];
-
-void Func_020013f0(s32 a, s32 b, s32 c);
-void Func_02001440(s32 a, s32 b);
-void Func_020012e0(void);
-void Func_02000f38(void);
 
 void Func_02000ffc(void) {
   s32 back;
@@ -868,11 +820,7 @@ void Func_020010a0(void) {
   Actor_SetSingleChildFlags(Actor_GetById(9), 0);
 }
 
-extern char SceneId_Ov6A6Room1;
-
 void Actor_SetWideSprite(s32 id, s32 wide);
-void Func_02001080(void);
-void Func_020010a0(void);
 
 static __inline__ void Func_02001350_(s32 id, s32 x, s32 z, u16 angle) {
   /* FAKEMATCH(wrapper): forwarded inline, so each call builds its angle
@@ -911,10 +859,6 @@ s32 Func_020010c0(void) {
   }
   return 0;
 }
-
-extern char SceneId_Ov6A6Room1;
-
-void Func_020000ac(void);
 
 s32 Func_020011ec(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6A6Room1 && GameFlag_Test(0xa5f))

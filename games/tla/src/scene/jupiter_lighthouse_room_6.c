@@ -34,7 +34,6 @@ s32 Func_020018bc(s32 value);
 void Func_020000b4(s32 value);
 void Func_02000108(void);
 void Func_02000154(void);
-void Scene_SetArrivalFlags(s32 value);
 void Func_020003a4(s32 value);
 
 void Func_02000054(s32 value) {

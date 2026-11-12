@@ -11,7 +11,6 @@
 
 void Func_02002378(void);
 void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
-s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 void Func_02002380(void);
 
 struct EventWork {

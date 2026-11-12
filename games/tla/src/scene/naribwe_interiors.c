@@ -183,7 +183,6 @@ s32 Func_020011a0(s32 *unit, s32 *slot);
 struct UnitData *Unit_Get(s32 unit);
 const u8 *Func_020010b8(s32 item);
 void Func_020010b0(s32 item, s32 a);
-void Actor_WaitForAnimationChange(u32 actor);
 void Func_02000920(void);
 void Func_020007b4(void);
 void Func_02000760(void);
@@ -601,11 +600,7 @@ s32 Func_02000ba0(s32 limit, s32 group, s32 *out) {
 
 #include "call.h"
 
-void *HeapSlot_AllocEwram(s32 slot, s32 size);
-void HeapSlot_Release(s32 slot);
 u32 Random16Far(void);
-s32 Func_02000b60(s32 group);
-s32 Func_02000ba0(s32 limit, s32 group, s32 *out);
 
 u8 *Func_02000c04(void) {
   s32 *hints = (s32 *)Value2((s32 (*)())HeapSlot_AllocEwram, 252, 320);
@@ -819,4 +814,3 @@ s32 Func_02000f28(void) {
 }
 
 s32 Scene_PrepareMap(void) { return 0; }
-

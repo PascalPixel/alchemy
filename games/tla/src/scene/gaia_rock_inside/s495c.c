@@ -76,7 +76,6 @@ extern const u8 gData_02006290[];
 
 void Func_02004e5c(void);
 void Func_02004e64(void);
-void Func_02004a5c(s32 id, s32 x, s32 y, s32 z);
 void Func_02004dac(struct Actor *object, const u8 *script);
 void Func_02004d9c(struct Actor *object, s32 mode);
 u32 Random16Far(void);

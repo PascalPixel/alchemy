@@ -149,8 +149,6 @@ void Func_02000244(struct Actor *object) {
 
 u32 Random16Far(void);
 
-void Func_02000244(struct Actor *object);
-
 void Func_02000300(void) {
   struct Actor *object;
   s32 i;
@@ -173,15 +171,10 @@ void Func_02000300(void) {
   }
 }
 
-void Func_020000c0(void);
-void Func_0200017c(void);
-void Func_020001ac(void);
-void Func_02000300(void);
 void Func_02001e48(void);
 void Func_02001e50(void);
 void Func_02001f00(s32 id);
 void Actor_SetAnimationSpeed(struct Actor *object, s32 value);
-void Event_StartScreenTransition(void);
 
 s32 Func_02000384(void) {
   struct Actor *leader;
@@ -230,7 +223,6 @@ s32 Func_02000384(void) {
   return 0;
 }
 
-void Scene_SetArrivalFlags(s32 value);
 void Func_020006a0(s32 value);
 void Func_02000724(s32 id);
 

@@ -180,11 +180,9 @@ struct BeamWork {
   struct Actor *second;
 };
 
-void Func_0200105c(struct Actor *object);
 void Func_02002b20(s32 *position);
 void Func_02002b38(struct BeamSprite *sprite);
 void Func_02002b40(struct BeamSprite *sprite, struct BeamSpark *spark);
-u32 Random16Far(void);
 s32 Math_Cosine(s32 angle);
 
 #define LERP(from, to, t, n) ((from) + ((to) - (from)) * (t) / (n))

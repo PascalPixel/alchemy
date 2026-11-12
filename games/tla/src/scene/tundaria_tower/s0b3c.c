@@ -2,13 +2,10 @@
 #include "call.h"
 
 void Camera_MoveWithinMapBounds(s32 a, s32 b, s32 c, s32 d);
-void Actor_SetModeById(u32 id, s32 mode);
 void Actor_SetActionById(u32 id, s32 action);
 void Motion_SetVarCbAndRefresh(u32 id, s32 variant);
-void Event_Wait(s32 frames);
 void Func_080d489c(s32 id, s32 emote);
 void Func_02003030(s32 x, s32 z, s32 a, s32 b);
-void Import_EventSetExitRequest(s32 a);
 
 /// The leader turns to angle 0x4000 and takes mode 22, shows emote 0x102, then
 /// turns to 0xc000 and takes mode 5 and action 24.

@@ -89,12 +89,8 @@ void Func_02000128(s32 id, u32 kind, s32 flag, s32 layer) {
 
 extern u8 gMapShapeGrid[];
 
-s32 Func_02001508(struct Actor *object);
 s32 Func_02001478(s32 layer, s32 x, s32 z);
-s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-void Func_020014c0(s32 id);
 s32 Func_02001528(s32 layer, s32 shape, s32 height);
-void Func_02001428(struct Actor *object, s32 mode);
 
 void Func_020001d0(u16 *list) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
@@ -140,10 +136,7 @@ void Func_020001d0(u16 *list) {
 
 s32 Func_020014d8(void);
 struct Actor *Func_02001530(s32 *position, s32 flags);
-void Func_02001488(void);
-void Func_02000974(s32 mode);
 void Func_02000c4c(s32 level, s32 layer);
-void Func_02000aa8(void);
 
 void Func_020002f8(u16 *list) {
   struct Actor *leader;
@@ -223,11 +216,6 @@ struct TrapEntry {
   u16 flag;
 };
 
-void Func_02001428();
-void Func_02001490(void);
-void Func_02000974(s32 value);
-void Func_02000bc0(s32 a, s32 b, s32 c);
-
 void Func_0200048c(const void *data, s32 id) {
   const struct TrapEntry *entry = data;
   struct Actor *object = Actor_Get(id);
@@ -272,8 +260,6 @@ void Func_0200056c(s32 id) {
 }
 
 void Func_020014a8(s32 id, s32 target);
-void Func_0200056c(s32 id);
-s32 Func_02001508(struct Actor *actor);
 void ObjectVisual_CopyAttributes(u32 targetId, u32 sourceId);
 
 void Func_02000584(u16 *list) {
@@ -331,8 +317,6 @@ void Func_020006ec(struct Actor *object, struct Actor *target) {
   FieldActor_SetPositionAndResetMotion(object, target->x, target->y, target->z);
   FieldActor_SetPositionAndResetMotion(target, 0, 0, 0);
 }
-
-void Func_020006ec(struct Actor *object, struct Actor *target);
 
 void Func_02000708(u16 *list) {
   struct Actor *leader;

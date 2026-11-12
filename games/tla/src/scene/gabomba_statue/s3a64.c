@@ -274,7 +274,6 @@ extern s8 gData_02005ac0[];
 extern u8 gData_02005ac8[];
 s32 abs(s32);
 s32 Func_02004224(s32 from, s32 to, s32 kind);
-void Func_02004270(s32 x, s32 z, s32 piece, s32 flags);
 // Lays a random path of `length` cells across the Gabomba Statue grid (gSceneState,
 // 11 by 8 cells of four bytes) from (x0, z0) to (endX, endZ), backtracking through
 // per-step stacks (Data_02006fc8 to gData_02007068: direction, x, z, kind, tried
@@ -397,4 +396,3 @@ done:
   }
   return 0;
 }
-

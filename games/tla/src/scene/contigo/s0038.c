@@ -56,7 +56,6 @@ void Func_02000038(u16 *slots, u16 *colours, u16 *a, u16 *b) {
 extern u16 gData_02006000;
 extern u16 gData_02006008;
 extern u16 gData_0200600c;
-extern u16 *gData_02006010;
 extern u16 gData_0200601c;
 extern u16 gData_02006020;
 
@@ -96,16 +95,6 @@ s32 Func_020001d4(u16 *list) {
   count--;
   return count;
 }
-
-extern u16 gData_02006000;
-extern u16 *gData_02006004;
-extern u16 gData_02006008;
-extern u16 gData_0200600c;
-extern u16 *gData_02006010;
-extern u16 *gData_02006014;
-extern u16 *Data_02006018;
-extern u16 gData_0200601c;
-extern u16 gData_02006020;
 
 void Func_020001f8(void) {
   s32 step;
@@ -168,10 +157,6 @@ struct ContigoEventWork {
   s32 value1ac;
 };
 
-void Event_StartScreenTransition(void);
-void Event_WaitTransitionFrames(void);
-void Func_02000158(void);
-void Func_02000178(void);
 void Func_02004284(void);
 
 void Func_02000328(void) {

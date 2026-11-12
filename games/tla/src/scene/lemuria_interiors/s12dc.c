@@ -79,8 +79,6 @@ struct EventWork1c4 {
   u16 count;
 };
 
-void Func_02001398();
-void Func_020012dc();
 void Func_0200282c();
 void Func_02002834();
 void Func_020028f4();

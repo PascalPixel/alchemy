@@ -13,7 +13,6 @@
        ->v)
 
 #include "event_inline.h"
-extern u8 MsgAlhafraInteriors06[];
 
 void Func_02000298(s32 a0) {
   Actor_ShowEmote(a0, 0x107, 0x1e);
@@ -28,8 +27,6 @@ void Func_02000298(s32 a0) {
      type v;                                                                   \
    } *)(base))                                                                 \
        ->v)
-
-extern u8 MsgAlhafraInteriors07[];
 
 void Func_020002bc(void) {
   Event_SetFlag(0x8b1);
@@ -85,8 +82,6 @@ void Func_020002bc(void) {
    } *)(base))                                                                 \
        ->v)
 
-extern u8 MsgAlhafraInteriors08[];
-
 void Func_02000444(s32 a0) {
   Actor_FaceEachOther(a0, FIELD_AT(&gMainRoutineWork, s32, 532), 0);
   FieldEvent_SetMessageId((s32)MsgAlhafraInteriors08);
@@ -102,8 +97,6 @@ void Func_02000444(s32 a0) {
    } *)(base))                                                                 \
        ->v)
 
-extern u8 MsgAlhafraInteriors48[];
-
 void Func_0200047c(s32 a0, s32 a1) {
   Actor_FaceEachOther(a1, FIELD_AT(&gMainRoutineWork, s32, 532), 0);
   FieldEvent_SetMessageId((s32)MsgAlhafraInteriors48);
@@ -118,8 +111,6 @@ void Func_0200047c(s32 a0, s32 a1) {
      type v;                                                                   \
    } *)(base))                                                                 \
        ->v)
-
-extern u8 MsgAlhafraInteriors55[];
 
 void Func_020004b8(s32 a0) {
   Event_SetFlag(0x8b8);
@@ -286,7 +277,6 @@ s32 Scene_PrepareMap(void) { return 0; }
    } *)(base))                                                                 \
        ->v)
 
-extern u8 MsgAlhafraInteriors120[];
 extern u8 gData_02000be4[];
 
 void Func_02000738(void) {
@@ -395,4 +385,3 @@ void Func_02000738(void) {
     }
   }
 }
-

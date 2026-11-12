@@ -196,18 +196,10 @@ extern const u8 gData_02004102[];
 extern const u8 gData_02004106[];
 extern const u8 gData_02004114[];
 
-void Func_02001e78(s32 id);
 void Func_02002ffc(void);
-void Func_02000b5c(void);
 // Returns what its closing Task_Add call leaves in r0.
 s32 Func_02003ab0(const u8 *a, const u8 *b, void (*handler)(void));
-void Func_02003ecc(s32 value);
 void Func_0200107c(s32 a, s32 b);
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
-void Func_02001f04(void);
-void Func_02001fcc(void);
-void Func_02001ea0(struct Actor *object);
 
 /// Aqua Rock's entry setup: in each room it shows the statues already filled by
 /// their flags (or dims those still empty), opens what the story has opened and

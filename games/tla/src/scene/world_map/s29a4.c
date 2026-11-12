@@ -67,13 +67,8 @@ void Func_020029a4(void) {
 
 extern char MsgWeReSaved[];
 
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
-void Event_StartScreenTransition(void);
-void Event_WaitTransitionFrames(void);
 void Func_020042e0(s32 mode);
 void Func_02004b40(void);
-void Func_02004c20(void);
 void Func_02004da8(void);
 void Func_02004db0(void);
 

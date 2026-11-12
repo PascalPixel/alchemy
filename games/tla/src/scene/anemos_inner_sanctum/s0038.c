@@ -164,8 +164,6 @@ struct AnemosInnerSanctumEventWork {
 
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
-void Func_02000158(void);
-void Func_02000178(void);
 void Func_020017b4(void);
 void Func_020034a8(void);
 

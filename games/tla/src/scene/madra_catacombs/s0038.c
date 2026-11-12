@@ -75,13 +75,7 @@ void Func_02000038(u16 *list) {
   }
 }
 
-extern u8 gMapShapeGrid[];
-
-s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-s32 Func_020010ec(s32 layer, s32 x, s32 z);
 s32 Func_0200118c(s32 owner, s32 mode);
-s32 Func_020011d4(struct Actor *object);
-s32 Func_020011f4(s32 layer, s32 shape, s32 height);
 struct Actor *Func_0200120c(void);
 
 #define HELD_OBJECT(work) (*(struct Actor **)((u8 *)(work) + 0xcbc))
@@ -136,13 +130,9 @@ void Func_0200014c(u16 *list) {
   }
 }
 
-extern u8 gMapShapeGrid[];
-
 u32 Random16Far(void);
 s32 Math_Cosine(s32 angle);
-void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 void ObjectVisual_CopyAttributes(s32 id, s32 value);
-s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 void Func_0200056c(s32 id);
 void Func_020006ec(struct Actor *object, struct Actor *other);
 void Func_02000974(s32 mode);
@@ -152,7 +142,6 @@ void Func_02003ba0(struct Actor *object, s32 mode);
 void Func_02003ba8(struct Actor *object, const void *script);
 struct Actor *Func_02003bb0(s32 type, s32 x, s32 y, s32 z);
 void Func_02003c00(s32 a, s32 b, s32 c);
-s32 Func_020010ec(s32 layer, s32 x, s32 z);
 void Func_02003c28(void);
 void Func_02003c30(void);
 void Func_02003c68(s32 id, s32 x, s32 z);
@@ -160,8 +149,6 @@ void Func_02003c78(s32 id, s32 target);
 void Func_02003cc0(s32 id);
 s32 Func_02003d20(void);
 s32 Func_02003d80(void *sprite, s32 frame);
-s32 Func_020011d4(struct Actor *object);
-s32 Func_020011f4(s32 layer, s32 shape, s32 height);
 struct Actor *Func_02003dd8(s32 *position, s32 mode);
 void Func_02003df8(s32 cue);
 void Effect_AdvanceMotionAtLeaderPriority(struct Actor *object);

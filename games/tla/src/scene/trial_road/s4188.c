@@ -71,8 +71,6 @@ struct RideWork {
   void *block;
 };
 
-extern u8 gData_020023c4[];
-
 void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 
 struct RideEntry *Func_02004224(s32 slot, s32 id, s32 timer, s32 low,
@@ -125,10 +123,8 @@ extern u8 gMapShapeGrid[];
 
 s32 Func_02005a18(struct Actor *object);
 s32 Func_02005848(s32 layer, s32 x, s32 z);
-s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 void Func_02005958(s32 id);
 u8 Func_02005a20(s32 layer, s32 shape, s32 height);
-void Func_020057c8(struct Actor *object, s32 mode);
 
 void Func_020042f0(const u16 *table) {
   struct MapWork *map = Ram_HeapSlots->mapWork;

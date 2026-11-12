@@ -75,10 +75,6 @@ L_020080f6:
   return;
 }
 
-extern u8 MsgLemuriaInteriors06[];
-extern u8 MsgLemuriaInteriors09[];
-extern u8 MsgLemuriaInteriors12[];
-
 void Func_02000104(s32 unused, s32 id) {
   if (GameFlag_Test(0x966)) {
     Event_SetMessageId((s32)MsgLemuriaInteriors12);
@@ -91,9 +87,6 @@ void Func_02000104(s32 unused, s32 id) {
     Event_ShowMessageAndWait(id, 0);
   }
 }
-
-void Func_0200282c();
-void Func_02002834();
 
 void Func_02000154(s32 arg0) {
   s32 result0;
@@ -172,8 +165,6 @@ L_0200825a:
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
-void Func_0200282c();
-void Func_02002834();
 void Party_RemoveActiveOwner();
 
 s32 Func_02000284(void) {

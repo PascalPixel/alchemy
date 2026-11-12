@@ -8,7 +8,6 @@
 #include "main_routine_work.h"
 
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-void Sound_Play(s32 cue);
 void Func_02003178(void);
 
 /// Off layer 2's terrain height, the event's object runs cue 188 on terrain 2

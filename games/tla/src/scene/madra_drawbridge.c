@@ -48,10 +48,6 @@ void Func_02000054(void) {
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
-void Func_020002b8(void);
-void Func_020002c0(void);
-void Func_02000338(void);
-
 void Func_020000c8(void) {
   if (Event_GetFlag(0x200) == 0) {
     Func_020002b8();
@@ -87,10 +83,6 @@ void Func_020000c8(void) {
     }
   }
 }
-
-void Func_020002b8(void);
-void Func_020002c0(void);
-void Func_02000338(void);
 
 void Func_02000224(void) {
   Func_020002b8();

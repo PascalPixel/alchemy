@@ -12,7 +12,6 @@ void Func_02001d30(s32 value) { gData_02002ce8 = value; }
 void Func_020016b0(void);
 void Func_0200173c(void);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-void Func_02001fe0(struct Actor *object, s32 mode);
 void Actor_SetAnimationSpeed(struct Actor *object, s32 value);
 s32 Func_02002050(s32 *a, s32 aRadius, s32 *b, s32 bRadius);
 

@@ -196,7 +196,6 @@ struct DustWork {
 };
 
 extern const u8 gField_Tiles679[];
-void Func_02001940(void);
 void Func_02001c24(const void *source, void *destination);
 
 /// Starts the sparkles: 64 sprites on the ground at the origin, their tiles

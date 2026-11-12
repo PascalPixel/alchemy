@@ -55,7 +55,6 @@ extern char MsgFieldPasswordKana[];
 
 #define MSGNO(name) ((s32)(name))
 
-void *Heap_AllocEwram(s32 size);
 struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 mode);
 void Window_DrawDividerLine(struct Window *window, s32 x, s32 y, s32 length,
                             s32 mode);
@@ -802,8 +801,6 @@ extern u16 gData_02002700[];
 extern s32 gData_020026f0[];
 extern u16 gData_0200270c[];
 extern u16 gData_0200271c[];
-
-void *Unit_Get(s32 owner);
 
 s32 Func_02001c7c(s32 unused, s32 mode, u8 *out) {
   s32 size;

@@ -45,8 +45,6 @@ struct EffectWork1a {
   s16 active;
 };
 
-void Func_02000128(s32 id, u32 mode, s32 flag, s32 layer);
-
 void Func_020000a4(const void *data, s32 mode, s32 timer) {
   const u16 *spec = data;
   struct EffectWork1a *work = Ram_HeapSlots->effectWork;

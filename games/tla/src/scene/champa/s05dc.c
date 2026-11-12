@@ -46,7 +46,6 @@ void Func_0200060c(void) {
 #include "version.h"
 #include "event_inline.h"
 s32 Func_02002b3c();
-void Func_0200060c(void);
 extern u8 MsgChampa52[];
 
 void Func_02000638(void) {

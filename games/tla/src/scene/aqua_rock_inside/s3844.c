@@ -81,11 +81,6 @@ struct WaterWork {
   u16 levels[4];
 };
 
-extern u8 gData_020023c4[];
-
-s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-void Func_02003a70(void);
-
 void Func_02003ab0(const u16 *spots, const u16 *levels, void (*handler)(void)) {
   struct WaterWork *work = (struct WaterWork *)(gData_020023c4 + 0x188);
   struct WaterOutlet *outlet = work->outlets;

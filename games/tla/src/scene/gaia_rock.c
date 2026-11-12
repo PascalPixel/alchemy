@@ -188,7 +188,6 @@ void Func_02000e7c(void);
 void Func_02000edc(s32 a);
 void Func_02000f04(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
 
-
 extern const u8 gData_020013c8[];
 extern const u8 gData_020014b8[];
 extern const u8 gData_02001554[];
@@ -331,8 +330,6 @@ void Func_02000474(struct OrbitEffect *effect) {
     Func_02000e2c((struct Actor *)effect, (const u8 *)gData_020015c0);
 }
 
-void Func_02000474(struct OrbitEffect *effect);
-
 s32 Func_02000528(struct OrbitEffect *source) {
   s32 i;
   s32 timer;
@@ -442,15 +439,9 @@ void Func_02000670(void) {
 #define SCREEN_EFFECT 0x204
 #endif
 
-extern char SceneId_Ov680Room1;
-extern char SceneId_Ov680Room2;
-extern char SceneId_Ov680Room3;
 s32 Func_02000f14();
 void Actor_SetSingleChildFlags();
-void Event_StartScreenTransition();
-void Event_WaitTransitionFrames();
 void Func_02000ed4();
-void Func_02000e7c();
 void Func_02000dd0();
 void Func_02000b2c();
 
@@ -600,8 +591,6 @@ void Func_02000b2c(s32 id, s32 x, s32 y, s32 z) {
 extern const u8 gData_020016cc[];
 extern const u8 gData_02001688[];
 
-void Func_02000b2c(s32 id, s32 x, s32 y, s32 z);
-void Func_02000e24(struct Actor *object, s32 mode);
 void Func_02000ecc(void);
 
 void Func_02000bc0(s32 id, s32 flag) {
@@ -682,8 +671,6 @@ fall:
   Func_02000e7c();
   Event_SetFlag(flag);
 }
-
-void Func_02000ab4(void);
 
 void Func_02000dd0(void) {
   Task_AddFrame(Func_02000ab4, TASK_PASS_VBLANK);

@@ -27,7 +27,6 @@ void Func_02002bec(void);
 void Func_0200115c(s32 value) { gData_02003594 = value; }
 
 extern s32 gData_02003590;
-extern s32 gData_02003594;
 extern u16 gData_020035bc[];
 
 void Func_02001168(void) {
@@ -72,16 +71,11 @@ next:
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 #define WORD_AT(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
 
-extern s32 gData_02003590;
-extern s32 gData_02003594;
-extern u16 gData_020035bc[];
 extern u16 gData_020035dc[];
 extern u16 gData_020035e0[];
 
 s32 Map_GetTerrainHeight();
-void Func_02002b54();
 void Func_02002c44();
-void Func_02001168(void);
 
 void Func_02001224(s32 mode) {
   gData_02003594 = 1;
@@ -105,10 +99,6 @@ void Func_02001224(s32 mode) {
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 #define WORD_AT(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
-
-s32 Map_GetTerrainHeight();
-void Func_02002b54();
-void Func_02002c44();
 
 void Func_020012a8(s32 id) {
   struct FieldActor *object;

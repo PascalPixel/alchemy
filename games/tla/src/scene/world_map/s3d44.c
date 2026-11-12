@@ -21,8 +21,6 @@ extern u8 gWorldMapPackedPictures[];
 extern u8 gWorldMapPalettes[];
 extern u16 gData_02006e08;
 
-void Event_StartScreenTransition(void);
-void Event_WaitTransitionFrames(void);
 void Func_02004da8(void);
 void *Heap_AllocEwram(s32 size);
 s32 Func_02004aa8(const void *source, void *destination);
@@ -143,9 +141,6 @@ extern u8 gWorldMapPackedTilesB[];
 extern u8 gWorldMapPackedPicturesB[];
 extern u8 gWorldMapPalettesB[];
 
-void *Heap_AllocEwram(s32 size);
-
-void Func_02004ac8(void);
 void Func_02004ad8(void);
 
 void Func_020042e0(void) {
@@ -220,9 +215,6 @@ void Func_02004500(struct Actor *object) {
   }
 }
 
-void Animation_ApplyChildValues(struct Actor *object, s32 value);
-void Func_02004634(struct Actor *object);
-
 void Func_02004538(struct Actor *object) {
   u32 frame = gFrameCount;
 
@@ -239,15 +231,10 @@ extern u8 gData_02006e0e[];
 extern u8 gData_02006e0c[];
 void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
-void Animation_ApplyChildValues(struct Actor *object, s32 value);
 u32 Random16Far(void);
-void Func_02004c20(void);
 void Func_02004c28(void);
 s32 Func_02004c38(s32 a, s32 b, s32 c);
 void Func_02003654(s32 a, s32 b, s32 c);
-void Event_StartScreenTransition(void);
-void Event_WaitTransitionFrames(void);
-void Event_FinishScreenTransition(void);
 void Func_020036a8(void);
 void Func_020048f4(void);
 void Func_02003bb8(struct Actor *object, s32 value);
@@ -334,9 +321,6 @@ struct WorldMapOam {
 };
 
 void Animation_ApplyChildArgument(void *sprite, s32 argument);
-void Resource_ResetEntry(s32 entry);
-void Func_02004598(struct Actor *object);
-void Func_020045e4(struct Actor *object);
 
 void Func_02004634(struct Actor *parent) {
   struct Actor *pair[2];

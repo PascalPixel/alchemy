@@ -77,7 +77,6 @@ void Func_02000168(void) {
 void Func_020001d4(void) {
   struct AlhafranCaveEventWork *work = Ram_HeapSlots->eventWork;
 
-  
   work->valueD4a = 2;
 }
 
@@ -137,8 +136,6 @@ s32 Func_0200027c(void) {
 
 #include "task.h"
 
-void Func_020000fc(void);
-void Func_02000220(void);
 void Func_02001578(const void *data);
 void Animation_ApplyChildValues(struct Actor *object, s32 value);
 
@@ -223,7 +220,6 @@ void Func_02001570(s32 a, s32 b, s32 c, s32 d);
 void Func_020015e0(s32 value);
 void Func_020015e8(const void *data, s32 a, s32 b, s32 c);
 void Func_02001220(void);
-s32 Func_02000258(void);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 
@@ -326,10 +322,6 @@ void Func_02000814(void) {}
 
 extern u8 MsgYouHereTo[];
 
-void BattleEffect_SnapScaleToFull(void *object);
-void *BattleEffect_StartItemBreak(void *object);
-void Field_StartPaletteTransition(s32 mode);
-void Field_EndActorSpriteEffect(s32 mode);
 void Func_02001430(void);
 void Func_02001438(void);
 void Func_02001508(void);
@@ -338,8 +330,6 @@ void Func_020015b0(void);
 void Func_020015b8(void);
 void Func_020015c0(void);
 void Func_020015c8(struct Actor *object, s32 mode);
-void UpdateRisingParticleBurst(void *object);
-void Func_02000814(void);
 void Func_02001228(void);
 extern s32 gData_02001610[];
 extern u32 gData_02001674[];
@@ -735,4 +725,3 @@ void Func_02001320(s32 id, u32 kind, s32 flag, s32 layer) {
     }
   }
 }
-

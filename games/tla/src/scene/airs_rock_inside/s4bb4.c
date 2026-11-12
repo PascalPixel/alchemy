@@ -65,23 +65,14 @@ s32 *Func_02004c00(void) {
 #include "actor.h"
 #include "main_routine_work.h"
 
-extern u32 gFrameCount;
-void Func_02005e14(void);
-void Func_02005e1c(void);
-void Func_02005f2c(s32 skip);
-void Func_02005f94(s32 cue);
 struct Actor *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type);
 void Func_02005d8c(struct Actor *object, s32 x, s32 y, s32 z);
-void Event_StartScreenTransition(void);
-void Event_WaitTransitionFrames(void);
 s32 Func_02005dec(struct Actor *object);
 void wait(s32 frames);
-void FieldEvent_Wait(s32 frames);
 void Actor_ArmCallback(s32 actor, s32 angle, s32 frames);
 s32 Map_GetTerrainHeight(s32 terrain, s32 x, s32 z);
 void OverlayObject_WaitUntilIdle(struct Actor *object);
 void Func_02005d94(struct Actor *object);
-void Actor_SetModeById(u32 id, s32 mode);
 void Func_02005d7c(struct Actor *object);
 
 void Func_02004cc8(void) {
@@ -186,10 +177,6 @@ do {
 
 extern s32 gData_020073d8;
 
-s32 Func_02005f84(void);
-void Func_02005dac(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
-                   s32 destY);
-
 void Func_02004f3c(void) {
   struct Actor *actor = Actor_GetById(Func_02005f84());
   s32 level;
@@ -225,4 +212,3 @@ void Func_02004f3c(void) {
   }
   gData_020073d8 = level;
 }
-

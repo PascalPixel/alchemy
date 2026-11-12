@@ -50,9 +50,6 @@ void Func_02001010(void) {
   GameFlag_SetBit(0xa6b);
 }
 
-void Func_02002998(void);
-void Func_020029a0(void);
-void Event_ResolvePendingActions(s32 a);
 void Func_080d489c(s32 id, s32 value);
 
 void Func_0200106c(void) {
@@ -217,7 +214,6 @@ void Func_020013f8(void) {
   }
 }
 
-void Sound_Play(s32 cue);
 void Func_02001d30(struct Actor *object);
 void Actor_SetPositionAndCommit(s32 id, s32 x, s32 z);
 
@@ -316,9 +312,6 @@ void Func_02001670(struct Actor *object) {
   object->action += 0x100;
   sprite->rotation = Math_Sine(object->action) / 64 + 0x600;
 }
-
-void Func_020015e8(struct Actor *object);
-void Func_02001630(struct Actor *object);
 
 /// Scatters objects 17 to 21 under cue 184, lines them up 32 pixels apart
 /// at z 824, then settles them under cue 298 and leaves object 21 rocking;

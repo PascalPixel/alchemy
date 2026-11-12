@@ -54,12 +54,6 @@ void Func_02001e08(void) {
 
 extern s16 gData_02003de8[];
 
-struct Actor *Actor_FindInCell(s32 *position, struct Actor *except);
-void Func_0200074c(struct Actor *object);
-void Func_020005cc(s32 layer, s32 x, s32 z, s32 height);
-void Func_020003b4(void);
-void Func_020006cc(s16 *ids);
-
 void Func_02001edc(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   s32 position[3];
@@ -162,8 +156,6 @@ void Func_020020d0(struct Actor *object) {
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 
-void Func_020020d0(struct Actor *object);
-void Func_02002024(s32 x, s32 z);
 void Func_02003820(s32 x, s32 y, s32 z, s32 kind);
 void Func_020038dc(void);
 void Func_02003998(void);

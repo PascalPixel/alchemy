@@ -66,7 +66,6 @@ void Func_020011f4(struct Actor *object) {
 
 extern s32 gData_02003db8;
 extern const s32 gData_02002eac[];
-void Animation_ApplyChildValues(struct Actor *object, s32 value);
 void Func_02001168(struct Actor *object);
 
 void Func_0200122c(struct Actor *object) {
@@ -78,10 +77,6 @@ void Func_0200122c(struct Actor *object) {
     Func_02001168(object);
   }
 }
-
-void Animation_ApplyChildValues(struct Actor *object, s32 value);
-void Func_020011f4(struct Actor *object);
-void Func_0200122c(struct Actor *object);
 
 void Func_02001274(struct Actor *object, s32 mode) {
   if (mode == 0) {
@@ -96,7 +91,6 @@ void Func_02001274(struct Actor *object, s32 mode) {
   }
 }
 
-void Func_02001274(struct Actor *object, s32 mode);
 s32 Func_02002004(s32 *position);
 s32 Func_020020a4(s32 mode, s32 value);
 
@@ -116,13 +110,10 @@ void Func_020012ac(void) {
   Func_02001274(object, 2);
 }
 
-void Func_02001274(struct Actor *object, s32 mode);
-
 void Func_020012f8(void) {
   Func_02001274(Actor_Get(FieldParty_GetLeaderActor()), 0);
 }
 
-extern u32 gFrameCount;
 extern u16 gData_02003fc0;
 
 /// Sets the layer blend, switching its alpha every two frames.
@@ -137,10 +128,6 @@ void Func_0200130c(void) {
     QueueIoWriteDelay2(alphaRegister, gData_02003fc0 | 16);
   }
 }
-
-extern u32 gFrameCount;
-
-u32 Random16Far(void);
 
 static inline void CameraMove(s32 x, s32 y, s32 z, s32 mode) {
   /* FAKEMATCH(wrapper): the call forwarded through the inline, which sets the
@@ -179,14 +166,10 @@ void Func_02001364(void) {
 extern u8 gWorldMapPackedTiles[];
 extern u8 gWorldMapPackedPictures[];
 extern u8 gWorldMapPalettes[];
-extern u16 gData_02003fc0;
 
-void Event_StartScreenTransition(void);
-void Event_WaitTransitionFrames(void);
 void Func_02002074(void);
 void *Heap_AllocEwram(s32 size);
 s32 Func_02001f54(const void *source, void *destination);
-void Func_0200130c(void);
 void Func_02002024(void);
 void Func_02001f74(void);
 void Heap_Release(void *pointer);
@@ -312,7 +295,6 @@ void Func_02001400(s32 mode) {
   Event_SetFlag(0x101);
 }
 
-void Animation_ApplyChildValues(struct Actor *object, s32 value);
 void Func_02001ad0(struct Actor *object);
 
 void Func_0200199c(struct Actor *object) {
@@ -326,9 +308,6 @@ void Func_0200199c(struct Actor *object) {
   }
 }
 
-void Animation_ApplyChildValues(struct Actor *object, s32 value);
-void Func_02001ad0(struct Actor *object);
-
 void Func_020019d4(struct Actor *object) {
   u32 frame = gFrameCount;
 
@@ -337,8 +316,6 @@ void Func_020019d4(struct Actor *object) {
   if ((gFrameCount & 15) == 0)
     Func_02001ad0(object);
 }
-
-void Animation_ApplyChildValues(struct Actor *object, s32 value);
 
 void Func_02001a0c(struct Actor *object) {
   u32 frame = gFrameCount;

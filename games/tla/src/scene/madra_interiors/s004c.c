@@ -269,23 +269,15 @@ void Func_02000570(void) {
 extern u8 gData_0200349c[];
 extern u8 gData_02003418[];
 extern u8 gData_020033c8[];
-void Event_StartScreenTransition();
-void Event_WaitTransitionFrames();
 void Field_DispatchTypeHandler();
-void Func_02001d50();
-void Func_02001d58();
 void Func_02001e68();
 void Func_02001e90();
 void Func_02001e98();
 void Func_02001ea0();
 void Func_02001ea8();
 void Func_02001eb0();
-void Actor_SetSingleChildFlags();
-void Actor_WaitForAnimationChange();
 
 void Func_02001e80(s32 value);
-void Func_02000534(void);
-void Func_02000570(void);
 
 /// The rooms' setup: the leader's sprite priority, the two rooms' actors and
 /// the sprite of actor 10, by the story flags.
@@ -332,23 +324,6 @@ s32 Func_02000624(void) {
     Actor_SetSpriteColor(Actor_Get(28), 2);
   return 0;
 }
-
-extern u8 gData_0200349c[];
-extern u8 gData_02003418[];
-extern u8 gData_020033c8[];
-void Event_StartScreenTransition();
-void Event_WaitTransitionFrames();
-void Field_DispatchTypeHandler();
-void Func_02001d50();
-void Func_02001d58();
-void Func_02001e68();
-void Func_02001e90();
-void Func_02001e98();
-void Func_02001ea0();
-void Func_02001ea8();
-void Func_02001eb0();
-void Actor_SetSingleChildFlags();
-void Actor_WaitForAnimationChange();
 
 s32 Scene_PrepareMap(void) { return 0; }
 
@@ -655,13 +630,9 @@ void Func_02000fe0(void) {
   return;
 }
 
-void Func_02001d50();
-void Func_02001d58();
 void Func_02001ef8();
 void Func_02001910(void);
 void Func_02001a20(void);
-void Func_02001d50();
-void Func_02001d58();
 void PartyInventory_Remove();
 extern u32 gData_02001f18[];
 extern u32 gData_02001f4c[];

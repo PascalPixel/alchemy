@@ -35,8 +35,6 @@ s32 OverlayObject_UpdateEveryFourFrames(void *obj) {
 
 s32 Random16Far(void);
 
-extern u32 gFrameCount;
-
 struct SceneEffectSource {
   u8 unk00[8];
   s32 x;

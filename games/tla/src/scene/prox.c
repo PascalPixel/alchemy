@@ -267,10 +267,7 @@ s32 Func_02000644(void) {
    } *)(base))                                                                 \
        ->v)
 
-s32 Func_02000644();
 s32 Func_02004634();
-s32 Func_02004464();
-s32 Func_0200446c();
 extern u8 MsgProx135[];
 extern u8 MsgProx56[];
 
@@ -302,10 +299,7 @@ void Func_02000674(void) {
    } *)(base))                                                                 \
        ->v)
 
-s32 Func_02000644();
 s32 Func_02004624();
-s32 Func_02004464();
-s32 Func_0200446c();
 extern u8 MsgProx132[];
 extern u8 MsgProx53[];
 
@@ -337,10 +331,7 @@ void Func_020006c4(void) {
    } *)(base))                                                                 \
        ->v)
 
-s32 Func_02000644();
 s32 Func_0200462c();
-s32 Func_02004464();
-s32 Func_0200446c();
 extern u8 MsgProx139[];
 extern u8 MsgProx60[];
 
@@ -451,8 +442,6 @@ void Func_02000884(void) {
    } *)(base))                                                                 \
        ->v)
 
-s32 Func_02004464();
-s32 Func_0200446c();
 extern u8 MsgProx47[];
 
 void Func_02000914(void) {
@@ -517,9 +506,7 @@ void Func_02000914(void) {
    } *)(base))                                                                 \
        ->v)
 
-s32 Func_02004464();
 s32 Func_0200457c();
-s32 Func_0200446c();
 extern u8 MsgProx62[];
 
 void Func_02000ad8(void) {
@@ -600,9 +587,7 @@ void Func_02000ad8(void) {
   Func_0200446c();
 }
 
-s32 Func_02004464();
 s32 Func_020044dc();
-s32 Func_0200446c();
 extern u8 MsgProx75[];
 extern u8 gData_020049c4[];
 extern u8 gData_02004980[];
@@ -829,9 +814,6 @@ test_wait:
   Func_0200446c();
 }
 
-s32 Func_02004464();
-s32 Func_0200446c();
-
 void Func_020015d0(void) {
   struct Actor *object;
 
@@ -975,8 +957,6 @@ void Func_02001860(s32 a0, s32 a1, s32 a2) {
     Animation_SetStateFlags(t0, 1);
   }
 }
-
-void Func_02001860(s32 x, s32 y, s32 z);
 
 void Func_020018e0(void) {
   s32 scene = gMainRoutineWork.scene;

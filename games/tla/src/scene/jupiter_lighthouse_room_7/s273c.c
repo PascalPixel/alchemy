@@ -10,8 +10,6 @@
 
 void Func_02002b6c(void);
 void Func_02002afc(void);
-void Event_StartScreenTransition(void);
-void Event_WaitTransitionFrames(void);
 s32 Math_Cosine(s32 angle);
 u32 Random16Far(void);
 void Effect_AdvanceMotion(union FieldObject *object);

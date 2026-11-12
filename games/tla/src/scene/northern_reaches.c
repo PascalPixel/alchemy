@@ -110,8 +110,6 @@ s32 Animation_ApplyChildValues();
 
 void Func_020006b0(s32 unused, s32 *position, void (*callback)(void));
 
-extern u8 MsgShipSafeFiringDistance[];
-
 void Func_020001d8(void) {
   /* FAKEMATCH(wrapper): calls forwarded through inlines (call.h's Call and
    * Value, this file's own); as direct calls, 174 of 438 instructions differ in
@@ -307,7 +305,6 @@ struct SceneWork {
 
 extern char SceneId_Ov6a7Room1;
 
-void Func_02000064(void);
 void Func_02000af8(s32 scene, s32 entrance);
 void Func_02000b08(void);
 
@@ -325,8 +322,6 @@ s32 Func_02000618(void) {
   Func_02000b08();
   return 0;
 }
-
-void Func_02000064(void);
 
 s32 Func_02000680(void) {
   if (gMainRoutineWork.entrance == 3)
@@ -398,10 +393,6 @@ void Func_02000b40(struct Sprite6a7 *sprite, s32 a, s32 b, s32 c, s32 tile);
 void Func_02000b48(struct Sprite6a7 *sprite, struct Particle6a7 *particle);
 void Func_02000b50(struct Particle6a7 *particle, s32 a, s32 b);
 void *HeapSlot_AllocFar(s32 slot, s32 size);
-void HeapSlot_Release(s32 slot);
-void *Heap_Alloc(s32 size);
-void *Heap_AllocEwram(s32 size);
-void Heap_Release(void *buffer);
 u32 Random16Far(void);
 void *Resource_GetTableEntry(s32 resourceId);
 s32 Resource_FindFreeEntry(void);

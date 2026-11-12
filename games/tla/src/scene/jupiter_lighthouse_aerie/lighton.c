@@ -10,8 +10,6 @@
 #include "ram_buffer.h"
 #include "field_event.h"
 
-extern s32 gData_02003318;
-
 void Func_02000790(s32 value) { gData_02003318 = value; }
 
 void Func_0200079c(void) {
@@ -53,13 +51,8 @@ next:
   gData_02003314++;
 }
 
-extern s32 gData_02003314;
-extern s32 gData_02003318;
-extern u16 gData_02003340[];
 extern u16 gData_02003360[];
 extern u16 gData_02003364[];
-
-void Func_0200079c(void);
 
 void Func_02000858(s32 mode) {
   gData_02003318 = 1;

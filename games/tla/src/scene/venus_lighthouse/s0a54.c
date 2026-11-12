@@ -79,9 +79,6 @@ void Func_02001c4c(void);
 void Func_02001cd4(s32 actor);
 void Func_02001ccc(s32 actor, s32 value);
 void Party_RemoveActiveOwner(s32 owner);
-void Event_FinishScreenTransition(void);
-void Event_WaitTransitionFrames(void);
-void Event_StartScreenTransition(void);
 void VenusLighthouse_RunSetupStep(void);
 void SceneState_RunActor13AtColumn42Setup(void);
 

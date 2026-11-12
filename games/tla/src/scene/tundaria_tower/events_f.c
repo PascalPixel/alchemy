@@ -12,15 +12,10 @@ void Func_02001e5c(s32 value) { gData_02003cd0 = value; }
 
 void Func_020017dc(void);
 void Func_02001868(void);
-s32 GetMapCellCollision(s32 layer, s32 x, s32 z);
-void Vector_AddPolarOffsetFar(s32 radius, s32 angle, s32 *vector);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-void Actor_SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z);
 void Func_02002f80(struct Actor *object, s32 mode);
 void Actor_SetAnimationSpeed(struct Actor *object, s32 value);
-void Script_WaitForEventTimeout(struct Actor *object);
 s32 Func_02003028(s32 *a, s32 aRadius, s32 *b, s32 bRadius);
-void wait(s32 frames);
 
 void Func_02001e68(void) {
   struct Actor *object;
@@ -131,7 +126,6 @@ end:
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 
-void Actor_SetSingleChildFlags();
 void Func_02002184();
 
 void Func_02002094(u16 *table) {
@@ -242,10 +236,7 @@ void Func_02002184(s32 id, u32 kind, s32 flag, s32 layer) {
 extern u8 gMapShapeGrid[];
 
 s32 Func_02003010(s32 layer, s32 x, s32 z);
-s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-void Func_020030c0(s32 id);
 s32 Func_02003180(s32 layer, s32 shape, s32 height);
-void Func_02002f80(struct Actor *object, s32 mode);
 
 void Func_0200222c(const u16 *table) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
@@ -301,9 +292,6 @@ done:
 
 s32 Func_020030f8(void);
 struct Actor *Func_02003188(s32 *position, s32 mode);
-void Func_02003048(void);
-void Func_02003050(void);
-void Func_02002f80(struct Actor *object, s32 mode);
 void Func_020029d0(s32 value);
 void Func_02002ca8(s32 offset, s32 layer);
 void Func_02002b04(void);
@@ -387,12 +375,6 @@ test:
     goto next;
 }
 
-void Func_02002f80(struct Actor *object, s32 mode);
-void Sound_Play(s32 cue);
-void Func_020029d0(s32 a);
-void Func_02002b04(void);
-void wait(s32 frames);
-
 void Func_020024e8(u16 *row, s32 id) {
   struct Actor *object = Actor_GetById(id);
   s32 flag;
@@ -441,15 +423,7 @@ void Func_020025c8(s32 id) {
 
 // Places the listed actors on their cells.
 
-extern u8 gMapShapeGrid[];
-
 void Func_02003090(s32 id, s32 target);
-void Func_020025c8(s32 id);
-s32 Func_02003160(struct Actor *object);
-s32 Func_02003010(s32 layer, s32 x, s32 z);
-s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-void Func_020030c0(s32 id);
-s32 Func_02003180(s32 layer, s32 shape, s32 height);
 void ObjectVisual_CopyAttributes(u32 targetId, u32 sourceId);
 /// Places actors 8, 9 and 10, then walks a 0xffff-ended list of (actor, flag)
 /// halfword pairs: flag + 1 set parks the actor at (0, 0); otherwise its cell

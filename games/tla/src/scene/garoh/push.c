@@ -57,7 +57,6 @@ void Func_02001454(s32 actor) {
   Func_0200531c();
 }
 
-void Func_020013b0(s32 id);
 #define ACTOR_MODE_THEN_WAIT(id, mode, frames)                                 \
   do {                                                                         \
     Actor_SetAnimation(id, mode);                            \

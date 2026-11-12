@@ -44,7 +44,6 @@ void Func_02001a38(s32 mode, s32 cue) {
   Event_SetFlag(0x201);
 }
 
-void Func_020014bc(s32 mode, s32 cue);
 void Func_02003aec(void);
 void Func_02003af4(void);
 

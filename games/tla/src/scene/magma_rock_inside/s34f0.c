@@ -1,7 +1,5 @@
 #include "local.h"
 
-extern char SceneId_Ov692Room3;
-
 s32 Func_02000694(u32 layer, s32 x, s32 y, s32 value);
 
 void Func_020034f0(void) {

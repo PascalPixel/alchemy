@@ -160,7 +160,6 @@ void Func_02000158(s32 message, s32 x, s32 y, s32 left, s32 line, s32 frames,
 // struct (the stores then stay, but through a base register: 75 differ).
 
 void Text_GetMessageSize();
-void Func_02000158();
 
 void Func_02000244(s32 message, s32 position, s32 frames) {
   s32 x;

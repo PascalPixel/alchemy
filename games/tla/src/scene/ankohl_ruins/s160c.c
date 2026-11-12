@@ -376,7 +376,6 @@ extern u32 gFrameCount;
 
 void Func_0200015c(s32 x, s32 y, s32 z, s32 unused, s32 speed, s32 phase,
                    s32 life, struct AnkohlRuinsEffectParams *params);
-void Func_02000b30(s32 id, s32 cue);
 void Func_02002ee4(void);
 
 // The scene's own event inlines: a habit of the whole game written once, as

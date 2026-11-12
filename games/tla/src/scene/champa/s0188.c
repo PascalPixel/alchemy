@@ -17,7 +17,6 @@
 s32 Func_02002a44();
 s32 Func_02002b3c();
 void Func_02002a4c(void);
-extern u8 MsgChampa49[];
 
 void Func_02000188(void) {
   s32 t24;
@@ -121,9 +120,6 @@ void Func_02000468(s32 actor) {
   Event_ShowMessage(actor, 0);
 }
 
-extern u8 MsgChampa30[];
-extern u8 MsgChampa05[];
-
 void Func_020004b4(s32 actor) {
   if (Event_GetFlag(0x97f)) {
     FieldEvent_SetMessageId((s32)MsgChampa30);
@@ -151,8 +147,6 @@ void Func_020004b4(s32 actor) {
 }
 
 #include "event_inline.h"
-extern u8 MsgChampa35[];
-extern u8 MsgChampa36[];
 
 void Func_02000554(s32 a0) {
   s32 t0;

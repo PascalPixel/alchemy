@@ -14,13 +14,7 @@
 #include "scene_ids.h"
 
 void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
-void Import_EventStart(void);
-void Import_EventEnd();
 void Import_ActorPlaceAtActor();
-void Event_StartScreenTransition(void);
-void Event_FinishScreenTransition(void);
-void Event_WaitTransitionFrames(void);
-void Actor_WaitForAnimationChange();
 void DriftScene_SpawnObject();
 void Func_02003180();
 
@@ -234,13 +228,8 @@ extern const u8 gData_0200346c[];
 extern const u8 gData_020034e4[];
 extern const u8 gData_0200350c[];
 
-void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
-void Event_StartScreenTransition();
-void Event_FinishScreenTransition();
-void Event_WaitTransitionFrames();
 void Func_0200161c(void);
 void DriftScene_Prepare(void);
-void Func_02003180();
 
 void Func_02001ee0(void) {
   struct Actor *actor = Actor_Get(5);
@@ -347,23 +336,15 @@ void Func_02001ee0(void) {
   FieldEvent_SetExitRequest(12);
 }
 
-void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
-void Import_EventStart(void);
-void Import_EventEnd();
-void Import_ActorPlaceAtActor();
 void Event_StartScreenTransition(void);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
-void Actor_WaitForAnimationChange();
-void DriftScene_SpawnObject();
-void Func_02003180();
 
 extern const u8 gData_02003534[];
 extern const u8 gData_02003578[];
 extern const u8 gData_020035bc[];
 extern const u8 gData_02003600[];
 
-void DriftScene_Prepare(void);
 void Func_020032e0(void);
 
 void Func_02002304(void) {
@@ -596,12 +577,6 @@ void Func_02002304(void) {
   FieldEvent_SetExitRequest(13);
 }
 
-void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
-void Actor_WaitForAnimationChange();
-void Event_StartScreenTransition();
-void Event_WaitTransitionFrames();
-void Func_02003180();
-
 void FelixWake_StartStep(void) {}
 
 void FelixWake_EndStep(void) {}
@@ -719,9 +694,6 @@ void Func_02002c64(void) {
 void Func_0200153c(void);
 void Func_02001558(void);
 void Func_020015a0(void);
-void Func_020016d8(void);
-void Func_02001ee0(void);
-void Func_02002304(void);
 void Func_02002fd4(void);
 void Func_020031a8(s32 a);
 
@@ -765,8 +737,6 @@ s32 Func_02002ec8(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
-
 struct ActorSprite {
   u8 unk00[18];
   u16 rotation;
@@ -783,9 +753,6 @@ void Func_02002f88(s32 id) {
   object->collisionFlags = 0;
   ((struct ActorSprite *)object->animation)->rotation = 0xc000;
 }
-
-void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
-void Func_02002c64(void);
 
 void Func_02002fd4(void) {
   s32 flag;

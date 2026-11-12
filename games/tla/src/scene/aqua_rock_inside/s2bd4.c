@@ -53,8 +53,6 @@ struct SlideWork {
 };
 
 s32 Func_02003d2c(struct Actor *object, s32 *position);
-void Func_02002bd4(struct Actor *object);
-void Func_02003cc4(struct Actor *object, s32 animation);
 
 void Func_02002ca4(void) {
   struct Actor *center;

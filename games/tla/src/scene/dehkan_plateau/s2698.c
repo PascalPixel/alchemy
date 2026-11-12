@@ -88,11 +88,9 @@ void Func_02002698(s32 id, s32 center, s32 flag) {
 }
 
 void Func_020021b4();
-void Func_02002698();
 void Func_02003c28();
 void Func_02003c30();
 void Func_02003cf0();
-void Actor_SetSingleChildFlags();
 
 void Func_020027e0(void) {
   struct Actor *actor;

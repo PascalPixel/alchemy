@@ -121,8 +121,6 @@ struct DoorPlan {
 extern u8 gData_02005290[];
 
 s32 Actor_SetSingleChildFlags();
-void Event_FinishScreenTransition();
-void Event_WaitTransitionFrames();
 void Func_0200112c(void);
 void Func_020017ec(void);
 void Func_02001cb0(void);
@@ -207,9 +205,6 @@ void Func_02000200(s32 mode, s32 id) {
 
 #include "actor.h"
 
-void Func_02000190(s32, s32);
-void Func_02000200(s32, s32);
-
 void Func_02000394(s32 unused, s32 id) {
   Func_02000190(unused, id);
   MapGrid_SetCellBehavior(0x1400000, 0x1d00000, 2, 255);
@@ -250,4 +245,3 @@ void Func_0200042c(s32 mode, s32 id) {
   if (open)
     FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
 }
-

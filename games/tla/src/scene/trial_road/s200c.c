@@ -16,7 +16,6 @@
    } *)(base))                                                                 \
        ->v)
 
-void Func_020006b4();
 void Func_02001754();
 void Func_02001fc4();
 void Func_02002db0();
@@ -71,16 +70,11 @@ L_0200a07c:
 L_0200a0bc:
 }
 
-extern char SceneId_Ov697Room1;
-extern char SceneId_Ov697Room2;
-extern char SceneId_Ov697Room3;
-extern char SceneId_Ov697Room4;
 extern s32 (*const gData_02005b64[])(void);
 
 void Func_02003900(void);
 void Func_02001dd0(void);
 void Func_02001eb0(void);
-void Func_0200200c(void);
 
 s32 Func_020020c4(void) {
   s32 scene = gMainRoutineWork.scene;
@@ -240,12 +234,6 @@ void Func_0200223c(void) {
   road->field14++;
 }
 
-extern char SceneId_Ov697Room1;
-extern char SceneId_Ov697Room2;
-extern char SceneId_Ov697Room3;
-extern char SceneId_Ov697Room4;
-extern u8 gMapShapeGrid[];
-extern const s32 *const gData_02005b84[];
 extern const s16 gData_02005bac[][2];
 extern const s8 gData_02005bcc[];
 extern const s8 gData_02005bd6[];
@@ -253,14 +241,10 @@ extern const s8 gData_02005bd6[];
 u8 *Unit_Get(s32 id);
 void Func_02002c30(u32 seed);
 void Func_02005828(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void Func_0200217c(s32 srcX, s32 srcY, s32 width, s32 height, s32 dstX,
-                   s32 dstY);
 void Func_020057e8(void);
 void Func_020055c4(s32 a, s32 b);
 void Func_02005688(s32 a);
-void Func_0200223c(void);
 void Func_02000218(s32 side, s32 phase);
-void Func_020002a4(s32 side, s32 phase);
 
 // The state as this function reads it: its first 16 bytes are the dealt order.
 struct TrialRoadDeal {
@@ -603,12 +587,7 @@ void Func_02002db4(void) {
 
 void Func_02005880(void);
 void Func_020058f0(s32 actor, s32 value);
-s32 Func_02002d20(s32 value);
-s32 Func_02002d50(s32 value);
-s32 Func_02002d38(s32 value);
 void Func_02005980(void);
-
-void Func_02002d78(s32 actor, s32 x, s32 z, s32 angle);
 
 void Func_02002dec(void) {
   struct Actor *object;
@@ -716,13 +695,6 @@ void Func_02002dec(void) {
   Event_Wait(6);
 }
 
-void Func_02005880(void);
-void Func_020058f0(s32 actor, s32 value);
-s32 Func_02002d20(s32 value);
-s32 Func_02002d50(s32 value);
-s32 Func_02002d38(s32 value);
-void Func_02005980(void);
-
 void Func_0200322c(void) {
   Func_02005880();
   Event_ResolvePendingActions(0);
@@ -787,12 +759,6 @@ struct ActorSolid {
   u8 solid : 8;
 };
 
-void Event_StartScreenTransition(void);
-void Event_WaitTransitionFrames(void);
-void Func_02005880(void);
-void Func_02002d78(s32 actor, s32 x, s32 z, s32 angle);
-s32 Func_02002d20(s32 value);
-s32 Func_02002d50(s32 value);
 void Func_02005860(s32 cue);
 
 void Func_020034b4(void) {
@@ -885,10 +851,6 @@ void Func_020034b4(void) {
 
 void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
-void Event_StartScreenTransition(void);
-void Event_WaitTransitionFrames(void);
-void Func_02005880(void);
-void Func_02002d78(s32 actor, s32 x, s32 z, s32 angle);
 
 void Func_020037c8(void) {
   Func_02005880();
@@ -933,10 +895,6 @@ extern const u8 gData_02005d28[];
 extern const u8 gData_02005dc8[];
 extern const u8 gData_02005e40[];
 extern const u8 gData_02005ed4[];
-
-void Event_StartScreenTransition(void);
-void Func_02005880(void);
-void Func_02005980(void);
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.

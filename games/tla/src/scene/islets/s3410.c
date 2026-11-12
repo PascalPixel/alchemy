@@ -118,8 +118,6 @@ void Func_020034fc(void) {
   }
 }
 
-void Event_FinishScreenTransition();
-void Event_WaitTransitionFrames();
 void Func_02003e64();
 void Actor_SetSingleChildFlags();
 void Func_02003f84();
@@ -219,4 +217,3 @@ void Func_02003790(s32 layer, s32 x, s32 z, u32 width, u32 height, s32 value) {
     }
   }
 }
-

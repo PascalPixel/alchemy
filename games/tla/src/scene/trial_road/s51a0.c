@@ -182,15 +182,6 @@ struct TrialRoadLink {
   s32 unkf0;
 };
 
-extern const u8 gData_020062d4[];
-
-void *HeapSlot_AllocEwram(s32 slot, s32 size);
-void *Heap_AllocEwram(s32 size);
-void Func_02005770(const void *source, void *destination);
-s32 Resource_FindFreeEntry(void);
-void Heap_Release(void *block);
-void Func_020051a0(void);
-
 void Func_020055c4(s32 a, s32 b) {
   struct TrialRoadLink *link = HeapSlot_AllocEwram(236, 0x3934);
   void *buffer = Heap_AllocEwram(576);

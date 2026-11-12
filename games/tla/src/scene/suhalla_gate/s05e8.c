@@ -10,7 +10,6 @@
 extern char SceneId_VenusLighthouseEntrance;
 extern char SceneId_SuhallaGate3;
 
-void Func_02000990(void);
 void Func_02000a40(s32 a, s32 b);
 
 void Func_020005e8(void) {

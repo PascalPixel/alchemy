@@ -23,8 +23,6 @@ struct Unk_02004240 {
   s32 value[6];
 };
 
-void Event_FinishScreenTransition();
-void Event_WaitTransitionFrames();
 void Func_02000fa4(void);
 void Func_0200112c(void);
 void Func_020017ec(void);
@@ -108,7 +106,6 @@ extern struct DoorStep gData_02005290[];
 
 void Func_02000394(s32, s32);
 void Func_0200042c(s32, s32);
-void Func_02000514(void);
 
 void Func_020006ec(s32 mode) {
   s32 tile;
@@ -293,7 +290,6 @@ void Func_02000af8(void) {
 #define OBJECT(id) (Actor_Get((id)))
 
 extern const u8 gData_02004d0c[];
-void Func_02000af8(void);
 void Func_02004c5c();
 void Func_02003274(void);
 void Func_020040ec();
@@ -930,4 +926,3 @@ void Func_02001b9c(s32 x, s32 y, s32 z, s16 value, s32 timer) {
     sprite->rotation = value;
   }
 }
-

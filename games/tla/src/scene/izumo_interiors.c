@@ -997,7 +997,6 @@ void Func_0200229c(s32, s32);
 void Func_020022a4(void);
 void Func_020022ac(void);
 void Func_020022b4(void);
-void Field_DispatchTypeHandler(s32 type);
 
 s32 Func_02001d84(void) { return -1; }
 
@@ -1013,15 +1012,11 @@ void Func_02001d8c(void) {
   Func_020022ac();
 }
 
-void Func_020021c4();
-void Func_020021cc();
 void Func_020022e4();
 void Func_020022ec();
 void Func_020022f4();
 void Func_020022fc();
 void PartyInventory_Remove();
-extern u8 MsgAgainYouHave[];
-extern u8 MsgAhCouldIt[];
 
 void Func_02001dd0(void) {
   s32 t9, t21, t31;

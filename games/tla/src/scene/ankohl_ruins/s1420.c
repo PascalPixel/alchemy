@@ -32,7 +32,6 @@ struct AnkohlRuinsFloatWork {
 
 extern struct AnkohlRuinsFloatWork Data_02004030;
 void Func_020012c4(void);
-s32 Resource_FindFreeEntry(void);
 
 void Func_02001420(void) {
   struct AnkohlRuinsFloatWork *work = &Data_02004030;
@@ -121,10 +120,6 @@ fill:
     sprite->kind = 4;
   }
 }
-
-extern s16 gData_02003782;
-extern s16 gData_02003784;
-extern s32 gData_0200378c;
 
 void Func_020015ac(void) {
   struct AnkohlRuinsEventWork *work =

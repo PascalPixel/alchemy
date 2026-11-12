@@ -41,8 +41,6 @@ struct GabombaStatueEffectWork {
   s16 objectId;
 };
 
-void GameFlag_SetBit(s32 flag);
-
 // Finds the current target's table row and shrinks it.
 void Func_020000a4(u16 *list, s32 mode, s32 count) {
   struct GabombaStatueEffectWork *work = Ram_HeapSlots->effectWork;
@@ -74,8 +72,6 @@ void Func_020000a4(u16 *list, s32 mode, s32 count) {
 
 #include "field_event.h"
 
-s32 GameFlag_Test(s32 flag);
-void Func_02005d5c(struct FieldActor *object, s32 mode);
 #include "map.h"
 
 void Func_02000128(s32 id, u32 kind, s32 flag, s32 layer) {
@@ -112,4 +108,3 @@ void Func_02000128(s32 id, u32 kind, s32 flag, s32 layer) {
     }
   }
 }
-

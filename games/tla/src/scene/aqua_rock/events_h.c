@@ -16,11 +16,6 @@ void Func_02001f60(s32 id) {
   }
 }
 
-void Func_02002998(void);
-void Func_020029a0(void);
-void Event_ResolvePendingActions(s32 a);
-void Sound_Play(s32 cue);
-void Import_EventSetExitRequest(s32 a);
 void Func_02001d30(struct Actor *object);
 void Func_0200015c(s32 x, s32 y, s32 z, s32 a, s32 b, s32 c, s32 flags,
                    s32 *params);

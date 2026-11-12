@@ -74,7 +74,6 @@ struct EffectWork7c4 {
   s16 active;
   s16 timer;
 };
-void Field_DispatchTypeHandler(s32 type);
 
 void Func_0200118c(void) {
   GameFlag_SetBit(0x209);
@@ -138,35 +137,6 @@ const u8 *Func_02001240(void) {
   return gData_02004f10;
 }
 
-extern const u8 gData_02003f44[];
-extern const u8 gData_02003f52[];
-extern const u8 gData_02003f80[];
-extern const u8 gData_02003f92[];
-extern const u8 gData_02003f98[];
-extern const u8 gData_02003fa0[];
-extern const u8 gData_02003fa8[];
-extern const u8 gData_02003fb0[];
-extern const u8 gData_02003fb8[];
-extern const u8 gData_02003fc0[];
-extern const u8 gData_02003fc4[];
-
-void Func_020000a4(const void *data, s32 a, s32 b);
-void Func_020002f8(const void *data);
-void Func_02000708(const void *data);
-void Func_02001474(s32 show);
-void Func_02002180(void);
-void Func_02003c28(void);
-void Func_02003c30(void);
-void Func_02003dc0(const void *data);
-void Func_02003dc8(void);
-void Func_02003de8(void);
-void Func_020015b8(struct Actor *object);
-void Func_0200172c(void);
-void Func_02001804(void);
-
-extern const u16 gData_02003fd2[];
-extern const struct CellRecord gData_02004066[];
-
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void Map_CopyAttributes(s32 a, s32 b, s32 c, s32 d, s32 e,
@@ -187,28 +157,6 @@ void Func_020012d8(void) {
     Map_CopyAttributes(0, 0, 1, 1, 16, 28);
 }
 
-extern const u8 gData_02003f44[];
-extern const u8 gData_02003f52[];
-extern const u8 gData_02003f80[];
-extern const u8 gData_02003f92[];
-extern const u8 gData_02003f98[];
-extern const u8 gData_02003fa0[];
-extern const u8 gData_02003fa8[];
-extern const u8 gData_02003fb0[];
-extern const u8 gData_02003fb8[];
-extern const u8 gData_02003fc0[];
-extern const u8 gData_02003fc4[];
-
-void Func_020000a4(const void *data, s32 a, s32 b);
-void Func_020002f8(const void *data);
-void Func_02000708(const void *data);
-void Func_02001474(s32 show);
-void Func_02002180(void);
-void Func_02003c28(void);
-void Func_02003c30(void);
-void Func_02003dc0(const void *data);
-void Func_02003dc8(void);
-
 void Func_02001368(void) {
   s32 y;
 
@@ -220,35 +168,6 @@ void Func_02001368(void) {
     Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 1;
   }
 }
-
-extern const u8 gData_02003f44[];
-extern const u8 gData_02003f52[];
-extern const u8 gData_02003f80[];
-extern const u8 gData_02003f92[];
-extern const u8 gData_02003f98[];
-extern const u8 gData_02003fa0[];
-extern const u8 gData_02003fa8[];
-extern const u8 gData_02003fb0[];
-extern const u8 gData_02003fb8[];
-extern const u8 gData_02003fc0[];
-extern const u8 gData_02003fc4[];
-
-void Func_020000a4(const void *data, s32 a, s32 b);
-void Func_020002f8(const void *data);
-void Func_02000708(const void *data);
-void Func_02001474(s32 show);
-void Func_02002180(void);
-void Func_02003c28(void);
-void Func_02003c30(void);
-void Func_02003dc0(const void *data);
-void Func_02003dc8(void);
-void Func_02003de8(void);
-void Func_020015b8(struct Actor *object);
-void Func_0200172c(void);
-void Func_02001804(void);
-
-extern const u16 gData_02003fd2[];
-extern const struct CellRecord gData_02004066[];
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -268,28 +187,6 @@ void Func_020013fc(void) {
     Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 1;
   }
 }
-
-extern const u8 gData_02003f44[];
-extern const u8 gData_02003f52[];
-extern const u8 gData_02003f80[];
-extern const u8 gData_02003f92[];
-extern const u8 gData_02003f98[];
-extern const u8 gData_02003fa0[];
-extern const u8 gData_02003fa8[];
-extern const u8 gData_02003fb0[];
-extern const u8 gData_02003fb8[];
-extern const u8 gData_02003fc0[];
-extern const u8 gData_02003fc4[];
-
-void Func_020000a4(const void *data, s32 a, s32 b);
-void Func_020002f8(const void *data);
-void Func_02000708(const void *data);
-void Func_02001474(s32 show);
-void Func_02002180(void);
-void Func_02003c28(void);
-void Func_02003c30(void);
-void Func_02003dc0(const void *data);
-void Func_02003dc8(void);
 
 void Func_02001444(void) {
   s32 y;
@@ -317,35 +214,6 @@ void Func_02001474(s32 show) {
     Func_02001514(show, 10, 6);
 }
 
-extern const u8 gData_02003f44[];
-extern const u8 gData_02003f52[];
-extern const u8 gData_02003f80[];
-extern const u8 gData_02003f92[];
-extern const u8 gData_02003f98[];
-extern const u8 gData_02003fa0[];
-extern const u8 gData_02003fa8[];
-extern const u8 gData_02003fb0[];
-extern const u8 gData_02003fb8[];
-extern const u8 gData_02003fc0[];
-extern const u8 gData_02003fc4[];
-
-void Func_020000a4(const void *data, s32 a, s32 b);
-void Func_020002f8(const void *data);
-void Func_02000708(const void *data);
-void Func_02001474(s32 show);
-void Func_02002180(void);
-void Func_02003c28(void);
-void Func_02003c30(void);
-void Func_02003dc0(const void *data);
-void Func_02003dc8(void);
-void Func_02003de8(void);
-void Func_020015b8(struct Actor *object);
-void Func_0200172c(void);
-void Func_02001804(void);
-
-extern const u16 gData_02003fd2[];
-extern const struct CellRecord gData_02004066[];
-
 void Func_020014ec(void) {
   Func_02001474(1);
   GameFlag_SetBit(0x200);
@@ -368,35 +236,6 @@ void Func_02001514(s32 show, s32 first, u32 count) {
       actor->priorityFlags |= 0x10;
   }
 }
-
-extern const u8 gData_02003f44[];
-extern const u8 gData_02003f52[];
-extern const u8 gData_02003f80[];
-extern const u8 gData_02003f92[];
-extern const u8 gData_02003f98[];
-extern const u8 gData_02003fa0[];
-extern const u8 gData_02003fa8[];
-extern const u8 gData_02003fb0[];
-extern const u8 gData_02003fb8[];
-extern const u8 gData_02003fc0[];
-extern const u8 gData_02003fc4[];
-
-void Func_020000a4(const void *data, s32 a, s32 b);
-void Func_020002f8(const void *data);
-void Func_02000708(const void *data);
-void Func_02001474(s32 show);
-void Func_02002180(void);
-void Func_02003c28(void);
-void Func_02003c30(void);
-void Func_02003dc0(const void *data);
-void Func_02003dc8(void);
-void Func_02003de8(void);
-void Func_020015b8(struct Actor *object);
-void Func_0200172c(void);
-void Func_02001804(void);
-
-extern const u16 gData_02003fd2[];
-extern const struct CellRecord gData_02004066[];
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -526,35 +365,6 @@ loop:
   }
 }
 
-extern const u8 gData_02003f44[];
-extern const u8 gData_02003f52[];
-extern const u8 gData_02003f80[];
-extern const u8 gData_02003f92[];
-extern const u8 gData_02003f98[];
-extern const u8 gData_02003fa0[];
-extern const u8 gData_02003fa8[];
-extern const u8 gData_02003fb0[];
-extern const u8 gData_02003fb8[];
-extern const u8 gData_02003fc0[];
-extern const u8 gData_02003fc4[];
-
-void Func_020000a4(const void *data, s32 a, s32 b);
-void Func_020002f8(const void *data);
-void Func_02000708(const void *data);
-void Func_02001474(s32 show);
-void Func_02002180(void);
-void Func_02003c28(void);
-void Func_02003c30(void);
-void Func_02003dc0(const void *data);
-void Func_02003dc8(void);
-void Func_02003de8(void);
-void Func_020015b8(struct Actor *object);
-void Func_0200172c(void);
-void Func_02001804(void);
-
-extern const u16 gData_02003fd2[];
-extern const struct CellRecord gData_02004066[];
-
 void Func_02001820(void) {
   const u16 *cell = &gData_02004066[0].present;
   s32 flag = 0x240;
@@ -586,32 +396,6 @@ void Func_02001820(void) {
   if (GameFlag_Test(0x109) == 0)
     Func_02001804();
 }
-
-extern const u8 gData_02003f44[];
-extern const u8 gData_02003f52[];
-extern const u8 gData_02003f80[];
-extern const u8 gData_02003f92[];
-extern const u8 gData_02003f98[];
-extern const u8 gData_02003fa0[];
-extern const u8 gData_02003fa8[];
-extern const u8 gData_02003fb0[];
-extern const u8 gData_02003fb8[];
-extern const u8 gData_02003fc0[];
-extern const u8 gData_02003fc4[];
-
-void Func_020000a4(const void *data, s32 a, s32 b);
-void Func_020002f8(const void *data);
-void Func_02000708(const void *data);
-void Func_02001474(s32 show);
-void Func_02002180(void);
-void Func_02003c28(void);
-void Func_02003c30(void);
-void Func_02003dc0(const void *data);
-void Func_02003dc8(void);
-void Func_02003de8(void);
-void Func_020015b8(struct Actor *object);
-void Func_0200172c(void);
-void Func_02001804(void);
 
 extern const u16 gData_02003fda[];
 extern const struct CellRecord gData_0200410e[];
@@ -647,32 +431,6 @@ void Func_020018a8(void) {
   if (GameFlag_Test(0x109) == 0)
     Func_02001804();
 }
-
-extern const u8 gData_02003f44[];
-extern const u8 gData_02003f52[];
-extern const u8 gData_02003f80[];
-extern const u8 gData_02003f92[];
-extern const u8 gData_02003f98[];
-extern const u8 gData_02003fa0[];
-extern const u8 gData_02003fa8[];
-extern const u8 gData_02003fb0[];
-extern const u8 gData_02003fb8[];
-extern const u8 gData_02003fc0[];
-extern const u8 gData_02003fc4[];
-
-void Func_020000a4(const void *data, s32 a, s32 b);
-void Func_020002f8(const void *data);
-void Func_02000708(const void *data);
-void Func_02001474(s32 show);
-void Func_02002180(void);
-void Func_02003c28(void);
-void Func_02003c30(void);
-void Func_02003dc0(const void *data);
-void Func_02003dc8(void);
-void Func_02003de8(void);
-void Func_020015b8(struct Actor *object);
-void Func_0200172c(void);
-void Func_02001804(void);
 
 extern const u16 gData_02003fe2[];
 extern const struct CellRecord gData_0200416e[];
@@ -753,10 +511,7 @@ void Func_02000c4c(s32 level, s32 layer);
 void Func_02003ba0(struct Actor *object, s32 mode);
 void Func_02003ba8(struct Actor *object, const void *script);
 s32 Func_02003c10(s32 layer, s32 x, s32 z);
-void Func_02003c28(void);
-void Func_02003c30(void);
 void Func_02003c78(s32 id, s32 target);
-void Func_02003cc0(s32 id);
 s32 Func_02003d20(void);
 s32 Func_02003d80(void *sprite, s32 frame);
 s32 Func_02003db0(struct Actor *object);
@@ -780,12 +535,6 @@ struct EffectView {
   void (*update)(struct Actor *object);
 };
 
-extern char SceneId_Ov655Room1;
-extern char SceneId_Ov655Room2;
-extern char SceneId_Ov655Room3;
-extern char SceneId_Ov655Room5;
-
-extern u16 gData_02003fea[];
 extern u16 gData_02003ff2[];
 extern u16 gData_02004012[];
 extern u16 gData_02004032[];
@@ -793,13 +542,9 @@ extern u16 gData_02004052[];
 extern u16 gData_02004068[];
 extern u16 gData_02004110[];
 extern u16 gData_02004170[];
-extern u16 gData_020041b8[];
 extern struct Actor *gData_02004420;
 extern s32 gData_02005678;
 extern s32 gData_0200567c;
-
-void Event_FinishScreenTransition(void);
-void Event_WaitTransitionFrames(void);
 
 #define SCENE(name) ((s32)&SceneId_##name)
 
@@ -968,41 +713,9 @@ void Func_02001a30(void) {
   }
 }
 
-extern const u8 gData_02003f44[];
-extern const u8 gData_02003f52[];
-extern const u8 gData_02003f80[];
-extern const u8 gData_02003f92[];
-extern const u8 gData_02003f98[];
-extern const u8 gData_02003fa0[];
-extern const u8 gData_02003fa8[];
-extern const u8 gData_02003fb0[];
-extern const u8 gData_02003fb8[];
-extern const u8 gData_02003fc0[];
-extern const u8 gData_02003fc4[];
-
-void Func_020000a4(const void *data, s32 a, s32 b);
-void Func_020002f8(const void *data);
-void Func_02000708(const void *data);
-void Func_02001474(s32 show);
-void Func_02002180(void);
-void Func_02003c28(void);
-void Func_02003c30(void);
-void Func_02003dc0(const void *data);
-void Func_02003dc8(void);
-void Func_02003de8(void);
-void Func_020015b8(struct Actor *object);
-void Func_0200172c(void);
-void Func_02001804(void);
-
-extern const u16 gData_02003fd2[];
-extern const struct CellRecord gData_02004066[];
-
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ s32 Flag_Test(s32 flag) { return GameFlag_Test(flag); }
-
-extern s32 gData_0200567c;
-extern s32 gData_02005678;
 
 void Func_02001ee8(void) {
   struct Actor *object;
@@ -1014,8 +727,6 @@ void Func_02001ee8(void) {
       GameFlag_ClearBit(0x201);
   }
 }
-
-void Func_02003cc0(s32 id);
 
 void Func_02001f38(s32 id) {
   Func_02003cc0(id);
@@ -1079,7 +790,6 @@ struct MapCells {
 };
 
 void Func_02000e9c(struct Actor *object);
-s32 Func_02003db0(struct Actor *object);
 
 void Func_0200200c(struct Actor *object) {
   s32 x;
@@ -1113,7 +823,6 @@ void Func_0200200c(struct Actor *object) {
 s32 Func_02003de0(void);
 s32 Func_02003d10(s32 owner);
 void Func_02000d78(const void *data);
-void Func_0200200c(struct Actor *object);
 extern const u8 gData_02003fc8[];
 
 void Func_020020dc(void) {
@@ -1127,46 +836,12 @@ void Func_020020dc(void) {
   }
 }
 
-void Func_02000d78(const void *data);
-extern const u8 gData_02003fc8[];
-
 void Func_02002114(void) { Func_02000d78(gData_02003fc8); }
-
-extern const u8 gData_02003f44[];
-extern const u8 gData_02003f52[];
-extern const u8 gData_02003f80[];
-extern const u8 gData_02003f92[];
-extern const u8 gData_02003f98[];
-extern const u8 gData_02003fa0[];
-extern const u8 gData_02003fa8[];
-extern const u8 gData_02003fb0[];
-extern const u8 gData_02003fb8[];
-extern const u8 gData_02003fc0[];
-extern const u8 gData_02003fc4[];
-
-void Func_020000a4(const void *data, s32 a, s32 b);
-void Func_020002f8(const void *data);
-void Func_02000708(const void *data);
-void Func_02001474(s32 show);
-void Func_02002180(void);
-void Func_02003c28(void);
-void Func_02003c30(void);
-void Func_02003dc0(const void *data);
-void Func_02003dc8(void);
-void Func_02003de8(void);
-void Func_020015b8(struct Actor *object);
-void Func_0200172c(void);
-void Func_02001804(void);
-
-extern const u16 gData_02003fd2[];
-extern const struct CellRecord gData_02004066[];
 
 struct EventWorkCbc {
   u8 unk000[0xcbc];
   struct Actor *active;
 };
-
-void Func_0200200c(struct Actor *object);
 
 void Func_02002124(void) {
   struct EventWorkCbc *work = Ram_HeapSlots->eventWork;
@@ -1176,35 +851,6 @@ void Func_02002124(void) {
   if (active != 0)
     Func_0200200c(active);
 }
-
-extern const u8 gData_02003f44[];
-extern const u8 gData_02003f52[];
-extern const u8 gData_02003f80[];
-extern const u8 gData_02003f92[];
-extern const u8 gData_02003f98[];
-extern const u8 gData_02003fa0[];
-extern const u8 gData_02003fa8[];
-extern const u8 gData_02003fb0[];
-extern const u8 gData_02003fb8[];
-extern const u8 gData_02003fc0[];
-extern const u8 gData_02003fc4[];
-
-void Func_020000a4(const void *data, s32 a, s32 b);
-void Func_020002f8(const void *data);
-void Func_02000708(const void *data);
-void Func_02001474(s32 show);
-void Func_02002180(void);
-void Func_02003c28(void);
-void Func_02003c30(void);
-void Func_02003dc0(const void *data);
-void Func_02003dc8(void);
-void Func_02003de8(void);
-void Func_020015b8(struct Actor *object);
-void Func_0200172c(void);
-void Func_02001804(void);
-
-extern const u16 gData_02003fd2[];
-extern const struct CellRecord gData_02004066[];
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.

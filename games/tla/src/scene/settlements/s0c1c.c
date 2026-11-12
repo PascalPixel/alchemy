@@ -197,8 +197,6 @@ void Func_02000f2c(void) {
   }
 }
 
-void Func_0200156c(s32 id);
-
 static __inline__ void Speed(s32 id, s32 speed, s32 acceleration) {
   /* FAKEMATCH(wrapper): the call forwarded through the inline, which keeps
    * each call's own constants; as direct Actor_SetSpeedParameters calls, 38
@@ -314,8 +312,6 @@ void Func_020012c0(void) {
 }
 
 extern const u8 gData_02002272[];
-
-void Func_02001200(void);
 
 void Func_02001304(void) {
   struct Actor *object = Actor_Get(10);

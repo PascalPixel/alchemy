@@ -77,8 +77,6 @@ void Func_020001d4(void) {
   Func_02000178();
 }
 
-void Func_02000178(void);
-
 void Func_020001f4(void) {
   System_Wait(10);
   Func_02000178();
@@ -87,7 +85,6 @@ void Func_020001f4(void) {
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
 void Func_02001bcc(s32 owner);
-void Func_02000060(s32 animate);
 
 s32 Func_0200020c(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x204;

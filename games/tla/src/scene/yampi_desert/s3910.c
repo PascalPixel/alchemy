@@ -73,9 +73,6 @@ struct RideWork {
 
 extern u8 gData_020023c4[];
 
-s32 GameFlag_Test(s32 flag);
-
-void Func_020041f8(s32 cue);
 s32 Math_Sine(s32 angle);
 
 // The rising platforms callback: for each of the 16 entries it raises or lowers
@@ -161,12 +158,9 @@ struct ResourceTableEntry {
   u16 offset;
 };
 
-extern u8 gData_020023c4[];
 extern struct ResourceTableEntry gResourceTableEntries[];
-extern u32 gFrameCount;
 
 void Func_02003f88(u32 *oam, s32 depth);
-s32 Math_Sine(s32 angle);
 
 // Draws the rising platforms' columns as sprites, one 16-pixel piece per step
 // of height and a bobbing top, up to 80 of them, each an OAM entry queued by
@@ -258,18 +252,14 @@ struct YampiDesertRideWork {
   void *block;
 };
 
-extern u8 gData_020023c4[];
 extern const u8 gField_Tiles64D[];
 
-s32 GameFlag_Test(s32 flag);
 void *Heap_AllocEwram(s32 size);
 void Func_02003f70(const void *source, void *destination);
 s32 Resource_FindFreeEntry(void);
 void VramCache_Load(s32 entry, s32 size, void *source);
 void Heap_Release(void *block);
 
-void Func_020039b8(void);
-void Func_02003b80(void);
 s32 Func_020041f0(void);
 
 void Func_02003da0(s32 unused, s32 value) {
@@ -290,10 +280,6 @@ void Func_02003da0(s32 unused, s32 value) {
   Task_Add((s32)Func_02003b80, 0x480);
   Actor_GetById(Func_020041f0())->priorityFlags |= 0x40;
 }
-
-extern u8 gData_020023c4[];
-
-s32 GameFlag_Test(s32 flag);
 
 struct Actor *Func_02003fc0(s32 kind, s32 x, s32 y, s32 z);
 

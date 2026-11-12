@@ -10,8 +10,6 @@
 
 void Func_020056b4(void);
 void Func_0200564c(void);
-void Event_StartScreenTransition(void);
-void Event_WaitTransitionFrames(void);
 s32 Math_Cosine(s32 angle);
 u32 Random16Far(void);
 void Effect_AdvanceMotion(union FieldObject *object);
@@ -93,7 +91,6 @@ void Func_02005724(s32 id, s32 target);
 void Func_020057b4(void);
 void Func_02000f6c(void);
 s32 Func_02004d48(s32 a, s32 b);
-void Event_FinishScreenTransition(void);
 
 static __inline__ void Func_0200578c_ArgsFirst(s32 id, s32 a, s32 b) {
   Func_080d47b4(id, a, b);
@@ -236,4 +233,3 @@ void Func_020027cc(void) {
   Event_WaitTransitionFrames();
   FieldEvent_SetExitRequest(12);
 }
-

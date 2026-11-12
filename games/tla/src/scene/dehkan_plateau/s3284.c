@@ -170,8 +170,6 @@ void Func_0200353c(void) {
   }
 }
 
-extern const u16 gData_02004276[];
-
 void Func_020035ec(void) {
   /* FAKEMATCH(pin): flag in r5, which leaves r6 to the entry; as a plain
    * local, 61 of 79 instructions differ in tla-en. */
@@ -209,7 +207,6 @@ void Func_020035ec(void) {
 
 void Func_02001804(void);
 void Func_02001fdc(void);
-void Func_0200353c(void);
 void Func_02003764(void);
 
 void Func_0200369c(void) {
@@ -260,7 +257,6 @@ s32 Func_02003c10(s32 layer, s32 x, s32 z);
 void Func_02003c28(void);
 void Func_02003c30(void);
 void Func_02003c78(s32 id, s32 target);
-void Func_02003cc0(s32 id);
 s32 Func_02003d20(void);
 s32 Func_02003d80(void *sprite, s32 frame);
 
@@ -283,15 +279,12 @@ struct EffectView {
   u8 unk66[6];
   void (*update)(struct Actor *object);
 };
-void Event_StartScreenTransition(void);
-void Event_WaitTransitionFrames(void);
 
 void Func_02000fc4(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options);
 void Effect_AdvanceMotion(union FieldObject *object);
 void Func_02003bc8(void);
-s32 Math_Cosine(s32 angle);
 
 void Func_02003764(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);

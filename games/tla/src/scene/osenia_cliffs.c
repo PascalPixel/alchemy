@@ -101,7 +101,6 @@ s32 Func_02000074(void) {
   return 0;
 }
 
-extern u32 gData_020001b0[];
 extern u32 gFrameCount;
 
 /// The palette cycle Func_02000074 schedules: every 16 frames it copies four

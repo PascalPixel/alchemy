@@ -36,7 +36,6 @@ s32 Func_02000038(s32 *a, s32 *b) {
   return Iwram_Sqrt(dxsq + dysq + dzsq);
 }
 
-s32 Func_02000038(s32 *a, s32 *b);
 s32 ArcTan2(s32 y, s32 x);
 
 s32 Func_02000070(struct Actor *self, struct Actor *other, s32 range) {
@@ -62,8 +61,6 @@ s32 Func_02000070(struct Actor *self, struct Actor *other, s32 range) {
 s32 Func_02001d54(struct Actor *object);
 void Func_02001ba4(struct Actor *object, s32 priority);
 void Func_02001b7c(struct Actor *object, s32 mode);
-s32 Func_02000070(struct Actor *self, struct Actor *other,
-                  s32 range);
 
 s32 Func_020000e8(struct Actor *self) {
   u8 *event = Ram_HeapSlots->eventWork;
@@ -105,11 +102,7 @@ struct WarpTarget {
   u16 z;
 };
 
-s32 ArcTan2(s32, s32);
 void Animation_SetIndexAndInitializeObjects(struct Actor *object, s32 index);
-void Event_FinishScreenTransition(void);
-void Event_WaitTransitionFrames(void);
-void Func_02001ba4(struct Actor *object, s32 value);
 void Func_02001bcc(void);
 void Func_02001bd4(void);
 void Func_02001cf4(s32 a, s32 b, s32 c);
@@ -124,7 +117,6 @@ extern const struct WarpTarget gData_020021d4;
 extern const struct WarpTarget gData_020021dc;
 extern const struct WarpTarget gData_020021e4;
 extern const struct WarpTarget gData_020021ec;
-
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -372,17 +364,10 @@ void Func_0200061c(s32 a) { Func_02001cf4_(a, 72, 0x308); }
    } *)(base))                                                                 \
        ->v)
 
-void Animation_SetIndexAndInitializeObjects();
-void Func_020001bc();
 s32 Func_02001bbc();
-void Func_02001bcc();
-void Func_02001bd4();
 void Func_02001cc4();
 void Func_02001d2c();
 void Func_02001d34();
-extern u8 MsgAreYouKids[];
-extern u8 MsgTheDoorDoesn[];
-extern u8 MsgWhatSThe[];
 
 void Func_0200062c(void) {
   s32 t1, t2, t3, t4, t12, t30, t31, v5;
@@ -609,9 +594,6 @@ void Func_02000b28(void) {
   gData_02002590 ^= 1;
 }
 
-void Func_02000b28(void);
-void Func_02000ad8(void);
-
 void Func_02000bbc(void) {
   s32 priority;
 
@@ -621,14 +603,11 @@ void Func_02000bbc(void) {
   Task_AddFrame(Func_02000ad8, priority);
 }
 
-void Func_02000560();
 void Func_02001cfc();
 void Func_02001d24();
 void Func_02001d3c();
 void Func_02001d4c();
-void Actor_SetSingleChildFlags();
 void Actor_SetWideSprite();
-void Func_02000a6c();
 void Func_02001b3c();
 extern u8 gData_02001d84[];
 extern u8 gData_02001e04[];

@@ -97,9 +97,6 @@ void Func_0200063c(s32 x, s32 y) {
 void Func_020039a0(void);
 void Map_SetScreenShake(s32 a, s32 b, s32 c);
 void Import_EventSetExitRequest(s32 value);
-void Func_02000568(void);
-void Func_02000618(void);
-void Func_0200063c(s32 x, s32 y);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 
@@ -220,13 +217,8 @@ loop:
 }
 
 void Func_02003988(void);
-void Func_020039a0(void);
-void Map_SetScreenShake(s32 a, s32 b, s32 c);
 void Map_WaitForShakeToSettle(void);
 void Func_02003854(s32 actor);
-void Func_0200087c(void);
-void Func_0200092c(void);
-void Func_0200094c(s32 x, s32 y);
 
 void Func_02000994(void) {
   struct ShrineOfTheSeaGodMapWork *map =
@@ -335,11 +327,7 @@ void Func_02000994(void) {
 
 extern const u8 gData_02003cbc[];
 
-void Func_02003988(void);
-void Map_SetScreenShake(s32 a, s32 b, s32 c);
-void Import_EventSetExitRequest(s32 a);
 void Event_StartScreenTransition(void);
-void Event_FinishScreenTransition(void);
 
 /// The leader is placed at y -50 and map layer 1 moved by -50; then both move
 /// by 0x8000 in y a frame for 100 frames as a screen transition starts.

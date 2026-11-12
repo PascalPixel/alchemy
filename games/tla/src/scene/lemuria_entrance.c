@@ -39,9 +39,6 @@ struct AnimationRecord26 {
 extern u8 MsgFieldAddressCompanion;
 extern const u8 gData_020005e4[];
 
-void Event_StartScreenTransition(void);
-void Event_FinishScreenTransition(void);
-void Event_WaitTransitionFrames(void);
 s32 BattleEffect_GetResourceId(s32 id);
 void Text_GetMessageSize(s32 id, s32 *a, s32 *b, s32 *c, s32 *d);
 void Message_OpenWindow(s32 id, s32 x, s32 y, u32 flags);

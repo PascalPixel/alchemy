@@ -78,7 +78,6 @@ struct Orbit {
   s16 speed;
 };
 
-s32 Math_Cosine(s32 angle);
 // Called by its linked name, as Gaia Rock's Func_0200142c does.
 s32 IwramMulQ16(s32 a, s32 b) __attribute__((long_call));
 

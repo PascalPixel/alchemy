@@ -97,7 +97,6 @@ loop:
 u8 *HeapSlot_AllocFar(s32 slot, s32 size);
 void Func_02002c88(void);
 void Func_02002d34(void);
-void Func_02002de4(void);
 
 void Func_02002f58(const s32 *position) {
   u8 *work = HeapSlot_AllocFar(220, 0x1078);

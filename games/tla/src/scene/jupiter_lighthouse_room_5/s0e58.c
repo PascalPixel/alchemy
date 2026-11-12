@@ -110,7 +110,6 @@ extern s32 gData_02003400;
 void Actor_SetAnimationSpeed(struct Actor *object, s32 speed);
 s32 Func_02002a20(s32 x, s32 z, s32 layer);
 void Func_020029b0(s32 *position);
-s32 Func_02001044(s32 *from, s32 *to);
 s32 Math_Cosine(s32 angle);
 void Func_02002820(struct Actor *object, const s32 *script);
 

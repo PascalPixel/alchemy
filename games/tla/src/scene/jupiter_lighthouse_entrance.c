@@ -39,8 +39,6 @@ void Func_02000054(void) { Call7(Func_02001b1c, 0x38, 0, 4, 2, 0x46, 0x13, 1); }
    } *)(base))                                                                 \
        ->v)
 
-s32 Func_02001b1c();
-
 void Func_02000074(void) { Call7(Func_02001b1c, 0x38, 0, 4, 2, 0x45, 0x16, 1); }
 
 #define FIELD_AT(base, type, off)                                              \
@@ -49,8 +47,6 @@ void Func_02000074(void) { Call7(Func_02001b1c, 0x38, 0, 4, 2, 0x45, 0x16, 1); }
      type v;                                                                   \
    } *)(base))                                                                 \
        ->v)
-
-s32 Func_02001b1c();
 
 void Func_02000094(void) { Call7(Func_02001b1c, 0x38, 0, 3, 3, 0x4f, 0x19, 1); }
 
@@ -61,8 +57,6 @@ void Func_02000094(void) { Call7(Func_02001b1c, 0x38, 0, 3, 3, 0x4f, 0x19, 1); }
    } *)(base))                                                                 \
        ->v)
 
-s32 Func_02001b1c();
-
 void Func_020000b4(void) { Call7(Func_02001b1c, 0x38, 0, 5, 3, 0x55, 0x1a, 1); }
 
 #define FIELD_AT(base, type, off)                                              \
@@ -71,7 +65,5 @@ void Func_020000b4(void) { Call7(Func_02001b1c, 0x38, 0, 5, 3, 0x55, 0x1a, 1); }
      type v;                                                                   \
    } *)(base))                                                                 \
        ->v)
-
-s32 Func_02001b1c();
 
 void Func_020000d4(void) { Call7(Func_02001b1c, 0x38, 0, 5, 3, 0x5e, 0x1a, 1); }

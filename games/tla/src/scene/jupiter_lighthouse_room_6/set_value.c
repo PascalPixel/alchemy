@@ -18,7 +18,6 @@ extern s16 gData_0200242a;
 extern struct Actor *gData_0200242c[];
 extern u16 gData_0200252e;
 s32 Func_020018bc(s32 value);
-void Func_020000b4(s32 value);
 void Func_02000108(void);
 void Func_02000154(void);
 void Scene_SetArrivalFlags(s32 value);
@@ -27,7 +26,6 @@ void Func_020003a4(s32 value);
 void Func_020002dc(s32 value) { gData_020023c0 = value; }
 
 extern s32 gData_020023bc;
-extern s32 gData_020023c0;
 extern u16 gData_020023e8[];
 
 void Func_020002e8(void) {
@@ -72,13 +70,8 @@ next:
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 #define WORD_AT(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
 
-extern s32 gData_020023bc;
-extern s32 gData_020023c0;
-extern u16 gData_020023e8[];
 extern u16 gData_02002408[];
 extern u16 gData_0200240c[];
-
-void Func_020002e8(void);
 
 void Func_020003a4(s32 mode) {
   gData_020023c0 = 1;
@@ -103,10 +96,6 @@ void Func_020003a4(s32 mode) {
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 #define HALF_AT(base, offset) (*(u16 *)((u8 *)(base) + (offset)))
 #define WORD_AT(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
-
-extern s32 gData_020023bc;
-extern s32 gData_020023c0;
-extern u16 gData_020023e8[];
 
 s32 __modsi3();
 s32 Map_GetTerrainHeight();

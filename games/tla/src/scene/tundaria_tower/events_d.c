@@ -23,19 +23,13 @@ struct TundariaTowerEventWork {
 
 extern const u8 gData_02003340[];
 extern const u8 gData_0200335a[];
-extern const u8 gData_02003264[];
-extern const u8 gData_0200326e[];
 union FieldObject;
 extern union FieldObject *Data_02003ccc;
-void Func_02000840(struct Actor *object);
 void Func_020010d4(void);
-void Func_0200137c(void);
 void Func_02000548(void);
 void Func_0200058c(void);
 void Func_02000404(const u8 *data);
 void Func_020011e0(void);
-void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
-s32 MapCell_SetAttributes(u32 layer, s32 x, s32 z, s32 value);
 void Scene_SetActorSpritePriority(struct Actor *object, s32 priority);
 void Animation_SetStateFlags(struct Actor *object, s32 a);
 void Func_02003168(const u8 *data);

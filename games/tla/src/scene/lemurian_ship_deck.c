@@ -100,8 +100,6 @@ const u8 *Func_0200013c(void) {
   return gData_020023ec;
 }
 
-void Func_02001f5c(void);
-void Func_02001f64(void);
 extern const u8 MsgTheDoorIsHeld[];
 
 void Func_02000168(void) {
@@ -133,8 +131,6 @@ void Func_02000188(void) {
   }
 }
 
-extern u32 gFrameCount;
-
 #define OBJ_PALETTE ((volatile u16 *)&BG_PLTT_COLOR(11, 0))
 
 void Func_020001cc(void) {
@@ -155,12 +151,8 @@ void Func_020001cc(void) {
   }
 }
 
-void Func_02001f5c(void);
-void Func_02001f64(void);
 void Func_02001f34(s32 a);
 void Event_StartScreenTransition(void);
-void Event_WaitTransitionFrames(void);
-void Func_020001cc(void);
 
 void Func_02000210(void) {
   Func_02001f5c();

@@ -102,14 +102,10 @@ extern u8 gData_02006e0e[];
 extern u8 gData_02006e0c[];
 
 void Animation_ApplyChildValues(struct Actor *object, s32 value);
-u32 Random16Far(void);
 void Func_02004c20(void);
 void Func_02004c28(void);
 s32 Func_02004c38(s32 a, s32 b, s32 c);
 void Func_02003654(s32 a, s32 b, s32 c);
-void Event_StartScreenTransition(void);
-void Event_WaitTransitionFrames(void);
-void Event_FinishScreenTransition(void);
 void Func_020036a8(void);
 void Func_020048f4(void);
 void Func_02003bb8(struct Actor *object, s32 value);
@@ -143,8 +139,6 @@ struct BobbingMarker {
   s16 angle;
   s16 stopped;
 };
-
-extern u32 gFrameCount;
 
 static __inline__ s32 MulQ16(s32 a, s32 b) {
   /* FAKEMATCH(wrapper): through the inline the multiply's address loads between
@@ -198,28 +192,6 @@ s32 StoryActor_Initialize(struct Actor *actor) {
   actor->scaleY = 0x8000;
   return 0;
 }
-
-extern u8 gData_02006c08[];
-extern const u8 gWorldMapPackedTilesC[];
-extern u8 gData_02006f20[];
-extern u8 gData_02006e0e[];
-extern u8 gData_02006e0c[];
-
-void Animation_ApplyChildValues(struct Actor *object, s32 value);
-u32 Random16Far(void);
-void Func_02004c20(void);
-void Func_02004c28(void);
-s32 Func_02004c38(s32 a, s32 b, s32 c);
-void Func_02003654(s32 a, s32 b, s32 c);
-void Event_StartScreenTransition(void);
-void Event_WaitTransitionFrames(void);
-void Event_FinishScreenTransition(void);
-void Func_020036a8(void);
-void Func_020048f4(void);
-void Func_02003bb8(struct Actor *object, s32 value);
-void Func_02004aa8(const u8 *a, u8 *b);
-void Resource_ResetEntry(s32 entry);
-u32 __umodsi3(u32 a, u32 b);
 
 s32 Func_02000388(struct Actor *object) {
   u16 *tile = (u16 *)((u8 *)Ram_HeapSlots->mapWork + 286);
@@ -353,12 +325,10 @@ void Func_0200050c(void) {
 }
 
 s32 Func_02004d68(s32 owner);
-void Func_02004c20(void);
 void Func_02004b18(struct Actor *object, s32 mode);
 void Func_02004b48(struct Actor *object);
 void Func_02004dc8(void);
 void Func_02004dc0(void);
-void Func_02004c28(void);
 
 void Func_02000574(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
@@ -415,12 +385,6 @@ extern u8 gMapBlocks[];
 
 s32 GetWorldMapCollision(s32 *position);
 s32 Func_02004b88(struct Actor *object, s32 *position);
-void Func_02004c20(void);
-void Func_02004b18(struct Actor *object, s32 mode);
-void Func_02004b48(struct Actor *object);
-void Func_02004dc8(void);
-void Func_02004dc0(void);
-void Func_02004c28(void);
 
 void Func_020006d0(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -505,14 +469,7 @@ struct EventDestination {
   s16 scene;
 };
 
-void Func_02004c20(void);
-void Func_02004c28(void);
 void Func_02004c98(s32 actor, s32 target);
-void Func_02004da8(void);
-void Func_02004db0(void);
-void Event_FinishScreenTransition(void);
-void Event_WaitTransitionFrames(void);
-void Func_0200050c(void);
 
 /// Back to the map: actor 8's position is kept in gMainRoutineWork.
 void Func_02000918(void) {
@@ -533,12 +490,6 @@ void Func_02000918(void) {
   Event_PlaySound(123);
   FieldEvent_SetExitRequest(work->scene);
 }
-
-void Func_02004c20(void);
-void Func_02004c28(void);
-void Func_02004c98(s32 actor, s32 target);
-void Func_02004da8(void);
-void Func_02004db0(void);
 
 /// Brings the actor to the player character's position.
 static __inline__ void Actor_JoinLeader(s32 actor) {
@@ -630,10 +581,6 @@ void Func_02000994(void) {
   }
 }
 
-u32 Random16Far(void);
-
-void Func_02004c20(void);
-void Func_02004c28(void);
 void Func_02004d70(s32 value);
 
 void Func_02000be0(void) {
@@ -689,10 +636,6 @@ void Func_02000be0(void) {
   Func_02004c28();
 }
 
-void Func_02004c20(void);
-void Func_02004c28(void);
-s32 Func_02004c38(s32 a, s32 b, s32 c);
-
 void Func_02000d1c(void) {
   Func_02004c20();
   FieldEvent_ResolvePendingActions(0);
@@ -717,28 +660,6 @@ void Func_02000d4c(void) {
   Event_SetFlag(0xa77);
 }
 
-extern u8 gData_02006c08[];
-extern const u8 gWorldMapPackedTilesC[];
-extern u8 gData_02006f20[];
-extern u8 gData_02006e0e[];
-extern u8 gData_02006e0c[];
-
-void Animation_ApplyChildValues(struct Actor *object, s32 value);
-u32 Random16Far(void);
-void Func_02004c20(void);
-void Func_02004c28(void);
-s32 Func_02004c38(s32 a, s32 b, s32 c);
-void Func_02003654(s32 a, s32 b, s32 c);
-void Event_StartScreenTransition(void);
-void Event_WaitTransitionFrames(void);
-void Event_FinishScreenTransition(void);
-void Func_020036a8(void);
-void Func_020048f4(void);
-void Func_02003bb8(struct Actor *object, s32 value);
-void Func_02004aa8(const u8 *a, u8 *b);
-void Resource_ResetEntry(s32 entry);
-u32 __umodsi3(u32 a, u32 b);
-
 void Func_02000d98(s32 id) { Func_02003654(id, 63, 62); }
 
 void Func_02000da4(s32 id) { Func_02003654(id, 34, 33); }
@@ -751,9 +672,6 @@ extern char SceneId_WorldMap;
 extern char SceneId_Ov6a5;
 extern u8 gData_0200632c[];
 
-void Event_FinishScreenTransition(void);
-void Event_WaitTransitionFrames(void);
-void Func_02000d4c(void);
 void Func_020012bc(s32 entrance);
 void Func_02001c5c(void);
 void Func_02001e34(void);
@@ -884,8 +802,6 @@ s32 Func_02000dc4(void) {
 
 void Menu_AnimateSelectionToEntry(s32 a, s32 b);
 void Func_02004d48(s32 a, s32 b);
-void Func_02004da8(void);
-void Func_02004db0(void);
 void Func_02004e00(void);
 void Func_02004e28(void);
 
@@ -933,19 +849,6 @@ struct SavedDestination {
   s16 scene;
   s16 entrance;
 };
-
-extern char SceneId_WorldMap;
-
-void Event_StartScreenTransition(void);
-void Event_WaitTransitionFrames(void);
-void Func_02000d4c(void);
-void Func_02004c20(void);
-void Func_02004c28(void);
-void Func_02004d38(s32 scene, s32 entrance);
-void Func_02004d48(s32 a, s32 b);
-void Func_02004da8(void);
-void Func_02004db0(void);
-void Func_02004e00(void);
 
 #define ARM_WEST(id)                                                           \
   do {                                                                         \
@@ -1288,14 +1191,6 @@ extern const u8 gData_02004e38[];
 extern const u8 gData_02004e58[];
 extern const u8 gData_02004e88[];
 
-void Event_StartScreenTransition(void);
-void Event_WaitTransitionFrames(void);
-void Func_02004c20(void);
-void Func_02004c28(void);
-void Func_02004da8(void);
-void Func_02004db0(void);
-void Func_02004e00(void);
-
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
 static __inline__ void Actor_SetSpeedParameters_(s32 actor, s32 speed,
@@ -1371,32 +1266,16 @@ void Func_02001c5c(void) {
 
 extern u32 gInput;
 
-void Event_StartScreenTransition(void);
-void Event_WaitTransitionFrames(void);
 void Party_RemoveActiveOwner(s32 owner);
 void Party_AddActiveOwner(s32 owner);
-s32 Djinn_AddToOwner(s32 owner, s32 element, s32 djinni);
-u32 *DjinnRecovery_AddStandby(u32 owner, u32 element, u32 djinni);
-void Animation_ApplyChildValues(struct Actor *object, s32 value);
-void Menu_AnimateSelectionToEntry(s32 a, s32 b);
-void Func_020011fc(void);
 static inline void SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z) {
   Actor_SetMoveTarget(object, x, y, z);
 }
-void Func_02004ba8(s32 a, s32 b);
 void Func_02004bf8(s32 value);
-void Func_02004c20(void);
-void Func_02004c28(void);
-void Func_02004c98(s32 id, s32 target);
 
 static inline void ShowEmote(s32 id, s32 animation, s32 frames) {
   Func_080d47b4(id, animation, frames);
 }
-void Func_02004da8(void);
-void Func_02004db0(void);
-void Func_02004dc0(void);
-void Func_02004e00(void);
-void Func_02004e28(void);
 
 /// A tutorial message: the second set (from MsgDjinnGiveTutorialB) when
 /// secondSet is 1.
@@ -1666,8 +1545,6 @@ refused:
 
 extern const u8 gData_02006bc8[];
 
-u32 Random16Far(void);
-void Func_02004b18(struct Actor *object, s32 mode);
 void Func_02004b20(struct Actor *object, const u8 *script);
 
 /// Spawns object 285 at a random spot with a random scale and starts its
@@ -1716,8 +1593,6 @@ void Func_02002618(s32 id, s32 dx, s32 dz) {
            *(s16 *)((u8 *)object + 18) + dz);
 }
 
-void Func_02002618(s32 id, s32 dx, s32 dz);
-
 void Func_02002640(s32 a, s32 b, s32 dx, s32 dz) {
   WorldMap_SetWindowCellTileAndDraw(a, b, 48, 224);
   Func_02002618(5, dx, dz);
@@ -1727,14 +1602,7 @@ void Func_02002640(s32 a, s32 b, s32 dx, s32 dz) {
   WorldMap_SetWindowCellTileAndDraw(a + 16, b, 64, 224);
 }
 
-void Event_FinishScreenTransition(void);
-void Event_WaitTransitionFrames(void);
-void Func_02002594(void);
-void Func_02002640(s32 a, s32 b, s32 c, s32 d);
-void Func_02003d44(s32 value);
 void Func_02004d30(void);
-void Func_02004da8(void);
-void Func_02004db0(void);
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -1817,12 +1685,7 @@ void Func_02002698(void) {
   FieldEvent_Wait(120);
 }
 
-extern u32 gFrameCount;
 extern const u8 gData_02004f10[];
-
-u32 Random16Far(void);
-void Func_02004b18(struct Actor *object, s32 mode);
-void Func_02004b20(struct Actor *object, const u8 *script);
 
 static __inline__ struct Actor *Func_02004b30_(s32 kind, s32 x, s32 y, s32 z) {
   /* FAKEMATCH(wrapper): the create call forwarded through an inline, so its

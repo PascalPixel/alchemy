@@ -17,8 +17,6 @@ void Func_02005f94(s32 cue);
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 void Func_02005d84(void);
 void wait(s32 frames);
-void Event_StartScreenTransition(void);
-void Event_WaitTransitionFrames(void);
 void FieldEvent_Wait(s32 frames);
 s32 Math_Cosine(s32 angle);
 s32 Math_Sine(s32 angle);
@@ -28,7 +26,6 @@ void Func_020002f4(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options);
 void Func_02005ec4(u32 id, s32 mode);
-void Actor_SetModeById(u32 id, s32 mode);
 void Func_02005dcc(s32 a, s32 b, s32 c);
 void Func_02005dd4(void);
 
@@ -113,13 +110,11 @@ void Func_02005d9c(s32 x, s32 z, s32 width, s32 height, s32 a, s32 b);
 void Func_02005dac(s32 srcX, s32 srcZ, s32 width, s32 height, s32 destX,
                    s32 destZ);
 void Actor_SetSingleChildFlags(struct Actor *object, u32 value);
-void Func_0200505c(void);
 void Func_02004cc8(void);
 void Func_02005f4c(s32 id);
 void Func_02005f54(void);
 s32 Func_02005f5c(s32 slot, s32 a, s32 b);
 s32 Func_0200062c(s32 layer, s32 x, s32 z, s32 cell);
-void Actor_SetActionCallback(struct Actor *object, s32 action);
 void Func_02000908(const u8 *table);
 
 s32 Func_020051f8(void) {
@@ -368,4 +363,3 @@ s32 Func_020051f8(void) {
   }
   return 0;
 }
-

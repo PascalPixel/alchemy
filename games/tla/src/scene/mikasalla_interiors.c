@@ -64,8 +64,6 @@ const struct Trigger *Scene_GetEvents(void) {
   return (const struct Trigger *)gData_02000a20;
 }
 
-void Func_020005c4();
-void Func_020005cc();
 void Func_0200063c();
 void Func_02000644();
 void Func_0200064c();
@@ -213,8 +211,6 @@ s32 Func_02000340(void) {
   return 0;
 }
 
-void Func_02000454(void);
-
 s32 Scene_PrepareMap(void) { return 0; }
 
 void Func_02000454(void) {
@@ -222,9 +218,6 @@ void Func_02000454(void) {
   Event_ClearFlag(0x12f);
   return;
 }
-
-extern u8 MsgMikasallaInteriors20[];
-extern u8 MsgMikasallaInteriors21[];
 
 void Func_020004dc(void);
 
@@ -237,10 +230,6 @@ void Func_02000470(void) {
     Func_020004dc();
   }
 }
-
-void Func_020005c4();
-void Func_020005cc();
-void Func_020004dc(void);
 
 void Func_020004b0(void) {
   s32 result0;

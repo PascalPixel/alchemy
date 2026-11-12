@@ -671,18 +671,8 @@ L_0200a9e0:
    } *)(base))                                                                 \
        ->v)
 
-s32 Func_02005924();
-
-s32 Func_02003a6c();
-s32 Func_0200598c();
-s32 Func_02003c58();
 s32 Event_FinishScreenTransition();
-s32 Func_0200581c();
 extern u8 MsgWeDidItWe[];
-extern u8 gData_02005ff8[];
-extern u8 gData_02006088[];
-extern u8 gData_02005ff0[];
-extern u8 gData_020061e0[];
 
 static __inline__ void W_Func_020058ec(s32 a0, s32 a1) {
   Actor_ArmCallbackAndRefresh(a0, a1);

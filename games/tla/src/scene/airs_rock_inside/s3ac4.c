@@ -50,13 +50,7 @@ void Func_02003b08(void) {
 #include "field_sprite.h"
 #include "system/io_reg.h"
 
-void Func_02005e14(void);
-void Func_02005e1c(void);
-void Func_02005f2c(s32 skip);
-void Func_02005f94(s32 cue);
 void wait(s32 frames);
-void Func_02005d9c(s32 srcX, s32 srcY, s32 destX, s32 destY, s32 width,
-                   s32 height);
 void Func_0200062c(s32 layer, s32 x, s32 z, s32 cell);
 void Func_02005d7c(struct Actor *object);
 
@@ -104,11 +98,8 @@ fadeOut:
 #include "main_routine_work.h"
 #include "ram_buffer.h"
 
-s32 GameFlag_Test(s32 flag);
-void GameFlag_SetBit(s32 flag);
 s32 Func_02000690(s32 kind, s32 x, s32 z);
 void Func_02002790(void);
-void Func_02003b7c(s32 x, s32 y);
 
 /// Reads what the leader stands on (Func_02000690, kind 2): on cells 1 and 7
 /// it only redraws the marker when flag 0x200 is set; elsewhere it clears
@@ -302,8 +293,6 @@ s32 Func_02004084(struct Actor *object) {
 
 #include "system/field_effect.h"
 
-extern u32 gFrameCount;
-
 u32 Random16Far(void);
 void Func_020002f4(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
@@ -344,7 +333,6 @@ union SparkView {
 
 extern const u8 gData_020060e0[], gData_02006094[], gData_020060b0[],
     gData_02006104[], gData_020060c0[], gData_02006128[], gData_02006158[];
-void FieldEvent_Wait(s32 frames);
 void Func_02005ed4(s32 a, s32 b);
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 void Func_02005dcc(s32 a, s32 b, s32 c);
@@ -353,7 +341,6 @@ s32 Func_02005f04(s32 a, s32 b);
 s32 Func_02005f14(s32 frames);
 void Actor_SetMovementTypeById(s32 actor, const void *callback);
 void Func_02005e94(s32 actor, s32 a);
-void Vector_AddPolarOffsetFar(s32 distance, s32 angle, s32 *position);
 void Func_02005f3c(void);
 
 void Func_02004138(s32 idA, s32 idB) {
@@ -504,4 +491,3 @@ third:
   Func_02005f3c();
   wait(1);
 }
-

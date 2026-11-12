@@ -78,9 +78,6 @@ void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options);
 void Effect_AdvanceMotion(void *object);
-void Func_02001340(struct ShrineOfTheSeaGodObject *object,
-                   struct ShrineOfTheSeaGodObject *other);
-void Func_02001464(void);
 void Map_SetScreenShake(s32 a, s32 b, s32 c);
 void Map_WaitForShakeToSettle(void);
 s32 Math_Cosine(s32 angle);
@@ -154,9 +151,6 @@ void Func_02001474(void) {
   Func_020039e0();
 }
 
-void Task_RemoveFar(void (*func)(void));
-void Func_02001340(struct ShrineOfTheSeaGodObject *object,
-                   struct ShrineOfTheSeaGodObject *target);
 void Func_02001658(struct ShrineOfTheSeaGodObject *object, s32 base);
 void Func_020016c8(void);
 
@@ -223,10 +217,6 @@ void Func_020016d8(void) {
   GameFlag_SetBit(0x231);
 }
 
-void Task_RemoveFar(void (*func)(void));
-void Func_02001340(struct ShrineOfTheSeaGodObject *object,
-                   struct ShrineOfTheSeaGodObject *target);
-void Func_02001658(struct ShrineOfTheSeaGodObject *object, s32 base);
 void Func_020018ac(void);
 
 void Func_020018ac(void) { Func_0200142c(Actor_GetById(16)); }
@@ -884,19 +874,6 @@ void Func_02002c88(void) {
   Func_020027d4();
 }
 
-void Func_020027f8(void);
-void Func_02002830(void);
-void Func_0200291c(void);
-void Func_0200296c(void);
-void Func_020029a4(void);
-void Func_020029dc(void);
-void Func_02002a2c(void);
-void Func_02002b18(void);
-void Func_02002b50(void);
-void Func_02002c18(void);
-void Func_02002c50(void);
-void Func_02002c88(void);
-
 void Func_02002d50(void) {
   struct ShrineOfTheSeaGodEventWork *work;
   struct ShrineOfTheSeaGodObject *object;
@@ -992,18 +969,6 @@ void Func_02001088(void);
 void Func_02001128(void);
 void Func_020011a0(void);
 void Func_02000f18(s32 actor);
-void Func_020027f8(void);
-void Func_02002830(void);
-void Func_0200291c(void);
-void Func_0200296c(void);
-void Func_020029a4(void);
-void Func_020029dc(void);
-void Func_02002a2c(void);
-void Func_02002b18(void);
-void Func_02002b50(void);
-void Func_02002c18(void);
-void Func_02002c50(void);
-void Func_02002c88(void);
 
 void Func_02002e70(void) {
   Actor_SetModeById(8, 2);
@@ -1019,34 +984,6 @@ void Func_02002ea8(void) {
   Actor_GetById(gMainRoutineWork.currentOwner)->layer = 0;
 }
 
-extern const struct ShrineOfTheSeaGodSpot gData_02003cc0[];
-extern const u8 gData_02003cbc[];
-extern const u8 gData_02003c10[];
-
-void Actor_SetPartAttribute(struct ShrineOfTheSeaGodObject *object, s32 value);
-void Func_02003b00(s32 value);
-void Func_02003b18(void);
-void Func_02003b20(s32 a, s32 b, s32 c, s32 d);
-void Func_02003b30(const void *script);
-void Func_02003854(s32 actor);
-void Func_0200123c(void);
-void Func_020010e8(void);
-void Func_02001088(void);
-void Func_02001128(void);
-void Func_020011a0(void);
-void Func_02000f18(s32 actor);
-void Func_020027f8(void);
-void Func_02002830(void);
-void Func_0200291c(void);
-void Func_0200296c(void);
-void Func_020029a4(void);
-void Func_020029dc(void);
-void Func_02002a2c(void);
-void Func_02002b18(void);
-void Func_02002b50(void);
-void Func_02002c18(void);
-void Func_02002c50(void);
-void Func_02002c88(void);
 void Func_02003094(void);
 void Func_02003134(void);
 void Func_0200320c(void);
@@ -1331,9 +1268,6 @@ void Func_02003504(void) {
   Func_0200300c();
 }
 
-void Func_02003b18(void);
-void Func_02003b20(s32 a, s32 flag, s32 b, s32 c);
-
 /// The Shrine of the Sea God's prepare step: sets up actors 8 to 24 and,
 /// for each of flags 0x231 and 0x232 that is set, copies its opened tiles
 /// and places actor 15 or 16 where it rests.
@@ -1402,14 +1336,9 @@ struct ShrineOfTheSeaGodPartyExtra {
 
 extern u32 gFrameCount;
 
-void Func_02003b18(void);
-void Func_02003b20(s32 a, s32 b, s32 c, s32 d);
 void Func_02003988(void);
 void Func_02000994(void);
 void Func_02000ce8(void);
-struct ShrineOfTheSeaGodObject *Func_02002f88(s32 id);
-
-void Func_02003854(s32 id);
 
 void Func_02003740(void) {
   Func_02003854(8);

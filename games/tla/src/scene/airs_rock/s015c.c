@@ -17,8 +17,6 @@
    } *)(base))                                                                 \
        ->v)
 
-extern void Actor_SetSingleChildFlags(struct FieldEffect*effect,u32 flags);
-
 s32 Func_0200033c(s32 a0) {
   Actor_SetSingleChildFlags(a0, 0);
   return 0;
@@ -72,4 +70,3 @@ s32 Func_02000384(u32 layer, s32 x, s32 y, s32 value) {
   cell[3] = value;
   return old;
 }
-

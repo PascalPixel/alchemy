@@ -56,16 +56,12 @@ next:
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 #define WORD_AT(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
 
-extern s32 gData_020069f4;
-extern s32 gData_020069f8;
-extern u16 gData_02006a2c[];
 extern u16 gData_02006a4c[];
 extern u16 gData_02006a50[];
 
 s32 Map_GetTerrainHeight();
 void Func_020057c4();
 void Func_020059ec();
-void Func_02003f60(void);
 
 void Func_0200401c(s32 mode) {
   gData_020069f8 = 1;

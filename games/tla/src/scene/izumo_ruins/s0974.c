@@ -103,7 +103,6 @@ void Func_02000aa8(void) {
 extern u8 gMapShapeGrid[];
 
 s32 Func_02001478(s32 terrainId, s32 x, s32 z);
-s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 s32 Func_02001528(s32 terrainId, s32 value, s32 height);
 
 void Func_02000bc0(s32 heightOffset, s32 layer, s32 id) {

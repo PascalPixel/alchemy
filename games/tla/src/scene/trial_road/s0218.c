@@ -44,7 +44,6 @@ void Func_020002a4(s32 side, s32 phase) {
        ->v)
 void Func_02005868();
 void Func_02005880();
-extern u8 MsgTrialRoadGiveUpPrompt[];
 
 s32 Func_02000330(void) {
   s32 t1, t2, t9, v_r5, v_r6;
@@ -126,10 +125,7 @@ void Func_02000428(void) {
   Func_02005888();
 }
 
-void Func_02005880(void);
-void Func_02005888(void);
 void Func_02005858(s32 value, s32 slot);
-void Func_02000218(s32 a, s32 b);
 /// Func_080af0e4 through its far call: empties an inventory slot and returns 2.
 s32 Func_02005870(s32 owner, s32 slot);
 
@@ -167,9 +163,6 @@ struct EventWork15a {
   u8 unk000[0x15a];
   u16 value;
 };
-
-void Func_02005880(void);
-void Func_02005888(void);
 
 void Func_020005b4(s32 id) {
   s32 flag;
@@ -441,9 +434,6 @@ next:
 
 extern const s8 gData_02005a88[4];
 
-void Func_02000924(s32 id);
-void Func_0200095c(s32 id);
-
 void Func_02000a18(s32 id, s32 mode, s32 frame) {
   s32 other = gData_02005a88[(id - 18) & 3];
   struct Actor *object = Actor_GetById(id);
@@ -495,11 +485,6 @@ void Func_02000b4c(s32 a, s32 b) { Func_02000a18(19, a, b); }
 void Func_02000b5c(s32 a, s32 b) { Func_02000a18(20, a, b); }
 
 void Func_02000b6c(s32 a, s32 b) { Func_02000a18(21, a, b); }
-
-void Func_02005880(void);
-void Func_02005888(void);
-void Func_0200095c(s32 id);
-void Func_02000924(s32 id);
 
 void Func_02000b7c(s32 id, s32 other, s32 flag, s32 side) {
   struct Actor *object = Actor_GetById(id);
@@ -598,8 +583,6 @@ void Func_02000cf8(s32 id, s32 mode) {
   }
 }
 
-void Func_02000cf8(s32 id, s32 side);
-
 void Func_02000d70(void) {
   Map_CopyCellAttributeRect(11, 64, 11, 8, 11, 22);
   Map_CopyCellAttributeRect(79, 64, 11, 8, 79, 22);
@@ -632,11 +615,6 @@ struct EventWork184 {
   u8 unk000[388];
   s16 value;
 };
-
-void Func_02005880(void);
-void Func_02005888(void);
-s32 Func_02000df8(s32 x, s32 z);
-void Func_02000d70(void);
 
 void Func_02000e40(s32 id, s32 dx, s32 dz, s32 axis) {
   struct Actor *object = Actor_GetById(id);

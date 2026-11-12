@@ -11,7 +11,6 @@
 #include "scene_tables.h"
 #include "io_write_queue.h"
 
-void Func_02003d7c();
 void Func_02000ca8();
 s32 Func_02003d2c(struct Actor *object, struct Vector3 *target);
 

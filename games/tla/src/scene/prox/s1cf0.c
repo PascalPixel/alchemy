@@ -388,7 +388,6 @@ void Func_0200279c(s32 actor, s32 x, s32 z, s32 frames) {
    } *)(base))                                                                 \
        ->v)
 
-void Func_0200279c(s32 a, s32 b, s32 c, s32 d);
 extern u8 gData_020047ac[];
 extern u8 gData_02004848[];
 extern u8 gData_020048e4[];

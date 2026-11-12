@@ -70,8 +70,6 @@ struct Charge {
 };
 
 extern u8 gData_02002ae8[];
-void Func_02002898(void);
-void Func_020028a0(void);
 void Animation_ApplyChildArgument(void *sprite, s32 argument);
 void Animation_ApplyChildValuesToRecord(void *sprite, s32 value);
 void Animation_ApplyChildValue(void *sprite, s32 value);
@@ -225,7 +223,6 @@ extern u8 gData_020029b8[];
 extern u8 gData_020029c0[];
 s32 Func_02002708(s32 hole);
 s32 Func_02002850(struct Actor *object, struct Vector3 *position);
-void Func_02000428(s32 hole);
 
 void Func_020004c8(s32 hole) {
   struct Actor *leader;
@@ -540,12 +537,6 @@ void Func_02000cec(void) {
 }
 
 extern u8 gData_02002a04[];
-s32 Math_Cosine(s32 angle);
-void Func_02000ca0(void);
-void Func_02000c24(void);
-void Func_02000cec(void);
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
 
 void Func_02000d2c(void) {
   struct Actor *rock = Actor_Get(19);
@@ -777,9 +768,6 @@ void Func_02001288(void) {
     }
   }
 }
-
-void Func_020009c0(s32 id);
-void Func_02000a94(s32 id);
 
 // The vent setter called through a function type returning s32; each caller's
 // tag says why.
@@ -1021,31 +1009,13 @@ extern char SceneId_Ov678Room1, SceneId_Ov678Room2, SceneId_Ov678Room3,
 extern u8 gDecodeFillByte;
 extern const u8 gData_02002a78[], gData_02002ab6[], gData_02002abc[],
     gData_02002aca[], gData_02002ad8[];
-s32 GameFlag_Test(s32 flag);
-void GameFlag_SetBit(s32 flag);
 void Func_02002120(void);
-void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 x, s32 z);
-void Map_CopyCellAttributeRect(s32 srcX, s32 srcZ, s32 width, s32 height,
-                               s32 destX, s32 destZ);
-void Map_CopyCellsRect(s32 srcX, s32 srcZ, s32 width, s32 height, s32 destX,
-                       s32 destZ);
-void Func_02001288(void);
-void Func_02001304(void);
-void Func_02001424(void);
-void Func_020014a0(void);
-void Func_0200151c(void);
-void Func_02001684(void);
-void Func_020016fc(void);
-void Func_02001618(void);
 void Actor_SetWideSprite(s32 id, s32 wide);
 void Func_02002960(s32 a);
 void Func_02002614();
-void Func_020027f8(struct Actor *object, s32 mode);
 void Func_02002980(void);
 void Func_02002988(s32 a, s32 flag, s32 b, s32 c);
-void Func_02002084(s32 a);
 void Func_02002114();
-void Func_02002828(void);
 
 #if !TLA_PATCH_1
 s32 Func_02001774(void) {
@@ -1497,8 +1467,6 @@ struct MapFocus {
 };
 
 extern u8 gMapCellBuffer[];
-extern u8 gMapShapeGrid[];
-void Func_02002810(void);
 
 void Func_02001ff0(s32 x, s32 z) {
   u8 *map = (u8 *)Ram_HeapSlots->mapWork;
@@ -1567,7 +1535,6 @@ void Func_02002120(void) {
 
 // volatile: the VBlank handler sets the held keys, as gKeysHeld in The Broken Seal.
 extern volatile u32 gInput;
-extern struct SceneState gSceneState;
 
 void Func_02002144(void) {
   struct SceneState *state = &gSceneState;
@@ -1680,8 +1647,6 @@ void Func_0200237c(void) {
 #define VENT_BOUNCE Func_02002400
 #include "../field/object/vent_bounce.c"
 
-void Func_020027f8(struct Actor *object, s32 a);
-
 void Func_020024f8(struct Actor *object, s32 priority) {
   object->motionFlags = 0;
   object->collisionFlags = 0;
@@ -1695,8 +1660,6 @@ void Func_020024f8(struct Actor *object, s32 priority) {
   object->speedLimit = 0;
   object->acceleration = 0;
 }
-
-void Func_020024f8(struct Actor *object, s32 priority);
 
 void Func_02002554(s32 *position, s32 base) {
   struct Actor *object =
@@ -1759,9 +1722,7 @@ struct SwingWork {
   u16 values[4];
 };
 
-extern u8 gData_020023c4[];
 s32 Map_GetTerrainHeight(s32 terrain, s32 x, s32 z);
-void Func_020025d4(void);
 
 void Func_02002614(u16 *points, u16 *values, s32 arg) {
   struct SwingWork *work = (struct SwingWork *)(gData_020023c4 + 0x188);

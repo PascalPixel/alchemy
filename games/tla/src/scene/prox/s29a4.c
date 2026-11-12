@@ -30,7 +30,6 @@ void Func_020029a4(void) {
 
 s32 Func_020045dc();
 s32 Func_02001cf0();
-extern u8 gMainRoutineWork[];
 
 void Func_020029c8(void) {
   s32 t2;

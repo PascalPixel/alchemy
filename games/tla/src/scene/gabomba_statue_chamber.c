@@ -84,14 +84,8 @@ extern const u8 gData_02001f78[];
 extern const u8 gData_02001f9c[];
 extern const u8 gData_02001fe4[];
 extern const u8 gData_0200200c[];
-void Func_02001da0(void);
-void Func_02001e20();
-void Func_02000100(void);
 #define OBJECT(id) (Actor_Get((id)))
 void Func_02001094(void);
-void Func_02001d30();
-void Event_FinishScreenTransition(void);
-void Event_WaitTransitionFrames(void);
 void Func_02001d78(void);
 void Func_02001d80(void);
 
@@ -391,8 +385,6 @@ void Func_02000a98(s32 x, s32 z) {
   Import_EventSetExitRequest(work->exit);
 }
 
-void Func_02000a98(s32 a, s32 b);
-
 void Func_02000b60(void) { Func_02000a98(312, 144); }
 
 #include "input.h"
@@ -420,10 +412,8 @@ void Func_02000b70(void) {
 
 #include "system/io_reg.h"
 
-void Func_02001da8(void);
 void Func_02001d60(void);
 void Func_02001d40(void);
-void Event_StartScreenTransition(void);
 
 void Func_02000be8(void) {
   u8 *map = (u8 *)Ram_HeapSlots->mapWork;
@@ -540,4 +530,3 @@ void Func_02000e60(void) {
 void Func_02000ef0(struct Actor *object) {
   object->x = Actor_GetById(8)->x;
 }
-

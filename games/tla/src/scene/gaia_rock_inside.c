@@ -60,8 +60,6 @@ void Func_0200036c(void) {
 
 void Func_02004e5c(void);
 void Func_02004dc4(void);
-void Event_StartScreenTransition(void);
-void Event_WaitTransitionFrames(void);
 s32 Math_Cosine(s32 angle);
 u32 Random16Far(void);
 void Effect_AdvanceMotion(union FieldObject *object);

@@ -67,7 +67,6 @@ s32 Func_02003d20(void);
 struct Actor *Func_02003dd8(s32 *position, s32 mode);
 void Func_02003c28(void);
 void Func_02003c30(void);
-void Func_02003ba0(struct Actor *object, s32 mode);
 void Func_02000974(s32 mode);
 void Func_02000aa8(void);
 void Func_02000c4c(s32 level, s32 layer);
@@ -146,12 +145,7 @@ test:
   }
 }
 
-void Func_02000974(s32 mode);
-void Func_02000aa8(void);
 void Func_02000bc0(s32 a, s32 b, s32 owner);
-void Func_02003ba0(struct Actor *object, s32 value);
-void Func_02003c28(void);
-void Func_02003c30(void);
 
 /// Runs the event of the listed object `id` once: the list holds (object id,
 /// flag) pairs ended by 0xffff, and unless the flag after the entry's own is
@@ -212,8 +206,6 @@ void Func_020000a4(const void *data, s32 a, s32 b);
 
 void Func_02001474(s32 show);
 void Func_02002180(void);
-void Func_02003c28(void);
-void Func_02003c30(void);
 void Func_02003dc0(const void *data);
 void Func_02003dc8(void);
 void Func_02003de8(void);
@@ -237,7 +229,6 @@ void Func_02003d58(s32 a, s32 b);
 void Func_02003d60(void);
 void Func_02003d68(void);
 void Func_02003d70(void);
-void Func_02003cc0(s32 id);
 void Func_02003d40(struct Actor *object, s32 mode);
 void Func_02003bb8(struct Actor *object);
 void Func_02002b68(void);
@@ -257,16 +248,8 @@ void Func_0200056c(s32 id) {
   Func_02003cc0(id);
 }
 
-extern u8 gMapShapeGrid[];
-
 void ObjectVisual_CopyAttributes(s32 id, s32 value);
-s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-void Func_0200056c(s32 id);
-s32 Func_02003c10(s32 layer, s32 x, s32 z);
 void Func_02003c78(s32 id, s32 target);
-void Func_02003cc0(s32 id);
-s32 Func_02003db0(struct Actor *actor);
-s32 Func_02003dd0(s32 layer, s32 shape, s32 height);
 
 /// Places actors 8 to 10 at the leader, then walks a list of (actor, flag)
 /// pairs ended by 0xffff: an actor whose flag + 1 is set is put back with
@@ -325,80 +308,15 @@ void Func_02000584(u16 *list) {
   wait(10);
 }
 
-extern const u8 gData_02003f44[];
-extern const u8 gData_02003f52[];
-extern const u8 gData_02003f80[];
-extern const u8 gData_02003f92[];
-extern const u8 gData_02003f98[];
-extern const u8 gData_02003fa0[];
-extern const u8 gData_02003fa8[];
-extern const u8 gData_02003fb0[];
-extern const u8 gData_02003fb8[];
-extern const u8 gData_02003fc0[];
-extern const u8 gData_02003fc4[];
-
-void Func_020000a4(const void *data, s32 a, s32 b);
-
-void Func_02001474(s32 show);
-void Func_02002180(void);
-void Func_02003c28(void);
-void Func_02003c30(void);
-void Func_02003dc0(const void *data);
-void Func_02003dc8(void);
-void Func_02003de8(void);
-void Func_020015b8(struct Actor *object);
-void Func_0200172c(void);
-void Func_02001804(void);
-
-extern const u16 gData_02003fd2[];
-extern const struct CellRecord gData_02004066[];
-
-void Func_02003cf0(void);
-void Func_02003d50(s32 a, s32 b);
-void Func_02003d58(s32 a, s32 b);
-void Func_02003d60(void);
-void Func_02003d68(void);
-void Func_02003d70(void);
-void Func_02003cc0(s32 id);
-void Func_02003d40(struct Actor *object, s32 mode);
-void Func_02003bb8(struct Actor *object);
-void Func_02002b68(void);
-void Func_02002f08(void);
-
-void Field_DispatchTypeHandler(s32 type);
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
-
 void Func_020006ec(struct Actor *object, struct Actor *target) {
   Actor_SetPositionAndResetMotion(object, target->x, target->y, target->z);
   Actor_SetPositionAndResetMotion(target, 0, 0, 0);
 }
 
-extern u8 gMapShapeGrid[];
-
 u32 Random16Far(void);
 s32 Math_Cosine(s32 angle);
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
-void ObjectVisual_CopyAttributes(s32 id, s32 value);
-s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-void Func_0200056c(s32 id);
-void Func_020006ec(struct Actor *object, struct Actor *other);
-void Func_02000974(s32 mode);
-void Func_02000aa8(void);
-void Func_02000c4c(s32 level, s32 layer);
-void Func_02003ba0(struct Actor *object, s32 mode);
 void Func_02003ba8(struct Actor *object, const void *script);
-s32 Func_02003c10(s32 layer, s32 x, s32 z);
-void Func_02003c28(void);
-void Func_02003c30(void);
-void Func_02003c78(s32 id, s32 target);
-void Func_02003cc0(s32 id);
-s32 Func_02003d20(void);
 s32 Func_02003d80(void *sprite, s32 frame);
-s32 Func_02003db0(struct Actor *object);
-s32 Func_02003dd0(s32 layer, s32 shape, s32 height);
-struct Actor *Func_02003dd8(s32 *position, s32 mode);
 void Effect_AdvanceMotionAtLeaderPriority(struct Actor *object);
 
 /// The effect fields of an Actor, as field_effect.h names them.

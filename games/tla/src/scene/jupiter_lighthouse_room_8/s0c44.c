@@ -100,8 +100,6 @@ s32 Func_02000c44(struct PushTarget *target) {
 #define PIXELS(v) (((s16 *)&(v))[1])
 
 extern u16 gData_020022d0[];
-extern s8 gData_020022dc[][4];
-extern s32 gData_020022f4[];
 
 struct Actor *Func_02000dac(s32 *direction, s32 *slot, s32 *kind) {
   struct EventWork *work = Ram_HeapSlots->eventWork;

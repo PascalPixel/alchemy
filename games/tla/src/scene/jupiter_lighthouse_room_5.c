@@ -156,12 +156,10 @@ struct OrbitEffect {
   void (*update)(struct OrbitEffect *effect);
 };
 
-extern u32 gFrameCount;
 extern u32 gData_02003214[];
 
 u32 Random16Far(void);
 void Func_02002820(struct OrbitEffect *object, const void *script);
-void Func_02000148(struct FieldActor *self);
 
 static inline struct OrbitEffect *CreateOrbitEffect(s32 type, s32 x, s32 y,
                                                     s32 z) {
@@ -225,8 +223,6 @@ void Func_02000294(void) {
   Func_02001650(gData_02003274);
 }
 
-extern s32 gData_02003274;
-extern s32 gData_02003278;
 extern const u8 gData_02002f70[];
 extern const u8 gData_02002f94[];
 
@@ -235,11 +231,6 @@ void Actor_SetAnimationSpeed(struct Actor *object, s32 speed);
 void Func_02001718(const s32 *from, const s32 *to);
 void Func_02000d80(s32 value);
 void Func_0200185c(void);
-void Func_02000e04(s32 id);
-void Sound_WaitForJingle(void);
-
-void Func_02000294(void);
-void Func_020001a4(void);
 
 static __inline__ void Bring(s32 id) {
   struct Actor *object;
@@ -399,18 +390,13 @@ struct SparkWork {
 };
 
 extern s32 gData_020033dc;
-extern u8 MsgFieldShowAnemosPower[];
 
 void Resource_ResetEntry(s32 entry);
-void HeapSlot_Release(s32 slot);
-void Event_WaitTransitionFrames(void);
 void Func_02001538(void);
 void Func_020028b0(void);
 void Func_020028b8(void);
 void Func_02001c88(s32 x, s32 y, s32 z, s32 a3, s32 a4, s32 a5, s32 a6,
                    struct EffectParams *params);
-
-u32 Random16Far(void);
 
 void Func_020006ac(void) {
   if (!Event_GetFlag(0xa0e)) {
@@ -516,10 +502,6 @@ struct JupiterLighthouseRoom5EventWork {
   ((struct JupiterLighthouseRoom5EventWork *)Ram_HeapSlots->eventWork)
 
 void Func_020028a0(s32 value);
-void Func_020028b0(void);
-void Func_020028b8(void);
-void Func_02000734(void);
-void Func_02000810(s32 actor, s32 target);
 
 /// Once flag 0xa24 is set and neither 0xa23 nor 0xa22 is, actor 4 turns
 /// about, actor 22 rises in sparks and talks with it, then joins it; flags
@@ -600,10 +582,7 @@ struct JupiterLighthouseRoom5EventWork1ac {
   s32 value;
 };
 
-extern u8 gData_02002fb8[];
-
 void Func_020029c8(void *data);
-void Func_020001a4(void);
 
 /// Scene preparation: the event value 0x204, actor 22 placed while flag 0xa22
 /// is set (cleared once 0xa23 is), actors 23 and 24 placed, and with flag
@@ -639,10 +618,6 @@ s32 Func_02000ae8(void) {
   }
   return 0;
 }
-
-void Scene_SetArrivalFlags(s32 unused);
-void Func_02000d80(s32 mode);
-void Func_02000e04(s32 id);
 
 /// Scene setup: the arrival flags and palette, the leader's priority bit 0x40,
 /// and the actors flags 0xa00 and 0xa09 bring in.

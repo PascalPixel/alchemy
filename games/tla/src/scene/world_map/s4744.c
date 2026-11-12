@@ -114,13 +114,11 @@ done:
 }
 
 extern u32 gInput;
-extern s16 gData_02006e0e;
 extern s16 gData_02006e10;
 extern u32 Data_02006e14[3];
 
 void Func_02004c08(s32 value);
 s32 Func_02004c10(void);
-void Func_02004744(s32 progress);
 void Render_ProjectPoint(s32 *position, s32 *screen);
 void Func_02004ad0(u32 *oam, s32 priority);
 
@@ -154,12 +152,7 @@ void Func_020048f4(void) {
 }
 
 extern const u8 gWorldMapPackedTilesC[];
-extern s16 gData_02006e0c;
-extern s16 gData_02006e0e;
-extern s16 gData_02006e10;
 
-s32 Resource_FindFreeEntry(void);
-void Func_020048f4(void);
 void Func_02004aa8(const u8 *a, u8 *b);
 
 void Func_020049bc(void) {

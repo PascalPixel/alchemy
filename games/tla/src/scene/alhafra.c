@@ -71,7 +71,6 @@ void Func_02000098(struct DoorStep *step, s32 countdown, s32 unused) {
 void Func_0200010c(s32 index) {
   struct DoorStep *table = gData_0200277c;
 
-  
   Func_02000098(&table[index], index, 0);
 }
 
@@ -466,7 +465,6 @@ const u8 *Func_02000788(void) {
        ->v)
 
 void Func_02001d24();
-void Actor_SetActionCallback();
 void Func_02000a98();
 
 s32 Func_020007d4(void) {
@@ -1147,4 +1145,3 @@ void Func_02001958(s32 a0) {
   Actor_SetHorizontalPositionWithTerrain(25, 0, 0);
   Func_02001bec();
 }
-

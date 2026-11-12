@@ -21,8 +21,6 @@
 extern void Func_0200145c(struct FieldEffect *effect, s32 mode);
 extern void Func_02001464(struct FieldEffect *effect, const s32 *script);
 extern s32 gData_02001650[];
-extern void
-BattleEffect_UpdateObjectMotionScaleAndLinkedAngle(union FieldObject *object);
 void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options) {

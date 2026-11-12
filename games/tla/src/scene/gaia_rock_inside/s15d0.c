@@ -196,7 +196,6 @@ third:
 void Func_02004e5c(void);
 void Func_02004ec4(s32 id, s32 target);
 void Func_02004ddc(void);
-void Func_020015d0(s32 a, s32 b);
 void Func_02004dd4(void);
 void Party_LearnAbility(s32 unit, s32 ability);
 s32 Func_02004e64(void);
@@ -307,7 +306,6 @@ void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options);
 s32 Math_Cosine(s32 angle);
-void Effect_AdvanceMotionLocal(union FieldObject *object);
 
 void Func_02001c9c(void) {
   s32 velocity[3];
@@ -332,7 +330,6 @@ void Func_02001c9c(void) {
 }
 
 struct Actor *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type);
-void Func_02001c9c(void);
 void Func_02004dbc(struct Actor *object);
 
 /// Unless flag 0x9ee or 0x9ba is set: fades the blend out, lowers person 12 by

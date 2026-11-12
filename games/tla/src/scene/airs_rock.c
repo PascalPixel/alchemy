@@ -640,8 +640,6 @@ struct ObjBits {
 };
 extern char ResourceId_WhirlwindMap;
 extern char ResourceId_WhirlwindTiles;
-void *Heap_Alloc(s32 size);
-void Heap_Release(void *block);
 void *Resource_GetTableEntry(s32 id);
 void Func_02003af0(void *resource, void *dest);
 
@@ -986,8 +984,6 @@ struct Shot {
 
 void Actor_SetAnimationSpeed(struct Actor *object, s32 speed);
 void Func_02003cd0(struct Actor *object, s32 cue);
-s32 Func_020018d8(s32 *a, s32 *b);
-s32 Func_020018ac(s32 *a, s32 *b);
 
 void Func_02001908(struct Actor *shot) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -1135,7 +1131,6 @@ void Func_02001ca4(void) {
 }
 
 void Func_02003cc0(void);
-s32 Map_GetTerrainHeight(s32 terrain, s32 x, s32 z);
 
 void Func_02001cc8(void) {
   struct Actor *object =
@@ -1258,7 +1253,6 @@ struct ObjectPriorityByte {
 extern char ResourceId_LightningMap;
 extern char ResourceId_LightningTiles;
 void Func_02005dcc(s32 a, s32 b, s32 c);
-void Func_02001dc4(s32 x, s32 z);
 
 /// The pillar of light in Air's Rock, overlay 664's Func_02003654 with object
 /// 14 glowing: the camera moves to (0x218, 0xd8), the leader turns, and the
@@ -1694,13 +1688,9 @@ void Func_02002c24(s32 height) {
 }
 
 extern char SceneId_Ov663Room1, SceneId_Ov663Room2, SceneId_Ov663Room3;
-void Func_02002c24(s32 offset);
 void Func_02003cb0(const u8 *table);
 void Func_02003ca0(const u8 *table);
-void Func_02000620(void);
 void Func_02003c80(s32 a);
-void Event_StartScreenTransition(void);
-void Func_02001f7c(void);
 
 #define LEADER() Actor_GetById(gMainRoutineWork.currentOwner)
 #define BEAM ((s32 *)((u8 *)Ram_HeapSlots->mapWork + 0x178))
@@ -2012,4 +2002,3 @@ s32 Func_02003a7c(void) {
   }
   return 0;
 }
-

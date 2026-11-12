@@ -141,8 +141,6 @@ void Func_02000228(s32 arg) {
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
-extern s32 gData_02002618;
-
 void Func_0200130c(s32 kind, s32 x, s32 z, s32 a, s32 b);
 void Func_02001a28(s32 dx, s32 dz, s32 effect);
 void Func_02000460(s32 mode);

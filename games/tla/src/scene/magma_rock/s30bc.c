@@ -86,7 +86,6 @@ done:
 
 extern const u8 gData_02003dba[];
 void Func_02002e30(const u8 *data);
-void Func_02003b3c(s32 id);
 void Func_020036f8(s32 a, s32 b, s32 owner);
 
 void Func_02003224(struct Actor *object, struct Actor *source) {
@@ -98,9 +97,7 @@ s32 Func_02003b8c(void);
 struct Actor *Func_02003c2c(s32 *position, s32 flags);
 void Func_02003aec(void);
 s32 Func_02003af4(void);
-void ObjectVisual_CopyAttributes(u32 targetId, u32 sourceId);
 void Func_02003a54(struct Actor *object, s32 mode);
-void Func_02003224(struct Actor *object, struct Actor *target);
 void Func_020034ac(s32 mode);
 void Func_02003784(s32 level, s32 layer);
 void Func_020035e0(void);

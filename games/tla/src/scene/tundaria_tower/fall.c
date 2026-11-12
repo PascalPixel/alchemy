@@ -135,12 +135,7 @@ void Func_0200095c(void) { Func_0200189c(); }
 
 extern const u8 gData_02003370[];
 
-void BattleEffect_StartBufferInterpolation(s32 frames);
-void Sound_Play(s32 cue);
 void Func_02002f90(struct Actor *object, const void *script);
-void Event_Wait(s32 frames);
-void Actor_WaitForMoveById(s32 actor);
-void Actor_WatchAndSetScript(s32 actor, s32 target);
 
 /// Actor 8 is placed and given its script while the screen flashes, and three
 /// map cells change.

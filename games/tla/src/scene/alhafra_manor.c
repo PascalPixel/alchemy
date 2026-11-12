@@ -202,8 +202,6 @@ const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
 #include "input.h"
 
-void Event_StartScreenTransition(void);
-void Event_WaitTransitionFrames(void);
 void Func_02000658(void);
 void Func_02001488(void);
 
@@ -643,4 +641,3 @@ void Func_02000658(void) {
 void Func_020015e8(void);
 
 void Func_02001488(void) { Func_020015e8(); }
-

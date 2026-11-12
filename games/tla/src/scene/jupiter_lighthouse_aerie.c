@@ -32,7 +32,6 @@ union ActorCoordinate {
 };
 
 void Func_0200105c(struct Actor *object);
-void Sound_WaitForJingle(void);
 
 void Func_02000054(s32 mode) {
   struct Actor *left = Actor_Get(9);
@@ -91,7 +90,6 @@ struct JupiterLighthouseAerieObject {
   s32 z;
 };
 
-void Func_02000054(s32 step);
 void Func_02001070(struct JupiterLighthouseAerieObject *object);
 void Func_020017a8(s32 a, s32 b, s32 c);
 void Func_02002a78(s32 x, s32 z, s32 a, s32 b);
@@ -161,10 +159,6 @@ void Func_02000314(s32 unused, s32 actor) {
 // (Func_020001b4, Func_02000264); off its cell it only marks the cell it stands
 // on (Func_02002a78). With both flags set, flag 2591 is set. The fall wait is
 // an if around a do-while.
-
-void Func_02002a78(s32 x, s32 z, s32 a, s32 b);
-void Func_020001b4(void);
-void Func_02000264(void);
 
 void Func_0200032c(s32 unused, s32 id) {
   struct Actor *object = Actor_Get(id);
@@ -254,10 +248,8 @@ s32 Func_02000538(void) {
   return 0;
 }
 
-void Scene_SetArrivalFlags(s32 flags);
 void Func_02001cb4(void);
 void Func_02001dbc(s32 actor, s32 mode);
-void Func_02002a78(s32 x, s32 z, s32 a, s32 b);
 
 /// The room's setup: actors 13 and 14 by flags 0xa0a and 0xa0b (with the map
 /// cells copied when set), then the terrain under each.

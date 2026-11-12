@@ -129,7 +129,6 @@ struct KibomboEffectWork {
 void Func_020037e4(void) {
   struct KibomboEffectWork *work = Ram_HeapSlots->effectWork;
 
-  
   if (work->field7c4 != 0) {
     if (GameFlag_Test(0x220))
       Func_02000624();
@@ -190,7 +189,6 @@ void Func_02003948(void) {
   s32 x;
   s32 px;
 
-  
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   Func_02005a9c();
   Event_ResolvePendingActions(0);
@@ -457,7 +455,6 @@ void Func_02003dec(void) {
 
 void Func_02002eb0(void);
 void Func_020032e0(void);
-void Func_02003610(void);
 
 void Func_020040cc(void) {
   Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
@@ -610,31 +607,6 @@ void Func_02004424(void) {
   GameFlag_SetBit(0x109);
   Import_EventSetExitRequest(12);
 }
-
-extern const u8 gData_0200613c[];
-extern const u8 gData_0200614c[];
-extern const u8 gData_02006324[];
-
-void Func_020000a0(struct KibomboObject *object);
-void Func_02002f34(void);
-void Func_02003030(void);
-void Func_02003184(void);
-void Func_02003640(s32 open, s32 hide);
-void Func_020036e0(s32 open, s32 mode);
-void Func_02004524(void);
-void Func_020045d0(void);
-void Func_020050ac(void);
-void Func_02005114(void);
-void Func_0200516c(void);
-void Func_020054e0(void);
-void Func_02005594(void);
-void Func_020057e0(void);
-void Func_02005898(void);
-void Func_02005bcc(void);
-void Func_02005c04(s32 a);
-void Func_02005c54(void);
-void Func_02005c5c(s32 a, s32 b, s32 c, s32 d);
-void Func_02005c64(const void *script);
 
 void Func_02004524(void) {
   struct KibomboEventWork *work;
@@ -905,10 +877,6 @@ void Func_02004a28(void) {
   Import_EventSetExitRequest(13);
 }
 
-void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 actor, s32 x, s32 z,
-                                                    s32 angle);
-void BattleEffect_ApplyColorToTargetBuffer(s32 a, s32 b);
-
 void Func_02004cf4(void) {
   struct KibomboEventWork *work;
   struct KibomboObject *leader;
@@ -1047,4 +1015,3 @@ void Func_02005114(void) {
   KIBOMBO_TASK_ADD(Func_02003030, 0x480)
   Func_02003184();
 }
-

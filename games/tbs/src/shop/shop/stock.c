@@ -349,7 +349,7 @@ s32 ShopStock_CopyItems(s32 stockRow, s16 *output) {
       /* FAKEMATCH(dead): the copy under a test of copying, always 1, which
        * emits nothing but keeps the copy's read apart from the signed sentinel
        * read; as the copy and increments without the test, 41 of 30
-       * instructions differ in tbs-en. */
+       * instructions differ in tbs-en (the plain form is 31 instructions). */
       if (copying) {
         *dst = *src;
         count++;

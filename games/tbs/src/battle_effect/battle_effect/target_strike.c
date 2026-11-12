@@ -1,10 +1,10 @@
 /// @file
-/// Monster bites, fangs and slashes on one target.
+/// Monster bites and slashes on one target.
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
 
-// Target strikes: repeated slashes or columns of light on the first target.
+// Target strikes: slashes across the first target, or fangs closing on it.
 // The folder README describes them under "Effect families".
 
 /// The strike sparks, 512 of them, from PARTICLES[512] (14336 bytes in);
@@ -20,14 +20,14 @@
 
 /// The columns of gTargetStrike_Styles.
 enum {
-  TARGET_STRIKE_KIND,         ///< STRIKE_KIND_SLASH or STRIKE_KIND_COLUMN
+  TARGET_STRIKE_KIND,         ///< STRIKE_KIND_SLASH or STRIKE_KIND_BITE
   TARGET_STRIKE_HITS,         ///< how many times the target is struck
   TARGET_STRIKE_FLAGS,        ///< STRIKE_SMOKE and so on
   TARGET_STRIKE_COLOR,        ///< background palette, a STRIKE_COLOR_
   TARGET_STRIKE_IMAGE_FRAMES, ///< frames each strike image is shown
-  TARGET_STRIKE_COMPOSITE, ///< how the columns are drawn (COMPOSITE_LIGHTEN or
-                           ///< _ADDITIVE)
-  TARGET_STRIKE_FRAMES     ///< length of the effect in frames
+  TARGET_STRIKE_COMPOSITE,    ///< how the fangs are drawn (COMPOSITE_LIGHTEN or
+                              ///< _ADDITIVE)
+  TARGET_STRIKE_FRAMES        ///< length of the effect in frames
 };
 // STRIKE_KIND_*, the STRIKE_SMOKE flags, the STRIKE_COLOR_ palettes and enum
 // TargetStrikeStyle are in battle_effect_table.h.
@@ -38,31 +38,32 @@ enum {
 void BattleEffect_RunNumbingSting(struct BattleEffectParams *args) {
   BattleEffect_RunTargetStrike(args, TARGET_STRIKE_STYLE_LIGHTNING_GLINT_SLASH);
 }
-/// Three ember columns strike the first target and drain it into the user.
+/// Fangs bite the first target three times, in ember colours, and drain it
+/// into the user.
 ///
 /// Abilities: Cannibal Fang (BATTLE_EFFECT_CANNIBAL_FANG).
 void BattleEffect_RunCannibalFang(struct BattleEffectParams *args) {
-  BattleEffect_RunTargetStrike(args, TARGET_STRIKE_STYLE_EMBER_DRAIN_COLUMNS);
+  BattleEffect_RunTargetStrike(args, TARGET_STRIKE_STYLE_EMBER_DRAIN_BITES);
 }
-/// One lime column strikes the first target, with smoke.
+/// Fangs bite the first target once, in lime, with smoke.
 ///
 /// Abilities: Poisonous Bite (BATTLE_EFFECT_POISONOUS_BITE); Poison Fang
 /// (BATTLE_EFFECT_POISON_FANG).
 void BattleEffect_RunPoisonousBite(struct BattleEffectParams *args) {
-  BattleEffect_RunTargetStrike(args, TARGET_STRIKE_STYLE_LIME_SMOKE_COLUMN);
+  BattleEffect_RunTargetStrike(args, TARGET_STRIKE_STYLE_LIME_SMOKE_BITE);
 }
-/// One column strikes the first target, with smoke, in Mars Djinn colours.
+/// Fangs bite the first target once, with smoke, in Mars Djinn colours.
 ///
 /// Abilities: Rabid Fang (BATTLE_EFFECT_RABID_FANG).
 void BattleEffect_RunRabidFang(struct BattleEffectParams *args) {
-  BattleEffect_RunTargetStrike(args, TARGET_STRIKE_STYLE_MARS_SMOKE_COLUMN);
+  BattleEffect_RunTargetStrike(args, TARGET_STRIKE_STYLE_MARS_SMOKE_BITE);
 }
-/// Three lightning columns strike the first target among glints.
+/// Fangs bite the first target three times among glints, in lightning
+/// colours.
 ///
 /// Abilities: Electric Bite (BATTLE_EFFECT_ELECTRIC_BITE).
 void BattleEffect_RunElectricBite(struct BattleEffectParams *args) {
-  BattleEffect_RunTargetStrike(args,
-                               TARGET_STRIKE_STYLE_LIGHTNING_GLINT_COLUMNS);
+  BattleEffect_RunTargetStrike(args, TARGET_STRIKE_STYLE_LIGHTNING_GLINT_BITES);
 }
 /// One lime slash strikes the first target, with smoke.
 ///
@@ -70,17 +71,18 @@ void BattleEffect_RunElectricBite(struct BattleEffectParams *args) {
 void BattleEffect_RunPoisonTail(struct BattleEffectParams *args) {
   BattleEffect_RunTargetStrike(args, TARGET_STRIKE_STYLE_LIME_SMOKE_SLASH);
 }
-/// Three columns strike the first target and drain it, in Mars Djinn colours.
+/// Fangs bite the first target three times and drain it, in Mars Djinn
+/// colours.
 ///
 /// Abilities: Vampiric Fang (BATTLE_EFFECT_VAMPIRIC_FANG).
 void BattleEffect_RunVampiricFang(struct BattleEffectParams *args) {
-  BattleEffect_RunTargetStrike(args, TARGET_STRIKE_STYLE_MARS_DRAIN_COLUMNS);
+  BattleEffect_RunTargetStrike(args, TARGET_STRIKE_STYLE_MARS_DRAIN_BITES);
 }
-/// Two blue columns strike the first target, with sparks.
+/// Fangs bite the first target twice, in blue, with sparks.
 ///
 /// Abilities: Double Fang (BATTLE_EFFECT_DOUBLE_FANG).
 void BattleEffect_RunDoubleFang(struct BattleEffectParams *args) {
-  BattleEffect_RunTargetStrike(args, TARGET_STRIKE_STYLE_BLUE_SPARK_COLUMNS);
+  BattleEffect_RunTargetStrike(args, TARGET_STRIKE_STYLE_BLUE_SPARK_BITES);
 }
 /// One heavy slash strikes the first target, with sparks, in Mars Djinn
 /// colours.
@@ -96,23 +98,23 @@ void BattleEffect_RunTwinBeaks(struct BattleEffectParams *args) {
   BattleEffect_RunTargetStrike(args,
                                TARGET_STRIKE_STYLE_LIGHTNING_SPARK_SLASHES);
 }
-/// Three pink columns strike the first target, with smoke.
+/// Fangs bite the first target three times, in pink, with smoke.
 ///
 /// Abilities: Acid Bite (BATTLE_EFFECT_ACID_BITE).
 void BattleEffect_RunAcidBite(struct BattleEffectParams *args) {
-  BattleEffect_RunTargetStrike(args, TARGET_STRIKE_STYLE_PINK_SMOKE_COLUMNS);
+  BattleEffect_RunTargetStrike(args, TARGET_STRIKE_STYLE_PINK_SMOKE_BITES);
 }
-/// Three additive columns strike the first target and drain it with large
-/// motes, in Mars Djinn colours.
+/// Fangs bite the first target three times, added to what lies under them,
+/// and drain it with large motes, in Mars Djinn colours.
 ///
 /// Abilities: Drain Fang (BATTLE_EFFECT_DRAIN_FANG).
 void BattleEffect_RunDrainFang(struct BattleEffectParams *args) {
   BattleEffect_RunTargetStrike(args,
-                               TARGET_STRIKE_STYLE_MARS_ADDITIVE_DRAIN_COLUMNS);
+                               TARGET_STRIKE_STYLE_MARS_ADDITIVE_DRAIN_BITES);
 }
 /// Strikes the first target TARGET_STRIKE_HITS times with a sideways slash or a
-/// column of light, with the extras its flags choose, and lets the battle
-/// show the damage on the hits.
+/// bite of closing fangs, with the extras its flags choose, and lets the
+/// battle show the damage on the hits.
 ///
 /// Called by the twelve wrappers above, from BattleEffect_RunNumbingSting to
 /// BattleEffect_RunDrainFang. Loads the style's colours over the first 64 of
@@ -140,7 +142,6 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
   struct Actor *source;
   s32 resource;
   s32 i;
-  s32 wispSheet = TARGET_STRIKE_SMOKE_OFFSETS;
   DrawRectangle *lower;
 
   EFFECT_GET_SLOTS(slots, cursor, work, canvas);
@@ -156,7 +157,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
 
   // Setup. The images: glints at the start of the sheet, the slashes or the
-  // columns at 3200, smoke at TARGET_STRIKE_SMOKE_OFFSETS, and the style's
+  // fangs at 3200, smoke at TARGET_STRIKE_SMOKE_OFFSETS, and the style's
   // palette.
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, particleSheet,
                              0, 0);
@@ -211,7 +212,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
       step->variant = -1;
     }
     // Motes and sparks work in battle space, projected each frame, from 20
-    // up at the target. Motes and a column's sparks fly up to 4 a frame
+    // up at the target. Motes and a bite's sparks fly up to 4 a frame
     // along each axis; a slash's sparks up to 8 across, towards the middle,
     // and the heavy slash's twice as fast as that.
     for (i = 0; i != 128; i++) {
@@ -227,7 +228,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
       TARGET_STRIKE_SPARKS[i].x = target->x.fixed;
       TARGET_STRIKE_SPARKS[i].y = px(20);
       TARGET_STRIKE_SPARKS[i].z = target->z.fixed;
-      if (TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_KIND) == STRIKE_KIND_COLUMN) {
+      if (TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_KIND) == STRIKE_KIND_BITE) {
         TARGET_STRIKE_SPARKS[i].velocityX = ((Random16() & 255) - 128) << 11;
         TARGET_STRIKE_SPARKS[i].velocityY = ((Random16() & 255) - 128) << 11;
         TARGET_STRIKE_SPARKS[i].velocityZ = ((Random16() & 255) - 128) << 11;
@@ -349,14 +350,14 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
           }
         }
       }
-      // Slashes show their glints on frames 12 to 31; columns while stage 3
-      // is drawn.
+      // Slashes show their glints on frames 12 to 31; bites while the fangs
+      // meet (stage 3).
       if (frame >= 12 && frame <= 31)
         glint = 1;
     } else if (frame < length + 4) {
-      // Columns: a column of light, drawn as two mirrored halves, rises
-      // through its stages on the target once per hit, then holds stage 3
-      // for 4 frames.
+      // Bites: rows of fangs above and below the target, drawn as two mirrored
+      // halves, close through stages 0 to 2 and meet in a flash at stage 3,
+      // once per hit; the last meeting holds for 4 frames.
       s32 stage;
 
       if (frame < length) {
@@ -364,10 +365,10 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
             frame / TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_IMAGE_FRAMES);
 
         // Pictures above 4 wrap back by 4, so each later hit reads pictures
-        // 4, 1, 2 and 3 (gTargetStrike_ColumnStages).
+        // 4, 1, 2 and 3 (gTargetStrike_BiteStages).
         while (picture > 4)
           picture -= 4;
-        stage = gTargetStrike_ColumnStages[picture];
+        stage = gTargetStrike_BiteStages[picture];
       } else {
         stage = 3;
       }
@@ -390,7 +391,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
         // damage, the others only play the hit sound. Each hit lights a
         // group of 64 sparks, 8 smoke puffs and 16 motes.
         // The group is frame / (6 * IMAGE_FRAMES), a slash's period, though
-        // column hits are four images apart, so a three-hit column's third
+        // bite hits are four images apart, so a three-hit bite's third
         // hit relights its second's group. Lighting sets only the lives, not
         // the positions, so the third hit throws nothing new: Acid Bite's
         // third puffs (frame 66) start again from where its second's,
@@ -447,6 +448,8 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
       for (i = 0; i != 3; i++) {
         s32 image = frame & 3;
         s32 angle = Random16() & TRIG_ANGLE_MASK;
+        /* FAKEMATCH(temporary): range holds 31; as Random16() & 31, 47 of 1259
+         * instructions differ in tbs-en. */
         s32 range = 31;
         s32 radius = Random16() & range;
         s32 x;
@@ -487,7 +490,9 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
           if (step->variant >= 0 && step->variant <= 23) {
             s32 picture = step->variant / 4;
 
-            draw[i & 1](canvas, work->sheet + picture * (24 * 48) + wispSheet,
+            draw[i & 1](canvas,
+                        work->sheet + picture * (24 * 48) +
+                            TARGET_STRIKE_SMOKE_OFFSETS,
                         Q_16_16_TO_INT(step->x) - 12,
                         Q_16_16_TO_INT(step->y) - 24, 24, 48);
             Particle_AdvanceWithGravity2D(step, 62, -px(1) / 64);
@@ -502,7 +507,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
       if (TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_FLAGS) & STRIKE_ABSORB) {
         s32 size = 3;
 
-        if (mode == TARGET_STRIKE_STYLE_MARS_ADDITIVE_DRAIN_COLUMNS)
+        if (mode == TARGET_STRIKE_STYLE_MARS_ADDITIVE_DRAIN_BITES)
           size = 8;
         if (frame == 55)
           BattleEffect_TintBattler(work->args->user, SPRITE_COLOR_WHITE,

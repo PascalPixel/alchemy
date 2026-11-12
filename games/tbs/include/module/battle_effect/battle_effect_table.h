@@ -6,8 +6,10 @@
 #include "vector3.h"
 
 // The two kinds of target strike (gTargetStrike_Styles).
-#define STRIKE_KIND_SLASH 0  ///< sideways slashes
-#define STRIKE_KIND_COLUMN 1 ///< columns of light
+#define STRIKE_KIND_SLASH 0 ///< sideways slashes
+/// Rows of fangs above and below the target that close on it.
+/// ★ Named from the game: "Double Fang" (MsgAbilityName)
+#define STRIKE_KIND_BITE 1
 
 // A target strike style's extras.
 #define STRIKE_SMOKE 1  ///< each hit raises smoke puffs from the target's feet
@@ -26,18 +28,18 @@
 
 /// The twelve target strike styles, rows of gTargetStrike_Styles.
 enum TargetStrikeStyle {
-  TARGET_STRIKE_STYLE_BLUE_SPARK_COLUMNS,
-  TARGET_STRIKE_STYLE_LIME_SMOKE_COLUMN,
-  TARGET_STRIKE_STYLE_PINK_SMOKE_COLUMNS,
-  TARGET_STRIKE_STYLE_EMBER_DRAIN_COLUMNS,
-  TARGET_STRIKE_STYLE_MARS_DRAIN_COLUMNS,
-  TARGET_STRIKE_STYLE_LIGHTNING_GLINT_COLUMNS,
+  TARGET_STRIKE_STYLE_BLUE_SPARK_BITES,
+  TARGET_STRIKE_STYLE_LIME_SMOKE_BITE,
+  TARGET_STRIKE_STYLE_PINK_SMOKE_BITES,
+  TARGET_STRIKE_STYLE_EMBER_DRAIN_BITES,
+  TARGET_STRIKE_STYLE_MARS_DRAIN_BITES,
+  TARGET_STRIKE_STYLE_LIGHTNING_GLINT_BITES,
   TARGET_STRIKE_STYLE_LIGHTNING_GLINT_SLASH,
   TARGET_STRIKE_STYLE_LIGHTNING_SPARK_SLASHES,
   TARGET_STRIKE_STYLE_MARS_HEAVY_SLASH,
   TARGET_STRIKE_STYLE_LIME_SMOKE_SLASH,
-  TARGET_STRIKE_STYLE_MARS_SMOKE_COLUMN,
-  TARGET_STRIKE_STYLE_MARS_ADDITIVE_DRAIN_COLUMNS
+  TARGET_STRIKE_STYLE_MARS_SMOKE_BITE,
+  TARGET_STRIKE_STYLE_MARS_ADDITIVE_DRAIN_BITES
 };
 
 // Every table battle_effect_table.c defines, in its order. A table read by
@@ -77,7 +79,7 @@ extern u8 gTargetStrike_Widths[];
 extern u8 gTargetStrike_Heights[];
 extern u16 gTargetStrike_Offsets[];
 extern u8 gTargetStrike_Reach[];
-extern u8 gTargetStrike_ColumnStages[];
+extern u8 gTargetStrike_BiteStages[];
 extern u8 gTargetStrike_GlintDrawFlags[];
 extern u8 gDeathPlunge_CellWidths[];
 extern u8 gDeathPlunge_CellHeights[];

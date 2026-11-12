@@ -291,7 +291,7 @@ SECTIONS
         "*/games/tla/src/graphics/ui/pointing_hand.o"(.rodata)
         "*/games/tla/src/graphics/ui/menu_titles.o"(.rodata)
         "*/games/tla/src/graphics/font/text.o"(.rodata)
-        "*/games/tla/src/window/articles.o"(.rodata)
+        "*/games/tla/src/window/flag_bit_rect.o"(.rodata)
         "*/games/tla/src/graphics/ui/sprite_cursors.o"(.rodata)
         "*/games/tla/src/window/scales.o"(.rodata)
         "*/games/tla/src/graphics/ui/page_arrow.o"(.rodata)
@@ -480,7 +480,7 @@ SECTIONS
         "*/games/tla/src/menu/menu.o"(.text)
         "*/games/tla/src/graphics/ui/menu_sprites.o"(.rodata)
         "*/games/tla/src/menu/menu_strings.o"(.rodata)
-        "*/games/tla/src/menu/menu_tables.o"(.data)
+        "*/games/tla/src/menu/menu.o"(.data)
         . = ABSOLUTE(ROM_SHIFT + SHOP_BANK_START);
         "*/games/tla/src/gamepak/far_call/table_41.o"(.text .rodata .data .padding)
         "*/games/tla/src/gamepak/far_call/table_42.o"(.text .rodata .data .padding)

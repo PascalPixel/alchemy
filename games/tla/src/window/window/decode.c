@@ -4,8 +4,8 @@
 
 #include "../window_internal.h"
 
-// The number of article kinds in each edition's table (articles.c), and the
-// mask a name's kind is read through.
+// The number of article kinds in each edition's table (flag_bit_rect.c), and
+// the mask a name's kind is read through.
 #if (LANGUAGE == LANGUAGE_ITALIAN)
 #define ARTICLE_KINDS 11
 #elif (LANGUAGE == LANGUAGE_SPANISH)
@@ -20,7 +20,7 @@
 #define ARTICLE_KIND_MASK 7
 #endif
 
-// The article strings by kind, copied whole (articles.c).
+// The article strings by kind, copied whole (flag_bit_rect.c).
 struct ArticleTable {
   u8 *text[ARTICLE_KINDS];
 };
@@ -30,7 +30,7 @@ extern const struct ArticleTable gText_ArticleTable;
 extern const struct ArticleTable gText_IndefiniteArticles;
 #endif
 #if (LANGUAGE == LANGUAGE_FRENCH)
-// "de", elided and whole, copied whole (articles.c).
+// "de", elided and whole, copied whole (flag_bit_rect.c).
 struct DeArticles {
   u8 *text[2];
 };
@@ -263,7 +263,7 @@ extern u8 MsgClassName[], MsgItemName[], MsgAbilityNothing[],
 #if LANGUAGE == LANGUAGE_FRENCH
 extern const s8 gLocalizedWord_ItemPronoun[];
 #else
-// The possessives (articles.c), copied whole: Spanish {singular, plural},
+// The possessives (flag_bit_rect.c), copied whole: Spanish {singular, plural},
 // German and Italian one for each item gender (gLocalizedWord_ItemGenders).
 #if LANGUAGE == LANGUAGE_SPANISH
 #define POSSESSIVE_COUNT 2

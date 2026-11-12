@@ -1,0 +1,197 @@
+/// @file
+/// Routines whose twins are in The Broken Seal's field/event_commands/view.c.
+// Part of visual_attributes.c.
+
+#include "../visual_attributes_internal.h"
+
+/// Sets the map coordinates the camera keeps the screen inside.
+void MapGrid_SetCameraBounds(s32 minX, s32 minZ, s32 maxX, s32 maxZ) {
+  struct MapWork *map = Ram_HeapSlots->mapWork;
+
+  map->minX = minX;
+  map->minZ = minZ;
+  map->maxX = maxX;
+  map->maxZ = maxZ;
+}
+
+void Func_080d45d8(void) {
+  struct MapWork *map = Ram_HeapSlots->mapWork;
+  s16 *duration;
+  s32 *from;
+  s16 *step;
+  s32 offset;
+  s32 delta;
+
+  if (((struct EventWork *)HeapSlot_AllocEwram(108, 0xd50))
+          ->viewCenter->movementState != 0)
+    return;
+  duration = &map->zoomFrames;
+  if (*duration == 0)
+    return;
+  from = &map->zoomFrom;
+  delta = map->zoomTo - *from;
+  step = &map->zoomStep;
+  (*step)++;
+  offset = *from + __divsi3(delta * *step, *duration);
+  map->zoom = Iwram_MulQ16(map->farPlane, offset);
+  gData_03001144 = *(u16 *)((u8 *)map + 0x11c) + 1;
+  if (*step == *duration) {
+    *duration = 0;
+    Task_Remove(Func_080d45d8);
+  }
+}
+
+void Func_080d46a4(s32 zoom, s32 frames) {
+  struct MapWork *map = Ram_HeapSlots->mapWork;
+  s32 result;
+
+  if (((struct EventWork *)HeapSlot_AllocEwram(108, 0xd50))->controlMode != 3)
+    return;
+  {
+    s32 (*ratio)(s32, s32) = Iwram_RatioMulQ14;
+    result = ratio(zoom, 0x10000);
+  }
+  map->zoomFrom = map->zoomTo;
+  map->zoomTo = result;
+  map->zoomFrames = frames;
+  map->zoomStep = 0;
+  Task_Add(Func_080d45d8, TASK_PASS_VBLANK + 20);
+}
+
+void Func_080d4714(void) {
+  struct MapWork *map = Ram_HeapSlots->mapWork;
+  s32 frames;
+
+  if (((struct EventWork *)HeapSlot_AllocEwram(108, 0xd50))->controlMode == 3) {
+    frames = 0;
+    if (map->zoomFrames != 0) {
+      do {
+        wait(1);
+        frames++;
+      } while (frames <= 0x12b && map->zoomFrames != 0);
+    }
+  }
+}
+
+
+s32 BattleEffect_CopyWatchedObjectPosition(struct Actor *object) {
+  struct Actor *link;
+
+  link = object->watchedObject;
+  if (link != NULL) {
+    object->motionFlags = 0;
+    object->x = link->x;
+    object->y = link->y +
+                ((s8)Resource_GetMetadataRecordFarFar(
+                     *(s16 *)Scene_FindActorPlacement((s16)object->unk66))
+                     ->boxX
+                 << 16) +
+                0x80000;
+    object->terrainHeight = link->terrainHeight;
+    object->z = link->z;
+  }
+  return 0;
+}
+
+struct BattleEffectVisual {
+  u8 unk00[9];
+  u8 flags;
+  u8 unk0a[16];
+  u8 value26;
+};
+
+struct BattleEffectResource {
+  u8 unk00[8];
+  s32 x;
+  s32 y;
+  s32 z;
+  u8 unk14[60];
+  struct BattleEffectVisual *visual;
+};
+
+struct BattleEffectWatchedObject {
+  u8 unk00[80];
+  struct BattleEffectVisual *visual;
+  u8 value54;
+  u8 value55;
+  u8 unk56[14];
+  u16 counter;
+  u16 resourceId;
+  struct BattleEffectResource *resource;
+  void (*callback)(void);
+};
+
+struct BattleEffectWatchedObject *Func_080200c0(s32 kind, s32 x, s32 y, s32 z);
+extern const u8 gData_080f3310[];
+
+/// The Broken Seal's BattleEffect_SpawnLinked with this game's object kind
+/// (488): spawns an effect object at object resourceId that follows it,
+/// waits state, and returns the new object.
+struct BattleEffectWatchedObject *Func_080d47b4(s32 resourceId, s32 flags,
+                                                s32 state) {
+  struct BattleEffectResource *resource;
+  struct BattleEffectWatchedObject *object;
+
+  if ((flags & 0xff) == 6) {
+    Sound_PlayFar(110);
+  }
+
+  resource = ObjectTable_Get(resourceId);
+  if (resource != 0) {
+    object = Func_080200c0(488, resource->x, resource->y, resource->z);
+
+    if (object != 0) {
+      Actor_StartScriptFar((struct Actor *)object, (u32)gData_080f3310);
+      Actor_SetMode(object, flags & 15);
+      object->value55 = 0;
+      object->counter = 0;
+      object->resourceId = resourceId;
+      object->callback = BattleEffect_CopyWatchedObjectPosition;
+      object->resource = resource;
+      object->visual->value26 = 0;
+
+      if ((flags & 0x100) != 0) {
+        s32 mask = 13;
+        u8 visualFlags = object->visual->flags;
+
+        mask = -mask;
+        mask &= visualFlags;
+        mask |= 4;
+        object->visual->flags = mask;
+      } else {
+        s32 copiedFlags = 12;
+        u8 sourceFlags = resource->visual->flags;
+        u8 flags;
+        s32 clearMask = 13;
+
+        copiedFlags &= sourceFlags;
+        flags = object->visual->flags;
+        clearMask = -clearMask;
+        clearMask &= flags;
+        clearMask |= copiedFlags;
+        object->visual->flags = clearMask;
+      }
+    }
+    Event_Wait(state);
+  }
+  return object;
+}
+
+s32 Actor_IsOutsideAnimation108(struct Actor *object) {
+  struct ObjectAnimationState *state;
+  s32 value;
+
+  if (object == 0 || object->animationKind != 1 ||
+      (state = object->sprite) == 0 || state->value28 == 0)
+    return 1;
+  value = *state->value28;
+  value ^= 0x108;
+  if (value != 0)
+    return 1;
+  return 0;
+}
+#undef SPEAKER_PORTRAIT_LEFT
+#undef SPEAKER_PORTRAIT_RIGHT
+#undef SPEAKER_WINDOW_ABOVE
+#undef SPEAKER_WINDOW_BELOW
+#undef HELD

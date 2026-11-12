@@ -1,0 +1,295 @@
+/// @file
+/// Routines first written as f0e572c.c; none has a twin in The Broken Seal.
+// Part of f0e2c38.c.
+
+#include "../f0e2c38_internal.h"
+
+/* VIEW(f0e572c): tag struct FxScene as struct FxScene__f0e572c; f0e2c38.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/event_commands/f0e2c38.c:2101: structure has no member named `facing'. */
+struct FxScene__f0e572c {
+  u16 facing;
+  u16 angle;
+  s32 x;
+  s32 y;
+  s32 z;
+  struct Actor *mainObject;
+  struct Actor *child;
+  s16 firstObjectId;
+  s16 secondObjectId;
+  u16 action;
+  s16 fieldKind;
+  s8 enabled;
+};
+
+extern const u8 Data_080f3984[];
+extern char ResourceId_FieldEffectExplosion, ResourceId_GlowDisc;
+
+void *HeapSlot_Alloc(s32 slot, s32 size);
+void HeapSlot_Release(s32 slot);
+void BattleEffect_InitializeSharedScene(void);
+void Camera_WorldToScreen(s32 *position);
+s32 Func_080db9a8(struct Actor *object, s32 facing);
+s32 BattleEffect_GetObjectDepth(struct Actor *object);
+s32 Resource_FindFreeEntry(void);
+s32 VramCache_Load(u32 slot, u32 size, const void *source);
+s32 Resource_ResetEntry(u32 slot);
+void *Resource_GetTableEntry(s32 resourceId);
+s32 Resource_DecodeType01(const void *source, void *destination);
+u32 Random16(void);
+s32 Trig_Sin(s32 angle);
+s32 Trig_Cos(s32 angle);
+void wait(s32 frames);
+s32 Func_080ce31c(s32 kind);
+void BattleEffect_PrepareBufferInterpolation(void);
+void Func_080e4d9c(void);
+
+void Func_080e572c(void) {
+  struct GlowWork *work = HeapSlot_Alloc(92, sizeof(struct GlowWork));
+  struct FxScene__f0e572c *scene = Ram_HeapSlots->effectWork;
+  struct CanvasSpriteWork *canvas;
+  struct EffectSprite *sprite;
+  struct GlowParticle *particle;
+  void *pending;
+  s32 pos[3];
+  s32 sparkEntry;
+  s32 sparkTile;
+  s32 burstEntry;
+  s32 tile;
+  s32 radius;
+  s32 angle;
+  s32 kind;
+  s32 frame;
+  s32 (*mul)(s32, s32);
+  struct EffectSprite *burstSprite;
+  s32 i;
+
+  scene->y += 0xa0000;
+  BattleEffect_InitializeSharedScene();
+  Func_080eb824();
+  canvas = Ram_HeapSlots->unkec[1];
+  pos[0] = scene->x;
+  pos[1] = scene->y;
+  pos[2] = scene->z;
+  Camera_WorldToScreen(pos);
+  canvas->x = (s16)(pos[0] >> 16);
+  canvas->y = (s16)(pos[2] >> 16);
+  canvas->priority = Func_080db9a8(scene->mainObject, scene->facing);
+  canvas->depth = BattleEffect_GetObjectDepth(scene->mainObject) + 2;
+  canvas->mode = CANVAS_SPRITE_256_COLORS;
+  canvas->scaleX = 0;
+  canvas->scaleY = 0;
+  if (scene->facing == 0xc000)
+    canvas->depth -= 4;
+
+  sparkEntry = Resource_FindFreeEntry();
+  sparkTile = VramCache_Load(sparkEntry, 64, Data_080f3984);
+  for (i = 0, particle = work->sparks, mul = Iwram_MulQ16,
+      sprite = work->sparkSprites;
+       i < 32;) {
+    Func_080eaf98(sprite, 4, 4, 0, sparkTile);
+    sprite->oam.palette256 = 1;
+    sprite->oam.palette = 0;
+    sprite->oam.priority = canvas->priority;
+    sprite->depth = canvas->depth + 1;
+    sprite->scaleY = sprite->scaleX = 0x10000;
+    radius = Random16() * 20 + 0x140000;
+    angle = Random16();
+    particle->x = mul(Trig_Cos(angle), radius);
+    particle->y = mul(Trig_Sin(angle), radius);
+    radius /= 12;
+    angle += 0x8000;
+    particle->velocityX = mul(Trig_Cos(angle), radius);
+    particle->velocityY = mul(Trig_Sin(angle), radius);
+    particle->timer = -i * 2;
+    i++;
+    sprite++;
+    particle++;
+  }
+
+  Resource_DecodeType01(
+      Resource_GetTableEntry((s32)&ResourceId_FieldEffectExplosion), work);
+  burstEntry = Resource_FindFreeEntry();
+  tile = VramCache_Load(burstEntry, 0x400, work);
+  work->burstTile = tile;
+  particle = work->bursts;
+  burstSprite = work->burstSprites;
+  for (i = 0; i < 32; i++) {
+    Func_080eaf98(burstSprite, 8, 8, 0x40000000, tile);
+    burstSprite->depth = canvas->depth + 1;
+    burstSprite->oam.priority = canvas->priority;
+    burstSprite->oam.palette256 = 0;
+    burstSprite->oam.palette = 15;
+    particle->timer = -1;
+    burstSprite++;
+    particle++;
+  }
+  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_GlowDisc),
+                        Ram_HeapSlots->battleFxWork[1]);
+  canvas->command = CANVAS_UPLOAD;
+  Sound_PlayFar(130);
+  wait(1);
+  work->phase = 0;
+  work->timer = 0;
+  work->paletteMode = 1;
+  work->nextBurst = 0;
+  work->newBursts = 0;
+  Task_Add(Func_080e4d9c, 0x480);
+  kind = scene->fieldKind;
+  pending = Func_080ce458(0x50000005, kind, Func_080ce31c(kind));
+  frame = 0;
+  while (work->phase != 999) {
+    wait(1);
+    if (work->phase == 999)
+      frame = 999;
+    Field_RunPsynergyEvent(pending, work->shake, frame);
+    frame++;
+  }
+  Task_Remove(Func_080e4d9c);
+  Resource_ResetEntry(sparkEntry);
+  Resource_ResetEntry(burstEntry);
+  BattleEffect_PrepareBufferInterpolation();
+  BattleEffect_EndCanvasSprite();
+  HeapSlot_Release(92);
+}
+
+
+struct ShineParticle {
+  s32 x;
+  s32 y;
+  u8 unk08[16];
+  s32 timer;
+};
+
+struct ShineSprite {
+  u8 unk00[12];
+  s32 x;
+  s32 y;
+  u8 unk14[20];
+};
+
+struct ShineWork {
+  u8 unk0000[0x1000];
+  struct ShineParticle particles[12];
+  u8 unk1150[0x230];
+  struct ShineSprite sprites[12];
+  u8 unk1560[0x348];
+  struct Actor *object;
+  s16 state;
+  s16 timer;
+  s8 sparkles;
+  u8 fading;
+};
+
+struct BlendWork {
+  u8 unk00[160];
+  u32 phase;
+  u8 unka4[12];
+  s32 scaleX;
+  s32 scaleY;
+  u8 unkb8[9];
+  u8 mode;
+};
+
+void Map_SetScreenShakeFar(s32 a, s32 b, s32 c);
+
+void Func_080e5a64(void) {
+  struct ShineWork *work = (struct ShineWork *)Ram_HeapSlots->battleFxWork[0];
+  struct BlendWork *blend = Ram_HeapSlots->unkec[1];
+  struct ShineParticle *particle;
+  struct ShineSprite *sprite;
+  s32 i;
+  s32 base, blue;
+  s32 color;
+  s32 red, green;
+  u32 *phase;
+
+  work->fading = 0;
+  if (work->state == 1) {
+    i = 0;
+    /* FAKEMATCH(temporary): the phase read through a pointer kept across the
+     * loop, whose address is built ahead of the loop's constants; as
+     * blend->phase, 4 of 302 instructions differ in tla-en. */
+    phase = &blend->phase;
+    // The phase offset built in two steps stays in a register across the loop;
+    // as base = 0x90000, 48 of 302 instructions differ in tla-en.
+    base = 9;
+    base <<= 16;
+    blue = 0x7c00;
+    // The loop is written with goto: as for (; i < 32; i++), 60 of 302
+    // instructions differ in tla-en.
+  palette:
+    red = Trig_Sin(((((*phase >> 1) + i) << 16) + base) >> 5) * 12;
+    green = Trig_Sin(((((*phase >> 1) + i) << 16) + base) >> 5) * 12;
+    red = (red >> 16) + 16;
+    green = (green >> 16) + 16;
+    // The colour in a once-only block, so red and green are finished before it
+    // is put together; as plain statements, 10 of 302 instructions differ in
+    // tla-en.
+    do {
+      color = (green << 5) | blue | red;
+      *(u16 *)(0x050003c0 + i * 2) = color;
+    } while (0);
+    if (++i < 32)
+      goto palette;
+  }
+  if (work->sparkles) {
+    particle = work->particles;
+    sprite = work->sprites;
+    for (i = 0; i < 12; i++, sprite++, particle++) {
+      if (particle->timer >= 0 && particle->timer < 16) {
+        sprite->x = particle->x;
+        sprite->y = particle->y;
+        Func_080eb01c(sprite);
+        BattleEffect_IntegrateVector2(particle, 64, 0);
+      }
+      particle->timer++;
+    }
+  }
+  switch (work->state) {
+  case 0:
+    work->object->y -= 0x38000;
+    if (work->timer == 8) {
+      blend->scaleX = 0x2000;
+      blend->scaleY = 0x2000;
+      Map_SetScreenShakeFar(0x14ccc, 0x14ccc, 0x10000);
+      Sound_PlayFar(567);
+      work->sparkles = 1;
+      work->fading = 1;
+    }
+    if (work->timer == 8) {
+      work->state++;
+      work->timer = -1;
+    }
+    break;
+  case 1:
+    blend->scaleX += 0x1000;
+    blend->scaleY = blend->scaleX;
+    if (blend->scaleX > 0xcccb) {
+      blend->scaleX = 0xcccc;
+      blend->scaleY = 0xcccc;
+      work->state++;
+      work->timer = -1;
+    }
+    break;
+  case 2:
+    blend->mode = 3;
+    if (work->timer == 32) {
+      work->state++;
+      work->timer = -1;
+    }
+    break;
+  case 3:
+    if (work->timer == 0)
+      Map_SetScreenShakeFar(1, 1, 1);
+    if (work->timer == 10) {
+      work->state++;
+      work->timer = -1;
+    }
+    break;
+  case 4:
+    work->object->y += 0x18000;
+    if (work->timer == 13)
+      work->state = 999;
+    break;
+  }
+  work->timer++;
+}

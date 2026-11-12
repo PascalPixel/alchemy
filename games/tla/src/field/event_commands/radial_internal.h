@@ -1,0 +1,50 @@
+#ifndef ALCHEMY_RADIAL_INTERNAL_H
+#define ALCHEMY_RADIAL_INTERNAL_H
+
+/// @file
+/// What every part of the radial object shares: its includes. radial.c
+/// includes it before the parts, and each part includes it too.
+
+#include "iwram_call.h"
+#include "objdisp.h"
+#include "system.h"
+#include "fixed_math.h"
+#include "types.h"
+#include "motobj.h"
+#include "scene_tables.h"
+#include "field_effect.h"
+#include "battle.h"
+#include "debug.h"
+#include "field.h"
+#include "game.h"
+#include "graphics.h"
+#include "lib.h"
+#include "menu.h"
+#include "sound.h"
+#include "actor.h"
+#include "ram_buffer.h"
+#include "field_psynergy_work.h"
+#include "sprite.h"
+#include "field_event.h"
+#include "field_particle.h"
+#include "actor_view.h"
+#include "object_lookup.h"
+#include "main_routine_work.h"
+#include "effect_sprite.h"
+#include "vector3.h"
+#include "graphics/resource.h"
+#include "system/task.h"
+#include "system/heap_release.h"
+#include "scene.h"
+#include "frame.h"
+#include "scene_ids.h"
+#include "resource.h"
+#include "vram_tab.h"
+#include "arc_effect.h"
+#include "heap_release.h"
+#include "task.h"
+#include "canvas_sprite.h"
+#include "io_reg.h"
+#include "map.h"
+
+#endif // ALCHEMY_RADIAL_INTERNAL_H

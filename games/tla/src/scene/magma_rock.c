@@ -39,8 +39,6 @@ void Func_02000668(u16 *list) {
 // the mark.
 #include "map.h"
 
-s32 MapCell_GetAttributes(u32 layer, s32 x, s32 z);
-
 void Func_020006cc(u16 *ids) {
   struct Actor *object;
   u8 *blocked;

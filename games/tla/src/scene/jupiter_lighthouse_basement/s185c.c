@@ -4,6 +4,7 @@
 #include "main_routine_work.h"
 #include "field_effect.h"
 #include "event_inline.h"
+#include "../jupiter_lighthouse_aerie/jupiter_lighthouse_aerie.h"
 
 void Func_02001c84(void);
 void Func_02001c14(void);
@@ -90,4 +91,38 @@ loop:
   FieldEvent_Wait(10);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
   Func_02001c8c();
+}
+
+extern u8 gData_020024f8[];
+void Func_02001654();
+void Func_020016c4();
+
+s32 Func_020019f4(void) {
+  struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
+  s32 x = object->x >> 20;
+  s32 z = object->z >> 20;
+  struct JupiterLighthouseAerieWork *work =
+      (struct JupiterLighthouseAerieWork *)gData_020024f8;
+  struct JupiterLighthouseAerieEntry *entry =
+      (struct JupiterLighthouseAerieEntry *)(work + 1);
+  s32 i;
+
+  for (i = 0; i < work->count; i++, entry++) {
+    if (entry->x == x && entry->z == z) {
+      if (Event_GetFlag(entry->flag) == 0) {
+        Func_02001654(work, entry);
+        Event_SetFlag(entry->flag);
+        work->current = i;
+        break;
+      }
+      if (i == work->current)
+        break;
+      work->current = i;
+      Func_020016c4(work, entry);
+      GameFlag_SetByte(work->flag, x);
+      GameFlag_SetByte(work->flag + 8, z);
+      return 1;
+    }
+  }
+  return 0;
 }

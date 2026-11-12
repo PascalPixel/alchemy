@@ -9,7 +9,12 @@
 /// watched actors, projected at 1/16 scale from their positions and the
 /// course side.
 
+#include "types.h"
+#include "actor.h"
+#include "main_routine_work.h"
+#include "event_inline.h"
 #include "trial_road.h"
+
 #include "frame.h"
 #include "dma.h"
 #include "heap_release.h"
@@ -163,3 +168,115 @@ void Func_020051a0(void) {
            -work->fade * 6 + work->scrollX + 23, 1, 14);
   }
 }
+
+struct TrialRoadLink {
+  u8 unk00[0xd8];
+  s16 vramEntry;
+  u16 unkda;
+  u8 unkdc[4];
+  u16 unke0;
+  u16 a;
+  u16 b;
+  u8 unke6[6];
+  s32 height;
+  s32 unkf0;
+};
+
+extern const u8 gData_020062d4[];
+
+void *HeapSlot_AllocEwram(s32 slot, s32 size);
+void *Heap_AllocEwram(s32 size);
+void Func_02005770(const void *source, void *destination);
+s32 Resource_FindFreeEntry(void);
+void Heap_Release(void *block);
+void Func_020051a0(void);
+
+void Func_020055c4(s32 a, s32 b) {
+  struct TrialRoadLink *link = HeapSlot_AllocEwram(236, 0x3934);
+  void *buffer = Heap_AllocEwram(576);
+  s32 zero;
+  s32 owner;
+  u16 *unkda;
+  u16 *unke0;
+  s32 *height;
+  s32 *unkf0;
+  s16 *vramEntry;
+
+  link->a = a;
+  link->b = b;
+  owner = gMainRoutineWork.currentOwner;
+  height = &link->height;
+  unkf0 = &link->unkf0;
+  unkda = &link->unkda;
+  unke0 = &link->unke0;
+  vramEntry = &link->vramEntry;
+  if (a == owner) {
+    *height = 0xa00000;
+    *unkf0 = 0xf9a00000;
+  } else {
+    *height = 0x700000;
+    *unkf0 = 0xf9a00000;
+  }
+  Actor_GetById(a);
+  Actor_GetById(b);
+  zero = 0;
+  *unkda = zero;
+  *unke0 = zero;
+  Func_02005770(gData_020062d4, buffer);
+  *vramEntry = Resource_FindFreeEntry();
+  VramCache_Load(*vramEntry, 576, buffer);
+  Task_Add(Func_020051a0, 0x476);
+  Heap_Release(buffer);
+}
+
+struct TrialRoadControl {
+  s16 state;
+  s16 field02;
+  s16 field04;
+  s16 field06;
+  s16 field08;
+  s16 field0a;
+};
+
+extern u8 gSceneState[];
+
+void Func_02004ddc(void);
+
+void Func_02005688(s32 a) {
+  u8 *work = Ram_HeapSlots->unkec[0];
+  struct TrialRoadControl *control = (struct TrialRoadControl *)gSceneState;
+
+  if (GameFlag_Test(0x109) == 0) {
+    /* FAKEMATCH(temporary): a local reads the work value before the three
+     * stores; as the value stored directly, 4 of 24 instructions differ in
+     * tla-en. */
+    s32 value = *(u16 *)(work + 228);
+
+    control->field02 = a;
+    control->field04 = value;
+    control->field08 = 0;
+  }
+  Task_Add(Func_02004ddc, 0x485);
+}
+
+void Func_020056c4(s32 a) {
+  struct TrialRoadControl *control = (struct TrialRoadControl *)gSceneState;
+  /* FAKEMATCH(temporary): a word local builds 0 with movs for both halfword
+   * stores; as a halfword constant, which loads from the pool, 14
+   * of 15 instructions differ in tla-en. */
+  s32 zero = 0;
+
+  *(u16 *)((Ram_HeapSlots->unkec[0]) + 234) = zero;
+  control->field0a = a;
+  control->field06 = zero;
+  control->state = 1;
+  Func_02004ddc();
+}
+
+s32 Func_020056e8(void) {
+  s32 state = *(s16 *)gSceneState;
+
+  return IsZero(state ^ 9);
+}
+
+void Func_02005704(void) {}

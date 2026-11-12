@@ -1,4 +1,22 @@
-#include "trial_road.h"
+#include "trial_road/trial_road.h"
+#include "battle.h"
+#include "field.h"
+#include "game.h"
+#include "graphics.h"
+#include "lib.h"
+#include "menu.h"
+#include "sound.h"
+#include "system.h"
+#include "types.h"
+#include "scene_tables.h"
+
+void Func_02000038(void) { Func_080d2b4c(8, 75); }
+
+const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
+
+const struct SceneRegion *Scene_GetRegions(void) { return 0; }
+
+const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 extern const u8 gData_0200646c[];
 extern const u8 gData_02006ea4[];

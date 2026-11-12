@@ -78,3 +78,8 @@ void Func_02001094(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   if ((flags & EFFECT_USE_UPDATE) != 0)
     effect->update = options->update;
 }
+
+#define CELL_TABLE gData_020024f8
+#define CELL_SPRITE_DRAW Func_0200125c
+#define CELL_PUSH_SLOT_ENTRY Func_02001bc4
+#include "../../field/map/cell_sprite.c"

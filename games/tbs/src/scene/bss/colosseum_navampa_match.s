@@ -10,8 +10,8 @@ gColosso_MarkerStep:
 	.global gColosso_ModeScaleDuration
 gColosso_ModeScaleDuration:
 	.space 4
-	.global gColosso_MarkerPriority
-gColosso_MarkerPriority:
+	.global gColosso_MarkerFlip
+gColosso_MarkerFlip:
 	.space 4
 	.global gColosso_WarriorStartZ
 gColosso_WarriorStartZ:

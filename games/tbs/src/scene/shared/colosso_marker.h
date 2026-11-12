@@ -169,7 +169,7 @@ extern s16 gColosso_MarkerY;
 extern union MarkerCoordinate gColosso_MarkerStartY;
 extern s16 gColosso_MarkerEndY;
 extern s16 gColosso_MarkerBlink;
-extern s16 gColosso_MarkerPriority;
+extern s16 gColosso_MarkerFlip;
 
 /// The pointer's task: glide one step, then draw it while it blinks
 /// on (a glide keeps it on).
@@ -215,7 +215,7 @@ static void Colosso_UpdateMarker(void) {
     y = gColosso_MarkerY;
     dst = oam;
     *dst++ = 0;
-    *dst++ = (y - 8) | ((x - 8) << 16) | size | (gColosso_MarkerPriority << 28);
+    *dst++ = (y - 8) | ((x - 8) << 16) | size | (gColosso_MarkerFlip << 28);
     *dst = tile | OBJ_PRIORITY(1);
     Oam_AddSpriteAtDepth(oam, 255);
   } else if (gColosso_MarkerBlink > 19) {
@@ -230,7 +230,7 @@ void Colosso_ShowPointer(u32 x, u32 y, u32 style) {
 
   gColosso_MarkerX = x;
   gColosso_MarkerY = y;
-  gColosso_MarkerPriority = (style & 3);
+  gColosso_MarkerFlip = (style & 3);
   gColosso_MarkerBlink = 0;
   gColosso_MarkerSteps = 0;
 

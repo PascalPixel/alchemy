@@ -11,7 +11,25 @@ enum ParticleStreamsMode {
                                ///< rise in the lightning bolt's colours
 };
 
+/// The pictures in the flame sheet (ResourceId_FlameSheetB), each starting
+/// where the one before ends: six 32x32 pictures, then three 24x24 and three
+/// 8x8 glows, each glow brighter at its centre than the one before. The rise
+/// draws only the six and the brightest glow of each size.
+enum ParticleStreamsSheetCell {
+  /// 32x32, six in a row: a rising mote's cells
+  PARTICLE_STREAMS_RISE_MOTE_CELLS = 0,
+  /// 24x24
+  PARTICLE_STREAMS_DROP_CELL = PARTICLE_STREAMS_RISE_MOTE_CELLS + 6 * 32 * 32 +
+      2 * 24 * 24,
+  /// 8x8
+  PARTICLE_STREAMS_SPARK_CELL = PARTICLE_STREAMS_DROP_CELL + 24 * 24 +
+      2 * 8 * 8,
+  /// Past the sheet's end: the heat lines, 160 colours the rise writes there.
+  PARTICLE_STREAMS_HEAT_LINES = PARTICLE_STREAMS_SPARK_CELL + 8 * 8
+};
+
 /// Adds per-channel steps to background colours 1 to 63, capped at 31.
+/// Colour 0, the backdrop, is left alone.
 ///
 /// Called once a frame to whiten the colours over a few frames: by
 /// BattleEffect_RunParticleStreams from frame 36 of its burst, and by Tiamat's
@@ -38,9 +56,9 @@ void Palette_BrightenBgEntries(s32 blueStep, s32 greenStep, s32 redStep) {
   }
 }
 
-/// Arms DMA 0 to write one halfword of the table at work->sheet + 8064 into
-/// background colour 0 at each horizontal blank, so the backdrop colour
-/// changes line by line.
+/// Arms DMA 0 to write one halfword of the table at work->sheet +
+/// PARTICLE_STREAMS_HEAT_LINES into background colour 0 at each horizontal
+/// blank, so the backdrop colour changes line by line.
 ///
 /// Runs each VBlank as a task (priority TASK_PASS_VBLANK + 126) that
 /// BattleEffect_RunParticleStreams adds for its rise and removes after it; the
@@ -50,8 +68,8 @@ void BattleEffect_ArmPaletteHBlankDma(void) {
   struct BattleEffectWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   volatile u16 *channel = REG_DMA0;
   Dma_Stop(channel);
-  Dma_Set(work->sheet + 8064, (void *)BG_PLTT, DMA_HBLANK_HALFWORD_PER_LINE,
-          (volatile u32 *)channel);
+  Dma_Set(work->sheet + PARTICLE_STREAMS_HEAT_LINES, (void *)BG_PLTT,
+          DMA_HBLANK_HALFWORD_PER_LINE, (volatile u32 *)channel);
 }
 
 /// A formation rises out of a dissolving starfield and bursts into embers and
@@ -68,7 +86,7 @@ void BattleEffect_RunMeteor(struct BattleEffectParams *args) {
 /// The user leaps up, and two sprites rise out of a dissolving starfield and
 /// burst into embers and flashes, in the lightning bolt's colours.
 ///
-/// Abilities: Outer Space (BATTLE_EFFECT_OUTER_SPACE).
+/// Abilities: Outer Space (BATTLE_EFFECT_OUTER_SPACE), the Fusion Dragon's.
 void BattleEffect_RunOuterSpace(struct BattleEffectParams *args) {
   BattleEffect_RunParticleStreams(args, PARTICLE_STREAMS_OUTER_SPACE);
 }
@@ -79,8 +97,9 @@ void BattleEffect_RunOuterSpace(struct BattleEffectParams *args) {
 #define PARTICLE_STREAMS_RISE_FRAMES 192 ///< frames, at most, of the rise
 #define PARTICLE_STREAMS_BURST_FRAMES 54 ///< frames of the burst
 
-/// The mote pictures in the sheet: two sets, MOTE_SET_BYTES apart.
-#define PARTICLE_STREAMS_MOTE_OFFSETS 12800
+/// The mote pictures in the blast sheet, after its seven blast pictures
+/// (BLAST_CELL_SIZES): two sets, MOTE_SET_BYTES apart.
+#define PARTICLE_STREAMS_MOTE_OFFSETS (16 * 16 + 32 * 32 + 5 * 48 * 48)
 
 /// The stream runs in two halves. The rise dissolves the battle map into a
 /// starfield, then for up to PARTICLE_STREAMS_RISE_FRAMES lifts a formation of
@@ -349,9 +368,10 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
       heat = dividend >> 2;
       /* FAKEMATCH(barrier): count and sheet through an empty asm clobbering r1
        * and r3, so count keeps r2 and sheet takes r0; as line = (u16 *)
-       * (work->sheet + 8064), 69 of 1532 instructions differ in tbs-en. */
+       * (work->sheet + PARTICLE_STREAMS_HEAT_LINES), 69 of 1532 instructions
+       * differ in tbs-en. */
       __asm__("" : "=r"(sheet) : "0"(sheet), "r"(count) : "r1", "r3");
-      line = (u16 *)(sheet + 8064);
+      line = (u16 *)(sheet + PARTICLE_STREAMS_HEAT_LINES);
       if (mode == PARTICLE_STREAMS_OUTER_SPACE) {
         if ((gKeysRepeat & (KEY_A | KEY_B)) && frame > 16)
           break;
@@ -473,8 +493,8 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
         Projection_Point(vector, screenPosition = &spot);
         screenPosition->x = Q_16_16_TO_INT(screenPosition->x) + 128;
         screenPosition->y = Q_16_16_TO_INT(screenPosition->y) + 60;
-        draw(Ram_MapGridCellBuffer, work->sheet + 8000, screenPosition->x - 4,
-             screenPosition->y - 4, 8, 8);
+        draw(Ram_MapGridCellBuffer, work->sheet + PARTICLE_STREAMS_SPARK_CELL,
+             screenPosition->x - 4, screenPosition->y - 4, 8, 8);
       }
       if (direction == 1)
         x = frame / 4 - 16;
@@ -487,7 +507,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
         s32 drop = gParticleStreams_DropPoints[i][1] + y;
 
         if (drop <= 93)
-          draw(Ram_MapGridCellBuffer, work->sheet + 7296,
+          draw(Ram_MapGridCellBuffer, work->sheet + PARTICLE_STREAMS_DROP_CELL,
                gParticleStreams_DropPoints[i][0] + x - 12, drop - 12, 24, 24);
         else if (drop <= 95)
           ParticleStreams_SpawnFlame(
@@ -496,11 +516,12 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
       for (i = 0; i != 32; i++) {
         struct Particle *mote = &work->particles[i];
 
-        // A rising mote shows six 32x32 cells, 1 KB each from the start of
-        // the sheet, one a frame, moving 5 pixels up and 1.25 against the
-        // stream each frame, then frees its slot.
+        // A rising mote shows its six cells, one a frame, moving 5 pixels up
+        // and 1.25 against the stream each frame, then frees its slot.
         if (mote->variant >= 0) {
-          draw(Ram_MapGridCellBuffer, work->sheet + (mote->variant << 10),
+          draw(Ram_MapGridCellBuffer,
+               work->sheet + PARTICLE_STREAMS_RISE_MOTE_CELLS +
+                   mote->variant * (32 * 32),
                Q_16_16_TO_INT(mote->x) - 16, Q_16_16_TO_INT(mote->y) - 16, 32,
                32);
           mote->x -= direction * (Q16_ONE * 5 / 4);

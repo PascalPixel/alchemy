@@ -39,11 +39,9 @@ s32 BattleEffect_LoadBlitter(s32 slot,
                              s32 modeAndFlags); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 duration, s32 timer,
                    s32 frames); // BattleEffect_TintBattler
-void BattleEffect_FetchRectangleBlitters(
-    s32 flip, DrawRectangle *draw); // ..FetchRectangleBlitters
-void Func_0815585c(struct BattleEffectArgument *effect, s32 kindAndSide,
-                   s32 *origin, s32 *size); // BattleEffect_RunDjinniEntrance
-void SceneTransform_ApplyPosition(s32 *position);
+void BattleEffect_FetchRectangleBlitters(s32 flip, void **out); // ..FetchRectangleBlitters
+void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen, s32 *world); // BattleEffect_RunDjinniEntrance
+void SceneTransform_ApplyPosition(const s32 *pos);
 void Sound_PlayFar(s32 cue);
 
 extern char ResourceId_EarthWallSheet;

@@ -15,6 +15,9 @@
 #include "graphics.h"
 #include "transform.h"
 #include "resource.h"
+#include "task.h"
+
+struct Model;
 
 typedef DrawRectangle BlitterPair[2];
 
@@ -73,8 +76,8 @@ extern u8 Data_08197605[];
 extern u16 gData_08197410[];
 
 // The star model and its four projected corners.
-extern u8 gData_08199340[];
-extern u8 gData_08199210[];
+extern const u8 gData_08199340[];
+extern const u8 gData_08199210[];
 
 // The motes live in the map cell buffer, the sparks 0x3800 bytes on.
 #define gMotes ((struct EffectStep *)Ram_MapCellBuffer)
@@ -117,10 +120,9 @@ struct ModelDraw {
 void BattleEffect_StartCanvasLayer(s32 control);
 void BattleEffect_EndCanvasLayer(void);
 s32 BattleEffect_LoadBlitter(s32 slot, s32 flags);
-s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
-                  s32 mode); // BattleEffect_BuildBlitter
-s32 Task_Add(void *func, s32 order);
-s32 Task_Remove(void *func);
+s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags, u32 mode); // BattleEffect_BuildBlitter
+s32 Task_Add(void (*func)(void), s32 order);
+
 void HeapSlot_Release(s32 slot);
 void Sound_PlayFar(s32 cue);
 void Func_081180e8(s32 phase);             // BattlePlayback_StartFar
@@ -135,9 +137,9 @@ void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // BattleEffect_TintBattler
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffect_CountDownBattlerTints(void);
-struct ModelDraw *Render_AllocateModelList(s32 count);
-void Render_TransformVertices(const void *corners, void *out, s32 count);
-void Render_DrawModelList(struct ModelDraw *draw);
+struct PoolEntry *Render_AllocateModelList(s32 count);
+void Render_TransformVertices(const void *corners, void *vertices, s32 count);
+void Render_DrawModelList(struct Model *model);
 void Func_08015160(s32 x, s32 y, s32 z);
 void Func_080151e4(s32 x, s32 y, s32 z);
 void SceneTransform_ApplyPitch(s32 pitch);

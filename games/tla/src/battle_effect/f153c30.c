@@ -28,7 +28,7 @@ void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
 // The Lost Age's blitter modes, BattleEffect_LoadBlitter's high nibble: 3 minus
 // The Broken Seal's COMPOSITE_ADDITIVE, COMPOSITE_MAX and
 // COMPOSITE_TRANSPARENT.
-enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT };
+enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 #define BLIT_MODE(mode, flags) ((mode) << 4 | (flags))
 #define CLIP (COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y)
 

@@ -35,10 +35,8 @@ void Func_081496c8(s32 frame, s32 redPhase, s32 greenPhase,
 void Func_080150e4(s32 angle);     // SceneTransform_ApplyRoll
 void Func_080151ac(s32 *scale);    // SceneTransform_ApplyScale
 void SceneTransform_ApplyYaw(s32 angle);
-void BattleEffect_FetchRectangleBlitters(
-    s32 flip, DrawRectangle *draw); // ..FetchRectangleBlitters
-void Func_0815585c(struct BattleEffectArgument *effect, s32 kindAndSide,
-                   s32 *origin, s32 *size); // BattleEffect_RunDjinniEntrance
+void BattleEffect_FetchRectangleBlitters(s32 flip, void **out); // ..FetchRectangleBlitters
+void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen, s32 *world); // BattleEffect_RunDjinniEntrance
 void Sound_PlayFar(s32 cue);
 
 extern char ResourceId_RuneSheet;

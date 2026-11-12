@@ -1,6 +1,8 @@
 #include "types.h"
 
-void Func_0816a2d8(s32 a0, s32 a1);
+struct BattleEffectArgument;
+
+void Func_0816a2d8(struct BattleEffectArgument *effect, s32 variant);
 
 /// Abilities: Quick Strike (kind 52).
 void BattleEffect_RunQuickStrike(s32 a0) { Func_0816a2d8(a0, 1); }

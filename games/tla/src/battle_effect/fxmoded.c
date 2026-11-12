@@ -1,6 +1,8 @@
 #include "types.h"
 
-void Func_081548d0(void *object, s32 mode);
+struct BattleEffectArgument;
+
+void Func_081548d0(struct BattleEffectArgument *effect, s32 mode);
 
 /// Abilities: Growth, Mad Growth, Wild Growth (kind 4).
 void BattleEffect_RunGrowth(void *object) { Func_081548d0(object, 0); }

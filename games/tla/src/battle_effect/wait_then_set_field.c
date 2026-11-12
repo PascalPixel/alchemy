@@ -7,7 +7,7 @@
 #include "battle_effect_work.h"
 
 void BattleMotion_ApproachTargetFar(s32, s16, s32, s32);
-s32 BattleEffect_RunSparkGroups(void *, s32);
+void BattleEffect_RunSparkGroups(struct BattleEffectArgument *effect, s32 kind);
 
 /// Jumps the user toward the first target and emits type 4 sparks after 29
 /// frames.

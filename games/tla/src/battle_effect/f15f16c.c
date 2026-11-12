@@ -5,6 +5,10 @@
 #include "dma.h"
 #include "iwram_call.h"
 #include "ram_buffer.h"
+#include "transform.h"
+#include "effect_step.h"
+#include "actor.h"
+#include "task.h"
 
 struct Particle {
   s32 x;
@@ -136,23 +140,23 @@ extern char ResourceId_TwelveModeImage;
 extern char ResourceId_TornadoSheet;
 extern char ResourceId_CrystalSheet;
 
-extern const u16 gData_08197410[];
-extern const u8 gData_08197467[];
-extern const u8 gData_0819746d[];
-extern const u8 gData_08197473[];
-extern const u16 gData_0819747a[];
-extern const u16 gData_08197486[];
+extern u16 gData_08197410[];
+extern u8 gData_08197467[];
+extern u8 gData_0819746d[];
+extern u8 gData_08197473[];
+extern u16 gData_0819747a[];
+extern u16 gData_08197486[];
 extern u8 gData_08197492[];
 extern u8 gData_08197498[];
-extern const u8 gData_0819749e[];
+extern u8 gData_0819749e[];
 extern u8 gData_081974ad[];
 extern u16 gData_081974bc[];
 extern u8 gData_0819750c[];
 extern u8 gData_0819751a[];
-extern const u8 gData_081977f8[];
-extern const u8 gData_0819781a[];
+extern u8 gData_081977f8[];
+extern u8 gData_0819781a[];
 extern u8 gData_08197826[];
-extern const u32 gData_08197834[];
+extern s32 gData_08197834[];
 extern const u8 gData_0819887e[];
 extern const u8 gData_08198882[];
 extern const u8 gData_08198886[];
@@ -194,8 +198,8 @@ void HeapSlot_Release(s32);
 void Heap_Release(void *);
 void *Resource_GetTableEntry(s32);
 void wait(s32);
-s32 Task_Add(void *, s32);
-s32 Task_Remove(void *);
+s32 Task_Add(void (*func)(void), s32 order);
+
 u32 Random16(void);
 void Render_ResetTransformState(void);
 void SceneTransform_ApplyPitch(s32);
@@ -204,43 +208,45 @@ void Func_080150e4(s32);
 void Func_08015160(s32, s32, s32);
 void Func_080151e4(s32, s32, s32);
 void Func_0801521c(s32);
-void Transform_SetLookAt(void *, void *);
-void Actor_SetMode(struct BattleObject *, s32);
-void Actor_SetAnimationSpeedFar(struct BattleObject *, s32);
+
+
+void Actor_SetAnimationSpeedFar(struct Actor *object, s32 value);
 s32 BattleUnit_GetEffectHeightFar(s32);
 void Func_08118088(s32, s32);
 struct BattleObject **GetBattleObjectSlotFar(s32);
 void Func_081180e8(s32);
-void BattleEffectKernels_IntegrateVector3(struct Particle *, s32, s32);
-void BattleEffectKernels_IntegrateVector2(struct Particle *, s32, s32);
+void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
+                                          s32 gravity);
+void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
+                                          s32 gravity);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void Palette_StepFadeTransfer(void);
 void BattleEffect_CountDownBattlerTints(void);
 void BattleEffect_StartCanvasLayer(s32);
 void BattleEffect_StartTiledCanvas(s32);
 void BattleEffect_EndCanvasLayer(void);
-void BattleEffect_FetchRectangleBlitters(s32, struct DrawFuncs *);
-s32 BattleEffect_RunSparkGroups(struct BattleEffectArgument *, s32);
+void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
+void BattleEffect_RunSparkGroups(struct BattleEffectArgument *effect, s32 kind);
 void BattleEffect_RunMysticFlame(struct BattleEffectArgument *);
 void Func_0814cd48(s32, s32, s32, s32, s32);
-void SummonEffect_RunCanvasMode3(struct BattleEffectArgument *);
-void SummonEffect_RunCanvasMode1(struct BattleEffectArgument *);
-void SummonEffect_RunCanvasMode2(struct BattleEffectArgument *);
+void SummonEffect_RunCanvasMode3(void *action);
+void SummonEffect_RunCanvasMode1(void *action);
+void SummonEffect_RunCanvasMode2(void *action);
 void BattleEffect_ArmBg2AffineHBlankDma(void);
 void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *, s32);
 void Resource_LoadAndDecompress(s32, void *, s32, s32);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
-void Func_0815b434(void *, s32, s32);
-s32 EffectPosition_ProjectPoint(void *, s32 *);
-void EffectPosition_ProjectScaledBattler(s32, s32 *);
+void Func_0815b434(u8 *map, s32 size, s32 scale);
+s32 EffectPosition_ProjectPoint(const void *point, struct EffectPosition *position);
+
 void BattleEffect_StartActorMotion(s32, s32, s32, s32, s32, s32);
 void Func_0815f0a0(s32);
 void Graphics_PackTileRows(void *, void *, s32, s32);
 void Func_0818caa8(void *, s32, s32, s32);
 s32 BattleEffect_LoadBlitter(s32, s32);
-s32 Func_08196404(s32, s32, s32, s32, s32);
-void Render_TransformVertices(const void *, void *, s32);
-struct Model *Render_AllocateModelList(s32);
+s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags, u32 mode);
+void Render_TransformVertices(const void *corners, void *vertices, s32 count);
+struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_DrawModelList(struct Model *);
 void Sound_PlayFar(s32);
 

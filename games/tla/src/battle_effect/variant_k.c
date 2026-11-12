@@ -1,6 +1,8 @@
 #include "types.h"
 
-void Func_0817e698(s32 a0, s32 a1);
+struct BattleEffectArgument;
+
+void Func_0817e698(struct BattleEffectArgument *effect, s32 mode);
 
 /// Abilities: Spasm (kind 348).
 void BattleEffect_RunSpasm(s32 a0) { Func_0817e698(a0, 0); }

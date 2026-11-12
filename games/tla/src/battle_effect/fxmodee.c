@@ -1,6 +1,8 @@
 #include "types.h"
 
-void Func_0815c970(void *object, s32 mode);
+struct BattleEffectArgument;
+
+void Func_0815c970(struct BattleEffectArgument *effect, s32 mode);
 
 /// Abilities: Poison Beat (kind 382).
 void BattleEffect_RunPoisonBeat(void *object) { Func_0815c970(object, 0); }

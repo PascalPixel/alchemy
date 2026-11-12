@@ -4,6 +4,8 @@
 #include "battle_effect.h"
 #include "battle_effect_work.h"
 #include "effect_step.h"
+#include "battle_display.h"
+#include "task.h"
 
 // The blitter pair's heap slots, as byte offsets into Ram_HeapSlots.
 #define SLOT_BLITTER 104           // unk64[1]
@@ -29,17 +31,16 @@ extern u16 Data_0819744c[];
 
 extern char ResourceId_IceShardSheet;
 extern char ResourceId_SparkleDots;
-extern u16 gMapCellBuffer[];
+extern u8 gMapCellBuffer[];
 
 void BattleEffect_StartCanvasLayer(s32 control);
 void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_ConfigureEffectDisplay(void);
 s32 BattleEffect_LoadBlitter(s32 slot, s32 flags);
-s32 BattleEffect_ProcessPendingGraphicsTransfer(
-    void);                                // the canvas transfer callback
+
 void BattleEffect_ArmWin0HBlankDma(void); // arms WIN0's HBlank DMA
-s32 Task_Add(void *func, s32 order);
-s32 Task_Remove(void *func);
+s32 Task_Add(void (*func)(void), s32 order);
+
 void HeapSlot_Release(s32 slot);
 void Sound_PlayFar(s32 cue);
 void Func_081180e8(s32 phase); // BattlePlayback_StartFar

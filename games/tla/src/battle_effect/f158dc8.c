@@ -13,6 +13,10 @@
 #include "iwram_call.h"
 #include "ram_buffer.h"
 #include "macros.h"
+#include "task.h"
+#include "resource.h"
+
+struct FxPartyList;
 
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);
@@ -23,14 +27,11 @@ void BattleEffect_CountDownBattlerTints(void);
 void Func_08163c2c(s32 page, s32 value);
 s32 BattleEffect_LoadBlitter(s32 slot,
                              s32 modeAndFlags); // BattleEffect_BuildBlitter
-s32 Func_08196404(s32 slot, s32 widthLog, s32 heightLog, s32 flags,
-                  s32 mode);      // BattleEffect_BuildBlitter, five arguments
+s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags, u32 mode);      // BattleEffect_BuildBlitter, five arguments
 void Func_0815f0a0(s32 resource); // the dusk palette step
 void Func_0814cca8(void);         // BattleEffect_SetupBlendedDisplay
-void BattleEffect_SelectLivingTargets(
-    struct BattleEffectArgument *effect); // SelectLivingTargets
-void BattleEffect_SpawnObjects(s32 count, s32 resource,
-                               s32 mode); // SpawnObjects
+void BattleEffect_SelectLivingTargets(struct FxPartyList *party); // SelectLivingTargets
+void BattleEffect_SpawnObjects(s32 entryCount, s32 kind, u32 variant); // SpawnObjects
 void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                    s32 timerFrames);       // BattleEffect_TintBattler
 void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
@@ -39,10 +40,10 @@ void Func_0816442c(s32 group, s32 x,
                    s32 y); // BattleEffect_PlaceFormationObjects
 void Func_0816467c(s32 group, s32 x, s32 y); // BattleEffect_RunImpactBurst
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
-void Func_0818caa8(const u8 *cells, s32 x, s32 y, s32 height); // four motes
+void Func_0818caa8(void *source, s32 x, s32 y, s32 size); // four motes
 void Func_080150e4(s32 angle);  // SceneTransform_ApplyRoll
 void Func_080151ac(s32 *scale); // SceneTransform_ApplyScale
-void SceneTransform_ApplyPosition(s32 *position);
+void SceneTransform_ApplyPosition(const s32 *pos);
 void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
 void Render_ResetTransformState(void);
@@ -52,10 +53,10 @@ void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
 void BattleBackground_LoadFar(s32 layer, s32 resource, s32 mode);
 void Resource_LoadAndDecompress(s32 resource, void *destination, s32 a, s32 b);
 void *Resource_GetTableEntry(s32 resource);
-s32 Task_Add(void (*func)(void), s32 order);
-s32 Task_Remove(void (*func)(void));
+
+
 void HeapSlot_Release(s32 slot);
-void ResourceObject_ReleaseFar(void *object);
+
 void Sound_PlayFar(s32 cue);
 void wait(s32 frames);
 u32 Random16(void);
@@ -78,7 +79,7 @@ static inline s32 RatioMulQ14(s32 divisor, s32 value) {
   return Iwram_RatioMulQ14(divisor, value);
 }
 
-enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT };
+enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 #define BLIT_MODE(mode, flags) ((mode) << 4 | (flags))
 #define BLIT_CLIP (COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y)
 
@@ -102,8 +103,8 @@ extern char ResourceId_VioletLightningSheetB;
 extern char ResourceId_VioletMoteSheet;
 extern u32 gCameraSceneParameters[];
 extern const s16 Data_08196e2c[6][2]; // the three lines' end points
-extern const u16 gData_08197410[];    // gBattleEffect_MoteCells
-extern const u16 gData_08197486[];    // gBattleEffect_GlintCells
+extern u16 gData_08197410[];    // gBattleEffect_MoteCells
+extern u16 gData_08197486[];    // gBattleEffect_GlintCells
 extern u8 gData_08197492[];           // gBattleEffect_GlintCellWidths
 extern u8 gData_08197498[];           // gBattleEffect_GlintCellHeights
 extern const u8 Data_0819855e[];      // gThor_TargetPalettes

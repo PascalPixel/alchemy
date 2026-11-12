@@ -8,6 +8,9 @@
 #include "bg_scroll.h"
 #include "battle_effect.h"
 #include "battle_effect_work.h"
+#include "resource.h"
+
+struct FxPartyList;
 
 // The pixel half of a 16.16 value.
 #define HI(v) (((s16 *)&(v))[1])
@@ -75,17 +78,15 @@ void BattleEffect_EndCanvasLayer(void);
 void Func_08163c2c(s32 mode, s32 value);
 s32 BattleEffect_LoadBlitter(s32 slot,
                              s32 flags); // ☀️ BattleEffect_BuildBlitter
-void BattleEffect_SelectLivingTargets(
-    struct BattleEffectArgument *effect); // ☀️ SelectLivingTargets
-void BattleEffect_SpawnObjects(s32 count, s32 formation,
-                               s32 priority); // ☀️ SpawnObjects
+void BattleEffect_SelectLivingTargets(struct FxPartyList *party); // ☀️ SelectLivingTargets
+void BattleEffect_SpawnObjects(s32 entryCount, s32 kind, u32 variant); // ☀️ SpawnObjects
 void BattleBackground_LoadFar(s32, s32, s32);
 void BattleEffect_BuildWindowEdgeTable(void);
 void Sound_PlayFar(s32 cue);
 void Animation_ApplyChildArgumentFar(void *, s32);
 void Render_ApplyProjectedPlacementFar(struct ScaledSprite *sprite,
                                        s32 *position, s32 *scale, s32 mode);
-void ResourceObject_ReleaseFar(void *object);
+
 void Func_0814cca8(void); // ☀️ BattleEffect_SetupBlendedDisplay
 void Render_ResetTransformState(void);
 void Func_081180e8(s32 phase); // ☀️ BattleEvent_StartPhaseFar

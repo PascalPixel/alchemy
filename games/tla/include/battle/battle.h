@@ -115,8 +115,9 @@ s32 BattleEffect_HasMatchingEvent5(s32 effectId);
 void BattleEffect_IntegrateVector2(s32 *vector, s32 damping, s32 gravity);
 void BattleEffect_IntegrateVector3(s32 *vector, s32 damping, s32 gravity);
 s32 Encounter_ResolveWorldMapZoneAndBackdrop(void *);
-s32 BattleEffect_RunProjectileVolleyB(void *effect, s32 mode);
-s32 BattleEffect_RunSparkGroups(void *, s32);
+void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
+                                       u32 mode);
+void BattleEffect_RunSparkGroups(struct BattleEffectArgument *effect, s32 kind);
 void BattleEffect_SnapScaleToFull(void *object);
 void BattleEffect_StartBufferInterpolation(s32 frames);
 struct Actor *BattleEffect_StartRandomParticleEmitter(s32 actor, s32 item);

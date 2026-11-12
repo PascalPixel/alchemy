@@ -4,6 +4,7 @@
 #include "effect_step.h"
 #include "io_reg.h"
 #include "ram_buffer.h"
+#include "task.h"
 
 // Directory row 0x16b, BattleEffect_GreenVineSheet: five 32x32 vine cels.
 extern char ResourceId_GreenVineSheet;
@@ -15,8 +16,7 @@ extern const s8 Data_08198422[];
 void wait(s32 frames);
 void Sound_PlayFar(s32 cue);
 void BattleEffect_StartCanvasLayer(s32 bgControl);
-void Func_0815585c(struct BattleEffectArgument *effect, s32 flags,
-                   struct EffectPosition *screen, struct EffectPosition *world);
+void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen, s32 *world);
 void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void BattleEffect_CountDownBattlerTints(void);
@@ -26,8 +26,8 @@ void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void Resource_LoadAndDecompress(s32 id, void *dst, s32 skipPalette,
                                 s32 copyPalette);
-s32 Task_Add(void (*func)(void), s32 order);
-s32 Task_Remove(void (*func)(void));
+
+
 void HeapSlot_Release(s32 slot);
 
 #define VINE_COUNT 16

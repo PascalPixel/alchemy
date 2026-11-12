@@ -9,6 +9,9 @@
 #include "effect_step.h"
 #include "battle_effect.h"
 #include "battle_effect_work.h"
+#include "resource.h"
+
+struct FxPartyList;
 
 // The pixel half of a 16.16 fixed-point value.
 #define HI(v) (((s16 *)&(v))[1])
@@ -69,9 +72,9 @@ void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_ConfigureEffectDisplay(void);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void Func_08163c2c(s32 mode, s32 value);
-void BattleEffect_SelectLivingTargets(struct BattleEffectArgument *effect);
-void BattleEffect_SpawnObjects(s32 count, s32 resource, s32 priority);
-void ResourceObject_ReleaseFar(void *object);
+void BattleEffect_SelectLivingTargets(struct FxPartyList *party);
+void BattleEffect_SpawnObjects(s32 entryCount, s32 kind, u32 variant);
+
 s32 BattleEffect_LoadBlitter(
     s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter(slot,
                                  // 7, 7, flags, mode)

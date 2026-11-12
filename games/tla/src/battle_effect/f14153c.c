@@ -7,6 +7,13 @@
 #include "heap_release.h"
 #include "ram_buffer.h"
 
+struct FxPartyList;
+struct MeshTriangle;
+struct MeshVertex;
+struct Model;
+struct ResourceObjectWork;
+struct StripQuad;
+
 struct ModelTexture {
   u32 logWidth : 8;
   u32 logHeight : 8;
@@ -35,12 +42,11 @@ void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                    s32 timerFrames);              // BattleEffect_TintBattler
 void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
 void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
-void Func_0815585c(struct BattleEffectArgument *effect, s32 packed, s32 *screen,
-                   s32 *otherPoint);
+void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen, s32 *world);
 void Func_0818caa8(void *cells, s32 x, s32 y, s32 size);
-struct RenderModel *Render_AllocateModelList(s32 count);
+struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
-void Render_DrawModelList(struct RenderModel *model);
+void Render_DrawModelList(struct Model *model);
 void Func_08015160(s32 x, s32 y, s32 z);
 void Func_0801521c(s32 scale);
 void SceneTransform_ApplyPitch(s32 angle);
@@ -48,27 +54,24 @@ void SceneTransform_ApplyYaw(s32 angle);
 void Render_ResetTransformState(void);
 void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
-void BattleEffect_SpawnObjects(s32 count, s32 resource,
-                               s32 mode); // SpawnObjects
-void BattleEffect_SelectLivingTargets(
-    struct BattleEffectArgument *effect); // SelectLivingTargets
+void BattleEffect_SpawnObjects(s32 entryCount, s32 kind, u32 variant); // SpawnObjects
+void BattleEffect_SelectLivingTargets(struct FxPartyList *party); // SelectLivingTargets
 void Func_080150e4(s32 angle);            // SceneTransform_ApplyRoll
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                    s32 speedLimit, s32 velocityY, s32 percent);
-void Render_ApplyProjectedPlacementFar(void *object, s32 *request, s32 *source,
-                                       s32 flags);
+
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
 void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
 void Func_081180e8(s32 phase);             // BattlePlayback_StartFar
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                           s32 drag);
-void **GetBattleObjectSlotFar(s32 objectId);
+
 void *Heap_AllocEwram(s32 size);
 void Resource_LoadAndDecompress(s32 resource, void *destination, s32 a, s32 b);
 void *Resource_GetTableEntry(s32 resource);
-s32 Task_Add(void (*func)(void), s32 order);
-s32 Task_Remove(void (*func)(void));
+
+
 void HeapSlot_Release(s32 slot);
 void Sound_PlayFar(s32 cue);
 void wait(s32 frames);
@@ -76,7 +79,7 @@ u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
 
-void Render_BuildQuadStrip(void *mesh, s32 columns, s32 width, s32 height);
+void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height, s32 count);
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                           s32 gravity);
 s32 BattleUnit_GetEffectHeightFar(s32 unit);
@@ -96,7 +99,10 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 #include "bg_scroll.h"
 #include "vram_tab.h"
 #include "input.h"
-
+#include "task.h"
+#include "battle.h"
+#include "motobj.h"
+#include "item_icon.h"
 struct EclipseObject {
   u8 unk0[9];
   u8 unk09 : 2;
@@ -142,35 +148,35 @@ extern const u8 Data_081977a4[];
 extern const u8 Data_081977c4[];
 extern const u8 Data_081977e4[];
 extern const s8 Data_081977e8[];
-extern const u16 gData_08197410[];
-extern const u16 gData_08197486[];
-extern const u8 gData_08197492[];
-extern const u8 gData_08197498[];
+extern u16 gData_08197410[];
+extern u16 gData_08197486[];
+extern u8 gData_08197492[];
+extern u8 gData_08197498[];
 extern const u8 gData_081991b0[];
 extern const u8 Data_081991c0[];
 extern const u8 gData_08199210[];
 extern const u8 Data_08199220[];
 extern const u8 gData_08199340[];
 
-struct EclipseObject *Func_0815b290(s32 width, s32 height, u32 shape, s32 mode);
-void ResourceObject_ReleaseFar(void *object);
+struct SpriteObject *Func_0815b290(s32 width, s32 height, u32 shape,
+                                   u32 attributes);
+void ResourceObject_ReleaseFar(struct ResourceObjectWork *work);
 void Func_08179e6c(void);
 void Func_0813baec(void);
 void BattleActor_SpawnObjectsForListFar(s16 *list, s32 mode);
-void Resource_ResetEntry(s32 entry);
+
 void VramBlock_Reset93Far(void);
 void BattleBackground_LoadFar(s32 layer, s32 background, s32 palette);
 s32 Resource_DecodeType01(const void *source, void *destination);
-s32 Func_08196404(s32 slot, s32 width, s32 height, s32 mode, s32 flags);
+s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags, u32 mode);
 void Func_08020388(void);
 s32 VramCache_AllocEntry(s32 size);
 void Palette_LoadBasicObjColors(void);
 void Func_08164abc(s32 r, s32 g, s32 b);
 void Func_08164b2c(s32 r, s32 g, s32 b);
-void Func_081885f0(void *a, void *b, s32 count);
+void Func_081885f0(struct MeshVertex *vertices, struct MeshTriangle *triangles, s32 segments);
 void Graphics_LoadGreyRamp(void);
-void Func_0818de3c(void *triangles, s32 columns, s32 rows, s32 cellWidth,
-                   s32 cellHeight);
+void Func_0818de3c(struct MeshTriangle *triangles, s32 columns, s32 rows, s32 cellWidth, s32 cellHeight);
 void Heap_Release(void *buffer);
 
 #define SLOT_ALT 188 // unkb8[1]

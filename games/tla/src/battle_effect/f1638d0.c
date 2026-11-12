@@ -28,9 +28,8 @@
 #define PHASE_RESULTS 134
 
 void BattleEffect_StartCanvasLayer(s32 bgControl);
-void Func_0815585c(struct BattleEffectArgument *effect, s32 flags, s32 *screenX,
-                   s32 *screenY); // BattleEffect_RunDjinniEntrance
-void BattleEffect_FetchRectangleBlitters(s32 side, DrawRectangle *draw);
+void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen, s32 *world); // BattleEffect_RunDjinniEntrance
+void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void BattleEffect_ArmBg2AffineHBlankDma(void);
 void Func_081180e8(s32 phase); // BattlePlayback_StartFar

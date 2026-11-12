@@ -9,6 +9,11 @@
 #include "battle_work.h"
 #include "battle_effect.h"
 #include "battle_effect_work.h"
+#include "task.h"
+#include "battle.h"
+#include "actor.h"
+
+struct Model;
 
 // The integer (pixel) half of a 16.16 value, read as the halfword it is.
 #define HI(v) (((s16 *)&(v))[1])
@@ -57,10 +62,10 @@ extern char ResourceId_RedHazeBackdrop;
 extern char ResourceId_Data101;
 extern u8 gMapCellBuffer[];
 extern u8 gData_02014000[];
-extern struct EffectStep Data_02016000[];
+extern u8 Data_02016000[];
 extern u16 gData_08197410[];
-extern const u16 gData_08199364[];
-extern const u16 Data_0819919c[];
+extern const u8 gData_08199364[];
+extern const u8 Data_0819919c[];
 extern const u8 Data_081991e0[];
 extern const u8 Data_081991a4[];
 extern const s16 Data_08199f2a[];
@@ -68,21 +73,21 @@ extern const s16 Data_08199f2e[];
 
 void BattleEffect_StartCanvasLayer(s32 layer);
 void BattleEffect_EndCanvasLayer(void);
-void BattleEffect_LoadBlitter(s32 slot, s32 value);
+s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void Graphics_LoadGreyRamp(void);
 void BattleEffect_BuildRepeatingTilemap(void);
 void BattleEffect_SetApproachMotion(s32 id, s32 targetId, s32 frames, s32 rate);
 void Resource_LoadAndDecompress(s32 id, void *target, s32 unpack, s32 wait);
-s32 Task_Add(void (*func)(void), s32 order);
-s32 Task_Remove(void (*func)(void));
+
+
 struct BattleObj *GetBattleObjectSlotFar(s32 objectId);
 void EffectPosition_ProjectScaledBattler(s32 id, struct EffectPosition *out);
 void BattleActor_SpawnObjectsForListFar(s16 *targets, s32 mode);
 void BattleActor_CommitPlacementFar(void);
 void BattleBackground_LoadFar(s32 mode, s32 background, s32 level);
-void Actor_SetMode(struct MotionObject *object, s32 mode);
-void Actor_SetAnimationSpeedFar(struct MotionObject *object, s32 value);
+
+
 void HeapSlot_Release(s32 slot);
 void wait(s32 frames);
 u32 Random16(void);
@@ -92,14 +97,14 @@ void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                           s32 gravity);
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                           s32 gravity);
-struct RenderModel *Render_AllocateModelList(s32 count);
+struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_ResetTransformState(void);
 void Func_08015160(s32 x, s32 y, s32 z);
 void Func_080151e4(s32 x, s32 y, s32 z);
 void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
-void Render_TransformVertices(const u8 *vertices, void *projected, s32 count);
-void Render_DrawModelList(struct RenderModel *model);
+void Render_TransformVertices(const void *corners, void *vertices, s32 count);
+void Render_DrawModelList(struct Model *model);
 void Func_0814cd48(s32 actor, s32 palette, s32 mode, s32 timer, s32 frames);
 void Func_08164a4c(s32 blue, s32 green, s32 red);
 void Camera_ApplyVerticalShake(s32 range);

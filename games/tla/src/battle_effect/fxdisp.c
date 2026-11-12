@@ -5,6 +5,7 @@
 #include "heap_release.h"
 #include "motobj.h"
 #include "iwram_call.h"
+#include "transform.h"
 
 struct BattleFxWorkTail {
   u8 unk0000[0x78e4];
@@ -14,10 +15,10 @@ struct BattleFxWorkTail {
   struct BattleEffectArgument *effect;
 };
 
-u8 *GetMotionRecordFar(s32 *object, s32 mode);
+void *GetMotionRecordFar(void *object, s32 index);
 s32 BattleUnit_GetEffectHeightFar(s32 unit);
 void Render_ResetTransformState(void);
-void Transform_SetLookAt(u8 *source, u8 *destination);
+
 s32 Render_ProjectPoint(const void *point, s32 *screen);
 
 s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen) {
@@ -50,7 +51,7 @@ void BattleEffect_ProbeKeysForExtendedActor(void) {
 }
 
 void Func_0815f16c(struct BattleEffectArgument *effect, s32 index);
-void BattleEffect_RunCanvasModeByCount(struct BattleEffectArgument *effect);
+void BattleEffect_RunCanvasModeByCount(s32 *effect);
 void Func_0815e9f4(struct BattleEffectArgument *effect);
 void Func_0815e3ac(struct BattleEffectArgument *effect);
 

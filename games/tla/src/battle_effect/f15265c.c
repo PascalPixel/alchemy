@@ -71,23 +71,21 @@ void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void Palette_StepFadeTransfer(void);
 void BattleEffect_CountDownBattlerTints(void);
-void BattleEffect_FetchRectangleBlitters(s32 side, DrawRectangle *pair);
+void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
 s32 BattleEffect_LoadBlitter(s32 slot,
                              s32 modeAndFlags); // BattleEffect_BuildBlitter
-s32 Func_08196404(s32 slot, s32 width, s32 height, s32 flags,
-                  s32 mode); // BattleEffect_BuildBlitter
+s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags, u32 mode); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // BattleEffect_TintBattler
 void Func_081180e8(s32 phase);       // BattlePlayback_StartFar
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
-void Func_0815585c(struct BattleEffectArgument *effect, s32 djinni, s32 *origin,
-                   s32 *target);  // BattleEffect_RunDjinniEntrance
+void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen, s32 *world);  // BattleEffect_RunDjinniEntrance
 void Func_0815f0a0(s32 resource); // BattleEffect_StepPaletteToResource
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                    s32 speedLimit, s32 velocityY, s32 percent);
 void EffectPosition_ProjectSprite(s32 id, struct EffectPosition *position);
-void SummonEffect_RunCanvasMode1(struct BattleEffectArgument *effect);
-void SummonEffect_RunCanvasMode3(struct BattleEffectArgument *effect);
+void SummonEffect_RunCanvasMode1(void *action);
+void SummonEffect_RunCanvasMode3(void *action);
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                           s32 gravity);
 s32 BattleUnit_GetEffectHeightFar(s32 actor);
@@ -95,7 +93,7 @@ s32 BattleUnit_GetEffectHeightFar(s32 actor);
 // The Lost Age's blitter modes, BattleEffect_LoadBlitter's high nibble: 3 minus
 // The Broken Seal's COMPOSITE_ADDITIVE, COMPOSITE_MAX and
 // COMPOSITE_TRANSPARENT.
-enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT };
+enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 #define BLIT_MODE(mode, flags) ((mode) << 4 | (flags))
 #define CLIP (COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y)
 

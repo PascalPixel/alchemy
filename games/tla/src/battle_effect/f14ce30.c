@@ -10,6 +10,9 @@
 #include "transform.h"
 #include "battle_effect.h"
 #include "battle_effect_work.h"
+#include "resource.h"
+
+struct FxPartyList;
 
 // The pixel half of a 16.16 value.
 #define HI(v) (((s16 *)&(v))[1])
@@ -52,10 +55,8 @@ void BattleEffect_ProcessPendingGraphicsTransfer(
 void BattleEffect_EndCanvasLayer(void);
 s32 BattleEffect_LoadBlitter(s32 slot,
                              s32 flags); // ☀️ BattleEffect_BuildBlitter
-void BattleEffect_SelectLivingTargets(
-    struct BattleEffectArgument *effect); // ☀️ SelectLivingTargets
-void BattleEffect_SpawnObjects(s32 count, s32 formation,
-                               s32 priority);    // ☀️ SpawnObjects
+void BattleEffect_SelectLivingTargets(struct FxPartyList *party); // ☀️ SelectLivingTargets
+void BattleEffect_SpawnObjects(s32 entryCount, s32 kind, u32 variant);    // ☀️ SpawnObjects
 void Func_0816442c(s32 formation, s32 x, s32 y); // ☀️ PlaceFormationObjects
 void Func_0816467c(s32 formation, s32 x, s32 y); // ☀️ RunImpactBurst
 void Func_08118088(s32 actor, s32 motion);       // ☀️ ApplyVariantMotionFar
@@ -63,7 +64,7 @@ void Sound_PlayFar(s32 cue);
 void Animation_ApplyChildArgumentFar(void *, s32);
 void *GetMotionRecordFar(void *object, s32 index);
 void Render_ResetTransformState(void);
-void ResourceObject_ReleaseFar(void *object);
+
 void Func_081180e8(s32 phase); // ☀️ BattleEvent_StartPhaseFar
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                           s32 gravity);

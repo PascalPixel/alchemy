@@ -26,8 +26,7 @@ void BattleEffect_CountDownBattlerTints(void);
 void Func_081180e8(s32 phase); // BattlePlayback_StartFar
 void Func_0814cd48(s32 actor, s32 palette, s32 duration, s32 timer,
                    s32 frames); // BattleEffect_TintBattler
-void BattleEffect_FetchRectangleBlitters(
-    s32 flip, DrawRectangle *draw);      // ..FetchRectangleBlitters
+void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);      // ..FetchRectangleBlitters
 void BattleEffect_ArmBg1HBlankDma(void); // arms the BG1 scroll's HBlank DMA
 void Func_0815b634(void);                // mode 3 only
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,

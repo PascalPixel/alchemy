@@ -4,6 +4,8 @@
 #include "battle_effect.h"
 #include "battle_effect_work.h"
 #include "effect_step.h"
+#include "battle_display.h"
+#include "task.h"
 
 // Byte offset of the blitter slot in gHeapSlots (unk64[1]).
 #define HEAP_BLITTER 104
@@ -43,10 +45,8 @@ void BattleEffect_EndCanvasLayer(void);
 // Builds a blitter in a heap slot: BattleEffect_BuildBlitter(slot, 7, 7,
 // flags, mode), whose result it returns.
 s32 BattleEffect_LoadBlitter(s32 slot, s32 modeFlags);
-// Copies the canvas to VRAM when a transfer is pending.
-s32 BattleEffect_ProcessPendingGraphicsTransfer(void);
-s32 Task_Add(s32 (*func)(void), s32 order);
-s32 Task_Remove(s32 (*func)(void));
+s32 Task_Add(void (*func)(void), s32 order);
+
 void HeapSlot_Release(s32 slot);
 void Sound_PlayFar(s32 cue);
 // BattlePlayback_Start through its far call.

@@ -10,6 +10,10 @@
 #include "fixed_math.h"
 #include "graphics.h"
 #include "resource.h"
+#include "battle_display.h"
+#include "task.h"
+
+struct Model;
 
 // Heap slots, as byte offsets into Ram_HeapSlots.
 #define SLOT_BATTLE_EFFECT 92 // battleFxWork[0]
@@ -61,10 +65,10 @@ extern u8 Data_081977f0[];
 extern u8 Data_081977f4[];
 
 // The models: the rings' quad, its corners, the crystal and its corners.
-extern u8 Data_08199220[];
-extern u8 gData_081991b0[];
-extern u8 gData_081990d0[];
-extern u8 gData_08199090[];
+extern const u8 Data_08199220[];
+extern const u8 gData_081991b0[];
+extern const u8 gData_081990d0[];
+extern const u8 gData_08199090[];
 
 // The crystal texture and the flashes live in EWRAM after the map cells.
 extern u8 Data_02012000[];
@@ -81,11 +85,10 @@ extern char ResourceId_EffectPalette03;
 void BattleEffect_StartCanvasLayer(s32 control);
 void BattleEffect_EndCanvasLayer(void);
 s32 BattleEffect_LoadBlitter(s32 slot, s32 flags);
-s32 BattleEffect_ProcessPendingGraphicsTransfer(
-    void); // the canvas transfer callback
+
 void Palette_StepFadeTransfer(void);
-s32 Task_Add(void *func, s32 order);
-s32 Task_Remove(void *func);
+s32 Task_Add(void (*func)(void), s32 order);
+
 void HeapSlot_Release(s32 slot);
 void Sound_PlayFar(s32 cue);
 u32 Random16(void);
@@ -100,9 +103,9 @@ void Func_08164a4c(s32 blueDelta, s32 greenDelta, s32 redDelta);
 void Func_08118150(s32 kind);
 void Func_0815b434(u8 *map, s32 size, s32 scale);
 void Func_0818caa8(void *source, s32 x, s32 y, s32 size);
-struct ModelDraw *Render_AllocateModelList(s32 count);
-void Render_TransformVertices(const void *corners, void *out, s32 count);
-void Render_DrawModelList(struct ModelDraw *draw);
+struct PoolEntry *Render_AllocateModelList(s32 count);
+void Render_TransformVertices(const void *corners, void *vertices, s32 count);
+void Render_DrawModelList(struct Model *model);
 void Func_08015160(s32 x, s32 y, s32 z);
 void Func_080151e4(s32 x, s32 y, s32 z);
 void Func_080150e4(s32 roll);

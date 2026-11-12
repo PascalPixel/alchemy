@@ -5,6 +5,9 @@
 #include "heap_release.h"
 #include "battle_effect.h"
 #include "battle_effect_work.h"
+#include "task.h"
+
+struct Model;
 
 // The integer (pixel) half of a 16.16 value, read as the halfword it is.
 #define HI(v) (((s16 *)&(v))[1])
@@ -14,9 +17,9 @@
 // A texture for the ARM model renderer: its size as powers of two and the
 // address of its pixels.
 struct ModelTexture {
-  u8 logWidth;
-  u8 logHeight;
-  u16 unk02;
+  u32 logWidth : 8;
+  u32 logHeight : 8;
+  u32 unk02 : 16;
   const void *pixels;
 };
 
@@ -41,9 +44,9 @@ extern u8 gData_02014000[];
 // combine with the second.
 #define EFFECT_PICTURES (Ram_MapCellBuffer + 0x4000)
 extern u16 gData_08197410[];
-extern const u16 Data_081992b0[];
-extern const u16 Data_08199220[];
-extern const u16 gData_08199364[];
+extern u8 Data_081992b0[];
+extern const u8 Data_08199220[];
+extern const u8 gData_08199364[];
 extern const u8 Data_08199eb4[];
 extern const u8 Data_08199ebc[];
 extern const u8 Data_08199ea4[];
@@ -53,12 +56,12 @@ extern const u8 gData_08199210[];
 
 void BattleEffect_StartCanvasLayer(s32 layer);
 void BattleEffect_EndCanvasLayer(void);
-void BattleEffect_FetchRectangleBlitters(s32 flip, DrawRectangle *out);
+void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void Resource_LoadAndDecompress(s32 id, void *target, s32 unpack, s32 wait);
 void *Resource_GetTableEntry(s32 id);
-s32 Task_Add(void (*func)(void), s32 order);
-s32 Task_Remove(void (*func)(void));
+
+
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
 void HeapSlot_Release(s32 slot);
 void wait(s32 frames);
@@ -67,14 +70,14 @@ s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                           s32 gravity);
-struct RenderModel *Render_AllocateModelList(s32 count);
+struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_ResetTransformState(void);
 void Func_08015160(s32 x, s32 y, s32 z);
 void Func_080151e4(s32 x, s32 y, s32 z);
 void Func_080150e4(s32 angle);
 void SceneTransform_ApplyPitch(s32 angle);
-void Render_TransformVertices(const u8 *vertices, void *projected, s32 count);
-void Render_DrawModelList(struct RenderModel *model);
+void Render_TransformVertices(const void *corners, void *vertices, s32 count);
+void Render_DrawModelList(struct Model *model);
 void Func_0814cd48(s32 actor, s32 palette, s32 mode, s32 timer, s32 frames);
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                    s32 speedLimit, s32 velocityY, s32 percent);

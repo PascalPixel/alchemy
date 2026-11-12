@@ -10,6 +10,9 @@
 #include "battle_effect_work.h"
 #include "fixed_math.h"
 #include "resource.h"
+#include "graphics.h"
+
+struct Model;
 
 static __inline__ s32 CopyWords_(void *destination, const void *source,
                                  s32 size) {
@@ -61,8 +64,8 @@ extern char ResourceId_MercuryDjinnSheet; // directory row 0x154
 extern char ResourceId_BlueFlameSheet;    // directory row 0x130
 extern char ResourceId_MarsDjinnSheet;    // directory row 0x150
 
-extern s32 gCameraSceneParameters[]; // unsized: sized, word 4 folds
-extern const s8 gData_08199210[];    // a quad's four corners, x y z for each
+
+extern const u8 gData_08199210[];    // a quad's four corners, x y z for each
 extern const u8 gData_08199340[];    // the quad's face
 
 void BattleEffect_StartCanvasLayer(s32 bgControl);
@@ -75,12 +78,11 @@ s32 BattleEffect_LoadBlitter(s32 slot,
                              s32 flags); // ☀️ BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ☀️ BattleEffect_TintBattler
-void Func_0815585c(struct BattleEffectArgument *effect, s32 flags, s32 *anchor,
-                   s32 *size); // the canvas preparer
+void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen, s32 *world); // the canvas preparer
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *pos);
-struct RenderJob *Render_AllocateModelList(s32 count);
-void Render_TransformVertices(const s8 *vertices, void *projected, s32 count);
-void Render_DrawModelList(struct RenderJob *job);
+struct PoolEntry *Render_AllocateModelList(s32 count);
+void Render_TransformVertices(const void *corners, void *vertices, s32 count);
+void Render_DrawModelList(struct Model *model);
 void Func_08015160(s32 x, s32 y, s32 z); // translate
 void Func_080151e4(s32 x, s32 y, s32 z); // scale
 void Func_080150e4(s32 angle);           // roll

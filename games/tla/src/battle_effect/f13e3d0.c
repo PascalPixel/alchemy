@@ -11,6 +11,7 @@
 #include "graphics.h"
 #include "transform.h"
 #include "resource.h"
+#include "task.h"
 
 typedef DrawRectangle BlitterPair[2];
 
@@ -47,8 +48,8 @@ extern char ResourceId_VioletPaletteA;
 void BattleEffect_StartCanvasLayer(s32 control);
 void BattleEffect_EndCanvasLayer(void);
 s32 BattleEffect_LoadBlitter(s32 slot, s32 flags);
-s32 Task_Add(void *func, s32 order);
-s32 Task_Remove(void *func);
+s32 Task_Add(void (*func)(void), s32 order);
+
 void HeapSlot_Release(s32 slot);
 void Sound_PlayFar(s32 cue);
 u32 Random16(void);

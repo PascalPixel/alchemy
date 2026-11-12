@@ -49,8 +49,7 @@ void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
 s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
                   u32 mode); // BattleEffect_BuildBlitter
-void BattleEffect_FetchRectangleBlitters(
-    s32 flip, DrawRectangle *draw); // ..FetchRectangleBlitters
+void BattleEffect_FetchRectangleBlitters(s32 flip, void **out); // ..FetchRectangleBlitters
 void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
                    s32 frames); // BattleEffect_TintBattler
 void BattleEffect_CountDownBattlerTints(void);

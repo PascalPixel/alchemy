@@ -46,9 +46,8 @@ void Func_08118088(s32 actor,
                    s32 variant); // BattleMotion_ApplyVariantMotionFar
 void Func_0814cd48(s32 actor, s32 palette, s32 a, s32 timer,
                    s32 frames); // BattleEffect_TintBattler
-s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
-                  s32 mode); // BattleEffect_BuildBlitter
-void BattleEffect_FetchRectangleBlitters(s32 side, DrawRectangle *draw);
+s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags, u32 mode); // BattleEffect_BuildBlitter
+void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                           s32 gravity);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);

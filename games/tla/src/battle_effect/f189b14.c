@@ -4,6 +4,7 @@
 #include "iwram_call.h"
 #include "battle_effect.h"
 #include "battle_effect_work.h"
+#include "task.h"
 
 // The Lost Age's heap slots, by byte offset into Ram_HeapSlots.
 #define HEAP_SLOT_BLITTER 104
@@ -29,7 +30,7 @@ struct ModelTexture {
   u32 logWidth : 8;
   u32 logHeight : 8;
   u32 unk02 : 16;
-  void *pixels;
+  const void *pixels;
 };
 
 // One entry of a model list, as Render_AllocateModelList allocates them and
@@ -52,19 +53,19 @@ extern char ResourceId_Data0C2;
 
 // The quad mesh and the corners of the rune, the jaw-like flash and the
 // eight blades of the opening fan.
-extern u8 gData_08199364[];
+extern const u8 gData_08199364[];
 extern u8 Data_081992b0[];
-extern s32 Data_081991e0[];
+extern const u8 Data_081991e0[];
 extern s32 Data_08199200[];
 
 // The spark cells: offsets into the particle sheet by size.
 extern u16 gData_08197410[];
 
 void BattleEffect_StartCanvasLayer(s32 bgControl);
-void BattleEffect_LoadBlitter(s32 slot, s32 packed);
+s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags);
 void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
-s32 Task_Add(void (*func)(void), s32 order);
-s32 Task_Remove(void (*func)(void));
+
+
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *position);
 void Sound_PlayFar(s32 cue);
 void Func_081180e8(s32 phase);
@@ -77,7 +78,7 @@ s32 Trig_Cos(s32 angle);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                           s32 gravity);
 void *Heap_AllocEwram(s32 size);
-struct Model *Render_AllocateModelList(s32 count);
+struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_ResetTransformState(void);
 void Func_080151e4(s32 x, s32 y, s32 z);
 void Func_08015160(s32 x, s32 y, s32 z);
@@ -85,7 +86,7 @@ void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
 void Func_080150e4(s32 angle);
 void Func_0801521c(s32 scale);
-void Render_TransformVertices(void *corners, void *vertices, s32 count);
+void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct Model *model);
 void Heap_Release(void *block);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);

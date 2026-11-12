@@ -1,6 +1,8 @@
 #include "types.h"
 
-void Func_0813cb34(void *object, s32 mode);
+struct BattleEffectArgument;
+
+void Func_0813cb34(struct BattleEffectArgument *effect, s32 mode);
 
 /// Abilities: Sleep Star (kind 349).
 void BattleEffect_RunSleepStar(void *object) { Func_0813cb34(object, 1); }

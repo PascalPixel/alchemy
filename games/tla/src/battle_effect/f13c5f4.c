@@ -11,6 +11,7 @@
 #include "graphics.h"
 #include "transform.h"
 #include "resource.h"
+#include "task.h"
 
 // The blitters' heap slots, as byte offsets into Ram_HeapSlots.
 #define SLOT_BLITTER 104           // unk64[1]
@@ -46,8 +47,8 @@ extern char ResourceId_CyanPalette;
 void BattleEffect_StartCanvasLayer(s32 control);
 void BattleEffect_EndCanvasLayer(void);
 s32 BattleEffect_LoadBlitter(s32 slot, s32 flags);
-s32 Task_Add(void *func, s32 order);
-s32 Task_Remove(void *func);
+s32 Task_Add(void (*func)(void), s32 order);
+
 void HeapSlot_Release(s32 slot);
 void Sound_PlayFar(s32 cue);
 void Func_081180e8(s32 phase);             // BattlePlayback_StartFar

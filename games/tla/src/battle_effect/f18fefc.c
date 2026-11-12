@@ -7,6 +7,12 @@
 #include "heap_release.h"
 #include "ram_buffer.h"
 
+struct Actor;
+struct FxPartyList;
+struct Model;
+struct ScaledSprite;
+struct StripQuad;
+
 struct ModelTexture {
   u32 logWidth : 8;
   u32 logHeight : 8;
@@ -45,12 +51,11 @@ void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                    s32 timerFrames);              // BattleEffect_TintBattler
 void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
 void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
-void Func_0815585c(struct BattleEffectArgument *effect, s32 packed, s32 *screen,
-                   s32 *otherPoint);
+void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen, s32 *world);
 void Func_0818caa8(void *cells, s32 x, s32 y, s32 size);
-struct RenderModel *Render_AllocateModelList(s32 count);
+struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
-void Render_DrawModelList(struct RenderModel *model);
+void Render_DrawModelList(struct Model *model);
 void Func_08015160(s32 x, s32 y, s32 z);
 void Func_0801521c(s32 scale);
 void SceneTransform_ApplyPitch(s32 angle);
@@ -58,15 +63,13 @@ void SceneTransform_ApplyYaw(s32 angle);
 void Render_ResetTransformState(void);
 void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
-void BattleEffect_SpawnObjects(s32 count, s32 resource,
-                               s32 mode); // SpawnObjects
-void BattleEffect_SelectLivingTargets(
-    struct BattleEffectArgument *effect); // SelectLivingTargets
+void BattleEffect_SpawnObjects(s32 entryCount, s32 kind, u32 variant); // SpawnObjects
+void BattleEffect_SelectLivingTargets(struct FxPartyList *party); // SelectLivingTargets
 void Func_080150e4(s32 angle);            // SceneTransform_ApplyRoll
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                    s32 speedLimit, s32 velocityY, s32 percent);
-void Render_ApplyProjectedPlacementFar(void *object, s32 *request, s32 *source,
-                                       s32 flags);
+void Render_ApplyProjectedPlacementFar(struct ScaledSprite *sprite,
+                                       s32 *position, s32 *scale, s32 mode);
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
 void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
 void Func_081180e8(s32 phase);             // BattlePlayback_StartFar
@@ -77,8 +80,8 @@ void **GetBattleObjectSlotFar(s32 objectId);
 void *Heap_AllocEwram(s32 size);
 void Resource_LoadAndDecompress(s32 resource, void *destination, s32 a, s32 b);
 void *Resource_GetTableEntry(s32 resource);
-s32 Task_Add(void (*func)(void), s32 order);
-s32 Task_Remove(void (*func)(void));
+
+
 void HeapSlot_Release(s32 slot);
 void Sound_PlayFar(s32 cue);
 void wait(s32 frames);
@@ -86,7 +89,7 @@ u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
 
-void Render_BuildQuadStrip(void *mesh, s32 columns, s32 width, s32 height);
+void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height, s32 count);
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                           s32 gravity);
 s32 BattleUnit_GetEffectHeightFar(s32 unit);
@@ -107,16 +110,18 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 #include "bg_scroll.h"
 #include "input.h"
 #include "io_write_queue.h"
-
+#include "task.h"
+#include "graphics.h"
+#include "resource.h"
 extern u8 Data_02011000[];
 extern u8 Data_02012000[];
 extern u8 gMapCellBuffer[];
 extern u8 gData_02014000[];
-extern const u16 gData_08197410[]; // gBattleEffect_MoteCells
+extern u16 gData_08197410[]; // gBattleEffect_MoteCells
 extern const u8 gData_08199364[];
 extern const u8 Data_081991e0[];
 extern const u8 gData_081991f0[];
-extern const u8 Data_081992b0[];
+extern u8 Data_081992b0[];
 extern const u16 Data_08199ee0[]; // the five rings' start frames
 extern const s16 Data_08199ecc[];
 extern const s16 Data_08199ed6[];
@@ -125,7 +130,7 @@ extern const s16 Data_08199efa[];
 extern const s16 Data_08199f0a[];
 extern const s8 Data_08199f1a[];
 extern const s8 Data_08199f22[];
-extern s32 gCameraSceneParameters[];
+
 extern char ResourceId_RedHazeBackdrop;
 extern char ResourceId_Data0C2;
 extern char ResourceId_Data0C9;
@@ -137,7 +142,7 @@ extern char ResourceId_OrangePaletteB;
 
 void BattleMotion_ApproachTargetFar(s32 actor, s32 target, s32 frames,
                                     s32 speed);
-void Actor_SetAnimationSpeedFar(void *object, s32 value);
+void Actor_SetAnimationSpeedFar(struct Actor *object, s32 value);
 void BattleActor_SpawnObjectsForListFar(s16 *targets, s32 mode);
 void BattleActor_CommitPlacementFar(void);
 void BattleEffect_BuildRepeatingTilemap(void);
@@ -146,7 +151,7 @@ void Func_08164a4c(s32 blue, s32 green, s32 red);
 void Func_0815f0a0(s32 palette);
 void Graphics_LoadGreyRamp(void);
 s32 Render_ProjectPoint(const void *point, s32 *screen);
-void ResourceObject_ReleaseFar(void *object);
+
 void BattleBackground_LoadFar(s32 layer, s32 background, s32 palette);
 
 // Megiddo: the caster rises in a column of light, a winged figure gathers

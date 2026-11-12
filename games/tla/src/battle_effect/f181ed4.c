@@ -5,6 +5,9 @@
 #include "iwram_call.h"
 #include "ram_buffer.h"
 #include "types.h"
+#include "task.h"
+
+struct Model;
 
 #define HEAP_SLOT_BLITTER 104           // Ram_HeapSlots->unk64[1]
 #define HEAP_SLOT_BLITTER_ALTERNATE 188 // Ram_HeapSlots->unkb8[1]
@@ -52,7 +55,7 @@ extern const s32 Data_08199660[];
 extern const s8 Data_0819966c[];
 
 // The offsets of the spark cels: cel n is n pixels wide and 2n tall.
-extern const u16 gData_08197410[];
+extern u16 gData_08197410[];
 
 // The geyser: a mesh of sixteen corners and its faces.
 extern const u8 gData_08198c6c[];
@@ -64,10 +67,10 @@ static inline void CopyPalette(const void *palette) {
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
 }
 void BattleEffect_StartCanvasLayer(s32 bgControl);
-void BattleEffect_FetchRectangleBlitters(s32 side, DrawRectangle *pair);
+void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
 void *Resource_GetTableEntry(s32 resourceId);
-s32 Task_Add(s32 func, s32 priority);
-s32 Task_Remove(s32 func);
+s32 Task_Add(void (*func)(void), s32 order);
+
 void Func_0815e22c(struct EffectPosition *midpoint);
 void Func_0815f0a0(s32 resourceId);
 void Sound_PlayFar(s32 cue);
@@ -79,13 +82,13 @@ s32 Trig_Cos(s32 angle);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                           s32 gravity);
 void *Heap_AllocEwram(s32 size);
-struct RenderPrimitive *Render_AllocateModelList(s32 count);
+struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_ResetTransformState(void);
 void Func_08015160(s32 x, s32 y, s32 z);
 void SceneTransform_ApplyPitch(s32 angle);
 void Func_080151e4(s32 x, s32 y, s32 z);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
-void Render_DrawModelList(struct RenderPrimitive *list);
+void Render_DrawModelList(struct Model *model);
 void Heap_Release(void *buffer);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffect_CountDownBattlerTints(void);

@@ -1,6 +1,8 @@
 #include "types.h"
 
-void Func_0816fca8(s32 a0, s32 a1);
+struct BattleEffectArgument;
+
+void Func_0816fca8(struct BattleEffectArgument *effect, s32 mode);
 
 /// Abilities: Earth Force (kind 459).
 void BattleEffect_RunEarthForce(s32 a0) { Func_0816fca8(a0, 1); }

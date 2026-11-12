@@ -35,9 +35,9 @@ extern u8 gData_0819967e[];
 extern u16 gData_0819968e[];
 
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
-s32 Task_Add(void (*func)(void), s32 order);
-s32 Task_Remove(void (*func)(void));
-void BattleEffect_LoadBlitter(s32 slot, s32 blitter);
+
+
+s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags);
 void *Resource_GetTableEntry(s32 id);
 u32 Random16(void);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,

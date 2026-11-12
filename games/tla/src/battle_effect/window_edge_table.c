@@ -3,6 +3,9 @@
 #include "dma.h"
 #include "heap_release.h"
 #include "macros.h"
+#include "battle_effect.h"
+
+struct SummonArgument;
 
 struct FxRunWork {
   u8 unk0000[0x78e4];
@@ -13,34 +16,34 @@ struct FxRunWork {
 
 struct BattleEffectArgument;
 void BattleEffect_RunMeteor(struct BattleEffectArgument *effect);
-void BattleEffect_RunRamses(s32 *arg);
-void BattleEffect_RunNereid(s32 *arg);
-void BattleEffect_RunKirin(s32 *arg);
-void BattleEffect_RunAtalanta(s32 *arg);
-void BattleEffect_RunCybele(s32 *arg);
-void BattleEffect_RunNeptune(s32 *arg);
+void BattleEffect_RunRamses(struct BattleEffectArgument *effect);
+void BattleEffect_RunNereid(struct BattleEffectArgument *effect);
+void BattleEffect_RunKirin(struct BattleEffectArgument *effect);
+void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect);
+
+void BattleEffect_RunNeptune(struct BattleEffectArgument *effect);
 void BattleEffect_RunTiamat(s32 *arg);
-void BattleEffect_RunProcne(s32 *arg);
-void BattleEffect_RunJudgment(s32 *arg);
-void BattleEffect_RunBoreas(s32 *arg);
-void BattleEffect_RunThor(s32 *arg);
-void BattleEffect_RunZagan(s32 *arg);
-void BattleEffect_RunMegaera(s32 *arg);
-void BattleEffect_RunFlora(s32 *arg);
-void BattleEffect_RunMoloch(s32 *arg);
-void BattleEffect_RunUlysses(s32 *arg);
-void BattleEffect_RunHaures(s32 *arg);
-void BattleEffect_RunEclipse(s32 *arg);
-void BattleEffect_RunCoatlicue(s32 *arg);
-void BattleEffect_RunDaedalus(s32 *arg);
-void BattleEffect_RunAzul(s32 *arg);
-void BattleEffect_RunCatastrophe(s32 *arg);
-void BattleEffect_RunCharon(s32 *arg);
-void BattleEffect_RunIris(s32 *arg);
-void BattleEffect_RunDaedalusAlt(s32 *arg);
-void BattleEffect_RunTrident(s32 *arg);
-void BattleEffect_RunCruelRuin(s32 *arg);
-void BattleEffect_RunMeteorBlow(s32 *arg);
+void BattleEffect_RunProcne(struct BattleEffectArgument *effect);
+void BattleEffect_RunJudgment(struct BattleEffectArgument *effect);
+void BattleEffect_RunBoreas(struct BattleEffectArgument *effect);
+void BattleEffect_RunThor(struct BattleEffectArgument *effect);
+void BattleEffect_RunZagan(struct BattleEffectArgument *effect);
+void BattleEffect_RunMegaera(struct BattleEffectArgument *effect);
+void BattleEffect_RunFlora(struct BattleEffectArgument *effect);
+void BattleEffect_RunMoloch(struct BattleEffectArgument *effect);
+void BattleEffect_RunUlysses(struct BattleEffectArgument *effect);
+void BattleEffect_RunHaures(struct BattleEffectArgument *effect);
+void BattleEffect_RunEclipse(struct BattleEffectArgument *effect);
+void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect);
+void BattleEffect_RunDaedalus(struct SummonArgument *arg);
+void BattleEffect_RunAzul(struct BattleEffectArgument *effect);
+void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect);
+void BattleEffect_RunCharon(struct BattleEffectArgument *arg);
+void BattleEffect_RunIris(struct BattleEffectArgument *effect);
+void BattleEffect_RunDaedalusAlt(struct BattleEffectArgument *effect);
+void BattleEffect_RunTrident(struct BattleEffectArgument *effect);
+void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect);
+void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect);
 
 extern void (*gData_08197aa0[])(s32 *script);
 extern u8 gMapCellBuffer[];

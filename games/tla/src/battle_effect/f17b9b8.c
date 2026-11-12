@@ -7,6 +7,7 @@
 #include "motobj.h"
 #include "ram_buffer.h"
 #include "types.h"
+#include "task.h"
 
 #define HEAP_SLOT_BLITTER 104 // Ram_HeapSlots->unk64[1]
 
@@ -31,8 +32,8 @@ extern char ResourceId_SmokeSheet;
 
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void *Resource_GetTableEntry(s32 resourceId);
-s32 Task_Add(s32 func, s32 priority);
-s32 Task_Remove(s32 func);
+s32 Task_Add(void (*func)(void), s32 order);
+
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *position);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);

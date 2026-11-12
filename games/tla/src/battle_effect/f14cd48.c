@@ -1,5 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
+#include "motobj.h"
 
 struct FxGroupEntry {
   u8 unk00[5];
@@ -29,8 +30,8 @@ struct FxTimerWork {
   u8 actorTimers[8];
 };
 
-struct FxSlot *GetBattleObjectSlotFar(s32 id);
-struct FxGroup *GetMotionRecordFar(void *object, s32 index);
+
+void *GetMotionRecordFar(void *object, s32 index);
 s32 BattleMotion_GetSlotPaletteFar(s32 id);
 void Animation_ApplyChildArgumentFar(void *group, s32 value);
 

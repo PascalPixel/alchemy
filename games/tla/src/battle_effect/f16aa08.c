@@ -31,8 +31,7 @@ extern u16 gData_08197410[];
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
-void BattleEffect_FetchRectangleBlitters(
-    s32 flip, DrawRectangle *draw); // ..FetchRectangleBlitters
+void BattleEffect_FetchRectangleBlitters(s32 flip, void **out); // ..FetchRectangleBlitters
 void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
                    s32 frames); // BattleEffect_TintBattler
 void BattleEffect_CountDownBattlerTints(void);

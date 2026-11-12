@@ -35,7 +35,7 @@ s32 BattleEffect_LoadBlitter(s32 slot,
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames);               // ☀️ BattleEffect_TintBattler
 void Func_0815e22c(struct EffectPosition *middle); // the targets' middle
-void SceneTransform_ApplyPosition(s32 *position);
+void SceneTransform_ApplyPosition(const s32 *pos);
 void Sound_PlayFar(s32 cue);
 
 // A flock of sheep cards drops in over the targets, one every four frames,

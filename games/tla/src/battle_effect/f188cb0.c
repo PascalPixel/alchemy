@@ -4,6 +4,7 @@
 #include "iwram_call.h"
 #include "battle_effect.h"
 #include "battle_effect_work.h"
+#include "task.h"
 
 // The Lost Age's heap slots, by byte offset into Ram_HeapSlots.
 #define HEAP_SLOT_BLITTER 104
@@ -27,9 +28,9 @@ extern u8 gData_08199d38[];
 
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void *Resource_GetTableEntry(s32 id);
-s32 Task_Add(void (*func)(void), s32 order);
-s32 Task_Remove(void (*func)(void));
-void BattleEffect_FetchRectangleBlitters(s32 side, DrawRectangle *draw);
+
+
+void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
 void BattleMotion_ApproachTargetFar(s32, s16, s32, s32);
 void EffectPosition_ProjectBattler(
     s32 id, struct EffectPosition *position);

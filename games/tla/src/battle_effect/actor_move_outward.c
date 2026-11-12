@@ -2,11 +2,12 @@
 #include "motobj.h"
 #include "battle_action.h"
 #include "battle_unit.h"
+#include "actor.h"
 
 void *Unit_Get(s32 owner);
-void Actor_ResetMotion(struct MotionObject *object);
-void Actor_SetTargetPosition(struct MotionObject *object, s32 x, s32 y, s32 z);
-void Actor_SetMode(struct MotionObject *object, s32 mode);
+void Actor_ResetMotion(struct Actor *);
+void Actor_SetTargetPosition(struct Actor *, s32, s32, s32);
+
 
 /// BattleEffect_StartActorMotion with fixed values: unless the unit is one of
 /// four enemies, the actor steps 15 pixels further from x = 0 on its

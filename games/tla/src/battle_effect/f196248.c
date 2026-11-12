@@ -23,7 +23,7 @@ struct WireFace {
   u8 unk19[3];
 };
 
-void Func_08143eb4(s32 x0, s32 y0, s32 x1, s32 y1, u8 color);
+void Func_08143eb4(s32 x0, s32 y0, s32 x1, s32 y1, s32 color);
 
 // An unused wireframe renderer. Transforms the vertexCount points in the
 // sheet block by the current matrix, then draws the three edges of every

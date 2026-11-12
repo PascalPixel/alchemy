@@ -11,6 +11,9 @@
 #include "iwram_call.h"
 #include "motobj.h"
 #include "ram_buffer.h"
+#include "task.h"
+#include "transform.h"
+#include "battle.h"
 
 // Byte offsets of the two blitter slots in gHeapSlots (unk64[1], unkb8[1]).
 #define HEAP_BLITTER 104
@@ -32,7 +35,7 @@ extern char ResourceId_MarsDjinnSmallSheet;
 extern char ResourceId_ParticleSpritesD;
 // Byte offsets of the spark cels in the spark sheet, by size - 1 (☀️'s
 // gLuckyWheels_SparkCellOffsets).
-extern const u16 Data_08197424[];
+extern u16 Data_08197424[];
 
 void wait(s32 frames);
 void Sound_PlayFar(s32 cue);
@@ -40,13 +43,13 @@ u32 Random16(void);
 void *Resource_GetTableEntry(s32 id);
 void Resource_LoadAndDecompress(s32 id, void *dst, s32 skipPalette,
                                 s32 copyPalette);
-s32 Task_Add(void (*func)(void), s32 order);
-s32 Task_Remove(void (*func)(void));
+
+
 void HeapSlot_Release(s32 slot);
 void BattleCamera_SetViewAtPairMidpointFar(s32 actor, s32 target, s32 frames);
 void BattleBackground_SetPaletteLevelFar(s32 background, s32 level);
 s32 BattleUnit_GetEffectHeightFar(s32 actor);
-void Actor_SetAnimationSpeedFar(struct MotionObject *object, s32 value);
+
 void EffectPosition_ProjectScaledBattler(s32 actor,
                                          struct EffectPosition *position);
 void Render_ResetTransformState(void);
@@ -54,7 +57,7 @@ void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
 // The roll step of the scene transform.
 void Func_080150e4(s32 angle);
-void Transform_SetLookAt(void *camera, void *eye);
+
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                           s32 gravity);
 // Sets up the canvas tile map on BG1.

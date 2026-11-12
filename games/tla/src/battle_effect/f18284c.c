@@ -2,8 +2,10 @@
 #include "io_reg.h"
 #include "ram_buffer.h"
 
+struct BattleEffectArgument;
+
 void BattleEffect_StartCanvasLayer(s32 mode);
-void Func_08182898(s32 arg);
+void Func_08182898(struct BattleEffectArgument *effect);
 
 /// Opens the canvas layer, sets alpha blending and a 24-frame palette fade
 /// counter (read by Func_08143488), then runs the effect body Func_08182898.

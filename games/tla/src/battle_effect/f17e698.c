@@ -4,6 +4,9 @@
 #include "iwram_call.h"
 #include "ram_buffer.h"
 #include "types.h"
+#include "task.h"
+
+struct Model;
 
 #define HEAP_SLOT_BLITTER 104 // Ram_HeapSlots->unk64[1]
 
@@ -68,8 +71,8 @@ void BattleEffect_StartCanvasLayer(s32 bgControl);
 void Resource_LoadAndDecompress(s32 resourceId, void *target, s32 unpack,
                                 s32 wait);
 void *Resource_GetTableEntry(s32 resourceId);
-s32 Task_Add(s32 func, s32 priority);
-s32 Task_Remove(s32 func);
+s32 Task_Add(void (*func)(void), s32 order);
+
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *position);
 void Render_ResetTransformState(void);
 void Sound_PlayFar(s32 cue);
@@ -78,11 +81,11 @@ s32 BattleEffect_LoadBlitter(s32 slot, s32 blitter);
 void Func_0814cd48(s32 actor, s32 palette, s32 member, s32 timer, s32 frames);
 void *Heap_AllocEwram(s32 size);
 void HeapSlot_Release(s32 slot);
-struct RenderPrimitive *Render_AllocateModelList(s32 count);
+struct PoolEntry *Render_AllocateModelList(s32 count);
 void Func_08015160(s32 x, s32 y, s32 z);
 void Func_0801521c(s32 scale);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
-void Render_DrawModelList(struct RenderPrimitive *list);
+void Render_DrawModelList(struct Model *model);
 void Heap_Release(void *buffer);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffect_CountDownBattlerTints(void);

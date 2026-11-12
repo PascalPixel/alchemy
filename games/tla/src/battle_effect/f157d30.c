@@ -5,6 +5,7 @@
 #include "fixed_math.h"
 #include "io_reg.h"
 #include "ram_buffer.h"
+#include "task.h"
 
 // Byte offsets of the two blitter slots in gHeapSlots (unk64[1], unkb8[1]).
 #define HEAP_BLITTER 104
@@ -29,7 +30,7 @@ extern char ResourceId_Data134;
 extern char ResourceId_VenusDjinnSmallSheet;
 extern char ResourceId_BlueFlameSheet;
 // Byte offsets of the dot cels in the particle sheet, by size - 1.
-extern const u16 gData_08197410[];
+extern u16 gData_08197410[];
 
 u32 Random16(void);
 void wait(s32 frames);
@@ -55,8 +56,8 @@ void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void Resource_LoadAndDecompress(s32 id, void *dst, s32 skipPalette,
                                 s32 copyPalette);
-s32 Task_Add(void (*func)(void), s32 order);
-s32 Task_Remove(void (*func)(void));
+
+
 void HeapSlot_Release(s32 slot);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                           s32 gravity);

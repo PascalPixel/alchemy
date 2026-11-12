@@ -13,6 +13,8 @@
 #include "battle_effect.h"
 #include "battle_effect_work.h"
 
+struct Model;
+
 // The Lost Age numbers the blitter modes from the other end of The Broken
 // Seal's COMPOSITE_* list; the packed loader argument is mode << 4 | flags.
 enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
@@ -42,8 +44,8 @@ struct RenderModel {
 extern char ResourceId_Data0C2;
 extern char ResourceId_OrangePaletteB;
 
-extern const u16 gData_08199364[]; // a textured square
-extern const u16 Data_081991e0[];  // its four corners
+extern const u8 gData_08199364[]; // a textured square
+extern const u8 Data_081991e0[];  // its four corners
 
 // The canvas layer and its helpers, with The Broken Seal's names.
 void BattleEffect_StartCanvasLayer(s32 bgControl);
@@ -59,7 +61,7 @@ void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantFar
 void Func_081180e8(s32 phase);             // BattlePlayback_StartFar
 void BattleEffect_SetApproachMotion(s32 actor, s32 target, s32 frames,
                                     s32 percent);
-void Func_0815b434(void *map, s32 size, s32 scale); // a shaded disc
+void Func_0815b434(u8 *map, s32 size, s32 scale); // a shaded disc
 void Func_0818caa8(void *picture, s32 x, s32 y, s32 size);
 void Render_ResetTransformState(void);
 void Transform_SetLookAt(s32 *eye, s32 *position);
@@ -68,9 +70,9 @@ void Func_080150e4(s32 angle);
 void SceneTransform_ApplyPitch(s32 angle);
 void Func_0801521c(s32 angle);
 void *Heap_AllocEwram(s32 size);
-struct RenderModel *Render_AllocateModelList(s32 count);
+struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
-void Render_DrawModelList(struct RenderModel *model);
+void Render_DrawModelList(struct Model *model);
 void Heap_Release(void *block);
 void Sound_PlayFar(s32 cue);
 

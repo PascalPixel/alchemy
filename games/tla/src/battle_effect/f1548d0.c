@@ -4,6 +4,8 @@
 #include "effect_step.h"
 #include "io_reg.h"
 #include "ram_buffer.h"
+#include "battle_display.h"
+#include "task.h"
 
 // The dust puffs at the map cell buffer: 1024 cleared, the first 512 used.
 #define PUFFS ((struct EffectStep *)Ram_MapCellBuffer)
@@ -29,9 +31,9 @@ extern u8 Data_0819840c[];  // _PuffHeights
 void BattleEffect_StartCanvasLayer(s32 control);
 void BattleEffect_EndCanvasLayer(void);
 s32 BattleEffect_LoadBlitter(s32 slot, s32 modeFlags);
-s32 BattleEffect_ProcessPendingGraphicsTransfer(void);
-s32 Task_Add(s32 (*func)(void), s32 order);
-s32 Task_Remove(s32 (*func)(void));
+
+s32 Task_Add(void (*func)(void), s32 order);
+
 void HeapSlot_Release(s32 slot);
 void Sound_PlayFar(s32 cue);
 void Func_081180e8(s32 phase);

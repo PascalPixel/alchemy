@@ -8,6 +8,10 @@
 #include "battle_effect.h"
 #include "battle_effect_work.h"
 #include "render_placement.h"
+#include "battle.h"
+#include "resource.h"
+
+struct FxPartyList;
 
 // The pixel half of a 16.16 fixed-point value.
 #define HI(v) (((s16 *)&(v))[1])
@@ -79,19 +83,17 @@ void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_ConfigureEffectDisplay(void);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void Func_08163c2c(s32 mode, s32 value);
-void BattleEffect_SelectLivingTargets(struct BattleEffectArgument *effect);
-void BattleEffect_SpawnObjects(s32 count, s32 resource, s32 priority);
-void *ResourceObject_CreateFar(s32 resource);
-void ResourceObject_ReleaseFar(void *object);
+void BattleEffect_SelectLivingTargets(struct FxPartyList *party);
+void BattleEffect_SpawnObjects(s32 entryCount, s32 kind, u32 variant);
+
+void ResourceObject_ReleaseFar(struct ResourceObjectWork *work);
 void Animation_ApplyChildArgumentFar(void *object, s32 animation);
 s32 BattleEffect_LoadBlitter(
     s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter(slot,
                                  // 7, 7, flags, mode)
 void BattleBackground_LoadFar(s32 layer, s32 resourceId, s32 mode);
 void Sound_PlayFar(s32 cue);
-void Render_ApplyProjectedPlacementFar(struct ScaledSprite *sprite,
-                                       struct SpritePlacement *position,
-                                       s32 *scale, s32 mode);
+
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                           s32 gravity);
 void Func_08118088(s32 actor,

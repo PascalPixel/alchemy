@@ -7,6 +7,7 @@
 #include "battle_work.h"
 #include "battle_effect.h"
 #include "battle_effect_work.h"
+#include "task.h"
 #undef Iwram_CopyWords
 static inline s32 Iwram_CopyWords(void *d, const void *s, s32 n) {
   return Iwram_CopyWordsEntry(d, s, n);
@@ -41,8 +42,8 @@ void Func_0815b434(u8 *map, s32 size, s32 scale);
 void Func_0815e22c(struct EffectPosition *position);
 void Resource_LoadAndDecompress(s32 id, void *target, s32 unpack, s32 wait);
 void *Resource_GetTableEntry(s32 id);
-s32 Task_Add(void (*func)(void), s32 order);
-s32 Task_Remove(void (*func)(void));
+
+
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
 void HeapSlot_Release(s32 slot);
 void wait(s32 frames);
@@ -57,7 +58,7 @@ void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffect_CountDownBattlerTints(void);
 void Func_081180e8(s32 phase);
 void Sound_PlayFar(s32 cue);
-void SummonEffect_RunCanvasMode1(struct BattleEffectArgument *effect);
+void SummonEffect_RunCanvasMode1(void *action);
 void BattleStaging_ConfigurePaletteFadeFar(s32 mode, s32 background, s32 value);
 
 // Draws a disc of the given size from the disc sheet in the map cell buffer

@@ -3,6 +3,7 @@
 #include "actor.h"
 #include "io_reg.h"
 #include "iwram_call.h"
+#include "bg_scroll.h"
 
 struct FxRunWork {
   u8 unk0000[0x78e4];
@@ -29,7 +30,7 @@ struct FxBgScroll {
 };
 
 extern void (*gData_08197aa0[])(s32 *script);
-extern struct FxBgScroll gBgScroll[];
+
 extern u32 gCameraSceneParameters[];
 
 void *HeapSlot_Alloc(s32 block, s32 size);

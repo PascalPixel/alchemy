@@ -115,6 +115,7 @@ void BattleCamera_SetView(s32 x, s32 depth, s32 y, s32 mode);
 void BattleHighlight_SetSpriteMode(s32 actor, s32 mode);
 void BattleObject_Put(void);
 void BattleEffect_RunSceneEffectFar(s32 *context);
+/// Copies the canvas to VRAM when a transfer is pending.
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void BattleEffect_ArmBg2AffineHBlankDma(void);
 void Palette_StepFadeTransfer(void);

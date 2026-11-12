@@ -33,6 +33,8 @@
 #include "ram_buffer.h"
 #include "transform.h"
 
+struct FxPartyList;
+
 // The comet sparks live in the map buffer, 128 for each of four comets.
 #define PARTICLES ((struct EffectStep *)Ram_MapCellBuffer)
 
@@ -45,16 +47,13 @@ void BattleEffect_CountDownBattlerTints(void);
 void Func_081180e8(s32 phase); // BattlePlayback_StartFar
 void Func_0814cd48(s32 actor, s32 palette, s32 duration, s32 timer,
                    s32 frames); // BattleEffect_TintBattler
-void BattleEffect_FetchRectangleBlitters(
-    s32 flip, DrawRectangle *draw); // ..FetchRectangleBlitters
-void BattleEffect_SelectLivingTargets(
-    struct BattleEffectArgument *effect); // ..SelectLivingTargets
-void BattleEffect_SpawnObjects(s32 count, s32 resource,
-                               s32 priority); // ..SpawnObjects
+void BattleEffect_FetchRectangleBlitters(s32 flip, void **out); // ..FetchRectangleBlitters
+void BattleEffect_SelectLivingTargets(struct FxPartyList *party); // ..SelectLivingTargets
+void BattleEffect_SpawnObjects(s32 entryCount, s32 kind, u32 variant); // ..SpawnObjects
 void Func_0814cca8(void);      // BattleEffect_SetupBlendedDisplay
 void Func_080150e4(s32 angle); // SceneTransform_ApplyRoll
 void SceneTransform_ApplyYaw(s32 angle);
-void SceneTransform_ApplyPosition(s32 *position);
+void SceneTransform_ApplyPosition(const s32 *pos);
 void BattleBackground_LoadFar(s32 layer, s32 background, s32 frames);
 void BattleStaging_ConfigurePaletteFadeFar(s32 layer, s32 background,
                                            s32 frames);

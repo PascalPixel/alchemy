@@ -38,7 +38,7 @@ void Func_0814cd48(s32 actor, s32 palette, s32 duration, s32 timer,
 void Func_080150e4(s32 angle);  // SceneTransform_ApplyRoll
 void Func_080151ac(s32 *scale); // SceneTransform_ApplyScale
 void SceneTransform_ApplyYaw(s32 angle);
-void SceneTransform_ApplyPosition(void *position);
+void SceneTransform_ApplyPosition(const s32 *pos);
 void Transform_Pop(void);
 
 // The camera's heading, as the camera work holds it.

@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 
-void BattleEffect_LoadBlitter(s32 slot, s32 flags);
+s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags);
 
 /// Builds the two usual routines that draw onto the 128x128 canvas, clipped,
 /// mirrored when flip is nonzero. out[0] keeps the higher colour index (heap

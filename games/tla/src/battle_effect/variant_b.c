@@ -1,6 +1,8 @@
 #include "types.h"
 
-void Func_0816aeec(s32 a0, s32 a1);
+struct BattleEffectArgument;
+
+void Func_0816aeec(struct BattleEffectArgument *effect, s32 mode);
 
 /// Abilities: Dreamtide (kind 106).
 void BattleEffect_RunDreamtide(s32 a0) { Func_0816aeec(a0, 0); }

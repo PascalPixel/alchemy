@@ -8,6 +8,8 @@
 #include "battle_action.h"
 #include "battle_effect.h"
 #include "battle_effect_work.h"
+#include "battle.h"
+#include "actor.h"
 
 // The pixel half of a 16.16 fixed-point value.
 #define HI(v) (((s16 *)&(v))[1])
@@ -49,9 +51,9 @@ extern u16 gData_08197410[]; // ☀️ gBattleEffect_MoteCells
 
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
-void BattleEffect_FetchRectangleBlitters(s32 side, DrawRectangle *draw);
-void Actor_SetMode(void *object, s32 mode);
-void Actor_SetAnimationSpeedFar(void *object, s32 value);
+void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
+
+
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *position);
 void Func_081180e8(s32 phase);      // BattlePlayback_StartFar
 void Func_0815f0a0(s32 resourceId); // BattleEffect_StepPaletteToResource

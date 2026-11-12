@@ -8,6 +8,8 @@
 #include "iwram_call.h"
 #include "motobj.h"
 #include "ram_buffer.h"
+#include "task.h"
+#include "transform.h"
 
 // Byte offsets of the two blitter slots in gHeapSlots (unk64[1], unkb8[1]).
 #define HEAP_BLITTER 104
@@ -62,10 +64,10 @@ extern char ResourceId_EmberStreakSheet;
 // The variants' records, eight bytes each.
 extern u8 Data_081985b3[];
 // Byte offsets of the dot cels in the particle sheet, by size - 1.
-extern const u16 gData_08197410[];
+extern u16 gData_08197410[];
 // The glint's six cels: ☀️'s gBattleEffect_GlintCells, _GlintCellWidths
 // and _GlintCellHeights.
-extern const u16 gData_08197486[];
+extern u16 gData_08197486[];
 extern u8 gData_08197492[];
 extern u8 gData_08197498[];
 // A glint's four flips.
@@ -77,8 +79,8 @@ void Sound_PlayFar(s32 cue);
 void *Resource_GetTableEntry(s32 id);
 void Resource_LoadAndDecompress(s32 id, void *dst, s32 skipPalette,
                                 s32 copyPalette);
-s32 Task_Add(void (*func)(void), s32 order);
-s32 Task_Remove(void (*func)(void));
+
+
 void HeapSlot_Release(s32 slot);
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleMotion_ApproachTargetFar(s32 actor, s16 target, s32 frames,
@@ -86,20 +88,18 @@ void BattleMotion_ApproachTargetFar(s32 actor, s16 target, s32 frames,
 void EffectPosition_ProjectScaledBattler(s32 actor,
                                          struct EffectPosition *position);
 void Render_ResetTransformState(void);
-void Transform_SetLookAt(void *camera, void *eye);
+
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                           s32 gravity);
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                           s32 gravity);
 // Prepares the canvas around an anchor and returns its screen point.
-void Func_0815585c(struct BattleEffectArgument *effect, s32 packed, s32 *screen,
-                   s32 *otherPoint);
+void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen, s32 *world);
 // Builds a blitter in a heap slot: BattleEffect_BuildBlitter(slot, 7, 7,
 // flags, mode), whose result it returns.
 s32 BattleEffect_LoadBlitter(s32 slot, s32 modeFlags);
 // BattleEffect_BuildBlitter itself.
-s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
-                  s32 mode);
+s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags, u32 mode);
 // Closes the canvas layer.
 void BattleEffect_EndCanvasLayer(void);
 // Copies the canvas to VRAM when a transfer is pending.

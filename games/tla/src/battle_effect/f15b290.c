@@ -37,7 +37,7 @@ struct EffectSprite {
 s32 Resource_FindFreeEntry(void);
 s32 VramCache_Load(u32 slot, u32 size, const void *source);
 struct AnimationEntry *AnimationObject_AllocateEmpty(void);
-s32 Animation_ApplyChildArgumentFar(void *object, s32 argument);
+void Animation_ApplyChildArgumentFar(void *object, s32 animation);
 
 /// Makes an effect sprite with tiles of its own in object VRAM: a free VRAM
 /// cache entry and the first free effect sprite of the 64, as Func_0815b3b0

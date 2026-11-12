@@ -47,7 +47,7 @@ void BattleMotion_ApproachTargetFar(s32 actor, s16 target, s32 frames,
 void EffectPosition_ProjectBattler(s32 actor, struct EffectPosition *position);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                           s32 gravity);
-void SummonEffect_RunCanvasMode3(struct BattleEffectArgument *effect);
+void SummonEffect_RunCanvasMode3(void *action);
 void Sound_PlayFar(s32 cue);
 
 // Hurricane: driving rain slants down over the target, each drop bursting

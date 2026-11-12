@@ -10,6 +10,7 @@
 #include "bg_scroll.h"
 #include "effect_step.h"
 #include "iwram_call.h"
+#include "task.h"
 
 typedef DrawRectangle BlitterPair[2];
 
@@ -64,8 +65,8 @@ extern char ResourceId_FlashBurstSheet;
 void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_ClearActorTimers(void);
 s32 BattleEffect_LoadBlitter(s32 slot, s32 flags);
-s32 Task_Add(void *func, s32 order);
-s32 Task_Remove(void *func);
+s32 Task_Add(void (*func)(void), s32 order);
+
 void HeapSlot_Release(s32 slot);
 void Sound_PlayFar(s32 cue);
 u32 Random16(void);

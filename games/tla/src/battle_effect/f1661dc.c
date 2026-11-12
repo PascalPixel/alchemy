@@ -38,7 +38,7 @@
 extern char ResourceId_FireStreakSheet;
 extern char ResourceId_FireBurstSheet;
 extern char ResourceId_Data134;    // ☀️ ParticleSpritesA
-extern const u16 gData_08197410[]; // ☀️ gBattleEffect_MoteCells
+extern u16 gData_08197410[]; // ☀️ gBattleEffect_MoteCells
 
 struct EffectCamera {
   s32 eye[3];
@@ -49,10 +49,9 @@ void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void Func_081180e8(s32 phase); // BattlePlayback_StartFar
 void Sound_PlayFar(s32 cue);
-void BattleEffect_LoadBlitter(
-    s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter(slot,
+s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter(slot,
                                  // 7, 7, flags, mode)
-void BattleEffect_FetchRectangleBlitters(s32 side, DrawRectangle *draw);
+void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
 void BattleMotion_ApproachTargetFar(s32, s16, s32, s32);
 void BattleEffect_CallDoNothing(s32 frames);
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,

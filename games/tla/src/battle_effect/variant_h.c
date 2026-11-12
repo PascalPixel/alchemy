@@ -1,6 +1,8 @@
 #include "types.h"
 
-void Func_08173588(s32 a0, s32 a1);
+struct BattleEffectArgument;
+
+void Func_08173588(struct BattleEffectArgument *effect, s32 mode);
 
 /// Abilities: Rime (kind 240).
 void BattleEffect_RunRime(s32 a0) { Func_08173588(a0, 0); }

@@ -25,10 +25,9 @@ void BattleEffect_CountDownBattlerTints(void);
 void Func_081180e8(s32 phase); // BattlePlayback_StartFar
 void Func_0814cd48(s32 actor, s32 palette, s32 duration, s32 timer,
                    s32 frames); // BattleEffect_TintBattler
-void BattleEffect_FetchRectangleBlitters(
-    s32 flip, DrawRectangle *draw); // ..FetchRectangleBlitters
+void BattleEffect_FetchRectangleBlitters(s32 flip, void **out); // ..FetchRectangleBlitters
 void BattleEffect_ArmBg2AffineHBlankDma(void);
-void SceneTransform_ApplyPosition(s32 *position);
+void SceneTransform_ApplyPosition(const s32 *pos);
 void SceneTransform_ApplyPitch(s32 angle);
 void Sound_PlayFar(s32 cue);
 

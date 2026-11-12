@@ -25,7 +25,7 @@ extern char ResourceId_CrystalSheet; // directory row 0x193
 // ☀️ gPrism_Counts, with a third byte: crystals, frames and the frame
 // that begins phase 134, for each variant.
 extern u8 Data_081979b7[];
-extern u32 gData_08197834[]; // ☀️ gPrism_ShardOffsets
+extern s32 gData_08197834[]; // ☀️ gPrism_ShardOffsets
 extern u8 gData_0819781a[];  // ☀️ gPrism_ShardWidths
 extern u8 gData_08197826[];  // ☀️ gPrism_ShardHeights
 extern u8 gData_081977f8[];  // ☀️ gPrism_ShardStarts: x, y for each shard
@@ -37,8 +37,7 @@ void BattleEffect_ProcessPendingGraphicsTransfer(
 void BattleEffect_CountDownBattlerTints(void);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void Func_081180e8(s32 phase);    // ☀️ BattleEvent_StartPhaseFar
-void BattleEffect_FetchRectangleBlitters(
-    s32 side, DrawRectangle *draw); // ☀️ FetchRectangleBlitters
+void BattleEffect_FetchRectangleBlitters(s32 flip, void **out); // ☀️ FetchRectangleBlitters
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ☀️ BattleEffect_TintBattler
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,

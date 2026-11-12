@@ -5,6 +5,7 @@
 #include "iwram_call.h"
 #include "ram_buffer.h"
 #include "types.h"
+#include "task.h"
 
 #define HEAP_SLOT_BLITTER 104           // Ram_HeapSlots->unk64[1]
 #define HEAP_SLOT_BLITTER_ALTERNATE 188 // Ram_HeapSlots->unkb8[1]
@@ -44,8 +45,8 @@ extern u8 gData_081993e8[];
 extern u16 gData_081993f0[];
 
 void BattleEffect_StartTiledCanvas(s32 bgControl);
-s32 Task_Add(s32 func, s32 priority);
-s32 Task_Remove(s32 func);
+s32 Task_Add(void (*func)(void), s32 order);
+
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
 void Sound_PlayFar(s32 cue);

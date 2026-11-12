@@ -1,6 +1,8 @@
 #include "types.h"
 
-void Func_08171bb0(s32 a0, s32 a1);
+struct BattleEffectArgument;
+
+void Func_08171bb0(struct BattleEffectArgument *effect, u32 mode);
 
 /// Abilities: Whorl (kind 232).
 void BattleEffect_RunWhorl(s32 a0) { Func_08171bb0(a0, 0); }

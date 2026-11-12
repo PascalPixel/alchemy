@@ -33,10 +33,8 @@ void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void Func_081180e8(s32 phase);    // BattlePlayback_StartFar
 void Func_0814cd48(s32 actor, s32 palette, s32 duration, s32 timer,
                    s32 frames); // BattleEffect_TintBattler
-void BattleEffect_FetchRectangleBlitters(
-    s32 flip, DrawRectangle *draw); // ..FetchRectangleBlitters
-void Func_0815585c(struct BattleEffectArgument *effect, s32 kindAndSide,
-                   s32 *origin, s32 *size); // BattleEffect_RunDjinniEntrance
+void BattleEffect_FetchRectangleBlitters(s32 flip, void **out); // ..FetchRectangleBlitters
+void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen, s32 *world); // BattleEffect_RunDjinniEntrance
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                           s32 gravity);
 void SummonEffect_RunCanvasMode1(void *action);

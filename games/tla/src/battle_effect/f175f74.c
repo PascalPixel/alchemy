@@ -6,6 +6,10 @@
 #include "ram_buffer.h"
 #include "input.h"
 #include "bg_scroll.h"
+#include "battle.h"
+#include "vram_tab.h"
+#include "effect_step.h"
+#include "task.h"
 
 // A pair of 16.16 scales; the game keeps each start value in the rodata.
 struct ScalePair {
@@ -160,7 +164,7 @@ typedef s32 (*DrawRectangleFn)(void *canvas, const void *source, s32 x, s32 y,
 #define SYSTEM_WORK ((struct SystemWork *)Ram_HeapSlots)
 extern u32 gCameraSceneParameters[];
 #define REGISTER_QUEUE ((struct RegisterQueue *)&gIoWriteQueue)
-extern u8 gResourceTableEntries[];
+
 #define TILE_SLOTS ((struct TileSlot *)gResourceTableEntries)
 extern u8 gMapCellBuffer[];
 #define SPRITES ((struct SpriteObject **)Ram_MapCellBuffer)
@@ -213,26 +217,25 @@ void BattleEffect_ProcessPendingGraphicsTransfer(void);
 
 void BattleEffect_StartCanvasLayer(s32);
 void BattleEffect_ConfigureEffectDisplay(void);
-void Task_Add(void *, s32);
+s32 Task_Add(void (*func)(void), s32 order);
 void Func_08163c2c(s32, s32);
-void BattleActor_SpawnObjectsForListFar(struct Local264 *, s32);
+void BattleActor_SpawnObjectsForListFar(s16 *list, s32 mode);
 void wait(s32);
 void Palette_LoadBasicObjColors(void);
 void BattleBackground_LoadFar(s32, s32, s32);
 void Func_08164b2c(s32, s32, s32);
-void BattleEffect_FetchRectangleBlitters(s32, DrawRectangleFn *);
+void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
 struct SpriteObject *Func_0815b290(s32, s32, u32, u32);
 struct SpriteObject *Func_0815b3b0(s32, s32, u32, u32);
 void Resource_LoadAndDecompress(s32, void *, s32, s32);
 void Sound_PlayFar(s32);
 u32 Random16(void);
 s32 Func_0800206c(s32, s32);
-void Render_ApplyProjectedPlacementFar(struct SpriteObject *, s32 *, s32 *,
-                                       s32);
+
 s32 Trig_Sin(s32);
 s32 Trig_Cos(s32);
 s32 __divsi3(s32, s32);
-struct Model *Render_AllocateModelList(s32);
+struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_ResetTransformState(void);
 void Func_080151e4(s32, s32, s32);
 void Func_08015160(s32, s32, s32);
@@ -240,11 +243,11 @@ void SceneTransform_ApplyPitch(s32);
 void Func_080150e4(s32);
 void SceneTransform_ApplyYaw(s32);
 void Func_0801521c(s32);
-void Render_TransformVertices(const void *, void *, s32);
+void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct Model *);
 void Heap_Release(void *);
 void Graphics_LoadGreyRamp(void);
-void Func_0815b434(void *, s32, s32);
+void Func_0815b434(u8 *map, s32 size, s32 scale);
 void HeapSlot_Release(s32);
 void Func_0818caa8(void *, s32, s32, s32);
 s32 BattleEffect_LoadBlitter(s32, s32);
@@ -253,11 +256,12 @@ struct ActorPos **GetBattleObjectSlotFar(s32);
 void Func_0814cd48(s32, s32, s32, s32, s32);
 void Func_081180e8(s32);
 void BattleEffect_StartActorMotion(s32, s32, s32, s32, s32, s32);
-void BattleEffectKernels_IntegrateVector2(struct Particle *, s32, s32);
-void EffectPosition_ProjectScaledBattler(s32, struct Particle *);
+void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
+                                          s32 gravity);
+
 void Camera_ApplyVerticalShake(s32);
 void BattleEffect_CountDownBattlerTints(void);
-void Task_Remove(void *);
+
 void BattleEffect_EndCanvasLayer(void);
 
 static __inline__ s32 CpuCopy(void *destination, const void *source, s32 size) {

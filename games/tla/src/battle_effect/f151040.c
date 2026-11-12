@@ -34,7 +34,7 @@ s32 BattleUnit_GetEffectHeightFar(s32 actor);
 // The Lost Age's blitter modes, BattleEffect_LoadBlitter's high nibble: 3 minus
 // The Broken Seal's COMPOSITE_ADDITIVE, COMPOSITE_MAX and
 // COMPOSITE_TRANSPARENT.
-enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT };
+enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 #define BLIT_MODE(mode, flags) ((mode) << 4 | (flags))
 
 #define EMBERS ((struct EffectStep *)Ram_MapCellBuffer)

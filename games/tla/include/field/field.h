@@ -66,7 +66,9 @@ void BattleEffect_SelectBattleCue(s32 row, s32 column);
 void BattleEffect_SetupObjectPair(s32 actor, s32 target);
 s32 BattleEffect_StartBufferInterpolationFar(s32);
 s32 BattleMotion_ProjectScaledPositionFar(s32, s32 *);
-void BattleEffect_RunBurstScene(struct EffectStep *, s32);
+struct BattleEffectArgument;
+void BattleEffect_RunBurstScene(struct BattleEffectArgument *effect,
+                                s32 variant);
 void BattleEffect_StopMainActor(void);
 struct ActorPlacement;
 void Event_SpawnObjectTable(struct ActorPlacement *entry, s32 slot);

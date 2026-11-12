@@ -5,6 +5,11 @@
 #include "heap_release.h"
 #include "battle_effect.h"
 #include "battle_effect_work.h"
+#include "task.h"
+#include "resource.h"
+
+struct FxPartyList;
+struct Model;
 
 // The integer (pixel) half of a 16.16 value, read as the halfword it is.
 #define HI(v) (((s16 *)&(v))[1])
@@ -43,10 +48,10 @@ struct RenderModel {
 extern char ResourceId_FlashBurstSheet;
 extern char ResourceId_Data0C1;
 extern char ResourceId_Data134;
-extern struct EffectStep gMapCellBuffer[];
+extern u8 gMapCellBuffer[];
 extern const u8 Data_08196f28[];
 extern u16 gData_08197410[];
-extern const u16 Data_08198ec4[];
+extern const u8 Data_08198ec4[];
 extern const u8 Data_08198cac[];
 extern const u8 Data_08199f34[];
 extern const u8 Data_08199f38[];
@@ -54,11 +59,11 @@ extern const s8 Data_08199f3c[];
 
 void BattleEffect_StartCanvasLayer(s32 layer);
 void BattleEffect_EndCanvasLayer(void);
-void BattleEffect_FetchRectangleBlitters(s32 flip, DrawRectangle *out);
+void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void Graphics_LoadGreyRamp(void);
-void BattleEffect_SelectLivingTargets(struct BattleEffectArgument *effect);
-void BattleEffect_SpawnObjects(s32 count, s32 resource, s32 priority);
+void BattleEffect_SelectLivingTargets(struct FxPartyList *party);
+void BattleEffect_SpawnObjects(s32 entryCount, s32 kind, u32 variant);
 void Func_0816442c(s32 formation, s32 x, s32 y);
 void Func_0816467c(s32 formation, s32 x, s32 y);
 void Func_0814cd48(s32 actor, s32 palette, s32 mode, s32 timer, s32 frames);
@@ -70,20 +75,20 @@ void BattleEffect_CountDownBattlerTints(void);
 void Func_081180e8(s32 phase);
 void Sound_PlayFar(s32 cue);
 void Resource_LoadAndDecompress(s32 id, void *target, s32 unpack, s32 wait);
-s32 Task_Add(void (*func)(void), s32 order);
-s32 Task_Remove(void (*func)(void));
+
+
 void HeapSlot_Release(s32 slot);
 void wait(s32 frames);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
-struct RenderModel *Render_AllocateModelList(s32 count);
+struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_ResetTransformState(void);
 void Func_08015160(s32 x, s32 y, s32 z);
 void Func_080151e4(s32 x, s32 y, s32 z);
 void SceneTransform_ApplyPitch(s32 angle);
-void Render_TransformVertices(const u8 *vertices, void *projected, s32 count);
-void Render_DrawModelList(struct RenderModel *model);
-void ResourceObject_ReleaseFar(void *object);
+void Render_TransformVertices(const void *corners, void *vertices, s32 count);
+void Render_DrawModelList(struct Model *model);
+
 
 // Summon 16. A shower of 256 motes drifts down the screen and, from frame
 // 91, gathers toward the middle; from frame 97 flames rise in twelve columns

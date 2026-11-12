@@ -15,6 +15,8 @@
 #include "actor.h"
 #include "ram_buffer.h"
 
+struct FxPartyList;
+
 // The rising grains live in the map buffer.
 #define PARTICLES ((struct EffectStep *)Ram_MapCellBuffer)
 
@@ -32,12 +34,9 @@ void Func_081180e8(s32 phase);              // BattlePlayback_StartFar
 void Func_08118088(s32 actor, s32 variant); // ..ApplyVariantMotionFar
 void Func_0814cd48(s32 actor, s32 palette, s32 duration, s32 timer,
                    s32 frames); // BattleEffect_TintBattler
-void BattleEffect_FetchRectangleBlitters(
-    s32 flip, DrawRectangle *draw); // ..FetchRectangleBlitters
-void BattleEffect_SelectLivingTargets(
-    struct BattleEffectArgument *effect); // ..SelectLivingTargets
-void BattleEffect_SpawnObjects(s32 count, s32 resource,
-                               s32 priority);     // ..SpawnObjects
+void BattleEffect_FetchRectangleBlitters(s32 flip, void **out); // ..FetchRectangleBlitters
+void BattleEffect_SelectLivingTargets(struct FxPartyList *party); // ..SelectLivingTargets
+void BattleEffect_SpawnObjects(s32 entryCount, s32 kind, u32 variant);     // ..SpawnObjects
 void Func_0816442c(s32 formation, s32 x, s32 y);  // ..PlaceFormationObjects
 void Func_0816467c(s32 formation, s32 x, s32 y);  // ..RunImpactBurst
 void Func_08164a4c(s32 blue, s32 green, s32 red); // Palette_BrightenBgEntries

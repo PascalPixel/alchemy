@@ -7,6 +7,7 @@
 #include "iwram_call.h"
 #include "ram_buffer.h"
 #include "resource.h"
+#include "task.h"
 
 // Byte offsets of the two blitter slots in gHeapSlots (unk64[1], unkb8[1]).
 #define HEAP_BLITTER 104
@@ -44,7 +45,7 @@ void BattleEffect_ProcessPendingGraphicsTransfer(void);
 // Counts down the actors' flash timers.
 void BattleEffect_CountDownBattlerTints(void);
 // Fetches the max and additive blitters, flipped or not.
-void BattleEffect_FetchRectangleBlitters(s32 flip, DrawRectangle *out);
+void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
 // BattlePlayback_Start through its far call.
 void Func_081180e8(s32 hitCue);
 // An actor's recoil motion, through a far call.
@@ -56,8 +57,8 @@ void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void Resource_LoadAndDecompress(s32 id, void *dst, s32 skipPalette,
                                 s32 copyPalette);
-s32 Task_Add(void (*func)(void), s32 order);
-s32 Task_Remove(void (*func)(void));
+
+
 void HeapSlot_Release(s32 slot);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                           s32 gravity);

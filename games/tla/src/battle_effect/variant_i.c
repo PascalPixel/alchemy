@@ -1,6 +1,8 @@
 #include "types.h"
 
-void Func_08173aac(s32 a0, s32 a1);
+struct BattleEffectArgument;
+
+void Func_08173aac(struct BattleEffectArgument *effect, s32 mode);
 
 /// Abilities: Gasp (kind 242).
 void BattleEffect_RunGasp(s32 a0) { Func_08173aac(a0, 0); }

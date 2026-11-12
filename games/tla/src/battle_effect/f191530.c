@@ -8,6 +8,7 @@
 #include "battle_display.h"
 #include "battle_effect.h"
 #include "battle_effect_work.h"
+#include "task.h"
 
 typedef DrawRectangle BlitterPair[2];
 
@@ -21,8 +22,8 @@ extern u8 gMapCellBuffer[];
 
 void BattleEffect_StartCanvasLayer(s32 layer);
 void BattleEffect_EndCanvasLayer(void);
-void BattleEffect_LoadBlitter(s32 slot, s32 value);
-s32 Func_08196404(s32 slot, s32 width, s32 height, s32 flags, s32 mode);
+s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags);
+s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags, u32 mode);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void BattleEffect_FlushPendingGraphicsTransfer(void);
 void Func_08164a4c(s32 blue, s32 green, s32 red);
@@ -30,8 +31,8 @@ void Func_0815f0a0(s32 resource);
 void Resource_LoadAndDecompress(s32 id, void *target, s32 unpack, s32 wait);
 void *Resource_GetTableEntry(s32 id);
 s32 Resource_DecodeType01(const void *source, void *destination);
-s32 Task_Add(void (*func)(void), s32 order);
-s32 Task_Remove(void (*func)(void));
+
+
 void HeapSlot_Release(s32 slot);
 void wait(s32 frames);
 s32 Trig_Sin(s32 angle);

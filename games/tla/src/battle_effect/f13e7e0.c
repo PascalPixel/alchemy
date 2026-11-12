@@ -10,6 +10,7 @@
 #include "battle_display.h"
 #include "bg_scroll.h"
 #include "iwram_call.h"
+#include "task.h"
 
 // Heap slots, as byte offsets into Ram_HeapSlots.
 #define SLOT_BATTLE_EFFECT 92      // battleFxWork[0]
@@ -43,8 +44,8 @@ union BattleBackgroundId {
 void BattleEffect_ClearActorTimers(void);
 void Func_08191530(struct BattleEffectArgument *effect);
 s32 BattleEffect_LoadBlitter(s32 slot, s32 flags);
-s32 Task_Add(void *func, s32 order);
-s32 Task_Remove(void *func);
+s32 Task_Add(void (*func)(void), s32 order);
+
 void HeapSlot_Release(s32 slot);
 void BattleStaging_ConfigurePaletteFadeFar(s32 mode, s32 background, s32 value);
 void BattleCamera_SetViewFar(s32 a, s32 b, s32 c, s32 d);

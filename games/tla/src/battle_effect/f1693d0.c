@@ -12,6 +12,9 @@
 #include "vram_tab.h"
 #include "battle_effect.h"
 #include "battle_effect_work.h"
+#include "resource.h"
+
+struct FxPartyList;
 
 // The pixel half of a 16.16 fixed-point value.
 #define HI(v) (((s16 *)&(v))[1])
@@ -92,7 +95,7 @@ void Func_08163c2c(s32 mode, s32 value);
 s32 BattleEffect_LoadBlitter(
     s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter(slot,
                                  // 7, 7, flags, mode)
-void BattleEffect_SelectLivingTargets(struct BattleEffectArgument *effect);
+void BattleEffect_SelectLivingTargets(struct FxPartyList *party);
 struct SpriteObject *Func_0815b290(s32 width, s32 height, u32 attributes,
                                    u32 mode);
 void Func_08143eb4(s32 x0, s32 y0, s32 x1, s32 y1,
@@ -114,7 +117,7 @@ void BattleBackground_LoadFar(s32 layer, s32 resourceId, s32 mode);
 void Sound_PlayFar(s32 cue);
 void Render_ApplyProjectedPlacementFar(struct ScaledSprite *sprite,
                                        s32 *position, s32 *scale, s32 mode);
-void ResourceObject_ReleaseFar(void *object);
+
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                           s32 gravity);
 

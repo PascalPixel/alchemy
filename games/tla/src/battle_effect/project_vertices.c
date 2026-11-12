@@ -13,8 +13,8 @@ extern u8 Data_0813b9a0CodeSize[];
 
 /// Copies the ARM vertex kernel into a heap block and runs it: count packed
 /// s8 vertices through the current transform into screen coordinates.
-void Render_TransformVertices(s32 arg0, s32 arg1, s32 arg2) {
-  void (*routine)(s32, s32, s32);
+void Render_TransformVertices(const void *corners, void *vertices, s32 count) {
+  void (*routine)(const void *, void *, s32);
   u32 size;
 
   // The size's load in a once-only block keeps it after the parameters are
@@ -22,10 +22,10 @@ void Render_TransformVertices(s32 arg0, s32 arg1, s32 arg2) {
   do {
     size = (u32)Data_0813b9a0CodeSize;
   } while (0);
-  routine = (void (*)(s32, s32, s32))Heap_Alloc(size);
+  routine = (void (*)(const void *, void *, s32))Heap_Alloc(size);
   Dma_Set((const void *)Data_0813b9a0, routine, DMA_COPY_WORDS(size >> 2),
           REG_DMA3);
-  routine(arg0, arg1, arg2);
+  routine(corners, vertices, count);
   Heap_Release(routine);
 }
 

@@ -7,6 +7,9 @@
 #include "ram_buffer.h"
 #include "types.h"
 
+struct MeshTriangle;
+struct Model;
+
 struct ModelTexture {
   u32 logWidth : 8;
   u32 logHeight : 8;
@@ -29,15 +32,13 @@ void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void BattleEffect_CountDownBattlerTints(void);
-void BattleEffect_LoadBlitter(s32 slot,
-                              s32 modeAndFlags); // BattleEffect_BuildBlitter
+s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                    s32 timerFrames); // BattleEffect_TintBattler
-void Func_0815585c(struct BattleEffectArgument *effect, s32 packed, s32 *screen,
-                   s32 *otherPoint);
-struct RenderModel *Render_AllocateModelList(s32 count);
+void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen, s32 *world);
+struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
-void Render_DrawModelList(struct RenderModel *model);
+void Render_DrawModelList(struct Model *model);
 void Func_08015160(s32 x, s32 y, s32 z);
 void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
@@ -50,8 +51,8 @@ void **GetBattleObjectSlotFar(s32 objectId);
 void *Heap_AllocEwram(s32 size);
 void Resource_LoadAndDecompress(s32 resource, void *destination, s32 a, s32 b);
 void *Resource_GetTableEntry(s32 resource);
-s32 Task_Add(void *func, s32 order);
-void Task_Remove(void (*func)(void));
+s32 Task_Add(void (*func)(void), s32 order);
+
 void HeapSlot_Release(s32 slot);
 void Sound_PlayFar(s32 cue);
 void wait(s32 frames);
@@ -68,13 +69,13 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 #include "bg_scroll.h"
 #include "io_write_queue.h"
 #include "irq_lock.h"
+#include "battle.h"
+#include "task.h"
 
-void Actor_SetAnimationSpeedFar(void *object, s32 value);
 void BattleBackground_LoadFar(s32 layer, s32 resourceId, s32 mode);
 void ColorBuffer_ScaleFar(void *source, void *destination, s32 scale,
                           s32 count);
-void Func_0818de3c(void *triangles, s32 columns, s32 rows, s32 cellWidth,
-                   s32 cellHeight); // builds a grid's mesh
+void Func_0818de3c(struct MeshTriangle *triangles, s32 columns, s32 rows, s32 cellWidth, s32 cellHeight); // builds a grid's mesh
 void Func_08143354(void);
 void BattleEffect_ConfigureEffectDisplay(void);
 void Display_ApplyBg2Affine(void);

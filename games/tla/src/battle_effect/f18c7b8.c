@@ -4,6 +4,7 @@
 #include "iwram_call.h"
 #include "battle_effect.h"
 #include "battle_effect_work.h"
+#include "task.h"
 
 // The fill goes through an inline wrapper, as the Broken Seal's iwram_call.h
 // writes it: called straight through the fixed entry, the build loads 0x4000
@@ -36,11 +37,10 @@ extern char ResourceId_StarCrescentSheet;
 extern char ResourceId_MarsDjinnSheet;
 
 void BattleEffect_StartTiledCanvas(s32 bgControl);
-s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
-                  s32 mode);
+s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags, u32 mode);
 void *Resource_GetTableEntry(s32 id);
-s32 Task_Add(void (*func)(void), s32 order);
-s32 Task_Remove(void (*func)(void));
+
+
 void BattleMotion_ApproachTargetFar(s32, s16, s32, s32);
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *position);
 void Sound_PlayFar(s32 cue);

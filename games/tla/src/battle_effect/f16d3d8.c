@@ -9,6 +9,8 @@
 #include "effect_step.h"
 #include "battle_effect.h"
 #include "battle_effect_work.h"
+#include "battle.h"
+#include "actor.h"
 
 // The pixel half of a 16.16 fixed-point value.
 static inline s16 *Fixed_Halves(s32 *value) {
@@ -45,8 +47,8 @@ void BattleEffect_CountDownBattlerTints(void);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffect_StartActorMotion(s32 actor, s32 force, s32 acceleration,
                                    s32 speedLimit, s32 velocityY, s32 percent);
-void Actor_SetAnimationSpeedFar(struct MotionObject *object, s32 value);
-void Actor_SetMode(struct MotionObject *object, s32 mode);
+
+
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                           s32 gravity);
 void Sound_PlayFar(s32 cue);

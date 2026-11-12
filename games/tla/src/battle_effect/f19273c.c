@@ -3,6 +3,8 @@
 #include "heap_release.h"
 #include "battle_effect_work.h"
 
+struct Model;
+
 // A texture for the ARM model renderer: its size as powers of two and the
 // address of its pixels.
 struct ModelTexture {
@@ -20,6 +22,9 @@ struct RenderModel {
   const void *mesh;
   void *vertices;
   struct ModelTexture *texture;
+  s32 shade;
+  u8 scrollU;
+  u8 scrollV;
 };
 
 // One model vertex: signed byte coordinates, padded to a word.
@@ -39,12 +44,11 @@ struct Vector3 {
 extern const struct ModelVertex Data_08196f30[6];
 extern const u16 Data_08199f4c[];
 
-struct RenderModel *Render_AllocateModelList(s32 count);
+struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_ResetTransformState(void);
-void SceneTransform_ApplyPosition(struct Vector3 *position);
-void Render_TransformVertices(const struct ModelVertex *vertices, void *projected,
-                   s32 count);
-void Render_DrawModelList(struct RenderModel *model);
+void SceneTransform_ApplyPosition(const s32 *pos);
+void Render_TransformVertices(const void *corners, void *vertices, s32 count);
+void Render_DrawModelList(struct Model *model);
 
 // Summon 25: draws one rising pillar, a textured strip of six vertices whose
 // two lower rows come from Data_08196f30 and whose top row is raised to

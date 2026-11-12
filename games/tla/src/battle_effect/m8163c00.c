@@ -2,8 +2,7 @@
 #include "battle_effect_argument.h"
 
 void BattleEffect_StartCanvasLayer(s32 layer);
-void Func_0815585c(struct BattleEffectArgument *effect, s32 flags, s32 *b,
-                   s32 *a);
+void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen, s32 *world);
 void BattleEffect_EndCanvasLayer(void);
 
 /// Abilities: Kite (kind 217).

@@ -1,6 +1,8 @@
 #include "types.h"
 
-void Func_0817e0c0(s32 a0, s32 a1);
+struct BattleEffectArgument;
+
+void Func_0817e0c0(struct BattleEffectArgument *effect, s32 mode);
 
 /// Abilities: Bone Charge (kind 311).
 void BattleEffect_RunBoneCharge(s32 a0) { Func_0817e0c0(a0, 4); }

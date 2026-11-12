@@ -5,6 +5,7 @@
 #include "iwram_call.h"
 #include "ram_buffer.h"
 #include "types.h"
+#include "task.h"
 
 #define HEAP_SLOT_BLITTER 104           // Ram_HeapSlots->unk64[1]
 #define HEAP_SLOT_BLITTER_ALTERNATE 188 // Ram_HeapSlots->unkb8[1]
@@ -43,13 +44,13 @@ extern s32 Data_02010018[];
 extern u8 Data_0819940c[][7];
 
 // The offsets of the spark cels: cel n is n pixels wide and 2n tall.
-extern const u16 gData_08197410[];
+extern u16 gData_08197410[];
 
 void BattleEffect_StartCanvasLayer(s32 bgControl);
-void BattleEffect_FetchRectangleBlitters(s32 side, DrawRectangle *pair);
+void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
 void *Resource_GetTableEntry(s32 resourceId);
-s32 Task_Add(s32 func, s32 priority);
-s32 Task_Remove(s32 func);
+s32 Task_Add(void (*func)(void), s32 order);
+
 void Sound_PlayFar(s32 cue);
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *position);
 void EffectPosition_ProjectSprite(s32 id, struct EffectPosition *position);

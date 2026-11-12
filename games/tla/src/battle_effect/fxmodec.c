@@ -1,6 +1,8 @@
 #include "types.h"
 
-void Func_0813d098(void *object, s32 mode);
+struct BattleEffectArgument;
+
+void Func_0813d098(struct BattleEffectArgument *effect, s32 mode);
 
 /// Abilities: Numbing Sting, Paralytail (kind 313).
 void BattleEffect_RunNumbingSting(void *object) { Func_0813d098(object, 6); }

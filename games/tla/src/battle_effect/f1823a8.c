@@ -7,6 +7,7 @@
 #include "motobj.h"
 #include "ram_buffer.h"
 #include "types.h"
+#include "task.h"
 
 #define HEAP_SLOT_BLITTER 104 // Ram_HeapSlots->unk64[1]
 
@@ -25,13 +26,13 @@ extern char ResourceId_MarsDjinnSheet;
 extern char ResourceId_JupiterDjinnSheet;
 
 // The offsets of the spark cels: cel n is n pixels wide and 2n tall.
-extern const u16 gData_08197410[];
+extern u16 gData_08197410[];
 
 void BattleEffect_StartCanvasLayer(s32 bgControl);
-void BattleEffect_LoadBlitter(s32 slot, s32 blitter);
+s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags);
 void *Resource_GetTableEntry(s32 resourceId);
-void Task_Add(s32 func, s32 priority);
-s32 Task_Remove(s32 func);
+s32 Task_Add(void (*func)(void), s32 order);
+
 s32 __divsi3(s32 dividend, s32 divisor);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);

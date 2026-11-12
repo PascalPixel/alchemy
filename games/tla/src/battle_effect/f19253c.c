@@ -5,9 +5,10 @@
 #include "bg_scroll.h"
 #include "battle_display.h"
 #include "battle_effect_work.h"
+#include "graphics.h"
 
 extern char ResourceId_VioletSkyBackdrop;
-extern s32 gCameraSceneParameters[];
+
 
 struct BattleObj *GetBattleObjectSlotFar(s32 objectId);
 u32 Random16(void);

@@ -10,6 +10,9 @@
 #include "effect_step.h"
 #include "battle_effect.h"
 #include "battle_effect_work.h"
+#include "graphics.h"
+
+struct Model;
 
 // The Lost Age numbers the blitter modes from the other end of The Broken
 // Seal's COMPOSITE_* list; the packed loader argument is mode << 4 | flags.
@@ -47,32 +50,30 @@ extern char ResourceId_RuneSheet;
 extern char ResourceId_JupiterDjinnSheet;
 extern char ResourceId_StarCrossSheet;
 
-extern s32 gCameraSceneParameters[];
-extern const u16 gData_08199340[]; // a textured square
-extern const u16 gData_08199210[]; // its four corners
+
+extern const u8 gData_08199340[]; // a textured square
+extern const u8 gData_08199210[]; // its four corners
 
 // The canvas layer and its helpers, with The Broken Seal's names.
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
-void BattleEffect_LoadBlitter(s32 slot,
-                              s32 blitter); // BattleEffect_BuildBlitter, packed
+s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter, packed
 void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
                    s32 frames); // BattleEffect_TintBattler
 void BattleEffect_CountDownBattlerTints(void);
 void Func_081180e8(s32 phase);    // BattlePlayback_StartFar
 void Func_0815f0a0(s32 resource); // BattleEffect_StepPaletteToResource
-void Func_0815585c(struct BattleEffectArgument *effect, s32 placement,
-                   s32 *center, s32 *base); // BattleEffect_RunDjinniEntrance
+void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen, s32 *world); // BattleEffect_RunDjinniEntrance
 void Render_ResetTransformState(void);
 void Func_08015160(s32 x, s32 y, s32 z);
 void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
 void Func_080151e4(s32 x, s32 y, s32 z);
 void *Heap_AllocEwram(s32 size);
-struct RenderModel *Render_AllocateModelList(s32 count);
+struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
-void Render_DrawModelList(struct RenderModel *model);
+void Render_DrawModelList(struct Model *model);
 void Heap_Release(void *block);
 void Sound_PlayFar(s32 cue);
 

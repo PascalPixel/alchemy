@@ -4,6 +4,8 @@
 #include "dma.h"
 #include "io_reg.h"
 
+struct BattleEffectArgument;
+
 struct MenuFlagWork {
   u8 unk000[0x506];
   u8 busy;
@@ -26,7 +28,7 @@ extern struct DescriptorEntry gData_080eff28[];
 
 void BattleEffect_StartTiledCanvas(s32 mode);
 void BattleEffect_EndCanvasLayer(void);
-void Func_0814ea58(void *effect, s32 mode);
+void Func_0814ea58(struct BattleEffectArgument *effect, s32 mode);
 void PartyStatus_CreateWindow(s32 flags);
 void wait(s32 frames);
 s32 Func_08020310(s32 x, s32 z, s32 layer);

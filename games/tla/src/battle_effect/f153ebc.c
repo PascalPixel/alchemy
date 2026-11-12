@@ -19,6 +19,9 @@
 #include "system.h"
 #include "transform.h"
 #include "vram_tab.h"
+#include "battle.h"
+
+struct FxPartyList;
 
 // The blitter slots read as what they hold, a drawing routine.
 #define ALTERNATE_BLITTER_SLOT                                                 \
@@ -42,15 +45,13 @@ void Func_0813baec(void); // BattleEffect_AdvanceScrollOnInterval
 void BattleEffect_ConfigureEffectDisplay(void);
 void Func_0814cca8(void); // BattleEffect_SetupBlendedDisplay
 void BattleEffect_CountDownBattlerTints(void);
-void BattleEffect_LoadBlitter(s32 slot,
-                              s32 modeAndFlags); // BattleEffect_BuildBlitter
+s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames);       // BattleEffect_TintBattler
 void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void Func_08163c2c(s32 layer, s32 value);
-void BattleEffect_SelectLivingTargets(
-    struct BattleEffectArgument *effect); // SelectLivingTargets
+void BattleEffect_SelectLivingTargets(struct FxPartyList *party); // SelectLivingTargets
 void Func_080150e4(s32 angle);            // SceneTransform_ApplyRoll
 void Palette_LoadBasicObjColors(void);
 void BattleBackground_LoadFar(s32 layer, s32 resource, s32 mode);
@@ -59,9 +60,7 @@ struct SpritePlacement {
   s32 x, height, y, groundHeight;
 };
 
-void Render_ApplyProjectedPlacementFar(void *object,
-                                       struct SpritePlacement *position,
-                                       const s32 *scale, s32 mode);
+
 
 // A sprite object as Func_0815b290 returns it.
 struct SpriteObject {
@@ -79,7 +78,7 @@ struct SpriteObject *Func_0815b290(s32 width, s32 height, u32 shape,
 // The Lost Age's blitter modes, BattleEffect_LoadBlitter's high nibble: 3 minus
 // The Broken Seal's COMPOSITE_ADDITIVE, COMPOSITE_MAX and
 // COMPOSITE_TRANSPARENT.
-enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT };
+enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 #define BLIT_MODE(mode, flags) ((mode) << 4 | (flags))
 #define CLIP (COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y)
 

@@ -1,6 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "system.h"
+#include "effect_step.h"
 
 struct StreakWork {
   s32 frame;
@@ -27,7 +28,7 @@ void Render_ResetTransformState(void);
 void Func_080150e4(s32 roll);
 void SceneTransform_ApplyPitch(s32 pitch);
 void SceneTransform_ApplyYaw(s32 yaw);
-void EffectPosition_ProjectPoint(s32 *point, struct StreakPoint *out);
+
 void Func_08143eb4(s32 x0, s32 y0, s32 x1, s32 y1, s32 color);
 
 void Func_0813f8d4(void) {

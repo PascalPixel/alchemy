@@ -3,7 +3,9 @@
 
 #include "effect_step.h"
 
-void BattleEffect_RunBurstScene(struct EffectStep *, s32);
+struct BattleEffectArgument;
+
+void BattleEffect_RunBurstScene(struct BattleEffectArgument *effect, s32 variant);
 
 /// Each entry passes a burst type to BattleEffect_RunBurstScene.
 /// step: effect arguments.

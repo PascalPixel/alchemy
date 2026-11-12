@@ -15,6 +15,8 @@
 #include "battle_effect.h"
 #include "battle_effect_work.h"
 
+struct FxPartyList;
+
 // The pixel half of a 16.16 fixed-point value.
 #define HI(v) (((s16 *)&(v))[1])
 
@@ -48,14 +50,14 @@ extern char ResourceId_WaterSpraySheet;
 extern char ResourceId_FirePillarSheetA;
 extern char ResourceId_Data134;    // ☀️ ParticleSpritesA
 extern u8 gData_0819896a[];        // the pillars' feet, x and y
-extern const u16 gData_08197410[]; // ☀️ gBattleEffect_MoteCells
+extern u16 gData_08197410[]; // ☀️ gBattleEffect_MoteCells
 extern const s32 gData_08198974[]; // ☀️ gNereid_Gravity
 
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
-void BattleEffect_FetchRectangleBlitters(s32 side, DrawRectangle *draw);
-void BattleEffect_SelectLivingTargets(struct BattleEffectArgument *effect);
-void BattleEffect_SpawnObjects(s32 count, s32 resource, s32 priority);
+void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
+void BattleEffect_SelectLivingTargets(struct FxPartyList *party);
+void BattleEffect_SpawnObjects(s32 entryCount, s32 kind, u32 variant);
 void Func_081180e8(s32 phase); // BattlePlayback_StartFar
 void Sound_PlayFar(s32 cue);
 void Func_0814cd48(s32 actor, s32 palette, s32 a, s32 timer,

@@ -6,6 +6,7 @@
 #include "iwram_call.h"
 #include "heap_release.h"
 #include "ram_buffer.h"
+#include "task.h"
 
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);
@@ -35,8 +36,8 @@ void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
 void **GetBattleObjectSlotFar(s32 objectId);
 void Resource_LoadAndDecompress(s32 resource, void *destination, s32 a, s32 b);
 void *Resource_GetTableEntry(s32 resource);
-void Task_Add(void (*func)(void), s32 order);
-void Task_Remove(void (*func)(void));
+s32 Task_Add(void (*func)(void), s32 order);
+
 void HeapSlot_Release(s32 slot);
 void Sound_PlayFar(s32 cue);
 void wait(s32 frames);
@@ -48,7 +49,7 @@ extern char ResourceId_FlashBurstSheet;
 extern char ResourceId_BlueCrescentSheet;
 extern char ResourceId_Data134;
 extern char ResourceId_OrangePaletteB;
-extern const u16 gData_08197410[];
+extern u16 gData_08197410[];
 
 #define HI(v) (((s16 *)&(v))[1])
 #define STAR_MINE_FRAMES 144

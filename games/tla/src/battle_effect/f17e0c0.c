@@ -7,6 +7,10 @@
 #include "motobj.h"
 #include "ram_buffer.h"
 #include "types.h"
+#include "battle.h"
+#include "task.h"
+
+struct Model;
 
 #define HEAP_SLOT_BLITTER 104           // Ram_HeapSlots->unk64[1]
 #define HEAP_SLOT_BLITTER_ALTERNATE 188 // Ram_HeapSlots->unkb8[1]
@@ -52,11 +56,11 @@ extern char ResourceId_BlastSheet;
 extern char ResourceId_OrangePaletteB;
 
 // The 64 sparks, past the map cells' first 16 KB.
-extern struct EffectStep gData_02014000[];
+extern u8 gData_02014000[];
 
 // The streak quad's faces (32x64) and the flash quad's (128x128), and the
 // corners of a 64x64 square around the origin, which both scale.
-extern const u8 Data_081992b0[];
+extern u8 Data_081992b0[];
 extern const u8 gData_08199364[];
 extern const u8 Data_081991e0[];
 
@@ -64,25 +68,25 @@ extern const u8 Data_081991e0[];
 extern const s32 Data_081994b8[];
 
 // The offsets of the spark cels: cel n is n pixels wide and 2n tall.
-extern const u16 gData_08197410[];
+extern u16 gData_08197410[];
 
 void BattleEffect_StartCanvasLayer(s32 bgControl);
-void BattleEffect_FetchRectangleBlitters(s32 side, DrawRectangle *pair);
+void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
 void *Resource_GetTableEntry(s32 resourceId);
-s32 Task_Add(s32 func, s32 priority);
-s32 Task_Remove(s32 func);
+s32 Task_Add(void (*func)(void), s32 order);
+
 void BattleEffect_SetApproachMotion(s32 id, s32 targetId, s32 frames, s32 rate);
-void Actor_SetAnimationSpeedFar(struct MotionObject *object, s32 value);
+
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *position);
 u32 Random16(void);
 void *Heap_AllocEwram(s32 size);
-struct RenderPrimitive *Render_AllocateModelList(s32 count);
+struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_ResetTransformState(void);
 void Func_08015160(s32 x, s32 y, s32 z);
 void Func_080151e4(s32 x, s32 y, s32 z);
 void SceneTransform_ApplyYaw(s32 angle);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
-void Render_DrawModelList(struct RenderPrimitive *list);
+void Render_DrawModelList(struct Model *model);
 void Heap_Release(void *buffer);
 void Func_0814cd48(s32 actor, s32 palette, s32 member, s32 timer, s32 frames);
 void Func_08118088(s32 actor, s32 motion);

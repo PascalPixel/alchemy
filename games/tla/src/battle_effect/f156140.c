@@ -7,6 +7,7 @@
 #include "iwram_call.h"
 #include "motobj.h"
 #include "ram_buffer.h"
+#include "task.h"
 
 #define ABS(v) ((v) < 0 ? -(v) : (v))
 
@@ -71,13 +72,12 @@ extern u8 gData_08197826[];
 
 void BattleEffect_StartCanvasLayer(s32 control);
 void BattleEffect_EndCanvasLayer(void);
-void Func_0815585c(struct BattleEffectArgument *effect, s32 flags,
-                   struct EffectPosition *screen, struct EffectPosition *world);
+void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen, s32 *world);
 s32 BattleEffect_LoadBlitter(s32 slot, s32 modeFlags);
 s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
                   u32 mode);
-s32 Task_Add(s32 (*func)(void), s32 order);
-s32 Task_Remove(s32 (*func)(void));
+s32 Task_Add(void (*func)(void), s32 order);
+
 void HeapSlot_Release(s32 slot);
 void *Resource_GetTableEntry(s32 resourceId);
 void Sound_PlayFar(s32 cue);

@@ -8,6 +8,7 @@
 #include "motobj.h"
 #include "battle_effect.h"
 #include "battle_effect_work.h"
+#include "actor.h"
 
 // The heap blocks the dispatcher hands every canvas effect, as byte offsets
 // into Ram_HeapSlots (☀️ uses slot indices).
@@ -53,10 +54,10 @@ void Func_08118088(s32 actor,
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffect_CountDownBattlerTints(void);
 void BattleEffect_EndCanvasLayer(void);
-void SummonEffect_RunCanvasMode2(struct BattleEffectArgument *effect);
+void SummonEffect_RunCanvasMode2(void *action);
 void Sound_PlayFar(s32 cue);
-void Actor_SetMode(struct MotionObject *object, s32 mode);
-s32 Actor_SetAnimationSpeedFar(struct MotionObject *object, s32 value);
+
+void Actor_SetAnimationSpeedFar(struct Actor *object, s32 value);
 // The target is a whole word here: variant 3 passes the user twice, loaded once
 // and copied, where an s16 parameter would load it again halved.
 void BattleMotion_ApproachTargetFar(s32 actor, s32 target, s32 frames,

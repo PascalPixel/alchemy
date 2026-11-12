@@ -4,8 +4,9 @@
 #include "battle_display.h"
 #include "battle_work.h"
 #include "battle_effect_work.h"
+#include "graphics.h"
 
-extern s32 gCameraSceneParameters[];
+
 
 struct BattleObj *GetBattleObjectSlotFar(s32 objectId);
 void Func_08118088(s32 actor, s32 mode);

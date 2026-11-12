@@ -47,7 +47,7 @@ extern u8 Data_08197a1a[];   // ☀️ gPlasma_FlashCells
 extern u16 gData_08197410[]; // ☀️ gBattleEffect_MoteCells
 
 // The sparks live in the map cell buffer.
-extern struct EffectStep gMapCellBuffer[];
+extern u8 gMapCellBuffer[];
 
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);
@@ -57,8 +57,7 @@ void BattleEffect_CountDownBattlerTints(void);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void Func_081180e8(s32 phase);             // ☀️ BattleEvent_StartPhaseFar
 void Func_08118088(s32 actor, s32 motion); // ☀️ ApplyVariantMotionFar
-void BattleEffect_FetchRectangleBlitters(
-    s32 side, DrawRectangle *draw); // ☀️ FetchRectangleBlitters
+void BattleEffect_FetchRectangleBlitters(s32 flip, void **out); // ☀️ FetchRectangleBlitters
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ☀️ BattleEffect_TintBattler
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,

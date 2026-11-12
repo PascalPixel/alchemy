@@ -27,6 +27,10 @@
 #include "resource.h"
 #include "system.h"
 #include "types.h"
+#include "battle.h"
+#include "graphics.h"
+
+struct FxPartyList;
 
 static __inline__ s32 CopyWords_(void *destination, const void *source,
                                  s32 size) {
@@ -91,7 +95,7 @@ struct ScaledSprite;
 extern char ResourceId_FlameSheetB;
 extern char ResourceId_LightningBoltSheet;
 extern char ResourceId_BlastSheet;
-extern s32 gCameraSceneParameters[];
+
 extern s16 Data_08198a02[][3]; // ☀️ gParticleStreams_OrbitPoints
 extern s16 Data_08198a2c[][2]; // ☀️ gParticleStreams_DropPoints
 extern u16 Data_08198a48[];    // ☀️ gParticleStreams_FlashCells
@@ -106,22 +110,17 @@ void BattleEffect_ConfigureEffectDisplay(void);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void Func_08163c2c(s32 mode, s32 value);
 void Animation_ApplyChildArgumentFar(void *object, s32 animation);
-void BattleEffect_SpawnObjects(s32 count, s32 resource,
-                   s32 priority);
-void BattleEffect_SelectLivingTargets(
-    struct BattleEffectArgument *effect);
+void BattleEffect_SpawnObjects(s32 entryCount, s32 kind, u32 variant);
+void BattleEffect_SelectLivingTargets(struct FxPartyList *party);
 void BattleEffect_AdvanceBg2OnInterval(void);
 void BattleEffect_FlushPendingGraphicsTransfer(void);
 void BattleEffect_ArmPaletteHBlankDma(void);
-s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
-                  s32 mode);                   // BattleEffect_BuildBlitter
+s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags, u32 mode);                   // BattleEffect_BuildBlitter
 s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter(slot,
                                                // 7, 7, flags, mode)
-void Render_ApplyProjectedPlacementFar(struct ScaledSprite *sprite,
-                                       s32 *position, struct Scale *scale,
-                                       s32 mode);
+
 void Render_ResetTransformState(void);
-void SceneTransform_ApplyPosition(s32 *position);
+void SceneTransform_ApplyPosition(const s32 *pos);
 void Func_080150e4(s32 roll); // SceneTransform_ApplyRoll
 void SceneTransform_ApplyYaw(s32 yaw);
 void Func_0814cca8(void); // BattleEffect_SetupBlendedDisplay

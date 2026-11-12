@@ -4,6 +4,9 @@
 #include "system/irq.h"
 #include "types.h"
 #include "ram_buffer.h"
+
+struct EffectStep;
+struct Model;
 typedef volatile u16 vu16;
 typedef volatile u32 vu32;
 typedef volatile s32 vs32;
@@ -130,12 +133,12 @@ static inline void Iwram_Copy(void *d, const void *s, s32 n) {
 #define IWRAM_COPY_WORDS_LINKED                                                \
   ((CopyFunc)(IwramIrqMain + Iwram_CopyWordsOffset))
 #define Iwram_Clear Iwram_ClearWords
-extern VramSlot gResourceTableEntries[];
+
 #define VRAM_SLOTS gResourceTableEntries
 #define DECODE_BUFFER Ram_MapCellBuffer
 #define PARTICLES ((Particle *)(Ram_MapCellBuffer + 0x4000))
 extern struct InputState gInput;
-extern s32 gCameraSceneParameters[];
+
 struct BgScroll {
   u16 x, y;
 };
@@ -167,20 +170,21 @@ extern s8 Data_08199590[];
 extern u8 Data_08199592[][2];
 extern u8 Data_0819959c[][6][2];
 extern u16 Data_081995cc[];
-extern u8 gData_08199210[];
-extern u8 gData_08199364[];
+extern const u8 gData_08199210[];
+extern const u8 gData_08199364[];
 
 void BattleEffect_StartCanvasLayer(s32);
 void BattleEffect_ConfigureEffectDisplay(void);
 void Func_08179e6c(void);
 s32 BattleEffect_LoadBlitter(s32, s32);
-s32 Task_Add(void *, s32);
-void BattleActor_SpawnObjectsForListFar(void *, s32);
+s32 Task_Add(void (*func)(void), s32 order);
+void BattleActor_SpawnObjectsForListFar(s16 *list, s32 mode);
 void BattleBackground_LoadFar(s32, s32, s32);
 void Resource_LoadAndDecompress(s32, void *, s32, s32);
-Sprite *Func_0815b290(s32, s32, u32, s32);
+struct SpriteObject *Func_0815b290(s32 width, s32 height, u32 shape,
+                                   u32 attributes);
 Sprite *Func_0815b3b0(s32, s32, u32, s32);
-void Render_ApplyProjectedPlacementFar(Sprite *, Vec3 *, Vec2 *, s32);
+
 void wait(s32);
 void HeapSlot_Release(s32);
 void BattleEffect_FetchRectangleBlitters(s32, void **);
@@ -189,23 +193,25 @@ s32 Trig_Cos(s32);
 s32 Trig_Sin(s32);
 void Sound_PlayFar(s32);
 void Func_0815f0a0(s32);
-void BattleEffectKernels_IntegrateVector2(Particle *, s32, s32);
-void BattleEffectKernels_IntegrateVector3(Particle *, s32, s32);
-s32 *Render_AllocateModelList(s32);
+void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
+                                          s32 gravity);
+void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
+                                          s32 gravity);
+struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_ResetTransformState(void);
 void Func_08015160(s32, s32, s32);
 void Func_080150e4(s32);
 void SceneTransform_ApplyPitch(s32);
 void Func_0801521c(s32);
-void Render_TransformVertices(const void *, void *, s32);
-void Render_DrawModelList(s32 *);
+void Render_TransformVertices(const void *corners, void *vertices, s32 count);
+void Render_DrawModelList(struct Model *model);
 void Heap_Release(void *);
 void BattleEffect_CountDownBattlerTints(void);
-void Task_Remove(void *);
+
 void Func_0814cca8(void);
 s32 VramCache_AllocEntry(s32);
 void Palette_LoadBasicObjColors(void);
-void BattleEffect_SpawnObjects(s32, s32, s32);
+void BattleEffect_SpawnObjects(s32 entryCount, s32 kind, u32 variant);
 void BattleEffect_StartActorMotion(s32, s32, s32, s32, s32, s32);
 void Func_0814cd48(s32, s32, s32, s32, s32);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
@@ -215,7 +221,10 @@ void Func_0813baec(void);
 
 #define ALCHEMY_TYPES_H
 #include "dma.h"
-
+#include "battle.h"
+#include "vram_tab.h"
+#include "graphics.h"
+#include "task.h"
 void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
   s16 targets[14];
   Vec3 pos;

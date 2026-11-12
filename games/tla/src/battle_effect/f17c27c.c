@@ -29,7 +29,7 @@ extern char ResourceId_Data0F3;
 extern char ResourceId_EffectPalette02;
 
 // The offsets of the spark cels: cel n is n pixels wide and 2n tall.
-extern const u16 gData_08197410[];
+extern u16 gData_08197410[];
 
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void *Resource_GetTableEntry(s32 resourceId);

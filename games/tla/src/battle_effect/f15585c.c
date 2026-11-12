@@ -6,6 +6,8 @@
 #include "iwram_call.h"
 #include "ram_buffer.h"
 #include "transform.h"
+#include "task.h"
+#include "resource.h"
 
 static __inline__ s32 ClearWords_(void *destination, s32 size) {
   return Iwram_ClearWords(destination, size);
@@ -51,22 +53,22 @@ extern u8 ResourceId_VenusDjinnSmallSheet[];
 extern u8 ResourceId_Data134[];
 
 // The Broken Seal's gBattleEffect_MoteCells: each spark size's cel.
-extern const u16 gData_08197410[];
+extern u16 gData_08197410[];
 
-u8 *Resource_GetTableEntry(s32 id);
+
 s32 Resource_DecodeType01(const void *source, void *destination);
 s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags);
 struct BattleObj *GetBattleObjectSlotFar(s32 id);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
-s32 Task_Add(void (*func)(void), s32 order);
-s32 Task_Remove(void (*func)(void));
+
+
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void Func_08164abc(s32 red, s32 green, s32 blue);
 void Sound_PlayFar(s32 cue);
 void Render_ResetTransformState(void);
-void SceneTransform_ApplyPosition(s32 *position);
+void SceneTransform_ApplyPosition(const s32 *pos);
 void SceneTransform_ApplyYaw(s32 angle);
 void SceneTransform_ApplyPitch(s32 angle);
 void Func_080150e4(s32 angle);

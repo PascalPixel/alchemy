@@ -6,6 +6,7 @@
 #include "battle_effect_work.h"
 #include "battle_display.h"
 #include "actor.h"
+#include "task.h"
 
 // The Lost Age's heap slots, by byte offset into Ram_HeapSlots.
 #define HEAP_SLOT_BLITTER 104
@@ -47,16 +48,16 @@ extern char ResourceId_Data0C2;
 extern char ResourceId_EffectPalette02;
 
 // Triple Chomp's jaw quad: its mesh and its four corners.
-extern u8 gData_08199364[];
-extern s32 gData_08199210[];
+extern const u8 gData_08199364[];
+extern const u8 gData_08199210[];
 
 struct BattleObj *GetBattleObjectSlotFar(s32 objectId);
 s32 BattleUnit_GetEffectHeightFar(s32 objectId);
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void *Resource_GetTableEntry(s32 id);
 s32 BattleEffect_LoadBlitter(s32 slot, s32 packed);
-s32 Task_Add(void (*func)(void), s32 order);
-s32 Task_Remove(void (*func)(void));
+
+
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *position);
 void Render_ResetTransformState(void);
 void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
@@ -67,12 +68,12 @@ s32 Trig_Cos(s32 angle);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                           s32 gravity);
 void *Heap_AllocEwram(s32 size);
-struct Model *Render_AllocateModelList(s32 count);
+struct PoolEntry *Render_AllocateModelList(s32 count);
 void Func_08015160(s32 x, s32 y, s32 z);
 void Func_080151e4(s32 x, s32 y, s32 z);
 void Func_080150e4(s32 angle);
 void SceneTransform_ApplyPitch(s32 angle);
-void Render_TransformVertices(void *corners, void *vertices, s32 count);
+void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct Model *model);
 void Heap_Release(void *block);
 void Func_081180e8(s32 phase);

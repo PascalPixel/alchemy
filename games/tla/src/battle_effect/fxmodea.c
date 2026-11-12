@@ -1,6 +1,8 @@
 #include "types.h"
 
-void Func_0813c5f4(void *object, s32 mode);
+struct BattleEffectArgument;
+
+void Func_0813c5f4(struct BattleEffectArgument *effect, s32 mode);
 
 /// Abilities: Sonic Wave (kind 300).
 void BattleEffect_RunSonicWave(void *object) { Func_0813c5f4(object, 0); }

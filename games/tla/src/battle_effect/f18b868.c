@@ -6,6 +6,7 @@
 #include "iwram_call.h"
 #include "battle_effect.h"
 #include "battle_effect_work.h"
+#include "task.h"
 
 // The Lost Age's heap slots, by byte offset into Ram_HeapSlots.
 #define HEAP_SLOT_BLITTER 104
@@ -34,7 +35,7 @@ struct ModelTexture {
   u32 logWidth : 8;
   u32 logHeight : 8;
   u32 unk02 : 16;
-  void *pixels;
+  const void *pixels;
 };
 
 // One entry of a model list, as Render_AllocateModelList allocates them and
@@ -55,8 +56,8 @@ extern char ResourceId_BlueFlameSheet;
 
 // The bite's quad: its mesh and its four corners, 192 x 128 around the
 // origin.
-extern u8 gData_08199364[];
-extern s32 gData_08199210[];
+extern const u8 gData_08199364[];
+extern const u8 gData_08199210[];
 
 // The three bites' frames: 0, 12 and 24.
 extern u8 gData_08199d94[];
@@ -65,15 +66,15 @@ extern u8 gData_08199d94[];
 extern u16 gData_08197410[];
 
 void BattleEffect_StartCanvasLayer(s32 bgControl);
-s32 Task_Add(void (*func)(void), s32 order);
-s32 Task_Remove(void (*func)(void));
+
+
 void BattleEffect_SetApproachMotion(s32 actor, s32 target, s32 frames,
                                     s32 percent);
 void wait(s32 frames);
 s32 BattleEffect_LoadBlitter(s32 slot, s32 packed);
 void *Resource_GetTableEntry(s32 id);
 void *Heap_AllocEwram(s32 size);
-struct Model *Render_AllocateModelList(s32 count);
+struct PoolEntry *Render_AllocateModelList(s32 count);
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *position);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
@@ -89,7 +90,7 @@ void Func_08015160(s32 x, s32 y, s32 z);
 void Func_080150e4(s32 angle);
 void SceneTransform_ApplyPitch(s32 angle);
 void Func_0801521c(s32 scale);
-void Render_TransformVertices(void *corners, void *vertices, s32 count);
+void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct Model *model);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                           s32 gravity);

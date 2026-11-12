@@ -1,4 +1,5 @@
 #include "types.h"
+#include "motobj.h"
 
 struct FxSlot {
   void *object;
@@ -13,8 +14,8 @@ struct FxRecord {
   u8 high : 4;
 };
 
-struct FxSlot *GetBattleObjectSlotFar(s32 objectId);
-struct FxRecord *GetMotionRecordFar(void *object, s32 record_index);
+
+void *GetMotionRecordFar(void *object, s32 index);
 
 /// Sets the OBJ priority of every motion record of the battle object, unless
 /// its slot is hidden.

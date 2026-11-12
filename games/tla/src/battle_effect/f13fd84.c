@@ -7,6 +7,10 @@
 #include "heap_release.h"
 #include "ram_buffer.h"
 
+struct FxPartyList;
+struct Model;
+struct StripQuad;
+
 struct ModelTexture {
   u32 logWidth : 8;
   u32 logHeight : 8;
@@ -41,12 +45,11 @@ void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                    s32 timerFrames);              // BattleEffect_TintBattler
 void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
 void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
-void Func_0815585c(struct BattleEffectArgument *effect, s32 packed, s32 *screen,
-                   s32 *otherPoint);
+void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen, s32 *world);
 void Func_0818caa8(void *cells, s32 x, s32 y, s32 size);
-struct RenderModel *Render_AllocateModelList(s32 count);
+struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
-void Render_DrawModelList(struct RenderModel *model);
+void Render_DrawModelList(struct Model *model);
 void Func_08015160(s32 x, s32 y, s32 z);
 void Func_0801521c(s32 scale);
 void SceneTransform_ApplyPitch(s32 angle);
@@ -54,15 +57,12 @@ void SceneTransform_ApplyYaw(s32 angle);
 void Render_ResetTransformState(void);
 void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
-void BattleEffect_SpawnObjects(s32 count, s32 resource,
-                               s32 mode); // SpawnObjects
-void BattleEffect_SelectLivingTargets(
-    struct BattleEffectArgument *effect); // SelectLivingTargets
+void BattleEffect_SpawnObjects(s32 entryCount, s32 kind, u32 variant); // SpawnObjects
+void BattleEffect_SelectLivingTargets(struct FxPartyList *party); // SelectLivingTargets
 void Func_080150e4(s32 angle);            // SceneTransform_ApplyRoll
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                    s32 speedLimit, s32 velocityY, s32 percent);
-void Render_ApplyProjectedPlacementFar(void *object, s32 *request, s32 *source,
-                                       s32 flags);
+
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
 void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
 void Func_081180e8(s32 phase);             // BattlePlayback_StartFar
@@ -73,8 +73,8 @@ void **GetBattleObjectSlotFar(s32 objectId);
 void *Heap_AllocEwram(s32 size);
 void Resource_LoadAndDecompress(s32 resource, void *destination, s32 a, s32 b);
 void *Resource_GetTableEntry(s32 resource);
-void Task_Add(void (*func)(void), s32 order);
-void Task_Remove(void (*func)(void));
+s32 Task_Add(void (*func)(void), s32 order);
+
 void HeapSlot_Release(s32 slot);
 void Sound_PlayFar(s32 cue);
 void wait(s32 frames);
@@ -82,7 +82,7 @@ u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
 
-void Render_BuildQuadStrip(void *mesh, s32 columns, s32 width, s32 height);
+void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height, s32 count);
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                           s32 gravity);
 s32 BattleUnit_GetEffectHeightFar(s32 unit);
@@ -103,7 +103,9 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 #include "bg_scroll.h"
 #include "dma.h"
 #include "input.h"
-
+#include "battle.h"
+#include "resource.h"
+#include "task.h"
 struct ResourceTableEntry {
   u16 unk0;
   u16 tile;
@@ -161,16 +163,17 @@ extern const u8 Data_08199220[];
 extern const u8 gData_08199340[];
 extern const u8 gData_08199364[];
 
-struct RuinObject *Func_0815b290(s32 width, s32 height, u32 shape, s32 mode);
+struct SpriteObject *Func_0815b290(s32 width, s32 height, u32 shape,
+                                   u32 attributes);
 struct RuinObject *Func_0815b3b0(s32 width, s32 height, u32 shape, s32 mode);
-void ResourceObject_ReleaseFar(void *object);
+
 void BattleEffect_ConfigureEffectDisplay(void);
 void BattleBackground_LoadFar(s32 layer, s32 background, s32 palette);
 void BattleActor_SpawnObjectsForListFar(s16 *list, s32 mode);
 s32 Resource_DecodeType01(const void *source, void *destination);
 void Palette_LoadBasicObjColors(void);
 void Graphics_LoadGreyRamp(void);
-void Func_0815b510(void *cells, s32 size, s32 scale);
+void Func_0815b510(u8 *map, s32 size, s32 scale);
 void Func_08164a4c(s32 r, s32 g, s32 b);
 void Func_08164abc(s32 r, s32 g, s32 b);
 void Func_08164b2c(s32 r, s32 g, s32 b);

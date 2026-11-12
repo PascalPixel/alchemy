@@ -3,6 +3,11 @@
 #include "io_reg.h"
 #include "ram_buffer.h"
 #include "types.h"
+#include "motobj.h"
+#include "graphics.h"
+#include "task.h"
+
+struct Model;
 
 #define DAGGER_FRAMES 96
 #define DAGGER_COUNT 8       // of the 32 steps set up, the first 8 are drawn
@@ -30,7 +35,7 @@ struct RenderPrimitive {
 };
 
 extern char ResourceId_CrossedDaggersSheet;
-extern s32 gCameraSceneParameters[];
+
 
 // The dagger quad: its face list and its four corners, 32x80 pixels from
 // (-16, -16) to (16, 64), the point down.
@@ -40,9 +45,9 @@ extern const u8 gData_08199474[];
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void Resource_LoadAndDecompress(s32 resourceId, void *target, s32 unpack,
                                 s32 wait);
-s32 Task_Add(s32 func, s32 priority);
-s32 Task_Remove(s32 func);
-void *GetBattleObjectSlotFar(s32 id);
+s32 Task_Add(void (*func)(void), s32 order);
+
+
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *position);
 u32 Random16(void);
 void Render_ResetTransformState(void);
@@ -52,12 +57,12 @@ void Func_0814cd48(s32 actor, s32 palette, s32 member, s32 timer, s32 frames);
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                    s32 speedLimit, s32 velocityY, s32 percent);
 void *Heap_AllocEwram(s32 size);
-struct RenderPrimitive *Render_AllocateModelList(s32 count);
+struct PoolEntry *Render_AllocateModelList(s32 count);
 void Func_08015160(s32 x, s32 y, s32 z);
 void Func_0801521c(s32 scale);
 void Func_080150e4(s32 angle);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
-void Render_DrawModelList(struct RenderPrimitive *list);
+void Render_DrawModelList(struct Model *model);
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                           s32 gravity);
 void Heap_Release(void *buffer);

@@ -9,6 +9,8 @@
 #include "io_reg.h"
 #include "motobj.h"
 #include "ram_buffer.h"
+#include "task.h"
+#include "transform.h"
 
 // The blitter slots read as what they hold, a drawing routine.
 #define ALTERNATE_BLITTER_SLOT                                                 \
@@ -61,8 +63,8 @@ u32 Random16(void);
 void *Resource_GetTableEntry(s32 id);
 void Resource_LoadAndDecompress(s32 id, void *dst, s32 skipPalette,
                                 s32 copyPalette);
-s32 Task_Add(void (*func)(void), s32 order);
-s32 Task_Remove(void (*func)(void));
+
+
 void HeapSlot_Release(s32 slot);
 void *Unit_Get(s32 owner);
 s32 Summon_IsEntrySecondaryFlaggedFar(s32 enemyId);
@@ -74,7 +76,7 @@ void EffectPosition_ProjectScaledBattler(s32 actor,
 void EffectPosition_ProjectSprite(s32 actor, struct EffectPosition *position);
 s32 Render_ProjectPoint(const void *point, s32 *screen);
 void Render_ResetTransformState(void);
-void Transform_SetLookAt(void *camera, void *eye);
+
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                           s32 gravity);
 // Configures the battle display for an effect.

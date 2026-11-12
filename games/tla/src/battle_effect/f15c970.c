@@ -7,6 +7,7 @@
 #include "iwram_call.h"
 #include "motobj.h"
 #include "ram_buffer.h"
+#include "task.h"
 
 // Byte offset of the blitter slot in gHeapSlots (unk64[1]).
 #define HEAP_BLITTER 104
@@ -49,8 +50,8 @@ void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
 // Shakes the camera while work->shakeFrames lasts.
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void *Resource_GetTableEntry(s32 id);
-s32 Task_Add(void (*func)(void), s32 order);
-s32 Task_Remove(void (*func)(void));
+
+
 void HeapSlot_Release(s32 slot);
 
 void Func_0815c970(struct BattleEffectArgument *effect, s32 mode) {

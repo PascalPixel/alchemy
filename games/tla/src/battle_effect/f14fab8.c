@@ -28,8 +28,7 @@ s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // BattleEffect_TintBattler
 void Func_081180e8(s32 phase);       // BattlePlayback_StartFar
-void Func_0815585c(struct BattleEffectArgument *effect, s32 djinni, s32 *origin,
-                   s32 *target);  // BattleEffect_RunDjinniEntrance
+void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen, s32 *world);  // BattleEffect_RunDjinniEntrance
 void Func_0815f0a0(s32 resource); // BattleEffect_StepPaletteToResource
 void Func_080150e4(s32 angle);    // SceneTransform_ApplyRoll
 void Graphics_LoadGreyRamp(void); // a grey ramp from color 1
@@ -47,7 +46,7 @@ s32 BattleUnit_GetEffectHeightFar(s32 actor);
 
 // The Lost Age's blitter modes: 3 minus The Broken Seal's
 // COMPOSITE_ADDITIVE, COMPOSITE_MAX and COMPOSITE_TRANSPARENT.
-enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT };
+enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 
 // Func_0815585c's packed argument: the Djinni's element, the side, and
 // whether the Djinni stands at the anchor.

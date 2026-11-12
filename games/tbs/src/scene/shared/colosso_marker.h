@@ -207,21 +207,22 @@ static void Colosso_UpdateMarker(void) {
     gColosso_MarkerBlink = 0;
   }
   if (++gColosso_MarkerBlink <= 13) {
-    s32 size = 0x40000000;
+    s32 size = OBJ_SIZE_16X16;
 
     x = gColosso_MarkerX;
     y = gColosso_MarkerY;
     dst = oam;
     *dst++ = 0;
     *dst++ = (y - 8) | ((x - 8) << 16) | size | (gColosso_MarkerPriority << 28);
-    *dst = tile | 0x400;
+    *dst = tile | OBJ_PRIORITY(1);
     Oam_AddSpriteAtDepth(oam, 255);
   } else if (gColosso_MarkerBlink > 19) {
     gColosso_MarkerBlink = 0;
   }
 }
 
-/// Shows the pointer at screen pixel (x, y), drawn at priority style & 3.
+/// Shows the pointer at screen pixel (x, y), mirrored by style & 3 (1 left to
+/// right, 2 top to bottom); every caller passes 0.
 void Colosso_ShowPointer(u32 x, u32 y, u32 style) {
   Colosso_EnsureMarkerSlot();
 

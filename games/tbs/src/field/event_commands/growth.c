@@ -5,7 +5,6 @@
 #include "../event_commands_internal.h"
 
 #define GROWTH_PARTICLE_MAX 24 ///< particles round the target
-#define GROWTH_FALL_COUNT 5    ///< falling actors
 
 /// A point Growth works out round the Psynergy's position.
 struct BurstParticleVector {
@@ -85,7 +84,7 @@ void FieldPsynergy_Growth(void) {
 
   FieldEffect_SpawnBurstParticleField();
   Sound_PlayFar(SE_HEAVY_IMPACT);
-  for (i = 0; i < GROWTH_FALL_COUNT; i++) {
+  for (i = 0; i < 5; i++) {
     struct Actor *particle;
     s32 radius;
 
@@ -180,4 +179,3 @@ void FieldEffect_SpawnBurstParticleField(void) {
 
 #undef GROWTH_PARTICLE_MAX
 #undef SPRITE_PARTICLE
-#undef GROWTH_FALL_COUNT

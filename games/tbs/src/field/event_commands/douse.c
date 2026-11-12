@@ -4,7 +4,7 @@
 
 #include "../event_commands_internal.h"
 
-/// A Actor as Douse's rain cloud and drops use it; the notes give the
+/// An actor as Douse's rain cloud and drops use it; the notes give the
 /// Actor fields at the same offsets.
 struct ActorDouseView {
   u8 reserved00[8];

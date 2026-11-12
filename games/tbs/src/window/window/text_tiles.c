@@ -4,6 +4,13 @@
 
 #include "../window_internal.h"
 
+// A new line in tile text advances by a space's width: tile text is one line.
+#if LANGUAGE != LANGUAGE_JAPANESE
+#define TILE_TEXT_NEWLINE_WIDTH gFont_GlyphWidths[0]
+#else
+#define TILE_TEXT_NEWLINE_WIDTH 8
+#endif
+
 /// Draws window tile pattern over the tile of tilemap entry *entry, with its
 /// colours mapped through remap (0 leaves a pixel as it was). A shared tile
 /// first gets a free tile of its own, which entry and mirror then point to.
@@ -146,13 +153,8 @@ s32 Text_DrawStringAsTiles(u16 *text, u16 *tiles, u16 *mirror, s32 x) {
           work->colour = 15;
           pens[1] = gFont_ColorPens[work->colour];
           break;
-        // A new line is a space's width: tile text is one line.
         case TEXT_NEWLINE:
-#if (LANGUAGE != LANGUAGE_JAPANESE)
-          x += gFont_GlyphWidths[0];
-#else
-          x += 8;
-#endif
+          x += TILE_TEXT_NEWLINE_WIDTH;
           break;
         case 14:
         case TEXT_WINDOW_STATE:
@@ -782,3 +784,5 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *window,
     Text_DrawStringAsTiles((u16 *)output, (u16 *)src, (u16 *)dst, phase);
   }
 }
+
+#undef TILE_TEXT_NEWLINE_WIDTH

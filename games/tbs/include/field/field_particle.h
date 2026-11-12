@@ -59,11 +59,15 @@ STATIC_ASSERT(sizeof(struct FieldParticle) == 0x48);
 STATIC_ASSERT(offsetof(struct FieldParticle, orbitRadius) == 0x3c);
 STATIC_ASSERT(offsetof(struct FieldParticle, state) == 0x40);
 
-/// Gives every particle in use among the 24 in `work->member` the state
-/// `newState`: `cursor` walks their state bytes and `count` counts them down,
-/// both the caller's. Six routines that end a field effect run this same code,
-/// the state held in a local first; the macro is our reconstruction of that
-/// shared code, and its name is ours.
+/// Gives every particle in use in `work->member` the state `newState`:
+/// `cursor`, a byte pointer, walks their state bytes and `count` counts them
+/// down, both the caller's. Five routines that end a field effect run this
+/// same code, Mars's twice, the state held in a local first; the macro is our
+/// reconstruction of that shared code, and its name is ours. Its forms are
+/// the ones every site needs: the state stored straight from `newState`
+/// differs by 2 to 4 instructions at every site, Mars's second needs the
+/// cursor built as the work pointer plus the member's offset (22 otherwise),
+/// and a cursor and count of the macro's own differ by 10 to 40.
 #define FIELD_PARTICLES_SET_ACTIVE_STATE(cursor, count, work, member,          \
                                          newState)                             \
   {                                                                            \
@@ -71,7 +75,7 @@ STATIC_ASSERT(offsetof(struct FieldParticle, state) == 0x40);
     (cursor) = (void *)(work);                                                 \
     (cursor) += offsetof(__typeof__(*(work)), member) +                        \
                 offsetof(struct FieldParticle, state);                         \
-    (count) = 24 - 1;                                                          \
+    (count) = sizeof((work)->member) / sizeof(struct FieldParticle) - 1;       \
     do {                                                                       \
       if (((s8 *)(cursor))[offsetof(struct FieldParticle, active) -            \
                            offsetof(struct FieldParticle, state)] != 0)        \

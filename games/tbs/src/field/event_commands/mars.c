@@ -79,8 +79,7 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   Actor_SelectAnimationFar(Actor_GetById(gMainRoutineWork.leaderActorId),
                            ANIM_LEADER_ARMS_RAISED);
 
-  // Every spark still in use stops its fountain. The cursor walks
-  // the slots' state bytes; a slot's active flag is 5 bytes after its state.
+  // Every spark still in use stops its fountain.
   wait(20);
   FIELD_PARTICLES_SET_ACTIVE_STATE(slotState, remaining, effectWork, particles,
                                    MARS_SPARK_STOPPING);

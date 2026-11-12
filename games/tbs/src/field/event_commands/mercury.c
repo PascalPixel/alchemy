@@ -127,8 +127,6 @@ void Djinn_RunMercuryJoinEffect(s32 djinniId) {
   } while (remaining >= 0);
 
   // After 120 frames every droplet still in use takes its last fall.
-  // Walking whole slots instead of their state bytes grows native English
-  // from 572 to 576 bytes.
   wait(120);
   FIELD_PARTICLES_SET_ACTIVE_STATE(slotState, remaining, effectWork, particles,
                                    MERCURY_DROPLET_LAST_FALL);

@@ -79,8 +79,6 @@ void Djinn_RunVenusJoinEffect(s32 djinniId) {
 
   // After 140 frames every particle still in use stops rising.
   wait(140);
-  // Walking whole slots instead of their state bytes grows native English
-  // from 732 to 736 bytes.
   FIELD_PARTICLES_SET_ACTIVE_STATE(slotState, remaining, effectWork, particles,
                                    VENUS_PARTICLE_LAST_RISE);
 

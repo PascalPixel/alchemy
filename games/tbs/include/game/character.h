@@ -49,8 +49,11 @@ struct ClassAbility {
 };
 
 /// ClassDefinition.series for the series a character's elements can choose
-/// (gClass_SeriesByElements), each named by its first class. Series 11 holds
-/// the fixed classes 200 to 202, and 12 class 0, the enemies'.
+/// (gClass_SeriesByElements), each named by its first class. Two more stay
+/// numbers, as no pair of elements chooses them: 11 holds the classes
+/// Class_Determine gives outright (200 and 201, "?", to Isaac and Garet as
+/// children, and 202, "Flame User", to Jenna), and 12 class 0, "NPC", an
+/// enemy's (CLASS_NONE).
 enum ClassSeries {
   /// ★ Named from the game: "Squire" (MsgClassName)
   CLASS_SERIES_SQUIRE = 1,

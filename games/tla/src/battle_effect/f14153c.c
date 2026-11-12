@@ -185,22 +185,10 @@ void Func_0818de3c(struct MeshTriangle *triangles, s32 columns, s32 rows,
 
 // Forwarded so that a constant size reaches the call's register at each call.
 static __inline__ void FillWords_(void *destination, s32 size, u32 value) {
-  /* FAKEMATCH(wrapper): the fill forwarded through an inline, which keeps each
-   * call's own constants, as the scene layer does; as direct Iwram_FillWords
-   * calls, 16 of 369 instructions of the four transfer callbacks differ in
-   * tla-en. */
   Iwram_FillWords(destination, size, value);
 }
 static __inline__ void CopyWords_(void *destination, const void *source,
                                   s32 size) {
-  /* FAKEMATCH(wrapper): the copy forwarded through an inline, which keeps each
-   * call's own constants, as the scene layer does; as direct Iwram_CopyWords
-   * calls, 128 of 369 instructions of the four transfer callbacks differ in
-   * tla-en. */
-  /* FAKEMATCH(wrapper): the copy forwarded through an inline, which loads the
-   * routine's entry before the arguments, as the native does at all three
-   * copies; as direct Iwram_CopyWords calls, 8 of 181 instructions differ in
-   * tla-en. */
   Iwram_CopyWords(destination, source, size);
 }
 
@@ -1305,10 +1293,21 @@ void BattleEffect_ProcessPendingGraphicsTransfer(void) {
     IRQ_UNLOCK(ime);
     switch (work->transferMode) {
     case 0:
+      /* FAKEMATCH(wrapper): the copy forwarded through CopyWords_, which keeps
+       * each call's own constants, as the scene layer does; as direct
+       * Iwram_CopyWords calls in this callback and in
+       * BattleEffect_ProcessPendingStampTransfer,
+       * BattleEffect_FlushPendingGraphicsTransfer and
+       * BattleEffect_ProcessPendingBlock2Transfer, 128 of 369 instructions
+       * differ in tla-en. */
       CopyWords_((void *)0x06004000, source, 0x4000);
       break;
     case 1:
       CopyWords_((void *)0x06004000, source, 0x4000);
+      /* FAKEMATCH(wrapper): the fill forwarded through FillWords_, which keeps
+       * each call's own constants, as the scene layer does; as direct
+       * Iwram_FillWords calls in this callback and in the same three
+       * callbacks, 16 of 369 instructions differ in tla-en. */
       FillWords_(source, 0x4000, work->transferValue);
       break;
     case 2:
@@ -1490,7 +1489,7 @@ void Graphics_ApplyWindowBlendRegisters(void) {
 /// Writes background 2's scale (BG2PA and BG2PD) and its reference point.
 void Display_ApplyBg2Affine(void) {
   /* FAKEMATCH(pin): the work pointer kept in r2, so the registers' address
-   * takes r1; as a plain local, 16 of 30 instructions differ in tla-en. */
+   * takes r1; as a plain local, 32 of 30 instructions differ in tla-en. */
   register struct BattleFxWork *work asm("r2") =
       (struct BattleFxWork *)Ram_HeapSlots->battleFxWork[0];
 
@@ -3291,6 +3290,10 @@ void Graphics_ConvertBackgroundToBlueRamp(void) {
   delays = Ram_HeapSlots->unk64[0];
   end = 0;
   speed = 16;
+  /* FAKEMATCH(wrapper): the copy forwarded through CopyWords_, which loads the
+   * routine's entry before the arguments, as the native does at all three
+   * copies; as direct Iwram_CopyWords calls, 8 of 181 instructions differ in
+   * tla-en. */
   CopyWords_(PIXEL_BUFFER, (void *)0x06008000, 0x7800);
   delayMask = 63;
   p = delays;

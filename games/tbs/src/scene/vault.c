@@ -1067,6 +1067,8 @@ UNUSED static void Vault_SpawnDriftingEffect(s32 flags) {
   x <<= 16;
   z <<= 16;
   x += anchor->x.fixed;
+  /* FAKEMATCH(temporary): y copies anchor->y.fixed; as anchor->y.fixed in the
+   * call, 28 of 141 instructions differ in tbs-en. */
   y = anchor->y.fixed;
   z += anchor->z.fixed;
   // XXX (no evidence): what this drift was meant to draw; SPRITE_172 has no

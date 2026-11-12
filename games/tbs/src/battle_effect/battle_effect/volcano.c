@@ -12,16 +12,17 @@
 // idle.
 
 #define VOLCANO_FRAMES 96
-#define VOLCANO_ERUPTION 200          ///< sparks thrown as a pillar starts
-#define VOLCANO_TRICKLE 4             ///< and each frame after
-#define VOLCANO_SPARK_POOL 1024       ///< sparks in PARTICLES
-#define VOLCANO_FLAME_IMAGE_ODD 3536  ///< the flame on odd frames
-#define VOLCANO_FLAME_IMAGE_EVEN 4276 ///< the flame on even frames
+#define VOLCANO_ERUPTION 200    ///< sparks thrown as a pillar starts
+#define VOLCANO_TRICKLE 4       ///< and each frame after
+#define VOLCANO_SPARK_POOL 1024 ///< sparks in PARTICLES
+/// The flame on odd frames, then on even frames, after the 34x104 column.
+#define VOLCANO_FLAME_IMAGE_ODD (34 * 104)
+#define VOLCANO_FLAME_IMAGE_EVEN (VOLCANO_FLAME_IMAGE_ODD + 20 * 37)
 
 /// One, two or four columns of fire (gVolcano_Counts by args->variant) rise
-/// near the far edge on the targets' side, at the depths of gVolcano_Depths,
-/// starting at gVolcano_StartFrames; each erupts with a fountain of 200 sparks
-/// and keeps spitting more, and each eruption knocks the targets back.
+/// among the targets, at the depths of gVolcano_Depths, starting at
+/// gVolcano_StartFrames; each erupts with a fountain of 200 sparks and keeps
+/// spitting more, and each eruption knocks the targets back.
 ///
 /// Abilities: Volcano, Eruption, Pyroclasm, Lava Shower, Molten Bath, Magma
 /// Storm (BATTLE_EFFECT_VOLCANO).
@@ -50,9 +51,7 @@ void BattleEffect_RunVolcano(struct BattleEffectParams *args) {
   struct BattleCamera *camera;
   s32 i;
 
-  slots = &gHeapSlots[HEAP_SLOT_BATTLE_EFFECT];
-  cursor = slots;
-  EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
+  EFFECT_GET_SLOTS(slots, cursor, work, canvas);
   sheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   work->args = args;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));

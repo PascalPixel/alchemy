@@ -305,8 +305,9 @@ enum KalayTunnelActorId {
   /// ★ Named from what the player sees: the second stone statue, east of the
   /// first (its render)
   ACTOR_SECOND_STATUE,
-  // XXX (no evidence): whether he is Bunza; likely, because every other scene
-  // places SPRITE_BUNZA beside Hammet as Bunza, but his lines never name him.
+  // XXX (no evidence): whether he is Bunza; he has the sprite of the man
+  // Kalay's arrival calls Bunza ("Well then, Bunza, ..."), but none of his
+  // three lines here names him, and no other line does.
   /// A man drawn with SPRITE_BUNZA who waits here once FLAG_KALAY_TUNNEL_OPEN
   /// is set.
   /// ★ Named from the game: "Layana was very hard on all of you, wasn't she?"

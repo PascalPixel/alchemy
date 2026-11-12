@@ -273,8 +273,9 @@ s32 Scene_Initialize(void) {
   entrance = gMainRoutineWork.entrance;
 
   if (entrance == STONE_ROOMS_FROM_LUNPA) {
-    // XXX (no evidence): why, when gArea_NameRules gives "Lunpa" for this
-    // entrance.
+    // The room is in Vault's area, so coming from Lunpa changes the area and
+    // Scene_Arrive asks for the area name, which gArea_NameRules gives as
+    // "Lunpa" for this entrance: the town the party has just left.
     GameFlag_Clear(FLAG_SHOW_AREA_NAME);
   } else if (entrance == STONE_ROOMS_FROM_VAULT_REVISIT) {
     Actor_Get(ACTOR_PRISONER)->collisionFlags |= JAIL_REACH_ACROSS_BARS;

@@ -17,6 +17,7 @@
 #include "frame.h"
 #include "field_sprite.h"
 #include "debug.h"
+#include "cell_target.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -101,12 +102,6 @@ void Func_0200015c(struct Actor *object) {
 struct EventWork1ac {
   u8 unk000[0x1ac];
   s32 value;
-};
-
-struct CellTarget {
-  u8 unk00[6];
-  s16 x;
-  s16 z;
 };
 
 s32 Math_Cosine(s32 angle);

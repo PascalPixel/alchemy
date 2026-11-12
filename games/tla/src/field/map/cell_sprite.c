@@ -11,32 +11,7 @@
 #include "main_routine_work.h"
 #include "map.h"
 #include "vram_tab.h"
-
-/// One watched cell, in map cells.
-struct CellTargetEntry {
-  s16 x;
-  s16 z;
-  s16 flag; ///< set the first time the leader steps on the cell
-  s16 unk06;
-};
-
-/// A map's watched cells and the sprite drawn over the current one.
-struct CellTarget {
-  u8 unk00[2];
-  /// The first of two flag bytes that keep the leader's cell, x then z (at
-  /// flagByte + 8).
-  s16 flagByte;
-  u8 unk04[2];
-  s16 x; ///< column of the copied cell, whose row is z + 1
-  s16 z;
-  s16 count;   ///< entries in use
-  s16 current; ///< the entry the leader stands on, or -1
-  s16 shown;   ///< nonzero draws the sprite
-  s16 tile;    ///< resource entry of the sprite's tiles
-  u16 unk12;
-  u32 oam[3]; ///< the sprite's attributes, as Oam_AddSpriteAtDepth takes them
-  struct CellTargetEntry entries[1];
-};
+#include "cell_target.h"
 
 extern struct CellTarget CELL_TABLE;
 

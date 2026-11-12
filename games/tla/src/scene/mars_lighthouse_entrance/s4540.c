@@ -3,11 +3,7 @@
 #include "actor.h"
 #include "main_routine_work.h"
 #include "event_inline.h"
-
-struct JupiterLighthouseRoom8Puzzle {
-  s16 unk00;
-  s16 flag;
-};
+#include "cell_target.h"
 
 struct JupiterLighthouseRoom8EventWork {
   u8 unk000[0x1ac];
@@ -16,7 +12,7 @@ struct JupiterLighthouseRoom8EventWork {
   struct Actor *marker;
 };
 
-extern struct JupiterLighthouseRoom8Puzzle Data_020068b4;
+extern struct CellTarget Data_020068b4;
 
 void GameFlag_SetByte(s32 flag, s32 value);
 void Func_02004bf0(void);
@@ -25,14 +21,14 @@ void Func_020042f8(void);
 void Func_02004540(s32 x, s32 z, s32 effect) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   struct JupiterLighthouseRoom8EventWork *work = Ram_HeapSlots->eventWork;
-  s32 dx = FieldGameFlag_GetByte(Data_020068b4.flag);
-  s32 dz = FieldGameFlag_GetByte(Data_020068b4.flag + 8);
+  s32 dx = FieldGameFlag_GetByte(Data_020068b4.flagByte);
+  s32 dz = FieldGameFlag_GetByte(Data_020068b4.flagByte + 8);
 
   if (dx != 0 || dz != 0) {
     struct Actor *marker;
 
-    GameFlag_SetByte(Data_020068b4.flag, 0);
-    GameFlag_SetByte(Data_020068b4.flag + 8, 0);
+    GameFlag_SetByte(Data_020068b4.flagByte, 0);
+    GameFlag_SetByte(Data_020068b4.flagByte + 8, 0);
     leader->x = ((dx + x) << 20) + 0x80000;
     leader->z = ((dz + z) << 20) + 0x80000;
     marker = work->marker;

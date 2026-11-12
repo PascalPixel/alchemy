@@ -81,8 +81,8 @@ s32 Func_020027d8(void) {
   struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
   s32 x = object->x >> 20;
   s32 z = object->z >> 20;
-  struct JupiterLighthouseAerieWork *work = (struct JupiterLighthouseAerieWork *)gData_02003488;
-  struct JupiterLighthouseAerieEntry *entry = (struct JupiterLighthouseAerieEntry *)(work + 1);
+  struct CellTarget *work = &gData_02003488;
+  struct CellTargetEntry *entry = work->entries;
   s32 i;
 
   for (i = 0; i < work->count; i++, entry++) {
@@ -97,8 +97,8 @@ s32 Func_020027d8(void) {
         break;
       work->current = i;
       Func_020024a8(work, entry);
-      GameFlag_SetByte(work->flag, x);
-      GameFlag_SetByte(work->flag + 8, z);
+      GameFlag_SetByte(work->flagByte, x);
+      GameFlag_SetByte(work->flagByte + 8, z);
       return 1;
     }
   }
@@ -108,16 +108,16 @@ s32 Func_020027d8(void) {
 void Func_02002888(s32 dx, s32 dz, s32 value) {
   struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
   u8 *event = Ram_HeapSlots->eventWork;
-  struct JupiterLighthouseAerieWork *work =
-      (struct JupiterLighthouseAerieWork *)gData_02003488;
-  s32 x = FieldGameFlag_GetByte(work->flag);
-  s32 z = FieldGameFlag_GetByte(work->flag + 8);
+  struct CellTarget *work =
+      &gData_02003488;
+  s32 x = FieldGameFlag_GetByte(work->flagByte);
+  s32 z = FieldGameFlag_GetByte(work->flagByte + 8);
 
   if (x != 0 || z != 0) {
     struct Actor *shadow;
 
-    GameFlag_SetByte(work->flag, 0);
-    GameFlag_SetByte(work->flag + 8, 0);
+    GameFlag_SetByte(work->flagByte, 0);
+    GameFlag_SetByte(work->flagByte + 8, 0);
     object->x = ((x + dx) << 20) + 0x80000;
     object->z = ((z + dz) << 20) + 0x80000;
     shadow = *(struct Actor **)(event + 460);

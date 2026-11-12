@@ -4,28 +4,7 @@
 #include "main_routine_work.h"
 #include "iwram_call.h"
 #include "event_inline.h"
-
-struct CellTargetEntry {
-  s16 x;
-  s16 z;
-  s16 flag;
-  s16 unk06;
-};
-
-struct CellTarget {
-  s16 firstFlag;
-  s16 flagByte;
-  s16 kind;
-  s16 x;
-  s16 z;
-  s16 count;
-  s16 current;
-  s16 shown;
-  s16 tile;
-  u16 unk12;
-  u32 oam[3];
-  struct CellTargetEntry entries[1];
-};
+#include "cell_target.h"
 
 struct CellMapCell {
   u8 unk00[2];

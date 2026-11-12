@@ -8,18 +8,11 @@
 #include "field_sprite.h"
 #include "scene_tables.h"
 #include "event_inline.h"
+#include "cell_target.h"
 
 struct EventWork1ac {
   u8 unk000[0x1ac];
   s32 value;
-};
-
-/// The cells Func_020019f4 watches, and the cell it copies over the one the
-/// leader steps on.
-struct CellTarget {
-  u8 unk00[6];
-  s16 x; ///< column of the copied cell, whose row is z + 1
-  s16 z;
 };
 
 s32 Math_Cosine(s32 angle);
@@ -51,9 +44,6 @@ void Func_020015cc(void) {
   FieldEvent_Wait(4);
   FieldCamera_GetActor()->y -= 0x80000;
 }
-
-/// Map_CopyCellsRect through this overlay's import.
-struct CellTargetEntry;
 
 /// Centers the leader on its cell, plays sound 161 and copies the cell below
 /// the table's source cell over the leader's, keeping the source column's and

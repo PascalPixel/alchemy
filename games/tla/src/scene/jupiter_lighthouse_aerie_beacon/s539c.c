@@ -7,6 +7,7 @@
 #include "actor.h"
 #include "field_effect.h"
 #include "event_inline.h"
+#include "cell_target.h"
 
 u32 Random16Far(void);
 s32 Math_Cosine(s32 angle);
@@ -76,38 +77,20 @@ void Func_0200539c(void) {
   Func_0200581c();
 }
 
-struct JupiterLighthouseAerieWork {
-  u8 unk00[2];
-  s16 flag;
-  u8 unk04[2];
-  s16 x;
-  s16 z;
-  s16 count;
-  s16 current;
-  u8 unk0e[18];
-};
-
-struct JupiterLighthouseAerieEntry {
-  s16 x;
-  s16 z;
-  s16 flag;
-  u8 unk06[2];
-};
-
-extern u8 Data_02006b74[];
+extern struct CellTarget Data_02006b74;
 
 void GameFlag_SetByte(s32 flag, s32 value);
-void Func_02005194(struct JupiterLighthouseAerieWork *work,
-                   struct JupiterLighthouseAerieEntry *entry);
-void Func_02005204(struct JupiterLighthouseAerieWork *work,
-                   struct JupiterLighthouseAerieEntry *entry);
+void Func_02005194(struct CellTarget *work,
+                   struct CellTargetEntry *entry);
+void Func_02005204(struct CellTarget *work,
+                   struct CellTargetEntry *entry);
 
 s32 Func_02005534(void) {
   struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
   s32 x = object->x >> 20;
   s32 z = object->z >> 20;
-  struct JupiterLighthouseAerieWork *work = (struct JupiterLighthouseAerieWork *)Data_02006b74;
-  struct JupiterLighthouseAerieEntry *entry = (struct JupiterLighthouseAerieEntry *)(work + 1);
+  struct CellTarget *work = &Data_02006b74;
+  struct CellTargetEntry *entry = work->entries;
   s32 i;
 
   for (i = 0; i < work->count; i++, entry++) {
@@ -122,8 +105,8 @@ s32 Func_02005534(void) {
         break;
       work->current = i;
       Func_02005204(work, entry);
-      GameFlag_SetByte(work->flag, x);
-      GameFlag_SetByte(work->flag + 8, z);
+      GameFlag_SetByte(work->flagByte, x);
+      GameFlag_SetByte(work->flagByte + 8, z);
       return 1;
     }
   }

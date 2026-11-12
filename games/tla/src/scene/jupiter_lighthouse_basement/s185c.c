@@ -90,7 +90,7 @@ loop:
   Func_02001c8c();
 }
 
-extern u8 gData_020024f8[];
+extern struct CellTarget gData_020024f8;
 void Func_02001654();
 void Func_020016c4();
 
@@ -98,10 +98,10 @@ s32 Func_020019f4(void) {
   struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
   s32 x = object->x >> 20;
   s32 z = object->z >> 20;
-  struct JupiterLighthouseAerieWork *work =
-      (struct JupiterLighthouseAerieWork *)gData_020024f8;
-  struct JupiterLighthouseAerieEntry *entry =
-      (struct JupiterLighthouseAerieEntry *)(work + 1);
+  struct CellTarget *work =
+      &gData_020024f8;
+  struct CellTargetEntry *entry =
+      work->entries;
   s32 i;
 
   for (i = 0; i < work->count; i++, entry++) {
@@ -116,8 +116,8 @@ s32 Func_020019f4(void) {
         break;
       work->current = i;
       Func_020016c4(work, entry);
-      GameFlag_SetByte(work->flag, x);
-      GameFlag_SetByte(work->flag + 8, z);
+      GameFlag_SetByte(work->flagByte, x);
+      GameFlag_SetByte(work->flagByte + 8, z);
       return 1;
     }
   }

@@ -2,6 +2,7 @@
 #include "actor.h"
 #include "main_routine_work.h"
 #include "event_inline.h"
+#include "cell_target.h"
 
 
 void Func_02002cb8(void) {
@@ -23,15 +24,6 @@ void Func_02002cb8(void) {
 }
 
 /// Map_CopyCellsRect through this overlay's import.
-
-/// The cells Func_020030e0 watches, and the cell it copies over the one the
-/// leader steps on.
-struct CellTarget {
-  u8 unk00[6];
-  s16 x; ///< column of the copied cell, whose row is z + 1
-  s16 z;
-};
-struct CellTargetEntry;
 
 /// Centers the leader on its cell, plays sound 161 and copies the cell below
 /// the table's source cell over the leader's, keeping the source column's and

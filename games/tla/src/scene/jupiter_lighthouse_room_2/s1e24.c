@@ -79,7 +79,7 @@ void Func_02001e24(void) {
   Func_02002254();
 }
 
-extern u8 gData_02002ce0[];
+extern struct CellTarget gData_02002ce0;
 void Func_02001c1c();
 void Func_02001c8c();
 
@@ -87,10 +87,10 @@ s32 Func_02001fbc(void) {
   struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
   s32 x = object->x >> 20;
   s32 z = object->z >> 20;
-  struct JupiterLighthouseAerieWork *work =
-      (struct JupiterLighthouseAerieWork *)gData_02002ce0;
-  struct JupiterLighthouseAerieEntry *entry =
-      (struct JupiterLighthouseAerieEntry *)(work + 1);
+  struct CellTarget *work =
+      &gData_02002ce0;
+  struct CellTargetEntry *entry =
+      work->entries;
   s32 i;
 
   for (i = 0; i < work->count; i++, entry++) {
@@ -105,8 +105,8 @@ s32 Func_02001fbc(void) {
         break;
       work->current = i;
       Func_02001c8c(work, entry);
-      GameFlag_SetByte(work->flag, x);
-      GameFlag_SetByte(work->flag + 8, z);
+      GameFlag_SetByte(work->flagByte, x);
+      GameFlag_SetByte(work->flagByte + 8, z);
       return 1;
     }
   }

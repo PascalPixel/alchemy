@@ -10,30 +10,7 @@
 #include "scene_tables.h"
 #include "../../../../games/tla/src/scene/jupiter_lighthouse_room_3/local.h"
 #include "io_reg.h"
-
-struct CellTargetEntry {
-  s16 x;
-  s16 z;
-  s16 flag;
-  s16 unk06;
-};
-
-/// The cells Func_02005534 watches, and the cell it copies over the one the
-/// leader steps on.
-struct CellTarget {
-  s16 firstFlag;
-  s16 flagByte;
-  s16 kind;
-  s16 x; ///< column of the copied cell, whose row is z + 1
-  s16 z;
-  s16 count;
-  s16 current;
-  s16 shown;
-  s16 tile;
-  u16 unk12;
-  u32 oam[3];
-  struct CellTargetEntry entries[1];
-};
+#include "cell_target.h"
 
 struct CellMapCell {
   u8 unk00[2];
@@ -59,6 +36,8 @@ struct CellMapWork {
   struct CellMapLayer layers[4];
 };
 
+/// The cells Func_02005534 watches, and the cell it copies over the one the
+/// leader steps on.
 extern struct CellTarget Data_02006b74;
 
 void *Heap_Alloc(s32 size);

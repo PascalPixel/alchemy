@@ -6,6 +6,7 @@
 #include "main_routine_work.h"
 #include "actor.h"
 #include "frame.h"
+#include "cell_target.h"
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 #define WORD_AT(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
@@ -14,29 +15,11 @@ struct JupiterLighthouseAerieSpark {
   s32 word[10];
 };
 
-struct JupiterLighthouseAerieWork {
-  u8 unk00[2];
-  s16 flag;
-  u8 unk04[2];
-  s16 x;
-  s16 z;
-  s16 count;
-  s16 current;
-  u8 unk0e[18];
-};
-
-struct JupiterLighthouseAerieEntry {
-  s16 x;
-  s16 z;
-  s16 flag;
-  u8 unk06[2];
-};
-
 extern u8 gDecodeFillByte;
 extern s32 gData_02003314;
 extern s32 gData_02003318;
 extern u16 gData_02003340[];
-extern u8 gData_02003488[];
+extern struct CellTarget gData_02003488;
 
 void Animation_ApplyChildValues(struct Actor *object, s32 value);
 void GameFlag_SetByte(s32 flag, s32 value);
@@ -47,10 +30,10 @@ void Func_02001010(struct Actor *object);
 void Func_02001e78(s32 x, s32 y, s32 z, s32 a, s32 b, s32 c, s32 d,
                    struct JupiterLighthouseAerieSpark *spark);
 void Func_020023b0(void);
-void Func_02002438(struct JupiterLighthouseAerieWork *work,
-                   struct JupiterLighthouseAerieEntry *entry);
-void Func_020024a8(struct JupiterLighthouseAerieWork *work,
-                   struct JupiterLighthouseAerieEntry *entry);
+void Func_02002438(struct CellTarget *work,
+                   struct CellTargetEntry *entry);
+void Func_020024a8(struct CellTarget *work,
+                   struct CellTargetEntry *entry);
 void Func_02002640(void);
 void Func_02002a18(void);
 void Func_02002b28(s32 id, s32 a);

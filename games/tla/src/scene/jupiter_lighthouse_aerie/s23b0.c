@@ -24,8 +24,8 @@ void Func_020023b0(void) {
 /// the table's source cell over the leader's, keeping the source column's and
 /// row's 64 bit; Func_020027d8 calls it the first time the leader steps on
 /// one of the table's cells.
-void Func_02002438(struct JupiterLighthouseAerieWork *table,
-                   struct JupiterLighthouseAerieEntry *entry) {
+void Func_02002438(struct CellTarget *table,
+                   struct CellTargetEntry *entry) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   s16 sourceX;
   s32 leaderX = leader->x;

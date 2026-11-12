@@ -13,6 +13,6 @@ describes for The Broken Seal.
   [entry table](../../../tbs/glossary.md#entry-table-and-import-table)
   (`entry.s`), its import table (`import.s`) and the code not yet gathered
   into the file. The battle's debug parameter sets and the field sequence's
-  `stream.c` are in their banks' folders.
+  stream readers are in their banks' folders.
 - Code not yet gathered is named by offset (`level/s0590.c`) and linked as
   [The Lost Age: scene](../scene/README.md) describes.

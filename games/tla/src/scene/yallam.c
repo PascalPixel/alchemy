@@ -321,7 +321,7 @@ s32 Func_020006a4(struct Actor *object) {
   return 0;
 }
 
-// The layout Func_02001904 (yallam/s1904.c) reads: state and timer sit where
+// The layout Func_02001904 reads: state and timer sit where
 // struct Actor has its callback and action.
 struct YallamActor {
   u8 unk00[8];

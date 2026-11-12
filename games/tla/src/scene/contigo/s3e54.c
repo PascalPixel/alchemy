@@ -1,6 +1,6 @@
 /// @file
 /// Sets up the sparkle: loads its picture and its four 16 by 16 sprites, and hands the
-/// object to the update in s3cd8.c.
+/// object to its update, Func_02003cd8.
 #include "types.h"
 #include "actor.h"
 #include "event_inline.h"

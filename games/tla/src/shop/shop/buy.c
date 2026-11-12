@@ -437,13 +437,10 @@ draw:
 }
 
 #undef SHOP_PRICE_NUMBER_X
-#undef SHOP_PRICE_NUMBER_X
-#undef SHOP_PRICE_COINS_X
 #undef SHOP_PRICE_COINS_X
 
 #define OWN_Text_DrawCharacterAtOffsetFar
 //--------------------------------------------------------------------------
-// draw_message.c
 // Shop: replace a window's message.
 //--------------------------------------------------------------------------
 

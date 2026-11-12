@@ -211,13 +211,9 @@ void Func_0810b1b4(s32 member);
 #define SERVICE_PRICE_WINDOW_WIDTH 23
 #endif
 
-// Matches: differ 0 in tla-it and in the five editions that already link
-// games/tla/src/shop/f10abf0.c (11 November 2026). One source for all six,
-// and it needs neither that file's pin and messageBase temporary nor the
-// Italian draft's firstMessage: every local takes its default at the top, in
-// this order, and memberIndex is zeroed again after the windows.
-// How the listing's zeros come out of the defaults (rounds 1 to 9 held
-// tla-it at 8 of 282 by zeroing after the windows instead):
+// One source for all six editions: every local takes its default at the
+// top, in this order, and memberIndex is zeroed again after the windows.
+// How the listing's zeros come out of the defaults:
 // - listWindow's NULL comes first, so cse stores memberIndex's first 0 from
 //   listWindow's register, r11. A store from a high register is reloaded
 //   through a low one, the function's first reload, so r0: reload registers

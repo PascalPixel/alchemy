@@ -1,7 +1,7 @@
 name: CI
 
 # The public proof: all twelve editions, ☀️'s six and ⚓️'s six, rebuild from a
-# clean clone with no ROM and match rom.sha1. On main, the docs site is then
+# clean clone and match rom.sha1. On main, the docs site is then
 # rebuilt (.github/publication.md).
 
 on:
@@ -19,7 +19,7 @@ concurrency:
 
 jobs:
   build:
-    name: ☀️ and ⚓️ from a clean clone, with no ROM
+    name: ☀️ and ⚓️ from a clean clone
     runs-on: ubuntu-24.04
     timeout-minutes: 60
     env:

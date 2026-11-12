@@ -47,7 +47,7 @@ Japanese, English, German, Spanish, French and Italian.
 
 ## Build it yourself
 
-Three commands, and you have a ROM you made from source. No cartridge needed.
+Three commands, and you have a ROM you made from source.
 
 ```bash
 git clone --recurse-submodules https://github.com/PascalPixel/alchemy

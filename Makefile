@@ -40,8 +40,8 @@ help:
 	  'make bootstrap          build the pinned compilers and tools into tools/out' \
 	  'make tbs-en             build one edition: tbs or tla, then ja en de es fr it' \
 	  'make compare-tbs-en     build one edition and check it against rom.sha1' \
-	  'make compare-tbs        the six ☀️ editions, which need no ROM' \
-	  'make compare-editions   all twelve editions, which need no ROM' \
+	  'make compare-tbs        the six ☀️ editions' \
+	  'make compare-editions   all twelve editions' \
 	  'make modern             all twelve editions'\'' C through a current GCC (MODERN_CC)' \
 	  'make test               test the C build tools, the format and the fake-match devices' \
 	  'make SHIFT=4 tbs-en     the shift test: everything after the header moves 4 bytes'

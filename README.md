@@ -2,6 +2,21 @@
 
 Alchemy is a reconstruction of the source for the Game Boy Advance games ☀️ **[Golden Sun: The Broken Seal](https://alchemy.pascalpixel.com/tbs)** and ⚓️ **Golden Sun: The Lost Age**. It is a [matching decompilation](games/tbs/glossary.md#matching-decompilation): readable code, images, music and text that build the same ROMs as the originals, byte for byte.
 
+It builds the following ROMs:
+
+- **tbs-ja.gba** `sha1: 35ef9e4c9f38183ebd6a3e3923a11ce9a4333718`
+- **tbs-en.gba** `sha1: 5c4695205413df7db52b9a184815a07783999971`
+- **tbs-de.gba** `sha1: c23ab91a39434623cf1a999f387d743ade1a22a6`
+- **tbs-es.gba** `sha1: de0bdc889594b012cad213ca83707feb81ada28b`
+- **tbs-fr.gba** `sha1: 42f3b262c16cfc5bde1fa2b25016fb74046de1b3`
+- **tbs-it.gba** `sha1: ca45e04b26b2f040ac63e679a459d21869f5f28d`
+- **tla-ja.gba** `sha1: 4c79e60962299654981628ccd99b122ef27043f7`
+- **tla-en.gba** `sha1: b500663220cb9bf56b9f8e8c0c544f1d6fa3a824`
+- **tla-de.gba** `sha1: 7820b4c7ba9002b0e9be23a6f45a9ab204986438`
+- **tla-es.gba** `sha1: a2e3e80036195343c2713410ac14f4e329e3f40d`
+- **tla-fr.gba** `sha1: f14855c0f8c87a95cc52189e8e3b2bd9df186322`
+- **tla-it.gba** `sha1: 57f1d005666b81645e55412658427e27099c5907`
+
 ## Docs
 
 <a href="https://alchemy.pascalpixel.com"><img src="https://alchemy.pascalpixel.com/guides/docs/interface.png" width="838" alt="Alchemy's documentation on the interface: Isaac talks to Garet's sister in Vale above a diagram of what each button opens, beside the guide's sidebar" /></a>
@@ -35,7 +50,7 @@ cd alchemy
 make
 ```
 
-The first `make` builds the old compilers from the `alchemy-gcc` submodule, once, then the English Broken Seal as `out/tbs-en/tbs-en.gba`. No ROM is needed.
+The first `make` builds the old compilers from the `alchemy-gcc` submodule, once, then the English Broken Seal as `out/tbs-en/tbs-en.gba`.
 
 | Command | Builds |
 |---|---|

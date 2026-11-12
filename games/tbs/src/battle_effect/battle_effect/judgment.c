@@ -47,20 +47,10 @@ struct JudgmentWork {
 /// The second 24x24 flare picture.
 #define JUDGMENT_SHEET_FLARE_B (JUDGMENT_SHEET_FLARE_A + 24 * 24)
 // OverlayImageA's three flash pictures, a byte a pixel, one after another in
-// the sheet: the small flash, the large flash and the streak.
-#define JUDGMENT_FLASH_SMALL_WIDTH 16
-#define JUDGMENT_FLASH_SMALL_HEIGHT 17
-#define JUDGMENT_FLASH_LARGE_WIDTH 24
-#define JUDGMENT_FLASH_LARGE_HEIGHT 41
-#define JUDGMENT_FLASH_STREAK_WIDTH 22
-#define JUDGMENT_FLASH_STREAK_HEIGHT 44
+// the sheet: the 16x17 small flash, the 24x41 large flash and the 22x44 glow.
 #define JUDGMENT_SHEET_FLASH_SMALL 24576
-#define JUDGMENT_SHEET_FLASH_LARGE                                             \
-  (JUDGMENT_SHEET_FLASH_SMALL +                                                \
-   JUDGMENT_FLASH_SMALL_WIDTH * JUDGMENT_FLASH_SMALL_HEIGHT)
-#define JUDGMENT_SHEET_FLASH_STREAK                                            \
-  (JUDGMENT_SHEET_FLASH_LARGE +                                                \
-   JUDGMENT_FLASH_LARGE_WIDTH * JUDGMENT_FLASH_LARGE_HEIGHT)
+#define JUDGMENT_SHEET_FLASH_LARGE (JUDGMENT_SHEET_FLASH_SMALL + 16 * 17)
+#define JUDGMENT_SHEET_FLASH_GLOW (JUDGMENT_SHEET_FLASH_LARGE + 24 * 41)
 /// Each explosion picture is 32x54.
 #define JUDGMENT_EXPLOSION_CELL_BYTES (32 * 54)
 #define JUDGMENT_WAVE_SIZE 120 ///< the wave picture is 120x120
@@ -726,52 +716,40 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
     }
 
     // Frames 64 to 85: the flash plays twice: a small picture, a large one,
-    // then four streaks that close in (68 to 75) or spread out (82 to 85).
+    // then four glows that close in (68 to 75) or spread out (82 to 85).
     if (frame >= 64 && frame < 66) {
-      draw[0](canvas, work->sheet + JUDGMENT_SHEET_FLASH_SMALL, 52, 51,
-              JUDGMENT_FLASH_SMALL_WIDTH, JUDGMENT_FLASH_SMALL_HEIGHT);
+      draw[0](canvas, work->sheet + JUDGMENT_SHEET_FLASH_SMALL, 52, 51, 16, 17);
     }
     if (frame >= 66 && frame < 68) {
-      draw[0](canvas, work->sheet + JUDGMENT_SHEET_FLASH_LARGE, 48, 40,
-              JUDGMENT_FLASH_LARGE_WIDTH, JUDGMENT_FLASH_LARGE_HEIGHT);
+      draw[0](canvas, work->sheet + JUDGMENT_SHEET_FLASH_LARGE, 48, 40, 24, 41);
     }
     if (frame >= 68 && frame < 76) {
       s32 d = 76 - frame;
-      draw[0](canvas, work->sheet + JUDGMENT_SHEET_FLASH_STREAK, 49 - d / 2,
-              38 - d, JUDGMENT_FLASH_STREAK_WIDTH,
-              JUDGMENT_FLASH_STREAK_HEIGHT);
-      draw[0](canvas, work->sheet + JUDGMENT_SHEET_FLASH_STREAK, 49 - d / 2,
-              d + 38, JUDGMENT_FLASH_STREAK_WIDTH,
-              JUDGMENT_FLASH_STREAK_HEIGHT);
-      draw[0](canvas, work->sheet + JUDGMENT_SHEET_FLASH_STREAK, d / 2 + 49,
-              38 - d, JUDGMENT_FLASH_STREAK_WIDTH,
-              JUDGMENT_FLASH_STREAK_HEIGHT);
-      draw[0](canvas, work->sheet + JUDGMENT_SHEET_FLASH_STREAK, d / 2 + 49,
-              d + 38, JUDGMENT_FLASH_STREAK_WIDTH,
-              JUDGMENT_FLASH_STREAK_HEIGHT);
+      draw[0](canvas, work->sheet + JUDGMENT_SHEET_FLASH_GLOW, 49 - d / 2,
+              38 - d, 22, 44);
+      draw[0](canvas, work->sheet + JUDGMENT_SHEET_FLASH_GLOW, 49 - d / 2,
+              d + 38, 22, 44);
+      draw[0](canvas, work->sheet + JUDGMENT_SHEET_FLASH_GLOW, d / 2 + 49,
+              38 - d, 22, 44);
+      draw[0](canvas, work->sheet + JUDGMENT_SHEET_FLASH_GLOW, d / 2 + 49,
+              d + 38, 22, 44);
     }
     if (frame >= 78 && frame < 80) {
-      draw[0](canvas, work->sheet + JUDGMENT_SHEET_FLASH_SMALL, 52, 51,
-              JUDGMENT_FLASH_SMALL_WIDTH, JUDGMENT_FLASH_SMALL_HEIGHT);
+      draw[0](canvas, work->sheet + JUDGMENT_SHEET_FLASH_SMALL, 52, 51, 16, 17);
     }
     if (frame >= 80 && frame < 82) {
-      draw[0](canvas, work->sheet + JUDGMENT_SHEET_FLASH_LARGE, 48, 40,
-              JUDGMENT_FLASH_LARGE_WIDTH, JUDGMENT_FLASH_LARGE_HEIGHT);
+      draw[0](canvas, work->sheet + JUDGMENT_SHEET_FLASH_LARGE, 48, 40, 24, 41);
     }
     if (frame >= 82 && frame < 86) {
       s32 d = frame * 2 - 164;
-      draw[0](canvas, work->sheet + JUDGMENT_SHEET_FLASH_STREAK, 49 - d / 4,
-              38 - d, JUDGMENT_FLASH_STREAK_WIDTH,
-              JUDGMENT_FLASH_STREAK_HEIGHT);
-      draw[0](canvas, work->sheet + JUDGMENT_SHEET_FLASH_STREAK, 49 - d / 4,
-              d + 38, JUDGMENT_FLASH_STREAK_WIDTH,
-              JUDGMENT_FLASH_STREAK_HEIGHT);
-      draw[0](canvas, work->sheet + JUDGMENT_SHEET_FLASH_STREAK, d / 4 + 49,
-              38 - d, JUDGMENT_FLASH_STREAK_WIDTH,
-              JUDGMENT_FLASH_STREAK_HEIGHT);
-      draw[0](canvas, work->sheet + JUDGMENT_SHEET_FLASH_STREAK, d / 4 + 49,
-              d + 38, JUDGMENT_FLASH_STREAK_WIDTH,
-              JUDGMENT_FLASH_STREAK_HEIGHT);
+      draw[0](canvas, work->sheet + JUDGMENT_SHEET_FLASH_GLOW, 49 - d / 4,
+              38 - d, 22, 44);
+      draw[0](canvas, work->sheet + JUDGMENT_SHEET_FLASH_GLOW, 49 - d / 4,
+              d + 38, 22, 44);
+      draw[0](canvas, work->sheet + JUDGMENT_SHEET_FLASH_GLOW, d / 4 + 49,
+              38 - d, 22, 44);
+      draw[0](canvas, work->sheet + JUDGMENT_SHEET_FLASH_GLOW, d / 4 + 49,
+              d + 38, 22, 44);
     }
 
     // Frames 72 to 75: a ring of 256 of the largest motes grows around
@@ -1062,7 +1040,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
 #undef JUDGMENT_SHEET_FLARE_A
 #undef JUDGMENT_SHEET_FLASH_SMALL
 #undef JUDGMENT_SHEET_FLASH_LARGE
-#undef JUDGMENT_SHEET_FLASH_STREAK
+#undef JUDGMENT_SHEET_FLASH_GLOW
 #undef JUDGMENT_EXPLOSION_CELL_BYTES
 #undef JUDGMENT_WAVE_SIZE
 #undef JUDGMENT_DMA_FILL_CANVAS

@@ -488,7 +488,7 @@ with the same five probes each time. It takes the first that is clear.
 
 That is the slide along a wall. Walk into a wall at a slant and Isaac
 glides along it, because along the wall is the nearest direction that is
-open ([Field](../../field.md#movement) has its recording).
+open.
 
 When every direction fails, Isaac stays where he is and turns toward the
 pad. The game counts each such frame as a push. A doorstep, a ledge or a
@@ -654,8 +654,7 @@ lower numbers in front. Each map gives its three sheets their numbers. A
 sprite usually takes its number from the cell its actor stands on.
 
 So walking behind a house is nothing more than stepping onto cells that
-give Isaac a number behind the roof sheet's
-([Field](../../field.md#map-layers) has that recording).
+give Isaac a number behind the roof sheet's.
 
 The sheets do not have to move together. Each frame the map centres the
 view on the camera actor, and scrolls each sheet to match. A sheet can be

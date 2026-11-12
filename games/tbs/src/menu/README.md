@@ -54,8 +54,7 @@ member, then which of their things, then what to do with it.
 Backing out of a screen's first question brings the icons back, and so does
 Start. Only two answers close the whole menu: a Psynergy or an item chosen
 for use on the field, such as Move on a pillar. The screen hands that to the
-field to carry out ([Psynergy and items used on the
-field](../../interface.md#psynergy-and-items-used-on-the-field)).
+field to carry out ([Interface](../../interface.md#menus)).
 
 ### The Psynergy screen
 

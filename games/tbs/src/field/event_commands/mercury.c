@@ -71,8 +71,8 @@ void Djinn_RunMercuryJoinEffect(s32 djinniId) {
       copy->scaleY = Q16_ONE * 15 / 16;
       copy->scaleX = Q16_ONE * 15 / 16;
       copy->motionFlags = 0;
-      copy->priorityFlags = 2;
-      copy->steeringFlags |= 1;
+      copy->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
+      copy->steeringFlags |= ACTOR_FACES_MOTION;
       copy->update = FieldEffect_HalveDistanceToTarget;
       copy->facing = djinni->facing;
       Actor_SetSpriteColorModeFar(copy, SPRITE_COLOR_BLUE_TINT);

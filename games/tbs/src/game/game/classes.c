@@ -4,9 +4,9 @@
 
 #include "../game_internal.h"
 
-// Declared here without const, as Camelot's code read it: with const,
-// alchemy-gcc orders Unit_CalculateBaseElements' loads differently in tbs-it.
-// element_table.c defines it, const, in ROM.
+// Declared here without const: with const, one add in
+// Unit_CalculateBaseElements moves, and 2 of 93 instructions differ in every
+// edition. element_table.c defines it, const, in ROM.
 extern struct ElementLevelBonus gElement_PowerResistByLevel[16];
 
 /// Returns the class series of a character whose strongest element is

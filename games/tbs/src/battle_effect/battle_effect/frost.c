@@ -6,14 +6,14 @@
 
 /// One row of gFrost_Timings, for each variant.
 enum {
-  FROST_MOTES,   ///< how many motes spiral down
-  FROST_COLUMNS, ///< how many ice columns spring up
-  FROST_FRAME    ///< the frame the motes burst
+  FROST_MOTES,  ///< how many motes spiral down
+  FROST_MOUNDS, ///< how many ice mounds spring up
+  FROST_FRAME   ///< the frame the motes burst
 };
 
-/// Motes spiral down and inwards while ice columns spring up one every 3
-/// frames from frame 36; at the burst frame the motes spread and rise, chips
-/// fly up and smoke rises over the heights they span.
+/// Motes of ice spiral down and inwards while mounds of ice spring up one
+/// every 3 frames from frame 36; at the burst frame the motes spread and rise,
+/// chips fly up and sparkles rise over the heights they span.
 ///
 /// Abilities: Frost, Tundra, Glacier (BATTLE_EFFECT_FROST).
 ///
@@ -22,14 +22,14 @@ enum {
 /// it.
 ///
 /// work->particles holds the 64 motes (angle, height and radius in x, y and
-/// z); after the burst the first 32 also hold the smoke puffs, in their
+/// z); after the burst the first 32 also hold the sparkles, in their
 /// velocity and variant fields, while motes 0 to 15 keep moving in theirs.
 /// PARTICLES holds the 32 chips. Writes REG_BG2PA and, on EFFECT_SIDE_PARTY,
 /// REG_BG2X; ends with the blitters freed, the transfer task removed and
 /// the canvas layer closed.
 ///
-/// args: the targets; variant picks the number of motes and columns and
-///         the burst frame (gFrost_Timings): 32 motes, 8 columns and frame
+/// args: the targets; variant picks the number of motes and mounds and
+///         the burst frame (gFrost_Timings): 32 motes, 8 mounds and frame
 ///         85 for Frost, 48, 12 and 97 for Tundra, 64, 19 and 109 for
 ///         Glacier.
 void BattleEffect_RunFrost(struct BattleEffectParams *args) {
@@ -38,7 +38,7 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
-  u8 *puffSheet;
+  u8 *sparkleSheet;
   s32 xyz[3];
   struct ScreenPoint screen;
   s32 point[3];
@@ -49,11 +49,11 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
   slots = &gHeapSlots[HEAP_SLOT_BATTLE_EFFECT];
   cursor = slots;
   EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
-  puffSheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
+  sparkleSheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   work->args = args;
   EFFECT_START_NARROW_CANVAS(BGCNT_PRIORITY(1));
   Resource_LoadAndDecompress((s32)&ResourceId_IceChipSheet, work->sheet, 1, 1);
-  Resource_LoadAndDecompress((s32)&ResourceId_SparkleDots, puffSheet, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_SparkleDots, sparkleSheet, 0, 0);
   BattleEffect_FetchRectangleBlitters(0, pair);
 
   // Motes: x holds the angle, z the radius (56 to 119), y the vertical
@@ -78,7 +78,7 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
     s32 lowest;
     s32 highest;
 
-    // The range of heights the smoke will rise over, in 16.16 pixels,
+    // The range of heights the sparkles will rise over, in 16.16 pixels,
     // gathered from the motes and chips below.
     lowest = px(120);
     highest = 0;
@@ -89,7 +89,7 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
     SET_VECTOR(point, 0, 0, px(512));
     Transform_Reset();
     Transform_ApplyPosition(point);
-    // A chime every 4 frames while the columns spring up.
+    // A chime every 4 frames while the mounds spring up.
     if (frame >= 36 && frame < 64 && (frame & 3) == 0)
       Sound_PlayFar(SE_ICE);
     // Frame 85 is Frost's burst; Tundra and Glacier play this sound 12 and 24
@@ -125,6 +125,8 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
 
           mote = &work->particles[i];
           if (mote->y < px(48 - i / 2) && mote->y > -px(48)) {
+            /* FAKEMATCH(temporary): position holds &screen; as screen used
+             * directly, 126 of 782 instructions differ in tbs-en. */
             struct ScreenPoint *position;
             u32 width;
             u32 height;
@@ -172,13 +174,12 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
     lowest += px(64);
     highest += px(64);
 
-    // Columns (32 wide), standing at gFrost_ColumnSpots: one more every 3
-    // frames from frame 36; over the last 7 frames before the burst they are
+    // Ice mounds (32 wide), at gFrost_ColumnSpots: one more every 3 frames
+    // from frame 36; over the last 7 frames before the burst they are
     // drawn additively (the pair's second blitter), a flash before they
     // break.
     if (frame < gFrost_Timings[work->args->variant][FROST_FRAME]) {
-      for (i = 0; i != gFrost_Timings[work->args->variant][FROST_COLUMNS];
-           i++) {
+      for (i = 0; i != gFrost_Timings[work->args->variant][FROST_MOUNDS]; i++) {
         if (i < (frame - 36) / 3) {
           s32 cell = i % 3;
           u32 height;
@@ -238,7 +239,7 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
     }
     if (frame >= gFrost_Timings[work->args->variant][FROST_FRAME]) {
       // The first 24 chips, drawn while they last; every one, live or not,
-      // widens the range of heights the smoke rises over.
+      // widens the range of heights the sparkles rise over.
       for (i = 0; i != 24; i++) {
         struct Particle *chip = &PARTICLES[i];
 
@@ -263,56 +264,56 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
     if (highest <= lowest)
       highest = lowest + 1;
 
-    // Smoke: puffs appear over the heights of the motes and chips and rise
-    // half a pixel a frame. A puff keeps its x and y in velocityX and
+    // Sparkles: they appear over the heights of the motes and chips and rise
+    // half a pixel a frame. A sparkle keeps its x and y in velocityX and
     // velocityY, since x, y and z still hold the first 16 motes, and waits
     // 3 to 18 frames before its first picture (variant 20 to 35).
     if (frame == gFrost_Timings[work->args->variant][FROST_FRAME]) {
       for (i = 0; i != 32; i++) {
-        struct Particle *puff = &work->particles[i];
+        struct Particle *sparkle = &work->particles[i];
 
-        puff->velocityX = (Random16() & 127) << 16;
+        sparkle->velocityX = (Random16() & 127) << 16;
         if (highest == lowest)
-          puff->velocityY = px(lowest);
+          sparkle->velocityY = px(lowest);
         else
-          puff->velocityY = (Random16() % (highest - lowest) + lowest) << 16;
-        puff->variant = (Random16() & 15) + 20;
+          sparkle->velocityY = (Random16() % (highest - lowest) + lowest) << 16;
+        sparkle->variant = (Random16() & 15) + 20;
       }
     }
     if (frame >= gFrost_Timings[work->args->variant][FROST_FRAME]) {
-      // Each puff plays nine pictures, 2 frames each, and until 35 frames
+      // Each sparkle plays nine pictures, 2 frames each, and until 35 frames
       // after the burst starts again at a random spot when it goes out. The
       // spot chosen at the burst is replaced too, as the wait counts down to
       // 17, so every run of pictures starts at a fresh spot.
       s32 rise = (frame - gFrost_Timings[work->args->variant][FROST_FRAME]) / 2;
 
       for (i = 0; i != 32; i++) {
-        struct Particle *puff = &work->particles[i];
+        struct Particle *sparkle = &work->particles[i];
 
-        if (puff->variant >= 0 && puff->variant <= 17) {
-          s32 cell = (17 - puff->variant) / 2;
+        if (sparkle->variant >= 0 && sparkle->variant <= 17) {
+          s32 cell = (17 - sparkle->variant) / 2;
           u32 size;
 
 #ifdef UBFIX
           size = gBattleEffect_PuffSizes[cell];
-          pair[1](canvas, puffSheet + gBattleEffect_PuffCells[cell],
-                  Q_16_16_TO_INT(puff->velocityX) - (size >> 1),
-                  Q_16_16_TO_INT(puff->velocityY) - (size >> 1) - rise, size,
+          pair[1](canvas, sparkleSheet + gBattleEffect_PuffCells[cell],
+                  Q_16_16_TO_INT(sparkle->velocityX) - (size >> 1),
+                  Q_16_16_TO_INT(sparkle->velocityY) - (size >> 1) - rise, size,
                   size);
 #else
-          pair[1](canvas, puffSheet + gBattleEffect_PuffCells[cell],
-                  Q_16_16_TO_INT(puff->velocityX) -
+          pair[1](canvas, sparkleSheet + gBattleEffect_PuffCells[cell],
+                  Q_16_16_TO_INT(sparkle->velocityX) -
                       ((size = gBattleEffect_PuffSizes[cell]) >> 1),
-                  Q_16_16_TO_INT(puff->velocityY) - (size >> 1) - rise, size,
+                  Q_16_16_TO_INT(sparkle->velocityY) - (size >> 1) - rise, size,
                   size);
 #endif
         }
-        puff->variant--;
-        if ((puff->variant == -1 || puff->variant == 17) &&
+        sparkle->variant--;
+        if ((sparkle->variant == -1 || sparkle->variant == 17) &&
             frame < gFrost_Timings[work->args->variant][FROST_FRAME] + 35) {
-          puff->variant = 17;
-          puff->velocityX = (Random16() & 127) << 16;
-          puff->velocityY = (Random16() % (highest - lowest) + lowest) << 16;
+          sparkle->variant = 17;
+          sparkle->velocityX = (Random16() & 127) << 16;
+          sparkle->velocityY = (Random16() % (highest - lowest) + lowest) << 16;
         }
       }
     }

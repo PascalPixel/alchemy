@@ -498,10 +498,11 @@ static void MenuTest_GiveConsumableTestStock(void) {
 /// nothing else reads either. The call the string presumably fed is gone from
 /// every edition.
 static void MenuTest_GivePartyDjinn(void) {
-  /* LEFTOVER(frame): the buffer the Japanese edition's loop below fills sixteen
-   * times; the other editions drop the loop but keep its 256 bytes, the whole
-   * of the ROM's frame (sub sp, #256), which no instruction reads; as declared
-   * only with the loop, 4 of 232 instructions differ in tbs-en. */
+  /* LEFTOVER(frame): the buffer tbs-ja's loop below fills sixteen times; the
+   * other editions drop the loop but keep its 256 bytes, the whole of the ROM's
+   * frame (sub sp, #256), which no instruction addresses there, leaving them
+   * untouched; as declared only with the loop, 4 of 232 instructions differ in
+   * tbs-en. */
   UNUSED u8 fillBuffer[256];
 #if !TBS_PATCH_1
   s32 pass;

@@ -32,12 +32,12 @@ void BattleEffect_RunAstralBlast(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
-  /* LEFTOVER(frame): draw[1], the idle half of the pair, for 4 bytes the ROM's
-   * frame reserves that no instruction reads; Camelot's template: BlitterPair
-   * is the blitter set every effect declares, and
-   * BattleEffect_FetchRectangleBlitters and about 35 sibling effects fill and
-   * use its second half; as one DrawRectangle draw[1], 48 of 490 instructions
-   * differ in tbs-en. */
+  /* LEFTOVER(frame): draw[1], the idle half of the pair; the ROM's frame
+   * reserves 116 bytes (sub sp, #116), 4 more than one blitter needs, and no
+   * instruction addresses the word at sp+64; BlitterPair is the blitter set
+   * every effect declares, and BattleEffect_FetchRectangleBlitters and 28
+   * battle-effect files fill or call its second half; as one DrawRectangle
+   * draw[1], 48 of 490 instructions differ in tbs-en. */
   BlitterPair draw;
   s32 i;
   u8 *graphics;
@@ -222,12 +222,12 @@ void BattleEffect_RunShiningStar(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
-  /* LEFTOVER(frame): draw[1], the idle half of the pair, for 4 bytes the ROM's
-   * frame reserves that no instruction reads; Camelot's template: BlitterPair
-   * is the blitter set every effect declares, and
-   * BattleEffect_FetchRectangleBlitters and about 35 sibling effects fill and
-   * use its second half; as one DrawRectangle draw[1], 40 of 415 instructions
-   * differ in tbs-en. */
+  /* LEFTOVER(frame): draw[1], the idle half of the pair; the ROM's frame
+   * reserves 64 bytes (sub sp, #64), 4 more than one blitter needs, and no
+   * instruction addresses the word at sp+36; BlitterPair is the blitter set
+   * every effect declares, and BattleEffect_FetchRectangleBlitters and 28
+   * battle-effect files fill or call its second half; as one DrawRectangle
+   * draw[1], 40 of 415 instructions differ in tbs-en. */
   BlitterPair draw;
   s32 i;
   u8 *graphics;

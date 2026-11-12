@@ -1112,9 +1112,10 @@ s32 Credits_DrawLine(const u8 *text, s32 firstTile, s32 alignment) {
   u32 glyphBits;
   u32 glyphMask;
 
-  /* LEFTOVER(frame): an unused local for 32 of the 44 bytes the ROM's frame
-   * reserves (sub sp, #44) that no instruction reads; as without it, 4 of 277
-   * instructions differ in tbs-en. */
+  /* LEFTOVER(frame): an unused local the ROM's frame reserves and never
+   * touches: of the 44 bytes it reserves (sub sp, #44), no instruction
+   * addresses the 32 at sp+12 to sp+43; as without it, 4 of 277 instructions
+   * differ in tbs-en. */
   UNUSED u32 unused[8];
 
   if (text == NULL) {

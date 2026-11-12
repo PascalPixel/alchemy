@@ -122,12 +122,12 @@ UNUSED void BattleEffect_RunOrbitingSkulls(void) {
   struct ScreenPoint center;
   struct ScreenPoint screen;
   s32 frame;
-  /* LEFTOVER(frame): draw[1], the idle half of the pair, for 4 bytes the ROM's
-   * frame reserves that no instruction reads; Camelot's template: BlitterPair
-   * is the blitter set every effect declares, and
-   * BattleEffect_FetchRectangleBlitters and about 35 sibling effects fill and
-   * use its second half; as one DrawRectangle draw[1], 22 of 265 instructions
-   * differ in tbs-en. */
+  /* LEFTOVER(frame): draw[1], the idle half of the pair; the ROM's frame
+   * reserves 88 bytes (sub sp, #88), 4 more than one blitter needs, and no
+   * instruction addresses the word at sp+40; BlitterPair is the blitter set
+   * every effect declares, and BattleEffect_FetchRectangleBlitters and 28
+   * battle-effect files fill or call its second half; as one DrawRectangle
+   * draw[1], 22 of 265 instructions differ in tbs-en. */
   BlitterPair draw;
   s32 member;
   struct BattleCamera *camera;

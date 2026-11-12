@@ -531,9 +531,10 @@ static void IncreaseItemAndLevel_RunMotionTest(void) {
 /// at ACTOR_PORTRAIT_BROWSER, outside Japanese. The window is left open.
 static void IncreaseItemAndLevel_ShowGlyphCaptions(void) {
   struct Window *window;
-  /* LEFTOVER(frame): an unused local for 32 of the 36 bytes the ROM's frame
-   * reserves (sub sp, #36) that no instruction reads; as without it, 4 of 29
-   * instructions differ in tbs-en. */
+  /* LEFTOVER(frame): an unused local the ROM's frame reserves and never
+   * touches: of the 36 bytes it reserves (sub sp, #36), no instruction
+   * addresses the 32 at sp+4 to sp+35; as without it, 4 of 29 instructions
+   * differ in tbs-en. */
   UNUSED u8 text[32];
 
   window = Window_Create(0, 13, 30, 6, WINDOW_FLAG_INSTANT);

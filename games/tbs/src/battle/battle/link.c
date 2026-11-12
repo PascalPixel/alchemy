@@ -266,9 +266,10 @@ s32 LinkBattle_SyncTurn(void) {
   u16 *peer;
   u16 *signature;
   s32 missed = 0;
-  /* LEFTOVER(frame): an unused local for the 20 bytes, the whole of the ROM's
-   * frame (sub sp, #20), that no instruction reads; as without it, 20 of 232
-   * instructions differ in tbs-en. */
+  /* LEFTOVER(frame): an unused local the ROM's frame reserves and never
+   * touches: no instruction addresses any of the 20 bytes it reserves (sub sp,
+   * #20), and The Lost Age's LinkBattle_SyncTurn declares the same spare[10];
+   * as without it, 20 of 232 instructions differ in tbs-en. */
   UNUSED u16 spare[10];
 
   if (battle->isLink != 0) {

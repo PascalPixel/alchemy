@@ -1079,9 +1079,10 @@ static void TolbiSpring_UpdateTossSimulation(void) {
   s32 maxX;
   s32 minZ;
   s32 maxZ;
-  /* LEFTOVER(frame): an unused local for 12 of the 24 bytes the ROM's frame
-   * reserves (sub sp, #24) that no instruction reads; as without it, 4 of 947
-   * instructions differ in tbs-en. */
+  /* LEFTOVER(frame): an unused local the ROM's frame reserves and never
+   * touches: of the 24 bytes it reserves (sub sp, #24), no instruction
+   * addresses the 12 at sp+12 to sp+23; as without it, 4 of 947 instructions
+   * differ in tbs-en. */
   UNUSED struct Vector3 spare;
 
   toss = &sToss;

@@ -421,7 +421,7 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
 
         if (burst->variant > 0) {
           /* LEFTOVER(template): size holds 3, the mote's size; Camelot's
-           * template, from a sibling loop: the same routine's first motes
+           * template, from a sibling loop: BattleEffect_RunKirin's first motes
            * above draw through EFFECT_DRAW_MOTE with a size that grows, grow +
            * 4; as 3 in EFFECT_DRAW_MOTE, 77 of 1026 instructions differ in
            * tbs-en. */

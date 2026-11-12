@@ -469,7 +469,8 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses) {
     if ((spriteId = unitIds[0]) != BATTLE_UNIT_LIST_END) {
       for (;;) {
         /* LEFTOVER(template): actor = battleObject->actor, never read here;
-         * Camelot's template: the sibling loop above runs the same chain of
+         * Camelot's template: the sibling loop above in
+         * BattleObject_SpawnObjectsForList runs the same chain of
          * tests (removed, no battle object, actor = battleObject->actor, no
          * actor) and reads actor after it; as battleObject->actor != 0, 62 of
          * 272 instructions differ in tbs-en. */

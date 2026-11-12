@@ -299,9 +299,9 @@ next_state:
 /// When Move is cast with no target, the hand appears beside the caster for 30
 /// frames and then turns into particles.
 void FieldPsynergy_Move(void) {
-  /* LEFTOVER(frame): an unused local for the 12 bytes, the whole of the ROM's
-   * frame (sub sp, #12), that no instruction reads; as without it, 4 of 24
-   * instructions differ in tbs-en. */
+  /* LEFTOVER(frame): an unused local the ROM's frame reserves and never
+   * touches: no instruction addresses any of the 12 bytes it reserves (sub sp,
+   * #12); as without it, 4 of 24 instructions differ in tbs-en. */
   UNUSED s32 work[3];
   struct FieldEffectWork *effectWork;
   struct Actor *caster;

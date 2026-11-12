@@ -13,8 +13,8 @@ explains the window system for The Broken Seal.
   the debug menus, which The Broken Seal keeps in its screens object.
   `screens.c` is its screens object as far as the battle Psynergy menu
   (`battle_psynergy_menu.c`), written the same way. Each other file
-  holds one function or a small family, some still named by address
-  (`f04a85c.c`).
+  holds a run of functions the ROM keeps together, one still named by its
+  address (`f04a85c.c`).
 - `cell_picture.c` is ARM code, compiled with GCC 2.95.2 like The Broken
   Seal's ARM files (`ARM_C`).
 - `screens/save.c` holds `PaletteGlow_UpdateSine`, which pulses four colours

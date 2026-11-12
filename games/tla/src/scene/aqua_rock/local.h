@@ -44,7 +44,7 @@ s32 Event_AskYesNoWithActorAnimation(s32 id, s32 flags);
 void Event_StartScreenTransition(void);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
-void Task_RemoveFar(void *func);
+void Task_RemoveFar(TaskFunc func);
 s32 Resource_FindFreeEntry(void);
 s32 VramCache_Load(u32 slot, u32 size, const void *source);
 void *HeapSlot_AllocEwram(s32 slot, s32 size);

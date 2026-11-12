@@ -18,7 +18,7 @@ u16 Random16Far(void);
 s32 BattleEffect_ApplyColorToTargetBuffer(s32 a, s32 b);
 void BattleEffect_StartBufferInterpolation(s32 frames);
 void Func_02001de4(void);
-void Task_RemoveFar(void (*func)(void));
+void Task_RemoveFar(TaskFunc func);
 void Func_02000540(void);
 void Func_020006bc(void);
 void Func_020017bc(void);

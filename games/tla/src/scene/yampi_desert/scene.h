@@ -31,7 +31,7 @@ void GameFlag_ClearBit(s32 flag);
 void FieldMessage_Show(s32 message, s32 position);
 void Actor_SetPartAttribute(struct FieldActor *object, s32 value);
 void Actor_SetWideSprite(s32 actor, s32 value);
-void Task_RemoveFar(void (*func)(void));
+void Task_RemoveFar(TaskFunc func);
 void Field_DispatchTypeHandler(s32 type);
 
 void Func_020006ac(void);

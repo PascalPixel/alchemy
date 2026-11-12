@@ -7,8 +7,6 @@
 
 void Func_020042dc(void);
 void Func_020041fc(void);
-void Event_StartScreenTransition(void);
-void Event_WaitTransitionFrames(void);
 s32 Math_Cosine(s32 angle);
 u32 Random16Far(void);
 void Effect_AdvanceMotion(union FieldObject *object);
@@ -76,4 +74,72 @@ void Func_02003e04(void) {
   FieldEvent_Wait(10);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
   Func_020042e4();
+}
+
+#include "cell_target.h"
+
+extern struct CellTarget gData_02004cf4;
+
+void GameFlag_SetByte(s32 flag, s32 value);
+void Func_02003bfc(struct CellTarget *work,
+                   struct CellTargetEntry *entry);
+void Func_02003c6c(struct CellTarget *work,
+                   struct CellTargetEntry *entry);
+
+s32 Func_02003f9c(void) {
+  struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
+  s32 x = object->x >> 20;
+  s32 z = object->z >> 20;
+  struct CellTarget *work = &gData_02004cf4;
+  struct CellTargetEntry *entry = work->entries;
+  s32 i;
+
+  for (i = 0; i < work->count; i++, entry++) {
+    if (entry->x == x && entry->z == z) {
+      if (Event_GetFlag(entry->flag) == 0) {
+        Func_02003bfc(work, entry);
+        Event_SetFlag(entry->flag);
+        work->current = i;
+        break;
+      }
+      if (i == work->current)
+        break;
+      work->current = i;
+      Func_02003c6c(work, entry);
+      GameFlag_SetByte(work->flagByte, x);
+      GameFlag_SetByte(work->flagByte + 8, z);
+      return 1;
+    }
+  }
+  return 0;
+}
+
+struct JupiterLighthouseRoom8EventWork {
+  u8 unk000[0x1ac];
+  s32 screenEffect;
+  u8 unk1b0[0x1c];
+  struct Actor *marker;
+};
+
+void Func_0200404c(s32 x, s32 z, s32 effect) {
+  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
+  struct JupiterLighthouseRoom8EventWork *work = Ram_HeapSlots->eventWork;
+  s32 dx = FieldGameFlag_GetByte(gData_02004cf4.flagByte);
+  s32 dz = FieldGameFlag_GetByte(gData_02004cf4.flagByte + 8);
+
+  if (dx != 0 || dz != 0) {
+    struct Actor *marker;
+
+    GameFlag_SetByte(gData_02004cf4.flagByte, 0);
+    GameFlag_SetByte(gData_02004cf4.flagByte + 8, 0);
+    leader->x = ((dx + x) << 20) + 0x80000;
+    leader->z = ((dz + z) << 20) + 0x80000;
+    marker = work->marker;
+    marker->x = leader->x;
+    marker->z = leader->z;
+    Func_020041fc();
+    Func_02003e04();
+    ((struct JupiterLighthouseRoom8EventWork *)Ram_HeapSlots->eventWork)
+        ->screenEffect = effect;
+  }
 }

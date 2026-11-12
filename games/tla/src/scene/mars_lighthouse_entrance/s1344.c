@@ -27,7 +27,6 @@ extern const u8 gData_02006778[];
 extern s16 gData_02006868;
 extern s16 gData_020068a0;
 extern u16 gData_020068a2;
-extern u8 gMapCellBuffer[];
 
 void *Heap_Alloc(s32 size);
 void Heap_Release(void *block);
@@ -45,4 +44,14 @@ void Func_02001344(struct Actor *object) {
     return;
   object->action = 0;
   object->update = (void (*)(void))Func_020012e4;
+}
+
+#include "types.h"
+
+s32 Func_020029bc(void);
+void Func_02003878(s32 value);
+
+void Func_02001378(void) {
+  if (Func_020029bc())
+    Func_02003878(1);
 }

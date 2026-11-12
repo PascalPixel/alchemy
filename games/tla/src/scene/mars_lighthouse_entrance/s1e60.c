@@ -1,6 +1,7 @@
 #include "room.h"
 
 void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
+void Animation_SetStateFlags(struct Actor *object, s32 flags);
 
 extern const u8 gData_020056a0[];
 

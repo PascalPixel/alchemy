@@ -183,3 +183,10 @@ void Func_0200263c(void) {
 #endif
     work->unk04 = 0;
 }
+
+#include "ride.h"
+
+void Func_02002848(void) {
+  if (RIDE_WORK->active)
+    Func_0200263c();
+}

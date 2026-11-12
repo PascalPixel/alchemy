@@ -38,7 +38,6 @@ extern const u8 gData_020014d8[];
 extern const u8 gData_020014fc[];
 
 void Scene_SetActorSpritePriority(struct FieldActor *object, s32 priority);
-void Actor_SetSingleChildFlags(struct FieldActor *object, s32 value);
 void Func_02000454(const u8 *data);
 void Func_02000d10(void);
 void Func_02000ea0(void);

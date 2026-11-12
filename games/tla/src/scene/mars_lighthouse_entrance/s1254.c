@@ -29,3 +29,42 @@ void Func_02001254(void) {
   if (++gData_020068a0 > 300)
     gData_020068a0 = 0;
 }
+
+#include "ride.h"
+#include "event_inline.h"
+
+void Func_020012bc(struct Actor *object) {
+  switch (gFrameCount & 7) {
+  case 0:
+    Animation_ApplyChildValues(object, 0);
+    break;
+  case 6:
+    Animation_ApplyChildValues(object, 10);
+    break;
+  }
+}
+
+#include "actor.h"
+
+struct Sprite020012e4 {
+  u8 unk00[18];
+  u16 unk12;
+};
+
+void Func_020012e4(struct Actor *actor) {
+  struct Sprite020012e4 *sprite = actor->animation;
+
+  sprite->unk12 += 0x800;
+  if (++actor->action == 8)
+    actor->velocityY = 0x40000;
+  if (actor->action > 9) {
+    actor->x += 0x40000;
+    actor->scaleX -= 0x800;
+    actor->scaleY -= 0x800;
+  }
+  if (actor->action == 32) {
+    actor->x = 0;
+    actor->z = 0;
+    actor->update = NULL;
+  }
+}

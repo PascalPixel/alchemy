@@ -57,7 +57,6 @@ void Func_02004d40(void);
 void Func_02004d48(void);
 void Func_02004db0(void);
 void Func_02004bc0(struct Actor *object, s32 a1);
-void Animation_SetStateFlags(struct Actor *object, s32 flags);
 s32 Math_Cosine(s32 angle);
 
 void Func_02001e1c(struct Actor *object, s32 part);

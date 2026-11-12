@@ -20,7 +20,7 @@ void Func_02002d04(void);
 void Func_02002d90(void);
 void Func_020041cc(struct Actor *actor, s32 mode);
 s32 Func_0200428c(s32 *a, s32 radiusA, struct Position *b, s32 radiusB);
-s32 Map_GetTerrainHeight(u8 layer, s32 x, s32 z);
+s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 void Actor_SetAnimationSpeed(struct Actor *actor, s32 speed);
 extern s16 gData_0200483c[];
 

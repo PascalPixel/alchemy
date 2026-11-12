@@ -43,7 +43,6 @@ struct RideWork {
 extern u8 gData_020023c4[];
 extern u16 gData_02004cf0[];
 void Animation_ApplyChildValues(struct Actor *object, s32 value);
-void Func_020041ec(void *handle);
 void Func_02002148(void);
 void Func_0200236c(void);
 void Func_02002ad0(struct Actor *object);

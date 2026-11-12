@@ -1,5 +1,7 @@
 #include "caverns.h"
 
+void Actor_SetSingleChildFlags(struct FieldActor *object, s32 value);
+
 struct FieldActor *Func_020000d0(s32 x, s32 y, s32 z, s32 type) {
   struct FieldActor *object = Import_ActorCreate(type, x, y, z);
 

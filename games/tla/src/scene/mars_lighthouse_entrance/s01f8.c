@@ -48,3 +48,33 @@ L_02008282:
   Func_02000168(2, v9, v10, v6);
   Func_02004c80((v9 << 20), (v10 << 20), FIELD_AT(v11, u8, 0), v7);
 }
+
+#include "field_event.h"
+#include "field.h"
+
+void Func_02004bc0();
+
+void Func_020002bc(u16 *table) {
+  u16 *row;
+  struct FieldActor *object;
+  s16 flag;
+  s16 animation;
+
+  if (table[0] == 0xffff)
+    return;
+  row = table;
+loop:
+  object = (struct FieldActor *)Actor_Get(row[0]);
+  animation = row[1];
+  flag = row[2];
+
+  Actor_SetSingleChildFlags(object, 0);
+  Func_02004bc0(object, (u16)animation + Event_GetFlag((u16)flag));
+  object->motionFlags = 0;
+  object->collisionFlags &= 0xfe;
+  object->timer = flag;
+  Func_020001f8(object);
+  row += 3;
+  if (row[0] != 0xffff)
+    goto loop;
+}

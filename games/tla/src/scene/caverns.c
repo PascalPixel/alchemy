@@ -1,4 +1,27 @@
-#include "caverns.h"
+#include "battle.h"
+#include "field.h"
+#include "game.h"
+#include "graphics.h"
+#include "lib.h"
+#include "menu.h"
+#include "sound.h"
+#include "system.h"
+#include "types.h"
+#include "scene_tables.h"
+
+const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
+
+#include "caverns/caverns.h"
+
+const u8 *Func_02000344(void) {
+  const u8 *result = NULL;
+
+  if (gMainRoutineWork.scene == (s32)&SceneId_Ov6a9Room2)
+    result = gData_02001264;
+  return result;
+}
+
+const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 const u8 *Func_02000374(void) {
   s32 scene = gMainRoutineWork.scene;

@@ -27,7 +27,6 @@ extern const u8 gData_02006778[];
 extern s16 gData_02006868;
 extern s16 gData_020068a0;
 extern u16 gData_020068a2;
-extern u8 gMapCellBuffer[];
 
 void *Heap_Alloc(s32 size);
 void Heap_Release(void *block);
@@ -62,8 +61,6 @@ void Func_02001a00(void) { Func_02002f4c(13, 21, 22, 0, gData_02005644); }
 
 extern const u8 gData_020056a0[];
 
-void Func_02001ae0(void);
-void Func_02001cbc(void);
 void Func_02001f90(struct Actor *object);
 
 s32 Func_02001a1c(struct Actor *a, struct Actor *b) {
@@ -82,4 +79,91 @@ s32 Func_02001a80(struct Actor *a, struct Actor *b) {
       return 1;
   }
   return 0;
+}
+
+#include "field/event_work.h"
+
+struct RideSlot {
+  u16 id;
+  u16 blocked;
+};
+
+struct RideWork {
+  u8 unk00[4];
+  u16 landed;
+  u16 blocked;
+  u8 unk08[2];
+  u16 value0a;
+  u8 unk0c[0x48];
+  struct RideSlot slots[4];
+  u8 unk64[4];
+  u16 value68;
+  u16 direction;
+};
+
+extern u8 gData_020023c4[];
+
+void Func_02001ae0(struct Actor *object) {
+  struct RideWork *work = (struct RideWork *)(gData_020023c4 + 0x188);
+  struct Actor *actor = Actor_Get(gMainRoutineWork.currentOwner);
+  struct EventWork *event = Ram_HeapSlots->eventWork;
+  s32 dx = object->bounce;
+  s32 dz;
+  s32 i;
+  s32 direction;
+  s32 id;
+
+  object->x += dx;
+  object->y += object->gravity;
+  dz = object->unk4c;
+  object->z += dz;
+  object->bounce = dx - dx / 18;
+  object->unk4c = dz - dz / 16;
+  object->scaleX += object->speedLimit;
+  object->scaleY += object->acceleration;
+  ((struct SpriteParts *)object->animation)->unk12 += object->action;
+  if (actor->y == actor->terrainHeight && Func_02001a1c(object, actor) &&
+      gMainRoutineWork.renderMode == 0) {
+    if (object->unk4c != 0) {
+      work->value68 = 0;
+      {
+        u16 *cell = &work->direction;
+
+        if (object->unk4c > 0) {
+          direction = 1;
+          *cell = direction;
+        } else {
+          direction = 0xffff;
+          *cell = direction;
+        }
+      }
+    }
+    object->priorityFlags = 2;
+    {
+      s32 speed = object->unk4c;
+
+      object->unk4c = 0;
+      object->z -= speed;
+      object->gravity += speed >> 2;
+    }
+    work->landed = 1;
+    event->exit = work->value0a;
+  }
+  for (i = 0; i < 4 && (id = work->slots[i].id) != 0; i++) {
+    actor = Actor_Get(id);
+
+    if (actor->y == actor->terrainHeight && Func_02001a80(object, actor)) {
+      if (work->slots[i].blocked == 0) {
+        s32 speed;
+
+        object->priorityFlags = 2;
+        speed = object->unk4c;
+        object->unk4c = 0;
+        object->z -= speed;
+        object->gravity += speed >> 2;
+      } else {
+        work->blocked = 1;
+      }
+    }
+  }
 }

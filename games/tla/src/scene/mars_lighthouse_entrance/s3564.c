@@ -177,3 +177,5 @@ end:
   object->acceleration = 0x4000;
   Func_02004bc0(object, 1);
 }
+
+void Func_02003878(s32 value) { gData_020068b0 = value; }

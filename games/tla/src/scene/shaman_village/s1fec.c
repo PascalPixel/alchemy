@@ -332,7 +332,7 @@ void Func_0200289c(void) {
 
 #define EVENT_WORK ((struct ShamanVillageEventWork *)Ram_HeapSlots->eventWork)
 
-u8 *Unit_Get(s32 owner);
+void *Unit_Get(s32 owner);
 struct ItemDefinition *Func_02004894(s32 item);
 
 // Forwards to Party_ListActiveOwners; tagged where it is used.

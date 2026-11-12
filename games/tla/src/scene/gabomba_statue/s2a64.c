@@ -14,7 +14,7 @@ extern const u8 gData_02005d7c[];
 extern u32 gData_02005ccc[];
 extern u32 gData_02005d24[];
 extern u32 gData_02005d8c[];
-u8 *Unit_Get(s32 owner);
+void *Unit_Get(s32 owner);
 void Func_0200533c(void);
 void Func_02005364(void);
 void Func_02005724(s32 id, s32 target);

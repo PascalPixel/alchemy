@@ -180,7 +180,7 @@ void Func_02000304(void) {
 #include "version.h"
 
 s32 Func_020011a0(s32 *unit, s32 *slot);
-struct UnitData *Unit_Get(s32 unit);
+void *Unit_Get(s32 owner);
 const u8 *Func_020010b8(s32 item);
 void Func_020010b0(s32 item, s32 a);
 void Func_02000920(void);

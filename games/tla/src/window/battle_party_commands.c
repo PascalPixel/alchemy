@@ -162,7 +162,7 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member);
 s32 Message_ShowLocalizedAndWait(void);
 void Message_DecodeRaw(s32 message, u16 *text, s32 capacity);
 void Func_08118130(s32 kind, u8 *counts);
-struct BattleUnit *Unit_Get(s32 unit);
+void *Unit_Get(s32 owner);
 s32 Func_08045528(s32 portrait, s32 slot);
 void Func_08041b68(void);
 struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 flags);

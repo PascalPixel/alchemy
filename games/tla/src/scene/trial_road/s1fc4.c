@@ -270,7 +270,7 @@ extern const s16 gData_02005bac[][2];
 extern const s8 gData_02005bcc[];
 extern const s8 gData_02005bd6[];
 
-u8 *Unit_Get(s32 id);
+void *Unit_Get(s32 owner);
 void Func_02002c30(u32 seed);
 void Func_02005828(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Func_020057e8(void);

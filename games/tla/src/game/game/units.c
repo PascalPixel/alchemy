@@ -1118,7 +1118,6 @@ void Func_080ae410(u8 *save, s32 keepSettings) {
   gFrameWaitCount = gMainRoutineWork.playTime;
 }
 
-void *Unit_Get(s32 owner);
 void Unit_Calculate(s32 unitId);
 void Func_08038348(s32 a, s32 b);
 

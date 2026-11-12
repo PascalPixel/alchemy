@@ -11,7 +11,7 @@
 extern u16 gData_02007948[4];
 void Func_02005a9c(void);
 void Func_02005aa4(void);
-u8 *Unit_Get(s32 unit);
+void *Unit_Get(s32 owner);
 void Party_RemoveOwnerRestored(s32 unit);
 void Func_020050ac(void);
 void Func_020031f0(s32 id);

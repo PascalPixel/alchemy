@@ -1550,7 +1550,7 @@ void Func_02004274(s32 a0) { Func_0200495c(1, a0); }
 extern u8 gData_020023c4[];
 extern u32 gData_020053e4[];
 
-u8 *Unit_Get(s32 owner);
+void *Unit_Get(s32 owner);
 void Func_020044f8(s32 level);
 void Func_020048a0(void);
 s32 Func_02004904(void);

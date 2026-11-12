@@ -508,7 +508,7 @@ void Event_WaitTransitionFrames(void);
 void Func_0200577c(void);
 
 void PartyInventory_Add(s32 item);
-void *Unit_Get(s32 id);
+void *Unit_Get(s32 owner);
 void Func_020057ec(s32 id, s32 slot);
 void Func_0200593c(s32 row, s32 column);
 static __inline__ s32 Func_0200592c_(void) { return ((s32)Func_080d4568()); }

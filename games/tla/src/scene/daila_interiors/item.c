@@ -92,7 +92,7 @@ s32 Func_02000df4(s32 *member, s32 *slot);
 s32 Func_02000dbc(s32 mode);
 void FieldMessage_Show(s32 msg, s32 mode);
 void Message_CloseFinishedWindows(void);
-u8 *Unit_Get(s32 owner);
+void *Unit_Get(s32 owner);
 void Unit_Calculate(s32 owner);
 s32 Inventory_GetQuantity(s32 member, s32 slot);
 s32 Inventory_CountItem(s32 member, s32 item);

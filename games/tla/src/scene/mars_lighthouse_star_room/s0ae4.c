@@ -63,7 +63,7 @@ void Func_02000ba4(void) {
 
 void PartyInventory_Remove(s32 item);
 s32 Inventory_AddItem(s32 owner, s32 item);
-u8 *Unit_Get(s32 owner);
+void *Unit_Get(s32 owner);
 void Func_020042c4(s32 owner, s32 slot);
 void Func_020041ec(struct Actor *object);
 void Func_020043d4(void);

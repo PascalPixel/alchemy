@@ -110,7 +110,7 @@ static void ValePrologue_FlickerBoulderShadow(void);
 static void ValePrologue_GaretFollowsIsaac(void);
 static void ValePrologue_RebuildRiverbank(void);
 static void ValePrologue_FlashPaletteAndSpawnEffects(struct Actor *actor);
-static void ValePrologue_SpawnEffectPair(struct Actor *parent);
+static void Scene_SpawnPsynergyRings(struct Actor *parent);
 static void ValePrologue_UpdateBoulderMapEffects(void);
 static void ValePrologue_CycleBoulderPalette(void);
 static void ValePrologue_CopyLeaderSpritePriority(void);
@@ -2989,7 +2989,7 @@ static void ValePrologue_FightFourthMonster(void) {
 
 /// An elder calling up Psynergy, for 40 frames once the camera reaches the
 /// Boulder. The sprite shows palette 7 for two frames in four, and a pair of
-/// Psynergy sparks rises and falls every 16 frames plus 8 for each step of
+/// Psynergy rings rises and falls every 16 frames plus 8 for each step of
 /// sShakeShift.
 static void ValePrologue_FlashPaletteAndSpawnEffects(struct Actor *actor) {
   s32 spawnInterval;
@@ -3004,13 +3004,13 @@ static void ValePrologue_FlashPaletteAndSpawnEffects(struct Actor *actor) {
 
     spawnInterval = (sShakeShift << 3) + 16;
     if (Math_RemainderUnsigned(*frame, spawnInterval) == 0) {
-      ValePrologue_SpawnEffectPair(actor);
+      Scene_SpawnPsynergyRings(actor);
     }
   }
 }
 
 /// An elder holding the Boulder. The sprite cycles through palettes 0 to 5,
-/// and sparks rise and fall as in ValePrologue_FlashPaletteAndSpawnEffects.
+/// and rings rise and fall as in ValePrologue_FlashPaletteAndSpawnEffects.
 static void ValePrologue_CyclePaletteAndSpawnEffects(struct Actor *actor) {
   s32 paletteFrame;
   s32 spawnInterval;
@@ -3021,7 +3021,7 @@ static void ValePrologue_CyclePaletteAndSpawnEffects(struct Actor *actor) {
   }
   spawnInterval = (sShakeShift << 3) + 16;
   if (Math_RemainderUnsigned(gFrameCount, spawnInterval) == 0) {
-    ValePrologue_SpawnEffectPair(actor);
+    Scene_SpawnPsynergyRings(actor);
   }
 }
 
@@ -3035,59 +3035,8 @@ static void ValePrologue_CycleActorPalettes(struct Actor *actor) {
   }
 }
 
-#include "shared/field_effect_vertical.h"
-
-/// Spawns a pair of Psynergy sparks on an elder, one rising and one falling
-/// (shared/field_effect_vertical.h), with SE_JUMP.
-static void ValePrologue_SpawnEffectPair(struct Actor *parent) {
-  struct Actor *pair[2];
-  struct Actor *child;
-  struct Sprite *sprite;
-  struct FieldEffectWork *effectWork = gFieldEffectWork;
-  s32 i;
-
-  Sound_Play(SE_JUMP);
-  for (i = 0; i < 2; ++i) {
-    child = FieldActor_Create(SPRITE_GOLDEN_RINGS, parent->x.fixed,
-                              parent->y.fixed, parent->z.fixed);
-    pair[i] = child;
-    if (child != NULL) {
-      child->groundHeight = parent->groundHeight;
-      sprite = child->sprite;
-      child->motionFlags = 0;
-      child->timer = 0;
-      child->watchedActor = parent;
-      if (sprite != NULL) {
-        Sprite_StartAnimation(sprite, 0);
-        sprite->flags = 0;
-        VramCache_FreeEntry(sprite->slot);
-        sprite->slot = effectWork->tileSlot;
-        sprite->retainCacheEntry = 1;
-        sprite->image.tile =
-            (gVramCacheEntries[sprite->slot].offset >> 5) & 0x3ff;
-        sprite->image.fullColor = 0;
-        sprite->image.shape = 1;
-        sprite->image.size = 2;
-        sprite->entries[0]->picture = 0;
-      }
-    }
-  }
-  {
-    struct Actor *effect = pair[0];
-    struct Sprite *effectSprite = effect->sprite;
-
-    effect->update = FieldEffect_AnimateVerticalNegative;
-    effectSprite->image.priority = parent->sprite->image.priority;
-  }
-  {
-    struct Actor *effect = pair[1];
-    struct Sprite *effectSprite = effect->sprite;
-
-    effectSprite->image.priority = parent->sprite->image.priority;
-    effect->update = FieldEffect_AnimateVerticalPositive;
-    effect->priorityFlags = 2;
-  }
-}
+#define PSYNERGY_RINGS_SOUND SE_JUMP
+#include "shared/psynergy_rings.h"
 
 #include "shared/event_psynergy.h"
 

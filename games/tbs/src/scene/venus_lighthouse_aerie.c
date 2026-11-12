@@ -144,7 +144,7 @@ static void VenusLighthouseAerie_FloatPlatforms(void);
 static void VenusLighthouseAerie_OverhearSaturosAndMenardi(void);
 static void VenusLighthouseAerie_ShowPartyMember(s32 actorId, s32 shown);
 static void VenusLighthouseAerie_FlashActorPalette(struct Actor *actor);
-static void VenusLighthouseAerie_SpawnAttachedPairEffects(struct Actor *parent);
+static void Scene_SpawnPsynergyRings(struct Actor *parent);
 static void VenusLighthouseAerie_UpdateShebaPalette(void);
 static void VenusLighthouseAerie_CombineSaturosAndMenardi(void);
 static void VenusLighthouseAerie_FlashScreen(void);
@@ -1260,8 +1260,8 @@ static void VenusLighthouseAerie_ConfrontSaturosAndMenardi(void) {
   GameFlag_Set(FLAG_AERIE_FIRST_BATTLE_BEGUN);
 }
 
-/// Flashes an actor palette and emits paired effects every fifteenth
-/// frame.
+/// Flashes the actor white two frames in four, with Psynergy rings every 15
+/// frames.
 static void VenusLighthouseAerie_FlashActorPalette(struct Actor *actor) {
   if (*(s32 *)&gFrameCount & 2) {
     Actor_SetColorMode(actor, SPRITE_COLOR_WHITE);
@@ -1269,75 +1269,23 @@ static void VenusLighthouseAerie_FlashActorPalette(struct Actor *actor) {
     Actor_SetColorMode(actor, SPRITE_COLOR_NORMAL);
   }
   if (Math_RemainderUnsigned(*(s32 *)&gFrameCount, 15) == 0) {
-    VenusLighthouseAerie_SpawnAttachedPairEffects(actor);
+    Scene_SpawnPsynergyRings(actor);
   }
 }
 
-/// Cycles the actor palette and emits paired effects every fifteenth
-/// frame.
+/// Cycles the actor through palettes 0 to 5, with Psynergy rings every 15
+/// frames.
 static void VenusLighthouseAerie_CycleActorPalette(struct Actor *actor) {
   if (gFrameCount & 1) {
     Actor_SetColorMode(actor, Math_RemainderUnsigned(gFrameCount >> 1, 6));
   }
   if (Math_RemainderUnsigned(gFrameCount, 15) == 0) {
-    VenusLighthouseAerie_SpawnAttachedPairEffects(actor);
+    Scene_SpawnPsynergyRings(actor);
   }
 }
 
-#include "shared/field_effect_vertical.h"
-
-/// Spawns two vertical effects using the parent position and shared cached
-/// tiles.
-static void
-VenusLighthouseAerie_SpawnAttachedPairEffects(struct Actor *parent) {
-  struct Actor *pair[2];
-  struct Actor *child;
-  struct Sprite *sprite;
-  struct FieldEffectWork *effectWork = gFieldEffectWork;
-  s32 effectIndex;
-
-  Sound_Play(SE_PSYNERGY_SPARKLE);
-  for (effectIndex = 0; effectIndex < 2; ++effectIndex) {
-    child = FieldActor_Create(SPRITE_GOLDEN_RINGS, parent->x.fixed,
-                              parent->y.fixed, parent->z.fixed);
-    pair[effectIndex] = child;
-    if (child != NULL) {
-      child->groundHeight = parent->groundHeight;
-      sprite = child->sprite;
-      child->motionFlags = 0;
-      child->timer = 0;
-      child->watchedActor = parent;
-      if (sprite != NULL) {
-        Sprite_StartAnimation(sprite, 0);
-        sprite->flags = 0;
-        VramCache_FreeEntry(sprite->slot);
-        sprite->slot = effectWork->tileSlot;
-        sprite->retainCacheEntry = 1;
-        sprite->image.tile =
-            (gVramCacheEntries[sprite->slot].offset >> 5) & 0x3ff;
-        sprite->image.fullColor = 0;
-        sprite->image.shape = 1;
-        sprite->image.size = 2;
-        sprite->entries[0]->picture = 0;
-      }
-    }
-  }
-  {
-    struct Actor *effect = pair[0];
-    struct Sprite *effectSprite = effect->sprite;
-
-    effect->update = FieldEffect_AnimateVerticalNegative;
-    effectSprite->image.priority = parent->sprite->image.priority;
-  }
-  {
-    struct Actor *effect = pair[1];
-    struct Sprite *effectSprite = effect->sprite;
-
-    effectSprite->image.priority = parent->sprite->image.priority;
-    effect->update = FieldEffect_AnimateVerticalPositive;
-    effect->priorityFlags = 2;
-  }
-}
+#define PSYNERGY_RINGS_SOUND SE_PSYNERGY_SPARKLE
+#include "shared/psynergy_rings.h"
 
 #include "shared/event_psynergy.h"
 

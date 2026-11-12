@@ -1300,7 +1300,7 @@ static void ShipRooms_StepBesideLeader(s32 passengerId) {
     Actor_SetPositionFixed(passengerId, leaderPosition->x.fixed,
                            leaderPosition->z.fixed);
   }
-  Actor_SetSpeed(passengerId, PIXELS(8) / 5, PIXELS(4) / 5);
+  Actor_SetSpeed(passengerId, 1.6);
   Actor_SetAnimation(passengerId, 2);
   {
     s32 offset = gShipRooms_TurnSteps[direction];
@@ -1636,7 +1636,7 @@ static void ShipRooms_TurnBackFromStairs(void) {
     Event_Start();
     Message_SetVoiceFromActor(ACTOR_ROWING_CREWMAN);
     FieldMessage_ShowCentered(MsgTolbiShipWhereGoingSlay, 1, 8);
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(8) / 5, PIXELS(4) / 5);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 1.6);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 408, 134);
     ShipRooms_Turn(ACTOR_PARTY_LEADER, FACING_SOUTH);
     Event_End();
@@ -1788,14 +1788,14 @@ static void ShipRooms_WatchWarriorsStormOff(void) {
     Actor_FaceDirection(ACTOR_HOLD_SEAN, FACING_NORTH_NORTHWEST, 40);
     Actor_SetAnimation(ACTOR_HOLD_SEAN, 3);
     Actor_SetAnimationAndWait(ACTOR_HOLD_OURANOS, 3);
-    Actor_SetSpeed(ACTOR_HOLD_SEAN, PIXELS(8) / 5, PIXELS(4) / 5);
-    Actor_SetSpeed(ACTOR_HOLD_OURANOS, PIXELS(8) / 5, PIXELS(4) / 5);
+    Actor_SetSpeed(ACTOR_HOLD_SEAN, 1.6);
+    Actor_SetSpeed(ACTOR_HOLD_OURANOS, 1.6);
     action = gShipRooms_LeaveHold;
     Actor_SetScript(ACTOR_HOLD_SEAN, action);
     Actor_SetScript(ACTOR_HOLD_OURANOS, action);
     Event_Wait(20);
     Actor_FaceDirection(ACTOR_HOLD_SECOND_GUIDE, FACING_SOUTH, 0);
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(12) / 5, PIXELS(6) / 5);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 2.4);
     Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 184, 520);
     Event_Wait(1);
@@ -1809,7 +1809,7 @@ static void ShipRooms_WatchWarriorsStormOff(void) {
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 20);
     Actor_StartRepeatedMotion(ACTOR_HOLD_SECOND_GUIDE, 2);
     ShipRooms_Say(ACTOR_HOLD_SECOND_GUIDE);
-    Actor_SetSpeed(ACTOR_HOLD_SECOND_GUIDE, PIXELS(8) / 5, PIXELS(4) / 5);
+    Actor_SetSpeed(ACTOR_HOLD_SECOND_GUIDE, 1.6);
     Actor_SetScript(ACTOR_HOLD_SECOND_GUIDE, action);
     Event_Wait(40);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
@@ -1876,8 +1876,8 @@ static void ShipRooms_DiscussLaunchingWithoutAnchor(void) {
   Actor_FaceDirection(ACTOR_QUARTERS_SEAN, FACING_SOUTH_SOUTHWEST, 0);
   ShipRooms_Turn(ACTOR_QUARTERS_OURANOS, FACING_SOUTH_SOUTHWEST);
   // Two passengers step aside as the conversation continues.
-  Actor_SetSpeed(ACTOR_QUARTERS_SECOND_GUIDE, PIXELS(2) / 5, PIXELS(1) / 5);
-  Actor_SetSpeed(ACTOR_QUARTERS_SEAN, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(ACTOR_QUARTERS_SECOND_GUIDE, 0.4);
+  Actor_SetSpeed(ACTOR_QUARTERS_SEAN, 0.8);
   Actor_WalkTo(ACTOR_QUARTERS_SEAN, 444, 668);
   Actor_WalkToAndWait(ACTOR_QUARTERS_SECOND_GUIDE, 472, 668);
   Actor_WaitForMoveById(ACTOR_QUARTERS_SEAN);
@@ -2003,10 +2003,10 @@ static void ShipRooms_DiscussLaunchingWithoutAnchor(void) {
   Actor_Jump(ACTOR_QUARTERS_CAPTAIN, 4, 40);
   Actor_StartRepeatedMotion(ACTOR_QUARTERS_CAPTAIN, 2);
   Event_ShowMessage(captainSpeech, 0);
-  Actor_SetSpeed(ACTOR_QUARTERS_CAPTAIN, PIXELS(8) / 5, PIXELS(4) / 5);
+  Actor_SetSpeed(ACTOR_QUARTERS_CAPTAIN, 1.6);
   Actor_WalkToAndWait(ACTOR_QUARTERS_CAPTAIN, 475, 598);
   Actor_FaceDirection(ACTOR_QUARTERS_CAPTAIN, FACING_WEST, 0);
-  Actor_SetSpeed(ACTOR_QUARTERS_KAJA, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_QUARTERS_KAJA, 1);
   Actor_WalkToAndWait(ACTOR_QUARTERS_KAJA, 462, 618);
   ShipRooms_Turn(ACTOR_QUARTERS_KAJA, FACING_NORTH_NORTHWEST);
   Actor_ShowEmote(ACTOR_QUARTERS_KAJA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
@@ -2070,14 +2070,14 @@ static void ShipRooms_DiscussLaunchingWithoutAnchor(void) {
   ShipRooms_Say(ACTOR_QUARTERS_CREWMAN);
   Actor_RunRepeatedMotion(ACTOR_QUARTERS_CREWMAN, 1);
   ShipRooms_Say(ACTOR_QUARTERS_CREWMAN);
-  Actor_SetSpeed(ACTOR_QUARTERS_SECOND_GUIDE, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_QUARTERS_SECOND_GUIDE, 1);
   Actor_WalkTo(ACTOR_QUARTERS_SECOND_GUIDE, 438, 659);
   Actor_FaceDirection(ACTOR_QUARTERS_CAPTAIN, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_QUARTERS_KAJA, FACING_NORTH_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_QUARTERS_SEAN, FACING_SOUTH_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_QUARTERS_OURANOS, FACING_NORTH_NORTHWEST, 0);
   Sound_Play(SOUND_FADE_OUT_BGM);
-  Actor_SetSpeed(ACTOR_QUARTERS_CREWMAN, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_QUARTERS_CREWMAN, 1);
   Actor_WalkToAndWait(ACTOR_QUARTERS_CREWMAN, 488, 686);
   Actor_FaceDirection(ACTOR_QUARTERS_CREWMAN, FACING_NORTH_NORTHWEST, 0);
   Actor_WaitForMoveById(ACTOR_QUARTERS_SECOND_GUIDE);
@@ -2142,7 +2142,7 @@ static void ShipRooms_ReturnLuckyAnchor(void) {
                   40);
   FieldCamera_SetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
   FieldCamera_MoveTo(PIXELS(472), -1, PIXELS(636), 1);
-  Actor_SetSpeed(ACTOR_QUARTERS_SECOND_GUIDE, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_QUARTERS_SECOND_GUIDE, 1);
   Actor_WalkToAndWait(ACTOR_QUARTERS_SECOND_GUIDE, 472, 662);
   ShipRooms_Turn(ACTOR_QUARTERS_SECOND_GUIDE, FACING_NORTH_NORTHWEST);
   ShipRooms_Say(ACTOR_QUARTERS_SECOND_GUIDE);
@@ -2190,28 +2190,28 @@ static void ShipRooms_ReturnLuckyAnchor(void) {
   Actor_FaceDirection(ACTOR_QUARTERS_OURANOS, FACING_NORTH_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_QUARTERS_SECOND_GUIDE, FACING_NORTH_NORTHEAST, 0);
   // Bring the rest of the party out beside Isaac for the agreement.
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 1);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 486, 608);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   if (actor != 0) {
     Actor_SetPositionFixed(ACTOR_GARET, actor->x.fixed, actor->z.fixed);
   }
-  Actor_SetSpeed(ACTOR_GARET, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_GARET, 1);
   Actor_WalkToAndWait(ACTOR_GARET, 486, 624);
   Actor_FaceDirection(ACTOR_GARET, FACING_WEST, 0);
   actor = Actor_Get(ACTOR_GARET);
   if (actor != 0) {
     Actor_SetPositionFixed(ACTOR_IVAN, actor->x.fixed, actor->z.fixed);
   }
-  Actor_SetSpeed(ACTOR_IVAN, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_IVAN, 1);
   Actor_WalkToAndWait(ACTOR_IVAN, 486, 640);
   Actor_FaceDirection(ACTOR_IVAN, FACING_WEST, 0);
   actor = Actor_Get(ACTOR_IVAN);
   if (actor != 0) {
     Actor_SetPositionFixed(ACTOR_MIA, actor->x.fixed, actor->z.fixed);
   }
-  Actor_SetSpeed(ACTOR_MIA, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_MIA, 1);
   Actor_WalkToAndWait(ACTOR_MIA, 486, 656);
   Actor_FaceDirection(ACTOR_MIA, FACING_WEST, 20);
   Actor_ShowEmote(ACTOR_QUARTERS_SEAN, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
@@ -2249,7 +2249,7 @@ static void ShipRooms_ReturnLuckyAnchor(void) {
   ShipRooms_Turn(ACTOR_QUARTERS_SECOND_GUIDE, (value << 8));
   Event_ShowMessageThenWait(ACTOR_QUARTERS_SECOND_GUIDE, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_QUARTERS_CAPTAIN, 3);
-  Actor_SetSpeed(ACTOR_QUARTERS_CAPTAIN, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(ACTOR_QUARTERS_CAPTAIN, 0.8);
   captainAboveSpeech = SPEAKER(ACTOR_QUARTERS_CAPTAIN, SPEAKER_WINDOW_ABOVE);
   Actor_WalkToAndWait(ACTOR_QUARTERS_CAPTAIN, 472, 632);
   ShipRooms_Say(captainAboveSpeech);
@@ -2263,7 +2263,7 @@ static void ShipRooms_ReturnLuckyAnchor(void) {
   ShipRooms_Turn(ACTOR_QUARTERS_OURANOS, (value << 8));
   ShipRooms_Say(SPEAKER(ACTOR_QUARTERS_OURANOS, SPEAKER_PORTRAIT_LEFT));
   Actor_ShowEmote(ACTOR_QUARTERS_CREWMAN, EMOTE_IN_FRONT | EMOTE_WINCE, 20);
-  Actor_SetSpeed(ACTOR_QUARTERS_CREWMAN, PIXELS(12) / 5, PIXELS(6) / 5);
+  Actor_SetSpeed(ACTOR_QUARTERS_CREWMAN, 2.4);
   Actor_Jump(ACTOR_QUARTERS_CREWMAN, 2, 0);
   Actor_WalkToAndWait(ACTOR_QUARTERS_CREWMAN, 462, 674);
   ShipRooms_Turn(ACTOR_QUARTERS_CREWMAN, (value << 8));
@@ -2535,7 +2535,7 @@ static void ShipRooms_SetUpCaptainsQuarters(void) {
     ShipRooms_PlaceActor(ACTOR_QUARTERS_CAPTAIN, 456, 652, FACING_EAST);
     x = 480;
     ShipRooms_PlaceActor(ACTOR_QUARTERS_KAJA, x, 600, FACING_NORTH_NORTHWEST);
-    Actor_SetSpeed(ACTOR_QUARTERS_KAJA, PIXELS(4) / 5, PIXELS(2) / 5);
+    Actor_SetSpeed(ACTOR_QUARTERS_KAJA, 0.8);
     actor->userValue = done;
     zero = 0;
     actor->riseEnabled = zero;
@@ -2734,7 +2734,7 @@ static void ShipRooms_AskForReplacementOarsmen(void) {
   ShipRooms_PlaceActor(ACTOR_PARTY_LEADER, 440, 134, FACING_WEST);
   gFieldWork->transition = (mode << 1);
   Event_StartScreenTransition();
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.8);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 408, 134);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 408, 148);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 424, 148);
@@ -2751,21 +2751,21 @@ static void ShipRooms_AskForReplacementOarsmen(void) {
   if (actor != 0) {
     Actor_SetPositionFixed(ACTOR_GARET, actor->x.fixed, actor->z.fixed);
   }
-  Actor_SetSpeed(ACTOR_GARET, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(ACTOR_GARET, 0.8);
   Actor_WalkToAndWait(ACTOR_GARET, 440, 148);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH, 0);
   actor = Actor_Get(ACTOR_GARET);
   if (actor != 0) {
     Actor_SetPositionFixed(ACTOR_IVAN, actor->x.fixed, actor->z.fixed);
   }
-  Actor_SetSpeed(ACTOR_IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(ACTOR_IVAN, 0.8);
   Actor_WalkToAndWait(ACTOR_IVAN, 456, 148);
   Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTH, 0);
   actor = Actor_Get(ACTOR_IVAN);
   if (actor != 0) {
     Actor_SetPositionFixed(ACTOR_MIA, actor->x.fixed, actor->z.fixed);
   }
-  Actor_SetSpeed(ACTOR_MIA, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(ACTOR_MIA, 0.8);
   Actor_WalkToAndWait(ACTOR_MIA, 472, 148);
   Actor_FaceDirection(ACTOR_MIA, FACING_SOUTH, 20);
   // Let the full party respond to the request for replacement oarsmen.
@@ -2830,7 +2830,7 @@ static void ShipRooms_AskForReplacementOarsmen(void) {
   Actor_SetAnimationAndWait(ACTOR_ROWING_KAJA, 3);
   Actor_RunRepeatedMotion(ACTOR_ROWING_KAJA, 1);
   ShipRooms_Say(ACTOR_ROWING_KAJA);
-  Actor_SetSpeed(ACTOR_ROWING_KAJA, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(ACTOR_ROWING_KAJA, 0.8);
   Actor_WalkToAndWait(ACTOR_ROWING_KAJA, 408, 158);
   Actor_WalkToAndWait(ACTOR_ROWING_KAJA, 408, 148);
   Actor_FaceDirection(ACTOR_ROWING_KAJA, FACING_EAST, 20);
@@ -2854,7 +2854,7 @@ static void ShipRooms_CastOff(void) {
   ShipRooms_RunEventCommand(SHIP_SETUP_CAPTAINS_QUARTERS, 0, 1);
   Actor_RunRepeatedMotion(ACTOR_QUARTERS_CAPTAIN, 1);
   Event_Wait(20);
-  Actor_SetSpeed(ACTOR_QUARTERS_CAPTAIN, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(ACTOR_QUARTERS_CAPTAIN, 0.8);
   Actor_WalkToAndWait(ACTOR_QUARTERS_CAPTAIN, 468, 614);
   Actor_WalkToAndWait(ACTOR_QUARTERS_CAPTAIN, 472, 596);
   Actor_FaceDirection(ACTOR_QUARTERS_CAPTAIN, FACING_WEST, 20);
@@ -2903,7 +2903,7 @@ static void ShipRooms_KajaCallsToOars(void) {
   ShipRooms_MoveCameraAndWait(PIXELS(156), -1, PIXELS(536),
                               SHIP_CAMERA_RECENTER_LAYERS | SHIP_CAMERA_JUMP);
   ShipRooms_RunEventCommand(SHIP_OPEN_SCREEN, 0, 0);
-  Actor_SetSpeed(ACTOR_HOLD_KAJA, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(ACTOR_HOLD_KAJA, 0.8);
   Actor_WalkToAndWait(ACTOR_HOLD_KAJA, 168, 578);
   Actor_WalkToAndWait(ACTOR_HOLD_KAJA, 168, 554);
   Actor_FaceDirection(ACTOR_HOLD_KAJA, FACING_WEST, 20);
@@ -2925,7 +2925,7 @@ static void ShipRooms_KajaCallsReplacementToOars(void) {
   ShipRooms_MoveCameraAndWait(PIXELS(156), -1, PIXELS(536),
                               SHIP_CAMERA_RECENTER_LAYERS | SHIP_CAMERA_JUMP);
   ShipRooms_RunEventCommand(SHIP_OPEN_SCREEN, 0, 0);
-  Actor_SetSpeed(ACTOR_SEA_HOLD_KAJA, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(ACTOR_SEA_HOLD_KAJA, 0.8);
   Actor_WalkToAndWait(ACTOR_SEA_HOLD_KAJA, 168, 578);
   Actor_WalkToAndWait(ACTOR_SEA_HOLD_KAJA, 168, 554);
   Actor_FaceDirection(ACTOR_SEA_HOLD_KAJA, FACING_WEST, 20);
@@ -3075,7 +3075,7 @@ static void ShipRooms_IntroduceReplacementOarsman(s32 seat) {
   ShipRooms_PlaceFoundActors(1);
   wait(1);
   Event_StartScreenTransition();
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.8);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 406, 134);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 406, 152);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 421, 152);
@@ -3091,14 +3091,14 @@ static void ShipRooms_IntroduceReplacementOarsman(s32 seat) {
     ShipRooms_Say(KAJA_ROWING_SPEAKER);
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
     leftSeat = 0;
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), halfStep);
+    Actor_SetSpeedFixed(ACTOR_PARTY_LEADER, px(1), halfStep);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, x, 168);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
     actor = Actor_Get(ACTOR_PARTY_LEADER);
     if (actor != 0) {
       Actor_SetPositionFixed(rowerId, actor->x.fixed, actor->z.fixed);
     }
-    Actor_SetSpeed(rowerId, PIXELS(1), halfStep);
+    Actor_SetSpeedFixed(rowerId, px(1), halfStep);
     Actor_WalkToAndWait(rowerId, 448, 168);
     Actor_FaceDirection(rowerId, FACING_NORTH_NORTHWEST, 20);
     Actor_FaceDirection(ACTOR_ROWING_KAJA, FACING_SOUTH_SOUTHEAST, 20);
@@ -3138,7 +3138,7 @@ static void ShipRooms_IntroduceReplacementOarsman(s32 seat) {
     ShipRooms_Say(SPEAKER(ACTOR_ROWING_KAJA, SPEAKER_PORTRAIT_RIGHT));
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
     Actor_SetAnimationAndWait(ACTOR_ROWING_KAJA, 3);
-    Actor_SetSpeed(ACTOR_ROWING_KAJA, PIXELS(1), PIXELS(1) / 2);
+    Actor_SetSpeed(ACTOR_ROWING_KAJA, 1);
     if (leftSeat != 0) {
       Actor_WalkToAndWait(ACTOR_ROWING_KAJA, 428, 164);
       Actor_WalkToAndWait(ACTOR_ROWING_KAJA, 408, 164);
@@ -3707,7 +3707,7 @@ static void ShipRooms_ReportMonstersBelowdecks(void) {
                               SHIP_CAMERA_RECENTER_LAYERS | SHIP_CAMERA_JUMP);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 440, 134);
   Event_StartScreenTransition();
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(8) / 5, PIXELS(4) / 5);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 1.6);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_RUN);
   Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 408, 134);
   Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 408, 152);
@@ -3727,11 +3727,11 @@ static void ShipRooms_ReportMonstersBelowdecks(void) {
     Actor_SetPositionFixed(ACTOR_MIA, actor->x.fixed, actor->z.fixed);
   }
   wait(1);
-  Actor_SetSpeed(ACTOR_IVAN, PIXELS(8) / 5, PIXELS(4) / 5);
+  Actor_SetSpeed(ACTOR_IVAN, 1.6);
   Actor_WalkTo(ACTOR_IVAN, 424, 152);
-  Actor_SetSpeed(ACTOR_GARET, PIXELS(8) / 5, PIXELS(4) / 5);
+  Actor_SetSpeed(ACTOR_GARET, 1.6);
   Actor_WalkTo(ACTOR_GARET, 448, 168);
-  Actor_SetSpeed(ACTOR_MIA, PIXELS(2), PIXELS(1));
+  Actor_SetSpeed(ACTOR_MIA, 2);
   Actor_WalkToAndWait(ACTOR_MIA, 458, 152);
   Actor_SetAnimation(ACTOR_GARET, ANIM_STAND);
   Actor_SetAnimation(ACTOR_IVAN, ANIM_STAND);
@@ -3790,7 +3790,7 @@ static void ShipRooms_ReactToMonsterAttack(void) {
   ShipRooms_RunEventCommand(SHIP_FACE_PARTY, FACING_NORTH, 0);
   FieldCamera_SetSpeed(PIXELS(12) / 5, PIXELS(3) / 10);
   FieldCamera_MoveTo(PIXELS(440), -1, PIXELS(176), 1);
-  Actor_SetSpeed(ACTOR_ROWING_KAJA, PIXELS(8) / 5, PIXELS(4) / 5);
+  Actor_SetSpeed(ACTOR_ROWING_KAJA, 1.6);
   Actor_WalkToAndWait(ACTOR_ROWING_KAJA, 408, 134);
   Actor_WalkToAndWait(ACTOR_ROWING_KAJA, 408, 152);
   Actor_WalkToAndWait(ACTOR_ROWING_KAJA, 424, 164);
@@ -3845,7 +3845,7 @@ static void ShipRooms_ReactToMonsterAttack(void) {
   Actor_RunScriptAndWait(ACTOR_MIA, action);
   FieldCamera_SetSpeed(PIXELS(3) / 5, PIXELS(3) / 40);
   FieldCamera_MoveTo(PIXELS(440), -1, PIXELS(176), 1);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 1);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 424, 272);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 424, 164);
   Event_Wait(60);
@@ -3993,7 +3993,7 @@ static void ShipRooms_NoticeShipRocking(void) {
   Actor_SetSpriteColorById(ACTOR_ROWING_KAJA, SPRITE_COLOR_NORMAL);
   actor = Actor_Get(ACTOR_ROWING_KAJA);
   Actor_SetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
-  Actor_SetSpeed(ACTOR_ROWING_KAJA, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_ROWING_KAJA, 1);
   Actor_WalkToAndWait(ACTOR_ROWING_KAJA, 430, 134);
   ShipRooms_Turn(ACTOR_ROWING_KAJA, FACING_SOUTH_SOUTHEAST);
   Actor_StartRepeatedMotion(ACTOR_ROWING_KAJA, 2);
@@ -4039,9 +4039,9 @@ static void ShipRooms_NoticeShipRocking(void) {
   Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
   Actor_SetAnimation(ACTOR_IVAN, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
-  Actor_SetSpeed(ACTOR_GARET, PIXELS(1), PIXELS(1) / 2);
-  Actor_SetSpeed(ACTOR_IVAN, PIXELS(1), PIXELS(1) / 2);
-  Actor_SetSpeed(ACTOR_MIA, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_GARET, 1);
+  Actor_SetSpeed(ACTOR_IVAN, 1);
+  Actor_SetSpeed(ACTOR_MIA, 1);
   action = gShipRooms_FollowersRejoinBySeats;
   Actor_SetScript(ACTOR_GARET, action);
   Actor_SetScript(ACTOR_IVAN, action);
@@ -4133,7 +4133,7 @@ static void ShipRooms_ReachIsland(void) {
   Actor_SetSpriteColorById(ACTOR_ROWING_KAJA, SPRITE_COLOR_NORMAL);
   actor = Actor_Get(ACTOR_ROWING_KAJA);
   Actor_SetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
-  Actor_SetSpeed(ACTOR_ROWING_KAJA, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_ROWING_KAJA, 1);
   Actor_WalkToAndWait(ACTOR_ROWING_KAJA, 408, 132);
   Actor_WalkToAndWait(ACTOR_ROWING_KAJA, 408, 142);
   Actor_FaceDirection(ACTOR_ROWING_KAJA, FACING_SOUTH_SOUTHEAST, 20);
@@ -4194,7 +4194,7 @@ static void ShipRooms_ReachIsland(void) {
   // Send the rowers and party back through their departure scripts.
   ShipRooms_Turn(firstRower, 0);
   ShipRooms_Say(firstRower);
-  Actor_SetSpeed(firstRower, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(firstRower, 1);
   progressB = gShipRooms_LeaveByStairs;
   Actor_RunScriptAndWait(firstRower, progressB);
   Actor_FaceDirection(secondRower, FACING_SOUTH_SOUTHWEST, 0);
@@ -4203,9 +4203,9 @@ static void ShipRooms_ReachIsland(void) {
   Actor_FaceDirection(secondRower, FACING_NORTH_NORTHEAST, 0);
   Actor_FaceDirection(thirdRower, FACING_NORTH_NORTHWEST, 0);
   Actor_FaceDirection(fourthRower, FACING_SOUTH_SOUTHWEST, 20);
-  Actor_SetSpeed(secondRower, PIXELS(1), PIXELS(1) / 2);
-  Actor_SetSpeed(thirdRower, PIXELS(1), PIXELS(1) / 2);
-  Actor_SetSpeed(fourthRower, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(secondRower, 1);
+  Actor_SetSpeed(thirdRower, 1);
+  Actor_SetSpeed(fourthRower, 1);
   Actor_SetScript(thirdRower, progressB);
   Event_Wait(40);
   progressC = gShipRooms_StepIntoAisle;
@@ -4213,9 +4213,9 @@ static void ShipRooms_ReachIsland(void) {
   Actor_SetScript(secondRower, progressB);
   Actor_RunScriptAndWait(fourthRower, progressC);
   Actor_RunScriptAndWait(fourthRower, progressB);
-  Actor_SetSpeed(ACTOR_GARET, PIXELS(1), PIXELS(1) / 2);
-  Actor_SetSpeed(ACTOR_IVAN, PIXELS(1), PIXELS(1) / 2);
-  Actor_SetSpeed(ACTOR_MIA, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_GARET, 1);
+  Actor_SetSpeed(ACTOR_IVAN, 1);
+  Actor_SetSpeed(ACTOR_MIA, 1);
   progressA = gShipRooms_FollowersRejoinByStairs;
   Actor_SetScript(ACTOR_GARET, progressA);
   Actor_SetScript(ACTOR_IVAN, progressA);
@@ -4264,10 +4264,10 @@ static void ShipRooms_DismissReplacementRowers(void) {
   Actor_FaceDirection(secondRower, FACING_WEST, 0);
   Actor_FaceDirection(thirdRower, FACING_EAST, 0);
   Actor_FaceDirection(fourthRower, FACING_WEST, 40);
-  Actor_SetSpeed(firstRower, PIXELS(1), PIXELS(1) / 2);
-  Actor_SetSpeed(secondRower, PIXELS(1), PIXELS(1) / 2);
-  Actor_SetSpeed(thirdRower, PIXELS(1), PIXELS(1) / 2);
-  Actor_SetSpeed(fourthRower, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(firstRower, 1);
+  Actor_SetSpeed(secondRower, 1);
+  Actor_SetSpeed(thirdRower, 1);
+  Actor_SetSpeed(fourthRower, 1);
   Actor_WalkTo(firstRower, 470, 172);
   Actor_WalkTo(secondRower, 410, 172);
   Actor_WalkTo(thirdRower, 470, 204);
@@ -4294,7 +4294,7 @@ static void ShipRooms_DismissReplacementRowers(void) {
   ShipRooms_Turn(ACTOR_PARTY_LEADER, FACING_WEST);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_ROWING_KAJA, 3);
-  Actor_SetSpeed(ACTOR_ROWING_KAJA, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_ROWING_KAJA, 1);
   Actor_WalkToAndWait(ACTOR_ROWING_KAJA, 408, 132);
   Actor_WalkToAndWait(ACTOR_ROWING_KAJA, 444, 132);
   Actor_SetPosition(ACTOR_ROWING_KAJA, 0, 0);

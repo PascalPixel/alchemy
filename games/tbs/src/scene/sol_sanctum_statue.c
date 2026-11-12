@@ -361,7 +361,7 @@ static void SolSanctumStatue_ExplainTrapDisarmed(void) {
   Actor_SetPosition(ACTOR_KRADEN, 576, 280);
   FieldCamera_SetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
   FieldCamera_MoveTo(PIXELS(574), -1, PIXELS(180), 1);
-  Actor_SetSpeed(ACTOR_KRADEN, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_KRADEN, 1);
   Actor_WalkToAndWait(ACTOR_KRADEN, 576, 216);
   Event_Wait(20);
   Actor_Jump(ACTOR_JENNA, 2, 0);
@@ -385,7 +385,7 @@ static void SolSanctumStatue_ExplainTrapDisarmed(void) {
   Event_Wait(10);
   // Kraden hops up to the party: "Excellent work, Isaac!"
   Actor_Jump(ACTOR_KRADEN, 6, 0);
-  Actor_SetSpeed(ACTOR_KRADEN, PIXELS(3), PIXELS(2));
+  Actor_SetSpeedAndAcceleration(ACTOR_KRADEN, 3, 2);
   Actor_WalkToAndWait(ACTOR_KRADEN, 576, 184);
   Event_Wait(40);
   SolSanctumStatue_SayThenWait(ACTOR_KRADEN, 6);
@@ -476,8 +476,8 @@ static void SolSanctumStatue_ExplainTrapDisarmed(void) {
   FieldCamera_WaitForMove();
   Event_Wait(20);
   // Rejoin the companions to the leader and restore normal field control.
-  Actor_SetSpeed(ACTOR_GARET, PIXELS(1), PIXELS(1) / 2);
-  Actor_SetSpeed(ACTOR_JENNA, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_GARET, 1);
+  Actor_SetSpeed(ACTOR_JENNA, 1);
   Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
@@ -535,7 +535,7 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   SolSanctumStatue_SayThenWait(ACTOR_KRADEN, 6);
   FieldCamera_SetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
   FieldCamera_MoveTo(PIXELS(574), -1, PIXELS(180), 1);
-  Actor_SetSpeed(ACTOR_KRADEN, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_KRADEN, 1);
   Actor_WalkToAndWait(ACTOR_KRADEN, 576, 216);
   Event_Wait(20);
   Actor_Jump(ACTOR_JENNA, 2, 0);
@@ -557,7 +557,7 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH, 0);
   Event_Wait(10);
   Actor_Jump(ACTOR_KRADEN, 6, 0);
-  Actor_SetSpeed(ACTOR_KRADEN, PIXELS(3), PIXELS(2));
+  Actor_SetSpeedAndAcceleration(ACTOR_KRADEN, 3, 2);
   Actor_WalkToAndWait(ACTOR_KRADEN, 576, 184);
   Event_Wait(40);
   // Kraden: "This is a most interesting mechanism you've found, Isaac."
@@ -589,7 +589,7 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   Actor_WalkToAndWait(ACTOR_KRADEN, 576, 216);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST, 0);
   Event_Wait(10);
-  Actor_SetSpeed(ACTOR_KRADEN, PIXELS(6) / 5, PIXELS(3) / 5);
+  Actor_SetSpeed(ACTOR_KRADEN, 1.2);
   Actor_WalkTo(ACTOR_KRADEN, 432, 200);
   Event_Wait(20);
   FieldCamera_SetSpeed(PIXELS(12) / 5, PIXELS(3) / 10);
@@ -610,7 +610,7 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   FieldCamera_SetSpeedParameters(PIXELS(4) / 5, PIXELS(1) / 10);
   FieldCamera_MoveWithinMapBounds(PIXELS(574), -1, PIXELS(171), 1);
   Actor_Jump(ACTOR_KRADEN, 6, 0);
-  Actor_SetSpeed(ACTOR_KRADEN, PIXELS(3), PIXELS(2));
+  Actor_SetSpeedAndAcceleration(ACTOR_KRADEN, 3, 2);
   Actor_WalkToAndWait(ACTOR_KRADEN, 576, 184);
   Event_Wait(80);
   // Kraden: they are looking in the right place, but moving one statue
@@ -669,7 +669,7 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   Event_Wait(40);
   FieldCamera_SetSpeedParameters(PIXELS(4) / 5, PIXELS(1) / 10);
   FieldCamera_MoveTo(PIXELS(574), -1, PIXELS(191), 1);
-  Actor_SetSpeed(ACTOR_KRADEN, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_KRADEN, 1);
   Actor_WalkToAndWait(ACTOR_KRADEN, 576, 232);
   Event_Wait(40);
   Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
@@ -694,8 +694,8 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   SolSanctumStatue_SayThenWait(ACTOR_JENNA, 6);
   Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_NOD);
-  Actor_SetSpeed(ACTOR_GARET, PIXELS(1), PIXELS(1) / 2);
-  Actor_SetSpeed(ACTOR_JENNA, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_GARET, 1);
+  Actor_SetSpeed(ACTOR_JENNA, 1);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_WALK);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != 0) {
@@ -887,7 +887,7 @@ UNUSED static void SolSanctumStatue_UnusedMoveNorthwestStatue(void) {
   if (GameFlag_Get(FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN) == 0) {
     Event_Start();
     Actor_Get(ACTOR_NORTHWEST_STATUE);
-    Actor_SetSpeed(ACTOR_NORTHWEST_STATUE, PIXELS(1) / 5, PIXELS(1) / 10);
+    Actor_SetSpeed(ACTOR_NORTHWEST_STATUE, 0.2);
     Actor_WalkToAndWait(ACTOR_NORTHWEST_STATUE, 504, 152);
     Event_End();
   }
@@ -1218,7 +1218,7 @@ static void SolSanctumStatue_CenterStatueMoved(void) {
         FieldCamera_MoveTo(PIXELS(286), -1, PIXELS(146), 1);
         FieldCamera_WaitForMove();
         Actor_Get(ACTOR_CENTER_STATUE)->steeringFlags &= ~ACTOR_FACES_MOTION;
-        Actor_SetSpeed(ACTOR_CENTER_STATUE, PIXELS(3), PIXELS(1));
+        Actor_SetSpeedAndAcceleration(ACTOR_CENTER_STATUE, 3, 1);
         statue->motionFlags = 0;
         Actor_SetSpritePriority(ACTOR_CENTER_STATUE, 3);
         Sound_Play(SE_STONE_GRIND);
@@ -1281,8 +1281,8 @@ static void SolSanctumStatue_PushCenterStatueNorth(void) {
     if ((movingActor->z.fixed >> 20) == 8) {
       Event_Start();
       Sound_Play(SE_PUSH);
-      Actor_SetSpeed(ACTOR_CENTER_STATUE, PIXELS(1) / 5, PIXELS(1) / 10);
-      Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 5, PIXELS(1) / 10);
+      Actor_SetSpeed(ACTOR_CENTER_STATUE, 0.2);
+      Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.2);
       Actor_Get(ACTOR_CENTER_STATUE)->steeringFlags &= ~ACTOR_FACES_MOTION;
       Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_PUSH);
       movingActor = Actor_Get(ACTOR_PARTY_LEADER);
@@ -1409,8 +1409,8 @@ static void SolSanctumStatue_PushStatue(s32 statueId, s32 statueColumn,
 
   Event_Start();
   Sound_Play(SE_PUSH);
-  Actor_SetSpeed(statueId, PIXELS(1) / 5, PIXELS(1) / 10);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 5, PIXELS(1) / 10);
+  Actor_SetSpeed(statueId, 0.2);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.2);
   Actor_Get(statueId)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_PUSH);
   Actor_SetDestination(ACTOR_PARTY_LEADER, (leaderColumn << 4) + 8,
@@ -1697,7 +1697,7 @@ static void SolSanctumStatue_OpenSeal(void) {
       if (!GameFlag_Get(FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED)) {
         FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 1);
         Actor_Get(ACTOR_PARTY_LEADER)->facing = seal->facing;
-        Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2), PIXELS(2));
+        Actor_SetSpeedAndAcceleration(ACTOR_PARTY_LEADER, 2, 2);
         Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
         Actor_Jump(ACTOR_PARTY_LEADER, 4, 0);
         Actor_SetDestination(ACTOR_PARTY_LEADER, seal->destinationX,

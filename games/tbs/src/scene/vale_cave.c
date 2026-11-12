@@ -535,7 +535,7 @@ static void ValeCave_KiteRunsOff(void) {
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Actor_RunRepeatedMotion(ACTOR_KITE, 2);
     Event_Wait(20);
-    Actor_SetSpeed(ACTOR_KITE, PIXELS(1), PIXELS(1) / 2);
+    Actor_SetSpeed(ACTOR_KITE, 1);
     Actor_WalkToAndWait(ACTOR_KITE, 792, 248);
     Sound_Play(SE_JUMP);
     djinni = Actor_Get(ACTOR_KITE);
@@ -568,7 +568,7 @@ static void ValeCave_KiteRunsBehindLedge(void) {
                               ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
       Actor_RunRepeatedMotion(ACTOR_KITE, 2);
       Event_Wait(20);
-      Actor_SetSpeed(ACTOR_KITE, PIXELS(2), PIXELS(1));
+      Actor_SetSpeed(ACTOR_KITE, 2);
       Actor_WalkToAndWait(ACTOR_KITE, 760, 280);
       Actor_WalkToAndWait(ACTOR_KITE, 760, 312);
       Actor_WalkToAndWait(ACTOR_KITE, 792, 312);
@@ -695,14 +695,14 @@ static void ValeCave_PushLogOffLedge(void) {
 
   Event_Start();
   Event_Wait(10);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 10);
+  Actor_SetSpeedAndAcceleration(ACTOR_PARTY_LEADER, 0.5, 0.1);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_PUSH);
   Event_Wait(15);
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 8, 0);
   Event_Wait(4);
   Event_PlaySound(SE_STOP_ACTION_SE);
   Sound_Play(SE_HEAVY_MOVE);
-  Actor_SetSpeed(ACTOR_WEST_LOG, PIXELS(1) / 2, PIXELS(1) / 10);
+  Actor_SetSpeedAndAcceleration(ACTOR_WEST_LOG, 0.5, 0.1);
   Actor_SetAnimation(ACTOR_WEST_LOG, 2);
   stationaryMotion = 0;
   Actor_Get(ACTOR_WEST_LOG)->motionFlags = stationaryMotion;
@@ -742,7 +742,7 @@ static void ValeCave_PushLogNorth(void) {
     Actor_MoveAndRedraw(probe);
     // Slide into the new cell before replacing the cell behavior footprint.
     Actor_SetAnimation(ACTOR_SOUTH_LOG, 3);
-    Actor_SetSpeed(ACTOR_SOUTH_LOG, PIXELS(1) / 4, PIXELS(1) / 2);
+    Actor_SetSpeedAndAcceleration(ACTOR_SOUTH_LOG, 0.25, 0.5);
     Actor_SetDestinationOffset(ACTOR_SOUTH_LOG, 0, -16);
     Event_Wait(45);
     Sound_Play(SE_LOG_FALL);

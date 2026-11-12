@@ -305,8 +305,8 @@ static void SuhallaGate_LeaveForWorldMap(void) {
 /// step together in front of it, and the map cells around them change.
 static void SuhallaGate_GuardsBlockPassage(void) {
   Event_Start();
-  Actor_SetSpeed(ACTOR_WEST_GUARD, PIXELS(1), PIXELS(1) / 2);
-  Actor_SetSpeed(ACTOR_EAST_GUARD, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_WEST_GUARD, 1);
+  Actor_SetSpeed(ACTOR_EAST_GUARD, 1);
   Actor_WalkTo(ACTOR_WEST_GUARD, 136, 384);
   Actor_WalkToAndWait(ACTOR_EAST_GUARD, 152, 384);
   Actor_FaceDirection(ACTOR_WEST_GUARD, FACING_SOUTH, 0);
@@ -343,7 +343,7 @@ static void SuhallaGate_IodemQuestionsGuards(void) {
 #endif
 
   Event_Start();
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(8) / 5, PIXELS(4) / 5);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 1.6);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 120, 438);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
@@ -351,7 +351,7 @@ static void SuhallaGate_IodemQuestionsGuards(void) {
     Actor_SetPositionFixed(ACTOR_IODEM, leader->x.fixed, leader->z.fixed);
   }
   wait(1);
-  Actor_SetSpeed(ACTOR_IODEM, PIXELS(8) / 5, PIXELS(4) / 5);
+  Actor_SetSpeed(ACTOR_IODEM, 1.6);
   Actor_WalkToAndWait(ACTOR_IODEM, 108, 431);
   Actor_FaceDirection(ACTOR_IODEM, FACING_NORTH_NORTHEAST, 10);
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);

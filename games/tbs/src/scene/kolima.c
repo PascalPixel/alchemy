@@ -369,7 +369,7 @@ const struct Trigger *Kolima_GetTriggers(void) {
 /// number.
 static void Kolima_WalkThroughExit(s32 exitNumber) {
   Actor_Get(ACTOR_PARTY_LEADER)->motionFlags = 0;
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.5);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, -8);
   gFieldWork->transitionFrames = 16;
@@ -409,7 +409,7 @@ static void Kolima_EnterDoor(void) {
     break;
   case KOLIMA_TO_HOUSE_NORTH:
     Actor_Get(ACTOR_PARTY_LEADER)->motionFlags = 0;
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.5);
     Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, 8);
     gFieldWork->transitionFrames = 16;
     Import_EventSetExitRequest(KOLIMA_TO_HOUSE_NORTH);
@@ -451,7 +451,7 @@ static void Kolima_LowerBridge(void) {
   Event_ShowMessage(ACTOR_BRIDGE_VILLAGER, 0);
   FieldCamera_SetSpeedParameters(PIXELS(2) / 5, PIXELS(1) / 20);
   FieldCamera_MoveTo(PIXELS(168), 0, PIXELS(234), 1);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 5, PIXELS(3) / 10);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.6);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 174, 278);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 20);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
@@ -463,7 +463,7 @@ static void Kolima_LowerBridge(void) {
   Actor_RunRepeatedMotion(ACTOR_BRIDGE_VILLAGER, 1);
   Event_Wait(20);
   Actor_Get(ACTOR_BRIDGE_VILLAGER)->steeringFlags &= ~ACTOR_FACES_MOTION;
-  Actor_SetSpeed(ACTOR_BRIDGE_VILLAGER, PIXELS(2), PIXELS(1));
+  Actor_SetSpeed(ACTOR_BRIDGE_VILLAGER, 2);
   Actor_Jump(ACTOR_BRIDGE_VILLAGER, 2, 0);
   Actor_MoveToAndWait(ACTOR_BRIDGE_VILLAGER, 224, 197);
   Sound_Play(SE_KOLIMA_BRIDGE_HOP);
@@ -687,10 +687,10 @@ static void Kolima_WitnessForestCurse(void) {
   wait(1);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.8);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 121, 238);
-  Actor_SetSpeed(ACTOR_GARET, PIXELS(3) / 5, PIXELS(3) / 10);
-  Actor_SetSpeed(ACTOR_IVAN, PIXELS(3) / 5, PIXELS(3) / 10);
+  Actor_SetSpeed(ACTOR_GARET, 0.6);
+  Actor_SetSpeed(ACTOR_IVAN, 0.6);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   if (actor != NULL) {
     Actor_SetPositionFixed(ACTOR_GARET, actor->x.fixed, actor->z.fixed);
@@ -702,7 +702,7 @@ static void Kolima_WitnessForestCurse(void) {
   Actor_SetScript(ACTOR_GARET, gKolima_GaretWalksIn);
   Actor_SetScript(ACTOR_IVAN, gKolima_IvanWalksIn);
   if (*partyLayout != 0) {
-    Actor_SetSpeed(ACTOR_MIA, PIXELS(3) / 5, PIXELS(3) / 10);
+    Actor_SetSpeed(ACTOR_MIA, 0.6);
     actor = Actor_Get(ACTOR_PARTY_LEADER);
     if (actor != NULL) {
       Actor_SetPositionFixed(ACTOR_MIA, actor->x.fixed, actor->z.fixed);
@@ -763,7 +763,7 @@ static void Kolima_WitnessForestCurse(void) {
   Event_Wait(40);
   Scene_EndMindRead();
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
-  Actor_SetSpeed(ACTOR_IVAN, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_IVAN, 1);
   Actor_Get(ACTOR_IVAN)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(ACTOR_IVAN, 80, 310);
   motionFacingFlag = ACTOR_FACES_MOTION;
@@ -784,7 +784,7 @@ static void Kolima_WitnessForestCurse(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 0);
   Actor_StartRepeatedMotion(ACTOR_GARET, 1);
   Kolima_ShowMessageAndWait(ACTOR_GARET, 20);
-  Actor_SetSpeed(ACTOR_IVAN, PIXELS(1) / 2, PIXELS(1) / 4);
+  Actor_SetSpeed(ACTOR_IVAN, 0.5);
   Actor_Get(ACTOR_IVAN)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(ACTOR_IVAN, 72, 286);
   Event_Wait(1);
@@ -887,7 +887,7 @@ static void Kolima_WitnessForestCurse(void) {
     actor = Actor_Get(ACTOR_MIA);
     actor->velocityY = (stagingValue << 10);
     Event_Wait(10);
-    Actor_SetSpeed(ACTOR_MIA, (stagingValue << 10), (stagingValue << 10));
+    Actor_SetSpeedFixed(ACTOR_MIA, (stagingValue << 10), (stagingValue << 10));
     Actor_SetDestinationOffset(ACTOR_MIA, -2, 0);
     Actor_SetScript(ACTOR_MIA, gKolima_PartyRestoreScaleActions);
     actor = Actor_Get(ACTOR_MIA);
@@ -899,8 +899,8 @@ static void Kolima_WitnessForestCurse(void) {
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   actor->velocityY = (stagingValue << 10);
   Event_Wait(10);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, (stagingValue << 10),
-                 (stagingValue << 10));
+  Actor_SetSpeedFixed(ACTOR_PARTY_LEADER, (stagingValue << 10),
+                      (stagingValue << 10));
   restoreScaleActions = gKolima_PartyRestoreScaleActions;
   Actor_SetScript(ACTOR_PARTY_LEADER, restoreScaleActions);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
@@ -910,7 +910,7 @@ static void Kolima_WitnessForestCurse(void) {
   actor = Actor_Get(ACTOR_GARET);
   actor->velocityY = (stagingValue << 10);
   Event_Wait(10);
-  Actor_SetSpeed(ACTOR_GARET, (stagingValue << 10), (stagingValue << 10));
+  Actor_SetSpeedFixed(ACTOR_GARET, (stagingValue << 10), (stagingValue << 10));
   Actor_SetScript(ACTOR_GARET, restoreScaleActions);
   actor = Actor_Get(ACTOR_GARET);
   Actor_SetSpriteFlags(actor, 0);
@@ -1540,9 +1540,9 @@ static void Kolima_WitnessForestCurse(void) {
   }
   // Reunite the party and remember that the first visit has played.
   Sound_Play(SOUND_FADE_OUT_BGM);
-  Actor_SetSpeed(ACTOR_GARET, PIXELS(6) / 5, PIXELS(3) / 5);
-  Actor_SetSpeed(ACTOR_IVAN, PIXELS(6) / 5, PIXELS(3) / 5);
-  Actor_SetSpeed(ACTOR_MIA, PIXELS(6) / 5, PIXELS(3) / 5);
+  Actor_SetSpeed(ACTOR_GARET, 1.2);
+  Actor_SetSpeed(ACTOR_IVAN, 1.2);
+  Actor_SetSpeed(ACTOR_MIA, 1.2);
   Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   if (actor != NULL) {

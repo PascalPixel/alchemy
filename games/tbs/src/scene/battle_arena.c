@@ -1022,7 +1022,7 @@ static s32 BattleArena_EnterBattle(void) {
       // "Good luck!"
       Event_OpenMessage(ACTOR_ATTENDANT, 0);
       wait(45);
-      Actor_SetSpeed(ACTOR_PARTY_LEADER, Q16_ONE, Q16_ONE / 2);
+      Actor_SetSpeed(ACTOR_PARTY_LEADER, 1);
       Actor_WalkTo(ACTOR_PARTY_LEADER, 216, 184);
       Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
       Actor_WalkTo(ACTOR_PARTY_LEADER, 216, 168);
@@ -1030,15 +1030,15 @@ static s32 BattleArena_EnterBattle(void) {
     } else {
       // Speeds are 16.16 pixels a frame: one to (216, 200), a tenth while
       // the parties are exchanged, then a half.
-      Actor_SetSpeed(ACTOR_PARTY_LEADER, Q16_ONE, Q16_ONE / 2);
+      Actor_SetSpeed(ACTOR_PARTY_LEADER, 1);
       Actor_WalkTo(ACTOR_PARTY_LEADER, 216, 200);
       Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
-      Actor_SetSpeed(ACTOR_PARTY_LEADER, Q16_ONE / 10, Q16_ONE / 20);
+      Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.1);
       Actor_WalkTo(ACTOR_PARTY_LEADER, 216, 168);
       // A failed exchange: walk back out and return to the Battle Arena,
       // reporting the link lost (LOBBY_EVENT_DISCONNECTED).
       if (BattleArena_ExchangePartyRecords() < 0) {
-        Actor_SetSpeed(ACTOR_PARTY_LEADER, Q16_ONE, Q16_ONE / 2);
+        Actor_SetSpeed(ACTOR_PARTY_LEADER, 1);
         Actor_WalkTo(ACTOR_PARTY_LEADER, 216, 200);
         TilesetAnim_Resume(5);
         wait(8);
@@ -1058,7 +1058,7 @@ static s32 BattleArena_EnterBattle(void) {
         Event_End();
         return LOBBY_NO_RESULT;
       }
-      Actor_SetSpeed(ACTOR_PARTY_LEADER, Q16_ONE / 2, Q16_ONE / 4);
+      Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.5);
       Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
     }
     if (GameFlag_Get(FLAG_MONSTER_BATTLE)) {

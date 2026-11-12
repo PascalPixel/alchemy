@@ -190,11 +190,28 @@ static inline void Actor_SetPositionFixed(s32 actorId, s32 x, s32 z) {
 #define Actor_SetPosition(actorId, x, z)                                       \
   Actor_SetPositionFixed(actorId, px(x), px(z))
 
-/// Sets how fast an actor moves, and how quickly it gets up to speed,
-/// for the event's next moves.
-static inline void Actor_SetSpeed(s32 actorId, s32 speed, s32 acceleration) {
+/// A decimal number of pixels as 16.16 fixed point, for the speed macros
+/// below; it folds to a constant, so they take only constants.
+#define EVENT_DECIMAL_FIXED(value) ((s32)((value) * Q16_ONE))
+
+/// Sets how fast an actor moves, and how quickly it gets up to speed, for the
+/// event's next moves; both are 16.16 fixed point, as stored values hold them.
+static inline void Actor_SetSpeedFixed(s32 actorId, s32 speed,
+                                       s32 acceleration) {
   Actor_SetSpeedParameters(actorId, speed, acceleration);
 }
+
+/// Sets an actor's top speed for the event's next moves, in pixels a frame,
+/// and an acceleration of half that: `Actor_SetSpeed(ACTOR_GARET, 0.8)`.
+#define Actor_SetSpeed(actorId, speed)                                         \
+  Actor_SetSpeedFixed(actorId, EVENT_DECIMAL_FIXED(speed),                     \
+                      EVENT_DECIMAL_FIXED(speed) / 2)
+
+/// Sets an actor's top speed, in pixels a frame, and its acceleration, in
+/// pixels a frame per frame, where the acceleration isn't half the speed.
+#define Actor_SetSpeedAndAcceleration(actorId, speed, acceleration)            \
+  Actor_SetSpeedFixed(actorId, EVENT_DECIMAL_FIXED(speed),                     \
+                      EVENT_DECIMAL_FIXED(acceleration))
 
 /// Moves an actor to a point in the pose it has, without walking; the
 /// event carries on meanwhile.

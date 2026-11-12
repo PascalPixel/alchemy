@@ -282,7 +282,7 @@ static void ValeKradensCottage_KradenPlansSanctumVisit(void) {
   if (GameFlag_Get(FLAG_SANCTUM_VISIT_PLANNED) == 0) {
     // Isaac walks up to Kraden, who greets him.
     Event_Start();
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 1);
     Event_SetMessageId(MsgValeKradenOhIsaac);
     Actor_RunRepeatedMotion(ACTOR_KRADEN, 1);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 232, 264);
@@ -297,8 +297,8 @@ static void ValeKradensCottage_KradenPlansSanctumVisit(void) {
     z = leader->z.part.pixel;
     Actor_SetPositionFixed(ACTOR_JENNA, x * Q16_ONE, z * Q16_ONE);
     Actor_SetPositionFixed(ACTOR_GARET, x * Q16_ONE, z * Q16_ONE);
-    Actor_SetSpeed(ACTOR_JENNA, PIXELS(1) / 2, PIXELS(1) / 4);
-    Actor_SetSpeed(ACTOR_GARET, PIXELS(1) / 2, PIXELS(1) / 4);
+    Actor_SetSpeed(ACTOR_JENNA, 0.5);
+    Actor_SetSpeed(ACTOR_GARET, 0.5);
     Actor_WalkTo(ACTOR_JENNA, 248, 264);
     Actor_WalkToAndWait(ACTOR_GARET, 216, 264);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
@@ -527,7 +527,7 @@ static void ValeKradensCottage_KradenPlansSanctumVisit(void) {
     // VALE_KRADENS_COTTAGE_TO_COTTAGE_ROOMS_B_MYTHRIL_BAG.
     Sound_Play(SE_DOOR_OPEN);
     MapGrid_AnimateCells(gValeKradensCottage_DoorOpens, 43, 8);
-    Actor_SetSpeed(ACTOR_KRADEN, PIXELS(1), PIXELS(1) / 2);
+    Actor_SetSpeed(ACTOR_KRADEN, 1);
     Actor_WalkToAndWait(ACTOR_KRADEN, 232, 218);
     Actor_SetPosition(ACTOR_KRADEN, 0, 0);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
@@ -572,7 +572,7 @@ static void ValeKradensCottage_KradenSetsOff(void) {
   Event_WaitTransitionFrames();
   Event_Wait(40);
   // Kraden comes out of the door: this is their best bet.
-  Actor_SetSpeed(ACTOR_KRADEN, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(ACTOR_KRADEN, 0.8);
   Actor_SetPosition(ACTOR_KRADEN, 230, 220);
   Actor_WalkToAndWait(ACTOR_KRADEN, 230, 232);
   Event_Wait(20);
@@ -596,8 +596,8 @@ static void ValeKradensCottage_KradenSetsOff(void) {
   Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STILL);
-  Actor_SetSpeed(ACTOR_GARET, PIXELS(4) / 5, PIXELS(2) / 5);
-  Actor_SetSpeed(ACTOR_JENNA, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(ACTOR_GARET, 0.8);
+  Actor_SetSpeed(ACTOR_JENNA, 0.8);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   // Garet, Jenna and Kraden walk into Isaac and vanish; the strangers are
   // gone too.
@@ -665,7 +665,7 @@ static void ValeKradensCottage_MeetSaturosAndMenardi(void) {
   Event_ShowMessageThenWait(ACTOR_SATUROS, 0, 10);
 
   // Isaac hurries forward and Garet and Jenna step out beside him.
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(6) / 5, PIXELS(3) / 5);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 1.2);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 392, 328);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 10);
@@ -676,8 +676,8 @@ static void ValeKradensCottage_MeetSaturosAndMenardi(void) {
   Actor_SetPositionFixed(ACTOR_JENNA, x * Q16_ONE, z * Q16_ONE);
   Actor_SetPositionFixed(ACTOR_GARET, x * Q16_ONE, z * Q16_ONE);
 
-  Actor_SetSpeed(ACTOR_JENNA, PIXELS(6) / 5, PIXELS(3) / 5);
-  Actor_SetSpeed(ACTOR_GARET, PIXELS(6) / 5, PIXELS(3) / 5);
+  Actor_SetSpeed(ACTOR_JENNA, 1.2);
+  Actor_SetSpeed(ACTOR_GARET, 1.2);
   Actor_WalkTo(ACTOR_JENNA, 376, 328);
   Actor_WalkToAndWait(ACTOR_GARET, 408, 328);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STILL);
@@ -827,8 +827,8 @@ static void ValeKradensCottage_MeetSaturosAndMenardi(void) {
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_SATUROS, FACING_NORTH_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_MENARDI, FACING_NORTH_NORTHEAST, 20);
-  Actor_SetSpeed(ACTOR_MENARDI, PIXELS(1) / 2, PIXELS(1) / 4);
-  Actor_SetSpeed(ACTOR_SATUROS, PIXELS(1) / 2, PIXELS(1) / 4);
+  Actor_SetSpeed(ACTOR_MENARDI, 0.5);
+  Actor_SetSpeed(ACTOR_SATUROS, 0.5);
 
   // The pair back away south without turning round.
   actor = Actor_Get(ACTOR_SATUROS);
@@ -888,7 +888,7 @@ static void ValeKradensCottage_OverhearKraden(void) {
   if (Event_GetFlag(FLAG_KRADEN_WONDERED_ABOUT_STRANGERS) != 0) {
   } else {
     Event_Start();
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 1);
     // Kraden wonders aloud who they were, while Garet and Jenna step out of
     // Isaac behind him.
     Event_SetMessageId(MsgValeWho);
@@ -902,8 +902,8 @@ static void ValeKradensCottage_OverhearKraden(void) {
       Actor_SetPositionFixed(ACTOR_JENNA, x * Q16_ONE, z * Q16_ONE);
       Actor_SetPositionFixed(ACTOR_GARET, x * Q16_ONE, z * Q16_ONE);
     }
-    Actor_SetSpeed(ACTOR_JENNA, PIXELS(4) / 5, PIXELS(2) / 5);
-    Actor_SetSpeed(ACTOR_GARET, PIXELS(4) / 5, PIXELS(2) / 5);
+    Actor_SetSpeed(ACTOR_JENNA, 0.8);
+    Actor_SetSpeed(ACTOR_GARET, 0.8);
     Actor_WalkTo(ACTOR_JENNA, 296, 328);
     Actor_WalkToAndWait(ACTOR_GARET, 280, 328);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STILL);
@@ -919,7 +919,7 @@ static void ValeKradensCottage_OverhearKraden(void) {
     Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST, 20);
     Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
     Event_ShowMessage(ACTOR_KRADEN, 0);
-    Actor_SetSpeed(ACTOR_KRADEN, PIXELS(1) / 5, PIXELS(1) / 10);
+    Actor_SetSpeed(ACTOR_KRADEN, 0.2);
     Actor_WalkToAndWait(ACTOR_KRADEN, 216, 232);
     Event_Wait(20);
     Actor_RunRepeatedMotion(ACTOR_KRADEN, 1);

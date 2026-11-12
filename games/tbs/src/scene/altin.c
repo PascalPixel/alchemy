@@ -712,7 +712,7 @@ static void Altin_EnterDoor(void) {
   }
 
   // Walk the leader through.
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.5);
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Actor_Get(ACTOR_PARTY_LEADER)->motionFlags = 0;
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
@@ -800,7 +800,7 @@ static void Altin_BeastHopAway(void) {
   beast->userValue = 0;
   beast->gravity = PIXELS(2) / 5;
   beast->update = Altin_BeastHop;
-  Actor_SetSpeed(ACTOR_WATER_BEAST, PIXELS(6) / 5, PIXELS(3) / 5);
+  Actor_SetSpeed(ACTOR_WATER_BEAST, 1.2);
   Actor_MoveToAndWait(ACTOR_WATER_BEAST, 28, 460);
   Actor_MoveToAndWait(ACTOR_WATER_BEAST, 24, 448);
   Sound_Play(SE_SPLASH);

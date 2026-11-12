@@ -663,7 +663,7 @@ static void LamakanDesert_BatheInOasis(void) {
   }
   nearest <<= 1;
   // Hop the leader into the middle of the oasis before draining the heat gauge.
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2), PIXELS(1));
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 2);
   {
     struct Actor *actor = Actor_Get(ACTOR_PARTY_LEADER);
     const struct LamakanDesertOasis *spot =
@@ -844,7 +844,7 @@ static void LamakanDesert_FallIntoPit(void) {
   actor->facing = (record->facing + TRIG_TURN / 2) & -0x1000;
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_RUN);
   Actor_SetAnimationSpeedById(ACTOR_PARTY_LEADER, 24);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 10, PIXELS(1) / 20);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.1);
   record = Actor_Get(ACTOR_PARTY_LEADER);
 #ifdef UBFIX
   record->update = LamakanDesert_LeaderSpraySand;
@@ -992,7 +992,7 @@ static void LamakanDesert_MeetManticore(void) {
       backwardOffset.z = paused;
       record = Actor_Get(ACTOR_PARTY_LEADER);
       FieldVector_AddPolarOffset(-PIXELS(16), record->facing, &backwardOffset);
-      Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2), PIXELS(1));
+      Actor_SetSpeed(ACTOR_PARTY_LEADER, 2);
       Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
       Actor_SetDestinationOffset(ACTOR_PARTY_LEADER,
                                  backwardOffset.x / PIXELS(1),
@@ -1004,9 +1004,9 @@ static void LamakanDesert_MeetManticore(void) {
       Sound_Play(SE_BOSS_ROAR);
       Actor_RunRepeatedMotion(ACTOR_MANTICORE, 2);
       Event_Wait(20);
-      Actor_SetSpeed(ACTOR_MANTICORE, PIXELS(5) / 2, PIXELS(5) / 4);
+      Actor_SetSpeed(ACTOR_MANTICORE, 2.5);
       Actor_WalkToAndWait(ACTOR_MANTICORE, 168, 104);
-      Actor_SetSpeed(ACTOR_MANTICORE, PIXELS(1) / 2, PIXELS(1) / 4);
+      Actor_SetSpeed(ACTOR_MANTICORE, 0.5);
       Actor_WalkToAndWait(ACTOR_MANTICORE, 168, 92);
       *revealFrames = holdFrames;
       HeatGauge_SetHeld(0);
@@ -1066,7 +1066,7 @@ s32 LamakanDesert_Initialize(void) {
 /// shows it (168, 92), at the slow speed of LamakanDesert_MeetManticore's walk
 /// back, then plays its one-shot animation 2. Nothing calls it.
 static UNUSED void LamakanDesert_UnusedWalkManticore(void) {
-  Actor_SetSpeed(ACTOR_MANTICORE, PIXELS(1) / 2, PIXELS(1) / 4);
+  Actor_SetSpeed(ACTOR_MANTICORE, 0.5);
   Actor_SetAnimation(ACTOR_MANTICORE, 1);
   Actor_WalkToAndWait(ACTOR_MANTICORE, 168, 96);
   Actor_SetAnimation(ACTOR_MANTICORE, 2);

@@ -1122,8 +1122,8 @@ static void ValePlaza_SentToAidElders(void) {
     FieldEvent_ShowMessageThenWait(
         SPEAKER_WINDOW_ABOVE | ACTOR_STORM_GARETS_GRANDFATHER, 0, 10);
     // Isaac walks over and Garet steps out of him.
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
-    Actor_SetSpeed(ACTOR_STORM_GARET, PIXELS(1), PIXELS(1) / 2);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 1);
+    Actor_SetSpeed(ACTOR_STORM_GARET, 1);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 179, 789);
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     if (leader != NULL) {
@@ -1156,8 +1156,8 @@ static void ValePlaza_SentToAidElders(void) {
 #if TBS_PATCH_4
     Actor_SetSpritePriority(ACTOR_STORM_SECOND_AIDE, 1);
 #endif
-    Actor_SetSpeed(ACTOR_STORM_FIRST_AIDE, PIXELS(8) / 5, PIXELS(4) / 5);
-    Actor_SetSpeed(ACTOR_STORM_SECOND_AIDE, PIXELS(8) / 5, PIXELS(4) / 5);
+    Actor_SetSpeed(ACTOR_STORM_FIRST_AIDE, 1.6);
+    Actor_SetSpeed(ACTOR_STORM_SECOND_AIDE, 1.6);
     // The two run off; Isaac and Garet step up to the group.
     Actor_SetScript(ACTOR_STORM_FIRST_AIDE, gValePlaza_AideRunActions);
     Event_Wait(20);
@@ -1291,7 +1291,7 @@ static void ValePlaza_MeetSurvivingTravelers(void) {
   Weather_ResumeLightning();
   Actor_SetPosition(ACTOR_FIRST_TRAVELER, 105, 267);
   wait(1);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(6) / 5, PIXELS(3) / 5);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 1.2);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 93, 343);
   Event_SetMessageId(MsgValeOnlyTwoSurvived);
   // "Only the two of us survived..."
@@ -1305,7 +1305,7 @@ static void ValePlaza_MeetSurvivingTravelers(void) {
   FieldCamera_WaitForMove();
   Event_Wait(40);
   Actor_SetPosition(ACTOR_SECOND_TRAVELER, 135, 177);
-  Actor_SetSpeed(ACTOR_SECOND_TRAVELER, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(ACTOR_SECOND_TRAVELER, 0.8);
   Actor_WalkTo(ACTOR_SECOND_TRAVELER, 126, 258);
   Event_Wait(40);
   Actor_FaceDirection(ACTOR_FIRST_TRAVELER, FACING_NORTH_NORTHEAST, 0);
@@ -1379,8 +1379,8 @@ static void ValePlaza_FightTravelers(void) {
                                  40);
   FieldCamera_SetSpeedParameters(PIXELS(4) / 5, PIXELS(1) / 10);
   FieldCamera_MoveWithinMapBounds(PIXELS(100), PIXELS(144), PIXELS(333), 1);
-  Actor_SetSpeed(ACTOR_FIRST_TRAVELER, PIXELS(1), PIXELS(1) / 2);
-  Actor_SetSpeed(ACTOR_SECOND_TRAVELER, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_FIRST_TRAVELER, 1);
+  Actor_SetSpeed(ACTOR_SECOND_TRAVELER, 1);
   Actor_WalkTo(ACTOR_FIRST_TRAVELER, 105, 329);
   Event_Wait(10);
   Actor_WalkTo(ACTOR_SECOND_TRAVELER, 124, 329);
@@ -1396,7 +1396,7 @@ static void ValePlaza_FightTravelers(void) {
   actor = Actor_Get(ACTOR_STORM_GARET);
   Actor_SetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
   Actor_SetPosition(ACTOR_STORM_GARET, 0, 331);
-  Actor_SetSpeed(ACTOR_STORM_GARET, PIXELS(6) / 5, PIXELS(3) / 5);
+  Actor_SetSpeed(ACTOR_STORM_GARET, 1.2);
   Actor_WalkToAndWait(ACTOR_STORM_GARET, 37, 339);
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_FIRST_TRAVELER, ANIM_NOD);
@@ -1513,14 +1513,14 @@ static void ValePlaza_TravelersLeaveAfterBattle(void) {
   Actor_FaceDirection(ACTOR_SECOND_TRAVELER, FACING_WEST, 10);
   Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 3);
   Actor_SetSpritePriority(ACTOR_STORM_GARET, 3);
-  Actor_SetSpeed(ACTOR_FIRST_TRAVELER, PIXELS(12) / 5, PIXELS(6) / 5);
+  Actor_SetSpeed(ACTOR_FIRST_TRAVELER, 2.4);
   gravityQ8 = 128;
   actor = Actor_Get(ACTOR_FIRST_TRAVELER);
   actor->bounce = Q16_ONE / 100;
   actor->gravity = gravityQ8 << 8;
   Actor_SetScript(ACTOR_FIRST_TRAVELER, gValePlaza_FirstTravelerBounceActions);
   Event_Wait(24);
-  Actor_SetSpeed(ACTOR_SECOND_TRAVELER, PIXELS(12) / 5, PIXELS(6) / 5);
+  Actor_SetSpeed(ACTOR_SECOND_TRAVELER, 2.4);
   actor = Actor_Get(ACTOR_SECOND_TRAVELER);
   actor->bounce = Q16_ONE / 100;
   actor->gravity = gravityQ8 << 8;
@@ -1611,12 +1611,12 @@ static void ValePlaza_DepartForQuest(void) {
   // good-bye.
   Actor_ShowEmote(ACTOR_FAREWELL_SECOND_CHILD,
                   EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
-  Actor_SetSpeed(ACTOR_FAREWELL_SECOND_CHILD, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(ACTOR_FAREWELL_SECOND_CHILD, 0.8);
   Actor_WalkToAndWait(ACTOR_FAREWELL_SECOND_CHILD, 184, 618);
   ValePlaza_FaceDirectionAndWait(ACTOR_FAREWELL_SECOND_CHILD,
                                  FACING_SOUTH_SOUTHEAST, 60);
   ValePlaza_SayThenWait(ACTOR_FAREWELL_SECOND_CHILD, 20);
-  Actor_SetSpeed(ACTOR_FAREWELL_FIRST_CHILD, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_FAREWELL_FIRST_CHILD, 1);
   Actor_WalkToAndWait(ACTOR_FAREWELL_FIRST_CHILD, 168, 618);
   ValePlaza_FaceDirectionAndWait(ACTOR_FAREWELL_FIRST_CHILD,
                                  FACING_EAST_NORTHEAST, 10);
@@ -1627,7 +1627,7 @@ static void ValePlaza_DepartForQuest(void) {
   Actor_RunRepeatedMotion(ACTOR_FAREWELL_SECOND_CHILD, 1);
   Event_ShowMessage(ACTOR_FAREWELL_SECOND_CHILD, 0);
   Event_Wait(10);
-  Actor_SetSpeed(ACTOR_FAREWELL_DOG, PIXELS(12) / 5, PIXELS(6) / 5);
+  Actor_SetSpeed(ACTOR_FAREWELL_DOG, 2.4);
   Actor_SetPosition(ACTOR_FAREWELL_DOG, 110, 744);
   wait(2);
   Actor_SetAnimation(ACTOR_FAREWELL_DOG, ANIM_NOD);
@@ -1721,13 +1721,13 @@ static void ValePlaza_DepartForQuest(void) {
   Actor_GetById(ACTOR_FAREWELL_CAT)->priorityFlags &= priorityFlags;
   Actor_SetSpritePriority(ACTOR_FAREWELL_DOG, 2);
   Actor_SetSpritePriority(ACTOR_FAREWELL_CAT, 2);
-  Actor_SetSpeed(ACTOR_FAREWELL_CAT, PIXELS(18) / 5, PIXELS(9) / 5);
+  Actor_SetSpeed(ACTOR_FAREWELL_CAT, 3.6);
   Actor_SetAnimation(ACTOR_FAREWELL_CAT, ANIM_WALK);
   chaseActions = gValePlaza_FarewellChaseActions;
   Actor_SetScript(ACTOR_FAREWELL_CAT, chaseActions);
   Event_Wait(20);
   Actor_SetAnimation(ACTOR_FAREWELL_DOG, ANIM_NOD);
-  Actor_SetSpeed(ACTOR_FAREWELL_DOG, PIXELS(24) / 5, PIXELS(12) / 5);
+  Actor_SetSpeed(ACTOR_FAREWELL_DOG, 4.8);
   Actor_RunScriptAndWait(ACTOR_FAREWELL_DOG, chaseActions);
   Event_Wait(60);
   // Should they say good-bye too? Sure: both run down, and the camera
@@ -1746,8 +1746,8 @@ static void ValePlaza_DepartForQuest(void) {
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_FAREWELL_FIRST_CHILD, ANIM_NOD);
   Event_Wait(20);
-  Actor_SetSpeed(ACTOR_FAREWELL_FIRST_CHILD, PIXELS(12) / 5, PIXELS(6) / 5);
-  Actor_SetSpeed(ACTOR_FAREWELL_SECOND_CHILD, PIXELS(12) / 5, PIXELS(6) / 5);
+  Actor_SetSpeed(ACTOR_FAREWELL_FIRST_CHILD, 2.4);
+  Actor_SetSpeed(ACTOR_FAREWELL_SECOND_CHILD, 2.4);
   Actor_SetScript(ACTOR_FAREWELL_FIRST_CHILD,
                   gValePlaza_FarewellFirstChildActions);
   Event_Wait(10);
@@ -1777,7 +1777,7 @@ static void ValePlaza_DepartForQuest(void) {
   Actor_RunRepeatedMotion(ACTOR_FAREWELL_GARETS_SISTER, 2);
   Event_Wait(20);
   ValePlaza_SayThenWait(ACTOR_FAREWELL_GARETS_SISTER, 10);
-  Actor_SetSpeed(ACTOR_FAREWELL_GARETS_SISTER, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_FAREWELL_GARETS_SISTER, 1);
   Actor_WalkToAndWait(ACTOR_FAREWELL_GARETS_SISTER, 216, 800);
   Actor_FaceDirection(ACTOR_FAREWELL_GARETS_SISTER, FACING_SOUTH, 0);
   Party_GiveItem(ITEM_HERB, 0);
@@ -1931,14 +1931,14 @@ static void ValePlaza_DepartForQuest(void) {
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
   ValePlaza_FaceDirectionAndWait(ACTOR_PARTY_LEADER, FACING_SOUTH, 10);
   ValePlaza_FaceDirectionAndWait(ACTOR_GARET, FACING_SOUTH_SOUTHWEST, 20);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.8);
   departureActions = gValePlaza_PartyDepartureActions;
   Actor_SetScript(ACTOR_PARTY_LEADER, departureActions);
   Event_Wait(20);
   FieldCamera_SetSpeed(PIXELS(2) / 5, PIXELS(1) / 20);
   FieldCamera_MoveWithinMapBounds(PIXELS(216), PIXELS(16), PIXELS(905), 1);
   Event_Wait(20);
-  Actor_SetSpeed(ACTOR_GARET, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(ACTOR_GARET, 0.8);
   Actor_SetScript(ACTOR_GARET, departureActions);
   Event_Wait(60);
   work = gFieldWork;

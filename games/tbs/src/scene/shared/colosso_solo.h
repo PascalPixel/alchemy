@@ -454,9 +454,9 @@ L_main:
   MessageArgument_Push(friendId, MESSAGE_ARGUMENT_ACTOR);
   Event_SetMessageId(MsgColossoIsaacWillCheerForWay);
   Event_ShowMessage(guide, 0);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
-  Actor_SetSpeed(friendId, PIXELS(1), PIXELS(1) / 2);
-  Actor_SetSpeed(guide, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 1);
+  Actor_SetSpeed(friendId, 1);
+  Actor_SetSpeed(guide, 1);
   leader = Actor_GetById(ACTOR_PARTY_LEADER);
   if (leader != 0) {
     Actor_SetPositionFixed(friendId, leader->x.fixed, leader->z.fixed);

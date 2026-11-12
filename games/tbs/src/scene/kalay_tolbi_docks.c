@@ -359,8 +359,7 @@ static void KalayTolbiDocks_GreetArrivals(void) {
   Event_Start();
   GameFlag_Set(FLAG_TOLBI_DOCKS_ARRIVALS_GREETED);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 392, 296);
-  Actor_SetSpeed(ACTOR_MAN_HEARING_OF_THE_SCARY_TRIP, PIXELS(6) / 5,
-                 PIXELS(3) / 5);
+  Actor_SetSpeed(ACTOR_MAN_HEARING_OF_THE_SCARY_TRIP, 1.2);
   Actor_WalkToAndWait(ACTOR_MAN_HEARING_OF_THE_SCARY_TRIP, 408, 296);
   Actor_FaceDirection(ACTOR_MAN_HEARING_OF_THE_SCARY_TRIP, FACING_WEST, 0);
   Event_Wait(20);
@@ -714,7 +713,7 @@ static void KalayTolbiDocks_TalkToWaitingDaughter(void) {
 static void KalayTolbiDocks_OpenDoorAndLeave(void) {
   Event_Start();
   Sound_Play(SE_DOOR_OPEN);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.5);
   Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 3);
   if (gMainRoutineWork.next == (s32)&SceneId_KalayDocks) {
     Actor_WalkTo(ACTOR_PARTY_LEADER, 304, 1392);
@@ -891,7 +890,7 @@ static void KalayTolbiDocks_GaretSeesTheKaragol(void) {
   // Follow Garet to the water before the man joins him.
   Event_SetMessageId(MsgKalayIncredibleOcean);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
-  Actor_SetSpeed(ACTOR_GARET, PIXELS(8) / 5, PIXELS(4) / 5);
+  Actor_SetSpeed(ACTOR_GARET, 1.6);
   Actor_WalkToAndWait(ACTOR_GARET, 232, 1424);
   Actor_FaceDirection(ACTOR_GARET, FACING_WEST, 0);
   FieldCamera_MoveTo(PIXELS(184), -1, PIXELS(1440), 1);
@@ -907,8 +906,7 @@ static void KalayTolbiDocks_GaretSeesTheKaragol(void) {
   Event_Wait(20);
   Actor_ShowEmote(ACTOR_YOUNG_MAN_ASKING_ABOUT_TOLBI,
                   EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 50);
-  Actor_SetSpeed(ACTOR_YOUNG_MAN_ASKING_ABOUT_TOLBI, PIXELS(6) / 5,
-                 PIXELS(3) / 5);
+  Actor_SetSpeed(ACTOR_YOUNG_MAN_ASKING_ABOUT_TOLBI, 1.2);
   Actor_WalkToAndWait(ACTOR_YOUNG_MAN_ASKING_ABOUT_TOLBI, 264, 1424);
   Actor_FaceDirection(ACTOR_YOUNG_MAN_ASKING_ABOUT_TOLBI, FACING_WEST, 0);
   Event_Wait(10);
@@ -930,7 +928,7 @@ static void KalayTolbiDocks_GaretSeesTheKaragol(void) {
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHEAST, 0);
   Event_Wait(30);
-  Actor_SetSpeed(ACTOR_GARET, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_GARET, 1);
   Actor_WalkToAndWait(ACTOR_GARET, 264, 1464);
   Actor_FaceDirection(ACTOR_GARET, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
@@ -943,7 +941,7 @@ static void KalayTolbiDocks_GaretSeesTheKaragol(void) {
   Event_Wait(30);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
   Event_Wait(30);
-  Actor_SetSpeed(ACTOR_GARET, PIXELS(6) / 5, PIXELS(3) / 5);
+  Actor_SetSpeed(ACTOR_GARET, 1.2);
   Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
   // Garet rejoins the leader and the man wanders again from where he stands.
   actor = Actor_Get(ACTOR_PARTY_LEADER);
@@ -991,7 +989,7 @@ static void KalayTolbiDocks_PassengersConfrontTourGuide(void) {
   ((u8 *)actor->sprite)[9] |= 12;
   ((u8 *)actor->sprite)[21] |= 12;
   FieldCamera_MoveTo(PIXELS(232), -1, PIXELS(304), 1);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 1);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 216, 272);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 0);
   FieldCamera_WaitForMove();
@@ -1018,14 +1016,14 @@ static void KalayTolbiDocks_PassengersConfrontTourGuide(void) {
   Event_ShowMessage(ACTOR_TOUR_GUIDE, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_ANGRY_YOUNG_MAN, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 55);
-  Actor_SetSpeed(ACTOR_ANGRY_YOUNG_MAN, PIXELS(2), PIXELS(1));
+  Actor_SetSpeed(ACTOR_ANGRY_YOUNG_MAN, 2);
   Actor_WalkByAndWait(ACTOR_ANGRY_YOUNG_MAN, 16, 0);
   Actor_Jump(ACTOR_ANGRY_YOUNG_MAN, 7, 0);
   Actor_WalkByAndWait(ACTOR_ANGRY_YOUNG_MAN, 24, 0);
   Actor_Get(ACTOR_ANGRY_YOUNG_MAN)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkBy(ACTOR_ANGRY_YOUNG_MAN, -16, 0);
   Sound_Play(SE_HIGH_JUMP);
-  Actor_SetSpeed(ACTOR_TOUR_GUIDE, PIXELS(12) / 5, PIXELS(6) / 5);
+  Actor_SetSpeed(ACTOR_TOUR_GUIDE, 2.4);
   Actor_WalkByAndWait(ACTOR_TOUR_GUIDE, 16, 0);
   Event_Wait(10);
   Actor_SetAnimation(ACTOR_ANGRY_YOUNG_MAN, ANIM_STAND);
@@ -1040,7 +1038,7 @@ static void KalayTolbiDocks_PassengersConfrontTourGuide(void) {
   Sound_Play(SE_SWITCH);
   Event_Wait(10);
   Event_Wait(20);
-  Actor_SetSpeed(ACTOR_TOUR_GUIDE, PIXELS(2) / 5, PIXELS(1) / 5);
+  Actor_SetSpeed(ACTOR_TOUR_GUIDE, 0.4);
   Actor_Jump(ACTOR_TOUR_GUIDE, 6, 0);
   Sound_Play(SE_DOOR_CLOSE);
   Actor_WalkByAndWait(ACTOR_TOUR_GUIDE, -8, 0);
@@ -1049,7 +1047,7 @@ static void KalayTolbiDocks_PassengersConfrontTourGuide(void) {
   Event_ShowMessage(ACTOR_ANGRY_YOUNG_MAN, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_TOUR_GUIDE, EMOTE_IN_FRONT | EMOTE_WINCE, 70);
-  Actor_SetSpeed(ACTOR_BODYGUARD, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_BODYGUARD, 1);
   Actor_WalkByAndWait(ACTOR_BODYGUARD, -8, 0);
   Actor_FaceDirection(ACTOR_BODYGUARD, FACING_SOUTH_SOUTHWEST, 0);
   Event_Wait(30);
@@ -1097,9 +1095,9 @@ static void KalayTolbiDocks_PassengersConfrontTourGuide(void) {
   Event_Wait(20);
   // "What are you talking about?"
   Event_ShowMessage(ACTOR_ANGRY_YOUNG_MAN, 0);
-  Actor_SetSpeed(ACTOR_ANGRY_YOUNG_MAN, PIXELS(6) / 5, PIXELS(3) / 5);
+  Actor_SetSpeed(ACTOR_ANGRY_YOUNG_MAN, 1.2);
   Actor_WalkByAndWait(ACTOR_ANGRY_YOUNG_MAN, 8, 0);
-  Actor_SetSpeed(ACTOR_BODYGUARD, PIXELS(2), PIXELS(1));
+  Actor_SetSpeed(ACTOR_BODYGUARD, 2);
   Actor_WalkByAndWait(ACTOR_BODYGUARD, -8, 16);
   Actor_FaceDirection(ACTOR_BODYGUARD, FACING_WEST, 0);
   // "I wouldn't go any farther than that if I were you!"
@@ -1107,7 +1105,7 @@ static void KalayTolbiDocks_PassengersConfrontTourGuide(void) {
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_ANGRY_YOUNG_MAN, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
   Actor_Get(ACTOR_ANGRY_YOUNG_MAN)->steeringFlags &= ~ACTOR_FACES_MOTION;
-  Actor_SetSpeed(ACTOR_ANGRY_YOUNG_MAN, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(ACTOR_ANGRY_YOUNG_MAN, 0.8);
   Actor_WalkByAndWait(ACTOR_ANGRY_YOUNG_MAN, -8, 0);
   Actor_Get(ACTOR_ANGRY_YOUNG_MAN)->steeringFlags |= ACTOR_FACES_MOTION;
   Event_Wait(20);
@@ -1122,14 +1120,14 @@ static void KalayTolbiDocks_PassengersConfrontTourGuide(void) {
   Event_ShowMessage(ACTOR_BODYGUARD, 0);
   Event_Wait(10);
   Actor_Get(ACTOR_ANGRY_YOUNG_MAN)->steeringFlags &= ~ACTOR_FACES_MOTION;
-  Actor_SetSpeed(ACTOR_ANGRY_YOUNG_MAN, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(ACTOR_ANGRY_YOUNG_MAN, 0.8);
   Actor_WalkByAndWait(ACTOR_ANGRY_YOUNG_MAN, -16, 0);
   Actor_Get(ACTOR_ANGRY_YOUNG_MAN)->steeringFlags |= ACTOR_FACES_MOTION;
   Actor_FaceDirection(ACTOR_ANGRY_YOUNG_MAN, FACING_EAST, 0);
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_ANGRY_YOUNG_MAN, ANIM_SHAKE_HEAD);
   Event_Wait(20);
-  Actor_SetSpeed(ACTOR_ANGRY_YOUNG_MAN, PIXELS(9) / 5, PIXELS(9) / 10);
+  Actor_SetSpeed(ACTOR_ANGRY_YOUNG_MAN, 1.8);
   Actor_WalkByAndWait(ACTOR_ANGRY_YOUNG_MAN, 8, 0);
   Actor_Jump(ACTOR_ANGRY_YOUNG_MAN, 6, 0);
   Actor_WalkByAndWait(ACTOR_ANGRY_YOUNG_MAN, 24, 0);
@@ -1152,7 +1150,7 @@ static void KalayTolbiDocks_PassengersConfrontTourGuide(void) {
   Sound_Play(SE_DOOR_CLOSE);
   Event_Wait(20);
   Actor_ShowEmote(ACTOR_STRANDED_WOMAN, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
-  Actor_SetSpeed(ACTOR_STRANDED_WOMAN, PIXELS(3) / 2, PIXELS(3) / 4);
+  Actor_SetSpeed(ACTOR_STRANDED_WOMAN, 1.5);
   Actor_WalkByAndWait(ACTOR_STRANDED_WOMAN, 24, 0);
   Actor_FaceDirection(ACTOR_STRANDED_WOMAN, FACING_NORTH, 0);
   Event_Wait(10);
@@ -1164,7 +1162,7 @@ static void KalayTolbiDocks_PassengersConfrontTourGuide(void) {
   // "I know... And after I asked him so nicely..."
   Event_ShowMessage(ACTOR_BODYGUARD, 0);
   Event_Wait(20);
-  Actor_SetSpeed(ACTOR_BODYGUARD, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(ACTOR_BODYGUARD, 0.8);
   Actor_WalkByAndWait(ACTOR_BODYGUARD, -8, 0);
   Event_Wait(20);
   // "You're wasting time on this!? Why don't you find a way to..."
@@ -1180,12 +1178,12 @@ static void KalayTolbiDocks_PassengersConfrontTourGuide(void) {
   Actor_SetAnimationAndWait(ACTOR_TOUR_GUIDE, ANIM_NOD);
   Event_Wait(20);
   Event_Wait(10);
-  Actor_SetSpeed(ACTOR_BODYGUARD, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_BODYGUARD, 1);
   Actor_WalkByAndWait(ACTOR_BODYGUARD, 24, -24);
   Actor_WalkByAndWait(ACTOR_BODYGUARD, 8, 0);
   Actor_FaceDirection(ACTOR_BODYGUARD, FACING_NORTHEAST, 0);
   Event_Wait(20);
-  Actor_SetSpeed(ACTOR_TOUR_GUIDE, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_TOUR_GUIDE, 1);
   Actor_WalkByAndWait(ACTOR_TOUR_GUIDE, 0, -8);
   Event_Wait(10);
   Event_End();

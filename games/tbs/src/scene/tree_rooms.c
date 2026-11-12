@@ -520,10 +520,10 @@ static void TreeRooms_FightTret(void) {
   // "Hm HROOOM!!!"
   Event_ShowMessageThenWait(SPEAKER(ACTOR_SECOND_TRET), 0, 20);
   Sound_Play(MUS_CONFRONTATION);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
-  Actor_SetSpeed(ACTOR_GARET, PIXELS(1), PIXELS(1) / 2);
-  Actor_SetSpeed(ACTOR_IVAN, PIXELS(1), PIXELS(1) / 2);
-  Actor_SetSpeed(ACTOR_MIA, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 1);
+  Actor_SetSpeed(ACTOR_GARET, 1);
+  Actor_SetSpeed(ACTOR_IVAN, 1);
+  Actor_SetSpeed(ACTOR_MIA, 1);
   Actor_Get(ACTOR_MIA)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   Actor_SetSpritePriority(ACTOR_MIA, 2);
   Actor_Get(ACTOR_PARTY_LEADER)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
@@ -621,10 +621,10 @@ static void TreeRooms_PlayPostBattleConversation(void) {
   PartyInventory_FindMember(ITEM_HERMES_WATER);
   Sound_Play(SOUND_FADE_OUT_BGM);
   Event_Start();
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
-  Actor_SetSpeed(ACTOR_GARET, PIXELS(4) / 5, PIXELS(2) / 5);
-  Actor_SetSpeed(ACTOR_IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
-  Actor_SetSpeed(ACTOR_MIA, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.8);
+  Actor_SetSpeed(ACTOR_GARET, 0.8);
+  Actor_SetSpeed(ACTOR_IVAN, 0.8);
+  Actor_SetSpeed(ACTOR_MIA, 0.8);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 166, 80);
   partyActor = Actor_Get(ACTOR_PARTY_LEADER);
   partyActor->facing = FACING_NORTH;

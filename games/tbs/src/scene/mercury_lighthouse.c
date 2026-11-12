@@ -629,7 +629,7 @@ static void MercuryLighthouse_WalkLeaderIn(void) {
   work = gFieldWork;
   Event_Start();
   Task_AddFrame(MercuryLighthouse_SparkleAroundLeader, TASK_PASS_FRAME);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(5) / 2, PIXELS(5) / 4);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 2.5);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Sound_Play(SE_SPARKLING_PASSAGE);
@@ -1477,8 +1477,8 @@ static void MercuryLighthouse_MiaSensesSomeoneInside(void) {
   struct Actor *mia;
 
   Event_Start();
-  Actor_SetSpeed(ACTOR_MIA, PIXELS(4) / 5, PIXELS(2) / 5);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(ACTOR_MIA, 0.8);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.8);
   Event_SetMessageId(MsgImilSomebodyHere);
   // "Somebody...is here."
   Event_ShowMessageThenWait(ACTOR_MIA, 0, 20);
@@ -1594,7 +1594,7 @@ static void MercuryLighthouse_MiaOpensEntranceWithPly(void) {
   if (column != 51) {
   } else {
     // Mia turns: "Did you do that?"
-    Actor_SetSpeed(ACTOR_MIA, PIXELS(4) / 5, PIXELS(2) / 5);
+    Actor_SetSpeed(ACTOR_MIA, 0.8);
     Event_Wait(20);
     Actor_RunRepeatedMotion(ACTOR_MIA, 2);
     Event_Wait(20);
@@ -1622,8 +1622,8 @@ static void MercuryLighthouse_MiaOpensEntranceWithPly(void) {
     SetEffectRecordMode(actor, 1);
     actor = Actor_Get(ACTOR_IVAN);
     SetEffectRecordMode(actor, 1);
-    Actor_SetSpeed(ACTOR_GARET, PIXELS(4) / 5, PIXELS(2) / 5);
-    Actor_SetSpeed(ACTOR_IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
+    Actor_SetSpeed(ACTOR_GARET, 0.8);
+    Actor_SetSpeed(ACTOR_IVAN, 0.8);
     Actor_SetPosition(ACTOR_GARET, 872, 600);
     Actor_SetPosition(ACTOR_IVAN, 872, 600);
     Actor_WalkTo(ACTOR_IVAN, 888, 632);
@@ -1706,13 +1706,13 @@ static void MercuryLighthouse_MiaOpensEntranceWithPly(void) {
     // She nods, jumps up and goes in.
     Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
     Event_Wait(20);
-    Actor_SetSpeed(ACTOR_MIA, PIXELS(3), PIXELS(3) / 2);
+    Actor_SetSpeed(ACTOR_MIA, 3);
     Actor_Jump(ACTOR_MIA, 4, 0);
     Actor_WalkTo(ACTOR_MIA, 840, 600);
     Actor_WaitForMoveById(ACTOR_MIA);
     MapGrid_CopyCellAttributes(116, 36, 3, 4, 52, 36);
     Actor_Prepare(PIXELS(840), PIXELS(56), PIXELS(608), SPRITE_CRATE);
-    Actor_SetSpeed(ACTOR_MIA, PIXELS(4) / 5, PIXELS(2) / 5);
+    Actor_SetSpeed(ACTOR_MIA, 0.8);
     Actor_WalkToAndWait(ACTOR_MIA, 840, 560);
     Actor_SetPosition(ACTOR_MIA, 0, 0);
     Event_Wait(20);
@@ -1965,11 +1965,11 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
   Event_Wait(30);
   // After Saturos the leader goes alone; the first time Mia leads the party.
   if (GameFlag_Get(FLAG_SATUROS_BEATEN_AT_MERCURY) != 0) {
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.8);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 824, 232);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 792, 232);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 792, 208);
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2), PIXELS(1));
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 2);
     Actor_Jump(ACTOR_PARTY_LEADER, 4, 0);
     Actor_WalkTo(ACTOR_PARTY_LEADER, 792, 200);
     Event_Wait(10);
@@ -1988,10 +1988,10 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
         MERCURY_LIGHTHOUSE_EXTERIOR_TO_MERCURY_LIGHTHOUSE_AERIE);
     Event_End();
   } else {
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
-    Actor_SetSpeed(ACTOR_GARET, PIXELS(4) / 5, PIXELS(2) / 5);
-    Actor_SetSpeed(ACTOR_IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
-    Actor_SetSpeed(ACTOR_MIA, PIXELS(4) / 5, PIXELS(2) / 5);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.8);
+    Actor_SetSpeed(ACTOR_GARET, 0.8);
+    Actor_SetSpeed(ACTOR_IVAN, 0.8);
+    Actor_SetSpeed(ACTOR_MIA, 0.8);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 824, 240);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 20);
     Actor_SetPosition(ACTOR_MIA, 824, 240);
@@ -2023,7 +2023,7 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
     Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTHEAST, 20);
     Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 1);
     Event_Wait(60);
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.5);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 792, 224);
     Actor_FaceDirection(ACTOR_GARET, FACING_WEST, 0);
     Actor_FaceDirection(ACTOR_IVAN, FACING_EAST, 0);
@@ -2032,7 +2032,7 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
     Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHEAST, 20);
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
     Event_Wait(20);
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2), PIXELS(1));
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 2);
     Actor_Jump(ACTOR_PARTY_LEADER, 4, 0);
     Actor_WalkTo(ACTOR_PARTY_LEADER, 792, 200);
     Event_Wait(10);
@@ -2840,7 +2840,7 @@ static void MercuryLighthouse_MiaJoinsAfterRescue(void) {
     }
   }
   Event_SetMessageId(MsgMercuryThoughtSo);
-  Actor_SetSpeed(ACTOR_MIA, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(ACTOR_MIA, 0.8);
   Actor_WalkToAndWait(ACTOR_MIA, 728, 632);
   Event_Wait(20);
   // "I thought so..."

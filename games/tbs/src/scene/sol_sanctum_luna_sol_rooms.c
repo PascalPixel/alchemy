@@ -408,7 +408,7 @@ static void SolSanctumLunaSolRooms_KradenFindsHeartOfSanctum(void) {
     // The leader walks in as the music changes.
     Event_SetMessageId(MsgSolSanctumFound);
     Sound_Play(SOUND_FADE_OUT_BGM);
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 1);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 288, 232);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STILL);
     Event_Wait(20);
@@ -419,7 +419,7 @@ static void SolSanctumLunaSolRooms_KradenFindsHeartOfSanctum(void) {
     if (leader != 0) {
       Actor_SetPositionFixed(ACTOR_KRADEN, leader->x.fixed, leader->z.fixed);
     }
-    Actor_SetSpeed(ACTOR_KRADEN, PIXELS(7) / 5, PIXELS(7) / 10);
+    Actor_SetSpeed(ACTOR_KRADEN, 1.4);
     Actor_WalkToAndWait(ACTOR_KRADEN, 288, 206);
     Event_Wait(40);
     Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
@@ -435,8 +435,8 @@ static void SolSanctumLunaSolRooms_KradenFindsHeartOfSanctum(void) {
     if (leader != 0) {
       Actor_SetPositionFixed(ACTOR_JENNA, leader->x.fixed, leader->z.fixed);
     }
-    Actor_SetSpeed(ACTOR_GARET, PIXELS(1) / 2, PIXELS(1) / 4);
-    Actor_SetSpeed(ACTOR_JENNA, PIXELS(1) / 2, PIXELS(1) / 4);
+    Actor_SetSpeed(ACTOR_GARET, 0.5);
+    Actor_SetSpeed(ACTOR_JENNA, 0.5);
     Actor_WalkTo(ACTOR_GARET, 280, 248);
     Actor_WalkToAndWait(ACTOR_JENNA, 296, 248);
     Actor_SetAnimation(ACTOR_GARET, ANIM_STAND);
@@ -444,7 +444,7 @@ static void SolSanctumLunaSolRooms_KradenFindsHeartOfSanctum(void) {
     Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH_NORTHWEST, 30);
     FieldCamera_SetSpeedParameters(PIXELS(3) / 5, PIXELS(3) / 40);
     FieldCamera_MoveWithinMapBounds(PIXELS(288), -1, PIXELS(213), 1);
-    Actor_SetSpeed(ACTOR_KRADEN, PIXELS(2) / 5, PIXELS(1) / 5);
+    Actor_SetSpeed(ACTOR_KRADEN, 0.4);
     Actor_WalkToAndWait(ACTOR_KRADEN, 288, 176);
     Event_Wait(40);
     Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
@@ -547,9 +547,9 @@ static void SolSanctumLunaSolRooms_KradenFindsHeartOfSanctum(void) {
     Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
     SolSanctumLunaSolRooms_ShowMessageAndWait(ACTOR_KRADEN, 6);
     // End the discussion and return the followers to Isaac.
-    Actor_SetSpeed(ACTOR_GARET, PIXELS(1), PIXELS(1) / 2);
-    Actor_SetSpeed(ACTOR_JENNA, PIXELS(1), PIXELS(1) / 2);
-    Actor_SetSpeed(ACTOR_KRADEN, PIXELS(2), PIXELS(1));
+    Actor_SetSpeed(ACTOR_GARET, 1);
+    Actor_SetSpeed(ACTOR_JENNA, 1);
+    Actor_SetSpeed(ACTOR_KRADEN, 2);
     Actor_SetAnimation(ACTOR_KRADEN, ANIM_WALK);
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     if (leader != 0) {
@@ -598,7 +598,7 @@ static void SolSanctumLunaSolRooms_IntroduceSolAndLunaRooms(void) {
 
   // Kraden steps out beside Isaac: "What is this room?"
   Event_SetMessageId(MsgSolSanctumWhRoom);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 1);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 488, 176);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STILL);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
@@ -606,7 +606,7 @@ static void SolSanctumLunaSolRooms_IntroduceSolAndLunaRooms(void) {
     Actor_SetPositionFixed(ACTOR_KRADEN, leader->x.fixed, leader->z.fixed);
   }
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 1);
-  Actor_SetSpeed(ACTOR_KRADEN, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_KRADEN, 1);
   Actor_WalkToAndWait(ACTOR_KRADEN, 472, 168);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_EAST, 60);
   Actor_Jump(ACTOR_KRADEN, 4, 40);
@@ -697,12 +697,12 @@ static void SolSanctumLunaSolRooms_KradenStopsPartyLeaving(void) {
       Actor_SetPositionFixed(ACTOR_KRADEN, leader->x.fixed, leader->z.fixed);
     }
     Event_Wait(4);
-    Actor_SetSpeed(ACTOR_KRADEN, PIXELS(1), PIXELS(1) / 2);
+    Actor_SetSpeed(ACTOR_KRADEN, 1);
   } else if (GameFlag_Get(FLAG_SOL_SANCTUM_LUNA_PICTURE_CHANGED) != 0 ||
              kraden->x.fixed > PIXELS(340)) {
     Actor_SetPosition(ACTOR_KRADEN, 392, 168);
     Event_Wait(4);
-    Actor_SetSpeed(ACTOR_KRADEN, PIXELS(2), PIXELS(1));
+    Actor_SetSpeed(ACTOR_KRADEN, 2);
   }
   if (GameFlag_Get(FLAG_SOL_SANCTUM_LUNA_PICTURE_CHANGED) != 0 ||
       kraden->x.fixed > PIXELS(340)) {
@@ -970,7 +970,7 @@ static void SolSanctumLunaSolRooms_FlashLightsWithTrapDisarmed(void) {
   // Kraden: "Isaac must have found something!" He runs off south.
   SolSanctumLunaSolRooms_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | ACTOR_KRADEN,
                                             6);
-  Actor_SetSpeed(ACTOR_KRADEN, PIXELS(2), PIXELS(1));
+  Actor_SetSpeed(ACTOR_KRADEN, 2);
   Actor_WalkToAndWait(ACTOR_KRADEN, 576, 280);
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   gFieldWork->transitionFrames = 32;
@@ -1054,7 +1054,7 @@ static void SolSanctumLunaSolRooms_SpringTrap(void) {
   // Kraden: "Stop!!! You're about to make a big mistake!" He runs south.
   SolSanctumLunaSolRooms_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | ACTOR_KRADEN,
                                             6);
-  Actor_SetSpeed(ACTOR_KRADEN, PIXELS(2), PIXELS(1));
+  Actor_SetSpeed(ACTOR_KRADEN, 2);
   Actor_WalkToAndWait(ACTOR_KRADEN, 576, 280);
   // Stop all light tasks before leaving this room.
   Task_Remove(SolSanctumLunaSolRooms_UpdateFirstFallingLight);
@@ -1192,7 +1192,7 @@ static void SolSanctumLunaSolRooms_KradenSeesLunaPictureChange(void) {
       Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STILL);
       FieldCamera_WaitForMove();
       Event_Wait(10);
-      Actor_SetSpeed(ACTOR_KRADEN, PIXELS(1), PIXELS(1) / 2);
+      Actor_SetSpeed(ACTOR_KRADEN, 1);
       Actor_WalkToAndWait(ACTOR_KRADEN, 576, 152);
       Event_Wait(6);
       Actor_Jump(ACTOR_KRADEN, 6, 30);
@@ -1222,7 +1222,7 @@ static void SolSanctumLunaSolRooms_KradenSeesLunaPictureChange(void) {
       Event_Wait(40);
       Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
       Event_Wait(6);
-      Actor_SetSpeed(ACTOR_KRADEN, PIXELS(1) / 2, PIXELS(1) / 4);
+      Actor_SetSpeed(ACTOR_KRADEN, 0.5);
       Actor_SetAnimation(ACTOR_KRADEN, ANIM_WALK);
       leader = Actor_Get(ACTOR_PARTY_LEADER);
       if (leader != 0) {
@@ -1248,7 +1248,7 @@ static void SolSanctumLunaSolRooms_DiscussFloorSymbolChangingToLuna(void) {
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 376, 184);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STILL);
   Actor_SetPosition(ACTOR_KRADEN, 376, 184);
-  Actor_SetSpeed(ACTOR_KRADEN, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_KRADEN, 1);
   Actor_WalkToAndWait(ACTOR_KRADEN, 392, 168);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST, 30);
   Actor_SetAnimation(ACTOR_KRADEN, ANIM_STAND);
@@ -1289,7 +1289,7 @@ static void SolSanctumLunaSolRooms_RiseToElementalStarRoom(void) {
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STILL);
     Actor_Jump(ACTOR_PARTY_LEADER, 4, 30);
     Actor_SetPosition(ACTOR_KRADEN, 288, 120);
-    Actor_SetSpeed(ACTOR_KRADEN, PIXELS(1), PIXELS(1) / 2);
+    Actor_SetSpeed(ACTOR_KRADEN, 1);
     Actor_WalkToAndWait(ACTOR_KRADEN, 276, 136);
     Actor_WalkTo(ACTOR_KRADEN, 264, 136);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 312, 136);
@@ -1351,7 +1351,7 @@ static void SolSanctumLunaSolRooms_RiseToElementalStarRoom(void) {
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 288, 120);
     Event_Wait(20);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 10, PIXELS(3) / 20);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.3);
     actor->steeringFlags &= ~ACTOR_FACES_MOTION;
     // Default: NULL until it is pointed at the leader's sprite below.
     sprite = NULL;
@@ -1383,7 +1383,7 @@ static void SolSanctumLunaSolRooms_RiseToElementalStarRoom(void) {
     Event_Wait(20);
     Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH, 20);
     // Repeat the ascent for Kraden before closing the room transition.
-    Actor_SetSpeed(ACTOR_KRADEN, PIXELS(3) / 10, PIXELS(3) / 20);
+    Actor_SetSpeed(ACTOR_KRADEN, 0.3);
     actor = Actor_Get(ACTOR_KRADEN);
     // The mask is built in a variable and frame is reused for the zero;
     // clearing ACTOR_FACES_MOTION in place differs.

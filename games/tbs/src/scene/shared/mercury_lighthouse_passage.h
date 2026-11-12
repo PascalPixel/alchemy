@@ -43,7 +43,7 @@ static void UNUSED MercuryLighthouse_DropLeaderToColumn(s32 column) {
 
   Event_Start();
   Sound_Play(SE_SPARKLING_PASSAGE);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2) / 5, PIXELS(1) / 5);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.4);
   Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 2);
   Actor_SetDestinationOffsetById(ACTOR_PARTY_LEADER, 0, -8);
   record = Actor_Get(ACTOR_PARTY_LEADER);

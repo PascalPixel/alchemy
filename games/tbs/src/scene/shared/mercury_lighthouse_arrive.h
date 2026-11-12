@@ -35,7 +35,7 @@ static void MercuryLighthouse_ArriveWithSparks(void) {
 #else
     actor->update = (void (*)(struct Actor *))MercuryLighthouse_TrailSparks;
 #endif
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2) / 5, PIXELS(1) / 5);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.4);
     Actor_WalkByAndWait(ACTOR_PARTY_LEADER, 0, 8);
     Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_NORMAL);
     record = Actor_Get(ACTOR_PARTY_LEADER);

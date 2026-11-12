@@ -1559,7 +1559,7 @@ static void Imil_WalkTowardFever(void) {
   actor = Actor_Get(ACTOR_FEVER);
   Actor_SetSpriteFlags(actor, 0);
   Event_StartScreenTransition();
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2), PIXELS(1) / 10);
+  Actor_SetSpeedAndAcceleration(ACTOR_PARTY_LEADER, 2, 0.1);
   Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 264, 196);
   Event_End();
 }
@@ -1689,7 +1689,7 @@ static void FuchinFallsCave_HopWest(void) { ImilFuchinFalls_HopBy(-32, 0); }
 /// Jumps the leader by a pixel offset while using the hopping animations.
 static void ImilFuchinFalls_HopBy(s32 dx, s32 dz) {
   Event_Start();
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(5) / 2, PIXELS(5) / 4);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 2.5);
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, dx, dz);
   Actor_Jump(ACTOR_PARTY_LEADER, 4, 0);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_LEAP);

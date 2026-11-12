@@ -244,7 +244,7 @@ static void GondowanCave_IodemAsksWhyTurningBack(void) {
       Event_GetFlag(FLAG_IODEM_FOLLOWING_PARTY) != 0) {
     Event_Start();
     // Bring Iodem out of the party before opening his question.
-    Actor_SetSpeed(ACTOR_IODEM, PIXELS(1), PIXELS(1) / 2);
+    Actor_SetSpeed(ACTOR_IODEM, 1);
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     if (leader != 0) {
       Actor_SetPositionFixed(ACTOR_IODEM, leader->x.fixed, leader->z.fixed);
@@ -497,7 +497,7 @@ static void GondowanCave_RunSpinningLeap(s32 actorId) {
   actor->update = GondowanCave_RotateLeapingActor;
   // Continue spinning through the first jump.
   Sound_Play(SE_WHOOSH);
-  Actor_SetSpeed(actorId, PIXELS(2), PIXELS(1));
+  Actor_SetSpeed(actorId, 2);
   Actor_SetDestination(actorId, 472, 288);
   actor->gravity = 4 * PIXELS(1) / 5;
   actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;

@@ -1071,8 +1071,8 @@ static s32 TunnelRuins_RideStoneBelow(struct Actor *updated) {
 static void TunnelRuins_SettleBalance(s32 frames) {
   u32 i;
 
-  Actor_SetSpeed(ACTOR_BALANCE_WEST, PIXELS(1) / 2, PIXELS(1) / 4);
-  Actor_SetSpeed(ACTOR_BALANCE_EAST, PIXELS(1) / 2, PIXELS(1) / 4);
+  Actor_SetSpeed(ACTOR_BALANCE_WEST, 0.5);
+  Actor_SetSpeed(ACTOR_BALANCE_EAST, 0.5);
   if (frames != 0) {
     Sound_Play(SE_SETTLE);
   }
@@ -1130,7 +1130,7 @@ static void TunnelRuins_DropStoneOnStack(s32 actorId) {
     Actor_Get(actorId)->timer = candidateId;
   }
 
-  Actor_SetSpeed(actorId, PIXELS(4), PIXELS(2));
+  Actor_SetSpeed(actorId, 4);
 
   {
     struct Actor *actor = Actor_Get(actorId);

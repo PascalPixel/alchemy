@@ -509,7 +509,7 @@ static void Imil_TalkToOldMan(void) {
       // "Grandpa! Grandpa! Hold on!"
       Event_ShowMessageThenWait(ACTOR_OLD_WOMAN, 0, 20);
       Actor_SetScript(ACTOR_PARTY_LEADER, gImil_LeaderStepAsideScript);
-      Actor_SetSpeed(ACTOR_OLD_WOMAN, PIXELS(8) / 5, PIXELS(4) / 5);
+      Actor_SetSpeed(ACTOR_OLD_WOMAN, 1.6);
       Actor_RunScriptAndWait(ACTOR_OLD_WOMAN, gImil_OldWomanHurryScript);
       Event_Wait(40);
       Actor_Jump(ACTOR_OLD_WOMAN, 2, 0);
@@ -679,10 +679,10 @@ static void Imil_OpenDoorAndExit(void) {
 
     MapGrid_PlayMapEdit(gImil_DoorCellSteps[exit - 1], x, y);
   }
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.5);
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   if (exit == IMIL_TO_ICE_ROOMS_NORTHEAST) {
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 5, PIXELS(1) / 10);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.2);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
     Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 3);
     Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, -8);
@@ -1023,9 +1023,9 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   work->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   work->transitionFrames = 40;
   Event_StartScreenTransition();
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2) / 5, PIXELS(1) / 5);
-  Actor_SetSpeed(ACTOR_GARET, PIXELS(2) / 5, PIXELS(1) / 5);
-  Actor_SetSpeed(ACTOR_IVAN, PIXELS(2) / 5, PIXELS(1) / 5);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.4);
+  Actor_SetSpeed(ACTOR_GARET, 0.4);
+  Actor_SetSpeed(ACTOR_IVAN, 0.4);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 142, 221);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH_NORTHEAST, 0);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
@@ -1100,7 +1100,7 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
   Event_Wait(40);
-  Actor_SetSpeed(ACTOR_MIA, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_MIA, 1);
   Actor_Get(ACTOR_MIA)->timer = 0;
   Actor_SetScript(ACTOR_MIA, gImil_MiaCheckRoomScript);
   while (Actor_Get(ACTOR_MIA)->timer == 0) {
@@ -1128,7 +1128,7 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_MIA, FACING_EAST, 10);
-  Actor_SetSpeed(ACTOR_MIA, PIXELS(2), PIXELS(1));
+  Actor_SetSpeed(ACTOR_MIA, 2);
   Actor_WalkToAndWait(ACTOR_MIA, 202, 198);
   Event_Wait(40);
   Actor_RunRepeatedMotion(ACTOR_MIA, 2);
@@ -1144,7 +1144,7 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   Actor_Stop(ACTOR_PARTY_LEADER);
   Actor_Stop(ACTOR_GARET);
   Actor_Stop(ACTOR_IVAN);
-  Actor_SetSpeed(ACTOR_MIA, PIXELS(3), PIXELS(3) / 2);
+  Actor_SetSpeed(ACTOR_MIA, 3);
   Actor_Get(ACTOR_MIA)->timer = 0;
   Actor_SetScript(ACTOR_MIA, gImil_MiaRunOutScript);
   while (Actor_Get(ACTOR_MIA)->timer == 0) {
@@ -1153,9 +1153,9 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTH, 10);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(4), PIXELS(2));
-  Actor_SetSpeed(ACTOR_GARET, PIXELS(4), PIXELS(2));
-  Actor_SetSpeed(ACTOR_IVAN, PIXELS(4), PIXELS(2));
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 4);
+  Actor_SetSpeed(ACTOR_GARET, 4);
+  Actor_SetSpeed(ACTOR_IVAN, 4);
   Sound_Play(SE_JUMP);
   Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_Get(ACTOR_GARET)->steeringFlags &= ~ACTOR_FACES_MOTION;
@@ -1168,9 +1168,9 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
   Actor_Get(ACTOR_GARET)->steeringFlags |= ACTOR_FACES_MOTION;
   Actor_Get(ACTOR_IVAN)->steeringFlags |= ACTOR_FACES_MOTION;
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
-  Actor_SetSpeed(ACTOR_GARET, PIXELS(4) / 5, PIXELS(2) / 5);
-  Actor_SetSpeed(ACTOR_IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.8);
+  Actor_SetSpeed(ACTOR_GARET, 0.8);
+  Actor_SetSpeed(ACTOR_IVAN, 0.8);
   table = gImil_FollowMiaOutScript;
   Actor_SetScript(ACTOR_GARET, table);
   Actor_RunScriptAndWait(ACTOR_IVAN, table);
@@ -1437,7 +1437,7 @@ static void Imil_LeaveNorth(void) {
 static void Imil_ArriveFromFallsCave(void) {
   Event_Start();
   Event_StartScreenTransition();
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2), PIXELS(1) / 10);
+  Actor_SetSpeedAndAcceleration(ACTOR_PARTY_LEADER, 2, 0.1);
   Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 232, 204);
   Event_End();
 }
@@ -1452,7 +1452,7 @@ static void Imil_MiaSaysFarewellToApprentices(void) {
 
   Event_Start();
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTHWEST, 0);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 5, PIXELS(3) / 10);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.6);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 690, 200);
 
   FieldCamera_GetActor()->motionFlags = 0;
@@ -1464,7 +1464,7 @@ static void Imil_MiaSaysFarewellToApprentices(void) {
   Event_StartScreenTransition();
   Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
-  Actor_SetSpeed(ACTOR_MIA, PIXELS(3) / 5, PIXELS(3) / 10);
+  Actor_SetSpeed(ACTOR_MIA, 0.6);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
     Actor_SetPositionFixed(ACTOR_MIA, leader->x.fixed, leader->z.fixed);
@@ -1517,7 +1517,7 @@ static void Imil_MiaSaysFarewellToApprentices(void) {
   Actor_FaceDirection(ACTOR_JUSTIN, FACING_WEST_SOUTHWEST, 40);
   Actor_FaceDirection(ACTOR_JUSTIN, FACING_SOUTH_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_MEGAN, FACING_SOUTH_SOUTHEAST, 20);
-  Actor_SetSpeed(ACTOR_MEGAN, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_MEGAN, 1);
   // Let the student approach Mia before she rejoins the party.
   Actor_Get(ACTOR_MEGAN)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(ACTOR_MEGAN, 656, 166);

@@ -298,7 +298,7 @@ static void WestLunpaCave_HammetFindsBunza(void) {
     GameFlag_Set(FLAG_LUNPA_CAVE_REUNION_SEEN);
     Event_Start();
     Actor_SetPosition(ACTOR_BUNZA, 144, 400);
-    Actor_SetSpeed(ACTOR_BUNZA, PIXELS(3) / 2, PIXELS(3) / 4);
+    Actor_SetSpeed(ACTOR_BUNZA, 1.5);
     Actor_WalkTo(ACTOR_BUNZA, 184, 400);
     Actor_WaitForMoveById(ACTOR_BUNZA);
     Actor_SetAnimation(ACTOR_BUNZA, ANIM_STAND);
@@ -311,7 +311,7 @@ static void WestLunpaCave_HammetFindsBunza(void) {
     if (leader != NULL) {
       Actor_SetPositionFixed(ACTOR_HAMMET, leader->x.fixed, leader->z.fixed);
     }
-    Actor_SetSpeed(ACTOR_HAMMET, PIXELS(13) / 10, PIXELS(13) / 20);
+    Actor_SetSpeed(ACTOR_HAMMET, 1.3);
     Actor_WalkTo(ACTOR_HAMMET, 168, 464);
     Actor_WaitForMoveById(ACTOR_HAMMET);
     Actor_FaceDirection(ACTOR_HAMMET, FACING_NORTH, 0);
@@ -319,7 +319,7 @@ static void WestLunpaCave_HammetFindsBunza(void) {
     if (leader != NULL) {
       Actor_SetPositionFixed(ACTOR_IVAN, leader->x.fixed, leader->z.fixed);
     }
-    Actor_SetSpeed(ACTOR_IVAN, PIXELS(13) / 10, PIXELS(13) / 20);
+    Actor_SetSpeed(ACTOR_IVAN, 1.3);
     Actor_WalkTo(ACTOR_IVAN, 152, 488);
     Actor_WaitForMoveById(ACTOR_IVAN);
     Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
@@ -327,7 +327,7 @@ static void WestLunpaCave_HammetFindsBunza(void) {
     if (leader != NULL) {
       Actor_SetPositionFixed(ACTOR_MIA, leader->x.fixed, leader->z.fixed);
     }
-    Actor_SetSpeed(ACTOR_MIA, PIXELS(13) / 10, PIXELS(13) / 20);
+    Actor_SetSpeed(ACTOR_MIA, 1.3);
     Actor_WalkTo(ACTOR_MIA, 168, 488);
     Actor_WaitForMoveById(ACTOR_MIA);
     Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
@@ -335,7 +335,7 @@ static void WestLunpaCave_HammetFindsBunza(void) {
     if (leader != NULL) {
       Actor_SetPositionFixed(ACTOR_GARET, leader->x.fixed, leader->z.fixed);
     }
-    Actor_SetSpeed(ACTOR_GARET, PIXELS(13) / 10, PIXELS(13) / 20);
+    Actor_SetSpeed(ACTOR_GARET, 1.3);
     Actor_WalkTo(ACTOR_GARET, 184, 488);
     Actor_WaitForMoveById(ACTOR_GARET);
     Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
@@ -390,7 +390,7 @@ static void WestLunpaCave_HammetFindsBunza(void) {
     Event_ShowMessage(ACTOR_BUNZA, 0);
     Actor_SetAnimationAndWait(ACTOR_HAMMET, ANIM_NOD);
     Event_Wait(80);
-    Actor_SetSpeed(ACTOR_BUNZA, PIXELS(2) / 5, PIXELS(1) / 5);
+    Actor_SetSpeed(ACTOR_BUNZA, 0.4);
     Actor_WalkBy(ACTOR_BUNZA, -13, 0);
     Actor_WaitForMoveById(ACTOR_BUNZA);
     Actor_FaceDirection(ACTOR_BUNZA, FACING_SOUTH, 0);
@@ -602,7 +602,7 @@ static void Reunion_Converse(void) {
   // Bunza checks the passage, worries about pursuit and proposes his wagon.
   Actor_FaceDirection(ACTOR_BUNZA, FACING_SOUTH, 0);
   Actor_ShowEmote(ACTOR_BUNZA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
-  Actor_SetSpeed(ACTOR_BUNZA, PIXELS(3) / 2, PIXELS(3) / 4);
+  Actor_SetSpeed(ACTOR_BUNZA, 1.5);
   Actor_WalkTo(ACTOR_BUNZA, 144, 528);
   Actor_WaitForMoveById(ACTOR_BUNZA);
   Actor_WalkTo(ACTOR_BUNZA, 168, 560);

@@ -400,7 +400,7 @@ static void GomaCavePillar_PushStumpOver(void) {
     gravityActor->gravity = PIXELS(3) / 5;
     Event_Wait(3);
     // It tips over the edge.
-    Actor_SetSpeed(ACTOR_STUMP, 5 * PIXELS(1) / 2, PIXELS(1) / 4);
+    Actor_SetSpeedAndAcceleration(ACTOR_STUMP, 2.5, 0.25);
     Sound_Play(SE_STOP_ACTION_SE);
     Actor_SetDestination(ACTOR_STUMP, 416, 200);
     movedActor = Actor_Get(ACTOR_STUMP);
@@ -595,7 +595,7 @@ static void GomaCavePillar_WitnessCheersForgeCaught(void) {
   Actor_SetAnimationAndWait(ACTOR_WITNESS, ANIM_NOD);
   Event_Wait(30);
   Actor_Get(ACTOR_EAST_PILLAR)->priorityFlags &= ~ACTOR_PRIORITY_UNDERFOOT;
-  Actor_SetSpeed(ACTOR_WITNESS, PIXELS(2), PIXELS(1));
+  Actor_SetSpeed(ACTOR_WITNESS, 2);
   Actor_WalkToAndWait(ACTOR_WITNESS, 600, 216);
   Actor_WalkToAndWait(ACTOR_WITNESS, 600, 248);
   Actor_WalkToAndWait(ACTOR_WITNESS, 568, 296);

@@ -801,9 +801,9 @@ static void ValePrologue_DoraSendsIsaacToThePlaza(void) {
   MapGrid_AnimateCells(gValePrologue_IsaacsDoorOpens, 50, 44);
   Actor_SetAttachedEffect(ACTOR_GARET_CHILD,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
-  Actor_SetSpeed(ACTOR_DORA, PIXELS(4) / 5, PIXELS(2) / 5);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
-  Actor_SetSpeed(ACTOR_KYLE, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(ACTOR_DORA, 0.8);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.8);
+  Actor_SetSpeed(ACTOR_KYLE, 0.8);
   Actor_SetPosition(ACTOR_DORA, 342, 890);
   Actor_WalkToAndWait(ACTOR_DORA, 342, 905);
   Scene_PlayQueuedMusic();
@@ -844,7 +844,7 @@ static void ValePrologue_DoraSendsIsaacToThePlaza(void) {
   Actor_FaceDirection(ACTOR_DORA, FACING_EAST, 50);
   Actor_FaceDirection(ACTOR_DORA, FACING_NORTH, 10);
   // Dora runs to Kyle: "Let me help you, Kyle!" "It's too dangerous, Dora."
-  Actor_SetSpeed(ACTOR_DORA, PIXELS(3) / 2, PIXELS(3) / 4);
+  Actor_SetSpeed(ACTOR_DORA, 1.5);
   Actor_WalkToAndWait(ACTOR_DORA, 289, 883);
   Actor_FaceDirection(ACTOR_DORA, FACING_NORTHEAST, 0);
   // "Let me help you, Kyle!"
@@ -876,7 +876,7 @@ static void ValePrologue_DoraSendsIsaacToThePlaza(void) {
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   // Kyle and Dora run north toward the Boulder and out of sight.
-  Actor_SetSpeed(ACTOR_KYLE, PIXELS(3) / 2, PIXELS(3) / 4);
+  Actor_SetSpeed(ACTOR_KYLE, 1.5);
   Actor_WalkTo(ACTOR_KYLE, 297, 750);
   Event_Wait(10);
   Actor_WalkToAndWait(ACTOR_DORA, 297, 750);
@@ -1218,7 +1218,7 @@ static void ValePrologue_BumpIntoShovingMan(void) {
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 262, 810);
   Actor_SetPosition(ACTOR_SHOVING_MAN, 262, 805);
   Actor_WalkTo(ACTOR_SHOVING_MAN, 262, 825);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2), PIXELS(1));
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 2);
   Actor_Jump(ACTOR_PARTY_LEADER, 2, 0);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 282, 855);
   Actor_SetAnimation(ACTOR_SHOVING_MAN, ANIM_STAND);
@@ -1391,7 +1391,7 @@ static void ValePrologue_UnusedGaretJoinsIsaac(void) {
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
     FieldCamera_SetSpeed(PIXELS(2) / 5, PIXELS(1) / 20);
     FieldCamera_MoveTo(PIXELS(256), -1, PIXELS(588), 1);
-    Actor_SetSpeed(ACTOR_GARET_CHILD, PIXELS(2), PIXELS(1));
+    Actor_SetSpeed(ACTOR_GARET_CHILD, 2);
     Actor_RunScriptAndWait(ACTOR_GARET_CHILD,
                            gValePrologue_UnusedGaretRunsUpScript);
     Actor_FaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GARET_CHILD, 0);
@@ -1416,7 +1416,7 @@ static void ValePrologue_UnusedGaretJoinsIsaac(void) {
     Actor_SetAnimationAndWait(ACTOR_GARET_CHILD, ANIM_NOD);
     // "Everyone's gathering down south, in the town plaza."
     Event_ShowMessage(ACTOR_GARET_CHILD, 0);
-    Actor_SetSpeed(ACTOR_GARET_CHILD, PIXELS(1), PIXELS(1) / 2);
+    Actor_SetSpeed(ACTOR_GARET_CHILD, 1);
     Actor_SetAnimation(ACTOR_GARET_CHILD, ANIM_WALK);
     actor = Actor_Get(ACTOR_PARTY_LEADER);
     if (actor != 0) {
@@ -1447,7 +1447,7 @@ static void ValePrologue_WarnAboutMtAleph(void) {
     Actor_SetPositionFixed(ACTOR_GARET_CHILD, initialLeader->x.fixed,
                            initialLeader->z.fixed);
   }
-  Actor_SetSpeed(ACTOR_GARET_CHILD, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_GARET_CHILD, 1);
   Actor_WalkToAndWait(ACTOR_GARET_CHILD, 281, 507);
   Actor_FaceEachOther(ACTOR_GARET_CHILD, ACTOR_PARTY_LEADER, 0);
   Event_Wait(30);
@@ -1487,7 +1487,7 @@ static void ValePrologue_GaretCommentsOnBlockedPath(s32 x, s32 y) {
     Actor_SetPositionFixed(ACTOR_GARET_CHILD, leaderAtStart->x.fixed,
                            leaderAtStart->z.fixed);
   }
-  Actor_SetSpeed(ACTOR_GARET_CHILD, speed, acceleration);
+  Actor_SetSpeedFixed(ACTOR_GARET_CHILD, speed, acceleration);
   Actor_WalkToAndWait(ACTOR_GARET_CHILD, x, y);
   Actor_FaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GARET_CHILD, 0);
   Event_Wait(20);
@@ -1544,8 +1544,8 @@ static void ValePrologue_WatchBoulderFall(void) {
     if (actor != NULL) {
       Actor_SetPositionFixed(ACTOR_GARET_CHILD, actor->x.fixed, actor->z.fixed);
     }
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2), PIXELS(1));
-    Actor_SetSpeed(ACTOR_GARET_CHILD, PIXELS(2), PIXELS(1));
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 2);
+    Actor_SetSpeed(ACTOR_GARET_CHILD, 2);
     Actor_SetScript(ACTOR_PARTY_LEADER, gValePrologue_BoulderFallLeaderPath);
     Actor_RunScriptAndWait(ACTOR_GARET_CHILD,
                            gValePrologue_BoulderFallGaretPath);
@@ -1604,32 +1604,32 @@ static void ValePrologue_WatchBoulderFall(void) {
     boulderHeight = movingActor->y.fixed + PIXELS(64);
     movingActor->y.fixed = boulderHeight;
     movingActor->targetY = boulderHeight;
-    Actor_SetSpeed(ACTOR_BOULDER, PIXELS(4) / 5, PIXELS(2) / 5);
+    Actor_SetSpeed(ACTOR_BOULDER, 0.8);
     Sound_Play(SE_CRASH);
     Actor_MoveToAndWait(ACTOR_BOULDER, 114, 333);
     Actor_SetAnimation(ACTOR_BOULDER, ANIM_WALK);
     MapGrid_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
     Sound_Play(SE_CRASH);
     *shakeShift = 0;
-    Actor_SetSpeed(ACTOR_BOULDER, PIXELS(2) / 5, PIXELS(1) / 5);
+    Actor_SetSpeed(ACTOR_BOULDER, 0.4);
     Actor_MoveToAndWait(ACTOR_BOULDER, 114, 300);
     Actor_SetAnimation(ACTOR_BOULDER, ANIM_WALK);
     MapGrid_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
     Sound_Play(SE_CRASH);
     *shakeShift = 2;
-    Actor_SetSpeed(ACTOR_BOULDER, PIXELS(4) / 5, PIXELS(2) / 5);
+    Actor_SetSpeed(ACTOR_BOULDER, 0.8);
     Actor_MoveToAndWait(ACTOR_BOULDER, 114, 333);
     Actor_SetAnimation(ACTOR_BOULDER, ANIM_WALK);
     MapGrid_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
     Sound_Play(SE_CRASH);
     *shakeShift = 0;
-    Actor_SetSpeed(ACTOR_BOULDER, PIXELS(2) / 5, PIXELS(1) / 5);
+    Actor_SetSpeed(ACTOR_BOULDER, 0.4);
     Actor_MoveToAndWait(ACTOR_BOULDER, 114, 300);
     Actor_SetAnimation(ACTOR_BOULDER, ANIM_WALK);
     MapGrid_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
     Sound_Play(SE_CRASH);
     *shakeShift = 2;
-    Actor_SetSpeed(ACTOR_BOULDER, PIXELS(4) / 5, PIXELS(2) / 5);
+    Actor_SetSpeed(ACTOR_BOULDER, 0.8);
     Actor_MoveToAndWait(ACTOR_BOULDER, 114, 333);
     Actor_SetAnimation(ACTOR_BOULDER, ANIM_WALK);
     MapGrid_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
@@ -1923,8 +1923,8 @@ static void ValePrologue_WatchAttemptToSaveFelix(void) {
     actor = Actor_Get(ACTOR_JENNA_CHILD);
     actor->steeringFlags &= ~ACTOR_FACES_MOTION;
   }
-  Actor_SetSpeed(ACTOR_JENNAS_MOTHER, PIXELS(3) / 5, PIXELS(3) / 10);
-  Actor_SetSpeed(ACTOR_JENNA_CHILD, PIXELS(3) / 5, PIXELS(3) / 10);
+  Actor_SetSpeed(ACTOR_JENNAS_MOTHER, 0.6);
+  Actor_SetSpeed(ACTOR_JENNA_CHILD, 0.6);
   Actor_SetDestination(ACTOR_JENNAS_MOTHER, 247, 1210);
   Actor_MoveToAndWait(ACTOR_JENNA_CHILD, 227, 1189);
   {
@@ -2026,8 +2026,8 @@ static void ValePrologue_DoraGoesForHelp(void) {
   Event_Wait(20);
   FieldCamera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
   FieldCamera_MoveTo(PIXELS(134), -1, PIXELS(1195), 1);
-  Actor_SetSpeed(ACTOR_JENNA_CHILD, PIXELS(8) / 5, PIXELS(4) / 5);
-  Actor_SetSpeed(ACTOR_DORA, PIXELS(8) / 5, PIXELS(4) / 5);
+  Actor_SetSpeed(ACTOR_JENNA_CHILD, 1.6);
+  Actor_SetSpeed(ACTOR_DORA, 1.6);
   Actor_SetScript(ACTOR_JENNA_CHILD, gValePrologue_JennaRunsIntoRiversideHouse);
   Actor_RunScriptAndWait(ACTOR_DORA, gValePrologue_DoraRunsIntoRiversideHouse);
   Sound_Play(SE_DOOR_OPEN);
@@ -2217,10 +2217,10 @@ static void ValePrologue_BoulderSweepsThemAway(void) {
     if (Event_GetFlag(FLAG_VALE_STORM_BOULDER_SWEPT_THEM_AWAY) != 0) {
     } else {
       Event_Start();
-      Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
-      Actor_SetSpeed(ACTOR_GARET_CHILD, PIXELS(1), PIXELS(1) / 2);
-      Actor_SetSpeed(ACTOR_JENNA_CHILD, PIXELS(1), PIXELS(1) / 2);
-      Actor_SetSpeed(ACTOR_EXHAUSTED_STRONGMAN, PIXELS(1), PIXELS(1) / 2);
+      Actor_SetSpeed(ACTOR_PARTY_LEADER, 1);
+      Actor_SetSpeed(ACTOR_GARET_CHILD, 1);
+      Actor_SetSpeed(ACTOR_JENNA_CHILD, 1);
+      Actor_SetSpeed(ACTOR_EXHAUSTED_STRONGMAN, 1);
       Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 217, 1367);
       actor = Actor_Get(ACTOR_PARTY_LEADER);
       if (actor != 0) {
@@ -2265,7 +2265,7 @@ static void ValePrologue_BoulderSweepsThemAway(void) {
       Actor_FaceDirection(ACTOR_JENNA_CHILD, FACING_NORTHWEST, 0);
       FieldCamera_SetSpeedParameters(PIXELS(6) / 5, PIXELS(3) / 20);
       FieldCamera_MoveTo(PIXELS(101), -1, PIXELS(1197), 1);
-      Actor_SetSpeed(ACTOR_DORA, PIXELS(7) / 5, PIXELS(7) / 10);
+      Actor_SetSpeed(ACTOR_DORA, 1.4);
       Actor_SetScript(ACTOR_DORA, gValePrologue_DoraRunsToRiver);
       Event_Wait(60);
       FieldCamera_SetSpeedParameters(PIXELS(3) / 5, PIXELS(3) / 40);
@@ -2383,10 +2383,10 @@ static void ValePrologue_ShowBoulderSweepingDownriver(void) {
   boulderShadowSprite = boulderShadow->sprite;
   FieldCamera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
   FieldCamera_MoveTo(PIXELS(110), -1, PIXELS(1419), 1);
-  Actor_SetSpeed(ACTOR_EXHAUSTED_STRONGMAN, PIXELS(6) / 5, PIXELS(3) / 5);
-  Actor_SetSpeed(ACTOR_JENNA_CHILD, PIXELS(6) / 5, PIXELS(3) / 5);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(6) / 5, PIXELS(3) / 5);
-  Actor_SetSpeed(ACTOR_GARET_CHILD, PIXELS(6) / 5, PIXELS(3) / 5);
+  Actor_SetSpeed(ACTOR_EXHAUSTED_STRONGMAN, 1.2);
+  Actor_SetSpeed(ACTOR_JENNA_CHILD, 1.2);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 1.2);
+  Actor_SetSpeed(ACTOR_GARET_CHILD, 1.2);
   // Bring the group to the riverbank as the lightning subsides.
   entryActions = gValePrologue_ToRiverbankPath;
   Actor_SetScript(ACTOR_EXHAUSTED_STRONGMAN, entryActions);
@@ -2918,7 +2918,7 @@ static void ValePrologue_GaretFollowsIsaac(void) {
   Event_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_GARET_CHILD, 0, 10);
   Actor_FaceDirection(ACTOR_GARET_CHILD, FACING_EAST_SOUTHEAST, 20);
   Actor_SetAnimationAndWait(ACTOR_GARET_CHILD, ANIM_NOD);
-  Actor_SetSpeed(ACTOR_GARET_CHILD, PIXELS(2), PIXELS(1));
+  Actor_SetSpeed(ACTOR_GARET_CHILD, 2);
   Actor_WalkToAndWait(ACTOR_GARET_CHILD, 165, 1300);
   Actor_WalkToAndWait(ACTOR_GARET_CHILD, 195, 1432);
   GameFlag_Set(FLAG_VALE_STORM_GARET_LEFT);

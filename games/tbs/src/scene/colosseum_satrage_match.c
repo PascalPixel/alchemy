@@ -318,12 +318,12 @@ enum {
 
 /// Sets the party leader's walking speed and acceleration.
 static inline void InitializeActorZero(void) {
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 1);
 }
 
 /// Sets the specified actor's walking speed and acceleration.
 static inline void InitializeSelectedActor(s32 actorId) {
-  Actor_SetSpeed(actorId, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(actorId, 1);
 }
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
@@ -640,7 +640,7 @@ static void ColosseumSatrageMatch_RollLogToCell(s32 logId, s32 halfCellX,
                          HEAP_SLOT_FIELD, sizeof(struct FieldWork)))
                         ->camera,
                     (s32)log);
-  Actor_SetSpeed(pusher, PIXELS(1) / 2, PIXELS(1) / 5);
+  Actor_SetSpeedAndAcceleration(pusher, 0.5, 0.2);
   Actor_SelectAnimation(pusherActor, 2);
   FieldActor_SetMoveTarget(pusherActor, pusherActor->x.fixed + offsetX, 0,
                            pusherActor->z.fixed + offsetZ);
@@ -907,9 +907,9 @@ static void ColosseumSatrageMatch_ReachArena(void) {
     refreshCount = (refreshCount - 1);
   } while (refreshCount >= 0);
   // Bring the warriors together before selecting the battle's result bias.
-  Actor_SetSpeed(ACTOR_OPPONENT, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_OPPONENT, 1);
   Actor_WalkTo(ACTOR_OPPONENT, 88, 256);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 1);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 120, 256);
   Actor_SetAnimation(ACTOR_OPPONENT, ANIM_STAND);
   Actor_FaceEachOther(ACTOR_PARTY_LEADER, ACTOR_OPPONENT, 0);
@@ -917,8 +917,8 @@ static void ColosseumSatrageMatch_ReachArena(void) {
   Actor_SetAnimation(ACTOR_OPPONENT, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Event_Wait(20);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2), PIXELS(1));
-  Actor_SetSpeed(ACTOR_OPPONENT, PIXELS(2), PIXELS(1));
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 2);
+  Actor_SetSpeed(ACTOR_OPPONENT, 2);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 112, 256);
   Actor_WalkToAndWait(ACTOR_OPPONENT, 96, 256);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_STRIDE);
@@ -1185,11 +1185,11 @@ static void ColosseumSatrageMatch_IntroduceSecondFinals(s32 attendantId) {
   attendantX = actor->x.part.pixel;
   attendantZ = actor->z.part.pixel;
   Event_Start();
-  Actor_SetSpeed(attendantId, PIXELS(1), PIXELS(1) / 2);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
-  Actor_SetSpeed(ACTOR_GARET, PIXELS(1), PIXELS(1) / 2);
-  Actor_SetSpeed(ACTOR_IVAN, PIXELS(1), PIXELS(1) / 2);
-  Actor_SetSpeed(ACTOR_MIA, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(attendantId, 1);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 1);
+  Actor_SetSpeed(ACTOR_GARET, 1);
+  Actor_SetSpeed(ACTOR_IVAN, 1);
+  Actor_SetSpeed(ACTOR_MIA, 1);
   Actor_SetPositionFixed(ACTOR_PARTY_LEADER, (attendantX << 16),
                          ((attendantZ << 16) - px(48)));
   Actor_SetPositionFixed(ACTOR_GARET, (attendantX << 16) - px(16),
@@ -1275,7 +1275,7 @@ static void ColosseumSatrageMatch_TalkToMiniMazeAttendant(s32 attendant) {
       // "This stage is dubbed the Mini-Maze."
       Event_ShowMessage(attendant, 0);
       Colosso_FadeInWarrior(ACTOR_PARTY_LEADER, 1272, 168);
-      Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
+      Actor_SetSpeed(ACTOR_PARTY_LEADER, 1.5);
       Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 1288, 184);
       Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 1288, 216);
       Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 1224, 216);
@@ -1328,7 +1328,7 @@ static void ColosseumSatrageMatch_TalkToShiftingFloorAttendant(s32 attendant) {
       Event_ShowMessage(attendant, 0);
       Colosso_FadeInWarrior(ACTOR_PARTY_LEADER, 1080, 264);
       Event_Wait(15);
-      Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
+      Actor_SetSpeed(ACTOR_PARTY_LEADER, 1.5);
       Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 1080, 216);
       Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 1064, 216);
       ColosseumSatrageMatch_WaitForLiftCrossingPhase();
@@ -1376,7 +1376,7 @@ static void ColosseumSatrageMatch_TalkToLogRollingAttendant(s32 attendant) {
       Event_ShowMessage(attendant, 0);
       Colosso_FadeInWarrior(ACTOR_PARTY_LEADER, 856, 264);
       Event_Wait(10);
-      Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
+      Actor_SetSpeed(ACTOR_PARTY_LEADER, 1.5);
       Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 856, 264);
       Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 856, 232);
       Event_ShowMessage(attendant, 0);
@@ -1386,7 +1386,7 @@ static void ColosseumSatrageMatch_TalkToLogRollingAttendant(s32 attendant) {
       FieldCamera_MoveTo(PIXELS(752), -1, PIXELS(216), 1);
       Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
       Event_Wait(10);
-      Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
+      Actor_SetSpeed(ACTOR_PARTY_LEADER, 1);
       Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 760, 232);
       Event_Wait(10);
       Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 30);
@@ -1434,13 +1434,13 @@ static void ColosseumSatrageMatch_TalkToWallAttendant(s32 attendant) {
     // "The fans just call this The Wall."
     Event_ShowMessage(attendant, 0);
     Colosso_FadeInWarrior(ACTOR_PARTY_LEADER, 632, z);
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 1);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 616, z);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
     Field_ClimbUp();
     FieldCamera_SetSpeed(PIXELS(1) / 4, PIXELS(1) / 32);
     FieldCamera_MoveTo(PIXELS(536), -1, PIXELS(160), 1);
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.5);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_CLIMB);
     actor = Actor_Get(ACTOR_PARTY_LEADER);
     FieldActor_SetMoveTarget(actor, actor->x.fixed, actor->y.fixed + PIXELS(64),
@@ -1449,7 +1449,7 @@ static void ColosseumSatrageMatch_TalkToWallAttendant(s32 attendant) {
     Field_ClimbUp();
     FieldCamera_MoveTo(-1, -1, -1, 0);
     Event_ShowMessage(attendant, 0);
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 1.5);
     Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 488, 248);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 20);
     FieldActor_JumpDownLedge(ACTOR_PARTY_LEADER, 6, 0);
@@ -1496,7 +1496,7 @@ static void ColosseumSatrageMatch_PushObstacleToCell(s32 obstacleId, s32 column,
   FieldActor_SetMoveTarget(obstacle, column, 0, row);
   Event_Wait(6);
   Actor_SetAnimation(pusher, ANIM_WALK);
-  Actor_SetSpeed(pusher, PIXELS(1) / 2, PIXELS(1) / 5);
+  Actor_SetSpeedAndAcceleration(pusher, 0.5, 0.2);
   Actor_SelectAnimation(pusherActor, 2);
   FieldActor_SetMoveTarget(pusherActor, pusherActor->x.fixed + offsetX, 0,
                            pusherActor->z.fixed + offsetZ);
@@ -1535,13 +1535,13 @@ static void ColosseumSatrageMatch_TalkToBoardWalkAttendant(s32 attendant) {
     // "This place is called the Board Walk."
     Event_ShowMessage(attendant, 0);
     Colosso_FadeInWarrior(ACTOR_PARTY_LEADER, 408, 264);
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 1.5);
     Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 408, 216);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 10);
     Event_ShowMessage(attendant, 0);
     ColosseumSatrageMatch_PushObstacleToCell(ACTOR_ROLLING_LOG_EAST, 360, 208);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_SMILE, 45);
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 1.5);
     Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 376, 216);
     Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 376, 248);
     Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 312, 248);

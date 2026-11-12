@@ -650,7 +650,7 @@ static void CrossboneIsle_OpenEastDoor(void) {
 /// (ENTRANCE_AFTER_BATTLE): the door opens, and the party walks through.
 static void CrossboneIsle_OpenEastDoorAfterBattle(void) {
   Event_Start();
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2) / 5, PIXELS(1) / 5);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.4);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   GameFlag_Set((gMainRoutineWork.next +

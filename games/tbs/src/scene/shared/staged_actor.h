@@ -467,7 +467,7 @@ UNUSED static void Actor_MoveAndRedraw(struct PushedActorProbe probe) {
                            probe.position.z);
   Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 10, PIXELS(1) / 10);
+  Actor_SetSpeedAndAcceleration(ACTOR_PARTY_LEADER, 0.3, 0.1);
 
   {
     s32 packedOrientation = gPushedActor_DirectionSteps[direction];

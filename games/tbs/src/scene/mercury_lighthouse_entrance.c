@@ -625,9 +625,9 @@ static void MercuryLighthouseEntrance_LizardManBlocksMia(void) {
   Actor_SetPosition(ACTOR_MIA, 136, 184);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 136, 296);
   Actor_SetPosition(ACTOR_LIZARD_MAN, 136, 152);
-  Actor_SetSpeed(ACTOR_MIA, PIXELS(3) / 2, PIXELS(3) / 4);
-  Actor_SetSpeed(ACTOR_LIZARD_MAN, PIXELS(3) / 2, PIXELS(3) / 4);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(ACTOR_MIA, 1.5);
+  Actor_SetSpeed(ACTOR_LIZARD_MAN, 1.5);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.8);
   FieldCamera_SetSpeedParameters(PIXELS(4) / 5, PIXELS(1) / 10);
   FieldCamera_MoveWithinMapBounds(PIXELS(136), -1, PIXELS(184), 0);
   Event_StartScreenTransition();

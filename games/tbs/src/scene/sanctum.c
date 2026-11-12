@@ -380,7 +380,7 @@ static void Sanctum_ReconsiderQuest(void) {
         Event_Wait(20);
         if (Actor_Get(ACTOR_HEALER)->facing >= FACING_NORTHWEST &&
             Actor_Get(ACTOR_HEALER)->facing <= FACING_NORTHEAST) {
-          Actor_SetSpeed(ACTOR_HEALER, PIXELS(1) / 2, PIXELS(1) / 4);
+          Actor_SetSpeed(ACTOR_HEALER, 0.5);
           Actor_FaceDirection(ACTOR_HEALER, FACING_EAST, 0);
           Event_Wait(10);
           Actor_Get(ACTOR_HEALER)->steeringFlags &= ~ACTOR_FACES_MOTION;
@@ -692,13 +692,13 @@ static void Sanctum_RequestQuestAcceptance(void) {
     Event_Wait(20);
     Actor_SetMovementTypeById(ACTOR_HEALER, MOVEMENT_TYPE_STAND);
     Actor_SetMovementTypeById(ACTOR_GARETS_GRANDFATHER, MOVEMENT_TYPE_STAND);
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
-    Actor_SetSpeed(ACTOR_GARET, PIXELS(4) / 5, PIXELS(2) / 5);
-    Actor_SetSpeed(ACTOR_DORA, PIXELS(4) / 5, PIXELS(2) / 5);
-    Actor_SetSpeed(ACTOR_GARETS_GRANDFATHER, PIXELS(4) / 5, PIXELS(2) / 5);
-    Actor_SetSpeed(ACTOR_WEST_HEALER, PIXELS(4) / 5, PIXELS(2) / 5);
-    Actor_SetSpeed(ACTOR_EAST_HEALER, PIXELS(4) / 5, PIXELS(2) / 5);
-    Actor_SetSpeed(ACTOR_HEALER, PIXELS(4) / 5, PIXELS(2) / 5);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.8);
+    Actor_SetSpeed(ACTOR_GARET, 0.8);
+    Actor_SetSpeed(ACTOR_DORA, 0.8);
+    Actor_SetSpeed(ACTOR_GARETS_GRANDFATHER, 0.8);
+    Actor_SetSpeed(ACTOR_WEST_HEALER, 0.8);
+    Actor_SetSpeed(ACTOR_EAST_HEALER, 0.8);
+    Actor_SetSpeed(ACTOR_HEALER, 0.8);
     Event_Wait(30);
     Actor_RunRepeatedMotion(ACTOR_GARETS_GRANDFATHER, 2);
     Event_SetMessageId(MsgSanctumWeHadIdeaTrueSanctum);
@@ -1229,13 +1229,13 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
   Event_Wait(20);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
-  Actor_SetSpeed(ACTOR_GARET, PIXELS(4) / 5, PIXELS(2) / 5);
-  Actor_SetSpeed(ACTOR_DORA, PIXELS(4) / 5, PIXELS(2) / 5);
-  Actor_SetSpeed(ACTOR_GARETS_GRANDFATHER, PIXELS(4) / 5, PIXELS(2) / 5);
-  Actor_SetSpeed(ACTOR_WEST_HEALER, PIXELS(4) / 5, PIXELS(2) / 5);
-  Actor_SetSpeed(ACTOR_EAST_HEALER, PIXELS(4) / 5, PIXELS(2) / 5);
-  Actor_SetSpeed(ACTOR_HEALER, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.8);
+  Actor_SetSpeed(ACTOR_GARET, 0.8);
+  Actor_SetSpeed(ACTOR_DORA, 0.8);
+  Actor_SetSpeed(ACTOR_GARETS_GRANDFATHER, 0.8);
+  Actor_SetSpeed(ACTOR_WEST_HEALER, 0.8);
+  Actor_SetSpeed(ACTOR_EAST_HEALER, 0.8);
+  Actor_SetSpeed(ACTOR_HEALER, 0.8);
   FieldCamera_MoveTo(PIXELS(192), -1, PIXELS(160), 1);
   FieldCamera_WaitForMove();
   Actor_FaceActor(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
@@ -1302,7 +1302,7 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   Event_PlaySound(SE_MATERIALIZE);
   // The Wise One enters while the healer's afterimages appear.
   Actor_SetPosition(ACTOR_WISE_ONE, 200, 8);
-  Actor_SetSpeed(ACTOR_WISE_ONE, PIXELS(2) / 5, PIXELS(1) / 5);
+  Actor_SetSpeed(ACTOR_WISE_ONE, 0.4);
   Actor_MoveToAndWait(ACTOR_WISE_ONE, 200, 72);
   Sound_Play(SE_STOP_ACTION_SE);
   Event_Wait(30);
@@ -1782,8 +1782,8 @@ static s32 Sanctum_ChooseRestartOption(void) {
 /// happened in Sol Sanctum.
 static void Sanctum_ReenactSolSanctum(void) {
 
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
-  Actor_SetSpeed(ACTOR_GARET, PIXELS(3) / 2, PIXELS(3) / 4);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 1.5);
+  Actor_SetSpeed(ACTOR_GARET, 1.5);
   Actor_RunRepeatedMotion(ACTOR_GARETS_GRANDFATHER, 2);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_GARETS_GRANDFATHER, 3);
@@ -1967,8 +1967,8 @@ static void Sanctum_ReenactSolSanctum(void) {
   Actor_SetScript(ACTOR_GARET, gSanctum_GaretCircleScript);
   Actor_WaitForScriptEndById(ACTOR_PARTY_LEADER);
   Actor_WaitForScriptEndById(ACTOR_GARET);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
-  Actor_SetSpeed(ACTOR_GARET, PIXELS(3) / 2, PIXELS(3) / 4);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 1.5);
+  Actor_SetSpeed(ACTOR_GARET, 1.5);
   Actor_Jump(ACTOR_PARTY_LEADER, 6, 0);
   Actor_Jump(ACTOR_GARET, 6, 0);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_WEST_HEALER, 0);

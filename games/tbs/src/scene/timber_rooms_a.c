@@ -298,7 +298,7 @@ static void TimberRoomsA_IodemQuestionsWoundedSoldiers(void) {
     Event_Wait(10);
     Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
     Event_Wait(20);
-    Actor_SetSpeed(ACTOR_IODEM, PIXELS(6) / 5, PIXELS(3) / 5);
+    Actor_SetSpeed(ACTOR_IODEM, 1.2);
     Actor_WalkByAndWait(ACTOR_IODEM, 0, -16);
     Actor_FaceDirection(ACTOR_IODEM, FACING_EAST, 0);
     Event_Wait(30);
@@ -315,7 +315,7 @@ static void TimberRoomsA_IodemQuestionsWoundedSoldiers(void) {
     // "Iodem... What are you doing here?"
     Event_ShowMessage(ACTOR_SOLDIER_NORTH, 0);
     Event_Wait(10);
-    Actor_SetSpeed(ACTOR_IODEM, PIXELS(6) / 5, PIXELS(3) / 5);
+    Actor_SetSpeed(ACTOR_IODEM, 1.2);
     Actor_WalkByAndWait(ACTOR_IODEM, 0, -24);
     Actor_WalkByAndWait(ACTOR_IODEM, 48, 0);
     Actor_FaceDirection(ACTOR_IODEM, FACING_NORTH, 0);
@@ -352,7 +352,7 @@ static void TimberRoomsA_IodemQuestionsWoundedSoldiers(void) {
     Actor_StartRepeatedMotion(ACTOR_SOLDIER_SOUTH, 2);
     Actor_RunRepeatedMotion(ACTOR_SOLDIER_NORTH, 2);
     Event_Wait(20);
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(6) / 5, PIXELS(3) / 5);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 1.2);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 368, 104);
     Actor_WalkByAndWait(ACTOR_PARTY_LEADER, 16, 0);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
@@ -566,7 +566,7 @@ static void TimberRoomsA_IodemQuestionsWoundedSoldiers(void) {
     Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
     Event_Wait(30);
     Sound_Play(MUS_BABI);
-    Actor_SetSpeed(ACTOR_IODEM, PIXELS(6) / 5, PIXELS(3) / 5);
+    Actor_SetSpeed(ACTOR_IODEM, 1.2);
     Actor_SetAnimation(ACTOR_IODEM, ANIM_WALK);
     // Iodem walks into the leader and is hidden: he travels in the party.
     leader = Actor_Get(ACTOR_PARTY_LEADER);

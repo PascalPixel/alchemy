@@ -742,7 +742,7 @@ static void CottageRoomsB_DoraWakesIsaac(void) {
   TilesetAnim_Pause(7);
   Event_Wait(20);
   TilesetAnim_Resume(8);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 1);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_ISAAC_GET_UP);
   Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 557, 679);
   TilesetAnim_Pause(8);
@@ -786,8 +786,8 @@ static void CottageRoomsB_DoraWakesIsaac(void) {
   Event_Wait(1);
   Actor_Get(ACTOR_DORA)->steeringFlags |= ACTOR_FACES_MOTION;
   Event_Wait(20);
-  Actor_SetSpeed(ACTOR_DORA, PIXELS(3) / 2, PIXELS(3) / 4);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
+  Actor_SetSpeed(ACTOR_DORA, 1.5);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 1.5);
   FieldCamera_FollowActor(ACTOR_DORA, 1);
   Actor_Get(ACTOR_PARTY_LEADER)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
   Actor_SetScript(ACTOR_DORA, gCottageRoomsB_LeaveHouseScript);
@@ -881,9 +881,9 @@ static void CottageRoomsB_HurryToThePlaza(void) {
   wait(30);
   // Dora and Isaac run out of the house (SE_DOOR_OPEN).
   FieldCamera_FollowActor(ACTOR_DORA, 1);
-  Actor_SetSpeed(ACTOR_DORA, PIXELS(3) / 2, PIXELS(3) / 4);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
-  Actor_SetSpeed(ACTOR_KYLE, PIXELS(3) / 2, PIXELS(3) / 4);
+  Actor_SetSpeed(ACTOR_DORA, 1.5);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 1.5);
+  Actor_SetSpeed(ACTOR_KYLE, 1.5);
   Actor_SetScript(ACTOR_PARTY_LEADER, gCottageRoomsB_IsaacRunsAheadScript);
   Actor_SetScript(ACTOR_DORA, gCottageRoomsB_DoraRunsAheadScript);
   Event_StartScreenTransition();
@@ -1072,7 +1072,7 @@ static void CottageRoomsB_VisitSickDora(void) {
 
   Event_Start();
   // Isaac steps up to the bed. "Cough, cough! Who is it? Is it the innkeeper?"
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 5, PIXELS(3) / 10);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.6);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 569, 393);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 40);
   Actor_StartRepeatedMotion(ACTOR_DORA, 2);
@@ -1085,7 +1085,7 @@ static void CottageRoomsB_VisitSickDora(void) {
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 60);
   Actor_RunRepeatedMotion(ACTOR_DORA, 2);
   Event_Wait(80);
-  Actor_SetSpeed(ACTOR_DORA, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(ACTOR_DORA, 0.8);
   // Bring Dora out of bed before asking about her illness.
   Actor_SetDestination(ACTOR_DORA, 584, 406);
   TilesetAnim_Pause(11);
@@ -1166,7 +1166,7 @@ static void CottageRoomsB_VisitSickDora(void) {
   wait(1);
   Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_SetDestination(ACTOR_PARTY_LEADER, 558, 388);
-  Actor_SetSpeed(ACTOR_DORA, PIXELS(6) / 5, PIXELS(3) / 5);
+  Actor_SetSpeed(ACTOR_DORA, 1.2);
   Actor_SetAnimation(ACTOR_DORA, ANIM_DORA_STRAIGHTEN);
   Actor_MoveToAndWait(ACTOR_DORA, 586, 400);
   Event_Wait(40);
@@ -1182,7 +1182,7 @@ static void CottageRoomsB_VisitSickDora(void) {
   Actor_Jump(ACTOR_DORA, 4, 20);
   // "See? I'm fine!" "Don't worry about me. Go on."
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 40);
-  Actor_SetSpeed(ACTOR_DORA, PIXELS(2) / 5, PIXELS(1) / 5);
+  Actor_SetSpeed(ACTOR_DORA, 0.4);
   Actor_WalkToAndWait(ACTOR_DORA, 572, 384);
   // "Don't worry about me. Go on. Do your best to complete your..."
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 20);
@@ -1274,7 +1274,7 @@ static void CottageRoomsB_ShowMythrilBag(void) {
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
   Event_StartScreenTransition();
   // Walk the presenter into view, then wait for both bag scripts to finish.
-  Actor_SetSpeed(ACTOR_KRADEN, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_KRADEN, 1);
   Actor_WalkToAndWait(ACTOR_KRADEN, 480, 176);
   Actor_WalkToAndWait(ACTOR_KRADEN, 420, 164);
   Actor_WalkToAndWait(ACTOR_KRADEN, 326, 185);

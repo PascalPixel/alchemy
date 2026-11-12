@@ -266,7 +266,7 @@ static void McCoyPalaceGrounds_TalkToEastGuard(void) {
       // "Hmmm, I see... You seem pretty confident..."
       Event_ShowMessageThenWait(ACTOR_EAST_GUARD, 0, 10);
       if (Actor_Get(ACTOR_PARTY_LEADER)->z.fixed < PIXELS(270)) {
-        Actor_SetSpeed(ACTOR_EAST_GUARD, PIXELS(4) / 5, PIXELS(2) / 5);
+        Actor_SetSpeed(ACTOR_EAST_GUARD, 0.8);
         Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 346, 274);
         Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 328, 282);
         Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
@@ -289,12 +289,12 @@ static void McCoyPalaceGrounds_TalkToEastGuard(void) {
       // "All right. I shall let you pass. Follow me!"
       Event_ShowMessageThenWait(ACTOR_WEST_GUARD, 0, 20);
       Actor_FaceDirection(ACTOR_WEST_GUARD, FACING_EAST_NORTHEAST, 0);
-      Actor_SetSpeed(ACTOR_EAST_GUARD, PIXELS(1), PIXELS(1) / 2);
+      Actor_SetSpeed(ACTOR_EAST_GUARD, 1);
       Actor_Get(ACTOR_EAST_GUARD)->steeringFlags &= ~ACTOR_FACES_MOTION;
       Actor_WalkToAndWait(ACTOR_EAST_GUARD, 346, 263);
       Event_Wait(1);
       Actor_Get(ACTOR_EAST_GUARD)->steeringFlags |= ACTOR_FACES_MOTION;
-      Actor_SetSpeed(ACTOR_WEST_GUARD, PIXELS(3) / 5, PIXELS(3) / 10);
+      Actor_SetSpeed(ACTOR_WEST_GUARD, 0.6);
       Actor_WalkToAndWait(ACTOR_WEST_GUARD, 328, 263);
       Actor_WalkToAndWait(ACTOR_WEST_GUARD, 328, 252);
       Actor_FaceDirection(ACTOR_WEST_GUARD, FACING_NORTH, 10);
@@ -326,7 +326,7 @@ static void McCoyPalaceGrounds_EnterPalace(void) {
   if (GameFlag_Get(FLAG_GATE_OPEN) == 0) {
     McCoyPalaceGrounds_OpenGate();
   }
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.5);
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 2, -16);
@@ -405,7 +405,7 @@ static void McCoyPalaceGrounds_GuardsArrestParty(void) {
   Event_StartScreenTransition();
   FieldCamera_SetSpeedParameters(PIXELS(1) / 5, PIXELS(1) / 40);
   FieldCamera_MoveWithinMapBounds(PIXELS(320), -1, PIXELS(290), 1);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 5, PIXELS(3) / 10);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.6);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 320, 310);
   Actor_FaceDirection(ACTOR_WEST_GUARD, FACING_SOUTH_SOUTHEAST, 10);
   Actor_StartRepeatedMotion(ACTOR_WEST_GUARD, 2);
@@ -449,7 +449,7 @@ static void McCoyPalaceGrounds_GuardsArrestParty(void) {
   Event_SetMessageId(MsgBilibinUnderArrest);
   // "You're under arrest!"
   Event_ShowMessageThenWait(ACTOR_WEST_GUARD, 0, 10);
-  Actor_SetSpeed(ACTOR_WEST_GUARD, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_WEST_GUARD, 1);
   Actor_WalkToAndWait(ACTOR_WEST_GUARD, 314, 280);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
   // "Let's go. Lord McCoy is waiting."
@@ -458,7 +458,7 @@ static void McCoyPalaceGrounds_GuardsArrestParty(void) {
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(60);
   if (GameFlag_Get(FLAG_MCCOY_PALACE_ADMITTED) == 0) {
-    Actor_SetSpeed(ACTOR_EAST_GUARD, PIXELS(1), PIXELS(1) / 2);
+    Actor_SetSpeed(ACTOR_EAST_GUARD, 1);
     Actor_Get(ACTOR_EAST_GUARD)->steeringFlags &= ~ACTOR_FACES_MOTION;
     Actor_WalkToAndWait(ACTOR_EAST_GUARD, 346, 263);
     Event_Wait(1);
@@ -468,9 +468,9 @@ static void McCoyPalaceGrounds_GuardsArrestParty(void) {
       guard->steeringFlags = ACTOR_FACES_MOTION | guard->steeringFlags;
     }
   }
-  Actor_SetSpeed(ACTOR_WEST_GUARD, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(ACTOR_WEST_GUARD, 0.8);
   // Escort Isaac through the opened gate before changing to the palace.
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.8);
   Actor_WalkTo(ACTOR_WEST_GUARD, 328, 262);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 328, 278);
   Actor_SetAnimation(ACTOR_WEST_GUARD, ANIM_STAND);

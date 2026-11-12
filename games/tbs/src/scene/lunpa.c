@@ -578,7 +578,7 @@ static void Lunpa_EnterDoor(void) {
   doorIndex = work->stepTrigger - CELL_BEHAVIOR_LUNPA_FIRST_HOME_DOOR;
   MapGrid_AnimateCells(gLunpaDoors[doorIndex].steps, gLunpaDoors[doorIndex].x,
                        gLunpaDoors[doorIndex].y);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.5);
   Actor_Get(ACTOR_PARTY_LEADER)->motionFlags = 0;
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   if (doorIndex != DOOR_TEMPLE) {
@@ -596,7 +596,7 @@ static void Lunpa_EnterDoor(void) {
 static void Lunpa_EnterHiddenPassage(void) {
   if (GameFlag_Get(FLAG_LUNPA_HIDDEN_PASSAGE_OPEN) != 0) {
     if (GameFlag_Get(FLAG_LUNPA_SECRETS_HIDDEN) == 0) {
-      Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 5, PIXELS(1) / 10);
+      Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.2);
       Actor_Get(ACTOR_PARTY_LEADER)->motionFlags = 0;
       Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
       Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 2, -8);
@@ -611,7 +611,7 @@ static void Lunpa_EnterHiddenPassage(void) {
 static void Lunpa_EnterFortress(void) {
   GameFlag_Set(FLAG_LUNPA_FORTRESS_GATES_ENTERING_FORTRESS);
   Event_Start();
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 5, PIXELS(1) / 10);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.2);
   Actor_Get(ACTOR_PARTY_LEADER)->motionFlags = 0;
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   Actor_WalkBy(ACTOR_PARTY_LEADER, 0, -8);
@@ -729,9 +729,9 @@ static void Lunpa_GuardsCatchParty(void) {
   warningMessageBase = MsgLunpaGuardsCatchParty;
   Event_SetMessageId(warningMessageBase + CATCH_LEFT_GUARD_CHALLENGES);
   Event_ShowMessage(ACTOR_LEFT_GUARD, 0);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2), PIXELS(1));
-  Actor_SetSpeed(ACTOR_LEFT_GUARD, PIXELS(2), PIXELS(1));
-  Actor_SetSpeed(ACTOR_RIGHT_GUARD, PIXELS(2), PIXELS(1));
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 2);
+  Actor_SetSpeed(ACTOR_LEFT_GUARD, 2);
+  Actor_SetSpeed(ACTOR_RIGHT_GUARD, 2);
   Actor_SetAnimation(ACTOR_RIGHT_GUARD, ANIM_SHAKE_HEAD);
   Event_Wait(35);
   Event_SetMessageId(warningMessageBase + CATCH_RIGHT_GUARD_WONDERS);
@@ -849,9 +849,9 @@ static void Lunpa_GuardsThrowIsaacOut(void) {
   FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 0);
   Event_StartScreenTransition();
   Event_Wait(30);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(9) / 5, PIXELS(9) / 10);
-  Actor_SetSpeed(ACTOR_LEFT_GUARD, PIXELS(9) / 5, PIXELS(9) / 10);
-  Actor_SetSpeed(ACTOR_RIGHT_GUARD, PIXELS(9) / 5, PIXELS(9) / 10);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 1.8);
+  Actor_SetSpeed(ACTOR_LEFT_GUARD, 1.8);
+  Actor_SetSpeed(ACTOR_RIGHT_GUARD, 1.8);
   Actor_WalkTo(ACTOR_LEFT_GUARD, 152, 288);
   Actor_WalkTo(ACTOR_RIGHT_GUARD, 168, 288);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_SHAKE_HEAD);
@@ -904,8 +904,8 @@ static void Lunpa_GuardsThrowIsaacOut(void) {
   Event_ShowMessage(ACTOR_LEFT_GUARD, 0);
   Actor_Get(ACTOR_LEFT_GUARD)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
   Actor_Get(ACTOR_RIGHT_GUARD)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
-  Actor_SetSpeed(ACTOR_LEFT_GUARD, PIXELS(1), PIXELS(1) / 2);
-  Actor_SetSpeed(ACTOR_RIGHT_GUARD, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_LEFT_GUARD, 1);
+  Actor_SetSpeed(ACTOR_RIGHT_GUARD, 1);
   Actor_WalkTo(ACTOR_LEFT_GUARD, 144, 200);
   Actor_WalkTo(ACTOR_RIGHT_GUARD, 176, 200);
   Actor_WaitForMoveById(ACTOR_LEFT_GUARD);

@@ -303,7 +303,7 @@ static void SolSanctumEntrance_OpenDoorAndEnter(void) {
   MapGrid_CopyCellsTo(16, 32, 21, 3, width, height);
   wait(10);
   Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 2);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 5, PIXELS(3) / 10);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.6);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 120, 98);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, -8);
@@ -874,9 +874,9 @@ static void SolSanctumEntrance_IntroduceSanctum(void) {
   if (leader != NULL) {
     Actor_SetPositionFixed(ACTOR_GARET, leader->x.fixed, leader->z.fixed);
   }
-  Actor_SetSpeed(ACTOR_KRADEN, PIXELS(3) / 5, PIXELS(3) / 10);
-  Actor_SetSpeed(ACTOR_JENNA, PIXELS(3) / 5, PIXELS(3) / 10);
-  Actor_SetSpeed(ACTOR_GARET, PIXELS(3) / 5, PIXELS(3) / 10);
+  Actor_SetSpeed(ACTOR_KRADEN, 0.6);
+  Actor_SetSpeed(ACTOR_JENNA, 0.6);
+  Actor_SetSpeed(ACTOR_GARET, 0.6);
   Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_WALK);
   Actor_SetAnimation(ACTOR_KRADEN, ANIM_WALK);
@@ -968,9 +968,9 @@ static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void) {
   if (leader != NULL)
     Actor_SetPositionFixed(ACTOR_GARET, leader->x.fixed, leader->z.fixed);
 
-  Actor_SetSpeed(ACTOR_KRADEN, PIXELS(3) / 5, PIXELS(3) / 10);
-  Actor_SetSpeed(ACTOR_JENNA, PIXELS(3) / 5, PIXELS(3) / 10);
-  Actor_SetSpeed(ACTOR_GARET, PIXELS(3) / 5, PIXELS(3) / 10);
+  Actor_SetSpeed(ACTOR_KRADEN, 0.6);
+  Actor_SetSpeed(ACTOR_JENNA, 0.6);
+  Actor_SetSpeed(ACTOR_GARET, 0.6);
   Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_WALK);
   Actor_SetAnimation(ACTOR_KRADEN, ANIM_WALK);
@@ -1131,7 +1131,7 @@ static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void) {
   }
 
   // Bring Kraden back and return the followers to the party.
-  Actor_SetSpeed(ACTOR_KRADEN, PIXELS(3) / 5, PIXELS(3) / 10);
+  Actor_SetSpeed(ACTOR_KRADEN, 0.6);
   Actor_SetAnimation(ACTOR_KRADEN, ANIM_WALK);
   Actor_SetDestinationOffset(ACTOR_KRADEN, 0, 48);
   Actor_WaitForMoveById(ACTOR_KRADEN);
@@ -1197,7 +1197,7 @@ static void SolSanctumEntrance_KradenSeesStatuesOutOfReach(void) {
   if (leader != NULL) {
     Actor_SetPositionFixed(ACTOR_KRADEN, leader->x.fixed, leader->z.fixed);
   }
-  Actor_SetSpeed(ACTOR_KRADEN, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_KRADEN, 1);
   Actor_SetAnimation(ACTOR_KRADEN, ANIM_WALK);
   Actor_SetDestinationOffset(ACTOR_KRADEN, 24, -10);
   Actor_WaitForMoveById(ACTOR_KRADEN);

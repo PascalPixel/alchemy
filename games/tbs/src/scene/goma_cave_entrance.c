@@ -195,8 +195,8 @@ static void GomaCaveEntrance_PushWestPillar(void) {
   Event_Start();
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_PUSH);
   Event_Wait(20);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 5, PIXELS(1) / 10);
-  Actor_SetSpeed(ACTOR_WEST_PILLAR, PIXELS(1) / 5, PIXELS(1) / 10);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.2);
+  Actor_SetSpeed(ACTOR_WEST_PILLAR, 0.2);
   Sound_Play(SE_PUSH);
   // 16 pixels east from step trigger 5, west from step trigger 6.
   offsetX = (11 - (work->stepTrigger << 1)) << 4;
@@ -305,8 +305,8 @@ static void GomaCaveEntrance_IvanRejoins(void) {
   Event_Start();
   Event_Wait(30);
   Event_SetMessageId(MsgGomaNoUsePsynergy);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
-  Actor_SetSpeed(ACTOR_GARET, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.8);
+  Actor_SetSpeed(ACTOR_GARET, 0.8);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 20);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != 0) {
@@ -335,7 +335,7 @@ static void GomaCaveEntrance_IvanRejoins(void) {
   } else {
     // Ivan comes up from the south: "You want to move the stump, right?"
     Actor_SetPosition(ACTOR_IVAN, 360, 248);
-    Actor_SetSpeed(ACTOR_IVAN, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
+    Actor_SetSpeed(ACTOR_IVAN, 0.8);
     Actor_WalkToAndWait(ACTOR_IVAN, 272, 248);
     Actor_WalkToAndWait(ACTOR_IVAN, 272, 208);
     Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 20);
@@ -497,8 +497,8 @@ static void GomaCaveEntrance_IvanRejoins(void) {
     Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
     Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
     Event_Wait(50);
-    Actor_SetSpeed(ACTOR_GARET, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
-    Actor_SetSpeed(ACTOR_IVAN, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
+    Actor_SetSpeed(ACTOR_GARET, 0.8);
+    Actor_SetSpeed(ACTOR_IVAN, 0.8);
     Actor_WalkTo(ACTOR_GARET, 248, 168);
     Actor_WalkToAndWait(ACTOR_IVAN, 248, 168);
     Actor_SetPosition(ACTOR_IVAN, 0, 0);
@@ -581,7 +581,7 @@ static void GomaCaveEntrance_LeapStump(s32 stumpId) {
     stump->targetX = ACTOR_NO_TARGET;
   }
   stump->update = GomaCaveEntrance_SpinStump;
-  Actor_SetSpeed(stumpId, PIXELS(3), 3 * PIXELS(1) / 2);
+  Actor_SetSpeed(stumpId, 3);
   Actor_SetDestination(stumpId, 160, 192);
   stump->gravity = 4 * PIXELS(1) / 5;
   stump->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;

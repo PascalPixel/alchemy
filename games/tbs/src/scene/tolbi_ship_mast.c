@@ -456,7 +456,7 @@ static void TolbiShipMast_AnnounceClearCourse(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(20);
-  Actor_SetSpeed(ACTOR_LOOKOUT, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_LOOKOUT, 1);
   Actor_WalkToAndWait(ACTOR_LOOKOUT, 164, 321);
   Actor_FaceDirection(ACTOR_LOOKOUT, FACING_NORTH_NORTHEAST, 40);
   Actor_FaceDirection(ACTOR_LOOKOUT, FACING_NORTH_NORTHWEST, 40);
@@ -542,12 +542,9 @@ static void TolbiShipMast_RunAvastEvent(void) {
   actor->scaleX = scale;
   actor->update = update;
   wait(1);
-  Actor_SetSpeed(ACTOR_FIRST_SIGHTED_MONSTER, 13 * PIXELS(1) / 25,
-                 13 * PIXELS(1) / 50);
-  Actor_SetSpeed(ACTOR_FIRST_SIGHTED_MONSTER + 1, 9 * PIXELS(1) / 20,
-                 9 * PIXELS(1) / 40);
-  Actor_SetSpeed(ACTOR_FIRST_SIGHTED_MONSTER + 2, 3 * PIXELS(1) / 5,
-                 3 * PIXELS(1) / 10);
+  Actor_SetSpeed(ACTOR_FIRST_SIGHTED_MONSTER, 0.52);
+  Actor_SetSpeed(ACTOR_FIRST_SIGHTED_MONSTER + 1, 0.45);
+  Actor_SetSpeed(ACTOR_FIRST_SIGHTED_MONSTER + 2, 0.6);
   Actor_SetDestination(ACTOR_FIRST_SIGHTED_MONSTER, 128, 345);
   Actor_SetDestination(ACTOR_FIRST_SIGHTED_MONSTER + 1, 136, 330);
   Actor_SetDestination(ACTOR_FIRST_SIGHTED_MONSTER + 2, 156, 340);
@@ -597,13 +594,13 @@ static inline void TolbiShipMast_PrepareGroupDeparture(void) {
   Actor_Stop(ACTOR_FIRST_BIRD + 4);
   Actor_Stop(ACTOR_FIRST_BIRD + 5);
   Actor_Stop(ACTOR_FIRST_BIRD + 6);
-  Actor_SetSpeed(ACTOR_FIRST_BIRD, PIXELS(3), 3 * PIXELS(1) / 2);
-  Actor_SetSpeed(ACTOR_FIRST_BIRD + 1, PIXELS(3), 3 * PIXELS(1) / 2);
-  Actor_SetSpeed(ACTOR_FIRST_BIRD + 2, PIXELS(3), 3 * PIXELS(1) / 2);
-  Actor_SetSpeed(ACTOR_FIRST_BIRD + 3, PIXELS(3), 3 * PIXELS(1) / 2);
-  Actor_SetSpeed(ACTOR_FIRST_BIRD + 4, PIXELS(3), 3 * PIXELS(1) / 2);
-  Actor_SetSpeed(ACTOR_FIRST_BIRD + 5, PIXELS(3), 3 * PIXELS(1) / 2);
-  Actor_SetSpeed(ACTOR_FIRST_BIRD + 6, PIXELS(3), 3 * PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_FIRST_BIRD, 3);
+  Actor_SetSpeed(ACTOR_FIRST_BIRD + 1, 3);
+  Actor_SetSpeed(ACTOR_FIRST_BIRD + 2, 3);
+  Actor_SetSpeed(ACTOR_FIRST_BIRD + 3, 3);
+  Actor_SetSpeed(ACTOR_FIRST_BIRD + 4, 3);
+  Actor_SetSpeed(ACTOR_FIRST_BIRD + 5, 3);
+  Actor_SetSpeed(ACTOR_FIRST_BIRD + 6, 3);
 }
 
 /// On the mast at TOLBI_SHIP_MAST_FROM_WORLD_MAP_SECOND_ATTACK, the second
@@ -631,7 +628,7 @@ static void TolbiShipMast_ShowMonsters(void) {
   Actor_Stop(ACTOR_FIRST_BIRD);
   TolbiShipMast_StopDriftingActor(approachingActor);
   Event_Wait(20);
-  Actor_SetSpeed(ACTOR_FIRST_BIRD, PIXELS(8), PIXELS(4));
+  Actor_SetSpeed(ACTOR_FIRST_BIRD, 8);
   FieldActor_SetMoveTarget(approachingActor, PIXELS(164), PIXELS(144),
                            PIXELS(321));
   Actor_WaitForMove(approachingActor);
@@ -646,7 +643,7 @@ static void TolbiShipMast_ShowMonsters(void) {
   wait(1);
   Actor_FaceDirection(ACTOR_LOOKOUT, FACING_WEST, 0);
   Actor_ShowEmote(ACTOR_LOOKOUT, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 60);
-  Actor_SetSpeed(ACTOR_FIRST_BIRD, PIXELS(2), PIXELS(1));
+  Actor_SetSpeed(ACTOR_FIRST_BIRD, 2);
   TolbiShipMast_InitializeDriftingActor(ACTOR_FIRST_BIRD);
   Event_Wait(20);
   Actor_SetScript(ACTOR_LOOKOUT, gTolbiShipMast_LookoutActions);
@@ -654,11 +651,11 @@ static void TolbiShipMast_ShowMonsters(void) {
   Actor_Stop(ACTOR_FIRST_BIRD);
   TolbiShipMast_StopDriftingActor(approachingActor);
   Event_Wait(20);
-  Actor_SetSpeed(ACTOR_FIRST_BIRD, PIXELS(8), PIXELS(4));
+  Actor_SetSpeed(ACTOR_FIRST_BIRD, 8);
   FieldActor_SetMoveTarget(approachingActor, PIXELS(164), PIXELS(144),
                            PIXELS(321));
   Actor_WaitForMove(approachingActor);
-  Actor_SetSpeed(ACTOR_FIRST_BIRD, PIXELS(5), 5 * PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_FIRST_BIRD, 5);
   FieldActor_SetMoveTarget(approachingActor, PIXELS(164), PIXELS(104),
                            PIXELS(321));
   Actor_WaitForMove(approachingActor);
@@ -676,7 +673,7 @@ static void TolbiShipMast_ShowMonsters(void) {
   wait(1);
   Actor_FaceDirection(ACTOR_LOOKOUT, FACING_WEST, 0);
   Actor_ShowEmote(ACTOR_LOOKOUT, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 60);
-  Actor_SetSpeed(ACTOR_FIRST_BIRD, PIXELS(2), PIXELS(1));
+  Actor_SetSpeed(ACTOR_FIRST_BIRD, 2);
   TolbiShipMast_InitializeDriftingActor(ACTOR_FIRST_BIRD);
   // The lookout jumps, the monsters' theme plays, and Sean cries out.
   Actor_Jump(ACTOR_LOOKOUT, 4, 20);
@@ -805,7 +802,7 @@ static void TolbiShipMast_RunMonsterLanding(void) {
   // Let the monster bounce, then move it and its landing spot out of the
   // shot.
   Actor_SetSpritePriority(ACTOR_LANDING_MONSTER, 1);
-  Actor_SetSpeed(ACTOR_LANDING_MONSTER, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_LANDING_MONSTER, 1);
   actor->bounce = Q16_ONE / 10;
   actor->gravity = 7 * PIXELS(1) / 10;
   Sound_Play(SE_HIGH_JUMP);
@@ -859,7 +856,7 @@ static void TolbiShipMast_AnnounceLand(void) {
   Event_Wait(120);
   Actor_StartRepeatedMotion(ACTOR_LOOKOUT, 1);
   Actor_ShowEmote(ACTOR_LOOKOUT, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
-  Actor_SetSpeed(ACTOR_LOOKOUT, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_LOOKOUT, 1);
   Actor_WalkToAndWait(ACTOR_LOOKOUT, 164, 344);
   Actor_Jump(ACTOR_LOOKOUT, 4, 10);
   Actor_Jump(ACTOR_LOOKOUT, 6, 20);

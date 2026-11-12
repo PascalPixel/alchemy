@@ -234,7 +234,7 @@ static void Lalivero_WharfGuardLetsPartyThrough(void) {
   Event_SetMessageId(MsgLaliveroWasToldLetInIf);
   // "I was told to let you in if you showed up... The door is open."
   Event_ShowMessage(ACTOR_WHARF_GUARD, 0);
-  Actor_SetSpeed(ACTOR_WHARF_GUARD, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_WHARF_GUARD, 1);
   Actor_WalkByAndWait(ACTOR_WHARF_GUARD, -16, 0);
   Actor_FaceDirection(ACTOR_WHARF_GUARD, FACING_EAST, 0);
   Event_Wait(10);
@@ -300,7 +300,7 @@ static void Lalivero_WatchWoundedSoldiers(void) {
   Actor_WaitForMoveById(ACTOR_IODEM);
   Event_Wait(20);
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
-  Actor_SetSpeed(ACTOR_IODEM, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_IODEM, 1);
   Actor_WalkByAndWait(ACTOR_IODEM, 0, -16);
   Event_Wait(10);
   Actor_FaceActor(ACTOR_IODEM, ACTOR_WEST_SOLDIER, 40);
@@ -389,7 +389,7 @@ static void Lalivero_WatchWoundedSoldiers(void) {
   Event_Wait(20);
   // Iodem paces while they tell where the attackers went.
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
-  Actor_SetSpeed(ACTOR_IODEM, PIXELS(9) / 5, PIXELS(9) / 10);
+  Actor_SetSpeed(ACTOR_IODEM, 1.8);
   Actor_WalkToAndWait(ACTOR_IODEM, 256, 360);
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_IODEM, FACING_EAST, 0);
@@ -419,7 +419,7 @@ static void Lalivero_WatchWoundedSoldiers(void) {
   Event_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
   Event_Wait(20);
-  Actor_SetSpeed(ACTOR_IODEM, PIXELS(8) / 5, PIXELS(4) / 5);
+  Actor_SetSpeed(ACTOR_IODEM, 1.6);
   Actor_WalkToAndWait(ACTOR_IODEM, 256, 384);
   Actor_FaceDirection(ACTOR_IODEM, FACING_EAST, 0);
   Event_Wait(20);
@@ -438,7 +438,7 @@ static void Lalivero_WatchWoundedSoldiers(void) {
   // "I see. Faran, too..."
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
-  Actor_SetSpeed(ACTOR_IODEM, PIXELS(6) / 5, PIXELS(3) / 5);
+  Actor_SetSpeed(ACTOR_IODEM, 1.2);
   // Iodem resolves to follow; the soldiers send the party on.
   Actor_WalkByAndWait(ACTOR_IODEM, 0, 16);
   Event_Wait(10);
@@ -485,7 +485,7 @@ static void Lalivero_WatchWoundedSoldiers(void) {
   Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
   Event_Wait(30);
   // Iodem walks back into the leader.
-  Actor_SetSpeed(ACTOR_IODEM, PIXELS(6) / 5, PIXELS(3) / 5);
+  Actor_SetSpeed(ACTOR_IODEM, 1.2);
   Actor_SetAnimation(ACTOR_IODEM, ANIM_WALK);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != 0) {
@@ -568,7 +568,7 @@ static void Lalivero_IodemGivesBlackOrb(void) {
   Event_Wait(80);
   // Iodem comes out: the door opens (cells 34, 0 drawn at 4, 18) and closes
   // behind him (cells 32, 0).
-  Actor_SetSpeed(ACTOR_IODEM, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(ACTOR_IODEM, 0.8);
   Actor_Get(ACTOR_IODEM)->motionFlags = ACTOR_FALLS;
   Actor_SetSpritePriority(ACTOR_IODEM, 2);
   MapGrid_CopyCellsLayered(34, 0, 1, 2, 4, 18);
@@ -735,7 +735,7 @@ static void Lalivero_IodemGivesBlackOrb(void) {
   Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
   Event_Wait(30);
   // He holds the orb out, the leader takes it, and he steps back.
-  Actor_SetSpeed(ACTOR_BLACK_ORB, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(ACTOR_BLACK_ORB, 0.8);
   Actor_SetDestinationOffset(ACTOR_BLACK_ORB, 0, 16);
   Actor_WalkByAndWait(ACTOR_IODEM, 0, 16);
   Event_Wait(30);
@@ -804,9 +804,9 @@ static void Lalivero_IodemGivesBlackOrb(void) {
   Actor_SetAnimation(ACTOR_IVAN, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
   Event_Wait(30);
-  Actor_SetSpeed(ACTOR_GARET, PIXELS(6) / 5, PIXELS(3) / 5);
-  Actor_SetSpeed(ACTOR_MIA, PIXELS(6) / 5, PIXELS(3) / 5);
-  Actor_SetSpeed(ACTOR_IVAN, PIXELS(6) / 5, PIXELS(3) / 5);
+  Actor_SetSpeed(ACTOR_GARET, 1.2);
+  Actor_SetSpeed(ACTOR_MIA, 1.2);
+  Actor_SetSpeed(ACTOR_IVAN, 1.2);
   Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != 0) {

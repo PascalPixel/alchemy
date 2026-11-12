@@ -255,8 +255,8 @@ static void ValeEruption_ReturnFromMtAleph(void) {
 
   // Isaac and Garet come down the path, and Garet sees the villagers: "Uh-oh.
   // It's Grandpa and the others."
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
-  Actor_SetSpeed(ACTOR_GARET, PIXELS(1) / 2, PIXELS(1) / 4);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.5);
+  Actor_SetSpeed(ACTOR_GARET, 0.5);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 120, 258);
   FieldCamera_SetSpeed(PIXELS(3) / 2, PIXELS(3) / 16);
   FieldCamera_MoveTo(PIXELS(112), -1, PIXELS(320), 1);
@@ -272,7 +272,7 @@ static void ValeEruption_ReturnFromMtAleph(void) {
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH_SOUTHEAST, 0);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Event_Wait(50);
-  Actor_SetSpeed(ACTOR_GARET, PIXELS(3) / 2, PIXELS(3) / 4);
+  Actor_SetSpeed(ACTOR_GARET, 1.5);
   Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
   Actor_MoveToAndWait(ACTOR_GARET, 105, 342);
   Actor_SetAnimation(ACTOR_GARET, ANIM_STAND);
@@ -293,7 +293,7 @@ static void ValeEruption_ReturnFromMtAleph(void) {
     Event_Wait(50);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
     Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
-    Actor_SetSpeed(ACTOR_GARET, PIXELS(1), PIXELS(1) / 2);
+    Actor_SetSpeed(ACTOR_GARET, 1);
     Actor_MoveToAndWait(ACTOR_GARET, 103, 320);
     Actor_SetAnimation(ACTOR_GARET, ANIM_STAND);
   } else {
@@ -354,8 +354,8 @@ static void ValeEruption_ReturnFromMtAleph(void) {
   // "Come over here, both of you!" The two walk down to the villagers.
   FieldCamera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
   FieldCamera_MoveTo(PIXELS(214), -1, PIXELS(472), 1);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
-  Actor_SetSpeed(ACTOR_GARET, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 1);
+  Actor_SetSpeed(ACTOR_GARET, 1);
   Actor_SetScript(ACTOR_PARTY_LEADER, gValeEruption_LeaderWalksDown);
   Event_Wait(30);
   Actor_SetScript(ACTOR_GARET, gValeEruption_GaretWalksDown);
@@ -364,7 +364,7 @@ static void ValeEruption_ReturnFromMtAleph(void) {
   Actor_FaceDirection(ACTOR_GARET, FACING_EAST, 0);
   FieldCamera_WaitForArrival();
   Actor_FaceDirection(ACTOR_GARETS_GRANDFATHER, FACING_WEST, 0);
-  Actor_SetSpeed(ACTOR_GREAT_HEALER, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(ACTOR_GREAT_HEALER, 0.8);
   Actor_SetAnimation(ACTOR_GREAT_HEALER, ANIM_WALK);
   Actor_MoveToAndWait(ACTOR_GREAT_HEALER, 265, 455);
   Actor_MoveToAndWait(ACTOR_GREAT_HEALER, 246, 455);
@@ -476,8 +476,8 @@ static void ValeEruption_ReturnFromMtAleph(void) {
   Event_Wait(30);
   Actor_WalkTo(ACTOR_GREAT_HEALER, 255, 390);
   Event_Wait(20);
-  Actor_SetSpeed(ACTOR_GARETS_GRANDFATHER, PIXELS(4) / 5, PIXELS(2) / 5);
-  Actor_SetSpeed(ACTOR_DORA, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(ACTOR_GARETS_GRANDFATHER, 0.8);
+  Actor_SetSpeed(ACTOR_DORA, 0.8);
   Actor_WalkTo(ACTOR_GARETS_GRANDFATHER, 255, 390);
   Actor_WalkToAndWait(ACTOR_DORA, 255, 460);
   Actor_FaceDirection(ACTOR_DORA, FACING_WEST, 0);

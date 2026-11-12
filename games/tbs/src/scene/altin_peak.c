@@ -485,7 +485,7 @@ static void AltinPeak_RideCart(s32 log) {
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_LEAN_BACK);
   Event_Wait(10);
   Sound_Play(SE_JUMP);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(16) / 5, PIXELS(8) / 5);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 3.2);
   // Leap by the height between leader and cart, in quarter pixels, plus 4.
   leader->velocityY =
       ((ABS(logActor->y.fixed - leader->y.fixed) >> 14) << 14) + PIXELS(4);
@@ -924,8 +924,8 @@ static void AltinPeak_PushSpritzRoomPillar(void) {
   Event_Start();
   MapGrid_CopyCellAttributes(24, 27, 2, 1, 24, 26);
   Sound_Play(SE_PUSH);
-  Actor_SetSpeed(ACTOR_SPRITZ_ROOM_PILLAR, PIXELS(1) / 5, PIXELS(1) / 10);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 5, PIXELS(1) / 10);
+  Actor_SetSpeed(ACTOR_SPRITZ_ROOM_PILLAR, 0.2);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.2);
   Actor_Get(ACTOR_SPRITZ_ROOM_PILLAR)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_PUSH);
   Actor_SetDestination(ACTOR_PARTY_LEADER, 400, 424);
@@ -1037,7 +1037,7 @@ static void AltinPeak_RunBoulderChase(s32 boulderDelay) {
   Event_Wait(40);
   FieldCamera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
   FieldCamera_MoveTo(PIXELS(784), -1, PIXELS(116), 1);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2), PIXELS(1));
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 2);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_SPRING);
   Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 792, 140);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
@@ -1079,7 +1079,7 @@ static void AltinPeak_RunBoulderChase(s32 boulderDelay) {
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
   // Send the leader first, then release the rolling actor after its delay.
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(5) / 2, PIXELS(5) / 4);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 2.5);
   leader->timer = 0;
   Actor_SetScript(ACTOR_PARTY_LEADER, gAltinPeak_LeaderFleePath);
   if (GameFlag_Get(FLAG_ALTIN_PEAK_GARET_WATCHING_ROCKS) != 0) {
@@ -1091,7 +1091,7 @@ static void AltinPeak_RunBoulderChase(s32 boulderDelay) {
   FieldCamera_MoveTo(PIXELS(786), -1, PIXELS(556), 1);
   Event_Wait(boulderDelay);
   Actor_SetSpritePriority(ACTOR_FALLING_BOULDER, 1);
-  Actor_SetSpeed(ACTOR_FALLING_BOULDER, PIXELS(317) / 200, PIXELS(275) / 347);
+  Actor_SetSpeed(ACTOR_FALLING_BOULDER, 1.585);
   boulder->timer = 0;
   Actor_SetScript(ACTOR_FALLING_BOULDER, gAltinPeak_BoulderPath);
   do {
@@ -1110,12 +1110,12 @@ static void AltinPeak_RunBoulderChase(s32 boulderDelay) {
   shadow->z.fixed = PIXELS(618);
   shadow->y.fixed = -PIXELS(64);
   // Let the rolling actor bounce before the final collapse.
-  Actor_SetSpeed(ACTOR_FALLING_BOULDER, PIXELS(8) / 5, PIXELS(4) / 5);
+  Actor_SetSpeed(ACTOR_FALLING_BOULDER, 1.6);
   boulder->bounce = PIXELS(1) / 10;
   boulder->gravity = PIXELS(1) / 5;
   boulder->velocityY = PIXELS(4);
   Actor_MoveToAndWait(ACTOR_FALLING_BOULDER, 786, 604);
-  Actor_SetSpeed(ACTOR_FALLING_BOULDER, PIXELS(16) / 5, PIXELS(8) / 5);
+  Actor_SetSpeed(ACTOR_FALLING_BOULDER, 3.2);
   Actor_SetDestination(ACTOR_FALLING_BOULDER, 786, 644);
   Event_Wait(15);
   MapGrid_SetShake(PIXELS(5), PIXELS(7), Q16_ONE);
@@ -1133,10 +1133,10 @@ static void AltinPeak_RunBoulderChase(s32 boulderDelay) {
   // Return Garet to the party if the warning sign brought him into the event.
   Event_Wait(120);
   if (Event_GetFlag(FLAG_ALTIN_PEAK_GARET_WATCHING_ROCKS) != 0) {
-    Actor_SetSpeed(ACTOR_GARET, PIXELS(1), PIXELS(1) / 2);
+    Actor_SetSpeed(ACTOR_GARET, 1);
     Actor_WalkTo(ACTOR_GARET, 824, 558);
   }
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 5, PIXELS(3) / 10);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.6);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 854, 584);
   if (Event_GetFlag(FLAG_ALTIN_PEAK_GARET_WATCHING_ROCKS) != 0) {
     Actor_SetAnimation(ACTOR_GARET, ANIM_STAND);
@@ -1185,7 +1185,7 @@ static void AltinPeak_ReadFallingRockSign(void) {
       GameFlag_Get(FLAG_FUCHIN_FALLS_ORB_OF_FORCE_FOUND) == 0) {
     // Bring Garet out to inspect the warning and demonstrate the danger.
     GameFlag_Set(FLAG_ALTIN_PEAK_GARET_WATCHING_ROCKS);
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.8);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 790, 140);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 780, 140);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
@@ -1193,7 +1193,7 @@ static void AltinPeak_ReadFallingRockSign(void) {
     if (actor != 0) {
       Actor_SetPositionFixed(ACTOR_GARET, actor->x.fixed, actor->z.fixed);
     }
-    Actor_SetSpeed(ACTOR_GARET, PIXELS(4) / 5, PIXELS(2) / 5);
+    Actor_SetSpeed(ACTOR_GARET, 0.8);
     Actor_WalkToAndWait(ACTOR_GARET, 800, 140);
     Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 20);
     Event_SetMessageId(message + 1);
@@ -1202,7 +1202,7 @@ static void AltinPeak_ReadFallingRockSign(void) {
     // "Tch! We came this deep into the mine just to find a dead end!"
     Event_ShowMessageThenWait(ACTOR_GARET, 0, 10);
     Actor_Jump(ACTOR_GARET, 6, 0);
-    Actor_SetSpeed(ACTOR_GARET, PIXELS(8) / 5, PIXELS(4) / 5);
+    Actor_SetSpeed(ACTOR_GARET, 1.6);
     Actor_Get(ACTOR_GARET)->steeringFlags &= ~ACTOR_FACES_MOTION;
     Actor_WalkToAndWait(ACTOR_GARET, 792, 110);
     Event_Wait(1);
@@ -1236,7 +1236,7 @@ static void AltinPeak_ReadFallingRockSign(void) {
     Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH, 20);
     Actor_StartRepeatedMotion(ACTOR_GARET, 2);
     Event_ShowMessageThenWait(ACTOR_GARET, 0, 10);
-    Actor_SetSpeed(ACTOR_GARET, PIXELS(5) / 2, PIXELS(5) / 4);
+    Actor_SetSpeed(ACTOR_GARET, 2.5);
     Actor_SetAnimation(ACTOR_GARET, 5);
     Actor_MoveToAndWait(ACTOR_GARET, 796, 138);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
@@ -1369,7 +1369,7 @@ static void AltinPeak_ShowFirstBeastRoute(void) {
   beast->userValue = 0;
   beast->gravity = PIXELS(2) / 5;
   beast->update = AltinPeak_UpdateBeastHops;
-  Actor_SetSpeed(ACTOR_FIRST_WATER_BEAST, PIXELS(6) / 5, PIXELS(3) / 5);
+  Actor_SetSpeed(ACTOR_FIRST_WATER_BEAST, 1.2);
   Actor_MoveToAndWait(ACTOR_FIRST_WATER_BEAST, 308, 291);
   Actor_MoveToAndWait(ACTOR_FIRST_WATER_BEAST, 311, 215);
   beast->update = 0;
@@ -1429,7 +1429,7 @@ static void AltinPeak_ShowFirstBeastRoute(void) {
   MapGrid_CopyCellAttributes(3, 0, 1, 1, 17, 13);
   MapGrid_CopyCellAttributes(3, 0, 1, 1, 18, 13);
   MapGrid_CopyCellAttributes(3, 0, 1, 1, 19, 13);
-  Actor_SetSpeed(ACTOR_FIRST_WATER_BEAST, PIXELS(7) / 5, PIXELS(7) / 10);
+  Actor_SetSpeed(ACTOR_FIRST_WATER_BEAST, 1.4);
   actor = Actor_Get(ACTOR_FIRST_WATER_BEAST);
   Actor_SetSpriteFlags(actor, 0);
   Sound_Play(SE_HIGH_JUMP);
@@ -1497,7 +1497,7 @@ static void AltinPeak_ShowSecondBeastRoute(void) {
   actor->userValue = 0;
   actor->gravity = PIXELS(2) / 5;
   actor->update = AltinPeak_UpdateBeastHops;
-  Actor_SetSpeed(ACTOR_FIRST_WATER_BEAST, PIXELS(6) / 5, PIXELS(3) / 5);
+  Actor_SetSpeed(ACTOR_FIRST_WATER_BEAST, 1.2);
   Actor_MoveToAndWait(ACTOR_FIRST_WATER_BEAST, 212, 200);
   Actor_MoveToAndWait(ACTOR_FIRST_WATER_BEAST, 103, 200);
   actor->update = NULL;
@@ -1508,7 +1508,7 @@ static void AltinPeak_ShowSecondBeastRoute(void) {
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_FIRST_WATER_BEAST, FACING_SOUTH_SOUTHWEST, 40);
   Actor_Get(ACTOR_FIRST_WATER_BEAST)->steeringFlags &= ~ACTOR_FACES_MOTION;
-  Actor_SetSpeed(ACTOR_FIRST_WATER_BEAST, PIXELS(6) / 5, PIXELS(3) / 5);
+  Actor_SetSpeed(ACTOR_FIRST_WATER_BEAST, 1.2);
   movingActor = Actor_Get(ACTOR_FIRST_WATER_BEAST);
   Actor_SetSpriteFlags(movingActor, 0);
   Sound_Play(SE_HIGH_JUMP);
@@ -1529,7 +1529,7 @@ static void AltinPeak_ShowSecondBeastRoute(void) {
   actor->timer = 0;
   actor->userValue = 0;
   actor->update = AltinPeak_UpdateBeastHops;
-  Actor_SetSpeed(ACTOR_FIRST_WATER_BEAST, PIXELS(6) / 5, PIXELS(3) / 5);
+  Actor_SetSpeed(ACTOR_FIRST_WATER_BEAST, 1.2);
   Actor_MoveToAndWait(ACTOR_FIRST_WATER_BEAST, 120, 215);
   actor->update = NULL;
   actor->paused = 0;
@@ -2186,13 +2186,13 @@ static void AltinPeak_StartHydrosBattle(void) {
   Event_Start();
   FieldCamera_SetSpeed(PIXELS(3) / 5, PIXELS(3) / 40);
   FieldCamera_MoveTo(PIXELS(328), -1, PIXELS(87), 1);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 5, PIXELS(3) / 10);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.6);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 328, 116);
   Sound_Play(SE_BOSS_ROAR);
   Task_AddFrame(AltinPeak_PlayHydrosRumble, TASK_PASS_FRAME);
   MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
-  Actor_SetSpeed(ACTOR_STATUE, PIXELS(1) / 10, PIXELS(1) / 20);
-  Actor_SetSpeed(ACTOR_STATUE_SHADOW, PIXELS(1) / 10, PIXELS(1) / 20);
+  Actor_SetSpeed(ACTOR_STATUE, 0.1);
+  Actor_SetSpeed(ACTOR_STATUE_SHADOW, 0.1);
   Actor_SetAnimation(ACTOR_STATUE, 2);
   Actor_SetDestination(ACTOR_STATUE, 328, 104);
   Actor_SetDestination(ACTOR_STATUE_SHADOW, 328, 108);
@@ -2252,9 +2252,9 @@ static void AltinPeak_CelebrateHydrosVictory(void) {
   if (leader != 0) {
     Actor_SetPositionFixed(ACTOR_MIA, leader->x.fixed, leader->z.fixed);
   }
-  Actor_SetSpeed(ACTOR_GARET, PIXELS(3) / 5, PIXELS(3) / 10);
-  Actor_SetSpeed(ACTOR_IVAN, PIXELS(3) / 5, PIXELS(3) / 10);
-  Actor_SetSpeed(ACTOR_MIA, PIXELS(3) / 5, PIXELS(3) / 10);
+  Actor_SetSpeed(ACTOR_GARET, 0.6);
+  Actor_SetSpeed(ACTOR_IVAN, 0.6);
+  Actor_SetSpeed(ACTOR_MIA, 0.6);
   Actor_SetScript(ACTOR_GARET, gAltinPeak_GaretScript);
   Actor_SetScript(ACTOR_IVAN, gAltinPeak_IvanScript);
   Actor_RunScriptAndWait(ACTOR_MIA, gAltinPeak_MiaScript);

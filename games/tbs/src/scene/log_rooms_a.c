@@ -725,7 +725,7 @@ static void LogRoomsA_SuspectedLeaderDodges(void) {
   Event_SetMessageId(MsgVaultOwStop);
   // "Ow! Stop it!"
   Event_ShowMessage(ACTOR_SUSPECTED_LEADER, 0);
-  Actor_SetSpeed(ACTOR_SUSPECTED_LEADER, PIXELS(4), PIXELS(2));
+  Actor_SetSpeed(ACTOR_SUSPECTED_LEADER, 4);
   if ((u32)((suspect->facing & 0xf000) - TRIG_TURN * 5 / 16) <=
       TRIG_TURN * 3 / 8) {
     routeState = (s16 *)&suspect->timer;
@@ -794,7 +794,7 @@ static void LogRoomsA_SuspectedThiefDodges(void) {
   Event_SetMessageId(MsgVaultNoLeaveAlone);
   // "No! Leave me alone!"
   Event_ShowMessage(ACTOR_SUSPECTED_THIEF, 0);
-  Actor_SetSpeed(ACTOR_SUSPECTED_THIEF, PIXELS(7) / 2, PIXELS(7) / 4);
+  Actor_SetSpeed(ACTOR_SUSPECTED_THIEF, 3.5);
   switch (actor->timer) {
   case 4:
     if (facing > FACING_SOUTHEAST && facing < FACING_NORTHWEST) {
@@ -1044,9 +1044,9 @@ static void LogRoomsA_MeetIvan(void) {
   struct Actor *actor;
 
   Event_Start();
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
-  Actor_SetSpeed(ACTOR_GARET, PIXELS(4) / 5, PIXELS(2) / 5);
-  Actor_SetSpeed(ACTOR_IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.8);
+  Actor_SetSpeed(ACTOR_GARET, 0.8);
+  Actor_SetSpeed(ACTOR_IVAN, 0.8);
   // Isaac steps up in front of Ivan and Garet comes out beside him.
   Sound_Play(MUS_SILENCE);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 384, 408);
@@ -1341,9 +1341,9 @@ static void LogRoomsA_FreeRooferAndConfrontThieves(void) {
   s32 base;
 
   Event_Start();
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
-  Actor_SetSpeed(ACTOR_GARET, PIXELS(4) / 5, PIXELS(2) / 5);
-  Actor_SetSpeed(ACTOR_IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.8);
+  Actor_SetSpeed(ACTOR_GARET, 0.8);
+  Actor_SetSpeed(ACTOR_IVAN, 0.8);
   // Isaac cuts the tied-up villager free from the ropes; he gets up and nods.
   Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 3);
   Event_Wait(20);
@@ -1413,9 +1413,9 @@ static void LogRoomsA_FreeRooferAndConfrontThieves(void) {
   Actor_FaceActor(ACTOR_IVAN, ACTOR_THIEF_LEADER, 0);
   LogRoomsA_FaceActorAndWait(ACTOR_TIED_UP_VILLAGER, ACTOR_THIEF_LEADER, 40);
   // He walks up and his two men run in behind him.
-  Actor_SetSpeed(ACTOR_THIEF_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
-  Actor_SetSpeed(ACTOR_FIRST_THIEF, PIXELS(3) / 2, PIXELS(3) / 4);
-  Actor_SetSpeed(ACTOR_SECOND_THIEF, PIXELS(3) / 2, PIXELS(3) / 4);
+  Actor_SetSpeed(ACTOR_THIEF_LEADER, 0.8);
+  Actor_SetSpeed(ACTOR_FIRST_THIEF, 1.5);
+  Actor_SetSpeed(ACTOR_SECOND_THIEF, 1.5);
   Actor_SetPosition(ACTOR_FIRST_THIEF, 744, 408);
   Actor_SetPosition(ACTOR_SECOND_THIEF, 744, 408);
   Actor_WalkToAndWait(ACTOR_THIEF_LEADER, 792, 416);
@@ -1562,7 +1562,7 @@ static void LogRoomsA_LeaveGuestsRoom(void) {
 /// Reached by stepping on CELL_BEHAVIOR_LOG_ROOMS_A_LOFT_CLIMB. Takes
 /// LOG_ROOMS_A_CRATE_ROOM_TO_LOFT.
 static void LogRoomsA_ClimbToLoft(void) {
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.5);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 728, 408);
   gFieldWork->transitionFrames = 16;
   Sound_Play(SE_MAP_EXIT);
@@ -1576,7 +1576,7 @@ static void LogRoomsA_ClimbToLoft(void) {
 /// Reached by stepping on CELL_BEHAVIOR_LOG_ROOMS_A_LOFT_DESCENT. Takes
 /// LOG_ROOMS_A_LOFT_TO_CRATE_ROOM back down.
 static void LogRoomsA_LeaveLoft(void) {
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.5);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 744, 408);
   if (GameFlag_Get(FLAG_VAULT_THIEVES_ATTACKED) == 0) {
     Event_Start();
@@ -1608,9 +1608,9 @@ static void LogRoomsA_ApproachSuspects(void) {
   suspectedLeader = Actor_Get(ACTOR_SUSPECTED_LEADER);
   suspectedThief = Actor_Get(ACTOR_SUSPECTED_THIEF);
   Event_Start();
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
-  Actor_SetSpeed(ACTOR_GARET, PIXELS(4) / 5, PIXELS(2) / 5);
-  Actor_SetSpeed(ACTOR_IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.8);
+  Actor_SetSpeed(ACTOR_GARET, 0.8);
+  Actor_SetSpeed(ACTOR_IVAN, 0.8);
   // Isaac walks in; the two start and spot Ivan with him: "It looks like that
   // weird kid is with them!"
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 232, 696);
@@ -1632,8 +1632,8 @@ static void LogRoomsA_ApproachSuspects(void) {
   Actor_RunRepeatedMotion(ACTOR_SUSPECTED_LEADER, 1);
   LogRoomsA_ShowMessageAndWait(ACTOR_SUSPECTED_LEADER, 30);
   // "Don't let him near me!" They run off to their routes' first spots.
-  Actor_SetSpeed(ACTOR_SUSPECTED_LEADER, PIXELS(4), PIXELS(2));
-  Actor_SetSpeed(ACTOR_SUSPECTED_THIEF, PIXELS(7) / 2, PIXELS(7) / 4);
+  Actor_SetSpeed(ACTOR_SUSPECTED_LEADER, 4);
+  Actor_SetSpeed(ACTOR_SUSPECTED_THIEF, 3.5);
   Actor_SetScript(ACTOR_SUSPECTED_THIEF, gLogRoomsA_SuspectToSouthWestCorner);
   Actor_SetScript(ACTOR_SUSPECTED_LEADER, gLogRoomsA_SuspectRoundToWestBedHead);
   Actor_WaitForScriptEndById(ACTOR_SUSPECTED_LEADER);
@@ -1676,9 +1676,9 @@ static void LogRoomsA_DiscussSuspiciousGuests(void) {
   } else {
     Actor_SetScript(ACTOR_SUSPECTED_THIEF, gLogRoomsA_SuspectToWestBedFoot);
   }
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
-  Actor_SetSpeed(ACTOR_GARET, PIXELS(4) / 5, PIXELS(2) / 5);
-  Actor_SetSpeed(ACTOR_IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.8);
+  Actor_SetSpeed(ACTOR_GARET, 0.8);
+  Actor_SetSpeed(ACTOR_IVAN, 0.8);
   // Outside the room, Garet and Ivan step out of the leader.
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 248, 728);
   Actor_SetPosition(ACTOR_IVAN, 248, 728);
@@ -1778,8 +1778,8 @@ static void LogRoomsA_ResetSuspectRoutes(void) {
   Actor_SetAnimationAndWait(ACTOR_SUSPECTED_LEADER, ANIM_SHAKE_HEAD);
   Event_Wait(20);
   LogRoomsA_ShowMessageAndWait(ACTOR_SUSPECTED_LEADER, 20);
-  Actor_SetSpeed(ACTOR_SUSPECTED_LEADER, PIXELS(4), PIXELS(2));
-  Actor_SetSpeed(ACTOR_SUSPECTED_THIEF, PIXELS(7) / 2, PIXELS(7) / 4);
+  Actor_SetSpeed(ACTOR_SUSPECTED_LEADER, 4);
+  Actor_SetSpeed(ACTOR_SUSPECTED_THIEF, 3.5);
   Actor_SetScript(ACTOR_SUSPECTED_THIEF, gLogRoomsA_SuspectToSouthWestCorner);
   Actor_SetScript(ACTOR_SUSPECTED_LEADER, gLogRoomsA_SuspectRoundToWestBedHead);
   Actor_WaitForScriptEndById(ACTOR_SUSPECTED_LEADER);
@@ -1947,9 +1947,9 @@ static void LogRoomsA_DiscussMindReading(void) {
     leader->priorityFlags = ACTOR_PRIORITY_AUTOMATIC | leader->priorityFlags;
   }
   Field_SetCameraBounds(PIXELS(32), PIXELS(576), PIXELS(400), PIXELS(936));
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
-  Actor_SetSpeed(ACTOR_GARET, PIXELS(4) / 5, PIXELS(2) / 5);
-  Actor_SetSpeed(ACTOR_IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.8);
+  Actor_SetSpeed(ACTOR_GARET, 0.8);
+  Actor_SetSpeed(ACTOR_IVAN, 0.8);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 248, 728);
   Actor_SetPosition(ACTOR_IVAN, 264, 744);
   Actor_SetPosition(ACTOR_GARET, 232, 744);
@@ -2333,8 +2333,8 @@ static void LogRoomsA_LoseToThieves(void) {
   Actor_FaceDirection(ACTOR_THIEF_LEADER, FACING_SOUTH_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_FIRST_THIEF, FACING_SOUTH_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_SECOND_THIEF, FACING_SOUTH_SOUTHEAST, 0);
-  Actor_SetSpeed(ACTOR_FIRST_THIEF, PIXELS(4) / 5, PIXELS(2) / 5);
-  Actor_SetSpeed(ACTOR_SECOND_THIEF, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(ACTOR_FIRST_THIEF, 0.8);
+  Actor_SetSpeed(ACTOR_SECOND_THIEF, 0.8);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 784, 448);
   Actor_SetPosition(ACTOR_GARET, 808, 432);
   Actor_SetPosition(ACTOR_IVAN, 776, 432);
@@ -2486,7 +2486,7 @@ static void LogRoomsA_DefeatThieves(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH_NORTHWEST, 0);
-  Actor_SetSpeed(ACTOR_TIED_UP_VILLAGER, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(ACTOR_TIED_UP_VILLAGER, 0.8);
   Actor_FaceDirection(ACTOR_TIED_UP_VILLAGER, FACING_NORTH_NORTHWEST, 0);
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
@@ -2506,7 +2506,7 @@ static void LogRoomsA_DefeatThieves(void) {
   Event_Wait(60);
   LogRoomsA_ShowMessageAndWait(ACTOR_TIED_UP_VILLAGER, 20);
   Actor_WalkToAndWait(ACTOR_TIED_UP_VILLAGER, 808, 456);
-  Actor_SetSpeed(ACTOR_GARET, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(ACTOR_GARET, 0.8);
   Actor_WalkToAndWait(ACTOR_GARET, 792, 432);
   Actor_FaceDirection(ACTOR_GARET, FACING_EAST, 0);
   Actor_WalkToAndWait(ACTOR_TIED_UP_VILLAGER, 808, 408);
@@ -2614,10 +2614,9 @@ static void LogRoomsA_DefeatThieves(void) {
   Actor_RunRepeatedMotion(ACTOR_TIED_UP_VILLAGER, 1);
   Event_Wait(20);
   LogRoomsA_ShowMessageAndWait(ACTOR_TIED_UP_VILLAGER, 20);
-  Actor_SetSpeed(ACTOR_LOFT_MAYOR, PIXELS(4) / 5, PIXELS(2) / 5);
-  Actor_SetSpeed(ACTOR_LOFT_ESCORT, PIXELS(4) / 5, PIXELS(2) / 5);
-  Actor_SetSpeed(ACTOR_STRONGMAN_OPENING_THE_CHESTS, PIXELS(4) / 5,
-                 PIXELS(2) / 5);
+  Actor_SetSpeed(ACTOR_LOFT_MAYOR, 0.8);
+  Actor_SetSpeed(ACTOR_LOFT_ESCORT, 0.8);
+  Actor_SetSpeed(ACTOR_STRONGMAN_OPENING_THE_CHESTS, 0.8);
   Actor_SetPosition(ACTOR_LOFT_MAYOR, 744, 408);
   Actor_WalkToAndWait(ACTOR_LOFT_MAYOR, 768, 408);
   LogRoomsA_FaceActorAndWait(ACTOR_LOFT_MAYOR, ACTOR_THIEF_LEADER, 30);
@@ -2767,7 +2766,7 @@ static void LogRoomsA_ReturnStolenGoods(void) {
   Event_Wait(60);
   // The escort leads the three thieves down the ladder, the tied-up villager
   // after them.
-  Actor_SetSpeed(ACTOR_LOFT_ESCORT, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(ACTOR_LOFT_ESCORT, 0.8);
   Actor_WalkTo(ACTOR_LOFT_ESCORT, 746, 408);
   Actor_FaceDirection(ACTOR_LOFT_MAYOR, FACING_NORTH_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_STRONGMAN_OPENING_THE_CHESTS,
@@ -2784,9 +2783,8 @@ static void LogRoomsA_ReturnStolenGoods(void) {
   Actor_SetPosition(ACTOR_LOFT_ESCORT, 0, 0);
   Event_Wait(40);
   // The mayor and the villager opening the chests thank the party.
-  Actor_SetSpeed(ACTOR_LOFT_MAYOR, PIXELS(4) / 5, PIXELS(2) / 5);
-  Actor_SetSpeed(ACTOR_STRONGMAN_OPENING_THE_CHESTS, PIXELS(4) / 5,
-                 PIXELS(2) / 5);
+  Actor_SetSpeed(ACTOR_LOFT_MAYOR, 0.8);
+  Actor_SetSpeed(ACTOR_STRONGMAN_OPENING_THE_CHESTS, 0.8);
   Actor_WalkToAndWait(ACTOR_LOFT_MAYOR, 784, 408);
   Actor_FaceActor(ACTOR_LOFT_MAYOR, ACTOR_PARTY_LEADER, 0);
   Actor_WalkToAndWait(ACTOR_STRONGMAN_OPENING_THE_CHESTS, 768, 408);
@@ -2813,8 +2811,8 @@ static void LogRoomsA_ReturnStolenGoods(void) {
   Actor_SetScript(ACTOR_STRONGMAN_OPENING_THE_CHESTS, gLogRoomsA_VaultScriptC);
   Event_Wait(50);
   Actor_SetScript(ACTOR_LOFT_MAYOR, gLogRoomsA_VaultScriptD);
-  Actor_SetSpeed(ACTOR_GARET, PIXELS(4) / 5, PIXELS(2) / 5);
-  Actor_SetSpeed(ACTOR_IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(ACTOR_GARET, 0.8);
+  Actor_SetSpeed(ACTOR_IVAN, 0.8);
   Actor_WalkToAndWait(ACTOR_GARET, 792, 456);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH_NORTHEAST, 0);
   Event_Wait(30);
@@ -2836,7 +2834,7 @@ static void LogRoomsA_ReturnStolenGoods(void) {
   Actor_SetAnimation(ACTOR_FIRST_CHEST, ANIM_SHAKE_HEAD);
   Actor_SetPosition(ACTOR_FOUND_URN, 872, 424);
   Actor_SetSpritePriority(ACTOR_FOUND_URN, 1);
-  Actor_SetSpeed(ACTOR_FOUND_URN, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(ACTOR_FOUND_URN, 0.8);
   Actor_SetDestinationOffset(ACTOR_FOUND_URN, 0, -8);
   Actor_WaitForMoveById(ACTOR_FOUND_URN);
   Actor_RunRepeatedMotion(ACTOR_FOUND_URN, 2);
@@ -2865,7 +2863,7 @@ static void LogRoomsA_ReturnStolenGoods(void) {
   Actor_Get(ACTOR_FOUND_STATUE)->motionFlags = 0;
   Actor_SetSpritePriority(ACTOR_FOUND_STATUE, 1);
   Actor_SetPosition(ACTOR_FOUND_STATUE, 872, 408);
-  Actor_SetSpeed(ACTOR_FOUND_STATUE, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(ACTOR_FOUND_STATUE, 0.8);
   Actor_SetDestinationOffset(ACTOR_FOUND_STATUE, 0, -8);
   Actor_WaitForMoveById(ACTOR_FOUND_STATUE);
   Actor_RunRepeatedMotion(ACTOR_FOUND_STATUE, 2);
@@ -2942,7 +2940,7 @@ static void LogRoomsA_ReturnStolenGoods(void) {
   // Dodonpa wants a ransom, so Hammet is safe for now.
   Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
   LogRoomsA_PlayAnimationAndWait(ACTOR_IVAN, ANIM_SHAKE_HEAD, 30);
-  Actor_SetSpeed(ACTOR_IVAN, PIXELS(3) / 2, PIXELS(3) / 4);
+  Actor_SetSpeed(ACTOR_IVAN, 1.5);
   Actor_WalkToAndWait(ACTOR_IVAN, 800, 408);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
   Event_ShowMessage(ACTOR_IVAN, 0);
@@ -2997,7 +2995,7 @@ static void LogRoomsA_ReturnStolenGoods(void) {
   Actor_SetScript(ACTOR_LOFT_MAYOR, gLogRoomsA_VaultScriptE);
   Actor_SetScript(ACTOR_STRONGMAN_OPENING_THE_CHESTS, gLogRoomsA_VaultScriptE);
   Actor_WalkTo(ACTOR_GARET, 792, 456);
-  Actor_SetSpeed(ACTOR_IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(ACTOR_IVAN, 0.8);
   Actor_WalkTo(ACTOR_IVAN, 776, 432);
   Actor_WaitForMoveById(ACTOR_GARET);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH_NORTHEAST, 0);
@@ -3469,9 +3467,9 @@ static void LogRoomsA_UpdateActorStops(void) {
 static void LogRoomsA_StartActorStops(void) {
   Event_Start();
   FieldCamera_MoveTo(PIXELS(168), -1, PIXELS(656), 1);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
-  Actor_SetSpeed(ACTOR_GARET, PIXELS(4) / 5, PIXELS(2) / 5);
-  Actor_SetSpeed(ACTOR_IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.8);
+  Actor_SetSpeed(ACTOR_GARET, 0.8);
+  Actor_SetSpeed(ACTOR_IVAN, 0.8);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 248, 696);
   Actor_SetPosition(ACTOR_GARET, 248, 696);
   Actor_SetPosition(ACTOR_IVAN, 248, 696);
@@ -3485,10 +3483,10 @@ static void LogRoomsA_StartActorStops(void) {
   Actor_SetAnimation(ACTOR_GARET, 12);
   LogRoomsA_ResetSuspectRoutes();
   Field_SetCameraBounds(PIXELS(48), PIXELS(576), PIXELS(288), PIXELS(736));
-  Actor_SetSpeed(ACTOR_GARET, PIXELS(1), PIXELS(1) / 2);
-  Actor_SetSpeed(ACTOR_IVAN, PIXELS(3) / 4, PIXELS(3) / 8);
-  Actor_SetSpeed(ACTOR_SUSPECTED_LEADER, PIXELS(1), PIXELS(6) / 5);
-  Actor_SetSpeed(ACTOR_SUSPECTED_THIEF, PIXELS(3) / 2, PIXELS(3) / 2);
+  Actor_SetSpeed(ACTOR_GARET, 1);
+  Actor_SetSpeed(ACTOR_IVAN, 0.75);
+  Actor_SetSpeedAndAcceleration(ACTOR_SUSPECTED_LEADER, 1, 1.2);
+  Actor_SetSpeedAndAcceleration(ACTOR_SUSPECTED_THIEF, 1.5, 1.5);
   gLogRoomsA_StopTimer = 0;
   Task_AddOrUpdateFrame(LogRoomsA_UpdateActorStops, TASK_PASS_FRAME + 20);
   // Flag 0x1ff holds nothing: no table, script or function sets or reads it,

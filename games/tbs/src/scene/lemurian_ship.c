@@ -550,10 +550,10 @@ static void LemurianShip_SetSail(void) {
   Event_Wait(40);
   // Everyone boards by their own scripts, hopping up onto the deck
   // (SE_HIGH_JUMP each); the camera follows up to the ship.
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(6) / 5, PIXELS(3) / 5);
-  Actor_SetSpeed(ACTOR_GARET, PIXELS(6) / 5, PIXELS(3) / 5);
-  Actor_SetSpeed(ACTOR_IVAN, PIXELS(6) / 5, PIXELS(3) / 5);
-  Actor_SetSpeed(ACTOR_MIA, PIXELS(6) / 5, PIXELS(3) / 5);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 1.2);
+  Actor_SetSpeed(ACTOR_GARET, 1.2);
+  Actor_SetSpeed(ACTOR_IVAN, 1.2);
+  Actor_SetSpeed(ACTOR_MIA, 1.2);
   Actor_SetScript(ACTOR_PARTY_LEADER, gLeaderBoardsShip);
   Event_Wait(50);
   FieldCamera_MoveTo(PIXELS(264), -1, PIXELS(200), 1);

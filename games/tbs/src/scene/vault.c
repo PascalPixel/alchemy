@@ -245,7 +245,7 @@ static void Vault_IvanStaysBehind(void) {
   if (actor != 0) {
     Actor_SetPositionFixed(ACTOR_IVAN, actor->x.fixed, actor->z.fixed);
   }
-  Actor_SetSpeed(ACTOR_IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(ACTOR_IVAN, 0.8);
   if (work->stepTrigger == CELL_BEHAVIOR_VAULT_SOUTH_GATE) {
     Actor_WalkToAndWait(ACTOR_IVAN, 400, 448);
   } else {
@@ -702,7 +702,7 @@ static void Vault_ReadWomanWantingTheRoofFixedMind(void) {
 
 /// Walks to the exit's threshold and requests the room's transition.
 static void Vault_WalkThroughExit(s32 x, s32 y, s32 continuation) {
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.5);
   Actor_WalkTo(ACTOR_PARTY_LEADER, x, y);
   gFieldWork->transitionFrames = 16;
   Import_EventSetExitRequest(continuation);
@@ -801,7 +801,7 @@ static void Vault_JumpActorToAndWait(s32 actorId, s32 x, s32 z,
                                      s32 verticalSpeed) {
   struct Actor *actor = Actor_Get(actorId);
   int frames;
-  Actor_SetSpeed(actorId, PIXELS(3), PIXELS(3) / 2);
+  Actor_SetSpeed(actorId, 3);
   actor->gravity = PIXELS(1) / 2;
   actor->bounce = 0;
   actor->velocityY = verticalSpeed;
@@ -851,7 +851,7 @@ static void Vault_GiveBoneToDog(void) {
   Event_Start();
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_VAULT_DOG, 2);
-  Actor_SetSpeed(ACTOR_VAULT_DOG, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(ACTOR_VAULT_DOG, 0.8);
   Actor_WalkToAndWait(ACTOR_VAULT_DOG, 216, 408);
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_VAULT_DOG, FACING_SOUTH, 20);
@@ -949,7 +949,7 @@ s32 Scene_Initialize(void) {
           // "Welcome back, you two! Let's go find the rod!"
           Event_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
           Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
-          Actor_SetSpeed(ACTOR_IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
+          Actor_SetSpeed(ACTOR_IVAN, 0.8);
           Actor_SetAnimation(ACTOR_IVAN, ANIM_WALK);
           actor = Actor_Get(ACTOR_PARTY_LEADER);
           if (actor != 0) {
@@ -983,7 +983,7 @@ s32 Scene_Initialize(void) {
           // "Welcome back, you two! Let's go find the rod!"
           Event_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
           Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
-          Actor_SetSpeed(ACTOR_IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
+          Actor_SetSpeed(ACTOR_IVAN, 0.8);
           Actor_SetAnimation(ACTOR_IVAN, ANIM_WALK);
           actor = Actor_Get(ACTOR_PARTY_LEADER);
           if (actor != 0) {

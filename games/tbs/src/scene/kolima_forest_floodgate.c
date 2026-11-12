@@ -358,12 +358,12 @@ static void KolimaForestFloodgate_PushShortLogWest(void) {
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_PUSH);
   Event_Wait(6);
   Sound_Play(SE_HEAVY_MOVE);
-  Actor_SetSpeed(ACTOR_SHORT_LOG, PIXELS(1) / 2, PIXELS(1) / 5);
+  Actor_SetSpeedAndAcceleration(ACTOR_SHORT_LOG, 0.5, 0.2);
   Actor_SetAnimation(ACTOR_SHORT_LOG, 2);
   Actor_SetDestination(ACTOR_SHORT_LOG, 72, 176);
   Event_Wait(6);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, 3 * PIXELS(1) / 10, PIXELS(1) / 5);
+  Actor_SetSpeedAndAcceleration(ACTOR_PARTY_LEADER, 0.3, 0.2);
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, -8, 0);
   Event_Wait(24);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
@@ -385,12 +385,12 @@ static void KolimaForestFloodgate_PushShortLogEast(void) {
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_PUSH);
   Event_Wait(6);
   Sound_Play(SE_HEAVY_MOVE);
-  Actor_SetSpeed(ACTOR_SHORT_LOG, PIXELS(1) / 2, PIXELS(1) / 5);
+  Actor_SetSpeedAndAcceleration(ACTOR_SHORT_LOG, 0.5, 0.2);
   Actor_SetAnimation(ACTOR_SHORT_LOG, 2);
   Actor_SetDestination(ACTOR_SHORT_LOG, 104, 176);
   Event_Wait(6);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, 3 * PIXELS(1) / 10, PIXELS(1) / 5);
+  Actor_SetSpeedAndAcceleration(ACTOR_PARTY_LEADER, 0.3, 0.2);
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 8, 0);
   Event_Wait(24);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
@@ -605,7 +605,7 @@ static void KolimaForestFloodgate_RollLog(struct FloodgateLog *runs) {
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   work = HeapSlot_AllocEwram(HEAP_SLOT_FIELD, sizeof(*work));
   Actor_StartCamera(work->camera, (s32)actor);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, 3 * PIXELS(1) / 10, PIXELS(1) / 5);
+  Actor_SetSpeedAndAcceleration(ACTOR_PARTY_LEADER, 0.3, 0.2);
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER,
                              gKolimaForestFloodgate_PushStepX[quarter],
                              gKolimaForestFloodgate_PushStepZ[quarter]);

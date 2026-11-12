@@ -383,7 +383,7 @@ static void BabiLighthouse_JumpFromLedge(void) {
     leader->targetX = ACTOR_NO_TARGET;
     leader->targetZ = ACTOR_NO_TARGET;
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2), PIXELS(1));
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 2);
     Actor_Jump(ACTOR_PARTY_LEADER, 4, 0);
     {
       u16 facing = leader->facing;
@@ -528,7 +528,7 @@ static void BabiLighthouse_FaranAsksPartyToOpenDoor(void) {
   Event_Start();
   Field_EndBusyAndReveal();
   Event_SetMessageId(MsgBabiYoureSureTheyWentThrough);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 1);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 296, 352);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Event_Wait(10);
@@ -662,7 +662,7 @@ static void BabiLighthouse_FaranAsksPartyToOpenDoor(void) {
   }
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_FARAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-  Actor_SetSpeed(ACTOR_FARAN, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_FARAN, 1);
   Actor_WalkByAndWait(ACTOR_FARAN, 0, 16);
   Event_Wait(20);
   // "Iodem, just who are these people?"
@@ -717,13 +717,13 @@ static void BabiLighthouse_FaranAsksPartyToOpenDoor(void) {
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_WORRIED_FOR_SHEBA, 2);
   Event_Wait(20);
-  Actor_SetSpeed(ACTOR_WORRIED_FOR_SHEBA, PIXELS(13) / 10, PIXELS(13) / 20);
+  Actor_SetSpeed(ACTOR_WORRIED_FOR_SHEBA, 1.3);
   Actor_WalkByAndWait(ACTOR_WORRIED_FOR_SHEBA, 0, 16);
   Event_Wait(20);
   // "What do you expect when, in the midst of such dangers... you..."
   Event_ShowMessage(ACTOR_WORRIED_FOR_SHEBA, 0);
   Event_Wait(10);
-  Actor_SetSpeed(ACTOR_DOUBTING_THE_DOOR, PIXELS(13) / 10, PIXELS(13) / 20);
+  Actor_SetSpeed(ACTOR_DOUBTING_THE_DOOR, 1.3);
   Actor_WalkByAndWait(ACTOR_DOUBTING_THE_DOOR, 0, 16);
   Event_Wait(20);
   Actor_ShowEmote(ACTOR_DOUBTING_THE_DOOR, EMOTE_IN_FRONT | EMOTE_SCOWL, 50);
@@ -778,8 +778,8 @@ static void BabiLighthouse_FaranAsksPartyToOpenDoor(void) {
   Actor_SetAnimation(ACTOR_DOUBTING_THE_DOOR, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_WORRIED_FOR_SHEBA, ANIM_NOD);
   Event_Wait(30);
-  Actor_SetSpeed(ACTOR_DOUBTING_THE_DOOR, PIXELS(1), PIXELS(1) / 2);
-  Actor_SetSpeed(ACTOR_WORRIED_FOR_SHEBA, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_DOUBTING_THE_DOOR, 1);
+  Actor_SetSpeed(ACTOR_WORRIED_FOR_SHEBA, 1);
   Actor_WalkBy(ACTOR_DOUBTING_THE_DOOR, 32, 0);
   Actor_WalkByAndWait(ACTOR_WORRIED_FOR_SHEBA, 32, 0);
   Actor_WalkBy(ACTOR_DOUBTING_THE_DOOR, 0, 16);
@@ -795,18 +795,18 @@ static void BabiLighthouse_FaranAsksPartyToOpenDoor(void) {
   // "Now, show me what you can do."
   Event_ShowMessage(ACTOR_FARAN, 0);
   Event_Wait(10);
-  Actor_SetSpeed(ACTOR_FARAN, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_FARAN, 1);
   Actor_WalkToAndWait(ACTOR_FARAN, 328, 312);
   Actor_FaceDirection(ACTOR_FARAN, FACING_WEST, 0);
   Event_Wait(30);
-  Actor_SetSpeed(ACTOR_WITNESS, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_WITNESS, 1);
   Actor_WalkToAndWait(ACTOR_WITNESS, 328, 328);
   Actor_FaceDirection(ACTOR_WITNESS, FACING_WEST, 0);
   Event_Wait(20);
   // The companions walk back into the leader.
-  Actor_SetSpeed(ACTOR_GARET, PIXELS(6) / 5, PIXELS(3) / 5);
-  Actor_SetSpeed(ACTOR_IVAN, PIXELS(6) / 5, PIXELS(3) / 5);
-  Actor_SetSpeed(ACTOR_MIA, PIXELS(6) / 5, PIXELS(3) / 5);
+  Actor_SetSpeed(ACTOR_GARET, 1.2);
+  Actor_SetSpeed(ACTOR_IVAN, 1.2);
+  Actor_SetSpeed(ACTOR_MIA, 1.2);
   BabiLighthouse_WalkBackToLeader(ACTOR_GARET);
   BabiLighthouse_WalkBackToLeader(ACTOR_IVAN);
   BabiLighthouse_WalkBackToLeader(ACTOR_MIA);
@@ -827,7 +827,7 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
   Event_Start();
   Field_EndBusyAndReveal();
   Event_SetMessageId(MsgBabiTheDoor);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 1);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 296, 312);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
   Event_Wait(10);
@@ -907,7 +907,7 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
   Event_Wait(20);
-  Actor_SetSpeed(ACTOR_IODEM, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_IODEM, 1);
   Actor_WalkByAndWait(ACTOR_IODEM, 0, -40);
   Actor_FaceDirection(ACTOR_IODEM, FACING_EAST, 0);
   Event_Wait(20);
@@ -1086,9 +1086,9 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
   Event_Wait(30);
   // The companions walk back into the leader.
-  Actor_SetSpeed(ACTOR_GARET, PIXELS(6) / 5, PIXELS(3) / 5);
-  Actor_SetSpeed(ACTOR_IVAN, PIXELS(6) / 5, PIXELS(3) / 5);
-  Actor_SetSpeed(ACTOR_MIA, PIXELS(6) / 5, PIXELS(3) / 5);
+  Actor_SetSpeed(ACTOR_GARET, 1.2);
+  Actor_SetSpeed(ACTOR_IVAN, 1.2);
+  Actor_SetSpeed(ACTOR_MIA, 1.2);
   BabiLighthouse_WalkBackToLeader(ACTOR_GARET);
   BabiLighthouse_WalkBackToLeader(ACTOR_IVAN);
   BabiLighthouse_WalkBackToLeader(ACTOR_MIA);
@@ -1514,8 +1514,8 @@ s32 BabiLighthouse_SetupMap(void) {
     // discussion.
     Actor_Get(ACTOR_LEFT_DOOR)->steeringFlags &= ~ACTOR_FACES_MOTION;
     Actor_Get(ACTOR_RIGHT_DOOR)->steeringFlags &= ~ACTOR_FACES_MOTION;
-    Actor_SetSpeed(ACTOR_LEFT_DOOR, PIXELS(1), PIXELS(1) / 2);
-    Actor_SetSpeed(ACTOR_RIGHT_DOOR, PIXELS(1), PIXELS(1) / 2);
+    Actor_SetSpeed(ACTOR_LEFT_DOOR, 1);
+    Actor_SetSpeed(ACTOR_RIGHT_DOOR, 1);
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
       if (state->entrance ==
           BABI_LIGHTHOUSE_STONE_DOOR_FROM_TUNNEL_RUINS_GREAT_STATUE) {

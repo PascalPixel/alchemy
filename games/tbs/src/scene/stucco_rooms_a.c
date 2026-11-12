@@ -394,7 +394,7 @@ static void StuccoRoomsA_OpenDoorAndExit(void) {
     MapGrid_AnimateCells(gStuccoRoomsA_DoorCells[doorIndex].steps, x, y);
   }
 
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.5);
 
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   leader->motionFlags = 0;

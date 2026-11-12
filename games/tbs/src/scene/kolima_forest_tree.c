@@ -368,7 +368,7 @@ static void KolimaForestTree_RejectHermesWater(void) {
   Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 1);
   Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_STRIDE);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2), PIXELS(2));
+  Actor_SetSpeedAndAcceleration(ACTOR_PARTY_LEADER, 2, 2);
   Sound_Play(SE_IMPACT);
   leader->velocityY = PIXELS(5);
   leader->gravity = PIXELS(1) / 4;
@@ -463,8 +463,8 @@ static void KolimaForestTree_RestoreTret(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
   Sound_Play(SOUND_FADE_OUT_BGM);
   FieldMessage_Show(MsgKolimaWaterHermesSeepedIntoTret, 1);
-  Actor_SetSpeed(ACTOR_GARET, PIXELS(1), PIXELS(1) / 2);
-  Actor_SetSpeed(ACTOR_IVAN, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_GARET, 1);
+  Actor_SetSpeed(ACTOR_IVAN, 1);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != 0) {
     Actor_SetPositionFixed(ACTOR_GARET, leader->x.fixed, leader->z.fixed);
@@ -476,7 +476,7 @@ static void KolimaForestTree_RestoreTret(void) {
   Actor_SetScript(ACTOR_GARET, gKolimaForestTree_GaretApproachActions);
   Actor_SetScript(ACTOR_IVAN, gKolimaForestTree_IvanApproachActions);
   if (includeMia != 0) {
-    Actor_SetSpeed(ACTOR_MIA, PIXELS(1), PIXELS(1) / 2);
+    Actor_SetSpeed(ACTOR_MIA, 1);
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     if (leader != 0) {
       Actor_SetPositionFixed(ACTOR_MIA, leader->x.fixed, leader->z.fixed);

@@ -831,7 +831,7 @@ static void VenusLighthouse_ArriveThroughSparkPassage(void) {
     leader->update =
         (void (*)(struct Actor *))VenusLighthouse_EmitPassageSparkTrail;
 #endif
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2) / 5, PIXELS(1) / 5);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.4);
     Actor_WalkByAndWait(ACTOR_PARTY_LEADER, 0, 8);
     Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_NORMAL);
     Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), SPRITE_FLAG_SHADOW);
@@ -1305,7 +1305,7 @@ static void VenusLighthouse_JumpDown(void) {
   Actor_WaitForScriptEndById(ACTOR_PARTY_LEADER);
   Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_GREY);
   leader->velocityY = PIXELS(4);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(4), PIXELS(2));
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 4);
   if (leader->z.fixed >> 20 <= 54) {
     Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
     landingQuarterZ = 210;
@@ -1460,7 +1460,7 @@ static void VenusLighthouse_MovePillarTowardWall(void) {
       if (actor != 0) {
         Actor_SetPositionFixed(ACTOR_GARET, actor->x.fixed, actor->z.fixed);
       }
-      Actor_SetSpeed(ACTOR_GARET, walkSpeed, walkAcceleration);
+      Actor_SetSpeedFixed(ACTOR_GARET, walkSpeed, walkAcceleration);
       Actor_WalkToAndWait(ACTOR_GARET, garetX, 88);
       Actor_WalkToAndWait(ACTOR_GARET, garetX, 104);
       Actor_FaceEachOther(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
@@ -1609,7 +1609,7 @@ static void VenusLighthouse_FallThroughFloor(void) {
 
     leader->facing = facing;
   }
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3), PIXELS(3) / 2);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 3);
   Actor_MoveToAndWait(ACTOR_PARTY_LEADER, leader->x.part.pixel, 552);
   Event_Wait(10);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_LEAN_BACK);
@@ -2159,8 +2159,8 @@ static void VenusLighthouse_LowerFloatingPillars(s32 waitFrames) {
   struct Actor *eastSupport = Actor_Get(ACTOR_BALANCE_EAST);
   u32 pillarIndex;
 
-  Actor_SetSpeed(ACTOR_BALANCE_WEST, PIXELS(1) / 2, PIXELS(1) / 4);
-  Actor_SetSpeed(ACTOR_BALANCE_EAST, PIXELS(1) / 2, PIXELS(1) / 4);
+  Actor_SetSpeed(ACTOR_BALANCE_WEST, 0.5);
+  Actor_SetSpeed(ACTOR_BALANCE_EAST, 0.5);
   if (waitFrames != 0) {
     Sound_Play(SE_SETTLE);
   }
@@ -2219,7 +2219,7 @@ static void VenusLighthouse_StackFloatingPillar(s32 pillarId) {
     }
   }
 
-  Actor_SetSpeed(pillarId, PIXELS(4), PIXELS(2));
+  Actor_SetSpeed(pillarId, 4);
   FieldActor_SetMoveTarget(pillar, pillar->x.fixed, supportHeight,
                            pillar->z.fixed);
   Actor_WaitForMoveById(pillarId);
@@ -2693,7 +2693,7 @@ static void VenusLighthouse_JumpOrPushSocketPillar(void) {
 /// ACTOR_RISING_PLATFORM).
 static void VenusLighthouse_EnterRisingPassage(void) {
   Event_Start();
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.5);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 520, 712);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 10);
   (void)VenusLighthouse_CreateBlendedPassageEffect(PIXELS(520), 0, PIXELS(784),

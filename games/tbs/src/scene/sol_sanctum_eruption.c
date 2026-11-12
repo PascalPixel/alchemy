@@ -413,7 +413,7 @@ static void SolSanctumEruption_PlayHostageEvent(void) {
   // Felix steps forward: Alex is breaking their promise. Alex: conditions
   // have changed. Felix will not let them hurt Jenna; Kraden offers himself
   // in her place.
-  Actor_SetSpeed(ACTOR_FELIX, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_FELIX, 1);
   Actor_WalkToAndWait(ACTOR_FELIX, 471, 314);
   Actor_StartRepeatedMotion(ACTOR_FELIX, 3);
   Event_ShowMessageThenWait(ACTOR_FELIX, 0, 10);
@@ -478,8 +478,8 @@ static void SolSanctumEruption_PlayHostageEvent(void) {
   Actor_SetAnimation(ACTOR_SATUROS, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_MENARDI, ANIM_NOD);
   Event_Wait(20);
-  Actor_SetSpeed(ACTOR_SATUROS, PIXELS(3) / 5, PIXELS(3) / 10);
-  Actor_SetSpeed(ACTOR_MENARDI, PIXELS(3) / 5, PIXELS(3) / 10);
+  Actor_SetSpeed(ACTOR_SATUROS, 0.6);
+  Actor_SetSpeed(ACTOR_MENARDI, 0.6);
   Actor_WalkTo(ACTOR_MENARDI, 475, 348);
   Actor_WalkTo(ACTOR_SATUROS, 491, 348);
   Actor_WaitForMoveById(ACTOR_MENARDI);
@@ -493,8 +493,8 @@ static void SolSanctumEruption_PlayHostageEvent(void) {
   Actor_ShowEmote(ACTOR_MENARDI, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
   Actor_RunRepeatedMotion(ACTOR_MENARDI, 2);
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_MENARDI, 0);
-  Actor_SetSpeed(ACTOR_MENARDI, PIXELS(8) / 5, PIXELS(4) / 5);
-  Actor_SetSpeed(ACTOR_JENNA, PIXELS(6) / 5, PIXELS(3) / 5);
+  Actor_SetSpeed(ACTOR_MENARDI, 1.6);
+  Actor_SetSpeed(ACTOR_JENNA, 1.2);
   Actor_WalkToAndWait(ACTOR_MENARDI, 475, 338);
   actor = Actor_Get(ACTOR_MENARDI);
   actor->steeringFlags = 254 & actor->steeringFlags;
@@ -502,7 +502,7 @@ static void SolSanctumEruption_PlayHostageEvent(void) {
   Actor_RunRepeatedMotion(ACTOR_JENNA, 1);
   Actor_Jump(ACTOR_JENNA, 4, 0);
   Actor_WalkToAndWait(ACTOR_JENNA, 459, 316);
-  Actor_SetSpeed(ACTOR_JENNA, PIXELS(1) / 2, PIXELS(1) / 4);
+  Actor_SetSpeed(ACTOR_JENNA, 0.5);
   // Felix: "Hey, don't push my sister!" Menardi: "You owe us your life!"
   // Saturos: "Menardi!"
   Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
@@ -511,7 +511,7 @@ static void SolSanctumEruption_PlayHostageEvent(void) {
   Actor_RunRepeatedMotion(ACTOR_MENARDI, 1);
   Event_Wait(20);
   actor->steeringFlags |= 1;
-  Actor_SetSpeed(ACTOR_MENARDI, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_MENARDI, 1);
   Actor_WalkToAndWait(ACTOR_MENARDI, 475, 332);
   Actor_FaceDirection(ACTOR_MENARDI, FACING_NORTH_NORTHWEST, 20);
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_MENARDI, 0);
@@ -540,13 +540,13 @@ static void SolSanctumEruption_PlayHostageEvent(void) {
   Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH_NORTHWEST, 30);
-  Actor_SetSpeed(ACTOR_KRADEN, PIXELS(1) / 2, PIXELS(1) / 4);
+  Actor_SetSpeed(ACTOR_KRADEN, 0.5);
   Actor_WalkToAndWait(ACTOR_KRADEN, 491, 296);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST, 40);
-  Actor_SetSpeed(ACTOR_SATUROS, PIXELS(1), PIXELS(1) / 2);
-  Actor_SetSpeed(ACTOR_MENARDI, PIXELS(1), PIXELS(1) / 2);
-  Actor_SetSpeed(ACTOR_FELIX, PIXELS(1), PIXELS(1) / 2);
-  Actor_SetSpeed(ACTOR_ALEX, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_SATUROS, 1);
+  Actor_SetSpeed(ACTOR_MENARDI, 1);
+  Actor_SetSpeed(ACTOR_FELIX, 1);
+  Actor_SetSpeed(ACTOR_ALEX, 1);
   Actor_WalkToAndWait(ACTOR_SATUROS, 471, 308);
   Actor_FaceDirection(ACTOR_SATUROS, FACING_SOUTH_SOUTHWEST, 0);
   Actor_WalkToAndWait(ACTOR_MENARDI, 455, 308);
@@ -565,9 +565,9 @@ static void SolSanctumEruption_PlayHostageEvent(void) {
   // One by one they rise out of the chamber: Saturos, Kraden, Menardi, then
   // Jenna ("Isaac, Garet! Don't die!") and Felix, and last Alex, who regrets
   // leaving the Mars Star.
-  Actor_SetSpeed(ACTOR_SATUROS, PIXELS(1) / 2, PIXELS(1) / 4);
-  Actor_SetSpeed(ACTOR_MENARDI, PIXELS(1) / 2, PIXELS(1) / 4);
-  Actor_SetSpeed(ACTOR_ALEX, PIXELS(1) / 2, PIXELS(1) / 4);
+  Actor_SetSpeed(ACTOR_SATUROS, 0.5);
+  Actor_SetSpeed(ACTOR_MENARDI, 0.5);
+  Actor_SetSpeed(ACTOR_ALEX, 0.5);
   Actor_SetAnimationAndWait(ACTOR_SATUROS, ANIM_NOD);
   SolSanctumEruption_RaiseAndShrinkActor(ACTOR_SATUROS);
   Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
@@ -951,8 +951,8 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
     wait(1);
   }
   Event_Wait(40);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2), PIXELS(1));
-  Actor_SetSpeed(ACTOR_GARET, PIXELS(2), PIXELS(1));
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 2);
+  Actor_SetSpeed(ACTOR_GARET, 2);
   Actor_Get(ACTOR_PARTY_LEADER)->sprite->rotation = 0;
   Actor_Get(ACTOR_GARET)->sprite->rotation = 0;
   Actor_Jump(ACTOR_PARTY_LEADER, 6, 0);
@@ -1096,8 +1096,8 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   MapGrid_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
   Event_Wait(10);
   SolSanctumEruption_SetMaterializationTint(0, 40, 0);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2), PIXELS(1));
-  Actor_SetSpeed(ACTOR_GARET, PIXELS(2), PIXELS(1));
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 2);
+  Actor_SetSpeed(ACTOR_GARET, 2);
   Actor_Jump(ACTOR_PARTY_LEADER, 6, 0);
   Actor_Jump(ACTOR_GARET, 6, 0);
   Actor_SetDestination(ACTOR_PARTY_LEADER, 243, 144);
@@ -1110,8 +1110,8 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Event_Wait(80);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2) / 5, PIXELS(1) / 5);
-  Actor_SetSpeed(ACTOR_GARET, PIXELS(2) / 5, PIXELS(1) / 5);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.4);
+  Actor_SetSpeed(ACTOR_GARET, 0.4);
   Actor_WalkTo(ACTOR_GARET, 220, 150);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 246, 150);
   Actor_SetAnimation(ACTOR_GARET, ANIM_STAND);
@@ -1142,11 +1142,11 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   // and calls him: "I'm over here. Come on, we've gotta go."
   Actor_SetPosition(ACTOR_WISE_ONE, 110, 152);
   wait(1);
-  Actor_SetSpeed(ACTOR_WISE_ONE, PIXELS(6) / 5, PIXELS(3) / 5);
+  Actor_SetSpeed(ACTOR_WISE_ONE, 1.2);
   Actor_SetDestination(ACTOR_WISE_ONE, 171, 152);
   Actor_FaceDirection(ACTOR_WISE_ONE, FACING_EAST, 0);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_WISE_ONE), SPRITE_FLAG_SHADOW);
-  Actor_SetSpeed(ACTOR_GARET, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_GARET, 1);
   Actor_WalkTo(ACTOR_GARET, 217, 182);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST_SOUTHWEST, 0);
   Event_Wait(10);
@@ -1206,8 +1206,8 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   sparkles->stopped = 0;
   MapGrid_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
   Event_Wait(20);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2), PIXELS(1));
-  Actor_SetSpeed(ACTOR_GARET, PIXELS(2), PIXELS(1));
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 2);
+  Actor_SetSpeed(ACTOR_GARET, 2);
   Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_Get(ACTOR_GARET)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_Jump(ACTOR_PARTY_LEADER, 4, 0);
@@ -1288,7 +1288,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   Event_Wait(60);
   FieldCamera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
   FieldCamera_MoveTo(PIXELS(218), -1, PIXELS(181), 1);
-  Actor_SetSpeed(ACTOR_WISE_ONE, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_WISE_ONE, 1);
   Actor_SetDestination(ACTOR_WISE_ONE, 169, 151);
   Actor_WaitForMoveById(ACTOR_WISE_ONE);
   Event_Wait(10);

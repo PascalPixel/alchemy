@@ -559,7 +559,7 @@ static void ColosseumAzartMatch_PushPipeworksPillar(void) {
                          HEAP_SLOT_FIELD, sizeof(struct FieldWork)))
                         ->camera,
                     (s32)actor);
-  Actor_SetSpeed(leaderId, PIXELS(3) / 10, PIXELS(1) / 5);
+  Actor_SetSpeedAndAcceleration(leaderId, 0.3, 0.2);
   FieldActor_SetMoveTarget(leader, leader->x.fixed - PIXELS(24), 0,
                            leader->z.fixed);
   Actor_WaitForMoveById(leaderId);
@@ -637,9 +637,9 @@ static void ColosseumAzartMatch_ReachArena(void) {
     Actor_WaitForScriptEndById(ACTOR_OPPONENT);
     n = n - 1;
   } while (n >= 0);
-  Actor_SetSpeed(ACTOR_OPPONENT, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_OPPONENT, 1);
   Actor_WalkTo(ACTOR_OPPONENT, 1320, 192);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 1);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 1288, 192);
   Actor_SetAnimation(ACTOR_OPPONENT, ANIM_STAND);
   Actor_FaceEachOther(ACTOR_PARTY_LEADER, ACTOR_OPPONENT, 0);
@@ -647,8 +647,8 @@ static void ColosseumAzartMatch_ReachArena(void) {
   Actor_SetAnimation(ACTOR_OPPONENT, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Event_Wait(20);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2), PIXELS(1));
-  Actor_SetSpeed(ACTOR_OPPONENT, PIXELS(2), PIXELS(1));
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 2);
+  Actor_SetSpeed(ACTOR_OPPONENT, 2);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 1296, 192);
   Actor_WalkToAndWait(ACTOR_OPPONENT, 1312, 192);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_STRIDE);
@@ -876,11 +876,11 @@ static void ColosseumAzartMatch_ExplainFinalsRules(s32 guide) {
   x = actor->x.part.pixel;
   z = actor->z.part.pixel;
   Event_Start();
-  Actor_SetSpeed(guide, PIXELS(1), PIXELS(1) / 2);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
-  Actor_SetSpeed(ACTOR_GARET, PIXELS(1), PIXELS(1) / 2);
-  Actor_SetSpeed(ACTOR_IVAN, PIXELS(1), PIXELS(1) / 2);
-  Actor_SetSpeed(ACTOR_MIA, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(guide, 1);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 1);
+  Actor_SetSpeed(ACTOR_GARET, 1);
+  Actor_SetSpeed(ACTOR_IVAN, 1);
+  Actor_SetSpeed(ACTOR_MIA, 1);
   Actor_SetPositionFixed(ACTOR_PARTY_LEADER, x << 16, (z << 16) - px(48));
   Actor_SetPositionFixed(ACTOR_GARET, (x << 16) - px(16), (z << 16) - px(40));
   Actor_SetPositionFixed(ACTOR_IVAN, (x << 16) + px(16), (z << 16) - px(40));
@@ -1047,7 +1047,7 @@ static void ColosseumAzartMatch_TalkToRockAttendant(s32 actorId) {
       // "They call this the Rock Challenge."
       Event_ShowMessage(actorId, 0);
       Colosso_FadeInWarrior(ACTOR_PARTY_LEADER, 280, 200);
-      Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
+      Actor_SetSpeed(ACTOR_PARTY_LEADER, 1);
       Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 360, 200);
       Event_Wait(30);
       Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
@@ -1057,7 +1057,7 @@ static void ColosseumAzartMatch_TalkToRockAttendant(s32 actorId) {
       Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 10);
       Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB,
                       60);
-      Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
+      Actor_SetSpeed(ACTOR_PARTY_LEADER, 1.5);
       Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 296, 184);
       Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 296, 152);
       Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 312, 152);
@@ -1066,7 +1066,7 @@ static void ColosseumAzartMatch_TalkToRockAttendant(s32 actorId) {
       Actor_ResetMotionFields(ACTOR_PARTY_LEADER);
       Colosso_PushActorAhead();
       Actor_ResetMotionFields(ACTOR_PARTY_LEADER);
-      Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
+      Actor_SetSpeed(ACTOR_PARTY_LEADER, 1.5);
       Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 304, 184);
       Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 296, 192);
       Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 296, 200);
@@ -1193,7 +1193,7 @@ static void ColosseumAzartMatch_TalkToBridgeAttendant(s32 actorId) {
       Colosso_FadeInWarrior(ACTOR_PARTY_LEADER, 736, 200);
       COLOSSEUM_AZART_MATCH_FACE_DIRECTION(ACTOR_PARTY_LEADER, 0, 0);
       ColosseumAzartMatch_WaitForBridgeOpening();
-      Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
+      Actor_SetSpeed(ACTOR_PARTY_LEADER, 1);
       Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 816, 200);
       Event_Wait(30);
       Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
@@ -1241,7 +1241,7 @@ static void ColosseumAzartMatch_TalkToLumberAttendant(s32 actorId) {
     Event_ShowMessage(actorId, 0);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 30);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 60);
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 1.5);
     Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 1000, 192);
     Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 1000, 176);
     Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 1016, 168);
@@ -1250,7 +1250,7 @@ static void ColosseumAzartMatch_TalkToLumberAttendant(s32 actorId) {
     FieldCamera_MoveTo(PIXELS(1088), -1, PIXELS(168), 1);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
     Event_Wait(10);
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 1);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 1192, 168);
     Event_Wait(10);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 30);
@@ -1271,12 +1271,12 @@ static void ColosseumAzartMatch_TalkToLumberAttendant(s32 actorId) {
 
 /// Sets the leader's movement speed for the shared Colosso dialogue.
 static inline void InitializeActorZero(void) {
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 1);
 }
 
 /// Sets an attendant's movement speed for the shared Colosso dialogue.
 static inline void InitializeSelectedActor(s32 actorId) {
-  Actor_SetSpeed(actorId, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(actorId, 1);
 }
 
 /// Advances to the next message in the current explanation.

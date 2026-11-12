@@ -300,12 +300,12 @@ enum { PISTON_COUNT = 5 };
 
 /// Sets the leader speed for the shared solo-party placement routine.
 static inline void InitializeActorZero(void) {
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 1);
 }
 
 /// Sets a companion speed for the shared solo-party placement routine.
 static inline void InitializeSelectedActor(s32 actorId) {
-  Actor_SetSpeed(actorId, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(actorId, 1);
 }
 
 extern s32 gColossoParticleCount;
@@ -768,7 +768,7 @@ static void ColosseumNavampaMatch_RollLongLog(void) {
   Actor_SetAnimation(actorId, ANIM_WALK);
   work = HeapSlot_AllocEwram(HEAP_SLOT_FIELD, sizeof(struct FieldWork));
   Actor_StartCamera(work->camera, (s32)log);
-  Actor_SetSpeed(actorId, PIXELS(1) / 2, acceleration);
+  Actor_SetSpeedFixed(actorId, px(1) / 2, acceleration);
   Sound_Play(SE_HEAVY_MOVE);
   Actor_SelectAnimation(rider, 2);
   FieldActor_SetMoveTarget(rider, (steps * step * PIXELS(1)) + rider->x.fixed,
@@ -980,9 +980,9 @@ static void ColosseumNavampaMatch_ReachArena(void) {
   for (i = 0; i < 10; i++) {
     Actor_WaitForScriptEndById(ACTOR_OPPONENT);
   }
-  Actor_SetSpeed(ACTOR_OPPONENT, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_OPPONENT, 1);
   Actor_WalkTo(ACTOR_OPPONENT, 1528, 192);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 1);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 1496, 192);
   Actor_SetAnimation(ACTOR_OPPONENT, ANIM_STAND);
   Actor_FaceEachOther(ACTOR_PARTY_LEADER, ACTOR_OPPONENT, 0);
@@ -990,8 +990,8 @@ static void ColosseumNavampaMatch_ReachArena(void) {
   Actor_SetAnimation(ACTOR_OPPONENT, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Event_Wait(20);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2), PIXELS(1));
-  Actor_SetSpeed(ACTOR_OPPONENT, PIXELS(2), PIXELS(1));
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 2);
+  Actor_SetSpeed(ACTOR_OPPONENT, 2);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 1504, 192);
   Actor_WalkToAndWait(ACTOR_OPPONENT, 1520, 192);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_STRIDE);
@@ -1363,9 +1363,9 @@ static void ColosseumNavampaMatch_PlayPostBattleReunion(s32 battleResult) {
   }
   Actor_SetScript(ACTOR_PARTY_LEADER, gColosseumNavampaMatch_LeaderActionA);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_CROUCH);
-  Actor_SetSpeed(ACTOR_GARET, PIXELS(1), PIXELS(1) / 2);
-  Actor_SetSpeed(ACTOR_IVAN, PIXELS(1), PIXELS(1) / 2);
-  Actor_SetSpeed(ACTOR_MIA, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_GARET, 1);
+  Actor_SetSpeed(ACTOR_IVAN, 1);
+  Actor_SetSpeed(ACTOR_MIA, 1);
   Actor_SetPosition(ACTOR_GARET, 1464, 184);
   Actor_SetPosition(ACTOR_IVAN, 1464, 200);
   Actor_SetPosition(ACTOR_MIA, 1448, 192);
@@ -1562,11 +1562,11 @@ static void ColosseumNavampaMatch_IntroduceThirdFinals(s32 guideId) {
   guideX = actor->x.part.pixel;
   guideZ = actor->z.part.pixel;
   Event_Start();
-  Actor_SetSpeed(guideId, PIXELS(1), PIXELS(1) / 2);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
-  Actor_SetSpeed(ACTOR_GARET, PIXELS(1), PIXELS(1) / 2);
-  Actor_SetSpeed(ACTOR_IVAN, PIXELS(1), PIXELS(1) / 2);
-  Actor_SetSpeed(ACTOR_MIA, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(guideId, 1);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 1);
+  Actor_SetSpeed(ACTOR_GARET, 1);
+  Actor_SetSpeed(ACTOR_IVAN, 1);
+  Actor_SetSpeed(ACTOR_MIA, 1);
   Actor_SetPositionFixed(ACTOR_PARTY_LEADER, px(guideX), (px(guideZ) - px(48)));
   Actor_SetPositionFixed(ACTOR_GARET, px(guideX) - px(16), px(guideZ) - px(40));
   Actor_SetPositionFixed(ACTOR_IVAN, px(guideX) + px(16), px(guideZ) - px(40));
@@ -1720,7 +1720,7 @@ static void ColosseumNavampaMatch_TalkToSteppingStoneAttendant(s32 guideId) {
     // "This is the Stepping- Stone Stage."
     Event_ShowMessage(guideId, 0);
     Colosso_FadeInWarrior(ACTOR_PARTY_LEADER, x, 200);
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 1.5);
     Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, x, 152);
     Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 296, 152);
     Event_Wait(10);
@@ -1786,7 +1786,7 @@ static void ColosseumNavampaMatch_TalkToWallWedgeAttendant(s32 guideId) {
       Colosso_FadeInWarrior(ACTOR_PARTY_LEADER, 504, 200);
       COLOSSEUM_NAVAMPA_MATCH_FACE_DIRECTION(ACTOR_PARTY_LEADER, 0, 0);
       ColosseumNavampaMatch_WaitForWallWedgeOpening();
-      Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
+      Actor_SetSpeed(ACTOR_PARTY_LEADER, 1.5);
       Colosso_WalkActorTo(ACTOR_PARTY_LEADER, 680, 200);
       if (work->raisedTrigger != 5) {
         do {
@@ -1844,16 +1844,16 @@ static void ColosseumNavampaMatch_TalkToFreeClimbAttendant(s32 guideId) {
       // "This sheer wall has a bumpy surface."
       Event_ShowMessage(guideId, 0);
       Colosso_FadeInWarrior(ACTOR_PARTY_LEADER, 816, 200);
-      Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
+      Actor_SetSpeed(ACTOR_PARTY_LEADER, 1);
       Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 840, 200);
       Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
       Field_ClimbUp();
       FieldCamera_MoveTo(-1, -1, -1, 0);
-      Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
+      Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.5);
       actor = Actor_Get(ACTOR_PARTY_LEADER);
       y = actor->y.fixed;
       x = actor->x.fixed;
-      Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
+      Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.5);
       Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_CLIMB);
       raisedHeight = PIXELS(6) + y;
       FieldActor_SetMoveTarget(actor, x, raisedHeight, actor->z.fixed);
@@ -1940,10 +1940,10 @@ static void ColosseumNavampaMatch_TalkToMovingSidewalkAttendant(s32 guideId) {
       // "The conveyor belt moves opposite the direction you need to go."
       Event_ShowMessage(guideId, 0);
       Colosso_FadeInWarrior(ACTOR_PARTY_LEADER, 984, 184);
-      Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
+      Actor_SetSpeed(ACTOR_PARTY_LEADER, 1.5);
       ColosseumNavampaMatch_PositionAndActivateActor(ACTOR_PARTY_LEADER, 992,
                                                      184);
-      Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 10, PIXELS(3) / 20);
+      Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.3);
       ColosseumNavampaMatch_PositionActor(ACTOR_PARTY_LEADER, 1120, 184);
       Event_Wait(120);
       Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT |

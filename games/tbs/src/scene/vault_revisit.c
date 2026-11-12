@@ -427,7 +427,7 @@ static void VaultRevisit_JumpActorToAndWait(int actorId, int x, int z,
                                             int velocityY) {
   struct Actor *jumpingActor = Actor_Get(actorId);
   int frames;
-  Actor_SetSpeed(actorId, PIXELS(3), PIXELS(3) / 2);
+  Actor_SetSpeed(actorId, 3);
   jumpingActor->gravity = PIXELS(1) / 2;
   jumpingActor->bounce = 0;
   jumpingActor->velocityY = velocityY;
@@ -471,7 +471,7 @@ static void VaultRevisit_RingBell(void) {
 static void Vault_WalkThroughExit(s32 x, s32 z, s32 exitNumber) {
   s32 leaderId = ACTOR_PARTY_LEADER;
 
-  Actor_SetSpeed(leaderId, PIXELS(1) / 2, PIXELS(1) / 4);
+  Actor_SetSpeed(leaderId, 0.5);
   Actor_WalkTo(leaderId, x, z);
   gFieldWork->transitionFrames = 16;
   Import_EventSetExitRequest(exitNumber);
@@ -587,7 +587,7 @@ static void VaultRevisit_GiveBoneToDog(void) {
   Event_Start();
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_VAULT_DOG, 2);
-  Actor_SetSpeed(ACTOR_VAULT_DOG, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(ACTOR_VAULT_DOG, 0.8);
   Actor_WalkToAndWait(ACTOR_VAULT_DOG, 216, 408);
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_VAULT_DOG, FACING_SOUTH, 20);

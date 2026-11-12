@@ -412,7 +412,7 @@ static void BabiPalace_ShowBeds(s32 actorId) {
       Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 40, 104);
       Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
     }
-    Actor_SetSpeed(actorId, PIXELS(1), PIXELS(1) / 2);
+    Actor_SetSpeed(actorId, 1);
     Actor_WalkByAndWait(actorId, 0, -48);
     Actor_WalkByAndWait(actorId, 64, 0);
     Actor_FaceDirection(actorId, facingOrMessage, 0);
@@ -479,7 +479,7 @@ static void BabiPalace_OfferRest(s32 actorId) {
     Event_Wait(10);
     Actor_SetAnimationAndWait(actorId, ANIM_NOD);
     Event_Wait(20);
-    Actor_SetSpeed(actorId, PIXELS(1), PIXELS(1) / 2);
+    Actor_SetSpeed(actorId, 1);
     Actor_WalkByAndWait(actorId, -64, 0);
     Actor_WalkByAndWait(actorId, 0, 48);
   } else {
@@ -667,7 +667,7 @@ static void BabiPalace_WakeFromFinalsDream(void) {
   Event_WaitTransitionFrames();
   Event_Wait(20);
   gFieldWork->transitionFrames = 24;
-  Actor_SetSpeed(ACTOR_MIA, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_MIA, 1);
   Actor_WalkByAndWait(ACTOR_MIA, 16, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_SOUTHEAST, 0);
   Event_Wait(20);
@@ -747,12 +747,12 @@ static void BabiPalace_WakeFromFinalsDream(void) {
     Event_ShowMessage(ACTOR_GARET, 0);
   }
   Event_Wait(10);
-  Actor_SetSpeed(ACTOR_GARET, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_GARET, 1);
   Actor_WalkByAndWait(ACTOR_GARET, -16, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_EAST, 0);
   Event_Wait(35);
   Actor_Jump(ACTOR_PARTY_LEADER, 6, 0);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(19) / 10, PIXELS(19) / 20);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 1.9);
   Actor_WalkByAndWait(ACTOR_PARTY_LEADER, -32, 0);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   Actor_SetSpriteFlags(leader, SPRITE_FLAG_SHADOW);
@@ -765,9 +765,9 @@ static void BabiPalace_WakeFromFinalsDream(void) {
   Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
   Event_Wait(30);
-  Actor_SetSpeed(ACTOR_GARET, PIXELS(6) / 5, PIXELS(3) / 5);
-  Actor_SetSpeed(ACTOR_MIA, PIXELS(6) / 5, PIXELS(3) / 5);
-  Actor_SetSpeed(ACTOR_IVAN, PIXELS(6) / 5, PIXELS(3) / 5);
+  Actor_SetSpeed(ACTOR_GARET, 1.2);
+  Actor_SetSpeed(ACTOR_MIA, 1.2);
+  Actor_SetSpeed(ACTOR_IVAN, 1.2);
   Scene_WalkIntoLeader(ACTOR_GARET);
   Scene_WalkIntoLeader(ACTOR_MIA);
   Scene_WalkIntoLeader(ACTOR_IVAN);
@@ -815,7 +815,7 @@ static void BabiPalace_RestInPalaceBeds(void) {
     Event_Wait(10);
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
     Event_Wait(20);
-    Actor_SetSpeed(ACTOR_GARET, PIXELS(1), PIXELS(1) / 2);
+    Actor_SetSpeed(ACTOR_GARET, 1);
     Actor_WalkByAndWait(ACTOR_GARET, 40, 0);
     Actor_WalkByAndWait(ACTOR_GARET, 0, -32);
     Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHWEST, 0);
@@ -830,7 +830,7 @@ static void BabiPalace_RestInPalaceBeds(void) {
     Event_Wait(10);
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
     Event_Wait(20);
-    Actor_SetSpeed(ACTOR_IVAN, PIXELS(1), PIXELS(1) / 2);
+    Actor_SetSpeed(ACTOR_IVAN, 1);
     Actor_WalkByAndWait(ACTOR_IVAN, -40, 0);
     Actor_WalkByAndWait(ACTOR_IVAN, 0, 40);
     Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHEAST, 0);
@@ -845,7 +845,7 @@ static void BabiPalace_RestInPalaceBeds(void) {
     Event_Wait(10);
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
     Event_Wait(20);
-    Actor_SetSpeed(ACTOR_MIA, PIXELS(1), PIXELS(1) / 2);
+    Actor_SetSpeed(ACTOR_MIA, 1);
     Actor_WalkByAndWait(ACTOR_MIA, 40, 0);
     Actor_WalkByAndWait(ACTOR_MIA, 0, 40);
     Actor_FaceDirection(ACTOR_MIA, FACING_NORTHWEST, 0);
@@ -923,9 +923,9 @@ static void BabiPalace_RestInPalaceBeds(void) {
     Event_Wait(10);
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
     Event_Wait(20);
-    Actor_SetSpeed(ACTOR_GARET, PIXELS(6) / 5, PIXELS(3) / 5);
-    Actor_SetSpeed(ACTOR_IVAN, PIXELS(6) / 5, PIXELS(3) / 5);
-    Actor_SetSpeed(ACTOR_MIA, PIXELS(6) / 5, PIXELS(3) / 5);
+    Actor_SetSpeed(ACTOR_GARET, 1.2);
+    Actor_SetSpeed(ACTOR_IVAN, 1.2);
+    Actor_SetSpeed(ACTOR_MIA, 1.2);
     Scene_WalkIntoLeader(ACTOR_GARET);
     Scene_WalkIntoLeader(ACTOR_MIA);
     Scene_WalkIntoLeader(ACTOR_IVAN);
@@ -948,7 +948,7 @@ static void BabiPalace_HearSoldiersReport(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 0);
   FieldCamera_MoveTo(PIXELS(560), -1, PIXELS(368), 1);
   FieldCamera_WaitForMove();
-  Actor_SetSpeed(ACTOR_IODEM, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_IODEM, 1);
   Actor_WalkByAndWait(ACTOR_IODEM, 40, 0);
   Actor_WalkToAndWait(ACTOR_IODEM, 584, 360);
   // "Iodem, Iodem!"
@@ -956,8 +956,8 @@ static void BabiPalace_HearSoldiersReport(void) {
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Actor_FaceDirection(ACTOR_IODEM, FACING_WEST, 0);
-  Actor_SetSpeed(ACTOR_FIRST_SOLDIER, PIXELS(2), PIXELS(1));
-  Actor_SetSpeed(ACTOR_SECOND_SOLDIER, PIXELS(2), PIXELS(1));
+  Actor_SetSpeed(ACTOR_FIRST_SOLDIER, 2);
+  Actor_SetSpeed(ACTOR_SECOND_SOLDIER, 2);
   Actor_WalkTo(ACTOR_FIRST_SOLDIER, 528, 352);
   Actor_WalkToAndWait(ACTOR_SECOND_SOLDIER, 528, 368);
   wait(3);
@@ -985,7 +985,7 @@ static void BabiPalace_HearSoldiersReport(void) {
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_FIRST_SOLDIER, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
-  Actor_SetSpeed(ACTOR_FIRST_SOLDIER, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_FIRST_SOLDIER, 1);
   Actor_WalkByAndWait(ACTOR_FIRST_SOLDIER, 8, 0);
   Event_Wait(20);
   // "Iodem, why did you send us to look for Babi in a place like..."
@@ -994,7 +994,7 @@ static void BabiPalace_HearSoldiersReport(void) {
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_QUESTION, 80);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_SECOND_SOLDIER, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
-  Actor_SetSpeed(ACTOR_SECOND_SOLDIER, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_SECOND_SOLDIER, 1);
   Actor_WalkByAndWait(ACTOR_SECOND_SOLDIER, 8, 0);
   Event_Wait(20);
   // "Why would Lord Babi enter such a dangerous cave alone? It's..."
@@ -1211,8 +1211,8 @@ static void BabiPalace_HearSoldiersReport(void) {
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_SECOND_SOLDIER, FACING_SOUTH, 0);
   Event_Wait(40);
-  Actor_SetSpeed(ACTOR_FIRST_SOLDIER, PIXELS(13) / 10, PIXELS(13) / 20);
-  Actor_SetSpeed(ACTOR_SECOND_SOLDIER, PIXELS(13) / 10, PIXELS(13) / 20);
+  Actor_SetSpeed(ACTOR_FIRST_SOLDIER, 1.3);
+  Actor_SetSpeed(ACTOR_SECOND_SOLDIER, 1.3);
   Actor_WalkBy(ACTOR_FIRST_SOLDIER, 0, 120);
   Actor_WalkByAndWait(ACTOR_SECOND_SOLDIER, 0, 120);
   Actor_SetPosition(ACTOR_FIRST_SOLDIER, 0, 0);
@@ -1220,7 +1220,7 @@ static void BabiPalace_HearSoldiersReport(void) {
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
   Event_Wait(40);
-  Actor_SetSpeed(ACTOR_IODEM, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(ACTOR_IODEM, 0.8);
   Actor_WalkByAndWait(ACTOR_IODEM, -16, 0);
   Event_Wait(30);
   // "Lord Babi, where have you gone?"
@@ -1230,7 +1230,7 @@ static void BabiPalace_HearSoldiersReport(void) {
   Event_Wait(30);
   Actor_FaceDirection(ACTOR_IODEM, FACING_EAST, 0);
   Event_Wait(30);
-  Actor_SetSpeed(ACTOR_IODEM, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_IODEM, 1);
   Actor_WalkByAndWait(ACTOR_IODEM, 120, 0);
   Actor_WalkByAndWait(ACTOR_IODEM, 60, 0);
   Actor_SetPosition(ACTOR_IODEM, 0, 0);
@@ -1306,7 +1306,7 @@ static void BabiPalace_WakeAfterFinals(void) {
   Event_Wait(30);
   Actor_RunRepeatedMotion(ACTOR_MIA, 2);
   Event_Wait(30);
-  Actor_SetSpeed(ACTOR_MIA, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_MIA, 1);
   Actor_WalkByAndWait(ACTOR_MIA, 0, -40);
   Actor_WalkByAndWait(ACTOR_MIA, 32, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_SOUTHEAST, 0);
@@ -1456,7 +1456,7 @@ static void BabiPalace_WakeAfterFinals(void) {
     wait(1);
   }
   Actor_Jump(ACTOR_PARTY_LEADER, 6, 0);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(19) / 10, PIXELS(19) / 20);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 1.9);
   Actor_WalkByAndWait(ACTOR_PARTY_LEADER, -32, -8);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   Actor_SetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
@@ -1485,9 +1485,9 @@ static void BabiPalace_WakeAfterFinals(void) {
   Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
   Event_Wait(30);
-  Actor_SetSpeed(ACTOR_GARET, PIXELS(6) / 5, PIXELS(3) / 5);
-  Actor_SetSpeed(ACTOR_MIA, PIXELS(6) / 5, PIXELS(3) / 5);
-  Actor_SetSpeed(ACTOR_IVAN, PIXELS(6) / 5, PIXELS(3) / 5);
+  Actor_SetSpeed(ACTOR_GARET, 1.2);
+  Actor_SetSpeed(ACTOR_MIA, 1.2);
+  Actor_SetSpeed(ACTOR_IVAN, 1.2);
   Scene_WalkIntoLeader(ACTOR_GARET);
   Scene_WalkIntoLeader(ACTOR_MIA);
   Scene_WalkIntoLeader(ACTOR_IVAN);
@@ -1517,7 +1517,7 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   // "I've been waiting for you and your companions, Isaac!"
   Event_ShowMessage(ACTOR_IODEM, 0);
   Event_Wait(10);
-  Actor_SetSpeed(ACTOR_BABI, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(ACTOR_BABI, 0.8);
   Actor_WalkByAndWait(ACTOR_BABI, 0, 16);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_NOD);
@@ -1530,7 +1530,7 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 1);
   FieldCamera_WaitForMove();
   Event_Wait(40);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 1);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 208, 760);
   Event_Wait(10);
   FieldCamera_MoveTo(PIXELS(216), -1, PIXELS(736), 1);
@@ -1567,7 +1567,7 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
     Event_ShowMessage(ACTOR_IODEM, 0);
     Actor_FaceDirection(ACTOR_IODEM, FACING_NORTH, 0);
     Event_Wait(20);
-    Actor_SetSpeed(ACTOR_IODEM, PIXELS(1), PIXELS(1) / 2);
+    Actor_SetSpeed(ACTOR_IODEM, 1);
     Actor_WalkByAndWait(ACTOR_IODEM, 0, -16);
     Event_Wait(40);
     Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
@@ -1583,13 +1583,13 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
     Event_Wait(30);
     Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTH, 0);
     Event_Wait(20);
-    Actor_SetSpeed(ACTOR_IODEM, PIXELS(4) / 5, PIXELS(2) / 5);
+    Actor_SetSpeed(ACTOR_IODEM, 0.8);
     Actor_Get(ACTOR_IODEM)->steeringFlags &= ~ACTOR_FACES_MOTION;
     Actor_WalkByAndWait(ACTOR_IODEM, 0, -16);
     Actor_Get(ACTOR_IODEM)->steeringFlags |= ACTOR_FACES_MOTION;
     Actor_FaceDirection(ACTOR_BABI, FACING_SOUTH, 0);
     Event_Wait(40);
-    Actor_SetSpeed(ACTOR_BABI, PIXELS(4) / 5, PIXELS(2) / 5);
+    Actor_SetSpeed(ACTOR_BABI, 0.8);
     Actor_WalkByAndWait(ACTOR_BABI, 0, 16);
     Event_Wait(40);
     MessageArgument_Push(ITEM_LURE_CAP, MESSAGE_ARGUMENT_ITEM);
@@ -1663,7 +1663,7 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Actor_FaceDirection(ACTOR_BABI, FACING_SOUTH, 0);
   Actor_RunRepeatedMotion(ACTOR_IODEM, 2);
   Event_Wait(20);
-  Actor_SetSpeed(ACTOR_BABI, PIXELS(8) / 5, PIXELS(4) / 5);
+  Actor_SetSpeed(ACTOR_BABI, 1.6);
   Actor_WalkByAndWait(ACTOR_IODEM, 0, 16);
   wait(2);
   Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTHEAST, 0);
@@ -2039,7 +2039,7 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Event_Wait(20);
   // "Why didn't you tell us sooner? We must hurry to Lemuria!"
   Event_ShowMessage(ACTOR_IODEM, 0);
-  Actor_SetSpeed(ACTOR_IODEM, PIXELS(8) / 5, PIXELS(4) / 5);
+  Actor_SetSpeed(ACTOR_IODEM, 1.6);
   Actor_WalkByAndWait(ACTOR_IODEM, 0, 24);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_IODEM, 0);
   Actor_FaceActor(ACTOR_GARET, ACTOR_IODEM, 0);
@@ -2066,7 +2066,7 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Event_ShowMessage(ACTOR_BABI, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-  Actor_SetSpeed(ACTOR_IODEM, PIXELS(6) / 5, PIXELS(3) / 5);
+  Actor_SetSpeed(ACTOR_IODEM, 1.2);
   Actor_WalkByAndWait(ACTOR_IODEM, 0, -24);
   Actor_FaceDirection(ACTOR_IODEM, FACING_EAST, 0);
   Event_Wait(20);
@@ -2476,7 +2476,7 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Actor_WatchAndSetScript(ACTOR_GARET, ACTOR_IODEM);
   Actor_WatchAndSetScript(ACTOR_MIA, ACTOR_IODEM);
   Actor_WatchAndSetScript(ACTOR_IVAN, ACTOR_IODEM);
-  Actor_SetSpeed(ACTOR_IODEM, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_IODEM, 1);
   Actor_WalkByAndWait(ACTOR_IODEM, 0, 32);
   Actor_FaceDirection(ACTOR_IODEM, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_BABI, FACING_SOUTH, 0);
@@ -2507,7 +2507,7 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Event_Wait(30);
   Actor_SetAnimationAndWait(ACTOR_BABI, ANIM_NOD);
   Event_Wait(30);
-  Actor_SetSpeed(ACTOR_BABI, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(ACTOR_BABI, 0.8);
   Actor_WalkByAndWait(ACTOR_BABI, 0, 24);
   Actor_WalkByAndWait(ACTOR_BABI, -80, 0);
   Event_Wait(10);
@@ -2535,9 +2535,9 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
   Event_Wait(30);
   Sound_Play(SOUND_FADE_OUT_BGM);
-  Actor_SetSpeed(ACTOR_GARET, PIXELS(6) / 5, PIXELS(3) / 5);
-  Actor_SetSpeed(ACTOR_IVAN, PIXELS(6) / 5, PIXELS(3) / 5);
-  Actor_SetSpeed(ACTOR_MIA, PIXELS(6) / 5, PIXELS(3) / 5);
+  Actor_SetSpeed(ACTOR_GARET, 1.2);
+  Actor_SetSpeed(ACTOR_IVAN, 1.2);
+  Actor_SetSpeed(ACTOR_MIA, 1.2);
   Scene_WalkIntoLeader(ACTOR_GARET);
   Scene_WalkIntoLeader(ACTOR_IVAN);
   Scene_WalkIntoLeader(ACTOR_MIA);
@@ -2560,7 +2560,7 @@ static void BabiPalace_LeaveThroughDoor(void) {
   work = gFieldWork;
   Event_Start();
   Sound_Play(SE_DOOR_OPEN);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.5);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   if (work->stepTrigger == BABI_PALACE_CARPET_ROOM_TO_MEETING_ROOM) {
     TilesetAnim_Resume(BABI_PALACE_MEETING_ROOM_DOOR_ANIMATION);
@@ -2587,7 +2587,7 @@ static void BabiPalace_LeaveThroughDoor(void) {
 /// goes in.
 static void BabiPalace_LeaveThroughAnimatedDoor(void) {
   Event_Start();
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.5);
   Sound_Play(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gBabiPalace_DoorCells, 36, 10);
   Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 2, -16);

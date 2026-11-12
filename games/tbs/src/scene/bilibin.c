@@ -517,7 +517,7 @@ static void Bilibin_OpenDoorAndLeave(void) {
   rowOffset = originOffset + 2;
   row = *(s16 *)(originBytes + rowOffset);
   MapGrid_PlayMapEdit(gBilibin_DoorSteps[exitIndex], column, row);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.5);
   Actor_Get(ACTOR_PARTY_LEADER)->motionFlags = 0;
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   if (exitIndex == BILIBIN_TO_SANCTUM - BILIBIN_TO_INN) {
@@ -553,8 +553,8 @@ static void Bilibin_PullJillFromRiver(void) {
     Actor_SetSpritePriority(ACTOR_JILL_TREE, 1);
     Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
     Event_Wait(20);
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 5, PIXELS(1) / 10);
-    Actor_SetSpeed(ACTOR_JILL_TREE, PIXELS(1) / 5, PIXELS(1) / 10);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.2);
+    Actor_SetSpeed(ACTOR_JILL_TREE, 0.2);
     Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
     jillTree->motionFlags = 0;
     // Each tug: the leader faces about, strains and draws her in, then steps
@@ -582,7 +582,7 @@ static void Bilibin_PullJillFromRiver(void) {
     Actor_MoveToAndWait(ACTOR_JILL_TREE, 132, 186);
     leader->scaleX = Q16_ONE;
     Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 5, PIXELS(3) / 10);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.6);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 166, 185);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 20);
     Actor_SetSpritePriority(ACTOR_JILL_TREE, 2);
@@ -671,7 +671,7 @@ static void Bilibin_JillGivesHardNut(void) {
   Event_Wait(20);
   // "I would have been swept down the river if it wasn't for you."
   Event_ShowMessage(ACTOR_JILL, 0);
-  Actor_SetSpeed(ACTOR_JILL, PIXELS(3) / 5, PIXELS(3) / 10);
+  Actor_SetSpeed(ACTOR_JILL, 0.6);
   Actor_Get(ACTOR_JILL)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(ACTOR_JILL, 266, 172);
   Event_Wait(1);
@@ -688,7 +688,7 @@ static void Bilibin_JillGivesHardNut(void) {
   Actor_SetAnimationAndWait(ACTOR_JILL, ANIM_NOD);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-  Actor_SetSpeed(ACTOR_JILL, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_JILL, 1);
   Actor_Get(ACTOR_JILL)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(ACTOR_JILL, 262, 156);
   Event_Wait(1);
@@ -811,7 +811,7 @@ static void Bilibin_UpdateVillageStatueCells(void) {
       Event_Start();
       Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
                       20);
-      Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2), PIXELS(1));
+      Actor_SetSpeed(ACTOR_PARTY_LEADER, 2);
       Actor_Jump(ACTOR_PARTY_LEADER, 6, 0);
       if (statueRow == 13) {
         Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 262, 196);

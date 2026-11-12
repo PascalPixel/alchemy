@@ -633,10 +633,10 @@ static void CottageRoomsA_GaretComesHome(void) {
   FieldCamera_MoveTo(-1, -1, -1, 0);
   wait(1);
   Actor_SetSpritePriority(ACTOR_MIA, 1);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2) / 5, PIXELS(1) / 5);
-  Actor_SetSpeed(ACTOR_GARET, PIXELS(2) / 5, PIXELS(1) / 5);
-  Actor_SetSpeed(ACTOR_IVAN, PIXELS(2) / 5, PIXELS(1) / 5);
-  Actor_SetSpeed(ACTOR_MIA, PIXELS(2) / 5, PIXELS(1) / 5);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.4);
+  Actor_SetSpeed(ACTOR_GARET, 0.4);
+  Actor_SetSpeed(ACTOR_IVAN, 0.4);
+  Actor_SetSpeed(ACTOR_MIA, 0.4);
   Actor_SetAnimation(ACTOR_GARETS_GRANDFATHER, ANIM_GRANDFATHER_ASLEEP);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 808, 508);
   sleepZ = Actor_Get(ACTOR_FIRST_SLEEP_Z);
@@ -824,7 +824,7 @@ static void CottageRoomsA_GaretComesHome(void) {
       SPEAKER_WINDOW_ABOVE | ACTOR_GARETS_GRANDFATHER, 0, 20);
   // Garet goes to him; the grandfather asks whether the Wise One's mission
   // is done, and a no skips one line of Garet's father.
-  Actor_SetSpeed(ACTOR_GARET, PIXELS(8) / 5, PIXELS(4) / 5);
+  Actor_SetSpeed(ACTOR_GARET, 1.6);
   Actor_WalkToAndWait(ACTOR_GARET, 789, 473);
   Actor_FaceDirection(ACTOR_GARET, FACING_WEST_SOUTHWEST, 20);
   Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
@@ -888,7 +888,7 @@ static void CottageRoomsA_GaretComesHome(void) {
   Actor_FaceDirection(ACTOR_GARET, FACING_EAST_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 0);
   // Ivan, then Mia, step forward and introduce themselves; the family nods.
-  Actor_SetSpeed(ACTOR_IVAN, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_IVAN, 1);
   Actor_WalkToAndWait(ACTOR_IVAN, 819, 489);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH_NORTHWEST, 40);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
@@ -898,7 +898,7 @@ static void CottageRoomsA_GaretComesHome(void) {
   CottageRoomsA_FamilyNods();
   Actor_Get(ACTOR_MIA)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   Actor_SetSpritePriority(ACTOR_MIA, 1);
-  Actor_SetSpeed(ACTOR_MIA, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_MIA, 1);
   Actor_WalkToAndWait(ACTOR_MIA, 794, 520);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
@@ -911,7 +911,7 @@ static void CottageRoomsA_GaretComesHome(void) {
   FieldCamera_MoveTo(PIXELS(777), 0, PIXELS(428), 1);
   Event_Wait(20);
   // Garet's mother comes forward and asks them to look after young Garet.
-  Actor_SetSpeed(ACTOR_GARETS_MOTHER, PIXELS(2) / 5, PIXELS(1) / 5);
+  Actor_SetSpeed(ACTOR_GARETS_MOTHER, 0.4);
   Actor_WalkToAndWait(ACTOR_GARETS_MOTHER, 835, 388);
   Actor_FaceDirection(ACTOR_GARETS_MOTHER, FACING_SOUTH_SOUTHWEST, 0);
   Actor_ShowEmote(ACTOR_GARETS_MOTHER, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
@@ -940,7 +940,7 @@ static void CottageRoomsA_GaretComesHome(void) {
   Actor_SetAnimation(ACTOR_IVAN, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
   Event_Wait(20);
-  Actor_SetSpeed(ACTOR_IVAN, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_IVAN, 1);
   partyScript = gCottageRoomsA_PartyLeavesScript;
   Actor_SetScript(ACTOR_GARET, partyScript);
   Actor_SetScript(ACTOR_IVAN, partyScript);

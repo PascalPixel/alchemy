@@ -416,7 +416,7 @@ static void McCoyPalace_WalkThroughDoor(void) {
   }
   Event_Start();
   Event_Wait(10);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.5);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   if (work->stepTrigger == 9)
     Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, -16);
@@ -536,7 +536,7 @@ static void McCoyPalace_CaptainAsksPartyToChoose(void) {
       Event_SetMessageId(MsgBilibinPleaseTakeYourRewardBefore);
       // "Please take your reward before your depart!"
       Event_ShowMessage(ACTOR_CAPTAIN, 0);
-      Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
+      Actor_SetSpeed(ACTOR_PARTY_LEADER, 1);
       Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 616, 762);
       Actor_FaceDirection(ACTOR_CAPTAIN, FACING_NORTH_NORTHEAST, 10);
       Event_End();
@@ -551,7 +551,7 @@ static void McCoyPalace_CaptainSeesPartyOff(void) {
   if (GameFlag_Get(FLAG_MCCOY_PALACE_REWARD_TAKEN) != 0) {
     Event_Start();
     Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_CAPTAIN, 0);
-    Actor_SetSpeed(ACTOR_CAPTAIN, PIXELS(3) / 5, PIXELS(3) / 10);
+    Actor_SetSpeed(ACTOR_CAPTAIN, 0.6);
     Actor_WalkToAndWait(ACTOR_CAPTAIN, 622, 764);
     Actor_FaceDirection(ACTOR_CAPTAIN, FACING_EAST_NORTHEAST, 20);
     Actor_SetAnimationAndWait(ACTOR_CAPTAIN, ANIM_NOD);
@@ -563,7 +563,7 @@ static void McCoyPalace_CaptainSeesPartyOff(void) {
     Event_SetMessageId(MsgBilibinAlwaysWelcomeInPalaceLord);
     // "You are always welcome in the palace of Lord McCoy."
     Event_ShowMessageThenWait(ACTOR_CAPTAIN, 0, 10);
-    Actor_SetSpeed(ACTOR_CAPTAIN, PIXELS(4) / 5, PIXELS(2) / 5);
+    Actor_SetSpeed(ACTOR_CAPTAIN, 0.8);
     Actor_WalkToAndWait(ACTOR_CAPTAIN, 570, 758);
     Actor_SetPosition(ACTOR_CAPTAIN, 0, 0);
     gFieldWork->transition =
@@ -672,9 +672,9 @@ s32 Scene_Initialize(void) {
 
 /// Garet, Ivan and Mia get ready to walk up to McCoy.
 static __inline__ void McCoyPalace_PrepareCompanionApproach(void) {
-  Actor_SetSpeed(ACTOR_GARET, PIXELS(3) / 5, PIXELS(3) / 10);
-  Actor_SetSpeed(ACTOR_IVAN, PIXELS(3) / 5, PIXELS(3) / 10);
-  Actor_SetSpeed(ACTOR_MIA, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_GARET, 0.6);
+  Actor_SetSpeed(ACTOR_IVAN, 0.6);
+  Actor_SetSpeed(ACTOR_MIA, 1);
   Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
   Actor_SetAnimation(ACTOR_IVAN, ANIM_WALK);
   Actor_SetAnimation(ACTOR_MIA, ANIM_WALK);
@@ -720,7 +720,7 @@ static void McCoyPalace_AudienceWithMcCoy(void) {
     Actor_SetPosition(ACTOR_CAPTAIN, 894, 798);
     FieldCamera_SetSpeed(PIXELS(3) / 5, PIXELS(3) / 40);
     FieldCamera_MoveTo(PIXELS(894), -1, PIXELS(698), 1);
-    Actor_SetSpeed(ACTOR_CAPTAIN, PIXELS(4) / 5, PIXELS(2) / 5);
+    Actor_SetSpeed(ACTOR_CAPTAIN, 0.8);
     Actor_WalkTo(ACTOR_CAPTAIN, 894, 696);
     Event_Wait(80);
     FieldCamera_MoveTo(PIXELS(894), -1, PIXELS(664), 1);
@@ -761,7 +761,7 @@ static void McCoyPalace_AudienceWithMcCoy(void) {
     Actor_FaceDirection(ACTOR_LORD_MCCOY, FACING_SOUTH_SOUTHWEST, 10);
     FieldCamera_MoveTo(PIXELS(894), -1, PIXELS(698), 1);
     Actor_SetPosition(ACTOR_PARTY_LEADER, 894, 798);
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 5, PIXELS(3) / 10);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.6);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 894, 726);
     Event_Wait(20);
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
@@ -860,14 +860,14 @@ static void McCoyPalace_AudienceWithMcCoy(void) {
     Actor_SetPosition(ACTOR_IVAN, 0, 0);
     Actor_SetPosition(ACTOR_MIA, 0, 0);
     GameFlag_Set(FLAG_MCCOY_PALACE_JOB_REFUSED);
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 1);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 894, 752);
     gFieldWork->transitionFrames = 16;
     Event_FinishScreenTransition();
     Event_WaitTransitionFrames();
     goto leave;
   }
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 5, PIXELS(3) / 10);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.6);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 894, 684);
   Event_Wait(80);
   FieldCamera_SetSpeedParameters(PIXELS(3) / 5, PIXELS(3) / 40);
@@ -938,7 +938,7 @@ accepted:
   }
   wait(1);
   Actor_Jump(ACTOR_BARRICADE_KEY, 6, 0);
-  Actor_SetSpeed(ACTOR_BARRICADE_KEY, PIXELS(2), PIXELS(1));
+  Actor_SetSpeed(ACTOR_BARRICADE_KEY, 2);
   Actor_MoveToAndWait(ACTOR_BARRICADE_KEY, 894, 668);
   Event_Wait(40);
   // "Here. This key'll get yeh past the barricades tae the east..."
@@ -1137,7 +1137,7 @@ accepted:
   FieldActor_WatchAndStartScript(ACTOR_MIA,
                                  ACTOR_WATCH_KEEP_MOTION | ACTOR_CAPTAIN,
                                  gPalace_FacingActions);
-  Actor_SetSpeed(ACTOR_CAPTAIN, PIXELS(3) / 5, PIXELS(3) / 10);
+  Actor_SetSpeed(ACTOR_CAPTAIN, 0.6);
   Actor_WalkToAndWait(ACTOR_CAPTAIN, 852, 646);
   Actor_WalkToAndWait(ACTOR_CAPTAIN, 852, 666);
   Actor_WalkToAndWait(ACTOR_CAPTAIN, 864, 672);
@@ -1177,7 +1177,7 @@ accepted:
   Actor_SetPosition(ACTOR_GARET, 0, 0);
   Actor_SetPosition(ACTOR_IVAN, 0, 0);
   Actor_SetPosition(ACTOR_MIA, 0, 0);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 1);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 894, 752);
   gFieldWork->transitionFrames = 16;
   Event_FinishScreenTransition();
@@ -1197,7 +1197,7 @@ static void McCoyPalace_CaptainHintsAtBarricade(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Actor_FaceDirection(ACTOR_CAPTAIN, FACING_SOUTH_SOUTHEAST, 0);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 5, PIXELS(3) / 10);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.6);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 256, 660);
   Event_Wait(20);
   FieldCamera_MoveTo(-1, -1, -1, 0);
@@ -1207,7 +1207,7 @@ static void McCoyPalace_CaptainHintsAtBarricade(void) {
   TilesetAnim_Resume(2);
   Actor_SetPosition(ACTOR_CAPTAIN, 256, 632);
   wait(1);
-  Actor_SetSpeed(ACTOR_CAPTAIN, PIXELS(3) / 5, PIXELS(3) / 10);
+  Actor_SetSpeed(ACTOR_CAPTAIN, 0.6);
   Actor_WalkToAndWait(ACTOR_CAPTAIN, 256, 644);
   TilesetAnim_Pause(1);
   TilesetAnim_Pause(2);
@@ -1242,7 +1242,7 @@ static void McCoyPalace_CaptainHintsAtBarricade(void) {
   Actor_SetAnimationAndWait(ACTOR_CAPTAIN, ANIM_NOD);
   // "Well, I'm going to go now."
   Event_ShowMessage(ACTOR_CAPTAIN, 0);
-  Actor_SetSpeed(ACTOR_CAPTAIN, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(ACTOR_CAPTAIN, 0.8);
   Actor_WalkToAndWait(ACTOR_CAPTAIN, 248, 772);
   Actor_SetPosition(ACTOR_CAPTAIN, 0, 0);
   GameFlag_Clear(FLAG_SHOW_AREA_NAME);
@@ -1300,8 +1300,8 @@ static void McCoyPalace_McCoyRewardsParty(void) {
   Actor_SetPosition(ACTOR_PARTY_LEADER, 904, 798);
   FieldCamera_SetSpeed(PIXELS(3) / 5, PIXELS(3) / 40);
   FieldCamera_MoveTo(PIXELS(894), -1, PIXELS(698), 1);
-  Actor_SetSpeed(ACTOR_CAPTAIN, PIXELS(4) / 5, PIXELS(2) / 5);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 5, PIXELS(3) / 10);
+  Actor_SetSpeed(ACTOR_CAPTAIN, 0.8);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.6);
   Actor_WalkTo(ACTOR_CAPTAIN, 888, 720);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 904, 736);
   Event_Wait(60);
@@ -1596,8 +1596,8 @@ static void McCoyPalace_PresentRewardChests(void) {
   gFieldWork->transitionFrames = 16;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Actor_SetSpeed(ACTOR_CAPTAIN, PIXELS(3) / 5, PIXELS(3) / 10);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 5, PIXELS(3) / 10);
+  Actor_SetSpeed(ACTOR_CAPTAIN, 0.6);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.6);
   Actor_WalkTo(ACTOR_CAPTAIN, 628, 764);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 612, 764);
   Actor_SetAnimation(ACTOR_CAPTAIN, ANIM_STAND);

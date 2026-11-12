@@ -464,7 +464,7 @@ static void Tolbi_EnterDoor(void) {
   Sound_Play(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gTolbiDoors[door].steps, gTolbiDoors[door].x,
                        gTolbiDoors[door].y);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.5);
   Actor_Get(ACTOR_PARTY_LEADER)->motionFlags = 0;
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   if (door != TOLBI_TO_WEAPON_AND_ARMOR_SHOP - 1) {
@@ -576,7 +576,7 @@ static void Tolbi_TalkToSpringVisitor(void) {
     gFieldWork->message++;
     // "Really? Well then, I'll give you the chance to go first."
     Event_ShowMessage(ACTOR_TOLBI_SPRING_VISITOR, 0);
-    Actor_SetSpeed(ACTOR_TOLBI_SPRING_VISITOR, PIXELS(1), PIXELS(1) / 2);
+    Actor_SetSpeed(ACTOR_TOLBI_SPRING_VISITOR, 1);
     Actor_WalkToAndWait(ACTOR_TOLBI_SPRING_VISITOR, 320, 304);
     Actor_WalkToAndWait(ACTOR_TOLBI_SPRING_VISITOR, 316, 328);
     Actor_FaceDirection(ACTOR_TOLBI_SPRING_VISITOR, FACING_NORTHWEST, 0);
@@ -615,8 +615,8 @@ static void Tolbi_MeetSearchingSoldiers(void) {
 
   Event_Start();
   FieldCamera_MoveTo(-1, -1, -1, 0);
-  Actor_SetSpeed(ACTOR_TOLBI_SOLDIER_A, PIXELS(1), PIXELS(1) / 2);
-  Actor_SetSpeed(ACTOR_TOLBI_SOLDIER_B, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_TOLBI_SOLDIER_A, 1);
+  Actor_SetSpeed(ACTOR_TOLBI_SOLDIER_B, 1);
   firstMsg = MsgTolbiSeenAnyoneWho;
   Event_SetMessageId(firstMsg);
 
@@ -676,8 +676,8 @@ static void Tolbi_MeetSearchingSoldiers(void) {
     Actor_SetAnimation(ACTOR_TOLBI_SOLDIER_A, ANIM_NOD);
     Actor_SetAnimationAndWait(ACTOR_TOLBI_SOLDIER_B, ANIM_NOD);
     Event_Wait(20);
-    Actor_SetSpeed(ACTOR_TOLBI_SOLDIER_A, PIXELS(9) / 5, PIXELS(9) / 10);
-    Actor_SetSpeed(ACTOR_TOLBI_SOLDIER_B, PIXELS(9) / 5, PIXELS(9) / 10);
+    Actor_SetSpeed(ACTOR_TOLBI_SOLDIER_A, 1.8);
+    Actor_SetSpeed(ACTOR_TOLBI_SOLDIER_B, 1.8);
     Actor_WalkTo(ACTOR_TOLBI_SOLDIER_A, 232, 248);
     Event_Wait(2);
     Actor_WalkTo(ACTOR_TOLBI_SOLDIER_B, 232, 248);
@@ -707,8 +707,8 @@ static void Tolbi_MeetSearchingSoldiers(void) {
     Actor_SetAnimation(ACTOR_TOLBI_SOLDIER_A, ANIM_NOD);
     Actor_SetAnimationAndWait(ACTOR_TOLBI_SOLDIER_B, ANIM_NOD);
     Event_Wait(20);
-    Actor_SetSpeed(ACTOR_TOLBI_SOLDIER_A, PIXELS(8) / 5, PIXELS(4) / 5);
-    Actor_SetSpeed(ACTOR_TOLBI_SOLDIER_B, PIXELS(8) / 5, PIXELS(4) / 5);
+    Actor_SetSpeed(ACTOR_TOLBI_SOLDIER_A, 1.6);
+    Actor_SetSpeed(ACTOR_TOLBI_SOLDIER_B, 1.6);
     Actor_WalkTo(ACTOR_TOLBI_SOLDIER_A, 72, 184);
     Actor_WalkToAndWait(ACTOR_TOLBI_SOLDIER_B, 56, 184);
   }

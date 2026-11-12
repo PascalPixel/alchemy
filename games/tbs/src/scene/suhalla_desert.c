@@ -450,8 +450,8 @@ static void SuhallaDesert_RaiseStorm(s32 stormId) {
   if (GameFlag_Get(FLAG_IODEM_FOLLOWING_PARTY) != 0 &&
       Event_GetFlag(FLAG_SUHALLA_DESERT_IODEM_WARNED) == 0) {
     GameFlag_Set(FLAG_SUHALLA_DESERT_IODEM_WARNED);
-    Actor_SetSpeed(ACTOR_IODEM, PIXELS(1), PIXELS(1) / 2);
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
+    Actor_SetSpeed(ACTOR_IODEM, 1);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 1.5);
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     if ((s32)leader != 0) {
       Actor_SetPositionFixed(ACTOR_IODEM, leader->x.fixed, leader->z.fixed);
@@ -489,7 +489,7 @@ static void SuhallaDesert_RaiseStorm(s32 stormId) {
     Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
     // "We must step carefully if we hope to escape the desert."
     Event_ShowMessage(ACTOR_IODEM, 0);
-    Actor_SetSpeed(ACTOR_IODEM, PIXELS(1), PIXELS(1) / 2);
+    Actor_SetSpeed(ACTOR_IODEM, 1);
     Actor_SetAnimation(ACTOR_IODEM, ANIM_WALK);
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     if ((s32)leader != 0) {
@@ -597,7 +597,7 @@ static void SuhallaDesert_IodemAsksWhetherToPressOn(void) {
     Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
     // "We can leave Sheba to the soldiers at the gate."
     Event_ShowMessage(ACTOR_IODEM, 0);
-    Actor_SetSpeed(ACTOR_IODEM, PIXELS(7) / 10, PIXELS(7) / 20);
+    Actor_SetSpeed(ACTOR_IODEM, 0.7);
     Actor_WalkToAndWait(ACTOR_IODEM, 440, 1256);
     // "Well, perhaps we should head there first, then."
     Event_ShowMessage(ACTOR_IODEM, 0);

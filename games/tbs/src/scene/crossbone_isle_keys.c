@@ -321,7 +321,7 @@ static void CrossboneIsleKeys_BaneFirstEscape(void) {
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Actor_RunRepeatedMotion(ACTOR_BANE, 2);
     Event_Wait(20);
-    Actor_SetSpeed(ACTOR_BANE, PIXELS(1), PIXELS(1) / 2);
+    Actor_SetSpeed(ACTOR_BANE, 1);
     Sound_Play(SE_JUMP);
     djinni = Actor_Get(ACTOR_BANE);
     djinni->velocityY = PIXELS(8);
@@ -356,7 +356,7 @@ static void CrossboneIsleKeys_BaneSecondEscape(void) {
                               ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
       Actor_RunRepeatedMotion(ACTOR_BANE, 2);
       Event_Wait(20);
-      Actor_SetSpeed(ACTOR_BANE, PIXELS(1), PIXELS(1) / 2);
+      Actor_SetSpeed(ACTOR_BANE, 1);
       Sound_Play(SE_JUMP);
       jumpingDjinni = Actor_Get(ACTOR_BANE);
       jumpingDjinni->velocityY = PIXELS(10);
@@ -367,7 +367,7 @@ static void CrossboneIsleKeys_BaneSecondEscape(void) {
       Event_Wait(30);
 
       // Dash across the platforms, then shake the room on landing.
-      Actor_SetSpeed(ACTOR_BANE, PIXELS(8), PIXELS(1) / 4);
+      Actor_SetSpeedAndAcceleration(ACTOR_BANE, 8, 0.25);
       Actor_WalkToAndWait(ACTOR_BANE, 664, 664);
       Actor_WalkToAndWait(ACTOR_BANE, 744, 664);
       Actor_WalkToAndWait(ACTOR_BANE, 824, 664);
@@ -415,7 +415,7 @@ static void CrossboneIsleKeys_BaneLastEscape(void) {
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Actor_RunRepeatedMotion(ACTOR_BANE, 2);
     Event_Wait(20);
-    Actor_SetSpeed(ACTOR_BANE, PIXELS(1), PIXELS(1) / 2);
+    Actor_SetSpeed(ACTOR_BANE, 1);
     Sound_Play(SE_JUMP);
     djinni = Actor_Get(ACTOR_BANE);
     djinni->velocityY = PIXELS(4);
@@ -423,7 +423,7 @@ static void CrossboneIsleKeys_BaneLastEscape(void) {
     Event_Wait(10);
     Actor_SetAttachedEffect(ACTOR_BANE,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
-    Actor_SetSpeed(ACTOR_BANE, PIXELS(2), PIXELS(1));
+    Actor_SetSpeed(ACTOR_BANE, 2);
     Actor_WalkToAndWait(ACTOR_BANE, 880, 696);
     Actor_WalkToAndWait(ACTOR_BANE, 882, 704);
     Actor_WalkToAndWait(ACTOR_BANE, 880, 712);
@@ -724,8 +724,8 @@ static void CrossboneIsleKeys_DodgeFirstPursuer(void) {
   struct Actor *leader;
 
   Event_Start();
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(19) / 10, PIXELS(19) / 20);
-  Actor_SetSpeed(ACTOR_FIRST_STATUE, PIXELS(19) / 10, PIXELS(19) / 20);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 1.9);
+  Actor_SetSpeed(ACTOR_FIRST_STATUE, 1.9);
   Sound_Play(SE_THUMP);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != 0) {
@@ -766,8 +766,8 @@ static void CrossboneIsleKeys_DodgeSecondPursuer(void) {
   struct Actor *leader;
 
   Event_Start();
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(17) / 10, PIXELS(17) / 20);
-  Actor_SetSpeed(ACTOR_SECOND_STATUE, PIXELS(17) / 10, PIXELS(17) / 20);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 1.7);
+  Actor_SetSpeed(ACTOR_SECOND_STATUE, 1.7);
   Sound_Play(SE_THUMP);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != 0) {
@@ -799,7 +799,7 @@ static void CrossboneIsleKeys_TrackPursuerColumn(s32 pursuerIndex) {
   if (column == gCrossboneIsleKeys_SlotColumns[pursuerIndex])
     return;
 
-  Actor_SetSpeed(pursuerId, PIXELS(9) / 2, PIXELS(9) / 4);
+  Actor_SetSpeed(pursuerId, 4.5);
   Sound_Play(SE_THUMP);
   Actor_SetDestination(pursuerId, (column << 4) + 8, 360);
 
@@ -835,8 +835,8 @@ static void CrossboneIsleKeys_DodgeThirdPursuer(void) {
 
   if (gMainRoutineWork.haltedActor != ACTOR_THIRD_STATUE) {
     Event_Start();
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(17) / 10, PIXELS(17) / 20);
-    Actor_SetSpeed(ACTOR_THIRD_STATUE, PIXELS(17) / 10, PIXELS(17) / 20);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 1.7);
+    Actor_SetSpeed(ACTOR_THIRD_STATUE, 1.7);
     Sound_Play(SE_THUMP);
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     if (leader != 0) {
@@ -864,8 +864,8 @@ static void CrossboneIsleKeys_DodgeFourthPursuer(void) {
 
   if (gMainRoutineWork.haltedActor != ACTOR_FOURTH_STATUE) {
     Event_Start();
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(17) / 10, PIXELS(17) / 20);
-    Actor_SetSpeed(ACTOR_FOURTH_STATUE, PIXELS(17) / 10, PIXELS(17) / 20);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 1.7);
+    Actor_SetSpeed(ACTOR_FOURTH_STATUE, 1.7);
     Sound_Play(SE_THUMP);
     leaderColumn = Actor_Get(ACTOR_PARTY_LEADER)->x.fixed / PIXELS(16);
     if (leaderColumn > Actor_Get(ACTOR_FOURTH_STATUE)->x.fixed / PIXELS(16)) {
@@ -916,8 +916,8 @@ static void CrossboneIsleKeys_DodgeFifthPursuer(void) {
   struct Actor *leader;
 
   Event_Start();
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(17) / 10, PIXELS(17) / 20);
-  Actor_SetSpeed(ACTOR_FIFTH_STATUE, PIXELS(17) / 10, PIXELS(17) / 20);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 1.7);
+  Actor_SetSpeed(ACTOR_FIFTH_STATUE, 1.7);
   Sound_Play(SE_THUMP);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != 0) {

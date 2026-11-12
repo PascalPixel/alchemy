@@ -198,7 +198,7 @@ static void StuccoRoomsB_EnterDoor(void) {
   MapGrid_AnimateCells(gStuccoRoomsBDoors[doorIndex].steps,
                        gStuccoRoomsBDoors[doorIndex].x,
                        gStuccoRoomsBDoors[doorIndex].y);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.5);
   Actor_Get(ACTOR_PARTY_LEADER)->motionFlags = 0;
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   Import_EventSetExitRequest(*trigger);
@@ -233,7 +233,7 @@ static void StuccoRoomsB_WatchWomanHideMedal(void) {
   // She runs to it and picks it up.
   Actor_ShowEmote(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN,
                   EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 50);
-  Actor_SetSpeed(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN, 1);
   Actor_WalkToAndWait(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN, 600, 848);
   Actor_FaceDirection(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN, FACING_NORTH, 0);
   Event_Wait(40);
@@ -272,8 +272,7 @@ static void StuccoRoomsB_WatchWomanHideMedal(void) {
   Event_ShowMessage(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN, 0);
 
   // She hides it and comes back, then leaves.
-  Actor_SetSpeed(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN, PIXELS(7) / 5,
-                 PIXELS(7) / 10);
+  Actor_SetSpeed(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN, 1.4);
   Actor_WalkByAndWait(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN, 16, 0);
   Actor_WalkByAndWait(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN, 0, 32);
   Event_Wait(20);
@@ -284,8 +283,7 @@ static void StuccoRoomsB_WatchWomanHideMedal(void) {
   Actor_WalkByAndWait(ACTOR_PARTY_LEADER, 16, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
   Event_Wait(20);
-  Actor_SetSpeed(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN, PIXELS(9) / 5,
-                 PIXELS(9) / 10);
+  Actor_SetSpeed(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN, 1.8);
   Actor_WalkByAndWait(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN, 0, 48);
   Actor_SetPosition(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN, 0, 0);
   Event_End();

@@ -411,7 +411,7 @@ static void Xian_TalkToWaterCarrier(void) {
   if ((Actor_Get(ACTOR_PARTY_LEADER)->z.fixed >> 19) > 27 &&
       (Actor_Get(ACTOR_PARTY_LEADER)->z.fixed >> 19) <= 29 &&
       (Actor_Get(ACTOR_PARTY_LEADER)->x.fixed >> 20) != 26) {
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.5);
     Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_WOMAN_CARRYING_WATER, 0);
     Event_Wait(5);
     leader = Actor_Get(ACTOR_PARTY_LEADER);
@@ -483,7 +483,7 @@ static void Xian_TalkToWaterCarrier(void) {
   }
   // Clear the carrier's route back to the water supply.
   if (leaderMustStepAside != 0) {
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.8);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 10);
     Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
@@ -491,7 +491,7 @@ static void Xian_TalkToWaterCarrier(void) {
     Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   }
-  Actor_SetSpeed(ACTOR_WOMAN_CARRYING_WATER, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(ACTOR_WOMAN_CARRYING_WATER, 0.8);
   carrier = Actor_Get(ACTOR_WOMAN_CARRYING_WATER);
   if ((carrier->z.fixed >> 20) != 14) {
     carrier = Actor_Get(ACTOR_WOMAN_CARRYING_WATER);
@@ -591,7 +591,7 @@ static void Xian_TalkToKungFuStudent(void) {
     Actor_Get(ACTOR_KUNG_FU_STUDENT)->velocityY = PIXELS(6);
     Actor_Get(ACTOR_KUNG_FU_STUDENT)->gravity = PIXELS(1);
     Actor_Get(ACTOR_KUNG_FU_STUDENT)->bounce = 0;
-    Actor_SetSpeed(ACTOR_KUNG_FU_STUDENT, PIXELS(3), PIXELS(3) / 2);
+    Actor_SetSpeed(ACTOR_KUNG_FU_STUDENT, 3);
     Actor_SetDestination(ACTOR_KUNG_FU_STUDENT, 168, 312);
     Actor_WaitForMoveById(ACTOR_KUNG_FU_STUDENT);
     Sound_Play(SE_HEAVY_IMPACT);
@@ -699,7 +699,7 @@ static void Xian_JumpOverSpilledWater(void) {
 /// Sanctum's door the leader walks straight in, without centering on it.
 static void Xian_WalkThroughExit(s32 exitNumber) {
   Actor_Get(ACTOR_PARTY_LEADER)->motionFlags = 0;
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.5);
   if (exitNumber == XIAN_TO_SANCTUM) {
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
     Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, -16);
@@ -821,8 +821,8 @@ static void Xian_MoveAsideForWaterCarrier(void) {
                   0);
   Actor_StartRepeatedMotion(ACTOR_WOMAN_CARRYING_WATER, 2);
   Event_Wait(60);
-  Actor_SetSpeed(ACTOR_WOMAN_CARRYING_WATER, PIXELS(3) / 2, PIXELS(3) / 4);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
+  Actor_SetSpeed(ACTOR_WOMAN_CARRYING_WATER, 1.5);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 1.5);
   Actor_WalkTo(ACTOR_WOMAN_CARRYING_WATER, 280, 232);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 296, 232);
   Actor_WaitForMoveById(ACTOR_WOMAN_CARRYING_WATER);

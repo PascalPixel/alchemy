@@ -311,10 +311,10 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   wait(1);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.8);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 254, 593);
-  Actor_SetSpeed(ACTOR_GARET, PIXELS(3) / 5, PIXELS(3) / 10);
-  Actor_SetSpeed(ACTOR_IVAN, PIXELS(3) / 5, PIXELS(3) / 10);
+  Actor_SetSpeed(ACTOR_GARET, 0.6);
+  Actor_SetSpeed(ACTOR_IVAN, 0.6);
   {
     struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
@@ -332,7 +332,7 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   Actor_SetScript(ACTOR_GARET, gKolimaForestEntrance_GaretAction);
   Actor_SetScript(ACTOR_IVAN, gKolimaForestEntrance_IvanAction);
   if (*party != 0) {
-    Actor_SetSpeed(ACTOR_MIA, PIXELS(3) / 5, PIXELS(3) / 10);
+    Actor_SetSpeed(ACTOR_MIA, 0.6);
     {
       struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
@@ -417,7 +417,7 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
     record = Actor_Get(ACTOR_MIA);
     record->velocityY = PIXELS(2);
     Event_Wait(10);
-    Actor_SetSpeed(ACTOR_MIA, PIXELS(2), PIXELS(2));
+    Actor_SetSpeedAndAcceleration(ACTOR_MIA, 2, 2);
     Actor_SetDestinationOffset(ACTOR_MIA, -2, 0);
     Actor_SetScript(ACTOR_MIA, gKolimaForestEntrance_RestoreScaleAction);
     record = Actor_Get(ACTOR_MIA);
@@ -428,7 +428,7 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   record = Actor_Get(ACTOR_PARTY_LEADER);
   record->velocityY = PIXELS(2);
   Event_Wait(10);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2), PIXELS(2));
+  Actor_SetSpeedAndAcceleration(ACTOR_PARTY_LEADER, 2, 2);
   restoreScaleAction = gKolimaForestEntrance_RestoreScaleAction;
   Actor_SetScript(ACTOR_PARTY_LEADER, restoreScaleAction);
   record = Actor_Get(ACTOR_PARTY_LEADER);
@@ -438,7 +438,7 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   record = Actor_Get(ACTOR_GARET);
   record->velocityY = PIXELS(2);
   Event_Wait(10);
-  Actor_SetSpeed(ACTOR_GARET, PIXELS(2), PIXELS(2));
+  Actor_SetSpeedAndAcceleration(ACTOR_GARET, 2, 2);
   Actor_SetScript(ACTOR_GARET, restoreScaleAction);
   record = Actor_Get(ACTOR_GARET);
   Actor_SetSpriteFlags(record, 0);
@@ -1057,9 +1057,9 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
     }
   }
   Sound_Play(SOUND_FADE_OUT_BGM);
-  Actor_SetSpeed(ACTOR_GARET, PIXELS(6) / 5, PIXELS(3) / 5);
-  Actor_SetSpeed(ACTOR_IVAN, PIXELS(6) / 5, PIXELS(3) / 5);
-  Actor_SetSpeed(ACTOR_MIA, PIXELS(6) / 5, PIXELS(3) / 5);
+  Actor_SetSpeed(ACTOR_GARET, 1.2);
+  Actor_SetSpeed(ACTOR_IVAN, 1.2);
+  Actor_SetSpeed(ACTOR_MIA, 1.2);
   Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
   {
     struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);

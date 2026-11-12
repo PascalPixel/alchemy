@@ -652,7 +652,7 @@ static void Kalay_OpenDoorAndExit(void) {
 
     MapGrid_AnimateCells(gKalay_DoorCells[door].steps, x, y);
   }
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.5);
   Actor_Get(ACTOR_PARTY_LEADER)->motionFlags = 0;
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 2, -8);
@@ -677,7 +677,7 @@ static __inline__ void Kalay_AnimatePalaceDoor(void) {
 static void Kalay_EnterPalace(void) {
   Event_Start();
   Kalay_AnimatePalaceDoor();
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.5);
   Actor_Get(ACTOR_PARTY_LEADER)->motionFlags = 0;
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, -8);
@@ -743,16 +743,16 @@ static void Kalay_WatchTourGroupDeparture(void) {
       Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 20);
     }
     // Stagger the speeds so the group arrives in rows.
-    Actor_SetSpeed(ACTOR_HEAD_GUIDE, PIXELS(11) / 10, PIXELS(11) / 20);
-    Actor_SetSpeed(ACTOR_FIRST_TOURIST, PIXELS(1), PIXELS(1) / 2);
-    Actor_SetSpeed(ACTOR_FIRST_TOURIST + 1, PIXELS(1), PIXELS(1) / 2);
-    Actor_SetSpeed(ACTOR_FIRST_TOURIST + 2, PIXELS(9) / 10, PIXELS(9) / 20);
-    Actor_SetSpeed(ACTOR_FIRST_TOURIST + 3, PIXELS(9) / 10, PIXELS(9) / 20);
-    Actor_SetSpeed(ACTOR_FIRST_TOURIST + 5, PIXELS(4) / 5, PIXELS(2) / 5);
-    Actor_SetSpeed(ACTOR_FIRST_TOURIST + 4, PIXELS(4) / 5, PIXELS(2) / 5);
-    Actor_SetSpeed(ACTOR_FIRST_TOURIST + 6, PIXELS(7) / 10, PIXELS(7) / 20);
-    Actor_SetSpeed(ACTOR_OURANOS, PIXELS(7) / 10, PIXELS(7) / 20);
-    Actor_SetSpeed(ACTOR_SECOND_GUIDE, PIXELS(3) / 5, PIXELS(3) / 10);
+    Actor_SetSpeed(ACTOR_HEAD_GUIDE, 1.1);
+    Actor_SetSpeed(ACTOR_FIRST_TOURIST, 1);
+    Actor_SetSpeed(ACTOR_FIRST_TOURIST + 1, 1);
+    Actor_SetSpeed(ACTOR_FIRST_TOURIST + 2, 0.9);
+    Actor_SetSpeed(ACTOR_FIRST_TOURIST + 3, 0.9);
+    Actor_SetSpeed(ACTOR_FIRST_TOURIST + 5, 0.8);
+    Actor_SetSpeed(ACTOR_FIRST_TOURIST + 4, 0.8);
+    Actor_SetSpeed(ACTOR_FIRST_TOURIST + 6, 0.7);
+    Actor_SetSpeed(ACTOR_OURANOS, 0.7);
+    Actor_SetSpeed(ACTOR_SECOND_GUIDE, 0.6);
     Actor_SetScript(ACTOR_HEAD_GUIDE, gKalay_TourGroupWalkScript);
     Actor_SetScript(ACTOR_FIRST_TOURIST, gKalay_TourGroupWalkScript);
     Actor_SetScript(ACTOR_FIRST_TOURIST + 1, gKalay_TourGroupWalkScript);
@@ -850,7 +850,7 @@ static void Kalay_WatchTourGroupDeparture(void) {
     Actor_RunRepeatedMotion(ACTOR_HEAD_GUIDE, 2);
     // "All right, hurry up and start counting!"
     Event_ShowMessageThenWait(ACTOR_HEAD_GUIDE, 0, 10);
-    Actor_SetSpeed(ACTOR_SECOND_GUIDE, PIXELS(8) / 5, PIXELS(4) / 5);
+    Actor_SetSpeed(ACTOR_SECOND_GUIDE, 1.6);
     Actor_WalkToAndWait(ACTOR_SECOND_GUIDE, 265, 282);
     Actor_WalkToAndWait(ACTOR_SECOND_GUIDE, 251, 284);
     Actor_WalkToAndWait(ACTOR_SECOND_GUIDE, 246, 296);
@@ -858,7 +858,7 @@ static void Kalay_WatchTourGroupDeparture(void) {
     // The tourists fidget while the guides count them.
     Kalay_StartTouristsFidgeting();
     Event_Wait(40);
-    Actor_SetSpeed(ACTOR_SECOND_GUIDE, PIXELS(8) / 5, PIXELS(4) / 5);
+    Actor_SetSpeed(ACTOR_SECOND_GUIDE, 1.6);
     Actor_WalkToAndWait(ACTOR_SECOND_GUIDE, 228, 296);
     Actor_FaceDirection(ACTOR_SECOND_GUIDE, FACING_NORTH, 40);
     Actor_WalkToAndWait(ACTOR_SECOND_GUIDE, 212, 296);
@@ -884,7 +884,7 @@ static void Kalay_WatchTourGroupDeparture(void) {
     Actor_SetAnimationAndWait(ACTOR_HEAD_GUIDE, ANIM_NOD);
     Actor_SetAnimationAndWait(ACTOR_SECOND_GUIDE, ANIM_NOD);
     Actor_FaceDirection(ACTOR_SECOND_GUIDE, FACING_EAST, 0);
-    Actor_SetSpeed(ACTOR_HEAD_GUIDE, PIXELS(8) / 5, PIXELS(4) / 5);
+    Actor_SetSpeed(ACTOR_HEAD_GUIDE, 1.6);
     Actor_RunScriptAndWait(ACTOR_HEAD_GUIDE, gKalay_GuidePaceScript);
     Actor_WalkToAndWait(ACTOR_HEAD_GUIDE, 228, 296);
     Actor_FaceDirection(ACTOR_HEAD_GUIDE, FACING_NORTH, 40);
@@ -944,8 +944,8 @@ static void Kalay_WatchTourGroupDeparture(void) {
     headWait->timer = 0;
     lastWait = Actor_Get(ACTOR_SECOND_GUIDE);
     lastWait->timer = 0;
-    Actor_SetSpeed(ACTOR_HEAD_GUIDE, PIXELS(4) / 5, PIXELS(2) / 5);
-    Actor_SetSpeed(ACTOR_SECOND_GUIDE, PIXELS(4) / 5, PIXELS(2) / 5);
+    Actor_SetSpeed(ACTOR_HEAD_GUIDE, 0.8);
+    Actor_SetSpeed(ACTOR_SECOND_GUIDE, 0.8);
     Actor_SetScript(ACTOR_HEAD_GUIDE, gKalay_HeadGuideStopScript);
     Actor_SetScript(ACTOR_SECOND_GUIDE, gKalay_SecondGuideStopScript);
     Actor_Stop(ACTOR_FIRST_TOURIST + 2);
@@ -1079,16 +1079,16 @@ static void Kalay_WatchTourGroupDeparture(void) {
     Actor_FaceDirection(ACTOR_FIRST_TOURIST + 4, FACING_WEST, 4);
     Actor_FaceDirection(ACTOR_FIRST_TOURIST + 6, FACING_WEST, 0);
     Actor_FaceDirection(ACTOR_OURANOS, FACING_WEST, 4);
-    Actor_SetSpeed(ACTOR_HEAD_GUIDE, PIXELS(11) / 10, PIXELS(11) / 20);
-    Actor_SetSpeed(ACTOR_FIRST_TOURIST, PIXELS(21) / 20, PIXELS(21) / 40);
-    Actor_SetSpeed(ACTOR_FIRST_TOURIST + 1, PIXELS(21) / 20, PIXELS(21) / 40);
-    Actor_SetSpeed(ACTOR_FIRST_TOURIST + 2, PIXELS(1), PIXELS(1) / 2);
-    Actor_SetSpeed(ACTOR_FIRST_TOURIST + 3, PIXELS(1), PIXELS(1) / 2);
-    Actor_SetSpeed(ACTOR_FIRST_TOURIST + 5, PIXELS(19) / 20, PIXELS(19) / 40);
-    Actor_SetSpeed(ACTOR_FIRST_TOURIST + 4, PIXELS(19) / 20, PIXELS(19) / 40);
-    Actor_SetSpeed(ACTOR_FIRST_TOURIST + 6, PIXELS(9) / 10, PIXELS(9) / 20);
-    Actor_SetSpeed(ACTOR_OURANOS, PIXELS(9) / 10, PIXELS(9) / 20);
-    Actor_SetSpeed(ACTOR_SECOND_GUIDE, PIXELS(17) / 20, PIXELS(17) / 40);
+    Actor_SetSpeed(ACTOR_HEAD_GUIDE, 1.1);
+    Actor_SetSpeed(ACTOR_FIRST_TOURIST, 1.05);
+    Actor_SetSpeed(ACTOR_FIRST_TOURIST + 1, 1.05);
+    Actor_SetSpeed(ACTOR_FIRST_TOURIST + 2, 1);
+    Actor_SetSpeed(ACTOR_FIRST_TOURIST + 3, 1);
+    Actor_SetSpeed(ACTOR_FIRST_TOURIST + 5, 0.95);
+    Actor_SetSpeed(ACTOR_FIRST_TOURIST + 4, 0.95);
+    Actor_SetSpeed(ACTOR_FIRST_TOURIST + 6, 0.9);
+    Actor_SetSpeed(ACTOR_OURANOS, 0.9);
+    Actor_SetSpeed(ACTOR_SECOND_GUIDE, 0.85);
     Actor_SetSpritePriority(ACTOR_FIRST_TOURIST, 1);
     Actor_SetSpritePriority(ACTOR_FIRST_TOURIST + 1, 1);
     Actor_SetSpritePriority(ACTOR_FIRST_TOURIST + 2, 1);
@@ -1130,7 +1130,7 @@ static void Kalay_WatchTourGroupDeparture(void) {
     // The late tourist finds that the rest of the group has already left.
     Actor_SetPosition(ACTOR_LATE_TOURIST, 340, 274);
     wait(1);
-    Actor_SetSpeed(ACTOR_LATE_TOURIST, PIXELS(1), PIXELS(1) / 2);
+    Actor_SetSpeed(ACTOR_LATE_TOURIST, 1);
     Actor_WalkToAndWait(ACTOR_LATE_TOURIST, 224, 274);
     Actor_FaceDirection(ACTOR_LATE_TOURIST, FACING_EAST, 40);
     Actor_FaceDirection(ACTOR_LATE_TOURIST, FACING_WEST, 40);
@@ -1148,7 +1148,7 @@ static void Kalay_WatchTourGroupDeparture(void) {
     Actor_RunRepeatedMotion(ACTOR_LATE_TOURIST, 2);
     Event_ShowMessageThenWait(ACTOR_LATE_TOURIST, 0, 10);
     Actor_Jump(ACTOR_LATE_TOURIST, 4, 40);
-    Actor_SetSpeed(ACTOR_LATE_TOURIST, PIXELS(6) / 5, PIXELS(3) / 5);
+    Actor_SetSpeed(ACTOR_LATE_TOURIST, 1.2);
     closing = Actor_Get(ACTOR_LATE_TOURIST);
     closing->timer = 0;
     Actor_SetScript(ACTOR_LATE_TOURIST, gKalay_TourGroupLeaveScript);
@@ -1616,8 +1616,8 @@ static void Kalay_StartTouristFidgeting(s32 actorId) {
 /// The guides speed up and start pacing in turn.
 static void Kalay_StartGuidesPacing(void) {
   gKalay_DanceStep = 0;
-  Actor_SetSpeed(ACTOR_HEAD_GUIDE, PIXELS(8) / 5, PIXELS(4) / 5);
-  Actor_SetSpeed(ACTOR_SECOND_GUIDE, PIXELS(8) / 5, PIXELS(4) / 5);
+  Actor_SetSpeed(ACTOR_HEAD_GUIDE, 1.6);
+  Actor_SetSpeed(ACTOR_SECOND_GUIDE, 1.6);
   Task_AddFrame(Kalay_AlternateGuidesPacing, TASK_PASS_FRAME);
 }
 
@@ -1677,10 +1677,10 @@ static void Kalay_IvanMeetsPalaceGuards(void) {
   FieldCamera_MoveTo(PIXELS(192), -1, PIXELS(252), 1);
   gFieldWork->transitionFrames = 40;
   Event_StartScreenTransition();
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.8);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 192, 278);
-  Actor_SetSpeed(ACTOR_PALACE_GUARD, PIXELS(1), PIXELS(1) / 2);
-  Actor_SetSpeed(ACTOR_SECOND_PALACE_GUARD, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_PALACE_GUARD, 1);
+  Actor_SetSpeed(ACTOR_SECOND_PALACE_GUARD, 1);
   actor = Actor_Get(ACTOR_PALACE_GUARD);
   actor->facing = FACING_SOUTH_SOUTHEAST;
   actor = Actor_Get(ACTOR_SECOND_PALACE_GUARD);
@@ -1710,7 +1710,7 @@ static void Kalay_IvanMeetsPalaceGuards(void) {
   if (actor != NULL) {
     Actor_SetPositionFixed(ACTOR_IVAN, actor->x.fixed, actor->z.fixed);
   }
-  Actor_SetSpeed(ACTOR_IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(ACTOR_IVAN, 0.8);
   Actor_WalkToAndWait(ACTOR_IVAN, 212, 268);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTHWEST, 20);
@@ -1834,8 +1834,8 @@ static void Kalay_IvanMeetsPalaceGuards(void) {
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 10);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
-  Actor_SetSpeed(ACTOR_PALACE_GUARD, PIXELS(4) / 5, PIXELS(2) / 5);
-  Actor_SetSpeed(ACTOR_SECOND_PALACE_GUARD, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(ACTOR_PALACE_GUARD, 0.8);
+  Actor_SetSpeed(ACTOR_SECOND_PALACE_GUARD, 0.8);
   actor = Actor_Get(ACTOR_PALACE_GUARD);
   actor->facing = FACING_EAST;
   actor = Actor_Get(ACTOR_SECOND_PALACE_GUARD);
@@ -1854,7 +1854,7 @@ static void Kalay_IvanMeetsPalaceGuards(void) {
   Actor_WalkToAndWait(ACTOR_IVAN, 192, 222);
   // Lead the party and guards through the opened palace door.
   Actor_SetPosition(ACTOR_IVAN, 0, 0);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(6) / 5, PIXELS(3) / 5);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 1.2);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 192, 222);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
   Actor_SetAnimation(ACTOR_PALACE_GUARD, ANIM_NOD);
@@ -1907,16 +1907,16 @@ static void Kalay_HammetReturnsToPalace(void) {
   FieldCamera_SetSpeed(PIXELS(8) / 5, PIXELS(1) / 5);
   FieldCamera_MoveTo(PIXELS(440), -1, PIXELS(400), 1);
   Sound_Play(SE_RUMBLE);
-  Actor_SetSpeed(ACTOR_WAGON, PIXELS(8) / 5, PIXELS(4) / 5);
+  Actor_SetSpeed(ACTOR_WAGON, 1.6);
   Actor_WalkToAndWait(ACTOR_WAGON, 440, 400);
   FieldCamera_SetSpeed(PIXELS(3) / 4, PIXELS(3) / 32);
   FieldCamera_MoveTo(PIXELS(440), -1, PIXELS(300), 1);
-  Actor_SetSpeed(ACTOR_WAGON, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(ACTOR_WAGON, 0.8);
   Actor_WalkToAndWait(ACTOR_WAGON, 440, 300);
   Actor_SetAnimation(ACTOR_WAGON, 0);
   Sound_Play(SOUND_FADE_OUT_ACTION_SE);
   Event_Wait(40);
-  Actor_SetSpeed(ACTOR_BUNZA, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(ACTOR_BUNZA, 0.8);
   Actor_SetPosition(ACTOR_BUNZA, 439, 306);
   Actor_Jump(ACTOR_BUNZA, 4, 0);
   Actor_WalkToAndWait(ACTOR_BUNZA, 439, 312);
@@ -1924,7 +1924,7 @@ static void Kalay_HammetReturnsToPalace(void) {
   Actor_WalkToAndWait(ACTOR_BUNZA, 400, 256);
   Actor_FaceDirection(ACTOR_BUNZA, FACING_SOUTH_SOUTHEAST, 40);
   FieldCamera_MoveTo(PIXELS(410), -1, PIXELS(280), 1);
-  Actor_SetSpeed(ACTOR_HAMMET, PIXELS(3) / 5, PIXELS(3) / 10);
+  Actor_SetSpeed(ACTOR_HAMMET, 0.6);
   Actor_SetPosition(ACTOR_HAMMET, 439, 306);
   Actor_Jump(ACTOR_HAMMET, 4, 0);
   Actor_WalkToAndWait(ACTOR_HAMMET, 439, 312);
@@ -1932,7 +1932,7 @@ static void Kalay_HammetReturnsToPalace(void) {
   Actor_WalkToAndWait(ACTOR_HAMMET, 388, 270);
   Actor_FaceDirection(ACTOR_HAMMET, FACING_NORTH_NORTHEAST, 10);
   Actor_FaceDirection(ACTOR_BUNZA, FACING_SOUTH_SOUTHWEST, 10);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.8);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 439, 306);
   Actor_Jump(ACTOR_PARTY_LEADER, 4, 0);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 439, 312);
@@ -1965,9 +1965,9 @@ static void Kalay_HammetReturnsToPalace(void) {
   if (actor != 0) {
     Actor_SetPositionFixed(ACTOR_MIA, actor->x.fixed, actor->z.fixed);
   }
-  Actor_SetSpeed(ACTOR_GARET, PIXELS(4) / 5, PIXELS(2) / 5);
-  Actor_SetSpeed(ACTOR_IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
-  Actor_SetSpeed(ACTOR_MIA, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(ACTOR_GARET, 0.8);
+  Actor_SetSpeed(ACTOR_IVAN, 0.8);
+  Actor_SetSpeed(ACTOR_MIA, 0.8);
   Actor_WalkTo(ACTOR_GARET, 378, 310);
   Actor_WalkTo(ACTOR_IVAN, 400, 288);
   Actor_WalkToAndWait(ACTOR_MIA, 410, 308);
@@ -2120,7 +2120,7 @@ static void Kalay_HammetReturnsToPalace(void) {
   Actor_SetAnimationAndWait(ACTOR_HAMMET, ANIM_NOD);
   Actor_FaceDirection(ACTOR_TUNNEL_GUARD, FACING_EAST, 10);
   Actor_SetAnimationAndWait(ACTOR_TUNNEL_GUARD, ANIM_NOD);
-  Actor_SetSpeed(ACTOR_TUNNEL_GUARD, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(ACTOR_TUNNEL_GUARD, 0.8);
   Actor_WalkToAndWait(ACTOR_TUNNEL_GUARD, 268, 198);
   Actor_FaceDirection(ACTOR_TUNNEL_GUARD, FACING_NORTH, 10);
   Actor_RunRepeatedMotion(ACTOR_TUNNEL_GUARD, 2);
@@ -2177,13 +2177,13 @@ static void Kalay_HammetReturnsToPalace(void) {
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 439, 306);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
   Sound_Play(SE_RUMBLE);
-  Actor_SetSpeed(ACTOR_WAGON, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetSpeed(ACTOR_WAGON, 0.8);
   FieldCamera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
   FieldCamera_MoveTo(PIXELS(440), -1, PIXELS(420), 1);
   Actor_WalkToAndWait(ACTOR_WAGON, 440, 420);
   FieldCamera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
   FieldCamera_MoveTo(PIXELS(440), -1, PIXELS(600), 1);
-  Actor_SetSpeed(ACTOR_WAGON, PIXELS(8) / 5, PIXELS(4) / 5);
+  Actor_SetSpeed(ACTOR_WAGON, 1.6);
   Actor_WalkToAndWait(ACTOR_WAGON, 440, 500);
   Actor_WalkTo(ACTOR_WAGON, 440, 600);
   Sound_Play(SOUND_FADE_OUT_ACTION_SE);

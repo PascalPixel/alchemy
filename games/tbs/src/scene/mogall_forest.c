@@ -377,7 +377,7 @@ static void MogallForest_HopActorTo(s32 actorId, s32 targetX, s32 targetZ,
 
   actor = Actor_Get(actorId);
   Actor_SetSpritePriority(actorId, 1);
-  Actor_SetSpeed(actorId, PIXELS(3), PIXELS(3) / 2);
+  Actor_SetSpeed(actorId, 3);
   Sound_Play(SE_JUMP);
   actor->velocityY = verticalSpeed;
   actor->gravity = PIXELS(1) / 2;
@@ -493,7 +493,7 @@ static void MogallForest_FirstArea_PushLog(void) {
         (probe.position.z >> 20) == 26) {
       GameFlag_Set(FLAG_MOGALL_FOREST_FIRST_AREA_LOG_ROLLED);
       Actor_SetAnimation(ACTOR_FIRST_AREA_RIVER_LOG, MOGALL_FOREST_LOG_ROLLING);
-      Actor_SetSpeed(ACTOR_FIRST_AREA_RIVER_LOG, PIXELS(1) / 4, PIXELS(1) / 2);
+      Actor_SetSpeedAndAcceleration(ACTOR_FIRST_AREA_RIVER_LOG, 0.25, 0.5);
       Actor_SetDestinationOffsetById(ACTOR_FIRST_AREA_RIVER_LOG, 0, -16);
       Event_Wait(45);
       Actor_SetAnimation(ACTOR_FIRST_AREA_RIVER_LOG,
@@ -1443,7 +1443,7 @@ s32 MogallForest_Initialize(void) {
         Actor_SetPosition(ACTOR_FIRST_AREA_NORTH_APE, 92, 120);
         Actor_FaceDirection(ACTOR_FIRST_AREA_NORTH_APE, FACING_NORTH_NORTHEAST,
                             0);
-        Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2) / 5, PIXELS(1) / 5);
+        Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.4);
         Actor_WalkTo(ACTOR_PARTY_LEADER, 136, 64);
         Event_StartScreenTransition();
         Event_WaitTransitionFrames();

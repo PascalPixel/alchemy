@@ -1,5 +1,5 @@
 @ Why assembly:
-@ Func_08196404 (battle_effect/f192c9c.c) copies these 14-word fragments into
+@ Func_08196404 (battle_effect/f191d60.c) copies these 14-word fragments into
 @ generated ARM routines. r1/r5/r8/r9 are shared state and sl is the mask;
 @ r5/r8/r9 change without callee saves, and neither fragment has a return.
 .syntax unified

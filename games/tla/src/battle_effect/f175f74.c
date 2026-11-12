@@ -88,7 +88,7 @@ struct SummonWork {
   struct SpriteObject *objects[14];
   u8 unk7814[0xd0];
   // volatile: the VBlank handler counts it up; every effect that waits on it
-  // reads it twice per test (f142944.c, the drafts at 0813fd84,
+  // reads it twice per test (f14153c.c, the drafts at 0813fd84,
   // 08173aac).
   volatile u32 frameSync;
   s32 frameDone;

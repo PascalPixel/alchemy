@@ -96,7 +96,7 @@ squares of 8 by 8 pixels, called tiles.
 The console draws its
 [background layers](../../glossary.md#background-layer), the flat sheets a
 town or a title screen is made of, as grids of tile numbers
-([The console](../../README.md#the-console)). A tile is stored once and can
+([How the console draws a picture](#how-the-console-draws-a-picture)). A tile is stored once and can
 be named in the grid as often as the artist likes. One square of grass can
 cover a whole field.
 

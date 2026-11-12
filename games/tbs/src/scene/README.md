@@ -205,9 +205,8 @@ An exit can lead to different scenes as the story moves on. The path down
 from Sol Sanctum's entrance has three rows. It leads to Vale until the
 eruption, to Vale in the middle of the eruption until the party has left
 the village, and to Vale again ever after. Each of the first two rows
-counts until its flag is set, and the first row that counts wins. The front
-page's [Sol Sanctum path](../../README.md#exits-and-entrances) shows the
-three rows.
+counts until its flag is set, and the first row that counts wins
+([Field](../../field.md#exits-and-entrances)).
 
 An exit can also lead into a battle instead of a scene. Its row then names
 the [formation](../../glossary.md#formation), the group of enemies to
@@ -684,9 +683,8 @@ walking as the screen begins to fade.
 
 The last line does not end the scene on the spot. It sets a
 [field request](../../glossary.md#field-request), which the field acts on
-once the event has finished. The front page's
-[Vault thieves](../../README.md#the-event) wait for their battle the same
-way.
+once the event has finished. The thieves in Vault's inn wait for their
+battle the same way ([Field](../../field.md#triggers-and-events)).
 
 ### An event with a choice in it
 

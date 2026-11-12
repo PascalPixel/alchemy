@@ -270,7 +270,7 @@ kept waiting. It is built again from what the main routine's work and the
 game flags say. So any scene or battle can follow any other, and that is
 what lets the developers' window jump from Vale to any scene in the game:
 the [debug menus](glossary.md#debug-menus) rely on it
-([The Broken Seal](README.md#why-every-sequence-starts-fresh)).
+([System code](src/system/README.md#clearing-away-the-last-sequence)).
 
 ## For readers of the code
 

@@ -20,9 +20,8 @@ Enjoy! It is a fascinating game with unique engineering, and a great read.
 
 ## Where to start
 
-Start with [The Broken Seal](tbs/README.md). It explains the four mechanisms
-the whole game runs on, then follows one conversation into a battle and back
-out through all four.
+Start with [The Broken Seal](tbs/README.md). It says which two ideas to
+read first and maps everything else.
 
 After that, go wherever you are curious:
 

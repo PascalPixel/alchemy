@@ -229,7 +229,7 @@ The main routine, `MainRoutine_Run`, starts when the console is switched on
 and never finishes. All it does is run one [sequence](#sequence), clear away
 what that one set up, and start the next. Walk into a battle, win it and
 walk on, and the main routine has run three: the place, the battle, the
-place again ([The Broken Seal](README.md#the-main-routine-and-its-sequences)).
+place again ([System](system.md#the-main-routine)).
 
 Evidence: tradition: メインルーチン, the period's word for the code that runs
 outside the interrupts.
@@ -242,7 +242,7 @@ are four: the field sequence (walking around a place), the battle sequence
 Wheels). The code names the last three `SEQUENCE_BATTLE`, `SEQUENCE_DICE`
 and `SEQUENCE_SLOTS`. The field sequence has no such name: it is asked for
 by naming the place to walk around. Only one sequence runs at a time
-([The Broken Seal](README.md#the-main-routine-and-its-sequences)).
+([System](system.md#the-main-routine)).
 
 Evidence: tradition: ゲームシーケンス.
 
@@ -276,7 +276,7 @@ read it. It holds what runs next, who is in the party, their Djinn and
 their coins, which is why a battle's winnings are still there back on the
 field. It is emptied when the console is switched on and when a new game
 begins. A save file keeps it, with the [game flags](#game-flag)
-([The Broken Seal](README.md#what-the-game-remembers)).
+([System](system.md#saving)).
 
 Evidence: tradition: work, named for its owner, the main routine.
 
@@ -286,7 +286,7 @@ A frame is one picture on the screen and the game's work to prepare it,
 about a sixtieth of a second. Everything that takes time is counted in
 frames. When Dora, at her door in Vale, says `Isaac... That's a lie!`, she
 pauses 60 frames before going on: one second
-([The Broken Seal](README.md#the-frame)).
+([System code](src/system/README.md#the-frame-loop)).
 
 Evidence: tradition: フレーム, one pass of a game's processing.
 
@@ -297,7 +297,7 @@ To wait is to let [frames](#frame) go by in the middle of a piece of code.
 line. When a woman in Vale feels a tremor, her code starts the screen
 shaking, waits ten frames, and only then goes on to her line. So a scene can
 be written top to bottom, in the order things happen
-([The Broken Seal](README.md#code-that-waits)).
+([System](system.md#waiting-and-tasks)).
 
 Evidence: tradition: WAIT, the period's word for it.
 
@@ -307,7 +307,7 @@ A task is a routine the game runs once in every [frame](#frame), even
 while other code is [waiting](#wait), until it is taken off the list. The
 task that types a villager's line into its window letter by letter is
 one. The list, `gTasks`, has room for 20
-([The Broken Seal](README.md#tasks)).
+([System code](src/system/README.md#the-task-runner)).
 
 Evidence: tradition: タスク and its 実行関数.
 
@@ -343,7 +343,7 @@ and what the leader has just run into. The menus' is `gMenuWork`. Each is
 found again through a [heap slot](#heap-slot). The
 [main routine's](#main-routines-work) is the one that is kept apart and
 outlives the rest
-([The Broken Seal](README.md#what-the-game-remembers)).
+([System](system.md#saving)).
 
 Evidence: tradition: ワーク, working memory, as in the hardware's Work RAM,
 used here for a system's block.
@@ -392,7 +392,7 @@ The main image is the code the processor runs straight from the cartridge,
 without copying it into memory first. It is about 1 MB, in fourteen
 [banks](#bank), and holds what is needed all the time: walking, battles,
 windows, menus, shops, sound. What only one place needs is kept apart, in
-[overlays](#overlay) ([The Broken Seal](README.md#the-console)).
+[overlays](#overlay) ([System](system.md#overlays)).
 
 Evidence: plain English; the project's own word.
 
@@ -482,7 +482,7 @@ villagers and what happens in Vale are in Vale's overlay, and are of no use
 in Vault. There are 96 overlays for the 201 [scenes](#scene), because
 neighbours share: Crossbone Isle and the floors of its cave have one between
 them. They all unpack into the same 32 KB of memory, so only one is loaded
-at a time ([The Broken Seal](README.md#overlays)).
+at a time ([System](system.md#overlays)).
 
 Evidence: tradition: the GNU linker's word; the linker's `.bss` for the
 globals' folder.
@@ -622,7 +622,7 @@ such as the Title and the File Screen. There are 201, each a row of the
 list `gScenes`: Vale is one, and the Sanctum's hall another, which is why
 the screen fades between them. Each has a short label Camelot gave it
 (`TITLE`, `WORLD`, `PLOGV00` for Vale on the stormy night of the prologue)
-([The Broken Seal](README.md#scenes)).
+([Field](field.md#scenes-and-areas)).
 
 Evidence: Camelot: The Lost Age's developer test message 05746 heads a location name シーン.
 

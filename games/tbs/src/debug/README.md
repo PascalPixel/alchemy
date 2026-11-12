@@ -419,8 +419,8 @@ door uses. The developers did not need a second way of loading anything in
 order to test the game.
 
 That works because a scene builds everything it needs when the party
-arrives, wherever they came from ([The Broken
-Seal](../../README.md#why-every-sequence-starts-fresh) says why). Vale does
+arrives, wherever they came from ([System code](../system/README.md#clearing-away-the-last-sequence)
+says why). Vale does
 not care whether the party walked in from the World Map or was dropped in by
 the selector, and neither does Menu test.
 

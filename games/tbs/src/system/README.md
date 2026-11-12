@@ -150,8 +150,7 @@ are all that one sequence can hand to the next.
 
 The main routine then reads what runs next from its work. A battle, Lucky
 Dice or Lucky Wheels
-([The Broken Seal](../../README.md#the-main-routine-and-its-sequences) lists
-them) runs from start to finish and hands back a result, such as a defeat.
+([System](../../system.md#the-main-routine) lists them) runs from start to finish and hands back a result, such as a defeat.
 
 The result decides which scene comes back (`Scene_ReturnFromSequence`):
 
@@ -245,8 +244,8 @@ It does so with the scene's list of exits. Each line of the list names an
 exit and where it leads, and a line can carry a flag. The main routine takes
 the first line for the exit whose flag, if it has one, is not set. That is
 how one path leads to two places
-([The Broken Seal](../../README.md#exits-and-entrances) reads the three
-lines behind this recording).
+([Field](../../field.md#exits-and-entrances) reads the lines behind this
+recording).
 
 Vale's door to the Sanctum is the plainest case. Walking into the door
 plays a thump, opens the door, walks Isaac through and asks for the exit
@@ -742,7 +741,7 @@ the fighters moved and the background not
 The second choice is that every sequence starts from nothing. The cave's
 tasks, its blocks from the heap and its line-by-line effects are all gone
 before the battle begins, and only the party and the flags cross over
-([The Broken Seal](../../README.md#why-every-sequence-starts-fresh)).
+([Clearing away the last sequence](#clearing-away-the-last-sequence)).
 
 ## How it fits with the rest of the game
 

@@ -173,7 +173,7 @@ for the Psynergy or item the player has put on them.
 
 When several requests are set at once, the field answers them one at a
 time, in a fixed order, and goes back to the walk only when none is left.
-[The Broken Seal](../../README.md#requests) lists all twelve in that order.
+[The twelve requests](#the-twelve-requests) lists them in that order.
 They fall into four groups.
 
 - Leaving comes first. If the party has walked out of the scene, nothing
@@ -1382,7 +1382,7 @@ do {
 ```
 
 `wait(1)` is the frame going by
-([The Broken Seal](../../README.md#code-that-waits)).
+([System](../../system.md#waiting-and-tasks)).
 
 ### Actor scripts without addresses
 

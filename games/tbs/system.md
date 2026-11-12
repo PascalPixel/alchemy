@@ -1,303 +1,158 @@
 # System
 
-![Isaac climbs the steps to the Sanctum's door in Vale. Watch the fade: Vale goes dark, and the Sanctum's hall comes up with Isaac just inside its door.](https://alchemy.pascalpixel.com/guides/front/sanctum-door.gif)
+The System is what every other part of the game stands on. It decides what
+runs, lets time pass, loads a place's code and writes the save.
 
-Isaac climbs the steps to Vale's Sanctum and walks through its door. The
-town fades out, the hall fades in, and he is standing just inside.
-
-To the player that is one walk with a fade in the middle. Underneath, one
-part of the game has ended and another has begun. While the screen was dark
-the game cleared away everything it had set up for Vale, and fetched from
-the cartridge everything the Sanctum can do.
-
-The System is the part of the game under every moment like that one. It
-starts the game, decides which part of it runs next, and lets time pass. It
-finds things on the cartridge, plays the sound and writes the save.
-
-Three words come up all the way down this page. The game is code: long
-lists of instructions for the console to carry out. Memory is where the
-console keeps whatever the game is working on at the moment, and it is
-emptied when the power goes. And the console draws the screen afresh about
-sixty times a second. Each of those pictures, with the work that goes into
-it, is a [frame](glossary.md#frame).
-
-The System's code is in five folders, and each has a guide that goes
-through properly what this page introduces:
-[System code](src/system/README.md), [The Game Pak](src/gamepak/README.md),
-which is the cartridge itself, [Sound](src/sound/README.md),
-[Graphics](src/graphics/README.md) and
-[Debug scenes](src/debug/README.md).
-
-## Start-up
-
-![Isaac stands in Vale. Then A, B, Select and Start are pressed together, and the game starts over from its opening logos.](https://alchemy.pascalpixel.com/guides/runtime/soft-reset.gif)
-
-Hold A, B, Select and Start anywhere in the game and the opening logos come
-up, just as they do when the console is switched on.
-
-As far as the game can tell, it has been switched on. Switching on runs the
-first instruction on the cartridge, and the four buttons send the game back
-to that same instruction. So a reset goes through start-up in full.
-
-Start-up runs once, from top to bottom, before anything moves. It wipes the
-memory, which after a reset is still full of the old game. It loads the
-pictures the windows are drawn from, and starts the sound.
-
-Then it waits ten frames and hands over to the main routine, which never
-hands back. The logos are the first thing the main routine shows.
-[Start-up](src/system/README.md#start-up) goes through it step by step.
+Four ideas, and you know how the whole program hangs together.
 
 ## The main routine
 
 ![Isaac walks through Goma Cave until a random battle starts. Watch what comes back afterwards: the same cave, with the party standing where the battle found it.](https://alchemy.pascalpixel.com/guides/overworld/battle-return.gif)
 
-Isaac walks through Goma Cave, a battle breaks out, and afterwards the cave
-is back with the party where it stood.
-
-The game runs those as three separate stretches of play: the cave, the
-battle, the cave again. It calls each stretch a
-[sequence](glossary.md#sequence), and there are four kinds. The
-[field sequence](glossary.md#field-sequence) runs a
-[scene](glossary.md#scene), which is one town, one dungeon floor, a few
-rooms or the World Map. The other three run a battle, a game of Lucky Dice
-and a game of Lucky Wheels.
-
-The [main routine](glossary.md#main-routine) runs them, one after another,
-for as long as the console is on.
-
-Between two sequences it makes a
-[transition](glossary.md#transition-and-next-sequence). It stops whatever
-the last sequence left going and clears out the memory it used. The battle
-starts with nothing of the cave's still running under it.
-
-Very little crosses over. The party, its coins and its Djinn are kept in
-one place the clearing never touches, together with what runs next. The
-game calls the memory a part keeps for itself its work, so this is the
-[main routine's work](glossary.md#main-routines-work). Beside it are
-the [game flags](glossary.md#game-flag). A flag is one yes-or-no fact the
-game remembers, such as a chest being open.
+The game is one routine that starts when the console is switched on and
+never returns. All it does is run a [sequence](glossary.md#sequence), wait
+for it to end, and run the next one. There are four kinds.
 
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
-flowchart LR
-  cave(["🏡 Field sequence: Goma Cave"]) -- "ends" --> clear(["Transition: what the cave left going is stopped and cleared"])
-  clear --> battle(["⚔️ Battle sequence"])
-  cave -. "writes down what runs next" .-> kept(["Never cleared: the main routine's work and the game flags"])
-  kept -. "what crosses over" .-> battle
+flowchart TD
+  loop(["Main routine: read what runs next"]) --> scene(["🏡 Field sequence"]) & battle(["⚔️ Battle sequence"]) & dice(["🎲 Lucky Dice"]) & wheels(["🎰 Lucky Wheels"])
+  scene & battle & dice & wheels --> back(["It ends, with what runs next written down"])
+  back --> loop
   classDef mainRoutine fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
   classDef sequence fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
-  class clear,kept mainRoutine
-  class cave,battle sequence
+  classDef request fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
+  class loop mainRoutine
+  class scene,battle,dice,wheels sequence
+  class back request
 ```
 
-A scene ends when the party takes one of its [exits](glossary.md#exit), a
-door or the edge of a map, and the exit says where it leads. A battle ends
-with a result instead. After this battle in Goma Cave, won or fled, the
-party goes back to the scene it left, standing where it stood. A party that
-falls in a random battle is sent to its restart point, usually the last
-Sanctum. A story battle can name other places beforehand.
+The [field sequence](glossary.md#field-sequence) is one place: a town, a
+dungeon floor, the World Map. It ends when the party leaves, and says where
+the exit leads. The other three end with a result, such as a battle won or
+lost.
 
-[The main routine](src/system/README.md#the-main-routine) follows one turn
-of this, from the clearing away to the exit.
+Between two sequences the main routine wipes the slate. Every task is
+stopped and all the memory the last sequence took is handed back. The cave
+you return to after a battle is not the old cave kept waiting. It is built
+again from scratch.
+
+So a sequence can pass something on in only two places, the two things that
+are never wiped:
+
+- the [main routine's work](glossary.md#main-routines-work), which holds
+  the party, their coins, what runs next and how the last sequence ended;
+- the [game flags](glossary.md#game-flag), one bit for each thing the game
+  remembers, such as a chest being open.
+
+Take the three thieves in Vault's inn. The event that ends in their attack
+writes two destinations into the work, one for a win and one for a loss,
+asks for a battle, and lets the field sequence end. The battle knows
+nothing about Vault. It runs, and writes its result. The main routine reads
+the result, picks the matching destination, and starts a fresh field
+sequence in the loft.
+
+That is why any sequence can follow any other, and why Camelot's own debug
+menu can drop the party into any scene in the game.
+[The main routine](src/system/README.md#the-main-routine) goes through one
+turn of it, and the routine itself is `MainRoutine_Run` in
+[main_routine.c](src/system/main_routine.c).
 
 ## Waiting and tasks
 
 ![A villager by Vale's river says `I don't blame Felix.` and waits for the A Button. Watch the river behind him: it keeps flowing the whole time he waits.](https://alchemy.pascalpixel.com/guides/engine/waiting-talk.gif)
 
-A villager by Vale's river says his line and waits for the A Button. Behind
-him the river keeps flowing.
+Inside a sequence there is no loop that polls a state machine each frame.
+Code that needs time to pass calls [`wait()`](glossary.md#wait) with a
+number of frames and simply stands still.
 
-Here is the odd part. The code that showed his line is standing still
-until the window has closed.
+The trick is that the game runs inside the wait. For every frame it is
+asked for, `wait()` runs one whole frame of the game, then sleeps until the
+console has shown the picture.
 
-It stands still at one small piece of code named
-[`wait()`](glossary.md#wait). Whatever has to let time pass hands over to
-it and says for how many frames. And while `wait()` waits, it keeps the
-rest of the game going.
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
+flowchart TD
+  call(["Code calls wait"]) --> tasks(["Every task runs once"])
+  tasks --> halt(["Sleep until the picture is shown"])
+  halt -- "frames left" --> tasks
+  halt -- "done" --> back(["The code's next line runs"])
+  classDef code fill:#DDE3EC,stroke:#8FA0B8,color:#2E3C50
+  classDef frame fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
+  class call,back code
+  class tasks,halt frame
+```
 
-The whole game is written this way. A night at an inn, in the code, is a
-plain list: wait 20 frames, close the screen to black, play the inn's tune
-and wait for it to end, wait 10 frames, open the screen again, wait 30
-more. Nothing in that list has to keep the game running. The waits do it.
+This is what lets a cutscene or a menu be written as a plain list, top to
+bottom, in the order things happen. A night at an inn is: wait, fade to
+black, play the tune and wait for it to end, wait, fade back in. Nothing in
+that list keeps the game alive. The waits do.
 
-In every frame it waits through, `wait()` runs a short list of
-[tasks](glossary.md#task), each of which does one frame's share of its work.
-Typing the next letters into a window is a task, which is how the
-villager's line types itself out while his own code stands still.
+A [task](glossary.md#task) is the other half. It is a routine on a short
+list that `wait()` calls once in every frame, highest rank first. A task
+does one frame's worth of something and returns at once: move the actors a
+step, type the next letters into a window, swap the river's tiles. Whatever
+needs work done every frame puts a task on the list and takes it off when
+it is done.
 
-Then `wait()` rests until the console has finished drawing the picture. In
-the short pause before the next picture starts, the
-[VBlank](glossary.md#vblank), the finished frame is put on screen all at
-once, the buttons are read, and the next stretch of sound is made ready.
+If you have used coroutines, the waiting code is the one coroutine and the
+tasks are the scheduler's callbacks, except that the scheduler lives inside
+the yield. If you have not, think of two kinds of code: code that tells a
+story and waits, and code that keeps the world moving while it does.
 
-[The frame loop](src/system/README.md#the-frame-loop) has the frame's order
-in full, [The task runner](src/system/README.md#the-task-runner) says which
-task goes first, and
-[The stack switch in `wait()`](src/system/README.md#the-stack-switch-in-wait)
-is the housekeeping that makes waiting safe.
+A task has one frame, so it cannot start something long, like a
+conversation. It leaves a [request](glossary.md#field-request) instead, and
+the waiting code picks it up.
 
-### Slowdown
-
-Sometimes a frame has too much to do and is still being worked on when the
-VBlank comes. Nothing of it is shown. The screen keeps the last picture,
-whole, and the late frame goes up at the VBlank after.
-
-Every walk, wait and animation is counted in frames, so they all take
-longer together. The music doesn't. Its sound is made ready at every
-VBlank, finished frame or not, so the tune keeps its tempo while the
-picture drags.
-
-That is the game's [slowdown](glossary.md#slowdown).
-[What VBlank does](src/system/README.md#what-vblank-does) shows why the
-screen never shows half a frame.
+[The frame loop](src/system/README.md#the-frame-loop) has a frame's order
+in full, and [The task runner](src/system/README.md#the-task-runner) says
+which task goes first.
 
 ## Overlays
 
-![Isaac leaves a house in Vale. While the screen is dark between the room and the town, the code for one is swapped for the code of the other.](https://alchemy.pascalpixel.com/guides/map/arrive.gif)
+The game has 201 scenes, each with code of its own: what its people say,
+what its doors and switches do. That is far more than the console's memory
+holds, and a town's code matters only while the party is there.
 
-Every scene has code of its own: what its people say, what its doors and
-switches do. That code matters only while the party is there, and the game
-has 201 scenes.
+So each scene's code is kept packed on the cartridge as an
+[overlay](glossary.md#overlay), and unpacked on arrival into one fixed
+stretch of memory, over whichever overlay was there before. Only one is
+ever loaded. Scenes share them, so 96 overlays cover all 201.
 
-So the game keeps each scene's code packed small on the cartridge, and
-unpacks it into memory when the party arrives. Such a packed piece is an
-[overlay](glossary.md#overlay).
-
-Every overlay is unpacked into the same spot in memory, over whichever one
-was there before. So only one is ever loaded.
-
-Scenes share overlays. The rooms of one place often have their code in one
-piece, so the 201 scenes need only 96 overlays. But one overlay cannot
-use code from another, since the two are never loaded together. Code that
-two of them need is built into both.
-
+Two things follow. The always-loaded part of the game, the
+[main image](glossary.md#main-image), knows nothing about any one town: it
+asks whichever overlay is loaded the same few questions through a table at
+a fixed address. And one overlay can never call another, so code two of
+them need is built into both.
 [How an overlay reaches the rest of the game](src/system/README.md#how-an-overlay-reaches-the-rest-of-the-game)
-describes the unpacking, and the two lists through which a scene's code and
-the rest of the game find each other.
+shows both directions.
 
 ## Saving
 
-![Isaac opens the Pause menu by Vale's river and chooses `Save your quest`. The File Screen lists the three files, and `Your game was saved.` confirms it.](https://alchemy.pascalpixel.com/guides/runtime/save.gif)
+A save is the two things that outlive a sequence, the game flags and the
+main routine's work, plus where the people in the current scene stand.
+Nothing else needs saving, because everything else is rebuilt from those.
 
-Choose `Save your quest`, and before `Your game was saved.` appears the game
-has been careful. It has written the new save beside the old one, read it
-back to check it, and only then crossed the old one out.
+That gives a simple rule for new state: if the game should remember it, it
+has to live in a flag or in the work. A yes-or-no fact is a flag. Anything
+larger goes in the work, which still has stretches no code uses.
 
-The saves live in a [flash chip](glossary.md#flash-chip) on the cartridge, a
-small memory that keeps what is written to it with the power off. The chip
-is written in 16 pieces called sectors.
+The save lives in a [flash chip](glossary.md#flash-chip) on the cartridge,
+written in 16 sectors. Each of the three files is two parts of one sector
+each, which leaves ten sectors spare. A save writes each part's new copy
+into a spare sector, reads it back, and only then retires the old one. If
+the batteries die halfway, the old copy is still whole.
+[Saving](src/system/README.md#saving) follows a save onto the chip.
 
-Each of the three save [files](glossary.md#file-and-part) is two parts, and
-a part fills one sector. Between them the two parts hold the game flags,
-the main routine's work and where the scene's people stand. Three files of
-two parts need six sectors, so ten are spare.
+## The rest of the System
 
-A save uses the spare ones. Each part's new copy goes into an empty sector,
-and the copy carries a count one higher than the old copy's. If the
-batteries die halfway, the old copy is still whole. If they die just after,
-the game finds two copies and takes the one with the higher count.
-
-[Saving](src/system/README.md#saving) follows a save onto the chip, and
-[The flash chip](src/gamepak/README.md#the-flash-chip) is about the chip
-itself.
-
-## Sound
-
-![Isaac stays the night at an inn. Watch the screen close to black around him: that dark moment is when the inn's short tune plays.](https://alchemy.pascalpixel.com/guides/sound/inn-fanfare.gif)
-
-Stay at an inn and the town's music stops, a short tune plays over the
-black screen, and the music comes back by itself.
-
-The inn did almost none of that. It asked for
-[sound](glossary.md#sound) number 86 and waited for it to end. It never
-said that 86 is a short tune, or that the music should make way for it.
-
-The number says so. Every sound in the game is asked for the same way, by
-its number, and the number's range decides the kind. Below 80 is music.
-From 80 to 99 is a jingle, a short tune like the inn's. The music is turned
-silent for it, carries on unheard, and is faded back in when the jingle
-ends. From 100 up is a sound effect, which plays over both. A few numbers
-are orders and not sounds, such as the one that fades the music out.
-
-Asking for the music that is already playing changes nothing, which is
-why walking from room to room leaves the tune playing on.
-
-[What a sound number means](src/sound/README.md#what-a-sound-number-means)
-has the kinds in full, and
-[The sound driver](src/sound/README.md#the-sound-driver) is about the code
-that turns notes into what the speaker plays.
-
-## Images
-
-![The title intro taken apart. Look at how many separate pictures it is: the clouds, Mt. Aleph and the sun are spread out one behind another, then put back together.](https://alchemy.pascalpixel.com/guides/graphics/title-intro-layers-3d.gif)
-
-Everything the player sees is a picture from the cartridge: the tiles a
-[map](glossary.md#map) is built from, Isaac, a monster, the letters of a
-message.
-
-In this project each one is an ordinary image file that any image editor
-opens. `battle_backgrounds/grassland.png`, for instance, is a battle's
-backdrop, 256 dots wide and 120 high. When the cartridge's contents are put
-together from these files, every picture is packed into the form the
-console reads and placed where the code will look for it.
-
-[How an image is built and placed](src/graphics/README.md#how-an-image-is-built-and-placed)
-follows a picture from its file to the cartridge, and
-[The resource directory and table order](src/gamepak/README.md#the-resource-directory-and-table-order)
-explains the cartridge's one numbered list, where a picture or a scene's
-overlay is found by its number.
-
-## Debug scenes
-
-![A small window the player never sees, opened in Vale. Each press steps to another scene and shows its name, and A takes the party there.](https://alchemy.pascalpixel.com/guides/debug/map-select.gif)
-
-The developers left their test rooms on the cartridge. The last ten of the
-201 scenes are theirs: eight test rooms that hand out Djinn, one called
-Increase item and level, and one called Menu test.
-
-They also left the small window in the recording, which jumps to any scene
-in the game.
-
-A player never sees any of it. The window opens only when a hidden switch
-the developers used, debug mode, is on, and start-up turns it off.
-[How the debug scenes are reached](src/debug/README.md#how-the-debug-scenes-are-reached)
-shows the window and says why the switch stays off.
-
-## Design
-
-Every sequence starts cold. The cave after a battle is not the old cave
-kept waiting. It is built again from what the main routine's work and the
-game flags say. So any scene or battle can follow any other, and that is
-what lets the developers' window jump from Vale to any scene in the game:
-the [debug menus](glossary.md#debug-menus) rely on it
-([System code](src/system/README.md#clearing-away-the-last-sequence)).
-
-## For readers of the code
-
-### The heap and work
-
-Memory the game uses for a while and then gives up comes from the
-[heap](glossary.md#heap-and-pools). Before a game of Lucky Dice, for
-instance, the main routine takes a little to keep the player's window
-colours safe, and puts the colours back afterwards. The main routine
-empties the whole heap between sequences.
-
-A part of the game that keeps what it is working on, its
-[work](glossary.md#work), finds it again through a numbered place of the
-heap, a [heap slot](glossary.md#heap-slot).
-[The heap](src/system/README.md#the-heap) explains how blocks are handed out.
-
-### Banks and far calls
-
-Most of the game's code runs straight from the cartridge. That code is the
-[main image](glossary.md#main-image), and it is cut into fourteen
-[banks](glossary.md#bank): one for the field, one for the battle, one for
-the shops, one for the sound, and so on.
-
-When the inn, in the shops' bank, wants its tune, it does not go to the
-sound's code directly. It goes to a fixed [veneer](glossary.md#veneer) at
-the front of the sound bank, a few bytes of code that jump on to the real
-thing. Going by the veneer is a
-[far call](glossary.md#far-call).
-[Why the main image is cut into banks](src/gamepak/README.md#why-the-main-image-is-cut-into-banks)
-says what the veneers are for.
+- [System code](src/system/README.md) is the detail behind this page:
+  start-up, the frame, the task list, the heap, saving and the link cable.
+- [The Game Pak](src/gamepak/README.md) is the cartridge: how its contents
+  are laid out and found, and the flash chip.
+- [Graphics](src/graphics/README.md) is how a picture gets from a PNG to
+  the screen.
+- [Sound](src/sound/README.md) is the music, the jingles and the driver
+  that plays them.
+- [Debug scenes](src/debug/README.md) are the test rooms and menus Camelot
+  left on the cartridge.

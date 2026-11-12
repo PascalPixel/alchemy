@@ -735,8 +735,7 @@ a frame half made.
 During a frame nothing touches the screen. Sprites go into the depth slots,
 settings into the queue. The VBlank handler puts them up together, and only
 for a finished frame. A busy battle may show a picture late. It never shows
-the fighters moved and the background not
-([System](../../system.md#design) covers the rest).
+the fighters moved and the background not.
 
 The second choice is that every sequence starts from nothing. The cave's
 tasks, its blocks from the heap and its line-by-line effects are all gone

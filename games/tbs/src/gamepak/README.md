@@ -380,8 +380,7 @@ veneer is in the same spot, and only the veneer has to know where
 `Sound_Play` went.
 
 A bank's row of veneers is its far-call table. A call that goes through one
-is a [far call](../../glossary.md#far-call)
-([System](../../system.md#banks-and-far-calls) introduces them).
+is a [far call](../../glossary.md#far-call).
 
 ### A veneer
 
@@ -504,7 +503,7 @@ player saves, [the save code](../system/README.md#saving) decides what goes
 in which sector and hands each sector over to be written to the chip.
 
 At switch-on the header hands the console to the
-[System's start-up](../../system.md#start-up).
+[System's start-up](../system/README.md#start-up).
 
 ## Limits
 

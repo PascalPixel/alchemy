@@ -330,7 +330,7 @@ for two pictures or more. Everything counted in frames, every walk, pause
 and animation, drags together. The music does not, because the sound is
 prepared at every [VBlank](#vblank) whether the frame is ready or not. So
 the tune keeps its speed while the picture falls behind it
-([System](system.md#slowdown)).
+([System code](src/system/README.md#what-vblank-does)).
 
 Evidence: tradition: 処理落ち.
 

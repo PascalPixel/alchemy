@@ -388,14 +388,9 @@ SECTIONS
         "*/games/tla/src/field/field_effect/move.o"(.text)
         "*/games/tla/src/scene/yampi_desert/s00b8.o"(.text)
         "*/games/tla/src/scene/yampi_desert/placements.o"(.text)
-        "*/games/tla/src/scene/yampi_desert/scene_tables.o"(.text)
-        "*/games/tla/src/scene/yampi_desert/s02f8.o"(.text)
         "*/games/tla/src/field/field_effect/advance_motion_priority.o"(.text)
         "*/games/tla/src/scene/yampi_desert/s0b84.o"(.text)
-        "*/games/tla/src/scene/yampi_desert/s1b70.o"(.text)
-        "*/games/tla/src/scene/yampi_desert/s1bec.o"(.text)
         "*/games/tla/src/scene/yampi_desert/s1cc4.o"(.text)
-        "*/games/tla/src/scene/yampi_desert/s1e58.o"(.text)
         "*/games/tla/src/scene/yampi_desert/s388c.o"(.text)
         "*/games/tla/src/scene/yampi_desert/s3910.o"(.text)
         "*/games/tla/src/scene/yampi_desert/import.o"(.text)
@@ -410,8 +405,6 @@ SECTIONS
     .text 0x2008000 :
     {
         "*/games/tla/src/scene/yampi_desert_cave/entry.o"(.text)
-        "*/games/tla/src/scene/yampi_desert_cave/s0038.o"(.text)
-        "*/games/tla/src/scene/yampi_desert_cave/s01d4.o"(.text)
         "*/games/tla/src/scene/yampi_desert_cave.o"(.text)
         "*/games/tla/src/scene/yampi_desert_cave/import.o"(.text)
         "*/games/tla/src/scene/yampi_desert_cave/data.o"(.data)
@@ -490,8 +483,6 @@ SECTIONS
     {
         "*/games/tla/src/scene/alhafra_interiors/entry.o"(.text)
         "*/games/tla/src/scene/alhafra_interiors.o"(.text)
-        "*/games/tla/src/scene/alhafra_interiors/s01ac.o"(.text)
-        "*/games/tla/src/scene/alhafra_interiors/s0298.o"(.text)
         "*/games/tla/src/scene/alhafra_interiors/import.o"(.text)
         "*/games/tla/src/scene/alhafra_interiors/data.o"(.data)
     }
@@ -564,7 +555,6 @@ SECTIONS
     {
         "*/games/tla/src/scene/gondowan_cliffs/entry.o"(.text)
         "*/games/tla/src/scene/gondowan_cliffs.o"(.text)
-        "*/games/tla/src/scene/gondowan_cliffs/s0160.o"(.text)
         "*/games/tla/src/field/field_effect/move.o"(.text)
         "*/games/tla/src/scene/gondowan_cliffs/s01ec.o"(.text)
         "*/games/tla/src/scene/gondowan_cliffs/s03cc.o"(.text)

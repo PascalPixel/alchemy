@@ -1,22 +1,160 @@
 /// @file
-/// The scene code of overlay 0x662 that its scene tables belong to, in ROM order; the rest of the overlay is in yampi_desert_cave/.
+/// The scene code of overlay 0x662, in ROM order; the rest of the overlay is in yampi_desert_cave/.
+
+#include "types.h"
+#include "ram_buffer.h"
+#include "map.h"
+#include "actor.h"
+#include "macros.h"
+#include "event_inline.h"
+
+extern u16 gData_02001968[];
+extern s8 gData_02001974[];
+
+s32 Func_02000038(s32 id) {
+  struct MapWork *map = Ram_HeapSlots->mapWork;
+  struct Actor *object = Actor_GetById(id);
+  s16 sprite = ((struct ObjectAnimationState *)object->sprite)->value28[0];
+  s16 i;
+  u32 kind;
+  s32 w, h, x, z;
+  s32 az;
+  s32 bx, bz;
+  s32 toX, toZ, fromX, fromZ;
+  s32 layer1X, layer1Z;
+
+  i = 0;
+  if ((u16)sprite != gData_02001968[i]) {
+  loop:
+    /* FAKEMATCH(temporary): kind set to i, then stepped; as kind = (u16)(i +
+     * 1), 12 of 160 instructions differ in tla-en. */
+    kind = (u16)i;
+    kind = (u16)(kind + 1);
+    i = (s16)kind;
+    if (kind <= 5 && (u16)sprite != gData_02001968[kind])
+      goto loop;
+  }
+  kind = (u16)i;
+  if (kind == 6)
+    return 0;
+  w = (ABS(gData_02001974[kind * 4]) + ABS(gData_02001974[kind * 4 + 2])) >> 4;
+  // i is reused: the footprint's second byte here, layers[1]'s x offset in
+  // cells below.
+  i = gData_02001974[kind * 4 + 1];
+  h = (ABS(i) + ABS(gData_02001974[kind * 4 + 3])) >> 4;
+  x = (object->x + (gData_02001974[kind * 4] << 16)) >> 20;
+  z = (object->z + (i << 16)) >> 20;
+  i = *(s32 *)&map->layers[1].unk08[0] >> 20;
+  az = *(s32 *)&map->layers[1].unk08[4] >> 20;
+  bx = *(s32 *)&map->layers[2].unk08[0];
+  bz = *(s32 *)&map->layers[2].unk08[4];
+  /* FAKEMATCH(temporary): the first call's last two arguments held in locals;
+   * as direct arguments, 36 of 160 instructions differ in tla-en. */
+  layer1X = (u16)i + x;
+  layer1Z = (u16)az + z;
+  Map_CopyCellAttributeRect(x, z, w, h, layer1X, layer1Z);
+  /* FAKEMATCH(temporary): the second call's arguments held in locals; as direct
+   * arguments, 10 of 160 instructions differ in tla-en. */
+  fromX = (u16)(bx >> 20) + x;
+  fromZ = (u16)(bz >> 20) + z;
+  toX = x + 64;
+  toZ = z + 64;
+  Map_CopyCellAttributeRect(fromX, fromZ, w, h, toX, toZ);
+  Map_FillCellRectByte2(0, x, z, w, h, 255);
+  Map_FillCellRectByte2(2, x, z, w, h, 255);
+  return 1;
+}
+
+#include "../field/map/cellfill.c"
+
+
+extern s32 gData_0200198c[];
+
+struct Actor *Func_0200033c(s32 *direction, s32 *slot, s32 *kind);
+s32 Func_02001850(struct Actor *object, s32 *position);
+
+static inline s32 Func_02001850_Call(struct Actor *object, s32 *position) {
+  return Func_02001850(object, position);
+}
+
+/// Finds how far a pushed object can slide in the leader's direction, probing
+/// its footprint cell by cell until Func_02001850 reports a wall. Returns 1
+/// with the end position in position[0] to position[2], or 0 if it cannot
+/// move.
+s32 Func_020001d4(s32 *position) {
+  s32 probe[3];
+  s32 direction;
+  struct Actor *object;
+  s32 kind, w, h, dx, dz, count, i, j;
+  u8 *state;
+  s32 offset;
+
+  object = Func_0200033c(&direction, &position[4], &position[3]);
+  if (object != NULL) {
+    kind = position[3];
+    w = (ABS(gData_02001974[kind * 4]) + ABS(gData_02001974[kind * 4 + 2])) >>
+        4;
+    h = (ABS(gData_02001974[kind * 4 + 1]) +
+         ABS(gData_02001974[kind * 4 + 3])) >>
+        4;
+    dx = gData_0200198c[direction] & 0xffff0000;
+    dz = gData_0200198c[direction] << 16;
+    position[5] = 0;
+    count = 0;
+    state = &object->terrainId;
+    *state = 2;
+    position[0] = object->x + dx;
+    position[2] = object->z + dz;
+    probe[1] = object->y;
+    // The row loop is built from labels: as a loop it grows by 14 bytes.
+  next:
+    offset = kind;
+    probe[2] = position[2] + (gData_02001974[offset * 4 + 1] << 16);
+    offset *= 4;
+    j = 0;
+    if (j >= h)
+      goto advance;
+  row:
+    probe[0] = position[0] + (gData_02001974[offset] << 16);
+    for (i = 0; i < w; i++) {
+      /* FAKEMATCH(wrapper): the call through Func_02001850_Call; as
+         Func_02001850(object, probe), 2 of 171 instructions differ in tla-en.
+       */
+      if (Func_02001850_Call(object, probe) == 2)
+        goto hit;
+      probe[0] += 0x100000;
+    }
+    probe[2] += 0x100000;
+    j++;
+    if (j < h)
+      goto row;
+  advance:
+    position[0] += dx;
+    count++;
+    position[2] += dz;
+    goto next;
+  hit:
+    *state = 0;
+    if (count == 0)
+      return 0;
+    position[0] = object->x + dx * count;
+    position[1] = object->y;
+    position[2] = object->z + dz * count;
+    return 1;
+  } else {
+    return 0;
+  }
+}
+
 
 #include "field/field.h"
 #include "text/msg_ids.h"
 #include "system/main_routine_work.h"
 
-#include "types.h"
-#include "ram_buffer.h"
-#include "actor.h"
 #include "event_work.h"
-#include "event_inline.h"
 
 /// The whole-pixel half of a 16.16 coordinate.
 #define PIXELS(v) (((s16 *)&(v))[1])
-
-extern u16 gData_02001968[];
-extern s8 gData_02001974[][4];
-extern s32 gData_0200198c[];
 
 struct Actor *Func_0200033c(s32 *direction, s32 *slot, s32 *kind) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
@@ -37,10 +175,10 @@ inner:
       gData_02001968[k]) {
     x = (PIXELS(leader->x) + (gData_0200198c[*direction] >> 16)) >> 4;
     z = (PIXELS(leader->z) + (s16)gData_0200198c[*direction]) >> 4;
-    left = (PIXELS(object->x) + gData_02001974[k][0]) >> 4;
-    top = (PIXELS(object->z) + gData_02001974[k][1]) >> 4;
-    right = (PIXELS(object->x) + gData_02001974[k][2]) >> 4;
-    bottom = (PIXELS(object->z) + gData_02001974[k][3]) >> 4;
+    left = (PIXELS(object->x) + gData_02001974[k * 4]) >> 4;
+    top = (PIXELS(object->z) + gData_02001974[k * 4 + 1]) >> 4;
+    right = (PIXELS(object->x) + gData_02001974[k * 4 + 2]) >> 4;
+    bottom = (PIXELS(object->z) + gData_02001974[k * 4 + 3]) >> 4;
     if (left <= x && x < right && top <= z && z < bottom) {
       *kind = k;
       if (k & 1) {
@@ -67,9 +205,6 @@ inner:
 }
 
 #include "yampi_desert_cave/yampi_desert_cave.h"
-#include "map.h"
-
-#define ABS(v) ((v) < 0 ? -(v) : (v))
 
 void Func_02000754(struct Actor *object);
 void Func_02001828(struct Actor *object, s32 mode);
@@ -100,10 +235,10 @@ void Func_02000458(struct YampiDesertCaveRect rect) {
 
   from[0] = object->x;
   from[2] = object->z;
-  cell[0] = (object->x + (gData_02001974[kind][0] << 16)) >> 20;
-  cell[2] = (object->z + (gData_02001974[kind][1] << 16)) >> 20;
-  w = (ABS(gData_02001974[kind][0]) + ABS(gData_02001974[kind][2])) >> 4;
-  h = (ABS(gData_02001974[kind][1]) + ABS(gData_02001974[kind][3])) >> 4;
+  cell[0] = (object->x + (gData_02001974[kind * 4] << 16)) >> 20;
+  cell[2] = (object->z + (gData_02001974[kind * 4 + 1] << 16)) >> 20;
+  w = (ABS(gData_02001974[kind * 4]) + ABS(gData_02001974[kind * 4 + 2])) >> 4;
+  h = (ABS(gData_02001974[kind * 4 + 1]) + ABS(gData_02001974[kind * 4 + 3])) >> 4;
   Map_FillCellRectByte2(0, cell[0], cell[2], w, h, 0);
   Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x1999);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 8);
@@ -143,8 +278,8 @@ void Func_02000458(struct YampiDesertCaveRect rect) {
   Actor_SetPositionAndResetMotion(object, rect.word[0], object->y,
                                   rect.word[2]);
   Func_02001828(object, 1);
-  rect.word[0] = (rect.word[0] + (gData_02001974[kind][0] << 16)) >> 20;
-  rect.word[2] = (rect.word[2] + (gData_02001974[kind][1] << 16)) >> 20;
+  rect.word[0] = (rect.word[0] + (gData_02001974[kind * 4] << 16)) >> 20;
+  rect.word[2] = (rect.word[2] + (gData_02001974[kind * 4 + 1] << 16)) >> 20;
   ax = *(s32 *)&map->layers[1].unk08[0] >> 20;
   az = *(s32 *)&map->layers[1].unk08[4] >> 20;
   bx = *(s32 *)&map->layers[2].unk08[0] >> 20;
@@ -155,8 +290,8 @@ void Func_02000458(struct YampiDesertCaveRect rect) {
                              rect.word[0] + 64, rect.word[2] + 64);
   Map_FillCellRectByte2(0, rect.word[0], rect.word[2], w, h, 255);
   Map_FillCellRectByte2(2, rect.word[0], rect.word[2], w, h, 255);
-  cell[0] = (from[0] + (gData_02001974[kind][0] << 16)) >> 20;
-  cell[2] = (from[2] + (gData_02001974[kind][1] << 16)) >> 20;
+  cell[0] = (from[0] + (gData_02001974[kind * 4] << 16)) >> 20;
+  cell[2] = (from[2] + (gData_02001974[kind * 4 + 1] << 16)) >> 20;
   MapGrid_CopyCellAttributes(ax + cell[0], az + cell[2], w, h, cell[0],
                              cell[2]);
   MapGrid_CopyCellAttributes(cell[0] + 64, cell[2] + 64, w, h, cell[0] + bx,
@@ -165,7 +300,6 @@ void Func_02000458(struct YampiDesertCaveRect rect) {
 }
 
 struct Actor *Func_02001948(s32 *position, s32 mode);
-s32 Func_02001850(struct Actor *object, s32 *position);
 
 void Func_02000754(struct Actor *object) {
   s32 position[3];
@@ -804,7 +938,6 @@ extern u16 gData_02001a28[];
 extern u16 gData_02001a54[];
 
 void Actor_SetWideSprite(s32 id, s32 wide);
-s32 Func_02000038(s32 id);
 void Func_020018c8(s32 id);
 void Func_02001928(s32 value);
 

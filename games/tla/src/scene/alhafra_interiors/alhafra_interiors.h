@@ -11,39 +11,6 @@
 #include "field/field.h"
 #include "frame.h"
 
-struct AlhafraInteriorsObject {
-  u8 unk00[6];
-  u16 facing;
-  s32 x;
-  s32 y;
-  s32 z;
-  s32 height;
-  s32 scaleX;
-  s32 scaleY;
-  u8 unk20[3];
-  u8 priorityFlags;
-  s32 velocityX;
-  s32 velocityY;
-  u8 unk2c[0x18];
-  s32 field44;
-  s32 field48;
-  u8 unk4c[4];
-  struct FieldSprite *sprite;
-  u8 unk54;
-  u8 motionFlags;
-  u8 unk56[3];
-  u8 collisionFlags;
-  u8 unk5a[2];
-  u8 field5c;
-  u8 unk5d[5];
-  u8 timer;
-  u8 unk63;
-  s16 field64;
-  s16 field66;
-  s32 field68;
-  void *update;
-};
-
 struct AlhafraInteriorsEventWork {
   u8 unk000[0x154];
   s16 exit;

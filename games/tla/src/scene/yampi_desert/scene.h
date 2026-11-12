@@ -88,7 +88,6 @@ struct Actor *Func_02001b70(void);
 void Func_02003fc8(struct Actor *object);
 void Func_020041f8(s32 cue);
 extern struct Actor *gData_0200480c;
-extern s32 gInput;
 void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
 void Actor_SetPositionAndReset(s32 actor, s32 x, s32 z);
 void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);

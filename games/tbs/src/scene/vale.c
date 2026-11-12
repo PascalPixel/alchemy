@@ -153,12 +153,11 @@
 static void Vale_HaveJennaStopTheAlephDetour(void);
 static void Vale_AskAboutSneakingToAleph(const s32 *leaderActions,
                                          const s32 *guardActions);
-static void Vale_MoveActorAlongLowerZPath(s32 actorId, s32 approachAnimationId,
-                                          s32 departureAnimationId,
-                                          s32 resumeMotion);
-static void Vale_MoveActorAlongHigherZPath(s32 actorId, s32 approachAnimationId,
-                                           s32 departureAnimationId,
-                                           s32 resumeMotion);
+static void Vale_ClimbUpRoofLadder(s32 actorId, s32 approachAnimationId,
+                                   s32 departureAnimationId, s32 resumeMotion);
+static void Vale_ClimbDownRoofLadder(s32 actorId, s32 approachAnimationId,
+                                     s32 departureAnimationId,
+                                     s32 resumeMotion);
 static void Vale_PlaceOrHideBoards(s32 first, u32 count, s32 mode);
 static void Vale_MendingTheRoof(void);
 static void Vale_RoofMended(void);
@@ -894,8 +893,8 @@ static void Vale_TurnBackFromThePuppies(void) {
 static void Vale_ClimbLadderOntoRoof(void) {
   Event_Start();
   MapGrid_CopyCellAttributes(49, 53, 8, 4, 20, 50);
-  Vale_MoveActorAlongLowerZPath(ACTOR_PARTY_LEADER, ANIM_LEADER_CLIMB,
-                                ANIM_LEADER_CLIMB_OVER_TOP, 1);
+  Vale_ClimbUpRoofLadder(ACTOR_PARTY_LEADER, ANIM_LEADER_CLIMB,
+                         ANIM_LEADER_CLIMB_OVER_TOP, 1);
   GameFlag_Set(FLAG_VALE_ON_ROOF);
   Event_End();
 }
@@ -905,9 +904,8 @@ static void Vale_ClimbLadderOntoRoof(void) {
 /// put back (FLAG_VALE_ON_ROOF cleared).
 static void Vale_ClimbDownFromRoof(void) {
   Event_Start();
-  Vale_MoveActorAlongHigherZPath(ACTOR_PARTY_LEADER,
-                                 ANIM_LEADER_CLIMB_DOWN_FROM_TOP,
-                                 ANIM_LEADER_CLIMB, 1);
+  Vale_ClimbDownRoofLadder(ACTOR_PARTY_LEADER, ANIM_LEADER_CLIMB_DOWN_FROM_TOP,
+                           ANIM_LEADER_CLIMB, 1);
   GameFlag_Clear(FLAG_VALE_ON_ROOF);
   MapGrid_CopyCellAttributes(49, 46, 8, 4, 20, 50);
   Event_End();
@@ -1194,7 +1192,7 @@ UNUSED static void Vale_UnusedRoofMended(void) {
   // "Good job, Isaac."
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_STEP, 20);
-  Vale_MoveActorAlongLowerZPath(ACTOR_DORA, 5, 6, 0);
+  Vale_ClimbUpRoofLadder(ACTOR_DORA, 5, 6, 0);
   Actor_SetSpeed(ACTOR_DORA, 0.3);
   Actor_WalkToAndWait(ACTOR_DORA, 397, 832);
   Event_Wait(20);
@@ -1285,8 +1283,8 @@ UNUSED static void Vale_UnusedRoofMended(void) {
   Actor_WalkTo(ACTOR_GARET, 369, 904);
   Actor_WalkToAndWait(ACTOR_JENNA, 392, 904);
   Actor_SetAnimation(ACTOR_GARET, ANIM_STAND);
-  Vale_MoveActorAlongLowerZPath(ACTOR_JENNA, ANIM_LEADER_CLIMB,
-                                ANIM_LEADER_CLIMB_OVER_TOP, 0);
+  Vale_ClimbUpRoofLadder(ACTOR_JENNA, ANIM_LEADER_CLIMB,
+                         ANIM_LEADER_CLIMB_OVER_TOP, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHWEST, 0);
   Event_ShowMessageThenWait(ACTOR_JENNA, 0, 10);
   Actor_RunRepeatedMotion(ACTOR_DORA, 2);
@@ -1308,8 +1306,8 @@ UNUSED static void Vale_UnusedRoofMended(void) {
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Event_Wait(20);
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 20);
-  Vale_MoveActorAlongLowerZPath(ACTOR_GARET, ANIM_LEADER_CLIMB,
-                                ANIM_LEADER_CLIMB_OVER_TOP, 0);
+  Vale_ClimbUpRoofLadder(ACTOR_GARET, ANIM_LEADER_CLIMB,
+                         ANIM_LEADER_CLIMB_OVER_TOP, 0);
   Actor_SetSpeed(ACTOR_JENNA, 0.3);
   Actor_SetSpeed(ACTOR_GARET, 0.3);
   Actor_WalkTo(ACTOR_GARET, 392, 843);
@@ -1602,13 +1600,12 @@ UNUSED static void Vale_UnusedRoofMended(void) {
   Actor_SetPosition(ACTOR_GARET, 0, 0);
   Event_AddPartyMemberPair(GARET, JENNA);
   FieldCamera_MoveTo(377, 160, 887, 1);
-  Vale_MoveActorAlongHigherZPath(ACTOR_PARTY_LEADER,
-                                 ANIM_LEADER_CLIMB_DOWN_FROM_TOP,
-                                 ANIM_LEADER_CLIMB, 0);
+  Vale_ClimbDownRoofLadder(ACTOR_PARTY_LEADER, ANIM_LEADER_CLIMB_DOWN_FROM_TOP,
+                           ANIM_LEADER_CLIMB, 0);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 376, 912);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_Get(ACTOR_DORA)->steeringFlags |= ACTOR_FACES_MOTION;
-  Vale_MoveActorAlongHigherZPath(ACTOR_DORA, 6, 5, 0);
+  Vale_ClimbDownRoofLadder(ACTOR_DORA, 6, 5, 0);
   Actor_WalkToAndWait(ACTOR_DORA, 373, 887);
   Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 40);
@@ -2010,9 +2007,8 @@ UNUSED static void Vale_UnusedWaterBurstsByTheRiver(void) {
 /// Walks an actor to the foot of the ladder beside Isaac's house and climbs it
 /// onto the roof, in `approachAnimationId` on the rungs and
 /// `departureAnimationId` over the eaves.
-static void Vale_MoveActorAlongLowerZPath(s32 actorId, s32 approachAnimationId,
-                                          s32 departureAnimationId,
-                                          s32 resumeMotion) {
+static void Vale_ClimbUpRoofLadder(s32 actorId, s32 approachAnimationId,
+                                   s32 departureAnimationId, s32 resumeMotion) {
   struct Actor *actor;
   struct Sprite *sprite;
 
@@ -2040,9 +2036,9 @@ static void Vale_MoveActorAlongLowerZPath(s32 actorId, s32 approachAnimationId,
 
 /// Climbs an actor down the ladder beside Isaac's house from the roof, and
 /// restores falling motion if requested.
-static void Vale_MoveActorAlongHigherZPath(s32 actorId, s32 approachAnimationId,
-                                           s32 departureAnimationId,
-                                           s32 resumeMotion) {
+static void Vale_ClimbDownRoofLadder(s32 actorId, s32 approachAnimationId,
+                                     s32 departureAnimationId,
+                                     s32 resumeMotion) {
   struct Actor *actor;
   struct Sprite *sprite;
 
@@ -2644,7 +2640,7 @@ static void Vale_RoofMended(void) {
   // "Good job, Isaac."
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST_SOUTHEAST, 10);
-  Vale_MoveActorAlongLowerZPath(ACTOR_DORA, 5, 6, 0);
+  Vale_ClimbUpRoofLadder(ACTOR_DORA, 5, 6, 0);
   Actor_SetSpeed(ACTOR_DORA, 0.3);
   Actor_WalkToAndWait(ACTOR_DORA, 397, 832);
   Event_Wait(20);
@@ -2725,8 +2721,8 @@ static void Vale_RoofMended(void) {
   Actor_WalkTo(ACTOR_GARET, 369, 904);
   Actor_WalkToAndWait(ACTOR_JENNA, 392, 904);
   Actor_SetAnimation(ACTOR_GARET, ANIM_STAND);
-  Vale_MoveActorAlongLowerZPath(ACTOR_JENNA, ANIM_LEADER_CLIMB,
-                                ANIM_LEADER_CLIMB_OVER_TOP, 0);
+  Vale_ClimbUpRoofLadder(ACTOR_JENNA, ANIM_LEADER_CLIMB,
+                         ANIM_LEADER_CLIMB_OVER_TOP, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHWEST, 0);
   Event_ShowMessageThenWait(ACTOR_JENNA, 0, 10);
   Actor_RunRepeatedMotion(ACTOR_DORA, 2);
@@ -2745,8 +2741,8 @@ static void Vale_RoofMended(void) {
   Actor_SetAnimation(ACTOR_DORA, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 20);
-  Vale_MoveActorAlongLowerZPath(ACTOR_GARET, ANIM_LEADER_CLIMB,
-                                ANIM_LEADER_CLIMB_OVER_TOP, 0);
+  Vale_ClimbUpRoofLadder(ACTOR_GARET, ANIM_LEADER_CLIMB,
+                         ANIM_LEADER_CLIMB_OVER_TOP, 0);
   Actor_SetSpeed(ACTOR_JENNA, 0.3);
   Actor_SetSpeed(ACTOR_GARET, 0.3);
   Actor_WalkTo(ACTOR_GARET, 392, 843);
@@ -3040,9 +3036,8 @@ static void Vale_RoofMended(void) {
   Actor_SetPosition(ACTOR_GARET, 0, 0);
   Event_AddPartyMemberPair(GARET, JENNA);
   FieldCamera_MoveTo(377, 160, 887, 1);
-  Vale_MoveActorAlongHigherZPath(ACTOR_PARTY_LEADER,
-                                 ANIM_LEADER_CLIMB_DOWN_FROM_TOP,
-                                 ANIM_LEADER_CLIMB, 0);
+  Vale_ClimbDownRoofLadder(ACTOR_PARTY_LEADER, ANIM_LEADER_CLIMB_DOWN_FROM_TOP,
+                           ANIM_LEADER_CLIMB, 0);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 376, 912);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   {
@@ -3050,7 +3045,7 @@ static void Vale_RoofMended(void) {
 
     record->steeringFlags = flag | record->steeringFlags;
   }
-  Vale_MoveActorAlongHigherZPath(ACTOR_DORA, 6, 5, 0);
+  Vale_ClimbDownRoofLadder(ACTOR_DORA, 6, 5, 0);
   Actor_WalkToAndWait(ACTOR_DORA, 373, 887);
   Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 40);

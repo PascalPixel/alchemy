@@ -640,6 +640,8 @@ s32 PartyMemberChooser_MoveEntry(s32 selectedIndex, s32 direction) {
   }
 
   {
+    /* FAKEMATCH(temporary): zero holds the clear's 0; as 0 in the store, 2
+     * of 113 instructions differ in tbs-en. */
     u32 zero = 0;
 #ifdef UBFIX
     s32 clearIndex = 13;

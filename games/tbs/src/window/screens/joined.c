@@ -121,6 +121,8 @@ void Djinn_ShowJoinedMessage(s32 member, s32 element, s32 djinn) {
   s32 *p;
 
   window = NULL;
+  /* FAKEMATCH(temporary): zero holds the 0 the calls and stores take; as 0
+   * at each use, 62 of 123 instructions differ in tbs-en. */
   zero = 0;
   name = gDjinn_ElementSprites[element & 3];
   entry = sprite;

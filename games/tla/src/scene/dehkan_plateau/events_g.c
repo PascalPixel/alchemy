@@ -58,7 +58,7 @@ extern const u16 gData_02003fd2[];
 extern const struct CellRecord gData_02004066[];
 
 void Actor_SetHorizontalPositionAndAngleWithTerrain(u32 id, s32 x, s32 z, s16 angle);
-struct Actor *Func_080d47b4(s32 id, s32 a, s32 b);
+s32 Func_080d47b4(s32 actorId, s32 emote, s32 frames);
 void Func_02003cf0(void);
 struct Actor *Func_080d4568(void);
 void Func_02003d50(s32 a, s32 b);

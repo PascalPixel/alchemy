@@ -159,7 +159,7 @@ void Actor_SetMovementTypeById(s32 actor, const void *callback);
 void Actor_SetMovementTypeAndWaitById(s32 actor, const void *callback);
 s32 FieldMessage_ShowAtActor(s32 speaker, s32 flags);
 s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 flags);
-struct KibomboObject *Func_080d47b4(s32 actor, s32 emote, s32 frames);
+s32 Func_080d47b4(s32 actorId, s32 emote, s32 frames);
 void Func_080d489c(s32 actor, s32 emote);
 void Actor_Jump(s32 actor, s32 speed, s32 frames);
 void Motion_SetModeAndWaitAnimation(s32 actor, s32 mode);

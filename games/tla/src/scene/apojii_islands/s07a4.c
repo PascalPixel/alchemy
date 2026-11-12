@@ -26,7 +26,7 @@ void Func_020017f8(u32 base, s32 a, s32 b);
 void GameFlag_SetBit(s32 flag);
 void Camera_SetSpeedParameters(s32 a, s32 b);
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
-s32 Func_080d47b4(s32 a, s32 b, s32 c);
+s32 Func_080d47b4(s32 actorId, s32 emote, s32 frames);
 void Func_02001d8c(void);
 void Import_EventSetExitRequest(s32 cue);
 

@@ -30,7 +30,7 @@ void Func_0200345c(void);
 void Event_ResolvePendingActions(s32 mode);
 void Event_SetMessageId(s32 message);
 void Func_020005e8(s32 value);
-void Func_080d47b4(s32 id, s32 animation, s32 frames);
+s32 Func_080d47b4(s32 actorId, s32 emote, s32 frames);
 void Event_ShowMessageThenWait(s32 speaker, s32 a, s32 b);
 void Func_0200067c(s32 mode);
 void Actor_SetPositionAndReset(s32 actor, s32 x, s32 z);

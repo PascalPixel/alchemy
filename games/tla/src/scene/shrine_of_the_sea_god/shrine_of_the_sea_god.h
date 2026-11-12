@@ -114,7 +114,7 @@ void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 actor, s32 x, s32 z, s32
 void Event_SetMessageId(s32 message);
 void Event_ShowMessageThenWait(s32 actor, s32 a, s32 b);
 void Event_ShowMessageAndWait(s32 speaker, s32 flags);
-void Func_080d47b4(s32 actor, s32 height, s32 frames);
+s32 Func_080d47b4(s32 actorId, s32 emote, s32 frames);
 void Func_080d489c(s32 actor, s32 emote);
 void Camera_SetSpeedParameters(s32 speed, s32 acceleration);
 void Func_02003ac8(void);

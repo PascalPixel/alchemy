@@ -449,7 +449,7 @@ void Event_End(void);
 void Motion_SetVarCbAndRefresh(u32 objectId, s32 variant);
 void Actor_ArmCallback(s32 id, s32 angle, s32 frames);
 void Actor_Jump(s32 id, s32 speed, s32 frames);
-void *Func_080d47b4(s32 id, s32 flags, s32 state);
+s32 Func_080d47b4(s32 actorId, s32 emote, s32 frames);
 struct Actor *Func_080200c0(s32 kind, s32 x, s32 y, s32 z);
 void Animation_ApplyChildValuesFar(struct ActorView *object, u32 value);
 void *Sprite_ShareVramCacheEntry(void *sprite, void *last);

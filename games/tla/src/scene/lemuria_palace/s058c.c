@@ -39,7 +39,7 @@ s32 Actor_GetById();
 void Actor_SetPositionAndReset();
 void Camera_MoveWithinMapBounds();
 void Func_020020ac();
-void Func_080d47b4();
+s32 Func_080d47b4(s32 actorId, s32 emote, s32 frames);
 void Motion_SetVarCbAndRefresh(u32 objectId, s32 variant);
 void Camera_FollowActor();
 void Actor_ResetAndSetPositionInMode2();

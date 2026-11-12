@@ -30,7 +30,7 @@ void Actor_ResetAndSetPositionInMode2(s32 actor, s32 x, s32 z);
 void Party_SetFields1f2And1f4(s32 scene, s32 entrance);
 void Party_SetFields1eeAnd1f0(s32 scene, s32 entrance);
 void Actor_SetHorizontalPositionWithTerrain(s32 actor, s32 x, s32 z);
-s32 Func_080d47b4(s32 actor, s32 value, s32 frames);
+s32 Func_080d47b4(s32 actorId, s32 emote, s32 frames);
 void Event_ShowMessageThenWait(s32 actor, s32 value, s32 frames);
 void Func_02003564(void);
 void Func_020035bc(void);

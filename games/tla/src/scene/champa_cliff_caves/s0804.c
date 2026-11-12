@@ -10,8 +10,7 @@ void Motion_SetVarCbAndRefresh(u32 objectId, s32 variant);
 void Motion_SetModeAndWaitAnimation(s32 actor, s32 mode);
 void Func_020005e8(s32 actor);
 void Func_0200067c(s32 value);
-struct BattleEffectWatchedObject *Func_080d47b4(s32 resourceId, s32 flags,
-                                                s32 state);
+s32 Func_080d47b4(s32 actorId, s32 emote, s32 frames);
 void Event_ShowMessageThenWait(s32 actor, s32 value, s32 frames);
 
 void Func_02000804(s32 actor) {

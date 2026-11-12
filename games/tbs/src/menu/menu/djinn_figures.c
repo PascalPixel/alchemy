@@ -208,8 +208,8 @@ s32 DjinnFigures_SetSlotPhase(s32 index, s32 phase) {
 
 /// Replaces one displayed sprite and selects its animation: figure index
 /// becomes the Djinni figure of element resourceKind
-/// (gDjinnFigures_SpriteIds) in animation value. Returns 1.
-s32 DjinnFigures_ReplaceSlot(s32 index, s32 resourceKind, s32 value) {
+/// (gDjinnFigures_SpriteIds) playing `animation`. Returns 1.
+s32 DjinnFigures_ReplaceSlot(s32 index, s32 resourceKind, s32 animation) {
   struct ItemMenuFiguresView *state = gMenuWork;
 
   if (state->animations[index] != NULL) {
@@ -217,12 +217,12 @@ s32 DjinnFigures_ReplaceSlot(s32 index, s32 resourceKind, s32 value) {
     state->animations[index] = NULL;
   }
   {
-    struct Sprite *animation =
+    struct Sprite *figure =
         Sprite_CreateFar(gDjinnFigures_SpriteIds[resourceKind]);
 
-    if (animation != NULL)
-      Sprite_StartAnimationFar(animation, value);
-    state->animations[index] = animation;
+    if (figure != NULL)
+      Sprite_StartAnimationFar(figure, animation);
+    state->animations[index] = figure;
   }
   return 1;
 }

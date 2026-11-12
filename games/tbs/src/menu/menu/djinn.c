@@ -1044,8 +1044,8 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
         Text_DrawMessageAsTilesFar(MsgDjinnOwnerLabel + 2, menu->helpWindow, 0,
                                    8);
       }
-      // The Djinni's figure, its element's: animation 1 for one on standby or
-      // recovering, 2 for one that is set. A recovering one gets
+      // The Djinni's figure, its element's: standing for one on standby or
+      // recovering, walking for one that is set. A recovering one gets
       // DjinnFigures_SetSlotPosition's negative mark, which
       // DjinnFigures_UpdateBottomRow turns into FACING_WEST rather than
       // FACING_SOUTH. On a header the figure goes off screen (y 200).
@@ -1065,14 +1065,14 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
                              DJINN_NUMBER(djinn))) {
             if (Djinn_CanSetFar(DJINN_MEMBER(djinn), DJINN_ELEMENT(djinn),
                                 DJINN_NUMBER(djinn)))
-              DjinnFigures_ReplaceSlot(mode, DJINN_ELEMENT(djinn), 1);
+              DjinnFigures_ReplaceSlot(mode, DJINN_ELEMENT(djinn), ANIM_STAND);
             else
-              DjinnFigures_ReplaceSlot(mode, DJINN_ELEMENT(djinn), 2);
+              DjinnFigures_ReplaceSlot(mode, DJINN_ELEMENT(djinn), ANIM_WALK);
             DjinnFigures_SetSlotPosition(mode, memberColumn * 56 + 48, 62, 0);
           } else {
             Text_DrawMessageAsTilesFar(MsgDjinnRecovering, menu->helpWindow, 0,
                                        16);
-            DjinnFigures_ReplaceSlot(mode, DJINN_ELEMENT(djinn), 1);
+            DjinnFigures_ReplaceSlot(mode, DJINN_ELEMENT(djinn), ANIM_STAND);
             DjinnFigures_SetSlotPosition(mode, memberColumn * 56 + 48, 62, 1);
           }
           if (refresh & 2)
@@ -1087,17 +1087,17 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
                                 DJINN_NUMBER(djinn))) {
               Text_DrawMessageAsTilesFar(MsgDjinnChoose + 3, menu->helpWindow,
                                          0, 16);
-              DjinnFigures_ReplaceSlot(mode, DJINN_ELEMENT(djinn), 1);
+              DjinnFigures_ReplaceSlot(mode, DJINN_ELEMENT(djinn), ANIM_STAND);
             } else {
               Text_DrawMessageAsTilesFar(MsgDjinnChoose + 2, menu->helpWindow,
                                          0, 16);
-              DjinnFigures_ReplaceSlot(mode, DJINN_ELEMENT(djinn), 2);
+              DjinnFigures_ReplaceSlot(mode, DJINN_ELEMENT(djinn), ANIM_WALK);
             }
             DjinnFigures_SetSlotPosition(mode, memberColumn * 56 + 48, 62, 0);
           } else {
             Text_DrawMessageAsTilesFar(MsgDjinnChoose + 4, menu->helpWindow, 0,
                                        16);
-            DjinnFigures_ReplaceSlot(mode, DJINN_ELEMENT(djinn), 1);
+            DjinnFigures_ReplaceSlot(mode, DJINN_ELEMENT(djinn), ANIM_STAND);
             DjinnFigures_SetSlotPosition(mode, memberColumn * 56 + 48, 62, 1);
           }
           if (refresh & 2)
@@ -1110,12 +1110,12 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
                            DJINN_NUMBER(djinn))) {
           if (Djinn_CanSetFar(DJINN_MEMBER(djinn), DJINN_ELEMENT(djinn),
                               DJINN_NUMBER(djinn)))
-            DjinnFigures_ReplaceSlot(mode, DJINN_ELEMENT(djinn), 1);
+            DjinnFigures_ReplaceSlot(mode, DJINN_ELEMENT(djinn), ANIM_STAND);
           else
-            DjinnFigures_ReplaceSlot(mode, DJINN_ELEMENT(djinn), 2);
+            DjinnFigures_ReplaceSlot(mode, DJINN_ELEMENT(djinn), ANIM_WALK);
           DjinnFigures_SetSlotPosition(mode, memberColumn * 56 + 48, 54, 0);
         } else {
-          DjinnFigures_ReplaceSlot(mode, DJINN_ELEMENT(djinn), 1);
+          DjinnFigures_ReplaceSlot(mode, DJINN_ELEMENT(djinn), ANIM_STAND);
           DjinnFigures_SetSlotPosition(mode, memberColumn * 56 + 48, 54, 1);
         }
         if (refresh & 2)

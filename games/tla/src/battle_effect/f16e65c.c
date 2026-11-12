@@ -834,19 +834,9 @@ extern char ResourceId_Data0C2;
 extern char ResourceId_OrangePaletteB;
 
 extern const u8 gData_08199364[]; // a textured square
-extern const u8 Data_081991e0[];  // its four corners
 
-// The canvas layer and its helpers, with The Broken Seal's names.
-void BattleEffect_StartCanvasLayer(s32 bgControl);
-s32 BattleEffect_LoadBlitter(s32 slot,
-                             s32 blitter); // BattleEffect_BuildBlitter, packed
-void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
-                   s32 frames);            // BattleEffect_TintBattler
-void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantFar
-void Func_081180e8(s32 phase);             // BattlePlayback_StartFar
 void BattleEffect_SetApproachMotion(s32 actor, s32 target, s32 frames,
                                     s32 percent);
-void Func_0815b434(u8 *map, s32 size, s32 scale); // a shaded disc
 
 // Radiant Fire: eight bursts of fire bloom one after another around the
 // target, each a shaded disc that swells and shrinks under a spinning

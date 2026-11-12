@@ -40,11 +40,15 @@ extern char ResourceId_MercuryDjinnSmallSheet;
 extern char ResourceId_MarsDjinnSmallSheet;
 extern char ResourceId_JupiterDjinnSmallSheet;
 extern char ResourceId_VenusDjinnSmallSheet;
-extern char ResourceId_Data134;
+extern char ResourceId_Data134; // the spark sprites
 
-// The Broken Seal's gBattleEffect_MoteCells: each spark size's cel.
+// The Broken Seal's gBattleEffect_MoteCells, each spark size's cel; then
+// gBattleEffect_GlintCell* (offsets, widths, heights), gPrism_ShardOffsets and
+// the shards' widths and heights.
 extern u16 gData_08197410[];
 
+// Builds a blitter in a heap slot: BattleEffect_BuildBlitter(slot, 7, 7,
+// flags, mode), whose result it returns.
 s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
@@ -57,8 +61,9 @@ void Render_ResetTransformState(void);
 void SceneTransform_ApplyPosition(const s32 *pos);
 void SceneTransform_ApplyYaw(s32 angle);
 void SceneTransform_ApplyPitch(s32 angle);
-void Func_080150e4(s32 angle);
+void Func_080150e4(s32 angle); // SceneTransform_ApplyRoll
 void Transform_Pop(void);
+/// Flashes an actor in a palette for some frames.
 void Func_0814cd48(s32 actor, s32 palette, s32 a, s32 timer, s32 frames);
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                           s32 gravity);
@@ -510,7 +515,6 @@ DEFINE_EFFECT_KIND(BattleEffect_RunProjectileVolleyMode18,
 #define HI(v) (((s16 *)&(v))[1])
 
 // Directory rows, named by their assets.
-extern char ResourceId_Data134; // the spark sprites
 extern char ResourceId_CometSheetA;
 extern char ResourceId_CometSheetB;
 extern char ResourceId_CometSheetC;
@@ -539,9 +543,6 @@ extern u8 Data_081984ec[];    // _FlashRises
 extern u16 Data_081984f4[];   // _FlashOffsets
 extern u16 Data_08198502[];   // _PelletOffsets
 extern u8 Data_0819850a[];    // the glints' palettes
-// gBattleEffect_MoteCells; gBattleEffect_GlintCell* (offsets, widths,
-// heights); gPrism_ShardOffsets and the shards' widths and heights.
-extern u16 gData_08197410[];
 // The glint's six cels: ☀️'s gBattleEffect_GlintCells, _GlintCellWidths
 // and _GlintCellHeights.
 extern u16 gData_08197486[];
@@ -561,21 +562,12 @@ extern u8 gData_08197826[];
 void BattleEffect_StartCanvasLayer(s32 control);
 /// Closes the canvas layer.
 void BattleEffect_EndCanvasLayer(void);
-// Prepares the canvas around an anchor and returns its screen point.
-void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen,
-                   s32 *world);
-// Builds a blitter in a heap slot: BattleEffect_BuildBlitter(slot, 7, 7,
-// flags, mode), whose result it returns.
-s32 BattleEffect_LoadBlitter(s32 slot, s32 modeFlags);
 // BattleEffect_BuildBlitter itself.
 s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
                   u32 mode);
 
 /// BattlePlayback_Start through its far call.
 void Func_081180e8(s32 phase);
-/// Flashes an actor in a palette for some frames.
-void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
-                   s32 timerFrames);
 /// An actor's recoil motion, through a far call.
 void Func_08118088(s32 actor, s32 motion);
 /// Shakes the camera while work->shakeFrames lasts.
@@ -2440,7 +2432,6 @@ void Func_0816442c(s32 group, s32 x,
 void Func_0816467c(s32 group, s32 x, s32 y); // BattleEffect_RunImpactBurst
 
 void Func_0818caa8(void *source, s32 x, s32 y, s32 size); // four motes
-void Func_080150e4(s32 angle);  // SceneTransform_ApplyRoll
 void Func_080151ac(s32 *scale); // SceneTransform_ApplyScale
 
 void Projection_Set(s32 a, s32 b, s32 c);

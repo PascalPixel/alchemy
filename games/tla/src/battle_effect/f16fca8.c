@@ -772,21 +772,6 @@ struct FxPartyList;
 struct Model;
 struct StripQuad;
 
-s32 BattleEffect_LoadBlitter(s32 slot,
-                             s32 modeAndFlags); // BattleEffect_BuildBlitter
-void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
-                   s32 timerFrames);              // BattleEffect_TintBattler
-void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
-void Func_080151e4(s32 x, s32 y, s32 z);          // SceneTransform_ApplyScale3
-void BattleEffect_SpawnObjects(s32 entryCount, s32 kind,
-                               u32 variant); // SpawnObjects
-void BattleEffect_SelectLivingTargets(
-    struct FxPartyList *party); // SelectLivingTargets
-void Func_080150e4(s32 angle);  // SceneTransform_ApplyRoll
-
-void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
-void Func_081180e8(s32 phase);             // BattlePlayback_StartFar
-
 void BattleCamera_SetViewFar(s32 a, s32 b, s32 c, s32 d);
 void Camera_ApplyPhasedDelta(void); // the camera's sway
 
@@ -794,7 +779,6 @@ extern char ResourceId_EmberStreakSheet;
 extern char ResourceId_CometSheetB;
 extern char ResourceId_RuneSheet;
 extern u8 gMapCellBuffer[];
-extern u16 gData_08197410[];     // gBattleEffect_MoteCells
 extern const s8 Data_08196e9c[]; // the hexagon's corners (z, y)
 
 #define VOID_BEAM_FRAMES 88

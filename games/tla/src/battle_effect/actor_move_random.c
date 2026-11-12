@@ -83,7 +83,9 @@ extern char ResourceId_WaterSpraySheet;
 extern char ResourceId_FirePillarSheetA;
 extern char ResourceId_Data134;    // ☀️ ParticleSpritesA
 extern u8 gData_0819896a[];        // the pillars' feet, x and y
-extern u16 gData_08197410[];       // ☀️ gBattleEffect_MoteCells
+// ☀️ gBattleEffect_MoteCells: the Data134 sheet's spark cells, by size - 1
+// (byte offsets).
+extern u16 gData_08197410[];
 extern const s32 gData_08198974[]; // ☀️ gNereid_Gravity
 
 void BattleEffect_StartCanvasLayer(s32 bgControl);
@@ -4978,17 +4980,6 @@ void BattleEffect_RunUndeadSword(struct BattleEffectArgument *effect) {
 extern char ResourceId_Data0DA;
 extern char ResourceId_MercuryDjinnSmallSheet;
 
-// Spark cells of the Data134 sheet, by size - 1 (byte offsets).
-extern u16 gData_08197410[];
-
-// The canvas layer and its helpers, with The Broken Seal's names.
-void BattleEffect_StartCanvasLayer(s32 bgControl);
-void BattleEffect_FetchRectangleBlitters(
-    s32 flip, void **out); // ..FetchRectangleBlitters
-void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
-                   s32 frames);            // BattleEffect_TintBattler
-void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantFar
-void Func_081180e8(s32 phase);             // BattlePlayback_StartFar
 void BattleEffect_SetApproachMotion(s32 actor, s32 target, s32 frames,
                                     s32 percent);
 
@@ -5199,23 +5190,11 @@ struct WaterTriangle {
   u32 v2 : 8;
 };
 
-s32 BattleEffect_LoadBlitter(s32 slot,
-                             s32 modeAndFlags);   // BattleEffect_BuildBlitter
-void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
-void Func_080151e4(s32 x, s32 y, s32 z);          // SceneTransform_ApplyScale3
-void BattleEffect_SpawnObjects(s32 entryCount, s32 kind,
-                               u32 variant); // SpawnObjects
-void BattleEffect_SelectLivingTargets(
-    struct FxPartyList *party); // SelectLivingTargets
-void Func_080150e4(s32 angle);  // SceneTransform_ApplyRoll
-
 extern char ResourceId_CrackedTextureSheet;
 extern char ResourceId_Data0B4;
 extern char ResourceId_SmokeSheet;
 extern char ResourceId_CrystalSheet;
-extern u8 gData_02014000[];       // the water's mesh, built here
 extern const u8 gData_08199340[]; // the splash's mesh
-extern const u8 gData_08199210[]; // its corners
 
 #define WATER_COLUMNS 16
 #define WATER_ROWS 8
@@ -5879,7 +5858,6 @@ extern const u8 Data_08198b2a[4];  // its growth
 extern const s8 Data_08198b2e[4];  // and its height
 extern const s16 Data_08198b32[8]; // per flash: its roll
 extern const s16 Data_08198b42[8]; // and pitch
-extern const u8 gData_08199364[];  // the flash's mesh
 
 #define DIAMOND_BERG_FRAMES 148
 

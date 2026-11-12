@@ -914,9 +914,6 @@ void Func_08015160(s32, s32, s32);
 void Func_080151e4(s32, s32, s32);
 void Func_0801521c(s32);
 
-void Func_08118088(s32 actor,
-                   s32 variant); // BattleMotion_ApplyVariantMotionFar
-void Func_081180e8(s32 phase);   // BattlePlayback_StartFar
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                           s32 gravity);
 void BattleEffect_CountDownBattlerTints(void);
@@ -932,7 +929,6 @@ void SummonEffect_RunCanvasMode2(void *action);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void Func_0815b434(u8 *map, s32 size, s32 scale);
 
-void BattleEffect_StartActorMotion(s32, s32, s32, s32, s32, s32);
 void Graphics_PackTileRows(void *, void *, s32, s32);
 void Func_0818caa8(void *, s32, s32, s32);
 s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,

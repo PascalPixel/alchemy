@@ -313,7 +313,7 @@ extern u8 *gLocalizedWord_CountedNouns[];
 /// operands for the message to run.
 /// The message is written at WindowWork.textBufferEnd, which it leaves just
 /// past the message's terminator, and is cut at the ring's length. The decoder
-/// routine is copied into heap slot TEXT_WORK_BLOCK for the call and freed at
+/// routine is copied into HEAP_SLOT_MESSAGE_DECODER for the call and freed at
 /// its end.
 s32 Message_Decode(s32 script, s32 clear) {
   struct WindowWork *work = WINDOW_WORK;
@@ -383,12 +383,12 @@ s32 Message_Decode(s32 script, s32 clear) {
 
       size = (u32)Text_DecodeSymbolCodeSize;
       Dma_Set((const void *)Text_DecodeSymbol,
-              HeapSlot_Alloc(TEXT_WORK_BLOCK, size), DMA_COPY32(size >> 2),
-              REG_DMA3);
+              HeapSlot_Alloc(HEAP_SLOT_MESSAGE_DECODER, size),
+              DMA_COPY32(size >> 2), REG_DMA3);
     }
     // The decoder runs from a copy in RAM, one symbol at a time.
-    decode = (s32 (*)(
-        struct MessageReader *))gWindowWork[TEXT_WORK_BLOCK - HEAP_SLOT_WINDOW];
+    decode = (s32 (*)(struct MessageReader *))
+        gWindowWork[HEAP_SLOT_MESSAGE_DECODER - HEAP_SLOT_WINDOW];
     Message_Find(&reader, script);
     /* FAKEMATCH(temporary): messageReader holds &reader; as decode(&reader),
      * 2 of 706 instructions differ in tbs-en. */
@@ -833,7 +833,7 @@ s32 Message_Decode(s32 script, s32 clear) {
     entry[writePosition] = 0;
     nextPosition = (writePosition + 1) & TEXT_BUFFER_MASK;
     work->textBufferEnd = (u16)nextPosition;
-    HeapSlot_Release(TEXT_WORK_BLOCK);
+    HeapSlot_Release(HEAP_SLOT_MESSAGE_DECODER);
     work->lastMessageStart = (u16)start;
   }
 
@@ -922,12 +922,12 @@ s32 Message_Decode(s32 script, s32 clear) {
 
       size = (u32)Text_DecodeSymbolCodeSize;
       Dma_Set((const void *)Text_DecodeSymbol,
-              HeapSlot_Alloc(TEXT_WORK_BLOCK, size), DMA_COPY32(size >> 2),
-              REG_DMA3);
+              HeapSlot_Alloc(HEAP_SLOT_MESSAGE_DECODER, size),
+              DMA_COPY32(size >> 2), REG_DMA3);
     }
     // The decoder runs from a copy in RAM, one symbol at a time.
-    decode = (s32 (*)(
-        struct MessageReader *))gWindowWork[TEXT_WORK_BLOCK - HEAP_SLOT_WINDOW];
+    decode = (s32 (*)(struct MessageReader *))
+        gWindowWork[HEAP_SLOT_MESSAGE_DECODER - HEAP_SLOT_WINDOW];
     Message_Find(&reader, script);
     /* FAKEMATCH(temporary): messageReader holds &reader; as decode(&reader),
      * 2 of 895 instructions differ in tbs-ja. */
@@ -1158,7 +1158,7 @@ s32 Message_Decode(s32 script, s32 clear) {
     entry[writePosition] = 0;
     nextPosition = (writePosition + 1) & TEXT_BUFFER_MASK;
     work->textBufferEnd = (u16)nextPosition;
-    HeapSlot_Release(TEXT_WORK_BLOCK);
+    HeapSlot_Release(HEAP_SLOT_MESSAGE_DECODER);
     work->lastMessageStart = (u16)start;
   }
   if (clear != 0)

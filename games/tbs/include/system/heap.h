@@ -148,6 +148,10 @@ enum HeapSlot {
   HEAP_SLOT_RAM_CODE_2 = 47,
   /// Copied field row drawer or window tile decoder, released after each call.
   HEAP_SLOT_RAM_CODE_TEMP = 49,
+  /// The message decoder routine (Text_DecodeSymbol), copied here to run for
+  /// the length of one message's decoding (Message_Decode), or of one
+  /// Message_DecodeRaw call when the slot is empty.
+  HEAP_SLOT_MESSAGE_DECODER = 50,
   /// The save workspace (struct SaveWork), from
   /// Save_InitializeWork to Save_ReleaseWork around each
   /// save, load, copy or delete and each scan of the files, as the main

@@ -50,15 +50,15 @@ void Message_DecodeRaw(s32 message, u16 *text, s32 capacity) {
   u16 delta;
 #endif
 
-  // The decoder may already be in TEXT_WORK_BLOCK, as it is while
+  // The decoder may already be in HEAP_SLOT_MESSAGE_DECODER, as it is while
   // Message_Decode decodes the names this is called for; then it is
   // borrowed, and freed only if loaded here.
-  original = ((union HeapState *)&gHeapSlots)->slots[TEXT_WORK_BLOCK];
+  original = ((union HeapState *)&gHeapSlots)->slots[HEAP_SLOT_MESSAGE_DECODER];
   if (original == NULL)
-    RamCode_LoadSlot(TEXT_WORK_BLOCK, Text_DecodeSymbol,
+    RamCode_LoadSlot(HEAP_SLOT_MESSAGE_DECODER, Text_DecodeSymbol,
                      Text_DecodeSymbolCodeSize);
   decode = (s32 (*)(struct MessageReader *))((union HeapState *)&gHeapSlots)
-               ->slots[TEXT_WORK_BLOCK];
+               ->slots[HEAP_SLOT_MESSAGE_DECODER];
   Message_Find(&reader, message);
 #if !defined(DECODE_EUROPEAN)
   delta = 0xffff;
@@ -108,7 +108,7 @@ void Message_DecodeRaw(s32 message, u16 *text, s32 capacity) {
   }
 done:
   if (original == NULL)
-    HeapSlot_Release(TEXT_WORK_BLOCK);
+    HeapSlot_Release(HEAP_SLOT_MESSAGE_DECODER);
   *text = 0;
 }
 

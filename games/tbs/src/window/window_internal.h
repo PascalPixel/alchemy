@@ -215,11 +215,6 @@ enum TextStyle {
 /// countdown.
 #define WINDOW_ANIMATION_SWELL 4
 
-/// The heap block the message decoder routine is copied into to run, for the
-/// length of one message's decoding (Message_Decode), or of one
-/// Message_DecodeRaw call when the block is empty.
-#define TEXT_WORK_BLOCK 50
-
 /// HEAP_SLOT_GLYPH_TRANSFER's pointer, kept in IWRAM (system/iwram.s, after
 /// gWindowWork and gPartyStatusWork): the glyph transfer work icons are built
 /// in. Each icon builder allocates the slot for its build and frees it after.

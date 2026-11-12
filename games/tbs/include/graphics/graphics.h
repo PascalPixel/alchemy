@@ -239,8 +239,8 @@ extern const u8 Credits_DecodeBackground[];
 extern u8 Credits_DecodeBackgroundCodeSize[];
 /// Decodes one Huffman-coded symbol of a message for a struct MessageReader.
 extern const u8 Text_DecodeSymbol[];
-/// Text_DecodeSymbol, which the message decoders copy into heap slot
-/// TEXT_WORK_BLOCK.
+/// Text_DecodeSymbol, which the message decoders copy into
+/// HEAP_SLOT_MESSAGE_DECODER.
 extern u8 Text_DecodeSymbolCodeSize[];
 /// Tile_BuildCellPictures, copied to the heap by ScanlineWindow_FillSpans for
 /// each frame of a window transition.

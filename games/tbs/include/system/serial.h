@@ -200,14 +200,11 @@ static inline s32 Serial_AddErrorFlag(s32 status) {
 
 static __inline__ void Serial_ResetTransferState(void) {
   struct SerialTransferState *state;
-  volatile u16 *ime;
   u32 saved;
   u32 zero;
 
   state = &gSerialTransfer;
-  ime = &REG_IME;
-  IME_SAVE(ime, saved);
-  IME_DISABLE(ime);
+  IRQ_LOCK(saved);
   zero = 0;
   /* FAKEMATCH(dead): state set again; as the one assignment above, 14 of 62
    * instructions differ in tbs-en (BattleArena_ExchangePartyRecords). */
@@ -221,10 +218,10 @@ static __inline__ void Serial_ResetTransferState(void) {
   gSerialSendSource = zero;
   gSerialSendSize = zero;
   gSerialReceiveDestination = zero;
-  *(u8 *)&state->peerFlags = zero;
-  *(u8 *)&state->flags = zero;
+  state->peerFlags = zero;
+  state->flags = zero;
   gSerialReceivedSize = zero;
-  *ime = saved;
+  IRQ_UNLOCK(saved);
 }
 
 #endif

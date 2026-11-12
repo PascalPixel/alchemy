@@ -20,8 +20,8 @@
 /// The flash pictures in the sheet, after the 34x104 fire pillar.
 #define TITAN_BLADE_FLASH_OFFSETS (34 * 104)
 
-/// A huge sword drops onto the first target amid charging flashes, dust and
-/// sparks.
+/// A huge gold-hilted sword drops onto the first target and is driven into the
+/// ground amid flashes, golden dust and sparks.
 ///
 /// Abilities: Titan Blade (BATTLE_EFFECT_TITAN_BLADE).
 ///
@@ -108,13 +108,13 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
     s32 mag;
     s32 ang;
 
+    /* FAKEMATCH(temporary): mag holds 0x1ff before the mask; as
+     * Random16() & 0x1ff, 41 of 779 instructions differ in tbs-en. */
     mag = 0x1FF;
-    // Masked in place, the mask assigned first; as Random16() & mask, 3
-    // instructions differ.
     mag &= Random16();
     ang = Random16() & TRIG_ANGLE_MASK;
     spark->x = sparkOriginX;
-    spark->y = 176 << 15;
+    spark->y = px(88);
     spark->velocityX = (Trig_Sin(ang) * (mag + 32)) >> 5;
     spark->velocityY = -(Trig_Cos(ang) * (mag + 32)) >> 6;
     spark->variant = (Random16() & 7) + 32;
@@ -124,7 +124,8 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
   frame = 0;
   do {
     // The palette fades towards the blast colours over frames 25 to 47,
-    // then towards the lightning colours from frame 57.
+    // then towards the lightning colours from frame 57: the dust and sparks
+    // turn from gold to pink and violet.
     if (frame >= 25 && frame <= 47) {
       BattleEffect_StepPaletteToResource((s32)&ResourceId_BlastSheet);
     }
@@ -134,7 +135,7 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
 
     // Shakes of 8 frames from frames 8 and 48, and of 16 from the strike.
     if (frame == 8) {
-      work->shakeFrames = frame;
+      work->shakeFrames = 8;
     }
     if (frame == 48) {
       work->shakeFrames = 8;
@@ -176,6 +177,8 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
                           TITAN_BLADE_FLASH_OFFSETS,
                       x - 16, y + 48, 32, 64);
         }
+        /* FAKEMATCH(dead): life is read again, unchanged; without the read,
+         * 385 of 779 instructions differ in tbs-en. */
         life = flash->variant;
         flash->variant = life > 0 ? life - 1 : -1;
         i++;
@@ -197,7 +200,7 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
           mag = Random16() & 63;
           ang = Random16() & TRIG_ANGLE_MASK;
           dust->x = ((Trig_Sin(ang) * mag) >> 3) + sparkOriginX;
-          dust->y = ((Trig_Cos(ang) * mag) >> 2) + (192 << 15);
+          dust->y = ((Trig_Cos(ang) * mag) >> 2) + px(96);
           dust->velocityX = ((Random16() & 63) - 32) << 14;
           dust->velocityY = (-(Random16() & 63) - 8) << 13;
           dust->variant = 0;
@@ -225,7 +228,7 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
           mag = Random16() & 63;
           ang = Random16() & TRIG_ANGLE_MASK;
           dust->x = ((Trig_Sin(ang) * mag) >> 3) + sparkOriginX;
-          dust->y = ((Trig_Cos(ang) * mag) >> 2) + (192 << 15);
+          dust->y = ((Trig_Cos(ang) * mag) >> 2) + px(96);
           dust->velocityX = ((Random16() & 63) - 32) << 14;
           dust->velocityY = (-(Random16() & 63) - 8) << 13;
           dust->variant = 0;
@@ -241,6 +244,8 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
     if (step >= 0 && step <= 31) {
       s32 phase = frame * 16;
       s32 x = canvasCenterX - 17;
+      /* FAKEMATCH(temporary): width, blit and high hold one value each; as
+       * those values in place, 212 of 779 instructions differ in tbs-en. */
       s32 width = 34;
       DrawRectangle blit = blitters[0];
       s32 high = 104;
@@ -253,8 +258,7 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
     // Until frame 71, move and draw the first 342 dust motes; they swell
     // from frame 69, and one goes out once it falls below y 108. Each falls
     // under its gTitanBlade_DustGravity, 1/8 to 1/2 pixel a frame each
-    // frame, and slows to 62/64 a frame. The tests on frames past 71 never
-    // hold here.
+    // frame, and slows to 62/64 a frame.
     if (frame <= 71) {
       i = 0;
       do {
@@ -273,6 +277,9 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
           if (frame > 70 && size <= 6) {
             size = 7;
           }
+          /* FAKEMATCH(dead): frame never passes 71 here, so the next three
+           * tests never hold; without them, 36 of 779 instructions differ in
+           * tbs-en. */
           if (frame > 72 && size <= 7) {
             size = 8;
           }
@@ -287,8 +294,10 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
 
           dust->x += dust->velocityX;
           dust->y += dust->velocityY;
+          /* FAKEMATCH(dead): frame never passes 80 here; as the else branch
+           * alone, 97 of 779 instructions differ in tbs-en. */
           if (frame > 80) {
-            dust->velocityY += -32768;
+            dust->velocityY += -px(1) / 2;
           } else {
             dust->velocityY += gTitanBlade_DustGravity[i & 3];
           }
@@ -344,10 +353,10 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
           s32 y;
           s32 size;
 
-          Particle_AdvanceWithGravity2D(spark, 64, 128 << 6);
+          Particle_AdvanceWithGravity2D(spark, 64, px(1) / 8);
           y = spark->y;
           spark->variant--;
-          if (y > (216 << 15)) {
+          if (y > px(108)) {
             spark->velocityY = -spark->velocityY / 2;
           } else {
             x = spark->x;

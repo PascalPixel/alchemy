@@ -1,3 +1,5 @@
+	new=$(@:.stamp=.ld).$$$$.new; $(CPP) $(LD_CPPFLAGS) -DOVERLAY=0x$* $< $$new && { cmp -s $$new $(@:.stamp=.ld) && rm $$new || mv $$new $(@:.stamp=.ld); }
+	new=$(@:.stamp=.ld).$$$$.new; $(CPP) $(LD_CPPFLAGS) $< $$new && { cmp -s $$new $(@:.stamp=.ld) && rm $$new || mv $$new $(@:.stamp=.ld); }
 # Golden Sun: The Broken Seal ☀️ (tbs) and The Lost Age ⚓️ (tla), in six
 # languages each: ja en de es fr it. `make tbs-en` builds one edition into
 # out/tbs-en/tbs-en.gba; `make compare-tbs-en` also checks it against
@@ -216,19 +218,19 @@ LDFLAGS := -T $(LD_SCRIPT)
 OVERLAY_SCRIPT = -T $(BUILD)/ld/overlay_$*.ld
 # A script is rewritten only when its text changes, so an edit that leaves an
 # image's script as it was relinks nothing; its stamp records when it last ran,
-# and a script that has gone missing runs its stamp's recipe again.
+# and a script that has gone missing runs its stamp's recipe again. Two makes of
+# one edition may run a recipe at once (land builds the ROM and the modern
+# objects together), so each writes a new file of its own.
 if_missing = $(if $(wildcard $(1)),,FORCE)
 $(BUILD)/ld/main.ld: $(BUILD)/ld/main.stamp ;
 $(BUILD)/ld/main.stamp: games/$(GAME)/ld_script.ld $(LD_HEADERS) $(call if_missing,$(BUILD)/ld/main.ld)
 	@mkdir -p $(@D)
-	$(CPP) $(LD_CPPFLAGS) $< $(@:.stamp=.ld).new
-	cmp -s $(@:.stamp=.ld).new $(@:.stamp=.ld) && rm $(@:.stamp=.ld).new || mv $(@:.stamp=.ld).new $(@:.stamp=.ld)
+	new=$(@:.stamp=.ld).$$$$.new; $(CPP) $(LD_CPPFLAGS) $< $$new && { cmp -s $$new $(@:.stamp=.ld) && rm $$new || mv $$new $(@:.stamp=.ld); }
 	@touch $@
 $(BUILD)/ld/overlay_%.ld: $(BUILD)/ld/overlay_%.stamp ;
 $(BUILD)/ld/overlay_%.stamp: games/$(GAME)/ld_script.ld $(OVERLAY_LD) $(LD_HEADERS) $$(call if_missing,$(BUILD)/ld/overlay_$$*.ld)
 	@mkdir -p $(@D)
-	$(CPP) $(LD_CPPFLAGS) -DOVERLAY=0x$* $< $(@:.stamp=.ld).new
-	cmp -s $(@:.stamp=.ld).new $(@:.stamp=.ld) && rm $(@:.stamp=.ld).new || mv $(@:.stamp=.ld).new $(@:.stamp=.ld)
+	new=$(@:.stamp=.ld).$$$$.new; $(CPP) $(LD_CPPFLAGS) -DOVERLAY=0x$* $< $$new && { cmp -s $$new $(@:.stamp=.ld) && rm $$new || mv $$new $(@:.stamp=.ld); }
 	@touch $@
 .PHONY: FORCE
 FORCE:

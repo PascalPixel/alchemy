@@ -300,3 +300,29 @@ void Func_020010b4(void) {
 }
 
 void Func_020010d0(void) { Func_02001d9c(); }
+
+#include "actor.h"
+#include "field_sprite.h"
+
+
+
+void Func_020010d8(struct Actor *object) {
+  struct Actor *child;
+  struct FieldSprite *parent;
+  struct FieldSprite *sprite;
+
+  child = (FieldActor_Create(14, object->x, object->y + 0x40000,
+                              object->z + 0x40000));
+  parent = object->sprite;
+  if (child != NULL) {
+    sprite = child->sprite;
+    child->terrainHeight = object->terrainHeight;
+    Func_02001c74(child, gData_02001ee8);
+    child->motionFlags = 0;
+    if (sprite != NULL) {
+      Animation_ApplyChildArgument(sprite, 1);
+      sprite->nextFrame = 0;
+      sprite->priority = parent->priority;
+    }
+  }
+}

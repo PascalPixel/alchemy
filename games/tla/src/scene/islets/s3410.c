@@ -223,3 +223,234 @@ void Func_02003790(s32 layer, s32 x, s32 z, u32 width, u32 height, s32 value) {
     }
   }
 }
+
+#include "system/vector3.h"
+
+extern s32 gData_02004094[];
+struct Actor *Func_02003940(s32 *direction, s32 *number, s32 *kind);
+
+static __inline__ s32 RowByte(s8 *row, s32 index) { return row[index]; }
+
+static __inline__ s32 BoxSpan(s32 kind, s32 start) {
+  return (Abs(gData_0200407c[kind][start]) +
+          Abs(gData_0200407c[kind][start + 2])) >>
+         4;
+}
+
+static __inline__ s32 CallFunc_02003e2c(struct Actor *object,
+                                        struct Vector3 *cell) {
+  return Func_02003e2c(object, cell);
+}
+
+s32 Func_020037d8(struct PushTarget *push) {
+  struct Actor *object;
+  struct Vector3 cell;
+  s32 direction, kind;
+  s32 dx, dz, steps, i, j, offset, result;
+
+  object = Func_02003940(&direction, &push->id, &push->footprint);
+  if (object != 0) {
+    kind = push->footprint;
+    /* FAKEMATCH(dead): the address of kind taken and dropped; as kind =
+     * push->footprint alone, 127 of 171 instructions differ in tla-en. */
+    (void)&kind;
+    {
+      s32 width = BoxSpan(kind, 0);
+      s32 height = BoxSpan(kind, 1);
+      u8 *layer;
+      s32 index;
+
+      offset = gData_02004094[direction];
+      dx = offset & 0xffff0000;
+      dz = offset << 16;
+      push->callback = 0;
+      steps = 0;
+      layer = &object->terrainId;
+      *layer = 2;
+      push->x = object->x + dx;
+      push->z = object->z + dz;
+      cell.y = object->y;
+      for (;;) {
+        s8 *table = gData_0200407c[0];
+
+        index = kind * 4;
+        /* FAKEMATCH(wrapper): the read through RowByte; as table[index + 1],
+         * 27 of 171 instructions differ in tla-en. */
+        cell.z = push->z + (RowByte(table, index + 1) << 16);
+        for (j = 0; j < height; j++) {
+          cell.x = push->x + (gData_0200407c[0][index] << 16);
+          for (i = 0; i < width; i++) {
+            /* FAKEMATCH(wrapper): the call through CallFunc_02003e2c; as a
+             * direct call, 2 of 171 instructions differ in tla-en. */
+            if (CallFunc_02003e2c(object, &cell) == 2)
+              goto blocked;
+            cell.x += 0x100000;
+          }
+          cell.z += 0x100000;
+        }
+        push->x += dx;
+        steps++;
+        push->z += dz;
+      }
+    blocked:
+      *layer = 0;
+    }
+    result = 0;
+    if (steps != 0) {
+      push->x = object->x + dx * steps;
+      result = 1;
+      push->y = object->y;
+      push->z = object->z + dz * steps;
+    }
+  } else
+    result = 0;
+  return result;
+}
+
+/// The whole-pixel half of a 16.16 coordinate.
+#define HI(v) (((s16 *)&(v))[1])
+
+struct Actor *Func_02003940(s32 *direction, s32 *slot, s32 *kind) {
+  struct EventWork *work = Ram_HeapSlots->eventWork;
+  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
+  struct Actor **entry;
+  struct Actor *object;
+  u32 i, k;
+  s32 x, z, left, top, right, bottom;
+
+  *direction = leader->facing >> 12;
+  i = 8;
+  entry = &work->objects[8];
+outer:
+  object = *entry;
+  k = 0;
+inner:
+  if (((struct ObjectAnimationState *)object->sprite)->value28[0] ==
+      gData_02004070[k]) {
+    x = (HI(leader->x) + (gData_02004094[*direction] >> 16)) >> 4;
+    z = (HI(leader->z) + (s16)gData_02004094[*direction]) >> 4;
+    left = (HI(object->x) + gData_0200407c[k][0]) >> 4;
+    top = (HI(object->z) + gData_0200407c[k][1]) >> 4;
+    right = (HI(object->x) + gData_0200407c[k][2]) >> 4;
+    bottom = (HI(object->z) + gData_0200407c[k][3]) >> 4;
+    if (left <= x && x < right && top <= z && z < bottom) {
+      *kind = k;
+      if (k & 1) {
+        if (left != leader->x >> 20) {
+          *slot = i;
+          return object;
+        }
+      } else {
+        if (top != leader->z >> 20) {
+          *slot = i;
+          return object;
+        }
+      }
+    }
+  }
+  k++;
+  if (k <= 5)
+    goto inner;
+  entry++;
+  i++;
+  if (i <= 63)
+    goto outer;
+  return NULL;
+}
+
+void Func_02003fd4(void);
+void Func_02003d0c(void);
+
+/// The heap slots read as words: the map slot comes through u32, not its
+/// pointer type, so its load stays behind the stores of the block.
+struct HeapSlotWords {
+  u32 slots[8];
+  u32 mapWork;
+};
+
+#define ABS(x) ((x) < 0 ? -(x) : (x))
+
+void Func_02003a5c(struct PushTarget target) {
+  u8 *map = (u8 *)((struct HeapSlotWords *)Ram_HeapSlots)->mapWork;
+  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
+  struct Actor *object = Actor_Get(target.id);
+  s32 cell[3];
+  s32 from[3];
+  s32 footprint;
+  s32 width;
+  s32 height;
+  s32 originX;
+  s32 originZ;
+  s32 direction;
+  s32 speed;
+  s32 acceleration;
+
+  direction = leader->facing >> 16;
+  footprint = target.footprint;
+  speed = leader->speedLimit;
+  acceleration = leader->acceleration;
+  from[0] = object->x;
+  from[2] = object->z;
+  cell[0] = (object->x + (gData_0200407c[footprint][0] << 16)) >> 20;
+  cell[2] = (object->z + (gData_0200407c[footprint][1] << 16)) >> 20;
+  width = (ABS(gData_0200407c[footprint][0]) +
+           ABS(gData_0200407c[footprint][2])) >>
+          4;
+  height = (ABS(gData_0200407c[footprint][1]) +
+            ABS(gData_0200407c[footprint][3])) >>
+           4;
+  Func_02003790(0, cell[0], cell[2], width, height, 0);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x1999);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, 8);
+  System_Wait(15);
+  {
+    s32 deltaX = (target.x - from[0]) >> 17;
+    s32 deltaZ = (target.z - from[2]) >> 17;
+
+    Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, deltaX,
+                                       deltaZ);
+  }
+  Actor_Get(gMainRoutineWork.currentOwner)->update = Func_02003d0c;
+  System_Wait(4);
+  if ((u32)(direction - 6) <= 7)
+    Func_02003de4(object, 3);
+  else
+    Func_02003de4(object, 2);
+  Event_PlaySound(239);
+  Actor_SetSpeed(target.id, 0x8000, 0x1999);
+  FieldActor_SetMoveTarget(object, target.x, target.y, target.z);
+  FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, 2);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x4ccc, 0x1999);
+  Actor_SetDestinationOffset(gMainRoutineWork.currentOwner,
+                                     (gData_02004094[direction] << 16) >> 31,
+                                     (gData_02004094[direction] << 16) >> 17);
+  if (target.callback != 0)
+    target.callback();
+  FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
+  leader->update = 0;
+  leader->speedLimit = speed;
+  leader->acceleration = acceleration;
+  Actor_WaitForMove(object);
+  Event_PlaySound(298);
+  Event_PlaySound(213);
+  FieldActor_SetPositionAndResetMotion(object, target.x, object->y, target.z);
+  Func_02003de4(object, 1);
+  target.x = target.x + (gData_0200407c[footprint][0] << 16);
+  target.z = target.z + (gData_0200407c[footprint][1] << 16);
+  target.x >>= 20;
+  target.z >>= 20;
+  originX = *(s32 *)(map + 328) >> 20;
+  originZ = *(s32 *)(map + 332) >> 20;
+  MapGrid_CopyCellAttributes(target.x, target.z, width, height, originX + target.x, originZ + target.z);
+  Func_02003790(0, target.x, target.z, width, height, 255);
+  Func_02003790(2, target.x, target.z, width, height, 255);
+  cell[0] = (from[0] + (gData_0200407c[footprint][0] << 16)) >> 20;
+  cell[2] = (from[2] + (gData_0200407c[footprint][1] << 16)) >> 20;
+  originX += cell[0];
+  originZ += cell[2];
+  MapGrid_CopyCellAttributes(originX, originZ, width, height, cell[0], cell[2]);
+  Func_02003790(2, cell[0], cell[2], width, height, 0);
+  Func_02003fd4();
+}

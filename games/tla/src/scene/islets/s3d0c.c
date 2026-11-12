@@ -2,7 +2,7 @@
 #include "event_inline.h"
 
 void Func_02003d0c(struct Actor *object) {
-  struct IsletsVector position;
+  struct Vector3 position;
   struct Actor *hit;
   u32 i;
   s32 angle = object->facing >> 12;

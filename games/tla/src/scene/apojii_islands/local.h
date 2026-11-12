@@ -26,7 +26,7 @@ void Event_WaitTransitionFrames(void);
 s32 Resource_FindFreeEntry(void);
 void *HeapSlot_AllocEwram(s32 slot, s32 size);
 void HeapSlot_Release(s32 slot);
-s32 Map_GetTerrainHeight(s32 x, s32 z);
+s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 void Func_02001bf4(void *callback);
 void Func_02001bfc(void *callback);
 void Func_02001c0c(s32 a, s32 b, void *callback);
@@ -66,7 +66,7 @@ s32 Func_020013d8(struct Actor *object);
 void Func_02001500(void);
 void Func_020015f8(void);
 void Func_020017bc(void);
-void Func_020017f8(s32 a, s32 b, s32 c);
+void Func_020017f8(u32 base, s32 a, s32 b);
 void Func_02001940(void);
 void Func_02001ad8(void);
 void Func_02001ba0(s32 id);
@@ -74,7 +74,23 @@ void Func_02001ba0(s32 id);
 extern s32 gData_02002a98;
 extern u16 gData_02002a9c;
 extern u16 gData_02002a9e;
-extern u16 gData_02002aa0[];
+struct CellMarker {
+  s32 x;
+  s32 y;
+  s32 z;
+  s32 rest;
+  u16 kind;
+  u16 state;
+  u32 oam[3];
+};
+
+struct CellMarkers {
+  u16 block;
+  u16 count;
+  struct CellMarker markers[128];
+};
+
+extern struct CellMarkers gData_02002aa0;
 extern u32 gData_02001ee8[];
 extern u32 gData_02001ef4[];
 extern const u8 gField_Tiles679[];

@@ -9,6 +9,7 @@
 #include "input.h"
 #include "text/msg_ids.h"
 #include "frame.h"
+#include "system/vector3.h"
 
 struct IsletsEventWork {
   u8 unk000[0x154];
@@ -65,23 +66,13 @@ struct IsletsExit {
   } pair;
 };
 
-struct IsletsVector {
-  s32 x;
+struct PushTarget {
+  s32 x; ///< 16.16 fixed-point pixels
   s32 y;
   s32 z;
-};
-
-struct IsletsPair {
-  s32 first;
-  s32 second;
-};
-
-struct IsletsTarget {
-  s32 a;
-  s32 b;
-  s32 c;
-  s32 d;
-  struct IsletsPair pair;
+  s32 footprint; ///< index into the footprint table
+  s32 id;
+  void (*callback)(void);
 };
 
 extern u8 gData_02004754[];
@@ -96,16 +87,16 @@ extern s32 gData_02005198;
 extern s32 gData_0200519c;
 extern const u8 gData_02004028[];
 extern const struct IsletsExit gData_020046bc[];
-extern const u16 gData_02004070[];
+extern u16 gData_02004070[];
 
 void Func_020020ec(s32 x, s32 z, s32 layers, s32 value);
 void Func_020021d0(void);
 void Func_02002bd8(void);
 void Func_02003fe4(void);
-s32 Func_02003e2c(struct Actor *object, struct IsletsVector *position);
-struct Actor *Func_02003fdc(struct IsletsVector *position, s32 mode);
-s32 Func_020037d8(struct IsletsTarget *target);
-void Func_02003a5c(struct IsletsTarget target);
+s32 Func_02003e2c(struct Actor *object, struct Vector3 *position);
+struct Actor *Func_02003fdc(struct Vector3 *position, s32 mode);
+s32 Func_020037d8(struct PushTarget *target);
+void Func_02003a5c(struct PushTarget target);
 
 void Func_02001f58(void);
 void Func_02001278(struct Actor *object);

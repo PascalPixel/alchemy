@@ -8,7 +8,6 @@
 
 extern struct GabombaStatueChamberObject *gData_02002058;
 void *HeapSlot_AllocFar(s32 slot, s32 size);
-void HeapSlot_Release(s32 slot);
 void Func_02000ef0();
 
 void Func_02000f00(void) {
@@ -290,4 +289,284 @@ void Func_020010d4(void) {
   Event_WaitTransitionFrames();
   GameFlag_SetBit(265);
   Import_EventSetExitRequest(2);
+}
+
+void Func_02001d40(void);
+s32 Func_02001f08();
+extern u8 gData_02001f4c[];
+
+struct GroupWork {
+  u8 unk000[0x1ac];
+  s32 screenEffect;
+  u8 unk1b0[0x1c4 - 0x1b0];
+  u16 unk1c4;
+};
+
+void Func_02001710(void) {
+  s32 *owner;
+  s32 facing;
+  s32 angleC;
+  s32 zero;
+  s32 turn;
+  struct HeapSlots *heap;
+  Func_02001da0();
+  FieldEvent_ResolvePendingActions(0);
+  FieldCamera_MoveTo(-1, -1, -1, 0);
+  System_Wait(1);
+  Func_02001010();
+  Func_02001d40();
+  System_Wait(1);
+  owner = (s32 *)&gMainRoutineWork;
+  owner += 133;
+  {
+    s32 angleA = 0xe000;
+
+    Actor_SetPositionAndFacing(*owner, 0x1680000, 0xd80000, angleA);
+    Actor_SetPositionAndFacing(7, 0x1780000, 0xd80000, angleA);
+  }
+  facing = 0xa000;
+  zero = 0;
+  Actor_SetPositionAndFacing(11, 0x1680000, 0xc80000, zero);
+  Actor_SetPositionAndFacing(5, 0x1980000, 0xd80000, facing);
+  angleC = 0x8000;
+  Actor_SetPositionAndFacing(6, 0x1a80000, 0xc80000, angleC);
+  {
+    s32 angleB = 0xb000;
+
+    Actor_SetPositionAndFacing(12, 0x1880000, 0xc80000, angleB);
+  }
+  heap = Ram_HeapSlots;
+  System_Wait(1);
+  {
+    s32 *effect = &((struct GroupWork *)heap->eventWork)->screenEffect;
+
+    turn = 0x100;
+    *effect = turn;
+  }
+  Event_StartScreenTransition();
+  Event_WaitTransitionFrames();
+  FieldEvent_Wait(40);
+  Actor_FaceDirection(12, 0xd000, 20);
+  Actor_FaceDirectionAndWait(12, 0x5000);
+  Func_080d47b4(12, 0x106, 40);
+  Actor_FaceDirection(7, 0xc000, 0);
+  Actor_FaceDirection(5, 0xc000, 0);
+  Actor_FaceDirection(11, 0xd000, 0);
+  Actor_FaceDirection(6, facing, 0);
+  Actor_SetSpeed(12, 0xcccc, 0x6666);
+  Actor_WalkToAndWait(12, 0x188, 168);
+  Event_PlaySound(210);
+  Func_02000f00();
+  FieldEvent_Wait(40);
+  Event_PlaySound(185);
+  {
+    struct Actor *guard = Actor_GetById(8);
+
+    guard->motionFlags = zero;
+  }
+  Func_02001064();
+  Actor_SetSpeed(8, 0x6666, 0x3333);
+  Actor_MoveToAndWait(8, 0x1a8, 152);
+  Actor_FaceDirectionAndWait(12, 0x5000);
+  FieldEvent_SetMessageId((s32)MsgIMightBe);
+  Event_ShowMessage(0x400c, 0);
+  Actor_SetAnimationAndWait(12, 3);
+  Actor_WalkToAndWait(12, 0x188, 140);
+  System_Wait(1);
+  Actor_SetPosition(12, 0, 0);
+  System_Wait(1);
+  Func_080d47b4(5, turn, 20);
+  Actor_FaceDirection(5, angleC, 0);
+  FieldMessage_ShowAtActor(0x4005, 0);
+  if (Event_AskYesNoWithActorAnimation(*owner, 0) == 0) {
+    Actor_FaceDirectionAndWait(7, 0);
+    Actor_SetAnimation(7, 3);
+    Event_ShowMessage(0x4007, 0);
+    ((struct GroupWork *)heap->eventWork)->unk1c4++;
+  } else {
+    ((struct GroupWork *)heap->eventWork)->unk1c4++;
+    Actor_FaceDirectionAndWait(7, angleC);
+    Event_ShowMessage(0x4007, 0);
+    Func_02001f08();
+  }
+  Actor_FaceDirection(6, 0x8000, 0);
+  Actor_SetAttachedEffect(6, 0x102);
+  FieldEvent_Wait(20);
+  Event_ShowMessage(0x4006, 0);
+  Actor_FaceDirectionAndWait(11, 0);
+  Actor_SetAnimation(11, 4);
+  Event_ShowMessage(0x400b, 0);
+  Actor_FaceDirectionAndWait(11, 0xd000);
+  Event_ShowMessage(0x400b, 0);
+  Actor_FaceDirectionAndWait(11, 0x3000);
+  Actor_SetAnimationAndWait(11, 3);
+  Event_ShowMessage(0x400b, 0);
+  Actor_FaceDirection(7, 0x8000, 0);
+  Actor_FaceDirection(7, 0x8000, 20);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, 3);
+  Actor_SetAnimation(7, 3);
+  Actor_SetAnimation(5, 3);
+  Actor_SetAnimationAndWait(6, 3);
+  Actor_SetSpeed(11, 0xcccc, 0x6666);
+  Actor_SetSpeed(7, 0xcccc, 0x6666);
+  Actor_SetSpeed(5, 0x10000, 0x8000);
+  Actor_SetSpeed(6, 0x13333, 0x9999);
+  {
+    s32 path = (s32)gData_02001f4c;
+
+    Actor_SetScript(11, path);
+    Actor_SetScript(7, path);
+    Actor_SetScript(5, path);
+    Actor_RunScriptAndWait(6, path);
+  }
+  Event_SetFlag(0x8fd);
+  Func_02001da8();
+}
+
+void Func_02001b14(void);
+void Func_02001ba8(void);
+void Func_02001c44(void);
+
+s32 Func_02001aa4(void) {
+  struct GabombaStatueChamberEventWork *work;
+  s16 scene;
+
+  work = Ram_HeapSlots->eventWork;
+  work->screenEffect = 521;
+  ((struct GabombaStatueChamberObject *)Actor_GetById(Party_GetLeaderActor()))
+      ->priorityFlags |= 0x20;
+  scene = gMainRoutineWork.scene;
+  if (scene == (s32)&SceneId_Ov672Room1)
+    Func_02001b14();
+  else if (scene == (s32)&SceneId_Ov672Room2)
+    Func_02001ba8();
+  else if (scene == (s32)&SceneId_Ov672Room3)
+    Func_02001c44();
+  return 0;
+}
+
+s32 Scene_PrepareMap(void) { return 0; }
+
+void Func_02001b14(void) {
+  Func_02001e80(8);
+  Func_02001e80(9);
+  Func_02001e80(10);
+  wait(1);
+  if (GameFlag_Test(0x8fd)) {
+    Func_02001010();
+    Func_02001064();
+    Actor_SetPosition(8, PIXELS(424), PIXELS(152));
+    wait(1);
+    Func_02000f00();
+  } else {
+    s32 entrance;
+
+    entrance = gMainRoutineWork.entrance;
+    if (entrance == 5) {
+      Func_020010d4();
+      return;
+    }
+    if (entrance == 6) {
+      Func_02001710();
+      return;
+    }
+  }
+  {
+    struct MainRoutineWork *party = &gMainRoutineWork;
+
+    if (party->entrance == 3) {
+      GameFlag_ClearBit(0xa27);
+      GameFlag_SetBit(0xa28);
+    }
+  }
+}
+
+#include "../../../include/system/io_reg.h"
+
+struct GabombaStatueChamberLayer {
+  u8 unk00[12];
+  s32 y;
+  u8 unk10[0x28];
+};
+
+struct GabombaStatueChamberMapWork {
+  u8 unk000[0x108];
+  struct GabombaStatueChamberLayer layers[3];
+};
+
+void Func_02001d60(void);
+void Func_02000be8(void);
+
+void Func_02001ba8(void) {
+  if (GameFlag_Test(265)) {
+    if (GameFlag_Test(519)) {
+      struct GabombaStatueChamberMapWork *map =
+          (struct GabombaStatueChamberMapWork *)Ram_HeapSlots->mapWork;
+      struct GabombaStatueChamberLayer *front = &map->layers[0];
+      struct GabombaStatueChamberLayer *back = &map->layers[2];
+      s32 blend = 1;
+      s32 i;
+
+      Func_02001d60();
+      i = 0;
+    loop:
+      if (i >= 17 && i <= 79) {
+        u32 alpha = ((blend + 1) / 4) << 8;
+
+        alpha |= 16 - (blend + 1) / 4;
+        REG_BLDALPHA = alpha;
+        blend++;
+      }
+      front->y += 0x10000;
+      back->y += 0x10000;
+      i++;
+      if (i < 352)
+        goto loop;
+      Func_02001d40();
+      wait(1);
+    }
+  } else if (gMainRoutineWork.entrance == 2) {
+    Func_02000be8();
+  }
+}
+
+#include "version.h"
+
+/// Gives actors 15 to 32 action variant 2, runs Func_02001e80 for actor 8 and
+/// grounds it, then Func_02001094 with actor 10 placed when flag 0x8ff is set,
+/// else Func_02000f88; arriving by entrance 2 it sets the retreat to
+/// Ov671Room7's entrance 1 (flag 0xa27) or Ov672Room1's entrance 3 (flag
+/// 0xa28).
+void Func_02001c44(void) {
+  u32 i;
+  char *scene;
+
+  for (i = 0; i <= 17; i++)
+    Actor_SetSpritePriority(i + 15, 2);
+  Func_02001e80(8);
+  Actor_GetById(8)->y = 0;
+  if (GameFlag_Test(0x8ff)) {
+    Func_02001094();
+    Actor_SetHorizontalPositionWithTerrain(10, 0, 0);
+  } else {
+    Func_02000f88();
+  }
+#if TLA_PATCH_1 /* The Japanese edition does not set the retreat. */
+  if (gMainRoutineWork.entrance == 2) {
+    if (GameFlag_Test(0xa27)) {
+      /* FAKEMATCH(temporary): the scene id through a local, which issues its
+       * literal load first; as plain stores, 4 of 71 instructions differ in
+       * tla-en. */
+      scene = &SceneId_Ov671Room7;
+      gMainRoutineWork.retreatScene = (s32)scene;
+        gMainRoutineWork.retreatEntrance = 1;
+    } else if (GameFlag_Test(0xa28)) {
+      /* FAKEMATCH(temporary): the scene id through a local, as in the first
+       * branch; as plain stores, 4 of 71 instructions differ in tla-en. */
+      scene = &SceneId_Ov672Room1;
+      gMainRoutineWork.retreatScene = (s32)scene;
+        gMainRoutineWork.retreatEntrance = 3;
+    }
+  }
+#endif
 }

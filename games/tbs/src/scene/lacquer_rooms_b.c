@@ -323,10 +323,10 @@ s32 LacquerRoomsB_Initialize(void) {
   // sees nor meets them.
   if (entrance == LACQUER_ROOMS_B_INN_SOUTH ||
       entrance == LACQUER_ROOMS_B_INN_FROM_INN_GUEST_ROOMS) {
-    Actor_CreateConfigured(PIXELS(248), 0, PIXELS(417), SPRITE_CHEST);
+    Actor_CreateConfigured(248, 0, 417, SPRITE_CHEST);
   } else if (entrance == LACQUER_ROOMS_B_WEAPON_AND_ARMOR_SHOP) {
-    Actor_CreateConfigured(PIXELS(460), 0, PIXELS(568), SPRITE_CHEST);
-    Actor_CreateConfigured(PIXELS(484), 0, PIXELS(568), SPRITE_CHEST);
+    Actor_CreateConfigured(460, 0, 568, SPRITE_CHEST);
+    Actor_CreateConfigured(484, 0, 568, SPRITE_CHEST);
   } else if (entrance == LACQUER_ROOMS_B_FROM_LACQUER_ROOMS_A_FEHS_SCHOOL) {
     GameFlag_Clear(FLAG_SHOW_AREA_NAME);
     Actor_SetAnimation(ACTOR_HSU, ANIM_HSU_IN_BED);

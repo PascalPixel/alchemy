@@ -2676,7 +2676,7 @@ s32 Scene_Initialize(void) {
       // the door.
       // XXX (no evidence): why it is there; nothing the player sees shows what
       // it was for.
-      Actor_Prepare(PIXELS(304), PIXELS(24), PIXELS(224), SPRITE_CRATE);
+      Actor_Prepare(304, 24, 224, SPRITE_CRATE);
       Actor_SetAnimation(ACTOR_KICKING_STUDENT, ANIM_STUDENT_KICKS);
       Actor_SetAnimation(ACTOR_PUNCHING_STUDENT, ANIM_STUDENT_PUNCHES);
     } else if (gMainRoutineWork.entrance ==

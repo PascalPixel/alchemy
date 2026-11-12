@@ -459,7 +459,7 @@ static void BabiLighthouse_DropFromWestRoomEastPit(void) {
 /// mask by it. The leader jumps in and drops into the south room.
 static void BabiLighthouse_DropFromEastRoomPit(void) {
   Event_Start();
-  Actor_Prepare(PIXELS(464), 0, PIXELS(290), PIT_MASK);
+  Actor_Prepare(464, 0, 290, PIT_MASK);
   BabiLighthouse_JumpIntoPit();
   Import_EventSetExitRequest(BABI_LIGHTHOUSE_LUFF_EAST_ROOM_TO_SOUTH_ROOM_PIT);
   Event_End();
@@ -470,8 +470,8 @@ static void BabiLighthouse_DropFromEastRoomPit(void) {
 /// into the east room.
 static void BabiLighthouse_DropFromWestRoomSouthwestPit(void) {
   Event_Start();
-  Actor_Prepare(PIXELS(143), 0, PIXELS(290), PIT_MASK);
-  Actor_Prepare(PIXELS(121), 0, PIXELS(286), SPRITE_CAPPED_PILLAR);
+  Actor_Prepare(143, 0, 290, PIT_MASK);
+  Actor_Prepare(121, 0, 286, SPRITE_CAPPED_PILLAR);
   BabiLighthouse_JumpIntoPit();
   Import_EventSetExitRequest(
       BABI_LIGHTHOUSE_LUFF_WEST_ROOM_TO_EAST_ROOM_PIT_SOUTHWEST);
@@ -1484,19 +1484,19 @@ s32 BabiLighthouse_SetupMap(void) {
       }
       break;
     case BABI_LIGHTHOUSE_LUFF_EAST_ROOM_FROM_WEST_ROOM_PIT_SOUTHWEST:
-      Actor_Prepare(PIXELS(440), 0, PIXELS(290), PIT_MASK);
+      Actor_Prepare(440, 0, 290, PIT_MASK);
       MapGrid_CopyCellAttributes(22, 13, 1, 1, 27, 13);
       BabiLighthouse_FallToExit(
           BABI_LIGHTHOUSE_LUFF_EAST_ROOM_TO_SOUTH_ROOM_FALL_SOUTH);
       break;
     case BABI_LIGHTHOUSE_LUFF_EAST_ROOM_FROM_WEST_ROOM_PIT_NORTHWEST:
-      Actor_Prepare(PIXELS(448), 0, PIXELS(290), PIT_MASK);
+      Actor_Prepare(448, 0, 290, PIT_MASK);
       MapGrid_CopyCellAttributes(22, 12, 1, 1, 28, 10);
       BabiLighthouse_FallToExit(
           BABI_LIGHTHOUSE_LUFF_EAST_ROOM_TO_SOUTH_ROOM_FALL_NORTH);
       break;
     case BABI_LIGHTHOUSE_LUFF_SOUTH_ROOM_FROM_EAST_ROOM_FALL_NORTH:
-      Actor_Prepare(PIXELS(232), 0, PIXELS(594), PIT_MASK);
+      Actor_Prepare(232, 0, 594, PIT_MASK);
       MapGrid_CopyCellAttributes(22, 12, 1, 1, 14, 33);
       BabiLighthouse_FallToExit(
           BABI_LIGHTHOUSE_LUFF_TO_BABI_LIGHTHOUSE_STONE_DOOR_EAST);

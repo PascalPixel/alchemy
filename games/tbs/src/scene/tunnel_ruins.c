@@ -779,7 +779,7 @@ static void TunnelRuins_SinkNorthwestPillar(void) {
   actor = Actor_Get(ACTOR_NORTHWEST_SINKING_PILLAR);
   if ((actor->x.fixed >> 20) == 46) {
     Event_Wait(30);
-    overlay = Actor_Prepare(PIXELS(744), 0, PIXELS(184), SPRITE_CAPPED_PILLAR);
+    overlay = Actor_Prepare(744, 0, 184, SPRITE_CAPPED_PILLAR);
     // The pillar sinks a pixel every three frames, raising dust around it.
     options.startScaleX = 3 * Q16_ONE / 5;
     options.startScaleY = 3 * Q16_ONE / 5;
@@ -864,7 +864,7 @@ static void TunnelRuins_SinkSoutheastPillar(void) {
   if ((actor->x.fixed >> 20) == 48) {
     if (GameFlag_Get(FLAG_SCENE_TEMP_02) != 0) {
       Event_Wait(30);
-      overlay = Actor_Prepare(PIXELS(770), 0, PIXELS(274), SPRITE_CRATE);
+      overlay = Actor_Prepare(770, 0, 274, SPRITE_CRATE);
       options.startScaleX = 3 * Q16_ONE / 5;
       options.startScaleY = 3 * Q16_ONE / 5;
       options.palette = 7;

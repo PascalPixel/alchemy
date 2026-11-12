@@ -891,7 +891,7 @@ s32 Scene_Initialize(void) {
   }
   // A still actor on the well that shows nothing (vault_revisit.c's open
   // questions).
-  Actor_CreateConfigured(PIXELS(128), 0, PIXELS(420), SPRITE_CRATE);
+  Actor_CreateConfigured(128, 0, 420, SPRITE_CRATE);
   lowBit = 1;
   zero = 0;
   actor = Actor_Get(ACTOR_BOY_ROUND_THE_WELL);

@@ -382,12 +382,12 @@ static void ValeCave_MoveWestCratesIntoWater(void) {
     Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 360, 664);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 10);
     Actor_Get(ACTOR_WEST_CRATES)->x.fixed += PIXELS(2);
-    leftEffect = Actor_Prepare(
+    leftEffect = Actor_PrepareFixed(
         Actor_Get(ACTOR_WEST_CRATES)->x.fixed, 0,
-        Actor_Get(ACTOR_WEST_CRATES)->z.fixed + PIXELS(52), SPRITE_CRATES);
-    rightEffect = Actor_Prepare(
-        Actor_Get(ACTOR_WEST_CRATES)->x.fixed + PIXELS(16), 0,
-        Actor_Get(ACTOR_WEST_CRATES)->z.fixed + PIXELS(52), SPRITE_CRATES);
+        Actor_Get(ACTOR_WEST_CRATES)->z.fixed + px(52), SPRITE_CRATES);
+    rightEffect = Actor_PrepareFixed(
+        Actor_Get(ACTOR_WEST_CRATES)->x.fixed + px(16), 0,
+        Actor_Get(ACTOR_WEST_CRATES)->z.fixed + px(52), SPRITE_CRATES);
     Actor_Get(ACTOR_WEST_CRATES)->motionFlags = 0;
     // Surround the sinking crates with one particle per frame.
     options.startScaleX = 3 * Q16_ONE / 5;
@@ -422,12 +422,12 @@ static void ValeCave_MoveEastCratesIntoWater(void) {
 
   Event_Start();
   if (Actor_Get(ACTOR_EAST_CRATES)->x.fixed >> 20 == 27) {
-    leftEffect = Actor_Prepare(
-        Actor_Get(ACTOR_EAST_CRATES)->x.fixed - PIXELS(8), 0,
-        Actor_Get(ACTOR_EAST_CRATES)->z.fixed + PIXELS(52), SPRITE_CRATES);
-    rightEffect = Actor_Prepare(
-        Actor_Get(ACTOR_EAST_CRATES)->x.fixed + PIXELS(8), 0,
-        Actor_Get(ACTOR_EAST_CRATES)->z.fixed + PIXELS(52), SPRITE_CRATES);
+    leftEffect = Actor_PrepareFixed(
+        Actor_Get(ACTOR_EAST_CRATES)->x.fixed - px(8), 0,
+        Actor_Get(ACTOR_EAST_CRATES)->z.fixed + px(52), SPRITE_CRATES);
+    rightEffect = Actor_PrepareFixed(
+        Actor_Get(ACTOR_EAST_CRATES)->x.fixed + px(8), 0,
+        Actor_Get(ACTOR_EAST_CRATES)->z.fixed + px(52), SPRITE_CRATES);
     // This clears the western crates' motion flags, not these crates', where
     // ValeCave_MoveWestCratesIntoWater clears its own. These sink all the
     // same, since the sinking writes their height directly and nothing pulls
@@ -910,7 +910,7 @@ static void ValeCave_ApplyEntryState(void) {
       // nothing. XXX (no evidence): what it and the chest below were meant to
       // show; the sprites alone hold neither, and neither actor is solid or a
       // target.
-      Actor_CreateConfigured(PIXELS(120), 0, PIXELS(232), SPRITE_CRATE);
+      Actor_CreateConfigured(120, 0, 232, SPRITE_CRATE);
       break;
     case VALE_CAVE_KITE_EAST_FROM_WEST:
     case VALE_CAVE_KITE_EAST_FROM_SOUTH:
@@ -938,7 +938,7 @@ static void ValeCave_ApplyEntryState(void) {
     case VALE_CAVE_KITE_FROM_VALE_CAVE_LOGS_SOUTH:
       // The riding log's part: a still chest actor that shows nothing, the
       // riding log's passage, and the cells of crates already sunk.
-      Actor_CreateConfigured(PIXELS(642), 0, PIXELS(552), SPRITE_CHEST);
+      Actor_CreateConfigured(642, 0, 552, SPRITE_CHEST);
       MapGrid_CopyCellAttributes(23, 34, 13, 3, 0, 34);
       ValeCave_UpdateRidingLogPassage();
       // The cells ValeCave_MoveWestCratesIntoWater copies as it sets the flag,

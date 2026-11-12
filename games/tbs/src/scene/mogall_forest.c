@@ -1623,8 +1623,8 @@ s32 MogallForest_Initialize(void) {
     case MOGALL_FOREST_KILLER_APE_RIVER_FROM_BRIDGES:
       // XXX (no evidence): what these two crates are for; they are hidden, not
       // solid and never a target, so the player neither sees nor meets them.
-      Actor_CreateConfigured(PIXELS(734), 0, PIXELS(370), SPRITE_CRATE);
-      Actor_CreateConfigured(PIXELS(754), 0, PIXELS(370), SPRITE_CRATE);
+      Actor_CreateConfigured(734, 0, 370, SPRITE_CRATE);
+      Actor_CreateConfigured(754, 0, 370, SPRITE_CRATE);
       Scene_RedrawActorFootprint(ACTOR_THIRD_AREA_WEST_LOG);
       Scene_RedrawActorFootprint(ACTOR_THIRD_AREA_SOUTHWEST_LOG);
       if (GameFlag_Get(FLAG_MOGALL_FOREST_THIRD_AREA_NORTH_LOG_ROLLED) == 0) {

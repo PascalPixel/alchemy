@@ -475,7 +475,7 @@ static s32 CrossboneIsleSteppingStones_LowerActorToLedge(s32 id, s32 far) {
         y = top << 20;
         kind = 253;
       }
-      temporaryActor = Actor_Prepare(x, y, z, kind);
+      temporaryActor = Actor_PrepareFixed(x, y, z, kind);
       height = actor->z.fixed - z + y;
       /* FAKEMATCH(dead): an empty once-only loop after the height arithmetic,
        * which keeps found's constant after it; as no loop, 2 of 117
@@ -1648,7 +1648,7 @@ s32 Scene_Initialize(void) {
   } else if (gMainRoutineWork.next ==
              (s32)&SceneId_CrossboneIsleStackedPillars) {
     // Restore the four movable pillars and the leader's riding overlay.
-    Actor_CreateConfigured(PIXELS(584), 0, PIXELS(200), SPRITE_CRATE);
+    Actor_CreateConfigured(584, 0, 200, SPRITE_CRATE);
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
       Actor_Get(ACTOR_PARTY_LEADER)->riseCounter = 1;
     }

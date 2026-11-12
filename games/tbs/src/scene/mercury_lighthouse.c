@@ -1302,8 +1302,8 @@ static void MercuryLighthouse_PushStoneDoorPipes(void) {
 #endif
           MercuryLighthouse_OpenStoneDoor(STONE_DOOR_SOUTH);
           Actor_WaitForScriptEndById(ACTOR_SLIDING_STATUE);
-          Actor_Prepare(x, 0, PIXELS(786), SPRITE_CRATE);
-          Actor_Prepare(x, 0, PIXELS(818), SPRITE_CRATE);
+          Actor_PrepareFixed(x, 0, px(786), SPRITE_CRATE);
+          Actor_PrepareFixed(x, 0, px(818), SPRITE_CRATE);
           Actor_SetDestination(ACTOR_SLIDING_STATUE, 840, 744);
           Event_Wait(5);
           Sound_Play(SE_STONE_GRIND);
@@ -1711,7 +1711,7 @@ static void MercuryLighthouse_MiaOpensEntranceWithPly(void) {
     Actor_WalkTo(ACTOR_MIA, 840, 600);
     Actor_WaitForMoveById(ACTOR_MIA);
     MapGrid_CopyCellAttributes(116, 36, 3, 4, 52, 36);
-    Actor_Prepare(PIXELS(840), PIXELS(56), PIXELS(608), SPRITE_CRATE);
+    Actor_Prepare(840, 56, 608, SPRITE_CRATE);
     Actor_SetSpeed(ACTOR_MIA, 0.8);
     Actor_WalkToAndWait(ACTOR_MIA, 840, 560);
     Actor_SetPosition(ACTOR_MIA, 0, 0);
@@ -2144,8 +2144,8 @@ static void MercuryLighthouse_EnterRisingPassage(void) {
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 10);
     FieldCamera_MoveTo(464, CAMERA_KEEP, 656, 1);
     Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
-    Actor_Prepare(Actor_Get(ACTOR_PARTY_LEADER)->x.fixed, 0, PIXELS(702),
-                  SPRITE_CRATE);
+    Actor_PrepareFixed(Actor_Get(ACTOR_PARTY_LEADER)->x.fixed, 0, px(702),
+                       SPRITE_CRATE);
     MapGrid_CopyCellsTo(92, 46, 92, 40, 3, 2);
     Actor_Get(ACTOR_PARTY_LEADER)->gravity = PIXELS(1) / 2;
     Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 2);

@@ -443,8 +443,8 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
         size = angle + Q16_ONE * 5 / 8;
         scale.x = size;
         scale.y = size;
-        position.x = (x << 16) + px(80);
-        position.y = (64 - y) << 16;
+        position.x = px(x) + px(80);
+        position.y = px(64 - y);
         Actor_ApplyProjectedPlacementFar(work->sprites[0], &position, &scale,
                                          0);
         Actor_ApplyProjectedPlacementFar(work->sprites[1], &position, &scale,
@@ -453,8 +453,8 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
         size = angle + Q16_ONE;
         scale.x = size;
         scale.y = size;
-        position.x = (x << 16) + px(96);
-        position.y = (96 - y) << 16;
+        position.x = px(x) + px(96);
+        position.y = px(96 - y);
         Actor_ApplyProjectedPlacementFar(work->sprites[0], &position, &scale,
                                          0);
       }
@@ -467,8 +467,8 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
           s32 angle = (Random16() & 0x7fff) + TRIG_TURN / 4;
 
           mote->variant = 0;
-          mote->x = ((x + 96) << 16) + Trig_Sin(angle) * 30 / 65536 * size;
-          mote->y = (y << 16) - Trig_Cos(angle) * 30 / 65536 * size;
+          mote->x = px(x + 96) + Trig_Sin(angle) * 30 / 65536 * size;
+          mote->y = px(y) - Trig_Cos(angle) * 30 / 65536 * size;
           break;
         }
       }
@@ -487,9 +487,9 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
       Transform_ApplyRoll(TRIG_TURN / 32);
       Transform_ApplyYaw(frame << 8);
       for (i = 0; i != 7; i++) {
-        SET_VECTOR(vector, (gParticleStreams_OrbitPoints[i][0] / 2) << 16,
-                   (gParticleStreams_OrbitPoints[i][1] + frame) << 16,
-                   (gParticleStreams_OrbitPoints[i][2] / 2) << 16);
+        SET_VECTOR(vector, px(gParticleStreams_OrbitPoints[i][0] / 2),
+                   px(gParticleStreams_OrbitPoints[i][1] + frame),
+                   px(gParticleStreams_OrbitPoints[i][2] / 2));
         Projection_Point(vector, screenPosition = &spot);
         screenPosition->x = Q_16_16_TO_INT(screenPosition->x) + 128;
         screenPosition->y = Q_16_16_TO_INT(screenPosition->y) + 60;
@@ -512,8 +512,8 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
                work->sheet + PARTICLE_STREAMS_LARGE_GLOW_CELL,
                gParticleStreams_DropPoints[i][0] + x - 12, drop - 12, 24, 24);
         else if (drop <= 95)
-          ParticleStreams_SpawnFlame(
-              (gParticleStreams_DropPoints[i][0] + x) << 16, drop << 16, 1);
+          ParticleStreams_SpawnFlame(px(gParticleStreams_DropPoints[i][0] + x),
+                                     px(drop), 1);
       }
       for (i = 0; i != 32; i++) {
         struct Particle *mote = &work->particles[i];
@@ -715,15 +715,15 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
     if (mode == PARTICLE_STREAMS_OUTER_SPACE) {
       scale.x = size;
       scale.y = size;
-      position.x = (x << 16) + px(96);
-      position.y = (96 - y) << 16;
+      position.x = px(x) + px(96);
+      position.y = px(96 - y);
       Actor_ApplyProjectedPlacementFar(work->sprites[0], &position, &scale, 0);
       Actor_ApplyProjectedPlacementFar(work->sprites[1], &position, &scale, 0);
     } else {
       scale.x = grow;
       scale.y = grow;
-      position.x = (x << 16) + px(96);
-      position.y = (96 - y) << 16;
+      position.x = px(x) + px(96);
+      position.y = px(96 - y);
       Actor_ApplyProjectedPlacementFar(work->sprites[0], &position, &scale, 0);
     }
     work->shakeFrames = 1;

@@ -374,9 +374,9 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
       // Oam_AddSpriteAtDepth stops at 255).
       index = 0;
       do {
-        place.x = (gProcne_GridX[index] << 16) + wave.x + px(40);
+        place.x = px(gProcne_GridX[index]) + wave.x + px(40);
         place.height = px(255) + index * px(64);
-        place.y = ((gProcne_GridY[index] + index * 64) << 16) + wave.y;
+        place.y = px(gProcne_GridY[index] + index * 64) + wave.y;
         Actor_ApplyProjectedPlacementFar(work->sprites[index], &place, &scale,
                                          0);
         index++;

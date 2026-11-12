@@ -929,7 +929,7 @@ void LuckyWheels_InitializeTitle(void) {
   y = -px(32);
   width = gLuckyWheels_TitleLetterWidths;
   for (i = 0; i != LUCKY_WHEELS_TITLE_LETTERS; i++) {
-    letter[i].x = (left + LUCKY_WHEELS_TITLE_X) << 16;
+    letter[i].x = px(left + LUCKY_WHEELS_TITLE_X);
     step = *width;
     width++;
     left += step;
@@ -1197,8 +1197,8 @@ void LuckyWheels_Run(void) {
             // instructions differ.
             speed &= Random16();
             angle = Random16() & 0xffff;
-            spark->x = x << 16;
-            spark->y = y << 16;
+            spark->x = px(x);
+            spark->y = px(y);
             spark->velocityX = Trig_Sin(angle) * (speed + 64) >> 6;
             spark->velocityY = -(Trig_Cos(angle) * (speed + 64)) >> 6;
             spark->variant = (Random16() & 15) + 16;

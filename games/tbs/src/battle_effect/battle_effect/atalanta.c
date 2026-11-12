@@ -173,8 +173,8 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
       position.height = px(255);
       for (row = 0; row != 3; row++) {
         for (column = 0; column != 3; column++) {
-          position.x = (pathX + 80 + column * 32) << 16;
-          position.y = (64 - pathY + row * 32) << 16;
+          position.x = px(pathX + 80 + column * 32);
+          position.y = px(64 - pathY + row * 32);
           Actor_ApplyProjectedPlacementFar(work->sprites[row * 3 + column],
                                            &position, &gAtalanta_UnitScale, 0);
         }

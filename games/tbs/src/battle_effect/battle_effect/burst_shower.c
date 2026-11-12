@@ -281,7 +281,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, s32 mode) {
         // frames, when the hits start, and only three quarters of its y
         // distance in its 24 frames.
         work->particles[frame].x = origin.x << 15;
-        work->particles[frame].y = origin.y << 16;
+        work->particles[frame].y = px(origin.y);
         work->particles[frame].velocityX = (aim[0] - origin.x) << 11;
         work->particles[frame].velocityY = (aim[1] - origin.y) << 11;
         work->particles[frame].variant = 0;

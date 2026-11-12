@@ -635,15 +635,15 @@ void Menu_PlacePartyFigures(void) {
     // which puts every figure in the same depth slot ((482 >> 1) + 10 = 251,
     // Render_ApplyProjectedPlacement), and raising the image by this height
     // brings it back up to its row.
-    s32 placeY = px(482) - (menu->rowPositions[i] << 16);
+    s32 placeY = px(482) - px(menu->rowPositions[i]);
 
     if (figure != 0) {
       figure->image.priority = 0;
       scale.x = menu->memberScale[i];
       scale.y = menu->memberScale[i];
-      position.x = menu->tabX[i] << 16;
+      position.x = px(menu->tabX[i]);
       position.height = placeY;
-      position.y = (menu->rowPositions[i] << 16) + placeY; // always 482
+      position.y = px(menu->rowPositions[i]) + placeY; // always 482
       position.groundHeight = 0;
       Actor_ApplyProjectedPlacementFar(figure, &position, &scale, FACING_SOUTH);
     }

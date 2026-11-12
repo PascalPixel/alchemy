@@ -773,8 +773,8 @@ static void ColosseumNavampaMatch_RollLongLog(void) {
   Actor_SetSpeedFixed(actorId, px(1) / 2, acceleration);
   Sound_Play(SE_HEAVY_MOVE);
   Actor_SelectAnimation(rider, 2);
-  FieldActor_SetMoveTargetFixed(rider, (steps * step * px(1)) + rider->x.fixed,
-                                0, rider->z.fixed);
+  FieldActor_SetMoveTargetFixed(rider, px(steps * step) + rider->x.fixed, 0,
+                                rider->z.fixed);
   Actor_WaitForMove(rider);
   Actor_SelectAnimation(rider, 1);
   Actor_WaitForMove(log);
@@ -1897,7 +1897,7 @@ static void ColosseumNavampaMatch_PositionActor(s32 selector, s32 x, s32 z) {
   if (actor != 0) {
     Actor_StartIdle(actor);
     Actor_SelectAnimation(actor, 5);
-    Actor_SetMoveTarget(actor, x << 16, actor->y.fixed, z << 16);
+    Actor_SetMoveTarget(actor, px(x), actor->y.fixed, px(z));
   }
 }
 
@@ -1910,7 +1910,7 @@ static void ColosseumNavampaMatch_PositionAndActivateActor(s32 selector, s32 x,
   if (actor != 0) {
     Actor_StartIdle(actor);
     Actor_SelectAnimation(actor, 5);
-    Actor_SetMoveTarget(actor, x << 16, actor->y.fixed, z << 16);
+    Actor_SetMoveTarget(actor, px(x), actor->y.fixed, px(z));
     Actor_WaitForMove(actor);
     Actor_SelectAnimation(actor, 1);
   }

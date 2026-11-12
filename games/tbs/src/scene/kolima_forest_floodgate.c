@@ -466,9 +466,8 @@ static void KolimaForestFloodgate_CreateLogs(struct FloodgateLog *entry) {
     Actor_SetSpriteFlags(actor, 0);
     actor->collisionFlags = 0;
     actor->radius = 32;
-    height =
-        MapGrid_GetTerrainHeight(0, actor->x.part.pixel, actor->z.part.pixel)
-        << 16;
+    height = px(
+        MapGrid_GetTerrainHeight(0, actor->x.part.pixel, actor->z.part.pixel));
     // Through an s32 view of y, not y.fixed, the step to the next entry is
     // scheduled before this store (1 of 82 instructions differ in tbs-en).
     *(s32 *)&actor->y += height;

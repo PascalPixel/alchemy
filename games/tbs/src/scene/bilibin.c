@@ -968,8 +968,7 @@ static void Bilibin_PushStatueOrCrates(void) {
     destination.x =
         pushed->x.fixed + (gBilibin_FacingCellSteps[direction] & -0x10000);
     destination.y = pushed->y.fixed;
-    destination.z =
-        pushed->z.fixed + (gBilibin_FacingCellSteps[direction] << 16);
+    destination.z = pushed->z.fixed + px(gBilibin_FacingCellSteps[direction]);
     if (FieldActor_CheckMovementCollision(pushed, &destination) <= 0) {
       // The leader leans on it, then both move together.
       Actor_SelectAnimation(leader, ANIM_PUSH);

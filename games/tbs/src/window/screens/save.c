@@ -658,9 +658,9 @@ void FileList_PlacePartySprites(void) {
       // Offset height and y equally to keep the visible row fixed.
       scale.x = menu->partyMemberScale[index];
       scale.y = menu->partyMemberScale[index];
-      position.x = menu->partyMemberX[index] << 16;
+      position.x = px(menu->partyMemberX[index]);
       position.height = px(500);
-      position.y = (menu->partyMemberY[index] << 16) + px(500);
+      position.y = px(menu->partyMemberY[index]) + px(500);
       position.groundHeight = 0;
       Actor_ApplyProjectedPlacementFar(sprite, &position, &scale, FACING_SOUTH);
     }
@@ -730,9 +730,9 @@ void FileList_PlaceDjinnSprites(void) {
 
       scale.x = one;
       scale.y = one;
-      position.x = menu->positionsX[index] << 16;
+      position.x = px(menu->positionsX[index]);
       position.height = height;
-      position.y = (menu->positionsY[index] << 16) + height;
+      position.y = px(menu->positionsY[index]) + height;
       position.groundHeight = 0;
       Actor_ApplyProjectedPlacementFar(sprite, &position, &scale, FACING_SOUTH);
     }

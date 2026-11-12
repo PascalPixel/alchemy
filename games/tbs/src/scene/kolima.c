@@ -500,7 +500,7 @@ static void Kolima_LowerBridge(void) {
       debris->velocityX = (s32)((px(debrisIndex & 3) + px(1))) >> 1;
       debris->velocityZ = px(1);
       if (debrisIndex & 1) {
-        debris->velocityX = -((s32)(((debrisIndex & 3) << 16) + px(1)) >> 1);
+        debris->velocityX = -((s32)(px(debrisIndex & 3) + px(1)) >> 1);
       }
       Actor_SelectAnimation(debris, 1);
       Actor_StartScript(debris, gKolima_DebrisScript);

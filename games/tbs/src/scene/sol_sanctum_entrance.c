@@ -642,7 +642,7 @@ static void SolSanctumEntrance_PushStatue(void) {
     destination = &target;
     packedStep = gSolSanctumPushSteps[direction];
     SET_POSITION(destination, statue->x.fixed + (packedStep & -0x10000),
-                 statue->y.fixed, statue->z.fixed + (packedStep << 16));
+                 statue->y.fixed, statue->z.fixed + px(packedStep));
     // Move only after the statue's proposed position passes collision.
     if (FieldActor_CheckMovementCollision(statue, destination) <= 0) {
       Actor_SelectAnimation(leader, ANIM_PUSH);

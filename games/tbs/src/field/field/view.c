@@ -118,7 +118,7 @@ void WorldMap_BuildScanlineTable(s32 pitchSlope, s32 *position,
     // The line's ray slope: its offset from the projection's centre line
     // over the focal length. Lines below the screen centre have a negative
     // displacement.
-    distance = Iwram_RatioMulQ14(focus, (gProjection.centerY - line) * Q16_ONE);
+    distance = Iwram_RatioMulQ14(focus, px(gProjection.centerY - line));
     // A ray parallel to the ground would divide by zero.
     difference = distance - pitchSlope;
     if (difference == 0)

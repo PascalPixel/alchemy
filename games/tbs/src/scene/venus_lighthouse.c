@@ -633,8 +633,8 @@ static void VenusLighthouse_PushAdjacentPillar(void) {
   leader->targetZ = ACTOR_NO_TARGET;
   leader->velocityX = transitionBusy;
   leader->velocityZ = transitionBusy;
-  leader->x.fixed = leader->x.part.pixel << 16;
-  leader->z.fixed = leader->z.part.pixel << 16;
+  leader->x.fixed = px(leader->x.part.pixel);
+  leader->z.fixed = px(leader->z.part.pixel);
   Actor_SelectAnimation(leader, ANIM_STAND);
 }
 
@@ -818,8 +818,8 @@ static void VenusLighthouse_ArriveThroughSparkPassage(void) {
     Event_Start();
     FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
     leader->motionFlags = 0;
-    Actor_SetPositionFixed(ACTOR_PARTY_LEADER, leader->x.part.pixel << 16,
-                           (leader->z.part.pixel << 16) - px(16));
+    Actor_SetPositionFixed(ACTOR_PARTY_LEADER, px(leader->x.part.pixel),
+                           px(leader->z.part.pixel) - px(16));
     Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
     Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
     Event_StartScreenTransition();
@@ -986,8 +986,8 @@ static struct Actor *VenusLighthouse_CreateLight(s32 x, s32 z,
   s32 fixedX;
   s32 fixedZ;
 
-  fixedX = x << 16;
-  fixedZ = z << 16;
+  fixedX = px(x);
+  fixedZ = px(z);
   effect = FieldActor_Create(SPRITE_PARTICLE, fixedX, 0, fixedZ);
   if (effect == 0) {
     return 0;
@@ -1856,10 +1856,10 @@ static void VenusLighthouse_StepOnWallSwitch(void) {
             ((u32)(Import_RandomNext() * 3) >> 16) * (Q16_ONE / 5) +
             4 * Q16_ONE / 5;
         options.spin = ((u32)(Import_RandomNext() << 12) >> 16) + 0xf800;
-        FieldEffect_Spawn(
-            dustX, 0, px(528), 0, -(((gFrameCount & 1) * 3) << 16), 0,
-            EFFECT_USE_PRIORITY | EFFECT_USE_START_SCALE | EFFECT_USE_SPIN,
-            &options);
+        FieldEffect_Spawn(dustX, 0, px(528), 0, -px((gFrameCount & 1) * 3), 0,
+                          EFFECT_USE_PRIORITY | EFFECT_USE_START_SCALE |
+                              EFFECT_USE_SPIN,
+                          &options);
         if (frame == 240) {
           dustX += -px(48);
         }
@@ -2408,10 +2408,10 @@ static void VenusLighthouse_StepOnWestWallSwitch(void) {
               ((u32)(Import_RandomNext() * 3) >> 16) * (Q16_ONE / 5) +
               4 * Q16_ONE / 5;
           options.spin = ((u32)(Import_RandomNext() << 12) >> 16) + 0xf800;
-          FieldEffect_Spawn(
-              dustX, 0, px(288), 0, -(((gFrameCount & 1) * 3) << 16), 0,
-              EFFECT_USE_PRIORITY | EFFECT_USE_START_SCALE | EFFECT_USE_SPIN,
-              &options);
+          FieldEffect_Spawn(dustX, 0, px(288), 0, -px((gFrameCount & 1) * 3), 0,
+                            EFFECT_USE_PRIORITY | EFFECT_USE_START_SCALE |
+                                EFFECT_USE_SPIN,
+                            &options);
           if (tileDelay == 0) {
             tileDelay = 40;
             column += 4;
@@ -2484,10 +2484,10 @@ static void VenusLighthouse_StepOnEastWallSwitch(void) {
               ((u32)(Import_RandomNext() * 3) >> 16) * (Q16_ONE / 5) +
               4 * Q16_ONE / 5;
           options.spin = ((u32)(Import_RandomNext() << 12) >> 16) + 0xf800;
-          FieldEffect_Spawn(
-              dustX, 0, px(288), 0, -(((gFrameCount & 1) * 3) << 16), 0,
-              EFFECT_USE_PRIORITY | EFFECT_USE_START_SCALE | EFFECT_USE_SPIN,
-              &options);
+          FieldEffect_Spawn(dustX, 0, px(288), 0, -px((gFrameCount & 1) * 3), 0,
+                            EFFECT_USE_PRIORITY | EFFECT_USE_START_SCALE |
+                                EFFECT_USE_SPIN,
+                            &options);
           if (tileDelay == 0) {
             tileDelay = 40;
             column -= 4;

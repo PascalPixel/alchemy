@@ -496,8 +496,8 @@ void Scene_ApplyEntrance(void) {
   if (entranceEntry->cameraBottom != -1)
     grid->maxY = REGION_FIXED(entranceEntry->cameraBottom);
 
-  if (grid->minX + (DISPLAY_WIDTH << 16) > grid->maxX)
-    grid->minX = grid->maxX - (DISPLAY_WIDTH << 16);
-  if (grid->minY + (DISPLAY_HEIGHT << 16) > grid->maxY)
-    grid->minY = grid->maxY - (DISPLAY_HEIGHT << 16);
+  if (grid->minX + px(DISPLAY_WIDTH) > grid->maxX)
+    grid->minX = grid->maxX - px(DISPLAY_WIDTH);
+  if (grid->minY + px(DISPLAY_HEIGHT) > grid->maxY)
+    grid->minY = grid->maxY - px(DISPLAY_HEIGHT);
 }

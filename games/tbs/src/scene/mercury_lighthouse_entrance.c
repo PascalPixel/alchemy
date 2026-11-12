@@ -342,9 +342,8 @@ static void MercuryLighthouseEntrance_ActivateWithPly(void) {
       sparkX = 208 - ((u32)(Random_Next() << 4) >> 16);
       sparkZ = 560 - ((u32)(Random_Next() << 4) >> 16);
       speedRoll = ((u32)(Import_RandomNext() << 2) >> 16);
-      velocityY =
-          Math_Divide((((speedRoll << 4) - speedRoll) << 16) + px(60), 100);
-      FieldEffect_Spawn(sparkX << 16, 0, sparkZ << 16, 0, velocityY, velocityZ,
+      velocityY = Math_Divide(px((speedRoll << 4) - speedRoll) + px(60), 100);
+      FieldEffect_Spawn(px(sparkX), 0, px(sparkZ), 0, velocityY, velocityZ,
                         EFFECT_USE_PRIORITY | EFFECT_USE_TYPE |
                             EFFECT_USE_SCRIPT | EFFECT_SCRIPT_MEDIUM,
                         effectData);

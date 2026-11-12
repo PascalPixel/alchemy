@@ -1337,9 +1337,9 @@ static s32 ShipRooms_IsSpotFree(s32 bucket) {
 
   {
     struct FieldPosition point;
-    point.x = x << 16;
+    point.x = px(x);
     point.y = actor->y.fixed;
-    point.z = z << 16;
+    point.z = px(z);
 
     if (FieldActor_CheckMovementCollision(actor, &point) != 0) {
       return 0;
@@ -3303,7 +3303,7 @@ static void ShipRooms_Turn(s32 actorId, u16 facing) {
 
 /// Places an actor at pixel coordinates and sets its initial heading.
 static void ShipRooms_PlaceActor(s32 actorId, s32 x, s32 z, s32 facing) {
-  Import_ActorSetPosition(actorId, x << 16, z << 16, facing);
+  Import_ActorSetPosition(actorId, px(x), px(z), facing);
   Actor_Get(actorId)->facing = facing;
 }
 

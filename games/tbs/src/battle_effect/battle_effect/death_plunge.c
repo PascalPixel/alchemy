@@ -235,7 +235,7 @@ UNUSED void BattleEffect_RunBladeRain(struct BattleEffectParams *args) {
     blade = &work->particles[i];
     column = Random16() % 96 + 16;
     blade->x = column;
-    blade->y = (24 - i / 4) << 16;
+    blade->y = px(24 - i / 4);
     if (column <= 43)
       blade->velocityX = 3;
     else if (column <= 51)
@@ -647,8 +647,8 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
   for (i = 0; i != SHATTERING_OPENING_PIECES; i++) {
     s32 x, y, vx, vy;
 
-    x = *startX++ << 16;
-    y = *startY++ << 16;
+    x = px(*startX++);
+    y = px(*startY++);
     piece->x = x;
     piece->y = y;
     vx = (x - px(32)) >> 2;

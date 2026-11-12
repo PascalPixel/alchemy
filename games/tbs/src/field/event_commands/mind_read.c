@@ -115,12 +115,12 @@ void FieldPsynergy_UpdateMindReadWave(void) {
       from.x = caster->x.fixed;
       meta = Resource_GetMetadataRecordFar(
           (s16)Scene_FindActorPlacement(work->sourceId)->sprite);
-      from.y = caster->y.fixed + ((s8)meta->boxX << 16) - px(2);
+      from.y = caster->y.fixed + px((s8)meta->boxX) - px(2);
       from.z = caster->z.fixed;
       to.x = target->x.fixed;
       meta = Resource_GetMetadataRecordFar(
           (s16)Scene_FindActorPlacement(work->targetId)->sprite);
-      to.y = target->y.fixed + ((s8)meta->boxX << 16) - px(2);
+      to.y = target->y.fixed + px((s8)meta->boxX) - px(2);
       to.z = target->z.fixed;
       particle = Actor_CreateFar(SPRITE_CRESCENT, to.x, to.y, to.z);
       if (particle != 0) {

@@ -1099,7 +1099,7 @@ static void TreeRooms_UpdateSwirlSpark(struct Actor *actor) {
     {
       s32 initialAngle = (s16)spark->userValue;
 
-      Vector_AddPolarOffset(frame << 16, ((frame * 3) << 8) + initialAngle,
+      Vector_AddPolarOffset(px(frame), ((frame * 3) << 8) + initialAngle,
                             &position);
     }
     spark->x.fixed = position.x;

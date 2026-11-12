@@ -1718,7 +1718,7 @@ static void FuchinTemple_SpawnGrottoEntryParticle(void) {
 
   fallSpeed = ((u32)(Import_RandomNext() * 8) >> 16) * 13107;
 
-  FieldEffect_Spawn(leader->x.fixed + ((8 - (gFrameCount & 15)) << 16),
+  FieldEffect_Spawn(leader->x.fixed + px(8 - (gFrameCount & 15)),
                     leader->y.fixed + (192 << 13), leader->z.fixed, 0,
                     -fallSpeed, 0, EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE,
                     &options);

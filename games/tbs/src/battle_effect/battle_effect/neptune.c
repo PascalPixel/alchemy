@@ -247,8 +247,8 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
       pos.groundHeight = 0;
       pos.height = 0;
       for (i = 0; i != NEPTUNE_OBJECTS; i++) {
-        pos.x = (((gNeptune_ObjectX[i] * 3) >> 1) << 16) + formationX - px(32);
-        pos.y = (((gNeptune_ObjectY[i] * 3) >> 1) << 16) + formationZ - px(24);
+        pos.x = px((gNeptune_ObjectX[i] * 3) >> 1) + formationX - px(32);
+        pos.y = px((gNeptune_ObjectY[i] * 3) >> 1) + formationZ - px(24);
         Actor_ApplyProjectedPlacementFar(work->sprites[i], &pos, &scale, 0);
       }
     }
@@ -545,8 +545,8 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
               // 3 instructions differ.
               r &= Random16();
               a = (Random16() & 0x7fff) - TRIG_TURN / 4;
-              PARTICLES[j].x = sparkOriginX << 16;
-              PARTICLES[j].y = ground << 16;
+              PARTICLES[j].x = px(sparkOriginX);
+              PARTICLES[j].y = px(ground);
               r += 32;
               PARTICLES[j].velocityX = (Trig_Sin(a) * r) >> 7;
               PARTICLES[j].velocityY = -(Trig_Cos(a) * r * 2) >> 7;

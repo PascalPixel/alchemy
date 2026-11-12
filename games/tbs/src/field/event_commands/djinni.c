@@ -397,7 +397,7 @@ void FieldEffect_RunAngledApproachPhases(struct FieldParticle *particle) {
   // orbitAngle is in 1/32 turns: << 11 makes it 1/65536 turns.
   position.x = particle->originX;
   position.z = particle->originZ;
-  Vector_AddPolarOffset(particle->orbitRadius << 16, particle->orbitAngle << 11,
+  Vector_AddPolarOffset(px(particle->orbitRadius), particle->orbitAngle << 11,
                         &position);
   particle->x = position.x;
   particle->z = position.z;

@@ -133,8 +133,8 @@ void BattleEffect_RunRay(struct BattleEffectParams *args) {
 
             speed = (Random16() & 0x1ff) + 128;
             spread = (Random16() & 0x7fff) - TRIG_TURN / 4;
-            spark->x = x << 16;
-            spark->y = (y + 112) << 16;
+            spark->x = px(x);
+            spark->y = px(y + 112);
             spark->velocityX = (Trig_Sin(spread) * speed) >> 9;
             spark->velocityY = -(Trig_Cos(spread) * speed * 2) >> 7;
             spark->variant = (Random16() & 7) + 32;

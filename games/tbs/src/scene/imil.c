@@ -1202,7 +1202,7 @@ UNUSED static void Imil_UpdateCountdownArc(struct Actor *actor) {
       b[0] = gImil_ArcOrigin[0];
       b[1] = gImil_ArcOrigin[1] + px(8);
       b[2] = gImil_ArcOrigin[2];
-      Vector_AddPolarOffset(t << 16, (t << 11) + (s16)actor->userValue, b);
+      Vector_AddPolarOffset(px(t), (t << 11) + (s16)actor->userValue, b);
       actor->x.fixed = b[0];
       actor->y.fixed = b[1];
       actor->z.fixed = b[2];

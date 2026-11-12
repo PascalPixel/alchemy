@@ -289,10 +289,10 @@ static s32 CrossboneIsleSteppingStones_QueryFootprint(
   *width = (coordinate + farExtent) >> 4;
   // Move from the actor's center to the footprint's top-left cell.
   probe->position.x +=
-      gPushedActor_FootprintBounds[probe->footprintIndex * 4] * px(1);
+      px(gPushedActor_FootprintBounds[probe->footprintIndex * 4]);
   {
     s32 offsetZ =
-        gPushedActor_FootprintBounds[probe->footprintIndex * 4 + 1] * px(1);
+        px(gPushedActor_FootprintBounds[probe->footprintIndex * 4 + 1]);
 
     coordinate = probe->position.z;
     coordinate += offsetZ;
@@ -539,9 +539,9 @@ UNUSED static void CrossboneIsleSteppingStones_SpawnUnusedLeaderParticle(void) {
     options.startScaleX = 7 * Q16_ONE / 10;
     options.startScaleY = 7 * Q16_ONE / 10;
     drawX = Import_RandomNext();
-    x = leader->x.fixed + ((((u32)((drawX << 4) + drawX) >> 16) - 8) << 16);
+    x = leader->x.fixed + px(((u32)((drawX << 4) + drawX) >> 16) - 8);
     drawZ = Import_RandomNext();
-    z = leader->z.fixed + ((((u32)((drawZ << 4) + drawZ) >> 16) - 8) << 16);
+    z = leader->z.fixed + px(((u32)((drawZ << 4) + drawZ) >> 16) - 8);
     drawY = Import_RandomNext();
     velocityY =
         Math_Divide((((u32)((drawY << 2) + drawY) >> 16) << 16) + px(3), 10);
@@ -1352,10 +1352,10 @@ static void CrossboneIsleSteppingStones_SpawnFrostParticle(void) {
   options.update = CrossboneIsleSteppingStones_UpdateDampedParticle;
 
   draw = Import_RandomNext();
-  velocityX = -(((draw * 5) >> 16) * px(1) + px(6));
+  velocityX = -(px((draw * 5) >> 16) + px(6));
   velocityX /= 2;
   draw = Import_RandomNext();
-  velocityY = -(((draw * 5) >> 16) * px(1) + px(5));
+  velocityY = -(px((draw * 5) >> 16) + px(5));
 
   FieldEffect_Spawn(px(324), px(48), px(228), velocityX, velocityY, 0,
                     EFFECT_USE_UPDATE | EFFECT_USE_ROTATION |
@@ -1397,8 +1397,7 @@ CrossboneIsleSteppingStones_SpawnThawParticle(struct Actor *updated) {
   x = actor->x.fixed + (((((u32)Import_RandomNext() * 17) >> 16) - 8) << 16);
   y = actor->y.fixed + ((((u32)Import_RandomNext() * 17) >> 16) << 16);
   z = actor->z.fixed + (((((u32)Import_RandomNext() * 17) >> 16) - 8) << 16);
-  scale =
-      Math_Divide((((u32)Import_RandomNext() * 5) >> 16) * px(1) + px(3), 10);
+  scale = Math_Divide(px(((u32)Import_RandomNext() * 5) >> 16) + px(3), 10);
 
   FieldEffect_Spawn(x, y, z, 0, scale, phase,
                     EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE |

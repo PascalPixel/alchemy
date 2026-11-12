@@ -107,7 +107,7 @@ void Actor_SetDestinationById(u32 actorId, s32 x, s32 z) {
   if (actor != NULL) {
     actor->paused = 0;
     Actor_StartIdleFar(actor);
-    Actor_SetMoveTargetFar(actor, x << 16, actor->y.fixed, z << 16);
+    Actor_SetMoveTargetFar(actor, px(x), actor->y.fixed, px(z));
   }
 }
 
@@ -121,7 +121,7 @@ void Actor_MoveToAndWaitById(u32 actorId, s32 x, s32 z) {
   if (actor != NULL) {
     actor->paused = 0;
     Actor_StartIdleFar(actor);
-    Actor_SetMoveTargetFar(actor, x << 16, actor->y.fixed, z << 16);
+    Actor_SetMoveTargetFar(actor, px(x), actor->y.fixed, px(z));
     Actor_WaitForMoveFar(actor);
   }
 }
@@ -136,7 +136,7 @@ void Actor_WalkToById(u32 actorId, s32 x, s32 z) {
     actor->paused = 0;
     Actor_StartIdleFar(actor);
     Actor_SelectAnimationFar(actor, 2);
-    Actor_SetMoveTargetFar(actor, x << 16, actor->y.fixed, z << 16);
+    Actor_SetMoveTargetFar(actor, px(x), actor->y.fixed, px(z));
   }
 }
 
@@ -151,7 +151,7 @@ void Actor_WalkToAndWaitById(u32 actorId, s32 x, s32 z) {
     actor->paused = 0;
     Actor_StartIdleFar(actor);
     Actor_SelectAnimationFar(actor, 2);
-    Actor_SetMoveTargetFar(actor, x << 16, actor->y.fixed, z << 16);
+    Actor_SetMoveTargetFar(actor, px(x), actor->y.fixed, px(z));
     Actor_WaitForMoveFar(actor);
     Actor_SelectAnimationFar(actor, 1);
   }
@@ -183,12 +183,12 @@ void Actor_CenterOnColumn(u32 actorId, s32 priority, s32 zOffset) {
     actor->paused = 0;
     Actor_StartIdleFar(actor);
     Actor_SelectAnimationFar(actor, 2);
-    Actor_SetMoveTargetFar(actor, actor->x.fixed + ((8 - offsetInColumn) << 16),
+    Actor_SetMoveTargetFar(actor, actor->x.fixed + px(8 - offsetInColumn),
                            actor->y.fixed, actor->z.fixed);
     Actor_WaitForMoveFar(actor);
     Actor_SetSpritePriority(actorId, priority);
     Actor_SetMoveTargetFar(actor, actor->x.fixed, actor->y.fixed,
-                           actor->z.fixed + (zOffset << 16));
+                           actor->z.fixed + px(zOffset));
   }
 }
 
@@ -202,8 +202,8 @@ void Actor_SetDestinationOffsetById(u32 actorId, s32 xOffset, s32 zOffset) {
   if (actor != NULL) {
     actor->paused = 0;
     Actor_StartIdleFar(actor);
-    Actor_SetMoveTargetFar(actor, actor->x.fixed + (xOffset << 16),
-                           actor->y.fixed, actor->z.fixed + (zOffset << 16));
+    Actor_SetMoveTargetFar(actor, actor->x.fixed + px(xOffset), actor->y.fixed,
+                           actor->z.fixed + px(zOffset));
   }
 }
 
@@ -217,8 +217,8 @@ void Actor_WalkByById(u32 actorId, s32 xOffset, s32 zOffset) {
     actor->paused = 0;
     Actor_StartIdleFar(actor);
     Actor_SelectAnimationFar(actor, 2);
-    Actor_SetMoveTargetFar(actor, actor->x.fixed + (xOffset << 16),
-                           actor->y.fixed, actor->z.fixed + (zOffset << 16));
+    Actor_SetMoveTargetFar(actor, actor->x.fixed + px(xOffset), actor->y.fixed,
+                           actor->z.fixed + px(zOffset));
   }
 }
 
@@ -313,7 +313,7 @@ void Actor_SetHorizontalPositionWithTerrain(u32 actorId, s32 x, s32 z) {
         tileZ += 0xFFFF;
       }
       tileZ >>= 16;
-      groundHeight = MapGrid_GetTerrainHeightFar(terrainId, tileX, tileZ) << 16;
+      groundHeight = px(MapGrid_GetTerrainHeightFar(terrainId, tileX, tileZ));
       object->y.fixed = (object->y.fixed - object->groundHeight) + groundHeight;
       object->groundHeight = groundHeight;
     }
@@ -348,8 +348,8 @@ void Actor_SetPositionWithTerrain(u32 actorId, s32 x, s32 y, s32 z) {
       if (tileZ < 0) {
         tileZ += 0xFFFF;
       }
-      groundHeight = MapGrid_GetTerrainHeightFar(terrainId, tileX, tileZ >> 16)
-                     << 16;
+      groundHeight =
+          px(MapGrid_GetTerrainHeightFar(terrainId, tileX, tileZ >> 16));
       actor->y.fixed = (actor->y.fixed - actor->groundHeight) + groundHeight;
       actor->groundHeight = groundHeight;
     }
@@ -432,7 +432,7 @@ void Actor_Jump(u32 actorId, s32 speed, s32 frames) {
   if (actor != NULL) {
     objectFlags = &actor->motionFlags;
     updatedFlags = *objectFlags | ACTOR_FALLS;
-    verticalVelocity = speed << 16;
+    verticalVelocity = px(speed);
     *objectFlags = updatedFlags;
     actor->velocityY = verticalVelocity;
     if (speed > 5) {

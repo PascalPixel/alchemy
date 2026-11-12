@@ -101,7 +101,7 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
   // The sparks start at canvas y 88 below the target, thrown at 1 to 17
   // pixels a frame across and half that up or down (twice as fast across as
   // Ragnarok's and half as fast up), and live 32 to 39 frames.
-  sparkOriginX = canvasCenterX << 16;
+  sparkOriginX = px(canvasCenterX);
   do {
     struct Particle *spark = &TITAN_BLADE_SWORD_SPARKS[i];
 

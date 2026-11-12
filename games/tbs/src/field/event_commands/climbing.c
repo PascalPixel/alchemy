@@ -164,8 +164,8 @@ s32 Field_ClimbDown(void) {
       actor->motionFlags = 0;
       Actor_SetSpriteFlagsFar(actor, 0);
       Actor_SelectAnimationFar(actor, 13);
-      Actor_SetMoveTargetFar(actor, gridX << 16, actor->y.fixed - px(16),
-                             (gridZ << 16) + px(16));
+      Actor_SetMoveTargetFar(actor, px(gridX), actor->y.fixed - px(16),
+                             px(gridZ) + px(16));
       Actor_WaitForMoveById(gMainRoutineWork.leaderActorId);
       gMainRoutineWork.movementMode = LEADER_MOVEMENT_CLIMB;
     } else {
@@ -259,8 +259,8 @@ s32 Field_ClimbUp(void) {
     // Climb over the top: up 8 pixels and a cell north.
     actor->motionFlags = 0;
     Actor_SelectAnimationFar(actor, 11);
-    Actor_SetMoveTargetFar(actor, gridX << 16, actor->y.fixed + px(8),
-                           (gridZ << 16) - px(16));
+    Actor_SetMoveTargetFar(actor, px(gridX), actor->y.fixed + px(8),
+                           px(gridZ) - px(16));
     Actor_WaitForMoveById(gMainRoutineWork.leaderActorId);
     actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     spriteFlags |= 1;

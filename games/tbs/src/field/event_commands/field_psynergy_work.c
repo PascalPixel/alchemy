@@ -322,8 +322,8 @@ void Camera_WorldToScreen(struct Vector3 *position) {
     s32 result[3];
 
     Transform_ProjectPoint(position, result);
-    position->x = result[0] << 16;
-    position->z = result[1] << 16;
+    position->x = px(result[0]);
+    position->z = px(result[1]);
     position->y = 0;
   } else {
 #ifdef UBFIX

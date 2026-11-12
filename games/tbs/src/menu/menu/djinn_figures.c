@@ -81,14 +81,14 @@ void DjinnFigures_UpdateAllPositions(void) {
     struct Sprite *animation = state->animations[index];
 
     if (animation != 0) {
-      u32 vertical = FOUR_OBJECT_MOTION_ORIGIN_Y -
-                     ((s32)state->verticalOrigins[index] << 16);
+      u32 vertical =
+          FOUR_OBJECT_MOTION_ORIGIN_Y - px((s32)state->verticalOrigins[index]);
       animation->image.priority = 0;
       scale.x = FOUR_OBJECT_MOTION_FULL_SCALE;
       scale.y = FOUR_OBJECT_MOTION_FULL_SCALE;
-      placement.x = (s32)state->positionsX[index] << 16;
+      placement.x = px((s32)state->positionsX[index]);
       placement.height = vertical;
-      placement.y = ((s32)state->positionsY[index] << 16) + vertical;
+      placement.y = px((s32)state->positionsY[index]) + vertical;
       placement.groundHeight = 0;
       Actor_ApplyProjectedPlacementFar(animation, &placement, &scale,
                                        FACING_SOUTH);
@@ -117,7 +117,7 @@ void DjinnFigures_UpdateBottomRow(void) {
 
     if (animation != 0) {
       u32 projectedY =
-          (241u << 17) - ((u32)(s32)menu->verticalOrigins[objectIndex] << 16);
+          (241u << 17) - px((u32)(s32)menu->verticalOrigins[objectIndex]);
       s32 phase;
       s32 limit;
       s32 rowY;
@@ -134,10 +134,9 @@ void DjinnFigures_UpdateBottomRow(void) {
         scale.y = scale.x;
         menu->phases[objectIndex] = scale.x;
       }
-      placement.x = (u32)(s32)menu->positionsX[objectIndex] << 16;
+      placement.x = px((u32)(s32)menu->positionsX[objectIndex]);
       placement.height = projectedY;
-      placement.y =
-          ((u32)(s32)menu->positionsY[objectIndex] << 16) + projectedY;
+      placement.y = px((u32)(s32)menu->positionsY[objectIndex]) + projectedY;
       placement.groundHeight = 0;
       rowY = menu->positionsY[objectIndex];
       /* FAKEMATCH(dead): the scale's x assigned to itself while rowY is live,

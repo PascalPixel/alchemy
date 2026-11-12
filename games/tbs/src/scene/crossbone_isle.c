@@ -821,10 +821,8 @@ static void CrossboneIsle_MoveSelectedActorAndLog(s32 actorId, s32 xOffset,
   logActor = Actor_Get(actorId);
   Event_Start();
   {
-    fixedX =
-        ((selectedActor->x.fixed + (xOffset * px(1))) & 0xFFF00000) + px(8);
-    fixedZ =
-        ((selectedActor->z.fixed + (zOffset * px(1))) & 0xFFF00000) + px(8);
+    fixedX = ((selectedActor->x.fixed + px(xOffset)) & 0xFFF00000) + px(8);
+    fixedZ = ((selectedActor->z.fixed + px(zOffset)) & 0xFFF00000) + px(8);
 
     selectedActor->speedLimit = px(1);
     selectedActor->acceleration = px(1) / 2;
@@ -834,8 +832,8 @@ static void CrossboneIsle_MoveSelectedActorAndLog(s32 actorId, s32 xOffset,
   // Position the log on the same cell-center grid as the selected actor.
   Actor_SelectAnimation(selectedActor, 27);
   {
-    fixedX = ((logActor->x.fixed + (xOffset * px(1))) & 0xFFF00000) + px(8);
-    fixedZ = ((logActor->z.fixed + (zOffset * px(1))) & 0xFFF00000) + px(8);
+    fixedX = ((logActor->x.fixed + px(xOffset)) & 0xFFF00000) + px(8);
+    fixedZ = ((logActor->z.fixed + px(zOffset)) & 0xFFF00000) + px(8);
 
     logActor->speedLimit = px(1);
     logActor->acceleration = px(1) / 2;

@@ -124,7 +124,7 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
           s32 cell = i % 8;
 
           mote = &work->particles[i];
-          if (mote->y < (48 - i / 2) << 16 && mote->y > -px(48)) {
+          if (mote->y < px(48 - i / 2) && mote->y > -px(48)) {
             struct ScreenPoint *position;
             u32 width;
             u32 height;
@@ -158,7 +158,7 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
             }
           } else {
             mote->z += 8;
-            mote->y -= (i % 5 + 2) << 16;
+            mote->y -= px(i % 5 + 2);
             if (lowest > mote->y)
               lowest = mote->y;
             if (highest < mote->y)
@@ -273,7 +273,7 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
 
         puff->velocityX = (Random16() & 127) << 16;
         if (highest == lowest)
-          puff->velocityY = lowest << 16;
+          puff->velocityY = px(lowest);
         else
           puff->velocityY = (Random16() % (highest - lowest) + lowest) << 16;
         puff->variant = (Random16() & 15) + 20;

@@ -122,7 +122,7 @@ void BattleEffect_RunBolt(struct BattleEffectParams *args) {
             s32 speed = (Random16() & 0x1ff) + 64;
             s32 angle = (Random16() & 0x7fff) - TRIG_TURN / 4;
 
-            spark->x = screen.x << 16;
+            spark->x = px(screen.x);
             spark->y = px(104);
             spark->velocityX = (Trig_Sin(angle) * speed) >> 5;
             spark->velocityY = -(Trig_Cos(angle) * speed) >> 6;

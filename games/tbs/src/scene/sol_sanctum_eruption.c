@@ -363,8 +363,8 @@ static void SolSanctumEruption_PlayHostageEvent(void) {
   Actor_FaceDirection(ACTOR_FELIX, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_ALEX, FACING_WEST, 0);
   actor = Actor_Get(ACTOR_JENNA);
-  FieldCamera_MoveToFixed(actor->x.part.pixel * px(1), CAMERA_KEEP,
-                          actor->z.part.pixel * px(1), 1);
+  FieldCamera_MoveToFixed(px(actor->x.part.pixel), CAMERA_KEEP,
+                          px(actor->z.part.pixel), 1);
   FieldCamera_WaitForMove();
   Event_Wait(40);
   Actor_RunRepeatedMotion(ACTOR_FELIX, 2);
@@ -754,7 +754,7 @@ static void SolSanctumEruption_StepEmbers(void) {
   shakePixels = (u32)gEmberTimer / 10;
   if (shakePixels != 0) {
     sparkles->stopped = 0;
-    MapGrid_SetShakeFixed(shakePixels * px(1), shakePixels * px(1), Q16_ONE);
+    MapGrid_SetShakeFixed(px(shakePixels), px(shakePixels), Q16_ONE);
   } else {
     sparkles->stopped = 1;
     MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);

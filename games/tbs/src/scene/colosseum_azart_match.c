@@ -881,11 +881,11 @@ static void ColosseumAzartMatch_ExplainFinalsRules(s32 guide) {
   Actor_SetSpeed(ACTOR_GARET, 1);
   Actor_SetSpeed(ACTOR_IVAN, 1);
   Actor_SetSpeed(ACTOR_MIA, 1);
-  Actor_SetPositionFixed(ACTOR_PARTY_LEADER, x << 16, (z << 16) - px(48));
-  Actor_SetPositionFixed(ACTOR_GARET, (x << 16) - px(16), (z << 16) - px(40));
-  Actor_SetPositionFixed(ACTOR_IVAN, (x << 16) + px(16), (z << 16) - px(40));
-  Actor_SetPositionFixed(ACTOR_MIA, x << 16, (z << 16) - px(32));
-  Actor_SetPositionFixed(guide, x << 16, (z << 16) - px(80));
+  Actor_SetPositionFixed(ACTOR_PARTY_LEADER, px(x), px(z) - px(48));
+  Actor_SetPositionFixed(ACTOR_GARET, px(x) - px(16), px(z) - px(40));
+  Actor_SetPositionFixed(ACTOR_IVAN, px(x) + px(16), px(z) - px(40));
+  Actor_SetPositionFixed(ACTOR_MIA, px(x), px(z) - px(32));
+  Actor_SetPositionFixed(guide, px(x), px(z) - px(80));
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   actor->facing = FACING_NORTH;
   FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 0);

@@ -390,7 +390,7 @@ static void VaultCave_PushPillarAhead(void) {
       pillar->x.fixed + (VAULT_CAVE_DIRECTION_STEP(direction) & 0xffff0000);
   destination.y = pillar->y.fixed;
   destination.z =
-      pillar->z.fixed + (s32)((u32)VAULT_CAVE_DIRECTION_STEP(direction) << 16);
+      pillar->z.fixed + (s32)(px((u32)VAULT_CAVE_DIRECTION_STEP(direction)));
   if (FieldActor_CheckMovementCollision(pillar, &destination) > 0) {
     return;
   }

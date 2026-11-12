@@ -1479,8 +1479,8 @@ static void TolbiSpring_InitializeTossSimulation(void) {
   pixelZ = gTolbiSpring_ActorPixelZ;
 
   do {
-    obstacle->position.x = *pixelX << 16;
-    obstacle->position.z = *pixelZ << 16;
+    obstacle->position.x = px(*pixelX);
+    obstacle->position.z = px(*pixelZ);
     obstacle->position.y = 0;
     obstacle->heading = *headings;
     obstacle->pauseOrPhase = 0;

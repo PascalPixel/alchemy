@@ -524,7 +524,7 @@ s32 BattleStaging_RunAttack(struct BattleActionRun *plan, s32 mode) {
   frames = SpriteAnimation_SumCommandLengthsFar(
       animation->entries[0]->animationId, 2, 1);
   BattleMotion_ApproachTarget(work.effect.user, work.effect.targets[0], frames,
-                              BattleSprite_GetAttackHop(unit->id) << 16);
+                              px(BattleSprite_GetAttackHop(unit->id)));
   Actor_SetAnimationSpeedFar(BattleObject_Get(work.effect.user)->actor, 16);
   BattleObject_Get(work.effect.targets[0]);
 

@@ -3178,7 +3178,7 @@ static void VenusLighthouseAerie_AdvanceActorRise(struct Actor *actor) {
   if (actor->riseEnabled != 0) {
     u8 counter = actor->riseCounter;
 
-    actor->y.fixed = actor->riseBaseY + ((counter >> 2) << 16);
+    actor->y.fixed = actor->riseBaseY + px(counter >> 2);
 
     VenusLighthouseAerie_StopActorMotion(actor);
 

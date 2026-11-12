@@ -497,8 +497,8 @@ void Sanctum_RunMemberIconBurst(s32 member) {
   Task_Add(Sanctum_UpdateBurst, priority);
 
   // The burst's centre, in 16.16 pixels: 12 above the party member's icon
-  position.x = shop->partyMemberX[member] << 16;
-  position.z = (shop->partyMemberY[member] << 16) - px(12);
+  position.x = px(shop->partyMemberX[member]);
+  position.z = px(shop->partyMemberY[member]) - px(12);
 
   // Spawn eighteen particles while the task continues updating all twenty-four.
   effectIndex = 0;

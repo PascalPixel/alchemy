@@ -97,7 +97,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
 
       speed = (Random16() & 0x1ff) + 32;
       angle = Random16() & TRIG_ANGLE_MASK;
-      spark->x = RAGNAROK_COLUMN_X(work->args->side, col) << 16;
+      spark->x = px(RAGNAROK_COLUMN_X(work->args->side, col));
       spark->y = px(88);
       spark->velocityX = (Trig_Sin(angle) * speed) >> 6;
       spark->velocityY = -(Trig_Cos(angle) * speed * 2) >> 6;

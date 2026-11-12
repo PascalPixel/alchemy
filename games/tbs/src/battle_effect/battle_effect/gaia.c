@@ -298,8 +298,8 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
           }
           scale.y = scale.x;
           position.groundHeight = 0;
-          position.x = (rock->x + rockX * 2) << 16;
-          position.height = px(512) - (rock->y << 16);
+          position.x = px(rock->x + rockX * 2);
+          position.height = px(512) - px(rock->y);
           position.y = px(512);
           slot = (frame / 2 + k) % GAIA_ROCKS;
           // DEAD: always true, as slot is a remainder of a positive count; the

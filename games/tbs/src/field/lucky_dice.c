@@ -873,7 +873,7 @@ void LuckyDice_Run(void) {
 #ifdef UBFIX
             rowDepth = gLuckyDice_FaceHeights[otherIndex] * 65536;
 #else
-            rowDepth = gLuckyDice_FaceHeights[otherIndex] << 16;
+            rowDepth = px(gLuckyDice_FaceHeights[otherIndex]);
 #endif
             if (rollingDie->z > rowDepth) {
               numbers[index + 2] = otherIndex;

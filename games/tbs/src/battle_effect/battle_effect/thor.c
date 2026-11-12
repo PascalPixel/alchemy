@@ -254,8 +254,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
     // and dot j sits j/48 of the way along (Q16_ONE / 48).
     if (frame <= 149) {
       for (i = 0; i != 6; i++) {
-        SET_VECTOR(point, (points[i][0] - 96) << 16, 0,
-                   (points[i][1] - 96) << 16);
+        SET_VECTOR(point, px(points[i][0] - 96), 0, px(points[i][1] - 96));
         Projection_Point(point, &screen[i]);
         screen[i].x = (screen[i].x >> 17) + 64;
         screen[i].y = (screen[i].y >> 16) + 60;
@@ -451,7 +450,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
             blit[0](canvas, work->sheet + (48 * 112), 36, 0, 48, 112);
           }
           if (frame == start + 2) {
-            THOR_LAUNCH_SPARKS(spark, i, pillarX << 16, pillarY << 16,
+            THOR_LAUNCH_SPARKS(spark, i, px(pillarX), px(pillarY),
                                (Random16() & 0x7fff) - TRIG_TURN / 4, 512);
             work->shakeFrames = 8;
           }
@@ -557,8 +556,8 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
             // instructions differ.
             speed &= Random16();
             angle = Random16() & TRIG_ANGLE_MASK;
-            spark->x = mirrorX << 16;
-            spark->y = moteY << 16;
+            spark->x = px(mirrorX);
+            spark->y = px(moteY);
             speed += 64;
             spark->velocityX = (Trig_Sin(angle) * speed) >> 7;
             spark->velocityY = -((Trig_Cos(angle) * speed) << 1) >> 7;

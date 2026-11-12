@@ -2227,7 +2227,7 @@ static void Kalay_PushTunnelStatue(void) {
     target = &destination;
     moveStep = gKalay_TileStepByFacing[direction];
     SET_POSITION(target, statue->x.fixed + (moveStep & -0x10000),
-                 statue->y.fixed, statue->z.fixed + (moveStep << 16));
+                 statue->y.fixed, statue->z.fixed + px(moveStep));
     if (FieldActor_CheckMovementCollision(statue, target) <= 0) {
       Actor_SelectAnimation(leader, ANIM_PUSH);
       pushSpeed = px(1) / 5;

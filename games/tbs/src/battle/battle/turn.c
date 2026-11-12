@@ -105,7 +105,7 @@ void BattleCamera_SetCommandView(s32 verticalOffset) {
   // offset 8 pixels in y, in 8.8 (128 << 4), scale 2.0.
   gProjection.centerY = verticalOffset + 120;
   view->busy = 1;
-  BattleCamera_SetRange(240 << 15, (118 - verticalOffset) << 16, 0, 128 << 4,
+  BattleCamera_SetRange(240 << 15, px(118 - verticalOffset), 0, 128 << 4,
                         128 << 10);
   view->flag = 1;
   view->busy = 0;

@@ -212,8 +212,8 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
     position.height = px(255);
     for (row = 0; row != 3; row++) {
       for (j = 0; j != 3; j++) {
-        position.x = (j * 32 + 144 - shakeX) << 16;
-        position.y = (row * 32 + 76 - shakeY) << 16;
+        position.x = px(j * 32 + 144 - shakeX);
+        position.y = px(row * 32 + 76 - shakeY);
         Actor_ApplyProjectedPlacementFar(work->sprites[row * 3 + j], &position,
                                          &scale, 0);
       }
@@ -441,8 +441,8 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
     // over work->particles. The second frame 72 test is redundant.
     if (frame == 72) {
       for (i = 0; i != 64; i++) {
-        work->particles[i].x = (BOREAS_POINT_X(i & 15) - 56) << 16;
-        work->particles[i].y = BOREAS_POINT_Y(i & 15) << 16;
+        work->particles[i].x = px(BOREAS_POINT_X(i & 15) - 56);
+        work->particles[i].y = px(BOREAS_POINT_Y(i & 15));
         work->particles[i].velocityX = ((Random16() & 127) - 63) << 13;
         work->particles[i].velocityY = (-(Random16() & 31) - 16) << 14;
       }

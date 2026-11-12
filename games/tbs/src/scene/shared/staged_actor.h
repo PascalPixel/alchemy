@@ -142,8 +142,8 @@ UNUSED static void PushedActor_AdvancePair(void) {
   lead->targetZ = ACTOR_NO_TARGET;
   lead->velocityX = 0;
   lead->velocityZ = 0;
-  lead->x.fixed = lead->x.part.pixel << 16;
-  lead->z.fixed = lead->z.part.pixel << 16;
+  lead->x.fixed = px(lead->x.part.pixel);
+  lead->z.fixed = px(lead->z.part.pixel);
   Actor_SelectAnimation(lead, 1);
 }
 
@@ -330,18 +330,17 @@ PushedActor_FindClearPosition(struct PushedActorProbe *probe) {
     s32 y = actor->y.fixed;
 
     position.y = y;
-    position.z =
-        actor->z.fixed + (gPushedActor_DirectionSteps[direction] << 16);
+    position.z = actor->z.fixed + px(gPushedActor_DirectionSteps[direction]);
     probe->position.y = y;
   }
   for (;;) {
     probe->position.z =
         position.z +
-        (gPushedActor_FootprintBounds[probe->footprintIndex * 4 + 1] << 16);
+        px(gPushedActor_FootprintBounds[probe->footprintIndex * 4 + 1]);
     for (row = 0; row < height; row++) {
       probe->position.x =
           position.x +
-          (gPushedActor_FootprintBounds[probe->footprintIndex * 4] << 16);
+          px(gPushedActor_FootprintBounds[probe->footprintIndex * 4]);
       for (column = 0; column < width; column++) {
         if (FieldActor_CheckMovementCollision(actor, &probe->position) == 2) {
           goto found;
@@ -352,7 +351,7 @@ PushedActor_FindClearPosition(struct PushedActorProbe *probe) {
     }
     steps++;
     position.x += gPushedActor_DirectionSteps[direction] & 0xffff0000;
-    position.z += gPushedActor_DirectionSteps[direction] << 16;
+    position.z += px(gPushedActor_DirectionSteps[direction]);
   }
 found:
   *mode = 0;
@@ -364,7 +363,7 @@ found:
       (gPushedActor_DirectionSteps[direction] & 0xffff0000) * steps;
   probe->position.y = actor->y.fixed;
   probe->position.z =
-      actor->z.fixed + (gPushedActor_DirectionSteps[direction] << 16) * steps;
+      actor->z.fixed + px(gPushedActor_DirectionSteps[direction]) * steps;
   return 1;
 }
 
@@ -420,10 +419,10 @@ UNUSED static void Actor_MoveAndRedraw(struct PushedActorProbe probe) {
   {
     s32 tableOffset = probe.footprintIndex << 4;
     tilePosition.x =
-        (actor->x.fixed + (*(s32 *)(footprintTable + tableOffset) << 16));
+        (actor->x.fixed + px(*(s32 *)(footprintTable + tableOffset)));
     tableOffset += 4;
     tilePosition.z =
-        (actor->z.fixed + (*(s32 *)(footprintTable + tableOffset) << 16));
+        (actor->z.fixed + px(*(s32 *)(footprintTable + tableOffset)));
     tilePosition.x >>= 20;
     tilePosition.z >>= 20;
   }
@@ -497,11 +496,9 @@ UNUSED static void Actor_MoveAndRedraw(struct PushedActorProbe probe) {
 
     {
       s32 tableOffset = probe.footprintIndex << 4;
-      probe.position.x =
-          (probe.position.x + (*(s32 *)(table + tableOffset) << 16));
+      probe.position.x = (probe.position.x + px(*(s32 *)(table + tableOffset)));
       tableOffset += 4;
-      probe.position.z =
-          (probe.position.z + (*(s32 *)(table + tableOffset) << 16));
+      probe.position.z = (probe.position.z + px(*(s32 *)(table + tableOffset)));
       probe.position.x >>= 20;
       probe.position.z >>= 20;
     }
@@ -521,10 +518,10 @@ UNUSED static void Actor_MoveAndRedraw(struct PushedActorProbe probe) {
     {
       s32 tableOffset = probe.footprintIndex << 4;
       originalPosition.x =
-          (originalPosition.x + (*(s32 *)(table + tableOffset) << 16));
+          (originalPosition.x + px(*(s32 *)(table + tableOffset)));
       tableOffset += 4;
       originalPosition.z =
-          (originalPosition.z + (*(s32 *)(table + tableOffset) << 16));
+          (originalPosition.z + px(*(s32 *)(table + tableOffset)));
       originalPosition.x >>= 20;
       originalPosition.z >>= 20;
     }
@@ -587,8 +584,8 @@ UNUSED static s32 Scene_RedrawActorFootprint(s32 id) {
   if (x1 < 0)
     x1 = -x1;
   width = (x0 + x1) >> 4;
-  probe.position.x += gPushedActor_FootprintBounds[offset] << 16;
-  probe.position.z += gPushedActor_FootprintBounds[offset + 1] << 16;
+  probe.position.x += px(gPushedActor_FootprintBounds[offset]);
+  probe.position.z += px(gPushedActor_FootprintBounds[offset + 1]);
   probe.position.x >>= 20;
   probe.position.z >>= 20;
   idx = grid->layers[1].offsetX >> 20;

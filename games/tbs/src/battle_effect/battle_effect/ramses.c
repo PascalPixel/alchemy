@@ -147,8 +147,8 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
     position.groundHeight = 0;
     position.height = 0;
     for (i = 0; i != 7; i++) {
-      position.x = (gRamses_ObjectColumns[i] << 16) + base.x - px(32);
-      position.y = (gRamses_ObjectRows[i] << 16) + base.y - px(32);
+      position.x = px(gRamses_ObjectColumns[i]) + base.x - px(32);
+      position.y = px(gRamses_ObjectRows[i]) + base.y - px(32);
       Actor_ApplyProjectedPlacementFar(work->sprites[i], &position, &scale, 0);
     }
     // The orb circles until frame 90, 16 pixels around (156, 92), a 128th
@@ -186,7 +186,7 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
     if (frame >= 244 && frame <= 251)
       orb.x -= px(1);
     if (frame >= 252 && frame <= 275)
-      orb.x -= (frame - 250) << 16;
+      orb.x -= px(frame - 250);
     // The orb's two sprites, 32 pixels apart, drawn at the orb: a height of
     // -256 pixels, 100 or more below the ground, puts them in draw slot 1
     // (Render_ApplyProjectedPlacement), and y moves up as far, so the two

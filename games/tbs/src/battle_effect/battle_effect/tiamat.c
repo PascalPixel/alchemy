@@ -251,7 +251,7 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectParams *args,
               spark->y = px(70);
             } else {
               spark->x = ((Random16() & 7) + origin.x - 8) << 16;
-              spark->y = origin.y << 16;
+              spark->y = px(origin.y);
             }
             spark->velocityX = speed * Trig_Sin(angle) >> 9;
             spark->velocityY = speed * Trig_Cos(angle) >> 9;
@@ -283,8 +283,8 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectParams *args,
             flash->x = px(68);
             flash->y = px(64);
           } else {
-            flash->x = origin.x << 16;
-            flash->y = origin.y << 16;
+            flash->x = px(origin.x);
+            flash->y = px(origin.y);
           }
           flash->velocityX = speed * Trig_Sin(angle) >> 6;
           flash->velocityY = speed * Trig_Cos(angle) >> 6;

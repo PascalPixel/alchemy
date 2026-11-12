@@ -197,8 +197,8 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
       place.height = px(255);
       i = 0;
       do {
-        place.x = ((baseX + gKirin_Columns[i] - lift) << 16) + px(224);
-        place.y = ((gKirin_Rows[i] - wave) << 16) + (144 << 15);
+        place.x = px(baseX + gKirin_Columns[i] - lift) + px(224);
+        place.y = px(gKirin_Rows[i] - wave) + (144 << 15);
         Actor_ApplyProjectedPlacementFar(work->sprites[i], &place, &pair, 0);
         i++;
       } while (i != KIRIN_OBJECTS);
@@ -365,8 +365,8 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
         risePlace.height = px(255);
         i = 0;
         do {
-          risePlace.x = (rowX + gKirin_Columns[i]) << 16;
-          risePlace.y = ((gKirin_Rows[i] - rise) << 16) + (144 << 15);
+          risePlace.x = px(rowX + gKirin_Columns[i]);
+          risePlace.y = px(gKirin_Rows[i] - rise) + (144 << 15);
           Actor_ApplyProjectedPlacementFar(work->sprites[i], &risePlace,
                                            &riseScaleCopy, 0);
           i++;
@@ -403,7 +403,7 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
               s32 up;
 
               burst->x = unit.x << 15;
-              burst->y = (unit.y - 16) << 16;
+              burst->y = px(unit.y - 16);
               burst->velocityX = ((Random16() & 255) - 128) << 10;
               up = (Random16() & 255) - 192;
               burst->velocityY = up << 11;

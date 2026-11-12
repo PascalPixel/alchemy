@@ -517,11 +517,11 @@ void BattleEffect_RunStatReduction(struct BattleEffectParams *args, s32 mode) {
     angle = Random16() & TRIG_ANGLE_MASK;
     shard->x = 0;
     if (mode == STAT_REDUCTION_DULL) {
-      shard->y = ((i & 31) / 4 * 6 - 10) << 16;
-      shard->z = (i % 4 * 2 - 2) << 16;
+      shard->y = px((i & 31) / 4 * 6 - 10);
+      shard->z = px(i % 4 * 2 - 2);
     } else {
-      shard->y = ((i & 31) / 4 * 6 - 10) << 16;
-      shard->z = (i % 4 * 8 - 16) << 16;
+      shard->y = px((i & 31) / 4 * 6 - 10);
+      shard->z = px(i % 4 * 8 - 16);
     }
     if (work->args->side == EFFECT_SIDE_PARTY)
       shard->velocityX = px(2);

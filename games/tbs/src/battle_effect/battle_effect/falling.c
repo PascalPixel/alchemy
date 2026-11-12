@@ -393,8 +393,8 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
                          [i * gFalling_Counts[work->args->variant]
                                              [FALLING_BOLT_SPARKS_PER_BOLT] +
                           k];
-            spark->x = (x + 12) << 16;
-            spark->y = y << 16;
+            spark->x = px(x + 12);
+            spark->y = px(y);
             spark->velocityX = ((Random16() & 255) - 128) << 9;
             if (work->args->variant == EFFECT_VARIANT_STRONGEST)
               spark->velocityY = ((Random16() & 0x1ff) - 384) << 10;

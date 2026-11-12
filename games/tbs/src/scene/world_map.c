@@ -2890,20 +2890,17 @@ static void WorldMap_JitterTransitionCamera(void) {
     mode = (u32)(Random_Next() << 2) >> 16;
     switch (mode) {
     case 0:
-      FieldCamera_MoveToFixed((sx << 16) - px(1), CAMERA_KEEP,
-                              (sy << 16) + px(1), 1);
+      FieldCamera_MoveToFixed(px(sx) - px(1), CAMERA_KEEP, px(sy) + px(1), 1);
       break;
     case 1:
-      FieldCamera_MoveWithinMapBounds((sx << 16) + px(1), CAMERA_KEEP,
-                                      (sy << 16) - px(1), 1);
+      FieldCamera_MoveWithinMapBounds(px(sx) + px(1), CAMERA_KEEP,
+                                      px(sy) - px(1), 1);
       break;
     case 2:
-      FieldCamera_MoveToFixed((sx << 16) + px(1), CAMERA_KEEP,
-                              (sy << 16) + px(1), 1);
+      FieldCamera_MoveToFixed(px(sx) + px(1), CAMERA_KEEP, px(sy) + px(1), 1);
       break;
     case 3:
-      FieldCamera_MoveToFixed((sx << 16) - px(1), CAMERA_KEEP,
-                              (sy << 16) - px(1), 1);
+      FieldCamera_MoveToFixed(px(sx) - px(1), CAMERA_KEEP, px(sy) - px(1), 1);
       break;
     }
   }

@@ -463,7 +463,7 @@ s32 FieldCamera_FollowLeaderInBounds(struct Actor *interpreter) {
        * 224 instructions differ in tbs-en. */
       dy = (y - cameraActor->y.fixed) / Q16_ONE;
       dz = (z - cameraActor->z.fixed) / Q16_ONE;
-      distance = Iwram_Sqrt(dx * dx + dz * dz) << 16;
+      distance = px(Iwram_Sqrt(dx * dx + dz * dz));
       dx = x - cameraActor->x.fixed;
       dy = y - cameraActor->y.fixed;
       dz = z - cameraActor->z.fixed;

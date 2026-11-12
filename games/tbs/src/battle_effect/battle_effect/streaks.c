@@ -242,9 +242,8 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
             struct Actor *struck =
                 GetBattleObjectSlotFar(work->args->targets[k])->actor;
 
-            struck->x.fixed +=
-                gStreaks_Tremble[(frame - k * STREAKS_TARGET_DELAY - 30) % 8]
-                << 16;
+            struck->x.fixed += px(
+                gStreaks_Tremble[(frame - k * STREAKS_TARGET_DELAY - 30) % 8]);
             if (struck->x.fixed > 0)
               struck->x.fixed += px(1) / 2;
             else

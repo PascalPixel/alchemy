@@ -204,7 +204,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
       struct Particle *step = &work->particles[i];
 
       Projection_Unit(work->args->targets[k], &ground);
-      SET_POSITION(step, (ground.x / 2) << 16, px(80), 0);
+      SET_POSITION(step, px(ground.x / 2), px(80), 0);
       SET_VELOCITY(step, ((Random16() & 255) - 128) << 9,
                    ((Random16() & 255) - 128) << 9, 0);
       step->variant = -1;

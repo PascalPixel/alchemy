@@ -56,8 +56,8 @@ void Weather_UpdateRain(void) {
       y = leader[2] + (Random16() << 8) - px(128);
       particle->positionX = x;
       particle->positionZ = y;
-      particle->positionY = MapGrid_GetTerrainHeightFar(0, x >> 16, y >> 16)
-                            << 16;
+      particle->positionY =
+          px(MapGrid_GetTerrainHeightFar(0, x >> 16, y >> 16));
       particle->timer = 16;
     }
   }
@@ -156,8 +156,7 @@ void Weather_StartRain(void) {
     z = leader[2];
     particle->positionX = x;
     particle->positionZ = z;
-    particle->positionY = MapGrid_GetTerrainHeightFar(0, x >> 16, z >> 16)
-                          << 16;
+    particle->positionY = px(MapGrid_GetTerrainHeightFar(0, x >> 16, z >> 16));
     particle->timer = (i & 15) + 1;
     particle++;
   }
@@ -240,7 +239,7 @@ void FieldMotes_Update(void) {
       y = leader[2] + (Random16() << 8) - px(128);
       mote->positionZ = y;
       mote->positionX = x;
-      mote->positionY = MapGrid_GetTerrainHeightFar(0, x >> 16, y >> 16) << 16;
+      mote->positionY = px(MapGrid_GetTerrainHeightFar(0, x >> 16, y >> 16));
       mote->timer = 120;
       mote->delay = 0;
       spawned++;
@@ -284,8 +283,7 @@ void FieldMotes_Start(void) {
     z = pos[2];
     mote->positionX = (s32)p;
     mote->positionZ = z;
-    mote->positionY = MapGrid_GetTerrainHeightFar(0, (s32)p >> 16, z >> 16)
-                      << 16;
+    mote->positionY = px(MapGrid_GetTerrainHeightFar(0, (s32)p >> 16, z >> 16));
     mote->timer = (i & 15) + 1;
     mote++;
   }
@@ -378,8 +376,8 @@ void FieldEffect_UpdateSparkles(void) {
         // Actor_SetHorizontalPositionWithTerrain's comment explains.
         sparkle->positionX = spawnX;
         sparkle->positionZ = spawnZ;
-        sparkle->positionY = MapGrid_GetTerrainHeightFar(0, sx >> 16, sy >> 16)
-                             << 16;
+        sparkle->positionY =
+            px(MapGrid_GetTerrainHeightFar(0, sx >> 16, sy >> 16));
         sparkle->timer = 62 - delay;
         sparkle->delay = 0;
         spawned++;
@@ -391,8 +389,8 @@ void FieldEffect_UpdateSparkles(void) {
         spawnZ = leader[2] + (Random16() << 8) - px(128);
         sparkle->positionX = spawnX;
         sparkle->positionZ = spawnZ;
-        sparkle->positionY = MapGrid_GetTerrainHeightFar(0, sx >> 16, sy >> 16)
-                             << 16;
+        sparkle->positionY =
+            px(MapGrid_GetTerrainHeightFar(0, sx >> 16, sy >> 16));
         sparkle->timer = 30;
         sparkle->delay = delay;
         spawned++;
@@ -445,7 +443,7 @@ void FieldEffect_InitializeSparkles(void) {
     sparkle->positionX = clear;
     sparkle->positionZ = clear;
     sparkle->positionY =
-        MapGrid_GetTerrainHeightFar(0, (s32)attr >> 16, z >> 16) << 16;
+        px(MapGrid_GetTerrainHeightFar(0, (s32)attr >> 16, z >> 16));
     sparkle->timer = (i & 15) + 1;
     i++;
     sparkle++;

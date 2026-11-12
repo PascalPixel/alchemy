@@ -170,7 +170,7 @@ void Actor_UpdateAllThumb(void) {
             // ratio is acceleration / distance in 16.16, and dx, dy and dz
             // are whole pixels, so each axis gains its share of the
             // acceleration toward the target.
-            ratio = Iwram_RatioMulQ14(distance << 16, actor->acceleration);
+            ratio = Iwram_RatioMulQ14(px(distance), actor->acceleration);
             actor->velocityX += dx * ratio;
             actor->velocityY += dy * ratio;
             actor->velocityZ += dz * ratio;
@@ -212,7 +212,7 @@ void Actor_UpdateAllThumb(void) {
         if (actor->targetX != TARGET_UNSET) {
           dx = (actor->targetX - x) / 65536;
           dz = (actor->targetZ - z) / 65536;
-          distance = Iwram_Sqrt(Actor_Square(dx) + Actor_Square(dz)) << 16;
+          distance = px(Iwram_Sqrt(Actor_Square(dx) + Actor_Square(dz)));
           // Under 256 pixels, measure again in 16.16 for sub-pixel accuracy;
           // further away the squares would overflow.
           if (distance <= px(256) - 1) {
@@ -439,7 +439,7 @@ void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z) {
   distance = (y - actor->y.fixed) / Q16_ONE;
   dz = (z - actor->z.fixed) / Q16_ONE;
   squaredZ = dz * dz;
-  distance = Iwram_Sqrt(dx * dx + distance * distance + squaredZ) << 16;
+  distance = px(Iwram_Sqrt(dx * dx + distance * distance + squaredZ));
   // Under 16 whole pixels, measure again in 16.16 for sub-pixel accuracy.
   if (distance < px(16)) {
     dx = x - actor->x.fixed;
@@ -553,7 +553,7 @@ void Actor_UpdateAllMotion(void) {
       if (actor->targetX != TARGET_UNSET) {
         dx = (actor->targetX - x) / 65536;
         dz = (actor->targetZ - z) / 65536;
-        distance = Iwram_Sqrt(dx * dx + dz * dz) << 16;
+        distance = px(Iwram_Sqrt(dx * dx + dz * dz));
         // Under 256 pixels, measure again in 16.16: the root of a 16.16
         // square is 8.8, and << 8 makes it 16.16 again.
         if (distance <= px(256) - 1) {

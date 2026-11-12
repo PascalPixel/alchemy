@@ -1201,7 +1201,7 @@ static struct Actor *BabiLighthouse_FindActorAhead(struct Actor *actor) {
     s32 z = actor->z.fixed;
 
     x += -0x10000 & directionStep;
-    z += directionStep << 16;
+    z += px(directionStep);
     target->x = x;
     target->z = z;
   }

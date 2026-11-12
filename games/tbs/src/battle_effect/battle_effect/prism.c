@@ -142,10 +142,9 @@ void BattleEffect_RunPrism(struct BattleEffectParams *args) {
             crystal->y = PRISM_GROUND_Y;
             for (j = 0; j != 16; j++) {
               shard = &shards[i * 16 + j];
-              shard->x =
-                  ((gPrism_ShardStarts[j][PRISM_SHARD_START_X] - 40) << 16) +
-                  crystal->x;
-              shard->y = gPrism_ShardStarts[j][PRISM_SHARD_START_Y] << 16;
+              shard->x = px(gPrism_ShardStarts[j][PRISM_SHARD_START_X] - 40) +
+                         crystal->x;
+              shard->y = px(gPrism_ShardStarts[j][PRISM_SHARD_START_Y]);
               // Up to 2 pixels a frame either way across, and up to 4 up.
               shard->velocityX = ((Random16() & 127) - 64) << 11;
               shard->velocityY = -(Random16() & 127) << 11;

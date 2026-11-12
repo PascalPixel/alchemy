@@ -160,12 +160,10 @@ void WorldPicture_Initialize(void) {
     work->cursorX.fixed = WORLD_MAP_SCREEN_WIDTH << 15;
     work->cursorY.fixed = WORLD_MAP_SCREEN_HEIGHT << 15;
   } else {
-    work->cursorX.fixed = (((actor->x.fixed - WORLD_MAP_X_ORIGIN) >> 16) *
-                           WORLD_MAP_SCREEN_WIDTH / WORLD_MAP_WORLD_SIZE)
-                          << 16;
-    work->cursorY.fixed =
-        ((actor->z.part.pixel * WORLD_MAP_SCREEN_HEIGHT) / WORLD_MAP_WORLD_SIZE)
-        << 16;
+    work->cursorX.fixed = px(((actor->x.fixed - WORLD_MAP_X_ORIGIN) >> 16) *
+                             WORLD_MAP_SCREEN_WIDTH / WORLD_MAP_WORLD_SIZE);
+    work->cursorY.fixed = px((actor->z.part.pixel * WORLD_MAP_SCREEN_HEIGHT) /
+                             WORLD_MAP_WORLD_SIZE);
   }
   work->cursorVramBlock = Resource_LoadFixedBlockBIntoFreeSlotFar();
   tile = gVramCacheEntries[work->cursorVramBlock].offset;
@@ -377,8 +375,8 @@ void WorldPicture_UpdateMarkers(void) {
   if (gKeysHeld == 0) {
     if (nearestMarker != -1) {
       if (nearestDistanceSquared <= 1) {
-        work->cursorX.fixed = nearestX << 16;
-        work->cursorY.fixed = nearestY << 16;
+        work->cursorX.fixed = px(nearestX);
+        work->cursorY.fixed = px(nearestY);
         work->cursorSpeed = WORLD_MAP_CURSOR_MIN_SPEED;
       } else {
         if (work->cursorSpeed < px(2))

@@ -352,7 +352,7 @@ s32 BattleUnit_GetEffectHeight(s32 unitId) {
   u8 classId;
 
   classId = Unit_GetFar(unitId)->id;
-  height = (u8)BattleSprite_GetEffectHeight(classId) << 16;
+  height = px((u8)BattleSprite_GetEffectHeight(classId));
   if (height == 0) {
     classId = Unit_GetFar(unitId)->id;
     if (BattleSprite_IsSmall(classId) != 0) {

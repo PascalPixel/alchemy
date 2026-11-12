@@ -139,8 +139,8 @@ void BattleEffect_RunMercury(struct BattleEffectParams *args) {
             mote = &PARTICLES[i * DJINN_ATTACKS_MOTES_PER_FLAME + j];
             angle = Random16() & TRIG_ANGLE_MASK;
             speed = (Random16() & 0x1ff) + 256;
-            mote->x = flame->x << 16;
-            mote->y = flame->y << 16;
+            mote->x = px(flame->x);
+            mote->y = px(flame->y);
             mote->velocityX = (Trig_Sin(angle) * speed) >> 8;
             mote->velocityY = (Trig_Cos(angle) * speed) >> 7;
             mote->variant = (Random16() & 15) + 32; // lives 32 to 47 frames
@@ -289,8 +289,8 @@ void BattleEffect_RunJupiter(struct BattleEffectParams *args) {
             mote = &PARTICLES[i * DJINN_ATTACKS_MOTES_PER_FLAME + j];
             direction = Random16() & TRIG_ANGLE_MASK;
             speed = (Random16() & 0x1ff) + 256;
-            mote->x = ball->x << 16;
-            mote->y = ball->y << 16;
+            mote->x = px(ball->x);
+            mote->y = px(ball->y);
             mote->velocityX = (Trig_Sin(direction) * speed) >> 7;
             mote->velocityY = (Trig_Cos(direction) * speed) >> 6;
             mote->variant = (Random16() & 15) + 32; // lives 32 to 47 frames
@@ -432,8 +432,8 @@ void BattleEffect_RunVenus(struct BattleEffectParams *args) {
             mote = &PARTICLES[i * DJINN_ATTACKS_MOTES_PER_FLAME + j];
             direction = (Random16() & 0x7fff) + TRIG_TURN / 4;
             speed = (Random16() & 0x1ff) + 256;
-            mote->x = column->x << 16;
-            mote->y = (column->y + 16) << 16;
+            mote->x = px(column->x);
+            mote->y = px(column->y + 16);
             mote->velocityX = (Trig_Sin(direction) * speed) >> 7;
             mote->velocityY = (Trig_Cos(direction) * speed) >> 6;
             mote->variant = (Random16() & 15) + 32;

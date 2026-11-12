@@ -86,7 +86,7 @@ void BattleEffect_RunVolcano(struct BattleEffectParams *args) {
     x = ((Random16() & 15) + 72) << 16;
     base->y = 0;
     base->x = x;
-    base->z = gVolcano_Depths[work->args->variant][i] << 16;
+    base->z = px(gVolcano_Depths[work->args->variant][i]);
     if (actor->x.fixed < 0)
       base->x = -x;
   }

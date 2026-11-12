@@ -295,8 +295,8 @@ static void ValeKradensCottage_KradenPlansSanctumVisit(void) {
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     x = leader->x.part.pixel;
     z = leader->z.part.pixel;
-    Actor_SetPositionFixed(ACTOR_JENNA, x * Q16_ONE, z * Q16_ONE);
-    Actor_SetPositionFixed(ACTOR_GARET, x * Q16_ONE, z * Q16_ONE);
+    Actor_SetPosition(ACTOR_JENNA, x, z);
+    Actor_SetPosition(ACTOR_GARET, x, z);
     Actor_SetSpeed(ACTOR_JENNA, 0.5);
     Actor_SetSpeed(ACTOR_GARET, 0.5);
     Actor_WalkTo(ACTOR_JENNA, 248, 264);
@@ -673,8 +673,8 @@ static void ValeKradensCottage_MeetSaturosAndMenardi(void) {
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   x = actor->x.part.pixel;
   z = actor->z.part.pixel;
-  Actor_SetPositionFixed(ACTOR_JENNA, x * Q16_ONE, z * Q16_ONE);
-  Actor_SetPositionFixed(ACTOR_GARET, x * Q16_ONE, z * Q16_ONE);
+  Actor_SetPosition(ACTOR_JENNA, x, z);
+  Actor_SetPosition(ACTOR_GARET, x, z);
 
   Actor_SetSpeed(ACTOR_JENNA, 1.2);
   Actor_SetSpeed(ACTOR_GARET, 1.2);
@@ -899,8 +899,8 @@ static void ValeKradensCottage_OverhearKraden(void) {
       s32 x = leader->x.part.pixel;
       s32 z = leader->z.part.pixel;
 
-      Actor_SetPositionFixed(ACTOR_JENNA, x * Q16_ONE, z * Q16_ONE);
-      Actor_SetPositionFixed(ACTOR_GARET, x * Q16_ONE, z * Q16_ONE);
+      Actor_SetPosition(ACTOR_JENNA, x, z);
+      Actor_SetPosition(ACTOR_GARET, x, z);
     }
     Actor_SetSpeed(ACTOR_JENNA, 0.8);
     Actor_SetSpeed(ACTOR_GARET, 0.8);

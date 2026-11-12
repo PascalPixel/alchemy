@@ -1826,7 +1826,6 @@ SECTIONS
     {
         "*/games/tla/src/scene/jupiter_lighthouse_aerie_beacon/entry.o"(.text)
         "*/games/tla/src/scene/jupiter_lighthouse_aerie_beacon.o"(.text)
-        "*/games/tla/src/field/object/park_record.o"(.text)
         "*/games/tla/src/scene/jupiter_lighthouse_aerie_beacon/s0090.o"(.text)
         "*/games/tla/src/field/object/step_angle.o"(.text)
         "*/games/tla/src/scene/jupiter_lighthouse_aerie_beacon/s0198.o"(.text)
@@ -2062,7 +2061,6 @@ SECTIONS
     {
         "*/games/tla/src/scene/mars_lighthouse_aerie/entry.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_aerie.o"(.text)
-        "*/games/tla/src/field/object/park_record.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_aerie/s3370.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_aerie/s53e4.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_aerie/import.o"(.text)

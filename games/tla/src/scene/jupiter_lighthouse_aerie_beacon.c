@@ -47,3 +47,5 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 const struct ActorPlacement *Scene_GetPlacements(void) {
   return gActorPlacements;
 }
+
+#include "../field/object/park_record.c"

@@ -2026,3 +2026,5 @@ void Func_0200326c(void) {
     sprite->priority = 2;
   }
 }
+
+#include "../field/object/park_record.c"

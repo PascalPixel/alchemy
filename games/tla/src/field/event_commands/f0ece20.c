@@ -312,7 +312,7 @@ s32 Func_080ed2a4(s32 mode) {
   s32 gliding = 0;
   struct WorldMapWork *world = &gWorldMapWork;
   struct MapAnimation *layer;
-  struct FlagEntry *place;
+  const struct FlagEntry *place;
   u32 *tiles;
   u32 tile;
   s32 row;
@@ -539,3 +539,27 @@ done:
   }
   return 0;
 }
+
+extern const struct FlagEntry gData_080f1140[];
+
+void Func_080d46a4(s32 a0, s32 a1);
+
+void BattleEffect_RunVisibilityTransition(void) {
+  struct MainRoutineWork *party;
+
+  if (*(s8 *)((u8 *)Ram_HeapSlots->eventWork + 394) == 3) {
+    Leader_StopMoving();
+    Func_080d46a4(0x9d89, 6);
+    while (gInput.held & 0x200)
+      wait(1);
+    party = &gMainRoutineWork;
+
+    if (party->ownerOverride != 0)
+      Func_080d46a4(0x10000, 6);
+    else
+      Func_080d46a4(0x10000, 6);
+  }
+}
+
+/// Returns the flag entry table, 20-byte entries ended by a zero flag.
+const struct FlagEntry *FlagEntries_GetTable(void) { return gData_080f1140; }

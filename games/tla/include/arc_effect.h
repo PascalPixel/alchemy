@@ -11,6 +11,8 @@ struct ArcEffectWork {
   s32 target;
 };
 
-void BattleEffect_SpawnScaledArcObjects(s32 object);
+struct Actor;
+
+void BattleEffect_SpawnScaledArcObjects(struct Actor *target);
 
 #endif

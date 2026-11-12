@@ -60,6 +60,6 @@ struct WorldMapChoice {
 
 extern struct WorldMapWork gWorldMapWork;
 extern struct WorldMapChoice Data_02000500;
-struct FlagEntry *FlagEntries_GetTable(void);
+const struct FlagEntry *FlagEntries_GetTable(void);
 
 #endif

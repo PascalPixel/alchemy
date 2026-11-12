@@ -5,7 +5,7 @@
 #include "../field_sequence_internal.h"
 
 void Func_080c9de0(s32 id, s32 variant) {
-  struct FlagEntry *entry = FlagEntries_GetTable();
+  const struct FlagEntry *entry = FlagEntries_GetTable();
 
   for (; entry->flag != 0; entry++) {
     if (entry->id != id)
@@ -18,7 +18,7 @@ void Func_080c9de0(s32 id, s32 variant) {
 }
 
 s32 Func_080c9e1c(s32 flag) {
-  struct FlagEntry *entry = FlagEntries_GetTable();
+  const struct FlagEntry *entry = FlagEntries_GetTable();
 
   while (entry->flag != 0) {
     if (entry->flag == flag && entry->value != 0)
@@ -205,7 +205,8 @@ s32 Encounter_SelectEnemyGroup(s32 zone, s32 steps) {
   return sum;
 }
 
-#define BattleEffect_GetResourceGroup ((s32 (*)(s32))BattleEffect_GetResourceGroup)
+#define BattleEffect_GetResourceGroup                                          \
+  ((s32 (*)(s32))BattleEffect_GetResourceGroup)
 
 s32 Encounter_RollTerrain(u32 index, s32 steps) {
   u8 *table = (u8 *)Ram_HeapSlots->eventWork + 0x18c;

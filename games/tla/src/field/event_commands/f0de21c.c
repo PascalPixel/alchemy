@@ -693,3 +693,8 @@ void Func_080debd8(void) {
   sprite->blend = 1;
   gMainRoutineWork.cloaked = 0;
 }
+
+void FieldEffect_ResumeCloakCheck(void) {
+  if (gMainRoutineWork.cloaked != 0)
+    Task_Add(FieldEffect_CheckCloakTile, 0x480);
+}

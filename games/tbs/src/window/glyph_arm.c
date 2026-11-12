@@ -72,7 +72,8 @@ s32 Glyph_DrawArm(struct Window *window, u32 character, u32 x, u32 y,
   u32 glyphIndex;
 #endif
 #if (LANGUAGE == LANGUAGE_JAPANESE)
-  // Unused: gives the stack frame its 64 extra bytes.
+  /* FAKEMATCH(dead): an unused local that gives the stack frame its 64 extra
+   * bytes; without it, 6 of 193 instructions differ in tbs-ja. */
   UNUSED struct GlyphRect unusedStackFrame[4];
 #endif
 

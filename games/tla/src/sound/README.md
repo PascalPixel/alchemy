@@ -13,7 +13,7 @@ a sound number means, how a jingle returns to the music and the driver's lock.
   `Makefile`'s `SOUND_C`, as The Broken Seal's driver is.
 - `driver.c` holds the handlers of the song commands, as The Broken Seal's
   does; the handwritten ARM and Thumb routines are one file each under
-  `driver/`. One file is still named by its address (`f1c0cac.c`).
+  `driver/`.
 - This game has its own song table (`games/tla/sound/songs.s`), and it has no
   `sounds.h` of names yet.
 - A few copies kept beside the driver carry older prefixes (`MusicTrack_`,

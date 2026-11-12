@@ -43,7 +43,7 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
   struct SpriteScale scale;
   struct SpritePlacement position;
   u8 *src;
-  u16 *color;
+  volatile u16 *color;
   s32 sheetIndex;
   s32 frame;
   s32 i;
@@ -81,16 +81,13 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
                              Ram_MapGridCellBuffer, 1, 0);
   Iwram_CopyWords((void *)BG_PLTT,
                   Resource_GetTableEntry((s32)&ResourceId_OrangePaletteA), 128);
-  color = (u16 *)&BG_PLTT[1];
+  color = &BG_PLTT[1];
   for (i = 0; i != 63; i++) {
     s32 entry = *color;
     s32 blue = ((u16)entry >> 10) & 31;
     s32 green = ((u16)entry >> 5) & 31;
-    /* FAKEMATCH(temporary): red holds 31 before the mask; as entry & 31, 56 of
-     * 936 instructions differ in tbs-en. */
-    s32 red = 31;
+    s32 red = entry & 31;
 
-    red &= entry;
     blue -= 8;
     green -= 8;
     red -= 8;

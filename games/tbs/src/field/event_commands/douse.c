@@ -113,6 +113,9 @@ void FieldPsynergy_DouseOnTarget(s32 unused) { FieldPsynergy_Douse(); }
 static inline void Douse_MoveOrbBetween(struct ActorDouseView *orb,
                                         struct Vector3 *from,
                                         struct Vector3 *to, s32 step) {
+  /* FAKEMATCH(temporary): e and t reused for x, y and z; as orb->x = from->x
+   * + step * (to->x - from->x) / 10, 48 of 359 instructions differ in tbs-en.
+   */
   s32 e, t;
 
   e = to->x;
@@ -178,7 +181,8 @@ void FieldPsynergy_Douse(void) {
     s32 scale;
 
     {
-      /* FAKEMATCH(temporary): a holds &start and b holds &end; as
+      /* FAKEMATCH(temporary): a holds &start and b holds &end, with e and t
+       * reused as in Douse_MoveOrbBetween; as
        * Douse_MoveOrbBetween(lightOrb, &start, &end, step), 2 of 359
        * instructions differ in tbs-en. */
       struct Vector3 *a = &start;

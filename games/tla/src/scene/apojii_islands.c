@@ -22,25 +22,21 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-/* VIEW(apojii_islands): variable gData_02002200 as extern const u8 gData_02002200[]; the definition has u32 gData_02002200[] = { 0xffff, 0, 0, 0, 0, 0, }. */
-extern const u8 gData_02002200__apojii_islands[] __asm__("gData_02002200");
-/* VIEW(apojii_islands): variable gData_02002218 as extern const u8 gData_02002218[]; the definition has u32 gData_02002218[] = { 0xffff0073, 1, 0x380000, 0, 0xa80000, 0x1a000, 0xffff0074, 1, 0x1c80000, 0, 0x580000, 0x3e000, 0xffff0072, 1, 0x238.... */
-extern const u8 gData_02002218__apojii_islands[] __asm__("gData_02002218");
-/* VIEW(apojii_islands): variable gData_02002320 as extern const u8 gData_02002320[]; the definition has s32 gData_02002320[] = { (s32) 0xffff0074, 1, 0x980000, 0, 0x980000, 0x10000, (s32) 0xffff0088, 1, 0x780000, 0, 0x680000, 0x22000, (s32) 0xf.... */
-extern const u8 gData_02002320__apojii_islands[] __asm__("gData_02002320");
-/* VIEW(apojii_islands): variable gData_02002458 as extern const u8 gData_02002458[]; the definition has u32 gData_02002458[] = { 0xffff0197, 1, 0x1080000, 0, 0x1180000, 0x2c000, 0xffff0197, 1, 0xd80000, 0, 0x1180000, 0x2c000, 0x7700f6, 1, 0x178.... */
-extern const u8 gData_02002458__apojii_islands[] __asm__("gData_02002458");
+extern u32 gData_02002200[];
+extern u32 gData_02002218[];
+extern s32 gData_02002320[];
+extern u32 gData_02002458[];
 
 const u8 *Func_02000360(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov679Room1)
-    return gData_02002218__apojii_islands;
+    return gData_02002218;
   if (scene == (s32)&SceneId_Ov679Room3)
-    return gData_02002320__apojii_islands;
+    return gData_02002320;
   if (scene == (s32)&SceneId_Ov679Room2)
-    return gData_02002458__apojii_islands;
-  return gData_02002200__apojii_islands;
+    return gData_02002458;
+  return gData_02002200;
 }
 
 void Func_020003b0(void) {
@@ -51,7 +47,7 @@ void Func_020003cc(void) {
   Actor_Get(gMainRoutineWork.currentOwner)->terrainId = 0;
 }
 
-/* VIEW(apojii_islands): variable gData_020024c4 as extern s32 gData_020024c4; the definition has s32 gData_020024c4[] = { - 1, }. */
+/* VIEW(apojii_islands): variable gData_020024c4 as extern s32 gData_020024c4; the definition has s32 gData_020024c4[] = { - 1, }; tried as the definition's extern s32 gData_020024c4[], it does not compile in tla-ja: games/tla/src/scene/apojii_islands.c:67: `gData_020024c4' has an incomplete type. */
 extern s32 gData_020024c4__apojii_islands __asm__("gData_020024c4");
 extern u16 Data_02002958[], Data_02002978[], gData_02002998[], gData_020029b8[];
 
@@ -85,7 +81,7 @@ void Func_020003e8(void) {
   gData_020024c4__apojii_islands++;
 }
 
-/* VIEW(apojii_islands): variable gData_020024c8 as extern s32 gData_020024c8; the definition has s32 gData_020024c8[] = { - 1, }. */
+/* VIEW(apojii_islands): variable gData_020024c8 as extern s32 gData_020024c8; the definition has s32 gData_020024c8[] = { - 1, }; tried as the definition's extern s32 gData_020024c8[], it does not compile in tla-ja: games/tla/src/scene/apojii_islands.c:101: `gData_020024c8' has an incomplete type. */
 extern s32 gData_020024c8__apojii_islands __asm__("gData_020024c8");
 extern u16 Data_020029d8[], Data_020029f8[], Data_02002a18[], Data_02002a38[];
 
@@ -131,8 +127,7 @@ void Func_020006a8(void) {
   System_Wait(3);
 }
 
-/* VIEW(apojii_islands): variable gData_020024cc as extern volatile s32 gData_020024cc[]; the definition has s32 gData_020024cc[] = { - 1, }. */
-extern volatile s32 gData_020024cc__apojii_islands[] __asm__("gData_020024cc");
+extern s32 gData_020024cc[];
 extern u16 gData_02002a58[16];
 extern u16 gData_02002a78[16];
 
@@ -142,15 +137,15 @@ void Func_020006bc(void) {
   s32 base;
   s32 i;
 
-  if (gData_020024cc__apojii_islands[0] == -1) {
+  if (gData_020024cc[0] == -1) {
     Iwram_CopyWords(gData_02002a58, (void *)0x05000080, 32);
-    gData_020024cc__apojii_islands[0] = 0;
+    gData_020024cc[0] = 0;
   }
-  base = (gData_020024cc__apojii_islands[0] / 2) % 15;
+  base = (gData_020024cc[0] / 2) % 15;
   for (i = 0; i < 15; i++)
     gData_02002a78[(base + i) % 15 + 1] = gData_02002a58[i + 1];
   IO_WRITE_QUEUE_PUSH(0x050003c0, (u32)gData_02002a78, 0x84000008);
-  gData_020024cc__apojii_islands[0]++;
+  gData_020024cc[0]++;
 }
 
 void Func_02000770(struct Actor *object) {
@@ -173,16 +168,14 @@ void Func_02000780(struct Actor *object) {
 struct Actor *Actor_GetById(u32 objectId);
 void Func_02001cc4(void);
 void Event_ResolvePendingActions(s32 skip);
-/* VIEW(s07a4): routine Func_02000780 as void Func_02000780(void); the definition has void Func_02000780(struct Actor *object). */
-extern void Func_02000780__s07a4(void) __asm__("Func_02000780");
 void Sound_Play(s32 cue);
 void wait(s32 frames);
 void Func_02001ad8(void);
 void Func_02001ba0(s32 a);
 void Func_02001dec(s32 a);
-/* VIEW(s07a4): routine Random16Far as u16 Random16Far(void); system.h has u32 Random16Far(void). */
+/* VIEW(s07a4): routine Random16Far as u16 Random16Far(void); system.h has u32 Random16Far(void); tried as the rest of the object declares it, Func_020007a4 moves: 1 of 188 instructions in tla-ja. */
 extern u16 Random16Far__s07a4(void) __asm__("Random16Far");
-/* VIEW(s07a4): routine BattleEffect_ApplyColorToTargetBuffer as s32 BattleEffect_ApplyColorToTargetBuffer(s32 a, s32 b); event.h has void BattleEffect_ApplyColorToTargetBuffer(s32 value, s32 mode). */
+/* VIEW(s07a4): routine BattleEffect_ApplyColorToTargetBuffer as s32 BattleEffect_ApplyColorToTargetBuffer(s32 a, s32 b); event.h has void BattleEffect_ApplyColorToTargetBuffer(s32 value, s32 mode); tried as the definition's void BattleEffect_ApplyColorToTargetBuffer(s32 value, s32 mode), which the object already declares, Func_020007a4 moves: 1 of 188 instructions in tla-ja. */
 extern s32 BattleEffect_ApplyColorToTargetBuffer__s07a4(s32 a, s32 b) __asm__("BattleEffect_ApplyColorToTargetBuffer");
 void BattleEffect_StartBufferInterpolation(s32 frames);
 void Func_02001de4(void);
@@ -218,7 +211,7 @@ void Func_020007a4(s32 unused, s32 id) {
 
   Func_02001cc4();
   Event_ResolvePendingActions(0);
-  actor->update = Func_02000780__s07a4;
+  actor->update = Func_02000780;
   Sound_Play(78);
   wait(30);
   Sound_Play(21);
@@ -414,25 +407,21 @@ s32 Func_02000d20(void) {
 
 void Func_02000d74(void) { Func_02001d2c(gMainRoutineWork.currentOwner, 1, 5); }
 
-/* VIEW(events_d): variable gData_020024b8 as extern const u8 gData_020024b8[]; the definition has s32 gData_020024b8[] = { - 1, 0, 0, }. */
-extern const u8 gData_020024b8__events_d[] __asm__("gData_020024b8");
-/* VIEW(events_d): variable gData_020024d0 as extern const u8 gData_020024d0[]; the definition has s32 gData_020024d0[] = { 1, (s32) 0xffff0001, 1, 1, (s32) 0xffff0002, 2, 1, (s32) 0xffff0003, 3, 2, (s32) 0xffff0004, (s32) Func_02000c38, 2.... */
-extern const u8 gData_020024d0__events_d[] __asm__("gData_020024d0");
-/* VIEW(events_d): variable gData_02002698 as extern const u8 gData_02002698[]; the definition has s32 gData_02002698[] = { 1, (s32) 0xffff0001, 1, 1, (s32) 0xffff0002, 2, 1, (s32) 0xffff0003, 3, 1, (s32) 0xffff0004, 4, 1, (s32) 0xffff0005.... */
-extern const u8 gData_02002698__events_d[] __asm__("gData_02002698");
-/* VIEW(events_d): variable gData_0200280c as extern const u8 gData_0200280c[]; the definition has s32 gData_0200280c[] = { 1, (s32) 0xffff0001, 1, 1, (s32) 0xffff0002, 2, 2, (s32) 0xffff0003, (s32) Func_02001464, 2, (s32) 0xffff0004, (s32.... */
-extern const u8 gData_0200280c__events_d[] __asm__("gData_0200280c");
+extern s32 gData_020024b8[];
+extern s32 gData_020024d0[];
+extern s32 gData_02002698[];
+extern s32 gData_0200280c[];
 
 const u8 *Func_02000d90(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov679Room1)
-    return gData_020024d0__events_d;
+    return gData_020024d0;
   if (scene == (s32)&SceneId_Ov679Room3)
-    return gData_02002698__events_d;
+    return gData_02002698;
   if (scene == (s32)&SceneId_Ov679Room2)
-    return gData_0200280c__events_d;
-  return gData_020024b8__events_d;
+    return gData_0200280c;
+  return gData_020024b8;
 }
 
 void Func_02000de0(s32 actor) {
@@ -1134,25 +1123,13 @@ void Func_020003b0(void);
 void Func_020003cc(void);
 void Func_02000694(void);
 void Func_020006a8(void);
-/* VIEW(events_h): routine Func_020007a4 as void Func_020007a4(void); the definition has void Func_020007a4(s32 unused, s32 id). */
-extern void Func_020007a4__events_h(void) __asm__("Func_020007a4");
 void Func_02000a48(void);
 void Func_02000a68(void);
 void Func_02000af8(void);
 void Func_02000b88(void);
 void Func_02000ba8(void);
 void Func_02000c38(void);
-/* VIEW(events_h): routine Func_02000cb4 as void Func_02000cb4(void); the definition has s32 Func_02000cb4(void). */
-extern void Func_02000cb4__events_h(void) __asm__("Func_02000cb4");
-/* VIEW(events_h): routine Func_02000d20 as void Func_02000d20(void); the definition has s32 Func_02000d20(void). */
-extern void Func_02000d20__events_h(void) __asm__("Func_02000d20");
 void Func_02000d74(void);
-/* VIEW(events_h): routine Func_02000de0 as void Func_02000de0(void); the definition has void Func_02000de0(s32 actor). */
-extern void Func_02000de0__events_h(void) __asm__("Func_02000de0");
-/* VIEW(events_h): routine Func_02000e40 as void Func_02000e40(void); the definition has void Func_02000e40(s32 actor). */
-extern void Func_02000e40__events_h(void) __asm__("Func_02000e40");
-/* VIEW(events_h): routine Func_02000e98 as void Func_02000e98(void); the definition has void Func_02000e98(s32 actor). */
-extern void Func_02000e98__events_h(void) __asm__("Func_02000e98");
 void Func_020010d0(void);
 
 extern u32 gData_02001e34[];
@@ -1520,7 +1497,7 @@ s32 gData_020024d0[] = {
     MSGNO(MsgAquaRockMust),
     0x2115,
     0x95f0011,
-    (s32)Func_020007a4__events_h,
+    (s32)Func_020007a4,
     0x8b85,
     -0x10000,
     (s32)Func_020003b0,
@@ -1571,7 +1548,7 @@ s32 gData_02002698[] = {
     MSGNO(MsgThereSThis),
     0,
     (s32)0xffff0009,
-    (s32)Func_02000cb4__events_h,
+    (s32)Func_02000cb4,
     0,
     (s32)0xffff000a,
     MSGNO(MsgIAbsolutelyRefuse),
@@ -1592,19 +1569,19 @@ s32 gData_02002698[] = {
     MSGNO(MsgHeSToo),
     0,
     (s32)0xffff0010,
-    (s32)Func_02000e98__events_h,
+    (s32)Func_02000e98,
     0,
     (s32)0xffff0011,
-    (s32)Func_02000de0__events_h,
+    (s32)Func_02000de0,
     0,
     (s32)0xffff0012,
-    (s32)Func_02000e40__events_h,
+    (s32)Func_02000e40,
     0x8d15,
     (s32)0xffff0008,
     MSGNO(MsgIJustWish),
     0x8d15,
     (s32)0xffff0009,
-    (s32)Func_02000d20__events_h,
+    (s32)Func_02000d20,
     0x8d15,
     (s32)0xffff000a,
     MSGNO(MsgISinkLike),

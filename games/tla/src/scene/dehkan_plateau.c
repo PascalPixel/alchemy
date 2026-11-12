@@ -933,7 +933,7 @@ void Func_02002604(void);
 extern const u16 gData_02003fd2[];
 extern const struct CellRecord gData_02004066[];
 
-/* VIEW(events_g): routine Actor_SetHorizontalPositionAndAngleWithTerrain as void Actor_SetHorizontalPositionAndAngleWithTerrain(u32 id, s32 x, s32 z, s16 angle); event.h has void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 actorId, s32 x, s32 z, s32 angle). */
+/* VIEW(events_g): routine Actor_SetHorizontalPositionAndAngleWithTerrain as void Actor_SetHorizontalPositionAndAngleWithTerrain(u32 id, s32 x, s32 z, s16 angle); event.h has void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 actorId, s32 x, s32 z, s32 angle); tried as the definition's void Actor_SetHorizontalPositionAndAngleWithTerrain(u32 objectId, s32 x, s32 z, s16 angle), it does not compile in tla-ja: games/tla/src/scene/dehkan_plateau.c:936: conflicting types for `Actor_SetHorizontalPositionAndAngleWithTerrain'. */
 extern void Actor_SetHorizontalPositionAndAngleWithTerrain__events_g(u32 id, s32 x, s32 z, s16 angle) __asm__("Actor_SetHorizontalPositionAndAngleWithTerrain");
 s32 Func_080d47b4(s32 actorId, s32 emote, s32 frames);
 void Func_02003cf0(void);
@@ -951,7 +951,7 @@ void Actor_Jump(s32 id, s32 a, s32 b);
 void Actor_ArmCallback(s32 id, s32 a, s32 b);
 void Actor_WatchAndSetScript(s32 id, s32 target);
 void Event_Wait(s32 frames);
-/* VIEW(events_g): routine Task_Add as void Task_Add(void(*func) (void), s32 priority); task.h has s32 Task_Add(TaskFunc func, s32 order). */
+/* VIEW(events_g): routine Task_Add as void Task_Add(void(*func) (void), s32 priority); task.h has s32 Task_Add(TaskFunc func, s32 order); tried as the definition's s32 Task_Add(TaskFunc func, s32 order), which the object already declares, Func_02002604 moves: 1 of 20 instructions in tla-ja. */
 extern void Task_Add__events_g(void (*func)(void), s32 priority) __asm__("Task_Add");
 void Task_RemoveFar(void (*func)(void));
 
@@ -961,10 +961,6 @@ static __inline__ void Camera_SetBounds(s32 a, s32 b, s32 c, s32 d) {
   Camera_MoveWithinMapBounds(a, b, c, d);
 }
 
-/* VIEW(events_g): static Actor_SetSpeed as Actor_SetSpeed__events_g; event.h has static inline void Actor_SetSpeed(s32 actorId, s32 speed, s32 acceleration) { Actor_SetSpeedParameters(actorId, speed, acceleration); }. */
-static __inline__ void Actor_SetSpeed__events_g(s32 id, s32 speed, s32 acceleration) {
-  Actor_SetSpeedParameters(id, speed, acceleration);
-}
 
 static __inline__ void Actor_MoveTo(s32 id, s32 x, s32 z) {
   Actor_SetPositionAndReset(id, x, z);
@@ -982,7 +978,7 @@ void Func_020021e8(void) {
   Func_02003cf0();
   Actor_SetAngleToward(24, gMainRoutineWork.currentOwner, 0);
   Func_080d47b4(24, 0x100, 40);
-  Actor_SetSpeed__events_g(24, 0x19999, 0xcccc);
+  Actor_SetSpeed(24, 0x19999, 0xcccc);
   Actor_MoveTo(24, 664, 136);
   Map_CopyCellPictureIndicesRect(68, 33, 105, 6, 1, 1);
   Sound_Play(161);
@@ -1009,7 +1005,7 @@ void Func_020022e0(void) {
   Func_080d47b4(24, 0x100, 40);
   Actor_GetById(24)->motionFlags = 0;
   Actor_SetSpritePriority(24, 1);
-  Actor_SetSpeed__events_g(24, 0x19999, 0xcccc);
+  Actor_SetSpeed(24, 0x19999, 0xcccc);
   Actor_MoveTo(24, 940, 168);
   Actor_MoveTo(24, 984, 152);
   Actor_MoveTo(24, 1040, 152);
@@ -1026,7 +1022,7 @@ void Func_02002390(void) {
   Func_02003cf0();
   Actor_SetAngleToward(25, gMainRoutineWork.currentOwner, 0);
   Func_080d47b4(25, 0x100, 40);
-  Actor_SetSpeed__events_g(25, 0x19999, 0xcccc);
+  Actor_SetSpeed(25, 0x19999, 0xcccc);
   Actor_SetPositionAndReset(25, 168, 104);
   Event_Wait(10);
   Sound_Play(153);
@@ -1050,7 +1046,7 @@ void Func_02002458(void) {
   Actor_SetAngleToward(25, gMainRoutineWork.currentOwner, 0);
   Func_080d47b4(25, 0x100, 20);
   Camera_MoveWithinMapBounds(212 << 17, -1, 152 << 16, 1);
-  Actor_SetSpeed__events_g(25, 0x19999, 0xcccc);
+  Actor_SetSpeed(25, 0x19999, 0xcccc);
   Actor_MoveTo(25, 424, 152);
   Actor_ArmCallback(25, FACING_EAST, 20);
   Func_02002604();

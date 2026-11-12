@@ -435,7 +435,7 @@ struct Trigger gSceneEvents[] = {
 
 void Unit_AddPp(s32 owner, s32 amount);
 void Inventory_Break(s32 owner, s32 slot);
-/* VIEW(s0520): routine Func_02000d48 as struct ItemDefinition *Func_02000d48(s32 item); shop_test has u16 *Func_02000d48(s32 item). */
+/* VIEW(s0520): routine Func_02000d48 as struct ItemDefinition *Func_02000d48(s32 item); shop_test has u16 *Func_02000d48(s32 item); tried as the definition's void Func_02000d48(struct Actor *shot), it does not compile in tla-ja: games/tla/src/debug/shop_test.c:438: conflicting types for `Func_02000d48'. */
 extern struct ItemDefinition *Func_02000d48__s0520(s32 item) __asm__("Func_02000d48");
 void Func_02000dc0(void);
 
@@ -580,8 +580,7 @@ void Func_02000704(s32 levels) {
   }
 }
 
-/* VIEW(s0520): variable gData_02000e80 as extern const u8 gData_02000e80[]; the definition has u32 gData_02000e80[] = { 0x764c, }. */
-extern const u8 gData_02000e80__s0520[] __asm__("gData_02000e80");
+extern u32 gData_02000e80[];
 
 void *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 flags);
 void Text_DrawMessage(s32 message, s32 window, s32 x, s32 y);
@@ -609,7 +608,7 @@ void Func_02000748(void) {
     if (redraw) {
       WindowSprite_RedrawSavedRect(window);
       Text_DrawStringAtOffset(unit, window, 0, 48);
-      Text_DrawStringInWindow(gData_02000e80__s0520, window, 48, 48);
+      Text_DrawStringInWindow(gData_02000e80, window, 48, 48);
       redraw = 0;
       Text_DrawNumberInWindow(unit[15], 0, window, 72, 48);
     }
@@ -631,12 +630,9 @@ void Func_02000748(void) {
   Window_Close(window, 2);
 }
 
-/* VIEW(s0520): variable gData_02000e84 as extern const u8 gData_02000e84[]; the definition has u32 gData_02000e84[] = { 0x6d657449, 0x3a6f4e20, 0, }. */
-extern const u8 gData_02000e84__s0520[] __asm__("gData_02000e84");
-/* VIEW(s0520): variable gData_02000e90 as extern const u8 gData_02000e90[]; the definition has u32 gData_02000e90[] = { 0x65473a41, 0x74492074, 0x20206d65, 0x65523a42, 0x6e727574, 0, }. */
-extern const u8 gData_02000e90__s0520[] __asm__("gData_02000e90");
-/* VIEW(s0520): variable gData_02000ea8 as extern const u8 gData_02000ea8[]; the definition has u32 gData_02000ea8[] = { 0x4d455449, 0x4c554620, 0x2e2e2e4c, 0x2e2e2e2e, 46, }. */
-extern const u8 gData_02000ea8__s0520[] __asm__("gData_02000ea8");
+extern u32 gData_02000e84[];
+extern u32 gData_02000e90[];
+extern u32 gData_02000ea8[];
 
 struct ItemSummary {
   u8 unk00[6];
@@ -675,15 +671,15 @@ void Func_02000848(void) {
       redraw = 0;
       WindowSprite_PrepareForRedraw(window);
       WindowSprite_PrepareForRedraw(details);
-      Text_DrawStringInWindow(gData_02000e84__s0520, window, 0, 0);
+      Text_DrawStringInWindow(gData_02000e84, window, 0, 0);
       Text_DrawNumberAtOffset(item, 0, window, 80, 0);
       if (PartyInventory_HasSpace()) {
-        Text_DrawStringInWindow(gData_02000e90__s0520, window, 0, 32);
+        Text_DrawStringInWindow(gData_02000e90, window, 0, 32);
         Text_DrawCharacterAtOffset((s32)(item + MsgItemName), window, 120, 0);
         Text_DrawMessage((s32)(item + MsgItemPlainName), window, 0, 16);
         ItemMenu_DrawItemDetails(details, item);
       } else {
-        Text_DrawStringInWindow(gData_02000ea8__s0520, window, 0, 32);
+        Text_DrawStringInWindow(gData_02000ea8, window, 0, 32);
       }
     }
     wait(1);

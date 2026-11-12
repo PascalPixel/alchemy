@@ -19,8 +19,7 @@
 #include "event_work.h"
 #include "text/msg_ids.h"
 
-/* VIEW(eastern_alhafra_ship): variable gData_0200345c as extern u8 gData_0200345c[]; the definition has s16 gData_0200345c[] = { 16, - 1, 1, 0, 0, 360, 0, 0, 0, 396, 0x4000, 1, 39, - 1, 1, 0, 0, 360, 0, 0, 0, 440, 0xc000, 1, 37, - 1, 1, 0, 0, 3.... */
-extern u8 gData_0200345c__eastern_alhafra_ship[] __asm__("gData_0200345c");
+extern s16 gData_0200345c[];
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -28,7 +27,7 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-s32 Func_0200004c(void) { return (s32)gData_0200345c__eastern_alhafra_ship; }
+s32 Func_0200004c(void) { return (s32)gData_0200345c; }
 
 void Func_02000054(void) {}
 
@@ -208,7 +207,7 @@ struct Actor020003e8 {
   s16 unk5e;
 };
 
-/* VIEW(eastern_alhafra_ship): variable gData_02003720 as extern const u8 gData_02003720[]; the definition has u32 gData_02003720[] = { 38, }. */
+/* VIEW(eastern_alhafra_ship): variable gData_02003720 as extern const u8 gData_02003720[]; the definition has u32 gData_02003720[] = { 38, }; tried as the definition's extern u32 gData_02003720[], it does not compile in tla-ja: games/tla/src/scene/eastern_alhafra_ship.c:223: `gData_02003720__eastern_alhafra_ship' undeclared (first use in this function). */
 extern const u8 gData_02003720__eastern_alhafra_ship[] __asm__("gData_02003720");
 
 void Func_02003100(struct Actor020003e8 *object, s32 mode);
@@ -238,7 +237,7 @@ void Func_020003e8(s32 x, s32 y, s32 z, s16 value, s32 fifth) {
 // Scene code of overlay 0x669, in ROM order, from s0438's offset up to the next object the overlay links, and the overlay's data.
 
 
-/* VIEW(s0438): routine Func_020003e8 as s32 Func_020003e8(s32 x, s32 y, s32 z, s32 rotation, s32 timer); the definition has void Func_020003e8(s32 x, s32 y, s32 z, s16 value, s32 fifth). */
+/* VIEW(s0438): routine Func_020003e8 as s32 Func_020003e8(s32 x, s32 y, s32 z, s32 rotation, s32 timer); the definition has void Func_020003e8(s32 x, s32 y, s32 z, s16 value, s32 fifth); tried as the definition's void Func_020003e8(u16 *ids), it does not compile in tla-ja: games/tla/src/scene/eastern_alhafra_ship.c:240: conflicting types for `Func_020003e8'. */
 extern s32 Func_020003e8__s0438(s32 x, s32 y, s32 z, s32 rotation, s32 timer) __asm__("Func_020003e8");
 
 void Func_02000438(s32 id) {
@@ -1529,13 +1528,8 @@ L_0200b0b8:
 }
 
 void Func_02000054(void);
-/* VIEW(s0438): routine Func_02000058 as void Func_02000058(void); the definition has void Func_02000058(s32 unused, s32 id). */
-extern void Func_02000058__s0438(void) __asm__("Func_02000058");
 void Func_0200008c(void);
-/* VIEW(s0438): routine Func_02000128 as void Func_02000128(void); the definition has void Func_02000128(s32 arg0). */
-extern void Func_02000128__s0438(void) __asm__("Func_02000128");
-/* VIEW(s0438): routine Func_0200013c as void Func_0200013c(void); the definition has void Func_0200013c(s32 id). */
-extern void Func_0200013c__s0438(void) __asm__("Func_0200013c");
+void Func_0200013c(s32 actor);
 
 // clang-format off
 u32 gData_020032b0[] = {
@@ -1620,15 +1614,15 @@ struct Trigger gSceneEvents[] = {
     {1, 4, CONDITION_ALWAYS, 4},
     {1, 5, CONDITION_ALWAYS, 5},
     {2, 20, 0x8aa, EVENT(Func_020004f4)},
-    {0, 11, CONDITION_ALWAYS, EVENT(Func_0200013c__s0438)},
+    {0, 11, CONDITION_ALWAYS, EVENT(Func_0200013c)},
     {0, 10, CONDITION_ALWAYS, MSGNO(MsgEoleoAndI)},
     {0x8d15, 11, CONDITION_ALWAYS, MSGNO(MsgIMGonna)},
     {0x8d15, 10, CONDITION_ALWAYS, MSGNO(MsgIfEoleoGets)},
-    {0, 15, CONDITION_ALWAYS, EVENT(Func_02000128__s0438)},
+    {0, 15, CONDITION_ALWAYS, EVENT(Func_02000128)},
     {0x10008c15, 13, CONDITION_ALWAYS, EVENT(Func_02000054)},
-    {0x8c15, 13, CONDITION_ALWAYS, EVENT(Func_02000058__s0438)},
+    {0x8c15, 13, CONDITION_ALWAYS, EVENT(Func_02000058)},
     {8, 30, CONDITION_ALWAYS, EVENT(Func_02000054)},
-    {9, 30, CONDITION_ALWAYS, EVENT(Func_02000058__s0438)},
+    {9, 30, CONDITION_ALWAYS, EVENT(Func_02000058)},
     {0x8715, 14, 0x901, EVENT(Func_0200008c)},
     {TRIGGERS_END},
 };

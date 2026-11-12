@@ -4158,10 +4158,10 @@ struct EffectSprite *Func_0815b290(s32 width, s32 height, s32 attributes,
 
 // ---- games/tla/src/battle_effect/f15b3b0.c ----
 struct AnimationEntry *AnimationObject_AllocateEmpty(void);
-/* VIEW(f15b3b0): routine Animation_ApplyChildArgumentFar as s32 Animation_ApplyChildArgumentFar(void *, s32); f15585c has void Animation_ApplyChildArgumentFar(void *object, s32 value). */
+/* VIEW(f15b3b0): routine Animation_ApplyChildArgumentFar as s32 Animation_ApplyChildArgumentFar(void *, s32); f15585c has void Animation_ApplyChildArgumentFar(void *object, s32 value); tried as the 4 declarations' void Animation_ApplyChildArgumentFar(void *, s32), Func_0815b3b0 moves: 1 of 46 instructions in tla-ja. */
 extern s32 Animation_ApplyChildArgumentFar__f15b3b0(void *, s32) __asm__("Animation_ApplyChildArgumentFar");
 
-/* VIEW(f15b3b0): tag struct EffectSprite as struct EffectSprite__f15b3b0; f15585c.c has another definition. */
+/* VIEW(f15b3b0): tag struct EffectSprite as struct EffectSprite__f15b3b0; f15585c.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:4172: structure has no member named `kind'. */
 struct EffectSprite__f15b3b0 {
   u8 unk00[0x0c];
   s32 unk0c;
@@ -4373,7 +4373,7 @@ struct FxPartyList;
 struct Model;
 struct StripQuad;
 
-/* VIEW(f15b3b0): tag struct ModelTexture as struct ModelTexture__f15b3b0; render_model.h has another definition. */
+/* VIEW(f15b3b0): tag struct ModelTexture as struct ModelTexture__f15b3b0; render_model.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:4524: storage size of `texture' isn't known. */
 struct ModelTexture__f15b3b0 {
   u32 logWidth : 8;
   u32 logHeight : 8;
@@ -4381,7 +4381,7 @@ struct ModelTexture__f15b3b0 {
   const void *pixels;
 };
 
-/* VIEW(f15b3b0): tag struct RenderModel as struct RenderModel__f15b3b0; render_model.h has another definition. */
+/* VIEW(f15b3b0): tag struct RenderModel as struct RenderModel__f15b3b0; render_model.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:4819: dereferencing pointer to incomplete type. */
 struct RenderModel__f15b3b0 {
   s32 kind;
   s32 unk04;
@@ -5463,7 +5463,7 @@ void Func_081180e8(s32 phase);             // BattlePlayback_StartFar
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                           s32 drag);
-/* VIEW(f15cde8): routine GetBattleObjectSlotFar as void **GetBattleObjectSlotFar(s32 objectId); motobj.h has struct BattleObj *GetBattleObjectSlotFar(s32 objectId). */
+/* VIEW(f15cde8): routine GetBattleObjectSlotFar as void **GetBattleObjectSlotFar(s32 objectId); motobj.h has struct BattleObj *GetBattleObjectSlotFar(s32 objectId); tried as the 11 declarations' void **GetBattleObjectSlotFar(s32 objectId), it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:5466: conflicting types for `GetBattleObjectSlotFar'. */
 extern void **GetBattleObjectSlotFar__f15cde8(s32 objectId) __asm__("GetBattleObjectSlotFar");
 void *Resource_GetTableEntry(s32 resource);
 
@@ -5544,7 +5544,7 @@ extern const u8 Data_081991e0[];
 extern const u8 gData_08199340[];
 extern const u8 gData_08199364[];
 
-/* VIEW(f15cde8): routine Func_0815b3b0 as struct AzulObject *Func_0815b3b0(s32 width, s32 height, u32 shape, s32 mode); the definition has struct EffectSprite *Func_0815b3b0(s32 kind, s32 value). */
+/* VIEW(f15cde8): routine Func_0815b3b0 as struct AzulObject *Func_0815b3b0(s32 width, s32 height, u32 shape, s32 mode); the definition has struct EffectSprite *Func_0815b3b0(s32 kind, s32 value); tried as the definition's struct EffectSprite__f15b3b0 *Func_0815b3b0(s32 kind, s32 value), which the object already declares, it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:5655: too many arguments to function `Func_0815b3b0'. */
 extern struct AzulObject *Func_0815b3b0__f15cde8(s32 width, s32 height, u32 shape, s32 mode) __asm__("Func_0815b3b0");
 
 void BattleEffect_ConfigureEffectDisplay(void);
@@ -7238,7 +7238,7 @@ void SummonEffect_RunCanvasMode2(void *action);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void Func_0815b434(u8 *map, s32 size, s32 scale);
 
-/* VIEW(fxdisp): routine Graphics_PackTileRows as void Graphics_PackTileRows(void *, void *, s32, s32); the definition has void Graphics_PackTileRows(u8 *src, u8 *dst, s32 stride). */
+/* VIEW(fxdisp): routine Graphics_PackTileRows as void Graphics_PackTileRows(void *, void *, s32, s32); the definition has void Graphics_PackTileRows(u8 *src, u8 *dst, s32 stride); tried as the definition's void Graphics_PackTileRows(u8 *src, u8 *dst, s32 stride), which the object already declares, Func_0815f16c moves: 1 of 7568 instructions in tla-ja. */
 extern void Graphics_PackTileRows__fxdisp(void *, void *, s32, s32) __asm__("Graphics_PackTileRows");
 void Func_0818caa8(void *, s32, s32, s32);
 s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
@@ -10497,7 +10497,7 @@ void BattleEffect_ArmPaletteHBlankDma(void) {
 }
 
 /// The particle streams in mode 0.
-/* VIEW(actor_move_random): static CopyWords_ as CopyWords___actor_move_random; f15b3b0 has static __inline__ s32 CopyWords_(void *destination, const void *source, s32 size) { return Iwram_CopyWords(destination, source, size); }. */
+/* VIEW(actor_move_random): static CopyWords_ as CopyWords___actor_move_random; f15b3b0 has static __inline__ s32 CopyWords_(void *destination, const void *source, s32 size) { return Iwram_CopyWords(destination, source, size); }; tried with the definition the rest of the object has, BattleEffect_RunMeteor (gone) moves: 4 of 4 instructions in tla-ja. */
 DEFINE_EFFECT_KIND(BattleEffect_RunMeteor, BattleEffect_RunParticleStreams, 0)
 
 /// The particle streams in mode 1.
@@ -12418,16 +12418,13 @@ extern const u16 Data_08198ac2[];
 extern const u8 gData_08199364[];
 extern const u8 gData_08199210[];
 
-/* VIEW(actor_move_random): routine Func_0815b290 as struct SpriteObject *Func_0815b290(s32 width, s32 height, u32 shape, u32 attributes); the definition has struct EffectSprite *Func_0815b290(s32 width, s32 height, s32 attributes, s32 flags). */
-extern struct SpriteObject *Func_0815b290__actor_move_random(s32 width, s32 height, u32 shape,
-                                   u32 attributes) __asm__("Func_0815b290");
 
 void Palette_LoadBasicObjColors(void);
 void BattleStaging_ConfigurePaletteFadeFar(s32 mode, s32 background, s32 speed);
 void Graphics_LoadGreyRamp(void);
 
 #define SLOT_ALT 188 // unkb8[1]
-/* VIEW(actor_move_random): static FILL as FILL__actor_move_random; fxdisp has static __inline__ void FILL(void *dst, s32 size, s32 value) { Iwram_FillWords(dst, size, value); }. */
+/* VIEW(actor_move_random): static FILL as FILL__actor_move_random; fxdisp has static __inline__ void FILL(void *dst, s32 size, s32 value) { Iwram_FillWords(dst, size, value); }; tried with the definition the rest of the object has, BattleEffect_RunJudgment moves: 18 of 2634 instructions in tla-ja. */
 static inline void FILL__actor_move_random(void *dst, s32 size, s32 value) {
   do {
     Iwram_FillWords(dst, size, value);
@@ -12479,7 +12476,7 @@ static inline void FillWords(void *dst, s32 size, s32 value) {
     IRQ_UNLOCK(saved);                                                         \
   }
 
-/* VIEW(actor_move_random): static CopyWords as CopyWords__actor_move_random; f15585c has static inline s32 CopyWords(void *destination, const void *source, s32 size) { return Iwram_CopyWords(destination, source, size); }. */
+/* VIEW(actor_move_random): static CopyWords as CopyWords__actor_move_random; f15585c has static inline s32 CopyWords(void *destination, const void *source, s32 size) { return Iwram_CopyWords(destination, source, size); }; not tried: CopyWords's definition holds a FAKEMATCH tag. */
 static inline s32 CopyWords__actor_move_random(void *destination, const void *source, s32 size) {
   /* FAKEMATCH(wrapper): the first palette copy calls through this inline; as a
    * direct call to Iwram_CopyWords there, 103 of 2680 instructions differ in
@@ -12547,7 +12544,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
   pal += 512;
   Resource_DecodeType01(pal, cells);
   for (i = 0; i != 16; i++) {
-    struct JudgmentObject *obj = Func_0815b290__actor_move_random(32, 32, 0x80002000, 0);
+    struct JudgmentObject *obj = Func_0815b290(32, 32, 0x80002000, 0);
 
     obj->priority = 2;
     work->objects[i] = obj;
@@ -13883,7 +13880,7 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
     sheet += 0x200;
     Resource_DecodeType01(sheet, tiles);
     for (i = 0; i != 8; i++) {
-      struct SpriteObject *object = Func_0815b290__actor_move_random(32, 32, 0x80002000, 0);
+      struct SpriteObject *object = Func_0815b290(32, 32, 0x80002000, 0);
 
       object->priority = 1;
       work->objects[i] = object;
@@ -16007,7 +16004,7 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectArgument *effect) {
 
 struct Model;
 
-/* VIEW(f16c274): tag struct ModelTexture as struct ModelTexture__f16c274; f15585c.c has another definition. */
+/* VIEW(f16c274): tag struct ModelTexture as struct ModelTexture__f16c274; f15585c.c has another definition; tried with the definition the rest of the object has, BattleEffect_RunCrystal moves: 1 of 487 instructions in tla-ja. */
 struct ModelTexture__f16c274 {
   u32 logWidth : 8;
   u32 logHeight : 8;
@@ -16015,17 +16012,6 @@ struct ModelTexture__f16c274 {
   const u8 *pixels;
 };
 
-/* VIEW(f16c274): tag struct RenderModel as struct RenderModel__f16c274; f15585c.c has another definition. */
-struct RenderModel__f16c274 {
-  s32 kind;
-  s32 unk04;
-  const void *mesh;
-  void *vertices;
-  struct ModelTexture__f16c274 *texture;
-  s32 shade;
-  u8 scrollU;
-  u8 scrollV;
-};
 
 struct BattleObjectPosition {
   u8 unk00[8];
@@ -16052,7 +16038,7 @@ void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
 void Render_ResetTransformState(void);
 
-/* VIEW(f16c274): routine GetBattleObjectSlotFar as struct BattleObjectPosition **GetBattleObjectSlotFar(s32 objectId); motobj.h has struct BattleObj *GetBattleObjectSlotFar(s32 objectId). */
+/* VIEW(f16c274): routine GetBattleObjectSlotFar as struct BattleObjectPosition **GetBattleObjectSlotFar(s32 objectId); motobj.h has struct BattleObj *GetBattleObjectSlotFar(s32 objectId); tried as the 11 declarations' void **GetBattleObjectSlotFar(s32 objectId), it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:16055: conflicting types for `GetBattleObjectSlotFar'. */
 extern struct BattleObjectPosition **GetBattleObjectSlotFar__f16c274(s32 objectId) __asm__("GetBattleObjectSlotFar");
 void *Resource_GetTableEntry(s32 resource);
 
@@ -16221,7 +16207,7 @@ void BattleEffect_RunCrystal(struct BattleEffectArgument *effect) {
       gCameraSceneParameters[4] = 104;
       {
         void *vertices = Heap_AllocEwram(32);
-        struct RenderModel__f16c274 *model = Render_AllocateModelList(1);
+        struct RenderModel *model = Render_AllocateModelList(1);
 
         model->kind = 6;
         model->texture = &texture;
@@ -16286,7 +16272,7 @@ void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
 void Func_081180e8(s32 phase);                      // BattlePlayback_StartFar
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
-/* VIEW(f16c6f8): routine GetBattleObjectSlotFar as void **GetBattleObjectSlotFar(s32 objectId); f16c274 has struct BattleObjectPosition **GetBattleObjectSlotFar(s32 objectId). */
+/* VIEW(f16c6f8): routine GetBattleObjectSlotFar as void **GetBattleObjectSlotFar(s32 objectId); f16c274 has struct BattleObjectPosition **GetBattleObjectSlotFar(s32 objectId); tried as the 11 declarations' void **GetBattleObjectSlotFar(s32 objectId), it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:16289: conflicting types for `GetBattleObjectSlotFar'. */
 extern void **GetBattleObjectSlotFar__f16c6f8(s32 objectId) __asm__("GetBattleObjectSlotFar");
 void *Resource_GetTableEntry(s32 resource);
 
@@ -17269,11 +17255,11 @@ void BattleEffect_RunSoulShatter(struct BattleEffectArgument *effect) {
 
 struct FxPartyList;
 struct Model;
-struct ModelVertex__f16d130;
+struct ModelVertex;
 struct ProjectedVertex;
 struct StripQuad;
 
-/* VIEW(f16d130): tag struct ModelTexture as struct ModelTexture__f16d130; f15585c.c has another definition. */
+/* VIEW(f16d130): tag struct ModelTexture as struct ModelTexture__f16d130; f15585c.c has another definition; tried with the definition the rest of the object has, BattleEffect_RunSerac moves: 1 of 1094 instructions in tla-ja. */
 struct ModelTexture__f16d130 {
   u32 logWidth : 8;
   u32 logHeight : 8;
@@ -17281,7 +17267,7 @@ struct ModelTexture__f16d130 {
   const u8 *pixels;
 };
 
-/* VIEW(f16d130): tag struct RenderModel as struct RenderModel__f16d130; f15585c.c has another definition. */
+/* VIEW(f16d130): tag struct RenderModel as struct RenderModel__f16d130; f15585c.c has another definition; tried with the definition the rest of the object has, BattleEffect_RunSerac moves: 1 of 1094 instructions in tla-ja. */
 struct RenderModel__f16d130 {
   s32 kind;
   s32 unk04;
@@ -17327,9 +17313,7 @@ struct ProjectedPoint {
   s32 x, y, depth;
 };
 
-/* VIEW(f16d130): routine Render_ProjectPoint as s32 Render_ProjectPoint(const void *point, struct ProjectedPoint *screen); fxdisp has s32 Render_ProjectPoint(const void *point, s32 *screen). */
-extern s32 Render_ProjectPoint__f16d130(const void *point, struct ProjectedPoint *screen) __asm__("Render_ProjectPoint");
-void Render_ProjectVertices(struct ModelVertex__f16d130 *vertices,
+void Render_ProjectVertices(struct ModelVertex *vertices,
                             struct ProjectedVertex *screen, s32 count);
 
 extern char ResourceId_Data0C1;
@@ -17339,17 +17323,10 @@ extern char ResourceId_MercuryDjinnSheet;
 extern char ResourceId_BlueFlameSheet;
 
 // One model vertex: signed byte coordinates, padded to a word.
-/* VIEW(f16d130): tag struct ModelVertex as struct ModelVertex__f16d130; f15585c.c has another definition. */
-struct ModelVertex__f16d130 {
-  s8 x;
-  s8 y;
-  s8 z;
-  s8 pad;
-};
 
 // The cone's 64 vertices, stored at the buffer's constant address.
 extern u8 gMapCellBuffer[];
-#define VERTICES ((struct ModelVertex__f16d130 *)Ram_MapCellBuffer)
+#define VERTICES ((struct ModelVertex *)Ram_MapCellBuffer)
 extern u8 gData_02014000[];
 extern u8 Data_02012000[];
 #define MESH_BUFFER (Ram_MapCellBuffer + 0x2000)
@@ -17364,7 +17341,7 @@ extern const u8 Data_08198ec4[];
 extern const u8 Data_0819919c[];
 extern const u8 Data_081991a4[];
 
-/* VIEW(f16d130): static ClearWords as ClearWords__f16d130; f16c274 has static inline s32 ClearWords(void *destination, s32 size) { return Iwram_ClearWords(destination, size); }. */
+/* VIEW(f16d130): static ClearWords as ClearWords__f16d130; f16c274 has static inline s32 ClearWords(void *destination, s32 size) { return Iwram_ClearWords(destination, size); }; not tried: ClearWords's definition holds a FAKEMATCH tag. */
 static inline s32 ClearWords__f16d130(void *destination, s32 size) {
   /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
    * Iwram_ClearWords, 14 of 1101 instructions of BattleEffect_RunSerac differ
@@ -17531,7 +17508,7 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *effect) {
       world[0] = target->x;
       world[1] = 0;
       world[2] = target->z;
-      Render_ProjectPoint__f16d130(world, &screen);
+      Render_ProjectPoint(world, &screen);
       if (screen.x <= 63) {
         screen.x = 64;
       }
@@ -17568,7 +17545,7 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *effect) {
             continue;
           }
           picture = p->variant / 6;
-          Render_ProjectPoint__f16d130(p, &point);
+          Render_ProjectPoint(p, &point);
           BattleEffectKernels_IntegrateVector3(p, 60, 0x2000);
           x = point.x - 16;
           y = point.y - 16;
@@ -17581,7 +17558,7 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *effect) {
         point.x = target->x;
         point.y = 0x3c0000 - (frame << 17);
         point.depth = target->z + (Trig_Sin(frame << 9) << 5);
-        Render_ProjectPoint__f16d130(&point, &dropScreen);
+        Render_ProjectPoint(&point, &dropScreen);
         blitters[1](canvas, work->sheet + 0x4000, dropScreen.x - 20,
                     dropScreen.y - 30, 40, 40);
       }
@@ -19076,7 +19053,7 @@ extern char ResourceId_TornadoSheet;
 extern char ResourceId_Data134;
 extern char ResourceId_LightningBoltSheet;
 extern char ResourceId_VioletPaletteC;
-/* VIEW(f16fca8): variable gData_02014000 as extern struct EffectStep gData_02014000[]; f16e65c has extern u8 gData_02014000[]. */
+/* VIEW(f16fca8): variable gData_02014000 as extern struct EffectStep gData_02014000[]; f16e65c has extern u8 gData_02014000[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:19186: request for member `variant' in something not a structure or union. */
 extern struct EffectStep gData_02014000__f16fca8[] __asm__("gData_02014000"); // the sparks
 extern u16 gData_08197410[];               // gBattleEffect_MoteCells
 // Heights not const: a const table's second height read issues two places
@@ -20036,7 +20013,7 @@ struct Model;
 struct StripQuad;
 
 
-/* VIEW(f171430): tag struct RenderModel as struct RenderModel__f171430; render_model.h has another definition. */
+/* VIEW(f171430): tag struct RenderModel as struct RenderModel__f171430; render_model.h has another definition; tried with the definition the rest of the object has, BattleEffect_RunLightSurge moves: 2 of 823 instructions in tla-ja. */
 struct RenderModel__f171430 {
   s32 kind;
   s32 unk04;
@@ -20083,7 +20060,7 @@ void Func_081180e8(s32 phase);             // BattlePlayback_StartFar
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                           s32 drag);
-/* VIEW(f171430): routine GetBattleObjectSlotFar as void **GetBattleObjectSlotFar(s32 objectId); motobj.h has struct BattleObj *GetBattleObjectSlotFar(s32 objectId). */
+/* VIEW(f171430): routine GetBattleObjectSlotFar as void **GetBattleObjectSlotFar(s32 objectId); motobj.h has struct BattleObj *GetBattleObjectSlotFar(s32 objectId); tried as the 11 declarations' void **GetBattleObjectSlotFar(s32 objectId), it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:20086: conflicting types for `GetBattleObjectSlotFar'. */
 extern void **GetBattleObjectSlotFar__f171430(s32 objectId) __asm__("GetBattleObjectSlotFar");
 void *Resource_GetTableEntry(s32 resource);
 
@@ -20496,7 +20473,7 @@ struct ModelVertex;
 struct ProjectedVertex;
 struct StripQuad;
 
-/* VIEW(f171bb0): tag struct ModelTexture as struct ModelTexture__f171bb0; f15585c.c has another definition. */
+/* VIEW(f171bb0): tag struct ModelTexture as struct ModelTexture__f171bb0; f15585c.c has another definition; tried with the definition the rest of the object has, Func_08171bb0 moves: 1 of 1741 instructions in tla-ja. */
 struct ModelTexture__f171bb0 {
   u32 logWidth : 8;
   u32 logHeight : 8;
@@ -20504,17 +20481,6 @@ struct ModelTexture__f171bb0 {
   const u8 *pixels;
 };
 
-/* VIEW(f171bb0): tag struct RenderModel as struct RenderModel__f171bb0; f15585c.c has another definition. */
-struct RenderModel__f171bb0 {
-  s32 kind;
-  s32 unk04;
-  const void *mesh;
-  void *vertices;
-  struct ModelTexture__f171bb0 *texture;
-  s32 shade;
-  u8 scrollU;
-  u8 scrollV;
-};
 
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);
@@ -20552,7 +20518,7 @@ void Func_081180e8(s32 phase);             // BattlePlayback_StartFar
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                           s32 drag);
-/* VIEW(f171bb0): routine GetBattleObjectSlotFar as void **GetBattleObjectSlotFar(s32 objectId); motobj.h has struct BattleObj *GetBattleObjectSlotFar(s32 objectId). */
+/* VIEW(f171bb0): routine GetBattleObjectSlotFar as void **GetBattleObjectSlotFar(s32 objectId); motobj.h has struct BattleObj *GetBattleObjectSlotFar(s32 objectId); tried as the 11 declarations' void **GetBattleObjectSlotFar(s32 objectId), it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:20555: conflicting types for `GetBattleObjectSlotFar'. */
 extern void **GetBattleObjectSlotFar__f171bb0(s32 objectId) __asm__("GetBattleObjectSlotFar");
 void *Resource_GetTableEntry(s32 resource);
 
@@ -20591,9 +20557,7 @@ extern u16 gData_08197410[]; // gBattleEffect_MoteCells
 extern const u8 gData_08199340[];
 extern const u8 gData_08199210[];
 
-/* VIEW(f171bb0): routine Render_ProjectVertices as void Render_ProjectVertices(struct ModelVertex *vertices, struct ProjectedVertex *screen, s32 count); f16d130 has void Render_ProjectVertices(struct ModelVertex__f16d130 *vertices, struct ProjectedVertex *screen, s32 count). */
-extern void Render_ProjectVertices__f171bb0(struct ModelVertex *vertices,
-                            struct ProjectedVertex *screen, s32 count) __asm__("Render_ProjectVertices");
+void Render_ProjectVertices(struct ModelVertex *vertices, struct ProjectedVertex *screen, s32 count);
 void SceneTransform_ApplyPosition(const s32 *pos);
 
 // The water-column scene shared by Whorl (0), Gale (1), Lethe Albion (2),
@@ -20612,7 +20576,7 @@ void Func_08171bb0(struct BattleEffectArgument *effect, u32 mode) {
   s32 frames;
   u8 *unit;
   s32 *target;
-  struct RenderModel__f171bb0 *model;
+  struct RenderModel *model;
   struct ModelTexture__f171bb0 texture;
   s32 columns;
   s32 shade;
@@ -21102,7 +21066,7 @@ void Func_08171bb0(struct BattleEffectArgument *effect, u32 mode) {
               SceneTransform_ApplyPitch((i << 13) - (frame << 11));
             }
             Func_080151e4(0x40000, 0x10000, 0x10000);
-            Render_ProjectVertices__f171bb0(gMapCellBuffer, vertices, 66);
+            Render_ProjectVertices(gMapCellBuffer, vertices, 66);
             Render_DrawModelList(model);
             Transform_Pop();
           }
@@ -21192,7 +21156,7 @@ void Func_081180e8(s32 phase);             // BattlePlayback_StartFar
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                           s32 drag);
-/* VIEW(f172b00): routine GetBattleObjectSlotFar as void **GetBattleObjectSlotFar(s32 objectId); motobj.h has struct BattleObj *GetBattleObjectSlotFar(s32 objectId). */
+/* VIEW(f172b00): routine GetBattleObjectSlotFar as void **GetBattleObjectSlotFar(s32 objectId); motobj.h has struct BattleObj *GetBattleObjectSlotFar(s32 objectId); tried as the 11 declarations' void **GetBattleObjectSlotFar(s32 objectId), it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:21195: conflicting types for `GetBattleObjectSlotFar'. */
 extern void **GetBattleObjectSlotFar__f172b00(s32 objectId) __asm__("GetBattleObjectSlotFar");
 void *Resource_GetTableEntry(s32 resource);
 
@@ -21221,9 +21185,7 @@ void Transform_Pop(void);
 
 void Func_0818de3c(struct MeshTriangle *triangles, s32 columns, s32 rows,
                    s32 cellWidth, s32 cellHeight); // builds a grid's mesh
-/* VIEW(f172b00): routine Render_ProjectVertices as void Render_ProjectVertices(struct ModelVertex *vertices, struct ProjectedVertex *screen, s32 count); f16d130 has void Render_ProjectVertices(struct ModelVertex__f16d130 *vertices, struct ProjectedVertex *screen, s32 count). */
-extern void Render_ProjectVertices__f172b00(struct ModelVertex *vertices,
-                            struct ProjectedVertex *screen, s32 count) __asm__("Render_ProjectVertices");
+void Render_ProjectVertices(struct ModelVertex *vertices, struct ProjectedVertex *screen, s32 count);
 void SceneTransform_ApplyPosition(const s32 *pos);
 
 extern char ResourceId_Data134;
@@ -21607,7 +21569,7 @@ void Func_08172b00(struct BattleEffectArgument *effect, s32 mode) {
           model->scrollV = frame & 63;
           model->shade = shade;
           model->unk04 = 3;
-          Render_ProjectVertices__f172b00(cells, projected, 64);
+          Render_ProjectVertices(cells, projected, 64);
           Render_DrawModelList(model);
         }
         gCameraSceneParameters[3] = 120;
@@ -21652,7 +21614,7 @@ struct Model;
 
 // A texture for the ARM polygon kernels: 1 << logWidth by 1 << logHeight
 // pixels.
-/* VIEW(f173588): tag struct Texture as struct Texture__f173588; f15585c.c has another definition. */
+/* VIEW(f173588): tag struct Texture as struct Texture__f173588; f15585c.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:21770: structure has no member named `logWidth'. */
 struct Texture__f173588 {
   u32 logWidth : 8;
   u32 logHeight : 8;
@@ -21661,7 +21623,7 @@ struct Texture__f173588 {
 };
 
 // One model for Render_DrawModelList, the polygon kernel runner.
-/* VIEW(f173588): tag struct RenderModel as struct RenderModel__f173588; f15585c.c has another definition. */
+/* VIEW(f173588): tag struct RenderModel as struct RenderModel__f173588; f15585c.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:21784: structure has no member named `brightness'. */
 struct RenderModel__f173588 {
   s32 kind;
   s32 unk04;
@@ -21954,7 +21916,7 @@ struct ScaledSprite;
 struct StripQuad;
 
 
-/* VIEW(f173aac): tag struct RenderModel as struct RenderModel__f173aac; render_model.h has another definition. */
+/* VIEW(f173aac): tag struct RenderModel as struct RenderModel__f173aac; render_model.h has another definition; tried with the definition the rest of the object has, Func_08173aac moves: 13 of 4112 instructions in tla-ja. */
 struct RenderModel__f173aac {
   s32 kind;
   s32 unk04;
@@ -22004,7 +21966,7 @@ void Func_081180e8(s32 phase);             // BattlePlayback_StartFar
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                           s32 drag);
-/* VIEW(f173aac): routine GetBattleObjectSlotFar as void **GetBattleObjectSlotFar(s32 objectId); motobj.h has struct BattleObj *GetBattleObjectSlotFar(s32 objectId). */
+/* VIEW(f173aac): routine GetBattleObjectSlotFar as void **GetBattleObjectSlotFar(s32 objectId); motobj.h has struct BattleObj *GetBattleObjectSlotFar(s32 objectId); tried as the 11 declarations' void **GetBattleObjectSlotFar(s32 objectId), it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:22007: conflicting types for `GetBattleObjectSlotFar'. */
 extern void **GetBattleObjectSlotFar__f173aac(s32 objectId) __asm__("GetBattleObjectSlotFar");
 void *Resource_GetTableEntry(s32 resource);
 
@@ -23362,7 +23324,7 @@ struct ScalePair {
   s32 v[2];
 };
 
-/* VIEW(f175f74): tag struct Particle as struct Particle__f175f74; f15585c.c has another definition. */
+/* VIEW(f175f74): tag struct Particle as struct Particle__f175f74; f15585c.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:23799: structure has no member named `timer'. */
 struct Particle__f175f74 {
   s32 x;
   s32 y;
@@ -23373,7 +23335,7 @@ struct Particle__f175f74 {
   s32 timer;
 };
 
-/* VIEW(f175f74): tag struct SpriteObject as struct SpriteObject__f175f74; f15585c.c has another definition. */
+/* VIEW(f175f74): tag struct SpriteObject as struct SpriteObject__f175f74; f15585c.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:23688: structure has no member named `oamPriority'. */
 struct SpriteObject__f175f74 {
   u16 unk00;
   u16 unk02;
@@ -23402,7 +23364,7 @@ struct ModelDesc {
   u8 *tiles;
 };
 
-/* VIEW(f175f74): tag struct Model as struct Model__f175f74; f15585c.c has another definition. */
+/* VIEW(f175f74): tag struct Model as struct Model__f175f74; f15585c.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:24163: structure has no member named `depth'. */
 struct Model__f175f74 {
   s32 kind;
   s32 unk04;
@@ -23421,7 +23383,7 @@ struct ActorPos {
   s32 unk48;
 };
 
-/* VIEW(f175f74): tag struct SummonWork as struct SummonWork__f175f74; f15585c.c has another definition. */
+/* VIEW(f175f74): tag struct SummonWork as struct SummonWork__f175f74; f15585c.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:23638: structure has no member named `transferMode'. */
 struct SummonWork__f175f74 {
   struct Particle__f175f74 drops[16];
   struct Particle__f175f74 members[16];
@@ -23444,19 +23406,6 @@ struct SummonWork__f175f74 {
   s32 frameDone;
 };
 
-/* VIEW(f175f74): tag struct BattleEffectArgument as struct BattleEffectArgument__f175f74; battle_effect_argument.h has another definition. */
-struct BattleEffectArgument__f175f74 {
-  s32 kind;
-  s32 side;
-  s32 actor;
-  s32 unk000c;
-  s32 unk0010;
-  s32 count;
-  s32 variant;
-  s32 prelude;
-  s32 unk0020;
-  s16 actors[8];
-};
 
 struct Scene68 {
   u8 unk000[0x56c];
@@ -23509,9 +23458,6 @@ struct RegisterQueue {
   struct RegisterQueueEntry entries[32];
 };
 
-/* VIEW(f175f74): typedef DrawRectangleFn as DrawRectangleFn__f175f74; battle_effect.h has typedef BattleEffectDrawRectangle DrawRectangleFn. */
-typedef s32 (*DrawRectangleFn__f175f74)(void *canvas, const void *source, s32 x, s32 y,
-                               s32 width, s32 height);
 
 #define SYSTEM_WORK ((struct SystemWork *)Ram_HeapSlots)
 extern u32 gCameraSceneParameters[];
@@ -23528,24 +23474,6 @@ extern u8 gData_02014000[];
 #define OBJ_VRAM ((u8 *)0x06010000)
 #define BG_VRAM_A900 ((u8 *)0x0600a900)
 #define PLTT ((u16 *)0x05000000)
-/* VIEW(f175f74): macro REG_DISPCNT as REG_DISPCNT__f175f74; another part or header has another definition. */
-#define REG_DISPCNT__f175f74 (*(u16 *)0x04000000)
-/* VIEW(f175f74): macro REG_BG2CNT as REG_BG2CNT__f175f74; another part or header has another definition. */
-#define REG_BG2CNT__f175f74 (*(u16 *)0x0400000c)
-/* VIEW(f175f74): macro REG_BG2PA as REG_BG2PA__f175f74; another part or header has another definition. */
-#define REG_BG2PA__f175f74 (*(u16 *)0x04000020)
-/* VIEW(f175f74): macro REG_BG2X as REG_BG2X__f175f74; another part or header has another definition. */
-#define REG_BG2X__f175f74 (*(u32 *)0x04000028)
-/* VIEW(f175f74): macro REG_WIN0H as REG_WIN0H__f175f74; another part or header has another definition. */
-#define REG_WIN0H__f175f74 (*(u16 *)0x04000040)
-/* VIEW(f175f74): macro REG_WININ as REG_WININ__f175f74; another part or header has another definition. */
-#define REG_WININ__f175f74 (*(u16 *)0x04000048)
-/* VIEW(f175f74): macro REG_BLDCNT as REG_BLDCNT__f175f74; another part or header has another definition. */
-#define REG_BLDCNT__f175f74 (*(u16 *)0x04000050)
-/* VIEW(f175f74): macro REG_BLDALPHA as REG_BLDALPHA__f175f74; another part or header has another definition. */
-#define REG_BLDALPHA__f175f74 (*(u16 *)0x04000052)
-/* VIEW(f175f74): macro REG_IME as REG_IME__f175f74; another part or header has another definition. */
-#define REG_IME__f175f74 (*(u16 *)0x04000208)
 
 extern char ResourceId_AerialViewBackdrop;
 extern char ResourceId_CrimsonBeastTiles;
@@ -23585,9 +23513,7 @@ void Palette_LoadBasicObjColors(void);
 void BattleBackground_LoadFar(s32, s32, s32);
 void Func_08164b2c(s32, s32, s32);
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
-/* VIEW(f175f74): routine Func_0815b290 as struct SpriteObject__f175f74 *Func_0815b290(s32, s32, u32, u32); the definition has struct EffectSprite *Func_0815b290(s32 width, s32 height, s32 attributes, s32 flags). */
-extern struct SpriteObject__f175f74 *Func_0815b290__f175f74(s32, s32, u32, u32) __asm__("Func_0815b290");
-/* VIEW(f175f74): routine Func_0815b3b0 as struct SpriteObject__f175f74 *Func_0815b3b0(s32, s32, u32, u32); the definition has struct EffectSprite__f15b3b0 *Func_0815b3b0(s32 kind, s32 value). */
+/* VIEW(f175f74): routine Func_0815b3b0 as struct SpriteObject__f175f74 *Func_0815b3b0(s32, s32, u32, u32); the definition has struct EffectSprite__f15b3b0 *Func_0815b3b0(s32 kind, s32 value); tried as the definition's struct EffectSprite__f15b3b0 *Func_0815b3b0(s32 kind, s32 value), which the object already declares, it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:23757: too many arguments to function `Func_0815b3b0'. */
 extern struct SpriteObject__f175f74 *Func_0815b3b0__f175f74(s32, s32, u32, u32) __asm__("Func_0815b3b0");
 void Resource_LoadAndDecompress(s32, void *, s32, s32);
 void Sound_PlayFar(s32);
@@ -23606,14 +23532,12 @@ void Func_080150e4(s32);
 void SceneTransform_ApplyYaw(s32);
 void Func_0801521c(s32);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
-/* VIEW(f175f74): routine Render_DrawModelList as void Render_DrawModelList(struct Model__f175f74 *); f173aac has void Render_DrawModelList(struct Model *model). */
-extern void Render_DrawModelList__f175f74(struct Model__f175f74 *) __asm__("Render_DrawModelList");
 void Graphics_LoadGreyRamp(void);
 void Func_0815b434(u8 *map, s32 size, s32 scale);
 void Func_0818caa8(void *, s32, s32, s32);
 s32 BattleEffect_LoadBlitter(s32, s32);
 void ColorBuffer_ScaleFar(void *, void *, s32, s32);
-/* VIEW(f175f74): routine GetBattleObjectSlotFar as struct ActorPos **GetBattleObjectSlotFar(s32); motobj.h has struct BattleObj *GetBattleObjectSlotFar(s32 objectId). */
+/* VIEW(f175f74): routine GetBattleObjectSlotFar as struct ActorPos **GetBattleObjectSlotFar(s32); motobj.h has struct BattleObj *GetBattleObjectSlotFar(s32 objectId); tried as the 11 declarations' void **GetBattleObjectSlotFar(s32 objectId), it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:23616: conflicting types for `GetBattleObjectSlotFar'. */
 extern struct ActorPos **GetBattleObjectSlotFar__f175f74(s32) __asm__("GetBattleObjectSlotFar");
 void Func_0814cd48(s32, s32, s32, s32, s32);
 void Func_081180e8(s32);
@@ -23640,7 +23564,7 @@ static __inline__ s32 CpuFill(void *destination, s32 size, u32 value) {
   return Iwram_FillWords(destination, size, value);
 }
 
-void BattleEffect_RunCharon(struct BattleEffectArgument__f175f74 *arg) {
+void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
   u16 tiles[16];
   struct Local264 local264;
   s32 pos248[4];
@@ -23648,7 +23572,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument__f175f74 *arg) {
   s32 pos216[4];
   s32 pos200[4];
   s32 pos184[4];
-  DrawRectangleFn__f175f74 routine[2];
+  DrawRectangleFn routine[2];
   struct ModelDesc desc144;
   struct ModelDesc desc128;
   struct ModelDesc desc112;
@@ -23661,7 +23585,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument__f175f74 *arg) {
   u32 savedWidth;
   u8 *glyphs;
   struct Scene68 *scene;
-  DrawRectangleFn__f175f74 *blit;
+  DrawRectangleFn *blit;
   s32 posX;
   s32 posZ;
   s32 t56;
@@ -23694,7 +23618,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument__f175f74 *arg) {
   scene = SYSTEM_WORK->scene;
   BattleEffect_StartCanvasLayer(0);
   BattleEffect_ConfigureEffectDisplay();
-  REG_BG2CNT__f175f74 = 0x784;
+  REG_BG2CNT = 0x784;
   PLTT[0] = 0;
   PLTT[1] = 0;
   work->transferMode = 0;
@@ -23709,18 +23633,18 @@ void BattleEffect_RunCharon(struct BattleEffectArgument__f175f74 *arg) {
   gBgScroll[1].x = 0;
   local264.value = 255;
   BattleActor_SpawnObjectsForListFar(&local264, 0);
-  REG_WININ__f175f74 = 0x2737;
-  REG_WIN0H__f175f74 = 240;
+  REG_WININ = 0x2737;
+  REG_WIN0H = 240;
   wait(1);
   Palette_LoadBasicObjColors();
   scene->unk867 = 1;
   BattleBackground_LoadFar(1, (s32)&ResourceId_AerialViewBackdrop, 0);
   Func_08164b2c(0, -20, -20);
   Func_08163c2c(1, 1);
-  REG_BLDALPHA__f175f74 = 0x1010;
-  REG_BLDCNT__f175f74 = 0x3f44;
-  REG_BG2PA__f175f74 = 0x80;
-  REG_BG2X__f175f74 = 0;
+  REG_BLDALPHA = 0x1010;
+  REG_BLDCNT = 0x3f44;
+  REG_BG2PA = 0x80;
+  REG_BG2X = 0;
   blit = routine;
   BattleEffect_FetchRectangleBlitters(0, blit);
 
@@ -23734,7 +23658,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument__f175f74 *arg) {
     }
   }
   {
-    struct SpriteObject__f175f74 *object = Func_0815b290__f175f74(64, 64, 0xc0002000, 0);
+    struct SpriteObject__f175f74 *object = Func_0815b290(64, 64, 0xc0002000, 0);
 
     work->objects[0] = object;
     object->priority = 3;
@@ -23749,7 +23673,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument__f175f74 *arg) {
   source += 32;
   Resource_DecodeType01(source, work->buffer);
   for (i = 0; i != 16; i++) {
-    struct SpriteObject__f175f74 *object = Func_0815b290__f175f74(16, 16, 0, 0xf000);
+    struct SpriteObject__f175f74 *object = Func_0815b290(16, 16, 0, 0xf000);
     SPRITES[i] = object;
     object->priority = 1;
     CpuCopy(OBJ_VRAM + slots[object->slot].offset, work->buffer + i * 32, 32);
@@ -23781,8 +23705,8 @@ void BattleEffect_RunCharon(struct BattleEffectArgument__f175f74 *arg) {
                              work->buffer + 0x1000, 1, 1);
   source = (u8 *)Resource_GetTableEntry((s32)&ResourceId_BoltSheet);
   CpuCopy(PLTT, source, 128);
-  REG_BG2CNT__f175f74 = 0x784;
-  REG_BG2X__f175f74 = 0x800;
+  REG_BG2CNT = 0x784;
+  REG_BG2X = 0x800;
   posX = 0;
   posZ = 0;
 
@@ -23832,7 +23756,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument__f175f74 *arg) {
     if (frame == 0) {
       work->transferMode = 2;
       work->transferValue = 75;
-      REG_BLDALPHA__f175f74 = 0x1010;
+      REG_BLDALPHA = 0x1010;
       {
         u32 hidden;
         /* FAKEMATCH(temporary): the mask held in a halfword struct set in the
@@ -24071,7 +23995,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument__f175f74 *arg) {
         source += 0x180;
         Resource_DecodeType01(source, work->buffer + 0x2400);
         for (i = 0, objectSlots = TILE_SLOTS; i != 12; i++) {
-          struct SpriteObject__f175f74 *object = Func_0815b290__f175f74(32, 32, 0x80002000, 0);
+          struct SpriteObject__f175f74 *object = Func_0815b290(32, 32, 0x80002000, 0);
 
           object->priority = 3;
           work->objects[i] = object;
@@ -24085,7 +24009,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument__f175f74 *arg) {
         Resource_DecodeType01(source, work->buffer + 0x2400);
         {
           struct SpriteObject__f175f74 *object =
-              Func_0815b290__f175f74(64, 64, 0xc0000000, 0xe000);
+              Func_0815b290(64, 64, 0xc0000000, 0xe000);
           struct TileSlot *tileSlots;
 
           work->objects[12] = object;
@@ -24100,7 +24024,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument__f175f74 *arg) {
             vram += tileSlots[object->slot].offset;
             CpuCopy(vram, work->buffer + 0x2400, 0x800);
           }
-          object = Func_0815b290__f175f74(64, 64, 0xc0002000, 0);
+          object = Func_0815b290(64, 64, 0xc0002000, 0);
           work->objects[13] = object;
           object->priority = 2;
           object->unk17 = 32;
@@ -24227,7 +24151,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument__f175f74 *arg) {
           Func_080150e4(0x4000 - t * 256);
           SceneTransform_ApplyYaw(-t << 10);
           Render_TransformVertices(gData_08199210, texture, 4);
-          Render_DrawModelList__f175f74(model);
+          Render_DrawModelList(model);
         }
         if (frame > 231) {
           t = frame - 232;
@@ -24253,7 +24177,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument__f175f74 *arg) {
           SceneTransform_ApplyPitch(0xc000);
           SceneTransform_ApplyYaw(-t << 10);
           Render_TransformVertices(gData_08199210, texture, 4);
-          Render_DrawModelList__f175f74(model);
+          Render_DrawModelList(model);
         }
         Heap_Release(model);
         Heap_Release(texture);
@@ -24408,7 +24332,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument__f175f74 *arg) {
               }
               SceneTransform_ApplyPitch(0x800);
               Render_TransformVertices(gData_08199210, texture, 4);
-              Render_DrawModelList__f175f74(model);
+              Render_DrawModelList(model);
             }
           }
           Heap_Release(model);
@@ -24438,7 +24362,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument__f175f74 *arg) {
       if (frame == 347) {
         work->transferMode = 1;
         work->transferValue = 0;
-        REG_BLDCNT__f175f74 = 0;
+        REG_BLDCNT = 0;
         {
           u16 *entry = PLTT + 1;
           for (i = 0; i != 63; i++, entry++) {
@@ -24680,7 +24604,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument__f175f74 *arg) {
           SceneTransform_ApplyYaw(-frame << 10);
         }
         Render_TransformVertices(gData_08199210, texture, 4);
-        Render_DrawModelList__f175f74(model);
+        Render_DrawModelList(model);
       }
       if (frame > 95) {
         depth = 568 - frame * 6;
@@ -24693,7 +24617,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument__f175f74 *arg) {
         SceneTransform_ApplyPitch(0x2000);
         SceneTransform_ApplyYaw(-frame << 9);
         Render_TransformVertices(gData_08199210, texture, 4);
-        Render_DrawModelList__f175f74(model);
+        Render_DrawModelList(model);
       }
       if (frame > 55) {
         s32 last = frame * 2 - 208;
@@ -24709,7 +24633,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument__f175f74 *arg) {
         SceneTransform_ApplyPitch(0x2000);
         SceneTransform_ApplyYaw(frame << 10);
         Render_TransformVertices(gData_08199210, texture, 4);
-        Render_DrawModelList__f175f74(model);
+        Render_DrawModelList(model);
         /* FAKEMATCH(dead): twice raised to frame though nothing reads it again;
          * flow deletes the store and its test; as no test, 290 of 4354
          * instructions differ in tla-en. */
@@ -24723,7 +24647,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument__f175f74 *arg) {
           SceneTransform_ApplyPitch(0x2000);
           SceneTransform_ApplyYaw(-frame << 10);
           Render_TransformVertices(gData_08199210, texture, 4);
-          Render_DrawModelList__f175f74(model);
+          Render_DrawModelList(model);
         }
       }
       Heap_Release(model);
@@ -24749,7 +24673,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument__f175f74 *arg) {
   HeapSlot_Release(188);
   HeapSlot_Release(104);
   Palette_LoadBasicObjColors();
-  REG_DISPCNT__f175f74 = 0x141;
+  REG_DISPCNT = 0x141;
   wait(1);
   scene->unk867 = 0;
   BattleBackground_LoadFar(1, scene->unk670, 24);
@@ -24772,9 +24696,9 @@ void BattleEffect_RunCharon(struct BattleEffectArgument__f175f74 *arg) {
   work->transferValue = 0;
   work->transferMode = 2;
   work->transferValue = 50;
-  REG_BLDALPHA__f175f74 = 0x410;
-  REG_BG2X__f175f74 = 0;
-  REG_BG2CNT__f175f74 = 0x786;
+  REG_BLDALPHA = 0x410;
+  REG_BG2X = 0;
+  REG_BG2CNT = 0x786;
   for (i = 1; i != 64; i++) {
     s32 q = i * 2 / 3;
     s32 r = 31 - q;
@@ -24897,7 +24821,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument__f175f74 *arg) {
                                    SPRITE_BUFFER, 1, 0);
         Sound_PlayFar(144);
         CpuFill(canvas, 0x3c00, 0x3f3f3f3f);
-        REG_BG2CNT__f175f74 = 0x784;
+        REG_BG2CNT = 0x784;
         work->transferMode = 2;
         work->transferValue = 50;
         for (i = 0; i != arg->count; i++) {
@@ -25175,7 +25099,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument__f175f74 *arg) {
             Func_080151e4(size / 3, size, size);
             SceneTransform_ApplyPitch(0xc000);
             Render_TransformVertices(gData_08199210, texture, 4);
-            Render_DrawModelList__f175f74(model);
+            Render_DrawModelList(model);
           }
           Heap_Release(model);
           Heap_Release(texture);
@@ -25249,15 +25173,6 @@ void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height,
 #undef OBJ_VRAM
 #undef BG_VRAM_A900
 #undef PLTT
-#undef REG_DISPCNT__f175f74
-#undef REG_BG2CNT__f175f74
-#undef REG_BG2PA__f175f74
-#undef REG_BG2X__f175f74
-#undef REG_WIN0H__f175f74
-#undef REG_WININ__f175f74
-#undef REG_BLDCNT__f175f74
-#undef REG_BLDALPHA__f175f74
-#undef REG_IME__f175f74
 
 // ---- games/tla/src/battle_effect/f178710.c ----
 #include "version.h"
@@ -25267,7 +25182,7 @@ struct Model;
 struct StripQuad;
 
 
-/* VIEW(f178710): tag struct RenderModel as struct RenderModel__f178710; render_model.h has another definition. */
+/* VIEW(f178710): tag struct RenderModel as struct RenderModel__f178710; render_model.h has another definition; tried with the definition the rest of the object has, BattleEffect_RunRisingDragon moves: 1 of 882 instructions in tla-ja. */
 struct RenderModel__f178710 {
   s32 kind;
   s32 unk04;
@@ -25294,8 +25209,6 @@ void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen,
 void Func_0818caa8(void *cells, s32 x, s32 y, s32 size);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
-/* VIEW(f178710): routine Render_DrawModelList as void Render_DrawModelList(struct Model *model); f175f74 has void Render_DrawModelList(struct Model__f175f74 *). */
-extern void Render_DrawModelList__f178710(struct Model *model) __asm__("Render_DrawModelList");
 void Func_08015160(s32 x, s32 y, s32 z);
 void Func_0801521c(s32 scale);
 void SceneTransform_ApplyPitch(s32 angle);
@@ -25316,7 +25229,7 @@ void Func_081180e8(s32 phase);             // BattlePlayback_StartFar
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                           s32 drag);
-/* VIEW(f178710): routine GetBattleObjectSlotFar as void **GetBattleObjectSlotFar(s32 objectId); f175f74 has struct ActorPos **GetBattleObjectSlotFar(s32). */
+/* VIEW(f178710): routine GetBattleObjectSlotFar as void **GetBattleObjectSlotFar(s32 objectId); f175f74 has struct ActorPos **GetBattleObjectSlotFar(s32); tried as the 11 declarations' void **GetBattleObjectSlotFar(s32 objectId), it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:25319: conflicting types for `GetBattleObjectSlotFar'. */
 extern void **GetBattleObjectSlotFar__f178710(s32 objectId) __asm__("GetBattleObjectSlotFar");
 void *Resource_GetTableEntry(s32 resource);
 
@@ -25369,7 +25282,7 @@ struct StripVertex {
   s8 z;
   s8 unk3;
 };
-/* VIEW(f178710): variable gMapCellBuffer as extern struct StripVertex gMapCellBuffer[2][66]; f175f74 has extern u8 gMapCellBuffer[]. */
+/* VIEW(f178710): variable gMapCellBuffer as extern struct StripVertex gMapCellBuffer[2][66]; f175f74 has extern u8 gMapCellBuffer[]; tried as the rest of the object declares it, BattleEffect_RunRisingDragon moves: 93 of 882 instructions in tla-ja. */
 extern struct StripVertex gMapCellBuffer__f178710[2][66] __asm__("gMapCellBuffer");
 
 // Abilities: Rising Dragon.
@@ -25626,7 +25539,7 @@ void BattleEffect_RunRisingDragon(struct BattleEffectArgument *effect) {
           Func_080150e4(i * 14192 - 0x1000);
           Func_0801521c(0x40000);
           Render_TransformVertices(strip0 + i * 66, vertices, 66);
-          Render_DrawModelList__f178710(model);
+          Render_DrawModelList(model);
           if (frame < i * 16 + 40) {
             texture.logWidth = 6;
             texture.logHeight = 6;
@@ -25637,7 +25550,7 @@ void BattleEffect_RunRisingDragon(struct BattleEffectArgument *effect) {
             Func_080150e4(0x3060 - (arcs[i * 2] << 5));
             Func_0801521c(20768);
             Render_TransformVertices(Data_081991e0, vertices, 4);
-            Render_DrawModelList__f178710(model);
+            Render_DrawModelList(model);
           }
         }
         Heap_Release(model);
@@ -25894,8 +25807,6 @@ void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen,
 void Func_0818caa8(void *cells, s32 x, s32 y, s32 size);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
-/* VIEW(f179394): routine Render_DrawModelList as void Render_DrawModelList(struct Model *model); f175f74 has void Render_DrawModelList(struct Model__f175f74 *). */
-extern void Render_DrawModelList__f179394(struct Model *model) __asm__("Render_DrawModelList");
 void Func_08015160(s32 x, s32 y, s32 z);
 void Func_0801521c(s32 scale);
 void SceneTransform_ApplyPitch(s32 angle);
@@ -26167,7 +26078,7 @@ void BattleEffect_RunRagingHeat(struct BattleEffectArgument *effect) {
         if (scale > 0 && shade > -64) {
           Func_0801521c(scale);
           Render_TransformVertices(gData_08199210, vertices, 4);
-          Render_DrawModelList__f179394(model);
+          Render_DrawModelList(model);
         }
       }
       Heap_Release(model);
@@ -26435,7 +26346,7 @@ struct FxPartyList;
 struct Model;
 struct StripQuad;
 
-/* VIEW(f179f18): tag struct ModelTexture as struct ModelTexture__f179f18; f15585c.c has another definition. */
+/* VIEW(f179f18): tag struct ModelTexture as struct ModelTexture__f179f18; f15585c.c has another definition; tried with the definition the rest of the object has, BattleEffect_RunFlora moves: 2 of 2567 instructions in tla-ja. */
 struct ModelTexture__f179f18 {
   u32 logWidth : 8;
   u32 logHeight : 8;
@@ -26443,17 +26354,6 @@ struct ModelTexture__f179f18 {
   u8 *pixels;
 };
 
-/* VIEW(f179f18): tag struct RenderModel as struct RenderModel__f179f18; f15585c.c has another definition. */
-struct RenderModel__f179f18 {
-  s32 kind;
-  s32 unk04;
-  const void *mesh;
-  void *vertices;
-  struct ModelTexture__f179f18 *texture;
-  s32 shade;
-  u8 scrollU;
-  u8 scrollV;
-};
 
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);
@@ -26470,8 +26370,6 @@ void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen,
 void Func_0818caa8(void *cells, s32 x, s32 y, s32 size);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
-/* VIEW(f179f18): routine Render_DrawModelList as void Render_DrawModelList(struct Model *model); f175f74 has void Render_DrawModelList(struct Model__f175f74 *). */
-extern void Render_DrawModelList__f179f18(struct Model *model) __asm__("Render_DrawModelList");
 void Func_08015160(s32 x, s32 y, s32 z);
 void Func_0801521c(s32 scale);
 void SceneTransform_ApplyPitch(s32 angle);
@@ -26549,10 +26447,8 @@ struct WordPair {
   s32 b;
 };
 
-/* VIEW(f179f18): variable gResourceTableEntries as extern struct ResourceTableEntry gResourceTableEntries[]; vram_tab.h has extern struct VramBlockCacheEntry gResourceTableEntries[]. */
+/* VIEW(f179f18): variable gResourceTableEntries as extern struct ResourceTableEntry gResourceTableEntries[]; vram_tab.h has extern struct VramBlockCacheEntry gResourceTableEntries[]; tried as the 12 declarations' extern struct ResourceTableEntry gResourceTableEntries[], it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:26450: conflicting types for `gResourceTableEntries'. */
 extern struct ResourceTableEntry gResourceTableEntries__f179f18[] __asm__("gResourceTableEntries");
-/* VIEW(f179f18): variable gMapCellBuffer as extern u8 gMapCellBuffer[]; f178710 has extern struct StripVertex gMapCellBuffer[2][66]. */
-extern u8 gMapCellBuffer__f179f18[] __asm__("gMapCellBuffer");
 extern u8 gData_02014000[];
 extern u32 gCameraSceneParameters[];
 extern const struct WordPair Data_08196ec8;
@@ -26581,10 +26477,7 @@ extern u16 Data_0201401e[];
 extern u16 Data_02014002[];
 extern u16 Data_02014260[];
 
-/* VIEW(f179f18): routine Func_0815b290 as struct SpriteObject *Func_0815b290(s32 width, s32 height, u32 shape, u32 attributes); f175f74 has struct SpriteObject__f175f74 *Func_0815b290(s32, s32, u32, u32). */
-extern struct SpriteObject *Func_0815b290__f179f18(s32 width, s32 height, u32 shape,
-                                   u32 attributes) __asm__("Func_0815b290");
-/* VIEW(f179f18): routine Func_0815b3b0 as struct FloraObject *Func_0815b3b0(s32 width, s32 height, u32 shape, s32 mode); f175f74 has struct SpriteObject *Func_0815b3b0(s32, s32, u32, u32). */
+/* VIEW(f179f18): routine Func_0815b3b0 as struct FloraObject *Func_0815b3b0(s32 width, s32 height, u32 shape, s32 mode); f175f74 has struct SpriteObject *Func_0815b3b0(s32, s32, u32, u32); tried as the definition's struct EffectSprite__f15b3b0 *Func_0815b3b0(s32 kind, s32 value), which the object already declares, it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:26700: too many arguments to function `Func_0815b3b0'. */
 extern struct FloraObject *Func_0815b3b0__f179f18(s32 width, s32 height, u32 shape, s32 mode) __asm__("Func_0815b3b0");
 
 void BattleEffect_ConfigureEffectDisplay(void);
@@ -26602,7 +26495,7 @@ void Func_08143eb4(s32 x0, s32 y0, s32 x1, s32 y1, s32 color);
 #define OBJ_TILES(obj)                                                         \
   (0x06010000 + gResourceTableEntries__f179f18[(obj)->resource].tile)
 
-/* VIEW(f179f18): static ClearWords as ClearWords__f179f18; f16c274 has static inline s32 ClearWords(void *destination, s32 size) { return Iwram_ClearWords(destination, size); }. */
+/* VIEW(f179f18): static ClearWords as ClearWords__f179f18; f16c274 has static inline s32 ClearWords(void *destination, s32 size) { return Iwram_ClearWords(destination, size); }; not tried: ClearWords's definition holds a FAKEMATCH tag. */
 static inline s32 ClearWords__f179f18(void *destination, s32 size) {
   /* FAKEMATCH(wrapper): the VRAM clear through this inline; as a direct call
    * to Iwram_ClearWords, 16 of 2583 instructions of BattleEffect_RunFlora
@@ -26646,7 +26539,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
   s32 place[4];
   struct WordPair req;
   struct ModelTexture__f179f18 texture;
-  struct RenderModel__f179f18 *model;
+  struct RenderModel *model;
   void *verts;
   struct EffectStep *p;
   u8 *cells;
@@ -26692,7 +26585,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
       Resource_DecodeType01(e, source);
       cells = Ram_MapCellBuffer;
       for (i = 0; i != 15; i++) {
-        struct FloraObject *obj = Func_0815b290__f179f18(16, 16, 0x40000000, 0xf000);
+        struct FloraObject *obj = Func_0815b290(16, 16, 0x40000000, 0xf000);
         work->objects[12 + i] = obj;
         obj->flags = 2;
         Iwram_CopyWords((void *)OBJ_TILES(obj), cells + i * 128, 128);
@@ -26715,7 +26608,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
       Resource_DecodeType01(e, source);
       cells = Ram_MapCellBuffer;
       for (i = 0; i != 12; i++) {
-        struct FloraObject *obj = Func_0815b290__f179f18(32, 32, 0x80002000, 0);
+        struct FloraObject *obj = Func_0815b290(32, 32, 0x80002000, 0);
         obj->flags = 2;
         work->objects[i] = obj;
         Iwram_CopyWords((void *)OBJ_TILES(obj), cells + i * 0x400, 0x400);
@@ -27106,7 +26999,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
           Func_0801521c(scale);
           SceneTransform_ApplyYaw(frame << 11);
           Render_TransformVertices(gData_08199210, verts, 4);
-          Render_DrawModelList__f179f18(model);
+          Render_DrawModelList(model);
         }
       }
     }
@@ -27557,7 +27450,7 @@ void BattleEffect_RunSabreDance(struct BattleEffectArgument *effect) {
       Func_0801521c(0x8000);
       Func_080150e4(dagger->z);
       Render_TransformVertices(gData_08199474, vertices, 4);
-      Render_DrawModelList__f179f18(quad);
+      Render_DrawModelList(quad);
       if (frame >= DAGGER_FALL_FRAME)
         BattleEffectKernels_IntegrateVector3(dagger, 64, 0);
       else
@@ -27800,7 +27693,7 @@ struct FxPartyList;
 struct Model;
 struct StripQuad;
 
-/* VIEW(f17bd88): tag struct ModelTexture as struct ModelTexture__f17bd88; render_model.h has another definition. */
+/* VIEW(f17bd88): tag struct ModelTexture as struct ModelTexture__f17bd88; render_model.h has another definition; tried with the definition the rest of the object has, BattleEffect_RunFirePuppet moves: 1 of 541 instructions in tla-ja. */
 struct ModelTexture__f17bd88 {
   u32 logWidth : 8;
   u32 logHeight : 8;
@@ -27808,7 +27701,7 @@ struct ModelTexture__f17bd88 {
   const u8 *pixels;
 };
 
-/* VIEW(f17bd88): tag struct RenderModel as struct RenderModel__f17bd88; render_model.h has another definition. */
+/* VIEW(f17bd88): tag struct RenderModel as struct RenderModel__f17bd88; render_model.h has another definition; tried with the definition the rest of the object has, BattleEffect_RunFirePuppet moves: 2 of 541 instructions in tla-ja. */
 struct RenderModel__f17bd88 {
   long kind; // long: see the tag at the model's stores
   s32 unk04;
@@ -27857,7 +27750,7 @@ void Func_081180e8(s32 phase);             // BattlePlayback_StartFar
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                           s32 drag);
-/* VIEW(f17bd88): routine GetBattleObjectSlotFar as void **GetBattleObjectSlotFar(s32 objectId); motobj.h has struct BattleObj *GetBattleObjectSlotFar(s32 objectId). */
+/* VIEW(f17bd88): routine GetBattleObjectSlotFar as void **GetBattleObjectSlotFar(s32 objectId); motobj.h has struct BattleObj *GetBattleObjectSlotFar(s32 objectId); tried as the 11 declarations' void **GetBattleObjectSlotFar(s32 objectId), it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:27860: conflicting types for `GetBattleObjectSlotFar'. */
 extern void **GetBattleObjectSlotFar__f17bd88(s32 objectId) __asm__("GetBattleObjectSlotFar");
 void *Resource_GetTableEntry(s32 resource);
 
@@ -27898,13 +27791,6 @@ extern char ResourceId_Data0D3;
 extern char ResourceId_Data134;
 extern char ResourceId_Data0F2;
 extern char ResourceId_MercuryDjinnSheet;
-/* VIEW(f17bd88): tag struct ModelVertex as struct ModelVertex__f17bd88; f15585c.c has another definition. */
-struct ModelVertex__f17bd88 {
-  s8 x;
-  s8 y;
-  s8 z;
-  s8 pad;
-};
 extern u8 Data_02011000[];
 extern u8 Data_02012000[];
 extern const u8 gData_08199340[]; // the hand's mesh
@@ -27999,8 +27885,8 @@ void BattleEffect_RunFirePuppet(struct BattleEffectArgument *effect) {
       s32 length;
       s32 j;
       // The fixed address, not the symbol: loop.c steps the row offset alone.
-      struct ModelVertex__f17bd88(*cells)[2] =
-          (struct ModelVertex__f17bd88(*)[2])Ram_MapCellBuffer;
+      struct ModelVertex(*cells)[2] =
+          (struct ModelVertex(*)[2])Ram_MapCellBuffer;
       u8 *projected = Data_02011000;
       s32 shade;
 
@@ -28284,7 +28170,7 @@ struct Corner {
   s8 z;
 };
 
-/* VIEW(f17c6ac): tag struct RenderModel as struct RenderModel__f17c6ac; render_model.h has another definition. */
+/* VIEW(f17c6ac): tag struct RenderModel as struct RenderModel__f17c6ac; render_model.h has another definition; tried with the definition the rest of the object has, BattleEffect_RunFume moves: 2 of 625 instructions in tla-ja. */
 struct RenderModel__f17c6ac {
   s32 kind;
   s32 unk04;
@@ -28907,7 +28793,7 @@ void Func_081180e8(s32 phase);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                           s32 drag);
-/* VIEW(f17d174): routine GetBattleObjectSlotFar as void **GetBattleObjectSlotFar(s32 objectId); motobj.h has struct BattleObj *GetBattleObjectSlotFar(s32 objectId). */
+/* VIEW(f17d174): routine GetBattleObjectSlotFar as void **GetBattleObjectSlotFar(s32 objectId); motobj.h has struct BattleObj *GetBattleObjectSlotFar(s32 objectId); tried as the 11 declarations' void **GetBattleObjectSlotFar(s32 objectId), it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:28910: conflicting types for `GetBattleObjectSlotFar'. */
 extern void **GetBattleObjectSlotFar__f17d174(s32 objectId) __asm__("GetBattleObjectSlotFar");
 void *Resource_GetTableEntry(s32 resource);
 
@@ -29157,7 +29043,7 @@ struct Model;
 struct StripQuad;
 
 
-/* VIEW(f17d174): tag struct RenderModel as struct RenderModel__f17d174; render_model.h has another definition. */
+/* VIEW(f17d174): tag struct RenderModel as struct RenderModel__f17d174; render_model.h has another definition; tried with the definition the rest of the object has, BattleEffect_RunRisingDragonEnemy moves: 5 of 1028 instructions in tla-ja. */
 struct RenderModel__f17d174 {
   s32 kind;
   s32 unk04;
@@ -29218,15 +29104,8 @@ extern char ResourceId_ClawSlashSheet;
 
 extern char ResourceId_RedHazeBackdrop;
 extern u32 gCameraSceneParameters[];
-/* VIEW(f17d174): tag struct Corner as struct Corner__f17d174; f15585c.c has another definition. */
-struct Corner__f17d174 {
-  s8 x;
-  s8 y;
-  s8 z;
-  s8 pad;
-};
 struct CornerRow {
-  struct Corner__f17d174 corners[2];
+  struct Corner corners[2];
 };
 extern u8 gMapCellBuffer[];
 // 256 sparks. The listing's pool holds this address plus each constant offset
@@ -29474,10 +29353,10 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *effect) {
     // The dragon's body, swaying.
     for (j = 0; j != SEGMENTS; j++) {
       for (i = 0; i != 2; i++) {
-        ((struct Corner__f17d174 *)(cells + j))[i].x =
+        ((struct Corner *)(cells + j))[i].x =
             i * 20 + ((Trig_Sin(j * 2018 + (frame << 10)) * 2) >> 16) - 10;
-        ((struct Corner__f17d174 *)(cells + j))[i].z = 0;
-        ((struct Corner__f17d174 *)(cells + j))[i].y = j * 2 - 64;
+        ((struct Corner *)(cells + j))[i].z = 0;
+        ((struct Corner *)(cells + j))[i].y = j * 2 - 64;
       }
     }
     zero = 0;
@@ -29693,7 +29572,7 @@ struct Model;
 
 // A texture: log2 of its width and height in the first word, then its
 // pixels.
-/* VIEW(f17e0c0): tag struct Texture as struct Texture__f17e0c0; f15585c.c has another definition. */
+/* VIEW(f17e0c0): tag struct Texture as struct Texture__f17e0c0; f15585c.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:29798: structure has no member named `logWidth'. */
 struct Texture__f17e0c0 {
   u8 logWidth;
   u8 logHeight;
@@ -29703,7 +29582,7 @@ struct Texture__f17e0c0 {
 
 // One entry of the list Render_DrawModelList draws; kinds 6 and 7 are textured
 // quads.
-/* VIEW(f17e0c0): tag struct RenderPrimitive as struct RenderPrimitive__f17e0c0; f15585c.c has another definition. */
+/* VIEW(f17e0c0): tag struct RenderPrimitive as struct RenderPrimitive__f17e0c0; f15585c.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:29770: structure has no member named `brightness'. */
 struct RenderPrimitive__f17e0c0 {
   s32 kind;
   s32 unk04;
@@ -30077,15 +29956,6 @@ struct BurstTexture {
 };
 
 // One entry of the list Render_DrawModelList draws; kind 6 is a textured quad.
-/* VIEW(f17e698): tag struct RenderPrimitive as struct RenderPrimitive__f17e698; f15585c.c has another definition. */
-struct RenderPrimitive__f17e698 {
-  s32 kind;
-  s32 unk04;
-  const void *faces;
-  void *vertices;
-  struct BurstTexture *texture;
-  s32 unk14;
-};
 
 extern char ResourceId_EarthWallSheet;
 extern char ResourceId_OrangePaletteB;
@@ -30128,7 +29998,7 @@ void wait(s32 frames);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void BattleEffect_EndCanvasLayer(void);
 
-/* VIEW(f17e698): static ClearWords as ClearWords__f17e698; f16c274 has static inline s32 ClearWords(void *destination, s32 size) { return Iwram_ClearWords(destination, size); }. */
+/* VIEW(f17e698): static ClearWords as ClearWords__f17e698; f16c274 has static inline s32 ClearWords(void *destination, s32 size) { return Iwram_ClearWords(destination, size); }; not tried: ClearWords's definition holds a FAKEMATCH tag. */
 static inline s32 ClearWords__f17e698(void *destination, s32 size) {
   /* FAKEMATCH(wrapper): the sheet's clear through this inline; as a direct
    * call to Iwram_ClearWords, 2 of 386 instructions of Func_0817e698 differ
@@ -30136,7 +30006,7 @@ static inline s32 ClearWords__f17e698(void *destination, s32 size) {
   return Iwram_ClearWords(destination, size);
 }
 
-/* VIEW(f17e698): static CopyWords as CopyWords__f17e698; f15585c has static inline s32 CopyWords(void *destination, const void *source, s32 size) { return Iwram_CopyWords(destination, source, size); }. */
+/* VIEW(f17e698): static CopyWords as CopyWords__f17e698; f15585c has static inline s32 CopyWords(void *destination, const void *source, s32 size) { return Iwram_CopyWords(destination, source, size); }; not tried: CopyWords's definition holds a FAKEMATCH tag. */
 static inline s32 CopyWords__f17e698(void *destination, const void *source, s32 size) {
   /* FAKEMATCH(wrapper): the palette copies through this inline; as direct
    * calls to Iwram_CopyWords, 4 of 386 instructions of Func_0817e698 differ
@@ -30155,7 +30025,7 @@ void Func_0817e698(struct BattleEffectArgument *effect, s32 mode) {
       (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   struct BurstTexture texture;
   struct EffectPosition target;
-  struct RenderPrimitive__f17e698 *quad;
+  struct RenderPrimitive *quad;
   void *vertices;
   s32 frame;
   s32 cel;
@@ -30280,7 +30150,7 @@ typedef volatile u16 vu16;
 typedef volatile u32 vu32;
 typedef volatile s32 vs32;
 
-/* VIEW(f17e698): tag struct Particle as struct Particle__f17e698; f15585c.c has another definition. */
+/* VIEW(f17e698): tag struct Particle as struct Particle__f17e698; f15585c.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:30479: structure has no member named `timer'. */
 typedef struct Particle__f17e698 {
   s32 x;
   s32 y;
@@ -30338,7 +30208,7 @@ typedef struct Bitmap {
   void *data;
 } Bitmap;
 
-/* VIEW(f17e698): tag struct SummonWork as struct SummonWork__f17e698; f15585c.c has another definition. */
+/* VIEW(f17e698): tag struct SummonWork as struct SummonWork__f17e698; f15585c.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:30373: structure has no member named `transferMode'. */
 struct SummonWork__f17e698 {
   Particle particles[48];
   u8 unk0540[0x1c0];
@@ -30371,19 +30241,12 @@ struct SummonArgument {
   s16 actors[8];
 };
 
-/* VIEW(f17e698): tag struct InputState as struct InputState__f17e698; input.h has another definition. */
-struct InputState__f17e698 {
-  u32 held;
-  u32 unk4;
-  u32 unk8;
-  u32 repeat;
-};
 
 typedef void (*CopyFunc)(void *, const void *, s32);
 typedef void (*ClearFunc)(void *, s32);
 typedef void (*BlitFunc)(void *, const void *, s32, s32, s32, s32);
 
-/* VIEW(f17e698): tag struct SystemWork as struct SystemWork__f17e698; f15585c.c has another definition. */
+/* VIEW(f17e698): tag struct SystemWork as struct SystemWork__f17e698; f15585c.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:30365: structure has no member named `map'. */
 struct SystemWork__f17e698 {
   u8 unk00[0x24];
   s32 *bank;
@@ -30410,8 +30273,8 @@ static inline void Iwram_Copy(void *d, const void *s, s32 n) {
 #define VRAM_SLOTS gResourceTableEntries
 #define DECODE_BUFFER Ram_MapCellBuffer
 #define PARTICLES ((Particle *)(Ram_MapCellBuffer + 0x4000))
-/* VIEW(f17e698): variable gInput as extern struct InputState__f17e698 gInput; input.h has extern struct InputState gInput. */
-extern struct InputState__f17e698 gInput__f17e698 __asm__("gInput");
+/* VIEW(f17e698): variable gInput as extern struct InputState__f17e698 gInput; input.h has extern struct InputState gInput; tried as the 3 declarations' extern u32 gInput, it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:30276: conflicting types for `gInput'. */
+extern struct InputState gInput__f17e698 __asm__("gInput");
 
 extern struct BgScroll gBgScroll[];
 extern char ResourceId_VioletSkyBackdrop;
@@ -30449,10 +30312,10 @@ void Func_08179e6c(void);
 
 void BattleActor_SpawnObjectsForListFar(s16 *list, s32 mode);
 void BattleBackground_LoadFar(s32, s32, s32);
-/* VIEW(f17e698): routine Func_0815b290 as struct SpriteObject *Func_0815b290(s32 width, s32 height, u32 shape, u32 attributes); the definition has struct EffectSprite *Func_0815b290(s32 width, s32 height, s32 attributes, s32 flags). */
+/* VIEW(f17e698): routine Func_0815b290 as struct SpriteObject *Func_0815b290(s32 width, s32 height, u32 shape, u32 attributes); the definition has struct EffectSprite *Func_0815b290(s32 width, s32 height, s32 attributes, s32 flags); tried as the definition's struct EffectSprite *Func_0815b290(s32 width, s32 height, s32 attributes, s32 flags), which the object already declares, BattleEffect_RunDaedalus moves: 4 of 3898 instructions in tla-ja. */
 extern struct SpriteObject *Func_0815b290__f17e698(s32 width, s32 height, u32 shape,
                                    u32 attributes) __asm__("Func_0815b290");
-/* VIEW(f17e698): routine Func_0815b3b0 as Sprite *Func_0815b3b0(s32, s32, u32, s32); the definition has struct EffectSprite__f15b3b0 *Func_0815b3b0(s32 kind, s32 value). */
+/* VIEW(f17e698): routine Func_0815b3b0 as Sprite *Func_0815b3b0(s32, s32, u32, s32); the definition has struct EffectSprite__f15b3b0 *Func_0815b3b0(s32 kind, s32 value); tried as the definition's struct EffectSprite__f15b3b0 *Func_0815b3b0(s32 kind, s32 value), which the object already declares, BattleEffect_RunDaedalus moves: 3 of 3898 instructions in tla-ja. */
 extern Sprite *Func_0815b3b0__f17e698(s32, s32, u32, s32) __asm__("Func_0815b3b0");
 
 void BattleEffect_FetchRectangleBlitters(s32, void **);
@@ -31571,7 +31434,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
 struct FxPartyList;
 
 
-/* VIEW(f17e698): tag struct RenderModel as struct RenderModel__f17e698; render_model.h has another definition. */
+/* VIEW(f17e698): tag struct RenderModel as struct RenderModel__f17e698; render_model.h has another definition; tried with the definition the rest of the object has, BattleEffect_RunDaedalusAlt moves: 2 of 572 instructions in tla-ja. */
 struct RenderModel__f17e698 {
   s32 kind;
   s32 unk04;
@@ -31602,7 +31465,7 @@ extern char ResourceId_Data0C9;
 extern u8 gMapCellBuffer[];
 
 extern const u8 Data_081995ec[]; // the seven strike frames
-/* VIEW(f17e698): tag struct PlacementSource as struct PlacementSource__f17e698; f15585c.c has another definition. */
+/* VIEW(f17e698): tag struct PlacementSource as struct PlacementSource__f17e698; f15585c.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:31647: structure has no member named `x'. */
 struct PlacementSource__f17e698 {
   s32 x;
   s32 y;
@@ -31611,7 +31474,7 @@ extern const struct PlacementSource__f17e698
     Data_08196ee8;                         // the summon's placement source
 extern const u8 Data_08199220[];           // the rings' mesh
 extern const u8 gData_081991b0[];          // their corners
-/* VIEW(f17e698): variable gData_02014000 as extern struct EffectStep gData_02014000[]; f17e0c0 has extern u8 gData_02014000[]. */
+/* VIEW(f17e698): variable gData_02014000 as extern struct EffectStep gData_02014000[]; f17e0c0 has extern u8 gData_02014000[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:31688: request for member `variant' in something not a structure or union. */
 extern struct EffectStep gData_02014000__f17e698[] __asm__("gData_02014000"); // the sparks
 
 #define BLITTER ((DrawRectangle)Ram_HeapSlots->unk64[1])
@@ -32549,7 +32412,7 @@ void BattleEffect_RunLifeShear(struct BattleEffectArgument *effect) {
 void Func_08181ed4(struct BattleEffectArgument *effect, s32 mode);
 
 /// Abilities: Purgatory (kind 114).
-/* VIEW(f1811d4): tag struct Texture as struct Texture__f1811d4; f15585c.c has another definition. */
+/* VIEW(f1811d4): tag struct Texture as struct Texture__f1811d4; f15585c.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:32640: structure has no member named `size'. */
 DEFINE_EFFECT_KIND(BattleEffect_RunPurgatory, Func_08181ed4, 0)
 
 /// Abilities: Djinn Blast (kind 461).
@@ -32575,7 +32438,7 @@ struct Texture__f1811d4 {
 
 // One entry of the list Render_DrawModelList draws; kind 7 is a textured mesh
 // whose texture scrolls by scrollU and scrollV.
-/* VIEW(f1811d4): tag struct RenderPrimitive as struct RenderPrimitive__f1811d4; f15585c.c has another definition. */
+/* VIEW(f1811d4): tag struct RenderPrimitive as struct RenderPrimitive__f1811d4; f15585c.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:32636: structure has no member named `scrollU'. */
 struct RenderPrimitive__f1811d4 {
   s32 kind;
   s32 unk04;
@@ -33185,7 +33048,7 @@ struct SpriteView {
 
 
 
-/* VIEW(f1811d4): variable gResourceTableEntries as extern struct ResourceTableEntry gResourceTableEntries[]; vram_tab.h has extern struct VramBlockCacheEntry gResourceTableEntries[]. */
+/* VIEW(f1811d4): variable gResourceTableEntries as extern struct ResourceTableEntry gResourceTableEntries[]; vram_tab.h has extern struct VramBlockCacheEntry gResourceTableEntries[]; tried as the 12 declarations' extern struct ResourceTableEntry gResourceTableEntries[], it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:33081: conflicting types for `gResourceTableEntries'. */
 extern struct ResourceTableEntry gResourceTableEntries__f1811d4[] __asm__("gResourceTableEntries");
 
 #define EFFECT_STEPS ((struct EffectStep *)(Ram_MapCellBuffer + 0x5000))
@@ -33222,13 +33085,13 @@ extern char ResourceId_Data0C2;
 extern char ResourceId_Data0FB;
 extern char ResourceId_Data0FC;
 
-/* VIEW(f1811d4): routine Func_0815b290 as struct SpriteObject *Func_0815b290(s32 width, s32 height, u32 shape, u32 attributes); the definition has struct EffectSprite *Func_0815b290(s32 width, s32 height, s32 attributes, s32 flags). */
+/* VIEW(f1811d4): routine Func_0815b290 as struct SpriteObject *Func_0815b290(s32 width, s32 height, u32 shape, u32 attributes); the definition has struct EffectSprite *Func_0815b290(s32 width, s32 height, s32 attributes, s32 flags); tried as the definition's struct EffectSprite *Func_0815b290(s32 width, s32 height, s32 attributes, s32 flags), which the object already declares, BattleEffect_RunCoatlicue moves: 1 of 2768 instructions in tla-ja. */
 extern struct SpriteObject *Func_0815b290__f1811d4(s32 width, s32 height, u32 shape,
                                    u32 attributes) __asm__("Func_0815b290");
 void BattleEffect_ConfigureEffectDisplay(void);
 void Func_08179e6c(void);
 void BattleEffect_ArmPaletteHBlankDma(void);
-/* VIEW(f1811d4): routine Func_081885f0 as void Func_081885f0(struct MeshVertex *vertices, struct MeshTriangle *triangles, s32 segments); the definition has void Func_081885f0(struct MeshVertex__f186dfc *vertices, struct MeshTriangle *triangles, s32 segments). */
+/* VIEW(f1811d4): routine Func_081885f0 as void Func_081885f0(struct MeshVertex *vertices, struct MeshTriangle *triangles, s32 segments); the definition has void Func_081885f0(struct MeshVertex__f186dfc *vertices, struct MeshTriangle *triangles, s32 segments); tried as the definition's void Func_081885f0(struct MeshVertex__f186dfc *vertices, struct MeshTriangle *triangles, s32 segments), which the object already declares, BattleEffect_RunCoatlicue moves: 3 of 2768 instructions in tla-ja. */
 extern void Func_081885f0__f1811d4(struct MeshVertex *vertices, struct MeshTriangle *triangles,
                    s32 segments) __asm__("Func_081885f0");
 void BattleActor_SpawnObjectsForListFar(s16 *list, s32 mode);
@@ -33308,7 +33171,7 @@ void Func_08164b2c(s32 r, s32 g, s32 b);
     }                                                                          \
   } while (0)
 
-/* VIEW(f1811d4): static CopyWords as CopyWords__f1811d4; the definition has static inline s32 CopyWords(void *destination, const void *source, s32 size). */
+/* VIEW(f1811d4): static CopyWords as CopyWords__f1811d4; the definition has static inline s32 CopyWords(void *destination, const void *source, s32 size); not tried: CopyWords's definition holds a FAKEMATCH tag. */
 static inline void CopyWords__f1811d4(void *destination, const void *source, s32 size) {
   /* FAKEMATCH(wrapper): the copies through this inline, so their sizes stay
    * out of CSE; as direct calls to Iwram_CopyWords, 528 of 2781 instructions
@@ -33316,7 +33179,7 @@ static inline void CopyWords__f1811d4(void *destination, const void *source, s32
   Iwram_CopyWords(destination, source, size);
 }
 
-/* VIEW(f1811d4): static FillWords as FillWords__f1811d4; actor_move_random has static inline void FillWords(void *dst, s32 size, s32 value) { Iwram_FillWords(dst, size, value); }. */
+/* VIEW(f1811d4): static FillWords as FillWords__f1811d4; actor_move_random has static inline void FillWords(void *dst, s32 size, s32 value) { Iwram_FillWords(dst, size, value); }; not tried: FillWords's definition holds a FAKEMATCH tag. */
 static inline void FillWords__f1811d4(void *destination, s32 size, s32 value) {
   /* FAKEMATCH(wrapper): the last two fills through this inline, so the
    * routine's address loads before the value; as direct calls to
@@ -34278,7 +34141,7 @@ struct Model;
 struct StripQuad;
 
 
-/* VIEW(f1843fc): tag struct RenderModel as struct RenderModel__f1843fc; render_model.h has another definition. */
+/* VIEW(f1843fc): tag struct RenderModel as struct RenderModel__f1843fc; render_model.h has another definition; tried with the definition the rest of the object has, BattleEffect_RunCatastrophe moves: 2 of 4547 instructions in tla-ja. */
 struct RenderModel__f1843fc {
   s32 kind;
   s32 unk04;
@@ -34379,10 +34242,10 @@ extern char ResourceId_RedHazeBackdrop;
 extern char ResourceId_SmokeBandSheet;
 extern char ResourceId_TornadoSheet;
 extern char ResourceId_WhiteSpikesTiles;
-/* VIEW(f1843fc): variable gResourceTableEntries as extern struct ResourceTableEntry gResourceTableEntries[]; vram_tab.h has extern struct VramBlockCacheEntry gResourceTableEntries[]. */
+/* VIEW(f1843fc): variable gResourceTableEntries as extern struct ResourceTableEntry gResourceTableEntries[]; vram_tab.h has extern struct VramBlockCacheEntry gResourceTableEntries[]; tried as the 12 declarations' extern struct ResourceTableEntry gResourceTableEntries[], it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:34275: conflicting types for `gResourceTableEntries'. */
 extern struct ResourceTableEntry gResourceTableEntries__f1843fc[] __asm__("gResourceTableEntries");
 extern u8 gMapCellBuffer[];
-/* VIEW(f1843fc): variable gData_02014000 as extern u8 gData_02014000[]; f17e698 has extern struct EffectStep gData_02014000[]. */
+/* VIEW(f1843fc): variable gData_02014000 as extern u8 gData_02014000[]; f17e698 has extern struct EffectStep gData_02014000[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:35963: `gData_02014000__f1843fc' undeclared (first use in this function). */
 extern u8 gData_02014000__f1843fc[] __asm__("gData_02014000");
 extern u8 Data_02011000[];
 extern u8 Data_02012000[];
@@ -34427,10 +34290,10 @@ extern const s16 Data_081999f2[];
 
 void VramBlock_Reset93Far(void);
 void Func_08020388(void);
-/* VIEW(f1843fc): routine Func_0815b290 as struct SpriteObject *Func_0815b290(s32 width, s32 height, u32 shape, u32 attributes); the definition has struct EffectSprite *Func_0815b290(s32 width, s32 height, s32 attributes, s32 flags). */
+/* VIEW(f1843fc): routine Func_0815b290 as struct SpriteObject *Func_0815b290(s32 width, s32 height, u32 shape, u32 attributes); the definition has struct EffectSprite *Func_0815b290(s32 width, s32 height, s32 attributes, s32 flags); tried as the definition's struct EffectSprite *Func_0815b290(s32 width, s32 height, s32 attributes, s32 flags), which the object already declares, BattleEffect_RunCatastrophe moves: 4 of 4547 instructions in tla-ja. */
 extern struct SpriteObject *Func_0815b290__f1843fc(s32 width, s32 height, u32 shape,
                                    u32 attributes) __asm__("Func_0815b290");
-/* VIEW(f1843fc): routine Func_0815b3b0 as struct SpriteObject *Func_0815b3b0(s32 width, s32 height, u32 shape, s32 mode); f17e698 has Sprite *Func_0815b3b0(s32, s32, u32, s32). */
+/* VIEW(f1843fc): routine Func_0815b3b0 as struct SpriteObject *Func_0815b3b0(s32 width, s32 height, u32 shape, s32 mode); f17e698 has Sprite *Func_0815b3b0(s32, s32, u32, s32); tried as the definition's struct EffectSprite__f15b3b0 *Func_0815b3b0(s32 kind, s32 value), which the object already declares, BattleEffect_RunCatastrophe moves: 2 of 4547 instructions in tla-ja. */
 extern struct SpriteObject *Func_0815b3b0__f1843fc(s32 width, s32 height, u32 shape, s32 mode) __asm__("Func_0815b3b0");
 
 void BattleEffect_ConfigureEffectDisplay(void);
@@ -36125,7 +35988,7 @@ struct HalfPair {
   u16 y;
 };
 
-/* VIEW(f186dfc): variable gResourceTableEntries as extern struct ResourceTableEntry gResourceTableEntries[]; vram_tab.h has extern struct VramBlockCacheEntry gResourceTableEntries[]. */
+/* VIEW(f186dfc): variable gResourceTableEntries as extern struct ResourceTableEntry gResourceTableEntries[]; vram_tab.h has extern struct VramBlockCacheEntry gResourceTableEntries[]; tried as the 12 declarations' extern struct ResourceTableEntry gResourceTableEntries[], it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:36021: conflicting types for `gResourceTableEntries'. */
 extern struct ResourceTableEntry gResourceTableEntries__f186dfc[] __asm__("gResourceTableEntries");
 struct WingVertex {
   s8 x;
@@ -36180,9 +36043,6 @@ extern char ResourceId_SmokeBandSheet;
 extern char ResourceId_Data134;
 
 void Animation_ApplyChildArgumentFar(void *object, s32 argument);
-/* VIEW(f186dfc): routine Func_0815b290 as struct SpriteObject *Func_0815b290(s32 width, s32 height, u32 shape, u32 attributes); the definition has struct EffectSprite *Func_0815b290(s32 width, s32 height, s32 attributes, s32 flags). */
-extern struct SpriteObject *Func_0815b290__f186dfc(s32 width, s32 height, u32 shape,
-                                   u32 attributes) __asm__("Func_0815b290");
 void BattleEffect_ConfigureEffectDisplay(void);
 void Func_08163c2c(s32 a, s32 b);
 void Func_0814cca8(void); // BattleEffect_SetupBlendedDisplay
@@ -36200,7 +36060,7 @@ void BattleEffect_ProcessPendingStampTransfer(
 #define STAMP_CANVAS(work) ((u8 *)(work) + 0x6780)
 #define HALF_HI(v) (((s16 *)&(v))[1])
 
-/* VIEW(f186dfc): static ClearWords as ClearWords__f186dfc; f16c274 has static inline s32 ClearWords(void *destination, s32 size) { return Iwram_ClearWords(destination, size); }. */
+/* VIEW(f186dfc): static ClearWords as ClearWords__f186dfc; f16c274 has static inline s32 ClearWords(void *destination, s32 size) { return Iwram_ClearWords(destination, size); }; not tried: ClearWords's definition holds a FAKEMATCH tag. */
 static inline s32 ClearWords__f186dfc(void *destination, s32 size) {
   /* FAKEMATCH(wrapper): the buffer clears through this inline; as direct
    * calls to Iwram_ClearWords, 4 of 2667 instructions of
@@ -36295,7 +36155,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
       }
     }
   }
-  sprite = Func_0815b290__f186dfc(64, 64, 0xc0002000, 0);
+  sprite = Func_0815b290(64, 64, 0xc0002000, 0);
   ((struct FieldSprite **)work->objects)[18] = sprite;
   sprite->blendMode = 1;
   STAMP_TILES(work) =
@@ -37178,13 +37038,6 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
 #define COLUMN_WIDTH 8
 #define COLUMN_HEIGHT 16
 
-/* VIEW(f186dfc): tag struct MeshVertex as struct MeshVertex__f186dfc; f15585c.c has another definition. */
-struct MeshVertex__f186dfc {
-  s8 x;
-  s8 y;
-  s8 z;
-  u8 unk03;
-};
 
 struct MeshTriangle {
   u8 vertex[3];
@@ -37199,7 +37052,7 @@ struct MeshTriangle {
 // to the second (row 15). A triangle whose three vertices are 0 ends the list.
 // Summon 20 builds it with 32 segments into the buffers at 0x02014400 and
 // 0x02014800.
-void Func_081885f0(struct MeshVertex__f186dfc *vertices, struct MeshTriangle *triangles,
+void Func_081885f0(struct MeshVertex *vertices, struct MeshTriangle *triangles,
                    s32 segments) {
   s32 ring;
   s32 i;
@@ -37286,7 +37139,7 @@ void Func_081885f0(struct MeshVertex__f186dfc *vertices, struct MeshTriangle *tr
 
 // A texture for the model kernels: its size as powers of two, then its
 // pixels.
-/* VIEW(f188714): tag struct ModelTexture as struct ModelTexture__f188714; render_model.h has another definition. */
+/* VIEW(f188714): tag struct ModelTexture as struct ModelTexture__f188714; render_model.h has another definition; tried with the definition the rest of the object has, BattleEffect_RunDeathPlunge moves: 1 of 632 instructions in tla-ja. */
 struct ModelTexture__f188714 {
   u32 logWidth : 8;
   u32 logHeight : 8;
@@ -37296,7 +37149,7 @@ struct ModelTexture__f188714 {
 
 // One entry of a model list, as Render_AllocateModelList allocates them and
 // Render_DrawModelList draws them.
-/* VIEW(f188714): tag struct Model as struct Model__f188714; f15585c.c has another definition. */
+/* VIEW(f188714): tag struct Model as struct Model__f188714; f15585c.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:37378: structure has no member named `vertices'. */
 struct Model__f188714 {
   s32 kind;
   s32 next;
@@ -37337,8 +37190,6 @@ void Func_080151e4(s32 x, s32 y, s32 z);
 void Func_080150e4(s32 angle);
 void SceneTransform_ApplyPitch(s32 angle);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
-/* VIEW(f188714): routine Render_DrawModelList as void Render_DrawModelList(struct Model__f188714 *model); f186dfc has void Render_DrawModelList(struct Model *model). */
-extern void Render_DrawModelList__f188714(struct Model__f188714 *model) __asm__("Render_DrawModelList");
 void Heap_Release(void *block);
 void Func_081180e8(s32 phase);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
@@ -37544,7 +37395,7 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectArgument *effect) {
             Func_080150e4(angle);
             SceneTransform_ApplyPitch(-0x1000);
             Render_TransformVertices(gData_08199210, vertices, 4);
-            Render_DrawModelList__f188714(model);
+            Render_DrawModelList(model);
           }
         }
       }
@@ -38239,7 +38090,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectArgument *effect) {
 
 // One entry of a model list, as Render_AllocateModelList allocates them and
 // Render_DrawModelList draws them.
-/* VIEW(f189b14): tag struct Model as struct Model__f189b14; f15585c.c has another definition. */
+/* VIEW(f189b14): tag struct Model as struct Model__f189b14; f15585c.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:38301: structure has no member named `vertices'. */
 struct Model__f189b14 {
   s32 kind;
   s32 next;
@@ -38292,8 +38143,6 @@ void SceneTransform_ApplyYaw(s32 angle);
 void Func_080150e4(s32 angle);
 void Func_0801521c(s32 scale);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
-/* VIEW(f189b14): routine Render_DrawModelList as void Render_DrawModelList(struct Model__f189b14 *model); f188714 has void Render_DrawModelList(struct Model *model). */
-extern void Render_DrawModelList__f189b14(struct Model__f189b14 *model) __asm__("Render_DrawModelList");
 void Heap_Release(void *block);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffect_CountDownBattlerTints(void);
@@ -38488,7 +38337,7 @@ void BattleEffect_RunLegend(struct BattleEffectArgument *effect) {
         Func_0801521c(scale);
         Func_080151e4(0x10000, 0x10000, 0x10000);
         Render_TransformVertices(Data_081991e0, vertices, 4);
-        Render_DrawModelList__f189b14(model);
+        Render_DrawModelList(model);
       }
 
       // Each sword's flash grows where it lands and fades over 16 frames.
@@ -38514,7 +38363,7 @@ void BattleEffect_RunLegend(struct BattleEffectArgument *effect) {
             Func_080150e4(frame << 9);
             Func_0801521c(scale);
             Render_TransformVertices(Data_081991e0, vertices, 4);
-            Render_DrawModelList__f189b14(model);
+            Render_DrawModelList(model);
           }
         }
       }
@@ -38540,7 +38389,7 @@ void BattleEffect_RunLegend(struct BattleEffectArgument *effect) {
           Func_080151e4(0x8000, 0x10000,
                         (Trig_Sin((frame + i * 8) << 9) / 8 + scale) * 2);
           Render_TransformVertices(Data_08199200, vertices, 4);
-          Render_DrawModelList__f189b14(model);
+          Render_DrawModelList(model);
         }
       }
       Heap_Release(model);
@@ -38895,7 +38744,7 @@ void Func_0818a220(struct BattleEffectArgument *effect, s32 mode) {
       Func_0801521c(scale);
       Func_080151e4(0x10000, 0x20000, 0x10000);
       Render_TransformVertices(Data_081991e0, vertices, 4);
-      Render_DrawModelList__f189b14(model);
+      Render_DrawModelList(model);
       if (mode == CARD_BRAMBLE || mode == CARD_THUNDER) {
         Func_0801521c(0x4000);
         Render_TransformVertices(Data_081991e0, vertices, 4);
@@ -38975,7 +38824,7 @@ void Func_0818a220(struct BattleEffectArgument *effect, s32 mode) {
           Func_080151e4(0x20000, 0x20000, 0x10000);
         }
         Render_TransformVertices(Data_081991c0, vertices, 4);
-        Render_DrawModelList__f189b14(model);
+        Render_DrawModelList(model);
       }
     }
     Heap_Release(model);
@@ -39065,7 +38914,7 @@ enum {
 
 // A texture for the model kernels: its size as powers of two, then its
 // pixels.
-/* VIEW(f18ad40): tag struct ModelTexture as struct ModelTexture__f18ad40; render_model.h has another definition. */
+/* VIEW(f18ad40): tag struct ModelTexture as struct ModelTexture__f18ad40; render_model.h has another definition; tried with the definition the rest of the object has, Func_0818ad40 moves: 1 of 1232 instructions in tla-ja. */
 struct ModelTexture__f18ad40 {
   u32 logWidth : 8;
   u32 logHeight : 8;
@@ -39075,7 +38924,7 @@ struct ModelTexture__f18ad40 {
 
 // One entry of a model list, as Render_AllocateModelList allocates them and
 // Render_DrawModelList draws them.
-/* VIEW(f18ad40): tag struct Model as struct Model__f18ad40; f15585c.c has another definition. */
+/* VIEW(f18ad40): tag struct Model as struct Model__f18ad40; f15585c.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:39213: structure has no member named `vertices'. */
 struct Model__f18ad40 {
   s32 kind;
   s32 next;
@@ -39138,8 +38987,6 @@ void SceneTransform_ApplyYaw(s32 angle);
 void Func_080150e4(s32 angle);
 void Func_0801521c(s32 scale);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
-/* VIEW(f18ad40): routine Render_DrawModelList as void Render_DrawModelList(struct Model__f18ad40 *model); f188714 has void Render_DrawModelList(struct Model__f188714 *model). */
-extern void Render_DrawModelList__f18ad40(struct Model__f18ad40 *model) __asm__("Render_DrawModelList");
 void Heap_Release(void *block);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffect_CountDownBattlerTints(void);
@@ -39398,7 +39245,7 @@ void Func_0818ad40(struct BattleEffectArgument *effect, s32 mode) {
       Func_0801521c(scale);
       Func_080151e4(0x10000, 0x20000, 0x10000);
       Render_TransformVertices(Data_081991e0, vertices, 4);
-      Render_DrawModelList__f18ad40(model);
+      Render_DrawModelList(model);
       Heap_Release(model);
       Heap_Release(vertices);
     }
@@ -39621,7 +39468,7 @@ void Func_0818ad40(struct BattleEffectArgument *effect, s32 mode) {
 
 // One entry of a model list, as Render_AllocateModelList allocates them and
 // Render_DrawModelList draws them.
-/* VIEW(f18b868): tag struct Model as struct Model__f18b868; f15585c.c has another definition. */
+/* VIEW(f18b868): tag struct Model as struct Model__f18b868; f15585c.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:39584: structure has no member named `vertices'. */
 struct Model__f18b868 {
   s32 kind;
   s32 next;
@@ -39672,8 +39519,6 @@ void Func_080150e4(s32 angle);
 void SceneTransform_ApplyPitch(s32 angle);
 void Func_0801521c(s32 scale);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
-/* VIEW(f18b868): routine Render_DrawModelList as void Render_DrawModelList(struct Model__f18b868 *model); f18ad40 has void Render_DrawModelList(struct Model *model). */
-extern void Render_DrawModelList__f18b868(struct Model__f18b868 *model) __asm__("Render_DrawModelList");
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                           s32 gravity);
 void Heap_Release(void *block);
@@ -39801,7 +39646,7 @@ void BattleEffect_RunTripleChomp(struct BattleEffectArgument *effect) {
           SceneTransform_ApplyPitch(-0x1000);
           Func_0801521c(scale);
           Render_TransformVertices(gData_08199210, vertices, 4);
-          Render_DrawModelList__f18b868(model);
+          Render_DrawModelList(model);
         }
       }
     }
@@ -39891,7 +39736,7 @@ enum {
 
 // A texture for the model kernels: its size as powers of two, then its
 // pixels.
-/* VIEW(f18bc98): tag struct ModelTexture as struct ModelTexture__f18bc98; render_model.h has another definition. */
+/* VIEW(f18bc98): tag struct ModelTexture as struct ModelTexture__f18bc98; render_model.h has another definition; tried with the definition the rest of the object has, Func_0818bc98 moves: 1 of 1241 instructions in tla-ja. */
 struct ModelTexture__f18bc98 {
   u32 logWidth : 8;
   u32 logHeight : 8;
@@ -39901,7 +39746,7 @@ struct ModelTexture__f18bc98 {
 
 // One entry of a model list, as Render_AllocateModelList allocates them and
 // Render_DrawModelList draws them.
-/* VIEW(f18bc98): tag struct Model as struct Model__f18bc98; f15585c.c has another definition. */
+/* VIEW(f18bc98): tag struct Model as struct Model__f18bc98; f15585c.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:40081: structure has no member named `vertices'. */
 struct Model__f18bc98 {
   s32 kind;
   s32 next;
@@ -39968,8 +39813,6 @@ void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
 void Func_080150e4(s32 angle);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
-/* VIEW(f18bc98): routine Render_DrawModelList as void Render_DrawModelList(struct Model__f18bc98 *model); f18ad40 has void Render_DrawModelList(struct Model__f18ad40 *model). */
-extern void Render_DrawModelList__f18bc98(struct Model__f18bc98 *model) __asm__("Render_DrawModelList");
 void Heap_Release(void *block);
 void Sound_PlayFar(s32 cue);
 void Func_081180e8(s32 phase);
@@ -40285,7 +40128,7 @@ void Func_0818bc98(struct BattleEffectArgument *effect, s32 mode) {
                 scale /= 2;
               Func_080151e4(scale / 2, scale, scale / 2);
               Render_TransformVertices(gData_08199210, vertices, 4);
-              Render_DrawModelList__f18bc98(model);
+              Render_DrawModelList(model);
             }
           }
         }
@@ -40333,7 +40176,7 @@ void Func_0818bc98(struct BattleEffectArgument *effect, s32 mode) {
                 SceneTransform_ApplyPitch(0x4000);
                 SceneTransform_ApplyYaw(frame << 10);
                 Render_TransformVertices(Data_08198cac, vertices, 32);
-                Render_DrawModelList__f18bc98(model);
+                Render_DrawModelList(model);
               }
             }
           }
@@ -40363,7 +40206,7 @@ void Func_0818bc98(struct BattleEffectArgument *effect, s32 mode) {
           Func_080150e4(angle);
           Func_080151e4(0x40000, 0x20000, 0x10000);
           Render_TransformVertices(Data_081991c0, vertices, 4);
-          Render_DrawModelList__f18bc98(model);
+          Render_DrawModelList(model);
         }
         Heap_Release(model);
         Heap_Release(vertices);
@@ -40648,8 +40491,6 @@ void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen,
 void Func_0818caa8(void *cells, s32 x, s32 y, s32 size);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
-/* VIEW(f18cb74): routine Render_DrawModelList as void Render_DrawModelList(struct Model *model); f18bc98 has void Render_DrawModelList(struct Model__f18bc98 *model). */
-extern void Render_DrawModelList__f18cb74(struct Model *model) __asm__("Render_DrawModelList");
 void Func_08015160(s32 x, s32 y, s32 z);
 void Func_0801521c(s32 scale);
 void SceneTransform_ApplyPitch(s32 angle);
@@ -40714,12 +40555,7 @@ extern u8 gMapCellBuffer[];
 extern u8 Data_02011000[];
 extern u8 Data_02011400[];
 extern u8 Data_02012964[]; // 128 sparks
-/* VIEW(f18cb74): tag struct PlacementSource as struct PlacementSource__f18cb74; f15585c.c has another definition. */
-struct PlacementSource__f18cb74 {
-  s32 x;
-  s32 y;
-};
-extern const struct PlacementSource__f18cb74 Data_08196f18;
+extern const struct PlacementSource Data_08196f18;
 extern u16 gData_08197410[];
 extern u16 gData_08197486[]; // the glints' cells
 extern u8 gData_08197492[];  // widths
@@ -40748,7 +40584,7 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
   s16 *circles;
   s32 center[3];
   s32 placement[4];
-  struct PlacementSource__f18cb74 source;
+  struct PlacementSource source;
   struct ModelTexture texture;
   struct RenderModel *model;
   void *vertices;
@@ -40998,7 +40834,7 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
         model->scrollU = ((frame + i * 5) & 7) << 4;
         SceneTransform_ApplyPitch(3000);
         Render_TransformVertices(Data_08198cac, vertices, 32);
-        Render_DrawModelList__f18cb74(model);
+        Render_DrawModelList(model);
       }
 
       // The tridents.
@@ -41048,7 +40884,7 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
           spinner->z += spinner->velocityZ;
           Func_080151e4(0x20000, 0x12710, 0x10000);
           Render_TransformVertices(Data_08199e24 + x * 16, vertices, 4);
-          Render_DrawModelList__f18cb74(model);
+          Render_DrawModelList(model);
         }
       }
       Heap_Release(model);
@@ -41402,7 +41238,7 @@ void Func_0818d5a8(struct BattleEffectArgument *effect, s32 mode) {
           }
           Func_0801521c(0x286a0);
           Render_TransformVertices(Data_081991e0, projected, 4);
-          Render_DrawModelList__f18cb74(model);
+          Render_DrawModelList(model);
         }
 
         // Three rings, each from its own frame, spinning as they spread.
@@ -41436,7 +41272,7 @@ void Func_0818d5a8(struct BattleEffectArgument *effect, s32 mode) {
               else
                 SceneTransform_ApplyYaw((i * 4 - frame) << 11);
               Render_TransformVertices(gData_08199090, projected, 32);
-              Render_DrawModelList__f18cb74(model);
+              Render_DrawModelList(model);
             }
           }
         }
@@ -41477,7 +41313,7 @@ void Func_0818d5a8(struct BattleEffectArgument *effect, s32 mode) {
               Func_080151e4(scale, scale * 2, scale);
               SceneTransform_ApplyPitch(2000);
               Render_TransformVertices(Data_08198cac, projected, 32);
-              Render_DrawModelList__f18cb74(model);
+              Render_DrawModelList(model);
             }
           }
         }
@@ -41604,7 +41440,7 @@ struct MeshTriangle;
 struct Model;
 struct StripQuad;
 
-/* VIEW(f18df5c): tag struct ModelTexture as struct ModelTexture__f18df5c; render_model.h has another definition. */
+/* VIEW(f18df5c): tag struct ModelTexture as struct ModelTexture__f18df5c; render_model.h has another definition; tried with the definition the rest of the object has, BattleEffect_RunMeteorBlow moves: 1 of 1545 instructions in tla-ja. */
 struct ModelTexture__f18df5c {
   u32 logWidth : 8;
   u32 logHeight : 8;
@@ -41617,17 +41453,6 @@ struct PointPair {
   s32 y;
 };
 
-/* VIEW(f18df5c): tag struct RenderModel as struct RenderModel__f18df5c; render_model.h has another definition. */
-struct RenderModel__f18df5c {
-  s32 kind;
-  s32 unk04;
-  const void *mesh;
-  void *vertices;
-  struct ModelTexture__f18df5c *texture;
-  s32 shade;
-  u8 scrollU;
-  u8 scrollV;
-};
 
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);
@@ -41971,7 +41796,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
     }
 
     if (frame > 115) {
-      struct RenderModel__f18df5c *model;
+      struct RenderModel *model;
       s32 shade;
       s32 scroll;
       s32 angle;
@@ -42150,7 +41975,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
 
   // The impact: the meteor lands, rings of fire and shards fly.
   for (frame = 0; frame != 50; frame++) {
-    struct RenderModel__f18df5c *model;
+    struct RenderModel *model;
     s32 angle;
     s32 back;
     s32 shade;

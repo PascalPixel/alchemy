@@ -43,7 +43,7 @@ void Func_02001620(s32 objectId) {
 
 void Func_020016a4(void) { GameFlag_SetBit(0x208); }
 
-/* VIEW(s1620): variable gInput as extern u32 gInput; input.h has extern struct InputState gInput. */
+/* VIEW(s1620): variable gInput as extern u32 gInput; input.h has extern struct InputState gInput; tried as the 3 declarations' extern u32 gInput, it does not compile in tla-ja: games/tla/include/system/input.h:37: conflicting types for `gInput'. */
 extern u32 gInput__s1620 __asm__("gInput");
 extern const s16 gData_02002276[];
 void Actor_SetAnimationSpeed(struct Actor *object, s32 value);
@@ -95,7 +95,7 @@ void Func_0200173c(void) {
 }
 
 extern s16 gData_020022b6[];
-/* VIEW(s173c): routine Func_020016b0 as void Func_020016b0(void); the definition has void Func_020016b0(struct Actor *object). */
+/* VIEW(s173c): routine Func_020016b0 as void Func_020016b0(void); the definition has void Func_020016b0(struct Actor *object); tried as the definition's void Func_020016b0(void), it does not compile in tla-ja: games/tla/src/scene/settlements.c:98: conflicting types for `Func_020016b0'. */
 extern void Func_020016b0__s173c(void) __asm__("Func_020016b0");
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 s32 ArcTan2(s32 y, s32 x);

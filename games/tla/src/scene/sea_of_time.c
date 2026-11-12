@@ -71,14 +71,13 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-/* VIEW(sea_of_time): variable gData_020021e4 as extern const u8 gData_020021e4[]; the definition has struct ActorPlacement gData_020021e4[] = { { 8, CONDITION_ALWAYS, (s32) gData_02002154, PIXELS(120), 0, PIXELS(280), FACING_NORTH, 2, 0 }, {.... */
+/* VIEW(sea_of_time): variable gData_020021e4 as extern const u8 gData_020021e4[]; the definition has struct ActorPlacement gData_020021e4[] = { { 8, CONDITION_ALWAYS, (s32) gData_02002154, PIXELS(120), 0, PIXELS(280), FACING_NORTH, 2, 0 }, {...; tried as the definition's extern struct WarpTarget gData_020021e4, it does not compile in tla-ja: games/tla/src/scene/sea_of_time.c:81: cannot convert to a pointer type. */
 extern const u8 gData_020021e4__sea_of_time[] __asm__("gData_020021e4");
-/* VIEW(sea_of_time): variable gData_02002214 as extern const u8 gData_02002214[]; the definition has struct ActorPlacement gData_02002214[] = { { 8, CONDITION_ALWAYS, (s32) gData_02002154, PIXELS(120), 0, PIXELS(280), FACING_NORTH, 2, 0 }, {.... */
-extern const u8 gData_02002214__sea_of_time[] __asm__("gData_02002214");
+extern struct ActorPlacement gData_02002214[];
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov687Room2)
-    return (const struct ActorPlacement *)gData_02002214__sea_of_time;
+    return (const struct ActorPlacement *)gData_02002214;
   return (const struct ActorPlacement *)gData_020021e4__sea_of_time;
 }
 
@@ -371,17 +370,16 @@ struct Spots {
   struct Spot spot[6];
 };
 
-/* VIEW(sea_of_time): variable gData_020022c4 as extern u32 gData_020022c4; the definition has u32 gData_020022c4[] = { 0, }. */
-extern u32 gData_020022c4__sea_of_time __asm__("gData_020022c4");
-/* VIEW(sea_of_time): variable gData_020022be as extern u16 gData_020022be; the definition has u16 gData_020022be[] = { 0, }. */
+extern u32 gData_020022c4[];
+/* VIEW(sea_of_time): variable gData_020022be as extern u16 gData_020022be; the definition has u16 gData_020022be[] = { 0, }; tried as the definition's extern u16 gData_020022be[], it does not compile in tla-ja: games/tla/src/scene/sea_of_time.c:407: `gData_020022be' has an incomplete type. */
 extern u16 gData_020022be__sea_of_time __asm__("gData_020022be");
-/* VIEW(sea_of_time): variable gData_020022c0 as extern s16 gData_020022c0; the definition has u32 gData_020022c0[] = { 0, }. */
+/* VIEW(sea_of_time): variable gData_020022c0 as extern s16 gData_020022c0; the definition has u32 gData_020022c0[] = { 0, }; tried as the definition's extern u32 gData_020022c0[], it does not compile in tla-ja: games/tla/src/scene/sea_of_time.c:408: `gData_020022c0' has an incomplete type. */
 extern s16 gData_020022c0__sea_of_time __asm__("gData_020022c0");
-/* VIEW(sea_of_time): variable gData_020022bc as extern u16 gData_020022bc; the definition has u16 gData_020022bc[] = { 0, }. */
+/* VIEW(sea_of_time): variable gData_020022bc as extern u16 gData_020022bc; the definition has u16 gData_020022bc[] = { 0, }; tried as the definition's extern u16 gData_020022bc[], it does not compile in tla-ja: games/tla/src/scene/sea_of_time.c:443: `gData_020022bc' has an incomplete type. */
 extern u16 gData_020022bc__sea_of_time __asm__("gData_020022bc");
-/* VIEW(sea_of_time): variable gData_02002118 as extern struct Spots gData_02002118; the definition has u16 gData_02002118[] = { 0, 672, 0, 704, 0, 896, 0, 320, 0, 512, 0, 192, 0, 320, 0, 416, 0, 320, 0, 832, 0, 96, 0, 160, }. */
+/* VIEW(sea_of_time): variable gData_02002118 as extern struct Spots gData_02002118; the definition has u16 gData_02002118[] = { 0, 672, 0, 704, 0, 896, 0, 320, 0, 512, 0, 192, 0, 320, 0, 416, 0, 320, 0, 832, 0, 96, 0, 160, }; tried as the definition's extern u16 gData_02002118[], it does not compile in tla-ja: games/tla/src/scene/sea_of_time.c:447: invalid initializer. */
 extern struct Spots gData_02002118__sea_of_time __asm__("gData_02002118");
-/* VIEW(sea_of_time): variable gData_02002110 as extern u8 gData_02002110[]; the definition has u32 gData_02002110[] = { 0x18101810, 0x1810, }. */
+/* VIEW(sea_of_time): variable gData_02002110 as extern u8 gData_02002110[]; the definition has u32 gData_02002110[] = { 0x18101810, 0x1810, }; tried as the definition's extern u32 gData_02002110[], Func_02000a80 moves: 5 of 188 instructions in tla-ja. */
 extern u8 gData_02002110__sea_of_time[] __asm__("gData_02002110");
 
 struct EventWork687 {
@@ -404,7 +402,7 @@ void Func_02000a80(void) {
 
   index = (Func_0200034c(0, actor->x >> 20, actor->z >> 20) >> 8) - 1;
   frame = &gFrameCount;
-  stamp = &gData_020022c4__sea_of_time;
+  stamp = &gData_020022c4;
 
   if (*frame - *stamp > 50) {
     gData_020022be__sea_of_time = 0;
@@ -491,11 +489,9 @@ void Func_02000c50(void) {
 #include "system/io_reg.h"
 
 extern u32 gData_020022cc;
-/* VIEW(s0c94): variable gData_020022c8 as extern s32 gData_020022c8; sea_of_time.h has extern volatile u32 gData_020022c8. */
-extern s32 gData_020022c8__s0c94 __asm__("gData_020022c8");
 void Func_02000c50(void);
 void Func_02001fac(void);
-/* VIEW(s0c94): routine Func_02001fb4 as s32 Func_02001fb4(void); sea_of_time.h has void Func_02001fb4(void). */
+/* VIEW(s0c94): routine Func_02001fb4 as s32 Func_02001fb4(void); sea_of_time.h has void Func_02001fb4(void); tried as the definition's void Func_02001fb4(s32 *position, s32 speed, s32 mode), it does not compile in tla-ja: games/tla/src/scene/sea_of_time.c:494: conflicting types for `Func_02001fb4'. */
 extern s32 Func_02001fb4__s0c94(void) __asm__("Func_02001fb4");
 
 /// Fades BG palette 3's entries 1 to 13 toward RGB(11, 6, 23), one unit per
@@ -550,7 +546,7 @@ s32 Func_02000c94(void) {
     gData_020022cc += frame & 1;
   } while (changed);
   gData_020022cc = 360;
-  gData_020022c8__s0c94 = frame;
+  gData_020022c8 = frame;
   Task_Add(Func_02000c50, 0x480);
   return Func_02001fb4__s0c94();
 }
@@ -636,8 +632,6 @@ fade:
 
 
 void Func_02001fac(void);
-/* VIEW(s0ef0): routine Func_02001fb4 as void Func_02001fb4(void); s0c94 has s32 Func_02001fb4(void). */
-extern void Func_02001fb4__s0ef0(void) __asm__("Func_02001fb4");
 s32 Math_Cosine(s32 angle);
 s32 Func_02001f9c(struct Actor *actor);
 void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
@@ -708,7 +702,7 @@ void Func_02000ef0(void) {
   }
   wait(1);
   }
-  Func_02001fb4__s0ef0();
+  Func_02001fb4();
 }
 
 
@@ -725,7 +719,7 @@ void Func_02001068(void) {
   }
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Func_02001fb4__s0ef0();
+  Func_02001fb4();
 }
 
 void Func_020010a8(struct Actor *object) {
@@ -885,7 +879,7 @@ next:
   gMainRoutineWork.battleRule24b = 2;
   Party_SetFields1eeAnd1f0((s32)&SceneId_Ov687Room2, 4);
   Func_0200200c(12, 6);
-  Func_02001fb4__s0ef0();
+  Func_02001fb4();
 }
 
 extern struct Trigger gData_020022d0[];
@@ -911,7 +905,7 @@ void Func_02001480(void) {
   object = Actor_GetById(9);
   Func_0200141c(object->x, Actor_GetById(9)->z, 9);
   GameFlag_SetBit(0xa90);
-  Func_02001fb4__s0ef0();
+  Func_02001fb4();
 }
 
 void Func_020014b4(void) {
@@ -922,7 +916,7 @@ void Func_020014b4(void) {
   object = Actor_GetById(10);
   Func_0200141c(object->x, Actor_GetById(10)->z, 10);
   GameFlag_SetBit(0xa91);
-  Func_02001fb4__s0ef0();
+  Func_02001fb4();
 }
 
 void Func_020014ec(void) {
@@ -933,7 +927,7 @@ void Func_020014ec(void) {
   object = Actor_GetById(11);
   Func_0200141c(object->x, Actor_GetById(11)->z, 11);
   GameFlag_SetBit(0xa92);
-  Func_02001fb4__s0ef0();
+  Func_02001fb4();
 }
 
 void Func_02001524(void) {
@@ -944,7 +938,7 @@ void Func_02001524(void) {
   object = Actor_GetById(12);
   Func_0200141c(object->x, Actor_GetById(12)->z, 12);
   GameFlag_SetBit(0xa93);
-  Func_02001fb4__s0ef0();
+  Func_02001fb4();
 }
 
 void Func_0200155c(void) {
@@ -955,7 +949,7 @@ void Func_0200155c(void) {
   object = Actor_GetById(13);
   Func_0200141c(object->x, Actor_GetById(13)->z, 13);
   GameFlag_SetBit(0xa94);
-  Func_02001fb4__s0ef0();
+  Func_02001fb4();
 }
 
 void Func_02001594(void) {
@@ -966,7 +960,7 @@ void Func_02001594(void) {
   object = Actor_GetById(9);
   Func_0200141c(object->x, Actor_GetById(9)->z, 9);
   GameFlag_SetBit(0xa95);
-  Func_02001fb4__s0ef0();
+  Func_02001fb4();
 }
 
 void Func_020015cc(void) {
@@ -975,7 +969,7 @@ void Func_020015cc(void) {
   Import_EventSetExitRequest(4);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Func_02001fb4__s0ef0();
+  Func_02001fb4();
 }
 
 void Func_020015ec(void) {
@@ -984,7 +978,7 @@ void Func_020015ec(void) {
   Import_EventSetExitRequest(5);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Func_02001fb4__s0ef0();
+  Func_02001fb4();
 }
 
 const struct Trigger *Scene_GetEvents(void) {
@@ -1282,7 +1276,7 @@ void Func_02001a14(void) {
   Task_RemoveFar(Func_02001650);
   Func_0200204c();
   GameFlag_SetBit(0x940);
-  Func_02001fb4__s0ef0();
+  Func_02001fb4();
 }
 
 
@@ -1366,16 +1360,10 @@ s32 Func_02001ec8(void) {
   return 0;
 }
 
-/* VIEW(s0ef0): routine Func_0200033c as void Func_0200033c(void); the definition has s32 Func_0200033c(struct Actor *object). */
-extern void Func_0200033c__s0ef0(void) __asm__("Func_0200033c");
 void Func_0200043c(void);
 void Func_0200054c(void);
 void Func_02000818(void);
 void Func_02000a80(void);
-/* VIEW(s0ef0): routine Func_02000c94 as void Func_02000c94(void); the definition has s32 Func_02000c94(void). */
-extern void Func_02000c94__s0ef0(void) __asm__("Func_02000c94");
-/* VIEW(s0ef0): routine Func_02000da0 as void Func_02000da0(void); the definition has s32 Func_02000da0(void). */
-extern void Func_02000da0__s0ef0(void) __asm__("Func_02000da0");
 
 extern u32 gData_0200205c[];
 extern u32 gData_02002098[];
@@ -1420,7 +1408,7 @@ s32 gData_02002148[] = {
 
 s32 gData_02002154[] = {
     46,
-    (s32)Func_0200033c__s0ef0,
+    (s32)Func_0200033c,
     17,
 };
 
@@ -1508,8 +1496,8 @@ struct Trigger gData_020022d0[] = {
     {2, 55, 0x200, EVENT(Func_02000a80)},
     {2, 56, 0x200, EVENT(Func_02000a80)},
     {2, 57, 0x200, EVENT(Func_02000a80)},
-    {6, 200, CONDITION_ALWAYS, EVENT(Func_02000c94__s0ef0)},
-    {6, 201, CONDITION_ALWAYS, EVENT(Func_02000da0__s0ef0)},
+    {6, 200, CONDITION_ALWAYS, EVENT(Func_02000c94)},
+    {6, 201, CONDITION_ALWAYS, EVENT(Func_02000da0)},
     {TRIGGERS_END},
 };
 

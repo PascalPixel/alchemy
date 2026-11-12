@@ -61,7 +61,7 @@ void Func_081180e8(s32 phase);             // BattlePlayback_StartFar
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                           s32 drag);
-/* VIEW(f18fefc): routine GetBattleObjectSlotFar as void **GetBattleObjectSlotFar(s32 objectId); motobj.h has struct BattleObj *GetBattleObjectSlotFar(s32 objectId). */
+/* VIEW(f18fefc): routine GetBattleObjectSlotFar as void **GetBattleObjectSlotFar(s32 objectId); motobj.h has struct BattleObj *GetBattleObjectSlotFar(s32 objectId); tried as the 11 declarations' void **GetBattleObjectSlotFar(s32 objectId), it does not compile in tla-ja: games/tla/include/battle/motobj.h:79: conflicting types for `GetBattleObjectSlotFar'. */
 extern void **GetBattleObjectSlotFar__f18fefc(s32 objectId) __asm__("GetBattleObjectSlotFar");
 void *Resource_GetTableEntry(s32 resource);
 
@@ -760,7 +760,7 @@ union BattleBackgroundId {
 
 // A model for the ARM renderer (Render_DrawModelList). A textured model (kind
 // 7) takes a shade; a flat one (kind 3) the address of its colour.
-/* VIEW(f190b74): tag struct RenderModel as struct RenderModel__f190b74; render_model.h has another definition. */
+/* VIEW(f190b74): tag struct RenderModel as struct RenderModel__f190b74; render_model.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/battle_effect/f18fefc.c:1096: structure has no member named `look'. */
 struct RenderModel__f190b74 {
   s32 kind;
   s32 unk04;

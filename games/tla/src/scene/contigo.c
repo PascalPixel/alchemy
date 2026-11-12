@@ -3,11 +3,11 @@
 #include "field_effect.h"
 #include "main_routine_work.h"
 #include "event_inline.h"
-/* VIEW(contigo): routine Func_02003e54 as void Func_02003e54(struct ContigoObject *object, const void *effect); the definition has void Func_02003e54(struct Actor *object, struct SparkleWork *work). */
+/* VIEW(contigo): routine Func_02003e54 as void Func_02003e54(struct ContigoObject *object, const void *effect); the definition has void Func_02003e54(struct Actor *object, struct SparkleWork *work); tried as the definition's void Func_02003e54(struct Actor *object, struct SparkleWork__s3e54 *work), which the object already declares, it does not compile in tla-ja: games/tla/src/scene/contigo.c:2288: conflicting types for `Func_02003e54'. */
 struct ContigoObject;
 extern void Func_02003e54__contigo(struct ContigoObject *object, const void *effect) __asm__("Func_02003e54");
 #define Func_02003e54 Func_02003e54__contigo
-/* VIEW(contigo): routine Func_02003f54 as void Func_02003f54(struct ContigoObject *object); the definition has void Func_02003f54(struct ContigoObject__s3e54 *object). */
+/* VIEW(contigo): routine Func_02003f54 as void Func_02003f54(struct ContigoObject *object); the definition has void Func_02003f54(struct ContigoObject__s3e54 *object); tried as the definition's void Func_02003f54(struct ContigoObject__s3e54 *object), which the object already declares, it does not compile in tla-ja: games/tla/src/scene/contigo.c:2322: conflicting types for `Func_02003f54'. */
 struct ContigoObject;
 extern void Func_02003f54__contigo(struct ContigoObject *object) __asm__("Func_02003f54");
 #define Func_02003f54 Func_02003f54__contigo
@@ -33,8 +33,7 @@ extern void Func_02003f54__contigo(struct ContigoObject *object) __asm__("Func_0
 #include "event_work.h"
 #include "version.h"
 
-/* VIEW(contigo): variable gData_0200474c as extern const s32 *gData_0200474c[]; the definition has s32 gData_0200474c[] = { (s32) gData_0200457c, (s32) gData_020045b8, (s32) gData_020045f4, }. */
-extern const s32 *gData_0200474c__contigo[] __asm__("gData_0200474c");
+extern s32 gData_0200474c[];
 
 void Func_02003fdc(struct Actor *object, s32 mode);
 void Func_02003fe4(struct FieldEffect *effect, const s32 *script);
@@ -56,7 +55,7 @@ void Func_02000430(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
   sprite = effect->sprite;
   Func_02003fdc(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
-  Func_02003fe4(effect, gData_0200474c__contigo[flags & EFFECT_SCRIPT_MASK]);
+  Func_02003fe4(effect, gData_0200474c[flags & EFFECT_SCRIPT_MASK]);
   effect->motionFlags = 0;
   Actor_SetSingleChildFlags(effect, 0);
   effect->update = BattleEffect_UpdateObjectMotionScaleAndLinkedAngle;
@@ -85,7 +84,7 @@ void Func_02000430(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     s32 target;
     s32 frames;
 
-    script = gData_0200474c__contigo[flags & EFFECT_SCRIPT_MASK];
+    script = gData_0200474c[flags & EFFECT_SCRIPT_MASK];
     target = options->targetScaleX;
     frames = script[3];
     if ((flags & EFFECT_USE_START_SCALE) != 0) {
@@ -202,70 +201,58 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-/* VIEW(contigo): variable gData_02004c70 as extern u8 gData_02004c70[]; the definition has u32 gData_02004c70[] = { 0xffff, 0, 0, 0, 0, 0, }. */
+/* VIEW(contigo): variable gData_02004c70 as extern u8 gData_02004c70[]; the definition has u32 gData_02004c70[] = { 0xffff, 0, 0, 0, 0, 0, }; tried as the definition's extern s32 gData_02004c70[], it does not compile in tla-ja: games/tla/src/scene/contigo.c:2626: conflicting types for `gData_02004c70'. */
 extern u8 gData_02004c70__contigo[] __asm__("gData_02004c70");
-/* VIEW(contigo): variable gData_02004c88 as extern u8 gData_02004c88[]; the definition has s32 gData_02004c88[] = { (s32) 0xffff0073, 3, 0x1540000, 0, 0x3a80000, 0x4000, (s32) 0xffff0074, 3, 0x580000, 0, 0x3ae0000, 0xc000, (s32) 0x.... */
-extern u8 gData_02004c88__contigo[] __asm__("gData_02004c88");
-/* VIEW(contigo): variable gData_02004d90 as extern u8 gData_02004d90[]; the definition has s32 gData_02004d90[] = { (s32) 0xffff0073, 3, 0x34e0000, 0, 0x2940000, 0x4000, (s32) 0xffff0074, 1, 0x2e80000, 0, 0x2680000, 0x1d000, (s32) .... */
-extern u8 gData_02004d90__contigo[] __asm__("gData_02004d90");
-/* VIEW(contigo): variable gData_02005018 as extern u8 gData_02005018[]; the definition has u32 gData_02005018[] = { 0xffff0072, 1, 0x680000, 0, 0x540000, 0x5000, 0xffff006b, 1, 0x480000, 0, 0x580000, 0x3000, 0xffff0088, 2, 0x700000.... */
-extern u8 gData_02005018__contigo[] __asm__("gData_02005018");
-/* VIEW(contigo): variable gData_02005228 as extern u8 gData_02005228[]; the definition has s16 gData_02005228[] = { 59, - 1, 1, 0, 0, 0, 0, 0, 0, 0, FACING_NORTH, 2, 5, - 1, 1, 0, 0, 0, 0, 0, 0, 0, FACING_WEST, 2, 7, - 1, 1, 0, 0, .... */
-extern u8 gData_02005228__contigo[] __asm__("gData_02005228");
-/* VIEW(contigo): variable gData_02005318 as extern u8 gData_02005318[]; the definition has s32 gData_02005318[] = { (s32) 0xffff003b, 1, 0x9e0000, 0, 0x1600000, 0x34000, (s32) 0xffff0002, 1, 0, 0, 0, 0x24000, - 0x10000, 1, 0, 0, 0,.... */
-extern u8 gData_02005318__contigo[] __asm__("gData_02005318");
-/* VIEW(contigo): variable gData_02005390 as extern u8 gData_02005390[]; the definition has u32 gData_02005390[] = { 0xffff00ec, 1, 0x780000, 0, 0x3480000, 0x3000, 0xffff00ec, 1, 0x880000, 0, 0x3480000, 0x5000, 0xffff0072, 1, 0x5c00.... */
-extern u8 gData_02005390__contigo[] __asm__("gData_02005390");
+extern s32 gData_02004c88[];
+extern s32 gData_02004d90[];
+extern u32 gData_02005018[];
+extern s16 gData_02005228[];
+extern s32 gData_02005318[];
+extern u32 gData_02005390[];
 
 u8 *Func_020007cc(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov694Room1)
-    return gData_02004c88__contigo;
+    return gData_02004c88;
   if (scene == (s32)&SceneId_Ov694Room4)
-    return gData_02004d90__contigo;
+    return gData_02004d90;
   if (scene == (s32)&SceneId_Ov694Room2) {
     if (gMainRoutineWork.entrance == 4) {
       if (GameFlag_Test(0x9b2) != 0)
-        return gData_02005318__contigo;
+        return gData_02005318;
       if (GameFlag_Test(0xa21) != 0 && GameFlag_Test(0x9d0) == 0)
-        return gData_02005228__contigo;
+        return gData_02005228;
     }
-    return gData_02005018__contigo;
+    return gData_02005018;
   }
   if (scene == (s32)&SceneId_Ov694Room3)
-    return gData_02005390__contigo;
+    return gData_02005390;
   return gData_02004c70__contigo;
 }
 
-/* VIEW(contigo): variable gData_020054e0 as extern u8 gData_020054e0[]; the definition has s32 gData_020054e0[] = { - 1, 0, 0, }. */
-extern u8 gData_020054e0__contigo[] __asm__("gData_020054e0");
-/* VIEW(contigo): variable gData_020054ec as extern u8 gData_020054ec[]; the definition has s32 gData_020054ec[] = { 1, (s32) 0xffff0001, 1, 0xce01, (s32) 0xffff0002, 2, 0xce01, (s32) 0xffff0003, 3, 0xce01, (s32) 0xffff0004, 4, 0xce.... */
-extern u8 gData_020054ec__contigo[] __asm__("gData_020054ec");
-/* VIEW(contigo): variable gData_02005870 as extern u8 gData_02005870[]; the definition has s32 gData_02005870[] = { 1, (s32) 0xffff000c, 21, 0xc602, (s32) 0xffff000d, (s32) Func_02001d08, 0xce01, (s32) 0xffff000e, 23, 0xc602, (s32).... */
-extern u8 gData_02005870__contigo[] __asm__("gData_02005870");
-/* VIEW(contigo): variable gData_02005a44 as extern u8 gData_02005a44[]; the definition has s32 gData_02005a44[] = { 1, (s32) 0xffff0001, 1, 1, (s32) 0xffff0002, 2, 1, (s32) 0xffff0003, 3, 1, (s32) 0xffff0005, 5, 1, (s32) 0xffff0006.... */
-extern u8 gData_02005a44__contigo[] __asm__("gData_02005a44");
-/* VIEW(contigo): variable gData_02005e70 as extern u8 gData_02005e70[]; the definition has s32 gData_02005e70[] = { 1, (s32) 0xffff0004, 4, 0, (s32) 0xffff0008, MSGNO(MsgContigo170), 0x8d15, (s32) 0xffff0008, MSGNO(MsgContigo171), .... */
-extern u8 gData_02005e70__contigo[] __asm__("gData_02005e70");
-/* VIEW(contigo): variable gData_02005ed0 as extern u8 gData_02005ed0[]; the definition has s32 gData_02005ed0[] = { 1, (s32) 0xffff0008, 8, 1, (s32) 0xffff0009, 9, 1, (s32) 0xffff000a, 10, 0, (s32) 0xffff0008, (s32) Func_02001b84, .... */
-extern u8 gData_02005ed0__contigo[] __asm__("gData_02005ed0");
+extern s32 gData_020054e0[];
+extern s32 gData_020054ec[];
+extern s32 gData_02005870[];
+extern s32 gData_02005a44[];
+extern s32 gData_02005e70[];
+extern s32 gData_02005ed0[];
 
 u8 *Func_02000874(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov694Room1)
-    return gData_020054ec__contigo;
+    return gData_020054ec;
   if (scene == (s32)&SceneId_Ov694Room4)
-    return gData_02005870__contigo;
+    return gData_02005870;
   if (scene == (s32)&SceneId_Ov694Room2) {
     if (gMainRoutineWork.entrance == 4)
-      return gData_02005e70__contigo;
-    return gData_02005a44__contigo;
+      return gData_02005e70;
+    return gData_02005a44;
   }
   if (scene == (s32)&SceneId_Ov694Room3)
-    return gData_02005ed0__contigo;
-  return gData_020054e0__contigo;
+    return gData_02005ed0;
+  return gData_020054e0;
 }
 
 void Func_020008ec(void) {
@@ -1014,8 +1001,7 @@ struct ContigoTopicState {
   s8 cursor[6];
 };
 
-/* VIEW(contigo): variable gData_02004630 as extern s32 gData_02004630[]; the definition has u32 gData_02004630[] = { 250, 251, 252, 256, 257, 258, 262, 263, 264, 183, 182, 181, 189, 186, 188, }. */
-extern s32 gData_02004630__contigo[] __asm__("gData_02004630");
+extern u32 gData_02004630[];
 
 s32 Func_02001a60(s32 topic) {
   struct ContigoTopicState *state;
@@ -1033,7 +1019,7 @@ s32 Func_02001a60(s32 topic) {
   state->cursor[topic] = variant;
   index = topic * 2;
 
-  return gData_02004630__contigo[index + topic + variant];
+  return gData_02004630[index + topic + variant];
 }
 
 struct ContigoEventCount {
@@ -1122,8 +1108,7 @@ void Func_02001c44(s32 id) {
   object->radius = 8;
 }
 
-/* VIEW(contigo): variable gData_0200466c as extern const u8 gData_0200466c[]; the definition has s32 gData_0200466c[] = { 22, 26, 0, 23, 7, - 0x8000, 0, 1, 13, 24, 0, 17, }. */
-extern const u8 gData_0200466c__contigo[] __asm__("gData_0200466c");
+extern s32 gData_0200466c[];
 
 void Func_02001c5c(s32 a, s32 b, s32 c, s32 d) {
   Func_0200406c();
@@ -1139,7 +1124,7 @@ void Func_02001c5c(s32 a, s32 b, s32 c, s32 d) {
   Event_Wait(20);
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
   Actor_SetMovementTypeById(gMainRoutineWork.currentOwner,
-                                          gData_0200466c__contigo);
+                                          gData_0200466c);
   wait(12);
   Sound_Play(123);
   Event_FinishScreenTransition();
@@ -1161,15 +1146,15 @@ void Func_02001d38(void) {
   Import_EventSetExitRequest(24);
 }
 
-/* VIEW(contigo): variable gData_020048a0 as extern const u8 gData_020048a0[]; the definition has u32 gData_020048a0[] = { 39, 2, 4, 0xa40000, 0, 0x1680000, 1, 39, 1, 0, 10, 22, 3, 0xa000, 0, 10, 22, 3, 0x8000, 0, 10, 17, }. */
+/* VIEW(contigo): variable gData_020048a0 as extern const u8 gData_020048a0[]; the definition has u32 gData_020048a0[] = { 39, 2, 4, 0xa40000, 0, 0x1680000, 1, 39, 1, 0, 10, 22, 3, 0xa000, 0, 10, 22, 3, 0x8000, 0, 10, 17, }; tried as the definition's extern u32 gData_020048a0[], it does not compile in tla-ja: games/tla/src/scene/contigo.c:1194: `gData_020048a0__contigo' undeclared (first use in this function). */
 extern const u8 gData_020048a0__contigo[] __asm__("gData_020048a0");
-/* VIEW(contigo): variable gData_020048f8 as extern const u8 gData_020048f8[]; the definition has u32 gData_020048f8[] = { 39, 2, 4, 0xbe0000, 0, 0x1600000, 1, 39, 1, 0, 10, 22, 3, 0x8000, 0, 10, 17, }. */
+/* VIEW(contigo): variable gData_020048f8 as extern const u8 gData_020048f8[]; the definition has u32 gData_020048f8[] = { 39, 2, 4, 0xbe0000, 0, 0x1600000, 1, 39, 1, 0, 10, 22, 3, 0x8000, 0, 10, 17, }; tried as the definition's extern u32 gData_020048f8[], it does not compile in tla-ja: games/tla/src/scene/contigo.c:1197: `gData_020048f8__contigo' undeclared (first use in this function). */
 extern const u8 gData_020048f8__contigo[] __asm__("gData_020048f8");
-/* VIEW(contigo): variable gData_0200493c as extern const u8 gData_0200493c[]; the definition has u32 gData_0200493c[] = { 39, 2, 4, 0xbe0000, 0, 0x1860000, 1, 39, 1, 0, 10, 22, 3, 0x8000, 0, 10, 17, }. */
+/* VIEW(contigo): variable gData_0200493c as extern const u8 gData_0200493c[]; the definition has u32 gData_0200493c[] = { 39, 2, 4, 0xbe0000, 0, 0x1860000, 1, 39, 1, 0, 10, 22, 3, 0x8000, 0, 10, 17, }; tried as the definition's extern u32 gData_0200493c[], it does not compile in tla-ja: games/tla/src/scene/contigo.c:1196: `gData_0200493c__contigo' undeclared (first use in this function). */
 extern const u8 gData_0200493c__contigo[] __asm__("gData_0200493c");
-/* VIEW(contigo): variable gData_02004980 as extern const u8 gData_02004980[]; the definition has u32 gData_02004980[] = { 39, 2, 4, 0xb60000, 0, 0x1700000, 1, 39, 1, 0, 10, 22, 3, 0x8000, 0, 10, 17, }. */
+/* VIEW(contigo): variable gData_02004980 as extern const u8 gData_02004980[]; the definition has u32 gData_02004980[] = { 39, 2, 4, 0xb60000, 0, 0x1700000, 1, 39, 1, 0, 10, 22, 3, 0x8000, 0, 10, 17, }; tried as the definition's extern u32 gData_02004980[], it does not compile in tla-ja: games/tla/src/scene/contigo.c:1195: `gData_02004980__contigo' undeclared (first use in this function). */
 extern const u8 gData_02004980__contigo[] __asm__("gData_02004980");
-/* VIEW(contigo): variable gData_020049c4 as extern const u8 gData_020049c4[]; the definition has u32 gData_020049c4[] = { 39, 2, 4, 0xa00000, 0, 0x17e0000, 1, 39, 1, 0, 1, 3, 0, 1, 17, 39, 2, 0, 10, 13, 0xffff, 0, }. */
+/* VIEW(contigo): variable gData_020049c4 as extern const u8 gData_020049c4[]; the definition has u32 gData_020049c4[] = { 39, 2, 4, 0xa00000, 0, 0x17e0000, 1, 39, 1, 0, 1, 3, 0, 1, 17, 39, 2, 0, 10, 13, 0xffff, 0, }; tried as the definition's extern u32 gData_020049c4[], it does not compile in tla-ja: games/tla/src/scene/contigo.c:1599: `gData_020049c4__contigo' undeclared (first use in this function). */
 extern const u8 gData_020049c4__contigo[] __asm__("gData_020049c4");
 extern const u8 gData_02006030[];
 
@@ -1625,10 +1610,8 @@ void Func_02001d50(void) {
   Func_02004074();
 }
 
-/* VIEW(contigo): variable gData_02004ac0 as extern const u8 gData_02004ac0[]; the definition has u32 gData_02004ac0[] = { 39, 2, 4, 0x800000, 0, 0x17a0000, 1, 4, 0x840000, 0, 0x1680000, 1, 39, 1, 0, 10, 22, 3, 0, 0, 10, 17, }. */
-extern const u8 gData_02004ac0__contigo[] __asm__("gData_02004ac0");
-/* VIEW(contigo): variable gData_02004b18 as extern const u8 gData_02004b18[]; the definition has u32 gData_02004b18[] = { 39, 2, 4, 0x840000, 0, 0x1670000, 1, 39, 1, 0, 1, 3, 0, 1, 17, }. */
-extern const u8 gData_02004b18__contigo[] __asm__("gData_02004b18");
+extern u32 gData_02004ac0[];
+extern u32 gData_02004b18[];
 
 void Func_02002e18(void) {
   if (GameFlag_Test(0x9b2)) {
@@ -1686,7 +1669,7 @@ void Func_02002e18(void) {
     Func_020040e4(9, gMainRoutineWork.currentOwner);
     wait(1);
     Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
-    Actor_SetMovementTypeById(gMainRoutineWork.currentOwner, gData_02004ac0__contigo);
+    Actor_SetMovementTypeById(gMainRoutineWork.currentOwner, gData_02004ac0);
     Actor_SetSpeed(9, 0xcccc, 0x6666);
     Actor_WalkToAndWait(9, 182, 378);
     Actor_SetPositionAndReset(9, 182, 360);
@@ -1830,9 +1813,9 @@ void Func_02002e18(void) {
     Actor_SetSpeed(2, 0x13333, 0x9999);
     Actor_SetSpeed(0, 0x13333, 0x9999);
     Actor_SetSpeed(9, 0x13333, 0x9999);
-    Actor_SetMovementTypeById(2, gData_02004b18__contigo);
-    Actor_SetMovementTypeById(0, gData_02004b18__contigo);
-    Actor_SetMovementTypeAndWaitById(9, gData_02004b18__contigo);
+    Actor_SetMovementTypeById(2, gData_02004b18);
+    Actor_SetMovementTypeById(0, gData_02004b18);
+    Actor_SetMovementTypeAndWaitById(9, gData_02004b18);
     GameFlag_SetBit(2513);
     Func_02004074();
   }
@@ -1874,14 +1857,10 @@ void Func_020036f0(void) {
   }
 }
 
-/* VIEW(contigo): variable gData_0200469c as extern const u8 gData_0200469c[]; the definition has s16 gData_0200469c[] = { 89, 90, 91, 92, 93, 94, 95, - 1, }. */
-extern const u8 gData_0200469c__contigo[] __asm__("gData_0200469c");
-/* VIEW(contigo): variable gData_020046ac as extern const u8 gData_020046ac[]; the definition has s16 gData_020046ac[] = { 23, 25, 22, 23, 25, 22, 23, 25, 22, 23, 25, 22, 23, 25, 22, 23, 25, 22, 23, 25, 22, - 1, }. */
-extern const u8 gData_020046ac__contigo[] __asm__("gData_020046ac");
-/* VIEW(contigo): variable gData_020046d8 as extern const u8 gData_020046d8[]; the definition has s16 gData_020046d8[] = { 30, 27, 31, 22, 21, 31, 20, 18, 31, 13, 11, 27, 11, 8, 24, 8, 5, 21, 31, 31, 31, - 1, }. */
-extern const u8 gData_020046d8__contigo[] __asm__("gData_020046d8");
-/* VIEW(contigo): variable gData_02004704 as extern const u8 gData_02004704[]; the definition has u16 gData_02004704[] = { 94, 89, 90, 91, 92, 93, 93, 94, 89, 90, 91, 92, 92, 93, 94, 89, 90, 91, 91, 92, 93, 94, 89, 90, 90, 91, 92, 93, 94,.... */
-extern const u8 gData_02004704__contigo[] __asm__("gData_02004704");
+extern s16 gData_0200469c[];
+extern s16 gData_020046ac[];
+extern s16 gData_020046d8[];
+extern u16 gData_02004704[];
 
 void Func_02000038(const u8 *a, const u8 *b, const u8 *c, const u8 *d);
 void Func_02003ffc(void);
@@ -1939,7 +1918,7 @@ void Func_02003720(void) {
     Func_02003ffc();
     wait(1);
   }
-  Func_02000038(gData_0200469c__contigo, gData_020046ac__contigo, gData_020046d8__contigo, gData_02004704__contigo);
+  Func_02000038(gData_0200469c, gData_020046ac, gData_020046d8, gData_02004704);
 }
 
 void Func_02003880(void) {
@@ -1986,8 +1965,7 @@ struct ContigoEventWork {
   s32 value1ac;
 };
 
-/* VIEW(contigo): variable gData_02004a1c as extern const u8 gData_02004a1c[]; the definition has s32 gData_02004a1c[] = { 22, 9, 0x10000, 22, 10, 0x10000, 23, 9, - 0x2800, 23, 10, 0x800, 0, 2, 23, 9, 0x1400, 23, 10, - 1024, 0, 2, 23, 9, .... */
-extern const u8 gData_02004a1c__contigo[] __asm__("gData_02004a1c");
+extern s32 gData_02004a1c[];
 
 void Func_020039d4(void) {
   ((struct ContigoEventWork *)Ram_HeapSlots->eventWork)->value1ac = 0x209;
@@ -2000,7 +1978,7 @@ void Func_020039d4(void) {
     Actor_SetModeById(17, 2);
     Actor_SetSingleChildFlags(Actor_GetById(17), 0);
     if (GameFlag_Test(0x9b2) != 0)
-      Actor_SetMovementTypeById(11, gData_02004a1c__contigo);
+      Actor_SetMovementTypeById(11, gData_02004a1c);
     if (GameFlag_Test(0x9d0) != 0) {
       Actor_SetHorizontalPositionWithTerrain(24, 0, 0);
       Actor_SetHorizontalPositionWithTerrain(25, 0, 0);
@@ -2255,7 +2233,7 @@ struct ResourceTableEntry {
   u16 offset; ///< in bytes; its tile is offset / 32
 };
 
-/* VIEW(s3e54): tag struct SparkleSprite as struct SparkleSprite__s3e54; contigo.c has another definition. */
+/* VIEW(s3e54): tag struct SparkleSprite as struct SparkleSprite__s3e54; contigo.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/contigo.c:2279: structure has no member named `blend'. */
 struct SparkleSprite__s3e54 {
   u8 unk00[5];
   u8 unk05_0 : 5;
@@ -2268,7 +2246,7 @@ struct SparkleSprite__s3e54 {
   u8 unk0a[0x1e];
 };
 
-/* VIEW(s3e54): tag struct SparkleWork as struct SparkleWork__s3e54; contigo.c has another definition. */
+/* VIEW(s3e54): tag struct SparkleWork as struct SparkleWork__s3e54; contigo.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/contigo.c:2271: incompatible types in assignment. */
 struct SparkleWork__s3e54 {
   struct SparkleSprite__s3e54 sprites[4];
   u16 unka0;
@@ -2285,8 +2263,6 @@ s32 Resource_FindFreeEntry(void);
 void Func_02004244(struct SparkleSprite__s3e54 *sprite, s32 width, s32 height,
                    u32 attributes, s32 tile);
 s32 Func_02004254(struct Actor *object);
-/* VIEW(s3e54): routine Func_02003cd8 as void Func_02003cd8(void); the definition has void Func_02003cd8(struct Actor *object). */
-extern void Func_02003cd8__s3e54(void) __asm__("Func_02003cd8");
 
 /// Sets up the sparkle: loads its picture and its four 16 by 16 sprites, and
 /// hands the object to its update, Func_02003cd8.
@@ -2304,7 +2280,7 @@ void Func_02003e54(struct Actor *object, struct SparkleWork__s3e54 *work) {
   work->object = object;
   ((u8 *)object)[0x62] = 0;
   ((u8 *)object)[0x63] = 0;
-  object->update = Func_02003cd8__s3e54;
+  object->update = Func_02003cd8;
   tile = gResourceTableEntries[work->vramEntry].offset >> 5;
   object->watchedObject = (struct Actor *)work;
   for (row = 0; row <= 1; row++) {
@@ -2318,7 +2294,7 @@ void Func_02003e54(struct Actor *object, struct SparkleWork__s3e54 *work) {
   }
 }
 
-/* VIEW(s3e54): tag struct ContigoObject as struct ContigoObject__s3e54; contigo.c has another definition. */
+/* VIEW(s3e54): tag struct ContigoObject as struct ContigoObject__s3e54; contigo.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/contigo.c:2298: structure has no member named `unk62'. */
 struct ContigoObject__s3e54 {
   u8 unk00[0x62];
   u8 unk62;
@@ -2329,8 +2305,6 @@ void Func_02003f54(struct ContigoObject__s3e54 *object) { object->unk62 = 1; }
 
 void Func_020005f8(void);
 void Func_02000608(void);
-/* VIEW(s3e54): routine Func_020007a4 as void Func_020007a4(void); the definition has s32 Func_020007a4(void). */
-extern void Func_020007a4__s3e54(void) __asm__("Func_020007a4");
 void Func_020008ec(void);
 void Func_0200090c(void);
 void Func_0200092c(void);
@@ -2577,7 +2551,7 @@ s32 gData_02004b54[] = {
     0,
     40,
     46,
-    (s32)Func_020007a4__s3e54,
+    (s32)Func_020007a4,
     0,
     120,
     13,

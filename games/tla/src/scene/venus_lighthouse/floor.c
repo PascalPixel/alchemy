@@ -35,13 +35,12 @@ struct VenusActor {
   void *update;
 };
 
-/* VIEW(floor): variable gData_02001d8c as extern const u32 gData_02001d8c[]; the definition has s16 gData_02001d8c[] = { 0, 16, 0, 16, 0, 16, 16, 0, 16, 0, 16, 0, 16, 0, 0, - 16, 0, - 16, 0, - 16, 0, - 16, - 16, 0, - 16, 0, - 16, 0, - 1.... */
-extern const u32 gData_02001d8c__floor[] __asm__("gData_02001d8c");
-/* VIEW(floor): variable gData_02001dd8 as extern const u8 gData_02001dd8[]; the definition has s32 gData_02001dd8[] = { 39, 12, 22, 38, (s32) OverlayObject_UpdateEveryFourFrames, (s32) 0x80010000, 22, 9, 0x11999, 22, 10, 0x11999, 0, 2,.... */
+extern s16 gData_02001d8c[];
+/* VIEW(floor): variable gData_02001dd8 as extern const u8 gData_02001dd8[]; the definition has s32 gData_02001dd8[] = { 39, 12, 22, 38, (s32) OverlayObject_UpdateEveryFourFrames, (s32) 0x80010000, 22, 9, 0x11999, 22, 10, 0x11999, 0, 2,...; tried as the definition's extern s32 gData_02001dd8[], it does not compile in tla-ja: games/tla/src/scene/venus_lighthouse/floor.c:86: `gData_02001dd8__floor' undeclared (first use in this function). */
 extern const u8 gData_02001dd8__floor[] __asm__("gData_02001dd8");
 extern u8 gMapCellBuffer[];
 
-/* VIEW(floor): routine Actor_GetById as struct VenusActor *Actor_GetById(s32 id); event.h has struct Actor *Actor_GetById(u32 objectId). */
+/* VIEW(floor): routine Actor_GetById as struct VenusActor *Actor_GetById(s32 id); event.h has struct Actor *Actor_GetById(u32 objectId); tried as the definition's struct Actor *Actor_GetById(u32 objectId), which the object already declares, it does not compile in tla-ja: games/tla/src/scene/venus_lighthouse/floor.c:100: invalid type argument of `->'. */
 extern struct VenusActor *Actor_GetById__floor(s32 id) __asm__("Actor_GetById");
 void Import_EventStart(void);
 void Import_EventEnd(void);
@@ -53,9 +52,9 @@ void Map_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX,
                                           s32 destY, s32 width, s32 height);
 void wait(s32 frames);
 void Actor_SetMovementTypeById(s32 actor, const void *callback);
-/* VIEW(floor): routine Actor_RefreshSelectorById as void Actor_RefreshSelectorById(s32 actor); actor.h has void Actor_RefreshSelectorById(u32). */
+/* VIEW(floor): routine Actor_RefreshSelectorById as void Actor_RefreshSelectorById(s32 actor); actor.h has void Actor_RefreshSelectorById(u32); tried as the definition's void Actor_RefreshSelectorById(u32 objectId), Func_020006ac moves: 1 of 85 instructions in tla-ja. */
 extern void Actor_RefreshSelectorById__floor(s32 actor) __asm__("Actor_RefreshSelectorById");
-/* VIEW(floor): routine Actor_SetPartAttribute as void Actor_SetPartAttribute(struct VenusActor *object, s32 value); event.h has void Actor_SetPartAttribute(struct Actor *object, s32 attribute). */
+/* VIEW(floor): routine Actor_SetPartAttribute as void Actor_SetPartAttribute(struct VenusActor *object, s32 value); event.h has void Actor_SetPartAttribute(struct Actor *object, s32 attribute); tried as the definition's void Actor_SetPartAttribute(struct Actor *object, s32 attribute), which the object already declares, Func_020006ac moves: 3 of 85 instructions in tla-ja. */
 extern void Actor_SetPartAttribute__floor(struct VenusActor *object, s32 value) __asm__("Actor_SetPartAttribute");
 void Actor_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
 void Actor_SetPositionAndReset(s32 actor, s32 x, s32 z);
@@ -64,7 +63,7 @@ void Func_02001b2c(struct VenusActor *object, s32 mode);
 void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
 void Script_WaitForEventTimeout(struct Actor *actor);
 s32 Func_02001b64(struct VenusActor *object, s32 *position);
-/* VIEW(floor): routine Func_080d47b4 as void Func_080d47b4(s32 actor, s32 height, s32 frames); event.h has s32 Func_080d47b4(s32 actorId, s32 emote, s32 frames). */
+/* VIEW(floor): routine Func_080d47b4 as void Func_080d47b4(s32 actor, s32 height, s32 frames); event.h has s32 Func_080d47b4(s32 actorId, s32 emote, s32 frames); tried as the definition's struct BattleEffectWatchedObject *Func_080d47b4(s32 resourceId, s32 flags, s32 state), it does not compile in tla-ja: games/tla/include/field/event.h:46: conflicting types for `Func_080d47b4'. */
 extern void Func_080d47b4__floor(s32 actor, s32 height, s32 frames) __asm__("Func_080d47b4");
 void Func_02001cbc(void);
 s32 VenusLighthouse_EmitRisingParticles(struct VenusActor *object);
@@ -354,13 +353,6 @@ s32 VenusLighthouse_Start(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-/* VIEW(push): tag struct VenusActor as struct VenusActor__push; floor.c has another definition. */
-struct VenusActor__push {
-  u8 unk00[0xa];
-  s16 xPixel;
-  u8 unk0c[6];
-  s16 zPixel;
-};
 
 void Func_02001c4c(void);
 void Func_02001cd4(s32 actor);
@@ -467,7 +459,7 @@ void Func_02000b2c(void) {
 }
 
 void Func_02000d30(void) {
-  struct VenusActor__push *actor;
+  struct VenusActor *actor;
   struct EventWork *work;
 
   FieldEvent_SetMessageId((s32)MsgVenusLighthouseAreYouSureWeShouldBeLeaving);
@@ -845,14 +837,14 @@ void Func_02000d30(void) {
   FieldEvent_Wait(20);
   Venus_ObjSpeed(8, 0x13333, 0x9999);
   Actor_SetAnimation(8, 2);
-  actor = (struct VenusActor__push *)Actor_Get(5);
+  actor = (struct VenusActor *)Actor_Get(5);
   if (actor != NULL)
     Actor_SetDestination(8, actor->xPixel, actor->zPixel);
   FieldActor_WaitForMoveById(8);
   Actor_SetPosition(8, 0, 0);
   Venus_ObjSpeed(9, 0x13333, 0x9999);
   Actor_SetAnimation(9, 2);
-  actor = (struct VenusActor__push *)Actor_Get(5);
+  actor = (struct VenusActor *)Actor_Get(5);
   if (actor != NULL)
     Actor_SetDestination(9, actor->xPixel, actor->zPixel);
   FieldActor_WaitForMoveById(9);

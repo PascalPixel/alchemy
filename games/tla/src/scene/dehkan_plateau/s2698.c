@@ -282,8 +282,7 @@ void Func_080d489c(s32 id, s32 value);
 void Func_02003d40(struct Actor *object, s32 mode);
 void Func_02003bb8(struct Actor *object);
 void Motion_SetVarCbAndRefresh(u32 objectId, s32 variant);
-/* VIEW(events_i): routine PartyInventory_GiveItem as void PartyInventory_GiveItem(s32 item, s32 mode); event.h has s32 PartyInventory_GiveItem(s32 item, s32 flags). */
-extern void PartyInventory_GiveItem__events_i(s32 item, s32 mode) __asm__("PartyInventory_GiveItem");
+s32 PartyInventory_GiveItem(s32 item, s32 unused);
 void Func_02002b68(void);
 void Func_02002f08(void);
 
@@ -295,7 +294,7 @@ void Actor_Jump(s32 id, s32 a, s32 b);
 void Actor_ArmCallback(s32 id, s32 a, s32 b);
 void Actor_WatchAndSetScript(s32 id, s32 target);
 void Event_Wait(s32 frames);
-/* VIEW(events_i): routine Task_Add as void Task_Add(void(*func) (void), s32 priority); task.h has s32 Task_Add(TaskFunc func, s32 order). */
+/* VIEW(events_i): routine Task_Add as void Task_Add(void(*func) (void), s32 priority); task.h has s32 Task_Add(TaskFunc func, s32 order); tried as the definition's s32 Task_Add(TaskFunc func, s32 order), which the object already declares, Func_02002bcc moves: 1 of 24 instructions in tla-ja. */
 extern void Task_Add__events_i(void (*func)(void), s32 priority) __asm__("Task_Add");
 void Task_RemoveFar(void (*func)(void));
 void Field_DispatchTypeHandler(s32 type);
@@ -637,7 +636,7 @@ void Func_02003db8(const void *data);
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
 
-/* VIEW(s3164): static Actor_SetPosition as Actor_SetPosition__s3164; the definition has static inline void Actor_SetPosition(s32 actorId, s32 fixed_x, s32 fixed_z). */
+/* VIEW(s3164): static Actor_SetPosition as Actor_SetPosition__s3164; the definition has static inline void Actor_SetPosition(s32 actorId, s32 fixed_x, s32 fixed_z); tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/dehkan_plateau/s2698.c:658: too many arguments to function `Actor_SetPosition'. */
 static __inline__ void Actor_SetPosition__s3164(struct Actor *object, s32 x,
                                          s32 y, s32 z) {
   Actor_SetPositionAndResetMotion(object, x, y, z);
@@ -706,7 +705,7 @@ void Func_02003d90(void);
 s32 Func_02003d98(void);
 s32 Func_02003da0(s32 a, s32 b, s32 c);
 void Func_02003da8(s32 a, s32 b, s32 c, s32 d);
-/* VIEW(s3284): routine Func_02003db0 as s32 Func_02003db0(void); s2c14 has s32 Func_02003db0(struct Actor *object). */
+/* VIEW(s3284): routine Func_02003db0 as s32 Func_02003db0(void); s2c14 has s32 Func_02003db0(struct Actor *object); tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/dehkan_plateau/s2698.c:760: too few arguments to function `Func_02003db0'. */
 extern s32 Func_02003db0__s3284(void) __asm__("Func_02003db0");
 void Func_02003db8(const void *data);
 
@@ -940,8 +939,6 @@ void Effect_AdvanceMotionAtLeaderPriority(struct Actor *object);
 void Func_02000fc4(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options);
-/* VIEW(s3284): routine Effect_AdvanceMotion as void Effect_AdvanceMotion(union FieldObject *object); s2698 has void Effect_AdvanceMotion(struct Actor *object). */
-extern void Effect_AdvanceMotion__s3284(union FieldObject *object) __asm__("Effect_AdvanceMotion");
 void Func_02003bc8(void);
 
 void Func_02003764(void) {
@@ -968,7 +965,7 @@ void Func_02003764(void) {
   Event_Wait(24);
   opts = &options;
   opts->palette = 7;
-  opts->update = Effect_AdvanceMotion__s3284;
+  opts->update = Effect_AdvanceMotion;
   opts->startScaleX = 0xa3d7;
   opts->startScaleY = 0xa3d7;
   opts = &options;
@@ -1040,7 +1037,7 @@ static __inline__ s32 Flag_Test(s32 flag) {
 }
 
 
-/* VIEW(s390c): static Actor_SetPosition as Actor_SetPosition__s390c; the definition has static inline void Actor_SetPosition(s32 actorId, s32 fixed_x, s32 fixed_z). */
+/* VIEW(s390c): static Actor_SetPosition as Actor_SetPosition__s390c; the definition has static inline void Actor_SetPosition(s32 actorId, s32 fixed_x, s32 fixed_z); tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/dehkan_plateau/s2698.c:1054: too many arguments to function `Actor_SetPosition'. */
 static __inline__ void Actor_SetPosition__s390c(struct Actor *object, s32 x,
                                          s32 y, s32 z) {
   Actor_SetPositionAndResetMotion(object, x, y, z);

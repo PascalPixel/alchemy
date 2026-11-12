@@ -479,7 +479,7 @@ void Func_02000ca8(void) {
 
 void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
 
-/* VIEW(s0cc8): routine Func_02000ca8 as void Func_02000ca8(); the parts before it has another declaration. */
+/* VIEW(s0cc8): routine Func_02000ca8 as void Func_02000ca8(); the parts before it has another declaration; tried as the definition's void Func_02000ca8(void), which the object already declares, it does not compile in tla-ja: games/tla/src/scene/aqua_rock_inside.c:513: too many arguments to function `Func_02000ca8'. */
 extern void Func_02000ca8__s0cc8() __asm__("Func_02000ca8");
 s32 Func_02003d2c(struct Actor *object, struct Vector3 *target);
 
@@ -836,8 +836,6 @@ struct Orbiter {
   struct Actor *anchor;
 };
 
-/* VIEW(s13bc): routine Func_02001364 as void Func_02001364(struct Orbiter *orbiter); the definition has void Func_02001364(struct Actor *object). */
-extern void Func_02001364__s13bc(struct Orbiter *orbiter) __asm__("Func_02001364");
 
 s32 Func_020013bc(struct Orbiter *orbiter) {
   struct Actor *anchor = orbiter->anchor;
@@ -856,14 +854,14 @@ s32 Func_020013bc(struct Orbiter *orbiter) {
     return 0;
   if (orbiter->radius == 0x20000)
     return 1;
-  Func_02001364__s13bc(orbiter);
+  Func_02001364(orbiter);
   orbiter->radius -= 0x40000;
   orbiter->angle += (s32)(orbiter->speed << 16) >> 17;
   orbiter->x = anchor->x;
   orbiter->y = anchor->y + 0x80000;
   orbiter->z = anchor->z;
   FieldVector_AddPolarOffset(orbiter->radius, *angle, &orbiter->x);
-  Func_02001364__s13bc(orbiter);
+  Func_02001364(orbiter);
   orbiter->radius -= 0x40000;
   return 1;
 }
@@ -980,8 +978,6 @@ void Func_02003cc4(struct Actor *object, s32 mode);
 void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
 void Animation_SetStateFlags(struct Actor *object, u32 value);
 void Func_02003ccc(struct Actor *object, const void *data);
-/* VIEW(s1620): routine Func_02001598 as void Func_02001598(void); the definition has void Func_02001598(struct Actor *object). */
-extern void Func_02001598__s1620(void) __asm__("Func_02001598");
 void Func_02003ebc(void);
 
 void Func_02001620(s32 firstId, s32 secondId) {
@@ -1129,7 +1125,7 @@ column:
   BattleEffect_StartBufferInterpolation(80);
   Actor_SetMovementTypeById(firstId, gData_0200407c);
   Actor_SetMovementTypeById(secondId, gData_020040ac);
-  second->update = Func_02001598__s1620;
+  second->update = Func_02001598;
   wait(120);
   second->update = 0;
   Sound_Play(390);
@@ -1865,8 +1861,6 @@ struct SlideWork {
   struct Actor *camera;
 };
 
-/* VIEW(s1620): routine Func_02003d2c as s32 Func_02003d2c(struct Actor *object, s32 *position); s0cc8 has s32 Func_02003d2c(struct Actor *object, struct Vector3 *target). */
-extern s32 Func_02003d2c__s1620(struct Actor *object, s32 *position) __asm__("Func_02003d2c");
 
 void Func_02002ca4(void) {
   struct Actor *center;
@@ -1888,7 +1882,7 @@ void Func_02002ca4(void) {
   position[0] = actor->x;
   position[1] = actor->y;
   position[2] = actor->z + 0x20000;
-  hit = Func_02003d2c__s1620(actor, position);
+  hit = Func_02003d2c(actor, position);
   if ((gFrameCount & 4) == 0)
     Func_02002bd4(actor);
   if (hit < 0) {
@@ -1909,19 +1903,19 @@ void Func_02002ca4(void) {
   position[0] = actor->x;
   position[1] = actor->y;
   position[2] = actor->z + 0x80000;
-  hit = Func_02003d2c__s1620(actor, position);
+  hit = Func_02003d2c(actor, position);
   if (hit > 0)
     return;
   position[0] = actor->x + 0x5b333;
   position[1] = actor->y;
   position[2] = actor->z + 0x5b333;
-  hit = Func_02003d2c__s1620(actor, position);
+  hit = Func_02003d2c(actor, position);
   if (hit > 0)
     return;
   position[0] = actor->x - 0x5b333;
   position[1] = actor->y;
   position[2] = actor->z + 0x5b333;
-  hit = Func_02003d2c__s1620(actor, position);
+  hit = Func_02003d2c(actor, position);
   if (hit > 0)
     return;
   center->z += 0x20000;
@@ -1970,9 +1964,6 @@ void Func_02002e34(s32 entrance) {
   FieldEvent_SetExitRequest(entrance);
 }
 
-/* VIEW(s1620): routine Func_0200015c as void Func_0200015c(s32 x, s32 y, s32 z, s32 a, s32 b, s32 c, s32 flags, s32 *params); s13bc has void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags, const struct EffectOptions *options). */
-extern void Func_0200015c__s1620(s32 x, s32 y, s32 z, s32 a, s32 b, s32 c, s32 flags,
-                   s32 *params) __asm__("Func_0200015c");
 
 /// On odd frames, spawns a drifting effect above the object, swaying with the
 /// frame count; Func_02002030 of Aqua Rock is the same function.
@@ -1993,7 +1984,7 @@ s32 Func_02002ed4(struct Actor *object) {
     drift = ((u32)(Random16Far() << 3) >> 16) * 0x3333;
     x = object->x;
     y = object->y;
-    Func_0200015c__s1620(x + ((8 - (gFrameCount & 15)) << 16), y + 0x1a0000, object->z,
+    Func_0200015c(x + ((8 - (gFrameCount & 15)) << 16), y + 0x1a0000, object->z,
                   0, -drift, 0, 0xb0000, params);
   }
   return 0;

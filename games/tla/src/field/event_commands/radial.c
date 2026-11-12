@@ -122,8 +122,6 @@ void BattleEffect_CircleAnchor(struct OrbitEffect *effect) {
 #define Actor_SetPositionAndResetMotionFar                                     \
   ((s32 (*)(void *, s32, s32, s32))Actor_SetPositionAndResetMotionFar)
 
-/* VIEW(radial): routine FieldEffect_RunWhirlwind as s32 FieldEffect_RunWhirlwind(); the definition has void FieldEffect_RunWhirlwind(void). */
-extern s32 FieldEffect_RunWhirlwind__radial() __asm__("FieldEffect_RunWhirlwind");
 
 void BattleEffect_ShrinkObjectScaleUntilHalf(struct Actor *object) {
   s32 scale;
@@ -137,7 +135,7 @@ void BattleEffect_ShrinkObjectScaleUntilHalf(struct Actor *object) {
   }
 }
 
-void FieldEffect_RunWhirlwindOnTarget(void) { FieldEffect_RunWhirlwind__radial(); }
+void FieldEffect_RunWhirlwindOnTarget(void) { FieldEffect_RunWhirlwind(); }
 #undef Actor_SetPositionAndResetMotionFar
 
 // ---- games/tla/src/field/event_commands/f0dfd00.c ----
@@ -152,23 +150,6 @@ struct EffectVector {
 };
 
 // An orbiting mote: radial.c's OrbitEffect.
-/* VIEW(f0dfd00): tag struct OrbitEffect as struct OrbitEffect__f0dfd00; radial.c has another definition. */
-struct OrbitEffect__f0dfd00 {
-  u8 unk00[6];
-  u16 angle;
-  s32 x;
-  s32 y;
-  s32 z;
-  u8 unk14[20];
-  s32 scale;
-  u8 unk2c[28];
-  s32 speed;
-  u8 unk4c[24];
-  u16 timer;
-  s16 pause;
-  struct Actor *anchor;
-  void (*update)(struct OrbitEffect__f0dfd00 *);
-};
 
 // ⚓️'s composite sprite, as far as this reads it.
 struct OrbTargetSprite {
@@ -180,14 +161,8 @@ struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
 void BattleEffect_InitializeSharedScene(void);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, struct EffectVector *p);
 void BattleEffect_ShrinkObjectScaleUntilHalf(struct Actor *object);
-/* VIEW(f0dfd00): routine BattleEffect_CircleAnchor as void BattleEffect_CircleAnchor(struct OrbitEffect__f0dfd00 *mote); the definition has void BattleEffect_CircleAnchor(struct OrbitEffect *effect). */
-extern void BattleEffect_CircleAnchor__f0dfd00(struct OrbitEffect__f0dfd00 *mote) __asm__("BattleEffect_CircleAnchor");
-/* VIEW(f0dfd00): routine BattleEffect_WanderAroundAnchor as void BattleEffect_WanderAroundAnchor(struct OrbitEffect__f0dfd00 *mote); the definition has void BattleEffect_WanderAroundAnchor(struct OrbitEffect *effect). */
-extern void BattleEffect_WanderAroundAnchor__f0dfd00(struct OrbitEffect__f0dfd00 *mote) __asm__("BattleEffect_WanderAroundAnchor");
-/* VIEW(f0dfd00): routine BattleEffect_AgeAndCueAtEighty as void BattleEffect_AgeAndCueAtEighty(struct Actor *object); the definition has void BattleEffect_AgeAndCueAtEighty(struct TimedObject *object). */
+/* VIEW(f0dfd00): routine BattleEffect_AgeAndCueAtEighty as void BattleEffect_AgeAndCueAtEighty(struct Actor *object); the definition has void BattleEffect_AgeAndCueAtEighty(struct TimedObject *object); tried as the definition's void BattleEffect_AgeAndCueAtEighty(struct TimedObject *object), which the object already declares, it does not compile in tla-ja: games/tla/src/field/event_commands/radial.c:313: `BattleEffect_AgeAndCueAtEighty' undeclared (first use in this function). */
 extern void BattleEffect_AgeAndCueAtEighty__f0dfd00(struct Actor *object) __asm__("BattleEffect_AgeAndCueAtEighty");
-/* VIEW(f0dfd00): routine BattleEffect_SetObjectUpdateMode as void BattleEffect_SetObjectUpdateMode(void *object, s32 mode); the definition has void BattleEffect_SetObjectUpdateMode(struct Actor *object, s32 mode). */
-extern void BattleEffect_SetObjectUpdateMode__f0dfd00(void *object, s32 mode) __asm__("BattleEffect_SetObjectUpdateMode");
 void BattleEffect_PrepareBufferInterpolation(void);
 void Func_080db0b0(s32 objectId);
 void Func_08020340(struct Actor *object);
@@ -220,7 +195,7 @@ void FieldEffect_RunWhirlwind(void) {
   struct EffectVector from;
   struct EffectVector to;
   struct Actor *orb;
-  struct OrbitEffect__f0dfd00 *mote;
+  struct OrbitEffect *mote;
   s32 kind = ORB_PLAIN;
   s32 step;
   s32 i;
@@ -288,10 +263,10 @@ void FieldEffect_RunWhirlwind(void) {
       position.z = orb->z;
       distance = Random16() * 5 + (3 << 16);
       Vector_AddPolarOffset(distance, Random16(), &position);
-      mote = (struct OrbitEffect__f0dfd00 *)Actor_Spawn(MOTE_OBJECT, position.x,
+      mote = (struct OrbitEffect *)Actor_Spawn(MOTE_OBJECT, position.x,
                                                position.y, position.z);
       if (mote != 0) {
-        mote->update = BattleEffect_CircleAnchor__f0dfd00;
+        mote->update = BattleEffect_CircleAnchor;
         mote->anchor = orb;
         mote->timer = 0;
         mote->pause = 0;
@@ -320,10 +295,10 @@ void FieldEffect_RunWhirlwind(void) {
         distance = Random16() * 5;
         distance += 3 << 16;
         Vector_AddPolarOffset(distance, Random16(), &position);
-        mote = (struct OrbitEffect__f0dfd00 *)Actor_Spawn(MOTE_OBJECT, position.x,
+        mote = (struct OrbitEffect *)Actor_Spawn(MOTE_OBJECT, position.x,
                                                  position.y, position.z);
         if (mote != 0) {
-          mote->update = BattleEffect_WanderAroundAnchor__f0dfd00;
+          mote->update = BattleEffect_WanderAroundAnchor;
           mote->timer = 20 + i * -2;
           mote->pause = 0;
           mote->speed = 0x1999;
@@ -332,9 +307,9 @@ void FieldEffect_RunWhirlwind(void) {
         }
       }
     }
-    BattleEffect_SetObjectUpdateMode__f0dfd00(scene->mainObject, 0);
+    BattleEffect_SetObjectUpdateMode(scene->mainObject, 0);
     BattleEffect_PrepareBufferInterpolation();
-    ((struct OrbitEffect__f0dfd00 *)orb)->timer = 0;
+    ((struct OrbitEffect *)orb)->timer = 0;
     orb->update = (void (*)(void))BattleEffect_AgeAndCueAtEighty__f0dfd00;
     Func_080db0b0(scene->secondObjectId);
     Func_08020340(orb);
@@ -370,8 +345,6 @@ void BattleEffect_AgeAndCueAtEighty(struct TimedObject *object) {
 #include "field_particle.h"
 
 
-/* VIEW(age_and_cue): routine Vector_AddPolarOffset as void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position); f0dfd00 has void Vector_AddPolarOffset(s32 magnitude, s32 angle, struct EffectVector *p). */
-extern void Vector_AddPolarOffset__age_and_cue(s32 radius, s32 angle, s32 *position) __asm__("Vector_AddPolarOffset");
 void Camera_WorldToScreen(struct EffectVector *pos);
 void BattleEffect_ClearOwnedSlot(struct FieldParticle *slot);
 
@@ -390,7 +363,7 @@ top:
     pos.x = effect->originX;
     pos.z = effect->originZ;
     angle = Random16();
-    Vector_AddPolarOffset__age_and_cue(Random16() * 30 + (40 << 16), (u16)angle, &pos);
+    Vector_AddPolarOffset(Random16() * 30 + (40 << 16), (u16)angle, &pos);
     effect->targetX = pos.x;
     effect->targetZ = pos.z;
     effect->acceleration = 4 << 16;
@@ -410,7 +383,7 @@ top:
     pos.y = scene->y + (8 << 16);
     pos.z = scene->z;
     Camera_WorldToScreen(&pos);
-    Vector_AddPolarOffset__age_and_cue(4 << 16, Random16(), &pos);
+    Vector_AddPolarOffset(4 << 16, Random16(), &pos);
     effect->targetX = pos.x;
     effect->targetZ = pos.z;
     effect->maxTurnStep = 0x1000;
@@ -502,7 +475,7 @@ void Func_080e0134(void) {
     pos.y = obj->y + (8 << 16);
     pos.z = obj->z;
     Camera_WorldToScreen(&pos);
-    Vector_AddPolarOffset__age_and_cue(4 << 16, Random16(), &pos);
+    Vector_AddPolarOffset(4 << 16, Random16(), &pos);
     FieldParticle_Initialize(slot, 673, pos.x, pos.z);
     FieldParticle_SetCallback(slot, Func_080e0020);
     Animation_ApplyChildValuesToRecordFar(slot->object, 7);
@@ -624,7 +597,7 @@ void Func_080e03cc(void) {
     target.x = mainObject->x;
     target.y = mainObject->y + 0x200000;
     target.z = mainObject->z;
-    Vector_AddPolarOffset__age_and_cue(0x200000, scene->angle, &target.x);
+    Vector_AddPolarOffset(0x200000, scene->angle, &target.x);
   } else {
     target.x = scene->x;
     target.y = scene->y + 0x200000;
@@ -752,12 +725,12 @@ void Func_080e0618(void) {
     particle->y = object->y;
     particle->z = object->z;
     distance = Random16() * 12 + 0x40000;
-    Vector_AddPolarOffset__age_and_cue(distance, Random16(), particle);
+    Vector_AddPolarOffset(distance, Random16(), particle);
     particle->velocityX = 0;
     particle->velocityY = 0x20000 - Random16() * 2;
     particle->velocityZ = 0;
     speed = Random16() + 0x18000;
-    Vector_AddPolarOffset__age_and_cue(speed, Random16(), &particle->velocityX);
+    Vector_AddPolarOffset(speed, Random16(), &particle->velocityX);
     particle->timer = 0;
     work->next++;
     work->next &= 63;
@@ -936,7 +909,7 @@ void Func_080e09c0(void) {
       particle->x = object->x;
       particle->y = object->y;
       particle->z = object->z;
-      Vector_AddPolarOffset__age_and_cue(0xc0000, Random16(), particle);
+      Vector_AddPolarOffset(0xc0000, Random16(), particle);
       particle->timer = -1;
       sprite++;
       particle++;
@@ -1054,7 +1027,7 @@ void Func_080e0cec(struct FieldParticle *slot) {
     slot->z = slot->originZ = pos.z + (8 << 16);
 
     r = Random16();
-    Vector_AddPolarOffset__age_and_cue(
+    Vector_AddPolarOffset(
         120 << 16, ((r << 13) >> 16) - ((Random16() << 13) >> 16) + 0xc000,
         &pos);
 
@@ -1118,23 +1091,12 @@ void BattleEffect_InitializeSharedScene(void);
 void wait(s32 frames);
 void Actor_ArmCallback(s32 actor, s32 angle, s32 frames);
 void Sound_PlayFar(s32 cue);
-/* VIEW(launch): routine Animation_ApplyChildValuesFar as void Animation_ApplyChildValuesFar(void *object, s32 value); actor_view.h has void Animation_ApplyChildValuesFar(struct Actor *, u32). */
-extern void Animation_ApplyChildValuesFar__launch(void *object, s32 value) __asm__("Animation_ApplyChildValuesFar");
-/* VIEW(launch): routine Actor_SetSingleChildFlagsFar as void Actor_SetSingleChildFlagsFar(void *object, s32 flags); actor_view.h has void Actor_SetSingleChildFlagsFar(struct Actor *object, u32 flags). */
-extern void Actor_SetSingleChildFlagsFar__launch(void *object, s32 flags) __asm__("Actor_SetSingleChildFlagsFar");
-/* VIEW(launch): routine Camera_WorldToScreen as void Camera_WorldToScreen(struct SpinVector *position); age_and_cue has void Camera_WorldToScreen(struct EffectVector *pos). */
-extern void Camera_WorldToScreen__launch(struct SpinVector *position) __asm__("Camera_WorldToScreen");
+void Camera_WorldToScreen(struct EffectVector *position);
 void FieldParticle_Initialize(struct FieldParticle *slot, s32 kind, s32 x,
                               s32 z);
-/* VIEW(launch): routine Animation_ApplyChildValuesToRecordFar as void Animation_ApplyChildValuesToRecordFar(void *record, u32 value); actor_view.h has void Animation_ApplyChildValuesToRecordFar(struct ActorSpriteView *, u32). */
-extern void Animation_ApplyChildValuesToRecordFar__launch(void *record, u32 value) __asm__("Animation_ApplyChildValuesToRecordFar");
 u32 Random16(void);
 void BattleEffect_PrepareBufferInterpolation(void);
 void Actor_ApplyRandomChildValues(struct SpinObject *owner);
-/* VIEW(launch): routine BattleEffect_AdvanceAngleWithRamp as void BattleEffect_AdvanceAngleWithRamp(struct SpinObject *object); the definition has void BattleEffect_AdvanceAngleWithRamp(struct Actor *object). */
-extern void BattleEffect_AdvanceAngleWithRamp__launch(struct SpinObject *object) __asm__("BattleEffect_AdvanceAngleWithRamp");
-/* VIEW(launch): routine BattleEffect_UpdateDescendingObject as void BattleEffect_UpdateDescendingObject(struct SpinObject *obj); the definition has void BattleEffect_UpdateDescendingObject(struct Actor *obj). */
-extern void BattleEffect_UpdateDescendingObject__launch(struct SpinObject *obj) __asm__("BattleEffect_UpdateDescendingObject");
 void Func_080e0cec(struct FieldParticle *slot);
 
 void FieldEffect_RunRetreat(void) {
@@ -1158,20 +1120,20 @@ void FieldEffect_RunRetreat(void) {
   wait(40);
 
   Sound_PlayFar(220);
-  Animation_ApplyChildValuesFar__launch(obj, 0);
+  Animation_ApplyChildValuesFar(obj, 0);
   Actor_SetMode(obj, 3);
-  obj->update = BattleEffect_AdvanceAngleWithRamp__launch;
+  obj->update = BattleEffect_AdvanceAngleWithRamp;
   obj->timer = 0;
   wait(70);
 
-  Actor_SetSingleChildFlagsFar__launch(obj, 0);
+  Actor_SetSingleChildFlagsFar(obj, 0);
   obj->motionFlags = 0;
-  obj->update = BattleEffect_UpdateDescendingObject__launch;
+  obj->update = BattleEffect_UpdateDescendingObject;
   obj->targetX = EFFECT_NO_TARGET;
   pos.x = obj->x;
   pos.y = obj->y;
   pos.z = obj->z;
-  Camera_WorldToScreen__launch(&pos);
+  Camera_WorldToScreen(&pos);
   i = 0;
   slot = scene->slots;
   slots = slot;
@@ -1181,7 +1143,7 @@ void FieldEffect_RunRetreat(void) {
     FieldParticle_Initialize(slot, 0x2a0, pos.x, pos.z);
     FieldParticle_SetCallback(slot, Func_080e0cec);
     FieldParticle_SetActorMode(slot, 7);
-    Animation_ApplyChildValuesToRecordFar__launch(slot->object, (Random16() * 7) >> 16);
+    Animation_ApplyChildValuesToRecordFar(slot->object, (Random16() * 7) >> 16);
     scale = (Random16() >> 1) + 0x13333;
     slot->scaleY = scale;
     slot->scaleX = scale;
@@ -1385,18 +1347,6 @@ struct ArcGroup {
   struct ArcEntry *entries[1];
 };
 
-/* VIEW(launch): tag struct ArcEffectObject as struct ArcEffectObject__launch; field_psynergy_work.h has another definition. */
-struct ArcEffectObject__launch {
-  u8 unk00[6];
-  u16 angle;
-  u8 unk08[0x48];
-  struct ArcGroup *records;
-  u8 unk54[0x10];
-  s16 phase;
-  u16 step;
-  u8 unk68[4];
-  void (*callback)(struct ArcEffectObject__launch *);
-};
 
 extern char MsgAbilityWoreOff;
 extern char MsgItemWoreOff;
@@ -1409,7 +1359,7 @@ void FieldMessage_ShowFar(s32 message, s32 flags);
 /// The caster during Avoid (BattleEffect_RunEffect16): sheds a pair of falling
 /// arcs every 5 frames (7 in scene Ov64a), and spins in phase 1.
 // As ☀️'s function of the same name.
-void BattleEffect_UpdatePairedArcSpawner(struct ArcEffectObject__launch *caster) {
+void BattleEffect_UpdatePairedArcSpawner(struct ArcEffectObject *caster) {
   s16 phase;
   s32 elapsedFrames;
   struct MainRoutineWork *party;
@@ -1444,7 +1394,7 @@ void FieldEvent_ShowStatusMessage(void) {
 
 struct ArcScene {
   u8 unk00[0x10];
-  struct ArcEffectObject__launch *mainObject;
+  struct ArcEffectObject *mainObject;
   u8 unk14[0x6fc];
   s16 arcTileSlot;
 };
@@ -1457,7 +1407,7 @@ s32 GameFlag_Test(s32 flag);
 /// Psynergy effect 16: the user spins, rains arc particles, then flashes.
 void BattleEffect_RunEffect16(void) {
   struct ArcScene *scene;
-  struct ArcEffectObject__launch *object;
+  struct ArcEffectObject *object;
   struct ArcGroup *group;
   struct ArcEntry *entry;
   const u8 *tiles;
@@ -1481,7 +1431,7 @@ void BattleEffect_RunEffect16(void) {
   VramCache_Load((s16)slot, 0x100, tiles);
   gMainRoutineWork.avoidDistance = 0x09600000;
   gMainRoutineWork.avoidByItem = GameFlag_Test(0x145);
-  Animation_ApplyChildValuesFar__launch(object, 0);
+  Animation_ApplyChildValuesFar(object, 0);
   object->callback = BattleEffect_UpdatePairedArcSpawner;
   object->phase = 0;
   object->step = 0;
@@ -1617,7 +1567,7 @@ void BattleEffect_SpawnScaledArcObjects(struct Actor *target) {
 }
 
 // ---- games/tla/src/field/event_commands/f0e150c.c ----
-/* VIEW(f0e150c): tag struct ArcSprite as struct ArcSprite__f0e150c; radial.c has another definition. */
+/* VIEW(f0e150c): tag struct ArcSprite as struct ArcSprite__f0e150c; radial.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/event_commands/radial.c:1607: structure has no member named `x'. */
 struct ArcSprite__f0e150c {
   u8 unk00[12];
   s32 x;
@@ -1629,21 +1579,12 @@ struct ArcSprite__f0e150c {
   u8 unk20[8];
 };
 
-/* VIEW(f0e150c): tag struct ArcWork as struct ArcWork__f0e150c; radial.c has another definition. */
-struct ArcWork__f0e150c {
-  struct ArcSprite__f0e150c sprites[2][2];
-  s16 age[2];
-  s16 resource;
-  s16 group;
-  struct Actor *target;
-};
 
-/* VIEW(f0e150c): routine Camera_WorldToScreen as void Camera_WorldToScreen(s32 *position); launch has void Camera_WorldToScreen(struct SpinVector *position). */
-extern void Camera_WorldToScreen__f0e150c(s32 *position) __asm__("Camera_WorldToScreen");
+void Camera_WorldToScreen(struct EffectVector *position);
 s32 BattleEffect_GetObjectDepth(struct Actor *object);
 
 void BattleEffect_UpdateArcEffect(void) {
-  struct ArcWork__f0e150c *work = Ram_HeapSlots->block62;
+  struct ArcWork *work = Ram_HeapSlots->block62;
   struct Actor *target = work->target;
   s32 group;
   s32 position[3];
@@ -1661,7 +1602,7 @@ void BattleEffect_UpdateArcEffect(void) {
       position[0] = target->x;
       position[1] = target->y + (work->age[group] << 16);
       position[2] = target->z;
-      Camera_WorldToScreen__f0e150c(position);
+      Camera_WorldToScreen(position);
       x = position[0];
       y = position[2];
       for (i = 0; i < 2; i++) {
@@ -1761,8 +1702,6 @@ extern const s32 Data_080f0f34[8];
 extern const s32 Data_080f0f54[4];
 extern const u8 Data_080eda0c[];
 
-/* VIEW(f0e150c): routine Vector_AddPolarOffset as void Vector_AddPolarOffset(s32 distance, s32 angle, s32 *position); f0dfd00 has void Vector_AddPolarOffset(s32 magnitude, s32 angle, struct EffectVector *p). */
-extern void Vector_AddPolarOffset__f0e150c(s32 distance, s32 angle, s32 *position) __asm__("Vector_AddPolarOffset");
 s32 Func_08020210(struct Actor *object, s32 *position);
 s32 Func_080dbe80(s32 *a, s32 radiusA, s32 *b, s32 radiusB);
 void BattleEffect_DrawCanvasBlock(const u8 *src, s32 x, s32 y, s32 width,
@@ -1809,7 +1748,7 @@ again:
       sprite->scaleX = sprite->scaleY = 0x10000;
       motion = &work->arrowMotion;
       pos[0] = pos[1] = pos[2] = 0;
-      Vector_AddPolarOffset__f0e150c(0x2666, scene->angle + 0x8000, pos);
+      Vector_AddPolarOffset(0x2666, scene->angle + 0x8000, pos);
       motion->velocityX = pos[0];
       motion->velocityY = pos[1];
       motion->velocityZ = pos[2];
@@ -1820,7 +1759,7 @@ again:
     if (work->timer == 56) {
       motion = &work->arrowMotion;
       pos[0] = pos[1] = pos[2] = 0;
-      Vector_AddPolarOffset__f0e150c(0x50000, scene->angle, pos);
+      Vector_AddPolarOffset(0x50000, scene->angle, pos);
       motion->velocityX = pos[0];
       motion->velocityY = pos[1];
       motion->velocityZ = pos[2];
@@ -1880,7 +1819,7 @@ again:
     }
     motion = &work->arrowMotion;
     pos[0] = pos[1] = pos[2] = 0;
-    Vector_AddPolarOffset__f0e150c(0x20000, scene->angle, pos);
+    Vector_AddPolarOffset(0x20000, scene->angle, pos);
     motion->velocityX = pos[0];
     motion->velocityY = pos[1];
     motion->velocityZ = pos[2];
@@ -1982,7 +1921,7 @@ again:
   pos[1] = motion->y;
   pos[2] = motion->z;
   sprite = &work->bow;
-  Camera_WorldToScreen__f0e150c(pos);
+  Camera_WorldToScreen(pos);
   sprite->x = pos[0];
   sprite->y = pos[2];
   Func_080eb01c(sprite);
@@ -1990,7 +1929,7 @@ again:
   pos[0] = motion->x;
   pos[1] = motion->y;
   pos[2] = motion->z;
-  Camera_WorldToScreen__f0e150c(pos);
+  Camera_WorldToScreen(pos);
   sprite = &work->arrow;
   sprite->x = pos[0];
   sprite->y = pos[2];
@@ -2034,8 +1973,8 @@ again:
   pos[0] = motion->x;
   pos[1] = motion->y;
   pos[2] = motion->z;
-  Vector_AddPolarOffset__f0e150c(-0x240000, scene->angle, pos);
-  Camera_WorldToScreen__f0e150c(pos);
+  Vector_AddPolarOffset(-0x240000, scene->angle, pos);
+  Camera_WorldToScreen(pos);
   canvas->x = (s16)(pos[0] >> 16);
   canvas->y = (s16)(pos[2] >> 16);
   canvas->command = CANVAS_UPLOAD_AND_FADE3;
@@ -2101,7 +2040,7 @@ void Func_080e1f2c(void) {
   pos[0] = scene->mainObject->x;
   pos[2] = scene->mainObject->z;
   motion = &work->bowMotion;
-  Vector_AddPolarOffset__f0e150c(0x80000, scene->angle, pos);
+  Vector_AddPolarOffset(0x80000, scene->angle, pos);
   motion->x = pos[0];
   motion->y = 0x100000;
   motion->z = pos[2];
@@ -2123,7 +2062,7 @@ void Func_080e1f2c(void) {
   pos[0] = scene->mainObject->x;
   pos[2] = scene->mainObject->z;
   motion = &work->arrowMotion;
-  Vector_AddPolarOffset__f0e150c(0x120000, scene->angle, pos);
+  Vector_AddPolarOffset(0x120000, scene->angle, pos);
   motion->x = pos[0];
   motion->y = 0x100000;
   motion->z = pos[2];
@@ -2143,7 +2082,7 @@ void Func_080e1f2c(void) {
   work->target[0] = scene->mainObject->x;
   work->target[1] = scene->mainObject->y;
   work->target[2] = scene->mainObject->z;
-  Vector_AddPolarOffset__f0e150c(0x500000, scene->angle, work->target);
+  Vector_AddPolarOffset(0x500000, scene->angle, work->target);
 
   palette = (u16 *)&OBJ_PLTT_COLOR(14, 0);
   for (i = 0; i < 16; i++) {
@@ -2276,8 +2215,6 @@ struct TouchCell {
 };
 
 s32 Func_080dbdc8(s32 x, s32 z, s32 layer);
-/* VIEW(f0e150c): routine Field_RunPsynergyEvent as void Field_RunPsynergyEvent(s32 event, s32 argument0, s32 argument1); event_work.h has s32 Field_RunPsynergyEvent(struct PendingEvent *event, s32 mode, s32 target). */
-extern void Field_RunPsynergyEvent__f0e150c(s32 event, s32 argument0, s32 argument1) __asm__("Field_RunPsynergyEvent");
 
 // Only for the compiler: see the FAKEMATCH tag in Func_080e249c.
 static inline s32 Index(s32 i) { return i; }
@@ -2326,7 +2263,7 @@ void Func_080e249c(void) {
     s32 event = Func_080ce458(0x50000005, work->kind, ids[Index(i)]);
 
     if (event != 0)
-      Field_RunPsynergyEvent__f0e150c(event, work->argument0, work->argument1);
+      Field_RunPsynergyEvent(event, work->argument0, work->argument1);
   }
 }
 
@@ -2352,7 +2289,7 @@ struct TouchCopy {
   u8 unk06[2];
 };
 
-/* VIEW(f0e150c): tag struct MapCell as struct MapCell__f0e150c; map.h has another definition. */
+/* VIEW(f0e150c): tag struct MapCell as struct MapCell__f0e150c; map.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/event_commands/radial.c:2328: dereferencing pointer to incomplete type. */
 struct MapCell__f0e150c {
   u8 unk00[2];
   u8 unk02;
@@ -2414,10 +2351,10 @@ void Func_080e25e8(s32 toX, s32 toZ, s32 width, s32 height, s32 originX,
 
 #include "map.h"
 
-/* VIEW(f0e2718): variable gData_02001000 as extern u8 gData_02001000[]; f0e150c has extern struct TouchCopies gData_02001000. */
+/* VIEW(f0e2718): variable gData_02001000 as extern u8 gData_02001000[]; f0e150c has extern struct TouchCopies gData_02001000; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/field/event_commands/radial.c:2361: incompatible types in initialization. */
 extern u8 gData_02001000__f0e2718[] __asm__("gData_02001000");
 void Func_080201f0(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-/* VIEW(f0e2718): routine Func_080dbb78 as struct MapCell *Func_080dbb78(s32 x, s32 z, s32 layer); f0e150c has struct MapCell__f0e150c *Func_080dbb78(s32 x, s32 z, s32 layer). */
+/* VIEW(f0e2718): routine Func_080dbb78 as struct MapCell *Func_080dbb78(s32 x, s32 z, s32 layer); f0e150c has struct MapCell__f0e150c *Func_080dbb78(s32 x, s32 z, s32 layer); tried as the definition's struct MapCell *Func_080dbb78(s32 x, s32 z, s32 layer), it does not compile in tla-ja: games/tla/src/field/event_commands/radial.c:2357: conflicting types for `Func_080dbb78'. */
 extern struct MapCell *Func_080dbb78__f0e2718(s32 x, s32 z, s32 layer) __asm__("Func_080dbb78");
 
 /// For each entry of the event work's list at 0x174c, calls Func_080201f0 with

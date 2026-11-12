@@ -56,24 +56,22 @@ void Func_02000054(struct DoorStep *step, s32 countdown, s32 unused) {
   Func_02001fd4();
 }
 
-/* VIEW(lemuria_palace): variable gData_02002368 as extern u8 gData_02002368[]; the definition has s32 gData_02002368[] = { (s32) gData_0200233c, 0x170005, (s32) gData_0200233c, 0x17001e, }. */
-extern u8 gData_02002368__lemuria_palace[] __asm__("gData_02002368");
-/* VIEW(lemuria_palace): variable gData_02002378 as extern u8 gData_02002378[]; the definition has s32 gData_02002378[] = { (s32) gData_0200233c, 0x40038, }. */
-extern u8 gData_02002378__lemuria_palace[] __asm__("gData_02002378");
+extern s32 gData_02002368[];
+extern s32 gData_02002378[];
 
 void Func_020000c8(s32 kind) {
-  const u8 *data = gData_02002368__lemuria_palace;
+  const u8 *data = gData_02002368;
 
   if (kind == 3)
     data += 8;
   if (kind == 16)
-    data = gData_02002378__lemuria_palace;
+    data = gData_02002378;
   Func_02000054(data, kind, 0);
 }
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
-/* VIEW(lemuria_palace): variable gData_02002608 as extern s16 gData_02002608[]; the definition has u32 gData_02002608[] = { 0x76c07b00, 0x6e407280, 0x65c06a00, 0x65c06180, 0x6e406a00, 0x76c07280, }. */
+/* VIEW(lemuria_palace): variable gData_02002608 as extern s16 gData_02002608[]; the definition has u32 gData_02002608[] = { 0x76c07b00, 0x6e407280, 0x65c06a00, 0x65c06180, 0x6e406a00, 0x76c07280, }; tried as the definition's extern u32 gData_02002608[], Func_020000f4 moves: 2 of 35 instructions in tla-ja. */
 extern s16 gData_02002608__lemuria_palace[] __asm__("gData_02002608");
 
 static inline u32 Frame_Mod6(u32 frame) {
@@ -274,17 +272,17 @@ extern s32 gData_02003020;
 extern s32 gData_02003094;
 extern s32 Data_02003088;
 extern s32 Data_02003058;
-/* VIEW(s03a0): variable Data_02003060 as extern struct Unk_020003a0Sprite Data_02003060; lemuria_palace has extern u8 Data_02003060[]. */
+/* VIEW(s03a0): variable Data_02003060 as extern struct Unk_020003a0Sprite Data_02003060; lemuria_palace has extern u8 Data_02003060[]; tried as the one declaration extern struct Unk_020003a0Sprite Data_02003060, it does not compile in tla-ja: games/tla/src/scene/lemuria_palace.c:275: conflicting types for `Data_02003060'. */
 extern struct Unk_020003a0Sprite Data_02003060__s03a0 __asm__("Data_02003060");
-/* VIEW(s03a0): variable Data_02003030 as extern struct Unk_020003a0Sprite Data_02003030; lemuria_palace has extern u8 Data_02003030[]. */
+/* VIEW(s03a0): variable Data_02003030 as extern struct Unk_020003a0Sprite Data_02003030; lemuria_palace has extern u8 Data_02003030[]; tried as the one declaration extern struct Unk_020003a0Sprite Data_02003030, it does not compile in tla-ja: games/tla/src/scene/lemuria_palace.c:277: conflicting types for `Data_02003030'. */
 extern struct Unk_020003a0Sprite Data_02003030__s03a0 __asm__("Data_02003030");
-/* VIEW(s03a0): variable Data_02003090 as extern s32 Data_02003090; lemuria_palace has extern u8 Data_02003090[]. */
+/* VIEW(s03a0): variable Data_02003090 as extern s32 Data_02003090; lemuria_palace has extern u8 Data_02003090[]; tried as the one declaration extern s32 Data_02003090, it does not compile in tla-ja: games/tla/src/scene/lemuria_palace.c:279: conflicting types for `Data_02003090'. */
 extern s32 Data_02003090__s03a0 __asm__("Data_02003090");
-/* VIEW(s03a0): variable Data_02003024 as extern s32 Data_02003024; lemuria_palace has extern u8 Data_02003024[]. */
+/* VIEW(s03a0): variable Data_02003024 as extern s32 Data_02003024; lemuria_palace has extern u8 Data_02003024[]; tried as the one declaration extern s32 Data_02003024, it does not compile in tla-ja: games/tla/src/scene/lemuria_palace.c:281: conflicting types for `Data_02003024'. */
 extern s32 Data_02003024__s03a0 __asm__("Data_02003024");
-/* VIEW(s03a0): variable Data_02003098 as extern s32 Data_02003098; lemuria_palace has extern u8 Data_02003098[]. */
+/* VIEW(s03a0): variable Data_02003098 as extern s32 Data_02003098; lemuria_palace has extern u8 Data_02003098[]; tried as the one declaration extern s32 Data_02003098, it does not compile in tla-ja: games/tla/src/scene/lemuria_palace.c:283: conflicting types for `Data_02003098'. */
 extern s32 Data_02003098__s03a0 __asm__("Data_02003098");
-/* VIEW(s03a0): variable gData_0200308c as extern u8 gData_0200308c; lemuria_palace has extern u8 gData_0200308c[]. */
+/* VIEW(s03a0): variable gData_0200308c as extern u8 gData_0200308c; lemuria_palace has extern u8 gData_0200308c[]; tried as the definition's extern struct Trigger gData_0200308c[], which the object already declares, it does not compile in tla-ja: games/tla/src/scene/lemuria_palace.c:330: `gData_0200308c' has an incomplete type. */
 extern u8 gData_0200308c__s03a0 __asm__("gData_0200308c");
 
 void *Heap_Alloc(s32 size);
@@ -401,11 +399,11 @@ loop:
        ->v)
 
 void Func_02001fcc();
-/* VIEW(s03a0): routine Func_02001fd4 as s32 Func_02001fd4(); lemuria_palace has void Func_02001fd4(). */
+/* VIEW(s03a0): routine Func_02001fd4 as s32 Func_02001fd4(); lemuria_palace has void Func_02001fd4(); tried as the definition's void Func_02001fd4(void), it does not compile in tla-ja: games/tla/src/scene/lemuria_palace.c:442: void value not ignored as it ought to be. */
 extern s32 Func_02001fd4__s03a0() __asm__("Func_02001fd4");
 s32 Party_AddActiveOwner();
 void Func_020020ac();
-/* VIEW(s03a0): routine Func_020001d8 as s32 Func_020001d8(); the definition has void Func_020001d8(void). */
+/* VIEW(s03a0): routine Func_020001d8 as s32 Func_020001d8(); the definition has void Func_020001d8(void); tried as the definition's void Func_020001d8(struct Actor *object), it does not compile in tla-ja: games/tla/src/scene/lemuria_palace.c:406: conflicting types for `Func_020001d8'. */
 extern s32 Func_020001d8__s03a0() __asm__("Func_020001d8");
 void Func_02002114();
 s32 __modsi3();
@@ -1192,8 +1190,6 @@ L_02009f20:
   return r0;
 }
 
-/* VIEW(s03a0): routine Func_020000c8 as void Func_020000c8(void); the definition has void Func_020000c8(s32 kind). */
-extern void Func_020000c8__s03a0(void) __asm__("Func_020000c8");
 
 extern s16 gData_0200233c[];
 
@@ -1265,8 +1261,8 @@ s32 gData_02002378[] = {
 
 struct Trigger gSceneEvents[] = {
     {1, 1, CONDITION_ALWAYS, 1},
-    {0xc602, 2, CONDITION_ALWAYS, EVENT(Func_020000c8__s03a0)},
-    {0xc602, 3, CONDITION_ALWAYS, EVENT(Func_020000c8__s03a0)},
+    {0xc602, 2, CONDITION_ALWAYS, EVENT(Func_020000c8)},
+    {0xc602, 3, CONDITION_ALWAYS, EVENT(Func_020000c8)},
     {1, 4, CONDITION_ALWAYS, 4},
     {1, 5, CONDITION_ALWAYS, 5},
     {1, 6, CONDITION_ALWAYS, 6},
@@ -1279,7 +1275,7 @@ struct Trigger gSceneEvents[] = {
     {1, 13, CONDITION_ALWAYS, 13},
     {1, 14, CONDITION_ALWAYS, 14},
     {1, 15, CONDITION_ALWAYS, 15},
-    {0xc602, 16, CONDITION_ALWAYS, EVENT(Func_020000c8__s03a0)},
+    {0xc602, 16, CONDITION_ALWAYS, EVENT(Func_020000c8)},
     {1, 17, CONDITION_ALWAYS, 17},
     {2, 20, 0x96a, EVENT(Func_0200058c)},
     {0, 8, 0x196a, MSGNO(MsgLemuriaPalace12)},

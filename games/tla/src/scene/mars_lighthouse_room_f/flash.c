@@ -475,11 +475,11 @@ void Func_02002f6c(struct Actor *object) {
 #define MapLayer MapLayer__s2f80
 #include "map.h"
 #undef MapLayer
-/* VIEW(s2f80): tag struct MapLayer as struct MapLayer__s2f80; room.h has another definition. */
+/* VIEW(s2f80): tag struct MapLayer as struct MapLayer__s2f80; room.h has another definition; not tried: struct MapLayer__s2f80 was not found. */
 
 #define ABS(x) ((x) < 0 ? -(x) : (x))
 
-/* VIEW(s2f80): tag struct Work020023c4 as struct Work020023c4__s2f80; flash.c has another definition. */
+/* VIEW(s2f80): tag struct Work020023c4 as struct Work020023c4__s2f80; flash.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_room_f/flash.c:602: structure has no member named `unk6c'. */
 struct Work020023c4__s2f80 {
   u8 unk00[4];
   u16 unk04;

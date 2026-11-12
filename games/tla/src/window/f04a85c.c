@@ -107,9 +107,9 @@ s32 System_GetLanguage(void);
 #endif
 
 s32 VramCache_AllocEntry(s32 size);
-/* VIEW(f04a85c): routine VramCache_Reload as s32 VramCache_Reload(s32 entry, const void *tiles); resource.h has s32 VramCache_Reload(s32 slot, s32 source). */
+/* VIEW(f04a85c): routine VramCache_Reload as s32 VramCache_Reload(s32 entry, const void *tiles); resource.h has s32 VramCache_Reload(s32 slot, s32 source); tried as the definition's s32 VramCache_Reload(s32 no, s32 src), Func_0804a85c moves: 1 of 1647 instructions in tla-ja. */
 extern s32 VramCache_Reload__f04a85c(s32 entry, const void *tiles) __asm__("VramCache_Reload");
-/* VIEW(f04a85c): routine Unit_Get as struct BattleUnit *Unit_Get(s32 unit); the definition has s32 Func_0804b8b8(s32 slot) { u16 owners[6]; u16 selected[2]; struct BattleWork *battle; s32 count; count = BattleParty_PrepareReserveOwners.... */
+/* VIEW(f04a85c): routine Unit_Get as struct BattleUnit *Unit_Get(s32 unit); the definition has s32 Func_0804b8b8(s32 slot) { u16 owners[6]; u16 selected[2]; struct BattleWork *battle; s32 count; count = BattleParty_PrepareReserveOwners...; tried as the definition's void *Unit_Get(s32 owner), which the object already declares, it does not compile in tla-ja: games/tla/src/window/f04a85c.c:328: invalid type argument of `->'. */
 extern struct BattleUnit *Unit_Get__f04a85c(s32 unit) __asm__("Unit_Get");
 s32 GameFlag_Test(s32 flag);
 s32 BattleMotion_ProjectConditionalPositionFar(s32 unit,
@@ -117,25 +117,25 @@ s32 BattleMotion_ProjectConditionalPositionFar(s32 unit,
 struct TargetWindow *Window_Create(s32 x, s32 y, s32 width, s32 height,
                                    s32 flags);
 s32 Trig_Sin(s32 angle);
-/* VIEW(f04a85c): routine Oam_AddSpriteAtDepth as s32 Oam_AddSpriteAtDepth(void *sprite, s32 depth); task.h has void Oam_AddSpriteAtDepth(void *entry, s32 priority). */
+/* VIEW(f04a85c): routine Oam_AddSpriteAtDepth as s32 Oam_AddSpriteAtDepth(void *sprite, s32 depth); task.h has void Oam_AddSpriteAtDepth(void *entry, s32 priority); tried as the definition's void Oam_AddSpriteAtDepth(void *entry, s32 slot), Func_0804a85c moves: 2 of 1647 instructions in tla-ja. */
 extern s32 Oam_AddSpriteAtDepth__f04a85c(void *sprite, s32 depth) __asm__("Oam_AddSpriteAtDepth"); // Returns void; see the tag.
 s32 AffineMatrix_BuildForEffect(struct TargetAffine *affine);
 void BattleHighlight_SetModesFar(u16 *units, s32 mode);
-/* VIEW(f04a85c): routine Window_Close as void Window_Close(void *window, s32 mode); uiflow.h has void Window_Close(struct Window *window, s32 release). */
+/* VIEW(f04a85c): routine Window_Close as void Window_Close(void *window, s32 mode); uiflow.h has void Window_Close(struct Window *window, s32 release); tried as the definition's void Window_Close(struct Window *work, s32 release), it does not compile in tla-ja: games/tla/include/graphics/uiflow.h:7: conflicting types for `Window_Close'. */
 extern void Window_Close__f04a85c(void *window, s32 mode) __asm__("Window_Close");
-/* VIEW(f04a85c): routine Text_DrawStringAtOffset as void Text_DrawStringAtOffset(const u8 *text, struct TargetWindow *window, s32 x, s32 y); text_render.h has void Text_DrawStringAtOffset(u8 *text, struct RenderInput *work, s32 offsetX, s32 offsetY). */
+/* VIEW(f04a85c): routine Text_DrawStringAtOffset as void Text_DrawStringAtOffset(const u8 *text, struct TargetWindow *window, s32 x, s32 y); text_render.h has void Text_DrawStringAtOffset(u8 *text, struct RenderInput *work, s32 offsetX, s32 offsetY); tried as the definition's void Text_DrawStringAtOffset(u8 *text, struct RenderInput *work, s32 offsetX, s32 offsetY), which the object already declares, Func_0804a85c moves: 8 of 1647 instructions in tla-ja. */
 extern void Text_DrawStringAtOffset__f04a85c(const u8 *text, struct TargetWindow *window, s32 x,
                              s32 y) __asm__("Text_DrawStringAtOffset");
 void Text_DrawNumberInWindow(s32 value, s32 digits, struct TargetWindow *window,
                              s32 x, s32 y);
-/* VIEW(f04a85c): routine Text_DrawCharacterAtOffset as void Text_DrawCharacterAtOffset(s32 message, struct TargetWindow *window, s32 x, s32 y); text_render.h has void Text_DrawCharacterAtOffset(s32 character, struct RenderInput *work, u32 offsetX, u32 offsetY). */
+/* VIEW(f04a85c): routine Text_DrawCharacterAtOffset as void Text_DrawCharacterAtOffset(s32 message, struct TargetWindow *window, s32 x, s32 y); text_render.h has void Text_DrawCharacterAtOffset(s32 character, struct RenderInput *work, u32 offsetX, u32 offsetY); tried as the definition's void Text_DrawCharacterAtOffset(s32 character, struct RenderInput *position, u32 offsetX, u32 offsetY), it does not compile in tla-ja: games/tla/include/graphics/text_render.h:10: conflicting types for `Text_DrawCharacterAtOffset'. */
 extern void Text_DrawCharacterAtOffset__f04a85c(s32 message, struct TargetWindow *window, s32 x,
                                 s32 y) __asm__("Text_DrawCharacterAtOffset");
 void Func_08041f70(s32 color);
 void Message_CopyExpanded(s32 message, u16 *text, s32 capacity);
 void Message_DecodeRaw(s32 message, u16 *text, s32 capacity);
 s32 Text_GetWideStringWidth(u16 *text);
-/* VIEW(f04a85c): routine Vram_ClearWindowBlock as void Vram_ClearWindowBlock(void); graphics.h has s32 Vram_ClearWindowBlock(void). */
+/* VIEW(f04a85c): routine Vram_ClearWindowBlock as void Vram_ClearWindowBlock(void); graphics.h has s32 Vram_ClearWindowBlock(void); tried as the definition's s32 Vram_ClearWindowBlock(void), which the object already declares, Func_0804a85c moves: 1 of 1647 instructions in tla-ja. */
 extern void Vram_ClearWindowBlock__f04a85c(void) __asm__("Vram_ClearWindowBlock");
 void Text_DrawWideStringAtOffset(u16 *text, struct TargetWindow *window, s32 x,
                                  s32 y);
@@ -852,9 +852,6 @@ extern struct LinkCountdownState *gLinkCountdownWork;
 extern struct LinkRuntimeState *gBattleWork;
 extern struct LinkSignature gLinkPeerSignatures[];
 
-/* VIEW(countdown): routine Text_DrawNumberInWindow as void Text_DrawNumberInWindow(s32 value, s32 width, s32 handle, s32 arg3, s32 arg4); f04a85c has void Text_DrawNumberInWindow(s32 value, s32 digits, struct TargetWindow *window, s32 x, s32 y). */
-extern void Text_DrawNumberInWindow__countdown(s32 value, s32 width, s32 handle, s32 arg3,
-                             s32 arg4) __asm__("Text_DrawNumberInWindow");
 
 void Sound_PlayFar(s32 soundId);
 
@@ -953,7 +950,7 @@ void UpdateLinkSessionCountdown(void) {
       Sound_PlayFar(108);
 
     if (state->displayHandle != 0)
-      Text_DrawNumberInWindow__countdown(seconds, 2, state->displayHandle, 16, 8);
+      Text_DrawNumberInWindow(seconds, 2, state->displayHandle, 16, 8);
   }
 
 done:
@@ -965,8 +962,6 @@ done:
 #include "system.h"
 #include "main_routine_work.h"
 unsigned char Vram_FillWindowBlockPattern(void);
-/* VIEW(countdown): routine Text_DrawWideStringAtOffset as void Text_DrawWideStringAtOffset(s16 *, s32, s32, s32); f04a85c has void Text_DrawWideStringAtOffset(u16 *text, struct TargetWindow *window, s32 x, s32 y). */
-extern void Text_DrawWideStringAtOffset__countdown(s16 *, s32, s32, s32) __asm__("Text_DrawWideStringAtOffset");
 
 // The Japanese edition decodes the message (Message_DecodeRaw) into at most 32
 // halfwords; the others copy its text (Message_CopyExpanded) into at most 52.
@@ -975,22 +970,15 @@ extern void Text_DrawWideStringAtOffset__countdown(s16 *, s32, s32, s32) __asm__
 #define BATTLE_MENU_MESSAGE_COPY Message_CopyExpanded__countdown
 #else
 #define BATTLE_MENU_MESSAGE_CAPACITY 32
-#define BATTLE_MENU_MESSAGE_COPY Message_DecodeRaw__countdown
+#define BATTLE_MENU_MESSAGE_COPY Message_DecodeRaw
 #endif
 
-/* VIEW(countdown): routine Window_Create as s32 Window_Create(s32, s32, s32, s32, s32); f04a85c has struct TargetWindow *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 flags). */
-extern s32 Window_Create__countdown(s32, s32, s32, s32, s32) __asm__("Window_Create");
-/* VIEW(countdown): routine Window_Close as void Window_Close(struct Work *work, s32 release); f04a85c has void Window_Close(void *window, s32 mode). */
-extern void Window_Close__countdown(struct Work *work, s32 release) __asm__("Window_Close");
 
-/* VIEW(countdown): routine Message_CopyExpanded as s32 Message_CopyExpanded(s32, s16 *, s32); f04a85c has void Message_CopyExpanded(s32 message, u16 *text, s32 capacity). */
+/* VIEW(countdown): routine Message_CopyExpanded as s32 Message_CopyExpanded(s32, s16 *, s32); f04a85c has void Message_CopyExpanded(s32 message, u16 *text, s32 capacity); tried as the definition's s32 Message_CopyExpanded(s32 key, u16 *destination, u32 capacity), it does not compile in tla-ja: games/tla/src/window/f04a85c.c:977: conflicting types for `Message_CopyExpanded'. */
 extern s32 Message_CopyExpanded__countdown(s32, s16 *, s32) __asm__("Message_CopyExpanded");
-/* VIEW(countdown): routine Message_DecodeRaw as void Message_DecodeRaw(s32, s16 *, s32); f04a85c has void Message_DecodeRaw(s32 message, u16 *text, s32 capacity). */
-extern void Message_DecodeRaw__countdown(s32, s16 *, s32) __asm__("Message_DecodeRaw");
 
 extern s32 gKeyState;
-/* VIEW(countdown): variable MsgNoTimeToRun as extern char MsgNoTimeToRun; msg_ids.h has extern u8 MsgNoTimeToRun[]. */
-extern char MsgNoTimeToRun__countdown __asm__("MsgNoTimeToRun");
+extern u8 MsgNoTimeToRun[];
 
 s32 Message_ShowLocalizedAndWait(void) {
   s16 buffer[64];
@@ -1013,16 +1001,16 @@ s32 Message_ShowLocalizedAndWait(void) {
   }
   if (result != 0) {
     attrs = 42;
-    work = Window_Create__countdown(0, 7, 30, 4, attrs);
+    work = Window_Create(0, 7, 30, 4, attrs);
     Vram_FillWindowBlockPattern();
-    BATTLE_MENU_MESSAGE_COPY((s32)&MsgNoTimeToRun__countdown, buffer,
+    BATTLE_MENU_MESSAGE_COPY((s32)&MsgNoTimeToRun, buffer,
                              BATTLE_MENU_MESSAGE_CAPACITY);
-    Text_DrawWideStringAtOffset__countdown(buffer, work, 0, 4);
+    Text_DrawWideStringAtOffset(buffer, work, 0, 4);
     do {
       wait(1);
     } while ((gInput.pressed & (KEY_A | KEY_B)) == 0 &&
              *(s32 *)((u8 *)((void **)Ram_HeapSlots)[57] + 0x4C) != 0);
-    Window_Close__countdown(work, 1);
+    Window_Close(work, 1);
   }
   return result;
 }
@@ -1353,9 +1341,9 @@ struct BattleAction {
 
 extern u16 gData_02003a74[];
 extern u16 gLinkStatus;
-/* VIEW(battle_party_commands): variable gLinkPeerSignatures as extern u16 gLinkPeerSignatures[][12]; countdown has extern struct LinkSignature gLinkPeerSignatures[]. */
+/* VIEW(battle_party_commands): variable gLinkPeerSignatures as extern u16 gLinkPeerSignatures[][12]; countdown has extern struct LinkSignature gLinkPeerSignatures[]; tried as the 2 declarations' extern u16 gLinkPeerSignatures[][12], it does not compile in tla-ja: games/tla/src/window/f04a85c.c:1344: conflicting types for `gLinkPeerSignatures'. */
 extern u16 gLinkPeerSignatures__battle_party_commands[][12] __asm__("gLinkPeerSignatures");
-/* VIEW(battle_party_commands): variable gMainRoutineWork as extern u8 gMainRoutineWork[]; main_routine_work.h has extern struct MainRoutineWork gMainRoutineWork. */
+/* VIEW(battle_party_commands): variable gMainRoutineWork as extern u8 gMainRoutineWork[]; main_routine_work.h has extern struct MainRoutineWork gMainRoutineWork; tried as the 3 declarations' extern u8 gMainRoutineWork[], it does not compile in tla-ja: games/tla/src/window/f04a85c.c:1346: conflicting types for `gMainRoutineWork'. */
 extern u8 gMainRoutineWork__battle_party_commands[] __asm__("gMainRoutineWork");
 extern u8 gDebugMode;
 extern u8 MsgWaitingForOpponent[];
@@ -1365,14 +1353,14 @@ void *HeapSlot_AllocEwram(s32 slot, s32 size);
 void HeapSlot_Release(s32 slot);
 s32 Resource_LoadIndexedIntoBuffer(s32 slot, s32 index);
 void Graphics_ExpandVramTilesByColorTable(u16 *tiles);
-/* VIEW(battle_party_commands): routine Link_DrawShiftedTilePair as void Link_DrawShiftedTilePair(u32 address); countdown has void Link_DrawShiftedTilePair(s32 destination). */
+/* VIEW(battle_party_commands): routine Link_DrawShiftedTilePair as void Link_DrawShiftedTilePair(u32 address); countdown has void Link_DrawShiftedTilePair(s32 destination); tried as the rest of the object declares it, Func_0804bc08 moves: 1 of 1909 instructions in tla-ja. */
 extern void Link_DrawShiftedTilePair__battle_party_commands(u32 address) __asm__("Link_DrawShiftedTilePair");
 void Menu_BuildLocalizedPatternTiles(void);
 void wait(s32 frames);
 void UpdateLinkSessionCountdown(void);
-/* VIEW(battle_party_commands): routine Func_0804babc as s32 Func_0804babc(u16 *actors, struct BattleAction **cursor, s32 *forcedCount); the definition has s32 Func_0804b8b8(s32 slot) { u16 owners[6]; u16 selected[2]; struct BattleWork *battle; s32 count; count = BattleParty_PrepareReserveOwners.... */
+/* VIEW(battle_party_commands): routine Func_0804babc as s32 Func_0804babc(u16 *actors, struct BattleAction **cursor, s32 *forcedCount); the definition has s32 Func_0804b8b8(s32 slot) { u16 owners[6]; u16 selected[2]; struct BattleWork *battle; s32 count; count = BattleParty_PrepareReserveOwners...; tried as the rest of the object declares it, Func_0804bc08 moves: 1 of 1909 instructions in tla-ja. */
 extern s32 Func_0804babc__battle_party_commands(u16 *actors, struct BattleAction **cursor, s32 *forcedCount) __asm__("Func_0804babc");
-/* VIEW(battle_party_commands): routine BattleLayout_HighlightPartyPanels as void BattleLayout_HighlightPartyPanels(u16 *units); countdown has s32 BattleLayout_HighlightPartyPanels(u16 *ids). */
+/* VIEW(battle_party_commands): routine BattleLayout_HighlightPartyPanels as void BattleLayout_HighlightPartyPanels(u16 *units); countdown has s32 BattleLayout_HighlightPartyPanels(u16 *ids); tried as the definition's s32 BattleLayout_HighlightPartyPanels(u16 *ids), which the object already declares, Battle_DrawPartyPanelsWithEmptyList.0 moves: 1 of 18 instructions, Func_0804bc08 moves: 3 of 1909 instructions in tla-ja. */
 extern void BattleLayout_HighlightPartyPanels__battle_party_commands(u16 *units) __asm__("BattleLayout_HighlightPartyPanels");
 void BattleHighlight_SetModesFar(u16 *units, s32 mode);
 s32 GameFlag_Test(s32 flag);
@@ -1385,29 +1373,29 @@ s32 Func_0804a85c(s32 selection, s32 mode, u32 spread, u32 kind);
 s32 Func_0804b8b8(s32 slot);
 void *Heap_Alloc(s32 size);
 void Heap_Release(void *block);
-/* VIEW(battle_party_commands): routine BattleParty_ListActorIdsFar as s32 BattleParty_ListActorIdsFar(s32 side, u16 *units); graphics.h has s32 BattleParty_ListActorIdsFar(s32 side, s32 group). */
+/* VIEW(battle_party_commands): routine BattleParty_ListActorIdsFar as s32 BattleParty_ListActorIdsFar(s32 side, u16 *units); graphics.h has s32 BattleParty_ListActorIdsFar(s32 side, s32 group); tried as the rest of the object declares it, Func_0804bc08 moves: 2 of 1909 instructions in tla-ja. */
 extern s32 BattleParty_ListActorIdsFar__battle_party_commands(s32 side, u16 *units) __asm__("BattleParty_ListActorIdsFar");
 s32 BattleParty_PrepareReserveOwnersFar(u16 *units);
 s32 Func_08046b08(u16 *list, s32 listCount, s32 member);
 s32 Message_ShowLocalizedAndWait(void);
-/* VIEW(battle_party_commands): routine Message_DecodeRaw as void Message_DecodeRaw(s32 message, u16 *text, s32 capacity); countdown has void Message_DecodeRaw(s32, s16 *, s32). */
+/* VIEW(battle_party_commands): routine Message_DecodeRaw as void Message_DecodeRaw(s32 message, u16 *text, s32 capacity); countdown has void Message_DecodeRaw(s32, s16 *, s32); tried as the definition's void Message_DecodeRaw(s32 message, u16 *text, s32 capacity), which the object already declares, Func_0804bbd0.1 moves: 2 of 24 instructions in tla-ja. */
 extern void Message_DecodeRaw__battle_party_commands(s32 message, u16 *text, s32 capacity) __asm__("Message_DecodeRaw");
 void Func_08118130(s32 kind, u8 *counts);
 void *Unit_Get(s32 owner);
 s32 Func_08045528(s32 portrait, s32 slot);
 void Func_08041b68(void);
-/* VIEW(battle_party_commands): routine Window_Create as struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 flags); f04a85c has struct TargetWindow *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 flags). */
+/* VIEW(battle_party_commands): routine Window_Create as struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 flags); f04a85c has struct TargetWindow *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 flags); tried as the definition's struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 attrs), which the object already declares, Func_0804bc08 moves: 7 of 1909 instructions in tla-ja. */
 extern struct Window *Window_Create__battle_party_commands(s32 x, s32 y, s32 width, s32 height, s32 flags) __asm__("Window_Create");
-/* VIEW(battle_party_commands): routine Text_DrawCharacterAtOffset as void Text_DrawCharacterAtOffset(s32 message, struct Window *window, s32 x, s32 y); f04a85c has void Text_DrawCharacterAtOffset(s32 message, struct TargetWindow *window, s32 x, s32 y). */
+/* VIEW(battle_party_commands): routine Text_DrawCharacterAtOffset as void Text_DrawCharacterAtOffset(s32 message, struct Window *window, s32 x, s32 y); f04a85c has void Text_DrawCharacterAtOffset(s32 message, struct TargetWindow *window, s32 x, s32 y); tried as the definition's void Text_DrawCharacterAtOffset(s32 character, struct RenderInput *position, u32 offsetX, u32 offsetY), Func_0804bc08 moves: 7 of 1909 instructions in tla-ja. */
 extern void Text_DrawCharacterAtOffset__battle_party_commands(s32 message, struct Window *window, s32 x,
                                 s32 y) __asm__("Text_DrawCharacterAtOffset");
 s32 Func_0804a134(s32 unit, u16 *actions, s32 count);
 s32 Resource_LoadIndexedEntryToBuffer(s32 id, s32 slot);
 void Func_08041f70(s32 color);
-/* VIEW(battle_party_commands): routine Text_DrawNumberAtOffset as void Text_DrawNumberAtOffset(s32 value, s32 digits, struct Window *window, s32 x, s32 y); text_render.h has void Text_DrawNumberAtOffset(s32 value, s32 format, struct RenderInput *work, s32 offsetX, s32 offsetY). */
+/* VIEW(battle_party_commands): routine Text_DrawNumberAtOffset as void Text_DrawNumberAtOffset(s32 value, s32 digits, struct Window *window, s32 x, s32 y); text_render.h has void Text_DrawNumberAtOffset(s32 value, s32 format, struct RenderInput *work, s32 offsetX, s32 offsetY); tried as the definition's void Text_DrawNumberAtOffset(s32 value, s32 width, struct RenderInput *work, s32 x, s32 y), Func_0804bc08 moves: 2 of 1909 instructions in tla-ja. */
 extern void Text_DrawNumberAtOffset__battle_party_commands(s32 value, s32 digits, struct Window *window,
                              s32 x, s32 y) __asm__("Text_DrawNumberAtOffset");
-/* VIEW(battle_party_commands): routine Window_SetTilemapEntry as void Window_SetTilemapEntry(struct Window *window, s32 entry, s32 x, s32 y, s32 flags); graphics.h has void Window_SetTilemapEntry(struct Window *window, s32 value, s32 x, s32 y, u32 mode). */
+/* VIEW(battle_party_commands): routine Window_SetTilemapEntry as void Window_SetTilemapEntry(struct Window *window, s32 entry, s32 x, s32 y, s32 flags); graphics.h has void Window_SetTilemapEntry(struct Window *window, s32 value, s32 x, s32 y, u32 mode); tried as the definition's void Window_SetTilemapEntry(struct Window *window, s32 value, s32 x, s32 y, u32 mode), which the object already declares, Func_0804bc08 moves: 11 of 1909 instructions in tla-ja. */
 extern void Window_SetTilemapEntry__battle_party_commands(struct Window *window, s32 entry, s32 x, s32 y,
                             s32 flags) __asm__("Window_SetTilemapEntry");
 s32 Resource_ResetEntry(u32 slot);
@@ -1421,16 +1409,16 @@ s32 Func_0804519c(void);
 void *Message_ShowAndWait(s32 message, s32 x, s32 y);
 s32 Message_AllTyped(void);
 s32 Func_08049a30(s32 member, u16 *entries, s32 count);
-/* VIEW(battle_party_commands): routine Item_Get as u16 *Item_Get(s32 item); item.h has struct ItemDefinition *Item_Get(s32 item). */
+/* VIEW(battle_party_commands): routine Item_Get as u16 *Item_Get(s32 item); item.h has struct ItemDefinition *Item_Get(s32 item); tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/window/f04a85c.c:2047: subscripted value is neither array nor pointer. */
 extern u16 *Item_Get__battle_party_commands(s32 item) __asm__("Item_Get");
 s32 Item_ClassifyUseAbility(s32 member, s32 item);
 s32 ItemIcon_LoadIntoSlot(s32 item, s32 slot);
 u32 Random16(void);
-/* VIEW(battle_party_commands): routine Vram_FillWindowBlockPattern as void Vram_FillWindowBlockPattern(void); countdown has unsigned char Vram_FillWindowBlockPattern(void). */
+/* VIEW(battle_party_commands): routine Vram_FillWindowBlockPattern as void Vram_FillWindowBlockPattern(void); countdown has unsigned char Vram_FillWindowBlockPattern(void); tried as the definition's void Vram_FillWindowBlockPattern(void), which the object already declares, Func_0804bc08 moves: 1 of 1909 instructions in tla-ja. */
 extern void Vram_FillWindowBlockPattern__battle_party_commands(void) __asm__("Vram_FillWindowBlockPattern");
-/* VIEW(battle_party_commands): routine Message_CopyExpanded as s32 Message_CopyExpanded(s32 key, u16 *destination, u32 capacity); f04a85c has void Message_CopyExpanded(s32 message, u16 *text, s32 capacity). */
+/* VIEW(battle_party_commands): routine Message_CopyExpanded as s32 Message_CopyExpanded(s32 key, u16 *destination, u32 capacity); f04a85c has void Message_CopyExpanded(s32 message, u16 *text, s32 capacity); tried as the definition's s32 Message_CopyExpanded(s32 key, u16 *destination, u32 capacity), it does not compile in tla-ja: games/tla/src/window/f04a85c.c:1422: conflicting types for `Message_CopyExpanded'. */
 extern s32 Message_CopyExpanded__battle_party_commands(s32 key, u16 *destination, u32 capacity) __asm__("Message_CopyExpanded");
-/* VIEW(battle_party_commands): routine Text_DrawWideStringAtOffset as void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x, s32 y); f04a85c has void Text_DrawWideStringAtOffset(u16 *text, struct TargetWindow *window, s32 x, s32 y). */
+/* VIEW(battle_party_commands): routine Text_DrawWideStringAtOffset as void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x, s32 y); f04a85c has void Text_DrawWideStringAtOffset(u16 *text, struct TargetWindow *window, s32 x, s32 y); tried as the definition's void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x, s32 y), it does not compile in tla-ja: games/tla/src/window/f04a85c.c:1426: conflicting types for `Text_DrawWideStringAtOffset'. */
 extern void Text_DrawWideStringAtOffset__battle_party_commands(u16 *text, struct Window *window, s32 x,
                                  s32 y) __asm__("Text_DrawWideStringAtOffset");
 void Camera_ConfigureSceneFar(s32 mode);
@@ -2210,8 +2198,6 @@ struct AffineTransform {
   u16 unk06;
 };
 
-/* VIEW(battle_party_commands): routine AffineMatrix_BuildForEffect as s32 AffineMatrix_BuildForEffect(struct AffineTransform *transform); f04a85c has s32 AffineMatrix_BuildForEffect(struct TargetAffine *affine). */
-extern s32 AffineMatrix_BuildForEffect__battle_party_commands(struct AffineTransform *transform) __asm__("AffineMatrix_BuildForEffect");
 
 extern const u16 gWindowSprite_BounceScales[];
 
@@ -2252,7 +2238,7 @@ void Func_0804cda8(void) {
   effect.scaleX = scale;
   effect.scaleY = scale;
   effect.angle = 0;
-  matrix = AffineMatrix_BuildForEffect__battle_party_commands(&effect);
+  matrix = AffineMatrix_BuildForEffect(&effect);
   for (i = 0; i < work->count; i++, sprite++) {
     u32 *attr;
     s32 slot;
@@ -2538,8 +2524,6 @@ s32 Menu_SelectResource(s32 start, s32 goal) {
   ((void (*)(void *, void *))Resource_DecodeByteLzInRam)
 
 extern char ResourceId_CommandIcons;
-/* VIEW(resource_work): routine Window_Create as struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 style); f04a85c has struct TargetWindow *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 flags). */
-extern struct Window *Window_Create__resource_work(s32 x, s32 y, s32 width, s32 height, s32 style) __asm__("Window_Create");
 
 void Menu_LoadResourceSlot(s32 slot, s32 index) {
   s32 size = 1024;
@@ -2592,7 +2576,7 @@ void Menu_CenterResourceEntries(s32 row, s32 width, s32 resourceBase) {
     entry->y = row * 8;
     x += 3;
   }
-  menu->window = Window_Create__resource_work(x, row, menu->width, 3, 2);
+  menu->window = Window_Create(x, row, menu->width, 3, 2);
 }
 
 #include "tla_edition.h"
@@ -2617,7 +2601,7 @@ void Menu_LayoutResourceEntries(s32 x, s32 y, s32 width, s32 resourceBase) {
     entry->x = x << 3;
     x += 3;
   }
-  work->window = Window_Create__resource_work(x, y, *widthp, 3, 2);
+  work->window = Window_Create(x, y, *widthp, 3, 2);
 }
 
 static __inline__ s32 TableGet(s8 *table, s32 index) { return table[index]; }
@@ -2988,12 +2972,12 @@ s32 Func_0804d7fc(s32 mode) {
   if (mode != 0) {
     Task_Add(Menu_DrawModeLabel, TASK_PASS_VBLANK - 10);
     work->previousMode = 0xffff;
-    window = Window_Create__resource_work(PASSWORD_UPPER_X, 0, PASSWORD_UPPER_WIDTH, 4, 2);
+    window = Window_Create(PASSWORD_UPPER_X, 0, PASSWORD_UPPER_WIDTH, 4, 2);
     msg = (s32)MsgPasswordEntry;
     upper = &work->upperWindow;
     *upper = window;
     Text_DrawMessage(msg, window, 0, 4);
-    window = Window_Create__resource_work(PASSWORD_LOWER_X, 4, PASSWORD_LOWER_WIDTH, 12, 2);
+    window = Window_Create(PASSWORD_LOWER_X, 4, PASSWORD_LOWER_WIDTH, 12, 2);
     work->lowerWindow = window;
     Text_DrawMessage(msg + 1, window, PASSWORD_TEXT_X, PASSWORD_TEXT_Y);
 #if LANGUAGE == LANGUAGE_FRENCH
@@ -3011,12 +2995,12 @@ s32 Func_0804d7fc(s32 mode) {
   } else {
     Task_Add(Menu_DrawModeIndicator, TASK_PASS_VBLANK - 10);
     work->previousMode = 0xffff;
-    window = Window_Create__resource_work(TRANSFER_UPPER_X, 0, TRANSFER_UPPER_WIDTH, 4, 2);
+    window = Window_Create(TRANSFER_UPPER_X, 0, TRANSFER_UPPER_WIDTH, 4, 2);
     upper = &work->upperWindow;
     *upper = window;
     Text_DrawMessage((s32)MsgTransferMethod, window, TRANSFER_TITLE_X, 4);
     work->lowerWindow =
-        Window_Create__resource_work(TRANSFER_LOWER_X, 5, TRANSFER_LOWER_WIDTH, 7, 2);
+        Window_Create(TRANSFER_LOWER_X, 5, TRANSFER_LOWER_WIDTH, 7, 2);
   }
   result = Menu_RunResourceSelectionLoop(0);
   if (mode != 0)
@@ -3155,7 +3139,7 @@ s32 Menu_SelectCoinsOrMedals(s32 selection) {
   return ret;
 }
 
-/* VIEW(resource_work): routine Menu_RunSelection as void Menu_RunSelection(void); the definition has s16 Menu_RunSelection(void). */
+/* VIEW(resource_work): routine Menu_RunSelection as void Menu_RunSelection(void); the definition has s16 Menu_RunSelection(void); tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/window/f04a85c.c:3143: `Menu_RunSelection' undeclared (first use in this function). */
 extern void Menu_RunSelection__resource_work(void) __asm__("Menu_RunSelection");
 
 void Func_0804dabc(void) { Task_Add(Menu_RunSelection__resource_work, TASK_PASS_VBLANK); }
@@ -3182,11 +3166,8 @@ void Func_0804dabc(void) { Task_Add(Menu_RunSelection__resource_work, TASK_PASS_
 
 // ---- games/tla/src/window/selrow.c ----
 s32 Scene_GetAreaNameIndexFar(s32 scene, s32 entrance);
-/* VIEW(selrow): routine WindowSprite_PrepareForRedraw as void WindowSprite_PrepareForRedraw(void *window); resource_work has void WindowSprite_PrepareForRedraw(struct Window *). */
-extern void WindowSprite_PrepareForRedraw__selrow(void *window) __asm__("WindowSprite_PrepareForRedraw");
 void Text_DrawNumber(s32 value, s32 digits, void *window, s32 x, s32 y);
-/* VIEW(selrow): routine Text_DrawString as void Text_DrawString(const u8 *text, void *window, s32 x, s32 y); graphics.h has void Text_DrawString(u8 *text, s32 window, s32 x, s32 y). */
-extern void Text_DrawString__selrow(const u8 *text, void *window, s32 x, s32 y) __asm__("Text_DrawString");
+void Text_DrawString(u8 *text, s32 arg1, s32 arg2, s32 arg3);
 void Text_DrawMessage(s32 message, void *window, s32 x, s32 y);
 extern const u8 gMenu_ColonString[];
 extern u8 MsgDebugAreaName[];
@@ -3205,12 +3186,12 @@ void Menu_DrawSelectionRow(void *window, s16 first, const s16 *second) {
   s32 label =
       Scene_GetAreaNameIndexFar(selected, *second) + (s32)MsgDebugAreaName;
 
-  WindowSprite_PrepareForRedraw__selrow(window);
+  WindowSprite_PrepareForRedraw(window);
   Text_DrawNumber(selected, 3, window, 0, 14);
   Text_DrawNumber(*second, 3, window, SELROW_LABEL_X, 14);
-  Text_DrawString__selrow(gMenu_ColonString, window, SELROW_TEXT_X, 0);
+  Text_DrawString(gMenu_ColonString, window, SELROW_TEXT_X, 0);
   Text_DrawMessage(selected + (s32)MsgDebugSceneCode, window, 0, 0);
-  Text_DrawString__selrow(gMenu_ColonString, window, SELROW_TEXT_X, 14);
+  Text_DrawString(gMenu_ColonString, window, SELROW_TEXT_X, 14);
   Text_DrawMessage(label, window, SELROW_LABEL_X, 0);
 }
 
@@ -3223,15 +3204,8 @@ struct TextObject {
 
 void Event_SetDestinationFar(s16 primary, s16 secondary);
 void UiTextResource_Release(s32 resource);
-/* VIEW(selrow): routine UiTextResource_Initialize as void UiTextResource_Initialize(struct TextObject *object, s32 *resource); menu.h has void UiTextResource_Initialize(struct Actor_0801c0dc *obj, s32 *slot). */
-extern void UiTextResource_Initialize__selrow(struct TextObject *object, s32 *resource) __asm__("UiTextResource_Initialize");
-/* VIEW(selrow): routine UiTextResource_SetPosition as void UiTextResource_SetPosition(struct TextObject *object, s32 x, s32 y); menu.h has void UiTextResource_SetPosition(struct Obj *obj, s32 arg1, s32 arg2). */
-extern void UiTextResource_SetPosition__selrow(struct TextObject *object, s32 x, s32 y) __asm__("UiTextResource_SetPosition");
-/* VIEW(selrow): routine Window_Create as struct Work *Window_Create(s32 kind, s32 x, s32 y, s32 width, s32 layer); resource_work has struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 style). */
-extern struct Work *Window_Create__selrow(s32 kind, s32 x, s32 y, s32 width, s32 layer) __asm__("Window_Create");
-/* VIEW(selrow): routine Window_Close as void Window_Close(struct Work *work, s32 release); uiflow.h has void Window_Close(struct Window *window, s32 release). */
-extern void Window_Close__selrow(struct Work *work, s32 release) __asm__("Window_Close");
-/* VIEW(selrow): routine Menu_HandleSelectionRowInput as s32 Menu_HandleSelectionRowInput(struct Work *work, s16 value, s16 *sub, s16 *mode); the definition has s32 Menu_HandleSelectionRowInput(s32 arg, s16 value, s16 *sub, s16 *mode). */
+void Window_Close(struct Window *work, s32 release);
+/* VIEW(selrow): routine Menu_HandleSelectionRowInput as s32 Menu_HandleSelectionRowInput(struct Work *work, s16 value, s16 *sub, s16 *mode); the definition has s32 Menu_HandleSelectionRowInput(s32 arg, s16 value, s16 *sub, s16 *mode); tried as the rest of the object declares it, it does not compile in tla-ja (make modern): games/tla/src/window/f04a85c.c:129:74: note: expected 'struct TargetWindow *' but argument is of type 's32' {aka 'int'}. */
 extern s32 Menu_HandleSelectionRowInput__selrow(struct Work *work, s16 value, s16 *sub,
                                  s16 *mode) __asm__("Menu_HandleSelectionRowInput");
 
@@ -3250,9 +3224,9 @@ s16 Menu_RunSelection(void) {
   mode = 0;
   primary = gMainRoutineWork.primary;
   secondary = gMainRoutineWork.secondary;
-  work = Window_Create__selrow(0, 7, 30, 5, 2);
+  work = Window_Create(0, 7, 30, 5, 2);
   Menu_DrawSelectionRow(work, primary, &secondary);
-  UiTextResource_Initialize__selrow(&object, &resource);
+  UiTextResource_Initialize(&object, &resource);
 
   while (gInput.held != 0)
     wait(1);
@@ -3262,17 +3236,17 @@ s16 Menu_RunSelection(void) {
         (s16)Menu_HandleSelectionRowInput__selrow(work, primary, &secondary, &mode);
     if (result == -1) {
       UiTextResource_Release(resource);
-      Window_Close__selrow(work, 2);
+      Window_Close(work, 2);
       Event_SetDestinationFar(primary, secondary);
       return result;
     }
     if (result == -2) {
       UiTextResource_Release(resource);
-      Window_Close__selrow(work, 2);
+      Window_Close(work, 2);
       return result;
     }
 
-    UiTextResource_SetPosition__selrow(&object, MENU_TEXT_X, mode * 14 + MENU_TEXT_Y);
+    UiTextResource_SetPosition(&object, MENU_TEXT_X, mode * 14 + MENU_TEXT_Y);
     primary = result;
     wait(1);
   }
@@ -3286,8 +3260,6 @@ s16 Menu_RunSelection(void) {
 // the field, Left and Right step the value (0 to 324) or the second number
 // (0 to 99) by one, R and L by ten, and the row is redrawn after a step.
 
-/* VIEW(handle_selection_row_input): routine Menu_DrawSelectionRow as void Menu_DrawSelectionRow(s32 arg, s32 value, s16 *sub); the definition has void Menu_DrawSelectionRow(void *window, s16 first, const s16 *second). */
-extern void Menu_DrawSelectionRow__handle_selection_row_input(s32 arg, s32 value, s16 *sub) __asm__("Menu_DrawSelectionRow");
 
 s32 Menu_HandleSelectionRowInput(s32 arg, s16 value, s16 *sub, s16 *mode) {
   if (gInput.repeat & KEY_A)
@@ -3308,7 +3280,7 @@ s32 Menu_HandleSelectionRowInput(s32 arg, s16 value, s16 *sub, s16 *mode) {
     }
     if (value > 324)
       value = 0;
-    Menu_DrawSelectionRow__handle_selection_row_input(arg, value, sub);
+    Menu_DrawSelectionRow(arg, value, sub);
   } else if (gInput.repeat & KEY_LEFT) {
     if (*mode == 0) {
       value--;
@@ -3319,7 +3291,7 @@ s32 Menu_HandleSelectionRowInput(s32 arg, s16 value, s16 *sub, s16 *mode) {
     }
     if (value < 0)
       value = 324;
-    Menu_DrawSelectionRow__handle_selection_row_input(arg, value, sub);
+    Menu_DrawSelectionRow(arg, value, sub);
   } else if (gInput.repeat & KEY_R) {
     if (*mode == 0) {
       *sub = 0;
@@ -3331,7 +3303,7 @@ s32 Menu_HandleSelectionRowInput(s32 arg, s16 value, s16 *sub, s16 *mode) {
     }
     if (value > 324)
       value = 0;
-    Menu_DrawSelectionRow__handle_selection_row_input(arg, value, sub);
+    Menu_DrawSelectionRow(arg, value, sub);
   } else if (gInput.repeat & KEY_L) {
     if (*mode == 0) {
       *sub = 0;
@@ -3343,7 +3315,7 @@ s32 Menu_HandleSelectionRowInput(s32 arg, s16 value, s16 *sub, s16 *mode) {
     }
     if (value < 0)
       value = 324;
-    Menu_DrawSelectionRow__handle_selection_row_input(arg, value, sub);
+    Menu_DrawSelectionRow(arg, value, sub);
   }
   return value;
 }
@@ -3408,7 +3380,7 @@ extern const u8 gMenu_HexDigitsString[];
 
 extern const u8 gMenu_ColonString[];
 
-/* VIEW(handle_selection_row_input): routine WindowSprite_PrepareForRedraw as void WindowSprite_PrepareForRedraw(void); resource_work has void WindowSprite_PrepareForRedraw(struct Window *). */
+/* VIEW(handle_selection_row_input): routine WindowSprite_PrepareForRedraw as void WindowSprite_PrepareForRedraw(void); resource_work has void WindowSprite_PrepareForRedraw(struct Window *); tried as the definition's void WindowSprite_PrepareForRedraw(struct Window *work), which the object already declares, it does not compile in tla-ja: games/tla/src/window/f04a85c.c:3400: too few arguments to function `WindowSprite_PrepareForRedraw'. */
 extern void WindowSprite_PrepareForRedraw__handle_selection_row_input(void) __asm__("WindowSprite_PrepareForRedraw");
 void Text_DrawStringInWindow(s32 text, s32 window, s32 x, s32 y);
 s32 GameFlag_Test(s32 flag);
@@ -3446,8 +3418,6 @@ void Menu_DrawFlagBitTable(s32 window, s32 startFlag) {
   }
 }
 
-/* VIEW(handle_selection_row_input): routine GameFlag_SetBit as s32 GameFlag_SetBit(s32); scene_call.h has void GameFlag_SetBit(s32 flag). */
-extern s32 GameFlag_SetBit__handle_selection_row_input(s32) __asm__("GameFlag_SetBit");
 void GameFlag_ClearBit(s32);
 
 s32 Menu_HandleFlagGridInput(s32 window, s32 *page, s32 *cursor) {
@@ -3459,7 +3429,7 @@ s32 Menu_HandleFlagGridInput(s32 window, s32 *page, s32 *cursor) {
     if (GameFlag_Test(flag))
       GameFlag_ClearBit(flag);
     else
-      GameFlag_SetBit__handle_selection_row_input(flag);
+      GameFlag_SetBit(flag);
     return 1;
   }
   if ((gInput.pressed & 2) || (gInput.repeat & 4))
@@ -3501,7 +3471,7 @@ s32 Menu_HandleFlagGridInput(s32 window, s32 *page, s32 *cursor) {
 void Menu_ReservedNoOp(void) {}
 
 void Djinn_SetFoundFlagAndAdd(s32 arg0, s32 arg1, s32 arg2) {
-  GameFlag_SetBit__handle_selection_row_input((arg1 * 0x14) + arg2 + 0x30);
+  GameFlag_SetBit((arg1 * 0x14) + arg2 + 0x30);
   Djinn_AddToOwnerFar(arg0, arg1, arg2);
 }
 
@@ -3594,20 +3564,9 @@ extern u8 gWorkspace_PageLabel[];
 extern u8 gWorkspace_RangeDash[];
 
 void wait(s32 frames);
-/* VIEW(flag_bit_rect): routine Window_Create as struct RenderInput *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 style); selrow has struct Work *Window_Create(s32 kind, s32 x, s32 y, s32 width, s32 layer). */
-extern struct RenderInput *Window_Create__flag_bit_rect(s32 x, s32 y, s32 width, s32 height,
-                                  s32 style) __asm__("Window_Create");
-/* VIEW(flag_bit_rect): routine Text_DrawStringInWindow as void Text_DrawStringInWindow(u8 *text, struct RenderInput *window, u32 x, u32 y); handle_selection_row_input has void Text_DrawStringInWindow(s32 text, s32 window, s32 x, s32 y). */
-extern void Text_DrawStringInWindow__flag_bit_rect(u8 *text, struct RenderInput *window, u32 x,
-                             u32 y) __asm__("Text_DrawStringInWindow");
-/* VIEW(flag_bit_rect): routine Text_DrawNumberInWindow as void Text_DrawNumberInWindow(s32 value, s32 width, struct RenderInput *window, s32 x, s32 y); f04a85c has void Text_DrawNumberInWindow(s32 value, s32 digits, struct TargetWindow *window, s32 x, s32 y). */
-extern void Text_DrawNumberInWindow__flag_bit_rect(s32 value, s32 width, struct RenderInput *window,
-                             s32 x, s32 y) __asm__("Text_DrawNumberInWindow");
 void Icon_BuildItemIconTiles(s32 icon, s32 with_base, s32 *slot, s32 *tile,
                              s32 reuse);
-/* VIEW(flag_bit_rect): routine Icon_BuildAbilityIconTiles as void Icon_BuildAbilityIconTiles(s32 icon, s32 with_base, s32 *slot, s32 *tile, s32 reuse); graphics.h has void Icon_BuildAbilityIconTiles(u32 icon, s32 with_base, s32 *slot, s32 *tile, s32 reuse). */
-extern void Icon_BuildAbilityIconTiles__flag_bit_rect(s32 icon, s32 with_base, s32 *slot, s32 *tile,
-                                s32 reuse) __asm__("Icon_BuildAbilityIconTiles");
+void Icon_BuildAbilityIconTiles(u32 glyph, s32 withBase, s32 *cacheSlot, s32 *tileOut, s32 reuse);
 s32 Resource_FindFreeEntry(void);
 void Icon_BuildMiscIconTiles(s32 pattern, s32 unused, s32 slot);
 
@@ -3657,19 +3616,19 @@ s32 Func_0804e1d8(void) {
       page = (page + 12) % 12;
       mode = (mode + 3) % 3;
       Window_Close(window, 2);
-      window = Window_Create__flag_bit_rect(10, 0, 18, 12, 2);
+      window = Window_Create(10, 0, 18, 12, 2);
       if (mode == 0)
-        Text_DrawStringInWindow__flag_bit_rect(gWorkspace_ItemTitle, window, 0, 0);
+        Text_DrawStringInWindow(gWorkspace_ItemTitle, window, 0, 0);
       else if (mode == 1)
-        Text_DrawStringInWindow__flag_bit_rect(gWorkspace_EnergyTitle, window, 0, 0);
+        Text_DrawStringInWindow(gWorkspace_EnergyTitle, window, 0, 0);
       else
-        Text_DrawStringInWindow__flag_bit_rect(gWorkspace_StatusTitle, window, 0, 0);
-      Text_DrawStringInWindow__flag_bit_rect(gWorkspace_PageLabel, window, 0, 8);
-      Text_DrawNumberInWindow__flag_bit_rect(page, 0, window, 40, 8);
+        Text_DrawStringInWindow(gWorkspace_StatusTitle, window, 0, 0);
+      Text_DrawStringInWindow(gWorkspace_PageLabel, window, 0, 8);
+      Text_DrawNumberInWindow(page, 0, window, 40, 8);
       base = page << 5;
-      Text_DrawNumberInWindow__flag_bit_rect(base, 3, window, 64, 8);
-      Text_DrawStringInWindow__flag_bit_rect(gWorkspace_RangeDash, window, 88, 8);
-      Text_DrawNumberInWindow__flag_bit_rect(base + 31, 3, window, 96, 8);
+      Text_DrawNumberInWindow(base, 3, window, 64, 8);
+      Text_DrawStringInWindow(gWorkspace_RangeDash, window, 88, 8);
+      Text_DrawNumberInWindow(base + 31, 3, window, 96, 8);
       for (i = 0; i <= 31; i++) {
         slot = -1;
         row = i / 8;
@@ -3679,7 +3638,7 @@ s32 Func_0804e1d8(void) {
           Icon_BuildItemIconTiles(base + i, 1, &slot, &tile, mode);
           WindowSprite_Create(slot, 0x40000000, window, x, y);
         } else if (mode == 1) {
-          Icon_BuildAbilityIconTiles__flag_bit_rect(base + i, 1, &slot, &tile, 0);
+          Icon_BuildAbilityIconTiles(base + i, 1, &slot, &tile, 0);
           WindowSprite_Create(slot, 0x40000000, window, x, y);
         } else {
           slot = Resource_FindFreeEntry();
@@ -3700,8 +3659,6 @@ extern s16 gPortrait_CharacterMap[];
 extern s16 gPortrait_SpriteMap[];
 
 struct RenderInput *Func_0803d3c0(s32 x, s32 y, s32 width, s32 height);
-/* VIEW(flag_bit_rect): routine WindowSprite_PrepareForRedraw as void WindowSprite_PrepareForRedraw(struct RenderInput *window); resource_work has void WindowSprite_PrepareForRedraw(struct Window *). */
-extern void WindowSprite_PrepareForRedraw__flag_bit_rect(struct RenderInput *window) __asm__("WindowSprite_PrepareForRedraw");
 void UiGlyph_LoadEntryWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile,
                                   s32 palette, s32 reuse);
 
@@ -3727,7 +3684,7 @@ s32 Func_0804e3f4(void) {
   work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
   redraw = 1;
   portrait = Func_0803d3c0(0, 0, 10, 5);
-  window = Window_Create__flag_bit_rect(10, 10, 14, 3, 2);
+  window = Window_Create(10, 10, 14, 3, 2);
   index = 0;
   palette = 15;
   for (i = 0; gPortrait_CharacterMap[i * 2] != -1; i++) {
@@ -3764,14 +3721,14 @@ s32 Func_0804e3f4(void) {
     if (redraw) {
       redraw = 0;
       index = (index + total) % total;
-      WindowSprite_PrepareForRedraw__flag_bit_rect(window);
+      WindowSprite_PrepareForRedraw(window);
       if (index < count)
         glyph = gPortrait_CharacterMap[index * 2 + 1];
       else
         glyph = gPortrait_SpriteMap[(index - count) * 2 + 1] + 128;
       slot = *(u16 *)((u8 *)work + slotOffset);
       UiGlyph_LoadEntryWithPalette(glyph, 0, &slot, &tile, palette, 1);
-      Text_DrawNumberInWindow__flag_bit_rect(index, 2, window, 0, 0);
+      Text_DrawNumberInWindow(index, 2, window, 0, 0);
       Text_DrawCharacterAtOffset(index + (s32)MsgTestName, window, 24, 0);
     }
     wait(1);

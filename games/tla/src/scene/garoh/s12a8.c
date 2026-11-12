@@ -61,7 +61,7 @@ struct SpawnObject {
   u16 unk5e;
 };
 
-/* VIEW(s12a8): variable gData_02006330 as extern u8 gData_02006330[]; the definition has u32 gData_02006330[] = { 38, }. */
+/* VIEW(s12a8): variable gData_02006330 as extern u8 gData_02006330[]; the definition has u32 gData_02006330[] = { 38, }; tried as the definition's extern u32 gData_02006330[], it does not compile in tla-ja: games/tla/src/scene/garoh/s12a8.c:95: `gData_02006330__s12a8' undeclared (first use in this function). */
 extern u8 gData_02006330__s12a8[] __asm__("gData_02006330");
 
 void Func_02005164(struct SpawnObject *object, s32 mode);
@@ -130,7 +130,7 @@ static inline void BlendBack(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5) {
 
 /// The fourth argument is passed unextended (0xf000), where spawn.c's
 /// definition takes an s16: the callers saw an int parameter.
-/* VIEW(push): routine Func_02001360 as void Func_02001360(s32 x, s32 y, s32 z, s32 value, s32 timer); the definition has void Func_02001360(s32 x, s32 y, s32 z, s16 value, s32 timer). */
+/* VIEW(push): routine Func_02001360 as void Func_02001360(s32 x, s32 y, s32 z, s32 value, s32 timer); the definition has void Func_02001360(s32 x, s32 y, s32 z, s16 value, s32 timer); tried as the definition's void Func_02001360(s32 x, s32 y, s32 z, s16 value, s32 timer), which the object already declares, Func_020013b0 moves: 4 of 43 instructions in tla-ja. */
 extern void Func_02001360__push(s32 x, s32 y, s32 z, s32 value, s32 timer) __asm__("Func_02001360");
 
 void Func_020013b0(s32 id) {

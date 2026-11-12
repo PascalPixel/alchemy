@@ -262,21 +262,15 @@ void Func_02001cb0(void);
 void Func_02003f48(s32, s32, s32, s32);
 void Func_02004004(void);
 void Func_020040c0(void);
-/* VIEW(s0514): routine Func_02004240 as s32 Func_02004240(struct Unk_02004240 *); eastern_alhafra has s32 Func_02004240(struct DoorPlan *). */
-extern s32 Func_02004240__s0514(struct Unk_02004240 *) __asm__("Func_02004240");
-/* VIEW(s0514): routine Func_020044c4 as void Func_020044c4(struct Unk_02004240); eastern_alhafra has void Func_020044c4(struct DoorPlan). */
+/* VIEW(s0514): routine Func_020044c4 as void Func_020044c4(struct Unk_02004240); eastern_alhafra has void Func_020044c4(struct DoorPlan); tried as the definition's void Func_020044c4(struct PushTarget target), it does not compile in tla-ja: games/tla/src/scene/eastern_alhafra.c:265: conflicting types for `Func_020044c4'. */
 extern void Func_020044c4__s0514(struct Unk_02004240) __asm__("Func_020044c4");
 void Func_02004868(void *, s32, s32);
-/* VIEW(s0514): routine Func_02004a0c as void Func_02004a0c(struct SpawnObject *object, s32 mode); eastern_alhafra has s32 Func_02004a0c(). */
-extern void Func_02004a0c__s0514(struct SpawnObject *object, s32 mode) __asm__("Func_02004a0c");
 s32 Func_02004a24();
 s32 Func_02004a7c();
 s32 Func_02004a84();
 void Func_02004a94();
 void Func_02004a9c();
 s32 Func_02004bb4();
-/* VIEW(s0514): routine Func_02004c24 as void Func_02004c24(s32 slotNo, s32 firstId, s32 secondId); eastern_alhafra has s32 Func_02004c24(). */
-extern void Func_02004c24__s0514(s32 slotNo,s32 firstId,s32 secondId) __asm__("Func_02004c24");
 s32 Func_02004c44();
 s32 Func_02004c4c();
 s32 Func_02004c8c();
@@ -294,7 +288,7 @@ void Func_02000514(void) {
       (Actor_GetById(gMainRoutineWork.currentOwner)->facing + 0x2000) & 0xc000;
   if (actor16 != NULL && Event_GetFlag(0x8a4) == 0)
     Func_080dbdd4(actor16->x, actor16->z, 2, 255);
-  if (Func_02004240__s0514(&unk) != 0) {
+  if (Func_02004240(&unk) != 0) {
     if (Event_GetFlag(0x8a4) == 0 || facing == 0xc000) {
       Func_020044c4__s0514(unk);
     } else {
@@ -339,8 +333,6 @@ struct DoorStep {
   u16 z;
 };
 
-/* VIEW(s0514): variable gData_02005290 as extern struct DoorStep gData_02005290[]; eastern_alhafra has extern u8 gData_02005290[]. */
-extern struct DoorStep gData_02005290__s0514[] __asm__("gData_02005290");
 
 void Func_02000394(s32, s32);
 void Func_0200042c(s32, s32);
@@ -434,7 +426,7 @@ void Func_020008cc(struct DoorStep *step, s32 countdown, s32 unused) {
 }
 
 void Func_02000940(s32 countdown) {
-  Func_020008cc(gData_02005290__s0514, countdown, 0);
+  Func_020008cc(gData_02005290, countdown, 0);
 }
 
 void Func_02000954(void) {}
@@ -526,8 +518,6 @@ void Func_02000af8(void) {
 #define EVENT_WORK ((u8 *)Ram_HeapSlots->eventWork)
 #define OBJECT(id) (Actor_Get((id)))
 
-/* VIEW(s0514): variable gData_02004d0c as extern const u8 gData_02004d0c[]; eastern_alhafra has extern u8 gData_02004d0c[]. */
-extern const u8 gData_02004d0c__s0514[] __asm__("gData_02004d0c");
 void Func_02004c5c();
 void Func_02003274(void);
 void Func_020040ec();
@@ -620,10 +610,10 @@ s32 Func_02000b18(void) {
   OBJECT(8)->priorityFlags |= 32;
   OBJECT(9)->priorityFlags |= 32;
   Func_02004c1c();
-  Func_02004c24__s0514(0, 12, 13);
+  Func_02004c24(0, 12, 13);
   Actor_SetSingleChildFlags(Actor_Get(12), 0);
   Actor_SetSingleChildFlags(Actor_Get(13), 0);
-  Func_020047fc(gData_02004d0c__s0514);
+  Func_020047fc(gData_02004d0c);
   Actor_SetSingleChildFlags(Actor_Get(14), 0);
   flag = Event_GetFlag(0x8a2);
   if (flag == 0) {
@@ -637,14 +627,14 @@ s32 Func_02000b18(void) {
     object = OBJECT(19);
     object->motionFlags = flag;
     object->y = 0x100000;
-    Func_02004c24__s0514(1, 18, 19);
+    Func_02004c24(1, 18, 19);
     Func_02004c94(1);
     object = OBJECT(20);
     object->collisionFlags |= 8;
     object = OBJECT(21);
     object->motionFlags = flag;
     object->y = 0x100000;
-    Func_02004c24__s0514(2, 20, 21);
+    Func_02004c24(2, 20, 21);
   }
   Actor_SetSingleChildFlags(Actor_Get(16), 0);
   Actor_SetSingleChildFlags(Actor_Get(17), 0);
@@ -1148,7 +1138,7 @@ void Func_02001b9c(s32 x, s32 y, s32 z, s16 value, s32 timer) {
   object = ((struct SpawnObject *)FieldActor_Create(0x1e8, x, y, z));
   if (object != 0) {
     sprite = object->sprite;
-    Func_02004a0c__s0514(object, 1);
+    Func_02004a0c(object, 1);
     Func_02004a14(object, gData_020056d4);
     Func_02004a74(object, 1);
     object->motionFlags = 0;
@@ -1172,7 +1162,7 @@ void Func_02001b9c(s32 x, s32 y, s32 z, s16 value, s32 timer) {
 // Scene code of overlay 0x668, in ROM order, from s1bf4's offset up to the next object the overlay links.
 
 
-/* VIEW(s1bf4): routine Func_02001b9c as s32 Func_02001b9c(s32 x, s32 y, s32 z, s32 rotation, s32 timer); the definition has void Func_02001b9c(s32 x, s32 y, s32 z, s16 value, s32 timer). */
+/* VIEW(s1bf4): routine Func_02001b9c as s32 Func_02001b9c(s32 x, s32 y, s32 z, s32 rotation, s32 timer); the definition has void Func_02001b9c(s32 x, s32 y, s32 z, s16 value, s32 timer); tried as the definition's void Func_02001b9c(s32 x, s32 y, s32 z, s16 value, s32 timer), which the object already declares, Func_02001bf4 moves: 2 of 79 instructions in tla-ja. */
 extern s32 Func_02001b9c__s1bf4(s32 x, s32 y, s32 z, s32 rotation, s32 timer) __asm__("Func_02001b9c");
 
 void Func_02001bf4(s32 id) {

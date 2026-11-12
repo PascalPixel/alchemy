@@ -349,13 +349,12 @@ struct AttackAnimation {
   struct AttackAnimationEntry *entries[1];
 };
 
-/* VIEW(f11e3ac): variable MsgNimblyDodgesBlow as extern char MsgNimblyDodgesBlow; msg_ids.h has extern u8 MsgNimblyDodgesBlow[]. */
-extern char MsgNimblyDodgesBlow__f11e3ac __asm__("MsgNimblyDodgesBlow");
+extern u8 MsgNimblyDodgesBlow[];
 
 s32 ArcTan2(s32 x, s32 y);
 void *Unit_Get(s32 owner);
 s32 ResourceMetadata_SumCommandLengthsFar(s32 animation, s32 a, s32 b);
-/* VIEW(f11e3ac): routine BattleClass_GetAttackHop as s32 BattleClass_GetAttackHop(s32 classId); the definition has void Func_08126700(s32 x, s32 depth, s32 y, s32 zoom) { void Func_08126700(s32 x, s32 depth, s32 y) { s32 span = 0x01fe0000; s32 zoom; struc.... */
+/* VIEW(f11e3ac): routine BattleClass_GetAttackHop as s32 BattleClass_GetAttackHop(s32 classId); the definition has void Func_08126700(s32 x, s32 depth, s32 y, s32 zoom) { void Func_08126700(s32 x, s32 depth, s32 y) { s32 span = 0x01fe0000; s32 zoom; struc...; tried as the one declaration s32 BattleClass_GetAttackHop(s32 classId), it does not compile in tla-ja: games/tla/src/battle/presentation/f11e3ac.c:7993: conflicting types for `BattleClass_GetAttackHop'. */
 extern s32 BattleClass_GetAttackHop__f11e3ac(s32 classId) __asm__("BattleClass_GetAttackHop");
 void BattleMotion_ApproachTarget(s32 actorId, s32 targetId, s32 frames,
                                  s32 hop);
@@ -363,8 +362,6 @@ void BattleCamera_SetViewAtPairMidpoint(s32 first, s32 second, s32 scale);
 void BattleParty_ListAllUnitsAndSubmit(void);
 void Func_08138008(struct BattlePresentationWork *work);
 void Func_08138018(struct BattlePresentationWork *work);
-/* VIEW(f11e3ac): routine BattlePlayback_WaitForReady as void BattlePlayback_WaitForReady(void); the definition has s32 BattlePlayback_WaitForReady(void). */
-extern void BattlePlayback_WaitForReady__f11e3ac(void) __asm__("BattlePlayback_WaitForReady");
 
 s32 Func_0811ea0c(struct BattlePlan *plan, s32 mode) {
   struct BattlePresentationWork work;
@@ -467,7 +464,7 @@ s32 Func_0811ea0c(struct BattlePlan *plan, s32 mode) {
     wait(4);
     wait(10);
     BattleEvent_Push(0, plan->targetIds[0]);
-    BattleEvent_Push(4, (u32)&MsgNimblyDodgesBlow__f11e3ac);
+    BattleEvent_Push(4, (u32)&MsgNimblyDodgesBlow);
     BattleEvent_DispatchQueued();
     ObjMotRst(work.actors[0]);
   } else {
@@ -515,7 +512,7 @@ s32 Func_0811ea0c(struct BattlePlan *plan, s32 mode) {
       Func_0811e830(saved);
       Heap_Release(saved);
     }
-    BattlePlayback_WaitForReady__f11e3ac();
+    BattlePlayback_WaitForReady();
     if (critical != 0) {
       view->flag = 0;
       BattleParty_ListAllUnitsAndSubmit();
@@ -553,8 +550,7 @@ struct ItemAnimation {
   struct ItemAnimationEntry *entries[1];
 };
 
-/* VIEW(f11e3ac): variable MsgItemBroke as extern char MsgItemBroke; msg_ids.h has extern u8 MsgItemBroke[]. */
-extern char MsgItemBroke__f11e3ac __asm__("MsgItemBroke");
+extern u8 MsgItemBroke[];
 
 void ColorBuffer_Scale(u16 *source, u32 destination, s32 value, s32 size);
 void Func_0811ddd8(struct BattlePlan *plan,
@@ -637,7 +633,7 @@ s32 Func_0811edb0(struct BattlePlan *plan, s32 unused,
   } else {
     wait(60);
   }
-  BattlePlayback_WaitForReady__f11e3ac();
+  BattlePlayback_WaitForReady();
   Actor_SetMode(object, 1);
   for (targetOrFadeIndex = 0; targetOrFadeIndex != work.count;
        targetOrFadeIndex++)
@@ -666,7 +662,7 @@ s32 Func_0811edb0(struct BattlePlan *plan, s32 unused,
   } else if (itemDefinition->useType == 2) {
     if ((Battle_RandomFar() & 7) == 0) {
       BattleEvent_Push(2, unit->inventory[selection->parameter]);
-      BattleEvent_Push(4, (u32)&MsgItemBroke__f11e3ac);
+      BattleEvent_Push(4, (u32)&MsgItemBroke);
       Inventory_BreakFar(selection->unitId, selection->parameter);
       BattleEvent_DispatchQueued();
     }
@@ -745,10 +741,8 @@ struct CastAnimation {
   struct CastAnimationEntry *entries[1];
 };
 
-/* VIEW(f11e3ac): variable MsgCastLacksPp as extern char MsgCastLacksPp; msg_ids.h has extern u8 MsgCastLacksPp[]. */
-extern char MsgCastLacksPp__f11e3ac __asm__("MsgCastLacksPp");
-/* VIEW(f11e3ac): variable MsgPsynergyBlocked as extern char MsgPsynergyBlocked; msg_ids.h has extern u8 MsgPsynergyBlocked[]. */
-extern char MsgPsynergyBlocked__f11e3ac __asm__("MsgPsynergyBlocked");
+extern u8 MsgCastLacksPp[];
+extern u8 MsgPsynergyBlocked[];
 
 void Func_08127308(s32 unitId, s32 element, s32 mode, s32 value);
 void BattleBackground_RestorePalette(void);
@@ -828,9 +822,9 @@ s32 Func_0811f088(struct BattlePlan *plan, s32 mode) {
   if (plan->failure != 0) {
     if (plan->failure == 1) {
       BattleEvent_Push(0, plan->actorId);
-      BattleEvent_Push(4, (u32)&MsgPsynergyBlocked__f11e3ac);
+      BattleEvent_Push(4, (u32)&MsgPsynergyBlocked);
     } else {
-      BattleEvent_Push(4, (u32)&MsgCastLacksPp__f11e3ac);
+      BattleEvent_Push(4, (u32)&MsgCastLacksPp);
     }
     BattleEvent_DispatchQueued();
     BattleBackground_RestorePalette();
@@ -852,7 +846,7 @@ s32 Func_0811f088(struct BattlePlan *plan, s32 mode) {
       Heap_Release(saved);
     }
     if (((s32 *)plan)[25] == 0)
-      BattlePlayback_WaitForReady__f11e3ac();
+      BattlePlayback_WaitForReady();
     Actor_SetMode(object, 1);
     for (targetIndex = 0; targetIndex != work.count; targetIndex++)
       ObjMotRst(work.actors[targetIndex]);
@@ -989,9 +983,9 @@ void BattleMotion_ShowDowned(s32 id) {
 #undef Func_080219ccFar
 
 // ---- games/tla/src/battle/strongest_unit.c ----
-/* VIEW(strongest_unit): routine Unit_Get as struct BattleUnit *Unit_Get(s32 unitId); owner_state.h has void *Unit_Get(s32 owner). */
+/* VIEW(strongest_unit): routine Unit_Get as struct BattleUnit *Unit_Get(s32 unitId); owner_state.h has void *Unit_Get(s32 owner); tried as the definition's void *Unit_Get(s32 owner), which the object already declares, it does not compile in tla-ja: games/tla/src/battle/presentation/f11e3ac.c:1004: request for member `hp' in something not a structure or union. */
 extern struct BattleUnit *Unit_Get__strongest_unit(s32 unitId) __asm__("Unit_Get");
-/* VIEW(strongest_unit): routine Battle_RandomFar as u32 Battle_RandomFar(void); battle_system.h has s32 Battle_RandomFar(void). */
+/* VIEW(strongest_unit): routine Battle_RandomFar as u32 Battle_RandomFar(void); battle_system.h has s32 Battle_RandomFar(void); tried as the rest of the object declares it, Func_0811f4d4 moves: 1 of 95 instructions in tla-ja. */
 extern u32 Battle_RandomFar__strongest_unit(void) __asm__("Battle_RandomFar");
 
 /// Picks a random living target on one side: the party (target codes 0x100 +
@@ -1067,7 +1061,7 @@ s32 Func_0811f5a4(u32 unitId) {
 #define PLACE_PARTY 0x100
 #define PLACE_ENEMY 0x180
 
-/* VIEW(f11f66c): routine Unit_Get as void *Unit_Get(s32 owner); strongest_unit has struct BattleUnit *Unit_Get(s32 unitId). */
+/* VIEW(f11f66c): routine Unit_Get as void *Unit_Get(s32 owner); strongest_unit has struct BattleUnit *Unit_Get(s32 unitId); tried as the definition's void *Unit_Get(s32 owner), which the object already declares, Func_0811f66c moves: 5 of 776 instructions, BattleActor_ResetRuntimeFields moves: 1 of 97 instructions, BattleActor_DestroyTemporaryObject moves: 1 of 24 instructions, 32 more in tla-ja. */
 extern void *Unit_Get__f11f66c(s32 owner) __asm__("Unit_Get");
 const struct EnemyDefinition *Enemy_GetDefinitionFar(s32 id);
 
@@ -1666,11 +1660,9 @@ struct BattleDisplayFlags {
   s32 marked;
 };
 
-/* VIEW(f11f66c): routine BattleMotion_FlashHit as void BattleMotion_FlashHit(u32 unitId, s32 a, s32 b); the definition has void BattleMotion_FlashHit(s32 id). */
+/* VIEW(f11f66c): routine BattleMotion_FlashHit as void BattleMotion_FlashHit(u32 unitId, s32 a, s32 b); the definition has void BattleMotion_FlashHit(s32 id); tried as the definition's void BattleMotion_FlashHit(s32 id), which the object already declares, it does not compile in tla-ja: games/tla/src/battle/presentation/f11e3ac.c:1722: too many arguments to function `BattleMotion_FlashHit'. */
 extern void BattleMotion_FlashHit__f11f66c(u32 unitId, s32 a, s32 b) __asm__("BattleMotion_FlashHit");
 s32 Func_0812824c(s32 unitId, s32 earned);
-/* VIEW(f11f66c): routine BattleMotion_ShowDowned as void BattleMotion_ShowDowned(u32 unitId); the definition has void BattleMotion_ShowDowned(s32 id). */
-extern void BattleMotion_ShowDowned__f11f66c(u32 unitId) __asm__("BattleMotion_ShowDowned");
 void BattleObject_UpdatePose(s32 id);
 u32 BattlePlayback_Reset(void);
 
@@ -1732,7 +1724,7 @@ u32 BattleEvent_DispatchQueued(void) {
       case BATTLE_EVENT_DEFEAT:
         Func_0812824c(queue->operands[i], runtime->flags);
         BattleActor_ResetRuntimeFields(queue->operands[i]);
-        BattleMotion_ShowDowned__f11f66c(queue->operands[i]);
+        BattleMotion_ShowDowned(queue->operands[i]);
         break;
       case BATTLE_EVENT_DRAW_STATUS:
         PartyStatus_DrawFar(Ram_HeapSlots->battleWork->partyStatus);
@@ -4226,8 +4218,6 @@ s32 Item_GetEquippedElementFar(s32 unitId);
 u32 BattleClass_GetAttackEffect(u32 index);
 s32 Func_0811d79c(s32 classId);
 s32 Equipment_GetUnleashRateBonusFar(struct BattleUnit *owner);
-/* VIEW(f11f66c): routine Func_0811f5a4 as s32 Func_0811f5a4(s32 unitId); the definition has s32 Func_0811f5a4(u32 unitId). */
-extern s32 Func_0811f5a4__f11f66c(s32 unitId) __asm__("Func_0811f5a4");
 
 s32 Func_0812381c(struct BattleActionRecord *request, struct BattlePlan *plan) {
   struct BattleUnit *actor = Unit_Get__f11f66c(request->unitId);
@@ -4832,7 +4822,7 @@ s32 Func_0812381c(struct BattleActionRecord *request, struct BattlePlan *plan) {
       }
     }
     if (abilityId == 312) {
-      plan->actorId2 = Func_0811f5a4__f11f66c(plan->actorId);
+      plan->actorId2 = Func_0811f5a4(plan->actorId);
     } else if (abilityId == 316) {
       s32 tries = 0;
 
@@ -6178,8 +6168,6 @@ void Func_08125d74(s32 arg, s32 kind) {
   HeapSlot_Release(168);
 }
 
-/* VIEW(f11f66c): routine ColorBuffer_Scale as void ColorBuffer_Scale(u16 *source, u16 *destination, s32 scale, s32 count); f11e3ac has void ColorBuffer_Scale(u16 *source, u32 destination, s32 value, s32 size). */
-extern void ColorBuffer_Scale__f11f66c(u16 *source, u16 *destination, s32 scale, s32 count) __asm__("ColorBuffer_Scale");
 
 /// Sets the palette brightness. Level 0 transfers the original colours
 /// unchanged.
@@ -6213,7 +6201,7 @@ void BattleBackground_SetPaletteLevel(s32 unused, s32 level) {
     Dma_Set(palette, (void *)&BG_PLTT_COLOR(6, 0), DMA_COPY_HALFWORDS(128),
             REG_DMA3);
   } else {
-    ColorBuffer_Scale__f11f66c(palette, (u16 *)0x050000c0,
+    ColorBuffer_Scale(palette, (u16 *)0x050000c0,
                       screen->brightness = 0x10000 - level * 1092, 128);
   }
   {
@@ -6349,7 +6337,7 @@ void Func_081263fc(s32 mode, s32 resource, s32 level) {
   palette = session->palette;
   Dma_Set(data, palette, 0x84000040, REG_DMA3);
   if (level >= 0)
-    ColorBuffer_Scale__f11f66c(palette, (u16 *)0x050000c0,
+    ColorBuffer_Scale(palette, (u16 *)0x050000c0,
                       session->brightness = 0x10000 - level * 1092, 128);
   if (session->keepBackdropPalette == 0) {
     Dma_Set((void *)0x05000200, (void *)0x050000a0, 0x80000010, REG_DMA3);
@@ -7220,7 +7208,7 @@ void Func_08127308(s32 unit, s32 kind, s32 mode, s32 variant) {
       ime = &REG_IME;
       work = (struct SparkWork *)Ram_HeapSlots->battleFxWork[0];
       if (frame <= 24)
-        ColorBuffer_Scale__f11f66c(session->palette, (u16 *)0x050000c0,
+        ColorBuffer_Scale(session->palette, (u16 *)0x050000c0,
                           *brightness = 0x10000 - frame * 1092, 128);
       Func_0811c2b4(unit, (s32 *)pos);
       work->originX = (64 - pos->x) << 8;

@@ -39,7 +39,7 @@ void Func_02000054(void) {
   Func_02001358(1);
 }
 
-/* VIEW(lemuria_spring): variable gData_02001678 as extern const u16 gData_02001678[]; the definition has u32 gData_02001678[] = { 0xa08090a, 0xc040b06, 0xe020d03, 0x10000f01, }. */
+/* VIEW(lemuria_spring): variable gData_02001678 as extern const u16 gData_02001678[]; the definition has u32 gData_02001678[] = { 0xa08090a, 0xc040b06, 0xe020d03, 0x10000f01, }; tried as the definition's extern u32 gData_02001678[], Func_02000070 moves: 2 of 40 instructions in tla-ja. */
 extern const u16 gData_02001678__lemuria_spring[] __asm__("gData_02001678");
 
 static inline void RegSet(s32 value, s32 reg) {
@@ -101,8 +101,6 @@ const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 #include "main_routine_work.h"
 
 s32 Event_StartScreenTransition();
-/* VIEW(lemuria_spring): routine Func_020010f4 as s32 Func_020010f4(); the definition has void Func_020010f4(void). */
-extern s32 Func_020010f4__lemuria_spring() __asm__("Func_020010f4");
 
 /// Starts the scene: sets the colour blend, puts objects 24 and 25 in mode 2
 /// and starts the screen transition; when gMainRoutineWork's 0x1e2 halfword is
@@ -134,7 +132,7 @@ s32 Func_0200012c(void) {
   FIELD_AT((t4 + 0x23), u8, 0) = 2;
   Event_StartScreenTransition();
   if (gMainRoutineWork.entrance == 1) {
-    Func_020010f4__lemuria_spring();
+    Func_020010f4();
     t7 = Event_GetFlag(0x200);
     if (t7 != 0) {
       FIELD_AT(0x4000050, u16, 0) = blend;
@@ -155,8 +153,7 @@ s32 Scene_PrepareMap(void) { return 0; }
 // The Japanese catalog does not name these yet.
 extern u8 MsgWhatWillYou[], MsgCoins2[], MsgToss2[], MsgYouWonCoin[];
 extern u16 gData_0200173c[];
-/* VIEW(lemuria_spring): variable gData_02001700 as extern s32 gData_02001700[]; the definition has u32 gData_02001700[] = { 280, 359, 335, 380, 302, 342, 387, 372, 320, 395, 364, 341, 183, 186, 189, }. */
-extern s32 gData_02001700__lemuria_spring[] __asm__("gData_02001700");
+extern u32 gData_02001700[];
 s32 PartyInventory_CountItem();
 struct Window *Window_Create();
 void Text_DrawCharacterAtOffset();
@@ -398,7 +395,7 @@ toss:
         }
         if (prize == 15)
           prize = 14;
-        Func_0200049c(gData_02001700__lemuria_spring[prize]);
+        Func_0200049c(gData_02001700[prize]);
         if (WEIGHT(prize) > 1)
           gMainRoutineWork.unk13d[prize] = WEIGHT(prize) / 2;
       }
@@ -1005,15 +1002,6 @@ struct SpringPoint {
   s32 z;
 };
 
-/* VIEW(ride): tag struct SpringObstacle as struct SpringObstacle__ride; lemuria_spring.c has another definition. */
-struct SpringObstacle__ride {
-  struct SpringPoint position;
-  s16 heading;
-  s16 pauseOrPhase;
-  s16 speedMode;
-  s16 reactionFrames;
-  s16 hitCooldownFrames;
-};
 
 struct SpringRide {
   u16 unk00;
@@ -1023,11 +1011,11 @@ struct SpringRide {
   s32 frames;
 };
 
-/* VIEW(ride): variable gData_02001760 as extern struct SpringRide gData_02001760; lemuria_spring has extern struct SpringTossMotion gData_02001760. */
+/* VIEW(ride): variable gData_02001760 as extern struct SpringRide gData_02001760; lemuria_spring has extern struct SpringTossMotion gData_02001760; tried as the one declaration extern struct SpringRide gData_02001760, it does not compile in tla-ja: games/tla/src/scene/lemuria_spring.c:1014: conflicting types for `gData_02001760'. */
 extern struct SpringRide gData_02001760__ride __asm__("gData_02001760");
 extern s32 gData_020017b0;
-/* VIEW(ride): variable gData_020017c0 as extern struct SpringObstacle__ride gData_020017c0[]; lemuria_spring has extern struct SpringObstacle gData_020017c0[]. */
-extern struct SpringObstacle__ride gData_020017c0__ride[] __asm__("gData_020017c0");
+/* VIEW(ride): variable gData_020017c0 as extern struct SpringObstacle__ride gData_020017c0[]; lemuria_spring has extern struct SpringObstacle gData_020017c0[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/lemuria_spring.c:1042: `gData_020017c0__ride' undeclared (first use in this function). */
+extern struct SpringObstacle gData_020017c0__ride[] __asm__("gData_020017c0");
 extern s32 gData_02001820;
 extern s32 gData_02001824;
 extern s32 gData_02001828;
@@ -1046,7 +1034,7 @@ void Func_020010f4(void) {
   s32 i = 0;
   u8 *xtbl;
   u16 *htbl;
-  struct SpringObstacle__ride *rec;
+  struct SpringObstacle *rec;
   u8 *ztbl;
   s32 zero;
 

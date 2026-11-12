@@ -49,10 +49,7 @@ void BattleEffect_AdvanceHueCycle(void);
 void BattleEffect_ApplyColorToTargetBuffer(u32 color, s32 mode);
 void BattleEffect_StartBufferInterpolation(s32 frames);
 struct Actor *Actor_GetById(u32 objectId);
-/* VIEW(f0dcb44): routine BattleEffect_ApplyFlickerValue as void BattleEffect_ApplyFlickerValue(struct Actor *object, s32 value); the definition has void BattleEffect_ApplyFlickerValue(void *object, s32 value). */
-extern void BattleEffect_ApplyFlickerValue__f0dcb44(struct Actor *object, s32 value) __asm__("BattleEffect_ApplyFlickerValue");
-/* VIEW(f0dcb44): routine Scene_FindActorPlacement as struct WaveFxDescriptor *Scene_FindActorPlacement(s32 id); battle.h has struct ActionDescriptor *Scene_FindActorPlacement(s32 id). */
-extern struct WaveFxDescriptor *Scene_FindActorPlacement__f0dcb44(s32 id) __asm__("Scene_FindActorPlacement");
+struct ActionDescriptor *Scene_FindActorPlacement(s32 id);
 struct WaveFxMetadata *Resource_GetMetadataRecordFarFar(s32 sprite);
 struct Actor *Func_080200c0(s32 kind, s32 x, s32 y, s32 z);
 s32 ArcTan2(s32 y, s32 x);
@@ -91,20 +88,20 @@ void Func_080dcb44(void) {
         (work->blue << 10) | (work->green << 5) | work->red | 0x200000, 1);
     BattleEffect_StartBufferInterpolation(1);
   }
-  BattleEffect_ApplyFlickerValue__f0dcb44(Actor_GetById(work->sourceId), 0);
+  BattleEffect_ApplyFlickerValue(Actor_GetById(work->sourceId), 0);
 
   if (work->counter == 0 || work->counter == 8 || work->counter == 16) {
     source = Actor_GetById(work->sourceId);
     target = Actor_GetById(work->targetId);
     if (source != NULL && target != NULL) {
-      descriptor = Scene_FindActorPlacement__f0dcb44(work->sourceId);
+      descriptor = Scene_FindActorPlacement(work->sourceId);
       spriteId = descriptor->sprite;
       from.x = source->x;
       metadata = Resource_GetMetadataRecordFarFar(spriteId);
       from.y = source->y + (metadata->boxX << 16) - 0x20000;
       from.z = source->z;
       sprite = target->sprite;
-      descriptor = Scene_FindActorPlacement__f0dcb44(work->targetId);
+      descriptor = Scene_FindActorPlacement(work->targetId);
       spriteId = descriptor->sprite;
       to.x = target->x;
       metadata = Resource_GetMetadataRecordFarFar(spriteId);
@@ -194,18 +191,10 @@ s32 BattleEffect_HueChannelRamp(s16 hue) {
   return level;
 }
 
-/* VIEW(hue): tag struct WaveFxWork as struct WaveFxWork__hue; f0dcb44.c has another definition. */
-struct WaveFxWork__hue {
-  u8 unk000[0x28b];
-  u8 red;
-  u8 green;
-  u8 blue;
-  u16 hue; ///< Degrees.
-};
 
 /// Advances the hue by four degrees and calculates its colour.
 void BattleEffect_AdvanceHueCycle(void) {
-  struct WaveFxWork__hue *work = Ram_HeapSlots->unk4c[3];
+  struct WaveFxWork *work = Ram_HeapSlots->unk4c[3];
   s16 r;
   s16 g;
   s16 b;
@@ -250,15 +239,13 @@ void BattleEffect_SetCallbackWhenTargetUnset(struct Actor *target) {
 }
 
 extern u8 gData_080f0e9c[];
-/* VIEW(hue): routine Animation_ApplyChildValuesFar as void Animation_ApplyChildValuesFar(void *object, s32 value); actor_view.h has void Animation_ApplyChildValuesFar(struct Actor *, u32). */
-extern void Animation_ApplyChildValuesFar__hue(void *object, s32 value) __asm__("Animation_ApplyChildValuesFar");
 
 void BattleEffect_ApplyFlickerValue(void *object, s32 value) {
   s32 child = value - 1;
 
   if (value == 0)
     child = gData_080f0e9c[(gFrameCount >> 1) & 7];
-  Animation_ApplyChildValuesFar__hue(object, child);
+  Animation_ApplyChildValuesFar(object, child);
 }
 
 #include "input.h"
@@ -381,19 +368,9 @@ struct PendingEvent;
 
 void BattleEffect_InitializeSharedScene(void);
 void BattleEffect_PrepareBufferInterpolation(void);
-/* VIEW(f0dd054): routine BattleEffect_StartItemBreak as struct Actor *BattleEffect_StartItemBreak(struct Actor *object); battle.h has void *BattleEffect_StartItemBreak(void *object). */
-extern struct Actor *BattleEffect_StartItemBreak__f0dd054(struct Actor *object) __asm__("BattleEffect_StartItemBreak");
 void BattleEffect_SnapScaleToFull(struct Actor *object);
 s32 Func_080ce31c(s32 kind);
-/* VIEW(f0dd054): routine Func_080ce458 as struct PendingEvent *Func_080ce458(u32 filter, s32 kind, s32 selector); battle.h has struct TriggerEvent *Func_080ce458(s32 filter, s32 kind, s32 selector). */
-extern struct PendingEvent *Func_080ce458__f0dd054(u32 filter, s32 kind, s32 selector) __asm__("Func_080ce458");
-/* VIEW(f0dd054): routine Actor_StartScriptFar as void Actor_StartScriptFar(struct Actor *object, const void *script); objdisp.h has void Actor_StartScriptFar(struct Actor *object, const s32 *script). */
-extern void Actor_StartScriptFar__f0dd054(struct Actor *object, const void *script) __asm__("Actor_StartScriptFar");
-/* VIEW(f0dd054): routine Animation_ApplyChildValuesFar as void Animation_ApplyChildValuesFar(struct Actor *object, u32 values); hue has void Animation_ApplyChildValuesFar(void *object, s32 value). */
-extern void Animation_ApplyChildValuesFar__f0dd054(struct Actor *object, u32 values) __asm__("Animation_ApplyChildValuesFar");
-/* VIEW(f0dd054): routine Vector_AddPolarOffset as void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position); hue has extern void Vector_AddPolarOffset(s32, s32, struct ItemBreakFragmentPosition *). */
-extern void Vector_AddPolarOffset__f0dd054(s32 radius, s32 angle, s32 *position) __asm__("Vector_AddPolarOffset");
-/* VIEW(f0dd054): routine BattleEffect_GetCycledTableWord as u32 BattleEffect_GetCycledTableWord(u32 keys); the definition has u16 BattleEffect_GetCycledTableWord(void). */
+/* VIEW(f0dd054): routine BattleEffect_GetCycledTableWord as u32 BattleEffect_GetCycledTableWord(u32 keys); the definition has u16 BattleEffect_GetCycledTableWord(void); tried as the definition's u16 BattleEffect_GetCycledTableWord(void), which the object already declares, it does not compile in tla-ja: games/tla/src/field/event_commands/f0dcb44.c:463: too many arguments to function `BattleEffect_GetCycledTableWord'. */
 extern u32 BattleEffect_GetCycledTableWord__f0dd054(u32 keys) __asm__("BattleEffect_GetCycledTableWord");
 s32 Func_08020210(struct Actor *object, struct Vec3 *position);
 struct Actor *ScriptObject_FindOverlappingEntryFar(struct Actor *object,
@@ -452,20 +429,20 @@ void Func_080dd054(void) {
     return;
   BattleEffect_InitializeSharedScene();
   user->watchedObject = target;
-  Actor_StartScriptFar__f0dd054(user, gData_080f0e60);
-  pusher = BattleEffect_StartItemBreak__f0dd054(user);
+  Actor_StartScriptFar(user, gData_080f0e60);
+  pusher = BattleEffect_StartItemBreak(user);
   if (pusher == NULL) {
     BattleEffect_PrepareBufferInterpolation();
     return;
   }
 
-  event = Func_080ce458__f0dd054(0x50000005, scene->fieldKind,
+  event = Func_080ce458(0x50000005, scene->fieldKind,
                         Func_080ce31c(scene->fieldKind));
   pusher->watchedObject = target;
   position.x = target->x;
   position.y = target->y + (16 << 16);
   position.z = target->z;
-  Vector_AddPolarOffset__f0dd054(16 << 16, angle, &position);
+  Vector_AddPolarOffset(16 << 16, angle, &position);
   Actor_SetTargetPosition(pusher, position.x, position.y, position.z);
   BattleEffect_SnapScaleToFull(pusher);
   pusher->speedLimit = 4 << 16;
@@ -497,7 +474,7 @@ void Func_080dd054(void) {
       position.x = target->x;
       position.y = target->y + (16 << 16);
       position.z = target->z;
-      Vector_AddPolarOffset__f0dd054(16 << 16, angle, &position);
+      Vector_AddPolarOffset(16 << 16, angle, &position);
       Actor_SetTargetPosition(pusher, position.x, position.y, position.z);
       Actor_SetMode(pusher, 1);
       pusher->velocityX = 0;
@@ -509,18 +486,18 @@ void Func_080dd054(void) {
     position.x = target->x;
     position.y = target->y + (16 << 16);
     position.z = target->z;
-    Vector_AddPolarOffset__f0dd054(16 << 16, angle, &position);
-    Vector_AddPolarOffset__f0dd054(2 << 16, direction, &position);
+    Vector_AddPolarOffset(16 << 16, angle, &position);
+    Vector_AddPolarOffset(2 << 16, direction, &position);
     Actor_SetTargetPosition(pusher, position.x, position.y, position.z);
     Actor_CommitPosition(pusher);
     position.x = target->x;
     position.y = target->y;
     position.z = target->z;
-    Vector_AddPolarOffset__f0dd054(16 << 16, direction, &position);
+    Vector_AddPolarOffset(16 << 16, direction, &position);
     beyond.x = target->x;
     beyond.y = target->y;
     beyond.z = target->z;
-    Vector_AddPolarOffset__f0dd054(32 << 16, direction, &beyond);
+    Vector_AddPolarOffset(32 << 16, direction, &beyond);
     if (Func_08020210(target, &position) > 0) {
       Actor_SetMode(pusher, 4);
       if ((gFrameCount & 15) == 0)
@@ -570,7 +547,7 @@ void Func_080dd054(void) {
     pusher->motionFlags = 0;
     pusher->speedLimit = 0x3333;
     pusher->acceleration = 0x3333;
-    Vector_AddPolarOffset__f0dd054(16 << 16, direction, &position);
+    Vector_AddPolarOffset(16 << 16, direction, &position);
     Actor_SetTargetPosition(pusher, position.x, position.y + (16 << 16),
                             position.z);
     if (moved == 1) {
@@ -591,8 +568,8 @@ void Func_080dd054(void) {
 
   *layer = savedLayer;
   // The palette byte sits at 0x40 here, not the struct's savedPalette at 0x44.
-  Animation_ApplyChildValuesFar__f0dd054(target, scene->unk40[0]);
-  Actor_StartScriptFar__f0dd054(target, scene->savedScript);
+  Animation_ApplyChildValuesFar(target, scene->unk40[0]);
+  Actor_StartScriptFar(target, scene->savedScript);
   target->update = (void (*)(void))scene->savedCallback;
   if (pushed) {
     pusher->update = NULL;
@@ -636,7 +613,7 @@ next_state:
     position.x = effect->originX;
     position.z = effect->originZ;
     angle = Random16();
-    Vector_AddPolarOffset__f0dd054(0x1e0000, (u16)angle, &position);
+    Vector_AddPolarOffset(0x1e0000, (u16)angle, &position);
     effect->targetX = position.x;
     effect->targetZ = position.z;
     effect->acceleration = 0x40000;
@@ -675,16 +652,11 @@ next_state:
 // ---- games/tla/src/field/event_commands/item_break.c ----
 #include "debug.h"
 
-/* VIEW(item_break): tag struct BattleFxScene as struct BattleFxScene__item_break; field_psynergy_work.h has another definition. */
-struct BattleFxScene__item_break {
-  u8 unk00[16];
-  void *volatile mainObject;
-};
 
 void FieldEffect_RunMove(void) {
   // Unused: gives the stack frame its 12 bytes.
   s32 work[3];
-  struct BattleFxScene__item_break *scene;
+  struct BattleFxScene *scene;
   void *object;
 
   scene = Ram_HeapSlots->effectWork;
@@ -704,12 +676,8 @@ void FieldEffect_RunMove(void) {
 
 extern const s32 gData_080f0e78[];
 
-/* VIEW(item_break): routine Actor_Spawn as struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z); hue has extern struct ItemBreakFragmentObject *Actor_Spawn(s32, s32, s32, s32). */
-extern struct Actor *Actor_Spawn__item_break(s32 kind, s32 x, s32 y, s32 z) __asm__("Actor_Spawn");
 void Motion_SetTargetPositionFromMagnitudeAngle(struct Actor *object,
                                                 s32 magnitude, s32 angle);
-/* VIEW(item_break): routine BattleEffect_UpdateItemBreakFragment as void BattleEffect_UpdateItemBreakFragment(void); the definition has void BattleEffect_UpdateItemBreakFragment(struct ItemBreakFragmentSource *src). */
-extern void BattleEffect_UpdateItemBreakFragment__item_break(void) __asm__("BattleEffect_UpdateItemBreakFragment");
 
 #define SE_ITEM_BREAK 138
 
@@ -728,12 +696,12 @@ void *BattleEffect_StartItemBreak(void *object) {
   u32 jitter;
 
   angle = (source->facing + 0x2000) & 0xc000;
-  parent = Actor_Spawn__item_break(278, source->x, source->y + (16 << 16), source->z);
+  parent = Actor_Spawn(278, source->x, source->y + (16 << 16), source->z);
   if (parent == 0)
     return 0;
   parent->scaleY = 0x4000;
   parent->scaleX = 0x4000;
-  parent->update = BattleEffect_UpdateItemBreakFragment__item_break;
+  parent->update = BattleEffect_UpdateItemBreakFragment;
   parent->speedLimit = 2 << 16;
   parent->acceleration = 2 << 16;
   parent->motionFlags = 0;
@@ -741,7 +709,7 @@ void *BattleEffect_StartItemBreak(void *object) {
   Motion_SetTargetPositionFromMagnitudeAngle(parent, 16 << 16, angle);
 
   for (fragmentIndex = 7; fragmentIndex >= 0; fragmentIndex--) {
-    child = Actor_Spawn__item_break(673, source->x, source->y + (16 << 16), source->z);
+    child = Actor_Spawn(673, source->x, source->y + (16 << 16), source->z);
     if (child != 0) {
       Actor_StartScriptFar(child, gData_080f0e78);
       speed = Random16() + Q16_ONE;
@@ -800,7 +768,7 @@ void UpdateRisingParticleBurst(void *object) {
     wait(1);
   }
   for (i = 7; i >= 0; i--) {
-    child = Actor_Spawn__item_break(673, src->x, src->y, src->z);
+    child = Actor_Spawn(673, src->x, src->y, src->z);
     if (child != 0) {
       s32 speed;
       // One 1.0 for both uses, set before the block's calls; a literal at
@@ -882,15 +850,11 @@ struct RevealEvent {
   s16 centreY;
 };
 
-/* VIEW(f0dd820): routine BattleEffect_RunBusyWaitDelay as void BattleEffect_RunBusyWaitDelay(s32 value); the definition has void BattleEffect_RunBusyWaitDelay(void). */
+/* VIEW(f0dd820): routine BattleEffect_RunBusyWaitDelay as void BattleEffect_RunBusyWaitDelay(s32 value); the definition has void BattleEffect_RunBusyWaitDelay(void); tried as the definition's void BattleEffect_RunBusyWaitDelay(void), which the object already declares, it does not compile in tla-ja: games/tla/src/field/event_commands/f0dcb44.c:879: too many arguments to function `BattleEffect_RunBusyWaitDelay'. */
 extern void BattleEffect_RunBusyWaitDelay__f0dd820(s32 value) __asm__("BattleEffect_RunBusyWaitDelay");
-/* VIEW(f0dd820): routine BattleEffect_ApplyColorToSourceBuffer as void BattleEffect_ApplyColorToSourceBuffer(u32 value, s32 enabled); battle.h has void BattleEffect_ApplyColorToSourceBuffer(s32 value, s32 mode). */
-extern void BattleEffect_ApplyColorToSourceBuffer__f0dd820(u32 value, s32 enabled) __asm__("BattleEffect_ApplyColorToSourceBuffer");
 void BattleEffect_ApplyColorToTargetBuffer(u32 value, s32 enabled);
 void BattleEffect_StartBufferInterpolation(s32 frames);
 s32 Func_080ce31c(s32 kind);
-/* VIEW(f0dd820): routine Func_080ce458 as void *Func_080ce458(u32 kind, s32 entry, s32 arg); battle.h has struct TriggerEvent *Func_080ce458(s32 filter, s32 kind, s32 selector). */
-extern void *Func_080ce458__f0dd820(u32 kind, s32 entry, s32 arg) __asm__("Func_080ce458");
 #include "event_work.h"
 void Func_080cf554(void);
 #include "task.h"
@@ -919,13 +883,13 @@ void Func_080dd820(void) {
   caster = scene->mainObject;
   transition->centreX = caster->x;
   transition->centreY = caster->z - caster->y;
-  BattleEffect_ApplyColorToSourceBuffer__f0dd820(0x10000, 0);
+  BattleEffect_ApplyColorToSourceBuffer(0x10000, 0);
   BattleEffect_ApplyColorToTargetBuffer(0x10001, 1);
   BattleEffect_StartBufferInterpolation(1);
   event->active = 0;
   wait(1);
 
-  pending = Func_080ce458__f0dd820(REVEAL_EVENT_START, FIELD_FX_REVEAL,
+  pending = Func_080ce458(REVEAL_EVENT_START, FIELD_FX_REVEAL,
                           Func_080ce31c(FIELD_FX_REVEAL));
   if (pending != 0)
     Field_RunPsynergyEvent(pending, scene->firstObjectId,
@@ -968,11 +932,11 @@ void Func_080dd950(void) {
     BattleEffect_RunBusyWaitDelay__f0dd820(0);
     BattleEffect_ApplyColorToTargetBuffer(0x10000, 1);
     BattleEffect_StartBufferInterpolation(1);
-    BattleEffect_ApplyColorToSourceBuffer__f0dd820(0, 0);
+    BattleEffect_ApplyColorToSourceBuffer(0, 0);
     BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
     BattleEffect_StartBufferInterpolation(30);
     wait(1);
-    pending = Func_080ce458__f0dd820(0x40000005, FIELD_FX_REVEAL,
+    pending = Func_080ce458(0x40000005, FIELD_FX_REVEAL,
                             Func_080ce31c(FIELD_FX_REVEAL));
     if (pending != NULL)
       Field_RunPsynergyEvent(pending, scene->firstObjectId,
@@ -995,10 +959,6 @@ struct BurstParticleVector {
 extern const s32 gData_080f0ee8[];
 
 void Func_080ddbd8(void);
-/* VIEW(f0dd820): routine Vector_AddPolarOffset as void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position); hue has extern void Vector_AddPolarOffset(s32, s32, struct ItemBreakFragmentPosition *). */
-extern void Vector_AddPolarOffset__f0dd820(s32 radius, s32 angle, s32 *position) __asm__("Vector_AddPolarOffset");
-/* VIEW(f0dd820): routine Actor_Spawn as struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z); hue has extern struct ItemBreakFragmentObject *Actor_Spawn(s32, s32, s32, s32). */
-extern struct Actor *Actor_Spawn__f0dd820(s32 kind, s32 x, s32 y, s32 z) __asm__("Actor_Spawn");
 void BattleEffect_PrepareBufferInterpolation(void);
 // Far call to the target classifier Func_080237c8.
 s32 Func_08020330(struct Actor *object);
@@ -1047,9 +1007,9 @@ void Func_080dda30(s32 unused) {
       p->values[0] = scene->x;
       p->values[2] = scene->z;
       distance = Random16() * 6 + 0x40000;
-      Vector_AddPolarOffset__f0dd820(distance, Random16(), p->values);
+      Vector_AddPolarOffset(distance, Random16(), p->values);
       p->values[1] = scene->y;
-      piece = Actor_Spawn__f0dd820(BURST_FALL_OBJECT, p->values[0], p->values[1],
+      piece = Actor_Spawn(BURST_FALL_OBJECT, p->values[0], p->values[1],
                           p->values[2]);
       if (piece != 0) {
         Actor_StartScriptFar(piece, gData_080f0ee8);
@@ -1083,9 +1043,9 @@ void FieldEffect_RunGrowth(void) {
     p->values[0] = *(s32 *)(state + 4);
     p->values[2] = *(s32 *)(state + 12);
     randomValue = (Random16() * 6) + 0x40000;
-    Vector_AddPolarOffset__f0dd820(randomValue, Random16(), p->values);
+    Vector_AddPolarOffset(randomValue, Random16(), p->values);
     p->values[1] = *(s32 *)(state + 8);
-    object = Actor_Spawn__f0dd820(0x119, p->values[0], p->values[1], p->values[2]);
+    object = Actor_Spawn(0x119, p->values[0], p->values[1], p->values[2]);
     if (object != 0) {
       Actor_StartScriptFar(object, gData_080f0ee8);
       *((u8 *)object + 0x55) = 2;
@@ -1158,10 +1118,10 @@ void Func_080ddbd8(void) {
       pos[0] = user->x;
       pos[1] = user->y + 0xa0000;
       pos[2] = user->z;
-      Vector_AddPolarOffset__f0dd820(0xa0000, *(u16 *)&work->angle, pos);
+      Vector_AddPolarOffset(0xa0000, *(u16 *)&work->angle, pos);
     }
 
-    obj = Actor_Spawn__f0dd820(672, pos[0], pos[1], pos[2]);
+    obj = Actor_Spawn(672, pos[0], pos[1], pos[2]);
     visual = &((struct BurstParticleVisualGroup *)obj->sprite)->primary;
     child = &((struct BurstParticleVisualGroup *)obj->sprite)->child;
     child->flip = visual->flip;
@@ -1186,9 +1146,9 @@ void Func_080ddbd8(void) {
       p[1] = work->y;
       p[2] = work->z;
       if (*(u16 *)&work->angle == 0xc000)
-        Vector_AddPolarOffset__f0dd820(0xe0000, *(u16 *)&work->angle, p);
+        Vector_AddPolarOffset(0xe0000, *(u16 *)&work->angle, p);
       dist = Random16() * 6 + 0x40000;
-      Vector_AddPolarOffset__f0dd820(dist, Random16(), p);
+      Vector_AddPolarOffset(dist, Random16(), p);
       Actor_SetTargetPosition(obj, p[0], p[1], p[2]);
     }
     Sound_PlayFar(131);
@@ -1323,7 +1283,7 @@ void Func_080ddea8(void) {
     pos.x = work->x;
     pos.y = work->y + 0x100000;
     pos.z = work->z;
-    obj = Actor_Spawn__f0dd820(673, pos.x, pos.y, pos.z);
+    obj = Actor_Spawn(673, pos.x, pos.y, pos.z);
     if (obj != 0) {
       Actor_StartScriptFar(obj, gData_080f0e78);
       obj->speedLimit = Random16() + 0x20000;
@@ -1348,7 +1308,7 @@ struct Actor *BattleEffect_SpawnItemBreakMode3(s32 x, s32 y, s32 z, s32 angle) {
   s32 scale;
 
   Sound_PlayFar(138);
-  object = Actor_Spawn__f0dd820(278, x, y, z);
+  object = Actor_Spawn(278, x, y, z);
   if (object != NULL) {
     object->scaleX = object->scaleY = 0x4000;
     object->acceleration = object->speedLimit = 0x30000;
@@ -1407,8 +1367,7 @@ struct RadialBurstEffect {
 };
 
 void Camera_WorldToScreen(struct EffectPosition *value);
-/* VIEW(f0dd820): routine BattleEffect_ClearOwnedSlot as void BattleEffect_ClearOwnedSlot(struct RadialBurstEffect *effect); f0dd054 has void BattleEffect_ClearOwnedSlot(struct FieldParticle *). */
-extern void BattleEffect_ClearOwnedSlot__f0dd820(struct RadialBurstEffect *effect) __asm__("BattleEffect_ClearOwnedSlot");
+void BattleEffect_ClearOwnedSlot(struct FieldParticle *slot);
 
 void Func_080de060(struct RadialBurstEffect *effect) {
   struct EffectWork *work = Ram_HeapSlots->effectWork;
@@ -1420,7 +1379,7 @@ again:
   if (state == 0) {
     value.x = effect->sourceX;
     value.z = effect->sourceZ;
-    Vector_AddPolarOffset__f0dd820(0x190000, (u16)Random16(), &value);
+    Vector_AddPolarOffset(0x190000, (u16)Random16(), &value);
     effect->x = value.x;
     effect->z = value.z;
     effect->velocityZ = 0x30000;
@@ -1444,9 +1403,9 @@ again:
     value.x = target->x;
     value.y = target->y + 0x100000;
     value.z = target->z;
-    Vector_AddPolarOffset__f0dd820(0x80000, work->angle, &value);
+    Vector_AddPolarOffset(0x80000, work->angle, &value);
     Camera_WorldToScreen(&value);
-    Vector_AddPolarOffset__f0dd820(0x40000, Random16(), &value);
+    Vector_AddPolarOffset(0x40000, Random16(), &value);
     effect->x = value.x;
     effect->z = value.z;
     effect->scale = 0x800;
@@ -1456,7 +1415,7 @@ again:
   }
 
   if (state == 3 && FieldParticle_HasPendingTarget(effect) == 0)
-    BattleEffect_ClearOwnedSlot__f0dd820(effect);
+    BattleEffect_ClearOwnedSlot(effect);
 }
 
 struct ImpactVector {
@@ -1480,7 +1439,7 @@ s32 Func_080de154(struct Actor *src) {
   pos.x = src->x;
   pos.y = src->y;
   pos.z = src->z;
-  obj = Actor_Spawn__f0dd820(671, pos.x, pos.y - (32 << 16), pos.z);
+  obj = Actor_Spawn(671, pos.x, pos.y - (32 << 16), pos.z);
   if (obj != NULL) {
     obj->motionFlags = 0;
     ((struct ParticleTimer *)obj)->timer = 20;
@@ -1488,7 +1447,7 @@ s32 Func_080de154(struct Actor *src) {
   }
 
   for (i = 0; i < 12; i++) {
-    frag = Actor_Spawn__f0dd820(673, pos.x, pos.y, pos.z);
+    frag = Actor_Spawn(673, pos.x, pos.y, pos.z);
     if (frag != NULL) {
       Actor_StartScriptFar(frag, gData_080f0e78);
       frag->speedLimit = Random16() + (1 << 16);
@@ -1503,12 +1462,10 @@ s32 Func_080de154(struct Actor *src) {
 
 struct BattleEffectArgument;
 
-/* VIEW(f0dd820): routine Func_080de21c as void Func_080de21c(struct BattleEffectArgument *effect); the definition has void Func_080de21c(void). */
-extern void Func_080de21c__f0dd820(struct BattleEffectArgument *effect) __asm__("Func_080de21c");
 
 /// Runs field Psynergy animation 4; the target is unused.
 void FieldEffect_RunForceOnTarget(struct BattleEffectArgument *effect) {
-  Func_080de21c__f0dd820(effect);
+  Func_080de21c(effect);
 }
 #undef FIELD_FX_REVEAL
 #undef REVEAL_EVENT_START
@@ -1553,25 +1510,15 @@ struct Effect04Vector {
 
 void BattleEffect_InitializeSharedScene(void);
 void BattleEffect_PrepareBufferInterpolation(void);
-/* VIEW(f0de21c): routine Camera_WorldToScreen as void Camera_WorldToScreen(struct Effect04Vector *position); f0dd820 has void Camera_WorldToScreen(struct EffectPosition *value). */
-extern void Camera_WorldToScreen__f0de21c(struct Effect04Vector *position) __asm__("Camera_WorldToScreen");
 void FieldParticle_Initialize(struct FieldParticle *slot, s32 kind, s32 x,
                               s32 z);
-/* VIEW(f0de21c): routine Vector_AddPolarOffset as void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position); hue has extern void Vector_AddPolarOffset(s32, s32, struct ItemBreakFragmentPosition *). */
-extern void Vector_AddPolarOffset__f0de21c(s32 radius, s32 angle, s32 *position) __asm__("Vector_AddPolarOffset");
-/* VIEW(f0de21c): routine Actor_Spawn as struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z); hue has extern struct ItemBreakFragmentObject *Actor_Spawn(s32, s32, s32, s32). */
-extern struct Actor *Actor_Spawn__f0de21c(s32 kind, s32 x, s32 y, s32 z) __asm__("Actor_Spawn");
 struct ResourceEntry *Sprite_ShareVramCacheEntry(void *sprite,
                                                  struct ResourceEntry *last);
-/* VIEW(f0de21c): routine Func_08020210 as s32 Func_08020210(struct Actor *object, struct Effect04Vector *position); f0dd054 has s32 Func_08020210(struct Actor *object, struct Vec3 *position). */
-extern s32 Func_08020210__f0de21c(struct Actor *object, struct Effect04Vector *position) __asm__("Func_08020210");
 s32 ScriptObject_CheckOverlapFar(struct Actor *object,
                                  struct Effect04Vector *position);
 s32 Func_080ce31c(s32 kind);
 s32 Field_RunPsynergyEvent(struct PendingEvent *event, s32 mode, s32 target);
 s32 Resource_ResetEntry(u32 slot);
-/* VIEW(f0de21c): routine Func_080de060 as void Func_080de060(struct FieldParticle *slot); the definition has void Func_080de060(struct RadialBurstEffect *effect). */
-extern void Func_080de060__f0de21c(struct FieldParticle *slot) __asm__("Func_080de060");
 
 extern const u8 gData_080f0ef8[];
 extern const u8 gData_080f0e58[];
@@ -1605,9 +1552,9 @@ void Func_080de21c(void) {
     pos.x = source->x;
     pos.y = source->y + 0x100000;
     pos.z = source->z;
-    Camera_WorldToScreen__f0de21c(&pos);
+    Camera_WorldToScreen(&pos);
     FieldParticle_Initialize(slot, 0x2a0, pos.x, pos.z);
-    FieldParticle_SetCallback(slot, Func_080de060__f0de21c);
+    FieldParticle_SetCallback(slot, Func_080de060);
     FieldParticle_SetActorMode(slot, 7);
     Animation_ApplyChildValuesToRecordFar(slot->object, 9);
     slot->scaleY = 0xb333;
@@ -1620,8 +1567,8 @@ void Func_080de21c(void) {
   pos.x = source->x;
   pos.y = source->y + 0x100000;
   pos.z = source->z;
-  Vector_AddPolarOffset__f0de21c(0x80000, scene->angle, &pos);
-  object = Actor_Spawn__f0de21c(278, pos.x, pos.y, pos.z);
+  Vector_AddPolarOffset(0x80000, scene->angle, &pos);
+  object = Actor_Spawn(278, pos.x, pos.y, pos.z);
   if (object == NULL) {
     BattleEffect_PrepareBufferInterpolation();
     return;
@@ -1648,7 +1595,7 @@ void Func_080de21c(void) {
 
   resource = NULL;
   for (i = 2; i >= 0; i--) {
-    copy = copies[i] = Actor_Spawn__f0de21c(278, object->x, object->y, object->z);
+    copy = copies[i] = Actor_Spawn(278, object->x, object->y, object->z);
     if (copy != NULL) {
       copy->scaleY = 0xf000;
       copy->scaleX = 0xf000;
@@ -1668,7 +1615,7 @@ void Func_080de21c(void) {
     pos.x = source->x;
     pos.y = source->y + 0x100000;
     pos.z = source->z;
-    Vector_AddPolarOffset__f0de21c(0x380000, scene->angle, &pos);
+    Vector_AddPolarOffset(0x380000, scene->angle, &pos);
   } else {
     pos.x = scene->x;
     pos.y = scene->y + 0x100000;
@@ -1694,8 +1641,8 @@ void Func_080de21c(void) {
     pos.x = target->x;
     pos.y = target->y;
     pos.z = target->z;
-    Vector_AddPolarOffset__f0de21c(0x100000, scene->angle, &pos);
-    if (Func_08020210__f0de21c(target, &pos) == 0 &&
+    Vector_AddPolarOffset(0x100000, scene->angle, &pos);
+    if (Func_08020210(target, &pos) == 0 &&
         ScriptObject_CheckOverlapFar(target, &pos) == 0) {
       target->acceleration = 0x10000;
       target->speedLimit = 0x10000;
@@ -1761,7 +1708,7 @@ void BattleEffect_UpdateOrbitingParticleLeft(struct Actor *particle) {
       pos.x = particle->targetX;
       pos.y = particle->targetY;
       pos.z = particle->targetZ;
-      Vector_AddPolarOffset__f0de21c(life << 17, (s16)particle->unk66 + (life << 11),
+      Vector_AddPolarOffset(life << 17, (s16)particle->unk66 + (life << 11),
                             &pos);
       SET_POSITION(particle, pos.x, pos.y, pos.z);
     } else {
@@ -1784,7 +1731,7 @@ void BattleEffect_UpdateOrbitingParticleRight(struct Actor *particle) {
       pos.x = particle->targetX;
       pos.y = particle->targetY;
       pos.z = particle->targetZ;
-      Vector_AddPolarOffset__f0de21c(life << 17, (s16)particle->unk66 - (life << 11),
+      Vector_AddPolarOffset(life << 17, (s16)particle->unk66 - (life << 11),
                             &pos);
       SET_POSITION(particle, pos.x, pos.y, pos.z);
     } else {
@@ -1832,7 +1779,7 @@ void FieldEffect_RunFrost(void) {
   p = &pos;
   cnt = 15;
   do {
-    particle = Actor_Spawn__f0de21c(681, 0, 0, 0);
+    particle = Actor_Spawn(681, 0, 0, 0);
     if (particle != NULL) {
       u32 scale;
       s32 dist;
@@ -1854,7 +1801,7 @@ void FieldEffect_RunFrost(void) {
 
       SET_POSITION(p, scene->x, scene->y, scene->z);
       dist = (Random16() << 2) + (2 << 16);
-      Vector_AddPolarOffset__f0de21c(dist, Random16(), p);
+      Vector_AddPolarOffset(dist, Random16(), p);
       particle->targetX = p->x;
       particle->targetY = p->y;
       particle->targetZ = p->z;
@@ -1943,7 +1890,7 @@ void BattleEffect_UpdateShrinkingOrbitObject(struct Actor *object) {
       radius = life << 16;
 
       pos.z = scene->z;
-      Vector_AddPolarOffset__f0de21c(radius, (s16)object->unk66 + (life << 11), &pos);
+      Vector_AddPolarOffset(radius, (s16)object->unk66 + (life << 11), &pos);
       SET_POSITION(object, pos.x, pos.y, pos.z);
     } else {
       Actor_StartScriptFar((struct Actor *)object,
@@ -1995,8 +1942,8 @@ void Func_080de8d0(struct SparkObject *obj) {
     pos[0] = obj->x;
     pos[1] = obj->y + (2 << 16);
     pos[2] = obj->z;
-    Vector_AddPolarOffset__f0de21c(Random16() * 6, Random16(), pos);
-    spark = Actor_Spawn__f0de21c(673, pos[0], pos[1], pos[2]);
+    Vector_AddPolarOffset(Random16() * 6, Random16(), pos);
+    spark = Actor_Spawn(673, pos[0], pos[1], pos[2]);
     if (spark != 0) {
       spark->update = BattleEffect_SwayParticle;
       spark->scaleX = spark->scaleY = 0x9999;
@@ -2036,7 +1983,7 @@ void FieldEffect_RunPly(void) {
 
   last = 0;
   for (i = 0; i < 8; i++) {
-    object = Actor_Spawn__f0de21c(296, target->x, target->y + 0x200000, target->z);
+    object = Actor_Spawn(296, target->x, target->y + 0x200000, target->z);
     if (object != 0) {
       object->scaleY = 0xb333;
       object->scaleX = 0xb333;
@@ -2053,7 +2000,7 @@ void FieldEffect_RunPly(void) {
   Sound_PlayFar(130);
   wait(110);
 
-  target = Actor_Spawn__f0de21c(296, 0, 0, 0);
+  target = Actor_Spawn(296, 0, 0, 0);
   object = target;
   if (target != 0) {
     target->scaleY = 0xb333;
@@ -2115,7 +2062,7 @@ struct OwnerObject {
   u8 layer;
 };
 
-/* VIEW(f0de21c): tag struct EventWork as struct EventWork__f0de21c; event_work.h has another definition. */
+/* VIEW(f0de21c): tag struct EventWork as struct EventWork__f0de21c; event_work.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/event_commands/f0dcb44.c:2076: structure has no member named `state'. */
 struct EventWork__f0de21c {
   u8 unk000[0x166];
   u16 state;

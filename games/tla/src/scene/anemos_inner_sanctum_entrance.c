@@ -34,12 +34,9 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 extern const u8 gData_020019dc[];
 extern const u8 gData_020019f4[];
-/* VIEW(hide): variable gData_02000e20 as extern const u8 gData_02000e20[]; the definition has s32 gData_02000e20[] = { 23, 9, 0x400, 23, 10, 0x400, 23, 6, - 0x4000, 0, 1, 13, 40, 0, 17, }. */
-extern const u8 gData_02000e20__hide[] __asm__("gData_02000e20");
-/* VIEW(hide): variable gData_02000e5c as extern const u8 gData_02000e5c[]; the definition has s32 gData_02000e5c[] = { 23, 9, - 2048, 23, 10, - 2048, 23, 6, 0x4000, 0, 1, 13, 24, 0, 3, 0, 1, 17, }. */
-extern const u8 gData_02000e5c__hide[] __asm__("gData_02000e5c");
-/* VIEW(hide): variable gData_02000ea4 as extern const u8 gData_02000ea4[]; the definition has s32 gData_02000ea4[] = { 23, 9, - 1024, 23, 10, - 1024, 0, 1, 13, 40, 0, 3, 0, 1, 17, }. */
-extern const u8 gData_02000ea4__hide[] __asm__("gData_02000ea4");
+extern s32 gData_02000e20[];
+extern s32 gData_02000e5c[];
+extern s32 gData_02000ea4[];
 extern u8 MsgIAmTheShadow;
 
 const u8 *Func_0200035c(void) {
@@ -82,9 +79,9 @@ void Func_02000408(void) {
   Sound_Play(190);
   Func_02000cdc(15, 8);
   wait(1);
-  Actor_SetMovementTypeById(8, gData_02000ea4__hide);
-  Actor_SetMovementTypeAndWaitById(15, gData_02000e20__hide);
-  Actor_SetMovementTypeAndWaitById(15, gData_02000e5c__hide);
+  Actor_SetMovementTypeById(8, gData_02000ea4);
+  Actor_SetMovementTypeAndWaitById(15, gData_02000e20);
+  Actor_SetMovementTypeAndWaitById(15, gData_02000e5c);
   Event_Wait(10);
   Func_02000cbc();
 }
@@ -111,7 +108,7 @@ void Func_020004b4(struct Actor *object) {
     Actor_SetSingleChildFlags(object, 0);
 }
 
-/* VIEW(hide): variable gData_02000ee0 as extern const s8 gData_02000ee0[]; the definition has u32 gData_02000ee0[] = { 0x1c0b1b0b, 0x1c0c1b0c, 0x1c0d1b0d, }. */
+/* VIEW(hide): variable gData_02000ee0 as extern const s8 gData_02000ee0[]; the definition has u32 gData_02000ee0[] = { 0x1c0b1b0b, 0x1c0c1b0c, 0x1c0d1b0d, }; tried as the definition's extern u32 gData_02000ee0[], Func_020004e4 moves: 1 of 32 instructions in tla-ja. */
 extern const s8 gData_02000ee0__hide[] __asm__("gData_02000ee0");
 
 void Func_020004e4(s32 a, s32 b) {
@@ -164,8 +161,6 @@ void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
 extern s8 gData_02000eec[];
 
 void Func_02000388(void);
-/* VIEW(s0588): routine Func_020004b4 as void Func_020004b4(void); the definition has void Func_020004b4(struct Actor *object). */
-extern void Func_020004b4__s0588(void) __asm__("Func_020004b4");
 void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
 void Script_WaitForEventTimeout(struct Actor *actor);
 s32 GetMapCellCollision(s32 layer, s32 x, s32 z);
@@ -213,7 +208,7 @@ next:
     object->speedLimit = 0x20000;
     Actor_SetSingleChildFlags(object, 1);
     Actor_SetMoveTarget(object, object->x, 0xfff80000, object->z);
-    object->update = Func_020004b4__s0588;
+    object->update = Func_020004b4;
     Sound_Play(152);
     wait((Random16Far() * 4 >> 16) + 3);
   }
@@ -357,9 +352,9 @@ extern s16 gData_02001cde;
 extern struct Actor *gData_02001ce0[];
 extern struct LightOam gData_02001d20[];
 extern s16 gData_02001de0;
-/* VIEW(s0588): variable gData_02001de2 as extern s16 gData_02001de2; hide has extern u16 gData_02001de2. */
+/* VIEW(s0588): variable gData_02001de2 as extern s16 gData_02001de2; hide has extern u16 gData_02001de2; tried as the one declaration extern s16 gData_02001de2, it does not compile in tla-ja: games/tla/src/scene/anemos_inner_sanctum_entrance.c:355: conflicting types for `gData_02001de2'. */
 extern s16 gData_02001de2__s0588 __asm__("gData_02001de2");
-/* VIEW(s0588): variable gData_02001de4 as extern s16 gData_02001de4; hide has extern u16 gData_02001de4. */
+/* VIEW(s0588): variable gData_02001de4 as extern s16 gData_02001de4; hide has extern u16 gData_02001de4; tried as the one declaration extern s16 gData_02001de4, it does not compile in tla-ja: games/tla/src/scene/anemos_inner_sanctum_entrance.c:357: conflicting types for `gData_02001de4'. */
 extern s16 gData_02001de4__s0588 __asm__("gData_02001de4");
 
 s32 Func_02000d5c(struct Actor *actor);

@@ -224,8 +224,6 @@ struct RideWork {
 };
 
 extern u16 gData_02004cf0[];
-/* VIEW(s2148): routine Func_0200236c as void Func_0200236c(void); the definition has s32 Func_0200236c(void). */
-extern void Func_0200236c__s2148(void) __asm__("Func_0200236c");
 void Func_02002ad0(struct Actor *object);
 
 void Func_02002354(void) {
@@ -239,8 +237,6 @@ void Func_02002354(void) {
 void Func_02001fcc(void);
 void Func_020043fc(s32 a, s32 b);
 s32 Func_0200422c(s32 layer, s32 x, s32 z);
-/* VIEW(s236c): routine Func_02002120 as void Func_02002120(struct Actor *object); s2148 has void Func_02002120(void). */
-extern void Func_02002120__s236c(struct Actor *object) __asm__("Func_02002120");
 void Func_020042dc(void);
 extern u8 gData_020023c4[];
 void Animation_ApplyChildValues(struct Actor *object, s32 value);
@@ -313,7 +309,7 @@ s32 Func_0200236c(void) {
   Func_020042dc();
   FieldEvent_ResolvePendingActions(0);
   Event_ClearFlag(0x106);
-  leader->update = (void (*)(void))Func_02002120__s236c;
+  leader->update = (void (*)(void))Func_02002120;
   leader->facing = 0x4000;
   Func_020041cc(leader, 49);
   while (ride->car->stopped == 0) {
@@ -514,7 +510,7 @@ void Func_02002738(struct Actor *object) {
 
 #define ABS(x) ((x) < 0 ? -(x) : (x))
 
-/* VIEW(s236c): tag struct Work020023c4 as struct Work020023c4__s236c; s2148.c has another definition. */
+/* VIEW(s236c): tag struct Work020023c4 as struct Work020023c4__s236c; s2148.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_star_room/s2148.c:628: structure has no member named `unk6c'. */
 struct Work020023c4__s236c {
   u8 unk00[4];
   u16 unk04;
@@ -662,8 +658,6 @@ void Func_0200274c(struct Actor *actor) {
 #undef ABS
 
 // ---- games/tla/src/scene/mars_lighthouse_star_room/s2a58.c ----
-/* VIEW(s2a58): routine Func_02002738 as void Func_02002738(void); the definition has void Func_02002738(struct Actor *object). */
-extern void Func_02002738__s2a58(void) __asm__("Func_02002738");
 
 void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
 
@@ -681,7 +675,7 @@ void Func_02002a58(s32 sourceId, s32 id, s32 kind, s32 value,
   object->timer = 0;
   *(s16 *)((u8 *)object + 0x66) = value;
   *(u8 *)((u8 *)object + 0x62) = kind;
-  object->update = Func_02002738__s2a58;
+  object->update = Func_02002738;
 }
 
 #include "field_sprite.h"
@@ -804,8 +798,6 @@ s32 Func_02002c44(struct Actor *object) {
 extern u8 gData_020023c4[];
 extern u16 gData_02004cf0[];
 void Func_02002148(void);
-/* VIEW(s2a58): routine Func_0200236c as void Func_0200236c(void); the definition has s32 Func_0200236c(void). */
-extern void Func_0200236c__s2a58(void) __asm__("Func_0200236c");
 
 s32 Func_02002ce8(struct Actor *object) {
   Func_02002ad0(object);
@@ -865,12 +857,8 @@ struct Position {
 };
 
 s32 ArcTan2(s32 y, s32 x);
-/* VIEW(s2dc4): routine Func_02002d04 as void Func_02002d04(void); the definition has void Func_02002d04(struct Actor *object). */
-extern void Func_02002d04__s2dc4(void) __asm__("Func_02002d04");
 void Func_02002d90(void);
 void Func_020041cc(struct Actor *actor, s32 mode);
-/* VIEW(s2dc4): routine Func_0200428c as s32 Func_0200428c(s32 *a, s32 radiusA, struct Position *b, s32 radiusB); s2148 has s32 Func_0200428c(s32 *from, s32 radius, struct Vector3 *to, s32 radius2). */
-extern s32 Func_0200428c__s2dc4(s32 *a, s32 radiusA, struct Position *b, s32 radiusB) __asm__("Func_0200428c");
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 void Actor_SetAnimationSpeed(struct Actor *actor, s32 speed);
 extern s16 gData_0200483c[];
@@ -950,7 +938,7 @@ top:
   Func_020041cc(actor, 2);
   Actor_SetAnimationSpeed(actor, 48);
   Actor_WaitForMove(actor);
-  actor->update = Func_02002d04__s2dc4;
+  actor->update = Func_02002d04;
   goto test;
 body:
   if (Map_GetTerrainHeight(*layer, next->x, next->z) - actor->y > PIXELS(8)) {
@@ -968,7 +956,7 @@ body:
           : "r"(next), "r"(next), "r"(actor), "r"(actor), "r"(actor),
             "r"(actor), "r"(actor), "r"(actor), "r"(actor), "r"(actor)
           : SFP_CLOBBER, "r4");
-      if (Func_0200428c__s2dc4(&other->x, radius, &probe, other->radius - 2) >= 0) {
+      if (Func_0200428c(&other->x, radius, &probe, other->radius - 2) >= 0) {
         goto stop;
       }
     }
@@ -1018,7 +1006,7 @@ done:
 // ---- games/tla/src/scene/mars_lighthouse_star_room/s3070.c ----
 #include "input.h"
 
-/* VIEW(s3070): variable gData_02004cf0 as extern volatile s16 gData_02004cf0; s2a58 has extern u16 gData_02004cf0[]. */
+/* VIEW(s3070): variable gData_02004cf0 as extern volatile s16 gData_02004cf0; s2a58 has extern u16 gData_02004cf0[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_star_room/s2148.c:1044: `gData_02004cf0__s3070' undeclared (first use in this function). */
 extern volatile s16 gData_02004cf0__s3070 __asm__("gData_02004cf0");
 extern s16 gData_0200483c[];
 void Func_02002d04(struct Actor *object);
@@ -1028,7 +1016,7 @@ s32 ArcTan2(s32 y, s32 x);
 void Func_020041cc(struct Actor *object, s32 mode);
 void Actor_SetAnimationSpeed(struct Actor *object, s32 value);
 s32 Func_02004284(struct Actor *object);
-/* VIEW(s3070): routine Func_0200428c as s32 Func_0200428c(s32 *a, s32 aRadius, s32 *b, s32 bRadius); s2dc4 has s32 Func_0200428c(s32 *a, s32 radiusA, struct Position *b, s32 radiusB). */
+/* VIEW(s3070): routine Func_0200428c as s32 Func_0200428c(s32 *a, s32 aRadius, s32 *b, s32 bRadius); s2dc4 has s32 Func_0200428c(s32 *a, s32 radiusA, struct Position *b, s32 radiusB); tried as the 2 declarations' s32 Func_0200428c(s32 *a, s32 radiusA, struct Position *b, s32 radiusB), it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_star_room/s2148.c:1019: conflicting types for `Func_0200428c'. */
 extern s32 Func_0200428c__s3070(s32 *a, s32 aRadius, s32 *b, s32 bRadius) __asm__("Func_0200428c");
 
 void Func_02003070(void) {

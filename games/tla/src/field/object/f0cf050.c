@@ -53,7 +53,7 @@ struct ParticleEmitter {
   u8 active;
 };
 
-/* VIEW(emitter): routine Vector_AddPolarOffset as void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position); f0cf050 has void Vector_AddPolarOffset(s32 distance, u16 angle, s32 *position). */
+/* VIEW(emitter): routine Vector_AddPolarOffset as void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position); f0cf050 has void Vector_AddPolarOffset(s32 distance, u16 angle, s32 *position); tried as the definition's void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position), it does not compile in tla-ja: games/tla/src/field/object/f0cf050.c:56: conflicting types for `Vector_AddPolarOffset'. */
 extern void Vector_AddPolarOffset__emitter(s32 radius, s32 angle, s32 *position) __asm__("Vector_AddPolarOffset");
 struct ParticleEffectObject *Actor_Spawn(s32, s32, s32, s32);
 
@@ -135,7 +135,7 @@ extern const u8 Data_080f01b8[];
 struct Actor *Func_080200c0(s32 kind, s32 x, s32 y, s32 z);
 void Func_08038248(s32 item);
 s32 VramCache_Load(u32 slot, u32 size, const void *source);
-/* VIEW(emitter): routine BattleEffect_SpawnRandomParticleAtPosition as void BattleEffect_SpawnRandomParticleAtPosition(void); the definition has void BattleEffect_SpawnRandomParticleAtPosition(const struct ParticleSource *source). */
+/* VIEW(emitter): routine BattleEffect_SpawnRandomParticleAtPosition as void BattleEffect_SpawnRandomParticleAtPosition(void); the definition has void BattleEffect_SpawnRandomParticleAtPosition(const struct ParticleSource *source); tried as the definition's void BattleEffect_SpawnRandomParticleAtPosition(const struct ParticleSource *source), which the object already declares, it does not compile in tla-ja: games/tla/src/field/object/f0cf050.c:168: `BattleEffect_SpawnRandomParticleAtPosition' undeclared (first use in this function). */
 extern void BattleEffect_SpawnRandomParticleAtPosition__emitter(void) __asm__("BattleEffect_SpawnRandomParticleAtPosition");
 
 /// Shows the picture of item above actor (in front of the controlled owner,
@@ -236,8 +236,6 @@ void Func_080cf34c(void) {}
 #include "actor_view.h"
 
 s32 Party_GetLeaderActor(void);
-/* VIEW(rising): routine Marker_MoveLeaderAwayFromEmitter as void Marker_MoveLeaderAwayFromEmitter(void); the definition has void Marker_MoveLeaderAwayFromEmitter(struct ParticleEmitter *emitter). */
-extern void Marker_MoveLeaderAwayFromEmitter__rising(void) __asm__("Marker_MoveLeaderAwayFromEmitter");
 void Actor_SetSpritePriorityDirectFar(struct Actor *object, s32 priority);
 extern const u8 gData_080effd8[];
 extern const u8 gData_080f0074[];
@@ -276,7 +274,7 @@ void BattleEffect_RunActorRiseAndDescent(struct Actor *object, s32 flags) {
       Actor_StartScriptFar(object, gData_080effd8);
       object->velocityY = 0x20000;
       object->gravity = 0x4000;
-      object->update = Marker_MoveLeaderAwayFromEmitter__rising;
+      object->update = Marker_MoveLeaderAwayFromEmitter;
     }
     if (flags == 3)
       wait(60);
@@ -288,7 +286,7 @@ void BattleEffect_RunActorRiseAndDescent(struct Actor *object, s32 flags) {
   }
 }
 
-/* VIEW(rising): tag struct EffectVisual as struct EffectVisual__rising; f0cf050.c has another definition. */
+/* VIEW(rising): tag struct EffectVisual as struct EffectVisual__rising; f0cf050.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/object/f0cf050.c:310: structure has no member named `flags09'. */
 struct EffectVisual__rising {
   u8 unk00[5];
   u8 flags05;
@@ -336,7 +334,7 @@ void BattleEffect_StartEffectObject22(s32 item, s32 flags) {
     HeapSlot_Release(68);
 
     if (flags & 1)
-      object->update = Marker_MoveLeaderAwayFromEmitter__rising;
+      object->update = Marker_MoveLeaderAwayFromEmitter;
     if (flags & 2)
       Func_080cf350(object);
 
@@ -352,7 +350,7 @@ struct ParticleSource {
   struct ParticlePosition position;
 };
 
-/* VIEW(rising): routine Vector_AddPolarOffset as void Vector_AddPolarOffset(s32, s32, struct ParticlePosition *); f0cf050 has void Vector_AddPolarOffset(s32 distance, u16 angle, s32 *position). */
+/* VIEW(rising): routine Vector_AddPolarOffset as void Vector_AddPolarOffset(s32, s32, struct ParticlePosition *); f0cf050 has void Vector_AddPolarOffset(s32 distance, u16 angle, s32 *position); tried as the definition's void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position), it does not compile in tla-ja: games/tla/src/field/object/f0cf050.c:355: conflicting types for `Vector_AddPolarOffset'. */
 extern void Vector_AddPolarOffset__rising(s32, s32, struct ParticlePosition *) __asm__("Vector_AddPolarOffset");
 struct ParticleEffectObject *Actor_Spawn(s32, s32, s32, s32);
 
@@ -400,8 +398,6 @@ s16 *Func_080ceba8(void);
 s32 Func_080cec24(s32 value, s32 *out);
 struct Actor *ObjectEvent_GetObject(u32 objectId);
 
-/* VIEW(rising): variable Data_080f01b8 as extern const s32 Data_080f01b8[]; emitter has extern const u8 Data_080f01b8[]. */
-extern const s32 Data_080f01b8__rising[] __asm__("Data_080f01b8");
 
 /// Places a marker at each waiting scene item event that is on screen.
 void Func_080cf554(void) {
@@ -470,7 +466,7 @@ void Func_080cf554(void) {
     object = Func_080200c0(673, x, y, z);
     if (object != NULL) {
       object->motionFlags = 0;
-      Actor_StartScriptFar((struct Actor *)object, Data_080f01b8__rising);
+      Actor_StartScriptFar((struct Actor *)object, Data_080f01b8);
       Actor_SetSingleChildFlagsFar((struct Actor *)object, 0);
       Actor_SetMode(object, 1);
       ((struct FieldSprite *)object->sprite)->priority = 1;
@@ -2223,10 +2219,8 @@ s32 BattleEffect_GetAnimationValue(u32 objectId) {
 
 // ---- games/tla/src/field/field_sequence/definition_flags.c ----
 
-/* VIEW(definition_flags): routine BattleEffect_FindDefinition as struct BattleFxDefinition *BattleEffect_FindDefinition(s32 id); the definition has struct BattleFxDefinition *BattleEffect_FindDefinition(u32 id). */
-extern struct BattleFxDefinition *BattleEffect_FindDefinition__definition_flags(s32 id) __asm__("BattleEffect_FindDefinition");
 
-/* VIEW(definition_flags): routine BattleEffect_GetAnimationValue as s32 BattleEffect_GetAnimationValue(void); the definition has s32 BattleEffect_GetAnimationValue(u32 objectId). */
+/* VIEW(definition_flags): routine BattleEffect_GetAnimationValue as s32 BattleEffect_GetAnimationValue(void); the definition has s32 BattleEffect_GetAnimationValue(u32 objectId); tried as the definition's s32 BattleEffect_GetAnimationValue(u32 objectId), which the object already declares, it does not compile in tla-ja: games/tla/src/field/object/f0cf050.c:2239: too few arguments to function `BattleEffect_GetAnimationValue'. */
 extern s32 BattleEffect_GetAnimationValue__definition_flags(void) __asm__("BattleEffect_GetAnimationValue");
 
 /// Returns the voice sound of sprite id's messages, its definition's value
@@ -2238,13 +2232,13 @@ s32 Speaker_GetVoice(s32 id) {
   u8 value;
 
   if (party->battleFxEnabled == 0 ||
-      (value = BattleEffect_FindDefinition__definition_flags(id)->value) == 0xff)
+      (value = BattleEffect_FindDefinition(id)->value) == 0xff)
     return 0;
   return value + 0x100;
 }
 
 u8 BattleEffect_GetFlags(void) {
-  return BattleEffect_FindDefinition__definition_flags(BattleEffect_GetAnimationValue__definition_flags())->flags;
+  return BattleEffect_FindDefinition(BattleEffect_GetAnimationValue__definition_flags())->flags;
 }
 
 extern const s32 gData_080f3228[];

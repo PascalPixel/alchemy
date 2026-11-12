@@ -1061,15 +1061,7 @@ struct LinkedEffectObject {
   void (*callback)(void);
 };
 
-/* VIEW(f0d489c): routine Func_080200c0 as struct LinkedEffectObject *Func_080200c0(s32 kind, s32 x, s32 y, s32 z); visual_attributes has struct BattleEffectWatchedObject *Func_080200c0(s32 kind, s32 x, s32 y, s32 z). */
-extern struct LinkedEffectObject *Func_080200c0__f0d489c(s32 kind, s32 x, s32 y, s32 z) __asm__("Func_080200c0");
 void Actor_StartScriptFar(struct Actor *object, const s32 *script);
-/* VIEW(f0d489c): routine Actor_Destroy as void Actor_Destroy(struct LinkedEffectObject *object); battle.h has void Actor_Destroy(struct Actor *object). */
-extern void Actor_Destroy__f0d489c(struct LinkedEffectObject *object) __asm__("Actor_Destroy");
-/* VIEW(f0d489c): routine Actor_IsOutsideAnimation108 as s32 Actor_IsOutsideAnimation108(struct LinkedEffectObject *object); the definition has s32 Actor_IsOutsideAnimation108(struct Actor *object). */
-extern s32 Actor_IsOutsideAnimation108__f0d489c(struct LinkedEffectObject *object) __asm__("Actor_IsOutsideAnimation108");
-/* VIEW(f0d489c): routine BattleEffect_CopyWatchedObjectPosition as void BattleEffect_CopyWatchedObjectPosition(void); the definition has s32 BattleEffect_CopyWatchedObjectPosition(struct Actor *object). */
-extern void BattleEffect_CopyWatchedObjectPosition__f0d489c(void) __asm__("BattleEffect_CopyWatchedObjectPosition");
 extern const u8 gData_080f341c[];
 
 /// The Broken Seal's BattleEffect_ConfigureWatchedObject with this game's
@@ -1090,14 +1082,14 @@ void Func_080d489c(s32 id, s32 flags) {
     return;
 
   if ((flags & 3) != 0) {
-    if ((flags & 3) == 2 || Actor_IsOutsideAnimation108__f0d489c(object->resource)) {
-      child = Func_080200c0__f0d489c(264, object->x, object->y, object->z);
+    if ((flags & 3) == 2 || Actor_IsOutsideAnimation108(object->resource)) {
+      child = Func_080200c0(264, object->x, object->y, object->z);
     }
   } else {
     child = object->resource;
     if (child == 0)
       return;
-    Actor_Destroy__f0d489c(child);
+    Actor_Destroy(child);
     object->resource = NULL;
     return;
   }
@@ -1121,7 +1113,7 @@ void Func_080d489c(s32 id, s32 flags) {
 
   child->resourceId = id;
   child->value55 = 0;
-  child->callback = BattleEffect_CopyWatchedObjectPosition__f0d489c;
+  child->callback = BattleEffect_CopyWatchedObjectPosition;
   visual = child->visual;
   visual->value26 = 0;
   child->resource = object;
@@ -1610,8 +1602,6 @@ struct ClimbSprite {
 };
 
 void Event_Wait(s32 frames);
-/* VIEW(f0d489c): routine Map_GetTerrainHeightFar as s32 Map_GetTerrainHeightFar(s32 layer, s32 x, s32 z); field.h has s32 Map_GetTerrainHeightFar(u8, s32, s32). */
-extern s32 Map_GetTerrainHeightFar__f0d489c(s32 layer, s32 x, s32 z) __asm__("Map_GetTerrainHeightFar");
 s32 Func_08020258(s32 *position);
 s32 Field_CheckSpheresOverlapFar(s32 *position, s32 radius, s32 *other,
                                  s32 otherRadius);
@@ -1654,8 +1644,8 @@ s32 Func_080d50f8(void) {
     south = cell + 128;
     if (south->collisionCode == 255)
       goto failure;
-    if (Map_GetTerrainHeightFar__f0d489c(leader->terrainId, gridX << 16, gridZ << 16) <=
-        Map_GetTerrainHeightFar__f0d489c(leader->terrainId, gridX << 16,
+    if (Map_GetTerrainHeightFar(leader->terrainId, gridX << 16, gridZ << 16) <=
+        Map_GetTerrainHeightFar(leader->terrainId, gridX << 16,
                                 (gridZ + 16) << 16))
       goto failure;
     position[0] = leader->x;
@@ -1744,8 +1734,8 @@ s32 Func_080d53b8(void) {
     north = cell - 128;
     if (north->collisionCode == 255)
       goto failure;
-    if (Map_GetTerrainHeightFar__f0d489c(leader->terrainId, gridX << 16, gridZ << 16) >=
-        Map_GetTerrainHeightFar__f0d489c(leader->terrainId, gridX << 16,
+    if (Map_GetTerrainHeightFar(leader->terrainId, gridX << 16, gridZ << 16) >=
+        Map_GetTerrainHeightFar(leader->terrainId, gridX << 16,
                                 (gridZ - 16) << 16))
       goto failure;
     position[0] = leader->x;
@@ -2168,8 +2158,6 @@ void Func_080d5d70(s32 id, s32 side) {
 // ---- games/tla/src/field/object/context_start.c ----
 
 
-/* VIEW(context_start): routine ResourceMetadata_RegisterFar as s32 ResourceMetadata_RegisterFar(struct MetadataSlotState *state, s32 id); f0d489c has void *ResourceMetadata_RegisterFar(void *, s32). */
-extern s32 ResourceMetadata_RegisterFar__context_start(struct MetadataSlotState *state, s32 id) __asm__("ResourceMetadata_RegisterFar");
 void GameFlag_SetBit(s32 flag);
 
 /// Starts the leader's animation for leaving through an exit: centres it on
@@ -2190,7 +2178,7 @@ void ObjectEffect_PrepareContextEffect(s32 animation) {
   mode = animation;
   object = ObjectTable_Get(party->currentOwner);
   context = object->sprite;
-  effect = ResourceMetadata_RegisterFar__context_start(context, 267);
+  effect = ResourceMetadata_RegisterFar(context, 267);
   zero = 0;
   context->flags = zero;
   // An empty once-only loop keeps the cleared flags' store before the kind's
@@ -2240,7 +2228,7 @@ void ObjectEffect_EndContextEffect(s32 mode) {
   s32 zero;
   struct Actor *obj = ObjectTable_Get(gMainRoutineWork.currentOwner);
   struct ContextSprite *ctx = obj->sprite;
-  struct ContextEffectEntry *eff = ResourceMetadata_RegisterFar__context_start(ctx, 0x10b);
+  struct ContextEffectEntry *eff = ResourceMetadata_RegisterFar(ctx, 0x10b);
 
   zero = 0;
   ctx->flags = zero;
@@ -2314,7 +2302,7 @@ s32 ObjectEffect_RunPendingFlagEvent(void) {
 void Func_080d5fd4(void) {
   struct Actor *object = ObjectTable_Get(gMainRoutineWork.currentOwner);
   u8 *metadata =
-      ResourceMetadata_RegisterFar__context_start(*(void **)((u8 *)object + 0x50), 268);
+      ResourceMetadata_RegisterFar(*(void **)((u8 *)object + 0x50), 268);
 
   metadata[5] = 15;
 }
@@ -2642,7 +2630,7 @@ void Func_080d64f0(void) {
 
 // ---- games/tla/src/field/field_effect/f0d6674.c ----
 
-/* VIEW(f0d6674): tag struct GroundParticleWork as struct GroundParticleWork__f0d6674; visual_attributes.c has another definition. */
+/* VIEW(f0d6674): tag struct GroundParticleWork as struct GroundParticleWork__f0d6674; visual_attributes.c has another definition; tried with the definition the rest of the object has, Func_080d6674 moves: 1 of 167 instructions in tla-ja. */
 struct GroundParticleWork__f0d6674 {
   u8 unk00[4];
   // long, not s32: its own alias set lets the sprite stores pass its load.
@@ -2651,8 +2639,6 @@ struct GroundParticleWork__f0d6674 {
 };
 
 u32 Random16(void);
-/* VIEW(f0d6674): routine Map_GetTerrainHeightFar as s32 Map_GetTerrainHeightFar(u8 layer, s32 x, s32 z); f0d489c has s32 Map_GetTerrainHeightFar(s32 layer, s32 x, s32 z). */
-extern s32 Map_GetTerrainHeightFar__f0d6674(u8 layer, s32 x, s32 z) __asm__("Map_GetTerrainHeightFar");
 void Func_080140d8(struct GroundParticle *sprite, s32 depth);
 
 extern const s16 Data_080f0b50[];
@@ -2701,7 +2687,7 @@ void Func_080d6674(void) {
       y = focus[2] + (Random16() << 8) - 0x800000;
       particle->posX = x;
       particle->posZ = y;
-      particle->posY = Map_GetTerrainHeightFar__f0d6674(0, x, y);
+      particle->posY = Map_GetTerrainHeightFar(0, x, y);
       particle->timer = 12;
     }
   }
@@ -2755,22 +2741,12 @@ void Func_080d67e8(void) {
 }
 
 // ---- games/tla/src/field/field_effect/ground_particles.c ----
-/* VIEW(ground_particles): tag struct GroundParticle as struct GroundParticle__ground_particles; visual_attributes.c has another definition. */
-struct GroundParticle__ground_particles {
-  u32 attributes[3];
-  s32 posX;
-  s32 posY;
-  s32 posZ;
-  s32 delay;
-  u16 timer;
-  u8 unk1e[2];
-};
 
-/* VIEW(ground_particles): tag struct GroundParticleWork as struct GroundParticleWork__ground_particles; visual_attributes.c has another definition. */
+/* VIEW(ground_particles): tag struct GroundParticleWork as struct GroundParticleWork__ground_particles; visual_attributes.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/object/visual_attributes.c:2771: structure has no member named `entry'. */
 struct GroundParticleWork__ground_particles {
   s32 entry;
   s32 tileBase;
-  struct GroundParticle__ground_particles particles[64];
+  struct GroundParticle particles[64];
   s32 unk808;
   s32 stopped;
   s32 unk810;
@@ -2779,8 +2755,6 @@ struct GroundParticleWork__ground_particles {
 void Func_080d2c64(s32 sound);
 void Func_080d64f0(void);
 s32 Resource_DecodeByteLzInRam(const void *source, void *destination);
-/* VIEW(ground_particles): routine Map_GetTerrainHeightFar as s32 Map_GetTerrainHeightFar(s32 layer, s32 x, s32 z); f0d6674 has s32 Map_GetTerrainHeightFar(u8 layer, s32 x, s32 z). */
-extern s32 Map_GetTerrainHeightFar__ground_particles(s32 layer, s32 x, s32 z) __asm__("Map_GetTerrainHeightFar");
 extern const u8 gData_080f3798[];
 
 /// Starts the ground particles: 64 sprites placed at the leader's position on
@@ -2789,7 +2763,7 @@ extern const u8 gData_080f3798[];
 void Func_080d690c(void) {
   struct GroundParticleWork__ground_particles *work;
   s32 *leader;
-  struct GroundParticle__ground_particles *particle;
+  struct GroundParticle *particle;
   // words is the decode buffer, then each particle's attribute cursor.
   u32 *words;
   u32 i;
@@ -2818,7 +2792,7 @@ void Func_080d690c(void) {
     z = leader[2];
     particle->posX = x;
     particle->posZ = z;
-    particle->posY = Map_GetTerrainHeightFar__ground_particles(0, x, z);
+    particle->posY = Map_GetTerrainHeightFar(0, x, z);
     particle->timer = (i & 15) + 1;
     particle++;
   }
@@ -2872,8 +2846,6 @@ struct RisingParticleWork {
 
 u32 Random16(void);
 void Camera_WorldToScreen(union FieldCoordinate *position);
-/* VIEW(ground_particles): routine Func_080140d8 as void Func_080140d8(void *sprite, s32 depth); f0d6674 has void Func_080140d8(struct GroundParticle *sprite, s32 depth). */
-extern void Func_080140d8__ground_particles(void *sprite, s32 depth) __asm__("Func_080140d8");
 
 extern const u8 gData_080f385e[];
 
@@ -2896,7 +2868,7 @@ void Func_080d69f4(void) {
       y = Q16_ONE * 80 - Random16() * 20;
       particle->posX = x;
       particle->posZ = y;
-      particle->posY = Map_GetTerrainHeightFar__ground_particles(0, x, y);
+      particle->posY = Map_GetTerrainHeightFar(0, x, y);
       particle->timer = 120;
       particle->drift = 0;
     }
@@ -2922,7 +2894,7 @@ void Func_080d69f4(void) {
       particle->sprite.attributes.priority = 3;
       particle->sprite.attributes.blendMode = 1;
       particle->sprite.attributes.y = y;
-      Func_080140d8__ground_particles(particle, 240);
+      Func_080140d8(particle, 240);
     }
     particle->timer--;
   }
@@ -2963,7 +2935,7 @@ void Func_080d6b90(void) {
     z = 0x500000 - Random16() * 20;
     particle->posX = x;
     particle->posZ = z;
-    particle->posY = Map_GetTerrainHeightFar__ground_particles(0, x, z);
+    particle->posY = Map_GetTerrainHeightFar(0, x, z);
     particle->drift = 0;
     particle->timer = i * 2;
   }
@@ -3047,7 +3019,7 @@ void Func_080d6c60(void) {
         mote->y = y - (mote->delay >> 2);
         mote->shape = 0;
         mote->size = 1;
-        Func_080140d8__ground_particles(mote, 240);
+        Func_080140d8(mote, 240);
       } else {
         mote->timer = 0;
       }
@@ -3059,7 +3031,7 @@ void Func_080d6c60(void) {
       y = leader[2] + (Random16() << 8) - 0x800000;
       mote->posX = x;
       mote->posZ = y;
-      mote->posY = Map_GetTerrainHeightFar__ground_particles(0, x, y);
+      mote->posY = Map_GetTerrainHeightFar(0, x, y);
       mote->timer = 120;
       mote->delay = 0;
       spawned++;
@@ -3071,8 +3043,6 @@ void Func_080d6c60(void) {
 #define Resource_DecodeByteLzInRam                                             \
   ((void (*)(const void *, void *))Resource_DecodeByteLzInRam)
 
-/* VIEW(motes): routine Map_GetTerrainHeightFar as s32 Map_GetTerrainHeightFar(s32 layer, s32 x, s32 z); f0d6674 has s32 Map_GetTerrainHeightFar(u8 layer, s32 x, s32 z). */
-extern s32 Map_GetTerrainHeightFar__motes(s32 layer, s32 x, s32 z) __asm__("Map_GetTerrainHeightFar");
 
 extern const u8 gData_080f385e[];
 
@@ -3095,7 +3065,7 @@ struct Mote {
 };
 
 /// Heap slot 0x74 while the motes run.
-/* VIEW(motes): tag struct MoteWork as struct MoteWork__motes; visual_attributes.c has another definition. */
+/* VIEW(motes): tag struct MoteWork as struct MoteWork__motes; visual_attributes.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/object/visual_attributes.c:3089: structure has no member named `motes'. */
 struct MoteWork__motes {
   s32 vramEntry;
   s32 tileBase;
@@ -3158,7 +3128,7 @@ void FieldMotes_Start(void) {
     z = pos[2];
     mote->posX = (s32)p;
     mote->posZ = z;
-    mote->posY = Map_GetTerrainHeightFar__motes(0, (s32)p, z);
+    mote->posY = Map_GetTerrainHeightFar(0, (s32)p, z);
     mote->timer = (i & 15) + 1;
     mote++;
   }
@@ -3260,7 +3230,7 @@ void Func_080d6f34(s32 withCue) {
     z = focus[2];
     particle->posX = (s32)p;
     particle->posZ = z;
-    particle->posY = Map_GetTerrainHeightFar__motes(0, (s32)p, z);
+    particle->posY = Map_GetTerrainHeightFar(0, (s32)p, z);
     particle->timer = (i & 11) + 1;
   }
   Io_Write16(BLDCNT_TGT2_ALL, &REG_BLDCNT);
@@ -3312,8 +3282,6 @@ struct SparklePicture {
 
 extern const struct SparklePicture gData_080f0b7c[];
 
-/* VIEW(motes): routine Func_080140d8 as void Func_080140d8(void *entry, s32 priority); f0d6674 has void Func_080140d8(struct GroundParticle *sprite, s32 depth). */
-extern void Func_080140d8__motes(void *entry, s32 priority) __asm__("Func_080140d8");
 
 void FieldEffect_UpdateSparkles(void) {
   struct SparkleWork *work;
@@ -3377,7 +3345,7 @@ void FieldEffect_UpdateSparkles(void) {
 #endif
         sparkle->y = sy;
         sparkle->matrix = ((frames >> 1) & 1) << 3;
-        Func_080140d8__motes(sparkle, 240);
+        Func_080140d8(sparkle, 240);
       }
       sparkle->timer--;
     }
@@ -3385,7 +3353,7 @@ void FieldEffect_UpdateSparkles(void) {
       if (delay != 0) {
         sparkle->posX = spawnX;
         sparkle->posZ = spawnZ;
-        sparkle->height = Map_GetTerrainHeightFar__motes(0, sx, sy);
+        sparkle->height = Map_GetTerrainHeightFar(0, sx, sy);
         sparkle->timer = 62 - delay;
         sparkle->delay = 0;
         spawned++;
@@ -3396,7 +3364,7 @@ void FieldEffect_UpdateSparkles(void) {
         spawnZ = leader[2] + (Random16() << 8) - 0x800000;
         sparkle->posX = spawnX;
         sparkle->posZ = spawnZ;
-        sparkle->height = Map_GetTerrainHeightFar__motes(0, sx, sy);
+        sparkle->height = Map_GetTerrainHeightFar(0, sx, sy);
         sparkle->timer = 30;
         sparkle->delay = delay;
         spawned++;
@@ -3489,7 +3457,7 @@ loop:
     z = leader[2];
     p->posX = clear;
     p->posZ = clear;
-    p->posY = Map_GetTerrainHeightFar__motes(0, attr, z);
+    p->posY = Map_GetTerrainHeightFar(0, attr, z);
     p->timer = (i & 15) + 1;
   }
   i++;
@@ -3609,10 +3577,6 @@ void Event_End(void);
 void Motion_SetVarCbAndRefresh(u32 objectId, s32 variant);
 void Actor_ArmCallback(s32 id, s32 angle, s32 frames);
 void Actor_Jump(s32 id, s32 speed, s32 frames);
-/* VIEW(motes): routine Func_080d47b4 as s32 Func_080d47b4(s32 actorId, s32 emote, s32 frames); the definition has struct BattleEffectWatchedObject *Func_080d47b4(s32 resourceId, s32 flags, s32 state). */
-extern s32 Func_080d47b4__motes(s32 actorId, s32 emote, s32 frames) __asm__("Func_080d47b4");
-/* VIEW(motes): routine Func_080200c0 as struct Actor *Func_080200c0(s32 kind, s32 x, s32 y, s32 z); visual_attributes has struct BattleEffectWatchedObject *Func_080200c0(s32 kind, s32 x, s32 y, s32 z). */
-extern struct Actor *Func_080200c0__motes(s32 kind, s32 x, s32 y, s32 z) __asm__("Func_080200c0");
 void Animation_ApplyChildValuesFar(struct Actor *object, u32 value);
 void *Sprite_ShareVramCacheEntry(void *sprite, void *last);
 void Motion_SetTargetPositionFromMagnitudeAngle(struct Actor *object,
@@ -3645,7 +3609,7 @@ void Func_080d7524(s32 djinniId) {
   Actor_ArmCallback(djinniId, back, 0);
   wait(10);
   djinni->facing = back;
-  Func_080d47b4__motes(djinniId, 0x103, 50);
+  Func_080d47b4(djinniId, 0x103, 50);
   Actor_GetById(djinniId)->actionFlags &= ~1;
   djinni->motionFlags = 2;
   djinni->update = (void (*)(void))FieldEffect_AdvanceSpinAngle;
@@ -3681,7 +3645,7 @@ void Func_080d7524(s32 djinniId) {
   sharedSprite = NULL;
   prev = djinni;
   for (i = 0; i < 8; i++) {
-    copy = Func_080200c0__motes(sprite, djinni->x, djinni->y, djinni->z);
+    copy = Func_080200c0(sprite, djinni->x, djinni->y, djinni->z);
     // DEAD: nothing reads copies; the source keeps the store.
     copies[i] = copy;
     if (copy != NULL) {
@@ -3892,7 +3856,7 @@ void Func_080d793c(s32 capture) {
 
 #include "field_particle.h"
 
-/* VIEW(motes): tag struct BattleFxScene as struct BattleFxScene__motes; field_psynergy_work.h has another definition. */
+/* VIEW(motes): tag struct BattleFxScene as struct BattleFxScene__motes; field_psynergy_work.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/object/visual_attributes.c:3869: dereferencing pointer to incomplete type. */
 struct BattleFxScene__motes {
   u8 unk00[0x50];
   struct FieldParticle slots[24];
@@ -3952,11 +3916,7 @@ struct EffectVector {
   s32 z;
 };
 
-/* VIEW(motes): routine Camera_WorldToScreen as void Camera_WorldToScreen(struct EffectVector *position); ground_particles has void Camera_WorldToScreen(union FieldCoordinate *position). */
-extern void Camera_WorldToScreen__motes(struct EffectVector *position) __asm__("Camera_WorldToScreen");
-/* VIEW(motes): routine Vector_AddPolarOffset as void Vector_AddPolarOffset(s32 magnitude, s32 angle, struct EffectVector *position); f0d489c has void Vector_AddPolarOffset(s32 magnitude, s32 angle, s32 *position). */
-extern void Vector_AddPolarOffset__motes(s32 magnitude, s32 angle,
-                           struct EffectVector *position) __asm__("Vector_AddPolarOffset");
+void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position);
 
 /// Field effect sprite callback of a Jupiter Djinni's light particles: each
 /// circles its centre while it widens for 60 frames, circles 40, drifts toward
@@ -3989,7 +3949,7 @@ void FieldEffect_RunAngledApproachPhases(struct FieldParticle *particle) {
     position.x = owner->x;
     position.y = owner->y + 20 * Q16_ONE;
     position.z = owner->z;
-    Camera_WorldToScreen__motes(&position);
+    Camera_WorldToScreen(&position);
     particle->originX += (position.x - particle->originX) / 8;
     particle->originZ += (position.z - particle->originZ) / 8;
     if ((s16)particle->age == 40) {
@@ -4008,7 +3968,7 @@ void FieldEffect_RunAngledApproachPhases(struct FieldParticle *particle) {
   }
   position.x = particle->originX;
   position.z = particle->originZ;
-  Vector_AddPolarOffset__motes(particle->orbitRadius << 16, particle->orbitAngle << 11,
+  Vector_AddPolarOffset(particle->orbitRadius << 16, particle->orbitAngle << 11,
                         &position);
   particle->x = position.x;
   particle->z = position.z;
@@ -4022,8 +3982,6 @@ extern u32 gData_080f0bfc[];
 void Shop_RestoreSceneTilesFar(s32 value);
 void FieldParticle_Initialize(struct FieldParticle *slot, s32 kind, s32 x,
                               s32 z);
-/* VIEW(motes): routine Animation_ApplyChildValuesToRecordFar as void Animation_ApplyChildValuesToRecordFar(void *object, u32 value); actor_view.h has void Animation_ApplyChildValuesToRecordFar(struct ActorSpriteView *, u32). */
-extern void Animation_ApplyChildValuesToRecordFar__motes(void *object, u32 value) __asm__("Animation_ApplyChildValuesToRecordFar");
 void Shop_InitializeEffectFar(void);
 
 /// Ends a heavy impact: object id spins, leaps and vanishes in 24 sparks that
@@ -4061,7 +4019,7 @@ void Djinn_RunJupiterJoinEffect(s32 id) {
   position.x = object->x;
   position.y = object->y;
   position.z = object->z;
-  Camera_WorldToScreen__motes(&position);
+  Camera_WorldToScreen(&position);
   Actor_Destroy(object);
   Sound_PlayFar(164);
   slot = scene->slots;
@@ -4070,7 +4028,7 @@ void Djinn_RunJupiterJoinEffect(s32 id) {
     FieldParticle_Initialize(slot, 672, position.x, position.z);
     FieldParticle_SetCallback(slot, FieldEffect_RunAngledApproachPhases);
     FieldParticle_SetActorMode(slot, 7);
-    Animation_ApplyChildValuesToRecordFar__motes(slot->object, (Random16() * 7) >> 16);
+    Animation_ApplyChildValuesToRecordFar(slot->object, (Random16() * 7) >> 16);
     scale = Random16() / 3 + Q16_ONE;
     slot->scaleY = scale;
     slot->scaleX = scale;
@@ -4139,7 +4097,7 @@ void BattleEffect_ShrinkObjectAndDestroySlow(void *obj) {
 struct BattleFxScene__motes;
 
 #define Actor_SetChildValueUnlessFifteenFar                                    \
-  ((void (*)(s32, s32))Animation_ApplyChildValuesToRecordFar__motes)
+  ((void (*)(s32, s32))Animation_ApplyChildValuesToRecordFar)
 #define Actor_ReleaseFar Actor_Destroy
 #define gBattleEffect_PulseScales gData_080f0bfc
 #define gEffectWork Ram_HeapSlots->effectWork
@@ -4226,7 +4184,7 @@ void BattleEffect_UpdatePhasedRadialParticle(struct FieldParticle *effect) {
     effect->z = effect->originZ;
     position.x = effect->x;
     position.z = effect->z;
-    Vector_AddPolarOffset__motes(0x780000,
+    Vector_AddPolarOffset(0x780000,
                           ((Random16() * 3 << 11) >> 16) -
                               ((Random16() * 3 << 11) >> 16) + 0xc000,
                           &position);
@@ -4267,8 +4225,8 @@ void BattleEffect_UpdatePhasedRadialParticle(struct FieldParticle *effect) {
     position.x = owner->position.x;
     position.y = owner->position.y + 0x140000;
     position.z = owner->position.z;
-    Camera_WorldToScreen__motes(&position);
-    Vector_AddPolarOffset__motes(0x40000, Random16(), &position);
+    Camera_WorldToScreen(&position);
+    Vector_AddPolarOffset(0x40000, Random16(), &position);
     effect->targetX = position.x;
     effect->targetZ = position.z;
     effect->state++;
@@ -4324,17 +4282,10 @@ void Sound_PlayFar(s32 cue);
 void Motion_SetVarCbAndRefresh(u32 objectId, s32 variant);
 void wait(s32 frames);
 void Actor_ArmCallback(s32 id, s32 angle, s32 frames);
-/* VIEW(mars_join): routine Camera_WorldToScreen as void Camera_WorldToScreen(struct EffectVector *position); ground_particles has void Camera_WorldToScreen(union FieldCoordinate *position). */
-extern void Camera_WorldToScreen__mars_join(struct EffectVector *position) __asm__("Camera_WorldToScreen");
-/* VIEW(mars_join): routine FieldParticle_Initialize as void FieldParticle_Initialize(void *slot, s32 kind, s32 x, s32 z); motes has void FieldParticle_Initialize(struct FieldParticle *slot, s32 kind, s32 x, s32 z). */
-extern void FieldParticle_Initialize__mars_join(void *slot, s32 kind, s32 x, s32 z) __asm__("FieldParticle_Initialize");
-/* VIEW(mars_join): routine Animation_ApplyChildValuesToRecordFar as void Animation_ApplyChildValuesToRecordFar(s32 object, s32 value); motes has void Animation_ApplyChildValuesToRecordFar(void *object, u32 value). */
-extern void Animation_ApplyChildValuesToRecordFar__mars_join(s32 object, s32 value) __asm__("Animation_ApplyChildValuesToRecordFar");
+void FieldParticle_Initialize(struct FieldParticle *effect, s32 kind, s32 x, s32 z);
 u32 Random16(void);
 void Shop_InitializeEffectFar(void);
 void BattleEffect_ClearActiveSlotsAndScheduleUpdates(void);
-/* VIEW(mars_join): routine Actor_Destroy as void Actor_Destroy(void *object); battle.h has void Actor_Destroy(struct Actor *object). */
-extern void Actor_Destroy__mars_join(void *object) __asm__("Actor_Destroy");
 void BattleEffect_SetObjectAlternatingWords(u8 *object);
 void BattleEffect_SpinUpAngle(void *obj);
 void BattleEffect_ShrinkObjectAndDestroySlow(void *obj);
@@ -4391,17 +4342,17 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
     remaining = 23;
     position.y = y;
     position.z = djinni->z;
-    Camera_WorldToScreen__mars_join(p);
+    Camera_WorldToScreen(p);
   }
 
   slot = (u8 *)effectSlots + 80;
   do {
-    FieldParticle_Initialize__mars_join(slot, 672, position.x, position.z);
+    FieldParticle_Initialize(slot, 672, position.x, position.z);
     FieldParticle_SetCallback(slot, BattleEffect_UpdatePhasedRadialParticle);
     FieldParticle_SetActorMode(slot, 7);
     objectPointer = slot;
     value = *(s32 *)objectPointer;
-    Animation_ApplyChildValuesToRecordFar__mars_join(value, 10);
+    Animation_ApplyChildValuesToRecordFar(value, 10);
     value = Random16() / 3 + Q16_ONE; // 1.0 to 1.33
     ((struct FieldParticle *)slot)->scaleY = value;
     ((struct FieldParticle *)slot)->scaleX = value;
@@ -4479,15 +4430,15 @@ void BattleEffect_ShrinkObjectAndDestroyFast(void *obj) {
   ((struct MotionObject *)obj)->angle = angle + 0x2000;
   ((struct MotionObject *)obj)->scaleX = scale;
   if (scale < 0x3000)
-    Actor_Destroy__mars_join(obj);
+    Actor_Destroy(obj);
 }
 
 
 struct BattleFxScene;
 
 #define Actor_SetChildValueUnlessFifteenFar                                    \
-  ((void (*)(s32, s32))Animation_ApplyChildValuesToRecordFar__mars_join)
-#define Actor_ReleaseFar Actor_Destroy__mars_join
+  ((void (*)(s32, s32))Animation_ApplyChildValuesToRecordFar)
+#define Actor_ReleaseFar Actor_Destroy
 #define gBattleEffect_PulseScales gData_080f0bfc
 #define gEffectWork Ram_HeapSlots->effectWork
 
@@ -4496,9 +4447,7 @@ extern u32 gData_080f0bfc[];
 
 
 void BattleEffect_ClearOwnedSlot(struct FieldParticle *effect);
-/* VIEW(mars_join): routine Vector_AddPolarOffset as void Vector_AddPolarOffset(s32 magnitude, s32 angle, struct EffectVector *position); f0d489c has void Vector_AddPolarOffset(s32 magnitude, s32 angle, s32 *position). */
-extern void Vector_AddPolarOffset__mars_join(s32 magnitude, s32 angle,
-                           struct EffectVector *position) __asm__("Vector_AddPolarOffset");
+void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position);
 void BattleEffect_AdvanceSpinAngle();
 void Map_SetScreenShakeFar(s32, s32, s32);
 void Motion_SetTargetPositionFromMagnitudeAngle();
@@ -4511,8 +4460,6 @@ extern const s32 gBattleEffect_SharedParticleScript[];
 
 void Actor_Jump(s32 id, s32 height, s32 frames);
 struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
-/* VIEW(mars_join): routine Animation_ApplyChildValuesFar as void Animation_ApplyChildValuesFar(struct CaptureObject *object, s32 value); motes has void Animation_ApplyChildValuesFar(struct Actor *object, u32 value). */
-extern void Animation_ApplyChildValuesFar__mars_join(struct CaptureObject *object, s32 value) __asm__("Animation_ApplyChildValuesFar");
 
 
 /// Per-frame update of a Venus Djinni's falling motes: each circles the
@@ -4534,7 +4481,7 @@ void FieldEffect_UpdateDescendingOrbitActor(
   value = actor->timer;
   local.x = other->x;
   local.z = other->z;
-  Vector_AddPolarOffset__mars_join(value * 0x6666, (value << 11) + actor->angle, &local);
+  Vector_AddPolarOffset(value * 0x6666, (value << 11) + actor->angle, &local);
   actor->x = local.x;
   actor->z = local.z;
   y = actor->y + 0xFFFF0000;
@@ -4570,8 +4517,8 @@ void BattleEffect_UpdateRadialSpread(struct FieldParticle *effect) {
     position.z = source->z;
 
     random = Random16() * 10 + 0xa0000;
-    Vector_AddPolarOffset__mars_join(random, Random16(), &position);
-    Camera_WorldToScreen__mars_join(&position);
+    Vector_AddPolarOffset(random, Random16(), &position);
+    Camera_WorldToScreen(&position);
 
     x = position.x;
     magnitude = 240;
@@ -4583,7 +4530,7 @@ void BattleEffect_UpdateRadialSpread(struct FieldParticle *effect) {
     position.x = effect->x;
     position.z = effect->z;
 
-    Vector_AddPolarOffset__mars_join(magnitude << 15, angle << 8, &position);
+    Vector_AddPolarOffset(magnitude << 15, angle << 8, &position);
     effect->targetX = position.x;
     effect->targetZ = position.z;
     effect->acceleration = Q16_ONE;
@@ -4646,12 +4593,12 @@ void Func_080d82e0(s32 arg) {
   position[0] = djinni->x;
   position[1] = djinni->y;
   position[2] = djinni->z;
-  Camera_WorldToScreen__mars_join(position);
+  Camera_WorldToScreen(position);
 
   slot = (u8 *)effectSlots + 80;
   remaining = 23;
   do {
-    FieldParticle_Initialize__mars_join(slot, 672, position[0], position[2]);
+    FieldParticle_Initialize(slot, 672, position[0], position[2]);
     FieldParticle_SetCallback(slot, (void *)BattleEffect_UpdateRadialSpread);
     FieldParticle_SetActorMode(slot, 7);
     Actor_SetChildValueUnlessFifteenFar(*(s32 *)slot, 11);
@@ -4697,7 +4644,7 @@ void Func_080d82e0(s32 arg) {
       djinni->callback = (void *)FieldEffect_UpdateDescendingOrbitActor;
       djinni->mode = 0;
       Actor_SetMode((struct Actor *)djinni, 7);
-      Animation_ApplyChildValuesFar__mars_join(djinni, 11);
+      Animation_ApplyChildValuesFar(djinni, 11);
     }
   }
 
@@ -4720,7 +4667,7 @@ void Func_080d82e0(s32 arg) {
     djinni->baseY = djinni->y;
     djinni->speed = Random16() + 0x16666;
     Motion_SetTargetPositionFromMagnitudeAngle(djinni, 0x200000, Random16());
-    Animation_ApplyChildValuesFar__mars_join(djinni, 11);
+    Animation_ApplyChildValuesFar(djinni, 11);
     djinni->lifetime = 8;
     Actor_StartScriptFar((struct Actor *)djinni,
                          gBattleEffect_SharedParticleScript);
@@ -4759,9 +4706,9 @@ void FieldEffect_UpdateRandomTargetParticle(struct FieldParticle *effect) {
       struct EffectVector *p = &position;
 
       position.z = source->z;
-      Camera_WorldToScreen__mars_join(p);
+      Camera_WorldToScreen(p);
     }
-    Vector_AddPolarOffset__mars_join(Random16() * 6 + 0x20000, Random16(), &position);
+    Vector_AddPolarOffset(Random16() * 6 + 0x20000, Random16(), &position);
 
     {
       s32 accel = 0x30000;
@@ -4782,7 +4729,7 @@ void FieldEffect_UpdateRandomTargetParticle(struct FieldParticle *effect) {
     if (FieldParticle_HasPendingTarget(effect) == 0) {
       position.x = effect->x;
       position.z = effect->z;
-      Vector_AddPolarOffset__mars_join(0xc0000, Random16(), &position);
+      Vector_AddPolarOffset(0xc0000, Random16(), &position);
       effect->targetX = position.x;
       effect->targetZ = position.z;
       effect->stopAtTarget = 0;
@@ -4817,15 +4764,13 @@ void Actor_MoveHalfwayTowardTargetCopy(struct Actor *object) {
 #undef gEffectWork
 
 // ---- games/tla/src/field/work9c/f0d8740.c ----
-/* VIEW(f0d8740): routine FieldEffect_UpdateRandomTargetParticle as void FieldEffect_UpdateRandomTargetParticle(void); the definition has void FieldEffect_UpdateRandomTargetParticle(struct FieldParticle *effect). */
-extern void FieldEffect_UpdateRandomTargetParticle__f0d8740(void) __asm__("FieldEffect_UpdateRandomTargetParticle");
 
 struct CaptureSprite {
   u8 unk00[40];
   s16 *resource;
 };
 
-/* VIEW(f0d8740): tag struct CaptureObject as struct CaptureObject__f0d8740; visual_attributes.c has another definition. */
+/* VIEW(f0d8740): tag struct CaptureObject as struct CaptureObject__f0d8740; visual_attributes.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/object/visual_attributes.c:4840: structure has no member named `sprite'. */
 struct CaptureObject__f0d8740 {
   u8 unk00[6];
   u16 facing;
@@ -4854,29 +4799,14 @@ struct CaptureResource {
   u8 id;
 };
 
-/* VIEW(f0d8740): routine Actor_GetById as struct CaptureObject__f0d8740 *Actor_GetById(s32 id); mars_join has struct Actor *Actor_GetById(u32 objectId). */
-extern struct CaptureObject__f0d8740 *Actor_GetById__f0d8740(s32 id) __asm__("Actor_GetById");
 void BattleEffect_InitializeSlots(void);
 void Shop_RestoreSceneTilesFar(s32 value);
 void Motion_SetVarCbAndRefresh(u32 objectId, s32 variant);
 void Actor_Jump(s32 id, s32 height, s32 frames);
-/* VIEW(f0d8740): routine Func_080200c0 as struct CaptureObject__f0d8740 *Func_080200c0(s32 kind, s32 x, s32 y, s32 z); visual_attributes has struct BattleEffectWatchedObject *Func_080200c0(s32 kind, s32 x, s32 y, s32 z). */
-extern struct CaptureObject__f0d8740 *Func_080200c0__f0d8740(s32 kind, s32 x, s32 y, s32 z) __asm__("Func_080200c0");
-/* VIEW(f0d8740): routine Sprite_ShareVramCacheEntry as struct CaptureResource *Sprite_ShareVramCacheEntry(struct CaptureSprite *sprite, struct CaptureResource *resource); motes has void *Sprite_ShareVramCacheEntry(void *sprite, void *last). */
-extern struct CaptureResource *
-Sprite_ShareVramCacheEntry__f0d8740(struct CaptureSprite *sprite,
-                           struct CaptureResource *resource) __asm__("Sprite_ShareVramCacheEntry");
-/* VIEW(f0d8740): routine Actor_Destroy as void Actor_Destroy(struct CaptureObject__f0d8740 *object); battle.h has void Actor_Destroy(struct Actor *object). */
-extern void Actor_Destroy__f0d8740(struct CaptureObject__f0d8740 *object) __asm__("Actor_Destroy");
 void Actor_ArmCallback(s32 id, s32 value, s32 flags);
-/* VIEW(f0d8740): routine Camera_WorldToScreen as void Camera_WorldToScreen(s32 *position); mars_join has void Camera_WorldToScreen(struct EffectVector *position). */
-extern void Camera_WorldToScreen__f0d8740(s32 *position) __asm__("Camera_WorldToScreen");
-/* VIEW(f0d8740): routine FieldParticle_Initialize as void FieldParticle_Initialize(void *slot, s32 kind, s32 x, s32 y); motes has void FieldParticle_Initialize(struct FieldParticle *slot, s32 kind, s32 x, s32 z). */
-extern void FieldParticle_Initialize__f0d8740(void *slot, s32 kind, s32 x, s32 y) __asm__("FieldParticle_Initialize");
-/* VIEW(f0d8740): routine FieldParticle_SetCallback as void FieldParticle_SetCallback(void *slot, void *callback); field_particle.h has void FieldParticle_SetCallback(struct FieldParticle *, EffectCallback). */
-extern void FieldParticle_SetCallback__f0d8740(void *slot, void *callback) __asm__("FieldParticle_SetCallback");
-/* VIEW(f0d8740): routine FieldParticle_SetActorMode as void FieldParticle_SetActorMode(void *slot, s32 mode); field_particle.h has void FieldParticle_SetActorMode(struct FieldParticle *, s32). */
-extern void FieldParticle_SetActorMode__f0d8740(void *slot, s32 mode) __asm__("FieldParticle_SetActorMode");
+void FieldParticle_Initialize(struct FieldParticle *effect, s32 kind, s32 x, s32 z);
+void FieldParticle_SetCallback(struct FieldParticle *effect, EffectCallback callback);
+void FieldParticle_SetActorMode(struct FieldParticle *effect, s32 mode);
 void Shop_InitializeEffectFar(void);
 void BattleEffect_ClearActiveSlotsAndScheduleUpdates(void);
 
@@ -4900,7 +4830,7 @@ void BattleEffect_RunMercuryDjinnCapture(s32 arg) {
     s32 z;
   } position;
 
-  djinni = Actor_GetById__f0d8740(arg);
+  djinni = Actor_GetById(arg);
   if (djinni == NULL)
     return;
 
@@ -4927,7 +4857,7 @@ void BattleEffect_RunMercuryDjinnCapture(s32 arg) {
   previous = djinni;
   cursor = copies;
   for (remaining = 7; remaining >= 0; remaining--) {
-    copy = Func_080200c0__f0d8740(kind, djinni->x, djinni->y, djinni->z);
+    copy = Func_080200c0(kind, djinni->x, djinni->y, djinni->z);
     *cursor++ = copy;
     if (copy != NULL) {
       copy->scaleY = 0xf000;
@@ -4940,7 +4870,7 @@ void BattleEffect_RunMercuryDjinnCapture(s32 arg) {
       Animation_ApplyChildValuesFar((struct Actor *)copy, 9);
       Actor_SetMode(copy, 0);
       Actor_SetSingleChildFlagsFar((struct Actor *)copy, 0);
-      resource = Sprite_ShareVramCacheEntry__f0d8740(copy->sprite, resource);
+      resource = Sprite_ShareVramCacheEntry(copy->sprite, resource);
       copy->linked = previous;
       previous = copy;
     }
@@ -4953,30 +4883,30 @@ void BattleEffect_RunMercuryDjinnCapture(s32 arg) {
     djinni->y += 0x80000;
     wait(1);
   }
-  Actor_Destroy__f0d8740(djinni);
+  Actor_Destroy(djinni);
   list = copies;
   for (remaining = 7; remaining >= 0; remaining--)
-    Actor_Destroy__f0d8740(*list++);
+    Actor_Destroy(*list++);
   if (resourceId != 96)
     Resource_ResetEntry(resourceId);
   wait(10);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, 0x4000, 0);
   wait(20);
-  Actor_SetMode(Actor_GetById__f0d8740(gMainRoutineWork.currentOwner), 28);
+  Actor_SetMode(Actor_GetById(gMainRoutineWork.currentOwner), 28);
   wait(20);
 
   position.x = djinni->x;
   position.y = djinni->y;
   position.z = djinni->z;
-  Camera_WorldToScreen__f0d8740(&position.x);
+  Camera_WorldToScreen(&position.x);
 
   slot = (u8 *)effectSlots + 80;
   remaining = 23;
   do {
-    FieldParticle_Initialize__f0d8740(slot, 301, position.x, position.z);
-    FieldParticle_SetCallback__f0d8740(slot,
-                              (void *)FieldEffect_UpdateRandomTargetParticle__f0d8740);
-    FieldParticle_SetActorMode__f0d8740(slot, 7);
+    FieldParticle_Initialize(slot, 301, position.x, position.z);
+    FieldParticle_SetCallback(slot,
+                              (void *)FieldEffect_UpdateRandomTargetParticle);
+    FieldParticle_SetActorMode(slot, 7);
     Animation_ApplyChildValuesToRecordFar(*(struct ActorSpriteView **)slot, 9);
     remaining--;
     wait(1);
@@ -5064,10 +4994,6 @@ struct ChainWork {
 };
 
 s32 ArcTan2(s32 y, s32 x);
-/* VIEW(f0d8740): routine AffineMatrix_BuildForEffect as s32 AffineMatrix_BuildForEffect(struct ChainTransform *source); affine.h has s32 AffineMatrix_BuildForEffect(struct AffineTransform *source). */
-extern s32 AffineMatrix_BuildForEffect__f0d8740(struct ChainTransform *source) __asm__("AffineMatrix_BuildForEffect");
-/* VIEW(f0d8740): routine Func_080140d8 as void Func_080140d8(void *entry, s32 slot); f0d6674 has void Func_080140d8(struct GroundParticle *sprite, s32 depth). */
-extern void Func_080140d8__f0d8740(void *entry, s32 slot) __asm__("Func_080140d8");
 
 /// The heap slot 0x9c work's per-frame callback (Func_080d897c schedules it).
 /// For each of the eight slots it draws a sprite at the midpoint of each pair
@@ -5131,11 +5057,11 @@ void Func_080d8a00(void) {
             transform.scaleX = 0x100;
             transform.scaleY = 0x100;
             node->sprite.affine = 1;
-            node->sprite.affineIndex = AffineMatrix_BuildForEffect__f0d8740(&transform);
+            node->sprite.affineIndex = AffineMatrix_BuildForEffect(&transform);
           }
           node->sprite.priority = priority;
           node->angle = angle;
-          Func_080140d8__f0d8740(sprite, prevY);
+          Func_080140d8(sprite, prevY);
         }
       }
       prevX = x;
@@ -5368,10 +5294,10 @@ void Func_080d8fa8(s32 index, s32 from, s32 to, s32 mode) {
 // Func_080d9104, which links two objects.
 
 
-/* VIEW(f0d8ff8): routine ArcTan2 as s16 ArcTan2(s32 y, s32 x); f0d8740 has s32 ArcTan2(s32 y, s32 x). */
+/* VIEW(f0d8ff8): routine ArcTan2 as s16 ArcTan2(s32 y, s32 x); f0d8740 has s32 ArcTan2(s32 y, s32 x); tried as the definition's s32 ArcTan2(s32 x, s32 y), which the object already declares, Func_080d8ff8 moves: 1 of 120 instructions in tla-ja. */
 extern s16 ArcTan2__f0d8ff8(s32 y, s32 x) __asm__("ArcTan2");
 
-/* VIEW(f0d8ff8): tag struct ChainNode as struct ChainNode__f0d8ff8; visual_attributes.c has another definition. */
+/* VIEW(f0d8ff8): tag struct ChainNode as struct ChainNode__f0d8ff8; visual_attributes.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/object/visual_attributes.c:5338: structure has no member named `visible'. */
 struct ChainNode__f0d8ff8 {
   struct ChainNode__f0d8ff8 *next;
   s32 x;
@@ -5381,7 +5307,7 @@ struct ChainNode__f0d8ff8 {
   s8 visible;
 };
 
-/* VIEW(f0d8ff8): tag struct ChainSlot as struct ChainSlot__f0d8ff8; visual_attributes.c has another definition. */
+/* VIEW(f0d8ff8): tag struct ChainSlot as struct ChainSlot__f0d8ff8; visual_attributes.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/object/visual_attributes.c:5330: structure has no member named `segments'. */
 struct ChainSlot__f0d8ff8 {
   u8 unk00[4];
   s16 segments;
@@ -5389,17 +5315,12 @@ struct ChainSlot__f0d8ff8 {
   struct ChainNode__f0d8ff8 *head;
 };
 
-/* VIEW(f0d8ff8): tag struct ChainWork as struct ChainWork__f0d8ff8; visual_attributes.c has another definition. */
-struct ChainWork__f0d8ff8 {
-  u8 unk00[12];
-  struct ChainSlot__f0d8ff8 slots[8];
-};
 
 /// Lays a slot's chain of nodes along the line between two points, bowed
 /// sideways by a half sine of the given height.
 s32 Func_080d8ff8(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ,
                   s32 height) {
-  struct ChainWork__f0d8ff8 *work = Ram_HeapSlots->unk84[6];
+  struct ChainWork *work = Ram_HeapSlots->unk84[6];
   s32 dx = toX - x;
   s32 ax = dx >> 8;
   s32 dy = toY - y;
@@ -5445,8 +5366,6 @@ struct LinkEntry {
   u8 unk14[12];
 };
 
-/* VIEW(f0d8ff8): routine Func_080d9194 as void Func_080d9194(s32 slot, s32 x0, s32 y0, s32 z0, s32 x1, s32 y1, s32 z1); the definition has s32 Func_080d9194(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ). */
-extern void Func_080d9194__f0d8ff8(s32 slot, s32 x0, s32 y0, s32 z0, s32 x1, s32 y1, s32 z1) __asm__("Func_080d9194");
 
 // Link two objects.
 void Func_080d9104(s32 slot, s32 firstId, s32 secondId) {
@@ -5471,7 +5390,7 @@ void Func_080d9104(s32 slot, s32 firstId, s32 secondId) {
      * 69 instructions differ in tla-en. */
     asm volatile("" : "+l"(lift));
     lift <<= 12;
-    Func_080d9194__f0d8ff8(slot, first->x, first->y + lift, first->z, second->x,
+    Func_080d9194(slot, first->x, first->y + lift, first->z, second->x,
                   second->y + lift, second->z);
   }
 }
@@ -5481,10 +5400,8 @@ void Func_080d9104(s32 slot, s32 firstId, s32 secondId) {
 // the position of the node at the slot's depth.
 
 
-/* VIEW(f0d9194): routine ArcTan2 as s32 ArcTan2(s32 y, s32 x); f0d8ff8 has s16 ArcTan2(s32 y, s32 x). */
-extern s32 ArcTan2__f0d9194(s32 y, s32 x) __asm__("ArcTan2");
 
-/* VIEW(f0d9194): tag struct ChainNode as struct ChainNode__f0d9194; visual_attributes.c has another definition. */
+/* VIEW(f0d9194): tag struct ChainNode as struct ChainNode__f0d9194; visual_attributes.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/object/visual_attributes.c:5452: structure has no member named `visible'. */
 struct ChainNode__f0d9194 {
   struct ChainNode__f0d9194 *next;
   s32 x;
@@ -5494,7 +5411,7 @@ struct ChainNode__f0d9194 {
   s8 visible;
 };
 
-/* VIEW(f0d9194): tag struct ChainSlot as struct ChainSlot__f0d9194; visual_attributes.c has another definition. */
+/* VIEW(f0d9194): tag struct ChainSlot as struct ChainSlot__f0d9194; visual_attributes.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/object/visual_attributes.c:5442: structure has no member named `segments'. */
 struct ChainSlot__f0d9194 {
   u8 unk00[4];
   s16 segments;
@@ -5502,19 +5419,12 @@ struct ChainSlot__f0d9194 {
   struct ChainNode__f0d9194 *head;
 };
 
-/* VIEW(f0d9194): tag struct ChainWork as struct ChainWork__f0d9194; visual_attributes.c has another definition. */
-struct ChainWork__f0d9194 {
-  u8 unk00[12];
-  struct ChainSlot__f0d9194 slots[8];
-};
 
-/* VIEW(f0d9194): routine Func_080d8d40 as struct ChainNode__f0d9194 *Func_080d8d40(void); the definition has struct Work9cItem *Func_080d8d40(void). */
-extern struct ChainNode__f0d9194 *Func_080d8d40__f0d9194(void) __asm__("Func_080d8d40");
 
 /// Builds a slot's chain of nodes, one for each 6 units of the distance between
 /// two points, laid out as a flat spiral around the first point.
 s32 Func_080d9194(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
-  struct ChainWork__f0d9194 *work = Ram_HeapSlots->unk84[6];
+  struct ChainWork *work = Ram_HeapSlots->unk84[6];
   s32 result = 0;
   s32 dx = (toX - x) >> 8;
   s32 dy = (toY - y) >> 8;
@@ -5531,7 +5441,7 @@ s32 Func_080d9194(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
 
   slot->segments = segments;
   for (i = 0; i <= segments; i++) {
-    struct ChainNode__f0d9194 *node = Func_080d8d40__f0d9194();
+    struct ChainNode__f0d9194 *node = Func_080d8d40();
     u16 step;
 
     if (node == NULL) {
@@ -5543,7 +5453,7 @@ s32 Func_080d9194(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
     node->z = z + Iwram_MulQ16(Trig_Sin(angle), radius);
     node->visible = visible;
     *link = node;
-    step = ArcTan2__f0d9194(0x60000, radius);
+    step = ArcTan2(0x60000, radius);
     angle += step;
     link = &node->next;
     radius += step * 4;
@@ -5570,7 +5480,7 @@ void Func_080d92a4(s32 index, s32 *position) {
 }
 
 // ---- games/tla/src/field/work9c/f0d92d4.c ----
-/* VIEW(f0d92d4): tag struct ChainSlot as struct ChainSlot__f0d92d4; visual_attributes.c has another definition. */
+/* VIEW(f0d92d4): tag struct ChainSlot as struct ChainSlot__f0d92d4; visual_attributes.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/object/visual_attributes.c:5526: structure has no member named `segments'. */
 struct ChainSlot__f0d92d4 {
   u8 unk00[4];
   s16 segments;
@@ -5579,26 +5489,15 @@ struct ChainSlot__f0d92d4 {
   void *head;
 };
 
-/* VIEW(f0d92d4): tag struct ChainWork as struct ChainWork__f0d92d4; visual_attributes.c has another definition. */
-struct ChainWork__f0d92d4 {
-  u8 unk00[12];
-  struct ChainSlot__f0d92d4 slots[8];
-};
 
 typedef void (*TargetHook)(struct Actor *, s32 *, s32 *);
 
 extern s32 gData_080f393c;
 
 void wait(s32 frames);
-/* VIEW(f0d92d4): routine Func_080d9498 as void Func_080d9498(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ, s32 wobble); the definition has s32 Func_080d9498(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ). */
-extern void Func_080d9498__f0d92d4(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ,
-                   s32 wobble) __asm__("Func_080d9498");
-/* VIEW(f0d92d4): routine Func_080d9790 as void Func_080d9790(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ, s32 wobble); the definition has s32 Func_080d9790(s32 index, s32 x, s32 y, s32 z). */
-extern void Func_080d9790__f0d92d4(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ,
-                   s32 wobble) __asm__("Func_080d9790");
 
 void Func_080d92d4(s32 index, s32 fromId, s32 toId) {
-  struct ChainWork__f0d92d4 *work = Ram_HeapSlots->unk84[6];
+  struct ChainWork *work = Ram_HeapSlots->unk84[6];
   struct Actor *from = ObjectTable_Get(fromId);
   struct Actor *to = ObjectTable_Get(toId);
 
@@ -5628,14 +5527,14 @@ void Func_080d92d4(s32 index, s32 fromId, s32 toId) {
       y = toY;
       z = from->z + (toZ - from->z) * count / segments;
 
-      Func_080d9498__f0d92d4(index, from->x, from->y + 0x80000, from->z, x, y + 0x80000,
+      Func_080d9498(index, from->x, from->y + 0x80000, from->z, x, y + 0x80000,
                     z, Trig_Sin(gData_080f393c) << 2);
       slot->unk18 = 0;
       wait(1);
-      Func_080d9790__f0d92d4(index, from->x, from->y + 0x80000, from->z, x, y + 0x80000,
+      Func_080d9790(index, from->x, from->y + 0x80000, from->z, x, y + 0x80000,
                     z, Trig_Sin(gData_080f393c) << 2);
     } else {
-      Func_080d9498__f0d92d4(index, from->x, from->y + 0x80000, from->z, to->x,
+      Func_080d9498(index, from->x, from->y + 0x80000, from->z, to->x,
                     to->y + 0x80000, to->z, Trig_Sin(gData_080f393c) << 2);
       gData_080f393c += 0x1000;
       wait(6);
@@ -5650,7 +5549,7 @@ s32 ArcTan2(s32 y, s32 x);
 void GameFlag_SetBit(s32 flag);
 void wait(s32 frames);
 
-/* VIEW(f0d9498): tag struct ChainNode as struct ChainNode__f0d9498; visual_attributes.c has another definition. */
+/* VIEW(f0d9498): tag struct ChainNode as struct ChainNode__f0d9498; visual_attributes.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/object/visual_attributes.c:5634: structure has no member named `visible'. */
 struct ChainNode__f0d9498 {
   struct ChainNode__f0d9498 *next;
   s32 x;
@@ -5661,7 +5560,7 @@ struct ChainNode__f0d9498 {
   u8 unk13;
 };
 
-/* VIEW(f0d9498): tag struct ChainSlot as struct ChainSlot__f0d9498; visual_attributes.c has another definition. */
+/* VIEW(f0d9498): tag struct ChainSlot as struct ChainSlot__f0d9498; visual_attributes.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/object/visual_attributes.c:5591: structure has no member named `active'. */
 struct ChainSlot__f0d9498 {
   u8 unk00[4];
   s16 segments;
@@ -5675,14 +5574,9 @@ struct ChainSlot__f0d9498 {
   struct ChainNode__f0d9498 *head;
 };
 
-/* VIEW(f0d9498): tag struct ChainWork as struct ChainWork__f0d9498; visual_attributes.c has another definition. */
-struct ChainWork__f0d9498 {
-  u8 unk00[12];
-  struct ChainSlot__f0d9498 slots[8];
-};
 
 s32 Func_080d9498(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
-  struct ChainWork__f0d9498 *work = Ram_HeapSlots->unk84[6];
+  struct ChainWork *work = Ram_HeapSlots->unk84[6];
   s32 dx = toX - x;
   s32 ex = dx >> 8;
   s32 dy = toY - y;
@@ -5760,7 +5654,7 @@ s32 Func_080d9498(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
 }
 
 // ---- games/tla/src/field/work9c/f0d9710.c ----
-/* VIEW(f0d9710): tag struct ChainWork as struct ChainWork__f0d9710; visual_attributes.c has another definition. */
+/* VIEW(f0d9710): tag struct ChainWork as struct ChainWork__f0d9710; visual_attributes.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/object/visual_attributes.c:5671: structure has no member named `from'. */
 struct ChainWork__f0d9710 {
   struct Actor *from;
   struct Actor *to;
@@ -5768,9 +5662,6 @@ struct ChainWork__f0d9710 {
 
 extern s32 gData_080f3940;
 
-/* VIEW(f0d9710): routine Func_080d9790 as void Func_080d9790(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ, s32 wobble); the definition has s32 Func_080d9790(s32 index, s32 x, s32 y, s32 z). */
-extern void Func_080d9790__f0d9710(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ,
-                   s32 wobble) __asm__("Func_080d9790");
 
 void Func_080d9710(s32 index, s32 fromId, s32 toId) {
   struct ChainWork__f0d9710 *work;
@@ -5784,7 +5675,7 @@ void Func_080d9710(s32 index, s32 fromId, s32 toId) {
   if (from != NULL && to != NULL) {
     work->from = from;
     work->to = to;
-    Func_080d9790__f0d9710(index, from->x, from->y + 0x80000, from->z, to->x,
+    Func_080d9790(index, from->x, from->y + 0x80000, from->z, to->x,
                   to->y + 0x80000, to->z, Trig_Sin(gData_080f3940) * 4);
     gData_080f3940 += 0x1000;
   }
@@ -5795,7 +5686,7 @@ s32 ArcTan2(s32 y, s32 x);
 void GameFlag_ClearBit(s32 flag);
 void wait(s32 frames);
 
-/* VIEW(f0d9790): tag struct ChainNode as struct ChainNode__f0d9790; visual_attributes.c has another definition. */
+/* VIEW(f0d9790): tag struct ChainNode as struct ChainNode__f0d9790; visual_attributes.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/object/visual_attributes.c:5764: structure has no member named `visible'. */
 struct ChainNode__f0d9790 {
   struct ChainNode__f0d9790 *next;
   s32 x;
@@ -5806,7 +5697,7 @@ struct ChainNode__f0d9790 {
   u8 unk13;
 };
 
-/* VIEW(f0d9790): tag struct ChainSlot as struct ChainSlot__f0d9790; visual_attributes.c has another definition. */
+/* VIEW(f0d9790): tag struct ChainSlot as struct ChainSlot__f0d9790; visual_attributes.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/object/visual_attributes.c:5725: structure has no member named `active'. */
 struct ChainSlot__f0d9790 {
   u8 unk00[4];
   s16 segments;
@@ -5818,7 +5709,7 @@ struct ChainSlot__f0d9790 {
   struct ChainNode__f0d9790 *head;
 };
 
-/* VIEW(f0d9790): tag struct ChainWork as struct ChainWork__f0d9790; visual_attributes.c has another definition. */
+/* VIEW(f0d9790): tag struct ChainWork as struct ChainWork__f0d9790; visual_attributes.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/object/visual_attributes.c:5749: structure has no member named `from'. */
 struct ChainWork__f0d9790 {
   struct Actor *from;
   struct Actor *to;
@@ -6033,18 +5924,8 @@ void Func_080d9b08(void) {
 
 // ---- games/tla/src/field/worka0/f0d9b80.c ----
 
-/* VIEW(f0d9b80): tag struct ChainNode as struct ChainNode__f0d9b80; visual_attributes.c has another definition. */
-struct ChainNode__f0d9b80 {
-  struct ChainNode__f0d9b80 *next;
-  s32 x;
-  s32 y;
-  s32 z;
-  s8 used;
-  u8 unk11[3];
-  struct AnimationSpritePart sprite;
-};
 
-/* VIEW(f0d9b80): tag struct ChainSlot as struct ChainSlot__f0d9b80; visual_attributes.c has another definition. */
+/* VIEW(f0d9b80): tag struct ChainSlot as struct ChainSlot__f0d9b80; visual_attributes.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/object/visual_attributes.c:5953: structure has no member named `angle'. */
 struct ChainSlot__f0d9b80 {
   s16 first;
   s16 second;
@@ -6052,21 +5933,17 @@ struct ChainSlot__f0d9b80 {
   s32 amplitude;
   u8 unk0c[4];
   s32 wobble;
-  struct ChainNode__f0d9b80 *tail;
-  struct ChainNode__f0d9b80 *head;
+  struct ChainNode *tail;
+  struct ChainNode *head;
 };
 
-/* VIEW(f0d9b80): tag struct ChainWork as struct ChainWork__f0d9b80; visual_attributes.c has another definition. */
+/* VIEW(f0d9b80): tag struct ChainWork as struct ChainWork__f0d9b80; visual_attributes.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/object/visual_attributes.c:5958: structure has no member named `angle'. */
 struct ChainWork__f0d9b80 {
   u8 unk000[8];
   s32 vramEntry;
   struct ChainSlot__f0d9b80 slots[8];
 };
 
-/* VIEW(f0d9b80): routine AffineMatrix_BuildForEffect as s32 AffineMatrix_BuildForEffect(struct ChainTransform *source); affine.h has s32 AffineMatrix_BuildForEffect(struct AffineTransform *source). */
-extern s32 AffineMatrix_BuildForEffect__f0d9b80(struct ChainTransform *source) __asm__("AffineMatrix_BuildForEffect");
-/* VIEW(f0d9b80): routine Func_080140d8 as void Func_080140d8(void *entry, s32 slot); f0d6674 has void Func_080140d8(struct GroundParticle *sprite, s32 depth). */
-extern void Func_080140d8__f0d9b80(void *entry, s32 slot) __asm__("Func_080140d8");
 
 void Func_080d9b80(void) {
   struct ChainWork__f0d9b80 *work = Ram_HeapSlots->unk84[7];
@@ -6085,7 +5962,7 @@ void Func_080d9b80(void) {
 
   for (i = 0; i < 8; i++) {
     u32 angle = work->slots[i].angle;
-    struct ChainNode__f0d9b80 *node = work->slots[i].head;
+    struct ChainNode *node = work->slots[i].head;
     s32 affine;
     s32 matrix;
 
@@ -6094,7 +5971,7 @@ void Func_080d9b80(void) {
       transform.scaleX = 0x100;
       transform.scaleY = 0x100;
       affine = 1;
-      matrix = AffineMatrix_BuildForEffect__f0d9b80(&transform);
+      matrix = AffineMatrix_BuildForEffect(&transform);
     } else {
       affine = 0;
       matrix = 0;
@@ -6125,7 +6002,7 @@ void Func_080d9b80(void) {
           ((u32 *)&node->sprite)[2] = tile | 0x800;
           node->sprite.affine = affine;
           node->sprite.affineIndex = matrix;
-          Func_080140d8__f0d9b80(&node->sprite, key);
+          Func_080140d8(&node->sprite, key);
         }
       }
       prevX = x;
@@ -6363,8 +6240,6 @@ void Func_080da1b8(s32 index, s32 from, s32 to) {
 
 // Builds a chain of nodes around a point.
 
-/* VIEW(f0d9b80): routine Func_080d8d40 as struct LineNode *Func_080d8d40(void); f0d9194 has struct ChainNode__f0d9194 *Func_080d8d40(void). */
-extern struct LineNode *Func_080d8d40__f0d9b80(void) __asm__("Func_080d8d40");
 
 /// Builds a slot's chain of nodes, one for each 6 units of the distance between
 /// two points, laid out as a flat spiral around the first point, every node of
@@ -6385,7 +6260,7 @@ s32 Func_080da22c(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
   s32 kind = 2; // One constant for its whole life.
 
   for (i = 0; i <= segments; i++) {
-    struct LineNode *node = Func_080d8d40__f0d9b80();
+    struct LineNode *node = Func_080d8d40();
     u16 step;
 
     if (node == NULL) {
@@ -6408,16 +6283,13 @@ s32 Func_080da22c(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
 
 
 extern s32 gData_080f3948;
-/* VIEW(f0d9b80): routine Func_080da3bc as void Func_080da3bc(s32 arg, s32 x1, s32 y1, s32 z1, s32 x2, s32 y2, s32 z2, s32 wave); the definition has s32 Func_080da3bc(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ). */
-extern void Func_080da3bc__f0d9b80(s32 arg, s32 x1, s32 y1, s32 z1, s32 x2, s32 y2, s32 z2,
-                   s32 wave) __asm__("Func_080da3bc");
 
 void Func_080da334(s32 arg, s32 firstId, s32 secondId) {
   struct Actor *first = ObjectTable_Get(firstId);
   struct Actor *second = ObjectTable_Get(secondId);
 
   if (first != NULL && second != NULL) {
-    Func_080da3bc__f0d9b80(arg, first->x, first->y + 0x80000, first->z, second->x,
+    Func_080da3bc(arg, first->x, first->y + 0x80000, first->z, second->x,
                   second->y + 0x80000, second->z,
                   Trig_Sin(gData_080f3948) << 2);
     gData_080f3948 += 0x1000;
@@ -6657,8 +6529,6 @@ extern const u8 Data_080f0d07[], Data_080f0d5e[], Data_080f0dbb[];
 extern const u8 Data_080f0e00[];
 
 s32 Resource_FindFreeEntry(void);
-/* VIEW(f0da3bc): routine Resource_DecodeType01 as void Resource_DecodeType01(const void *source, void *destination); resource.h has s32 Resource_DecodeType01(const void *source, void *destination). */
-extern void Resource_DecodeType01__f0da3bc(const void *source, void *destination) __asm__("Resource_DecodeType01");
 s32 VramCache_Load(u32 slot, u32 size, const void *source);
 void Func_080daab0(void);
 void Func_080dacb8(void);
@@ -6689,10 +6559,10 @@ struct TileEffectWork *Func_080da9a8(s32 kind) {
   Dma_Fill32(0, work, sizeof(struct TileEffectWork));
   work->vramEntry = Resource_FindFreeEntry();
   if (kind == TILE_EFFECT_KIND_ALT) {
-    Resource_DecodeType01__f0da3bc(Data_080f0c1c, pictures);
-    Resource_DecodeType01__f0da3bc(Data_080f0c63, pictures + PICTURE_SIZE);
-    Resource_DecodeType01__f0da3bc(Data_080f0cb8, pictures + 2 * PICTURE_SIZE);
-    Resource_DecodeType01__f0da3bc(Data_080f0d07, pictures + 3 * PICTURE_SIZE);
+    Resource_DecodeType01(Data_080f0c1c, pictures);
+    Resource_DecodeType01(Data_080f0c63, pictures + PICTURE_SIZE);
+    Resource_DecodeType01(Data_080f0cb8, pictures + 2 * PICTURE_SIZE);
+    Resource_DecodeType01(Data_080f0d07, pictures + 3 * PICTURE_SIZE);
     VramCache_Load(work->vramEntry, size, pictures);
     /* FAKEMATCH(dead): an empty once-only block closing the arm keeps each
      * decode's destination set before its source loads; without it, 4 of 95
@@ -6700,10 +6570,10 @@ struct TileEffectWork *Func_080da9a8(s32 kind) {
     do {
     } while (0);
   } else {
-    Resource_DecodeType01__f0da3bc(Data_080f0d5e, pictures);
-    Resource_DecodeType01__f0da3bc(Data_080f0dbb, pictures + PICTURE_SIZE);
-    Resource_DecodeType01__f0da3bc(Data_080f0dbb, pictures + 2 * PICTURE_SIZE);
-    Resource_DecodeType01__f0da3bc(Data_080f0e00, pictures + 3 * PICTURE_SIZE);
+    Resource_DecodeType01(Data_080f0d5e, pictures);
+    Resource_DecodeType01(Data_080f0dbb, pictures + PICTURE_SIZE);
+    Resource_DecodeType01(Data_080f0dbb, pictures + 2 * PICTURE_SIZE);
+    Resource_DecodeType01(Data_080f0e00, pictures + 3 * PICTURE_SIZE);
     VramCache_Load(work->vramEntry, size, pictures);
     /* FAKEMATCH(barrier): an empty asm closing the arm keeps each decode's
      * destination set before its source loads; without it, 4 of 95
@@ -6723,8 +6593,6 @@ struct TileEffectWork *Func_080da9a8(s32 kind) {
 #include "affine.h"
 #include "graphics/vram_tab.h"
 
-/* VIEW(f0da3bc): routine Func_080140d8 as void Func_080140d8(void *entry, s32 slot); f0d6674 has void Func_080140d8(struct GroundParticle *sprite, s32 depth). */
-extern void Func_080140d8__f0da3bc(void *entry, s32 slot) __asm__("Func_080140d8");
 
 // The transform as this function builds it, a word at a time.
 
@@ -6739,14 +6607,14 @@ struct ChainLink {
   struct AnimationSpritePart sprite;
 };
 
-/* VIEW(f0da3bc): tag struct ChainSlot as struct ChainSlot__f0da3bc; visual_attributes.c has another definition. */
+/* VIEW(f0da3bc): tag struct ChainSlot as struct ChainSlot__f0da3bc; visual_attributes.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/object/visual_attributes.c:6634: structure has no member named `root'. */
 struct ChainSlot__f0da3bc {
   s16 id;
   u8 unk02[22];
   struct ChainLink *root;
 };
 
-/* VIEW(f0da3bc): tag struct ChainWork as struct ChainWork__f0da3bc; visual_attributes.c has another definition. */
+/* VIEW(f0da3bc): tag struct ChainWork as struct ChainWork__f0da3bc; visual_attributes.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/object/visual_attributes.c:6624: structure has no member named `sheet'. */
 struct ChainWork__f0da3bc {
   s32 sheet; ///< the resource entry of the links' tiles
   struct ChainSlot__f0da3bc slots[8];
@@ -6809,7 +6677,7 @@ void Func_080daab0(void) {
                 (struct AffineTransform *)&transform);
           }
           link->angle = angle;
-          Func_080140d8__f0da3bc(sprite, priority);
+          Func_080140d8(sprite, priority);
         }
       }
       prevX = x;
@@ -6829,15 +6697,8 @@ void Func_080daab0(void) {
 #undef PICTURE_SIZE
 
 // ---- games/tla/src/field/worka0/f0dacb8.c ----
-/* VIEW(f0dacb8): tag struct ChainLink as struct ChainLink__f0dacb8; visual_attributes.c has another definition. */
-struct ChainLink__f0dacb8 {
-  struct ChainLink__f0dacb8 *next;
-  s32 x;
-  s32 y;
-  s32 z;
-};
 
-/* VIEW(f0dacb8): tag struct ChainSlot as struct ChainSlot__f0dacb8; visual_attributes.c has another definition. */
+/* VIEW(f0dacb8): tag struct ChainSlot as struct ChainSlot__f0dacb8; visual_attributes.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/object/visual_attributes.c:6731: structure has no member named `root'. */
 struct ChainSlot__f0dacb8 {
   s16 objectId;
   u8 unk02[2];
@@ -6846,10 +6707,10 @@ struct ChainSlot__f0dacb8 {
   u8 unk08[4];
   s32 phase;
   s32 active;
-  struct ChainLink__f0dacb8 *root;
+  struct ChainLink *root;
 };
 
-/* VIEW(f0dacb8): tag struct ChainWork as struct ChainWork__f0dacb8; visual_attributes.c has another definition. */
+/* VIEW(f0dacb8): tag struct ChainWork as struct ChainWork__f0dacb8; visual_attributes.c has another definition; tried with the definition the rest of the object has, Func_080dacb8 moves: 1 of 173 instructions in tla-ja. */
 struct ChainWork__f0dacb8 {
   u8 unk00[4];
   struct ChainSlot__f0dacb8 slots[8];
@@ -6865,7 +6726,7 @@ void Func_080dacb8(void) {
   struct ChainSlot__f0dacb8 *slot;
   struct Actor *leader;
   s32 x, y, z;
-  struct ChainLink__f0dacb8 *link;
+  struct ChainLink *link;
   s32 i;
   s32 target;
   s32 phase;
@@ -6972,17 +6833,8 @@ struct WorkA4Item *Func_080daea8(void) {
 #undef CHAIN_WORK
 
 // ---- games/tla/src/field/worka0/f0daecc.c ----
-/* VIEW(f0daecc): tag struct ChainLink as struct ChainLink__f0daecc; visual_attributes.c has another definition. */
-struct ChainLink__f0daecc {
-  struct ChainLink__f0daecc *next;
-  s32 x;
-  s32 y;
-  s32 z;
-  u8 unk10[2];
-  s8 kind;
-};
 
-/* VIEW(f0daecc): tag struct ChainSlot as struct ChainSlot__f0daecc; visual_attributes.c has another definition. */
+/* VIEW(f0daecc): tag struct ChainSlot as struct ChainSlot__f0daecc; visual_attributes.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/object/visual_attributes.c:6922: structure has no member named `root'. */
 struct ChainSlot__f0daecc {
   s16 objectId;
   u8 unk02[2];
@@ -6991,7 +6843,7 @@ struct ChainSlot__f0daecc {
   u8 unk0c[4];
   s32 phase;
   s32 active;
-  struct ChainLink__f0daecc *root;
+  struct ChainLink *root;
 };
 
 struct ChainObject {
@@ -7011,13 +6863,7 @@ struct ChainObject {
 };
 
 struct Actor *Actor_GetById(u32 objectId);
-/* VIEW(f0daecc): routine Func_080da9a8 as void *Func_080da9a8(s32 kind); the definition has struct TileEffectWork *Func_080da9a8(s32 kind). */
-extern void *Func_080da9a8__f0daecc(s32 kind) __asm__("Func_080da9a8");
 struct WorkA4Slot *Func_080dae70(s32 id);
-/* VIEW(f0daecc): routine Func_080dae3c as struct ChainSlot__f0daecc *Func_080dae3c(void); the definition has struct WorkA4Slot *Func_080dae3c(void). */
-extern struct ChainSlot__f0daecc *Func_080dae3c__f0daecc(void) __asm__("Func_080dae3c");
-/* VIEW(f0daecc): routine Func_080daea8 as struct ChainLink__f0daecc *Func_080daea8(void); the definition has struct WorkA4Item *Func_080daea8(void). */
-extern struct ChainLink__f0daecc *Func_080daea8__f0daecc(void) __asm__("Func_080daea8");
 
 #define CELL_MASK 0xfff00000 // 16-pixel cells
 
@@ -7025,8 +6871,8 @@ void Func_080daecc(s32 objectId, s32 grow) {
   struct ChainObject *object;
   struct MapWork *map;
   struct ChainSlot__f0daecc *slot;
-  struct ChainLink__f0daecc *link;
-  struct ChainLink__f0daecc **tail;
+  struct ChainLink *link;
+  struct ChainLink **tail;
   struct MapCell *cells;
   struct MapCell *cell;
   s32 i;
@@ -7046,11 +6892,11 @@ void Func_080daecc(s32 objectId, s32 grow) {
   if (running == 0) {
     if (object->sprite != 0 && object->sprite->entries[0] != 0)
       kind = *object->sprite->entries[0];
-    Func_080da9a8__f0daecc(kind);
+    Func_080da9a8(kind);
   }
   if (Func_080dae70(objectId) != 0)
     return;
-  slot = Func_080dae3c__f0daecc();
+  slot = Func_080dae3c();
   if (slot == 0)
     return;
 
@@ -7079,7 +6925,7 @@ void Func_080daecc(s32 objectId, s32 grow) {
   // Hang the links.
   last = 6;
   tail = &slot->root;
-  for (i = 0; i <= last && (link = Func_080daea8__f0daecc()) != 0; i++) {
+  for (i = 0; i <= last && (link = Func_080daea8()) != 0; i++) {
     link->x = x;
     link->y = y + (15 << 16) - i * (14 << 16);
     link->z = z;
@@ -7372,7 +7218,7 @@ void FieldEffect_RunDouseOnTarget(s32 targetId);
 void FieldEffect_RunFrostOnTarget(s32 targetId);
 void Func_080dda30(s32 targetId);
 void FieldEffect_RunPlyOnTarget(s32 targetId);
-/* VIEW(f0daecc): routine FieldEffect_RunWhirlwindOnTarget as void FieldEffect_RunWhirlwindOnTarget(s32 targetId); battle.h has void FieldEffect_RunWhirlwindOnTarget(void). */
+/* VIEW(f0daecc): routine FieldEffect_RunWhirlwindOnTarget as void FieldEffect_RunWhirlwindOnTarget(s32 targetId); battle.h has void FieldEffect_RunWhirlwindOnTarget(void); tried as the definition's void FieldEffect_RunWhirlwindOnTarget(void), which the object already declares, it does not compile in tla-ja: games/tla/src/field/object/visual_attributes.c:7369: too many arguments to function `FieldEffect_RunWhirlwindOnTarget'. */
 extern void FieldEffect_RunWhirlwindOnTarget__f0daecc(s32 targetId) __asm__("FieldEffect_RunWhirlwindOnTarget");
 void BattleEffect_CallEffect13(s32 targetId);
 void Func_080e0978(s32 targetId);
@@ -7585,8 +7431,7 @@ void BattleEffect_DispatchRequestKind(void) {
 }
 
 
-/* VIEW(f0daecc): routine Vector_AddPolarOffset as void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position); mars_join has void Vector_AddPolarOffset(s32 magnitude, s32 angle, struct EffectVector *position). */
-extern void Vector_AddPolarOffset__f0daecc(s32 radius, s32 angle, s32 *position) __asm__("Vector_AddPolarOffset");
+void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position);
 
 struct CompositeAnimation {
   u8 unk00[0x11];
@@ -7689,7 +7534,7 @@ void Motion_SetTargetPositionFromMagnitudeAngle(struct Actor *object,
 
   if (object != 0) {
     SET_VECTOR(values, object->x, object->y, object->z);
-    Vector_AddPolarOffset__f0daecc(magnitude, angle, values);
+    Vector_AddPolarOffset(magnitude, angle, values);
     Actor_SetTargetPosition(object, values[0], values[1], values[2]);
   }
 }
@@ -7797,8 +7642,6 @@ struct DepthScene {
 };
 
 void Func_080eaf98(struct DepthSprite *sprite, s32 a, s32 b, u32 c, s32 tiles);
-/* VIEW(f0daecc): routine Camera_WorldToScreen as void Camera_WorldToScreen(s32 *position); ground_particles has void Camera_WorldToScreen(union FieldCoordinate *position). */
-extern void Camera_WorldToScreen__f0daecc(s32 *position) __asm__("Camera_WorldToScreen");
 
 void Func_080dba5c(void) {
   struct DepthScene *scene = Ram_HeapSlots->effectWork;
@@ -7832,7 +7675,7 @@ void Func_080dba5c(void) {
     position[0] = scene->x;
     position[1] = mainObject->y + 0x1c0000;
     position[2] = mainObject->z;
-    Camera_WorldToScreen__f0daecc(position);
+    Camera_WorldToScreen(position);
     sprite->x = position[0];
     sprite->y = position[2];
     Task_Add(BattleEffect_DrawSceneSprite, TASK_PASS_VBLANK);
@@ -7842,24 +7685,13 @@ void Func_080dba5c(void) {
 #undef SIDE_TURN
 
 // ---- games/tla/src/field/event_commands/depthend.c ----
-/* VIEW(depthend): tag struct DepthScene as struct DepthScene__depthend; visual_attributes.c has another definition. */
-struct DepthScene__depthend {
-  u16 mode;
-  u8 unk02[2];
-  s32 x;
-  u8 unk08[8];
-  struct Actor *mainObject;
-  u8 unk14[0x7dc];
-  s16 vramSlot;
-  s16 active;
-};
 
 void BattleEffect_DrawSceneSprite(void);
 
 /// If the scene's sprite is active, stops its update callback
 /// (Func_080dba44) and frees its VRAM cache entry.
 void Func_080dbb40(void) {
-  struct DepthScene__depthend *scene = Ram_HeapSlots->effectWork;
+  struct DepthScene *scene = Ram_HeapSlots->effectWork;
 
   if (scene->active != 0) {
     scene->active = 0;
@@ -8158,8 +7990,6 @@ void *Sprite_ShareVramCacheEntry(void *src, void *alt) {
 #define Actor_SetAnimationSpeedFar                                             \
   ((void (*)(struct Actor *, s32))Actor_SetAnimationSpeedFar)
 
-/* VIEW(depthend): routine Func_080200c0 as struct Actor *Func_080200c0(s32 kind, s32 x, s32 y, s32 z); f0d8740 has struct CaptureObject *Func_080200c0(s32 kind, s32 x, s32 y, s32 z). */
-extern struct Actor *Func_080200c0__depthend(s32 kind, s32 x, s32 y, s32 z) __asm__("Func_080200c0");
 
 struct SpawnScene {
   u8 unk00[0x10];
@@ -8172,7 +8002,7 @@ struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z) {
   u8 *part;
   s32 mask;
 
-  object = Func_080200c0__depthend(kind, x, y, z);
+  object = Func_080200c0(kind, x, y, z);
   if (object != NULL) {
     if (object->animationKind == 0) {
       Actor_Destroy(object);
@@ -8210,8 +8040,6 @@ void Actor_SetOthersPaused(struct Actor *excludedObject, s32 groupMode,
 }
 
 
-/* VIEW(depthend): routine BattleEffect_ApplyColorToTargetBuffer as void BattleEffect_ApplyColorToTargetBuffer(s32 colors, s32 mode); f0d6674 has void BattleEffect_ApplyColorToTargetBuffer(void *buffer, s32 mode). */
-extern void BattleEffect_ApplyColorToTargetBuffer__depthend(s32 colors, s32 mode) __asm__("BattleEffect_ApplyColorToTargetBuffer");
 void GameFlag_ClearBit(s32 flag);
 
 void GameFlag_SetBit(s32 flag);
@@ -8225,7 +8053,7 @@ void Field_StartColorTransition(s32 frames, s32 color) {
   if (*(s8 *)(state + 0xca4) == 0)
     Dma_Set(buffers->target, state + 0x222, DMA_COPY_WORDS(0x150), REG_DMA3);
   Dma_Set(buffers->target, buffers->current, DMA_COPY_WORDS(0x2a0), REG_DMA3);
-  BattleEffect_ApplyColorToTargetBuffer__depthend(0x200000 | color, 1);
+  BattleEffect_ApplyColorToTargetBuffer(0x200000 | color, 1);
   GameFlag_SetBit(0x108);
   BattleEffect_StartBufferInterpolation(frames);
 }
@@ -8234,11 +8062,11 @@ void Field_StartPaletteTransition(s32 frames) {
   u8 *state = Ram_HeapSlots->eventWork;
   s32 colors = (s32)(state + 0x222);
 
-  BattleEffect_ApplyColorToTargetBuffer__depthend(colors, 2);
+  BattleEffect_ApplyColorToTargetBuffer(colors, 2);
   if (*(s8 *)(state + 0xca4) != 0)
-    BattleEffect_ApplyColorToTargetBuffer__depthend(0x10001, 1);
+    BattleEffect_ApplyColorToTargetBuffer(0x10001, 1);
   else
-    BattleEffect_ApplyColorToTargetBuffer__depthend(colors, 1);
+    BattleEffect_ApplyColorToTargetBuffer(colors, 1);
   GameFlag_ClearBit(0x108);
   BattleEffect_StartBufferInterpolation(frames);
 }

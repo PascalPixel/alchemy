@@ -529,10 +529,8 @@ const u8 *Func_02002a44(void) {
    } *)(base))                                                                 \
        ->v)
 
-/* VIEW(s2ac8): routine Actor_GetById as s32 Actor_GetById(); event.h has struct Actor *Actor_GetById(u32 objectId). */
+/* VIEW(s2ac8): routine Actor_GetById as s32 Actor_GetById(); event.h has struct Actor *Actor_GetById(u32 objectId); tried as the definition's struct Actor *Actor_GetById(u32 objectId), which the object already declares, it does not compile in tla-ja: games/tla/src/scene/gaia_rock_inside/s1f68.c:541: too few arguments to function `Actor_GetById'. */
 extern s32 Actor_GetById__s2ac8() __asm__("Actor_GetById");
-/* VIEW(s2ac8): routine Actor_SetAngleToward as s32 Actor_SetAngleToward(); event.h has void Actor_SetAngleToward(s32 actorId, s32 target, s32 frames). */
-extern s32 Actor_SetAngleToward__s2ac8() __asm__("Actor_SetAngleToward");
 s32 ResourceMetadata_Register();
 s32 Func_02004d9c();
 
@@ -541,7 +539,7 @@ void Func_02002ac8(s32 a0, s32 a1) {
   s32 t0;
 
   t0 = Actor_GetById__s2ac8();
-  Actor_SetAngleToward__s2ac8(a0, a1, 0);
+  Actor_SetAngleToward(a0, a1, 0);
   if (t0 != 0) {
     t2 = ResourceMetadata_Register(FIELD_AT(t0, s32, 80), 0x185);
     FIELD_AT(t2, u8, 5) = 0;
@@ -575,16 +573,15 @@ void Func_02002b04(u32 id, s8 mode) {
        ->v)
 
 #include "call.h"
-/* VIEW(s2b58): routine Actor_GetById as s32 Actor_GetById(); event.h has struct Actor *Actor_GetById(u32 objectId). */
+/* VIEW(s2b58): routine Actor_GetById as s32 Actor_GetById(); event.h has struct Actor *Actor_GetById(u32 objectId); tried as the definition's struct Actor *Actor_GetById(u32 objectId), which the object already declares, it does not compile in tla-ja: games/tla/src/scene/gaia_rock_inside/s1f68.c:584: too few arguments to function `Actor_GetById'. */
 extern s32 Actor_GetById__s2b58() __asm__("Actor_GetById");
-/* VIEW(s2b58): routine Actor_SetMoveTarget as s32 Actor_SetMoveTarget(); event.h has void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z). */
-extern s32 Actor_SetMoveTarget__s2b58() __asm__("Actor_SetMoveTarget");
+void Actor_SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z);
 
 void Func_02002b58(s32 a0, s32 a1, s32 a2) {
   s32 t0;
 
   t0 = Actor_GetById__s2b58();
-  Call4(Actor_SetMoveTarget__s2b58, t0,
+  Call4(Actor_SetMoveTarget, t0,
         (((a1 << 4) + FIELD_AT((t0 + 0x64), s16, 0)) << 16),
         FIELD_AT(t0, s32, 12),
         (((a2 << 4) + FIELD_AT((t0 + 0x66), s16, 0)) << 16));

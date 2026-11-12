@@ -218,7 +218,7 @@ extern const u16 gData_0802f054[8];
 void VramCache_Reset(void);
 void Func_080230e0(s32 mode);
 s32 ResourceSlot_Load(u32 slot, u32 *buffer, s32 number, u32 variant);
-/* VIEW(terrain): routine Resource_GetMetadataRecordFar as struct ViewerMetadata *Resource_GetMetadataRecordFar(s32 id); sprite_metadata.h has struct AnimationMetadata *Resource_GetMetadataRecordFar(u32 number). */
+/* VIEW(terrain): routine Resource_GetMetadataRecordFar as struct ViewerMetadata *Resource_GetMetadataRecordFar(s32 id); sprite_metadata.h has struct AnimationMetadata *Resource_GetMetadataRecordFar(u32 number); tried as the definition's struct AnimationMetadata *Resource_GetMetadataRecordFar(u32 id), it does not compile in tla-ja: games/tla/src/field/map/terrain.c:285: dereferencing pointer to incomplete type. */
 extern struct ViewerMetadata *Resource_GetMetadataRecordFar__terrain(s32 id) __asm__("Resource_GetMetadataRecordFar");
 struct ViewerSprite *ResourceObject_Create(s32 id);
 s32 ResourceMetadata_Register(struct ViewerSprite *sprite, s32 id);
@@ -755,9 +755,6 @@ void SpriteViewer_SetGridColumnNumber(s32 slot, s32 no) {
   } while (count >= 0);
 }
 
-/* VIEW(grid): routine Render_ApplyProjectedPlacement as void Render_ApplyProjectedPlacement(void *object, s32 *position, s32 *scale, u32 mode); field.h has void Render_ApplyProjectedPlacement(void *sprite, s32 *position, s32 *scale, u16 angle). */
-extern void Render_ApplyProjectedPlacement__grid(void *object, s32 *position, s32 *scale,
-                                    u32 mode) __asm__("Render_ApplyProjectedPlacement");
 
 struct BattleCells {
   u8 *actors;
@@ -825,7 +822,7 @@ void Battle_PlaceActorsByFormationKind(void) {
   }
 
   for (i = 0; i < cnt; i++) {
-    Render_ApplyProjectedPlacement__grid(actor, (s32 *)(table + i * 16),
+    Render_ApplyProjectedPlacement(actor, (s32 *)(table + i * 16),
                                    (s32 *)&scale, angle);
     actor += 56;
     angle += step;

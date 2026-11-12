@@ -24,14 +24,14 @@ void Func_02000280(void) {
 // The scene code of overlay 0x654 that its scene tables belong to, in ROM order; the rest of the overlay is in shrine_of_the_sea_god/.
 
 #include "battle.h"
-/* VIEW(shrine_of_the_sea_god): routine Actor_SetPositionAndResetMotion as void Actor_SetPositionAndResetMotion(struct Actor *object, s32 x, s32 y, s32 z); shrine_of_the_sea_god.h has void Actor_SetPositionAndResetMotion(struct ShrineOfTheSeaGodObject *object, s32 x, s32 y, s32 z). */
+/* VIEW(shrine_of_the_sea_god): routine Actor_SetPositionAndResetMotion as void Actor_SetPositionAndResetMotion(struct Actor *object, s32 x, s32 y, s32 z); shrine_of_the_sea_god.h has void Actor_SetPositionAndResetMotion(struct ShrineOfTheSeaGodObject *object, s32 x, s32 y, s32 z); tried as the definition's void Actor_SetPositionAndResetMotion(struct Actor *obj, s32 x, s32 y, s32 z), it does not compile in tla-ja: games/tla/include/actor.h:95: conflicting types for `Actor_SetPositionAndResetMotion'. */
 struct Actor;
 extern void Actor_SetPositionAndResetMotion__shrine_of_the_sea_god(struct Actor *object, s32 x, s32 y, s32 z) __asm__("Actor_SetPositionAndResetMotion");
 #define Actor_SetPositionAndResetMotion Actor_SetPositionAndResetMotion__shrine_of_the_sea_god
-/* VIEW(shrine_of_the_sea_god): routine Actor_SetSpritePriority as void Actor_SetSpritePriority(u32, s32); shrine_of_the_sea_god.h has void Actor_SetSpritePriority(s32 actor, s32 variant). */
+/* VIEW(shrine_of_the_sea_god): routine Actor_SetSpritePriority as void Actor_SetSpritePriority(u32, s32); shrine_of_the_sea_god.h has void Actor_SetSpritePriority(s32 actor, s32 variant); tried as the definition's void Actor_SetSpritePriority(u32 objectId, s32 priority), it does not compile in tla-ja: games/tla/include/actor.h:106: conflicting types for `Actor_SetSpritePriority'. */
 extern void Actor_SetSpritePriority__shrine_of_the_sea_god(u32, s32) __asm__("Actor_SetSpritePriority");
 #define Actor_SetSpritePriority Actor_SetSpritePriority__shrine_of_the_sea_god
-/* VIEW(shrine_of_the_sea_god): routine Actor_SetSingleChildFlags as void Actor_SetSingleChildFlags(struct Actor *object, u32 flags); shrine_of_the_sea_god.h has void Actor_SetSingleChildFlags(struct ShrineOfTheSeaGodObject *object, u32 value). */
+/* VIEW(shrine_of_the_sea_god): routine Actor_SetSingleChildFlags as void Actor_SetSingleChildFlags(struct Actor *object, u32 flags); shrine_of_the_sea_god.h has void Actor_SetSingleChildFlags(struct ShrineOfTheSeaGodObject *object, u32 value); tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/include/field/field.h:25: conflicting types for `Actor_SetSingleChildFlags'. */
 struct Actor;
 extern void Actor_SetSingleChildFlags__shrine_of_the_sea_god(struct Actor *object, u32 flags) __asm__("Actor_SetSingleChildFlags");
 #define Actor_SetSingleChildFlags Actor_SetSingleChildFlags__shrine_of_the_sea_god

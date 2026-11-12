@@ -6,7 +6,7 @@
 #include "types.h"
 #include "system.h"
 #include "field_effect.h"
-/* VIEW(s0b84): routine Func_0200388c as void Func_0200388c(const void *script, s32 a, s32 b); the definition has void Func_0200388c(u16 *list, s32 mode, s32 count). */
+/* VIEW(s0b84): routine Func_0200388c as void Func_0200388c(const void *script, s32 a, s32 b); the definition has void Func_0200388c(u16 *list, s32 mode, s32 count); tried as the definition's void Func_0200388c(u16 *list, s32 mode, s32 count), which the object already declares, it does not compile in tla-ja: games/tla/src/scene/yampi_desert.c:1764: conflicting types for `Func_0200388c'. */
 extern void Func_0200388c__s0b84(const void *script, s32 a, s32 b) __asm__("Func_0200388c");
 #define Func_0200388c Func_0200388c__s0b84
 #include "yampi_desert/scene.h"
@@ -697,8 +697,6 @@ struct Actor *Actor_GetById(u32 objectId);
 struct Actor *Func_02003fc0(s32 kind, s32 x, s32 y, s32 z);
 void Func_02003fa8(struct Actor *object, s32 mode);
 void Func_02003fb8(struct Actor *object, const void *script);
-/* VIEW(s1cc4): routine Effect_AdvanceMotionAtLeaderPriority as void Effect_AdvanceMotionAtLeaderPriority(void); s0b84 has void Effect_AdvanceMotionAtLeaderPriority(union FieldObject *object). */
-extern void Effect_AdvanceMotionAtLeaderPriority__s1cc4(void) __asm__("Effect_AdvanceMotionAtLeaderPriority");
 s32 Math_Cosine(s32 angle);
 s32 Math_Sine(s32 angle);
 
@@ -752,7 +750,7 @@ void Func_02001cc4(struct Actor *object, s32 dx, s32 dz) {
         dust->timer = ((Random16Far() << 9) >> 16) - 256;
         dust->speedLimit = 0;
         dust->acceleration = 0;
-        dust->update = Effect_AdvanceMotionAtLeaderPriority__s1cc4;
+        dust->update = Effect_AdvanceMotionAtLeaderPriority;
       }
     }
   }
@@ -1364,8 +1362,6 @@ void Func_02002e98(void) {
   Func_02002d6c(Actor_GetById(gMainRoutineWork.currentOwner), 408, 432, 2);
 }
 
-/* VIEW(s1cc4): routine Motion_SetModeAndWaitAnimation as void Motion_SetModeAndWaitAnimation(s32 id, s32 mode); s0b84 has s32 Motion_SetModeAndWaitAnimation(). */
-extern void Motion_SetModeAndWaitAnimation__s1cc4(s32 id, s32 mode) __asm__("Motion_SetModeAndWaitAnimation");
 void Party_SetFields1eeAnd1f0(s32 scene, s32 entrance);
 void Func_02000b84(s32 x, s32 y, s32 z);
 void Func_02003fd8(void);
@@ -1415,7 +1411,7 @@ void Func_02002ebc(void) {
   Func_02000b84(leader->x, leader->y, leader->z);
   Func_020041f8(188);
   Func_02004108(party->currentOwner, 0x101);
-  Motion_SetModeAndWaitAnimation__s1cc4(party->currentOwner, 49);
+  Motion_SetModeAndWaitAnimation(party->currentOwner, 49);
   Func_020041f8(204);
   actor8->motionFlags = 3;
   Actor_SetSingleChildFlags(Actor_GetById(8), 1);
@@ -1691,8 +1687,7 @@ void Func_020036d0(void) {
 
 void Func_02001bec(void);
 void Func_02003da0(s32 unused, s32 value);
-/* VIEW(s1cc4): routine Func_02003e3c as void Func_02003e3c(s32 a, s32 b, s32 c, s32 d, s32 e); the definition has struct RideEntry *Func_02003e3c(s32 slot, s32 id, s32 timer, s32 low, s32 high). */
-extern void Func_02003e3c__s1cc4(s32 a, s32 b, s32 c, s32 d, s32 e) __asm__("Func_02003e3c");
+struct RideEntry *Func_02003e3c(s32 slot, s32 id, s32 timer, s32 low, s32 high);
 
 /// Room 10's setup.
 void Func_0200371c(void) {
@@ -1709,7 +1704,7 @@ void Func_0200371c(void) {
     Scene_Call4090(9, 232 << 16, 200 << 16);
   }
   Func_02003da0(0, 240);
-  Func_02003e3c__s1cc4(0, 9, 0, 0, 64);
+  Func_02003e3c(0, 9, 0, 0, 64);
   wait(10);
 }
 
@@ -1761,8 +1756,6 @@ struct GabombaStatueEffectWork {
 
 struct Actor *Actor_GetById(u32 objectId);
 void GameFlag_SetBit(s32 flag);
-/* VIEW(s388c): routine Func_02003910 as void Func_02003910(s32 id, s32 a, s32 flag, s32 terrain); scene.h has void Func_02003910(s32 id, u32 kind, s32 flag, s32 layer). */
-extern void Func_02003910__s388c(s32 id, s32 a, s32 flag, s32 terrain) __asm__("Func_02003910");
 
 // Finds the current target's table row and shrinks it.
 void Func_0200388c(u16 *list, s32 mode, s32 count) {
@@ -1784,7 +1777,7 @@ void Func_0200388c(u16 *list, s32 mode, s32 count) {
         object->scaleY -= 0x1f00;
       if (mode == 1) {
         GameFlag_SetBit(flag);
-        Func_02003910__s388c(id, a, flag, object->terrainId);
+        Func_02003910(id, a, flag, object->terrainId);
         object->scaleY = 0x10000;
       }
       break;
@@ -1834,7 +1827,7 @@ void Func_02003910(s32 id, u32 kind, s32 flag, s32 layer) {
 }
 
 /// The whole-pixel half of a 16.16 coordinate.
-/* VIEW(s3910): macro PIXELS as PIXELS__s3910; another part or header has another definition. */
+/* VIEW(s3910): macro PIXELS as PIXELS__s3910; another part or header has another definition; tried with the definition the rest of the object has, Func_020039b8 moves: 33 of 212 instructions in tla-ja. */
 #define PIXELS__s3910(v) (((s16 *)&(v))[1])
 
 /// One rising platform and what rides it.

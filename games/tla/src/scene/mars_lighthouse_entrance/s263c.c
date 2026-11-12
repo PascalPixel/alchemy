@@ -195,7 +195,7 @@ void Func_02002848(void) {
 // ---- games/tla/src/scene/mars_lighthouse_entrance/s2860.c ----
 #include "room.h"
 
-/* VIEW(s2860): routine Func_020024c0 as s32 Func_020024c0(s32 a, s32 b); s263c has void Func_020024c0(). */
+/* VIEW(s2860): routine Func_020024c0 as s32 Func_020024c0(s32 a, s32 b); s263c has void Func_020024c0(); tried as the definition's void Func_020024c0(void), it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_entrance/s263c.c:259: too many arguments to function `Func_020024c0'. */
 extern s32 Func_020024c0__s2860(s32 a, s32 b) __asm__("Func_020024c0");
 void Func_02004d50(s32 a, s32 b);
 s32 Func_02004c18(s32 layer, s32 x, s32 z);
@@ -450,7 +450,7 @@ void Func_02002c2c(struct Actor *object) {
 
 #define ABS(x) ((x) < 0 ? -(x) : (x))
 
-/* VIEW(s2860): tag struct Work020023c4 as struct Work020023c4__s2860; s263c.c has another definition. */
+/* VIEW(s2860): tag struct Work020023c4 as struct Work020023c4__s2860; s263c.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_entrance/s263c.c:568: structure has no member named `unk6c'. */
 struct Work020023c4__s2860 {
   u8 unk00[4];
   u16 unk04;
@@ -633,8 +633,6 @@ void Func_02000d18(void);
 void Func_02000fe0(u8 *cell);
 void Func_020012e4(struct Actor *object);
 void Func_02002f4c(s32 id, s32 a1, s32 a2, s32 a3, const void *script);
-/* VIEW(s2f4c): routine Func_02002c2c as void Func_02002c2c(void); the definition has void Func_02002c2c(struct Actor *object). */
-extern void Func_02002c2c__s2f4c(void) __asm__("Func_02002c2c");
 void Func_02004c88(s32 scene, s32 a1);
 void Func_02004d98(void);
 
@@ -651,7 +649,7 @@ void Func_02002f4c(s32 id, s32 target, s32 kind, s32 a3, const void *script) {
   object->timer = 0;
   object->unk66 = a3;
   BYTE_AT(object, 98) = kind;
-  object->update = Func_02002c2c__s2f4c;
+  object->update = Func_02002c2c;
 }
 
 #include "field_sprite.h"
@@ -830,12 +828,8 @@ struct Position {
 };
 
 s32 ArcTan2(s32 y, s32 x);
-/* VIEW(s32b8): routine Func_020031f8 as void Func_020031f8(void); the definition has void Func_020031f8(struct Actor *object). */
-extern void Func_020031f8__s32b8(void) __asm__("Func_020031f8");
 void Func_02003284(void);
 void Func_02004bc0(struct Actor *actor, s32 mode);
-/* VIEW(s32b8): routine Func_02004c78 as s32 Func_02004c78(s32 *a, s32 radiusA, struct Position *b, s32 radiusB); s263c has s32 Func_02004c78(s32 *from, s32 radius, struct Vector3 *to, s32 radius2). */
-extern s32 Func_02004c78__s32b8(s32 *a, s32 radiusA, struct Position *b, s32 radiusB) __asm__("Func_02004c78");
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 void Actor_SetAnimationSpeed(struct Actor *actor, s32 speed);
 extern s16 gData_02005798[];
@@ -915,7 +909,7 @@ top:
   Func_02004bc0(actor, 2);
   Actor_SetAnimationSpeed(actor, 48);
   Actor_WaitForMove(actor);
-  actor->update = Func_020031f8__s32b8;
+  actor->update = Func_020031f8;
   goto test;
 body:
   if (Map_GetTerrainHeight(*layer, next->x, next->z) - actor->y > PIXELS(8)) {
@@ -933,7 +927,7 @@ body:
           : "r"(next), "r"(next), "r"(actor), "r"(actor), "r"(actor),
             "r"(actor), "r"(actor), "r"(actor), "r"(actor), "r"(actor)
           : SFP_CLOBBER, "r4");
-      if (Func_02004c78__s32b8(&other->x, radius, &probe, other->radius - 2) >= 0) {
+      if (Func_02004c78(&other->x, radius, &probe, other->radius - 2) >= 0) {
         goto stop;
       }
     }
@@ -983,7 +977,7 @@ done:
 // ---- games/tla/src/scene/mars_lighthouse_entrance/s3564.c ----
 extern volatile s16 gData_020068b0;
 extern s16 gData_02005798[];
-/* VIEW(s3564): routine Func_020031f8 as void Func_020031f8(struct Actor *object); s32b8 has void Func_020031f8(void). */
+/* VIEW(s3564): routine Func_020031f8 as void Func_020031f8(struct Actor *object); s32b8 has void Func_020031f8(void); tried as the definition's void Func_020031f8(struct Actor *object), which the object already declares, it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_entrance/s263c.c:1077: `Func_020031f8__s3564' undeclared (first use in this function). */
 extern void Func_020031f8__s3564(struct Actor *object) __asm__("Func_020031f8");
 void Func_02003284(void);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
@@ -991,7 +985,7 @@ s32 ArcTan2(s32 y, s32 x);
 void Func_02004bc0(struct Actor *object, s32 mode);
 void Actor_SetAnimationSpeed(struct Actor *object, s32 value);
 s32 Func_02004c70(struct Actor *object);
-/* VIEW(s3564): routine Func_02004c78 as s32 Func_02004c78(s32 *a, s32 aRadius, s32 *b, s32 bRadius); s32b8 has s32 Func_02004c78(s32 *a, s32 radiusA, struct Position *b, s32 radiusB). */
+/* VIEW(s3564): routine Func_02004c78 as s32 Func_02004c78(s32 *a, s32 aRadius, s32 *b, s32 bRadius); s32b8 has s32 Func_02004c78(s32 *a, s32 radiusA, struct Position *b, s32 radiusB); tried as the 2 declarations' s32 Func_02004c78(s32 *a, s32 radiusA, struct Position *b, s32 radiusB), it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_entrance/s263c.c:988: conflicting types for `Func_02004c78'. */
 extern s32 Func_02004c78__s3564(s32 *a, s32 aRadius, s32 *b, s32 bRadius) __asm__("Func_02004c78");
 
 void Func_02003564(void) {

@@ -345,8 +345,6 @@ void Func_0200092c(s32, s32, s32, s32, s32, s32, s32);
 void Func_02000950(s32, s32, s32, s32);
 void Func_020009c0(s32, s32, s32, s32);
 void Func_02000a10(s32, s32, s32, s32, s32);
-/* VIEW(psynergy_test): routine Func_02000c4c as void Func_02000c4c(struct Actor *, void *); the definition has void Func_02000c4c(struct Actor *object, struct SparkleWork *work). */
-extern void Func_02000c4c__psynergy_test(struct Actor *, void *) __asm__("Func_02000c4c");
 void Func_02000d4c(struct Actor *);
 
 void Func_02000660(void) {
@@ -393,8 +391,8 @@ void Func_02000740(void) {}
 void Func_02000744(void) {}
 
 void Func_02000748(s32 actor) {
-  Func_02000c4c__psynergy_test(Actor_Get(actor), gData_02001860);
-  Func_02000c4c__psynergy_test(Actor_Get(gMainRoutineWork.currentOwner), gData_020017b0);
+  Func_02000c4c(Actor_Get(actor), gData_02001860);
+  Func_02000c4c(Actor_Get(gMainRoutineWork.currentOwner), gData_020017b0);
   System_Wait(100);
   Func_02000d4c(Actor_Get(actor));
   Func_02000d4c(Actor_Get(gMainRoutineWork.currentOwner));
@@ -811,7 +809,7 @@ struct ResourceTableEntry {
   u16 offset; ///< in bytes; its tile is offset / 32
 };
 
-/* VIEW(s0c4c): tag struct SparkleSprite as struct SparkleSprite__s0c4c; psynergy_test.c has another definition. */
+/* VIEW(s0c4c): tag struct SparkleSprite as struct SparkleSprite__s0c4c; psynergy_test.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/debug/psynergy_test.c:858: structure has no member named `flag'. */
 struct SparkleSprite__s0c4c {
   u8 unk00[5];
   u8 attr5Low : 5;
@@ -825,7 +823,7 @@ struct SparkleSprite__s0c4c {
   u8 unk0a[0x1e];
 };
 
-/* VIEW(s0c4c): tag struct SparkleWork as struct SparkleWork__s0c4c; psynergy_test.c has another definition. */
+/* VIEW(s0c4c): tag struct SparkleWork as struct SparkleWork__s0c4c; psynergy_test.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/debug/psynergy_test.c:848: incompatible types in assignment. */
 struct SparkleWork__s0c4c {
   struct SparkleSprite__s0c4c sprites[4];
   u16 unka0;
@@ -835,16 +833,13 @@ struct SparkleWork__s0c4c {
   struct Actor *object;
 };
 
-/* VIEW(s0c4c): variable gData_02000f44 as extern const u8 gData_02000f44[]; the definition has s32 gData_02000f44[] = { 0, 0, 0, 0, 0, 0, 0x70000000, (s32) 0xf7700000, 0, 0, 0, 0, 0x77770000, (s32) 0xffff7770, - 9, 0x7777ffff, 0, 0, 0,.... */
-extern const u8 gData_02000f44__s0c4c[] __asm__("gData_02000f44");
+extern s32 gData_02000f44[];
 extern struct ResourceTableEntry gResourceTableEntries[];
 
 s32 Resource_FindFreeEntry(void);
 void Func_02000ee4(struct SparkleSprite__s0c4c *sprite, s32 width, s32 height,
                    u32 attributes, s32 tile);
 s32 Func_02000ef4(struct Actor *object);
-/* VIEW(s0c4c): routine Func_02000ad0 as void Func_02000ad0(void); the definition has void Func_02000ad0(struct Actor *object). */
-extern void Func_02000ad0__s0c4c(void) __asm__("Func_02000ad0");
 
 void Func_02000c4c(struct Actor *object, struct SparkleWork__s0c4c *work) {
   struct SparkleSprite__s0c4c *sprite;
@@ -854,14 +849,14 @@ void Func_02000c4c(struct Actor *object, struct SparkleWork__s0c4c *work) {
   s32 offset;
 
   work->vramEntry = Resource_FindFreeEntry();
-  Vram_Load(work->vramEntry, 256, gData_02000f44__s0c4c);
+  Vram_Load(work->vramEntry, 256, gData_02000f44);
   work->unka6 = 0;
   work->unka0 = 999;
   work->unka2 = 999;
   work->object = object;
   ((u8 *)object)[0x62] = 0;
   ((u8 *)object)[0x63] = 0;
-  object->update = Func_02000ad0__s0c4c;
+  object->update = Func_02000ad0;
   tile = gResourceTableEntries[work->vramEntry].offset >> 5;
   object->watchedObject = (struct Actor *)work;
   for (row = 0; row <= 1; row++) {

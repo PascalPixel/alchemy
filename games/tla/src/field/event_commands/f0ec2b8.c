@@ -13,7 +13,7 @@ struct WorldMapPlace {
 };
 
 // The world map screen's work, laid out as field/world_map.h has it.
-/* VIEW(f0ec2b8): tag struct WorldMapWork as struct WorldMapWork__f0ec2b8; world_map.h has another definition. */
+/* VIEW(f0ec2b8): tag struct WorldMapWork as struct WorldMapWork__f0ec2b8; world_map.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/event_commands/f0ec2b8.c:46: dereferencing pointer to incomplete type. */
 struct WorldMapWork__f0ec2b8 {
   u16 vramBlock;
   u16 windowSlot;
@@ -25,8 +25,7 @@ struct WorldMapWork__f0ec2b8 {
 };
 
 s32 Party_GetLeaderActor(void);
-/* VIEW(f0ec2b8): routine FlagEntries_GetTable as struct WorldMapPlace *FlagEntries_GetTable(void); world_map.h has const struct FlagEntry *FlagEntries_GetTable(void). */
-extern struct WorldMapPlace *FlagEntries_GetTable__f0ec2b8(void) __asm__("FlagEntries_GetTable");
+const struct FlagEntry *FlagEntries_GetTable(void);
 u32 Func_080ec298(struct WorldMapPlace *place);
 s32 GameFlag_Test(s32 flag);
 void Func_080ec1d0(s32 *screenX, s32 *screenY);
@@ -50,7 +49,7 @@ void Func_080ec2b8(s32 *screenX, s32 *screenY, s32 step) {
   struct WorldMapWork__f0ec2b8 *work = Ram_WorldMapWork;
 
   Party_GetLeaderActor();
-  places = FlagEntries_GetTable__f0ec2b8();
+  places = FlagEntries_GetTable();
   bestDistance = 0x4000000;
   best = -1;
   cursorX = work->x >> 16;
@@ -172,7 +171,7 @@ struct WorldMapMarker {
   u8 unk0a[2];
 };
 
-/* VIEW(f0ec4d4): tag struct WorldMapWork as struct WorldMapWork__f0ec4d4; f0ec2b8.c has another definition. */
+/* VIEW(f0ec4d4): tag struct WorldMapWork as struct WorldMapWork__f0ec4d4; f0ec2b8.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/event_commands/f0ec2b8.c:276: dereferencing pointer to incomplete type. */
 struct WorldMapWork__f0ec4d4 {
   u16 vramBlock;
   u16 windowSlot;
@@ -189,7 +188,7 @@ struct WorldMapWork__f0ec4d4 {
   s32 scrollZ;
 };
 
-/* VIEW(f0ec4d4): tag struct WorldMapPlace as struct WorldMapPlace__f0ec4d4; f0ec2b8.c has another definition. */
+/* VIEW(f0ec4d4): tag struct WorldMapPlace as struct WorldMapPlace__f0ec4d4; f0ec2b8.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/event_commands/f0ec2b8.c:356: structure has no member named `name'. */
 struct WorldMapPlace__f0ec4d4 {
   u8 flag;
   u8 value;
@@ -233,13 +232,10 @@ struct WorldMapAliasedHalfword {
 extern struct WorldMapMarker Data_0202a620;
 
 s32 Party_GetLeaderActor(void);
-/* VIEW(f0ec4d4): routine FlagEntries_GetTable as struct WorldMapPlace__f0ec4d4 *FlagEntries_GetTable(void); f0ec2b8 has struct WorldMapPlace *FlagEntries_GetTable(void). */
-extern struct WorldMapPlace__f0ec4d4 *FlagEntries_GetTable__f0ec4d4(void) __asm__("FlagEntries_GetTable");
+const struct FlagEntry *FlagEntries_GetTable(void);
 s32 FixedSqrt(s32 value);
 void Vector_AddPolarOffset(s32 distance, s32 angle, s32 *position);
 void Func_080ec1d0(s32 *screenX, s32 *screenY);
-/* VIEW(f0ec4d4): routine Func_080ec298 as u32 Func_080ec298(struct WorldMapPlace__f0ec4d4 *place); f0ec2b8 has u32 Func_080ec298(struct WorldMapPlace *place). */
-extern u32 Func_080ec298__f0ec4d4(struct WorldMapPlace__f0ec4d4 *place) __asm__("Func_080ec298");
 s32 GameFlag_Test(s32 flag);
 void Func_080140d8(void *entry, s32 slot);
 s32 ArcTan2(s32 y, s32 x);
@@ -247,8 +243,6 @@ void WindowSprite_PrepareForRedrawFar(void *window);
 s32 Scene_GetAreaNameIndex(s32 scene, s32 entrance);
 void Text_MeasureMessageFar(s32 message, s32 *width, s32 *height);
 void Text_DrawMessageFar(s32 message, void *window, s32 x, s32 y);
-/* VIEW(f0ec4d4): routine Func_080ec484 as void Func_080ec484(void *window, s32 dx, s32 dy); the definition has void Func_080ec484(struct WindowSpriteList *list, s32 dx, s32 dy). */
-extern void Func_080ec484__f0ec4d4(void *window, s32 dx, s32 dy) __asm__("Func_080ec484");
 
 #define WORLD_MAP_HIGH(value) (((s16 *)&(value))[1])
 #define WORLD_MAP_SCALE(value) ((value) * 300 / 640)
@@ -297,7 +291,7 @@ void Func_080ec4d4(void) {
   nearestDistance = 64;
   nearestX = 0;
   nearestY = 0;
-  places = FlagEntries_GetTable__f0ec4d4();
+  places = FlagEntries_GetTable();
   scrollX = work->scrollX & 0xffff0000;
   scrollY = work->scrollZ & 0xffff0000;
   blend = Data_080f1100[(gFrameCount >> 1) & 31];
@@ -370,7 +364,7 @@ void Func_080ec4d4(void) {
       name = place->name;
       entrance = place->nameEntrance;
       flag = place->flag + 0x180;
-      tile = Func_080ec298__f0ec4d4(place);
+      tile = Func_080ec298(place);
       if (tile == 0)
         continue;
       if (tile == 15) {
@@ -547,7 +541,7 @@ void Func_080ec4d4(void) {
        load may alias width's store to the stack and stays after it; as
        NAME_BOX_Y, 10 of 1044 instructions differ in tla-en. */
     height = cursorY - ((struct WorldMapAliasedHalfword *)&NAME_BOX_Y)->value;
-    Func_080ec484__f0ec4d4(work->window, width, height);
+    Func_080ec484(work->window, width, height);
     NAME_BOX_X = cursorX;
     NAME_BOX_Y = cursorY;
   }

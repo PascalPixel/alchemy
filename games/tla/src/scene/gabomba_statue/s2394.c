@@ -244,8 +244,7 @@ void Func_020027cc(void) {
 
 #include "field.h"
 
-/* VIEW(s2394): variable gData_02005944 as extern const u8 gData_02005944[]; the definition has u32 gData_02005944[] = { 38, }. */
-extern const u8 gData_02005944__s2394[] __asm__("gData_02005944");
+extern u32 gData_02005944[];
 extern const u8 gData_02005d7c[];
 extern u32 gData_02005ccc[];
 extern u32 gData_02005d24[];
@@ -255,15 +254,12 @@ void Func_0200533c(void);
 void Func_02005364(void);
 void Func_02001b38(void);
 void Func_02001b68(void);
-/* VIEW(s2394): routine Func_020053bc as void Func_020053bc(const u8 *data); the definition has void Func_020053bc(const u16 *entry). */
-extern void Func_020053bc__s2394(const u8 *data) __asm__("Func_020053bc");
 void Func_02005824(void);
 void Func_0200583c(s32 index, s32 flag, s32 a, s32 b);
 void Func_0200582c(s32 index, s32 a, s32 b);
 s32 Func_02003604(void);
 s32 Func_020048a4(s32 x, s32 z, s32 value, s32 id);
-/* VIEW(s2394): routine Func_02004f40 as void Func_02004f40(s32 *x_out, s32 *z_out); the definition has void Func_02004f40(u32 *x_out, u32 *z_out). */
-extern void Func_02004f40__s2394(s32 *x_out, s32 *z_out) __asm__("Func_02004f40");
+void Func_02004f40(u32 *x_out, u32 *z_out);
 void Func_02005624(struct Actor *object, s32 mode);
 s32 ArcTan2(s32 y, s32 x);
 void Func_02005644(struct Actor *object);
@@ -468,7 +464,7 @@ void Func_02002f70(void) {
   FieldCamera_MoveTo(PIXELS(414), -1, PIXELS(272), 1);
   Func_020057b4();
   Event_ShowMessage(5, 0);
-  Func_02004f40__s2394(&x, &z);
+  Func_02004f40(&x, &z);
   x = (x << 20) + (156 << 17);
   z = (z << 20) + (184 << 16);
   spark = (FieldActor_Create(434, x, 0, z));
@@ -599,11 +595,11 @@ static __inline__ void Exit_Set(s32 index, s32 flag, s32 a, s32 b) {
 
 void Func_020034f4(void) {
   if ((u16)(gMainRoutineWork.entrance - 3) <= 1) {
-    Actor_SetScript(27, gData_02005944__s2394);
-    Actor_SetScript(28, gData_02005944__s2394);
+    Actor_SetScript(27, gData_02005944);
+    Actor_SetScript(28, gData_02005944);
     MapGrid_CopyCellAttributes(33, 24, 3, 3, 27, 29);
   }
-  Func_020053bc__s2394(gData_02005d7c);
+  Func_020053bc(gData_02005d7c);
   if (!Event_GetFlag(0x8ce) || !Event_GetFlag(0x8cf))
     Actor_Get(26)->y = PIXELS(16);
   Func_02005824();
@@ -886,7 +882,7 @@ void Func_02003974(void) {
 
 s32 Func_02003fc0(s32 x0, s32 z0, s32 x1, s32 z1, s32 a, s32 b, s32 c, s32 d);
 void Func_02004270(s32 col, s32 row, s32 a, s32 b);
-/* VIEW(s2394): routine Func_02004380 as s32 Func_02004380(s32 col, s32 row, s32 turn); the definition has u8 Func_02004380(s32 x, s32 z, s32 direction). */
+/* VIEW(s2394): routine Func_02004380 as s32 Func_02004380(s32 col, s32 row, s32 turn); the definition has u8 Func_02004380(s32 x, s32 z, s32 direction); tried as the definition's u8 Func_02004380(s32 x, s32 z, s32 direction), which the object already declares, it does not compile in tla-ja (make modern): games/tla/include/field/event_inline.h:170:48: note: expected 's32' {aka 'int'} but argument is of type 'u8 *' {aka 'unsigned char *'}. */
 extern s32 Func_02004380__s2394(s32 col, s32 row, s32 turn) __asm__("Func_02004380");
 
 s32 Func_02003a64(s32 value) {
@@ -1798,7 +1794,7 @@ struct Unk02004d48 {
 
 void Func_02005654();
 void Func_02005624(struct Actor *object, s32 mode);
-/* VIEW(s4d48): routine Func_02004938 as void Func_02004938(); the parts before it has another declaration. */
+/* VIEW(s4d48): routine Func_02004938 as void Func_02004938(); the parts before it has another declaration; tried as the definition's void Func_02004938(struct Actor *ball, s32 step), which the object already declares, it does not compile in tla-ja: games/tla/src/scene/gabomba_statue/s2394.c:1848: too many arguments to function `Func_02004938'. */
 extern void Func_02004938__s4d48() __asm__("Func_02004938");
 
 s32 Func_02004d48(s32 first, s32 check) {
@@ -1913,13 +1909,7 @@ s32 Func_02004d48(s32 first, s32 check) {
 }
 
 
-/* VIEW(s4d48): tag struct SceneState as struct SceneState__s4d48; s2394.c has another definition. */
-struct SceneState__s4d48 {
-  struct PuzzleCell cells[88];
-};
 
-/* VIEW(s4d48): variable gSceneState as extern struct SceneState__s4d48 gSceneState; puzzle_turn has extern struct SceneState gSceneState. */
-extern struct SceneState__s4d48 gSceneState__s4d48 __asm__("gSceneState");
 
 void Func_02004f40(u32 *x_out, u32 *z_out) {
   u32 z;
@@ -1927,7 +1917,7 @@ void Func_02004f40(u32 *x_out, u32 *z_out) {
 
   for (z = 0; z <= 7; z++) {
     for (x = 0; x <= 10; x++) {
-      if (gSceneState__s4d48.cells[z * 11 + x].kind == 10 && !(x == 5 && z == 3) &&
+      if (gSceneState.cells[z * 11 + x].kind == 10 && !(x == 5 && z == 3) &&
           !(z == 7 && (x == 1 || x == 9))) {
         *x_out = x;
         *z_out = z;

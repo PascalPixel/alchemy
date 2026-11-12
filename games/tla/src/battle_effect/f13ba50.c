@@ -2236,7 +2236,7 @@ void Func_0813e7e0(struct BattleEffectArgument *effect) {
 // The battle background's id, read through a union whose s32 member gives
 // the read view->secondMode's alias set and not the scroll's, so those two
 // stores stay in source order.
-/* VIEW(f13eb70): tag struct BattleBackgroundId as struct BattleBackgroundId__f13eb70; f13ba50.c has another definition. */
+/* VIEW(f13eb70): tag struct BattleBackgroundId as struct BattleBackgroundId__f13eb70; f13ba50.c has another definition; tried with the definition the rest of the object has, Func_0813eb70 moves: 1 of 1093 instructions in tla-ja. */
 union BattleBackgroundId__f13eb70 {
   u16 id;
   s32 word;
@@ -2278,7 +2278,7 @@ void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
 void BattleEffect_CountDownBattlerTints(void);
 void wait(s32 frames);
 
-/* VIEW(f13eb70): static ClearWords as ClearWords__f13eb70; f13ba50 has static inline s32 ClearWords(void *destination, s32 size) { return Iwram_ClearWords(destination, size); }. */
+/* VIEW(f13eb70): static ClearWords as ClearWords__f13eb70; f13ba50 has static inline s32 ClearWords(void *destination, s32 size) { return Iwram_ClearWords(destination, size); }; not tried: ClearWords's definition holds a FAKEMATCH tag. */
 static inline s32 ClearWords__f13eb70(void *destination, s32 size) {
   /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
    * Iwram_ClearWords, 14 of 1102 instructions of Func_0813eb70 differ in
@@ -2286,7 +2286,7 @@ static inline s32 ClearWords__f13eb70(void *destination, s32 size) {
   return Iwram_ClearWords(destination, size);
 }
 
-/* VIEW(f13eb70): static FillWords as FillWords__f13eb70; f13ba50 has static inline s32 FillWords(void *destination, s32 size, u32 value) { return Iwram_FillWords(destination, size, value); }. */
+/* VIEW(f13eb70): static FillWords as FillWords__f13eb70; f13ba50 has static inline s32 FillWords(void *destination, s32 size, u32 value) { return Iwram_FillWords(destination, size, value); }; not tried: FillWords's definition holds a FAKEMATCH tag. */
 static inline s32 FillWords__f13eb70(void *destination, s32 size, u32 value) {
   /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
    * Iwram_FillWords, 4 of 1102 instructions of Func_0813eb70 differ in
@@ -2294,7 +2294,7 @@ static inline s32 FillWords__f13eb70(void *destination, s32 size, u32 value) {
   return Iwram_FillWords(destination, size, value);
 }
 
-/* VIEW(f13eb70): static CopyWords as CopyWords__f13eb70; f13ba50 has static inline s32 CopyWords(void *destination, const void *source, s32 size) { return Iwram_CopyWords(destination, source, size); }. */
+/* VIEW(f13eb70): static CopyWords as CopyWords__f13eb70; f13ba50 has static inline s32 CopyWords(void *destination, const void *source, s32 size) { return Iwram_CopyWords(destination, source, size); }; not tried: CopyWords's definition holds a FAKEMATCH tag. */
 static inline s32 CopyWords__f13eb70(void *destination, const void *source, s32 size) {
   /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
    * Iwram_CopyWords, 47 of 1102 instructions of Func_0813eb70 differ in
@@ -3123,7 +3123,7 @@ void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
 void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
 void Func_081180e8(s32 phase);             // BattlePlayback_StartFar
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
-/* VIEW(f13eb70): routine GetBattleObjectSlotFar as void **GetBattleObjectSlotFar(s32 objectId); motobj.h has struct BattleObj *GetBattleObjectSlotFar(s32 objectId). */
+/* VIEW(f13eb70): routine GetBattleObjectSlotFar as void **GetBattleObjectSlotFar(s32 objectId); motobj.h has struct BattleObj *GetBattleObjectSlotFar(s32 objectId); tried as the 11 declarations' void **GetBattleObjectSlotFar(s32 objectId), it does not compile in tla-ja: games/tla/src/battle_effect/f13ba50.c:3126: conflicting types for `GetBattleObjectSlotFar'. */
 extern void **GetBattleObjectSlotFar__f13eb70(s32 objectId) __asm__("GetBattleObjectSlotFar");
 
 void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height,
@@ -3165,7 +3165,7 @@ struct WordPair {
   s32 b;
 };
 
-/* VIEW(f13eb70): variable gResourceTableEntries as extern struct ResourceTableEntry gResourceTableEntries[]; vram_tab.h has extern struct VramBlockCacheEntry gResourceTableEntries[]. */
+/* VIEW(f13eb70): variable gResourceTableEntries as extern struct ResourceTableEntry gResourceTableEntries[]; vram_tab.h has extern struct VramBlockCacheEntry gResourceTableEntries[]; tried as the 12 declarations' extern struct ResourceTableEntry gResourceTableEntries[], it does not compile in tla-ja: games/tla/include/graphics/vram_tab.h:26: conflicting types for `gResourceTableEntries'. */
 extern struct ResourceTableEntry gResourceTableEntries__f13eb70[] __asm__("gResourceTableEntries");
 extern char ResourceId_Data0B4, ResourceId_Data0C2, ResourceId_Data0C9;
 extern char ResourceId_Data0CA, ResourceId_Data104, ResourceId_Data134;
@@ -4251,7 +4251,7 @@ struct ResourceObjectWork;
 struct StripQuad;
 
 // A texture for the IWRAM renderer.
-/* VIEW(f14153c): tag struct ModelTexture as struct ModelTexture__f14153c; render_model.h has another definition. */
+/* VIEW(f14153c): tag struct ModelTexture as struct ModelTexture__f14153c; render_model.h has another definition; tried with the definition the rest of the object has, BattleEffect_RunEclipse moves: 1 of 2142 instructions, Func_08142944 moves: 1 of 730 instructions in tla-ja. */
 struct ModelTexture__f14153c {
   u32 logWidth : 8;
   u32 logHeight : 8;
@@ -4259,17 +4259,6 @@ struct ModelTexture__f14153c {
   const u8 *pixels;
 };
 
-/* VIEW(f14153c): tag struct RenderModel as struct RenderModel__f14153c; render_model.h has another definition. */
-struct RenderModel__f14153c {
-  s32 kind;
-  s32 unk04;
-  const void *mesh;
-  void *vertices;
-  struct ModelTexture__f14153c *texture;
-  s32 shade;
-  u8 scrollU;
-  u8 scrollV;
-};
 
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);
@@ -4360,7 +4349,7 @@ extern char ResourceId_Data134, ResourceId_TornadoSheet, ResourceId_Data0B4;
 extern char ResourceId_Data0C1, ResourceId_Data0C9, ResourceId_Data0CA;
 
 extern u8 gMapCellBuffer[];
-/* VIEW(f14153c): variable gData_02014000 as extern struct EffectStep gData_02014000[]; f13eb70 has extern u8 gData_02014000[]. */
+/* VIEW(f14153c): variable gData_02014000 as extern struct EffectStep gData_02014000[]; f13eb70 has extern u8 gData_02014000[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/battle_effect/f13ba50.c:4528: `gData_02014000__f14153c' undeclared (first use in this function). */
 extern struct EffectStep gData_02014000__f14153c[] __asm__("gData_02014000");
 extern u8 Data_02010400[];
 extern u8 Data_02010800[];
@@ -4456,7 +4445,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
   struct ModelTexture__f14153c texture;
   struct ModelTexture__f14153c texture2;
   struct ModelTexture__f14153c texture3;
-  struct RenderModel__f14153c *model;
+  struct RenderModel *model;
   struct EffectStep *p;
   struct EclipseObject *obj;
 
@@ -4668,7 +4657,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
         }
       }
       if (frame > 47) {
-        struct RenderModel__f14153c *model;
+        struct RenderModel *model;
         void *verts;
         s32 modelShade;
 
@@ -4857,7 +4846,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
     }
     if (frame <= 109) {
       // Default: set for real below.
-      struct RenderModel__f14153c *model = 0;
+      struct RenderModel *model = 0;
       void *verts = 0;
 
       verts = Heap_AllocEwram(32);
@@ -5162,7 +5151,7 @@ struct Model;
 enum { KIND_RIGHT = 78, KIND_LEFT = 79, KIND_FINALE = 80 };
 
 // One model for the IWRAM renderer.
-/* VIEW(f14153c): tag struct ModelDraw as struct ModelDraw__f14153c; f13ba50.c has another definition. */
+/* VIEW(f14153c): tag struct ModelDraw as struct ModelDraw__f14153c; f13ba50.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/battle_effect/f13ba50.c:5359: structure has no member named `depthBias'. */
 struct ModelDraw__f14153c {
   s32 kind;
   s32 next;
@@ -11486,21 +11475,11 @@ void BattleEffect_RunPhoenix(struct BattleEffectArgument *effect) {
 // ---- games/tla/src/battle_effect/f14b9e8.c ----
 struct Model;
 
-/* VIEW(f14b9e8): static CopyWords_ as CopyWords___f14b9e8; the definition has static __inline__ void CopyWords_(void *destination, const void *source, s32 size). */
-static __inline__ s32 CopyWords___f14b9e8(void *destination, const void *source,
-                                 s32 size) {
-  return Iwram_CopyWords(destination, source, size);
-}
 
 #define HEAP_BLITTER 104 // ☀️ HEAP_SLOT_BLITTER
 
 // The Lost Age numbers its blitter modes in the reverse of The Broken Seal's
 // order: Func_08196404 builds additive for 0, max for 1, transparent for 2.
-/* VIEW(f14b9e8): enumerator BLITTER_ADDITIVE as BLITTER_ADDITIVE__f14b9e8; f14153c has enum { BLITTER_ADDITIVE, BLITTER_MAX, BLITTER_TRANSPARENT, BLITTER_COPY }. */
-/* VIEW(f14b9e8): enumerator BLITTER_MAX as BLITTER_MAX__f14b9e8; f14153c has enum { BLITTER_ADDITIVE, BLITTER_MAX, BLITTER_TRANSPARENT, BLITTER_COPY }. */
-/* VIEW(f14b9e8): enumerator BLITTER_TRANSPARENT as BLITTER_TRANSPARENT__f14b9e8; f14153c has enum { BLITTER_ADDITIVE, BLITTER_MAX, BLITTER_TRANSPARENT, BLITTER_COPY }. */
-/* VIEW(f14b9e8): enumerator BLITTER_COPY as BLITTER_COPY__f14b9e8; f14153c has enum { BLITTER_ADDITIVE, BLITTER_MAX, BLITTER_TRANSPARENT, BLITTER_COPY }. */
-enum { BLITTER_ADDITIVE__f14b9e8, BLITTER_MAX__f14b9e8, BLITTER_TRANSPARENT__f14b9e8, BLITTER_COPY__f14b9e8 };
 
 #define QUAD_FRAMES 64
 #define QUAD_COUNT 16
@@ -11602,7 +11581,7 @@ void Func_0814b9e8(struct BattleEffectArgument *effect, s32 mode) {
                                work->sheet + SHEET_DJINN, 1, 0);
     /* FAKEMATCH(wrapper): the palette copy through CopyWords_; as a direct
      * Iwram_CopyWords call, 2 of 549 instructions differ in tla-en. */
-    CopyWords___f14b9e8((void *)BG_PLTT,
+    CopyWords_((void *)BG_PLTT,
                Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet), 128);
   } else if (mode == QUADS_MARS) {
     Func_0815585c(effect, (effect->side ^ 1) << 4 | 2, anchor, size);
@@ -11625,10 +11604,10 @@ void Func_0814b9e8(struct BattleEffectArgument *effect, s32 mode) {
   REG_BG2X = (64 - anchor[0]) << 8;
   if (effect->side == 0)
     BattleEffect_LoadBlitter(HEAP_BLITTER,
-                             BLITTER_ADDITIVE__f14b9e8 << 4 | COMPOSITE_CLIP_X |
+                             BLITTER_ADDITIVE << 4 | COMPOSITE_CLIP_X |
                                  COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X);
   else
-    BattleEffect_LoadBlitter(HEAP_BLITTER, BLITTER_ADDITIVE__f14b9e8 << 4 |
+    BattleEffect_LoadBlitter(HEAP_BLITTER, BLITTER_ADDITIVE << 4 |
                                                COMPOSITE_CLIP_X |
                                                COMPOSITE_CLIP_Y);
   draws[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
@@ -12293,8 +12272,6 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect);
 void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect);
 
 void BattleEffect_RunNeptune(struct BattleEffectArgument *effect);
-/* VIEW(f14b9e8): routine BattleEffect_RunTiamat as void BattleEffect_RunTiamat(s32 *arg); the definition has DEFINE_EFFECT_KIND(BattleEffect_RunDragonDriver, Func_08147aec, 1) DEFINE_EFFECT_KIND(BattleEffect_RunTiamat, Func_08147aec, 0) void Func_08.... */
-extern void BattleEffect_RunTiamat__f14b9e8(s32 *arg) __asm__("BattleEffect_RunTiamat");
 void BattleEffect_RunProcne(struct BattleEffectArgument *effect);
 void BattleEffect_RunJudgment(struct BattleEffectArgument *effect);
 void BattleEffect_RunBoreas(struct BattleEffectArgument *effect);
@@ -12353,7 +12330,7 @@ void BattleEffect_RunSceneEffect(s32 *arg) {
       BattleEffect_RunNeptune(arg);
       break;
     case 7:
-      BattleEffect_RunTiamat__f14b9e8(arg);
+      BattleEffect_RunTiamat(arg);
       break;
     case 8:
       BattleEffect_RunProcne(arg);
@@ -12524,14 +12501,14 @@ void BattleEffect_SelectLivingTargets(struct FxPartyList *party) {
 
 // ---- games/tla/src/battle_effect/f14cca8.c ----
 
-/* VIEW(f14cca8): variable gBgScroll as extern struct FxBgScroll gBgScroll[]; bg_scroll.h has extern struct BgScroll gBgScroll[]. */
+/* VIEW(f14cca8): variable gBgScroll as extern struct FxBgScroll gBgScroll[]; bg_scroll.h has extern struct BgScroll gBgScroll[]; tried as the rest of the object declares it, Func_0814cca8 moves: 1 of 57 instructions in tla-ja. */
 extern struct FxBgScroll gBgScroll__f14cca8[] __asm__("gBgScroll");
 extern u32 gCameraSceneParameters[];
 
 void BattleBackground_LoadFar(s32, s32, s32);
 void wait(s32 frames);
 
-/* VIEW(f14cca8): static FillWords_ as FillWords___f14cca8; f13eb70 has static __inline__ void FillWords_(void *destination, s32 size, u32 value) { Iwram_FillWords(destination, size, value); }. */
+/* VIEW(f14cca8): static FillWords_ as FillWords___f14cca8; f13eb70 has static __inline__ void FillWords_(void *destination, s32 size, u32 value) { Iwram_FillWords(destination, size, value); }; tried with the definition the rest of the object has, Func_0814cca8 moves: 3 of 57 instructions in tla-ja. */
 static __inline__ void FillWords___f14cca8(void *destination, s32 size, u32 value) {
   // The call in a once-only block, so the entry loads before the size; as
   // the plain call, 6 of 59 instructions of Func_0814cca8 differ in tla-en.

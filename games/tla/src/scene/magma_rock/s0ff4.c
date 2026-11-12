@@ -17,8 +17,7 @@ struct MagmaRockEventWork {
   u16 value1b2;
 };
 
-/* VIEW(s0ff4): routine Func_02001738 as void Func_02001738(void); the definition has void Func_02001738(struct Actor *object). */
-extern void Func_02001738__s0ff4(void) __asm__("Func_02001738");
+void Func_02001738(struct Actor *object);
 
 void Func_02000ff4(struct Actor *object) {
   struct MagmaRockEventWork *work = Ram_HeapSlots->eventWork;
@@ -34,7 +33,7 @@ void Func_02000ff4(struct Actor *object) {
     else
       Actor_SetSpriteColor(object, 0);
   } else {
-    object->update = Func_02001738__s0ff4;
+    object->update = Func_02001738;
     object->timer = 1;
   }
   if (work->value166 == 0 && work->value15a == 0 && work->value15e == 0 &&
@@ -279,17 +278,11 @@ hit:
 // ---- games/tla/src/scene/magma_rock/target.c ----
 #include "macros.h"
 
-/* VIEW(target): routine Func_02000ff4 as void Func_02000ff4(void); the definition has void Func_02000ff4(struct Actor *object). */
-extern void Func_02000ff4__target(void) __asm__("Func_02000ff4");
-/* VIEW(target): routine Func_020011e4 as void Func_020011e4(struct Actor *object); the definition has s32 Func_020011e4(struct Actor *source). */
-extern void Func_020011e4__target(struct Actor *object) __asm__("Func_020011e4");
 void Func_02003820(s32 x, s32 y, s32 z, s32 kind);
 void Func_020038dc(void);
 void Func_02003998(void);
 void Func_02003a54(struct Actor *object, s32 a);
 void Func_02003aec(void);
-/* VIEW(target): routine Func_02003af4 as void Func_02003af4(void); s0ff4 has s32 Func_02003af4(void). */
-extern void Func_02003af4__target(void) __asm__("Func_02003af4");
 
 void Func_02001444(void) {
   struct MagmaRockWork *work = Ram_HeapSlots->effectWork;
@@ -304,8 +297,8 @@ void Func_02001444(void) {
   FieldEvent_Wait(3);
   Actor_SetSpriteColor(work->target, 0);
   FieldEvent_Wait(1);
-  Func_020011e4__target(work->target);
-  Func_02003af4__target();
+  Func_020011e4(work->target);
+  Func_02003af4();
 }
 
 void Func_0200148c(void) {
@@ -316,8 +309,8 @@ void Func_0200148c(void) {
   FieldEvent_ResolvePendingActions(0);
   object = work->target;
   object->timer = 0x400;
-  object->update = Func_02000ff4__target;
-  Func_02003af4__target();
+  object->update = Func_02000ff4;
+  Func_02003af4();
 }
 
 void Func_020014bc(s32 mode, s32 cue) {
@@ -394,12 +387,6 @@ struct MagmaRockEffectConfig {
 };
 
 extern u32 gData_02003d50[];
-/* VIEW(target): routine Func_020011b8 as void Func_020011b8(void); the definition has void Func_020011b8(struct Actor *object). */
-extern void Func_020011b8__target(void) __asm__("Func_020011b8");
-/* VIEW(target): routine Func_0200015c as void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags, struct MagmaRockEffectConfig *config); s0ff4 has void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags, struct EffectOptions *options). */
-extern void Func_0200015c__target(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                   s32 velocityZ, u32 flags,
-                   struct MagmaRockEffectConfig *config) __asm__("Func_0200015c");
 void Func_020005cc(s32 layer, s32 x, s32 z, s32 height);
 
 #define EFFECT_Y(object) (((union Position *)&(object)->effect.y)->word)
@@ -434,9 +421,9 @@ void Func_020015e4(union FieldObject *object) {
     config.id = 403;
     config.variant = 10;
     config.kind = 2;
-    config.unk24 = Func_020011b8__target;
+    config.unk24 = Func_020011b8;
     config.data = gData_02003d50;
-    Func_0200015c__target(object->effect.x + 0x10000, object->effect.y - 0x40000,
+    Func_0200015c(object->effect.x + 0x10000, object->effect.y - 0x40000,
                   object->effect.z, ((Random16Far() & mask) - 3) << 14,
                   -0x20000, step, 0x1330000, &config);
   }
@@ -456,32 +443,10 @@ void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
 
 
 extern u32 gData_02003d50[];
-/* VIEW(s1738): variable gData_02003d9e as extern u8 gData_02003d9e[]; s0ff4 has extern s16 gData_02003d9e[]. */
-extern u8 gData_02003d9e__s1738[] __asm__("gData_02003d9e");
-/* VIEW(s1738): variable gData_02003db2 as extern u8 gData_02003db2[]; s0ff4 has extern s16 gData_02003db2[]. */
-extern u8 gData_02003db2__s1738[] __asm__("gData_02003db2");
-/* VIEW(s1738): variable gData_02003dc4 as extern u8 gData_02003dc4[]; s0ff4 has extern s16 gData_02003dc4[]. */
-extern u8 gData_02003dc4__s1738[] __asm__("gData_02003dc4");
-/* VIEW(s1738): variable gData_02003dd6 as extern u8 gData_02003dd6[]; s0ff4 has extern s16 gData_02003dd6[]. */
-extern u8 gData_02003dd6__s1738[] __asm__("gData_02003dd6");
-/* VIEW(s1738): variable gData_02003dee as extern u8 gData_02003dee[]; s0ff4 has extern s16 gData_02003dee[]. */
-extern u8 gData_02003dee__s1738[] __asm__("gData_02003dee");
 
-/* VIEW(s1738): routine Func_0200015c as void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags, struct MagmaRockEffectConfig *config); s0ff4 has void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags, struct EffectOptions *options). */
-extern void Func_0200015c__s1738(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                   s32 velocityZ, u32 flags,
-                   struct MagmaRockEffectConfig *config) __asm__("Func_0200015c");
 void Scene_SetActorSpritePriority(struct Actor *object, s32 priority);
 void Func_02003a54(struct Actor *object, s32 a);
 void Func_02003c4c(struct Actor *object, s32 a);
-/* VIEW(s1738): routine Func_020010cc as s32 Func_020010cc(s32 x, s32 z, const u8 *data); the definition has s32 Func_020010cc(s32 x, s32 z, u16 *table). */
-extern s32 Func_020010cc__s1738(s32 x, s32 z, const u8 *data) __asm__("Func_020010cc");
-/* VIEW(s1738): routine Func_020011b8 as void Func_020011b8(void); the definition has void Func_020011b8(struct Actor *object). */
-extern void Func_020011b8__s1738(void) __asm__("Func_020011b8");
-/* VIEW(s1738): routine Func_020015e4 as void Func_020015e4(void); the definition has void Func_020015e4(union FieldObject *object). */
-extern void Func_020015e4__s1738(void) __asm__("Func_020015e4");
-/* VIEW(s1738): routine Func_02001528 as void Func_02001528(void); the definition has void Func_02001528(struct Actor *part). */
-extern void Func_02001528__s1738(void) __asm__("Func_02001528");
 
 struct AnimationEntry;
 
@@ -529,11 +494,11 @@ void Func_02001738(struct Actor *object) {
       config.id = 403;
       config.variant = 10;
       config.kind = 2;
-      config.unk24 = Func_020011b8__s1738;
+      config.unk24 = Func_020011b8;
       config.data = gData_02003d50;
       dx = Random16Far() & 15;
       dz = Random16Far() & 15;
-      Func_0200015c__s1738(object->x + 0x10000, object->y + 0x180000, object->z,
+      Func_0200015c(object->x + 0x10000, object->y + 0x180000, object->z,
                     (dx - 8) << 14, 0, (dz - 8) << 14, 0x1330000, &config);
     }
   } else if (object->timer == 33) {
@@ -569,7 +534,7 @@ void Func_02001738(struct Actor *object) {
       // differ 34).
       part->unk5c[6] = 3 - i;
       part->watchedObject = object;
-      part->update = Func_02001528__s1738;
+      part->update = Func_02001528;
       Actor_SetPartAttribute(part, 3);
     }
     {
@@ -585,12 +550,12 @@ void Func_02001738(struct Actor *object) {
       part = parts[0];
       part->unk5c[6] = 3;
       part->watchedObject = object;
-      part->update = Func_02001528__s1738;
+      part->update = Func_02001528;
       Actor_SetPartAttribute(part, 3);
     }
     id = 0;
     if (gMainRoutineWork.scene == (s32)&SceneId_Ov691Room1) {
-      id = Func_020010cc__s1738(object->x, object->z, gData_02003d9e__s1738);
+      id = Func_020010cc(object->x, object->z, gData_02003d9e);
     } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov691Room2) {
       // The native loads x and z once, ahead of the entrance tests.
       s16 entrance = gMainRoutineWork.entrance;
@@ -598,18 +563,18 @@ void Func_02001738(struct Actor *object) {
       s32 z = object->z;
 
       if (entrance <= 3)
-        id = Func_020010cc__s1738(x, z, gData_02003db2__s1738);
+        id = Func_020010cc(x, z, gData_02003db2);
       else if (entrance <= 8)
-        id = Func_020010cc__s1738(x, z, gData_02003dc4__s1738);
+        id = Func_020010cc(x, z, gData_02003dc4);
       else if (entrance <= 12)
-        id = Func_020010cc__s1738(x, z, gData_02003dd6__s1738);
+        id = Func_020010cc(x, z, gData_02003dd6);
       else
-        id = Func_020010cc__s1738(x, z, gData_02003dee__s1738);
+        id = Func_020010cc(x, z, gData_02003dee);
     }
     fifthPart = Actor_Get(id);
     fifthPart->unk5c[6] = 4;
     fifthPart->watchedObject = object;
-    fifthPart->update = Func_020015e4__s1738;
+    fifthPart->update = Func_020015e4;
     object->timer++;
   } else if (object->timer > 364) {
     Actor_SetPartAttribute(object, 0);
@@ -663,8 +628,6 @@ void Func_02001a38(s32 mode, s32 cue) {
 }
 
 void Func_02003aec(void);
-/* VIEW(s1738): routine Func_02003af4 as void Func_02003af4(void); s0ff4 has s32 Func_02003af4(void). */
-extern void Func_02003af4__s1738(void) __asm__("Func_02003af4");
 
 void Func_02001a8c(s32 mode, s32 cue) {
   struct MagmaRockWork *work = Ram_HeapSlots->effectWork;
@@ -708,7 +671,7 @@ void Func_02001b44(void) {
     FieldEvent_Wait(5);
     Event_PlaySound(123);
     FieldEvent_SetExitRequest(2);
-    Func_02003af4__s1738();
+    Func_02003af4();
   }
   Event_SetFlag(0x2f8);
 }
@@ -755,19 +718,13 @@ void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 void Sound_Play(s32 cue);
 void Actor_SetActionById(s32 id, s32 action);
-/* VIEW(s1c00): routine Func_0200015c as void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags, struct MagmaRockEffectOptions *options); s1738 has void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags, struct MagmaRockEffectConfig *config). */
-extern void Func_0200015c__s1c00(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                   s32 velocityZ, u32 flags,
-                   struct MagmaRockEffectOptions *options) __asm__("Func_0200015c");
 void Camera_MoveWithinMapBounds(s32 a, s32 b, s32 c, s32 d);
 void Event_Wait(s32 frames);
 void Map_SetScreenShake(s32 a, s32 b, s32 c);
 void Map_WaitForShakeToSettle(void);
-/* VIEW(s1c00): routine Func_080d452c as void Func_080d452c(s32 a, s32 b); event.h has s32 Func_080d452c(s32 actorId, s32 pan). */
+/* VIEW(s1c00): routine Func_080d452c as void Func_080d452c(s32 a, s32 b); event.h has s32 Func_080d452c(s32 actorId, s32 pan); tried as the definition's void Func_080d452c(s32 id, s32 use_setter), it does not compile in tla-ja: games/tla/src/scene/magma_rock/s0ff4.c:725: conflicting types for `Func_080d452c'. */
 extern void Func_080d452c__s1c00(s32 a, s32 b) __asm__("Func_080d452c");
 void Func_02003b6c(void);
-/* VIEW(s1c00): routine Func_02003af4 as void Func_02003af4(void); s0ff4 has s32 Func_02003af4(void). */
-extern void Func_02003af4__s1c00(void) __asm__("Func_02003af4");
 
 void Func_02001c00(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -799,7 +756,7 @@ first:
     offset[0] = ((r & 15) << 16) - 0x80000;
   }
   offset[1] = (Random16Far() & 15) << 16;
-  Func_0200015c__s1c00(leader->x + offset[0], leader->y + offset[1], leader->z, 0,
+  Func_0200015c(leader->x + offset[0], leader->y + offset[1], leader->z, 0,
                 0x13333, 0, 0xb0000, opt);
   wait(5);
   i++;
@@ -818,7 +775,7 @@ second:
   if (phase == 0) {
     offset[0] = ((Random16Far() & 15) << 16) - 0x80000;
     offset[1] = (Random16Far() & 15) << 16;
-    Func_0200015c__s1c00(leader->x + offset[0], leader->y + offset[1], leader->z, 0,
+    Func_0200015c(leader->x + offset[0], leader->y + offset[1], leader->z, 0,
                   0x13333, phase, 0xb0000, opt);
   }
   wait(1);
@@ -841,7 +798,7 @@ second:
   GameFlag_ClearBit(0x260);
   leader->gravity = 0x10000;
   leader->bounce = 0x4000;
-  Func_02003af4__s1c00();
+  Func_02003af4();
 }
 
 // ---- games/tla/src/scene/magma_rock/s1e08.c ----
@@ -941,28 +898,12 @@ void Func_02001ffc(void) {
   Event_SetFlag(0x252);
 }
 
-/* VIEW(s1e08): tag struct MagmaRockEffectConfig as struct MagmaRockEffectConfig__s1e08; s0ff4.c has another definition. */
-struct MagmaRockEffectConfig__s1e08 {
-  s32 kind;
-  s32 variant;
-  s32 unk08;
-  s32 unk0c;
-  u8 unk10[8];
-  u16 id;
-  u8 unk1a[2];
-  const void *data;
-  u8 unk20[8];
-};
 
 extern u32 gData_02003d50[];
 
-/* VIEW(s1e08): routine Func_0200015c as void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags, struct MagmaRockEffectConfig__s1e08 *config); s1738 has void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags, struct MagmaRockEffectConfig *config). */
-extern void Func_0200015c__s1e08(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                   s32 velocityZ, u32 flags,
-                   struct MagmaRockEffectConfig__s1e08 *config) __asm__("Func_0200015c");
 
 void Func_02002024(s32 x, s32 z) {
-  struct MagmaRockEffectConfig__s1e08 config;
+  struct MagmaRockEffectConfig config;
   s32 position[3];
   s32 i;
   s32 kind;
@@ -978,7 +919,7 @@ loop:
   position[0] = x + ((Random16Far() & 63) << 16) - Q16_ONE * 32;
   position[1] = (Random16Far() & 15) << 12;
   position[2] = z + ((Random16Far() & 63) << 16) - Q16_ONE * 32;
-  Func_0200015c__s1e08(position[0], 0, position[2], 0, position[1], 0, 0x3a0001,
+  Func_0200015c(position[0], 0, position[2], 0, position[1], 0, 0x3a0001,
                 &config);
   i++;
   if (i != 4)

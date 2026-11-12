@@ -92,8 +92,6 @@ struct JupiterLighthouseAerieObject {
   s32 z;
 };
 
-/* VIEW(jupiter_lighthouse_aerie): routine Func_02001070 as void Func_02001070(struct JupiterLighthouseAerieObject *object); the definition has void Func_02001070(struct Actor *object). */
-extern void Func_02001070__jupiter_lighthouse_aerie(struct JupiterLighthouseAerieObject *object) __asm__("Func_02001070");
 void Func_020017a8(s32 a, s32 b, s32 c);
 void Func_02002a78(s32 x, s32 z, s32 a, s32 b);
 void Func_02002a88(void);
@@ -116,10 +114,10 @@ void Func_020001b4(void) {
   }
   FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   FieldEvent_Wait(40);
-  Func_02001070__jupiter_lighthouse_aerie(((struct JupiterLighthouseAerieObject *)Actor_Get(9)));
-  Func_02001070__jupiter_lighthouse_aerie(((struct JupiterLighthouseAerieObject *)Actor_Get(10)));
-  Func_02001070__jupiter_lighthouse_aerie(((struct JupiterLighthouseAerieObject *)Actor_Get(11)));
-  Func_02001070__jupiter_lighthouse_aerie(((struct JupiterLighthouseAerieObject *)Actor_Get(12)));
+  Func_02001070(((struct JupiterLighthouseAerieObject *)Actor_Get(9)));
+  Func_02001070(((struct JupiterLighthouseAerieObject *)Actor_Get(10)));
+  Func_02001070(((struct JupiterLighthouseAerieObject *)Actor_Get(11)));
+  Func_02001070(((struct JupiterLighthouseAerieObject *)Actor_Get(12)));
   Func_02002af0();
   Func_02002a90();
 }
@@ -140,10 +138,10 @@ void Func_02000264(void) {
   }
   FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   FieldEvent_Wait(40);
-  Func_02001070__jupiter_lighthouse_aerie(((struct JupiterLighthouseAerieObject *)Actor_Get(9)));
-  Func_02001070__jupiter_lighthouse_aerie(((struct JupiterLighthouseAerieObject *)Actor_Get(10)));
-  Func_02001070__jupiter_lighthouse_aerie(((struct JupiterLighthouseAerieObject *)Actor_Get(11)));
-  Func_02001070__jupiter_lighthouse_aerie(((struct JupiterLighthouseAerieObject *)Actor_Get(12)));
+  Func_02001070(((struct JupiterLighthouseAerieObject *)Actor_Get(9)));
+  Func_02001070(((struct JupiterLighthouseAerieObject *)Actor_Get(10)));
+  Func_02001070(((struct JupiterLighthouseAerieObject *)Actor_Get(11)));
+  Func_02001070(((struct JupiterLighthouseAerieObject *)Actor_Get(12)));
   Func_02002af0();
   Func_02002a90();
 }
@@ -587,10 +585,6 @@ struct GustObject {
 
 s32 Math_Cosine(s32 angle);
 void Func_020029f0(struct GustObject *object, s32 mode);
-/* VIEW(s0d08): routine Actor_SetSingleChildFlags as void Actor_SetSingleChildFlags(struct GustObject *object, u32 flags); field.h has void Actor_SetSingleChildFlags(struct Actor *object, u32 flags). */
-extern void Actor_SetSingleChildFlags__s0d08(struct GustObject *object, u32 flags) __asm__("Actor_SetSingleChildFlags");
-/* VIEW(s0d08): routine Func_02000b48 as void Func_02000b48(struct GustObject *object); the definition has void Func_02000b48(struct Actor *self). */
-extern void Func_02000b48__s0d08(struct GustObject *object) __asm__("Func_02000b48");
 void Func_02001e78(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options);
@@ -611,14 +605,14 @@ struct GustObject *Func_02000d08(struct GustObject *source) {
   object = ((struct GustObject *)FieldActor_Create(280, position.x, source->y,
                                                    position.z));
   Func_020029f0(object, 2);
-  Actor_SetSingleChildFlags__s0d08(object, 0);
+  Actor_SetSingleChildFlags(object, 0);
   object->motionFlags = 0;
   object->priorityFlags &= ~1;
   object->angle = source->angle;
   object->unk64 = 0;
   object->unk62 = 0;
   object->unk63 = 0;
-  object->update = Func_02000b48__s0d08;
+  object->update = Func_02000b48;
   object->unk30 = 0x18000;
   options.priority = 1;
   options.palette = 7;

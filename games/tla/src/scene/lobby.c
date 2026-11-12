@@ -1056,8 +1056,6 @@ void Func_02000fbc(s32 actor) {
 #include "scene_ids.h"
 
 s32 Func_02000f6c(s32 id);
-/* VIEW(talk): routine Func_02000fbc as s32 Func_02000fbc(s32 actor); the definition has void Func_02000fbc(s32 actor). */
-extern s32 Func_02000fbc__talk(s32 actor) __asm__("Func_02000fbc");
 void Func_0200191c(void);
 void Func_0200197c(void);
 void Map_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX, s32 destY,
@@ -1068,13 +1066,12 @@ void Func_02001a14(void);
 void Func_02001a1c(void);
 void Event_SetMessageId(s32 message);
 void Event_ShowMessageAndWait(s32 actor, s32 flags);
-/* VIEW(talk): routine Func_080d47b4 as void Func_080d47b4(s32 actor, s32 animation, s32 flags); event.h has s32 Func_080d47b4(s32 actorId, s32 emote, s32 frames). */
+/* VIEW(talk): routine Func_080d47b4 as void Func_080d47b4(s32 actor, s32 animation, s32 flags); event.h has s32 Func_080d47b4(s32 actorId, s32 emote, s32 frames); tried as the definition's struct BattleEffectWatchedObject *Func_080d47b4(s32 resourceId, s32 flags, s32 state), it does not compile in tla-ja: games/tla/src/scene/lobby.c:1069: conflicting types for `Func_080d47b4'. */
 extern void Func_080d47b4__talk(s32 actor, s32 animation, s32 flags) __asm__("Func_080d47b4");
 s32 Func_02001a84(s32 scene, s32 entrance);
 void Event_ResolvePendingActions(s32 skip);
 void Actor_SetAngleToward(s32 actor, s32 target, s32 frames);
-/* VIEW(talk): routine FieldMessage_Show as void FieldMessage_Show(const u8 *message, s32 flags); event.h has void FieldMessage_Show(s32 message, s32 flags). */
-extern void FieldMessage_Show__talk(const u8 *message, s32 flags) __asm__("FieldMessage_Show");
+void FieldMessage_Show(s32 no, s32 flags);
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -1131,7 +1128,7 @@ s32 Func_0200122c(s32 actor) {
   s32 message;
 
   if (actor == 14 && (gInput.held & 0x300)) {
-    Func_02000fbc__talk(14);
+    Func_02000fbc(14);
     return;
   }
   Func_02001a14();
@@ -1221,8 +1218,6 @@ const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
 
 s32 Func_02000f6c(s32 id);
-/* VIEW(scene_events): routine Func_02000fbc as void Func_02000fbc(s32 actor); talk has s32 Func_02000fbc(s32 actor). */
-extern void Func_02000fbc__scene_events(s32 actor) __asm__("Func_02000fbc");
 void Func_0200191c(void);
 void Func_0200197c(void);
 void Func_020019e4(s32 value, s32 digits);
@@ -1260,7 +1255,7 @@ next:
 }
 
 
-/* VIEW(scene_events): tag struct LobbyEventWork as struct LobbyEventWork__scene_events; lobby.c has another definition. */
+/* VIEW(scene_events): tag struct LobbyEventWork as struct LobbyEventWork__scene_events; lobby.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/lobby.c:1307: structure has no member named `startTransition'. */
 struct LobbyEventWork__scene_events {
   u8 unk000[0x16a];
   s16 raisedTrigger;
@@ -1499,30 +1494,6 @@ s32 Func_0200145c(void) {
 s32 Scene_PrepareMap(void) { return 0; }
 
 
-/* VIEW(scene_events): routine Func_020002d8 as void Func_020002d8(void); the definition has s32 Func_020002d8(void). */
-extern void Func_020002d8__scene_events(void) __asm__("Func_020002d8");
-/* VIEW(scene_events): routine Func_02000344 as void Func_02000344(void); the definition has s32 Func_02000344(void). */
-extern void Func_02000344__scene_events(void) __asm__("Func_02000344");
-/* VIEW(scene_events): routine Func_02000864 as void Func_02000864(void); the definition has s32 Func_02000864(void). */
-extern void Func_02000864__scene_events(void) __asm__("Func_02000864");
-/* VIEW(scene_events): routine Func_02000bb0 as void Func_02000bb0(void); the definition has s32 Func_02000bb0(void). */
-extern void Func_02000bb0__scene_events(void) __asm__("Func_02000bb0");
-/* VIEW(scene_events): routine Func_02000da0 as void Func_02000da0(void); the definition has s32 Func_02000da0(s32 actor). */
-extern void Func_02000da0__scene_events(void) __asm__("Func_02000da0");
-/* VIEW(scene_events): routine Func_02000e4c as void Func_02000e4c(void); the definition has s32 Func_02000e4c(s32 id). */
-extern void Func_02000e4c__scene_events(void) __asm__("Func_02000e4c");
-/* VIEW(scene_events): routine Func_02000f50 as void Func_02000f50(void); the definition has void Func_02000f50(s32 value). */
-extern void Func_02000f50__scene_events(void) __asm__("Func_02000f50");
-/* VIEW(scene_events): routine Func_02001130 as void Func_02001130(void); the definition has s32 Func_02001130(s32 actor). */
-extern void Func_02001130__scene_events(void) __asm__("Func_02001130");
-/* VIEW(scene_events): routine Func_02001210 as void Func_02001210(void); the definition has s32 Func_02001210(void). */
-extern void Func_02001210__scene_events(void) __asm__("Func_02001210");
-/* VIEW(scene_events): routine Func_0200122c as void Func_0200122c(void); the definition has s32 Func_0200122c(s32 actor). */
-extern void Func_0200122c__scene_events(void) __asm__("Func_0200122c");
-/* VIEW(scene_events): routine Func_02001304 as void Func_02001304(void); the definition has s32 Func_02001304(s32 actor). */
-extern void Func_02001304__scene_events(void) __asm__("Func_02001304");
-/* VIEW(scene_events): routine Func_02001388 as void Func_02001388(void); the definition has s32 Func_02001388(s32 id). */
-extern void Func_02001388__scene_events(void) __asm__("Func_02001388");
 
 /// Edition-specific link handshake values (each word is four ASCII characters).
 // clang-format off
@@ -1636,34 +1607,34 @@ u32 gData_02001ee0[] = {
 // clang-format on
 
 struct Trigger gSceneEvents[] = {
-    {0, 0, CONDITION_ALWAYS, EVENT(Func_02001130__scene_events)},
-    {0, 1, CONDITION_ALWAYS, EVENT(Func_02001130__scene_events)},
-    {0, 2, CONDITION_ALWAYS, EVENT(Func_02001130__scene_events)},
-    {0, 3, CONDITION_ALWAYS, EVENT(Func_02001130__scene_events)},
-    {0, 5, CONDITION_ALWAYS, EVENT(Func_02001130__scene_events)},
-    {0, 6, CONDITION_ALWAYS, EVENT(Func_02001130__scene_events)},
-    {0, 7, CONDITION_ALWAYS, EVENT(Func_02001130__scene_events)},
-    {0, 8, CONDITION_ALWAYS, EVENT(Func_02000bb0__scene_events)},
-    {0, 9, CONDITION_ALWAYS, EVENT(Func_02000da0__scene_events)},
-    {0, 10, CONDITION_ALWAYS, EVENT(Func_02000f50__scene_events)},
+    {0, 0, CONDITION_ALWAYS, EVENT(Func_02001130)},
+    {0, 1, CONDITION_ALWAYS, EVENT(Func_02001130)},
+    {0, 2, CONDITION_ALWAYS, EVENT(Func_02001130)},
+    {0, 3, CONDITION_ALWAYS, EVENT(Func_02001130)},
+    {0, 5, CONDITION_ALWAYS, EVENT(Func_02001130)},
+    {0, 6, CONDITION_ALWAYS, EVENT(Func_02001130)},
+    {0, 7, CONDITION_ALWAYS, EVENT(Func_02001130)},
+    {0, 8, CONDITION_ALWAYS, EVENT(Func_02000bb0)},
+    {0, 9, CONDITION_ALWAYS, EVENT(Func_02000da0)},
+    {0, 10, CONDITION_ALWAYS, EVENT(Func_02000f50)},
     {0, 11, CONDITION_ALWAYS, MSGNO(MsgWelcomeToBattle)},
     {0, 12, CONDITION_ALWAYS, MSGNO(MsgHmItComes)},
-    {0, 13, CONDITION_ALWAYS, EVENT(Func_0200122c__scene_events)},
-    {0, 14, CONDITION_ALWAYS, EVENT(Func_0200122c__scene_events)},
-    {0, 15, CONDITION_ALWAYS, EVENT(Func_02000e4c__scene_events)},
-    {0, 16, CONDITION_ALWAYS, EVENT(Func_02001304__scene_events)},
+    {0, 13, CONDITION_ALWAYS, EVENT(Func_0200122c)},
+    {0, 14, CONDITION_ALWAYS, EVENT(Func_0200122c)},
+    {0, 15, CONDITION_ALWAYS, EVENT(Func_02000e4c)},
+    {0, 16, CONDITION_ALWAYS, EVENT(Func_02001304)},
     {0, 17, CONDITION_ALWAYS, MSGNO(MsgInTheLinked)},
     {0, 18, CONDITION_ALWAYS, MSGNO(MsgSoYouWin)},
     {0, 19, CONDITION_ALWAYS, MSGNO(MsgYouCouldUse)},
     {0, 20, CONDITION_ALWAYS, MSGNO(MsgShouldIEnter)},
     {0, 21, CONDITION_ALWAYS, MSGNO(MsgMonsterBattleRules)},
-    {0, 22, CONDITION_ALWAYS, EVENT(Func_02001388__scene_events)},
+    {0, 22, CONDITION_ALWAYS, EVENT(Func_02001388)},
     {0, 23, CONDITION_ALWAYS, MSGNO(MsgSometimesYourClass)},
-    {0, 24, CONDITION_ALWAYS, EVENT(Func_02000fbc__scene_events)},
+    {0, 24, CONDITION_ALWAYS, EVENT(Func_02000fbc)},
     {0, 25, CONDITION_ALWAYS, MSGNO(MsgIDonTHaveThe)},
-    {2, 10, CONDITION_ALWAYS, EVENT(Func_02000864__scene_events)},
-    {2, 1, CONDITION_ALWAYS, EVENT(Func_02001210__scene_events)},
-    {6, 1, CONDITION_ALWAYS, EVENT(Func_020002d8__scene_events)},
-    {6, 2, CONDITION_ALWAYS, EVENT(Func_02000344__scene_events)},
+    {2, 10, CONDITION_ALWAYS, EVENT(Func_02000864)},
+    {2, 1, CONDITION_ALWAYS, EVENT(Func_02001210)},
+    {6, 1, CONDITION_ALWAYS, EVENT(Func_020002d8)},
+    {6, 2, CONDITION_ALWAYS, EVENT(Func_02000344)},
     {TRIGGERS_END},
 };

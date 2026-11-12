@@ -6,7 +6,7 @@
 #include "lib.h"
 #include "menu.h"
 #include "sound.h"
-/* VIEW(resource_slot): routine AnimationObject_Allocate as s32 AnimationObject_Allocate(s32 id); the definition has struct AnimationEntry *AnimationObject_Allocate(s32 id). */
+/* VIEW(resource_slot): routine AnimationObject_Allocate as s32 AnimationObject_Allocate(s32 id); the definition has struct AnimationEntry *AnimationObject_Allocate(s32 id); tried as the definition's struct AnimationEntry *AnimationObject_Allocate(s32 id), which the object already declares, it does not compile in tla-ja: games/tla/src/field/resource_slot.c:482: conflicting types for `AnimationObject_Allocate'. */
 extern s32 AnimationObject_Allocate__resource_slot(s32 id) __asm__("AnimationObject_Allocate");
 #define AnimationObject_Allocate AnimationObject_Allocate__resource_slot
 #include "system.h"
@@ -105,7 +105,7 @@ s32 Animation_LookupValueByKey(s32 key) {
 // actor_view.h's ActorSpriteView, with the bytes this function writes named
 // from the projection draft's layout (field_sprite.h); its other members as
 // the tree has them.
-/* VIEW(resource_slot): tag struct ActorSpriteView as struct ActorSpriteView__resource_slot; actor_view.h has another definition. */
+/* VIEW(resource_slot): tag struct ActorSpriteView as struct ActorSpriteView__resource_slot; actor_view.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/resource_slot.c:113: dereferencing pointer to incomplete type. */
 struct ActorSpriteView__resource_slot {
   u8 unk00[5];
   u8 unk05Low : 2;
@@ -586,8 +586,6 @@ struct ResourceSprite {
   struct AnimationEntry *entries[4];
 };
 
-/* VIEW(vram_block_93): routine ResourceMetadata_Register as s32 ResourceMetadata_Register(struct ResourceSprite *sprite, s32 id); the definition has s32 ResourceMetadata_Register(struct MetadataSlotState *state, s32 id). */
-extern s32 ResourceMetadata_Register__vram_block_93(struct ResourceSprite *sprite, s32 id) __asm__("ResourceMetadata_Register");
 
 /// Creates an animated sprite object for animation id, using one of 64 free
 /// objects and a VRAM cache entry. Returns the object, or NULL on failure.
@@ -672,7 +670,7 @@ struct ResourceObject *ResourceObject_Create(s32 id) {
   *attribute++ = 0;
   *attribute++ = 0x6000;
   *attribute = (gResourceTableEntries[93].offset >> 5) | 0x800;
-  if (ResourceMetadata_Register__vram_block_93(sprite, id) == -1) {
+  if (ResourceMetadata_Register(sprite, id) == -1) {
     /* FAKEMATCH(dead): a store of the byte it reloads keeps the -1 built after
      * the call and never used; with the call alone, 20 of 154 instructions
      * differ in tla-en. */
@@ -940,19 +938,19 @@ void Func_080231a0(void) {}
 
 #include "objdisp.h"
 #include "actor.h"
-/* VIEW(render_animated_tile_picture): routine Animation_ApplyChildArgument as s32 Animation_ApplyChildArgument(struct ActorSpriteView *, s32); the definition has s32 Animation_ApplyChildArgument(struct AnimationGroup *state, s32 flags). */
+/* VIEW(render_animated_tile_picture): routine Animation_ApplyChildArgument as s32 Animation_ApplyChildArgument(struct ActorSpriteView *, s32); the definition has s32 Animation_ApplyChildArgument(struct AnimationGroup *state, s32 flags); tried as the definition's s32 Animation_ApplyChildArgument(struct AnimationGroup *state, s32 flags), which the object already declares, it does not compile in tla-ja: games/tla/include/actor_view.h:65: conflicting types for `Animation_ApplyChildArgument'. */
 struct ActorSpriteView;
 extern s32 Animation_ApplyChildArgument__render_animated_tile_picture(struct ActorSpriteView *, s32) __asm__("Animation_ApplyChildArgument");
 #define Animation_ApplyChildArgument Animation_ApplyChildArgument__render_animated_tile_picture
-/* VIEW(render_animated_tile_picture): routine Animation_ApplyChildValue as void Animation_ApplyChildValue(struct ActorSpriteView *, s32); the definition has void Animation_ApplyChildValue(struct ChildGroup *group, s32 value). */
+/* VIEW(render_animated_tile_picture): routine Animation_ApplyChildValue as void Animation_ApplyChildValue(struct ActorSpriteView *, s32); the definition has void Animation_ApplyChildValue(struct ChildGroup *group, s32 value); tried as the definition's void Animation_ApplyChildValue(struct ChildGroup *group, s32 value), which the object already declares, it does not compile in tla-ja: games/tla/include/actor_view.h:66: conflicting types for `Animation_ApplyChildValue'. */
 struct ActorSpriteView;
 extern void Animation_ApplyChildValue__render_animated_tile_picture(struct ActorSpriteView *, s32) __asm__("Animation_ApplyChildValue");
 #define Animation_ApplyChildValue Animation_ApplyChildValue__render_animated_tile_picture
-/* VIEW(render_animated_tile_picture): routine InitializeAnimationObjects as s32 InitializeAnimationObjects(struct ActorSpriteView *); the definition has s32 InitializeAnimationObjects(struct ActorSpriteView__resource_slot *state). */
+/* VIEW(render_animated_tile_picture): routine InitializeAnimationObjects as s32 InitializeAnimationObjects(struct ActorSpriteView *); the definition has s32 InitializeAnimationObjects(struct ActorSpriteView__resource_slot *state); tried as the definition's s32 InitializeAnimationObjects(struct ActorSpriteView__resource_slot *state), which the object already declares, it does not compile in tla-ja: games/tla/include/actor_view.h:67: conflicting types for `InitializeAnimationObjects'. */
 struct ActorSpriteView;
 extern s32 InitializeAnimationObjects__render_animated_tile_picture(struct ActorSpriteView *) __asm__("InitializeAnimationObjects");
 #define InitializeAnimationObjects InitializeAnimationObjects__render_animated_tile_picture
-/* VIEW(render_animated_tile_picture): routine ResourceMetadata_Register as s32 ResourceMetadata_Register(struct ActorSpriteView *, s32); the definition has s32 ResourceMetadata_Register(struct MetadataSlotState *state, s32 id). */
+/* VIEW(render_animated_tile_picture): routine ResourceMetadata_Register as s32 ResourceMetadata_Register(struct ActorSpriteView *, s32); the definition has s32 ResourceMetadata_Register(struct MetadataSlotState *state, s32 id); tried as the definition's s32 ResourceMetadata_Register(struct MetadataSlotState *state, s32 id), which the object already declares, it does not compile in tla-ja: games/tla/include/actor_view.h:68: conflicting types for `ResourceMetadata_Register'. */
 struct ActorSpriteView;
 extern s32 ResourceMetadata_Register__render_animated_tile_picture(struct ActorSpriteView *, s32) __asm__("ResourceMetadata_Register");
 #define ResourceMetadata_Register ResourceMetadata_Register__render_animated_tile_picture
@@ -1412,12 +1410,10 @@ s32 Func_080237c8(u8 *object) {
   return 0;
 }
 
-/* VIEW(f023680): routine Animation_WaitForTrackEnd as void Animation_WaitForTrackEnd(void *track); the definition has void Animation_WaitForTrackEnd(struct AnimObject *object). */
-extern void Animation_WaitForTrackEnd__f023680(void *track) __asm__("Animation_WaitForTrackEnd");
 
 void Func_080237e8(u8 *object) {
   if (object != NULL)
-    Animation_WaitForTrackEnd__f023680(*(void **)(object + 0x50));
+    Animation_WaitForTrackEnd(*(void **)(object + 0x50));
 }
 
 void Func_0802386c(void);
@@ -1943,8 +1939,6 @@ extern const MotionCommand gData_0802f204[];
 extern const s32 gData_0802ebc8[];
 
 s32 IwramMulQ16(s32 a, s32 b) __attribute__((long_call));
-/* VIEW(f023680): routine ScriptObject_CheckOverlap as s32 ScriptObject_CheckOverlap(struct MotionObject *object, s32 *values); the definition has s32 ScriptObject_CheckOverlap(struct Actor *object, s32 *values). */
-extern s32 ScriptObject_CheckOverlap__f023680(struct MotionObject *object, s32 *values) __asm__("ScriptObject_CheckOverlap");
 
 #define TARGET_UNSET ((s32)0x80000000)
 
@@ -2220,7 +2214,7 @@ void Func_08023f9c(void) {
       pos[0] = x;
       pos[1] = y;
       pos[2] = z;
-      if (ScriptObject_CheckOverlap__f023680(object, pos) != 0) {
+      if (ScriptObject_CheckOverlap(object, pos) != 0) {
         object->refused++;
         continue;
       }
@@ -2425,7 +2419,7 @@ void ObjectList_CollectActive(u8 *object, u8 **out) {
 // ---- games/tla/src/field/object/f02493c.c ----
 #define TARGET_UNSET ((s32)0x80000000)
 
-/* VIEW(f02493c): tag struct MotionObject as struct MotionObject__f02493c; resource_slot.c has another definition. */
+/* VIEW(f02493c): tag struct MotionObject as struct MotionObject__f02493c; resource_slot.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/resource_slot.c:2501: structure has no member named `terrainHeight'. */
 struct MotionObject__f02493c {
   void *script;
   u16 scriptCursor;
@@ -2458,8 +2452,6 @@ struct MotionObject__f02493c {
   u8 unk62[0x1e];
 };
 
-/* VIEW(f02493c): routine ObjectList_CollectActive as void ObjectList_CollectActive(void *objects, struct MotionObject__f02493c **out); the definition has void ObjectList_CollectActive(u8 *object, u8 **out). */
-extern void ObjectList_CollectActive__f02493c(void *objects, struct MotionObject__f02493c **out) __asm__("ObjectList_CollectActive");
 s32 ArcTan2(s32 y, s32 x);
 
 void Func_0802493c(void) {
@@ -2477,7 +2469,7 @@ void Func_0802493c(void) {
   s32 facingStep;
 
   object = Ram_HeapSlots->scriptObjects;
-  ObjectList_CollectActive__f02493c(object, list);
+  ObjectList_CollectActive(object, list);
   object = list[0];
   next = &list[1];
   while (object != NULL) {
@@ -2761,8 +2753,6 @@ s32 Script_TestFlag(struct ScriptInterpreter *interpreter) {
   return done;
 }
 
-/* VIEW(f02493c): routine GameFlag_SetBit as s32 GameFlag_SetBit(s32); flag_call.h has void GameFlag_SetBit(s32 flag). */
-extern s32 GameFlag_SetBit__f02493c(s32) __asm__("GameFlag_SetBit");
 void GameFlag_ClearBit(s32);
 
 s32 Script_SetFlagAndTest(struct ScriptInterpreter *interpreter) {
@@ -2770,7 +2760,7 @@ s32 Script_SetFlagAndTest(struct ScriptInterpreter *interpreter) {
 
   value = interpreter->script[interpreter->cursor + 1];
   interpreter->conditionResult = GameFlag_Test(value);
-  GameFlag_SetBit__f02493c(value);
+  GameFlag_SetBit(value);
   interpreter->cursor += 2;
   return 1;
 }
@@ -2793,7 +2783,7 @@ s32 Script_ToggleFlag(struct ScriptInterpreter *interpreter) {
   if (interpreter->conditionResult == 1)
     GameFlag_ClearBit(value);
   else
-    GameFlag_SetBit__f02493c(value);
+    GameFlag_SetBit(value);
   interpreter->cursor += 2;
   return 1;
 }
@@ -2871,10 +2861,6 @@ struct Actor *ScriptObject_FindOverlappingEntry(struct Actor *object,
 // ---- games/tla/src/field/script/apply_relative_position.c ----
 #include "actor_script_view.h"
 
-/* VIEW(apply_relative_position): routine Actor_SetMoveTarget as void Actor_SetMoveTarget(void *, s32, s32, s32); the definition has void Actor_SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z). */
-extern void Actor_SetMoveTarget__apply_relative_position(void *, s32, s32, s32) __asm__("Actor_SetMoveTarget");
-/* VIEW(apply_relative_position): routine Actor_SetPositionAndResetMotion as void Actor_SetPositionAndResetMotion(void *, s32, s32, s32); the definition has void Actor_SetPositionAndResetMotion(struct Actor *obj, s32 x, s32 y, s32 z). */
-extern void Actor_SetPositionAndResetMotion__apply_relative_position(void *, s32, s32, s32) __asm__("Actor_SetPositionAndResetMotion");
 s32 Func_0802d45c(s32 terrainId, s32 x, s32 z);
 
 s32 Func_08024fe0(struct ActorScriptView *object) {
@@ -2884,7 +2870,7 @@ s32 Func_08024fe0(struct ActorScriptView *object) {
   s32 z = *argument;
   s32 height;
 
-  Actor_SetPositionAndResetMotion__apply_relative_position(object, x, y, z);
+  Actor_SetPositionAndResetMotion(object, x, y, z);
   if (y == -1 && (object->flags & 1)) {
     height = Func_0802d45c(object->terrainId, object->x, object->z);
     object->y = object->y - object->terrainHeight + height;
@@ -2897,7 +2883,7 @@ s32 Func_08024fe0(struct ActorScriptView *object) {
 s32 Func_08025038(struct ActorScriptView *object) {
   s32 height;
 
-  Actor_SetPositionAndResetMotion__apply_relative_position(object, 0, object->y, 0);
+  Actor_SetPositionAndResetMotion(object, 0, object->y, 0);
   if (object->flags & 1) {
     height = Func_0802d45c(object->terrainId, object->x, object->z);
     object->y = object->y - object->terrainHeight + height;
@@ -2914,7 +2900,7 @@ s32 ActorScript_ApplyAbsolutePosition(struct ActorScriptView *object) {
   s32 y = *argument++;
   s32 z = *argument;
 
-  Actor_SetMoveTarget__apply_relative_position(object, x, y, z);
+  Actor_SetMoveTarget(object, x, y, z);
   object->scriptCursor += 4;
   return 1;
 }
@@ -2924,7 +2910,7 @@ s32 Func_0802509c(struct ActorScriptView *object) {
   s32 x = *argument++;
   s32 z = *argument;
 
-  Actor_SetMoveTarget__apply_relative_position(object, x, object->y, z);
+  Actor_SetMoveTarget(object, x, object->y, z);
   object->scriptCursor += 3;
   return 1;
 }
@@ -2935,20 +2921,18 @@ s32 Script_ApplyRelativePosition(struct ActorScriptView *object) {
   s32 second = *cursor++;
   s32 third = *cursor;
 
-  Actor_SetMoveTarget__apply_relative_position(object, object->x + first, object->y + second,
+  Actor_SetMoveTarget(object, object->x + first, object->y + second,
                        object->z + third);
   object->scriptCursor += 4;
   return 1;
 }
 
-/* VIEW(apply_relative_position): routine ArcTan2 as u16 ArcTan2(s32, s32); f02493c has s32 ArcTan2(s32 y, s32 x). */
-extern u16 ArcTan2__apply_relative_position(s32, s32) __asm__("ArcTan2");
 
 s32 Script_StoreAngleToWatchedObject(struct ActorScriptView *object) {
   struct ActorScriptView *target;
 
   target = object->watchedObject;
-  object->scriptValue = ArcTan2__apply_relative_position((s32)((u32)target->z - (u32)object->z),
+  object->scriptValue = ArcTan2((s32)((u32)target->z - (u32)object->z),
                                 (s32)((u32)target->x - (u32)object->x));
   object->scriptCursor++;
   return 1;
@@ -2958,19 +2942,17 @@ s32 Script_ApplyWatchedObjectPosition(struct ActorScriptView *object) {
   struct ActorScriptView *target;
 
   target = object->watchedObject;
-  Actor_SetMoveTarget__apply_relative_position(object, target->x, target->y, target->z);
+  Actor_SetMoveTarget(object, target->x, target->y, target->z);
   object->scriptCursor++;
   return 1;
 }
 
 // ---- games/tla/src/field/script/offset.c ----
-/* VIEW(offset): routine Actor_SetMoveTarget as void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z); apply_relative_position has void Actor_SetMoveTarget(void *, s32, s32, s32). */
-extern void Actor_SetMoveTarget__offset(struct Actor *actor, s32 x, s32 y, s32 z) __asm__("Actor_SetMoveTarget");
 
 s32 Script_ApplyLocalOffsetPosition(struct Actor *object) {
   s32 offset[3];
 
-  Actor_SetMoveTarget__offset(object, object->x + offset[0], object->y + offset[1],
+  Actor_SetMoveTarget(object, object->x + offset[0], object->y + offset[1],
                       object->z + offset[2]);
   object->step += 3;
   return 1;
@@ -3194,7 +3176,7 @@ s32 Actor_ApproachWatchedActor(struct Actor *object) {
     remainingDistance = distancePixels - 0x10;
     moveX = dx * remainingDistance / distancePixels;
     moveZ = dz * remainingDistance / distancePixels;
-    Actor_SetMoveTarget__offset(object, object->x + moveX, object->y,
+    Actor_SetMoveTarget(object, object->x + moveX, object->y,
                         object->z + moveZ);
     Actor_SelectAnimation(object, 2);
     object->step = (object->step + 1);
@@ -3215,8 +3197,6 @@ struct FieldPosition {
 
 void Vector_AddPolarOffset(s32 radius, s32 angle,
                            struct FieldPosition *position);
-/* VIEW(offset): routine ScriptObject_CheckOverlap as s32 ScriptObject_CheckOverlap(struct ScriptObjectEntry *object, s32 *position); the definition has s32 ScriptObject_CheckOverlap(struct Actor *object, s32 *values). */
-extern s32 ScriptObject_CheckOverlap__offset(struct ScriptObjectEntry *object, s32 *position) __asm__("ScriptObject_CheckOverlap");
 
 s32 Func_08025698(struct ActorScriptView *object) {
   struct FieldPosition pos;
@@ -3248,7 +3228,7 @@ retry:
     radius = base + Iwram_MulQ16(Random16(), range);
     heading = object->scriptValue + (Random16() >> 2) - (Random16() >> 2);
     Vector_AddPolarOffset(radius, heading, &pos);
-    if (ScriptObject_CheckOverlap__offset((struct ScriptObjectEntry *)object,
+    if (ScriptObject_CheckOverlap((struct ScriptObjectEntry *)object,
                                   (s32 *)&pos) != 0)
       goto retry;
     if (Func_0802d87c((struct Actor *)object, &pos) != 0)
@@ -3293,7 +3273,7 @@ found:
      * move ahead of the loads; without it, 2 of 188 instructions differ in
      * tla-en. */
     asm("");
-    Actor_SetMoveTarget__offset(moved, pos.x, pos.y, pos.z);
+    Actor_SetMoveTarget(moved, pos.x, pos.y, pos.z);
   }
   object->scriptCursor += 4;
   return 1;
@@ -3304,8 +3284,6 @@ found:
 struct ScriptObjectEntry;
 
 s32 Func_0802d87c(struct Actor *object, struct FieldPosition *position);
-/* VIEW(offset): routine ArcTan2 as s32 ArcTan2(s32 y, s32 x); apply_relative_position has u16 ArcTan2(s32, s32). */
-extern s32 ArcTan2__offset(s32 y, s32 x) __asm__("ArcTan2");
 
 /// Moves the object to a random spot within its home radius, as The Broken
 /// Seal's ActorScript_WanderNearHome does: up to seven tries at a point a
@@ -3348,7 +3326,7 @@ s32 Func_08025830(struct ActorScriptView *object) {
       candidatePosition.y = object->y;
       candidatePosition.z = object->z;
       Vector_AddPolarOffset(0x80000, heading, &candidatePosition);
-      if (ScriptObject_CheckOverlap__offset((struct ScriptObjectEntry *)object,
+      if (ScriptObject_CheckOverlap((struct ScriptObjectEntry *)object,
                                     (s32 *)&candidatePosition) != 0)
         goto roam;
       candidatePosition.x = object->x;
@@ -3393,13 +3371,13 @@ s32 Func_08025830(struct ActorScriptView *object) {
       if (dx * dx + dz * dz > homeRadiusSquared)
         goto roam;
       object->flags59 |= 2;
-      Actor_SetMoveTarget__offset((struct Actor *)object, candidatePosition.x,
+      Actor_SetMoveTarget((struct Actor *)object, candidatePosition.x,
                           candidatePosition.y, candidatePosition.z);
       goto done;
     }
   }
   attempts = 0;
-  angle = (u16)ArcTan2__offset(dz, dx) + 0x8000;
+  angle = (u16)ArcTan2(dz, dx) + 0x8000;
 back:
   attempts++;
   if (attempts <= 7) {
@@ -3409,7 +3387,7 @@ back:
     candidatePosition.y = object->y;
     candidatePosition.z = object->z;
     Vector_AddPolarOffset(0x80000, heading, &candidatePosition);
-    if (ScriptObject_CheckOverlap__offset((struct ScriptObjectEntry *)object,
+    if (ScriptObject_CheckOverlap((struct ScriptObjectEntry *)object,
                                   (s32 *)&candidatePosition) != 0)
       goto back;
     candidatePosition.x = object->x;
@@ -3419,7 +3397,7 @@ back:
     if (Func_0802d87c((struct Actor *)object, &candidatePosition) != 0)
       goto back;
     object->flags59 &= ~2;
-    Actor_SetMoveTarget__offset((struct Actor *)object, candidatePosition.x,
+    Actor_SetMoveTarget((struct Actor *)object, candidatePosition.x,
                         candidatePosition.y, candidatePosition.z);
   }
 done:
@@ -4299,7 +4277,7 @@ s32 Func_0802632c(struct Actor *object) {
     object->timer = 0;
     object->unk66 = 2;
   } else {
-    Actor_SetMoveTarget__offset(object, position.x, position.y, position.z);
+    Actor_SetMoveTarget(object, position.x, position.y, position.z);
     if (object->timer != 0)
       object->timer--;
   }
@@ -4327,7 +4305,7 @@ s32 Func_0802632c(struct Actor *object) {
 
 // ---- games/tla/src/field/script/f0267bc.c ----
 
-/* VIEW(f0267bc): tag struct PartyKeys as struct PartyKeys__f0267bc; resource_slot.c has another definition. */
+/* VIEW(f0267bc): tag struct PartyKeys as struct PartyKeys__f0267bc; resource_slot.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/resource_slot.c:4350: structure has no member named `keys23c'. */
 struct PartyKeys__f0267bc {
   u8 unk000[0x23c];
   u16 keys23c;
@@ -4347,9 +4325,7 @@ void Vector_AddPolarOffset(s32 radius, s32 angle,
 s32 Func_0802d87c(struct Actor *object, struct FieldPosition *position);
 s32 Field_CheckSpheresOverlap(s32 *a, s32 radiusA, s32 *b, s32 radiusB);
 s32 ScriptObject_CheckOverlap(struct Actor *object, s32 *values);
-/* VIEW(f0267bc): routine ArcTan2 as s16 ArcTan2(s32 y, s32 x); offset has s32 ArcTan2(s32 y, s32 x). */
-extern s16 ArcTan2__f0267bc(s32 y, s32 x) __asm__("ArcTan2");
-/* VIEW(f0267bc): routine Unit_Get as struct LeaderUnit *Unit_Get(s32 owner); offset has void *Unit_Get(s32 owner). */
+/* VIEW(f0267bc): routine Unit_Get as struct LeaderUnit *Unit_Get(s32 owner); offset has void *Unit_Get(s32 owner); tried as the definition's void *Unit_Get(s32 owner), which the object already declares, it does not compile in tla-ja: games/tla/src/field/resource_slot.c:4584: request for member `hp' in something not a structure or union. */
 extern struct LeaderUnit *Unit_Get__f0267bc(s32 owner) __asm__("Unit_Get");
 void Actor_SelectAnimation(struct Actor *object, s32 argument);
 void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
@@ -4551,7 +4527,7 @@ push_objects:
     if ((other->collisionFlags & 2) && other->movementState == 0) {
       u16 direction;
 
-      direction = ArcTan2__f0267bc(other->z - object->z, other->x - object->x);
+      direction = ArcTan2(other->z - object->z, other->x - object->x);
       testPosition.x = other->x;
       testPosition.y = other->y;
       testPosition.z = other->z;
@@ -4797,7 +4773,7 @@ struct PlayerSprite {
   u8 flags;
 };
 
-/* VIEW(f027064): tag struct PartyKeys as struct PartyKeys__f027064; resource_slot.c has another definition. */
+/* VIEW(f027064): tag struct PartyKeys as struct PartyKeys__f027064; resource_slot.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/resource_slot.c:4836: structure has no member named `keys23c'. */
 struct PartyKeys__f027064 {
   u8 unk000[0x23c];
   u16 keys23c;
@@ -4820,17 +4796,13 @@ void Vector_AddPolarOffset(s32 radius, s32 angle,
 s32 Func_0802d87c(struct Actor *object, struct FieldPosition *position);
 s32 Field_CheckSpheresOverlap(s32 *a, s32 radiusA, s32 *b, s32 radiusB);
 s32 ScriptObject_CheckOverlap(struct Actor *object, s32 *values);
-/* VIEW(f027064): routine ArcTan2 as s16 ArcTan2(s32 y, s32 x); f02493c has s32 ArcTan2(s32 y, s32 x). */
-extern s16 ArcTan2__f027064(s32 y, s32 x) __asm__("ArcTan2");
-/* VIEW(f027064): routine Unit_Get as struct LeaderUnit *Unit_Get(s32 owner); offset has void *Unit_Get(s32 owner). */
+/* VIEW(f027064): routine Unit_Get as struct LeaderUnit *Unit_Get(s32 owner); offset has void *Unit_Get(s32 owner); tried as the definition's void *Unit_Get(s32 owner), which the object already declares, it does not compile in tla-ja: games/tla/src/field/resource_slot.c:5066: request for member `hp' in something not a structure or union. */
 extern struct LeaderUnit *Unit_Get__f027064(s32 owner) __asm__("Unit_Get");
 void Actor_SelectAnimation(struct Actor *object, s32 argument);
 void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
 s32 FixedSqrt(s32 value);
 struct Actor *Func_08023220(s32 kind, s32 x, s32 y, s32 z);
 void Actor_StartScript(struct Actor *, const s32 *);
-/* VIEW(f027064): routine Animation_ApplyChildArgument as s32 Animation_ApplyChildArgument(struct PlayerSprite *, s32); the definition has s32 Animation_ApplyChildArgument(struct AnimationGroup *state, s32 flags). */
-extern s32 Animation_ApplyChildArgument__f027064(struct PlayerSprite *, s32) __asm__("Animation_ApplyChildArgument");
 void Func_08026fc8(struct Actor *object, s32 kind);
 s32 Field_CheckConfiguredKeys(void);
 
@@ -5036,7 +5008,7 @@ push_objects:
                                    other->radius - 2) < 0)
       continue;
     if ((other->collisionFlags & 2) && other->movementState == 0) {
-      direction = ArcTan2__f027064(other->z - object->z, other->x - object->x);
+      direction = ArcTan2(other->z - object->z, other->x - object->x);
       testPosition.x = other->x;
       testPosition.y = other->y;
       testPosition.z = other->z;
@@ -5181,13 +5153,13 @@ counted:
       effect->priorityFlags = 2;
       effect->motionFlags = collision;
       if (effectSprite != NULL) {
-        Animation_ApplyChildArgument__f027064(effectSprite, 1);
+        Animation_ApplyChildArgument(effectSprite, 1);
         effectSprite->flags = collision;
         effectSprite->rotation = footprintAngle + 0x4000;
         effectSprite->priority = 3;
       }
       if (*(s16 *)&object->unk66 == 2) {
-        Animation_ApplyChildArgument__f027064(effectSprite, 2);
+        Animation_ApplyChildArgument(effectSprite, 2);
         object->unk66 = collision;
       }
       if (*(s16 *)&object->unk66 != 0)
@@ -5212,7 +5184,7 @@ struct WorldCamera {
   u16 yaw;
 };
 
-/* VIEW(f0279b0): tag struct PlayerSprite as struct PlayerSprite__f0279b0; resource_slot.c has another definition. */
+/* VIEW(f0279b0): tag struct PlayerSprite as struct PlayerSprite__f0279b0; resource_slot.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/resource_slot.c:5352: structure has no member named `entry'. */
 struct PlayerSprite__f0279b0 {
   u8 unk00[5];
   u8 low05 : 2;
@@ -5244,8 +5216,6 @@ void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
 s32 FixedSqrt(s32 value);
 struct Actor *Func_08023220(s32 kind, s32 x, s32 y, s32 z);
 void Actor_StartScript(struct Actor *, const s32 *);
-/* VIEW(f0279b0): routine Animation_ApplyChildArgument as s32 Animation_ApplyChildArgument(struct PlayerSprite__f0279b0 *, s32); f027064 has s32 Animation_ApplyChildArgument(struct PlayerSprite *, s32). */
-extern s32 Animation_ApplyChildArgument__f0279b0(struct PlayerSprite__f0279b0 *, s32) __asm__("Animation_ApplyChildArgument");
 s32 Field_CheckConfiguredKeys(void);
 
 s32 Func_080279b0(struct Actor *object) {
@@ -5408,7 +5378,7 @@ update_object:
         ripple->motionFlags = collision;
         ripple->terrainId = 1;
         if (rippleSprite != 0) {
-          Animation_ApplyChildArgument__f0279b0(rippleSprite, 1);
+          Animation_ApplyChildArgument(rippleSprite, 1);
           rippleSprite->flags = collision;
           rippleSprite->objectMode = 1;
           rippleSprite->priority = 2;
@@ -5436,8 +5406,6 @@ s32 Field_CheckConfiguredKeysAndCount(struct ActorScriptView *interpreter) {
 s32 Func_0802d87c(struct Actor *object, struct FieldPosition *position);
 s32 Field_CheckSpheresOverlap(s32 *a, s32 radiusA, s32 *b, s32 radiusB);
 s32 ScriptObject_CheckOverlap(struct Actor *object, s32 *values);
-/* VIEW(f0279b0): routine ArcTan2 as s16 ArcTan2(s32 y, s32 x); f02493c has s32 ArcTan2(s32 y, s32 x). */
-extern s16 ArcTan2__f0279b0(s32 y, s32 x) __asm__("ArcTan2");
 
 // Two 16.16 coordinates fall in the same 16-pixel cell, rounding to nearest.
 #define SAME_CELL(a, b) ((((a) - (b) + 0x80000) >> 20) == 0)
@@ -5644,7 +5612,7 @@ push_objects:
                                   other->radius - 2) < 0)
       continue;
     if ((other->collisionFlags & 2) && other->movementState == 0) {
-      direction = ArcTan2__f0279b0(other->z - object->z, other->x - object->x);
+      direction = ArcTan2(other->z - object->z, other->x - object->x);
       testPosition.x = other->x;
       testPosition.y = other->y;
       testPosition.z = other->z;
@@ -5753,7 +5721,7 @@ counted:
 // ---- games/tla/src/field/script/s28534.c ----
 
 
-/* VIEW(s28534): tag struct PlayerSprite as struct PlayerSprite__s28534; resource_slot.c has another definition. */
+/* VIEW(s28534): tag struct PlayerSprite as struct PlayerSprite__s28534; resource_slot.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/resource_slot.c:5966: structure has no member named `objectMode'. */
 struct PlayerSprite__s28534 {
   u8 unk00[5];
   u8 low05 : 2;
@@ -5767,7 +5735,7 @@ struct PlayerSprite__s28534 {
   u8 flags;
 };
 
-/* VIEW(s28534): tag struct PartyKeys as struct PartyKeys__s28534; resource_slot.c has another definition. */
+/* VIEW(s28534): tag struct PartyKeys as struct PartyKeys__s28534; resource_slot.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/resource_slot.c:5905: structure has no member named `keys23c'. */
 struct PartyKeys__s28534 {
   u8 unk000[0x23c];
   u16 keys23c;
@@ -5795,8 +5763,6 @@ void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
 s32 FixedSqrt(s32 value);
 struct Actor *Func_08023220(s32 kind, s32 x, s32 y, s32 z);
 void Actor_StartScript(struct Actor *, const s32 *);
-/* VIEW(s28534): routine Animation_ApplyChildArgument as s32 Animation_ApplyChildArgument(struct PlayerSprite__s28534 *, s32); f027064 has s32 Animation_ApplyChildArgument(struct PlayerSprite *, s32). */
-extern s32 Animation_ApplyChildArgument__s28534(struct PlayerSprite__s28534 *, s32) __asm__("Animation_ApplyChildArgument");
 s32 Field_CheckConfiguredKeys(void);
 
 /// Script command 0x20, a sibling of Func_080279b0 in The Broken Seal's later
@@ -6008,7 +5974,7 @@ update_object:
         ripple->motionFlags = 0;
         ripple->terrainId = kind;
         if (rippleSprite != 0) {
-          Animation_ApplyChildArgument__s28534(rippleSprite, 2);
+          Animation_ApplyChildArgument(rippleSprite, 2);
           rippleSprite->flags = 0;
           rippleSprite->objectMode = 0;
           rippleSprite->priority = 2;
@@ -6025,7 +5991,7 @@ update_object:
 // ---- games/tla/src/field/script/f028aac.c ----
 
 
-/* VIEW(f028aac): tag struct PlayerSprite as struct PlayerSprite__f028aac; resource_slot.c has another definition. */
+/* VIEW(f028aac): tag struct PlayerSprite as struct PlayerSprite__f028aac; resource_slot.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/resource_slot.c:6229: structure has no member named `objectMode'. */
 struct PlayerSprite__f028aac {
   u8 unk00[5];
   u8 low05 : 2;
@@ -6039,7 +6005,7 @@ struct PlayerSprite__f028aac {
   u8 flags;
 };
 
-/* VIEW(f028aac): tag struct WorldEventWork as struct WorldEventWork__f028aac; resource_slot.c has another definition. */
+/* VIEW(f028aac): tag struct WorldEventWork as struct WorldEventWork__f028aac; resource_slot.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/resource_slot.c:6249: structure has no member named `climbing'. */
 struct WorldEventWork__f028aac {
   u8 unk000[0xd3a];
   u8 terrainKind;
@@ -6057,14 +6023,10 @@ void Vector_AddPolarOffset(s32 radius, s32 angle,
 s32 Func_0802dbd0(struct Actor *object, struct FieldPosition *position);
 s32 Field_CheckSpheresOverlap(s32 *a, s32 radius_a, s32 *b, s32 radius_b);
 void Actor_SelectAnimation(struct Actor *object, s32 argument);
-/* VIEW(f028aac): routine Actor_SetChildByteValue as void Actor_SetChildByteValue(struct Actor *object, s32 value); the definition has void Actor_SetChildByteValue(struct Actor *object, u32 value). */
-extern void Actor_SetChildByteValue__f028aac(struct Actor *object, s32 value) __asm__("Actor_SetChildByteValue");
 void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
 s32 FixedSqrt(s32 value);
 struct Actor *Func_08023220(s32 kind, s32 x, s32 y, s32 z);
 void Actor_StartScript(struct Actor *, const s32 *);
-/* VIEW(f028aac): routine Animation_ApplyChildArgument as s32 Animation_ApplyChildArgument(struct PlayerSprite__f028aac *, s32); f027064 has s32 Animation_ApplyChildArgument(struct PlayerSprite *, s32). */
-extern s32 Animation_ApplyChildArgument__f028aac(struct PlayerSprite__f028aac *, s32) __asm__("Animation_ApplyChildArgument");
 s32 Func_080ad318(void);
 
 s32 Func_08028aac(struct Actor *object) {
@@ -6273,7 +6235,7 @@ update_object:
           ripple->motionFlags = 0;
           ripple->terrainId = kind;
           if (rippleSprite != 0) {
-            Animation_ApplyChildArgument__f028aac(rippleSprite, 1);
+            Animation_ApplyChildArgument(rippleSprite, 1);
             rippleSprite->flags = 0;
             rippleSprite->objectMode = 1;
             rippleSprite->priority = 2;
@@ -6282,7 +6244,7 @@ update_object:
         }
       }
     } else {
-      Actor_SetChildByteValue__f028aac(object, gFrameCount & kind);
+      Actor_SetChildByteValue(object, gFrameCount & kind);
     }
   }
 
@@ -6307,9 +6269,6 @@ update_object:
 
 // ---- games/tla/src/field/script/move_by_keys.c ----
 
-/// The heading of each direction-pad combination, 0xffff for none.
-/* VIEW(move_by_keys): variable gData_0802ec5c as extern const u16 gData_0802ec5c[16]; f028aac has extern const s16 gData_0802ec5c[16]. */
-extern const u16 gData_0802ec5c__move_by_keys[16] __asm__("gData_0802ec5c");
 
 void Vector_AddPolarOffset(s32 radius, s32 angle,
                            struct FieldPosition *position);
@@ -6353,7 +6312,7 @@ s32 Actor_MoveByKeys(struct Actor *object) {
     keys = INPUT_HELD;
   keys = INPUT_HELD;
   {
-    const u16 *table = gData_0802ec5c__move_by_keys;
+    const u16 *table = gData_0802ec5c;
 
     angle = *(const u16 *)((const u8 *)table + (((keys >> 4) & 15) << 1));
   }
@@ -6488,7 +6447,7 @@ s32 Func_080292fc(struct Actor *object) {
   object->speedLimit = 0x8000;
   object->acceleration = 0x8000;
   object->motionFlags = 0;
-  angle = gData_0802ec5c__move_by_keys[(INPUT_HELD >> 4) & 15];
+  angle = gData_0802ec5c[(INPUT_HELD >> 4) & 15];
   if (angle == 0xffff) {
     best = (struct ChainNode *)object->watchedObject;
     value = 0;
@@ -6619,7 +6578,7 @@ s32 Func_08029570(struct Actor *object) {
   object->speedLimit = 0x8000;
   object->acceleration = 0x8000;
   object->motionFlags = 0;
-  angle = gData_0802ec5c__move_by_keys[(gInput.held >> 4) & 15];
+  angle = gData_0802ec5c[(gInput.held >> 4) & 15];
   if (angle == 0xffff) {
     collisionFlags = 4;
     best = (struct WorkA0Node *)object->watchedObject;
@@ -6773,7 +6732,7 @@ s32 Func_08029838(s32 arg) {
 
 // ---- games/tla/src/field/script/f0298c0.c ----
 
-/* VIEW(f0298c0): tag struct PlayerSprite as struct PlayerSprite__f0298c0; resource_slot.c has another definition. */
+/* VIEW(f0298c0): tag struct PlayerSprite as struct PlayerSprite__f0298c0; resource_slot.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/resource_slot.c:7309: structure has no member named `entry'. */
 struct PlayerSprite__f0298c0 {
   u8 unk00[9];
   u8 low09 : 2;
@@ -6813,12 +6772,6 @@ void Actor_SelectAnimation(struct Actor *actor, s32 argument);
 void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
 struct Actor *Func_08023220(s32 kind, s32 x, s32 y, s32 z);
 void Actor_StartScript(struct Actor *, const s32 *);
-/* VIEW(f0298c0): routine Animation_ApplyChildArgument as s32 Animation_ApplyChildArgument(struct PlayerSprite__f0298c0 *, s32); s28534 has s32 Animation_ApplyChildArgument(struct PlayerSprite *, s32). */
-extern s32 Animation_ApplyChildArgument__f0298c0(struct PlayerSprite__f0298c0 *, s32) __asm__("Animation_ApplyChildArgument");
-/* VIEW(f0298c0): routine Func_08029810 as void Func_08029810(void); the definition has void Func_08029810(struct Actor *object). */
-extern void Func_08029810__f0298c0(void) __asm__("Func_08029810");
-/* VIEW(f0298c0): routine Func_08029838 as s32 Func_08029838(struct Actor *actor); the definition has s32 Func_08029838(s32 arg). */
-extern s32 Func_08029838__f0298c0(struct Actor *actor) __asm__("Func_08029838");
 
 s32 Func_080298c0(struct Actor *actor) {
   struct FieldPosition position;
@@ -6969,7 +6922,7 @@ s32 Func_080298c0(struct Actor *actor) {
         effect->terrainHeight = actor->terrainHeight;
         sprite = effect->sprite;
         Actor_StartScript(effect, gData_0802ed28);
-        effect->update = Func_08029810__f0298c0;
+        effect->update = Func_08029810;
         effect->motionFlags = 2;
         if (collision == 0)
           Sound_PlayFar(596);
@@ -6978,13 +6931,13 @@ s32 Func_080298c0(struct Actor *actor) {
         effect->scaleX = 0x4ccc;
         effect->scaleY = 0x4ccc;
         if (sprite != NULL) {
-          Animation_ApplyChildArgument__f0298c0(sprite, 2);
+          Animation_ApplyChildArgument(sprite, 2);
           sprite->flags = 0;
           sprite->priority = 0;
         }
       }
     }
-    Func_08029838__f0298c0(actor);
+    Func_08029838(actor);
     goto done;
   }
 
@@ -7178,7 +7131,7 @@ counted:
       if (sprite != NULL) {
         struct Unk_ClimbEventWork *work = Ram_HeapSlots->eventWork;
 
-        Animation_ApplyChildArgument__f0298c0(sprite, 1);
+        Animation_ApplyChildArgument(sprite, 1);
         sprite->flags = 0;
         // DEAD: overwritten by the next line.
         sprite->priority = 2;
@@ -7187,7 +7140,7 @@ counted:
       *wakeTimer = 5;
     }
   }
-  Func_08029838__f0298c0(actor);
+  Func_08029838(actor);
 
 done:
   actor->step++;
@@ -7374,7 +7327,7 @@ update_object:
       ((struct Unk0802a124Actor *)ripple)->unk63 = 100;
       ripple->motionFlags = collision;
       if (rippleSprite != 0) {
-        Animation_ApplyChildArgument__f0298c0(rippleSprite, 1);
+        Animation_ApplyChildArgument(rippleSprite, 1);
         rippleSprite->flags = collision;
         rippleSprite->priority = 2;
         rippleSprite->priority = 1;
@@ -7382,7 +7335,7 @@ update_object:
       *timer = 5;
     }
   }
-  Func_08029838__f0298c0(object);
+  Func_08029838(object);
   object->step++;
   return 1;
 }
@@ -7410,8 +7363,6 @@ void SpriteColor_RemapPixels(u8 *buf, s32 cnt) {
 // Map: unpack decoded block data into gMapBlocks.
 
 extern u32 gMapBlocks[];
-/* VIEW(f0298c0): variable gMapCellBuffer as extern u8 gMapCellBuffer[]; f027064 has extern struct MapCell gMapCellBuffer[]. */
-extern u8 gMapCellBuffer__f0298c0[] __asm__("gMapCellBuffer");
 
 /// Decoded buffer [1] selects the method; halfword data starts at [2].
 /// size: length including the method byte (even means no data).
@@ -7428,7 +7379,7 @@ void Tilemap_DecodeStagedBuffer(s32 size) {
   dst = (u16 *)gMapBlocks;
   n = (size - 1) / 2;
   if (size & 1) {
-    switch (((u8 *)gMapCellBuffer__f0298c0)[1]) {
+    switch (((u8 *)gMapCellBuffer)[1]) {
     case 0:
       for (i = 0; i < n; i++)
         *dst++ = *src++;
@@ -7483,7 +7434,7 @@ void Tilemap_ConvertBuffer(void) {
   saved = Heap_AllocEwram(size);
   CopyWords(saved, Ram_MapCellBuffer, size);
   RamCode_Load(routine, Render_ConvertMapCode, Render_ConvertMapCodeSize);
-  routine(((u8 *)gMapCellBuffer__f0298c0 + 0x8000), Ram_MapCellBuffer, saved);
+  routine(((u8 *)gMapCellBuffer + 0x8000), Ram_MapCellBuffer, saved);
   Heap_Release(routine);
   Heap_Release(saved);
 }
@@ -7551,10 +7502,6 @@ struct LayeredSceneHeader {
   s32 script;
 };
 
-/* VIEW(f02a6b8): tag struct MapCell as struct MapCell__f02a6b8; map.h has another definition. */
-struct MapCell__f02a6b8 {
-  u32 value;
-};
 
 struct MapLayerScroll {
   s32 x, y;
@@ -7564,7 +7511,7 @@ struct MapLayerScroll {
   s32 phaseX, phaseY;
   u16 maskX, maskY;
   u16 cellX, cellY;
-  struct MapCell__f02a6b8 *cells;
+  struct MapCell *cells;
   u8 *shapes;
 };
 
@@ -7582,8 +7529,6 @@ struct MapScrollWork {
   struct MapLayerScroll layers[3];
 };
 
-/* VIEW(f02a6b8): variable gData_0802f380 as extern struct LayeredSceneEntry gData_0802f380[]; f0298c0 has extern const u16 gData_0802f380[][6]. */
-extern struct LayeredSceneEntry gData_0802f380__f02a6b8[] __asm__("gData_0802f380");
 extern char ResourceId_Map000;
 extern u8 gMapShapeGrid[];
 extern u8 gData_02028000[];
@@ -7615,7 +7560,7 @@ s32 Func_0802a6b8(s32 index) {
   REG_DISPCNT &= ~(DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_BG3_ON |
                    DISPCNT_OBJ_ON | DISPCNT_WIN0_ON);
   Fade_FromBlack(0);
-  sceneResources = &gData_0802f380__f02a6b8[index];
+  sceneResources = &gData_0802f380[index];
   work = HeapSlot_AllocEwram(32, sizeof(struct MapScrollWork));
   Iwram_ClearWords(work, sizeof(struct MapScrollWork));
   sceneHeader = (struct LayeredSceneHeader *)Resource_GetTableEntry(
@@ -7687,7 +7632,7 @@ s32 Func_0802a6b8(s32 index) {
     scaleX = layerSource->scaleX * 4096;
     cell = y + x;
     shapeGrid = gMapShapeGrid;
-    mapLayer->cells = (struct MapCell__f02a6b8 *)Ram_MapCellBuffer + cell;
+    mapLayer->cells = (struct MapCell *)Ram_MapCellBuffer + cell;
     mapLayer->scaleX = scaleX;
     mapLayer->cellX = x;
     mapLayer->shapes = shapeGrid + cell;
@@ -7935,19 +7880,10 @@ void Func_0802ac90(u32 layer, s32 tileX, s32 tileY) {
 
 u32 Random16(void);
 
-/* VIEW(f02aa74): tag struct MapLayerScroll as struct MapLayerScroll__f02aa74; resource_slot.c has another definition. */
-struct MapLayerScroll__f02aa74 {
-  s32 x, y;
-  s32 offsetX, offsetY;
-  s32 scaleX, scaleY;
-  s32 speedX, speedY;
-  s32 phaseX, phaseY;
-  u8 unk28[0x10];
-};
 
 void Func_0802ad84(void) {
   struct MapWork *work;
-  struct MapLayerScroll__f02aa74 *layer;
+  struct MapLayerScroll *layer;
   s32 *origin;
   s32 x, y;
   s32 minX, minY, maxX, maxY;
@@ -7956,7 +7892,7 @@ void Func_0802ad84(void) {
 
   work = Ram_HeapSlots->mapWork;
   origin = work->origin;
-  layer = (struct MapLayerScroll__f02aa74 *)work->layers;
+  layer = (struct MapLayerScroll *)work->layers;
   if (origin == NULL)
     return;
   baseX = *origin++ - 0x780000;
@@ -8323,7 +8259,7 @@ void Map_CopyCellAttributeRect(s32 srcX, s32 srcY, s32 width, s32 height,
   }
 }
 
-/* VIEW(f02aa74): variable gMapCellBuffer as extern u8 gMapCellBuffer[]; f027064 has extern struct MapCell gMapCellBuffer[]. */
+/* VIEW(f02aa74): variable gMapCellBuffer as extern u8 gMapCellBuffer[]; f027064 has extern struct MapCell gMapCellBuffer[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/field/resource_slot.c:8281: `gMapCellBuffer__f02aa74' undeclared (first use in this function). */
 extern u8 gMapCellBuffer__f02aa74[] __asm__("gMapCellBuffer");
 
 void Func_0802b450(s32 srcX, s32 srcY, s32 width, s32 height, s32 dstX,
@@ -8529,8 +8465,6 @@ next:
   goto next;
 }
 
-/* VIEW(f02aa74): variable gData_0802f380 as extern const u16 gData_0802f380[][6]; f02a6b8 has extern struct LayeredSceneEntry gData_0802f380[]. */
-extern const u16 gData_0802f380__f02aa74[][6] __asm__("gData_0802f380");
 extern char ResourceId_Map000;
 
 void Map_GetHeaderSize(s32 map, s32 *size) {
@@ -8538,7 +8472,7 @@ void Map_GetHeaderSize(s32 map, s32 *size) {
 
   // Indexed as gData_0802f380[map][0], the load reads [table, offset].
   header = Resource_GetTableEntry(
-      *(const u16 *)(map * 12 + (u32)gData_0802f380__f02aa74) + (u32)&ResourceId_Map000);
+      *(const u16 *)(map * 12 + (u32)gData_0802f380) + (u32)&ResourceId_Map000);
   size[0] = header[0];
   if (header[2] == 0)
     size[1] = 256;
@@ -8561,7 +8495,7 @@ void Tilemap_ConvertBuffer(void);
 void Map_LoadCellsAndShapes(void) {
   u8 *source;
   struct MapHeader *header = Resource_GetTableEntry(
-      *(const u16 *)(gMainRoutineWork.map * 12 + (u32)gData_0802f380__f02aa74) +
+      *(const u16 *)(gMainRoutineWork.map * 12 + (u32)gData_0802f380) +
       (u32)&ResourceId_Map000);
 
   source = (u8 *)header + header->cells;
@@ -8643,8 +8577,6 @@ s32 Map_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update) {
 extern char ResourceId_PerspectiveDataA;
 extern char ResourceId_DefaultMapCells;
 extern char ResourceId_Data199;
-/* VIEW(f02b998): variable gMapCellBuffer as extern u8 gMapCellBuffer[]; f027064 has extern struct MapCell gMapCellBuffer[]. */
-extern u8 gMapCellBuffer__f02b998[] __asm__("gMapCellBuffer");
 extern u8 gData_0202e000[];
 extern u32 gCameraSceneParameters[];
 extern const u8 Data_0802146c[];
@@ -8656,7 +8588,7 @@ void Fade_FromBlack(s32 vblanks);
 s32 Trig_Cos(s32 angle);
 s32 Trig_Sin(s32 angle);
 void Projection_Set(s32 distance, s32 nearPlane, s32 farPlane);
-/* VIEW(f02b998): routine Render_ResetTransformState as u32 Render_ResetTransformState(void); graphics.h has void Render_ResetTransformState(void). */
+/* VIEW(f02b998): routine Render_ResetTransformState as u32 Render_ResetTransformState(void); graphics.h has void Render_ResetTransformState(void); tried as the definition's void Render_ResetTransformState(void), which the object already declares, Func_0802b998 moves: 1 of 372 instructions in tla-ja. */
 extern u32 Render_ResetTransformState__f02b998(void) __asm__("Render_ResetTransformState"); // Returns void; see the tag.
 void SceneTransform_ApplyPosition(void *position);
 void SceneTransform_ApplyYaw(s32 yaw);
@@ -8730,7 +8662,7 @@ void Func_0802b998(void) {
   Io_Write16(0x1010, &REG_BLDALPHA);
   REG_BLDY = 0;
   Resource_DecodeType01(
-      Resource_GetTableEntry((s32)&ResourceId_DefaultMapCells), gMapCellBuffer__f02b998);
+      Resource_GetTableEntry((s32)&ResourceId_DefaultMapCells), gMapCellBuffer);
   view->unk014 = 0x1f00;
   view->unk016 = 0x80;
   Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_Data199),
@@ -8901,7 +8833,7 @@ struct Data02020000 {
 
 extern const u32 gData_0802ed34[4][9];
 extern u8 gData_02028000[];
-/* VIEW(f02be4c): variable gWorldMapWork as extern u8 gWorldMapWork[]; battle.h has extern struct WorldMapWork gWorldMapWork. */
+/* VIEW(f02be4c): variable gWorldMapWork as extern u8 gWorldMapWork[]; battle.h has extern struct WorldMapWork gWorldMapWork; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/field/resource_slot.c:8903: `gWorldMapWork' has an incomplete type. */
 extern u8 gWorldMapWork__f02be4c[] __asm__("gWorldMapWork");
 
 void Func_0802d088(s32 region, s32 mode);
@@ -9068,7 +9000,7 @@ void Func_0802c088(void) {
   perspective->windowPending = 0;
 }
 
-/* VIEW(f02be4c): variable gMapBlocks as extern u8 gMapBlocks[]; f0298c0 has extern u32 gMapBlocks[]. */
+/* VIEW(f02be4c): variable gMapBlocks as extern u8 gMapBlocks[]; f0298c0 has extern u32 gMapBlocks[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/field/resource_slot.c:9021: `gMapBlocks__f02be4c' undeclared (first use in this function). */
 extern u8 gMapBlocks__f02be4c[] __asm__("gMapBlocks");
 
 /// Copies one world map cell's two tile entries (top and bottom) to a BG map.
@@ -9169,31 +9101,12 @@ void Transform_SetLookAt(s32 *eye, s32 *target);
 void Func_0802c58c(void);
 void Func_0802dd70(s32 ratio, s32 *position, void *affineWork);
 
-/* VIEW(f02be4c): tag struct WorldView as struct WorldView__f02be4c; resource_slot.c has another definition. */
-struct WorldView__f02be4c {
-  s32 *origin;
-  s32 shakeX, shakeY, shakeDecay;
-  u8 unk010[0xd4];
-  s32 viewX;
-  s32 viewY;
-  u8 unk0ec[0x30];
-  u16 pitch;
-  u16 yaw;
-  u8 unk120[0x83c];
-  s32 farPlane;
-  s32 distance;
-  u8 unk964[0xd];
-  s8 flat;
-  s8 paused;
-  u8 unk973[3];
-  s8 fixedEye;
-};
 
 
 void Func_0802c240(void) {
   u8 *camera = Ram_HeapSlots->cameraWork;
   u8 *affineWork = Ram_HeapSlots->unk1c[0];
-  struct WorldView__f02be4c *view = (struct WorldView__f02be4c *)Ram_HeapSlots->mapWork;
+  struct WorldView *view = (struct WorldView *)Ram_HeapSlots->mapWork;
   s32 *cameraPosition = (s32 *)(camera + 12);
   s32 *followedPosition = view->origin;
   u8 *affinePages = affineWork + 0xc80;

@@ -187,8 +187,6 @@ extern const u8 gData_02007734[];
 
 void Func_02000924(s32 id);
 void Func_0200095c(s32 id);
-/* VIEW(s15a8): routine Func_020042f0 as void Func_020042f0(const void *data); the definition has void Func_020042f0(const u16 *table). */
-extern void Func_020042f0__s15a8(const void *data) __asm__("Func_020042f0");
 void Func_02000d70(void);
 
 void Func_02001afc(void) {
@@ -226,7 +224,7 @@ void Func_02001afc(void) {
   }
 }
 
-void Func_02001bdc(void) { Func_020042f0__s15a8(gData_02007734); }
+void Func_02001bdc(void) { Func_020042f0(gData_02007734); }
 
 /// Copies two blocks of map cells, sets byte 98 of objects 16 to 18 and clears
 /// their collision flags; then runs Func_02000d70, and Func_020006b4 and
@@ -272,7 +270,7 @@ struct MapWorkByte23 {
 };
 
 void Func_02004188(s32 a, s32 b);
-/* VIEW(s15a8): routine Func_02004224 as struct TrialRoadMover *Func_02004224(s32 index, s32 id, s32 value, s32 low, s32 high); the definition has struct RideEntry *Func_02004224(s32 slot, s32 id, s32 timer, s32 low, s32 high). */
+/* VIEW(s15a8): routine Func_02004224 as struct TrialRoadMover *Func_02004224(s32 index, s32 id, s32 value, s32 low, s32 high); the definition has struct RideEntry *Func_02004224(s32 slot, s32 id, s32 timer, s32 low, s32 high); tried as the definition's s32 Func_02004224(s32 row, s32 column, s32 direction), it does not compile in tla-ja: games/tla/src/scene/trial_road/s15a8.c:283: too many arguments to function `Func_02004224'. */
 extern struct TrialRoadMover *Func_02004224__s15a8(s32 index, s32 id, s32 value, s32 low,
                                      s32 high) __asm__("Func_02004224");
 
@@ -335,8 +333,7 @@ void Func_02001d8c(void) {
 
 void Func_02001dd0(void) {}
 
-/* VIEW(s15a8): variable gData_02005b44 as extern const u8 gData_02005b44[]; the definition has u32 gData_02005b44[] = { 23, 3, 0x1000, 0, 1, 13, 0xffff, 0, }. */
-extern const u8 gData_02005b44__s15a8[] __asm__("gData_02005b44");
+extern u32 gData_02005b44[];
 
 void Func_02001dd4(void) {
   struct Actor *partner = Actor_GetById(8);
@@ -368,7 +365,7 @@ void Func_02001dd4(void) {
   partner->terrainHeight = 0;
   partner->collisionFlags = 1;
   partner->velocityY = 0xa0000;
-  Actor_SetMovementTypeById(8, gData_02005b44__s15a8);
+  Actor_SetMovementTypeById(8, gData_02005b44);
   y = partner->y;
   Actor_SetMoveTarget(partner, 344 << 16, y, 264 << 16);
   GameFlag_SetBit(648);
@@ -443,8 +440,6 @@ next:
 
 extern s32 gData_02007e20;
 extern s32 gData_02007e24;
-/* VIEW(s1fc4): variable gData_02007e28 as extern u8 gData_02007e28[]; s15a8 has extern u16 gData_02007e28[]. */
-extern u8 gData_02007e28__s1fc4[] __asm__("gData_02007e28");
 
 void Func_02001f08(void);
 
@@ -458,7 +453,7 @@ static __inline__ void Words_Copy(void *destination, const void *source,
 void Func_02001fc4(s32 mode) {
   gData_02007e24 = 1;
   if (mode != 2)
-    Words_Copy(gData_02007e28__s1fc4, (void *)&BG_PLTT_COLOR(5, 0), 32);
+    Words_Copy(gData_02007e28, (void *)&BG_PLTT_COLOR(5, 0), 32);
   if (mode == 1) {
     /* FAKEMATCH(temporary): a local holding the zero builds it in r2 and the
      * counter address in r3, as overlay 699's twin does; as
@@ -539,7 +534,7 @@ L_0200a07c:
 L_0200a0bc:
 }
 
-/* VIEW(s1fc4): variable gData_02005b64 as extern s32(*const gData_02005b64[]) (void); the definition has void(*gData_02005b64[]) (void) = { Func_02001904, Func_02001974, Func_02001a70, Func_02001afc, Func_02001bdc, Func_02001bec, Func_02001c6c, .... */
+/* VIEW(s1fc4): variable gData_02005b64 as extern s32(*const gData_02005b64[]) (void); the definition has void(*gData_02005b64[]) (void) = { Func_02001904, Func_02001974, Func_02001a70, Func_02001afc, Func_02001bdc, Func_02001bec, Func_02001c6c, ...; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/trial_road/s15a8.c:553: `gData_02005b64' undeclared (first use in this function). */
 extern s32 (*const gData_02005b64__s1fc4[])(void) __asm__("gData_02005b64");
 
 void Func_02003900(void);
@@ -613,8 +608,7 @@ struct TrialRoadStage {
   s16 best;
 };
 
-/* VIEW(s1fc4): variable gData_02005b84 as extern const s32 *const gData_02005b84[]; the definition has u32 gData_02005b84[] = { 450, 451, 452, 453, 454, 455, 456, 457, 458, 459, }. */
-extern const s32 *const gData_02005b84__s1fc4[] __asm__("gData_02005b84");
+extern u32 gData_02005b84[];
 
 s32 Func_020056e8(void);
 s32 Func_020000fc(s32 value);
@@ -631,7 +625,7 @@ void Func_0200223c(void) {
   if (Func_020056e8() != 0) {
     if (state->timer == 0) {
       side = Func_020000fc(1) ^ 1;
-      Func_020056c4(gData_02005b84__s1fc4[side + 8]);
+      Func_020056c4(gData_02005b84[side + 8]);
       state->timer = side * 5 * 120 + 1;
     } else {
       if (state->stage >= state->best)
@@ -640,7 +634,7 @@ void Func_0200223c(void) {
         s32 pattern =
             state->order[state->stage * 2 + (s16)(state->mirrored ^ 1)];
 
-        Func_020056c4(gData_02005b84__s1fc4[pattern & 7]);
+        Func_020056c4(gData_02005b84[pattern & 7]);
         Actor_GetById(8)->terrainHeight = 0;
         Actor_GetById(8)->y = 0;
       } else {
@@ -705,11 +699,11 @@ void Func_0200223c(void) {
   road->field14++;
 }
 
-/* VIEW(s1fc4): variable gData_02005bac as extern const s16 gData_02005bac[][2]; the definition has u16 gData_02005bac[] = { 1, 48, 15, 48, 29, 48, 1, 70, 15, 70, 29, 70, 1, 92, 15, 92, }. */
+/* VIEW(s1fc4): variable gData_02005bac as extern const s16 gData_02005bac[][2]; the definition has u16 gData_02005bac[] = { 1, 48, 15, 48, 29, 48, 1, 70, 15, 70, 29, 70, 1, 92, 15, 92, }; tried as the definition's extern u32 gData_02005bac[], it does not compile in tla-ja: games/tla/src/scene/trial_road/s15a8.c:851: subscripted value is neither array nor pointer. */
 extern const s16 gData_02005bac__s1fc4[][2] __asm__("gData_02005bac");
-/* VIEW(s1fc4): variable gData_02005bcc as extern const s8 gData_02005bcc[]; the definition has u8 gData_02005bcc[] = { 0, 1, 2, 3, 4, 4, 4, 5, 6, 7, }. */
+/* VIEW(s1fc4): variable gData_02005bcc as extern const s8 gData_02005bcc[]; the definition has u8 gData_02005bcc[] = { 0, 1, 2, 3, 4, 4, 4, 5, 6, 7, }; tried as the definition's extern struct ActorPlacement gData_02005bcc[], it does not compile in tla-ja: games/tla/src/scene/trial_road/s15a8.c:860: invalid operands to binary !=. */
 extern const s8 gData_02005bcc__s1fc4[] __asm__("gData_02005bcc");
-/* VIEW(s1fc4): variable gData_02005bd6 as extern const s8 gData_02005bd6[]; the definition has u8 gData_02005bd6[] = { 0, 1, 2, 3, 4, 4, 4, 5, 6, 7, }. */
+/* VIEW(s1fc4): variable gData_02005bd6 as extern const s8 gData_02005bd6[]; the definition has u8 gData_02005bd6[] = { 0, 1, 2, 3, 4, 4, 4, 5, 6, 7, }; tried as the definition's extern u8 gData_02005bd6[], Func_0200242c moves: 1 of 868 instructions in tla-ja. */
 extern const s8 gData_02005bd6__s1fc4[] __asm__("gData_02005bd6");
 
 void *Unit_Get(s32 owner);
@@ -777,7 +771,7 @@ s32 Func_0200242c(void) {
       state->field1a = 0;
       state->field1c = 0;
       value = state->order[state->mirrored ^ 1];
-      Func_020056c4((s32)gData_02005b84__s1fc4[value & 7]);
+      Func_020056c4((s32)gData_02005b84[value & 7]);
       state->pattern = state->order[state->field16[0] * 2 + state->mirrored];
       n = entrance % 10;
       Func_02005988((s32)&SceneId_Ov697Room1, n);
@@ -810,7 +804,7 @@ s32 Func_0200242c(void) {
           value = state->order[index];
         }
       }
-      Func_020056c4((s32)gData_02005b84__s1fc4[value & 7]);
+      Func_020056c4((s32)gData_02005b84[value & 7]);
       state->pattern = state->order[state->field16[0] * 2 + state->mirrored];
       n = entrance % 10;
       Func_02005988((s32)&SceneId_Ov697Room1, n);
@@ -976,7 +970,7 @@ s32 Func_0200242c(void) {
 // the odd slots hold at least one of the four values in gData_02005be0; the
 // random state is restored after.
 
-/* VIEW(s1fc4): variable gData_02005be0 as extern const s8 gData_02005be0[4]; the definition has u32 gData_02005be0[] = { 0x7030200, 0x6050401, }. */
+/* VIEW(s1fc4): variable gData_02005be0 as extern const s8 gData_02005be0[4]; the definition has u32 gData_02005be0[] = { 0x7030200, 0x6050401, }; tried as the definition's extern struct ActorPlacement gData_02005be0[], it does not compile in tla-ja: games/tla/src/scene/trial_road/s15a8.c:1002: incompatible types in assignment. */
 extern const s8 gData_02005be0__s1fc4[4] __asm__("gData_02005be0");
 
 /// Deals the Trial Road's stage order from a seed: shuffles 0 to 7 into the
@@ -1363,18 +1357,13 @@ void Func_020037c8(void) {
 
 /// The byte at 0x5a of an actor, as the field its bit 0 is set through.
 
-/* VIEW(s1fc4): variable gData_02005c88 as extern const u8 gData_02005c88[]; the definition has u32 gData_02005c88[] = { 22, 15, 0x18000, 22, 16, 0x10000, 22, 5, 0xe80000, 22, 7, 0x2a80000, 39, 5, 4, 0xe80000, 0, 0x2780000, 1, 4, 0xc800.... */
-extern const u8 gData_02005c88__s1fc4[] __asm__("gData_02005c88");
-/* VIEW(s1fc4): variable gData_02005be8 as extern const u8 gData_02005be8[]; the definition has u32 gData_02005be8[] = { 22, 15, 0x18000, 22, 16, 0x10000, 22, 5, 0x1380000, 22, 7, 0x2a80000, 39, 5, 4, 0x1380000, 0, 0x2780000, 1, 4, 0x15.... */
-extern const u8 gData_02005be8__s1fc4[] __asm__("gData_02005be8");
-/* VIEW(s1fc4): variable gData_02005d28 as extern const u8 gData_02005d28[]; the definition has u32 gData_02005d28[] = { 22, 15, 0x18000, 22, 16, 0x10000, 22, 5, 0x780000, 22, 7, 0x1280000, 39, 5, 4, 0x780000, 0, 0xd80000, 1, 4, 0x88000.... */
-extern const u8 gData_02005d28__s1fc4[] __asm__("gData_02005d28");
-/* VIEW(s1fc4): variable gData_02005dc8 as extern const u8 gData_02005dc8[]; the definition has u32 gData_02005dc8[] = { 22, 15, 0x18000, 22, 16, 0x10000, 39, 5, 4, 0xd80000, 0, 0xa80000, 1, 4, 0xe80000, 0, 0x980000, 1, 4, 0xe80000, 0, .... */
+extern u32 gData_02005c88[];
+extern u32 gData_02005be8[];
+extern u32 gData_02005d28[];
+/* VIEW(s1fc4): variable gData_02005dc8 as extern const u8 gData_02005dc8[]; the definition has u32 gData_02005dc8[] = { 22, 15, 0x18000, 22, 16, 0x10000, 39, 5, 4, 0xd80000, 0, 0xa80000, 1, 4, 0xe80000, 0, 0x980000, 1, 4, 0xe80000, 0, ...; tried as the definition's extern s16 gData_02005dc8[], it does not compile in tla-ja: games/tla/src/scene/trial_road/s15a8.c:3027: conflicting types for `gData_02005dc8'. */
 extern const u8 gData_02005dc8__s1fc4[] __asm__("gData_02005dc8");
-/* VIEW(s1fc4): variable gData_02005e40 as extern const u8 gData_02005e40[]; the definition has u32 gData_02005e40[] = { 22, 15, 0x10000, 22, 16, 0x8000, 22, 5, 0x1580000, 22, 7, 0xb80000, 39, 2, 4, 0x1380000, 0, 0xa80000, 1, 39, 1, 0, .... */
-extern const u8 gData_02005e40__s1fc4[] __asm__("gData_02005e40");
-/* VIEW(s1fc4): variable gData_02005ed4 as extern const u8 gData_02005ed4[]; the definition has u32 gData_02005ed4[] = { 22, 15, 0x18000, 22, 16, 0x10000, 39, 5, 4, 0x1780000, 0, 0xc80000, 1, 4, 0x1d80000, 0, 0xc80000, 1, 4, 0x1e80000, .... */
-extern const u8 gData_02005ed4__s1fc4[] __asm__("gData_02005ed4");
+extern u32 gData_02005e40[];
+extern u32 gData_02005ed4[];
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -1397,8 +1386,8 @@ void Func_02003900(void) {
       object->x -= 0x900000;
   }
   FieldCamera_MoveTo(-1, -1, -1, 0);
-  Actor_SetMovementTypeById(13, gData_02005c88__s1fc4);
-  Actor_SetMovementTypeById(14, gData_02005be8__s1fc4);
+  Actor_SetMovementTypeById(13, gData_02005c88);
+  Actor_SetMovementTypeById(14, gData_02005be8);
   Event_StartScreenTransition();
   Event_Wait(20);
   FieldCamera_SetSpeed(0x20000, 0x4000);
@@ -1416,7 +1405,7 @@ void Func_02003900(void) {
   Func_02005980();
   Event_ShowMessageAndWait(8, 0);
   Event_ShowMessageAndWait(4, 0);
-  Actor_SetMovementTypeById(13, gData_02005d28__s1fc4);
+  Actor_SetMovementTypeById(13, gData_02005d28);
   Actor_RefreshSelectorById(13);
   Actor_SetModeById(13, 1);
   Event_Wait(10);
@@ -1467,7 +1456,7 @@ void Func_02003900(void) {
   Actor_RefreshSelectorById(13);
   Sound_Play(123);
   Event_ShowMessageAndWait(8, 0);
-  Actor_SetMovementTypeById(14, gData_02005e40__s1fc4);
+  Actor_SetMovementTypeById(14, gData_02005e40);
   FieldCamera_MoveTo(328 << 16, -1, 120 << 16, 1);
   Func_02005980();
   Event_ShowMessageAndWait(8, 0);
@@ -1505,7 +1494,7 @@ void Func_02003900(void) {
   Camera_MoveWithinMapBounds(408 << 16, -1, 120 << 16, 1);
   Func_02005980();
   Event_ShowMessageAndWait(8, 0);
-  Actor_SetMovementTypeById(14, gData_02005ed4__s1fc4);
+  Actor_SetMovementTypeById(14, gData_02005ed4);
   Actor_RefreshSelectorById(14);
   Event_ShowMessageAndWait(8, 0);
   Import_EventSetExitRequest(10);
@@ -1518,7 +1507,7 @@ void Func_02003900(void) {
 // height and cell attribute byte follow its actor and offset, and its marker
 // actor is placed over it, bobbing on a sine while the offset is not 0.
 
-/* VIEW(s1fc4): tag struct TrialRoadMover as struct TrialRoadMover__s1fc4; s15a8.c has another definition. */
+/* VIEW(s1fc4): tag struct TrialRoadMover as struct TrialRoadMover__s1fc4; s15a8.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/trial_road/s15a8.c:1546: structure has no member named `phase'. */
 struct TrialRoadMover__s1fc4 {
   s16 id;
   s16 phase;
@@ -1646,7 +1635,7 @@ struct ResourceTableEntry {
   u16 offset;
 };
 
-/* VIEW(s3f68): tag struct TrialRoadMover as struct TrialRoadMover__s3f68; s15a8.c has another definition. */
+/* VIEW(s3f68): tag struct TrialRoadMover as struct TrialRoadMover__s3f68; s15a8.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/trial_road/s15a8.c:1689: structure has no member named `offset'. */
 struct TrialRoadMover__s3f68 {
   s16 id;
   s16 phase;
@@ -1656,7 +1645,7 @@ struct TrialRoadMover__s3f68 {
   struct Actor *marker;
 };
 
-/* VIEW(s3f68): tag struct TrialRoadMovers as struct TrialRoadMovers__s3f68; s15a8.c has another definition. */
+/* VIEW(s3f68): tag struct TrialRoadMovers as struct TrialRoadMovers__s3f68; s15a8.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/trial_road/s15a8.c:1680: structure has no member named `vramEntry'. */
 struct TrialRoadMovers__s3f68 {
   s16 vramEntry;
   s16 shape;
@@ -1664,7 +1653,7 @@ struct TrialRoadMovers__s3f68 {
   u32 *entries;
 };
 
-/* VIEW(s3f68): variable gResourceTableEntries as extern struct ResourceTableEntry gResourceTableEntries[]; vram_tab.h has extern struct VramBlockCacheEntry gResourceTableEntries[]. */
+/* VIEW(s3f68): variable gResourceTableEntries as extern struct ResourceTableEntry gResourceTableEntries[]; vram_tab.h has extern struct VramBlockCacheEntry gResourceTableEntries[]; tried as the 12 declarations' extern struct ResourceTableEntry gResourceTableEntries[], it does not compile in tla-ja: games/tla/include/graphics/vram_tab.h:26: conflicting types for `gResourceTableEntries'. */
 extern struct ResourceTableEntry gResourceTableEntries__s3f68[] __asm__("gResourceTableEntries");
 
 void Func_02005790(void *entry, s32 priority);
@@ -2292,12 +2281,6 @@ void Func_02004a14(union FieldObject *object) {
 extern const s32 gData_02006254[];
 
 u32 Func_020059f0(struct FieldSprite *sprite, u32 frame);
-/* VIEW(s4a94): routine Actor_SetSingleChildFlags as void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags); field.h has void Actor_SetSingleChildFlags(struct Actor *object, u32 flags). */
-extern void Actor_SetSingleChildFlags__s4a94(struct FieldEffect *effect, s32 flags) __asm__("Actor_SetSingleChildFlags");
-/* VIEW(s4a94): routine Func_020057c8 as void Func_020057c8(struct FieldEffect *effect, s32 mode); trial_road.h has void Func_020057c8(struct Actor *object, s32 a). */
-extern void Func_020057c8__s4a94(struct FieldEffect *effect, s32 mode) __asm__("Func_020057c8");
-/* VIEW(s4a94): routine Func_020057d0 as void Func_020057d0(struct FieldEffect *effect, const s32 *script); trial_road.h has void Func_020057d0(struct Actor *object, const void *script). */
-extern void Func_020057d0__s4a94(struct FieldEffect *effect, const s32 *script) __asm__("Func_020057d0");
 s32 Math_Cosine(s32 angle);
 void Func_02004a14(union FieldObject *object);
 
@@ -2320,9 +2303,9 @@ void Func_02004a94(s32 spread) {
       frame = Func_020059f0(effect->sprite, frame);
       effect->motionFlags = 0;
       effect->collisionFlags = 0;
-      Actor_SetSingleChildFlags__s4a94(effect, 0);
-      Func_020057c8__s4a94(effect, 2);
-      Func_020057d0__s4a94(effect, gData_02006254);
+      Actor_SetSingleChildFlags(effect, 0);
+      Func_020057c8(effect, 2);
+      Func_020057d0(effect, gData_02006254);
       effect->scaleY = effect->scaleX = 0xb333;
       effect->sprite->priority = 1;
       if (spread != 0) {
@@ -2361,9 +2344,9 @@ void Func_02004bc8(void) {
       frame = Func_020059f0(effect->sprite, frame);
       effect->motionFlags = 0;
       effect->collisionFlags = 0;
-      Actor_SetSingleChildFlags__s4a94(effect, 0);
-      Func_020057c8__s4a94(effect, 2);
-      Func_020057d0__s4a94(effect, gData_02006284);
+      Actor_SetSingleChildFlags(effect, 0);
+      Func_020057c8(effect, 2);
+      Func_020057d0(effect, gData_02006284);
       effect->velocity.x = Math_Cosine(i << 12);
       effect->velocity.y = 0;
       effect->velocity.z = Math_Sine(i << 12);
@@ -2479,8 +2462,6 @@ struct TrialRoadLinkWork {
   s16 path[0x1c20];
 };
 
-/* VIEW(s4ddc): variable gSceneState as extern struct TrialRoadReplay gSceneState; s4d6c has extern u8 gSceneState[]. */
-extern struct TrialRoadReplay gSceneState__s4ddc __asm__("gSceneState");
 extern u8 gLinkPeerSignatures[][24];
 extern volatile u16 gLinkStatus;
 
@@ -2496,7 +2477,7 @@ void Func_020057f0(struct Actor *object);
 void Func_02004ddc(void) {
   struct TrialRoadLinkWork *work =
       *(struct TrialRoadLinkWork **)((u8 *)Ram_HeapSlots + 236);
-  struct TrialRoadReplay *state = &gSceneState__s4ddc;
+  struct TrialRoadReplay *state = &gSceneState;
   struct Actor *rival = Actor_GetById(state->id);
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   s32 x, z, turn, dx, dz;
@@ -2657,7 +2638,7 @@ void Func_02004ddc(void) {
 #include "resource.h"
 #include "vram_tab.h"
 
-/* VIEW(s51a0): tag struct TrialRoadLinkWork as struct TrialRoadLinkWork__s51a0; s15a8.c has another definition. */
+/* VIEW(s51a0): tag struct TrialRoadLinkWork as struct TrialRoadLinkWork__s51a0; s15a8.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/trial_road/s15a8.c:2710: structure has no member named `vramEntry'. */
 struct TrialRoadLinkWork__s51a0 {
   u32 oam[54];
   s16 vramEntry;

@@ -192,7 +192,7 @@ void Func_080e2ec0(void) {
 
 #include "battle.h"
 #include "debug.h"
-/* VIEW(f0e2c38): routine BattleEffect_DropObjectAtAnchor as void BattleEffect_DropObjectAtAnchor(u32 objectId); the definition has void BattleEffect_DropObjectAtAnchor(s32 id). */
+/* VIEW(f0e2c38): routine BattleEffect_DropObjectAtAnchor as void BattleEffect_DropObjectAtAnchor(u32 objectId); the definition has void BattleEffect_DropObjectAtAnchor(s32 id); tried as the definition's void BattleEffect_DropObjectAtAnchor(s32 id), which the object already declares, it does not compile in tla-ja: games/tla/src/field/event_commands/f0e2c38.c:3404: conflicting types for `BattleEffect_DropObjectAtAnchor'. */
 extern void BattleEffect_DropObjectAtAnchor__f0e2c38(u32 objectId) __asm__("BattleEffect_DropObjectAtAnchor");
 #define BattleEffect_DropObjectAtAnchor BattleEffect_DropObjectAtAnchor__f0e2c38
 #include "field.h"
@@ -770,26 +770,6 @@ void BattleEffect_CallEffect26(void) { Func_080e3d04(); }
 #include "input.h"
 
 
-/* VIEW(f0e3d04): tag struct SprayWork as struct SprayWork__f0e3d04; f0e2c38.c has another definition. */
-struct SprayWork__f0e3d04 {
-  u8 tiles[0x1000];
-  struct EffectSprite drops[16];
-  struct SprayParticle dropMotion[16];
-  struct EffectSprite puffs[16];
-  struct SprayParticle puffMotion[16];
-  s32 origin[3];
-  u16 dropTile;
-  u16 puffTile;
-  u16 angle;
-  u16 targetAngle;
-  s16 hitObject;
-  s8 hit;
-  s8 emitting;
-  s32 speed;
-  s32 lifetime;
-  s32 gravity;
-  s8 mode;
-};
 
 struct FxScene {
   u16 angleFraction;
@@ -845,10 +825,6 @@ s32 Resource_DecodeType01(const void *source, void *destination);
 s32 Resource_FindFreeEntry(void);
 s32 BattleEffect_GetObjectDepth(struct Actor *object);
 s32 BattleEffect_GetObjectPriority(struct Actor *object);
-/* VIEW(f0e3d04): routine Func_080ce458 as void *Func_080ce458(u32 kind, s32 entry, s32 arg); battle.h has struct TriggerEvent *Func_080ce458(s32 filter, s32 kind, s32 selector). */
-extern void *Func_080ce458__f0e3d04(u32 kind, s32 entry, s32 arg) __asm__("Func_080ce458");
-/* VIEW(f0e3d04): routine Field_RunPsynergyEvent as void Field_RunPsynergyEvent(void *event, s32 a, s32 b); event_work.h has s32 Field_RunPsynergyEvent(struct PendingEvent *event, s32 mode, s32 target). */
-extern void Field_RunPsynergyEvent__f0e3d04(void *event, s32 a, s32 b) __asm__("Field_RunPsynergyEvent");
 void BattleEffect_PrepareBufferInterpolation(void);
 void Func_080e38c8(void);
 
@@ -856,7 +832,7 @@ void Func_080e38c8(void);
   (((struct ObjectAnimation *)(object)->sprite)->definition)
 
 void Func_080e3d04(void) {
-  struct SprayWork__f0e3d04 *work;
+  struct SprayWork *work;
   struct FxEvent *event;
   struct FxScene *scene;
   struct Actor *caster;
@@ -883,7 +859,7 @@ void Func_080e3d04(void) {
   s32 k;
   s32 mode;
 
-  work = HeapSlot_Alloc(92, sizeof(struct SprayWork__f0e3d04));
+  work = HeapSlot_Alloc(92, sizeof(struct SprayWork));
   scene = Ram_HeapSlots->effectWork;
   event = Ram_HeapSlots->eventWork;
   caster = scene->mainObject;
@@ -1038,11 +1014,11 @@ void Func_080e3d04(void) {
   for (k = 0; k < 80; k++) {
     wait(1);
     if (work->hit != 0) {
-      pending = Func_080ce458__f0e3d04(0x60000005, scene->fieldKind,
+      pending = Func_080ce458(0x60000005, scene->fieldKind,
                               (s16)(work->hitObject | 0x100));
       if (pending != NULL)
-        Field_RunPsynergyEvent__f0e3d04(pending, scene->firstObjectId, work->hitObject);
-      if (Func_080ce458__f0e3d04(0x20000005, scene->fieldKind,
+        Field_RunPsynergyEvent(pending, scene->firstObjectId, work->hitObject);
+      if (Func_080ce458(0x20000005, scene->fieldKind,
                         (s16)(work->hitObject | 0x100)) != NULL) {
         event->unkd30 = work->hitObject;
         break;
@@ -1116,7 +1092,7 @@ struct CueEvent {
   u16 cue;
 };
 
-/* VIEW(f0e3d04): variable gMainRoutineWork as extern u8 gMainRoutineWork[]; main_routine_work.h has extern struct MainRoutineWork gMainRoutineWork. */
+/* VIEW(f0e3d04): variable gMainRoutineWork as extern u8 gMainRoutineWork[]; main_routine_work.h has extern struct MainRoutineWork gMainRoutineWork; tried as the 3 declarations' extern u8 gMainRoutineWork[], it does not compile in tla-ja: games/tla/include/system/main_routine_work.h:123: conflicting types for `gMainRoutineWork'. */
 extern u8 gMainRoutineWork__f0e3d04[] __asm__("gMainRoutineWork");
 
 s32 Func_080dbcd8(s32 x, s32 z, s32 layer);
@@ -1229,7 +1205,7 @@ void Func_080e43a4(struct PictureSource *source, void *buffer, s32 size) {
 #undef PICTURE_FORMAT_COMPRESSED
 
 // ---- games/tla/src/field/event/f0e446c.c ----
-/* VIEW(f0e446c): tag struct EffectSprite as struct EffectSprite__f0e446c; effect_sprite.h has another definition. */
+/* VIEW(f0e446c): tag struct EffectSprite as struct EffectSprite__f0e446c; effect_sprite.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/event_commands/f0e2c38.c:1281: structure has no member named `priority'. */
 struct EffectSprite__f0e446c {
   u8 unk00[4];
   u16 attr0_0 : 13;
@@ -1265,18 +1241,10 @@ struct EffectParticle {
   s32 timer;
 };
 
-/* VIEW(f0e446c): routine Func_080eaf98 as void Func_080eaf98(struct EffectSprite__f0e446c *sprite, s32 width, s32 height, u32 shape, s32 tiles); effect_sprite.h has void Func_080eaf98(struct EffectSprite *sprite, s32 pivotX, s32 pivotY, u32 attributes, s32 tile). */
-extern void Func_080eaf98__f0e446c(struct EffectSprite__f0e446c *sprite, s32 width, s32 height,
-                   u32 shape, s32 tiles) __asm__("Func_080eaf98");
 s32 BattleEffect_GetObjectDepth(struct Actor *object);
 s32 BattleEffect_GetObjectPriority(struct Actor *object);
-/* VIEW(f0e446c): routine Func_080eb01c as void Func_080eb01c(struct EffectSprite__f0e446c *sprite); effect_sprite.h has void Func_080eb01c(struct EffectSprite *sprite). */
-extern void Func_080eb01c__f0e446c(struct EffectSprite__f0e446c *sprite) __asm__("Func_080eb01c");
 void Camera_WorldToScreen(s32 *position);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, s32 *position);
-/* VIEW(f0e446c): routine BattleEffect_IntegrateVector2 as void BattleEffect_IntegrateVector2(struct EffectParticle *particle, s32 frames, s32 flags); battle.h has void BattleEffect_IntegrateVector2(s32 *vector, s32 damping, s32 gravity). */
-extern void BattleEffect_IntegrateVector2__f0e446c(struct EffectParticle *particle, s32 frames,
-                                   s32 flags) __asm__("BattleEffect_IntegrateVector2");
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 
@@ -1319,7 +1287,7 @@ void Func_080e4510(struct EffectSprite__f0e446c *sprite, s32 tiles) {
   struct EventWork *event = Ram_HeapSlots->eventWork;
   s32 position[3];
 
-  Func_080eaf98__f0e446c(sprite, 16, 30, 0x80000000, tiles);
+  Func_080eaf98(sprite, 16, 30, 0x80000000, tiles);
   sprite->depth = BattleEffect_GetObjectDepth(scene->mainObject);
   sprite->priority = BattleEffect_GetObjectPriority(scene->mainObject);
   sprite->color = 1;
@@ -1340,7 +1308,7 @@ void Func_080e4510(struct EffectSprite__f0e446c *sprite, s32 tiles) {
 }
 
 /// Forwards to Func_080eb01c, which draws an effect sprite.
-void Func_080e45a0(void *sprite) { Func_080eb01c__f0e446c(sprite); }
+void Func_080e45a0(void *sprite) { Func_080eb01c(sprite); }
 
 void Func_080e45a8(struct EffectSprite__f0e446c *sprite, struct EffectParticle *particle,
                    s32 unused, s32 tiles, s32 high) {
@@ -1370,7 +1338,7 @@ void Func_080e45a8(struct EffectSprite__f0e446c *sprite, struct EffectParticle *
   particle->velocityX = position[0];
   particle->velocityY = 0;
   particle->velocityZ = position[2];
-  Func_080eaf98__f0e446c(sprite, 8, 8, 0x40000000, tiles);
+  Func_080eaf98(sprite, 8, 8, 0x40000000, tiles);
   sprite->scaleX = 0x3333;
   sprite->scaleY = 0x3333;
   sprite->priority = BattleEffect_GetObjectPriority(mainObject);
@@ -1384,8 +1352,6 @@ void Func_080e45a8(struct EffectSprite__f0e446c *sprite, struct EffectParticle *
 // 64 of them as a dust puff.
 
 void Camera_WorldToScreen(s32 *position);
-/* VIEW(growing_particle): routine BattleEffect_IntegrateVector2 as void BattleEffect_IntegrateVector2(s32 *vector, s32 damping, s32 gravity); f0e446c has void BattleEffect_IntegrateVector2(struct EffectParticle *particle, s32 frames, s32 flags). */
-extern void BattleEffect_IntegrateVector2__growing_particle(s32 *vector, s32 damping, s32 gravity) __asm__("BattleEffect_IntegrateVector2");
 
 /// Advances one particle by a frame. For its first 32 frames its sprite
 /// steps through eight pictures of eight tiles from tiles, four frames each,
@@ -1414,7 +1380,7 @@ void Func_080e46ac(struct EffectSprite *sprite, struct EffectParticle *particle,
     sprite->x = position[0];
     sprite->y = position[2];
     Func_080eb01c(sprite);
-    BattleEffect_IntegrateVector2__growing_particle(&particle->x, 60, 0);
+    BattleEffect_IntegrateVector2(&particle->x, 60, 0);
   }
   particle->timer++;
 }
@@ -1422,7 +1388,7 @@ void Func_080e46ac(struct EffectSprite *sprite, struct EffectParticle *particle,
 
 struct PendingEvent;
 
-/* VIEW(growing_particle): variable gMainRoutineWork as extern u8 gMainRoutineWork[]; main_routine_work.h has extern struct MainRoutineWork gMainRoutineWork. */
+/* VIEW(growing_particle): variable gMainRoutineWork as extern u8 gMainRoutineWork[]; main_routine_work.h has extern struct MainRoutineWork gMainRoutineWork; tried as the 3 declarations' extern u8 gMainRoutineWork[], it does not compile in tla-ja: games/tla/include/system/main_routine_work.h:123: conflicting types for `gMainRoutineWork'. */
 extern u8 gMainRoutineWork__growing_particle[] __asm__("gMainRoutineWork");
 extern u8 Data_02000452;
 
@@ -1436,15 +1402,8 @@ s32 Resource_DecodeType01(const void *source, void *destination);
 s32 Resource_FindFreeEntry(void);
 s32 VramCache_Load(u32 slot, u32 size, const void *source);
 s32 Resource_ResetEntry(u32 slot);
-/* VIEW(growing_particle): routine Func_080e45a8 as void Func_080e45a8(void *sprite, void *particle, s32 index, s32 tiles, s32 high); the definition has void Func_080e45a8(struct EffectSprite__f0e446c *sprite, struct EffectParticle *particle, s32 unused, s32 tiles, s32 high). */
-extern void Func_080e45a8__growing_particle(void *sprite, void *particle, s32 index, s32 tiles,
-                   s32 high) __asm__("Func_080e45a8");
-/* VIEW(growing_particle): routine Func_080e4510 as void Func_080e4510(void *sprite, s32 tiles); the definition has void Func_080e4510(struct EffectSprite__f0e446c *sprite, s32 tiles). */
-extern void Func_080e4510__growing_particle(void *sprite, s32 tiles) __asm__("Func_080e4510");
 void Func_080e446c(u8 *source, u8 *destination, s32 phase);
 void Func_080e45a0(void *sprite);
-/* VIEW(growing_particle): routine Func_080e43a4 as void Func_080e43a4(void *source, void *buffer, s32 size); the definition has void Func_080e43a4(struct PictureSource *source, void *buffer, s32 size). */
-extern void Func_080e43a4__growing_particle(void *source, void *buffer, s32 size) __asm__("Func_080e43a4");
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 void Actor_SetPositionAndResetMotionFar(struct Actor *object, s32 x, s32 y,
                                         s32 z);
@@ -1453,8 +1412,6 @@ void Animation_ApplyChildValueToFirstFar(void *animation, s32 value);
 struct Actor *Actor_GetById(u32 objectId);
 void Camera_FollowActor(s32 actor, s32 mode);
 s32 Func_080ce31c(s32 kind);
-/* VIEW(growing_particle): routine Func_080ce458 as struct PendingEvent *Func_080ce458(u32 filter, s32 kind, s32 selector); battle.h has struct TriggerEvent *Func_080ce458(s32 filter, s32 kind, s32 selector). */
-extern struct PendingEvent *Func_080ce458__growing_particle(u32 filter, s32 kind, s32 selector) __asm__("Func_080ce458");
 s32 Field_RunPsynergyEvent(struct PendingEvent *event, s32 mode, s32 argument);
 
 void Func_080e4730(void) {
@@ -1493,7 +1450,7 @@ void Func_080e4730(void) {
   delay = 0;
   particleSprite = work + 0x800;
   for (; i < 64; i++) {
-    Func_080e45a8__growing_particle(particleSprite, particle, i, particleTiles,
+    Func_080e45a8(particleSprite, particle, i, particleTiles,
                   *(s16 *)(event + 0xd48));
     *(s32 *)(particle + 24) = delay;
     particleSprite += 40;
@@ -1530,7 +1487,7 @@ void Func_080e4730(void) {
        * instructions differ in tla-en. */
       register s32 size asm("r2") = sprite;
 
-      Func_080e43a4__growing_particle(source, work, size);
+      Func_080e43a4(source, work, size);
     }
   }
   Animation_ApplyChildValueToFirstFar(owner->sprite, 15);
@@ -1540,7 +1497,7 @@ void Func_080e4730(void) {
   asm("" : : "r"(party));
   pictureEntry = Resource_FindFreeEntry();
   sprite = VramCache_Load(pictureEntry, sprite, NULL);
-  Func_080e4510__growing_particle(work + 0x1900, sprite);
+  Func_080e4510(work + 0x1900, sprite);
   wait(1);
 
   frame = 0;
@@ -1571,7 +1528,7 @@ void Func_080e4730(void) {
       }
       if (*(s16 *)(event + 0xd48) == 0)
         Field_RunPsynergyEvent(
-            Func_080ce458__growing_particle(0x40000005, *(s16 *)(effect + 30),
+            Func_080ce458(0x40000005, *(s16 *)(effect + 30),
                           Func_080ce31c(*(s16 *)(effect + 30))),
             *(s16 *)(effect + 24), -1);
     }
@@ -1636,17 +1593,8 @@ s32 Resource_DecodeType01(const void *source, void *destination);
 s32 Resource_FindFreeEntry(void);
 s32 VramCache_Load(u32 slot, u32 size, const void *source);
 s32 Resource_ResetEntry(u32 slot);
-/* VIEW(f0e4a34): routine Func_080e45a8 as void Func_080e45a8(void *sprite, void *particle, s32 index, s32 tiles, s32 high); the definition has void Func_080e45a8(struct EffectSprite__f0e446c *sprite, struct EffectParticle *particle, s32 unused, s32 tiles, s32 high). */
-extern void Func_080e45a8__f0e4a34(void *sprite, void *particle, s32 index, s32 tiles,
-                   s32 high) __asm__("Func_080e45a8");
-/* VIEW(f0e4a34): routine Func_080e4510 as void Func_080e4510(void *sprite, s32 tiles); the definition has void Func_080e4510(struct EffectSprite__f0e446c *sprite, s32 tiles). */
-extern void Func_080e4510__f0e4a34(void *sprite, s32 tiles) __asm__("Func_080e4510");
 void Func_080e446c(u8 *source, u8 *destination, s32 phase);
 void Func_080e45a0(void *sprite);
-/* VIEW(f0e4a34): routine Func_080e46ac as void Func_080e46ac(void *sprite, void *particle, s32 index, s32 tiles); the definition has void Func_080e46ac(struct EffectSprite *sprite, struct EffectParticle *particle, s32 unused, s32 tiles). */
-extern void Func_080e46ac__f0e4a34(void *sprite, void *particle, s32 index, s32 tiles) __asm__("Func_080e46ac");
-/* VIEW(f0e4a34): routine Func_080e43a4 as void Func_080e43a4(void *source, void *buffer, s32 size); the definition has void Func_080e43a4(struct PictureSource *source, void *buffer, s32 size). */
-extern void Func_080e43a4__f0e4a34(void *source, void *buffer, s32 size) __asm__("Func_080e43a4");
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 void Actor_SetPositionAndResetMotionFar(struct Actor *actor, s32 x, s32 y,
                                         s32 z);
@@ -1695,7 +1643,7 @@ void Func_080e4a34(void) {
   delay = -12;
   sprite = work + 0x800;
   for (; i < 64; i++) {
-    Func_080e45a8__f0e4a34(sprite, particle, i, particleTiles, event->standing);
+    Func_080e45a8(sprite, particle, i, particleTiles, event->standing);
     *(s32 *)(particle + 24) = delay;
     sprite += 40;
     delay -= 2;
@@ -1716,10 +1664,10 @@ void Func_080e4a34(void) {
   }
   owner->facing = 0x4000;
   wait(1);
-  Func_080e43a4__f0e4a34(*(void **)((u8 *)owner->sprite + 40), work, 0x400);
+  Func_080e43a4(*(void **)((u8 *)owner->sprite + 40), work, 0x400);
   pictureEntry = Resource_FindFreeEntry();
   pictureTiles = VramCache_Load(pictureEntry, 0x400, NULL);
-  Func_080e4510__f0e4a34(work + 0x1900, pictureTiles);
+  Func_080e4510(work + 0x1900, pictureTiles);
   frame = 15;
   for (; frame <= 92; frame++) {
     Func_080e446c(work, work + 0x400, frame * 3 / 2);
@@ -1730,7 +1678,7 @@ void Func_080e4a34(void) {
     particle = work + 0x1200;
     sprite = work + 0x800;
     for (; i <= 32; i++) {
-      Func_080e46ac__f0e4a34(sprite, particle, i, particleTiles);
+      Func_080e46ac(sprite, particle, i, particleTiles);
       sprite += 40;
       particle += 28;
     }
@@ -1805,9 +1753,6 @@ s32 Trig_Sin(s32 angle);
 void Camera_WorldToScreen(s32 *position);
 void Vector_AddPolarOffset(s32 distance, s32 angle, s32 *position);
 void BattleEffect_IntegrateVector2(s32 *vector, s32 damping, s32 gravity);
-/* VIEW(f0e4a34): routine EffectSprite_DrawAtWorldPosition as void EffectSprite_DrawAtWorldPosition(struct EffectSprite *sprite, struct GlowParticle *particle); f0e2c38 has void EffectSprite_DrawAtWorldPosition(struct EffectSprite *sprite, struct SprayParticle *particle). */
-extern void EffectSprite_DrawAtWorldPosition__f0e4a34(struct EffectSprite *sprite,
-                                      struct GlowParticle *particle) __asm__("EffectSprite_DrawAtWorldPosition");
 void Map_SetScreenShakeFar(s32 x, s32 y, s32 decay);
 
 #define GLOW_NEXT_PHASE(work) ((work)->phase++, (work)->timer = -1)
@@ -1914,7 +1859,7 @@ void Func_080e4d9c(void) {
         sprite->oam.index = work->burstTile + 28;
         break;
       }
-      EffectSprite_DrawAtWorldPosition__f0e4a34(sprite, particle);
+      EffectSprite_DrawAtWorldPosition(sprite, particle);
       particle->timer++;
     }
     switch (work->phase) {
@@ -2035,7 +1980,7 @@ void Func_080e4d9c(void) {
         sprite->oam.index = work->burstTile + 28;
         break;
       }
-      EffectSprite_DrawAtWorldPosition__f0e4a34(sprite, particle);
+      EffectSprite_DrawAtWorldPosition(sprite, particle);
       particle->timer++;
     }
     switch (work->phase) {
@@ -2100,7 +2045,7 @@ void BattleEffect_CallEffect21(void) { Func_080e572c(); }
 // ---- games/tla/src/field/event_commands/f0e572c.c ----
 
 
-/* VIEW(f0e572c): tag struct FxScene as struct FxScene__f0e572c; f0e2c38.c has another definition. */
+/* VIEW(f0e572c): tag struct FxScene as struct FxScene__f0e572c; f0e2c38.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/event_commands/f0e2c38.c:2101: structure has no member named `facing'. */
 struct FxScene__f0e572c {
   u16 facing;
   u16 angle;
@@ -2135,10 +2080,6 @@ s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
 void wait(s32 frames);
 s32 Func_080ce31c(s32 kind);
-/* VIEW(f0e572c): routine Func_080ce458 as void *Func_080ce458(u32 kind, s32 entry, s32 arg); growing_particle has struct PendingEvent *Func_080ce458(u32 filter, s32 kind, s32 selector). */
-extern void *Func_080ce458__f0e572c(u32 kind, s32 entry, s32 arg) __asm__("Func_080ce458");
-/* VIEW(f0e572c): routine Field_RunPsynergyEvent as void Field_RunPsynergyEvent(void *event, s32 a, s32 b); growing_particle has s32 Field_RunPsynergyEvent(struct PendingEvent *event, s32 mode, s32 argument). */
-extern void Field_RunPsynergyEvent__f0e572c(void *event, s32 a, s32 b) __asm__("Field_RunPsynergyEvent");
 void BattleEffect_PrepareBufferInterpolation(void);
 void Func_080e4d9c(void);
 
@@ -2234,13 +2175,13 @@ void Func_080e572c(void) {
   work->newBursts = 0;
   Task_Add(Func_080e4d9c, 0x480);
   kind = scene->fieldKind;
-  pending = Func_080ce458__f0e572c(0x50000005, kind, Func_080ce31c(kind));
+  pending = Func_080ce458(0x50000005, kind, Func_080ce31c(kind));
   frame = 0;
   while (work->phase != 999) {
     wait(1);
     if (work->phase == 999)
       frame = 999;
-    Field_RunPsynergyEvent__f0e572c(pending, work->shake, frame);
+    Field_RunPsynergyEvent(pending, work->shake, frame);
     frame++;
   }
   Task_Remove(Func_080e4d9c);
@@ -2289,9 +2230,6 @@ struct BlendWork {
   u8 mode;
 };
 
-/* VIEW(f0e572c): routine BattleEffect_IntegrateVector2 as void BattleEffect_IntegrateVector2(struct ShineParticle *particle, s32 frames, s32 flags); f0e4a34 has void BattleEffect_IntegrateVector2(s32 *vector, s32 damping, s32 gravity). */
-extern void BattleEffect_IntegrateVector2__f0e572c(struct ShineParticle *particle, s32 frames,
-                                   s32 flags) __asm__("BattleEffect_IntegrateVector2");
 void Map_SetScreenShakeFar(s32 a, s32 b, s32 c);
 
 void Func_080e5a64(void) {
@@ -2342,7 +2280,7 @@ void Func_080e5a64(void) {
         sprite->x = particle->x;
         sprite->y = particle->y;
         Func_080eb01c(sprite);
-        BattleEffect_IntegrateVector2__f0e572c(particle, 64, 0);
+        BattleEffect_IntegrateVector2(particle, 64, 0);
       }
       particle->timer++;
     }
@@ -2398,25 +2336,6 @@ void Func_080e5a64(void) {
 }
 
 // ---- games/tla/src/field/event_commands/psynergy_effects_10.c ----
-/* VIEW(psynergy_effects_10): tag struct EffectSprite as struct EffectSprite__psynergy_effects_10; effect_sprite.h has another definition. */
-struct EffectSprite__psynergy_effects_10 {
-  u8 unk00[4];
-  u16 attr0_0 : 13;
-  u16 color : 1;
-  u16 attr0_14 : 2;
-  u16 attr1;
-  u16 tile : 10;
-  u16 priority : 2;
-  u16 palette : 4;
-  u8 unk0a[2];
-  s32 x;
-  s32 y;
-  s32 scaleX;
-  s32 scaleY;
-  u8 unk1c[2];
-  u16 depth;
-  u8 unk20[8];
-};
 
 
 struct RiseWork {
@@ -2436,12 +2355,7 @@ struct ModeEvent {
   u16 cue;
 };
 
-/* VIEW(psynergy_effects_10): routine Func_080eb01c as void Func_080eb01c(struct EffectSprite__psynergy_effects_10 *sprite); effect_sprite.h has void Func_080eb01c(struct EffectSprite *sprite). */
-extern void Func_080eb01c__psynergy_effects_10(struct EffectSprite__psynergy_effects_10 *sprite) __asm__("Func_080eb01c");
 void Camera_WorldToScreen(s32 *position);
-/* VIEW(psynergy_effects_10): routine BattleEffect_IntegrateVector3 as void BattleEffect_IntegrateVector3(struct EffectParticle *particle, s32 frames, s32 flags); battle.h has void BattleEffect_IntegrateVector3(s32 *vector, s32 damping, s32 gravity). */
-extern void BattleEffect_IntegrateVector3__psynergy_effects_10(struct EffectParticle *particle, s32 frames,
-                                   s32 flags) __asm__("BattleEffect_IntegrateVector3");
 struct Actor *Actor_GetById(u32 objectId);
 void wait(s32 frames);
 s32 Trig_Sin(s32 angle);
@@ -2479,7 +2393,7 @@ s32 Party_GetLeaderActor(void);
 void BattleEffect_CallEffect18(void) { Func_080e5d5c(); }
 
 // ---- games/tla/src/field/event_commands/f0e5d5c.c ----
-/* VIEW(f0e5d5c): tag struct ShineParticle as struct ShineParticle__f0e5d5c; f0e2c38.c has another definition. */
+/* VIEW(f0e5d5c): tag struct ShineParticle as struct ShineParticle__f0e5d5c; f0e2c38.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/event_commands/f0e2c38.c:2604: structure has no member named `velocityX'. */
 struct ShineParticle__f0e5d5c {
   s32 x;
   s32 y;
@@ -2490,7 +2404,7 @@ struct ShineParticle__f0e5d5c {
   s32 timer;
 };
 
-/* VIEW(f0e5d5c): tag struct ShineWork as struct ShineWork__f0e5d5c; f0e2c38.c has another definition. */
+/* VIEW(f0e5d5c): tag struct ShineWork as struct ShineWork__f0e5d5c; f0e2c38.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/event_commands/f0e2c38.c:2572: structure has no member named `glow'. */
 struct ShineWork__f0e5d5c {
   u8 tiles[0x1000];
   struct ShineParticle__f0e5d5c particles[32];
@@ -2503,7 +2417,7 @@ struct ShineWork__f0e5d5c {
   s8 fading;
 };
 
-/* VIEW(f0e5d5c): tag struct FxScene as struct FxScene__f0e5d5c; f0e2c38.c has another definition. */
+/* VIEW(f0e5d5c): tag struct FxScene as struct FxScene__f0e5d5c; f0e2c38.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/event_commands/f0e2c38.c:2490: structure has no member named `facing'. */
 struct FxScene__f0e5d5c {
   u16 facing;
   u16 angle;
@@ -2522,11 +2436,6 @@ struct FxScene__f0e5d5c {
   s16 frame;
 };
 
-/* VIEW(f0e5d5c): tag struct FxEvent as struct FxEvent__f0e5d5c; f0e2c38.c has another definition. */
-struct FxEvent__f0e5d5c {
-  u8 unk00[20];
-  struct Actor *objects[80];
-};
 
 extern char ResourceId_GlowDisc, ResourceId_GoldStar;
 
@@ -2555,17 +2464,13 @@ void Func_080dbf94(struct Actor *object, s32 x, s32 y, s32 z);
 void BattleEffect_SinkAndShrinkObject(void);
 struct Actor *BattleEffect_SpawnScatterParticle(s32 x, s32 y, s32 z);
 s32 Func_080ce31c(s32 kind);
-/* VIEW(f0e5d5c): routine Func_080ce458 as void *Func_080ce458(u32 kind, s32 entry, s32 arg); growing_particle has struct PendingEvent *Func_080ce458(u32 filter, s32 kind, s32 selector). */
-extern void *Func_080ce458__f0e5d5c(u32 kind, s32 entry, s32 arg) __asm__("Func_080ce458");
-/* VIEW(f0e5d5c): routine Field_RunPsynergyEvent as void Field_RunPsynergyEvent(void *event, s32 a, s32 b); growing_particle has s32 Field_RunPsynergyEvent(struct PendingEvent *event, s32 mode, s32 argument). */
-extern void Field_RunPsynergyEvent__f0e5d5c(void *event, s32 a, s32 b) __asm__("Field_RunPsynergyEvent");
 void BattleEffect_PrepareBufferInterpolation(void);
 void Func_080e5a64(void);
 
 void Func_080e5d5c(void) {
   struct ShineWork__f0e5d5c *work = HeapSlot_Alloc(92, 0x18b4);
   struct FxScene__f0e5d5c *scene = Ram_HeapSlots->effectWork;
-  struct FxEvent__f0e5d5c *event = Ram_HeapSlots->eventWork;
+  struct FxEvent *event = Ram_HeapSlots->eventWork;
   struct Actor *child = scene->child;
   struct Actor *caster = scene->mainObject;
   struct Actor *object;
@@ -2735,7 +2640,7 @@ void Func_080e5d5c(void) {
     Sound_PlayFar(114);
     wait(1);
   } else {
-    pending = Func_080ce458__f0e5d5c(0x50000005, scene->fieldKind,
+    pending = Func_080ce458(0x50000005, scene->fieldKind,
                             Func_080ce31c(scene->fieldKind));
     Task_Add(Func_080e5a64, 0x480);
     frame = 0;
@@ -2747,7 +2652,7 @@ void Func_080e5d5c(void) {
         glow = &work->glow;
         Func_080eb01c(glow);
       }
-      Field_RunPsynergyEvent__f0e5d5c(pending, work->fading, frame++);
+      Field_RunPsynergyEvent(pending, work->fading, frame++);
     }
     Task_Remove(Func_080e5a64);
     wait(10);
@@ -2791,7 +2696,7 @@ void Func_080e62f4(u8 *source, u8 *destination, s32 phase) {
 // ---- games/tla/src/field/event_commands/psynergy_effects_11.c ----
 #include "macros.h"
 
-/* VIEW(psynergy_effects_11): tag struct EffectSprite as struct EffectSprite__psynergy_effects_11; effect_sprite.h has another definition. */
+/* VIEW(psynergy_effects_11): tag struct EffectSprite as struct EffectSprite__psynergy_effects_11; effect_sprite.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/event_commands/f0e2c38.c:2716: structure has no member named `tile'. */
 struct EffectSprite__psynergy_effects_11 {
   u8 unk00[4];
   u16 attr0_0 : 13;
@@ -2815,12 +2720,7 @@ struct EffectSprite__psynergy_effects_11 {
 
 
 
-/* VIEW(psynergy_effects_11): routine Func_080eb01c as void Func_080eb01c(struct EffectSprite__psynergy_effects_11 *sprite); effect_sprite.h has void Func_080eb01c(struct EffectSprite *sprite). */
-extern void Func_080eb01c__psynergy_effects_11(struct EffectSprite__psynergy_effects_11 *sprite) __asm__("Func_080eb01c");
 void Camera_WorldToScreen(s32 *position);
-/* VIEW(psynergy_effects_11): routine BattleEffect_IntegrateVector3 as void BattleEffect_IntegrateVector3(struct EffectParticle *particle, s32 frames, s32 flags); battle.h has void BattleEffect_IntegrateVector3(s32 *vector, s32 damping, s32 gravity). */
-extern void BattleEffect_IntegrateVector3__psynergy_effects_11(struct EffectParticle *particle, s32 frames,
-                               s32 flags) __asm__("BattleEffect_IntegrateVector3");
 struct Actor *Actor_GetById(u32 objectId);
 void wait(s32 frames);
 
@@ -2843,8 +2743,8 @@ void BattleEffect_UpdateGrowingParticleSprite(struct EffectSprite__psynergy_effe
   Camera_WorldToScreen(position);
   sprite->x = position[0];
   sprite->y = position[2];
-  Func_080eb01c__psynergy_effects_11(sprite);
-  BattleEffect_IntegrateVector3__psynergy_effects_11(particle, 60, 0);
+  Func_080eb01c(sprite);
+  BattleEffect_IntegrateVector3(particle, 60, 0);
 }
 
 // ---- games/tla/src/field/event_commands/f0e6400.c ----
@@ -2865,13 +2765,6 @@ struct Work080e6400 {
 };
 
 void Func_080e62f4(u8 *source, u8 *destination, s32 phase);
-/* VIEW(f0e6400): routine BattleEffect_UpdateGrowingParticleSprite as void BattleEffect_UpdateGrowingParticleSprite(struct EffectSprite *sprite, struct EffectParticle *particle, s32 tiles); the definition has void BattleEffect_UpdateGrowingParticleSprite(struct EffectSprite__psynergy_effects_11 *sprite, struct EffectParticle *particle, s32 tiles). */
-extern void BattleEffect_UpdateGrowingParticleSprite__f0e6400(struct EffectSprite *sprite,
-                                              struct EffectParticle *particle,
-                                              s32 tiles) __asm__("BattleEffect_UpdateGrowingParticleSprite");
-/* VIEW(f0e6400): routine EffectSprite_DrawAtWorldPosition as void EffectSprite_DrawAtWorldPosition(struct ScreenSprite *sprite, s32 *position); f0e4a34 has void EffectSprite_DrawAtWorldPosition(struct EffectSprite *sprite, struct GlowParticle *particle). */
-extern void EffectSprite_DrawAtWorldPosition__f0e6400(struct ScreenSprite *sprite,
-                                      s32 *position) __asm__("EffectSprite_DrawAtWorldPosition");
 u32 Random16(void);
 
 #define NEXT_PHASE(work) ((work)->phase++, (work)->timer = -1)
@@ -2929,7 +2822,7 @@ void Func_080e6400(void) {
       for (i = 0, particle = work->particles; i < 18; i++, particle++) {
         sprite = &work->sprites[i];
         if (particle->timer >= 0 && particle->timer < 32)
-          BattleEffect_UpdateGrowingParticleSprite__f0e6400(sprite, particle,
+          BattleEffect_UpdateGrowingParticleSprite(sprite, particle,
                                                    work->particleTile);
         particle->timer++;
       }
@@ -2961,7 +2854,7 @@ void Func_080e6400(void) {
       for (i = 0, particle = work->particles; i < 64; i++, particle++) {
         if (particle->timer >= 0 && particle->timer < 45) {
           sprite = &work->sprites[i];
-          EffectSprite_DrawAtWorldPosition__f0e6400(sprite, particle);
+          EffectSprite_DrawAtWorldPosition(sprite, particle);
           if (particle->timer < 42) {
             particle->y -= Q16_ONE;
             jitter = Random16();
@@ -3011,7 +2904,7 @@ void Func_080e6400(void) {
     sprite = work->sprites;
     for (i = 0; i < 20; i++, sprite++, particle++) {
       if (particle->timer >= 0 && particle->timer < 32)
-        BattleEffect_UpdateGrowingParticleSprite__f0e6400(sprite, particle,
+        BattleEffect_UpdateGrowingParticleSprite(sprite, particle,
                                                  work->particleTile);
       particle->timer++;
     }
@@ -3047,7 +2940,7 @@ struct RiseParticle {
   s32 timer;
 };
 
-/* VIEW(f0e6400): tag struct RiseWork as struct RiseWork__f0e6400; f0e2c38.c has another definition. */
+/* VIEW(f0e6400): tag struct RiseWork as struct RiseWork__f0e6400; f0e2c38.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/event_commands/f0e2c38.c:3058: structure has no member named `other'. */
 struct RiseWork__f0e6400 {
   u8 tiles[0x400];
   u8 picture[0x400];
@@ -3063,7 +2956,7 @@ struct RiseWork__f0e6400 {
   s16 mode;
 };
 
-/* VIEW(f0e6400): tag struct FxScene as struct FxScene__f0e6400; f0e2c38.c has another definition. */
+/* VIEW(f0e6400): tag struct FxScene as struct FxScene__f0e6400; f0e2c38.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/event_commands/f0e2c38.c:3028: structure has no member named `facing'. */
 struct FxScene__f0e6400 {
   u16 facing;
   u16 angle;
@@ -3087,7 +2980,7 @@ struct FxScene__f0e6400 {
 // The event work with its flag word past the shared struct. Read as a member,
 // the flag word takes this struct's alias set, which orders its reads after
 // s32 stores but not after an Actor's u8 stores, as the listing has them.
-/* VIEW(f0e6400): tag struct FxEvent as struct FxEvent__f0e6400; f0e2c38.c has another definition. */
+/* VIEW(f0e6400): tag struct FxEvent as struct FxEvent__f0e6400; f0e2c38.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/event_commands/f0e2c38.c:2984: structure has no member named `unkd4c'. */
 struct FxEvent__f0e6400 {
   struct EventWork work;
   u8 unkd48[4];
@@ -3492,7 +3385,7 @@ struct WhirlSpark {
 };
 
 // Heap block 92: the decoded picture, then the sparks and their sprites.
-/* VIEW(f0e6400): tag struct WhirlWork as struct WhirlWork__f0e6400; f0e2c38.c has another definition. */
+/* VIEW(f0e6400): tag struct WhirlWork as struct WhirlWork__f0e6400; f0e2c38.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/event_commands/f0e2c38.c:3413: structure has no member named `sparks'. */
 struct WhirlWork__f0e6400 {
   u8 picture[0x400];
   struct WhirlSpark sparks[WHIRL_COUNT];
@@ -3732,7 +3625,7 @@ void Func_080e74d8(void) {
       age = particle->age;
       if (age >= 0) {
         if ((u32)age < 20) {
-          EffectSprite_DrawAtWorldPosition__f0e6400(sprite, particle);
+          EffectSprite_DrawAtWorldPosition(sprite, particle);
           // Reread in each arm: the two calls share one bl only this way.
           if (i & 1) {
             BattleEffect_IntegrateVector3(&particle->x, 63, 0x8000);
@@ -3832,7 +3725,7 @@ struct PuffWork {
   struct PuffParticle particles[64];
 };
 
-/* VIEW(f0e6400): tag struct ObjectAnimation as struct ObjectAnimation__f0e6400; f0e2c38.c has another definition. */
+/* VIEW(f0e6400): tag struct ObjectAnimation as struct ObjectAnimation__f0e6400; f0e2c38.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/event_commands/f0e2c38.c:3796: structure has no member named `unk18'. */
 struct ObjectAnimation__f0e6400 {
   u8 unk00[24];
   u8 unk18;
@@ -4345,7 +4238,7 @@ void Func_080e807c(void) {
         pos[0] = actor->x + entry->x;
         pos[1] = actor->y + entry->y;
         pos[2] = actor->z + entry->z;
-        EffectSprite_DrawAtWorldPosition__f0e6400(sprite, pos);
+        EffectSprite_DrawAtWorldPosition(sprite, pos);
         timer = entry->timer;
       }
       if ((entry->timer = timer + 1) == 16)
@@ -4395,15 +4288,6 @@ struct RingEvent {
   s16 timer;
 };
 
-/* VIEW(f0e82cc): tag struct FxScene as struct FxScene__f0e82cc; f0e2c38.c has another definition. */
-struct FxScene__f0e82cc {
-  u16 facing;
-  u16 angle;
-  s32 x;
-  s32 y;
-  s32 z;
-  struct Actor *mainObject;
-};
 
 extern char ResourceId_StarSparkleFade, ResourceId_RingArcs, ResourceId_Data1ED;
 
@@ -4416,18 +4300,13 @@ void *Resource_GetTableEntry(s32 resourceId);
 s32 Resource_DecodeType01(const void *source, void *destination);
 s32 Resource_FindFreeEntry(void);
 void Func_080e807c(void);
-/* VIEW(f0e82cc): routine Func_080e7f94 as void Func_080e7f94(u8 *canvas, s32 radius, s32 angle, s32 color); the definition has void Func_080e7f94(s32 unused, s32 radius, s32 angle, s32 color). */
-extern void Func_080e7f94__f0e82cc(u8 *canvas, s32 radius, s32 angle, s32 color) __asm__("Func_080e7f94");
 void Vector_AddPolarOffset(s32 distance, s32 angle, s32 *position);
-/* VIEW(f0e82cc): routine EffectSprite_DrawAtWorldPosition as void EffectSprite_DrawAtWorldPosition(struct ScreenSprite *sprite, s32 *position); f0e4a34 has void EffectSprite_DrawAtWorldPosition(struct EffectSprite *sprite, struct GlowParticle *particle). */
-extern void EffectSprite_DrawAtWorldPosition__f0e82cc(struct ScreenSprite *sprite,
-                                      s32 *position) __asm__("EffectSprite_DrawAtWorldPosition");
 u32 Random16(void);
 void BattleEffect_PrepareBufferInterpolation(void);
 
 void Func_080e82cc(void) {
   struct RingWork *work = HeapSlot_AllocEwram(92, 0x298c);
-  struct FxScene__f0e82cc *scene = Ram_HeapSlots->effectWork;
+  struct FxScene *scene = Ram_HeapSlots->effectWork;
   struct RingEvent *event = Ram_HeapSlots->eventWork;
   struct Actor *caster = scene->mainObject;
   struct CanvasSpriteWork *canvas;
@@ -4535,10 +4414,10 @@ void Func_080e82cc(void) {
       if (drawing) {
         radius = spin;
         for (i = 0; i < 8; i++) {
-          Func_080e7f94__f0e82cc(picture, 0x340000, radius, 243);
-          Func_080e7f94__f0e82cc(picture, 0x350000, radius, 247);
-          Func_080e7f94__f0e82cc(picture, 0x360000, radius, 251);
-          Func_080e7f94__f0e82cc(picture, 0x370000, radius, 255);
+          Func_080e7f94(picture, 0x340000, radius, 243);
+          Func_080e7f94(picture, 0x350000, radius, 247);
+          Func_080e7f94(picture, 0x360000, radius, 251);
+          Func_080e7f94(picture, 0x370000, radius, 255);
           radius += 128;
         }
         canvas->command = CANVAS_UPLOAD_TO_BG;
@@ -4556,7 +4435,7 @@ void Func_080e82cc(void) {
         }
         if ((u32)mote->timer <= 15) {
           sprite->oam.index = tile + (mote->timer & 3) * 2;
-          EffectSprite_DrawAtWorldPosition__f0e82cc(sprite, mote);
+          EffectSprite_DrawAtWorldPosition(sprite, mote);
           mote->y += -0x10000;
         }
         mote->timer++;
@@ -4654,7 +4533,7 @@ struct BurstMote {
   s32 timer;
 };
 
-/* VIEW(f0e82cc): tag struct BurstWork as struct BurstWork__f0e82cc; f0e2c38.c has another definition. */
+/* VIEW(f0e82cc): tag struct BurstWork as struct BurstWork__f0e82cc; f0e2c38.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/event_commands/f0e2c38.c:4606: structure has no member named `motes'. */
 struct BurstWork__f0e82cc {
   u8 unk0000[0x1000];
   struct EffectSprite sprites[64];
@@ -4672,8 +4551,6 @@ struct BurstEvent {
 
 struct Actor *Actor_GetById(u32 objectId);
 void Window_LoadGraphics(void);
-/* VIEW(f0e82cc): routine BattleEffect_IntegrateVector3 as void BattleEffect_IntegrateVector3(s32 *vector, s32 damping, s32 gravity); psynergy_effects_11 has void BattleEffect_IntegrateVector3(struct EffectParticle *particle, s32 frames, s32 flags). */
-extern void BattleEffect_IntegrateVector3__f0e82cc(s32 *vector, s32 damping, s32 gravity) __asm__("BattleEffect_IntegrateVector3");
 extern char ResourceId_SparkleFade;
 
 /// The burst of 64 sparkles that Func_080e807c's effect ends with: once the
@@ -4766,8 +4643,8 @@ void Func_080e87c4(void) {
       asm("");
       if (mote->timer >= 0) {
         spark->oam.index = tile + (mote->timer & 3) * 2;
-        EffectSprite_DrawAtWorldPosition__f0e82cc(spark, mote);
-        BattleEffect_IntegrateVector3__f0e82cc(&mote->x, 62, 0x8000);
+        EffectSprite_DrawAtWorldPosition(spark, mote);
+        BattleEffect_IntegrateVector3(&mote->x, 62, 0x8000);
       }
       mote->timer++;
     }
@@ -4890,7 +4767,7 @@ void Func_080e89e4(s32 direction) {
 }
 
 
-/* VIEW(f0e82cc): macro ABS as ABS__f0e82cc; another part or header has another definition. */
+/* VIEW(f0e82cc): macro ABS as ABS__f0e82cc; another part or header has another definition; tried with the definition the rest of the object has, Func_080e8b44 moves: 8 of 117 instructions in tla-ja. */
 #define ABS__f0e82cc(x) ((x) >= 0 ? (x) : -(x))
 
 /// Swings the view centre away from where Func_080e89e4 found it, along the
@@ -4942,7 +4819,7 @@ void Func_080e8b44(s32 direction, s32 phase, s32 amplitude) {
   center->z = z;
 }
 
-/* VIEW(f0e82cc): tag struct EffectScene as struct EffectScene__f0e82cc; f0e2c38.c has another definition. */
+/* VIEW(f0e82cc): tag struct EffectScene as struct EffectScene__f0e82cc; f0e2c38.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/event_commands/f0e2c38.c:4845: structure has no member named `firstObjectId'. */
 struct EffectScene__f0e82cc {
   u8 unk00[0x18];
   s16 firstObjectId;
@@ -5082,7 +4959,7 @@ struct ObjectSprite {
   void *pictures;
 };
 
-/* VIEW(f0e8db0): tag struct EffectScene as struct EffectScene__f0e8db0; f0e2c38.c has another definition. */
+/* VIEW(f0e8db0): tag struct EffectScene as struct EffectScene__f0e8db0; f0e2c38.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/event_commands/f0e2c38.c:4984: structure has no member named `target'. */
 struct EffectScene__f0e8db0 {
   u8 unk00[0x10];
   void *mainObject;
@@ -5094,12 +4971,8 @@ struct EffectScene__f0e8db0 {
 extern char ResourceId_ShakeTiles;
 
 void BattleEffect_InitializeSharedScene(void);
-/* VIEW(f0e8db0): routine BattleEffect_SetObjectUpdateMode as void BattleEffect_SetObjectUpdateMode(void *object, s32 mode); f0e4a34 has void BattleEffect_SetObjectUpdateMode(struct Actor *actor, s32 mode). */
-extern void BattleEffect_SetObjectUpdateMode__f0e8db0(void *object, s32 mode) __asm__("BattleEffect_SetObjectUpdateMode");
 void BattleEffect_PrepareBufferInterpolation(void);
 void Animation_ApplyChildValueFar(void *sprite, s32 value);
-/* VIEW(f0e8db0): routine Func_080e43a4 as void Func_080e43a4(void *source, void *buffer, s32 size); the definition has void Func_080e43a4(struct PictureSource *source, void *buffer, s32 size). */
-extern void Func_080e43a4__f0e8db0(void *source, void *buffer, s32 size) __asm__("Func_080e43a4");
 void wait(s32 frames);
 
 // Sways the view from side to side around the chosen object, as kind 19 does
@@ -5147,10 +5020,10 @@ void Func_080e8db0(void) {
     sprite->depth = 240;
     particle->timer = -1;
   }
-  BattleEffect_SetObjectUpdateMode__f0e8db0(scene->mainObject, 0);
+  BattleEffect_SetObjectUpdateMode(scene->mainObject, 0);
   if (target != NULL && targetSprite != NULL) {
     Animation_ApplyChildValueFar(targetSprite, 0);
-    Func_080e43a4__f0e8db0(targetSprite->pictures, work->picture,
+    Func_080e43a4(targetSprite->pictures, work->picture,
                   targetSprite->width * targetSprite->height);
   }
   Func_080e89e4(VIEW_MOVE_X);
@@ -5272,7 +5145,7 @@ void Func_080e9090(void) {
   s32 frames;
 
   BattleEffect_InitializeSharedScene();
-  BattleEffect_SetObjectUpdateMode__f0e8db0(scene->mainObject, 0);
+  BattleEffect_SetObjectUpdateMode(scene->mainObject, 0);
   Func_080e89e4(VIEW_MOVE_X);
   ViewMove_SaveNearbySprites();
   wait(10);
@@ -5399,7 +5272,7 @@ struct SplashAnimation {
   void *tiles;
 };
 
-/* VIEW(f0e92b4): tag struct FxScene as struct FxScene__f0e92b4; f0e2c38.c has another definition. */
+/* VIEW(f0e92b4): tag struct FxScene as struct FxScene__f0e92b4; f0e2c38.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/event_commands/f0e2c38.c:5353: structure has no member named `facing'. */
 struct FxScene__f0e92b4 {
   u16 facing;
   u16 angle;
@@ -5415,7 +5288,7 @@ struct FxScene__f0e92b4 {
   s8 enabled;
 };
 
-/* VIEW(f0e92b4): tag struct PendingEvent as struct PendingEvent__f0e92b4; event_work.h has another definition. */
+/* VIEW(f0e92b4): tag struct PendingEvent as struct PendingEvent__f0e92b4; event_work.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/event_commands/f0e2c38.c:5484: structure has no member named `callback'. */
 struct PendingEvent__f0e92b4 {
   u8 unk00[8];
   void (*callback)(s32, s32, s32);
@@ -5426,8 +5299,6 @@ extern char ResourceId_WaterSplash;
 void *HeapSlot_Alloc(s32 slot, s32 size);
 void HeapSlot_Release(s32 slot);
 s32 Func_080ce31c(s32 kind);
-/* VIEW(f0e92b4): routine Func_080ce458 as struct PendingEvent__f0e92b4 *Func_080ce458(u32 kind, s32 entry, s32 arg); f0e5d5c has void *Func_080ce458(u32 kind, s32 entry, s32 arg). */
-extern struct PendingEvent__f0e92b4 *Func_080ce458__f0e92b4(u32 kind, s32 entry, s32 arg) __asm__("Func_080ce458");
 void Vector_AddPolarOffset(s32 distance, s32 angle, s32 *position);
 s32 Func_08020330(struct Actor *object);
 void BattleEffect_InitializeSharedScene(void);
@@ -5437,8 +5308,6 @@ s32 Resource_FindFreeEntry(void);
 s32 VramCache_Load(u32 slot, u32 size, const void *source);
 s32 Resource_ResetEntry(u32 slot);
 void Animation_ApplyChildValueFar(void *sprite, s32 value);
-/* VIEW(f0e92b4): routine Func_080e43a4 as void Func_080e43a4(void *source, void *buffer, s32 size); the definition has void Func_080e43a4(struct PictureSource *source, void *buffer, s32 size). */
-extern void Func_080e43a4__f0e92b4(void *source, void *buffer, s32 size) __asm__("Func_080e43a4");
 void Func_080e89e4(s32 direction);
 void Func_080e8b44(s32 direction, s32 phase, s32 amplitude);
 void Func_080e8c9c(void);
@@ -5446,9 +5315,6 @@ void wait(s32 frames);
 u32 Random16(void);
 s32 BattleEffect_GetObjectPriority(struct Actor *object);
 s32 BattleEffect_GetObjectDepth(struct Actor *object);
-/* VIEW(f0e92b4): routine EffectSprite_DrawAtWorldPosition as void EffectSprite_DrawAtWorldPosition(struct EffectSprite *sprite, struct SplashParticle *particle); f0e4a34 has void EffectSprite_DrawAtWorldPosition(struct EffectSprite *sprite, struct GlowParticle *particle). */
-extern void EffectSprite_DrawAtWorldPosition__f0e92b4(struct EffectSprite *sprite,
-                                      struct SplashParticle *particle) __asm__("EffectSprite_DrawAtWorldPosition");
 void BattleEffect_ShiftRowsDown(u8 *base, s32 stride, s32 rows);
 void BattleEffect_PrepareBufferInterpolation(void);
 
@@ -5488,7 +5354,7 @@ void Func_080e92b4(void) {
   next = 0;
   mode = 0;
   selector = Func_080ce31c(scene->fieldKind);
-  pending = Func_080ce458__f0e92b4(0x50000005, scene->fieldKind, selector);
+  pending = Func_080ce458(0x50000005, scene->fieldKind, selector);
   if (child != NULL) {
     if (animation != NULL) {
       if (animation->width * animation->height <= 0x800) {
@@ -5532,7 +5398,7 @@ void Func_080e92b4(void) {
   }
   if (child != NULL && animation != NULL && isWaterObject == 1) {
     Animation_ApplyChildValueFar(animation, 0);
-    Func_080e43a4__f0e92b4(animation->tiles, picture,
+    Func_080e43a4(animation->tiles, picture,
                   animation->width * animation->height);
   }
   Func_080e89e4(2);
@@ -5587,7 +5453,7 @@ void Func_080e92b4(void) {
           sprite->oam.index = tile + 16;
         if (particle->timer == 22)
           sprite->oam.index = tile + 24;
-        EffectSprite_DrawAtWorldPosition__f0e92b4(sprite, particle);
+        EffectSprite_DrawAtWorldPosition(sprite, particle);
         particle->timer++;
       }
     }
@@ -5668,33 +5534,14 @@ end:
 #define SWAY_RAMP 0x2666 ///< 0.15 pixels a frame
 #define SWAY_HOLD_FRAMES 10
 
-/* VIEW(f0e92b4): enumerator SWAY_GROW as SWAY_GROW__f0e92b4; f0e8db0 has enum { SWAY_GROW, SWAY_HOLD, SWAY_SHRINK, SWAY_SETTLE, SWAY_DONE = 999, }. */
-/* VIEW(f0e92b4): enumerator SWAY_HOLD as SWAY_HOLD__f0e92b4; f0e8db0 has enum { SWAY_GROW, SWAY_HOLD, SWAY_SHRINK, SWAY_SETTLE, SWAY_DONE = 999, }. */
-/* VIEW(f0e92b4): enumerator SWAY_SHRINK as SWAY_SHRINK__f0e92b4; f0e8db0 has enum { SWAY_GROW, SWAY_HOLD, SWAY_SHRINK, SWAY_SETTLE, SWAY_DONE = 999, }. */
-/* VIEW(f0e92b4): enumerator SWAY_SETTLE as SWAY_SETTLE__f0e92b4; f0e8db0 has enum { SWAY_GROW, SWAY_HOLD, SWAY_SHRINK, SWAY_SETTLE, SWAY_DONE = 999, }. */
-/* VIEW(f0e92b4): enumerator SWAY_DONE as SWAY_DONE__f0e92b4; f0e8db0 has enum { SWAY_GROW, SWAY_HOLD, SWAY_SHRINK, SWAY_SETTLE, SWAY_DONE = 999, }. */
-enum {
-  SWAY_GROW__f0e92b4,
-  SWAY_HOLD__f0e92b4,
-  SWAY_SHRINK__f0e92b4,
-  SWAY_SETTLE__f0e92b4,
-  SWAY_DONE__f0e92b4 = 999,
-};
 
-/* VIEW(f0e92b4): tag struct EffectScene as struct EffectScene__f0e92b4; f0e2c38.c has another definition. */
-struct EffectScene__f0e92b4 {
-  u8 unk00[0x10];
-  void *mainObject;
-};
 
-/* VIEW(f0e92b4): routine BattleEffect_SetObjectUpdateMode as void BattleEffect_SetObjectUpdateMode(void *object, s32 mode); f0e4a34 has void BattleEffect_SetObjectUpdateMode(struct Actor *actor, s32 mode). */
-extern void BattleEffect_SetObjectUpdateMode__f0e92b4(void *object, s32 mode) __asm__("BattleEffect_SetObjectUpdateMode");
 
 /// Sways the view up and down the screen: the swing grows from 2 to 6 pixels,
 /// holds for 10 frames, shrinks back to 2 and stops; then the map's view
 /// bounds come back.
 void BattleEffect_RunViewSway(void) {
-  struct EffectScene__f0e92b4 *scene;
+  struct EffectScene *scene;
   s32 phase;
   s32 amplitude;
   s32 state;
@@ -5703,46 +5550,46 @@ void BattleEffect_RunViewSway(void) {
   HeapSlot_Alloc(HEAP_SLOT_VIEW_MOVE, VIEW_MOVE_WORK_SIZE);
   scene = Ram_HeapSlots->effectWork;
   BattleEffect_InitializeSharedScene();
-  BattleEffect_SetObjectUpdateMode__f0e92b4(scene->mainObject, 0);
+  BattleEffect_SetObjectUpdateMode(scene->mainObject, 0);
   Func_080e89e4(VIEW_MOVE_Z);
   wait(10);
 
   phase = 0;
   amplitude = SWAY_START;
-  state = SWAY_GROW__f0e92b4;
+  state = SWAY_GROW;
   frames = 0;
   do {
     Func_080e8b44(VIEW_MOVE_Z, phase++, amplitude);
     switch (state) {
-    case SWAY_GROW__f0e92b4:
+    case SWAY_GROW:
       amplitude += SWAY_RAMP;
       if (amplitude >= SWAY_PEAK) {
-        state = SWAY_HOLD__f0e92b4;
+        state = SWAY_HOLD;
         frames = -1;
       }
       break;
-    case SWAY_HOLD__f0e92b4:
+    case SWAY_HOLD:
       if (frames == SWAY_HOLD_FRAMES) {
-        state = SWAY_SHRINK__f0e92b4;
+        state = SWAY_SHRINK;
         frames = -1;
       }
       break;
-    case SWAY_SHRINK__f0e92b4:
+    case SWAY_SHRINK:
       amplitude -= SWAY_RAMP;
       if (amplitude <= SWAY_START) {
-        state = SWAY_SETTLE__f0e92b4;
+        state = SWAY_SETTLE;
         frames = -1;
       }
       break;
-    case SWAY_SETTLE__f0e92b4:
+    case SWAY_SETTLE:
       amplitude = 0;
       if (frames == 0)
-        state = SWAY_DONE__f0e92b4;
+        state = SWAY_DONE;
       break;
     }
     wait(1);
     frames++;
-  } while (state != SWAY_DONE__f0e92b4);
+  } while (state != SWAY_DONE);
 
   Func_080e8c9c();
   BattleEffect_PrepareBufferInterpolation();
@@ -5800,7 +5647,7 @@ s32 Func_080e989c(s32 counter, s32 level) {
 #define GLOW_SPENT_CUE 0x2099
 
 // Kind 24's work (battle_fx_work[0]).
-/* VIEW(f0e92b4): tag struct GlowWork as struct GlowWork__f0e92b4; f0e2c38.c has another definition. */
+/* VIEW(f0e92b4): tag struct GlowWork as struct GlowWork__f0e92b4; f0e2c38.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/event_commands/f0e2c38.c:5689: structure has no member named `fading'. */
 struct GlowWork__f0e92b4 {
   u8 unk0000[0x1000];
   struct EffectSprite sprite;
@@ -5915,7 +5762,7 @@ void BattleEffect_CallEffect24(void) { Func_080e9af4(); }
 
 // ---- games/tla/src/field/event_commands/f0e9af4.c ----
 // Kind 24's work (battle_fx_work[0]), as Func_080e9940's draft has it.
-/* VIEW(f0e9af4): tag struct GlowWork as struct GlowWork__f0e9af4; f0e2c38.c has another definition. */
+/* VIEW(f0e9af4): tag struct GlowWork as struct GlowWork__f0e9af4; f0e2c38.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/event_commands/f0e2c38.c:5812: structure has no member named `resource'. */
 struct GlowWork__f0e9af4 {
   u8 unk0000[0x1000];
   struct EffectSprite sprite;
@@ -5937,7 +5784,7 @@ struct GlowScene {
   s16 kind;
 };
 
-/* VIEW(f0e9af4): tag struct GlowEvent as struct GlowEvent__f0e9af4; f0e2c38.c has another definition. */
+/* VIEW(f0e9af4): tag struct GlowEvent as struct GlowEvent__f0e9af4; f0e2c38.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/event_commands/f0e2c38.c:5837: structure has no member named `objects'. */
 struct GlowEvent__f0e9af4 {
   u8 unk000[0x14];
   struct Actor *objects[80];
@@ -5951,8 +5798,6 @@ extern char ResourceId_RingOrb;
 void wait(s32 frames);
 s32 Func_080dbcc0(s32 x, s32 z, s32 layer);
 s32 Func_080dbe80(s32 *a, s32 radiusA, s32 *b, s32 radiusB);
-/* VIEW(f0e9af4): routine BattleEffect_SetObjectUpdateMode as void BattleEffect_SetObjectUpdateMode(struct Actor *object, s32 mode); f0e92b4 has void BattleEffect_SetObjectUpdateMode(void *object, s32 mode). */
-extern void BattleEffect_SetObjectUpdateMode__f0e9af4(struct Actor *object, s32 mode) __asm__("BattleEffect_SetObjectUpdateMode");
 void Func_080e9940(void);
 
 void Func_080e9af4(void) {
@@ -5983,7 +5828,7 @@ void Func_080e9af4(void) {
   sprite->oam.palette256 = 1;
   sprite->oam.palette = 0;
   Actor_SetPositionAndResetMotionFar(player, player->x, player->y, player->z);
-  BattleEffect_SetObjectUpdateMode__f0e9af4(player, 0);
+  BattleEffect_SetObjectUpdateMode(player, 0);
   Actor_SetMode(player, 5);
   Sound_PlayFar(130);
   wait(1);
@@ -6202,9 +6047,6 @@ struct MoteWork {
 };
 
 void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position);
-/* VIEW(f0e9af4): routine EffectSprite_DrawAtWorldPosition as void EffectSprite_DrawAtWorldPosition(struct EffectSprite *sprite, struct Mote *mote); f0e92b4 has void EffectSprite_DrawAtWorldPosition(struct EffectSprite *sprite, struct SplashParticle *particle). */
-extern void EffectSprite_DrawAtWorldPosition__f0e9af4(struct EffectSprite *sprite,
-                                      struct Mote *mote) __asm__("EffectSprite_DrawAtWorldPosition");
 
 void Func_080e9f68(void) {
   struct MoteWork *work = Ram_HeapSlots->battleFxWork[0];
@@ -6268,7 +6110,7 @@ void Func_080e9f68(void) {
   for (i = 31; i >= 0; i--, sprite++, mote++) {
     if ((u32)mote->timer < 20) {
       sprite->oam.index = *tile + (mote->timer / 5 & 7) * 8;
-      EffectSprite_DrawAtWorldPosition__f0e9af4(sprite, mote);
+      EffectSprite_DrawAtWorldPosition(sprite, mote);
       BattleEffect_IntegrateVector3(&mote->x, 63, -0x8000);
       mote->timer++;
     }
@@ -6277,24 +6119,6 @@ void Func_080e9f68(void) {
 
 // ---- games/tla/src/field/map/f0ea14c.c ----
 
-/* VIEW(f0ea14c): tag struct MoteWork as struct MoteWork__f0ea14c; f0e2c38.c has another definition. */
-struct MoteWork__f0ea14c {
-  u8 tiles[0x800];
-  struct Mote sparks[32];
-  struct EffectSprite sparkSprites[32];
-  struct Mote motes[48];
-  struct EffectSprite moteSprites[48];
-  s32 originX;
-  s32 originZ;
-  s32 angle;
-  s32 radius;
-  s32 spacing;
-  s8 state;
-  s8 moving;
-  u16 sparkTile;
-  s32 targetX;
-  s32 targetZ;
-};
 
 extern const s32 gData_080f3954[];
 extern const u8 Data_080f1040[];
@@ -6318,12 +6142,10 @@ void Actor_StartScriptFar(struct Actor *object, const void *script);
 void Actor_ArmCallback(s32 id, s32 value, s32 flags);
 void Vector_AddPolarOffset(s32 distance, s32 angle, s32 *position);
 void BattleEffect_PrepareBufferInterpolation(void);
-/* VIEW(f0ea14c): routine Func_080e9e8c as void Func_080e9e8c(void); the definition has void Func_080e9e8c(struct Actor *object). */
-extern void Func_080e9e8c__f0ea14c(void) __asm__("Func_080e9e8c");
 void Func_080e9f68(void);
 
 void Func_080ea14c(s32 targetId) {
-  struct MoteWork__f0ea14c *work = HeapSlot_Alloc(92, sizeof(struct MoteWork__f0ea14c));
+  struct MoteWork *work = HeapSlot_Alloc(92, sizeof(struct MoteWork));
   s32 ownerId = Party_GetLeaderActor();
   struct Actor *owner = ObjectTable_Get(ownerId);
   struct Actor *target = ObjectTable_Get(targetId);
@@ -6405,7 +6227,7 @@ void Func_080ea14c(s32 targetId) {
   Actor_SetMode(target, 2);
   Event_Wait(60);
   target->timer = 0;
-  target->update = Func_080e9e8c__f0ea14c;
+  target->update = Func_080e9e8c;
   Sound_PlayFar(142);
   Event_Wait(80);
   Actor_StartScriptFar(target, Data_080f1040);
@@ -6648,12 +6470,10 @@ s32 Func_080eab70(struct Actor *object);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 void Func_080eaa14(struct ActorFlag *list);
-/* VIEW(f0ea8d4): routine Map_GetTerrainHeightFar as s32 Map_GetTerrainHeightFar(s32 layer, s32 x, s32 z); field.h has s32 Map_GetTerrainHeightFar(u8, s32, s32). */
-extern s32 Map_GetTerrainHeightFar__f0ea8d4(s32 layer, s32 x, s32 z) __asm__("Map_GetTerrainHeightFar");
 s32 Party_GetLeaderActor(void);
-/* VIEW(f0ea8d4): routine Func_080ea8a8 as void Func_080ea8a8(s32 x, s32 z, s32 layer, s32 height); the definition has void Func_080ea8a8(s32 x, s32 z, s32 layer). */
+/* VIEW(f0ea8d4): routine Func_080ea8a8 as void Func_080ea8a8(s32 x, s32 z, s32 layer, s32 height); the definition has void Func_080ea8a8(s32 x, s32 z, s32 layer); tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/field/event_commands/f0e2c38.c:6493: too many arguments to function `Func_080ea8a8'. */
 extern void Func_080ea8a8__f0ea8d4(s32 x, s32 z, s32 layer, s32 height) __asm__("Func_080ea8a8");
-/* VIEW(f0ea8d4): routine Func_08020310 as s32 Func_08020310(s32 x, s32 z, s32 layer, s32 height); f0ea14c has s32 Func_08020310(s32 x, s32 z, s32 layer). */
+/* VIEW(f0ea8d4): routine Func_08020310 as s32 Func_08020310(s32 x, s32 z, s32 layer, s32 height); f0ea14c has s32 Func_08020310(s32 x, s32 z, s32 layer); tried as the 2 declarations' s32 Func_08020310(s32 x, s32 z, s32 layer), it does not compile in tla-ja: games/tla/src/field/event_commands/f0e2c38.c:6510: too many arguments to function `Func_08020310'. */
 extern s32 Func_08020310__f0ea8d4(s32 x, s32 z, s32 layer, s32 height) __asm__("Func_08020310");
 
 void Func_080ea8d4(struct ActorFlag *list) {
@@ -6690,7 +6510,7 @@ void Func_080ea8d4(struct ActorFlag *list) {
   owner = Actor_GetById(Party_GetLeaderActor());
   if (Func_08020310__f0ea8d4(owner->x, owner->z, owner->terrainId, owner->terrainHeight))
     owner->terrainHeight = owner->y =
-        Map_GetTerrainHeightFar__f0ea8d4(owner->terrainId, owner->x, owner->z);
+        Map_GetTerrainHeightFar(owner->terrainId, owner->x, owner->z);
 }
 
 struct SwitchCell {
@@ -6748,7 +6568,7 @@ void Func_080eaa14(struct ActorFlag *list) {
       slot = Func_080eab70(object);
       key = Func_080202f0(object->terrainId, object->x, object->z);
       height =
-          Map_GetTerrainHeightFar__f0ea8d4(object->terrainId, object->x, object->z) >>
+          Map_GetTerrainHeightFar(object->terrainId, object->x, object->z) >>
           19;
 
       *(struct Actor **)(event + 0xcbc) = object;

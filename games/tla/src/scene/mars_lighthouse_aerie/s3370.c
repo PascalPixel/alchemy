@@ -15,10 +15,8 @@ struct MarsLighthouseAerieSprite {
 
 extern u32 Data_02006ccc;
 extern u32 Data_02006b68;
-/* VIEW(s3370): variable gData_02005b54 as extern const u8 gData_02005b54[]; the definition has s32 gData_02005b54[] = { SC_LABEL(1), SC_ADD(SW_SCALE_X, - 1536), SC_WAIT(1), SC_LOOP(4, SC_TO(1)), SC_LABEL(2), SC_ADD(SW_SCALE_X, 0x600), .... */
-extern const u8 gData_02005b54__s3370[] __asm__("gData_02005b54");
-/* VIEW(s3370): variable gData_02006180 as extern const u8 gData_02006180[]; the definition has s32 gData_02006180[] = { 22, 9, 0xcccc, 22, 10, 0xcccc, 39, 1, (s32) 0x80010000, 23, 6, - 0x10000, 0, 1, 13, 16, (s32) 0xc0010000, 3, 0, 1, .... */
-extern const u8 gData_02006180__s3370[] __asm__("gData_02006180");
+extern s32 gData_02005b54[];
+extern s32 gData_02006180[];
 
 u32 Random16Far(void);
 void SceneActor_ParkRecord(struct Actor *object);
@@ -58,7 +56,7 @@ void Func_02003370(void) {
     anchor->scaleX = 0x10000;
     anchor->scaleY = 0x10000;
     SceneActor_ParkRecord(anchor);
-    Actor_SetScript(8, gData_02005b54__s3370);
+    Actor_SetScript(8, gData_02005b54);
     break;
   case 25:
     Data_02006ccc--;
@@ -95,7 +93,7 @@ void Func_02003370(void) {
       s32 mask;
 
       sprite = object->sprite;
-      Func_0200556c(object, gData_02006180__s3370);
+      Func_0200556c(object, gData_02006180);
       Actor_SetSpriteColor(object, 1);
       object->motionFlags = 0;
       {
@@ -165,14 +163,10 @@ s32 HeapSlot_AllocFar();
 s32 HeapSlot_Release();
 void Func_0200326c(void);
 extern u8 MsgTheBeaconIs[];
-/* VIEW(s3370): variable gData_020060b4 as extern u8 gData_020060b4[]; the definition has s32 gData_020060b4[] = { SC_ADD(SW_SCALE_X, 0x1000), SC_WAIT(1), SC_LOOP(32, SC_TOP), SC_END, SC_ADD(SW_SCALE_X, - 896), SC_WAIT(1), SC_LOOP.... */
-extern u8 gData_020060b4__s3370[] __asm__("gData_020060b4");
-/* VIEW(s3370): variable gData_020060fc as extern u8 gData_020060fc[]; the definition has s32 gData_020060fc[] = { SC_ADD(SW_SCALE_X, - 896), SC_WAIT(1), SC_LOOP(160, SC_TOP), SC_END, }. */
-extern u8 gData_020060fc__s3370[] __asm__("gData_020060fc");
-/* VIEW(s3370): variable gData_02006120 as extern u8 gData_02006120[]; the definition has u32 gData_02006120[] = { 23, 6, 0x40000, 0, 1, 13, 30, 0, 3, 0, 1, 17, }. */
-extern u8 gData_02006120__s3370[] __asm__("gData_02006120");
-/* VIEW(s3370): variable gData_02006150 as extern u8 gData_02006150[]; the definition has u32 gData_02006150[] = { 23, 6, 0x20000, 0, 1, 13, 160, 0, 3, 0, 1, 17, }. */
-extern u8 gData_02006150__s3370[] __asm__("gData_02006150");
+extern s32 gData_020060b4[];
+extern s32 gData_020060fc[];
+extern u32 gData_02006120[];
+extern u32 gData_02006150[];
 
 #define OWNER gMainRoutineWork.currentOwner
 
@@ -342,8 +336,8 @@ L_0200b8ac:
   Actor_FaceDirection(3, 0xa000, 0);
   Actor_FaceDirection(1, 0xa000, 0);
   Actor_FaceDirection(1, 0xa000, 80);
-  Actor_SetScript(23, gData_020060b4__s3370);
-  Actor_SetScript(24, gData_020060b4__s3370);
+  Actor_SetScript(23, gData_020060b4);
+  Actor_SetScript(24, gData_020060b4);
   Event_PlaySound(145);
   MapGrid_SetShake(0x60000, 0x60000, 0x10000);
   PaletteFade_ApplyTarget(0x4063ff, 0);
@@ -399,11 +393,11 @@ L_0200b8ac:
   MapGrid_SetShake(0x40000, 0x40000, 0x10000);
   PaletteFade_ApplyTarget(0x4063ff, 0);
   PaletteFade_Interpolate(120);
-  Actor_SetScript(23, gData_020060fc__s3370);
-  Actor_SetScript(24, gData_020060fc__s3370);
-  Actor_SetScript(25, gData_020060fc__s3370);
-  Actor_SetScript(26, gData_020060fc__s3370);
-  Actor_SetScript(27, gData_020060fc__s3370);
+  Actor_SetScript(23, gData_020060fc);
+  Actor_SetScript(24, gData_020060fc);
+  Actor_SetScript(25, gData_020060fc);
+  Actor_SetScript(26, gData_020060fc);
+  Actor_SetScript(27, gData_020060fc);
   System_Wait(120);
   MapGrid_SetShake(0x30000, 0x30000, 0x10000);
   PaletteFade_ApplyTarget(0x203210, 0);
@@ -416,14 +410,14 @@ L_0200b8ac:
   MapGrid_SetShake(0x10000, 0x10000, 0x10000);
   Event_PlaySound(78);
   A(((s32)Actor_Get(23)))->scaleY = 0x51e;
-  Actor_SetScript(24, gData_02006120__s3370);
-  Actor_SetScript(25, gData_02006120__s3370);
-  Actor_SetScript(26, gData_02006120__s3370);
-  Actor_RunScriptAndWait(27, gData_02006120__s3370);
+  Actor_SetScript(24, gData_02006120);
+  Actor_SetScript(25, gData_02006120);
+  Actor_SetScript(26, gData_02006120);
+  Actor_RunScriptAndWait(27, gData_02006120);
   Event_PlaySound(0x186);
   Actor_SetSpriteColor(((s32)Actor_Get(23)), 15);
   FieldEvent_Wait(20);
-  Actor_RunScriptAndWait(23, gData_02006150__s3370);
+  Actor_RunScriptAndWait(23, gData_02006150);
   FieldTask_Remove(glowTask);
   actor = (s32)Actor_Get(8);
   A(actor)->motionFlags = zero;
@@ -534,8 +528,7 @@ void Event_WaitTransitionFrames(void);
 s32 Func_0200558c();
 void Func_020004a4(void);
 extern u8 MsgWhatCouldHe[];
-/* VIEW(s3370): variable gData_020061d4 as extern u8 gData_020061d4[]; the definition has s32 gData_020061d4[] = { SC_ADD(SW_SCALE_X, 0x1000), SC_WAIT(1), SC_LOOP(8, SC_TOP), SC_LABEL(1), SC_ADD(SW_SCALE_X, - 4096), SC_WAIT(1), SC.... */
-extern u8 gData_020061d4__s3370[] __asm__("gData_020061d4");
+extern s32 gData_020061d4[];
 
 static __inline__ void W_Func_02005714(s32 a0, s32 a1, s32 a2) {
   /* FAKEMATCH(wrapper): W_Func_02005714 forwarded inline; as direct calls to
@@ -804,7 +797,7 @@ L_0200c72a:
   if ((u32)i <= (u32)39)
     goto L_0200c66c;
   Event_PlaySound(63);
-  Actor_SetScript(23, (s32)gData_020061d4__s3370);
+  Actor_SetScript(23, (s32)gData_020061d4);
   FieldEvent_Wait(80);
   FieldActor_Jump(1, 4, 10);
   FieldActor_Jump(1, 6, 10);
@@ -929,8 +922,7 @@ L_0200c72a:
   return;
 }
 
-/* VIEW(s3370): variable MsgWillYouCast as extern const u8 MsgWillYouCast[]; msg_ids.h has extern u8 MsgWillYouCast[]. */
-extern const u8 MsgWillYouCast__s3370[] __asm__("MsgWillYouCast");
+extern u8 MsgWillYouCast[];
 
 void Func_02004bc4(void) {
   Func_0200560c();
@@ -961,7 +953,7 @@ void Func_02004c94(void) {
   FieldEvent_ResolvePendingActions(0);
   Actor_SetPosition(18, PIXELS(512), PIXELS(232));
   System_Wait(1);
-  FieldEvent_SetMessageId(MsgWillYouCast__s3370);
+  FieldEvent_SetMessageId(MsgWillYouCast);
   Event_OpenMessage(18, 0);
   if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
     Actor_SetPosition(18, 0, 0);
@@ -1383,7 +1375,7 @@ struct ResourceTableEntry {
   u16 offset; ///< in bytes; its tile is offset / 32
 };
 
-/* VIEW(s53e4): tag struct SparkleSprite as struct SparkleSprite__s53e4; s3370.c has another definition. */
+/* VIEW(s53e4): tag struct SparkleSprite as struct SparkleSprite__s53e4; s3370.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_aerie/s3370.c:1422: structure has no member named `flag'. */
 struct SparkleSprite__s53e4 {
   u8 unk00[5];
   u8 attr5Low : 5;
@@ -1397,7 +1389,7 @@ struct SparkleSprite__s53e4 {
   u8 unk0a[0x1e];
 };
 
-/* VIEW(s53e4): tag struct SparkleWork as struct SparkleWork__s53e4; s3370.c has another definition. */
+/* VIEW(s53e4): tag struct SparkleWork as struct SparkleWork__s53e4; s3370.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_aerie/s3370.c:1412: incompatible types in assignment. */
 struct SparkleWork__s53e4 {
   struct SparkleSprite__s53e4 sprites[4];
   u16 unka0;

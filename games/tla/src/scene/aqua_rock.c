@@ -914,16 +914,10 @@ void Func_020025a8(s32 id);
 void Func_02002834(s32 id);
 void Func_02002948(s32 a);
 void Func_02002940(s32 a);
-/* VIEW(s17f4): routine Func_02000b58 as void Func_02000b58(void); the definition has void Func_02000b58(struct Actor *object). */
-extern void Func_02000b58__s17f4(void) __asm__("Func_02000b58");
 void Func_0200169c(void);
-/* VIEW(s17f4): routine Func_02001670 as void Func_02001670(void); the definition has void Func_02001670(struct Actor *object). */
-extern void Func_02001670__s17f4(void) __asm__("Func_02001670");
 void Func_0802b450(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Func_02000844(void);
 void Func_02002158(void);
-/* VIEW(s17f4): routine Func_02001d98 as void Func_02001d98(void); aqua_rock has void Func_02001d98(struct Actor *object). */
-extern void Func_02001d98__s17f4(void) __asm__("Func_02001d98");
 void Func_02001460(void);
 void Func_0200153c(void);
 
@@ -986,7 +980,7 @@ s32 Func_020017f4(void) {
       Func_02002948(6);
       Func_02002940(7);
       Func_02002940(8);
-      Actor_GetById(26)->update = Func_02000b58__s17f4;
+      Actor_GetById(26)->update = Func_02000b58;
     }
     Actor_SetSpritePriority(26, 1);
     if (gMainRoutineWork.entrance == 5)
@@ -1004,7 +998,7 @@ s32 Func_020017f4(void) {
             PIXELS(824));
       Call6(Map_CopyCellAttributeRect, 64, 66, 9, 3, 24, 53);
       Call6(Map_CopyCellsRect, 64, 66, 11, 7, 87, 50);
-      Actor_GetById(21)->update = Func_02001670__s17f4;
+      Actor_GetById(21)->update = Func_02001670;
     }
     if (GameFlag_Test(0xa6b)) {
       Call6(Map_CopyCellAttributeRect, 62, 41, 1, 2, 33, 41);
@@ -1051,7 +1045,7 @@ s32 Func_020017f4(void) {
     } else {
       Func_02002550();
       Func_0200276c();
-      Actor_GetById(8)->update = Func_02000b58__s17f4;
+      Actor_GetById(8)->update = Func_02000b58;
       if (GameFlag_Test(0xa69)) {
         Func_020025a8(8);
         Func_02002834(8);
@@ -1059,7 +1053,7 @@ s32 Func_020017f4(void) {
         Actor_SetSingleChildFlags(Actor_GetById(15), 0);
         Actor_GetById(15)->collisionFlags = 0;
         Actor_GetById(15)->priorityFlags |= 2;
-        Actor_GetById(15)->update = Func_02001d98__s17f4;
+        Actor_GetById(15)->update = Func_02001d98;
         Map_CopyCellAttributeRect(15, 48, 1, 1, 16, 48);
         Map_CopyCellAttributeRect(17, 50, 1, 1, 16, 50);
         Func_0802b450(0x40, 68, 5, 13, 14, 94);

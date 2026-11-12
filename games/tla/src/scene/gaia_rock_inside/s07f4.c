@@ -446,7 +446,7 @@ extern s32 gData_0200559c[];
 extern s32 gData_02005610[];
 extern s32 gData_020056c4[];
 extern s32 gData_02005728[];
-/* VIEW(s1048): variable gData_0200646c as extern s32 gData_0200646c[]; s07f4 has extern struct Actor gData_0200646c. */
+/* VIEW(s1048): variable gData_0200646c as extern s32 gData_0200646c[]; s07f4 has extern struct Actor gData_0200646c; tried as the definition's extern struct ActorPlacement gData_0200646c[], it does not compile in tla-ja: games/tla/src/scene/gaia_rock_inside/s07f4.c:449: conflicting types for `gData_0200646c'. */
 extern s32 gData_0200646c__s1048[] __asm__("gData_0200646c");
 extern s32 gData_020064ec;
 extern s32 gData_020064f0;
@@ -547,24 +547,14 @@ void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
    } *)(base))                                                                 \
        ->v)
 
-/* VIEW(s12ac): routine Func_02004e5c as s32 Func_02004e5c(); s1048 has void Func_02004e5c(void). */
-extern s32 Func_02004e5c__s12ac() __asm__("Func_02004e5c");
-/* VIEW(s12ac): routine Func_02000f00 as s32 Func_02000f00(); the definition has void Func_02000f00(void). */
-extern s32 Func_02000f00__s12ac() __asm__("Func_02000f00");
-/* VIEW(s12ac): routine Func_02000fac as s32 Func_02000fac(); the definition has void Func_02000fac(void). */
-extern s32 Func_02000fac__s12ac() __asm__("Func_02000fac");
-/* VIEW(s12ac): routine Func_02004e64 as s32 Func_02004e64(); s1048 has void Func_02004e64(void). */
-extern s32 Func_02004e64__s12ac() __asm__("Func_02004e64");
 extern u8 MsgGaiaRockInside07[];
-/* VIEW(s12ac): variable gData_02005610 as extern u8 gData_02005610[]; s1048 has extern s32 gData_02005610[]. */
-extern u8 gData_02005610__s12ac[] __asm__("gData_02005610");
 extern u8 MsgGaiaRockInside04[];
 
 void Func_020012ac(void) {
   s32 t5;
   s32 t2;
 
-  Func_02004e5c__s12ac();
+  Func_02004e5c();
   FieldEvent_ResolvePendingActions(0);
   t2 = FieldPartyInventory_FindOwner(0x1c3);
   if (t2 != -1) {
@@ -572,25 +562,17 @@ void Func_020012ac(void) {
     Event_ShowMessage(0xa, 0);
   } else {
     t5 = ((s32)Actor_Get(9));
-    if (FIELD_AT(t5, s32, 0) == (s32)gData_02005610__s12ac) {
+    if (FIELD_AT(t5, s32, 0) == (s32)gData_02005610) {
       FieldActor_RefreshSelectorById(9);
     }
-    Func_02000f00__s12ac();
+    Func_02000f00();
     FieldEvent_SetMessageId((s32)MsgGaiaRockInside04);
     Event_ShowMessage(0xa, 0);
-    Func_02000fac__s12ac();
+    Func_02000fac();
   }
-  Func_02004e64__s12ac();
+  Func_02004e64();
 }
 
-/* VIEW(s12ac): routine Scene_SetActorSpritePriority as s32 Scene_SetActorSpritePriority(); field.h has void Scene_SetActorSpritePriority(struct Actor *object, s32 priority). */
-extern s32 Scene_SetActorSpritePriority__s12ac() __asm__("Scene_SetActorSpritePriority");
-/* VIEW(s12ac): routine Func_02004d9c as s32 Func_02004d9c(); s07f4 has void Func_02004d9c(struct Actor *object, s32 mode). */
-extern s32 Func_02004d9c__s12ac() __asm__("Func_02004d9c");
-/* VIEW(s12ac): routine Animation_SetStateFlags as s32 Animation_SetStateFlags(); field.h has void Animation_SetStateFlags(struct Actor *object, u32 value). */
-extern s32 Animation_SetStateFlags__s12ac() __asm__("Animation_SetStateFlags");
-/* VIEW(s12ac): routine Func_02004dac as s32 Func_02004dac(); s07f4 has void Func_02004dac(struct Actor *object, const s32 *script). */
-extern s32 Func_02004dac__s12ac() __asm__("Func_02004dac");
 extern u8 gData_02005208[];
 
 void Func_02001314(s32 a0) {
@@ -602,11 +584,11 @@ void Func_02001314(s32 a0) {
   FIELD_AT(t0, s32, 24) = 0x6666;
   FIELD_AT((t0 + 0x55), u8, 0) = 0;
   Actor_SetSpriteColor(t0, 2);
-  Scene_SetActorSpritePriority__s12ac(t0, 1);
-  Func_02004d9c__s12ac(t0, 1);
+  Scene_SetActorSpritePriority(t0, 1);
+  Func_02004d9c(t0, 1);
   Actor_SetSingleChildFlags(t0, 0);
-  Animation_SetStateFlags__s12ac(t0, 1);
-  Func_02004dac__s12ac(t0, (s32)gData_02005208);
+  Animation_SetStateFlags(t0, 1);
+  Func_02004dac(t0, (s32)gData_02005208);
 }
 #undef FIELD_AT
 
@@ -631,8 +613,6 @@ struct Orbiter {
   struct Actor *anchor;
 };
 
-/* VIEW(s136c): routine Func_02001314 as void Func_02001314(struct Orbiter *orbiter); the definition has void Func_02001314(s32 a0). */
-extern void Func_02001314__s136c(struct Orbiter *orbiter) __asm__("Func_02001314");
 
 // Steps an orbiting object around its anchor: turns it by half its speed, puts
 // it on the anchor (raised 8 pixels) and pushes it out by its radius; when its
@@ -657,14 +637,14 @@ s32 Func_0200136c(struct Orbiter *orbiter) {
     return 0;
   if (orbiter->radius == 0x20000)
     return 1;
-  Func_02001314__s136c(orbiter);
+  Func_02001314(orbiter);
   orbiter->radius -= 0x40000;
   orbiter->angle += (s32)(orbiter->speed << 16) >> 17;
   orbiter->x = anchor->x;
   orbiter->y = anchor->y + 0x80000;
   orbiter->z = anchor->z;
   FieldVector_AddPolarOffset(orbiter->radius, *angle, &orbiter->x);
-  Func_02001314__s136c(orbiter);
+  Func_02001314(orbiter);
   orbiter->radius -= 0x40000;
   return 1;
 }

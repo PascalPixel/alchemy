@@ -2452,14 +2452,7 @@ void Func_020040a0(s32 id) {
 #include "main_routine_work.h"
 
 void Func_02005814(void);
-/* VIEW(s3f54): routine Func_0200581c as void Func_0200581c(void); s0198 has s32 Func_0200581c(). */
-extern void Func_0200581c__s3f54(void) __asm__("Func_0200581c");
 
-/* VIEW(s3f54): static Camera_MoveWithinMapBounds_ as Camera_MoveWithinMapBounds___s3f54; s0198 has static __inline__ void Camera_MoveWithinMapBounds_(s32 x, s32 y, s32 z, s32 b) { Camera_MoveWithinMapBounds(x, y, z, b); }. */
-static __inline__ void Camera_MoveWithinMapBounds___s3f54(s32 x, s32 y, s32 z,
-                                                   s32 mode) {
-  Camera_MoveWithinMapBounds(x, y, z, mode);
-}
 
 void Func_020040f4(void) {
   /* FAKEMATCH(wrapper): calls forwarded through inlines (call.h's Call and
@@ -2501,7 +2494,7 @@ void Func_020040f4(void) {
   actor->priorityFlags = 1;
   actor->motionFlags = 3;
   Actor_SetSingleChildFlags(actor, 1);
-  Camera_MoveWithinMapBounds___s3f54(-1, -1, -1, 0);
+  Camera_MoveWithinMapBounds_(-1, -1, -1, 0);
   shadow = FieldCamera_GetActor();
   shadow->speedLimit = 0x80000;
   shadow->acceleration = 0x10000;
@@ -2532,7 +2525,7 @@ void Func_020040f4(void) {
   FieldCamera_FollowActor(gMainRoutineWork.currentOwner, 1);
   work->unkd46 = 1;
   work->exit = 0;
-  Func_0200581c__s3f54();
+  Func_0200581c();
 }
 
 s32 Func_020042e0(s32 *a, s32 *b) {
@@ -2574,8 +2567,6 @@ struct EventWork6a5 {
   s16 unk16a;
 };
 
-/* VIEW(s3f54): routine Func_02005764 as void Func_02005764(struct Object6a5 *object, const void *script); s0198 has void Func_02005764(struct Actor *object, const void *script). */
-extern void Func_02005764__s3f54(struct Object6a5 *object, const void *script) __asm__("Func_02005764");
 void Func_02005994(struct Vector3 *position);
 s32 Func_020059e4();
 s32 Math_Cosine(s32 angle);
@@ -2642,7 +2633,7 @@ void Func_0200430c(struct Object6a5 *object) {
   }
   object->unk63 = 0;
   object->update = 0;
-  Func_02005764__s3f54(object, gData_020069fc);
+  Func_02005764(object, gData_020069fc);
   Event_PlaySound(228);
   Data_02006a28 = 0;
 }

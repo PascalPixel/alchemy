@@ -26,30 +26,26 @@ const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
-/* VIEW(daila_interiors): variable gData_0200116c as extern const u8 gData_0200116c[]; the definition has s32 gData_0200116c[] = { 11, 0x1010100a, - 1, 0x1020200a, - 1, 0x1030300a, - 1, 0x1040400a, - 1, 0x1050500a, - 1, 0x1060600a, - 1, 0x1070308.... */
+/* VIEW(daila_interiors): variable gData_0200116c as extern const u8 gData_0200116c[]; the definition has s32 gData_0200116c[] = { 11, 0x1010100a, - 1, 0x1020200a, - 1, 0x1030300a, - 1, 0x1040400a, - 1, 0x1050500a, - 1, 0x1060600a, - 1, 0x1070308...; tried as the definition's extern s16 gData_0200116c[], it does not compile in tla-ja: games/tla/src/scene/daila_interiors.c:735: conflicting types for `gData_0200116c'. */
 extern const u8 gData_0200116c__daila_interiors[] __asm__("gData_0200116c");
-/* VIEW(daila_interiors): variable gData_020011b8 as extern const u8 gData_020011b8[]; the definition has s32 gData_020011b8[] = { 11, 0x1010100d, - 1, 0x1020200d, - 1, 0x1030300d, - 1, 0x1040400d, - 1, 0x1050500d, - 1, 0x1060600d, - 1, 0x1070308.... */
-extern const u8 gData_020011b8__daila_interiors[] __asm__("gData_020011b8");
+extern s32 gData_020011b8[];
 
 const void *Scene_GetExits(void) {
   if (GameFlag_Test(0x873))
-    return gData_020011b8__daila_interiors;
+    return gData_020011b8;
   return gData_0200116c__daila_interiors;
 }
 
-/* VIEW(daila_interiors): variable gData_02001204 as extern const u8 gData_02001204[]; the definition has s32 gData_02001204[] = { (s32) 0xffff0073, 1, 0x980000, 0, 0x680000, 0x8000, (s32) 0xffff0074, 2, 0x580000, 0, 0x580000, 0, (s32) 0xffff0072.... */
-extern const u8 gData_02001204__daila_interiors[] __asm__("gData_02001204");
-/* VIEW(daila_interiors): variable gData_020013fc as extern const u8 gData_020013fc[]; the definition has u32 gData_020013fc[] = { 0xffff00c9, 1, 0xe80000, 0, 0x14d0000, 0x14000, 0xffff01e9, 1, 0xe80000, 0, 0xc40000, 0x24000, 0x2230122, 1, 0xb800.... */
-extern const u8 gData_020013fc__daila_interiors[] __asm__("gData_020013fc");
-/* VIEW(daila_interiors): variable gData_020014a4 as extern const u8 gData_020014a4[]; the definition has s32 gData_020014a4[] = { (s32) 0xffff0073, 1, 0xb00000, 0, 0x780000, 0xa000, (s32) 0xffff0074, 2, 0x580000, 0, 0x580000, 0, (s32) 0xffff0072.... */
-extern const u8 gData_020014a4__daila_interiors[] __asm__("gData_020014a4");
+extern s32 gData_02001204[];
+extern u32 gData_020013fc[];
+extern s32 gData_020014a4[];
 
 const struct ActorPlacement *Scene_GetPlacements(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_DailaInteriors2)
-    return (const struct ActorPlacement *)gData_020013fc__daila_interiors;
+    return (const struct ActorPlacement *)gData_020013fc;
   if (GameFlag_Test(0x873))
-    return (const struct ActorPlacement *)gData_020014a4__daila_interiors;
-  return (const struct ActorPlacement *)gData_02001204__daila_interiors;
+    return (const struct ActorPlacement *)gData_020014a4;
+  return (const struct ActorPlacement *)gData_02001204;
 }
 
 void DailaInteriors_EmptyHook(void) {}
@@ -111,14 +107,11 @@ void DailaInteriors_StartLeaderEvent(void) {
   Import_ActorSetSpritePriority(gMainRoutineWork.currentOwner, 1);
 }
 
-/* VIEW(daila_interiors): variable gData_020016e4 as extern const u8 gData_020016e4[]; the definition has s32 gData_020016e4[] = { 1, (s32) 0xffff0001, 1, 1, (s32) 0xffff0002, 2, 1, (s32) 0xffff0003, 3, 1, (s32) 0xffff0004, 4, 1, (s32) 0xffff0005.... */
+/* VIEW(daila_interiors): variable gData_020016e4 as extern const u8 gData_020016e4[]; the definition has s32 gData_020016e4[] = { 1, (s32) 0xffff0001, 1, 1, (s32) 0xffff0002, 2, 1, (s32) 0xffff0003, 3, 1, (s32) 0xffff0004, 4, 1, (s32) 0xffff0005...; tried as the definition's extern s16 gData_020016e4[], it does not compile in tla-ja: games/tla/src/scene/daila_interiors.c:1032: conflicting types for `gData_020016e4'. */
 extern const u8 gData_020016e4__daila_interiors[] __asm__("gData_020016e4");
-/* VIEW(daila_interiors): variable gData_02001924 as extern const u8 gData_02001924[]; the definition has s32 gData_02001924[] = { 1, (s32) 0xffff0001, 1, 1, (s32) 0xffff0002, 2, 1, (s32) 0xffff0003, 3, 1, (s32) 0xffff0004, 4, 1, (s32) 0xffff0005.... */
-extern const u8 gData_02001924__daila_interiors[] __asm__("gData_02001924");
-/* VIEW(daila_interiors): variable gData_02001990 as extern const u8 gData_02001990[]; the definition has s32 gData_02001990[] = { 1, (s32) 0xffff0001, 1, 1, (s32) 0xffff0002, 2, 1, (s32) 0xffff0003, 3, 1, (s32) 0xffff0004, 4, 1, (s32) 0xffff0005.... */
-extern const u8 gData_02001990__daila_interiors[] __asm__("gData_02001990");
-/* VIEW(daila_interiors): variable gData_02001c18 as extern const u8 gData_02001c18[]; the definition has s32 gData_02001c18[] = { 1, (s32) 0xffff0001, 1, 1, (s32) 0xffff0002, 2, 1, (s32) 0xffff0003, 3, 1, (s32) 0xffff0004, 4, 1, (s32) 0xffff0005.... */
-extern const u8 gData_02001c18__daila_interiors[] __asm__("gData_02001c18");
+extern s32 gData_02001924[];
+extern s32 gData_02001990[];
+extern s32 gData_02001c18[];
 
 const struct Trigger *Scene_GetEvents(void) {
   s32 flag = GameFlag_Test(0x873);
@@ -127,11 +120,11 @@ const struct Trigger *Scene_GetEvents(void) {
 
   if (flag) {
     if (party->scene == id)
-      return (const struct Trigger *)gData_02001c18__daila_interiors;
-    return (const struct Trigger *)gData_02001990__daila_interiors;
+      return (const struct Trigger *)gData_02001c18;
+    return (const struct Trigger *)gData_02001990;
   }
   if (party->scene == id)
-    return (const struct Trigger *)gData_02001924__daila_interiors;
+    return (const struct Trigger *)gData_02001924;
   return (const struct Trigger *)gData_020016e4__daila_interiors;
 }
 
@@ -360,7 +353,7 @@ void Func_02000704(void) {
 
 #include "item.h"
 
-/* VIEW(item): tag struct DailaActor as struct DailaActor__item; daila_interiors.c has another definition. */
+/* VIEW(item): tag struct DailaActor as struct DailaActor__item; daila_interiors.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/daila_interiors.c:373: structure has no member named `unk48'. */
 struct DailaActor__item {
   u8 unk00[0xc];
   s32 y;
@@ -379,7 +372,7 @@ struct DailaActor__item {
   s32 unk6c;
 };
 
-/* VIEW(item): routine Actor_GetById as struct DailaActor__item *Actor_GetById(s32 id); daila_interiors has struct DailaActor *Actor_GetById(s32 id). */
+/* VIEW(item): routine Actor_GetById as struct DailaActor__item *Actor_GetById(s32 id); daila_interiors has struct DailaActor *Actor_GetById(s32 id); tried as the definition's struct Actor *Actor_GetById(u32 objectId), which the object already declares, it does not compile in tla-ja: games/tla/src/scene/daila_interiors.c:389: structure has no member named `unk48'. */
 extern struct DailaActor__item *Actor_GetById__item(s32 id) __asm__("Actor_GetById");
 s32 PartyInventory_Add(s32 item);
 s32 Func_02000d14(s32 item);
@@ -552,13 +545,13 @@ struct DailaMapWork {
   u8 high17 : 4;
 };
 
-/* VIEW(arrival): variable gData_02000e04 as extern s16 gData_02000e04[]; daila_interiors has extern const u8 gData_02000e04[]. */
+/* VIEW(arrival): variable gData_02000e04 as extern s16 gData_02000e04[]; daila_interiors has extern const u8 gData_02000e04[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/daila_interiors.c:609: `gData_02000e04__arrival' undeclared (first use in this function). */
 extern s16 gData_02000e04__arrival[] __asm__("gData_02000e04");
 
-/* VIEW(arrival): routine Actor_GetById as struct DailaStartActor *Actor_GetById(s32 id); item has struct DailaActor__item *Actor_GetById(s32 id). */
+/* VIEW(arrival): routine Actor_GetById as struct DailaStartActor *Actor_GetById(s32 id); item has struct DailaActor__item *Actor_GetById(s32 id); tried as the definition's struct Actor *Actor_GetById(u32 objectId), which the object already declares, it does not compile in tla-ja: games/tla/src/scene/daila_interiors.c:579: invalid type argument of `->'. */
 extern struct DailaStartActor *Actor_GetById__arrival(s32 id) __asm__("Actor_GetById");
 void Actor_SetModeById(u32 actorId, s32 animation);
-/* VIEW(arrival): routine Actor_SetSingleChildFlags as void Actor_SetSingleChildFlags(struct DailaStartActor *object, s32 value); field.h has void Actor_SetSingleChildFlags(struct Actor *object, u32 flags). */
+/* VIEW(arrival): routine Actor_SetSingleChildFlags as void Actor_SetSingleChildFlags(struct DailaStartActor *object, s32 value); field.h has void Actor_SetSingleChildFlags(struct Actor *object, u32 flags); tried as the rest of the object declares it, DailaInteriors_Start moves: 5 of 174 instructions in tla-ja. */
 extern void Actor_SetSingleChildFlags__arrival(struct DailaStartActor *object,
                                         s32 value) __asm__("Actor_SetSingleChildFlags");
 void Func_02000c58(void);
@@ -701,26 +694,7 @@ s32 gData_02000ecc[] = {
 // clang-format on
 
 
-/* VIEW(arrival): routine DailaInteriors_TalkMazeTreasure as void DailaInteriors_TalkMazeTreasure(void); the definition has s32 DailaInteriors_TalkMazeTreasure(void). */
-extern void DailaInteriors_TalkMazeTreasure__arrival(void) __asm__("DailaInteriors_TalkMazeTreasure");
-/* VIEW(arrival): routine DailaInteriors_TalkScamps as void DailaInteriors_TalkScamps(void); the definition has s32 DailaInteriors_TalkScamps(void). */
-extern void DailaInteriors_TalkScamps__arrival(void) __asm__("DailaInteriors_TalkScamps");
-/* VIEW(arrival): routine Func_02000270 as void Func_02000270(void); the definition has void Func_02000270(s32 actor). */
-extern void Func_02000270__arrival(void) __asm__("Func_02000270");
-/* VIEW(arrival): routine Func_020002d0 as void Func_020002d0(void); the definition has void Func_020002d0(s32 actor). */
-extern void Func_020002d0__arrival(void) __asm__("Func_020002d0");
-/* VIEW(arrival): routine Func_02000330 as void Func_02000330(void); the definition has void Func_02000330(s32 actor). */
-extern void Func_02000330__arrival(void) __asm__("Func_02000330");
-/* VIEW(arrival): routine Func_02000390 as void Func_02000390(void); the definition has void Func_02000390(s32 actor). */
-extern void Func_02000390__arrival(void) __asm__("Func_02000390");
-/* VIEW(arrival): routine Func_02000498 as void Func_02000498(void); the definition has void Func_02000498(s32 actor). */
-extern void Func_02000498__arrival(void) __asm__("Func_02000498");
-/* VIEW(arrival): routine Func_020004f4 as void Func_020004f4(void); the definition has void Func_020004f4(s32 actor). */
-extern void Func_020004f4__arrival(void) __asm__("Func_020004f4");
-/* VIEW(arrival): routine Func_02000554 as void Func_02000554(void); the definition has void Func_02000554(s32 actor). */
-extern void Func_02000554__arrival(void) __asm__("Func_02000554");
-/* VIEW(arrival): routine Func_020005b4 as void Func_020005b4(void); the definition has void Func_020005b4(s32 actor). */
-extern void Func_020005b4__arrival(void) __asm__("Func_020005b4");
+void Func_02000554(s32 a0);
 void Func_02000614(void);
 void Func_0200066c(void);
 void Func_020006c4(void);
@@ -1088,13 +1062,13 @@ s32 gData_020016e4[] = {
     MSGNO(MsgFieldBetweenThePiratesAndTheTidal),
     0,
     (s32)0xffff0012,
-    (s32)Func_02000270__arrival,
+    (s32)Func_02000270,
     0,
     (s32)0xffff0013,
-    (s32)Func_020002d0__arrival,
+    (s32)Func_020002d0,
     0,
     (s32)0xffff0014,
-    (s32)Func_02000330__arrival,
+    (s32)Func_02000330,
     0,
     (s32)0xffff0015,
     MSGNO(MsgFieldWeRunAVerySmallInn),
@@ -1115,7 +1089,7 @@ s32 gData_020016e4[] = {
     MSGNO(MsgSeaOfTimeThreeGenerations),
     0,
     (s32)0xffff001b,
-    (s32)Func_020002d0__arrival,
+    (s32)Func_020002d0,
     0x8d15,
     (s32)0xffff0008,
     MSGNO(MsgFieldRikiTaviWhereAreYouWhat),
@@ -1175,7 +1149,7 @@ s32 gData_020016e4[] = {
     MSGNO(MsgSeaOfTimeGiveUp),
     0x8d15,
     (s32)0xffff001b,
-    (s32)DailaInteriors_TalkScamps__arrival,
+    (s32)DailaInteriors_TalkScamps,
     -1,
     0,
     0,
@@ -1202,7 +1176,7 @@ s32 gData_02001924[] = {
     6,
     0,
     (s32)0xffff0008,
-    (s32)Func_02000390__arrival,
+    (s32)Func_02000390,
     0x8d15,
     (s32)0xffff0008,
     MSGNO(MsgFieldTravelersWithNowhereToGoThis),
@@ -1265,13 +1239,13 @@ s32 gData_02001990[] = {
     MSGNO(MsgFieldWhyDidThePirateBriggsPlague),
     0,
     (s32)0xffff0012,
-    (s32)Func_020004f4__arrival,
+    (s32)Func_020004f4,
     0,
     (s32)0xffff0013,
-    (s32)Func_02000554__arrival,
+    (s32)Func_02000554,
     0,
     (s32)0xffff0014,
-    (s32)Func_020005b4__arrival,
+    (s32)Func_020005b4,
     0,
     (s32)0xffff0015,
     MSGNO(MsgDailaInteriorsDinnerShowPractice),
@@ -1301,7 +1275,7 @@ s32 gData_02001990[] = {
     MSGNO(MsgSeaOfTimeThreeGenerations),
     0,
     (s32)0xffff001e,
-    (s32)Func_020002d0__arrival,
+    (s32)Func_020002d0,
     0x8d15,
     (s32)0xffff0008,
     MSGNO(MsgFieldDarnThatRikiAhImGlad),
@@ -1370,7 +1344,7 @@ s32 gData_02001990[] = {
     MSGNO(MsgSeaOfTimeGiveUp),
     0x8d15,
     (s32)0xffff001e,
-    (s32)DailaInteriors_TalkMazeTreasure__arrival,
+    (s32)DailaInteriors_TalkMazeTreasure,
     -1,
     0,
     0,
@@ -1409,7 +1383,7 @@ s32 gData_02001c18[] = {
     (s32)Func_02000c74,
     0,
     (s32)0xffff0008,
-    (s32)Func_02000498__arrival,
+    (s32)Func_02000498,
     0x8d15,
     (s32)0xffff0008,
     MSGNO(MsgDailaInteriorsBoringVillage),

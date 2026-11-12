@@ -17,6 +17,8 @@
 #include "version.h"
 #include "event_inline.h"
 
+void Func_02000b2c(void);
+
 #define Actor_SetPartAttribute                                                \
   ((void (*)(struct FieldActor *, s32))Actor_SetPartAttribute)
 

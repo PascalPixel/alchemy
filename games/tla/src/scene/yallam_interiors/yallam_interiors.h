@@ -70,7 +70,6 @@ void Func_02000a70(s32 keeper);
 void Func_02000a78(s32 shop, s32 keeper);
 void Actor_SetSingleChildFlags(struct YallamInteriorsObject *object,
                                         u32 value);
-void Animation_SetStateFlags(struct YallamInteriorsObject *object, s32 flags);
 void Field_DispatchTypeHandler(s32 type);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);

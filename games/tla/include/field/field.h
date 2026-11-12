@@ -78,7 +78,6 @@ void Field_StartPaletteTransition(s32 mode);
 void Field_DispatchTypeHandler(s32 kind);
 void Field_EndActorSpriteEffect(s32 mode);
 void FieldEvent_RunTypeHandler(void);
-void Func_02000b2c(void);
 void Func_02000d30(void);
 void Func_02001c7c(s32, s32);
 void Func_02001c84(s32, s32);

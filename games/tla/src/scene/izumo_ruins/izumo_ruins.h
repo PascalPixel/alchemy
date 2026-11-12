@@ -56,7 +56,7 @@ extern char SceneId_Ov67FRoom2;
 void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
 
-void Func_020000a4(const void *data, s32 a, s32 b);
+void Func_020000a4(u16 *list, s32 mode, s32 count);
 void Func_02000bc0(s32 a, s32 b, s32 owner);
 s32 Func_02000eac(u32 layer, s32 x, s32 y);
 s32 Func_02000ee8(u32 layer, s32 x, s32 y, s32 value);

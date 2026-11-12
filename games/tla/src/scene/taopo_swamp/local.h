@@ -35,7 +35,7 @@ void Func_02002938(s32 a, s32 b);
 void Func_02002958(s32 a, s32 b, s32 c);
 void Func_02002990(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
 void Func_020029a8(s32 a, s32 b, s32 c);
-s32 Random16Far(void);
+u32 Random16Far(void);
 void Func_02002800(struct Actor *object, const void *data);
 void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);

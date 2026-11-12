@@ -1,3 +1,6 @@
+/// @file
+/// The overlay code of scene/izumo_ruins between two shared objects, in ROM order.
+
 #include "types.h"
 #include "iwram_call.h"
 #include "actor.h"
@@ -5,13 +8,14 @@
 #include "field_sprite.h"
 #include "field_effect.h"
 #include "event_inline.h"
+#include "map.h"
+#include "system/ram_buffer.h"
+#include "izumo_ruins.h"
 
 extern const s32 gData_02001540[];
 
 u32 Random16Far(void);
 u32 Func_020014f0(struct FieldSprite *sprite, u32 frame);
-void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags);
-void Func_02001428(struct FieldEffect *effect, s32 mode);
 void Func_02001430(struct FieldEffect *effect, const s32 *script);
 s32 Math_Cosine(s32 angle);
 void Effect_AdvanceMotionAtLeaderPriority(union FieldObject *object);
@@ -35,8 +39,8 @@ void Func_02000974(s32 spread) {
       frame = Func_020014f0(effect->sprite, frame);
       effect->motionFlags = 0;
       effect->collisionFlags = 0;
-      Actor_SetSingleChildFlags(effect, 0);
-      Func_02001428(effect, 2);
+      Actor_SetSingleChildFlags((struct Actor *)effect, 0);
+      Func_02001428((struct Actor *)effect, 2);
       Func_02001430(effect, gData_02001540);
       effect->scaleY = effect->scaleX = 0xb333;
       effect->sprite->priority = 1;
@@ -55,4 +59,69 @@ void Func_02000974(s32 spread) {
     }
     i++;
   } while (i <= 7);
+}
+
+extern const s32 gData_02001570[];
+
+void Func_02000aa8(void) {
+  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
+  struct FieldEffect *effect;
+  u32 frame;
+  u32 i;
+
+  if (leader == 0)
+    return;
+  frame = 0;
+  i = 0;
+  do {
+    effect = (struct FieldEffect *)FieldActor_Create(285, leader->x, leader->y,
+                                                      leader->z);
+    if (effect != 0) {
+      frame = Func_020014f0(effect->sprite, frame);
+      effect->motionFlags = 0;
+      effect->collisionFlags = 0;
+      Actor_SetSingleChildFlags((struct Actor *)effect, 0);
+      Func_02001428((struct Actor *)effect, 2);
+      Func_02001430(effect, gData_02001570);
+      effect->velocity.x = Math_Cosine(i << 12);
+      effect->velocity.y = 0;
+      effect->velocity.z = Math_Sin(i << 12);
+      effect->velocity.x += effect->velocity.x >> 1;
+      effect->velocity.x += ((Random16Far() * 3) << 14 >> 16) - 0x6000;
+      effect->velocity.z += ((Random16Far() * 3) << 13 >> 16) - 0x3000;
+      effect->spin = ((Random16Far() << 12) >> 16) - 0x800;
+      effect->scaleRateX = 0;
+      effect->scaleRateY = 0;
+      effect->update = Effect_AdvanceMotionAtLeaderPriority;
+      effect->sprite->priority =
+          ((struct FieldSprite *)leader->animation)->priority;
+    }
+    i++;
+  } while (i <= 16);
+}
+
+extern u8 gMapShapeGrid[];
+
+s32 Func_02001478(s32 terrainId, s32 x, s32 z);
+s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
+s32 Func_02001528(s32 terrainId, s32 value, s32 height);
+
+void Func_02000bc0(s32 heightOffset, s32 layer, s32 id) {
+  struct Actor *actor = Actor_Get(id);
+  s32 cell = Ram_HeapSlots->mapWork->layers[layer].cells -
+             (struct MapCell *)Ram_MapCellBuffer;
+  s32 z = actor->z;
+  u8 *shapes = gMapShapeGrid + cell;
+  s32 value;
+  s32 height;
+
+  value = Func_02001478(actor->terrainId, actor->x, z);
+  height = Map_GetTerrainHeight(actor->terrainId, actor->x, actor->z) >> 19;
+  height += heightOffset;
+  shapes += actor->x / 0x100000 + (actor->z / 0x100000 << 7);
+  *shapes = Func_02001528(actor->terrainId, value, height);
+}
+
+void Func_02000c4c(s32 a, s32 b) {
+  Func_02000bc0(a, b, gMainRoutineWork.currentOwner);
 }

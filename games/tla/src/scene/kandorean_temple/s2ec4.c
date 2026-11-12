@@ -1,7 +1,13 @@
+/// @file
+/// Scene code of overlay 0x653, in ROM order, from s2ec4's offset up to the next object the overlay links.
+
 #include "../../../../games/tla/src/scene/kandorean_temple/local.h"
 #include "field_effect.h"
 #include "event_work.h"
 #include "event_inline.h"
+#include "local.h"
+#include "version.h"
+#include "task.h"
 
 void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
@@ -59,5 +65,1107 @@ void Func_02002ec4(void) {
   Event_Wait(10);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 1);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
+  Func_020051c8();
+}
+
+extern s32 gData_02006298;
+
+void Func_02000cd8(s32 id, s32 offset, s32 limit);
+void Func_02000d64(void);
+void Func_02005158(void);
+
+void Func_0200306c(void) {
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *statue = Actor_GetById(9);
+  struct Actor *ride = Func_080d4568();
+  s16 i; u16 next;
+  s32 limit;
+
+  Func_020051c0();
+  Event_ResolvePendingActions(0);
+  FieldCamera_MoveTo(-1, -1, -1, 0);
+  Func_080d4568()->motionFlags = 0;
+  leader->motionFlags = 0;
+  wait(1);
+  GameFlag_SetBit(0x208);
+  GameFlag_ClearBit(0x209);
+  GameFlag_SetBit(0x301);
+  GameFlag_ClearBit(0x300);
+  Sound_Play(162);
+  Func_02000d64();
+  i = 0;
+do {
+  leader->y += 0x48000;
+  statue->y += 0x48000;
+  ride->y += 0x1cccc;
+  limit = 0x1000;
+  Func_02000cd8(11, 0x20000, limit);
+  Func_02000cd8(13, 0x18000, limit);
+  Func_02000cd8(14, 0x10000, limit);
+  Func_02000cd8(15, 0x8000, limit);
+  Func_02000cd8(16, 0, limit);
+  next = i;
+  next++;
+  i = next;
+} while (next <= 15);
+  Func_02005158();
+  wait(1);
+  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
+  Event_StartScreenTransition();
+  Event_WaitTransitionFrames();
+  Event_Wait(10);
+do {
+  leader->y += -0x6c000;
+  statue->y += -0x6c000;
+  ride->y += -0x2b333;
+  limit = 0x1800;
+  Func_02000cf8(11, 0x30000, limit);
+  Func_02000cf8(13, 0x24000, limit);
+  Func_02000cf8(14, 0x18000, limit);
+  Func_02000cf8(15, 0xc000, limit);
+  Func_02000cf8(16, 0, limit);
+  wait(1);
+} while (Actor_GetById(16)->scaleY > limit);
+  gData_02006298 = 0;
+  GameFlag_ClearBit(0x20c);
+  Sound_Play(390);
+  Actor_SetHorizontalPositionWithTerrain(11, 0, 0);
+  Actor_SetHorizontalPositionWithTerrain(13, 0, 0);
+  Actor_SetHorizontalPositionWithTerrain(14, 0, 0);
+  Actor_SetHorizontalPositionWithTerrain(15, 0, 0);
+  Actor_SetHorizontalPositionWithTerrain(16, 0, 0);
+  Actor_SetModeById(9, 1);
+  Actor_SetPositionAndResetMotion_(Actor_GetById(9), 0xd80000, 0, 0xd80000);
+  statue->priorityFlags |= 2;
+  Actor_SetSpritePriority(9, 3);
+  Actor_SetPositionAndResetMotion(leader, leader->x, 0, leader->z);
+  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
+                                     1);
+  wait(1);
+  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
+  Func_020051c8();
+}
+
+extern s32 gData_0200629c;
+
+void Func_02000cd8(s32 id, s32 offset, s32 limit);
+void Func_02000e60(void);
+void Func_02005158(void);
+
+void Func_020032c8(void) {
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *statue = Actor_GetById(10);
+  struct Actor *ride = Func_080d4568();
+  s16 i; u16 next;
+  s32 limit;
+
+  Func_020051c0();
+  Event_ResolvePendingActions(0);
+  FieldCamera_MoveTo(-1, -1, -1, 0);
+  Func_080d4568()->motionFlags = 0;
+  leader->motionFlags = 0;
+  wait(1);
+  GameFlag_ClearBit(0x208);
+  GameFlag_SetBit(0x209);
+  GameFlag_ClearBit(0x301);
+  GameFlag_SetBit(0x300);
+  Sound_Play(162);
+  Func_02000e60();
+  i = 0;
+do {
+  leader->y += 0x48000;
+  statue->y += 0x48000;
+  ride->y += 0x1cccc;
+  limit = 0x1000;
+  Func_02000cd8(12, 0x20000, limit);
+  Func_02000cd8(17, 0x18000, limit);
+  Func_02000cd8(18, 0x10000, limit);
+  Func_02000cd8(19, 0x8000, limit);
+  Func_02000cd8(20, 0, limit);
+  next = i;
+  next++;
+  i = next;
+} while (next <= 15);
+  Func_02005158();
+  wait(1);
+  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
+  Event_StartScreenTransition();
+  Event_WaitTransitionFrames();
+  Event_Wait(10);
+do {
+  leader->y += -0x6c000;
+  statue->y += -0x6c000;
+  ride->y += -0x2b333;
+  limit = 0x1800;
+  Func_02000cf8(12, 0x30000, limit);
+  Func_02000cf8(17, 0x24000, limit);
+  Func_02000cf8(18, 0x18000, limit);
+  Func_02000cf8(19, 0xc000, limit);
+  Func_02000cf8(20, 0, limit);
+  wait(1);
+} while (Actor_GetById(20)->scaleY > limit);
+  gData_0200629c = 0;
+  GameFlag_ClearBit(0x20d);
+  Sound_Play(390);
+  Actor_SetHorizontalPositionWithTerrain(12, 0, 0);
+  Actor_SetHorizontalPositionWithTerrain(17, 0, 0);
+  Actor_SetHorizontalPositionWithTerrain(18, 0, 0);
+  Actor_SetHorizontalPositionWithTerrain(19, 0, 0);
+  Actor_SetHorizontalPositionWithTerrain(20, 0, 0);
+  Actor_SetModeById(10, 1);
+  Actor_SetPositionAndResetMotion_(Actor_GetById(10), 0x1780000, 0, 0xf80000);
+  statue->priorityFlags |= 2;
+  Actor_SetSpritePriority(10, 3);
+  Actor_SetPositionAndResetMotion(leader, leader->x, 0, leader->z);
+  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
+                                     1);
+  wait(1);
+  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
+  Func_020051c8();
+}
+
+void Func_02003524(void) {
+  Func_020051c0();
+  Event_ResolvePendingActions(0);
+  Actor_GetById(gMainRoutineWork.currentOwner)->motionFlags = 0;
+  ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->value = 0x209;
+  Event_FinishScreenTransition();
+  Event_WaitTransitionFrames();
+}
+
+void Func_02003564(void) {
+  Func_02003524();
+  Import_EventSetExitRequest(3);
+}
+
+void Func_02003574(void) {
+  Func_02003524();
+  Import_EventSetExitRequest(4);
+}
+
+void Func_02003584(void) {
+  struct Actor *object = Actor_GetById(gMainRoutineWork.currentOwner);
+  u32 i;
+  struct MainRoutineWork *party;
+
+  Func_020051c0();
+  Event_ResolvePendingActions(0);
+  object->motionFlags = 0;
+  Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);
+  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
+  object->angle = 0;
+  Actor_SetModeById(gMainRoutineWork.currentOwner, 16);
+  for (i = 0; i <= 7; i++) {
+    Actor_SetPositionAndResetMotion(object, object->x, object->y,
+                                    object->z + PIXELS(3));
+    wait(1);
+  }
+  Event_Wait(20);
+  party = &gMainRoutineWork;
+  object->angle = FACING_SOUTH;
+  Func_080d489c(party->currentOwner, 258);
+  Actor_SetModeById(party->currentOwner, 27);
+  Event_Wait(30);
+  Actor_SetModeById(party->currentOwner, 28);
+  Event_Wait(10);
+  Actor_SetSpritePriority(party->currentOwner, 3);
+  for (i = 0; i <= 39; i++) {
+    {
+      s32 scale = object->scaleX;
+
+      object->scaleX = scale + -0x400;
+    }
+    object->scaleY += -0x400;
+    object->y += -0x20000;
+    wait(1);
+    if (i == 10)
+      Sound_Play(204);
+    if (i == 20) {
+      ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->value = 521;
+      Event_FinishScreenTransition();
+    }
+  }
+  Import_EventSetExitRequest(5);
+}
+
+void Func_02000cd8(s32 id, s32 dy, s32 scale);
+extern s32 gData_020062a0;
+extern s32 gData_020062a4;
+
+/// The leader and actor 13 rise into view while actor 15 scales.
+void Func_02003684(void) {
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *first = Actor_GetById(13);
+  struct Actor *second = Actor_GetById(15);
+
+  Func_020051c0();
+  Event_ResolvePendingActions(0);
+  Func_02005388(162);
+  FieldCamera_MoveTo(-1, -1, -1, 0);
+  wait(1);
+  leader->motionFlags = 0;
+  Actor_SetPositionAndResetMotion_(Actor_GetById(gMainRoutineWork.currentOwner),
+                                   PIXELS(440), PIXELS(-20), PIXELS(200));
+  Actor_SetSingleChildFlags_(Actor_GetById(gMainRoutineWork.currentOwner), 0);
+  Actor_SetPositionAndResetMotion_(Actor_GetById(13), PIXELS(440), PIXELS(-20),
+                                   PIXELS(204));
+  Actor_SetPositionAndResetMotion_(Actor_GetById(15), PIXELS(440), PIXELS(-20),
+                                   PIXELS(200));
+  Actor_SetSpritePriority(13, 2);
+  Actor_SetSpritePriority(15, 3);
+  {
+    u8 *flags = &second->priorityFlags;
+    s32 c = 2 | *flags;
+
+    *flags = c;
+  }
+  second->scaleY = 0x400;
+  Actor_SetModeById(13, 4);
+  Actor_SetModeById(15, 2);
+  ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->value = 521;
+  Event_StartScreenTransition();
+  Event_WaitTransitionFrames();
+  // A goto loop, as in Func_0200393c.
+rise:
+  first->y += PIXELS(4);
+  leader->y += PIXELS(4);
+  Func_02000cd8(15, 0x4ccc, 0x4ccc);
+  wait(1);
+  if (first->y < 0)
+    goto rise;
+  MapGrid_CopyCellAttributes(0, 0, 1, 1, 27, 12);
+  gData_020062a0 = 2000;
+  ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->value = 516;
+  Func_020051c8();
+}
+
+/// As Func_02003684, for actors 14 and 16 at another place.
+void Func_020037e0(void) {
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *first = Actor_GetById(14);
+  struct Actor *second = Actor_GetById(16);
+
+  Func_020051c0();
+  Event_ResolvePendingActions(0);
+  Func_02005388(162);
+  FieldCamera_MoveTo(-1, -1, -1, 0);
+  wait(1);
+  leader->motionFlags = 0;
+  Actor_SetPositionAndResetMotion_(Actor_GetById(gMainRoutineWork.currentOwner),
+                                   PIXELS(600), PIXELS(-20), PIXELS(232));
+  Actor_SetSingleChildFlags_(Actor_GetById(gMainRoutineWork.currentOwner), 0);
+  Actor_SetPositionAndResetMotion_(Actor_GetById(14), PIXELS(600), PIXELS(-20),
+                                   PIXELS(236));
+  Actor_SetPositionAndResetMotion_(Actor_GetById(16), PIXELS(600), PIXELS(-20),
+                                   PIXELS(232));
+  Actor_SetSpritePriority(14, 2);
+  Actor_SetSpritePriority(16, 3);
+  {
+    u8 *flags = &second->priorityFlags;
+    s32 c = 2 | *flags;
+
+    *flags = c;
+  }
+  second->scaleY = 0x400;
+  Actor_SetModeById(14, 4);
+  Actor_SetModeById(16, 2);
+  ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->value = 521;
+  Event_StartScreenTransition();
+  Event_WaitTransitionFrames();
+  // A goto loop, as in Func_0200393c.
+rise:
+  first->y += PIXELS(4);
+  leader->y += PIXELS(4);
+  Func_02000cd8(16, 0x4ccc, 0x4ccc);
+  wait(1);
+  if (first->y < 0)
+    goto rise;
+  MapGrid_CopyCellAttributes(0, 0, 1, 1, 37, 14);
+  gData_020062a4 = 2000;
+  ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->value = 516;
+  Func_020051c8();
+}
+
+/// Actor 13 rises out of view while actor 15 scales, then the scene moves on.
+void Func_0200393c(void) {
+  struct Actor *object = Actor_GetById(13);
+
+  Func_020051c0();
+  Event_ResolvePendingActions(0);
+  // A goto loop: as a do-while, loop.c hoists the scale constant into r6
+  // (differ 19).
+rise:
+  object->y -= PIXELS(4);
+  Func_02000cf8(15, 0x4ccc, 0x4ccc);
+  wait(1);
+  if (object->y > -0x140000)
+    goto rise;
+  Actor_SetHorizontalPositionWithTerrain(15, 0, 0);
+  ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->value = 521;
+  Event_FinishScreenTransition();
+  Event_WaitTransitionFrames();
+  Import_EventSetExitRequest(6);
+}
+
+/// As Func_0200393c, for actors 14 and 16.
+void Func_020039a8(void) {
+  struct Actor *object = Actor_GetById(14);
+
+  Func_020051c0();
+  Event_ResolvePendingActions(0);
+  // A goto loop, as in Func_0200393c.
+rise:
+  object->y -= PIXELS(4);
+  Func_02000cf8(16, 0x4ccc, 0x4ccc);
+  wait(1);
+  if (object->y > -0x140000)
+    goto rise;
+  Actor_SetHorizontalPositionWithTerrain(16, 0, 0);
+  ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->value = 521;
+  Event_FinishScreenTransition();
+  Event_WaitTransitionFrames();
+  Import_EventSetExitRequest(7);
+}
+
+struct MapWork17 {
+  s32 *origin;
+  s32 shakeX, shakeY, shakeDecay;
+  u8 *script;
+  u16 flags;
+  u8 wideTiles;
+  u8 bits0 : 2;
+  u8 mode : 2;
+};
+
+void Func_02003a14(void) {
+  struct MapWork17 *map = (struct MapWork17 *)Ram_HeapSlots->mapWork;
+
+  gData_02006294 = 0;
+  map->mode = 1;
+  Func_02005338(0);
+#if TLA_PATCH_1
+  if (gMainRoutineWork.entrance == 1 || gMainRoutineWork.entrance == 2)
+    GameFlag_ClearBit(0x12f);
+#endif
+}
+
+void Func_02003a5c(void) {
+  struct MapWork17 *map = (struct MapWork17 *)Ram_HeapSlots->mapWork;
+
+  gData_02006294 = 0;
+  Func_02005388(170);
+  map->mode = 1;
+  Func_02005338(0);
+}
+
+void Func_02003a8c(void) {
+  Func_02005390();
+  Func_020053a8(0, 0x20f, 8, 9);
+  if (GameFlag_Test(0x849)) {
+    Actor_SetHorizontalPositionWithTerrain(10, 0, 0);
+  } else {
+    Actor_SetSingleChildFlags(Actor_GetById(10), 0);
+    Actor_SetModeById(10, 6);
+    Actor_SetMovementTypeById(10, gData_02005550);
+  }
+  Func_02005338(0);
+}
+
+void Func_02003ae4(s32 id, s32 base) {
+  struct Actor *object = Actor_GetById(id);
+
+  Actor_SetModeById(id, 5);
+  object->action = base + ((Random16Far() * 400) >> 16);
+  object->unk66 = id;
+  Actor_SetMovementTypeById(id, gData_02005548);
+}
+
+void Func_02003ae4(s32 id, s32 base);
+
+void Func_02003b2c(void) {
+  ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->value = 0x100;
+  if (GameFlag_Test(0x842)) {
+    Actor_SetHorizontalPositionWithTerrain(8, 0, 0);
+    MapGrid_CopyCellAttributes(0, 0, 1, 1, 5, 13);
+  } else {
+    Func_020052c0(8);
+  }
+  if (GameFlag_Test(0x849)) {
+    MapGrid_CopyCellAttributes(2, 0, 2, 3, 17, 24);
+    Actor_SetHorizontalPositionWithTerrain(9, 0, 0);
+    Actor_SetHorizontalPositionWithTerrain(10, 0, 0);
+    Actor_SetPositionAndFacing(11, PIXELS(374), PIXELS(282), FACING_EAST);
+    {
+      /* FAKEMATCH(temporary): a local holding the angle builds it ahead of the
+       * other arguments; as a plain argument, 4 of 128 instructions differ in
+       * tla-en. */
+      s32 angle = 0xd000;
+
+      Actor_SetPositionAndFacing(12, PIXELS(272), PIXELS(296), angle);
+    }
+    {
+      /* FAKEMATCH(temporary): a local holding the angle builds it ahead of the
+       * other arguments; as a plain argument, 4 of 128 instructions differ in
+       * tla-en. */
+      s32 angle = 0x3000;
+
+      Actor_SetPositionAndFacing(13, PIXELS(216), PIXELS(264), angle);
+    }
+  } else {
+    Func_02003ae4(11, 0);
+    Func_02003ae4(12, 240);
+    Func_02003ae4(13, 480);
+  }
+  if (GameFlag_Test(0x212)) {
+    Map_CopyCellPictureIndicesRect(77, 33, 77, 24, 2, 2);
+    MapGrid_CopyCellAttributes(32, 30, 2, 1, 17, 25);
+  }
+#if TLA_PATCH_1 /* From patch 1. */
+  if (gMainRoutineWork.entrance == 3 || gMainRoutineWork.entrance == 4)
+    GameFlag_ClearBit(0x12f);
+#endif
+}
+
+void Func_02003c54(void) {
+  if (Event_GetFlag(0x210) == 0) {
+    Event_SetFlag(0x210);
+    Func_020053a8_(1, 0x210, 10, 11);
+  }
+  {
+    /* FAKEMATCH(temporary): a local holding the angle builds it ahead of the
+     * other arguments; as a plain argument, 4 of 24 instructions differ in
+     * tla-en. */
+    s32 angle = 0x3000;
+
+    Actor_SetPositionAndFacing(12, PIXELS(392), PIXELS(360), angle);
+  }
+}
+
+void Func_02001c8c(void);
+void Func_02003e8c(void);
+void Func_020044d4(void);
+void Func_020046d8(void);
+void Func_0200482c(void);
+void Func_02004fb4(void);
+
+void Func_02003c8c(void) {
+  ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->value = 521;
+  Func_02005390();
+  Func_020053a8_(0, 527, 8, 9);
+  Func_020053a8(1, 528, 10, 11);
+  if (Event_GetFlag(0x849) == 0) {
+    Actor_SetModeById(13, 5);
+    Actor_SetModeById(15, 5);
+  }
+  Actor_SetModeById(14, 5);
+  Task_Add(Func_02001c8c, TASK_PASS_VBLANK);
+  if ((gMainRoutineWork.entrance >= 4 && gMainRoutineWork.entrance <= 6) ||
+      gMainRoutineWork.entrance == 14) {
+    if (GameFlag_Test(0x84a)) {
+      /* FAKEMATCH(temporary): a local holding the angle builds it ahead of the
+       * other arguments; as a plain argument, 4 of 179 instructions differ in
+       * tla-en. */
+      s32 angle = 0x5000;
+
+      Actor_SetPositionAndFacing(12, PIXELS(432), PIXELS(394), angle);
+    } else {
+      Func_02004fb4();
+      if (GameFlag_Test(0x849))
+        Func_02003c54();
+    }
+  }
+  if ((gMainRoutineWork.entrance >= 1 && gMainRoutineWork.entrance <= 3) ||
+      gMainRoutineWork.entrance == 9) {
+    if (GameFlag_Test(0x212))
+      Func_02001f3c();
+    if (GameFlag_Test(0x849)) {
+      /* FAKEMATCH(temporary): a local holding the angle, set just before its
+       * call, builds it ahead of the other arguments, as above; as a plain
+       * argument, 4 of 179 instructions differ in tla-en. */
+      s32 angle;
+
+      Actor_SetHorizontalPositionWithTerrain(12, 0, 0);
+      angle = 0xb000;
+      Actor_SetPositionAndFacing(15, PIXELS(408), PIXELS(664), angle);
+    } else if (GameFlag_Test(0x848)) {
+      Actor_SetHorizontalPositionWithTerrain(12, 0, 0);
+      Actor_SetHorizontalPositionWithTerrain(15, 0, 0);
+    } else {
+      Func_02003e8c();
+    }
+  } else if (gMainRoutineWork.entrance == 6) {
+    if (GameFlag_Test(0x849) == 0)
+      Func_020044d4();
+  } else if (gMainRoutineWork.entrance == 13) {
+    Func_020046d8();
+  } else if (gMainRoutineWork.entrance == 14) {
+    if (GameFlag_Test(0x849) == 0)
+      Func_0200482c();
+  }
+#if TLA_PATCH_1 /* From patch 1. */
+  if (gMainRoutineWork.entrance >= 8 && gMainRoutineWork.entrance <= 9)
+    GameFlag_ClearBit(0x12f);
+#endif
+}
+
+void Func_02003e34(struct FieldSprite *sprite, u32 frames, s32 step) {
+  u32 count = frames;
+  u32 i;
+
+  for (i = 0; i < count; i++) {
+    sprite->rotation += step;
+    Event_Wait(1);
+  }
+}
+
+void Func_02003e60(struct Actor *object, u32 frames, s32 step) {
+  u32 count = frames;
+  u32 i;
+
+  for (i = 0; i < count; i++) {
+    object->x += step;
+    Event_Wait(1);
+  }
+}
+
+extern u8 MsgKandoreanTemple04;
+
+void Func_020052e8(void);
+
+void Func_02001f3c(void);
+void Func_02001c8c(void);
+
+void Func_02003e8c(void) {
+  struct Actor *object;
+  struct FieldSprite *sprite;
+  u32 i;
+
+  Func_020051c0();
+  Event_ResolvePendingActions(0);
+  FieldCamera_MoveTo(-1, -1, -1, 0);
+  Func_080d4568()->motionFlags = 0;
+  wait(1);
+  Actor_SetHorizontalPositionWithTerrain(gMainRoutineWork.currentOwner,
+                                         0x1900000, 0x31c0000);
+  wait(1);
+  Event_StartScreenTransition();
+  Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 400, 752);
+  Camera_SetSpeedParameters(0x4cccc, 0x9999);
+  Camera_MoveWithinMapBounds(0x1b40000, 0x480000, 0x2980000, 1);
+  Func_020052e8();
+  Actor_Jump(12, 4, 0);
+  Event_SetMessageId((s32)&MsgKandoreanTemple04);
+  Event_ShowMessageAndWait(12, 0);
+  Camera_MoveWithinMapBounds(0x1c80000, 0, 0x2b00000, 1);
+  Func_020052e8();
+  Motion_SetVarCbAndRefresh(13, 2);
+  Sound_Play(131);
+  Actor_ConfigureSpriteColor(13, 0x100);
+  Event_Wait(20);
+  Actor_ConfigureSpriteColor(13, 0);
+  Event_Wait(20);
+  object = Actor_GetById(13);
+  sprite = object->animation;
+  object->motionFlags = 0;
+  i = 0;
+rise13:
+  object->y += 0xccc;
+  Event_Wait(1);
+  i++;
+  if (i <= 63)
+    goto rise13;
+  Func_02003e34(sprite, 32, 32);
+  Event_Wait(20);
+  Actor_SetAttachedEffect(13, 0x102);
+  Func_02003e34(sprite, 32, -64);
+  Func_02003e34(sprite, 32, 64);
+  Func_02003e34(sprite, 64, 32);
+  Func_080d489c(13, 0x102);
+  Event_Wait(60);
+  object->motionFlags = 3;
+  Event_Wait(5);
+  Sound_Play(159);
+  object->velocityY = 0x30000;
+  sprite->rotation = 0;
+  Event_Wait(60);
+  Event_ShowMessageAndWait(13, 0);
+  FieldCamera_MoveTo(0x1b40000, 0x480000, 0x2980000, 1);
+  Func_020052e8();
+  Actor_SetSpeed(12, 0xcccc, 0x6666);
+  Actor_WalkToAndWait(12, 476, 664);
+  Actor_FaceDirection(12, 0x3000, 0);
+  Actor_SetModeById(12, 4);
+  Event_ShowMessageAndWait(0x100c, 0);
+  Actor_WalkToAndWait(12, 474, 664);
+  Actor_WalkToAndWait(12, 472, 648);
+  Actor_SetHorizontalPositionWithTerrain(12, 0, 0);
+  Camera_SetSpeedParameters(0x13333, 0x2666);
+  Camera_MoveWithinMapBounds(0x16c0000, 0x480000, 0x2980000, 1);
+  Func_020052e8();
+  Actor_SetHorizontalPositionWithTerrain(12, 0x1480000, 0x2880000);
+  wait(1);
+  Actor_WalkToAndWait(12, 326, 664);
+  Actor_WalkToAndWait(12, 320, 664);
+  Actor_FaceDirection(12, 0x5000, 0);
+  Event_ShowMessageAndWait(0x200c, 0);
+  Camera_SetSpeedParameters(0x4cccc, 0x9999);
+  Camera_MoveWithinMapBounds(0x1560000, 0, 0x2b00000, 1);
+  Func_020052e8();
+  Motion_SetVarCbAndRefresh(14, 2);
+  Sound_Play(131);
+  Actor_ConfigureSpriteColor(14, 0x100);
+  Event_Wait(20);
+  Actor_ConfigureSpriteColor(14, 0);
+  Event_Wait(20);
+  Actor_SetAttachedEffect(14, 0x101);
+  object = Actor_GetById(14);
+  object->motionFlags = 0;
+  i = 0;
+rise14:
+  object->y += 0x2666;
+  Event_Wait(1);
+  i++;
+  if (i <= 63)
+    goto rise14;
+  Func_02003e60(object, 64, 0x1000);
+  Func_02003e60(object, 128, -0x1000);
+  Func_02003e60(object, 128, 0x1000);
+  Func_02003e60(object, 64, -0x1000);
+  Event_Wait(20);
+  Actor_SetAttachedEffect(14, 0x100);
+  object->motionFlags = 3;
+  Event_Wait(5);
+  Sound_Play(159);
+  object->velocityY = 0x30000;
+  Event_Wait(60);
+  Event_ShowMessageAndWait(14, 0);
+  Camera_MoveWithinMapBounds(0x16c0000, 0x480000, 0x2980000, 1);
+  Func_020052e8();
+  Event_ShowMessageAndWait(0x200c, 0);
+  Actor_FaceDirection(12, 0x3000, 10);
+  Event_ShowMessageAndWait(12, 0);
+  Camera_MoveWithinMapBounds(0x1900000, 0, 0x2b00000, 1);
+  Func_020052e8();
+  Motion_SetVarCbAndRefresh(15, 2);
+  Sound_Play(131);
+  Actor_ConfigureSpriteColor(15, 0x100);
+  Event_Wait(20);
+  Actor_ConfigureSpriteColor(15, 0);
+  Event_Wait(20);
+  object = Actor_GetById(15);
+  sprite = object->animation;
+  object->motionFlags = 0;
+  i = 0;
+rise15:
+  object->y += 0x3333;
+  Event_Wait(1);
+  i++;
+  if (i <= 63)
+    goto rise15;
+  Func_02003e34(sprite, 32, 64);
+  sprite->rotation = 0;
+  Motion_SetVarCbAndRefresh(15, 1);
+  Event_Wait(60);
+  Func_02003e34(sprite, 32, -64);
+  sprite->rotation = 0;
+  Motion_SetVarCbAndRefresh(15, 1);
+  Event_Wait(60);
+  i = 0;
+fall15:
+  object->y += -0x3333;
+  Event_Wait(1);
+  i++;
+  if (i <= 63)
+    goto fall15;
+  Event_Wait(20);
+  Func_080d47b4(15, 0x108, 0);
+  Event_ShowMessageThenWait(15, 0, 20);
+  Event_ShowMessageAndWait(0x100c, 0);
+  Func_080d47b4(15, 0x103, 20);
+  Actor_SetModeById(15, 1);
+  Actor_Jump(15, 4, 0);
+  Actor_FaceDirection(15, 0xb000, 20);
+  Event_ShowMessageAndWait(0x400f, 0);
+  Camera_MoveWithinMapBounds(0x16c0000, 0x480000, 0x2980000, 1);
+  Func_020052e8();
+  Func_080d47b4(12, 0x102, 20);
+  Event_ShowMessage(0x800c, 0);
+  Event_ShowMessageAndWait(15, 0);
+  Actor_FaceDirection(12, 0xb000, 40);
+  Actor_SetModeById(12, 4);
+  Event_ShowMessage(0x800c, 0);
+  Event_ShowMessageAndWait(15, 0);
+  Func_080d47b4(12, 0x105, 80);
+  Event_ShowMessage(0x800c, 0);
+  Actor_FaceDirection(12, 0x3000, 20);
+  Actor_SetModeById(12, 3);
+  Event_ShowMessageAndWait(0x800c, 0);
+  Actor_WalkToAndWait(12, 326, 664);
+  Actor_SetPositionAndReset(12, 328, 648);
+  Actor_SetSingleChildFlags(Actor_GetById(12), 0);
+  Actor_SetPartAttribute(Actor_GetById(12), 15);
+  Actor_SetPosition(12, 0x1b80000, 0x2580000);
+  FieldCamera_MoveTo(0x1900000, 0, 0x2b00000, 1);
+  Actor_SetSpeed(15, 0xcccc, 0x6666);
+  Actor_WalkToAndWait(15, 400, 644);
+  Event_Wait(20);
+  Sound_Play(188);
+  Func_02001f3c();
+  Event_ShowMessageAndWait(12, 0);
+  Task_RemoveFar(Func_02001c8c);
+  Motion_SetModeAndWaitAnimation(15, 3);
+  Actor_SetSpritePriority(15, 3);
+  Actor_WalkToAndWait(15, 400, 640);
+  Actor_SetHorizontalPositionWithTerrain(15, 0, 0);
+  Actor_SetHorizontalPositionWithTerrain(12, 0, 0);
+  Camera_MoveWithinMapBounds(0x1900000, 0, 0x2f00000, 1);
+  Func_020052e8();
+  Task_Add(Func_02001c8c, 0x480);
+  Func_020051c8();
+  GameFlag_SetBit(0x848);
+}
+
+void Func_020044d4(void) {
+  /* FAKEMATCH(temporary): a local holding the angle, set just before its call,
+   * builds it ahead of the other arguments; as a plain argument, 2 of 206
+   * instructions differ in tla-en. */
+  s32 angle;
+
+  Func_020051c0();
+  Event_ResolvePendingActions(0);
+  FieldCamera_MoveTo(-1, -1, -1, 0);
+  wait(1);
+  Actor_SetHorizontalPositionWithTerrain(gMainRoutineWork.currentOwner,
+                                         PIXELS(328), PIXELS(360));
+  angle = 0x5000;
+  Actor_SetPositionAndFacing(12, PIXELS(472), PIXELS(408), angle);
+  Actor_GetById(16)->angle = 0xc000;
+  wait(1);
+  Event_StartScreenTransition();
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
+  Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 328, 392);
+  FieldCamera_SetSpeed(0xcccc, 0x1999);
+  Camera_MoveWithinMapBounds(PIXELS(408), -1, PIXELS(400), 1);
+  Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 376, 408);
+  Event_Wait(20);
+  Motion_SetVarCbAndRefresh(12, 1);
+  Event_SetMessageId((s32)&MsgKandoreanTemple05);
+  Event_ShowMessageAndWait(12, 0);
+  Actor_FaceDirection(12, FACING_WEST, 20);
+  Func_080d47b4(12, 256, 0);
+  Actor_SetSpeed(12, 0x19999, 0xcccc);
+  Actor_WalkToAndWait(12, 456, 408);
+  Event_ShowMessageAndWait(12, 0);
+  Func_02005240(16, gMainRoutineWork.currentOwner);
+  wait(1);
+  Actor_SetSpeed(16, 0xcccc, 0x6666);
+  Actor_WalkToAndWait(16, 376, 392);
+  Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
+  Actor_FaceDirection(16, FACING_SOUTHEAST + FACING_STEP, 40);
+  Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_EAST, 0);
+  Actor_ArmCallback(16, FACING_EAST, 20);
+  Actor_SetAttachedEffect(12, 258);
+  Event_ShowMessageAndWait(12, 0);
+  Func_080d47b4(16, 265, 0);
+  Actor_FaceDirection(16, FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTH, 20);
+  Event_ShowMessageAndWait(16, 0);
+  Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, 3);
+  Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_EAST, 0);
+  Actor_ArmCallback(16, FACING_EAST, 0);
+  Actor_WalkToAndWait(12, 468, 428);
+  Actor_WalkToAndWait(12, 472, 454);
+  ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->value = 514;
+  Event_FinishScreenTransition();
+  Event_WaitTransitionFrames();
+  Import_EventSetExitRequest(13);
+}
+
+void Func_020046d8(void) {
+  Func_020051c0();
+  Event_ResolvePendingActions(0);
+  Actor_SetHorizontalPositionWithTerrain(gMainRoutineWork.currentOwner, 0, 0);
+  Actor_SetHorizontalPositionWithTerrain(12, 0, 0);
+  Actor_SetHorizontalPositionWithTerrain(15, 0, 0);
+  FieldCamera_MoveTo(-1, -1, -1, 0);
+  Func_080d4568()->motionFlags = 0;
+  wait(1);
+  ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->value = 514;
+  Event_StartScreenTransition();
+  Event_WaitTransitionFrames();
+  Actor_SetHorizontalPositionWithTerrain(12, PIXELS(472), PIXELS(648));
+  wait(1);
+  Actor_WalkToAndWait(12, 472, 664);
+  Actor_FaceDirection(12, FACING_SOUTHEAST + FACING_STEP, 20);
+  Actor_FaceDirection(12, FACING_SOUTH + FACING_STEP, 20);
+  Actor_FaceDirection(12, FACING_SOUTHEAST + FACING_STEP, 0);
+  Camera_SetSpeedParameters(0x4cccc, 0x9999);
+  Camera_MoveWithinMapBounds(PIXELS(456), PIXELS(40), PIXELS(664), 1);
+  Func_020052e8();
+  Event_Wait(40);
+  Event_SetMessageId((s32)&MsgKandoreanTemple06);
+  Event_ShowMessageAndWait(0x800c, 0);
+  Actor_WalkToAndWait(12, 472, 648);
+  Event_FinishScreenTransition();
+  Event_WaitTransitionFrames();
+  Import_EventSetExitRequest(14);
+}
+
+void Func_020047f0(void) {
+  Actor_SetSpeed(12, 0x19999, 0xcccc);
+  Actor_WalkToAndWait(12, 496, 392);
+  Actor_FaceDirection(12, FACING_WEST, 0);
+  Event_ShowMessageAndWait(0x400c, 0);
+}
+
+extern u8 MsgKandoreanTemple07;
+extern const u8 gData_02005564[];
+extern const u8 gData_020055a0[];
+extern const u8 gData_020055e4[];
+
+void Func_02000bcc(void);
+void Func_020047f0(void);
+
+#define WORK ((struct EventWork *)Ram_HeapSlots->eventWork)
+
+void Func_0200482c(void) {
+  struct Actor *object;
+  struct FieldSprite *sprite;
+  u8 *flags;
+
+  Func_020051c0();
+  Event_ResolvePendingActions(0);
+  FieldCamera_MoveTo(-1, -1, -1, 0);
+  Func_080d4568()->motionFlags = 0;
+  wait(1);
+  Actor_SetPositionAndFacing(16, 0x1780000, 0x1880000, 0);
+  Actor_SetHorizontalPositionAndAngleWithTerrain(gMainRoutineWork.currentOwner,
+                                                 0x1780000, 0x1980000, 0);
+  {
+    s32 angle = 0xb000;
+    Actor_SetPositionAndFacing(12, 0x1d80000, 0x1c60000, angle);
+  }
+  WORK->screenEffect = 0x202;
+  Event_StartScreenTransition();
+  Actor_SetSpeed(12, 0x13333, 0x9999);
+  Actor_WalkToAndWait(12, 464, 428);
+  Actor_WalkToAndWait(12, 432, 408);
+  Actor_FaceDirection(12, 0x8000, 0);
+  Func_080d489c(12, 0x102);
+  Event_SetMessageId((s32)&MsgKandoreanTemple07);
+  Event_ShowMessageAndWait(12, 0);
+  Func_080d47b4(12, 0x105, 40);
+  Event_ShowMessageAndWait(12, 0);
+  Actor_ArmCallback(12, 0, 40);
+  Event_ShowMessageAndWait(12, 0);
+  Event_ShowMessageAndWait(16, 0);
+  Motion_SetVarCbAndRefresh(12, 2);
+  Actor_FaceDirection(12, 0x8000, 20);
+  Actor_SetModeById(12, 4);
+  Event_ShowMessageAndWait(12, 0);
+  Actor_FaceDirection(16, 0x3000, 10);
+  Actor_ArmCallback(gMainRoutineWork.currentOwner, 0xc000, 0);
+  Event_OpenMessage(16, 0);
+  if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
+    Actor_SetModeById(12, 4);
+    Event_ShowMessageAndWait(12, 0);
+    WORK->messageId++;
+  } else {
+    WORK->messageId++;
+    Actor_SetModeById(12, 3);
+    Event_ShowMessageAndWait(12, 0);
+  }
+  Actor_ArmCallback(gMainRoutineWork.currentOwner, 0, 0);
+  Actor_ArmCallback(16, 0, 0);
+  Actor_ShowEmote(16, 0x101, 20);
+  Event_ShowMessageAndWait(16, 0);
+  Actor_SetAttachedEffect(12, 0x102);
+  Event_ShowMessageAndWait(12, 0);
+  Actor_SetModeById(16, 3);
+  Event_ShowMessageThenWait(16, 0, 40);
+  Actor_FaceDirection(12, 0x5000, 40);
+  Event_ShowMessageAndWait(12, 0);
+  Actor_FaceDirection(16, 0x3000, 0);
+  Actor_ArmCallback(gMainRoutineWork.currentOwner, 0xc000, 40);
+  Actor_FaceDirection(12, 0x8000, 20);
+  Actor_SetModeById(12, 3);
+  Event_ShowMessageAndWait(12, 0);
+  Actor_ArmCallback(16, 0, 0);
+  Actor_ArmCallback(gMainRoutineWork.currentOwner, 0, 0);
+  Func_080d47b4(16, 0x101, 0);
+  Event_ShowMessageAndWait(16, 0);
+  Actor_SetModeById(12, 3);
+  Event_ShowMessageAndWait(12, 0);
+  FieldCamera_SetSpeed(0xcccc, 0x1999);
+  Camera_MoveWithinMapBounds(0x1a80000, 0x100000, 0x1800000, 1);
+  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
+  Actor_SetSpeed(16, 0xcccc, 0x6666);
+  Actor_SetSpeed(12, 0xcccc, 0x6666);
+  Actor_SetMovementTypeById(gMainRoutineWork.currentOwner, gData_02005564);
+  Actor_SetMovementTypeById(16, gData_020055a0);
+  Actor_SetMovementTypeAndWaitById(12, gData_020055e4);
+  Event_Wait(40);
+  Func_02000bcc();
+  Actor_FaceDirection(16, 0x3000, 0);
+  Actor_ArmCallback(gMainRoutineWork.currentOwner, 0xa000, 20);
+  Event_OpenMessage(0x5010, 0);
+  if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
+    Func_020047f0();
+    WORK->messageId++;
+  } else {
+    WORK->messageId++;
+    Func_020047f0();
+  }
+  Actor_ArmCallback(16, 0, 0);
+  Actor_ArmCallback(gMainRoutineWork.currentOwner, 0, 0);
+  Actor_SetModeById(12, 3);
+  Event_ShowMessage(0x400c, 0);
+  Actor_SetModeById(gMainRoutineWork.currentOwner, 3);
+  Motion_SetModeAndWaitAnimation(16, 3);
+  Event_ShowMessage(0x400c, 0);
+  Func_080d47b4(16, 0x100, 40);
+  Event_ShowMessage(0x5010, 0);
+  Actor_SetModeById(12, 3);
+  Event_ShowMessage(0x400c, 0);
+  Actor_FaceDirection(16, 0x3000, 0);
+  Actor_ArmCallback(gMainRoutineWork.currentOwner, 0xa000, 0);
+  Event_OpenMessage(0x5010, 0);
+  if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
+    Actor_SetModeById(12, 3);
+    Event_ShowMessageAndWait(0x400c, 0);
+    Actor_ArmCallback(16, 0, 0);
+    Func_080d47b4(16, 0x107, 20);
+    Event_ShowMessageAndWait(0x5010, 0);
+    WORK->messageId += 2;
+  } else {
+    WORK->messageId += 2;
+    Actor_SetModeById(12, 4);
+    Event_ShowMessageAndWait(0x400c, 0);
+    Actor_ArmCallback(16, 0, 0);
+    Func_080d47b4(16, 0x107, 20);
+    Event_ShowMessageAndWait(0x5010, 0);
+  }
+  Actor_ArmCallback(gMainRoutineWork.currentOwner, 0, 0);
+  FieldCamera_MoveTo(0x1a80000, 0, 0x1900000, 1);
+  FieldCamera_SetSpeed(0x9999, 0x1333);
+  Actor_SetSpeed(12, 0x9999, 0x4ccc);
+  Actor_WatchAndSetScript(gMainRoutineWork.currentOwner, 12);
+  Actor_WatchAndSetScript(16, 12);
+  Actor_WalkToAndWait(12, 488, 416);
+  Actor_WalkToAndWait(12, 472, 432);
+  Actor_FaceDirection(12, 0x5000, 0);
+  Event_ShowMessage(0x400c, 0);
+  Event_ShowMessageThenWait(0x1010, 0, 80);
+  Func_080d47b4(12, 0x108, 0);
+  Actor_FaceDirection(12, 0xb000, 20);
+  Event_ShowMessage(0x400c, 0);
+  Actor_SetModeById(12, 3);
+  Event_ShowMessageAndWait(0x400c, 0);
+  FieldCamera_MoveTo(0x1a80000, 0x100000, 0x1800000, 1);
+  Actor_SetSpeed(12, 0x13333, 0x9999);
+  Actor_WalkToAndWait(12, 488, 416);
+  Actor_WalkToAndWait(12, 504, 376);
+  Actor_ArmCallback(12, 0x8000, 20);
+  object = Actor_GetById(12);
+  sprite = object->animation;
+  Actor_SetSpritePriority(12, 1);
+  Actor_SetSpeed(12, 0x19999, 0xcccc);
+  Actor_Jump(12, 4, 0);
+  Actor_MoveToAndWait(12, 492, 376);
+  Actor_SetModeById(12, 7);
+  object->scaleX = 0xffff0000;
+  sprite->rotation = 0xe000;
+  /* FAKEMATCH(temporary): the motion flags written through a byte pointer, so
+   * the store may alias the rotation and stays after it; as
+   * object->motionFlags, which keeps the struct's alias set, 51 of 783
+   * instructions differ in tla-en. */
+  flags = &object->motionFlags;
+  *flags = 0;
+  object->y += 0x40000;
+  Actor_SetSingleChildFlags(Actor_GetById(12), 0);
+  Actor_SetSpeed(12, 0x6666, 0x3333);
+  Actor_SetMoveTarget((s32)object, 0x1bc0000, 0x280000, 0x1780000);
+  Actor_WaitForMoveById(12);
+  *flags = 3;
+  Actor_SetSingleChildFlags(Actor_GetById(12), 1);
+  sprite->rotation = 0;
+  object->scaleX = 0x10000;
+  object->terrainHeight = 0x200000;
+  Actor_SetModeById(12, 1);
+  Actor_SetSpeed(12, 0x19999, 0xcccc);
+  Actor_Jump(12, 4, 0);
+  Actor_MoveToAndWait(12, 424, 376);
+  Camera_MoveWithinMapBounds(0x1980000, 0x100000, 0x1900000, 1);
+  Actor_SetSpeed(12, 0xcccc, 0x6666);
+  Actor_WalkToAndWait(12, 392, 360);
+  Actor_FaceDirection(12, 0x3000, 0);
+  Actor_SetSpritePriority(12, 2);
+  Actor_Stop(16);
+  Actor_Stop(gMainRoutineWork.currentOwner);
+  wait(1);
+  Actor_FaceDirection(16, 0x3000, 0);
+  Actor_ArmCallback(gMainRoutineWork.currentOwner, 0xa000, 10);
+  Actor_SetModeById(gMainRoutineWork.currentOwner, 3);
+  Motion_SetModeAndWaitAnimation(16, 3);
+  Actor_SetModeById(16, 2);
+  {
+    struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+
+    if (leader != NULL)
+      Actor_ResetAndSetPosition(16, *(s16 *)((u8 *)leader + 10),
+                                *(s16 *)((u8 *)leader + 18));
+  }
+  Actor_WaitForMoveById(16);
+  Actor_SetHorizontalPositionWithTerrain(16, 0, 0);
+  GameFlag_SetBit(0x849);
+#if TLA_PATCH_1
+  WORK->screenEffect = 0x209;
+#endif
+  Func_020051c8();
+}
+
+void Func_02004fb4(void) {
+  struct Actor **slot = &gData_020062ac;
+  /* FAKEMATCH(temporary): one local zero, kept in r7 for the three byte stores
+   * below; as plain zeros, built in r2 where they are stored, 22 of 51
+   * instructions differ in tla-en. */
+  s32 zero = 0;
+  struct Actor *object =
+      ((struct Actor *)Import_ActorCreate(0x1e9, 0x1980000, 0x280000, 0x1580000));
+
+  *slot = object;
+  if (object) {
+    struct FieldSprite *sprite = object->animation;
+    u8 *buffer;
+
+    sprite->fullColor = 0;
+    sprite->palette = 0;
+    object->motionFlags = zero;
+    object->unk5c[0] = 1;
+    sprite->nextFrame = zero;
+    sprite->unk1b[0] = zero;
+    buffer = HeapSlot_AllocFar(68, 0x608);
+    Icon_DrawItem(198);
+    VramCache_Load(sprite->vramBlock, 128, buffer + 0x400);
+    HeapSlot_Release(68);
+  }
+}
+
+void Func_02005028(void) {
+  Func_020051c0();
+  Event_ResolvePendingActions(0);
+  Event_StartScreenTransition();
+  Event_WaitTransitionFrames();
+  Event_Wait(20);
+  Sound_Play(121);
+  Map_CopyCellPictureIndicesRect(41, 0, 20, 0, 1, 1);
+  Event_Wait(10);
+  Map_CopyCellPictureIndicesRect(41, 1, 20, 1, 1, 1);
+  Event_Wait(10);
+  Map_CopyCellPictureIndicesRect(41, 2, 20, 2, 1, 1);
+  Event_Wait(10);
+  Map_CopyCellPictureIndicesRect(41, 3, 20, 3, 1, 1);
+  Event_Wait(10);
+  GameFlag_SetBit(0x92d);
   Func_020051c8();
 }

@@ -1,6 +1,10 @@
+/// @file
+/// Scene code of overlay 0x64d, in ROM order, from s0510's offset up to the next object the overlay links.
+
 #include "types.h"
 #include "ram_buffer.h"
 #include "event_inline.h"
+#include "call.h"
 
 void Func_020023a4();
 void Func_020026f4();
@@ -691,5 +695,95 @@ void Func_02000510(void) {
   FieldActor_WaitForMoveById(8);
   Actor_SetPosition(8, 0, 0);
   FieldCamera_FollowActor(5, 1);
+  Func_020028bc();
+}
+
+#define FIELD_AT(base, type, off)                                              \
+  (((struct {                                                                  \
+     u8 pad[off];                                                              \
+     type v;                                                                   \
+   } *)(base))                                                                 \
+       ->v)
+
+s32 Func_020029a4();
+void Func_020028bc(void);
+extern u8 MsgWhyDoI[];
+extern char SceneId_VenusLighthouseEntrance;
+extern u8 gMainRoutineWork[];
+
+void Func_02001a2c(void) {
+  Func_020028b4();
+  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_SetMessageId((s32)MsgWhyDoI);
+  Actor_WalkToAndWait(5, 72, 266);
+  Actor_FaceDirection(5, 0x8000, 0);
+  FieldEvent_Wait(10);
+  FieldEvent_ShowMessageThenWait(22, 0, 0xa);
+  FieldActor_SetAnimation(22, 1);
+  FieldEvent_Wait(10);
+  Actor_ShowEmote(22, 0x101, 50);
+  FieldEvent_Wait(10);
+  Actor_FaceDirection(22, 0, 0);
+  FieldEvent_Wait(20);
+  FieldActor_Jump(22, 6, 15);
+  FieldActor_Jump(22, 6, 35);
+  Actor_FaceDirection(22, 0xb000, 0);
+  FieldEvent_Wait(20);
+  Actor_SetAnimation(22, 0xc);
+  FieldEvent_ShowMessageThenWait(22, 0, 0);
+  Actor_SetAnimation(22, 1);
+  Actor_ShowEmote(22, 0x100, 50);
+  Actor_FaceDirection(22, 0, 0);
+  FieldEvent_Wait(20);
+  FieldEvent_ShowMessageThenWait(22, 0, 0xa);
+  FieldActor_SetAnimationAndWait(22, 3);
+  FieldEvent_Wait(20);
+  Actor_SetSpeed(22, 0x10000, 0x8000);
+  Actor_WalkByAndWait(22, 0x10, 0);
+  FieldEvent_Wait(10);
+  FieldEvent_ShowMessageThenWait(22, 0, 0xa);
+  Actor_SetSpeed(22, 0x20000, 0x10000);
+  FieldActor_Jump(22, 6, 15);
+  FieldActor_Jump(22, 6, 25);
+  FieldActor_Jump(22, 6, 0);
+  Actor_WalkBy(22, 0x1a, 0);
+  FieldEvent_Wait(8);
+  Actor_SetAnimation(22, 1);
+  Event_SetAfterBattleDestination((s32)&SceneId_VenusLighthouseEntrance, 0x63);
+  Event_SetDefeatDestination((s32)&SceneId_VenusLighthouseEntrance, 0x62);
+  FIELD_AT((u8 *)gMainRoutineWork, u8, 587) = 2;
+  Call2(Func_020029a4, 9, 0);
+  Func_020028bc();
+}
+
+#define FIELD_AT(base, type, off)                                              \
+  (((struct {                                                                  \
+     u8 pad[off];                                                              \
+     type v;                                                                   \
+   } *)(base))                                                                 \
+       ->v)
+
+void Func_020028b4(void);
+void Func_020028bc(void);
+extern u8 MsgNotThatWayThe[];
+
+void Func_02001bb0(void) {
+  s32 t7;
+
+  Func_020028b4();
+  FieldEvent_ResolvePendingActions(0);
+  FieldEvent_SetMessageId((s32)MsgNotThatWayThe);
+  FieldActor_LaunchFromLeader(8, 0x10, 0, 0x8000);
+  FieldActor_WaitForMoveById(8);
+  FieldEvent_ShowMessageThenWait(0x2008, 0, 0xa);
+  Actor_SetAnimation(8, 2);
+  t7 = ((s32)Actor_Get(5));
+  if (t7 != 0) {
+    Actor_SetDestination(8, FIELD_AT(t7, s16, 10), FIELD_AT(t7, s16, 18));
+  }
+  FieldActor_WaitForMoveById(8);
+  Actor_SetPosition(8, 0, 0);
+  FieldEvent_Wait(10);
+  Actor_WalkByAndWait(5, -16, 0);
   Func_020028bc();
 }

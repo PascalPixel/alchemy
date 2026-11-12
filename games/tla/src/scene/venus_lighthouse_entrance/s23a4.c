@@ -1,3 +1,6 @@
+/// @file
+/// Scene code of overlay 0x64d, in ROM order, from s23a4's offset up to the next object the overlay links.
+
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -124,4 +127,99 @@ void Func_020023a4(s32 id) {
   Func_02002874(effect);
   Resource_ResetEntry(resource);
   HeapSlot_Release(220);
+}
+
+struct Unk_0200258cState {
+  u8 unk00[24];
+  s32 frame;
+};
+
+struct Unk_0200258cSprite {
+  u8 unk00[8];
+  u16 tile : 10;
+  u16 attributes : 6;
+  u8 unk0a[30];
+};
+
+struct Unk_0200258cWork {
+  u8 unk0000[0x800];
+  struct Unk_0200258cState states[96];
+  struct Unk_0200258cSprite sprites[96];
+  u16 unk2180;
+  u16 unk2182;
+};
+
+void Func_02002a14(struct Unk_0200258cSprite *sprite, struct Unk_0200258cState *state);
+void Func_02002a1c(struct Unk_0200258cState *state, s32 a, s32 b);
+
+void Func_0200258c(void) {
+  struct Unk_0200258cWork *work = Ram_HeapSlots->menuRuntime;
+  struct Unk_0200258cState *state = work->states;
+  struct Unk_0200258cSprite *sprite = work->sprites;
+  s32 value;
+  s32 i;
+
+  for (i = 0; i < 96; i++, sprite++, state++) {
+    value = state->frame;
+    if ((u32)value < 16) {
+      sprite->tile = work->unk2182 + ((value >> 1) & 7) * 8;
+      Func_02002a14(sprite, state);
+      Func_02002a1c(state, 64, 0);
+      state->frame++;
+    }
+  }
+}
+
+struct SparkState {
+  s32 x;
+  s32 y;
+  s32 z;
+  s32 velocityX;
+  s32 velocityY;
+  s32 velocityZ;
+  s32 frame;
+};
+
+struct SparkSprite {
+  u8 unk00[8];
+  u16 tile : 10;
+  u16 priority : 2;
+  u16 palette : 4;
+  u8 unk0a[20];
+  u16 unk1e;
+  u8 unk20[8];
+};
+
+struct SparkWork {
+  u8 unk0000[0x800];
+  struct SparkState states[96];
+  struct SparkSprite sprites[96];
+  s16 next;
+  u16 tileBase;
+};
+
+u32 Random16Far(void);
+s32 Func_02002a24(struct Actor *object);
+s32 Func_02002a2c(struct Actor *object);
+
+void Func_0200260c(struct Actor *source, s32 x, s32 y, s32 z) {
+  struct SparkWork *work = Ram_HeapSlots->menuRuntime;
+  s32 angle = Random16Far();
+  s16 *next = &work->next;
+  struct SparkSprite *sprite = &work->sprites[*next];
+  struct SparkState *state = &work->states[*next];
+
+  sprite->priority = Func_02002a24(source);
+  sprite->unk1e = Func_02002a2c(source);
+  state->frame = 0;
+  state->x = x;
+  state->y = y;
+  state->z = z;
+  FieldVector_AddPolarOffset(Random16Far() * 2 + 0x20000, angle, &state->x);
+  state->velocityX = 0;
+  state->velocityY = (Random16Far() >> 1) + 0xc000;
+  state->velocityZ = 0;
+  FieldVector_AddPolarOffset(Random16Far() >> 2, angle, &state->velocityX);
+  *next = *next + 1;
+  *next = *next % 96;
 }

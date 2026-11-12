@@ -1,3 +1,6 @@
+/// @file
+/// Scene code of overlay 0x64c, in ROM order, from s1ad0's offset up to the next object the overlay links.
+
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -6,6 +9,10 @@
 #include "actor_view.h"
 #include "graphics/resource.h"
 #include "event_inline.h"
+#include "call.h"
+#include "iwram_call.h"
+#include "task.h"
+#include "resource.h"
 
 struct LinkedDetail {
   u8 unk00[22];
@@ -81,4 +88,171 @@ void Func_02001ad0(struct Actor *parent) {
     p->update = (void *)Func_02001a34;
     p->priorityFlags = 2;
   }
+}
+
+extern u32 gFrameCount;
+extern s16 gData_02003fc4;
+extern s16 gData_02003fc6;
+extern u8 gData_02003fd8[][32];
+extern u8 gData_020040d8[][32];
+
+void Func_02001be0(s32 progress) {
+  /* FAKEMATCH(wrapper): calls forwarded through inlines (call.h's Call and
+   * Value, this file's own); as direct calls, 2 of 181 instructions differ in
+   * tla-en. */
+  s32 level = ((progress * 30 + 0x8000) >> 16) + 1;
+  s32 kind = 0;
+  s32 count, base, i;
+
+  if (progress != 0)
+    kind = 100;
+  if (level <= 15 && (gFrameCount & 15) <= 1)
+    kind = 200;
+  if (level <= 7 && (gFrameCount & 7) <= 1)
+    kind = 200;
+  if (kind + level == gData_02003fc4)
+    return;
+  gData_02003fc4 = kind + level;
+  Call2((void (*)())Iwram_ClearWords, (s32)(gData_02003fd8), (s32)(0x100));
+  {
+    s32 (*copy)(void *, const void *, s32) = Iwram_CopyWords;
+
+    if (kind == 0) {
+      copy(gData_02003fd8, gData_020040d8[8], 0x80);
+      goto done;
+    }
+    if (kind == 100)
+      copy(gData_02003fd8, gData_020040d8[4], 0x80);
+    else
+      copy(gData_02003fd8, gData_020040d8[8], 0x80);
+  }
+  base = 0;
+  count = level;
+  if (count > 7) {
+    Iwram_CopyWords(gData_02003fd8, gData_020040d8, 32);
+    base = 8;
+    count -= 8;
+  }
+  if (level > 15) {
+    Iwram_CopyWords(gData_02003fd8[1], gData_020040d8[1], 32);
+    count = level;
+    base = 16;
+    count -= 16;
+  }
+  if (level > 23) {
+    Iwram_CopyWords(gData_02003fd8[2], gData_020040d8[2], 32);
+    count = level;
+    base = 24;
+    count -= 24;
+  }
+  if (level > 30) {
+    Iwram_CopyWords(gData_02003fd8[3], gData_020040d8[3], 32);
+    base = 0;
+    count = 0;
+  }
+  if (count != 0) {
+    i = 0;
+    if (i >= count)
+      goto done;
+  loop:
+    {
+      s32 j;
+      u8 *source = &gData_020040d8[base / 8][4] + i / 2;
+      u8 *dest = &gData_02003fd8[base / 8][4] + i / 2;
+      /* FAKEMATCH(barrier): the empty asm on dest changes its allocation rank;
+       * as no asm, 22 of 181 instructions differ in tla-en. */
+      asm("" : "=r"(dest) : "0"(dest));
+
+      j = 2;
+      if ((i & 1) == 0) {
+        j = 1;
+      even:
+        *dest = (*dest & 240) | (*source & 15);
+        j++;
+        source += 4;
+        dest += 4;
+        if (j > 3)
+          goto next;
+        goto even;
+      } else {
+      oddLoop:
+        *dest = (*dest & 15) | (*source & 240);
+        j--;
+        source += 4;
+        dest += 4;
+        if (j >= 0)
+          goto oddLoop;
+      }
+    }
+  next:
+    i++;
+    if (i < count)
+      goto loop;
+  }
+done:
+  Vram_Load(gData_02003fc6, 0x100, gData_02003fd8);
+}
+
+extern u32 gInput;
+extern s16 gData_02003fc6;
+extern s16 gData_02003fc8;
+extern u32 Data_02003fcc[3];
+
+void Func_0200200c(s32 value);
+s32 Func_02002014(void);
+void Func_02001be0(s32 progress);
+void Render_ProjectPoint(s32 *position, s32 *screen);
+void Func_02001f7c(u32 *oam, s32 priority);
+
+// The same cursor as the world map's, in this overlay: counts down while A or B
+// is held, redraws the gauge and queues its sprite over the leader.
+void Func_02001d90(void) {
+  u32 *oam = Data_02003fcc;
+  s32 tile = gResourceTableEntries[gData_02003fc6].offset >> 5;
+  struct Actor *leader = Actor_Get(FieldParty_GetLeaderActor());
+  s32 screen[3];
+  u32 attributes;
+
+  if ((gInput & 3) != 0 && Event_GetFlag(0x106) == 0 && leader->y > 0x40000) {
+    if (--gData_02003fc8 <= 0) {
+      Func_0200200c(1);
+      gData_02003fc8 = 10;
+    }
+  }
+  Func_02001be0(Func_02002014());
+  attributes = 0x80004000;
+  Call2((void (*)())Render_ProjectPoint, (s32)(&leader->x), (s32)(screen));
+  {
+    s32 x = screen[0] - 16;
+    s32 y = screen[1] - 32;
+
+    *oam++ = 0;
+    *oam++ = (y | (x << 16)) | attributes;
+  }
+  *oam = tile | 0x400;
+  Func_02001f7c(Data_02003fcc, 255);
+}
+
+extern const u8 gWorldMapPackedTilesC[];
+
+extern s16 gData_02003fc4;
+extern s16 gData_02003fc6;
+extern s16 gData_02003fc8;
+void Func_02001f54(const u8 *a, u8 *b);
+void Func_02001d90(void);
+
+void Func_02001e58(void) {
+  Func_02001f54(gWorldMapPackedTilesC, gData_020040d8);
+  gData_02003fc6 = Resource_FindFreeEntry();
+  Vram_Load(gData_02003fc6, 0x100, 0);
+  gData_02003fc4 = -1;
+  gData_02003fc8 = 10;
+  Task_AddFrame(Func_02001d90, TASK_PASS_VBLANK - 10);
+}
+
+void Func_02001eb8(void) {
+  Func_02001f54(gWorldMapPackedTilesC, gData_020040d8);
+  Resource_ResetEntry(gData_02003fc6);
+  gData_02003fc4 = -1;
+  FieldTask_Remove(Func_02001d90);
 }

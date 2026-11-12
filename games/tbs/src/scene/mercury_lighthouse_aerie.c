@@ -142,6 +142,15 @@ enum MercuryLighthouseAerieActorId {
   ACTOR_ALEX
 };
 
+/// Animations of the aerie's sprites beyond enum ActorAnimation, as their
+/// animation tables and frames under graphics/sprite draw them.
+enum MercuryLighthouseAerieAnimation {
+  /// Mia seen side-on, her head bowed and her hands clasped at her chest
+  /// (spr_003.png).
+  ANIM_MIA_HEAD_BOWED = 16,
+  ANIM_SATUROS_FALLEN = 9 ///< lying on the floor (spr_032.png)
+};
+
 /// Scene flags, kept while the party stays on the aerie.
 enum {
   /// The leader stands on a platform, which has dipped under the weight.
@@ -417,17 +426,17 @@ static void MercuryLighthouseAerie_JumpToPlatform(void) {
   if (FieldActor_CheckMovementCollision(actor, &position) == 0) {
     GameFlag_Clear(FLAG_ON_PLATFORM);
     MercuryLighthouseAerie_SettlePlatforms();
-    Actor_SelectAnimation(actor, 6);
+    Actor_SelectAnimation(actor, ANIM_LEADER_SPRING);
     wait(6);
     Sound_Play(SE_JUMP);
-    Actor_SelectAnimation(actor, 7);
+    Actor_SelectAnimation(actor, ANIM_LEADER_LEAP);
     actor->speedLimit = px(3);
     actor->acceleration = px(2);
     actor->velocityY = px(4);
     actor->motionFlags &= 0x7e;
     Actor_SetSpriteFlags(actor, 0);
     Actor_MoveToAndWait(ACTOR_PARTY_LEADER, position.x >> 16, position.z >> 16);
-    Actor_SelectAnimation(actor, 6);
+    Actor_SelectAnimation(actor, ANIM_LEADER_SPRING);
     Actor_SetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
     actor->motionFlags = flags;
   }
@@ -570,7 +579,7 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   Actor_FaceDirection(ACTOR_MIA, FACING_EAST, 30);
   // "Mt. Aleph... Sol Sanctum... Are you healers from Sol Sanctum?"
   Event_OpenMessage(ACTOR_MIA, 0);
-  if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     Event_Wait(20);
     Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
     Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH, 10);
@@ -619,7 +628,7 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_SHAKE_HEAD);
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_MIA, FACING_EAST, 10);
-  Actor_SetAnimation(ACTOR_MIA, 16);
+  Actor_SetAnimation(ACTOR_MIA, ANIM_MIA_HEAD_BOWED);
   // "I have failed in the one duty placed upon me... This is..."
   Event_ShowMessageThenWait(ACTOR_MIA, 0, 60);
   // Jenna calls out: "Isaac! Garet!"
@@ -665,11 +674,11 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   // "That's not all... We're after the Elemental Stars!"
   Event_ShowMessageThenWait(ACTOR_GARET, 0, 20);
   Actor_SetPosition(ACTOR_GARET, 328, 216);
-  Actor_SetAnimationAndWait(ACTOR_MENARDI, 4);
+  Actor_SetAnimationAndWait(ACTOR_MENARDI, ANIM_SHAKE_HEAD);
   Event_Wait(20);
   // "In other words, they've come to stop us."
   Event_ShowMessageThenWait(ACTOR_MENARDI, 0, 20);
-  Actor_SetAnimationAndWait(ACTOR_MENARDI, 3);
+  Actor_SetAnimationAndWait(ACTOR_MENARDI, ANIM_NOD);
   Event_Wait(20);
   // "Then we have no choice... Let's take care of them now,..."
   Event_ShowMessageThenWait(ACTOR_MENARDI, 0, 20);
@@ -681,12 +690,12 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST, 30);
   Actor_FaceDirection(ACTOR_FELIX, FACING_EAST, 30);
   Actor_RunRepeatedMotion(ACTOR_JENNA, 2);
-  Actor_SetAnimationAndWait(ACTOR_FELIX, 4);
+  Actor_SetAnimationAndWait(ACTOR_FELIX, ANIM_SHAKE_HEAD);
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTHEAST, 10);
-  Actor_SetAnimationAndWait(ACTOR_FELIX, 3);
+  Actor_SetAnimationAndWait(ACTOR_FELIX, ANIM_NOD);
   Event_Wait(20);
-  Actor_SetAnimationAndWait(ACTOR_MENARDI, 3);
+  Actor_SetAnimationAndWait(ACTOR_MENARDI, ANIM_NOD);
   Actor_SetSpeed(ACTOR_FELIX, 0.8);
   Actor_WalkToAndWait(ACTOR_FELIX, 104, 168);
   Event_Wait(20);
@@ -716,7 +725,7 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   // "Oh, Saturos... They want to..."
   Event_ShowMessage(ACTOR_MENARDI, 0);
   Event_Wait(20);
-  Actor_SetAnimationAndWait(ACTOR_SATUROS, 3);
+  Actor_SetAnimationAndWait(ACTOR_SATUROS, ANIM_NOD);
   Event_Wait(20);
   // "I heard everything."
   Event_ShowMessage(ACTOR_SATUROS, 0);
@@ -731,7 +740,7 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   Actor_RunRepeatedMotion(ACTOR_MIA, 1);
   Event_Wait(20);
   Event_Wait(20);
-  Actor_SetAnimationAndWait(ACTOR_SATUROS, 3);
+  Actor_SetAnimationAndWait(ACTOR_SATUROS, ANIM_NOD);
   Event_Wait(20);
   // "They were lucky to survive the eruption of Mt. Aleph."
   Event_ShowMessage(ACTOR_SATUROS, 0);
@@ -749,7 +758,7 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 70);
-  Actor_SetAnimationAndWait(ACTOR_SATUROS, 3);
+  Actor_SetAnimationAndWait(ACTOR_SATUROS, ANIM_NOD);
   Event_Wait(20);
   // "Fine. If that is your wish, prepare to have it granted."
   Event_ShowMessage(ACTOR_SATUROS, 0);
@@ -793,10 +802,10 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   FieldCamera_SetSpeed(3);
   FieldCamera_MoveTo(120, -24, 168, 1);
   FieldCamera_WaitForArrival();
-  Actor_SetAnimationAndWait(ACTOR_MENARDI, 3);
+  Actor_SetAnimationAndWait(ACTOR_MENARDI, ANIM_NOD);
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_MENARDI, FACING_NORTH_NORTHEAST, 20);
-  Actor_SetAnimationAndWait(ACTOR_MENARDI, 3);
+  Actor_SetAnimationAndWait(ACTOR_MENARDI, ANIM_NOD);
   Event_Wait(20);
   // "Come here, child..."
   Event_ShowMessageThenWait(ACTOR_MENARDI, 0, 20);
@@ -814,18 +823,18 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH_NORTHEAST, 20);
   Actor_RunRepeatedMotion(ACTOR_FELIX, 1);
-  Actor_SetAnimationAndWait(ACTOR_MENARDI, 3);
+  Actor_SetAnimationAndWait(ACTOR_MENARDI, ANIM_NOD);
   Event_Wait(20);
   // "I should teach you a lesson, child, but..."
   Event_ShowMessageThenWait(ACTOR_MENARDI, 0, 20);
-  Actor_SetAnimationAndWait(ACTOR_MENARDI, 4);
+  Actor_SetAnimationAndWait(ACTOR_MENARDI, ANIM_SHAKE_HEAD);
   Event_Wait(20);
   // "Felix, I'd get your sister to obey me, if you hope to keep..."
   Event_ShowMessageThenWait(ACTOR_MENARDI, 0, 20);
   Actor_SetAttachedEffect(ACTOR_FELIX,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(60);
-  Actor_SetAnimationAndWait(ACTOR_FELIX, 4);
+  Actor_SetAnimationAndWait(ACTOR_FELIX, ANIM_SHAKE_HEAD);
   Event_Wait(20);
   // "Jenna, please... Just do as she says for now."
   Event_ShowMessageThenWait(ACTOR_FELIX, 0, 20);
@@ -834,10 +843,10 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   Event_Wait(60);
   // "Felix..."
   Event_ShowMessageThenWait(ACTOR_JENNA, 0, 40);
-  Actor_SetAnimationAndWait(ACTOR_FELIX, 3);
+  Actor_SetAnimationAndWait(ACTOR_FELIX, ANIM_NOD);
   Event_Wait(60);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHWEST, 10);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   Event_Wait(20);
   // "It's all right, Jenna."
   Event_ShowMessageThenWait(ACTOR_KRADEN, 0, 30);
@@ -853,8 +862,8 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   Actor_WalkToAndWait(ACTOR_FELIX, 88, 152);
   Actor_Get(ACTOR_FELIX)->steeringFlags |= ACTOR_FACES_MOTION;
   Actor_FaceDirection(ACTOR_MENARDI, FACING_NORTH_NORTHWEST, 20);
-  Actor_SetAnimation(ACTOR_MENARDI, 3);
-  Actor_SetAnimationAndWait(ACTOR_FELIX, 3);
+  Actor_SetAnimation(ACTOR_MENARDI, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_FELIX, ANIM_NOD);
   Event_Wait(40);
   Actor_SetSpeedAndAcceleration(ACTOR_MENARDI, 3, 2);
   Actor_Get(ACTOR_MENARDI)->velocityY = px(4);
@@ -930,15 +939,15 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   Event_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
   Actor_ShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Event_OpenMessage(ACTOR_SATUROS, 0);
-  if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     Event_Wait(20);
-    Actor_SetAnimationAndWait(ACTOR_SATUROS, 4);
+    Actor_SetAnimationAndWait(ACTOR_SATUROS, ANIM_SHAKE_HEAD);
     Event_Wait(20);
     Event_ShowMessageThenWait(ACTOR_SATUROS, 0, 20);
     gFieldWork->message++;
   } else {
     Event_Wait(20);
-    Actor_SetAnimationAndWait(ACTOR_SATUROS, 4);
+    Actor_SetAnimationAndWait(ACTOR_SATUROS, ANIM_SHAKE_HEAD);
     Event_Wait(20);
     gFieldWork->message++;
     Event_ShowMessageThenWait(ACTOR_SATUROS, 0, 20);
@@ -995,7 +1004,7 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
   Actor_SetPosition(ACTOR_SATUROS, 336, 176);
-  Actor_SetAnimation(ACTOR_SATUROS, 9);
+  Actor_SetAnimation(ACTOR_SATUROS, ANIM_SATUROS_FALLEN);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_SATUROS), 0);
   FieldCamera_MoveTo(336, CAMERA_KEEP, 208, 0);
   wait(1);
@@ -1052,7 +1061,7 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   Actor_WalkToAndWait(ACTOR_ALEX, 312, 176);
   Actor_FaceDirection(ACTOR_ALEX, FACING_SOUTH_SOUTHEAST, 20);
   FieldCamera_WaitForArrival();
-  Actor_SetAnimationAndWait(ACTOR_ALEX, 3);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_NOD);
   Event_Wait(20);
   // "It's been a while, Mia."
   Event_ShowMessageThenWait(ACTOR_ALEX, 0, 20);
@@ -1063,7 +1072,7 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   Event_Wait(20);
   // "Alex, do you realize what you've done?"
   Event_ShowMessageThenWait(ACTOR_MIA, 0, 20);
-  Actor_SetAnimationAndWait(ACTOR_ALEX, 4);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_SHAKE_HEAD);
   Event_Wait(20);
   // "Ha! Of course... I have freed a great power that has long..."
   Event_ShowMessageThenWait(ACTOR_ALEX, 0, 20);
@@ -1087,7 +1096,7 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   // "No, Mia... Don't you understand?"
   Event_ShowMessageThenWait(ACTOR_ALEX, 0, 20);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-  Actor_SetAnimationAndWait(ACTOR_ALEX, 4);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_SHAKE_HEAD);
   Event_Wait(20);
   // "The lighthouse granted you great power during your battle..."
   Event_ShowMessageThenWait(ACTOR_ALEX, 0, 20);
@@ -1095,7 +1104,7 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   Event_Wait(20);
   // "It's true... I could use my power without ever depleting it."
   Event_ShowMessageThenWait(ACTOR_MIA, 0, 20);
-  Actor_SetAnimationAndWait(ACTOR_ALEX, 3);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_NOD);
   Event_Wait(20);
   // "Don't you see? The Mercury Lighthouse supplied you with..."
   Event_ShowMessageThenWait(ACTOR_ALEX, 0, 20);
@@ -1112,7 +1121,7 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   Actor_FaceDirection(ACTOR_GARET, FACING_EAST, 20);
   // "Mia is an Adept too, isn't she?"
   Event_OpenMessage(ACTOR_GARET, 0);
-  if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     Actor_RunRepeatedMotion(ACTOR_GARET, 2);
     // "Geez, Isaac, you knew all along, and you didn't tell us?"
     Event_ShowMessageThenWait(ACTOR_GARET, 0, 20);
@@ -1126,7 +1135,7 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   // "Tell me, Alex... Why wasn't Saturos able to use his full power?"
   Event_ShowMessageThenWait(ACTOR_IVAN, 0, 20);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 20);
-  Actor_SetAnimationAndWait(ACTOR_ALEX, 3);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_NOD);
   Event_Wait(20);
   // "Ah, yes... I shall explain it all."
   Event_ShowMessageThenWait(ACTOR_ALEX, 0, 20);
@@ -1134,14 +1143,14 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   // "Saturos is aligned with Mars, the clan of fire."
   Event_ShowMessageThenWait(ACTOR_ALEX, 0, 20);
   Actor_FaceDirection(ACTOR_ALEX, FACING_SOUTH_SOUTHEAST, 20);
-  Actor_SetAnimationAndWait(ACTOR_ALEX, 4);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_SHAKE_HEAD);
   Event_Wait(20);
   // "Fire and water are opposing elements... His full power was..."
   Event_ShowMessageThenWait(ACTOR_ALEX, 0, 20);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   // "Didn't Saturos know that?"
   Event_ShowMessageThenWait(ACTOR_MIA, 0, 20);
-  Actor_SetAnimationAndWait(ACTOR_ALEX, 4);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_SHAKE_HEAD);
   Event_Wait(20);
   // "Of course he knew."
   Event_ShowMessageThenWait(ACTOR_ALEX, 0, 20);
@@ -1161,7 +1170,7 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_ALEX, FACING_SOUTHEAST, 0);
   Event_Wait(30);
-  Actor_SetAnimationAndWait(ACTOR_ALEX, 4);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_SHAKE_HEAD);
   Event_Wait(20);
   // "No... There is more to it."
   Event_ShowMessage(ACTOR_ALEX, 0);
@@ -1175,7 +1184,7 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   // "You were watching us?"
   Event_ShowMessage(ACTOR_IVAN, 0);
   Event_Wait(10);
-  Actor_SetAnimationAndWait(ACTOR_ALEX, 3);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_NOD);
   Event_Wait(30);
   // "Yes. I did not help Saturos, because I was certain he would win."
   Event_ShowMessage(ACTOR_ALEX, 0);
@@ -1193,7 +1202,7 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   Event_Wait(30);
   Actor_SetAnimation(ACTOR_SATUROS, 8);
   Event_Wait(45);
-  Actor_SetAnimation(ACTOR_SATUROS, 1);
+  Actor_SetAnimation(ACTOR_SATUROS, ANIM_STAND);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_SATUROS), SPRITE_FLAG_SHADOW);
   Event_Wait(40);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
@@ -1202,7 +1211,7 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_SATUROS, FACING_SOUTHEAST, 0);
   Event_Wait(20);
-  Actor_SetAnimationAndWait(ACTOR_SATUROS, 4);
+  Actor_SetAnimationAndWait(ACTOR_SATUROS, ANIM_SHAKE_HEAD);
   Event_Wait(30);
   // "Me? Beaten? Never! I lost to this lighthouse, not to you!"
   Event_ShowMessage(ACTOR_SATUROS, 0);
@@ -1219,9 +1228,9 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   Event_Wait(10);
   Actor_TurnToFaceEachOther(ACTOR_ALEX, ACTOR_SATUROS, 0);
   Event_Wait(35);
-  Actor_SetAnimationAndWait(ACTOR_SATUROS, 3);
+  Actor_SetAnimationAndWait(ACTOR_SATUROS, ANIM_NOD);
   Event_Wait(30);
-  Actor_SetAnimationAndWait(ACTOR_ALEX, 3);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_NOD);
   Event_Wait(20);
   Actor_WalkToAndWait(ACTOR_ALEX, 328, 176);
   Actor_FaceDirection(ACTOR_ALEX, FACING_SOUTH_SOUTHEAST, 20);
@@ -1244,7 +1253,7 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTHEAST, 0);
   Event_Wait(20);
-  if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     Event_Wait(30);
     // "If that's the case, you will have to fight me, as well. I've..."
     Event_ShowMessage(ACTOR_ALEX, 0);
@@ -1257,7 +1266,7 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
     Event_ShowMessage(ACTOR_ALEX, 0);
   }
   Event_Wait(20);
-  Actor_SetAnimationAndWait(ACTOR_ALEX, 4);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_SHAKE_HEAD);
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 0);
@@ -1358,7 +1367,7 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
     Event_ShowMessageThenWait(ACTOR_GARET, 0, 20);
     Actor_ShowEmote(ACTOR_ALEX, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
     Event_OpenMessage(ACTOR_ALEX, 0);
-    if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
+    if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
       Event_Wait(20);
       Actor_RunRepeatedMotion(ACTOR_SATUROS, 2);
       Event_Wait(20);
@@ -1378,7 +1387,7 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Event_OpenMessage(ACTOR_ALEX, 0);
-  if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     Event_Wait(20);
     Actor_RunRepeatedMotion(ACTOR_ALEX, 2);
     Event_Wait(20);
@@ -1396,8 +1405,8 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   Event_Wait(20);
   FieldCamera_MoveTo(128, CAMERA_KEEP, 200, 1);
   FieldCamera_WaitForArrival();
-  Actor_SetAnimation(ACTOR_SATUROS, 1);
-  Actor_SetAnimation(ACTOR_ALEX, 1);
+  Actor_SetAnimation(ACTOR_SATUROS, ANIM_STAND);
+  Actor_SetAnimation(ACTOR_ALEX, ANIM_STAND);
   Actor_SetSpriteColorById(ACTOR_SATUROS, SPRITE_COLOR_HIDDEN);
   Actor_SetSpriteColorById(ACTOR_ALEX, SPRITE_COLOR_HIDDEN);
   Actor_SetPosition(ACTOR_SATUROS, 120, 152);
@@ -1408,14 +1417,14 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   Event_Wait(30);
   Actor_FaceDirection(ACTOR_ALEX, FACING_EAST, 20);
   Event_OpenMessage(ACTOR_ALEX, 0);
-  if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
-    Actor_SetAnimationAndWait(ACTOR_ALEX, 3);
+  if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
+    Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_NOD);
     Event_Wait(20);
     Event_ShowMessageThenWait(ACTOR_ALEX, 0, 20);
     gFieldWork->message++;
   } else {
     gFieldWork->message++;
-    Actor_SetAnimationAndWait(ACTOR_ALEX, 4);
+    Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_SHAKE_HEAD);
     Event_Wait(20);
     Event_ShowMessageThenWait(ACTOR_ALEX, 0, 20);
   }
@@ -1448,7 +1457,7 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTHWEST, 20);
   Event_ShowMessageThenWait(ACTOR_MIA, 0, 20);
   Actor_FaceDirection(ACTOR_MIA, FACING_WEST, 20);
-  Actor_SetAnimation(ACTOR_MIA, 16);
+  Actor_SetAnimation(ACTOR_MIA, ANIM_MIA_HEAD_BOWED);
   Actor_Get(ACTOR_MIA)->scaleX = -Q16_ONE;
   Event_Wait(20);
   Event_ShowMessageThenWait(ACTOR_MIA, 0, 40);
@@ -1463,7 +1472,7 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 20);
-  if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
     Event_Wait(20);
     Event_ShowMessageThenWait(ACTOR_IVAN, 0, 20);

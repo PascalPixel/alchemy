@@ -13,6 +13,10 @@
 /// Whole pixels as 16.16, for arithmetic on a stored position or speed.
 #define px(value) ((value) << 16)
 
+/// A whole or decimal constant as 16.16, folded when compiled, for the macros
+/// that take plain pixels and decimal speeds: Q16(0.8) is 52428.
+#define Q16(value) ((s32)((value) * Q16_ONE))
+
 /// A whole turn in the angles that Trig_Sin, Trig_Cos and the transform's
 /// turns take: TRIG_TURN / 4 is a quarter turn.
 #define TRIG_TURN (1 << 16)

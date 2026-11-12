@@ -48,11 +48,10 @@
 #define SC_SET(w, v) 21, (w), (v) ///< Write a work value.
 #define SC_ADD(w, v) 22, (w), (v) ///< Add to a work value.
 #define SC_CMP(w, v) 23, (w), (v) ///< Test whether work value w equals v.
-/// Set the speed limit, in pixels a frame (0.8).
-#define SC_SPEED(speed) SC_SET(SW_SPEED, (s32)((speed) * Q16_ONE))
+/// Set the speed limit, in pixels a frame: SC_SPEED(0.8).
+#define SC_SPEED(speed) SC_SET(SW_SPEED, Q16(speed))
 /// Set the acceleration, in pixels a frame per frame.
-#define SC_ACCELERATION(acceleration)                                          \
-  SC_SET(SW_ACCELERATION, (s32)((acceleration) * Q16_ONE))
+#define SC_ACCELERATION(acceleration) SC_SET(SW_ACCELERATION, Q16(acceleration))
 #define SC_PLAYER 24  ///< Player input control
 #define SC_KEYS 25    ///< Move 8 pixels at a time by the direction pad
 #define SC_WORLD 26   ///< World map control

@@ -392,8 +392,7 @@ static void MogallForest_HopActorToFixed(s32 actorId, s32 targetX, s32 targetZ,
 /// Hops an actor with a vertical speed in pixels a frame:
 /// `MogallForest_HopActorTo(ACTOR_FIRST_AREA_NORTH_APE, 88, 120, 6)`.
 #define MogallForest_HopActorTo(actorId, targetX, targetZ, verticalSpeed)      \
-  MogallForest_HopActorToFixed(actorId, targetX, targetZ,                      \
-                               EVENT_DECIMAL_FIXED(verticalSpeed))
+  MogallForest_HopActorToFixed(actorId, targetX, targetZ, Q16(verticalSpeed))
 
 /// Scatters a complete ring of rising puffs around an actor.
 static void MogallForest_SpawnPuffRing(s32 id) {

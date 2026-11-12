@@ -18,9 +18,10 @@
 /// FLAG_VAULT_WARNED_OF_ESCAPED_THIEVES, as the mayor's welcome indoors does.
 ///
 /// Searching the bell rings it. A ring while FLAG_VAULT_SAP_CALLED_BY_BELL is
-/// clear calls Sap, a Venus Djinni, out to stand by the bell. Spoken to, Sap
-/// joins the party. Coming in by a gate clears the call, so Sap hides again
-/// until it has joined.
+/// clear calls Sap, a Venus Djinni, out of the tree east of the bell tower
+/// onto the cliff top above the cave mouth. Spoken to, Sap joins the party.
+/// Coming in by a gate clears the call, so Sap hides again until it has
+/// joined.
 ///
 /// The dog, given a Bone, runs to a spot and jumps there three times
 /// (FLAG_VAULT_DOG_SHOWN_PASSAGE, shared with vault.c). Reveal then shows the
@@ -434,8 +435,9 @@ static void VaultRevisit_JumpActorToAndWait(int actorId, int x, int z,
 }
 
 /// Searching the bell rings it (SE_BELL). The first ring since the party came
-/// in from the World Map makes Sap jump out of hiding and walk to the bell, at
-/// (408, 120). It also sets FLAG_VAULT_SAP_CALLED_BY_BELL.
+/// in from the World Map makes Sap jump out of the tree east of the bell tower
+/// onto the cliff top above the cave mouth. It also sets
+/// FLAG_VAULT_SAP_CALLED_BY_BELL.
 static void VaultRevisit_RingBell(void) {
   Event_Start();
   Sound_Play(SE_BELL);
@@ -447,7 +449,6 @@ static void VaultRevisit_RingBell(void) {
     Event_Wait(12);
     Actor_Jump(ACTOR_SAP, 4, 0);
     Event_Wait(20);
-    // Let the Djinni leap from hiding before it walks to the bell.
     VaultRevisit_JumpActorToAndWait(ACTOR_SAP, 392, 104, px(7));
     Event_Wait(20);
     Actor_WalkToAndWait(ACTOR_SAP, 408, 104);
@@ -639,8 +640,8 @@ static void VaultRevisit_PeerIntoWell(void) {
 /// Returns the town's talk, bg, Psynergy, and doorway events.
 const struct Trigger *Scene_GetTriggers(void) { return gVaultRevisit_Triggers; }
 
-/// Patched editions keep Sap by the bell when the party keeps its position,
-/// as on a return from battle.
+/// Patched editions keep Sap on the cliff top when the party keeps its
+/// position, as on a return from battle.
 static inline s32 VaultRevisit_ShouldKeepBellDjinniPosition(void) {
 #if TBS_PATCH_1
   return GameFlag_Get(FLAG_KEEP_PARTY_POSITION);
@@ -665,7 +666,7 @@ static inline s32 VaultRevisit_ShouldKeepBellDjinniPosition(void) {
 /// Coming in by a gate (ENTRANCE_DEFAULT to VAULT_REVISIT_NORTH_UNUSED,
 /// forwarded from vault.c) before Sap has joined clears
 /// FLAG_VAULT_SAP_CALLED_BY_BELL, so Sap is hidden again. While it is called
-/// and has not joined, it stands by the bell.
+/// and has not joined, it stands on the cliff top.
 ///
 /// Coming out of Vault Sanctum (VAULT_REVISIT_FROM_SANCTUM) clears
 /// FLAG_SHOW_AREA_NAME. Coming up from Vault Cave
@@ -705,7 +706,7 @@ s32 Scene_Initialize(void) {
   actor->update = (void (*)(struct Actor *))Vault_UpdateWalkingVillager;
 #endif
   Actor_Get(ACTOR_GIRL_ROUND_THE_WELL)->timer = mode;
-  // Restore the dog's clue position and the bell's current Djinni position.
+  // Restore the dog's clue position and Sap's on the cliff top.
   if (GameFlag_Get(FLAG_VAULT_DOG_SHOWN_PASSAGE))
     Actor_SetPosition(ACTOR_VAULT_DOG, 216, 392);
   if (gMainRoutineWork.entrance <= VAULT_REVISIT_NORTH_UNUSED &&

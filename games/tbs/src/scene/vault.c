@@ -29,9 +29,10 @@
 ///   to a spot and jumps there three times. The passage it shows opens only
 ///   in the later scene.
 ///
-/// Sap, a Venus Djinni, hides near the bell. The first ring since the party
-/// came in by a gate (FLAG_VAULT_SAP_CALLED_BY_BELL) calls it out to stand
-/// beside the bell. It joins only in the later scene.
+/// Sap, a Venus Djinni, hides in the tree east of the bell tower. The first
+/// ring since the party came in by a gate (FLAG_VAULT_SAP_CALLED_BY_BELL) calls
+/// it out: it leaps onto the cliff top above the cave mouth beyond the tree.
+/// It joins only in the later scene.
 ///
 /// The well rumbles with water and a wooden box holds a Nut.
 ///
@@ -815,8 +816,9 @@ static void Vault_JumpActorToAndWait(s32 actorId, s32 x, s32 z,
 }
 
 /// In Vault, Isaac rings the bell. The first time since the party came in by
-/// a gate, Sap, the Venus Djinni hiding nearby, jumps out and comes to the
-/// bell (FLAG_VAULT_SAP_CALLED_BY_BELL).
+/// a gate, Sap, the Venus Djinni hiding in the tree east of the bell tower,
+/// jumps out onto the cliff top above the cave mouth
+/// (FLAG_VAULT_SAP_CALLED_BY_BELL).
 ///
 /// No event here lets the party talk to it. It joins in the town's later
 /// scene (vault_revisit.c).

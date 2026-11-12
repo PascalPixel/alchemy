@@ -207,9 +207,6 @@ enum ActorId {
   ACTOR_LAST_ID = ACTOR_ID_COUNT - 1
 };
 
-/// Whole pixels as 16.16 fixed point.
-#define PIXELS(value) ((value) << 16)
-
 /// A trigger: its kind and detail, the subject it answers, its condition
 /// and its value (a message or an event).
 struct Trigger {

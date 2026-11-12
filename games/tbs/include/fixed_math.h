@@ -2,12 +2,16 @@
 #define ALCHEMY_FIXED_MATH_H
 
 /// @file
-/// 16.16 fixed-point constants, sine and cosine, and the library division.
+/// 16.16 fixed-point constants and pixels, sine and cosine, and the library
+/// division.
 
 #include "types.h"
 
 /// One in the game's signed 16.16 fixed-point format.
 #define Q16_ONE (1 << 16)
+
+/// Whole pixels as 16.16 fixed point.
+#define PIXELS(value) ((value) << 16)
 
 /// A whole turn in the angles that Trig_Sin, Trig_Cos and the transform's
 /// turns take: TRIG_TURN / 4 is a quarter turn.

@@ -262,11 +262,13 @@ void LuckyDice_Run(void) {
   s32 numbers[DICE_RESULT_COUNT];
   s32 groundPoint[3];
   s32 screen[3];
-  // Unused: gives the stack frame its 32 bytes at sp+168 to sp+200.
+  /* FAKEMATCH(dead): an unused local that gives the stack frame its 32 bytes
+   * at sp+168 to sp+200; without it, 42 of 2046 instructions differ in
+   * tbs-en. */
   UNUSED s32 unused[8];
-  // volatile: four halfwords stored to sp+166..160 and each reloaded with ldrh,
-  // the form the bytes prove; as plain u16 locals, 463 of 2046 instructions
-  // differ in tbs-en.
+  /* FAKEMATCH(volatile): four halfwords stored to sp+166..160 and each
+   * reloaded with ldrh; as plain u16 locals, 902 of 2046 instructions differ
+   * in tbs-en. */
   volatile u16 affineA;
   volatile u16 affineB;
   volatile u16 affineC;

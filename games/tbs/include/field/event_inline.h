@@ -84,11 +84,12 @@ static inline s32 Task_AddOrUpdateFrame(TaskFunc func, s32 priority) {
   return Task_AddFrame(func, priority);
 }
 
-/// Changes the cell behavior of the cell at (x, y), in 16.16 pixels,
-/// opening or closing the way (MapGrid_SetCellBehaviorAt).
+/// Changes the cell behavior of the cell at (x, y), in whole pixels, opening
+/// or closing the way (MapGrid_SetCellBehaviorAt):
+/// `Field_SetCellBehaviorAt(0, 544, 288, CELL_BEHAVIOR_CLIMB)`.
 static inline void Field_SetCellBehaviorAt(s32 layer, s32 x, s32 y,
                                            s32 behavior) {
-  MapGrid_SetCellBehaviorAt(layer, x, y, behavior);
+  MapGrid_SetCellBehaviorAt(layer, px(x), px(y), behavior);
 }
 
 /// Changes one 512-pixel tile of the World Map, drawn at once when it's next to

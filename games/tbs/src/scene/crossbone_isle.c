@@ -432,7 +432,7 @@ s32 Scene_Initialize(void) {
         Actor_SelectAnimation(actor, 4);
         Actor_SetSpriteFlags(actor, 0);
       }
-      Field_SetCellBehaviorAt(0, PIXELS(304), PIXELS(368), CELL_BEHAVIOR_CLIMB);
+      Field_SetCellBehaviorAt(0, 304, 368, CELL_BEHAVIOR_CLIMB);
     }
     if (GameFlag_Get(FLAG_CROSSBONE_ISLE_FIRST_PLANT_GROWN + 1) != 0) {
       actor = Actor_Get(ACTOR_FIRST_PLANT + 1);
@@ -441,7 +441,7 @@ s32 Scene_Initialize(void) {
         Actor_SelectAnimation(actor, 4);
         Actor_SetSpriteFlags(actor, 0);
       }
-      Field_SetCellBehaviorAt(0, PIXELS(80), PIXELS(368), CELL_BEHAVIOR_CLIMB);
+      Field_SetCellBehaviorAt(0, 80, 368, CELL_BEHAVIOR_CLIMB);
     }
     if (GameFlag_Get(FLAG_CROSSBONE_ISLE_FIRST_PLANT_GROWN + 2) != 0) {
       actor = Actor_Get(ACTOR_FIRST_PLANT + 2);
@@ -450,7 +450,7 @@ s32 Scene_Initialize(void) {
         Actor_SelectAnimation(actor, 4);
         Actor_SetSpriteFlags(actor, 0);
       }
-      Field_SetCellBehaviorAt(0, PIXELS(96), PIXELS(336), CELL_BEHAVIOR_CLIMB);
+      Field_SetCellBehaviorAt(0, 96, 336, CELL_BEHAVIOR_CLIMB);
     }
     if (GameFlag_Get(FLAG_CROSSBONE_ISLE_FIRST_PLANT_GROWN + 3) != 0) {
       actor = Actor_Get(ACTOR_FIRST_PLANT + 3);
@@ -459,8 +459,8 @@ s32 Scene_Initialize(void) {
         Actor_SelectAnimation(actor, 4);
         Actor_SetSpriteFlags(actor, 0);
       }
-      Field_SetCellBehaviorAt(0, PIXELS(144), PIXELS(320), CELL_BEHAVIOR_CLIMB);
-      Field_SetCellBehaviorAt(0, PIXELS(752), PIXELS(320), CELL_BEHAVIOR_CLIMB);
+      Field_SetCellBehaviorAt(0, 144, 320, CELL_BEHAVIOR_CLIMB);
+      Field_SetCellBehaviorAt(0, 752, 320, CELL_BEHAVIOR_CLIMB);
     }
     if (GameFlag_Get(FLAG_CROSSBONE_ISLE_NUT_CAUGHT) != 0) {
       return 0;

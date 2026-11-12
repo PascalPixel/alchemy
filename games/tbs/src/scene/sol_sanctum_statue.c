@@ -1113,7 +1113,7 @@ static void SolSanctumStatue_SoutheastStatueMoved(void) {
 /// Reached by Move on ACTOR_LEFT_BEAM_STATUE until
 /// FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING is set.
 static void SolSanctumStatue_LeftBeamStatueMoved(void) {
-  Field_SetCellBehaviorAt(2, PIXELS(208), PIXELS(112), 0);
+  Field_SetCellBehaviorAt(2, 208, 112, 0);
   if (SolSanctumStatue_IsActorAtCell(ACTOR_LEFT_BEAM_STATUE, 14, 7) != 0) {
     SolSanctumStatue_ShineLeftBeam();
   }
@@ -1124,7 +1124,7 @@ static void SolSanctumStatue_LeftBeamStatueMoved(void) {
 /// Reached by Move on ACTOR_RIGHT_BEAM_STATUE until
 /// FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING is set.
 static void SolSanctumStatue_RightBeamStatueMoved(void) {
-  Field_SetCellBehaviorAt(2, PIXELS(352), PIXELS(112), 0);
+  Field_SetCellBehaviorAt(2, 352, 112, 0);
   if (SolSanctumStatue_IsActorAtCell(ACTOR_RIGHT_BEAM_STATUE, 21, 7) != 0) {
     SolSanctumStatue_ShineRightBeam();
   }
@@ -1145,8 +1145,8 @@ static void SolSanctumStatue_PrepareMoveOnCenterStatue(void) {
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if ((leader->z.fixed >> 20) == 8) {
     if ((u32)(column - 17) <= 1) {
-      Field_SetCellBehaviorAt(2, PIXELS(272), PIXELS(128), CELL_BEHAVIOR_WALL);
-      Field_SetCellBehaviorAt(2, PIXELS(288), PIXELS(128), CELL_BEHAVIOR_WALL);
+      Field_SetCellBehaviorAt(2, 272, 128, CELL_BEHAVIOR_WALL);
+      Field_SetCellBehaviorAt(2, 288, 128, CELL_BEHAVIOR_WALL);
     }
   }
 }
@@ -1161,7 +1161,7 @@ static void SolSanctumStatue_PrepareMoveOnLeftBeamStatue(void) {
   s32 row = Actor_Get(ACTOR_PARTY_LEADER)->z.fixed >> 20;
 
   if (row == 7 && (u32)(column - 13) <= 1) {
-    Field_SetCellBehaviorAt(2, PIXELS(208), PIXELS(112), CELL_BEHAVIOR_WALL);
+    Field_SetCellBehaviorAt(2, 208, 112, CELL_BEHAVIOR_WALL);
   }
 }
 
@@ -1172,7 +1172,7 @@ static void SolSanctumStatue_PrepareMoveOnRightBeamStatue(void) {
   s32 row = Actor_Get(ACTOR_PARTY_LEADER)->z.fixed >> 20;
 
   if (row == 7 && (u32)(column - 21) <= 1) {
-    Field_SetCellBehaviorAt(2, PIXELS(352), PIXELS(112), CELL_BEHAVIOR_WALL);
+    Field_SetCellBehaviorAt(2, 352, 112, CELL_BEHAVIOR_WALL);
   }
 }
 
@@ -1195,8 +1195,8 @@ static void SolSanctumStatue_CenterStatueMoved(void) {
   s32 statueZ;
 
   statue = Actor_Get(ACTOR_CENTER_STATUE);
-  Field_SetCellBehaviorAt(2, PIXELS(272), PIXELS(128), 0);
-  Field_SetCellBehaviorAt(2, PIXELS(288), PIXELS(128), 0);
+  Field_SetCellBehaviorAt(2, 272, 128, 0);
+  Field_SetCellBehaviorAt(2, 288, 128, 0);
   if (statue != NULL) {
     statueZ = statue->z.fixed;
     Event_Start();

@@ -219,7 +219,7 @@ static void Tolbi_GrowSprout(void) {
   }
   sprout = Actor_Get(ACTOR_TOLBI_SPROUT);
   Actor_SetSpriteFlags(sprout, 0);
-  Field_SetCellBehaviorAt(0, PIXELS(544), PIXELS(288), CELL_BEHAVIOR_CLIMB);
+  Field_SetCellBehaviorAt(0, 544, 288, CELL_BEHAVIOR_CLIMB);
   GameFlag_Set(FLAG_TOLBI_SPROUT_GROWN);
 }
 

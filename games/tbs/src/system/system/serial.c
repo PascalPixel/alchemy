@@ -34,9 +34,8 @@ void Serial_Initialize(void) {
   s32 index;
   struct SerialWork *state;
 
-  // IRQ_LOCK written out, with the IME address set inside the save, which
-  // reads IME before the stack frame is made (as IRQ_LOCK, 2 of 123
-  // instructions differ).
+  /* FAKEMATCH(temporary): ime holds &REG_IME, set inside the save; as
+   * IRQ_LOCK(interruptEnable), 2 of 123 instructions differ in tbs-en. */
   IME_SAVE((ime = &REG_IME), interruptEnable);
   IME_DISABLE(ime);
   // Replace both interrupt handlers before configuring multiplayer transfers.

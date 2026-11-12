@@ -121,8 +121,8 @@ u32 gGomaCavePondExits[] = {
 
 // clang-format off
 struct ActorPlacement gGomaCavePondActorPlacements[] = {
-    { SPRITE_STUMP, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(8), 0, PIXELS(8), FACING_SOUTH, TALK_FACING_KEEP, 0 },
+    ACTOR_PLACEMENT(SPRITE_STUMP, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+        8, 0, 8, FACING_SOUTH, TALK_FACING_KEEP, 0),
     { SCENE_TABLE_END },
 };
 // clang-format on

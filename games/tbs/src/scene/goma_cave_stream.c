@@ -292,8 +292,8 @@ u32 gGomaCaveStreamAndBridgeExits[] = {
 
 // clang-format off
 struct ActorPlacement gGomaCaveStreamActorPlacements[] = {
-    { SPRITE_STUMP, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        PIXELS(400), 0, PIXELS(288), FACING_SOUTH, TALK_FACING_KEEP, 0 },
+    ACTOR_PLACEMENT(SPRITE_STUMP, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+        400, 0, 288, FACING_SOUTH, TALK_FACING_KEEP, 0),
     { SCENE_TABLE_END },
 };
 // clang-format on

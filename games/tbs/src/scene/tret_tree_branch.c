@@ -346,8 +346,8 @@ u32 gTretTreeBranch_Exits[] = {
 
 // clang-format off
 struct ActorPlacement gTretTreeBranch_ActorPlacements[] = {
-    { SPRITE_JUPITER_DJINNI, FLAG_DJINNI(DJINNI_BREEZE), MOVEMENT_TYPE_STAND,
-        PIXELS(648), 0, PIXELS(88), FACING_WEST, TALK_FACING_PARTY, 0 },
+    ACTOR_PLACEMENT(SPRITE_JUPITER_DJINNI, FLAG_DJINNI(DJINNI_BREEZE), MOVEMENT_TYPE_STAND,
+        648, 0, 88, FACING_WEST, TALK_FACING_PARTY, 0),
     { SCENE_TABLE_END },
 };
 // clang-format on

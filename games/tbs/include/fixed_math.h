@@ -13,6 +13,11 @@
 /// Whole pixels as 16.16 fixed point.
 #define PIXELS(value) ((value) << 16)
 
+/// Whole pixels as 16.16 fixed point, where code works on a stored position or
+/// speed (`actor->x + px(8)`); the calls and tables that place things take
+/// plain pixels and convert inside.
+#define px(value) ((value) << 16)
+
 /// A whole turn in the angles that Trig_Sin, Trig_Cos and the transform's
 /// turns take: TRIG_TURN / 4 is a quarter turn.
 #define TRIG_TURN (1 << 16)

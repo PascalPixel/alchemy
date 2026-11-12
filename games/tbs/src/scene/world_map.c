@@ -443,9 +443,7 @@ enum WorldMapEndingActorId {
 /// each sprite's animation table (graphics/sprite/spr_<number>.tsv).
 enum {
   ANIM_JENNA_LIE = 19, ///< lying on her back (spr_005.tsv's animation list)
-  ANIM_KRADEN_LIE = 5, ///< lying on his back (spr_030.tsv)
-  ANIM_FELIX_LIE = 6,  ///< lying face down, one arm out (spr_035.tsv)
-  ANIM_SHEBA_LIE = 8   ///< lying on her back (spr_006.tsv)
+  ANIM_KRADEN_LIE = 5  ///< lying on his back (spr_030.tsv)
 };
 
 // The World Map's scene flags: FLAG_WORLD_MAP_FALLING_ROCK_LANDED: the falling
@@ -2433,8 +2431,8 @@ static void WorldMap_ShowEndingEvent(void) {
   FieldCamera_MoveTo(7736, CAMERA_KEEP, 3528, 1);
   Actor_SetScript(ACTOR_JENNA, gEndingJennaWalk);
   do {
-    Actor_SetAnimation(ACTOR_FELIX, ANIM_FELIX_LIE);
-    Actor_SetAnimation(ACTOR_SHEBA, ANIM_SHEBA_LIE);
+    Actor_SetAnimation(ACTOR_FELIX, FELIX_ANIMATION_LIE);
+    Actor_SetAnimation(ACTOR_SHEBA, SHEBA_ANIMATION_LIE);
     wait(1);
   } while (Actor_Get(ACTOR_JENNA)->timer == 0);
   Event_Wait(20);

@@ -448,10 +448,9 @@ enum ShipRoomsAnimation {
   /// Pulling an oar from a seat, as the oarsmen's sheet (spr_144.png) and most
   /// passengers' sheets draw it.
   ANIM_ROW = 5,
-  /// The tour guide's sheet rowing again, its oar drawn pink (spr_171.png).
+  /// The tour guide's sheet rowing with a pink oar in place of ANIM_ROW's
+  /// brown one (spr_171.png).
   ANIM_SECOND_GUIDE_ROW = 6,
-  ANIM_OLD_MAN_ROW = 9,          ///< the old man's rowing (spr_103.png)
-  ANIM_TICKET_GRUMBLER_ROW = 10, ///< the young man's rowing (spr_108.png)
   /// An oarsman lying on his back, arms flung out (spr_144.png): "An oarsman
   /// was injured by a sea monster?"
   ANIM_OARSMAN_INJURED = 6,
@@ -3296,7 +3295,7 @@ static void ShipRooms_PoseActor(s32 id) {
     Actor_SetAnimationSpeedById(id, 20);
     break;
   case ACTOR_ROWING_TICKET_GRUMBLER:
-    Actor_SetAnimation(id, ANIM_TICKET_GRUMBLER_ROW);
+    Actor_SetAnimation(id, YOUNG_MAN_WITH_BROWN_HAIR_ANIMATION_ROW);
     Actor_SetAnimationSpeedById(id, 8);
     break;
   case ACTOR_ROWING_LADY:
@@ -3305,7 +3304,7 @@ static void ShipRooms_PoseActor(s32 id) {
     Actor_SetAnimationSpeedById(id, 4);
     break;
   case ACTOR_ROWING_OLD_MAN:
-    Actor_SetAnimation(id, ANIM_OLD_MAN_ROW);
+    Actor_SetAnimation(id, OLD_MAN_WITH_CANE_ANIMATION_ROW);
     Actor_SetAnimationSpeedById(id, 4);
     break;
   }

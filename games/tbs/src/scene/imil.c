@@ -264,18 +264,9 @@ enum IceRoomsCellBehavior {
   ((u16)((facing) - (FACING_NORTHWEST + 1)) <=                                 \
    FACING_NORTHEAST - FACING_NORTHWEST - 2)
 
-/// The townsfolk's own animations the events play, as their sheets draw them.
-enum ImilAnimation {
-  /// Lying in bed, only the head above the covers: the old man
-  /// (SPRITE_OLD_MAN_WITH_CANE, spr_103.png) and the sick sellers.
-  IMIL_ANIMATION_LIE_IN_BED = 5,
-  IMIL_ANIMATION_SIT_UP = 7, ///< the old man sits up in bed
-  /// The old man lies back down, then IMIL_ANIMATION_LIE_IN_BED.
-  IMIL_ANIMATION_LIE_BACK = 8,
-  /// The strongman's knee bends, over and over (SPRITE_STRONGMAN,
-  /// spr_116.png).
-  IMIL_ANIMATION_SQUATS = 9
-};
+/// The item merchant lying in bed, only her head above the covers
+/// (SPRITE_WOMAN_IN_GREEN_DRESS, spr_115.png).
+enum { IMIL_ANIMATION_LIE_IN_BED = 5 };
 
 static void Imil_MeetMiaAtOldCouplesHouse(void);
 static void Imil_MiaCastsPlyOnOldMan(void);
@@ -444,7 +435,8 @@ static void Imil_TalkToStrongmanKeepingInShape(void) {
     Event_AskYesNo(ACTOR_STRONGMAN_KEEPING_IN_SHAPE, 0);
     Actor_FaceDirection(ACTOR_STRONGMAN_KEEPING_IN_SHAPE,
                         FACING_SOUTH_SOUTHEAST, 10);
-    Actor_SetAnimation(ACTOR_STRONGMAN_KEEPING_IN_SHAPE, IMIL_ANIMATION_SQUATS);
+    Actor_SetAnimation(ACTOR_STRONGMAN_KEEPING_IN_SHAPE,
+                       STRONGMAN_ANIMATION_SQUATS);
   } else {
     Event_SetMessageId(MSGNO(MsgImilOneTwoThreeFour));
     Event_ShowMessage(ACTOR_STRONGMAN_KEEPING_IN_SHAPE, 0);
@@ -457,7 +449,8 @@ static void Imil_TalkToStrongmanKeepingInShape(void) {
     Event_ShowMessage(ACTOR_STRONGMAN_KEEPING_IN_SHAPE, 0);
     Actor_FaceDirection(ACTOR_STRONGMAN_KEEPING_IN_SHAPE,
                         FACING_SOUTH_SOUTHEAST, 10);
-    Actor_SetAnimation(ACTOR_STRONGMAN_KEEPING_IN_SHAPE, IMIL_ANIMATION_SQUATS);
+    Actor_SetAnimation(ACTOR_STRONGMAN_KEEPING_IN_SHAPE,
+                       STRONGMAN_ANIMATION_SQUATS);
   }
 
   Event_End();
@@ -486,12 +479,12 @@ static void Imil_TalkToOldMan(void) {
   } else {
     if (GameFlag_Get(FLAG_IMIL_MET_MIA) != 0) {
       Event_Start();
-      Actor_SetAnimation(ACTOR_OLD_MAN, IMIL_ANIMATION_SIT_UP);
+      Actor_SetAnimation(ACTOR_OLD_MAN, OLD_MAN_WITH_CANE_ANIMATION_SIT_UP);
       MapGrid_PlayMapEdit(gImil_CellStepsA, 10, 69);
       Event_SetMessageId(MsgMercuryFeelMuchBetter);
       // "I feel much better, thanks to Mia. I should be fine now."
       Event_ShowMessage(ACTOR_OLD_MAN, 0);
-      Actor_SetAnimation(ACTOR_OLD_MAN, IMIL_ANIMATION_LIE_BACK);
+      Actor_SetAnimation(ACTOR_OLD_MAN, OLD_MAN_WITH_CANE_ANIMATION_LIE_BACK);
       MapGrid_AnimateCells(gImil_CellStepsB, 10, 69);
       Event_End();
     } else {
@@ -891,7 +884,8 @@ s32 Imil_Initialize(void) {
   if (gMainRoutineWork.next == (s32)&SceneId_Imil) {
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-    Actor_SetAnimation(ACTOR_STRONGMAN_KEEPING_IN_SHAPE, IMIL_ANIMATION_SQUATS);
+    Actor_SetAnimation(ACTOR_STRONGMAN_KEEPING_IN_SHAPE,
+                       STRONGMAN_ANIMATION_SQUATS);
     if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
       GameFlag_Clear(FLAG_IMIL_NO_FOOTPRINTS);
       GameFlag_Clear(FLAG_IMIL_FOOTPRINTS);
@@ -929,7 +923,8 @@ s32 Imil_Initialize(void) {
         Actor_SetSpriteFlags(Actor_Get(ACTOR_OLD_MANS_BED), 0);
         Actor_SetPosition(ACTOR_OLD_MAN, 174, 164);
         Actor_SetSpriteFlags(Actor_Get(ACTOR_OLD_MAN), 0);
-        Actor_SetAnimation(ACTOR_OLD_MAN, IMIL_ANIMATION_LIE_IN_BED);
+        Actor_SetAnimation(ACTOR_OLD_MAN,
+                           OLD_MAN_WITH_CANE_ANIMATION_LIE_IN_BED);
         Actor_SetPosition(ACTOR_OLD_WOMAN, 168, 152);
         Actor_Get(ACTOR_OLD_WOMAN)->facing = FACING_SOUTH_SOUTHEAST;
         if (!GameFlag_Get(FLAG_IMIL_MET_MIA)) {
@@ -967,9 +962,11 @@ s32 Imil_Initialize(void) {
       } else {
         Actor_Get(ACTOR_WEAPON_MERCHANT)->scaleX = -Q16_ONE;
         Actor_SetSpriteFlags(Actor_Get(ACTOR_WEAPON_MERCHANT), 0);
-        Actor_SetAnimation(ACTOR_WEAPON_MERCHANT, IMIL_ANIMATION_LIE_IN_BED);
+        Actor_SetAnimation(ACTOR_WEAPON_MERCHANT,
+                           OLD_MAN_WITH_CANE_ANIMATION_LIE_IN_BED);
         Actor_SetSpriteFlags(Actor_Get(ACTOR_ARMOR_MERCHANT), 0);
-        Actor_SetAnimation(ACTOR_ARMOR_MERCHANT, IMIL_ANIMATION_LIE_IN_BED);
+        Actor_SetAnimation(ACTOR_ARMOR_MERCHANT,
+                           OLD_MAN_WITH_CANE_ANIMATION_LIE_IN_BED);
       }
     } else if (entrance == ICE_ROOMS_HOUSE_WEST) {
       if (GameFlag_Get(FLAG_SATUROS_BEATEN_AT_MERCURY)) {
@@ -1076,7 +1073,7 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   Event_ShowMessageThenWait(ACTOR_MIA, 0, 40);
   Event_ShowMessageThenWait(ACTOR_OLD_MAN, 0, 20);
   Actor_ShowEmote(ACTOR_OLD_WOMAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
-  Actor_SetAnimation(ACTOR_OLD_MAN, IMIL_ANIMATION_SIT_UP);
+  Actor_SetAnimation(ACTOR_OLD_MAN, OLD_MAN_WITH_CANE_ANIMATION_SIT_UP);
   MapGrid_AnimateCells(gImil_CellStepsA, 10, 69);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_MIA, 2);
@@ -1084,7 +1081,7 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   Event_ShowMessageThenWait(ACTOR_MIA, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_OLD_MAN, 1);
   Event_Wait(40);
-  Actor_SetAnimation(ACTOR_OLD_MAN, IMIL_ANIMATION_LIE_BACK);
+  Actor_SetAnimation(ACTOR_OLD_MAN, OLD_MAN_WITH_CANE_ANIMATION_LIE_BACK);
   MapGrid_AnimateCells(gImil_CellStepsB, 10, 69);
   Event_Wait(40);
   Actor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);

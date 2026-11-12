@@ -186,15 +186,6 @@ enum { CHILD_VALUE_BLINK = 0x100 };
 /// (graphics/sprite/spr_<number>.tsv). The party's are reached through their
 /// animation lists.
 enum {
-  /// Saturos standing, two pictures alternating at long intervals
-  /// (spr_032.tsv).
-  SATUROS_ANIMATION_BREATHE = 8,
-  SATUROS_ANIMATION_LIE = 9, ///< lying on his side
-  /// Saturos falling into the lighthouse: upright, then half his height, then
-  /// only his top above the floor.
-  SATUROS_ANIMATION_TIP = 10,
-  SATUROS_ANIMATION_SLUMP = 11,
-  SATUROS_ANIMATION_SINK = 12,
   /// Menardi standing, her hair blown back (spr_033.tsv).
   MENARDI_ANIMATION_STAND_WINDSWEPT = 5,
   MENARDI_ANIMATION_LIE = 7, ///< lying on her side
@@ -205,14 +196,7 @@ enum {
   /// Garet on his knees, Ivan and Mia lying down, as the party lies on the
   /// broken aerie (spr_001.tsv to spr_003.tsv).
   ANIM_PARTY_KNOCKED_DOWN = 18,
-  ANIM_LEADER_KNOCKED_DOWN = 19, ///< Isaac lying on his back (spr_000.tsv)
-  FELIX_ANIMATION_KNEEL = 5,     ///< Felix crouched on one knee (spr_035.tsv)
-  /// Sheba hanging from the broken aerie by one hand, seen from the side
-  /// (spr_006.tsv).
-  SHEBA_ANIMATION_HANG_ONE_HAND = 5,
-  SHEBA_ANIMATION_HANG = 6, ///< hanging by both hands, seen from behind
-  /// Her grip slipping for a moment, then SHEBA_ANIMATION_HANG again.
-  SHEBA_ANIMATION_SLIP = 7
+  ANIM_LEADER_KNOCKED_DOWN = 19 ///< Isaac lying on his back (spr_000.tsv)
 };
 
 // The aerie's scene flags: FLAG_VENUS_AERIE_FUSION_SLIDING: Saturos and Menardi

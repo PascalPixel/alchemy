@@ -291,23 +291,6 @@ enum CottageRoomsBAreaFlag {
   FLAG_VALE_MAN_SAW_ISAAC_GROWN = FLAG_AREA_TEMP_01
 };
 
-/// Animations of Dora's and young Isaac's sprites beyond enum
-/// ActorAnimation, as their animation tables and frames under
-/// graphics/sprite draw them.
-enum CottageRoomsBAnimation {
-  ANIM_DORA_IN_BED = 10, ///< lying down, ill (spr_031.png)
-  /// Dora seen from behind, her head bowed and turned aside (spr_031.png).
-  ANIM_DORA_HEAD_TURNED = 11,
-  ANIM_DORA_HEAD_BOWED = 12, ///< seen from behind, her head bowed low
-  /// ANIM_DORA_HEAD_TURNED and ANIM_DORA_HEAD_BOWED in turn, twice.
-  ANIM_DORA_HEAD_SWAYING = 13,
-  /// Dora straightening, still seen from behind (spr_031.png).
-  ANIM_DORA_STRAIGHTEN = 14,
-  /// Young Isaac asleep, only his head on the pillow (spr_018.png).
-  ANIM_ISAAC_ASLEEP = 18,
-  ANIM_ISAAC_GET_UP = 19 ///< sitting up, then jumping out of bed
-};
-
 // FLAG_VALE_DORA_OUT_OF_BED: Dora got out of her sickbed on this visit.
 
 /// Returns the entrances, among them the events played on arrival.
@@ -608,7 +591,7 @@ s32 CottageRoomsB_Initialize(void) {
           TilesetAnim_Resume(11);
           actor = Actor_Get(ACTOR_DORA);
           Actor_SetSpriteFlags(actor, 0);
-          Actor_SetAnimation(ACTOR_DORA, ANIM_DORA_IN_BED);
+          Actor_SetAnimation(ACTOR_DORA, DORA_ANIMATION_IN_BED);
         }
       }
     } else {
@@ -684,7 +667,7 @@ static void CottageRoomsB_DoraWakesIsaac(void) {
   Actor_SetPosition(ACTOR_MASKED_MAN, 0, 0);
   // Isaac lies asleep in bed; his tunic is set beside him.
   Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
-  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_ISAAC_ASLEEP);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ISAAC_CHILD_ANIMATION_ASLEEP);
   sprite->rotation = 1365;
   Actor_Get(ACTOR_TUNIC)->motionFlags = 0;
   Actor_SetSpriteFlags(Actor_Get(ACTOR_TUNIC), 0);
@@ -743,7 +726,7 @@ static void CottageRoomsB_DoraWakesIsaac(void) {
   Event_Wait(20);
   TilesetAnim_Resume(8);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 1);
-  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_ISAAC_GET_UP);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ISAAC_CHILD_ANIMATION_GET_UP);
   Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 557, 679);
   TilesetAnim_Pause(8);
   TilesetAnim_Resume(9);
@@ -1090,7 +1073,7 @@ static void CottageRoomsB_VisitSickDora(void) {
   Actor_SetDestination(ACTOR_DORA, 584, 406);
   TilesetAnim_Pause(11);
   TilesetAnim_Resume(12);
-  Actor_SetAnimation(ACTOR_DORA, ANIM_DORA_HEAD_BOWED);
+  Actor_SetAnimation(ACTOR_DORA, DORA_ANIMATION_HEAD_BOWED);
   Event_Wait(80);
   Actor_RunRepeatedMotion(ACTOR_DORA, 2);
   Event_Wait(40);
@@ -1100,9 +1083,9 @@ static void CottageRoomsB_VisitSickDora(void) {
   // "Are you finally home? Have you completed your mission!?"
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 40);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
-  Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_DORA_HEAD_SWAYING);
+  Actor_SetAnimationAndWait(ACTOR_DORA, DORA_ANIMATION_HEAD_SWAYING);
   Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
-  Actor_SetAnimation(ACTOR_DORA, ANIM_DORA_HEAD_TURNED);
+  Actor_SetAnimation(ACTOR_DORA, DORA_ANIMATION_HEAD_TURNED);
   Event_Wait(40);
   // "You haven't, have you?" "Have you forgotten your promise, Isaac?"
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 40);
@@ -1110,10 +1093,10 @@ static void CottageRoomsB_VisitSickDora(void) {
   Event_Wait(20);
   // "Have you forgotten your promise, Isaac?"
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 20);
-  Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_DORA_HEAD_BOWED);
+  Actor_SetAnimationAndWait(ACTOR_DORA, DORA_ANIMATION_HEAD_BOWED);
   Event_Wait(20);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
-  Actor_SetAnimation(ACTOR_DORA, ANIM_DORA_HEAD_SWAYING);
+  Actor_SetAnimation(ACTOR_DORA, DORA_ANIMATION_HEAD_SWAYING);
   // "You promised you wouldn't come back until your quest was complete,
   // right?" Either reply has its own answer; she is less surprised when Mind
   // Read has told Isaac of her illness.
@@ -1149,7 +1132,7 @@ static void CottageRoomsB_VisitSickDora(void) {
   Event_ShowMessage(ACTOR_DORA, 0);
   Actor_RunRepeatedMotion(ACTOR_DORA, 1);
   Event_Wait(20);
-  Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_DORA_HEAD_SWAYING);
+  Actor_SetAnimationAndWait(ACTOR_DORA, DORA_ANIMATION_HEAD_SWAYING);
   Actor_StartRepeatedMotion(ACTOR_DORA, 2);
   // "I... Cough... I just caught a cold. That's all."
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 40);
@@ -1167,7 +1150,7 @@ static void CottageRoomsB_VisitSickDora(void) {
   Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_SetDestination(ACTOR_PARTY_LEADER, 558, 388);
   Actor_SetSpeed(ACTOR_DORA, 1.2);
-  Actor_SetAnimation(ACTOR_DORA, ANIM_DORA_STRAIGHTEN);
+  Actor_SetAnimation(ACTOR_DORA, DORA_ANIMATION_STRAIGHTEN);
   Actor_MoveToAndWait(ACTOR_DORA, 586, 400);
   Event_Wait(40);
   Actor_WalkToAndWait(ACTOR_DORA, 580, 382);

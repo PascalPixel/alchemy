@@ -214,8 +214,6 @@ enum StormNightAnimation {
   /// Jenna's father and mother crouched at the bank, reaching out
   /// (spr_059.png, spr_060.png).
   ANIM_PARENT_REACH_OUT = 6,
-  /// The strongman fallen back on the ground (spr_116.png).
-  ANIM_STRONGMAN_SPRAWLED = 6,
   /// Only Felix's hands above the water as he goes under (spr_036.png).
   ANIM_FELIX_UNDER_WATER = 6,
   /// Felix clinging on in the river, one arm reaching out (spr_036.png).
@@ -223,22 +221,9 @@ enum StormNightAnimation {
   /// A bearded elder seen from behind, both arms raised against the Boulder
   /// (spr_122.png).
   ANIM_BEARDED_ELDER_HOLD_BACK = 5,
-  /// The young man seen from behind, both arms raised against the Boulder
-  /// (spr_108.png).
-  ANIM_YOUNG_ELDER_HOLD_BACK = 8,
-  /// The young man facing the player, his hands raised to his mouth to call
-  /// out (spr_108.png).
-  ANIM_YOUNG_ELDER_CALL_OUT = 9,
-  /// The strongman propped up on one hand, the two facing opposite ways. The
-  /// leader's heading picks one (spr_116.png).
-  ANIM_STRONGMAN_PROPPED_UP = 7,
-  ANIM_STRONGMAN_PROPPED_UP_OTHER_WAY = 8,
   // The poses frozen in the lightning as the Boulder comes down the river
   // (ValePrologue_ShowBoulderSweepingDownriver).
-  ANIM_STRONGMAN_RUN = 5,    ///< in mid-stride (spr_116.png)
-  ANIM_DORA_RUN = 9,         ///< in mid-stride (spr_031.png)
   ANIM_JENNA_RUN = 5,        ///< in mid-stride (spr_048.png)
-  ANIM_ISAAC_RECOIL = 17,    ///< arms flung out (spr_018.png)
   ANIM_PARENT_RECOIL = 5,    ///< seen from behind, arms flung out
   ANIM_FELIX_CLING_STILL = 8 ///< ANIM_FELIX_CLING's first frame held
 };
@@ -652,7 +637,7 @@ s32 ValePrologue_Initialize(void) {
       actor->userValue = 4;
       Actor_SetScript(ACTOR_EXHAUSTED_STRONGMAN, table);
     }
-    Actor_SetAnimation(ACTOR_EXHAUSTED_STRONGMAN, ANIM_STRONGMAN_SPRAWLED);
+    Actor_SetAnimation(ACTOR_EXHAUSTED_STRONGMAN, STRONGMAN_ANIMATION_SPRAWLED);
     Actor_Get(ACTOR_GARET_CHILD)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
     Actor_Get(ACTOR_EXHAUSTED_STRONGMAN)->priorityFlags &=
         ~ACTOR_PRIORITY_AUTOMATIC;
@@ -1566,8 +1551,10 @@ static void ValePrologue_WatchBoulderFall(void) {
     // Show the four elders holding back the Boulder.
     Actor_SetAnimation(ACTOR_ELDER_EAST, ANIM_BEARDED_ELDER_HOLD_BACK);
     Actor_SetAnimation(ACTOR_ELDER_WEST, ANIM_BEARDED_ELDER_HOLD_BACK);
-    Actor_SetAnimation(ACTOR_ELDER_FAR_EAST, ANIM_YOUNG_ELDER_HOLD_BACK);
-    Actor_SetAnimation(ACTOR_ELDER_FAR_WEST, ANIM_YOUNG_ELDER_HOLD_BACK);
+    Actor_SetAnimation(ACTOR_ELDER_FAR_EAST,
+                       YOUNG_MAN_WITH_BROWN_HAIR_ANIMATION_HOLD_BACK);
+    Actor_SetAnimation(ACTOR_ELDER_FAR_WEST,
+                       YOUNG_MAN_WITH_BROWN_HAIR_ANIMATION_HOLD_BACK);
     Actor_Get(ACTOR_ELDER_FAR_EAST)->scaleX = -Q16_ONE;
     Actor_SetSpritePriority(ACTOR_ELDER_EAST, 2);
     Actor_SetSpritePriority(ACTOR_ELDER_WEST, 2);
@@ -1662,7 +1649,8 @@ static void ValePrologue_WatchBoulderFall(void) {
                     0);
     Actor_RunRepeatedMotion(ACTOR_ELDER_FAR_WEST, 2);
     Actor_Jump(ACTOR_ELDER_FAR_WEST, 4, 40);
-    Actor_SetAnimation(ACTOR_ELDER_FAR_WEST, ANIM_YOUNG_ELDER_CALL_OUT);
+    Actor_SetAnimation(ACTOR_ELDER_FAR_WEST,
+                       YOUNG_MAN_WITH_BROWN_HAIR_ANIMATION_CALL_OUT);
     Event_Wait(10);
     Event_ShowMessageThenWait(ACTOR_ELDER_FAR_WEST, 0, 20);
     Sound_Play(SOUND_FADE_OUT_ACTION_SE);
@@ -2550,16 +2538,16 @@ static void ValePrologue_ShowBoulderSweepingDownriver(void) {
   Actor_SetAnimation(ACTOR_FELIX_CHILD, ANIM_FELIX_CLING_STILL);
   Actor_SetPosition(ACTOR_DORA, 169, 1264);
   Actor_FaceDirection(ACTOR_DORA, FACING_NORTH, 0);
-  Actor_SetAnimation(ACTOR_DORA, ANIM_DORA_RUN);
+  Actor_SetAnimation(ACTOR_DORA, DORA_ANIMATION_RUN);
   Actor_SetPosition(ACTOR_JENNA_CHILD, 151, 1292);
   Actor_FaceDirection(ACTOR_JENNA_CHILD, FACING_WEST, 0);
   Actor_SetAnimation(ACTOR_JENNA_CHILD, ANIM_JENNA_RUN);
   Actor_SetPosition(ACTOR_EXHAUSTED_STRONGMAN, 170, 1313);
   Actor_FaceDirection(ACTOR_EXHAUSTED_STRONGMAN, FACING_SOUTHWEST, 0);
-  Actor_SetAnimation(ACTOR_EXHAUSTED_STRONGMAN, ANIM_STRONGMAN_RUN);
+  Actor_SetAnimation(ACTOR_EXHAUSTED_STRONGMAN, STRONGMAN_ANIMATION_RUN);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 185, 1333);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 0);
-  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_ISAAC_RECOIL);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ISAAC_CHILD_ANIMATION_RECOIL);
   Actor_SetPosition(ACTOR_GARET_CHILD, 169, 1384);
   Actor_FaceDirection(ACTOR_GARET_CHILD, FACING_SOUTH, 0);
   Actor_SetAnimation(ACTOR_GARET_CHILD, ANIM_STILL);
@@ -2676,7 +2664,7 @@ static void ValePrologue_ShowBoulderSweepingDownriver(void) {
   actor->timer = Math_RemainderUnsigned(random, 90) + 60;
   actor->userValue = 4;
   Actor_SetScript(ACTOR_EXHAUSTED_STRONGMAN, departureActions);
-  Actor_SetAnimation(ACTOR_EXHAUSTED_STRONGMAN, ANIM_STRONGMAN_SPRAWLED);
+  Actor_SetAnimation(ACTOR_EXHAUSTED_STRONGMAN, STRONGMAN_ANIMATION_SPRAWLED);
   Actor_Get(ACTOR_GARET_CHILD)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   Actor_Get(ACTOR_EXHAUSTED_STRONGMAN)->priorityFlags &=
       ~ACTOR_PRIORITY_AUTOMATIC;
@@ -2829,10 +2817,11 @@ static void ValePrologue_StrongmanTriesToGoForHelp(void) {
     Actor_RunRepeatedMotion(ACTOR_EXHAUSTED_STRONGMAN, 2);
     Event_Wait(40);
     if ((s16)leader->facing >= 0) {
-      Actor_SetAnimation(ACTOR_EXHAUSTED_STRONGMAN, ANIM_STRONGMAN_PROPPED_UP);
+      Actor_SetAnimation(ACTOR_EXHAUSTED_STRONGMAN,
+                         STRONGMAN_ANIMATION_PROPPED_UP);
     } else {
       Actor_SetAnimation(ACTOR_EXHAUSTED_STRONGMAN,
-                         ANIM_STRONGMAN_PROPPED_UP_OTHER_WAY);
+                         STRONGMAN_ANIMATION_PROPPED_UP_OTHER_WAY);
     }
     Actor_RunRepeatedMotion(ACTOR_EXHAUSTED_STRONGMAN, 2);
     Event_Wait(20);
@@ -2841,17 +2830,18 @@ static void ValePrologue_StrongmanTriesToGoForHelp(void) {
     Event_ShowMessage(ACTOR_EXHAUSTED_STRONGMAN, 0);
     Actor_SetScript(ACTOR_EXHAUSTED_STRONGMAN,
                     gValePrologue_SquashAndStretchScript);
-    Actor_SetAnimation(ACTOR_EXHAUSTED_STRONGMAN, ANIM_STRONGMAN_SPRAWLED);
+    Actor_SetAnimation(ACTOR_EXHAUSTED_STRONGMAN, STRONGMAN_ANIMATION_SPRAWLED);
   } else {
     Actor_Stop(ACTOR_EXHAUSTED_STRONGMAN);
     villager->scaleX = Q16_ONE;
     villager->scaleY = Q16_ONE;
     Actor_FaceDirection(ACTOR_EXHAUSTED_STRONGMAN, FACING_EAST_SOUTHEAST, 0);
     if ((s16)leader->facing >= 0) {
-      Actor_SetAnimation(ACTOR_EXHAUSTED_STRONGMAN, ANIM_STRONGMAN_PROPPED_UP);
+      Actor_SetAnimation(ACTOR_EXHAUSTED_STRONGMAN,
+                         STRONGMAN_ANIMATION_PROPPED_UP);
     } else {
       Actor_SetAnimation(ACTOR_EXHAUSTED_STRONGMAN,
-                         ANIM_STRONGMAN_PROPPED_UP_OTHER_WAY);
+                         STRONGMAN_ANIMATION_PROPPED_UP_OTHER_WAY);
     }
     Event_Wait(20);
     Event_SetMessageId(MsgValeIllGo);
@@ -2863,10 +2853,11 @@ static void ValePrologue_StrongmanTriesToGoForHelp(void) {
     Actor_RunRepeatedMotion(ACTOR_EXHAUSTED_STRONGMAN, 2);
     Event_Wait(40);
     if ((s16)leader->facing >= 0) {
-      Actor_SetAnimation(ACTOR_EXHAUSTED_STRONGMAN, ANIM_STRONGMAN_PROPPED_UP);
+      Actor_SetAnimation(ACTOR_EXHAUSTED_STRONGMAN,
+                         STRONGMAN_ANIMATION_PROPPED_UP);
     } else {
       Actor_SetAnimation(ACTOR_EXHAUSTED_STRONGMAN,
-                         ANIM_STRONGMAN_PROPPED_UP_OTHER_WAY);
+                         STRONGMAN_ANIMATION_PROPPED_UP_OTHER_WAY);
     }
     Event_Wait(2);
     Actor_Jump(ACTOR_EXHAUSTED_STRONGMAN, 2, 0);
@@ -2877,7 +2868,7 @@ static void ValePrologue_StrongmanTriesToGoForHelp(void) {
     Event_ShowMessage(ACTOR_EXHAUSTED_STRONGMAN, 0);
     Actor_SetScript(ACTOR_EXHAUSTED_STRONGMAN,
                     gValePrologue_SquashAndStretchScript);
-    Actor_SetAnimation(ACTOR_EXHAUSTED_STRONGMAN, ANIM_STRONGMAN_SPRAWLED);
+    Actor_SetAnimation(ACTOR_EXHAUSTED_STRONGMAN, STRONGMAN_ANIMATION_SPRAWLED);
     GameFlag_Set(FLAG_VALE_STORM_STRONGMAN_TRIED_TO_GO);
   }
   Event_End();

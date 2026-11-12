@@ -313,11 +313,11 @@ enum {
   FLAG_ARENA_REACHED = FLAG_SCENE_TEMP_11
 };
 
-/// SPRITE_FALLING_LOG's animations (spr_259.png).
-enum ColosseumSatrageMatchAnimation {
-  ANIM_FALLING_LOG_STANDING = 3, ///< standing on end
+/// SPRITE_FALLING_LOG's animations (spr_259.tsv).
+enum FallingLogAnimation {
+  FALLING_LOG_ANIMATION_STANDING = 3, ///< standing on end
   /// Lying across the water, bobbing.
-  ANIM_FALLING_LOG_FALLEN = 4
+  FALLING_LOG_ANIMATION_FALLEN = 4
 };
 
 /// Sets the party leader's walking speed and acceleration.
@@ -459,7 +459,7 @@ static void ColosseumSatrageMatch_KnockDownObstacle(void) {
 
     sprite->rotation = rotation;
   }
-  Actor_SetAnimation(ACTOR_FALLING_LOG, ANIM_FALLING_LOG_FALLEN);
+  Actor_SetAnimation(ACTOR_FALLING_LOG, FALLING_LOG_ANIMATION_FALLEN);
   obstacle->x.fixed = px(336);
   obstacle->y.fixed = -px(8);
   obstacle->z.fixed = px(264);
@@ -1024,7 +1024,7 @@ s32 ColosseumSatrageMatch_Initialize(void) {
     MapGrid_CopyCellAttributes(20, 80, 1, 1, 21, 80);
   } else {
     actor = Actor_Get(ACTOR_FALLING_LOG);
-    Actor_SelectAnimation(actor, ANIM_FALLING_LOG_STANDING);
+    Actor_SelectAnimation(actor, FALLING_LOG_ANIMATION_STANDING);
     actor->y.fixed = px(16);
   }
   Actor_Get(ACTOR_WALL_PILLAR)->priorityFlags = 2;

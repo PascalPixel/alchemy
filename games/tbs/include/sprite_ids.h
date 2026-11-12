@@ -1422,6 +1422,92 @@ enum ChestAnimation {
   CHEST_ANIMATION_PEEK_AND_SHUT = 5
 };
 
+/// SPRITE_SHEBA's animations beyond enum ActorAnimation (spr_006.tsv).
+enum ShebaAnimation {
+  /// Hanging from a ledge by one hand, seen from the side.
+  SHEBA_ANIMATION_HANG_ONE_HAND = 5,
+  SHEBA_ANIMATION_HANG = 6, ///< hanging by both hands, seen from behind
+  /// Her grip slipping for a moment, then SHEBA_ANIMATION_HANG again.
+  SHEBA_ANIMATION_SLIP = 7,
+  SHEBA_ANIMATION_LIE = 8 ///< lying on her back
+};
+
+/// SPRITE_ISAAC_CHILD's animations beyond enum ActorAnimation (spr_018.tsv).
+enum IsaacChildAnimation {
+  ISAAC_CHILD_ANIMATION_RECOIL = 17, ///< arms flung out
+  /// Asleep, only his head on the pillow.
+  ISAAC_CHILD_ANIMATION_ASLEEP = 18,
+  ISAAC_CHILD_ANIMATION_GET_UP = 19 ///< sitting up, then jumping out of bed
+};
+
+/// SPRITE_DORA's animations beyond enum ActorAnimation (spr_031.tsv).
+enum DoraAnimation {
+  DORA_ANIMATION_CLIMB = 5,          ///< climbing a ladder, seen from behind
+  DORA_ANIMATION_CLIMB_OVER_TOP = 6, ///< stepping over the top of it
+  DORA_ANIMATION_HANDS_UP = 7,       ///< both hands raised
+  /// Only her head and hands showing, as she peeks back out.
+  DORA_ANIMATION_PEEK = 8,
+  DORA_ANIMATION_RUN = 9,     ///< in mid-stride
+  DORA_ANIMATION_IN_BED = 10, ///< lying down, ill
+  /// Seen from behind, her head bowed and turned aside.
+  DORA_ANIMATION_HEAD_TURNED = 11,
+  DORA_ANIMATION_HEAD_BOWED = 12, ///< seen from behind, her head bowed low
+  /// DORA_ANIMATION_HEAD_TURNED and DORA_ANIMATION_HEAD_BOWED in turn, twice.
+  DORA_ANIMATION_HEAD_SWAYING = 13,
+  DORA_ANIMATION_STRAIGHTEN = 14 ///< straightening, still seen from behind
+};
+
+/// SPRITE_SATUROS's animations beyond enum ActorAnimation (spr_032.tsv).
+enum SaturosAnimation {
+  /// Standing, two pictures alternating at long intervals.
+  SATUROS_ANIMATION_BREATHE = 8,
+  SATUROS_ANIMATION_LIE = 9, ///< lying on his side
+  /// Falling into the lighthouse: upright, then half his height, then only
+  /// his top above the floor.
+  SATUROS_ANIMATION_TIP = 10,
+  SATUROS_ANIMATION_SLUMP = 11,
+  SATUROS_ANIMATION_SINK = 12
+};
+
+/// SPRITE_FELIX's animations beyond enum ActorAnimation (spr_035.tsv).
+enum FelixAnimation {
+  FELIX_ANIMATION_KNEEL = 5, ///< crouched on one knee
+  FELIX_ANIMATION_LIE = 6    ///< lying face down, one arm out
+};
+
+/// SPRITE_OLD_MAN_WITH_CANE's animations beyond enum ActorAnimation
+/// (spr_103.tsv).
+enum OldManWithCaneAnimation {
+  /// Lying in bed, only his head above the covers.
+  OLD_MAN_WITH_CANE_ANIMATION_LIE_IN_BED = 5,
+  OLD_MAN_WITH_CANE_ANIMATION_SIT_UP = 7, ///< sitting up in bed
+  /// Lying back down, then OLD_MAN_WITH_CANE_ANIMATION_LIE_IN_BED.
+  OLD_MAN_WITH_CANE_ANIMATION_LIE_BACK = 8,
+  OLD_MAN_WITH_CANE_ANIMATION_ROW = 9 ///< pulling an oar from a seat
+};
+
+/// SPRITE_YOUNG_MAN_WITH_BROWN_HAIR's animations beyond enum ActorAnimation
+/// (spr_108.tsv).
+enum YoungManWithBrownHairAnimation {
+  /// Sitting bound, squirming.
+  YOUNG_MAN_WITH_BROWN_HAIR_ANIMATION_TIED_UP = 7,
+  /// Seen from behind, both arms raised against something before him.
+  YOUNG_MAN_WITH_BROWN_HAIR_ANIMATION_HOLD_BACK = 8,
+  /// Facing the player, his hands raised to his mouth to call out.
+  YOUNG_MAN_WITH_BROWN_HAIR_ANIMATION_CALL_OUT = 9,
+  YOUNG_MAN_WITH_BROWN_HAIR_ANIMATION_ROW = 10 ///< pulling an oar from a seat
+};
+
+/// SPRITE_STRONGMAN's animations beyond enum ActorAnimation (spr_116.tsv).
+enum StrongmanAnimation {
+  STRONGMAN_ANIMATION_RUN = 5,      ///< in mid-stride
+  STRONGMAN_ANIMATION_SPRAWLED = 6, ///< fallen back on the ground
+  /// Propped up on one hand, the two facing opposite ways.
+  STRONGMAN_ANIMATION_PROPPED_UP = 7,
+  STRONGMAN_ANIMATION_PROPPED_UP_OTHER_WAY = 8,
+  STRONGMAN_ANIMATION_SQUATS = 9 ///< his knees bending, over and over
+};
+
 /// SPRITE_TORCH's animations (spr_246.tsv).
 enum TorchAnimation {
   TORCH_ANIMATION_UNLIT = 1, ///< a cold torch, its bowl grey with ash

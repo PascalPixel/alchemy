@@ -281,8 +281,6 @@ enum {
 enum LogRoomsAAnimation {
   /// Garet seen from behind, his arms spread wide (spr_001.png).
   ANIM_GARET_ARMS_SPREAD = 12,
-  /// The villager sitting bound, squirming (spr_108.png).
-  ANIM_VILLAGER_TIED_UP = 7,
   /// A thief standing bound, a rope wound round his arms (spr_063.png,
   /// spr_064.png).
   ANIM_THIEF_TIED_UP = 5,
@@ -2276,7 +2274,8 @@ s32 Scene_Initialize(void) {
       Event_End();
       break;
     }
-    Actor_SetAnimation(ACTOR_TIED_UP_VILLAGER, ANIM_VILLAGER_TIED_UP);
+    Actor_SetAnimation(ACTOR_TIED_UP_VILLAGER,
+                       YOUNG_MAN_WITH_BROWN_HAIR_ANIMATION_TIED_UP);
     LogRoomsA_OpenWindowTransition();
     Sound_Play(SOUND_FADE_OUT_BGM);
     Event_SetMessageId(MsgVaultUhnnUhnn);

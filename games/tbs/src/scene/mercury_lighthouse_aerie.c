@@ -147,8 +147,7 @@ enum MercuryLighthouseAerieActorId {
 enum MercuryLighthouseAerieAnimation {
   /// Mia seen side-on, her head bowed and her hands clasped at her chest
   /// (spr_003.png).
-  ANIM_MIA_HEAD_BOWED = 16,
-  ANIM_SATUROS_FALLEN = 9 ///< lying on the floor (spr_032.png)
+  ANIM_MIA_HEAD_BOWED = 16
 };
 
 /// Scene flags, kept while the party stays on the aerie.
@@ -1004,7 +1003,7 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
   Actor_SetPosition(ACTOR_SATUROS, 336, 176);
-  Actor_SetAnimation(ACTOR_SATUROS, ANIM_SATUROS_FALLEN);
+  Actor_SetAnimation(ACTOR_SATUROS, SATUROS_ANIMATION_LIE);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_SATUROS), 0);
   FieldCamera_MoveTo(336, CAMERA_KEEP, 208, 0);
   wait(1);

@@ -371,14 +371,9 @@ enum ValeOpeningActorId {
 /// ActorAnimation's.
 enum { ANIM_HAMMER = 11 };
 
-/// Animations of Dora's and Garet's sprites beyond enum ActorAnimation,
-/// as their animation tables and frames under graphics/sprite draw them.
+/// Animations of Garet's sprite beyond enum ActorAnimation, as its animation
+/// table and frames under graphics/sprite draw them.
 enum ValeAnimation {
-  ANIM_DORA_CLIMB = 5, ///< climbing a ladder, seen from behind (spr_031.png)
-  ANIM_DORA_CLIMB_OVER_TOP = 6, ///< stepping over the top of it (spr_031.png)
-  ANIM_DORA_HANDS_UP = 7,       ///< both hands raised (spr_031.png)
-  /// Only her head and hands showing, as she peeks back out (spr_031.png).
-  ANIM_DORA_PEEK = 8,
   /// Garet throwing up his arms, then crouching, as he jumps in fright
   /// (spr_001.png).
   ANIM_GARET_STARTLED = 13
@@ -1186,8 +1181,8 @@ UNUSED static void Vale_UnusedRoofMended(void) {
   // "Good job, Isaac."
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_STEP, 20);
-  Vale_ClimbUpRoofLadder(ACTOR_DORA, ANIM_DORA_CLIMB, ANIM_DORA_CLIMB_OVER_TOP,
-                         0);
+  Vale_ClimbUpRoofLadder(ACTOR_DORA, DORA_ANIMATION_CLIMB,
+                         DORA_ANIMATION_CLIMB_OVER_TOP, 0);
   Actor_SetSpeed(ACTOR_DORA, 0.3);
   Actor_WalkToAndWait(ACTOR_DORA, 397, 832);
   Event_Wait(20);
@@ -1400,7 +1395,7 @@ UNUSED static void Vale_UnusedRoofMended(void) {
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 20);
   Actor_Jump(ACTOR_DORA, 4, 0);
   Actor_RunRepeatedMotion(ACTOR_DORA, 3);
-  Actor_SetAnimation(ACTOR_DORA, ANIM_DORA_HANDS_UP);
+  Actor_SetAnimation(ACTOR_DORA, DORA_ANIMATION_HANDS_UP);
   Event_Wait(5);
   // "Ahhh!"
   // "Be careful, ma'am!"
@@ -1436,7 +1431,7 @@ UNUSED static void Vale_UnusedRoofMended(void) {
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   MapGrid_WaitForShakeToSettle();
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
-  Actor_SetAnimation(ACTOR_DORA, ANIM_DORA_PEEK);
+  Actor_SetAnimation(ACTOR_DORA, DORA_ANIMATION_PEEK);
   actor->scaleY = Q16_ONE / 2;
   Actor_SetPosition(ACTOR_DORA, 364, 811);
   for (i = 0; i != 5; i++) {
@@ -1600,8 +1595,8 @@ UNUSED static void Vale_UnusedRoofMended(void) {
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 376, 912);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_Get(ACTOR_DORA)->steeringFlags |= ACTOR_FACES_MOTION;
-  Vale_ClimbDownRoofLadder(ACTOR_DORA, ANIM_DORA_CLIMB_OVER_TOP,
-                           ANIM_DORA_CLIMB, 0);
+  Vale_ClimbDownRoofLadder(ACTOR_DORA, DORA_ANIMATION_CLIMB_OVER_TOP,
+                           DORA_ANIMATION_CLIMB, 0);
   Actor_WalkToAndWait(ACTOR_DORA, 373, 887);
   Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 40);
@@ -2638,8 +2633,8 @@ static void Vale_RoofMended(void) {
   // "Good job, Isaac."
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST_SOUTHEAST, 10);
-  Vale_ClimbUpRoofLadder(ACTOR_DORA, ANIM_DORA_CLIMB, ANIM_DORA_CLIMB_OVER_TOP,
-                         0);
+  Vale_ClimbUpRoofLadder(ACTOR_DORA, DORA_ANIMATION_CLIMB,
+                         DORA_ANIMATION_CLIMB_OVER_TOP, 0);
   Actor_SetSpeed(ACTOR_DORA, 0.3);
   Actor_WalkToAndWait(ACTOR_DORA, 397, 832);
   Event_Wait(20);
@@ -2837,7 +2832,7 @@ static void Vale_RoofMended(void) {
   Event_ShowMessageThenWait(ACTOR_DORA, 0, 10);
   Actor_Jump(ACTOR_DORA, 4, 0);
   Actor_RunRepeatedMotion(ACTOR_DORA, 3);
-  Actor_SetAnimation(ACTOR_DORA, ANIM_DORA_HANDS_UP);
+  Actor_SetAnimation(ACTOR_DORA, DORA_ANIMATION_HANDS_UP);
   Event_Wait(5);
   // "Ahhh!"
   // "Be careful, ma'am!"
@@ -2878,7 +2873,7 @@ static void Vale_RoofMended(void) {
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   MapGrid_WaitForShakeToSettle();
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
-  Actor_SetAnimation(ACTOR_DORA, ANIM_DORA_PEEK);
+  Actor_SetAnimation(ACTOR_DORA, DORA_ANIMATION_PEEK);
   actor->scaleY = Q16_ONE / 2;
   Actor_SetPosition(ACTOR_DORA, 364, 811);
   for (i = 0; i != 5; i++) {
@@ -3044,8 +3039,8 @@ static void Vale_RoofMended(void) {
 
     record->steeringFlags = flag | record->steeringFlags;
   }
-  Vale_ClimbDownRoofLadder(ACTOR_DORA, ANIM_DORA_CLIMB_OVER_TOP,
-                           ANIM_DORA_CLIMB, 0);
+  Vale_ClimbDownRoofLadder(ACTOR_DORA, DORA_ANIMATION_CLIMB_OVER_TOP,
+                           DORA_ANIMATION_CLIMB, 0);
   Actor_WalkToAndWait(ACTOR_DORA, 373, 887);
   Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 40);

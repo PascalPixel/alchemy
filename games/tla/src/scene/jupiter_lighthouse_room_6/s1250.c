@@ -16,11 +16,13 @@ struct CellTargetEntry {
   s16 unk06;
 };
 
+/// The cells Func_020018bc watches, and the cell it copies over the one the
+/// leader steps on.
 struct CellTarget {
   s16 firstFlag;
   s16 flagByte;
   s16 kind;
-  s16 x;
+  s16 x; ///< column of the copied cell, whose row is z + 1
   s16 z;
   s16 count;
   s16 current;
@@ -184,10 +186,6 @@ void Func_02001494(void) {
   FieldEvent_Wait(4);
   FieldCamera_GetActor()->y -= 0x80000;
 }
-
-/// Map_CopyCellsRect through this overlay's import.
-
-struct CellTargetEntry;
 
 /// Centers the leader on its cell, plays sound 161 and copies the cell below
 /// the table's source cell over the leader's, keeping the source column's and

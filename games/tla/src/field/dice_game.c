@@ -134,6 +134,9 @@ void Func_081b810c(u16 *source, u16 *destination, u32 count, s32 angle) {
   }
 }
 
+/// A sprite's attribute words. They are volatile, as The Broken Seal's
+/// LuckyWheels_Update keeps its OAM shadow; as plain words, the two offset
+/// counters, the multiply on each pass and the stack slots all differ.
 struct ReelSprite {
   volatile u32 attr01;
   volatile u32 attr2;
@@ -173,8 +176,6 @@ s32 Func_081b8180(s32 sprite, s32 x, s32 y, s32 value, s32 palette,
   }
   return sprite;
 }
-
-// A number drawn as large digit sprites.
 
 /// Draws value as digits large digit sprites from x, 22 pixels apart, leading
 /// zeros skipped, tiles 640 + 16 * digit in palette, as Func_081b8180 does.

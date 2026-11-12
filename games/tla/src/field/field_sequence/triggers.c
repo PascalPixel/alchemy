@@ -688,6 +688,11 @@ s32 Func_080cd680(s32 keys) {
 
 extern const u8 Data_080eff22[];
 
+/// The search command. Collision codes 242 to 247 show their pair of messages
+/// from Data_080eff22; otherwise the search event (kind 3) of the cell runs:
+/// its "checked the ..." message, then its message or callback, or the matching
+/// "found nothing" message. MsgKey0dc4 is the base of the "X checked the Y..."
+/// lines, MsgKey0def the base of the "found nothing" lines.
 s32 Func_080cd808(s32 id) {
   struct Trigger *event;
   s32 index;

@@ -813,6 +813,9 @@ s32 Func_02000038(s32 id);
 void Func_020018c8(s32 id);
 void Func_02001928(s32 value);
 
+/// Sets up Yampi Desert Cave's three rooms as each one loads: the first room's
+/// palette cycle and Retreat destination, the third room's background
+/// priorities, and in each room the objects its flags place.
 s32 Func_02001418(void) {
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
   Func_02001928(0);

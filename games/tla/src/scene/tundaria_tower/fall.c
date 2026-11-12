@@ -21,6 +21,10 @@ void Func_020006d4(union FieldObject *object) {
 // turn and flies off with a random velocity through the overlay's effect
 // spawner, falling under Func_020006d4.
 
+/// Scatters count sparks (effect type 279) around a position: each starts at
+/// the given scale, shrinks toward 0xcccc, turns to a random sixteenth of a
+/// turn and flies off with a random velocity through the overlay's effect
+/// spawner, falling under Func_020006d4.
 void Func_02000708(struct TundariaTowerPosition *position, s32 count,
                    s32 scale) {
   struct EffectOptions options;

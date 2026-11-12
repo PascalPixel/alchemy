@@ -507,6 +507,10 @@ extern const s8 gData_02005be0[4];
 
 u32 Random16Far(void);
 
+/// Deals the Trial Road's stage order from a seed: shuffles 0 to 7 into the
+/// eight slots at the start of the stage state, again until both the even and
+/// the odd slots hold at least one of the four values in gData_02005be0; the
+/// random state is restored after.
 void Func_02002c30(u32 seed) {
   s16 *order = (s16 *)gTrialRoadState;
   u32 saved = gRandomState;
@@ -1060,6 +1064,12 @@ struct TrialRoadMovers {
   struct TrialRoadMover movers[16];
 };
 
+/// Updates the sixteen movers at gData_020023c4 + 0x188 each frame: at its upAt
+/// and downAt phases a mover calls Sound_Play (206 or 395) and moves by 4 or -8
+/// a frame until it reaches its high or low offset; its phase counts round its
+/// period unless flag 260 is set. Each mover's shape, collision height and cell
+/// attribute byte follow its actor and offset, and its marker actor is placed
+/// over it, bobbing on a sine while the offset is not 0.
 void Func_02003da0(void) {
   struct TrialRoadMovers *work =
       (struct TrialRoadMovers *)(gData_020023c4 + 0x188);

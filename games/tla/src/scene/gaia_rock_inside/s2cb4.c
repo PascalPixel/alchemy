@@ -14,6 +14,8 @@ extern const s16 gData_0200533c[][2];
 void Func_02002b04(u32 id, s8 mode);
 void Func_02002b8c(void);
 
+/// Starts the room where persons 8 to 16 sway: unless flag 265 is set, clears
+/// the sway state and places each person, then starts the sway's task.
 void Func_02002cb4(u8 mode) {
   u16 *state = gSceneState;
   u16 *pending = state + 1;

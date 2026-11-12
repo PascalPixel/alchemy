@@ -238,6 +238,9 @@ extern u8 gMapShapeGrid[];
 s32 Func_02003010(s32 layer, s32 x, s32 z);
 s32 Func_02003180(s32 layer, s32 shape, s32 height);
 
+/// On entering, sets each listed pillar from its two flags (pushed: moved to
+/// its place; else its cell raised and its shape redrawn), then lifts the
+/// leader onto the ground under it.
 void Func_0200222c(const u16 *table) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
   struct Actor *object;

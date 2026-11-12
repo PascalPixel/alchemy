@@ -200,6 +200,9 @@ void Func_02004dd4(void);
 void Party_LearnAbility(s32 unit, s32 ability);
 s32 Func_02004e64(void);
 
+/// The party meets person 11 on the ledge: they talk, the ground shakes, the
+/// screen blends out and back while the ledge changes, the party gains the item
+/// and person 11 joins the leader (flag 0x9ba).
 s32 Func_020019cc(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   /* FAKEMATCH(volatile): the blend level rereads through its slot; as a plain local,

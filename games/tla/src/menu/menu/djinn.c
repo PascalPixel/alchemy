@@ -433,6 +433,10 @@ extern char ResourceId_ShopGemTiles;
 void Graphics_ExpandVramTilesByColorTableFar(void *tiles);
 s32 Palette_GetBasicObjColors(void);
 
+/// Opens the Djinn menu's backdrop screen, the twin of The Broken Seal's
+/// Menu_OpenBackdropScreen: saves the tiles and palettes it covers, draws the
+/// backdrop, lists the owners (Func_081019a4), then makes the list's cursor and
+/// the two page arrows and places the arrows at the list window's corners.
 void Func_08101638(void) {
   struct DjinnMenuWork *menu = Ram_HeapSlots->menuRuntime;
   struct DjinnMenuBackdrop *backdrop = menu->backdrop;
@@ -1701,6 +1705,11 @@ extern const char gDjinnMenu_TextSlash[];
 s32 Icon_CreateWithLoadedResource(struct RenderInput *window, s32 x, s32 y, s32 resourceId);
 s32 Icon_DrawVariantWithTileOffset(struct RenderInput *window, s32 x, s32 y, s32 variant);
 
+/// Previews a djinni change on a member's status, the twin of The Broken Seal's
+/// DjinnMenu_DrawStatPreview: the unit is saved, the change applied and the
+/// unit recalculated; page 0 draws the stats with an arrow beside each one that
+/// changes, later pages the Psynergy gained and lost; then the saved unit is
+/// copied back.
 s32 Func_08103218(s32 window, s32 x, s32 y, s32 ownerId, s32 removePairSlot,
                   s32 addPairSlot, s32 previewMode, s32 page, s32 side) {
   // One constant for its whole life: the djinn tile loop starts from it.

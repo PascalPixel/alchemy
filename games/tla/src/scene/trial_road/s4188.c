@@ -126,6 +126,10 @@ s32 Func_02005848(s32 layer, s32 x, s32 z);
 void Func_02005958(s32 id);
 u8 Func_02005a20(s32 layer, s32 shape, s32 height);
 
+/// The trap table's setup: a trap whose second flag is set is put away; any
+/// other marks its cell, writes a shape for its height into the shape grid, and
+/// takes mode 0 when its first flag is set. Then the leader is lifted onto the
+/// ground if it stands below it.
 void Func_020042f0(const u16 *table) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
   struct Actor *object;

@@ -554,6 +554,9 @@ void Func_02000ce4(s32 phase) {
 // 255): the column above and below it in mode 0, the row beside it otherwise.
 #include "map.h"
 
+/// Blocks the three cells through an object's cell on layers 0 and 2 (collision
+/// code 255): the column above and below it in mode 0, the row beside it
+/// otherwise.
 void Func_02000cf8(s32 id, s32 mode) {
   struct TrialRoadMapWork *map = Ram_HeapSlots->mapWork;
   struct Actor *object = Actor_GetById(id);

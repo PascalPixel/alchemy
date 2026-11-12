@@ -161,6 +161,12 @@ void Func_02003790(s32 layer, s32 x, s32 z, u32 width, u32 height, s32 value);
 
 static __inline__ s32 Abs(s32 value) { return value < 0 ? -value : value; }
 
+/// Rewrites the map cells under a pushable actor. The actor's sprite shape
+/// picks one of the six footprints in gData_0200407c (four signed bytes each,
+/// in sixteenths of a cell); the cells under it are copied from the map's spare
+/// area (Map_CopyCellAttributeRect) and byte 2 of both collision layers there
+/// is filled with 255 (Func_02003790). Returns 1, or 0 for a shape with no
+/// footprint. The twin of overlay 668's Func_020040ec.
 s32 Func_02003684(s32 id) {
   u8 *map = (u8 *)Ram_HeapSlots->mapWork;
   struct Actor *actor = Actor_GetById(id);

@@ -230,6 +230,8 @@ struct AnkohlRuinsEffectParams {
 void Func_0200015c(s32 x, s32 y, s32 z, s32 unused, s32 speed, s32 phase,
                    s32 life, struct AnkohlRuinsEffectParams *params);
 
+/// Places count effects in a row, rows times, each row two pixels further down,
+/// waiting between rows.
 void Func_02000b78(s32 rows, s32 frames, s32 x, s32 y, s32 startZ, s32 count) {
   struct AnkohlRuinsEffectParams params;
   s32 row;

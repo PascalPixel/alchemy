@@ -2142,6 +2142,8 @@ void Func_0200421c(struct Vector3 *v);
 void Func_0200424c(struct SparkleSprite *sprite);
 s32 Func_0200425c(struct Actor *object);
 
+/// The sparkle's update: raises two pairs of sprites over the object, each pair
+/// starting when its counter is cleared, until both counters pass 31.
 void Func_02003cd8(struct Actor *object) {
   struct Vector3 position;
   s32 x, z, sine;

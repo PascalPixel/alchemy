@@ -81,6 +81,8 @@ union Position {
 
 void Func_02003a6c(struct Actor *part);
 
+/// One of the four parts Func_02001738 builds: rises and falls with its owner's
+/// action counter.
 void Func_02001528(struct Actor *part) {
   struct Actor *owner = part->watchedObject;
 
@@ -125,6 +127,8 @@ void Func_020005cc(s32 layer, s32 x, s32 z, s32 height);
 
 #define EFFECT_Y(object) (((union Position *)&(object)->effect.y)->word)
 
+/// The fifth part of Func_02001738's group: follows its owner like the others,
+/// throws effect 403 every eighth frame and marks the ground beneath.
 void Func_020015e4(union FieldObject *object) {
   struct Actor *watched = (struct Actor *)object->effect.countdown;
   struct MagmaRockEffectConfig config;

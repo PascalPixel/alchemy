@@ -356,6 +356,13 @@ void Func_02005f8c(struct Actor *object, s32 cue);
 s32 Math_Cosine(s32 angle);
 s32 Math_Sine(s32 angle);
 
+/// Func_020010b4's twin for another shot: it also stops while the render mode
+/// is 5, and on a cell of kind 212 it ends with one of two end scripts by its
+/// angle; otherwise, the first time it reaches the leader (within 16 pixels on
+/// the same height when the leader climbs, else within 8 on the same level) and
+/// flag 0x104 is clear, it carries the leader along (counter 0x16a 200, render
+/// mode 0); it moves 1.5 pixels a frame along its angle, upward when its angle
+/// is 0xc000.
 void Func_02000d48(struct Actor *shot) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   u8 *work = Ram_HeapSlots->eventWork;

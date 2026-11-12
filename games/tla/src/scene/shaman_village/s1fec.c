@@ -425,6 +425,8 @@ extern s16 gData_02006494;
 void Resource_ResetEntry(s32 entry);
 void Func_020047cc(void *entry, s32 slot);
 
+/// The portrait mode task: reads its command script, eases the portrait's
+/// scale, blend and position, and queues its sprites.
 void Func_02002a20(void) {
   u32 *write = gData_020064d0;
   struct Sprite *sprite = (struct Sprite *)write;

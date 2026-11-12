@@ -296,6 +296,8 @@ void Func_02002718(void) {
 extern const s16 gData_0200530c[][2];
 s32 GameFlag_SetByte(s32 flag, s32 value);
 
+/// Records which of eleven listed cells persons 10 and 11 stand on, as the two
+/// halves of the byte flag 0x210.
 s32 Func_02002974(void) {
   struct Actor *first = Actor_Get(10);
   s8 firstIndex = 0;

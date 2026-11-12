@@ -13,6 +13,9 @@ void Func_02000c50(void);
 void Func_02001650(void);
 void Func_02001a14(void);
 
+/// The overlay's start: sets the screen effect, restores the clock and palette
+/// in the first room, draws the unlit cells in the second, and schedules the
+/// frame callback.
 s32 Func_02001cdc(void) {
   ((struct SeaOfTimeEventWork *)Ram_HeapSlots->eventWork)->screenEffect = 256;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov687Room1) {

@@ -95,6 +95,9 @@ void Func_0810b7a8(s32 a, s32 b) { Func_0810b7b4(a, b, 0); }
 
 s32 Func_0810b9c0(s32 unitId);
 
+/// Func_0810b7b4 picks a party member and then one of their items, four members
+/// a page, returning the unit and slot through the pointers (both -1 when
+/// cancelled): the twin of The Broken Seal's Shop_PickUnitItem.
 s32 Func_0810b7b4(s32 *outUnit, s32 *outSlot, s32 itemMode) {
   struct ShopRuntime *shop;
   s32 unitId = 0;

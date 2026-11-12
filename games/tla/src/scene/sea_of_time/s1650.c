@@ -21,6 +21,9 @@ extern u16 Data_02002580[160];
 extern u16 gData_020026c0[14];
 extern s16 gData_0200257c[1];
 
+/// The Sea of Time's frame callback: rotates two runs of the background
+/// palette, pulses the red of colour 15 (or steps it with the alarm), copies
+/// the palette and ripples the layer's horizontal scroll line by line.
 void Func_02001650(void) {
   u16 *line = Data_02002580;
   struct MapLayer *layer = &Ram_HeapSlots->mapWork->layers[2];

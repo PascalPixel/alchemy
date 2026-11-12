@@ -80,6 +80,10 @@ extern struct AnkohlRuinsSpriteWork Data_02004030;
 
 void Func_02002dac(u32 *oam, s32 b);
 
+/// Draws eight sprites while flag 0x205 is clear and the level is below
+/// 0x200000: each moves by the level as its kind says, is placed relative to
+/// the view and is drawn when it is on screen. Then sets a word in map layer 1
+/// to the level plus a base.
 void Func_020012c4(void) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
   s32 *view = &map->viewX;

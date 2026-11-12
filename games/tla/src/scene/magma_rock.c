@@ -96,6 +96,9 @@ void Func_0200074c(struct Object0200074c *object) {
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 void Func_020005cc(s32 layer, s32 x, s32 z, s32 height);
 
+/// For each id of a list ended by 0xffff: settles the object on its ground,
+/// copies the cell under it, and blocks the cells ahead of and behind it on a
+/// cell with attribute bit 6.
 void Func_0200079c(u16 *ids) {
   while (*ids != 0xffff) {
     struct Actor *object = Actor_Get(*ids);

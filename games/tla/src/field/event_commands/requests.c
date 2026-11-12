@@ -141,7 +141,5 @@ void Func_080d2d08(struct CueObject *object, s32 cue) {
   Sound_PlayFar(cue);
 }
 
-// Counts up the main routine's counter274.
-
 /// Counts up the main routine's counter274.
 void Func_080d2d70(void) { gMainRoutineWork.counter274++; }

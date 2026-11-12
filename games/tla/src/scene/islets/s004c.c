@@ -389,6 +389,15 @@ void Func_02003dfc(struct Actor *object);
     GameFlag_SetBit(0xaa3);                                                    \
   }
 
+/// The Islets' trade of item 453 with object 10. With the item in the party, if
+/// flag 513 is set (asked before) the camera moves and object 10 asks again
+/// (MsgAreYouGiving); otherwise it notices the item (MsgOhThatRed), the leader
+/// steps up and shows it (object type 489, its picture set to the item by
+/// Func_0802372c) and object 10 asks. A yes hands the item across step by step,
+/// takes item 453 and gives item 454 (object 10 hands it back over the leader's
+/// head), sets flag 0xaa3 and counts the answer in the event work's halfword
+/// 0x1c4 the first time; a no sets flag 513. Without the item, object 10 says
+/// MsgYupANice after the trade or MsgIVeBeenFeeling before it.
 void Func_020006f4(void) {
   struct Actor *item, *leader, *given;
   const u8 *asked, *noticed;

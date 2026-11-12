@@ -1078,6 +1078,8 @@ s32 Func_080fd968(s32 window, s32 unused, const struct MenuResult *state) {
 
 s32 PsynergyMenu_IsActionRestricted(s32 actionEntry);
 
+/// Func_080fdad4 runs the Psynergy list of the member in paneIndex, the twin of
+/// The Broken Seal's PsynergyMenu_RunList (games/tbs/src/menu/menu/psynergy.c).
 s32 Func_080fdad4(s32 paneIndex) {
   struct PsynergyMenuState *menu;
   struct BattleAct *ability;

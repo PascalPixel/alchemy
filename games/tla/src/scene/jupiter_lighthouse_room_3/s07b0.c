@@ -260,6 +260,12 @@ void Map_FillCellRectByte2(s32 layer, s32 x, s32 y, u32 width, u32 height,
 
 #define ABS(x) ((x) < 0 ? -(x) : (x))
 
+/// Rewrites the map cells under a pushable actor: its sprite shape picks one of
+/// the six footprints in gData_02002484 (four signed bytes each, in sixteenths
+/// of a cell); the cells under it are copied from the map's spare area
+/// (Map_CopyCellAttributeRect) and byte 2 of both collision layers there is
+/// filled with 255. Returns 1, or 0 for a shape with no footprint. The twin of
+/// overlay 6ad's Func_02004938.
 s32 Func_02000c78(s32 id) {
   u8 *map = (u8 *)Ram_HeapSlots->mapWork;
   struct Actor *actor = Actor_Get(id);

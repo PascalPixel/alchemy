@@ -130,6 +130,8 @@ void Actor_SetSingleChildFlags(struct Actor *object,
 void Func_020005a4(s32 scene, s32 entrance);
 void Func_020003cc(void);
 
+/// The scene's setup: places its actors, then plays what the entrance it was
+/// reached by calls for.
 s32 Func_02000190(void) {
   s32 *screen = &((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect;
   s32 effect = 0x204;

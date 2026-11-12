@@ -272,9 +272,10 @@ static inline void Dma_Stop(volatile u16 *channel) {
 /// The reaper in CounterRevealSheet, which Condemn and Mortal Danger decode
 /// into work->sheet: the reaper with its scythe raised, then swung, then the
 /// red crescent the swing leaves. Each starts where the one before ends; the
-/// notes give the sizes the draws use.
-/// ★ Named from what the player sees: a hooded skeleton swings its scythe in a
-/// white flash (https://alchemy.pascalpixel.com/abilities/condemn.gif)
+/// notes give the sizes the draws use. In Condemn's render a hooded skeleton
+/// swings its scythe in a white flash:
+/// https://alchemy.pascalpixel.com/abilities/condemn.gif
+/// ★ Named from what the player sees: the Grim Reaper's swing (its render)
 enum ReaperSheetCell {
   /// 57x98
   REAPER_SHEET_RAISED = 0,

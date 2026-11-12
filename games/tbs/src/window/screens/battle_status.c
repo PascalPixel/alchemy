@@ -112,8 +112,8 @@ struct StatusCursor {
   s32 row;            ///< tiles
 };
 
-/// Points `cursor` at its stop in `stops`, a group with no highlight: that
-/// stop's help entry, column and row.
+/// Moves `cursor` to the stop its group remembers in `stops`: that stop's help
+/// entry, column and row.
 #define STATUS_CURSOR_TAKE_STOP(cursor, stops)                                 \
   ((cursor).helpEntry =                                                        \
        (stops)[(cursor).groupPositions[(cursor).group]].entry,                 \

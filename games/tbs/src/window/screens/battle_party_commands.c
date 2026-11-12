@@ -397,7 +397,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         iconSprite->oam.f.x = commandWindow->x * 8 + 8;
         iconSprite->oam.f.y = commandWindow->y * 8 + 4;
         /* FAKEMATCH(barrier): counted as 4 bytes, the empty asm puts the pool
-         * after mov r1, r10 as native (constant 40); without it, 7 of 1727
+         * after mov r1, r10 as native (constant 40); without it, 14 of 1727
          * instructions differ in tbs-en. */
         __asm__ volatile("");
         iconSprite->oam.f.tile =
@@ -483,7 +483,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         iconSprite->oam.word.attr01 = 0x40000400;
         iconSprite->oam.word.attr23 = 0;
         /* FAKEMATCH(barrier): counted as 4 bytes, the empty asm puts the pool
-         * after mov r2, r9 as native (constant 56); without it, 6 of 1727
+         * after mov r2, r9 as native (constant 56); without it, 12 of 1727
          * instructions differ in tbs-en. */
         __asm__ volatile("");
         iconSprite->oam.f.x = commandWindow->x * 8 + 8;
@@ -688,7 +688,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         iconSprite->oam.word.attr01 = 0x40000400;
         iconSprite->oam.word.attr23 = 0;
         /* FAKEMATCH(barrier): counted as 4 bytes, the empty asm puts the pool
-         * after ldr r1, [sp, #72] as native (constant 48); without it, 5 of
+         * after ldr r1, [sp, #72] as native (constant 48); without it, 10 of
          * 1727 instructions differ in tbs-en. */
         __asm__ volatile("");
         iconSprite->oam.f.x = commandWindow->x * 8 + 8;

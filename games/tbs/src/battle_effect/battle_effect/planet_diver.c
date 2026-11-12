@@ -26,9 +26,9 @@ struct ImpactChip {
   s32 x;         ///< canvas position, 16.16 fixed point
   s32 y;         ///< canvas position, 16.16; the ground is y 112
   s32 velocityX; ///< 16.16 pixels a frame, damped to 56/64 each frame
-  s32 unused0c;  ///< an Particle's velocityX; never read
+  s32 unused0c;  ///< a Particle's velocityX; never read
   s32 velocityY; ///< 16.16 pixels a frame, with 1/8 pixel of gravity
-  s32 unused14;  ///< an Particle's velocityZ; never read
+  s32 unused14;  ///< a Particle's velocityZ; never read
   s32 life;      ///< frames left; 0 is free
 };
 
@@ -120,8 +120,8 @@ void BattleEffect_RunPlanetDiver(struct BattleEffectParams *args) {
         s32 x = screenPosition.x + (frame * Trig_Sin(i << 12) >> 16);
         s32 y = screenPosition.y + (frame * Trig_Cos(i << 12) >> 16) - frame;
 
-        draw[0](canvas, work->sheet + ((frame - 4) / 2 << 11), x - 16, y - 64,
-                32, 64);
+        draw[0](canvas, work->sheet + (frame - 4) / 2 * (32 * 64), x - 16,
+                y - 64, 32, 64);
       }
     }
     // Frame 4: the user leaps, heading out past its own position: 20 pixels
@@ -137,8 +137,7 @@ void BattleEffect_RunPlanetDiver(struct BattleEffectParams *args) {
       actor->snapToTarget = 0;
       Actor_SetMoveTargetFar(actor, actor->x.fixed * 3, 0, actor->z.fixed);
       Actor_SelectAnimationFar(actor, POSE_LEAP);
-      // A 4-frame shake: frame is 4 here.
-      work->shakeFrames = frame;
+      work->shakeFrames = 4;
       Sound_PlayFar(SE_WHOOSH);
     }
     // Frame 16: switch to the fireball images and line the user up with
@@ -188,8 +187,9 @@ void BattleEffect_RunPlanetDiver(struct BattleEffectParams *args) {
           s32 angle;
 
           speed = 0x3ff;
-          // Masked in place, the mask assigned first; as Random16() & mask, 3
-          // instructions differ.
+          /* FAKEMATCH(temporary): speed holds the mask before the draw; as
+           * speed = Random16() & 0x3ff, 23 of 516 instructions differ in
+           * tbs-en. */
           speed &= Random16();
           angle = Random16() & TRIG_ANGLE_MASK;
           chip->x = px(screenPosition.x);
@@ -394,6 +394,9 @@ void BattleEffect_RunHaunt(struct BattleEffectParams *args) {
 /// BattleEffect_ArmBg2AffineHBlankDma, which it adds and removes. It never lets
 /// the battle show damage, and leaves the targets' flash timers alone.
 void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectParams *args) {
+  // XXX: do these spirals circle each target as the doc above says? Staging
+  // this function, which render guide --only unused has no stage for yet,
+  // would settle it.
   void **slots;
   void **cursor;
   struct BattleEffectWork *work;
@@ -448,59 +451,57 @@ void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectParams *args) {
       s32 angle;
       s32 base;
 
+      /* FAKEMATCH(temporary): base holds 8 << 16; as
+       * (8 << 16) - Trig_Sin(angle) * 8, 4 of 306 instructions differ in
+       * tbs-en. */
       for (i = 0, base = 8 << 16, angle = frame << 10; i != DISPLAY_HEIGHT;
            i++) {
-        *row++ = (base - ((Trig_Sin(angle) * 8))) >> 10;
+        *row++ = (base - Trig_Sin(angle) * 8) >> 10;
         angle += 1024;
       }
     } else {
       s32 angle;
 
       for (i = 0, angle = frame << 10; i != DISPLAY_HEIGHT; i++) {
-        *row++ = (((Trig_Sin(angle) * 8)) >> 10) - (112 << 8);
+        *row++ = (Trig_Sin(angle) * 8 >> 10) - (112 << 8);
         angle += 1024;
       }
     }
     EFFECT_VIEW_FROM_CAMERA(camera);
-    member = 0;
-    if (work->args->targetCount != 0) {
-      while (member != work->args->targetCount) {
-        struct Actor *actor;
+    EFFECT_FOR_EACH_TARGET(member, work->args) {
+      struct Actor *actor;
 
-        actor = GetBattleObjectSlotFar(work->args->targets[member])->actor;
-        // Target `member` has its turn from frame 16 * member, and takes
-        // its damage pose 32 frames in.
-        if (frame > member * 16 &&
-            frame < (member * 16) + ORBITING_SPIRALS_LIFE) {
-          s32 spin;
+      actor = GetBattleObjectSlotFar(work->args->targets[member])->actor;
+      // Target `member` has its turn from frame 16 * member, and takes
+      // its damage pose 32 frames in.
+      if (frame > member * 16 &&
+          frame < (member * 16) + ORBITING_SPIRALS_LIFE) {
+        s32 spin;
 
-          if (frame == (member * 16) + 32) {
-            BattleEffect_TintBattler(work->args->targets[member],
-                                     SPRITE_COLOR_NORMAL, POSE_DAMAGE,
-                                     TINT_KEEP, 0);
-          }
-          SET_VECTOR(point, actor->x.fixed, px(40), actor->z.fixed);
-          Projection_Point(point, &screen);
-
-          // The spirals (32x32) a quarter turn apart, circling once every 128
-          // frames; each shows its four 1 KB images for 4 frames apiece, and
-          // every other 16 frames draws them mirrored both ways, turned half
-          // a turn.
-          for (i = 0; i != 4; i++) {
-            s32 x;
-            s32 y;
-            s32 half;
-
-            spin = (frame << 9) + (i << 14);
-            x = (screen.x + (((Trig_Sin(spin) * 16)) >> 16)) + offsetX;
-            y = screen.y + (((Trig_Cos(spin) * 16)) >> 16);
-            half = frame / 16;
-            draw[half & 1](canvas,
-                           work->sheet + (((frame / 4) - (half * 4)) << 10),
-                           x - 16, y - 16, 32, 32);
-          }
+        if (frame == (member * 16) + 32) {
+          BattleEffect_TintBattler(work->args->targets[member],
+                                   SPRITE_COLOR_NORMAL, POSE_DAMAGE, TINT_KEEP,
+                                   0);
         }
-        member++;
+        SET_VECTOR(point, actor->x.fixed, px(40), actor->z.fixed);
+        Projection_Point(point, &screen);
+
+        // The spirals (32x32) a quarter turn apart, circling once every 128
+        // frames; each shows four images for 4 frames apiece, and every
+        // other 16 frames draws them mirrored both ways, turned half a turn.
+        for (i = 0; i != 4; i++) {
+          s32 x;
+          s32 y;
+          s32 half;
+
+          spin = (frame << 9) + (i << 14);
+          x = (screen.x + (Trig_Sin(spin) * 16 >> 16)) + offsetX;
+          y = screen.y + (Trig_Cos(spin) * 16 >> 16);
+          half = frame / 16;
+          draw[half & 1](canvas,
+                         work->sheet + (frame / 4 - half * 4) * (32 * 32),
+                         x - 16, y - 16, 32, 32);
+        }
       }
     }
     EFFECT_PRESENT_CANVAS(work);

@@ -1675,7 +1675,7 @@ static void Imil_RunIceSlide(void) {
     subject->speedLimit = PIXELS(2);
     subject->acceleration = PIXELS(1) / 10;
     subject->timer = 0;
-    FieldActor_SetMoveTarget(subject, x, subject->y.fixed, z);
+    FieldActor_SetMoveTargetFixed(subject, x, subject->y.fixed, z);
     Actor_SelectAnimation(subject, 2);
     Actor_SetAnimationSpeed(subject, 48);
     Actor_WaitForMove(subject);
@@ -1697,7 +1697,7 @@ static void Imil_RunIceSlide(void) {
       z = probe.z;
       subject->speedLimit = PIXELS(2);
       subject->acceleration = PIXELS(1) / 10;
-      FieldActor_SetMoveTarget(subject, probe.x, probe.y, probe.z);
+      FieldActor_SetMoveTargetFixed(subject, probe.x, probe.y, probe.z);
       Actor_WaitForMove(subject);
       if (nextBehavior != startBehavior) {
         goto blocked;
@@ -1706,7 +1706,7 @@ static void Imil_RunIceSlide(void) {
 
     subject->speedLimit = PIXELS(2);
     subject->acceleration = PIXELS(1);
-    FieldActor_SetMoveTarget(subject, x, subject->y.fixed, z);
+    FieldActor_SetMoveTargetFixed(subject, x, subject->y.fixed, z);
     Actor_WaitForMove(subject);
     wait(2);
   }

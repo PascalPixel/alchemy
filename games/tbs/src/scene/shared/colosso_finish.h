@@ -79,8 +79,8 @@ static void Colosso_SparkleAroundPrize(struct Actor *prize) {
 static s32 Colosso_RaisePrize(struct Actor *warrior) {
   struct Actor *prize = Actor_Get(warrior->timer);
 
-  FieldActor_SetMoveTarget(prize, warrior->x.fixed,
-                           warrior->y.fixed + PIXELS(36), warrior->z.fixed);
+  FieldActor_SetMoveTargetFixed(prize, warrior->x.fixed,
+                                warrior->y.fixed + px(36), warrior->z.fixed);
   prize->motionFlags = 0;
   Actor_StartScript(prize, gColosso_PrizeScript);
   Sound_Play(MUS_TREASURE_FOUND);
@@ -119,7 +119,7 @@ static s32 Colosso_TakePrize(s32 firstItem, s32 secondItem) {
   *raisedPrizeActorId = *prizeActorId;
   leader->acceleration = PIXELS(1) / 4;
   leader->speedLimit = PIXELS(1);
-  FieldActor_SetMoveTarget(leader, x, 0, z);
+  FieldActor_SetMoveTargetFixed(leader, x, 0, z);
   GameFlag_Set(FLAG_ARENA_REACHED);
   Actor_StartScript(leader, gColosso_LeaderFinishScript);
   while (*raisedPrizeActorId != 0) {

@@ -977,12 +977,12 @@ static void Bilibin_PushStatueOrCrates(void) {
       Sound_Play(SE_PUSH);
       pushed->speedLimit = PIXELS(1) / 5;
       pushed->acceleration = PIXELS(1) / 5;
-      FieldActor_SetMoveTarget(pushed, destination.x, destination.y,
-                               destination.z);
+      FieldActor_SetMoveTargetFixed(pushed, destination.x, destination.y,
+                                    destination.z);
       leader->speedLimit = PIXELS(1) / 5;
       leader->acceleration = PIXELS(1) / 5;
-      FieldActor_SetMoveTarget(leader, destination.x, destination.y,
-                               destination.z);
+      FieldActor_SetMoveTargetFixed(leader, destination.x, destination.y,
+                                    destination.z);
       Actor_WaitForMove(pushed);
       pushed->x.fixed = destination.x;
       pushed->z.fixed = destination.z;

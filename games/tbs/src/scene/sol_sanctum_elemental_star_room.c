@@ -1169,7 +1169,7 @@ static void SolSanctumElementalStarRoom_AlexTakesStars(void) {
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_ALEX, 30);
   actor->motionFlags = 0;
   Actor_SetSpeed(ACTOR_ALEX, 2.4);
-  FieldActor_SetMoveTarget(actor, PIXELS(460), 0, PIXELS(360));
+  FieldActor_SetMoveTarget(actor, 460, 0, 360);
   Actor_WaitForMoveById(ACTOR_ALEX);
   Actor_SetSpriteColorById(ACTOR_ALEX, SPRITE_COLOR_NORMAL);
   alex = Actor_Get(ACTOR_ALEX);

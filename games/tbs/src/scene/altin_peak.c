@@ -490,8 +490,8 @@ static void AltinPeak_RideCart(s32 log) {
   leader->velocityY =
       ((ABS(logActor->y.fixed - leader->y.fixed) >> 14) << 14) + PIXELS(4);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_LEAP);
-  FieldActor_SetMoveTarget(leader, logActor->x.fixed, logActor->y.fixed,
-                           logActor->z.fixed);
+  FieldActor_SetMoveTargetFixed(leader, logActor->x.fixed, logActor->y.fixed,
+                                logActor->z.fixed);
   wait(10);
   leader->sprite->image.priority = 3;
   Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
@@ -2407,7 +2407,7 @@ static void AltinPeak_StopCartAndJumpOff(struct Actor *actor) {
   actor->acceleration = PIXELS(2);
   x += centerZ;
   centerZ += z;
-  FieldActor_SetMoveTarget(actor, x, actor->y.fixed, centerZ);
+  FieldActor_SetMoveTargetFixed(actor, x, actor->y.fixed, centerZ);
   Actor_WaitForMove(actor);
   actor->layer = 0;
   actor->x.fixed = x;
@@ -2431,7 +2431,7 @@ static void AltinPeak_StopCartAndJumpOff(struct Actor *actor) {
   leader->z.fixed = centerZ;
   leader->sprite->image.priority = 0;
   Actor_SelectAnimation(leader, 7);
-  FieldActor_SetMoveTarget(leader, x, leader->y.fixed, z + PIXELS(24));
+  FieldActor_SetMoveTargetFixed(leader, x, leader->y.fixed, z + px(24));
   leader->facing = FACING_SOUTH;
   wait(20);
   leader->sprite->image.priority = 2;
@@ -2606,7 +2606,7 @@ static void AltinPeak_RollCart(s32 id, s32 heading) {
   position.y = actor->y.fixed;
   position.z = actor->z.fixed;
   FieldVector_AddPolarOffset(PIXELS(24), heading, &position);
-  FieldActor_SetMoveTarget(actor, position.x, actor->y.fixed, position.z);
+  FieldActor_SetMoveTargetFixed(actor, position.x, actor->y.fixed, position.z);
   Actor_WaitForMove(actor);
   Sound_Play(SE_CART_ROLL);
   // The route cells select turns, a countdown sound, and the destination.

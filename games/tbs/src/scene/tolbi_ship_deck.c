@@ -414,7 +414,7 @@ static s32 TolbiShipDeck_HoverAndDiveAtOuranos(struct Actor *interpreter) {
     case 1:
       actor->speedLimit = PIXELS(4);
       actor->acceleration = PIXELS(2);
-      FieldActor_SetMoveTarget(actor, PIXELS(268), PIXELS(20), PIXELS(692));
+      FieldActor_SetMoveTarget(actor, 268, 20, 692);
       actor->riseCounter++;
       break;
     case 2:
@@ -444,9 +444,9 @@ static s32 TolbiShipDeck_HoverAndDiveAtOuranos(struct Actor *interpreter) {
       break;
     case 5:
       if (actor->riseEnabled != 0)
-        FieldActor_SetMoveTarget(actor, PIXELS(282), 0, PIXELS(658));
+        FieldActor_SetMoveTarget(actor, 282, 0, 658);
       else
-        FieldActor_SetMoveTarget(actor, PIXELS(254), 0, PIXELS(668));
+        FieldActor_SetMoveTarget(actor, 254, 0, 668);
       actor->riseCounter++;
       break;
     case 6:
@@ -505,7 +505,7 @@ static s32 TolbiShipDeck_HoverAndDiveAtSean(struct Actor *interpreter) {
     case 1:
       actor->speedLimit = PIXELS(4);
       actor->acceleration = PIXELS(2);
-      FieldActor_SetMoveTarget(actor, PIXELS(256), PIXELS(20), PIXELS(640));
+      FieldActor_SetMoveTarget(actor, 256, 20, 640);
       actor->riseCounter++;
       break;
     case 2:
@@ -534,9 +534,9 @@ static s32 TolbiShipDeck_HoverAndDiveAtSean(struct Actor *interpreter) {
       break;
     case 5:
       if (actor->riseEnabled != 0)
-        FieldActor_SetMoveTarget(actor, PIXELS(264), 0, PIXELS(600));
+        FieldActor_SetMoveTarget(actor, 264, 0, 600);
       else
-        FieldActor_SetMoveTarget(actor, PIXELS(242), 0, PIXELS(604));
+        FieldActor_SetMoveTarget(actor, 242, 0, 604);
       actor->riseCounter++;
       break;
     case 6:
@@ -674,7 +674,7 @@ static s32 TolbiShipDeck_LeapAtOuranos(struct Actor *interpreter) {
     actor->velocityY = PIXELS(4);
     actor->speedLimit = PIXELS(4);
     actor->acceleration = PIXELS(2);
-    FieldActor_SetMoveTarget(actor, PIXELS(264), 0, PIXELS(662));
+    FieldActor_SetMoveTarget(actor, 264, 0, 662);
     actor->timer++;
     break;
   case 3:
@@ -708,9 +708,9 @@ static s32 TolbiShipDeck_LeapAtOuranos(struct Actor *interpreter) {
     actor->speedLimit = PIXELS(2);
     actor->acceleration = PIXELS(1);
     if (actor->riseEnabled != 0) {
-      FieldActor_SetMoveTarget(actor, PIXELS(252), 0, PIXELS(646));
+      FieldActor_SetMoveTarget(actor, 252, 0, 646);
     } else {
-      FieldActor_SetMoveTarget(actor, PIXELS(256), 0, PIXELS(686));
+      FieldActor_SetMoveTarget(actor, 256, 0, 686);
     }
     break;
   case 7:
@@ -745,7 +745,7 @@ static s32 TolbiShipDeck_LeapAtSean(struct Actor *interpreter) {
     actor->velocityY = PIXELS(4);
     actor->speedLimit = PIXELS(4);
     actor->acceleration = PIXELS(2);
-    FieldActor_SetMoveTarget(actor, PIXELS(176), 0, PIXELS(696));
+    FieldActor_SetMoveTarget(actor, 176, 0, 696);
     actor->timer++;
     break;
   case 3:
@@ -778,9 +778,9 @@ static s32 TolbiShipDeck_LeapAtSean(struct Actor *interpreter) {
     actor->speedLimit = PIXELS(2);
     actor->acceleration = PIXELS(1);
     if (actor->riseEnabled != 0) {
-      FieldActor_SetMoveTarget(actor, PIXELS(184), 0, PIXELS(672));
+      FieldActor_SetMoveTarget(actor, 184, 0, 672);
     } else {
-      FieldActor_SetMoveTarget(actor, PIXELS(202), 0, PIXELS(692));
+      FieldActor_SetMoveTarget(actor, 202, 0, 692);
     }
     break;
   case 7:

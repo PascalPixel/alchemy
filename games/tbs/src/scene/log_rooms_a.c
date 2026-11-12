@@ -3337,8 +3337,8 @@ static s32 LogRoomsA_CheckStopOccupancy(struct LogRoomsAStop *stop) {
 /// Sets the actor's destination to the route stop's cell center.
 static void LogRoomsA_MoveActorToStop(struct Actor *actor,
                                       struct LogRoomsAStop *stop) {
-  FieldActor_SetMoveTarget(actor, (stop->gridX << 19) + PIXELS(72), 0,
-                           (stop->gridZ << 19) + PIXELS(632));
+  FieldActor_SetMoveTargetFixed(actor, (stop->gridX << 19) + px(72), 0,
+                                (stop->gridZ << 19) + px(632));
 }
 
 /// Steers Ivan and both suspects through the graph and detects a sustained

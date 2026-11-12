@@ -23,7 +23,7 @@ static void Actor_PlacePairAtOffset(s32 id, s32 dx, s32 dz) {
 
     actor->speedLimit = PIXELS(1);
     actor->acceleration = PIXELS(1) / 2;
-    FieldActor_SetMoveTarget(actor, x, actor->y.fixed, z);
+    FieldActor_SetMoveTargetFixed(actor, x, actor->y.fixed, z);
   }
   Actor_SelectAnimation(actor, 27);
   {
@@ -32,7 +32,7 @@ static void Actor_PlacePairAtOffset(s32 id, s32 dx, s32 dz) {
 
     other->speedLimit = PIXELS(1);
     other->acceleration = PIXELS(1) / 2;
-    FieldActor_SetMoveTarget(other, x, other->y.fixed, z);
+    FieldActor_SetMoveTargetFixed(other, x, other->y.fixed, z);
   }
   if (dx < 0 || dz < 0) {
     Actor_SelectAnimation(other, 4);

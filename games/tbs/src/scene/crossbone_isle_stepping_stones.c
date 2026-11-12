@@ -1321,8 +1321,8 @@ static void CrossboneIsleSteppingStones_FrostRaisesPillar(void) {
   pillar->sprite->image.priority = 2;
   pillar->acceleration = PIXELS(2) / 5;
   pillar->speedLimit = PIXELS(4) / 5;
-  FieldActor_SetMoveTarget(pillar, pillar->x.fixed, PIXELS(32),
-                           pillar->z.fixed);
+  FieldActor_SetMoveTargetFixed(pillar, pillar->x.fixed, px(32),
+                                pillar->z.fixed);
   Actor_WaitForMoveById(ACTOR_RISING_PILLAR);
   MapGrid_CopyCellAttributes(20, 14, 1, 1, 22, 16);
 }

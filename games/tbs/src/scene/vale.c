@@ -2266,12 +2266,12 @@ static void Vale_MendingTheRoof(void) {
   moveHand->update = Vale_TrailSparkles;
   Event_Wait(4);
   Actor_SetSpeedAndAcceleration(ACTOR_OPENING_MOVE_HAND, 2, 2);
-  FieldActor_SetMoveTarget(moveHand, PIXELS(408), PIXELS(208), PIXELS(584));
+  FieldActor_SetMoveTarget(moveHand, 408, 208, 584);
   Event_Wait(40);
   Actor_SetSpeed(ACTOR_OPENING_PILLAR, 0.15);
   Actor_SetSpeed(ACTOR_OPENING_MOVE_HAND, 0.15);
   Actor_Get(ACTOR_OPENING_PILLAR);
-  FieldActor_SetMoveTarget(moveHand, PIXELS(392), PIXELS(208), PIXELS(584));
+  FieldActor_SetMoveTarget(moveHand, 392, 208, 584);
   Actor_MoveToAndWait(ACTOR_OPENING_PILLAR, 378, 584);
   Event_Wait(20);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_JENNA, 0, 10);
@@ -3284,7 +3284,7 @@ static void Vale_VanishMoveHand(struct Actor *emitter) {
 #include "shared/actor_polar_target.h"
 
 DEFINE_SET_TARGET_POSITION_FROM_MAGNITUDE_ANGLE(static,
-                                                FieldActor_SetMoveTarget)
+                                                FieldActor_SetMoveTargetFixed)
 
 /// Pushing the pillar in Vale (cell behaviors 30 and 31) moves it a cell.
 static void Vale_PushPillar(void) {

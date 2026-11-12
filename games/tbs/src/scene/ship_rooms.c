@@ -640,7 +640,7 @@ static void ShipRooms_PaceCaptainsQuarters(struct Actor *updated) {
     break;
   case 4:
     Actor_SelectAnimation(actor, 2);
-    FieldActor_SetMoveTarget(actor, PIXELS(468), PIXELS(32), PIXELS(632));
+    FieldActor_SetMoveTarget(actor, 468, 32, 632);
     actor->riseBaseY = 60;
     actor->userValue++;
     break;
@@ -664,7 +664,7 @@ static void ShipRooms_PaceCaptainsQuarters(struct Actor *updated) {
     break;
   case 9:
     Actor_SelectAnimation(actor, 2);
-    FieldActor_SetMoveTarget(actor, PIXELS(480), PIXELS(32), PIXELS(600));
+    FieldActor_SetMoveTarget(actor, 480, 32, 600);
     actor->riseBaseY = 60;
     actor->userValue++;
     if (captain->paused == 0) {

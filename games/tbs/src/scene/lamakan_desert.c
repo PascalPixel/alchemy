@@ -669,7 +669,7 @@ static void LamakanDesert_BatheInOasis(void) {
     const struct LamakanDesertOasis *spot =
         (const struct LamakanDesertOasis *)&points[nearest];
 
-    FieldActor_SetMoveTarget(actor, spot->x, 0, spot->z);
+    FieldActor_SetMoveTargetFixed(actor, spot->x, 0, spot->z);
   }
   Actor_Get(ACTOR_PARTY_LEADER)->velocityY = PIXELS(6);
   Sound_Play(SE_JUMP);
@@ -909,8 +909,8 @@ static void LamakanDesert_SlideDownDune(void) {
     // Let the fall complete before returning to ordinary field movement.
     Actor_SetAttachedEffect(id,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-    FieldActor_SetMoveTarget(actor, actor->x.fixed, actor->y.fixed,
-                             actor->z.fixed + PIXELS(8));
+    FieldActor_SetMoveTargetFixed(actor, actor->x.fixed, actor->y.fixed,
+                                  actor->z.fixed + px(8));
     Actor_SelectAnimation(actor, ANIM_LEADER_LEAP);
     Actor_WaitForMove(actor);
     do {

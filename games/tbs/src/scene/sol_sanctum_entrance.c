@@ -650,12 +650,12 @@ static void SolSanctumEntrance_PushStatue(void) {
       Sound_Play(SE_PUSH);
       statue->speedLimit = PIXELS(1) / 5;
       statue->acceleration = PIXELS(1) / 5;
-      FieldActor_SetMoveTarget(statue, destination->x, destination->y,
-                               destination->z);
+      FieldActor_SetMoveTargetFixed(statue, destination->x, destination->y,
+                                    destination->z);
       leader->speedLimit = PIXELS(1) / 5;
       leader->acceleration = PIXELS(1) / 5;
-      FieldActor_SetMoveTarget(leader, destination->x, destination->y,
-                               destination->z);
+      FieldActor_SetMoveTargetFixed(leader, destination->x, destination->y,
+                                    destination->z);
       Actor_WaitForMove(statue);
       statue->x.fixed = destination->x;
       statue->z.fixed = destination->z;

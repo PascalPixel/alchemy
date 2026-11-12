@@ -1599,7 +1599,7 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
     ((struct FieldEffect *)star)->velocity.y = PIXELS(3) / 5;
     ((struct FieldEffect *)star)->velocity.x = PIXELS(4) / 5;
     star->velocityY = PIXELS(8);
-    FieldActor_SetMoveTarget(star, PIXELS(308), PIXELS(32), PIXELS(164));
+    FieldActor_SetMoveTarget(star, 308, 32, 164);
   }
   Actor_MoveToAndWait(ACTOR_VENUS_STAR_SHADOW, 308, 164);
   Actor_SetPosition(ACTOR_VENUS_STAR_SHADOW, 0, 0);
@@ -1608,16 +1608,16 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
     Event_PlaySound(SE_STAR_BOUNCE);
     Actor_SetSpriteFlags(star, 0);
     star->velocityY = PIXELS(4);
-    FieldActor_SetMoveTarget(star, PIXELS(314), PIXELS(32), PIXELS(137));
+    FieldActor_SetMoveTarget(star, 314, 32, 137);
     Actor_WaitForMove(star);
     Event_PlaySound(SE_STAR_BOUNCE);
     star->sprite->image.priority = 1;
     star->velocityY = PIXELS(6);
-    FieldActor_SetMoveTarget(star, PIXELS(285), PIXELS(32), PIXELS(146));
+    FieldActor_SetMoveTarget(star, 285, 32, 146);
     Actor_WaitForMove(star);
     Sound_Play(SE_STAR_BOUNCE);
     star->velocityY = PIXELS(5);
-    FieldActor_SetMoveTarget(star, PIXELS(300), PIXELS(32), PIXELS(154));
+    FieldActor_SetMoveTarget(star, 300, 32, 154);
     Actor_WaitForMove(star);
     wait(6);
     star->x.fixed = 0;

@@ -342,7 +342,8 @@ void MercuryLighthouse_HopAcrossPool(void) {
       obj->priorityFlags = 2;
       obj->speedLimit = PIXELS(4);
       obj->acceleration = PIXELS(2);
-      FieldActor_SetMoveTarget(obj, pos[0].fixed, pos[1].fixed, pos[2].fixed);
+      FieldActor_SetMoveTargetFixed(obj, pos[0].fixed, pos[1].fixed,
+                                    pos[2].fixed);
       if (sprite != NULL) {
         Sprite_StartAnimation(sprite, 6);
         zero = 0;

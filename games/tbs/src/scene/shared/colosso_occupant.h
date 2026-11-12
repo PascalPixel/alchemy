@@ -73,11 +73,11 @@ static void Colosso_PushActorAhead(void) {
 
   pushed->speedLimit = PIXELS(1) / 5;
   pushed->acceleration = PIXELS(1) / 5;
-  FieldActor_SetMoveTarget(pushed, position.x, position.y, position.z);
+  FieldActor_SetMoveTargetFixed(pushed, position.x, position.y, position.z);
 
   leader->speedLimit = PIXELS(1) / 5;
   leader->acceleration = PIXELS(1) / 5;
-  FieldActor_SetMoveTarget(leader, position.x, position.y, position.z);
+  FieldActor_SetMoveTargetFixed(leader, position.x, position.y, position.z);
 
   Sound_Play(SE_PUSH_STEP);
   Actor_WaitForMove(pushed);

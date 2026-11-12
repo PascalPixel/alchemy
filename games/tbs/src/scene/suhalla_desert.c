@@ -351,9 +351,9 @@ static void SuhallaDesert_CatchInStorm(s32 stormId) {
     Sound_Play(SE_SANDSTORM);
     Task_AddFrame(SuhallaDesert_UpdateCaptureTimer, TASK_PASS_FRAME);
     selectedActor->motionFlags = captureActive;
-    FieldActor_SetMoveTarget(selectedActor, selectedActor->x.fixed,
-                             selectedActor->y.fixed + PIXELS(32),
-                             selectedActor->z.fixed);
+    FieldActor_SetMoveTargetFixed(selectedActor, selectedActor->x.fixed,
+                                  selectedActor->y.fixed + px(32),
+                                  selectedActor->z.fixed);
     Actor_WaitForMoveById(leaderActorId);
     selectedActor->velocityY = captureActive;
     selectedActor->motionFlags = ACTOR_FLOATS;

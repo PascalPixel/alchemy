@@ -617,12 +617,12 @@ static void VenusLighthouse_PushAdjacentPillar(void) {
   Sound_Play(SE_PUSH);
   pillar->speedLimit = moveRate;
   pillar->acceleration = moveRate;
-  FieldActor_SetMoveTarget(pillar, targetPosition.x, targetPosition.y,
-                           targetPosition.z);
+  FieldActor_SetMoveTargetFixed(pillar, targetPosition.x, targetPosition.y,
+                                targetPosition.z);
   leader->speedLimit = moveRate;
   leader->acceleration = moveRate;
-  FieldActor_SetMoveTarget(leader, targetPosition.x, targetPosition.y,
-                           targetPosition.z);
+  FieldActor_SetMoveTargetFixed(leader, targetPosition.x, targetPosition.y,
+                                targetPosition.z);
   Actor_WaitForMove(pillar);
   Scene_PlayQueuedMusic();
   pillar->x.fixed = targetPosition.x;
@@ -2164,12 +2164,12 @@ static void VenusLighthouse_LowerFloatingPillars(s32 waitFrames) {
   if (waitFrames != 0) {
     Sound_Play(SE_SETTLE);
   }
-  FieldActor_SetMoveTarget(westSupport, westSupport->x.fixed,
-                           gVenusBalancePlatformHeights[westSupport->timer],
-                           westSupport->z.fixed);
-  FieldActor_SetMoveTarget(eastSupport, eastSupport->x.fixed,
-                           gVenusBalancePlatformHeights[eastSupport->timer],
-                           eastSupport->z.fixed);
+  FieldActor_SetMoveTargetFixed(
+      westSupport, westSupport->x.fixed,
+      gVenusBalancePlatformHeights[westSupport->timer], westSupport->z.fixed);
+  FieldActor_SetMoveTargetFixed(
+      eastSupport, eastSupport->x.fixed,
+      gVenusBalancePlatformHeights[eastSupport->timer], eastSupport->z.fixed);
   Actor_WaitForMoveById(ACTOR_BALANCE_WEST);
   Actor_WaitForMoveById(ACTOR_BALANCE_EAST);
   westSupport->y.fixed = gVenusBalancePlatformHeights[westSupport->timer];
@@ -2220,8 +2220,8 @@ static void VenusLighthouse_StackFloatingPillar(s32 pillarId) {
   }
 
   Actor_SetSpeed(pillarId, 4);
-  FieldActor_SetMoveTarget(pillar, pillar->x.fixed, supportHeight,
-                           pillar->z.fixed);
+  FieldActor_SetMoveTargetFixed(pillar, pillar->x.fixed, supportHeight,
+                                pillar->z.fixed);
   Actor_WaitForMoveById(pillarId);
   Sound_Play(SE_THUMP);
   FieldEffect_SpawnNineRadialEffects(pillarId);
@@ -3359,8 +3359,8 @@ static void VenusLighthouse_StepActorWithDust(struct Vector3 *direction) {
   if (collision < 0) {
     Actor_SetAttachedEffect(actorId,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-    FieldActor_SetMoveTarget(actor, actor->x.fixed, actor->y.fixed,
-                             actor->z.fixed + PIXELS(8));
+    FieldActor_SetMoveTargetFixed(actor, actor->x.fixed, actor->y.fixed,
+                                  actor->z.fixed + px(8));
     Actor_SelectAnimation(actor, ANIM_LEADER_LEAP);
     Actor_WaitForMove(actor);
     do {

@@ -493,8 +493,8 @@ static void TunnelRuins_HopDownStep(void) {
   leader->motionFlags |= ACTOR_FALLS;
   Sound_Play(SE_JUMP);
   leader->velocityY = PIXELS(4);
-  FieldActor_SetMoveTarget(leader, leader->x.fixed, leader->y.fixed,
-                           leader->z.fixed + PIXELS(12));
+  FieldActor_SetMoveTargetFixed(leader, leader->x.fixed, leader->y.fixed,
+                                leader->z.fixed + px(12));
   wait(6);
   leader->motionFlags = 0;
   // Emit particles on alternate frames while the leader descends.
@@ -1076,11 +1076,11 @@ static void TunnelRuins_SettleBalance(s32 frames) {
   if (frames != 0) {
     Sound_Play(SE_SETTLE);
   }
-  FieldActor_SetMoveTarget(
+  FieldActor_SetMoveTargetFixed(
       Actor_Get(ACTOR_BALANCE_WEST), Actor_Get(ACTOR_BALANCE_WEST)->x.fixed,
       gTunnelRuins_BalanceHeights[Actor_Get(ACTOR_BALANCE_WEST)->timer],
       Actor_Get(ACTOR_BALANCE_WEST)->z.fixed);
-  FieldActor_SetMoveTarget(
+  FieldActor_SetMoveTargetFixed(
       Actor_Get(ACTOR_BALANCE_EAST), Actor_Get(ACTOR_BALANCE_EAST)->x.fixed,
       gTunnelRuins_BalanceHeights[Actor_Get(ACTOR_BALANCE_EAST)->timer],
       Actor_Get(ACTOR_BALANCE_EAST)->z.fixed);
@@ -1137,7 +1137,8 @@ static void TunnelRuins_DropStoneOnStack(s32 actorId) {
     struct Actor *sourceActor = Actor_Get(actorId);
     s32 z = Actor_Get(actorId)->z.fixed;
 
-    FieldActor_SetMoveTarget(actor, sourceActor->x.fixed, highestHeight, z);
+    FieldActor_SetMoveTargetFixed(actor, sourceActor->x.fixed, highestHeight,
+                                  z);
   }
 
   Actor_WaitForMoveById(actorId);

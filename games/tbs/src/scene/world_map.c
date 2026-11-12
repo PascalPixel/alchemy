@@ -1725,7 +1725,7 @@ static void WorldMap_MeetFlint(void) {
     djinni->acceleration = PIXELS(1);
     djinni->velocityY = 0;
     djinni->groundHeight = 0;
-    FieldActor_SetMoveTarget(djinni, PIXELS(5584), 0, PIXELS(1328));
+    FieldActor_SetMoveTarget(djinni, 5584, 0, 1328);
     for (i = 0; i < 16; i++) {
       djinni->scaleX += Q16_ONE / 32;
       djinni->scaleY += Q16_ONE / 32;
@@ -1771,7 +1771,7 @@ static void WorldMap_MeetFlint(void) {
     Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
     i = 0;
     djinni->motionFlags = 0;
-    FieldActor_SetMoveTarget(djinni, x, PIXELS(16), z);
+    FieldActor_SetMoveTargetFixed(djinni, x, px(16), z);
     for (; i < 16; i++) {
       djinni->facing += FACING_STEP;
       wait(1);
@@ -1836,7 +1836,7 @@ static void WorldMap_MeetFlint(void) {
     Actor_SetPositionFixed(ACTOR_VENUS_DJINNI, leader->x.fixed,
                            leader->z.fixed);
   djinni->velocityY = PIXELS(10);
-  FieldActor_SetMoveTarget(djinni, x, 0, z);
+  FieldActor_SetMoveTargetFixed(djinni, x, 0, z);
   Event_Wait(30);
   WorldMap_Freeze();
   Actor_FaceActor(ACTOR_VENUS_DJINNI, ACTOR_PARTY_LEADER, 0);
@@ -1857,7 +1857,7 @@ static void WorldMap_MeetFlint(void) {
   GameFlag_Clear(FLAG_DJINN_LESSON_PART_B);
   DjinnMenu_Run();
   Event_SetMessageId(MsgWorldMapGoSetStandby);
-  FieldActor_SetMoveTarget(djinni, PIXELS(5584), 0, PIXELS(1328));
+  FieldActor_SetMoveTarget(djinni, 5584, 0, 1328);
   Event_Wait(30);
   // "So, we go from set to standby to recovery, then back to set."
   Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
@@ -2196,17 +2196,16 @@ static void WorldMap_UseBlackOrb(void) {
   Actor_StartIdle(leader);
   if (leader->z.fixed > PIXELS(3432)) {
     if (leader->x.fixed > PIXELS(5998)) {
-      FieldActor_SetMoveTarget(leader, PIXELS(5998), leader->y.fixed,
-                               PIXELS(3453));
+      FieldActor_SetMoveTargetFixed(leader, px(5998), leader->y.fixed,
+                                    px(3453));
       Actor_WaitForMove(leader);
     }
   } else if (leader->x.fixed > PIXELS(6010)) {
     // BUG: iodem is NULL here; this branch reads its height through null.
-    FieldActor_SetMoveTarget(leader, PIXELS(6010), iodem->y.fixed,
-                             PIXELS(3400));
+    FieldActor_SetMoveTargetFixed(leader, px(6010), iodem->y.fixed, px(3400));
     Actor_WaitForMove(leader);
   }
-  FieldActor_SetMoveTarget(leader, PIXELS(5993), 0, PIXELS(3432));
+  FieldActor_SetMoveTarget(leader, 5993, 0, 3432);
   Actor_WaitForMove(leader);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 40);
@@ -2269,9 +2268,9 @@ static void WorldMap_UseBlackOrb(void) {
   Actor_SetSpeed(gWorldMapIodem, 0.8);
   Actor_SetAnimation(gWorldMapIodem, ANIM_WALK);
   iodem = Actor_Get(ACTOR_IODEM);
-  FieldActor_SetMoveTarget(iodem, PIXELS(6010), iodem->y.fixed, PIXELS(3400));
+  FieldActor_SetMoveTargetFixed(iodem, px(6010), iodem->y.fixed, px(3400));
   Actor_WaitForMove(iodem);
-  FieldActor_SetMoveTarget(iodem, PIXELS(6001), 0, PIXELS(3416));
+  FieldActor_SetMoveTarget(iodem, 6001, 0, 3416);
   Actor_WaitForMove(iodem);
   Actor_SetAnimation(ACTOR_IODEM, ANIM_STAND);
   Actor_FaceDirection(gWorldMapIodem, FACING_SOUTH_SOUTHWEST, 10);
@@ -2281,12 +2280,12 @@ static void WorldMap_UseBlackOrb(void) {
   Actor_SetSpeed(gWorldMapIodem, 1);
   Actor_Get(ACTOR_IODEM)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_SetAnimation(ACTOR_IODEM, ANIM_WALK);
-  FieldActor_SetMoveTarget(iodem, PIXELS(5997), 0, PIXELS(3424));
+  FieldActor_SetMoveTarget(iodem, 5997, 0, 3424);
   Actor_WaitForMove(iodem);
   Actor_SetAnimation(ACTOR_IODEM, ANIM_STAND);
   Event_Wait(10);
   Actor_SetAnimation(ACTOR_IODEM, ANIM_WALK);
-  FieldActor_SetMoveTarget(iodem, PIXELS(6001), 0, PIXELS(3416));
+  FieldActor_SetMoveTarget(iodem, 6001, 0, 3416);
   Actor_WaitForMove(iodem);
   Actor_SetAnimation(ACTOR_IODEM, ANIM_STAND);
   Message_ShowCentered(message + 6, 1);
@@ -2777,8 +2776,8 @@ static void WorldMap_CatchInStorm(s32 targetActorId) {
     Sound_Play(SE_SANDSTORM);
     Task_AddFrame(WorldMap_UpdateStormTimer, TASK_PASS_FRAME);
     actor->motionFlags = alreadyTraveling;
-    FieldActor_SetMoveTarget(actor, actor->x.fixed, actor->y.fixed + PIXELS(32),
-                             actor->z.fixed);
+    FieldActor_SetMoveTargetFixed(actor, actor->x.fixed,
+                                  actor->y.fixed + px(32), actor->z.fixed);
     Actor_WaitForMoveById(id);
     actor->velocityY = alreadyTraveling;
     actor->motionFlags = ACTOR_FLOATS;

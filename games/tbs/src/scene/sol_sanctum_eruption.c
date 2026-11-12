@@ -698,8 +698,8 @@ static void SolSanctumEruption_ThrowEruptionRing(void) {
     sprite->rotation = angle - TRIG_TURN / 4;
     offsetX = Iwram_MulQ16(Trig_Cos(angle), PIXELS(256));
     offsetZ = Iwram_MulQ16(Trig_Sin(angle), PIXELS(256));
-    FieldActor_SetMoveTarget(spun, spun->x.fixed + offsetX, spun->y.fixed,
-                             spun->z.fixed + offsetZ);
+    FieldActor_SetMoveTargetFixed(spun, spun->x.fixed + offsetX, spun->y.fixed,
+                                  spun->z.fixed + offsetZ);
   }
   Event_Wait(20);
   Actor_WaitForMoveById(ACTOR_FIRST_CRYSTAL);
@@ -820,7 +820,7 @@ static void SolSanctumEruption_StepEmbers(void) {
                        ((Import_RandomNext() & 63) << 16) + PIXELS(8));
       z = Iwram_MulQ16(Trig_Sin((u16)angle),
                        ((Import_RandomNext() & 63) << 16) + PIXELS(8));
-      FieldActor_SetMoveTarget(ember, x + PIXELS(325), 0, z + PIXELS(286));
+      FieldActor_SetMoveTargetFixed(ember, x + px(325), 0, z + px(286));
       Actor_SetSpriteColor(ember, SPRITE_COLOR_NORMAL);
       gEmberTimer = 30;
       return;

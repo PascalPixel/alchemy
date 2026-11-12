@@ -443,7 +443,7 @@ static inline void ColosseumNavampaMatch_MoveOnScales(struct Actor *ledge,
                                                       s32 height) {
   ledge->acceleration = PIXELS(2) / 5;
   ledge->speedLimit = PIXELS(4) / 5;
-  FieldActor_SetMoveTarget(ledge, ledge->x.fixed, height, ledge->z.fixed);
+  FieldActor_SetMoveTargetFixed(ledge, ledge->x.fixed, height, ledge->z.fixed);
 }
 
 /// Frost on the target on the Scales of Justice's eastern ledge freezes it.
@@ -763,7 +763,7 @@ static void ColosseumNavampaMatch_RollLongLog(void) {
   acceleration = PIXELS(1) / 5;
   log->acceleration = acceleration;
   Actor_SelectAnimation(log, mode);
-  FieldActor_SetMoveTarget(log, x, 0, z);
+  FieldActor_SetMoveTargetFixed(log, x, 0, z);
   Event_Wait(6);
   Actor_SetAnimation(actorId, ANIM_WALK);
   work = HeapSlot_AllocEwram(HEAP_SLOT_FIELD, sizeof(struct FieldWork));
@@ -771,8 +771,8 @@ static void ColosseumNavampaMatch_RollLongLog(void) {
   Actor_SetSpeedFixed(actorId, px(1) / 2, acceleration);
   Sound_Play(SE_HEAVY_MOVE);
   Actor_SelectAnimation(rider, 2);
-  FieldActor_SetMoveTarget(rider, (steps * step * PIXELS(1)) + rider->x.fixed,
-                           0, rider->z.fixed);
+  FieldActor_SetMoveTargetFixed(rider, (steps * step * px(1)) + rider->x.fixed,
+                                0, rider->z.fixed);
   Actor_WaitForMove(rider);
   Actor_SelectAnimation(rider, 1);
   Actor_WaitForMove(log);
@@ -871,8 +871,8 @@ static void ColosseumNavampaMatch_PassNorthWallOpening(void) {
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_SelectAnimation(actor, 5);
   z = actor->z.fixed & 0xFFF00000;
-  FieldActor_SetMoveTarget(actor, actor->x.fixed, actor->y.fixed,
-                           z + PIXELS(24));
+  FieldActor_SetMoveTargetFixed(actor, actor->x.fixed, actor->y.fixed,
+                                z + px(24));
   Actor_WaitForMove(actor);
 }
 
@@ -902,8 +902,8 @@ static void ColosseumNavampaMatch_PassSouthWallOpening(void) {
   actor->speedLimit = PIXELS(2);
   Actor_SelectAnimation(actor, 5);
   z = actor->z.fixed & 0xFFF00000;
-  FieldActor_SetMoveTarget(actor, actor->x.fixed, actor->y.fixed,
-                           z + PIXELS(12));
+  FieldActor_SetMoveTargetFixed(actor, actor->x.fixed, actor->y.fixed,
+                                z + px(12));
   Actor_WaitForMove(actor);
   Actor_SetAttachedEffect(*actorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -1856,18 +1856,20 @@ static void ColosseumNavampaMatch_TalkToFreeClimbAttendant(s32 guideId) {
       Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.5);
       Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_CLIMB);
       raisedHeight = PIXELS(6) + y;
-      FieldActor_SetMoveTarget(actor, x, raisedHeight, actor->z.fixed);
+      FieldActor_SetMoveTargetFixed(actor, x, raisedHeight, actor->z.fixed);
       Actor_WaitForMove(actor);
       Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_CLIMB_EAST);
       shiftedX = PIXELS(64) + x;
-      FieldActor_SetMoveTarget(actor, shiftedX, raisedHeight, actor->z.fixed);
+      FieldActor_SetMoveTargetFixed(actor, shiftedX, raisedHeight,
+                                    actor->z.fixed);
       Actor_WaitForMove(actor);
       Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_CLIMB);
-      FieldActor_SetMoveTarget(actor, shiftedX, y + PIXELS(54), actor->z.fixed);
+      FieldActor_SetMoveTargetFixed(actor, shiftedX, y + px(54),
+                                    actor->z.fixed);
       Actor_WaitForMove(actor);
       Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_CLIMB_WEST);
-      FieldActor_SetMoveTarget(actor, x + PIXELS(48), y + PIXELS(54),
-                               actor->z.fixed);
+      FieldActor_SetMoveTargetFixed(actor, x + px(48), y + px(54),
+                                    actor->z.fixed);
       Actor_WaitForMove(actor);
       Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_CLING);
       Event_ShowMessage(guideId, 0);

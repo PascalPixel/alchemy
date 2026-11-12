@@ -434,13 +434,13 @@ static void ColosseumSatrageMatch_KnockDownObstacle(void) {
   obstacle->speedLimit = PIXELS(6) / 5;
   Sound_Play(SE_TOPPLE);
   // Spin through the fall, then settle the obstacle at its final height.
-  FieldActor_SetMoveTarget(obstacle, PIXELS(336), PIXELS(10), PIXELS(264));
+  FieldActor_SetMoveTarget(obstacle, 336, 10, 264);
   for (rotationStep = 0, fallFrames = 9; fallFrames >= 0; fallFrames--) {
     sprite->rotation -= rotationStep;
     wait(1);
     rotationStep += 36;
   }
-  FieldActor_SetMoveTarget(obstacle, PIXELS(330), -PIXELS(16), PIXELS(264));
+  FieldActor_SetMoveTarget(obstacle, 330, -16, 264);
   for (settleRotationStep = 360, settleFrames = 21; settleFrames >= 0;
        settleFrames--) {
     sprite->rotation -= settleRotationStep;
@@ -543,8 +543,8 @@ static void ColosseumSatrageMatch_MovePusherAndLog(s32 logId, s32 offsetX,
 
     pusher->speedLimit = PIXELS(1);
     pusher->acceleration = PIXELS(1) / 2;
-    FieldActor_SetMoveTarget(pusher, destinationX, pusher->y.fixed,
-                             destinationZ);
+    FieldActor_SetMoveTargetFixed(pusher, destinationX, pusher->y.fixed,
+                                  destinationZ);
   }
   Actor_SelectAnimation(pusher, 27);
   {
@@ -559,7 +559,8 @@ static void ColosseumSatrageMatch_MovePusherAndLog(s32 logId, s32 offsetX,
 
     log->speedLimit = PIXELS(1);
     log->acceleration = PIXELS(1) / 2;
-    FieldActor_SetMoveTarget(log, destinationX, log->y.fixed, destinationZ);
+    FieldActor_SetMoveTargetFixed(log, destinationX, log->y.fixed,
+                                  destinationZ);
   }
   if (offsetX < 0 || offsetZ < 0) {
     Actor_SelectAnimation(log, 4);
@@ -632,7 +633,7 @@ static void ColosseumSatrageMatch_RollLogToCell(s32 logId, s32 halfCellX,
   log->acceleration = PIXELS(1) / 5;
   Actor_SelectAnimation(
       log, gColosseumSatrageMatch_RollLogScript[heading / (TRIG_TURN / 4)]);
-  FieldActor_SetMoveTarget(log, halfCellX, 0, halfCellZ);
+  FieldActor_SetMoveTargetFixed(log, halfCellX, 0, halfCellZ);
   Event_Wait(6);
   Actor_SetAnimation(pusher, ANIM_WALK);
   // Follow halfway behind the rolling log while its finish effect runs.
@@ -642,8 +643,8 @@ static void ColosseumSatrageMatch_RollLogToCell(s32 logId, s32 halfCellX,
                     (s32)log);
   Actor_SetSpeedAndAcceleration(pusher, 0.5, 0.2);
   Actor_SelectAnimation(pusherActor, 2);
-  FieldActor_SetMoveTarget(pusherActor, pusherActor->x.fixed + offsetX, 0,
-                           pusherActor->z.fixed + offsetZ);
+  FieldActor_SetMoveTargetFixed(pusherActor, pusherActor->x.fixed + offsetX, 0,
+                                pusherActor->z.fixed + offsetZ);
   Sound_Play(SE_HEAVY_MOVE);
   Actor_WaitForMove(pusherActor);
   Actor_SelectAnimation(pusherActor, 1);
@@ -797,23 +798,23 @@ static void ColosseumSatrageMatch_UpdateLifts(void) {
     gColosseumSatrageMatch_LiftPhase ^= 1;
     if (gColosseumSatrageMatch_LiftPhase != 0) {
       liftActor = Actor_Get(ACTOR_COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT);
-      FieldActor_SetMoveTarget(liftActor, PIXELS(936), 0, PIXELS(184));
+      FieldActor_SetMoveTarget(liftActor, 936, 0, 184);
       liftActor = Actor_Get(ACTOR_COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT + 1);
-      FieldActor_SetMoveTarget(liftActor, PIXELS(968), 0, PIXELS(248));
+      FieldActor_SetMoveTarget(liftActor, 968, 0, 248);
       liftActor = Actor_Get(ACTOR_COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT + 2);
-      FieldActor_SetMoveTarget(liftActor, PIXELS(1000), 0, PIXELS(184));
+      FieldActor_SetMoveTarget(liftActor, 1000, 0, 184);
       liftActor = Actor_Get(ACTOR_COLOSSEUM_SATRAGE_MATCH_LAST_LIFT);
-      FieldActor_SetMoveTarget(liftActor, PIXELS(1032), 0, PIXELS(248));
+      FieldActor_SetMoveTarget(liftActor, 1032, 0, 248);
       Actor_SetAnimation(ACTOR_LIFT_OPERATOR, 11);
     } else {
       liftActor = Actor_Get(ACTOR_COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT);
-      FieldActor_SetMoveTarget(liftActor, PIXELS(936), 0, PIXELS(216));
+      FieldActor_SetMoveTarget(liftActor, 936, 0, 216);
       liftActor = Actor_Get(ACTOR_COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT + 1);
-      FieldActor_SetMoveTarget(liftActor, PIXELS(968), 0, PIXELS(216));
+      FieldActor_SetMoveTarget(liftActor, 968, 0, 216);
       liftActor = Actor_Get(ACTOR_COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT + 2);
-      FieldActor_SetMoveTarget(liftActor, PIXELS(1000), 0, PIXELS(216));
+      FieldActor_SetMoveTarget(liftActor, 1000, 0, 216);
       liftActor = Actor_Get(ACTOR_COLOSSEUM_SATRAGE_MATCH_LAST_LIFT);
-      FieldActor_SetMoveTarget(liftActor, PIXELS(1032), 0, PIXELS(216));
+      FieldActor_SetMoveTarget(liftActor, 1032, 0, 216);
       Actor_SetAnimation(ACTOR_LIFT_OPERATOR, 10);
     }
   }
@@ -1443,8 +1444,8 @@ static void ColosseumSatrageMatch_TalkToWallAttendant(s32 attendant) {
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.5);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_CLIMB);
     actor = Actor_Get(ACTOR_PARTY_LEADER);
-    FieldActor_SetMoveTarget(actor, actor->x.fixed, actor->y.fixed + PIXELS(64),
-                             actor->z.fixed);
+    FieldActor_SetMoveTargetFixed(actor, actor->x.fixed,
+                                  actor->y.fixed + px(64), actor->z.fixed);
     Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
     Field_ClimbUp();
     FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
@@ -1493,13 +1494,13 @@ static void ColosseumSatrageMatch_PushObstacleToCell(s32 obstacleId, s32 column,
   obstacle->acceleration = PIXELS(1) / 5;
   Sound_Play(SE_HEAVY_MOVE);
   Actor_SelectAnimation(obstacle, 3);
-  FieldActor_SetMoveTarget(obstacle, column, 0, row);
+  FieldActor_SetMoveTargetFixed(obstacle, column, 0, row);
   Event_Wait(6);
   Actor_SetAnimation(pusher, ANIM_WALK);
   Actor_SetSpeedAndAcceleration(pusher, 0.5, 0.2);
   Actor_SelectAnimation(pusherActor, 2);
-  FieldActor_SetMoveTarget(pusherActor, pusherActor->x.fixed + offsetX, 0,
-                           pusherActor->z.fixed + offsetZ);
+  FieldActor_SetMoveTargetFixed(pusherActor, pusherActor->x.fixed + offsetX, 0,
+                                pusherActor->z.fixed + offsetZ);
   Actor_WaitForMove(pusherActor);
   Actor_SelectAnimation(pusherActor, 1);
   Actor_WaitForMove(obstacle);

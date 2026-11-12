@@ -893,7 +893,7 @@ static void KolimaForestTree_SpawnRejectionSpark(void) {
   effect->acceleration = PIXELS(4);
   effect->motionFlags = phase;
   Actor_SelectAnimation(effect, 2);
-  FieldActor_SetMoveTarget(effect, targetX, 0, targetZ);
+  FieldActor_SetMoveTargetFixed(effect, targetX, 0, targetZ);
   Actor_StartScript(effect, gKolimaForestTreeEffectScript);
 }
 

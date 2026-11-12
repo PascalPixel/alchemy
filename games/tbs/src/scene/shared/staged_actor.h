@@ -128,10 +128,10 @@ UNUSED static void PushedActor_AdvancePair(void) {
   Sound_Play(SE_PUSH);
   next->speedLimit = rate;
   next->acceleration = rate;
-  FieldActor_SetMoveTarget(next, dst.x, dst.y, dst.z);
+  FieldActor_SetMoveTargetFixed(next, dst.x, dst.y, dst.z);
   lead->speedLimit = rate;
   lead->acceleration = rate;
-  FieldActor_SetMoveTarget(lead, dst.x, dst.y, dst.z);
+  FieldActor_SetMoveTargetFixed(lead, dst.x, dst.y, dst.z);
   Actor_WaitForMove(next);
   Scene_PlayQueuedMusic();
   next->x.fixed = dst.x;
@@ -463,8 +463,8 @@ UNUSED static void Actor_MoveAndRedraw(struct PushedActorProbe probe) {
     Actor_SelectAnimation(actor, 2);
 
   Sound_Play(SE_HEAVY_MOVE);
-  FieldActor_SetMoveTarget(actor, probe.position.x, probe.position.y,
-                           probe.position.z);
+  FieldActor_SetMoveTargetFixed(actor, probe.position.x, probe.position.y,
+                                probe.position.z);
   Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   Actor_SetSpeedAndAcceleration(ACTOR_PARTY_LEADER, 0.3, 0.1);

@@ -399,10 +399,12 @@ static void VaultCave_PushPillarAhead(void) {
   Sound_Play(SE_PUSH_STEP);
   pillar->speedLimit = PIXELS(1) / 5;
   pillar->acceleration = PIXELS(1) / 5;
-  FieldActor_SetMoveTarget(pillar, destination.x, destination.y, destination.z);
+  FieldActor_SetMoveTargetFixed(pillar, destination.x, destination.y,
+                                destination.z);
   leader->speedLimit = PIXELS(1) / 5;
   leader->acceleration = PIXELS(1) / 5;
-  FieldActor_SetMoveTarget(leader, destination.x, destination.y, destination.z);
+  FieldActor_SetMoveTargetFixed(leader, destination.x, destination.y,
+                                destination.z);
   Actor_WaitForMove(pillar);
   Sound_Play(SE_STOP_ACTION_SE);
   pillar->x.fixed = destination.x;
@@ -926,8 +928,8 @@ static void VaultCave_OffsetActorRadially(struct Actor *actor, s32 radius,
   }
   SET_VECTOR(destination, actor->x.fixed, actor->y.fixed, actor->z.fixed);
   Vector_AddPolarOffset(radius, angle, destination);
-  FieldActor_SetMoveTarget(actor, destination[0], destination[1],
-                           destination[2]);
+  FieldActor_SetMoveTargetFixed(actor, destination[0], destination[1],
+                                destination[2]);
 }
 
 /// Spawns up to four short-lived puffs around a landing actor.

@@ -2235,10 +2235,10 @@ static void Kalay_PushTunnelStatue(void) {
       Sound_Play(SE_PUSH);
       statue->speedLimit = pushSpeed;
       statue->acceleration = pushSpeed;
-      FieldActor_SetMoveTarget(statue, target->x, target->y, target->z);
+      FieldActor_SetMoveTargetFixed(statue, target->x, target->y, target->z);
       leader->speedLimit = pushSpeed;
       leader->acceleration = pushSpeed;
-      FieldActor_SetMoveTarget(leader, target->x, target->y, target->z);
+      FieldActor_SetMoveTargetFixed(leader, target->x, target->y, target->z);
       Actor_WaitForMove(statue);
       Scene_PlayQueuedMusic();
       statue->x.fixed = target->x;

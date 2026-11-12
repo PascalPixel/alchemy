@@ -651,11 +651,13 @@ static void BilibinCave_PushTorch(void) {
 
   target->speedLimit = PIXELS(1) / 5;
   target->acceleration = PIXELS(1) / 5;
-  FieldActor_SetMoveTarget(target, destination.x, destination.y, destination.z);
+  FieldActor_SetMoveTargetFixed(target, destination.x, destination.y,
+                                destination.z);
 
   leader->speedLimit = PIXELS(1) / 5;
   leader->acceleration = PIXELS(1) / 5;
-  FieldActor_SetMoveTarget(leader, destination.x, destination.y, destination.z);
+  FieldActor_SetMoveTargetFixed(leader, destination.x, destination.y,
+                                destination.z);
 
   // Wait for the target's movement before snapping it to the destination.
   Actor_WaitForMove(target);

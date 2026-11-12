@@ -1147,7 +1147,7 @@ static void KolimaForestEntrance_SpawnCurseSparkle(void) {
   sparkle->acceleration = PIXELS(8);
   sparkle->motionFlags = framePhase;
   Actor_SelectAnimation(sparkle, 2);
-  FieldActor_SetMoveTarget(sparkle, targetX, 0, targetZ);
+  FieldActor_SetMoveTargetFixed(sparkle, targetX, 0, targetZ);
   Actor_StartScript(sparkle, gKolimaForestEntrance_SparkleScript);
 }
 

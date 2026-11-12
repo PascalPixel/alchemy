@@ -629,16 +629,13 @@ static void TolbiShipMast_ShowMonsters(void) {
   TolbiShipMast_StopDriftingActor(approachingActor);
   Event_Wait(20);
   Actor_SetSpeed(ACTOR_FIRST_BIRD, 8);
-  FieldActor_SetMoveTarget(approachingActor, PIXELS(164), PIXELS(144),
-                           PIXELS(321));
+  FieldActor_SetMoveTarget(approachingActor, 164, 144, 321);
   Actor_WaitForMove(approachingActor);
-  FieldActor_SetMoveTarget(approachingActor, PIXELS(164), PIXELS(104),
-                           PIXELS(321));
+  FieldActor_SetMoveTarget(approachingActor, 164, 104, 321);
   Actor_WaitForMove(approachingActor);
-  FieldActor_SetMoveTarget(approachingActor, PIXELS(204), PIXELS(124),
-                           PIXELS(321));
+  FieldActor_SetMoveTarget(approachingActor, 204, 124, 321);
   Actor_WaitForMove(approachingActor);
-  FieldActor_SetMoveTarget(approachingActor, PIXELS(144), 0, PIXELS(169));
+  FieldActor_SetMoveTarget(approachingActor, 144, 0, 169);
   Actor_Stop(ACTOR_LOOKOUT);
   wait(1);
   Actor_FaceDirection(ACTOR_LOOKOUT, FACING_WEST, 0);
@@ -652,23 +649,18 @@ static void TolbiShipMast_ShowMonsters(void) {
   TolbiShipMast_StopDriftingActor(approachingActor);
   Event_Wait(20);
   Actor_SetSpeed(ACTOR_FIRST_BIRD, 8);
-  FieldActor_SetMoveTarget(approachingActor, PIXELS(164), PIXELS(144),
-                           PIXELS(321));
+  FieldActor_SetMoveTarget(approachingActor, 164, 144, 321);
   Actor_WaitForMove(approachingActor);
   Actor_SetSpeed(ACTOR_FIRST_BIRD, 5);
-  FieldActor_SetMoveTarget(approachingActor, PIXELS(164), PIXELS(104),
-                           PIXELS(321));
+  FieldActor_SetMoveTarget(approachingActor, 164, 104, 321);
   Actor_WaitForMove(approachingActor);
-  FieldActor_SetMoveTarget(approachingActor, PIXELS(164), PIXELS(114),
-                           PIXELS(321));
+  FieldActor_SetMoveTarget(approachingActor, 164, 114, 321);
   Actor_WaitForMove(approachingActor);
-  FieldActor_SetMoveTarget(approachingActor, PIXELS(164), PIXELS(104),
-                           PIXELS(321));
+  FieldActor_SetMoveTarget(approachingActor, 164, 104, 321);
   Actor_WaitForMove(approachingActor);
-  FieldActor_SetMoveTarget(approachingActor, PIXELS(204), PIXELS(124),
-                           PIXELS(321));
+  FieldActor_SetMoveTarget(approachingActor, 204, 124, 321);
   Actor_WaitForMove(approachingActor);
-  FieldActor_SetMoveTarget(approachingActor, PIXELS(144), 0, PIXELS(169));
+  FieldActor_SetMoveTarget(approachingActor, 144, 0, 169);
   Actor_Stop(ACTOR_LOOKOUT);
   wait(1);
   Actor_FaceDirection(ACTOR_LOOKOUT, FACING_WEST, 0);

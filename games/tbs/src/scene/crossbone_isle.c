@@ -828,8 +828,8 @@ static void CrossboneIsle_MoveSelectedActorAndLog(s32 actorId, s32 xOffset,
 
     selectedActor->speedLimit = PIXELS(1);
     selectedActor->acceleration = PIXELS(1) / 2;
-    FieldActor_SetMoveTarget(selectedActor, fixedX, selectedActor->y.fixed,
-                             fixedZ);
+    FieldActor_SetMoveTargetFixed(selectedActor, fixedX, selectedActor->y.fixed,
+                                  fixedZ);
   }
   // Position the log on the same cell-center grid as the selected actor.
   Actor_SelectAnimation(selectedActor, 27);
@@ -841,7 +841,7 @@ static void CrossboneIsle_MoveSelectedActorAndLog(s32 actorId, s32 xOffset,
 
     logActor->speedLimit = PIXELS(1);
     logActor->acceleration = PIXELS(1) / 2;
-    FieldActor_SetMoveTarget(logActor, fixedX, logActor->y.fixed, fixedZ);
+    FieldActor_SetMoveTargetFixed(logActor, fixedX, logActor->y.fixed, fixedZ);
   }
   // The log's mode depends on which side of the grid it moves toward.
   if (xOffset < 0 || zOffset < 0) {

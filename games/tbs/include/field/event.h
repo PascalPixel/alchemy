@@ -365,11 +365,17 @@ static inline s32 Math_Divide(s32 dividend, s32 divisor) {
   return dividend / divisor;
 }
 
-/// Sends an actor toward a point, where it coasts to a stop.
-static inline void FieldActor_SetMoveTarget(struct Actor *actor, s32 fixed_x,
-                                            s32 fixed_y, s32 fixed_z) {
-  Actor_SetMoveTarget(actor, fixed_x, fixed_y, fixed_z);
+/// Sends an actor toward a point in 16.16 fixed point, where it coasts to a
+/// stop.
+static inline void FieldActor_SetMoveTargetFixed(struct Actor *actor, s32 x,
+                                                 s32 y, s32 z) {
+  Actor_SetMoveTarget(actor, x, y, z);
 }
+
+/// Sends an actor toward a point in whole pixels:
+/// `FieldActor_SetMoveTarget(star, 308, 32, 164)`.
+#define FieldActor_SetMoveTarget(actor, x, y, z)                               \
+  FieldActor_SetMoveTargetFixed(actor, px(x), px(y), px(z))
 
 /// Sets the colour mode (SpriteColorMode) of a one-sprite actor's layers,
 /// except those drawn hidden.

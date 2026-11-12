@@ -116,7 +116,7 @@ void Func_02002c14(void) {
 }
 
 void Func_02002698();
-void Func_02003cf0();
+void Func_02003cf0(void);
 
 void Func_02002dd4(void) {
   struct Actor *actor;
@@ -191,7 +191,6 @@ struct CellRecord {
 extern const u16 gData_02003fd2[];
 extern const struct CellRecord gData_02004066[];
 
-void Func_02003cf0(void);
 void Func_02003d50(s32 a, s32 b);
 void Func_02003d58(s32 a, s32 b);
 void Func_02003d60(void);

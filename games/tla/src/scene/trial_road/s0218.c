@@ -44,7 +44,7 @@ void Func_020002a4(s32 side, s32 phase) {
    } *)(base))                                                                 \
        ->v)
 void Func_02005868();
-void Func_02005880();
+void Func_02005880(void);
 
 s32 Func_02000330(void) {
   s32 t1, t2, t9, v_r5, v_r6;
@@ -87,7 +87,6 @@ L_02008400:
 
 void Func_02000418(void) { GameFlag_ClearBit(0x281); }
 
-void Func_02005880(void);
 void Func_02005888(void);
 void TrialRoad_Idle(void);
 s32 Func_020000fc(s32 value);
@@ -396,7 +395,7 @@ void Func_02000990(void) {
   GameFlag_SetBit(0x339);
 }
 
-extern const s8 gData_02005a88[];
+extern const s8 gData_02005a88[4];
 
 void Func_020009ac(s32 a, s32 b) {
   s32 id;
@@ -432,8 +431,6 @@ next:
   if (id <= 21)
     goto next;
 }
-
-extern const s8 gData_02005a88[4];
 
 void Func_02000a18(s32 id, s32 mode, s32 frame) {
   s32 other = gData_02005a88[(id - 18) & 3];

@@ -503,8 +503,6 @@ void Func_02002144(void) {
     Func_020020ec(gData_02005198, gData_02005190, 2, 0);
 }
 
-extern s32 gData_0200519c, gData_02005194, gData_02005198, gData_02005190;
-
 void Func_020021d0(void) {
   struct Actor *first = Actor_Get(12);
   struct Actor *second = Actor_Get(13);

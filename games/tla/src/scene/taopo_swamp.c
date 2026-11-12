@@ -218,8 +218,6 @@ void Func_02000464(s32 a, s32 id) {
   }
 }
 
-extern char SceneId_Ov678Room5, SceneId_Ov678Room7, SceneId_Ov678Room8,
-    SceneId_Ov678Room9;
 extern u8 gData_020029b8[];
 extern u8 gData_020029c0[];
 s32 Func_02002708(s32 hole);
@@ -1003,17 +1001,13 @@ void Func_020016fc(void) {
   }
 }
 
-extern char SceneId_Ov678Room1, SceneId_Ov678Room2, SceneId_Ov678Room3,
-    SceneId_Ov678Room4, SceneId_Ov678Room5, SceneId_Ov678Room6,
-    SceneId_Ov678Room7, SceneId_Ov678Room8, SceneId_Ov678Room9,
-    SceneId_Ov678Room10, SceneId_Ov678Room11;
 extern u8 gDecodeFillByte;
 extern const u8 gData_02002a78[], gData_02002ab6[], gData_02002abc[],
     gData_02002aca[], gData_02002ad8[];
 void Func_02002120(void);
 void Actor_SetWideSprite(s32 id, s32 wide);
 void Func_02002960(s32 a);
-void Func_02002614();
+void Func_02002614(u16 *points, u16 *values, s32 arg);
 void Func_02002980(void);
 void Func_02002988(s32 a, s32 flag, s32 b, s32 c);
 void Func_02002114();

@@ -58,7 +58,7 @@ inner:
 #include "text/msg_ids.h"
 #include "event_inline.h"
 
-void Func_020034fc();
+void Func_020034fc(void);
 
 void Func_020034d8(void) {
   Task_AddFrame(&Func_020034fc, 0x480);

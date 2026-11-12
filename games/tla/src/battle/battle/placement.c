@@ -510,8 +510,6 @@ s32 Enemy_GetFreeSlot(void) {
 // Enemy_Update: this game skips leading empty slots (254) and lays out up to
 // the last live one.
 
-void Summon_LayoutPositions(u16 *unit_ids, s32 count, s32 *x, s32 *z);
-
 void Enemy_Update(void) {
   struct BattleWork *work = Ram_HeapSlots->battleWork;
   u16 unitIds[14];

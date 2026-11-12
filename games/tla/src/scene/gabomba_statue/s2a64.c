@@ -428,7 +428,6 @@ s32 Func_02003604(void) {
      type v;                                                                   \
    } *)(base))                                                                 \
        ->v)
-void Event_StartScreenTransition();
 void Func_0200253c();
 void Func_020027cc();
 void Func_020052a4();

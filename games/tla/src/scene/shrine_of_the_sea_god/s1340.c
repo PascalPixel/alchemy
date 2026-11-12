@@ -46,8 +46,6 @@ void Func_02001340(struct ShrineOfTheSeaGodObject *object,
                                      0);
 }
 
-extern s32 gData_02004a18[];
-
 void Func_0200142c(struct ShrineOfTheSeaGodObject *object) {
   struct ShrineOfTheSeaGodObject *leader =
       Actor_GetById(gMainRoutineWork.currentOwner);

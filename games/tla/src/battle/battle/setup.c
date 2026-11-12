@@ -5,8 +5,6 @@
 
 #include "../battle_internal.h"
 
-#define REG_SIOCNT (*(volatile u32 *)0x04000128)
-
 void SceneTransform_RewindStack(void);
 void SceneTransform_SetPosition(s32 *position);
 void Func_080150ac(s32 yaw);

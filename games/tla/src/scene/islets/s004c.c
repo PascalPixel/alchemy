@@ -76,10 +76,10 @@ const u8 *Func_0200019c(void) {
 #include "text/msg_ids.h"
 
 void Func_02003ff4();
-void Func_02003dfc();
-void Func_02003fbc();
-void Func_02003fc4();
-void PartyInventory_Remove();
+void Func_02003dfc(struct Actor *object);
+void Func_02003fbc(void);
+void Func_02003fc4(void);
+void PartyInventory_Remove(s32 item);
 
 void Func_02000210(void) {
   s32 result0;
@@ -349,10 +349,6 @@ void Func_02000568(void) {
 // message bases in the refusals.
 
 void Func_02003f74(void);
-void Func_02003fc4(void);
-void Func_02003fbc(void);
-void PartyInventory_Remove(s32 item);
-void Func_02003dfc(struct Actor *object);
 
 #define STEP(actor, x, z)                                                      \
   (Actor_GetById(actor)->actionFlags &= ~1, Actor_WalkToAndWait(actor, x, z),  \

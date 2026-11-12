@@ -49,10 +49,10 @@ void Func_02001fc4(s32 mode) {
        ->v)
 
 void Func_02001754();
-void Func_02002db0();
-void Func_02002db4();
-void Func_020034b4();
-void Func_020037c8();
+void Func_02002db0(void);
+void Func_02002db4(void);
+void Func_020034b4(void);
+void Func_020037c8(void);
 void Func_02005868();
 
 void Func_0200200c(void) {

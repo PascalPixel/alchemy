@@ -583,7 +583,7 @@ void Func_080d40dc(s32 speaker) {
 #include "debug.h"
 #include "macros.h"
 
-void Event_ShowCounterAtPosition();
+void Event_ShowCounterAtPosition(s32 unused0, s32 unused1, s32 x, s32 y);
 
 void Event_ShowCounter(s32 a, s32 b, s32 c, s32 d) {
   Event_ShowCounterAtPosition(a, b, c, d);

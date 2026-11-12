@@ -209,7 +209,7 @@ void Func_02000738(void) {
 
 void Func_020012b4(s32, s32);
 void Func_020012fc(void);
-void Func_02001304();
+void Func_02001304(s32 a, s32 b, s32 c);
 
 void Func_02000768(void) {
   if (gMainRoutineWork.entrance == 99) {
@@ -294,10 +294,8 @@ struct MapLayerBits {
   u8 unk17High : 4;
 };
 
-extern char SceneId_Ov66bRoom1, SceneId_Ov66bRoom2;
 void Func_020012f4(void);
 void Func_0200130c(s32 a, s32 b, s32 c, s32 d);
-void Func_02001304(s32 a, s32 b, s32 c);
 void Func_02000fcc(s32 a, s32 b);
 struct RideEntry *Func_02001068(s32 slot, s32 id, s32 timer, s32 low,
                                 s32 high);

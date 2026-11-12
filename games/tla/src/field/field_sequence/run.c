@@ -53,7 +53,6 @@ struct FieldWork {
 };
 
 extern u8 gMapCellBuffer[];
-extern u8 gResourceBlockOwners[];
 
 void Func_080d793c(s32 capture);
 void Func_08020110(void);

@@ -150,14 +150,13 @@ extern u8 gData_02005e28[];
 
 struct Actor *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 kind);
 s32 __modsi3(s32 numerator, s32 denominator);
-void Func_02002d30(void);
 void Func_02002ac8();
 void Func_02001c9c(void);
 void Func_0200042c(void);
-void Func_02004a5c();
+void Func_02004a5c(s32 id, s32 x, s32 y, s32 z);
 void Func_02004d00(void);
-void Func_02004d9c();
-void Func_02004dac();
+void Func_02004d9c(struct Actor *object, s32 mode);
+void Func_02004dac(struct Actor *object, const u8 *script);
 void Func_02004dbc();
 void Func_02004dd4(void);
 void Func_02004ddc(void);
@@ -867,13 +866,12 @@ extern u8 gData_02005e28[];
 
 struct Actor *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 kind);
 s32 __modsi3(s32 numerator, s32 denominator);
-void Func_02002d30(void);
 void Func_02002ac8();
 void Func_02001c9c(void);
-void Func_02004a5c();
+void Func_02004a5c(s32 id, s32 x, s32 y, s32 z);
 void Func_02004d00(void);
-void Func_02004d9c();
-void Func_02004dac();
+void Func_02004d9c(struct Actor *object, s32 mode);
+void Func_02004dac(struct Actor *object, const u8 *script);
 void Func_02004dbc();
 void Func_02004dd4(void);
 void Func_02004ddc(void);
@@ -1557,7 +1555,6 @@ u8 *Unit_Get(s32 owner);
 void Func_020044f8(s32 level);
 void Func_020048a0(void);
 s32 Func_02004904(void);
-void Func_02004d9c(struct Actor *object, s32 mode);
 void Func_02004dc4(void);
 void Func_02004de4(u16 *script);
 void Func_02000aac(void);
@@ -2109,7 +2106,6 @@ void Func_02004a5c(s32 id, s32 x, s32 y, s32 z) {
 extern const u8 gData_020062d4[];
 extern const u8 gData_02006290[];
 
-void Func_02004dac(struct Actor *object, const u8 *script);
 s32 Math_Cosine(s32 angle);
 
 void Func_02004af0(s32 id, s32 flag) {

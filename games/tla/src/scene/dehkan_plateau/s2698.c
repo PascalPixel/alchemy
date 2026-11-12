@@ -88,8 +88,8 @@ void Func_02002698(s32 id, s32 center, s32 flag) {
   Event_Wait(20);
 }
 
-void Func_020021b4();
-void Func_02003c28();
+void Func_020021b4(void);
+void Func_02003c28(void);
 void Func_02003c30();
 void Func_02003cf0();
 
@@ -158,9 +158,7 @@ void Func_020027e0(void) {
   Func_02003c30();
 }
 
-void Func_020021b4(void);
 void Func_02002bcc(void);
-void Func_02003c28(void);
 
 void Func_02002a5c(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);

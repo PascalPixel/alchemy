@@ -438,8 +438,8 @@ void Func_02000670(void) {
 
 s32 Func_02000f14();
 void Func_02000ed4();
-void Func_02000dd0();
-void Func_02000b2c();
+void Func_02000dd0(void);
+void Func_02000b2c(s32 id, s32 x, s32 y, s32 z);
 
 s32 Func_020006ec(void) {
   struct Actor *actor;

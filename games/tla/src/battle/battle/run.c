@@ -172,7 +172,6 @@ s32 Event_GetSpecialValueFar(void);
 void ObjectSystem_InitializeFar(s32 mode);
 void WindowSystem_InitBattleFar(s32 mode);
 s32 Func_08127cd4(s32 enemyGroup);
-s32 Task_Add(void (*func)(void), s32 order);
 void Sound_LoadPresetParameters(s32 preset);
 void BattleUnit_RefreshPlacement(void);
 void PartyStatus_CreateWindowFar(s32 layout);

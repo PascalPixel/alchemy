@@ -59,7 +59,6 @@ void Render_ResetTransformState(void);
 
 struct BattleObjectPosition **GetBattleObjectSlotFar(s32 objectId);
 void *Resource_GetTableEntry(s32 resource);
-s32 Task_Add(void (*func)(void), s32 order);
 
 void Sound_PlayFar(s32 cue);
 void wait(s32 frames);

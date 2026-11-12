@@ -222,7 +222,7 @@ s32 Func_02000668();
 void Func_02000ee4();
 void Func_02003c0c();
 s32 Func_020006cc();
-void Func_02002d08();
+void Func_02002d08(const u16 *table);
 void Func_02003bec();
 void Func_02003bf4();
 void Func_02003be4();

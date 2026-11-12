@@ -78,7 +78,7 @@ top:
     BattleEffect_ClearOwnedSlot(effect);
 }
 
-void Func_080e0134();
+void Func_080e0134(void);
 
 /// Pauses the scene's child (byte 91) and runs the fallback transition.
 void BattleEffect_MarkChildAndRunFallbackTransition(void) {

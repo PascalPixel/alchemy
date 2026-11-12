@@ -50,19 +50,11 @@ static void Scene_SpawnPsynergyRings(struct Actor *parent) {
       }
     }
   }
-  {
-    struct Actor *effect = pair[0];
-    struct Sprite *effectSprite = effect->sprite;
-
-    effect->update = FieldEffect_AnimateVerticalNegative;
-    effectSprite->image.priority = parent->sprite->image.priority;
-  }
-  {
-    struct Actor *effect = pair[1];
-    struct Sprite *effectSprite = effect->sprite;
-
-    effectSprite->image.priority = parent->sprite->image.priority;
-    effect->update = FieldEffect_AnimateVerticalPositive;
-    effect->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
-  }
+  pair[0]->update = FieldEffect_AnimateVerticalNegative;
+  pair[0]->sprite->image.priority = parent->sprite->image.priority;
+  pair[1]->sprite->image.priority = parent->sprite->image.priority;
+  pair[1]->update = FieldEffect_AnimateVerticalPositive;
+  pair[1]->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 }
+
+#undef PSYNERGY_RINGS_SOUND

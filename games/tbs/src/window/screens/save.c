@@ -680,7 +680,7 @@ void FileList_ShowDjinnSprites(struct Window *window, s32 x, s32 y) {
 
   if (window != NULL) {
     for (i = 0; i < 4; i++) {
-      struct Sprite *sprite = Sprite_CreateFar(gMenu_PartySpriteResourceIds[i]);
+      struct Sprite *sprite = Sprite_CreateFar(gFileList_DjinnSpriteIds[i]);
 
       if (sprite != NULL) {
         Sprite_StartAnimationFar(sprite, ANIM_WALK);

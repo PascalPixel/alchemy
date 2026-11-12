@@ -110,7 +110,7 @@ extern const u8 gMenu_LvString[];
 #endif
 /// The four Djinn sprites, one per element from SPRITE_VENUS_DJINNI to
 /// SPRITE_JUPITER_DJINNI, that FileList_ShowDjinnSprites shows in a row.
-extern const s32 gMenu_PartySpriteResourceIds[4];
+extern const s32 gFileList_DjinnSpriteIds[4];
 /// `.`, the decimal point of an item's stat multiplier (`x1.2`).
 extern u8 gMenu_PointString[];
 /// The PP label: `PP`; `EP` in Japanese.

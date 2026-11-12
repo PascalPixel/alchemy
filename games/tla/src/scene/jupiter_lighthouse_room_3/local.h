@@ -10,7 +10,7 @@
 #include "dma.h"
 #include "event_inline.h"
 
-extern const u32 gSceneExits[];
+extern u32 gSceneExits[];
 
 struct PushedBlock {
   s32 a;

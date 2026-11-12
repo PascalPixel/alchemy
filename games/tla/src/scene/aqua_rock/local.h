@@ -13,7 +13,7 @@
 #include "field_sprite.h"
 #include "frame.h"
 
-extern const u32 gSceneExits[];
+extern u32 gSceneExits[];
 
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);

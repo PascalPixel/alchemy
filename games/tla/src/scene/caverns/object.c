@@ -4,8 +4,6 @@
 
 #include "caverns.h"
 
-void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
-
 struct Actor *Func_020000d0(s32 x, s32 y, s32 z, s32 type) {
   struct Actor *object = Import_ActorCreate(type, x, y, z);
 

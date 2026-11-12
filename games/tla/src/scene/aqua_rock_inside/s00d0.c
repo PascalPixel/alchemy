@@ -1,6 +1,8 @@
-#include "local.h"
+#include "../../field/object/set_sprite_priority.c"
 
-void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
+#include "../../field/object/prepare_object.c"
+
+#include "local.h"
 
 struct Actor *Func_020000d0(s32 x, s32 y, s32 z, s32 kind) {
   struct Actor *object = FieldActor_Create(kind, x, y, z);

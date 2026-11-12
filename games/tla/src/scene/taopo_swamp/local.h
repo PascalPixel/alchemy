@@ -12,7 +12,7 @@
 #include "event_inline.h"
 #include "frame.h"
 
-extern const u32 gSceneExits[];
+extern u32 gSceneExits[];
 
 extern char SceneId_Ov678Room1;
 extern char SceneId_Ov678Room2;

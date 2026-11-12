@@ -8,7 +8,7 @@
 #include "scene_tables.h"
 #include "event_inline.h"
 
-extern const u32 gSceneExits[];
+extern u32 gSceneExits[];
 
 struct WarpEntry {
   const void *script;

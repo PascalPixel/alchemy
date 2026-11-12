@@ -13,7 +13,7 @@
 #include "event_inline.h"
 #include "frame.h"
 
-extern const u32 gSceneExits[];
+extern u32 gSceneExits[];
 
 void Scene_SetActorSpritePriority(struct Actor *object, s32 priority);
 void Animation_ApplyChildValues(struct Actor *object, s32 value);

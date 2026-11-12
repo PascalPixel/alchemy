@@ -1205,9 +1205,10 @@ void LuckyWheels_Run(void) {
             s32 speed;
             s32 angle;
 
+            /* FAKEMATCH(temporary): speed holds the mask before Random16; as
+             * speed = Random16() & 255, 51 of 948 instructions differ in
+             * tbs-en. */
             speed = 255;
-            // Masked in place, the mask assigned first; as Random16() & mask, 3
-            // instructions differ.
             speed &= Random16();
             angle = Random16() & 0xffff;
             spark->x = px(x);

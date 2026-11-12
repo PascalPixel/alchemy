@@ -1,4 +1,5 @@
 #include "types.h"
+#include "task.h"
 #include "ram_buffer.h"
 #include "actor.h"
 #include "effect_sprite.h"
@@ -52,8 +53,6 @@ u32 Random16(void);
 void wait(s32 frames);
 void Event_Wait(s32 frames);
 void Actor_StartScriptFar(struct Actor *object, const void *script);
-void Task_Add(void (*func)(void), s32 order);
-void Task_Remove(void (*func)(void));
 void Actor_ArmCallback(s32 id, s32 value, s32 flags);
 void Vector_AddPolarOffset(s32 distance, s32 angle, s32 *position);
 void BattleEffect_PrepareBufferInterpolation(void);

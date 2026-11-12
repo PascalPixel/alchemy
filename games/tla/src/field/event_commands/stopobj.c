@@ -54,7 +54,6 @@ void Func_080dc954(void);
 void BattleEffect_WaitForArcGroups(void);
 void BattleEffect_EndArcEffect(void);
 void Func_080dbb40(void);
-s32 Task_Remove(void (*func)(void));
 void BattleEffect_UpdateAllEffectSlots(void);
 void Event_NoOp(void);
 

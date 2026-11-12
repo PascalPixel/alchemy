@@ -1,4 +1,5 @@
 #include "types.h"
+#include "task.h"
 #include "ram_buffer.h"
 #include "actor.h"
 #include "effect_sprite.h"
@@ -74,8 +75,6 @@ s32 Trig_Cos(s32 angle);
 void wait(s32 frames);
 void Func_080dbed0(struct Actor *object, s32 x, s32 y, s32 z);
 void Func_080dbf94(struct Actor *object, s32 x, s32 y, s32 z);
-void Task_Add(void (*func)(void), s32 order);
-void Task_Remove(void (*func)(void));
 void BattleEffect_SinkAndShrinkObject(void);
 struct Actor *BattleEffect_SpawnScatterParticle(s32 x, s32 y, s32 z);
 s32 Func_080ce31c(s32 kind);

@@ -1,4 +1,5 @@
 #include "types.h"
+#include "task.h"
 #include "system.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -646,8 +647,6 @@ struct CloakCaster {
   u8 unk54[0x18];
   void (*hook)(void);
 };
-
-void Task_Remove(void (*func)(void));
 
 #define SE_CLOAK_END 154
 

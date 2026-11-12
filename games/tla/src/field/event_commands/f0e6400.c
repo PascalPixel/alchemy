@@ -1,4 +1,5 @@
 #include "types.h"
+#include "task.h"
 #include "ram_buffer.h"
 #include "actor.h"
 #include "effect_sprite.h"
@@ -289,8 +290,6 @@ s32 Resource_FindFreeEntry(void);
 s32 BattleEffect_GetObjectDepth(struct Actor *object);
 s32 BattleEffect_GetObjectPriority(struct Actor *object);
 void Camera_WorldToScreen(s32 *position);
-void Task_Add(void (*func)(void), s32 order);
-void Task_Remove(void (*func)(void));
 s32 Func_080ce31c(s32 kind);
 #include "battle.h"
 #include "event_work.h"

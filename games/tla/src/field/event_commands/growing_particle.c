@@ -2,6 +2,7 @@
 /// A sprite particle that grows as it drifts, and Func_080e4730, which sets up
 /// 64 of them as a dust puff.
 #include "types.h"
+#include "task.h"
 #include "effect_sprite.h"
 #include "fixed_math.h"
 
@@ -64,7 +65,6 @@ extern u8 Data_02000452;
 void Func_080dc954(void);
 void Actor_SetOthersPaused(struct Actor *excludedObject, s32 groupMode,
                            s32 action);
-s32 Task_Remove(void (*func)(void));
 void Func_080e42d4(void);
 void *Resource_GetTableEntry(s32 resourceId);
 extern char ResourceId_DustPuffA;

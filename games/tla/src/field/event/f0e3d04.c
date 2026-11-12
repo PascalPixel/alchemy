@@ -1,4 +1,5 @@
 #include "types.h"
+#include "task.h"
 #include "ram_buffer.h"
 #include "actor.h"
 #include "effect_sprite.h"
@@ -89,8 +90,6 @@ s32 Resource_FindFreeEntry(void);
 #include "resource.h"
 s32 BattleEffect_GetObjectDepth(struct Actor *object);
 s32 BattleEffect_GetObjectPriority(struct Actor *object);
-void Task_Add(void (*func)(void), s32 order);
-void Task_Remove(void (*func)(void));
 void *Func_080ce458(u32 kind, s32 entry, s32 arg);
 void Field_RunPsynergyEvent(void *event, s32 a, s32 b);
 void BattleEffect_PrepareBufferInterpolation(void);

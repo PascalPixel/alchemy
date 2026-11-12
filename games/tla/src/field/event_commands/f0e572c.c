@@ -1,4 +1,5 @@
 #include "types.h"
+#include "task.h"
 #include "ram_buffer.h"
 #include "actor.h"
 #include "effect_sprite.h"
@@ -64,7 +65,6 @@ s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
 void wait(s32 frames);
 s32 Task_Add(void (*func)(void), s32 order);
-void Task_Remove(void (*func)(void));
 s32 Func_080ce31c(s32 kind);
 void *Func_080ce458(u32 kind, s32 entry, s32 arg);
 void Field_RunPsynergyEvent(void *event, s32 a, s32 b);

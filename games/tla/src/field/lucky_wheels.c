@@ -3,6 +3,7 @@
 /// in the order it has in the ROM.
 
 #include "types.h"
+#include "task.h"
 #include "io_reg.h"
 #include "main_routine_work.h"
 #include "system.h"
@@ -1120,7 +1121,6 @@ void HeapSlot_Release(s32 slot);
 void Resource_ReservedNoOp(s32 id);
 void Task_ResetAll(void);
 s32 Task_Add(void (*func)(void), s32 priority);
-void Task_Remove(void (*func)(void));
 s32 Resource_FarCall00C(s32 slot, s32 a, s32 b, s32 c, s32 d);
 void WindowSystem_InitFieldFar(void);
 void Func_081b336c(void);

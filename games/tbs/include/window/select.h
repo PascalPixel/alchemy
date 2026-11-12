@@ -31,9 +31,12 @@ struct SelectionSprite {
 struct SelectionNode {
   struct SelectionNode *previous; ///< the icon before it in its row
   struct SelectionNode *next;     ///< the icon after it in its row
-  u16 base;      ///< the entry's id, as listed in SelectionMenuWork.bases
-  u16 kind;      ///< the entry's kind, as listed in SelectionMenuWork.kinds; 0
-                 ///< free
+  /// The entry's number within its kind, as listed in SelectionMenuWork.bases;
+  /// for an arrow, the frames left of its nudge after a scroll.
+  u16 base;
+  /// The entry's kind, as listed in SelectionMenuWork.kinds, or ICON_KIND_NONE
+  /// for a free record; for an arrow, TRUE while it shows.
+  u16 kind;
   u16 slot;      ///< VRAM cache slot of its picture
   u16 tile;      ///< first sprite tile of its picture
   s16 x;         ///< screen pixels
@@ -54,13 +57,16 @@ struct SelectionNode {
 /// The selection screen (heap block 18): the row of icons the player picks
 /// from, with arrows at each end and a pointing hand over the chosen target.
 struct SelectionMenuWork {
-  /// The icons; 14 is the pointing hand, whose picture is loaded at setup.
+  /// 0 and 1 the arrows at the row's ends, 2 to 8 the row's icons, 9 to 13 the
+  /// icons chosen so far, 14 the pointing hand, whose picture is loaded at
+  /// setup, and 15 the large icon.
   struct SelectionNode records[16];
   struct AffineTransform transform; ///< a zooming icon's scale
   struct SelectionNode *head;       ///< the first icon of the row
   struct SelectionNode *path;       ///< the icons chosen so far
   struct Window *window;            ///< the window naming the chosen entry
-  /// The listed entries, up to 16 (SelectionMenu_AddEntry).
+  /// The listed entries, up to 16 (SelectionMenu_AddEntry): each one's kind
+  /// (enum IconKind) and its command, item or ability number.
   ///@{
   u16 kinds[16];
   u16 bases[16];
@@ -74,11 +80,18 @@ struct SelectionMenuWork {
   /// list to start again from its first entry.
   u16 cursorIndex;
   u16 verticalScroll; ///< pixels added to the icons' y; 32 at setup
-  u16 status;     ///< 1 shown, 33 while scrolling; counts up each frame drawn
-  u16 pathTop[5]; ///< top, kept for each icon chosen on the path
+  // XXX (no evidence): what the count was for; nothing reads status, so the
+  // game never shows it.
+  /// NODE_STATUS_SCROLLING while the cursor steps, NODE_STATUS_SHOWN after
+  /// (selection.c); each frame drawn adds 1.
+  u16 status;
+  u16 pathTop[5];    ///< top, kept for each icon chosen on the path
   u16 pathCursor[5]; ///< cursorIndex, kept for each icon chosen on the path
-  /// 999 from setup on. While 0, kind 6 icons sit at the top of the screen and
-  /// the window opens there; no TBS code clears it by name.
+  // XXX (no evidence): what was to set locked to 0; nothing in the game writes
+  // 0 to it, so the top placement never shows.
+  /// 999 from setup and once a yes or no window opens, 1 from
+  /// Menu_RunSelectionForValue. While 0, an ICON_KIND_YES_NO row and its window
+  /// sit at the top of the screen instead of the bottom.
   u16 locked;
   u8 unused[42]; ///< no code names it
 };

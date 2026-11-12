@@ -612,8 +612,6 @@ SelectionMenu_GetCursorNode(struct SelectionMenuWork *screen) {
 #define NODE_STATUS_SCROLLING 33
 #define NODE_STATUS_SHOWN 1
 
-#define NODE_KIND_YES_NO 6
-
 #define SELECTION_ROWS 4
 #define ARROW_SCROLL_FRAMES 8
 
@@ -670,7 +668,7 @@ u32 SelectionMenu_RunWithSounds(u32 mode) {
         // On a yes or no row, entry 0 (yes) sounds as a confirm and the
         // other as a cancel.
         result = screen->top + screen->cursorIndex;
-        if (screen->head->kind == NODE_KIND_YES_NO) {
+        if (screen->head->kind == ICON_KIND_YES_NO) {
           if (result == 0)
             Sound_PlayFar(SE_MENU_CONFIRM);
           else
@@ -770,7 +768,7 @@ void SelectionMenu_StepRight(struct SelectionMenuWork *state) {
     end = state->top + state->cursorIndex;
     if (end == state->count) {
       node = state->head;
-      state->records[0].kind = 0;
+      state->records[0].kind = FALSE;
       while (node->next != NULL) {
         node->targetX = state->baseX;
         node->targetY = state->baseY;
@@ -803,15 +801,15 @@ void SelectionMenu_StepRight(struct SelectionMenuWork *state) {
         node = node->next;
         y += 16;
       }
-      state->records[1].kind = 1;
-    } else if (state->cursorIndex == 4 && end + 1 < state->count) {
+      state->records[1].kind = TRUE;
+    } else if (state->cursorIndex == SELECTION_ROWS && end + 1 < state->count) {
       state->cursorIndex--;
-      state->records[1].base = 8;
+      state->records[1].base = ARROW_SCROLL_FRAMES;
       state->top++;
-      SelectionMenu_Scroll(state, 1);
+      SelectionMenu_Scroll(state, TRUE);
       if (state->top + state->cursorIndex + 2 == state->count)
-        state->records[1].kind = 0;
-      state->records[0].kind = 1;
+        state->records[1].kind = FALSE;
+      state->records[0].kind = TRUE;
     }
   } else if (state->cursorIndex == state->count) {
     state->cursorIndex = 0;
@@ -840,19 +838,20 @@ void SelectionMenu_StepLeft(struct SelectionMenuWork *state) {
   if (state->count > 5) {
     if ((state->cursorIndex | state->top) != 0) {
       if (state->cursorIndex == 1 && state->top != 0) {
-        state->records[0].base = 8;
+        state->records[0].base = ARROW_SCROLL_FRAMES;
         state->top--;
-        SelectionMenu_Scroll(state, 0);
+        SelectionMenu_Scroll(state, FALSE);
         if (state->top == 0)
-          state->records[0].kind = 0;
-        state->records[1].kind = 1;
+          state->records[0].kind = FALSE;
+        state->records[1].kind = TRUE;
       } else {
         state->cursorIndex--;
       }
     } else {
       node = state->head;
       i = 64;
-      // kind is reused for the 0; a plain 0 differs.
+      /* FAKEMATCH(temporary): kind holds the 0; as records[1].kind = FALSE,
+       * 28 of 184 instructions differ in tbs-en. */
       kind = 0;
       state->records[1].kind = kind;
       while (node->next != NULL) {
@@ -885,7 +884,7 @@ void SelectionMenu_StepLeft(struct SelectionMenuWork *state) {
         node = node->next;
         i += 16;
       }
-      state->records[0].kind = 1;
+      state->records[0].kind = TRUE;
     }
   } else if (state->cursorIndex != 0) {
     state->cursorIndex--;

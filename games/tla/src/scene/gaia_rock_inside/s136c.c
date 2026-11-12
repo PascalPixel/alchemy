@@ -14,9 +14,6 @@
 // takes a second, shrinking step. Returns 1 while it runs. The same code as
 // overlay 67C's Func_020013bc. The first push goes through Call3 (directly, its
 // offset pointer is set after the angle's load).
-#include "types.h"
-#include "actor.h"
-#include "event_inline.h"
 
 struct Orbiter {
   u8 unk00[8];

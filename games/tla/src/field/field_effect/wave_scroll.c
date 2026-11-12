@@ -13,8 +13,6 @@
 
 extern s16 WAVE_SCROLL_LINES[];
 
-s32 Math_Sine(s32 angle);
-
 void WAVE_SCROLL(void) {
   s16 *line = WAVE_SCROLL_LINES;
   s32 i;

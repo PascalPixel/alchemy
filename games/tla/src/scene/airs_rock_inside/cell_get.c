@@ -4,8 +4,6 @@
 #include "airs_rock_inside.h"
 #include "system.h"
 
-#include "airs_rock_inside.h"
-
 s32 Func_02000690(u32 layer, s32 x, s32 y) {
   struct AirsRockInsideMapWork *map =
       (struct AirsRockInsideMapWork *)Ram_HeapSlots->mapWork;
@@ -71,8 +69,6 @@ void Func_020006cc(struct Actor *object) {
 #include "field_sprite.h"
 #include "graphics/vram_tab.h"
 #include "system/dma.h"
-
-void wait(s32 frames);
 
 /// One step of two paired objects trading places: the effect work's halfword
 /// at 26 names the first, and its partner is the other id of its even and odd

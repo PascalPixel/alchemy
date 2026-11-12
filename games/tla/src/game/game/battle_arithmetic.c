@@ -111,8 +111,6 @@ s32 Battle_CalculateRecovery(s32 power, s32 element, s32 rate) {
   return val >> 16;
 }
 
-s32 Enemy_GetAttackElement(void *state);
-
 /// Returns the element of the unit's equipped weapon (4 for none); an enemy
 /// has no equipment and attacks with its species' element instead.
 s32 Item_GetEquippedElement(s32 id) {
@@ -281,9 +279,6 @@ s32 Battle_IsReviveEffect(s32 effect_id) {
   }
   return 0;
 }
-
-s32 Unit_GetElementLevel(s32 unitId, s32 element);
-u32 Battle_RandomPercent(void);
 
 /// Rolls whether effect `effectId` takes hold on `target`: it fails at once
 /// when there is nothing for it to do; the chance is the base rate, plus three

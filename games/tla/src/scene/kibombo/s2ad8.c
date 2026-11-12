@@ -113,7 +113,6 @@ void Func_02002d64(void) {
 #include "scene_tables.h"
 
 void *HeapSlot_AllocFar(s32 slot, s32 size);
-void HeapSlot_Release(s32 slot);
 void Icon_DrawItem(s32 resource);
 s32 VramCache_Load(u32 slot, u32 size, const void *source);
 

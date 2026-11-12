@@ -3,8 +3,6 @@
 
 #include "airs_rock_inside.h"
 
-#include "airs_rock_inside.h"
-
 extern u8 MsgCheckedThePsynergy[];
 extern s32 gData_02006c10[];
 extern s32 gData_02006d6c[];

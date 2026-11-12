@@ -9,7 +9,6 @@
 #include "main_routine_work.h"
 #include "text/msg_ids.h"
 #include "field_effect.h"
-#include "system/field_effect.h"
 #include "fixed_math.h"
 
 struct Spark {
@@ -401,10 +400,7 @@ void Func_02001d14(void) {
 // destinations (scene 0xb1, entrance 10, and 11 or 12 by the item 0x1c3 and
 // the four flags 0x9bc to 0x9bf) and leaves. The destination setters take s32:
 // as u16 the scene symbol loads through ldrh and the pools break up.
-#include "types.h"
-#include "main_routine_work.h"
 #include "text/msg_ids.h"
-#include "event_inline.h"
 
 extern char SceneId_Ov681Room1;
 

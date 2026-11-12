@@ -30,7 +30,6 @@ void Actor_SetActionById(s32 id, s32 action);
 void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    struct MagmaRockEffectOptions *options);
-void wait(s32 frames);
 void Camera_MoveWithinMapBounds(s32 a, s32 b, s32 c, s32 d);
 void Event_Wait(s32 frames);
 void Map_SetScreenShake(s32 a, s32 b, s32 c);

@@ -4,7 +4,6 @@
 #include "airs_rock_inside.h"
 #include "system.h"
 
-#include "airs_rock_inside.h"
 #include "actor.h"
 
 s32 Func_02005f64(struct FieldActor *object);

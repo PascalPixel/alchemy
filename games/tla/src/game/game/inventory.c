@@ -32,8 +32,6 @@ s32 Item_IsCompatibleWithOwner(s32 unit, s32 item) {
   return Item_CanOwnerEquipDirect(unit, item);
 }
 
-struct ItemDefinition *Item_GetDirect(s32 item_id);
-
 /// Returns an item's equipment group from its type: 1 for types 1, 7 and 10,
 /// 2 for types 2 to 5 and 9, and 0 for any other type.
 s32 Item_GetEquipmentGroup(s32 item_id) {
@@ -245,10 +243,6 @@ s32 PartyInventory_FindOwner(s32 itemId) {
   return -1;
 }
 
-s32 Item_CanOwnerEquipDirect(s32 owner, s32 item);
-void Unit_RefreshPsynergy(s32 owner);
-void Unit_Calculate(s32 owner);
-
 s32 Inventory_Equip(s32 owner, s32 slot) {
   struct OwnerInventoryState *inv = Unit_Get(owner);
   u32 item_id = inv->inventory[slot];
@@ -332,8 +326,6 @@ s32 Inventory_GetEquippedItem(struct OwnerInventoryState *inv, s32 type) {
   }
   return 0;
 }
-
-void Unit_Calculate(s32 owner);
 
 /// Empties an inventory slot outright, closes the inventory up and
 /// recalculates the unit; returns 2, as Inventory_Remove does for a last item.

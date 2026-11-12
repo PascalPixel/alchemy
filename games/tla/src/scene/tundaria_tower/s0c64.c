@@ -5,7 +5,6 @@ void Script_WaitForEventTimeout(struct Actor *actor);
 void Func_02003178(void);
 void Camera_FollowActor(u16 actor, s32 value);
 s32 MapCell_GetAttributes(u32 layer, s32 x, s32 z);
-void wait(s32 frames);
 
 /// The event's object keeps stepping a cell at a time in the direction it was
 /// pushed (its cell against the one Func_02000bfc stored in its action) while

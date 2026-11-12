@@ -23,8 +23,6 @@ extern char ResourceId_WhirlwindTiles;
 extern char ResourceId_WhirlwindMap;
 extern const s32 gData_02004ae0[];
 
-void *Heap_Alloc(s32 size);
-void Heap_Release(void *block);
 void *Resource_GetTableEntry(s32 id);
 void Func_0200479c(void *resource, void *destination);
 void Effect_CircleAndBlink(void);

@@ -59,7 +59,6 @@ struct GlowAnimation {
 extern u8 gField_Tiles64D[];
 
 void *HeapSlot_AllocFar(s32 slot, s32 size);
-void HeapSlot_Release(s32 slot);
 void Func_02002824(void *source, void *destination);
 s32 Resource_FindFreeEntry(void);
 s32 Resource_ResetEntry(u32 slot);

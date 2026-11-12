@@ -15,8 +15,6 @@ struct OwnerGrowthRecord;
 
 extern const struct ElementPreset gData_080c6684[];
 
-struct OwnerGrowthRecord *Character_GetDefinition(s32 index);
-
 /// Each element's value, ten per digit: an enemy's from the preset its record
 /// names, a character's from its djinn counts plus its growth record's bonus.
 s32 Unit_GetElementLevels(s32 record, const u8 *source, s32 output[4]) {
@@ -80,7 +78,6 @@ s32 Enemy_GetAttackElement(void *state) {
   return *(u32 *)((u8 *)table + offset);
 }
 
-extern const struct ElementPreset gData_080c6684[];
 extern struct ElementLevelBonus Data_080c6644[16];
 
 u32 Math_UnsignedMulHigh(u32 a, u32 b);
@@ -134,8 +131,6 @@ void Unit_CalculateBaseElements(s32 owner,
 }
 
 extern const s32 Data_080c6604[4][4];
-
-s32 Unit_GetElementLevels(s32 record, const u8 *source, s32 output[4]);
 
 /// Chooses a character's class: the series comes from its two strongest
 /// elements (or the item that picks one), and the class is the last of that

@@ -27,7 +27,6 @@
 #include "palette_buffers.h"
 
 extern char ResourceId_Data018;
-s32 Resource_DecodeByteLzInRam(const void *source, void *destination);
 
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
     (LANGUAGE == LANGUAGE_ITALIAN)
@@ -90,8 +89,6 @@ s32 Title_RunScrollStep(struct TitleScrollStep *step) {
 }
 
 void PaletteFade_SetCurrent(s32 index, s32 transform);
-s32 Title_WaitOrPress(u32 frames);
-s32 Title_RunScrollStep(struct TitleScrollStep *step);
 void Fade_Wait(void);
 
 #define TITLE_STEP(f, s0, s1, s2, s3, m0, m1, m2, m3)                          \
@@ -233,9 +230,6 @@ s32 Func_081a6154(s32 mode) {
 #define NUMBERED_ROWS 2
 #endif
 
-void PaletteFade_SetCurrent(s32 index, s32 transform);
-s32 Title_WaitOrPress(u32 frames);
-
 s32 Func_081a6638(void) {
   u16 *map;
   u16 tile;
@@ -281,9 +275,6 @@ s32 Func_081a6638(void) {
 #else
 #define FIRST_TILE 64
 #endif
-
-void PaletteFade_SetCurrent(s32 index, s32 transform);
-s32 Title_WaitOrPress(u32 frames);
 
 s32 Func_081a6724(void) {
   u16 *map;
@@ -364,8 +355,6 @@ struct TitleFadeTimers {
   s16 white;
   s16 back;
 };
-
-s32 Title_WaitOrPress(u32 frames);
 
 /// Scrolls the intro's tall picture from one position to another: each step
 /// moves it by the scroll's step and waits its frames, streams in the next map
@@ -515,10 +504,6 @@ extern char ResourceId_Data01D;
 extern char ResourceId_Data01E;
 extern char ResourceId_Data01F;
 
-void *Resource_GetTableEntry(s32 resourceId);
-s32 Resource_DecodeByteLzInRam(const void *source, void *destination);
-void Title_PlaceLogoPiece(s32 tile, s32 x, u32 y);
-
 #define LOAD_LOGO_TILES(id)                                                    \
   {                                                                            \
     u8 *buffer = Data_02026800;                                                \
@@ -633,15 +618,6 @@ extern u8 Data_02019600[];
 extern u8 Data_02017080[];
 extern char ResourceId_IntroLighthousePicture;
 extern char ResourceId_IntroGullSprites;
-
-void *HeapSlot_Alloc(s32 slot, s32 size);
-void HeapSlot_Release(s32 slot);
-void *Resource_GetTableEntry(s32 resourceId);
-s32 Resource_DecodeByteLzInRam(const void *source, void *destination);
-void wait(s32 frames);
-s32 Title_WaitOrPress(u32 frames);
-s32 Func_081a68b4(struct TitleScroll *s);
-void Func_081a6b50(void);
 
 s32 Func_081a6ea0(void) {
   struct TitleScroll scroll;
@@ -803,10 +779,6 @@ done:
 
 void DebugText_Clear(void);
 void VramCache_Reset(void);
-void Func_081a6030(void);
-s32 Func_081a6154(s32 step);
-s32 Func_081a6638(void);
-s32 Func_081a6724(void);
 void Window_LoadGraphics(void);
 
 /// Runs the intro's pictures in turn (Func_081a6154's steps
@@ -880,7 +852,6 @@ extern const u8 gTitle_PromptTiles[];
 
 void Fade_ToWhite(s32 vblanks);
 void Fade_FromWhite(s32 vblanks);
-void Fade_Wait(void);
 void Func_080140d8(void *entry, s32 slot);
 
 /// The title screen: fades to white, shows Title_ScreenPicture on BG2 (its
@@ -1061,12 +1032,8 @@ void Title_NoOpPalette(void) {}
 extern char ResourceId_NintendoLogo;
 
 void Sound_PlayFar(s32 cue);
-void Task_ResetAll(void);
 void Fade_ToBlack(s32 vblanks);
 void Fade_FromBlack(s32 vblanks);
-void Fade_Wait(void);
-void DebugText_Clear(void);
-void Window_LoadGraphics(void);
 
 /// Shows the Nintendo logo with its jingle. With mode 0 it fades in and holds
 /// two seconds; otherwise it waits a second, fades in, holds three seconds and
@@ -1202,12 +1169,6 @@ col:
 // buffer local and `* 1024 + buffer`.
 
 extern char ResourceId_CamelotLogo;
-
-void Fade_ToBlack(s32 vblanks);
-void Fade_FromWhite(s32 vblanks);
-void Fade_Wait(void);
-void DebugText_Clear(void);
-void Window_LoadGraphics(void);
 
 s32 Func_081a76f8(void) {
   s32 result;

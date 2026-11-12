@@ -80,8 +80,6 @@ void Func_020000f4(void) {
    } *)(base))                                                                 \
        ->v)
 
-#include "event_inline.h"
-
 void Func_02000158(void) {
   FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1ac), s32, 0) = 0x100;
   FieldTask_Remove((s32)Func_020001f8);

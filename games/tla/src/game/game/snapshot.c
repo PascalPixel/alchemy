@@ -20,15 +20,9 @@ s32 Func_080b106c(s32 id) {
 }
 #endif
 
-void *Unit_Get(s32 owner);
-void Unit_Calculate(s32 unitId);
-void Unit_UpdateClass(s32 owner);
-struct ItemDefinition *Item_GetDirect(s32 item);
 #if TLA_PATCH_1
 s32 Func_080b106c(s32 item);
 #endif
-void GameFlag_ClearBit(s32 flag);
-void Party_RestoreHpPp(s32 cureConditions);
 
 extern u16 gData_020023c4[];
 extern u16 Data_02000458[];
@@ -78,11 +72,6 @@ void Func_080b1088(void) {
   for (i = 0xe50; i <= 0xe59; i++)
     GameFlag_ClearBit(i);
 }
-
-extern u16 gData_020023c4[];
-
-void Unit_Calculate(s32 owner);
-void GameFlag_ClearBit(s32 flag);
 
 void Func_080b11f8(void) {
   u16 *src = gData_020023c4;

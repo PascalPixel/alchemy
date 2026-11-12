@@ -4,7 +4,6 @@
 #include "game/item.h"
 
 u8 *HeapSlot_AllocFar(s32 slot, s32 size);
-void HeapSlot_Release(s32 slot);
 
 struct ShamanVillageObject *Func_02001fec(void) {
   struct ShamanVillageObject *object =

@@ -423,8 +423,6 @@ extern const u8 gLuckyWheels_TitleLetterTiles[];
 extern const u8 gLuckyWheels_MachineSpriteX[];
 extern const u8 gLuckyWheels_MachineSpriteY[];
 
-u32 Random16(void);
-s32 Trig_Sin(s32 angle);
 s32 PartyInventory_CountItemFar(s32 item);
 void PartyInventory_RemoveFar(s32 item);
 void Text_DrawNumberInWindowFar(s32 value, s32 width, struct Window *window,
@@ -1115,23 +1113,9 @@ typedef void (*DrawRectangle)(void *canvas, const u8 *source, s32 x, s32 y,
                               s32 width, s32 height);
 extern const u16 gLuckyWheels_SparkCellOffsets[];
 
-void *HeapSlot_Alloc(s32 slot, s32 size);
-void *HeapSlot_AllocEwram(s32 slot, s32 size);
-void HeapSlot_Release(s32 slot);
 void Resource_ReservedNoOp(s32 id);
-void Task_ResetAll(void);
 s32 Resource_FarCall00C(s32 slot, s32 a, s32 b, s32 c, s32 d);
 void WindowSystem_InitFieldFar(void);
-void Func_081b336c(void);
-void Func_081b243c(void);
-void Func_081b3294(void);
-void BattleStaging_ProcessPendingTileTransfer(void);
-void Palette_StepTowardResource(s32 resource);
-void Func_081b22b8(s32 x0, s32 y0, s32 x1, s32 y1, s32 color);
-void Palette_DarkenSceneStep(void);
-s32 Trig_Cos(s32 angle);
-s32 Graphics_ScaleRgb555(u16 *source, u16 *destination, s32 level, s32 count);
-void wait(s32 frames);
 
 extern char ResourceId_FarCall00C;
 extern char ResourceId_ParticleSpritesD;

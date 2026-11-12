@@ -3,8 +3,6 @@
 
 #include "airs_rock_inside.h"
 
-#include "airs_rock_inside.h"
-
 s32 Func_02000690(u32 layer, s32 x, s32 y);
 void Func_02005efc(s32 countdown);
 void Actor_ResetAndSetPositionInMode2(s32 actor, s32 x, s32 z);

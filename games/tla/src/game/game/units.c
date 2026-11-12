@@ -152,8 +152,6 @@ struct StatWork {
   s32 unused5c;
 };
 
-s32 __divsi3(s32 numerator, s32 denominator);
-
 #define STAT_DIFF(a, b) ((a) - (b) < 0 ? (b) - (a) : (a) - (b))
 
 void Unit_Calculate(s32 owner) {
@@ -635,14 +633,11 @@ static __inline__ void WaitDma(struct DmaRegisters volatile *channel) {
 }
 
 extern u8 gData_02001000[];
-extern u8 gGameFlagBytes[];
 extern u8 gOwnerStates[];
-extern u32 gFrameWaitCount;
 #ifndef MODERN
 // A current GCC refuses the volatile redeclaration and reads frame.h's.
 extern volatile u8 gAutoSleepEnabled;
 #endif
-extern volatile u16 gIdleFrameCount;
 extern s16 gData_020036d0;
 extern u16 gData_02003860;
 extern const u8 Data_080b1f2c[4][5];
@@ -650,8 +645,6 @@ extern const u8 Data_080b1f2c[4][5];
 void Func_080af7ac(void);
 s32 Party_AddActiveOwner(s32 owner);
 s32 Unit_LearnPsynergy(s32 owner, s32 ability);
-
-u32 Random16(void);
 
 /// Starts a new game's state: clears gMainRoutineWork, the work block, the
 /// flags and the owners by DMA, builds the characters, sets the defaults (the
@@ -767,7 +760,6 @@ void Func_080addf0(void) {
   }
 }
 
-s32 Party_AddActiveOwner(s32 owner);
 s32 Party_RemoveActiveOwner(s32 owner);
 
 void Party_SetLeaderJenna(void) { gMainRoutineWork.currentOwner = 5; }
@@ -778,8 +770,6 @@ void Party_SetLeaderFelix(void) {
   Party_RemoveActiveOwner(5);
   Party_RemoveActiveOwner(6);
 }
-
-void Unit_Calculate(s32 unit);
 
 void Func_080ae118(void) {
   s32 i;
@@ -796,8 +786,6 @@ void Func_080ae118(void) {
   for (i = 0; i < count; i++)
     Unit_Calculate(gMainRoutineWork.activeOwners[i]);
 }
-
-void GameFlag_ClearBit(s32 flag);
 
 /// Restores every party member's HP and PP; with `cureConditions` 1 it also
 /// cures poison and haunting.
@@ -969,8 +957,6 @@ s32 Func_080ae2fc(s32 unit, s32 *element_out, s32 *index_out) {
   return 0;
 }
 
-s32 Func_080ae2fc(s32 unit, s32 *element_out, s32 *index_out);
-
 /// Until the Djinn counts of the active owners are within one, moves the last
 /// Djinni of the owner holding most to the one holding least.
 void Func_080ae358(void) {
@@ -1029,15 +1015,9 @@ s32 FlagBits_Test(u8 *bytes, s32 flag) {
   return (bytes[flag] >> bit) & 1;
 }
 
-s32 FlagBits_Test(u8 *bytes, s32 flag);
 s32 GameFlag_Test(s32 flag);
-void GameFlag_ClearBit(s32 flag);
 void Func_08038348(s32 a, s32 b);
-void *Unit_Get(s32 owner);
-s32 Inventory_Remove(s32 owner, s32 slot);
-void Unit_Calculate(s32 owner);
 void Djinn_ActivateOfferedForParty(void);
-void Party_RestoreHpPp(s32 cureConditions);
 
 extern const u16 Data_080b1284[6];
 
@@ -1118,9 +1098,6 @@ void Func_080ae410(u8 *save, s32 keepSettings) {
   gFrameWaitCount = gMainRoutineWork.playTime;
 }
 
-void Unit_Calculate(s32 unitId);
-void Func_08038348(s32 a, s32 b);
-
 void Func_080ae5fc(u8 *save) {
   struct MainRoutineWork *party = (struct MainRoutineWork *)(save + 0x240);
   struct BattleUnit *units = (struct BattleUnit *)(save + 0x520);
@@ -1159,15 +1136,6 @@ void Func_080ae6c8(s32 item, s32 owner) {
   if (PartyInventory_FindOwner(item) == -1)
     Inventory_AddItem(owner, item);
 }
-
-s32 GameFlag_Test(s32 flag);
-void Djinn_ActivateOfferedForParty(void);
-void Unit_Calculate(s32 unitId);
-void Party_RestoreHpPp(s32 cureConditions);
-void Func_080ae6c8(s32 a, s32 b);
-u32 Random16(void);
-
-extern u8 gData_02001000[];
 
 void Func_080ae6e4(void) {
   s32 i;
@@ -1239,16 +1207,6 @@ void Djinn_AddFoundToOwner(s32 owner, s32 element, s32 djinn) {
   DjinnRecovery_AddStandby(owner, element, djinn);
   GameFlag_SetBit(flag);
 }
-
-s32 GameFlag_Test(s32 flag);
-void GameFlag_ClearBit(s32 flag);
-s32 Party_CountActiveOwners(void);
-s32 Party_AddActiveOwner(s32 owner);
-s32 Party_RemoveActiveOwner(s32 owner);
-void Djinn_AddFoundToOwner(s32 owner, s32 element, s32 djinn);
-s32 Djinn_AddToLeastLoadedOwner(s32 element, s32 djinn);
-void Djinn_ActivateOfferedForParty(void);
-u32 Random16(void);
 
 extern const s16 Data_080b1290[4][7];
 
@@ -1434,8 +1392,6 @@ void Unit_SetPp(struct BattleUnit *unit, s32 pp) {
   Unit_UpdateGauges(unit);
 }
 
-void Unit_UpdateRatios(s32);
-
 /// Adds delta to the HP of unit owner, clamped to 0..maxHp, recomputes its
 /// gauges and returns the new HP.
 s32 Unit_AddHp(s32 owner, s32 delta) {
@@ -1456,8 +1412,6 @@ s32 Unit_AddHp(s32 owner, s32 delta) {
   Unit_UpdateRatios(owner);
   return state->hp;
 }
-
-void Unit_UpdateRatios(s32);
 
 /// Adds delta to the PP of unit owner, clamped to 0..maxPp, recomputes its
 /// gauges and returns the new PP.

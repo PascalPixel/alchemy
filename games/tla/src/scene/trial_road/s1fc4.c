@@ -534,7 +534,6 @@ s32 Func_0200242c(void) {
 // the odd slots hold at least one of the four values in gData_02005be0; the
 // random state is restored after.
 
-extern u32 gRandomState;
 extern const s8 gData_02005be0[4];
 
 /// Deals the Trial Road's stage order from a seed: shuffles 0 to 7 into the

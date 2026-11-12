@@ -4,7 +4,6 @@ extern struct Actor *Data_02004cec;
 
 void Func_02000ab4(void);
 u8 *HeapSlot_AllocFar(s32 slot, s32 size);
-void HeapSlot_Release(s32 slot);
 
 void Func_02000ae4(s32 rise) {
   struct Actor **slot = &Data_02004cec;

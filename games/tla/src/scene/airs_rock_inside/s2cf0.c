@@ -27,8 +27,6 @@ struct ObjectPriorityByte {
 extern char ResourceId_LightningMap;
 extern char ResourceId_LightningTiles;
 extern const u8 gData_02005fd8[];
-void *Heap_Alloc(s32 size);
-void Heap_Release(void *block);
 void Func_02005e14(void);
 void Func_02005e1c(void);
 void Func_02005f2c(s32 skip);
@@ -43,7 +41,6 @@ void Func_02005d5c(struct Actor *object, s32 mode);
 void Func_02005d6c(struct Actor *object, const u8 *script);
 void Actor_SetPartAttribute(struct Actor *object, s32 value);
 void FieldEvent_Wait(s32 frames);
-void wait(s32 frames);
 void Func_02005f0c(s32 a, s32 b);
 s32 Func_02005f04(s32 a, s32 b);
 s32 Func_02005f14(s32 frames);

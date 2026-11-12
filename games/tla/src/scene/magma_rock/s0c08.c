@@ -179,9 +179,6 @@ void Func_02000dc0(struct Actor *object) {
 // side, gives it Func_02000dc0 and faces it along the pair first and first + 1.
 #include "scene_tables.h"
 
-#define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
-#define HALF_AT(base, offset) (*(s16 *)((u8 *)(base) + (offset)))
-
 void Scene_SetActorSpritePriority(struct Actor *object, s32 priority);
 
 void Func_02000ee4(u16 id, s16 first, s16 side) {

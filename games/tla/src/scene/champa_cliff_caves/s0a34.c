@@ -44,7 +44,6 @@ void Func_02003564(void);
 void Func_080d3b28(s32 id, s32 animation);
 void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 x, s32 z);
 void Actor_Jump(s32 actor, s32 speed, s32 frames);
-void Actor_SetSpritePriority(u32 id, s32 variant);
 void Actor_SetSpeedParameters(u32 objectId, s32 speedLimit, s32 acceleration);
 void Actor_OffsetPositionAndResetMotion(u32 objectId, s32 xOffset, s32 zOffset);
 void Sound_Play(s32 cue);

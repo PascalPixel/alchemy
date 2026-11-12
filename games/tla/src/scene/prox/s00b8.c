@@ -92,13 +92,6 @@ void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 void Func_02000280(void) { Djinn_JoinParty(0x14, 0, 0x10); }
 
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-
 void Func_02000290(void) { Djinn_JoinParty(0x18, 1, 0x13); }
 
 #include "../venus_lighthouse/distance.c"

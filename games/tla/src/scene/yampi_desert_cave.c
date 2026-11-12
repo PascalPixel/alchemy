@@ -8,7 +8,6 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
-#include "main_routine_work.h"
 #include "event_work.h"
 #include "event_inline.h"
 
@@ -281,8 +280,6 @@ s32 Func_02000978(u16 *list) {
   return count;
 }
 
-#include "system/io_reg.h"
-
 /// Reads one colour's three channels, red first, stepping p past them. Its
 /// once-only block orders the shifts as the game does; see the note at its use.
 #define READ_COLOR(r, g, b, p)                                                 \
@@ -469,7 +466,6 @@ void Func_02000c44(s32 id, u32 kind, s32 flag, s32 layer) {
 }
 
 #include "battle.h"
-#include "field.h"
 #include "game.h"
 #include "graphics.h"
 #include "lib.h"

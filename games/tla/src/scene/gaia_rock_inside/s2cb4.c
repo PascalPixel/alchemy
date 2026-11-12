@@ -1721,10 +1721,6 @@ typedef struct {
 
 #define gPath ((Unk_Path *)(gData_020023c4 + 0x288))
 
-extern u32 gRandomState;
-void *Heap_AllocEwram(s32 size);
-void Heap_Release(void *buffer);
-
 static __inline__ void *Heap_AllocEwram_(s32 size) {
   /* FAKEMATCH(wrapper): forwarded inline, as scene_call.h describes; as a
    * direct call, 102 of 418 instructions differ in tla-en. */

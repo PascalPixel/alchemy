@@ -19,7 +19,6 @@ void Func_02005f2c(s32 skip);
 void Func_02005f94(s32 cue);
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 void Func_02005d84(void);
-void wait(s32 frames);
 void FieldEvent_Wait(s32 frames);
 s32 Math_Cosine(s32 angle);
 s32 Math_Sine(s32 angle);

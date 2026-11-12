@@ -49,7 +49,6 @@ void Func_02003b08(void) {
 #include "field_sprite.h"
 #include "system/io_reg.h"
 
-void wait(s32 frames);
 void Func_0200062c(s32 layer, s32 x, s32 z, s32 cell);
 void Func_02005d7c(struct Actor *object);
 

@@ -311,7 +311,6 @@ struct OrbitObject {
 void Func_02002180(s32 a, s32 b, s32 c, s32 d);
 void Func_02002170(void);
 u8 *HeapSlot_AllocFar(s32 slot, s32 size);
-void HeapSlot_Release(s32 slot);
 
 static __inline__ void Settlements_Func_02002180(s32 a, s32 b, s32 c, s32 d) {
   Func_02002180(a, b, c, d);

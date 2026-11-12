@@ -5,8 +5,6 @@
 #include "system.h"
 #include "task.h"
 
-#include "airs_rock_inside.h"
-
 void Func_020026c0(void);
 
 void Func_02002770(void) {
@@ -163,8 +161,6 @@ burst:
   Func_02005dcc(0x50000, 0x70000, 0x10000);
   Call3((void (*)())Func_02005dcc, -1, -1, 0xe666);
 }
-
-#include "../../../../games/tla/src/scene/airs_rock_inside/airs_rock_inside.h"
 
 struct AirsRockInsideVector {
   s32 x;

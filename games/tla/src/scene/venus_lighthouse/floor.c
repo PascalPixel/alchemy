@@ -39,11 +39,8 @@ extern const u8 gData_02001dd8[];
 extern u8 gMapCellBuffer[];
 
 struct VenusActor *Actor_GetById(s32 id);
-s32 Party_GetLeaderActor(void);
 void Import_EventStart(void);
 void Import_EventEnd(void);
-void Event_ResolvePendingActions(s32 skip);
-void Event_Wait(s32 frames);
 void Sound_Play(s32 cue);
 void GameFlag_SetBit(s32 flag);
 s32 GameFlag_Test(s32 flag);

@@ -4,8 +4,6 @@
 
 #include "../game_internal.h"
 
-s32 GameFlag_Test(s32);
-
 const u16 *Djinn_GetDefinition(u32 group, u32 index) {
   s32 entry;
 

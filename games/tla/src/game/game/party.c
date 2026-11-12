@@ -35,8 +35,6 @@ struct EnemyRecord {
 extern u8 MsgEnemyName[];
 
 void Message_DecodeRawFar(s32 message, u16 *buffer, s32 length);
-void Unit_CalculateBaseElements(s32 owner, struct BattleElementStats *elements);
-void Unit_Calculate(s32 unitId);
 
 s32 Func_080afbec(s32 unitId, s32 enemyId, s32 suffix) {
   struct BattleUnit *unit;
@@ -112,8 +110,6 @@ s32 Func_080afbec(s32 unitId, s32 enemyId, s32 suffix) {
   return 1;
 }
 
-s32 GameFlag_Test(s32 flag);
-
 s32 Party_CountActiveOwners(void) {
   s32 count;
   s32 i;
@@ -125,9 +121,6 @@ s32 Party_CountActiveOwners(void) {
   }
   return count;
 }
-
-s32 GameFlag_SetBit(s32);
-void GameFlag_ClearBit(s32);
 
 s32 Party_AddActiveOwner(s32 value) {
   s32 count = Party_CountActiveOwners();
@@ -143,8 +136,6 @@ s32 Party_AddActiveOwner(s32 value) {
   gMainRoutineWork.activeOwners[index] = value;
   return count + 1;
 }
-
-void GameFlag_ClearBit(s32);
 
 s32 Party_RemoveActiveOwner(s32 value) {
   s32 count = Party_CountActiveOwners();

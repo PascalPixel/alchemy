@@ -318,7 +318,6 @@ void Func_02000604(void) {
 }
 
 void Func_02000eb4(s32 scene, s32 entrance);
-void Func_02000ecc(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -400,7 +399,6 @@ void Func_02000748(s32 actor) {
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
-s32 Item_AdjustCounter(s32 item, s32 delta);
 void Func_02000ed4(s32 actor, s32 angle);
 void Func_02000edc(s32 actor, s32 angle, s32 frames);
 void Func_02000f04(s32 actor);
@@ -508,8 +506,6 @@ void Func_020009c0(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
 L_02008a06:
   return;
 }
-
-void Func_02000ebc(s32 scene, s32 entrance);
 
 /// Mode 1 places object kind 354 at (x, z) in pixels; mode 2 grows object
 /// kind 252 there from 0x6666 to full size while it turns, then turns it
@@ -647,33 +643,6 @@ void Func_02000ad0(struct Actor *object) {
     }
   }
 }
-
-void Func_02000054(void);
-void Func_02000058(void);
-void Func_02000068(void);
-void Func_02000074(void);
-void Func_02000140(void);
-void Func_02000158(void);
-void Func_02000170(void);
-void Func_0200018c(void);
-void Func_020001e0(void);
-void Func_020001e4(void);
-void Func_02000224(void);
-void Func_0200026c(void);
-void Func_02000330(void);
-void Func_02000444(void);
-void Func_02000454(void);
-void Func_020005b0(void);
-void Func_02000604(void);
-void Func_02000624(void);
-void Func_02000650(void);
-void Func_02000660(void);
-void Func_0200070c(void);
-void Func_02000724(void);
-void Func_02000740(void);
-void Func_02000744(void);
-void Func_0200091c(void);
-void Func_02000924(void);
 
 // clang-format off
 s32 gData_02000f44[] = {

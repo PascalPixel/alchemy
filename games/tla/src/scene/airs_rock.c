@@ -82,7 +82,6 @@ void Func_02000468(struct Unk_02000468 *unk) {
 }
 
 #include "battle.h"
-#include "field.h"
 #include "game.h"
 #include "graphics.h"
 #include "lib.h"
@@ -92,8 +91,6 @@ void Func_02000468(struct Unk_02000468 *unk) {
 #include "scene_tables.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
-
-#include "main_routine_work.h"
 
 extern char SceneId_Ov663Room1;
 extern char SceneId_Ov663Room2;
@@ -144,14 +141,6 @@ void Func_02000548(void) {
   Message_ShowCentered((s32)MsgFieldWindStoneWarning, 1);
   Func_02003bd0();
 }
-#undef FIELD_AT
-
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
 
 s32 Func_02003b70();
 
@@ -174,14 +163,6 @@ void Func_02000568(void) {
   FieldEvent_SetExitRequest(4);
   Func_02003bd0();
 }
-#undef FIELD_AT
-
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
 
 void Func_020005ec(void) {
   s32 t0;
@@ -196,7 +177,6 @@ void Func_020005ec(void) {
   }
   Func_02003bd0();
 }
-#undef FIELD_AT
 
 s32 Func_02000384();
 
@@ -229,13 +209,6 @@ void Func_02000620(void) {
   Func_02003bd0();
 }
 
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-
 void Func_020006d4(void) {
   s32 t0;
 
@@ -247,7 +220,6 @@ void Func_020006d4(void) {
   }
   Func_02003bd0();
 }
-#undef FIELD_AT
 
 void Func_02003b28(struct Actor *object, s32 mode);
 void Func_02003c98(void);
@@ -300,27 +272,11 @@ s32 *Func_020007e4(void) {
   return gData_0200459c;
 }
 
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-
 void Func_02000824(void) { Event_ResolvePendingActions(0); }
-#undef FIELD_AT
-
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
 
 void Func_02000830(void) {
   FIELD_AT(((s32)Ram_HeapSlots->effectWork + 0x34), u8, 0) = 1;
 }
-#undef FIELD_AT
 
 #include "field_event.h"
 #include "iwram_call.h"
@@ -1163,13 +1119,6 @@ void Func_02001cc8(void) {
   Func_02003bd0();
 }
 
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-
 s32 Func_02003ca8();
 extern s16 gData_02003e4c[];
 
@@ -1179,7 +1128,6 @@ void Func_02001da8(void) {
   Func_02003ca8((s32)((u8 *)gData_02003e4c));
   Func_02003bd0();
 }
-#undef FIELD_AT
 
 void Func_02003c90(void *sprite, void *source);
 extern u8 gData_02003dfc[];
@@ -1984,13 +1932,6 @@ s32 Func_02002ca0(void) {
   }
   return 0;
 }
-
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
 
 extern u8 MsgCurePoison2[];
 

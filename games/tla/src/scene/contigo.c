@@ -1840,8 +1840,6 @@ void Func_020036f0(void) {
   }
 }
 
-#define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
-
 extern const u8 gData_0200469c[];
 extern const u8 gData_020046ac[];
 extern const u8 gData_020046d8[];

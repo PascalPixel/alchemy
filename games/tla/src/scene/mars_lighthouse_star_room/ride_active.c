@@ -99,7 +99,6 @@ struct Work {
 extern u8 gData_02004774[];
 void Func_020041dc(struct Actor *object, const void *script);
 s32 Math_Cosine(s32 angle);
-void ResourceMetadata_ClearRecord(void *record);
 s32 Resource_ResetEntry(u32 slot);
 
 #define WORK ((struct Work *)(gData_020023c4 + 0x188))

@@ -29,7 +29,6 @@ void Func_02002f80(struct Actor *object, s32 mode);
 void Actor_SetAnimationSpeed(struct Actor *object, s32 value);
 void Script_WaitForEventTimeout(struct Actor *actor);
 s32 Func_02003028(s32 *a, s32 aRadius, s32 *b, s32 bRadius);
-void wait(s32 frames);
 
 void Func_0200189c(void) {
   struct Actor *object;

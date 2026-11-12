@@ -251,11 +251,6 @@ struct OwnerName {
 extern u8 MsgCharacterName[];
 extern s32 gData_080b2340[];
 
-s32 Inventory_AddItem(s32 owner, s32 item);
-
-void Message_DecodeRawUnboundedFar(s32, u16 *);
-void Unit_Calculate(s32 owner);
-
 void Func_080af7ac(void) {
   struct OwnerInventoryState *state;
   struct OwnerStart *start;
@@ -380,12 +375,6 @@ struct LevelUpWork {
   u8 unused0c[0x20];
 };
 
-void Heap_Release(void *buffer);
-u32 Unit_GetExperienceForLevel(s32 owner, s32 level);
-
-void Unit_Calculate(s32 owner);
-u32 Random16(void);
-s32 __divsi3(s32 numerator, s32 denominator);
 u32 __udivsi3(u32 numerator, u32 denominator);
 
 struct LevelUpResult *Owner_LevelUp(s32 owner, struct LevelUpResult *res) {
@@ -460,9 +449,6 @@ struct LevelUpResult *Owner_LevelUp(s32 owner, struct LevelUpResult *res) {
 }
 
 struct LevelUpResult;
-struct LevelUpResult *Owner_LevelUp(s32 owner, struct LevelUpResult *result);
-void Unit_Calculate(s32);
-u32 Unit_GetExperienceForLevel(s32 owner, s32 level);
 
 /// Levels the character up once if its experience reaches the next level.
 /// Returns `gains` filled with the gains, or NULL. Called after a battle by

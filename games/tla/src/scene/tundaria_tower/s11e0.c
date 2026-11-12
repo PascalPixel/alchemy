@@ -11,8 +11,6 @@
 void Func_02003048(void);
 void Func_02003050(void);
 void Func_02002fa8(void);
-void Event_StartScreenTransition(void);
-void Event_WaitTransitionFrames(void);
 s32 Math_Cosine(s32 angle);
 void Effect_AdvanceMotion(struct FieldEffect *effect);
 void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,

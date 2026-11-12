@@ -121,9 +121,9 @@ s32 Title_Run(void) {
     return 0;
   }
   // The stub does nothing with its argument (system/system/start_up.c), the
-  // far-call bank the logo and intro calls below go through. XXX (no
-  // evidence): what the call once did; the stub is empty in every edition, so
-  // only an earlier build of the game would show.
+  // far-call bank the logo and intro calls below go through.
+  // XXX (no evidence): what the call once did; the stub is empty in every
+  // edition, so only an earlier build of the game would show.
   Stub_NoOpHook((s32)&ResourceId_TitleFarCalls);
   if (gMainRoutineWork.entrance == TITLE_AFTER_RUN) {
     for (;;) {

@@ -13,7 +13,7 @@ const u8 gLuckyDice_LabelCounts[] = {5, 4, 3, 3};
 /// The first tile of each kind of result's lettering. A sprite's tile is the
 /// value * 8 + 152, then 32 more for each sprite across, so the four
 /// letterings lie one after another. Outside Japanese four more bytes
-/// follow, none of which ☀️ reads, resultKind being 0 to 3.
+/// follow, none of which the game reads, resultKind being 0 to 3.
 const u8 gLuckyDice_LabelTiles[] = {
     28,  48,  64, 76,
 #if (LANGUAGE != LANGUAGE_JAPANESE)

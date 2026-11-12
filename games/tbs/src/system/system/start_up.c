@@ -63,7 +63,7 @@ void System_Initialize(void) {
 }
 
 /// Unused: waits out frames forever; the frame loop still runs the
-/// tasks. Nothing in ☀️ calls it.
+/// tasks. Nothing in the game calls it.
 UNUSED void System_IdleForever(void) {
   for (;;) {
     (void)gKeysPressed;

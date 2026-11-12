@@ -33,7 +33,8 @@ void Task_ResetAll(void) {
   gTasksInitialized = 1;
 }
 
-/// Unused: copies `byteCount` bytes a word at a time. Nothing in ☀️ calls it.
+/// Unused: copies `byteCount` bytes a word at a time. Nothing in the game calls
+/// it.
 UNUSED void Task_CopyWords(u32 *destination, u32 *source, u32 byteCount) {
   u32 index;
   byteCount >>= 2;
@@ -73,7 +74,7 @@ void Task_Sort(void) {
 }
 
 /// Unused: returns the table index of the task running `func`, or -1.
-/// Nothing in ☀️ calls it.
+/// Nothing in the game calls it.
 UNUSED s32 Task_Find(TaskFunc func) {
   s32 result;
   struct Task *task;
@@ -101,7 +102,7 @@ UNUSED s32 Task_Find(TaskFunc func) {
 /// TASK_PASS_FRAME or TASK_PASS_VBLANK's high byte with a rank in
 /// the low byte. The index is the slot written before this call's own sort,
 /// which may already have moved the task; a few callers return it, but nothing
-/// in ☀️ tests it. A task stays until Task_Remove or Task_ResetAll.
+/// in the game tests it. A task stays until Task_Remove or Task_ResetAll.
 s32 Task_Add(TaskFunc func, s32 order) {
   u32 savedInterruptState;
   s32 index;
@@ -143,10 +144,10 @@ s32 Task_Add(TaskFunc func, s32 order) {
   return index;
 }
 
-/// Unused: an empty routine; nothing in ☀️ calls it.
+/// Unused: an empty routine; nothing in the game calls it.
 UNUSED void Task_Idle(void) {}
 
-/// Unused: an empty routine; nothing in ☀️ calls it.
+/// Unused: an empty routine; nothing in the game calls it.
 UNUSED void Task_Empty(void) {}
 
 /// Removes the task running `func`: clears its routine and gives it

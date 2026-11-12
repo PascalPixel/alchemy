@@ -321,7 +321,7 @@ void FieldPsynergy_StopMindReadWaveFar(void);
 /// Stops BG0's line scroll and restores BG palette 15.
 void FieldPsynergy_RestoreMindReadPaletteFar(void);
 /// Returns whether the scene has a Psynergy trigger of this group for what the
-/// leader faces; nothing in ☀️ calls it.
+/// leader faces; nothing in the game calls it.
 s32 Scene_HasFieldPsynergyTriggerFar(s32 group);
 /// Returns whether the scene has an event for this item and what the leader
 /// faces; the item menu then closes and the item is used on the field.

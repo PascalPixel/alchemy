@@ -24,7 +24,7 @@ enum SceneType {
 enum HazardMode {
   /// The distance the leader walks on CELL_BEHAVIOR_DESERT_SAND ground.
   HAZARD_COUNT_ON_CELLS = 0,
-  /// One each frame the field sequence runs; no ☀️ code sets it.
+  /// One each frame the field sequence runs; no code in the game sets it.
   HAZARD_COUNT_FRAMES = 1
 };
 

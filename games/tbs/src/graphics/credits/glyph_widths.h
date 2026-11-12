@@ -1,7 +1,7 @@
 /// @file
 /// The staff credits font's advance widths in pixels, character codes 32
-/// to 127, beside the font (font.png). ☀️'s credits.c and ⚓️'s
-/// slides.c include it after their line tables.
+/// to 127, beside the font (font.png). The Broken Seal's credits.c
+/// and The Lost Age's slides.c include it after their line tables.
 // clang-format off
 #include "edition.h"
 const u8 gCredits_GlyphWidths[96] = {

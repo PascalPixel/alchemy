@@ -1,3 +1,6 @@
+/// @file
+/// Finding a sprite animation's metadata row.
+
 #include "module/system/sprite_metadata.h"
 #include "sprite_metadata.h"
 

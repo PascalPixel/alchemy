@@ -774,57 +774,45 @@ static inline s32 Unit_ClampGaugeValue(s32 value, s32 maximum) {
   return result;
 }
 
-/// Sets the unit's HP, clamped to 0..hpMax, and recomputes its HP and PP
-/// gauges. Called by BattleObject_DestroyTemporaryObject.
-void Unit_SetHp(struct Unit *unit, s32 hp) {
-  s32 clamped;
+/// Each sets the unit's HP or PP, clamped to 0 and its maximum, and recomputes
+/// its HP and PP gauges.
+#define UNIT_DEFINE_SET(name, field, maximum)                                  \
+  void name(struct Unit *unit, s32 value) {                                    \
+    s32 clamped;                                                               \
+                                                                               \
+    clamped = Unit_ClampGaugeValue(value, unit->maximum);                      \
+    unit->field = clamped;                                                     \
+    Unit_UpdateGauges(unit);                                                   \
+  }
 
-  clamped = Unit_ClampGaugeValue(hp, unit->hpMax);
-  unit->hp = clamped;
-  Unit_UpdateGauges(unit);
-}
+/// Called by BattleObject_DestroyTemporaryObject.
+UNIT_DEFINE_SET(Unit_SetHp, hp, hpMax)
+/// Only GAME.S's bare veneer reaches it; nothing calls it by name.
+UNIT_DEFINE_SET(Unit_SetPp, pp, ppMax)
 
-/// Sets the unit's PP, clamped to 0..ppMax, and recomputes its HP and PP
-/// gauges. Only GAME.S's bare veneer reaches it; nothing calls it by name.
-void Unit_SetPp(struct Unit *unit, s32 pp) {
-  s32 clamped;
+/// Each adds delta to the HP or PP of unit unitId, clamped to 0 and its
+/// maximum, recomputes its gauges and returns the new value, as `type`.
+#define UNIT_DEFINE_ADD(type, name, field, maximum)                            \
+  type name(s32 unitId, s32 delta) {                                           \
+    struct Unit *unit = Unit_Get(unitId);                                      \
+    s32 current = unit->field;                                                 \
+    s32 limit = unit->maximum;                                                 \
+    s32 value = current + delta;                                               \
+    s32 result;                                                                \
+                                                                               \
+    result = Unit_ClampGaugeValue(value, limit);                               \
+    unit->field = result;                                                      \
+    Unit_RecalculateGauges(unitId);                                            \
+    return unit->field;                                                        \
+  }
 
-  clamped = Unit_ClampGaugeValue(pp, unit->ppMax);
-  unit->pp = clamped;
-  Unit_UpdateGauges(unit);
-}
+/// Called by battle's turn end, poison and regeneration, and by the field's
+/// damage floors and status damage.
+UNIT_DEFINE_ADD(s32, Unit_AddHp, hp, hpMax)
+/// Called when Psynergy is used in the field, in battle and from the menu, by
+/// PP recovery at the end of a battle turn, and by the debug menu.
+UNIT_DEFINE_ADD(s16, Unit_AddPp, pp, ppMax)
 
-/// Adds delta to the HP of unit unitId, clamped to 0..hpMax, recomputes its
-/// gauges and returns the new HP. Called by battle's turn end, poison and
-/// regeneration, and by the field's damage floors and status damage.
-s32 Unit_AddHp(s32 unitId, s32 delta) {
-  struct Unit *unit = Unit_Get(unitId);
-  s32 currentHp = unit->hp;
-  s32 maximumHp = unit->hpMax;
-  s32 value = currentHp + delta;
-  s32 result;
-
-  result = Unit_ClampGaugeValue(value, maximumHp);
-  unit->hp = result;
-  Unit_RecalculateGauges(unitId);
-  return unit->hp;
-}
-
-/// Adds delta to the PP of unit unitId, clamped to 0..ppMax, recomputes its
-/// gauges and returns the new PP. Called when Psynergy is used in the field,
-/// in battle and from the menu, by PP recovery at the end of a battle turn,
-/// and by the debug menu.
-s16 Unit_AddPp(s32 unitId, s32 delta) {
-  struct Unit *unit = Unit_Get(unitId);
-  s32 currentPp = unit->pp;
-  s32 maximumPp = unit->ppMax;
-  s32 value = currentPp + delta;
-  s32 result;
-
-  result = Unit_ClampGaugeValue(value, maximumPp);
-  unit->pp = result;
-  Unit_RecalculateGauges(unitId);
-  return unit->pp;
-}
-
+#undef UNIT_DEFINE_SET
+#undef UNIT_DEFINE_ADD
 #undef UNIT_STAT_DIFF

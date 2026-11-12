@@ -4,23 +4,29 @@
 
 #include "../battle_effect_internal.h"
 
+/// Each plays the flurry mode `basic`, `stronger` or `strongest` as the
+/// effect's variant (enum EffectVariant) says.
+#define FLURRY_DEFINE_BY_VARIANT(name, basic, stronger, strongest)             \
+  void name(struct BattleEffectParams *args) {                                 \
+    if (args->variant == EFFECT_VARIANT_BASIC) {                               \
+      BattleEffect_RunFlurry(args, basic);                                     \
+      return;                                                                  \
+    }                                                                          \
+    if (args->variant == EFFECT_VARIANT_STRONGER) {                            \
+      BattleEffect_RunFlurry(args, stronger);                                  \
+      return;                                                                  \
+    }                                                                          \
+    BattleEffect_RunFlurry(args, strongest);                                   \
+  }
+
 /// The user strikes the first target once, twice or three times as the
 /// variant grows with a double or triple blow, and each strike fills the
 /// canvas with light.
 ///
 /// Abilities: Gust (BATTLE_EFFECT_GUST); Rapid Smash, Sonic Smash, Slice
 /// (BATTLE_EFFECT_RAPID_SMASH).
-void BattleEffect_RunGust(struct BattleEffectParams *args) {
-  if (args->variant == EFFECT_VARIANT_BASIC) {
-    BattleEffect_RunFlurry(args, FLURRY_GUST);
-    return;
-  }
-  if (args->variant == EFFECT_VARIANT_STRONGER) {
-    BattleEffect_RunFlurry(args, FLURRY_GUST_DOUBLE);
-    return;
-  }
-  BattleEffect_RunFlurry(args, FLURRY_GUST_TRIPLE);
-}
+FLURRY_DEFINE_BY_VARIANT(BattleEffect_RunGust, FLURRY_GUST, FLURRY_GUST_DOUBLE,
+                         FLURRY_GUST_TRIPLE)
 
 /// The user strikes the first target five times.
 ///
@@ -57,17 +63,9 @@ void BattleEffect_RunFreebiteRush(struct BattleEffectParams *args) {
 ///
 /// Abilities: Flying Attack (BATTLE_EFFECT_FLYING_ATTACK); Swift Strike
 /// (BATTLE_EFFECT_SWIFT_STRIKE).
-void BattleEffect_RunFlyingAttack(struct BattleEffectParams *args) {
-  if (args->variant == EFFECT_VARIANT_BASIC) {
-    BattleEffect_RunFlurry(args, FLURRY_FLYING_ATTACK);
-    return;
-  }
-  if (args->variant == EFFECT_VARIANT_STRONGER) {
-    BattleEffect_RunFlurry(args, FLURRY_FLYING_ATTACK_DOUBLE);
-    return;
-  }
-  BattleEffect_RunFlurry(args, FLURRY_FLYING_ATTACK_TRIPLE);
-}
+FLURRY_DEFINE_BY_VARIANT(BattleEffect_RunFlyingAttack, FLURRY_FLYING_ATTACK,
+                         FLURRY_FLYING_ATTACK_DOUBLE,
+                         FLURRY_FLYING_ATTACK_TRIPLE)
 
 /// The bytes of a gFlurry_Styles row, one row a mode.
 enum FlurryColumn {
@@ -323,3 +321,4 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
 
 #undef FLURRY_FLASH_OFFSETS
 #undef FLURRY_WAVE_OFFSETS
+#undef FLURRY_DEFINE_BY_VARIANT

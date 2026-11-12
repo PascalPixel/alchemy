@@ -252,42 +252,30 @@ enum {
   MINIGAME_PALETTE_BYTES = 64  ///< palettes 14 and 15: 2 x 16 colours x 2 bytes
 };
 
-/// Runs the dice sequence (Lucky Dice), preserving BG palettes 14 and 15 in a
-/// 64-byte Heap_Alloc copy freed afterwards. Returns the minigame's result, 0,
-/// for Scene_ReturnFromSequence.
-static __inline__ s32 MainRoutine_RunDice(s32 entrance) {
-  void *palette = (void *)&BG_PLTT_COLOR(MINIGAME_PALETTE_FIRST, 0);
-  void *saved = Heap_Alloc(MINIGAME_PALETTE_BYTES);
-  s32 result;
+/// Each runs a minigame's sequence, preserving BG palettes 14 and 15 in a
+/// 64-byte Heap_Alloc copy freed afterwards, and returns its start routine's
+/// result, 0, for Scene_ReturnFromSequence.
+#define MAIN_ROUTINE_DEFINE_RUN_MINIGAME(name, start)                          \
+  static __inline__ s32 name(s32 entrance) {                                   \
+    void *palette = (void *)&BG_PLTT_COLOR(MINIGAME_PALETTE_FIRST, 0);         \
+    void *saved = Heap_Alloc(MINIGAME_PALETTE_BYTES);                          \
+    s32 result;                                                                \
+                                                                               \
+    Dma_Set(palette, saved,                                                    \
+            (DMA_ENABLE | DMA_32BIT) << 16 | (MINIGAME_PALETTE_BYTES / 4),     \
+            REG_DMA3);                                                         \
+    result = start(entrance);                                                  \
+    Dma_Set(saved, palette,                                                    \
+            (DMA_ENABLE | DMA_32BIT) << 16 | (MINIGAME_PALETTE_BYTES / 4),     \
+            REG_DMA3);                                                         \
+    Heap_Release(saved);                                                       \
+    return result;                                                             \
+  }
 
-  Dma_Set(palette, saved,
-          (DMA_ENABLE | DMA_32BIT) << 16 | (MINIGAME_PALETTE_BYTES / 4),
-          REG_DMA3);
-  result = LuckyDice_StartFar(entrance);
-  Dma_Set(saved, palette,
-          (DMA_ENABLE | DMA_32BIT) << 16 | (MINIGAME_PALETTE_BYTES / 4),
-          REG_DMA3);
-  Heap_Release(saved);
-  return result;
-}
-
-/// Runs the slots sequence (Lucky Wheels), preserving BG palettes 14 and 15 as
-/// MainRoutine_RunDice does. Returns LuckyWheels_Start's result, 0.
-static __inline__ s32 MainRoutine_RunSlots(s32 entrance) {
-  void *palette = (void *)&BG_PLTT_COLOR(MINIGAME_PALETTE_FIRST, 0);
-  void *saved = Heap_Alloc(MINIGAME_PALETTE_BYTES);
-  s32 result;
-
-  Dma_Set(palette, saved,
-          (DMA_ENABLE | DMA_32BIT) << 16 | (MINIGAME_PALETTE_BYTES / 4),
-          REG_DMA3);
-  result = LuckyWheels_StartFar(entrance);
-  Dma_Set(saved, palette,
-          (DMA_ENABLE | DMA_32BIT) << 16 | (MINIGAME_PALETTE_BYTES / 4),
-          REG_DMA3);
-  Heap_Release(saved);
-  return result;
-}
+/// Runs the dice sequence (Lucky Dice).
+MAIN_ROUTINE_DEFINE_RUN_MINIGAME(MainRoutine_RunDice, LuckyDice_StartFar)
+/// Runs the slots sequence (Lucky Wheels).
+MAIN_ROUTINE_DEFINE_RUN_MINIGAME(MainRoutine_RunSlots, LuckyWheels_StartFar)
 
 /// The main routine: runs one sequence after another and never returns.
 /// mode, an enum GameStart, chooses the first scene. Each pass resets the
@@ -472,3 +460,4 @@ void Scene_PlayMusic(void) { Sound_PlayFar(gMainRoutineWork.sceneMusic); }
 #undef EXIT_TABLE_END
 #undef EXIT_ID_ANY
 #undef MAP_HEADER
+#undef MAIN_ROUTINE_DEFINE_RUN_MINIGAME

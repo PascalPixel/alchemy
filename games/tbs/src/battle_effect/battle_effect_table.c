@@ -43,6 +43,10 @@ struct BattleEffectParams;
 #define FLASH_FADE_OFFSETS {5, 5, 4, 3, 2, 1}
 /// The flips a glint may be drawn in: none, and mirrored each way and both.
 #define GLINT_FLIPS {0, COMPOSITE_FLIP_X, COMPOSITE_FLIP_Y, COMPOSITE_FLIP}
+/// The counter reveal sheet's seven pictures, which Condemn and Mortal Danger
+/// draw at the same places: an x for each side of the field, and a y.
+#define COUNTER_REVEAL_X {{10, 30, 0, 0, 0, 6, 52}, {60, 0, 0, 0, 0, 0, 0}}
+#define COUNTER_REVEAL_Y {0, 20, 2, 2, 34, 64, 68}
 
 // Shared cell layouts, read by many parts.
 
@@ -257,12 +261,9 @@ u16 gLobbedShells_ShardOffsets[] = {0,    108,  228,  336,  444,  552,
 
 /// Where each stage of the panel is drawn: seven x positions for each side of
 /// the field, and seven y positions (above the swing) for both sides.
-u8 gCondemn_PanelX[][7] = {
-    {10, 30, 0, 0, 0, 6, 52},
-    {60, 0, 0, 0, 0, 0, 0},
-};
+u8 gCondemn_PanelX[][7] = COUNTER_REVEAL_X;
 u8 gCondemn_PanelY[][7] = {
-    {0, 20, 2, 2, 34, 64, 68},
+    COUNTER_REVEAL_Y,
     {0, 9, 4, 4, 4, 4, 4},
 };
 
@@ -1007,11 +1008,8 @@ u8 gCastingImpact_GlintDrawFlags[] = GLINT_FLIPS;
 // Where each picture of the counter reveal is drawn: seven x positions for
 // each side of the field, and seven y positions, from the target's height, for
 // both.
-u8 gCastingImpact_ImageX[][7] = {
-    {10, 30, 0, 0, 0, 6, 52},
-    {60, 0, 0, 0, 0, 0, 0},
-};
-u8 gCastingImpact_ImageY[] = {0, 20, 2, 2, 34, 64, 68};
+u8 gCastingImpact_ImageX[][7] = COUNTER_REVEAL_X;
+u8 gCastingImpact_ImageY[] = COUNTER_REVEAL_Y;
 /// The four ice chip cells, 8x8.
 u16 gCastingImpact_IceChipCells[] = {2308, 2372, 2436, 2500, 0};
 

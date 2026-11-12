@@ -23,35 +23,27 @@ s32 Terrain_GetFlatHeight(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
   return CURVE_HEIGHT_FIXED(samples[0]);
 }
 
-/// A slope along x: from sample 0 at x = 0 towards sample 1 at x = 16.
-s32 Terrain_GetSlopeXHeight(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
-  const s8 *samples = (const s8 *)heightBytes;
-  s32 startHeight;
-  s32 heightDelta;
-
-  startHeight = CURVE_HEIGHT_FIXED(samples[0]);
-  heightDelta = (CURVE_HEIGHT_FIXED(samples[1]) - startHeight) * pixelX;
-  // Round towards zero, as dividing by 16 would.
-  if (heightDelta < 0) {
-    heightDelta += CURVE_FULL_STEPS - 1;
+/// The slopes along one axis: from sample 0 where `along`, the pixel's
+/// coordinate on that axis, is 0, towards sample 1 where it is 16, rounded
+/// towards zero as dividing by 16 would.
+#define TERRAIN_DEFINE_SLOPE(name, along)                                      \
+  s32 name(const u8 *heightBytes, s32 pixelX, s32 pixelY) {                    \
+    const s8 *samples = (const s8 *)heightBytes;                               \
+    s32 startHeight;                                                           \
+    s32 heightDelta;                                                           \
+                                                                               \
+    startHeight = CURVE_HEIGHT_FIXED(samples[0]);                              \
+    heightDelta = (CURVE_HEIGHT_FIXED(samples[1]) - startHeight) * (along);    \
+    if (heightDelta < 0) {                                                     \
+      heightDelta += CURVE_FULL_STEPS - 1;                                     \
+    }                                                                          \
+    return startHeight + (heightDelta >> 4);                                   \
   }
-  return startHeight + (heightDelta >> 4);
-}
 
-/// A slope along y: from sample 0 at y = 0 towards sample 1 at y = 16.
-s32 Terrain_GetSlopeYHeight(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
-  const s8 *samples = (const s8 *)heightBytes;
-  s32 startHeight;
-  s32 heightDelta;
-
-  startHeight = CURVE_HEIGHT_FIXED(samples[0]);
-  heightDelta = (CURVE_HEIGHT_FIXED(samples[1]) - startHeight) * pixelY;
-  // Round towards zero, as dividing by 16 would.
-  if (heightDelta < 0) {
-    heightDelta += CURVE_FULL_STEPS - 1;
-  }
-  return startHeight + (heightDelta >> 4);
-}
+/// A slope along x.
+TERRAIN_DEFINE_SLOPE(Terrain_GetSlopeXHeight, pixelX)
+/// A slope along y.
+TERRAIN_DEFINE_SLOPE(Terrain_GetSlopeYHeight, pixelY)
 
 /// A step across the diagonal x + y = 15: sample 0 before it, sample 1 after
 /// it and the higher of the two on it.
@@ -193,27 +185,23 @@ s32 Terrain_GetRoundedSquareHeight(const u8 *heightBytes, s32 x, s32 y) {
                         gTerrain_LerpWeightTable[x + (y * CURVE_FULL_STEPS)]);
 }
 
-/// A step along x: sample 0 for x < 8, sample 1 from x = 8.
-s32 Terrain_GetStepXHeight(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
-  const s8 *samples = (const s8 *)heightBytes;
-  s32 heightSample;
-  if ((u32)pixelX < CURVE_HALF_STEPS)
-    heightSample = samples[0];
-  else
-    heightSample = samples[1];
-  return CURVE_HEIGHT_FIXED(heightSample);
-}
+/// The steps along one axis: sample 0 where `along`, the pixel's coordinate
+/// on that axis, is below 8, sample 1 from 8.
+#define TERRAIN_DEFINE_STEP(name, along)                                       \
+  s32 name(const u8 *heightBytes, s32 pixelX, s32 pixelY) {                    \
+    const s8 *samples = (const s8 *)heightBytes;                               \
+    s32 heightSample;                                                          \
+    if ((u32)(along) < CURVE_HALF_STEPS)                                       \
+      heightSample = samples[0];                                               \
+    else                                                                       \
+      heightSample = samples[1];                                               \
+    return CURVE_HEIGHT_FIXED(heightSample);                                   \
+  }
 
-/// A step along y: sample 0 for y < 8, sample 1 from y = 8.
-s32 Terrain_GetStepYHeight(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
-  const s8 *samples = (const s8 *)heightBytes;
-  s32 heightSample;
-  if ((u32)pixelY < CURVE_HALF_STEPS)
-    heightSample = samples[0];
-  else
-    heightSample = samples[1];
-  return CURVE_HEIGHT_FIXED(heightSample);
-}
+/// A step along x.
+TERRAIN_DEFINE_STEP(Terrain_GetStepXHeight, pixelX)
+/// A step along y.
+TERRAIN_DEFINE_STEP(Terrain_GetStepYHeight, pixelY)
 
 /// A slope along x that bends at the middle: sample 0 at x = 0, sample 1 at
 /// x = 8, towards sample 2 at x = 16.
@@ -316,6 +304,8 @@ s32 Terrain_GetFlatCHeight(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
   return CURVE_HEIGHT_FIXED(samples[0]);
 }
 
+#undef TERRAIN_DEFINE_SLOPE
+#undef TERRAIN_DEFINE_STEP
 #undef CURVE_HEIGHT_FIXED
 
 /// Returns the ground height of a layer at (x, y) in 16.16 pixels: the

@@ -7,6 +7,7 @@
 #include "main_routine_work.h"
 #include "event_inline.h"
 #include "field.h"
+#include "map.h"
 
 struct PushTarget {
   s32 x; ///< 16.16 fixed-point pixels
@@ -223,7 +224,6 @@ void Func_02004868(u16 *list, s32 mode, s32 count) {
 #include "field_event.h"
 
 s32 Func_02004c34(struct FieldActor *object);
-#include "map.h"
 
 void Func_020048ec(s32 id, u32 kind, s32 flag, s32 layer) {
   struct FieldActor *object = ((struct FieldActor *)Actor_Get(id));

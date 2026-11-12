@@ -10,9 +10,9 @@ enum StatBoostMode {
   STAT_BOOST_IMPACT,  ///< a dagger, in Mars colours
   STAT_BOOST_GUARD,   ///< a shield, in Mars colours
   STAT_BOOST_WARD,    ///< a shield, in Jupiter colours
-  STAT_BOOST_GRANITE, ///< a violet streak, in Venus colours
-  STAT_BOOST_ZEPHYR,  ///< a wisp, keeping the palette
-  STAT_BOOST_FLASH    ///< a violet streak, in Mars colours
+  STAT_BOOST_GRANITE, ///< a pane of light, in Venus colours
+  STAT_BOOST_ZEPHYR,  ///< a gust of wind, keeping the palette
+  STAT_BOOST_FLASH    ///< a pane of light, in Mars colours
 };
 
 /// The stat reductions' modes (BattleEffect_RunStatReduction).
@@ -48,22 +48,23 @@ void BattleEffect_RunGuard(struct BattleEffectParams *args) {
 void BattleEffect_RunWard(struct BattleEffectParams *args) {
   BattleEffect_RunStatBoost(args, STAT_BOOST_WARD);
 }
-/// Light swirls into each target and bursts, then a violet streak appears in
+/// Light swirls into each target and bursts, then a pane of light appears in
 /// Venus colours.
 ///
 /// Abilities: Granite (BATTLE_EFFECT_GRANITE).
 void BattleEffect_RunGranite(struct BattleEffectParams *args) {
   BattleEffect_RunStatBoost(args, STAT_BOOST_GRANITE);
 }
-/// Light swirls into each target and bursts, then a violet streak appears in
+/// Light swirls into each target and bursts, then a pane of light appears in
 /// Mars colours.
 ///
 /// Abilities: Flash (BATTLE_EFFECT_FLASH).
 void BattleEffect_RunFlash(struct BattleEffectParams *args) {
   BattleEffect_RunStatBoost(args, STAT_BOOST_FLASH);
 }
-/// Light swirls into each target and bursts, then a wisp appears in the colours
-/// already loaded, as this is the one boost that keeps the palette.
+/// Light swirls into each target and bursts, then a gust of wind sweeps across
+/// it in the colours already loaded, as this is the one boost that keeps the
+/// palette.
 ///
 /// Abilities: Zephyr (BATTLE_EFFECT_ZEPHYR).
 void BattleEffect_RunZephyr(struct BattleEffectParams *args) {
@@ -76,10 +77,6 @@ enum StatBoostSheet {
   STAT_BOOST_PICTURE = 11150, ///< the picture the mode picks
   STAT_BOOST_DJINNI = 26048   ///< the 40x40 Djinni
 };
-
-#define STAT_BOOST_SCATTERED 512 ///< flares scattered at the start
-#define STAT_BOOST_DRAWN 32      ///< flares drawn for each target
-#define STAT_BOOST_SLOTS 64      ///< particles reserved for each target
 
 /// Flares of light swirl in to the centre of each target, one target every
 /// 8 frames, burst, and the mode's picture plays. Target n's flares appear
@@ -192,7 +189,7 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
   // Scatter the flares around the centre: x and z within 25 pixels, y
   // within 50. All 512 are placed, though each target draws only its first
   // 32 of 64.
-  for (i = 0; i != STAT_BOOST_SCATTERED; i++) {
+  for (i = 0; i != 512; i++) {
     struct Particle *flare = &PARTICLES[i];
 
     SET_POSITION(flare, (Random16() % 200 - 100) << 14,
@@ -290,8 +287,8 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
           Transform_ApplyYaw(frame << 10);
           Transform_ApplyRoll(frame << 10);
         }
-        for (i = 0; i != STAT_BOOST_DRAWN; i++) {
-          struct Particle *flare = &PARTICLES[member * STAT_BOOST_SLOTS + i];
+        for (i = 0; i != 32; i++) {
+          struct Particle *flare = &PARTICLES[member * 64 + i];
 
           if (frame > member * 8 + i) {
             s32 xx = (flare->x >> 8) * (flare->x >> 8);
@@ -394,11 +391,6 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
   BattleEffect_EndCanvasLayer();
 }
 
-// Stat-reduction shards. The effects the folder README groups with them
-// under "Effect families" follow in their own parts: Flare (flare.c), Quake
-// (quake.c), Fire (fire.c), Frost (frost.c) and, after ray.c, Smoke Bomb and
-// Blast (eruption.c).
-
 /// A dagger appears over each target and breaks into shards that fade through
 /// darker copies, in the pink burst's colours.
 ///
@@ -434,8 +426,6 @@ BattleEffect_RunUnusedStatReduction(struct BattleEffectParams *args) {
 /// with its colour levels capped 7 lower than the one before.
 #define STAT_REDUCTION_SHARD_OFFSETS 9600
 #define STAT_REDUCTION_SHARD_BYTES 696 ///< bytes in each copy
-#define STAT_REDUCTION_SHARDS 24       ///< shards drawn for each target
-#define STAT_REDUCTION_SLOTS 32        ///< particles reserved for each target
 
 /// A dagger (Dull) or a shield (the others) appears over each target, 4
 /// frames apart, and then breaks into 24 shards that fly off and fade out
@@ -456,6 +446,8 @@ void BattleEffect_RunStatReduction(struct BattleEffectParams *args, s32 mode) {
   s32 frame;
   s32 j;
   s32 xOffset;
+  /* FAKEMATCH(temporary): draw holds blitters; as blitters[1] in the shield's
+   * draw, 12 of 531 instructions differ in tbs-en. */
   DrawRectangle *draw;
   struct BattleCamera *camera;
   s32 origin[3];
@@ -555,9 +547,11 @@ void BattleEffect_RunStatReduction(struct BattleEffectParams *args, s32 mode) {
       actor = GetBattleObjectSlotFar(work->args->targets[j])->actor;
       // Each target's timeline starts 4 frames after the one before.
       if (targetFrame > 0) {
+        /* FAKEMATCH(dead): the view set from the camera a first time, which the
+         * second call repeats; as one call, 233 of 531 instructions differ in
+         * tbs-en. */
         EFFECT_VIEW_FROM_CAMERA(camera);
-        // Centre on the point 20 pixels above the target; the view is set
-        // from the camera twice.
+        // Centre on the point 20 pixels above the target.
         SET_VECTOR(point, actor->x.fixed, 160 << 13, actor->z.fixed);
         EFFECT_VIEW_FROM_CAMERA(camera);
         Transform_ApplyPosition(point);
@@ -587,8 +581,8 @@ void BattleEffect_RunStatReduction(struct BattleEffectParams *args, s32 mode) {
             if (level > 7)
               level = 7;
           }
-          for (i = 0; i != STAT_REDUCTION_SHARDS; i++) {
-            struct Particle *shard = &PARTICLES[j * STAT_REDUCTION_SLOTS + i];
+          for (i = 0; i != 24; i++) {
+            struct Particle *shard = &PARTICLES[j * 32 + i];
             s32 cell;
 
             // Shard i takes shape i % 4, turning through its three frames
@@ -615,10 +609,5 @@ void BattleEffect_RunStatReduction(struct BattleEffectParams *args, s32 mode) {
   EFFECT_FINISH_CANVAS();
 }
 
-#undef STAT_BOOST_SCATTERED
-#undef STAT_BOOST_DRAWN
-#undef STAT_BOOST_SLOTS
 #undef STAT_REDUCTION_SHARD_OFFSETS
 #undef STAT_REDUCTION_SHARD_BYTES
-#undef STAT_REDUCTION_SHARDS
-#undef STAT_REDUCTION_SLOTS

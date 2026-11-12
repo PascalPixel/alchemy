@@ -212,8 +212,9 @@ s32 ElementGlow_InitializeStarField(s32 element) {
   struct Ring *ring;
   s32 effectIndex;
   u8 *graphics;
-  /* FAKEMATCH(dead): an unused local that gives the stack frame its 28 bytes;
-   * without it, 4 of 246 instructions differ in tbs-en. */
+  /* LEFTOVER(frame): an unused local for 28 of the 36 bytes the ROM's frame
+   * reserves (sub sp, #36) that no instruction reads; as without it, 4 of 246
+   * instructions differ in tbs-en. */
   UNUSED struct Spark unused;
 
   // Word 2 of the background's work is BattleBackgroundWork.mode.
@@ -366,8 +367,9 @@ s32 Graphics_ScaleRgb555Clamped(u16 *source, u16 *destination, s32 scale,
 /// blended over the other layers; GLOW_STAR_FIELD leaves the background's
 /// palette and BattleWork.brightness darkened.
 void ElementGlow_Play(s32 unitId, s32 element, s32 mode, s32 variant) {
-  /* FAKEMATCH(dead): an unused local that gives the stack frame its 40 bytes;
-   * without it, 4 of 249 instructions differ in tbs-en. */
+  /* LEFTOVER(frame): an unused local for 40 of the 240 bytes the ROM's frame
+   * reserves (sub sp, #240) that no instruction reads; as without it, 4 of 249
+   * instructions differ in tbs-en. */
   UNUSED s32 spare[10];
   struct ScreenPoint starFieldPosition;
   struct ScreenPoint streakPosition;

@@ -34,8 +34,9 @@ s32 BattleFormation_AverageLevel(s32 recordId) {
   s32 enemyId;
   s32 levelTotal;
   s32 enemyCount;
-  /* FAKEMATCH(dead): an unused local that gives the stack frame its 28 bytes;
-   * without it, 4 of 94 instructions differ in tbs-en. */
+  /* LEFTOVER(frame): an unused local for the 28 bytes, the whole of the ROM's
+   * frame (sub sp, #28), that no instruction reads; as without it, 4 of 94
+   * instructions differ in tbs-en. */
   UNUSED s32 levels[7];
 
   enemyCount = 0;

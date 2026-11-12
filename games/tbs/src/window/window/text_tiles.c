@@ -94,8 +94,11 @@ UNUSED void Window_OverlayTilePattern(u16 *entry, u16 *mirror, s32 pattern,
 /// ends on. tiles is the work block's tilemap and mirror the same place in
 /// VRAM, both written at once.
 s32 Text_DrawStringAsTiles(u16 *text, u16 *tiles, u16 *mirror, s32 x) {
-  /* FAKEMATCH(dead): an unused local that gives the stack frame its 32 extra
-   * bytes; without it, 4 of 402 instructions differ in tbs-en. */
+  /* LEFTOVER(frame): an unused local for 32 of the 68 bytes the ROM's frame
+   * reserves (sub sp, #68) that no instruction reads; The Lost Age's
+   * Text_DrawStringAsTiles needs the same 32 bytes, 4 of 428 instructions
+   * differing in tla-en without them; as without it, 4 of 402 instructions
+   * differ in tbs-en. */
   UNUSED u32 reserve[8];
   u8 pens[16];
   struct WindowWork *work;

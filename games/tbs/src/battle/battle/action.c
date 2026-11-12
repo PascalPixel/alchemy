@@ -556,8 +556,9 @@ s32 BattleActionRun_Build(struct BattleAction *request,
     struct DjinnRecoveryList *list;
     s32 side;
     u8 counts[ELEMENT_COUNT];
-    /* FAKEMATCH(dead): an unused local that gives the stack frame its 8 bytes
-     * below counts; without it, 28 of 1393 instructions differ in tbs-en. */
+    /* LEFTOVER(frame): an unused local for the 8 bytes below counts that the
+     * ROM's frame (sub sp, #48) reserves and no instruction reads; as without
+     * it, 28 of 1393 instructions differ in tbs-en. */
     UNUSED u8 unused[8];
     s32 index;
 

@@ -1112,8 +1112,9 @@ s32 Credits_DrawLine(const u8 *text, s32 firstTile, s32 alignment) {
   u32 glyphBits;
   u32 glyphMask;
 
-  /* FAKEMATCH(dead): an unused local that gives the stack frame its 32 bytes;
-   * without it, 4 of 277 instructions differ in tbs-en. */
+  /* LEFTOVER(frame): an unused local for 32 of the 44 bytes the ROM's frame
+   * reserves (sub sp, #44) that no instruction reads; as without it, 4 of 277
+   * instructions differ in tbs-en. */
   UNUSED u32 unused[8];
 
   if (text == NULL) {

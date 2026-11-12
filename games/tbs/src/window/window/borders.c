@@ -396,9 +396,11 @@ s32 Message_OpenDecoded(struct Window *window, s32 message) {
   struct WindowWork *work = WINDOW_WORK;
   s32 entry;
   s32 typing = 0;
-  /* FAKEMATCH(dead): an unused local that gives the stack frame its 8 bytes
-   * above the outgoing arguments; without it, 4 of 42 instructions differ in
-   * tbs-en. */
+  /* LEFTOVER(frame): an unused local for the 8 bytes above the outgoing
+   * arguments, of the 16 the ROM's frame reserves (sub sp, #16), that no
+   * instruction reads; The Lost Age's Message_OpenDecoded needs the same 8
+   * bytes, 4 of 43 instructions differing in tla-en without them; as without
+   * it, 4 of 42 instructions differ in tbs-en. */
   UNUSED u16 frameReserve[4];
 
   work->voiceSound = 0;

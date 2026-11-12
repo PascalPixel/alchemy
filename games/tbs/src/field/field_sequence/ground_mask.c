@@ -46,8 +46,9 @@ void FadeOverlay_DrawMarks(void) {
   s32 height;
   s32 secondHeight;
   s32 screenRow;
-  /* FAKEMATCH(dead): an unused 4-byte local that brings the stack frame to 16
-   * bytes; without it, 4 of 200 instructions differ in tbs-en. */
+  /* LEFTOVER(frame): an unused local for 4 of the 16 bytes the ROM's frame
+   * reserves (sub sp, #16) that no instruction reads; as without it, 4 of 200
+   * instructions differ in tbs-en. */
   UNUSED s16 unused[2];
 
   if (actor == 0)

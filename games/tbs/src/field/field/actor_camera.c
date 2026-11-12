@@ -41,9 +41,10 @@ struct ActorCameraFixed {
 /// priorities, and holds the picture decoder in heap slot
 /// HEAP_SLOT_FRAME_SCRATCH only while it runs.
 void ActorSystem_PlaceSprites(void) {
-  /* FAKEMATCH(dead): an unused local that gives the stack frame room for three
-   * points above the position; without it, 4 of 267 instructions differ in
-   * tbs-en. */
+  /* LEFTOVER(frame): an unused local for three points, 36 bytes above the
+   * position of the 80 the ROM's frame reserves (sub sp, #80), that no
+   * instruction reads; as without it, 4 of 267 instructions differ in tbs-en.
+   */
   UNUSED struct ActorCameraPoint unusedPoints[3];
   s32 objectIndex;
   struct MapGridScrollWork *grid;
@@ -212,9 +213,9 @@ void ActorSystem_ProjectSprites(void) {
   void *sprite;
   s32 groupScale[2];
   s32 scale[2];
-  /* FAKEMATCH(dead): an unused local that gives the stack frame room for two
-   * points above the scales; without it, 4 of 181 instructions differ in
-   * tbs-en. */
+  /* LEFTOVER(frame): an unused local for two points, 24 bytes above the scales
+   * of the 52 the ROM's frame reserves (sub sp, #52), that no instruction
+   * reads; as without it, 4 of 181 instructions differ in tbs-en. */
   UNUSED struct ActorCameraPoint unusedPoints[2];
 
   // UB: camera and system work are separate globals, beyond gActors.

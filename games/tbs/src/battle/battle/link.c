@@ -266,8 +266,9 @@ s32 LinkBattle_SyncTurn(void) {
   u16 *peer;
   u16 *signature;
   s32 missed = 0;
-  /* FAKEMATCH(dead): an unused local that gives the stack frame its 20 bytes;
-   * without it, 20 of 232 instructions differ in tbs-en. */
+  /* LEFTOVER(frame): an unused local for the 20 bytes, the whole of the ROM's
+   * frame (sub sp, #20), that no instruction reads; as without it, 20 of 232
+   * instructions differ in tbs-en. */
   UNUSED u16 spare[10];
 
   if (battle->isLink != 0) {

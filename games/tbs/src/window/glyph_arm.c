@@ -72,8 +72,11 @@ s32 Glyph_DrawArm(struct Window *window, u32 character, u32 x, u32 y,
   u32 glyphIndex;
 #endif
 #if (LANGUAGE == LANGUAGE_JAPANESE)
-  /* FAKEMATCH(dead): an unused local that gives the stack frame its 64 extra
-   * bytes; without it, 6 of 193 instructions differ in tbs-ja. */
+  /* LEFTOVER(frame): an unused local for 64 of the 100 bytes the ROM's Japanese
+   * frame reserves (sub sp, sp, #100) that no instruction reads; The Lost Age's
+   * Glyph_DrawArm needs the same 64 bytes in its Japanese edition alone, 6 of
+   * 193 instructions differing there without them; as without it, 6 of 193
+   * instructions differ in tbs-ja. */
   UNUSED struct GlyphRect unusedStackFrame[4];
 #endif
 

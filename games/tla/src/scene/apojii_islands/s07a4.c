@@ -19,7 +19,6 @@ s32 BattleEffect_ApplyColorToTargetBuffer(s32 a, s32 b);
 void BattleEffect_StartBufferInterpolation(s32 frames);
 void Func_02001de4(void);
 void Task_RemoveFar(void (*func)(void));
-s32 Task_Add(void (*func)(void), s32 priority);
 void Func_02000540(void);
 void Func_020006bc(void);
 void Func_020017bc(void);

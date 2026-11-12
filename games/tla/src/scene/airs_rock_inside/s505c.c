@@ -2,6 +2,7 @@
 /// Scene code of overlay 0x664, in ROM order, from s505c's offset up to the next object the overlay links.
 
 #include "types.h"
+#include "task.h"
 #include "actor.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"
@@ -98,7 +99,6 @@ extern const u8 gData_02006050[], gData_02006054[], gData_0200605a[],
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void Func_02002770(void);
-s32 Task_Add(void (*func)(void), s32 priority);
 void Func_02004f3c(void);
 void Func_02001690(void);
 void Func_02004eb0(void);

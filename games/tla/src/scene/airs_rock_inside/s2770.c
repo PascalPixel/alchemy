@@ -2,10 +2,10 @@
 /// Scene code of overlay 0x664, in ROM order, from s2770's offset up to the next object the overlay links.
 
 #include "airs_rock_inside.h"
+#include "task.h"
 
 #include "airs_rock_inside.h"
 
-void Task_Add(void (*func)(void), s32 priority);
 void Func_020026c0(void);
 
 void Func_02002770(void) {

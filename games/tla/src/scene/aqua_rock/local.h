@@ -2,6 +2,7 @@
 #define AQUA_ROCK_LOCAL_H
 
 #include "types.h"
+#include "task.h"
 #include "ram_buffer.h"
 #include "actor.h"
 #include "main_routine_work.h"
@@ -43,7 +44,6 @@ s32 Event_AskYesNoWithActorAnimation(s32 id, s32 flags);
 void Event_StartScreenTransition(void);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
-void Task_Add(void *func, s32 priority);
 void Task_RemoveFar(void *func);
 s32 Random16Far(void);
 s32 Resource_FindFreeEntry(void);

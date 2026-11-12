@@ -2,6 +2,7 @@
 #define TLA_YAMPI_DESERT_SCENE_H
 
 #include "types.h"
+#include "task.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "field_event.h"
@@ -30,7 +31,6 @@ void GameFlag_ClearBit(s32 flag);
 void FieldMessage_Show(s32 message, s32 position);
 void Actor_SetPartAttribute(struct FieldActor *object, s32 value);
 void Actor_SetWideSprite(s32 actor, s32 value);
-s32 Task_Add(void (*func)(void), s32 priority);
 void Task_RemoveFar(void (*func)(void));
 void Field_DispatchTypeHandler(s32 type);
 

@@ -69,7 +69,6 @@ void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                           s32 drag);
 
 void *Resource_GetTableEntry(s32 resource);
-s32 Task_Add(void (*func)(void), s32 order);
 
 void Sound_PlayFar(s32 cue);
 void wait(s32 frames);

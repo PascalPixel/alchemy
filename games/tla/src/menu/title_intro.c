@@ -642,7 +642,6 @@ void wait(s32 frames);
 s32 Title_WaitOrPress(u32 frames);
 s32 Func_081a68b4(struct TitleScroll *s);
 void Func_081a6b50(void);
-s32 Task_Add(void (*func)(void), s32 priority);
 
 s32 Func_081a6ea0(void) {
   struct TitleScroll scroll;

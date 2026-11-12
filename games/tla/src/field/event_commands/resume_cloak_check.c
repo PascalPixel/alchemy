@@ -1,7 +1,7 @@
 #include "types.h"
+#include "task.h"
 
 extern u8 gMainRoutineWork[];
-void Task_Add(void (*func)(void), s32 priority);
 void FieldEffect_CheckCloakTile(void);
 
 void FieldEffect_ResumeCloakCheck(void) {

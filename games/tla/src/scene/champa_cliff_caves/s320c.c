@@ -1,4 +1,5 @@
 #include "scene.h"
+#include "task.h"
 
 struct ChampaCliffCavesWork {
   u8 unk0000[0x1000];
@@ -15,7 +16,6 @@ struct ChampaCliffCavesWork {
 };
 
 void *HeapSlot_AllocFar(s32 slot, s32 size);
-void Task_Add(void (*func)(void), s32 priority);
 void wait(s32 frames);
 void Func_02002d34(void);
 void Func_02002de4(void);

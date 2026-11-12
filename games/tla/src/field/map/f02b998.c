@@ -1,4 +1,5 @@
 #include "types.h"
+#include "task.h"
 #include "io_write.h"
 #include "dma.h"
 #include "io_reg.h"
@@ -32,7 +33,6 @@ void SceneTransform_ApplyYaw(s32 yaw);
 void SceneTransform_ApplyPitch(s32 pitch);
 void Transform_SetLookAt(s32 *eye, s32 *target);
 void Func_0802dd70(s32 ratio, s32 *position, void *affineWork);
-s32 Task_Add(void (*func)(void), s32 order);
 void Func_0802c240(void);
 void Func_0802c088(void);
 

@@ -1,4 +1,5 @@
 #include "types.h"
+#include "task.h"
 #include "ram_buffer.h"
 #include "field_particle.h"
 
@@ -116,7 +117,6 @@ struct BattleAct *BattleAction_Get(s32 actionId);
 s32 ResourceTable_CountFreeBlocks(void);
 void BattleEffect_SetupObjectPair(s32 userId, s32 targetId);
 void BattleEffect_StartArcEffect(void);
-void Task_Add(void (*func)(void), s32 order);
 
 #define HEAP_SLOT_FX 224
 

@@ -1,4 +1,5 @@
 #include "battle.h"
+#include "task.h"
 #include "field.h"
 #include "game.h"
 #include "graphics.h"
@@ -214,7 +215,6 @@ extern u8 gResource_Data012[];
 extern const u16 gData_0802f054[8];
 
 void Task_ResetAll(void);
-void Task_Add(void (*func)(void), s32 order);
 void VramCache_Reset(void);
 void Func_080230e0(s32 mode);
 s32 ResourceSlot_Load(u32 slot, u32 *buffer, s32 number, u32 variant);

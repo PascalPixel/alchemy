@@ -49,7 +49,6 @@ void Func_081180e8(s32 phase);                      // BattlePlayback_StartFar
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void **GetBattleObjectSlotFar(s32 objectId);
 void *Resource_GetTableEntry(s32 resource);
-s32 Task_Add(void (*func)(void), s32 order);
 
 void Sound_PlayFar(s32 cue);
 void wait(s32 frames);

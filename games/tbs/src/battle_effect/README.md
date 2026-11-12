@@ -112,7 +112,8 @@ then lays it over the battle.
 ### A pixel is a brightness
 
 A pixel of the canvas is not a colour. It is a brightness, which the code
-calls a level, from 0 up to the brightest level.
+calls a level, from 0 to 63, the brightest
+([`CANVAS_LEVEL_BRIGHTEST`](../../include/battle/battle_effect_work.h)).
 
 Each effect brings a ramp of 64 colours, running from dark to bright, and
 each level is shown as the colour at its place on the ramp. Level 0 is
@@ -437,7 +438,7 @@ motes. A Smoke Bomb asks for Blast's fountain of embers, in grey.
 | What the family draws                                        | Abilities that share it                       |
 | ------------------------------------------------------------ | --------------------------------------------- |
 | the user rushes at the first target and strikes              | Bone Charge, Brute Force, Onslaught, Headbutt |
-| slashes or columns of light on the first target              | thirteen monster attacks, among them Cannibal Fang, Poison Tail and Twin Beaks |
+| slashes or bites of closing fangs on the first target        | thirteen monster attacks, among them Cannibal Fang, Poison Tail and Twin Beaks |
 | shots that fly from the user at each target                  | Heat Wave, Sleet and Wing Flutter, among others |
 | healing motes around each target                             | Ply, Wish, Cure, Cure Poison, Tonic, Psy Crystal |
 | a dagger or a shield over each target that shatters          | Dull (the dagger), Impair and Weaken (the shield) |

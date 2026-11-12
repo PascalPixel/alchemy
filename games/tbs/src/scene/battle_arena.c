@@ -370,9 +370,7 @@ static s32 BattleArena_PeerSlotMatches(s32 slot) {
   } else {
     GameFlag_Clear(FLAG_BATTLE_ARENA_LINK_UP);
   }
-  // A loop left by break after its first pass, which places the test after the
-  // body as the ROM does; as an if around the body, 12 of 58 instructions
-  // differ in tbs-en.
+  // At most one pass: a match returns 1, anything else breaks out.
   while (serialPlayerId >= 0 && GameFlag_Get(FLAG_BATTLE_ARENA_LINK_UP)) {
     const s32 *expected = &gBattleArena_SlotValues[slot];
 
@@ -584,8 +582,8 @@ static s32 BattleArena_ReceivePartyRecords(void) {
   result = 0;
   timeout = LOBBY_RECEIVE_TIMEOUT_FRAMES;
   slot = 0;
-  // The record loop and both waits are written with goto: as a
-  // for loop round while loops, 105 of 189 instructions differ in tbs-en.
+  // Three records, each started at next and waited for at testRecord, then
+  // the recovery table at second.
   goto next;
 waitRecord:
   if (gSerialReceivedSize > size) {
@@ -794,8 +792,6 @@ static s32 BattleArena_SendPartyRecords(void) {
     }
     wait(2);
   }
-  // The padding loop is written with goto: as for (; i <= 2;
-  // i++) round a while loop, 127 of 254 instructions differ in tbs-en.
   goto next;
 wait:
   wait(1);
@@ -899,8 +895,6 @@ static s32 BattleArena_ExchangePartyRecords(void) {
   } while (0);
   receiveFirst = GameFlag_Get(FLAG_BATTLE_ARENA_LINK_CHILD);
   gLinkExchangeState = result;
-  // Every failure reaches the one reset: as nested ifs before a single
-  // if (result < 0), 16 of 62 instructions differ in tbs-en.
   if (!receiveFirst) {
     wait(5);
     result = BattleArena_SendPartyRecords();

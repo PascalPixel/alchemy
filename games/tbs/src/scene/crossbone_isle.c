@@ -827,7 +827,7 @@ static void CrossboneIsle_MoveSelectedActorAndLog(s32 actorId, s32 xOffset,
                                   fixedZ);
   }
   // Position the log on the same cell-center grid as the selected actor.
-  Actor_SelectAnimation(selectedActor, 27);
+  Actor_SelectAnimation(selectedActor, ANIM_LEADER_WALK_BACKWARDS);
   {
     fixedX = ((logActor->x.fixed + px(xOffset)) & 0xFFF00000) + px(8);
     fixedZ = ((logActor->z.fixed + px(zOffset)) & 0xFFF00000) + px(8);

@@ -356,7 +356,7 @@ static void TreeRooms_StepOnCocoon(s32 cocoonFlag, s32 sourceColumn,
   Sound_Play(SE_CURSE_FALL);
   Event_Start();
   Event_SetDestination((s32)&SceneId_TreeRooms, entrance);
-  Actor_SetAnimation(leaderActorId, ANIM_LEADER_SPIN_AWAY);
+  Actor_SetAnimation(leaderActorId, ANIM_LEADER_WALK_BACKWARDS);
   Actor_SetSpriteFlags(Actor_Get(leaderActorId), 0);
   Actor_SetAttachedEffect(leaderActorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
@@ -908,7 +908,7 @@ s32 TreeRooms_EnterRoom(void) {
   // TREE_ROOMS_AFTER_FIGHT_TRET: back from the battle with Tret.
   if (entrance == 50 || entrance == 40 || entrance == 30 || entrance == 20) {
     Event_StartScreenTransition();
-    Actor_SetAnimation(leaderActorId, ANIM_LEADER_SPIN_AWAY);
+    Actor_SetAnimation(leaderActorId, ANIM_LEADER_WALK_BACKWARDS);
     Actor_SetSpriteFlags(Actor_Get(leaderActorId), 0);
     Actor_SetAttachedEffect(leaderActorId,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);

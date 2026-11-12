@@ -209,6 +209,9 @@ enum StormNightActorId {
 enum StormNightAnimation {
   /// Garet leaning into his chest to drag it (spr_019.png).
   ANIM_GARET_DRAG = 5,
+  /// Garet's chest, its rope pulled taut as he drags it (spr_210.png).
+  ANIM_CHEST_DRAGGED = 2,
+  ANIM_CHEST_ROPE_DROPPED = 3, ///< its rope let fall on the ground
   /// Kyle crouched at the bank, reaching out to Felix (spr_053.png).
   ANIM_KYLE_REACH_OUT = 5,
   /// Jenna's father and mother crouched at the bank, reaching out
@@ -736,14 +739,14 @@ s32 ValePrologue_Initialize(void) {
     Actor_SetPosition(ACTOR_GARETS_CHEST, 424, 627);
     Actor_WalkTo(ACTOR_GARET_CHILD, 400, 619);
     Actor_WalkToAndWait(ACTOR_GARETS_CHEST, 424, 619);
-    Actor_SetAnimation(ACTOR_GARETS_CHEST, ANIM_WALK);
+    Actor_SetAnimation(ACTOR_GARETS_CHEST, ANIM_CHEST_DRAGGED);
     Actor_SetAnimation(ACTOR_GARET_CHILD, ANIM_GARET_DRAG);
     Event_End();
   } else {
     Event_Start();
     Actor_SetPosition(ACTOR_GARETS_CHEST, 424, 627);
     Actor_WalkToAndWait(ACTOR_GARETS_CHEST, 424, 619);
-    Actor_SetAnimation(ACTOR_GARETS_CHEST, ANIM_NOD);
+    Actor_SetAnimation(ACTOR_GARETS_CHEST, ANIM_CHEST_ROPE_DROPPED);
     Event_End();
   }
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
@@ -868,7 +871,7 @@ static void ValePrologue_DoraSendsIsaacToThePlaza(void) {
   Actor_SetPosition(ACTOR_DORA, 0, 0);
   Actor_SetPosition(ACTOR_KYLE, 0, 0);
   Actor_SetAnimation(ACTOR_KYLE, ANIM_STAND);
-  Actor_SetAnimation(ACTOR_GARETS_CHEST, ANIM_WALK);
+  Actor_SetAnimation(ACTOR_GARETS_CHEST, ANIM_CHEST_DRAGGED);
   Actor_SetAnimation(ACTOR_GARET_CHILD, ANIM_GARET_DRAG);
   GameFlag_Clear(FLAG_SHOW_AREA_NAME);
   GameFlag_Set(FLAG_VALE_STORM_SENT_TO_PLAZA);
@@ -1321,7 +1324,7 @@ static void ValePrologue_GaretLeavesHisChest(void) {
   Event_ShowMessageThenWait(ACTOR_GARET_CHILD, 0, 40);
   Actor_SetAttachedEffect(ACTOR_GARET_CHILD,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
-  Actor_SetAnimation(ACTOR_GARETS_CHEST, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_GARETS_CHEST, ANIM_CHEST_ROPE_DROPPED);
   Actor_SetAnimation(ACTOR_GARET_CHILD, ANIM_STAND);
   Event_Wait(40);
   Actor_FaceActor(ACTOR_GARET_CHILD, ACTOR_PARTY_LEADER, 0);
@@ -1411,7 +1414,7 @@ static void ValePrologue_UnusedGaretJoinsIsaac(void) {
     Actor_WaitForMoveById(ACTOR_GARET_CHILD);
     Actor_SetPosition(ACTOR_GARET_CHILD, 0, 0);
     Event_AddPartyMember(GARET, 1);
-    Actor_SetAnimation(ACTOR_GARETS_CHEST, ANIM_NOD);
+    Actor_SetAnimation(ACTOR_GARETS_CHEST, ANIM_CHEST_ROPE_DROPPED);
     GameFlag_Set(FLAG_VALE_STORM_GARET_JOINED);
     Event_End();
   }

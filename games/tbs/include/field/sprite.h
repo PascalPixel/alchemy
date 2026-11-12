@@ -213,8 +213,11 @@ enum ActorAnimation {
   ANIM_LEADER_LEAVE_ALTERNATE = 25,
   ANIM_LEADER_LEAVE = 26,
   ///@}
-  /// Spinning round once, then drawn blank (ANIMCMD_BLANK).
-  ANIM_LEADER_SPIN_AWAY = 27,
+  /// ANIM_WALK's six pictures in reverse order, three frames each.
+  // XXX: what the player sees as Actor_PlacePairAtOffset or Crossbone Isle's
+  // logs move the leader, or a torn cocoon drops him; a recording of
+  // TreeRooms_StepOnCocoon's fall or of a log push would settle it.
+  ANIM_LEADER_WALK_BACKWARDS = 27,
   ANIM_LEADER_ARMS_RAISED = 28, ///< both arms raised over his head
   /// Swinging an arm out to throw, as he tosses a coin or medal at Tolbi's
   /// spring.

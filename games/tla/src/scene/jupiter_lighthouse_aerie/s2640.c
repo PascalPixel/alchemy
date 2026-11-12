@@ -1,5 +1,6 @@
 /// @file
-/// Scene code of overlay 0x6a4, in ROM order, from s2640's offset up to the next object the overlay links.
+/// Scene code of overlay 0x6a4, in ROM order, from s2640's offset up to the next object the overlay links, and the
+/// overlay's data.
 
 #include "types.h"
 #include "ram_buffer.h"
@@ -7,7 +8,7 @@
 #include "main_routine_work.h"
 #include "field_effect.h"
 #include "event_inline.h"
-#include "../../../../games/tla/src/scene/jupiter_lighthouse_aerie/jupiter_lighthouse_aerie.h"
+#include "jupiter_lighthouse_aerie.h"
 
 void Func_02002a88(void);
 s32 Math_Cosine(s32 angle);
@@ -128,3 +129,108 @@ void Func_02002888(s32 dx, s32 dz, s32 value) {
     *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 428) = value;
   }
 }
+
+#include "scene_tables.h"
+#include "objcmd.h"
+
+void Func_02000314(void);
+void Func_0200032c(void);
+
+extern u32 gData_02002fe4[];
+extern u32 gData_02003020[];
+extern u32 gData_0200305c[];
+
+// clang-format off
+u32 gData_02002fe4[] = {
+    SC_WAIT(1),
+    SC_LOOP(22, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
+};
+
+u32 gData_02003020[] = {
+    SC_WAIT(1),
+    SC_LOOP(44, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
+};
+
+u32 gData_0200305c[] = {
+    SC_WAIT(1),
+    SC_LOOP(126, SC_TOP),
+    SC_WAIT(1),
+    SC_POSITION(0, 0, 0),
+    SC_WAIT(1),
+    SC_FREE,
+    SC_END,
+};
+
+struct SceneEntrance gSceneEntrances[] = {
+    {0, CONDITION_ALWAYS, 560, 96, 264, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {SCENE_TABLE_END},
+};
+
+u32 gSceneExits[] = {
+    SCENE_EXITS(264),
+    SCENE_EXIT(1, 259, 1),
+    SCENE_EXIT(2, 259, 2),
+    SCENE_EXIT(3, 259, 3),
+    SCENE_EXIT(4, 262, 4),
+    SCENE_EXITS_END,
+};
+
+struct ActorPlacement gActorPlacements[] = {
+    {489, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_EAST, 2, 1},
+    {339, CONDITION_ALWAYS, 1, PIXELS(472), 0, PIXELS(256), FACING_WEST, 2, 0},
+    {339, CONDITION_ALWAYS, 1, PIXELS(552), 0, PIXELS(256), FACING_EAST, 2, 0},
+    {340, CONDITION_ALWAYS, 1, PIXELS(136), 0, PIXELS(200), FACING_EAST, 2, 0},
+    {340, CONDITION_ALWAYS, 1, PIXELS(888), 0, PIXELS(200), FACING_WEST, 2, 0},
+    {428, CONDITION_ALWAYS, 1, PIXELS(120), 0, PIXELS(168), FACING_SOUTH, 2, 0},
+    {428, CONDITION_ALWAYS, 1, PIXELS(904), 0, PIXELS(168), FACING_SOUTH, 2, 0},
+    {373, CONDITION_ALWAYS, 1, PIXELS(456), 0, PIXELS(424), FACING_SOUTH, 2, 0},
+    {373, CONDITION_ALWAYS, 1, PIXELS(568), 0, PIXELS(424), FACING_SOUTH, 2, 0},
+    {302, CONDITION_ALWAYS, 7, PIXELS(312), PIXELS(16), PIXELS(312), FACING_SOUTH, 2, 0},
+    {302, CONDITION_ALWAYS, 7, PIXELS(344), PIXELS(16), PIXELS(312), FACING_SOUTH, 2, 1},
+    {302, CONDITION_ALWAYS, 7, PIXELS(376), PIXELS(16), PIXELS(312), FACING_SOUTH, 2, 1},
+    {302, CONDITION_ALWAYS, 7, PIXELS(648), PIXELS(16), PIXELS(312), FACING_SOUTH, 2, 1},
+    {302, CONDITION_ALWAYS, 7, PIXELS(680), PIXELS(16), PIXELS(312), FACING_SOUTH, 2, 1},
+    {302, CONDITION_ALWAYS, 7, PIXELS(712), PIXELS(16), PIXELS(312), FACING_SOUTH, 2, 1},
+    {425, CONDITION_ALWAYS, 11, PIXELS(512), 0, PIXELS(248), FACING_EAST, 2, 0},
+    {425, CONDITION_ALWAYS, 11, PIXELS(512), 0, PIXELS(248), FACING_EAST, 2, 1},
+    {SCENE_TABLE_END},
+};
+
+struct Trigger gSceneEvents[] = {
+    {1, 1, CONDITION_ALWAYS, 1},
+    {1, 2, CONDITION_ALWAYS, 2},
+    {1, 3, CONDITION_ALWAYS, 3},
+    {1, 4, CONDITION_ALWAYS, 4},
+    {0x10008c15, 13, CONDITION_ALWAYS, EVENT(Func_02000314)},
+    {0x8c15, 13, CONDITION_ALWAYS, EVENT(Func_0200032c)},
+    {0x10008c15, 14, CONDITION_ALWAYS, EVENT(Func_02000314)},
+    {0x8c15, 14, CONDITION_ALWAYS, EVENT(Func_0200032c)},
+    {8, -1, CONDITION_ALWAYS, EVENT(Func_02000314)},
+    {9, -1, CONDITION_ALWAYS, EVENT(Func_0200032c)},
+    {TRIGGERS_END},
+};
+
+s32 gData_02003314 = -1;
+
+s32 gData_02003318 = 1;
+
+u32 gData_0200331c[] = {
+    39, 5, 0, 12, 38,
+};
+// clang-format on
+
+s32 gData_02003330[] = {
+    (s32)gData_02002fe4,
+    (s32)gData_02003020,
+    (s32)gData_0200305c,
+};

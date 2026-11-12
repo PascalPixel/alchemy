@@ -1,6 +1,7 @@
 /// @file
 /// Scene code of overlay 0x69c, in ROM order, from s1f50's offset up to the
-/// next object the overlay links.
+/// next object the overlay links, and the
+/// overlay's data.
 
 #include "types.h"
 #include "ram_buffer.h"
@@ -143,3 +144,22 @@ void Func_02002198(s32 x, s32 z, s32 effect) {
         ->screenEffect = effect;
   }
 }
+
+#include "scene_tables.h"
+
+// clang-format off
+u16 gData_02002478[] = {
+    258, 259, 293, 294, 332, 331,
+};
+
+u32 gData_02002484[] = {
+    0x820f8e0, 0x2008e0f8, 0x20f0e0, 0x2008e0f8, 0x820f8e0, 0x2008e0f8,
+};
+
+s16 gData_0200249c[] = {
+    0, 16, 0, 16, 0, 16, 16, 0,
+    16, 0, 16, 0, 16, 0, 0, -16,
+    0, -16, 0, -16, 0, -16, -16, 0,
+    -16, 0, -16, 0, -16, 0, 0, 16,
+};
+// clang-format on

@@ -1,6 +1,7 @@
 /// @file
 /// Scene code of overlay 0x6a0, in ROM order, from s273c's offset up to the
-/// next object the overlay links.
+/// next object the overlay links, and the
+/// overlay's data.
 
 #include "types.h"
 #include "system.h"
@@ -159,3 +160,14 @@ void Func_02002984(s32 x, s32 z, s32 effect) {
         ->screenEffect = effect;
   }
 }
+
+#include "scene_tables.h"
+
+// clang-format off
+s16 gData_02002c64[] = {
+    8, 16, 10, 16, 11, 16, 12, 16,
+    14, 16, 15, 16, 10, 18, 12, 18,
+    13, 18, 8, 20, 10, 20, 13, 20,
+    15, 20, -1, 0,
+};
+// clang-format on

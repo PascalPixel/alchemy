@@ -168,7 +168,9 @@ void Transform_UpdateVertices(struct Vector3 *eye, struct Vector3 *target,
         // On odd frames the sample point shifts by half a pixel step along
         // the line and a quarter step across it, so alternate frames sample
         // between each other's texels.
-        // sampleOffset is reused for u; two plain expressions differ.
+        /* FAKEMATCH(temporary): sampleOffset reused for line->u; as the two
+         * sums written straight into affine->x and affine->y, 6 of 157
+         * instructions differ in tbs-en. */
         s32 sampleOffset;
 
         sampleOffset = ((originX + line->dx) >> 8) + line->v / 4 + line->u / 2;

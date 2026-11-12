@@ -163,7 +163,8 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
         FieldMessage_ShowFar(MsgUseItemQuestion, FIELD_MESSAGE_ZOOM |
                                                      FIELD_MESSAGE_KEEP_OPEN |
                                                      FIELD_MESSAGE_LOWER);
-        // partyIndex is reused for the answer; a local of its own differs.
+        /* FAKEMATCH(temporary): partyIndex reused for the answer; as a local
+         * of its own, 109 of 253 instructions differ in tbs-en. */
         partyIndex = FieldYesNo_Ask(1);
         Message_CloseFinishedWindowsFar();
         if (partyIndex != 0)

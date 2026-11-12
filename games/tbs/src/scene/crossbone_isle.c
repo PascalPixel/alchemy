@@ -528,9 +528,9 @@ static void CrossboneIsle_MovePillar(void) {
   }
 
 #if TBS_PATCH_1
-  // Through state, the map's address is built as gMainRoutineWork's plus an
-  // offset, as the bytes have it; &gMainRoutineWork.next folds into one
-  // literal (1 of 78 instructions differ in tbs-en, 1 of 65 in tbs-ja).
+  /* FAKEMATCH(temporary): state holds &gMainRoutineWork and mapNumber
+   * &state->next; as gMainRoutineWork.next in the call, 13 of 78 instructions
+   * differ in tbs-en. */
   state = &gMainRoutineWork;
   mapNumber = &state->next;
   if (GameFlag_Get(*mapNumber + (FLAG_CROSSBONE_ISLE_FIRST_PASSAGE_OPENED -

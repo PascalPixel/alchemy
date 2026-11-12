@@ -82,6 +82,8 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   // Every spark still in use stops its fountain. The cursor walks
   // the slots' state bytes; a slot's active flag is 5 bytes after its state.
   {
+    /* FAKEMATCH(temporary): nextState holds MARS_SPARK_STOPPING; as the
+     * constant in the store, 2 of 179 instructions differ in tbs-en. */
     s32 nextState;
 
     wait(20);
@@ -105,6 +107,8 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   // the field effect plus 152, the first slot's state: written as above, the
   // cursor's two loads swap (differ 22).
   {
+    /* FAKEMATCH(temporary): nextState holds MARS_SPARK_LEAVING; as the
+     * constant in the store, 2 of 179 instructions differ in tbs-en. */
     s32 nextState;
 
     slotState = (s8 *)effectWork;
@@ -120,9 +124,10 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
     } while (remaining >= 0);
   }
 
-  // The leader stops pulsing. Storing NULL through the cleared slot cursor,
-  // as the bytes do: a plain NULL store differs by 9.
+  // The leader stops pulsing.
   wait(10);
+  /* FAKEMATCH(temporary): effect reused to hold NULL; as leader->update =
+   * NULL, 9 of 179 instructions differ in tbs-en. */
   effect = NULL;
   leader->update = (void *)effect;
   leader->scaleX = Q16_ONE;

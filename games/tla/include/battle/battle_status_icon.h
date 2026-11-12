@@ -4,7 +4,7 @@
 #include "edition.h"
 #include "battle_action.h"
 
-s32 BattleUnit_BuildStatusFlags(s32 id, struct BattleObj *slot);
-s32 BattleStatusIcon_Cycle(struct BattleObj *slot);
+void BattleUnit_BuildStatusFlags(s32 id, struct BattleObj *slot);
+void BattleStatusIcon_Cycle(struct BattleObj *slot);
 
 #endif

@@ -38,13 +38,14 @@ extern struct BattleCamera *gCameraWork;
 /// The battle background's heap slot as the camera reads it: the yaw the
 /// camera eases toward and the frames left to ease it.
 struct BattlePresentationTransition {
-  s32 targetYaw; ///< 1/65536 turns
-  s32 frames;    ///< frames left to ease the yaw, a sixteenth a frame
-  u8 unk08[8];   ///< BattleBackgroundView's mode and secondMode
-  s32 active;    ///< BattleBackgroundView's busy, at the same offset
-  s32 flag;      ///< 0 lets the camera update set the background's range
-  s32 unk18;     ///< cleared at the battle's start; not read by name in TLA
-  s32 unk1c;     ///< cleared at the battle's start; not read by name in TLA
+  s32 targetYaw;  ///< 1/65536 turns
+  s32 frames;     ///< frames left to ease the yaw, a sixteenth a frame
+  s32 mode;       ///< BattleBackgroundView's mode
+  s32 secondMode; ///< BattleBackgroundView's secondMode
+  s32 active;     ///< BattleBackgroundView's busy, at the same offset
+  s32 flag;       ///< 0 lets the camera update set the background's range
+  s32 unk18;      ///< cleared at the battle's start; not read by name in TLA
+  s32 unk1c;      ///< cleared at the battle's start; not read by name in TLA
 };
 
 /// A presentation's effect command, laid out as BattleEffectArgument with a
@@ -104,12 +105,11 @@ struct BattlePlan;
 s32 BattleStaging_RunActorEntries(struct BattlePlan *plan, s32 unused);
 
 void BattleStaging_BuildTargetList(struct BattlePlan *plan,
-                                struct BattlePresentationWork *work);
+                                   struct BattlePresentationWork *work);
 
 void BattleCamera_SetRange(s32 cx, s32 cy, s32 ox, s32 oy, s32 scale);
 
-s32 BattleStaging_RunPairedUnitTransition(
-    struct BattleActionRecord *action);
+s32 BattleStaging_RunPairedUnitTransition(struct BattleActionRecord *action);
 s32 BattleObject_IsValidId(u32 objectId);
 void BattleCamera_SetView(s32 x, s32 depth, s32 y, s32 mode);
 void BattleHighlight_SetSpriteMode(s32 actor, s32 mode);

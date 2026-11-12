@@ -6,11 +6,11 @@
 /// holds what the parts share; the parts under battle/ are included here in
 /// the order their code has in the ROM. Camelot's own files are not
 /// recoverable: the ROM shows one object, and these parts are ours, cut where
-/// The Broken Seal's are. The bank's code after them is still separate files,
-/// from presentation/f11e3ac.c on: its Func_0811e3ac calls BattleObject_Reset
-/// (placement.c) with the object alone, leaving the second argument register
-/// as BattleObject_Get left it, a call this object's prototype of the routine
-/// cannot compile.
+/// The Broken Seal's are. The bank's code after them is in objects of its
+/// own, from presentation/f11e3ac.c on: its Func_0811e3ac calls
+/// BattleObject_Reset (placement.c) with the object alone, leaving the second
+/// argument register as BattleObject_Get left it, a call this object's
+/// prototype of the routine cannot compile.
 
 #include "battle_internal.h"
 

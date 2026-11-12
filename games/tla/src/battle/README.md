@@ -7,15 +7,14 @@ the [battle effects](../../../tbs/glossary.md#battle-effect) are in
 
 ## What differs from The Broken Seal
 
-- The code is only partly gathered into objects with parts. `battle.c` holds
-  the bank's first eleven parts, cut where The Broken Seal's are, from the
-  debug routines to the start of an action's staging; it ends before
-  `presentation/f11e3ac.c`, which calls `BattleObject_Reset` with one argument
-  where the object's prototype has two (`battle.c` says more). The rest is
-  still one function or a small family to a file, named for it
-  (`battle_event.c`, `actor_reset_fields.c`); `presentation/`, `motion/`,
-  `party/` and `summon/` group some, and some files are still named by their
-  address (`f120454.c`, `d01297c4.s`).
+- The bank's C is four objects. `battle.c` holds the bank's first eleven
+  parts, cut where The Broken Seal's are, from the debug routines to the start
+  of an action's staging; it ends before `presentation/f11e3ac.c`, which calls
+  `BattleObject_Reset` with one argument where the object's prototype has two
+  (`battle.c` says more). `presentation/f11e3ac.c` holds the presentation
+  code that follows, `strongest_unit.c` stands alone between it and
+  `f11f66c.c`, and `f11f66c.c` holds the rest of the bank in ROM order. Some
+  objects are still named by their address (`f11f66c.c`, `d01297c4.s`).
 - The tables (`actflags.tsv`, `actstat.tsv`, the
   [formations](../../../tbs/glossary.md#formation) in `formatn.tsv` and the
   debug parameter sets in `debug_parameter_sets.tsv`) are still TSV, packed by

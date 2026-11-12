@@ -6,11 +6,11 @@
 
 /// The whirlwind sheet holds three 48x64 pictures, then the dust; the violet
 /// comets are decoded further on.
-#define PROCNE_DUST_OFFSETS (3 * (48 * 64))
-#define PROCNE_COMET_OFFSETS 13824
+#define PROCNE_DUST (3 * (48 * 64))
+#define PROCNE_COMETS 13824
 
-/// A whirlwind lifts the targets, then comets from a block of sprites in a
-/// violet sky strike them.
+/// A whirlwind lifts the targets, then Procne, a great bird in a violet sky,
+/// strikes them with comets.
 ///
 /// Abilities: Procne (SUMMON_EFFECT_PROCNE).
 ///
@@ -18,9 +18,9 @@
 ///   0 to 159   : a whirlwind rises over the field and lifts the targets,
 ///                spinning them round it and drawing them in, while dust
 ///                spirals up;
-///   160        : the battle background becomes the violet sky, and a 3x3 block
-///                of nine sprites appears and sways;
-///   256 to 329 : motes gather into the middle of the block;
+///   160        : the battle background becomes the violet sky, and Procne,
+///                3x3 sprites of SPRITE_PROCNE, appears and sways;
+///   256 to 329 : motes gather into Procne's middle;
 ///   330 to 372 : four comets shoot out of it, 12 frames apart, each with a
 ///                ring of sparks, striking the targets on frames 334, 347,
 ///                359 and 372 (gProcne_Frames);
@@ -35,9 +35,8 @@
 /// height, angle and gravity) and puts back their places and angles at the
 /// end; it loads the whirlwind's and then the comets' palette into the first
 /// 64 background colours, moves gProjection.centerX to 72 from frame 160 and
-/// back to 120, and sets work->shakeFrames on each comet. It spawns the nine
-/// sprites of the block on frame 160 and releases them before closing the
-/// canvas.
+/// back to 120, and sets work->shakeFrames on each comet. It spawns Procne's
+/// nine sprites on frame 160 and releases them before closing the canvas.
 void BattleEffect_RunProcne(struct BattleEffectParams *args) {
   static struct SpriteScale unitScale = {{{Q16_ONE, Q16_ONE}}};
   void **slots;
@@ -100,8 +99,8 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
   // Trails keep half of each pixel a frame.
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
-  // wave is where the block of sprites sways, from (128, 40); drift is a
-  // push from each comet.
+  // wave is where Procne sways, from (128, 40); drift is a push from each
+  // comet.
   wave.x = px(128);
   wave.y = px(40);
   drift.x = 0;
@@ -263,7 +262,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
           // Always true: a mote restarts once past 48 pixels up, and climbs
           // little more than 2 pixels a frame.
           if (point[index].y <= px(64) - 1) {
-            draw[0](canvas, work->sheet + PROCNE_DUST_OFFSETS, screen.x - 12,
+            draw[0](canvas, work->sheet + PROCNE_DUST, screen.x - 12,
                     screen.y - 12, 16, 16);
           }
           if (point[index].z > 24)
@@ -289,9 +288,9 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
       } while (index != 24);
     }
 
-    // Frame 160: the violet sky, the nine sprites and the comet images; the
-    // sparks are cleared, the targets hang 8 to 23 pixels up, the 32 motes
-    // that will gather are scattered round the block, and the targets
+    // Frame 160: the violet sky, Procne's nine sprites and the comet images;
+    // the sparks are cleared, the targets hang 8 to 23 pixels up, the 32 motes
+    // that will gather are scattered round Procne, and the targets
     // settle into a tight, fast orbit.
     if (frame == 160) {
       s32 speed;
@@ -307,7 +306,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
       resource = Resource_GetTableEntry((s32)&ResourceId_VioletCometSheet);
       Iwram_CopyWords((void *)BG_PLTT, resource, 128);
       resource += 128;
-      Decompress_TaggedLz(resource, work->sheet + PROCNE_COMET_OFFSETS);
+      Decompress_TaggedLz(resource, work->sheet + PROCNE_COMETS);
 
       index = 0;
       do {
@@ -318,10 +317,10 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
       EFFECT_FOR_EACH_TARGET(index, work->args) {
         battleObject = GetBattleObjectSlotFar(work->args->targets[index]);
         actor = battleObject->actor;
-        actor->y.fixed = ((Random16() & 15) + 8) << 16;
+        actor->y.fixed = px((Random16() & 15) + 8);
       }
 
-      // The block and its comets are projected about a centre left of the
+      // Procne and its comets are projected about a centre left of the
       // screen's.
       gProjection.centerX = 72;
 
@@ -334,7 +333,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
         angle = (Random16() & 0x7fff) + 0x9fff;
         work->particles[index].x = Trig_Sin(angle) * speed;
         work->particles[index].y = Trig_Cos(angle) * speed;
-        work->particles[index].z = (Random16() % 200 - 100) << 16;
+        work->particles[index].z = px(Random16() % 200 - 100);
         work->particles[index].variant = 0;
         index++;
       } while (index != 32);
@@ -347,11 +346,11 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
       }
     }
 
-    // From frame 160: sway the block of sprites, faster for its first 64
-    // frames, plus what is left of each comet's push. Each frame it moves up
-    // to half a pixel across, on a 512-frame swing, and half a pixel (a
-    // quarter after the first 64 frames) up and down, on a 128-frame swing;
-    // a push halves every frame.
+    // From frame 160: sway Procne, faster for its first 64 frames, plus what
+    // is left of each comet's push. Each frame it moves up to half a pixel
+    // across, on a 512-frame swing, and half a pixel (a quarter after the
+    // first 64 frames) up and down, on a 128-frame swing; a push halves every
+    // frame.
     if (frame > 159) {
       scale = unitScale;
       size = 16;
@@ -399,10 +398,10 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
         Transform_Reset();
         Transform_ApplyPosition(Vector3_Coordinates(&depthOffset));
 
-        // Frames 256 to 329: the motes close in on the middle of the
-        // block two pixels a frame (dist is half the distance in pixels, the
-        // root's 8.8 >> 9); those that arrive swell one mote there, a size
-        // larger for every ten, and each is drawn smaller the deeper it lies.
+        // Frames 256 to 329: the motes close in on Procne's middle two pixels
+        // a frame (dist is half the distance in pixels, the root's 8.8 >> 9);
+        // those that arrive swell one mote there, a size larger for every ten,
+        // and each is drawn smaller the deeper it lies.
         if (frame <= 329) {
           index = 0;
           do {
@@ -497,10 +496,10 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
           slot++;
         } while (slot != 4);
 
-        // The four comets, from frame 330 + 12i: each leaves the middle of
-        // the block, flies down to the left growing through three images,
-        // and spreads a ring of 28 motes for 8 frames; it pushes the block
-        // and shakes the screen.
+        // The four comets, from frame 330 + 12i: each leaves Procne's middle,
+        // flies down to the left growing through three images, and spreads a
+        // ring of 28 motes for 8 frames; it pushes Procne and shakes the
+        // screen.
         index = 0;
         do {
           mark = &work->particles[index + 60];
@@ -536,7 +535,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
 
             if (frame < threshold + 8) {
               // The ring is work->particles 32 to 59, each variant its radius,
-              // growing 2 a frame round where the comet left the block (kept
+              // growing 2 a frame round where the comet left Procne (kept
               // in its mark's velocity); each comet turns the view further.
               // Its 28 motes lie 2340/65536 turn apart, a full circle.
               Transform_ApplyRoll(-2048);
@@ -605,5 +604,5 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
   EFFECT_FINISH_CANVAS();
 }
 
-#undef PROCNE_DUST_OFFSETS
-#undef PROCNE_COMET_OFFSETS
+#undef PROCNE_DUST
+#undef PROCNE_COMETS

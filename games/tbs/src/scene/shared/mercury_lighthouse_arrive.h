@@ -43,7 +43,7 @@ static void MercuryLighthouse_ArriveWithSparks(void) {
     sprite = actor->sprite;
     sprite->image.priority = 1;
     Actor_WalkByAndWait(ACTOR_PARTY_LEADER, 0, 10);
-    actor->motionFlags = 3;
+    actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     actor->update = NULL;
     Scene_PlayQueuedMusic();
     Event_End();

@@ -174,7 +174,7 @@ void Event_SpawnActorPlacements(struct ActorPlacement *entry, s32 slot) {
       // falls. Outside the World Map every height is then counted from the
       // ground below.
       if (object->y.fixed != 0) {
-        object->motionFlags = 4;
+        object->motionFlags = ACTOR_FLOATS;
         object->y.fixed += Q16_ONE / 2;
       }
       if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
@@ -601,7 +601,7 @@ void Actor_Restore(void) {
   s32 priority;
   s32 y;
   s32 *leaderId = &gMainRoutineWork.leaderActorId;
-  struct FieldWork **fieldWork = &gFieldWork;
+  struct FieldWork **work = &gFieldWork;
   struct MapGridScrollWork **grid = (struct MapGridScrollWork **)gMapGridWork;
 
   restoredCount = 0;
@@ -628,7 +628,7 @@ void Actor_Restore(void) {
       *(struct Sprite **)&object->sprite = sprite;
       // Re-anchor the camera only when restoring the selected leader.
       if (actorIndex == *leaderId) {
-        camera = (*fieldWork)->camera;
+        camera = (*work)->camera;
         cameraPosition = (*grid)->origin;
         y = object->y.fixed;
         camera->groundHeight = y;

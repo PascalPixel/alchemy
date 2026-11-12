@@ -138,7 +138,7 @@ void Djinn_RunVenusJoinEffect(s32 djinniId) {
       break;
     djinni->scaleY = Q16_ONE * 3 / 5;
     djinni->scaleX = Q16_ONE * 3 / 5;
-    djinni->motionFlags = 2;
+    djinni->motionFlags = ACTOR_FALLS;
     djinni->velocityY = PIXELS(5);
     djinni->groundHeight = djinni->y.fixed;
     djinni->speedLimit = Random16() + Q16_ONE * 7 / 5;

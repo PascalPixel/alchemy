@@ -101,7 +101,7 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
   target->update = Actor_CycleSpriteColors;
   Task_Add(FieldEffect_SpawnFallingParticles, TASK_PASS_FRAME);
   Sound_PlayFar(SE_PSYNERGY_START);
-  target->motionFlags = 4;
+  target->motionFlags = ACTOR_FLOATS;
   Actor_SetSpriteFlagsFar(target, 0);
   if (hands[0] != NULL && hands[1] != NULL) {
     while (target->y.fixed - target->groundHeight <= 24 << 16) {
@@ -242,7 +242,7 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
   Actor_SetSpriteColorModeFar(target, effectWork->savedPalette);
   Actor_StartScriptFar(target, effectWork->savedScript);
   target->update = effectWork->savedCallback;
-  target->motionFlags = 3;
+  target->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   target->velocityY = 10 << 16;
   target->bounce = Q16_ONE / 5;
   target->layer = 0;

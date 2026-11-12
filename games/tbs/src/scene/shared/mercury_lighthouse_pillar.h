@@ -214,7 +214,7 @@ void MercuryLighthouse_ChargeLights(void) {
       actor->groundHeight = leader->groundHeight;
       Actor_StartScript(actor, gMercuryLighthouse_PillarScript);
       actor->watchedActor = leader;
-      actor->motionFlags = 4;
+      actor->motionFlags = ACTOR_FLOATS;
       // The height is written by its offset, the plain-C form of obj->y.fixed
       // this site matches with (scene/README.md): as the field, the sprite's
       // reload moves after the add and store.

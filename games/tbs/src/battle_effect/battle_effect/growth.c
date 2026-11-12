@@ -95,7 +95,7 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectParams *args, s32 mode) {
   s32 height;
   s32 limit;
 
-  s32 puffCells;
+  s32 puffPictures;
   struct ParticleGrowthColumnView *column;
   s32 length;
   s32 reach;
@@ -215,10 +215,10 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectParams *args, s32 mode) {
               if (mode == GROWING_COLUMNS_VINES) {
                 {
                   s32 side = 1 & i;
-                  s32 cell = gGrowth_VinePictures[shape];
+                  s32 picture = gGrowth_VinePictures[shape];
                   shape = gGrowth_VineWidths[shape];
                   ((DrawRectangle)draw[side])(
-                      canvas, work->sheet + cell, column->x - (shape >> 1),
+                      canvas, work->sheet + picture, column->x - (shape >> 1),
                       column->y - length, shape, length);
                 }
               } else {
@@ -228,10 +228,10 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectParams *args, s32 mode) {
                 }
                 {
                   s32 side = 1 & i;
-                  s32 cell = gGrowth_PillarPictures[shape];
+                  s32 picture = gGrowth_PillarPictures[shape];
                   shape = gGrowth_PillarWidths[shape];
                   ((DrawRectangle)draw[side])(
-                      canvas, work->sheet + cell, column->x - (shape >> 1),
+                      canvas, work->sheet + picture, column->x - (shape >> 1),
                       column->y - length, shape, length);
                 }
               }
@@ -286,17 +286,19 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectParams *args, s32 mode) {
         puffAge = puff->variant;
         if (puffAge >= 0) {
           image = puffAge / 2;
-          puffCells = GROWING_COLUMNS_VINE_DUST_PICTURES;
+          puffPictures = GROWING_COLUMNS_VINE_DUST_PICTURES;
           if (mode != GROWING_COLUMNS_VINES) {
-            puffCells = GROWING_COLUMNS_PILLAR_DUST_PICTURES;
+            puffPictures = GROWING_COLUMNS_PILLAR_DUST_PICTURES;
           }
           ((DrawRectangle)rectangle[0])(
-              canvas, work->sheet + (gGrowth_PuffPictures[image] + puffCells),
+              canvas,
+              work->sheet + (gGrowth_PuffPictures[image] + puffPictures),
               puff->x - gGrowth_PuffWidths[image],
               puff->y - (s8)gGrowth_PuffHeights[image] / 2,
               gGrowth_PuffWidths[image], (s8)gGrowth_PuffHeights[image]);
           ((DrawRectangle)rectangle[1])(
-              canvas, work->sheet + (gGrowth_PuffPictures[image] + puffCells),
+              canvas,
+              work->sheet + (gGrowth_PuffPictures[image] + puffPictures),
               puff->x, puff->y - (s8)gGrowth_PuffHeights[image] / 2,
               gGrowth_PuffWidths[image], (s8)gGrowth_PuffHeights[image]);
           puff->variant++;
@@ -339,7 +341,7 @@ void BattleEffect_RunVine(struct BattleEffectParams *args) {
   BlitterPair draw;
   s32 originX, originY;
   struct ScreenPoint first, last;
-  s32 i, frame, cell, height, offset, middle;
+  s32 i, frame, picture, height, offset, middle;
   struct Particle *column;
 
   slots = (u32 *)(gHeapSlots + HEAP_SLOT_BATTLE_EFFECT);
@@ -400,7 +402,7 @@ void BattleEffect_RunVine(struct BattleEffectParams *args) {
       // through the five 32x32 pictures every 4 frames from its own start.
       offset = i * 2;
       if (frame > offset + 4) {
-        cell = (frame / 4 + i) % 5;
+        picture = (frame / 4 + i) % 5;
         if (frame < offset + 32) {
           height = (frame - offset) * 4 - 16;
           if (height > 32)
@@ -409,7 +411,7 @@ void BattleEffect_RunVine(struct BattleEffectParams *args) {
           height = 160 - (frame - offset) * 4;
         }
         if (height > 0)
-          draw[i & 1](canvas, work->sheet + (cell << 10), column->x - 16,
+          draw[i & 1](canvas, work->sheet + (picture << 10), column->x - 16,
                       (i & 7) - height + 104, 32, height);
       }
       i++;
@@ -575,16 +577,17 @@ void BattleEffect_RunThorn(struct BattleEffectParams *args) {
     // Dust, drawn over the thorns.
     for (i = 0; i != 64; i++) {
       if (PARTICLES[i].variant >= 0) {
-        s32 cell = PARTICLES[i].variant / 2;
-        draw(canvas, work->sheet + gGrowth_ThornPuffPictures[cell],
-             PARTICLES[i].x - gGrowth_ThornPuffWidths[cell],
-             PARTICLES[i].y - (s8)gGrowth_ThornPuffHeights[cell] / 2,
-             gGrowth_ThornPuffWidths[cell], (s8)gGrowth_ThornPuffHeights[cell]);
-        drawFlip(canvas, work->sheet + gGrowth_ThornPuffPictures[cell],
+        s32 picture = PARTICLES[i].variant / 2;
+        draw(canvas, work->sheet + gGrowth_ThornPuffPictures[picture],
+             PARTICLES[i].x - gGrowth_ThornPuffWidths[picture],
+             PARTICLES[i].y - (s8)gGrowth_ThornPuffHeights[picture] / 2,
+             gGrowth_ThornPuffWidths[picture],
+             (s8)gGrowth_ThornPuffHeights[picture]);
+        drawFlip(canvas, work->sheet + gGrowth_ThornPuffPictures[picture],
                  PARTICLES[i].x,
-                 PARTICLES[i].y - (s8)gGrowth_ThornPuffHeights[cell] / 2,
-                 gGrowth_ThornPuffWidths[cell],
-                 (s8)gGrowth_ThornPuffHeights[cell]);
+                 PARTICLES[i].y - (s8)gGrowth_ThornPuffHeights[picture] / 2,
+                 gGrowth_ThornPuffWidths[picture],
+                 (s8)gGrowth_ThornPuffHeights[picture]);
         if (++PARTICLES[i].variant == 14) {
           PARTICLES[i].variant = -1;
         }

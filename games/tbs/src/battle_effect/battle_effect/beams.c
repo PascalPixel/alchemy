@@ -218,19 +218,20 @@ void BattleEffect_RunAttackSlash(struct BattleEffectParams *args) {
       }
     } else {
       if (frame <= 17) {
-        s32 cell = frame / 3;
+        s32 picture = frame / 3;
 
         if (work->args->side == EFFECT_SIDE_ENEMIES)
-          draw[1](canvas, work->sheet + gBeam_Pictures[cell],
-                  screenPosition.x + gBeam_PictureReaches[cell] + scrollX - 58,
-                  screenPosition.y - gBeam_PictureHeights[cell] / 2,
-                  gBeam_PictureWidths[cell], gBeam_PictureHeights[cell]);
+          draw[1](canvas, work->sheet + gBeam_Pictures[picture],
+                  screenPosition.x + gBeam_PictureReaches[picture] + scrollX -
+                      58,
+                  screenPosition.y - gBeam_PictureHeights[picture] / 2,
+                  gBeam_PictureWidths[picture], gBeam_PictureHeights[picture]);
         else
-          draw[1](canvas, work->sheet + gBeam_Pictures[cell],
-                  screenPosition.x - gBeam_PictureReaches[cell] + scrollX -
-                      gBeam_PictureWidths[cell] + 58,
-                  screenPosition.y - gBeam_PictureHeights[cell] / 2,
-                  gBeam_PictureWidths[cell], gBeam_PictureHeights[cell]);
+          draw[1](canvas, work->sheet + gBeam_Pictures[picture],
+                  screenPosition.x - gBeam_PictureReaches[picture] + scrollX -
+                      gBeam_PictureWidths[picture] + 58,
+                  screenPosition.y - gBeam_PictureHeights[picture] / 2,
+                  gBeam_PictureWidths[picture], gBeam_PictureHeights[picture]);
       }
     }
     // Frames 4 to 15: the yellow orb flashes over the target, six 40x48

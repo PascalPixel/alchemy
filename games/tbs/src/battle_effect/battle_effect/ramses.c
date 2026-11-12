@@ -250,12 +250,12 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
         /* FAKEMATCH(dead): the first half of the test is always true here; as
          * puff->variant <= 23 alone, 2 of 818 instructions differ in tbs-en. */
         if (puff->variant >= 0 && puff->variant <= 23) {
-          s32 cell = puff->variant / 6 + 3;
+          s32 picture = puff->variant / 6 + 3;
 
-          draw[0](canvas, work->sheet + gRamses_PuffPictures[cell],
-                  Q_16_16_TO_INT(puff->x) - gRamses_PuffSizes[cell] / 2,
-                  Q_16_16_TO_INT(puff->y) - gRamses_PuffSizes[cell] / 2,
-                  gRamses_PuffSizes[cell], gRamses_PuffSizes[cell]);
+          draw[0](canvas, work->sheet + gRamses_PuffPictures[picture],
+                  Q_16_16_TO_INT(puff->x) - gRamses_PuffSizes[picture] / 2,
+                  Q_16_16_TO_INT(puff->y) - gRamses_PuffSizes[picture] / 2,
+                  gRamses_PuffSizes[picture], gRamses_PuffSizes[picture]);
         }
         Particle_AdvanceWithGravity2D(puff, 60, -px(1) / 4);
         puff->variant++;

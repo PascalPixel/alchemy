@@ -35,7 +35,7 @@ void BattleEffect_RunPrism(struct BattleEffectParams *args) {
   struct Particle *shards;
   struct Particle *shard;
   s32 x;
-  s32 cell;
+  s32 picture;
   s32 i;
   s32 j;
 
@@ -116,14 +116,15 @@ void BattleEffect_RunPrism(struct BattleEffectParams *args) {
           // XXX (no evidence): whether a fifth kind of shard was meant; the
           // twelve pictures and their tables are all the ROM holds.
           for (j = 0; j != 16; j++) {
-            cell = (j % 5) * 3 + (shards[i * 16 + j].variant / 96) % 3;
+            picture = (j % 5) * 3 + (shards[i * 16 + j].variant / 96) % 3;
             shard = &shards[i * 16 + j];
             draw[j <= 2](
                 canvas,
-                work->sheet + gPrism_ShardPictures[cell] + PRISM_SHARD_PICTURES,
-                Q_16_16_TO_INT(shard->x) - gPrism_ShardWidths[cell] / 2,
-                Q_16_16_TO_INT(shard->y) - gPrism_ShardHeights[cell] / 2,
-                gPrism_ShardWidths[cell], gPrism_ShardHeights[cell]);
+                work->sheet + gPrism_ShardPictures[picture] +
+                    PRISM_SHARD_PICTURES,
+                Q_16_16_TO_INT(shard->x) - gPrism_ShardWidths[picture] / 2,
+                Q_16_16_TO_INT(shard->y) - gPrism_ShardHeights[picture] / 2,
+                gPrism_ShardWidths[picture], gPrism_ShardHeights[picture]);
             // Shards gain 1/8 pixel a frame of downward speed each frame.
             // Their spin starts at 32 and slows by 1 every other frame, down
             // to 1.

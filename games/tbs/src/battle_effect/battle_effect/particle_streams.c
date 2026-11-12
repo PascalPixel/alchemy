@@ -682,13 +682,13 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
         Projection_Point(&flash->x, &screen);
         screen.x >>= 1;
         if ((u32)flash->variant <= 13) {
-          s32 cell = flash->variant / 2;
+          s32 picture = flash->variant / 2;
 
-          draw(canvas, work->sheet + gParticleStreams_FlashPictures[cell],
-               screen.x - gParticleStreams_FlashSizes[cell] / 2,
-               screen.y - gParticleStreams_FlashSizes[cell] / 2,
-               gParticleStreams_FlashSizes[cell],
-               gParticleStreams_FlashSizes[cell]);
+          draw(canvas, work->sheet + gParticleStreams_FlashPictures[picture],
+               screen.x - gParticleStreams_FlashSizes[picture] / 2,
+               screen.y - gParticleStreams_FlashSizes[picture] / 2,
+               gParticleStreams_FlashSizes[picture],
+               gParticleStreams_FlashSizes[picture]);
         }
         flash->variant++;
         if (flash->variant == 14) {

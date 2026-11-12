@@ -617,23 +617,24 @@ void BattleEffect_RunMars(struct BattleEffectParams *args) {
         // counts its frames, starting below 0 so the flames erupt 2 frames
         // apart.
         if (step->variant >= 0 && step->variant <= 47) {
-          s32 cell = step->variant / 8;
+          s32 picture = step->variant / 8;
           u32 width;
 
           // UB: width is assigned in one argument and read in another.
 #ifdef UBFIX
-          width = gBattleEffect_PuffArcPictureWidths[cell];
-          blitters[0](canvas, work->sheet + gBattleEffect_PuffArcPictures[cell],
+          width = gBattleEffect_PuffArcPictureWidths[picture];
+          blitters[0](canvas,
+                      work->sheet + gBattleEffect_PuffArcPictures[picture],
                       step->x - (width >> 1),
-                      step->y + gBattleEffect_PuffArcPictureBiasY[cell], width,
-                      gBattleEffect_PuffArcPictureHeights[cell]);
+                      step->y + gBattleEffect_PuffArcPictureBiasY[picture],
+                      width, gBattleEffect_PuffArcPictureHeights[picture]);
 #else
           blitters[0](
-              canvas, work->sheet + gBattleEffect_PuffArcPictures[cell],
+              canvas, work->sheet + gBattleEffect_PuffArcPictures[picture],
               step->x -
-                  ((width = gBattleEffect_PuffArcPictureWidths[cell]) >> 1),
-              step->y + gBattleEffect_PuffArcPictureBiasY[cell], width,
-              gBattleEffect_PuffArcPictureHeights[cell]);
+                  ((width = gBattleEffect_PuffArcPictureWidths[picture]) >> 1),
+              step->y + gBattleEffect_PuffArcPictureBiasY[picture], width,
+              gBattleEffect_PuffArcPictureHeights[picture]);
 #endif
         }
         index++;

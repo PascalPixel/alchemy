@@ -106,23 +106,23 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
     // Frames 8 to 23: the swirl plays its seven pictures, two frames each,
     // at the user's height, placed from the other edge on EFFECT_SIDE_PARTY.
     if (frame >= 8 && frame <= 23) {
-      s32 cell = (frame - 8) / 2;
+      s32 picture = (frame - 8) / 2;
 
-      if (cell > 6)
-        cell = 6;
+      if (picture > 6)
+        picture = 6;
       if (work->args->side == EFFECT_SIDE_ENEMIES) {
-        draw[0](canvas, work->sheet + gHelmSplitter_Pictures[cell],
-                gHelmSplitter_PictureBiasX[cell] + 30,
-                gHelmSplitter_PictureBiasY[cell] + position.y - 60,
-                gHelmSplitter_PictureWidths[cell],
-                gHelmSplitter_PictureHeights[cell]);
+        draw[0](canvas, work->sheet + gHelmSplitter_Pictures[picture],
+                gHelmSplitter_PictureBiasX[picture] + 30,
+                gHelmSplitter_PictureBiasY[picture] + position.y - 60,
+                gHelmSplitter_PictureWidths[picture],
+                gHelmSplitter_PictureHeights[picture]);
       } else {
-        draw[0](canvas, work->sheet + gHelmSplitter_Pictures[cell],
-                -gHelmSplitter_PictureBiasX[cell] -
-                    gHelmSplitter_PictureWidths[cell] + 108,
-                gHelmSplitter_PictureBiasY[cell] + position.y - 60,
-                gHelmSplitter_PictureWidths[cell],
-                gHelmSplitter_PictureHeights[cell]);
+        draw[0](canvas, work->sheet + gHelmSplitter_Pictures[picture],
+                -gHelmSplitter_PictureBiasX[picture] -
+                    gHelmSplitter_PictureWidths[picture] + 108,
+                gHelmSplitter_PictureBiasY[picture] + position.y - 60,
+                gHelmSplitter_PictureWidths[picture],
+                gHelmSplitter_PictureHeights[picture]);
       }
     }
     // The strike: the battle shows the damage, the target flashes and
@@ -347,26 +347,27 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
     // The flash: its first picture until frame 12, then the next every five
     // frames, eight in all.
     if (frame <= 47) {
-      s32 cell = (frame - 8) / 5;
+      s32 picture = (frame - 8) / 5;
       u32 width;
       u32 height;
 
-      if (cell < 0)
-        cell = 0;
+      if (picture < 0)
+        picture = 0;
       // UB: width is assigned in one argument and read in another.
 #ifdef UBFIX
-      width = gHelmSplitter_ImpactBurstPictureWidths[cell];
-      height = gHelmSplitter_ImpactBurstPictureHeights[cell];
-      maxBlend(canvas, work->sheet + gHelmSplitter_ImpactBurstPictures[cell],
+      width = gHelmSplitter_ImpactBurstPictureWidths[picture];
+      height = gHelmSplitter_ImpactBurstPictureHeights[picture];
+      maxBlend(canvas, work->sheet + gHelmSplitter_ImpactBurstPictures[picture],
                (x >> 16) - (width >> 1), (y >> 16) - (height >> 1), width,
                height);
 #else
       maxBlend(
-          canvas, work->sheet + gHelmSplitter_ImpactBurstPictures[cell],
+          canvas, work->sheet + gHelmSplitter_ImpactBurstPictures[picture],
           (x >> 16) -
-              ((width = gHelmSplitter_ImpactBurstPictureWidths[cell]) >> 1),
+              ((width = gHelmSplitter_ImpactBurstPictureWidths[picture]) >> 1),
           (y >> 16) -
-              ((height = gHelmSplitter_ImpactBurstPictureHeights[cell]) >> 1),
+              ((height = gHelmSplitter_ImpactBurstPictureHeights[picture]) >>
+               1),
           width, height);
 #endif
     }
@@ -412,18 +413,18 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
           &work->particles[IMPACT_BURST_FIRST_FRAGMENT + i];
 
       if (frame >= 36 && frame <= 63) {
-        s32 cell;
+        s32 picture;
         s32 drawX;
         s32 drawY;
 
         Particle_AdvanceWithGravity2D(shard, 64, 0);
-        cell = (frame - 36) / 7;
+        picture = (frame - 36) / 7;
         drawX = Q_16_16_TO_INT(shard->x);
         drawY = Q_16_16_TO_INT(shard->y);
         maxBlend(canvas,
                  work->sheet +
-                     cell * (IMPACT_BURST_FRAGMENT_WIDTH *
-                             IMPACT_BURST_FRAGMENT_HEIGHT) +
+                     picture * (IMPACT_BURST_FRAGMENT_WIDTH *
+                                IMPACT_BURST_FRAGMENT_HEIGHT) +
                      IMPACT_BURST_SHARD_PICTURES,
                  drawX - IMPACT_BURST_FRAGMENT_WIDTH / 2,
                  drawY - IMPACT_BURST_FRAGMENT_HEIGHT / 2,

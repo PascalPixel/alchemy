@@ -35,7 +35,7 @@ void BattleEffect_RunUndeadSword(struct BattleEffectParams *args) {
   u8 *src;
   s32 speed;
   s32 angle;
-  s32 cell;
+  s32 picture;
   s32 size;
 
   EFFECT_GET_SLOTS(slots, cursor, work, canvas);
@@ -121,14 +121,14 @@ void BattleEffect_RunUndeadSword(struct BattleEffectParams *args) {
         s32 drawX;
         s32 drawY;
 
-        cell = particle->variant / 3;
+        picture = particle->variant / 3;
         drawX = Q_16_16_TO_INT(particle->x);
         drawY = Q_16_16_TO_INT(particle->y);
-        if (cell > 6)
-          cell = 6;
-        src = work->sheet + gUndeadSword_SparkPictures[cell] +
+        if (picture > 6)
+          picture = 6;
+        src = work->sheet + gUndeadSword_SparkPictures[picture] +
               UNDEAD_SWORD_SPARK_SHEET;
-        size = gUndeadSword_SparkSizes[cell];
+        size = gUndeadSword_SparkSizes[picture];
         draw[0](canvas, src, drawX - size / 2, drawY - size / 2, size, size);
         particle->variant++;
         Particle_AdvanceWithGravity2D(particle, 62, -px(1) / 8);

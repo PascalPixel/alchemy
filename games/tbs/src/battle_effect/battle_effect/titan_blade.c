@@ -338,15 +338,15 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
           } else {
             x = spark->x;
             if ((x >= 0 && x <= px(127) - 1) && y >= 0) {
-              u8 *cell;
+              u8 *picture;
 
               size = spark->variant / 5 + 1;
-              cell = sheet + gBattleEffect_MotePictures[size - 1];
+              picture = sheet + gBattleEffect_MotePictures[size - 1];
               x >>= 16;
               y >>= 16;
               x -= size / 2;
               y -= size;
-              blitters[0](canvas, cell, x, y, size, size * 2);
+              blitters[0](canvas, picture, x, y, size, size * 2);
             }
           }
         }

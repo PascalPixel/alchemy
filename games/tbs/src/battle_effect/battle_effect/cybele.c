@@ -203,17 +203,17 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
         struct Particle *thorn = &work->particles[CYBELE_FIRST_THORN + i];
 
         if (frame >= i + 72 && thorn->y < px(104)) {
-          s32 cellIndex = (frame + i) / 4 % 5;
+          s32 pictureIndex = (frame + i) / 4 % 5;
           s32 x = Q_16_16_TO_INT(thorn->x);
           s32 y = thorn->y >> 16;
-          u8 *cell = work->sheet + gCybele_ThornPictures[cellIndex];
-          u32 width = gCybele_ThornWidths[cellIndex];
+          u8 *picture = work->sheet + gCybele_ThornPictures[pictureIndex];
+          u32 width = gCybele_ThornWidths[pictureIndex];
           u32 tall;
 
           x -= width >> 1;
-          tall = gCybele_ThornHeights[cellIndex];
+          tall = gCybele_ThornHeights[pictureIndex];
           y -= tall >> 1;
-          draw[0](canvas, cell, x, y, width, tall);
+          draw[0](canvas, picture, x, y, width, tall);
           Particle_AdvanceWithGravity2D(thorn, 64, px(1) / 16);
         }
       }
@@ -306,12 +306,12 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
         struct Particle *chip = &work->particles[32 + i];
 
         if (chip->variant >= 0) {
-          s32 cellIndex = i % 5;
+          s32 pictureIndex = i % 5;
 
-          draw[0](canvas, work->sheet + gCybele_ChipPictures[cellIndex],
+          draw[0](canvas, work->sheet + gCybele_ChipPictures[pictureIndex],
                   Q_16_16_TO_INT(chip->x), Q_16_16_TO_INT(chip->y),
-                  gCybele_ChipWidths[cellIndex],
-                  gCybele_ChipHeights[cellIndex]);
+                  gCybele_ChipWidths[pictureIndex],
+                  gCybele_ChipHeights[pictureIndex]);
           chip->x += chip->velocityX;
           chip->y += chip->velocityY;
           chip->velocityY += px(1) / 4;
@@ -371,11 +371,12 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
             spark->y = screen.y + (Random16() & 15) - 40;
           }
           if (spark->variant >= 0 && spark->variant <= 4) {
-            u8 *cell = work->sheet + gCybele_SparkPictures[spark->variant];
+            u8 *picture = work->sheet + gCybele_SparkPictures[spark->variant];
             u32 size = gCybele_SparkSizes[spark->variant];
             u32 half = size >> 1;
 
-            draw[0](canvas, cell, spark->x - half, spark->y - half, size, size);
+            draw[0](canvas, picture, spark->x - half, spark->y - half, size,
+                    size);
           }
           spark->variant++;
           if (frame <= 199 && spark->variant == 5)
@@ -504,16 +505,16 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
         s32 start = i * 4 + 302;
 
         if (frame >= start && frame < i * 4 + 314) {
-          s32 cellIndex = (frame - start) / 2;
+          s32 pictureIndex = (frame - start) / 2;
           struct Actor *actor =
               GetBattleObjectSlotFar(work->args->targets[i])->actor;
 
           SET_VECTOR(point, actor->x.fixed, 0, actor->z.fixed);
           Projection_Point(point, &screen);
           screen.x >>= 1;
-          draw[0](canvas, work->sheet + cellIndex * (20 * 24), screen.x - 20,
+          draw[0](canvas, work->sheet + pictureIndex * (20 * 24), screen.x - 20,
                   screen.y - 24, 20, 24);
-          draw[1](canvas, work->sheet + cellIndex * (20 * 24), screen.x,
+          draw[1](canvas, work->sheet + pictureIndex * (20 * 24), screen.x,
                   screen.y - 24, 20, 24);
         }
         if (frame >= start + 6) {
@@ -523,12 +524,12 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
             Projection_Point(&dust->x, &screen);
             screen.x >>= 1;
             if (dust->variant >= 0 && dust->variant <= 26) {
-              /* FAKEMATCH(temporary): cellIndex holds CYBELE_DUST_PICTURE; as
-               * CYBELE_DUST_PICTURE in both reads, 214 of 1434 instructions
+              /* FAKEMATCH(temporary): pictureIndex holds CYBELE_DUST_PICTURE;
+               * as CYBELE_DUST_PICTURE in both reads, 214 of 1434 instructions
                * differ in tbs-en. */
-              s32 cellIndex = CYBELE_DUST_PICTURE;
-              s32 offset = gCybele_BlastPictures[cellIndex];
-              u32 size = gCybele_BlastSizes[cellIndex];
+              s32 pictureIndex = CYBELE_DUST_PICTURE;
+              s32 offset = gCybele_BlastPictures[pictureIndex];
+              u32 size = gCybele_BlastSizes[pictureIndex];
 
               draw[0](canvas, work->sheet + offset, screen.x - (size >> 1),
                       screen.y - (size >> 1), size, size);

@@ -85,7 +85,7 @@ void BattleEffect_RunMirroredWall(struct BattleEffectParams *args, s32 mode) {
   BlitterPair draw;
   void **slots;
   s32 frame;
-  s32 cell;
+  s32 picture;
 
   cursor = gBattleEffectWork;
   EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
@@ -163,19 +163,19 @@ void BattleEffect_RunMirroredWall(struct BattleEffectParams *args, s32 mode) {
     // that. The left half is drawn as is, the right mirrored, meeting at the
     // canvas's x 64.
     if (frame <= 31) {
-      cell = frame / 4;
-      if (cell > 2)
-        cell = (cell & 1) + 1;
+      picture = frame / 4;
+      if (picture > 2)
+        picture = (picture & 1) + 1;
       if (frame <= 27) {
-        draw[0](canvas, work->sheet + gMirroredWall_Pictures[cell],
-                64 - gMirroredWall_PictureWidths[cell],
-                (screenPosition.y - gMirroredWall_PictureHeights[cell]) + 8,
-                gMirroredWall_PictureWidths[cell],
-                gMirroredWall_PictureHeights[cell]);
-        draw[1](canvas, work->sheet + gMirroredWall_Pictures[cell], 64,
-                (screenPosition.y - gMirroredWall_PictureHeights[cell]) + 8,
-                gMirroredWall_PictureWidths[cell],
-                gMirroredWall_PictureHeights[cell]);
+        draw[0](canvas, work->sheet + gMirroredWall_Pictures[picture],
+                64 - gMirroredWall_PictureWidths[picture],
+                (screenPosition.y - gMirroredWall_PictureHeights[picture]) + 8,
+                gMirroredWall_PictureWidths[picture],
+                gMirroredWall_PictureHeights[picture]);
+        draw[1](canvas, work->sheet + gMirroredWall_Pictures[picture], 64,
+                (screenPosition.y - gMirroredWall_PictureHeights[picture]) + 8,
+                gMirroredWall_PictureWidths[picture],
+                gMirroredWall_PictureHeights[picture]);
       }
     }
     if (mode == MIRRORED_WALL_SPASM)

@@ -106,25 +106,27 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
     // and are never retired.
     for (i = 0, chip = PARTICLES; i != 64; i++, chip++) {
       if (frame >= i / 4 + 4) {
-        s32 cell;
+        s32 picture;
         s32 width;
         s32 height;
 
-        cell = (chip->z / 128) & 3;
+        picture = (chip->z / 128) & 3;
         // UB: width is assigned in one argument and read in another.
 #ifdef UBFIX
-        width = gHail_PictureWidths[cell];
-        height = gHail_PictureHeights[cell];
+        width = gHail_PictureWidths[picture];
+        height = gHail_PictureHeights[picture];
         draw[i & 1](canvas,
-                    work->sheet + HAIL_CHIP_PICTURES + gHail_Pictures[cell],
+                    work->sheet + HAIL_CHIP_PICTURES + gHail_Pictures[picture],
                     Q_16_16_TO_INT(chip->x) - width / 2,
                     Q_16_16_TO_INT(chip->y) - height / 2, width, height);
 #else
-        draw[i & 1](
-            canvas, work->sheet + HAIL_CHIP_PICTURES + gHail_Pictures[cell],
-            Q_16_16_TO_INT(chip->x) - (width = gHail_PictureWidths[cell]) / 2,
-            Q_16_16_TO_INT(chip->y) - (height = gHail_PictureHeights[cell]) / 2,
-            width, height);
+        draw[i & 1](canvas,
+                    work->sheet + HAIL_CHIP_PICTURES + gHail_Pictures[picture],
+                    Q_16_16_TO_INT(chip->x) -
+                        (width = gHail_PictureWidths[picture]) / 2,
+                    Q_16_16_TO_INT(chip->y) -
+                        (height = gHail_PictureHeights[picture]) / 2,
+                    width, height);
 #endif
         Particle_AdvanceWithGravity3D(chip, 63, px(1) / 16);
       }

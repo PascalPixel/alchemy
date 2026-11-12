@@ -422,14 +422,15 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
 
         if (fireball->y > 55) {
           if (fireball->variant >= 0 && fireball->variant <= 11) {
-            s32 cell = fireball->variant / 2;
+            s32 picture = fireball->variant / 2;
 
             draw[0](canvas,
-                    work->sheet + gTiamat_FlamePictures[cell] +
+                    work->sheet + gTiamat_FlamePictures[picture] +
                         DRAGON_FIRE_FLAME_IMAGES,
-                    fireball->x - gTiamat_FlameWidths[cell] / 2,
-                    fireball->y + gTiamat_FlameDrops[cell],
-                    gTiamat_FlameWidths[cell], gTiamat_FlameHeights[cell]);
+                    fireball->x - gTiamat_FlameWidths[picture] / 2,
+                    fireball->y + gTiamat_FlameDrops[picture],
+                    gTiamat_FlameWidths[picture],
+                    gTiamat_FlameHeights[picture]);
           }
           fireball->variant++;
           if (fireball->variant == 12)

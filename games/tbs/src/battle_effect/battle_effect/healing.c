@@ -386,11 +386,11 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
               if (mode == HEALING_MODE_PLY ||
                   mode == HEALING_MODE_CURE_POISON ||
                   mode == HEALING_MODE_RESTORE || mode == HEALING_MODE_TONIC) {
-                u8 *cell = work->sheet + gBattleEffect_SparklePictures[size];
+                u8 *picture = work->sheet + gBattleEffect_SparklePictures[size];
                 u32 edge = gBattleEffect_SparkleSizes[size];
                 u32 half = edge >> 1;
 
-                blit[1](canvas, cell, screen.x - half, screen.y - half, edge,
+                blit[1](canvas, picture, screen.x - half, screen.y - half, edge,
                         edge);
               } else {
                 EFFECT_DRAW_MOTE(blit[1], canvas, sprites, screen.x, screen.y,

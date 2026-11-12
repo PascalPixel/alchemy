@@ -353,7 +353,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
     // it is tall.
     if (frame >= 116 && frame < 144) {
       s32 high;
-      s32 cell;
+      s32 picture;
       s32 n = (frame - 116) / 4;
       if (n > 6) {
         n = 6;
@@ -361,31 +361,32 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       // Four explicit draws: a shared load, draw and release helper grew
       // this runner by eight bytes in English (5756 to 5764 bytes).
       high = gJudgment_BurstHeights[n];
-      cell = gJudgment_BurstPictures[n] + JUDGMENT_SHEET_BURST;
+      picture = gJudgment_BurstPictures[n] + JUDGMENT_SHEET_BURST;
 
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                           COMPOSITE_LIGHTEN);
       (((DrawRectangle *)gHeapSlots)[HEAP_SLOT_RAM_CODE_2])(
-          canvas, work->sheet + cell, 60 - high, 80 - high * 2, high, high * 2);
+          canvas, work->sheet + picture, 60 - high, 80 - high * 2, high,
+          high * 2);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                           COMPOSITE_LIGHTEN);
       (((DrawRectangle *)gHeapSlots)[HEAP_SLOT_RAM_CODE_2])(
-          canvas, work->sheet + cell, 60, 80 - high * 2, high, high * 2);
+          canvas, work->sheet + picture, 60, 80 - high * 2, high, high * 2);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y,
                           COMPOSITE_LIGHTEN);
       (((DrawRectangle *)gHeapSlots)[HEAP_SLOT_RAM_CODE_2])(
-          canvas, work->sheet + cell, 60 - high, 80, high, high * 2);
+          canvas, work->sheet + picture, 60 - high, 80, high, high * 2);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X |
                               COMPOSITE_FLIP_Y,
                           COMPOSITE_LIGHTEN);
       (((DrawRectangle *)gHeapSlots)[HEAP_SLOT_RAM_CODE_2])(
-          canvas, work->sheet + cell, 60, 80, high, high * 2);
+          canvas, work->sheet + picture, 60, 80, high, high * 2);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
 
       for (i = 0; i != 6; i++) {
@@ -422,8 +423,8 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       work->transferValue = CANVAS_FADE_THREE_QUARTERS;
       if (n <= 6) {
         // The 8x16 mote of dimmed copy n in JudgmentWork's ramp.
-        s32 cell = n * MOTE_SET_BYTES + gBattleEffect_MotePictures[7] +
-                   JUDGMENT_SHEET_BYTES;
+        s32 picture = n * MOTE_SET_BYTES + gBattleEffect_MotePictures[7] +
+                      JUDGMENT_SHEET_BYTES;
         s32 high = 8;
         EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                             COMPOSITE_LIGHTEN);
@@ -432,7 +433,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
           s32 angle = i * (TRIG_TURN / 128);
           s32 x = ((r * Trig_Sin(angle)) >> 16) - high / 2;
           s32 y = (r * Trig_Cos(angle)) >> 17;
-          blit(canvas, work->sheet + cell, x + 60, y + 72, high, high * 2);
+          blit(canvas, work->sheet + picture, x + 60, y + 72, high, high * 2);
         }
         HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
       }

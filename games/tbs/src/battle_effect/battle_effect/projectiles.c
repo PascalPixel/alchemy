@@ -856,9 +856,9 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
             } else if (mode == PROJECTILE_VOLLEY_SLEET ||
                        mode == PROJECTILE_VOLLEY_BLIZZARD ||
                        mode == PROJECTILE_VOLLEY_ICE_BLESSING) {
-              s32 cell = j & 3;
+              s32 picture = j & 3;
               draw[0](canvas,
-                      work->sheet + gProjectileVolley_PelletPictures[cell],
+                      work->sheet + gProjectileVolley_PelletPictures[picture],
                       position.x - 4, position.y - 4, 8, 8);
             } else if (mode == PROJECTILE_VOLLEY_CRAZY_VOICE) {
               draw[0](canvas, work->sheet + j % 6 * (8 * 16), position.x - 4,

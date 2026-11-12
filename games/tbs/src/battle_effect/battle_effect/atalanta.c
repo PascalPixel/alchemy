@@ -329,27 +329,28 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
         // pictures, 4 frames each, the two blitters alternating by shaft.
         if (shaft->variant >= 0) {
           if (shaft->variant <= 23) {
-            s32 cell = shaft->variant / 4;
+            s32 picture = shaft->variant / 4;
             u32 width;
 
             // UB: width is assigned in one argument and read in another.
 #ifdef UBFIX
-            width = gBattleEffect_PuffArcPictureWidths[cell];
-            draw[i & 1](canvas,
-                        Ram_MapGridCellBuffer +
-                            gBattleEffect_PuffArcPictures[cell],
-                        shaft->x - (width >> 1) - 8,
-                        shaft->y + gBattleEffect_PuffArcPictureBiasY[cell] - 40,
-                        width, gBattleEffect_PuffArcPictureHeights[cell]);
+            width = gBattleEffect_PuffArcPictureWidths[picture];
+            draw[i & 1](
+                canvas,
+                Ram_MapGridCellBuffer + gBattleEffect_PuffArcPictures[picture],
+                shaft->x - (width >> 1) - 8,
+                shaft->y + gBattleEffect_PuffArcPictureBiasY[picture] - 40,
+                width, gBattleEffect_PuffArcPictureHeights[picture]);
 #else
             draw[i & 1](
                 canvas,
-                Ram_MapGridCellBuffer + gBattleEffect_PuffArcPictures[cell],
+                Ram_MapGridCellBuffer + gBattleEffect_PuffArcPictures[picture],
                 shaft->x -
-                    ((width = gBattleEffect_PuffArcPictureWidths[cell]) >> 1) -
+                    ((width = gBattleEffect_PuffArcPictureWidths[picture]) >>
+                     1) -
                     8,
-                shaft->y + gBattleEffect_PuffArcPictureBiasY[cell] - 40, width,
-                gBattleEffect_PuffArcPictureHeights[cell]);
+                shaft->y + gBattleEffect_PuffArcPictureBiasY[picture] - 40,
+                width, gBattleEffect_PuffArcPictureHeights[picture]);
 #endif
             if (shaft->variant <= 11) {
               draw[0](canvas, work->sheet + ATALANTA_SHAFT_TOP, shaft->x + 4,

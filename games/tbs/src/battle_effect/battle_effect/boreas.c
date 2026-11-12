@@ -203,11 +203,11 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
     }
 
     for (i = 0; i != count; i++) {
-      s32 cell = i % 3;
-      draw(canvas, work->sheet + gBoreas_CrystalPictures[cell],
+      s32 picture = i % 3;
+      draw(canvas, work->sheet + gBoreas_CrystalPictures[picture],
            BOREAS_POINT_X(i) - shakeX,
-           BOREAS_POINT_Y(i) - gBoreas_CrystalHeights[cell] - shakeY,
-           gBoreas_CrystalWidths[cell], gBoreas_CrystalHeights[cell]);
+           BOREAS_POINT_Y(i) - gBoreas_CrystalHeights[picture] - shakeY,
+           gBoreas_CrystalWidths[picture], gBoreas_CrystalHeights[picture]);
     }
 
     // Lay out Boreas's 3x3 sprites 32 pixels apart, moved against the shake.
@@ -244,16 +244,15 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
     dropFrame = frame - 160;
     if (dropFrame >= 0 && dropFrame < 158) {
       s32 sinkFrame = frame - 208;
-      s32 cellPictureX = 80;
+      s32 blockX = 80;
       s32 blockY = 8;
       if (frame <= 175) {
-        cellPictureX = 96 - dropFrame;
+        blockX = 96 - dropFrame;
         blockY = dropFrame * 4 - 56;
       } else if (frame > 208) {
         blockY = sinkFrame / 4 + 8;
       }
-      drawAlt(canvas, work->sheet + BOREAS_BIG_BLOCK, cellPictureX, blockY, 24,
-              48);
+      drawAlt(canvas, work->sheet + BOREAS_BIG_BLOCK, blockX, blockY, 24, 48);
     }
 
     if (frame == 32) {
@@ -311,16 +310,16 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
     if (frame >= 32 && frame < 208) {
       for (i = 0; i != 64; i++) {
         if (PARTICLES[i].variant >= 0) {
-          s32 cell;
+          s32 picture;
           if (frame > 191) {
-            cell = i % 7 + 4;
+            picture = i % 7 + 4;
           } else {
-            cell = i & 3;
+            picture = i & 3;
           }
-          drawAlt(canvas, work->sheet + gBoreas_DebrisPictures[cell],
+          drawAlt(canvas, work->sheet + gBoreas_DebrisPictures[picture],
                   Q_16_16_TO_INT(PARTICLES[i].x),
-                  Q_16_16_TO_INT(PARTICLES[i].y), gBoreas_DebrisWidths[cell],
-                  gBoreas_DebrisHeights[cell]);
+                  Q_16_16_TO_INT(PARTICLES[i].y), gBoreas_DebrisWidths[picture],
+                  gBoreas_DebrisHeights[picture]);
           PARTICLES[i].x += PARTICLES[i].velocityX;
           PARTICLES[i].y += PARTICLES[i].velocityY;
           PARTICLES[i].velocityY += px(1) / 8;
@@ -345,11 +344,11 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
       }
       for (i = 0; i != 128; i++) {
         if (frame >= i / 4 + 224) {
-          s32 cell = i % 3;
+          s32 picture = i % 3;
           if ((i & 1) == 0) {
-            draw(canvas, work->sheet + gBoreas_SprayPictures[cell],
+            draw(canvas, work->sheet + gBoreas_SprayPictures[picture],
                  Q_16_16_TO_INT(PARTICLES[i].x), Q_16_16_TO_INT(PARTICLES[i].y),
-                 gBoreas_SprayWidths[cell], gBoreas_SprayHeights[cell]);
+                 gBoreas_SprayWidths[picture], gBoreas_SprayHeights[picture]);
           }
           PARTICLES[i].x += PARTICLES[i].velocityX;
           PARTICLES[i].y += PARTICLES[i].velocityY;
@@ -375,9 +374,9 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
       for (i = 0, trail = BOREAS_SPRAY_SPARKLES, spray = PARTICLES; i != 128;
            i++, trail++, spray++) {
         if (frame >= i + 228) {
-          s32 cell = trail->variant / 2 % 9;
-          s32 size = gBattleEffect_SparkleSizes[cell];
-          draw(canvas, sparkleSheet + gBattleEffect_SparklePictures[cell],
+          s32 picture = trail->variant / 2 % 9;
+          s32 size = gBattleEffect_SparkleSizes[picture];
+          draw(canvas, sparkleSheet + gBattleEffect_SparklePictures[picture],
                Q_16_16_TO_INT(trail->x) - size / 2,
                Q_16_16_TO_INT(trail->y) - size / 2, size, size);
           if (++trail->variant == 18) {
@@ -450,12 +449,12 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
     }
     if (frame <= 71) {
       for (i = 0; i != count; i++) {
-        s32 cell = i % 3;
-        draw(canvas, work->sheet + gBoreas_RisingCrystalPictures[cell],
+        s32 picture = i % 3;
+        draw(canvas, work->sheet + gBoreas_RisingCrystalPictures[picture],
              BOREAS_POINT_X(i) - 56,
-             BOREAS_POINT_Y(i) - gBoreas_RisingCrystalHeights[cell],
-             gBoreas_RisingCrystalWidths[cell],
-             gBoreas_RisingCrystalHeights[cell]);
+             BOREAS_POINT_Y(i) - gBoreas_RisingCrystalHeights[picture],
+             gBoreas_RisingCrystalWidths[picture],
+             gBoreas_RisingCrystalHeights[picture]);
       }
     }
     // Frame 72: the risen crystals burst, throwing up 64 crystals from where
@@ -486,10 +485,10 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
         struct Particle *crystal = &work->particles[i];
         y = Q_16_16_TO_INT(crystal->y);
         if (y <= 135) {
-          s32 cell = i % 3;
-          draw(canvas, work->sheet + gBoreas_FallPictures[cell],
-               Q_16_16_TO_INT(crystal->x), y - gBoreas_FallHeights[cell],
-               gBoreas_FallWidths[cell], gBoreas_FallHeights[cell]);
+          s32 picture = i % 3;
+          draw(canvas, work->sheet + gBoreas_FallPictures[picture],
+               Q_16_16_TO_INT(crystal->x), y - gBoreas_FallHeights[picture],
+               gBoreas_FallWidths[picture], gBoreas_FallHeights[picture]);
           Particle_AdvanceWithGravity2D(crystal, 64, px(1));
           if (Q_16_16_TO_INT(crystal->y) > 120 && crystal->velocityY > px(8)) {
             crystal->velocityY = -crystal->velocityY / 4;
@@ -527,9 +526,9 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
     if (frame > 72) {
       for (i = 0; i != 64; i++) {
         if (PARTICLES[i].variant >= 0 && PARTICLES[i].variant < 18) {
-          s32 cell = PARTICLES[i].variant / 2 % 9;
-          s32 size = gBattleEffect_SparkleSizes[cell];
-          draw(canvas, sparkleSheet + gBattleEffect_SparklePictures[cell],
+          s32 picture = PARTICLES[i].variant / 2 % 9;
+          s32 size = gBattleEffect_SparkleSizes[picture];
+          draw(canvas, sparkleSheet + gBattleEffect_SparklePictures[picture],
                PARTICLES[i].x - size / 2, PARTICLES[i].y - size / 2, size,
                size);
         }

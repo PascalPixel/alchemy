@@ -198,17 +198,17 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
     // The flames at the wall's foot (frames 0 to 81): from frame 12 they
     // flicker between their second and third pictures.
     if (frame <= 81) {
-      s32 cell = frame / 4;
+      s32 picture = frame / 4;
 
-      if (cell > 2)
-        cell = (cell & 1) + 1;
-      draw[0](canvas, work->sheet + gGaia_FlamePictures[cell],
-              wallX - gGaia_FlameWidths[cell] + 64,
-              116 - gGaia_FlameHeights[cell], gGaia_FlameWidths[cell],
-              gGaia_FlameHeights[cell]);
-      draw[1](canvas, work->sheet + gGaia_FlamePictures[cell], wallX + 64,
-              116 - gGaia_FlameHeights[cell], gGaia_FlameWidths[cell],
-              gGaia_FlameHeights[cell]);
+      if (picture > 2)
+        picture = (picture & 1) + 1;
+      draw[0](canvas, work->sheet + gGaia_FlamePictures[picture],
+              wallX - gGaia_FlameWidths[picture] + 64,
+              116 - gGaia_FlameHeights[picture], gGaia_FlameWidths[picture],
+              gGaia_FlameHeights[picture]);
+      draw[1](canvas, work->sheet + gGaia_FlamePictures[picture], wallX + 64,
+              116 - gGaia_FlameHeights[picture], gGaia_FlameWidths[picture],
+              gGaia_FlameHeights[picture]);
     }
 
     // The rising wall (frames 12 to 87): its narrowest row until frame 66,

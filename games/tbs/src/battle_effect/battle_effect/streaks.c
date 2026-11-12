@@ -214,17 +214,17 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
               if (step > 5)
                 step = 5;
               if (STREAKS_VALUE(mode, STREAKS_ANIMATE)) {
-                u8 *cell = &work->sheet[step * 800 + frame / 2 % 3 * 4800];
+                u8 *picture = &work->sheet[step * 800 + frame / 2 % 3 * 4800];
 
-                drawUpper(canvas, cell, position.x - 10, position.y - 40, 20,
+                drawUpper(canvas, picture, position.x - 10, position.y - 40, 20,
                           40);
-                drawLower(canvas, cell, position.x - 10, position.y, 20, 40);
+                drawLower(canvas, picture, position.x - 10, position.y, 20, 40);
               } else {
-                u8 *cell = &work->sheet[step * 800 + 2 * 4800];
+                u8 *picture = &work->sheet[step * 800 + 2 * 4800];
 
-                drawUpper(canvas, cell, position.x - 10, position.y - 40, 20,
+                drawUpper(canvas, picture, position.x - 10, position.y - 40, 20,
                           40);
-                drawLower(canvas, cell, position.x - 10, position.y, 20, 40);
+                drawLower(canvas, picture, position.x - 10, position.y, 20, 40);
               }
               // No drag and no gravity: a straight line.
               Particle_AdvanceWithGravity3D(streak, 64, 0);

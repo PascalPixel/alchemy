@@ -232,7 +232,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
             } else {
               x = spark->x;
               if ((x >= 0 && x < px(127)) && y >= 0) {
-                u8 *cell;
+                u8 *picture;
                 s32 lane;
                 s32 drawY = y >> 16;
                 s32 drawX = x >> 16;
@@ -241,10 +241,10 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
                 // the brighter pixel or add.
                 size = spark->variant / 5 + 1;
                 lane = i & 1;
-                cell = sheet + gBattleEffect_MotePictures[size - 1];
+                picture = sheet + gBattleEffect_MotePictures[size - 1];
                 drawX -= size / 2;
                 drawY -= size;
-                blit[lane](canvas, cell, drawX, drawY, size, size * 2);
+                blit[lane](canvas, picture, drawX, drawY, size, size * 2);
               }
             }
           }

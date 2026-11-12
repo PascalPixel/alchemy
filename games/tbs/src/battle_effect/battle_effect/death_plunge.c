@@ -281,32 +281,33 @@ UNUSED void BattleEffect_RunBladeRain(struct BattleEffectParams *args) {
     for (i = 15; i != -1; i--) {
       s32 drift;
       s32 speed;
-      s32 cell;
+      s32 picture;
 
       blade = &work->particles[i];
       drift = blade->velocityX;
       speed = drift;
       if (drift < 0)
         speed = -drift;
-      cell = speed >> 17;
+      picture = speed >> 17;
       if (frame < i * 4 + 25) {
         u32 width;
         u32 height;
 
         // UB: width is assigned in one argument and read in another.
 #ifdef UBFIX
-        width = gDeathPlunge_SwordWidths[cell];
-        height = gDeathPlunge_SwordHeights[cell];
-        blit[(u32)drift >> 31](canvas,
-                               work->sheet + gDeathPlunge_SwordPictures[cell],
-                               (blade->x >> 16) - (width >> 1),
-                               (blade->y >> 16) - (height >> 1), width, height);
+        width = gDeathPlunge_SwordWidths[picture];
+        height = gDeathPlunge_SwordHeights[picture];
+        blit[(u32)drift >> 31](
+            canvas, work->sheet + gDeathPlunge_SwordPictures[picture],
+            (blade->x >> 16) - (width >> 1), (blade->y >> 16) - (height >> 1),
+            width, height);
 #else
         blit[(u32)drift >> 31](
-            canvas, work->sheet + gDeathPlunge_SwordPictures[cell],
-            (blade->x >> 16) - ((width = gDeathPlunge_SwordWidths[cell]) >> 1),
+            canvas, work->sheet + gDeathPlunge_SwordPictures[picture],
+            (blade->x >> 16) -
+                ((width = gDeathPlunge_SwordWidths[picture]) >> 1),
             (blade->y >> 16) -
-                ((height = gDeathPlunge_SwordHeights[cell]) >> 1),
+                ((height = gDeathPlunge_SwordHeights[picture]) >> 1),
             width, height);
 #endif
         if (frame >= i * 4 + 16) {
@@ -318,18 +319,19 @@ UNUSED void BattleEffect_RunBladeRain(struct BattleEffectParams *args) {
         u32 height;
 
 #ifdef UBFIX
-        width = gDeathPlunge_SwordWidths[cell];
-        height = gDeathPlunge_SwordHeights[cell];
+        width = gDeathPlunge_SwordWidths[picture];
+        height = gDeathPlunge_SwordHeights[picture];
         blit[(u32)drift >> 31](
-            canvas, work->sheet + gDeathPlunge_SwordPictures[cell],
+            canvas, work->sheet + gDeathPlunge_SwordPictures[picture],
             (blade->x >> 16) - (width >> 1), (blade->y >> 16) - (height >> 1),
             width, height - 4);
 #else
         blit[(u32)drift >> 31](
-            canvas, work->sheet + gDeathPlunge_SwordPictures[cell],
-            (blade->x >> 16) - ((width = gDeathPlunge_SwordWidths[cell]) >> 1),
+            canvas, work->sheet + gDeathPlunge_SwordPictures[picture],
+            (blade->x >> 16) -
+                ((width = gDeathPlunge_SwordWidths[picture]) >> 1),
             (blade->y >> 16) -
-                ((height = gDeathPlunge_SwordHeights[cell]) >> 1),
+                ((height = gDeathPlunge_SwordHeights[picture]) >> 1),
             width, height - 4);
 #endif
       }
@@ -889,12 +891,12 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
       for (i = 0; i != SHATTERING_OPENING_FLASHES; i++) {
         piece = &work->particles[i];
         if (frame >= i / 4 + 52 && piece->variant <= 39) {
-          s32 cell;
+          s32 picture;
 
-          cell = piece->variant / 4;
-          if (cell > 5)
-            cell = 5;
-          draw[1](canvas, work->sheet + (cell << 11),
+          picture = piece->variant / 4;
+          if (picture > 5)
+            picture = 5;
+          draw[1](canvas, work->sheet + (picture << 11),
                   Q_16_16_TO_INT(piece->x) - 16, Q_16_16_TO_INT(piece->y) - 32,
                   32, 64);
           Particle_AdvanceWithGravity2D(piece, 60, -px(1) / 16);

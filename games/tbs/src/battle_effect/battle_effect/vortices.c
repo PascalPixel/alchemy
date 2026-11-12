@@ -196,7 +196,7 @@ void BattleEffect_RunWhirlwind(struct BattleEffectParams *args) {
   s32 x;
   s32 y;
   s32 segment;
-  s32 cell;
+  s32 picture;
   s32 i;
   s32 j;
 
@@ -282,11 +282,12 @@ void BattleEffect_RunWhirlwind(struct BattleEffectParams *args) {
         // A glint plays three pictures, two frames each: glints 0 and 1 the
         // first three, glints 2 and 3 the last three; 1 and 3 are mirrored.
         if (point->variant >= 0) {
-          cell = point->variant / 2 + (j / 2) * 3;
-          draw[j & 1](canvas, work->sheet + gBattleEffect_GlintPictures[cell],
+          picture = point->variant / 2 + (j / 2) * 3;
+          draw[j & 1](canvas,
+                      work->sheet + gBattleEffect_GlintPictures[picture],
                       point->x + x, point->y + y,
-                      gBattleEffect_GlintPictureWidths[cell],
-                      gBattleEffect_GlintPictureHeights[cell]);
+                      gBattleEffect_GlintPictureWidths[picture],
+                      gBattleEffect_GlintPictureHeights[picture]);
         }
         point->variant++;
         if (point->variant == 6) {

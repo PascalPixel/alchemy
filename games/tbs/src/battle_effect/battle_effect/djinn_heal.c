@@ -204,23 +204,25 @@ UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
             s32 zz = (spark->z >> 8) * (spark->z >> 8);
             s32 distance = Iwram_Sqrt(xx + yy + zz) >> 9;
             if (distance != 0) {
-              s32 cellIndex;
+              s32 pictureIndex;
 
               Projection_Point(spark, &view);
               view.x >>= 1;
               /* FAKEMATCH(dead): BattleEffect_RunHealingMotes' clamp and size
                * by depth, copied with its code; nothing reads view.depth after,
-               * and the next line sets cellIndex for real. Without the clamp
+               * and the next line sets pictureIndex for real. Without the clamp
                * and the store, 673 of 747 instructions differ in tbs-en. */
               CLAMP(view.depth, 314, 634);
-              cellIndex = 3 - (view.depth - 314) / 128;
-              cellIndex = (i * 4 + frame) % 9;
+              pictureIndex = 3 - (view.depth - 314) / 128;
+              pictureIndex = (i * 4 + frame) % 9;
               {
-                u8 *cell = sheet + gBattleEffect_SparklePictures[cellIndex];
-                u32 edge = gBattleEffect_SparkleSizes[cellIndex];
+                u8 *picture =
+                    sheet + gBattleEffect_SparklePictures[pictureIndex];
+                u32 edge = gBattleEffect_SparkleSizes[pictureIndex];
                 u32 half = edge >> 1;
 
-                draw[1](canvas, cell, view.x - half, view.y - half, edge, edge);
+                draw[1](canvas, picture, view.x - half, view.y - half, edge,
+                        edge);
               }
               spark->x -= spark->x / distance;
               spark->y -= spark->y / distance;

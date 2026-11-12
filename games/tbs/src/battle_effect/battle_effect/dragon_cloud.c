@@ -16,14 +16,14 @@
 #define DRAGON_CLOUD_EMBERS 40           ///< embers, from FIRST_EMBER
 #define DRAGON_CLOUD_FLASHES 16          ///< flashes, from FIRST_FLASH
 
-/// Draws puff picture `cell` of sheet on canvas at (x, y) with blit, sized by
-/// the puff tables.
-#define DRAGON_CLOUD_DRAW_PUFF(blit, canvas, sheet, cell, x, y)                \
+/// Draws puff picture number `picture` of sheet on canvas at (x, y) with blit,
+/// sized by the puff tables.
+#define DRAGON_CLOUD_DRAW_PUFF(blit, canvas, sheet, picture, x, y)             \
   blit(canvas,                                                                 \
        &(sheet)[DRAGON_CLOUD_PUFF_PICTURES] +                                  \
-           gBattleEffect_PuffArcPictures[cell],                                \
-       x, y, gBattleEffect_PuffArcPictureWidths[cell],                         \
-       gBattleEffect_PuffArcPictureHeights[cell])
+           gBattleEffect_PuffArcPictures[picture],                             \
+       x, y, gBattleEffect_PuffArcPictureWidths[picture],                      \
+       gBattleEffect_PuffArcPictureHeights[picture])
 
 /// A flame leaves the user along a stored path with a fading trail of 19 copies
 /// behind it, then strikes the first target on DRAGON_CLOUD_STRIKE_FRAME and
@@ -159,12 +159,12 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
     }
     BattleCamera_SetViewFar(0, 0, 0, 100);
     if (frame <= 17) {
-      s32 cell = frame / 3;
+      s32 picture = frame / 3;
 
-      DRAGON_CLOUD_DRAW_PUFF(draw[0], canvas, work->sheet, cell, 48,
-                             gBattleEffect_PuffArcPictureBiasY[cell] + 60);
-      DRAGON_CLOUD_DRAW_PUFF(draw[1], canvas, work->sheet, cell, 56,
-                             gBattleEffect_PuffArcPictureBiasY[cell] + 60);
+      DRAGON_CLOUD_DRAW_PUFF(draw[0], canvas, work->sheet, picture, 48,
+                             gBattleEffect_PuffArcPictureBiasY[picture] + 60);
+      DRAGON_CLOUD_DRAW_PUFF(draw[1], canvas, work->sheet, picture, 56,
+                             gBattleEffect_PuffArcPictureBiasY[picture] + 60);
     }
     // The path gives two 16-bit coordinates on frame 18, then a signed byte
     // step for each axis every frame through frame 58. From frame 78 the
@@ -295,12 +295,12 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
         struct Particle *puff = &work->particles[i];
 
         if (puff->variant >= 0 && puff->variant <= 11) {
-          s32 cell = puff->variant / 2;
+          s32 picture = puff->variant / 2;
 
           DRAGON_CLOUD_DRAW_PUFF(
-              draw[1], canvas, work->sheet, cell,
-              puff->x - gBattleEffect_PuffArcPictureWidths[cell] / 2,
-              puff->y + gBattleEffect_PuffArcPictureBiasY[cell]);
+              draw[1], canvas, work->sheet, picture,
+              puff->x - gBattleEffect_PuffArcPictureWidths[picture] / 2,
+              puff->y + gBattleEffect_PuffArcPictureBiasY[picture]);
         }
         puff->variant++;
       }

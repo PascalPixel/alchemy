@@ -38,7 +38,7 @@ void BattleEffect_RunSpire(struct BattleEffectParams *args) {
   s32 frame;
   s32 i;
   s32 j;
-  s32 cell;
+  s32 picture;
   u32 width;
   u32 height;
 
@@ -99,22 +99,24 @@ void BattleEffect_RunSpire(struct BattleEffectParams *args) {
           // tumbling speed, slowing by one every other frame down to 1. The
           // shards gain 1/4 pixel a frame of downward speed each frame,
           // undamped.
-          cell = (j % 5) * 3 + shard->variant / 96 % 3;
+          picture = (j % 5) * 3 + shard->variant / 96 % 3;
           // UB: width is assigned in one argument and read in another.
 #ifdef UBFIX
-          width = gSpire_ShardWidths[cell];
-          height = gSpire_ShardHeights[cell];
+          width = gSpire_ShardWidths[picture];
+          height = gSpire_ShardHeights[picture];
           blit(canvas,
-               work->sheet + gSpire_ShardPictures[cell] + SPIRE_SHARD_PICTURES,
+               work->sheet + gSpire_ShardPictures[picture] +
+                   SPIRE_SHARD_PICTURES,
                Q_16_16_TO_INT(shard->x) - (width >> 1),
                Q_16_16_TO_INT(shard->y) - (height >> 1), width, height);
 #else
           blit(canvas,
-               work->sheet + gSpire_ShardPictures[cell] + SPIRE_SHARD_PICTURES,
+               work->sheet + gSpire_ShardPictures[picture] +
+                   SPIRE_SHARD_PICTURES,
                Q_16_16_TO_INT(shard->x) -
-                   ((width = gSpire_ShardWidths[cell]) >> 1),
+                   ((width = gSpire_ShardWidths[picture]) >> 1),
                Q_16_16_TO_INT(shard->y) -
-                   ((height = gSpire_ShardHeights[cell]) >> 1),
+                   ((height = gSpire_ShardHeights[picture]) >> 1),
                width, height);
 #endif
           Particle_AdvanceWithGravity2D(shard, 64, px(1) / 4);

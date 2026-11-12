@@ -175,18 +175,18 @@ void BattleEffect_RunEruption(struct BattleEffectParams *args, s32 mode) {
           screen.x >>= 1;
           screen.x += work->args->side * 32 - 16;
           if (puff->variant >= 0 && puff->variant <= 20) {
-            s32 cell = puff->variant / 3;
+            s32 picture = puff->variant / 3;
             u32 width;
 
             // UB: width is assigned in one argument and read in another.
 #ifdef UBFIX
-            width = gEruption_PuffSizes[cell];
-            draw[0](canvas, work->sheet + gEruption_PuffPictures[cell],
+            width = gEruption_PuffSizes[picture];
+            draw[0](canvas, work->sheet + gEruption_PuffPictures[picture],
                     screen.x - (width >> 1), screen.y - (width >> 1), width,
                     width);
 #else
-            draw[0](canvas, work->sheet + gEruption_PuffPictures[cell],
-                    screen.x - ((width = gEruption_PuffSizes[cell]) >> 1),
+            draw[0](canvas, work->sheet + gEruption_PuffPictures[picture],
+                    screen.x - ((width = gEruption_PuffSizes[picture]) >> 1),
                     screen.y - (width >> 1), width, width);
 #endif
           }

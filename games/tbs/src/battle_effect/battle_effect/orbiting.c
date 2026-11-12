@@ -220,8 +220,8 @@ UNUSED void BattleEffect_RunOrbitingSkulls(void) {
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
-/// The burst picture in the sheet, after the smoke.
-#define TARGET_BURST_PICTURE (6 * (24 * 48))
+/// The burst's six pictures in the sheet, after the smoke's six.
+#define TARGET_BURST_PICTURES (6 * (24 * 48))
 
 #define TARGET_BURSTS_FRAMES 96
 
@@ -250,7 +250,7 @@ UNUSED void BattleEffect_RunTargetBursts(struct BattleEffectParams *args) {
   BattleEffect_StartCanvasLayer(0);
   Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet, work->sheet, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_TargetBurstImage,
-                             work->sheet + TARGET_BURST_PICTURE, 0, 0);
+                             work->sheet + TARGET_BURST_PICTURES, 0, 0);
   palette = Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
@@ -304,22 +304,22 @@ UNUSED void BattleEffect_RunTargetBursts(struct BattleEffectParams *args) {
         // The target's five puffs and its burst, each through six pictures
         // of six frames, holding the last; the burst rises faster.
         for (i = 0; i != 6; i++) {
-          s32 cell;
+          s32 picture;
 
           puff = &work->particles[member * 6 + i];
-          cell = puff->variant / 6;
-          if (cell > 5)
-            cell = 5;
+          picture = puff->variant / 6;
+          if (picture > 5)
+            picture = 5;
           Projection_Point(puff, &screen);
           screen.x >>= 1;
           if (i == 5) {
             Particle_AdvanceWithGravity3D(puff, 62, px(1) / 32);
             drawBurst(canvas,
-                      work->sheet + cell * (24 * 48) + TARGET_BURST_PICTURE,
+                      work->sheet + picture * (24 * 48) + TARGET_BURST_PICTURES,
                       screen.x - 12, screen.y - 36, 24, 48);
           } else {
             Particle_AdvanceWithGravity3D(puff, 60, px(1) / 128);
-            drawSmoke(canvas, work->sheet + cell * (24 * 48), screen.x - 12,
+            drawSmoke(canvas, work->sheet + picture * (24 * 48), screen.x - 12,
                       screen.y - 36, 24, 48);
           }
           puff->variant += 1;
@@ -333,5 +333,5 @@ UNUSED void BattleEffect_RunTargetBursts(struct BattleEffectParams *args) {
 
 #undef SWIRLING_STARS_FRAMES
 #undef SWIRLING_STARS_COUNT
-#undef TARGET_BURST_PICTURE
+#undef TARGET_BURST_PICTURES
 #undef TARGET_BURSTS_FRAMES

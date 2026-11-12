@@ -297,7 +297,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
             // 256ths of a pixel, and >> 9 divides by 512.
             distance = Iwram_Sqrt(xx + yy + zz) >> 9;
             if (distance != 0 && mote->variant <= 23) {
-              s32 cell = mote->variant / 4;
+              s32 picture = mote->variant / 4;
 
               Projection_Point(mote, &screen);
               screen.x >>= 1;
@@ -306,8 +306,8 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
               // reached the centre is no longer drawn.
               if (mode == TARGET_MOTES_MYSTIC_FLAME ||
                   mode == TARGET_MOTES_DEMON_FIRE)
-                draw[1](canvas, work->sheet + cell * (40 * 40), screen.x - 20,
-                        screen.y - 20, 40, 40);
+                draw[1](canvas, work->sheet + picture * (40 * 40),
+                        screen.x - 20, screen.y - 20, 40, 40);
               else if (mode == TARGET_MOTES_DROWN)
                 draw[1](canvas, work->sheet + 3072, screen.x - 6, screen.y - 12,
                         12, 24);
@@ -315,7 +315,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
                 draw[1](canvas, work->sheet, screen.x - 11, screen.y - 21, 22,
                         42);
               else
-                draw[(i & 3) != 0](canvas, work->sheet + cell * (24 * 48),
+                draw[(i & 3) != 0](canvas, work->sheet + picture * (24 * 48),
                                    screen.x - 12, screen.y - 24, 24, 48);
               // Closing motes step 2 pixels towards the centre and start their
               // cycle again where they are; rising motes rise 1 pixel a frame
@@ -449,16 +449,16 @@ void BattleEffect_RunSleep(struct BattleEffectParams *args) {
     for (particleIndex = 0; particleIndex != SLEEP_SHEEP;
          particleIndex++, current++) {
       if (frame > particleIndex * 4 && current->y <= px(128) - 1) {
-        s32 cell;
+        s32 picture;
 
         // Eight 32x32 images (1024 bytes each), the last four drawn from the
         // first four mirrored both ways; z sets how fast a sheep tumbles.
-        cell = (current->variant / 16) & 7;
-        if (cell < 4)
-          drawUpright(canvas, work->sheet + (cell << 10),
+        picture = (current->variant / 16) & 7;
+        if (picture < 4)
+          drawUpright(canvas, work->sheet + (picture << 10),
                       (current->x >> 16) - 16, (current->y >> 16) - 16, 32, 32);
         else
-          drawFlipped(canvas, work->sheet + (cell << 10) - 4096,
+          drawFlipped(canvas, work->sheet + (picture << 10) - 4096,
                       (current->x >> 16) - 16, (current->y >> 16) - 16, 32, 32);
         current->y += current->velocityY;
         current->velocityY += px(1) / 8;
@@ -511,7 +511,7 @@ void BattleEffect_RunCurse(struct BattleEffectParams *args) {
   s32 i;
   s32 frame;
   s32 start;
-  s32 cell;
+  s32 picture;
   s32 y;
   struct ScreenPoint screenPosition;
 
@@ -565,8 +565,8 @@ void BattleEffect_RunCurse(struct BattleEffectParams *args) {
           draw[0](canvas, work->sheet + CURSE_MARKER_PICTURE,
                   screenPosition.x - 8, y - 20, 16, 20);
           if (frame >= start) {
-            cell = ((frame - start) + marker->variant) / 6 % 9;
-            draw[0](canvas, work->sheet + cell * (16 * 12),
+            picture = ((frame - start) + marker->variant) / 6 % 9;
+            draw[0](canvas, work->sheet + picture * (16 * 12),
                     screenPosition.x - 8, screenPosition.y - 16, 16, 12);
           }
         }

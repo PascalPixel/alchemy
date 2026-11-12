@@ -195,7 +195,7 @@ enum CastingImpact {
 void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
   void **slots;
   void **slot;
-  s32 cellOffset;
+  s32 pictureOffset;
   struct ScreenPoint casterPos;
   struct ScreenPoint targetPos;
   struct FixedPointPosition djinnPos;
@@ -1006,14 +1006,15 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
       if (frame > 5) {
         stripX = targetScreen->x / 2 - 20;
         image = frame / 2 % 3;
-        cellOffset = image * (2 * 40 * 32);
-        blitters[0](canvas, pictures + GLINT_SET_BYTES + cellOffset, stripX, 16,
-                    40, 32);
+        pictureOffset = image * (2 * 40 * 32);
+        blitters[0](canvas, pictures + GLINT_SET_BYTES + pictureOffset, stripX,
+                    16, 40, 32);
         blitters[0](canvas,
                     image * (40 * 32) +
                         (pictures + GLINT_SET_BYTES + 6 * (40 * 32)),
                     stripX, 48, 40, 32);
-        blitters[0](canvas, cellOffset + (pictures + GLINT_SET_BYTES + 40 * 32),
+        blitters[0](canvas,
+                    pictureOffset + (pictures + GLINT_SET_BYTES + 40 * 32),
                     stripX, 80, 40, 32);
       }
     } else if (mode == CASTING_IMPACT_IMPACT_SCORCH ||

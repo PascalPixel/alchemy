@@ -279,7 +279,7 @@ enum ImilAnimation {
 
 static void Imil_MeetMiaAtOldCouplesHouse(void);
 static void Imil_MiaCastsPlyOnOldMan(void);
-static void Imil_SpawnAmbientEffects(void);
+static void Imil_SpawnChimneySmoke(void);
 static void Imil_UpdateFootprints(void);
 static void Imil_PlaceMovedSnowman(void);
 static void Imil_ArriveFromFallsCave(void);
@@ -898,7 +898,7 @@ s32 Imil_Initialize(void) {
     }
     leader->timer = 0;
     leader->userValue = 0;
-    Task_AddFrame(Imil_SpawnAmbientEffects, TASK_PASS_FRAME);
+    Task_AddFrame(Imil_SpawnChimneySmoke, TASK_PASS_FRAME);
     Task_AddFrame(Imil_UpdateFootprints, TASK_PASS_FRAME);
     Actor_SetSpritePriority(ACTOR_SNOWMAN, 1);
     if (GameFlag_Get(FLAG_IMIL_SNOWMAN_MOVED)) {
@@ -1305,7 +1305,7 @@ static inline void Imil_StartRisingEffect(struct Actor *actor) {
 
 /// Smoke rises from the chimneys of Imil's five houses, staggered over each
 /// second.
-static void Imil_SpawnAmbientEffects(void) {
+static void Imil_SpawnChimneySmoke(void) {
   // volatile: the type of &gFrameCount (frame.h); the six editions build the
   // same bytes without it
   volatile u32 *frame;

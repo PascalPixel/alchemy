@@ -9,6 +9,10 @@
 #include "scene.h"
 #include "static_assert.h"
 
+/// A pixel step packed as one word: X in the upper halfword, Z in the lower.
+/// Packed through u32, so a negative step is its two's-complement bits.
+#define DIRECTION_STEP(dx, dz) (((u32)(dx) << 16) | ((u32)(dz) & 0xffff))
+
 /// Where a pushed actor ahead of the leader would roll to: its footprint, its
 /// actor, that position, and a routine run during the leader's
 /// follow-through.

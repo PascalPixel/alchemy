@@ -1239,31 +1239,8 @@ static void KolimaForestEntrance_FlickerPsynergyFields(void) {
   }
 }
 
-/// Pixel step by direction: X in the upper halfword, Z in the lower.
-#define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))
-
-s32 gPushedActor_DirectionSteps[] = {
-    DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),
-    DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),
-    DIRECTION_STEP(0, 16),  DIRECTION_STEP(-16, 0), DIRECTION_STEP(-16, 0),
-    DIRECTION_STEP(-16, 0), DIRECTION_STEP(-16, 0), DIRECTION_STEP(0, -16),
-    DIRECTION_STEP(0, -16), DIRECTION_STEP(0, -16), DIRECTION_STEP(0, -16),
-    DIRECTION_STEP(16, 0),
-};
-
+#include "shared/pushed_actor_tables.h"
 // clang-format off
-u32 gPushedActor_FootprintKinds[] = {
-    207, 205, 228, 229, 298, 297,
-};
-
-s32 gPushedActor_FootprintBounds[] = {
-    -32, -8, 32, 8,
-    -8, -32, 8, 32,
-    -32, -16, 32, 0,
-    -8, -32, 8, 32,
-    -32, -8, 32, 8,
-    -8, -32, 8, 32,
-};
 // clang-format on
 
 /// Garet, Ivan and Mia walk to their places beside the leader.

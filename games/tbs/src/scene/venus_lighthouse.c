@@ -638,35 +638,11 @@ static void VenusLighthouse_PushAdjacentPillar(void) {
   Actor_SelectAnimation(leader, ANIM_STAND);
 }
 
-/// Unused: fills cell behaviors in a rectangle of the requested map layer.
-/// Nothing in Venus Lighthouse calls it.
-static UNUSED s32 PushedActor_FillGridAttributeRectangle(u32 layerIndex, s32 x,
+/// Unused: nothing in Venus Lighthouse calls it.
+static UNUSED s32 PushedActor_FillGridAttributeRectangle(u32 layer, s32 x,
                                                          s32 z, u32 width,
-                                                         u32 height,
-                                                         s32 behavior) {
-  struct MapGridScrollWork *grid = gMapGridWork[0];
-  struct MapGridCell *cells;
-  u32 row;
-  u32 column;
-
-  if (grid != 0) {
-    if (layerIndex <= 2) {
-      cells = grid->layers[layerIndex].cells;
-    } else {
-      cells = (struct MapGridCell *)gMapGridCellBuffer;
-    }
-    cells += x + (z << 7);
-    for (row = 0; row < height; row++) {
-      struct MapGridCell *cell = cells + (row << 7);
-
-      for (column = 0; column < width; column++) {
-        cell->behavior = behavior;
-        cell++;
-      }
-    }
-  }
-  return 0;
-}
+                                                         u32 height, s32 value);
+#include "shared/pushed_actor_fill_rectangle.h"
 
 /// After a battle, draws every actor whose timer holds a
 /// VENUS_COLOR_MARK in its colour mode again.
@@ -3911,14 +3887,6 @@ static s32 VenusLighthouse_RouteLight(struct Actor *interpreter) {
 }
 
 #include "shared/field_effect_duration_scripts.h"
-
-// Step for each of 16 directions: X in the upper halfword, Z in the lower.
-// UB: westward rows contain a negative X step; pack its unsigned bits.
-#ifdef UBFIX
-#define DIRECTION_STEP(dx, dz) (((u32)(dx) << 16) | ((dz) & 0xffff))
-#else
-#define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))
-#endif
 
 /// The cell ahead for each of sixteen headings, 16 pixels east-west in the
 /// upper halfword and north-south in the lower (DIRECTION_STEP).

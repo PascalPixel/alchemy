@@ -105,6 +105,7 @@
 #include "flags.h"
 #include "sounds.h"
 #include "map_grid_scroll.h"
+#include "pushed_actor.h"
 
 /// In Bilibin Cave's ice room, a movable torch has melted the third puddle's
 /// ice pillar.
@@ -882,9 +883,6 @@ struct Trigger gBilibinCaveIceTriggers[] = {
     { TRIGGERS_END },
 };
 // clang-format on
-
-/// Packs signed pixel steps with X in the upper halfword and Z in the lower.
-#define DIRECTION_STEP(dx, dz) (((u32)(dx) << 16) | ((dz) & 0xffff))
 
 s32 gBilibinCave_PushSteps[] = {
     DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),

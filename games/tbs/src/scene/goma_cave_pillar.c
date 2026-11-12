@@ -662,32 +662,8 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-/// One step per facing: X pixels in the high halfword, Z pixels in the low
-/// half.
-#define DIRECTION_STEP(dx, dz) (((u32)(dx) << 16) | ((dz) & 0xffff))
-
-s32 gPushedActor_DirectionSteps[] = {
-    DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),
-    DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),
-    DIRECTION_STEP(0, 16),  DIRECTION_STEP(-16, 0), DIRECTION_STEP(-16, 0),
-    DIRECTION_STEP(-16, 0), DIRECTION_STEP(-16, 0), DIRECTION_STEP(0, -16),
-    DIRECTION_STEP(0, -16), DIRECTION_STEP(0, -16), DIRECTION_STEP(0, -16),
-    DIRECTION_STEP(16, 0),
-};
-
+#include "shared/pushed_actor_tables.h"
 // clang-format off
-u32 gPushedActor_FootprintKinds[] = {
-    207, 205, 228, 229, 298, 297,
-};
-
-s32 gPushedActor_FootprintBounds[] = {
-    -32, -8, 32, 8,
-    -8, -32, 8, 32,
-    -32, -16, 32, 0,
-    -8, -32, 8, 32,
-    -32, -8, 32, 8,
-    -8, -32, 8, 32,
-};
 
 /// The scripts a pillar fragment can run, chosen by the low bits of its spawn
 /// value.

@@ -329,7 +329,7 @@ static struct Actor *VaultCave_FindCollidableActorAtCell(s32 column, s32 row) {
 #ifdef UBFIX
 /// The table stores Z then X as halfwords. Build its packed word without
 /// reading a halfword array through an incompatible, more-aligned struct.
-#define DIRECTION_STEP(heading)                                                \
+#define VAULT_CAVE_DIRECTION_STEP(heading)                                     \
   ((s32)(((u32)(u16)gVaultCave_DirectionSteps[(heading) * 2 + 1] << 16) |      \
          (u16)gVaultCave_DirectionSteps[(heading) * 2]))
 #else
@@ -340,7 +340,7 @@ struct DirectionSteps {
   s32 xz[16];
 };
 
-#define DIRECTION_STEP(heading)                                                \
+#define VAULT_CAVE_DIRECTION_STEP(heading)                                     \
   (((struct DirectionSteps *)gVaultCave_DirectionSteps)->xz[heading])
 #endif
 
@@ -356,8 +356,10 @@ static void VaultCave_PushPillarAhead(void) {
   s32 column;
   s32 row;
 
-  column = (leader->x.part.pixel + (DIRECTION_STEP(direction) >> 16)) >> 4;
-  row = (leader->z.part.pixel + (s16)DIRECTION_STEP(direction)) >> 4;
+  column =
+      (leader->x.part.pixel + (VAULT_CAVE_DIRECTION_STEP(direction) >> 16)) >>
+      4;
+  row = (leader->z.part.pixel + (s16)VAULT_CAVE_DIRECTION_STEP(direction)) >> 4;
   pillar = VaultCave_FindCollidableActorAtCell(column, row);
   // UB: the lookup may return NULL. The plain safe guard moves the null
   // branch ahead of the byte load in EN, so matching keeps its original order.
@@ -375,16 +377,20 @@ static void VaultCave_PushPillarAhead(void) {
       return;
     }
   }
-  column = (pillar->x.part.pixel + (DIRECTION_STEP(direction) >> 16)) >> 4;
-  row = (pillar->z.part.pixel + (s16)DIRECTION_STEP(direction)) >> 4;
+  column =
+      (pillar->x.part.pixel + (VAULT_CAVE_DIRECTION_STEP(direction) >> 16)) >>
+      4;
+  row = (pillar->z.part.pixel + (s16)VAULT_CAVE_DIRECTION_STEP(direction)) >> 4;
   beyond = VaultCave_FindCollidableActorAtCell(column, row);
   if (beyond != 0 && (beyond->collisionFlags & 1)) {
     return;
   }
   pillar->layer = 2;
-  destination.x = pillar->x.fixed + (DIRECTION_STEP(direction) & 0xffff0000);
+  destination.x =
+      pillar->x.fixed + (VAULT_CAVE_DIRECTION_STEP(direction) & 0xffff0000);
   destination.y = pillar->y.fixed;
-  destination.z = pillar->z.fixed + (s32)((u32)DIRECTION_STEP(direction) << 16);
+  destination.z =
+      pillar->z.fixed + (s32)((u32)VAULT_CAVE_DIRECTION_STEP(direction) << 16);
   if (FieldActor_CheckMovementCollision(pillar, &destination) > 0) {
     return;
   }

@@ -3735,35 +3735,12 @@ static void LunpaFortress_RestoreToadonpaDoors(void) {
   }
 }
 
-/// Pixel steps pack X above Z in two halfwords. Unsigned packing also defines
-/// the entries with negative X steps.
-#define DIRECTION_STEP(dx, dz) (((u32)(dx) << 16) | ((u32)(dz) & 0xffff))
-
-// The ROM keeps these three tables in .rodata, but the shared declarations in
-// field.h and staged_actor.h lack const, so a section attribute
-// places each one.
-s32 gPushedActor_DirectionSteps[] __attribute__((section(".rodata"))) = {
-    DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),
-    DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),
-    DIRECTION_STEP(0, 16),  DIRECTION_STEP(-16, 0), DIRECTION_STEP(-16, 0),
-    DIRECTION_STEP(-16, 0), DIRECTION_STEP(-16, 0), DIRECTION_STEP(0, -16),
-    DIRECTION_STEP(0, -16), DIRECTION_STEP(0, -16), DIRECTION_STEP(0, -16),
-    DIRECTION_STEP(16, 0),
-};
-
+// The ROM keeps the pushed-actor tables in .rodata, but the shared declarations
+// in field.h and staged_actor.h lack const, so a section attribute places
+// each one.
+#define PUSHED_ACTOR_TABLE_SECTION __attribute__((section(".rodata")))
+#include "shared/pushed_actor_tables.h"
 // clang-format off
-u32 gPushedActor_FootprintKinds[] __attribute__((section(".rodata"))) = {
-    207, 205, 228, 229, 298, 297,
-};
-
-s32 gPushedActor_FootprintBounds[] __attribute__((section(".rodata"))) = {
-    -32, -8, 32, 8,
-    -8, -32, 8, 32,
-    -32, -16, 32, 0,
-    -8, -32, 8, 32,
-    -32, -8, 32, 8,
-    -8, -32, 8, 32,
-};
 
 s32 gLunpaFortressRandomPick = 0;
 

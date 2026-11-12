@@ -137,6 +137,7 @@
 #include "sounds.h"
 #include "item_ids.h"
 #include "fixed_math.h"
+#include "pushed_actor.h"
 
 static void Bilibin_RestoreVillageActors(void);
 static void Bilibin_UpdateVillageStatueCells(void);
@@ -1404,9 +1405,6 @@ u32 gBilibin_CratesLaneCells[] = {
     CELL_PAIR(10, 20, 11, 20),
 };
 // clang-format on
-
-/// Pixel step by direction, with X in the upper halfword and Z in the lower.
-#define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))
 
 s32 gBilibin_FacingCellSteps[] = {
     DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),

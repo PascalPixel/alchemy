@@ -431,8 +431,8 @@ static void GomaCavePillar_PushStumpOver(void) {
     Event_Wait(20);
     // It lands below; the shake dies down before the map grid cells change.
     Sound_Play(SE_CAST);
-    MapGrid_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
-    MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
+    MapGrid_SetShake(5, 5, 1);
+    MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
     MapGrid_WaitForShakeToSettle();
     Actor_SetPosition(ACTOR_STUMP, 0, 0);
     Actor_SetPosition(ACTOR_MASK_FOR_STUMP, 0, 0);

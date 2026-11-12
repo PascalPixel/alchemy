@@ -179,17 +179,17 @@ static void ValeEruption_ReturnFromMtAleph(void) {
   FieldCamera_SetSpeed(0.8);
   FieldCamera_MoveTo(256, CAMERA_KEEP, 500, 1);
   Event_Wait(20);
-  MapGrid_SetShake(PIXELS(1), PIXELS(2), Q16_ONE);
+  MapGrid_SetShake(1, 2, 1);
   Weather_LastLightning();
   Sound_Play(SE_CRASH);
   Event_Wait(30);
   Weather_LastLightning();
   Sound_Play(SE_CRASH);
   FieldCamera_WaitForArrival();
-  MapGrid_SetShake(PIXELS(2), PIXELS(3), Q16_ONE);
+  MapGrid_SetShake(2, 3, 1);
   Weather_LastLightning();
   Sound_Play(SE_CRASH);
-  MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   MapGrid_WaitForShakeToSettle();
   Event_Wait(60);
 
@@ -237,7 +237,7 @@ static void ValeEruption_ReturnFromMtAleph(void) {
   // "Yes, they did...but... what does that have to do with the..."
   Event_ShowMessage(ACTOR_DORA, 0);
   Event_Wait(60);
-  MapGrid_SetShake(PIXELS(2), PIXELS(3), Q16_ONE);
+  MapGrid_SetShake(2, 3, 1);
   Weather_LastLightning();
   Sound_Play(SE_CRASH);
   Event_Wait(60);
@@ -250,7 +250,7 @@ static void ValeEruption_ReturnFromMtAleph(void) {
   Actor_StartRepeatedMotion(ACTOR_GARETS_SISTER, 2);
   Actor_StartRepeatedMotion(ACTOR_GARETS_BROTHER, 2);
   Actor_StartRepeatedMotion(ACTOR_GUARD, 2);
-  MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   MapGrid_WaitForShakeToSettle();
 
   // Isaac and Garet come down the path, and Garet sees the villagers: "Uh-oh.
@@ -496,7 +496,7 @@ static void ValeEruption_ReturnFromMtAleph(void) {
   Actor_ShowEmote(ACTOR_GARETS_SISTER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Actor_ShowEmote(ACTOR_GARETS_BROTHER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Event_Wait(40);
-  MapGrid_SetShake(PIXELS(2), PIXELS(3), Q16_ONE);
+  MapGrid_SetShake(2, 3, 1);
   Weather_LastLightning();
   Sound_Play(SE_CRASH);
   Event_Wait(30);
@@ -504,7 +504,7 @@ static void ValeEruption_ReturnFromMtAleph(void) {
   work->transition = 0;
   work->transitionFrames = 64;
   Event_FinishScreenTransition();
-  MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   MapGrid_WaitForShakeToSettle();
   GameFlag_Clear(FLAG_SHOW_AREA_NAME);
   GameFlag_Set(FLAG_VALE_RETURNED_FROM_MT_ALEPH);

@@ -2073,9 +2073,9 @@ static void TolbiShipDeck_JumpIntoKrakenBattle(void) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 1.6);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 194, 624);
   Sound_Play(SE_BOOM);
-  MapGrid_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
+  MapGrid_SetShake(4, 4, 1);
   Event_Wait(20);
-  MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
   Actor_Get(ACTOR_INVISIBLE_SEA_CAMERA_TARGET)->motionFlags = 0;

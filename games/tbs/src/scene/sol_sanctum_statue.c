@@ -1013,7 +1013,7 @@ s32 SolSanctumStatue_Initialize(void) {
   }
   if (GameFlag_Get(FLAG_SOL_SANCTUM_ERUPTED) != 0) {
     Scene_QueueMusic(SE_RUMBLE);
-    MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
+    MapGrid_SetShake(1, 1, 1);
     FieldEffect_InitializeSparkles();
   }
   return 0;
@@ -1233,23 +1233,23 @@ static void SolSanctumStatue_CenterStatueMoved(void) {
         statue->z.fixed = 0;
         SET_VELOCITY(statue, 0, 0, 0);
         Actor_SetPosition(ACTOR_CENTER_STATUE, 0, 0);
-        MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
+        MapGrid_SetShake(1, 1, 1);
         Event_Wait(10);
         Sound_Play(SE_RUMBLE);
-        MapGrid_SetShake(PIXELS(3), PIXELS(3), Q16_ONE);
+        MapGrid_SetShake(3, 3, 1);
         Event_Wait(10);
-        MapGrid_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
+        MapGrid_SetShake(5, 5, 1);
         Event_Wait(35);
-        MapGrid_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
+        MapGrid_SetShake(4, 4, 1);
         Event_Wait(20);
-        MapGrid_SetShake(PIXELS(3), PIXELS(3), Q16_ONE);
+        MapGrid_SetShake(3, 3, 1);
         Event_Wait(30);
-        MapGrid_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
+        MapGrid_SetShake(2, 2, 1);
         Event_Wait(40);
         Sound_Play(SOUND_FADE_OUT_ACTION_SE);
-        MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
+        MapGrid_SetShake(1, 1, 1);
         Event_Wait(10);
-        MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
+        MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
         Event_Wait(60);
         Sound_Play(SE_THUMP);
         if (GameFlag_Get(FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN) != 0 &&

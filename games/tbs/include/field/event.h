@@ -316,11 +316,26 @@ static inline void MapGrid_CopyCellAttributes(s32 sourceX, s32 sourceY,
                                 destinationY);
 }
 
-/// Sets shake amplitudes in fixed-point pixels and the per-frame decay factor.
-/// A negative argument keeps that component unchanged; Q16_ONE keeps the shake.
-static inline void MapGrid_SetShake(s32 horizontal, s32 vertical, s32 decay) {
+/// Sets shake amplitudes in 16.16 fixed-point pixels and the per-frame decay
+/// factor in 16.16; SHAKE_KEEP keeps that component, Q16_ONE keeps the shake.
+static inline void MapGrid_SetShakeFixed(s32 horizontal, s32 vertical,
+                                         s32 decay) {
   MapGrid_SetScreenShake(horizontal, vertical, decay);
 }
+
+/// A shake amplitude in pixels or a decay factor, as a decimal, in 16.16
+/// fixed point, SHAKE_KEEP kept; it reads its argument twice, so the macro
+/// below takes only constants.
+#define EVENT_SHAKE_FIXED(value)                                               \
+  ((value) == SHAKE_KEEP ? SHAKE_KEEP : EVENT_DECIMAL_FIXED(value))
+
+/// Shakes the screen by amplitudes in pixels, shrunk each frame by a decay
+/// factor (1 keeps the shake going); SHAKE_KEEP keeps a component:
+/// `MapGrid_SetShake(2, 2, 1)`, `MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP,
+/// 0.9)`.
+#define MapGrid_SetShake(horizontal, vertical, decay)                          \
+  MapGrid_SetShakeFixed(EVENT_SHAKE_FIXED(horizontal),                         \
+                        EVENT_SHAKE_FIXED(vertical), EVENT_SHAKE_FIXED(decay))
 
 // Most events call GameFlag_Get, GameFlag_Set and GameFlag_Clear
 // directly; the events that match only through an inline call spell them

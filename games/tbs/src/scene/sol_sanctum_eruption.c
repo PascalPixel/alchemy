@@ -210,7 +210,7 @@ static void SolSanctumEruption_PlayHostageEvent(void) {
   sparkles->stopped = 0;
   // Reopen the chamber during the first quake and stage the two groups.
   Sound_Play(SE_RUMBLE);
-  MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
+  MapGrid_SetShake(1, 1, 1);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 232, 156);
   Actor_SetPosition(ACTOR_GARET, 218, 172);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH_NORTHWEST, 0);
@@ -291,7 +291,7 @@ static void SolSanctumEruption_PlayHostageEvent(void) {
   actor->motionFlags = 5;
   sparkles->stopped = 1;
   Sound_Play(SOUND_FADE_OUT_ACTION_SE);
-  MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   MapGrid_WaitForShakeToSettle();
   Event_Wait(150);
   // Menardi: "It's over... But what was it?" Jenna: "What is that?!?"
@@ -330,11 +330,11 @@ static void SolSanctumEruption_PlayHostageEvent(void) {
   SolSanctumEruption_SetMaterializationTint(1, 20, 0);
   sparkles->stopped = 0;
   Sound_Play(SE_RUMBLE);
-  MapGrid_SetShake(PIXELS(1), PIXELS(2), Q16_ONE);
+  MapGrid_SetShake(1, 2, 1);
   Event_Wait(80);
   sparkles->stopped = 1;
   Sound_Play(SOUND_FADE_OUT_ACTION_SE);
-  MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   MapGrid_WaitForShakeToSettle();
   SolSanctumEruption_SetMaterializationTint(0, 20, 60);
   // Alex: "Such power... Incredible!" Garet: "!!!" Jenna: "Wow..."
@@ -754,10 +754,10 @@ static void SolSanctumEruption_StepEmbers(void) {
   shakePixels = (u32)gEmberTimer / 10;
   if (shakePixels != 0) {
     sparkles->stopped = 0;
-    MapGrid_SetShake(shakePixels * PIXELS(1), shakePixels * PIXELS(1), Q16_ONE);
+    MapGrid_SetShakeFixed(shakePixels * px(1), shakePixels * px(1), Q16_ONE);
   } else {
     sparkles->stopped = 1;
-    MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
+    MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   }
   shakeTimer = gEmberTimer;
   if (shakeTimer != 0)
@@ -917,7 +917,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   SolSanctumEruption_PlaceBeforeStar(ACTOR_PARTY_LEADER);
   SolSanctumEruption_PlaceBeforeStar(ACTOR_GARET);
   sparkles->stopped = 0;
-  MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
+  MapGrid_SetShake(1, 1, 1);
   Event_Wait(80);
   SolSanctumEruption_RestoreCornerCellAttributes();
   center = FieldCamera_GetActor();
@@ -1093,7 +1093,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   Sound_Play(MUS_DANGER);
   SolSanctumEruption_SetMaterializationTint(1, 4, 0);
   sparkles->stopped = 0;
-  MapGrid_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
+  MapGrid_SetShake(5, 5, 1);
   Event_Wait(10);
   SolSanctumEruption_SetMaterializationTint(0, 40, 0);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 2);
@@ -1105,7 +1105,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
   Event_Wait(20);
   sparkles->stopped = 1;
-  MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
+  MapGrid_SetShake(1, 1, 1);
   Event_Wait(60);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
@@ -1183,7 +1183,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
 
   SolSanctumEruption_SetMaterializationTint(1, 20, 0);
   sparkles->stopped = 0;
-  MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
+  MapGrid_SetShake(1, 1, 1);
   Event_Wait(40);
   Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Actor_StartRepeatedMotion(ACTOR_GARET, 2);
@@ -1191,7 +1191,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_BG);
   PaletteFade_StartInterpolation(40);
   sparkles->stopped = 1;
-  MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   Event_Wait(120);
   // The Wise One: "Why are you standing there?" and "This place has become
   // dangerous..." A jolt; Garet: "You're the dangerous one!"
@@ -1204,7 +1204,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   Event_Wait(20);
   SolSanctumEruption_SetMaterializationTint(1, 10, 0);
   sparkles->stopped = 0;
-  MapGrid_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
+  MapGrid_SetShake(2, 2, 1);
   Event_Wait(20);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 2);
   Actor_SetSpeed(ACTOR_GARET, 2);
@@ -1249,7 +1249,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   Actor_FaceDirection(ACTOR_WISE_ONE, FACING_SOUTH_SOUTHEAST, 0);
   Event_Wait(20);
   sparkles->stopped = 0;
-  MapGrid_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
+  MapGrid_SetShake(2, 2, 1);
   PaletteFade_ApplyTarget(PALETTE_TINT_CUSTOM | RGB(30, 12, 4), PALETTES_BG);
   PaletteFade_StartInterpolation(20);
   Event_Wait(20);
@@ -1265,7 +1265,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   Event_Wait(30);
   Sound_Play(SOUND_FADE_OUT_ACTION_SE);
   Task_Remove(SolSanctumEruption_FlickerFirstCollapseTiles);
-  MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
+  MapGrid_SetShake(1, 1, 1);
   flickerDelay = 16;
   while (flickerDelay--) {
     SolSanctumEruption_DrawFirstCollapseTiles(0);
@@ -1275,7 +1275,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   }
   SolSanctumEruption_DrawFirstCollapseTiles(0);
   sparkles->stopped = 1;
-  MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   MapGrid_WaitForShakeToSettle();
   SolSanctumEruption_FinishMaterialization();
   Event_Wait(60);
@@ -1410,7 +1410,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   Event_Wait(40);
 
   sparkles->stopped = 0;
-  MapGrid_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
+  MapGrid_SetShake(4, 4, 1);
   PaletteFade_ApplyTarget(PALETTE_TINT_CUSTOM | RGB(30, 12, 4), PALETTES_BG);
   PaletteFade_StartInterpolation(20);
   Event_Wait(20);
@@ -1446,7 +1446,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   Event_Wait(30);
   Sound_Play(SOUND_FADE_OUT_ACTION_SE);
   Task_Remove(SolSanctumEruption_FlickerSecondCollapseTiles);
-  MapGrid_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
+  MapGrid_SetShake(2, 2, 1);
   flickerDelay = 8;
   while (flickerDelay--) {
     SolSanctumEruption_DrawSecondCollapseTiles(0);
@@ -1455,11 +1455,11 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
     wait(flickerDelay);
   }
   SolSanctumEruption_DrawSecondCollapseTiles(0);
-  MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
+  MapGrid_SetShake(1, 1, 1);
   SolSanctumEruption_FinishMaterialization();
   Event_Wait(60);
 
-  MapGrid_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
+  MapGrid_SetShake(4, 4, 1);
   PaletteFade_ApplyTarget(PALETTE_TINT_CUSTOM | RGB(30, 12, 4), PALETTES_BG);
   PaletteFade_StartInterpolation(20);
   Event_Wait(20);
@@ -1480,7 +1480,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   Sound_Play(SOUND_FADE_OUT_ACTION_SE);
   Event_Wait(30);
   Task_Remove(SolSanctumEruption_FlickerFirstCollapseTiles);
-  MapGrid_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
+  MapGrid_SetShake(2, 2, 1);
   flickerDelay = 8;
   while (flickerDelay--) {
     SolSanctumEruption_DrawFirstCollapseTiles(0);
@@ -1489,10 +1489,10 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
     wait(flickerDelay);
   }
   SolSanctumEruption_DrawFirstCollapseTiles(0);
-  MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
+  MapGrid_SetShake(1, 1, 1);
   Sound_Play(SE_TREMOR);
   Sound_Play(MUS_ERUPTION);
-  MapGrid_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
+  MapGrid_SetShake(4, 4, 1);
   PaletteFade_ApplyTarget(PALETTE_TINT_CUSTOM | RGB(30, 12, 4), PALETTES_BG);
   PaletteFade_StartInterpolation(20);
   Event_Wait(20);
@@ -1535,7 +1535,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   wait(60);
   Task_Remove(SolSanctumEruption_UpdateWiseOnePalette);
   sparkles->stopped = 1;
-  MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   MapGrid_WaitForShakeToSettle();
   Scene_EndEventPsynergy();
   GameFlag_Set(FLAG_SOL_SANCTUM_ERUPTED);

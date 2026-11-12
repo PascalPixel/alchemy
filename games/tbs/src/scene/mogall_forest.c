@@ -1337,16 +1337,16 @@ static void MogallForest_KillerApeAttacks(void) {
   FieldCamera_MoveTo(136, CAMERA_KEEP, 392, 1);
   FieldCamera_WaitForArrival();
   Event_Wait(60);
-  MapGrid_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
+  MapGrid_SetShake(5, 5, 1);
   MogallForest_SpawnPuffRing(ACTOR_THIRD_AREA_EAST_APE);
   Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-  MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   MapGrid_WaitForShakeToSettle();
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
   Event_Wait(40);
-  MapGrid_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
+  MapGrid_SetShake(5, 5, 1);
   MogallForest_SpawnPuffRing(ACTOR_THIRD_AREA_EAST_APE);
-  MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   MapGrid_WaitForShakeToSettle();
   Event_Wait(40);
   MogallForest_SpawnPuffRing(ACTOR_THIRD_AREA_EAST_APE);
@@ -1356,7 +1356,7 @@ static void MogallForest_KillerApeAttacks(void) {
   MogallForest_HopActorTo(ACTOR_THIRD_AREA_EAST_APE, 136, 392, PIXELS(15));
   Event_Wait(15);
   // The larger reveal uses a wider, level ring of puffs.
-  MapGrid_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
+  MapGrid_SetShake(5, 5, 1);
   for (directionIndex = 0; directionIndex <= 16; directionIndex++) {
     velocity.x = Trig_Cos(directionIndex << 12);
     velocity.y = 0;
@@ -1369,7 +1369,7 @@ static void MogallForest_KillerApeAttacks(void) {
                       EFFECT_SCRIPT_MEDIUM, NULL);
   }
   Event_Wait(30);
-  MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   MapGrid_WaitForShakeToSettle();
   Sound_Play(SE_BOSS_ROAR);
   Actor_RunRepeatedMotion(ACTOR_THIRD_AREA_EAST_APE, 2);

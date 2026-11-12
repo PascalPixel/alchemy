@@ -697,7 +697,7 @@ static void CottageRoomsB_DoraWakesIsaac(void) {
   firstMessage = MsgValeWake;
   FieldMessage_ShowCentered(firstMessage, 1, 0);
   Event_Wait(40);
-  MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
+  MapGrid_SetShake(1, 1, 1);
   Message_SetVoiceFromActor(ACTOR_DORA);
   FieldMessage_ShowCentered(firstMessage + 1, 1, 0);
   ActorSystem_ResumeProjectionAndHideLayers();

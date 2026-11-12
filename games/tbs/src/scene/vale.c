@@ -598,9 +598,9 @@ static void Vale_AskWhetherJennaHasReturned(void) {
 /// another tremor, and the view shakes.
 static void Vale_ReactToAnotherTremor(void) {
   Event_Start();
-  MapGrid_SetShake(PIXELS(3), PIXELS(3), Q16_ONE);
+  MapGrid_SetShake(3, 3, 1);
   wait(10);
-  MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   Event_SetMessageId(MsgValeIFeltAnotherOne);
   // "Aghh! I felt another one!"
   Event_ShowMessageThenWait(ACTOR_WOMAN_FEELING_TREMORS, 0, 20);
@@ -1435,12 +1435,12 @@ UNUSED static void Vale_UnusedRoofMended(void) {
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 10);
   Actor_SetAnimation(ACTOR_GARET, ANIM_GARET_STARTLED);
   Actor_Jump(ACTOR_GARET, 2, 5);
-  MapGrid_SetShake(0, PIXELS(4), Q16_ONE);
+  MapGrid_SetShake(0, 4, 1);
   MapGrid_CopyCellsTo(1, 102, 83, 41, 1, 1);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_GARET), 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH_NORTHEAST, 10);
   Actor_StartRepeatedMotion(ACTOR_GARET, 3);
-  MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   MapGrid_WaitForShakeToSettle();
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
   Actor_SetAnimation(ACTOR_DORA, ANIM_DORA_PEEK);
@@ -1506,9 +1506,9 @@ UNUSED static void Vale_UnusedRoofMended(void) {
   Actor_Jump(ACTOR_GARET, 2, 5);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_GARET), 0);
   MapGrid_CopyCellsTo(2, 102, 84, 41, 2, 1);
-  MapGrid_SetShake(0, PIXELS(4), Q16_ONE);
+  MapGrid_SetShake(0, 4, 1);
   Actor_RunRepeatedMotion(ACTOR_GARET, 3);
-  MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   MapGrid_WaitForShakeToSettle();
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   Actor_SetSpeed(ACTOR_JENNA, 0.3);
@@ -1983,12 +1983,12 @@ UNUSED static void Vale_UnusedWaterBurstsByTheRiver(void) {
   Actor_SetAnimation(ACTOR_FIRST_WATER + 1, 0);
   Actor_SetAnimation(ACTOR_FIRST_WATER + 2, 0);
   wait(20);
-  MapGrid_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
+  MapGrid_SetShake(2, 2, 1);
   actions = gVale_UnusedWaterGrows;
   Actor_SetScript(ACTOR_FIRST_WATER, actions);
   wait(10);
   Actor_SetScript(ACTOR_FIRST_WATER + 1, actions);
-  MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   wait(20);
   Actor_RunScriptAndWait(ACTOR_FIRST_WATER + 2, actions);
   Actor_ShowEmote(ACTOR_STRONGMAN_REMEMBERING_FELIX,
@@ -2875,12 +2875,12 @@ static void Vale_RoofMended(void) {
   Actor_SetAnimation(ACTOR_GARET, ANIM_GARET_STARTLED);
   Actor_Jump(ACTOR_GARET, 2, 5);
   Sound_Play(SE_CRACK);
-  MapGrid_SetShake(0, PIXELS(4), Q16_ONE);
+  MapGrid_SetShake(0, 4, 1);
   MapGrid_CopyCellsTo(1, 102, 83, 41, 1, 1);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_GARET), 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH_NORTHEAST, 10);
   Actor_StartRepeatedMotion(ACTOR_GARET, 3);
-  MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   MapGrid_WaitForShakeToSettle();
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
   Actor_SetAnimation(ACTOR_DORA, ANIM_DORA_PEEK);
@@ -2944,9 +2944,9 @@ static void Vale_RoofMended(void) {
   Actor_SetSpriteFlags(Actor_Get(ACTOR_GARET), 0);
   MapGrid_CopyCellsTo(2, 102, 84, 41, 2, 1);
   Sound_Play(SE_CRACK);
-  MapGrid_SetShake(0, PIXELS(4), Q16_ONE);
+  MapGrid_SetShake(0, 4, 1);
   Actor_RunRepeatedMotion(ACTOR_GARET, 3);
-  MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   MapGrid_WaitForShakeToSettle();
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   Actor_SetSpeed(ACTOR_JENNA, 0.3);

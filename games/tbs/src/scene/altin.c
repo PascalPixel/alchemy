@@ -765,7 +765,7 @@ static void Altin_BeastHop(struct Actor *actor) {
   // the countdown test.
   if (*shakeFrames != 0) {
     if (--*shakeFrames == 1)
-      MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
+      MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   }
   if (beast->velocityY == 0) {
     Actor_SelectAnimation(beast, 1);
@@ -775,7 +775,7 @@ static void Altin_BeastHop(struct Actor *actor) {
         Sound_Play(SE_SPLASH);
         ((struct FieldEffect *)actor)->countdown = 0;
         beast->userValue = 4;
-        MapGrid_SetShake(0, PIXELS(1), Q16_ONE);
+        MapGrid_SetShake(0, 1, 1);
       }
       beast->y.fixed = beast->groundHeight;
     }
@@ -807,9 +807,9 @@ static void Altin_BeastHopAway(void) {
   Actor_MoveToAndWait(ACTOR_WATER_BEAST, 24, 448);
   Sound_Play(SE_SPLASH);
   Actor_ReleaseById(ACTOR_WATER_BEAST);
-  MapGrid_SetShake(0, PIXELS(1), Q16_ONE);
+  MapGrid_SetShake(0, 1, 1);
   Event_Wait(4);
-  MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   Event_Wait(40);
   Actor_SetAnimation(ACTOR_WATER_BEAST, ANIM_STAND);
 }

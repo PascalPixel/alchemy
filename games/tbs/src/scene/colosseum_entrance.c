@@ -1360,10 +1360,10 @@ static void ColosseumEntrance_ShowClearedTrial(void) {
   trialEffect->scaleY = Q16_ONE;
   Event_Wait(10);
   Sound_Play(SE_TREMOR);
-  MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
+  MapGrid_SetShake(1, 1, 1);
   Event_Wait(10);
   Sound_Play(SOUND_FADE_OUT_ACTION_SE);
-  MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   MapGrid_WaitForShakeToSettle();
   Actor_SetSpeed(ACTOR_CLEARING_WARRIOR, 1.6);
   Actor_WalkToAndWait(ACTOR_CLEARING_WARRIOR, 208, 928);

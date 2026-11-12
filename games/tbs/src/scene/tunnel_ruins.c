@@ -754,8 +754,8 @@ static __inline__ void TunnelRuins_AnimateLoweringImpact(s32 sourceColumn,
                                                          s32 column, s32 row) {
   Sound_Play(SE_THUMP);
   MapGrid_CopyCellsTo(sourceColumn, 8, column, row, 1, 3);
-  MapGrid_SetShake(0, PIXELS(5), Q16_ONE);
-  MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
+  MapGrid_SetShake(0, 5, 1);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
 }
 
 /// Moving the north-west sinking pillar into column 46 sinks it 16 pixels into

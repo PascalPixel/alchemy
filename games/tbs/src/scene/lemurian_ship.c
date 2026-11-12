@@ -703,12 +703,12 @@ static void LemurianShip_RaiseTheShip(void) {
   gSprayActive = 1;
   Event_Wait(20);
   Sound_Play(SE_RUSH);
-  MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
+  MapGrid_SetShake(1, 1, 1);
   Event_Wait(60);
   gSprayActive = 1;
-  MapGrid_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
+  MapGrid_SetShake(2, 2, 1);
   Event_Wait(60);
-  MapGrid_SetShake(PIXELS(3), PIXELS(3), Q16_ONE);
+  MapGrid_SetShake(3, 3, 1);
   gOrbGlowFadeFrames = 0;
   Task_AddFrame(OrbGlow_Fade, TASK_PASS_FRAME);
   // The ship rises 90 pixels, 0.2 pixels a frame.
@@ -735,7 +735,7 @@ static void LemurianShip_RaiseTheShip(void) {
     Event_Wait(1);
   }
   Event_Wait(40);
-  MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   gShipHullY = grid->layers[MAPGRID_LAYER_MIDDLE].offsetY;
   gShipDeckY = grid->layers[MAPGRID_LAYER_OVERHEAD].offsetY;
   gSwellActive = 1;

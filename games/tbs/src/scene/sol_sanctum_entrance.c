@@ -342,10 +342,10 @@ static void SolSanctumEntrance_InspectFirstMinotaurRelief(void) {
 
 /// The room shakes as stone shifts, and the leader looks around and jumps.
 static inline void SolSanctumEntrance_ReactToOpeningPassage(void) {
-  MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
+  MapGrid_SetShake(1, 1, 1);
   Event_Wait(20);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  MapGrid_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
+  MapGrid_SetShake(2, 2, 1);
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 40);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 20);
@@ -353,7 +353,7 @@ static inline void SolSanctumEntrance_ReactToOpeningPassage(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 10);
   Actor_Jump(ACTOR_PARTY_LEADER, 4, 20);
   Actor_Jump(ACTOR_PARTY_LEADER, 6, 40);
-  MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   Event_Wait(40);
 }
 
@@ -757,7 +757,7 @@ static void SolSanctumEntrance_RestoreInteriorState(void) {
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (GameFlag_Get(FLAG_SOL_SANCTUM_ERUPTED) != 0) {
     Scene_QueueMusic(SE_RUMBLE);
-    MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
+    MapGrid_SetShake(1, 1, 1);
     FieldEffect_InitializeSparkles();
   }
 
@@ -1357,13 +1357,13 @@ static void SolSanctumEntrance_UpdateEruptionRumbles(void) {
     remainingFrames = (*timer - 1);
     *timer = (*timer - 1);
     if (remainingFrames == 40) {
-      MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
+      MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
     }
   } else {
     randomValue = Import_RandomNext();
     if (((u32)(((randomValue << 4) - randomValue) << 3) >> 16) == 0) {
       Sound_Play(SE_ITEM_BREAK);
-      MapGrid_SetShake(PIXELS(1), PIXELS(2), Q16_ONE);
+      MapGrid_SetShake(1, 2, 1);
       *timer = 80;
     }
   }

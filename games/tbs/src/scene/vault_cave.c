@@ -719,8 +719,8 @@ static void VaultCave_RunRumble(void) {
     layer->speedX = -1;
     layer->speedY = -1;
   }
-  MapGrid_SetShake(PIXELS(3), PIXELS(3), Q16_ONE);
-  MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
+  MapGrid_SetShake(3, 3, 1);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   Sound_Play(SE_RUSH);
   // Scroll and shake for 480 frames before the final fade.
   for (frame = 479; frame >= 0; frame--) {

@@ -537,14 +537,14 @@ static void MercuryLighthouse_ExitWhenChannelsOpen(void) {
       GameFlag_Get(FLAG_PIPE_3_JOINED) != 0) {
     GameFlag_Set(FLAG_MERCURY_LIGHTHOUSE_CHANNELS_OPEN);
     Event_Wait(30);
-    MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
+    MapGrid_SetShake(1, 1, 1);
     Sound_Play(SE_RUMBLE);
     Event_Wait(60);
     gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     Event_FinishScreenTransition();
     Event_WaitTransitionFrames();
     Sound_Play(SOUND_FADE_OUT_ACTION_SE);
-    MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
+    MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
     MapGrid_WaitForShakeToSettle();
     Import_EventSetExitRequest(
         MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_ENTRANCE_PIPE);
@@ -755,8 +755,8 @@ static void MercuryLighthouse_AnimateFountainTiles(s32 delayFrames,
       MapGrid_CopyCellsTo(sourceColumn, 32, 108 - step, 32, 1, 4);
       MapGrid_CopyCellsTo(sourceColumn, 51, sourceColumn, 32, 1, 4);
       if (delayFrames != 0) {
-        MapGrid_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
-        MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
+        MapGrid_SetShake(5, 5, 1);
+        MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
         Event_Wait(delayFrames);
       }
       step++;
@@ -789,8 +789,8 @@ static void MercuryLighthouse_RestoreFountainTiles(s32 delayFrames) {
     MapGrid_CopyCellPictureIndicesRect(105, 51, column, 32, copyWidth,
                                        stripHeight);
     if (delayFrames != 0) {
-      MapGrid_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
-      MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
+      MapGrid_SetShake(5, 5, 1);
+      MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
       Event_Wait(delayFrames);
     }
     step++;
@@ -1921,7 +1921,7 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
   } while ((u32)wave <= 15);
   Event_Wait(60);
   Sound_Play(SE_RUMBLE);
-  MapGrid_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
+  MapGrid_SetShake(5, 5, 1);
   Event_Wait(60);
   options.palette = 7;
   options.startScaleX = 7 * Q16_ONE / 10;
@@ -1959,7 +1959,7 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
     wave = (wave + 1);
   } while ((u32)wave <= 3);
   Sound_Play(SOUND_FADE_OUT_ACTION_SE);
-  MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   MapGrid_WaitForShakeToSettle();
   Scene_PlayQueuedMusic();
   Event_Wait(30);
@@ -2657,8 +2657,8 @@ s32 MercuryLighthouse_Initialize(void) {
       Event_Wait(32);
       Sound_Play(SE_THUMP);
       SetEffectRecordMode(Actor_Get(ACTOR_FALLEN_STATUE), 2);
-      MapGrid_SetShake(192 << 10, 192 << 10, 128 << 9);
-      MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
+      MapGrid_SetShake(3, 3, 1);
+      MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
       MapGrid_WaitForShakeToSettle();
       Event_Wait(60);
       Import_EventSetExitRequest(

@@ -198,9 +198,9 @@ static void GomaCaveStream_LeapStump(s32 stumpId) {
   Actor_WaitForMoveById(stumpId);
   Actor_WaitBelowHeight(stump, 0);
   Sound_Play(SE_THUMP);
-  MapGrid_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
+  MapGrid_SetShake(5, 5, 1);
   Sound_Play(SE_RUMBLE);
-  MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   for (i = 0; i < 17; i++) {
     dir.x = Trig_Cos(i << 12);
     dir.y = 0;

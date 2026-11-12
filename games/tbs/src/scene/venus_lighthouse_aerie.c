@@ -1689,7 +1689,7 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   Actor_SetScript(ACTOR_BEAM_BOTTOM, gVenusLighthouseAerie_BeamOpenAction);
   Actor_SetScript(ACTOR_BEAM_LOWER, gVenusLighthouseAerie_BeamOpenAction);
   Sound_Play(SE_CRASH);
-  MapGrid_SetShake(PIXELS(6), PIXELS(6), Q16_ONE);
+  MapGrid_SetShake(6, 6, 1);
   PaletteFade_ApplyTarget(PALETTE_TINT_BLEND | RGB(31, 31, 24), PALETTES_ALL);
   PaletteFade_Interpolate(16);
   wait(20);
@@ -1698,22 +1698,22 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   wait(60);
   Task_AddFrame(VenusLighthouseAerie_SpawnUpperOrbitParticles, TASK_PASS_FRAME);
   Sound_Play(SE_RUMBLE);
-  MapGrid_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
+  MapGrid_SetShake(4, 4, 1);
   PaletteFade_ApplyTarget(PALETTE_TINT_BLEND | RGB(31, 31, 24), PALETTES_ALL);
   PaletteFade_Interpolate(120);
   Actor_SetScript(ACTOR_BEAM_BOTTOM, gVenusLighthouseAerie_BeamNarrowAction);
   Actor_SetScript(ACTOR_BEAM_LOWER, gVenusLighthouseAerie_BeamNarrowAction);
   wait(120);
-  MapGrid_SetShake(PIXELS(3), PIXELS(3), Q16_ONE);
+  MapGrid_SetShake(3, 3, 1);
   PaletteFade_ApplyTarget(PALETTE_TINT_CUSTOM | RGB(16, 16, 12), PALETTES_ALL);
   PaletteFade_Interpolate(120);
   wait(120);
   Sound_Play(MUS_ERUPTION);
-  MapGrid_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
+  MapGrid_SetShake(2, 2, 1);
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_Interpolate(120);
   wait(120);
-  MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
+  MapGrid_SetShake(1, 1, 1);
 
   Actor_SetAnimation(ACTOR_MENARDI, ANIM_STAND);
   Actor_FaceDirection(ACTOR_MENARDI, FACING_EAST, 0);
@@ -2174,7 +2174,7 @@ static void VenusLighthouseAerie_StageShebasFall(void) {
   actor = Actor_Get(ACTOR_BEACON_STATUE_SOUTHEAST);
   actor->x.fixed += PIXELS(16);
   VenusLighthouseAerie_StopActorMotion(actor);
-  MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
+  MapGrid_SetShake(1, 1, 1);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_BEACON_ORB), 0);
   Actor_Get(ACTOR_BEACON_ORB)->motionFlags = ACTOR_FLOATS;
   Actor_SetSpriteColorById(ACTOR_BEACON_ORB, SPRITE_COLOR_GBR);
@@ -2240,7 +2240,7 @@ static void VenusLighthouseAerie_ShowSaturosAndMenardiFall(void) {
   wait(1);
   MapGrid_CenterOnFollowedPoint();
   wait(1);
-  MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
+  MapGrid_SetShake(1, 1, 1);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(40);
@@ -2419,7 +2419,7 @@ static void VenusLighthouseAerie_EruptBeacon(void) {
 
   Sound_Play(MUS_SILENCE);
   Sound_Play(SE_STOP_ACTION_SE);
-  MapGrid_SetShake(PIXELS(3), PIXELS(3), Q16_ONE);
+  MapGrid_SetShake(3, 3, 1);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
@@ -2432,9 +2432,9 @@ static void VenusLighthouseAerie_EruptBeacon(void) {
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTH_NORTHEAST, 0);
-  MapGrid_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
+  MapGrid_SetShake(2, 2, 1);
   Event_Wait(10);
-  MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
+  MapGrid_SetShake(1, 1, 1);
   FieldCamera_MoveTo(304, 32, 180, 1);
   FieldCamera_WaitForMove();
   // Open the beacon beam before splitting the surrounding platform.
@@ -2443,7 +2443,7 @@ static void VenusLighthouseAerie_EruptBeacon(void) {
   Actor_SetScript(ACTOR_BEAM_BOTTOM, gVenusLighthouseAerie_BeamOpenAction);
   Actor_SetScript(ACTOR_BEAM_LOWER, gVenusLighthouseAerie_BeamOpenAction);
   Sound_Play(SE_CRASH);
-  MapGrid_SetShake(PIXELS(6), PIXELS(6), Q16_ONE);
+  MapGrid_SetShake(6, 6, 1);
   PaletteFade_ApplyTarget(PALETTE_TINT_BLEND | RGB(31, 31, 24), PALETTES_ALL);
   PaletteFade_StartInterpolation(16);
   wait(20);
@@ -2522,7 +2522,7 @@ static void VenusLighthouseAerie_EruptBeacon(void) {
   Actor_SetPosition(ACTOR_SHEBA, 188, 316);
   Actor_SetAnimation(ACTOR_SHEBA, SHEBA_ANIMATION_HANG_ONE_HAND);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_SHEBA), 0);
-  MapGrid_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
+  MapGrid_SetShake(4, 4, 1);
   PaletteFade_ApplyTarget(PALETTE_TINT_BLEND | RGB(31, 31, 24), PALETTES_ALL);
   PaletteFade_StartInterpolation(120);
   Actor_SetScript(ACTOR_BEAM_BOTTOM, gVenusLighthouseAerie_BeamRiseAction);
@@ -2531,15 +2531,15 @@ static void VenusLighthouseAerie_EruptBeacon(void) {
   Actor_SetScript(ACTOR_BEAM_UPPER, gVenusLighthouseAerie_BeamRiseAction);
   Actor_SetScript(ACTOR_BEAM_TOP, gVenusLighthouseAerie_BeamRiseAction);
   wait(120);
-  MapGrid_SetShake(PIXELS(3), PIXELS(3), Q16_ONE);
+  MapGrid_SetShake(3, 3, 1);
   PaletteFade_ApplyTarget(PALETTE_TINT_CUSTOM | RGB(16, 16, 12), PALETTES_ALL);
   PaletteFade_StartInterpolation(120);
   wait(120);
-  MapGrid_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
+  MapGrid_SetShake(2, 2, 1);
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_StartInterpolation(120);
   wait(120);
-  MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
+  MapGrid_SetShake(1, 1, 1);
   Actor_Get(ACTOR_BEAM_BOTTOM)->scaleY = Q16_ONE / 50;
   Actor_SetScript(ACTOR_BEAM_LOWER, gVenusLighthouseAerie_BeamCloseAction);
   Actor_SetScript(ACTOR_BEAM_MIDDLE, gVenusLighthouseAerie_BeamCloseAction);
@@ -2633,7 +2633,7 @@ static void VenusLighthouseAerie_RestorePartyOnBrokenAerie(void) {
   MapGrid_CopyCellAttributes(19, 6, 3, 7, 13, 6);
   MapGrid_CopyCellAttributes(19, 6, 3, 7, 22, 13);
   MapGrid_CopyCellAttributes(19, 6, 3, 7, 13, 13);
-  MapGrid_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
+  MapGrid_SetShake(2, 2, 1);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Actor_Restore();
   MapGrid_CenterOnFollowedPoint();
@@ -2698,7 +2698,7 @@ static void VenusLighthouseAerie_TryToPreventFall(void) {
   Event_SetMessageId(MsgVenusNoooo);
   VenusLighthouseAerie_ShowMessage(ACTOR_FELIX);
   Sound_Play(MUS_SHEBA_HANGS_ON);
-  MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
+  MapGrid_SetShake(1, 1, 1);
   FieldCamera_SetSpeed(4.8);
   FieldCamera_SetSpeed(4);
   FieldCamera_MoveTo(192, -64, 238, 1);
@@ -2896,7 +2896,7 @@ static void VenusLighthouseAerie_PlayShebasFall(void) {
   Event_Wait(60);
   VenusLighthouseAerie_ShowMessage(ACTOR_MIA);
   Sound_Play(SE_RUMBLE);
-  MapGrid_SetShake(PIXELS(6), PIXELS(6), Q16_ONE);
+  MapGrid_SetShake(6, 6, 1);
   Event_Wait(40);
   Sound_Play(SE_CRASH);
   MapGrid_CopyCellsTo(110, 105, 74, 4, 18, 23);
@@ -2940,9 +2940,9 @@ static void VenusLighthouseAerie_PlayShebasFall(void) {
   Actor_SetScript(ACTOR_GARET, gVenusLighthouseAerie_PartyHeadingAction);
   Actor_SetScript(ACTOR_IVAN, gVenusLighthouseAerie_PartyHeadingAction);
   Actor_SetScript(ACTOR_MIA, gVenusLighthouseAerie_PartyHeadingAction);
-  MapGrid_SetShake(PIXELS(3), PIXELS(3), Q16_ONE);
+  MapGrid_SetShake(3, 3, 1);
   Event_Wait(80);
-  MapGrid_SetShake(PIXELS(6), PIXELS(6), Q16_ONE);
+  MapGrid_SetShake(6, 6, 1);
   Event_Wait(40);
   Sound_Play(SE_CRASH);
   MapGrid_CopyCellAttributes(110, 106, 18, 14, 10, 5);
@@ -2987,7 +2987,7 @@ static void VenusLighthouseAerie_PlayShebasFall(void) {
   Actor_Jump(ACTOR_GARET, 6, 0);
   Actor_Jump(ACTOR_IVAN, 6, 0);
   Actor_Jump(ACTOR_MIA, 6, 0);
-  MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   Event_Wait(80);
   Sound_Play(SOUND_FADE_OUT_ACTION_SE);
   Event_Wait(40);
@@ -3068,7 +3068,7 @@ static void VenusLighthouseAerie_UpdateBeaconRise(void) {
   switch (sTransitionStep) {
   case 0:
     Sound_Play(SE_SHIMMER);
-    MapGrid_SetShake(PIXELS(6), PIXELS(6), Q16_ONE);
+    MapGrid_SetShake(6, 6, 1);
     PaletteFade_ApplyTarget(PALETTE_TINT_CUSTOM | RGB(31, 31, 24), PALETTES_BG);
     PaletteFade_StartInterpolation(8);
     break;
@@ -3077,7 +3077,7 @@ static void VenusLighthouseAerie_UpdateBeaconRise(void) {
     PaletteFade_StartInterpolation(8);
     break;
   case 16:
-    MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
+    MapGrid_SetShake(1, 1, 1);
     break;
     // Start the lower beam beneath the floor, then pause each rise stage.
 

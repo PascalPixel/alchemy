@@ -245,13 +245,13 @@ static void SolSanctumElementalStarRoom_BagVenusStar(void) {
       MapGrid_SetScreenShake(PIXELS(1), PIXELS(1), Q16_ONE);
     }
   }
-  MapGrid_SetShake(PIXELS(1), PIXELS(2), Q16_ONE);
+  MapGrid_SetShake(1, 2, 1);
   Event_Wait(30);
   FieldCamera_SetSpeed(2.4);
   FieldCamera_MoveTo(664, CAMERA_KEEP, 497, 1);
   FieldCamera_WaitForMove();
   Event_Wait(20);
-  MapGrid_SetShake(PIXELS(1), PIXELS(2), Q16_ONE);
+  MapGrid_SetShake(1, 2, 1);
   Sound_Play(SE_CLATTER);
   MapGrid_PlayMapEdit(gSolSanctumElementalStarRoom_StarCells,
                       RISEN_PILLAR_LEFT(41), 29);
@@ -261,7 +261,7 @@ static void SolSanctumElementalStarRoom_BagVenusStar(void) {
   FieldCamera_SetSpeed(6.4);
   FieldCamera_MoveTo(311, CAMERA_KEEP, 497, 1);
   FieldCamera_WaitForMove();
-  MapGrid_SetShake(PIXELS(1), PIXELS(2), Q16_ONE);
+  MapGrid_SetShake(1, 2, 1);
   Event_Wait(20);
   Sound_Play(SE_CLATTER);
   MapGrid_PlayMapEdit(gSolSanctumElementalStarRoom_StarCells,
@@ -271,7 +271,7 @@ static void SolSanctumElementalStarRoom_BagVenusStar(void) {
   MapGrid_SetScreenShake(0, 0, 0);
   FieldCamera_MoveTo(663, CAMERA_KEEP, 192, 1);
   FieldCamera_WaitForMove();
-  MapGrid_SetShake(PIXELS(1), PIXELS(2), Q16_ONE);
+  MapGrid_SetShake(1, 2, 1);
   Event_Wait(20);
   Sound_Play(SE_CLATTER);
   MapGrid_PlayMapEdit(gSolSanctumElementalStarRoom_StarCells,
@@ -285,12 +285,12 @@ static void SolSanctumElementalStarRoom_BagVenusStar(void) {
   FieldCamera_MoveTo(710, CAMERA_KEEP, 474, 0);
   MapGrid_CenterOnFollowedPoint();
   wait(1);
-  MapGrid_SetShake(PIXELS(2), PIXELS(1), Q16_ONE);
+  MapGrid_SetShake(2, 1, 1);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(40);
   Sound_Play(SOUND_FADE_OUT_ACTION_SE);
-  MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   MapGrid_WaitForShakeToSettle();
   Event_Wait(20);
   PUT_OUT_STAR_LIGHT(43, 26);
@@ -346,16 +346,16 @@ static void SolSanctumElementalStarRoom_BagMercuryStar(void) {
     PaletteFade_StartInterpolation(8);
     Event_Wait(8);
     if (i == 1) {
-      MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
+      MapGrid_SetShake(1, 1, 1);
     }
   }
-  MapGrid_SetShake(PIXELS(1), PIXELS(2), Q16_ONE);
+  MapGrid_SetShake(1, 2, 1);
   Event_Wait(30);
   MapGrid_SetShake(0, 0, 0);
   FieldCamera_SetSpeed(5.6);
   FieldCamera_MoveTo(472, CAMERA_KEEP, 98, 1);
   FieldCamera_WaitForMove();
-  MapGrid_SetShake(PIXELS(1), PIXELS(2), Q16_ONE);
+  MapGrid_SetShake(1, 2, 1);
   Event_Wait(20);
   Sound_Play(SE_CLATTER);
   MapGrid_PlayMapEdit(gSolSanctumElementalStarRoom_StarCells,
@@ -365,7 +365,7 @@ static void SolSanctumElementalStarRoom_BagMercuryStar(void) {
   MapGrid_SetShake(0, 0, 0);
   FieldCamera_MoveTo(343, CAMERA_KEEP, 369, 1);
   FieldCamera_WaitForMove();
-  MapGrid_SetShake(PIXELS(1), PIXELS(2), Q16_ONE);
+  MapGrid_SetShake(1, 2, 1);
   Event_Wait(20);
   Sound_Play(SE_CLATTER);
   MapGrid_PlayMapEdit(gSolSanctumElementalStarRoom_StarCells,
@@ -376,7 +376,7 @@ static void SolSanctumElementalStarRoom_BagMercuryStar(void) {
   FieldCamera_SetSpeed(3.2);
   FieldCamera_MoveTo(343, CAMERA_KEEP, 497, 1);
   FieldCamera_WaitForMove();
-  MapGrid_SetShake(PIXELS(1), PIXELS(2), Q16_ONE);
+  MapGrid_SetShake(1, 2, 1);
   Event_Wait(20);
   Sound_Play(SE_CLATTER);
   MapGrid_PlayMapEdit(gSolSanctumElementalStarRoom_StarCells,
@@ -390,12 +390,12 @@ static void SolSanctumElementalStarRoom_BagMercuryStar(void) {
   FieldCamera_MoveTo(712, CAMERA_KEEP, 152, 0);
   MapGrid_CenterOnFollowedPoint();
   wait(1);
-  MapGrid_SetShake(PIXELS(2), PIXELS(1), Q16_ONE);
+  MapGrid_SetShake(2, 1, 1);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(40);
   Sound_Play(SOUND_FADE_OUT_ACTION_SE);
-  MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   MapGrid_WaitForShakeToSettle();
   Event_Wait(20);
   PUT_OUT_STAR_LIGHT(43, 6);
@@ -463,15 +463,15 @@ static void SolSanctumElementalStarRoom_BagJupiterStar(void) {
     PaletteFade_StartInterpolation(8);
     Event_Wait(8);
     if (i == 1) {
-      MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
+      MapGrid_SetShake(1, 1, 1);
     }
   }
-  MapGrid_SetShake(PIXELS(2), PIXELS(1), Q16_ONE);
+  MapGrid_SetShake(2, 1, 1);
   Event_Wait(30);
   FieldCamera_SetSpeed(2.4);
   FieldCamera_MoveTo(167, CAMERA_KEEP, 529, 1);
   FieldCamera_WaitForMove();
-  MapGrid_SetShake(PIXELS(1), PIXELS(2), Q16_ONE);
+  MapGrid_SetShake(1, 2, 1);
   Event_Wait(20);
   Sound_Play(SE_CLATTER);
   MapGrid_PlayMapEdit(gSolSanctumElementalStarRoom_StarCells,
@@ -482,7 +482,7 @@ static void SolSanctumElementalStarRoom_BagJupiterStar(void) {
   FieldCamera_SetSpeed(6.4);
   FieldCamera_MoveTo(391, CAMERA_KEEP, 177, 1);
   FieldCamera_WaitForMove();
-  MapGrid_SetShake(PIXELS(1), PIXELS(2), Q16_ONE);
+  MapGrid_SetShake(1, 2, 1);
   Event_Wait(20);
   Sound_Play(SE_CLATTER);
   MapGrid_PlayMapEdit(gSolSanctumElementalStarRoom_StarCells,
@@ -493,7 +493,7 @@ static void SolSanctumElementalStarRoom_BagJupiterStar(void) {
   FieldCamera_SetSpeed(2.4);
   FieldCamera_MoveTo(583, CAMERA_KEEP, 193, 1);
   FieldCamera_WaitForMove();
-  MapGrid_SetShake(PIXELS(1), PIXELS(2), Q16_ONE);
+  MapGrid_SetShake(1, 2, 1);
   Event_Wait(20);
   Sound_Play(SE_CLATTER);
   MapGrid_PlayMapEdit(gSolSanctumElementalStarRoom_StarCells,
@@ -507,12 +507,12 @@ static void SolSanctumElementalStarRoom_BagJupiterStar(void) {
   FieldCamera_MoveTo(232, CAMERA_KEEP, 477, 0);
   MapGrid_CenterOnFollowedPoint();
   wait(1);
-  MapGrid_SetShake(PIXELS(2), PIXELS(1), Q16_ONE);
+  MapGrid_SetShake(2, 1, 1);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(40);
   Sound_Play(SOUND_FADE_OUT_ACTION_SE);
-  MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   MapGrid_WaitForShakeToSettle();
   Event_Wait(20);
   PUT_OUT_STAR_LIGHT(13, 26);
@@ -1302,11 +1302,11 @@ static void SolSanctumElementalStarRoom_TakeMarsStar(void) {
     PaletteFade_StartInterpolation(8);
     Event_Wait(8);
     if (pass == 1) {
-      MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
+      MapGrid_SetShake(1, 1, 1);
     }
   }
   Sound_Play(SOUND_FADE_OUT_ACTION_SE);
-  MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   PUT_OUT_STAR_LIGHT(13, 6);
   Event_Wait(20);
   member = SolSanctumElementalStarRoom_PresentStar(ITEM_MARS_STAR, PIXELS(232),
@@ -1331,23 +1331,23 @@ static void SolSanctumElementalStarRoom_TakeMarsStar(void) {
   Actor_FaceEachOther(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
   Event_Wait(20);
   Sound_Play(SE_CRASH);
-  MapGrid_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
+  MapGrid_SetShake(4, 4, 1);
   Event_Wait(20);
-  MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
+  MapGrid_SetShake(1, 1, 1);
   Event_Wait(40);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH_SOUTHWEST, 50);
   Sound_Play(SE_CLATTER);
-  MapGrid_SetShake(PIXELS(3), PIXELS(3), Q16_ONE);
+  MapGrid_SetShake(3, 3, 1);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_EAST, 50);
-  MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
+  MapGrid_SetShake(1, 1, 1);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_WEST, 50);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH_NORTHEAST, 0);
   Sound_Play(SE_CLATTER);
-  MapGrid_SetShake(PIXELS(3), PIXELS(3), Q16_ONE);
+  MapGrid_SetShake(3, 3, 1);
   Event_Wait(30);
   Actor_Jump(ACTOR_PARTY_LEADER, 2, 0);
   Actor_Jump(ACTOR_GARET, 2, 20);

@@ -468,6 +468,8 @@ s32 WorldMap_GetCollision(struct WorldPosition *position);
 s32 WorldMap_IsWalkable(s32 unused, struct WorldPosition *position);
 s32 WorldMap_GetBattleEnvironment(struct WorldPosition *position,
                                   s32 *terrainKind);
+/// A screen shake's component left as it is; any negative value does.
+#define SHAKE_KEEP (-1)
 void MapGrid_SetScreenShake(s32 shakeX, s32 shakeY, s32 shakeDecay);
 void MapGrid_WaitForShakeToSettle(void);
 void TileMap_DrawRowsFromRam(const struct WorldMapAffinePair *lines,

@@ -771,9 +771,9 @@ static void SolSanctumLunaSolRooms_UpdateFirstFallingLight(void) {
   }
   if (gSolSanctumLunaSolRooms_FlashState != 0) {
     if (gSolSanctumLunaSolRooms_FlashState == 2) {
-      MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
+      MapGrid_SetShake(1, 1, 1);
     } else if (gSolSanctumLunaSolRooms_FlashState == 1) {
-      MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
+      MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
     }
     gSolSanctumLunaSolRooms_FlashState--;
   }
@@ -1598,7 +1598,7 @@ s32 SolSanctumLunaSolRooms_Initialize(void) {
   } else {
     if (GameFlag_Get(FLAG_SOL_SANCTUM_ERUPTED) != 0) {
       Scene_QueueMusic(SE_RUMBLE);
-      MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
+      MapGrid_SetShake(1, 1, 1);
       FieldEffect_InitializeSparkles();
       MapGrid_CopyCellAttributes(15, 6, 2, 1, 17, 6);
     }
@@ -1684,11 +1684,11 @@ static void SolSanctumLunaSolRooms_ArriveAfterWiseOnesRescue(void) {
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH_SOUTHWEST, 80);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 10);
   Actor_FaceDirection(ACTOR_GARET, FACING_EAST_SOUTHEAST, 60);
-  MapGrid_SetShake(PIXELS(3), PIXELS(3), Q16_ONE);
+  MapGrid_SetShake(3, 3, 1);
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 20);
-  MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   Event_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
   // Garet: "Did that floating eye thing save us?" A stronger tremor throws
@@ -1700,7 +1700,7 @@ static void SolSanctumLunaSolRooms_ArriveAfterWiseOnesRescue(void) {
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Event_Wait(40);
   Sound_Play(SE_TREMOR);
-  MapGrid_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
+  MapGrid_SetShake(4, 4, 1);
   Event_Wait(40);
   FieldEffect_InitializeSparkles();
   Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
@@ -1715,7 +1715,7 @@ static void SolSanctumLunaSolRooms_ArriveAfterWiseOnesRescue(void) {
   Actor_Get(ACTOR_GARET)->steeringFlags |= ACTOR_FACES_MOTION;
   // Recover from the tremor and bring Garet back into the party.
   Scene_QueueMusic(SE_RUMBLE);
-  MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
+  MapGrid_SetShake(1, 1, 1);
   Event_Wait(40);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
   // Garet: "Yeah, right! Let's get out of here..."

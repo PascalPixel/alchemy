@@ -509,11 +509,11 @@ static void Kolima_LowerBridge(void) {
   }
   MapGrid_CopyCellsTo(91, 19, 72, 9, 5, 7);
   MapGrid_CopyCellAttributes(23, 11, 5, 7, 8, 11);
-  MapGrid_SetShake(0, PIXELS(4), Q16_ONE);
+  MapGrid_SetShake(0, 4, 1);
   Event_Wait(10);
   Actor_Jump(ACTOR_PARTY_LEADER, 6, 0);
   Event_Wait(20);
-  MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   // From now on the villager turns to keep facing the leader.
   FieldActor_WatchAndStartScript(ACTOR_BRIDGE_VILLAGER,
                                  ACTOR_WATCH_KEEP_MOTION | ACTOR_PARTY_LEADER,

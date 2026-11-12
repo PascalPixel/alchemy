@@ -708,7 +708,7 @@ static void AltinPeak_DrainFirstWater(void) {
 
   gridWork = gMapGridWork[0];
   Sound_Play(SE_WATER_DRAIN);
-  MapGrid_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
+  MapGrid_SetShake(2, 2, 1);
   Event_Wait(10);
   // Sink the water layer one pixel every 4 frames, 24 in all.
   waterLayer = gridWork + 356;
@@ -736,7 +736,7 @@ static void AltinPeak_DrainFirstWater(void) {
   wait(1);
   Irq_SetHandler(1, 0, 0);
   Sound_Play(SOUND_FADE_OUT_ACTION_SE);
-  MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   Event_Wait(30);
   MapGrid_CopyCellAttributes(0, 0, 1, 2, 3, 14);
   GameFlag_Set(FLAG_ALTIN_MINE_FIRST_DRAIN);
@@ -753,7 +753,7 @@ static void AltinPeak_DrainSecondWater(void) {
   gridWork = gMapGridWork[0];
   MapGrid_CopyCells(93, 41, 16, 4, 77, 28);
   Sound_Play(SE_WATER_DRAIN);
-  MapGrid_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
+  MapGrid_SetShake(2, 2, 1);
   Event_Wait(10);
   // Sink the water layer one pixel every 4 frames, 24 in all.
   waterLayer = gridWork + 356;
@@ -772,7 +772,7 @@ static void AltinPeak_DrainSecondWater(void) {
   wait(1);
   Irq_SetHandler(1, 0, 0);
   Sound_Play(SOUND_FADE_OUT_ACTION_SE);
-  MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   Event_Wait(30);
   MapGrid_CopyCells(77, 41, 16, 4, 77, 28);
   GameFlag_Set(FLAG_ALTIN_MINE_SECOND_DRAIN);
@@ -790,7 +790,7 @@ static void AltinPeak_DrainThirdWater(void) {
   MapGrid_CopyCellsTo(111, 32, 104, 18, 3, 2);
   MapGrid_CopyCellsTo(64, 32, 103, 18, 1, 2);
   Sound_Play(SE_WATER_DRAIN);
-  MapGrid_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
+  MapGrid_SetShake(2, 2, 1);
   Event_Wait(10);
   // Sink the water layer one pixel every 4 frames, 24 in all.
   waterLayer = gridWork + 356;
@@ -809,7 +809,7 @@ static void AltinPeak_DrainThirdWater(void) {
   wait(1);
   Irq_SetHandler(1, 0, 0);
   Sound_Play(SOUND_FADE_OUT_ACTION_SE);
-  MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   Event_Wait(30);
   MapGrid_CopyCellsTo(103, 14, 103, 17, 4, 3);
   GameFlag_Set(FLAG_ALTIN_MINE_THIRD_DRAIN);
@@ -955,10 +955,10 @@ static void AltinPeak_ForceLogOver(void) {
   originHeight = actor->y.fixed;
   Event_Start();
   Sound_Play(SE_RUMBLE);
-  MapGrid_SetShake(PIXELS(2), PIXELS(1), Q16_ONE);
+  MapGrid_SetShake(2, 1, 1);
   Event_Wait(10);
   Sound_Play(SOUND_FADE_OUT_ACTION_SE);
-  MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   Event_Wait(20);
 
   // Rock the obstacle to each side before the accelerating fall.
@@ -1002,10 +1002,10 @@ static void AltinPeak_ForceLogOver(void) {
   wait(1);
   sprite->rotation = TRIG_TURN * 3 / 4;
   Sound_Play(SE_STONE_RUMBLE);
-  MapGrid_SetShake(PIXELS(3), PIXELS(3), Q16_ONE);
+  MapGrid_SetShake(3, 3, 1);
   Event_Wait(20);
   Sound_Play(SOUND_FADE_OUT_ACTION_SE);
-  MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   AltinPeak_RunBoulderChase(5);
   Event_End();
 }
@@ -1044,7 +1044,7 @@ static void AltinPeak_RunBoulderChase(s32 boulderDelay) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 100);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Sound_Play(SE_STONE_RUMBLE);
-  MapGrid_SetShake(PIXELS(3), PIXELS(3), Q16_ONE);
+  MapGrid_SetShake(3, 3, 1);
   Event_Wait(20);
   // Stage the rolling actor and its follower for the escape route.
   shadow->scaleX = 6 * Q16_ONE / 5;
@@ -1064,16 +1064,16 @@ static void AltinPeak_RunBoulderChase(s32 boulderDelay) {
   boulder->scaleY = 2 * Q16_ONE;
   Event_Wait(10);
   Sound_Play(SE_STONE_RUMBLE);
-  MapGrid_SetShake(PIXELS(4), PIXELS(2), Q16_ONE);
+  MapGrid_SetShake(4, 2, 1);
   Event_Wait(20);
   rock->x.fixed += PIXELS(14);
   rock->y.fixed += -PIXELS(8);
   rock->sprite->rotation = TRIG_TURN * 3 / 4;
   Sound_Play(SE_TREMOR);
-  MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
+  MapGrid_SetShake(1, 1, 1);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
   Sound_Play(MUS_BOULDER_CHASE);
-  MapGrid_SetShake(PIXELS(1), PIXELS(3), Q16_ONE);
+  MapGrid_SetShake(1, 3, 1);
   Actor_SetSpritePriority(ACTOR_FALLING_BOULDER, 0);
   Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 0);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
@@ -1104,7 +1104,7 @@ static void AltinPeak_RunBoulderChase(s32 boulderDelay) {
   Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 2);
   Actor_Get(ACTOR_PARTY_LEADER)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
   Sound_Play(SOUND_FADE_OUT_ACTION_SE);
-  MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   shadow->x.fixed = PIXELS(786);
   shadow->update = NULL;
   shadow->z.fixed = PIXELS(618);
@@ -1118,7 +1118,7 @@ static void AltinPeak_RunBoulderChase(s32 boulderDelay) {
   Actor_SetSpeed(ACTOR_FALLING_BOULDER, 3.2);
   Actor_SetDestination(ACTOR_FALLING_BOULDER, 786, 644);
   Event_Wait(15);
-  MapGrid_SetShake(PIXELS(5), PIXELS(7), Q16_ONE);
+  MapGrid_SetShake(5, 7, 1);
   MapGrid_CopyCellsTo(25, 36, 43, 36, 11, 9);
   MapGrid_CopyCellAttributes(25, 35, 10, 5, 43, 35);
   Actor_SetPosition(ACTOR_FALLING_BOULDER, 0, 0);
@@ -1129,7 +1129,7 @@ static void AltinPeak_RunBoulderChase(s32 boulderDelay) {
   Task_Remove(AltinPeak_SpawnDebris);
   Event_Wait(60);
   Sound_Play(SOUND_FADE_OUT_BGM);
-  MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   // Return Garet to the party if the warning sign brought him into the event.
   Event_Wait(120);
   if (Event_GetFlag(FLAG_ALTIN_PEAK_GARET_WATCHING_ROCKS) != 0) {
@@ -1208,7 +1208,7 @@ static void AltinPeak_ReadFallingRockSign(void) {
     Event_Wait(1);
     Actor_Get(ACTOR_GARET)->steeringFlags |= ACTOR_FACES_MOTION;
     Sound_Play(SE_RATTLE);
-    MapGrid_SetShake(PIXELS(2), PIXELS(1), Q16_ONE);
+    MapGrid_SetShake(2, 1, 1);
     Actor_Get(ACTOR_GARET)->steeringFlags &= ~ACTOR_FACES_MOTION;
     Actor_WalkToAndWait(ACTOR_GARET, 792, 120);
     Event_Wait(1);
@@ -1217,10 +1217,10 @@ static void AltinPeak_ReadFallingRockSign(void) {
 
       actor->steeringFlags = ACTOR_FACES_MOTION | actor->steeringFlags;
     }
-    MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
+    MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
     Event_Wait(80);
     Sound_Play(SE_RUMBLE);
-    MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
+    MapGrid_SetShake(1, 1, 1);
     Event_Wait(40);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
     Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
@@ -1303,7 +1303,7 @@ static void AltinPeak_UpdateBeastHops(struct Actor *updated) {
   // countdown (landing-sound latch) until it removes this update routine.
   if (*shakeDelay != 0) {
     if (--*shakeDelay == 1)
-      MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
+      MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   }
   if (beast->velocityY == 0) {
     Actor_SelectAnimation(updated, 1);
@@ -1313,7 +1313,7 @@ static void AltinPeak_UpdateBeastHops(struct Actor *updated) {
         Sound_Play(SE_SPLASH);
         ((struct FieldEffect *)updated)->countdown = 0;
         beast->userValue = 4;
-        MapGrid_SetShake(PIXELS(1), 0, Q16_ONE);
+        MapGrid_SetShake(1, 0, 1);
       }
       beast->y.fixed = beast->groundHeight;
     }
@@ -1335,9 +1335,9 @@ static void AltinPeak_UpdateBeastHops(struct Actor *updated) {
 static __inline__ void AltinPeak_PlayLandingShake(s32 amplitude,
                                                   s32 holdFrames) {
   Sound_Play(SE_SPLASH);
-  MapGrid_SetShake(amplitude, 0, Q16_ONE);
+  MapGrid_SetShakeFixed(amplitude, 0, Q16_ONE);
   Event_Wait(holdFrames);
-  MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
 }
 
 /// Stepping near AltinPeakFirstWaterBeast's water beast the first time makes it
@@ -2190,7 +2190,7 @@ static void AltinPeak_StartHydrosBattle(void) {
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 328, 116);
   Sound_Play(SE_BOSS_ROAR);
   Task_AddFrame(AltinPeak_PlayHydrosRumble, TASK_PASS_FRAME);
-  MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
+  MapGrid_SetShake(1, 1, 1);
   Actor_SetSpeed(ACTOR_STATUE, 0.1);
   Actor_SetSpeed(ACTOR_STATUE_SHADOW, 0.1);
   Actor_SetAnimation(ACTOR_STATUE, 2);

@@ -373,9 +373,9 @@ static void CrossboneIsleKeys_BaneSecondEscape(void) {
       Actor_WalkToAndWait(ACTOR_BANE, 824, 664);
       Event_Wait(10);
       Sound_Play(SE_BANE_ESCAPE);
-      MapGrid_SetShake(PIXELS(4), PIXELS(2), Q16_ONE);
+      MapGrid_SetShake(4, 2, 1);
       Event_Wait(20);
-      MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
+      MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
       Event_Wait(30);
 
       // Leave the Djinni tilted while its scale animation continues.
@@ -525,8 +525,8 @@ static void CrossboneIsleKeys_OpenBlueDoor(s32 passageInfo) {
 
   if (passageInfo & PASSAGE_PLAY_OPENING) {
     Sound_Play(SE_GATE_MOVE);
-    MapGrid_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
-    MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
+    MapGrid_SetShake(2, 2, 1);
+    MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
     MapGrid_CopyCells(79, 29, 1, 3, cellColumn, 40);
     wait(40);
   }
@@ -539,8 +539,8 @@ static void CrossboneIsleKeys_OpenBlueDoor(s32 passageInfo) {
 static void CrossboneIsleKeys_OpenRedDoor(s32 passageInfo) {
   if ((passageInfo & PASSAGE_PLAY_OPENING) != 0) {
     Sound_Play(SE_GATE_MOVE);
-    MapGrid_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
-    MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
+    MapGrid_SetShake(2, 2, 1);
+    MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
     MapGrid_CopyCells(84, 29, 1, 3, 70, 49);
     wait(60);
   }

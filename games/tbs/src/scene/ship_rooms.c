@@ -3956,14 +3956,14 @@ static void ShipRooms_NoticeShipRocking(void) {
   ShipRooms_RunEventCommand(SHIP_OPEN_SCREEN, 1, 20);
   Sound_Play(MUS_SILENCE);
   Sound_Play(SE_BOOM);
-  MapGrid_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
+  MapGrid_SetShake(2, 2, 1);
   Event_Wait(10);
-  MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   Event_Wait(80);
   Sound_Play(SE_BOOM);
-  MapGrid_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
+  MapGrid_SetShake(2, 2, 1);
   Event_Wait(10);
-  MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   Sound_Play(MUS_ERUPTION);
   GameFlag_Set(FLAG_KEEP_MUSIC_ONCE);
   Actor_SetAttachedEffect(ACTOR_MIA,
@@ -4071,12 +4071,12 @@ static void ShipRooms_ShakeWhileKrakenAboard(void) {
     remaining = *timer - 1;
     *timer = *timer - 1;
     if (remaining == 70)
-      MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
+      MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   } else {
     value = Import_RandomNext();
     if (((u32)(((value << 4) - value) << 3) >> 16) == 0) {
       Sound_Play(SE_BOOM);
-      MapGrid_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
+      MapGrid_SetShake(2, 2, 1);
       *timer = 80;
     }
   }

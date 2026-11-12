@@ -871,9 +871,9 @@ static void AltmillerCave_TurnRock(s32 rock) {
       }
       gAltmillerCave_LightWheel->phase = WHEEL_SLOWING;
       gAltmillerCave_LightWheel->frames = 0;
-      MapGrid_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
+      MapGrid_SetShake(2, 2, 1);
       Event_Wait(20);
-      MapGrid_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
+      MapGrid_SetShake(4, 4, 1);
       gAltmillerCave_LightWheel->phase = WHEEL_STOPPED;
       Sound_Play(SE_WARP);
       radius = PIXELS(24);
@@ -2373,7 +2373,7 @@ static void AltmillerCave_ReleaseWallBurst(void) {
   MapGrid_CopyCellsLayered(41, 55, 3, 2, 30, 55);
   MapGrid_CopyCellAttributes(42, 8, 1, 1, 31, 8);
   wait(50);
-  MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   wait(30);
   {
     s32 mode = 2;

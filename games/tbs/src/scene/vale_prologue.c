@@ -917,7 +917,7 @@ static void ValePrologue_FirstRockFalls(void) {
       rockSprite = rock->sprite;
       // A rumble (SE_RUMBLE, then SE_CRASH), and the rock bounces down from the
       // east.
-      MapGrid_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
+      MapGrid_SetShake(4, 4, 1);
       Sound_Play(SE_RUMBLE);
       wait(40);
       Sound_Play(SE_CRASH);
@@ -936,7 +936,7 @@ static void ValePrologue_FirstRockFalls(void) {
       Event_Wait(40);
       // It lands: the rumble on player 3 fades and the shaking dies down.
       Sound_Play(SOUND_FADE_OUT_ACTION_SE);
-      MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
+      MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
       MapGrid_WaitForShakeToSettle();
       Scene_PlayQueuedMusic();
       GameFlag_Set(FLAG_VALE_STORM_FIRST_ROCK_FELL);
@@ -994,7 +994,7 @@ static void ValePrologue_SecondRockFalls(void) {
     if (Event_GetFlag(FLAG_VALE_STORM_SECOND_ROCK_FELL) == 0) {
       rock = Actor_Get(ACTOR_FIRST_ROCK + 1);
       // A rumble, then the rock rolls down the slope from the north-east.
-      MapGrid_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
+      MapGrid_SetShake(4, 4, 1);
       Sound_Play(SE_RUMBLE);
       wait(40);
       Sound_Play(SE_CRASH);
@@ -1013,7 +1013,7 @@ static void ValePrologue_SecondRockFalls(void) {
       Event_Wait(40);
       // It lands: the rumble on player 3 fades and the shaking dies down.
       Sound_Play(SOUND_FADE_OUT_ACTION_SE);
-      MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
+      MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
       MapGrid_WaitForShakeToSettle();
       Scene_PlayQueuedMusic();
       GameFlag_Set(FLAG_VALE_STORM_SECOND_ROCK_FELL);
@@ -1074,7 +1074,7 @@ static void ValePrologue_ThirdRockFalls(void) {
 
       // A rumble, then the rock drops in from the west while Isaac is drawn
       // behind it.
-      MapGrid_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
+      MapGrid_SetShake(4, 4, 1);
       Sound_Play(SE_RUMBLE);
       wait(40);
       Sound_Play(SE_CRASH);
@@ -1090,7 +1090,7 @@ static void ValePrologue_ThirdRockFalls(void) {
       Event_Wait(40);
       // It lands: the rumble fades, and Isaac is drawn as before.
       Sound_Play(SOUND_FADE_OUT_ACTION_SE);
-      MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
+      MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
       MapGrid_WaitForShakeToSettle();
       Scene_PlayQueuedMusic();
       GameFlag_Set(FLAG_VALE_STORM_THIRD_ROCK_FELL);
@@ -1149,7 +1149,7 @@ static void ValePrologue_FourthRockFalls(void) {
     if (Event_GetFlag(FLAG_VALE_STORM_FOURTH_ROCK_FELL) == 0) {
       rock = Actor_Get(ACTOR_FIRST_ROCK + 3);
       // A rumble, then the rock rolls in from the east.
-      MapGrid_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
+      MapGrid_SetShake(4, 4, 1);
       Sound_Play(SE_RUMBLE);
       wait(40);
       Sound_Play(SE_CRASH);
@@ -1164,7 +1164,7 @@ static void ValePrologue_FourthRockFalls(void) {
       Event_Wait(40);
       // It lands: the rumble on player 3 fades and the shaking dies down.
       Sound_Play(SOUND_FADE_OUT_ACTION_SE);
-      MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
+      MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
       MapGrid_WaitForShakeToSettle();
       Scene_PlayQueuedMusic();
       GameFlag_Set(FLAG_VALE_STORM_FOURTH_ROCK_FELL);
@@ -1535,9 +1535,9 @@ static void ValePrologue_WatchBoulderFall(void) {
     Scene_StartEventPsynergy();
     wait(1);
     Sound_Play(SE_RUMBLE);
-    MapGrid_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
+    MapGrid_SetShake(2, 2, 1);
     Event_Wait(30);
-    MapGrid_SetShake(PIXELS(3), PIXELS(3), Q16_ONE);
+    MapGrid_SetShake(3, 3, 1);
     Sound_Play(SE_CRASH);
     Event_Wait(30);
     actor = Actor_Get(ACTOR_PARTY_LEADER);
@@ -1552,10 +1552,10 @@ static void ValePrologue_WatchBoulderFall(void) {
     Actor_WaitForScriptEndById(ACTOR_PARTY_LEADER);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
     Actor_ShowEmote(ACTOR_GARET_CHILD, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
-    MapGrid_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
+    MapGrid_SetShake(4, 4, 1);
     Sound_Play(SE_CRASH);
     Event_Wait(40);
-    MapGrid_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
+    MapGrid_SetShake(5, 5, 1);
     Sound_Play(SE_CRASH);
     Event_Wait(20);
     Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
@@ -1608,31 +1608,31 @@ static void ValePrologue_WatchBoulderFall(void) {
     Sound_Play(SE_CRASH);
     Actor_MoveToAndWait(ACTOR_BOULDER, 114, 333);
     Actor_SetAnimation(ACTOR_BOULDER, ANIM_WALK);
-    MapGrid_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
+    MapGrid_SetShake(2, 2, 1);
     Sound_Play(SE_CRASH);
     *shakeShift = 0;
     Actor_SetSpeed(ACTOR_BOULDER, 0.4);
     Actor_MoveToAndWait(ACTOR_BOULDER, 114, 300);
     Actor_SetAnimation(ACTOR_BOULDER, ANIM_WALK);
-    MapGrid_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
+    MapGrid_SetShake(5, 5, 1);
     Sound_Play(SE_CRASH);
     *shakeShift = 2;
     Actor_SetSpeed(ACTOR_BOULDER, 0.8);
     Actor_MoveToAndWait(ACTOR_BOULDER, 114, 333);
     Actor_SetAnimation(ACTOR_BOULDER, ANIM_WALK);
-    MapGrid_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
+    MapGrid_SetShake(2, 2, 1);
     Sound_Play(SE_CRASH);
     *shakeShift = 0;
     Actor_SetSpeed(ACTOR_BOULDER, 0.4);
     Actor_MoveToAndWait(ACTOR_BOULDER, 114, 300);
     Actor_SetAnimation(ACTOR_BOULDER, ANIM_WALK);
-    MapGrid_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
+    MapGrid_SetShake(4, 4, 1);
     Sound_Play(SE_CRASH);
     *shakeShift = 2;
     Actor_SetSpeed(ACTOR_BOULDER, 0.8);
     Actor_MoveToAndWait(ACTOR_BOULDER, 114, 333);
     Actor_SetAnimation(ACTOR_BOULDER, ANIM_WALK);
-    MapGrid_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
+    MapGrid_SetShake(2, 2, 1);
     Sound_Play(SE_CRASH);
     *shakeShift = 1;
     Event_Wait(20);
@@ -1666,7 +1666,7 @@ static void ValePrologue_WatchBoulderFall(void) {
     Event_Wait(10);
     Event_ShowMessageThenWait(ACTOR_ELDER_FAR_WEST, 0, 20);
     Sound_Play(SOUND_FADE_OUT_ACTION_SE);
-    MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
+    MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
     FieldCamera_SetSpeed(6);
     FieldCamera_MoveTo(84, CAMERA_KEEP, 564, 1);
     FieldCamera_WaitForMove();
@@ -2344,7 +2344,7 @@ static __inline__ void ValePrologue_PlaceActor(struct Actor *actor,
 /// One crash of the Boulder coming down, made of a shake, SE_CRASH and a wait.
 static __inline__ void ValePrologue_PlayImpactBeat(s32 shakeAmplitude,
                                                    s32 frames) {
-  MapGrid_SetShake(shakeAmplitude, shakeAmplitude, Q16_ONE);
+  MapGrid_SetShakeFixed(shakeAmplitude, shakeAmplitude, Q16_ONE);
   Sound_Play(SE_CRASH);
   Event_Wait(frames);
 }
@@ -2412,7 +2412,7 @@ static void ValePrologue_ShowBoulderSweepingDownriver(void) {
   Actor_SetScript(ACTOR_PARTY_LEADER, gValePrologue_LeaderGatherPath);
   Actor_RunScriptAndWait(ACTOR_GARET_CHILD, gValePrologue_GaretGatherPath);
   ValePrologue_PlayImpactBeat(PIXELS(4), 20);
-  MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
+  MapGrid_SetShake(1, 1, 1);
   Event_Wait(60);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_JENNA_CHILD, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
@@ -2451,21 +2451,21 @@ static void ValePrologue_ShowBoulderSweepingDownriver(void) {
   Event_Wait(10);
   Sound_Play(SOUND_FADE_OUT_BGM);
   ValePrologue_PlayImpactBeat(PIXELS(3), 30);
-  MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
+  MapGrid_SetShake(1, 1, 1);
   Event_Wait(120);
   ValePrologue_PlayImpactBeat(PIXELS(3), 40);
-  MapGrid_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
+  MapGrid_SetShake(2, 2, 1);
   Event_Wait(60);
   ValePrologue_PlayImpactBeat(PIXELS(4), 20);
-  MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
+  MapGrid_SetShake(1, 1, 1);
   Event_Wait(60);
   ValePrologue_PlayImpactBeat(PIXELS(3), 40);
-  MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
+  MapGrid_SetShake(1, 1, 1);
   Event_Wait(60);
   Weather_StopLightning();
-  MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
+  MapGrid_SetShake(1, 1, 1);
   Event_Wait(1);
-  MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   FieldCamera_SetSpeedAndAcceleration(8, 8);
   FieldCamera_MoveTo(217, CAMERA_KEEP, 1084, 1);
   PaletteFade_ApplyTarget(RGB(0, 0, 0), PALETTES_ALL);
@@ -2751,16 +2751,16 @@ static void ValePrologue_UpdateBoulderShadow(void) {
   timer = &source->timer;
   if (*timer != 0) {
     if (*timer == 60) {
-      MapGrid_SetShake(PIXELS(3), PIXELS(3), Q16_ONE);
+      MapGrid_SetShake(3, 3, 1);
     }
     if (*timer == 40) {
-      MapGrid_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
+      MapGrid_SetShake(4, 4, 1);
     }
     if (*timer == 30) {
-      MapGrid_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
+      MapGrid_SetShake(2, 2, 1);
     }
     if (*timer == 20) {
-      MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
+      MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
     }
     (*timer)--;
   }

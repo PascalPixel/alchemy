@@ -908,8 +908,8 @@ static void VenusLighthouse_LandWithRadialDust(void) {
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_LEAN_BACK);
-  MapGrid_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
-  MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
+  MapGrid_SetShake(5, 5, 1);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   MapGrid_WaitForShakeToSettle();
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
@@ -1838,7 +1838,7 @@ static void VenusLighthouse_StepOnWallSwitch(void) {
       MapGrid_CopyCellsTo(26, 33, 19, 33, 1, 1);
       Event_Wait(30);
       Sound_Play(SE_HEAVY_MOVE);
-      MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
+      MapGrid_SetShake(1, 1, 1);
       Event_Wait(20);
       dustX = PIXELS(288);
       column = 29;
@@ -1881,7 +1881,7 @@ static void VenusLighthouse_StepOnWallSwitch(void) {
       MapGrid_CopyCellAttributes(12, 32, 3, 1, 15, 32);
       Sound_Play(SE_STOP_ACTION_SE);
       Sound_Play(SE_THUMP);
-      MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
+      MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
       MapGrid_WaitForShakeToSettle();
       gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
       Import_EventSetExitRequest(
@@ -2388,7 +2388,7 @@ static void VenusLighthouse_StepOnWestWallSwitch(void) {
       Sound_Play(SE_RATTLE);
       MapGrid_CopyCellsTo(44, 83, 44, 80, 3, 3);
       Event_Wait(30);
-      MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
+      MapGrid_SetShake(1, 1, 1);
       Sound_Play(SE_HEAVY_MOVE);
       Event_Wait(20);
       dustX = PIXELS(616);
@@ -2424,7 +2424,7 @@ static void VenusLighthouse_StepOnWestWallSwitch(void) {
       layer->offsetX = layer->offsetX / PIXELS(1) << 16;
       Sound_Play(SE_STOP_ACTION_SE);
       Sound_Play(SE_THUMP);
-      MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
+      MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
       MapGrid_WaitForShakeToSettle();
       gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
       Import_EventSetExitRequest(
@@ -2464,7 +2464,7 @@ static void VenusLighthouse_StepOnEastWallSwitch(void) {
       MapGrid_CopyCellsTo(63, 29, 49, 20, 1, 1);
       Sound_Play(SE_RATTLE);
       Event_Wait(30);
-      MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
+      MapGrid_SetShake(1, 1, 1);
       Sound_Play(SE_HEAVY_MOVE);
       Event_Wait(20);
       dustX = PIXELS(704);
@@ -2500,7 +2500,7 @@ static void VenusLighthouse_StepOnEastWallSwitch(void) {
       layer->offsetX = layer->offsetX / PIXELS(1) << 16;
       Sound_Play(SE_STOP_ACTION_SE);
       Sound_Play(SE_THUMP);
-      MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
+      MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
       MapGrid_WaitForShakeToSettle();
       gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
       Import_EventSetExitRequest(

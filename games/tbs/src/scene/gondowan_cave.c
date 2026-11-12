@@ -504,8 +504,8 @@ static void GondowanCave_RunSpinningLeap(s32 actorId) {
   actor->layer = 0;
   Actor_WaitForMoveById(actorId);
   GondowanCave_WaitForDescent(actor, PIXELS(32));
-  MapGrid_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
-  MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
+  MapGrid_SetShake(5, 5, 1);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   // Emit a complete particle fan, including its closing direction.
   for (stepIndex = 0; stepIndex < 17; stepIndex++) {
     angle = stepIndex << 12;

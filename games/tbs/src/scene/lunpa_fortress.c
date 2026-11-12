@@ -550,8 +550,8 @@ static void LunpaFortress_MoveCrates(void) {
 
   cratesActor = Actor_Get(ACTOR_CAVE_CRATES);
   if ((cratesActor->z.fixed >> 20) > 22) {
-    MapGrid_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
-    MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
+    MapGrid_SetShake(4, 4, 1);
+    MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
     Sound_Play(SE_CLATTER);
     MapGrid_CopyCellAttributes(15, 20, 1, 1, 15, 22);
     MapGrid_CopyCellAttributes(17, 23, 1, 3, 15, 23);
@@ -594,8 +594,8 @@ static void LunpaFortress_UnlockToadonpaDoor(void) {
     if (GameFlag_Get(FLAG_DODONPA_LOCKED_UP) == 0 || doorIndex != 4) {
       LunpaFortress_OpenToadonpaDoor(doorIndex);
       Sound_Play(SE_GATE_MOVE);
-      MapGrid_SetShake(PIXELS(3), PIXELS(3), Q16_ONE);
-      MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
+      MapGrid_SetShake(3, 3, 1);
+      MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
       GameFlag_Set(doorTrigger + (TOADONPA_DOOR_FLAG -
                                   CELL_BEHAVIOR_LUNPA_FORTRESS_FIRST_DOOR));
     }
@@ -633,8 +633,8 @@ static void LunpaFortress_UnlockCaveDoor(void) {
     LunpaFortress_OpenCaveDoor(doorTrigger -
                                CELL_BEHAVIOR_LUNPA_FORTRESS_FIRST_DOOR);
     Sound_Play(SE_GATE_MOVE);
-    MapGrid_SetShake(PIXELS(3), PIXELS(3), Q16_ONE);
-    MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
+    MapGrid_SetShake(3, 3, 1);
+    MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
     GameFlag_Set(doorTrigger +
                  (CAVE_DOOR_FLAG - CELL_BEHAVIOR_LUNPA_FORTRESS_FIRST_DOOR));
   }
@@ -662,8 +662,8 @@ static void LunpaFortress_UnlockUpperFloorDoor(void) {
     LunpaFortress_OpenUpperFloorDoor(doorTrigger -
                                      CELL_BEHAVIOR_LUNPA_FORTRESS_FIRST_DOOR);
     Sound_Play(SE_GATE_MOVE);
-    MapGrid_SetShake(PIXELS(3), PIXELS(3), Q16_ONE);
-    MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
+    MapGrid_SetShake(3, 3, 1);
+    MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
     GameFlag_Set(doorTrigger + (UPPER_FLOOR_DOOR_FLAG -
                                 CELL_BEHAVIOR_LUNPA_FORTRESS_FIRST_DOOR));
   }
@@ -695,8 +695,8 @@ static void LunpaFortress_UnlockGroundFloorDoor(void) {
     LunpaFortress_OpenGroundFloorDoor(doorTrigger -
                                       CELL_BEHAVIOR_LUNPA_FORTRESS_FIRST_DOOR);
     Sound_Play(SE_GATE_MOVE);
-    MapGrid_SetShake(PIXELS(3), PIXELS(3), Q16_ONE);
-    MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
+    MapGrid_SetShake(3, 3, 1);
+    MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
     GameFlag_Set(doorTrigger + (GROUND_FLOOR_DOOR_FLAG -
                                 CELL_BEHAVIOR_LUNPA_FORTRESS_FIRST_DOOR));
   }
@@ -1864,14 +1864,14 @@ static void LunpaFortress_GatherPartyAroundHammet(void) {
 
 /// Dodonpa's lever: the room shakes, the floor opens and everyone startles.
 static void LunpaFortress_ActivateLeverTrap(void) {
-  MapGrid_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
+  MapGrid_SetShake(4, 4, 1);
   Sound_Play(SE_RUMBLE);
   Event_Wait(80);
   Sound_Play(SE_STOP_ACTION_SE);
   Event_Wait(5);
   Sound_Play(SE_CRASH);
   MapGrid_CopyCells(16, 75, 7, 4, 26, 55);
-  MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
+  MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);

@@ -930,8 +930,6 @@ extern u8 Data_02012f94[];
 
 extern u8 MsgFieldPasswordKana[];
 
-#define MSGNO(name) ((s32)(name))
-
 void Window_DrawDividerLine(struct Window *window, s32 x, s32 y, s32 length,
                             s32 mode);
 void Text_DrawStringInWindow(const u8 *text, struct Window *window, s32 x,

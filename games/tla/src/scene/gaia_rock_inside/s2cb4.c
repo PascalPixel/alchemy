@@ -1532,8 +1532,6 @@ end:
 
 #endif
 
-#include "main_routine_work.h"
-#include "ram_buffer.h"
 #include "iwram_call.h"
 #include "map.h"
 
@@ -2045,8 +2043,6 @@ s32 Func_02004904(void) {
     return 0xc000;
   return -1;
 }
-
-#include "field.h"
 
 void Func_0200495c(s32 layer, s32 keep) {
   struct MapWork *map = Ram_HeapSlots->mapWork;

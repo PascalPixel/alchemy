@@ -219,12 +219,8 @@ struct StatusUnit {
 
 extern const u8 Data_080aa1b8[];
 
-s32 BattleParty_PrepareActiveOwnersFar(u16 *owners);
-s32 Party_CountActiveOwnersFar(void);
 s32 Func_08118130(s32 a, u8 *counts);
-void Window_EraseBorderRect(s32 x, s32 y, u32 width, u32 height);
 void Window_DrawBorder(s32 x, s32 y, s32 width, s32 height);
-void Func_08041f70(s32 nibble);
 // Text_DrawPrefixedNumberAtOffset is called with no prototype in scope, as The
 // Broken Seal's screens.c calls it: with one, hp reaches r0 before the call's
 // other arguments rather than last (2 of 495 instructions in tla-en).

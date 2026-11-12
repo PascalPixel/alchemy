@@ -27,13 +27,6 @@
 #define DJINN_MESSAGE_COPY Message_DecodeRaw
 #endif
 
-extern u8 MsgDjinnName[];
-extern u8 MsgDjinnEffect[];
-extern u8 MsgDjinniStillRecovering[];
-extern u8 MsgReadyToSummon[];
-extern u8 MsgNoDjinn[];
-extern u8 MsgCannotUseSameDjinniTwice[];
-
 struct DjinnMenuWindow {
   u8 unk00[8];
   u16 width;
@@ -116,22 +109,8 @@ struct DjinnMenuOam {
 extern const u8 gDjinnMenu_BlinkTile[32];
 extern u8 gDjinnMenu_ElementXOffsets[4];
 extern u8 gDjinnMenu_ElementYOffsets[4];
-extern const u8 gResource_FixedBlockBTiles[];
 
-s32 VramCache_AllocEntry(s32 size);
-void *Heap_AllocEwram(s32 size);
 void Text_UseExtraTiles(s32 on);
-void Window_HighlightRect(s32 x, s32 y, s32 width, s32 height, s32 palette);
-void Vram_FillWindowBlockPattern(void);
-void MessageArgument_ClearAll(void);
-void Message_DecodeRaw(s32 message, u16 *text, s32 capacity);
-void Func_08041f70(s32 color);
-void Sound_PlayFar(s32 cue);
-void Input_ResetKeyRepeat(void);
-void Oam_AddSpriteAtDepth(void *sprite, s32 depth);
-void Func_08041b68(void);
-void Heap_Release(void *block);
-void wait(s32 frames);
 
 s32 Func_0804868c(s32 member) {
   struct DjinnMenuOam cursorSprite;

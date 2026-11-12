@@ -71,8 +71,6 @@ extern struct DescriptorEntry gData_080eff28[];
 void BattleEffect_StartTiledCanvas(s32 mode);
 void BattleEffect_EndCanvasLayer(void);
 void Func_0814ea58(void *effect, s32 mode);
-void PartyStatus_CreateWindow(s32 flags);
-void wait(s32 frames);
 s32 Func_08020310(s32 x, s32 z, s32 layer);
 s32 Func_080dbde8(s32 x, s32 z, s32 layer);
 u8 Func_080dbdf4(s32 x, s32 z, s32 layer, s32 value);
@@ -110,13 +108,6 @@ void Vram_CopyTile(u32 sourceTile, u32 destinationTile) {
 #else
 #define MENU_TEXT_COPY Message_DecodeRaw
 #endif
-
-extern u8 MsgItemName[];
-extern u8 MsgItemPlainName[];
-extern u8 MsgKey0d46[];
-extern u8 MsgKey0d4c[];
-extern u8 MsgKey0d4d[];
-extern u8 MsgKey0d4f[];
 
 struct ItemMenuWindow {
   u8 unk00[8];
@@ -194,21 +185,6 @@ struct ItemMenuOam {
     (sprite).oam.word.attr01 = (shape);                                        \
     (sprite).oam.word.attr23 = 0;                                              \
   } while (0)
-
-extern const u8 gResource_FixedBlockBTiles[];
-
-s32 VramCache_AllocEntry(s32 size);
-void Vram_CopyTile(u32 sourceTile, u32 destinationTile);
-void Window_HighlightRect(s32 x, s32 y, s32 width, s32 height, s32 palette);
-void Vram_FillWindowBlockPattern(void);
-s32 Item_ClassifyUseAbility(s32 member, s32 item);
-void Message_DecodeRaw(s32 message, u16 *text, s32 capacity);
-void Func_08041f70(s32 color);
-s32 ItemIcon_LoadIntoSlot(s32 item, s32 slot);
-void Oam_AddSpriteAtDepth(void *sprite, s32 depth);
-void Sound_PlayFar(s32 cue);
-void Input_ResetKeyRepeat(void);
-void wait(s32 frames);
 
 s32 Func_08049a30(s32 member, u16 *entries, s32 count) {
   struct ItemMenuWork *work;

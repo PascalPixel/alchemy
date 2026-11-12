@@ -142,8 +142,6 @@ void Func_080450fc(struct Object *obj) {
   }
 }
 
-s32 GameFlag_Test(s32 flag);
-
 s32 Func_0804519c(void) {
   if (GameFlag_Test(0x175))
     return (s32)MsgDjinnGiveTutorialB;
@@ -414,8 +412,6 @@ s32 Link_CreateCountdownLabelWindow(void) {
 #endif
   return win;
 }
-
-extern char ResourceId_CommandIcons;
 
 s32 Resource_LoadIndexedIntoBuffer(s32 arg0, s32 arg1) {
   GlyphTransfer *buffer = HeapSlot_Alloc(68, sizeof(GlyphTransfer));

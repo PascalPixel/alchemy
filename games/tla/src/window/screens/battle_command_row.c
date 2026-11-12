@@ -4,9 +4,6 @@
 
 #include "../screens_internal.h"
 
-s32 Message_AllTyped(void);
-s32 Message_OpenWindow(s32, s32, s32, s32);
-
 s32 Message_ShowAndWait(s32 message, s32 x, s32 y) {
   s32 result;
 
@@ -23,8 +20,6 @@ s32 Message_ShowAndWait(s32 message, s32 x, s32 y) {
 #else
 #define WINDOW_X 23
 #endif
-
-extern u8 MsgCommandName[];
 
 struct CommandRowIcon {
   u8 unk00[4];
@@ -97,22 +92,7 @@ extern const u16 gWindowSprite_BounceScales[32];
 extern struct BgScrollPair gBgScroll[];
 #include "main_routine_work.h"
 
-s32 VramCache_AllocEntry(s32 size);
-void *Heap_AllocEwram(s32 size);
-s32 Party_CountActiveOwnersFar(void);
-s32 Task_Add(void (*func)(void), s32 order);
-s32 Task_Remove(void (*func)(void));
-void Irq_SetHandler(u32 irq, s32 vcount, void (*handler)(void));
-void Graphics_SetBg1Priority3(void);
-void Func_08045780(void);
-void Oam_AddSpriteAtDepth(void *sprite, s32 depth);
-s32 Func_0804519c(void);
 void Func_08118128(s32 x, s32 y);
-void Sound_PlayFar(s32 cue);
-void QueueIoWriteDelay2(u32 address, u32 value);
-void wait(s32 frames);
-s32 Resource_ResetEntry(u32 entry);
-void Heap_Release(void *block);
 
 s32 Func_080457d0(s32 mode, s32 fleeAllowed) {
   u8 party[4];

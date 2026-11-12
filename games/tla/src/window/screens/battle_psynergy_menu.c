@@ -5,10 +5,6 @@
 #include "../screens_internal.h"
 #include "window_tile.h"
 
-extern u8 MsgAbilityNothing[];
-extern u8 MsgAbilityDescription[];
-extern u8 MsgKey0d48[];
-
 struct PsynergyMenuWindow {
   u8 unk00[8];
   u16 width;
@@ -155,20 +151,6 @@ struct PsynergyMenuOam {
   do {                                                                         \
     (work)->dirty |= 2 << ((u32)(row) >> 2);                                   \
   } while (0)
-
-extern const u8 gResource_FixedBlockBTiles[];
-
-s32 VramCache_AllocEntry(s32 size);
-void Vram_CopyTile(u32 sourceTile, u32 destinationTile);
-void Window_HighlightRect(s32 x, s32 y, s32 width, s32 height, s32 palette);
-void Vram_FillWindowBlockPattern(void);
-void Message_DecodeRaw(s32 message, u16 *text, s32 capacity);
-void Ability_LoadGlyph(s32 ability, s32 mode, s32 *slot, s32 *glyph, s32 count);
-void Func_08041f70(s32 color);
-void Oam_AddSpriteAtDepth(void *sprite, s32 depth);
-void Sound_PlayFar(s32 cue);
-void Input_ResetKeyRepeat(void);
-void wait(s32 frames);
 
 s32 Func_0804a134(s32 unitId, u16 *actions, s32 count) {
   struct PsynergyMenuWork *work;

@@ -254,7 +254,6 @@ union NameCursor {
   struct NameCursorMotion cursor;
 };
 
-extern u32 gVBlankCount;
 extern char ResourceId_UiIconTiles, ResourceId_UiFixedBlockATiles;
 extern const s8 gNameEntry_CaretWave[];
 extern const u8 gNameEntry_KeyboardTilemap[];
@@ -273,16 +272,11 @@ extern u8 gNameEntry_EndKeyLabel[];
 #endif
 
 void Window_LoadGraphics(void);
-void Func_0803f9c0(s32 glow, s32 sub);
 void Func_0803d3c0(s32 member, s32 x, s32 y, s32 side);
-s32 Resource_FindFreeEntry(void);
-void VramBlock_LoadResourceFar(s32 slot, s32 size, s32 resource);
 void Func_08108048(struct NameCursorMotion *cursor, s32 x, s32 y);
 void Func_08108040(struct NameCursorMotion *cursor, s32 x, s32 y, s32 speed);
 void Func_08108030(struct NameCursorMotion *cursor);
 void Func_08108038(struct NameCursorMotion *cursor);
-void wait(s32 frames);
-void Sound_PlayFar(s32 cue);
 void Func_0803d450(s32 member);
 
 // The Japanese form enters kana: a dakuten or handakuten joins the kana before

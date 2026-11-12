@@ -22,9 +22,6 @@
 #define BATTLE_MENU_MESSAGE_COPY Message_DecodeRaw
 #endif
 
-extern u8 MsgAbilityNothing[];
-extern u8 MsgAbilityDescription[];
-
 struct SummonMenuWindow {
   u8 unk00[8];
   u16 width;
@@ -97,22 +94,9 @@ struct SummonMenuOam {
 #define NAVIGATION ((struct SummonMenuNavigation *)Ram_HeapSlots->unke4[0])
 #define SUMMON_END 32
 
-extern const u8 gResource_FixedBlockBTiles[];
-
-s32 VramCache_AllocEntry(s32 size);
 s32 Summon_ListLearnedFar(u8 *summons);
-const struct SummonDefinition *SummonDefinition_Get(s32 summon);
-void Window_HighlightRect(s32 x, s32 y, s32 width, s32 height, s32 palette);
-void Vram_FillWindowBlockPattern(void);
-void Message_DecodeRaw(s32 message, u16 *text, s32 capacity);
-void Ability_LoadGlyph(s32 ability, s32 mode, s32 *slot, s32 *glyph, s32 count);
-void Func_08041f70(s32 color);
 void Func_0803c274(struct SummonMenuWindow *window, s32 character, s32 x, s32 y,
                    s32 mode);
-void Oam_AddSpriteAtDepth(void *sprite, s32 depth);
-void Sound_PlayFar(s32 cue);
-void Input_ResetKeyRepeat(void);
-void wait(s32 frames);
 
 s32 Func_08049154(s32 unused0, s32 unused1, const u8 *standby) {
   struct SummonMenuOam cursorStorage;

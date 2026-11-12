@@ -5,8 +5,6 @@
 #include "../screens_internal.h"
 #include "system/io_write.h"
 
-s32 Func_080cc67c(s32);
-s32 Func_080cc7c4(void);
 extern const u8 gWindow_ProgressBarRows[];
 
 /// The progress bar's serial callback: advances the stored progress by step
@@ -32,7 +30,6 @@ void Func_08042dc4(s32 step) {
 extern const u8 gWindow_ProgressBarTiles[];
 
 void Sound_SetBgmVolumeTargetFar(s32 target, s32 step);
-void Sound_PlayFar(s32 cue);
 void Func_080c8698(void);
 
 // Heading x coordinate: only French differs.
@@ -132,7 +129,6 @@ s32 Func_08042f10(s32 partId, void *buffer) {
   return result;
 }
 
-void Serial_QueueCommand(u32 command);
 s32 Save_DeletePart(s32 partId);
 
 /// Deletes a part of a save file (Save_DeletePart) with interrupts masked and
@@ -318,10 +314,6 @@ extern u16 gData_02003860;
 extern u16 gData_020036d8;
 extern u16 gData_02005350;
 
-s32 Func_0801596c(void);
-s32 Save_LoadFileSummaries(void);
-void Save_ReleaseWork(void);
-
 s32 Func_080432a4(void) {
   s32 err;
   s32 cnt;
@@ -369,7 +361,6 @@ extern u32 gData_02001000;
 // No prototype, as The Broken Seal declares it: this caller passes 0, and
 // FileList_SelectFile's twin passes nothing.
 u32 BuildStamp_GetTimeFar();
-s32 GameFlag_Test(s32 flag);
 
 // Builds the save header.
 s32 Save_BuildFileSummary(void) {
@@ -441,13 +432,9 @@ s32 Save_BuildFileSummary(void) {
   return 0;
 }
 
-extern u8 gData_02000000[];
 extern u8 gData_02000504[];
 extern s16 gData_020036d0;
 
-s32 Func_0801596c(void);
-s32 Save_LoadFileSummaries(void);
-void Save_ReleaseWork(void);
 s32 Save_ReadPart(s32 partId, void *buffer);
 void FieldMessage_Show(s32 message, s32 position);
 
@@ -506,16 +493,7 @@ s32 Func_08043534(void) {
   return value;
 }
 
-extern u8 gData_02000000[];
-extern s16 gData_020036d0;
-
-s32 Func_0801596c(void);
-s32 Save_LoadFileSummaries(void);
-void Save_ReleaseWork(void);
-void FieldMessage_Show(s32 message, s32 position);
-void Sound_PlayFar(s32 cue);
 void ObjectTable_SnapshotFar(void);
-s32 Message_AllTyped(void);
 void Message_CloseFinishedWindows(void);
 
 /// Saves the game to slot (at most 2).
@@ -601,15 +579,6 @@ done:
   return result;
 }
 
-extern u8 gData_02000000[];
-extern s16 gData_020036d0;
-
-s32 Func_0801596c(void);
-s32 Save_LoadFileSummaries(void);
-void Save_ReleaseWork(void);
-s32 Save_ReadPart(s32 partId, void *buffer);
-void FieldMessage_Show(s32 message, s32 position);
-
 /// Selects a file and loads it.
 s32 Save_ChooseAndLoadFile(s32 mode) {
   s32 result = 0;
@@ -681,10 +650,6 @@ s32 Save_CopyFile(void) {
   return result;
 }
 
-s32 Message_OpenWindow(s32 message, s32 x, s32 y, s32 style);
-s32 Message_AllTyped(void);
-void Message_CloseFinishedWindows(void);
-
 #if (LANGUAGE == LANGUAGE_FRENCH)
 #define ERASE_CONFIRM_X 4 ///< The French confirmation window is farther left.
 #else
@@ -729,8 +694,6 @@ s32 Save_EraseSelectedFile(void) {
   Save_ReleaseWork();
   return result;
 }
-
-extern u32 gVBlankCount;
 
 /// Updates four RGB555 colors with an eight-VBlank phase offset between them.
 /// For s = sin / 16384, red is 22 + 2s, green 16 + s, and blue 20 + s.
@@ -1016,23 +979,13 @@ void StatusMenu_DrawCharacterSummary(s32 win, u8 *rec) {
 #define FILE_LIST_AREA_X 62
 #endif
 
-void *HeapSlot_Alloc(s32 slot, s32 size);
-void HeapSlot_Release(s32 slot);
 void Func_080f8070(void);
 void Func_080f8078(void);
 void Func_080f8080(s32 shown);
 void Func_080f8090(s32 index, s32 x, s32 y);
-void wait(s32 frames);
-void Func_0803f9c0(s32 glow, s32 sub);
-void Sound_PlayFar(s32 cue);
 
 // Messages 0 to 4 and 3672, the first area name.
 extern u8 MsgSaveNoData[];
-extern u8 MsgSaveContinue[];
-extern u8 MsgSaveNotCleared[];
-extern u8 MsgSaveCorrupted[];
-extern u8 MsgSavePostReunion[];
-extern u8 MsgDebugAreaName[];
 
 #define SAVE_FILE_COUNT 3
 #define SAVE_MENU_NO_FILE -2

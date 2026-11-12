@@ -135,14 +135,6 @@ s32 WindowSprite_CreateFromResourceSlot(struct RenderInput *input, s32 x, s32 y,
 #define PSYNERGY_PROMPT_X 24
 #endif
 
-extern u8 MsgAbilityNothing[];
-extern u8 MsgClassName[];
-extern u8 MsgKey0d0d[];
-extern u8 MsgKey0d0e[];
-extern u8 MsgKey10d3[];
-extern u8 MsgKey10d4[];
-extern u8 MsgKey10d9[];
-
 struct PreviewUnit {
   u8 unk000[0x38];
   s16 hp;
@@ -174,19 +166,12 @@ struct PreviewAbility {
 extern const u8 gDjinnMenu_ArrowUpTiles[];
 extern const u8 gDjinnMenu_ArrowDownTiles[];
 
-struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 flags);
-void *Heap_Alloc(s32 size);
-void Heap_Release(void *block);
-void *Heap_AllocEwram(s32 size);
 s32 Djinn_IsActiveFar(s32 member, s32 element, s32 index);
 void Djinn_DeactivateFar(s32 member, s32 element, s32 index);
-void Unit_CalculateFar(s32 member);
-s32 String_FormatNumberToHalfwords(s16 *out, s32 value);
 // Text_RenderWideStringInWindow is called with no prototype in scope, as The
 // Broken Seal's window functions are from its menu object: an implicit int
 // call sets r0, which is what orders each call's arguments.
 void Func_08041f70(s32 color);
-s32 VramCache_AllocEntry(s32 size);
 
 // The sprite cell at WindowSprite.sprite: a link, then the OAM words.
 struct ArrowSprite {

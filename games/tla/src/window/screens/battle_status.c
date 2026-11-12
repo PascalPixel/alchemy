@@ -22,14 +22,6 @@
 #define SUMMARY_PP_LABEL_SECOND_TILE 0xf01e
 #endif
 
-extern u8 MsgAbilityNothing[];
-extern u8 MsgClassName[];
-extern u8 MsgDjinnName[];
-extern u8 MsgItemName[];
-extern u8 MsgItemPlainName[];
-extern u8 MsgAbilityDescription[];
-extern u8 MsgDjinnEffect[];
-extern u8 MsgReadyToSummon[];
 extern u8 Msg_0d10[];
 extern u8 Msg_0d11[];
 extern u8 Msg_0d12[];
@@ -38,17 +30,6 @@ extern u8 Msg_0d15[];
 extern u8 Msg_0d16[];
 extern u8 Msg_0d17[];
 extern u8 Msg_0d19[];
-extern u8 MsgExp[];
-extern u8 MsgNormal[];
-extern u8 MsgCantFight[];
-extern u8 MsgInTheBack[];
-extern u8 MsgKey0d20[];
-extern u8 MsgKey0d21[];
-extern u8 MsgNormalStatus[];
-extern u8 MsgKey0d46[];
-extern u8 MsgKey0d48[];
-extern u8 MsgNoDjinn[];
-extern u8 MsgKey0d4f[];
 
 struct SummaryElement {
   s16 power;
@@ -248,40 +229,21 @@ extern const u8 gOwnerStatus_PvString[];
 extern const u8 gOwnerStatus_HpString[];
 extern const u8 gOwnerStatus_SlashString[];
 extern const u8 gOwnerStatus_PpString[];
-extern const u8 gResource_FixedBlockBTiles[];
 
-s32 Party_SumDjinnCountsFar(s32 member);
-void *Heap_AllocEwram(s32 size);
 void BattleActor_SpawnObjectsForListFar(u16 *list, s32 count);
 void BattleActor_CommitPlacementFar(void);
-s32 VramCache_AllocEntry(s32 size);
-void Sound_PlayFar(s32 cue);
-void Func_08041b68(void);
-void Oam_AddSpriteAtDepth(void *sprite, s32 depth);
-void Window_HighlightRect(s32 x, s32 y, s32 width, s32 height, s32 palette);
 void ReleaseBattleObjectRecordsFar(s32 member);
 void Func_08118148(u16 *list, s32 count, s32 mode);
 void **GetBattleObjectSlotFar(s32 member);
-void Vram_FillWindowBlockPattern(void);
 s32 Item_ClassifyUseAbility(s32 member, s32 item);
 s32 Message_CopyExpanded(s32 key, u16 *destination, u32 capacity);
-void Message_DecodeRaw(s32 message, u16 *text, s32 capacity);
 // Returns nothing; typed s32 here, see the help window in page 2.
 s32 Func_0803a2b0(s32 x, s32 y, s32 width, s32 height, s32 flags);
 void Text_DrawWideStringAtOffset(u16 *text, struct SummaryWindow *window, s32 x,
                                  s32 y);
-void Func_08041f70(s32 color);
-s32 ItemIcon_LoadIntoSlot(s32 item, s32 slot);
-s32 Resource_LoadIndexedEntryToBuffer(s32 id, s32 slot);
 // Returns nothing; typed s32 here, see the range column in page 1.
-void MessageArgument_ClearAll(void);
 s32 Unit_GetElementLevelFar(s32 member, s32 element);
-void *Heap_Alloc(s32 size);
-void Heap_Release(void *block);
-void Unit_CalculateFar(s32 member);
 s32 Unit_GetExperienceForLevelFar(s32 member, s32 level);
-void wait(s32 frames);
-void PartyStatus_Draw(s32 flags);
 s32 System_GetLanguage(void);
 
 // The four list-page scroll marks, one tile per page of four rows (Psynergy

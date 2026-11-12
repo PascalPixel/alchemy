@@ -79,4 +79,18 @@ struct WindowSprite *RenderResource_CreatePair(s32 group,
                                                struct RenderInput *input, s32 x,
                                                s32 y);
 
+// What several parts call, declared once here for all of them.
+extern u32 gVBlankCount;
+void Func_0803f9c0(s32 glow, s32 sub);
+s32 GameFlag_Test(s32 flag);
+s32 Message_AllTyped(void);
+s32 Message_OpenWindow(s32 message, s32 x, s32 y, s32 style);
+void Func_08041f70(s32 nibble);
+extern const u8 gResource_FixedBlockBTiles[];
+void Vram_FillWindowBlockPattern(void);
+void MessageArgument_ClearAll(void);
+void Message_DecodeRaw(s32 message, u16 *text, s32 capacity);
+void Func_08041b68(void);
+void Input_ResetKeyRepeat(void);
+
 #endif

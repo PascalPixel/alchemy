@@ -31,7 +31,6 @@ struct UiChannelSlot *Message_Start(struct Window *window, s32 entry, s32 x,
 #else
 s32 Message_Start();
 #endif
-void Sound_PlayFar(s32 cue);
 
 void Func_08044a58(s32 member, s32 element, s32 djinn) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
@@ -111,8 +110,6 @@ s32 Func_08044b80(u32 index) {
   return gCharacter_SpriteTable[index];
 }
 
-void Sound_PlayFar(s32 cue);
-
 void Func_08044b98(s32 member) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
   struct Window *window = NULL;
@@ -160,12 +157,6 @@ void Func_08044b98(s32 member) {
     Resource_ResetEntry(slot);
   }
 }
-
-extern u8 MsgPairJoinedParty[];
-
-void Sound_PlayFar(s32 cue);
-void wait(s32 frames);
-s32 Sound_GetBgmRestoreDelayFar(void);
 
 void Party_ShowPairJoinedMessage(s32 first, s32 second) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
@@ -253,12 +244,7 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second) {
 #define TO_SUMMON_WINDOW_HEIGHT 7
 #endif
 
-s32 Message_DecodeMode1(s32 message);
-void Sound_PlayFar(s32 cue);
-void wait(s32 frames);
-s32 Sound_GetBgmRestoreDelayFar(void);
 void Func_0803cf6c(s32 message);
-s32 Resource_ResetEntry(u32 slot);
 
 extern const u16 Data_0805f676[];
 extern u8 MsgCanNowSummon[], MsgToSummon[];

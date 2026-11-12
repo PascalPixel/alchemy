@@ -1,7 +1,7 @@
 /// @file
 /// The summons that spend one Djinni: Mercury, Jupiter, Venus and Mars. Each
-/// shows its Djinni washed bright in its element's colour, while what it
-/// throws bursts over every target.
+/// shows its Djinni washed bright, Mercury's white and the others in their
+/// element's colour, while what it throws bursts over every target.
 // Part of battle_effect.c.
 
 #include "../battle_effect_internal.h"
@@ -81,7 +81,9 @@ enum MercurySheetPicture {
 /// frame 32. A flame bursts on its 5th frame, 60 pixels on, into 32 motes.
 /// work->particles 0 to 4 hold the flames, variant -1 until launched and then
 /// counting the frames since; Ram_MapGridCellBuffer takes the blue flame sheet
-/// before it is turned. Sets work->shakeFrames as each flame bursts.
+/// before it is turned. The palette copied is the blue flame sheet's, not the
+/// Djinni's, which is what washes the Djinni white. Sets work->shakeFrames as
+/// each flame bursts.
 ///
 /// args: the targets.
 void BattleEffect_RunMercury(struct BattleEffectParams *args) {

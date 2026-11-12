@@ -182,8 +182,14 @@ static void ShipGlow_CyclePalette(void) {
     *frame = 0;
 }
 
-/// A drop of spray rises and wobbles for its timer, then falls back by
-/// gSprayFallScript, which releases it.
+/// The water drop's burst into a ring of spray (spr_503.png), beyond enum
+/// ActorAnimation.
+/// ★ Named from what the player sees: drops bursting into rings of spray as
+/// the ship rises (LemurianShip_RaiseTheShip's render)
+enum { ANIM_DROP_BURST = 1 };
+
+/// A drop of spray rises and wobbles for its timer, then bursts into a ring
+/// of spray and is released 20 frames later by gSprayFallScript.
 ///
 /// This is the update routine Ship_UpdateSwell gives each drop it creates.
 static void LemurianShip_SprayUpdate(struct Actor *actor) {
@@ -199,7 +205,7 @@ static void LemurianShip_SprayUpdate(struct Actor *actor) {
     drop->y.fixed += px(4) / 5;
   } else if ((s16)drop->userValue != 0) {
     drop->userValue = 0;
-    Actor_SelectAnimation(drop, 1);
+    Actor_SelectAnimation(drop, ANIM_DROP_BURST);
     drop->wait = 20;
     Actor_StartScript(drop, gSprayFallScript);
   }
@@ -298,7 +304,7 @@ static void Ship_UpdateSwell(void) {
       actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
       actor->sprite->image.priority = 2;
       Actor_SetSpriteFlags(actor, ACTOR_BLEND_NORMAL);
-      Actor_SelectAnimation(actor, 0);
+      Actor_SelectAnimation(actor, ANIM_STILL);
     }
   }
 }

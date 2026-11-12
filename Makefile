@@ -215,15 +215,19 @@ LD_SCRIPT := $(BUILD)/ld/main.ld
 LDFLAGS := -T $(LD_SCRIPT)
 OVERLAY_SCRIPT = -T $(BUILD)/ld/overlay_$*.ld
 # A script is rewritten only when its text changes, so an edit that leaves an
-# image's script as it was relinks nothing.
-$(BUILD)/ld/main.ld: games/$(GAME)/ld_script.ld $(LD_HEADERS)
+# image's script as it was relinks nothing; its stamp records when it last ran.
+$(BUILD)/ld/main.ld: $(BUILD)/ld/main.stamp ;
+$(BUILD)/ld/main.stamp: games/$(GAME)/ld_script.ld $(LD_HEADERS)
 	@mkdir -p $(@D)
-	$(CPP) $(LD_CPPFLAGS) $< $@.new
-	cmp -s $@.new $@ && rm $@.new || mv $@.new $@
-$(BUILD)/ld/overlay_%.ld: games/$(GAME)/ld_script.ld $(OVERLAY_LD) $(LD_HEADERS)
+	$(CPP) $(LD_CPPFLAGS) $< $(@:.stamp=.ld).new
+	cmp -s $(@:.stamp=.ld).new $(@:.stamp=.ld) && rm $(@:.stamp=.ld).new || mv $(@:.stamp=.ld).new $(@:.stamp=.ld)
+	@touch $@
+$(BUILD)/ld/overlay_%.ld: $(BUILD)/ld/overlay_%.stamp ;
+$(BUILD)/ld/overlay_%.stamp: games/$(GAME)/ld_script.ld $(OVERLAY_LD) $(LD_HEADERS)
 	@mkdir -p $(@D)
-	$(CPP) $(LD_CPPFLAGS) -DOVERLAY=0x$* $< $@.new
-	cmp -s $@.new $@ && rm $@.new || mv $@.new $@
+	$(CPP) $(LD_CPPFLAGS) -DOVERLAY=0x$* $< $(@:.stamp=.ld).new
+	cmp -s $(@:.stamp=.ld).new $(@:.stamp=.ld) && rm $(@:.stamp=.ld).new || mv $(@:.stamp=.ld).new $(@:.stamp=.ld)
+	@touch $@
 # The objects each script names, first mention first, as make variables.
 object_list = sed -n 's|^ *"\*/\(games/[^"]*\)\.o"(.*|\1|p' $(2) | \
               awk -v name=$(1) '!seen[$$0]++ { list = list " \\\n\t$$(BUILD)/obj/" $$0 ".o" } END { print name " :=" list }'

@@ -1,5 +1,5 @@
 /// @file
-/// The Status screen.
+/// The battle's Status screen, which the Status command opens.
 // Part of screens.c.
 
 #include "../screens_internal.h"
@@ -111,6 +111,14 @@ struct StatusCursor {
   s32 column;         ///< tiles
   s32 row;            ///< tiles
 };
+
+/// Points `cursor` at its stop in `stops`, a group with no highlight: that
+/// stop's help entry, column and row.
+#define STATUS_CURSOR_TAKE_STOP(cursor, stops)                                 \
+  ((cursor).helpEntry =                                                        \
+       (stops)[(cursor).groupPositions[(cursor).group]].entry,                 \
+   (cursor).column = (stops)[(cursor).groupPositions[(cursor).group]].column,  \
+   (cursor).row = (stops)[(cursor).groupPositions[(cursor).group]].row)
 
 /// Runs the Status screen for party member `member` until B is pressed or
 /// the link battle's time runs out: the party member's level, experience, HP
@@ -341,25 +349,9 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
                            statusWindow->y + cursorStop->highlightRow + 1,
                            cursorStop->highlightWidth, 1, HIGHLIGHT_PALETTE);
     } else if (cursor.group == STATUS_CURSOR_COMBAT_STATS) {
-      cursor.helpEntry = gBattleStatusScreen_EquipmentCursors
-                             [cursor.groupPositions[cursor.group]]
-                                 .entry;
-      cursor.column = gBattleStatusScreen_EquipmentCursors
-                          [cursor.groupPositions[cursor.group]]
-                              .column;
-      cursor.row = gBattleStatusScreen_EquipmentCursors
-                       [cursor.groupPositions[cursor.group]]
-                           .row;
+      STATUS_CURSOR_TAKE_STOP(cursor, gBattleStatusScreen_EquipmentCursors);
     } else if (cursor.group == STATUS_CURSOR_CONDITIONS) {
-      cursor.helpEntry = gBattleStatusScreen_ConditionCursors
-                             [cursor.groupPositions[cursor.group]]
-                                 .entry;
-      cursor.column = gBattleStatusScreen_ConditionCursors
-                          [cursor.groupPositions[cursor.group]]
-                              .column;
-      cursor.row = gBattleStatusScreen_ConditionCursors
-                       [cursor.groupPositions[cursor.group]]
-                           .row;
+      STATUS_CURSOR_TAKE_STOP(cursor, gBattleStatusScreen_ConditionCursors);
     }
 
     if (cursor.drawnHelpEntry != cursor.helpEntry) {
@@ -380,7 +372,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
 #if TBS_PATCH_4
       /* FAKEMATCH(barrier): an empty asm, so the move into sl comes between
        * the two stores and the face tile loads before 0xFC00, as native;
-       * without it, 13 of 1458 instructions differ in tbs-es. */
+       * without it, 4 of 1458 instructions differ in tbs-es. */
       __asm__("");
 #endif
       portraitSprite.oam.f.tile = face->oam.f.tile;
@@ -392,7 +384,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
     cursorSprite.oam.word.attr01 = 0x40000400;
     cursorSprite.oam.word.attr23 = 0;
     /* FAKEMATCH(barrier): counted as 4 bytes, the empty asm puts gFrameCount's
-     * literal in the next pool, as native; without it, 13 of 1392
+     * literal in the next pool, as native; without it, 22 of 1392
      * instructions differ in tbs-en. */
     __asm__("");
     cursorSprite.oam.f.tile =

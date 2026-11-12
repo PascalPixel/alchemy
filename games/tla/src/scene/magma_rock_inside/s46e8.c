@@ -259,7 +259,7 @@ void Func_02004a5c(s32 x, s32 y, s32 z, s32 count) {
 extern char ResourceId_FallingRock;
 
 
-/* VIEW(s4b18): tag struct RockSprite as struct RockSprite__s4b18; s46e8.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/magma_rock_inside/s46e8.c:304: structure has no member named `unk05_5'. */
+/* VIEW(s4b18): tag struct RockSprite as struct RockSprite__s4b18; s46e8.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/magma_rock_inside/s46e8.c:295: structure has no member named `unk05_5'. */
 struct RockSprite__s4b18 {
   u8 unk00[5];
   u8 unk05_0 : 5;

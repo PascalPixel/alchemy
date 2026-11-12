@@ -1360,7 +1360,7 @@ void Func_020037c8(void) {
 extern u32 gData_02005c88[];
 extern u32 gData_02005be8[];
 extern u32 gData_02005d28[];
-/* VIEW(s1fc4): variable gData_02005dc8 as extern const u8 gData_02005dc8[]; the definition has u32 gData_02005dc8[] = { 22, 15, 0x18000, 22, 16, 0x10000, 39, 5, 4, 0xd80000, 0, 0xa80000, 1, 4, 0xe80000, 0, 0x980000, 1, 4, 0xe80000, 0, ...; tried as the definition's extern s16 gData_02005dc8[], it does not compile in tla-ja: games/tla/src/scene/trial_road/s15a8.c:3027: conflicting types for `gData_02005dc8'. */
+/* VIEW(s1fc4): variable gData_02005dc8 as extern const u8 gData_02005dc8[]; the definition has u32 gData_02005dc8[] = { 22, 15, 0x18000, 22, 16, 0x10000, 39, 5, 4, 0xd80000, 0, 0xa80000, 1, 4, 0xe80000, 0, 0x980000, 1, 4, 0xe80000, 0, ...; tried as the definition's extern s16 gData_02005dc8[], it does not compile in tla-ja: games/tla/src/scene/trial_road/s15a8.c:3017: conflicting types for `gData_02005dc8'. */
 extern const u8 gData_02005dc8__s1fc4[] __asm__("gData_02005dc8");
 extern u32 gData_02005e40[];
 extern u32 gData_02005ed4[];

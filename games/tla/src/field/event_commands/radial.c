@@ -161,7 +161,7 @@ struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
 void BattleEffect_InitializeSharedScene(void);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, struct EffectVector *p);
 void BattleEffect_ShrinkObjectScaleUntilHalf(struct Actor *object);
-/* VIEW(f0dfd00): routine BattleEffect_AgeAndCueAtEighty as void BattleEffect_AgeAndCueAtEighty(struct Actor *object); the definition has void BattleEffect_AgeAndCueAtEighty(struct TimedObject *object); tried as the definition's void BattleEffect_AgeAndCueAtEighty(struct TimedObject *object), which the object already declares, it does not compile in tla-ja: games/tla/src/field/event_commands/radial.c:313: `BattleEffect_AgeAndCueAtEighty' undeclared (first use in this function). */
+/* VIEW(f0dfd00): routine BattleEffect_AgeAndCueAtEighty as void BattleEffect_AgeAndCueAtEighty(struct Actor *object); the definition has void BattleEffect_AgeAndCueAtEighty(struct TimedObject *object); tried as the definition's void BattleEffect_AgeAndCueAtEighty(struct TimedObject *object), which the object already declares, it does not compile in tla-ja: games/tla/src/field/event_commands/radial.c:311: `BattleEffect_AgeAndCueAtEighty' undeclared (first use in this function). */
 extern void BattleEffect_AgeAndCueAtEighty__f0dfd00(struct Actor *object) __asm__("BattleEffect_AgeAndCueAtEighty");
 void BattleEffect_PrepareBufferInterpolation(void);
 void Func_080db0b0(s32 objectId);
@@ -1567,7 +1567,7 @@ void BattleEffect_SpawnScaledArcObjects(struct Actor *target) {
 }
 
 // ---- games/tla/src/field/event_commands/f0e150c.c ----
-/* VIEW(f0e150c): tag struct ArcSprite as struct ArcSprite__f0e150c; radial.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/event_commands/radial.c:1607: structure has no member named `x'. */
+/* VIEW(f0e150c): tag struct ArcSprite as struct ArcSprite__f0e150c; radial.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/event_commands/radial.c:1599: structure has no member named `x'. */
 struct ArcSprite__f0e150c {
   u8 unk00[12];
   s32 x;

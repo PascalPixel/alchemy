@@ -2419,7 +2419,7 @@ void ObjectList_CollectActive(u8 *object, u8 **out) {
 // ---- games/tla/src/field/object/f02493c.c ----
 #define TARGET_UNSET ((s32)0x80000000)
 
-/* VIEW(f02493c): tag struct MotionObject as struct MotionObject__f02493c; resource_slot.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/resource_slot.c:2501: structure has no member named `terrainHeight'. */
+/* VIEW(f02493c): tag struct MotionObject as struct MotionObject__f02493c; resource_slot.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/resource_slot.c:2499: structure has no member named `terrainHeight'. */
 struct MotionObject__f02493c {
   void *script;
   u16 scriptCursor;
@@ -5991,7 +5991,7 @@ update_object:
 // ---- games/tla/src/field/script/f028aac.c ----
 
 
-/* VIEW(f028aac): tag struct PlayerSprite as struct PlayerSprite__f028aac; resource_slot.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/resource_slot.c:6229: structure has no member named `objectMode'. */
+/* VIEW(f028aac): tag struct PlayerSprite as struct PlayerSprite__f028aac; resource_slot.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/resource_slot.c:6227: structure has no member named `objectMode'. */
 struct PlayerSprite__f028aac {
   u8 unk00[5];
   u8 low05 : 2;
@@ -6005,7 +6005,7 @@ struct PlayerSprite__f028aac {
   u8 flags;
 };
 
-/* VIEW(f028aac): tag struct WorldEventWork as struct WorldEventWork__f028aac; resource_slot.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/resource_slot.c:6249: structure has no member named `climbing'. */
+/* VIEW(f028aac): tag struct WorldEventWork as struct WorldEventWork__f028aac; resource_slot.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/resource_slot.c:6247: structure has no member named `climbing'. */
 struct WorldEventWork__f028aac {
   u8 unk000[0xd3a];
   u8 terrainKind;
@@ -6732,7 +6732,7 @@ s32 Func_08029838(s32 arg) {
 
 // ---- games/tla/src/field/script/f0298c0.c ----
 
-/* VIEW(f0298c0): tag struct PlayerSprite as struct PlayerSprite__f0298c0; resource_slot.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/resource_slot.c:7309: structure has no member named `entry'. */
+/* VIEW(f0298c0): tag struct PlayerSprite as struct PlayerSprite__f0298c0; resource_slot.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/resource_slot.c:7305: structure has no member named `entry'. */
 struct PlayerSprite__f0298c0 {
   u8 unk00[9];
   u8 low09 : 2;
@@ -8259,7 +8259,7 @@ void Map_CopyCellAttributeRect(s32 srcX, s32 srcY, s32 width, s32 height,
   }
 }
 
-/* VIEW(f02aa74): variable gMapCellBuffer as extern u8 gMapCellBuffer[]; f027064 has extern struct MapCell gMapCellBuffer[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/field/resource_slot.c:8281: `gMapCellBuffer__f02aa74' undeclared (first use in this function). */
+/* VIEW(f02aa74): variable gMapCellBuffer as extern u8 gMapCellBuffer[]; f027064 has extern struct MapCell gMapCellBuffer[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/field/resource_slot.c:8266: `gMapCellBuffer__f02aa74' undeclared (first use in this function). */
 extern u8 gMapCellBuffer__f02aa74[] __asm__("gMapCellBuffer");
 
 void Func_0802b450(s32 srcX, s32 srcY, s32 width, s32 height, s32 dstX,

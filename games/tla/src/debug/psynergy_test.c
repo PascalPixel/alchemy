@@ -809,7 +809,7 @@ struct ResourceTableEntry {
   u16 offset; ///< in bytes; its tile is offset / 32
 };
 
-/* VIEW(s0c4c): tag struct SparkleSprite as struct SparkleSprite__s0c4c; psynergy_test.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/debug/psynergy_test.c:858: structure has no member named `flag'. */
+/* VIEW(s0c4c): tag struct SparkleSprite as struct SparkleSprite__s0c4c; psynergy_test.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/debug/psynergy_test.c:855: structure has no member named `flag'. */
 struct SparkleSprite__s0c4c {
   u8 unk00[5];
   u8 attr5Low : 5;
@@ -823,7 +823,7 @@ struct SparkleSprite__s0c4c {
   u8 unk0a[0x1e];
 };
 
-/* VIEW(s0c4c): tag struct SparkleWork as struct SparkleWork__s0c4c; psynergy_test.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/debug/psynergy_test.c:848: incompatible types in assignment. */
+/* VIEW(s0c4c): tag struct SparkleWork as struct SparkleWork__s0c4c; psynergy_test.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/debug/psynergy_test.c:845: incompatible types in assignment. */
 struct SparkleWork__s0c4c {
   struct SparkleSprite__s0c4c sprites[4];
   u16 unka0;

@@ -406,7 +406,7 @@ void Func_02000a8c(void) {
   Call2(Func_0200101c, 0x67, 0);
 }
 
-/* VIEW(scene_tables): variable gData_020016e4 as extern const u8 gData_020016e4[]; the definition has struct Trigger gData_020016e4[] = { { 1, 1, CONDITION_ALWAYS, 1 }, { 1, 2, CONDITION_ALWAYS, 2 }, { 1, 3, CONDITION_ALWAYS, 3 }, { 1, 4, CON...; tried as the definition's extern s16 gData_020016e4[], it does not compile in tla-ja: games/tla/src/scene/treasure_isle.c:799: conflicting types for `gData_020016e4'. */
+/* VIEW(scene_tables): variable gData_020016e4 as extern const u8 gData_020016e4[]; the definition has struct Trigger gData_020016e4[] = { { 1, 1, CONDITION_ALWAYS, 1 }, { 1, 2, CONDITION_ALWAYS, 2 }, { 1, 3, CONDITION_ALWAYS, 3 }, { 1, 4, CON...; tried as the definition's extern s16 gData_020016e4[], it does not compile in tla-ja: games/tla/src/scene/treasure_isle.c:791: conflicting types for `gData_020016e4'. */
 extern const u8 gData_020016e4__scene_tables[] __asm__("gData_020016e4");
 extern struct Trigger gData_02001780[];
 extern struct Trigger gData_0200184c[];

@@ -986,7 +986,7 @@ s32 Func_020045f8();
 s32 Func_02004d88();
 s32 Func_02004dd8();
 extern u8 Data_02006878[];
-/* VIEW(s138c): routine Func_0200196c as extern u8 Func_0200196c[]; the definition has void Func_0200196c(void); tried as the definition's void Func_0200196c(s32 x, s32 z, s32 effect), it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_entrance.c:1343: conflicting types for `Func_0200196c'. */
+/* VIEW(s138c): routine Func_0200196c as extern u8 Func_0200196c[]; the definition has void Func_0200196c(void); tried as the definition's void Func_0200196c(s32 x, s32 z, s32 effect), it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_entrance.c:1339: conflicting types for `Func_0200196c'. */
 extern u8 Func_0200196c__s138c[] __asm__("Func_0200196c");
 void Func_02001988(void);
 void Func_020019a4(void);

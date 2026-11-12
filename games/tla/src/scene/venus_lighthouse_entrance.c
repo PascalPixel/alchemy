@@ -240,7 +240,7 @@ void Func_0200030c(void) {
   Func_0200298c();
 }
 
-/* VIEW(venus_lighthouse_entrance): variable gData_02003040 as extern u8 gData_02003040[]; the definition has u32 gData_02003040[] = { 1, 0, 1, 38, }; tried as the definition's extern s32 gData_02003040[], it does not compile in tla-ja: games/tla/src/scene/venus_lighthouse_entrance.c:1687: conflicting types for `gData_02003040'. */
+/* VIEW(venus_lighthouse_entrance): variable gData_02003040 as extern u8 gData_02003040[]; the definition has u32 gData_02003040[] = { 1, 0, 1, 38, }; tried as the definition's extern s32 gData_02003040[], it does not compile in tla-ja: games/tla/src/scene/venus_lighthouse_entrance.c:1656: conflicting types for `gData_02003040'. */
 extern u8 gData_02003040__venus_lighthouse_entrance[] __asm__("gData_02003040");
 
 void Func_02000440(void) {
@@ -1497,7 +1497,7 @@ void Func_0200260c(struct Actor *source, s32 x, s32 y, s32 z) {
 
 // ---- games/tla/src/scene/venus_lighthouse_entrance/s26f4.c ----
 
-/* VIEW(s26f4): tag struct SparkSprite as struct SparkSprite__s26f4; venus_lighthouse_entrance.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/venus_lighthouse_entrance.c:1537: structure has no member named `fullColor'. */
+/* VIEW(s26f4): tag struct SparkSprite as struct SparkSprite__s26f4; venus_lighthouse_entrance.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/venus_lighthouse_entrance.c:1534: structure has no member named `fullColor'. */
 struct SparkSprite__s26f4 {
   u8 unk00[4];
   u16 attr0 : 13;
@@ -1512,7 +1512,7 @@ struct SparkSprite__s26f4 {
   u8 unk20[8];
 };
 
-/* VIEW(s26f4): tag struct SparkWork as struct SparkWork__s26f4; venus_lighthouse_entrance.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/venus_lighthouse_entrance.c:1537: structure has no member named `resource'. */
+/* VIEW(s26f4): tag struct SparkWork as struct SparkWork__s26f4; venus_lighthouse_entrance.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/venus_lighthouse_entrance.c:1534: structure has no member named `resource'. */
 struct SparkWork__s26f4 {
   u8 unk0000[0x800];
   struct SparkState states[96];

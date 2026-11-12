@@ -354,7 +354,7 @@ extern u8 MsgNimblyDodgesBlow[];
 s32 ArcTan2(s32 x, s32 y);
 void *Unit_Get(s32 owner);
 s32 ResourceMetadata_SumCommandLengthsFar(s32 animation, s32 a, s32 b);
-/* VIEW(f11e3ac): routine BattleClass_GetAttackHop as s32 BattleClass_GetAttackHop(s32 classId); the definition has void Func_08126700(s32 x, s32 depth, s32 y, s32 zoom) { void Func_08126700(s32 x, s32 depth, s32 y) { s32 span = 0x01fe0000; s32 zoom; struc...; tried as the one declaration s32 BattleClass_GetAttackHop(s32 classId), it does not compile in tla-ja: games/tla/src/battle/presentation/f11e3ac.c:7993: conflicting types for `BattleClass_GetAttackHop'. */
+/* VIEW(f11e3ac): routine BattleClass_GetAttackHop as s32 BattleClass_GetAttackHop(s32 classId); the definition has void Func_08126700(s32 x, s32 depth, s32 y, s32 zoom) { void Func_08126700(s32 x, s32 depth, s32 y) { s32 span = 0x01fe0000; s32 zoom; struc...; tried as the one declaration s32 BattleClass_GetAttackHop(s32 classId), it does not compile in tla-ja: games/tla/src/battle/presentation/f11e3ac.c:7982: conflicting types for `BattleClass_GetAttackHop'. */
 extern s32 BattleClass_GetAttackHop__f11e3ac(s32 classId) __asm__("BattleClass_GetAttackHop");
 void BattleMotion_ApproachTarget(s32 actorId, s32 targetId, s32 frames,
                                  s32 hop);
@@ -1660,7 +1660,7 @@ struct BattleDisplayFlags {
   s32 marked;
 };
 
-/* VIEW(f11f66c): routine BattleMotion_FlashHit as void BattleMotion_FlashHit(u32 unitId, s32 a, s32 b); the definition has void BattleMotion_FlashHit(s32 id); tried as the definition's void BattleMotion_FlashHit(s32 id), which the object already declares, it does not compile in tla-ja: games/tla/src/battle/presentation/f11e3ac.c:1722: too many arguments to function `BattleMotion_FlashHit'. */
+/* VIEW(f11f66c): routine BattleMotion_FlashHit as void BattleMotion_FlashHit(u32 unitId, s32 a, s32 b); the definition has void BattleMotion_FlashHit(s32 id); tried as the definition's void BattleMotion_FlashHit(s32 id), which the object already declares, it does not compile in tla-ja: games/tla/src/battle/presentation/f11e3ac.c:1720: too many arguments to function `BattleMotion_FlashHit'. */
 extern void BattleMotion_FlashHit__f11f66c(u32 unitId, s32 a, s32 b) __asm__("BattleMotion_FlashHit");
 s32 Func_0812824c(s32 unitId, s32 earned);
 void BattleObject_UpdatePose(s32 id);

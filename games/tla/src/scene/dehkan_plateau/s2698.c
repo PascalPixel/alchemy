@@ -1037,7 +1037,7 @@ static __inline__ s32 Flag_Test(s32 flag) {
 }
 
 
-/* VIEW(s390c): static Actor_SetPosition as Actor_SetPosition__s390c; the definition has static inline void Actor_SetPosition(s32 actorId, s32 fixed_x, s32 fixed_z); tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/dehkan_plateau/s2698.c:1054: too many arguments to function `Actor_SetPosition'. */
+/* VIEW(s390c): static Actor_SetPosition as Actor_SetPosition__s390c; the definition has static inline void Actor_SetPosition(s32 actorId, s32 fixed_x, s32 fixed_z); tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/scene/dehkan_plateau/s2698.c:1052: too many arguments to function `Actor_SetPosition'. */
 static __inline__ void Actor_SetPosition__s390c(struct Actor *object, s32 x,
                                          s32 y, s32 z) {
   Actor_SetPositionAndResetMotion(object, x, y, z);

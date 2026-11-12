@@ -4770,7 +4770,7 @@ struct CaptureSprite {
   s16 *resource;
 };
 
-/* VIEW(f0d8740): tag struct CaptureObject as struct CaptureObject__f0d8740; visual_attributes.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/object/visual_attributes.c:4840: structure has no member named `sprite'. */
+/* VIEW(f0d8740): tag struct CaptureObject as struct CaptureObject__f0d8740; visual_attributes.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/object/visual_attributes.c:4832: structure has no member named `sprite'. */
 struct CaptureObject__f0d8740 {
   u8 unk00[6];
   u16 facing;
@@ -5297,7 +5297,7 @@ void Func_080d8fa8(s32 index, s32 from, s32 to, s32 mode) {
 /* VIEW(f0d8ff8): routine ArcTan2 as s16 ArcTan2(s32 y, s32 x); f0d8740 has s32 ArcTan2(s32 y, s32 x); tried as the definition's s32 ArcTan2(s32 x, s32 y), which the object already declares, Func_080d8ff8 moves: 1 of 120 instructions in tla-ja. */
 extern s16 ArcTan2__f0d8ff8(s32 y, s32 x) __asm__("ArcTan2");
 
-/* VIEW(f0d8ff8): tag struct ChainNode as struct ChainNode__f0d8ff8; visual_attributes.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/object/visual_attributes.c:5338: structure has no member named `visible'. */
+/* VIEW(f0d8ff8): tag struct ChainNode as struct ChainNode__f0d8ff8; visual_attributes.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/object/visual_attributes.c:5333: structure has no member named `visible'. */
 struct ChainNode__f0d8ff8 {
   struct ChainNode__f0d8ff8 *next;
   s32 x;
@@ -5307,7 +5307,7 @@ struct ChainNode__f0d8ff8 {
   s8 visible;
 };
 
-/* VIEW(f0d8ff8): tag struct ChainSlot as struct ChainSlot__f0d8ff8; visual_attributes.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/object/visual_attributes.c:5330: structure has no member named `segments'. */
+/* VIEW(f0d8ff8): tag struct ChainSlot as struct ChainSlot__f0d8ff8; visual_attributes.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/object/visual_attributes.c:5325: structure has no member named `segments'. */
 struct ChainSlot__f0d8ff8 {
   u8 unk00[4];
   s16 segments;
@@ -5401,7 +5401,7 @@ void Func_080d9104(s32 slot, s32 firstId, s32 secondId) {
 
 
 
-/* VIEW(f0d9194): tag struct ChainNode as struct ChainNode__f0d9194; visual_attributes.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/object/visual_attributes.c:5452: structure has no member named `visible'. */
+/* VIEW(f0d9194): tag struct ChainNode as struct ChainNode__f0d9194; visual_attributes.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/object/visual_attributes.c:5445: structure has no member named `visible'. */
 struct ChainNode__f0d9194 {
   struct ChainNode__f0d9194 *next;
   s32 x;
@@ -5411,7 +5411,7 @@ struct ChainNode__f0d9194 {
   s8 visible;
 };
 
-/* VIEW(f0d9194): tag struct ChainSlot as struct ChainSlot__f0d9194; visual_attributes.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/object/visual_attributes.c:5442: structure has no member named `segments'. */
+/* VIEW(f0d9194): tag struct ChainSlot as struct ChainSlot__f0d9194; visual_attributes.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/object/visual_attributes.c:5435: structure has no member named `segments'. */
 struct ChainSlot__f0d9194 {
   u8 unk00[4];
   s16 segments;
@@ -5480,7 +5480,7 @@ void Func_080d92a4(s32 index, s32 *position) {
 }
 
 // ---- games/tla/src/field/work9c/f0d92d4.c ----
-/* VIEW(f0d92d4): tag struct ChainSlot as struct ChainSlot__f0d92d4; visual_attributes.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/object/visual_attributes.c:5526: structure has no member named `segments'. */
+/* VIEW(f0d92d4): tag struct ChainSlot as struct ChainSlot__f0d92d4; visual_attributes.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/object/visual_attributes.c:5515: structure has no member named `segments'. */
 struct ChainSlot__f0d92d4 {
   u8 unk00[4];
   s16 segments;
@@ -5549,7 +5549,7 @@ s32 ArcTan2(s32 y, s32 x);
 void GameFlag_SetBit(s32 flag);
 void wait(s32 frames);
 
-/* VIEW(f0d9498): tag struct ChainNode as struct ChainNode__f0d9498; visual_attributes.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/object/visual_attributes.c:5634: structure has no member named `visible'. */
+/* VIEW(f0d9498): tag struct ChainNode as struct ChainNode__f0d9498; visual_attributes.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/object/visual_attributes.c:5629: structure has no member named `visible'. */
 struct ChainNode__f0d9498 {
   struct ChainNode__f0d9498 *next;
   s32 x;
@@ -5560,7 +5560,7 @@ struct ChainNode__f0d9498 {
   u8 unk13;
 };
 
-/* VIEW(f0d9498): tag struct ChainSlot as struct ChainSlot__f0d9498; visual_attributes.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/object/visual_attributes.c:5591: structure has no member named `active'. */
+/* VIEW(f0d9498): tag struct ChainSlot as struct ChainSlot__f0d9498; visual_attributes.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/object/visual_attributes.c:5586: structure has no member named `active'. */
 struct ChainSlot__f0d9498 {
   u8 unk00[4];
   s16 segments;
@@ -6834,7 +6834,7 @@ struct WorkA4Item *Func_080daea8(void) {
 
 // ---- games/tla/src/field/worka0/f0daecc.c ----
 
-/* VIEW(f0daecc): tag struct ChainSlot as struct ChainSlot__f0daecc; visual_attributes.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/object/visual_attributes.c:6922: structure has no member named `root'. */
+/* VIEW(f0daecc): tag struct ChainSlot as struct ChainSlot__f0daecc; visual_attributes.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/object/visual_attributes.c:6916: structure has no member named `root'. */
 struct ChainSlot__f0daecc {
   s16 objectId;
   u8 unk02[2];

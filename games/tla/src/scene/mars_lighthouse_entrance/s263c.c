@@ -977,7 +977,7 @@ done:
 // ---- games/tla/src/scene/mars_lighthouse_entrance/s3564.c ----
 extern volatile s16 gData_020068b0;
 extern s16 gData_02005798[];
-/* VIEW(s3564): routine Func_020031f8 as void Func_020031f8(struct Actor *object); s32b8 has void Func_020031f8(void); tried as the definition's void Func_020031f8(struct Actor *object), which the object already declares, it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_entrance/s263c.c:1077: `Func_020031f8__s3564' undeclared (first use in this function). */
+/* VIEW(s3564): routine Func_020031f8 as void Func_020031f8(struct Actor *object); s32b8 has void Func_020031f8(void); tried as the definition's void Func_020031f8(struct Actor *object), which the object already declares, it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_entrance/s263c.c:1075: `Func_020031f8__s3564' undeclared (first use in this function). */
 extern void Func_020031f8__s3564(struct Actor *object) __asm__("Func_020031f8");
 void Func_02003284(void);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
@@ -985,7 +985,7 @@ s32 ArcTan2(s32 y, s32 x);
 void Func_02004bc0(struct Actor *object, s32 mode);
 void Actor_SetAnimationSpeed(struct Actor *object, s32 value);
 s32 Func_02004c70(struct Actor *object);
-/* VIEW(s3564): routine Func_02004c78 as s32 Func_02004c78(s32 *a, s32 aRadius, s32 *b, s32 bRadius); s32b8 has s32 Func_02004c78(s32 *a, s32 radiusA, struct Position *b, s32 radiusB); tried as the 2 declarations' s32 Func_02004c78(s32 *a, s32 radiusA, struct Position *b, s32 radiusB), it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_entrance/s263c.c:988: conflicting types for `Func_02004c78'. */
+/* VIEW(s3564): routine Func_02004c78 as s32 Func_02004c78(s32 *a, s32 aRadius, s32 *b, s32 bRadius); s32b8 has s32 Func_02004c78(s32 *a, s32 radiusA, struct Position *b, s32 radiusB); tried as the one declaration s32 Func_02004c78(s32 *a, s32 aRadius, s32 *b, s32 bRadius), it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_entrance/s263c.c:988: conflicting types for `Func_02004c78'. */
 extern s32 Func_02004c78__s3564(s32 *a, s32 aRadius, s32 *b, s32 bRadius) __asm__("Func_02004c78");
 
 void Func_02003564(void) {

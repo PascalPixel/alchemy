@@ -1016,7 +1016,7 @@ s32 ArcTan2(s32 y, s32 x);
 void Func_020041cc(struct Actor *object, s32 mode);
 void Actor_SetAnimationSpeed(struct Actor *object, s32 value);
 s32 Func_02004284(struct Actor *object);
-/* VIEW(s3070): routine Func_0200428c as s32 Func_0200428c(s32 *a, s32 aRadius, s32 *b, s32 bRadius); s2dc4 has s32 Func_0200428c(s32 *a, s32 radiusA, struct Position *b, s32 radiusB); tried as the 2 declarations' s32 Func_0200428c(s32 *a, s32 radiusA, struct Position *b, s32 radiusB), it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_star_room/s2148.c:1019: conflicting types for `Func_0200428c'. */
+/* VIEW(s3070): routine Func_0200428c as s32 Func_0200428c(s32 *a, s32 aRadius, s32 *b, s32 bRadius); s2dc4 has s32 Func_0200428c(s32 *a, s32 radiusA, struct Position *b, s32 radiusB); tried as the one declaration s32 Func_0200428c(s32 *a, s32 aRadius, s32 *b, s32 bRadius), it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_star_room/s2148.c:1019: conflicting types for `Func_0200428c'. */
 extern s32 Func_0200428c__s3070(s32 *a, s32 aRadius, s32 *b, s32 bRadius) __asm__("Func_0200428c");
 
 void Func_02003070(void) {

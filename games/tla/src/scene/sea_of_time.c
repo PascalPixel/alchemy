@@ -71,7 +71,7 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-/* VIEW(sea_of_time): variable gData_020021e4 as extern const u8 gData_020021e4[]; the definition has struct ActorPlacement gData_020021e4[] = { { 8, CONDITION_ALWAYS, (s32) gData_02002154, PIXELS(120), 0, PIXELS(280), FACING_NORTH, 2, 0 }, {...; tried as the definition's extern struct WarpTarget gData_020021e4, it does not compile in tla-ja: games/tla/src/scene/sea_of_time.c:81: cannot convert to a pointer type. */
+/* VIEW(sea_of_time): variable gData_020021e4 as extern const u8 gData_020021e4[]; the definition has struct ActorPlacement gData_020021e4[] = { { 8, CONDITION_ALWAYS, (s32) gData_02002154, PIXELS(120), 0, PIXELS(280), FACING_NORTH, 2, 0 }, {...; tried as the definition's extern struct WarpTarget gData_020021e4, it does not compile in tla-ja: games/tla/src/scene/sea_of_time.c:80: cannot convert to a pointer type. */
 extern const u8 gData_020021e4__sea_of_time[] __asm__("gData_020021e4");
 extern struct ActorPlacement gData_02002214[];
 

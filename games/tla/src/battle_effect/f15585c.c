@@ -16038,7 +16038,7 @@ void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
 void Render_ResetTransformState(void);
 
-/* VIEW(f16c274): routine GetBattleObjectSlotFar as struct BattleObjectPosition **GetBattleObjectSlotFar(s32 objectId); motobj.h has struct BattleObj *GetBattleObjectSlotFar(s32 objectId); tried as the 11 declarations' void **GetBattleObjectSlotFar(s32 objectId), it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:16055: conflicting types for `GetBattleObjectSlotFar'. */
+/* VIEW(f16c274): routine GetBattleObjectSlotFar as struct BattleObjectPosition **GetBattleObjectSlotFar(s32 objectId); motobj.h has struct BattleObj *GetBattleObjectSlotFar(s32 objectId); tried as the 11 declarations' void **GetBattleObjectSlotFar(s32 objectId), it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:16041: conflicting types for `GetBattleObjectSlotFar'. */
 extern struct BattleObjectPosition **GetBattleObjectSlotFar__f16c274(s32 objectId) __asm__("GetBattleObjectSlotFar");
 void *Resource_GetTableEntry(s32 resource);
 
@@ -16272,7 +16272,7 @@ void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
 void Func_081180e8(s32 phase);                      // BattlePlayback_StartFar
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
-/* VIEW(f16c6f8): routine GetBattleObjectSlotFar as void **GetBattleObjectSlotFar(s32 objectId); f16c274 has struct BattleObjectPosition **GetBattleObjectSlotFar(s32 objectId); tried as the 11 declarations' void **GetBattleObjectSlotFar(s32 objectId), it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:16289: conflicting types for `GetBattleObjectSlotFar'. */
+/* VIEW(f16c6f8): routine GetBattleObjectSlotFar as void **GetBattleObjectSlotFar(s32 objectId); f16c274 has struct BattleObjectPosition **GetBattleObjectSlotFar(s32 objectId); tried as the 11 declarations' void **GetBattleObjectSlotFar(s32 objectId), it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:16275: conflicting types for `GetBattleObjectSlotFar'. */
 extern void **GetBattleObjectSlotFar__f16c6f8(s32 objectId) __asm__("GetBattleObjectSlotFar");
 void *Resource_GetTableEntry(s32 resource);
 
@@ -20060,7 +20060,7 @@ void Func_081180e8(s32 phase);             // BattlePlayback_StartFar
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                           s32 drag);
-/* VIEW(f171430): routine GetBattleObjectSlotFar as void **GetBattleObjectSlotFar(s32 objectId); motobj.h has struct BattleObj *GetBattleObjectSlotFar(s32 objectId); tried as the 11 declarations' void **GetBattleObjectSlotFar(s32 objectId), it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:20086: conflicting types for `GetBattleObjectSlotFar'. */
+/* VIEW(f171430): routine GetBattleObjectSlotFar as void **GetBattleObjectSlotFar(s32 objectId); motobj.h has struct BattleObj *GetBattleObjectSlotFar(s32 objectId); tried as the 11 declarations' void **GetBattleObjectSlotFar(s32 objectId), it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:20063: conflicting types for `GetBattleObjectSlotFar'. */
 extern void **GetBattleObjectSlotFar__f171430(s32 objectId) __asm__("GetBattleObjectSlotFar");
 void *Resource_GetTableEntry(s32 resource);
 
@@ -20518,7 +20518,7 @@ void Func_081180e8(s32 phase);             // BattlePlayback_StartFar
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                           s32 drag);
-/* VIEW(f171bb0): routine GetBattleObjectSlotFar as void **GetBattleObjectSlotFar(s32 objectId); motobj.h has struct BattleObj *GetBattleObjectSlotFar(s32 objectId); tried as the 11 declarations' void **GetBattleObjectSlotFar(s32 objectId), it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:20555: conflicting types for `GetBattleObjectSlotFar'. */
+/* VIEW(f171bb0): routine GetBattleObjectSlotFar as void **GetBattleObjectSlotFar(s32 objectId); motobj.h has struct BattleObj *GetBattleObjectSlotFar(s32 objectId); tried as the 11 declarations' void **GetBattleObjectSlotFar(s32 objectId), it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:20521: conflicting types for `GetBattleObjectSlotFar'. */
 extern void **GetBattleObjectSlotFar__f171bb0(s32 objectId) __asm__("GetBattleObjectSlotFar");
 void *Resource_GetTableEntry(s32 resource);
 
@@ -21156,7 +21156,7 @@ void Func_081180e8(s32 phase);             // BattlePlayback_StartFar
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                           s32 drag);
-/* VIEW(f172b00): routine GetBattleObjectSlotFar as void **GetBattleObjectSlotFar(s32 objectId); motobj.h has struct BattleObj *GetBattleObjectSlotFar(s32 objectId); tried as the 11 declarations' void **GetBattleObjectSlotFar(s32 objectId), it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:21195: conflicting types for `GetBattleObjectSlotFar'. */
+/* VIEW(f172b00): routine GetBattleObjectSlotFar as void **GetBattleObjectSlotFar(s32 objectId); motobj.h has struct BattleObj *GetBattleObjectSlotFar(s32 objectId); tried as the 11 declarations' void **GetBattleObjectSlotFar(s32 objectId), it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:21159: conflicting types for `GetBattleObjectSlotFar'. */
 extern void **GetBattleObjectSlotFar__f172b00(s32 objectId) __asm__("GetBattleObjectSlotFar");
 void *Resource_GetTableEntry(s32 resource);
 
@@ -21966,7 +21966,7 @@ void Func_081180e8(s32 phase);             // BattlePlayback_StartFar
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                           s32 drag);
-/* VIEW(f173aac): routine GetBattleObjectSlotFar as void **GetBattleObjectSlotFar(s32 objectId); motobj.h has struct BattleObj *GetBattleObjectSlotFar(s32 objectId); tried as the 11 declarations' void **GetBattleObjectSlotFar(s32 objectId), it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:22007: conflicting types for `GetBattleObjectSlotFar'. */
+/* VIEW(f173aac): routine GetBattleObjectSlotFar as void **GetBattleObjectSlotFar(s32 objectId); motobj.h has struct BattleObj *GetBattleObjectSlotFar(s32 objectId); tried as the 11 declarations' void **GetBattleObjectSlotFar(s32 objectId), it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:21969: conflicting types for `GetBattleObjectSlotFar'. */
 extern void **GetBattleObjectSlotFar__f173aac(s32 objectId) __asm__("GetBattleObjectSlotFar");
 void *Resource_GetTableEntry(s32 resource);
 
@@ -23324,7 +23324,7 @@ struct ScalePair {
   s32 v[2];
 };
 
-/* VIEW(f175f74): tag struct Particle as struct Particle__f175f74; f15585c.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:23799: structure has no member named `timer'. */
+/* VIEW(f175f74): tag struct Particle as struct Particle__f175f74; f15585c.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:23763: structure has no member named `timer'. */
 struct Particle__f175f74 {
   s32 x;
   s32 y;
@@ -23335,7 +23335,7 @@ struct Particle__f175f74 {
   s32 timer;
 };
 
-/* VIEW(f175f74): tag struct SpriteObject as struct SpriteObject__f175f74; f15585c.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:23688: structure has no member named `oamPriority'. */
+/* VIEW(f175f74): tag struct SpriteObject as struct SpriteObject__f175f74; f15585c.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:23652: structure has no member named `oamPriority'. */
 struct SpriteObject__f175f74 {
   u16 unk00;
   u16 unk02;
@@ -23364,7 +23364,7 @@ struct ModelDesc {
   u8 *tiles;
 };
 
-/* VIEW(f175f74): tag struct Model as struct Model__f175f74; f15585c.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:24163: structure has no member named `depth'. */
+/* VIEW(f175f74): tag struct Model as struct Model__f175f74; f15585c.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:24127: structure has no member named `depth'. */
 struct Model__f175f74 {
   s32 kind;
   s32 unk04;
@@ -23383,7 +23383,7 @@ struct ActorPos {
   s32 unk48;
 };
 
-/* VIEW(f175f74): tag struct SummonWork as struct SummonWork__f175f74; f15585c.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:23638: structure has no member named `transferMode'. */
+/* VIEW(f175f74): tag struct SummonWork as struct SummonWork__f175f74; f15585c.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:23602: structure has no member named `transferMode'. */
 struct SummonWork__f175f74 {
   struct Particle__f175f74 drops[16];
   struct Particle__f175f74 members[16];
@@ -23513,7 +23513,7 @@ void Palette_LoadBasicObjColors(void);
 void BattleBackground_LoadFar(s32, s32, s32);
 void Func_08164b2c(s32, s32, s32);
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
-/* VIEW(f175f74): routine Func_0815b3b0 as struct SpriteObject__f175f74 *Func_0815b3b0(s32, s32, u32, u32); the definition has struct EffectSprite__f15b3b0 *Func_0815b3b0(s32 kind, s32 value); tried as the definition's struct EffectSprite__f15b3b0 *Func_0815b3b0(s32 kind, s32 value), which the object already declares, it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:23757: too many arguments to function `Func_0815b3b0'. */
+/* VIEW(f175f74): routine Func_0815b3b0 as struct SpriteObject__f175f74 *Func_0815b3b0(s32, s32, u32, u32); the definition has struct EffectSprite__f15b3b0 *Func_0815b3b0(s32 kind, s32 value); tried as the definition's struct EffectSprite__f15b3b0 *Func_0815b3b0(s32 kind, s32 value), which the object already declares, it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:23681: too many arguments to function `Func_0815b3b0'. */
 extern struct SpriteObject__f175f74 *Func_0815b3b0__f175f74(s32, s32, u32, u32) __asm__("Func_0815b3b0");
 void Resource_LoadAndDecompress(s32, void *, s32, s32);
 void Sound_PlayFar(s32);
@@ -23537,7 +23537,7 @@ void Func_0815b434(u8 *map, s32 size, s32 scale);
 void Func_0818caa8(void *, s32, s32, s32);
 s32 BattleEffect_LoadBlitter(s32, s32);
 void ColorBuffer_ScaleFar(void *, void *, s32, s32);
-/* VIEW(f175f74): routine GetBattleObjectSlotFar as struct ActorPos **GetBattleObjectSlotFar(s32); motobj.h has struct BattleObj *GetBattleObjectSlotFar(s32 objectId); tried as the 11 declarations' void **GetBattleObjectSlotFar(s32 objectId), it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:23616: conflicting types for `GetBattleObjectSlotFar'. */
+/* VIEW(f175f74): routine GetBattleObjectSlotFar as struct ActorPos **GetBattleObjectSlotFar(s32); motobj.h has struct BattleObj *GetBattleObjectSlotFar(s32 objectId); tried as the 11 declarations' void **GetBattleObjectSlotFar(s32 objectId), it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:23540: conflicting types for `GetBattleObjectSlotFar'. */
 extern struct ActorPos **GetBattleObjectSlotFar__f175f74(s32) __asm__("GetBattleObjectSlotFar");
 void Func_0814cd48(s32, s32, s32, s32, s32);
 void Func_081180e8(s32);
@@ -25229,7 +25229,7 @@ void Func_081180e8(s32 phase);             // BattlePlayback_StartFar
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                           s32 drag);
-/* VIEW(f178710): routine GetBattleObjectSlotFar as void **GetBattleObjectSlotFar(s32 objectId); f175f74 has struct ActorPos **GetBattleObjectSlotFar(s32); tried as the 11 declarations' void **GetBattleObjectSlotFar(s32 objectId), it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:25319: conflicting types for `GetBattleObjectSlotFar'. */
+/* VIEW(f178710): routine GetBattleObjectSlotFar as void **GetBattleObjectSlotFar(s32 objectId); f175f74 has struct ActorPos **GetBattleObjectSlotFar(s32); tried as the 11 declarations' void **GetBattleObjectSlotFar(s32 objectId), it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:25232: conflicting types for `GetBattleObjectSlotFar'. */
 extern void **GetBattleObjectSlotFar__f178710(s32 objectId) __asm__("GetBattleObjectSlotFar");
 void *Resource_GetTableEntry(s32 resource);
 
@@ -26477,7 +26477,7 @@ extern u16 Data_0201401e[];
 extern u16 Data_02014002[];
 extern u16 Data_02014260[];
 
-/* VIEW(f179f18): routine Func_0815b3b0 as struct FloraObject *Func_0815b3b0(s32 width, s32 height, u32 shape, s32 mode); f175f74 has struct SpriteObject *Func_0815b3b0(s32, s32, u32, u32); tried as the definition's struct EffectSprite__f15b3b0 *Func_0815b3b0(s32 kind, s32 value), which the object already declares, it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:26700: too many arguments to function `Func_0815b3b0'. */
+/* VIEW(f179f18): routine Func_0815b3b0 as struct FloraObject *Func_0815b3b0(s32 width, s32 height, u32 shape, s32 mode); f175f74 has struct SpriteObject *Func_0815b3b0(s32, s32, u32, u32); tried as the definition's struct EffectSprite__f15b3b0 *Func_0815b3b0(s32 kind, s32 value), which the object already declares, it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:26593: too many arguments to function `Func_0815b3b0'. */
 extern struct FloraObject *Func_0815b3b0__f179f18(s32 width, s32 height, u32 shape, s32 mode) __asm__("Func_0815b3b0");
 
 void BattleEffect_ConfigureEffectDisplay(void);
@@ -27750,7 +27750,7 @@ void Func_081180e8(s32 phase);             // BattlePlayback_StartFar
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                           s32 drag);
-/* VIEW(f17bd88): routine GetBattleObjectSlotFar as void **GetBattleObjectSlotFar(s32 objectId); motobj.h has struct BattleObj *GetBattleObjectSlotFar(s32 objectId); tried as the 11 declarations' void **GetBattleObjectSlotFar(s32 objectId), it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:27860: conflicting types for `GetBattleObjectSlotFar'. */
+/* VIEW(f17bd88): routine GetBattleObjectSlotFar as void **GetBattleObjectSlotFar(s32 objectId); motobj.h has struct BattleObj *GetBattleObjectSlotFar(s32 objectId); tried as the 11 declarations' void **GetBattleObjectSlotFar(s32 objectId), it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:27753: conflicting types for `GetBattleObjectSlotFar'. */
 extern void **GetBattleObjectSlotFar__f17bd88(s32 objectId) __asm__("GetBattleObjectSlotFar");
 void *Resource_GetTableEntry(s32 resource);
 
@@ -28793,7 +28793,7 @@ void Func_081180e8(s32 phase);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                           s32 drag);
-/* VIEW(f17d174): routine GetBattleObjectSlotFar as void **GetBattleObjectSlotFar(s32 objectId); motobj.h has struct BattleObj *GetBattleObjectSlotFar(s32 objectId); tried as the 11 declarations' void **GetBattleObjectSlotFar(s32 objectId), it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:28910: conflicting types for `GetBattleObjectSlotFar'. */
+/* VIEW(f17d174): routine GetBattleObjectSlotFar as void **GetBattleObjectSlotFar(s32 objectId); motobj.h has struct BattleObj *GetBattleObjectSlotFar(s32 objectId); tried as the 11 declarations' void **GetBattleObjectSlotFar(s32 objectId), it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:28796: conflicting types for `GetBattleObjectSlotFar'. */
 extern void **GetBattleObjectSlotFar__f17d174(s32 objectId) __asm__("GetBattleObjectSlotFar");
 void *Resource_GetTableEntry(s32 resource);
 
@@ -30150,7 +30150,7 @@ typedef volatile u16 vu16;
 typedef volatile u32 vu32;
 typedef volatile s32 vs32;
 
-/* VIEW(f17e698): tag struct Particle as struct Particle__f17e698; f15585c.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:30479: structure has no member named `timer'. */
+/* VIEW(f17e698): tag struct Particle as struct Particle__f17e698; f15585c.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:30472: structure has no member named `timer'. */
 typedef struct Particle__f17e698 {
   s32 x;
   s32 y;
@@ -30208,7 +30208,7 @@ typedef struct Bitmap {
   void *data;
 } Bitmap;
 
-/* VIEW(f17e698): tag struct SummonWork as struct SummonWork__f17e698; f15585c.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:30373: structure has no member named `transferMode'. */
+/* VIEW(f17e698): tag struct SummonWork as struct SummonWork__f17e698; f15585c.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:30366: structure has no member named `transferMode'. */
 struct SummonWork__f17e698 {
   Particle particles[48];
   u8 unk0540[0x1c0];
@@ -31474,7 +31474,7 @@ extern const struct PlacementSource__f17e698
     Data_08196ee8;                         // the summon's placement source
 extern const u8 Data_08199220[];           // the rings' mesh
 extern const u8 gData_081991b0[];          // their corners
-/* VIEW(f17e698): variable gData_02014000 as extern struct EffectStep gData_02014000[]; f17e0c0 has extern u8 gData_02014000[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:31688: request for member `variant' in something not a structure or union. */
+/* VIEW(f17e698): variable gData_02014000 as extern struct EffectStep gData_02014000[]; f17e0c0 has extern u8 gData_02014000[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:31579: request for member `variant' in something not a structure or union. */
 extern struct EffectStep gData_02014000__f17e698[] __asm__("gData_02014000"); // the sparks
 
 #define BLITTER ((DrawRectangle)Ram_HeapSlots->unk64[1])
@@ -33048,7 +33048,7 @@ struct SpriteView {
 
 
 
-/* VIEW(f1811d4): variable gResourceTableEntries as extern struct ResourceTableEntry gResourceTableEntries[]; vram_tab.h has extern struct VramBlockCacheEntry gResourceTableEntries[]; tried as the 12 declarations' extern struct ResourceTableEntry gResourceTableEntries[], it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:33081: conflicting types for `gResourceTableEntries'. */
+/* VIEW(f1811d4): variable gResourceTableEntries as extern struct ResourceTableEntry gResourceTableEntries[]; vram_tab.h has extern struct VramBlockCacheEntry gResourceTableEntries[]; tried as the 12 declarations' extern struct ResourceTableEntry gResourceTableEntries[], it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:33051: conflicting types for `gResourceTableEntries'. */
 extern struct ResourceTableEntry gResourceTableEntries__f1811d4[] __asm__("gResourceTableEntries");
 
 #define EFFECT_STEPS ((struct EffectStep *)(Ram_MapCellBuffer + 0x5000))
@@ -33091,7 +33091,7 @@ extern struct SpriteObject *Func_0815b290__f1811d4(s32 width, s32 height, u32 sh
 void BattleEffect_ConfigureEffectDisplay(void);
 void Func_08179e6c(void);
 void BattleEffect_ArmPaletteHBlankDma(void);
-/* VIEW(f1811d4): routine Func_081885f0 as void Func_081885f0(struct MeshVertex *vertices, struct MeshTriangle *triangles, s32 segments); the definition has void Func_081885f0(struct MeshVertex__f186dfc *vertices, struct MeshTriangle *triangles, s32 segments); tried as the definition's void Func_081885f0(struct MeshVertex__f186dfc *vertices, struct MeshTriangle *triangles, s32 segments), which the object already declares, BattleEffect_RunCoatlicue moves: 3 of 2768 instructions in tla-ja. */
+/* VIEW(f1811d4): routine Func_081885f0 as void Func_081885f0(struct MeshVertex *vertices, struct MeshTriangle *triangles, s32 segments); the definition has void Func_081885f0(struct MeshVertex__f186dfc *vertices, struct MeshTriangle *triangles, s32 segments); tried as the definition's void Func_081885f0(struct MeshVertex *vertices, struct MeshTriangle *triangles, s32 segments), which the object already declares, BattleEffect_RunCoatlicue moves: 3 of 2768 instructions in tla-ja. */
 extern void Func_081885f0__f1811d4(struct MeshVertex *vertices, struct MeshTriangle *triangles,
                    s32 segments) __asm__("Func_081885f0");
 void BattleActor_SpawnObjectsForListFar(s16 *list, s32 mode);
@@ -34242,10 +34242,10 @@ extern char ResourceId_RedHazeBackdrop;
 extern char ResourceId_SmokeBandSheet;
 extern char ResourceId_TornadoSheet;
 extern char ResourceId_WhiteSpikesTiles;
-/* VIEW(f1843fc): variable gResourceTableEntries as extern struct ResourceTableEntry gResourceTableEntries[]; vram_tab.h has extern struct VramBlockCacheEntry gResourceTableEntries[]; tried as the 12 declarations' extern struct ResourceTableEntry gResourceTableEntries[], it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:34275: conflicting types for `gResourceTableEntries'. */
+/* VIEW(f1843fc): variable gResourceTableEntries as extern struct ResourceTableEntry gResourceTableEntries[]; vram_tab.h has extern struct VramBlockCacheEntry gResourceTableEntries[]; tried as the 12 declarations' extern struct ResourceTableEntry gResourceTableEntries[], it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:34245: conflicting types for `gResourceTableEntries'. */
 extern struct ResourceTableEntry gResourceTableEntries__f1843fc[] __asm__("gResourceTableEntries");
 extern u8 gMapCellBuffer[];
-/* VIEW(f1843fc): variable gData_02014000 as extern u8 gData_02014000[]; f17e698 has extern struct EffectStep gData_02014000[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:35963: `gData_02014000__f1843fc' undeclared (first use in this function). */
+/* VIEW(f1843fc): variable gData_02014000 as extern u8 gData_02014000[]; f17e698 has extern struct EffectStep gData_02014000[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:35854: `gData_02014000__f1843fc' undeclared (first use in this function). */
 extern u8 gData_02014000__f1843fc[] __asm__("gData_02014000");
 extern u8 Data_02011000[];
 extern u8 Data_02012000[];
@@ -35988,7 +35988,7 @@ struct HalfPair {
   u16 y;
 };
 
-/* VIEW(f186dfc): variable gResourceTableEntries as extern struct ResourceTableEntry gResourceTableEntries[]; vram_tab.h has extern struct VramBlockCacheEntry gResourceTableEntries[]; tried as the 12 declarations' extern struct ResourceTableEntry gResourceTableEntries[], it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:36021: conflicting types for `gResourceTableEntries'. */
+/* VIEW(f186dfc): variable gResourceTableEntries as extern struct ResourceTableEntry gResourceTableEntries[]; vram_tab.h has extern struct VramBlockCacheEntry gResourceTableEntries[]; tried as the 12 declarations' extern struct ResourceTableEntry gResourceTableEntries[], it does not compile in tla-ja: games/tla/src/battle_effect/f15585c.c:35991: conflicting types for `gResourceTableEntries'. */
 extern struct ResourceTableEntry gResourceTableEntries__f186dfc[] __asm__("gResourceTableEntries");
 struct WingVertex {
   s8 x;

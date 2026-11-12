@@ -13,7 +13,7 @@
 
 extern s32 gData_02003054[];
 extern u32 gData_02003084[];
-/* VIEW(scene_tables): variable gData_0200312c as extern u8 gData_0200312c[]; the definition has s16 gData_0200312c[] = { 0, - 1, 72, 0, 72, 0x4000, 0, - 1, - 1, - 1, - 1, 0, 1, - 1, 72, 0, 72, 0x4000, 0, 8, 16, 248, 256, 0, 2, - 1, 168,...; tried as the definition's extern u32 gData_0200312c[], it does not compile in tla-ja: games/tla/src/scene/lemurian_ship.c:1715: conflicting types for `gData_0200312c'. */
+/* VIEW(scene_tables): variable gData_0200312c as extern u8 gData_0200312c[]; the definition has s16 gData_0200312c[] = { 0, - 1, 72, 0, 72, 0x4000, 0, - 1, - 1, - 1, - 1, 0, 1, - 1, 72, 0, 72, 0x4000, 0, 8, 16, 248, 256, 0, 2, - 1, 168,...; tried as the definition's extern u32 gData_0200312c[], it does not compile in tla-ja: games/tla/src/scene/lemurian_ship.c:1713: conflicting types for `gData_0200312c'. */
 extern u8 gData_0200312c__scene_tables[] __asm__("gData_0200312c");
 extern u32 gData_02003234[];
 extern u32 gData_02003254[];

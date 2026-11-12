@@ -1416,9 +1416,9 @@ s32 ItemIcon_LoadIntoSlot(s32 item, s32 slot);
 u32 Random16(void);
 /* VIEW(battle_party_commands): routine Vram_FillWindowBlockPattern as void Vram_FillWindowBlockPattern(void); countdown has unsigned char Vram_FillWindowBlockPattern(void); tried as the definition's void Vram_FillWindowBlockPattern(void), which the object already declares, Func_0804bc08 moves: 1 of 1909 instructions in tla-ja. */
 extern void Vram_FillWindowBlockPattern__battle_party_commands(void) __asm__("Vram_FillWindowBlockPattern");
-/* VIEW(battle_party_commands): routine Message_CopyExpanded as s32 Message_CopyExpanded(s32 key, u16 *destination, u32 capacity); f04a85c has void Message_CopyExpanded(s32 message, u16 *text, s32 capacity); tried as the definition's s32 Message_CopyExpanded(s32 key, u16 *destination, u32 capacity), it does not compile in tla-ja: games/tla/src/window/f04a85c.c:1422: conflicting types for `Message_CopyExpanded'. */
+/* VIEW(battle_party_commands): routine Message_CopyExpanded as s32 Message_CopyExpanded(s32 key, u16 *destination, u32 capacity); f04a85c has void Message_CopyExpanded(s32 message, u16 *text, s32 capacity); tried as the definition's s32 Message_CopyExpanded(s32 key, u16 *destination, u32 capacity), it does not compile in tla-ja: games/tla/src/window/f04a85c.c:1419: conflicting types for `Message_CopyExpanded'. */
 extern s32 Message_CopyExpanded__battle_party_commands(s32 key, u16 *destination, u32 capacity) __asm__("Message_CopyExpanded");
-/* VIEW(battle_party_commands): routine Text_DrawWideStringAtOffset as void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x, s32 y); f04a85c has void Text_DrawWideStringAtOffset(u16 *text, struct TargetWindow *window, s32 x, s32 y); tried as the definition's void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x, s32 y), it does not compile in tla-ja: games/tla/src/window/f04a85c.c:1426: conflicting types for `Text_DrawWideStringAtOffset'. */
+/* VIEW(battle_party_commands): routine Text_DrawWideStringAtOffset as void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x, s32 y); f04a85c has void Text_DrawWideStringAtOffset(u16 *text, struct TargetWindow *window, s32 x, s32 y); tried as the definition's void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x, s32 y), it does not compile in tla-ja: games/tla/src/window/f04a85c.c:1421: conflicting types for `Text_DrawWideStringAtOffset'. */
 extern void Text_DrawWideStringAtOffset__battle_party_commands(u16 *text, struct Window *window, s32 x,
                                  s32 y) __asm__("Text_DrawWideStringAtOffset");
 void Camera_ConfigureSceneFar(s32 mode);
@@ -3380,7 +3380,7 @@ extern const u8 gMenu_HexDigitsString[];
 
 extern const u8 gMenu_ColonString[];
 
-/* VIEW(handle_selection_row_input): routine WindowSprite_PrepareForRedraw as void WindowSprite_PrepareForRedraw(void); resource_work has void WindowSprite_PrepareForRedraw(struct Window *); tried as the definition's void WindowSprite_PrepareForRedraw(struct Window *work), which the object already declares, it does not compile in tla-ja: games/tla/src/window/f04a85c.c:3400: too few arguments to function `WindowSprite_PrepareForRedraw'. */
+/* VIEW(handle_selection_row_input): routine WindowSprite_PrepareForRedraw as void WindowSprite_PrepareForRedraw(void); resource_work has void WindowSprite_PrepareForRedraw(struct Window *); tried as the definition's void WindowSprite_PrepareForRedraw(struct Window *work), which the object already declares, it does not compile in tla-ja: games/tla/src/window/f04a85c.c:3393: too few arguments to function `WindowSprite_PrepareForRedraw'. */
 extern void WindowSprite_PrepareForRedraw__handle_selection_row_input(void) __asm__("WindowSprite_PrepareForRedraw");
 void Text_DrawStringInWindow(s32 text, s32 window, s32 x, s32 y);
 s32 GameFlag_Test(s32 flag);

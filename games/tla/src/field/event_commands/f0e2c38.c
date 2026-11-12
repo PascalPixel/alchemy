@@ -192,7 +192,7 @@ void Func_080e2ec0(void) {
 
 #include "battle.h"
 #include "debug.h"
-/* VIEW(f0e2c38): routine BattleEffect_DropObjectAtAnchor as void BattleEffect_DropObjectAtAnchor(u32 objectId); the definition has void BattleEffect_DropObjectAtAnchor(s32 id); tried as the definition's void BattleEffect_DropObjectAtAnchor(s32 id), which the object already declares, it does not compile in tla-ja: games/tla/src/field/event_commands/f0e2c38.c:3404: conflicting types for `BattleEffect_DropObjectAtAnchor'. */
+/* VIEW(f0e2c38): routine BattleEffect_DropObjectAtAnchor as void BattleEffect_DropObjectAtAnchor(u32 objectId); the definition has void BattleEffect_DropObjectAtAnchor(s32 id); tried as the definition's void BattleEffect_DropObjectAtAnchor(s32 id), which the object already declares, it does not compile in tla-ja: games/tla/src/field/event_commands/f0e2c38.c:3297: conflicting types for `BattleEffect_DropObjectAtAnchor'. */
 extern void BattleEffect_DropObjectAtAnchor__f0e2c38(u32 objectId) __asm__("BattleEffect_DropObjectAtAnchor");
 #define BattleEffect_DropObjectAtAnchor BattleEffect_DropObjectAtAnchor__f0e2c38
 #include "field.h"
@@ -1205,7 +1205,7 @@ void Func_080e43a4(struct PictureSource *source, void *buffer, s32 size) {
 #undef PICTURE_FORMAT_COMPRESSED
 
 // ---- games/tla/src/field/event/f0e446c.c ----
-/* VIEW(f0e446c): tag struct EffectSprite as struct EffectSprite__f0e446c; effect_sprite.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/event_commands/f0e2c38.c:1281: structure has no member named `priority'. */
+/* VIEW(f0e446c): tag struct EffectSprite as struct EffectSprite__f0e446c; effect_sprite.h has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/event_commands/f0e2c38.c:1273: structure has no member named `priority'. */
 struct EffectSprite__f0e446c {
   u8 unk00[4];
   u16 attr0_0 : 13;
@@ -2393,7 +2393,7 @@ s32 Party_GetLeaderActor(void);
 void BattleEffect_CallEffect18(void) { Func_080e5d5c(); }
 
 // ---- games/tla/src/field/event_commands/f0e5d5c.c ----
-/* VIEW(f0e5d5c): tag struct ShineParticle as struct ShineParticle__f0e5d5c; f0e2c38.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/event_commands/f0e2c38.c:2604: structure has no member named `velocityX'. */
+/* VIEW(f0e5d5c): tag struct ShineParticle as struct ShineParticle__f0e5d5c; f0e2c38.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/event_commands/f0e2c38.c:2599: structure has no member named `velocityX'. */
 struct ShineParticle__f0e5d5c {
   s32 x;
   s32 y;
@@ -2404,7 +2404,7 @@ struct ShineParticle__f0e5d5c {
   s32 timer;
 };
 
-/* VIEW(f0e5d5c): tag struct ShineWork as struct ShineWork__f0e5d5c; f0e2c38.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/event_commands/f0e2c38.c:2572: structure has no member named `glow'. */
+/* VIEW(f0e5d5c): tag struct ShineWork as struct ShineWork__f0e5d5c; f0e2c38.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/event_commands/f0e2c38.c:2567: structure has no member named `glow'. */
 struct ShineWork__f0e5d5c {
   u8 tiles[0x1000];
   struct ShineParticle__f0e5d5c particles[32];
@@ -2417,7 +2417,7 @@ struct ShineWork__f0e5d5c {
   s8 fading;
 };
 
-/* VIEW(f0e5d5c): tag struct FxScene as struct FxScene__f0e5d5c; f0e2c38.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/event_commands/f0e2c38.c:2490: structure has no member named `facing'. */
+/* VIEW(f0e5d5c): tag struct FxScene as struct FxScene__f0e5d5c; f0e2c38.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/event_commands/f0e2c38.c:2485: structure has no member named `facing'. */
 struct FxScene__f0e5d5c {
   u16 facing;
   u16 angle;
@@ -4959,7 +4959,7 @@ struct ObjectSprite {
   void *pictures;
 };
 
-/* VIEW(f0e8db0): tag struct EffectScene as struct EffectScene__f0e8db0; f0e2c38.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/event_commands/f0e2c38.c:4984: structure has no member named `target'. */
+/* VIEW(f0e8db0): tag struct EffectScene as struct EffectScene__f0e8db0; f0e2c38.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/field/event_commands/f0e2c38.c:4982: structure has no member named `target'. */
 struct EffectScene__f0e8db0 {
   u8 unk00[0x10];
   void *mainObject;

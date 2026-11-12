@@ -850,7 +850,7 @@ struct RevealEvent {
   s16 centreY;
 };
 
-/* VIEW(f0dd820): routine BattleEffect_RunBusyWaitDelay as void BattleEffect_RunBusyWaitDelay(s32 value); the definition has void BattleEffect_RunBusyWaitDelay(void); tried as the definition's void BattleEffect_RunBusyWaitDelay(void), which the object already declares, it does not compile in tla-ja: games/tla/src/field/event_commands/f0dcb44.c:879: too many arguments to function `BattleEffect_RunBusyWaitDelay'. */
+/* VIEW(f0dd820): routine BattleEffect_RunBusyWaitDelay as void BattleEffect_RunBusyWaitDelay(s32 value); the definition has void BattleEffect_RunBusyWaitDelay(void); tried as the definition's void BattleEffect_RunBusyWaitDelay(void), which the object already declares, it does not compile in tla-ja: games/tla/src/field/event_commands/f0dcb44.c:877: too many arguments to function `BattleEffect_RunBusyWaitDelay'. */
 extern void BattleEffect_RunBusyWaitDelay__f0dd820(s32 value) __asm__("BattleEffect_RunBusyWaitDelay");
 void BattleEffect_ApplyColorToTargetBuffer(u32 value, s32 enabled);
 void BattleEffect_StartBufferInterpolation(s32 frames);

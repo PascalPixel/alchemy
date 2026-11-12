@@ -350,7 +350,7 @@ void Sanctum_ApplyService(s32 unitId, s32 serviceKind) {
   }
 }
 
-/// Shows the chosen party member in animation 30 and the others standing, and
+/// Shows the chosen party member running in place and the others standing, and
 /// draws at seven tenths of their size (Q16_ONE * 7 / 10 in 16.16) the party
 /// members who do not need the service.
 /// The sanctum's Shop_DrawParty.
@@ -361,10 +361,9 @@ void Sanctum_HighlightMembers(struct Window *window, s32 selected) {
 
   if (window != 0) {
     for (memberIndex = 0; memberIndex < shop->partyMemberCount; memberIndex++) {
-      // XXX: which animation is 30, as in Shop_DrawParty; a render of the
-      // sanctum's party member choice would settle it.
       if (memberIndex == selected)
-        Sprite_StartAnimationFar(shop->partyMemberIcons[memberIndex], 30);
+        Sprite_StartAnimationFar(shop->partyMemberIcons[memberIndex],
+                                 ANIM_PARTY_RUN);
       else
         Sprite_StartAnimationFar(shop->partyMemberIcons[memberIndex],
                                  ANIM_STAND);

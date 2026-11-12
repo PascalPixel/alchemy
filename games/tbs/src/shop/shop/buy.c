@@ -377,7 +377,7 @@ void Shop_DrawMessage(struct Window *window, s32 message) {
   }
 }
 
-/// Shows the chosen party member in animation 30 and the others standing, and
+/// Shows the chosen party member running in place and the others standing, and
 /// draws at four fifths of their size the party members who cannot equip
 /// `itemId`. Called by every counter's party member choice.
 void Shop_DrawParty(struct Window *window, s32 selected, s32 itemId) {
@@ -386,10 +386,9 @@ void Shop_DrawParty(struct Window *window, s32 selected, s32 itemId) {
 
   if (window != 0) {
     for (memberIndex = 0; memberIndex < shop->partyMemberCount; memberIndex++) {
-      // XXX: which animation is 30, a run or the walk at another pace; a
-      // render of buying a weapon, with a party member chosen, would settle it.
       if (memberIndex == selected)
-        Sprite_StartAnimationFar(shop->partyMemberIcons[memberIndex], 30);
+        Sprite_StartAnimationFar(shop->partyMemberIcons[memberIndex],
+                                 ANIM_PARTY_RUN);
       else
         Sprite_StartAnimationFar(shop->partyMemberIcons[memberIndex],
                                  ANIM_STAND);

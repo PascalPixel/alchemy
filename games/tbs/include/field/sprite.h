@@ -219,6 +219,9 @@ enum ActorAnimation {
   /// Swinging an arm out to throw, as he tosses a coin or medal at Tolbi's
   /// spring.
   ANIM_LEADER_TOSS = 29,
+  /// ANIM_LEADER_RUN again, on every party member's sheet: the shops run the
+  /// chosen party member in place with it.
+  ANIM_PARTY_RUN = 30,
   /// Held in ANIM_LEADER_SPRING's crouch, knees bent, as after a lost
   /// match.
   ANIM_LEADER_CROUCH = 35

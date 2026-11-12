@@ -8,10 +8,9 @@
 /// includes it too, so that a part read on its own resolves. It places no
 /// bytes.
 
-// The headers declare these on struct ActorView, as the routines behind them
-// are defined; the parts pass the same actors as struct Actor and declare them
-// so below.
-#define OWN_Actor_SetSingleChildFlagsFar
+// objdisp.h declares this on struct ActorView, as the routine behind it is
+// defined; the parts pass the same actors as struct Actor and declare it so
+// below.
 #define OWN_Actor_StartScriptFar
 
 #include "types.h"
@@ -70,7 +69,6 @@ void FieldMessage_ShowFar(s32 message, s32 mode);
 void MessageArgument_PushFar(s32 value, s32 slot);
 void Sound_PlayFar(s32 cue);
 s32 ArcTan2(s32 y, s32 x);
-void Actor_SetSingleChildFlagsFar(struct Actor *object, u32 flags);
 void Actor_StartScriptFar(struct Actor *object, const void *script);
 struct Actor *ObjectTable_Get(u32 objectId);
 s32 Encounter_ResolveWorldMapZoneAndBackdrop(void *position);

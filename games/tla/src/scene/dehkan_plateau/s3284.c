@@ -242,8 +242,6 @@ extern u8 gMapShapeGrid[];
 
 u32 Random16Far(void);
 s32 Math_Cosine(s32 angle);
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
 void ObjectVisual_CopyAttributes(s32 id, s32 value);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 void Func_0200056c(s32 id);

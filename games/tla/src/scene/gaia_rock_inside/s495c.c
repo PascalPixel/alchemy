@@ -13,6 +13,7 @@
 #include "actor.h"
 #include "main_routine_work.h"
 #include "iwram_call.h"
+#include "field.h"
 
 void Func_0200495c(s32 layer, s32 keep) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
@@ -52,8 +53,6 @@ void Func_020049e4(void) {
       *(u16 *)(event + 340) = code;
   }
 }
-
-void Actor_SetSingleChildFlags(struct Actor *object, u32 value);
 
 void Func_02004a5c(s32 id, s32 x, s32 y, s32 z) {
   struct Actor *object = Actor_Get(id);

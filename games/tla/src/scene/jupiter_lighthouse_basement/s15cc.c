@@ -17,7 +17,6 @@ struct EventWork1ac {
 
 s32 Math_Cosine(s32 angle);
 void Actor_SetAnimationSpeed(struct Actor *object, s32 value);
-void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 void Animation_SetStateFlags(struct Actor *object, s32 flags);
 void Map_EnableUpdateCallback(void);
 void Map_DisableUpdateCallback(void);

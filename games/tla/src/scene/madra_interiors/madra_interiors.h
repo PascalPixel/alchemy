@@ -31,8 +31,6 @@ void Func_02001d58(void);
 void Func_02001f00(s32 actor);
 void Func_02001f08(s32 slot, s32 actor);
 void Func_020007dc(void);
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.

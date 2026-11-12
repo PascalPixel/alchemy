@@ -9,6 +9,8 @@
 #include "types.h"
 #include "event_inline.h"
 
+void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
+
 void Func_0200137c(void) {
   if ((Actor_GetById(gMainRoutineWork.currentOwner)->y >> 19) != 0)
     MapCell_SetAttributes(0, 14, 17, 0);

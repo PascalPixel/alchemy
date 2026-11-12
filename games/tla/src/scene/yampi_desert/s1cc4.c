@@ -4,13 +4,13 @@
 #include "call.h"
 #include "input.h"
 #include "frame.h"
+#include "field.h"
 
 #define FIELD32(object, offset) (*(s32 *)((u8 *)(object) + (offset)))
 
 extern u32 gData_020042f0[];
 
 struct Actor *Actor_GetById(s32 id);
-void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 struct Actor *Func_02003fc0(s32 kind, s32 x, s32 y, s32 z);
 void Func_02003fa8(struct Actor *object, s32 mode);
 void Func_02003fb8(struct Actor *object, const void *script);

@@ -7,10 +7,10 @@
 #include "iwram_call.h"
 #include "actor.h"
 #include "worka0.h"
+#include "actor_view.h"
 
 struct Actor *Actor_GetById(s32 id);
 struct WorkA4Slot *Func_080dae70(s32 id);
-void Actor_SetSingleChildFlagsFar(struct Actor *actor, u32 flags);
 void wait(s32 frames);
 
 struct ChainLink {

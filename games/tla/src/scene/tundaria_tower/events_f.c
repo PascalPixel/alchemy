@@ -7,6 +7,7 @@
 #include "iwram_call.h"
 #include "field_event.h"
 #include "event_inline.h"
+#include "field.h"
 
 void Func_02001e5c(s32 value) { gData_02003cd0 = value; }
 

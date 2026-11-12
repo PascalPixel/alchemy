@@ -11,8 +11,9 @@
 #include "ram_buffer.h"
 #include "event_work.h"
 
+void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
+
 u32 Random16Far(void);
-void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 void Func_02003ba0(struct Actor *object, s32 mode);
 void Func_02003ba8(struct Actor *object, const void *script);
 s32 Func_02003d80(void *sprite, s32 frame);
@@ -201,9 +202,6 @@ void Func_02002a5c(void) {
   Event_WaitTransitionFrames();
   Import_EventSetExitRequest(23);
 }
-
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
 
 struct EffectWork7c4 {
   u8 unk000[0x7c4];

@@ -5,6 +5,7 @@
 #include "field_psynergy_work.h"
 #include "actor.h"
 #include "edition.h"
+#include "actor_view.h"
 
 struct BurstParticleVector {
   s32 values[3];
@@ -21,8 +22,6 @@ void Actor_StartScriptFar(void *object, u32 script);
 void BattleEffect_PrepareBufferInterpolation(void);
 // Far call to the target classifier Func_080237c8.
 s32 Func_08020330(struct Actor *object);
-void Actor_SetSingleChildFlagsFar(struct Actor *object,
-                                           s32 flags);
 void Func_080daecc(s32 objectId, s32 mode);
 
 #define BURST_FALL_OBJECT 281 ///< the object that falls round the target

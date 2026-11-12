@@ -5,8 +5,8 @@
 #include "frame.h"
 #include "field_effect.h"
 #include "event_inline.h"
+#include "field.h"
 
-void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 void Func_02004c98(struct Actor *object, s32 mode);
 s32 Math_Cosine(s32 angle);
 

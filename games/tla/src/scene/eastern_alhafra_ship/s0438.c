@@ -4,6 +4,7 @@
 #include "types.h"
 #include "actor.h"
 #include "event_inline.h"
+#include "field.h"
 
 s32 Func_020003e8(s32 x, s32 y, s32 z, s32 rotation, s32 timer);
 
@@ -39,7 +40,6 @@ void Func_02003130();
 void Func_02003138();
 void Func_02003218();
 void Func_020032a0();
-void Actor_SetSingleChildFlags();
 
 #include "map.h"
 #include "scene_ids.h"

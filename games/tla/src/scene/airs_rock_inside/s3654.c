@@ -9,6 +9,8 @@
 #include "call.h"
 #include "frame.h"
 
+void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
+
 /// A field sprite's byte 9: the top of its first tile and its priority (OAM
 /// attribute 2), read as bit-fields.
 struct SpriteAttr2High {
@@ -39,8 +41,6 @@ struct Actor *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
 u32 Random16Far(void);
 void Func_02005d5c(struct Actor *object, s32 mode);
 void Func_02005d6c(struct Actor *object, const u8 *script);
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        u32 value);
 void Actor_SetPartAttribute(struct Actor *object, s32 value);
 void FieldEvent_Wait(s32 frames);
 void wait(s32 frames);

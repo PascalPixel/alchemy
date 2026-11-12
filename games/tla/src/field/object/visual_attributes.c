@@ -11,6 +11,7 @@
 #include "objdisp.h"
 #include "field_sprite.h"
 #include "edition.h"
+#include "actor_view.h"
 
 struct Actor *Actor_GetById(u32);
 

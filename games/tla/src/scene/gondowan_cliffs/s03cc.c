@@ -4,6 +4,7 @@
 #include "types.h"
 #include "actor.h"
 #include "event_inline.h"
+#include "field.h"
 
 struct TileSprite {
   u8 unk00[18];
@@ -638,8 +639,6 @@ void Func_02000fcc(s32 unused, s32 value) {
   FieldTask_AddFrame((s32)Func_02000dac, 0x480);
   Actor_Get(FieldParty_GetLeaderActor())->priorityFlags |= 0x40;
 }
-
-void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 
 struct RideEntry *Func_02001068(s32 slot, s32 id, s32 timer, s32 low,
                                 s32 high) {

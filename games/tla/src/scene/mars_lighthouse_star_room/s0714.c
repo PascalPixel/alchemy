@@ -3,6 +3,7 @@
 #include "main_routine_work.h"
 #include "scene_tables.h"
 #include "event_inline.h"
+#include "field.h"
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
      u8 pad[off];                                                              \
@@ -20,7 +21,6 @@ void Func_020042dc();
 void Func_020042e4();
 void Func_02004334();
 void Func_0200445c();
-void Actor_SetSingleChildFlags();
 void Actor_WaitForAnimationChange();
 extern u8 MsgMarsStar01[];
 extern u8 gData_0200491c[];

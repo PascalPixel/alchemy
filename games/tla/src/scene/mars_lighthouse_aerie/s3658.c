@@ -2,6 +2,9 @@
 #include "system/main_routine_work.h"
 #include "ram_buffer.h"
 #include "event_inline.h"
+
+void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
+
 s32 Animation_SetStateFlags();
 s32 Func_02000610();
 s32 Func_02000640();
@@ -11,7 +14,6 @@ s32 Func_02003648();
 s32 Func_0200557c();
 void Func_02005734();
 void Func_02005794();
-s32 Actor_SetSingleChildFlags();
 s32 PartyInventory_Remove();
 s32 HeapSlot_AllocFar();
 s32 HeapSlot_Release();

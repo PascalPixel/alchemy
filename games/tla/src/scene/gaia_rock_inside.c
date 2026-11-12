@@ -1,10 +1,6 @@
 /// @file
 /// The scene code of overlay 0x681 that its scene tables belong to, in ROM order; the rest of the overlay is in gaia_rock_inside/.
 
-// field.h declares this on struct ActorView, as the routine behind it is
-// defined; this scene passes the same actors as struct Actor and declares it
-// so below.
-#define OWN_Actor_SetSingleChildFlags
 #include "battle.h"
 #include "field.h"
 #include "game.h"
@@ -177,7 +173,6 @@ s32 Func_020005f8(void) {
 
 extern const u8 gData_020050d0[];
 
-void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 void Func_02004dac(struct Actor *object, const u8 *script);
 
 s32 Func_02000610(void) {

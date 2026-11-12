@@ -164,7 +164,6 @@ extern void *gOverlayArea[]; ///< the scene overlay's entry table
 extern s8 gData_02001000[];
 void Actor_Destroy(struct Actor *object);
 void Actor_SetAnimationSpeedFar(struct Actor *object, s32 value);
-void Actor_SetSingleChildFlagsFar(struct Actor *object, u32 flags);
 void Actor_StartScriptFar(struct Actor *object, const void *script);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, s32 *position);
 s32 Map_GetTerrainHeightFar(u8 layer, s32 x, s32 z);

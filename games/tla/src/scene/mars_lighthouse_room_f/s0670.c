@@ -1,6 +1,8 @@
 #include "room.h"
 #include "scene_tables.h"
 
+void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
+
 void Func_02000670(void) {
   ((struct SceneWork *)Ram_HeapSlots->eventWork)->unk166 = 0;
   Event_ClearFlag(0x106);

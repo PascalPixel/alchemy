@@ -5,6 +5,8 @@
 #include "scene_ids.h"
 #include "system/frame.h"
 
+void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
+
 void Func_02002bd4(struct Actor *object) {
   struct Actor *child = FieldActor_Create(
       14, object->x, object->y + 0x40000, object->z + 0x40000);

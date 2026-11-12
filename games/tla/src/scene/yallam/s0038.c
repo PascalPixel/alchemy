@@ -1,8 +1,6 @@
 #include "types.h"
 #include "actor.h"
-
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
+#include "field.h"
 
 struct TileSprite {
   u8 unk00[18];

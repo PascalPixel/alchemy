@@ -19,6 +19,7 @@
 #include "map.h"
 
 #include "scene_tables.h"
+#include "field.h"
 
 s32 Math_Cosine(s32 angle);
 u32 Random16Far(void);
@@ -77,7 +78,6 @@ void Func_02001574(void);
 void Func_0200157c(void);
 void Func_02001584(void);
 void Func_0200158c(struct Actor *object, s32 a);
-void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 extern u8 MsgGoldenSunEternalLifeAndPower[];
 extern u8 MsgGoldenSunFormation[];
 extern char SceneId_Ov64c;

@@ -8,6 +8,7 @@
 #include "actor.h"
 #include "main_routine_work.h"
 #include "scene_tables.h"
+#include "field.h"
 
 s32 Func_020005a0(struct Actor *object);
 void Func_02002b54(s32 x, s32 z, s32 a, s32 b);

@@ -39,7 +39,6 @@ void Actor_ResetAndSetPositionInMode2(s32 id, s32 x, s32 z);
 void Actor_SetAngleToward(s32 id, s32 target, s32 frames);
 void Actor_ArmCallback(s32 id, s32 angle, s32 flags);
 void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
-void Actor_SetSingleChildFlags(struct FieldActor *object, s32 flags);
 void Event_StartScreenTransition(void);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);

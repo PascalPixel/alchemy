@@ -2,6 +2,7 @@
 #include "actor.h"
 #include "system/dma.h"
 #include "event_inline.h"
+#include "field.h"
 
 extern const u16 Field_Palette685[];
 extern char ResourceId_FieldEffectExplosion;
@@ -33,7 +34,6 @@ struct FlashWork {
 };
 
 struct FlashWork *HeapSlot_AllocFar(s32 slot, s32 size);
-void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 void *Resource_GetTableEntry(s32 resourceId);
 void Func_020033dc(void *entry, void *destination);
 s32 Resource_FindFreeEntry(void);

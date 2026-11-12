@@ -4,7 +4,6 @@
 #include "dma.h"
 
 struct Actor *Actor_GetById(u32);
-void Actor_SetSingleChildFlagsFar(struct Actor *object, u32 value);
 void SetMapCellCollisionFar(s32 terrain, s32 x, s32 z, s32 value);
 void Vector_AddPolarOffset(s32 distance, s32 angle, s32 *position);
 u8 *HeapSlot_Alloc(s32 block, s32 size);

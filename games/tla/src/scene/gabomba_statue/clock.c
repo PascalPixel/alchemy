@@ -6,6 +6,7 @@
 #include "iwram_call.h"
 #include "task.h"
 #include "event_inline.h"
+#include "field.h"
 
 struct ClockWork {
   u8 *tiles;
@@ -81,7 +82,6 @@ void Func_020053ac(void) {
 
 #include "actor.h"
 
-void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 void Func_020054ac(s32 id, u32 mode, s32 flag, s32 layer);
 
 struct EffectWork {

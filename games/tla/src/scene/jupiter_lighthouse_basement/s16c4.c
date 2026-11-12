@@ -4,6 +4,7 @@
 #include "main_routine_work.h"
 #include "io_reg.h"
 #include "event_inline.h"
+#include "field.h"
 
 struct CellTargetEntry;
 
@@ -20,7 +21,6 @@ struct CellTarget {
 };
 
 void Func_020015cc(void);
-void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 #include "io_write.h"

@@ -4,6 +4,7 @@
 #include "types.h"
 #include "system.h"
 
+struct Actor;
 struct AnimationObject;
 struct AnimationEntry;
 
@@ -64,9 +65,7 @@ void Animation_ApplyChildValue(struct ActorSpriteView *, s32);
 s32 InitializeAnimationObjects(struct ActorSpriteView *);
 s32 ResourceMetadata_Register(struct ActorSpriteView *, s32);
 void Actor_StartScript(struct ActorView *, const s32 *);
-#ifndef OWN_Actor_SetSingleChildFlagsFar
-void Actor_SetSingleChildFlagsFar(struct ActorView *, u32);
-#endif
+void Actor_SetSingleChildFlagsFar(struct Actor *object, u32 flags);
 void Animation_ApplyChildValuesToRecord(struct ActorSpriteView *, u32);
 void Animation_ApplyChildValuesToRecordFar(struct ActorSpriteView *, u32);
 void Animation_ApplyChildValues(struct ActorView *, u32);

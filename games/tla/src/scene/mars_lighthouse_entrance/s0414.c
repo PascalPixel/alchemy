@@ -1,6 +1,8 @@
 #include "../../../../games/tla/src/scene/mars_lighthouse_entrance/room.h"
 #include "iwram_call.h"
 
+void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
+
 extern const u8 gData_02005394[];
 
 void Func_02000414(s32 id) {

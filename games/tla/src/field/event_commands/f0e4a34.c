@@ -4,6 +4,7 @@
 #include "field_psynergy_work.h"
 #include "main_routine_work.h"
 #include "system/io_reg.h"
+#include "actor_view.h"
 
 extern char ResourceId_DustPuffA;
 
@@ -47,7 +48,6 @@ void Animation_ApplyChildValueToFirstFar(void *animation, s32 value);
 void wait(s32 frames);
 void Sound_PlayFar(s32 cue);
 struct Actor *Actor_GetById(u32 actor);
-void Actor_SetSingleChildFlagsFar(struct Actor *actor, s32 flags);
 void Camera_FollowActor(s32 actor, s32 mode);
 
 void Func_080e4a34(void) {

@@ -54,9 +54,6 @@ extern char SceneId_Ov6ACRoom4;
 extern char SceneId_Ov6ACRoom5;
 extern char SceneId_Ov6ACRoom6;
 
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
-
 void Func_02003118(struct Actor *object, s32 value);
 void Func_02003120(struct Actor *object, const void *script);
 

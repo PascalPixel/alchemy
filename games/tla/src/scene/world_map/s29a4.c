@@ -8,6 +8,7 @@
 #include "task.h"
 #include "io_reg.h"
 #include "event_inline.h"
+#include "field.h"
 
 struct EventWork {
   u8 unk000[0x1ac];
@@ -18,8 +19,6 @@ struct EventWork {
 
 extern const u8 gData_02004eb8[];
 
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void Event_FinishScreenTransition(void);

@@ -1,11 +1,11 @@
 #include "types.h"
 #include "fixed_math.h"
 #include "actor.h"
+#include "actor_view.h"
 
 s32 Party_GetLeaderActor(void);
 struct Actor *Actor_GetById(u32 actor);
 struct Actor *Func_080200c0(s32 sprite, s32 x, s32 y, s32 z);
-void Actor_SetSingleChildFlagsFar(struct Actor *object, s32 flags);
 void wait(s32 frames);
 void FacingObject_TurnPairToFaceEachOther(struct Actor *first,
                                           struct Actor *second);

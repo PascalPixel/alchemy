@@ -12,13 +12,12 @@
 #include "event_work.h"
 #include "scene_tables.h"
 #include "scene_ids.h"
+#include "field.h"
 
 extern u8 gMapShapeGrid[];
 
 u32 Random16Far(void);
 s32 Math_Cosine(s32 angle);
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
 void ObjectVisual_CopyAttributes(s32 id, s32 value);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 void Func_0200056c(s32 id);
@@ -209,8 +208,6 @@ struct EffectWork7c4 {
   s16 timer;
 };
 void Field_DispatchTypeHandler(s32 type);
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.

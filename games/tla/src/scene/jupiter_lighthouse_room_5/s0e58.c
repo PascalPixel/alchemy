@@ -9,9 +9,9 @@
 #include "event_inline.h"
 #include "iwram_call.h"
 #include "field_sprite.h"
+#include "field.h"
 
 void Func_020028b0(void);
-void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 void Func_020028b8(void);
 

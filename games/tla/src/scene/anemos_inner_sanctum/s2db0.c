@@ -1,6 +1,8 @@
 #include "../../../../games/tla/src/scene/jupiter_lighthouse_room_3/local.h"
 #include "io_reg.h"
 
+void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
+
 struct PushEvent {
   u8 unk00[6];
   s16 x;
@@ -11,7 +13,6 @@ struct PushEvent {
 
 void Func_02002cb8(void);
 void Map_CopyCellsRect(s32 x, s32 z, s32 a, s32 b, s32 cellX, s32 cellZ);
-void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 

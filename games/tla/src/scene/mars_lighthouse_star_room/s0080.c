@@ -1,6 +1,8 @@
 #include "../../../../games/tla/src/scene/mars_lighthouse_star_room/mars_lighthouse_star_room.h"
 #include "iwram_call.h"
 
+void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
+
 extern const u8 gData_02004474[];
 
 void Animation_ApplyChildValues(struct Actor *object, s32 value);

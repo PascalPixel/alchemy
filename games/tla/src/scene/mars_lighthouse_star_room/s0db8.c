@@ -1,6 +1,7 @@
 #include "mars_lighthouse_star_room.h"
 #include "scene_tables.h"
 
+void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.

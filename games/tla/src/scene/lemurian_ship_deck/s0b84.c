@@ -16,6 +16,7 @@
 #include "task.h"
 #include "call.h"
 #include "frame.h"
+#include "field.h"
 
 extern s32 gData_020024b4;
 extern s32 gData_020024b0;
@@ -541,7 +542,6 @@ void Func_02001178(void) { GameFlag_ClearBit(0x212); }
 extern const u8 gData_0200247c[];
 
 s32 Random16Far(void);
-void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 void Func_02001efc(struct Actor *object, s32 value);
 void Func_02001f04(struct Actor *object, const void *data);
 

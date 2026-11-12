@@ -1,5 +1,6 @@
 #include "ride.h"
 #include "event_inline.h"
+#include "field.h"
 
 
 s32 Func_02000038(struct Actor *object) {

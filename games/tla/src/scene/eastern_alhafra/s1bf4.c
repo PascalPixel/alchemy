@@ -4,6 +4,7 @@
 #include "types.h"
 #include "actor.h"
 #include "event_inline.h"
+#include "field.h"
 
 s32 Func_02001b9c(s32 x, s32 y, s32 z, s32 rotation, s32 timer);
 
@@ -43,8 +44,6 @@ extern u32 gData_0200d5d0[];
 extern u32 gData_02005620[];
 extern s32 gData_02005670[];
 
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
 void Func_02004a94();
 void Func_02004a9c();
 void Func_02004b94();

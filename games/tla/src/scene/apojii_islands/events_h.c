@@ -4,6 +4,8 @@
 #include "local.h"
 #include "scene_ids.h"
 
+void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
+
 void Func_02001140(struct Actor *object) {
   s32 phase = gFrameCount & 15;
 

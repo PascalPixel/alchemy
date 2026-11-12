@@ -5,6 +5,7 @@
 #include "ram_buffer.h"
 #include "main_routine_work.h"
 #include "event_inline.h"
+#include "field.h"
 
 struct Orbiter {
   u8 unk00[6];
@@ -111,8 +112,6 @@ struct Orbiter *Func_02000624(struct Orbiter *origin, s32 id) {
 
 void Func_020057d4(struct Actor *object);
 void Func_02005624(struct Actor *object, s32 mode);
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
 
 #define DIFF_WITHIN(a, b, limit)                                               \
   ((a) - (b) >= 0 ? (a) - (b) <= (limit) : (b) - (a) <= (limit))

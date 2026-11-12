@@ -1,10 +1,6 @@
 /// @file
 /// The scene code of overlay 0x67e, in ROM order.
 
-// field.h declares this on struct ActorView, as the routine behind it is
-// defined; this scene passes the same actors as struct Actor and declares it
-// so below.
-#define OWN_Actor_SetSingleChildFlags
 #include "izumo/izumo.h"
 #include "call.h"
 #include "flag_call.h"

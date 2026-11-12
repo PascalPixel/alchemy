@@ -3,6 +3,7 @@
 #include "actor.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"
+#include "actor_view.h"
 
 struct ClimbSprite {
   u8 unk00[26];
@@ -20,7 +21,6 @@ s32 Field_CheckSpheresOverlapFar(s32 *position, s32 radius, s32 *other,
                                  s32 otherRadius);
 void Actor_SetPositionAndCommit(s32 id, s32 x, s32 z);
 void Actor_WaitForMoveById(s32 id);
-void Actor_SetSingleChildFlagsFar(struct Actor *object, s32 flags);
 
 s32 Func_080d53b8(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);

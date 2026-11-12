@@ -85,8 +85,6 @@ void Event_Wait(s32 frames);
 void Task_Add(void (*func)(void), s32 priority);
 void Task_RemoveFar(void (*func)(void));
 void Field_DispatchTypeHandler(s32 type);
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
 
 void Func_02002bcc(void) {
   Func_02003d50(134, 1);

@@ -8,6 +8,7 @@
 #include "system/field_effect.h"
 #include "event_inline.h"
 #include "frame.h"
+#include "field.h"
 
 /// A field sprite's byte 9: the top of its first tile and its priority (OAM
 /// attribute 2), read as bit-fields.
@@ -26,7 +27,6 @@ void Heap_Release(void *block);
 void *Resource_GetTableEntry(s32 id);
 void Func_0200479c(void *resource, void *destination);
 u32 Random16Far(void);
-void Actor_SetSingleChildFlags(struct Actor *object, u32 value);
 void Effect_CircleAndBlink(void);
 void Func_020049f4(void);
 void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,

@@ -10,8 +10,6 @@
 
 extern const u32 gSceneExits[];
 
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
 void Func_02000620(s32 a);
 void Func_02000648(void);
 void Func_02000650(void);

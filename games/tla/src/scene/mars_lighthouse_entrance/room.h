@@ -51,8 +51,6 @@ struct Box {
 
 #define SCENE_WORK ((struct SceneWork *)Ram_HeapSlots->eventWork)
 
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
 void Animation_ApplyChildValues(struct Actor *object, s32 value);
 s32 Map_GetTerrainHeight(s32 terrain, s32 x, s32 z);
 void Event_FinishScreenTransition(void);

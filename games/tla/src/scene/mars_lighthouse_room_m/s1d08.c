@@ -1,6 +1,8 @@
 #include "mars_lighthouse_room_m.h"
 #include "event_inline.h"
 
+void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
+
 struct SpriteParts {
   u8 unk00[9];
   u8 unk09Low : 2;
@@ -8,8 +10,6 @@ struct SpriteParts {
 };
 extern const u8 gData_020032d4[];
 
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
 void Func_02003120(struct Actor *object, const void *script);
 
 /// Stops the object and sets its sprite part, then restarts its script at

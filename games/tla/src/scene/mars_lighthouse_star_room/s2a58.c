@@ -1,5 +1,7 @@
 #include "mars_lighthouse_star_room.h"
 
+void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
+
 void Func_02002a58(s32 sourceId, s32 id, s32 kind, s32 value,
                    const void *script) {
   struct Actor *source = Actor_Get(sourceId);

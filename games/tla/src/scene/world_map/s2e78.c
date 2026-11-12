@@ -11,14 +11,13 @@
 #include "event_inline.h"
 #include "frame.h"
 #include "iwram_call.h"
+#include "field.h"
 
 struct EventCounters {
   u8 unk000[0x1c4];
   u16 count;
 };
 
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void Func_02004c20(void);

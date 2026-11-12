@@ -3,6 +3,8 @@
 
 #include "types.h"
 
+void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
+
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
      u8 pad[off];                                                              \
@@ -45,7 +47,6 @@ void Func_020012ac(void) {
 #include "event_inline.h"
 s32 Scene_SetActorSpritePriority();
 s32 Func_02004d9c();
-s32 Actor_SetSingleChildFlags();
 s32 Animation_SetStateFlags();
 s32 Func_02004dac();
 extern u8 gData_02005208[];

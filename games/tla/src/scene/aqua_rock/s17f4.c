@@ -6,6 +6,8 @@
 #include "call.h"
 #include "types.h"
 
+void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
+
 struct MapBits {
   u8 unk00[23];
   u8 low : 2;

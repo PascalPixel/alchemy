@@ -8,6 +8,7 @@
 #include "event_inline.h"
 #include "scene_tables.h"
 #include "call.h"
+#include "field.h"
 
 s32 Func_020005c0(struct Actor *object) {
   Actor_SetSingleChildFlags(object, 0);

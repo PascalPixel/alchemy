@@ -7,6 +7,7 @@
 #include "islets.h"
 #include "scene_tables.h"
 #include "event_inline.h"
+#include "field.h"
 
 u8 *Func_0200004c(void) {
   s16 scene = gMainRoutineWork.scene;

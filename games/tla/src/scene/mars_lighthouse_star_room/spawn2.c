@@ -1,6 +1,7 @@
 #include "types.h"
 #include "actor.h"
 #include "event_inline.h"
+#include "field.h"
 
 void Func_020041cc(struct Actor *object, s32 mode);
 void Func_020015ec(void);
@@ -14,8 +15,6 @@ struct SpriteParts {
 };
 extern const u8 gData_02004744[];
 
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
 void Func_020041dc(struct Actor *object, const void *script);
 
 /// Stops the object and sets its sprite part, then restarts its script at

@@ -4,6 +4,7 @@
 // Part of field_sequence.c.
 
 #include "../field_sequence_internal.h"
+#include "actor_view.h"
 
 /// Picks the sprite a scene placement's character id shows: character 8
 /// becomes 9 on the world map and 11 elsewhere, one more once flag 0x8df is

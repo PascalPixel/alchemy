@@ -8,6 +8,7 @@
 #include "actor.h"
 #include "call.h"
 #include "iwram_call.h"
+#include "field.h"
 
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -17,7 +18,6 @@
        ->v)
 
 s32 Func_020028b4();
-s32 Actor_SetSingleChildFlags();
 s32 Func_02002994();
 s32 Event_StartScreenTransition();
 s32 Event_WaitTransitionFrames();

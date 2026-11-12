@@ -1,6 +1,8 @@
 #include "local.h"
 #include "macros.h"
 
+void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
+
 struct MagmaRockInsideWork {
   s32 unk00;
   s32 x;

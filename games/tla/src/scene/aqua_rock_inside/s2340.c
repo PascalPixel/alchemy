@@ -16,6 +16,7 @@
 #include "text/msg_ids.h"
 #include "types.h"
 #include "event_inline.h"
+#include "field.h"
 
 struct MapBits {
   u8 unk00[23];
@@ -40,7 +41,6 @@ void Func_020032d4(u32 first, s32 level, s32 baseLevel);
 void Func_02003cc4(struct Actor *actor, s32 mode);
 void Func_0200349c(u32 index, s32 height);
 void Func_02003ea4();
-void Actor_SetSingleChildFlags();
 void Func_02003628(void);
 s32 Func_02003688(s32 x, s32 y, s32 z, s32 kind);
 s32 Func_020036b8(s32 a, s32 b);

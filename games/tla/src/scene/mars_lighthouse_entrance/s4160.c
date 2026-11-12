@@ -3,6 +3,7 @@
 #include "event_work.h"
 #include "event_inline.h"
 
+void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
 
 struct PushEvent {
   u8 unk00[6];
@@ -13,8 +14,6 @@ struct PushEvent {
 };
 
 void Func_02004068(void);
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 

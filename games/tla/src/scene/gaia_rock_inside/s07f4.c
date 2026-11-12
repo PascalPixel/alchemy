@@ -5,10 +5,10 @@
 #include "actor.h"
 #include "event_inline.h"
 #include "main_routine_work.h"
+#include "field.h"
 
 extern const u8 gData_020050f4[];
 
-void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 void Func_02004d9c(struct Actor *object, s32 mode);
 void Func_02004dac(struct Actor *object, const u8 *script);
 u32 Random16Far(void);

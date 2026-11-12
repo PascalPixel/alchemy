@@ -1,6 +1,7 @@
 #include "types.h"
 #include "system/iwram_call.h"
 #include "event_inline.h"
+#include "field.h"
 
 struct Vector3 {
   s32 x;
@@ -33,7 +34,6 @@ s32 ArcTan2();
 void Func_020006f8();
 void Func_020032e0();
 void Func_020032e8();
-void Actor_SetSingleChildFlags();
 void Scene_SetActorSpritePriority();
 u32 Random16Far();
 extern u8 gData_02003684[];

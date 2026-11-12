@@ -1,5 +1,7 @@
 #include "room.h"
 
+void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
+
 extern char SceneId_Ov6adRoom1;
 extern char SceneId_Ov6adRoom2;
 extern char SceneId_Ov6adRoom3;

@@ -1,6 +1,8 @@
 #include "mars_lighthouse_room_m.h"
 #include "event_inline.h"
 
+void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
+
 void Func_02002df4(s32 sourceId, s32 id, s32 value, s32 angle,
                    const void *script) {
   struct Actor *source = Actor_Get(sourceId);

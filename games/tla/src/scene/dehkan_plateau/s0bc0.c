@@ -10,6 +10,7 @@
 #include "event_inline.h"
 #include "field_sprite.h"
 #include "iwram_call.h"
+#include "field.h"
 
 s32 Func_02003c10(s32 layer, s32 x, s32 z);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);

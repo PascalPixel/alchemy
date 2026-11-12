@@ -4,6 +4,8 @@
 #include "main_routine_work.h"
 #include "event_inline.h"
 
+void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
+
 struct AnemosInnerSanctumEventWork {
   u8 unk000[0x154];
   s16 unk154;
@@ -13,8 +15,6 @@ extern char SceneId_Ov6B0Room4;
 extern const s32 gData_02003574[];
 
 void Scene_SetActorSpritePriority(struct Actor *object, s32 priority);
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
 void Func_020032e0(struct Actor *object, s32 value);
 void Func_020032e8(struct Actor *object, const s32 *script);
 void Func_02003398(void);

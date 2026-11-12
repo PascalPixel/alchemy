@@ -5,6 +5,8 @@
 #include "version.h"
 #include "sprite.h"
 
+void Actor_SetSingleChildFlagsFar(struct Actor *object, u32 flags);
+
 #if TLA_PATCH_1
 #define LEAP_SOUND 153
 #else
@@ -22,7 +24,6 @@ void *Func_080d47b4(s32 id, s32 flags, s32 state);
 void FieldEffect_AdvanceSpinAngle(struct Actor *object);
 struct Actor *Func_080200c0(s32 kind, s32 x, s32 y, s32 z);
 void Animation_ApplyChildValuesFar(struct Actor *object, s32 value);
-void Actor_SetSingleChildFlagsFar(struct Actor *object, s32 flags);
 void *Sprite_ShareVramCacheEntry(void *sprite, void *last);
 void Motion_SetTargetPositionFromMagnitudeAngle(struct Actor *object,
                                                 s32 magnitude, s32 angle);

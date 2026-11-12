@@ -12,8 +12,8 @@
 #include "input.h"
 #include "task.h"
 #include "scene_ids.h"
+#include "field.h"
 
-void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 void Import_ActorPlaceAtActor();
 void DriftScene_SpawnObject();
 void Func_02003180();

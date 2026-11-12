@@ -1,6 +1,8 @@
 #include "mars_lighthouse_room_m.h"
 #include "event_inline.h"
 
+void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
+
 void Func_02001aec(struct Actor *object) {
   object->motionFlags = 0;
   object->collisionFlags = 0;

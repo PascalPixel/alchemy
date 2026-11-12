@@ -6,11 +6,11 @@
 #include "scene_tables.h"
 #include "io_reg.h"
 #include "event_inline.h"
+#include "field.h"
 
 extern u16 gData_02007948[4];
 void Func_02005a9c(void);
 void Func_02005aa4(void);
-void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 u8 *Unit_Get(s32 unit);
 void Party_RemoveOwnerRestored(s32 unit);
 void Func_020050ac(void);

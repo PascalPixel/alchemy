@@ -11,6 +11,7 @@
 #include "map.h"
 #include "system/ram_buffer.h"
 #include "izumo_ruins.h"
+#include "field.h"
 
 extern const s32 gData_02001540[];
 

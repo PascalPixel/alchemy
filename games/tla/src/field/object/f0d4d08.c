@@ -5,6 +5,7 @@
 #include "actor.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"
+#include "actor_view.h"
 
 struct JumpSprite {
   u8 unk00[26];
@@ -26,7 +27,6 @@ void wait(s32 frames);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, s32 *position);
 s32 Func_08020210(struct Actor *object, s32 *position);
 s32 Func_080d4ccc(struct Actor *object, s32 *position);
-void Actor_SetSingleChildFlagsFar(struct Actor *object, s32 flags);
 void Actor_SetPositionAndCommit(s32 id, s32 x, s32 z);
 void Func_080203a0(struct Actor *object, s32 kind);
 struct Actor *Actor_FindNearestFacingTarget(struct Actor *self, s32 id);

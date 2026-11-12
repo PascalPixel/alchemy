@@ -4,6 +4,7 @@
 #include "actor.h"
 #include "call.h"
 #include "frame.h"
+#include "field.h"
 
 struct MagmaRockEffectOptions {
   s32 kind;
@@ -33,7 +34,6 @@ void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 void wait(s32 frames);
 void Camera_MoveWithinMapBounds(s32 a, s32 b, s32 c, s32 d);
 void Event_Wait(s32 frames);
-void Actor_SetSingleChildFlags(struct Actor *object, u32 value);
 void Map_SetScreenShake(s32 a, s32 b, s32 c);
 void Map_WaitForShakeToSettle(void);
 void Func_080d452c(s32 a, s32 b);

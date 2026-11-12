@@ -7,6 +7,7 @@
 #include "main_routine_work.h"
 #include "event_inline.h"
 #include "call.h"
+#include "field.h"
 
 struct EventWork154 {
   u8 unk000[0x154];
@@ -123,9 +124,6 @@ void Func_02001b44(void) { Func_020019a4(0x57, 2, 0x50, 7, 1, 2); }
        ->v)
 
 void Func_02001b60(void) { Func_020019a4(0x59, 0, 0x4d, 0x10, 1, 2); }
-
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
 
 void Func_02001b7c(void) {
   struct EventWork154 *work = Ram_HeapSlots->eventWork;

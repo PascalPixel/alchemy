@@ -12,6 +12,7 @@
 #include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "io_reg.h"
+#include "field.h"
 
 #define Test(flag) Event_GetFlag(flag)
 #define C1(f, a) Call1((void (*)())f, a)
@@ -70,7 +71,6 @@ void Func_02004fc4();
 void Func_02004fec();
 void Func_02005004();
 void Actor_SetAnimationSpeed();
-void Actor_SetSingleChildFlags();
 void Animation_ApplyChildValues();
 void Event_FinishScreenTransition(void);
 void Event_StartScreenTransition(void);
@@ -730,6 +730,7 @@ end:
 #include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "io_reg.h"
+#include "field.h"
 
 #define Test(flag) Event_GetFlag(flag)
 #define C1(f, a) Call1((void (*)())f, a)
@@ -787,7 +788,6 @@ void Func_02004fc4();
 void Func_02004fec();
 void Func_02005004();
 void Actor_SetAnimationSpeed();
-void Actor_SetSingleChildFlags();
 void Animation_ApplyChildValues();
 void Event_FinishScreenTransition(void);
 void Event_StartScreenTransition(void);

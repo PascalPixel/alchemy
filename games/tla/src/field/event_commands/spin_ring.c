@@ -1,11 +1,10 @@
 #include "types.h"
 #include "actor.h"
 #include "fixed_math.h"
+#include "actor_view.h"
 
 struct Actor *Actor_GetById(u32 actor);
 struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
-void Actor_SetSingleChildFlagsFar(struct Actor *object,
-                                           s32 flags);
 void Event_Start(void);
 void Event_ResolvePendingActions(s32 skip);
 void Event_StartScreenTransition(void);

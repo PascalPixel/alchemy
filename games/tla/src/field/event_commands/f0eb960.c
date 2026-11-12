@@ -4,6 +4,7 @@
 #include "resource.h"
 #include "actor.h"
 #include "effect_sprite.h"
+#include "actor_view.h"
 
 // One spark: where it circles round, its angle and radius, and its age in
 // frames (-1: unused).
@@ -29,7 +30,6 @@ struct SparkWork {
 
 s32 BattleEffect_GetObjectDepth(struct Actor *object);
 s32 BattleEffect_GetObjectPriority(struct Actor *object);
-void Actor_SetSingleChildFlagsFar(struct Actor *object, u32 flags);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, s32 *position);
 void Camera_WorldToScreen(s32 *position);
 

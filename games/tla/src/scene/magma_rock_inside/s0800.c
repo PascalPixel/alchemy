@@ -1,5 +1,6 @@
 #include "types.h"
 #include "main_routine_work.h"
+#include "field.h"
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
      u8 pad[off];                                                              \
@@ -10,7 +11,6 @@
 void Func_02004c98();
 void Func_02004ca0();
 s32 GameFlag_Test();
-void Actor_SetSingleChildFlags();
 s32 Actor_GetById();
 void Func_020007ac();
 

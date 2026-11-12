@@ -61,8 +61,6 @@ static inline void AnkohlRuins_Call2dfc(s32 a, s32 b, s32 c, s32 d, s32 e,
   Map_CopyCellAttributeRect(a, b, c, d, e, f);
 }
 
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
 void Func_02002e34(struct Actor *object, s32 a);
 void Func_02002eb4(void);
 

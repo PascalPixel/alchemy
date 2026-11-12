@@ -9,8 +9,9 @@
 #include "event_inline.h"
 #include "local.h"
 
+void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
+
 void Func_02002378(void);
-void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 void Func_02002380(void);
 
 struct EventWork {

@@ -22,9 +22,7 @@ void Map_RenderAnimatedTilePicture(u8 *object, u32 position);
 void Camera_FollowActor(s32 id, s32 flag);
 void Actor_UpdateAllMotion(void);
 void Actor_UpdateAllThumb(void);
-#ifndef OWN_Actor_SetSingleChildFlags
-void Actor_SetSingleChildFlags(struct ActorView *object, u32 value);
-#endif
+void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
 void ObjectSystem_UpdateCamera(void);
 void ObjectSystem_UpdateCameraFixed(void);
 s32 ObjectTable_FindLastActiveId(void);

@@ -34,8 +34,6 @@ extern char SceneId_Ov692Room7;
 extern char SceneId_Ov692Room8;
 
 void Scene_SetActorSpritePriority(struct Actor *object, s32 priority);
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
 void Animation_SetStateFlags(struct Actor *object, s32 flags);
 
 extern const u8 gData_02005534[];
@@ -54,7 +52,6 @@ void Func_02004df8(s32 id);
 static __inline__ struct Actor *Create(s32 kind, s32 x, s32 y, s32 z) {
   return Import_ActorCreate(kind, x, y, z);
 }
-
 
 static __inline__ void Actor_ResetAndSetPositionInMode2_(s32 id, s32 x,
                                                                 s32 z) {

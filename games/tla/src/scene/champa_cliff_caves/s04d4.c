@@ -7,6 +7,8 @@
 #include "types.h"
 #include "scene_tables.h"
 
+void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
+
 struct EventTransition {
   u8 unk000[0x1ac];
   s32 type;

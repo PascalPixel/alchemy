@@ -7,6 +7,7 @@
 #include "event_work.h"
 #include "text/msg_ids.h"
 #include "scene_tables.h"
+#include "field.h"
 
 void Func_0200128c();
 
@@ -82,7 +83,6 @@ struct EventWork1c4 {
 void Func_0200282c();
 void Func_02002834();
 void Func_020028f4();
-void Actor_SetSingleChildFlags();
 
 void Func_020013f0(void) {
   struct Actor *leader;

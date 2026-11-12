@@ -2,12 +2,12 @@
 #include "iwram_call.h"
 #include "event_inline.h"
 
+void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
+
 extern const u8 gData_02003348[];
 
 void Func_02003120(struct Actor *object, const void *script);
 s32 Math_Cosine(s32 angle);
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
 void Animation_ApplyChildValues(struct Actor *object, s32 value);
 
 /// Throws two sparks (object kind 325) from (x, y, z), each upward at about

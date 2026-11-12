@@ -31,8 +31,6 @@ static __inline__ struct Actor *ObjectCreate_(s32 kind, s32 x, s32 y,
 #include "tla_edition.h"
 
 void Func_020041dc(struct Actor *object, const void *script);
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
 void Actor_SetAnimationSpeed(struct Actor *object,
                                          s32 value);
 void Func_02002738(void);

@@ -3,6 +3,7 @@
 #include "event_inline.h"
 #include "types.h"
 #include "actor.h"
+#include "field.h"
 
 struct TrialRoadGauge {
   u16 handle;
@@ -70,8 +71,6 @@ struct RideWork {
   struct RideEntry entries[16];
   void *block;
 };
-
-void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 
 struct RideEntry *Func_02004224(s32 slot, s32 id, s32 timer, s32 low,
                                 s32 high) {

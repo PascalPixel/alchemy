@@ -10,6 +10,7 @@
 #include "scene_tables.h"
 #include "system/io_reg.h"
 #include "event_inline.h"
+#include "field.h"
 
 // A once-only block with a local that holds one constant, as the native
 // builds the value.
@@ -31,7 +32,6 @@ void Func_02000df0(void);
 void Func_02004bc0(struct Actor *object, s32 a1);
 void Func_02004ca8(void);
 void Actor_SetAnimationSpeed(struct Actor *object, s32 speed);
-void Actor_SetSingleChildFlags(struct Actor *object, u32 value);
 extern struct MapCell gMapCellBuffer[];
 
 void Func_02000e3c(s32 arg) {

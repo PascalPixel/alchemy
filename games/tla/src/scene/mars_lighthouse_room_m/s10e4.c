@@ -4,6 +4,8 @@
 #include "io_reg.h"
 #include "event_inline.h"
 
+void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
+
 void Func_02003228(void);
 void Func_0200080c(void);
 

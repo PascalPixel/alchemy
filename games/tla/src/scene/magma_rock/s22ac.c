@@ -9,6 +9,8 @@
 #include "scene_ids.h"
 #include "field/event_work.h"
 
+void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
+
 struct MagmaRockEffectOptions {
   s32 kind;
   s32 palette;
@@ -91,9 +93,6 @@ loop:
   ((struct MagmaRockEventWork *)Ram_HeapSlots->eventWork)->field1ac = 0x204;
   Func_02003af4();
 }
-
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
 
 void Func_0200244c(s32 height) {
   struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);

@@ -3,6 +3,8 @@
 
 #include "naribwe/local.h"
 
+void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
+
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 const struct SceneRegion *Scene_GetRegions(void) { return 0; }

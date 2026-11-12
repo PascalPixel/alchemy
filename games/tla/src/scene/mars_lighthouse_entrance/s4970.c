@@ -1,9 +1,8 @@
 #include "types.h"
 #include "actor.h"
 #include "event_inline.h"
+#include "field.h"
 
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
 void Func_02004a60(s32 id, u32 mode, s32 flag, s32 layer);
 
 void Func_02004970(const u16 *list) {

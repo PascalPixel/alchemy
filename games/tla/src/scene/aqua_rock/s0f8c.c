@@ -6,6 +6,8 @@
 #include "scene_tables.h"
 #include "input.h"
 
+void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
+
 struct AquaRockEventWork {
   u8 unk000[0x16a];
   s16 field16a;

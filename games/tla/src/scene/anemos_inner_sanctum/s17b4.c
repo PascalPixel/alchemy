@@ -5,6 +5,8 @@
 #include "frame.h"
 #include "event_inline.h"
 
+void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
+
 struct AnemosInnerSanctumEventWork {
   u8 unk000[0x16a];
   u16 unk16a;
@@ -15,8 +17,6 @@ extern const s32 gData_02003594[];
 u32 Random16Far(void);
 void Scene_SetActorSpritePriority(struct Actor *object, s32 priority);
 void Func_020032e0(struct Actor *object, s32 value);
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
 void Func_020032e8(struct Actor *object, const s32 *script);
 
 static __inline__ void AddPolar(s32 length, s32 angle, s32 *position) {

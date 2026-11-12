@@ -1,5 +1,7 @@
 #include "room.h"
 
+void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
+
 void Func_02002f6c(void);
 
 void Func_0200328c(s32 id, s32 target, s32 kind, s32 a3, const void *script) {

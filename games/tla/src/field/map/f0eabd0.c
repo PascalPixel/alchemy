@@ -2,6 +2,7 @@
 #include "actor.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"
+#include "actor_view.h"
 
 struct SwitchCell {
   u8 unk00[2];
@@ -27,7 +28,6 @@ s32 Func_080eab70(struct Actor *object);
 u32 Func_080202f0(s32 terrain, s32 x, s32 z);
 s32 Map_GetTerrainHeightFar(s32 layer, s32 x, s32 z);
 s32 Func_080eab98(s32 unused, s32 key, s32 value);
-void Actor_SetSingleChildFlagsFar(struct Actor *object, s32 flags);
 
 void Func_080eabd0(u16 *actors) {
   struct RestoreMap *map = (struct RestoreMap *)Ram_HeapSlots->mapWork;

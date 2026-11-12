@@ -5,8 +5,9 @@
 #include "frame.h"
 #include "event_inline.h"
 
+void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
+
 void Func_02001c84(void);
-void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 void Func_02001c8c(void);
 

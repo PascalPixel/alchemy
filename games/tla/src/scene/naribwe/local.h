@@ -16,8 +16,6 @@ struct WarpEntry {
   u16 z;
 };
 
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void Func_0200054c(void);

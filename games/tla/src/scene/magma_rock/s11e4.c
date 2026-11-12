@@ -6,12 +6,12 @@
 #include "field_effect.h"
 #include "event_inline.h"
 #include "frame.h"
+#include "field.h"
 
 extern u32 gData_02003d50[];
 
 s32 Math_Cosine(s32 angle);
 s32 MapCell_GetAttributes(u32 layer, s32 x, s32 z);
-void Actor_SetSingleChildFlags(struct Actor *object, u32 value);
 u32 Random16Far(void);
 void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags, struct EffectOptions *options);

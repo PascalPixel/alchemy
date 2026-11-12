@@ -6,6 +6,7 @@
 #include "actor.h"
 #include "main_routine_work.h"
 #include "event_inline.h"
+#include "field.h"
 
 struct PushTarget {
   s32 x; ///< 16.16 fixed-point pixels
@@ -155,8 +156,6 @@ void Func_02004774(struct Actor *object) {
     FieldActor_SetPositionAndResetMotion(object, object->x, object->y, object->z);
 }
 
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
 void Func_020048ec(s32 id, u32 kind, s32 flag, s32 layer);
 
 void Func_020047fc(const u16 *list) {

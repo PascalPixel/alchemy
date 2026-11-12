@@ -10,6 +10,7 @@
 #include "main_routine_work.h"
 #include "version.h"
 #include "event_inline.h"
+#include "field.h"
 
 // The value stored at the event work's 0x1ac: 521 in the Japanese release,
 // 513 from patch 1.

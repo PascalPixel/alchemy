@@ -10,6 +10,7 @@
 #include "version.h"
 #include "actor.h"
 #include "event_work.h"
+#include "field.h"
 
 void Func_02001180();
 

@@ -3,6 +3,7 @@
 #include "iwram_call.h"
 #include "fixed_math.h"
 #include "event_inline.h"
+#include "field.h"
 
 struct Sprite {
   u8 unk00[4];
@@ -42,7 +43,6 @@ extern u8 gData_020023c4[];
 extern u8 gData_02005dbc[];
 void Func_02005490(struct Actor *object, const void *script);
 s32 Math_Cosine(s32 angle);
-void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 s32 Random16Far(void);
 void ResourceMetadata_ClearRecord(void *record);
 void Resource_ResetEntry(s32 entry);

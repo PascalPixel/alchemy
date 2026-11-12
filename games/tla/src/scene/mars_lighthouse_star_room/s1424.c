@@ -1,6 +1,8 @@
 #include "../../../../games/tla/src/scene/mars_lighthouse_star_room/mars_lighthouse_star_room.h"
 #include "frame.h"
 
+void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
+
 void Func_020013e4(void);
 
 void Func_02001424(void) {

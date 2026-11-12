@@ -1,6 +1,8 @@
 #include "local.h"
 #include "field_event.h"
 
+void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
+
 void Func_02000280(void) { Func_080d7788(10, 1, 14); }
 
 void Func_02000290(void) { Func_080d7788(11, 2, 14); }

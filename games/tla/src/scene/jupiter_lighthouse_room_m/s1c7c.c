@@ -13,11 +13,12 @@
 #include "event_work.h"
 #include "field_event.h"
 
+void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
+
 extern const u8 MsgIMSorry[];
 
 void Func_020047d4(void);
 void Func_020048f4(void);
-void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 void Party_RemoveActiveOwner(s32 owner);
 s32 Party_AddActiveOwner(s32 owner);
 void Unit_Calculate(s32 owner);

@@ -5,9 +5,8 @@
 #include "actor.h"
 #include "event_inline.h"
 #include "ram_buffer.h"
+#include "field.h"
 
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
 void Func_02000128(s32 id, u32 mode, s32 flag, s32 layer);
 
 void Func_02000038(const u16 *list) {

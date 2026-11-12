@@ -12,6 +12,7 @@
 #include "event_work.h"
 #include "text/msg_ids.h"
 #include "event_inline.h"
+#include "field.h"
 
 const u8 *Func_0200004c(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov659Room2)

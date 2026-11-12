@@ -5,6 +5,7 @@
 #include "system/vector3.h"
 #include "event_inline.h"
 #include "frame.h"
+#include "field.h"
 
 extern char SceneId_Ov67bRoom1;
 void Func_02001e00(void);
@@ -12,7 +13,6 @@ s32 Func_02002970(struct Actor *object, struct Vector3 *position);
 void Func_02001d30(struct Actor *object);
 void Func_02002910(struct Actor *object, s32 mode);
 void Func_02002998(void);
-void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 u32 Random16Far(void);
 void Func_020029a0(void);
 

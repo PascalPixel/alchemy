@@ -3,6 +3,8 @@
 
 #include "local.h"
 
+void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
+
 void Func_02001f60(s32 id) {
   struct Actor *object = Actor_GetById(id);
 

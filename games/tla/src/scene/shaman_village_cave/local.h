@@ -13,8 +13,6 @@ struct ShamanVillageCaveEventWork {
   s16 value154;
 };
 
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void Func_02001080(void);

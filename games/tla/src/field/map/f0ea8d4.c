@@ -3,6 +3,7 @@
 #include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "map.h"
+#include "actor_view.h"
 
 struct ActorFlag {
   u16 actor;
@@ -11,7 +12,6 @@ struct ActorFlag {
 
 struct Actor *Actor_GetById(u32 actor);
 s32 Func_080eab70(struct Actor *object);
-void Actor_SetSingleChildFlagsFar(struct Actor *object, s32 flags);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 void Func_080eaa14(struct ActorFlag *list);

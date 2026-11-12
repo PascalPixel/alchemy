@@ -12,6 +12,7 @@
 #include "system/io_reg.h"
 #include "garoh.h"
 #include "frame.h"
+#include "field.h"
 
 extern u16 Data_02006340[];
 

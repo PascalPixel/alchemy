@@ -19,8 +19,6 @@ struct IsletsEventWork {
   s32 field1ac;
 };
 
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 

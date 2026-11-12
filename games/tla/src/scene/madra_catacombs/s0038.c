@@ -9,10 +9,10 @@
 #include "iwram_call.h"
 #include "event_inline.h"
 #include "field_sprite.h"
+#include "field.h"
 
 extern u8 gMapShapeGrid[];
 
-void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 s32 Func_020010ec(s32 layer, s32 x, s32 z);
 s32 Func_020011d4(struct Actor *object);

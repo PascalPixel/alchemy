@@ -1,4 +1,5 @@
 #include "types.h"
+#include "field.h"
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
      u8 pad[off];                                                              \
@@ -8,7 +9,6 @@
 
 #include "event_inline.h"
 s32 Func_02004464();
-s32 Actor_SetSingleChildFlags();
 s32 Event_StartScreenTransition();
 s32 Func_0200446c();
 extern u8 gMainRoutineWork[];

@@ -8,11 +8,11 @@
 #include "event_inline.h"
 #include "ram_buffer.h"
 #include "scene_tables.h"
+#include "field.h"
 
 extern s32 gData_02002b88[3];
 
 struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
-void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 void Func_02000054(void);
 void Func_020000b4(void);
 void Func_020021b4(struct Actor *object, s32 a);

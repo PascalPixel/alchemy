@@ -23,8 +23,6 @@ void Actor_SetModeById(u32 id, s32 mode);
 struct Actor *Import_ActorCreate(s32 kind, s32 x, s32 y, s32 z);
 void Scene_SetActorSpritePriority(struct Actor *object, s32 priority);
 void Actor_SetPartAttribute(struct Actor *object, s32 attribute);
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
 void Animation_ApplyChildValues(struct Actor *object, s32 value);
 void Animation_ApplyChildArgument(void *animation, s32 value);
 u8 *ResourceMetadata_Register(void *animation, s32 id);

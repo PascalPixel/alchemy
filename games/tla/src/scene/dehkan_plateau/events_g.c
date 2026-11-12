@@ -6,6 +6,7 @@
 #include "ram_buffer.h"
 #include "actor.h"
 #include "main_routine_work.h"
+#include "field.h"
 
 extern const u8 gData_02003f44[];
 extern const u8 gData_02003f52[];
@@ -76,8 +77,6 @@ void Event_Wait(s32 frames);
 void Task_Add(void (*func)(void), s32 priority);
 void Task_RemoveFar(void (*func)(void));
 void Field_DispatchTypeHandler(s32 type);
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.

@@ -1,4 +1,7 @@
 #include "types.h"
+
+void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
+
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
      u8 pad[off];                                                              \
@@ -9,7 +12,6 @@
 #include "event_inline.h"
 s32 Scene_SetActorSpritePriority();
 s32 Func_020032e0();
-s32 Actor_SetSingleChildFlags();
 
 void Func_02000a78(s32 a0, s32 a1, s16 a2) {
   s32 t0;

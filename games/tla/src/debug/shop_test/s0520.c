@@ -23,6 +23,7 @@
 #include "actor.h"
 
 #include "fixed_math.h"
+#include "field.h"
 
 void Unit_AddPp(s32 owner, s32 amount);
 void Inventory_Break(s32 owner, s32 slot);
@@ -389,8 +390,6 @@ void Func_02000b50(s32 mode, s32 id, s32 x, s32 z) {
   }
 }
 
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
 void Func_02000e20(s32 scene, s32 entrance);
 
 /// Mode 1 places object kind 354 at (x, z) in pixels; mode 2 grows object

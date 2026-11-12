@@ -1,5 +1,7 @@
 #include "room.h"
 
+void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
+
 #define ABS(value) ((value) < 0 ? -(value) : (value))
 
 struct SpriteParts {
@@ -17,8 +19,6 @@ void Func_02001ffc(void);
 void Func_020022d0(struct Actor *object);
 extern const u8 gData_02005d8c[];
 
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
 void Func_02005490(struct Actor *object, const void *script);
 
 /// Stops the object and sets its sprite part, then restarts its script at

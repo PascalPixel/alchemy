@@ -2,6 +2,8 @@
 #include "io_reg.h"
 #include "call.h"
 
+void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
+
 extern char SceneId_Ov692Room1;
 extern const u8 gData_02005074[];
 extern const u8 gData_020050d4[];

@@ -9,14 +9,13 @@
 #include "system.h"
 #include "actor.h"
 #include "ram_buffer.h"
+#include "actor_view.h"
 
 #define Actor_SetAnimationSpeedFar                                 \
   ((void (*)(struct Actor *,                                           \
              s32))Actor_SetAnimationSpeedFar)
 
 struct Actor *Func_080200c0(s32 kind, s32 x, s32 y, s32 z);
-void Actor_SetSingleChildFlagsFar(struct Actor *object,
-                                           s32 value);
 
 struct SpawnScene {
   u8 unk00[0x10];

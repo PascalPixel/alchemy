@@ -4,6 +4,8 @@
 #include "io_reg.h"
 #include "version.h"
 
+void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
+
 extern char SceneId_Ov690Room1;
 extern char SceneId_Ov690Room2;
 extern char SceneId_Ov690Room4;

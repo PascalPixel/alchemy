@@ -3,6 +3,8 @@
 #include "main_routine_work.h"
 #include "event_inline.h"
 
+void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
+
 extern u32 Data_0200eb60;
 extern const u8 gData_02005aa4[];
 extern const u8 gData_02005ab4[];
@@ -11,7 +13,6 @@ extern const u8 gData_02005b0c[];
 
 void Animation_ApplyChildValues(struct Actor *object, s32 value);
 void Animation_SetStateFlags(struct Actor *object, s32 flags);
-void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 void Func_02004ef0(const u8 *a, const u8 *b, const u8 *c, const u8 *d);
 void Func_020004a4(void);
 

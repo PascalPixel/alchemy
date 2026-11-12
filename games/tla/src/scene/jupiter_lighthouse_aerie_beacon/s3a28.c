@@ -8,6 +8,7 @@
 #include "event_inline.h"
 #include "call.h"
 #include "text/msg_ids.h"
+#include "field.h"
 
 /// Writes to out the ids of objects 0 to 63 standing in columns 4 to 8 and in
 /// the three rows from 72 less the row of z. Nothing in this overlay calls it.
@@ -212,7 +213,6 @@ void Func_02003c58(s32 mode) {
 
 s32 Func_020059b4();
 s32 Func_02004644();
-s32 Actor_SetSingleChildFlags();
 s32 Func_02000cd0();
 s32 Party_AddActiveOwner();
 s32 Func_02001388();

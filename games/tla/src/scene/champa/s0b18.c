@@ -4,6 +4,8 @@
 #include "types.h"
 #include "ram_buffer.h"
 
+void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
+
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
      u8 pad[off];                                                              \
@@ -13,7 +15,6 @@
 
 #include "event_inline.h"
 s32 Func_020029fc();
-s32 Actor_SetSingleChildFlags();
 s32 Func_02002ba4();
 s32 Func_02002bac();
 s32 Actor_SetActionCallback();

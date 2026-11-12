@@ -1,8 +1,6 @@
 /// @file
 /// The scene code of overlay 0x668 that its scene tables belong to, in ROM order; the rest of the overlay is in eastern_alhafra/.
 
-#define OWN_Actor_SetSingleChildFlags
-
 #include "battle.h"
 #include "field.h"
 #include "game.h"
@@ -120,7 +118,6 @@ struct DoorPlan {
 
 extern u8 gData_02005290[];
 
-s32 Actor_SetSingleChildFlags();
 void Func_0200112c(void);
 void Func_020017ec(void);
 void Func_02001cb0(void);

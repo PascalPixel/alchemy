@@ -10,10 +10,7 @@
 #include "scene_ids.h"
 #include "event_inline.h"
 
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
 s32 Math_Cosine(s32 angle);
-
 
 extern u8 MsgSettlements01;
 

@@ -9,6 +9,7 @@
 #include "main_routine_work.h"
 #include "event_work.h"
 #include "field_sprite.h"
+#include "field.h"
 
 void Func_02000404(void);
 void Func_02000490(void);
@@ -75,8 +76,6 @@ void Func_020005b8(void) {
   }
 }
 
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
 void Func_02002c88(s32 a, s32 b);
 void Func_02000f80(void);
 void Func_020019d8(void);

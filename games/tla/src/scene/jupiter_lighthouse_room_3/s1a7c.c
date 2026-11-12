@@ -12,6 +12,8 @@
 #include "io_reg.h"
 #include "cell_target.h"
 
+void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
+
 struct CellMapCell {
   u8 unk00[2];
   u8 event;
@@ -226,8 +228,6 @@ struct PushEvent {
   u16 busy;
 };
 
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 

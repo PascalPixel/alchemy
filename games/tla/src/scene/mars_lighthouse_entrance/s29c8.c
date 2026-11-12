@@ -2,6 +2,7 @@
 #include "actor.h"
 #include "iwram_call.h"
 #include "event_inline.h"
+#include "field.h"
 
 struct Sprite {
   u8 unk00[4];
@@ -40,7 +41,6 @@ extern u8 gData_020023c4[];
 extern u8 gData_020056d0[];
 void Func_02004bd0(struct Actor *object, const void *script);
 s32 Math_Cosine(s32 angle);
-void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 s32 Random16Far(void);
 void ResourceMetadata_ClearRecord(void *record);
 void Resource_ResetEntry(s32 entry);

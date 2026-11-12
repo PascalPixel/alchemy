@@ -4,6 +4,7 @@
 #include "actor.h"
 #include "scene_tables.h"
 #include "event_inline.h"
+#include "field.h"
 
 void Func_02000098(s32 id) {
   struct Actor *object = Actor_Get(id);

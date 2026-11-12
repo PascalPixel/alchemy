@@ -15,8 +15,6 @@
 extern const u32 gSceneExits[];
 
 void Scene_SetActorSpritePriority(struct Actor *object, s32 priority);
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
 void Animation_ApplyChildValues(struct Actor *object, s32 value);
 void Animation_ApplyChildArgument(void *animation, s32 value);
 u8 *ResourceMetadata_Register(void *animation, s32 id);

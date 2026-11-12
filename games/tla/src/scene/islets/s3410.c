@@ -4,6 +4,7 @@
 #include "types.h"
 #include "heap_release.h"
 #include "palette_snapshots.h"
+#include "field.h"
 
 void Func_02003410(void) {
   struct PaletteSnapshotWork *queue;
@@ -119,7 +120,6 @@ void Func_020034fc(void) {
 }
 
 void Func_02003e64();
-void Actor_SetSingleChildFlags();
 void Func_02003f84();
 
 void Func_02003620(void) {

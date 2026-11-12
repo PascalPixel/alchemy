@@ -5,6 +5,7 @@
 #include "event_work.h"
 #include "effect_sprite.h"
 #include "system.h"
+#include "actor_view.h"
 
 #define WHIRL_COUNT 100
 
@@ -31,7 +32,6 @@ void wait(s32 frames);
 s32 Resource_FindFreeEntry(void);
 s32 Resource_ResetEntry(u32 entry);
 void HeapSlot_Release(s32 slot);
-void Actor_SetSingleChildFlagsFar(struct Actor *object, u32 flags);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, s32 *position);
 void Camera_WorldToScreen(s32 *position);
 void Sound_PlayFar(s32 cue);

@@ -2,6 +2,7 @@
 #include "actor.h"
 #include "ram_buffer.h"
 #include "canvas_sprite.h"
+#include "actor_view.h"
 
 struct WhirlWork {
   u8 unk0000[0x1b08];
@@ -37,7 +38,6 @@ void Func_080e2d64(void);
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 void Actor_SetPositionAndResetMotionFar(struct Actor *object, s32 x, s32 y,
                                         s32 z);
-void Actor_SetSingleChildFlagsFar(struct Actor *object, s32 flags);
 void Task_Add(void (*func)(void), s32 order);
 void Task_Remove(void (*func)(void));
 void Actor_Destroy(struct Actor *object);

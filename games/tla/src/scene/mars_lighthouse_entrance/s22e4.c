@@ -2,6 +2,7 @@
 #include "io_reg.h"
 #include "actor.h"
 #include "event_inline.h"
+#include "field.h"
 
 /// One object the beam reaches, as Func_020022e4 records it.
 struct MarsLighthouseBeamTarget {
@@ -27,8 +28,6 @@ struct MarsLighthouseBeam {
 
 extern u8 gData_020023c4[];
 
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
 void Func_020020ec(void);
 
 void Func_020022e4(u16 *targets, u16 *stops, s32 a2, s32 a3) {

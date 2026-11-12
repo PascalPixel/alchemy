@@ -6,6 +6,7 @@
 #include "effect_sprite.h"
 #include "battle.h"
 #include "system.h"
+#include "actor_view.h"
 
 #define SPARK_COUNT 100
 
@@ -34,7 +35,6 @@ s32 Resource_ResetEntry(u32 entry);
 void HeapSlot_Release(s32 slot);
 void Actor_ArmCallback(s32 actor, s32 angle, s32 frames);
 void Actor_ApplyRandomChildValues(void);
-void Actor_SetSingleChildFlagsFar(struct Actor *object, u32 flags);
 void EffectSprite_DrawAtWorldPosition(struct EffectSprite *sprite,
                                       struct SparkParticle *particle);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, s32 *position);

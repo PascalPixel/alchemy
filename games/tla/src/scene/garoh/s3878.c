@@ -1,6 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "event_inline.h"
+#include "field.h"
 
 #define ACTOR_MODE_THEN_WAIT(id, mode, frames)                                 \
   do {                                                                         \
@@ -21,7 +22,6 @@ s32 Func_02001454();
 s32 Func_020051ac();
 s32 Func_020051b4();
 s32 Func_020052b4();
-s32 Actor_SetSingleChildFlags();
 s32 __divsi3();
 extern u8 MsgGaroh28[];
 extern u8 gMainRoutineWork[];

@@ -4,8 +4,8 @@
 #include "main_routine_work.h"
 #include "scene_tables.h"
 #include "event_inline.h"
+#include "field.h"
 
-void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 void Func_02002b28(void);
 void Func_02002b30(void);
 void Func_02002c88(s32 a, s32 b);

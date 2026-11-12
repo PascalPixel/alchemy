@@ -6,6 +6,8 @@
 #include "actor.h"
 #include "event_inline.h"
 
+void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
+
 struct GlowState {
   s32 x; ///< 16.16 pixels
   s32 y; ///< 16.16 pixels
@@ -57,7 +59,6 @@ extern u8 gField_Tiles64D[];
 
 void *HeapSlot_AllocFar(s32 slot, s32 size);
 void HeapSlot_Release(s32 slot);
-void Actor_SetSingleChildFlags(struct Actor *actor, s32 flags);
 void Func_02002824(void *source, void *destination);
 s32 Resource_FindFreeEntry(void);
 void Resource_ResetEntry(s32 entry);

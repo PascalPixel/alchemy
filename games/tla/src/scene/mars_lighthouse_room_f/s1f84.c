@@ -1,5 +1,7 @@
 #include "room.h"
 
+void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
+
 extern const u8 gData_02005d8c[];
 
 void Func_02001e20(void);

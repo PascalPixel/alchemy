@@ -12,11 +12,11 @@
 #include "event_inline.h"
 #include "frame.h"
 
+void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
+
 extern const u32 gSceneExits[];
 
 u32 Random16Far(void);
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
 void Func_020051c0(void);
 void Func_020051c8(void);
 void Func_02000668(struct Actor *object, s32 a);

@@ -7,6 +7,7 @@
 #include "macros.h"
 #include "text/msg_ids.h"
 #include "vector3.h"
+#include "field.h"
 
 void Func_02000218(s32 side, s32 phase) {
   if (side == 0) {

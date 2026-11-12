@@ -66,7 +66,6 @@ extern u16 gData_02003cd0;
 
 void Func_02002e00(void);
 void Func_02002d44(s32 x, s32 y, s32 z, s32 frames);
-void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 void Func_0200137c(void);
 extern const u8 gData_020037f8[];
 extern const u8 gData_0200381c[];

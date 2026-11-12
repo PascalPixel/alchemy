@@ -1,9 +1,9 @@
 #include "types.h"
 #include "actor.h"
 #include "event_inline.h"
+#include "field.h"
 
 s32 Map_GetTerrainHeight(s32 terrain, s32 x, s32 z);
-s32 Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 s32 Func_020005dc(s32 terrain, s32 x, s32 z, s32 height);
 
 void Func_02000880(u16 *list) {

@@ -8,6 +8,7 @@
 #include "map.h"
 #include "event_work.h"
 #include "text/msg_ids.h"
+#include "field.h"
 
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -852,9 +853,6 @@ void Func_020034b4(void) {
   Actor_SetModeById(5, 3);
   wait(30);
 }
-
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
 
 void Func_020037c8(void) {
   Func_02005880();

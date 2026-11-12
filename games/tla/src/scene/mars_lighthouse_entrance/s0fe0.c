@@ -2,6 +2,8 @@
 #include "io_reg.h"
 #include "scene_tables.h"
 
+void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
+
 void GameFlag_SetByte(s32 flag, s32 value);
 void Func_02000df0(void);
 void Actor_SetAnimationSpeed(struct Actor *object, s32 speed);

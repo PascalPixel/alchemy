@@ -1,8 +1,8 @@
 #include "types.h"
 #include "field_event.h"
 #include "event_inline.h"
+#include "field.h"
 
-void Actor_SetSingleChildFlags();
 void Func_02004bc0();
 void Func_020001f8();
 

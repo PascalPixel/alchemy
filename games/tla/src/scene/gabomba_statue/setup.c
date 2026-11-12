@@ -9,13 +9,13 @@
 #include "text/msg_ids.h"
 #include "scene_tables.h"
 #include "event_inline.h"
+#include "field.h"
 
 void Func_020022d0(s32 id, s32 x, s32 z, s32 facing);
 void Func_020011bc(s32 message, s32 value);
 void Func_020056b4(void);
 void Func_0200533c(void);
 void Func_020057b4(void);
-void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 s32 Func_02004d48(s32 a, s32 b);
 void Func_0200581c(void);
 void Event_FinishScreenTransition(void);

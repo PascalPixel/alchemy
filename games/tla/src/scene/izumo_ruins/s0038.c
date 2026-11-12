@@ -5,6 +5,7 @@
 #include "text/msg_ids.h"
 #include "types.h"
 #include "event_inline.h"
+#include "field.h"
 
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -13,7 +14,6 @@
    } *)(base))                                                                 \
        ->v)
 
-void Actor_SetSingleChildFlags();
 s32 Func_02000128();
 
 s32 Func_02000038(s32 a0, s32 a1, s32 a2, s32 a3) {

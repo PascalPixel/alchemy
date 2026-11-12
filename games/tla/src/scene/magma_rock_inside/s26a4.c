@@ -4,8 +4,9 @@
 #include "field_sprite.h"
 #include "event_inline.h"
 
+void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
+
 void Scene_SetActorSpritePriority(struct Actor *object, s32 priority);
-void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 void Func_02004d40(void);
 void Func_02004d48(void);
 void Func_02000694(s32 layer, s32 x, s32 z, s32 mask);

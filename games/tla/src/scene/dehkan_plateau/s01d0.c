@@ -240,8 +240,6 @@ struct EffectWork7c4 {
   s16 timer;
 };
 void Field_DispatchTypeHandler(s32 type);
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
 
 void Func_0200056c(s32 id) {
   Actor_GetById(id)->unk5c[0] = 3;

@@ -2,11 +2,10 @@
 #include "actor.h"
 #include "heap_release.h"
 #include "fixed_math.h"
+#include "actor_view.h"
 
 s32 Party_GetLeaderActor(void);
 void wait(s32);
-void Actor_SetSingleChildFlagsFar(struct Actor *object,
-                                           s32 flags);
 void Actor_StartScriptFar(struct Actor *object,
                                   const u8 *script);
 void Marker_MoveLeaderAwayFromEmitter(void);

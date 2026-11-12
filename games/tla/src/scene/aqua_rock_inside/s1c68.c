@@ -11,6 +11,8 @@
 #include "ram_buffer.h"
 #include "event_inline.h"
 
+void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
+
 void Func_02001c68(void) {
   if (Event_GetFlag(0x9ae)) {
     Func_02003d7c();

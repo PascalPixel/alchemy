@@ -4,6 +4,7 @@
 #include "system/io_reg.h"
 #include "system/main_routine_work.h"
 #include "event_inline.h"
+#include "field.h"
 
 struct Work {
   u8 pad[340];
@@ -34,7 +35,6 @@ void Func_02003380();
 void Func_02003398();
 void Func_020033a0();
 void Func_02003430();
-void Actor_SetSingleChildFlags();
 s32 Random16Far();
 extern u8 gData_020035cc[];
 extern u8 gData_02003620[];

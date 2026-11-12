@@ -13,8 +13,6 @@ extern const u8 gWorldMapPackedTilesC[];
 extern u8 gData_02006f20[];
 extern u8 gData_02006e0e[];
 extern u8 gData_02006e0c[];
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
 void Animation_ApplyChildValues(struct Actor *object, s32 value);
 u32 Random16Far(void);
 void Func_02004c20(void);

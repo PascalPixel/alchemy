@@ -3,6 +3,8 @@
 
 #include "local.h"
 
+void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
+
 void Func_02000468(struct Actor *object) {
   struct FieldSprite *sprite;
   s32 angle;

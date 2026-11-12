@@ -7,6 +7,7 @@
 #include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "event_inline.h"
+#include "field.h"
 
 extern const u8 gData_02005944[];
 extern const u8 gData_02005d7c[];
@@ -32,7 +33,6 @@ void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void Func_020057b4(void);
 void Func_02004f40(s32 *x_out, s32 *z_out);
-void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 void Func_02005624(struct Actor *object, s32 mode);
 s32 ArcTan2(s32 y, s32 x);
 void Func_02005644(struct Actor *object);

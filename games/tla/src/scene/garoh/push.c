@@ -9,6 +9,7 @@
 #include "scene_tables.h"
 #include "ram_buffer.h"
 #include "call.h"
+#include "field.h"
 
 void Func_02005304(s32 a, s32 b);
 void Func_0200530c(s32 a, s32 b);

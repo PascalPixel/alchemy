@@ -5,6 +5,7 @@
 #include "main_routine_work.h"
 #include "event_inline.h"
 #include "scene_tables.h"
+#include "field.h"
 
 extern char SceneId_Ov65FRoom1;
 extern char SceneId_Ov65FRoom2;

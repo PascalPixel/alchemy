@@ -1,6 +1,7 @@
 #include "types.h"
 #include "actor.h"
 #include "ram_buffer.h"
+#include "actor_view.h"
 
 struct PendingEvent;
 
@@ -34,7 +35,6 @@ void Animation_SetIndexAndInitializeObjectsFar(struct Actor *object, s32 index);
 void Animation_ApplyChildValueToFirstFar(void *animation, s32 value);
 void wait(s32 frames);
 struct Actor *Actor_GetById(u32 actor);
-void Actor_SetSingleChildFlagsFar(struct Actor *object, s32 flags);
 void Camera_FollowActor(s32 actor, s32 mode);
 s32 Func_080ce31c(s32 kind);
 struct PendingEvent *Func_080ce458(u32 filter, s32 kind, s32 selector);

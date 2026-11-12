@@ -1,11 +1,10 @@
 #include "types.h"
 #include "actor.h"
 #include "event_inline.h"
+#include "field.h"
 
 extern const u8 gData_02004744[];
 
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
 void Func_020041cc(struct Actor *object, s32 mode);
 void Func_020041dc(struct Actor *object, const void *script);
 void Func_020015ec(void);

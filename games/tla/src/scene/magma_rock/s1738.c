@@ -7,6 +7,8 @@
 #include "event_inline.h"
 #include "frame.h"
 
+void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
+
 /// The native reads these event work halfwords signed (ldrsh).
 
 struct MagmaRockEffectConfig {
@@ -33,7 +35,6 @@ u32 Random16Far(void);
 void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    struct MagmaRockEffectConfig *config);
-void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 void Scene_SetActorSpritePriority(struct Actor *object, s32 priority);
 void Func_02003a54(struct Actor *object, s32 a);
 void Func_02003c4c(struct Actor *object, s32 a);

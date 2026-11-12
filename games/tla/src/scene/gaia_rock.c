@@ -1,10 +1,6 @@
 /// @file
 /// The scene code of overlay 0x680, in ROM order.
 
-// field.h declares this on struct ActorView, as the routine behind it is
-// defined; this scene passes the same actors as struct Actor and declares it
-// so below.
-#define OWN_Actor_SetSingleChildFlags
 #include "battle.h"
 #include "field.h"
 #include "game.h"
@@ -443,7 +439,6 @@ void Func_02000670(void) {
 #endif
 
 s32 Func_02000f14();
-void Actor_SetSingleChildFlags();
 void Func_02000ed4();
 void Func_02000dd0();
 void Func_02000b2c();
@@ -556,8 +551,6 @@ s32 Func_02000a68(void) {
   }
   return 0;
 }
-
-void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 
 void Func_02000ab4(void) {
   if (gMainRoutineWork.renderMode == 2) {

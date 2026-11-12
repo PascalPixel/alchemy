@@ -5,6 +5,8 @@
 #include "event_inline.h"
 #include "scene_ids.h"
 
+void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
+
 struct WarpEntry {
   s32 map;
   u16 x;

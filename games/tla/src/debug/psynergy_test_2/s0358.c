@@ -8,6 +8,7 @@
 #include "fixed_math.h"
 
 #include "main_routine_work.h"
+#include "field.h"
 
 struct Spark {
   s32 position[3];
@@ -98,8 +99,6 @@ void Func_02000418(s32 mode, s32 id, s32 x, s32 z) {
   }
 }
 
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
 void Func_020005d8(s32 scene, s32 entrance);
 
 /// Mode 1 places object kind 354 at (x, z) in pixels; mode 2 grows object

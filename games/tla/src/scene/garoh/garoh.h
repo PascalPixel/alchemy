@@ -6,8 +6,6 @@
 #include "actor.h"
 #include "flag_call.h"
 
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
 void Event_WaitTransitionFrames(void);
 
 void Func_020051ac(void);

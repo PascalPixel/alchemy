@@ -15,6 +15,7 @@
 #include "main_routine_work.h"
 #include "scene_ids.h"
 #include "frame.h"
+#include "field.h"
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 
@@ -293,7 +294,6 @@ void Func_020005b8(void) {
 
 s32 Func_02005894();
 void Func_02005924();
-s32 Actor_SetSingleChildFlags();
 s32 PartyInventory_Remove();
 void *HeapSlot_AllocFar();
 s32 HeapSlot_Release();

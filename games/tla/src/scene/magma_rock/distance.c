@@ -11,8 +11,6 @@ struct EventObjects {
 };
 
 void Scene_SetActorSpritePriority(struct Actor *object, s32 priority);
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
 
 void Func_02000594(void) { Func_080d2b4c(8, 56); }
 

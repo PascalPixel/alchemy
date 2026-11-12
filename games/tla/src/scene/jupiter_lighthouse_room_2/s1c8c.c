@@ -5,6 +5,8 @@
 #include "io_reg.h"
 #include "event_inline.h"
 
+void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
+
 struct CellTargetEntry;
 
 struct CellTarget {
@@ -20,7 +22,6 @@ struct CellTarget {
 };
 
 void Func_02001b94(void);
-void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 #include "io_write.h"

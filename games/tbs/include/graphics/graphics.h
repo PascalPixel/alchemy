@@ -164,8 +164,8 @@ extern const struct TileMask gMenu_BarPatternRows[];
 /// The credits' 8x8 one-bit font, ASCII 32 to 127.
 extern const u8 gCredits_Font[];
 extern const u8 gScreenTransition_DitherTable[];
-extern s8 gScreenTransition_EdgeOffsets[];
-extern u8 gScreenTransition_NoiseWidths[];
+extern const s8 gScreenTransition_EdgeOffsets[];
+extern const u8 gScreenTransition_NoiseWidths[];
 /// The resource bank's far-call stubs, listed in the resource directory as
 /// both ResourceFarCalls and ResourceFarCallsAlternate.
 extern const u8 FarCall_ResourceTable[];

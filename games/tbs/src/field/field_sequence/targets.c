@@ -9,7 +9,7 @@
 /// ranges, ended by -1, and a kind not listed reaches 16 pixels. Called by
 /// Field_FindNearbyPsynergyTarget.
 s32 Field_GetPsynergyTargetRange(s32 kind) {
-  s16 *rangeEntry = gFieldEffect_TargetRangeByMode;
+  const s16 *rangeEntry = gFieldEffect_TargetRangeByMode;
   s32 range = 16;
   s32 listedKind = *rangeEntry;
 

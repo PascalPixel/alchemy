@@ -81,7 +81,7 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
 /// joining sets it on the leader, and clears it to end the pulse.
 void FieldEffect_PulseActorScale(struct Actor *actor) {
   u8 *object = (u8 *)actor;
-  u32 *table = gFieldEffect_PulseScales;
+  const u32 *table = gFieldEffect_PulseScales;
   u32 index = ((u32)gVBlankCount >> 2) & 1;
   u32 scale = table[index];
   ((struct Actor *)object)->scaleX = scale;

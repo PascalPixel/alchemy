@@ -96,7 +96,7 @@
 
 /// The speakers' definitions (field_sequence_tables.c), read by
 /// Speaker_FindDefinition.
-extern struct SpeakerDefinition gSpeakerDefinitions[];
+extern const struct SpeakerDefinition gSpeakerDefinitions[];
 
 /// Scene ids above the field scenes, which MainRoutine_Run runs without a
 /// layout; each returns a result to Scene_ReturnFromSequence instead of an

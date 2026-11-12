@@ -22,7 +22,7 @@ void Weather_UpdateRain(void) {
   u32 i;
 
   for (i = 0; i < WEATHER_PARTICLE_COUNT; i++, particle++) {
-    s16 *frame;
+    const s16 *frame;
     s32 x;
     s32 y;
 
@@ -40,10 +40,10 @@ void Weather_UpdateRain(void) {
       particle->priority = 1;
       particle->x = x;
       particle->y = y;
-      particle->tile = work->tileBase + *(u16 *)frame;
+      particle->tile = work->tileBase + *(const u16 *)frame;
       frame++;
-      particle->shape = *(u8 *)frame;
-      particle->size = *(u8 *)(frame + 1);
+      particle->shape = *(const u8 *)frame;
+      particle->size = *(const u8 *)(frame + 1);
       Oam_AddSpriteAtDepth(particle, 240);
     }
     if (particle->timer == 0) {

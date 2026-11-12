@@ -175,7 +175,7 @@ extern u16 gLogRoomsA_StopTimer;
 /// (ld_script.ld). Only the unused Actor_RunUpdateAllFromHeap reads it, to
 /// copy the routine to the heap and run it once.
 extern u8 Actor_UpdateAllCodeSize[];
-extern u8 gActor_BlinkSpriteColors[];
+extern const u8 gActor_BlinkSpriteColors[];
 // The actor motion scripts: movement types 1 to 7, which
 // Actor_SetMovementType starts by number, and two turning scripts
 // with no movement type number.
@@ -247,8 +247,8 @@ void WorldMap_StartStillPicture(void);
 
 // The field effects' scripts and tables (field/field_sequence_tables.c,
 // scripts.s and spark_tiles.s).
-extern u16 gFieldEffect_CyclePatternWords[];
-extern s8 gFieldEffect_RandomChildValues[];
+extern const u16 gFieldEffect_CyclePatternWords[];
+extern const s8 gFieldEffect_RandomChildValues[];
 /// The 32 by 16 spark of Avoid's falling arcs (arc_spark.png), 4 bits a pixel;
 /// FieldPsynergy_Avoid loads it.
 extern const u8 gFieldEffect_ArcSparkTiles[];
@@ -260,9 +260,9 @@ extern const s32 gFieldEffect_WatchedActorScript[];
 extern const s32 gFieldEffect_MarkerParticleScript[];
 extern const s32 gFieldEffect_ParticleEmitterScript[];
 extern const s32 gFieldEffect_ParticleScript[];
-extern u32 gFieldEffect_PulseScales[];
+extern const u32 gFieldEffect_PulseScales[];
 extern const s32 gFieldEffect_SourceHoldScript[];
-extern s16 gFieldEffect_TargetRangeByMode[];
+extern const s16 gFieldEffect_TargetRangeByMode[];
 /// A lone SC_RELEASE: an actor that has arrived releases itself
 /// (FieldEffect_ReleaseOnArrival).
 extern const s32 gFieldEffect_UntargetedActorScript[];
@@ -274,7 +274,7 @@ extern const u8 gFieldEffect_QuadrantModes[];
 /// Psynergy fades the palettes toward, picked by the frame counter or
 /// by the FLAG_PSYNERGY_TINT flags (FieldPsynergy_FadeToCastColor).
 extern const s32 gFieldEffect_TargetColors[];
-extern s16 gFieldEffect_GroundParticleFrames[];
+extern const s16 gFieldEffect_GroundParticleFrames[];
 /// The ground particles' 16 by 16 tiles, packed (Decompress_ByteLz).
 extern const u8 gFieldEffect_GroundParticleTiles[];
 extern const s32 gFieldEffect_RisingPulseScript[];

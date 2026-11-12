@@ -166,7 +166,7 @@ void FieldPsynergy_Halt(void) {
 /// this way.
 void FieldPsynergy_UpdateHaltedActor(struct Actor *actor) {
   void *object = (void *)actor;
-  s8 *table = gFieldEffect_RandomChildValues;
+  const s8 *table = gFieldEffect_RandomChildValues;
   s32 random = Random16();
   Actor_SetSpriteColorModeFar(object, table[(u32)(random * 8) >> 16]);
 }

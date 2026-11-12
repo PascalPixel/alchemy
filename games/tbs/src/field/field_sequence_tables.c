@@ -9,17 +9,9 @@
 #include "types.h"
 #include "scene_tables.h"
 
-// Their readers declare them in battle.h, field.h, graphics.h, line_scroll.h
-// and field_effect_scripts.h, and field_sequence.c declares the colour curves.
-// Some readers declare their table without const: battle.h's
-// gFieldEffect_TargetRangeByMode, gMindRead_CasterPaletteCycle,
-// gSpeakerDefinitions, gFieldEffect_GroundParticleFrames,
-// gFieldEffect_PulseScales, gFieldEffect_CyclePatternWords and
-// gFieldEffect_RandomChildValues, graphics.h's gScreenTransition_NoiseWidths
-// and gScreenTransition_EdgeOffsets, field.h's gActor_BlinkSpriteColors
-// and field_sequence.c's three gColorBuffer_ChannelCurve tables. All are
-// defined const all the same: in rom_main_04 .data follows scripts.o, and these
-// tables would move. So this file includes none of those headers.
+// Their readers declare them in battle.h, field.h, graphics.h, line_scroll.h,
+// field_effect_scripts.h and field_sequence_internal.h, and palette_fade.c
+// declares the colour curves.
 
 /// The message of each searchable cell behavior from 242 to 247, as an
 /// offset from MsgTileChecked and MsgTileResult.

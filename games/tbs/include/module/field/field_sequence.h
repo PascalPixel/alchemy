@@ -293,7 +293,7 @@ void FadeOverlay_DrawMarks(void);
 void FieldEffect_StartFadeOverlay(void *object);
 void FadeOverlay_Suspend(void);
 void FadeOverlay_Resume(void);
-struct SpeakerDefinition *Speaker_FindDefinition(u32 id);
+const struct SpeakerDefinition *Speaker_FindDefinition(u32 id);
 s32 Speaker_GetActorSprite(s32 id);
 s32 Speaker_GetVoice(u32 id);
 s32 Speaker_GetHaltedLines(s32 id);

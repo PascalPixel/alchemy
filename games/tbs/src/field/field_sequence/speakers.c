@@ -8,8 +8,8 @@
 /// gSpeakerDefinitions, or its last entry, the default, when there is
 /// none. The search stops after 130 entries, all but the table's last of its
 /// 131.
-struct SpeakerDefinition *Speaker_FindDefinition(u32 id) {
-  struct SpeakerDefinition *entry = gSpeakerDefinitions;
+const struct SpeakerDefinition *Speaker_FindDefinition(u32 id) {
+  const struct SpeakerDefinition *entry = gSpeakerDefinitions;
   u32 definitionIndex = 0;
 
   if (entry->id != id) {

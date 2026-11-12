@@ -99,7 +99,7 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
     s32 y = i * 2;
 
     iconSprite = &sprites[i];
-    MenuSprite_Initialize(sprites[i], MENU_SPRITE_SHAPE_16X16);
+    MenuSprite_Initialize(sprites[i], OBJ_SIZE_16X16);
     iconSprite->oam.f.x = window->x * 8 + 8;
     iconSprite->oam.f.y = (y + window->y) * 8 + 4;
   }
@@ -215,7 +215,7 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
 
     cursorPosition.x = window->x * 8 - 2;
     cursorPosition.y = (selectedRow * 2 + window->y) * 8 + 20;
-    ((u32 *)sprite)[1] = MENU_SPRITE_SHAPE_16X16;
+    ((u32 *)sprite)[1] = OBJ_SIZE_16X16;
     ((u32 *)sprite)[2] = 0;
     sprite->tile = VramCache_Reload(cursorHandle, (s32)gPointingHandTiles);
     sprite->x = cursorPosition.x + ((gFrameCount & 4) >> 1) - 4;

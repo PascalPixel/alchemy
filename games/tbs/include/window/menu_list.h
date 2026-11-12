@@ -65,10 +65,6 @@ struct CursorSprite {
   u16 unused;
 };
 
-/// attr0 and attr1 of a square 16x16 sprite, as one word: size 1 (attr1 bits
-/// 14 and 15) and every other field 0.
-#define MENU_SPRITE_SHAPE_16X16 0x40000000
-
 /// Sets sprite shape (attr0/attr1) and clears the remaining fields.
 // A statement macro (4 sites), the shape every use matches through; as plain
 // stores, 4 of 49 instructions differ in tbs-en (BattleCommandRow_LoadIcon).

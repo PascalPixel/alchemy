@@ -172,10 +172,10 @@ void WorldPicture_Initialize(void) {
   work->cursorSpeed = WORLD_MAP_CURSOR_MIN_SPEED;
 #ifdef UBFIX
   marker->words[0] = 0;
-  marker->words[1] = MENU_SPRITE_SHAPE_16X16;
+  marker->words[1] = OBJ_SIZE_16X16;
 #else
   *oam++ = 0;
-  *oam++ = MENU_SPRITE_SHAPE_16X16;
+  *oam++ = OBJ_SIZE_16X16;
 #endif
   cursorAttributes = 0x400;
   cursorAttributes |= tile >> 5;

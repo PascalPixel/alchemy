@@ -70,7 +70,7 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
     s32 y = index * 2;
 
     sprite = &sprites[index];
-    MenuSprite_Initialize(sprites[index], MENU_SPRITE_SHAPE_16X16);
+    MenuSprite_Initialize(sprites[index], OBJ_SIZE_16X16);
     sprite->oam.f.x = window->x * 8 + 8;
     sprite->oam.f.y = (y + window->y) * 8 + 4;
   }
@@ -240,7 +240,7 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
     // The cursor wobbles every four frames.
     cursorPosition.x = window->x * 8 - 2;
     cursorPosition.y = (selectedRow * 2 + window->y) * 8 + 20;
-    ((u32 *)cur)[1] = MENU_SPRITE_SHAPE_16X16;
+    ((u32 *)cur)[1] = OBJ_SIZE_16X16;
     ((u32 *)cur)[2] = 0;
     cur->oam.f.tile =
         VramCache_Reload((u16)cursorHandle, (s32)gPointingHandTiles);

@@ -498,8 +498,6 @@ SECTIONS
         "*/games/tla/src/battle/color_scale_loader.o"(.text .rodata .data .padding)
         "*/games/tla/src/battle/battle.o"(.text)
         "*/games/tla/src/battle/presentation/f11e3ac.o"(.text)
-        "*/games/tla/src/battle/strongest_unit.o"(.text)
-        "*/games/tla/src/battle/f11f66c.o"(.text)
         "*/games/tla/src/battle/battle_data.o"(.rodata)
         "*/games/tla/src/battle/battle_action.o"(.rodata)
         "*/games/tla/src/battle/d01297c4.o"(.rodata)

@@ -135,12 +135,11 @@ void Djinn_ShowJoinedMessage(s32 member, s32 element, s32 djinn) {
     Icon_LoadWithPalette(id, zero, &handle, &palette, PORTRAIT_PALETTE, zero);
 
     // The portrait as a bare OAM entry, pushed onto draw layer 250 each frame:
-    // a link word, attributes 0 and 1 (32x32 at y 12) and attribute 2, its
-    // tile with PORTRAIT_PALETTE.
+    // a link word, attributes 0 and 1 and attribute 2.
     p = entry;
     *p++ = zero;
-    *p++ = 0x8000000c | ((DJINN_JOIN_X * 8 + 4) << 16);
-    *p = palette | (PORTRAIT_PALETTE << 12);
+    *p++ = OBJ_SIZE_32X32 | ((DJINN_JOIN_X * 8 + 4) << 16) | 12;
+    *p = palette | OBJ_PALETTE(PORTRAIT_PALETTE);
 
     // No voice blips while the message types.
     work->voiceSound = zero;
@@ -205,11 +204,11 @@ void Party_ShowJoinedMessage(s32 member) {
         Portrait_GetForSpeaker(Party_GetMemberPortraitSprite(member)), 0,
         &handle, &palette, PORTRAIT_PALETTE, 0);
     // The portrait as a bare OAM entry, pushed onto draw layer 250 each frame:
-    // a link word, attributes 0 and 1 (32x32 at y 12) and attribute 2.
+    // a link word, attributes 0 and 1 and attribute 2.
     p = entry;
     *p++ = 0;
-    *p++ = 0x8000000c | ((2 * 8 + 4) << 16);
-    *p = palette | (PORTRAIT_PALETTE << 12);
+    *p++ = OBJ_SIZE_32X32 | ((2 * 8 + 4) << 16) | 12;
+    *p = palette | OBJ_PALETTE(PORTRAIT_PALETTE);
     work->voiceSound = 0;
     work->voiceCountdown = 0;
     MessageArgument_Push(member, MESSAGE_ARGUMENT_ACTOR);
@@ -262,11 +261,11 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second) {
         Portrait_GetForSpeaker(Party_GetMemberPortraitSprite(first)), 0,
         &firstHandle, &palette, PORTRAIT_PALETTE, zero);
     // The portrait as a bare OAM entry, pushed onto draw layer 250 each frame:
-    // a link word, attributes 0 and 1 (32x32 at y 12) and attribute 2.
+    // a link word, attributes 0 and 1 and attribute 2.
     p = firstEntry;
     *p++ = zero;
-    *p++ = 0x800c000c;
-    *p = palette | (PORTRAIT_PALETTE << 12);
+    *p++ = OBJ_SIZE_32X32 | (12 << 16) | 12;
+    *p = palette | OBJ_PALETTE(PORTRAIT_PALETTE);
 
     secondEntry = secondOam;
     Icon_LoadWithPalette(
@@ -274,8 +273,8 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second) {
         &secondHandle, &palette, PORTRAIT_PALETTE + 1, zero);
     p = secondEntry;
     *p++ = zero;
-    *p++ = 0x802c000c;
-    *p = palette | ((PORTRAIT_PALETTE + 1) << 12);
+    *p++ = OBJ_SIZE_32X32 | (44 << 16) | 12;
+    *p = palette | OBJ_PALETTE(PORTRAIT_PALETTE + 1);
 
     ((struct WindowWork *)work)->voiceSound = zero;
     ((struct WindowWork *)work)->voiceCountdown = zero;

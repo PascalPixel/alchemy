@@ -325,7 +325,7 @@ void FieldPsynergy_Move(void) {
   UpdateRisingParticleBurst(hand);
 }
 
-/// Spawns Move's hand (sprite 215) 16 pixels above the caster, at quarter
+/// Spawns Move's hand (SPRITE_MOVE_HAND) 16 pixels above the caster, at quarter
 /// size, and moves it 16 pixels the way the caster faces (to the nearest
 /// quarter turn), with 8 particles round it. Returns the hand, or 0 when it
 /// cannot be spawned (Actor_Spawn); the caller releases it

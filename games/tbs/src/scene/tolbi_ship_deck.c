@@ -361,6 +361,10 @@ enum TolbiShipDeckActorId {
   ACTOR_INVISIBLE_ARRIVED_CAMERA_TARGET = ACTOR_ARRIVED_FIRST_PASSENGER + 9
 };
 
+/// Sean or Ouranos lying on his back, arms flung out (spr_066.png,
+/// spr_067.png), beyond enum ActorAnimation.
+enum { ANIM_LYING_FLAT = 5 };
+
 /// The deck's step triggers at Kalay, beside the ways below, whose cell
 /// behaviors carry the numbers of their exits (TolbiShipDeck_GoBelow).
 enum TolbiShipDeckCellBehavior {
@@ -1092,23 +1096,23 @@ static void TolbiShipDeck_WatchCrewDecideToSail(void) {
     TolbiShipDeck_Turn(ACTOR_KALAY_CREWMAN, FACING_NORTH_NORTHWEST);
     TolbiShipDeck_Say(ACTOR_KALAY_CREWMAN);
     TolbiShipDeck_Turn(ACTOR_KALAY_KAJA, FACING_SOUTH_SOUTHEAST);
-    Actor_SetAnimation(ACTOR_KALAY_KAJA, 3);
+    Actor_SetAnimation(ACTOR_KALAY_KAJA, ANIM_NOD);
     TolbiShipDeck_Say(SPEAKER(ACTOR_KALAY_KAJA, SPEAKER_WINDOW_ABOVE));
     Actor_ShowEmote(ACTOR_KALAY_CAPTAIN, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
     Actor_FaceDirection(ACTOR_KALAY_CAPTAIN, FACING_WEST, 20);
     TolbiShipDeck_Say(SPEAKER(ACTOR_KALAY_CAPTAIN, SPEAKER_WINDOW_ABOVE));
     TolbiShipDeck_Turn(ACTOR_KALAY_KAJA, FACING_EAST);
-    Actor_SetAnimationAndWait(ACTOR_KALAY_KAJA, 4);
+    Actor_SetAnimationAndWait(ACTOR_KALAY_KAJA, ANIM_SHAKE_HEAD);
     TolbiShipDeck_Say(SPEAKER(ACTOR_KALAY_KAJA, SPEAKER_WINDOW_ABOVE));
     Actor_ShowEmote(ACTOR_KALAY_CREWMAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
                     40);
     Actor_StartRepeatedMotion(ACTOR_KALAY_CREWMAN, 2);
     TolbiShipDeck_Say(ACTOR_KALAY_CREWMAN);
-    Actor_SetAnimationAndWait(ACTOR_KALAY_CAPTAIN, 3);
+    Actor_SetAnimationAndWait(ACTOR_KALAY_CAPTAIN, ANIM_NOD);
     TolbiShipDeck_Say(SPEAKER(ACTOR_KALAY_CAPTAIN, SPEAKER_WINDOW_ABOVE));
     TolbiShipDeck_Turn(ACTOR_KALAY_CREWMAN, FACING_NORTH_NORTHEAST);
-    Actor_SetAnimation(ACTOR_KALAY_KAJA, 3);
-    Actor_SetAnimationAndWait(ACTOR_KALAY_CREWMAN, 3);
+    Actor_SetAnimation(ACTOR_KALAY_KAJA, ANIM_NOD);
+    Actor_SetAnimationAndWait(ACTOR_KALAY_CREWMAN, ANIM_NOD);
     Event_Wait(60);
     Actor_ShowEmote(ACTOR_KALAY_CAPTAIN, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 40);
     TolbiShipDeck_Turn(ACTOR_KALAY_CAPTAIN, FACING_SOUTH_SOUTHWEST);
@@ -1124,14 +1128,14 @@ static void TolbiShipDeck_WatchCrewDecideToSail(void) {
     Actor_ShowEmote(ACTOR_KALAY_KAJA, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
     TolbiShipDeck_Say(SPEAKER(ACTOR_KALAY_KAJA, SPEAKER_WINDOW_ABOVE));
     TolbiShipDeck_Turn(ACTOR_KALAY_CAPTAIN, FACING_WEST);
-    Actor_SetAnimationAndWait(ACTOR_KALAY_CAPTAIN, 3);
+    Actor_SetAnimationAndWait(ACTOR_KALAY_CAPTAIN, ANIM_NOD);
     Event_ShowMessageThenWait(
         SPEAKER(ACTOR_KALAY_CAPTAIN, SPEAKER_WINDOW_ABOVE), 0, 20);
     Actor_ShowEmote(ACTOR_KALAY_CREWMAN, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
     Actor_StartRepeatedMotion(ACTOR_KALAY_CREWMAN, 2);
     TolbiShipDeck_Say(ACTOR_KALAY_CREWMAN);
     TolbiShipDeck_Turn(ACTOR_KALAY_CAPTAIN, FACING_SOUTH_SOUTHWEST);
-    Actor_SetAnimation(ACTOR_KALAY_CAPTAIN, 4);
+    Actor_SetAnimation(ACTOR_KALAY_CAPTAIN, ANIM_SHAKE_HEAD);
     TolbiShipDeck_Say(ACTOR_KALAY_CAPTAIN);
     Actor_FaceDirection(ACTOR_KALAY_CREWMAN, FACING_NORTH_NORTHWEST, 0);
     Actor_FaceDirection(ACTOR_KALAY_KAJA, FACING_SOUTH_SOUTHEAST, 40);
@@ -1145,7 +1149,7 @@ static void TolbiShipDeck_WatchCrewDecideToSail(void) {
     Actor_SetAttachedEffect(ACTOR_KALAY_CREWMAN,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Event_Wait(40);
-    Actor_SetAnimationAndWait(ACTOR_KALAY_CAPTAIN, 3);
+    Actor_SetAnimationAndWait(ACTOR_KALAY_CAPTAIN, ANIM_NOD);
     TolbiShipDeck_Say(SPEAKER(ACTOR_KALAY_CAPTAIN, SPEAKER_WINDOW_ABOVE));
     FieldCamera_SetSpeed(0.8);
     FieldCamera_MoveTo(182, CAMERA_KEEP, 760, 1);
@@ -1161,7 +1165,7 @@ static void TolbiShipDeck_WatchCrewDecideToSail(void) {
                     60);
     TolbiShipDeck_Turn(ACTOR_KALAY_CREWMAN, FACING_NORTH_NORTHEAST);
     Event_ShowMessageThenWait(ACTOR_KALAY_CREWMAN, 0, 20);
-    Actor_SetAnimationAndWait(ACTOR_KALAY_CREWMAN, 3);
+    Actor_SetAnimationAndWait(ACTOR_KALAY_CREWMAN, ANIM_NOD);
     Actor_Jump(ACTOR_KALAY_CREWMAN, 4, 0);
     Actor_FaceDirection(ACTOR_KALAY_CREWMAN, FACING_SOUTH_SOUTHEAST, 40);
     FieldCamera_SetSpeed(1);
@@ -1301,7 +1305,7 @@ static void TolbiShipDeck_ConfrontCrewman(void) {
   Actor_SetSpeed(ACTOR_KALAY_CREWMAN, 1.2);
   Actor_WalkToAndWait(ACTOR_KALAY_CREWMAN, 216, 814);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_KALAY_CREWMAN, 10);
-  Actor_SetAnimationAndWait(ACTOR_KALAY_CREWMAN, 4);
+  Actor_SetAnimationAndWait(ACTOR_KALAY_CREWMAN, ANIM_SHAKE_HEAD);
   Actor_StartRepeatedMotion(ACTOR_KALAY_CREWMAN, 2);
   Actor_ShowEmote(ACTOR_KALAY_CREWMAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   Actor_FaceActor(ACTOR_KALAY_CREWMAN, ACTOR_PARTY_LEADER, 20);
@@ -1688,7 +1692,7 @@ static void TolbiShipDeck_AnnouncePreparationsReady(s32 messenger,
   Actor_WalkToAndWait(messenger, 234, 604);
   Actor_WalkToAndWait(messenger, 236, 618);
   Actor_FaceDirection(messenger, FACING_SOUTH_SOUTHWEST, 20);
-  Actor_SetAnimationAndWait(messenger, 3);
+  Actor_SetAnimationAndWait(messenger, ANIM_NOD);
   Event_Wait(20);
   TolbiShipDeck_Turn(crewMember, FACING_SOUTH_SOUTHWEST);
   Actor_Jump(crewMember, 4, 40);
@@ -2053,7 +2057,7 @@ static void TolbiShipDeck_JumpIntoKrakenBattle(void) {
   wait(1);
   FieldCamera_FollowActor(ACTOR_INVISIBLE_SEA_CAMERA_TARGET, 1);
   wait(1);
-  Actor_SetAnimation(ACTOR_SEA_OURANOS, 5);
+  Actor_SetAnimation(ACTOR_SEA_OURANOS, ANIM_LYING_FLAT);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_SEA_OURANOS), 0);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
@@ -2084,7 +2088,7 @@ static void TolbiShipDeck_JumpIntoKrakenBattle(void) {
   Actor_SetDestination(ACTOR_INVISIBLE_SEA_CAMERA_TARGET, 216, 612);
   Sound_Play(SE_MONSTER_ROAR);
   Actor_SetSpritePriority(ACTOR_SEA_SEAN, 2);
-  Actor_SetAnimation(ACTOR_SEA_SEAN, 5);
+  Actor_SetAnimation(ACTOR_SEA_SEAN, ANIM_LYING_FLAT);
   actor = Actor_Get(ACTOR_SEA_SEAN);
   actor->velocityY = px(8);
   actor->gravity = px(7) / 10;
@@ -2200,7 +2204,7 @@ static void TolbiShipDeck_ThankForKraken(void) {
   TolbiShipDeck_Turn(ACTOR_SEA_KAJA, FACING_EAST);
   TolbiShipDeck_Say(ACTOR_SEA_KAJA);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
-  Actor_SetAnimationAndWait(ACTOR_SEA_KAJA, 3);
+  Actor_SetAnimationAndWait(ACTOR_SEA_KAJA, ANIM_NOD);
   Actor_WalkToAndWait(ACTOR_SEA_KAJA, 182, 600);
   Actor_WalkToAndWait(ACTOR_SEA_KAJA, 216, 600);
   TolbiShipDeck_Turn(ACTOR_SEA_KAJA, FACING_NORTH);
@@ -2255,7 +2259,7 @@ static void TolbiShipDeck_SightLand(void) {
   Actor_Jump(ACTOR_SEA_SEAN, 6, 20);
   Event_SetMessageId(MsgTolbiShipCanSeeLand);
   TolbiShipDeck_Say(ACTOR_SEA_SEAN);
-  Actor_SetAnimationAndWait(ACTOR_SEA_KAJA, 3);
+  Actor_SetAnimationAndWait(ACTOR_SEA_KAJA, ANIM_NOD);
   Actor_SetSpeed(ACTOR_SEA_OURANOS, 3);
   Actor_WalkToAndWait(ACTOR_SEA_OURANOS, 180, 546);
   Actor_FaceDirection(ACTOR_SEA_OURANOS, FACING_NORTH_NORTHWEST, 40);
@@ -2442,15 +2446,15 @@ static void TolbiShipDeck_RowersDisembark(void) {
       Event_SetMessageId(MsgTolbiShipOhhhHaventWorkout);
       break;
     case ROWER_REPLY_ROWING_MORE:
-      Actor_SetAnimationAndWait(actorId, 3);
+      Actor_SetAnimationAndWait(actorId, ANIM_NOD);
       Event_SetMessageId(MsgTolbiShipRowingShipMore);
       break;
     case ROWER_REPLY_LOST_AT_SEA:
-      Actor_SetAnimation(actorId, 4);
+      Actor_SetAnimation(actorId, ANIM_SHAKE_HEAD);
       Event_SetMessageId(MsgTolbiShipTotallyLostOcean);
       break;
     case ROWER_REPLY_OLD_MAN:
-      Actor_SetAnimationAndWait(actorId, 4);
+      Actor_SetAnimationAndWait(actorId, ANIM_SHAKE_HEAD);
       Actor_ShowEmote(actorId, EMOTE_IN_FRONT | EMOTE_SCOWL, 40);
       Event_SetMessageId(MsgTolbiShipMakeOldMan);
       break;
@@ -2484,13 +2488,13 @@ static void TolbiShipDeck_RowersDisembark(void) {
   Actor_FaceDirection(ACTOR_ARRIVED_KAJA, FACING_SOUTH_SOUTHEAST, 20);
   Actor_RunRepeatedMotion(ACTOR_ARRIVED_KAJA, 1);
   TolbiShipDeck_Say(ACTOR_ARRIVED_KAJA);
-  Actor_SetAnimationAndWait(ACTOR_ARRIVED_KAJA, 3);
+  Actor_SetAnimationAndWait(ACTOR_ARRIVED_KAJA, ANIM_NOD);
   TolbiShipDeck_Say(ACTOR_ARRIVED_KAJA);
   Actor_FaceDirection(ACTOR_ARRIVED_KAJA, 128 << 8, 40);
   TolbiShipDeck_Say(ACTOR_ARRIVED_KAJA);
   TolbiShipDeck_Turn(ACTOR_ARRIVED_KAJA, FACING_SOUTH_SOUTHEAST);
   TolbiShipDeck_Say(ACTOR_ARRIVED_KAJA);
-  Actor_SetAnimationAndWait(ACTOR_ARRIVED_KAJA, 3);
+  Actor_SetAnimationAndWait(ACTOR_ARRIVED_KAJA, ANIM_NOD);
   FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 1);
   Actor_WalkToAndWait(ACTOR_ARRIVED_KAJA, 188, 512);
   Actor_FaceDirection(ACTOR_ARRIVED_KAJA, FACING_SOUTH_SOUTHEAST, 0);
@@ -2910,14 +2914,14 @@ static void TolbiShipDeck_SightIsland(void) {
   Event_SetMessageId(MsgTolbiShipFinallyReachedTolbi);
   TolbiShipDeck_Say(ACTOR_SEA_OURANOS);
   Actor_RunRepeatedMotion(ACTOR_SEA_KAJA, 2);
-  Actor_SetAnimation(ACTOR_SEA_KAJA, 4);
+  Actor_SetAnimation(ACTOR_SEA_KAJA, ANIM_SHAKE_HEAD);
   TolbiShipDeck_Say(
       SPEAKER(ACTOR_SEA_KAJA, SPEAKER_WINDOW_ABOVE | SPEAKER_PORTRAIT_RIGHT));
   Actor_FaceDirection(ACTOR_SEA_OURANOS, FACING_NORTH_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_SEA_SEAN, FACING_NORTH_NORTHEAST, 0);
   Actor_ShowEmote(ACTOR_SEA_OURANOS, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_SEA_SEAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-  Actor_SetAnimation(ACTOR_SEA_KAJA, 3);
+  Actor_SetAnimation(ACTOR_SEA_KAJA, ANIM_NOD);
   TolbiShipDeck_Say(
       SPEAKER(ACTOR_SEA_KAJA, SPEAKER_WINDOW_ABOVE | SPEAKER_PORTRAIT_RIGHT));
   Actor_SetAttachedEffect(ACTOR_SEA_OURANOS,
@@ -2938,12 +2942,12 @@ static void TolbiShipDeck_SightIsland(void) {
   Actor_RunRepeatedMotion(ACTOR_SEA_OURANOS, 1);
   TolbiShipDeck_Say(
       SPEAKER(ACTOR_SEA_OURANOS, SPEAKER_WINDOW_ABOVE | SPEAKER_PORTRAIT_LEFT));
-  Actor_SetAnimationAndWait(ACTOR_SEA_KAJA, 3);
+  Actor_SetAnimationAndWait(ACTOR_SEA_KAJA, ANIM_NOD);
   TolbiShipDeck_Turn(ACTOR_SEA_SEAN, FACING_NORTH_NORTHEAST);
   TolbiShipDeck_Say(
       SPEAKER(ACTOR_SEA_SEAN, SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT));
   Actor_FaceDirection(ACTOR_SEA_KAJA, FACING_WEST, 20);
-  Actor_SetAnimation(ACTOR_SEA_KAJA, 4);
+  Actor_SetAnimation(ACTOR_SEA_KAJA, ANIM_SHAKE_HEAD);
   TolbiShipDeck_Say(
       SPEAKER(ACTOR_SEA_KAJA, SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_RIGHT));
   Actor_WalkToAndWait(ACTOR_SEA_KAJA, 204, 536);
@@ -3002,7 +3006,7 @@ static void TolbiShipDeck_OfferToScoutIsland(void) {
   Actor_ShowEmote(ACTOR_SEA_SEAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   Actor_RunRepeatedMotion(ACTOR_SEA_SEAN, 1);
   Event_OpenMessage(ACTOR_SEA_SEAN, 0);
-  if (Event_AskYesNoWithActorAnimation(0, 0) == 1) {
+  if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 1) {
     Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_SHAKE_HEAD);
     TolbiShipDeck_Say(ACTOR_IVAN);
     TolbiShipDeck_Turn(ACTOR_MIA, FACING_NORTHWEST);
@@ -3012,7 +3016,7 @@ static void TolbiShipDeck_OfferToScoutIsland(void) {
     Actor_RunRepeatedMotion(ACTOR_GARET, 1);
     Event_OpenMessage(ACTOR_GARET, 0);
     for (;;) {
-      if (Event_AskYesNoWithActorAnimation(0, 0) == 1) {
+      if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 1) {
         Actor_RunRepeatedMotion(ACTOR_IVAN, 1);
         Event_SetMessageId(MsgTolbiShipIsaacDontTalkLikeShouldnt);
         // "Isaac, don't talk like that. Shouldn't we listen to them?"
@@ -3022,7 +3026,7 @@ static void TolbiShipDeck_OfferToScoutIsland(void) {
     }
   }
   Event_Wait(20);
-  Actor_SetAnimationAndWait(ACTOR_SEA_SEAN, 3);
+  Actor_SetAnimationAndWait(ACTOR_SEA_SEAN, ANIM_NOD);
   Event_SetMessageId(MsgTolbiShipSeeYoureGoingGoFor);
   TolbiShipDeck_Say(ACTOR_SEA_SEAN);
   Actor_SetSpeed(ACTOR_SEA_SEAN, 1);
@@ -3078,7 +3082,7 @@ static void TolbiShipDeck_ReturnFromIsland(void) {
   // "How was it, Isaac? Did you explore the island thoroughly?"
   Event_OpenMessage(SPEAKER(ACTOR_SEA_SEAN, SPEAKER_PORTRAIT_RIGHT), 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 0);
-  if (Event_AskYesNoWithActorAnimation(0, 0) == 1) {
+  if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 1) {
     TolbiShipDeck_Say(SPEAKER(ACTOR_SEA_SEAN, SPEAKER_PORTRAIT_RIGHT));
     Event_End();
     return;
@@ -3095,7 +3099,7 @@ static void TolbiShipDeck_ReturnFromIsland(void) {
   Actor_FaceDirection(ACTOR_SEA_SEAN, FACING_NORTH_NORTHEAST, 0);
   TolbiShipDeck_Turn(ACTOR_TOUR_GUIDE_AT_ANCHOR, FACING_SOUTH_SOUTHWEST);
   Actor_Jump(ACTOR_TOUR_GUIDE_AT_ANCHOR, 2, 0);
-  Actor_SetAnimation(ACTOR_TOUR_GUIDE_AT_ANCHOR, 4);
+  Actor_SetAnimation(ACTOR_TOUR_GUIDE_AT_ANCHOR, ANIM_SHAKE_HEAD);
   Event_ShowMessage(ACTOR_TOUR_GUIDE_AT_ANCHOR, 0);
   Actor_SetPosition(ACTOR_SEA_KAJA, 180, 777);
   Actor_SetSpeed(ACTOR_SEA_KAJA, 1);
@@ -3111,11 +3115,11 @@ static void TolbiShipDeck_ReturnFromIsland(void) {
   Actor_StartRepeatedMotion(ACTOR_SEA_OURANOS, 2);
   TolbiShipDeck_Say(ACTOR_SEA_OURANOS);
   Actor_FaceDirection(ACTOR_SEA_KAJA, FACING_SOUTH_SOUTHWEST, 20);
-  Actor_SetAnimation(ACTOR_SEA_KAJA, 3);
+  Actor_SetAnimation(ACTOR_SEA_KAJA, ANIM_NOD);
   TolbiShipDeck_Say(
       SPEAKER(ACTOR_SEA_KAJA, SPEAKER_WINDOW_ABOVE | SPEAKER_PORTRAIT_RIGHT));
   Actor_Jump(ACTOR_TOUR_GUIDE_AT_ANCHOR, 2, 20);
-  Actor_SetAnimation(ACTOR_TOUR_GUIDE_AT_ANCHOR, 4);
+  Actor_SetAnimation(ACTOR_TOUR_GUIDE_AT_ANCHOR, ANIM_SHAKE_HEAD);
   TolbiShipDeck_Say(ACTOR_TOUR_GUIDE_AT_ANCHOR);
   Actor_WalkToAndWait(ACTOR_SEA_KAJA, 182, 640);
   Actor_FaceDirection(ACTOR_SEA_KAJA, FACING_NORTH_NORTHEAST, 0);
@@ -3124,7 +3128,7 @@ static void TolbiShipDeck_ReturnFromIsland(void) {
                   EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   Actor_StartRepeatedMotion(ACTOR_TOUR_GUIDE_AT_ANCHOR, 2);
   TolbiShipDeck_Say(ACTOR_TOUR_GUIDE_AT_ANCHOR);
-  Actor_SetAnimationAndWait(ACTOR_SEA_KAJA, 3);
+  Actor_SetAnimationAndWait(ACTOR_SEA_KAJA, ANIM_NOD);
   TolbiShipDeck_Turn(ACTOR_SEA_SEAN, FACING_EAST);
   Actor_RunRepeatedMotion(ACTOR_SEA_SEAN, 1);
   TolbiShipDeck_Say(ACTOR_SEA_SEAN);
@@ -3140,7 +3144,7 @@ static void TolbiShipDeck_ReturnFromIsland(void) {
   TolbiShipDeck_Say(SPEAKER(ACTOR_SEA_KAJA, SPEAKER_PORTRAIT_RIGHT));
   TolbiShipDeck_Turn(ACTOR_PARTY_LEADER, FACING_NORTHEAST);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
-  Actor_SetAnimationAndWait(ACTOR_SEA_KAJA, 3);
+  Actor_SetAnimationAndWait(ACTOR_SEA_KAJA, ANIM_NOD);
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   Event_FinishScreenTransition();

@@ -1306,33 +1306,29 @@ static inline void Imil_StartRisingEffect(struct Actor *actor) {
 /// Smoke rises from the chimneys of Imil's five houses, staggered over each
 /// second.
 static void Imil_SpawnChimneySmoke(void) {
-  // volatile: the type of &gFrameCount (frame.h); the six editions build the
-  // same bytes without it
-  volatile u32 *frame;
   struct Actor *actor;
 
-  frame = &gFrameCount;
-  if (((u32)*frame % (u32)60) == 0) {
+  if (gFrameCount % 60 == 0) {
     actor = (struct Actor *)FieldActor_Create(SPRITE_DUST_PUFF, px(463), 0,
                                               px(292));
     Imil_StartRisingEffect(actor);
   }
-  if (((u32)(*frame + 30) % (u32)60) == 0) {
+  if ((gFrameCount + 30) % 60 == 0) {
     actor = (struct Actor *)FieldActor_Create(SPRITE_DUST_PUFF, px(320), px(32),
                                               px(356));
     Imil_StartRisingEffect(actor);
   }
-  if (((u32)(*frame + 10) % (u32)60) == 0) {
+  if ((gFrameCount + 10) % 60 == 0) {
     actor =
         (struct Actor *)FieldActor_Create(SPRITE_DUST_PUFF, px(118), 0, px(70));
     Imil_StartRisingEffect(actor);
   }
-  if (((u32)(*frame + 50) % (u32)60) == 0) {
+  if ((gFrameCount + 50) % 60 == 0) {
     actor = (struct Actor *)FieldActor_Create(SPRITE_DUST_PUFF, px(342), 0,
                                               px(124));
     Imil_StartRisingEffect(actor);
   }
-  if (((u32)(*frame + 80) % (u32)60) == 0) {
+  if ((gFrameCount + 80) % 60 == 0) {
     actor = (struct Actor *)FieldActor_Create(SPRITE_DUST_PUFF, px(431), 0,
                                               px(171));
     Imil_StartRisingEffect(actor);

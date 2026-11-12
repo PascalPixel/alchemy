@@ -27,7 +27,7 @@ void Func_02003b38(struct Actor *object) {
 }
 
 extern s32 gData_02006be4;
-extern const s32 gData_02004fc8[];
+extern u32 gData_02004fc8[];
 void Func_02003aac(struct Actor *object);
 
 void Func_02003b70(struct Actor *object) {
@@ -162,10 +162,8 @@ extern u8 gWorldMapPackedPictures[];
 extern u8 gWorldMapPalettes[];
 
 void Func_02004da8(void);
-void *Heap_AllocEwram(s32 size);
 s32 Func_02004aa8(const void *source, void *destination);
 void Func_02004ac8(void);
-void Heap_Release(void *pointer);
 
 #define PUSH_PICTURE(offset)                                                   \
   IO_WRITE_QUEUE_PUSH(0x06002000, (u32)(buffer + (offset)), 0x84000140)
@@ -645,3 +643,65 @@ void Func_02004a1c(void) {
   gData_02006e0c = -1;
   FieldTask_Remove(Func_020048f4);
 }
+
+#include "scene_tables.h"
+
+void Func_02003418(void);
+void Func_020039a8(void);
+
+// clang-format off
+u32 gData_02004e38[] = {
+    39, 2, 48, 0x23010000, 0x16cd0000, 1,
+    3, 17,
+};
+
+u32 gData_02004e58[] = {
+    39, 2, 48, 0x22f10000, 0x16dd0000, 1,
+    48, 0x23010000, 0x16cd0000, 1, 3, 17,
+};
+
+u32 gData_02004e88[] = {
+    39, 2, 48, 0x22f10000, 0x16dd0000, 1,
+    48, 0x23010000, 0x16cd0000, 1, 3, 17,
+};
+
+u32 gData_02004eb8[] = {
+    5, 0x180000, 0, 0, 1, 13,
+    10, 0, 22, 35, 1, 5,
+    0x180000, 0, 0, 1, 5, 0x180000,
+    0, 0, 1, 17,
+};
+
+s32 gData_02004f10[] = {
+    23, 5, (s32)0xffffe667, 23, 7, 0x1999,
+    23, 9, 0xe00, 23, 10, -384,
+    0, 1, 13, 48, 0, 2,
+    0, 0, 0, 0, 1, 38,
+};
+
+s32 gData_02004f70[] = {
+    46,
+    (s32)Func_02003418,
+    0,
+    1,
+    13,
+    120,
+    0,
+    38,
+};
+
+s32 gData_02004f90[] = {
+    46,
+    (s32)Func_020039a8,
+    38,
+};
+
+u32 gData_02004f9c[] = {
+    0, 39, 22, 5, 0, 22,
+    7, 0, 0, 1, 38,
+};
+
+u32 gData_02004fc8[] = {
+    0, 9, 0, 6,
+};
+// clang-format on

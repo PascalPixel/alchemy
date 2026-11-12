@@ -113,11 +113,17 @@ static inline void FieldActor_WatchAndStartScript(s32 object, s32 target,
   Actor_WatchAndStartScript(object, target, actions);
 }
 
-/// Moves a point radius along a heading on the ground plane
-/// (Vector_AddPolarOffset).
-static inline void FieldVector_AddPolarOffset(s32 radius, s32 heading,
-                                              struct FieldPosition *probe) {
+/// Moves a point radius, in 16.16 fixed point, along a heading on the ground
+/// plane (Vector_AddPolarOffset).
+static inline void
+FieldVector_AddPolarOffsetFixed(s32 radius, s32 heading,
+                                struct FieldPosition *probe) {
   Vector_AddPolarOffset(radius, heading, probe);
 }
+
+/// Moves a point a radius in whole pixels along a heading:
+/// `FieldVector_AddPolarOffset(16, heading, &probe)`.
+#define FieldVector_AddPolarOffset(radius, heading, probe)                     \
+  FieldVector_AddPolarOffsetFixed(px(radius), heading, probe)
 
 #endif

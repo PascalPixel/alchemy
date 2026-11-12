@@ -2450,7 +2450,7 @@ static void AltinPeak_TurnCartRight(struct Actor *actor) {
 
   angle = (actor->facing + TRIG_TURN / 4) & 0xc000;
   SET_POSITION(&position, actor->x.fixed, actor->y.fixed, actor->z.fixed);
-  FieldVector_AddPolarOffset(PIXELS(24), angle, &position);
+  FieldVector_AddPolarOffset(24, angle, &position);
   x = (position.x + PIXELS(8)) & 0xfff00000;
   z = (position.z + PIXELS(8)) & 0xfff00000;
   angle += TRIG_TURN / 2;
@@ -2461,7 +2461,7 @@ static void AltinPeak_TurnCartRight(struct Actor *actor) {
     angle += TRIG_TURN / 64;
     position.x = x;
     position.z = z;
-    FieldVector_AddPolarOffset(PIXELS(24), angle, &position);
+    FieldVector_AddPolarOffset(24, angle, &position);
     actor->x.fixed = position.x;
     actor->z.fixed = position.z;
     actor->facing = angle + TRIG_TURN / 4;
@@ -2481,7 +2481,7 @@ static void AltinPeak_TurnCartLeft(struct Actor *actor) {
 
   angle = (actor->facing - TRIG_TURN / 4) & 0xc000;
   SET_POSITION(&position, actor->x.fixed, actor->y.fixed, actor->z.fixed);
-  FieldVector_AddPolarOffset(PIXELS(24), angle, &position);
+  FieldVector_AddPolarOffset(24, angle, &position);
   x = (position.x + PIXELS(8)) & 0xfff00000;
   z = (position.z + PIXELS(8)) & 0xfff00000;
   angle += TRIG_TURN / 2;
@@ -2492,7 +2492,7 @@ static void AltinPeak_TurnCartLeft(struct Actor *actor) {
     angle -= TRIG_TURN / 64;
     position.x = x;
     position.z = z;
-    FieldVector_AddPolarOffset(PIXELS(24), angle, &position);
+    FieldVector_AddPolarOffset(24, angle, &position);
     actor->x.fixed = position.x;
     actor->z.fixed = position.z;
     actor->facing = angle - TRIG_TURN / 4;
@@ -2532,13 +2532,13 @@ static void AltinPeak_AdvanceCart(struct Actor *actor) {
     }
   }
   SET_POSITION(&position, actor->x.fixed, actor->y.fixed, actor->z.fixed);
-  FieldVector_AddPolarOffset(Iwram_MulQ16(radius, 3 * Q16_ONE / 4), angle,
-                             &position);
+  FieldVector_AddPolarOffsetFixed(Iwram_MulQ16(radius, 3 * Q16_ONE / 4), angle,
+                                  &position);
   actor->x.fixed = position.x;
   actor->z.fixed = position.z;
   ahead = MapGrid_GetTerrainHeight(2, position.x, position.z);
-  FieldVector_AddPolarOffset(-Iwram_MulQ16(radius, 3 * Q16_ONE / 2), angle,
-                             &position);
+  FieldVector_AddPolarOffsetFixed(-Iwram_MulQ16(radius, 3 * Q16_ONE / 2), angle,
+                                  &position);
   behind = MapGrid_GetTerrainHeight(2, position.x, position.z);
   if (*timer <= 20) {
     if (ahead == behind) {
@@ -2580,7 +2580,7 @@ static void AltinPeak_RollCart(s32 id, s32 heading) {
     position.x = actor->x.fixed;
     position.y = actor->y.fixed;
     position.z = actor->z.fixed;
-    FieldVector_AddPolarOffset(PIXELS(16), heading, &position);
+    FieldVector_AddPolarOffset(16, heading, &position);
     if (MapGrid_GetTerrainHeight(2, position.x, position.z) == actor->y.fixed) {
       break;
     }
@@ -2605,7 +2605,7 @@ static void AltinPeak_RollCart(s32 id, s32 heading) {
   position.x = actor->x.fixed;
   position.y = actor->y.fixed;
   position.z = actor->z.fixed;
-  FieldVector_AddPolarOffset(PIXELS(24), heading, &position);
+  FieldVector_AddPolarOffset(24, heading, &position);
   FieldActor_SetMoveTargetFixed(actor, position.x, actor->y.fixed, position.z);
   Actor_WaitForMove(actor);
   Sound_Play(SE_CART_ROLL);

@@ -991,7 +991,7 @@ static void LamakanDesert_MeetManticore(void) {
       backwardOffset.y = paused;
       backwardOffset.z = paused;
       record = Actor_Get(ACTOR_PARTY_LEADER);
-      FieldVector_AddPolarOffset(-PIXELS(16), record->facing, &backwardOffset);
+      FieldVector_AddPolarOffset(-16, record->facing, &backwardOffset);
       Actor_SetSpeed(ACTOR_PARTY_LEADER, 2);
       Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
       Actor_SetDestinationOffset(ACTOR_PARTY_LEADER,

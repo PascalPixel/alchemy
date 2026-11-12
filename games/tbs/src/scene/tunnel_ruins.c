@@ -279,8 +279,8 @@ static s32 TunnelRuins_HopLeaderTo(struct FieldPosition *target) {
   adjacentTile.y = actor->y.fixed;
   adjacentTile.z = (actor->z.fixed & 0xfff00000) + PIXELS(8);
 
-  FieldVector_AddPolarOffset(
-      PIXELS(16), (actor->facing + TRIG_TURN / 8) & 0xc000, &adjacentTile);
+  FieldVector_AddPolarOffset(16, (actor->facing + TRIG_TURN / 8) & 0xc000,
+                             &adjacentTile);
 
   if (FieldActor_CheckMovementCollision(actor, &adjacentTile) != 1 &&
       FieldActor_CheckMovementCollision(actor, target) == 0) {

@@ -1683,7 +1683,7 @@ static void Imil_RunIceSlide(void) {
 
     // Advance along the slide until its next cell is blocked or too high.
     for (;;) {
-      FieldVector_AddPolarOffset(PIXELS(16), heading, &probe);
+      FieldVector_AddPolarOffset(16, heading, &probe);
       if ((nextBehavior =
                MapGrid_GetCellBehaviorAt(*layer, probe.x, probe.z)) == 255) {
         break;

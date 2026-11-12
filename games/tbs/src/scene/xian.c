@@ -568,7 +568,7 @@ static void Xian_TalkToKungFuStudent(void) {
     SET_VECTOR(stepBackOffset, demonstrationSeen, demonstrationSeen,
                demonstrationSeen);
     leader = Actor_Get(ACTOR_PARTY_LEADER);
-    FieldVector_AddPolarOffset(-PIXELS(8), leader->facing,
+    FieldVector_AddPolarOffset(-8, leader->facing,
                                (struct FieldPosition *)stepBackOffset);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
     Actor_SetDestinationOffset(ACTOR_PARTY_LEADER,
@@ -671,8 +671,7 @@ static void Xian_JumpOverSpilledWater(void) {
     landingPosition.x = (leader->x.fixed & -0x100000) + PIXELS(8);
     landingPosition.y = leader->y.fixed;
     landingPosition.z = (leader->z.fixed & -0x100000) + PIXELS(8);
-    FieldVector_AddPolarOffset(PIXELS(32),
-                               (leader->facing + TRIG_TURN / 8) & 0xc000,
+    FieldVector_AddPolarOffset(32, (leader->facing + TRIG_TURN / 8) & 0xc000,
                                &landingPosition);
     if (FieldActor_CheckMovementCollision(leader, &landingPosition) == 0) {
       Event_Start();

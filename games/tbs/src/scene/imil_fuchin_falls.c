@@ -2015,7 +2015,7 @@ static void Imil_SlideActorAcrossIce(void) {
     z = probe.z;
     x = probe.x;
     startBehavior = MapGrid_GetCellBehaviorAt(actor->layer, x, z);
-    FieldVector_AddPolarOffset(PIXELS(16), heading, &probe);
+    FieldVector_AddPolarOffset(16, heading, &probe);
 
     nextBehavior = MapGrid_GetCellBehaviorAt(actor->layer, probe.x, probe.z);
     if (nextBehavior == CELL_BEHAVIOR_WALL ||
@@ -2040,7 +2040,7 @@ static void Imil_SlideActorAcrossIce(void) {
 
     // Keep sliding through cells with the same cell behavior.
     for (;;) {
-      FieldVector_AddPolarOffset(PIXELS(16), heading, &probe);
+      FieldVector_AddPolarOffset(16, heading, &probe);
       nextBehavior = MapGrid_GetCellBehaviorAt(actor->layer, probe.x, probe.z);
       if (nextBehavior == CELL_BEHAVIOR_WALL) {
         break;

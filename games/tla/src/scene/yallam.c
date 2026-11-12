@@ -1,21 +1,41 @@
 /// @file
-/// The scene code of overlay 0x676 that its scene tables belong to, in ROM order; the rest of the overlay is in yallam/.
+/// All the code of overlay 0x676, in ROM order; the overlay's data is in yallam/data.c.
+
+#include "types.h"
+#include "actor.h"
+#include "field.h"
+
+struct TileSprite {
+  u8 unk00[18];
+  u16 tile;
+};
+
+s32 Func_02000038(struct Actor *object) {
+  struct TileSprite *sprite = object->animation;
+
+  sprite->tile = 0x8000;
+  return 0;
+}
+
+s32 Func_02000044(struct Actor *object) {
+  Actor_SetSingleChildFlags(object, 0);
+  return 0;
+}
+
+#include "venus_lighthouse/distance.c"
 
 #include "yallam/yallam.h"
 #include "version.h"
 #include "battle.h"
-#include "field.h"
 #include "game.h"
 #include "graphics.h"
 #include "lib.h"
 #include "menu.h"
 #include "sound.h"
 #include "system.h"
-#include "types.h"
 #include "scene_tables.h"
 #include "event_inline.h"
 #include "main_routine_work.h"
-#include "actor.h"
 #include "event_work.h"
 #include "task.h"
 #include "ram_buffer.h"
@@ -1690,11 +1710,6 @@ s32 Func_020022b0(void) {
 }
 
 void Func_020022f4(void) {}
-
-struct TileSprite {
-  u8 unk00[18];
-  u16 tile;
-};
 
 void Func_020022f8(void) {
   s32 step;

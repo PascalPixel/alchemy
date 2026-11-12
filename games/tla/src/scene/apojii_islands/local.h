@@ -12,8 +12,9 @@
 #include "field_sprite.h"
 #include "event_inline.h"
 #include "frame.h"
+#include "text/msg_ids.h"
 
-extern const u32 gSceneExits[];
+extern u32 gSceneExits[];
 
 void Scene_SetActorSpritePriority(struct Actor *object, s32 priority);
 void Animation_ApplyChildValues(struct Actor *object, s32 value);
@@ -74,16 +75,9 @@ extern s32 gData_02002a98;
 extern u16 gData_02002a9c;
 extern u16 gData_02002a9e;
 extern u16 gData_02002aa0[];
-extern const u8 gData_02001ee8[];
-extern const u8 gData_02001ef4[];
+extern u32 gData_02001ee8[];
+extern u32 gData_02001ef4[];
 extern const u8 gField_Tiles679[];
-
-extern u8 MsgWhatWhatJust;
-extern u8 MsgWhyDoesMy;
-extern u8 MsgICanTEver;
-extern u8 MsgWowYouLook;
-extern u8 MsgYouGuysAren;
-extern u8 MsgItDBe;
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.

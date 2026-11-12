@@ -280,14 +280,14 @@ void Func_02005594(void);
 void Func_020057e0(void);
 void Func_02005898(void);
 
-extern const u8 gData_02005cd0[];
-extern const u8 gData_02005d18[];
-extern const u8 gData_02005d5c[];
-extern const u8 gData_02005da0[];
-extern const u8 gData_02005e54[];
-extern const u8 gData_0200613c[];
-extern const u8 gData_0200614c[];
-extern const u8 gData_02006324[];
+extern s32 gData_02005cd0[];
+extern u32 gData_02005d18[];
+extern u32 gData_02005d5c[];
+extern s32 gData_02005da0[];
+extern u32 gData_02005e54[];
+extern s32 gData_0200613c[];
+extern s32 gData_0200614c[];
+extern s16 gData_02006324[];
 extern s16 gData_02007948[];
 extern struct KibomboObject *gData_02007950;
 

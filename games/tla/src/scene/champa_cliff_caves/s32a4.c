@@ -56,3 +56,11 @@ void Func_020032a4(void) {
   Resource_ResetEntry(FIELD_AT(work, s16, 4192));
   HeapSlot_Release(220);
 }
+
+#include "scene_tables.h"
+
+u32 gData_02003634[] = {
+    439,
+    440,
+    441,
+};

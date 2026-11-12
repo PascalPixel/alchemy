@@ -88,8 +88,8 @@ void Func_020023c0(void);
 void Func_02002534(void);
 
 extern struct AquaRockWork gData_020034f0;
-extern const u8 gData_02002c44[];
-extern const u8 gData_02002c50[];
+extern u32 gData_02002c44[];
+extern u32 gData_02002c50[];
 extern const u8 gData_02002c74[];
 extern const u8 gData_02002e30[];
 extern const u8 gData_02002e60[];

@@ -644,7 +644,7 @@ SECTIONS
         "*/games/tla/src/scene/kibombo/s516c.o"(.text)
         "*/games/tla/src/scene/kibombo/s538c.o"(.text)
         "*/games/tla/src/scene/kibombo/import.o"(.text)
-        "*/games/tla/src/scene/kibombo/data.o"(.data)
+        "*/games/tla/src/scene/kibombo/s538c.o"(.data)
     }
     .bss :
     {
@@ -684,7 +684,7 @@ SECTIONS
         "*/games/tla/src/scene/gabomba_statue/clock_count_down.o"(.text)
         "*/games/tla/src/scene/gabomba_statue/clock.o"(.text)
         "*/games/tla/src/scene/gabomba_statue/import.o"(.text)
-        "*/games/tla/src/scene/gabomba_statue/data.o"(.data)
+        "*/games/tla/src/scene/gabomba_statue/clock.o"(.data)
         "*/games/tla/src/graphics/field/cached_a.o"(.rodata)
         "*/games/tla/src/scene/gabomba_statue/data2.o"(.data)
     }
@@ -760,7 +760,6 @@ SECTIONS
     .text 0x2008000 :
     {
         "*/games/tla/src/scene/yallam/entry.o"(.text)
-        "*/games/tla/src/scene/yallam/s0038.o"(.text)
         "*/games/tla/src/scene/yallam.o"(.text)
         "*/games/tla/src/scene/yallam/import.o"(.text)
         "*/games/tla/src/scene/yallam/data.o"(.data)
@@ -813,7 +812,7 @@ SECTIONS
         "*/games/tla/src/scene/apojii_islands/s17f8.o"(.text)
         "*/games/tla/src/scene/apojii_islands/events_j.o"(.text)
         "*/games/tla/src/scene/apojii_islands/import.o"(.text)
-        "*/games/tla/src/scene/apojii_islands/data.o"(.data)
+        "*/games/tla/src/scene/apojii_islands/events_j.o"(.data)
         "*/games/tla/src/graphics/field/tiles679.o"(.rodata)
     }
     .bss :
@@ -862,7 +861,7 @@ SECTIONS
         "*/games/tla/src/scene/aqua_rock/s25d4.o"(.text)
         "*/games/tla/src/scene/aqua_rock/events_j.o"(.text)
         "*/games/tla/src/scene/aqua_rock/import.o"(.text)
-        "*/games/tla/src/scene/aqua_rock/data.o"(.data)
+        "*/games/tla/src/scene/aqua_rock/events_j.o"(.data)
         "*/games/tla/src/scene/aqua_rock/tiles.o"(.rodata)
         "*/games/tla/src/scene/aqua_rock/data2.o"(.data)
         "*/games/tla/src/graphics/field/tiles679.o"(.rodata)
@@ -888,7 +887,6 @@ SECTIONS
         "*/games/tla/src/scene/aqua_rock_inside/s042c.o"(.text)
         "*/games/tla/src/scene/aqua_rock_inside/s0cc8.o"(.text)
         "*/games/tla/src/scene/aqua_rock_inside/s13bc.o"(.text)
-        "*/games/tla/src/scene/aqua_rock_inside/s1598.o"(.text)
         "*/games/tla/src/scene/aqua_rock_inside/s1620.o"(.text)
         "*/games/tla/src/scene/aqua_rock_inside/s1c68.o"(.text)
         "*/games/tla/src/scene/aqua_rock_inside/s2340.o"(.text)
@@ -902,7 +900,7 @@ SECTIONS
         "*/games/tla/src/scene/aqua_rock_inside/s36b8.o"(.text)
         "*/games/tla/src/scene/aqua_rock_inside/s3844.o"(.text)
         "*/games/tla/src/scene/aqua_rock_inside/import.o"(.text)
-        "*/games/tla/src/scene/aqua_rock_inside/data.o"(.data)
+        "*/games/tla/src/scene/aqua_rock_inside/s3844.o"(.data)
         "*/games/tla/src/scene/aqua_rock_inside/tiles.o"(.rodata)
         "*/games/tla/src/scene/aqua_rock_inside/data2.o"(.data)
     }
@@ -983,7 +981,6 @@ SECTIONS
         "*/games/tla/src/scene/gaia_rock_inside/s15d0.o"(.text)
         "*/games/tla/src/scene/gaia_rock_inside/s1f68.o"(.text)
         "*/games/tla/src/scene/gaia_rock_inside/s2020.o"(.text)
-        "*/games/tla/src/scene/gaia_rock_inside/s225c.o"(.text)
         "*/games/tla/src/scene/gaia_rock_inside/s2ac8.o"(.text)
         "*/games/tla/src/scene/gaia_rock_inside/s2b04.o"(.text)
         "*/games/tla/src/scene/gaia_rock_inside/s2b58.o"(.text)
@@ -991,7 +988,7 @@ SECTIONS
         "*/games/tla/src/scene/gaia_rock_inside/s2cb4.o"(.text)
         "*/games/tla/src/scene/gaia_rock_inside/s4d00.o"(.text)
         "*/games/tla/src/scene/gaia_rock_inside/import.o"(.text)
-        "*/games/tla/src/scene/gaia_rock_inside/data.o"(.data)
+        "*/games/tla/src/scene/gaia_rock_inside/s4d00.o"(.data)
     }
     .bss :
     {
@@ -1057,7 +1054,7 @@ SECTIONS
         "*/games/tla/src/scene/champa_cliff_caves/s320c.o"(.text)
         "*/games/tla/src/scene/champa_cliff_caves/s32a4.o"(.text)
         "*/games/tla/src/scene/champa_cliff_caves/import.o"(.text)
-        "*/games/tla/src/scene/champa_cliff_caves/data.o"(.data)
+        "*/games/tla/src/scene/champa_cliff_caves/s32a4.o"(.data)
         "*/games/tla/src/graphics/field/pal685.o"(.rodata)
         "*/games/tla/src/scene/champa_cliff_caves/data2.o"(.data)
     }
@@ -1074,7 +1071,6 @@ SECTIONS
         "*/games/tla/src/field/field_effect/move.o"(.text)
         "*/games/tla/src/scene/ankohl_ruins/s015c.o"(.text)
         "*/games/tla/src/scene/ankohl_ruins/scene_tables.o"(.text)
-        "*/games/tla/src/scene/ankohl_ruins/s0418.o"(.text)
         "*/games/tla/src/scene/ankohl_ruins/events_b.o"(.text)
         "*/games/tla/src/scene/ankohl_ruins/s10f4.o"(.text)
         "*/games/tla/src/scene/ankohl_ruins/events_d.o"(.text)
@@ -1082,7 +1078,7 @@ SECTIONS
         "*/games/tla/src/scene/ankohl_ruins/s160c.o"(.text)
         "*/games/tla/src/scene/ankohl_ruins/s2438.o"(.text)
         "*/games/tla/src/scene/ankohl_ruins/import.o"(.text)
-        "*/games/tla/src/scene/ankohl_ruins/data.o"(.data)
+        "*/games/tla/src/scene/ankohl_ruins/s2438.o"(.data)
     }
     .bss :
     {

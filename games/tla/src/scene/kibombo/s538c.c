@@ -1,5 +1,5 @@
 /// @file
-/// Scene code of overlay 0x670, in ROM order, from s538c's offset up to the next object the overlay links.
+/// Scene code of overlay 0x670, in ROM order, from s538c's offset up to the next object the overlay links and the overlay's data.
 
 #include "kibombo.h"
 
@@ -207,8 +207,7 @@ void Func_020057e0(void) {
   }
 }
 
-#include "../../../../games/tla/src/scene/kibombo/kibombo.h"
-#include "../../../../games/tla/include/scene_tables.h"
+#include "scene_tables.h"
 #include "version.h"
 #include "fixed_math.h"
 
@@ -260,3 +259,783 @@ void Func_02005898(void) {
 }
 
 void Func_02005994(void) { Func_02005bcc(); }
+
+#include "types.h"
+#include "text/msg_ids.h"
+#include "objcmd.h"
+
+void Func_02000038(void);
+void Func_02000048(void);
+void Func_02000054(void);
+void Func_020000c4(void);
+void Func_02000228(void);
+void Func_0200024c(void);
+void Func_02000270(void);
+void Func_020002c4(void);
+void Func_02000318(void);
+void Func_02000350(void);
+void Func_02000388(void);
+void Func_020003c0(void);
+void Func_020003f8(void);
+void Func_0200042c(void);
+void Func_020004dc(void);
+void Func_02000500(void);
+void Func_020005d0(void);
+void Func_02000618(void);
+void Func_0200065c(void);
+void Func_020006a0(void);
+void Func_020006e4(void);
+void Func_02000728(void);
+void Func_02000734(void);
+void Func_020007c8(void);
+void Func_02000c90(void);
+void Func_02001218(void);
+void Func_02002050(void);
+void Func_02002ad8(void);
+void Func_02002af8(void);
+void Func_02003930(void);
+void Func_02003948(void);
+void Func_02003ac8(void);
+void Func_02003b20(void);
+void Func_02003b88(void);
+void Func_02003bf0(void);
+
+// clang-format off
+u32 gData_02005ca4[] = {
+    0, 28, 22, 38, 0, 0,
+    1, 3, 0, 1, 38,
+};
+
+s32 gData_02005cd0[] = {
+    SC_SET(SW_MOTION, 0),
+    SC_ADD(SW_Z, -0x8000),
+    SC_ADD(SW_SCALE_X, -1024),
+    SC_ADD(SW_SCALE_Y, -1024),
+    SC_WAIT(1),
+    SC_LOOP(24, SC_TOP),
+    SC_END,
+};
+
+u32 gData_02005d18[] = {
+    SC_ARG(2),
+    SC_MOVE(PIXELS(98), 0, PIXELS(408)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_WAIT(1),
+    SC_SET(SW_FACING, FACING_NORTH + FACING_STEP),
+    SC_WAIT(1),
+    SC_END,
+};
+
+u32 gData_02005d5c[] = {
+    SC_ARG(2),
+    SC_MOVE(PIXELS(80), 0, PIXELS(376)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_WAIT(1),
+    SC_SET(SW_FACING, FACING_EAST),
+    SC_WAIT(1),
+    SC_END,
+};
+
+s32 gData_02005da0[] = {
+    SC_ARG(2),
+    SC_MOVE(PIXELS(68), 0, PIXELS(392)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_WAIT(1),
+    SC_SET(SW_FACING, FACING_NORTHEAST),
+    SC_WAIT(1),
+    SC_END,
+    SC_ADD(SW_SCALE_X, 0x800),
+    SC_ADD(SW_SCALE_Y, 0x800),
+    SC_CALL(Func_02000038),
+    SC_WAIT(1),
+    SC_LOOP(10, SC_TOP),
+    SC_LABEL(1),
+    SC_ADD(SW_SCALE_X, -2048),
+    SC_ADD(SW_SCALE_Y, -2048),
+    SC_CALL(Func_02000038),
+    SC_WAIT(1),
+    SC_LOOP(24, SC_TO(1)),
+    SC_FREE,
+};
+
+u32 gData_02005e54[] = {
+    39, 2, 4, 0x580000, 0, 0x1880000,
+    1, 39, 1, 3, 0, 1,
+    17,
+};
+
+u32 gData_02005e88[] = {
+    SC_ARG(2),
+    SC_MOVE(PIXELS(72), 0, PIXELS(296)),
+    SC_SYNC,
+    SC_MOVE(PIXELS(40), 0, PIXELS(340)),
+    SC_SYNC,
+    SC_MOVE(PIXELS(40), 0, PIXELS(356)),
+    SC_SYNC,
+    SC_MOVE(PIXELS(56), 0, PIXELS(372)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_END,
+};
+
+u32 gData_02005eec[] = {
+    SC_ARG(2),
+    SC_MOVE(PIXELS(88), 0, PIXELS(372)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_END,
+};
+
+u32 gData_02005f14[] = {
+    SC_ARG(2),
+    SC_MOVE(PIXELS(48), 0, PIXELS(384)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_WAIT(1),
+    SC_SET(SW_FACING, FACING_EAST),
+    SC_WAIT(1),
+    SC_END,
+};
+
+u32 gData_02005f58[] = {
+    SC_ARG(2),
+    SC_MOVE(PIXELS(48), 0, PIXELS(360)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_WAIT(1),
+    SC_SET(SW_FACING, FACING_EAST),
+    SC_WAIT(1),
+    SC_END,
+};
+
+u32 gData_02005f9c[] = {
+    SC_ARG(2),
+    SC_MOVE(PIXELS(36), 0, PIXELS(372)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_WAIT(1),
+    SC_SET(SW_FACING, FACING_EAST),
+    SC_WAIT(1),
+    SC_END,
+};
+
+u32 gData_02005fe0[] = {
+    39, 2, 4, 0x380000, 0, 0x1740000,
+    1, 39, 1, 3, 0, 1,
+    17,
+};
+
+u32 gData_02006014[] = {
+    SC_ARG(2),
+    SC_MOVE(PIXELS(298), 0, PIXELS(200)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_WAIT(1),
+    SC_SET(SW_FACING, FACING_NORTHWEST),
+    SC_WAIT(1),
+    SC_END,
+};
+
+u32 gData_02006058[] = {
+    SC_ARG(2),
+    SC_MOVE(PIXELS(308), 0, PIXELS(188)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_WAIT(1),
+    SC_SET(SW_FACING, FACING_NORTHWEST),
+    SC_WAIT(1),
+    SC_END,
+};
+
+u32 gData_0200609c[] = {
+    SC_ARG(2),
+    SC_MOVE(PIXELS(298), 0, PIXELS(176)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_WAIT(1),
+    SC_SET(SW_FACING, FACING_NORTHWEST),
+    SC_WAIT(1),
+    SC_END,
+};
+
+u32 gData_020060e0[] = {
+    SC_ARG(2),
+    SC_MOVE(PIXELS(222), 0, PIXELS(184)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_END,
+};
+
+u32 gData_02006108[] = {
+    39, 2, 4, 0x11c0000, 0, 0xbc0000,
+    1, 39, 1, 3, 0, 1,
+    17,
+};
+
+s32 gData_0200613c[] = {
+    46,
+    (s32)Func_02000048,
+    46,
+    (s32)Func_02000054,
+};
+
+s32 gData_0200614c[] = {
+    SC_SET(SW_SCALE_X, 0x18000),
+    SC_SET(SW_SCALE_Y, 0x18000),
+    SC_ADD(SW_Y, PIXELS(-2)),
+    SC_WAIT(20),
+    SC_SET(SW_SCALE_X, 0x10000),
+    SC_SET(SW_SCALE_Y, 0x10000),
+    SC_ADD(SW_Y, PIXELS(2)),
+    SC_WAIT(1),
+    SC_END,
+};
+
+s32 gData_020061a8[] = {
+    22,
+    39,
+    0,
+    46,
+    (s32)Func_020000c4,
+    22,
+    15,
+    0x6666,
+    22,
+    16,
+    0x6666,
+    (s32)0x80010000,
+    39,
+    2,
+    4,
+    0xe60000,
+    0,
+    0x1e60000,
+    1,
+    39,
+    1,
+    0,
+    20,
+    22,
+    3,
+    0x5000,
+    0,
+    40,
+    39,
+    2,
+    4,
+    0x1000000,
+    0,
+    0x1e60000,
+    1,
+    39,
+    1,
+    22,
+    3,
+    0x3000,
+    0,
+    20,
+    22,
+    3,
+    0x5000,
+    0,
+    40,
+    13,
+    0xffff,
+    0,
+    22,
+    15,
+    0x6666,
+    22,
+    16,
+    0x6666,
+    (s32)0x80010000,
+    39,
+    2,
+    4,
+    0x12a0000,
+    0,
+    0x1e60000,
+    1,
+    39,
+    1,
+    0,
+    20,
+    22,
+    3,
+    0x3000,
+    0,
+    40,
+    39,
+    2,
+    4,
+    0x1100000,
+    0,
+    0x1e60000,
+    1,
+    39,
+    1,
+    22,
+    3,
+    0x5000,
+    0,
+    20,
+    22,
+    3,
+    0x3000,
+    0,
+    40,
+    13,
+    0xffff,
+    0,
+};
+
+s16 gData_02006324[] = {
+    8, 513, -1, 0,
+};
+
+struct SceneEntrance gSceneEntrances[] = {
+    {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {SCENE_TABLE_END},
+};
+
+s16 gData_0200635c[] = {
+    400, 40, 368, 416, 56, 384, -1, 14,
+    112, 40, 624, 128, 56, 640, -1, 15,
+    384, 40, 880, 400, 56, 896, -1, 16,
+    -1, 0, 0, 0, 0, 0, 0, 0,
+};
+
+u32 gSceneExits[] = {
+    SCENE_EXITS(110),
+    SCENE_EXIT(1, 2, 27),
+    SCENE_EXIT(2, 111, 1),
+    SCENE_EXIT(3, 112, 1),
+    SCENE_EXIT(4, 112, 6),
+    SCENE_EXIT(5, 112, 5),
+    SCENE_EXIT(6, 112, 4),
+    SCENE_EXIT(7, 112, 8),
+    SCENE_EXIT(8, 112, 10),
+    SCENE_EXIT(9, 111, 2),
+    SCENE_EXIT(10, 111, 5),
+    SCENE_EXITS(113),
+    SCENE_EXIT(1, 2, 27),
+    SCENE_EXIT(2, 114, 1),
+    SCENE_EXIT(3, 112, 1),
+    SCENE_EXIT(4, 112, 6),
+    SCENE_EXIT(5, 112, 5),
+    SCENE_EXIT(6, 112, 4),
+    SCENE_EXIT(7, 112, 8),
+    SCENE_EXIT(8, 112, 10),
+    SCENE_EXIT(9, 114, 2),
+    SCENE_EXIT(10, 114, 5),
+    SCENE_EXITS(111),
+    SCENE_EXIT(1, 110, 2),
+    SCENE_EXIT(2, 110, 9),
+    SCENE_EXIT(3, 123, 1),
+    SCENE_EXIT(4, 120, 3),
+    SCENE_EXIT(5, 110, 10),
+    SCENE_EXITS(114),
+    SCENE_EXIT(1, 113, 2),
+    SCENE_EXIT(2, 113, 9),
+    SCENE_EXIT(3, 123, 1),
+    SCENE_EXIT(4, 120, 3),
+    SCENE_EXIT(5, 113, 10),
+    SCENE_EXIT(10, 121, 2),
+    SCENE_EXIT(11, 121, 3),
+    SCENE_EXIT(12, 121, 1),
+    SCENE_EXIT(13, 120, 5),
+    SCENE_EXITS(112),
+    SCENE_EXIT_IF(1, 110, 3, 0x86b),
+    SCENE_EXIT_IF(1, 113, 3, -1),
+    SCENE_EXIT_IF(2, 112, 3, -1),
+    SCENE_EXIT_IF(3, 112, 2, -1),
+    SCENE_EXIT_IF(4, 110, 6, 0x86b),
+    SCENE_EXIT_IF(4, 113, 6, -1),
+    SCENE_EXIT_IF(5, 110, 5, 0x86b),
+    SCENE_EXIT_IF(5, 113, 5, -1),
+    SCENE_EXIT_IF(6, 110, 4, 0x86b),
+    SCENE_EXIT_IF(6, 113, 4, -1),
+    SCENE_EXIT_IF(7, 112, 15, -1),
+    SCENE_EXIT_IF(8, 110, 7, 0x86b),
+    SCENE_EXIT_IF(8, 113, 7, -1),
+    SCENE_EXIT_IF(9, 112, 14, -1),
+    SCENE_EXIT_IF(10, 110, 8, 0x86b),
+    SCENE_EXIT_IF(10, 113, 8, -1),
+    SCENE_EXIT_IF(11, 112, 12, -1),
+    SCENE_EXIT_IF(12, 112, 11, -1),
+    SCENE_EXIT_IF(13, 112, 16, -1),
+    SCENE_EXIT_IF(14, 112, 9, -1),
+    SCENE_EXIT_IF(15, 112, 7, -1),
+    SCENE_EXIT_IF(16, 112, 13, -1),
+    SCENE_EXITS(125),
+    SCENE_EXIT(10, 114, 16),
+    SCENE_EXIT(11, 114, 10),
+    SCENE_EXITS_END,
+};
+
+struct ActorPlacement gData_020064f8[] = {
+    {SCENE_TABLE_END},
+};
+
+struct ActorPlacement gData_02006510[] = {
+    {290, CONDITION_ALWAYS, 1, PIXELS(120), 0, PIXELS(72), FACING_SOUTH, 2, 0},
+    {387, CONDITION_ALWAYS, 1, PIXELS(328), 0, PIXELS(200), FACING_SOUTH, 2, 0},
+    {387, CONDITION_ALWAYS, 1, PIXELS(392), 0, PIXELS(200), FACING_SOUTH, 2, 1},
+    {365, CONDITION_ALWAYS, 1, PIXELS(264), 0, PIXELS(232), FACING_SOUTH, 2, 0},
+    {407, CONDITION_ALWAYS, 1, PIXELS(104), 0, PIXELS(488), FACING_SOUTH, 2, 0},
+    {407, CONDITION_ALWAYS, 1, PIXELS(56), 0, PIXELS(488), FACING_SOUTH, 2, 1},
+    {115, CONDITION_ALWAYS, 3, PIXELS(300), 0, PIXELS(228), FACING_WEST, 0, 0},
+    {116, CONDITION_ALWAYS, 3, PIXELS(248), 0, PIXELS(288), FACING_NORTH + FACING_STEP, 0, 0},
+    {114, CONDITION_ALWAYS, 3, PIXELS(208), 0, PIXELS(176), FACING_EAST, 0, 0},
+    {128, CONDITION_ALWAYS, 3, PIXELS(288), 0, PIXELS(364), FACING_WEST, 0, 0},
+    {139, CONDITION_ALWAYS, 1, PIXELS(432), 0, PIXELS(274), FACING_NORTHWEST + FACING_STEP, 0, 0},
+    {140, CONDITION_ALWAYS, 1, PIXELS(58), 0, PIXELS(298), FACING_SOUTHEAST + FACING_STEP, 1, 0},
+    {146, CONDITION_ALWAYS, 1, PIXELS(102), 0, PIXELS(328), FACING_NORTHWEST + FACING_STEP, 1, 0},
+    {147, CONDITION_ALWAYS, 1, PIXELS(88), 0, PIXELS(336), FACING_NORTH + FACING_STEP, 1, 0},
+    {83, CONDITION_ALWAYS, 1, PIXELS(246), 0, PIXELS(488), FACING_SOUTHEAST + FACING_STEP, 1, 0},
+    {83, CONDITION_ALWAYS, 1, PIXELS(282), 0, PIXELS(488), FACING_SOUTH + FACING_STEP, 1, 0},
+    {144, CONDITION_ALWAYS, 1, PIXELS(430), 0, PIXELS(442), FACING_SOUTHEAST + FACING_STEP, 2, 0},
+    {368, CONDITION_ALWAYS, 1, PIXELS(440), 0, PIXELS(460), FACING_SOUTHEAST + FACING_STEP, 2, 0},
+    {SCENE_TABLE_END},
+};
+
+struct ActorPlacement gData_020066d8[] = {
+    {290, CONDITION_ALWAYS, 1, PIXELS(120), 0, PIXELS(72), FACING_SOUTH, 2, 0},
+    {386, CONDITION_ALWAYS, 1, PIXELS(328), 0, PIXELS(200), FACING_SOUTH, 2, 0},
+    {386, CONDITION_ALWAYS, 1, PIXELS(392), 0, PIXELS(200), FACING_SOUTH, 2, 1},
+    {365, CONDITION_ALWAYS, 1, PIXELS(264), 0, PIXELS(232), FACING_SOUTH, 2, 0},
+    {407, CONDITION_ALWAYS, 1, PIXELS(104), 0, PIXELS(488), FACING_SOUTH, 2, 0},
+    {407, CONDITION_ALWAYS, 1, PIXELS(56), 0, PIXELS(488), FACING_SOUTH, 2, 1},
+    {144, CONDITION_ALWAYS, 1, PIXELS(264), 0, PIXELS(104), FACING_NORTH + FACING_STEP, 1, 0},
+    {141, CONDITION_ALWAYS, 1, PIXELS(296), 0, PIXELS(114), FACING_NORTH + FACING_STEP, 1, 0},
+    {139, CONDITION_ALWAYS, 1, PIXELS(208), 0, PIXELS(152), FACING_NORTH + FACING_STEP, 1, 0},
+    {145, CONDITION_ALWAYS, 1, PIXELS(292), 0, PIXELS(128), FACING_NORTHWEST + FACING_STEP, 1, 0},
+    {145, CONDITION_ALWAYS, 1, PIXELS(230), 0, PIXELS(112), FACING_NORTH + FACING_STEP, 1, 0},
+    {140, CONDITION_ALWAYS, 1, PIXELS(304), 0, PIXELS(220), FACING_NORTHWEST + FACING_STEP, 1, 0},
+    {146, CONDITION_ALWAYS, 1, PIXELS(264), 0, PIXELS(278), FACING_NORTH + FACING_STEP, 1, 0},
+    {147, CONDITION_ALWAYS, 1, PIXELS(320), 0, PIXELS(158), FACING_NORTHWEST + FACING_STEP, 1, 0},
+    {145, CONDITION_ALWAYS, 1, PIXELS(234), 0, PIXELS(132), FACING_NORTH + FACING_STEP, 1, 0},
+    {139, CONDITION_ALWAYS, 1, PIXELS(326), 0, PIXELS(88), FACING_NORTH + FACING_STEP, 1, 0},
+    {140, CONDITION_ALWAYS, 1, PIXELS(72), 0, PIXELS(308), FACING_NORTH + FACING_STEP, 1, 0},
+    {141, CONDITION_ALWAYS, 1, PIXELS(278), 0, PIXELS(146), FACING_NORTHWEST + FACING_STEP, 1, 0},
+    {143, CONDITION_ALWAYS, 1, PIXELS(264), 0, PIXELS(138), FACING_NORTH + FACING_STEP, 1, 0},
+    {144, CONDITION_ALWAYS, 1, PIXELS(196), 0, PIXELS(142), FACING_NORTH + FACING_STEP, 1, 0},
+    {144, CONDITION_ALWAYS, 1, PIXELS(234), 0, PIXELS(224), FACING_NORTH + FACING_STEP, 1, 0},
+    {337, CONDITION_ALWAYS, 1, PIXELS(120), 0, PIXELS(168), FACING_SOUTH, 2, 0},
+    {386, CONDITION_ALWAYS, 1, PIXELS(120), 0, PIXELS(181), FACING_SOUTH, 2, 0},
+    {386, CONDITION_ALWAYS, 1, PIXELS(360), 0, PIXELS(194), FACING_SOUTH, 2, 1},
+    {386, CONDITION_ALWAYS, 1, PIXELS(440), 0, PIXELS(242), FACING_SOUTH, 2, 1},
+    {386, CONDITION_ALWAYS, 1, PIXELS(104), 0, PIXELS(274), FACING_SOUTH, 2, 1},
+    {386, CONDITION_ALWAYS, 1, PIXELS(184), 0, PIXELS(338), FACING_SOUTH, 2, 1},
+    {386, CONDITION_ALWAYS, 1, PIXELS(328), 0, PIXELS(370), FACING_SOUTH, 2, 1},
+    {201, CONDITION_ALWAYS, 1, PIXELS(412), 0, PIXELS(60), FACING_NORTHWEST + FACING_STEP, 2, 0},
+    {SCENE_TABLE_END},
+};
+
+struct ActorPlacement gData_020069a8[] = {
+    {290, CONDITION_ALWAYS, 1, PIXELS(120), 0, PIXELS(504), FACING_SOUTH, 2, 0},
+    {386, CONDITION_ALWAYS, 1, PIXELS(232), 0, PIXELS(392), FACING_SOUTH, 2, 0},
+    {386, CONDITION_ALWAYS, 1, PIXELS(296), 0, PIXELS(392), FACING_SOUTH, 2, 1},
+    {272, CONDITION_ALWAYS, 1, PIXELS(120), 0, PIXELS(296), FACING_SOUTH, 2, 0},
+    {395, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
+    {395, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 1},
+    {396, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
+    {337, CONDITION_ALWAYS, 1, PIXELS(72), 0, PIXELS(424), FACING_SOUTH, 2, 0},
+    {337, CONDITION_ALWAYS, 1, PIXELS(328), 0, PIXELS(184), FACING_SOUTH, 2, 1},
+    {SCENE_TABLE_END},
+};
+
+struct ActorPlacement gData_02006a98[] = {
+    {290, CONDITION_ALWAYS, 1, PIXELS(120), 0, PIXELS(504), FACING_SOUTH, 2, 0},
+    {386, CONDITION_ALWAYS, 1, PIXELS(232), 0, PIXELS(392), FACING_SOUTH, 2, 0},
+    {386, CONDITION_ALWAYS, 1, PIXELS(296), 0, PIXELS(392), FACING_SOUTH, 2, 1},
+    {272, CONDITION_ALWAYS, 1, PIXELS(120), 0, PIXELS(296), FACING_SOUTH, 2, 0},
+    {395, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
+    {395, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 1},
+    {396, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
+    {337, CONDITION_ALWAYS, 1, PIXELS(72), 0, PIXELS(424), FACING_SOUTH, 2, 0},
+    {337, CONDITION_ALWAYS, 1, PIXELS(328), 0, PIXELS(184), FACING_SOUTH, 2, 1},
+    {26, CONDITION_ALWAYS, 1, PIXELS(264), 0, PIXELS(392), FACING_NORTH + FACING_STEP, 2, 0},
+    {83, CONDITION_ALWAYS, 1, PIXELS(218), 0, PIXELS(420), FACING_NORTH + FACING_STEP, 3, 0},
+    {83, CONDITION_ALWAYS, 1, PIXELS(232), 0, PIXELS(432), FACING_NORTH + FACING_STEP, 3, 0},
+    {83, CONDITION_ALWAYS, 1, PIXELS(248), 0, PIXELS(438), FACING_NORTH + FACING_STEP, 3, 0},
+    {83, CONDITION_ALWAYS, 1, PIXELS(264), 0, PIXELS(440), FACING_NORTH + FACING_STEP, 3, 0},
+    {83, CONDITION_ALWAYS, 1, PIXELS(280), 0, PIXELS(438), FACING_NORTHWEST + FACING_STEP, 3, 0},
+    {83, CONDITION_ALWAYS, 1, PIXELS(296), 0, PIXELS(432), FACING_NORTHWEST + FACING_STEP, 3, 0},
+    {83, CONDITION_ALWAYS, 1, PIXELS(310), 0, PIXELS(422), FACING_NORTHWEST + FACING_STEP, 3, 0},
+    {83, CONDITION_ALWAYS, 1, PIXELS(312), 0, PIXELS(406), FACING_NORTHWEST + FACING_STEP, 3, 0},
+    {56, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
+    {7, CONDITION_ALWAYS, 1, PIXELS(130), 0, PIXELS(364), FACING_SOUTHEAST, 2, 0},
+    {5, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
+    {6, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
+    {489, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
+    {SCENE_TABLE_END},
+};
+
+struct ActorPlacement gData_02006cd8[] = {
+    {27, CONDITION_ALWAYS, 1, PIXELS(366), 0, PIXELS(586), FACING_SOUTH + FACING_STEP, 2, 0},
+    {28, CONDITION_ALWAYS, 1, PIXELS(352), 0, PIXELS(586), FACING_SOUTHEAST + FACING_STEP, 0, 0},
+    {56, CONDITION_ALWAYS, 1, PIXELS(352), 0, PIXELS(634), FACING_NORTH + FACING_STEP, 2, 0},
+    {115, CONDITION_ALWAYS, 1, PIXELS(136), 0, PIXELS(108), FACING_SOUTH + FACING_STEP, 0, 0},
+    {145, CONDITION_ALWAYS, 1, PIXELS(124), 0, PIXELS(120), FACING_NORTH + FACING_STEP, 0, 0},
+    {136, CONDITION_ALWAYS, 3, PIXELS(100), 0, PIXELS(132), FACING_NORTH + FACING_STEP, 0, 0},
+    {114, CONDITION_ALWAYS, 3, PIXELS(710), 0, PIXELS(134), FACING_EAST, 0, 0},
+    {128, CONDITION_ALWAYS, 1, PIXELS(632), 0, PIXELS(108), FACING_SOUTHEAST + FACING_STEP, 0, 0},
+    {112, CONDITION_ALWAYS, 1, PIXELS(432), 0, PIXELS(120), FACING_SOUTHEAST + FACING_STEP, 2, 0},
+    {113, CONDITION_ALWAYS, 1, PIXELS(448), 0, PIXELS(108), FACING_SOUTH + FACING_STEP, 1, 0},
+    {83, CONDITION_ALWAYS, 1, PIXELS(106), 0, PIXELS(360), FACING_WEST, 1, 0},
+    {83, CONDITION_ALWAYS, 1, PIXELS(88), 0, PIXELS(352), FACING_EAST, 1, 0},
+    {108, CONDITION_ALWAYS, 1, PIXELS(92), 0, PIXELS(600), FACING_SOUTHEAST + FACING_STEP, 0, 0},
+    {109, CONDITION_ALWAYS, 1, PIXELS(72), 0, PIXELS(600), FACING_SOUTHEAST + FACING_STEP, 0, 0},
+    {110, CONDITION_ALWAYS, 1, PIXELS(648), 0, PIXELS(348), FACING_SOUTHEAST + FACING_STEP, 0, 0},
+    {134, CONDITION_ALWAYS, 1, PIXELS(84), 0, PIXELS(858), FACING_SOUTHEAST + FACING_STEP, 0, 0},
+    {135, CONDITION_ALWAYS, 3, PIXELS(148), 0, PIXELS(878), FACING_SOUTH + FACING_STEP, 0, 0},
+    {201, CONDITION_ALWAYS, 1, PIXELS(374), 0, PIXELS(344), FACING_SOUTHEAST + FACING_STEP, 0, 0},
+    {337, CONDITION_ALWAYS, 1, PIXELS(152), 0, PIXELS(824), FACING_SOUTH, 2, 0},
+    {337, CONDITION_ALWAYS, 1, PIXELS(168), 0, PIXELS(824), FACING_SOUTH, 2, 1},
+    {489, CONDITION_ALWAYS, 7, PIXELS(448), 0, PIXELS(120), FACING_SOUTH, 2, 0},
+    {SCENE_TABLE_END},
+};
+// clang-format on
+
+struct Trigger gData_02006ee8[] = {
+    {TRIGGERS_END},
+};
+
+struct Trigger gData_02006ef4[] = {
+    {1, 1, CONDITION_ALWAYS, 1},
+    {1, 2, CONDITION_ALWAYS, 2},
+    {0xc602, 3, CONDITION_ALWAYS, EVENT(Func_02003948)},
+    {0xc602, 4, CONDITION_ALWAYS, EVENT(Func_02003948)},
+    {0xc602, 5, CONDITION_ALWAYS, EVENT(Func_02003948)},
+    {0xc602, 6, CONDITION_ALWAYS, EVENT(Func_02003948)},
+    {0xc602, 7, CONDITION_ALWAYS, EVENT(Func_02003948)},
+    {0xc602, 8, CONDITION_ALWAYS, EVENT(Func_02003948)},
+    {1, 9, CONDITION_ALWAYS, 9},
+    {1, 10, CONDITION_ALWAYS, 10},
+    {2, 16, CONDITION_ALWAYS, EVENT(Func_02002ad8)},
+    {2, 15, CONDITION_ALWAYS, EVENT(Func_02002af8)},
+    {0x1815, 8, 0x201, EVENT(Func_020005d0)},
+    {0x8515, 12, 0x9e9, 0},
+    {0xc602, 20, CONDITION_ALWAYS, EVENT(Func_02005994)},
+    {0x8602, 21, CONDITION_ALWAYS, EVENT(Func_02005994)},
+    {0x10009a15, 11, CONDITION_ALWAYS, 0},
+    {0, 14, CONDITION_ALWAYS, MSGNO(MsgAkafubuHasFinally)},
+    {0x8d15, 14, CONDITION_ALWAYS, MSGNO(MsgEveryoneWasTerribly)},
+    {0, 15, CONDITION_ALWAYS, EVENT(Func_02000228)},
+    {0x8d15, 15, CONDITION_ALWAYS, MSGNO(MsgCoveringOurWarriors)},
+    {0, 16, CONDITION_ALWAYS, MSGNO(MsgTheGreatGabomba)},
+    {0x8d15, 16, CONDITION_ALWAYS, MSGNO(MsgIWantTo)},
+    {0, 17, CONDITION_ALWAYS, MSGNO(MsgNowThatThe)},
+    {0x8d15, 17, CONDITION_ALWAYS, MSGNO(MsgNowThatTheWitch)},
+    {0, 18, CONDITION_ALWAYS, MSGNO(MsgICouldnT)},
+    {0x8d15, 18, CONDITION_ALWAYS, MSGNO(MsgBecauseKibomboLies)},
+    {0, 19, CONDITION_ALWAYS, MSGNO(MsgOhISmell)},
+    {0x8d15, 19, CONDITION_ALWAYS, MSGNO(MsgYouDonTThink)},
+    {0, 20, CONDITION_ALWAYS, MSGNO(MsgGoodOlMeat)},
+    {0x8d15, 20, CONDITION_ALWAYS, MSGNO(MsgGulpTheSmell)},
+    {0, 21, CONDITION_ALWAYS, MSGNO(MsgWeGetTo)},
+    {0x8d15, 21, CONDITION_ALWAYS, MSGNO(MsgLatelyTheMonsters)},
+    {0, 22, CONDITION_ALWAYS, EVENT(Func_0200024c)},
+    {0x8d15, 22, CONDITION_ALWAYS, MSGNO(MsgNoOneInKibombo)},
+    {0, 23, CONDITION_ALWAYS, MSGNO(MsgTheOtherWarriors)},
+    {0x8d15, 23, CONDITION_ALWAYS, MSGNO(MsgWithAllOur)},
+    {0, 24, CONDITION_ALWAYS, EVENT(Func_02000270)},
+    {0x8d15, 24, CONDITION_ALWAYS, MSGNO(MsgIWonderIfI)},
+    {TRIGGERS_END},
+};
+
+struct Trigger gData_020070d4[] = {
+    {2, 1, CONDITION_ALWAYS, EVENT(Func_020038ec)},
+    {2, 2, CONDITION_ALWAYS, EVENT(Func_020038ec)},
+    {0xc602, 3, 0x209, EVENT(Func_02003948)},
+    {0xc602, 4, 0x209, EVENT(Func_02003948)},
+    {0xc602, 5, 0x209, EVENT(Func_02003948)},
+    {0xc602, 6, 0x209, EVENT(Func_02003948)},
+    {0xc602, 7, 0x209, EVENT(Func_02003948)},
+    {0xc602, 8, 0x209, EVENT(Func_02003948)},
+    {2, 9, CONDITION_ALWAYS, EVENT(Func_020038ec)},
+    {2, 10, CONDITION_ALWAYS, EVENT(Func_020038ec)},
+    {2, 16, CONDITION_ALWAYS, EVENT(Func_02002ad8)},
+    {2, 15, CONDITION_ALWAYS, EVENT(Func_02002af8)},
+    {0x1815, 8, 0x201, EVENT(Func_020005d0)},
+    {0x8515, 12, 0x9e9, 0},
+    {0xc602, 20, CONDITION_ALWAYS, EVENT(Func_02005994)},
+    {0, 20, 0x8fd, MSGNO(MsgAkafubuSCeremony)},
+    {0, 20, CONDITION_ALWAYS, MSGNO(MsgTheyToldMe)},
+    {0x8d15, 20, 0x8fd, MSGNO(MsgItSStrange)},
+    {0x8d15, 20, CONDITION_ALWAYS, MSGNO(MsgAsLongAsThis)},
+    {0, 14, 0x8fd, MSGNO(MsgDuringTheLast)},
+    {0, 14, CONDITION_ALWAYS, MSGNO(MsgAkafubuHasBeen)},
+    {0x8d15, 14, 0x8fd, MSGNO(MsgTheGreatGabombaIs)},
+    {0x8d15, 14, CONDITION_ALWAYS, MSGNO(MsgWhatSTaking)},
+    {0, 27, CONDITION_ALWAYS, MSGNO(MsgIMAfraid)},
+    {0x8d15, 27, CONDITION_ALWAYS, MSGNO(MsgWhenHeFails)},
+    {0, 21, 0x8fd, MSGNO(MsgIHopeThe)},
+    {0, 21, CONDITION_ALWAYS, MSGNO(MsgWhewThankGoodness)},
+    {0x8d15, 21, 0x8fd, MSGNO(MsgIfTheGreat)},
+    {0x8d15, 21, CONDITION_ALWAYS, MSGNO(MsgAmIGoing)},
+    {0, 17, 0x8fd, MSGNO(MsgIsMakingThe)},
+    {0, 17, CONDITION_ALWAYS, MSGNO(MsgOnceTheCeremony)},
+    {0x8d15, 17, 0x8fd, MSGNO(MsgHeSFailed)},
+    {0x8d15, 17, CONDITION_ALWAYS, MSGNO(MsgKibomboWasSo)},
+    {0, 22, 0x8fd, MSGNO(MsgWhenTheGabomba)},
+    {0, 22, CONDITION_ALWAYS, MSGNO(MsgLastTimeAkafubu)},
+    {0x8d15, 22, 0x8fd, MSGNO(MsgIHopeAkafubu)},
+    {0x8d15, 22, CONDITION_ALWAYS, MSGNO(MsgAkafubuSAlways)},
+    {0, 28, CONDITION_ALWAYS, MSGNO(MsgAkafubuWasA)},
+    {0x8d15, 28, CONDITION_ALWAYS, MSGNO(MsgAkafubuHasNot)},
+    {0, 15, 0x8fd, MSGNO(MsgAkafubuLooksReally)},
+    {0, 15, CONDITION_ALWAYS, MSGNO(MsgIThinkAkafubu)},
+    {0x8d15, 15, 0x8fd, MSGNO(MsgHeTravelsTo)},
+    {0x8d15, 15, CONDITION_ALWAYS, MSGNO(MsgAkafubuIsObsessed)},
+    {0, 25, 0x8fd, MSGNO(MsgIfTheGreatGabomba)},
+    {0, 25, CONDITION_ALWAYS, MSGNO(MsgIBelieveIn)},
+    {0x8d15, 25, 0x8fd, MSGNO(MsgIfTheGreatGabombaActually)},
+    {0x8d15, 25, CONDITION_ALWAYS, MSGNO(MsgAkafubuAndOeia)},
+    {0, 18, 0x8fd, MSGNO(MsgAkafubuHasTried)},
+    {0, 18, CONDITION_ALWAYS, MSGNO(MsgWhatDonT)},
+    {0x8d15, 18, 0x8fd, MSGNO(MsgAsAChildAkafubu)},
+    {0x8d15, 18, CONDITION_ALWAYS, MSGNO(MsgIMSoFar)},
+    {0, 26, CONDITION_ALWAYS, MSGNO(MsgHeyNoPushing)},
+    {0x8d15, 26, CONDITION_ALWAYS, MSGNO(MsgThereAreSo)},
+    {0, 16, 0x8fd, MSGNO(MsgAkafubuIsAttempting)},
+    {0, 16, CONDITION_ALWAYS, MSGNO(MsgTonightSeemsTo)},
+    {0x8d15, 16, 0x8fd, MSGNO(MsgOeiaSSudden)},
+    {0x8d15, 16, CONDITION_ALWAYS, MSGNO(MsgWillTheGreat)},
+    {0, 23, 0x8fd, MSGNO(MsgHeWhoIs)},
+    {0, 23, CONDITION_ALWAYS, MSGNO(MsgOeiaSDeath)},
+    {0x8d15, 23, 0x8fd, MSGNO(MsgIfOnlyOeia)},
+    {0x8d15, 23, CONDITION_ALWAYS, MSGNO(MsgISuspectAkafubu)},
+    {0, 19, 0x8fd, MSGNO(MsgAkafubuBlamesHis)},
+    {0, 19, CONDITION_ALWAYS, MSGNO(MsgTheySayThe)},
+    {0x8d15, 19, 0x8fd, MSGNO(MsgTheyAttackedSome)},
+    {0x8d15, 19, CONDITION_ALWAYS, MSGNO(MsgTheyReSaying)},
+    {0, 24, 0x8fd, MSGNO(MsgIfTheGreatGabombaS)},
+    {0, 24, CONDITION_ALWAYS, MSGNO(MsgAkafubuSeesThe)},
+    {0x8d15, 24, 0x8fd, MSGNO(MsgIFeelSo)},
+    {0x8d15, 24, CONDITION_ALWAYS, MSGNO(MsgIReallyWonder)},
+    {0, 36, CONDITION_ALWAYS, EVENT(Func_0200042c)},
+    {0x8d15, 36, CONDITION_ALWAYS, MSGNO(MsgIWonderIfA)},
+    {TRIGGERS_END},
+};
+
+struct Trigger gData_02007434[] = {
+    {2, 1, CONDITION_ALWAYS, EVENT(Func_020038ec)},
+    {2, 2, CONDITION_ALWAYS, EVENT(Func_020038ec)},
+    {0x4602, 3, 0x186a, EVENT(Func_02003bf0)},
+    {2, 4, CONDITION_ALWAYS, EVENT(Func_02003930)},
+    {2, 5, CONDITION_ALWAYS, EVENT(Func_020038ec)},
+    {0x1815, 8, 0x201, EVENT(Func_020005d0)},
+    {0x8c15, 11, 0x9ea, EVENT(Func_02000734)},
+    {9, 0, 0x9ea, EVENT(Func_02000734)},
+    {0x50008805, 10, 0x86a, EVENT(Func_02000618)},
+    {0x50008805, 11, 0x204, EVENT(Func_0200065c)},
+    {0x50008805, 12, 0x205, EVENT(Func_020006a0)},
+    {0x50008805, 13, 0x206, EVENT(Func_020006e4)},
+    {0x50008805, 14, 0x207, EVENT(Func_02000728)},
+    {TRIGGERS_END},
+};
+
+struct Trigger gData_020074dc[] = {
+    {2, 1, CONDITION_ALWAYS, EVENT(Func_020038ec)},
+    {2, 2, CONDITION_ALWAYS, EVENT(Func_020038ec)},
+    {0x4602, 3, 0x186a, EVENT(Func_02003bf0)},
+    {2, 4, CONDITION_ALWAYS, EVENT(Func_02003930)},
+    {2, 5, 0x8f3, EVENT(Func_020038ec)},
+    {2, 5, 0x92f, EVENT(Func_02001218)},
+    {2, 5, CONDITION_ALWAYS, EVENT(Func_020038ec)},
+    {0x1815, 8, 0x201, EVENT(Func_020005d0)},
+    {0x8c15, 11, 0x9ea, EVENT(Func_02000734)},
+    {9, 0, 0x9ea, EVENT(Func_02000734)},
+    {0x50008805, 10, 0x86a, EVENT(Func_02000618)},
+    {0x50008805, 11, 0x204, EVENT(Func_0200065c)},
+    {0x50008805, 12, 0x205, EVENT(Func_020006a0)},
+    {0x50008805, 13, 0x206, EVENT(Func_020006e4)},
+    {0x50008805, 14, 0x207, EVENT(Func_02000728)},
+    {2, 20, 0x8f3, EVENT(Func_020007c8)},
+    {2, 22, 0x92e, EVENT(Func_02000c90)},
+    {0, 7, CONDITION_ALWAYS, MSGNO(MsgTheOrbIs)},
+    {0x8d15, 7, CONDITION_ALWAYS, MSGNO(MsgIAmCertain)},
+    {2, 21, 0x8f5, EVENT(Func_02002050)},
+    {0, 18, CONDITION_ALWAYS, MSGNO(MsgAhhSomethingIs)},
+    {0, 19, CONDITION_ALWAYS, MSGNO(MsgYouLookHuman)},
+    {0, 20, CONDITION_ALWAYS, MSGNO(MsgAkafubuPossessesThe)},
+    {0, 21, CONDITION_ALWAYS, MSGNO(MsgWeMustStand)},
+    {0, 22, CONDITION_ALWAYS, MSGNO(MsgMenOrGods)},
+    {0, 23, CONDITION_ALWAYS, MSGNO(MsgItSeemsThese)},
+    {0, 24, CONDITION_ALWAYS, MSGNO(MsgThisIsnT)},
+    {0, 25, CONDITION_ALWAYS, MSGNO(MsgItIsProper)},
+    {0x8d15, 18, CONDITION_ALWAYS, MSGNO(MsgTheyLookLike)},
+    {0x8d15, 19, CONDITION_ALWAYS, MSGNO(MsgIfNoPerson)},
+    {0x8d15, 20, CONDITION_ALWAYS, MSGNO(MsgISawAkafubu)},
+    {0x8d15, 21, CONDITION_ALWAYS, MSGNO(MsgIHopeAkafubuCompletes)},
+    {0x8d15, 22, CONDITION_ALWAYS, MSGNO(MsgWhatIfThe)},
+    {0x8d15, 23, CONDITION_ALWAYS, MSGNO(MsgLookAtThese)},
+    {0x8d15, 24, CONDITION_ALWAYS, MSGNO(MsgSureThisIs)},
+    {0x8d15, 25, CONDITION_ALWAYS, MSGNO(MsgKoffKoffAll)},
+    {TRIGGERS_END},
+};
+
+struct Trigger gData_02007698[] = {
+    {1, 1, CONDITION_ALWAYS, 1},
+    {1, 2, CONDITION_ALWAYS, 2},
+    {1, 3, CONDITION_ALWAYS, 3},
+    {1, 4, CONDITION_ALWAYS, 4},
+    {1, 5, CONDITION_ALWAYS, 5},
+    {1, 6, CONDITION_ALWAYS, 6},
+    {0x202, 7, CONDITION_ALWAYS, EVENT(Func_02003ac8)},
+    {1, 8, CONDITION_ALWAYS, 8},
+    {0x202, 9, CONDITION_ALWAYS, EVENT(Func_02003b20)},
+    {1, 10, CONDITION_ALWAYS, 10},
+    {1, 11, CONDITION_ALWAYS, 11},
+    {1, 12, CONDITION_ALWAYS, 12},
+    {0x202, 13, CONDITION_ALWAYS, EVENT(Func_02003b88)},
+    {0, 8, 0x8ee, MSGNO(MsgIMGoing)},
+    {0, 8, CONDITION_ALWAYS, MSGNO(MsgIJustCan)},
+    {0x8d15, 8, CONDITION_ALWAYS, MSGNO(MsgDangWhyDid)},
+    {0, 9, 0x8ee, MSGNO(MsgIThinkThat)},
+    {0, 9, CONDITION_ALWAYS, MSGNO(MsgMySonHasBeen)},
+    {0x8d15, 9, CONDITION_ALWAYS, MSGNO(MsgAfterHeBecame)},
+    {0, 11, CONDITION_ALWAYS, MSGNO(MsgIHaveHeard)},
+    {0x8d15, 11, CONDITION_ALWAYS, MSGNO(MsgIKnowI)},
+    {0, 12, CONDITION_ALWAYS, EVENT(Func_020002c4)},
+    {0x8d15, 12, CONDITION_ALWAYS, MSGNO(MsgCrossingTheRiver)},
+    {0, 13, CONDITION_ALWAYS, MSGNO(MsgYouCanSee)},
+    {0x8d15, 13, CONDITION_ALWAYS, MSGNO(MsgIfIM)},
+    {0, 14, CONDITION_ALWAYS, MSGNO(MsgIfYouAreLooking)},
+    {0x8d15, 14, CONDITION_ALWAYS, MSGNO(MsgSureOurLegends)},
+    {0, 15, CONDITION_ALWAYS, MSGNO(MsgEachYearWhen)},
+    {0x8d15, 15, CONDITION_ALWAYS, MSGNO(MsgIWonderWhatOeia)},
+    {0, 16, CONDITION_ALWAYS, EVENT(Func_020004dc)},
+    {0x8d15, 16, CONDITION_ALWAYS, EVENT(Func_02000500)},
+    {0, 28, CONDITION_ALWAYS, EVENT(Func_020004dc)},
+    {0x8d15, 28, CONDITION_ALWAYS, EVENT(Func_02000500)},
+    {0, 17, CONDITION_ALWAYS, MSGNO(MsgAsSoonAs)},
+    {0x8d15, 17, CONDITION_ALWAYS, MSGNO(MsgAkafubuGetsSo)},
+    {0, 18, CONDITION_ALWAYS, MSGNO(MsgManyInGondowan)},
+    {0x8d15, 18, CONDITION_ALWAYS, MSGNO(MsgItWonT)},
+    {0, 19, CONDITION_ALWAYS, MSGNO(MsgWeThinkIt)},
+    {0x8d15, 19, CONDITION_ALWAYS, MSGNO(MsgIAmAMighty)},
+    {0, 20, CONDITION_ALWAYS, EVENT(Func_02000318)},
+    {3, 20, CONDITION_ALWAYS, EVENT(Func_02000318)},
+    {0x8d15, 20, CONDITION_ALWAYS, MSGNO(MsgOurWarriorsAppear)},
+    {0, 21, CONDITION_ALWAYS, EVENT(Func_02000350)},
+    {3, 21, CONDITION_ALWAYS, EVENT(Func_02000350)},
+    {0x8d15, 21, CONDITION_ALWAYS, MSGNO(MsgBecauseOurPaint)},
+    {0, 22, CONDITION_ALWAYS, EVENT(Func_02000388)},
+    {3, 22, CONDITION_ALWAYS, EVENT(Func_02000388)},
+    {0x8d15, 22, CONDITION_ALWAYS, MSGNO(MsgIfIHad)},
+    {0, 23, CONDITION_ALWAYS, EVENT(Func_020003c0)},
+    {3, 23, CONDITION_ALWAYS, EVENT(Func_020003c0)},
+    {0x8d15, 23, CONDITION_ALWAYS, MSGNO(MsgThatBedMakes)},
+    {0, 24, CONDITION_ALWAYS, MSGNO(MsgICanTRemember)},
+    {0x8d15, 24, CONDITION_ALWAYS, MSGNO(MsgILoveKibombo)},
+    {0, 25, CONDITION_ALWAYS, EVENT(Func_020003f8)},
+    {3, 24, CONDITION_ALWAYS, EVENT(Func_020003f8)},
+    {0x8d15, 25, CONDITION_ALWAYS, MSGNO(MsgICanTBelieve)},
+    {TRIGGERS_END},
+};

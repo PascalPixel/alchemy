@@ -1,3 +1,9 @@
+/// @file
+/// Cell layouts, timing rows and handler entries for the battle effects. Each
+/// table is read only by the part its prefix names, except the gBattleEffect_
+/// tables, which many parts share. Picture cell offsets are byte offsets from
+/// the sheet start, accumulated as width times height.
+
 #include "module/battle_effect/battle_effect_table.h"
 #include "module/battle_effect/battle_effect.h"
 #include "types.h"
@@ -5,11 +11,7 @@
 #include "render_placement.h"
 #include "fixed_math.h"
 
-// Cell layouts, timing rows and handler entries for the battle effects.
-// Keep the definitions in link order. Picture cell offsets are byte offsets
-// from the sheet start, accumulated as width times height. Each table is
-// read only by the part its prefix names, except the gBattleEffect_ tables,
-// which many parts share.
+// Keep the definitions in link order.
 
 // The tables are plain arrays, not const, as the effect code reads them:
 // it reloads their addresses where const would let the compiler keep

@@ -383,7 +383,7 @@ void PaletteFade_Initialize(void) {
 }
 
 /// Stops the palette fade and frees it. Reached only through a bare far-call
-/// veneer; no ☀️ code names it.
+/// veneer; nothing calls it by name.
 void PaletteFade_Release(void) {
   Task_Remove(&PaletteFade_Update);
   HeapSlot_Release(HEAP_SLOT_PALETTE_FADE);

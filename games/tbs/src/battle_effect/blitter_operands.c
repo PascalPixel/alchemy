@@ -1,9 +1,9 @@
+/// @file
+/// The ARM immediate operands for powers of two, which the blitter builder
+/// (battle_effect/blitter.c) adds to its clip words to fit the canvas width.
+
 #include "module/battle_effect/blitter_operands.h"
 #include "types.h"
-
-// ARM immediate operands used when specializing the compositor's width.
-// Encode 1 << n as a rotated 8-bit value; operand bits 8 to 11 select the
-// rotation rather than forming part of the value itself.
 
 /// The 12-bit operand field that makes an ARM data-processing immediate equal
 /// to 1 << n: below 8 the value itself; from 8 the value 1 or 2 with the

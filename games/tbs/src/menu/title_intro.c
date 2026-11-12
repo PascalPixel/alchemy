@@ -1,3 +1,7 @@
+/// @file
+/// The title intro, the Nintendo and Camelot logos, and the palette fade the
+/// intro uses.
+
 #include "speaker.h"
 #include "module/menu/title_intro.h"
 #include "module/system/system.h"
@@ -804,7 +808,7 @@ void TitlePaletteFade_BuildColors(u32 mode, u16 *source, u16 *destination,
         red = colorWork * 4 + 5;
         blue = colorWork * 3 + 5;
         /* FAKEMATCH(dead): two XORs with red that cancel fold late, keeping
-         * blue's add first; as green = blue, 3 of 803 instructions differ in
+         * blue's add first; as green = blue, 6 of 803 instructions differ in
          * tbs-en. */
         green = blue ^ red;
         green ^= red;
@@ -813,7 +817,7 @@ void TitlePaletteFade_BuildColors(u32 mode, u16 *source, u16 *destination,
         if (blue < 8) {
           green = 8;
           /* FAKEMATCH(dead): two XORs that cancel, green being 8, keep blue's
-           * separate lower test; as no pair, 8 of 803 instructions differ in
+           * separate lower test; as no pair, 46 of 803 instructions differ in
            * tbs-en. */
           blue ^= green;
           blue ^= 8;
@@ -1028,7 +1032,7 @@ void TitlePaletteFade_Initialize(void) {
   Task_Add(TitlePaletteFade_Update, priority);
 }
 
-/// Unused: removes the palette fade's task and frees its buffers. Nothing in ☀️
+/// Unused: removes the palette fade's task and frees its buffers. Nothing
 /// calls it.
 UNUSED void TitlePaletteFade_Release(void) {
   Task_Remove(&TitlePaletteFade_Update);
@@ -1036,7 +1040,7 @@ UNUSED void TitlePaletteFade_Release(void) {
 }
 
 /// Unused: sets the fade target by tinting the saved background and/or
-/// sprite palettes with the requested tint. Nothing in ☀️ calls it.
+/// sprite palettes with the requested tint. Nothing calls it.
 UNUSED void TitlePaletteFade_SetTarget(s32 mode, s32 selectedPalettes) {
   struct TitlePaletteFade *fade = (struct TitlePaletteFade *)gPaletteFadeWork;
 
@@ -1055,8 +1059,7 @@ void TitlePaletteFade_SetCurrent(s32 mode, s32 selectedPalettes) {
                                  selectedPalettes);
 }
 
-/// Unused: replaces the first saved colour, the backdrop. Nothing in ☀️ calls
-/// it.
+/// Unused: replaces the first saved colour, the backdrop. Nothing calls it.
 UNUSED void TitlePaletteFade_SetBackdrop(s32 color) {
   struct TitlePaletteFade *fade = (struct TitlePaletteFade *)gPaletteFadeWork;
 

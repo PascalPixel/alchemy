@@ -672,8 +672,9 @@ void Menu_DrawModeLabel(void) {
 // the language. The player sees no difference: French draws the help as
 // window sprites, so the empty window the others redraw has nothing to clear,
 // and with two methods and the menu opening on Password, every move to Cable
-// comes from Password. XXX (no evidence): why French alone was rewritten; both
-// forms draw the same screens, so nothing the game shows tells them apart.
+// comes from Password.
+// XXX (no evidence): why French alone was rewritten; both forms draw the same
+// screens, so nothing the game shows tells them apart.
 #if (LANGUAGE == LANGUAGE_FRENCH)
 
 /// Redraws password/cable transfer help when the chosen method changes. A

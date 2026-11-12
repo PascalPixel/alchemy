@@ -488,7 +488,7 @@ static void TunnelRuins_HopDownStep(void) {
   Event_Start();
   Actor_SelectAnimation(leader, ANIM_LEADER_SPRING);
   Actor_WaitForAnimationChange(ACTOR_PARTY_LEADER);
-  Actor_SelectAnimation(leader, 1);
+  Actor_SelectAnimation(leader, ANIM_STAND);
   Actor_SetSpriteFlags(leader, 0);
   leader->motionFlags |= ACTOR_FALLS;
   Sound_Play(SE_JUMP);
@@ -832,10 +832,12 @@ static void TunnelRuins_PushNorthwestSinkingPillar(void) {
 static void TunnelRuins_FreezeNorthwestPillarFrostTarget(void) {
   u8 *flags;
 
-  Actor_SetAnimation(ACTOR_NORTHWEST_PILLAR_FROST_TARGET, 1);
+  Actor_SetAnimation(ACTOR_NORTHWEST_PILLAR_FROST_TARGET,
+                     PUDDLE_ANIMATION_PUDDLE);
   Actor_SetSpriteColorById(ACTOR_NORTHWEST_PILLAR_FROST_TARGET,
                            SPRITE_COLOR_NORMAL);
-  Actor_SetAnimation(ACTOR_NORTHWEST_PILLAR_FROST_TARGET, 2);
+  Actor_SetAnimation(ACTOR_NORTHWEST_PILLAR_FROST_TARGET,
+                     PUDDLE_ANIMATION_FREEZE);
   flags = &Actor_Get(ACTOR_NORTHWEST_PILLAR_FROST_TARGET)->priorityFlags;
   *flags &= ~ACTOR_PRIORITY_UNDERFOOT;
   GameFlag_Set(FLAG_SCENE_TEMP_00);
@@ -937,10 +939,12 @@ static void TunnelRuins_DouseSoutheastPillar(void) {
 static void TunnelRuins_FreezeSoutheastPillarFrostTarget(void) {
   u8 *flags;
 
-  Actor_SetAnimation(ACTOR_SOUTHEAST_PILLAR_FROST_TARGET, 1);
+  Actor_SetAnimation(ACTOR_SOUTHEAST_PILLAR_FROST_TARGET,
+                     PUDDLE_ANIMATION_PUDDLE);
   Actor_SetSpriteColorById(ACTOR_SOUTHEAST_PILLAR_FROST_TARGET,
                            SPRITE_COLOR_NORMAL);
-  Actor_SetAnimation(ACTOR_SOUTHEAST_PILLAR_FROST_TARGET, 2);
+  Actor_SetAnimation(ACTOR_SOUTHEAST_PILLAR_FROST_TARGET,
+                     PUDDLE_ANIMATION_FREEZE);
   flags = &Actor_Get(ACTOR_SOUTHEAST_PILLAR_FROST_TARGET)->priorityFlags;
   *flags &= ~ACTOR_PRIORITY_UNDERFOOT;
   GameFlag_Set(FLAG_SCENE_TEMP_01);
@@ -1018,10 +1022,10 @@ static void TunnelRuins_FreezeDousePillarFrostTarget(void) {
 
   Event_Start();
   Actor_SetSpritePriority(ACTOR_DOUSE_PILLAR_FROST_TARGET, 1);
-  Actor_SetAnimation(ACTOR_DOUSE_PILLAR_FROST_TARGET, 1);
+  Actor_SetAnimation(ACTOR_DOUSE_PILLAR_FROST_TARGET, PUDDLE_ANIMATION_PUDDLE);
   Actor_SetSpriteColorById(ACTOR_DOUSE_PILLAR_FROST_TARGET,
                            SPRITE_COLOR_NORMAL);
-  Actor_SetAnimation(ACTOR_DOUSE_PILLAR_FROST_TARGET, 2);
+  Actor_SetAnimation(ACTOR_DOUSE_PILLAR_FROST_TARGET, PUDDLE_ANIMATION_FREEZE);
 
   {
     u8 *flag = &Actor_Get(ACTOR_DOUSE_PILLAR_FROST_TARGET)->priorityFlags;
@@ -1676,7 +1680,8 @@ s32 TunnelRuins_Initialize(void) {
       if (GameFlag_Get(FLAG_SCENE_TEMP_00)) {
         Actor_SetSpriteColorById(ACTOR_NORTHWEST_PILLAR_FROST_TARGET,
                                  SPRITE_COLOR_NORMAL);
-        Actor_SetAnimation(ACTOR_NORTHWEST_PILLAR_FROST_TARGET, 5);
+        Actor_SetAnimation(ACTOR_NORTHWEST_PILLAR_FROST_TARGET,
+                           PUDDLE_ANIMATION_PILLAR);
       }
       if (Event_GetFlag(FLAG_SCENE_TEMP_02))
         Actor_SetAnimation(ACTOR_SOUTHEAST_SINKING_PILLAR, 2);
@@ -1695,7 +1700,8 @@ s32 TunnelRuins_Initialize(void) {
       if (GameFlag_Get(FLAG_SCENE_TEMP_01)) {
         Actor_SetSpriteColorById(ACTOR_SOUTHEAST_PILLAR_FROST_TARGET,
                                  SPRITE_COLOR_NORMAL);
-        Actor_SetAnimation(ACTOR_SOUTHEAST_PILLAR_FROST_TARGET, 5);
+        Actor_SetAnimation(ACTOR_SOUTHEAST_PILLAR_FROST_TARGET,
+                           PUDDLE_ANIMATION_PILLAR);
       }
       break;
     case TUNNEL_RUINS_GREAT_STATUE_WHIRLWIND_ROOM_FROM_SECOND_PILLARS:
@@ -1748,7 +1754,8 @@ s32 TunnelRuins_Initialize(void) {
         break;
       Actor_SetSpriteColorById(ACTOR_DOUSE_PILLAR_FROST_TARGET,
                                SPRITE_COLOR_NORMAL);
-      Actor_SetAnimation(ACTOR_DOUSE_PILLAR_FROST_TARGET, 5);
+      Actor_SetAnimation(ACTOR_DOUSE_PILLAR_FROST_TARGET,
+                         PUDDLE_ANIMATION_PILLAR);
       MapGrid_CopyCellAttributeRect(
           26, 8, 1, 1,
           Actor_Get(ACTOR_DOUSE_PILLAR_FROST_TARGET)->x.fixed >> 20,

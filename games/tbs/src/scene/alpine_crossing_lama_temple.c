@@ -196,7 +196,6 @@ enum {
   TURNING_ROCK_ANIMATION_MOSSY = 2,
   ANIM_HSU_STRUGGLE = 5,
   ANIM_MONK_MEDITATE = 5,
-  PUDDLE_ANIMATION_FROZEN = 5,
   SPROUT_ANIMATION_GROWN = 4
 };
 
@@ -1052,7 +1051,7 @@ s32 Scene_Initialize(void) {
     Actor_SetSpriteFlags(Actor_Get(ACTOR_WATER_FOR_FROST), 0);
     Actor_Get(ACTOR_WATER_FOR_FROST)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     if (GameFlag_Get(FLAG_ALPINE_CROSSING_PUDDLE_FROZEN)) {
-      Actor_SetAnimation(ACTOR_WATER_FOR_FROST, PUDDLE_ANIMATION_FROZEN);
+      Actor_SetAnimation(ACTOR_WATER_FOR_FROST, PUDDLE_ANIMATION_PILLAR);
       AlpineCrossing_FreezePuddle();
     }
     if (GameFlag_Get(FLAG_ALPINE_CROSSING_SPROUT_GROWN)) {

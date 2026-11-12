@@ -163,9 +163,6 @@ enum XianActorId {
   ACTOR_FIRST_CRATE
 };
 
-/// SPRITE_PUDDLE's animation once Frost has frozen it into ice.
-enum { PUDDLE_ANIMATION_FROZEN = 5 };
-
 /// The event the water carrier raises when the leader has stood in her way
 /// for XIAN_CARRIER_BLOCKED_FRAMES.
 enum XianRaisedTrigger { RAISED_CARRIER_BLOCKED = 200 };
@@ -243,7 +240,7 @@ static s32 Xian_UpdateCarrierTracking(struct Actor *actor, struct Actor *target,
 
   // This route uses paused/timer as its tracking latch and mode.
   if (actor->paused == 1 && actor->timer == 0) {
-    Actor_SelectAnimation(actor, 1);
+    Actor_SelectAnimation(actor, ANIM_STAND);
     return 1;
   }
 
@@ -261,17 +258,17 @@ static s32 Xian_UpdateCarrierTracking(struct Actor *actor, struct Actor *target,
     if (targetHeading == currentHeading || nextHeading == currentHeading ||
         previousHeading == currentHeading || forceTracking != 0) {
       actor->paused = 1;
-      Actor_SelectAnimation(actor, 1);
+      Actor_SelectAnimation(actor, ANIM_STAND);
       isTracking = 1;
       actor->timer = isTracking;
     } else {
       actor->paused = 0;
-      Actor_SelectAnimation(actor, 2);
+      Actor_SelectAnimation(actor, ANIM_WALK);
       actor->timer = 0;
     }
   } else {
     actor->paused = 0;
-    Actor_SelectAnimation(actor, 2);
+    Actor_SelectAnimation(actor, ANIM_WALK);
     actor->timer = 0;
   }
 
@@ -886,7 +883,7 @@ s32 Xian_Initialize(void) {
   }
   // Restore the frozen puddle and tasks when re-entering the village.
   if (GameFlag_Get(FLAG_XIAN_SPILLED_WATER_FROZEN)) {
-    Actor_SetAnimation(ACTOR_SPILLED_WATER, PUDDLE_ANIMATION_FROZEN);
+    Actor_SetAnimation(ACTOR_SPILLED_WATER, PUDDLE_ANIMATION_PILLAR);
     {
       s32 puddleX = Actor_Get(ACTOR_SPILLED_WATER)->x.fixed;
 

@@ -323,9 +323,6 @@ enum KalayTunnelActorId {
   ACTOR_SCORCH
 };
 
-/// SPRITE_PUDDLE's animation once Frost has frozen it into an ice pillar.
-enum { PUDDLE_ANIMATION_FROZEN = 5 };
-
 /// The Kalay Tunnel's own flags. The temporary ones last one entry. The
 /// passages (area temp flags) last while the party stays in the tunnel's
 /// scenes.
@@ -386,10 +383,10 @@ static s32 Kalay_UpdateTouristFidget(struct Actor *interpreter) {
     action = (u32)(Import_RandomNext() * 8) >> 16;
     switch (action) {
     case 0:
-      Actor_SelectAnimation(actor, 3);
+      Actor_SelectAnimation(actor, ANIM_NOD);
       break;
     case 1:
-      Actor_SelectAnimation(actor, 4);
+      Actor_SelectAnimation(actor, ANIM_SHAKE_HEAD);
       break;
     case 3:
     case 4:
@@ -1474,7 +1471,7 @@ static void Kalay_PrepareTunnel(void) {
     if (GameFlag_Get(FLAG_TUNNEL_PUDDLE_FROZEN) != 0) {
       Actor_Get(ACTOR_PUDDLE);
       column = 9;
-      Actor_SetAnimation(ACTOR_PUDDLE, PUDDLE_ANIMATION_FROZEN);
+      Actor_SetAnimation(ACTOR_PUDDLE, PUDDLE_ANIMATION_PILLAR);
       MapGrid_CopyCellAttributes(0, 0, 1, 1, column, 14);
       MapGrid_CopyCellAttributes(0, 0, 1, 1, column, 45);
       {

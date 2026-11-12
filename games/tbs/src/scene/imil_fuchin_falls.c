@@ -1971,7 +1971,7 @@ static void Imil_TurnSkaterTowardHeldDirection(struct Actor *updated) {
   actor->steeringFlags = 0;
   direction = gImilFuchinFalls_KeyHeadings[(gKeysHeld >> 4) & 15];
   if (direction == -1) {
-    Actor_SelectAnimation(actor, 9);
+    Actor_SelectAnimation(actor, ANIM_LEADER_LOOK_AROUND);
     return;
   }
   facing = actor->facing;
@@ -1981,7 +1981,7 @@ static void Imil_TurnSkaterTowardHeldDirection(struct Actor *updated) {
   if (direction < -FACING_STEP)
     direction = -FACING_STEP;
   actor->facing = facing + direction;
-  Actor_SelectAnimation(actor, 2);
+  Actor_SelectAnimation(actor, ANIM_WALK);
   Actor_SetAnimationSpeed(actor, IMIL_SLIDE_ANIMATION_STEP);
 }
 
@@ -2031,7 +2031,7 @@ static void Imil_SlideActorAcrossIce(void) {
     actor->timer = 0;
     FieldActor_SetMoveTargetFixed(actor, x, actor->y.fixed, z);
 
-    Actor_SelectAnimation(actor, 2);
+    Actor_SelectAnimation(actor, ANIM_WALK);
     Actor_SetAnimationSpeed(actor, IMIL_SLIDE_ANIMATION_STEP);
     Actor_WaitForMove(actor);
     actor->update = Imil_TurnSkaterTowardHeldDirection;

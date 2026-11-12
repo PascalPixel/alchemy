@@ -1444,7 +1444,7 @@ s32 BabiLighthouse_SetupMap(void) {
     zero = 0;
     placedActor->sprite->flags = zero;
     placedActor->sprite->rotation = TRIG_TURN * 3 / 4;
-    Actor_SetAnimation(ACTOR_FALLEN_SOLDIER_NO_MATCH, 0);
+    Actor_SetAnimation(ACTOR_FALLEN_SOLDIER_NO_MATCH, ANIM_STILL);
     placedActor = Actor_Get(ACTOR_FALLEN_STRONGMAN_ONLY_TWO);
     placedActor->collisionFlags = zero;
     placedActor->priorityFlags = zero;
@@ -1452,7 +1452,7 @@ s32 BabiLighthouse_SetupMap(void) {
     placedActor->sprite->image.priority = 3;
     placedActor->sprite->flags = zero;
     placedActor->sprite->rotation = TRIG_TURN / 4;
-    Actor_SetAnimation(ACTOR_FALLEN_STRONGMAN_ONLY_TWO, 0);
+    Actor_SetAnimation(ACTOR_FALLEN_STRONGMAN_ONLY_TWO, ANIM_STILL);
     placedActor = Actor_Get(ACTOR_FALLEN_SOLDIER_KICKED_ASIDE);
     placedActor->collisionFlags = zero;
     placedActor->priorityFlags = zero;
@@ -1460,7 +1460,7 @@ s32 BabiLighthouse_SetupMap(void) {
     placedActor->sprite->image.priority = 3;
     placedActor->sprite->flags = zero;
     placedActor->sprite->rotation = TRIG_TURN / 2;
-    Actor_SetAnimation(ACTOR_FALLEN_SOLDIER_KICKED_ASIDE, 0);
+    Actor_SetAnimation(ACTOR_FALLEN_SOLDIER_KICKED_ASIDE, ANIM_STILL);
     placedActor = Actor_Get(ACTOR_FALLEN_MAN_SCORCHED_GROUND);
     placedActor->collisionFlags = zero;
     placedActor->priorityFlags = zero;
@@ -1468,7 +1468,7 @@ s32 BabiLighthouse_SetupMap(void) {
     placedActor->sprite->image.priority = 3;
     placedActor->sprite->flags = zero;
     placedActor->sprite->rotation = TRIG_TURN / 2;
-    Actor_SetAnimation(ACTOR_FALLEN_MAN_SCORCHED_GROUND, 0);
+    Actor_SetAnimation(ACTOR_FALLEN_MAN_SCORCHED_GROUND, ANIM_STILL);
   } else if (mapCopy == (s32)&SceneId_BabiLighthouseLuff) {
     // Match the arrival effect and fall to the entrance used in this
     // room.

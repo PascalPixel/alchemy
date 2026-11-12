@@ -604,10 +604,10 @@ static s32 CrossboneIsleSteppingStones_TryJumpAcrossPillar(void) {
     if (PushedActor_FindAtTile(&destination, leader) == 0 &&
         FieldActor_CheckMovementCollision(leader, &destination) == 0) {
       Event_Start();
-      Actor_SelectAnimation(leader, 6);
+      Actor_SelectAnimation(leader, ANIM_LEADER_SPRING);
       wait(6);
       Sound_Play(SE_JUMP);
-      Actor_SelectAnimation(leader, 7);
+      Actor_SelectAnimation(leader, ANIM_LEADER_LEAP);
       leader->speedLimit = px(3);
       leader->acceleration = px(2);
       leader->velocityY = px(4);
@@ -615,7 +615,7 @@ static s32 CrossboneIsleSteppingStones_TryJumpAcrossPillar(void) {
       Actor_SetSpriteFlags(leader, 0);
       Actor_MoveToAndWait(ACTOR_PARTY_LEADER, destination.x >> 16,
                           destination.z >> 16);
-      Actor_SelectAnimation(leader, 6);
+      Actor_SelectAnimation(leader, ANIM_LEADER_SPRING);
       Actor_SetSpriteFlags(leader, SPRITE_FLAG_SHADOW);
       *flags = savedMotionFlags;
       Event_End();
@@ -861,7 +861,7 @@ static void CrossboneIsleSteppingStones_FlipWaterSwitch(void) {
     water = Actor_Get(ACTOR_WATER);
     water->y.fixed = -px(32);
     Actor_SetPosition(ACTOR_WATER, 272, 416);
-    Actor_SetAnimation(ACTOR_WATER, 1);
+    Actor_SetAnimation(ACTOR_WATER, SPLASH_ANIMATION_BURST);
     MapGrid_AnimateCells(gCrossboneIsleSteppingStones_FloodgateCloseSteps, 80,
                          24);
     MapGrid_AnimateCells(gCrossboneIsleSteppingStones_FloodgateFootSteps, 80,
@@ -880,7 +880,7 @@ static void CrossboneIsleSteppingStones_FlipWaterSwitch(void) {
     water = Actor_Get(ACTOR_WATER);
     water->y.fixed = -px(32);
     Actor_SetPosition(ACTOR_WATER, 272, 436);
-    Actor_SetAnimation(ACTOR_WATER, 2);
+    Actor_SetAnimation(ACTOR_WATER, SPLASH_ANIMATION_CHURN);
     MapGrid_CopyCellsTo(65, 45, 16, 27, 2, 4);
     MapGrid_AnimateCells(gCrossboneIsleSteppingStones_FloodgateOpenSteps, 80,
                          24);
@@ -1440,7 +1440,7 @@ static void CrossboneIsleSteppingStones_FreezeThirdPuddle(void) {
       Actor_Get(ACTOR_SECOND_PUDDLE)->update = (void (*)(
           struct Actor *))CrossboneIsleSteppingStones_SpawnThawParticle;
 #endif
-      Actor_SetAnimation(ACTOR_SECOND_PUDDLE, 6);
+      Actor_SetAnimation(ACTOR_SECOND_PUDDLE, PUDDLE_ANIMATION_MELT);
       Actor_WaitForAnimationChange(ACTOR_SECOND_PUDDLE);
       Actor_Get(ACTOR_SECOND_PUDDLE)->update = (void (*)(struct Actor *))set;
       MapGrid_CopyCellAttributes(17, 13, 1, 1, 18, 13);

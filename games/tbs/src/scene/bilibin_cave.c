@@ -647,7 +647,7 @@ static void BilibinCave_PushTorch(void) {
   if (FieldActor_CheckMovementCollision(target, &destination) > 0)
     return;
 
-  Actor_SelectAnimation(leader, 8);
+  Actor_SelectAnimation(leader, ANIM_PUSH);
   wait(15);
   Sound_Play(SE_PUSH);
 

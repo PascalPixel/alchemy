@@ -1612,7 +1612,7 @@ static void Imil_TurnSlidingActor(struct Actor *updated) {
   d = gImil_KeyHeadings[(gKeysHeld >> 4) & 0xF];
   z = -z;
   if (d == z) {
-    Actor_SelectAnimation(actor, 9);
+    Actor_SelectAnimation(actor, ANIM_LEADER_LOOK_AROUND);
     return;
   }
   prev = actor->facing;
@@ -1622,7 +1622,7 @@ static void Imil_TurnSlidingActor(struct Actor *updated) {
   if (d < -FACING_STEP)
     d = -FACING_STEP;
   actor->facing = prev + d;
-  Actor_SelectAnimation(actor, 2);
+  Actor_SelectAnimation(actor, ANIM_WALK);
   Actor_SetAnimationSpeed(actor, 48);
 }
 
@@ -1671,7 +1671,7 @@ static void Imil_RunIceSlide(void) {
     subject->acceleration = px(1) / 10;
     subject->timer = 0;
     FieldActor_SetMoveTargetFixed(subject, x, subject->y.fixed, z);
-    Actor_SelectAnimation(subject, 2);
+    Actor_SelectAnimation(subject, ANIM_WALK);
     Actor_SetAnimationSpeed(subject, 48);
     Actor_WaitForMove(subject);
     subject->update = Imil_TurnSlidingActor;

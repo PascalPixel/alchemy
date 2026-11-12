@@ -122,7 +122,7 @@ UNUSED static void PushedActor_AdvancePair(void) {
   if (next->riseCounter != 0)
     return;
 
-  Actor_SelectAnimation(lead, 8);
+  Actor_SelectAnimation(lead, ANIM_PUSH);
   rate = px(1) / 5;
   wait(15);
   Sound_Play(SE_PUSH);
@@ -144,7 +144,7 @@ UNUSED static void PushedActor_AdvancePair(void) {
   lead->velocityZ = 0;
   lead->x.fixed = px(lead->x.part.pixel);
   lead->z.fixed = px(lead->z.part.pixel);
-  Actor_SelectAnimation(lead, 1);
+  Actor_SelectAnimation(lead, ANIM_STAND);
 }
 
 #include "pushed_actor_fill_rectangle.h"

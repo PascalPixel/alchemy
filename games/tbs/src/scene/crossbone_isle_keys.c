@@ -484,7 +484,7 @@ static void CrossboneIsleKeys_BaneKeepsAway(void) {
 /// Halt on Bane in CrossboneIsleBane: it freezes in place.
 static void CrossboneIsleKeys_HaltBane(void) {
   Event_Start();
-  Actor_SetAnimation(ACTOR_BANE, 0);
+  Actor_SetAnimation(ACTOR_BANE, ANIM_STILL);
   Event_End();
 }
 
@@ -1456,7 +1456,7 @@ static void CrossboneIsleKeys_InitializeBane(void) {
   CrossboneIsleKeys_RepaintFourthAndFifthPillarCells();
   if (GameFlag_Get(FLAG_CROSSBONE_ISLE_BANE_PUDDLE_FROZEN) != 0) {
     CrossboneIsleKeys_FreezePuddle();
-    Actor_SetAnimation(ACTOR_PUDDLE, 5);
+    Actor_SetAnimation(ACTOR_PUDDLE, PUDDLE_ANIMATION_PILLAR);
   }
 
   // Restore the surviving Djinni at the last completed escape stage.

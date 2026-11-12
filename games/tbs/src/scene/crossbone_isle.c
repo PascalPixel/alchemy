@@ -1006,10 +1006,10 @@ static s32 CrossboneIsle_TryHop(struct Actor *actor,
     s32 movingFlags;
 
     Event_Start();
-    Actor_SelectAnimation(actor, 6);
+    Actor_SelectAnimation(actor, ANIM_LEADER_SPRING);
     wait(6);
     Sound_Play(SE_JUMP);
-    Actor_SelectAnimation(actor, 7);
+    Actor_SelectAnimation(actor, ANIM_LEADER_LEAP);
     actor->speedLimit = px(3);
     actor->acceleration = px(2);
     actor->velocityY = px(4);
@@ -1028,7 +1028,7 @@ static s32 CrossboneIsle_TryHop(struct Actor *actor,
                           pixelCoordinates[5]);
     }
 #endif
-    Actor_SelectAnimation(actor, 6);
+    Actor_SelectAnimation(actor, ANIM_LEADER_SPRING);
     Actor_SetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
     *motionFlags = (u8)savedMotionFlags;
     Event_End();

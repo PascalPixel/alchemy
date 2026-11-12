@@ -359,10 +359,10 @@ void MercuryLighthouse_HopAcrossPool(void) {
       Actor_SelectAnimation(state->pillar, 6 - n);
     }
   }
-  Actor_SelectAnimation(actor, 6);
+  Actor_SelectAnimation(actor, ANIM_LEADER_SPRING);
   wait(3);
   Sound_Play(SE_JUMP);
-  Actor_SelectAnimation(actor, 7);
+  Actor_SelectAnimation(actor, ANIM_LEADER_LEAP);
   actor->speedLimit = px(3);
   actor->acceleration = px(2);
   actor->velocityY = px(4);
@@ -370,7 +370,7 @@ void MercuryLighthouse_HopAcrossPool(void) {
   Actor_SetSpriteFlags(actor, 0);
   Actor_MoveToAndWaitById(ACTOR_PARTY_LEADER, pos[0].part.pixel,
                           pos[2].part.pixel);
-  Actor_SelectAnimation(actor, 6);
+  Actor_SelectAnimation(actor, ANIM_LEADER_SPRING);
   wait(2);
   if (to->behavior != state->poolBehavior)
     Actor_SetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
@@ -379,7 +379,7 @@ void MercuryLighthouse_HopAcrossPool(void) {
   wait(1);
   *flags = saved;
   if (to->behavior == state->poolBehavior && state->stepEffect == NULL) {
-    Actor_SelectAnimation(actor, 18);
+    Actor_SelectAnimation(actor, ANIM_LEADER_BATHE);
     Sound_Play(SE_WATER_MOVE);
     for (i = 0;; i++) {
       if ((i & 15) == 0)

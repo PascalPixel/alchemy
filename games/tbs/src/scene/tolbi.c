@@ -283,7 +283,7 @@ static void Tolbi_TalkToOlderBrother(void) {
     }
   }
   Event_SetMessageId(msg);
-  Actor_SetAnimation(ACTOR_TOLBI_OLDER_BROTHER, 0);
+  Actor_SetAnimation(ACTOR_TOLBI_OLDER_BROTHER, ANIM_STILL);
   Actor_FaceEachOther(ACTOR_TOLBI_OLDER_BROTHER, ACTOR_PARTY_LEADER, 2);
   // "I'm the oldest, so I shouldn't have to share my allowance."
   Event_ShowMessageThenWait(ACTOR_TOLBI_OLDER_BROTHER, 0, 10);
@@ -322,7 +322,7 @@ static void Tolbi_TalkToYoungerSister(void) {
     }
   }
   Event_SetMessageId(msg);
-  Actor_SetAnimation(ACTOR_TOLBI_YOUNGER_SISTER, 0);
+  Actor_SetAnimation(ACTOR_TOLBI_YOUNGER_SISTER, ANIM_STILL);
   Actor_FaceEachOther(ACTOR_TOLBI_YOUNGER_SISTER, ACTOR_PARTY_LEADER, 2);
   // "Mama told us to share the money. Doesn't my brother remember?"
   Event_ShowMessageThenWait(ACTOR_TOLBI_YOUNGER_SISTER, 0, 10);
@@ -729,7 +729,7 @@ static void Tolbi_FreezePuddle(void) {
     puddle->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
     puddle->motionFlags = 0;
   }
-  Actor_SetAnimation(ACTOR_TOLBI_PUDDLE, 5);
+  Actor_SetAnimation(ACTOR_TOLBI_PUDDLE, PUDDLE_ANIMATION_PILLAR);
   {
     MapGrid_CopyCellAttributes(36, 16, 1, 1, 34, 16);
   }

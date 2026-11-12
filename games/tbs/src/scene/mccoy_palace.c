@@ -546,7 +546,7 @@ static void McCoyPalace_CaptainSeesPartyOff(void) {
     Actor_WalkToAndWait(ACTOR_CAPTAIN, 622, 764);
     Actor_FaceDirection(ACTOR_CAPTAIN, FACING_EAST_NORTHEAST, 20);
     Actor_SetAnimationAndWait(ACTOR_CAPTAIN, ANIM_NOD);
-    Actor_SetAnimationAndWait(ACTOR_SOLDIER_SHOWING_THE_REWARD, 3);
+    Actor_SetAnimationAndWait(ACTOR_SOLDIER_SHOWING_THE_REWARD, ANIM_NOD);
     Event_Wait(20);
     Actor_FaceActor(ACTOR_CAPTAIN, ACTOR_PARTY_LEADER, 0);
     Event_Wait(20);

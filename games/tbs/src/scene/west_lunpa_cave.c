@@ -158,7 +158,7 @@ static void WestLunpaCave_GateDrawPropped(void) {
   struct Actor *pillar;
 
   pillar = Actor_Get(ACTOR_GATE_PUDDLE);
-  Actor_SetAnimation(ACTOR_GATE_PUDDLE, PUDDLE_ANIMATION_FROZEN);
+  Actor_SetAnimation(ACTOR_GATE_PUDDLE, PUDDLE_ANIMATION_PILLAR);
   if (pillar != NULL) {
     Actor_SetSpriteFlags(pillar, 0);
     pillar->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
@@ -1084,10 +1084,10 @@ s32 Scene_Initialize(void) {
       WestLunpaCave_GateDrawPropped();
     }
     if (GameFlag_Get(FLAG_WEST_LUNPA_CAVE_NORTH_PUDDLE_FROZEN) != 0) {
-      Actor_SetAnimation(ACTOR_NORTH_PUDDLE, PUDDLE_ANIMATION_FROZEN);
+      Actor_SetAnimation(ACTOR_NORTH_PUDDLE, PUDDLE_ANIMATION_PILLAR);
     }
     if (GameFlag_Get(FLAG_WEST_LUNPA_CAVE_SOUTH_PUDDLE_FROZEN) != 0) {
-      Actor_SetAnimation(ACTOR_SOUTH_PUDDLE, PUDDLE_ANIMATION_FROZEN);
+      Actor_SetAnimation(ACTOR_SOUTH_PUDDLE, PUDDLE_ANIMATION_PILLAR);
     }
   }
   return 0;

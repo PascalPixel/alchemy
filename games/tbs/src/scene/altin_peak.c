@@ -331,9 +331,6 @@ enum {
 #define EXAMINE_CHEST_FACING(facing)                                           \
   (EXAMINE_TRIGGER(EXAMINE_CHEST) | TRIGGER_FLAG_FACING | (facing))
 
-/// SPRITE_PUDDLE's animation once Frost has frozen it into an ice pillar.
-enum { PUDDLE_ANIMATION_FROZEN = 5 };
-
 // The spray's direction (FACING_EAST or FACING_WEST) and origin, and the
 // water's flicker timer.
 extern s32 gAltinPeak_SprayDirection;
@@ -1662,7 +1659,7 @@ static void AltinPeak_RestoreFirstWaterBeastRoom(void) {
     AltinPeak_MarkActorTerrainCell(ACTOR_FIRST_WATER_BEAST_ROOM_PUDDLE);
     if (GameFlag_Get(FLAG_ALTIN_PEAK_PUDDLE_FROZEN) != 0) {
       Actor_SetAnimation(ACTOR_FIRST_WATER_BEAST_ROOM_PUDDLE,
-                         PUDDLE_ANIMATION_FROZEN);
+                         PUDDLE_ANIMATION_PILLAR);
       MapGrid_CopyCellAttributes(7, 13, 1, 1, 9, 13);
       actor = Actor_Get(ACTOR_FIRST_WATER_BEAST_ROOM_PUDDLE);
       actor->y.fixed = 0;
@@ -1671,7 +1668,7 @@ static void AltinPeak_RestoreFirstWaterBeastRoom(void) {
     AltinPeak_MarkActorTerrainCell(ACTOR_FIRST_WATER_BEAST_ROOM_SECOND_PUDDLE);
     if (GameFlag_Get(FLAG_ALTIN_PEAK_SECOND_PUDDLE_FROZEN) != 0) {
       Actor_SetAnimation(ACTOR_FIRST_WATER_BEAST_ROOM_SECOND_PUDDLE,
-                         PUDDLE_ANIMATION_FROZEN);
+                         PUDDLE_ANIMATION_PILLAR);
       MapGrid_CopyCellAttributes(29, 1, 3, 1, 17, 13);
       actor = Actor_Get(ACTOR_FIRST_WATER_BEAST_ROOM_SECOND_PUDDLE);
       actor->y.fixed = px(32);
@@ -1760,7 +1757,7 @@ static void AltinPeak_RestoreThirdWaterBeastRoom(void) {
   AltinPeak_MarkActorTerrainCell(ACTOR_THIRD_WATER_BEAST_ROOM_PUDDLE);
   if (GameFlag_Get(FLAG_ALTIN_PEAK_PUDDLE_FROZEN) != 0) {
     Actor_SetAnimation(ACTOR_THIRD_WATER_BEAST_ROOM_PUDDLE,
-                       PUDDLE_ANIMATION_FROZEN);
+                       PUDDLE_ANIMATION_PILLAR);
     MapGrid_CopyCellAttributes(23, 13, 1, 1, 25, 13);
     {
       struct Actor *actor = Actor_Get(ACTOR_THIRD_WATER_BEAST_ROOM_PUDDLE);
@@ -1791,7 +1788,7 @@ static void AltinPeak_RestorePoolRoom(void) {
   AltinPeak_MarkActorTerrainCell(ACTOR_POOL_ROOM_PUDDLE);
   if (GameFlag_Get(FLAG_ALTIN_PEAK_PUDDLE_FROZEN) != 0) {
     pillar = Actor_Get(ACTOR_POOL_ROOM_PUDDLE);
-    Actor_SetAnimation(ACTOR_POOL_ROOM_PUDDLE, PUDDLE_ANIMATION_FROZEN);
+    Actor_SetAnimation(ACTOR_POOL_ROOM_PUDDLE, PUDDLE_ANIMATION_PILLAR);
     MapGrid_CopyCellAttributes(45, 41, 1, 1, 43, 41);
     {
       pillar->priorityFlags = ACTOR_PRIORITY_UNDERFOOT | pillar->priorityFlags;
@@ -1821,7 +1818,7 @@ static void AltinPeak_RestoreSpritzRoom(void) {
   AltinPeak_SettleSpritzRoomPillar();
   AltinPeak_MarkActorTerrainCell(ACTOR_SPRITZ_ROOM_PUDDLE);
   if (GameFlag_Get(FLAG_ALTIN_PEAK_PUDDLE_FROZEN) != 0) {
-    Actor_SetAnimation(ACTOR_SPRITZ_ROOM_PUDDLE, PUDDLE_ANIMATION_FROZEN);
+    Actor_SetAnimation(ACTOR_SPRITZ_ROOM_PUDDLE, PUDDLE_ANIMATION_PILLAR);
     MapGrid_CopyCellAttributes(0, 0, 1, 1, 26, 26);
     {
       struct Actor *actor = Actor_Get(ACTOR_SPRITZ_ROOM_PUDDLE);
@@ -1831,7 +1828,7 @@ static void AltinPeak_RestoreSpritzRoom(void) {
   AltinPeak_MarkActorTerrainCell(ACTOR_SPRITZ_ROOM_SECOND_PUDDLE);
   if (GameFlag_Get(FLAG_ALTIN_PEAK_SECOND_PUDDLE_FROZEN) != 0) {
     Actor_SetAnimation(ACTOR_SPRITZ_ROOM_SECOND_PUDDLE,
-                       PUDDLE_ANIMATION_FROZEN);
+                       PUDDLE_ANIMATION_PILLAR);
     MapGrid_CopyCellAttributes(1, 0, 1, 1, 17, 10);
     {
       struct Actor *actor = Actor_Get(ACTOR_SPRITZ_ROOM_SECOND_PUDDLE);
@@ -1840,7 +1837,7 @@ static void AltinPeak_RestoreSpritzRoom(void) {
   }
   AltinPeak_MarkActorTerrainCell(ACTOR_SPRITZ_ROOM_THIRD_PUDDLE);
   if (GameFlag_Get(FLAG_ALTIN_PEAK_THIRD_PUDDLE_FROZEN) != 0) {
-    Actor_SetAnimation(ACTOR_SPRITZ_ROOM_THIRD_PUDDLE, PUDDLE_ANIMATION_FROZEN);
+    Actor_SetAnimation(ACTOR_SPRITZ_ROOM_THIRD_PUDDLE, PUDDLE_ANIMATION_PILLAR);
     MapGrid_CopyCellAttributes(1, 0, 1, 1, 26, 15);
     {
       struct Actor *actor = Actor_Get(ACTOR_SPRITZ_ROOM_THIRD_PUDDLE);
@@ -2434,7 +2431,7 @@ static void AltinPeak_StopCartAndJumpOff(struct Actor *actor) {
   leader->gravity = px(1);
   leader->z.fixed = centerZ;
   leader->sprite->image.priority = 0;
-  Actor_SelectAnimation(leader, 7);
+  Actor_SelectAnimation(leader, ANIM_LEADER_LEAP);
   FieldActor_SetMoveTargetFixed(leader, x, leader->y.fixed, z + px(24));
   leader->facing = FACING_SOUTH;
   wait(20);

@@ -492,10 +492,10 @@ static s32 ValeCave_HopDownLedge(s32 unusedArgument) {
   if (FieldActor_CheckMovementCollision(
           leader, (struct FieldPosition *)landingPosition) == 0) {
     Event_Start();
-    Actor_SelectAnimation(leader, 6);
+    Actor_SelectAnimation(leader, ANIM_LEADER_SPRING);
     wait(6);
     Sound_Play(SE_JUMP);
-    Actor_SelectAnimation(leader, 7);
+    Actor_SelectAnimation(leader, ANIM_LEADER_LEAP);
     leader->speedLimit = px(3);
     leader->acceleration = px(2);
     leader->velocityY = px(4);
@@ -503,7 +503,7 @@ static s32 ValeCave_HopDownLedge(s32 unusedArgument) {
     Actor_SetSpriteFlags(leader, 0);
     Actor_MoveToAndWait(ACTOR_PARTY_LEADER, landingPosition[0].part.pixel,
                         landingPosition[2].part.pixel);
-    Actor_SelectAnimation(leader, 6);
+    Actor_SelectAnimation(leader, ANIM_LEADER_SPRING);
     Actor_SetSpriteFlags(leader, SPRITE_FLAG_SHADOW);
     *motionFlags = savedMotionFlags;
     Event_End();
@@ -625,7 +625,7 @@ static void ValeCave_KiteKeepsAway(void) {
 /// Reached by Halt on Kite in the second room.
 static void ValeCave_HaltKite(void) {
   Event_Start();
-  Actor_SetAnimation(ACTOR_KITE, 0);
+  Actor_SetAnimation(ACTOR_KITE, ANIM_STILL);
   Event_End();
 }
 
@@ -718,7 +718,7 @@ static void ValeCave_PushLogOffLedge(void) {
   Actor_Get(ACTOR_WEST_LOG)->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   Actor_SetDestinationOffset(ACTOR_WEST_LOG, 6, 0);
   ValeCave_WaitForActorLanding(Actor_Get(ACTOR_WEST_LOG));
-  Actor_SetAnimation(ACTOR_WEST_LOG, 8);
+  Actor_SetAnimation(ACTOR_WEST_LOG, LOG_ANIMATION_DROP_IN);
   Actor_SetSpritePriority(ACTOR_WEST_LOG, 3);
   Actor_Get(ACTOR_WEST_LOG)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   PushedActor_FillGridAttributeRectangle(0, 12, 16, 1, 4, CELL_BEHAVIOR_NORMAL);

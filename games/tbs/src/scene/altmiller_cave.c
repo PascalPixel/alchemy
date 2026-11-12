@@ -252,9 +252,6 @@ enum {
 /// room brightens as BG1 fades.
 #define ALTMILLER_CAVE_BRIGHTENING_WINOUT (WINOUT_WIN01_ALL | WINOUT_WINOBJ_ALL)
 
-/// The puddle's animation once Frost has frozen it.
-enum { PUDDLE_ANIMATION_FROZEN = 5 };
-
 static void AltmillerCave_ReleaseWallBurst(void);
 
 /// The ring of five lights above AltmillerCaveDraught's rocks as it spins to
@@ -2208,7 +2205,7 @@ s32 AltmillerCave_Initialize(void) {
     GameFlag_Clear(FLAG_ALTMILLER_CAVE_DARK);
     AltmillerCave_RedrawObstacleFootprints();
     if (GameFlag_Get(FLAG_ALTMILLER_CAVE_PUDDLE_FROZEN)) {
-      Actor_SetAnimation(ACTOR_SQUALL_ROOM_PUDDLE, PUDDLE_ANIMATION_FROZEN);
+      Actor_SetAnimation(ACTOR_SQUALL_ROOM_PUDDLE, PUDDLE_ANIMATION_PILLAR);
       MapGrid_CopyCellAttributes(76, 16, 1, 1, 73, 17);
     } else {
       Actor_Get(ACTOR_SQUALL_ROOM_PUDDLE)->priorityFlags |=

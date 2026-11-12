@@ -280,10 +280,10 @@ enum {
 /// Halting speech (haltingSpeech): a short pause before each decoded code; in
 /// English and Japanese not at a line's start or before a kana mark.
 #define ENTRY_NARROW_GAP TEXT_PAUSE_SHORT
-/// With spacingAfter (English and Japanese): TEXT_VOICED_MARK after a character
+/// With spacingAfter (English and Japanese): TEXT_MARK_VOICED after a character
 /// of codes 128 to 256, other than the kana marks and the Japanese full stop,
 /// comma and middle dot, unless the code after it is a kana mark.
-#define ENTRY_WIDE_GAP TEXT_VOICED_MARK
+#define ENTRY_WIDE_GAP TEXT_MARK_VOICED
 
 #if (LANGUAGE == LANGUAGE_ENGLISH) || (LANGUAGE == LANGUAGE_GERMAN) ||         \
     (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH) ||         \
@@ -461,8 +461,8 @@ s32 Message_Decode(s32 script, s32 clear) {
         // Halting speech pauses before each code.
         if (work->haltingSpeech != 0
 #if (LANGUAGE == LANGUAGE_ENGLISH)
-            && lineStart == 0 && code != TEXT_VOICED_MARK &&
-            code != TEXT_SEMIVOICED_MARK
+            && lineStart == 0 && code != TEXT_MARK_VOICED &&
+            code != TEXT_MARK_SEMIVOICED
 #endif
         ) {
           entry[writePosition] = ENTRY_NARROW_GAP;
@@ -471,10 +471,10 @@ s32 Message_Decode(s32 script, s32 clear) {
 
 #if (LANGUAGE == LANGUAGE_ENGLISH)
         if (work->spacingAfter != 0 && lineStart == 0 &&
-            code != TEXT_VOICED_MARK && code != TEXT_SEMIVOICED_MARK &&
+            code != TEXT_MARK_VOICED && code != TEXT_MARK_SEMIVOICED &&
             previousCode <= 256 && previousCode > 127 &&
-            previousCode != TEXT_VOICED_MARK &&
-            previousCode != TEXT_SEMIVOICED_MARK && previousCode != 32 &&
+            previousCode != TEXT_MARK_VOICED &&
+            previousCode != TEXT_MARK_SEMIVOICED && previousCode != 32 &&
             previousCode != TEXT_JAPANESE_MIDDLE_DOT &&
             previousCode != TEXT_JAPANESE_FULL_STOP &&
             previousCode != TEXT_JAPANESE_COMMA) {
@@ -984,15 +984,15 @@ s32 Message_Decode(s32 script, s32 clear) {
       } else {
         // Halting speech pauses before each character.
         if (work->haltingSpeech != 0 && lineStart == 0 &&
-            code != TEXT_VOICED_MARK && code != TEXT_SEMIVOICED_MARK) {
+            code != TEXT_MARK_VOICED && code != TEXT_MARK_SEMIVOICED) {
           entry[writePosition] = ENTRY_NARROW_GAP;
           writePosition = (writePosition + 1) & TEXT_BUFFER_MASK;
         }
         if (work->spacingAfter != 0 && lineStart == 0 &&
-            code != TEXT_VOICED_MARK && code != TEXT_SEMIVOICED_MARK &&
+            code != TEXT_MARK_VOICED && code != TEXT_MARK_SEMIVOICED &&
             previousCode <= 256 && previousCode > 127 &&
-            previousCode != TEXT_VOICED_MARK &&
-            previousCode != TEXT_SEMIVOICED_MARK && previousCode != 32 &&
+            previousCode != TEXT_MARK_VOICED &&
+            previousCode != TEXT_MARK_SEMIVOICED && previousCode != 32 &&
             previousCode != TEXT_JAPANESE_MIDDLE_DOT &&
             previousCode != TEXT_JAPANESE_FULL_STOP &&
             previousCode != TEXT_JAPANESE_COMMA) {

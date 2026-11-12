@@ -178,9 +178,7 @@ enum {
   TEXT_JAPANESE_FULL_STOP = 161,        ///< 。
   TEXT_JAPANESE_COMMA = 164,            ///< 、
   TEXT_JAPANESE_MIDDLE_DOT = 165,       ///< ・
-  TEXT_INVERTED_QUESTION_MARK = 191,    ///< ¿, outside Japanese
-  TEXT_VOICED_MARK = 222,               ///< dakuten
-  TEXT_SEMIVOICED_MARK = 223            ///< handakuten
+  TEXT_INVERTED_QUESTION_MARK = 191     ///< ¿, outside Japanese
 };
 
 /// The last code the main font draws (gFont_Glyphs, from TEXT_SPACE) and the

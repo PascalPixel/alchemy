@@ -321,7 +321,7 @@ void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode) {
       out->active = mode;
     WindowSprite_AppendToList(&win->sprites, (struct WindowSprite *)out);
   } else if (tile <= TEXT_LAST_FONT_CODE) {
-    if (tile - TEXT_VOICED_MARK <= 1) {
+    if (tile - TEXT_MARK_VOICED <= 1) {
       // A kana mark goes in the tile above the character before it. Over the
       // frame's top edge or a divider line, it takes the mark tile drawn over
       // that background.

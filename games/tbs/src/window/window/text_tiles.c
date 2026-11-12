@@ -177,7 +177,8 @@ s32 Text_DrawStringAsTiles(u16 *text, u16 *tiles, u16 *mirror, s32 x) {
         // the character before it and draws from glyphs 254 and 255.
         glyphCode &= 0xFF;
 #if (LANGUAGE == LANGUAGE_JAPANESE)
-        if (glyphCode == 222 || glyphCode == 223) {
+        if (glyphCode == TEXT_MARK_VOICED ||
+            glyphCode == TEXT_MARK_SEMIVOICED) {
           x -= 3;
           glyphCode += 32;
         }

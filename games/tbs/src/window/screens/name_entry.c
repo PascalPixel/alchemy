@@ -11,11 +11,8 @@
 UNUSED s32 NameEntry_AcceptsMark(s32 mark, s32 letter) { return 1; }
 #else
 
-// The kana voicing marks of the Japanese name entry screen, which join the
-// letter before them.
-#define NAME_VOICED_MARK 222     ///< dakuten
-#define NAME_SEMIVOICED_MARK 223 ///< handakuten
-// The keyboard's keys for them, as its tilemap's low bytes hold them.
+// The keyboard's keys for the kana voicing marks (TEXT_MARK_VOICED and
+// TEXT_MARK_SEMIVOICED), as its tilemap's low bytes hold them.
 #define NAME_VOICED_KEY 254
 #define NAME_SEMIVOICED_KEY 255
 
@@ -25,9 +22,9 @@ UNUSED s32 NameEntry_AcceptsMark(s32 mark, s32 letter) { return 1; }
 s32 NameEntry_AcceptsMark(s32 mark, s32 letter) {
   const u8 *range;
 
-  if (mark < NAME_VOICED_MARK || mark > NAME_SEMIVOICED_MARK)
+  if (mark < TEXT_MARK_VOICED || mark > TEXT_MARK_SEMIVOICED)
     return 1;
-  if (mark == NAME_VOICED_MARK)
+  if (mark == TEXT_MARK_VOICED)
     range = gNameEntry_VoicedMarkRanges;
   else
     range = gNameEntry_SemivoicedMarkRanges;
@@ -45,8 +42,8 @@ s32 NameEntry_CountLetters(const u8 *name) {
 
   count = 0;
   for (; *name != 0; name++) {
-    // Neither NAME_VOICED_MARK nor NAME_SEMIVOICED_MARK.
-    if ((u8)(*name - NAME_VOICED_MARK) > 1)
+    // Neither TEXT_MARK_VOICED nor TEXT_MARK_SEMIVOICED.
+    if ((u8)(*name - TEXT_MARK_VOICED) > 1)
       count++;
   }
   return count;
@@ -563,7 +560,7 @@ s32 NameEntry_EditMemberName(s32 member) {
       if (letter != 0) {
         bytes++;
         letterCount++;
-        if ((u8)(letter - NAME_VOICED_MARK) <= 1)
+        if ((u8)(letter - TEXT_MARK_VOICED) <= 1)
           letterCount--;
       }
     }
@@ -734,7 +731,7 @@ s32 NameEntry_EditMemberName(s32 member) {
         bytes--;
         letter = editedName[bytes];
         editedName[bytes] = 0;
-        if ((u8)(letter - NAME_VOICED_MARK) <= 1) {
+        if ((u8)(letter - TEXT_MARK_VOICED) <= 1) {
           bytes--;
           editedName[bytes] = 0;
         }
@@ -804,13 +801,13 @@ s32 NameEntry_EditMemberName(s32 member) {
       letter = ((u8 *)&work->tilemap)[cell * 2];
       // The keyboard's dakuten key.
       if (letter == NAME_VOICED_KEY)
-        letter = NAME_VOICED_MARK;
+        letter = TEXT_MARK_VOICED;
       // The keyboard's handakuten key.
       if (letter == NAME_SEMIVOICED_KEY)
-        letter = NAME_SEMIVOICED_MARK;
+        letter = TEXT_MARK_SEMIVOICED;
       // A full name still takes a voicing mark on its last letter.
       if (letterCount == NAME_MAX_LETTERS &&
-          (u8)(letter - NAME_VOICED_MARK) > 1)
+          (u8)(letter - TEXT_MARK_VOICED) > 1)
         continue;
       dst = editedName + bytes;
       if (!NameEntry_AcceptsMark(letter, editedName[bytes - 1])) {
@@ -821,7 +818,7 @@ s32 NameEntry_EditMemberName(s32 member) {
       bytes++;
       editedName[bytes] = 0;
       letterCount++;
-      if ((u8)(letter - NAME_VOICED_MARK) <= 1)
+      if ((u8)(letter - TEXT_MARK_VOICED) <= 1)
         letterCount--;
       if (letterCount == NAME_MAX_LETTERS) {
         keyColumn = NAME_COMMAND_COLUMN;

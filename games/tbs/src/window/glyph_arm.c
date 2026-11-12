@@ -54,8 +54,8 @@ static __inline__ void Text_SetCanvasPixel(u32 windowHeight, u32 x, u32 tileY,
 /// gFont_KanjiGlyphs for codes from 256), drawn in four passes: the first
 /// three draw an outline in colour 5 (offset left, right and down when the
 /// window has WINDOW_FLAG_OUTLINED_TEXT) and the last draws the glyph itself in
-/// colour 1. In Japanese, kana marks (codes 222 and 223) sit over the previous
-/// character and advance by 0.
+/// colour 1. In Japanese, kana marks (TEXT_MARK_VOICED and
+/// TEXT_MARK_SEMIVOICED) sit over the previous character and advance by 0.
 s32 Glyph_DrawArm(struct Window *window, u32 character, u32 x, u32 y,
                   const u8 *font) {
   const u16 *glyphRows;
@@ -86,9 +86,9 @@ s32 Glyph_DrawArm(struct Window *window, u32 character, u32 x, u32 y,
     return 1;
 #endif
 
-  // character - 222 <= 1, unsigned, is a kana mark (222 or 223).
+  // character - TEXT_MARK_VOICED <= 1, unsigned, is either kana mark.
 #if (LANGUAGE == LANGUAGE_JAPANESE) || (LANGUAGE == LANGUAGE_ENGLISH)
-  if (character <= 255 || (font != NULL && character - 222 <= 1))
+  if (character <= 255 || (font != NULL && character - TEXT_MARK_VOICED <= 1))
 #else
   if (character <= 255 || font != NULL)
 #endif
@@ -113,7 +113,7 @@ s32 Glyph_DrawArm(struct Window *window, u32 character, u32 x, u32 y,
       color = 0x1111;
       fontWidth = 8;
       x++;
-      if (character - 222 <= 1) {
+      if (character - TEXT_MARK_VOICED <= 1) {
         character += 32;
         x -= 2;
         y--;
@@ -224,7 +224,7 @@ s32 Glyph_DrawArm(struct Window *window, u32 character, u32 x, u32 y,
 #endif
   }
 #if (LANGUAGE == LANGUAGE_JAPANESE) || (LANGUAGE == LANGUAGE_ENGLISH)
-  if (character - 222 <= 1) {
+  if (character - TEXT_MARK_VOICED <= 1) {
     x -= 3;
     y -= 2;
     advance = 0;

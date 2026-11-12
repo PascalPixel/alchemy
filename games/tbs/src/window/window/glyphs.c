@@ -238,10 +238,10 @@ s32 Text_GetWideStringWidth(u16 *text) {
 #if defined(WIDE_WIDTH_FIXED)
         width += 10;
 #else
-        glyphIndex = code - TEXT_VOICED_MARK;
+        glyphIndex = code - TEXT_MARK_VOICED;
         if (glyphIndex > 1U) {
           // The font starts at the space.
-          glyphIndex += TEXT_VOICED_MARK - TEXT_SPACE;
+          glyphIndex += TEXT_MARK_VOICED - TEXT_SPACE;
           width += FONT_GLYPH(glyphIndex)->width;
         }
       } else {
@@ -366,10 +366,10 @@ void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x,
 #endif
       }
 #else
-      if (*text == TEXT_VOICED_MARK) {
+      if (*text == TEXT_MARK_VOICED) {
         code |= TEXT_CODE_VOICED;
         text++;
-      } else if (*text == TEXT_SEMIVOICED_MARK) {
+      } else if (*text == TEXT_MARK_SEMIVOICED) {
         code |= TEXT_CODE_SEMIVOICED;
         text++;
       }
@@ -467,7 +467,7 @@ void Text_DrawWideStringInWindow(s16 *text, struct Window *window, s32 x,
         x++;
 #else
         // The kana marks share a tile.
-        if ((u16)(code - TEXT_VOICED_MARK) > 1)
+        if ((u16)(code - TEXT_MARK_VOICED) > 1)
           x++;
 #endif
       }

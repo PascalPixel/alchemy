@@ -346,10 +346,10 @@ s32 Message_Type(struct Message *message) {
       nextCode = work->textBuffer[nextEntryIndex];
 #if (LANGUAGE == LANGUAGE_JAPANESE) || (LANGUAGE == LANGUAGE_ENGLISH)
       // A kana mark after the character is drawn with it.
-      if (nextCode == TEXT_VOICED_MARK) {
+      if (nextCode == TEXT_MARK_VOICED) {
         code |= TEXT_CODE_VOICED;
         message->textIndex = (message->textIndex + 1) & TEXT_BUFFER_MASK;
-      } else if (nextCode == TEXT_SEMIVOICED_MARK) {
+      } else if (nextCode == TEXT_MARK_SEMIVOICED) {
         code |= TEXT_CODE_SEMIVOICED;
         message->textIndex = (message->textIndex + 1) & TEXT_BUFFER_MASK;
       }

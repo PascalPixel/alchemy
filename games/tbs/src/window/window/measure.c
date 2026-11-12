@@ -164,7 +164,7 @@ void Text_MeasureDecoded(s32 entryIndex, u32 *outWidth, u32 *outHeight,
         lineWidth += glyph;
       }
 #else
-      if (code != TEXT_VOICED_MARK && code != TEXT_SEMIVOICED_MARK) {
+      if (code != TEXT_MARK_VOICED && code != TEXT_MARK_SEMIVOICED) {
         if (code == 32) {
           lineWidth += WINDOW_SPRITE_SPACE_WIDTH;
         } else {
@@ -359,7 +359,7 @@ void Text_MeasureAllPages(s32 entryIndex, u32 *outWidth, u32 *outHeight,
         width += glyph;
       }
 #else
-      if (code != TEXT_VOICED_MARK && code != TEXT_SEMIVOICED_MARK) {
+      if (code != TEXT_MARK_VOICED && code != TEXT_MARK_SEMIVOICED) {
         if (code == 32) {
           width += WINDOW_SPRITE_SPACE_WIDTH;
         } else {

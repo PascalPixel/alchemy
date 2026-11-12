@@ -39,9 +39,9 @@ draws in. The shop counters are in [Shops](../shop/README.md).
 The row has three icons while the party has no Djinn, and four once it has
 one. The Djinn icon is simply left out until then.
 
-The four screens look alike. Small walking figures of the party stand along
-the top, and this page calls them the party figures. A pointing hand shows
-what is chosen. And the questions come in much the same order: which party
+The four screens look alike. Small figures of the party stand along the
+top, and this page calls them the party figures. A pointing hand shows what
+is chosen. And the questions come in much the same order: which party
 member, then which of their things, then what to do with it.
 
 | Icon     | What it asks, in the game's own words                               |
@@ -797,7 +797,7 @@ The shop counters show the same party figures ([Shops](../shop/README.md)).
   piece of code that asks it and waits for the answer.
 - **status panel**: the window on the left of the Item and Psynergy screens
   that shows the chosen party member.
-- **party figures**: the little party members walking in the top window.
+- **party figures**: the little party members standing in the top window.
 - **Djinn figures**: the four Djinn standing on the Status screen, one for
   each element, and the ones by the columns on the Djinn screen.
 - **ring**: the credits' room for 32 lines of text, 16 on screen at a time,

@@ -46,7 +46,8 @@ void FadeOverlay_DrawMarks(void) {
   s32 height;
   s32 secondHeight;
   s32 screenRow;
-  // Unused: gives the stack frame its 16 bytes.
+  /* FAKEMATCH(dead): an unused local that gives the stack frame its 16 bytes;
+   * without it, 4 of 200 instructions differ in tbs-en. */
   UNUSED s16 unused[2];
 
   if (actor == 0)

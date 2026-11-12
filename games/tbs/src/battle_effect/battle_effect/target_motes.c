@@ -500,7 +500,9 @@ void BattleEffect_RunCurse(struct BattleEffectParams *args) {
   void **slot;
   struct BattleEffectWork *work;
   void *canvas;
-  // Only draw[0] is used; the second blitter gives the stack frame 4 bytes.
+  /* FAKEMATCH(dead): a pair of blitters, of which only draw[0] is used,
+   * gives the stack frame 4 more bytes; as one DrawRectangle, 202 of 220
+   * instructions differ in tbs-en. */
   BlitterPair draw;
   struct Particle *marker;
   s32 i;

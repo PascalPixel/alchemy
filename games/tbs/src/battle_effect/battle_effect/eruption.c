@@ -55,7 +55,9 @@ void BattleEffect_RunEruption(struct BattleEffectParams *args, s32 mode) {
   void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
-  // Only draw[0] is used; the second blitter gives the stack frame 4 bytes.
+  /* FAKEMATCH(dead): a pair of blitters, of which only draw[0] is used,
+   * gives the stack frame 4 more bytes; as one DrawRectangle, 20 of 470
+   * instructions differ in tbs-en. */
   BlitterPair draw;
   s32 variant;
   struct ScreenPoint screen;

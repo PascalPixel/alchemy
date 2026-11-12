@@ -357,7 +357,7 @@ is put back as the screen closes.
 
 ### The Status screen
 
-![Isaac's Status screen: the party row, then his status page with the four Djinn figures standing on it, `Your status is normal.`, a page of his Psynergy with its PP costs and where each can be used, and a page of his equipment.](https://alchemy.pascalpixel.com/guides/menu/summary-screen.gif)
+![Isaac's Status screen: the party row, then his status page with the four Djinn figures on it, `Your status is normal.`, a page of his Psynergy with its PP costs and where each can be used, and a page of his equipment.](https://alchemy.pascalpixel.com/guides/menu/summary-screen.gif)
 
 The Status screen shows one party member at a time. A row picks the party
 member, and then A moves through three pages and round to the first again:
@@ -370,8 +370,10 @@ member, and then A moves through three pages and round to the first again:
   Shield and Chest), five items to a page, or six in Japanese.
 
 L and R switch to the previous or next party member on any page, and B goes
-back to the row. When the party has Djinn, four Djinn figures stand on the
-status page, one for each [element](../../glossary.md#the-four-elements).
+back to the row. When the party has Djinn, four Djinn figures walk on the spot
+on the status page, one for each
+[element](../../glossary.md#the-four-elements), each above how many of that
+element's Djinn the member holds.
 
 ![The Status screen's party row in Xian: R carries Isaac one place along the party and then another, L brings him back to the front, and Select opens `Current Djinn`, the Djinn the party has found, in four columns.](https://alchemy.pascalpixel.com/guides/menu/status-row.gif)
 
@@ -798,8 +800,8 @@ The shop counters show the same party figures ([Shops](../shop/README.md)).
 - **status panel**: the window on the left of the Item and Psynergy screens
   that shows the chosen party member.
 - **party figures**: the little party members standing in the top window.
-- **Djinn figures**: the four Djinn standing on the Status screen, one for
-  each element, and the ones by the columns on the Djinn screen.
+- **Djinn figures**: the four Djinn on the Status screen, one for each
+  element, and the ones by the columns on the Djinn screen.
 - **ring**: the credits' room for 32 lines of text, 16 on screen at a time,
   written round and round as the text scrolls.
 

@@ -1,0 +1,94 @@
+/// @file
+/// Routines whose twins are in The Broken Seal's window/screens/debug.c.
+// Part of f04a85c.c.
+
+#include "../f04a85c_internal.h"
+
+s32 Scene_GetAreaNameIndexFar(s32 scene, s32 entrance);
+void Text_DrawNumber(s32 value, s32 digits, void *window, s32 x, s32 y);
+void Text_DrawString(u8 *text, s32 arg1, s32 arg2, s32 arg3);
+void Text_DrawMessage(s32 message, void *window, s32 x, s32 y);
+extern const u8 gMenu_ColonString[];
+extern u8 MsgDebugAreaName[];
+extern u8 MsgDebugSceneCode[];
+
+#if (LANGUAGE == LANGUAGE_JAPANESE)
+#define SELROW_TEXT_X 100
+#define SELROW_LABEL_X 110
+#else
+#define SELROW_TEXT_X 74
+#define SELROW_LABEL_X 82
+#endif
+
+void Menu_DrawSelectionRow(void *window, s16 first, const s16 *second) {
+  s16 selected = first;
+  s32 label =
+      Scene_GetAreaNameIndexFar(selected, *second) + (s32)MsgDebugAreaName;
+
+  WindowSprite_PrepareForRedraw(window);
+  Text_DrawNumber(selected, 3, window, 0, 14);
+  Text_DrawNumber(*second, 3, window, SELROW_LABEL_X, 14);
+  Text_DrawString(gMenu_ColonString, window, SELROW_TEXT_X, 0);
+  Text_DrawMessage(selected + (s32)MsgDebugSceneCode, window, 0, 0);
+  Text_DrawString(gMenu_ColonString, window, SELROW_TEXT_X, 14);
+  Text_DrawMessage(label, window, SELROW_LABEL_X, 0);
+}
+
+
+struct Work;
+
+struct TextObject {
+  u8 storage[12];
+};
+
+void Event_SetDestinationFar(s16 primary, s16 secondary);
+void UiTextResource_Release(s32 resource);
+void Window_Close(struct Window *work, s32 release);
+/* VIEW(selrow): routine Menu_HandleSelectionRowInput as s32 Menu_HandleSelectionRowInput(struct Work *work, s16 value, s16 *sub, s16 *mode); the definition has s32 Menu_HandleSelectionRowInput(s32 arg, s16 value, s16 *sub, s16 *mode); tried as the rest of the object declares it, it does not compile in tla-ja (make modern): games/tla/src/window/f04a85c.c:129:74: note: expected 'struct TargetWindow *' but argument is of type 's32' {aka 'int'}. */
+extern s32 Menu_HandleSelectionRowInput__selrow(struct Work *work, s16 value, s16 *sub,
+                                 s16 *mode) __asm__("Menu_HandleSelectionRowInput");
+
+/// Picks a destination (primary and secondary) in a row menu and travels
+/// there; returns -1 after travelling and -2 when cancelled.
+s16 Menu_RunSelection(void) {
+  s32 resource;
+  s16 mode;
+  s16 secondary;
+  struct TextObject object;
+  s16 primary;
+  struct Work *work;
+  s16 result;
+
+  work = 0;
+  mode = 0;
+  primary = gMainRoutineWork.primary;
+  secondary = gMainRoutineWork.secondary;
+  work = Window_Create(0, 7, 30, 5, 2);
+  Menu_DrawSelectionRow(work, primary, &secondary);
+  UiTextResource_Initialize(&object, &resource);
+
+  while (gInput.held != 0)
+    wait(1);
+
+  for (;;) {
+    result =
+        (s16)Menu_HandleSelectionRowInput__selrow(work, primary, &secondary, &mode);
+    if (result == -1) {
+      UiTextResource_Release(resource);
+      Window_Close(work, 2);
+      Event_SetDestinationFar(primary, secondary);
+      return result;
+    }
+    if (result == -2) {
+      UiTextResource_Release(resource);
+      Window_Close(work, 2);
+      return result;
+    }
+
+    UiTextResource_SetPosition(&object, MENU_TEXT_X, mode * 14 + MENU_TEXT_Y);
+    primary = result;
+    wait(1);
+  }
+}
+#undef SELROW_TEXT_X
+#undef SELROW_LABEL_X

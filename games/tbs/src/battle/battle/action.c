@@ -556,7 +556,8 @@ s32 BattleActionRun_Build(struct BattleAction *request,
     struct DjinnRecoveryList *list;
     s32 side;
     u8 counts[ELEMENT_COUNT];
-    // Unused: gives the stack frame its 8 bytes below counts.
+    /* FAKEMATCH(dead): an unused local that gives the stack frame its 8 bytes
+     * below counts; without it, 28 of 1393 instructions differ in tbs-en. */
     UNUSED u8 unused[8];
     s32 index;
 

@@ -152,9 +152,9 @@ s32 LinkBattle_SendParty(void) {
   size = LINK_PARTY_OFFER_BYTES;
   Heap_Release(buffer);
   buffer = (u8 *)Heap_AllocEwram(size);
-  // The copy in a one-pass loop, a scheduling barrier that keeps the list
-  // pointer's copy ahead of the count's load; as the plain call, 1 of 152
-  // instructions differ in tbs-en.
+  /* FAKEMATCH(dead): the copy in a once-only block keeps the list pointer's
+   * copy ahead of the count's load; as the plain call, 2 of 152 instructions
+   * differ in tbs-en. */
   do {
     Iwram_CopyWords(buffer, Djinn_GetRecoveryTableFar(DJINN_RECOVERY_PARTY),
                     size);
@@ -266,7 +266,8 @@ s32 LinkBattle_SyncTurn(void) {
   u16 *peer;
   u16 *signature;
   s32 missed = 0;
-  // Unused: gives the stack frame its 20 bytes.
+  /* FAKEMATCH(dead): an unused local that gives the stack frame its 20 bytes;
+   * without it, 20 of 232 instructions differ in tbs-en. */
   UNUSED u16 spare[10];
 
   if (battle->isLink != 0) {

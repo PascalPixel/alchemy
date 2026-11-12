@@ -414,7 +414,7 @@ extern u8 gData_03001f2c[];
 void Func_080f8ab4(s32 x, s32 y);
 void *Unit_Get(s32 owner);
 s32 Func_080fd6f0(struct BattleUnit *unit, u16 *actions, s32 mode);
-s32 Func_080fd000(u16 *ownerIds, u16 *actions);
+s32 Func_080fd000(u16 *ownerIds, u16 *unused);
 
 /// Shows side partySlot's icon, collects the actions of the member chosen
 /// there last (the first when none was) and runs Func_080fd000 on them.
@@ -494,7 +494,7 @@ void Heap_Release(void *block);
 s32 Func_080fd6f0(struct BattleUnit *unit, u16 *actions, s32 mode);
 s32 Menu_MoveGridCursor(s32 *selection, s32 count, s32 columns);
 
-s32 Func_080fd000(u16 *ownerIds, u16 *actions) {
+s32 Func_080fd000(u16 *ownerIds, u16 *unused) {
   struct PsynergyMenuState *menu;
   s32 selection;
   s32 count;

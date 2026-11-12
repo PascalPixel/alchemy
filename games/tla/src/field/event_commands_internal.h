@@ -8,8 +8,9 @@
 /// includes it too, so that a part read on its own resolves. It places no
 /// bytes.
 
-// The headers declare these with other views; the parts' own declarations are
-// below.
+// The headers declare these on struct ActorView, as the routines behind them
+// are defined; the parts pass the same actors as struct Actor and declare them
+// so below.
 #define OWN_Actor_SetSingleChildFlagsFar
 #define OWN_Actor_StartScriptFar
 

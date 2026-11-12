@@ -619,21 +619,7 @@ static void Kolima_AlternateProtectiveFieldHeights(void) {
   Kolima_SetProtectiveFieldHeight(ACTOR_GARET_PSYNERGY_FIELD, 1);
 }
 
-/// Begins Mind Read on one of Kolima's villagers turned into a tree.
-static void Kolima_ReadVillagerThoughts(s32 actorId, s32 targetId) {
-  FieldPsynergy_LoadResources(ABILITY_MIND_READ, 1);
-  FieldPsynergy_SetupActorPair(actorId, targetId);
-  FieldPsynergy_StartCast();
-  FieldPsynergy_RunHandler(1);
-  wait(1);
-}
-
-/// Finishes Mind Read and releases its temporary event actors.
-static void Kolima_FinishReadingThoughts(void) {
-  FieldPsynergy_RunHandler(2);
-  FieldPsynergy_StopCasterUpdate();
-  FieldPsynergy_End();
-}
+#include "shared/mind_read.h"
 
 /// Gives the four companions the same nod, waiting on the final actor.
 static __inline__ void Kolima_NodTogether(void) {
@@ -773,9 +759,9 @@ static void Kolima_WitnessForestCurse(void) {
   Actor_FaceDirection(ACTOR_IVAN, FACING_EAST, 0);
   Event_Wait(20);
   // Mind Read reveals that the trees are the missing villagers.
-  Kolima_ReadVillagerThoughts(ACTOR_IVAN, ACTOR_VILLAGER_RELYING_ON_FORESTS);
+  Scene_StartMindRead(ACTOR_IVAN, ACTOR_VILLAGER_RELYING_ON_FORESTS);
   Event_Wait(40);
-  Kolima_FinishReadingThoughts();
+  Scene_EndMindRead();
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Actor_SetSpeed(ACTOR_IVAN, PIXELS(1), PIXELS(1) / 2);
   Actor_Get(ACTOR_IVAN)->steeringFlags &= ~ACTOR_FACES_MOTION;

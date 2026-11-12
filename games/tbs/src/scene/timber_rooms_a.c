@@ -257,17 +257,7 @@ static void TimberRoomsA_AskIfBlownHere(s32 actorId) {
   Event_ShowMessage(actorId, 0);
 }
 
-/// The party leaves by the touched exit.
-///
-/// This serves the doors of Suhalla and Suhalla Sanctum, and the doors between
-/// the inn and its guest rooms.
-static void TimberRoomsA_LeaveByExit(void) {
-  struct FieldWork *state = gFieldWork;
-  s16 *touchedTrigger = (s16 *)&state->stepTrigger;
-
-  Import_EventSetExitRequest(*touchedTrigger);
-  Sound_Play(SE_MAP_EXIT);
-}
+#include "shared/leave_by_exit.h"
 
 /// In Suhalla after Babi's audience, Iodem steps out of the party and
 /// questions the two wounded soldiers.
@@ -745,15 +735,15 @@ struct ActorPlacement gTimberRoomsAActorPlacementsAfterAudience[] = {
 };
 
 struct Trigger gTimberRoomsATriggers[] = {
-    { TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(TimberRoomsA_LeaveByExit) },
-    { TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(TimberRoomsA_LeaveByExit) },
-    { TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT(TimberRoomsA_LeaveByExit) },
-    { TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT(TimberRoomsA_LeaveByExit) },
-    { TRIGGER_STEP, 5, CONDITION_ALWAYS, EVENT(TimberRoomsA_LeaveByExit) },
-    { TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(TimberRoomsA_LeaveByExit) },
-    { TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT(TimberRoomsA_LeaveByExit) },
-    { TRIGGER_STEP, 12, CONDITION_ALWAYS, EVENT(TimberRoomsA_LeaveByExit) },
-    { TRIGGER_STEP, 13, CONDITION_ALWAYS, EVENT(TimberRoomsA_LeaveByExit) },
+    { TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
+    { TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
+    { TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
+    { TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
+    { TRIGGER_STEP, 5, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
+    { TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
+    { TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
+    { TRIGGER_STEP, 12, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
+    { TRIGGER_STEP, 13, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
     { TRIGGER_TALK, ACTOR_FATHERS_DAUGHTER, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsMyFatherLovesPeopleSoMuch) },
     { TRIGGER_TALK, ACTOR_FATHER_WHO_WANTS_TO_HELP, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsLetMeKnowIfYouHave) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FATHERS_DAUGHTER, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsWhenISeePeopleInTrouble) },
@@ -779,15 +769,15 @@ struct Trigger gTimberRoomsATriggers[] = {
 
 struct Trigger gTimberRoomsATriggersAfterAudience[] = {
     { TRIGGER_STEP, 50, FLAG_IODEM_MET_WOUNDED_SOLDIERS, EVENT(TimberRoomsA_IodemQuestionsWoundedSoldiers) },
-    { TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(TimberRoomsA_LeaveByExit) },
-    { TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(TimberRoomsA_LeaveByExit) },
-    { TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT(TimberRoomsA_LeaveByExit) },
-    { TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT(TimberRoomsA_LeaveByExit) },
-    { TRIGGER_STEP, 5, CONDITION_ALWAYS, EVENT(TimberRoomsA_LeaveByExit) },
-    { TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(TimberRoomsA_LeaveByExit) },
-    { TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT(TimberRoomsA_LeaveByExit) },
-    { TRIGGER_STEP, 12, CONDITION_ALWAYS, EVENT(TimberRoomsA_LeaveByExit) },
-    { TRIGGER_STEP, 13, CONDITION_ALWAYS, EVENT(TimberRoomsA_LeaveByExit) },
+    { TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
+    { TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
+    { TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
+    { TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
+    { TRIGGER_STEP, 5, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
+    { TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
+    { TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
+    { TRIGGER_STEP, 12, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
+    { TRIGGER_STEP, 13, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
     { TRIGGER_TALK, ACTOR_FATHERS_DAUGHTER, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsTheWoundedAreSleepingSoDont) },
     { TRIGGER_TALK, ACTOR_FATHER_WHO_WANTS_TO_HELP, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsIAmAmazedTheseSoldiersSurvived) },
     { TRIGGER_TALK, ACTOR_SOLDIER_SOUTH, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsWhyWereTheyHeadedTowardEastern) },

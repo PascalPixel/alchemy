@@ -293,8 +293,8 @@ static void LogRoomsA_FaceEachOtherAndWait(s32 firstId, s32 secondId,
                                            s32 waitFrames);
 static void LogRoomsA_PlayAnimationAndWait(s32 actorId, s32 animation,
                                            s32 waitFrames);
-static void LogRoomsA_StartMindRead(s32 casterId, s32 targetId);
-static void LogRoomsA_EndMindRead(void);
+static void Scene_StartMindRead(s32 casterId, s32 targetId);
+static void Scene_EndMindRead(void);
 static void LogRoomsA_UpdateActorStops(void);
 static void LogRoomsA_StartActorStops(void);
 
@@ -1058,9 +1058,9 @@ static void LogRoomsA_MeetIvan(void) {
   if (Event_GetFlag(FLAG_VAULT_MET_IVAN) == 0) {
     GameFlag_Set(FLAG_VAULT_MET_IVAN);
     // Ivan reads Isaac's mind and admits his strange powers.
-    LogRoomsA_StartMindRead(ACTOR_IVAN, ACTOR_PARTY_LEADER);
+    Scene_StartMindRead(ACTOR_IVAN, ACTOR_PARTY_LEADER);
     Event_Wait(40);
-    LogRoomsA_EndMindRead();
+    Scene_EndMindRead();
     Event_SetMessageId(MsgVaultDoPossessStrangePowers);
     Sound_Play(MUS_IVAN);
     Event_Wait(30);
@@ -1070,9 +1070,9 @@ static void LogRoomsA_MeetIvan(void) {
     Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
     Actor_RunRepeatedMotion(ACTOR_GARET, 1);
     Event_Wait(20);
-    LogRoomsA_StartMindRead(ACTOR_IVAN, ACTOR_PARTY_LEADER);
+    Scene_StartMindRead(ACTOR_IVAN, ACTOR_PARTY_LEADER);
     Event_Wait(40);
-    LogRoomsA_EndMindRead();
+    Scene_EndMindRead();
     LogRoomsA_ShowMessageAndWait(ACTOR_IVAN, 30);
     LogRoomsA_FaceEachOtherAndWait(ACTOR_PARTY_LEADER, ACTOR_GARET, 50);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
@@ -1080,9 +1080,9 @@ static void LogRoomsA_MeetIvan(void) {
     Event_Wait(20);
     // A third reading: his power is called Psynergy; then they have so much
     // in common he can trust them.
-    LogRoomsA_StartMindRead(ACTOR_IVAN, ACTOR_PARTY_LEADER);
+    Scene_StartMindRead(ACTOR_IVAN, ACTOR_PARTY_LEADER);
     Event_Wait(40);
-    LogRoomsA_EndMindRead();
+    Scene_EndMindRead();
     Actor_RunRepeatedMotion(ACTOR_IVAN, 1);
     LogRoomsA_ShowMessageAndWait(ACTOR_IVAN, 50);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
@@ -1166,9 +1166,9 @@ static void LogRoomsA_IvanJoinsRodSearch(void) {
   LogRoomsA_ShowMessageAndWait(ACTOR_IVAN, 30);
   // He reads their names from Isaac's mind; Isaac backs away from him.
   Actor_WalkToAndWait(ACTOR_IVAN, 376, 392);
-  LogRoomsA_StartMindRead(ACTOR_IVAN, ACTOR_PARTY_LEADER);
+  Scene_StartMindRead(ACTOR_IVAN, ACTOR_PARTY_LEADER);
   Event_Wait(40);
-  LogRoomsA_EndMindRead();
+  Scene_EndMindRead();
   Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 1);
   Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 384, 424);
@@ -1230,10 +1230,10 @@ static void LogRoomsA_IvanJoinsRodSearch(void) {
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 368, 424);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_GARET, 0);
   Actor_WaitForMoveById(ACTOR_IVAN);
-  LogRoomsA_StartMindRead(ACTOR_IVAN, ACTOR_GARET);
+  Scene_StartMindRead(ACTOR_IVAN, ACTOR_GARET);
   LogRoomsA_PlayAnimationAndWait(ACTOR_GARET, ANIM_SHAKE_HEAD, 10);
   Event_ShowMessage(ACTOR_GARET, 0);
-  LogRoomsA_EndMindRead();
+  Scene_EndMindRead();
   LogRoomsA_FaceEachOtherAndWait(ACTOR_IVAN, ACTOR_PARTY_LEADER, 30);
   Event_ShowMessage(ACTOR_IVAN, 0);
   Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 1);
@@ -1271,10 +1271,10 @@ static void LogRoomsA_IvanJoinsRodSearch(void) {
   Actor_FaceActor(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Event_Wait(60);
-  LogRoomsA_StartMindRead(ACTOR_IVAN, ACTOR_PARTY_LEADER);
+  Scene_StartMindRead(ACTOR_IVAN, ACTOR_PARTY_LEADER);
   FieldPsynergy_RestoreMindReadPalette();
   LogRoomsA_ShowMessageAndWait(ACTOR_GARET, 30);
-  LogRoomsA_EndMindRead();
+  Scene_EndMindRead();
   Actor_FaceEachOther(ACTOR_IVAN, ACTOR_GARET, 0);
   LogRoomsA_PlayAnimationAndWait(ACTOR_IVAN, ANIM_NOD, 10);
   LogRoomsA_ShowMessageAndWait(ACTOR_IVAN, 20);
@@ -1883,7 +1883,7 @@ static void LogRoomsA_ReadCorneredSuspectsMinds(void) {
   Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
   Event_Wait(20);
   LogRoomsA_ShowMessageAndWait(ACTOR_IVAN, 20);
-  LogRoomsA_StartMindRead(ACTOR_IVAN, actorId);
+  Scene_StartMindRead(ACTOR_IVAN, actorId);
   FieldPsynergy_RestoreMindReadPalette();
   Event_Wait(60);
   Actor_RunRepeatedMotion(ACTOR_SUSPECTED_LEADER, 2);
@@ -1892,7 +1892,7 @@ static void LogRoomsA_ReadCorneredSuspectsMinds(void) {
   LogRoomsA_ShowMessageAndWait(ACTOR_SUSPECTED_THIEF, 20);
   // "Are you done, Ivan?" He nods, and the window closes.
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
-  LogRoomsA_EndMindRead();
+  Scene_EndMindRead();
   Actor_StartRepeatedMotion(ACTOR_GARET, 2);
   Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Event_Wait(20);
@@ -2563,7 +2563,7 @@ static void LogRoomsA_DefeatThieves(void) {
   LogRoomsA_PlayAnimationAndWait(ACTOR_GARET, ANIM_NOD, 20);
   // Ivan reads Isaac's mind. Garet: "Shouldn't we stop him?" Yes: too late,
   // he's done. No: "If you say so."
-  LogRoomsA_StartMindRead(ACTOR_IVAN, ACTOR_PARTY_LEADER);
+  Scene_StartMindRead(ACTOR_IVAN, ACTOR_PARTY_LEADER);
   FieldPsynergy_RestoreMindReadPalette();
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_IVAN, 0);
   LogRoomsA_FaceActorAndWait(ACTOR_GARET, ACTOR_IVAN, 10);
@@ -2579,7 +2579,7 @@ static void LogRoomsA_DefeatThieves(void) {
     Event_Wait(20);
     Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_IVAN, 0);
     LogRoomsA_FaceActorAndWait(ACTOR_GARET, ACTOR_IVAN, 20);
-    LogRoomsA_EndMindRead();
+    Scene_EndMindRead();
     Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
     Actor_RunRepeatedMotion(ACTOR_GARET, 1);
     Event_Wait(20);
@@ -2591,7 +2591,7 @@ static void LogRoomsA_DefeatThieves(void) {
     LogRoomsA_ShowMessageAndWait(ACTOR_GARET, 20);
     Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_IVAN, 0);
     LogRoomsA_FaceActorAndWait(ACTOR_GARET, ACTOR_IVAN, 20);
-    LogRoomsA_EndMindRead();
+    Scene_EndMindRead();
     Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
     Actor_RunRepeatedMotion(ACTOR_GARET, 1);
     Event_Wait(20);
@@ -3210,21 +3210,7 @@ static void LogRoomsA_PlayAnimationAndWait(s32 actorId, s32 animation,
   Event_Wait(waitFrames);
 }
 
-/// Begins Mind Read, chooses its target, and shows its opening effect.
-static void LogRoomsA_StartMindRead(s32 casterId, s32 targetId) {
-  FieldPsynergy_LoadResources(ABILITY_MIND_READ, 1);
-  FieldPsynergy_SetupActorPair(casterId, targetId);
-  FieldPsynergy_StartCast();
-  FieldPsynergy_RunHandler(1);
-  wait(1);
-}
-
-/// Finishes Mind Read and releases its event effect actors.
-static void LogRoomsA_EndMindRead(void) {
-  FieldPsynergy_RunHandler(2);
-  FieldPsynergy_StopCasterUpdate();
-  FieldPsynergy_End();
-}
+#include "shared/mind_read.h"
 
 #include "shared/vault_item_icon.h"
 

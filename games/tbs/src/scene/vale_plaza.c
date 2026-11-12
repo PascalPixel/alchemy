@@ -1089,18 +1089,7 @@ s32 ValePlaza_Initialize(void) {
   return 0;
 }
 
-/// Walks a separate map actor back to the leader, then hides it.
-static inline void ValePlaza_RejoinParty(s32 actorId) {
-  struct Actor *leader;
-
-  Actor_SetAnimation(actorId, ANIM_WALK);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != NULL) {
-    Actor_SetDestination(actorId, leader->x.part.pixel, leader->z.part.pixel);
-  }
-  Actor_WaitForMoveById(actorId);
-  Actor_SetPosition(actorId, 0, 0);
-}
+#include "shared/walk_into_leader.h"
 
 /// The mayor sends help to the elders and the boys back to the river. In Vale's
 /// plaza on the stormy night, Garet's grandfather, the mayor, sends two
@@ -1264,9 +1253,9 @@ static void ValePlaza_SentToAidElders(void) {
     Actor_SetAnimationAndWait(ACTOR_STORM_CHARGED_UP_STRONGMAN, ANIM_NOD);
     // Garet, Jenna and the rested strongman walk into Isaac; Garet's
     // grandfather keeps turning to watch him.
-    ValePlaza_RejoinParty(ACTOR_STORM_GARET);
-    ValePlaza_RejoinParty(ACTOR_STORM_JENNA);
-    ValePlaza_RejoinParty(ACTOR_STORM_CHARGED_UP_STRONGMAN);
+    Scene_WalkIntoLeader(ACTOR_STORM_GARET);
+    Scene_WalkIntoLeader(ACTOR_STORM_JENNA);
+    Scene_WalkIntoLeader(ACTOR_STORM_CHARGED_UP_STRONGMAN);
     FieldActor_WatchAndStartScript(ACTOR_STORM_GARETS_GRANDFATHER,
                                    ACTOR_WATCH_KEEP_MOTION | ACTOR_PARTY_LEADER,
                                    gValePlaza_FaceTargetActions);

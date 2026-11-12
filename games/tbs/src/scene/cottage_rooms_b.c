@@ -1315,14 +1315,7 @@ static void CottageRoomsB_CyclePaletteAndSpawnPair(struct Actor *actor) {
   }
 }
 
-/// Advances deterministically through six palettes on odd frames.
-static void CottageRoomsB_CyclePaletteOnOddFrames(struct Actor *actor) {
-  if ((gFrameCount & 1) != 0) {
-    s32 slot = (gFrameCount >> 1) % 6;
-
-    Actor_SetColorMode(actor, slot);
-  }
-}
+#include "shared/color_mode_cycle.h"
 
 // Shared vertical-effect update routines precede their paired-effect creator.
 #include "shared/field_effect_vertical.h"
@@ -1391,7 +1384,7 @@ UNUSED static void CottageRoomsB_CyclePaletteWithParticles(void) {
 
 /// Cycles the tunic's palette, with no effects.
 UNUSED static void CottageRoomsB_CyclePaletteWithoutParticles(void) {
-  CottageRoomsB_CyclePaletteOnOddFrames((struct Actor *)Actor_Get(ACTOR_TUNIC));
+  Scene_CycleColorModesOnOddFrames((struct Actor *)Actor_Get(ACTOR_TUNIC));
 }
 
 /// Catch plays from Dora on the tunic, then its actors are released.

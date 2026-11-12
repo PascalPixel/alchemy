@@ -20,23 +20,8 @@ enum {
 /// The shared effect-spawning source, at its place in the ROM.
 #define EFFECT_SPAWN_RESIDENT
 #include "../../scene/shared/field_effect_spawn.h"
+#include "../../scene/shared/field_effect_advance.h"
 #undef EFFECT_SPAWN_RESIDENT
-
-/// Per-frame update of a particle: moves by its velocity, slowing its x and z
-/// velocity a little, and changes its scale and spin. Assigned by
-/// FieldEffect_SpawnRadialParticleRing for Carry's landing particles.
-void FieldEffect_UpdateParticleMotionAndScale(struct Actor *actor) {
-  struct FieldEffect *effect = ((struct FieldEffect *)actor);
-
-  effect->x += effect->velocity.x;
-  effect->y += effect->velocity.y;
-  effect->z += effect->velocity.z;
-  effect->velocity.x -= effect->velocity.x / 18;
-  effect->velocity.z -= effect->velocity.z / 16;
-  effect->scaleX += effect->scaleRateX;
-  effect->scaleY += effect->scaleRateY;
-  effect->sprite->rotation += effect->spin;
-}
 
 /// Spawns 17 particles that spread from origin in a flat ring, their x
 /// velocity 1.5 times their z velocity, so the ring is wider than deep as the
@@ -50,7 +35,7 @@ void FieldEffect_SpawnRadialParticleRing(struct Actor *origin) {
   u32 i;
 
   opt.palette = 0;
-  opt.update = FieldEffect_UpdateParticleMotionAndScale;
+  opt.update = FieldEffect_AdvanceMotion;
   opt.startScaleX = Q16_ONE * 4 / 5;
   opt.startScaleY = Q16_ONE * 4 / 5;
   i = 0;

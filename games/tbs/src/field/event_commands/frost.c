@@ -4,17 +4,10 @@
 
 #include "../event_commands_internal.h"
 
-/// Per-frame update Frost leaves on its target: sprite param 2 for 2 frames in
-/// every 8, otherwise 0, so the target glints.
-void FieldEffect_UpdateFrostGlint(struct Actor *actor) {
-  struct Actor *particle = (struct Actor *)actor;
-  s32 frame = gFrameCount & 7;
-  if (frame == 0) {
-    Actor_SetSpriteColorModeFar(particle, SPRITE_COLOR_RBG);
-  } else if (frame == 2) {
-    Actor_SetSpriteColorModeFar(particle, SPRITE_COLOR_NORMAL);
-  }
-}
+#include "../../scene/shared/frost_glint.h"
+
+/// Frost's glint on its target.
+DEFINE_FROST_GLINT(, Actor_SetSpriteColorModeFar)
 
 /// Per-frame update: shrinks by 1/16 a frame and is released at 1/16.
 void FieldEffect_UpdateOrbitingParticleFade(struct Actor *actor) {

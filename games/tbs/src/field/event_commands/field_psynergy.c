@@ -287,19 +287,11 @@ void Actor_CycleSpriteColors(struct Actor *actor) {
   }
 }
 
-/// Sends an actor toward the point magnitude (16.16 pixels) away from it in
-/// direction angle: sets its move target. Carry, Lift, Douse, Move and the
-/// Djinni's hop into battle throw things this way.
-void Actor_SetTargetPositionFromMagnitudeAngle(struct Actor *actor,
-                                               s32 magnitude, s32 angle) {
-  s32 pos[3];
+#include "../../scene/shared/actor_polar_target.h"
 
-  if (actor != 0) {
-    SET_VECTOR(pos, actor->x.fixed, actor->y.fixed, actor->z.fixed);
-    Vector_AddPolarOffset(magnitude, angle, pos);
-    Actor_SetMoveTargetFar(actor, pos[0], pos[1], pos[2]);
-  }
-}
+/// Carry, Lift, Douse, Move and the Djinni's hop into battle throw things this
+/// way.
+DEFINE_SET_TARGET_POSITION_FROM_MAGNITUDE_ANGLE(, Actor_SetMoveTargetFar)
 
 // From here on actors are passed in each function's own view of them.
 

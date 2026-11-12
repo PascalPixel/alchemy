@@ -460,15 +460,7 @@ static void TimberRoomsBC_TalkToIodem(void) {
   Event_ShowMessage(ACTOR_IODEM, 0);
 }
 
-/// In both scenes, a doorway out takes the touched step trigger's exit with
-/// the exit sound.
-static void TimberRoomsBC_LeaveBuilding(void) {
-  struct FieldWork *work = gFieldWork;
-  s16 *trigger = (s16 *)&work->stepTrigger;
-
-  Import_EventSetExitRequest(*trigger);
-  Sound_Play(SE_MAP_EXIT);
-}
+#include "shared/leave_by_exit.h"
 
 /// What the party can talk to, touch and search in each scene, before and
 /// after Venus Lighthouse.
@@ -1187,16 +1179,16 @@ struct ActorPlacement gTimberRoomsC_ActorPlacementsAfterLighthouse[] = {
 };
 
 struct Trigger gTimberRoomsB_Triggers[] = {
-    { TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(TimberRoomsBC_LeaveBuilding) },
-    { TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(TimberRoomsBC_LeaveBuilding) },
-    { TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT(TimberRoomsBC_LeaveBuilding) },
-    { TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT(TimberRoomsBC_LeaveBuilding) },
-    { TRIGGER_STEP, 5, CONDITION_ALWAYS, EVENT(TimberRoomsBC_LeaveBuilding) },
-    { TRIGGER_STEP, 6, CONDITION_ALWAYS, EVENT(TimberRoomsBC_LeaveBuilding) },
-    { TRIGGER_STEP, 7, CONDITION_ALWAYS, EVENT(TimberRoomsBC_LeaveBuilding) },
-    { TRIGGER_STEP, 8, CONDITION_ALWAYS, EVENT(TimberRoomsBC_LeaveBuilding) },
-    { TRIGGER_STEP, 9, CONDITION_ALWAYS, EVENT(TimberRoomsBC_LeaveBuilding) },
-    { TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT(TimberRoomsBC_LeaveBuilding) },
+    { TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
+    { TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
+    { TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
+    { TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
+    { TRIGGER_STEP, 5, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
+    { TRIGGER_STEP, 6, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
+    { TRIGGER_STEP, 7, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
+    { TRIGGER_STEP, 8, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
+    { TRIGGER_STEP, 9, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
+    { TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
     { TRIGGER_TALK, ACTOR_VILLAGER_SAW_SHEBAS_POWER, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsOfCourseIHaveSeenActor) },
     { TRIGGER_TALK, ACTOR_WOMAN_DEFENDING_SHEBA, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsThereAreSomeWhoDoNot) },
     { TRIGGER_TALK, ACTOR_VILLAGER_DOUBTING_FARAN, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsCouldFaranHaveTrickedUsAll) },
@@ -1234,16 +1226,16 @@ struct Trigger gTimberRoomsB_Triggers[] = {
 };
 
 struct Trigger gTimberRoomsB_TriggersAfterLighthouse[] = {
-    { TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(TimberRoomsBC_LeaveBuilding) },
-    { TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(TimberRoomsBC_LeaveBuilding) },
-    { TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT(TimberRoomsBC_LeaveBuilding) },
-    { TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT(TimberRoomsBC_LeaveBuilding) },
-    { TRIGGER_STEP, 5, CONDITION_ALWAYS, EVENT(TimberRoomsBC_LeaveBuilding) },
-    { TRIGGER_STEP, 6, CONDITION_ALWAYS, EVENT(TimberRoomsBC_LeaveBuilding) },
-    { TRIGGER_STEP, 7, CONDITION_ALWAYS, EVENT(TimberRoomsBC_LeaveBuilding) },
-    { TRIGGER_STEP, 8, CONDITION_ALWAYS, EVENT(TimberRoomsBC_LeaveBuilding) },
-    { TRIGGER_STEP, 9, CONDITION_ALWAYS, EVENT(TimberRoomsBC_LeaveBuilding) },
-    { TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT(TimberRoomsBC_LeaveBuilding) },
+    { TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
+    { TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
+    { TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
+    { TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
+    { TRIGGER_STEP, 5, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
+    { TRIGGER_STEP, 6, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
+    { TRIGGER_STEP, 7, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
+    { TRIGGER_STEP, 8, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
+    { TRIGGER_STEP, 9, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
+    { TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
     { TRIGGER_TALK, ACTOR_VILLAGER_SAW_SHEBAS_POWER, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsTheContinentBrokeApartAroundThe) },
     { TRIGGER_TALK, ACTOR_WOMAN_DEFENDING_SHEBA, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsWhatHappenedToThoseLivingOn) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_SAW_SHEBAS_POWER, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsIShudderToThinkWhatWould) },
@@ -1281,16 +1273,16 @@ struct Trigger gTimberRoomsB_TriggersAfterLighthouse[] = {
 };
 
 struct Trigger gTimberRoomsC_Triggers[] = {
-    { TRIGGER_STEP, 21, CONDITION_ALWAYS, EVENT(TimberRoomsBC_LeaveBuilding) },
-    { TRIGGER_STEP, 23, CONDITION_ALWAYS, EVENT(TimberRoomsBC_LeaveBuilding) },
-    { TRIGGER_STEP, 24, CONDITION_ALWAYS, EVENT(TimberRoomsBC_LeaveBuilding) },
-    { TRIGGER_STEP, 25, CONDITION_ALWAYS, EVENT(TimberRoomsBC_LeaveBuilding) },
-    { TRIGGER_STEP, 26, CONDITION_ALWAYS, EVENT(TimberRoomsBC_LeaveBuilding) },
-    { TRIGGER_STEP, 27, CONDITION_ALWAYS, EVENT(TimberRoomsBC_LeaveBuilding) },
-    { TRIGGER_STEP, 28, CONDITION_ALWAYS, EVENT(TimberRoomsBC_LeaveBuilding) },
-    { TRIGGER_STEP, 29, CONDITION_ALWAYS, EVENT(TimberRoomsBC_LeaveBuilding) },
-    { TRIGGER_STEP, 30, CONDITION_ALWAYS, EVENT(TimberRoomsBC_LeaveBuilding) },
-    { TRIGGER_STEP, 31, CONDITION_ALWAYS, EVENT(TimberRoomsBC_LeaveBuilding) },
+    { TRIGGER_STEP, 21, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
+    { TRIGGER_STEP, 23, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
+    { TRIGGER_STEP, 24, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
+    { TRIGGER_STEP, 25, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
+    { TRIGGER_STEP, 26, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
+    { TRIGGER_STEP, 27, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
+    { TRIGGER_STEP, 28, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
+    { TRIGGER_STEP, 29, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
+    { TRIGGER_STEP, 30, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
+    { TRIGGER_STEP, 31, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
     { TRIGGER_TALK, ACTOR_FARANS_WIFE, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsWeReceivedActorFromTheSky) },
     { TRIGGER_TALK, ACTOR_FARANS_SON, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsIJustKnowThatFatherWill) },
     { TRIGGER_TALK, ACTOR_WORRIED_YOUNG_WOMAN, CONDITION_ALWAYS, MSGNO(MsgLaliveroInteriorsHisWifeSeemsVeryCalmConsidering) },
@@ -1313,16 +1305,16 @@ struct Trigger gTimberRoomsC_Triggers[] = {
 };
 
 struct Trigger gTimberRoomsC_TriggersAfterLighthouse[] = {
-    { TRIGGER_STEP, 21, CONDITION_ALWAYS, EVENT(TimberRoomsBC_LeaveBuilding) },
-    { TRIGGER_STEP, 23, CONDITION_ALWAYS, EVENT(TimberRoomsBC_LeaveBuilding) },
-    { TRIGGER_STEP, 24, CONDITION_ALWAYS, EVENT(TimberRoomsBC_LeaveBuilding) },
-    { TRIGGER_STEP, 25, CONDITION_ALWAYS, EVENT(TimberRoomsBC_LeaveBuilding) },
-    { TRIGGER_STEP, 26, CONDITION_ALWAYS, EVENT(TimberRoomsBC_LeaveBuilding) },
-    { TRIGGER_STEP, 27, CONDITION_ALWAYS, EVENT(TimberRoomsBC_LeaveBuilding) },
-    { TRIGGER_STEP, 28, CONDITION_ALWAYS, EVENT(TimberRoomsBC_LeaveBuilding) },
-    { TRIGGER_STEP, 29, CONDITION_ALWAYS, EVENT(TimberRoomsBC_LeaveBuilding) },
-    { TRIGGER_STEP, 30, CONDITION_ALWAYS, EVENT(TimberRoomsBC_LeaveBuilding) },
-    { TRIGGER_STEP, 31, CONDITION_ALWAYS, EVENT(TimberRoomsBC_LeaveBuilding) },
+    { TRIGGER_STEP, 21, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
+    { TRIGGER_STEP, 23, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
+    { TRIGGER_STEP, 24, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
+    { TRIGGER_STEP, 25, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
+    { TRIGGER_STEP, 26, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
+    { TRIGGER_STEP, 27, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
+    { TRIGGER_STEP, 28, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
+    { TRIGGER_STEP, 29, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
+    { TRIGGER_STEP, 30, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
+    { TRIGGER_STEP, 31, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit) },
     { TRIGGER_STEP, 51, FLAG_IODEM_ASKED_TO_MEET, EVENT(TimberRoomsBC_IodemCallsOut) },
     { TRIGGER_TALK, ACTOR_IODEM, FLAG_IODEM_FAREWELL_SEEN, EVENT(TimberRoomsBC_TalkToIodem) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_IODEM, FLAG_IODEM_FAREWELL_SEEN, MSGNO(MsgLaliveroInteriorsIMustExplainTheirPromiseTo) },

@@ -175,8 +175,8 @@ static s32 Vale_HaveGuardWatchTheLeader(struct Actor *actor);
 #endif
 static void Vale_TrailSparkles(struct Actor *actor);
 static void Vale_VanishMoveHand(struct Actor *emitter);
-static void Vale_UpdateParticlePosition(struct Actor *particle, s32 distance,
-                                        s32 angle);
+static void Actor_SetTargetPositionFromMagnitudeAngle(struct Actor *actor,
+                                                      s32 magnitude, s32 angle);
 static void Vale_MovePillarBelowCliff(void);
 static void Vale_PlayStepSound(void);
 static void Vale_SynchronizeAlephGuardPause(void);
@@ -3265,9 +3265,9 @@ static void Vale_VanishMoveHand(struct Actor *emitter) {
 
       particle->velocityY = Import_RandomNext() - Import_RandomNext();
 
-      Vale_UpdateParticlePosition(particle,
-                                  ((Import_RandomNext() * 3) << 3) + PIXELS(8),
-                                  Import_RandomNext());
+      Actor_SetTargetPositionFromMagnitudeAngle(
+          particle, ((Import_RandomNext() * 3) << 3) + PIXELS(8),
+          Import_RandomNext());
     }
   }
 
@@ -3282,18 +3282,10 @@ static void Vale_VanishMoveHand(struct Actor *emitter) {
   SET_VELOCITY(emitter, 0, 0, 0);
 }
 
-/// Moves a particle outward in the horizontal plane without changing its
-/// height.
-static void Vale_UpdateParticlePosition(struct Actor *particle, s32 distance,
-                                        s32 angle) {
-  s32 position[3];
-  if (particle != 0) {
-    SET_VECTOR(position, particle->x.fixed, particle->y.fixed,
-               particle->z.fixed);
-    Vector_AddPolarOffset(distance, angle, position);
-    FieldActor_SetMoveTarget(particle, position[0], position[1], position[2]);
-  }
-}
+#include "shared/actor_polar_target.h"
+
+DEFINE_SET_TARGET_POSITION_FROM_MAGNITUDE_ANGLE(static,
+                                                FieldActor_SetMoveTarget)
 
 /// Pushing the pillar in Vale (cell behaviors 30 and 31) moves it a cell.
 static void Vale_PushPillar(void) {

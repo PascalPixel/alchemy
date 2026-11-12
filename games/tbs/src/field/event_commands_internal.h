@@ -92,6 +92,9 @@
 #include "ability_ids.h"
 #include "sprite_ids.h"
 
+void Actor_SetTargetPositionFromMagnitudeAngle(struct Actor *actor,
+                                               s32 magnitude, s32 angle);
+
 /// The field effect sprites of a field Psynergy
 /// (gFieldEffectWork->sprites).
 #define PSYNERGY_EFFECT_SLOT_COUNT 24

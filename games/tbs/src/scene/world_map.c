@@ -3016,14 +3016,7 @@ UNUSED static void WorldMap_UpdateCyclingLinkedEffects(struct Actor *actor) {
   }
 }
 
-/// An actor's update routine that advances its palette on odd frames.
-UNUSED static void WorldMap_CycleActorPalettes(struct Actor *actor) {
-  if ((gFrameCount & 1) != 0) {
-    s32 slot = (gFrameCount >> 1) % 6;
-
-    Actor_SetColorMode(actor, slot);
-  }
-}
+#include "shared/color_mode_cycle.h"
 
 #include "shared/field_effect_vertical.h"
 #include "shared/world_map_attached_effects.h"

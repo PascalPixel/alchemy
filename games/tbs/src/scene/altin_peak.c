@@ -165,7 +165,7 @@ static void AltinPeak_RestoreHydrosStatueRoom(void);
 static void AltinPeak_RestoreWestExitRoom(void);
 static void AltinPeak_StartSpitting(s32 x, s32 y, s32 z, s32 facing);
 static void AltinPeak_SpawnDebris(void);
-static void AltinPeak_SparkleIce(struct Actor *actor);
+static void FieldEffect_UpdateFrostGlint(struct Actor *actor);
 static void AltinPeak_BeastFreezesSecondPuddle(void);
 static void AltinPeak_AwardFrostJewelAndDrain(void);
 static void AltinPeak_DrainAfterSecondBeast(void);
@@ -1624,7 +1624,7 @@ static void AltinPeak_RestoreFirstWaterBeastRoom(void) {
     if (flag != 0) {
       Actor_SetAnimation(ACTOR_FIRST_WATER_BEAST_ROOM_SECOND_PUDDLE, 0);
       actor = Actor_Get(ACTOR_FIRST_WATER_BEAST_ROOM_SECOND_PUDDLE);
-      actor->update = AltinPeak_SparkleIce;
+      actor->update = FieldEffect_UpdateFrostGlint;
       Actor_Get(ACTOR_FIRST_WATER_BEAST_ROOM_SECOND_PUDDLE)->motionFlags =
           opened;
       actor = Actor_Get(ACTOR_FIRST_WATER_BEAST_ROOM_SECOND_PUDDLE);
@@ -1642,7 +1642,7 @@ static void AltinPeak_RestoreFirstWaterBeastRoom(void) {
     }
     Actor_SetAnimation(ACTOR_FIRST_WATER_BEAST_ROOM_SECOND_PUDDLE, 0);
     actor = Actor_Get(ACTOR_FIRST_WATER_BEAST_ROOM_SECOND_PUDDLE);
-    actor->update = AltinPeak_SparkleIce;
+    actor->update = FieldEffect_UpdateFrostGlint;
     Actor_Get(ACTOR_FIRST_WATER_BEAST_ROOM_SECOND_PUDDLE)->motionFlags = flag;
     actor = Actor_Get(ACTOR_FIRST_WATER_BEAST_ROOM_SECOND_PUDDLE);
     actor->y.fixed = PIXELS(32);
@@ -2077,19 +2077,10 @@ static void AltinPeak_SpawnDebris(void) {
   }
 }
 
-/// Update routine of the frozen second puddle. Its ice glints every eight
-/// frames.
-static void AltinPeak_SparkleIce(struct Actor *updated) {
-  struct Actor *actor = (struct Actor *)updated;
+#include "shared/frost_glint.h"
 
-  s32 framePhase = gFrameCount & 7;
-
-  if (framePhase == 0) {
-    Actor_SetSpriteColor(actor, SPRITE_COLOR_RBG);
-  } else if (framePhase == 2) {
-    Actor_SetSpriteColor(actor, SPRITE_COLOR_NORMAL);
-  }
-}
+/// The frozen second puddle's glint.
+DEFINE_FROST_GLINT(static, Actor_SetSpriteColor)
 
 /// AltinPeakFirstWaterBeast's water beast casts Frost on the second puddle.
 static void AltinPeak_BeastFreezesSecondPuddle(void) {

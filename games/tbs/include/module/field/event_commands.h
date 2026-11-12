@@ -291,8 +291,6 @@ void FieldPsynergy_FinishMindRead(void);
 void FieldPsynergy_RunExtraHandler(void);
 s32 Field_RunPsynergyEvent(const void *event, s32 param, s32 target);
 void Actor_CycleSpriteColors(struct Actor *actor);
-void Actor_SetTargetPositionFromMagnitudeAngle(struct Actor *actor,
-                                               s32 magnitude, s32 angle);
 s32 VramCache_CountFreeBlocks(void);
 struct Sprite *Sprite_ShareVramCacheEntry(struct Sprite *sourceSprite,
                                           struct Sprite *sharedSprite);
@@ -351,7 +349,6 @@ void FieldEffect_UpdateRadialBurst(struct FieldParticle *effect);
 s32 SpawnHeavyImpactEffect(struct Actor *interpreter);
 void FieldPsynergy_ForceOnTarget(s32 unused);
 void FieldPsynergy_Force(void);
-void FieldEffect_UpdateFrostGlint(struct Actor *actor);
 void FieldEffect_UpdateOrbitingParticleFade(struct Actor *actor);
 void FieldEffect_UpdateOrbitingParticleLeft(struct Actor *actor);
 void FieldEffect_UpdateOrbitingParticleRight(struct Actor *actor);
@@ -373,7 +370,6 @@ void FieldPsynergy_Douse(void);
 void FieldEffect_SpawnFallingParticles(void);
 void FieldPsynergy_SteerLiftedTarget(s32 targetId);
 struct Actor *FieldEffect_SpawnCarryHand(s32 x, s32 y, s32 z, s32 angle);
-void FieldEffect_UpdateParticleMotionAndScale(struct Actor *actor);
 void FieldEffect_SpawnRadialParticleRing(struct Actor *origin);
 void FieldEffect_WanderAroundAnchor(struct Actor *actor);
 void FieldEffect_CircleAnchor(struct Actor *actor);

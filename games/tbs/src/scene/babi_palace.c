@@ -304,19 +304,7 @@ enum BabiPalaceCellBehavior {
   CELL_BEHAVIOR_BABI_PALACE_WELL = 90
 };
 
-/// A companion walks into the leader and is taken off the map, as the party
-/// closes up into one walking sprite at the end of an event.
-static inline void BabiPalace_WalkIntoLeader(s32 member) {
-  struct Actor *leader;
-
-  Actor_SetAnimation(member, ANIM_WALK);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader != NULL) {
-    Actor_SetDestination(member, leader->x.part.pixel, leader->z.part.pixel);
-  }
-  Actor_WaitForMoveById(member);
-  Actor_SetPosition(member, 0, 0);
-}
+#include "shared/walk_into_leader.h"
 
 static inline void BabiPalace_CloseDoors(void) {
   TilesetAnim_Pause(BABI_PALACE_MEETING_ROOM_DOOR_ANIMATION);
@@ -780,9 +768,9 @@ static void BabiPalace_WakeFromFinalsDream(void) {
   Actor_SetSpeed(ACTOR_GARET, PIXELS(6) / 5, PIXELS(3) / 5);
   Actor_SetSpeed(ACTOR_MIA, PIXELS(6) / 5, PIXELS(3) / 5);
   Actor_SetSpeed(ACTOR_IVAN, PIXELS(6) / 5, PIXELS(3) / 5);
-  BabiPalace_WalkIntoLeader(ACTOR_GARET);
-  BabiPalace_WalkIntoLeader(ACTOR_MIA);
-  BabiPalace_WalkIntoLeader(ACTOR_IVAN);
+  Scene_WalkIntoLeader(ACTOR_GARET);
+  Scene_WalkIntoLeader(ACTOR_MIA);
+  Scene_WalkIntoLeader(ACTOR_IVAN);
   Event_Wait(10);
   Event_End();
 }
@@ -938,9 +926,9 @@ static void BabiPalace_RestInPalaceBeds(void) {
     Actor_SetSpeed(ACTOR_GARET, PIXELS(6) / 5, PIXELS(3) / 5);
     Actor_SetSpeed(ACTOR_IVAN, PIXELS(6) / 5, PIXELS(3) / 5);
     Actor_SetSpeed(ACTOR_MIA, PIXELS(6) / 5, PIXELS(3) / 5);
-    BabiPalace_WalkIntoLeader(ACTOR_GARET);
-    BabiPalace_WalkIntoLeader(ACTOR_MIA);
-    BabiPalace_WalkIntoLeader(ACTOR_IVAN);
+    Scene_WalkIntoLeader(ACTOR_GARET);
+    Scene_WalkIntoLeader(ACTOR_MIA);
+    Scene_WalkIntoLeader(ACTOR_IVAN);
     GameFlag_Set(FLAG_BABI_PALACE_FIRST_NIGHT);
   }
   Event_End();
@@ -1500,9 +1488,9 @@ static void BabiPalace_WakeAfterFinals(void) {
   Actor_SetSpeed(ACTOR_GARET, PIXELS(6) / 5, PIXELS(3) / 5);
   Actor_SetSpeed(ACTOR_MIA, PIXELS(6) / 5, PIXELS(3) / 5);
   Actor_SetSpeed(ACTOR_IVAN, PIXELS(6) / 5, PIXELS(3) / 5);
-  BabiPalace_WalkIntoLeader(ACTOR_GARET);
-  BabiPalace_WalkIntoLeader(ACTOR_MIA);
-  BabiPalace_WalkIntoLeader(ACTOR_IVAN);
+  Scene_WalkIntoLeader(ACTOR_GARET);
+  Scene_WalkIntoLeader(ACTOR_MIA);
+  Scene_WalkIntoLeader(ACTOR_IVAN);
   Event_Wait(10);
   Event_End();
 }
@@ -2550,9 +2538,9 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Actor_SetSpeed(ACTOR_GARET, PIXELS(6) / 5, PIXELS(3) / 5);
   Actor_SetSpeed(ACTOR_IVAN, PIXELS(6) / 5, PIXELS(3) / 5);
   Actor_SetSpeed(ACTOR_MIA, PIXELS(6) / 5, PIXELS(3) / 5);
-  BabiPalace_WalkIntoLeader(ACTOR_GARET);
-  BabiPalace_WalkIntoLeader(ACTOR_IVAN);
-  BabiPalace_WalkIntoLeader(ACTOR_MIA);
+  Scene_WalkIntoLeader(ACTOR_GARET);
+  Scene_WalkIntoLeader(ACTOR_IVAN);
+  Scene_WalkIntoLeader(ACTOR_MIA);
   Event_Wait(10);
   Scene_PlayMusic();
   Event_End();

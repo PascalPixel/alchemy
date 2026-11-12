@@ -281,7 +281,7 @@ void DjinnFigures_InitializeBottomRow(s32 unused0, s32 unused1);
 s32 DjinnFigures_SetSlotPosition(s32 index, s32 x, s32 y, s32 negative);
 s32 DjinnFigures_SetSlotPhase(s32 index, s32 phase);
 s32 DjinnFigures_ReplaceSlot(s32 index, s32 resourceKind, s32 value);
-void Menu_StartPartyFiguresWalking(void);
+void Menu_StartPartyFiguresStanding(void);
 
 s32 PsynergyList_RunCompareLoop(u32 mode);
 s32 DjinnMenu_ShowMemberStatus(void);

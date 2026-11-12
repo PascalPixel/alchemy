@@ -363,7 +363,8 @@ void Sanctum_HighlightMembers(struct Window *window, s32 selected) {
       if (memberIndex == selected)
         Sprite_StartAnimationFar(shop->partyMemberIcons[memberIndex], 30);
       else
-        Sprite_StartAnimationFar(shop->partyMemberIcons[memberIndex], 1);
+        Sprite_StartAnimationFar(shop->partyMemberIcons[memberIndex],
+                                 ANIM_STAND);
       shop->partyMemberScale[memberIndex] = Q16_ONE;
       if (!Sanctum_NeedsService(shop->partyMemberIds[memberIndex], serviceKind))
         shop->partyMemberScale[memberIndex] = Q16_ONE * 7 / 10;

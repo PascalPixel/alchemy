@@ -1308,9 +1308,9 @@ s32 ItemMenu_SelectTarget(s32 mode) {
 
 /// Task while ItemMenu_SelectTarget chooses a party member to use or
 /// give the item to, and while the command grid's cursor is on Give: every 32
-/// frames, sets each party figure's animation by whether that party member can
-/// equip the item (3) or not (1). EquipmentMenu_StopCompatibilityIndicators
-/// removes it.
+/// frames, has each party figure nod (ANIM_NOD) if that party member can equip
+/// the item, or stand (ANIM_STAND) if not.
+/// EquipmentMenu_StopCompatibilityIndicators removes it.
 void EquipmentMenu_UpdateCompatibilityIndicators(void) {
   struct ItemMenuWork *menu;
   s8 memberIndex;
@@ -1323,10 +1323,10 @@ void EquipmentMenu_UpdateCompatibilityIndicators(void) {
                             menu->selectedItems[0] & INVENTORY_ITEM_ID_MASK) !=
           0) {
         struct Sprite *partyFigure = menu->memberSprites[memberIndex];
-        Sprite_StartAnimationFar(partyFigure, 3);
+        Sprite_StartAnimationFar(partyFigure, ANIM_NOD);
       } else {
         struct Sprite *partyFigure = menu->memberSprites[memberIndex];
-        Sprite_StartAnimationFar(partyFigure, 1);
+        Sprite_StartAnimationFar(partyFigure, ANIM_STAND);
       }
       memberIndex++;
     } while (memberIndex < menu->partyCount);
@@ -1334,7 +1334,7 @@ void EquipmentMenu_UpdateCompatibilityIndicators(void) {
 }
 
 /// Ends EquipmentMenu_UpdateCompatibilityIndicators: puts every party figure
-/// back to animation 1 and removes the task. Removing a task that is not
+/// back to ANIM_STAND and removes the task. Removing a task that is not
 /// running is harmless, so the command grid calls it at each cursor move.
 void EquipmentMenu_StopCompatibilityIndicators(void) {
   struct ItemMenuWork *menu;
@@ -1345,7 +1345,7 @@ void EquipmentMenu_StopCompatibilityIndicators(void) {
     memberIndex = 0;
     do {
       struct Sprite *partyFigure = menu->memberSprites[memberIndex];
-      Sprite_StartAnimationFar(partyFigure, 1);
+      Sprite_StartAnimationFar(partyFigure, ANIM_STAND);
       memberIndex++;
     } while (memberIndex < menu->partyCount);
   }
@@ -2913,17 +2913,17 @@ s32 ItemMenu_RunList(s32 sideIndex) {
           icon->sentinel = 250;
         }
         for (i = 0; i < menu->partyCount; i++) {
-          Sprite_StartAnimationFar(menu->memberSprites[i], 1);
+          Sprite_StartAnimationFar(menu->memberSprites[i], ANIM_STAND);
         }
       }
 
-      // Every 32 frames, the party members who can equip the item move.
+      // Every 32 frames, the party members who can equip the item nod.
       if ((gFrameCount & 31) == 0) {
         for (i = 0; i < menu->partyCount; i++) {
           if (Item_CanUnitEquip(menu->memberIds[i],
                                 INVENTORY_ITEM_ID_MASK &
                                     menu->items[state.selectedIndex]) != 0) {
-            Sprite_StartAnimationFar(menu->memberSprites[i], 3);
+            Sprite_StartAnimationFar(menu->memberSprites[i], ANIM_NOD);
           }
         }
       }

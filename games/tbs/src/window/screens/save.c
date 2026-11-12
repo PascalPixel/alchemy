@@ -590,7 +590,7 @@ void Window_FillTilemapRect(struct Window *window, s32 x, s32 y, s32 width,
 
 #endif
 
-/// The file list shows the chosen file's party as walking sprites in a
+/// The file list shows the chosen file's party as standing sprites in a
 /// row, and four Djinn sprites, one for each element, over the file's Djinn
 /// counts. Each sprite stands three tiles (24 pixels) from the one before.
 #define FILE_LIST_SPRITE_SPACING 3
@@ -611,7 +611,7 @@ void FileList_ShowPartySprites(struct Window *window, s32 x, s32 y,
         summary->party[i], (s8)summary->childhood));
 
     if (sprite != NULL) {
-      Sprite_StartAnimationFar(sprite, 1);
+      Sprite_StartAnimationFar(sprite, ANIM_STAND);
       sprite->flags = 0;
       sprite->image.priority = 0;
     }
@@ -683,7 +683,7 @@ void FileList_ShowDjinnSprites(struct Window *window, s32 x, s32 y) {
       struct Sprite *sprite = Sprite_CreateFar(gMenu_PartySpriteResourceIds[i]);
 
       if (sprite != NULL) {
-        Sprite_StartAnimationFar(sprite, 2);
+        Sprite_StartAnimationFar(sprite, ANIM_WALK);
         sprite->flags = 0;
         sprite->image.priority = 0;
       }

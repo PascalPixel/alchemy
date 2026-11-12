@@ -7,7 +7,7 @@
 
 /// Replaces the four displayed sprites and starts their projected-position
 /// task: one Djinni figure of each element (gDjinnFigures_SpriteIds) in
-/// animation 2, at (16, 32) until the screen moves them, placed each frame by
+/// ANIM_WALK, at (16, 32) until the screen moves them, placed each frame by
 /// DjinnFigures_UpdateAllPositions. The Status menu calls it when the
 /// party has Djinn; DjinnFigures_ReleaseTopRow releases them.
 void DjinnFigures_InitializeTopRow(void *unused0, s32 unused1) {
@@ -27,7 +27,7 @@ void DjinnFigures_InitializeTopRow(void *unused0, s32 unused1) {
     struct Sprite *animation = Sprite_CreateFar(gDjinnFigures_SpriteIds[index]);
 
     if (animation != NULL) {
-      Sprite_StartAnimationFar(animation, 2);
+      Sprite_StartAnimationFar(animation, ANIM_WALK);
     }
     state->animations[index] = animation;
     state->positionsX[index] = 16;
@@ -154,7 +154,7 @@ void DjinnFigures_UpdateBottomRow(void) {
 }
 
 /// Replaces the bottom row's four sprites and starts its easing task: one
-/// Djinni figure of each element in animation 2, at full size, at (16, 200)
+/// Djinni figure of each element in ANIM_WALK, at full size, at (16, 200)
 /// below the screen until the Djinn menu moves one. DjinnMenu_Run calls it
 /// and DjinnFigures_ReleaseBottomRow releases them.
 void DjinnFigures_InitializeBottomRow(s32 unused0, s32 unused1) {
@@ -173,7 +173,7 @@ void DjinnFigures_InitializeBottomRow(s32 unused0, s32 unused1) {
     struct Sprite *animation = Sprite_CreateFar(gDjinnFigures_SpriteIds[index]);
 
     if (animation != NULL)
-      Sprite_StartAnimationFar(animation, 2);
+      Sprite_StartAnimationFar(animation, ANIM_WALK);
     state->animations[index] = animation;
     state->phases[index] = Q16_ONE;
     state->positionsX[index] = 16;
@@ -231,13 +231,13 @@ s32 DjinnFigures_ReplaceSlot(s32 index, s32 resourceKind, s32 value) {
 FOUR_OBJECT_MOTION_DEFINE_RELEASE(DjinnFigures_ReleaseBottomRow,
                                   DjinnFigures_UpdateBottomRow)
 
-/// Starts the walking animation (1) of each party figure. Nothing calls it.
-UNUSED void Menu_StartPartyFiguresWalking(void) {
+/// Has each party figure stand (ANIM_STAND). Nothing calls it.
+UNUSED void Menu_StartPartyFiguresStanding(void) {
   struct ItemMenuWork *menu = gMenuWork;
   s32 index;
 
   for (index = 0; index < menu->partyCount; ++index) {
-    Sprite_StartAnimationFar(menu->memberSprites[index], 1);
+    Sprite_StartAnimationFar(menu->memberSprites[index], ANIM_STAND);
   }
 }
 

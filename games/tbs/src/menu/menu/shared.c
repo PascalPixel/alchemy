@@ -543,7 +543,7 @@ struct Window *MenuCursor_Create(void *source) {
   return window;
 }
 
-/// Creates a walking figure for each active party member, side by side under
+/// Creates a standing figure for each active party member, side by side under
 /// the window source: origin (originX, originY) in tiles from the window's
 /// corner, each figure 16 + spacing pixels after the last, at full scale.
 /// Clears the unused figure slots and starts the task that places them
@@ -578,7 +578,7 @@ void Menu_CreatePartyFigures(void *source, s32 originX, s32 originY,
       menu->memberScale[i] = Q16_ONE;
       figure->image.priority = 0;
       figure->flags = 0;
-      Sprite_StartAnimationFar(figure, 1);
+      Sprite_StartAnimationFar(figure, ANIM_STAND);
     }
   }
   // Clear the unused party slots so the task can skip them.

@@ -157,4 +157,71 @@ STATIC_ASSERT(offsetof(struct Sprite, width) == 0x20);
 STATIC_ASSERT(sizeof(struct Sprite) == 0x38);
 STATIC_ASSERT(offsetof(struct Sprite, entries) == 0x28);
 
+/// Animation numbers of an actor's sprite, for Import_ActorSetAnimation
+/// and Sprite_StartAnimation. The menus' and shops' party and Djinn
+/// figures are the same field sprites and play the same numbers.
+enum ActorAnimation {
+  /// Standing still: nearly every sprite's first frame held, without the
+  /// blinks and small gestures of ANIM_STAND.
+  ANIM_STILL = 0,
+  ANIM_STAND = 1,
+  ANIM_WALK = 2,
+  ANIM_NOD = 3,
+  ANIM_SHAKE_HEAD = 4,
+  /// Running, leaning forward, four frames a step to the walk's six. This and
+  /// the leader's other poses below are as Isaac's sprite (spr_000.png) draws
+  /// them.
+  ANIM_LEADER_RUN = 5,
+  ANIM_LEADER_SPRING = 6, ///< leaning back for a moment before a jump
+  ANIM_LEADER_LEAP = 7,   ///< in mid-stride, leaning forward
+  /// The leader leaning into what it pushes, as scenes play it while a statue
+  /// or stone pillar slides ahead of it.
+  ANIM_PUSH = 8,
+  /// ANIM_STAND's idle with more glances to each side, as when a whirlwind
+  /// catches the leader.
+  ANIM_LEADER_LOOK_AROUND = 9,
+  ANIM_LEADER_CLIMB = 10, ///< climbing a wall, seen from behind
+  /// Stepping off the top of a ladder, as onto the roof beside Isaac's house.
+  ANIM_LEADER_CLIMB_OVER_TOP = 11,
+  ANIM_LEADER_CLING = 12, ///< still on a wall, seen from behind
+  /// ANIM_LEADER_CLIMB_OVER_TOP played backwards: stepping from the top of a
+  /// ladder onto its rungs.
+  ANIM_LEADER_CLIMB_DOWN_FROM_TOP = 13,
+  ANIM_LEADER_CLIMB_EAST = 14, ///< reaching along a wall as he climbs east
+  ANIM_LEADER_CLIMB_WEST = 15, ///< reaching along a wall as he climbs west
+  /// One leg forward, braced, held briefly: the frame ANIM_LEADER_LEAP holds
+  /// and the run starts on, as when he lunges into a fight or pulls someone
+  /// from a river.
+  ANIM_LEADER_STRIDE = 16,
+  /// Holding out a glowing hand, as the party's sprites cast Psynergy
+  /// (spr_000.png, spr_001.png).
+  ANIM_CAST_PSYNERGY = 17,
+  /// Sitting waist-deep in water and splashing, as in a Lamakan Desert oasis.
+  ANIM_LEADER_BATHE = 18,
+  /// Lying collapsed on the ground; every party member's sheet maps this
+  /// number to such a pose (spr_000.png to spr_003.png).
+  ANIM_COLLAPSE = 19,
+  ANIM_LEADER_LEAN_BACK = 22, ///< leaning back, his head thrown back
+  /// The arrivals and leavings of the animated exits (enum ExitStyle), each
+  /// four frames of the leader turning: an arrival grows from a small figure
+  /// seen side-on to full size facing the player, a leaving turns from his
+  /// back to side-on as he shrinks and is then hidden. The alternate pair has
+  /// its own drawings of the same turns.
+  ///@{
+  ANIM_LEADER_ARRIVE_ALTERNATE = 23,
+  ANIM_LEADER_ARRIVE = 24,
+  ANIM_LEADER_LEAVE_ALTERNATE = 25,
+  ANIM_LEADER_LEAVE = 26,
+  ///@}
+  /// Spinning round once, then drawn blank (ANIMCMD_BLANK).
+  ANIM_LEADER_SPIN_AWAY = 27,
+  ANIM_LEADER_ARMS_RAISED = 28, ///< both arms raised over his head
+  /// Swinging an arm out to throw, as he tosses a coin or medal at Tolbi's
+  /// spring.
+  ANIM_LEADER_TOSS = 29,
+  /// Held in ANIM_LEADER_SPRING's crouch, knees bent, as after a lost
+  /// match.
+  ANIM_LEADER_CROUCH = 35
+};
+
 #endif

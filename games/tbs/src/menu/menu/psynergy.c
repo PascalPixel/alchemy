@@ -1131,7 +1131,7 @@ s32 PsynergyMenu_RunList(s32 sideIndex) {
           icon->sentinel = 250;
         }
         for (i = 0; i < menu->memberCount; i++) {
-          Sprite_StartAnimationFar(menu->tabSprites[i], 1);
+          Sprite_StartAnimationFar(menu->tabSprites[i], ANIM_STAND);
         }
       }
 

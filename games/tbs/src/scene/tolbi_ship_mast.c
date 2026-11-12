@@ -1036,8 +1036,8 @@ u32 gTolbiShipMast_BirdDeparture6[] = {
     SC_MOVE(PIXELS(152), 0, PIXELS(196)),
     SC_CALL(TolbiShipMast_ShrinkAndStopActor),
     SC_END,
-    // Unidentified words following the script terminator. XXX (no evidence):
-    // what they were; nothing reads them, and as sixteen halfwords they form no
+    // Unused: eight words after the script's end, which nothing reads.
+    // XXX (no evidence): what they were; as sixteen halfwords they form no
     // table any code here indexes.
     0x9090000, 0xd70090d, 0xdb315cb, 0x15f5164c,
     0x1f0e1aad, 0x1f6f227a, 0x23f223b1, 0x2bf727f4,

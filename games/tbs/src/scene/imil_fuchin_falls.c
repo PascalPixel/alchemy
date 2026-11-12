@@ -1569,7 +1569,7 @@ static void Imil_WalkTowardFever(void) {
 /// room, and the darkness and the fade overlay in the dragon statue's room.
 static void ImilFuchinFalls_PrepareRoom(void) {
   struct Actor *actor;
-  struct FadeOverlayWork *fade;
+  struct FadeOverlayWork *work;
 
   ImilFuchinFalls_RebuildLogRoom();
   if (gMainRoutineWork.next == (s32)&SceneId_FuchinFallsCaveDragonsEye) {
@@ -1588,7 +1588,7 @@ static void ImilFuchinFalls_PrepareRoom(void) {
              (s32)&SceneId_FuchinFallsCaveDragonStatue) {
     // Default: NULL unless the arrival from the south half's middle takes the
     // fade overlay.
-    fade = NULL;
+    work = NULL;
     actor = Actor_Get(ACTOR_INVISIBLE_DRAGON_ROOM_CRATE);
     gImilFuchinFalls_TrackLeader = 0;
     actor->motionFlags = 0;
@@ -1605,8 +1605,8 @@ static void ImilFuchinFalls_PrepareRoom(void) {
     case FUCHIN_FALLS_CAVE_DRAGON_STATUE_NORTH_HALF_FROM_SOUTH_HALF_MIDDLE:
       FieldEffect_StartFadeOverlay(0);
       gImilFuchinFalls_TrackLeader = 1;
-      fade = HEAP_SLOT_BLOCK(HEAP_SLOT_FADE_OVERLAY);
-      fade->actor = NULL;
+      work = HEAP_SLOT_BLOCK(HEAP_SLOT_FADE_OVERLAY);
+      work->actor = NULL;
       break;
     }
     if (gMainRoutineWork.entrance <=

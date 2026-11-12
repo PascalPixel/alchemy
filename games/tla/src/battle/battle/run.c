@@ -164,8 +164,6 @@ struct EncounterWork {
 extern u8 gCpuLoadDisplayEnabled;
 /// The actor sprite slot buffers, 0x4000 bytes a slot.
 extern u8 Data_02018000[];
-// Messages 3203 and 3209, not yet named in this game's catalog.
-extern u8 MsgPartyDefeated[];
 
 // The ROM's call here keeps the whole return register, as an s32 return
 // does; system/system/flags.c defines it returning u8.

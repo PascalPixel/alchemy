@@ -201,9 +201,11 @@ s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
                   u32 mode);
 
 void *Resource_GetTableEntry(s32 resourceId);
+/// BattlePlayback_Start through its far call.
 void Func_081180e8(s32 phase);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
+/// Flashes an actor in a palette for some frames.
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames);
 /// An actor's recoil motion, through a far call.
@@ -1023,18 +1025,8 @@ extern char ResourceId_BlueFlameSheet;
 /// gDjinnAttacks_LaunchFrames).
 extern const u8 Data_0819850e[];
 
-/// Copies the canvas to VRAM when a transfer is pending.
-void BattleEffect_ProcessPendingGraphicsTransfer(void);
-
 /// Fetches the max and additive blitters, flipped or not.
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
-/// BattlePlayback_Start through its far call.
-void Func_081180e8(s32 hitCue);
-
-/// Flashes an actor in a palette for some frames.
-void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
-                   s32 frames);
-
 /// A small Mercury Djinn circles over the targets, one turn every 32 frames, on
 /// a radius of 64 - 2 x frame pixels (half that across) that shrinks through
 /// the middle at frame 32 and opens out on the other side. At frames 4, 7, 10,
@@ -2944,9 +2936,6 @@ extern u8 Data_081985b3[];
 
 // A glint's four flips.
 extern const u8 Data_0819861b[];
-
-// Arms the H-blank DMA of the work's line table into BG2X.
-void BattleEffect_ArmBg2AffineHBlankDma(void);
 
 void BattleEffect_RunBurstScene(struct BattleEffectArgument *effect,
                                 s32 variant) {

@@ -454,9 +454,6 @@ void Func_08143eb4(s32 x0, s32 y0, s32 x1, s32 y1, s32 color) {
 #define PARTICLES ((struct EffectStep *)Ram_MapCellBuffer)
 
 // The canvas routines every effect shares, with their Broken Seal names.
-void BattleEffect_StartCanvasLayer(s32 bgControl);
-void BattleEffect_ProcessPendingGraphicsTransfer(
-    void); // ..ProcessPendingGraphicsTransfer
 void BattleEffect_CountDownBattlerTints(void);
 void Func_081180e8(s32 phase); // BattlePlayback_StartFar
 void Func_0814cd48(s32 actor, s32 palette, s32 duration, s32 timer,
@@ -1505,9 +1502,6 @@ void Func_0814512c(struct BattleEffectArgument *effect, s32 mode) {
     BattleEffect_EndCanvasLayer();
   }
 }
-
-// The canvas routines every effect shares, with their Broken Seal names.
-void BattleEffect_StartTiledCanvas(s32 bgControl);
 
 void Func_08118088(s32 actor, s32 variant); // ..ApplyVariantMotionFar
 

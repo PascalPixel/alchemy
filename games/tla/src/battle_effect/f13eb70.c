@@ -62,7 +62,8 @@ extern char ResourceId_FlashBurstSheet;
 
 void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_ClearActorTimers(void);
-s32 BattleEffect_LoadBlitter(s32 slot, s32 flags);
+s32 BattleEffect_LoadBlitter(s32 slot,
+                             s32 modeAndFlags); // BattleEffect_BuildBlitter
 
 void Sound_PlayFar(s32 cue);
 u32 Random16(void);
@@ -669,12 +670,13 @@ struct StreakPoint {
 };
 
 void Render_ResetTransformState(void);
-void Func_080150e4(s32 roll);
+void Func_080150e4(s32 roll); // SceneTransform_ApplyRoll
 void SceneTransform_ApplyPitch(s32 pitch);
 void SceneTransform_ApplyYaw(s32 yaw);
 
 void Func_08143eb4(s32 x0, s32 y0, s32 x1, s32 y1, s32 color);
 
+/// The Broken Seal's BattleEffect_DrawStreaks.
 void Func_0813f8d4(void) {
   struct StreakWork *work = (struct StreakWork *)Ram_HeapSlots->battleFxWork[0];
   s32 frame;
@@ -769,10 +771,7 @@ extern char ResourceId_VioletPaletteD;
 extern char ResourceId_DustPuffSheet;
 
 void BattleEffect_ConfigureEffectDisplay(void);
-void Func_0814355c(void);                     // the BG2 canvas's registers
-void BattleEffect_DimBackgroundStep(void);    // fades the battle background
-void BattleEffect_TransferHalvedCanvas(void); // halves the canvas into VRAM
-void Func_0813f8d4(void);                     // BattleEffect_DrawStreaks
+void Func_0814355c(void); // the BG2 canvas's registers
 
 // Raises the light-streak backdrop in colour set kind (yellow, crystal,
 // ember, violet or dust).
@@ -915,8 +914,6 @@ struct RenderModel {
   u8 scrollV;
 };
 
-s32 BattleEffect_LoadBlitter(s32 slot,
-                             s32 modeAndFlags);   // BattleEffect_BuildBlitter
 void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
 void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
 void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen,
@@ -934,7 +931,6 @@ void BattleEffect_SpawnObjects(s32 entryCount, s32 kind,
                                u32 variant); // SpawnObjects
 void BattleEffect_SelectLivingTargets(
     struct FxPartyList *party); // SelectLivingTargets
-void Func_080150e4(s32 angle);  // SceneTransform_ApplyRoll
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                    s32 speedLimit, s32 velocityY, s32 percent);
 

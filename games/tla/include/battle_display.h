@@ -118,6 +118,7 @@ void BattleEffect_RunSceneEffectFar(s32 *context);
 /// Copies the canvas to VRAM when a transfer is pending.
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void BattleEffect_ArmBg2AffineHBlankDma(void);
+/// Steps the background palette fade.
 void Palette_StepFadeTransfer(void);
 struct BattleEffectArgument;
 void BattleEffect_RunBurstShower(struct BattleEffectArgument *effect, s32 mode);

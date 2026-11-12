@@ -428,9 +428,6 @@ void SceneTransform_ApplyYaw(s32 angle);
 // The roll step of the scene transform.
 void Func_080150e4(s32 angle);
 
-// Steps the background palette fade.
-void Palette_StepFadeTransfer(void);
-
 void Func_0815e9f4(struct BattleEffectArgument *effect) {
   struct EffectPosition pos;
   struct EffectPosition anchor;

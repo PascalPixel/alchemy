@@ -76,8 +76,10 @@ void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *position);
 void Render_ResetTransformState(void);
 void Sound_PlayFar(s32 cue);
 void Func_081180e8(s32 phase);
-s32 BattleEffect_LoadBlitter(s32 slot, s32 blitter);
-void Func_0814cd48(s32 actor, s32 palette, s32 member, s32 timer, s32 frames);
+s32 BattleEffect_LoadBlitter(s32 slot,
+                             s32 blitter); // BattleEffect_BuildBlitter
+void Func_0814cd48(s32 actor, s32 palette, s32 member, s32 timer,
+                   s32 frames); // BattleEffect_TintBattler
 void *Heap_AllocEwram(s32 size);
 void HeapSlot_Release(s32 slot);
 struct PoolEntry *Render_AllocateModelList(s32 count);
@@ -426,7 +428,7 @@ void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                           s32 gravity);
 
-void Func_080150e4(s32);
+void Func_080150e4(s32 angle); // SceneTransform_ApplyRoll
 void SceneTransform_ApplyPitch(s32);
 
 void Func_0814cca8(void);
@@ -1555,10 +1557,6 @@ struct RenderModel {
   u8 scrollV;
 };
 
-s32 BattleEffect_LoadBlitter(s32 slot,
-                             s32 modeAndFlags); // BattleEffect_BuildBlitter
-void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
-                   s32 timerFrames);              // BattleEffect_TintBattler
 void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
 void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
 void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen,
@@ -1571,7 +1569,6 @@ void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
 
 void BattleEffect_SelectLivingTargets(
     struct FxPartyList *party); // SelectLivingTargets
-void Func_080150e4(s32 angle);  // SceneTransform_ApplyRoll
 
 void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
 

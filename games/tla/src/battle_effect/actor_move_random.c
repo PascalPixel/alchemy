@@ -443,7 +443,9 @@ extern u16 gData_081989f2[];
 extern u8 gData_081989e2[];
 extern u8 gData_081989ea[];
 
-s32 BattleEffect_LoadBlitter(s32 slot, s32 kind);
+s32 BattleEffect_LoadBlitter(
+    s32 slot,
+    s32 modeAndFlags); // BattleEffect_BuildBlitter(slot, 7, 7, flags, mode)
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                           s32 gravity);
 
@@ -809,15 +811,11 @@ void BattleEffect_AdvanceBg2OnInterval(void);
 void BattleEffect_FlushPendingGraphicsTransfer(void);
 s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
                   u32 mode); // BattleEffect_BuildBlitter
-s32 BattleEffect_LoadBlitter(
-    s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter(slot,
-                                 // 7, 7, flags, mode)
 
 void SceneTransform_ApplyPosition(const s32 *pos);
 void Func_080150e4(s32 roll); // SceneTransform_ApplyRoll
 void SceneTransform_ApplyYaw(s32 yaw);
 void Func_0814cca8(void); // BattleEffect_SetupBlendedDisplay
-void Func_08164a4c(s32 red, s32 green, s32 blue); // Palette_BrightenBgEntries
 void BattleActor_CommitPlacementFar(void);
 
 void Transform_SetLookAt(s32 *eye, s32 *position);

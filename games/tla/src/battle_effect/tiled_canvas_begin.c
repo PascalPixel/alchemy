@@ -26,7 +26,7 @@ struct DescriptorEntry {
 extern void *gOverlayArea[];
 extern struct DescriptorEntry gData_080eff28[];
 
-void BattleEffect_StartTiledCanvas(s32 mode);
+void BattleEffect_StartTiledCanvas(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);
 void Func_0814ea58(struct BattleEffectArgument *effect, s32 mode);
 void PartyStatus_CreateWindow(s32 flags);
@@ -3354,7 +3354,6 @@ void BattleEffect_RunFrost(struct BattleEffectArgument *effect) {
 
 // The canvas layer and its helpers; the comments give The Broken Seal's
 // names where the twin is known.
-void BattleEffect_StartTiledCanvas(s32 bgControl);
 void BattleEffect_StartTiledCanvasFilled(s32 bgControl);
 
 void Func_0815e22c(struct EffectPosition *midpoint);

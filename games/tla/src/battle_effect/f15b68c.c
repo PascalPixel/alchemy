@@ -76,8 +76,11 @@ void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
 // Counts down the actors' flash timers.
 void BattleEffect_CountDownBattlerTints(void);
+// Builds a blitter in a heap slot: BattleEffect_BuildBlitter(slot, 7, 7,
+// flags, mode), whose result it returns.
 s32 BattleEffect_LoadBlitter(s32 slot,
                              s32 modeAndFlags); // BattleEffect_BuildBlitter
+// Flashes an actor in a palette for some frames.
 void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                    s32 timerFrames);              // BattleEffect_TintBattler
 void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
@@ -890,16 +893,6 @@ extern const u8 gData_081986e0[];
 extern const u8 gData_081986c8[];
 extern const s8 gData_081986ec[];
 extern const u8 gData_081986ce[];
-
-// Builds a blitter in a heap slot: BattleEffect_BuildBlitter(slot, 7, 7,
-// flags, mode), whose result it returns.
-s32 BattleEffect_LoadBlitter(s32 slot, s32 modeFlags);
-// BattlePlayback_Start through its far call.
-void Func_081180e8(s32 hitCue);
-
-// Flashes an actor in a palette for some frames.
-void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
-                   s32 frames);
 
 void Func_0815c970(struct BattleEffectArgument *effect, s32 mode) {
   struct HeapSlots *slots;

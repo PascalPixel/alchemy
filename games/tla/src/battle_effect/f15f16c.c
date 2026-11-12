@@ -208,9 +208,10 @@ void Func_0801521c(s32);
 
 void Actor_SetAnimationSpeedFar(struct Actor *object, s32 value);
 s32 BattleUnit_GetEffectHeightFar(s32);
-void Func_08118088(s32, s32);
+void Func_08118088(s32 actor,
+                   s32 variant); // BattleMotion_ApplyVariantMotionFar
 struct BattleObject **GetBattleObjectSlotFar(s32);
-void Func_081180e8(s32);
+void Func_081180e8(s32 phase); // BattlePlayback_StartFar
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                           s32 gravity);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
@@ -2569,10 +2570,6 @@ void Func_0815f16c(struct BattleEffectArgument *action, s32 kind) {
 
 void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen,
                    s32 *world); // BattleEffect_RunDjinniEntrance
-
-void Func_081180e8(s32 phase); // BattlePlayback_StartFar
-void Func_08118088(s32 actor,
-                   s32 variant); // BattleMotion_ApplyVariantMotionFar
 
 /// A disc of rings rises on BG2 over the target's side, its colour ramp
 /// cycling outward one ring a frame while each scanline sways on a sine wave.

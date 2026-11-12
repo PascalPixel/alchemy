@@ -127,8 +127,6 @@ void BattleEffect_StartCanvasLayer(s32 control);
 void BattleEffect_EndCanvasLayer(void);
 s32 BattleEffect_LoadBlitter(s32 slot, s32 flags);
 
-void BattleEffect_ArmWin0HBlankDma(void); // arms WIN0's HBlank DMA
-
 void Sound_PlayFar(s32 cue);
 void Func_081180e8(s32 phase); // BattlePlayback_StartFar
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,

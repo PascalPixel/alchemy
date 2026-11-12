@@ -26,14 +26,16 @@ extern char ResourceId_PinkBurstSheet;
 // Data134 sheet, by size - 1.
 extern u16 gData_08197410[];
 
-void BattleEffect_StartCanvasLayer(s32 layer);
+void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void BattleEffect_EndCanvasLayer(void);
 s32 BattleUnit_GetEffectHeightFar(s32 unit);
-s32 BattleEffect_LoadBlitter(s32 slot, s32 kind);
+s32 BattleEffect_LoadBlitter(s32 slot,
+                             s32 blitter); // BattleEffect_BuildBlitter, packed
 void Sound_PlayFar(s32 cue);
 void Func_081180e8(s32 phase);
-void Func_0814cd48(s32 id, s32 a, s32 b, s32 c, s32 d);
+void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
+                   s32 frames); // BattleEffect_TintBattler
 void Transform_Pop(void);
 void Func_08015160(s32 x, s32 y, s32 z);
 void SceneTransform_ApplyPitch(s32);
@@ -178,14 +180,6 @@ extern char ResourceId_BoulderSheet;
 extern u8 gData_0819749e[];
 extern u8 gData_081974ad[];
 extern u16 gData_081974bc[];
-
-// The canvas layer and its helpers, with The Broken Seal's names.
-void BattleEffect_StartCanvasLayer(s32 bgControl);
-
-s32 BattleEffect_LoadBlitter(s32 slot,
-                             s32 blitter); // BattleEffect_BuildBlitter, packed
-void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
-                   s32 frames); // BattleEffect_TintBattler
 
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffect_StartActorMotion(s32 actor, s32 force, s32 acceleration,

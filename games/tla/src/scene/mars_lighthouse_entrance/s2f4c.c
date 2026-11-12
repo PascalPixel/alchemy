@@ -30,8 +30,6 @@ extern s16 gData_02006868;
 extern s16 gData_020068a0;
 extern u16 gData_020068a2;
 
-void *Heap_Alloc(s32 size);
-void Heap_Release(void *block);
 s32 Resource_FindFreeEntry(void);
 void Func_02000d18(void);
 void Func_02000fe0(u8 *cell);

@@ -16,7 +16,6 @@ void Func_02000e28(s32 value);
 void Func_02000038(void) { Func_080d2b4c(18, 70); }
 
 #include "battle.h"
-#include "field.h"
 #include "game.h"
 #include "graphics.h"
 #include "lib.h"

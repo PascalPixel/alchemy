@@ -60,7 +60,6 @@ void Func_0200036c(void) {
 void Func_02004e5c(void);
 void Func_02004dc4(void);
 s32 Math_Cosine(s32 angle);
-void Effect_AdvanceMotion(union FieldObject *object);
 void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags, struct EffectOptions *options);
 s32 Func_02004e64(void);

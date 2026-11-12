@@ -128,11 +128,9 @@ void Func_02000148(void) { MapGrid_CopyCellAttributes(7, 90, 1, 1, 8, 91); }
 // The Japanese edition drops an object with no cue; the later editions play
 // cue 181 as it drops. The first drop goes through the call layer.
 #if !TLA_PATCH_1
-void Func_02000100(s32 id);
 #define DROP_OBJECT_CALLED(id) Func_02000100(id)
 #define DROP_OBJECT(id) Func_02000100(id)
 #else
-void Func_02000100(s32 id, s32 cue);
 #define DROP_OBJECT_CALLED(id) Func_02000100(id, 181)
 #define DROP_OBJECT(id) Func_02000100(id, 181)
 #endif

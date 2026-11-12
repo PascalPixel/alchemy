@@ -484,8 +484,6 @@ void Func_02000d18(void) {
 
 #include "task.h"
 
-void *Heap_Alloc(s32 size);
-void Heap_Release(void *buffer);
 s32 Resource_FindFreeEntry(void);
 
 /// Fills 0x100 bytes with colour 1, loads them into a VRAM block of their own

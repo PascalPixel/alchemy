@@ -77,11 +77,6 @@ s32 Func_020002d8(struct Actor *object, struct Actor *target, s32 range,
 // that the leader stands within 11 of the actor, is still on its listing.
 #if TLA_PATCH_1
 
-s32 SceneActor_CalculateFixedPointDistance(s32 *from, s32 *to);
-s32 Func_020002d8(struct Actor *actor, struct Actor *target, s32 distance,
-                  s32 flag);
-void Func_020043c4(struct Actor *actor, s32 mode);
-
 /// Once the leader is within 11 of the actor, stops it (Func_020043c4 mode
 /// 2). Otherwise it runs Func_020002d8 toward object 18, 16 or 17 by its
 /// action (0, 1, other) at 24, and if that returns 0, toward the leader at
@@ -115,9 +110,6 @@ s32 Func_020003bc(struct Actor *actor) {
 }
 
 #else
-
-s32 Func_020002d8(struct Actor *actor, struct Actor *target, s32 distance,
-                  s32 flag);
 
 s32 Func_020003bc(struct Actor *actor) {
   u8 *tiles = Ram_HeapSlots->windowTiles;

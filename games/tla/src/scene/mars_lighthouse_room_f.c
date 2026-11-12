@@ -85,16 +85,6 @@ void Func_02000168(void) { Func_02005600(); }
 
 #if TLA_PATCH_1
 
-extern char SceneId_Ov6adRoom1;
-extern char SceneId_Ov6adRoom2;
-extern char SceneId_Ov6adRoom3;
-extern char SceneId_Ov6adRoom4;
-extern const u8 gData_02006518[];
-extern const u8 gData_02006530[];
-extern const u8 gData_02006710[];
-extern const u8 gData_02006890[];
-extern const u8 gData_02006a0c[];
-
 void Func_02000170(void) {
   s32 position[3];
   struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);

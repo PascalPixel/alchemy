@@ -22,8 +22,6 @@ extern const s32 *gData_080f3978[];
 struct Actor *Actor_GetById(u32 objectId);
 struct FieldEffect *Func_080200c0(s32 type, s32 x, s32 y, s32 z);
 void Actor_SetPartAttribute(struct Actor *object, s32 attribute);
-void BattleEffect_UpdateObjectMotionScaleAndLinkedAngle(
-    union FieldObject *object);
 
 void Func_080df8e0(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,

@@ -170,6 +170,8 @@ void Func_020005f8(void) {
   Event_SetFlag(0x250);
 }
 
+void Func_0200061c(struct Actor *object);
+
 #if TLA_PATCH_1
 void Func_0200061c(struct Actor *object) {
   object->motionFlags = 3;
@@ -181,8 +183,6 @@ void Func_0200061c(struct Actor *object) {
   object->motionFlags = 0;
 }
 #endif
-
-void Func_0200061c(struct Actor *object);
 
 void Func_02000644(s32 unused, s32 id) {
   struct Actor *object = Actor_Get(id);

@@ -5,7 +5,6 @@
 #include "system/main_routine_work.h"
 
 #include "types.h"
-#include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "dma.h"
 #include "io_reg.h"
@@ -225,7 +224,6 @@ s32 Func_020003d4(struct Actor *object) {
 }
 
 #include "battle.h"
-#include "field.h"
 #include "game.h"
 #include "graphics.h"
 #include "lib.h"

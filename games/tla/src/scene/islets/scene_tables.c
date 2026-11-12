@@ -1892,16 +1892,8 @@ struct MapLayerBits {
   u8 unk17High : 4;
 };
 
-void Func_02003e64(void);
-void Func_02003e6c(void);
 void Func_02003410(void);
 void PaletteQueue_Add(s32 a, s32 b, s32 c, s32 d);
-void Func_02001c4c(void);
-void Func_02002830(void);
-void Func_020029c4(void);
-void Event_StartScreenTransition(void);
-void Event_WaitTransitionFrames(void);
-void Func_020034d8(void);
 
 void Func_0200329c(void) {
   u8 *map = (u8 *)Ram_HeapSlots->mapWork;
@@ -1981,16 +1973,8 @@ struct MapLayerBits {
   u8 unk17High : 4;
 };
 
-void Func_02003e64(void);
-void Func_02003e6c(void);
 void Func_02003410(void);
 s32 PaletteQueue_Add(s16 bank, s16 index, s16 delay, s16 count);
-void Func_02001c4c(void);
-void Func_02002830(void);
-void Func_020029c4(void);
-void Event_StartScreenTransition(void);
-void Event_WaitTransitionFrames(void);
-void Func_020034d8(void);
 
 void Func_0200329c(void) {
   u8 *map = (u8 *)Ram_HeapSlots->mapWork;

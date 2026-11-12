@@ -54,30 +54,27 @@ void Func_02000384(void) {
 #include "../field/field_effect/advance_motion.c"
 #endif
 
-// The Japanese form is the older revision and is still on its listing.
-#if TLA_PATCH_1
-
 #include "ram_buffer.h"
 #include "main_routine_work.h"
 #include "actor.h"
 #include "event_inline.h"
+#include "call.h"
 #include "system/field_effect.h"
+
+void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                   s32 velocityZ, u32 flags,
+                   const struct EffectOptions *options);
+
+// The Japanese form is the older revision and is still on its listing.
+#if TLA_PATCH_1
 
 struct LandingEventWork {
   u8 unk000[0x1ac];
   s32 field1ac;
 };
 
-void Event_StartScreenTransition(void);
-void Event_WaitTransitionFrames(void);
 s32 Math_Cosine(s32 angle);
-void Effect_AdvanceMotion();
-void Func_02002e44(void);
 void Func_02002dec(void);
-void Func_02002e4c(void);
-void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                   s32 velocityZ, u32 flags,
-                   const struct EffectOptions *options);
 
 void Func_02000418(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
@@ -135,11 +132,6 @@ loop:
 }
 
 #endif
-
-#include "actor.h"
-#include "event_inline.h"
-#include "call.h"
-#include "system/field_effect.h"
 
 s32 Func_020005c0(struct Actor *object) {
   Actor_SetSingleChildFlags(object, 0);
@@ -347,12 +339,6 @@ void Func_02000b30(s32 id, s32 cue) {
   System_Wait(10);
   *held = 0;
 }
-
-// Places count effects in a row, rows times, each row two pixels further down,
-// waiting between rows.
-void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                   s32 velocityZ, u32 flags,
-                   const struct EffectOptions *options);
 
 /// Places count effects in a row, rows times, each row two pixels further down,
 /// waiting between rows.

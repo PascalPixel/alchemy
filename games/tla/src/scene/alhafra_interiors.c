@@ -232,7 +232,6 @@ s32 Func_02000598(s32 a0) {
 // The Japanese edition sets no flag 0x200 by the leader's position and places
 // no actors 31 and 32.
 #if TLA_PATCH_1
-extern u8 gData_02001c90[], gData_02001c60[];
 void Func_02000bac(s32 mode);
 void Func_02000bb4();
 
@@ -274,7 +273,6 @@ s32 Func_020005b8(void) {
   return 0;
 }
 #else
-extern u8 gData_02001c90[], gData_02001c60[];
 void Func_02000bac(s32 mode);
 void Func_02000bb4();
 

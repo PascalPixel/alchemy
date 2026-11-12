@@ -410,8 +410,6 @@ void Func_02000b70(void) {
   Func_02000a98(424, 100);
 }
 
-#include "system/io_reg.h"
-
 void Func_02001d60(void);
 void Func_02001d40(void);
 

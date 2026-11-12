@@ -2,6 +2,7 @@
 /// The overlay code of scene/izumo_ruins between two shared objects, in ROM order.
 
 #include "types.h"
+#include "system.h"
 #include "iwram_call.h"
 #include "actor.h"
 #include "main_routine_work.h"
@@ -15,7 +16,6 @@
 
 extern const s32 gData_02001540[];
 
-u32 Random16Far(void);
 u32 Func_020014f0(struct FieldSprite *sprite, u32 frame);
 void Func_02001430(struct FieldEffect *effect, const s32 *script);
 s32 Math_Cosine(s32 angle);

@@ -2,6 +2,7 @@
 /// Scene code of overlay 0x64d, in ROM order, from s23a4's offset up to the next object the overlay links.
 
 #include "types.h"
+#include "system.h"
 #include "ram_buffer.h"
 #include "actor.h"
 #include "event_inline.h"
@@ -198,8 +199,6 @@ struct SparkWork {
   s16 next;
   u16 tileBase;
 };
-
-u32 Random16Far(void);
 
 void Func_0200260c(struct Actor *source, s32 x, s32 y, s32 z) {
   struct SparkWork *work = Ram_HeapSlots->menuRuntime;

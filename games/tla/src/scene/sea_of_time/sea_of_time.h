@@ -2,6 +2,7 @@
 #define TLA_SEA_OF_TIME_H
 
 #include "types.h"
+#include "system.h"
 #include "ram_buffer.h"
 #include "iwram_call.h"
 #include "dma.h"
@@ -69,7 +70,6 @@ extern u8 gMapCellBuffer[];
 void Scene_SetActorSpritePriority(struct SeaOfTimeObject *object, s32 priority);
 void Actor_SetSingleChildFlags(struct SeaOfTimeObject *object,
                                         s32 value);
-u32 Random16Far(void);
 s32 Math_Cosine(s32 angle);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);

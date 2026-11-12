@@ -1,4 +1,5 @@
 #include "types.h"
+#include "system.h"
 #include "scene_tables.h"
 #include "actor.h"
 #include "main_routine_work.h"
@@ -38,7 +39,6 @@ struct Actor *Actor_GetById(u32 id);
 void Func_02002cc0(void);
 void Func_02002c40(void);
 struct Actor *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
-u32 Random16Far(void);
 void Func_02005d5c(struct Actor *object, s32 mode);
 void Func_02005d6c(struct Actor *object, const u8 *script);
 void Actor_SetPartAttribute(struct Actor *object, s32 value);

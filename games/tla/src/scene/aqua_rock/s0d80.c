@@ -1,4 +1,5 @@
 #include "types.h"
+#include "system.h"
 #include "actor.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"
@@ -13,7 +14,6 @@ s32 Func_02002970(struct Actor *object, struct Vector3 *position);
 void Func_02001d30(struct Actor *object);
 void Func_02002910(struct Actor *object, s32 mode);
 void Func_02002998(void);
-u32 Random16Far(void);
 void Func_020029a0(void);
 
 struct EventWork1cc {

@@ -1,4 +1,5 @@
 #include "types.h"
+#include "system.h"
 #include "main_routine_work.h"
 #include "local.h"
 #include "io_reg.h"
@@ -234,8 +235,6 @@ void Func_020007d8(void) {
   if ((gFrameCount & 63) == 0)
     Func_02000758(0xf80000, 0x300000, 0x1000000);
 }
-
-u32 Random16Far(void);
 
 /// Moves the object around its orbit's centre (words 14 and 15) and steps the
 /// angle by a random amount.

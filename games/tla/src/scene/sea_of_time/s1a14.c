@@ -2,6 +2,7 @@
 /// The Sea of Time's opening: places the camera and the first effects, showers sparks
 /// for 360 frames and larger effects for 16, then fades BG palette 3 to RGB(11, 6, 23).
 #include "iwram_call.h"
+#include "system.h"
 #include "actor.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"
@@ -24,7 +25,6 @@ void Event_StartScreenTransition();
 void Event_WaitTransitionFrames();
 void Func_02001928(s32 a, s32 b, s32 c);
 void Func_02001ffc();
-s32 Random16Far();
 void Func_0200015c();
 void Func_02001f64();
 void Func_0200204c();

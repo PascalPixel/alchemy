@@ -2,6 +2,7 @@
 /// Scene code of overlay 0x664, in ROM order, from s3ac4's offset up to the next object the overlay links.
 
 #include "airs_rock_inside.h"
+#include "system.h"
 
 struct FieldActor *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type);
 void Func_02005e84(s32 owner, s32 a, s32 b);
@@ -289,7 +290,6 @@ s32 Func_02004084(struct Actor *object) {
 
 #include "system/field_effect.h"
 
-u32 Random16Far(void);
 void Func_020002f4(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options);

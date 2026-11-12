@@ -2,6 +2,7 @@
 /// Scene code of overlay 0x664, in ROM order, from s0550's offset up to the next object the overlay links.
 
 #include "airs_rock_inside.h"
+#include "system.h"
 
 extern u32 gData_0200654c[];
 extern u32 gData_02006564[];
@@ -18,7 +19,6 @@ s32 Math_Cosine(s32 angle);
 void Actor_SetAnimationSpeed(struct FieldActor *object, s32 value);
 void Map_EnableUpdateCallback(void);
 void Map_DisableUpdateCallback(void);
-u32 Random16Far(void);
 
 /// On most frames, moves the object to a random spot: x 176 to 431 pixels, y
 /// and z up to 31 and 127 pixels past the leader's. Then it keeps its action as

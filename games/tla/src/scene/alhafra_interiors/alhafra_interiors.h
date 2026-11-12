@@ -2,6 +2,7 @@
 #define TLA_ALHAFRA_INTERIORS_H
 
 #include "types.h"
+#include "system.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "scene_ids.h"
@@ -60,8 +61,6 @@ struct AlhafraInteriorsEventWork {
   u16 field1c4;
 };
 
-u32 Random16Far(void);
-
 void Func_02000a94(void);
 void Func_02000a9c(void);
 void Func_02000bc4(s32 shop, s32 keeper);
@@ -73,8 +72,6 @@ void Event_WaitTransitionFrames(void);
 void Func_02000b7c(void);
 
 void Event_StartScreenTransition(void);
-
-
 
 // ---- this overlay
 

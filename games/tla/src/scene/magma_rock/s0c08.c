@@ -1,4 +1,5 @@
 #include "types.h"
+#include "system.h"
 #include "main_routine_work.h"
 #include "actor.h"
 #include "event_inline.h"
@@ -34,7 +35,6 @@ struct MagmaRockEffectParams {
 
 extern const u8 gData_02003d74[];
 
-u32 Random16Far(void);
 void Func_0200015c(s32 x, s32 y, s32 z, s32 a, s32 b, s32 c, s32 flags, s32 *params);
 void Func_02000dc0(struct Actor *object);
 

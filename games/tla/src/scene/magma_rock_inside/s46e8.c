@@ -1,4 +1,5 @@
 #include "types.h"
+#include "system.h"
 #include "iwram_call.h"
 #include "actor.h"
 #include "main_routine_work.h"
@@ -8,7 +9,6 @@
 
 extern const s32 gData_02005638[];
 
-u32 Random16Far(void);
 u32 Func_02004e98(struct FieldSprite *sprite, u32 frame);
 void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags);
 void Func_02004c98(struct FieldEffect *effect, s32 mode);

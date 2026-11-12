@@ -2,6 +2,7 @@
 #define AQUA_ROCK_INSIDE_LOCAL_H
 
 #include "types.h"
+#include "system.h"
 #include "ram_buffer.h"
 #include "actor.h"
 #include "main_routine_work.h"
@@ -21,7 +22,6 @@ u8 *ResourceMetadata_Register(void *animation, s32 id);
 void Event_StartScreenTransition(void);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
-s32 Random16Far(void);
 s32 Resource_FindFreeEntry(void);
 void *HeapSlot_AllocEwram(s32 slot, s32 size);
 void HeapSlot_Release(s32 slot);

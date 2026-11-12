@@ -1,4 +1,5 @@
 #include "types.h"
+#include "system.h"
 #include "ram_buffer.h"
 #include "actor.h"
 #include "main_routine_work.h"
@@ -18,7 +19,6 @@ void Func_02004d40(void);
 void Func_02004d48(void);
 void Func_02004cb0(struct Actor *object);
 void Func_02004e20(void);
-u32 Random16Far(void);
 void Func_02000d1c(struct Actor *object);
 void Func_02000ea4(struct Actor *object);
 void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,

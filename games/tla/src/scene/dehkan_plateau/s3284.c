@@ -2,6 +2,7 @@
 /// Scene code of overlay 0x655, in ROM order, from s3284's offset up to the next object the overlay links.
 
 #include "types.h"
+#include "system.h"
 #include "ram_buffer.h"
 #include "actor.h"
 #include "main_routine_work.h"
@@ -240,7 +241,6 @@ void Func_0200369c(void) {
 
 extern u8 gMapShapeGrid[];
 
-u32 Random16Far(void);
 s32 Math_Cosine(s32 angle);
 void ObjectVisual_CopyAttributes(s32 id, s32 value);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);

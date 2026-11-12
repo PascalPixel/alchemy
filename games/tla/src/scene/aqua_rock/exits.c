@@ -18,8 +18,6 @@
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-u32 Random16Far(void);
-
 struct ActorTail {
   u8 head[0x5e];
   u16 unk5e;

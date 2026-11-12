@@ -214,8 +214,6 @@ struct SparkWork {
   s16 resource;
 };
 
-s32 Random16Far(void);
-
 void Func_020001e0(s32 x, s32 y, s32 z, s32 count) {
   struct SparkWork *work = Ram_HeapSlots->menuRuntime;
   struct Spark *spark;

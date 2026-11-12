@@ -2,6 +2,7 @@
 /// Scene code of overlay 0x655, in ROM order, from s0038's offset up to the next object the overlay links.
 
 #include "types.h"
+#include "system.h"
 #include "actor.h"
 #include "event_inline.h"
 #include "ram_buffer.h"
@@ -420,7 +421,6 @@ void Func_020006ec(struct Actor *object, struct Actor *target) {
   Actor_SetPositionAndResetMotion(target, 0, 0, 0);
 }
 
-u32 Random16Far(void);
 s32 Math_Cosine(s32 angle);
 void Func_02003ba8(struct Actor *object, const void *script);
 s32 Func_02003d80(void *sprite, s32 frame);

@@ -4,6 +4,7 @@
 /// after naming the function (WAVE_SCROLL) and its 160-line table
 /// (WAVE_SCROLL_LINES).
 #include "types.h"
+#include "system.h"
 #include "ram_buffer.h"
 #include "iwram_call.h"
 #include "dma.h"
@@ -13,7 +14,6 @@
 extern s16 WAVE_SCROLL_LINES[];
 
 s32 Math_Sine(s32 angle);
-u32 Random16Far(void);
 
 void WAVE_SCROLL(void) {
   s16 *line = WAVE_SCROLL_LINES;

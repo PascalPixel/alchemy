@@ -1,4 +1,5 @@
 #include "types.h"
+#include "system.h"
 #include "iwram_call.h"
 #include "ram_buffer.h"
 #include "irq.h"
@@ -151,8 +152,6 @@ struct GustObject *Func_020007a4(struct GustObject *source) {
                 &options);
   return object;
 }
-
-s32 Random16Far(void);
 
 struct SceneEffectSource {
   u8 unk00[8];

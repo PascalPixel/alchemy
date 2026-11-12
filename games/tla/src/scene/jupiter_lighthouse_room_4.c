@@ -147,8 +147,6 @@ void Func_02000244(struct Actor *object) {
   object->unk66++;
 }
 
-u32 Random16Far(void);
-
 void Func_02000300(void) {
   struct Actor *object;
   s32 i;

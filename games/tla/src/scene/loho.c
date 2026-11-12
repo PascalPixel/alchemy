@@ -101,7 +101,6 @@ s32 Func_02001280();
 void Func_020012e8();
 void Func_020013c8();
 
-s32 Random16Far();
 s32 Resource_FindFreeEntry();
 s32 Resource_GetTableEntry();
 s32 Resource_ResetEntry();

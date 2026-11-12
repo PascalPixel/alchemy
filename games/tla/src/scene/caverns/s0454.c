@@ -2,6 +2,7 @@
 /// Scene code of overlay 0x6a9, in ROM order, from s0454's offset up to the next object the overlay links.
 
 #include "caverns.h"
+#include "system.h"
 #include "event_inline.h"
 #include "actor.h"
 #include "field_sprite.h"
@@ -202,7 +203,6 @@ void Func_0200108c(struct Actor *object);
 struct Actor *Func_0200115c(s32 *position, s32 mode);
 s32 Math_Cosine(s32 angle);
 struct Actor *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type);
-u32 Random16Far(void);
 
 void Func_0200087c(void) {
   s32 velocity[3];

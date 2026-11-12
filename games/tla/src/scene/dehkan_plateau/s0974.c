@@ -2,6 +2,7 @@
 /// Scene code of overlay 0x655, in ROM order, from s0974's offset up to the next object the overlay links.
 
 #include "types.h"
+#include "system.h"
 #include "iwram_call.h"
 #include "actor.h"
 #include "main_routine_work.h"
@@ -13,7 +14,6 @@
 
 extern const s32 gData_02003e00[];
 
-u32 Random16Far(void);
 u32 Func_02003d80(struct FieldSprite *sprite, u32 frame);
 void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags);
 void Func_02003ba0(struct FieldEffect *effect, s32 mode);

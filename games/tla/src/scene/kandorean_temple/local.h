@@ -2,6 +2,7 @@
 #define KANDOREAN_TEMPLE_LOCAL_H
 
 #include "types.h"
+#include "system.h"
 #include "ram_buffer.h"
 #include "actor.h"
 #include "main_routine_work.h"
@@ -16,7 +17,6 @@ void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
 
 extern u32 gSceneExits[];
 
-u32 Random16Far(void);
 void Func_020051c0(void);
 void Func_020051c8(void);
 void Func_02000668(struct Actor *object, s32 a);

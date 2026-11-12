@@ -2,6 +2,7 @@
 /// Scene code of overlay 0x655, in ROM order, from s2698's offset up to the next object the overlay links.
 
 #include "types.h"
+#include "system.h"
 #include "actor.h"
 #include "field_sprite.h"
 #include "fixed_math.h"
@@ -13,7 +14,6 @@
 
 void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
 
-u32 Random16Far(void);
 void Func_02003ba0(struct Actor *object, s32 mode);
 void Func_02003ba8(struct Actor *object, const void *script);
 s32 Func_02003d80(void *sprite, s32 frame);

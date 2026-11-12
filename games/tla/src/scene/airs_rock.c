@@ -380,7 +380,6 @@ void Func_0200092c(struct Actor *object) {
 extern s16 gData_02004674[][4];
 extern const u8 gData_02003d1c[];
 void Func_02003b38(struct Actor *object, const u8 *script);
-u32 Random16Far(void);
 s32 Func_02003ba8(struct Actor *object);
 void Func_02003b50(void);
 void Func_02003b48(struct Actor *object);

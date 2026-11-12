@@ -2,6 +2,7 @@
 /// Scene code of overlay 0x664, in ROM order, from cell_get's offset up to the next object the overlay links.
 
 #include "airs_rock_inside.h"
+#include "system.h"
 
 #include "airs_rock_inside.h"
 
@@ -694,8 +695,6 @@ void Func_02001458(struct Actor *object) {
   object->scaleX += 0xccc;
   object->scaleY += 0xccc;
 }
-
-u32 Random16Far(void);
 
 void Func_0200160c(s32 x, s32 y, s32 z) {
   struct FieldActor *object = Import_ActorCreate(0x11d, x, y, z);

@@ -2,6 +2,7 @@
 #define TLA_MARS_LIGHTHOUSE_STAR_ROOM_H
 
 #include "types.h"
+#include "system.h"
 #include "ram_buffer.h"
 #include "event_work.h"
 #include "actor.h"
@@ -10,7 +11,6 @@
 
 #define DIFF(a, b) ((a) - (b) >= 0 ? (a) - (b) : (b) - (a))
 
-u32 Random16Far(void);
 s32 Math_Cosine(s32 angle);
 void Func_020043f4(void);
 void Func_02004444(void);

@@ -1,4 +1,5 @@
 #include "types.h"
+#include "system.h"
 #include "actor.h"
 #include "main_routine_work.h"
 #include "field_effect.h"
@@ -11,7 +12,6 @@ extern const s32 gData_02005050[];
 void Func_02004d40(void);
 void Func_02004d48(void);
 void Func_02004e20(void);
-u32 Random16Far(void);
 void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options);

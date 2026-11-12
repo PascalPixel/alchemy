@@ -2,6 +2,7 @@
 #define TLA_LEMURIAN_SHIP_H
 
 #include "types.h"
+#include "system.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "scene_ids.h"
@@ -62,8 +63,6 @@ struct LemurianShipEventWork {
   u8 unk1b8[0x0c];
   u16 field1c4;
 };
-
-u32 Random16Far(void);
 
 void Func_02002c68(void);
 void Func_02002c70(void);

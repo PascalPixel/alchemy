@@ -1,4 +1,5 @@
 #include "types.h"
+#include "system.h"
 #include "actor.h"
 #include "main_routine_work.h"
 #include "call.h"
@@ -17,7 +18,6 @@ void Func_02003fb8(struct Actor *object, const void *script);
 void Effect_AdvanceMotionAtLeaderPriority(void);
 s32 Math_Cosine(s32 angle);
 s32 Math_Sine(s32 angle);
-u32 Random16Far(void);
 
 struct DustSprite {
   u8 unk00[9];

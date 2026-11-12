@@ -2,6 +2,7 @@
 /// Scene code of overlay 0x661, in ROM order, from s0b84's offset up to the next object the overlay links.
 
 #include "types.h"
+#include "system.h"
 #include "field_effect.h"
 #include "scene.h"
 #include "scene_tables.h"
@@ -15,7 +16,6 @@ void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 void Effect_AdvanceMotionAtLeaderPriority(union FieldObject *object);
 s32 Math_Cosine(s32 angle);
 s32 Math_Sine(s32 angle);
-u32 Random16Far(void);
 
 void Func_02000b84(s32 x, s32 y, s32 z) {
   struct EffectOptions options;

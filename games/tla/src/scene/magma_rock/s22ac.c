@@ -1,4 +1,5 @@
 #include "types.h"
+#include "system.h"
 #include "ram_buffer.h"
 #include "main_routine_work.h"
 #include "actor.h"
@@ -32,7 +33,6 @@ struct MagmaRockEventWork {
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 s32 Math_Cosine(s32 angle);
-u32 Random16Far(void);
 void Effect_AdvanceMotion();
 void Func_02003aec(void);
 void Func_02003a7c(void);

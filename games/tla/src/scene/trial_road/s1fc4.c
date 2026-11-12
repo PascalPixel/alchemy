@@ -1,4 +1,5 @@
 #include "trial_road.h"
+#include "system.h"
 
 #include "iwram_call.h"
 #include "io_reg.h"
@@ -535,8 +536,6 @@ s32 Func_0200242c(void) {
 
 extern u32 gRandomState;
 extern const s8 gData_02005be0[4];
-
-u32 Random16Far(void);
 
 /// Deals the Trial Road's stage order from a seed: shuffles 0 to 7 into the
 /// eight slots at the start of the stage state, again until both the even and

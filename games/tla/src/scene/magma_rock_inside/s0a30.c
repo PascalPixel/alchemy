@@ -1,4 +1,5 @@
 #include "local.h"
+#include "system.h"
 #include "io_reg.h"
 
 extern const u8 gData_02005528[];
@@ -141,7 +142,6 @@ void Func_02000ce4(s16 value) {
 extern const s32 gData_0200502c[];
 
 void Func_02004f28(struct Actor *object, s32 sound);
-u32 Random16Far(void);
 void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options);

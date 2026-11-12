@@ -1,4 +1,5 @@
 #include "types.h"
+#include "system.h"
 #include "event_inline.h"
 
 union FieldObject;
@@ -8,7 +9,6 @@ union FieldObject;
 #include "field_effect.h"
 #include "field_sprite.h"
 
-u32 Random16Far(void);
 void Actor_SetSingleChildFlags(struct FieldEffect *object, s32 flags);
 void Func_02002f80(struct FieldEffect *object, s32 mode);
 void Func_02002f90(struct FieldEffect *object, const void *script);

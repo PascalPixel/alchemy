@@ -2,6 +2,7 @@
 #define TLA_KIBOMBO_H
 
 #include "types.h"
+#include "system.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "scene_ids.h"
@@ -62,7 +63,6 @@ struct KibomboEventWork {
   u16 field1c4;
 };
 
-u32 Random16Far(void);
 void wait(s32 frames);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);

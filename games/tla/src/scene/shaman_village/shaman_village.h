@@ -2,6 +2,7 @@
 #define TLA_SHAMAN_VILLAGE_H
 
 #include "types.h"
+#include "system.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "scene_ids.h"
@@ -60,8 +61,6 @@ struct ShamanVillageEventWork {
   u8 unk1b8[0x0c];
   u16 field1c4;
 };
-
-u32 Random16Far(void);
 
 void Func_020048c4(void);
 void Func_020048cc(void);

@@ -70,7 +70,6 @@ s32 ArcTan2();
 void Func_020006f8();
 void Func_020032e0();
 void Func_020032e8();
-u32 Random16Far();
 extern u8 gData_02003684[];
 
 void Func_0200088c(struct Vector3 *from, struct Vector3 *to, s16 part) {

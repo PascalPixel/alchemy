@@ -1,4 +1,5 @@
 #include "local.h"
+#include "system.h"
 #include "macros.h"
 
 void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
@@ -121,7 +122,6 @@ extern const s32 gData_02005050[];
 extern const s32 gData_0200502c[];
 
 void Func_02004cc0(void);
-u32 Random16Far(void);
 void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options);

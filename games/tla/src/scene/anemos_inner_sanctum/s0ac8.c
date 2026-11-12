@@ -1,4 +1,5 @@
 #include "types.h"
+#include "system.h"
 #include "ram_buffer.h"
 #include "actor.h"
 #include "system/io_reg.h"
@@ -34,7 +35,6 @@ void Func_02003380(s32 x, s32 z, s32 a, s32 b);
 void Func_02003398(void);
 void Func_020033a0(void);
 void Func_02003430();
-s32 Random16Far();
 extern u8 gData_020035cc[];
 extern u8 gData_02003620[];
 extern s32 gData_020036fc[][2];

@@ -2,6 +2,7 @@
 /// Scene code of overlay 0x6a5, in ROM order, from s44cc's offset up to the next object the overlay links.
 
 #include "types.h"
+#include "system.h"
 #include "call.h"
 #include "iwram_call.h"
 #include "actor.h"
@@ -69,8 +70,6 @@ struct GustObject *Func_020044cc(struct GustObject *source) {
                 &options);
   return object;
 }
-
-u32 Random16Far(void);
 
 s32 Func_020045a4(struct FieldActor *object) {
   s32 params[10];

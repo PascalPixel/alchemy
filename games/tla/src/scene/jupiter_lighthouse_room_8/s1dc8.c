@@ -3,6 +3,7 @@
 /// next object the overlay links.
 
 #include "types.h"
+#include "system.h"
 #include "ram_buffer.h"
 #include "actor.h"
 #include "main_routine_work.h"
@@ -13,7 +14,6 @@
 void Func_020021f0(void);
 void Func_02002188(void);
 s32 Math_Cosine(s32 angle);
-u32 Random16Far(void);
 void Effect_AdvanceMotion(union FieldObject *object);
 void Func_02001600(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags, struct EffectOptions *options);

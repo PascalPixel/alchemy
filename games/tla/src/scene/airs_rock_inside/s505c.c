@@ -2,6 +2,7 @@
 /// Scene code of overlay 0x664, in ROM order, from s505c's offset up to the next object the overlay links.
 
 #include "types.h"
+#include "system.h"
 #include "task.h"
 #include "actor.h"
 #include "main_routine_work.h"
@@ -22,7 +23,6 @@ void wait(s32 frames);
 void FieldEvent_Wait(s32 frames);
 s32 Math_Cosine(s32 angle);
 s32 Math_Sine(s32 angle);
-u32 Random16Far(void);
 void Effect_AdvanceMotion(union FieldObject *object);
 void Func_020002f4(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,

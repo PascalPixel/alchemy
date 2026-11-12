@@ -296,7 +296,6 @@ struct OrbitEffect {
   void (*update)(struct OrbitEffect *);
 };
 
-u32 Random16Far(void);
 s32 Math_Cosine(s32 angle);
 void Func_02000e2c(struct Actor *object, const u8 *script);
 void Func_02000e5c(struct Actor *object, s32 a);

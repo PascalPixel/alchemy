@@ -2,6 +2,7 @@
 /// Scene code of overlay 0x681, in ROM order, from s15d0's offset up to the next object the overlay links.
 
 #include "types.h"
+#include "system.h"
 #include "actor.h"
 #include "system/io_reg.h"
 #include "event_inline.h"
@@ -37,7 +38,6 @@ struct Spark {
 
 extern const u8 gData_02005264[], gData_02005218[], gData_02005234[],
     gData_02005288[], gData_02005244[], gData_020052ac[], gData_020052dc[];
-u32 Random16Far(void);
 void Scene_SetActorSpritePriority(void *object, s32 priority);
 void Func_02004d9c(void *object, s32 mode);
 void Actor_SetSingleChildFlags(void *object, u32 value);

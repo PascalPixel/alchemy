@@ -304,7 +304,6 @@ struct OrbitEffect {
   s16 pause;
 };
 
-u32 Random16Far(void);
 s32 Math_Cosine(s32 angle);
 void Func_02003ff4(struct ActorView *obj);
 

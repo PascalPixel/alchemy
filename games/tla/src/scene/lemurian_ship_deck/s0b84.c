@@ -2,6 +2,7 @@
 /// Scene code of overlay 0x657, in ROM order, from s0b84's offset up to the next object the overlay links.
 
 #include "types.h"
+#include "system.h"
 #include "main_routine_work.h"
 #include "actor.h"
 #include "ram_buffer.h"
@@ -541,7 +542,6 @@ void Func_02001178(void) { GameFlag_ClearBit(0x212); }
 
 extern const u8 gData_0200247c[];
 
-s32 Random16Far(void);
 void Func_02001efc(struct Actor *object, s32 value);
 void Func_02001f04(struct Actor *object, const void *data);
 

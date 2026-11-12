@@ -1,4 +1,5 @@
 #include "types.h"
+#include "system.h"
 #include "ram_buffer.h"
 #include "actor.h"
 #include "main_routine_work.h"
@@ -8,7 +9,6 @@
 void Func_020042dc(void);
 void Func_020041fc(void);
 s32 Math_Cosine(s32 angle);
-u32 Random16Far(void);
 void Effect_AdvanceMotion(union FieldObject *object);
 void Func_0200363c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags, struct EffectOptions *options);

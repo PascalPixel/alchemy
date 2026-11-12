@@ -2,6 +2,7 @@
 /// Scene code of overlay 0x64b, in ROM order, from cell_index's offset up to the next object the overlay links.
 
 #include "types.h"
+#include "system.h"
 #include "ram_buffer.h"
 #include "frame.h"
 #include "iwram_call.h"
@@ -14,7 +15,6 @@ extern u8 gData_02006f20[];
 extern u8 gData_02006e0e[];
 extern u8 gData_02006e0c[];
 void Animation_ApplyChildValues(struct Actor *object, s32 value);
-u32 Random16Far(void);
 void Func_02004c20(void);
 void Func_02004c28(void);
 s32 Func_02004c38(s32 a, s32 b, s32 c);

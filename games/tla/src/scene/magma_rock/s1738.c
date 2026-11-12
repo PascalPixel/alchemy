@@ -1,4 +1,5 @@
 #include "types.h"
+#include "system.h"
 #include "actor.h"
 #include "field/event_work.h"
 #include "scene_ids.h"
@@ -31,7 +32,6 @@ extern u8 gData_02003dc4[];
 extern u8 gData_02003dd6[];
 extern u8 gData_02003dee[];
 
-u32 Random16Far(void);
 void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    struct MagmaRockEffectConfig *config);

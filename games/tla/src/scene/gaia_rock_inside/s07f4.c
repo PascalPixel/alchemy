@@ -2,6 +2,7 @@
 /// Scene code of overlay 0x681, in ROM order, from s07f4's offset up to the next object the overlay links.
 
 #include "types.h"
+#include "system.h"
 #include "actor.h"
 #include "event_inline.h"
 #include "main_routine_work.h"
@@ -11,7 +12,6 @@ extern const u8 gData_020050f4[];
 
 void Func_02004d9c(struct Actor *object, s32 mode);
 void Func_02004dac(struct Actor *object, const u8 *script);
-u32 Random16Far(void);
 s32 Math_Cosine(s32 angle);
 void Effect_AdvanceMotionAtLeaderPriority(void);
 

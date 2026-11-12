@@ -3,6 +3,7 @@
 /// next object the overlay links.
 
 #include "types.h"
+#include "system.h"
 #include "actor.h"
 #include "event_inline.h"
 
@@ -1723,7 +1724,6 @@ typedef struct {
 extern u32 gRandomState;
 void *Heap_AllocEwram(s32 size);
 void Heap_Release(void *buffer);
-u32 Random16Far(void);
 
 static __inline__ void *Heap_AllocEwram_(s32 size) {
   /* FAKEMATCH(wrapper): forwarded inline, as scene_call.h describes; as a

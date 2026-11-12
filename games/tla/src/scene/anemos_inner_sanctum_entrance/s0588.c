@@ -1,4 +1,5 @@
 #include "version.h"
+#include "system.h"
 #include "anemos_inner_sanctum_entrance.h"
 
 void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
@@ -11,7 +12,6 @@ void Actor_SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z);
 void Script_WaitForEventTimeout(struct Actor *actor);
 s32 GetMapCellCollision(s32 layer, s32 x, s32 z);
 void Actor_ArmCallback(s32 id, s32 angle, s32 a);
-u32 Random16Far(void);
 
 static __inline__ void MoveTo(struct Actor *object, s32 x, s32 y, s32 z) {
   /* FAKEMATCH(wrapper): MoveTo forwarded inline; as direct calls to

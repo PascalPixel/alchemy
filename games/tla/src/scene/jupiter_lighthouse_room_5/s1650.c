@@ -1,4 +1,5 @@
 #include "types.h"
+#include "system.h"
 #include "ram_buffer.h"
 #include "iwram_call.h"
 #include "event_inline.h"
@@ -38,7 +39,6 @@ struct SparkWork {
   s16 vramEntry;
 };
 
-u32 Random16Far(void);
 s32 Math_Cosine(s32 angle);
 
 /// Adds count sparks to the spark ring's 96 entries in heap slot 220, each

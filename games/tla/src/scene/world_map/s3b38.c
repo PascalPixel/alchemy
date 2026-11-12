@@ -2,6 +2,7 @@
 /// Scene code of overlay 0x64b, in ROM order, from s3b38's offset up to the next object the overlay links.
 
 #include "types.h"
+#include "system.h"
 #include "frame.h"
 #include "actor.h"
 #include "event_inline.h"
@@ -71,7 +72,6 @@ void Func_02003bf0(void) {
   Func_02003bb8(object, 2);
 }
 
-u32 Random16Far(void);
 void Func_02004c20(void);
 void Func_02004c28(void);
 s32 Func_02004c38(s32 a, s32 b, s32 c);

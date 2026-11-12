@@ -393,7 +393,6 @@ void Func_02000b40(struct Sprite6a7 *sprite, s32 a, s32 b, s32 c, s32 tile);
 void Func_02000b48(struct Sprite6a7 *sprite, struct Particle6a7 *particle);
 void Func_02000b50(struct Particle6a7 *particle, s32 a, s32 b);
 void *HeapSlot_AllocFar(s32 slot, s32 size);
-u32 Random16Far(void);
 void *Resource_GetTableEntry(s32 resourceId);
 s32 Resource_FindFreeEntry(void);
 s32 Resource_ResetEntry(u32 slot);

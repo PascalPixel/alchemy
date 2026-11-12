@@ -1,4 +1,5 @@
 #include "types.h"
+#include "system.h"
 #include "call.h"
 #include "iwram_call.h"
 #include "actor.h"
@@ -67,8 +68,6 @@ struct GustObject *Func_0200098c(struct GustObject *source) {
 #include "field_sprite.h"
 #include "field_event.h"
 #include "task.h"
-
-u32 Random16Far(void);
 
 s32 Func_02000a64(struct Actor *object) {
   struct EffectOptions params;

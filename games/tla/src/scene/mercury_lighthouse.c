@@ -38,8 +38,6 @@ s32 Func_02000038(struct Actor *object) {
   return 0;
 }
 
-u32 Random16Far(void);
-
 void Func_02000060(struct Actor *object) {
   u8 *timer = (u8 *)object + 98;
   u8 *state;

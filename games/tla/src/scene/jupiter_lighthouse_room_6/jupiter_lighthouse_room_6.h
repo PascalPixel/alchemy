@@ -2,6 +2,7 @@
 #define TLA_JUPITER_LIGHTHOUSE_ROOM_6_H
 
 #include "types.h"
+#include "system.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "scene_ids.h"
@@ -59,8 +60,6 @@ struct JupiterLighthouseRoom6EventWork {
   u8 unk1b8[0x0c];
   u16 field1c4;
 };
-
-u32 Random16Far(void);
 
 void Func_02001b44(void);
 void Func_02001b4c(void);

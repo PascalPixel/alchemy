@@ -1,4 +1,5 @@
 #include "types.h"
+#include "system.h"
 #include "main_routine_work.h"
 #include "event_inline.h"
 #define FIELD_AT(base, type, off)                                              \
@@ -11,7 +12,6 @@ void Func_02004e3c();
 void Func_02004e5c();
 void Func_02004e64();
 void Func_02004ec4();
-s32 Random16Far();
 extern u8 MsgGaiaRockInside01[];
 
 void Func_02002020(void) {

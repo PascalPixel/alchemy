@@ -1,4 +1,5 @@
 #include "types.h"
+#include "system.h"
 #include "iwram_call.h"
 #include "actor.h"
 #include "field_sprite.h"
@@ -8,7 +9,6 @@
 extern s32 gData_02004f90[];
 extern u32 gData_02004f9c[];
 
-u32 Random16Far(void);
 void Func_02004b20(struct Actor *object, const s32 *script);
 void Animation_ApplyChildArgument(void *sprite, s32 argument);
 

@@ -2,6 +2,7 @@
 /// Tracks actor 8 around the ring of cells: counts steps made in one direction,
 /// spawning an effect every fourth frame once past 3, and rewards a full count.
 #include "iwram_call.h"
+#include "system.h"
 #include "actor.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"
@@ -33,7 +34,6 @@ extern u16 gData_020022bc;
 extern struct Spots gData_02002118;
 extern u8 gData_02002110[];
 s32 Func_0200034c(s32, s32, s32);
-u32 Random16Far(void);
 void Func_0200015c(s32, s32, s32, s32, s32, s32, s32, struct Params *);
 
 struct EventWork687 {

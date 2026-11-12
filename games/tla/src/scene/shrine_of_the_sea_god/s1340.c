@@ -2,6 +2,7 @@
 /// Scene code of overlay 0x654, in ROM order, from s1340's offset up to the next object the overlay links.
 
 #include "shrine_of_the_sea_god.h"
+#include "system.h"
 #include "macros.h"
 #include "call.h"
 #include "text/msg_ids.h"
@@ -80,7 +81,6 @@ void Map_SetScreenShake(s32 a, s32 b, s32 c);
 void Map_WaitForShakeToSettle(void);
 s32 Math_Cosine(s32 angle);
 s32 Math_Sine(s32 angle);
-u32 Random16Far(void);
 void Task_RemoveFar(void (*func)(void));
 
 void Func_02001474(void) {

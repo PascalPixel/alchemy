@@ -2,6 +2,7 @@
 #define TLA_MARS_LIGHTHOUSE_ENTRANCE_ROOM_H
 
 #include "types.h"
+#include "system.h"
 #include "ram_buffer.h"
 #include "main_routine_work.h"
 #include "actor.h"
@@ -45,7 +46,6 @@ void Animation_ApplyChildValues(struct Actor *object, s32 value);
 s32 Map_GetTerrainHeight(s32 terrain, s32 x, s32 z);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
-u32 Random16Far(void);
 
 s32 Func_0200246c(s32 index, s32 value);
 s32 Func_0200249c(s32 index);

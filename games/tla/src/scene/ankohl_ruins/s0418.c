@@ -1,4 +1,5 @@
 #include "version.h"
+#include "system.h"
 
 // The Japanese form is the older revision and is still on its listing.
 #if TLA_PATCH_1
@@ -30,7 +31,6 @@ struct LandingEventWork {
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 s32 Math_Cosine(s32 angle);
-u32 Random16Far(void);
 void Effect_AdvanceMotion();
 void Func_02002e44(void);
 void Func_02002dec(void);

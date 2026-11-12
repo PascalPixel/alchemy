@@ -1,4 +1,5 @@
 #include "types.h"
+#include "system.h"
 #include "ram_buffer.h"
 #include "actor.h"
 #include "magma_rock.h"
@@ -119,7 +120,6 @@ struct MagmaRockEffectConfig {
 
 extern u32 gData_02003d50[];
 void Func_020011b8(void);
-u32 Random16Far(void);
 void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    struct MagmaRockEffectConfig *config);

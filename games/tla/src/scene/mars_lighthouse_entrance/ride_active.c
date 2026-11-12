@@ -1,4 +1,5 @@
 #include "ride.h"
+#include "system.h"
 #include "event_inline.h"
 
 void Func_02002860(void);
@@ -54,7 +55,6 @@ struct Work {
 extern u8 gData_020056d0[];
 void Func_02004bd0(struct Actor *object, const void *script);
 s32 Math_Cosine(s32 angle);
-u32 Random16Far(void);
 void ResourceMetadata_ClearRecord(void *record);
 void Resource_ResetEntry(s32 entry);
 

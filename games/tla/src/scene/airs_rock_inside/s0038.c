@@ -2,11 +2,11 @@
 /// Scene code of overlay 0x664, in ROM order, from s0038's offset up to the next object the overlay links.
 
 #include "airs_rock_inside.h"
+#include "system.h"
 
 #include "airs_rock_inside.h"
 #include "actor.h"
 
-u32 Random16Far(void);
 s32 Func_02005f64(struct FieldActor *object);
 void Func_020006cc(struct FieldActor *object);
 void Func_02000128(s32 id, u32 kind, s32 flag, s32 layer);

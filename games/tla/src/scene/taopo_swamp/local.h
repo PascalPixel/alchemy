@@ -2,6 +2,7 @@
 #define TAOPO_SWAMP_LOCAL_H
 
 #include "types.h"
+#include "system.h"
 #include "ram_buffer.h"
 #include "actor.h"
 #include "main_routine_work.h"
@@ -36,7 +37,6 @@ void Func_02002938(s32 a, s32 b);
 void Func_02002958(s32 a, s32 b, s32 c);
 void Func_02002990(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
 void Func_020029a8(s32 a, s32 b, s32 c);
-u32 Random16Far(void);
 void Func_02002800(struct Actor *object, const void *data);
 void Animation_SetStateFlags(struct Actor *object, s32 flags);
 

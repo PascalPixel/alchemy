@@ -2,6 +2,7 @@
 /// Scene code of overlay 0x679, in ROM order, from s17f8's offset up to the next object the overlay links.
 
 #include "types.h"
+#include "system.h"
 #include "ram_buffer.h"
 #include "map.h"
 #include "event_inline.h"
@@ -120,7 +121,6 @@ struct GroundParticleWork {
 
 extern s16 gData_02001f18[];
 
-s32 Random16Far(void);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 void Func_02001c3c(void *entry, s32 slot);
 

@@ -157,7 +157,6 @@ struct OrbitEffect {
 
 extern u32 gData_02003214[];
 
-u32 Random16Far(void);
 void Func_02002820(struct OrbitEffect *object, const void *script);
 
 static inline struct OrbitEffect *CreateOrbitEffect(s32 type, s32 x, s32 y,

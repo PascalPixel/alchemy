@@ -1,4 +1,5 @@
 #include "types.h"
+#include "system.h"
 #include "ram_buffer.h"
 #include "actor.h"
 #include "event_inline.h"
@@ -149,7 +150,6 @@ void Func_020011b8(struct Actor *object) {
 extern u32 gData_02003d50[];
 
 s32 Math_Cosine(s32 angle);
-u32 Random16Far(void);
 void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags, struct EffectOptions *options);
 s32 Func_020005a0(s32 *a, s32 *b);

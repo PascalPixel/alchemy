@@ -35,8 +35,6 @@ struct EncounterWork {
   s32 threshold;
 };
 
-u32 Random16Far(void);
-
 // Once the party has walked nine tenths of the encounter threshold, a coin
 // toss either requests the event's battle now or makes the party walk the
 // whole threshold first. The Japanese release has no render mode test.

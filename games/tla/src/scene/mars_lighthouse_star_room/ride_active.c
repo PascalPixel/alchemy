@@ -1,4 +1,5 @@
 #include "types.h"
+#include "system.h"
 #include "ram_buffer.h"
 #include "frame.h"
 #include "actor.h"
@@ -98,7 +99,6 @@ struct Work {
 extern u8 gData_02004774[];
 void Func_020041dc(struct Actor *object, const void *script);
 s32 Math_Cosine(s32 angle);
-u32 Random16Far(void);
 void ResourceMetadata_ClearRecord(void *record);
 void Resource_ResetEntry(s32 entry);
 

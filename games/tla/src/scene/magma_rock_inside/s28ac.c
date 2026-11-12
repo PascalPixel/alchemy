@@ -1,4 +1,5 @@
 #include "local.h"
+#include "system.h"
 #include "io_reg.h"
 
 struct FieldActor;
@@ -216,7 +217,6 @@ s32 Func_02002c1c(struct Actor *object) {
   return n != 0;
 }
 
-u32 Random16Far(void);
 void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options);

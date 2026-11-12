@@ -2,6 +2,7 @@
 #define AQUA_ROCK_LOCAL_H
 
 #include "types.h"
+#include "system.h"
 #include "task.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -45,7 +46,6 @@ void Event_StartScreenTransition(void);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void Task_RemoveFar(void *func);
-s32 Random16Far(void);
 s32 Resource_FindFreeEntry(void);
 s32 VramCache_Load(s32 entry, s32 size, void *data);
 void *HeapSlot_AllocEwram(s32 slot, s32 size);

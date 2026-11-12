@@ -2,6 +2,7 @@
 #define TLA_JUPITER_LIGHTHOUSE_AERIE_H
 
 #include "types.h"
+#include "system.h"
 #include "ram_buffer.h"
 #include "main_routine_work.h"
 #include "actor.h"
@@ -25,7 +26,6 @@ extern struct CellTarget gData_02003488;
 
 void Animation_ApplyChildValues(struct Actor *object, s32 value);
 void GameFlag_SetByte(s32 flag, s32 value);
-u32 Random16Far(void);
 void Func_02000858(s32 mode);
 void Func_02000e80(void);
 void Func_02001010(struct Actor *object);

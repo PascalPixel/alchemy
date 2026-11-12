@@ -1,4 +1,5 @@
 #include "types.h"
+#include "system.h"
 #include "actor.h"
 #include "map.h"
 #include "ram_buffer.h"
@@ -22,7 +23,6 @@ struct BubbleWork {
 };
 
 extern struct BubbleWork gData_020034f0;
-u32 Random16Far(void);
 s32 Map_GetTerrainHeight(s32 terrain, s32 x, s32 z);
 void Func_020028d0(u32 *oam, s32 depth);
 

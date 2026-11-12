@@ -130,7 +130,6 @@ void Func_0200014c(u16 *list) {
   }
 }
 
-u32 Random16Far(void);
 s32 Math_Cosine(s32 angle);
 void ObjectVisual_CopyAttributes(s32 id, s32 value);
 void Func_0200056c(s32 id);

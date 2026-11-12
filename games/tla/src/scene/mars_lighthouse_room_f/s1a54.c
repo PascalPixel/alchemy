@@ -1,4 +1,5 @@
 #include "types.h"
+#include "system.h"
 #include "iwram_call.h"
 #include "actor.h"
 #include "field_effect.h"
@@ -64,8 +65,6 @@ struct GustObject *Func_02001a54(struct GustObject *source) {
 
 #include "frame.h"
 #include "field_event.h"
-
-u32 Random16Far(void);
 
 s32 Func_02001b2c(struct FieldActor *object) {
   s32 params[10];

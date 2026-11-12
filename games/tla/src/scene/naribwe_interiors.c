@@ -600,8 +600,6 @@ s32 Func_02000ba0(s32 limit, s32 group, s32 *out) {
 
 #include "call.h"
 
-u32 Random16Far(void);
-
 u8 *Func_02000c04(void) {
   s32 *hints = (s32 *)Value2((s32 (*)())HeapSlot_AllocEwram, 252, 320);
   s32 limits[4];

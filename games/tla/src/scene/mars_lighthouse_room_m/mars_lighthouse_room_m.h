@@ -2,6 +2,7 @@
 #define TLA_MARS_LIGHTHOUSE_ROOM_M_H
 
 #include "types.h"
+#include "system.h"
 #include "actor.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"
@@ -92,7 +93,6 @@ void Func_02002ad4(struct Actor *object);
 void Func_020031e0(void);
 void Func_020031e8(void);
 void Func_020032a0(void);
-u32 Random16Far(void);
 s32 Math_Cosine(s32 angle);
 struct FieldActor;
 void Animation_SetStateFlags(struct FieldActor *object, s32 flags);

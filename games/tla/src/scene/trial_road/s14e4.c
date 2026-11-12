@@ -1,11 +1,11 @@
 #include "types.h"
+#include "system.h"
 #include "actor.h"
 #include "main_routine_work.h"
 #include "frame.h"
 #include "field_effect.h"
 #include "event_inline.h"
 
-u32 Random16Far(void);
 void Effect_AdvanceMotionAtLeaderPriority(union FieldObject *object);
 void Func_0200129c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,

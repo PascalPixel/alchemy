@@ -2,6 +2,7 @@
 #define TLA_ANKOHL_RUINS_H
 
 #include "types.h"
+#include "system.h"
 #include "ram_buffer.h"
 #include "actor.h"
 #include "main_routine_work.h"
@@ -20,8 +21,6 @@ struct AnkohlRuinsEventWork {
   /// Moved with the leader while the raft (object 9) carries them.
   struct Actor *unk1cc;
 };
-
-s32 Random16Far(void);
 
 extern s16 gData_02003780;
 extern s16 gData_02003782;

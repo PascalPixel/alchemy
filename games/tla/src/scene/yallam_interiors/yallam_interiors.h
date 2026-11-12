@@ -2,6 +2,7 @@
 #define TLA_YALLAM_INTERIORS_H
 
 #include "types.h"
+#include "system.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "scene_ids.h"
@@ -59,8 +60,6 @@ struct YallamInteriorsEventWork {
   u8 unk1b8[0x0c];
   u16 field1c4;
 };
-
-u32 Random16Far(void);
 
 void Func_020009b0(void);
 void Func_020009b8(void);

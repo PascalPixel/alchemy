@@ -2,6 +2,7 @@
 /// Scene code of overlay 0x65f, in ROM order, from push's offset up to the next object the overlay links.
 
 #include "garoh.h"
+#include "system.h"
 #include "event_inline.h"
 #include "main_routine_work.h"
 #include "event_work.h"
@@ -79,7 +80,6 @@ void Func_02001454(s32 actor) {
 extern u8 MsgGaroh01[];
 extern const u8 gData_0200545c[];
 
-u32 Random16Far(void);
 void Func_020052b4(void);
 
 static inline s32 Garoh_PathStep(s32 from, s32 to, s32 i) {

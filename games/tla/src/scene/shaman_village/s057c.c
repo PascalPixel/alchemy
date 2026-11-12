@@ -1,4 +1,5 @@
 #include "types.h"
+#include "system.h"
 #include "scene_tables.h"
 #include "actor.h"
 #include "main_routine_work.h"
@@ -26,7 +27,6 @@ void *Heap_Alloc(s32 size);
 void Heap_Release(void *block);
 void *Resource_GetTableEntry(s32 id);
 void Func_0200479c(void *resource, void *destination);
-u32 Random16Far(void);
 void Effect_CircleAndBlink(void);
 void Func_020049f4(void);
 void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,

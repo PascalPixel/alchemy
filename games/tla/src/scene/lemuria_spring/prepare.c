@@ -1,4 +1,5 @@
 #include "types.h"
+#include "system.h"
 #include "scene_tables.h"
 #include "text/msg_ids.h"
 #include "version.h"
@@ -28,7 +29,6 @@ s32 PartyInventory_Remove();
 s32 Func_02001184();
 void Func_02001328();
 void Func_0200049c();
-s32 Random16Far();
 void Func_02001388(void);
 
 // French draws the count window two tiles wider, its numbers 16 pixels further

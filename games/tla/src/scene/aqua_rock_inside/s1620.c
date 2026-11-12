@@ -2,6 +2,7 @@
 /// Scene code of overlay 0x67c, in ROM order, from s1620's offset up to the next object the overlay links.
 
 #include "types.h"
+#include "system.h"
 #include "actor.h"
 #include "system/io_reg.h"
 #include "event_inline.h"
@@ -19,7 +20,6 @@ union ActorView {
 };
 extern const u8 gData_02004034[], gData_02003fe8[], gData_02004004[],
     gData_02004058[], gData_02004014[], gData_0200407c[], gData_020040ac[];
-u32 Random16Far(void);
 void Scene_SetActorSpritePriority(void *object, s32 priority);
 void Func_02003cc4(void *object, s32 mode);
 void Actor_SetSingleChildFlags(void *object, u32 value);

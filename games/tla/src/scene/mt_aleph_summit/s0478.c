@@ -2,6 +2,7 @@
 /// Overlay 0x6b4's code after field/field_effect/advance_motion, in ROM order.
 
 #include "types.h"
+#include "system.h"
 #include "actor.h"
 #include "field_sprite.h"
 #include "field_effect.h"
@@ -22,7 +23,6 @@
 #include "field.h"
 
 s32 Math_Cosine(s32 angle);
-u32 Random16Far(void);
 void Effect_AdvanceMotion(union FieldObject *object);
 void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,

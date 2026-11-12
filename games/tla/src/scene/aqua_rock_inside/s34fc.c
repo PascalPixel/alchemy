@@ -2,6 +2,7 @@
 /// Draws thirty-two sprites that each shake by a random few pixels a frame.
 
 #include "types.h"
+#include "system.h"
 #include "ram_buffer.h"
 #include "map.h"
 #include "vram_tab.h"
@@ -24,7 +25,6 @@ struct Splashes {
 
 extern struct Splashes gData_02005970;
 
-u32 Random16Far(void);
 void Func_02003c94(u32 *sprite, s32 depth);
 
 void Func_020034fc(void) {

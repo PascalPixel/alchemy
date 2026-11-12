@@ -504,8 +504,6 @@ s32 Func_02000a78(void) {
   return 1;
 }
 
-s32 Random16Far();
-
 s32 Func_02000ad0(void) {
   switch (Random16Far() & 7) {
   case 0:

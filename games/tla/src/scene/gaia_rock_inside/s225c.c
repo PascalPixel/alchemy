@@ -2,6 +2,7 @@
 /// Scene code of overlay 0x681, in ROM order, from s225c's offset up to the next object the overlay links.
 
 #include "types.h"
+#include "system.h"
 #include "actor.h"
 #include "main_routine_work.h"
 #include "text/msg_ids.h"
@@ -10,7 +11,6 @@
 #include "iwram_call.h"
 #include "ram_buffer.h"
 
-u32 Random16Far(void);
 void Func_02004e3c(struct Actor *object, s32 value);
 void Func_02004e5c(void);
 void Func_02004e64(void);

@@ -2,6 +2,7 @@
 #define TLA_TUNDARIA_TOWER_H
 
 #include "types.h"
+#include "system.h"
 #include "ram_buffer.h"
 #include "frame.h"
 #include "actor.h"
@@ -35,7 +36,6 @@ struct Actor *Actor_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
-u32 Random16Far(void);
 void FieldMessage_Show(s32 message, s32 flags);
 void Task_RemoveFar(void (*func)(void));
 s32 MapCell_SetAttributes(u32 layer, s32 x, s32 z, s32 value);

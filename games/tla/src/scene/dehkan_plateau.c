@@ -498,7 +498,6 @@ void Func_020019b8(void) {
 
 extern u8 gMapShapeGrid[];
 
-u32 Random16Far(void);
 s32 Math_Cosine(s32 angle);
 
 void ObjectVisual_CopyAttributes(s32 id, s32 value);

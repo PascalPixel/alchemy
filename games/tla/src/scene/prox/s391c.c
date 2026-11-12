@@ -2,6 +2,7 @@
 /// Scene code of overlay 0x6a8, in ROM order, from s391c's offset up to the next object the overlay links.
 
 #include "types.h"
+#include "system.h"
 #include "actor.h"
 #include "fixed_math.h"
 #include "ram_buffer.h"
@@ -559,8 +560,6 @@ struct RockWork {
   u16 tileBase;
   s16 resource;
 };
-
-s32 Random16Far(void);
 
 /// Spawns count rocks around (x, y, z), each pushed out at a random angle and
 /// thrown up and out along it.

@@ -2,6 +2,7 @@
 /// Scene code of overlay 0x681, in ROM order, from s136c's offset up to the next object the overlay links.
 
 #include "types.h"
+#include "system.h"
 #include "frame.h"
 #include "event_inline.h"
 #include "actor.h"
@@ -130,7 +131,6 @@ s32 Func_0200151c(struct Actor *object) {
   return left != 0;
 }
 
-u32 Random16Far(void);
 void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options);

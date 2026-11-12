@@ -294,4 +294,37 @@ struct MenuEntryWindow;
 struct MenuPanel;
 struct OwnerList;
 
+// What several parts call, declared once here for all of them.
+s32 GameFlag_Test(s32);
+void GameFlag_ClearBit(s32 flag_no);
+s32 Inventory_EquipFar(s32 owner, s32 slot);
+void Window_DrawBorderFar(s32 x, s32 y, s32 width, s32 height);
+void Window_EraseBorderRectFar(s32 x, s32 y, s32 width, s32 height);
+void Text_UseExtraTilesFar(s32 flag);
+void Func_08038290(void);
+void Menu_CreateOwnerEntryObjects(s32 first);
+void Menu_HighlightPageEntry(s32 unused, s32 index, s32 count);
+s32 Menu_MoveGridCursor(s32 *selection, s32 count, s32 columns);
+void Func_08038288(s32 mode, s32 id, s32 slot, s32 flags);
+extern u8 MsgShortcutHelp[];
+void Animation_ApplyChildArgumentFar(void *object, s32 argument);
+void Link_DrawShiftedTilePairFar(s32 addr);
+void Menu_UpdateEntryObjectTransforms(void);
+void Input_ResetKeyRepeat(void);
+s32 CharacterMenu_BuildAvailability(u8 *ailments, s32 requested, s32 owner);
+void ItemMenu_DrawCategory(s32 window, s32 ownerId, s32 mode);
+s32 BattleEffect_ApplyToTargets(s32 entry, s32 member, s32 target, s32 mode);
+s32 Ability_PlayUseAnimation(s32 action);
+void Func_081051a8(void);
+void MenuIcon_ReleaseObjects(void);
+void Menu_ResetTwoResourceEntries(void);
+extern u8 gMenu_BackdropBorderTile[];
+void WindowSprite_PrepareForRedrawFar(s32 window);
+s32 Message_AllTypedFar(void);
+void Func_08105350(s32 index, s32 scale);
+void MenuIcon_SetPosition(s32 slot, s32 x, s32 y);
+void Func_08020018(struct AnimationObject *object,
+                   struct SpritePlacement *position, struct SpriteScale *scale,
+                   s32 depth, s32 mode);
+
 #endif

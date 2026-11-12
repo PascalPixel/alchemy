@@ -12,7 +12,6 @@
 /// cancel sound and text colours.
 // Part of menu.c.
 
-void GameFlag_ClearBit(s32 flag_no);
 s32 GameFlag_SetBit(s32 flag_no);
 
 void Menu_ResumeFieldTasks(void) {
@@ -122,19 +121,12 @@ enum StatusPanelKind {
 
 extern const u8 gStatusPanel_LvString[];
 
-void *Unit_Get(s32 owner);
-void wait(s32 frames);
 void Window_ClearInteriorTilesFar(struct RenderInput *window, s32 x, s32 y,
                                   s32 width, s32 height);
-s32 CharacterMenu_BuildAvailability(u8 *ailments, s32 requested, s32 owner);
 void WindowSprite_ClearListFar(struct RenderInput *window);
 void *SideObject_CreateFar(s32 owner, s32 x, s32 y, struct RenderInput *window,
                            s32 a, s32 b);
-void *Heap_Alloc(s32 size);
-void Heap_Release(void *block);
 void Unit_UpdateClassFar(s32 owner);
-s32 Inventory_EquipFar(s32 owner, s32 slot);
-void Unit_CalculateFar(s32 owner);
 
 static inline void RestoreUnit(struct BattleUnit *unit,
                                struct BattleUnit *backup) {
@@ -558,11 +550,6 @@ struct RenderInput *Func_080f88d0(struct OwnerMenuState *work) {
   return window;
 }
 
-s32 Party_CountActiveOwnersFar(void);
-void Func_08020018(struct AnimationObject *object,
-                   struct SpritePlacement *position, struct SpriteScale *scale,
-                   s32 depth, s32 mode);
-
 void Func_080f89a4(void) {
   struct OwnerMenuState *menu =
       (struct OwnerMenuState *)Ram_HeapSlots->menuRuntime;
@@ -589,7 +576,6 @@ void Func_080f89a4(void) {
   }
 }
 
-extern u32 gFrameCount;
 extern u8 gUiMenu_CursorBobX[];
 extern u8 gUiMenu_CursorBobY[];
 
@@ -607,8 +593,6 @@ void Func_080f8a44(s32 xOffset, s32 yOffset) {
   cursor->sprite.oam.y = cursor->y = gUiMenu_CursorBobY[CURSOR_BOB_STEP()] +
                                      yOffset + work->auxiliaryWindow->y * 8 + 8;
 }
-
-void wait(s32 frames);
 
 /// The twin of The Broken Seal's MenuCursor_Slide.
 void Func_080f8ab4(s32 x, s32 y) {
@@ -670,8 +654,6 @@ void Func_080f8ab4(s32 x, s32 y) {
 void PsynergyMenu_RefreshOwnerEntries(s32 x, s32 y, s32 width);
 
 void Func_080f8bbc(void) { PsynergyMenu_RefreshOwnerEntries(108, 40, 8); }
-
-void PsynergyMenu_RefreshOwnerEntries(s32 originX, s32 originY, s32 columns);
 
 void PsynergyMenu_RefreshOwnerEntries(s32 originX, s32 originY, s32 columns) {
   struct WindowSprite **slot;
@@ -746,10 +728,6 @@ void ItemMenu_RefreshEntry(s32 layout) {
 
 void Text_GetMessageSizeFar(s32 message, s32 *left, s32 *top, s32 *width,
                             s32 *height);
-void Window_SetBounds(struct RenderInput *window, s32 x, s32 y, s32 width,
-                      s32 height);
-void WindowSprite_ClearListFar(struct RenderInput *window);
-void wait(s32 frames);
 
 // gInput through a volatile view: its one use below says why.
 #define INPUT ((volatile struct InputState *)&gInput)
@@ -907,10 +885,6 @@ void Menu_CopyListOrder(s32 mode, u8 *order) {
     } while (*order != 0xff);
   }
 }
-
-void Link_DrawShiftedTilePairFar(s32 addr);
-void Sound_PlayFar(s32 cue);
-void Input_ResetKeyRepeat(void);
 
 /// Moves a paged list's cursor and page with the d-pad's repeating keys.
 ///
@@ -1153,10 +1127,6 @@ void Window_SetBounds(struct RenderInput *window, s32 x, s32 y, s32 width,
 
 typedef s32 (*CopyFn)(void *, const void *, s32);
 typedef s32 (*FillFn)(void *, s32, u32);
-
-s32 GameFlag_Test(s32);
-s32 GameFlag_SetBit(s32);
-void GameFlag_ClearBit(s32);
 
 static __inline__ void CopyWords(const void *src, CopyFn copy, void *dst,
                                  s32 size) {

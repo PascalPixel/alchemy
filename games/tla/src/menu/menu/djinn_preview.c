@@ -5,50 +5,7 @@
 
 #include "../menu_internal.h"
 
-extern u8 MsgDjinnCompareSet[];
-extern u8 MsgDjinnCompareStandby[];
-extern u8 MsgDjinnCompareGive[];
-extern u8 MsgDjinnCompareTrade[];
-extern u8 MsgDjinnPsyHelp[];
-extern u8 MsgDjinnStatusHelp[];
-extern u8 MsgDjinnCompareConfirm[];
-extern u8 gMenu_BackdropBorderTile[];
-
-void wait(s32 frames);
-void Sound_PlayFar(s32 cue);
-
 void Func_08104e38(s32 first, s32 second);
-
-void WindowSprite_PrepareForRedrawFar(s32 window);
-
-void *Heap_AllocEwram(s32 size);
-void Heap_Release(void *buffer);
-void *Unit_Get(s32 owner);
-
-s32 Djinn_AddToOwnerFar(s32 owner, s32 element, s32 index);
-void Unit_CalculateFar(s32 owner);
-
-void Func_08101a54(s32 window, s32 x, s32 y, s32 entry);
-s32 Text_SetColorFar(s32 color);
-void Window_SetTilemapEntryFar(s32 window, s32 tile, s32 x, s32 y, s32 mode);
-
-void MessageArgument_PushFar(s32 value, s32 kind);
-s32 Menu_GetDjinnGiveMessage(void);
-s32 Message_OpenWindowFar(s32 message, s32 x, s32 y, s32 style);
-s32 Message_AllTypedFar(void);
-void Window_CloseFar(s32 window, s32 style);
-void Func_08038290(void);
-void Func_080f8a44(s32 x, s32 y);
-void Func_080f8ab4(s32 x, s32 y);
-s32 DjinnMenu_DrawPairPreview(s32 mode, s32 param);
-
-void Func_08105350(s32 index, s32 scale);
-void MenuIcon_SetPosition(s32 index, s32 x, s32 y);
-s32 Trig_Sin(s32 angle);
-s32 Menu_GetModuloOfSum(s32 value, s32 count);
-void Input_ResetKeyRepeat(void);
-
-void Menu_UpdateEntryObjectTransforms(void);
 
 s32 Func_081039fc(u32 mode) {
   struct DjinnMenuWork *menu;
@@ -507,24 +464,6 @@ s32 Func_081039fc(u32 mode) {
   wait(1);
   return result;
 }
-
-extern u8 MsgCurrentStatus[];
-extern u8 gMenu_BackdropBorderTile[];
-
-void WindowSprite_PrepareForRedrawFar(s32 window);
-
-void Window_SetTilemapEntryFar(s32 window, s32 tile, s32 x, s32 y, s32 mode);
-void *Heap_AllocEwram(s32 size);
-void Heap_Release(void *block);
-s32 PsynergyList_Diff(struct OwnerActionSlot *a, struct OwnerActionSlot *b,
-                      u16 *out, s32 *firstCount, s32 *secondCount);
-
-s32 Menu_GetModuloOfSum(s32 value, s32 count);
-void MenuIcon_SetPosition(s32 index, s32 x, s32 y);
-void Input_ResetKeyRepeat(void);
-void Sound_PlayFar(s32 cue);
-void Menu_UpdateEntryObjectTransforms(void);
-void wait(s32 frames);
 
 s32 Func_08104540(void) {
   s32 selectedPages[2];

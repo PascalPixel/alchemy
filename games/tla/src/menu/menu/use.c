@@ -5,11 +5,6 @@
 
 #include "../menu_internal.h"
 
-s32 ItemMenu_CollectItems(struct OwnerInventoryState *owner, u16 *items,
-                          s32 mode);
-s32 BattleEffect_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
-                                s32 fixedScale);
-
 s32 Func_08100738(s32 slot, s32 ownerId, s32 targetId) {
   struct InventoryMenuState *menu;
   s32 useResult;
@@ -46,13 +41,7 @@ s32 Func_08100738(s32 slot, s32 ownerId, s32 targetId) {
   return useResult;
 }
 
-struct BattleAct *BattleAction_Get(s32 action);
-
 s32 Battle_CalculateRecoveryFar(s32 value, s32 selector, s32 multiplier);
-void Unit_UpdateRatiosFar(s32 unitId);
-void Unit_CalculateFar(s32 unitId);
-u32 Random16(void);
-void MessageArgument_PushFar(s32 slot, s32 digits);
 
 s32 BattleEffect_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
                                 s32 fixedScale) {
@@ -313,13 +302,9 @@ s32 BattleEffect_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
   return 0;
 }
 
-s32 Ability_PlayUseAnimation(s32 action);
-
 s32 Func_08100d40(s32 item) {
   return Ability_PlayUseAnimation(Item_Get(item)->actionId & 0x3fff);
 }
-
-s32 Sound_PlayReturnOne(s32 cue);
 
 /// Plays the sound of action used from the menu, and returns at once: no
 /// animation is drawn and nothing waits. Formulas 1 and 11 play sound 126,

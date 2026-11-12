@@ -36,14 +36,8 @@
 #define ITEM_TRADED_X 15
 #endif
 
-void Window_DrawBorderFar(s32 x, s32 y, s32 width, s32 height);
-void Window_EraseBorderRectFar(s32 x, s32 y, s32 width, s32 height);
 void Resource_LoadPairedBlocks(void);
-void Palette_LightenHighlight(s32 palette);
-void Text_UseExtraTilesFar(s32 flag);
 void ItemMenu_Close(void);
-void Menu_ResetTwoResourceEntries(void);
-void Func_08038290(void);
 s32 ItemMenu_RunCommands(s32 *memberOut, s32 *targetOut, s32 *itemOut);
 void ItemMenu_Initialize(s32 x, s32 y, s32 mode, s32 columns);
 void ItemMenu_HideAllIcons(void);
@@ -856,8 +850,6 @@ void Func_08104484(void) {
 #undef ITEM_IWRAM_COPY_WORDS
 
 void Menu_ReleaseEntryObjects(void);
-void ItemMenu_HideAllIcons(void);
-void wait(s32 frames);
 
 void ItemMenu_Close(void) {
   u8 *menu;
@@ -893,8 +885,6 @@ struct ItemMenuOwner {
   u16 inventory[15];
 };
 
-void Func_080f8ab4(s32 x, s32 y);
-void *Unit_Get(s32 unitId);
 s32 ItemMenu_CollectItems(struct OwnerInventoryState *owner, u16 *items, s32 mode);
 s32 ItemMenu_RunOwnerSelection(u16 *ownerIds, u16 *items);
 
@@ -931,17 +921,11 @@ extern const u8 gItemMenu_ArrangeKeysString[];
 extern const u8 gItemMenu_EquipmentKeyString[];
 #endif
 
-s32 GameFlag_Test(s32 flag);
 void Func_080fa84c(s32 owner);
 
 void ItemMenu_RefreshOwner(s32 owner, s32 mode);
-void Menu_CreateOwnerEntryObjects(s32 first);
-void Menu_HighlightPageEntry(s32 unused, s32 index, s32 count);
-void Func_080f8a44(s32 x, s32 y);
 
-void Sound_PlayFar(s32 cue);
 s32 ItemMenu_CountItems(s32 owner);
-s32 Menu_MoveGridCursor(s32 *selection, s32 count, s32 columns);
 
 /// The party member row of the item menu: moving shows each member's items and
 /// status, holding R their equipment; L + A sorts the member's items, a new
@@ -1056,10 +1040,6 @@ s32 ItemMenu_RunOwnerSelection(u16 *ownerIds, u16 *items) {
   return result;
 }
 
-void ItemMenu_PositionCategory(void);
-
-void ItemMenu_DrawCategory(s32 window, s32 ownerId, s32 mode);
-
 void Func_080fa84c(s32 category) {
   u8 *menu = Ram_HeapSlots->menuRuntime;
 
@@ -1136,30 +1116,11 @@ struct TargetMenu {
   u8 paneOwner[2];
 };
 
-extern u8 MsgInStock[];
-extern u8 MsgTradeForWhat[];
-extern u8 MsgNoneInStock[];
-extern u8 MsgItemPlainName[];
-
 void Func_080fabe0(void);
 
-void *Unit_Get(s32 owner);
-
-s32 GameFlag_Test(s32 flag);
-void GameFlag_ClearBit(s32 flag);
-void Menu_CreateOwnerEntryObjects(s32 first);
-void wait(s32 frames);
-void Menu_HighlightPageEntry(s32 unused, s32 index, s32 count);
-void ItemMenu_RefreshOwner(s32 owner, s32 mode);
-
 s32 InventoryMenu_GetItemQuantity(s32 owner, s32 item);
-s32 ItemMenu_CountItems(s32 owner);
 
-void Func_080fae8c(s32 owner, s32 slot, s32 mode, s32 target);
 s32 ItemMenu_IsSpecial(s32 item);
-
-void Func_080f8a44(s32 x, s32 y);
-void Sound_PlayFar(s32 cue);
 
 void Func_080fac58(void);
 
@@ -1300,9 +1261,6 @@ struct ItemMenuIcons {
   u8 unk216[2];
 };
 
-void Animation_ApplyChildArgumentFar(void *object, s32 argument);
-s32 Item_CanOwnerEquip(s32 owner, s32 item);
-
 void Func_080fabe0(void) {
   struct ItemMenuIcons *menu = Ram_HeapSlots->menuRuntime;
   s8 i;
@@ -1320,10 +1278,6 @@ void Func_080fabe0(void) {
     }
   }
 }
-
-void Animation_ApplyChildArgumentFar(void *object, s32 argument);
-
-void Func_080fabe0(void);
 
 void Func_080fac58(void) {
   struct ItemMenuIcons *menu = Ram_HeapSlots->menuRuntime;
@@ -1429,11 +1383,6 @@ s32 InventoryMenu_GetItemQuantity(s32 owner, s32 item) {
   return quantity;
 }
 
-void Func_08038288(s32 mode, s32 id, s32 slot, s32 flags);
-void ItemMenu_RefreshEntry(s32 mode);
-
-void Menu_HideEmptyEntryIcons(const u16 *items);
-
 s32 ItemMenu_CollectItems(struct OwnerInventoryState *owner, u16 *items, s32 mode) {
   s32 count;
   s32 i;
@@ -1476,8 +1425,6 @@ void ItemMenu_DrawIcons(u16 *items, s32 style) {
   Menu_HideEmptyEntryIcons(items);
 }
 
-s32 ItemMenu_CountItems(s32 owner_id);
-
 void ItemMenu_RefreshOwner(s32 ownerId, s32 mode) {
   struct ItemEntryMenu *menu;
   struct OwnerInventoryState *owner;
@@ -1509,13 +1456,6 @@ struct PreviewItem {
   u8 unk00[2];
   u8 type;
 };
-
-void *Unit_Get(s32 owner);
-
-void *Heap_Alloc(s32 size);
-void Heap_Release(void *buffer);
-s32 Inventory_RemoveFirstUnflagged(s32 owner);
-s32 Inventory_AddItemFar(s32 owner, s32 item);
 
 void Func_080fae8c(s32 owner, s32 slot, s32 mode, s32 target) {
   struct PreviewMenu *menu = Ram_HeapSlots->menuRuntime;
@@ -1704,21 +1644,11 @@ enum ItemMenuCommand {
 };
 
 void Func_080fb410(s8 *commandStates);
-void ItemMenu_HideAllIcons(void);
 
 void ItemMenu_SetMessageWindowHeight7(void);
 
 void Func_080fc12c(void);
 void ItemMenu_DrawCommands(const s8 *commandStates, s32 window);
-void Func_080f8ab4(s32 x, s32 y);
-void Func_080f8a44(s32 x, s32 y);
-s32 GameFlag_Test(s32 flag);
-void Func_080fac58(void);
-void Func_080fae8c(s32 owner, s32 slot, s32 mode, s32 target);
-void Func_080fabe0(void);
-
-void wait(s32 frames);
-void Sound_PlayFar(s32 cue);
 
 s32 Func_080fb104(void) {
   struct CommandMenu *menu;
@@ -1958,9 +1888,6 @@ void Func_080fb410(s8 *commandStates) {
 #define ITEM_COMMAND_TEXT_X 40
 #endif
 
-s32 Text_SetColorFar(s32 color);
-extern u8 MsgItemCommandUse[];
-
 /// Writes the six command names into window, the disabled ones in grey.
 void ItemMenu_DrawCommands(const s8 *commandStates, s32 window) {
   s32 disabled;
@@ -2005,11 +1932,6 @@ void ItemMenu_DrawCommands(const s8 *commandStates, s32 window) {
                                   ITEM_COMMAND_TEXT_X, 32);
   Text_SetColorFar(TEXT_COLOR_NORMAL);
 }
-
-struct ItemDefinition *Item_Get(s32);
-s32 BattleEffect_HasTriggerFar(s32);
-
-s32 Item_CanOwnerEquip(s32, s32);
 
 s32 Item_ClassifyUseMode(s32 owner, s32 itemId) {
   s32 masked = itemId;
@@ -2060,10 +1982,7 @@ s32 Item_ClassifyUseMode(s32 owner, s32 itemId) {
   return result;
 }
 
-u32 Random16(void);
 void Inventory_BreakFar(s32 owner, s32 slot);
-void Sound_PlayFar(s32 cue);
-void InventoryMenu_ShowModalMessage(s32 message, s32 x, s32 y);
 
 void Func_080fb6d4(void) {
   u8 *work = Ram_HeapSlots->menuRuntime;
@@ -2090,8 +2009,6 @@ struct InventoryMenuDetailsState {
   u16 itemIds[0x100];
 };
 
-s32 Window_UpdateOrCreate(s32 *, s32, s32, s32, s32, s32);
-void Palette_CopyObjectBankToBackground14(void);
 void ItemMenu_DrawItemDetails(s32, s32);
 
 s32 ItemMenu_OpenDetail(s32 itemIndex) {
@@ -2124,17 +2041,7 @@ struct ItemDetailsMenu {
   u16 unk21c; ///< bit 1 read by Func_080fd968; Japanese's Details sets 1
 };
 
-void Menu_UpdateEntryObjectTransforms(void);
-
-void Palette_CopyObjectBankToBackground14(void);
-s32 GameFlag_Test(s32);
-
-void ItemMenu_DrawItemDetails(s32, s32);
-
 void Window_CloseFar(s32, s32);
-void Window_DrawDividerLineFar(s32, s32, s32, s32, s32);
-void Palette_LightenHighlight(s32);
-void Window_DrawBorderFar(s32, s32, s32, s32);
 
 /// The item menu's Details screen: describes the item entry value in a window
 /// over the top half (DETAILS_WINDOW_WIDTH) and waits for A or B. Up and Down
@@ -2254,33 +2161,12 @@ void ItemMenu_DrawItemDetails(s32 a, s32 b) { Func_080fb8b8(a, b, -1); }
 #define ITEM_DETAILS_MULTIPLIER_X 72
 #endif
 
-extern u8 MsgEquipEffectHeading[];
-extern u8 MsgStatLabel[];
-extern u8 MsgDefenseLabel[];
-extern u8 MsgEquipEffectName[];
-
-extern u8 MsgItemCursed[];
-extern u8 MsgBestowsPsynergy[];
-extern u8 MsgUsesHeading[];
-extern u8 MsgSingleUse[];
-
-extern u8 MsgBrokenNotice[];
-extern u8 MsgMightBreak[];
-extern u8 MsgNumberHeading[];
-extern u8 MsgRareItem[];
-extern u8 MsgImportantItem[];
-extern u8 MsgDetailsUnknown[];
 #if LANGUAGE == LANGUAGE_JAPANESE
 /// "ばい", times, after a multiplier.
 extern u8 MsgTimesSuffix[];
 #endif
 extern u8 gMenu_PointString[];
 
-void Text_DrawNumberInWindowFar(s32 value, s32 digits, s32 window, s32 x,
-                                  s32 y);
-void Window_SetTilemapEntryFar(s32 window, s32 tile, s32 x, s32 y,
-                                 s32 palette);
-void MessageArgument_PushFar(s32 value, s32 kind);
 void ItemMenu_DrawStat(s32 delta, s32 unused, s32 window, s32 x, s32 y);
 
 /// Describes an item (an inventory entry) in window, one 8-pixel row a line:
@@ -2630,30 +2516,14 @@ struct QuantityMenu {
 };
 
 #if LANGUAGE == LANGUAGE_JAPANESE
-extern u8 MsgShortcutHelp[];
 extern u8 MsgItemCommandUse[];
 #else
 // "How many?"
 extern u8 MsgHowMany[];
 #endif
-extern u8 MsgItemName[];
 extern const u8 gMenu_QuantityTiles[];
 
-void *HeapSlot_AllocEwram(s32 slot, s32 size);
-void HeapSlot_Release(s32 slot);
-void ItemMenu_SetMessageWindowHeight7(void);
-
-s32 InventoryMenu_GetItemQuantity(s32 owner, s32 item);
-s32 Resource_FindFreeEntry(void);
-
-void Func_080f8ab4(s32 x, s32 y);
-void Func_080f8a44(s32 x, s32 y);
-
 void Shop_FillSelectorFar(s32 value, s32 column, void *tiles);
-void *Unit_Get(s32 owner);
-s32 GameFlag_Test(s32 flag);
-void Sound_PlayFar(s32 cue);
-void wait(s32 frames);
 
 s32 Func_080fbe6c(s32 base, s32 range, s32 mode) {
   s32 value = base;
@@ -2751,10 +2621,6 @@ s32 Func_080fbe6c(s32 base, s32 range, s32 mode) {
 #undef HOW_MANY_Y
 #undef CURSOR_X
 
-void *Unit_Get(s32 owner);
-void Func_08038288(s32 mode, s32 item, s32 slot, s32 flags);
-void Icon_PrepareActor(struct WindowSprite *icon);
-
 // Draws the selected item's icon, owner and item name in the heading.
 void Func_080fc12c(void) {
   struct InventoryMenuState *menu = Ram_HeapSlots->menuRuntime;
@@ -2778,17 +2644,6 @@ void Func_080fc12c(void) {
 #else
 #define ITEM_DROP_QUESTION_X 8
 #endif
-
-extern u8 MsgItemName[];
-extern u8 MsgConfirmDrop[];
-extern u8 MsgYes[];
-
-void Window_CloseFar(s32, s32);
-
-s32 GameFlag_Test(s32);
-void Func_080f8a44(s32, s32);
-void Func_080f8ab4(s32, s32);
-void Sound_PlayFar(s32 cue);
 
 /// Asks whether to drop item (an inventory entry): its name, the question, and
 /// Yes or No, No first. Returns 0 for Yes and 1 for No, B or Start. The twin of
@@ -2896,17 +2751,6 @@ extern u8 MsgConfirmDrop[];
 
 extern u8 MsgYes[]; // the ☀️ twin's name
 
-void *Unit_Get(s32 unit);
-void Func_080fae8c(s32 owner, s32 slot, s32 mode, s32 target);
-s32 Inventory_EquipFar(s32 owner, s32 slot);
-
-void Func_080f8ab4(s32 x, s32 y);
-void Func_080f8a44(s32 x, s32 y);
-void Sound_PlayFar(s32 cue);
-void Unit_CalculateFar(s32 unit);
-
-void wait(s32 frames);
-
 s32 Func_080fc2e0(s32 unused) {
   s32 rows = 2;
   s32 selection = 0;
@@ -2987,9 +2831,6 @@ s32 Func_080fc2e0(s32 unused) {
 extern char ResourceId_MenuArrowTiles;
 extern char ResourceId_MenuSmallDownArrowTiles;
 
-s32 Resource_FindFreeEntry(void);
-void VramBlock_LoadResourceFar(s32 slot, s32 size, s32 resource);
-
 /// Loads the two page arrows into free tile slots.
 void Resource_LoadPairedBlocks(void) {
   struct InventoryMenuState *state = Ram_HeapSlots->menuRuntime;
@@ -3002,8 +2843,6 @@ void Resource_LoadPairedBlocks(void) {
   VramBlock_LoadResourceFar(value, 128,
                             (s32)&ResourceId_MenuSmallDownArrowTiles);
 }
-
-s32 ItemMenu_CountItems(s32 owner);
 
 /// Splits the selected slot owner's items into pages of five rows.
 s32 ItemMenu_PageResult(struct MenuResult *result, s32 index) {
@@ -3035,10 +2874,6 @@ s32 ItemMenu_PageResult(struct MenuResult *result, s32 index) {
   result->selectedIndex = value;
   return 1;
 }
-
-void Text_DrawMessageFar(s32 message, s32 window, s32 x, s32 y);
-
-void wait(s32 frames);
 
 /// Draws the selected item-list row's name and highlights only that row; the
 /// twin of The Broken Seal's ItemMenu_DrawItemDetailPage.
@@ -3099,14 +2934,6 @@ s32 Func_080fc558(s32 arg0, void *arg1, struct MenuResult *state) {
 #define PAGE_X 116
 #define ENTRY_X 24
 #endif
-
-void Window_DrawDividerLineFar(s32 window, s32 x, s32 width, s32 height,
-                                 s32 style);
-
-void Menu_DrawPageIndicator(s32 window, s32 count, s32 page_size, s32 page,
-                            s32 style);
-void Menu_SetPageIcons(s32 page_size, s32 first_entry, s32 window, s32 x,
-                       s32 y);
 
 /// Draws the names on one five-row page of the item list: The Broken Seal's
 /// ItemMenu_DrawNamePage over this game's menu offsets.
@@ -3207,25 +3034,6 @@ struct ListOwner {
 
 // "L/R: Change character", under the list in pane 0.
 extern u8 MsgChangeCharacterHelp[];
-extern u32 gFrameCount;
-
-void *Unit_Get(s32 owner);
-
-void ItemMenu_DrawIcons(u16 *items, s32 style);
-s32 ItemMenu_PageResult(struct MenuResult *state, s32 pane);
-void Func_080f8a44(s32 x, s32 y);
-
-void wait(s32 frames);
-
-void Func_080fae8c(s32 owner, s32 slot, s32 mode, s32 target);
-void Animation_ApplyChildArgumentFar(void *object, s32 argument);
-s32 Item_CanOwnerEquip(s32 owner, s32 item);
-s32 PagedList_HandleInput(s32 horizontal, s32 count, s32 perPage, s32 *row,
-                          s32 *page);
-void Sound_PlayFar(s32 cue);
-s32 GameFlag_Test(s32 flag);
-void Menu_CreateOwnerEntryObjects(s32 first);
-void Menu_HighlightPageEntry(s32 unused, s32 index, s32 count);
 
 s32 Func_080fc6bc(s32 pane) {
   struct ListMenu *menu;

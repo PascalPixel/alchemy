@@ -130,8 +130,6 @@ s32 Icon_DrawVariantWithTileOffset(struct RenderInput *window, s32 x, s32 y,
   return 1;
 }
 
-void Sound_PlayFar(s32 cue);
-
 s32 Menu_MoveGridCursor(s32 *cursor, s32 count, s32 columns) {
   struct InputState *input = &gInput;
   s32 result = 0;
@@ -208,8 +206,6 @@ void Menu_SetPageArrowsB(s32 index, s32 count) {
   }
 }
 
-void Menu_SetPageArrowsA(s32 index, s32 count);
-
 void Menu_HighlightPageEntry(s32 unused, s32 index, s32 count) {
   struct MenuPageWork *menu = Ram_HeapSlots->menuRuntime;
   s32 top = index / 4 * 4;
@@ -282,8 +278,6 @@ struct FigureMenuState {
 
 s32 Func_080c82b8(s32 id);
 
-void Animation_ApplyChildArgumentFar(void *object, s32 argument);
-
 void Func_08104e38(s32 first, s32 second) {
   struct FigureMenuState *menu =
       (struct FigureMenuState *)Ram_HeapSlots->menuRuntime;
@@ -315,10 +309,6 @@ void Func_08104e38(s32 first, s32 second) {
     }
   }
 }
-
-void Animation_ApplyChildArgumentFar(void *object, s32 argument);
-
-s32 Func_080c82b8(s32 owner);
 
 void Menu_CreateOwnerEntryObjects(s32 first) {
   struct MenuEntryWork *menu = Ram_HeapSlots->menuRuntime;
@@ -353,9 +343,6 @@ struct MenuEntryWindow {
   s16 y;
 };
 
-void Menu_CreateOwnerEntryObjects(s32 first);
-void Menu_UpdateEntryObjectTransforms(void);
-
 void Menu_PlaceOwnerEntryObjects(struct MenuEntryWindow *window, s32 originX,
                                  s32 originY) {
   struct MenuEntryWork *menu = Ram_HeapSlots->menuRuntime;
@@ -374,8 +361,6 @@ void Menu_PlaceOwnerEntryObjects(struct MenuEntryWindow *window, s32 originX,
   menu->active = 1;
   Task_Add(Menu_UpdateEntryObjectTransforms, TASK_PASS_VBLANK);
 }
-
-void Menu_UpdateEntryObjectTransforms(void);
 
 void Menu_ReleaseEntryObjects(void) {
   struct MenuEntryWork *menu = Ram_HeapSlots->menuRuntime;
@@ -396,10 +381,6 @@ void Menu_SetEntryObjectsHidden(s32 hidden) {
 
   menu->hidden = hidden;
 }
-
-void Func_08020018(struct AnimationObject *object,
-                   struct SpritePlacement *position, struct SpriteScale *scale,
-                   s32 depth, s32 mode);
 
 void MenuIcon_UpdateTransforms(void) {
   struct FigureMenuState *menu =
@@ -464,9 +445,6 @@ struct MenuIconWork {
 
 extern s32 gMenuIcon_ResourceIds[];
 
-void Animation_ApplyChildArgumentFar(void *object, s32 argument);
-void MenuIcon_UpdateTransforms(void);
-
 void Func_081051a8(void) {
   struct MenuIconWork *menu = Ram_HeapSlots->menuRuntime;
   s8 *object;
@@ -494,8 +472,6 @@ void Func_081051a8(void) {
   Task_Add(MenuIcon_UpdateTransforms, TASK_PASS_VBLANK);
 }
 
-void MenuIcon_UpdateTransforms(void);
-
 void MenuIcon_ReleaseObjects(void) {
   struct MenuIconWork *menu = Ram_HeapSlots->menuRuntime;
   s32 i;
@@ -508,10 +484,6 @@ void MenuIcon_ReleaseObjects(void) {
   }
   Task_Remove(MenuIcon_UpdateTransforms);
 }
-
-extern s32 gMenuIcon_ResourceIds[];
-
-void Animation_ApplyChildArgumentFar(void *object, s32 argument);
 
 void MenuIcon_ReplaceObject(s32 index, s32 kind, s32 animation) {
   struct MenuIconWork *menu = Ram_HeapSlots->menuRuntime;
@@ -567,8 +539,6 @@ void MenuIcon_PushSlots(void) {
 }
 
 extern u16 gData_08105a50[5];
-void Func_08038288(s32 mode, s32 id, s32 slot, s32 flags);
-void MenuIcon_PushSlots(void);
 
 /// Loads the five menu icons of gData_08105a50 into free VRAM entries, gives
 /// each slot its sprite attributes and tile, keeps the entries for
@@ -602,9 +572,6 @@ void Func_081053a8(void) {
   menu->active = 1;
   Task_Add(MenuIcon_PushSlots, TASK_PASS_VBLANK + 10);
 }
-
-void MenuIcon_PushSlots(void);
-s32 Resource_ResetEntry(u32 resource);
 
 void MenuIcon_ReleaseSlots(void) {
   struct MenuIconWork *menu = Ram_HeapSlots->menuRuntime;
@@ -649,8 +616,6 @@ struct MenuPanel {
   s16 x;
   s16 y;
 };
-
-void MenuIcon_SetSlot(s32 index, u32 x, s32 mode);
 
 // Lists usable entries with icons and names, or "none" when no entries qualify.
 void Func_081054e0(struct MenuPanel *panel, s32 x, s32 y, const u8 *enabled) {

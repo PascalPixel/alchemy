@@ -5,24 +5,7 @@
 
 #include "../menu_internal.h"
 
-void Window_DrawBorderFar(s32 x, s32 y, s32 width, s32 height);
-void Window_EraseBorderRectFar(s32 x, s32 y, s32 width, s32 height);
-void Window_InitializeWork(s32 mode);
-s32 Party_ListActiveOwnersFar(s16 *owners);
-void ItemMenu_Initialize(s32 x, s32 y, s32 mode, s32 columns);
-void Palette_LightenHighlight(s32 palette);
-
-void Menu_CancelSoundReset(void);
-void Menu_EnsureCancelSound(void);
 s32 PsynergyMenu_RunSteps(s32 *ownerOut, s32 *targetOut, s32 *itemOut);
-
-void ItemMenu_Close(void);
-void Event_ClearInvalidPackedValuesFar(void);
-
-void Menu_ResumeFieldTasks(void);
-void Text_UseExtraTilesFar(s32 flag);
-void Func_08038290(void);
-void wait(s32 frames);
 
 /// A second item picker an event script opens, built as Func_080f94a4: opens
 /// the item menu over the field and runs its command loop; when that returns 1,
@@ -135,33 +118,14 @@ enum PsynergyMenuMode {
   PSYNERGY_MODE_SET_R,
 };
 
-extern u8 MsgPsynergyChooseOwner[];
-extern u8 MsgPsynergyChooseAbility[];
-extern u8 MsgPsynergyChooseForL[];
-extern u8 MsgPsynergyChooseForR[];
-extern u8 MsgShortcutSetL[];
-extern u8 MsgShortcutSetR[];
-extern u8 MsgPsynergyChooseTarget[];
-extern u8 MsgItemUseResult[];
-
-s32 GameFlag_Test(s32 flag);
-void wait(s32 frames);
-void Sound_PlayFar(s32 cue);
-void *Unit_Get(s32 member);
-void Unit_CalculateFar(s32 member);
 s16 Unit_AddPpFar(s32 unit, s32 amount);
-void ItemMenu_DrawMessage(s32 window, s32 message);
-void ItemMenu_PositionCategory(void);
-void InventoryMenu_ShowModalMessage(s32 message, s32 x, s32 y);
 
 s32 Party_SetPackedEvent(s32 kind, s32 id, s32 second);
-s32 BattleEffect_ApplyToTargets(s32 entry, s32 member, s32 target, s32 mode);
 
 s32 Func_080fcf14(void);
 s32 PsynergyMenu_SelectPartySlot(s32 paneIndex);
 s32 Func_080fd2e8(s32 paneIndex);
 s32 Func_080fdad4(s32 paneIndex);
-s32 Ability_PlayUseAnimation(s32 action);
 
 /// Runs the Psynergy menu, The Broken Seal's PsynergyMenu_RunSteps: choose a
 /// party member and one of their Psynergy, then use it on a member (or the
@@ -411,8 +375,6 @@ struct Cur {
 };
 extern u8 gData_03001f2c[];
 
-void Func_080f8ab4(s32 x, s32 y);
-void *Unit_Get(s32 owner);
 s32 Func_080fd6f0(struct BattleUnit *unit, u16 *actions, s32 mode);
 s32 Func_080fd000(u16 *ownerIds, u16 *unused);
 
@@ -472,27 +434,9 @@ s32 PsynergyMenu_SelectPartySlot(s32 partySlot) {
 // The pressed keys, read again at each test.
 #define KEYS_PRESSED (((struct InputState *)&gInput)->pressed)
 
-void *Unit_Get(s32 owner);
-s32 Window_UpdateOrCreate(s32 *window, s32 x, s32 y, s32 width, s32 height,
-                          s32 frame);
-
-s32 GameFlag_Test(s32 flag);
-void GameFlag_ClearBit(s32 flag);
 void PsynergyMenu_RefreshOwnerPsynergy(s32 ownerId);
 
 s32 Func_080fd55c(s32 window, s32 owner);
-
-void Menu_CreateOwnerEntryObjects(s32 first);
-void wait(s32 frames);
-void Menu_HighlightPageEntry(s32 window, s32 selection, s32 count);
-
-void Text_DrawWorkValueWithLabel(s32 window);
-void Func_080f8a44(s32 x, s32 y);
-void Sound_PlayFar(s32 cue);
-void *Heap_Alloc(s32 size);
-void Heap_Release(void *block);
-s32 Func_080fd6f0(struct BattleUnit *unit, u16 *actions, s32 mode);
-s32 Menu_MoveGridCursor(s32 *selection, s32 count, s32 columns);
 
 s32 Func_080fd000(u16 *ownerIds, u16 *unused) {
   struct PsynergyMenuState *menu;
@@ -592,11 +536,7 @@ s32 Func_080fd000(u16 *ownerIds, u16 *unused) {
 
 #undef KEYS_PRESSED
 
-void *Unit_Get(s32 owner);
-s32 Func_080fd6f0(struct BattleUnit *unit, u16 *actions, s32 mode);
 void PsynergyMenu_DrawPsynergyIcons(u16 *psynergies);
-
-void PsynergyMenu_RefreshOwnerEntries(s32 x, s32 y, s32 count);
 
 /// Collects the owner's Psynergy and redraws the list, saying when it is
 /// empty.
@@ -617,20 +557,6 @@ void PsynergyMenu_RefreshOwnerPsynergy(s32 ownerId) {
                                     menu->psynergyWindow, 0, 0x18);
   }
 }
-
-extern u8 MsgAbilityDescription[];
-
-void *Unit_Get(s32 owner);
-s32 GameFlag_Test(s32 flag);
-void GameFlag_ClearBit(s32 flag);
-void Func_080f8ab4(s32 x, s32 y);
-
-void Menu_CreateOwnerEntryObjects(s32 first);
-void wait(s32 frames);
-
-void Func_080f8a44(s32 x, s32 y);
-void Sound_PlayFar(s32 cue);
-s32 Menu_MoveGridCursor(s32 *selection, s32 count, s32 columns);
 
 s32 Func_080fd2e8(s32 browseOnly) {
   struct PsynergyMenuState *menu;
@@ -741,9 +667,6 @@ s32 Party_SetPackedEvent(s32 kind, s32 id, s32 second) {
 #define OWNER_NAME_WIDTH_LIMIT 10
 #endif
 
-extern u8 MsgShortcutSetL[];
-extern u8 MsgShortcutSetR[];
-extern u8 MsgAbilityNothing[];
 #if LANGUAGE == LANGUAGE_JAPANESE
 extern const u8 gMenu_ShortcutLString[];
 extern const u8 gMenu_ShortcutLColonString[];
@@ -756,7 +679,6 @@ extern const u8 gMenu_ShortcutRColonString[];
 #else
 void MessageArgument_PushFar(s32 item, s32 digits);
 #endif
-void *Unit_Get(s32 unit);
 
 /// Draws the two packed values of gMainRoutineWork (owner << 10 | ability), the
 /// shortcuts' messages, into a window: a heading (one when both are set,
@@ -888,9 +810,6 @@ struct PsynergyEntryMenu {
   struct PsynergyEntryIcon *entryIcons[32];
 };
 
-void Func_08038288(s32 mode, s32 id, s32 slot, s32 flags);
-void Menu_HideEmptyEntryIcons(const u16 *items);
-
 void PsynergyMenu_DrawPsynergyIcons(u16 *psynergies) {
   s32 remaining;
   struct PsynergyEntryIcon **icons;
@@ -912,8 +831,6 @@ void PsynergyMenu_DrawPsynergyIcons(u16 *psynergies) {
 }
 
 // Lists a unit's Psynergy for a menu.
-
-struct BattleAct *BattleAction_Get(s32 actionId);
 
 /// Lists a unit's Psynergy into actions (32 entries, cleared first) and returns
 /// how many: mode 1 those with a field effect, any other mode those first and
@@ -1001,11 +918,6 @@ s32 Func_080fd80c(struct MenuResult *result, s32 index) {
 
 // Psynergy menu workspace; only identified fields are declared here.
 
-s32 GameFlag_Test(s32 flag);
-void GameFlag_ClearBit(s32 flag);
-
-void Text_DrawMessageFar(s32 message, s32 window, s32 x, s32 y);
-
 // Shows the selected row's description and sets the five rows' backgrounds.
 s32 Func_080fd8a0(s32 window, s32 *work, struct MenuResult *state) {
   struct PsynergyMenuState *menu;
@@ -1076,23 +988,6 @@ s32 Func_080fd8a0(s32 window, s32 *work, struct MenuResult *state) {
 #endif
 
 // The psynergy menu work block, as this function reads it.
-
-void Window_DrawDividerLineFar(s32 window, s32 x, s32 width, s32 height,
-                                 s32 style);
-
-void Menu_SetPageIcons(s32 page_size, s32 first_entry, s32 window, s32 x,
-                       s32 y);
-void Menu_DrawPageIndicator(s32 window, s32 count, s32 page_size, s32 page,
-                            s32 style);
-s32 Text_SetColorFar(s32 color);
-void Text_DrawNumberAtOffsetFar(s32 value, s32 digits, s32 layer, s32 x,
-                                  s32 y);
-
-struct BattleAct *BattleAction_Get(s32 action);
-extern u8 MsgAbilityNothing[];
-extern u8 MsgShortcutSetL[];
-extern u8 MsgArrangeItemsHelp[];
-extern u8 MsgPsynergyChooseTarget[];
 
 /// Draws one page of the Psynergy list (name, PP cost, greyed when the PP is
 /// short or the action restricted): The Broken Seal's
@@ -1181,31 +1076,7 @@ s32 Func_080fd968(s32 window, s32 unused, const struct MenuResult *state) {
 #define CHANGE_HELP_X 0
 #endif
 
-extern u8 MsgShortcutHelp[];
-extern u8 MsgChangeCharacterHelp[];
-
-s32 Window_UpdateOrCreate(s32 *window, s32 x, s32 y, s32 width, s32 height,
-                          s32 frame);
-s32 GameFlag_Test(s32 flag);
-
-s32 Func_080fd6f0(struct BattleUnit *unit, u16 *actions, s32 mode);
-void PsynergyMenu_DrawPsynergyIcons(u16 *psynergies);
-s32 Func_080fd80c(struct MenuResult *result, s32 index);
-void Func_080f8a44(s32 x, s32 y);
-
-void wait(s32 frames);
-
-s32 Func_080fd8a0(s32 window, s32 *work, struct MenuResult *state);
-void Animation_ApplyChildArgumentFar(void *object, s32 argument);
-s32 PagedList_HandleInput(s32 mode, s32 count, s32 rows, s32 *row, s32 *page);
-struct BattleAct *BattleAction_Get(s32 action);
-void Sound_PlayFar(s32 cue);
-
 s32 PsynergyMenu_IsActionRestricted(s32 actionEntry);
-void Menu_CreateOwnerEntryObjects(s32 first);
-void Menu_HighlightPageEntry(s32 window, s32 selection, s32 count);
-
-s32 Party_SetPackedEvent(s32 kind, s32 id, s32 second);
 
 s32 Func_080fdad4(s32 paneIndex) {
   struct PsynergyMenuState *menu;

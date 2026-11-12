@@ -24,8 +24,6 @@ s32 Menu_SetFirstObjectRowCoordinates(s32 arg0) {
   return arg0;
 }
 
-s32 GameFlag_Test(s32 flag);
-
 s32 Menu_GetDjinnGiveMessage(void) {
   if (GameFlag_Test(0x175))
     return (s32)MsgDjinnGiveTutorialB;
@@ -37,31 +35,9 @@ s32 Menu_GetDjinnGiveMessage(void) {
 // (games/tbs/src/menu/menu/djinn.c), rewritten with this game's heap block
 // (220, 0xcec), menu work and calls (Func_0810106c is the screen loop).
 
-void *HeapSlot_Alloc(s32 slot, s32 size);
-void *Heap_AllocEwram(s32 size);
-void HeapSlot_Release(s32 slot);
-void Heap_Release(void *block);
-s32 GameFlag_Test(s32 flag);
-void Window_DrawBorderFar(s32 x, s32 y, s32 width, s32 height);
-void wait(s32 frames);
-void Window_InitializeWork(s32 mode);
-
-void Menu_ResumeFieldTasks(void);
-void Text_UseExtraTilesFar(s32 flag);
-
 void Resource_LoadPairedBlocksIfAvailable(void);
-void ItemMenu_Initialize(s32 x, s32 y, s32 mode, s32 columns);
 
-void Palette_LightenHighlight(s32 paletteNumber);
-
-void Func_081051a8(void);
 s32 Func_0810106c(void);
-void MenuIcon_ReleaseObjects(void);
-void Menu_ResetTwoResourceEntries(void);
-void ItemMenu_Close(void);
-void Func_08038290(void);
-void Window_EraseBorderRectFar(s32 x, s32 y, s32 width, s32 height);
-void Event_ClearInvalidPackedValuesFar(void);
 
 s32 Func_08100e7c(void) {
   struct DjinnMenuWork *menu;
@@ -140,20 +116,15 @@ struct DjinnElementList {
 };
 
 void Func_08101638(void);
-void wait(s32 frames);
 
-void MenuIcon_SetPosition(s32 slot, s32 x, s32 y);
 s32 Func_08102008(s32 mode);
 s32 Func_08104540(void);
 s32 Func_08101d5c(void);
 s32 Func_081039fc(u32 mode);
-void Sound_PlayFar(s32 cue);
 s32 Djinn_TransferFar(s32 owner, s32 element, s32 index, s32 recipient);
 
 u32 Djinn_DeactivateFar(s32 owner, s32 element, s32 index);
 s32 DjinnRecovery_AddStandbyFar(s32 owner, s32 element, s32 index);
-s32 DjinnRecovery_RemoveFar(s32 owner, s32 element, s32 index);
-void Unit_CalculateFar(s32 unitId);
 
 void Func_081019a4(struct OwnerList *list);
 
@@ -457,17 +428,10 @@ void Graphics_AdjustPalettes(s32 d) {
 // backdrop, lists the owners (Func_081019a4), then makes the list's cursor and
 // the two page arrows and places the arrows at the list window's corners.
 
-extern u8 gMenu_BackdropBorderTile[];
 extern char ResourceId_ShopGemTiles;
 
-void wait(s32 frames);
 void Graphics_ExpandVramTilesByColorTableFar(void *tiles);
 s32 Palette_GetBasicObjColors(void);
-void Graphics_AdjustPalettes(s32 bank);
-void Func_081019a4(struct OwnerList *list);
-
-s32 Resource_FindFreeEntry(void);
-void VramBlock_LoadResourceFar(s32 entry, s32 size, s32 resource);
 
 void Func_08101638(void) {
   struct DjinnMenuWork *menu = Ram_HeapSlots->menuRuntime;
@@ -627,9 +591,6 @@ extern u8 MsgDjinnName[]; ///< the first djinni's name
 s32 Djinn_IsReadyFar(s32 owner, s32 element, s32 index);
 s32 Djinn_IsActiveFar(s32 owner, s32 element, s32 index);
 
-void Window_SetTilemapEntryFar(s32 window, s32 tile, s32 x, s32 y, s32 mode);
-s32 Text_SetColorFar(s32 color);
-
 /// The state of a packed djinni entry (owner in bits 8-11, element in 5-7,
 /// index in 0-4, bit 15 set): 2 when the djinni is neither ready nor active,
 /// otherwise whether bit 15 is set. DjinnMenu_DrawPage colours each name by it.
@@ -669,18 +630,6 @@ struct DjinnMenuState {
   u8 unk038[0xc0];
   void *owners[4];
 };
-
-extern u8 MsgDjinnUnleashEffectLabel[];
-
-s32 Party_CountActiveOwnersFar(void);
-s32 Party_SumDjinnCountsFar(s32 owner);
-
-void Window_DrawDividerLineFar(s32 window, s32 x, s32 y, s32 width, s32 height);
-
-s32 Func_08101a04(u32 entry);
-void Func_08101a54(s32 window, s32 x, s32 y, s32 entry);
-s32 Text_SetColorFar(s32 color);
-void wait(s32 frames);
 
 void DjinnMenu_DrawPage(struct DjinnMenuBackdrop *backdrop, s32 page) {
   struct DjinnMenuState *menu =
@@ -843,29 +792,12 @@ void Func_08101c7c(s32 x, s32 y, s32 width, s32 height, s32 palette) {
   }
 }
 
-void Func_08101c7c(s32 x, s32 y, s32 width, s32 height, s32 palette);
-
 void UiPanel_SetRectPalette(struct UiPanel *panel, s32 x, s32 y, s32 width,
                             s32 height, s32 palette) {
   Func_08101c7c(panel->x + x + 1, panel->y + y + 1, width, height, palette);
 }
 
-void Func_08101c7c(s32 x, s32 y, s32 width, s32 height, s32 palette);
-void UiPanel_SetRectPalette(struct UiPanel *panel, s32 x, s32 y, s32 width,
-                            s32 height, s32 palette);
-void UiPanel_SetRectHighlight(struct UiPanel *panel, s32 x, s32 y, s32 width,
-                              s32 height, s32 palette);
-
-void Func_08038290(void);
 struct UiChannelSlot *Func_080383d8(void *window, s32 message);
-s32 Menu_GetModuloOfSum(s32 value, s32 count);
-void Sound_PlayFar(s32 cue);
-s32 Message_AllTypedFar(void);
-void Func_080f8a44(s32 x, s32 y);
-s32 Resource_ResetEntry(u32 entry);
-
-void Menu_UpdateEntryObjectTransforms(void);
-void wait(s32 frames);
 
 s32 Func_08101d5c(void) {
   struct UiPanel *helpWindow;
@@ -1002,53 +934,15 @@ struct DjinnWindowWork {
   u8 dirty;
 };
 
-extern u8 MsgClassName[];
-extern u8 MsgDjinnEffect[];
-extern u8 MsgDjinnSetAll[];
-extern u8 MsgDjinnAllStandby[];
-extern u8 MsgDjinnChoose[];
-extern u8 MsgDjinnRecovering[];
-extern u8 MsgDjinnCharacterStatus[];
-extern u8 MsgDjinnGiveAction[];
-extern u8 MsgDjinnSetAction[];
-extern u8 MsgDjinnStandbyAction[];
-extern u8 MsgDjinnTradeAction[];
-extern u8 MsgDjinnOwnerLabel[];
-extern u8 MsgDjinnNowRecovering[];
 extern u8 gDjinnMenu_TextLevel[];
 
-void wait(s32 frames);
-void Sound_PlayFar(s32 cue);
 s32 Func_08104928(s8 *table, s32 self);
-void Func_080f8a44(s32 x, s32 y);
-void Func_080f8ab4(s32 x, s32 y);
-void Menu_CreateOwnerEntryObjects(s32 first);
 
 void Menu_SetPageArrowsB(s32 index, s32 count);
-s32 Func_08101a04(u32 entry);
-void MenuIcon_SetPosition(s32 index, s32 x, s32 y);
 void MenuIcon_SetPicture(s32 index, s32 frame);
-void Func_08105350(s32 index, s32 scale);
 void MenuIcon_ReplaceObject(s32 index, s32 kind, s32 animation);
-void *Unit_Get(s32 owner);
 
-void Text_DrawStringAtOffsetFar(const u8 *text, s32 window, s32 x, s32 y);
-
-void Text_DrawMessageFar(s32 message, s32 window, s32 x, s32 y);
-void Text_DrawNumberInWindowFar(s32 value, s32 width, s32 window, s32 x, s32 y);
-void MessageArgument_PushFar(s32 value, s32 kind);
-void Window_SetTilemapEntryFar(s32 window, s32 tile, s32 x, s32 y, s32 mode);
-
-s32 Menu_GetDjinnGiveMessage(void);
-s32 Message_OpenWindowFar(s32 message, s32 x, s32 y, s32 style);
-s32 Message_AllTypedFar(void);
-void Window_CloseFar(s32 window, s32 style);
 void DjinnRecovery_CountDownFar(void);
-s32 Djinn_ActivateFar(s32 owner, s32 element, s32 index);
-u32 Djinn_DeactivateFar(s32 owner, s32 element, s32 index);
-s32 DjinnRecovery_AddStandbyFar(s32 owner, s32 element, s32 index);
-s32 DjinnRecovery_RemoveFar(s32 owner, s32 element, s32 index);
-void Unit_CalculateFar(s32 owner);
 s32 Menu_GetModuloOfSum(s32 value, s32 count) __attribute__((const));
 
 #define DJINN_OWNER(entry) (((entry) & 0xf00) >> 8)
@@ -1804,24 +1698,8 @@ extern const char gDjinnMenu_TextSlash[];
 
 #endif
 
-void Unit_CalculateFar(s32 owner);
-void *Heap_Alloc(s32 size);
-void Heap_Release(void *block);
-struct BattleAct *BattleAction_Get(s32 actionId);
-s32 Djinn_AddToOwnerFar(s32 owner, s32 element, s32 index);
-s32 Djinn_ActivateFar(s32 owner, s32 element, s32 index);
-
-void Text_DrawNumberAtOffsetFar(s32 value, s32 width, s32 window, s32 x, s32 y);
-void Text_DrawNumberInWindowFar(s32 value, s32 width, s32 window, s32 x, s32 y);
-
-void Window_SetTilemapEntryFar(s32 window, s32 tile, s32 x, s32 y, s32 mode);
-void Window_DrawDividerLineFar(s32 window, s32 x, s32 y, s32 width, s32 height);
 s32 Icon_CreateWithLoadedResource(struct RenderInput *window, s32 x, s32 y, s32 resourceId);
 s32 Icon_DrawVariantWithTileOffset(struct RenderInput *window, s32 x, s32 y, s32 variant);
-s32 Text_SetColorFar(s32 colour);
-
-s32 PsynergyList_Diff(struct OwnerActionSlot *a, struct OwnerActionSlot *b,
-                      u16 *out, s32 *firstCount, s32 *secondCount);
 
 s32 Func_08103218(s32 window, s32 x, s32 y, s32 ownerId, s32 removePairSlot,
                   s32 addPairSlot, s32 previewMode, s32 page, s32 side) {

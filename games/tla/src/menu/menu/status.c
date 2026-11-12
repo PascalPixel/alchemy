@@ -5,15 +5,9 @@
 
 #include "../menu_internal.h"
 
-void Window_DrawBorderFar(s32 x, s32 y, s32 width, s32 height);
-void wait(s32 frames);
-void Window_InitializeWork(s32 unused);
-s32 Party_ListActiveOwnersFar(s16 *owners);
 void Func_080fee04(s32 unused0, s32 unused1, s32 unused2, s32 unused3);
 
 s32 Func_080fe240(void);
-
-void ItemMenu_Close(void);
 
 s32 Func_080fe184(void) {
   struct OwnerMenuState *state =
@@ -77,29 +71,10 @@ s32 Func_080fe240(void) {
   return result;
 }
 
-void Window_DrawBorderFar(s32 x, s32 y, s32 width, s32 height);
-void Window_EraseBorderRectFar(s32 x, s32 y, s32 width, s32 height);
-void wait(s32 frames);
-void Window_InitializeWork(s32 unused);
-s32 Party_ListActiveOwnersFar(s16 *owners);
 s32 Func_080fe49c(void);
 
-void ItemMenu_Close(void);
-void *Heap_AllocEwram(s32 size);
-void Heap_Release(void *block);
-
-void Menu_ResumeFieldTasks(void);
-void Palette_LightenHighlight(s32 paletteNumber);
-void Text_UseExtraTilesFar(s32 flag);
-s32 Party_SumDjinnCountsFar(s32 owner);
-void Func_081051a8(void);
 void Func_081053a8(void);
-void Link_DrawShiftedTilePairFar(s32 address);
-void Menu_CancelSoundReset(void);
-void Menu_EnsureCancelSound(void);
 void MenuIcon_ReleaseSlots(void);
-void MenuIcon_ReleaseObjects(void);
-void Func_08038290(void);
 
 s32 Func_080fe274(void) {
   struct OwnerMenuState *state =
@@ -175,10 +150,7 @@ s32 Func_080fe274(void) {
   return result;
 }
 
-s32 GameFlag_Test(s32 flag);
 void MenuIcon_SetActive(s32 active);
-void Menu_UpdateEntryObjectTransforms(void);
-s32 Func_080fe580(s32 slot);
 s32 Func_080feec0(void);
 s32 Func_080ffcd4(void);
 s32 Func_0810021c(void);
@@ -244,13 +216,8 @@ struct OwnerCursor {
   u16 animStep;
 };
 
-s32 GameFlag_Test(s32 flag);
-
-void Func_080f8ab4(s32 x, s32 y);
 s32 Func_080feb58(void);
 s32 Func_080fe894(void);
-
-void wait(s32 frames);
 
 /// The twin of The Broken Seal's CharacterMenu_SelectOwner.
 s32 Func_080fe580(s32 slot) {
@@ -282,23 +249,6 @@ s32 Func_080fe580(s32 slot) {
   wait(1);
   return result;
 }
-
-extern u8 MsgButtonReturn[];
-extern u8 MsgCurrentDjinn[];
-extern u8 MsgDjinnName[];
-
-void Sound_PlayFar(s32 cue);
-
-void MenuIcon_SetActive(s32 active);
-void wait(s32 frames);
-s32 GameFlag_Test(s32 flag);
-void Window_DrawDividerLineFar(s32 window, s32 x1, s32 y1, s32 x2, s32 y2);
-void Menu_DrawPageIndicator(s32 window, s32 count, s32 pageSize, s32 page,
-                            s32 style);
-void Window_SetTilemapEntryFar(s32 window, s32 tile, s32 x, s32 y,
-                                 s32 palette);
-
-void Input_ResetKeyRepeat(void);
 
 void Func_080fe638(void) {
   struct DjinnMenuWork *menu = Ram_HeapSlots->menuRuntime;
@@ -411,23 +361,9 @@ struct CharacterMenuState {
   s16 rowY[4];
 };
 
-extern u8 MsgRearrangeHelp[];
-extern u8 MsgDjinnListHelp[];
-
-void *Unit_Get(s32 owner);
-void Palette_LightenHighlight(s32 paletteNumber);
-s32 GameFlag_Test(s32 flag);
-
 void Menu_CreateWindowAndEntryObjects(s32 resource, s32 frame);
 
-void Menu_CreateOwnerEntryObjects(s32 first);
-void wait(s32 frames);
-void Menu_HighlightPageEntry(s32 window, s32 selection, s32 count);
-void Func_080f8a44(s32 x, s32 y);
-void Sound_PlayFar(s32 cue);
 s32 Func_080fecfc(s32 selection, s32 direction);
-void Func_080fe638(void);
-s32 Menu_MoveGridCursor(s32 *selection, s32 count, s32 columns);
 
 s32 Func_080fe894(void) {
   struct CharacterMenuState *menu;
@@ -548,19 +484,7 @@ struct OwnerPageState {
   u16 page;
 };
 
-extern u8 MsgChooseCharacter[];
-
-void *Unit_Get(s32 owner);
-
-void PsynergyMenu_DrawPsynergyIcons(u16 *list);
 void Func_081005e4(s32 x, s32 y, s32 columns);
-
-void Menu_CreateOwnerEntryObjects(s32 first);
-
-void Func_080f8a44(s32 x, s32 y);
-s32 Menu_MoveGridCursor(s32 *selection, s32 count, s32 columns);
-void wait(s32 frames);
-void Sound_PlayFar(s32 cue);
 
 s32 Func_080feb58(void) {
   struct OwnerPageState *menu =
@@ -615,8 +539,6 @@ s32 Func_080feb58(void) {
   menu->selectedIds[0] = menu->ownerIds[selection];
   return result;
 }
-
-s32 Party_AddActiveOwnerFar(s32 ownerId);
 
 s32 Func_080fecfc(s32 selectedIndex, s32 direction) {
   struct CharacterMenuState *menu = Ram_HeapSlots->menuRuntime;
@@ -708,9 +630,6 @@ typedef struct {
   u8 field0f;
 } Object0f;
 
-s32 Window_UpdateOrCreate(s32 *handle, s32 x, s32 y, s32 width, s32 height,
-                            s32 style);
-
 void Func_080ff370(s32, s32, s32); ///< draws the status ailments
 
 /// Creates the status window and its side object the first time, spawns the
@@ -754,27 +673,11 @@ void Menu_CreateWindowAndEntryObjects(s32 resource, s32 frame) {
 #define SWITCH_CHARACTER_HELP_X 80
 #endif
 
-extern u8 MsgSwitchCharacterHelp[];
-
-s32 Window_UpdateOrCreate(s32 *window, s32 x, s32 y, s32 width, s32 height,
-                          s32 frame);
-s32 Party_SumDjinnCountsFar(s32 owner);
-void Func_080f8ab4(s32 x, s32 y);
-s32 GameFlag_Test(s32 flag);
-void *Unit_Get(s32 owner);
-void Func_080ff370(s32 window, s32 ownerId, s32 mode);
-s32 CharacterMenu_BuildAvailability(u8 *ailments, s32 requested, s32 ownerId);
-
 void CharacterMenu_DrawSelectionCursor(s32 mode, s32 selected, u8 *entries,
                                        s32 invert);
 
-void wait(s32 frames);
 void CharacterMenu_DrawSelectionLabels(s32 target, s32 selected, const u8 *entries);
 void Func_080ff2e8(void *window, s32 help, s32 full);
-void Func_080f8a44(s32 x, s32 y);
-void Sound_PlayFar(s32 cue);
-
-void WindowSprite_PrepareForRedrawFar(s32 window);
 
 s32 Func_080feec0(void) {
   struct CharacterMenuState *menu;
@@ -999,12 +902,7 @@ struct StatusOwner {
 #define HELP_LENGTH 64
 #endif
 
-extern u8 MsgYourNameAndLevelExperience[];
-
 u32 Unit_GetExperienceForLevelFar(s32 owner_id, s32 level);
-void MessageArgument_PushFar(s32 value, s32 digits);
-void *Heap_Alloc(s32 size);
-void Heap_Release(void *buffer);
 void Message_CopyExpandedFar(s32 messageId, void *buffer, s32 length);
 void Text_DrawWideStringAtOffsetFar(void *buffer, void *destination,
                                         s32 offset, s32 terminator);
@@ -1044,23 +942,13 @@ void Func_080ff2e8(void *window, s32 help, s32 full) {
 #define DRAW_LEVEL_LABEL Text_DrawStringAtOffsetFar
 #endif
 
-extern u8 MsgDjinnLabel[];
-extern u8 MsgPowerLabel[];
 extern const u8 gMenu_LvString[];
 extern const u8 gMenu_SlashString[];
 
-s32 Party_SumDjinnCountsFar(s32 owner);
-
 void ItemMenu_DrawOwnerStatus(s32 window, s32 owner, s32 flags);
-s32 CharacterMenu_BuildAvailability(u8 *ailments, s32 requested, s32 ownerId);
 
 void Func_081054e0(struct MenuPanel *panel, s32 x, s32 y, const u8 *enabled);
-void wait(s32 frames);
 
-void Window_SetTilemapEntryFar(s32 window, s32 tile, s32 x, s32 y, s32 palette);
-
-void Text_DrawNumberInWindowFar(s32 value, s32 digits, s32 window, s32 x,
-                                s32 y);
 s32 Unit_GetElementLevelFar(s32 ownerId, s32 element);
 
 void Func_080ff370(s32 window, s32 ownerId, s32 mode) {
@@ -1145,17 +1033,8 @@ struct ItemMenuState {
   struct ItemMenuCursor *cursor;
 };
 
-extern u8 MsgExpLabel[];
-extern u8 MsgClassName[];
-extern const u8 gMenu_LvString[];
-extern const u8 gMenu_SlashString[];
 extern const u8 gMenu_HpString[];
 extern const u8 gMenu_PpString[];
-
-void Text_DrawNumberInWindowFar(s32 value, s32 digits, s32 window, s32 x,
-                                  s32 y);
-
-void wait(s32 frames);
 
 // The Japanese edition draws the Lv, HP and PP labels through
 // Text_DrawStringInWindowFar, and the four stats a digit wider, starting a
@@ -1240,8 +1119,6 @@ struct MenuPageResult {
   s32 count;
   s32 selected;
 };
-
-void *Unit_Get(s32 owner);
 
 s32 Func_080ff7b4(struct MenuPageResult *result, s32 index) {
   struct MenuOwnerWork *menu = Ram_HeapSlots->menuRuntime;
@@ -1362,7 +1239,6 @@ struct PsynergyListWork {
 #define USABLE_BOTTOM 104
 #endif
 
-extern u8 MsgAbilityDescription[];
 #if LANGUAGE == LANGUAGE_JAPANESE
 extern u8 MsgExpLabel[];
 extern u8 MsgDjinnListHelp[];
@@ -1372,10 +1248,6 @@ extern u8 MsgUsableInField[];
 // In the English release its text is MsgUsableInField's again.
 extern u8 MsgUsableAnywhere[];
 #endif
-
-void Text_DrawMessageFar(s32, s32, s32, s32);
-
-void Window_SetTilemapEntryFar(s32, s32, s32, s32, s32);
 
 s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused,
                                struct MenuResult *state) {
@@ -1520,25 +1392,6 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused,
 #define EMPTY_MESSAGE_Y 17
 #endif
 
-extern u8 MsgAbilityNothing[];
-extern u8 MsgClassName[];
-extern u8 MsgPsynergyChooseTarget[];
-extern u8 MsgPsynergyChooseForR[];
-extern const u8 gMenu_LvString[];
-
-struct BattleAct *BattleAction_Get(s32 action);
-void Menu_SetPageIcons(s32 pageSize, s32 first, s32 window, s32 x, s32 y);
-void Menu_DrawPageIndicator(s32 window, s32 count, s32 pageSize, s32 page,
-                            s32 style);
-
-void Text_DrawNumberAtOffsetFar(s32 value, s32 digits, s32 window, s32 x,
-                                  s32 y);
-void PsynergyMenu_DrawRange(s32 window, s32 x, s32 y, s32 range, s32 style);
-void Text_DrawStringAtOffsetFar(const u8 *text, s32 window, s32 x, s32 y);
-
-void Text_DrawNumberInWindowFar(s32 value, s32 digits, s32 window, s32 x,
-                                  s32 y);
-
 /// The Psynergy menu's list page: each ability's name, PP cost and range, "no
 /// Psynergy" when empty, then the owner's name, class and level.
 s32 PsynergyMenu_DrawListPage(s32 window, s32 unused,
@@ -1641,27 +1494,6 @@ s32 PsynergyMenu_DrawListPage(s32 window, s32 unused,
 #define CURSOR_X 55
 #define CURSOR_Y 60
 #endif
-
-extern u8 MsgSwitchCharacterHelp[];
-
-s32 Window_UpdateOrCreate(s32 *window, s32 x, s32 y, s32 width, s32 height,
-                          s32 frame);
-
-void Menu_BuildPatternTiles(void);
-s32 GameFlag_Test(s32 flag);
-void *Unit_Get(s32 owner);
-
-void ItemMenu_HideAllIcons(void);
-void PsynergyMenu_DrawPsynergyIcons(u16 *psynergies);
-void wait(s32 frames);
-
-s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused,
-                               struct MenuResult *state);
-s32 PagedList_HandleInput(s32 mode, s32 count, s32 rows, s32 *row, s32 *page);
-void Func_080f8a44(s32 x, s32 y);
-void Sound_PlayFar(s32 cue);
-
-void WindowSprite_PrepareForRedrawFar(s32 window);
 
 s32 Func_080ffcd4(void) {
   struct PsynergyMenuState *menu;
@@ -1775,11 +1607,6 @@ s32 Func_080ffcd4(void) {
 #else
 #define EQUIP_SLOT_WIDTH 10
 #endif
-
-void wait(s32 frames);
-
-void Window_SetTilemapEntryFar(s32 window, s32 tile, s32 x, s32 y,
-                                 s32 palette);
 
 s32 ItemMenu_DrawEquipPage(s32 window, s32 unused, struct MenuResult *state) {
   struct InventoryMenuState *menu;
@@ -1902,13 +1729,6 @@ s32 ItemMenu_DrawEquipPage(s32 window, s32 unused, struct MenuResult *state) {
 #define STAT_X 72
 #endif
 
-void Menu_SetPageIcons(s32 pageSize, s32 first, s32 window, s32 x, s32 y);
-void Menu_DrawPageIndicator(s32 window, s32 count, s32 pageSize, s32 page,
-                            s32 style);
-
-void Text_DrawNumberInWindowFar(s32 value, s32 digits, s32 window, s32 x,
-                                  s32 y);
-
 /// Draws one page of the member's items into window: five names a page, or
 /// "no items", then the member's name, Attack and Defense.
 s32 Func_081000e0(s32 window, s32 unused, struct MenuResult *state) {
@@ -1984,27 +1804,6 @@ s32 Func_081000e0(s32 window, s32 unused, struct MenuResult *state) {
 #else
 #define CURSOR_X 96
 #endif
-
-extern u8 MsgSwitchCharacterHelp[];
-
-void *Unit_Get(s32 owner);
-s32 Window_UpdateOrCreate(s32 *window, s32 x, s32 y, s32 width, s32 height,
-                          s32 frame);
-
-s32 GameFlag_Test(s32 flag);
-
-s32 InventoryMenu_SortByListOrder(u16 *items, s32 mode);
-
-void ItemMenu_DrawIcons(u16 *items, s32 mode);
-void ItemMenu_DrawCategory(s32 window, s32 owner, s32 mode);
-void wait(s32 frames);
-s32 Func_081000e0(s32 window, s32 unused, struct MenuResult *state);
-s32 ItemMenu_DrawEquipPage(s32 window, s32 unused, struct MenuResult *state);
-s32 PagedList_HandleInput(s32 mode, s32 count, s32 rows, s32 *row, s32 *page);
-void Func_080f8a44(s32 x, s32 y);
-void Sound_PlayFar(s32 cue);
-
-void WindowSprite_PrepareForRedrawFar(s32 window);
 
 s32 Func_0810021c(void) {
   struct InventoryMenuState *menu;
@@ -2108,10 +1907,6 @@ s32 Func_0810021c(void) {
 #undef PAGE_ROWS
 #undef CURSOR_X
 #undef CURSOR_X
-
-void ItemMenu_HideAllIcons(void);
-
-void ItemMenu_DrawIcons(u16 *items, s32 mode);
 
 struct CategoryMenuState {
   u8 unk000[0x1c4];

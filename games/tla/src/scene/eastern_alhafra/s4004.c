@@ -2,6 +2,7 @@
 /// Scene code of overlay 0x668, in ROM order, from s4004's offset up to the next object the overlay links.
 
 #include "types.h"
+#include "map.h"
 #include "system/task.h"
 #include "event_inline.h"
 
@@ -108,8 +109,6 @@ void Func_020040c0(void) {
 
 extern u16 gData_02004ca4[];
 extern s8 gData_02004cb0[][4];
-void Map_FillCellRectByte2(s32 layer, s32 x, s32 z, s32 width, s32 height,
-                           s32 value);
 
 static __inline__ s32 Abs(s32 value) { return value < 0 ? -value : value; }
 
@@ -159,3 +158,4 @@ s32 Func_020040ec(s32 id) {
   return 1;
 }
 
+#include "../../field/map/cellfill.c"

@@ -20,8 +20,6 @@ struct PushTarget {
 extern s8 gData_02004cb0[];
 extern s32 gData_02004cc8[];
 
-void Map_FillCellRectByte2(s32 layer, s32 x, s32 z, s32 width, s32 height,
-                           s32 value);
 void Func_02004a0c(struct Actor *object, s32 mode);
 void Func_02004c0c(void);
 void Func_02004774(struct Actor *object);

@@ -75,7 +75,6 @@ inner:
 void Func_02000754(struct Actor *object);
 void Func_02001828(struct Actor *object, s32 mode);
 void Func_02001938(void);
-void Map_FillCellRectByte2(s32 layer, s32 x, s32 z, s32 w, s32 h, s32 value);
 
 struct HeapView {
   s32 pad[8];

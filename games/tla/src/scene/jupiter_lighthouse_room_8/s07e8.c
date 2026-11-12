@@ -2,6 +2,7 @@
 /// Scene code of overlay 0x6a1, in ROM order, from s07e8's offset up to the next object the overlay links.
 
 #include "types.h"
+#include "map.h"
 #include "call.h"
 #include "iwram_call.h"
 #include "actor.h"
@@ -170,8 +171,6 @@ void Func_02000960(void) {
 extern const u16 gData_020022d0[];
 extern const s8 gData_020022dc[][4];
 
-void Map_FillCellRectByte2(s32 layer, s32 x, s32 z, s32 width, s32 height,
-                           s32 value);
 
 #define ABS(x) ((x) < 0 ? -(x) : (x))
 
@@ -214,3 +213,5 @@ s32 Func_02000af0(s32 id) {
   Map_FillCellRectByte2(2, x, z, width, height, 255);
   return 1;
 }
+
+#include "../../field/map/cellfill.c"

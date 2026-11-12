@@ -99,6 +99,9 @@ struct WorldPosition {
 
 s32 GetWorldMapCollision(struct WorldPosition *position);
 
+void Map_FillCellRectByte2(s32 layer, s32 x, s32 y, u32 width, u32 height,
+                           s32 value);
+
 STATIC_ASSERT(sizeof(struct MapLayer) == 56);
 STATIC_ASSERT(offsetof(struct MapWork, layers) == 0x108);
 

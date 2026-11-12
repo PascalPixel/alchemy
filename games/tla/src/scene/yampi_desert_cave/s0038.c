@@ -8,8 +8,6 @@
 extern u16 gData_02001968[];
 extern s8 gData_02001974[][4];
 
-void Map_FillCellRectByte2(s32 layer, s32 x, s32 z, u32 width, u32 height,
-                           s32 value);
 
 s32 Func_02000038(s32 id) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
@@ -64,3 +62,5 @@ s32 Func_02000038(s32 id) {
   Map_FillCellRectByte2(2, x, z, w, h, 255);
   return 1;
 }
+
+#include "../../field/map/cellfill.c"

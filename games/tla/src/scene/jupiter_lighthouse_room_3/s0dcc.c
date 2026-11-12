@@ -3,6 +3,7 @@
 /// next object the overlay links.
 
 #include "types.h"
+#include "map.h"
 #include "actor.h"
 #include "ram_buffer.h"
 #include "main_routine_work.h"
@@ -154,8 +155,6 @@ inner:
   return NULL;
 }
 
-void Map_FillCellRectByte2(s32 layer, s32 x, s32 z, s32 width, s32 height,
-                           s32 value);
 void Func_020022e0(struct Actor *object, s32 mode);
 void Func_02002430(void);
 void Func_02001300(void);

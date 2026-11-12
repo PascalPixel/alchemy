@@ -2,6 +2,7 @@
 /// Scene code of overlay 0x69c, in ROM order, from s07b0's offset up to the next object the overlay links.
 
 #include "types.h"
+#include "map.h"
 #include "ram_buffer.h"
 #include "iwram_call.h"
 #include "irq.h"
@@ -255,8 +256,6 @@ extern const s8 gData_02002484[][4];
 /// (Map_CopyCellAttributeRect) and byte 2 of both collision layers there is
 /// filled with 255. Returns 1, or 0 for a shape with no footprint. The twin of
 /// overlay 6ad's Func_02004938.
-void Map_FillCellRectByte2(s32 layer, s32 x, s32 y, u32 width, u32 height,
-                           s32 value);
 
 #define ABS(x) ((x) < 0 ? -(x) : (x))
 
@@ -305,3 +304,5 @@ s32 Func_02000c78(s32 id) {
   Map_FillCellRectByte2(2, x, z, width, height, 255);
   return 1;
 }
+
+#include "../../field/map/cellfill.c"

@@ -130,7 +130,8 @@ void Weather_StartRain(void) {
   // words is the decode buffer, then each particle's attribute cursor.
   u32 *words;
   u32 i;
-  // The fill's value; as a literal 0 the fill differs.
+  /* FAKEMATCH(temporary): zero holds the fill's 0; as 0 in the fill, 4 of 93
+   * instructions differ in tbs-en. */
   u32 zero = 0;
 
   work = HeapSlot_AllocEwram(HEAP_SLOT_WEATHER, sizeof(struct WeatherWork));
@@ -411,9 +412,9 @@ void FieldEffect_InitializeSparkles(void) {
   struct GroundParticle *sparkle = work->particles;
   u8 *tiles;
   u32 i;
-  s32 clear;
 
-  // size is reused for the fill's zero; a zero of its own differs.
+  /* FAKEMATCH(temporary): size reused for the fill's zero; as sizeof in the
+   * allocation and 0 in the fill, 4 of 74 instructions differ in tbs-en. */
   size = 0;
   Dma_Fill32(size, work, sizeof(*work));
   tiles = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 1024);
@@ -422,7 +423,6 @@ void FieldEffect_InitializeSparkles(void) {
   work->tileBase = VramCache_Load(work->entry, 512, tiles);
   HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
   i = 0;
-  clear = 0;
   do {
     struct MapGridScrollWork *view = gMapGridWork[0];
     s32 *leader;
@@ -433,7 +433,7 @@ void FieldEffect_InitializeSparkles(void) {
     s32 z;
 
     attr = (u32)sparkle;
-    *(u32 *)attr = clear;
+    *(u32 *)attr = 0;
     attr += sizeof(union ParticleLinkWord);
     leader = view->origin;
     *(u32 *)attr = 0x40000400;
@@ -441,8 +441,8 @@ void FieldEffect_InitializeSparkles(void) {
     *(u32 *)attr = 0xd400;
     attr = leader[0];
     z = leader[2];
-    sparkle->positionX = clear;
-    sparkle->positionZ = clear;
+    sparkle->positionX = 0;
+    sparkle->positionZ = 0;
     sparkle->positionY =
         px(MapGrid_GetTerrainHeightFar(0, (s32)attr >> 16, z >> 16));
     sparkle->timer = (i & 15) + 1;

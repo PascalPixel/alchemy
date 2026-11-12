@@ -9,6 +9,7 @@
 #include "field_sprite.h"
 #include "event_inline.h"
 #include "field/field.h"
+#include "frame.h"
 
 struct GabombaStatueChamberObject {
   u8 unk00[6];
@@ -59,8 +60,6 @@ struct GabombaStatueChamberEventWork {
   u8 unk1b8[0x0c];
   u16 field1c4;
 };
-
-extern s32 gFrameCount;
 
 u32 Random16Far(void);
 

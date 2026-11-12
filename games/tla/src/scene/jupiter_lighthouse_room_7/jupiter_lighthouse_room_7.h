@@ -7,6 +7,7 @@
 #include "ram_buffer.h"
 #include "input.h"
 #include "text/msg_ids.h"
+#include "frame.h"
 
 struct JupiterLighthouseRoom7Cell {
   u8 unk00[6];
@@ -14,7 +15,6 @@ struct JupiterLighthouseRoom7Cell {
   s16 z;
 };
 
-extern u32 gFrameCount;
 extern s16 gData_02002c64[];
 
 void Actor_SetSingleChildFlags(struct Actor *object,

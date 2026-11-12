@@ -1,6 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "field_particle.h"
+#include "frame.h"
 
 struct LaunchVector {
   s32 x;
@@ -19,8 +20,6 @@ struct LaunchScene {
   u8 unk00[0x10];
   struct LaunchObject *mainObject;
 };
-
-extern u32 gFrameCount;
 
 void Camera_WorldToScreen(struct LaunchVector *position);
 void Vector_AddPolarOffset(s32 distance, s32 angle, void *position);

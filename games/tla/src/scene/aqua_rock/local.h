@@ -9,6 +9,7 @@
 #include "iwram_call.h"
 #include "io_reg.h"
 #include "field_sprite.h"
+#include "frame.h"
 
 extern const u32 gSceneExits[];
 
@@ -52,8 +53,6 @@ s32 VramCache_Load(s32 entry, s32 size, void *data);
 void *HeapSlot_AllocEwram(s32 slot, s32 size);
 void HeapSlot_Release(s32 slot);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-
-extern u32 gFrameCount;
 
 #include "scene_ids.h"
 

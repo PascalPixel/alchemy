@@ -5,6 +5,7 @@
 #include "ram_buffer.h"
 #include "main_routine_work.h"
 #include "actor.h"
+#include "frame.h"
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 #define WORD_AT(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
@@ -32,7 +33,6 @@ struct JupiterLighthouseAerieEntry {
 };
 
 extern u8 gDecodeFillByte;
-extern s32 gFrameCount;
 extern s32 gData_02003314;
 extern s32 gData_02003318;
 extern u16 gData_02003340[];

@@ -5,6 +5,7 @@
 #include "ram_buffer.h"
 #include "types.h"
 #include "event_inline.h"
+#include "frame.h"
 
 struct Spark {
   s32 mode;
@@ -19,7 +20,6 @@ struct EventWork {
   s16 unk154;
 };
 
-extern u32 gFrameCount;
 void Func_02001fac(void);
 void Func_02001fb4(void);
 s32 Math_Cosine(s32 angle);

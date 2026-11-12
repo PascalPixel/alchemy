@@ -10,6 +10,7 @@
 #include "io_reg.h"
 #include "field_sprite.h"
 #include "event_inline.h"
+#include "frame.h"
 
 extern const u32 gSceneExits[];
 
@@ -27,8 +28,6 @@ s32 Resource_FindFreeEntry(void);
 void *HeapSlot_AllocEwram(s32 slot, s32 size);
 void HeapSlot_Release(s32 slot);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-
-extern u32 gFrameCount;
 
 #include "map.h"
 

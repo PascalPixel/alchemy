@@ -20,6 +20,7 @@
 #include "io_reg.h"
 
 #include "objcmd.h"
+#include "frame.h"
 
 extern u32 gData_020007e4;
 
@@ -81,7 +82,6 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
-extern u32 gFrameCount;
 extern s32 gData_02000618[];
 
 void Func_02000540(struct Actor *object, s32 mode);

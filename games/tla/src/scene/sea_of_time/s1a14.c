@@ -9,6 +9,7 @@
 #include "types.h"
 #include "system/io_reg.h"
 #include "event_inline.h"
+#include "frame.h"
 
 struct EventWork687 {
   u8 unk000[0x16a];
@@ -17,7 +18,6 @@ struct EventWork687 {
 
 extern u8 Func_020010a8[];
 extern u8 Func_02001650[];
-extern s32 gFrameCount;
 extern s32 gData_020022cc;
 void Func_02001fac();
 void Event_StartScreenTransition();

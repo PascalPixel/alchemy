@@ -10,6 +10,7 @@
 #include "field_coordinate.h"
 #include "field_sprite.h"
 #include "ram_buffer.h"
+#include "frame.h"
 
 struct GustObject {
   u8 unk00[6];
@@ -69,8 +70,6 @@ struct GustObject *Func_02001230(struct GustObject *source) {
                 &options);
   return object;
 }
-
-extern u32 gFrameCount;
 
 u32 Random16Far(void);
 

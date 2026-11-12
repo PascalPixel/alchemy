@@ -8,6 +8,7 @@
 #include "text/msg_ids.h"
 #include "field_sprite.h"
 #include "event_inline.h"
+#include "frame.h"
 
 struct ShamanVillageObject {
   u8 unk00[6];
@@ -59,8 +60,6 @@ struct ShamanVillageEventWork {
   u8 unk1b8[0x0c];
   u16 field1c4;
 };
-
-extern s32 gFrameCount;
 
 u32 Random16Far(void);
 

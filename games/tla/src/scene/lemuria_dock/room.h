@@ -7,6 +7,7 @@
 #include "actor.h"
 #include "flag_call.h"
 #include "event_inline.h"
+#include "frame.h"
 
 #define S16_AT(base, offset) (*(s16 *)((u8 *)(base) + (offset)))
 
@@ -27,7 +28,6 @@ struct WarpTarget {
 
 #define SCENE_WORK ((struct SceneWork *)Ram_HeapSlots->eventWork)
 
-extern u32 gFrameCount;
 extern u8 MsgAreWeSetting[];
 extern const u8 gData_0200057c[];
 extern const u8 gData_0200059c[];

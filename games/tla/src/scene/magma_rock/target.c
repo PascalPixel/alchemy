@@ -102,6 +102,7 @@ void Func_02001528(struct Actor *part) {
 // The fifth part of Func_02001738's group: follows its owner like the others, throws effect 403 every eighth frame and marks the ground beneath.
 #include "system/field_effect.h"
 #include "system/main_routine_work.h"
+#include "frame.h"
 
 struct MagmaRockEffectConfig {
   s32 kind;
@@ -116,7 +117,6 @@ struct MagmaRockEffectConfig {
   void (*unk24)(void);
 };
 
-extern u32 gFrameCount;
 extern u32 gData_02003d50[];
 void Func_020011b8(void);
 u32 Random16Far(void);

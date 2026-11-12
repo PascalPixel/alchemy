@@ -10,6 +10,7 @@
 #include "io_reg.h"
 #include "field_sprite.h"
 #include "event_inline.h"
+#include "frame.h"
 
 extern const u32 gSceneExits[];
 
@@ -78,7 +79,6 @@ extern u16 gData_02002aa0[];
 extern const u8 gData_02001ee8[];
 extern const u8 gData_02001ef4[];
 extern const u8 gField_Tiles679[];
-extern u32 gFrameCount;
 
 extern u8 MsgWhatWhatJust;
 extern u8 MsgWhyDoesMy;

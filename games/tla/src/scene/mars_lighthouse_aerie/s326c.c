@@ -1,6 +1,7 @@
 #include "types.h"
 #include "field_event.h"
 #include "event_inline.h"
+#include "frame.h"
 
 struct OrbitEffect {
   u8 unk00[8];
@@ -20,7 +21,6 @@ struct OrbitEffect {
   void (*update)(struct OrbitEffect *effect);
 };
 
-extern u32 gFrameCount;
 extern u32 gData_02006afc[];
 
 u32 Random16Far(void);

@@ -9,8 +9,8 @@
 #include "vram_tab.h"
 #include "resource.h"
 #include "task.h"
+#include "frame.h"
 
-extern u32 gFrameCount;
 extern s16 gData_02006e0c;
 extern s16 gData_02006e0e;
 extern u8 Data_02006e20[][32];

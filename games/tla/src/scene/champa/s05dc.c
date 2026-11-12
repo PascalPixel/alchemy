@@ -45,6 +45,7 @@ void Func_0200060c(void) {
 
 #include "version.h"
 #include "event_inline.h"
+#include "frame.h"
 s32 Func_02002b3c();
 extern u8 MsgChampa52[];
 
@@ -220,8 +221,6 @@ void Func_02000638(void) {
 
 extern s32 gData_0200320c[];
 extern s32 gData_0200b410[];
-
-extern u32 gFrameCount;
 
 const s32 *Func_02000a60(void) {
   if (Event_GetFlag(0x97f))

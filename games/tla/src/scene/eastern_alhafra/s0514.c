@@ -237,10 +237,10 @@ const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 #include "io_reg.h"
 #include "dma.h"
 #include "map.h"
+#include "frame.h"
 
 extern u8 gData_020054f0[];
 extern u16 gData_020056e0[2][160];
-extern u32 gFrameCount;
 
 // BG1's wave: each frame the finished table of scanline offsets is handed to
 // an HBlank DMA, while the other table is filled for the next frame.

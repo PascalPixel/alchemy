@@ -21,6 +21,7 @@
 #include "io_reg.h"
 #include "task.h"
 #include "version.h"
+#include "frame.h"
 
 void Func_02000038(void) { Func_02000de8(gData_02000e10); }
 
@@ -183,8 +184,6 @@ const u8 *Func_0200049c(void) {
     return gData_02001b00;
   return gData_020018b4;
 }
-
-extern u32 gFrameCount;
 
 static inline s32 GameFlag_Test_(s32 flag) {
   /* FAKEMATCH(wrapper): the flag test forwarded through the inline, as overlay

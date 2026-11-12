@@ -5,8 +5,8 @@
 #include "system/ram_buffer.h"
 #include "field_effect.h"
 #include "event_inline.h"
+#include "frame.h"
 
-extern u32 gFrameCount;
 extern u32 gData_02003d50[];
 
 s32 Math_Cosine(s32 angle);

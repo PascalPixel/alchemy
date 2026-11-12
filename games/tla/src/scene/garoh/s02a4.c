@@ -11,8 +11,8 @@
 #include "palette_buffers.h"
 #include "system/io_reg.h"
 #include "garoh.h"
+#include "frame.h"
 
-extern u32 gFrameCount;
 extern u16 Data_02006340[];
 
 void Func_020002a4(void) {

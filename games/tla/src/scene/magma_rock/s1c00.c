@@ -3,6 +3,7 @@
 #include "main_routine_work.h"
 #include "actor.h"
 #include "call.h"
+#include "frame.h"
 
 struct MagmaRockEffectOptions {
   s32 kind;
@@ -16,8 +17,6 @@ struct MagmaRockEffectOptions {
   s32 unk20;
   void (*update)();
 };
-
-extern u32 gFrameCount;
 
 struct Actor *Actor_GetById(s32 id);
 void Func_02003aec(void);

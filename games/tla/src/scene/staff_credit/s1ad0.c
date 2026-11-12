@@ -13,6 +13,7 @@
 #include "iwram_call.h"
 #include "task.h"
 #include "resource.h"
+#include "frame.h"
 
 struct LinkedDetail {
   u8 unk00[22];
@@ -90,7 +91,6 @@ void Func_02001ad0(struct Actor *parent) {
   }
 }
 
-extern u32 gFrameCount;
 extern s16 gData_02003fc4;
 extern s16 gData_02003fc6;
 extern u8 gData_02003fd8[][32];

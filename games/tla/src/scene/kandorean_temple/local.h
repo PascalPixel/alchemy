@@ -10,6 +10,7 @@
 #include "field_sprite.h"
 #include "input.h"
 #include "event_inline.h"
+#include "frame.h"
 
 extern const u32 gSceneExits[];
 
@@ -40,7 +41,6 @@ void Func_02000adc(void);
 extern s32 gData_02006298;
 extern s32 gData_0200629c;
 extern s32 gData_02006294;
-extern u32 gFrameCount;
 extern const u8 gData_02005494[];
 extern const u8 gData_020054e4[];
 extern const u8 gData_020054f0[];

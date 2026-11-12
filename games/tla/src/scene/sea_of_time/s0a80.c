@@ -8,6 +8,7 @@
 #include "text/msg_ids.h"
 #include "types.h"
 #include "event_inline.h"
+#include "frame.h"
 
 struct Spot {
   s32 x;
@@ -25,7 +26,6 @@ struct Params {
   u8 pad2[14];
 };
 
-extern u32 gFrameCount;
 extern u32 gData_020022c4;
 extern u16 gData_020022be;
 extern s16 gData_020022c0;

@@ -9,8 +9,8 @@
 #include "text/msg_ids.h"
 #include "types.h"
 #include "event_inline.h"
+#include "frame.h"
 
-extern s32 gFrameCount;
 extern s32 gData_020022cc;
 extern s32 gData_020022c8;
 void Func_02000c50(void);

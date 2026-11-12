@@ -1,8 +1,7 @@
 #include "types.h"
 #include "actor.h"
 #include "system/field_effect.h"
-
-extern u32 gFrameCount;
+#include "frame.h"
 
 u32 Random16Far(void);
 void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,

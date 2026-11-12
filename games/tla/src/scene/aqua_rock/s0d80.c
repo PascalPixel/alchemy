@@ -4,9 +4,9 @@
 #include "ram_buffer.h"
 #include "system/vector3.h"
 #include "event_inline.h"
+#include "frame.h"
 
 extern char SceneId_Ov67bRoom1;
-extern u32 gFrameCount;
 void Func_02001e00(void);
 s32 Func_02002970(struct Actor *object, struct Vector3 *position);
 void Func_02001d30(struct Actor *object);

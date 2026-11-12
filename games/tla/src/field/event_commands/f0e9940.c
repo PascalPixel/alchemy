@@ -2,6 +2,7 @@
 #include "ram_buffer.h"
 #include "actor.h"
 #include "effect_sprite.h"
+#include "frame.h"
 
 #define OBJ_PALETTE_14 ((u16 *)0x050003c0)
 
@@ -29,8 +30,6 @@ struct GlowEvent {
   s16 glow;
   s16 glowHeld;
 };
-
-extern u32 gFrameCount;
 
 s32 Party_GetLeaderActor(void);
 s32 Func_080dbcc0(s32 x, s32 z, s32 layer);

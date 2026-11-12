@@ -3,6 +3,7 @@
 #include "map.h"
 #include "field_event.h"
 #include "vram_tab.h"
+#include "frame.h"
 
 struct LightOam {
   u32 link;
@@ -20,7 +21,6 @@ extern struct LightOam gData_02001d20[];
 extern s16 gData_02001de0;
 extern s16 gData_02001de2;
 extern s16 gData_02001de4;
-extern u32 gFrameCount;
 
 s32 Func_02000d5c(struct FieldActor *actor);
 void Func_02000c3c(struct LightOam *oam, s32 depth);

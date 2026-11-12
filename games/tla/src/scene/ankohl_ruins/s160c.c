@@ -6,6 +6,7 @@
 #include "scene_tables.h"
 #include "task.h"
 #include "version.h"
+#include "frame.h"
 
 struct AnkohlRuinsFloatWork {
   s16 unk00;
@@ -372,7 +373,6 @@ extern const u8 gData_02003c94[];
 extern const u8 gData_02003e38[];
 extern const u8 gData_02003f4c[];
 extern const u8 gData_02004018[];
-extern u32 gFrameCount;
 
 void Func_0200015c(s32 x, s32 y, s32 z, s32 unused, s32 speed, s32 phase,
                    s32 life, struct AnkohlRuinsEffectParams *params);

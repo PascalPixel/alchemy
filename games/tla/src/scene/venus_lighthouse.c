@@ -15,12 +15,11 @@
 #include "event_inline.h"
 #include "scene_tables.h"
 #include "main_routine_work.h"
+#include "frame.h"
 
 void Func_0200056c(void) {}
 
 #define Actor_SetSpriteColor ((void (*)(void *, s32))Actor_SetPartAttribute)
-
-extern u32 gFrameCount;
 
 s32 OverlayObject_UpdateEveryFourFrames(void *obj) {
   if ((gFrameCount & 3) == 0)

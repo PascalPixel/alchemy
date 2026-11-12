@@ -3,10 +3,10 @@
 #include "main_routine_work.h"
 #include "call.h"
 #include "input.h"
+#include "frame.h"
 
 #define FIELD32(object, offset) (*(s32 *)((u8 *)(object) + (offset)))
 
-extern u32 gFrameCount;
 extern u32 gData_020042f0[];
 
 struct Actor *Actor_GetById(s32 id);

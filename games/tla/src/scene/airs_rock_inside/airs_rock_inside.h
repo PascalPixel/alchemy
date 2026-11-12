@@ -6,6 +6,7 @@
 #include "field_event.h"
 #include "iwram_call.h"
 #include "main_routine_work.h"
+#include "frame.h"
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 #define WORD_AT(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
@@ -32,7 +33,6 @@ extern char SceneId_Ov664Room8;
 extern char SceneId_Ov664Room9;
 extern char SceneId_Ov664Room10;
 extern u8 gMapCellBuffer[];
-extern u32 gFrameCount;
 
 struct FieldActor *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
 void Scene_SetActorSpritePriority(struct FieldActor *object, s32 priority);

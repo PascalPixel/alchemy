@@ -7,6 +7,7 @@
 #include "system/io_reg.h"
 #include "system/field_effect.h"
 #include "event_inline.h"
+#include "frame.h"
 
 /// A field sprite's byte 9: the top of its first tile and its priority (OAM
 /// attribute 2), read as bit-fields.
@@ -16,7 +17,6 @@ struct SpriteAttr2High {
   u8 priority : 2;
 };
 
-extern s32 gFrameCount;
 extern char ResourceId_WhirlwindTiles;
 extern char ResourceId_WhirlwindMap;
 extern const s32 gData_02004ae0[];

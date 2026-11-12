@@ -13,6 +13,7 @@
 #include "map.h"
 #include "vram_tab.h"
 #include "task.h"
+#include "frame.h"
 
 struct GustObject {
   u8 unk00[6];
@@ -72,8 +73,6 @@ struct GustObject *Func_02000b50(struct GustObject *source) {
                 &options);
   return object;
 }
-
-extern u32 gFrameCount;
 
 u32 Random16Far(void);
 

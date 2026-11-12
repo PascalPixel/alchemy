@@ -7,6 +7,7 @@
 #include "system/dma.h"
 #include "system/io_reg.h"
 #include "call.h"
+#include "frame.h"
 
 /// A field sprite's byte 9: the top of its first tile and its priority (OAM
 /// attribute 2), read as bit-fields.
@@ -20,7 +21,6 @@ struct ObjectPriorityByte {
   u8 unk00[35];
   u8 priorityFlags : 8;
 };
-extern s32 gFrameCount;
 extern char ResourceId_LightningTiles;
 extern char ResourceId_LightningMap;
 extern const u8 gData_02005fd8[];

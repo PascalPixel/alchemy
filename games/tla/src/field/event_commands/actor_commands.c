@@ -3,6 +3,7 @@
 // Part of event_commands.c.
 
 #include "../event_commands_internal.h"
+#include "frame.h"
 
 struct Actor *Actor_GetById(u32 objectId) {
   struct Actor *object = ObjectTable_Get(objectId);
@@ -632,8 +633,6 @@ struct ObjectPartList {
   u8 unk1c[0xc];
   struct ObjectPart *parts[1];
 };
-
-extern u32 gFrameCount;
 
 void Actor_ApplyIndexedChildValue(struct Actor *object) {
   struct ObjectPartList *list;

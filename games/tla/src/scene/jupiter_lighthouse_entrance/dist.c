@@ -12,6 +12,7 @@
 #include "field_coordinate.h"
 #include "field_event.h"
 #include "task.h"
+#include "frame.h"
 
 s32 Func_020005b8(s32 *a, s32 *b) {
   s32 dx = (a[0] - b[0]) >> 16;
@@ -152,8 +153,6 @@ struct GustObject *Func_020007a4(struct GustObject *source) {
 }
 
 s32 Random16Far(void);
-
-extern u32 gFrameCount;
 
 struct SceneEffectSource {
   u8 unk00[8];

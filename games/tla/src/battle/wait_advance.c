@@ -3,6 +3,7 @@
 #include "input.h"
 #include "io_write.h"
 #include "io_reg.h"
+#include "frame.h"
 
 struct AdvanceSprite {
   struct AdvanceSprite *next;
@@ -33,7 +34,6 @@ struct AdvanceDisplay {
   struct AdvanceOffset *offset;
 };
 
-extern u32 gFrameCount;
 extern u8 Data_0812996c[];
 
 s32 Message_AllTypedFar(void);

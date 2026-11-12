@@ -6,6 +6,7 @@
 #include "battle_effect.h"
 #include "task.h"
 #include "system.h"
+#include "frame.h"
 
 struct FxPosition {
   s32 x;
@@ -56,7 +57,6 @@ struct EffectWork {
 
 extern const u8 gData_080f0e60[];
 extern const u8 gData_080f0e78[];
-extern u32 gFrameCount;
 
 void BattleEffect_InitializeSharedScene(void);
 struct FxObject *BattleEffect_SpawnItemBreakMode1(s32 x, s32 y, s32 z,

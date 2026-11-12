@@ -17,6 +17,7 @@
 #include "scene_tables.h"
 
 #include "objcmd.h"
+#include "frame.h"
 
 extern void Func_0200145c(struct FieldEffect *effect, s32 mode);
 extern void Func_02001464(struct FieldEffect *effect, const s32 *script);
@@ -102,8 +103,6 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 }
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
-
-extern u32 gFrameCount;
 
 void Func_020002a4(u16 *colors, u16 *target, s32 count) {
   s32 i = 0;

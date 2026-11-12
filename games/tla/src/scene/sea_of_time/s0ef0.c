@@ -5,8 +5,8 @@
 #include "actor.h"
 #include "system/field_effect.h"
 #include "event_inline.h"
+#include "frame.h"
 
-extern u32 gFrameCount;
 void Func_02001fac(void);
 void Func_02001fb4(void);
 s32 Math_Cosine(s32 angle);

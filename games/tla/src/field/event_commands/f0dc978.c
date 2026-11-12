@@ -3,6 +3,7 @@
 #include "heap_release.h"
 #include "dma.h"
 #include "ram_buffer.h"
+#include "frame.h"
 
 #define WAVE_FX_SLOT 88
 
@@ -18,8 +19,6 @@ struct WaveFxWork {
   u8 unk295;
   u8 unk296[2];
 };
-
-extern u32 gFrameCount;
 
 void BattleEffect_InitializeSharedScene(void);
 void BattleEffect_AdvanceHueCycle(void);

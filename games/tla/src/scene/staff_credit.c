@@ -20,6 +20,7 @@
 #include "event_work.h"
 #include "bg_scroll.h"
 #include "event_inline.h"
+#include "frame.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -33,7 +34,6 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
-extern u32 gFrameCount;
 extern u16 gData_02003dbc;
 extern u16 gData_02003dbe;
 

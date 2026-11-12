@@ -14,6 +14,7 @@
 #include "event_inline.h"
 #include "ram_buffer.h"
 #include "main_routine_work.h"
+#include "frame.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -100,8 +101,6 @@ s32 Func_02000074(void) {
   }
   return 0;
 }
-
-extern u32 gFrameCount;
 
 /// The palette cycle Func_02000074 schedules: every 16 frames it copies four
 /// of the eight colours at 0x05000180, starting one further each time, to the

@@ -8,6 +8,7 @@
 #include "map.h"
 #include "input.h"
 #include "text/msg_ids.h"
+#include "frame.h"
 
 struct IsletsEventWork {
   u8 unk000[0x154];
@@ -17,8 +18,6 @@ struct IsletsEventWork {
   u8 unk15c[0x50];
   s32 field1ac;
 };
-
-extern u32 gFrameCount;
 
 void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);

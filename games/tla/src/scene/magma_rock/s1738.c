@@ -5,6 +5,7 @@
 #include "system/main_routine_work.h"
 #include "system/ram_buffer.h"
 #include "event_inline.h"
+#include "frame.h"
 
 /// The native reads these event work halfwords signed (ldrsh).
 
@@ -21,7 +22,6 @@ struct MagmaRockEffectConfig {
   void (*unk24)(void);
 };
 
-extern u32 gFrameCount;
 extern u32 gData_02003d50[];
 extern u8 gData_02003d9e[];
 extern u8 gData_02003db2[];

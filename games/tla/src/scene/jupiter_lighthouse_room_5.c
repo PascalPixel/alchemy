@@ -19,6 +19,7 @@
 #include "text/msg_ids.h"
 #include "macros.h"
 #include "task.h"
+#include "frame.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -57,8 +58,6 @@ void Func_02000064(s32 unused, s32 id) {
     Func_020029d8();
   }
 }
-
-extern u32 gFrameCount;
 
 u32 __umodsi3();
 void Animation_ApplyChildValues();

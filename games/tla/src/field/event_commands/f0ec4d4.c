@@ -7,6 +7,7 @@
 #include "version.h"
 #include "ram_buffer.h"
 #include "fixed_math.h"
+#include "frame.h"
 
 // The scrolled name's left edge, in pixels left of its place.
 #if LANGUAGE == LANGUAGE_GERMAN
@@ -67,7 +68,6 @@ struct ResourceTableEntry {
 
 #define WORK Ram_WorldMapWork
 extern struct ResourceTableEntry gResourceTableEntries[];
-extern u32 gFrameCount;
 extern const u8 Data_080f1100[];
 extern const u16 Data_080f1120[];
 extern u8 MsgPresentLocation[];

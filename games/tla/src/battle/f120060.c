@@ -2,6 +2,7 @@
 #include "input.h"
 #include "io_write.h"
 #include "io_reg.h"
+#include "frame.h"
 
 struct CursorSprite {
   struct CursorSprite *next;
@@ -24,8 +25,6 @@ struct MenuPoint {
   s32 x;
   s32 y;
 };
-
-extern u32 gFrameCount;
 
 s32 WindowSprite_GetPointerTilesFar(s32 index);
 s32 Message_AllTypedFar(void);

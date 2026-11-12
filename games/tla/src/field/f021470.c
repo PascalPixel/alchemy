@@ -7,6 +7,7 @@
 
 #include "types.h"
 #include "mul_q16.h"
+#include "frame.h"
 
 struct FarCallVeneer {
   u32 stub;
@@ -58,7 +59,6 @@ struct BgAffine {
 extern const struct FarCallRuntimeTrigView FarCall_RuntimeTable;
 extern s32 Data_030011ec;
 extern u32 Data_03001244;
-extern u32 gFrameCount;
 
 s32 Func_080216f0(s32 x, s32 y);
 

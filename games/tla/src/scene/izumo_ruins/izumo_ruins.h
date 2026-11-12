@@ -8,6 +8,7 @@
 #include "input.h"
 #include "text/msg_ids.h"
 #include "event_inline.h"
+#include "frame.h"
 
 struct IzumoRuinsEventWork {
   u8 unk000[0x154];
@@ -48,7 +49,6 @@ struct IzumoRuinsEffectWork {
   s16 objectId;
 };
 
-extern u32 gFrameCount;
 extern u8 gMapCellBuffer[];
 extern char SceneId_Ov67FRoom1;
 extern char SceneId_Ov67FRoom2;

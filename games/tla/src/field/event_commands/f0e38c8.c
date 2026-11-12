@@ -5,6 +5,7 @@
 #include "ram_buffer.h"
 #include "actor.h"
 #include "effect_sprite.h"
+#include "frame.h"
 
 struct SprayParticle {
   s32 x;
@@ -50,8 +51,6 @@ struct SprayEvent {
   u8 unk00[20];
   struct Actor *objects[80];
 };
-
-extern u32 gFrameCount;
 
 s32 BattleEffect_GetObjectDepth(struct Actor *object);
 void EffectSprite_DrawAtWorldPosition(struct EffectSprite *sprite,

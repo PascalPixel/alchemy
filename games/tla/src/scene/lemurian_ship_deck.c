@@ -18,6 +18,7 @@
 #include "event_inline.h"
 #include "io_reg.h"
 #include "map.h"
+#include "frame.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -108,8 +109,6 @@ void Func_02000168(void) {
   Message_ShowCentered(MsgTheDoorIsHeld, 1);
   Func_02001f64();
 }
-
-extern u32 gFrameCount;
 
 #define OBJ_PALETTE ((volatile u16 *)&BG_PLTT_COLOR(11, 0))
 

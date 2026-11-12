@@ -3,6 +3,7 @@
 #include "actor.h"
 #include "effect_sprite.h"
 #include "fixed_math.h"
+#include "frame.h"
 
 struct Mote {
   s32 x;
@@ -32,7 +33,6 @@ struct MoteWork {
   s32 targetZ;
 };
 
-extern u32 gFrameCount;
 extern const s32 gData_080f3954[];
 extern const u8 Data_080f1040[];
 extern const u8 gData_080f3614[];

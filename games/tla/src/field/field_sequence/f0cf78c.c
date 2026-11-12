@@ -5,6 +5,7 @@
 #include "actor.h"
 #include "display_transition.h"
 #include "map.h"
+#include "frame.h"
 
 struct TransitionSpan {
   u16 count;
@@ -24,7 +25,6 @@ struct TransitionShape {
 extern const u8 Data_080f01c4[];
 extern const s8 Data_080f01e6[];
 extern struct TransitionShape Data_080f2e9c[];
-extern u32 gFrameCount;
 
 void Task_Remove(void (*func)(void));
 void BattleEffect_StartWindowHBlankDma(void);

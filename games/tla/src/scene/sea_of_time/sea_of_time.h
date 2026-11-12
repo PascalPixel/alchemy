@@ -6,6 +6,7 @@
 #include "iwram_call.h"
 #include "dma.h"
 #include "event_inline.h"
+#include "frame.h"
 
 struct SeaOfTimeSprite {
   u8 unk00[0x1a];
@@ -60,7 +61,6 @@ struct SeaOfTimeSpark {
   u8 unk1a[0xe];
 };
 
-extern u32 gFrameCount;
 extern volatile u32 gData_020022c8;
 extern u32 gData_020022cc;
 extern u32 gSceneState[];

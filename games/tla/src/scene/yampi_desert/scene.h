@@ -6,6 +6,7 @@
 #include "ram_buffer.h"
 #include "field_event.h"
 #include "scene_ids.h"
+#include "frame.h"
 
 struct SceneEventWork {
   u8 unk000[0x16a];
@@ -88,7 +89,6 @@ void Func_02003fc8(struct FieldActor *object);
 void Func_020041f8(s32 cue);
 extern struct FieldActor *gData_0200480c;
 extern s32 gInput;
-extern u32 gFrameCount;
 void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
 void Actor_SetPositionAndReset(s32 actor, s32 x, s32 z);
 void Actor_SetSingleChildFlags(struct FieldActor *object, s32 flags);

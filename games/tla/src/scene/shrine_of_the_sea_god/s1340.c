@@ -8,6 +8,7 @@
 #include "text/msg_ids.h"
 #include "scene_tables.h"
 #include "scene_ids.h"
+#include "frame.h"
 
 extern s32 gData_02004a18[3];
 
@@ -1333,8 +1334,6 @@ struct ShrineOfTheSeaGodPartyExtra {
   u8 unk000[0x256];
   s16 value;
 };
-
-extern u32 gFrameCount;
 
 void Func_02003988(void);
 void Func_02000994(void);

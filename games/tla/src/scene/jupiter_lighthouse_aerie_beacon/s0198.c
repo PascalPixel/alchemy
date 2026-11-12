@@ -14,10 +14,10 @@
 #include "text/msg_ids.h"
 #include "main_routine_work.h"
 #include "scene_ids.h"
+#include "frame.h"
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 
-extern u32 gFrameCount;
 extern s32 gData_02006a24;
 extern s32 gData_0200641c[];
 extern s32 gData_02006470[];

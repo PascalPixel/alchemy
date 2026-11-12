@@ -35,7 +35,6 @@ struct Unk_ClimbEventWork {
 };
 
 extern u8 gDebugMode;
-extern u32 gFrameCount;
 // The heading of each direction-pad combination, -1 for none.
 extern const s16 gData_0802ec5c[16];
 extern const s32 gData_0802ed28[];

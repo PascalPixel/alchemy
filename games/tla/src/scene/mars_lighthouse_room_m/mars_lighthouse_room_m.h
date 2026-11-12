@@ -9,6 +9,7 @@
 #include "input.h"
 #include "iwram_call.h"
 #include "text/msg_ids.h"
+#include "frame.h"
 
 struct MarsLighthouseRoomMEventWork {
   u8 unk000[0x154];
@@ -45,7 +46,6 @@ struct MarsLighthouseRoomMRideWork {
   struct Actor *handle;
 };
 
-extern u32 gFrameCount;
 extern u8 gData_020023c4[];
 extern char SceneId_Ov6ACRoom1;
 extern char SceneId_Ov6ACRoom2;

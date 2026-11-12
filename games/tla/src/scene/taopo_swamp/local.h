@@ -9,6 +9,7 @@
 #include "iwram_call.h"
 #include "field_sprite.h"
 #include "event_inline.h"
+#include "frame.h"
 
 extern const u32 gSceneExits[];
 
@@ -117,7 +118,6 @@ extern const u8 gData_02002a60[];
 extern const u8 gData_02002a6c[];
 void Func_02000810(s32 id);
 void Func_020008d8(s32 id);
-extern u32 gFrameCount;
 extern const u8 gData_02002a48[];
 extern const u8 gData_02002a54[];
 extern u8 MsgIThoughtI;

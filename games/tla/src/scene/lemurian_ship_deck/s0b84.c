@@ -15,6 +15,7 @@
 #include "field_sprite.h"
 #include "task.h"
 #include "call.h"
+#include "frame.h"
 
 extern s32 gData_020024b4;
 extern s32 gData_020024b0;
@@ -886,7 +887,6 @@ void Func_020014c0(void) {
   Func_02001f64();
 }
 
-extern u32 gFrameCount;
 extern const u8 gData_02002498[];
 
 void Func_02001d60(struct Actor *object) {

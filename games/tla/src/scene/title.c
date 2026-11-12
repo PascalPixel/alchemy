@@ -25,6 +25,7 @@
 #include "io_write_queue.h"
 #include "ram_buffer.h"
 #include "bg_scroll.h"
+#include "frame.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -48,7 +49,6 @@ extern char ResourceId_IntroTilesB;
 extern s16 gTitleVramBlock;
 extern s16 gData_020006dc;
 extern struct TitleSprite gData_020006f0[];
-extern u32 gFrameCount;
 
 void Fade_ToBlack(s32 vblanks);
 void Fade_Wait(void);

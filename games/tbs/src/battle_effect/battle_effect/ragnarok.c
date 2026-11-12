@@ -15,21 +15,17 @@
 #define RAGNAROK_SPARKS 340 ///< sparks kept per column
 #define RAGNAROK_DRAWN_SPARKS 256 ///< of which flown
 
-/// gRagnarok_StrikeColumns has three columns for each side.
-#define RAGNAROK_COLUMN_X(side, column)                                        \
-  gRagnarok_StrikeColumns[(side)][(column)]
-
-/// A huge flaming blade swings down over the targets and two columns of light
-/// strike through them.
+/// A huge flaming blade swings down over the targets and light bursts over
+/// them twice.
 ///
 /// Abilities: Ragnarok (BATTLE_EFFECT_RAGNAROK).
 ///
 /// The sword is drawn for 40 frames: it swings down over 10 frames, pauses
-/// until frame 20, then creeps on. The columns flash at frames 16 and 24 and
+/// until frame 20, then creeps on. The bursts come at frames 16 and 24 and
 /// scatter sparks six frames later, as the targets recoil; the battle shows the
-/// damage on frame 40. Column x comes from gRagnarok_StrikeColumns: first two
-/// of three per side. work->particles holds 16 flashes a column and PARTICLES
-/// 340 sparks a column.
+/// damage on frame 40. Each burst stands at a strike column of
+/// gRagnarok_StrikeColumns, the first two of three per side. work->particles
+/// holds 16 flashes a column and PARTICLES 340 sparks a column.
 ///
 /// Leaves args->variant at EFFECT_VARIANT_STRONGER, and the user in its
 /// action pose with its animation back at the usual speed.
@@ -97,7 +93,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
 
       speed = (Random16() & 0x1ff) + 32;
       angle = Random16() & TRIG_ANGLE_MASK;
-      spark->x = px(RAGNAROK_COLUMN_X(work->args->side, col));
+      spark->x = px(gRagnarok_StrikeColumns[work->args->side][col]);
       spark->y = px(88);
       spark->velocityX = (Trig_Sin(angle) * speed) >> 6;
       spark->velocityY = -(Trig_Cos(angle) * speed * 2) >> 6;
@@ -116,9 +112,8 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
     if (frame == 4) {
       Sound_PlayFar(SE_POWER_UP);
     }
-    // An 8-frame shake from frame 8.
     if (frame == 8) {
-      work->shakeFrames = frame;
+      work->shakeFrames = 8;
     }
     if (frame == 18) {
       Sound_PlayFar(SE_CRASH);
@@ -185,11 +180,11 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
         // Large flash (picture 0) for the first two frames, then 12 small
         // flashes. Each small one shows for the last 18 frames of its life,
         // stepping through gRagnarok_FlashCells' six entries three frames
-        // apiece: pictures 1 to 4, then 5 for six frames. Each picture is
-        // 32x64 (2 KB).
+        // apiece: pictures 1 to 4, then 5 for six frames.
         if (frame < start + 2) {
           blit[0](canvas, work->sheet + RAGNAROK_FLASH_OFFSETS,
-                  RAGNAROK_COLUMN_X(work->args->side, col) - 16, 56, 32, 64);
+                  gRagnarok_StrikeColumns[work->args->side][col] - 16, 56, 32,
+                  64);
         }
         i = 0;
         do {
@@ -201,11 +196,11 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
 
           y = Q_16_16_TO_INT(flash->y);
           x = Q_16_16_TO_INT(flash->x) +
-              RAGNAROK_COLUMN_X(work->args->side, col);
+              gRagnarok_StrikeColumns[work->args->side][col];
           life = flash->variant;
           if (life >= 0 && life <= 17) {
             blit[0](canvas,
-                    work->sheet + (gRagnarok_FlashCells[life / 3] << 11) +
+                    work->sheet + gRagnarok_FlashCells[life / 3] * (32 * 64) +
                         RAGNAROK_FLASH_OFFSETS,
                     x - 16, y + 56, 32, 64);
           }
@@ -235,7 +230,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
               spark->velocityY = -spark->velocityY / 2;
             } else {
               x = spark->x;
-              if ((x >= 0 && x <= px(127) - 1) && y >= 0) {
+              if ((x >= 0 && x < px(127)) && y >= 0) {
                 u8 *cell;
                 s32 lane;
                 s32 drawY = y >> 16;
@@ -286,4 +281,3 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
 #undef RAGNAROK_RING
 #undef RAGNAROK_SPARKS
 #undef RAGNAROK_DRAWN_SPARKS
-#undef RAGNAROK_COLUMN_X

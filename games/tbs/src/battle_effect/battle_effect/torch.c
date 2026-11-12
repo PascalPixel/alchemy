@@ -132,12 +132,12 @@ void BattleEffect_RunTorch(struct BattleEffectParams *args) {
     if (frame > 88)
       REG_BLDALPHA = BLEND_ALPHA(192 - frame * 2, 16);
 
-    // BG2's x reference for each of the 160 scanlines, in 20.8 texels: line
-    // i starts i + 1 texels in, slanting the picture a texel a line, swayed
-    // up to 32 texels either way by a sine of one turn every 128 lines whose
-    // phase moves 1/64 turn a frame. The HBlank DMA applies it.
+    // BG2's x reference for each scanline, in 20.8 texels: line i starts
+    // i + 1 texels in, slanting the picture a texel a line, swayed up to 32
+    // texels either way by a sine of one turn every 128 lines whose phase
+    // moves 1/64 turn a frame. The HBlank DMA applies it.
     line = work->bg2xLines;
-    for (i = 0, angle = -(wave << 9); i != 160; i++) {
+    for (i = 0, angle = -(wave << 9); i != DISPLAY_HEIGHT; i++) {
       *line++ = ((i << 18) - ((Trig_Sin(angle) * 128)) + (4 << 16)) >> 10;
       angle += TRIG_TURN / 128;
     }

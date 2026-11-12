@@ -160,7 +160,7 @@ void BattleEffect_BuildWindowEdgeTable(void) {
   baseRightEdge = (u16 *)Ram_MapGridCellBuffer;
   scanlineEdges = (u16 *)(Ram_MapGridCellBuffer + 130);
   edgeOffsets = Ram_MapGridCellBuffer + 2;
-  for (scanline = 0; scanline != 160; scanline++) {
+  for (scanline = 0; scanline != DISPLAY_HEIGHT; scanline++) {
     if (scanline >= 8 && scanline <= 135) {
       rightEdge = *baseRightEdge - edgeOffsets[scanline - 8];
       CLAMP(rightEdge, 0, 240);

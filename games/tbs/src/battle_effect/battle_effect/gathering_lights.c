@@ -123,7 +123,7 @@ void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
     // 4-texel offset (16.16 >> 10 is a quarter in BG2X's 20.8), in a wave 64
     // lines long that moves up a line each frame.
     row = work->bg2xLines;
-    for (i = 0; i != 160; i++)
+    for (i = 0; i != DISPLAY_HEIGHT; i++)
       *row++ = ((16 << 16) - Trig_Sin((frame + i) << 10) * 16) >> 10;
 
     EFFECT_FOR_EACH_TARGET(k, work->args) {

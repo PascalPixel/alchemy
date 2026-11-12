@@ -683,7 +683,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
         i = 0;
         base = 4 << 16;
         phase = frame << 12;
-        for (; i != 160; i++) {
+        for (; i != DISPLAY_HEIGHT; i++) {
           // 1 - sin pixels (0 to 2), in BG2X's 20.8 format: a wave 32 lines
           // long that moves up two lines a frame.
           s32 offset = (base - ((Trig_Sin(phase) * 4))) >> 10;

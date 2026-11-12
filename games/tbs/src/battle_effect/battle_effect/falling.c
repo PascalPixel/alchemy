@@ -9,7 +9,7 @@
 /// the battle view, down to line 135, takes the fixed `span`; and the lines
 /// below it are empty. Every band the effects pass is 128 pixels wide.
 #define FALLING_BUILD_SLANTED_WINDOW(line, i, last, slant, span)               \
-  for ((i) = 0; (i) != 160; (i)++) {                                           \
+  for ((i) = 0; (i) != DISPLAY_HEIGHT; (i)++) {                                \
     if ((i) >= 8 && (i) <= (last))                                             \
       (line)[i] = (slant);                                                     \
     else if ((i) <= 135)                                                       \
@@ -247,7 +247,7 @@ enum { FALLING_BOLT_COUNT = 64, FALLING_BOLT_SPARK_COUNT = 512 };
 /// Ram_MapGridCellBuffer as the falling bolts use it: window 0's scanline
 /// table, then the bolts' sparks.
 struct BoltSparkBuffer {
-  u16 lines[160]; ///< WIN0H for each screen line, read by the HBlank DMA
+  u16 lines[DISPLAY_HEIGHT]; ///< WIN0H for each line, read by the HBlank DMA
   struct Particle sparks[FALLING_BOLT_SPARK_COUNT]; ///< free while -1
 };
 

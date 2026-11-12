@@ -227,7 +227,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
     // pixels, a wave of 1/32 turn a line that moves 1/16 turn a frame. The
     // table is filled in every mode but read only where the HBlank DMA runs.
     row = work->bg2xLines;
-    for (i = 0; i != 160; i++)
+    for (i = 0; i != DISPLAY_HEIGHT; i++)
       *row++ = ((4 << 16) -
                 ((Trig_Sin((frame << 12) + i * (TRIG_TURN / 32)) * 4))) >>
                10;

@@ -191,7 +191,7 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
       // BattleEffect_ArmBg2AffineHBlankDma feed the table to BG2X, and each
       // removes it before returning, so this table is never read and the
       // canvas does not ripple.
-      for (k = 0; k != 160; k++)
+      for (k = 0; k != DISPLAY_HEIGHT; k++)
         *row++ = ((8 << 16) - Trig_Sin((frame + k) << 12) * 2) >> 10;
       // Fade the canvas out over the last 16 frames.
       if (frame > totalFrames - 16)

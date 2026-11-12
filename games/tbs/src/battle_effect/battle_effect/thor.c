@@ -27,13 +27,10 @@
     s32 spawned = 0;                                                           \
     for (index = 0, spark = THOR_PARTICLES; index != 910; index++, spark++) {  \
       if (spark->variant == 0) {                                               \
-        s32 speed = 0x3ff;                                                     \
-        s32 angle;                                                             \
-        speed &= Random16();                                                   \
-        angle = angleExpr;                                                     \
+        s32 speed = (Random16() & 0x3ff) + 32;                                 \
+        s32 angle = angleExpr;                                                 \
         spark->x = startX;                                                     \
         spark->y = startY;                                                     \
-        speed += 32;                                                           \
         spark->velocityX = (Trig_Sin(angle) * speed) >> 7;                     \
         spark->velocityY = -((Trig_Cos(angle) * speed) << 1) >> 7;             \
         spark->variant = (Random16() & 7) + 32;                                \
@@ -443,9 +440,6 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
             blit[0](canvas, work->sheet + (48 * 112), 36, 0, 48, 112);
           }
           if (frame == start + 2) {
-            /* FAKEMATCH(temporary): THOR_LAUNCH_SPARKS's speed holds its mask
-             * before Random16() is masked in place; as Random16() & 0x3ff, 58
-             * of 1640 instructions differ in tbs-en. */
             THOR_LAUNCH_SPARKS(spark, i, px(pillarX), px(pillarY),
                                (Random16() & 0x7fff) - TRIG_TURN / 4, 512);
             work->shakeFrames = 8;
@@ -503,16 +497,11 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
         }
         {
           // The mote: a random offset 8 to 15 pixels from where it rests.
-          s32 radius = 7;
-          s32 angle;
-          /* FAKEMATCH(temporary): radius holds 7 before Random16() is masked in
-           * place; as Random16() & 7, 39 of 1640 instructions differ in
-           * tbs-en. */
-          radius &= Random16();
-          angle = Random16() & TRIG_ANGLE_MASK;
-          moteX = (Trig_Sin(angle) * (radius + 8)) >> 16;
+          s32 radius = (Random16() & 7) + 8;
+          s32 angle = Random16() & TRIG_ANGLE_MASK;
+          moteX = (Trig_Sin(angle) * radius) >> 16;
           mirrorX = moteX + 72;
-          moteY = 32 - ((Trig_Cos(angle) * (radius + 8)) >> 16);
+          moteY = 32 - ((Trig_Cos(angle) * radius) >> 16);
         }
         EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                             COMPOSITE_LIGHTEN);
@@ -546,16 +535,10 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
         j = 0;
         for (i = 0, spark = THOR_PARTICLES; i != 910; i++, spark++) {
           if (spark->variant == 0) {
-            s32 speed = 63;
-            s32 angle;
-            /* FAKEMATCH(temporary): speed holds 63 before Random16() is masked
-             * in place; as Random16() & 63, 37 of 1640 instructions differ in
-             * tbs-en. */
-            speed &= Random16();
-            angle = Random16() & TRIG_ANGLE_MASK;
+            s32 speed = (Random16() & 63) + 64;
+            s32 angle = Random16() & TRIG_ANGLE_MASK;
             spark->x = px(mirrorX);
             spark->y = px(moteY);
-            speed += 64;
             spark->velocityX = (Trig_Sin(angle) * speed) >> 7;
             spark->velocityY = -((Trig_Cos(angle) * speed) << 1) >> 7;
             spark->variant = (Random16() & 7) + 16;

@@ -124,6 +124,6 @@ FieldVector_AddPolarOffsetFixed(s32 radius, s32 heading,
 /// Moves a point a radius in whole pixels along a heading:
 /// `FieldVector_AddPolarOffset(16, heading, &probe)`.
 #define FieldVector_AddPolarOffset(radius, heading, probe)                     \
-  FieldVector_AddPolarOffsetFixed(px(radius), heading, probe)
+  FieldVector_AddPolarOffsetFixed(Q16(radius), heading, probe)
 
 #endif

@@ -1411,15 +1411,15 @@ s32 gKolimaForestEntrance_SparkleBurstScript[] = {
 };
 
 s32 gFallingEffectScript[] = {
-    SC_ADD(SW_Y, px(-2)),
+    SC_ADD(SW_Y, -px(2)),
     SC_CALL(Kolima_FlickerCurseDust),
     SC_WAIT(1),
-    SC_ADD(SW_Y, px(-2)),
+    SC_ADD(SW_Y, -px(2)),
     SC_CALL(Kolima_FlickerCurseDust),
     SC_WAIT(1),
     SC_LOOP(30, SC_TOP),
     SC_LABEL(1),
-    SC_ADD(SW_Y, px(-1)),
+    SC_ADD(SW_Y, -px(1)),
     SC_CALL(Kolima_FlickerCurseDust),
     SC_WAIT(1),
     SC_LOOP(40, SC_TO(1)),

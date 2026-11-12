@@ -1737,7 +1737,7 @@ s32 gMogallForest_ActorScript[] = {
 s32 gMogallForest_HidingPlaceScript[] = {
     SC_SET(SW_MOTION, 0),
     SC_SET(SW_Y, 0),
-    SC_SET(SW_TARGET_Y, px(-32768)),
+    SC_SET(SW_TARGET_Y, ACTOR_NO_TARGET),
     SC_CALL(MogallForest_ClearActorSpriteFlags),
     SC_WAIT(2),
     SC_END,

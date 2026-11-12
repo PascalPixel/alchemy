@@ -188,7 +188,7 @@ static inline void Actor_SetPositionFixed(s32 actorId, s32 x, s32 z) {
 /// Places an actor at a point in whole pixels at once, without walking it
 /// there: `Actor_SetPosition(ACTOR_MIA, 880, 502)`.
 #define Actor_SetPosition(actorId, x, z)                                       \
-  Actor_SetPositionFixed(actorId, px(x), px(z))
+  Actor_SetPositionFixed(actorId, Q16(x), Q16(z))
 
 /// Sets how fast an actor moves, and how quickly it gets up to speed, for the
 /// event's next moves; both are 16.16 fixed point, as stored values hold them.
@@ -281,7 +281,7 @@ static inline void FieldCamera_MoveToFixed(s32 x, s32 y, s32 z, s32 pan) {
 /// A camera axis in whole pixels as 16.16 fixed point, CAMERA_KEEP kept; it
 /// reads its argument twice, so the macros below take only constants.
 #define EVENT_CAMERA_FIXED(axis)                                               \
-  ((axis) == CAMERA_KEEP ? CAMERA_KEEP : px(axis))
+  ((axis) == CAMERA_KEEP ? CAMERA_KEEP : Q16(axis))
 
 /// Pans the camera to a point in whole pixels, or cuts there when pan is 0;
 /// CAMERA_KEEP keeps an axis: `FieldCamera_MoveTo(357, CAMERA_KEEP, 738, 1)`.
@@ -367,7 +367,7 @@ static inline void FieldActor_SetMoveTargetFixed(struct Actor *actor, s32 x,
 /// Sends an actor toward a point in whole pixels:
 /// `FieldActor_SetMoveTarget(star, 308, 32, 164)`.
 #define FieldActor_SetMoveTarget(actor, x, y, z)                               \
-  FieldActor_SetMoveTargetFixed(actor, px(x), px(y), px(z))
+  FieldActor_SetMoveTargetFixed(actor, Q16(x), Q16(y), Q16(z))
 
 /// Sets the colour mode (SpriteColorMode) of a one-sprite actor's layers,
 /// except those drawn hidden.

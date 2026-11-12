@@ -31,7 +31,7 @@ UNUSED static void *Actor_PrepareFixed(s32 x, s32 y, s32 z, s32 type) {
 /// Actor_PrepareFixed at a point in whole pixels:
 /// `Actor_Prepare(464, 0, 290, PIT_MASK)`.
 #define Actor_Prepare(x, y, z, type)                                           \
-  Actor_PrepareFixed(px(x), px(y), px(z), type)
+  Actor_PrepareFixed(Q16(x), Q16(y), Q16(z), type)
 
 /// A still effect in palette 15, at sprite priority 1, drawn under the
 /// actors, at a 16.16 position.
@@ -54,4 +54,4 @@ UNUSED static void *Actor_CreateConfiguredFixed(s32 x, s32 y, s32 z, s32 type) {
 /// Actor_CreateConfiguredFixed at a point in whole pixels:
 /// `Actor_CreateConfigured(128, 0, 420, SPRITE_CRATE)`.
 #define Actor_CreateConfigured(x, y, z, type)                                  \
-  Actor_CreateConfiguredFixed(px(x), px(y), px(z), type)
+  Actor_CreateConfiguredFixed(Q16(x), Q16(y), Q16(z), type)

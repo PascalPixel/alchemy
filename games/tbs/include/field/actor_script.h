@@ -17,20 +17,20 @@
 #define SC_TOP 0          ///< Script start
 #define SC_FOREVER 0xffff ///< An SC_LOOP count that never runs out
 
-#define SC_WAIT(n) 0, (n)                           ///< Wait n frames.
-#define SC_SYNC 1                                   ///< Wait for arrival.
-#define SC_POSITION(x, y, z) 2, px(x), px(y), px(z) ///< Set position.
-#define SC_MOVE(x, y, z) 3, px(x), px(y), px(z)     ///< Move toward the target.
-#define SC_MOVE_BY(x, y, z) 4, px(x), px(y), px(z)  ///< Move by an offset.
-#define SC_FACE_WATCHED 5                           ///< Face the watched actor.
+#define SC_WAIT(n) 0, (n)                              ///< Wait n frames.
+#define SC_SYNC 1                                      ///< Wait for arrival.
+#define SC_POSITION(x, y, z) 2, Q16(x), Q16(y), Q16(z) ///< Set position.
+#define SC_MOVE(x, y, z) 3, Q16(x), Q16(y), Q16(z) ///< Move toward the target.
+#define SC_MOVE_BY(x, y, z) 4, Q16(x), Q16(y), Q16(z) ///< Move by an offset.
+#define SC_FACE_WATCHED 5    ///< Face the watched actor.
 #define SC_MOVE_TO_WATCHED 6 ///< Move to the watched actor.
 /// Move toward the actor's position plus an offset that is never filled in;
 /// the operands are skipped unread.
 #define SC_MOVE_LOCAL(a, b) 7, (a), (b)
 // Wander to random points base to base + range pixels away, within limit
 // pixels of home; SC_WANDER_HOME heads home when outside it.
-#define SC_WANDER(base, range, limit) 8, px(base), px(range), px(limit)
-#define SC_WANDER_HOME(base, range, limit) 9, px(base), px(range), px(limit)
+#define SC_WANDER(base, range, limit) 8, Q16(base), Q16(range), Q16(limit)
+#define SC_WANDER_HOME(base, range, limit) 9, Q16(base), Q16(range), Q16(limit)
 #define SC_APPROACH_WATCHED 10 ///< Follow the watched actor to 16 pixels.
 #define SC_CAMERA 11           ///< Follow the leader.
 /// Jump to label to n - 1 times, so what lies between runs n times; loops

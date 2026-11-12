@@ -156,7 +156,8 @@ struct ActorPlacement {
 /// One row of a scene's actor placements, its spot in plain pixels.
 #define ACTOR_PLACEMENT(sprite, condition, movement, x, y, z, facing,          \
                         talkFacing, flags)                                     \
-  {sprite, condition, movement, px(x), px(y), px(z), facing, talkFacing, flags}
+  {sprite, condition, movement,   Q16(x), Q16(y),                              \
+   Q16(z), facing,    talkFacing, flags}
 
 STATIC_ASSERT(sizeof(struct ActorPlacement) == 24);
 STATIC_ASSERT(offsetof(struct ActorPlacement, talkFacing) == 22);

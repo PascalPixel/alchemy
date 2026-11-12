@@ -96,7 +96,7 @@ static s32 SolSanctumElementalStarRoom_PresentStarFixed(s32 item, s32 x, s32 y,
                                                         s32 z);
 /// SolSanctumElementalStarRoom_PresentStarFixed at a point in whole pixels.
 #define SolSanctumElementalStarRoom_PresentStar(item, x, y, z)                 \
-  SolSanctumElementalStarRoom_PresentStarFixed(item, px(x), px(y), px(z))
+  SolSanctumElementalStarRoom_PresentStarFixed(item, Q16(x), Q16(y), Q16(z))
 static void SolSanctumElementalStarRoom_GiveMythrilBags(void);
 static void SolSanctumElementalStarRoom_AnimateAlexReappearing(void);
 

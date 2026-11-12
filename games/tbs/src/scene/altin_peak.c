@@ -166,7 +166,7 @@ static void AltinPeak_RestoreWestExitRoom(void);
 static void AltinPeak_StartSpittingFixed(s32 x, s32 y, s32 z, s32 facing);
 /// AltinPeak_StartSpittingFixed from a point in whole pixels.
 #define AltinPeak_StartSpitting(x, y, z, facing)                               \
-  AltinPeak_StartSpittingFixed(px(x), px(y), px(z), facing)
+  AltinPeak_StartSpittingFixed(Q16(x), Q16(y), Q16(z), facing)
 static void AltinPeak_SpawnDebris(void);
 static void FieldEffect_UpdateFrostGlint(struct Actor *actor);
 static void AltinPeak_BeastFreezesSecondPuddle(void);

@@ -5,7 +5,6 @@
 #include "../field_internal.h"
 
 enum {
-  ANIM_SHADOW_CACHE_ENTRY = 93,
   ANIM_SHADOW_TILE_BYTES = 16 * 8, ///< 16x8 pixels, 256 colours
   ANIM_OAM_FULL_COLOR = 1 << 13,
   /// Priority 2, the field's for its sprites: in front of a map layer at 3, or
@@ -418,8 +417,8 @@ void Sprite_SetAnimationSpeed(struct Sprite *sprite, s32 step) {
 /// Allocates and zeroes the 64 sprites and 64 sprite animations
 /// (HEAP_SLOT_SPRITES and HEAP_SLOT_SPRITE_ANIMATIONS, from EWRAM
 /// first in ACTOR_SYSTEM_WORLD_MAP and IWRAM first otherwise), loads the basic
-/// sprite palettes, loads the shadow tiles into VRAM cache entry 93 and puts
-/// the sprite tile uploader in RAM. Called by ActorSystem_Initialize.
+/// sprite palettes, loads the shadow tiles into VRAM_CACHE_ENTRY_ACTOR_SHADOW
+/// and puts the sprite tile uploader in RAM. Called by ActorSystem_Initialize.
 /// Battle_Run (ACTOR_SYSTEM_BATTLE) takes both slots from EWRAM, at
 /// the same sizes, before it starts the actor system, so in battle this gets
 /// those blocks back.
@@ -450,7 +449,7 @@ void ActorSystem_Configure(s32 mode) {
   Dma_Fill32Cell(zero, 0, sprites, ANIM_OBJECT_COUNT * sizeof(struct Sprite));
   Dma_Fill32Cell(zero, 0, layers,
                  ANIM_OBJECT_COUNT * sizeof(struct SpriteAnimation));
-  VramCache_Load(ANIM_SHADOW_CACHE_ENTRY, ANIM_SHADOW_TILE_BYTES,
+  VramCache_Load(VRAM_CACHE_ENTRY_ACTOR_SHADOW, ANIM_SHADOW_TILE_BYTES,
                  gActor_ShadowTiles);
   RamCode_LoadSlot(HEAP_SLOT_PICTURE_UPLOADER, Tile_CopyStrided,
                    Tile_CopyStridedCodeSize);
@@ -618,8 +617,9 @@ struct Sprite *Sprite_Create(s32 id) {
   attributes[2] = tile | ANIM_OAM_FIELD_PRIORITY;
   attributes[3] = 0;
   attributes[4] = ANIM_OAM_FULL_COLOR | ANIM_OAM_WIDE;
-  attributes[5] = (gVramCacheEntries[ANIM_SHADOW_CACHE_ENTRY].offset >> 5) |
-                  ANIM_OAM_FIELD_PRIORITY;
+  attributes[5] =
+      (gVramCacheEntries[VRAM_CACHE_ENTRY_ACTOR_SHADOW].offset >> 5) |
+      ANIM_OAM_FIELD_PRIORITY;
   memcpy(freeSprite, attributes, sizeof(attributes));
 #else
   attribute = (u32 *)freeSprite;
@@ -628,7 +628,7 @@ struct Sprite *Sprite_Create(s32 id) {
   *attribute++ = tile | ANIM_OAM_FIELD_PRIORITY;
   *attribute++ = 0;
   *attribute++ = ANIM_OAM_FULL_COLOR | ANIM_OAM_WIDE;
-  *attribute = (gVramCacheEntries[ANIM_SHADOW_CACHE_ENTRY].offset >> 5) |
+  *attribute = (gVramCacheEntries[VRAM_CACHE_ENTRY_ACTOR_SHADOW].offset >> 5) |
                ANIM_OAM_FIELD_PRIORITY;
 #endif
   if (Sprite_AddAnimation(sprite, id) == -1) {

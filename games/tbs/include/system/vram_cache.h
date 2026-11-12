@@ -22,6 +22,9 @@ enum VramCacheLimits {
 
 /// The cache entries kept for one use each, loaded by number.
 enum VramCacheFixedEntry {
+  /// The actors' shared shadow (gActor_ShadowTiles), each sprite animation's
+  /// part 1 (ActorSystem_Configure).
+  VRAM_CACHE_ENTRY_ACTOR_SHADOW = 93,
   /// The fade overlay's solid tiles (FieldEffect_StartFadeOverlay).
   VRAM_CACHE_ENTRY_FADE_OVERLAY = 94,
   /// The window sprites' glyph tiles (WindowWork.glyphTiles).

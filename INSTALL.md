@@ -55,12 +55,7 @@ CI checks formatting with clang-format 21, available from [LLVM's packages](http
 
 ## Reconstruction tools (optional)
 
-The tools for matching, finding C that compiles to a function's original instructions, and for measuring how much is rebuilt are [Alchemy Devtools](https://github.com/PascalPixel/alchemy-devtools). They need Rust, and the first `make devtools` clones them into `alchemy-devtools/`:
-
-```sh
-make devtools
-alchemy-devtools/target/release/alchemy-devtools --help
-```
+For decompilation work, matching and measuring the code against the original, use [Alchemy Devtools](https://github.com/PascalPixel/alchemy-devtools): clone it into this checkout's `alchemy-devtools/` folder and build it with Rust's `cargo build --release`. Its README and AGENTS.md say how to proceed. Building or changing the games doesn't need it.
 
 The documentation site, [alchemy.pascalpixel.com](https://alchemy.pascalpixel.com/), is built separately in [alchemy-docs](https://github.com/PascalPixel/alchemy-docs); building the games needs neither Doxygen nor Node.
 
@@ -78,4 +73,4 @@ Run `make tla-en` (or `tla-ja`, `tla-de`, `tla-es`, `tla-fr` or `tla-it`), and `
 
 ## Upgrading an old checkout
 
-Alchemy Devtools used to be a submodule. In an older checkout, `git pull` leaves `alchemy-devtools/` where it is, and `make devtools` keeps using it; then run `git submodule update --init --recursive` and `make`.
+Alchemy Devtools used to be a submodule. In an older checkout, `git pull` leaves `alchemy-devtools/` where it is, an ignored folder; then run `git submodule update --init --recursive` and `make`.

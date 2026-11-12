@@ -16,8 +16,8 @@ TBS      := $(filter tbs-%,$(EDITIONS))
 TLA      := $(filter tla-%,$(EDITIONS))
 
 # make SHIFT=n builds the shift test (below), which never matches rom.sha1.
-ifneq ($(and $(SHIFT),$(filter compare% land progress,$(MAKECMDGOALS))),)
-$(error SHIFT builds the shift test, which never matches rom.sha1: compare, land and progress take no SHIFT)
+ifneq ($(and $(SHIFT),$(filter compare%,$(MAKECMDGOALS))),)
+$(error SHIFT builds the shift test, which never matches rom.sha1: compare takes no SHIFT)
 endif
 
 CPUS := $(shell sysctl -n hw.ncpu 2>/dev/null || nproc 2>/dev/null || echo 4)
@@ -43,10 +43,8 @@ help:
 	  'make compare-tbs        the six ☀️ editions, which need no ROM' \
 	  'make compare-editions   all twelve editions, which need no ROM' \
 	  'make modern             all twelve editions'\'' C through a current GCC (MODERN_CC)' \
-	  'make test               test the C build tools' \
-	  'make devtools           build the optional reconstruction tools (requires Rust)' \
-	  'make progress           DONE code and data in each edition built' \
-	  'make land               on main before committing: all twelve, the tests, the measurement'
+	  'make test               test the C build tools, the format and the fake-match devices' \
+	  'make SHIFT=4 tbs-en     the shift test: everything after the header moves 4 bytes'
 
 # Each edition builds in its own make, so its variables below are set once;
 # the tools and compilers are built first, once. GNU Make 3.81, macOS's make,
@@ -82,7 +80,6 @@ clean:
 # --- Tools ---------------------------------------------------------------
 
 TOOLS    := tools/out
-DEVTOOLS := alchemy-devtools/target/release/alchemy-devtools
 COMPILER := tools/out/compilers
 
 XGCC   := $(COMPILER)/xgcc -B$(COMPILER)/
@@ -219,8 +216,8 @@ OVERLAY_SCRIPT = -T $(BUILD)/ld/overlay_$*.ld
 # A script is rewritten only when its text changes, so an edit that leaves an
 # image's script as it was relinks nothing; its stamp records when it last ran,
 # and a script that has gone missing runs its stamp's recipe again. Two makes of
-# one edition may run a recipe at once (land builds the ROM and the modern
-# objects together), so each writes a new file of its own.
+# one edition may run a recipe at once (make compare-editions modern builds the
+# ROM and the modern objects together), so each writes a new file of its own.
 if_missing = $(if $(wildcard $(1)),,FORCE)
 $(BUILD)/ld/main.ld: $(BUILD)/ld/main.stamp ;
 $(BUILD)/ld/main.stamp: games/$(GAME)/ld_script.ld $(LD_HEADERS) $(call if_missing,$(BUILD)/ld/main.ld)
@@ -475,13 +472,14 @@ tools:
 test: tools format-check device-check
 	$(MAKE) -f tools/Makefile test
 
-# ☀️ takes no register pins or signature devices (AGENTS.md S2): only the
-# proven CAMELOT_ASM helpers, Dma_Set and MulQ16, fix a variable to a register.
+# ☀️ takes no register pins or signature devices (S2, in alchemy-devtools'
+# AGENTS.md): only the proven CAMELOT_ASM helpers, Dma_Set and MulQ16, fix a
+# variable to a register.
 .PHONY: device-check
 device-check:
 	@if git grep -n -E 'FAKEMATCH\((pin|signature)\)|register[^;]*(__asm__|asm) *\(' -- 'games/tbs/*.c' 'games/tbs/*.h' \
 	    ':!games/tbs/include/system/dma.h' ':!games/tbs/include/system/iwram_call.h'; then \
-	  echo "device-check: The Broken Seal takes no pin or signature devices (AGENTS.md S2)" >&2; exit 1; fi
+	  echo "device-check: The Broken Seal takes no pin or signature devices (S2, in alchemy-devtools/AGENTS.md)" >&2; exit 1; fi
 
 # ☀️'s C is as clang-format writes it (AGENTS.md S3), and so is the C ⚓️ took
 # from it: the headers in include's folders, the sound library, the save code
@@ -499,29 +497,4 @@ format-check:
 	@if command -v $(CLANG_FORMAT) >/dev/null; then \
 	  $(CLANG_FORMAT) --dry-run -Werror $(FORMATTED); \
 	else echo "format-check: $(CLANG_FORMAT) not found, skipped"; fi
-
-# Reconstruction work is optional. Normal builds use only the C tools above.
-CARGO ?= cargo
-.PHONY: devtools test-devtools progress land
-# Alchemy Devtools is optional and lives in its own repository: the first
-# make devtools clones it into alchemy-devtools/, which git ignores.
-devtools:
-	@test -f alchemy-devtools/Cargo.toml || git clone https://github.com/PascalPixel/alchemy-devtools
-	$(CARGO) build --locked --release --manifest-path alchemy-devtools/Cargo.toml -p alchemy-devtools
-
-# The render feature's tests too, where libmgba's headers are (MGBA_PREFIX,
-# else Homebrew's or the system's prefix): they play the built ROM.
-MGBA_HEADER := $(firstword $(wildcard $(addsuffix /include/mgba/core/core.h,$(MGBA_PREFIX) /opt/homebrew /usr/local /usr)))
-test-devtools: devtools
-	ALCHEMY_ROOT=$(CURDIR) $(CARGO) test --locked --release --workspace --manifest-path alchemy-devtools/Cargo.toml
-	$(if $(MGBA_HEADER),ALCHEMY_ROOT=$(CURDIR) $(CARGO) test --locked --release --workspace --features render --manifest-path alchemy-devtools/Cargo.toml,@echo "render tests skipped: no libmgba headers (MGBA_PREFIX)")
-
-progress: devtools
-	$(DEVTOOLS) progress
-	$(DEVTOOLS) progress --humanity
-
-# Before landing on main: all twelve editions, the current-GCC build, both
-# test suites, then the measurement the pre-push hook sends for CI (C3).
-land: compare-editions modern test test-devtools
-	$(DEVTOOLS) progress
 endif

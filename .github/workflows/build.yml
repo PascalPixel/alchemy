@@ -1,10 +1,8 @@
 name: CI
 
 # The public proof: all twelve editions, ☀️'s six and ⚓️'s six, rebuild from a
-# clean clone with no ROM, match rom.sha1 and are measured from the maps just
-# linked. The tool tests, format check and current-GCC build run locally in
-# `make land`, whose receipt is what publication accepts; CI confirms a push
-# without one from its ☀️ measurement (.github/publication.md).
+# clean clone with no ROM and match rom.sha1. On main, the docs site is then
+# rebuilt (.github/publication.md).
 
 on:
   pull_request:
@@ -31,7 +29,6 @@ jobs:
       CCACHE_BASEDIR: ${{ github.workspace }}
       CCACHE_COMPILERCHECK: content
       CCACHE_MAXSIZE: 1G
-      RUSTUP_TOOLCHAIN: 1.98.1
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
@@ -70,146 +67,29 @@ jobs:
           restore-keys: ccache-${{ steps.pin.outputs.compiler }}-
 
       - name: Build the compilers if the cache missed (make bootstrap)
-        run: make bootstrap CARGO=false
+        run: make bootstrap
 
       - name: Build the six ☀️ editions and check each against rom.sha1
         run: |
-          make -j"$(nproc)" compare-tbs CARGO=false \
+          make -j"$(nproc)" compare-tbs \
             XGCC="ccache $PWD/tools/out/compilers/xgcc -B$PWD/tools/out/compilers/"
           ccache --show-stats
 
       - name: Build the six ⚓️ editions and check each against rom.sha1
         run: |
-          make -j"$(nproc)" compare-tla CARGO=false \
+          make -j"$(nproc)" compare-tla \
             XGCC="ccache $PWD/tools/out/compilers/xgcc -B$PWD/tools/out/compilers/"
           ccache --show-stats
 
-      - name: Fetch the development tools
-        id: devtools
-        run: |
-          git clone --depth 1 https://github.com/PascalPixel/alchemy-devtools
-          echo "pin=$(git -C alchemy-devtools rev-parse HEAD)" >> "$GITHUB_OUTPUT"
-
-      - name: Restore the development tools built from that commit
-        uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
-        with:
-          path: |
-            ~/.cargo/registry
-            alchemy-devtools/target
-          key: devtools-${{ runner.os }}-${{ env.RUSTUP_TOOLCHAIN }}-${{ steps.devtools.outputs.pin }}
-
-      - name: Build the development tools if the cache missed
-        run: |
-          rustup toolchain install "$RUSTUP_TOOLCHAIN" --profile minimal
-          make devtools
-
-      - name: Measure the six ☀️ editions just built (calcrom over their maps)
-        run: alchemy-devtools/target/release/alchemy-devtools progress --game tbs "$RUNNER_TEMP/tbs.tsv"
-
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
-        with:
-          name: tbs-measurement
-          path: ${{ runner.temp }}/tbs.tsv
-          if-no-files-found: error
-          retention-days: 7
-
-      # Measured and kept beside the build for anyone to read; publication
-      # still takes ⚓️'s figures from a receipt (.github/publication.md).
-      - name: Measure the six ⚓️ editions just built (calcrom over their maps)
-        run: alchemy-devtools/target/release/alchemy-devtools progress --game tla "$RUNNER_TEMP/tla.tsv"
-
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
-        with:
-          name: tla-measurement
-          path: ${{ runner.temp }}/tla.tsv
-          if-no-files-found: error
-          retention-days: 7
-
-  publish:
-    name: Accept the measurement and publish the site
+  site:
+    name: Start the docs site build
     needs: build
     if: github.repository == 'PascalPixel/alchemy' && github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
     runs-on: ubuntu-24.04
-    timeout-minutes: 15
-    permissions:
-      contents: write
+    timeout-minutes: 5
     env:
-      RUSTUP_TOOLCHAIN: 1.98.1
       GH_TOKEN: ${{ github.token }}
-      GH_REPO: ${{ github.repository }}
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
-        with:
-          # The history is read, never the old blobs.
-          fetch-depth: 0
-          filter: blob:none
-          persist-credentials: false
-
-      - name: Fetch the development tools
-        id: devtools
-        run: |
-          git clone --depth 1 https://github.com/PascalPixel/alchemy-devtools
-          echo "pin=$(git -C alchemy-devtools rev-parse HEAD)" >> "$GITHUB_OUTPUT"
-
-      - name: Restore the development tools built from that commit
-        uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
-        with:
-          path: |
-            ~/.cargo/registry
-            alchemy-devtools/target
-          key: devtools-${{ runner.os }}-${{ env.RUSTUP_TOOLCHAIN }}-${{ steps.devtools.outputs.pin }}
-
-      - name: Build the development tools if the cache missed
-        run: |
-          rustup toolchain install "$RUSTUP_TOOLCHAIN" --profile minimal
-          make devtools
-
-      # No archived file ever changes, so each run starts from the copy the
-      # last one fetched.
-      - name: Restore the report archive the last run fetched
-        uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
-        with:
-          path: ${{ runner.temp }}/measured
-          key: report-archive-${{ github.run_id }}-${{ github.run_attempt }}
-          restore-keys: report-archive-
-
-      - name: Bring the report archive up to date
-        run: alchemy-devtools/target/release/alchemy-devtools progress --fetch "$RUNNER_TEMP/measured"
-
-      - name: Receive the build's ☀️ measurement
-        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
-        with:
-          name: tbs-measurement
-          path: ${{ runner.temp }}/ci
-
-      # With a receipt: its ☀️ row must equal the build's. Without one: the
-      # build's ☀️ figures, and ⚓️'s from the nearest receipt, carried only
-      # where everything ⚓️'s measurement reads is unchanged.
-      - name: Verify this revision and reconstruct its progress history
-        run: alchemy-devtools/target/release/alchemy-devtools progress --publish "$RUNNER_TEMP/measured" "$GITHUB_SHA" "$RUNNER_TEMP/publication" "$RUNNER_TEMP/ci/tbs.tsv"
-
-      # bash, which Actions runs with -eo pipefail, so a file tar cannot find
-      # fails the step instead of archiving what is left.
-      - name: Archive the public figures and admit the successful measurement
-        shell: bash
-        run: |
-          tar --sort=name --mtime='UTC 1970-01-01' --owner=0 --group=0 --numeric-owner \
-            -C "$RUNNER_TEMP/publication" -cf - PROGRESS_CHART.png history.tsv source.tsv \
-            | gzip -n > "$RUNNER_TEMP/publication/${GITHUB_SHA}.site.tar.gz"
-          for name in "${GITHUB_SHA}.site.tar.gz" "${GITHUB_SHA}.accepted.tsv"; do
-            alchemy-devtools/target/release/alchemy-devtools progress --archive "$RUNNER_TEMP/publication/$name"
-          done
-
-      # decomp.dev reads all twelve editions, which only a receipt holds:
-      # a commit without one hands it no report.
-      - name: Hand decomp.dev all twelve editions
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
-        with:
-          name: combined_report
-          path: ${{ runner.temp }}/publication/report.pb
-          if-no-files-found: ignore
-          retention-days: 90
-
       - name: Start the site build on Vercel, unless a newer commit is on main
         env:
           HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK }}

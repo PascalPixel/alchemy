@@ -44,8 +44,5 @@ To build the games yourself, see [Building Alchemy](../INSTALL.md).
 
 ## How far along it is
 
-The Broken Seal is fully rebuilt in all six languages it was released in:
-Japanese, English, German, Spanish, French and Italian. The Lost Age is
-nearly there.
-
-<img src="https://alchemy.pascalpixel.com/PROGRESS_CHART.png" width="838" alt="How much of each game's code and data is rebuilt, day by day since 16 July 2026" />
+Both games are fully rebuilt in all six languages they were released in:
+Japanese, English, German, Spanish, French and Italian.

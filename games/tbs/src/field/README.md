@@ -373,22 +373,22 @@ one villager can stand in one spot early in the game and wander later.
 These are the orders the scenes use most.
 [actor_script.h](../../include/field/actor_script.h) has them all.
 
-| Order                     | What the actor does                                              |
-| ------------------------- | ---------------------------------------------------------------- |
-| `SC_WAIT(n)`              | nothing, for n frames                                            |
-| `SC_MOVE(x, y, z)`        | heads for a point on the map                                     |
-| `SC_MOVE_BY(x, y, z)`     | heads for a point that far from where it stands                  |
-| `SC_SYNC`                 | waits until it arrives                                           |
-| `SC_POSITION(x, y, z)`    | appears at a point at once, standing still                       |
-| `SC_ANIMATION(n)`         | plays [sprite animation](../../glossary.md#sprite-animation) n   |
-| `SC_SPEED(s)`             | sets its top speed, in pixels a frame                            |
-| `SC_SET(what, value)`     | changes one thing about itself, such as its size                 |
-| `SC_FLAG_CHECK(f)`        | tests whether story moment f has happened                        |
-| `SC_LOOP(n, to)`          | goes back to a label, so the orders between run n times          |
-| `SC_WANDER_HOME(a, b, c)` | walks a short way in a random direction, staying near its home   |
-| `SC_CALL(code)`           | runs a piece of the scene's own code every frame until it is done |
-| `SC_END`                  | stands still from now on                                         |
-| `SC_RELEASE`              | disappears, and frees its place among the 64                     |
+| Order                                | What the actor does                                                                              |
+| ------------------------------------ | ------------------------------------------------------------------------------------------------ |
+| `SC_WAIT(n)`                         | nothing, for n frames                                                                            |
+| `SC_MOVE(x, y, z)`                   | heads for a point on the map                                                                     |
+| `SC_MOVE_BY(x, y, z)`                | heads for a point that far from where it stands                                                  |
+| `SC_SYNC`                            | waits until it arrives                                                                           |
+| `SC_POSITION(x, y, z)`               | appears at a point at once, standing still                                                       |
+| `SC_ANIMATION(n)`                    | plays [sprite animation](../../glossary.md#sprite-animation) n                                   |
+| `SC_SPEED(s)`                        | sets its top speed, in pixels a frame                                                            |
+| `SC_SET(what, value)`                | changes one thing about itself, such as its size                                                 |
+| `SC_FLAG_CHECK(f)`                   | tests whether story moment f has happened                                                        |
+| `SC_LOOP(n, to)`                     | goes back to a label, so the orders between run n times                                          |
+| `SC_WANDER_HOME(base, range, limit)` | walks base to base + range pixels in a random direction, staying within limit pixels of its home |
+| `SC_CALL(code)`                      | runs a piece of the scene's own code every frame until it is done                                |
+| `SC_END`                             | stands still from now on                                                                         |
+| `SC_RELEASE`                         | disappears, and frees its place among the 64                                                     |
 
 ### How an actor moves
 

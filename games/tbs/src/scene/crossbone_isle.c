@@ -517,8 +517,6 @@ static void CrossboneIsle_RestoreSunkPillar(void) {
 /// flag per room from FLAG_CROSSBONE_ISLE_FIRST_PASSAGE_OPENED).
 static void CrossboneIsle_MovePillar(void) {
   struct Actor *pillar;
-  s16 *mapNumber;
-  struct MainRoutineWork *state;
   s32 column;
 
   pillar = Actor_Get(ACTOR_SINKING_PILLAR);
@@ -528,13 +526,9 @@ static void CrossboneIsle_MovePillar(void) {
   }
 
 #if TBS_PATCH_1
-  /* FAKEMATCH(temporary): state holds &gMainRoutineWork and mapNumber
-   * &state->next; as gMainRoutineWork.next in the call, 13 of 78 instructions
-   * differ in tbs-en. */
-  state = &gMainRoutineWork;
-  mapNumber = &state->next;
-  if (GameFlag_Get(*mapNumber + (FLAG_CROSSBONE_ISLE_FIRST_PASSAGE_OPENED -
-                                 (s32)&SceneId_CrossboneIsleFirstFloor)) != 0) {
+  if (GameFlag_Get(gMainRoutineWork.next +
+                   (FLAG_CROSSBONE_ISLE_FIRST_PASSAGE_OPENED -
+                    (s32)&SceneId_CrossboneIsleFirstFloor)) != 0) {
     return;
   }
 #endif
@@ -556,12 +550,9 @@ static void CrossboneIsle_MovePillar(void) {
   // Replace the blocked cell and remember that the room's pillar is sunk.
   MapGrid_CopyCellAttributes(42, 10, 1, 1, column, 10);
 
-#if !TBS_PATCH_1
-  state = &gMainRoutineWork;
-  mapNumber = &state->next;
-#endif
-  GameFlag_Set(*mapNumber + (FLAG_CROSSBONE_ISLE_FIRST_PASSAGE_OPENED -
-                             (s32)&SceneId_CrossboneIsleFirstFloor));
+  GameFlag_Set(gMainRoutineWork.next +
+               (FLAG_CROSSBONE_ISLE_FIRST_PASSAGE_OPENED -
+                (s32)&SceneId_CrossboneIsleFirstFloor));
 }
 
 /// Walking into a corridor room's pillar in Crossbone Isle Cave (step trigger

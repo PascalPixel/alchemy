@@ -4,7 +4,6 @@
 /// sol_sanctum_elemental_star_ring_setup.h reads them.
 
 #include "types.h"
-#include "fixed_math.h"
 
 // clang-format off
 u8 gSolSanctum_RingDrift[][3] = {
@@ -46,13 +45,13 @@ s8 gSolSanctum_RingDirection[][3] = {
     { -1, 0, -1 },
 };
 
-s32 gSolSanctumRing_MaxScales[] = {
-    3 * Q16_ONE / 5, 4 * Q16_ONE / 5, 7 * Q16_ONE / 10, 3 * Q16_ONE / 5, 4 * Q16_ONE / 5,
-    3 * Q16_ONE / 5, 7 * Q16_ONE / 10, 3 * Q16_ONE / 5, 3 * Q16_ONE / 5, 7 * Q16_ONE / 10,
+s32 gSolSanctum_RingMaxScales[] = {
+    0x9999, 0xcccc, 0xb333, 0x9999, 0xcccc,
+    0x9999, 0xb333, 0x9999, 0x9999, 0xb333,
 };
 
-s32 gSolSanctumRing_ScaleSteps[] = {
-    10 * Q16_ONE / 1000, 7 * Q16_ONE / 1000, 10 * Q16_ONE / 1000, 7 * Q16_ONE / 1000, 10 * Q16_ONE / 1000,
-    7 * Q16_ONE / 1000, 10 * Q16_ONE / 1000, 10 * Q16_ONE / 1000, 8 * Q16_ONE / 1000, 10 * Q16_ONE / 1000,
+s32 gSolSanctum_RingScaleSteps[] = {
+    0x28f, 0x1ca, 0x28f, 0x1ca, 0x28f,
+    0x1ca, 0x28f, 0x28f, 0x20c, 0x28f,
 };
 // clang-format on

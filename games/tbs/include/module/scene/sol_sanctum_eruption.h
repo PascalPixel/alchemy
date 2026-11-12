@@ -21,7 +21,7 @@ extern s32 gEruption_EmberScript[];
 extern u8 gSolSanctum_RingDrift[][3];
 extern u8 gSolSanctum_RingSwing[][3];
 extern s8 gSolSanctum_RingDirection[][3];
-extern s32 gSolSanctumRing_MaxScales[];
-extern s32 gSolSanctumRing_ScaleSteps[];
+extern s32 gSolSanctum_RingMaxScales[];
+extern s32 gSolSanctum_RingScaleSteps[];
 
 #endif

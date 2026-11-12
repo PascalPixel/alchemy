@@ -16,8 +16,8 @@
 
 // Sol Sanctum's Elemental Star room and its eruption: the ten lights that float
 // in the room, actors in a row from the first the map passes, each
-// pulsing and drifting on its own path from the tables gSolSanctumRing_* and
-// gSolSanctum_Ring*, by its index.
+// pulsing and drifting on its own path from the tables gSolSanctum_Ring*, by
+// its index.
 
 enum { SOL_SANCTUM_RING_MAX = 10 };
 
@@ -91,10 +91,10 @@ static void SolSanctum_UpdateRing(void) {
       timer = 3;
       if (hold == 0) {
         scale += step;
-        if (scale >= gSolSanctumRing_MaxScales[i]) {
-          step = -gSolSanctumRing_ScaleSteps[i];
+        if (scale >= gSolSanctum_RingMaxScales[i]) {
+          step = -gSolSanctum_RingScaleSteps[i];
         } else if (scale <= Q16_ONE / 10) {
-          step = gSolSanctumRing_ScaleSteps[i];
+          step = gSolSanctum_RingScaleSteps[i];
           scale = Q16_ONE / 10;
           hold = 24;
           x = actor->x.fixed;
@@ -211,8 +211,8 @@ void SolSanctum_StartFloatingLights(s32 first, u32 count) {
       }
       light->motionFlags = cleared;
       Actor_SetBlendMode(Actor_GetById(first), ACTOR_BLEND_TRANSLUCENT);
-      entry->scale = gSolSanctumRing_MaxScales[i];
-      entry->scaleStep = -gSolSanctumRing_ScaleSteps[i];
+      entry->scale = gSolSanctum_RingMaxScales[i];
+      entry->scaleStep = -gSolSanctum_RingScaleSteps[i];
       entry->timer = 3;
       i++;
       entry++;

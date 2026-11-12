@@ -1,11 +1,5 @@
 # Building Alchemy
 
-Want to build Golden Sun yourself? Three steps, and you have a ROM you made from source.
-
-Alchemy is a [matching decompilation](games/tbs/glossary.md#matching-decompilation) of Golden Sun: The Broken Seal (`tbs`) and its sequel, Golden Sun: The Lost Age (`tla`): it rebuilds both, byte for byte, from the source in this repository. [README.md](README.md) says more about the project.
-
-Every byte of The Broken Seal comes from source, its pictures, music and text included. So it builds on Linux, macOS and Windows with nothing but this repository. The Lost Age builds the same way, from this repository alone, with no cartridge dump.
-
 ## 1. Install the tools
 
 **Linux** (Debian or Ubuntu):

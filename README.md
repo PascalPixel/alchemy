@@ -2,15 +2,11 @@
 
 Alchemy is a reconstruction of the source for the Game Boy Advance games ☀️ **[Golden Sun: The Broken Seal](https://alchemy.pascalpixel.com/tbs)** and ⚓️ **Golden Sun: The Lost Age**. It is a [matching decompilation](games/tbs/glossary.md#matching-decompilation): readable code, images, music and text that build the same ROMs as the originals, byte for byte.
 
-## Documentation
+## Docs
 
 <a href="https://alchemy.pascalpixel.com"><img src="https://alchemy.pascalpixel.com/guides/docs/interface.png" width="838" alt="Alchemy's documentation on the interface: Isaac talks to Garet's sister in Vale above a diagram of what each button opens, beside the guide's sidebar" /></a>
 
 [alchemy.pascalpixel.com](https://alchemy.pascalpixel.com) explains how The Broken Seal works, written from its rebuilt source, with recordings from the game itself.
-
-## Source
-
-Each game has its own folder of code, pictures, music and text: [games/tbs](games/tbs) for The Broken Seal and [games/tla](games/tla) for The Lost Age. Both games are fully rebuilt from this repository alone, with no cartridge dump, each in Japanese, English, German, French, Spanish, and Italian.
 
 ## Build
 

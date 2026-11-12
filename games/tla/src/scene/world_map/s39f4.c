@@ -5,15 +5,14 @@
 #include "field_sprite.h"
 #include "macros.h"
 #include "event_inline.h"
+#include "actor_view.h"
 
 extern s32 gData_02004f90[];
 extern u32 gData_02004f9c[];
 
 void Func_02004b20(struct Actor *object, const s32 *script);
-void Animation_ApplyChildArgument(void *sprite, s32 argument);
 
-static __inline__ struct Actor *Func_02004b30_(s32 kind, s32 x, s32 y,
-                                                       s32 z) {
+static __inline__ struct Actor *Func_02004b30_(s32 kind, s32 x, s32 y, s32 z) {
   /* FAKEMATCH(wrapper): forwarding through the inline builds the kind after the
    * position loads, as in the native; as a direct call, 4 of 77 instructions
    * of Func_020039f4 differ in tla-en. */

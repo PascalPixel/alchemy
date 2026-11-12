@@ -16,6 +16,6 @@ void Func_02000650(void);
 
 void Func_02000438(void);
 
-extern u8 MsgFieldAreYouLookingForSomeone;
+extern u8 MsgFieldAreYouLookingForSomeone[];
 
 #endif

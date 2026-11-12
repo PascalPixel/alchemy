@@ -1,5 +1,6 @@
 /// @file
-/// Scene code of overlay 0x650, in ROM order, from s16d8's offset up to the next object the overlay links.
+/// Scene code of overlay 0x650, in ROM order, from s16d8's offset up to the
+/// next object the overlay links, and the overlay's data.
 
 #include "types.h"
 #include "actor.h"
@@ -18,8 +19,8 @@ void Import_ActorPlaceAtActor();
 void DriftScene_SpawnObject();
 void Func_02003180();
 
-extern const u8 gData_02003330[];
-extern const u8 gData_0200336c[];
+extern u32 gData_02003330[];
+extern u32 gData_0200336c[];
 
 /// Idejima: the scene of actors 5, 8 and 10 that opens with
 /// MsgIdejimaIsThisThePlace, ending in a screen transition and countdown 11.
@@ -38,8 +39,7 @@ void Func_020016d8(void) {
   Func_02003180();
   Actor_SetPosition(gMainRoutineWork.currentOwner, 0, 0);
   east = 0x4000;
-  Actor_SetPositionAndFacing(5, PIXELS(184), PIXELS(168),
-                                                 east);
+  Actor_SetPositionAndFacing(5, PIXELS(184), PIXELS(168), east);
   {
     struct Actor *ship = Actor_Get(8);
 
@@ -222,11 +222,11 @@ void Func_020016d8(void) {
   FieldEvent_SetExitRequest(11);
 }
 
-extern const u8 gData_020033a8[];
-extern const u8 gData_02003400[];
-extern const u8 gData_0200346c[];
-extern const u8 gData_020034e4[];
-extern const u8 gData_0200350c[];
+extern u32 gData_020033a8[];
+extern u32 gData_02003400[];
+extern u32 gData_0200346c[];
+extern u32 gData_020034e4[];
+extern u32 gData_0200350c[];
 
 void Func_0200161c(void);
 void DriftScene_Prepare(void);
@@ -242,8 +242,7 @@ void Func_02001ee0(void) {
   Actor_SetPosition(6, PIXELS(444), PIXELS(212));
   Actor_SetAnimation(6, 19);
   Actor_SetSingleChildFlags(Actor_Get(6), 0);
-  Actor_SetPosition(gMainRoutineWork.currentOwner,
-                                         PIXELS(432), PIXELS(234));
+  Actor_SetPosition(gMainRoutineWork.currentOwner, PIXELS(432), PIXELS(234));
   Actor_Get(gMainRoutineWork.currentOwner)->scaleX = 0xffff0000;
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 41);
   Actor_SetSingleChildFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);
@@ -336,10 +335,10 @@ void Func_02001ee0(void) {
   FieldEvent_SetExitRequest(12);
 }
 
-extern const u8 gData_02003534[];
-extern const u8 gData_02003578[];
-extern const u8 gData_020035bc[];
-extern const u8 gData_02003600[];
+extern u32 gData_02003534[];
+extern u32 gData_02003578[];
+extern u32 gData_020035bc[];
+extern u32 gData_02003600[];
 
 void Func_020032e0(void);
 
@@ -361,8 +360,8 @@ void Func_02002304(void) {
   Actor_SetAnimation(6, 19);
   Actor_SetSingleChildFlags(Actor_Get(6), 0);
   a8000 = 0x8000;
-  Actor_SetPositionAndFacing(
-      gMainRoutineWork.currentOwner, PIXELS(312), PIXELS(230), a8000);
+  Actor_SetPositionAndFacing(gMainRoutineWork.currentOwner, PIXELS(312),
+                             PIXELS(230), a8000);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 41);
   Actor_SetSingleChildFlags(Actor_Get(gMainRoutineWork.currentOwner), 0);
   System_Wait(1);
@@ -636,7 +635,8 @@ void Func_02002c64(void) {
   FieldEvent_SetMessageId((s32)MsgIdejimaCheckForInjuries);
   Event_OpenMessage(11, 0);
   System_Wait(1);
-  answer = FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0);
+  answer =
+      FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0);
   leader = gMainRoutineWork.currentOwner;
   if (answer == 0) {
     Actor_WaitForAnimationChange(leader);
@@ -796,3 +796,225 @@ void Func_02002fd4(void) {
   if (!Event_GetFlag(0x844))
     Func_02002c64();
 }
+
+#include "objcmd.h"
+
+void Func_020000f0(void);
+void Func_020002b4(void);
+void Func_0200049c(void);
+void Func_02000640(void);
+void Func_020006a8(void);
+void Idejima_RunAlexDeparture(void);
+
+// clang-format off
+u32 gData_02003330[] = {
+    SC_ARG(2),
+    SC_MOVE(PIXELS(216), 0, PIXELS(172)),
+    SC_SYNC,
+    SC_MOVE(PIXELS(264), 0, PIXELS(164)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_END,
+};
+
+u32 gData_0200336c[] = {
+    SC_ARG(2),
+    SC_MOVE(PIXELS(216), 0, PIXELS(182)),
+    SC_SYNC,
+    SC_MOVE(PIXELS(242), 0, PIXELS(164)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_END,
+};
+
+u32 gData_020033a8[] = {
+    SC_ARG(2),
+    SC_MOVE(PIXELS(224), 0, PIXELS(172)),
+    SC_SYNC,
+    SC_MOVE(PIXELS(392), 0, PIXELS(172)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_WAIT(1),
+    SC_SET(SW_FACING, FACING_WEST),
+    SC_WAIT(1),
+    SC_END,
+};
+
+u32 gData_02003400[] = {
+    SC_ARG(2),
+    SC_MOVE(PIXELS(224), 0, PIXELS(172)),
+    SC_SYNC,
+    SC_MOVE(PIXELS(304), 0, PIXELS(172)),
+    SC_SYNC,
+    SC_MOVE(PIXELS(336), 0, PIXELS(192)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_WAIT(1),
+    SC_SET(SW_FACING, FACING_EAST),
+    SC_WAIT(1),
+    SC_END,
+};
+
+u32 gData_0200346c[] = {
+    39, 2, 4, 0xd80000, 0, 0xac0000,
+    1, 4, 0x1280000, 0, 0xac0000, 1,
+    4, 0x13c0000, 0, 0xd00000, 1, 39,
+    1, 0, 1, 22, 3, 0,
+    0, 1, 22, 35, 1, 17,
+};
+
+u32 gData_020034e4[] = {
+    SC_ARG(2),
+    SC_MOVE(PIXELS(420), 0, PIXELS(200)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_END,
+};
+
+u32 gData_0200350c[] = {
+    SC_ARG(2),
+    SC_MOVE(PIXELS(408), 0, PIXELS(232)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_END,
+};
+
+u32 gData_02003534[] = {
+    SC_ARG(2),
+    SC_MOVE(PIXELS(424), 0, PIXELS(200)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_WAIT(1),
+    SC_SET(SW_FACING, FACING_EAST),
+    SC_WAIT(1),
+    SC_END,
+};
+
+u32 gData_02003578[] = {
+    SC_ARG(2),
+    SC_MOVE(PIXELS(408), 0, PIXELS(228)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_WAIT(1),
+    SC_SET(SW_FACING, FACING_EAST),
+    SC_WAIT(1),
+    SC_END,
+};
+
+u32 gData_020035bc[] = {
+    SC_ARG(2),
+    SC_MOVE(PIXELS(400), 0, PIXELS(214)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_WAIT(1),
+    SC_SET(SW_FACING, FACING_EAST),
+    SC_WAIT(1),
+    SC_END,
+};
+
+u32 gData_02003600[] = {
+    39, 2, 4, 0x19c0000, 0, 0xf80000,
+    1, 39, 1, 0, 1, 22,
+    3, 0, 0, 1, 22, 35,
+    1, 17,
+};
+
+s32 gData_02003650[] = {
+    SC_LABEL(1),
+    SC_ADD(SW_SCALE_X, 192),
+    SC_ADD(SW_SCALE_Y, 384),
+    SC_WAIT(1),
+    SC_LOOP(24, SC_TO(1)),
+    SC_LABEL(2),
+    SC_ADD(SW_SCALE_X, -384),
+    SC_ADD(SW_SCALE_Y, -768),
+    SC_WAIT(1),
+    SC_LOOP(12, SC_TO(2)),
+    SC_LABEL(3),
+    SC_ADD(SW_SCALE_X, 192),
+    SC_ADD(SW_SCALE_Y, 384),
+    SC_WAIT(1),
+    SC_LOOP(24, SC_TO(3)),
+    SC_LABEL(4),
+    SC_ADD(SW_SCALE_X, -384),
+    SC_ADD(SW_SCALE_Y, -768),
+    SC_WAIT(1),
+    SC_LOOP(12, SC_TO(4)),
+    SC_SET(SW_SCALE_X, 0x10000),
+    SC_SET(SW_SCALE_Y, 0x10000),
+    SC_WAIT(1),
+    SC_END,
+};
+
+u32 gData_02003734[] = {
+    SC_POSITION(PIXELS(152), 0, PIXELS(756)),
+    SC_WAIT(1),
+    SC_ARG(2),
+    SC_MOVE(PIXELS(146), 0, PIXELS(736)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_WAIT(1),
+    SC_SET(SW_FACING, FACING_NORTHEAST),
+    SC_WAIT(1),
+    SC_END,
+};
+
+u32 gData_02003790[] = {
+    39, 2, 4, 0x980000, 0, 0x2f40000,
+    1, 39, 1, 3, 0, 1,
+    17,
+};
+
+u32 gIdejima_ActorDepartureScript[] = {
+    39, 2, 4, 0x680000, 0, 0x2d80000,
+    1, 39, 1, 3, 0, 1,
+    17,
+};
+
+struct SceneEntrance gIdejimaEntrances[] = {
+    {0, -1, 172, 0, 149, 0x4000, 0, -1, -1, -1, -1, 0},
+    {-1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+};
+
+u32 gIdejimaExits[] = {
+    9, 0x303009, 0x401002, 0xb40002, 0xc03000, 0xd41002,
+    511,
+};
+
+struct ActorPlacement gIdejimaPlacements[] = {
+    {56, -1, 1, PIXELS(0), PIXELS(0), PIXELS(0), 0x4000, 2, 0},
+    {5, -1, 1, PIXELS(0), PIXELS(0), PIXELS(0), 0x4000, 2, 0},
+    {6, -1, 1, PIXELS(0), PIXELS(0), PIXELS(0), 0, 2, 0},
+    {0x15a, -1, 7, PIXELS(256), PIXELS(0), PIXELS(200), 0x8000, 2, 0},
+    {57, -1, 1, PIXELS(0), PIXELS(0), PIXELS(0), 0x4000, 2, 0},
+    {0x1e9, -1, 7, PIXELS(0), PIXELS(0), PIXELS(0), 0x4000, 2, 0},
+    {-1, 0, 0, PIXELS(0), PIXELS(0), PIXELS(0), 0, 0, 0},
+};
+// clang-format on
+
+struct Trigger gIdejimaEvents[] = {
+    {TRIGGERS_END},
+};
+
+struct Trigger gIdejimaEventsEntrance1[] = {
+    {0xc602, 3, CONDITION_ALWAYS, EVENT(Func_02000640)},
+    {TRIGGERS_END},
+};
+
+struct Trigger gIdejimaEventsWake[] = {
+    {1, 4, CONDITION_ALWAYS, 4},
+    {3, 10, 0x863, EVENT(Func_020000f0)},
+    {3, 11, 0x864, EVENT(Func_020002b4)},
+    {3, 12, 0x865, EVENT(Func_0200049c)},
+    {0x8d15, 0x408, CONDITION_ALWAYS, EVENT(Func_020000f0)},
+    {0x8d15, 0x405, CONDITION_ALWAYS, EVENT(Func_020002b4)},
+    {2, 9, CONDITION_ALWAYS, EVENT(Func_020006a8)},
+    {2, 8, 0x867, EVENT(Idejima_RunAlexDeparture)},
+    {TRIGGERS_END},
+};
+
+u32 gDriftScene_SpawnScript[] = {
+    0,
+    46,
+    38,
+};

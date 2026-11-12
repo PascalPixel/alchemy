@@ -1,5 +1,6 @@
 /// @file
-/// The scene code of overlay 0x650 that its scene tables belong to, in ROM order; the rest of the overlay is in idejima/.
+/// The scene code of overlay 0x650 that its scene tables belong to, in ROM
+/// order; the rest of the overlay is in idejima/.
 
 #include "battle.h"
 #include "field.h"
@@ -22,11 +23,11 @@
 #include "dma.h"
 #include "map.h"
 
-extern const struct SceneEntrance gIdejimaEntrances[];
-extern const struct Trigger gIdejimaEvents[];
-extern const struct Trigger gIdejimaEventsEntrance1[];
-extern const struct Trigger gIdejimaEventsWake[];
-extern const struct ActorPlacement gIdejimaPlacements[];
+extern struct SceneEntrance gIdejimaEntrances[];
+extern struct Trigger gIdejimaEvents[];
+extern struct Trigger gIdejimaEventsEntrance1[];
+extern struct Trigger gIdejimaEventsWake[];
+extern struct ActorPlacement gIdejimaPlacements[];
 
 enum { ENTRANCE_WAKE = 2, ENTRANCE_WAKE_AGAIN = 4 };
 
@@ -122,8 +123,7 @@ void Func_020000f0(void) {
   Actor_SetAnimation(8, 2);
   leader = Actor_Get(gMainRoutineWork.currentOwner);
   if (leader != 0)
-    Actor_SetDestination(8, ((s16 *)&leader->x)[1],
-                              ((s16 *)&leader->z)[1]);
+    Actor_SetDestination(8, ((s16 *)&leader->x)[1], ((s16 *)&leader->z)[1]);
   FieldActor_WaitForMoveById(8);
   Actor_SetPosition(8, 0, 0);
   Message_ShowCentered(message + 8, 1);
@@ -171,7 +171,8 @@ void Func_020002b4(void) {
   FieldEvent_Wait(40);
   Actor_ShowEmote(5, 0x101, 0);
   Event_OpenMessage(5, 0);
-  if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
+  if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
+      0) {
     Actor_SetAnimation(5, 3);
     Event_ShowMessage(5, 0);
   } else {
@@ -182,8 +183,7 @@ void Func_020002b4(void) {
   Actor_SetAnimation(5, 2);
   leader = Actor_Get(gMainRoutineWork.currentOwner);
   if (leader != 0)
-    Actor_SetDestination(5, ((s16 *)&leader->x)[1],
-                              ((s16 *)&leader->z)[1]);
+    Actor_SetDestination(5, ((s16 *)&leader->x)[1], ((s16 *)&leader->z)[1]);
   FieldActor_WaitForMoveById(5);
   Actor_SetPosition(5, 0, 0);
   Event_PrepareActorAndApplyValue(5, 1);
@@ -191,9 +191,9 @@ void Func_020002b4(void) {
   Import_EventEnd();
 }
 
-extern const u8 gData_02003650[];
-extern const u8 gData_02003734[];
-extern const u8 gData_02003790[];
+extern s32 gData_02003650[];
+extern u32 gData_02003734[];
+extern u32 gData_02003790[];
 
 /// A scene of actor 6 and the leader that ends by setting flag 0x865.
 void Func_0200049c(void) {
@@ -484,7 +484,8 @@ void Idejima_RunAlexDeparture(void) {
   Event_OpenMessage(0x2008, 0);
   Actor_FaceDirection(6, FACING_EAST, 0);
   Actor_FaceDirection(5, FACING_SOUTHEAST, 0);
-  if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
+  if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
+      0) {
     Actor_SetAnimationAndWait(8, 4);
     Event_ShowMessage(0x2008, 0);
     ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
@@ -538,7 +539,8 @@ void Idejima_RunAlexDeparture(void) {
   Actor_FaceDirection(8, FACING_SOUTHEAST + FACING_STEP, 0);
   Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 20);
   Event_OpenMessage(0x2008, 0);
-  if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
+  if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
+      0) {
     Actor_ShowEmote(6, 0x103, 0);
     Actor_FaceDirection(6, FACING_EAST, 20);
     Event_ShowMessage(6, 0);
@@ -611,7 +613,8 @@ void Idejima_RunAlexDeparture(void) {
   Event_ShowMessage(5, 0);
   Actor_FaceDirection(5, FACING_SOUTHEAST, 0);
   Event_OpenMessage(5, 0);
-  if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
+  if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
+      0) {
     Actor_SetAnimation(5, 3);
     Event_ShowMessage(5, 0);
     ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
@@ -671,8 +674,9 @@ void Func_020015a0(void) {
   s32 i;
 
   for (i = 0; i != 160; i++) {
-    s32 wave = Math_Sin(((u8)gData_02003c10 - i - (layer->y >> 16) + 160) << 9) +
-               0x10000;
+    s32 wave =
+        Math_Sin(((u8)gData_02003c10 - i - (layer->y >> 16) + 160) << 9) +
+        0x10000;
 
     line[i] = (layer->y >> 16) + (wave >> 15);
   }

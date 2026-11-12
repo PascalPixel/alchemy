@@ -150,8 +150,8 @@ extern s16 gData_020024fa;
 extern s16 gData_020024fc;
 extern s16 gData_020024fe;
 extern s16 gData_02002500;
-extern const u16 gData_02002410[];
-extern const u16 gData_02002418[];
+extern u16 gData_02002410[];
+extern u16 gData_02002418[];
 
 /// Follows the two secret button codes: each held key that matches the next
 /// key of a code advances it, a wrong key starts it again, and finishing a
@@ -1937,3 +1937,86 @@ u16 Func_0200217c(u32 length, u8 *p) {
   }
   return ~crc;
 }
+
+u16 gData_02002410[] = {
+    4, 4, 4, 0,
+};
+
+// clang-format off
+u16 gData_02002418[] = {
+    64, 128, 64, 128, 32, 16, 32, 16,
+#if (LANGUAGE == LANGUAGE_JAPANESE)
+    64, 16, 128, 32, 64, 4, 0,
+#else
+    64, 16, 128, 32, 64, 4, 0, 0,
+#endif
+};
+
+s8 gData_02002438[] = {
+    0, 1, 2, 3, 3, 2, 1, 0,
+};
+
+// Alphabet table, absent in Japanese ("ABCDE FGHJK LMNPQ R" ...).
+#if (LANGUAGE != LANGUAGE_JAPANESE)
+u8 gData_02002440[] = {
+    65, 66, 67, 68, 69, 32, 70, 71,
+    72, 74, 75, 32, 76, 77, 78, 80,
+    81, 32, 82, 0,
+};
+
+u8 gData_02002454[] = {
+    83, 84, 85, 86, 87, 32, 88, 89,
+    90, 50, 51, 32, 52, 53, 54, 55,
+    56, 32, 57, 0,
+};
+
+u8 gData_02002468[] = {
+    97, 98, 99, 100, 101, 32, 102, 103,
+    104, 105, 106, 32, 107, 109, 110, 112,
+    113, 32, 114, 0,
+};
+
+u8 gData_0200247c[] = {
+    115, 116, 117, 118, 119, 32, 120, 121,
+    122, 33, 63, 32, 35, 38, 36, 37,
+    43, 32, 61, 0,
+};
+#endif
+
+u16 gData_02002490[] = {
+    0x941, 0x951, 0x8b3, 0x8d1, 0x81e, 0x868,
+};
+// clang-format on
+
+struct SceneEntrance gSceneEntrances[] = {
+    {0, CONDITION_ALWAYS, 0, 0, 0, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {SCENE_TABLE_END},
+};
+
+u32 gSceneExits[] = {
+    SCENE_EXITS_END,
+};
+
+struct ActorPlacement gActorPlacements[] = {
+    {SCENE_TABLE_END},
+};
+
+struct Trigger gSceneEvents[] = {
+    {TRIGGERS_END},
+};
+
+u16 gData_020024f4[] = {
+    0,
+};
+
+s16 gData_020024f6 = 0;
+
+s16 gData_020024f8 = 0;
+
+s16 gData_020024fa = 0;
+
+s16 gData_020024fc = 0;
+
+s16 gData_020024fe = 0;
+
+s16 gData_02002500 = 0;

@@ -2,22 +2,21 @@
 /// Scene code of overlay 0x656, in ROM order, from s00b8's offset up to the next object the overlay links.
 
 #include "lemurian_ship.h"
-#include "../../../../games/tla/src/scene/lemurian_ship/lemurian_ship.h"
 #include "event_inline.h"
 #include "scene_tables.h"
 #include "version.h"
 #include "macros.h"
 
-extern u32 gData_02003380[];
-extern u32 gData_02003398[];
-extern u32 gData_0200b410[];
-extern u32 gData_02003560[];
-extern u32 gData_02003590[];
-extern u32 gData_02003710[];
-extern u32 gData_020037d0[];
-extern u32 gData_02003848[];
+extern struct ActorPlacement gData_02003380[];
+extern struct ActorPlacement gData_02003398[];
+extern struct ActorPlacement gData_0200b410[];
+extern struct ActorPlacement gData_02003560[];
+extern struct ActorPlacement gData_02003590[];
+extern struct ActorPlacement gData_02003710[];
+extern struct ActorPlacement gData_020037d0[];
+extern struct ActorPlacement gData_02003848[];
 
-u32 *Func_020000b8(void) {
+struct ActorPlacement *Func_020000b8(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov656Room1) {
     switch (gMainRoutineWork.entrance) {
     case 3:
@@ -167,7 +166,7 @@ next2:
   Import_EventSetExitRequest(work->exit);
 }
 
-extern const u8 gData_02002de8[];
+extern s32 gData_02002de8[];
 
 void Func_02000438(void) {
   if (GameFlag_Test(0x982)) {
@@ -198,17 +197,17 @@ void Func_02000438(void) {
   }
 }
 
-extern s32 gData_020039c4[];
-extern s32 gData_020039d0[];
-extern s32 gData_02003a84[];
-extern s32 gData_02003ae4[];
-extern s32 gData_02003c10[];
-extern s32 gData_02003c7c[];
-extern s32 gData_02003d9c[];
-extern s32 gData_02003dfc[];
-extern s32 gData_02003ebc[];
+extern struct Trigger gData_020039c4[];
+extern struct Trigger gData_020039d0[];
+extern struct Trigger gData_02003a84[];
+extern struct Trigger gData_02003ae4[];
+extern struct Trigger gData_02003c10[];
+extern struct Trigger gData_02003c7c[];
+extern struct Trigger gData_02003d9c[];
+extern struct Trigger gData_02003dfc[];
+extern struct Trigger gData_02003ebc[];
 
-s32 *Func_020004f4(void) {
+struct Trigger *Func_020004f4(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov656Room1) {
     switch (gMainRoutineWork.entrance) {
     case 3:
@@ -858,10 +857,10 @@ void Func_020015c8(void) {
   }
 }
 
-extern const u8 gData_02002f1c[];
-extern const u8 gData_02002f44[];
-extern const u8 gData_02002f88[];
-extern const u8 gData_02002fcc[];
+extern u32 gData_02002f1c[];
+extern u32 gData_02002f44[];
+extern u32 gData_02002f88[];
+extern u32 gData_02002fcc[];
 
 void PartyInventory_Remove(s32 item);
 
@@ -1535,3 +1534,469 @@ void Func_02002b98(void) {
   if (GameFlag_Test(0x983) == 0)
     Func_02001650();
 }
+
+#include "types.h"
+#include "text/msg_ids.h"
+#include "objcmd.h"
+
+extern s16 gData_020038c0[];
+extern s16 gData_020038e0[];
+
+// clang-format off
+s32 gData_02002de8[] = {
+    SC_SET(SW_MOTION, 0),
+    SC_ADD(SW_Z, -0x8000),
+    SC_ADD(SW_SCALE_X, -1024),
+    SC_ADD(SW_SCALE_Y, -1024),
+    SC_WAIT(1),
+    SC_LOOP(24, SC_TOP),
+    SC_END,
+};
+
+s32 gData_02002e30[] = {
+    23, 9, -512, 23, 10, -1024,
+    0, 1, 13, 60, 0, 3,
+    0, 1, 17,
+};
+
+u32 gData_02002e6c[] = {
+    SC_ADD(SW_SCALE_X, 0x400),
+    SC_ADD(SW_SCALE_Y, 0x400),
+    SC_WAIT(1),
+    SC_LOOP(60, SC_TOP),
+    SC_END,
+};
+
+s32 gData_02002e9c[] = {
+    SC_ADD(SW_SCALE_X, 0x3000),
+    SC_ADD(SW_SCALE_Y, 0x3000),
+    SC_WAIT(4),
+    SC_ADD(SW_SCALE_X, -0x1800),
+    SC_ADD(SW_SCALE_Y, -0x1800),
+    SC_WAIT(4),
+    SC_LOOP(8, SC_TOP),
+    SC_END,
+    SC_ADD(SW_SCALE_X, -512),
+    SC_ADD(SW_SCALE_Y, -512),
+    SC_WAIT(1),
+    SC_LOOP(160, SC_TOP),
+    SC_END,
+};
+
+u32 gData_02002f1c[] = {
+    SC_ARG(2),
+    SC_MOVE(PIXELS(808), 0, PIXELS(168)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_END,
+};
+
+u32 gData_02002f44[] = {
+    SC_ARG(2),
+    SC_MOVE(PIXELS(784), 0, PIXELS(196)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_WAIT(10),
+    SC_SET(SW_FACING, FACING_NORTHEAST),
+    SC_WAIT(10),
+    SC_END,
+};
+
+u32 gData_02002f88[] = {
+    SC_ARG(2),
+    SC_MOVE(PIXELS(832), 0, PIXELS(196)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_WAIT(10),
+    SC_SET(SW_FACING, FACING_NORTHWEST),
+    SC_WAIT(10),
+    SC_END,
+};
+
+u32 gData_02002fcc[] = {
+    SC_ARG(2),
+    SC_MOVE(PIXELS(792), 0, PIXELS(216)),
+    SC_SYNC,
+    SC_ARG(1),
+    SC_WAIT(10),
+    SC_SET(SW_FACING, FACING_NORTH + FACING_STEP),
+    SC_WAIT(10),
+    SC_END,
+};
+
+s16 gData_02003010[] = {
+    8, -1,
+};
+
+s16 gData_02003014[] = {
+    10, 528, 11, 529, -1,
+};
+
+s16 gData_0200301e[] = {
+    16, 531, 17, 532, 18, 533, 19, 534,
+    20, 535, -1,
+};
+
+s16 gData_02003034[] = {
+    16, 536, 17, 537, 18, 538, 19, 539,
+    20, 540, 22, 542, -1,
+};
+
+s16 gData_0200304e[] = {
+    8, 9, -1,
+};
+
+s32 gData_02003054[] = {
+    -0x10000, 172, 0x40000095, -0x10000, -1, 0xffff,
+    0xffff, 0, 0, 0, 0, 0,
+};
+
+u32 gData_02003084[] = {
+    0xffff0009, 406, 0xc0000178, 0x1500000, 0x2680108, 424,
+    0xffff000a, 550, 0xc0000179, 0x1500000, 0x2680108, 424,
+    0xffff000b, 566, 0xc0000379, 0x1e80000, 0x2d80308, 936,
+    0xffff000c, 648, 0xc000037e, 0x1e80000, 0x2d80308, 936,
+    0xffff000d, 440, 216, 0x1800000, 0x2700080, 288,
+    0xffff000e, 567, 0x400000d7, 0x1800000, 0x2700080, 288,
+    0xffff, 0, 0, 0, 0, 0,
+};
+
+s16 gData_0200312c[] = {
+    0, -1, 72, 0, 72, 0x4000, 0, -1,
+    -1, -1, -1, 0, 1, -1, 72, 0,
+    72, 0x4000, 0, 8, 16, 248, 256, 0,
+    2, -1, 168, 0, 72, 0x4000, 0, 8,
+    16, 248, 256, 0, 3, -1, 72, 0,
+    216, 0xc000, 0, 8, 16, 248, 256, 0,
+    4, -1, 184, 0, 216, 0xc000, 0, 8,
+    16, 248, 256, 0, 11, -1, 72, 0,
+    376, 0x4000, 0, 8, 320, 248, 560, 0,
+    12, -1, 168, 0, 376, 0x4000, 0, 8,
+    320, 248, 560, 0, 13, -1, 72, 0,
+    512, 0xc000, 0, 8, 320, 248, 560, 0,
+    14, -1, 184, 0, 512, 0xc000, 0, 8,
+    320, 248, 560, 0, 15, -1, 120, 0,
+    440, 0xc000, 0, 8, 320, 248, 560, 0,
+    -1, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0,
+};
+
+u32 gData_02003234[] = {
+    0xffec01d2, 0x1da0244, 0x24cfff4, 0x13ffff, 0xffff, 0,
+    0, 0,
+};
+
+u32 gData_02003254[] = {
+    0x100200, 0x21000be, 0xce0020, 0xaffff, 0xffff, 0,
+    0, 0,
+};
+
+u32 gSceneExits[] = {
+    SCENE_EXITS(40),
+    SCENE_EXIT_IF(1, 43, 1, 0x907),
+    SCENE_EXIT_IF(1, 200, 3, 0x9b4),
+    SCENE_EXIT_IF(1, 234, 4, -1),
+    SCENE_EXIT(2, 40, 3),
+    SCENE_EXIT(3, 40, 2),
+    SCENE_EXIT(4, 40, 6),
+    SCENE_EXIT(5, 40, 13),
+    SCENE_EXIT(6, 40, 4),
+    SCENE_EXIT(7, 40, 19),
+    SCENE_EXIT_IF(8, 41, 1, 0x93f),
+    SCENE_EXIT_IF(8, 41, 11, 0x9e4),
+    SCENE_EXIT_IF(8, 41, 16, -1),
+    SCENE_EXIT_IF(9, 41, 2, 0x93f),
+    SCENE_EXIT_IF(9, 41, 12, 0x9e4),
+    SCENE_EXIT_IF(9, 41, 17, -1),
+    SCENE_EXIT(10, 40, 25),
+    SCENE_EXIT(11, 40, 26),
+    SCENE_EXIT(12, 40, 29),
+    SCENE_EXIT(13, 40, 5),
+    SCENE_EXIT_IF(14, 41, 3, 0x93f),
+    SCENE_EXIT_IF(14, 41, 13, 0x9e4),
+    SCENE_EXIT_IF(14, 41, 18, -1),
+    SCENE_EXIT_IF(15, 41, 4, 0x93f),
+    SCENE_EXIT_IF(15, 41, 14, 0x9e4),
+    SCENE_EXIT_IF(15, 41, 20, -1),
+    SCENE_EXIT(16, 40, 27),
+    SCENE_EXIT(17, 40, 28),
+    SCENE_EXIT(18, 40, 30),
+    SCENE_EXIT(19, 41, 10),
+    SCENE_EXIT(20, 40, 7),
+    SCENE_EXIT(25, 40, 10),
+    SCENE_EXIT(26, 40, 11),
+    SCENE_EXIT(27, 40, 16),
+    SCENE_EXIT(28, 40, 17),
+    SCENE_EXIT(29, 40, 12),
+    SCENE_EXIT(30, 40, 18),
+    SCENE_EXITS(41),
+    SCENE_EXIT(1, 40, 8),
+    SCENE_EXIT(2, 40, 9),
+    SCENE_EXIT(3, 40, 14),
+    SCENE_EXIT(4, 40, 15),
+    SCENE_EXIT(6, 41, 7),
+    SCENE_EXIT(7, 41, 6),
+    SCENE_EXIT_IF(8, 41, 9, 0x983),
+    SCENE_EXIT_IF(8, 41, 19, -1),
+    SCENE_EXIT(9, 41, 8),
+    SCENE_EXIT(10, 40, 20),
+    SCENE_EXIT(90, 2, 69),
+    SCENE_EXITS_END,
+};
+
+struct ActorPlacement gData_02003380[] = {
+    {SCENE_TABLE_END},
+};
+
+struct ActorPlacement gData_02003398[] = {
+    {248, CONDITION_ALWAYS, 1, PIXELS(104), 0, PIXELS(424), FACING_SOUTH, 0, 0},
+    {248, CONDITION_ALWAYS, 1, PIXELS(104), 0, PIXELS(536), FACING_SOUTH, 0, 0},
+    {290, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 0, 0},
+    {290, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 0, 0},
+    {SCENE_TABLE_END},
+};
+
+struct ActorPlacement gData_0200b410[] = {
+    {287, CONDITION_ALWAYS, 1, PIXELS(760), 0, PIXELS(120), FACING_SOUTH, 0, 0},
+    {248, CONDITION_ALWAYS, 1, PIXELS(856), 0, PIXELS(88), FACING_SOUTH, 0, 0},
+    {248, CONDITION_ALWAYS, 1, PIXELS(744), 0, PIXELS(88), FACING_SOUTH, 0, 0},
+    {248, CONDITION_ALWAYS, 1, PIXELS(760), 0, PIXELS(152), FACING_SOUTH, 0, 0},
+    {248, CONDITION_ALWAYS, 1, PIXELS(792), 0, PIXELS(120), FACING_SOUTH, 0, 0},
+    {248, CONDITION_ALWAYS, 1, PIXELS(824), 0, PIXELS(120), FACING_SOUTH, 0, 0},
+    {248, CONDITION_ALWAYS, 1, PIXELS(824), 0, PIXELS(152), FACING_SOUTH, 0, 0},
+    {290, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 0, 0},
+    {290, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 0, 0},
+    {290, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 0, 0},
+    {290, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 0, 0},
+    {290, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 0, 0},
+    {290, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 0, 0},
+    {SCENE_TABLE_END},
+};
+
+struct ActorPlacement gData_02003560[] = {
+    {287, CONDITION_ALWAYS, 1, PIXELS(296), 0, PIXELS(744), FACING_SOUTH, 0, 0},
+    {SCENE_TABLE_END},
+};
+
+struct ActorPlacement gData_02003590[] = {
+    {287, CONDITION_ALWAYS, 1, PIXELS(824), 0, PIXELS(552), FACING_SOUTH, 0, 0},
+    {248, CONDITION_ALWAYS, 1, PIXELS(776), 0, PIXELS(520), FACING_SOUTH, 0, 0},
+    {248, CONDITION_ALWAYS, 1, PIXELS(856), 0, PIXELS(520), FACING_SOUTH, 0, 0},
+    {248, CONDITION_ALWAYS, 1, PIXELS(696), 0, PIXELS(600), FACING_SOUTH, 0, 0},
+    {248, CONDITION_ALWAYS, 1, PIXELS(776), 0, PIXELS(600), FACING_SOUTH, 0, 0},
+    {248, CONDITION_ALWAYS, 1, PIXELS(808), 0, PIXELS(600), FACING_SOUTH, 0, 0},
+    {248, CONDITION_ALWAYS, 1, PIXELS(8), 0, PIXELS(8), FACING_SOUTH, 0, 0},
+    {248, CONDITION_ALWAYS, 1, PIXELS(776), 0, PIXELS(696), FACING_SOUTH, 0, 0},
+    {290, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 0, 0},
+    {290, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 0, 0},
+    {290, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 0, 0},
+    {290, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 0, 0},
+    {290, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 0, 0},
+    {290, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 0, 0},
+    {290, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 0, 0},
+    {SCENE_TABLE_END},
+};
+
+struct ActorPlacement gData_02003710[] = {
+    {248, CONDITION_ALWAYS, 1, PIXELS(120), 0, PIXELS(120), FACING_SOUTH, 0, 0},
+    {248, CONDITION_ALWAYS, 1, PIXELS(56), 0, PIXELS(88), FACING_SOUTH, 0, 1},
+    {248, CONDITION_ALWAYS, 1, PIXELS(88), 0, PIXELS(120), FACING_SOUTH, 0, 1},
+    {248, CONDITION_ALWAYS, 1, PIXELS(88), 0, PIXELS(152), FACING_SOUTH, 0, 1},
+    {248, CONDITION_ALWAYS, 1, PIXELS(152), 0, PIXELS(88), FACING_SOUTH, 0, 1},
+    {248, CONDITION_ALWAYS, 1, PIXELS(168), 0, PIXELS(152), FACING_SOUTH, 0, 1},
+    {7, 0x0, 1, PIXELS(8), 0, PIXELS(8), FACING_SOUTH, 2, 0},
+    {SCENE_TABLE_END},
+};
+
+struct ActorPlacement gData_020037d0[] = {
+    {314, CONDITION_ALWAYS, 1, PIXELS(584), 0, PIXELS(168), FACING_SOUTH, 2, 0},
+    {314, CONDITION_ALWAYS, 1, PIXELS(472), 0, PIXELS(152), FACING_SOUTH, 2, 0},
+    {290, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, 2, 0},
+    {290, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, 2, 0},
+    {SCENE_TABLE_END},
+};
+
+struct ActorPlacement gData_02003848[] = {
+    {7, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
+    {6, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
+    {5, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
+    {56, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_SOUTH, 2, 0},
+    {SCENE_TABLE_END},
+};
+
+s16 gData_020038c0[] = {
+    0, 126, 1, 2, 2, 1, 126, 1,
+    2, 4, 2, 126, 1, 2, 4, -1,
+};
+
+s16 gData_020038e0[] = {
+    10, 126, 1, 2, 4, 11, 126, 1,
+    2, 4, -1, 4, 126, 2, 2, 2,
+    -1, 0,
+};
+
+struct LemurianShipWarp gData_02003904[] = {
+    {2, (s32)gData_020038e0, 4, 3},
+    {14, (s32)gData_020038c0, 35, 11},
+    {15, (s32)gData_020038c0, 6, 45},
+    {16, (s32)gData_020038c0, 11, 45},
+    {17, (s32)gData_020038c0, 21, 45},
+    {18, (s32)gData_020038c0, 26, 46},
+    {20, (s32)gData_020038c0, 29, 28},
+    {25, (s32)gData_020038c0, 48, 2},
+    {26, (s32)gData_020038c0, 54, 2},
+    {29, (s32)gData_020038c0, 41, 29},
+};
+
+struct LemurianShipWarp gData_0200397c[] = {
+    {1, (s32)gData_020038c0, 4, 2},
+    {2, (s32)gData_020038c0, 10, 2},
+    {6, (s32)gData_020038c0, 31, 3},
+    {8, (s32)gData_020038c0, 41, 51},
+    {11, (s32)gData_020038c0, 4, 21},
+    {12, (s32)gData_020038c0, 10, 21},
+};
+
+struct Trigger gData_020039c4[] = {
+    {TRIGGERS_END},
+};
+
+struct Trigger gData_020039d0[] = {
+    {1, 1, CONDITION_ALWAYS, 1},
+    {0xc602, 2, CONDITION_ALWAYS, EVENT(Func_0200021c)},
+    {1, 6, CONDITION_ALWAYS, 6},
+    {1, 7, CONDITION_ALWAYS, 7},
+    {1, 8, CONDITION_ALWAYS, 8},
+    {1, 9, CONDITION_ALWAYS, 9},
+    {1, 10, CONDITION_ALWAYS, 10},
+    {1, 11, CONDITION_ALWAYS, 11},
+    {1, 12, CONDITION_ALWAYS, 12},
+    {1, 13, CONDITION_ALWAYS, 13},
+    {0xc602, 14, CONDITION_ALWAYS, EVENT(Func_0200021c)},
+    {0xc602, 20, CONDITION_ALWAYS, EVENT(Func_0200021c)},
+    {0xf3, 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgLemurianShip03))},
+    {0x1c3, 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgLemurianShip04))},
+    {TRIGGERS_END},
+};
+
+struct Trigger gData_02003a84[] = {
+    {1, 3, CONDITION_ALWAYS, 3},
+    {1, 4, CONDITION_ALWAYS, 4},
+    {1, 5, CONDITION_ALWAYS, 5},
+    {0, 8, CONDITION_ALWAYS, EVENT(Func_02000bf0)},
+    {0, 9, CONDITION_ALWAYS, EVENT(Func_02000bf0)},
+    {0x1815, 10, 0x210, EVENT(Func_02000818)},
+    {0x1815, 11, 0x211, EVENT(Func_02000818)},
+    {TRIGGERS_END},
+};
+
+struct Trigger gData_02003ae4[] = {
+    {0xc602, 25, CONDITION_ALWAYS, EVENT(Func_0200021c)},
+    {0xc602, 26, CONDITION_ALWAYS, EVENT(Func_0200021c)},
+    {1, 27, CONDITION_ALWAYS, 27},
+    {1, 28, CONDITION_ALWAYS, 28},
+    {0, 9, CONDITION_ALWAYS, EVENT(Func_02000c50)},
+    {0, 10, CONDITION_ALWAYS, EVENT(Func_02000c50)},
+    {0, 11, CONDITION_ALWAYS, EVENT(Func_02000c50)},
+    {0, 12, CONDITION_ALWAYS, EVENT(Func_02000c50)},
+    {0, 13, CONDITION_ALWAYS, EVENT(Func_02000c50)},
+    {0, 14, CONDITION_ALWAYS, EVENT(Func_02000c50)},
+    {0x1815, 15, 0x212, EVENT(Func_02000838)},
+    {0x1815, 16, 0x213, EVENT(Func_02000828)},
+    {0x1815, 17, 0x214, EVENT(Func_02000828)},
+    {0x1815, 18, 0x215, EVENT(Func_02000828)},
+    {0x1815, 19, 0x216, EVENT(Func_02000828)},
+    {0x1815, 20, 0x217, EVENT(Func_02000828)},
+    {0x10008c15, 8, CONDITION_ALWAYS, EVENT(Func_02000770)},
+    {0x8c15, 8, CONDITION_ALWAYS, EVENT(Func_02000780)},
+    {8, 0, CONDITION_ALWAYS, EVENT(Func_02000770)},
+    {9, 0, CONDITION_ALWAYS, EVENT(Func_02000780)},
+    {3, 40, CONDITION_ALWAYS, EVENT(Func_0200065c)},
+    {2, 41, 0x212, EVENT(Func_02000870)},
+    {2, 43, 0x212, EVENT(Func_02000af4)},
+    {2, 42, 0x201, EVENT(Func_020019e0)},
+    {TRIGGERS_END},
+};
+
+struct Trigger gData_02003c10[] = {
+    {0xc602, 15, CONDITION_ALWAYS, EVENT(Func_0200021c)},
+    {0xc602, 16, CONDITION_ALWAYS, EVENT(Func_0200021c)},
+    {0xc602, 17, CONDITION_ALWAYS, EVENT(Func_0200021c)},
+    {0xc602, 18, CONDITION_ALWAYS, EVENT(Func_0200021c)},
+    {0x10008c15, 8, CONDITION_ALWAYS, EVENT(Func_02000788)},
+    {0x8c15, 8, CONDITION_ALWAYS, EVENT(Func_02000798)},
+    {8, 0, CONDITION_ALWAYS, EVENT(Func_02000788)},
+    {9, 0, CONDITION_ALWAYS, EVENT(Func_02000798)},
+    {TRIGGERS_END},
+};
+
+struct Trigger gData_02003c7c[] = {
+    {0xc602, 29, CONDITION_ALWAYS, EVENT(Func_0200021c)},
+    {1, 30, CONDITION_ALWAYS, 30},
+    {0x400, 9, CONDITION_ALWAYS, EVENT(Func_02000cb0)},
+    {0x4400, 9, CONDITION_ALWAYS, EVENT(Func_02000cb0)},
+    {0x8400, 10, CONDITION_ALWAYS, EVENT(Func_02000cb0)},
+    {0x4400, 10, CONDITION_ALWAYS, EVENT(Func_02000cb0)},
+    {0xc400, 10, CONDITION_ALWAYS, EVENT(Func_02000cb0)},
+    {0, 11, CONDITION_ALWAYS, EVENT(Func_02000cb0)},
+    {0, 12, CONDITION_ALWAYS, EVENT(Func_02000cb0)},
+    {0xc400, 13, CONDITION_ALWAYS, EVENT(Func_02000cb0)},
+    {0x400, 15, CONDITION_ALWAYS, EVENT(Func_02000cb0)},
+    {0x8400, 15, CONDITION_ALWAYS, EVENT(Func_02000cb0)},
+    {0xc400, 15, CONDITION_ALWAYS, EVENT(Func_02000cb0)},
+    {0x1815, 16, 0x218, EVENT(Func_02000860)},
+    {0x1815, 17, 0x219, EVENT(Func_02000860)},
+    {0x1815, 18, 0x21a, EVENT(Func_02000860)},
+    {0x1815, 19, 0x21b, EVENT(Func_02000860)},
+    {0x1815, 20, 0x21c, EVENT(Func_02000860)},
+    {0x1815, 22, 0x21e, EVENT(Func_02000860)},
+    {0x10008c15, 8, CONDITION_ALWAYS, EVENT(Func_02000770)},
+    {0x8c15, 8, CONDITION_ALWAYS, EVENT(Func_02000780)},
+    {8, 0, CONDITION_ALWAYS, EVENT(Func_02000770)},
+    {9, 0, CONDITION_ALWAYS, EVENT(Func_02000780)},
+    {TRIGGERS_END},
+};
+
+struct Trigger gData_02003d9c[] = {
+    {0xc602, 1, CONDITION_ALWAYS, EVENT(Func_02000324)},
+    {0xc602, 2, CONDITION_ALWAYS, EVENT(Func_02000324)},
+    {1, 3, CONDITION_ALWAYS, 3},
+    {1, 4, CONDITION_ALWAYS, 4},
+    {0, 8, CONDITION_ALWAYS, EVENT(Func_02000d44)},
+    {0x80008a05, 255, CONDITION_ALWAYS, EVENT(Func_02001368)},
+    {0x50008a05, 255, CONDITION_ALWAYS, EVENT(Func_020012b4)},
+    {TRIGGERS_END},
+};
+
+struct Trigger gData_02003dfc[] = {
+    {0xc602, 6, CONDITION_ALWAYS, EVENT(Func_02000438)},
+    {0x10008c15, 8, 0x202, EVENT(Func_020010bc)},
+    {0x8c15, 8, 0x202, EVENT(Func_020010cc)},
+    {0x10008c15, 9, 0x203, EVENT(Func_020010bc)},
+    {0x8c15, 9, 0x203, EVENT(Func_020010cc)},
+    {8, 0, 0x982, EVENT(Func_020010bc)},
+    {9, 0, 0x982, EVENT(Func_020010cc)},
+    {0x2115, 8, 0x204, EVENT(Func_020010d8)},
+    {0x2115, 9, 0x205, EVENT(Func_020010f8)},
+    {0x50001815, 10, 0x210, EVENT(Func_02001118)},
+    {0x50001815, 11, 0x211, EVENT(Func_02001128)},
+    {0x1815, 10, 0x210, EVENT(Func_02000818)},
+    {0x1815, 11, 0x211, EVENT(Func_02000818)},
+    {6, 200, CONDITION_ALWAYS, EVENT(Func_02001138)},
+    {6, 201, CONDITION_ALWAYS, EVENT(Func_020011f4)},
+    {TRIGGERS_END},
+};
+
+struct Trigger gData_02003ebc[] = {
+    {1, 5, CONDITION_ALWAYS, 5},
+    {1, 7, CONDITION_ALWAYS, 7},
+    {0xc602, 8, CONDITION_ALWAYS, EVENT(Func_02000438)},
+    {1, 9, CONDITION_ALWAYS, 9},
+    {TRIGGERS_END},
+};
+
+u32 gData_02003ef8[] = {
+    0, 10, 1, 3, 0, 1,
+    38,
+};
+// clang-format on

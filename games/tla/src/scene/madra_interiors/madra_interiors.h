@@ -16,15 +16,15 @@
    } *)(base))                                                                 \
        ->v)
 
-extern const u8 gData_02002240[];
-extern const u8 gData_02002480[];
-extern const u8 gData_02002750[];
-extern const u8 gData_02002828[];
-extern const u8 gData_020028a0[];
-extern const u8 gData_02002bb8[];
-extern const u8 gData_02002c9c[];
-extern const u8 gData_02002da4[];
-extern const u8 gData_0200308c[];
+extern struct ActorPlacement gData_02002240[];
+extern struct ActorPlacement gData_02002480[];
+extern struct ActorPlacement gData_02002750[];
+extern struct ActorPlacement gData_02002828[];
+extern struct Trigger gData_020028a0[];
+extern struct Trigger gData_02002bb8[];
+extern struct Trigger gData_02002c9c[];
+extern struct Trigger gData_02002da4[];
+extern struct Trigger gData_0200308c[];
 
 void Func_02001d50(void);
 void Func_02001d58(void);

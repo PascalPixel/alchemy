@@ -44,11 +44,11 @@ struct ActorPlacement;
 struct SceneRegion;
 struct ScriptInterpreter;
 
-extern const u8 gDriftScene_SpawnScript[];
-extern const u32 gIdejimaExits[];
+extern u32 gDriftScene_SpawnScript[];
+extern u32 gIdejimaExits[];
 extern u32 gSceneExits[];
 extern struct Actor gSnapshotObjects[];
-extern const u8 gIdejima_ActorDepartureScript[];
+extern u32 gIdejima_ActorDepartureScript[];
 extern u8 gLinkLobby_SlotColumns[];
 extern const s32 gLinkLobby_SlotValues[];
 extern const u8 gActor_BlinkChildValues[4];

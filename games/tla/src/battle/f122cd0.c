@@ -393,7 +393,7 @@ void BattleEvent_Playback(void) {
         s32 base;
 
         slot = BattleObject_Get(events->actorId);
-        *(u8 *)&slot->fading = 1;
+        slot->fading = 1;
         for (count = 0; (record = GetMotionRecord(slot->object, count)) != 0;
              count++)
           records[count] = record;

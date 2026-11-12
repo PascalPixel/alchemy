@@ -4,29 +4,6 @@
 
 #include "../battle_internal.h"
 
-/// This game's battle object, whose last halfword holds the fade flag and a
-/// visible flag.
-// The Broken Seal's BattleObj with its last halfword split in two.
-struct TlaBattleObj {
-  struct MotionObject *object;
-  u16 resource;
-  u16 overlay;
-  u16 animation;
-  u16 effect;
-  s32 anchorX;
-  s32 anchorZ;
-  s32 palette;
-  s32 scale;
-  u16 activeConditions;
-  u8 selectedCondition;
-  s8 cycleTimer;
-  void *animationEntry;
-  struct SpriteEntry *effectEntry;
-  s16 active;
-  u8 fading;
-  u8 visible;
-};
-
 extern const s32 Data_0812cacc[];
 
 struct MotionObject *Func_080200c0(s32 kind, s32 x, s32 y, s32 z);
@@ -37,7 +14,7 @@ s32 ArcTan2(s32 y, s32 x);
 /// state, facing ArcTan2(0, 0) + 0x8000, visible, then the actor object
 /// script.
 // The tail of The Broken Seal's BattleObject_Make, for an actor without a unit.
-void BattleObject_Reset(struct TlaBattleObj *actor, s32 keep) {
+void BattleObject_Reset(struct BattleObj *actor, s32 keep) {
   struct MotionObject *object;
   s32 facingAngle;
   s32 zero;
@@ -84,7 +61,7 @@ s32 BattleClass_GetPalette(s32 index);
 s32 BattleUnit_LookupWeaponValueByClass(s32 unitId);
 s32 Inventory_GetEquippedItemFar(struct BattleUnit *unit, s32 slot);
 
-void BattleObject_Make(struct TlaBattleObj *actor, s32 unitId, s32 x, s32 y) {
+void BattleObject_Make(struct BattleObj *actor, s32 unitId, s32 x, s32 y) {
   s32 fixedX;
   s32 fixedZ;
   s32 palette;
@@ -612,7 +589,7 @@ void BattleUnit_RefreshPlacement(void) {
     s32 id = ids[i];
 
     work->placement[id] = place;
-    BattleObject_Make((struct TlaBattleObj *)BattleObject_Get(id), id,
+    BattleObject_Make(BattleObject_Get(id), id,
                       gBattlePlacement_StepPairs[place * 2],
                       gBattlePlacement_StepPairs[place * 2 + 1]);
   }
@@ -624,7 +601,7 @@ void BattleUnit_RefreshPlacement(void) {
     s32 id = work->enemyIds[i];
 
     if (id != 0xfe)
-      BattleObject_Make((struct TlaBattleObj *)BattleObject_Get(id), id,
+      BattleObject_Make(BattleObject_Get(id), id,
                         x[stand], z[stand]);
   }
 }

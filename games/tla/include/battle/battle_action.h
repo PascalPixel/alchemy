@@ -27,7 +27,10 @@ struct BattleObj {
   /// Set by BattleObject_MarkForRelease: the object is released with the
   /// others.
   s16 active;
-  s16 fading; ///< set while a fallen enemy's picture is being removed
+  // The Broken Seal's last halfword, fading, is two bytes here: the battle
+  // code reads and writes each on its own.
+  u8 fading;  ///< set while a fallen enemy's picture is being removed
+  u8 visible; ///< 1 from BattleObject_Reset, 0 from BattleObject_Make
 };
 
 /// BattleActionRecord.command and BattlePlan's copy of it: what a unit does

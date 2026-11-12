@@ -9,7 +9,7 @@
 /// (1) or deadly poison (2), delusion (0x20), stun (4, not for nine large
 /// enemies), Psy Seal (8), haunt (0x40), sleep (0x10) and the Grim Reaper's
 /// countdown (bit 6 + count); an object marked visible keeps its flags.
-void BattleUnit_BuildStatusFlags(s32 id, struct TlaBattleObj *output) {
+void BattleUnit_BuildStatusFlags(s32 id, struct BattleObj *output) {
   u32 flags = 0;
 
   if (output->visible == 0) {
@@ -201,7 +201,7 @@ s32 BattlePlacement_ContainsId(s16 *unitIds, s32 id);
 void Func_0811b75c(s16 *unitIds, s32 refreshPoses, s32 releaseOthers) {
   s32 unitIndex;
   s32 unitId;
-  struct TlaBattleObj *battleObject;
+  struct BattleObj *battleObject;
   struct MotionObject *object;
   struct TlaSpriteRecord *record;
   struct SpriteEntry *entry;
@@ -227,7 +227,7 @@ void Func_0811b75c(s16 *unitIds, s32 refreshPoses, s32 releaseOthers) {
        unitIndex++) {
     if (unitId == 254)
       continue;
-    battleObject = (struct TlaBattleObj *)BattleObject_Get(unitId);
+    battleObject = BattleObject_Get(unitId);
     if (battleObject == 0)
       continue;
     if (battleObject->fading != 0)
@@ -304,7 +304,7 @@ void Func_0811b75c(s16 *unitIds, s32 refreshPoses, s32 releaseOthers) {
       for (;;) {
         if (unitIds[unitIndex] != 254 &&
             (battleObject =
-                 (struct TlaBattleObj *)BattleObject_Get(spriteId)) != 0 &&
+                 BattleObject_Get(spriteId)) != 0 &&
             (object = battleObject->object) != 0)
           BattleObject_UpdatePose(spriteId);
         unitIndex++;
@@ -336,9 +336,9 @@ void ResetMotionRecordGroup(void *owner) {
   }
 }
 
-static inline struct TlaBattleObj *BattleObject_GetInline(s32 unitId) {
+static inline struct BattleObj *BattleObject_GetInline(s32 unitId) {
   struct BattleWork *battle = Ram_HeapSlots->battleWork;
-  struct TlaBattleObj *objects = (struct TlaBattleObj *)battle->slots;
+  struct BattleObj *objects = battle->slots;
   s32 placementIndex;
 
   if (unitId > 7)
@@ -369,13 +369,13 @@ void Func_0811b9fc(void) {
     for (;;) {
       /* FAKEMATCH(pin): slot held in r5; as a plain local, 27 of 273
        * instructions differ in tla-en. */
-      register struct TlaBattleObj *slot asm("r5");
+      register struct BattleObj *slot asm("r5");
 
       object = 0;
       slot = BattleObject_GetInline(unitIds[unitIndex]);
       if (slot != 0) {
         object = slot->object;
-        BattleStatusIcon_Cycle((struct BattleObj *)slot);
+        BattleStatusIcon_Cycle(slot);
         if (slot->effectEntry != 0) {
           struct TlaSpriteRecord *record = GetMotionRecord(object, 0);
 

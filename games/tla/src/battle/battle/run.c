@@ -100,7 +100,7 @@ void Func_08119734(s32 id) {
   work->enemyIds[1] = 255;
   Enemy_Update();
   object = (s32 *)BattleObject_Get(128);
-  BattleObject_Make((struct TlaBattleObj *)object, 128, object[3] / Q16_ONE,
+  BattleObject_Make((struct BattleObj *)object, 128, object[3] / Q16_ONE,
                     object[4] / Q16_ONE);
   BattleObject_Put();
 }

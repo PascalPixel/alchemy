@@ -11,6 +11,7 @@
 #include "ram_buffer.h"
 #include "call.h"
 #include "field.h"
+#include "text/msg_ids.h"
 
 void Func_02005304(s32 a, s32 b);
 void Func_0200530c(s32 a, s32 b);
@@ -77,7 +78,6 @@ void Func_02001454(s32 actor) {
     Actor_SetPosition(id, 0, 0);                          \
   }
 
-extern u8 MsgGaroh01[];
 extern u32 gData_0200545c[];
 
 void Func_020052b4(void);
@@ -441,8 +441,6 @@ loop2:
   Func_020051b4();
 }
 
-extern u8 MsgGaroh13[];
-
 void Func_020022f4(void) {
   s32 v5;
   s32 t1;
@@ -587,8 +585,6 @@ L_0200a66c:;
 s32 Func_02001344();
 
 s32 Func_020052bc();
-
-extern u8 MsgGaroh14[];
 
 void Func_02002694(void) {
   s32 v5;
@@ -1405,7 +1401,6 @@ L_0200b84e:;
        ->v)
 
 s32 __divsi3();
-extern u8 MsgGaroh28[];
 
 void Func_02003878(void) {
   s32 v5;
@@ -2366,7 +2361,6 @@ L_0200d0fa:;
   Func_020051b4();
 }
 
-#include "text/msg_ids.h"
 #include "objcmd.h"
 
 void Func_02000420(void);

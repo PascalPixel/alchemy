@@ -5,6 +5,8 @@
 #include "event_work.h"
 #include "actor.h"
 #include "iwram_call.h"
+#include "lib.h"
+#include "system.h"
 
 struct FieldPosition {
   s32 x;
@@ -49,8 +51,6 @@ s32 Func_0802d87c(struct Actor *actor, struct FieldPosition *position);
 s32 Func_080c8770(s32 x, s32 z, s32 kind);
 void Actor_SelectAnimation(struct Actor *actor, s32 argument);
 void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
-s32 FixedSqrt(s32 value);
-u32 Random16(void);
 struct Actor *Func_08023220(s32 kind, s32 x, s32 y, s32 z);
 void Actor_StartScript(struct Actor *, const s32 *);
 s32 Animation_ApplyChildArgument(struct PlayerSprite *, s32);
@@ -633,10 +633,8 @@ update_object:
 #include "field.h"
 #include "game.h"
 #include "graphics.h"
-#include "lib.h"
 #include "menu.h"
 #include "sound.h"
-#include "system.h"
 
 void SpriteColor_RemapPixels(u8 *buf, s32 cnt) {
   s32 n;

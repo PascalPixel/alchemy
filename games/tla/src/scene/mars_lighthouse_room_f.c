@@ -8,6 +8,7 @@
 #include "system.h"
 #include "types.h"
 #include "scene_tables.h"
+#include "event_work.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -680,7 +681,6 @@ void Func_02005670(void);
 void Func_02005678(s32 a0, s32 a1, s32 a2);
 void Func_020056b0(s32 id);
 void Func_020056b8(s32 id);
-void Event_StartScreenTransition(void);
 void Func_02001468(void);
 void Func_02001490(void);
 extern const u16 gData_02005bf0[];

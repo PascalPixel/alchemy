@@ -1,6 +1,7 @@
 #include "../mars_lighthouse_entrance/room.h"
 #include "field/event_work.h"
 #include "event_inline.h"
+#include "mars_lighthouse_room_m.h"
 
 struct RideSlot {
   u16 id;
@@ -19,8 +20,6 @@ struct RideWork {
   u16 value68;
   u16 direction;
 };
-
-extern u8 gData_020023c4[];
 
 s32 Func_020018c4(struct Actor *a, struct Actor *b);
 s32 Func_02001928(struct Actor *a, struct Actor *b);
@@ -89,8 +88,6 @@ void Func_02001988(struct Actor *object) {
     }
   }
 }
-
-#include "mars_lighthouse_room_m.h"
 
 void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
 

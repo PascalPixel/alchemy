@@ -5,6 +5,7 @@
 #include "system.h"
 #include "main_routine_work.h"
 #include "event_inline.h"
+#include "text/msg_ids.h"
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
      u8 pad[off];                                                              \
@@ -15,7 +16,6 @@ void Func_02004e3c(struct Actor *object, s32 value);
 void Func_02004e5c(void);
 void Func_02004e64(void);
 void Func_02004ec4(s32 id, s32 target);
-extern u8 MsgGaiaRockInside01[];
 
 void Func_02002020(void) {
   s32 t1, t2, t26, t27, t28, t34, t35, t37, t38, t43, t44, t50, v_r5, v_r6, v_r7,
@@ -121,7 +121,6 @@ L_0200a22e:
 }
 
 #include "actor.h"
-#include "text/msg_ids.h"
 #include "scene_tables.h"
 #include "iwram_call.h"
 #include "ram_buffer.h"

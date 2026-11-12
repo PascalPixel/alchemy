@@ -4,6 +4,7 @@
 #include "suhalla_gate/local.h"
 #include "types.h"
 #include "main_routine_work.h"
+#include "text/msg_ids.h"
 
 void Func_02000038(void) { Func_080d2b4c(13, 26); }
 
@@ -157,7 +158,6 @@ void Func_02000378(void) {
 s32 Scene_PrepareMap(void) { return 0; }
 
 extern char SceneId_VenusLighthouseEntrance;
-extern u8 MsgWaahhhItS[];
 
 void Func_02000a40(s32 a, s32 b);
 
@@ -196,7 +196,6 @@ void Func_020003ac(void) {
 }
 
 #include "actor.h"
-extern u8 MsgHaThatWas[];
 
 void Func_02000494(void) {
   struct MainRoutineWork *work;
@@ -358,8 +357,6 @@ void Func_020008cc(void) {
   Actor_CommitPositionAndActivate(gMainRoutineWork.currentOwner, 16, 0);
   Func_02000990();
 }
-
-#include "text/msg_ids.h"
 
 // clang-format off
 s32 gData_02000aa8[] = {

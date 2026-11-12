@@ -1,6 +1,8 @@
 #include "types.h"
 #include "sprite.h"
 #include "ram_buffer.h"
+#include "graphics.h"
+#include "resource.h"
 
 struct AnimationEntry *AnimationObject_AllocateEmpty(void);
 s32 Animation_ApplyChildArgumentFar(void *, s32);
@@ -270,7 +272,6 @@ void Func_08015160(s32 x, s32 y, s32 z);
 void Func_0801521c(s32 scale);
 void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
-void Render_ResetTransformState(void);
 void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
 void BattleEffect_SpawnObjects(s32 entryCount, s32 kind,
@@ -289,8 +290,6 @@ void Func_081180e8(s32 phase);             // BattlePlayback_StartFar
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
                                           s32 drag);
-
-void *Resource_GetTableEntry(s32 resource);
 
 void Sound_PlayFar(s32 cue);
 void wait(s32 frames);
@@ -319,8 +318,6 @@ void Transform_Pop(void);
 #include "task.h"
 
 #include "motobj.h"
-#include "graphics.h"
-#include "resource.h"
 static __inline__ s32 ClearWords_(void *destination, s32 size) {
   return Iwram_ClearWords(destination, size);
 }

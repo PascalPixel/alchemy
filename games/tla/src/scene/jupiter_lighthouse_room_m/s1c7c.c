@@ -12,8 +12,7 @@
 #include "main_routine_work.h"
 #include "event_work.h"
 #include "field_event.h"
-
-void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
+#include "field.h"
 
 extern const u8 MsgIMSorry[];
 
@@ -646,7 +645,6 @@ s32 Func_02002c54(void) {
   return 0;
 }
 
-void Scene_SetArrivalFlags(s32 unused);
 void Func_02002fc4(s32 mode);
 void Func_02003a38();
 void Func_02003ac0();
@@ -783,7 +781,6 @@ void Func_02003048(s32 id) {
 
 #include "frame.h"
 #include "field_sprite.h"
-#include "field.h"
 
 static __inline__ void Camera_MoveWithinMapBounds_(s32 x, s32 y, s32 z,
                                                    s32 mode) {

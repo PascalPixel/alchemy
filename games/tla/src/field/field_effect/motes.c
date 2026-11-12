@@ -11,6 +11,7 @@
 #include "map.h"
 #include "resource.h"
 #include "edition.h"
+#include "flag_call.h"
 
 #define Resource_DecodeByteLzInRam                                             \
   ((void (*)(const void *, void *))Resource_DecodeByteLzInRam)
@@ -257,7 +258,6 @@ struct SparklePicture {
 
 extern const struct SparklePicture gData_080f0b7c[];
 
-s32 GameFlag_Test(s32 flag);
 void Func_080140d8(void *entry, s32 priority);
 
 void FieldEffect_UpdateSparkles(void) {
@@ -673,8 +673,6 @@ void Func_080d7524(s32 djinniId) {
 #endif
   Event_End();
 }
-
-#include "flag_call.h"
 
 s32 Djinn_AddToLeastLoadedOwnerFar(s32 element, s32 djinni);
 void Func_080d82e0(s32 actor);

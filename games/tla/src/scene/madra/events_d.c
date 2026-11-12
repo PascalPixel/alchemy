@@ -5,6 +5,7 @@
 #include "scene_tables.h"
 #include "event_inline.h"
 #include "field.h"
+#include "text/msg_ids.h"
 
 void Func_02002b28(void);
 void Func_02002b30(void);
@@ -17,29 +18,6 @@ extern struct ActorPlacement gData_02002ff0[];
 extern struct Trigger gData_02003358[];
 extern struct Trigger gData_0200367c[];
 extern struct Trigger gData_0200394c[];
-
-extern u8 MsgItLooksLikeThe[];
-extern u8 MsgTheArmorerAnd[];
-extern u8 MsgAfterTheChampa[];
-extern u8 MsgPeopleAreSaying[];
-extern u8 MsgIKnewThere[];
-extern u8 MsgOwOwOw[];
-extern u8 MsgMyBoyfriendShin[];
-extern u8 MsgAllMyInjuries[];
-extern u8 MsgMySisterWas[];
-extern u8 MsgIfYouDon[];
-extern u8 MsgHaveYouBy[];
-extern u8 MsgUsingPsynergyOn[];
-extern u8 MsgWhereCouldMenardi[];
-extern u8 MsgEveryoneHereIn[];
-extern u8 MsgYeahWellWe[];
-extern u8 MsgYouCominThrough[];
-extern u8 MsgYeahUhWe[];
-extern u8 MsgOhUhYou[];
-extern u8 MsgWasIJust[];
-extern u8 MsgHeyMisterAre[];
-extern u8 MsgDidYouCome[];
-extern u8 MsgIsThereBy[];
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -115,8 +93,6 @@ void Func_02002ab0(void) {
   Actor_ArmCallback(id, a << 8, 0);
   Func_020029c8();
 }
-
-#include "text/msg_ids.h"
 
 void Func_0200006c(void);
 void Func_02000108(void);

@@ -19,7 +19,6 @@ s32 Func_020005a0(s32 *a, s32 *b) {
   return Iwram_Sqrt(dx * dx + dz * dz);
 }
 
-extern u8 gMapCellBuffer[];
 extern u8 gMapShapeGrid[];
 
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);

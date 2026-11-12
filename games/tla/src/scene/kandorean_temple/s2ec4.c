@@ -7,6 +7,7 @@
 #include "event_inline.h"
 #include "version.h"
 #include "task.h"
+#include "text/msg_ids.h"
 
 void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
@@ -617,8 +618,6 @@ void Func_02003e60(struct Actor *object, u32 frames, s32 step) {
   }
 }
 
-extern u8 MsgKandoreanTemple04[];
-
 void Func_02003e8c(void) {
   struct Actor *object;
   struct FieldSprite *sprite;
@@ -902,7 +901,6 @@ void Func_020047f0(void) {
   Event_ShowMessageAndWait(0x400c, 0);
 }
 
-extern u8 MsgKandoreanTemple07[];
 extern u32 gData_02005564[];
 extern u32 gData_020055a0[];
 extern u32 gData_020055e4[];
@@ -1155,7 +1153,6 @@ void Func_02005028(void) {
 
 #include "types.h"
 #include "scene_tables.h"
-#include "text/msg_ids.h"
 #include "objcmd.h"
 
 void Func_02000280(void);

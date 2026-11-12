@@ -83,9 +83,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
   struct Particle *column;
   DrawRectangle blit[2];
   struct SpriteScale scale;
-  /* FAKEMATCH(temporary): ground holds 112, where the columns land; as
-   * px(112) at its one use, 38 of 1474 instructions differ in tbs-en. */
-  s32 ground = 112;
+  s32 ground = 112; // where the columns land
 
   cache = (u32 *)&gHeapSlots[HEAP_SLOT_BATTLE_CANVAS];
   canvas = (void *)cache[0];

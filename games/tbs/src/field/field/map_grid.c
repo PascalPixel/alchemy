@@ -780,9 +780,6 @@ void MapGrid_PlayMapEdit(u16 *steps, s32 destinationX, u32 destinationY) {
     sourceX ^= firstSourceCopy;
   }
   if (firstSourceCopy != MAPGRID_ANIMATION_STEPS_END) {
-    /* FAKEMATCH(temporary): endMarker holds the one constant the loop
-     * compares with; as MAPGRID_ANIMATION_STEPS_END there, 30 of 53
-     * instructions differ in tbs-en. */
     u32 endMarker = MAPGRID_ANIMATION_STEPS_END;
     s16 *rectangleArgs = (s16 *)(steps + 1);
 

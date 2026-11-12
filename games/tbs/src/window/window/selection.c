@@ -14,8 +14,6 @@ void SelectionMenu_Create(void) {
   struct SelectionSprite *visual;
   const u8 *table;
   s32 i;
-  /* FAKEMATCH(temporary): clear holds the 0 three fields take; as 0 at each,
-   * 19 of 124 instructions differ in tbs-en. */
   u16 clear = 0;
 
   screen = HeapSlot_AllocEwram(HEAP_SLOT_SELECTION_MENU,

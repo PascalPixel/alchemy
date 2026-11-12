@@ -240,9 +240,9 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
     if (step >= 0 && step <= 31) {
       s32 phase = frame * 16;
       s32 x = canvasCenterX - 17;
-      /* FAKEMATCH(temporary): width, blit and high hold one value each; as
-       * those values in place, 212 of 779 instructions differ in tbs-en. */
       s32 width = 34;
+      /* FAKEMATCH(temporary): blit holds blitters[0]; as blitters[0] at both
+       * draws, 139 of 779 instructions differ in tbs-en. */
       DrawRectangle blit = blitters[0];
       s32 high = 104;
       s32 size = (phase - 256) % high;

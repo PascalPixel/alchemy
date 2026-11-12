@@ -162,8 +162,6 @@ void WindowSystem_InitBattle(s32 loadGlyphTiles) {
   // neither allocated nor shown, but nonzero, so the text tile search skips
   // them and no clear of the shown bits ever frees them.
   {
-    /* FAKEMATCH(temporary): mode holds the 4; as textTileState[tileIndex] = 4,
-     * 2 of 78 instructions differ in tbs-en. */
     u8 mode = 4;
 
     for (tileIndex = 2; tileIndex >= 0; tileIndex--)

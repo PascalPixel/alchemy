@@ -162,10 +162,8 @@ void WindowSystem_InitBattle(s32 loadGlyphTiles) {
   // neither allocated nor shown, but nonzero, so the text tile search skips
   // them and no clear of the shown bits ever frees them.
   {
-    /* LEFTOVER(form): the 4 held in a named local; The Lost Age's
-     * WindowSystem_InitBattle holds it the same way in the same loop, and its
-     * ROM needs it (as a literal 4, 2 of 75 differ in tla-en); as
-     * textTileState[tileIndex] = 4, 2 of 78 instructions differ in tbs-en. */
+    /* FAKEMATCH(temporary): mode holds the 4; as textTileState[tileIndex] = 4,
+     * 2 of 78 instructions differ in tbs-en. */
     u8 mode = 4;
 
     for (tileIndex = 2; tileIndex >= 0; tileIndex--)

@@ -121,10 +121,8 @@ void Djinn_ShowJoinedMessage(s32 member, s32 element, s32 djinn) {
   s32 *p;
 
   window = NULL;
-  /* LEFTOVER(form): one named 0 for the calls and stores; The Lost Age's
-   * twin of this routine (Func_08044a58) holds it the same way, and its ROM
-   * needs it (as 0 at each use, 58 of 124 differ in tla-en); as 0 at each
-   * use, 62 of 123 instructions differ in tbs-en. */
+  /* FAKEMATCH(temporary): zero holds the 0 the calls and stores take; as 0
+   * at each use, 62 of 123 instructions differ in tbs-en. */
   zero = 0;
   name = gDjinn_ElementSprites[element & 3];
   entry = sprite;

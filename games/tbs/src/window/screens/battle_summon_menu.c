@@ -119,11 +119,8 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
   orderedSummons[orderedCount] = SUMMON_END;
 
   for (;;) {
-    /* LEFTOVER(form): the cursor record reached through a pointer; The Lost
-     * Age's BattleSummonMenu_Run reaches it the same way, and its ROM needs
-     * it (277 of 984 differ in tla-en), as do the sibling menus; as
-     * cursorStorage used directly, 275 of 946 instructions differ in tbs-en.
-     */
+    /* FAKEMATCH(temporary): cur holds &cursorStorage; as cursorStorage used
+     * directly, 275 of 946 instructions differ in tbs-en. */
     cur = &cursorStorage;
 
     //------------------------------------------------------------------

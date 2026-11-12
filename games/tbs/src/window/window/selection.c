@@ -14,10 +14,8 @@ void SelectionMenu_Create(void) {
   struct SelectionSprite *visual;
   const u8 *table;
   s32 i;
-  /* LEFTOVER(form): one named 0 for three fields; The Lost Age's
-   * SelectionMenu_Create holds it the same way, and its ROM needs it (as 0 at
-   * each, 15 of 126 differ in tla-en); as 0 at each, 19 of 124 instructions
-   * differ in tbs-en. */
+  /* FAKEMATCH(temporary): clear holds the 0 three fields take; as 0 at each,
+   * 19 of 124 instructions differ in tbs-en. */
   u16 clear = 0;
 
   screen = HeapSlot_AllocEwram(HEAP_SLOT_SELECTION_MENU,
@@ -851,10 +849,8 @@ void SelectionMenu_StepLeft(struct SelectionMenuWork *state) {
     } else {
       node = state->head;
       i = 64;
-      /* LEFTOVER(form): kind holds the 0 stored; The Lost Age's
-       * Menu_StepLeft stores it the same way, and its ROM needs it (as a
-       * plain 0, 20 of 206 differ in tla-en); as records[1].kind = FALSE, 28
-       * of 184 instructions differ in tbs-en. */
+      /* FAKEMATCH(temporary): kind holds the 0; as records[1].kind = FALSE,
+       * 28 of 184 instructions differ in tbs-en. */
       kind = 0;
       state->records[1].kind = kind;
       while (node->next != NULL) {

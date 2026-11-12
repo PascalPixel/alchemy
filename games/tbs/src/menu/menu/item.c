@@ -251,11 +251,8 @@ s32 ItemMenu_RunCommands(s32 *memberOut, s32 *targetOut, s32 *itemOut) {
       Menu_DrawCoins(menu->descriptionWindow);
       command = ItemMenu_SelectMember(0);
       if (command == -1) {
-        /* LEFTOVER(form): the choice cleared on cancel, though the menu ends
-         * before reading it; the other edition's arm below clears its own, and
-         * The Lost Age's ItemMenu_RunCommands clears the same pair, which its
-         * ROM needs (104 of 1355 differ in tla-en); with neither store, 18 of
-         * 1268 instructions differ in tbs-en. */
+        // DEAD: selection and command cleared though the menu ends before
+        // reading either; the ROM keeps the 0 and its store to selection.
         selection = command = 0;
         menuResult = -1;
         done = 1;
@@ -264,11 +261,8 @@ s32 ItemMenu_RunCommands(s32 *memberOut, s32 *targetOut, s32 *itemOut) {
       Menu_DrawCoins(menu->descriptionWindow);
       member = ItemMenu_SelectMember(0);
       if (member == -1) {
-        /* LEFTOVER(form): the choice cleared on cancel, though the menu ends
-         * before reading it; the other edition's arm above clears its own, and
-         * The Lost Age's ItemMenu_RunCommands clears its choice on the same
-         * cancel, which its ROM needs (104 of 1355 differ in tla-en); with no
-         * store, 20 of 1272 instructions differ in tbs-ja. */
+        // DEAD: chosen, selection and member cleared though the menu ends
+        // before reading them; the ROM keeps the 0 and its three stores.
         chosen = selection = member = 0;
         menuResult = -1;
         done = 1;
@@ -831,8 +825,7 @@ s32 ItemMenu_RunCommands(s32 *memberOut, s32 *targetOut, s32 *itemOut) {
     case ITEM_STEP_QUANTITY:
       result = ItemMenu_SelectGiveQuantity(0, 30, 0);
       if (result != -1) {
-        // Unused: the quantity chosen, which nothing reads. In The Lost Age the
-        // finished step sets how many of a stacked item are given.
+        // Unused: the quantity chosen, which nothing reads.
         heldCount = result;
       }
       state = ITEM_STEP_ITEM;

@@ -141,12 +141,8 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
   work->dirty = 1;
 
   for (;;) {
-    /* LEFTOVER(form): the cursor record reached through a pointer, as in
-     * the sibling menus BattleItemMenu_Run and BattleSummonMenu_Run, whose
-     * The Lost Age twins need it (219 of 790 and 277 of 984 differ in
-     * tla-en), and BattlePsynergyMenu, which uses it untagged; as
-     * cursorStorage used directly, 398 of 1201 instructions differ in
-     * tbs-en. */
+    /* FAKEMATCH(temporary): sprite holds &cursorStorage; as cursorStorage
+     * used directly, 398 of 1201 instructions differ in tbs-en. */
     struct CursorSprite *sprite = &cursorStorage;
 
     // Rebuild descriptions only when the selection or preview page changes:

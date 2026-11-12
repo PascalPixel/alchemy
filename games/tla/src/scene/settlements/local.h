@@ -12,11 +12,11 @@
 
 s32 Math_Cosine(s32 angle);
 
-extern u8 MsgSettlements01;
+extern u8 MsgSettlements01[];
 
 #include "frame.h"
 
-extern const u8 gData_0200226c[];
+extern s16 gData_0200226c[];
 extern u16 gData_02002ce8;
 
 void Func_02000758(s32 x, s32 y, s32 z);
@@ -49,8 +49,8 @@ void Func_02002070(void);
 void Func_02002130(s32 a, s32 b);
 void Func_020021a0(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
 
-extern const u8 gData_02002380[];
-extern const u8 gData_020023a0[];
+extern u32 gData_02002380[];
+extern u32 gData_020023a0[];
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -74,12 +74,8 @@ static __inline__ void SetPosCommit(s32 id, s32 x, s32 z) {
   Actor_SetPositionAndCommit(id, x, z);
 }
 
-static __inline__ s32 Flag_Test(s32 flag) {
-  return GameFlag_Test(flag);
-}
+static __inline__ s32 Flag_Test(s32 flag) { return GameFlag_Test(flag); }
 
-static __inline__ void Flag_Set(s32 flag) {
-  GameFlag_SetBit(flag);
-}
+static __inline__ void Flag_Set(s32 flag) { GameFlag_SetBit(flag); }
 
 #endif

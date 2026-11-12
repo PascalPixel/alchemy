@@ -153,8 +153,9 @@ s32 Math_Cosine(s32 angle);
 void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags, struct EffectOptions *options);
 s32 Func_020005a0(s32 *a, s32 *b);
-// XXX: s0c08.c defines this with an s16 value; this call matches only with u16.
-// A match of s0c08.c under u16 would settle which the game declares.
+// XXX: magma_rock.c defines this with an s16 value; this call matches only with
+// u16. A match of magma_rock.c's Func_02000c08 under u16 would settle which the
+// game declares.
 void Func_02000c08(u16 index);
 void Func_02000d40(void);
 void Func_02003a54(struct Actor *object, s32 a);

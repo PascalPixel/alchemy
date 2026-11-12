@@ -13,13 +13,7 @@
 #include "heap_release.h"
 #include "field_effect.h"
 
-struct Trigger;
-
-struct TundariaTowerEffectParams {
-  u8 unk00[0x18];
-  u16 kind;
-  u8 unk1a[0xe];
-};
+#include "scene_tables.h"
 
 struct TundariaTowerSparkWork {
   u8 unk0000[0x1604];
@@ -41,7 +35,7 @@ void Task_RemoveFar(void (*func)(void));
 s32 MapCell_SetAttributes(u32 layer, s32 x, s32 z, s32 value);
 void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
-                   struct TundariaTowerEffectParams *params);
+                   const struct EffectOptions *options);
 void Func_020006d4(union FieldObject *object);
 void Func_02000708(struct TundariaTowerPosition *position, s32 count,
                    s32 scale);
@@ -56,23 +50,23 @@ void Func_020030c0(s32 id);
 void Func_02003100(void);
 void Func_02003140(void);
 void Event_ResolvePendingActions(s32 a);
-void Func_02003170(const u8 *script);
+void Func_02003170(const s16 *script);
 
-extern const u8 MsgThereSSomething[];
-extern const u8 gData_02003264[];
-extern const u8 gData_0200326e[];
+extern u8 MsgThereSSomething[];
+extern s16 gData_02003264[];
+extern s16 gData_0200326e[];
 extern u16 gData_02003cd0;
 
 void Func_02002e00(void);
 void Func_02002d44(s32 x, s32 y, s32 z, s32 frames);
 void Func_0200137c(void);
-extern const u8 gData_020037f8[];
-extern const u8 gData_0200381c[];
-extern const u8 gData_0200393c[];
-extern const u8 gData_020039e4[];
-extern const u8 gData_02003a5c[];
-extern const u8 gData_02003b28[];
-extern const u8 gData_02003c90[];
+extern struct Trigger gData_020037f8[];
+extern struct Trigger gData_0200381c[];
+extern struct Trigger gData_0200393c[];
+extern struct Trigger gData_020039e4[];
+extern struct Trigger gData_02003a5c[];
+extern struct Trigger gData_02003b28[];
+extern struct Trigger gData_02003c90[];
 
 void Func_02000840(struct Actor *object);
 void Func_02002ebc(void);

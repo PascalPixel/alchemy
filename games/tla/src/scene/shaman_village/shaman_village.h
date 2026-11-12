@@ -10,6 +10,7 @@
 #include "field_sprite.h"
 #include "event_inline.h"
 #include "frame.h"
+#include "scene_tables.h"
 
 struct ShamanVillageObject {
   u8 unk00[6];
@@ -69,8 +70,7 @@ void Func_02004a7c(s32 keeper);
 void Func_02004a84(s32 shop, s32 keeper);
 void Import_ActorSetMode(struct ShamanVillageObject *object, s32 mode);
 void Func_0200481c(struct ShamanVillageObject *object);
-void Actor_SetSingleChildFlags(struct ShamanVillageObject *object,
-                                        u32 value);
+void Actor_SetSingleChildFlags(struct ShamanVillageObject *object, u32 value);
 void Animation_SetStateFlags(struct ShamanVillageObject *object, s32 flags);
 void Field_DispatchTypeHandler(s32 type);
 void Event_FinishScreenTransition(void);
@@ -120,10 +120,10 @@ void Func_0200289c(void);
 void Func_0200290c(void);
 void Func_02003040(void);
 
-extern const u8 gData_02004c08[];
-extern const u8 gData_020050f8[];
-extern u8 gData_02005284[];
-extern u8 gData_020052b4[];
-extern u8 gData_02005314[];
+extern s32 gData_02004c08[];
+extern s32 gData_020050f8[];
+extern struct SceneEntrance gData_02005284[];
+extern struct SceneEntrance gData_020052b4[];
+extern struct SceneEntrance gData_02005314[];
 
 #endif

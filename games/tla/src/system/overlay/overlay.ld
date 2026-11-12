@@ -1112,24 +1112,15 @@ SECTIONS
         "*/games/tla/src/scene/tundaria_tower/s00b8.o"(.text)
         "*/games/tla/src/scene/tundaria_tower/script0.o"(.text)
         "*/games/tla/src/field/map/cell_set.o"(.text)
-        "*/games/tla/src/scene/tundaria_tower/s0338.o"(.text)
         "*/games/tla/src/scene/tundaria_tower.o"(.text)
-        "*/games/tla/src/scene/tundaria_tower/s05d0.o"(.text)
-        "*/games/tla/src/scene/tundaria_tower/fall.o"(.text)
-        "*/games/tla/src/scene/tundaria_tower/script3.o"(.text)
-        "*/games/tla/src/scene/tundaria_tower/s0c64.o"(.text)
-        "*/games/tla/src/scene/tundaria_tower/s0d2c.o"(.text)
         "*/games/tla/src/field/field_effect/advance_motion.o"(.text)
         "*/games/tla/src/scene/tundaria_tower/s11e0.o"(.text)
-        "*/games/tla/src/scene/tundaria_tower/events_d.o"(.text)
         "*/games/tla/src/scene/tundaria_tower/events_e.o"(.text)
         "*/games/tla/src/scene/tundaria_tower/s1b48.o"(.text)
         "*/games/tla/src/scene/tundaria_tower/events_f.o"(.text)
         "*/games/tla/src/scene/tundaria_tower/s29d0.o"(.text)
-        "*/games/tla/src/scene/tundaria_tower/s2b04.o"(.text)
-        "*/games/tla/src/scene/tundaria_tower/s2e00.o"(.text)
         "*/games/tla/src/scene/tundaria_tower/import.o"(.text)
-        "*/games/tla/src/scene/tundaria_tower/data.o"(.data)
+        "*/games/tla/src/scene/tundaria_tower/s29d0.o"(.data)
     }
     .bss :
     {
@@ -1146,17 +1137,13 @@ SECTIONS
         "*/games/tla/src/field/field_effect/move.o"(.text)
         "*/games/tla/src/scene/settlements/s00b8.o"(.text)
         "*/games/tla/src/scene/settlements/s0280.o"(.text)
-        "*/games/tla/src/scene/settlements/scene_tables.o"(.text)
-        "*/games/tla/src/scene/settlements/placements.o"(.text)
-        "*/games/tla/src/scene/settlements/exits.o"(.text)
-        "*/games/tla/src/scene/settlements/s0358.o"(.text)
         "*/games/tla/src/field/field_effect/advance_motion.o"(.text)
         "*/games/tla/src/scene/settlements/s1620.o"(.text)
         "*/games/tla/src/scene/settlements/s173c.o"(.text)
         "*/games/tla/src/scene/settlements/s1a1c.o"(.text)
         "*/games/tla/src/scene/settlements/s1d30.o"(.text)
         "*/games/tla/src/scene/settlements/import.o"(.text)
-        "*/games/tla/src/scene/settlements/data.o"(.data)
+        "*/games/tla/src/scene/settlements/s1d30.o"(.data)
     }
     .bss :
     {
@@ -1174,7 +1161,6 @@ SECTIONS
         "*/games/tla/src/scene/magma_rock/s015c.o"(.text)
         "*/games/tla/src/scene/magma_rock/s03b4.o"(.text)
         "*/games/tla/src/scene/magma_rock.o"(.text)
-        "*/games/tla/src/scene/magma_rock/s0c08.o"(.text)
         "*/games/tla/src/scene/magma_rock/s0ff4.o"(.text)
         "*/games/tla/src/scene/magma_rock/target.o"(.text)
         "*/games/tla/src/scene/magma_rock/s1738.o"(.text)
@@ -1231,7 +1217,7 @@ SECTIONS
         "*/games/tla/src/scene/atteka_inlet/entry.o"(.text)
         "*/games/tla/src/scene/atteka_inlet.o"(.text)
         "*/games/tla/src/scene/atteka_inlet/import.o"(.text)
-        "*/games/tla/src/scene/atteka_inlet/data.o"(.data)
+        "*/games/tla/src/scene/atteka_inlet.o"(.data)
     }
 }
 #elif OVERLAY == 0x694
@@ -1281,9 +1267,8 @@ SECTIONS
         "*/games/tla/src/scene/shaman_village/s0c80.o"(.text)
         "*/games/tla/src/scene/shared/drift_spawn.o"(.text)
         "*/games/tla/src/scene/shaman_village/s1fec.o"(.text)
-        "*/games/tla/src/scene/shaman_village/s2f20.o"(.text)
         "*/games/tla/src/scene/shaman_village/import.o"(.text)
-        "*/games/tla/src/scene/shaman_village/data.o"(.data)
+        "*/games/tla/src/scene/shaman_village/s1fec.o"(.data)
     }
     .bss :
     {

@@ -2,7 +2,7 @@
 
 void Func_02000280(void) { Func_080d7788(18, 3, 13); }
 
-u8 *Func_02000290(void) {
+const struct SceneEntrance *Func_02000290(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_ShamanVillage5)

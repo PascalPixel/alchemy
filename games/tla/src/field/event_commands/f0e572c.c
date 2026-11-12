@@ -56,7 +56,7 @@ void Camera_WorldToScreen(s32 *position);
 s32 Func_080db9a8(struct Actor *object, s32 facing);
 s32 BattleEffect_GetObjectDepth(struct Actor *object);
 s32 Resource_FindFreeEntry(void);
-s32 VramCache_Load(s32 slot, s32 size, const void *data);
+s32 VramCache_Load(u32 slot, u32 size, const void *source);
 void Resource_ResetEntry(s32 slot);
 void *Resource_GetTableEntry(s32 resourceId);
 s32 Resource_DecodeType01(const void *source, void *destination);

@@ -239,7 +239,7 @@ extern const u8 Data_080f0e00[];
 
 s32 Resource_FindFreeEntry(void);
 void Resource_DecodeType01(const void *source, void *destination);
-s32 VramCache_Load(s32 slot, s32 size, void *tiles);
+s32 VramCache_Load(u32 slot, u32 size, const void *source);
 void Func_080daab0(void);
 void Func_080dacb8(void);
 

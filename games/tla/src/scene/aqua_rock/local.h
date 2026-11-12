@@ -47,7 +47,7 @@ void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void Task_RemoveFar(void *func);
 s32 Resource_FindFreeEntry(void);
-s32 VramCache_Load(s32 entry, s32 size, void *data);
+s32 VramCache_Load(u32 slot, u32 size, const void *source);
 void *HeapSlot_AllocEwram(s32 slot, s32 size);
 void HeapSlot_Release(s32 slot);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);

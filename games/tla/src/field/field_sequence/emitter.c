@@ -101,7 +101,7 @@ extern const u8 gData_080effd8[];
 extern const u8 Data_080f01b8[];
 struct Actor *Func_080200c0(s32 kind, s32 x, s32 y, s32 z);
 void Func_08038248(s32 item);
-s32 VramCache_Load(u32 slot, u32 size, const void *picture);
+s32 VramCache_Load(u32 slot, u32 size, const void *source);
 void BattleEffect_SpawnRandomParticleAtPosition(void);
 
 /// Shows the picture of item above actor (in front of the controlled owner,

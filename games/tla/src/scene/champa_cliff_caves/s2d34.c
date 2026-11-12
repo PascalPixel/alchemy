@@ -42,7 +42,7 @@ struct ChampaCliffCavesWork {
 void *Resource_GetTableEntry(s32 id);
 void Func_020033dc(void *resource, void *destination);
 s32 Resource_FindFreeEntry(void);
-s32 VramCache_Load(s32 entry, s32 size, void *source);
+s32 VramCache_Load(u32 slot, u32 size, const void *source);
 void Func_020035fc(struct ChampaCliffCavesSprite *sprite, s32 width, s32 height,
                    u32 attributes, s32 vram);
 

@@ -62,7 +62,7 @@ void BattleEffect_InitializeSharedScene(void);
 void *Resource_GetTableEntry(s32 resourceId);
 s32 Resource_DecodeType01(const void *source, void *destination);
 s32 Resource_FindFreeEntry(void);
-s32 VramCache_Load(s32 slot, s32 size, const void *data);
+s32 VramCache_Load(u32 slot, u32 size, const void *source);
 void Resource_ResetEntry(s32 slot);
 void Animation_ApplyChildValueFar(void *sprite, s32 value);
 void Func_080e43a4(void *source, void *buffer, s32 size);

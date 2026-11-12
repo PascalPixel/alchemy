@@ -115,7 +115,7 @@ void Func_02002d64(void) {
 void *HeapSlot_AllocFar(s32 slot, s32 size);
 void HeapSlot_Release(s32 slot);
 void Icon_DrawItem(s32 resource);
-void VramCache_Load(s32 handle, s32 size, void *source);
+s32 VramCache_Load(u32 slot, u32 size, const void *source);
 
 void Func_02002de0(void) {
   struct KibomboObject **slot = &gData_02007950;

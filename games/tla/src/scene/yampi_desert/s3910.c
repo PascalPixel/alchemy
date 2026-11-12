@@ -257,7 +257,7 @@ extern const u8 gField_Tiles64D[];
 void *Heap_AllocEwram(s32 size);
 void Func_02003f70(const void *source, void *destination);
 s32 Resource_FindFreeEntry(void);
-void VramCache_Load(s32 entry, s32 size, void *source);
+s32 VramCache_Load(u32 slot, u32 size, const void *source);
 void Heap_Release(void *block);
 
 s32 Func_020041f0(void);

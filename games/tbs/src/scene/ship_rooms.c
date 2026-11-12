@@ -4352,22 +4352,18 @@ s32 gShipRooms_TurnSteps[] = {
 
 /// The warriors walk out of the hold.
 s32 gShipRooms_LeaveHold[] = {
-    SC_ANIMATION(2), SC_MOVE(PIXELS(168), 0, PIXELS(500)),
-    SC_SYNC,         SC_MOVE(PIXELS(168), 0, PIXELS(584)),
+    SC_ANIMATION(2), SC_MOVE(168, 0, 500),
+    SC_SYNC,         SC_MOVE(168, 0, 584),
     SC_SYNC,         SC_CALL(ShipRooms_ResetActor),
     SC_END,
 };
 
 /// Those gathered in the captain's quarters walk out.
 s32 gShipRooms_LeaveCaptainsQuarters[] = {
-    SC_SET(SW_SPEED, PIXELS(1)),
-    SC_SET(SW_ACCELERATION, PIXELS(1) / 2),
-    SC_ANIMATION(2),
-    SC_MOVE(PIXELS(456), 0, PIXELS(674)),
-    SC_SYNC,
-    SC_MOVE(PIXELS(456), 0, PIXELS(712)),
-    SC_SYNC,
-    SC_CALL(ShipRooms_ResetActor),
+    SC_SPEED(1),     SC_ACCELERATION(0.5),
+    SC_ANIMATION(2), SC_MOVE(456, 0, 674),
+    SC_SYNC,         SC_MOVE(456, 0, 712),
+    SC_SYNC,         SC_CALL(ShipRooms_ResetActor),
     SC_END,
 };
 
@@ -4391,21 +4387,21 @@ s32 gShipRooms_AnchorCharmPulse[] = {
 
 /// The party's followers walk into the leader by the rowing deck's stairs.
 s32 gShipRooms_FollowersRejoinByStairs[] = {
-    SC_ANIMATION(2), SC_MOVE(PIXELS(434), 0, PIXELS(166)),
+    SC_ANIMATION(2), SC_MOVE(434, 0, 166),
     SC_SYNC,         SC_CALL(ShipRooms_ResetActor),
     SC_END,
 };
 
 /// The same, in the middle of the rowing deck.
 s32 gShipRooms_FollowersRejoinMidDeck[] = {
-    SC_ANIMATION(2), SC_MOVE(PIXELS(438), 0, PIXELS(300)),
+    SC_ANIMATION(2), SC_MOVE(438, 0, 300),
     SC_SYNC,         SC_CALL(ShipRooms_ResetActor),
     SC_END,
 };
 
 /// The same, by the first row of seats.
 s32 gShipRooms_FollowersRejoinBySeats[] = {
-    SC_ANIMATION(2), SC_MOVE(PIXELS(432), 0, PIXELS(168)),
+    SC_ANIMATION(2), SC_MOVE(432, 0, 168),
     SC_SYNC,         SC_CALL(ShipRooms_ResetActor),
     SC_END,
 };
@@ -4438,15 +4434,14 @@ s32 gShipRooms_MonsterBob[] = {
 
 /// A rower walks up the stairs and is released.
 s32 gShipRooms_LeaveByStairs[] = {
-    SC_ANIMATION(2), SC_MOVE(PIXELS(408), 0, PIXELS(132)),
-    SC_SYNC,         SC_MOVE(PIXELS(444), 0, PIXELS(132)),
+    SC_ANIMATION(2), SC_MOVE(408, 0, 132), SC_SYNC, SC_MOVE(444, 0, 132),
     SC_SYNC,         SC_RELEASE,
 };
 
 /// A rower steps into the aisle.
 s32 gShipRooms_StepIntoAisle[] = {
     SC_ANIMATION(2),
-    SC_MOVE(PIXELS(416), 0, PIXELS(186)),
+    SC_MOVE(416, 0, 186),
     SC_SYNC,
     SC_END,
 };

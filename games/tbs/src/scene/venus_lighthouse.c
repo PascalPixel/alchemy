@@ -4071,20 +4071,20 @@ s32 gVenusTrackSouthWestScript[] = {
 s32 gVenusSecondFloorLightToGate[] = {
     SC_CALL(VenusLighthouse_ClearScriptedSpriteFlags),
     SC_ANIMATION(7),
-    SC_SET(SW_SPEED, PIXELS(1)),
+    SC_SPEED(1),
     SC_SET(SW_HOOK, (s32)VenusLighthouse_TrailLight),
-    SC_MOVE(PIXELS(760), 0, PIXELS(728)),
+    SC_MOVE(760, 0, 728),
     SC_SYNC,
-    SC_POSITION(PIXELS(760), 0, PIXELS(728)),
-    SC_MOVE(PIXELS(760), 0, PIXELS(744)),
+    SC_POSITION(760, 0, 728),
+    SC_MOVE(760, 0, 744),
     SC_SYNC,
-    SC_POSITION(PIXELS(760), 0, PIXELS(744)),
-    SC_MOVE(PIXELS(744), 0, PIXELS(744)),
+    SC_POSITION(760, 0, 744),
+    SC_MOVE(744, 0, 744),
     SC_SYNC,
-    SC_POSITION(PIXELS(743), 0, PIXELS(744)),
-    SC_MOVE(PIXELS(744), 0, PIXELS(696)),
+    SC_POSITION(743, 0, 744),
+    SC_MOVE(744, 0, 696),
     SC_SYNC,
-    SC_POSITION(PIXELS(743), 0, PIXELS(696)),
+    SC_POSITION(743, 0, 696),
     SC_WAIT(1),
     SC_END,
 };
@@ -4094,13 +4094,13 @@ s32 gVenusSecondFloorLightToGate[] = {
 /// it. Each that reaches a socket asks VenusLighthouse_RouteLight for its
 /// next path.
 s32 gVenusThirdFloorLightToNortheast[] = {
-    SC_MOVE(PIXELS(872), 0, PIXELS(680)),
+    SC_MOVE(872, 0, 680),
     SC_SYNC,
-    SC_POSITION(PIXELS(872), 0, PIXELS(680)),
-    SC_MOVE(PIXELS(872), 0, PIXELS(664)),
+    SC_POSITION(872, 0, 680),
+    SC_MOVE(872, 0, 664),
     SC_SYNC,
-    SC_POSITION(PIXELS(872), 0, PIXELS(664)),
-    SC_MOVE(PIXELS(840), 0, PIXELS(664)),
+    SC_POSITION(872, 0, 664),
+    SC_MOVE(840, 0, 664),
     SC_SYNC,
     SC_SET(SW_X, PIXELS(840)),
     SC_SET(SW_Z, PIXELS(664)),
@@ -4109,10 +4109,10 @@ s32 gVenusThirdFloorLightToNortheast[] = {
 };
 
 s32 gVenusThirdFloorLightToSoutheast[] = {
-    SC_MOVE(PIXELS(888), 0, PIXELS(696)),
+    SC_MOVE(888, 0, 696),
     SC_SYNC,
-    SC_POSITION(PIXELS(888), 0, PIXELS(696)),
-    SC_MOVE(PIXELS(840), 0, PIXELS(696)),
+    SC_POSITION(888, 0, 696),
+    SC_MOVE(840, 0, 696),
     SC_SYNC,
     SC_SET(SW_X, PIXELS(840)),
     SC_SET(SW_Z, PIXELS(696)),
@@ -4129,18 +4129,18 @@ s32 gVenusLightGoesOut[] = {
 };
 
 s32 gVenusThirdFloorLightNorthwestToGate[] = {
-    SC_MOVE(PIXELS(728), 0, PIXELS(664)),
+    SC_MOVE(728, 0, 664),
     SC_SYNC,
-    SC_POSITION(PIXELS(728), 0, PIXELS(664)),
-    SC_MOVE(PIXELS(728), 0, PIXELS(632)),
+    SC_POSITION(728, 0, 664),
+    SC_MOVE(728, 0, 632),
     SC_SYNC,
-    SC_POSITION(PIXELS(728), 0, PIXELS(632)),
+    SC_POSITION(728, 0, 632),
     SC_SET(SW_VENUS_LIGHT_ARRIVED, 1),
     SC_END,
 };
 
 s32 gVenusThirdFloorLightNorthwestToSouthwest[] = {
-    SC_MOVE(PIXELS(776), 0, PIXELS(696)),
+    SC_MOVE(776, 0, 696),
     SC_SYNC,
     SC_SET(SW_X, PIXELS(776)),
     SC_SET(SW_Z, PIXELS(696)),
@@ -4149,7 +4149,7 @@ s32 gVenusThirdFloorLightNorthwestToSouthwest[] = {
 };
 
 s32 gVenusThirdFloorLightNortheastToNorthwest[] = {
-    SC_MOVE(PIXELS(776), 0, PIXELS(664)),
+    SC_MOVE(776, 0, 664),
     SC_SYNC,
     SC_SET(SW_X, PIXELS(776)),
     SC_SET(SW_Z, PIXELS(664)),
@@ -4158,7 +4158,7 @@ s32 gVenusThirdFloorLightNortheastToNorthwest[] = {
 };
 
 s32 gVenusThirdFloorLightNortheastToSoutheast[] = {
-    SC_MOVE(PIXELS(840), 0, PIXELS(696)),
+    SC_MOVE(840, 0, 696),
     SC_SYNC,
     SC_SET(SW_X, PIXELS(840)),
     SC_SET(SW_Z, PIXELS(696)),
@@ -4167,7 +4167,7 @@ s32 gVenusThirdFloorLightNortheastToSoutheast[] = {
 };
 
 s32 gVenusThirdFloorLightSouthwestToNorthwest[] = {
-    SC_MOVE(PIXELS(776), 0, PIXELS(664)),
+    SC_MOVE(776, 0, 664),
     SC_SYNC,
     SC_SET(SW_X, PIXELS(776)),
     SC_SET(SW_Z, PIXELS(664)),
@@ -4176,18 +4176,18 @@ s32 gVenusThirdFloorLightSouthwestToNorthwest[] = {
 };
 
 s32 gVenusThirdFloorLightSouthwestToGate[] = {
-    SC_MOVE(PIXELS(728), 0, PIXELS(696)),
+    SC_MOVE(728, 0, 696),
     SC_SYNC,
-    SC_POSITION(PIXELS(728), 0, PIXELS(696)),
-    SC_MOVE(PIXELS(728), 0, PIXELS(632)),
+    SC_POSITION(728, 0, 696),
+    SC_MOVE(728, 0, 632),
     SC_SYNC,
-    SC_POSITION(PIXELS(728), 0, PIXELS(632)),
+    SC_POSITION(728, 0, 632),
     SC_SET(SW_VENUS_LIGHT_ARRIVED, 1),
     SC_END,
 };
 
 s32 gVenusThirdFloorLightSoutheastToNortheast[] = {
-    SC_MOVE(PIXELS(840), 0, PIXELS(664)),
+    SC_MOVE(840, 0, 664),
     SC_SYNC,
     SC_SET(SW_X, PIXELS(840)),
     SC_SET(SW_Z, PIXELS(664)),
@@ -4196,7 +4196,7 @@ s32 gVenusThirdFloorLightSoutheastToNortheast[] = {
 };
 
 s32 gVenusThirdFloorLightSoutheastToSouthwest[] = {
-    SC_MOVE(PIXELS(776), 0, PIXELS(696)),
+    SC_MOVE(776, 0, 696),
     SC_SYNC,
     SC_SET(SW_X, PIXELS(776)),
     SC_SET(SW_Z, PIXELS(696)),
@@ -4208,20 +4208,20 @@ s32 gVenusThirdFloorLightSoutheastToSouthwest[] = {
 /// statue to the fork, where VenusLighthouse_MoveSocketPillar sends it on to
 /// the southeast socket and a second light to the southwest one.
 s32 gVenusFourthFloorLightFromStatue[] = {
-    SC_MOVE(PIXELS(216), 0, PIXELS(776)),
+    SC_MOVE(216, 0, 776),
     SC_SYNC,
-    SC_POSITION(PIXELS(216), 0, PIXELS(776)),
-    SC_MOVE(PIXELS(216), 0, PIXELS(760)),
+    SC_POSITION(216, 0, 776),
+    SC_MOVE(216, 0, 760),
     SC_SYNC,
-    SC_POSITION(PIXELS(216), 0, PIXELS(760)),
+    SC_POSITION(216, 0, 760),
     SC_END,
 };
 
 s32 gVenusFourthFloorLightToSoutheast[] = {
-    SC_MOVE(PIXELS(264), 0, PIXELS(760)),
+    SC_MOVE(264, 0, 760),
     SC_SYNC,
-    SC_POSITION(PIXELS(264), 0, PIXELS(760)),
-    SC_MOVE(PIXELS(264), 0, PIXELS(744)),
+    SC_POSITION(264, 0, 760),
+    SC_MOVE(264, 0, 744),
     SC_SYNC,
     SC_SET(SW_X, PIXELS(264)),
     SC_SET(SW_Z, PIXELS(744)),
@@ -4230,13 +4230,13 @@ s32 gVenusFourthFloorLightToSoutheast[] = {
 };
 
 s32 gVenusFourthFloorLightSoutheastToMiddle[] = {
-    SC_MOVE(PIXELS(264), 0, PIXELS(728)),
+    SC_MOVE(264, 0, 728),
     SC_SYNC,
-    SC_POSITION(PIXELS(264), 0, PIXELS(728)),
-    SC_MOVE(PIXELS(232), 0, PIXELS(728)),
+    SC_POSITION(264, 0, 728),
+    SC_MOVE(232, 0, 728),
     SC_SYNC,
-    SC_POSITION(PIXELS(232), 0, PIXELS(728)),
-    SC_MOVE(PIXELS(232), 0, PIXELS(696)),
+    SC_POSITION(232, 0, 728),
+    SC_MOVE(232, 0, 696),
     SC_SYNC,
     SC_SET(SW_X, PIXELS(232)),
     SC_SET(SW_Z, PIXELS(696)),
@@ -4245,13 +4245,13 @@ s32 gVenusFourthFloorLightSoutheastToMiddle[] = {
 };
 
 s32 gVenusFourthFloorLightMiddleToWest[] = {
-    SC_MOVE(PIXELS(216), 0, PIXELS(696)),
+    SC_MOVE(216, 0, 696),
     SC_SYNC,
-    SC_POSITION(PIXELS(216), 0, PIXELS(696)),
-    SC_MOVE(PIXELS(216), 0, PIXELS(664)),
+    SC_POSITION(216, 0, 696),
+    SC_MOVE(216, 0, 664),
     SC_SYNC,
-    SC_POSITION(PIXELS(216), 0, PIXELS(664)),
-    SC_MOVE(PIXELS(184), 0, PIXELS(664)),
+    SC_POSITION(216, 0, 664),
+    SC_MOVE(184, 0, 664),
     SC_SYNC,
     SC_SET(SW_X, PIXELS(184)),
     SC_SET(SW_Z, PIXELS(664)),
@@ -4260,10 +4260,10 @@ s32 gVenusFourthFloorLightMiddleToWest[] = {
 };
 
 s32 gVenusFourthFloorLightMiddleToEast[] = {
-    SC_MOVE(PIXELS(264), 0, PIXELS(696)),
+    SC_MOVE(264, 0, 696),
     SC_SYNC,
-    SC_POSITION(PIXELS(264), 0, PIXELS(696)),
-    SC_MOVE(PIXELS(264), 0, PIXELS(680)),
+    SC_POSITION(264, 0, 696),
+    SC_MOVE(264, 0, 680),
     SC_SYNC,
     SC_SET(SW_X, PIXELS(264)),
     SC_SET(SW_Z, PIXELS(680)),
@@ -4272,7 +4272,7 @@ s32 gVenusFourthFloorLightMiddleToEast[] = {
 };
 
 s32 gVenusFourthFloorLightWestToNorthwest[] = {
-    SC_MOVE(PIXELS(184), 0, PIXELS(632)),
+    SC_MOVE(184, 0, 632),
     SC_SYNC,
     SC_SET(SW_X, PIXELS(184)),
     SC_SET(SW_Z, PIXELS(632)),
@@ -4281,25 +4281,25 @@ s32 gVenusFourthFloorLightWestToNorthwest[] = {
 };
 
 s32 gVenusFourthFloorLightEastToNortheast[] = {
-    SC_MOVE(PIXELS(248), 0, PIXELS(680)),
+    SC_MOVE(248, 0, 680),
     SC_SYNC,
-    SC_POSITION(PIXELS(248), 0, PIXELS(680)),
-    SC_MOVE(PIXELS(248), 0, PIXELS(664)),
+    SC_POSITION(248, 0, 680),
+    SC_MOVE(248, 0, 664),
     SC_SYNC,
-    SC_POSITION(PIXELS(248), 0, PIXELS(664)),
-    SC_MOVE(PIXELS(264), 0, PIXELS(664)),
+    SC_POSITION(248, 0, 664),
+    SC_MOVE(264, 0, 664),
     SC_SYNC,
-    SC_POSITION(PIXELS(264), 0, PIXELS(664)),
-    SC_MOVE(PIXELS(264), 0, PIXELS(648)),
+    SC_POSITION(264, 0, 664),
+    SC_MOVE(264, 0, 648),
     SC_SYNC,
-    SC_POSITION(PIXELS(264), 0, PIXELS(648)),
-    SC_MOVE(PIXELS(248), 0, PIXELS(648)),
+    SC_POSITION(264, 0, 648),
+    SC_MOVE(248, 0, 648),
     SC_SYNC,
-    SC_POSITION(PIXELS(248), 0, PIXELS(648)),
-    SC_MOVE(PIXELS(248), 0, PIXELS(632)),
+    SC_POSITION(248, 0, 648),
+    SC_MOVE(248, 0, 632),
     SC_SYNC,
-    SC_POSITION(PIXELS(248), 0, PIXELS(632)),
-    SC_MOVE(PIXELS(232), 0, PIXELS(632)),
+    SC_POSITION(248, 0, 632),
+    SC_MOVE(232, 0, 632),
     SC_SYNC,
     SC_SET(SW_X, PIXELS(232)),
     SC_SET(SW_Z, PIXELS(632)),
@@ -4308,19 +4308,19 @@ s32 gVenusFourthFloorLightEastToNortheast[] = {
 };
 
 s32 gVenusFourthFloorLightToSouthwest[] = {
-    SC_MOVE(PIXELS(216), 0, PIXELS(744)),
+    SC_MOVE(216, 0, 744),
     SC_SYNC,
-    SC_POSITION(PIXELS(216), 0, PIXELS(744)),
-    SC_MOVE(PIXELS(184), 0, PIXELS(744)),
+    SC_POSITION(216, 0, 744),
+    SC_MOVE(184, 0, 744),
     SC_SYNC,
-    SC_POSITION(PIXELS(184), 0, PIXELS(744)),
-    SC_MOVE(PIXELS(184), 0, PIXELS(760)),
+    SC_POSITION(184, 0, 744),
+    SC_MOVE(184, 0, 760),
     SC_SYNC,
-    SC_POSITION(PIXELS(184), 0, PIXELS(760)),
-    SC_MOVE(PIXELS(168), 0, PIXELS(760)),
+    SC_POSITION(184, 0, 760),
+    SC_MOVE(168, 0, 760),
     SC_SYNC,
-    SC_POSITION(PIXELS(168), 0, PIXELS(760)),
-    SC_MOVE(PIXELS(168), 0, PIXELS(744)),
+    SC_POSITION(168, 0, 760),
+    SC_MOVE(168, 0, 744),
     SC_SYNC,
     SC_SET(SW_X, PIXELS(168)),
     SC_SET(SW_Z, PIXELS(744)),
@@ -4329,16 +4329,16 @@ s32 gVenusFourthFloorLightToSouthwest[] = {
 };
 
 s32 gVenusFourthFloorLightSouthwestToFarWest[] = {
-    SC_MOVE(PIXELS(168), 0, PIXELS(728)),
+    SC_MOVE(168, 0, 728),
     SC_SYNC,
-    SC_POSITION(PIXELS(168), 0, PIXELS(728)),
-    SC_MOVE(PIXELS(184), 0, PIXELS(728)),
+    SC_POSITION(168, 0, 728),
+    SC_MOVE(184, 0, 728),
     SC_SYNC,
-    SC_POSITION(PIXELS(184), 0, PIXELS(728)),
-    SC_MOVE(PIXELS(184), 0, PIXELS(696)),
+    SC_POSITION(184, 0, 728),
+    SC_MOVE(184, 0, 696),
     SC_SYNC,
-    SC_POSITION(PIXELS(184), 0, PIXELS(696)),
-    SC_MOVE(PIXELS(168), 0, PIXELS(696)),
+    SC_POSITION(184, 0, 696),
+    SC_MOVE(168, 0, 696),
     SC_SYNC,
     SC_SET(SW_X, PIXELS(168)),
     SC_SET(SW_Z, PIXELS(696)),
@@ -4347,10 +4347,10 @@ s32 gVenusFourthFloorLightSouthwestToFarWest[] = {
 };
 
 s32 gVenusFourthFloorLightFarWestToWest[] = {
-    SC_MOVE(PIXELS(168), 0, PIXELS(664)),
+    SC_MOVE(168, 0, 664),
     SC_SYNC,
-    SC_POSITION(PIXELS(168), 0, PIXELS(664)),
-    SC_MOVE(PIXELS(184), 0, PIXELS(664)),
+    SC_POSITION(168, 0, 664),
+    SC_MOVE(184, 0, 664),
     SC_SYNC,
     SC_SET(SW_X, PIXELS(184)),
     SC_SET(SW_Z, PIXELS(664)),
@@ -4359,12 +4359,12 @@ s32 gVenusFourthFloorLightFarWestToWest[] = {
 };
 
 s32 gVenusFourthFloorLightNorthwestToGate[] = {
-    SC_MOVE(PIXELS(216), 0, PIXELS(632)),
+    SC_MOVE(216, 0, 632),
     SC_SYNC,
-    SC_POSITION(PIXELS(216), 0, PIXELS(632)),
-    SC_MOVE(PIXELS(216), 0, PIXELS(600)),
+    SC_POSITION(216, 0, 632),
+    SC_MOVE(216, 0, 600),
     SC_SYNC,
-    SC_POSITION(PIXELS(216), 0, PIXELS(600)),
+    SC_POSITION(216, 0, 600),
     SC_SET(SW_VENUS_LIGHT_ARRIVED, 1),
     SC_END,
 };

@@ -982,58 +982,58 @@ s32 gTolbiShipMast_WaveActions[] = {
 };
 
 s32 gTolbiShipMast_BirdDeparture0[] = {
-    SC_MOVE(PIXELS(72), 0, PIXELS(216)),
+    SC_MOVE(72, 0, 216),
     SC_SYNC,
-    SC_MOVE(PIXELS(152), 0, PIXELS(196)),
+    SC_MOVE(152, 0, 196),
     SC_CALL(TolbiShipMast_ShrinkAndStopActor),
     SC_END,
 };
 
 s32 gTolbiShipMast_BirdDeparture1[] = {
-    SC_MOVE(PIXELS(132), 0, PIXELS(242)),
+    SC_MOVE(132, 0, 242),
     SC_SYNC,
-    SC_MOVE(PIXELS(152), 0, PIXELS(196)),
+    SC_MOVE(152, 0, 196),
     SC_CALL(TolbiShipMast_ShrinkAndStopActor),
     SC_END,
 };
 
 s32 gTolbiShipMast_BirdDeparture2[] = {
-    SC_MOVE(PIXELS(88), 0, PIXELS(166)),
+    SC_MOVE(88, 0, 166),
     SC_SYNC,
-    SC_MOVE(PIXELS(152), 0, PIXELS(196)),
+    SC_MOVE(152, 0, 196),
     SC_CALL(TolbiShipMast_ShrinkAndStopActor),
     SC_END,
 };
 
 s32 gTolbiShipMast_BirdDeparture3[] = {
-    SC_MOVE(PIXELS(220), 0, PIXELS(134)),
+    SC_MOVE(220, 0, 134),
     SC_SYNC,
-    SC_MOVE(PIXELS(152), 0, PIXELS(196)),
+    SC_MOVE(152, 0, 196),
     SC_CALL(TolbiShipMast_ShrinkAndStopActor),
     SC_END,
 };
 
 s32 gTolbiShipMast_BirdDeparture4[] = {
-    SC_MOVE(PIXELS(264), 0, PIXELS(228)),
+    SC_MOVE(264, 0, 228),
     SC_SYNC,
-    SC_MOVE(PIXELS(152), 0, PIXELS(196)),
+    SC_MOVE(152, 0, 196),
     SC_CALL(TolbiShipMast_ShrinkAndStopActor),
     SC_END,
 };
 
 s32 gTolbiShipMast_BirdDeparture5[] = {
-    SC_MOVE(PIXELS(282), 0, PIXELS(168)),
+    SC_MOVE(282, 0, 168),
     SC_SYNC,
-    SC_MOVE(PIXELS(152), 0, PIXELS(196)),
+    SC_MOVE(152, 0, 196),
     SC_CALL(TolbiShipMast_ShrinkAndStopActor),
     SC_END,
 };
 
 // clang-format off
 u32 gTolbiShipMast_BirdDeparture6[] = {
-    SC_MOVE(PIXELS(154), 0, PIXELS(135)),
+    SC_MOVE(154, 0, 135),
     SC_SYNC,
-    SC_MOVE(PIXELS(152), 0, PIXELS(196)),
+    SC_MOVE(152, 0, 196),
     SC_CALL(TolbiShipMast_ShrinkAndStopActor),
     SC_END,
     // Unused: eight words after the script's end, which nothing reads.

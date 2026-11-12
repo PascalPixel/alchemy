@@ -3608,11 +3608,11 @@ s32 gLogRoomsA_ActionTable[] = {
 
 s32 gLogRoomsA_FirstThiefEntryScript[] = {
     SC_ANIMATION(2),
-    SC_MOVE(PIXELS(776), 0, PIXELS(408)),
+    SC_MOVE(776, 0, 408),
     SC_SYNC,
-    SC_MOVE(PIXELS(776), 0, PIXELS(400)),
+    SC_MOVE(776, 0, 400),
     SC_SYNC,
-    SC_MOVE(PIXELS(800), 0, PIXELS(400)),
+    SC_MOVE(800, 0, 400),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_SET(SW_FACING, TRIG_TURN * 3 / 16),
@@ -3622,9 +3622,9 @@ s32 gLogRoomsA_FirstThiefEntryScript[] = {
 
 s32 gLogRoomsA_SecondThiefEntryScript[] = {
     SC_ANIMATION(2),
-    SC_MOVE(PIXELS(776), 0, PIXELS(408)),
+    SC_MOVE(776, 0, 408),
     SC_SYNC,
-    SC_MOVE(PIXELS(776), 0, PIXELS(416)),
+    SC_MOVE(776, 0, 416),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_SET(SW_FACING, TRIG_TURN * 3 / 16),
@@ -3633,11 +3633,11 @@ s32 gLogRoomsA_SecondThiefEntryScript[] = {
 };
 
 s32 gLogRoomsA_VaultScriptA[] = {
-    SC_SET(SW_SPEED, PIXELS(4) / 5),
+    SC_SPEED(0.8),
     SC_ANIMATION(2),
-    SC_MOVE(PIXELS(776), 0, PIXELS(408)),
+    SC_MOVE(776, 0, 408),
     SC_SYNC,
-    SC_MOVE(PIXELS(744), 0, PIXELS(408)),
+    SC_MOVE(744, 0, 408),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_POSITION(0, 0, 0),
@@ -3645,11 +3645,11 @@ s32 gLogRoomsA_VaultScriptA[] = {
 };
 
 s32 gLogRoomsA_VaultScriptB[] = {
-    SC_SET(SW_SPEED, PIXELS(4) / 5),
+    SC_SPEED(0.8),
     SC_ANIMATION(6),
-    SC_MOVE(PIXELS(776), 0, PIXELS(408)),
+    SC_MOVE(776, 0, 408),
     SC_SYNC,
-    SC_MOVE(PIXELS(744), 0, PIXELS(408)),
+    SC_MOVE(744, 0, 408),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_POSITION(0, 0, 0),
@@ -3657,17 +3657,17 @@ s32 gLogRoomsA_VaultScriptB[] = {
 };
 
 s32 gLogRoomsA_VaultScriptC[] = {
-    SC_SET(SW_SPEED, PIXELS(4) / 5),
+    SC_SPEED(0.8),
     SC_ANIMATION(2),
-    SC_MOVE(PIXELS(792), 0, PIXELS(408)),
+    SC_MOVE(792, 0, 408),
     SC_SYNC,
-    SC_MOVE(PIXELS(808), 0, PIXELS(440)),
+    SC_MOVE(808, 0, 440),
     SC_SYNC,
-    SC_MOVE(PIXELS(808), 0, PIXELS(456)),
+    SC_MOVE(808, 0, 456),
     SC_SYNC,
-    SC_MOVE(PIXELS(840), 0, PIXELS(456)),
+    SC_MOVE(840, 0, 456),
     SC_SYNC,
-    SC_MOVE(PIXELS(856), 0, PIXELS(408)),
+    SC_MOVE(856, 0, 408),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_EAST),
@@ -3676,15 +3676,15 @@ s32 gLogRoomsA_VaultScriptC[] = {
 };
 
 s32 gLogRoomsA_VaultScriptD[] = {
-    SC_SET(SW_SPEED, PIXELS(4) / 5),
+    SC_SPEED(0.8),
     SC_ANIMATION(2),
-    SC_MOVE(PIXELS(808), 0, PIXELS(408)),
+    SC_MOVE(808, 0, 408),
     SC_SYNC,
-    SC_MOVE(PIXELS(808), 0, PIXELS(456)),
+    SC_MOVE(808, 0, 456),
     SC_SYNC,
-    SC_MOVE(PIXELS(840), 0, PIXELS(456)),
+    SC_MOVE(840, 0, 456),
     SC_SYNC,
-    SC_MOVE(PIXELS(856), 0, PIXELS(424)),
+    SC_MOVE(856, 0, 424),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_EAST),
@@ -3693,15 +3693,15 @@ s32 gLogRoomsA_VaultScriptD[] = {
 };
 
 s32 gLogRoomsA_VaultScriptE[] = {
-    SC_SET(SW_SPEED, PIXELS(4) / 5),
+    SC_SPEED(0.8),
     SC_ANIMATION(2),
-    SC_MOVE(PIXELS(840), 0, PIXELS(456)),
+    SC_MOVE(840, 0, 456),
     SC_SYNC,
-    SC_MOVE(PIXELS(808), 0, PIXELS(456)),
+    SC_MOVE(808, 0, 456),
     SC_SYNC,
-    SC_MOVE(PIXELS(808), 0, PIXELS(408)),
+    SC_MOVE(808, 0, 408),
     SC_SYNC,
-    SC_MOVE(PIXELS(776), 0, PIXELS(408)),
+    SC_MOVE(776, 0, 408),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_END,
@@ -3718,7 +3718,7 @@ s32 gLogRoomsA_VaultScriptE[] = {
 // and 4 the south-west and south-east corners.
 s32 gLogRoomsA_SuspectToWestBedHead[] = {
     SC_ANIMATION(2),
-    SC_MOVE(PIXELS(104), 0, PIXELS(632)),
+    SC_MOVE(104, 0, 632),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_END,
@@ -3726,11 +3726,11 @@ s32 gLogRoomsA_SuspectToWestBedHead[] = {
 
 s32 gLogRoomsA_SuspectRoundToWestBedHead[] = {
     SC_ANIMATION(2),
-    SC_MOVE(PIXELS(72), 0, PIXELS(696)),
+    SC_MOVE(72, 0, 696),
     SC_SYNC,
-    SC_MOVE(PIXELS(80), 0, PIXELS(640)),
+    SC_MOVE(80, 0, 640),
     SC_SYNC,
-    SC_MOVE(PIXELS(104), 0, PIXELS(632)),
+    SC_MOVE(104, 0, 632),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_END,
@@ -3738,7 +3738,7 @@ s32 gLogRoomsA_SuspectRoundToWestBedHead[] = {
 
 s32 gLogRoomsA_SuspectToMiddleBedHead[] = {
     SC_ANIMATION(2),
-    SC_MOVE(PIXELS(168), 0, PIXELS(632)),
+    SC_MOVE(168, 0, 632),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_END,
@@ -3746,7 +3746,7 @@ s32 gLogRoomsA_SuspectToMiddleBedHead[] = {
 
 s32 gLogRoomsA_SuspectToEastBedHead[] = {
     SC_ANIMATION(2),
-    SC_MOVE(PIXELS(232), 0, PIXELS(632)),
+    SC_MOVE(232, 0, 632),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_END,
@@ -3754,11 +3754,11 @@ s32 gLogRoomsA_SuspectToEastBedHead[] = {
 
 s32 gLogRoomsA_SuspectRoundToEastBedHead[] = {
     SC_ANIMATION(2),
-    SC_MOVE(PIXELS(264), 0, PIXELS(696)),
+    SC_MOVE(264, 0, 696),
     SC_SYNC,
-    SC_MOVE(PIXELS(264), 0, PIXELS(632)),
+    SC_MOVE(264, 0, 632),
     SC_SYNC,
-    SC_MOVE(PIXELS(232), 0, PIXELS(632)),
+    SC_MOVE(232, 0, 632),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_END,
@@ -3766,7 +3766,7 @@ s32 gLogRoomsA_SuspectRoundToEastBedHead[] = {
 
 s32 gLogRoomsA_SuspectToWestBedFoot[] = {
     SC_ANIMATION(2),
-    SC_MOVE(PIXELS(104), 0, PIXELS(696)),
+    SC_MOVE(104, 0, 696),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_END,
@@ -3774,11 +3774,11 @@ s32 gLogRoomsA_SuspectToWestBedFoot[] = {
 
 s32 gLogRoomsA_SuspectRoundToWestBedFoot[] = {
     SC_ANIMATION(2),
-    SC_MOVE(PIXELS(80), 0, PIXELS(640)),
+    SC_MOVE(80, 0, 640),
     SC_SYNC,
-    SC_MOVE(PIXELS(72), 0, PIXELS(696)),
+    SC_MOVE(72, 0, 696),
     SC_SYNC,
-    SC_MOVE(PIXELS(104), 0, PIXELS(696)),
+    SC_MOVE(104, 0, 696),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_END,
@@ -3786,7 +3786,7 @@ s32 gLogRoomsA_SuspectRoundToWestBedFoot[] = {
 
 s32 gLogRoomsA_SuspectToMiddleBedFoot[] = {
     SC_ANIMATION(2),
-    SC_MOVE(PIXELS(168), 0, PIXELS(696)),
+    SC_MOVE(168, 0, 696),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_END,
@@ -3794,7 +3794,7 @@ s32 gLogRoomsA_SuspectToMiddleBedFoot[] = {
 
 s32 gLogRoomsA_SuspectToEastBedFoot[] = {
     SC_ANIMATION(2),
-    SC_MOVE(PIXELS(232), 0, PIXELS(696)),
+    SC_MOVE(232, 0, 696),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_END,
@@ -3802,11 +3802,11 @@ s32 gLogRoomsA_SuspectToEastBedFoot[] = {
 
 s32 gLogRoomsA_SuspectRoundToEastBedFoot[] = {
     SC_ANIMATION(2),
-    SC_MOVE(PIXELS(264), 0, PIXELS(632)),
+    SC_MOVE(264, 0, 632),
     SC_SYNC,
-    SC_MOVE(PIXELS(264), 0, PIXELS(696)),
+    SC_MOVE(264, 0, 696),
     SC_SYNC,
-    SC_MOVE(PIXELS(232), 0, PIXELS(696)),
+    SC_MOVE(232, 0, 696),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_END,
@@ -3814,9 +3814,9 @@ s32 gLogRoomsA_SuspectRoundToEastBedFoot[] = {
 
 s32 gLogRoomsA_SuspectAcrossToWestOfBeds[] = {
     SC_ANIMATION(2),
-    SC_MOVE(PIXELS(168), 0, PIXELS(648)),
+    SC_MOVE(168, 0, 648),
     SC_SYNC,
-    SC_MOVE(PIXELS(72), 0, PIXELS(648)),
+    SC_MOVE(72, 0, 648),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_END,
@@ -3824,7 +3824,7 @@ s32 gLogRoomsA_SuspectAcrossToWestOfBeds[] = {
 
 s32 gLogRoomsA_SuspectToWestOfBeds[] = {
     SC_ANIMATION(2),
-    SC_MOVE(PIXELS(72), 0, PIXELS(648)),
+    SC_MOVE(72, 0, 648),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_END,
@@ -3832,9 +3832,9 @@ s32 gLogRoomsA_SuspectToWestOfBeds[] = {
 
 s32 gLogRoomsA_SuspectAcrossToEastOfBeds[] = {
     SC_ANIMATION(2),
-    SC_MOVE(PIXELS(168), 0, PIXELS(648)),
+    SC_MOVE(168, 0, 648),
     SC_SYNC,
-    SC_MOVE(PIXELS(264), 0, PIXELS(648)),
+    SC_MOVE(264, 0, 648),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_END,
@@ -3842,7 +3842,7 @@ s32 gLogRoomsA_SuspectAcrossToEastOfBeds[] = {
 
 s32 gLogRoomsA_SuspectToEastOfBeds[] = {
     SC_ANIMATION(2),
-    SC_MOVE(PIXELS(264), 0, PIXELS(648)),
+    SC_MOVE(264, 0, 648),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_END,
@@ -3850,7 +3850,7 @@ s32 gLogRoomsA_SuspectToEastOfBeds[] = {
 
 s32 gLogRoomsA_SuspectToSouthWestCorner[] = {
     SC_ANIMATION(2),
-    SC_MOVE(PIXELS(72), 0, PIXELS(696)),
+    SC_MOVE(72, 0, 696),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_END,
@@ -3858,9 +3858,9 @@ s32 gLogRoomsA_SuspectToSouthWestCorner[] = {
 
 s32 gLogRoomsA_SuspectAlongToSouthWestCorner[] = {
     SC_ANIMATION(2),
-    SC_MOVE(PIXELS(120), 0, PIXELS(696)),
+    SC_MOVE(120, 0, 696),
     SC_SYNC,
-    SC_MOVE(PIXELS(72), 0, PIXELS(696)),
+    SC_MOVE(72, 0, 696),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_END,
@@ -3868,7 +3868,7 @@ s32 gLogRoomsA_SuspectAlongToSouthWestCorner[] = {
 
 s32 gLogRoomsA_SuspectToSouthEastCorner[] = {
     SC_ANIMATION(2),
-    SC_MOVE(PIXELS(264), 0, PIXELS(696)),
+    SC_MOVE(264, 0, 696),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_END,
@@ -3876,9 +3876,9 @@ s32 gLogRoomsA_SuspectToSouthEastCorner[] = {
 
 s32 gLogRoomsA_SuspectAlongToSouthEastCorner[] = {
     SC_ANIMATION(2),
-    SC_MOVE(PIXELS(168), 0, PIXELS(696)),
+    SC_MOVE(168, 0, 696),
     SC_SYNC,
-    SC_MOVE(PIXELS(264), 0, PIXELS(696)),
+    SC_MOVE(264, 0, 696),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_END,

@@ -4,8 +4,10 @@
 /// @file
 /// Actor scripts: one s32 command word, then its operands, as
 /// gActorScript_CommandTable runs them. Each macro expands to the words of
-/// one command. Coordinates are 16.16 fixed point (PIXELS).
+/// one command. The script stores positions and speeds in 16.16 fixed point;
+/// its macros take plain pixels and decimal speeds and convert them.
 
+#include "fixed_math.h"
 #include "types.h"
 
 #define SC_LABEL(n) (s32)(0x80000000 | (n) << 16) ///< Branch destination
@@ -15,13 +17,13 @@
 #define SC_TOP 0          ///< Script start
 #define SC_FOREVER 0xffff ///< An SC_LOOP count that never runs out
 
-#define SC_WAIT(n) 0, (n)                     ///< Wait n frames.
-#define SC_SYNC 1                             ///< Wait for arrival.
-#define SC_POSITION(x, y, z) 2, (x), (y), (z) ///< Set position.
-#define SC_MOVE(x, y, z) 3, (x), (y), (z)     ///< Move toward the target.
-#define SC_MOVE_BY(x, y, z) 4, (x), (y), (z)  ///< Move by a relative offset.
-#define SC_FACE_WATCHED 5                     ///< Face the watched actor.
-#define SC_MOVE_TO_WATCHED 6                  ///< Move to the watched actor.
+#define SC_WAIT(n) 0, (n)                           ///< Wait n frames.
+#define SC_SYNC 1                                   ///< Wait for arrival.
+#define SC_POSITION(x, y, z) 2, px(x), px(y), px(z) ///< Set position.
+#define SC_MOVE(x, y, z) 3, px(x), px(y), px(z)     ///< Move toward the target.
+#define SC_MOVE_BY(x, y, z) 4, px(x), px(y), px(z)  ///< Move by an offset.
+#define SC_FACE_WATCHED 5                           ///< Face the watched actor.
+#define SC_MOVE_TO_WATCHED 6 ///< Move to the watched actor.
 /// Move toward the actor's position plus an offset that is never filled in;
 /// the operands are skipped unread.
 #define SC_MOVE_LOCAL(a, b) 7, (a), (b)
@@ -46,7 +48,12 @@
 #define SC_SET(w, v) 21, (w), (v) ///< Write a work value.
 #define SC_ADD(w, v) 22, (w), (v) ///< Add to a work value.
 #define SC_CMP(w, v) 23, (w), (v) ///< Test whether work value w equals v.
-#define SC_PLAYER 24              ///< Player input control
+/// Set the speed limit, in pixels a frame (0.8).
+#define SC_SPEED(speed) SC_SET(SW_SPEED, (s32)((speed) * Q16_ONE))
+/// Set the acceleration, in pixels a frame per frame.
+#define SC_ACCELERATION(acceleration)                                          \
+  SC_SET(SW_ACCELERATION, (s32)((acceleration) * Q16_ONE))
+#define SC_PLAYER 24  ///< Player input control
 #define SC_KEYS 25    ///< Move 8 pixels at a time by the direction pad
 #define SC_WORLD 26   ///< World map control
 #define SC_RELEASE 27 ///< Release

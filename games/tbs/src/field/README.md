@@ -308,12 +308,12 @@ its own. This is the boy's, as it is written in
 ```c
 s32 gVault_BoyRoundTheWellRoute[] = {
     SC_ANIMATION(2),
-    SC_SET(SW_SPEED, PIXELS(4) / 5),
-    SC_SET(SW_ACCELERATION, PIXELS(1) / 5),
+    SC_SPEED(0.8),
+    SC_ACCELERATION(0.2),
     SC_LABEL(1),
-    SC_MOVE(PIXELS(136), 0, PIXELS(376)),
+    SC_MOVE(136, 0, 376),
     SC_SYNC,
-    SC_MOVE(PIXELS(120), 0, PIXELS(376)),
+    SC_MOVE(120, 0, 376),
     SC_SYNC,
     /* ... six more points round the well ... */
     SC_LOOP(SC_FOREVER, SC_TO(1)),
@@ -324,10 +324,10 @@ s32 gVault_BoyRoundTheWellRoute[] = {
 Every word that starts with `SC_` is one order, and the rest is
 punctuation the code needs. Read the orders from the top.
 
-`SC_ANIMATION(2)` picks his walking animation. The two `SC_SET` orders
-set how fast he can go, four fifths of a pixel a frame, and how quickly
-he gets up to that speed. None of those takes any time, so they all
-happen in his first frame.
+`SC_ANIMATION(2)` picks his walking animation. `SC_SPEED` and
+`SC_ACCELERATION` set how fast he can go, four fifths of a pixel a frame,
+and how quickly he gets up to that speed. None of those takes any time,
+so they all happen in his first frame.
 
 `SC_MOVE` gives him a point to head for. Its three numbers are a place on
 the map in pixels: how far across, how high off the ground, and how far
@@ -381,7 +381,8 @@ These are the orders the scenes use most.
 | `SC_SYNC`                 | waits until it arrives                                           |
 | `SC_POSITION(x, y, z)`    | appears at a point at once, standing still                       |
 | `SC_ANIMATION(n)`         | plays [sprite animation](../../glossary.md#sprite-animation) n   |
-| `SC_SET(what, value)`     | changes one thing about itself, such as its speed                |
+| `SC_SPEED(s)`             | sets its top speed, in pixels a frame                            |
+| `SC_SET(what, value)`     | changes one thing about itself, such as its size                 |
 | `SC_FLAG_CHECK(f)`        | tests whether story moment f has happened                        |
 | `SC_LOOP(n, to)`          | goes back to a label, so the orders between run n times          |
 | `SC_WANDER_HOME(a, b, c)` | walks a short way in a random direction, staying near its home   |

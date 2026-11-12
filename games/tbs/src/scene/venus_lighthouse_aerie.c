@@ -3269,7 +3269,7 @@ const s32 *gFieldEffect_DurationScripts[] = {
 
 s32 gVenusLighthouseAerie_JoinLeaderAction[] = {
     SC_ANIMATION(ANIM_WALK),
-    SC_MOVE(PIXELS(492), 0, PIXELS(164)),
+    SC_MOVE(492, 0, 164),
     SC_SYNC,
     SC_ANIMATION(ANIM_STAND),
     SC_POSITION(0, 0, 0),
@@ -3278,19 +3278,19 @@ s32 gVenusLighthouseAerie_JoinLeaderAction[] = {
 };
 
 s32 gVenusLighthouseAerie_StepBackWestAction[] = {
-    SC_SET(SW_SPEED, PIXELS(1) / 5),
-    SC_SET(SW_ACCELERATION, PIXELS(1) / 10),
+    SC_SPEED(0.2),
+    SC_ACCELERATION(0.1),
     SC_ANIMATION(ANIM_WALK),
-    SC_MOVE_BY(-PIXELS(8), 0, 0),
+    SC_MOVE_BY(-8, 0, 0),
     SC_SYNC,
     SC_END,
 };
 
 s32 gVenusLighthouseAerie_StepBackEastAction[] = {
-    SC_SET(SW_SPEED, PIXELS(1) / 5),
-    SC_SET(SW_ACCELERATION, PIXELS(1) / 10),
+    SC_SPEED(0.2),
+    SC_ACCELERATION(0.1),
     SC_ANIMATION(ANIM_WALK),
-    SC_MOVE_BY(PIXELS(8), 0, 0),
+    SC_MOVE_BY(8, 0, 0),
     SC_SYNC,
     SC_END,
 };
@@ -3359,17 +3359,17 @@ s32 gVenusLighthouseAerie_RiseParticleScript[] = {
 
 s32 gVenusLighthouseAerie_WalkOutAction[] = {
     SC_ANIMATION(ANIM_WALK),
-    SC_MOVE(PIXELS(268), 0, PIXELS(186)),
+    SC_MOVE(268, 0, 186),
     SC_SYNC,
-    SC_MOVE(PIXELS(268), 0, PIXELS(252)),
+    SC_MOVE(268, 0, 252),
     SC_SYNC,
-    SC_MOVE(PIXELS(232), 0, PIXELS(222)),
+    SC_MOVE(232, 0, 222),
     SC_SYNC,
-    SC_MOVE(PIXELS(232), 0, PIXELS(136)),
+    SC_MOVE(232, 0, 136),
     SC_SYNC,
-    SC_MOVE(PIXELS(200), 0, PIXELS(136)),
+    SC_MOVE(200, 0, 136),
     SC_SYNC,
-    SC_MOVE(PIXELS(200), 0, PIXELS(200)),
+    SC_MOVE(200, 0, 200),
     SC_SYNC,
     SC_ANIMATION(ANIM_STAND),
     SC_POSITION(0, 0, 0),
@@ -3400,11 +3400,7 @@ s32 gVenusLighthouseAerie_LeapAction[] = {
 };
 
 s32 gVenusLighthouseAerie_PartyExitAction[] = {
-    SC_ANIMATION(ANIM_WALK),
-    SC_MOVE(PIXELS(330), 0, PIXELS(173)),
-    SC_SYNC,
-    SC_RELEASE,
-    SC_END,
+    SC_ANIMATION(ANIM_WALK), SC_MOVE(330, 0, 173), SC_SYNC, SC_RELEASE, SC_END,
 };
 
 s32 gVenusLighthouseAerie_PartyHeadingAction[] = {

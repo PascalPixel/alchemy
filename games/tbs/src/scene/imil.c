@@ -1760,11 +1760,11 @@ s32 gImil_ShiverScript[] = {
 
 s32 gImil_OldWomanHurryScript[] = {
     SC_ANIMATION(2),
-    SC_MOVE(PIXELS(136), 0, PIXELS(192)),
+    SC_MOVE(136, 0, 192),
     SC_SYNC,
-    SC_MOVE(PIXELS(136), 0, PIXELS(136)),
+    SC_MOVE(136, 0, 136),
     SC_SYNC,
-    SC_MOVE(PIXELS(149), 0, PIXELS(116)),
+    SC_MOVE(149, 0, 116),
     SC_SYNC,
     SC_SET(SW_FACING, FACING_EAST),
     SC_ANIMATION(1),
@@ -1773,7 +1773,7 @@ s32 gImil_OldWomanHurryScript[] = {
 
 s32 gImil_LeaderStepAsideScript[] = {
     SC_ANIMATION(2),
-    SC_MOVE(PIXELS(155), 0, PIXELS(135)),
+    SC_MOVE(155, 0, 135),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_SET(SW_FACING, TRIG_TURN * 13 / 16),
@@ -1811,14 +1811,14 @@ s32 gImil_SparkScript[] = {
 
 s32 gImil_MiaCheckRoomScript[] = {
     SC_ANIMATION(2),
-    SC_MOVE(PIXELS(177), 0, PIXELS(136)),
+    SC_MOVE(177, 0, 136),
     SC_SYNC,
-    SC_MOVE(PIXELS(161), 0, PIXELS(124)),
+    SC_MOVE(161, 0, 124),
     SC_SYNC,
     SC_SET(SW_TIMER, 1),
-    SC_MOVE(PIXELS(134), 0, PIXELS(139)),
+    SC_MOVE(134, 0, 139),
     SC_SYNC,
-    SC_MOVE(PIXELS(135), 0, PIXELS(189)),
+    SC_MOVE(135, 0, 189),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_END,
@@ -1826,12 +1826,12 @@ s32 gImil_MiaCheckRoomScript[] = {
 
 s32 gImil_MiaRunOutScript[] = {
     SC_ANIMATION(2),
-    SC_MOVE(PIXELS(165), 0, PIXELS(207)),
+    SC_MOVE(165, 0, 207),
     SC_SYNC,
     SC_SET(SW_TIMER, 1),
-    SC_MOVE(PIXELS(147), 0, PIXELS(252)),
+    SC_MOVE(147, 0, 252),
     SC_SYNC,
-    SC_MOVE(PIXELS(150), 0, PIXELS(268)),
+    SC_MOVE(150, 0, 268),
     SC_SYNC,
     SC_POSITION(0, 0, 0),
     SC_WAIT(1),
@@ -1845,7 +1845,7 @@ s32 gImil_FaceTargetScript[] = {
 
 s32 gImil_FollowMiaOutScript[] = {
     SC_ANIMATION(2),
-    SC_MOVE(PIXELS(132), 0, PIXELS(206)),
+    SC_MOVE(132, 0, 206),
     SC_SYNC,
     SC_POSITION(0, 0, 0),
     SC_WAIT(1),

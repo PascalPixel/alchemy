@@ -1245,19 +1245,19 @@ static void KolimaForestEntrance_FlickerPsynergyFields(void) {
 
 /// Garet, Ivan and Mia walk to their places beside the leader.
 s32 gKolimaForestEntrance_GaretAction[] = {
-    SC_ANIMATION(2), SC_MOVE(PIXELS(234), 0, PIXELS(576)),
+    SC_ANIMATION(2), SC_MOVE(234, 0, 576),
     SC_SYNC,         SC_SET(SW_FACING, FACING_NORTHEAST),
     SC_ANIMATION(1), SC_END,
 };
 
 s32 gKolimaForestEntrance_IvanAction[] = {
-    SC_ANIMATION(2), SC_MOVE(PIXELS(234), 0, PIXELS(623)),
+    SC_ANIMATION(2), SC_MOVE(234, 0, 623),
     SC_SYNC,         SC_SET(SW_FACING, FACING_EAST),
     SC_ANIMATION(1), SC_END,
 };
 
 s32 gKolimaForestEntrance_MiaAction[] = {
-    SC_ANIMATION(2), SC_MOVE(PIXELS(211), 0, PIXELS(602)),
+    SC_ANIMATION(2), SC_MOVE(211, 0, 602),
     SC_SYNC,         SC_SET(SW_FACING, FACING_NORTH),
     SC_ANIMATION(1), SC_END,
 };

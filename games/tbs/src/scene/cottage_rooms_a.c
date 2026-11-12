@@ -1006,10 +1006,10 @@ s32 gCottageRoomsA_FaceTargetScript[] = {
 };
 
 s32 gCottageRoomsA_FatherPacingScript[] = {
-    SC_SET(SW_SPEED, PIXELS(3) / 5),
-    SC_SET(SW_ACCELERATION, PIXELS(3) / 10),
+    SC_SPEED(0.6),
+    SC_ACCELERATION(0.3),
     SC_ANIMATION(2),
-    SC_MOVE(PIXELS(784), 0, PIXELS(405)),
+    SC_MOVE(784, 0, 405),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_WAIT(40),
@@ -1023,7 +1023,7 @@ s32 gCottageRoomsA_FatherPacingScript[] = {
     SC_WAIT(1),
     SC_LOOP(16, SC_TO(3)),
     SC_ANIMATION(2),
-    SC_MOVE(PIXELS(819), 0, PIXELS(405)),
+    SC_MOVE(819, 0, 405),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_LABEL(2),
@@ -1035,13 +1035,8 @@ s32 gCottageRoomsA_FatherPacingScript[] = {
 };
 
 s32 gCottageRoomsA_PartyLeavesScript[] = {
-    SC_ANIMATION(2),
-    SC_MOVE(PIXELS(808), 0, PIXELS(508)),
-    SC_SYNC,
-    SC_ANIMATION(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_END,
+    SC_ANIMATION(2),      SC_MOVE(808, 0, 508), SC_SYNC, SC_ANIMATION(1),
+    SC_POSITION(0, 0, 0), SC_WAIT(1),           SC_END,
 };
 
 s32 gCottageRoomsA_SleepZScript[] = {

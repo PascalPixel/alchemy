@@ -1400,62 +1400,47 @@ static void CottageRoomsB_DemonstrateCatch(void) {
 }
 
 s32 gCottageRoomsB_LeaveHouseScript[] = {
-    SC_ANIMATION(2), SC_MOVE(PIXELS(522), 0, PIXELS(748)),
-    SC_SYNC,         SC_MOVE(PIXELS(419), 0, PIXELS(748)),
-    SC_SYNC,         SC_MOVE(PIXELS(419), 0, PIXELS(691)),
-    SC_SYNC,         SC_ANIMATION(1),
+    SC_ANIMATION(2), SC_MOVE(522, 0, 748), SC_SYNC, SC_MOVE(419, 0, 748),
+    SC_SYNC,         SC_MOVE(419, 0, 691), SC_SYNC, SC_ANIMATION(1),
     SC_END,
 };
 
 s32 gCottageRoomsB_DoraLeavesScript[] = {
-    SC_ANIMATION(2), SC_MOVE(PIXELS(387), 0, PIXELS(661)),
-    SC_SYNC,         SC_POSITION(0, 0, 0),
+    SC_ANIMATION(2), SC_MOVE(387, 0, 661), SC_SYNC, SC_POSITION(0, 0, 0),
     SC_END,
 };
 
 s32 gCottageRoomsB_IsaacLeavesScript[] = {
-    SC_ANIMATION(2), SC_MOVE(PIXELS(408), 0, PIXELS(661)),
-    SC_SYNC,         SC_MOVE(PIXELS(387), 0, PIXELS(661)),
-    SC_SYNC,         SC_POSITION(0, 0, 0),
-    SC_END,
+    SC_ANIMATION(2), SC_MOVE(408, 0, 661), SC_SYNC, SC_MOVE(387, 0, 661),
+    SC_SYNC,         SC_POSITION(0, 0, 0), SC_END,
 };
 
 s32 gCottageRoomsB_DoraRunsAheadScript[] = {
-    SC_ANIMATION(2), SC_MOVE(PIXELS(468), 0, PIXELS(390)),
-    SC_SYNC,         SC_MOVE(PIXELS(508), 0, PIXELS(402)),
-    SC_SYNC,         SC_ANIMATION(1),
-    SC_END,
+    SC_ANIMATION(2), SC_MOVE(468, 0, 390), SC_SYNC, SC_MOVE(508, 0, 402),
+    SC_SYNC,         SC_ANIMATION(1),      SC_END,
 };
 
 s32 gCottageRoomsB_IsaacRunsAheadScript[] = {
-    SC_ANIMATION(2), SC_MOVE(PIXELS(431), 0, PIXELS(391)),
-    SC_SYNC,         SC_MOVE(PIXELS(468), 0, PIXELS(390)),
-    SC_SYNC,         SC_MOVE(PIXELS(486), 0, PIXELS(393)),
-    SC_SYNC,         SC_ANIMATION(1),
+    SC_ANIMATION(2), SC_MOVE(431, 0, 391), SC_SYNC, SC_MOVE(468, 0, 390),
+    SC_SYNC,         SC_MOVE(486, 0, 393), SC_SYNC, SC_ANIMATION(1),
     SC_END,
 };
 
 s32 gCottageRoomsB_DoraRunsBackScript[] = {
-    SC_ANIMATION(2), SC_MOVE(PIXELS(525), 0, PIXELS(414)),
-    SC_SYNC,         SC_MOVE(PIXELS(509), 0, PIXELS(442)),
-    SC_SYNC,         SC_MOVE(PIXELS(455), 0, PIXELS(450)),
-    SC_SYNC,         SC_ANIMATION(1),
+    SC_ANIMATION(2), SC_MOVE(525, 0, 414), SC_SYNC, SC_MOVE(509, 0, 442),
+    SC_SYNC,         SC_MOVE(455, 0, 450), SC_SYNC, SC_ANIMATION(1),
     SC_END,
 };
 
 s32 gCottageRoomsB_IsaacRunsBackScript[] = {
-    SC_ANIMATION(2), SC_MOVE(PIXELS(525), 0, PIXELS(414)),
-    SC_SYNC,         SC_MOVE(PIXELS(509), 0, PIXELS(442)),
-    SC_SYNC,         SC_MOVE(PIXELS(481), 0, PIXELS(443)),
-    SC_SYNC,         SC_ANIMATION(1),
+    SC_ANIMATION(2), SC_MOVE(525, 0, 414), SC_SYNC, SC_MOVE(509, 0, 442),
+    SC_SYNC,         SC_MOVE(481, 0, 443), SC_SYNC, SC_ANIMATION(1),
     SC_END,
 };
 
 s32 gCottageRoomsB_RunToPlazaScript[] = {
-    SC_ANIMATION(2), SC_MOVE(PIXELS(428), 0, PIXELS(460)),
-    SC_SYNC,         SC_MOVE(PIXELS(415), 0, PIXELS(513)),
-    SC_SYNC,         SC_MOVE(PIXELS(415), 0, PIXELS(589)),
-    SC_SYNC,         SC_END,
+    SC_ANIMATION(2), SC_MOVE(428, 0, 460), SC_SYNC, SC_MOVE(415, 0, 513),
+    SC_SYNC,         SC_MOVE(415, 0, 589), SC_SYNC, SC_END,
 };
 
 s32 gCottageRoomsB_FlameShakesScript[] = {
@@ -1504,9 +1489,9 @@ s32 gCottageRoomsB_FlameRisesScript[] = {
 s32 gCottageRoomsB_DoraFacesIsaacScript[] = {
     SC_CALL(Scene_TurnTowardTarget),
     SC_LOOP(SC_FOREVER, SC_TOP),
-    SC_MOVE(PIXELS(567), 0, PIXELS(690)),
+    SC_MOVE(567, 0, 690),
     SC_SYNC,
-    SC_MOVE(PIXELS(543), 0, PIXELS(674)),
+    SC_MOVE(543, 0, 674),
     SC_SYNC,
     SC_END,
 };

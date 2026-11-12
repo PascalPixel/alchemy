@@ -2016,54 +2016,44 @@ static void ColosseumEntrance_InitializeContestants(void) {
 }
 
 s32 gColosseumEntrance_GatherIntoIsaacScript[] = {
-    SC_ANIMATION(2),
-    SC_MOVE(PIXELS(262), 0, PIXELS(188)),
-    SC_SYNC,
-    SC_ANIMATION(1),
-    SC_POSITION(0, 0, 0),
-    SC_END,
+    SC_ANIMATION(2), SC_MOVE(262, 0, 188), SC_SYNC,
+    SC_ANIMATION(1), SC_POSITION(0, 0, 0), SC_END,
 };
 
 s32 gColosseumEntrance_GatherIntoGaretScript[] = {
-    SC_ANIMATION(2),
-    SC_MOVE(PIXELS(246), 0, PIXELS(200)),
-    SC_SYNC,
-    SC_ANIMATION(1),
-    SC_POSITION(0, 0, 0),
-    SC_END,
+    SC_ANIMATION(2), SC_MOVE(246, 0, 200), SC_SYNC,
+    SC_ANIMATION(1), SC_POSITION(0, 0, 0), SC_END,
 };
 
 s32 gColosseumEntrance_RejoinPartyScript[] = {
-    SC_ANIMATION(2),
-    SC_MOVE(PIXELS(808), 0, PIXELS(120)),
-    SC_SYNC,
-    SC_ANIMATION(1),
-    SC_POSITION(0, 0, 0),
-    SC_END,
+    SC_ANIMATION(2), SC_MOVE(808, 0, 120), SC_SYNC,
+    SC_ANIMATION(1), SC_POSITION(0, 0, 0), SC_END,
 };
 
 s32 gColosseumEntrance_EnterGatesScript[] = {
-    SC_ANIMATION(2), SC_MOVE(PIXELS(268), 0, PIXELS(146)),
-    SC_SYNC,         SC_MOVE(PIXELS(262), 0, PIXELS(24)),
-    SC_SYNC,         SC_ANIMATION(1),
-    SC_END,
+    SC_ANIMATION(2), SC_MOVE(268, 0, 146), SC_SYNC, SC_MOVE(262, 0, 24),
+    SC_SYNC,         SC_ANIMATION(1),      SC_END,
 };
 
 s32 gColosseumEntrance_ApproachFinalsGroupScript[] = {
-    SC_ANIMATION(2), SC_MOVE(PIXELS(776), 0, PIXELS(120)),      SC_SYNC,
-    SC_ANIMATION(1), SC_SET(SW_FACING, FACING_NORTH_NORTHEAST), SC_WAIT(20),
+    SC_ANIMATION(2),
+    SC_MOVE(776, 0, 120),
+    SC_SYNC,
+    SC_ANIMATION(1),
+    SC_SET(SW_FACING, FACING_NORTH_NORTHEAST),
+    SC_WAIT(20),
     SC_END,
 };
 
 s32 gColosseumEntrance_JoinFinalsFromEastScript[] = {
     SC_ANIMATION(2),
-    SC_MOVE(PIXELS(894), 0, PIXELS(106)),
+    SC_MOVE(894, 0, 106),
     SC_SYNC,
-    SC_MOVE(PIXELS(882), 0, PIXELS(136)),
+    SC_MOVE(882, 0, 136),
     SC_SYNC,
-    SC_MOVE(PIXELS(808), 0, PIXELS(136)),
+    SC_MOVE(808, 0, 136),
     SC_SYNC,
-    SC_MOVE(PIXELS(792), 0, PIXELS(152)),
+    SC_MOVE(792, 0, 152),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_NORTH_NORTHEAST),
@@ -2073,9 +2063,9 @@ s32 gColosseumEntrance_JoinFinalsFromEastScript[] = {
 
 s32 gColosseumEntrance_JoinFinalsFromSouthScript[] = {
     SC_ANIMATION(2),
-    SC_MOVE(PIXELS(840), 0, PIXELS(136)),
+    SC_MOVE(840, 0, 136),
     SC_SYNC,
-    SC_MOVE(PIXELS(824), 0, PIXELS(152)),
+    SC_MOVE(824, 0, 152),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_NORTH_NORTHWEST),
@@ -2084,12 +2074,12 @@ s32 gColosseumEntrance_JoinFinalsFromSouthScript[] = {
 };
 
 s32 gColosseumEntrance_EnterFinalsScript[] = {
-    SC_SET(SW_SPEED, PIXELS(4) / 5),
-    SC_SET(SW_ACCELERATION, PIXELS(2) / 5),
+    SC_SPEED(0.8),
+    SC_ACCELERATION(0.4),
     SC_ANIMATION(2),
-    SC_MOVE(PIXELS(808), 0, PIXELS(88)),
+    SC_MOVE(808, 0, 88),
     SC_SYNC,
-    SC_MOVE(PIXELS(808), 0, PIXELS(58)),
+    SC_MOVE(808, 0, 58),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_POSITION(0, 0, 0),

@@ -1088,13 +1088,8 @@ static void HammetPalace_HammetsHomecoming(void) {
 }
 
 s32 gHammetPalace_PartyActions[] = {
-    SC_ANIMATION(2),
-    SC_MOVE(PIXELS(856), 0, PIXELS(486)),
-    SC_SYNC,
-    SC_ANIMATION(1),
-    SC_POSITION(0, 0, 0),
-    SC_WAIT(1),
-    SC_END,
+    SC_ANIMATION(2),      SC_MOVE(856, 0, 486), SC_SYNC, SC_ANIMATION(1),
+    SC_POSITION(0, 0, 0), SC_WAIT(1),           SC_END,
 };
 
 struct SceneEntrance gHammetPalaceEntrancesOther[] = {

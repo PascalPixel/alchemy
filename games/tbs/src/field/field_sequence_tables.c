@@ -486,7 +486,7 @@ const s32 gFieldEffect_SourceHoldScript[] = {
 /// releases itself 10 frames later.
 const s32 gFieldEffect_FragmentScript[] = {
     SC_SYNC,
-    SC_SET(SW_SPEED, PIXELS(1) / 16),
+    SC_SPEED(0.0625),
     SC_ANIMATION(0),
     SC_WAIT(10),
     SC_RELEASE,

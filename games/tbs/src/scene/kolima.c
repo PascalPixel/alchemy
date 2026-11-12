@@ -1696,19 +1696,19 @@ static void Kolima_RestoreBridgeState(void) {
 /// Where Garet, Ivan and Mia walk on into the silent village and the way each
 /// turns (Kolima_WitnessForestCurse).
 s32 gKolima_GaretWalksIn[] = {
-    SC_ANIMATION(2), SC_MOVE(PIXELS(97), 0, PIXELS(221)),
+    SC_ANIMATION(2), SC_MOVE(97, 0, 221),
     SC_SYNC,         SC_SET(SW_FACING, FACING_NORTHEAST),
     SC_ANIMATION(1), SC_END,
 };
 
 s32 gKolima_IvanWalksIn[] = {
-    SC_ANIMATION(2), SC_MOVE(PIXELS(101), 0, PIXELS(268)),
+    SC_ANIMATION(2), SC_MOVE(101, 0, 268),
     SC_SYNC,         SC_SET(SW_FACING, FACING_EAST),
     SC_ANIMATION(1), SC_END,
 };
 
 s32 gKolima_MiaWalksIn[] = {
-    SC_ANIMATION(2), SC_MOVE(PIXELS(78), 0, PIXELS(247)),
+    SC_ANIMATION(2), SC_MOVE(78, 0, 247),
     SC_SYNC,         SC_SET(SW_FACING, FACING_NORTH),
     SC_ANIMATION(1), SC_END,
 };

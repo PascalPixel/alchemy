@@ -3095,20 +3095,20 @@ s32 gMercuryLighthouse_SparkBurstScript[] = {
 
 s32 gMercuryLighthouse_PushScriptA[] = {
     SC_WAIT(45),
-    SC_SET(SW_SPEED, PIXELS(4) / 5),
-    SC_SET(SW_ACCELERATION, PIXELS(1) / 5),
+    SC_SPEED(0.8),
+    SC_ACCELERATION(0.2),
     SC_CALL(MercuryLighthouse_StartStatueSpray),
-    SC_MOVE(PIXELS(792), 0, PIXELS(712)),
+    SC_MOVE(792, 0, 712),
     SC_SYNC,
     SC_END,
 };
 
 s32 gMercuryLighthouse_PushScriptB[] = {
     SC_WAIT(60),
-    SC_SET(SW_SPEED, PIXELS(4) / 5),
-    SC_SET(SW_ACCELERATION, PIXELS(1) / 5),
+    SC_SPEED(0.8),
+    SC_ACCELERATION(0.2),
     SC_CALL(MercuryLighthouse_StartStatueSpray),
-    SC_MOVE(PIXELS(792), 0, PIXELS(744)),
+    SC_MOVE(792, 0, 744),
     SC_SYNC,
     SC_CALL(MercuryLighthouse_StopStatueSpray),
     SC_END,
@@ -3116,10 +3116,10 @@ s32 gMercuryLighthouse_PushScriptB[] = {
 
 s32 gMercuryLighthouse_PushScriptD[] = {
     SC_WAIT(60),
-    SC_SET(SW_SPEED, PIXELS(4) / 5),
-    SC_SET(SW_ACCELERATION, PIXELS(1) / 5),
+    SC_SPEED(0.8),
+    SC_ACCELERATION(0.2),
     SC_CALL(MercuryLighthouse_StartStatueSpray),
-    SC_MOVE(PIXELS(824), 0, PIXELS(744)),
+    SC_MOVE(824, 0, 744),
     SC_SYNC,
     SC_CALL(MercuryLighthouse_StopStatueSpray),
     SC_END,

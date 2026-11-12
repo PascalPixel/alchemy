@@ -1290,7 +1290,7 @@ const s32 *gFieldEffect_DurationScripts[] = {
 /// each walking to its own place.
 s32 gTreeRooms_LeaderGathersActions[] = {
     SC_ANIMATION(2),
-    SC_MOVE(PIXELS(166), 0, PIXELS(80)),
+    SC_MOVE(166, 0, 80),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_END,
@@ -1298,7 +1298,7 @@ s32 gTreeRooms_LeaderGathersActions[] = {
 
 s32 gTreeRooms_GaretGathersActions[] = {
     SC_ANIMATION(2),
-    SC_MOVE(PIXELS(148), 0, PIXELS(90)),
+    SC_MOVE(148, 0, 90),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_END,
@@ -1306,7 +1306,7 @@ s32 gTreeRooms_GaretGathersActions[] = {
 
 s32 gTreeRooms_IvanGathersActions[] = {
     SC_ANIMATION(2),
-    SC_MOVE(PIXELS(182), 0, PIXELS(90)),
+    SC_MOVE(182, 0, 90),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_END,
@@ -1314,7 +1314,7 @@ s32 gTreeRooms_IvanGathersActions[] = {
 
 s32 gTreeRooms_MiaGathersActions[] = {
     SC_ANIMATION(2),
-    SC_MOVE(PIXELS(166), 0, PIXELS(104)),
+    SC_MOVE(166, 0, 104),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_END,
@@ -1340,7 +1340,7 @@ s32 gTreeRooms_FaceSinksActions[] = {
 /// Garet, Ivan and Mia walk back to the leader and are put away.
 s32 gTreeRooms_RejoinLeaderActions[] = {
     SC_ANIMATION(2),
-    SC_MOVE(PIXELS(166), 0, PIXELS(80)),
+    SC_MOVE(166, 0, 80),
     SC_SYNC,
     SC_POSITION(0, 0, 0),
     SC_WAIT(1),

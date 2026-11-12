@@ -2544,18 +2544,18 @@ s32 gKalay_TileStepByFacing[] = {
 };
 
 s32 gKalay_TourGroupWalkScript[] = {
-    SC_ANIMATION(2), SC_MOVE_BY(-PIXELS(80), 0, 0), SC_SYNC,
-    SC_ANIMATION(1), SC_SET(SW_TIMER, 1),           SC_WAIT(1),
+    SC_ANIMATION(2), SC_MOVE_BY(-80, 0, 0), SC_SYNC,
+    SC_ANIMATION(1), SC_SET(SW_TIMER, 1),   SC_WAIT(1),
     SC_END,
 };
 
 s32 gKalay_TourGroupLeaveScript[] = {
     SC_ANIMATION(2),
-    SC_MOVE_BY(-PIXELS(72), 0, 0),
+    SC_MOVE_BY(-72, 0, 0),
     SC_SYNC,
-    SC_MOVE_BY(-PIXELS(100), 0, 0),
+    SC_MOVE_BY(-100, 0, 0),
     SC_SYNC,
-    SC_MOVE_BY(-PIXELS(100), 0, 0),
+    SC_MOVE_BY(-100, 0, 0),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_SET(SW_TIMER, 1),
@@ -2563,7 +2563,7 @@ s32 gKalay_TourGroupLeaveScript[] = {
     SC_WAIT(1),
     SC_END,
     SC_ANIMATION(2),
-    SC_MOVE(PIXELS(192), 0, PIXELS(222)),
+    SC_MOVE(192, 0, 222),
     SC_SYNC,
     SC_POSITION(0, 0, 0),
     SC_WAIT(1),
@@ -2577,26 +2577,26 @@ s32 gKalay_TouristFidgetScript[] = {
 
 s32 gKalay_GuideCountScript[] = {
     SC_ANIMATION(2),
-    SC_MOVE(PIXELS(228), 0, PIXELS(296)),
+    SC_MOVE(228, 0, 296),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_NORTH),
     SC_WAIT(40),
     SC_ANIMATION(2),
-    SC_MOVE(PIXELS(212), 0, PIXELS(296)),
+    SC_MOVE(212, 0, 296),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_NORTH),
     SC_WAIT(40),
     SC_ANIMATION(2),
-    SC_MOVE(PIXELS(192), 0, PIXELS(296)),
+    SC_MOVE(192, 0, 296),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_NORTH),
     SC_WAIT(40),
     SC_SET(SW_TIMER, 1),
     SC_ANIMATION(2),
-    SC_MOVE(PIXELS(178), 0, PIXELS(272)),
+    SC_MOVE(178, 0, 272),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_EAST),
@@ -2606,13 +2606,13 @@ s32 gKalay_GuideCountScript[] = {
 
 s32 gKalay_GuidePaceScript[] = {
     SC_ANIMATION(2),
-    SC_MOVE(PIXELS(164), 0, PIXELS(278)),
+    SC_MOVE(164, 0, 278),
     SC_SYNC,
-    SC_MOVE(PIXELS(182), 0, PIXELS(304)),
+    SC_MOVE(182, 0, 304),
     SC_SYNC,
-    SC_MOVE(PIXELS(238), 0, PIXELS(304)),
+    SC_MOVE(238, 0, 304),
     SC_SYNC,
-    SC_MOVE(PIXELS(246), 0, PIXELS(296)),
+    SC_MOVE(246, 0, 296),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_SET(SW_FACING, TRIG_TURN * 13 / 16),
@@ -2630,7 +2630,7 @@ s32 gKalay_HeadGuideStopScript[] = {
     SC_SET(SW_VELOCITY_Z, 0),
     SC_WAIT(1),
     SC_ANIMATION(2),
-    SC_MOVE(PIXELS(184), 0, PIXELS(294)),
+    SC_MOVE(184, 0, 294),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_EAST),
@@ -2648,7 +2648,7 @@ s32 gKalay_SecondGuideStopScript[] = {
     SC_SET(SW_VELOCITY_Z, 0),
     SC_WAIT(1),
     SC_ANIMATION(2),
-    SC_MOVE(PIXELS(198), 0, PIXELS(300)),
+    SC_MOVE(198, 0, 300),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_EAST),
@@ -2659,7 +2659,7 @@ s32 gKalay_SecondGuideStopScript[] = {
 
 s32 gKalay_HeadGuideReturnScript[] = {
     SC_ANIMATION(2),
-    SC_MOVE(PIXELS(178), 0, PIXELS(272)),
+    SC_MOVE(178, 0, 272),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_EAST),
@@ -2670,11 +2670,11 @@ s32 gKalay_HeadGuideReturnScript[] = {
 
 s32 gKalay_SecondGuideReturnScript[] = {
     SC_ANIMATION(2),
-    SC_MOVE(PIXELS(255), 0, PIXELS(289)),
+    SC_MOVE(255, 0, 289),
     SC_SYNC,
-    SC_MOVE(PIXELS(265), 0, PIXELS(280)),
+    SC_MOVE(265, 0, 280),
     SC_SYNC,
-    SC_MOVE(PIXELS(284), 0, PIXELS(272)),
+    SC_MOVE(284, 0, 272),
     SC_SYNC,
     SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_WEST),
@@ -2689,12 +2689,8 @@ s32 gKalay_PartyFidgetScript[] = {
 };
 
 s32 gKalay_PartyGatherScript[] = {
-    SC_ANIMATION(2),
-    SC_MOVE(PIXELS(388), 0, PIXELS(300)),
-    SC_SYNC,
-    SC_ANIMATION(1),
-    SC_POSITION(0, 0, 0),
-    SC_END,
+    SC_ANIMATION(2), SC_MOVE(388, 0, 300), SC_SYNC,
+    SC_ANIMATION(1), SC_POSITION(0, 0, 0), SC_END,
 };
 
 s32 gKalay_FrostGrowScript[] = {

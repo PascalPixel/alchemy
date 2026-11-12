@@ -2128,9 +2128,9 @@ const u16 gColosseumNavampaMatch_FacingAngles[] = {
 };
 
 const s32 gColosseumNavampaMatch_SidewalkLogScript[] = {
-    SC_MOVE(PIXELS(1088), 0, PIXELS(184)),
+    SC_MOVE(1088, 0, 184),
     SC_SYNC,
-    SC_MOVE(PIXELS(1130), 0, PIXELS(184)),
+    SC_MOVE(1130, 0, 184),
     SC_SYNC,
     SC_CALL(ColosseumNavampaMatch_ShowActivatedSidewalkLayer),
     SC_LABEL(1),

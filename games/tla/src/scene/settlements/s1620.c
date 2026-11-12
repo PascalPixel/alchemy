@@ -2,6 +2,7 @@
 #include "field_effect.h"
 #include "actor.h"
 #include "event_inline.h"
+#include "local.h"
 
 struct Vec {
   s32 x;
@@ -39,3 +40,5 @@ void Func_02001620(s32 objectId) {
                   &params);
   }
 }
+
+void Func_020016a4(void) { GameFlag_SetBit(0x208); }

@@ -36,7 +36,7 @@ s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 s32 Random16Far(void);
-void FieldMessage_Show(const u8 *message, s32 flags);
+void FieldMessage_Show(s32 message, s32 flags);
 void OverlayObject_WaitUntilIdle(struct Actor *object);
 void Task_RemoveFar(void (*func)(void));
 s32 MapCell_SetAttributes(u32 layer, s32 x, s32 z, s32 value);
@@ -82,7 +82,7 @@ void Func_02002ebc(void);
 void Map_SetScreenShake(s32 a, s32 b, s32 c);
 void BattleEffect_ApplyColorToTargetBuffer(s32 color, s32 b);
 void BattleEffect_ApplyColorToSourceBuffer(s32 color, s32 b);
-void Actor_ResetAndSetPosition(s32 actor, s32 x, s32 z);
+void Actor_ResetAndSetPosition(u32 objectId, s32 x, s32 z);
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.

@@ -1,3 +1,521 @@
 #include "tundaria_tower.h"
+#include "call.h"
+#include "types.h"
+#include "actor.h"
+#include "main_routine_work.h"
+#include "ram_buffer.h"
+#include "iwram_call.h"
+#include "field_event.h"
+#include "event_inline.h"
 
 void Func_02001e5c(s32 value) { gData_02003cd0 = value; }
+
+void Func_020017dc(void);
+void Func_02001868(void);
+s32 GetMapCellCollision(s32 layer, s32 x, s32 z);
+void Vector_AddPolarOffsetFar(s32 radius, s32 angle, s32 *vector);
+s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
+void Actor_SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z);
+void Func_02002f80(struct Actor *object, s32 mode);
+void Actor_SetAnimationSpeed(struct Actor *object, s32 value);
+void Script_WaitForEventTimeout(struct Actor *object);
+s32 Func_02003028(s32 *a, s32 aRadius, s32 *b, s32 bRadius);
+void wait(s32 frames);
+
+void Func_02001e68(void) {
+  struct Actor *object;
+  s16 angle;
+  s32 startCell;
+  s32 targetX;
+  s32 targetZ;
+  s32 radius;
+  s32 position[3];
+  s32 *p;
+  s32 x;
+  s32 z;
+  u8 *layer;
+  s32 cell;
+  s32 *q;
+  struct Actor *entry;
+  s32 j;
+  u8 *flags;
+
+  object = ObjectTable_Get(gMainRoutineWork.currentOwner);
+  angle = (object->angle + 0x2000) & 0xc000;
+retry:
+  Func_02001868();
+  object->speedLimit = 0x10000;
+  object->acceleration = 0x8000;
+  object->targetX = 0x80000000;
+  object->targetZ = 0x80000000;
+  object->velocityX = 0;
+  object->velocityZ = 0;
+  p = position;
+  p[0] = x = (object->x & 0xfff00000) + 0x80000;
+  p[1] = object->y;
+  p[2] = z = (object->z & 0xfff00000) + 0x80000;
+  targetX = x;
+  targetZ = z;
+  layer = &object->terrainId;
+  startCell = GetMapCellCollision(*layer, x, z);
+  Vector_AddPolarOffsetFar(0x100000, angle, p);
+  cell = GetMapCellCollision(*layer, p[0], p[2]);
+  if (cell == 255 ||
+      Map_GetTerrainHeight(*layer, p[0], p[2]) - object->y > 0x80000) {
+    object->angle = angle;
+    object->velocityX = 0;
+    object->velocityZ = 0;
+    object->x = x;
+    object->z = z;
+    goto end;
+  }
+  p[0] = x;
+  p[2] = z;
+  object->speedLimit = 0x20000;
+  object->acceleration = 0x1999;
+  object->action = 0;
+  Func_02002f80(object, 2);
+  Actor_SetAnimationSpeed(object, 48);
+  object->update = Func_020017dc;
+  goto walk;
+walkNext:
+  if (Map_GetTerrainHeight(*layer, q[0], q[2]) - object->y > 0x80000)
+    goto blocked;
+  radius = object->radius - 2;
+  entry = Ram_HeapSlots->scriptObjects;
+  j = 0;
+  flags = &entry->collisionFlags;
+overlap:
+  if (entry->script != NULL && (1 & *flags) && entry != object) {
+    if (Value4((s32 (*)())Func_02003028, (s32)&entry->x, radius, (s32)position,
+               entry->radius - 2) >= 0)
+      goto blocked;
+  }
+  j++;
+  flags += sizeof(*entry);
+  entry++;
+  if (j <= 63)
+    goto overlap;
+  targetX = q[0];
+  targetZ = q[2];
+  object->speedLimit = 0x20000;
+  object->acceleration = 0x1999;
+  Actor_SetMoveTarget(object, q[0], q[1], q[2]);
+  Script_WaitForEventTimeout(object);
+  if (cell != startCell)
+    goto moved;
+walk:
+  /* FAKEMATCH(barrier): an empty asm clobbering sfp stops gcse hoisting the
+   * position's address; as no asm, 43 of 246 instructions differ in tla-en. */
+  __asm__("" : : : SFP_CLOBBER);
+  Call3((void (*)())Vector_AddPolarOffsetFar, 0x100000, angle, (s32)position);
+  q = position;
+  cell = GetMapCellCollision(*layer, q[0], q[2]);
+  if (cell != 255)
+    goto walkNext;
+blocked:
+  object->speedLimit = 0x20000;
+  object->acceleration = 0x10000;
+  Actor_SetMoveTarget(object, targetX, object->y, targetZ);
+  Script_WaitForEventTimeout(object);
+  wait(2);
+  goto retry;
+moved:
+  wait(10);
+end:
+  object->update = NULL;
+  object->actionFlags |= 1;
+  object->acceleration = 0x4000;
+  Func_02002f80(object, 1);
+}
+
+#define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
+
+void Actor_SetSingleChildFlags();
+void Func_02002184();
+
+void Func_02002094(u16 *table) {
+  u16 *row;
+  s32 id;
+  struct FieldActor *object;
+  s16 x, z;
+
+  if (table[0] == 0xffff)
+    return;
+  row = table;
+loop:
+  id = row[0];
+  object = ((struct FieldActor *)Actor_GetById(id));
+  x = row[1];
+  z = row[2];
+
+  object->collisionFlags &= 0xfe;
+  Actor_SetSingleChildFlags(object, 0);
+  Func_02002184(id, (u16)x, (u16)z, BYTE_AT(object, 34));
+  row += 3;
+  if (row[0] != 0xffff)
+    goto loop;
+}
+
+struct GabombaStatueEffectWork {
+  u8 unk00[0x1a];
+  s16 objectId;
+};
+
+void Func_02002184(s32 id, u32 kind, s32 flag, s32 layer);
+
+// Finds the current target's table row and shrinks it.
+void Func_02002100(u16 *list, s32 mode, s32 count) {
+  struct GabombaStatueEffectWork *work = Ram_HeapSlots->effectWork;
+
+  if (*list == 0xffff)
+    return;
+  // A goto loop: as a do-while loop, 42 of 61 instructions differ in tla-en.
+top:
+  {
+    u32 entry = *list;
+    s32 id = work->objectId;
+
+    if (id == entry) {
+      struct Actor *object = Actor_GetById(id);
+      s32 a;
+      s32 flag;
+
+      list++;
+      a = list[0];
+      flag = list[1];
+      if (count < 8)
+        object->scaleY -= 0x1f00;
+      if (mode == 1) {
+        GameFlag_SetBit(flag);
+        Func_02002184(id, a, flag, object->terrainId);
+        object->scaleY = 0x10000;
+      }
+      return;
+    }
+  }
+  list += 3;
+  if (*list != 0xffff)
+    goto top;
+}
+
+s32 Func_02003160(struct Actor *object);
+#include "map.h"
+
+void Func_02002184(s32 id, u32 kind, s32 flag, s32 layer) {
+  struct FieldActor *object = ((struct FieldActor *)Actor_GetById(id));
+  struct MapCell *cell = Ram_HeapSlots->mapWork->layers[layer].cells;
+
+  cell += Func_02003160(object);
+  if (GameFlag_Test(flag)) {
+    cell->collisionCode = 0;
+    object->priorityFlags |= 2;
+    switch (kind) {
+    case 0:
+      Func_02002f80(object, 2);
+      break;
+    case 1:
+      Func_02002f80(object, 4);
+      break;
+    case 2:
+      Func_02002f80(object, 6);
+      break;
+    }
+  } else {
+    cell->collisionCode = 255;
+    switch (kind) {
+    case 0:
+      Func_02002f80(object, 1);
+      break;
+    case 1:
+      Func_02002f80(object, 3);
+      break;
+    case 2:
+      Func_02002f80(object, 5);
+      break;
+    }
+  }
+}
+
+// On entering, sets each listed pillar from its two flags (pushed: moved to its place; else its cell raised and its shape redrawn), then lifts the leader onto the ground under it.
+
+extern u8 gMapShapeGrid[];
+
+s32 Func_02003010(s32 layer, s32 x, s32 z);
+s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
+void Func_020030c0(s32 id);
+s32 Func_02003180(s32 layer, s32 shape, s32 height);
+void Func_02002f80(struct Actor *object, s32 mode);
+
+void Func_0200222c(const u16 *table) {
+  struct MapWork *map = Ram_HeapSlots->mapWork;
+  struct Actor *object;
+  s32 id;
+  s32 flag;
+  s32 nextFlag;
+  struct MapCell *cells;
+  u8 *shapes;
+  struct MapCell *cell;
+  s32 index;
+  struct Actor *leader;
+  s32 ground;
+
+  if (*table == 0xffff)
+    goto done;
+next:
+  id = table[0];
+  object = Actor_GetById(id);
+  flag = table[1];
+  nextFlag = flag + 1;
+  cells = map->layers[object->terrainId].cells;
+  shapes = Ram_MapShapeGrid + (cells - (struct MapCell *)Ram_MapCellBuffer);
+  if (GameFlag_Test(nextFlag)) {
+    Actor_SetHorizontalPositionWithTerrain(id, 0, 0);
+  } else {
+    s32 shape;
+    u8 *slot;
+    s32 height;
+
+    index = Func_02003160(object);
+    cell = &cells[index];
+    slot = shapes + index;
+    shape = Func_02003010(object->terrainId, object->x, object->z);
+    height = Map_GetTerrainHeight(object->terrainId, object->x, object->z);
+    Func_020030c0(id);
+    cell->attributeB = 128;
+    *slot = Func_02003180(object->terrainId, shape, (height >> 19) + 4);
+    if (GameFlag_Test(flag))
+      Func_02002f80(object, 0);
+  }
+  table += 2;
+  if (*table != 0xffff)
+    goto next;
+done:
+  leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  ground = Map_GetTerrainHeight(leader->terrainId, leader->x, leader->z);
+  if (leader->y < ground) {
+    leader->terrainHeight = ground;
+    leader->y = ground;
+  }
+}
+
+s32 Func_020030f8(void);
+struct Actor *Func_02003188(s32 *position, s32 mode);
+void Func_02003048(void);
+void Func_02003050(void);
+void Func_02002f80(struct Actor *object, s32 mode);
+void Func_020029d0(s32 value);
+void Func_02002ca8(s32 offset, s32 layer);
+void Func_02002b04(void);
+
+static __inline__ void Shake(s32 a, s32 b, s32 c) {
+  /* FAKEMATCH(wrapper): forwarded inline; as a direct call, 28 of 158
+   * instructions differ in tla-en. */
+  Map_SetScreenShake(a, b, c);
+}
+
+void Func_02002354(const u16 *table) {
+  struct Actor *leader;
+  struct Actor *trap;
+  s32 position[3];
+  s32 id;
+  s32 flag;
+  s32 second;
+
+  if (Func_020030f8() != 0)
+    return;
+  leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  position[0] = leader->x;
+  position[1] = leader->y;
+  position[2] = leader->z;
+  trap = Func_02003188(position, 0);
+  if (trap != 0)
+    goto test;
+  return;
+next:
+  id = table[0];
+  if (Actor_GetById(id) != trap) {
+    table += 2;
+    goto test;
+  }
+  {
+    flag = table[1];
+    Func_02003048();
+    if (!GameFlag_Test(flag)) {
+      Sound_Play(125);
+      Actor_SetPartAttribute(Actor_GetById(id), 7);
+      wait(2);
+      Func_02002f80(trap, 0);
+      Actor_SetPartAttribute(Actor_GetById(id), 0);
+      wait(2);
+      Actor_SetPartAttribute(Actor_GetById(id), 7);
+      wait(4);
+      Actor_SetPartAttribute(Actor_GetById(id), 0);
+      Func_020029d0(0);
+      GameFlag_SetBit(flag);
+    } else {
+      second = flag + 1;
+      if (!GameFlag_Test(second)) {
+        leader->motionFlags = 0;
+        Sound_Play(185);
+        Shake(0x10000, 0x40000, 0x10000);
+        Func_020029d0(0);
+        wait(8);
+        Func_02002f80(trap, 2);
+        Func_02002ca8(-2, trap->terrainId);
+        Func_020029d0(1);
+        wait(16);
+        Func_02002ca8(-2, trap->terrainId);
+        wait(4);
+        Shake(-1, -1, 0xe666);
+        wait(8);
+        leader->motionFlags = 3;
+        wait(5);
+        Actor_SetPositionAndResetMotion(trap, 0, 0, 0);
+        wait(2);
+        Sound_Play(188);
+        Func_02002b04();
+        wait(20);
+        GameFlag_SetBit(second);
+      }
+    }
+    Func_02003050();
+    return;
+  }
+test:
+  if (*table != 0xffff)
+    goto next;
+}
+
+void Func_02002f80(struct Actor *object, s32 mode);
+void Sound_Play(s32 cue);
+void Func_020029d0(s32 a);
+void Func_02002b04(void);
+void wait(s32 frames);
+
+void Func_020024e8(u16 *row, s32 id) {
+  struct Actor *object = Actor_GetById(id);
+  s32 flag;
+  s32 nextFlag;
+
+  if (*row == 0xffff)
+    return;
+loop:
+  if (*row != id) {
+    row += 2;
+    goto test;
+  }
+  flag = row[1];
+  Func_02003048();
+  nextFlag = flag + 1;
+  if (!GameFlag_Test(nextFlag)) {
+    Sound_Play(185);
+    TundariaTower_SetWork(0x10000, 0x40000, 0x10000);
+    Func_020029d0(0);
+    wait(8);
+    Func_02002f80(object, 2);
+    Func_02002c1c(-4, object->terrainId, id);
+    Func_020029d0(1);
+    wait(16);
+    TundariaTower_SetWork(-1, -1, 0xe666);
+    wait(8);
+    Actor_SetPositionAndResetMotion(object, 0, 0, 0);
+    wait(2);
+    Sound_Play(188);
+    Func_02002b04();
+    wait(20);
+    GameFlag_SetBit(flag);
+    GameFlag_SetBit(nextFlag);
+  }
+  Func_02003050();
+  return;
+test:
+  if (*row != 0xffff)
+    goto loop;
+}
+
+void Func_020025c8(s32 id) {
+  Actor_GetById(id)->unk5c[0] = 3;
+  Func_020030c0(id);
+}
+
+// Places the listed actors on their cells.
+
+extern u8 gMapShapeGrid[];
+
+void Func_02003090(s32 id, s32 target);
+void Func_020025c8(s32 id);
+s32 Func_02003160(struct Actor *object);
+s32 Func_02003010(s32 layer, s32 x, s32 z);
+s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
+void Func_020030c0(s32 id);
+s32 Func_02003180(s32 layer, s32 shape, s32 height);
+void ObjectVisual_CopyAttributes(u32 targetId, u32 sourceId);
+/// Places actors 8, 9 and 10, then walks a 0xffff-ended list of (actor, flag)
+/// halfword pairs: flag + 1 set parks the actor at (0, 0); otherwise its cell
+/// gets attributeB 128 and its shape-grid byte is rewritten, and flag set makes
+/// it copy actor 9's visual attributes.
+void Func_020025e0(u16 *list) {
+  struct MapWork *map = Ram_HeapSlots->mapWork;
+  struct Actor *object;
+  s32 id;
+  s32 flag;
+  s32 nextFlag;
+  struct MapCell *cells;
+  u8 *shapes;
+  struct MapCell *cell;
+  s32 index;
+  u8 *grid = gMapShapeGrid; // the shape grid, read once
+
+  Func_02003090(8, gMainRoutineWork.currentOwner);
+  Func_02003090(9, gMainRoutineWork.currentOwner);
+  Func_02003090(10, gMainRoutineWork.currentOwner);
+  wait(1);
+  Func_020025c8(8);
+  Func_020025c8(9);
+  Func_020025c8(10);
+  Actor_SetModeById(9, 0);
+  wait(1);
+  Actor_SetHorizontalPositionWithTerrain(8, 0, 0);
+  Actor_SetHorizontalPositionWithTerrain(9, 0, 0);
+  Actor_SetHorizontalPositionWithTerrain(10, 0, 0);
+  wait(1);
+  if (*list == 0xffff)
+    goto done;
+next:
+  id = list[0];
+  object = Actor_GetById(id);
+  flag = list[1];
+  nextFlag = flag + 1;
+  cells = map->layers[object->terrainId].cells;
+  shapes = grid + (cells - (struct MapCell *)Ram_MapCellBuffer);
+  object->unk5c[0] = 3;
+  if (GameFlag_Test(nextFlag)) {
+    Actor_SetHorizontalPositionWithTerrain(id, 0, 0);
+  } else {
+    s32 shape;
+    u8 *slot;
+    s32 height;
+
+    index = Func_02003160(object);
+    cell = &cells[index];
+    slot = shapes + index;
+    shape = Func_02003010(object->terrainId, object->x, object->z);
+    height = Map_GetTerrainHeight(object->terrainId, object->x, object->z);
+    Func_020030c0(id);
+    cell->attributeB = 128;
+    *slot = Func_02003180(object->terrainId, shape, (height >> 19) + 4);
+    if (GameFlag_Test(flag))
+      ObjectVisual_CopyAttributes(id, 9);
+  }
+  list += 2;
+  if (*list != 0xffff)
+    goto next;
+done:
+  wait(10);
+}
+
+void Func_02002748(struct Actor *object, struct Actor *target) {
+  Actor_SetPositionAndResetMotion(object, target->x, target->y, target->z);
+  Actor_SetPositionAndResetMotion(target, 0, 0, 0);
+}

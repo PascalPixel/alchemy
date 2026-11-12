@@ -95,10 +95,6 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
   s32 j;
   s32 dotCount;
   struct Particle *spark;
-  /* FAKEMATCH(temporary): blitters holds gHeapSlots; as
-   * EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE], 5 of 1640 instructions differ in
-   * tbs-en. */
-  DrawRectangle *blitters;
 
   slots = &gHeapSlots[HEAP_SLOT_BATTLE_BACKGROUND];
   view = slots[0];
@@ -156,8 +152,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
   REG_BG2PA = Q_8_8(0.5);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_ADDITIVE);
-  blitters = (DrawRectangle *)gHeapSlots;
-  blit[0] = blitters[HEAP_SLOT_RAM_CODE];
+  blit[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
   EFFECT_SHOW_WIDE_CANVAS(15);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
@@ -396,7 +391,6 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
 
     thorX = px(80);
     thorY = px(64);
-    // The particle loop's counter is set with Thor's starting speeds.
     i = 0;
     thorSpeedX = 0;
     thorSpeedY = 0;

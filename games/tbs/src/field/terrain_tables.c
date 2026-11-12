@@ -1,3 +1,8 @@
+/// @file
+/// The ground's shape inside a cell for two of its height kinds (enum
+/// TerrainKind): where a raised or sunken square rounds off at its corners,
+/// and which of three heights each pixel takes, split along two diagonals.
+
 #include "module/field/terrain_tables.h"
 #include "types.h"
 

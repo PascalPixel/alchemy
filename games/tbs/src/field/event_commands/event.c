@@ -134,7 +134,8 @@ void Event_NoOpUpdate(void) {}
 
 /// Respawns the scene's actors from an actor placement table and
 /// waits one frame for them to appear. Reached only through an unnamed veneer
-/// in the field sequence bank's far-call table; nothing in ☀️ names it.
+/// in the field sequence bank's far-call table; nothing in The Broken Seal
+/// names it.
 void Event_RunActorUpdateAndWait(struct ActorPlacement *table) {
   Event_NoOpUpdate();
   Actor_ResetForLeader(table);
@@ -377,17 +378,17 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
 
 /// Gives item to one party member. Returns unit, or -1 if its bag is full.
 /// Reached only through an unnamed veneer in the field sequence bank's far-call
-/// table; nothing in ☀️ names it.
+/// table; nothing in The Broken Seal names it.
 s32 Inventory_TryAddAndReturnMember(s32 item, s32 unused, s32 unit) {
   if (Inventory_AddItemFar(unit, item) >= 0)
     return unit;
   return -1;
 }
 
-/// An empty function; nothing in ☀️ calls it.
+/// An empty function; nothing in The Broken Seal calls it.
 void Inventory_NoOpCallback(void) {}
 
-/// An empty function; nothing in ☀️ calls it.
+/// An empty function; nothing in The Broken Seal calls it.
 void Inventory_ReservedNoOp(void) {}
 
 /// Waits, at most 90 frames, for an actor's animation to stop being
@@ -522,7 +523,7 @@ void Event_SetDestination(s32 sceneId, s32 entrance) {
 
 /// Makes the event leave and records scene and entrance as the restart
 /// point. Reached only through an unnamed veneer in the field sequence bank's
-/// far-call table; nothing in ☀️ names it.
+/// far-call table; nothing in The Broken Seal names it.
 void Event_SetRestartPoint(u16 sceneId, u16 entrance) {
   struct FieldWork *state = gFieldWork;
   state->exit = EXIT_KEEP_DESTINATION;

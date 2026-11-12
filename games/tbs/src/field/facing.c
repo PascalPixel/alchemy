@@ -1,3 +1,9 @@
+/// @file
+/// Which picture a sprite shows for the way it faces, and the small tables
+/// the actors read as they move: the direction pad's headings, the World Map
+/// camera's lean, a floating actor's bob, how long a footprint lasts and the
+/// order a sprite dissolves in.
+
 #include "module/field/facing.h"
 #include "types.h"
 #include "actor_script.h"

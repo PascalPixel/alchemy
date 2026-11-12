@@ -1,3 +1,8 @@
+/// @file
+/// The music a battle plays: the bosses, the guards of Crossbone Isle, the
+/// Colosso finals and the fights with Saturos have their own, and every other
+/// battle plays the usual battle music.
+
 #include "module/field/battle_music.h"
 #include "module/field/field_sequence.h"
 #include "sounds.h"

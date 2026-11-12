@@ -1,3 +1,9 @@
+/// @file
+/// Lucky Wheels, Tolbi's game of chance: the player trades game tickets for
+/// lines, pulls the lever up to five times and holds wheels with the star to
+/// line up matching icons. It draws its own wheels and lines, and keeps an
+/// unused LZ packer.
+
 #include "sound_driver_symbols.h"
 #include "module/field/lucky_wheels.h"
 #include "module/system/system.h"
@@ -35,11 +41,6 @@
 #include "frame.h"
 #include "oam_words.h"
 #include "item_ids.h"
-
-//--------------------------------------------------------------------------
-// Lucky Wheels: its palette steps, canvas transfers and line drawing, and an LZ
-// packer.
-//--------------------------------------------------------------------------
 
 /// The sparks of the jackpot, kept in the map cell buffer.
 #define LUCKY_WHEELS_SPARKS ((struct Particle *)Ram_MapGridCellBuffer)

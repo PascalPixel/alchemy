@@ -1,3 +1,7 @@
+/// @file
+/// The World Map's tilt: each line of the screen draws the flat map at its
+/// own scale and turn, so the ground seems to stretch away to a horizon.
+
 #include "module/field/world_map_lines.h"
 #include "types.h"
 #include "frame.h"

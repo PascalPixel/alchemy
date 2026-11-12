@@ -6,7 +6,7 @@
 #include "task.h"
 #include "event_inline.h"
 
-extern u8 gData_02006c08[];
+extern struct Actor *gData_02006c08[];
 
 void Func_020036a8(void);
 

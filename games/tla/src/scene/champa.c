@@ -16,6 +16,9 @@
 #include "ram_buffer.h"
 #include "field_event.h"
 
+void Func_02002a44(void);
+void Func_02002a4c(void);
+
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 const struct SceneRegion *Scene_GetRegions(void) { return 0; }

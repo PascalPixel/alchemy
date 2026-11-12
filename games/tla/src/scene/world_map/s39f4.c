@@ -5,11 +5,11 @@
 #include "macros.h"
 #include "event_inline.h"
 
-extern const u8 gData_02004f90[];
-extern const u8 gData_02004f9c[];
+extern s32 gData_02004f90[];
+extern u32 gData_02004f9c[];
 
 u32 Random16Far(void);
-void Func_02004b20(struct Actor *object, const u8 *script);
+void Func_02004b20(struct Actor *object, const s32 *script);
 void Animation_ApplyChildArgument(void *sprite, s32 argument);
 
 static __inline__ struct Actor *Func_02004b30_(s32 kind, s32 x, s32 y,

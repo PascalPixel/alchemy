@@ -15,6 +15,14 @@
 #include "actor.h"
 #include "event_inline.h"
 
+void Func_020023a4(void *object);
+void Func_0200260c(struct Actor *object, s32 x, s32 y, s32 z);
+void Func_02002a34(s32 a, s32 b);
+void Func_02002a44(void);
+void Func_02002a4c(void);
+void Func_02002a54(void);
+void Func_02002a5c(struct Actor *object, s32 mode);
+
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 const struct SceneRegion *Scene_GetRegions(void) { return 0; }

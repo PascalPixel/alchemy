@@ -31,10 +31,10 @@ struct WorldMapSprite {
 };
 
 extern struct Actor *gData_02006c08[];
-extern u8 gData_02006bd4[];
+extern s32 gData_02006bd4[];
 
 struct WorldMapPlacement *Func_02004e08(void);
-void Func_02004b20(struct Actor *object, void *dispatch);
+void Func_02004b20(struct Actor *object, const s32 *script);
 void Func_02004b18(struct Actor *object, s32 mode);
 void Func_02004b38(struct Actor *object);
 

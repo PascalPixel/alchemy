@@ -21,6 +21,12 @@
 #include "scene_ids.h"
 #include "version.h"
 
+void Func_02001c7c(s32, s32);
+void Func_02001c84(s32, s32);
+void Func_02001c8c(void);
+void Func_02001c94(void);
+void Func_02001c9c(void);
+
 void SceneState_RunActor13AtColumn42Setup(void) {
   struct FieldActor *obj;
   s32 val;

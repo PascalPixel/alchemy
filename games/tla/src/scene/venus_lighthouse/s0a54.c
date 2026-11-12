@@ -22,6 +22,8 @@
 #include "event_work.h"
 #include "text/msg_ids.h"
 
+void Func_02000d30(void);
+
 void Func_02000b2c(void);
 
 #define Actor_SetPartAttribute                                                 \

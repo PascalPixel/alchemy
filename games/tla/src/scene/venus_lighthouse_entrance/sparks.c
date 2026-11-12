@@ -13,6 +13,8 @@
 #include "heap_release.h"
 #include "event_inline.h"
 
+void Func_0200258c(void);
+
 struct SparkWork {
   u8 unk0000[0x2102];
   u16 tileBase;

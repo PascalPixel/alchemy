@@ -215,8 +215,8 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
 
       /* FAKEMATCH(dead): a test that cannot change t, which puts the
        * offset's reload ahead of the ids' address and, with the dead stores
-       * below, sets the spill slots; as candidateIds[targetIndex], 102 of
-       * 1585 instructions differ in tbs-en. */
+       * below, sets the spill slots; as candidateIds[targetIndex], with the
+       * stores kept, 102 of 1585 instructions differ in tbs-en. */
       if (t == 0)
         t = 0;
       BattleMotion_ProjectConditionalPositionFar(
@@ -272,8 +272,10 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
     effect.angle = 0;
 #if !TBS_PATCH_4
     /* FAKEMATCH(dead): eighteen dead stores restore the native stack frame's
-     * spill slots from sp+16 to sp+36; without them, 102 of 1585 instructions
-     * differ in tbs-en, each a spill offset. */
+     * spill slots from sp+16 to sp+36, the eighteenth only for the test above,
+     * which stands in for a switch of two like arms that matched with
+     * seventeen (with seventeen, 102 differ too); without them, with the test
+     * kept, 102 of 1585 instructions differ in tbs-en. */
     effect.angle = 0;
     effect.angle = 0;
     effect.angle = 0;

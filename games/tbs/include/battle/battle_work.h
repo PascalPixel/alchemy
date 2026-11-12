@@ -103,7 +103,7 @@ struct BattleWork {
   u8 partyStatus;    ///< PARTY_STATUS_SUMMONS or PARTY_STATUS_NO_SUMMONS; the
                      ///< staging draws it less PARTY_STATUS_SHOW_PP, names and
                      ///< HP only
-  u8 layout; ///< FORMATION_LAYOUT_SHUFFLED or FORMATION_LAYOUT_INTERLEAVED
+  u8 layout; ///< the formation's FORMATION_LAYOUT_; SHUFFLED in a link battle
   /// bits: 1 a party unit was challenged; nonzero, the party cannot run
   u8 challengeFlag;
   u8 isLink;      ///< 1 in a link battle

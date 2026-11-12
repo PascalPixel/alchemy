@@ -30,7 +30,7 @@ const struct Formation gFormations[] = {
         .maximumCounts = {1, 1},
     },
     {
-        .layout = 2,
+        .layout = FORMATION_LAYOUT_CENTERED,
         .memberIds = {ENEMY_ROW(ENEMY_MYSTERY_WOMAN), ENEMY_ROW(ENEMY_MYSTERY_MAN)},
         .minimumCounts = {1, 1},
         .maximumCounts = {1, 1},
@@ -143,7 +143,7 @@ const struct Formation gFormations[] = {
         .maximumCounts = {1},
     },
     {
-        .layout = 2,
+        .layout = FORMATION_LAYOUT_CENTERED,
         .memberIds = {ENEMY_ROW(ENEMY_BANDIT), ENEMY_ROW(ENEMY_THIEF), ENEMY_ROW(ENEMY_THIEF)},
         .minimumCounts = {1, 1, 1},
         .maximumCounts = {1, 1, 1},
@@ -321,13 +321,13 @@ const struct Formation gFormations[] = {
         .maximumCounts = {3, 1},
     },
     {
-        .layout = 2,
+        .layout = FORMATION_LAYOUT_CENTERED,
         .memberIds = {ENEMY_ROW(ENEMY_GNOME), ENEMY_ROW(ENEMY_CREEPER), ENEMY_ROW(ENEMY_CREEPER)},
         .minimumCounts = {1},
         .maximumCounts = {2, 1, 1},
     },
     {
-        .layout = 2,
+        .layout = FORMATION_LAYOUT_CENTERED,
         .memberIds = {ENEMY_ROW(ENEMY_GNOME), ENEMY_ROW(ENEMY_TROLL), ENEMY_ROW(ENEMY_TROLL)},
         .minimumCounts = {1},
         .maximumCounts = {1, 1, 1},
@@ -860,13 +860,13 @@ const struct Formation gFormations[] = {
         .maximumCounts = {3},
     },
     {
-        .layout = 2,
+        .layout = FORMATION_LAYOUT_CENTERED,
         .memberIds = {ENEMY_ROW(ENEMY_LIZARD_FIGHTER), ENEMY_ROW(ENEMY_RABID_BAT)},
         .minimumCounts = {1, 2},
         .maximumCounts = {1, 2},
     },
     {
-        .layout = 2,
+        .layout = FORMATION_LAYOUT_CENTERED,
         .memberIds = {ENEMY_ROW(ENEMY_VIRAGO), ENEMY_ROW(ENEMY_MAN_O_WAR)},
         .minimumCounts = {1, 2},
         .maximumCounts = {1, 2},
@@ -1182,7 +1182,7 @@ const struct Formation gFormations[] = {
     },
     {0},
     {
-        .layout = 2,
+        .layout = FORMATION_LAYOUT_CENTERED,
         .memberIds = {ENEMY_ROW(ENEMY_HOBGOBLIN), ENEMY_ROW(ENEMY_VIRAGO)},
         .minimumCounts = {1, 2},
         .maximumCounts = {1, 2},
@@ -1193,7 +1193,7 @@ const struct Formation gFormations[] = {
         .maximumCounts = {2, 1},
     },
     {
-        .layout = 2,
+        .layout = FORMATION_LAYOUT_CENTERED,
         .memberIds = {ENEMY_ROW(ENEMY_LICH), ENEMY_ROW(ENEMY_FIENDISH_GHOUL)},
         .minimumCounts = {1, 2},
         .maximumCounts = {1, 2},
@@ -1205,7 +1205,7 @@ const struct Formation gFormations[] = {
     },
     {0},
     {
-        .layout = 2,
+        .layout = FORMATION_LAYOUT_CENTERED,
         .memberIds = {ENEMY_ROW(ENEMY_LIZARD_KING), ENEMY_ROW(ENEMY_HARRIDAN), ENEMY_ROW(ENEMY_STONE_SOLDIER)},
         .minimumCounts = {1, 1, 2},
         .maximumCounts = {1, 1, 2},
@@ -1222,7 +1222,7 @@ const struct Formation gFormations[] = {
     },
     {0},
     {
-        .layout = 2,
+        .layout = FORMATION_LAYOUT_CENTERED,
         .memberIds = {ENEMY_ROW(ENEMY_POISON_TOAD), ENEMY_ROW(ENEMY_THUNDER_LIZARD)},
         .minimumCounts = {1, 2},
         .maximumCounts = {1, 2},
@@ -1397,7 +1397,7 @@ const struct Formation gFormations[] = {
     },
     {0},
     {
-        .layout = 2,
+        .layout = FORMATION_LAYOUT_CENTERED,
         .memberIds = {ENEMY_ROW(ENEMY_MENARDI), ENEMY_ROW(ENEMY_SATUROS_VENUS_LIGHTHOUSE)},
         .minimumCounts = {1, 1},
         .maximumCounts = {1, 1},

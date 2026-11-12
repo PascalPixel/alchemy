@@ -1124,9 +1124,8 @@ s32 PsynergyMenu_RunList(s32 sideIndex) {
         menu->cursorIcon->motion = ICON_HIDDEN;
         if (menu->psynergies[state.selectedIndex] != 0) {
           icon = menu->entryIcons[state.selectedIndex];
-          // Animate the selected icon: 9 is WINDOW_SPRITE_MOTION_SWELL, in
-          // depth slot 250, as in ItemMenu_RunList.
-          icon->motion = 9;
+          // Swell the selected icon, in depth slot 250, as in ItemMenu_RunList.
+          icon->motion = WINDOW_SPRITE_MOTION_SWELL;
           icon->animationStep = 0;
           icon->sentinel = 250;
         }

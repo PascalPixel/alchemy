@@ -23,6 +23,11 @@
 #define STATUS_SAVED_TILE_BYTES 2048
 #endif
 
+// A bit over the page mode of StatusScreen_DrawStatusAilments and
+// ItemMenu_DrawMemberStatus: draw without clearing the window first, as for a
+// window just opened.
+#define STATUS_PAGE_NO_CLEAR 0x100
+
 // The longest status help text, in characters.
 #if LANGUAGE != LANGUAGE_JAPANESE
 #define STATUS_HELP_TEXT_MAX 128
@@ -724,7 +729,7 @@ void StatusScreen_ShowMemberStatus(s32 member, s32 frame) {
       Menu_SpawnIconEntries((struct ItemMenuWork *)menu, window);
     }
     Menu_CreateEightEntryActors(window);
-    StatusScreen_DrawStatusAilments(window, member, 0x100);
+    StatusScreen_DrawStatusAilments(window, member, STATUS_PAGE_NO_CLEAR);
     return;
   }
   StatusScreen_DrawStatusAilments(window, member, 0);
@@ -1009,8 +1014,8 @@ void StatusScreen_ShowMemberProgressMessage(struct Window *destination,
 /// Draws party member memberId's status page into window: the top rows
 /// (ItemMenu_DrawMemberStatus), the status list or "Normal", and except on the
 /// chooser page the Djinn counts by element and, in mode 1, the elemental
-/// levels, Power and Resist. mode's 0x100 keeps what is drawn instead of
-/// clearing it.
+/// levels, Power and Resist. With STATUS_PAGE_NO_CLEAR in mode the window is
+/// not cleared first.
 void StatusScreen_DrawStatusAilments(struct Window *window, s32 memberId,
                                      s32 mode) {
   struct StatusScreenWork *menu = gMenuWork;
@@ -1036,7 +1041,7 @@ void StatusScreen_DrawStatusAilments(struct Window *window, s32 memberId,
   ItemMenu_DrawMemberStatus(window, memberId, mode);
   StatusScreen_BuildAvailability(ailments, 1, memberId);
   StatusScreen_UpdateSelectionIcons(ailments);
-  keepDrawn = mode & 0x100;
+  keepDrawn = mode & STATUS_PAGE_NO_CLEAR;
   if (keepDrawn == 0)
     Window_ClearInteriorTilesFar(window, 0, 40, 96, 96);
   // The statuses, one a row, or "Normal".
@@ -1135,8 +1140,8 @@ spin:
 
 /// Draws the top rows of party member memberId's status page into window: name,
 /// class, level, experience, HP and PP on the left, Attack, Defense, Agility
-/// and Luck on the right. flags' 0x100 keeps what is drawn instead of clearing
-/// it.
+/// and Luck on the right. With STATUS_PAGE_NO_CLEAR in flags the window is not
+/// cleared first.
 void ItemMenu_DrawMemberStatus(struct Window *window, s32 memberId, s32 flags) {
   struct ItemMenuWork *menu;
   struct Unit *unit;
@@ -1144,7 +1149,7 @@ void ItemMenu_DrawMemberStatus(struct Window *window, s32 memberId, s32 flags) {
   menu = gMenuWork;
   unit = Unit_GetFar(memberId);
   menu->cursor->motion = ICON_SHOWN;
-  flags &= 0x100;
+  flags &= STATUS_PAGE_NO_CLEAR;
   if (flags == 0) {
     Window_ClearInteriorTilesFar(window, 0, 0, 128, 40);
   }
@@ -1266,16 +1271,11 @@ extern const struct TileMask gMenu_PatternRowMasks[];
 /// six tile pairs (24 8x8 tiles), each a fill of WINDOW_BACKGROUND_COLOR with
 /// the rows of gMenu_PatternRowMasks XORed in, the first set growing row by row
 /// and the second skipping its top row. Pair n is range icon n, at
-/// RANGE_ICON_TILE + 2n (tile 512, or 640 in the international editions,
-/// whose tiles start 4096 bytes further on), which PsynergyMenu_DrawRange
-/// draws. Called as the Status menu's Psynergy page opens
-/// (PsynergyMenu_SelectAction).
+/// RANGE_ICON_TILE + 2n, which PsynergyMenu_DrawRange draws. Called as the
+/// Status menu's Psynergy page opens (PsynergyMenu_SelectAction).
 void Menu_BuildPatternTiles(void) {
-#if TBS_PATCH_1
-  u32 *vram = (u32 *)(BG_CHAR_BLOCK(1) + 4096);
-#else
-  u32 *vram = (u32 *)BG_CHAR_BLOCK(1);
-#endif
+  u32 *vram = (u32 *)(BG_CHAR_BLOCK(0) +
+                      (RANGE_ICON_TILE & TILE_NUMBER_MASK) * TILE_SIZE_4BPP);
   s32 set;
   s32 tileIndex;
 

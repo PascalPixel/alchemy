@@ -2904,11 +2904,9 @@ s32 ItemMenu_RunList(s32 sideIndex) {
                                   menu->sideMember[sideIndex]);
         if (menu->items[state.selectedIndex] != 0) {
           icon = menu->entryIcons[state.selectedIndex];
-          // Animate the selected icon: 9 is WINDOW_SPRITE_MOTION_SWELL, pulsing
-          // between 1 and 1.5 times its size, from its first step, in depth
-          // slot 250. Icon_PrepareActor stills it again when the cursor
-          // leaves.
-          icon->motion = 9;
+          // Swell the selected icon from its first step, in depth slot 250;
+          // Icon_PrepareActor stills it again when the cursor leaves.
+          icon->motion = WINDOW_SPRITE_MOTION_SWELL;
           icon->animationStep = 0;
           icon->sentinel = 250;
         }

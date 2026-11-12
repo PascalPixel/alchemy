@@ -11,43 +11,53 @@
 //   frame 128 the sparks, six per target from 16 on, share these slots; from
 //   the third target's last two (slots 32 and 33) on, they share them with
 //   drawn chips.
-// - 0 on: embers, ten per target, from frame 302.
-#define CYBELE_FRAMES 366
+// - 0 on: dust clouds, ten per target, from frame 302.
 #define CYBELE_CHIP_COUNT 48      ///< chips thrown by the thorns
 #define CYBELE_VINES 10           ///< vines drawn
 #define CYBELE_BLAST_OFFSETS 5760 ///< the blast pictures, after the yellow ring
 #define CYBELE_FIRST_SPARK 16     ///< the first spark in work->particles
 #define CYBELE_FIRST_THORN 32     ///< the first thorn in work->particles
 #define CYBELE_FIRST_CHIP 16      ///< the first chip in work->particles
-#define CYBELE_EMBER_CELL 6       ///< the ember picture in gCybele_EmberOffsets
+#define CYBELE_DUST_CELL 6        ///< the dust cloud in gCybele_EmberOffsets
 
-/// Thorns fly in from the right and vines grow out of the ground, lifting the
-/// targets while sparks flash around them; then the picture dissolves pixel by
-/// pixel, and the targets drop and explode.
+/// The vine pictures in the thorn vine sheet, each starting where the one
+/// before ends, below a 24x8 tip at 0. The flowers, thorns and sparks follow
+/// (gCybele_LeafOffsets, gCybele_ThornOffsets, gCybele_SparkOffsets).
+enum ThornVineSheetCell {
+  /// 24x64
+  CYBELE_VINE_STEM = 24 * 8,
+  /// a thinner vine: its 24x8 tip, then its 24x64 stem
+  CYBELE_THIN_VINE = CYBELE_VINE_STEM + 24 * 64
+};
+
+/// Cybele drops in at the right and thorns fly from her mouth; flowering
+/// vines grow out of the ground, lifting the targets while sparks flash around
+/// them; then the picture greys and dissolves pixel by pixel, and the targets
+/// drop, each landing on a spreading ring in a cloud of dust.
 ///
 /// Abilities: Cybele (SUMMON_EFFECT_CYBELE).
 ///
-/// The effect runs for CYBELE_FRAMES, in these stages:
+/// The effect runs for 366 frames, in these stages:
 ///
-/// - 0 to 127: the formation sprites drop in, landing on frame 31; from 72
-///   a thorn flies in from the right each frame.
+/// - 0 to 127: Cybele drops in, landing on frame 31; from 72 a thorn flies
+///   in from the right each frame.
 /// - 128 to 224: vines grow out of the ground, shaking the screen, while
 ///   chips fly; sparks flash around the targets, which rise from 161.
 /// - 224 to 247: the first 64 background colours fade to grey.
 /// - 233 on: the canvas dissolves from the top, two rows a frame.
 /// - 286 on: the targets drop, 5 frames apart.
-/// - 302 on: each target is hit 16 frames after it drops and bursts into a
-///   blast and embers.
+/// - 302 on: each target lands 16 frames after it drops, on a spreading ring
+///   in a cloud of dust.
 ///
 /// Pressing A or B between frames 191 and 285 skips to the drop. At the end
 /// the battle shows the damage and an impact burst
-/// (BattleEffect_RunImpactBurst) explodes at the formation.
+/// (BattleEffect_RunImpactBurst) explodes at Cybele.
 ///
 /// Besides the canvas and work->particles (above), it writes the dissolve
 /// order into the first 1024 bytes of Ram_MapGridCellBuffer, greys the first 64
 /// background colours, lifts and drops the targets' actors (their y and
 /// gravity), and sets REG_BG2X, REG_BG2PA, REG_BLDCNT and work->shakeFrames.
-/// It spawns eight formation sprites and releases them, the transfer task
+/// It spawns Cybele's eight sprites and releases them, the transfer task
 /// and the blitters before it closes the canvas layer.
 void BattleEffect_RunCybele(struct BattleEffectParams *args) {
   void **cursor;
@@ -141,7 +151,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
 
   height = -px(64);
   speed = 0;
-  for (frame = 0; frame != CYBELE_FRAMES; frame++) {
+  for (frame = 0; frame != 366; frame++) {
     struct BattleCamera *camera = gBattleCamera;
 
     // A or B skips the vines straight to the drop.
@@ -154,8 +164,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
     if (frame == 224)
       work->transferMode = CANVAS_COPY;
     EFFECT_VIEW_FROM_CAMERA(camera);
-    // Frame 31: the formation lands; the screen shakes and the targets
-    // flinch.
+    // Frame 31: Cybele lands; the screen shakes and the targets flinch.
     if (frame == 31) {
       work->shakeFrames = 8;
       Sound_PlayFar(SE_GATE_MOVE);
@@ -168,7 +177,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
     if (frame == 140)
       Sound_PlayFar(SE_SWITCH_MECHANISM);
 
-    // Drop the formation sprites to a height of 64 pixels, and from frame
+    // Drop Cybele's sprites to a height of 64 pixels, and from frame
     // 48 to 96 take the two halves of Cybele's face through three poses:
     // her mouth opens as the thorns fly and shuts again.
     speed += px(1) / 4;
@@ -227,8 +236,8 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
     // Frames 128 to 224: grow the vines, shaking the screen while they
     // grow. A vine is a 24x8 tip on a stem of three 24x64 pieces; its
     // height wraps every 64 pixels past 184, so a grown vine keeps its
-    // length. Odd vines are mirrored and carry a leaf; vines 6 to 9 use the
-    // second stem picture.
+    // length. Odd vines are mirrored and carry a flower; vines 6 to 9 are the
+    // thinner vine.
     phase = frame - 128;
     if (phase >= 0 && phase <= 96) {
       rise = phase;
@@ -245,9 +254,8 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
           s32 wrap;
           s32 k;
 
-          // The second picture follows the first's tip and stem.
           if (i > 5)
-            sheet = work->sheet + 24 * (8 + 64);
+            sheet = work->sheet + CYBELE_THIN_VINE;
           // velocityY is the vine's growth in pixels a frame, variant its
           // delay.
           top = (rise - vine->variant) * vine->velocityY;
@@ -271,10 +279,11 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
               }
               if (y + rows > vine->y)
                 rows -= y + rows - vine->y;
-              draw[i & 1](canvas, sheet + skip + 192, vine->x, y, 24, rows);
+              draw[i & 1](canvas, sheet + skip + CYBELE_VINE_STEM, vine->x, y,
+                          24, rows);
             }
           }
-          // A leaf, on the odd vines only.
+          // A flower, on the odd vines only.
           if ((i & 1) != 0) {
             s32 y = ((vine->y - top) & 127) - 16;
             s32 kind = i % 3;
@@ -421,7 +430,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
             actor->y.fixed = px(128);
           actor->gravity = 0;
           for (n = 0; (record = GetMotionRecordFar(slot->actor, n)) != 0; n++)
-            Sprite_StartAnimationFar(record, 5);
+            Sprite_StartAnimationFar(record, POSE_DAMAGE);
         }
       }
     }
@@ -445,10 +454,10 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
       }
     }
 
-    // Frame 302: switch to the blast sheet, brightest-wins blitters and a
-    // canvas that keeps 75% of each frame, and give each target ten
-    // embers, 72 degrees apart (two rings of five), of which only the first
-    // ring is drawn.
+    // Frame 302: load the yellow ring and blast sheets, brightest-wins
+    // blitters and a canvas that keeps 75% of each frame, and give each
+    // target ten dust clouds, 72 degrees apart (two sets of five), of which
+    // only the first set is drawn.
     if (frame == 302) {
       EFFECT_RELEASE_BLITTERS();
       Resource_LoadAndDecompress((s32)&ResourceId_YellowRingSheet, work->sheet,
@@ -473,22 +482,22 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
             GetBattleObjectSlotFar(work->args->targets[i])->actor;
 
         for (j = 0; j != 10; j++) {
-          struct Particle *ember = &work->particles[i * 10 + j];
+          struct Particle *dust = &work->particles[i * 10 + j];
 
-          SET_POSITION(ember, actor->x.fixed, px(20), actor->z.fixed);
-          SET_VELOCITY(ember, (Trig_Sin(j * 0x3334) * 4),
+          SET_POSITION(dust, actor->x.fixed, px(20), actor->z.fixed);
+          SET_VELOCITY(dust, (Trig_Sin(j * 0x3334) * 4),
                        (Random16() & 0x7fff) + px(1),
                        (Trig_Cos(j * 0x3334) * 4));
-          ember->variant = 0;
+          dust->variant = 0;
         }
       }
     }
-    // Target i's blast plays from frame 302 + 4i: six 40x24 pictures, two
-    // frames each, drawn as two mirrored halves. Six frames in, the first
-    // five of its embers show for 27 frames. The 2D step leaves z alone, so
-    // they spread only across, and rise: their speed up and the 1/16 pixel
-    // added each frame both point up in the projection. The canvas is now
-    // shown at twice its width, so x positions are halved.
+    // Target i's ring spreads from frame 302 + 4i: six 40x24 pictures of the
+    // yellow ring sheet, two frames each, drawn as two mirrored halves. Six
+    // frames in, the first five of its dust clouds billow for 27 frames. The 2D
+    // step leaves z alone, so they spread only across, and rise: their speed up
+    // and the 1/16 pixel added each frame both point up in the projection. The
+    // canvas is now shown at twice its width, so x positions are halved.
     if (frame > 301) {
       EFFECT_FOR_EACH_TARGET(i, work->args) {
         s32 start = i * 4 + 302;
@@ -508,27 +517,30 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
         }
         if (frame >= start + 6) {
           for (j = 0; j != 5; j++) {
-            struct Particle *ember = &work->particles[i * 10 + j];
+            struct Particle *dust = &work->particles[i * 10 + j];
 
-            Projection_Point(&ember->x, &screen);
+            Projection_Point(&dust->x, &screen);
             screen.x >>= 1;
-            if (ember->variant >= 0 && ember->variant <= 26) {
-              s32 cellIndex = CYBELE_EMBER_CELL;
+            if (dust->variant >= 0 && dust->variant <= 26) {
+              /* FAKEMATCH(temporary): cellIndex holds CYBELE_DUST_CELL; as
+               * CYBELE_DUST_CELL in both reads, 214 of 1434 instructions
+               * differ in tbs-en. */
+              s32 cellIndex = CYBELE_DUST_CELL;
               s32 offset = gCybele_EmberOffsets[cellIndex];
               u32 size = gCybele_EmberSizes[cellIndex];
 
               draw[0](canvas, work->sheet + offset, screen.x - (size >> 1),
                       screen.y - (size >> 1), size, size);
             }
-            Particle_AdvanceWithGravity2D(ember, 60, px(1) / 16);
-            ember->variant++;
+            Particle_AdvanceWithGravity2D(dust, 60, px(1) / 16);
+            dust->variant++;
           }
         }
       }
     }
 
-    // The camera shake, by phase: the formation and thorns, the vines and
-    // the dissolve, the blasts.
+    // The camera shake, by phase: Cybele's landing and the thorns, the vines
+    // and the dissolve, the landings.
     if (frame <= 127)
       BattleCamera_Shake(4, 16);
     else if (frame <= 301)
@@ -549,11 +561,10 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
   BattleEffect_EndCanvasLayer();
 }
 
-#undef CYBELE_FRAMES
 #undef CYBELE_CHIP_COUNT
 #undef CYBELE_VINES
 #undef CYBELE_FIRST_SPARK
 #undef CYBELE_FIRST_THORN
 #undef CYBELE_FIRST_CHIP
-#undef CYBELE_EMBER_CELL
+#undef CYBELE_DUST_CELL
 #undef CYBELE_BLAST_OFFSETS

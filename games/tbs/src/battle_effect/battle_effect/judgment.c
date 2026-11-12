@@ -61,10 +61,8 @@ struct JudgmentWork {
 #define JUDGMENT_SHEET_FLASH_STREAK                                            \
   (JUDGMENT_SHEET_FLASH_LARGE +                                                \
    JUDGMENT_FLASH_LARGE_WIDTH * JUDGMENT_FLASH_LARGE_HEIGHT)
-#define JUDGMENT_EXPLOSION_WIDTH 32  ///< each explosion picture's width
-#define JUDGMENT_EXPLOSION_HEIGHT 54 ///< and height
-#define JUDGMENT_EXPLOSION_CELL_BYTES                                          \
-  (JUDGMENT_EXPLOSION_WIDTH * JUDGMENT_EXPLOSION_HEIGHT)
+/// Each explosion picture is 32x54.
+#define JUDGMENT_EXPLOSION_CELL_BYTES (32 * 54)
 #define JUDGMENT_WAVE_SIZE 120 ///< the wave picture is 120x120
 /// DMA word that fills the 128x128 canvas.
 #define JUDGMENT_DMA_FILL_CANVAS DMA_FILL_WORDS(CANVAS_BYTES / 4)
@@ -919,8 +917,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
                 work->sheet +
                     ((frame / 2 + i) % 4) * JUDGMENT_EXPLOSION_CELL_BYTES +
                     JUDGMENT_SHEET_EXPLOSION,
-                x + 44, y + 17, JUDGMENT_EXPLOSION_WIDTH,
-                JUDGMENT_EXPLOSION_HEIGHT);
+                x + 44, y + 17, 32, 54);
       }
     }
 
@@ -1012,7 +1009,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
                   work->sheet +
                       ((frame / 2 + i) % 4) * JUDGMENT_EXPLOSION_CELL_BYTES +
                       JUDGMENT_SHEET_EXPLOSION,
-                  x, y, JUDGMENT_EXPLOSION_WIDTH, JUDGMENT_EXPLOSION_HEIGHT);
+                  x, y, 32, 54);
         }
       } else {
         for (i = 0; i != 8; i++) {
@@ -1023,7 +1020,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
                   work->sheet +
                       ((frame / 2 + i) % 4) * JUDGMENT_EXPLOSION_CELL_BYTES +
                       JUDGMENT_SHEET_EXPLOSION,
-                  x, y, JUDGMENT_EXPLOSION_WIDTH, JUDGMENT_EXPLOSION_HEIGHT);
+                  x, y, 32, 54);
         }
       }
     }
@@ -1066,8 +1063,6 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
 #undef JUDGMENT_SHEET_FLASH_SMALL
 #undef JUDGMENT_SHEET_FLASH_LARGE
 #undef JUDGMENT_SHEET_FLASH_STREAK
-#undef JUDGMENT_EXPLOSION_WIDTH
-#undef JUDGMENT_EXPLOSION_HEIGHT
 #undef JUDGMENT_EXPLOSION_CELL_BYTES
 #undef JUDGMENT_WAVE_SIZE
 #undef JUDGMENT_DMA_FILL_CANVAS

@@ -3271,9 +3271,9 @@ LogRoomsA_SnapToNearestStop(struct LogRoomsAStop *node, s16 *requestedFacing) {
   return &gLogRoomsA_Stops[stopIndex];
 }
 
-/// Whether an actor following a route takes the stop at (x, z): its
-/// destination, or where it stands when it has none, is within half a cell.
-static s32 LogRoomsA_IsStopTakenByActor(s32 x, s32 z, s32 id) {
+/// Whether the actor's destination, or where it stands when it has none, is
+/// within half a cell (8 pixels) of the stop at (x, z).
+static s32 LogRoomsA_IsWithinHalfCellOfStop(s32 x, s32 z, s32 id) {
   struct Actor *actor = Actor_Lookup(id);
   s32 targetX = actor->targetX;
   s32 targetZ;
@@ -3293,9 +3293,9 @@ static s32 LogRoomsA_IsStopTakenByActor(s32 x, s32 z, s32 id) {
   return 0;
 }
 
-/// Whether the leader takes the stop at (x, z): its destination, or where it
-/// stands when it has none, is within a cell.
-static s32 LogRoomsA_IsStopTakenByLeader(s32 x, s32 z, s32 id) {
+/// Whether the actor's destination, or where it stands when it has none, is
+/// within a cell (16 pixels) of the stop at (x, z).
+static s32 LogRoomsA_IsWithinCellOfStop(s32 x, s32 z, s32 id) {
   struct Actor *actor = Actor_Lookup(id);
   s32 ax;
   s32 az;
@@ -3325,10 +3325,10 @@ static s32 LogRoomsA_CheckStopOccupancy(struct LogRoomsAStop *stop) {
   }
   x = (stop->gridX << 19) + px(72);
   z = (stop->gridZ << 19) + px(632);
-  if (LogRoomsA_IsStopTakenByLeader(x, z, ACTOR_PARTY_LEADER) != 0 ||
-      LogRoomsA_IsStopTakenByActor(x, z, ACTOR_IVAN) != 0 ||
-      LogRoomsA_IsStopTakenByActor(x, z, ACTOR_SUSPECTED_LEADER) != 0 ||
-      LogRoomsA_IsStopTakenByActor(x, z, ACTOR_SUSPECTED_THIEF) != 0) {
+  if (LogRoomsA_IsWithinCellOfStop(x, z, ACTOR_PARTY_LEADER) != 0 ||
+      LogRoomsA_IsWithinHalfCellOfStop(x, z, ACTOR_IVAN) != 0 ||
+      LogRoomsA_IsWithinHalfCellOfStop(x, z, ACTOR_SUSPECTED_LEADER) != 0 ||
+      LogRoomsA_IsWithinHalfCellOfStop(x, z, ACTOR_SUSPECTED_THIEF) != 0) {
     return -1;
   }
   return 0;

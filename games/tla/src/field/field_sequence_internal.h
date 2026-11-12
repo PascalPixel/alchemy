@@ -13,9 +13,6 @@
 #define OWN_Actor_Destroy
 #define OWN_Actor_SetAnimationSpeedFar
 #define OWN_Actor_StartScriptFar
-#define OWN_BattleEffect_StartRandomParticleEmitter
-#define OWN_Scene_FindActorPlacement
-#define OWN_Func_080ce458
 
 #include "types.h"
 #include "field/world_map.h"
@@ -168,7 +165,6 @@ void Actor_Destroy(struct Actor *object);
 void Actor_SetAnimationSpeedFar(struct Actor *object, s32 value);
 void Actor_SetSingleChildFlagsFar(struct Actor *object, u32 flags);
 void Actor_StartScriptFar(struct Actor *object, const void *script);
-struct Actor *BattleEffect_StartRandomParticleEmitter(s32 id, s32 item);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, s32 *position);
 s32 Map_GetTerrainHeightFar(u8 layer, s32 x, s32 z);
 void *Unit_Get(s32 owner);

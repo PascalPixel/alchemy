@@ -21,7 +21,7 @@ s32 BattleEffect_CopyWatchedObjectPosition(struct Actor *object) {
     object->x = link->x;
     object->y = link->y +
                 ((s8)Resource_GetMetadataRecordFarFar(
-                     *Scene_FindActorPlacement(object->unk66))
+                     *(s16 *)Scene_FindActorPlacement((s16)object->unk66))
                      ->boxX
                  << 16) +
                 0x80000;

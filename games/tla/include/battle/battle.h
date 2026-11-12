@@ -107,9 +107,8 @@ extern const u8 gColorBuffer_FadeStep2Map[32];
 extern const u8 gColorBuffer_FadeStep3Map[32];
 extern struct WorldMapWork gWorldMapWork;
 s32 AnimationObject_SelectAnimationFar(struct AnimationObject *, s32);
-#ifndef OWN_Scene_FindActorPlacement
-s16 *Scene_FindActorPlacement(s16 action);
-#endif
+struct ActionDescriptor;
+struct ActionDescriptor *Scene_FindActorPlacement(s32 id);
 s32 BattleActor_RemoveFromLists(s32);
 void BattleEffect_ApplyColorToSourceBuffer(s32 value, s32 mode);
 void BattleEffect_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 half);
@@ -123,9 +122,7 @@ s32 BattleEffect_RunProjectileVolleyB(void *effect, s32 mode);
 s32 BattleEffect_RunSparkGroups(void *, s32);
 void BattleEffect_SnapScaleToFull(void *object);
 void BattleEffect_StartBufferInterpolation(s32 frames);
-#ifndef OWN_BattleEffect_StartRandomParticleEmitter
-s32 BattleEffect_StartRandomParticleEmitter(s32, s32);
-#endif
+struct Actor *BattleEffect_StartRandomParticleEmitter(s32 actor, s32 item);
 void BattleEffect_UpdateArcEffect(void);
 void BattleLayout_HighlightPartyPanelsFar(u16 *);
 void BattleMotion_ApproachTargetFar(s32, s16, s32, s32);
@@ -144,9 +141,8 @@ s32 Djinn_ActivateFar(s32 unitId, s32 element, s32 index);
 s32 Func_08020190(s32, s32, s32);
 s32 Func_080cdac0(s32 effect, s32 from, s32 to);
 s32 Func_080ce31c(s32 kind);
-#ifndef OWN_Func_080ce458
-struct PendingEvent *Func_080ce458(u32 filter, s32 kind, s32 selector);
-#endif
+struct TriggerEvent;
+struct TriggerEvent *Func_080ce458(s32 filter, s32 kind, s32 selector);
 void Func_080e3074(void);
 void Func_0811b75c(s16 *list, s32 refresh, s32 spawn);
 void Func_0818f620(void *effect, s32 mode);

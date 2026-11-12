@@ -12,7 +12,6 @@
 // below.
 #define OWN_Actor_SetSingleChildFlagsFar
 #define OWN_Actor_StartScriptFar
-#define OWN_Scene_FindActorPlacement
 
 #include "types.h"
 #include "input.h"
@@ -73,7 +72,6 @@ s32 ArcTan2(s32 y, s32 x);
 void Actor_SetSingleChildFlagsFar(struct Actor *object, u32 flags);
 void Actor_StartScriptFar(struct Actor *object, const void *script);
 struct Actor *ObjectTable_Get(u32 objectId);
-struct ActionDescriptor *Scene_FindActorPlacement(s32 id);
 s32 Encounter_ResolveWorldMapZoneAndBackdrop(void *position);
 void BattleEffect_SelectBattleCue(s32 zone, s32 slot);
 

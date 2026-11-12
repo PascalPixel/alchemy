@@ -259,7 +259,8 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
     // Until frame 71, move and draw the first 342 dust motes; they swell
     // from frame 69, and one goes out once it falls below y 108. Each falls
     // under its gTitanBlade_DustGravity, 1/8 to 1/2 pixel a frame each
-    // frame, and slows to 62/64 a frame.
+    // frame, and slows to 62/64 a frame. The swell and the fall are Nereid's
+    // drops'; their steps after frame 71 never come here.
     if (frame <= 71) {
       i = 0;
       do {
@@ -272,36 +273,14 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
           if (dust->velocityY > 0) {
             size += 2;
           }
-          if (frame > 68 && size <= 5) {
-            size = 6;
-          }
-          if (frame > 70 && size <= 6) {
-            size = 7;
-          }
-          /* FAKEMATCH(dead): frame never passes 71 here, so the next three
-           * tests never hold; without them, 36 of 779 instructions differ in
-           * tbs-en. */
-          if (frame > 72 && size <= 7) {
-            size = 8;
-          }
-          if (frame > 74 && size <= 8) {
-            size = 9;
-          }
-          if (frame > 76) {
-            size = 10;
-          }
+          EFFECT_SWELL_MOTE(size, frame);
           EFFECT_DRAW_MOTE(blitters[0], canvas, sheet, Q_16_16_TO_INT(dust->x),
                            Q_16_16_TO_INT(dust->y), size);
 
           dust->x += dust->velocityX;
           dust->y += dust->velocityY;
-          /* FAKEMATCH(dead): frame never passes 80 here; as the else branch
-           * alone, 97 of 779 instructions differ in tbs-en. */
-          if (frame > 80) {
-            dust->velocityY += -px(1) / 2;
-          } else {
-            dust->velocityY += gTitanBlade_DustGravity[i & 3];
-          }
+          EFFECT_FALL_MOTE(dust->velocityY, gTitanBlade_DustGravity[i & 3],
+                           frame);
           dust->velocityX = dust->velocityX * 62 / 64;
           dust->velocityY = dust->velocityY * 62 / 64;
           dust->variant++;

@@ -205,25 +205,13 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
 
           if (drop->velocityY > 0)
             size += 2;
-          if (frame > 68 && size <= 5)
-            size = 6;
-          if (frame > 70 && size <= 6)
-            size = 7;
-          if (frame > 72 && size <= 7)
-            size = 8;
-          if (frame > 74 && size <= 8)
-            size = 9;
-          if (frame > 76)
-            size = 10;
+          EFFECT_SWELL_MOTE(size, frame);
           EFFECT_DRAW_MOTE(draw[drop->velocityY > 0], canvas, graphics,
                            Q_16_16_TO_INT(drop->x), Q_16_16_TO_INT(drop->y),
                            size);
           drop->x += drop->velocityX;
           drop->y += drop->velocityY;
-          if (frame > 80)
-            drop->velocityY += -px(1) / 2;
-          else
-            drop->velocityY += gNereid_Gravity[k & 3];
+          EFFECT_FALL_MOTE(drop->velocityY, gNereid_Gravity[k & 3], frame);
           drop->velocityX = drop->velocityX * 62 / 64;
           drop->velocityY = drop->velocityY * 62 / 64;
           drop->variant++;

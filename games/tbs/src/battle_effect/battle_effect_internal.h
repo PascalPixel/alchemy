@@ -235,6 +235,21 @@ static inline void Dma_Stop(volatile u16 *channel) {
   (draw)(canvas, (sheet) + gBattleEffect_FlarePictures[(size) - 1],            \
          (x) - (size), (y) - (size), (size) * 2, (size) * 2)
 
+/// Swells a falling mote as the drops clear: from frame 69 it is at least 6
+/// pixels, growing a size every 2 frames to 10 from frame 77. Nereid's drops
+/// and Titan Blade's dust share it.
+#define EFFECT_SWELL_MOTE(size, frame)                                         \
+  ((frame) > 68 && (size) <= 5 && ((size) = 6),                                \
+   (frame) > 70 && (size) <= 6 && ((size) = 7),                                \
+   (frame) > 72 && (size) <= 7 && ((size) = 8),                                \
+   (frame) > 74 && (size) <= 8 && ((size) = 9), (frame) > 76 && ((size) = 10))
+
+/// Moves a falling mote's vertical speed (16.16) on a frame: until frame 80
+/// it falls under `gravity`, then it rises, half a pixel a frame faster each
+/// frame.
+#define EFFECT_FALL_MOTE(velocityY, gravity, frame)                            \
+  ((frame) > 80 ? ((velocityY) -= px(1) / 2) : ((velocityY) += (gravity)))
+
 /// Shows the canvas: the effect display mode, BG2 stretched to twice its
 /// width (the 128-pixel canvas shown 256 pixels wide) and blended over
 /// everything below: `top` sixteenths of the canvas's colour are added to all

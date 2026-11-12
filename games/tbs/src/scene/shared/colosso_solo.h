@@ -157,7 +157,7 @@ static void Colosso_TakePlaceForMatch(void) {
 
   Event_Start();
   // Choose the nearest matching speaker whose Z is at least the supporter's.
-  for (actorId = 8; actorId <= 66; actorId++) {
+  for (actorId = ACTOR_FIRST_PLACED; actorId <= ACTOR_LAST; actorId++) {
     struct Actor *actor = Actor_GetById(actorId);
 
     if (actor != 0 && actor->spriteStorageKind == 1 &&

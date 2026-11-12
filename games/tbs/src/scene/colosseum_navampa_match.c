@@ -30,10 +30,10 @@
 ///   scales and the stones and the rock on the way. After Mia,
 ///   COLOSSEUM_NAVAMPA_MATCH_LEND_A_HAND_TO_RACE starts the race.
 /// - COLOSSEUM_NAVAMPA_MATCH_RACE_FROM_LEND_A_HAND, the race against Navampa,
-///   who follows a recorded path, after the lettering `Match 3` and a count of
-///   three. At the arena the first to arrive takes the Claymore and the second
-///   the Hunter's Sword. The battle is ENCOUNTER_ZONE_COLOSSO's fifth or sixth
-///   group, the Navampa with or without the Claymore.
+///   who follows a recorded path, after the lettering `The 3rd Match` and a
+///   count of three. At the arena the first to arrive takes the Claymore and
+///   the second the Hunter's Sword. The battle is ENCOUNTER_ZONE_COLOSSO's
+///   fifth or sixth group, the Navampa with or without the Claymore.
 ///
 /// Stepping onto the Scales of Justice's western ledge tips the scales (step
 /// trigger 15, ColosseumNavampaMatch_StepOnScales). The ledge goes down, with
@@ -64,6 +64,7 @@
 #include "module/scene/shared/colosso_setup.h"
 #include "module/scene/shared/colosso_occupant.h"
 #include "module/field/field_sequence.h"
+#include "pushed_actor.h"
 #include "module/system/main_routine.h"
 #include "module/field/event_commands.h"
 #include "module/field/field.h"
@@ -114,27 +115,21 @@
 // call the bytes show; UBFIX calls it as declared.
 #ifdef UBFIX
 #define COLOSSEUM_NAVAMPA_MATCH_FACE_DIRECTION Actor_FaceDirectionById
-#define COLOSSEUM_NAVAMPA_MATCH_INITIALIZE_MODE_TASK                           \
-  ColosseumNavampaMatch_StartLetteringAnimation
-#define COLOSSEUM_NAVAMPA_MATCH_APPLY_MATCHING_SLOT_VALUES                     \
-  Scene_GiveAndEquipItem
+#define COLOSSEUM_NAVAMPA_MATCH_INITIALIZE_MODE_TASK Colosso_StartLettering
 #else
 #define COLOSSEUM_NAVAMPA_MATCH_FACE_DIRECTION                                 \
   ((s32 (*)())Actor_FaceDirectionById)
 #define COLOSSEUM_NAVAMPA_MATCH_INITIALIZE_MODE_TASK                           \
-  ((s32 (*)())ColosseumNavampaMatch_StartLetteringAnimation)
-#define COLOSSEUM_NAVAMPA_MATCH_APPLY_MATCHING_SLOT_VALUES                     \
-  ((s32 (*)())Scene_GiveAndEquipItem)
+  ((s32 (*)())Colosso_StartLettering)
 #endif
 
 static void ColosseumNavampaMatch_PlayPostBattleReunion(s32 battleResult);
 static void ColosseumNavampaMatch_IntroduceThirdFinals(s32 guideId);
-static void ColosseumNavampaMatch_ShowRoundStartLettering(s32 mode);
-static void ColosseumNavampaMatch_EmptyHook(void);
-static void ColosseumNavampaMatch_WaitForOpponentToFinish(void);
-static s32 ColosseumNavampaMatch_CollectFinishEquipment(s32 firstItem,
-                                                        s32 secondItem);
-static void ColosseumNavampaMatch_PushActorAhead(void);
+static void Colosso_ShowRoundStartLettering(s32 match);
+static void Colosso_NoOp(void);
+static void Colosso_WaitForOpponentToFinish(void);
+static s32 Colosso_TakePrize(s32 firstItem, s32 secondItem);
+static void Colosso_PushActorAhead(void);
 
 typedef void (*MapTaskEntry)(void);
 
@@ -291,7 +286,7 @@ enum {
   /// stones." (MsgColossoAnotherLogRollingArea)
   FLAG_STONE_COLUMN = FLAG_AREA_TEMP_70,
   /// Someone has reached the arena
-  /// (ColosseumNavampaMatch_CollectFinishEquipment).
+  /// (Colosso_TakePrize).
   /// ★ Named from the game: "You must get through several stages before you
   /// reach the arena." (MsgColossoWarriorsEnterFinalsWithoutAny)
   FLAG_ARENA_REACHED = FLAG_SCENE_TEMP_11,
@@ -572,7 +567,7 @@ static void ColosseumNavampaMatch_SetWeightOnScales(void) {
 /// Walking into the weight by the Scales of Justice pushes it, perhaps onto the
 /// scales.
 static void ColosseumNavampaMatch_PushWeight(void) {
-  ColosseumNavampaMatch_PushActorAhead();
+  Colosso_PushActorAhead();
   ColosseumNavampaMatch_SetWeightOnScales();
 }
 
@@ -597,9 +592,7 @@ static void ColosseumNavampaMatch_IgnoreMove(void) {}
 
 /// Walking into a rock on Colosseum Final 3's stages (step trigger 22) pushes
 /// it.
-static void ColosseumNavampaMatch_PushRock(void) {
-  ColosseumNavampaMatch_PushActorAhead();
-}
+static void ColosseumNavampaMatch_PushRock(void) { Colosso_PushActorAhead(); }
 
 /// Move on one of the log-rolling area's three stones, and each push there,
 /// settles the stones.
@@ -809,7 +802,7 @@ static void ColosseumNavampaMatch_RollLongLog(void) {
   Event_End();
   return;
 far:
-  ColosseumNavampaMatch_PushActorAhead();
+  Colosso_PushActorAhead();
   ColosseumNavampaMatch_SettleStones();
 }
 
@@ -980,11 +973,10 @@ static void ColosseumNavampaMatch_ReachArena(void) {
   s32 last;
 
   last = 4;
-  ColosseumNavampaMatch_EmptyHook();
+  Colosso_NoOp();
   Event_Start();
-  place = ColosseumNavampaMatch_CollectFinishEquipment(ITEM_CLAYMORE,
-                                                       ITEM_HUNTERS_SWORD);
-  ColosseumNavampaMatch_WaitForOpponentToFinish();
+  place = Colosso_TakePrize(ITEM_CLAYMORE, ITEM_HUNTERS_SWORD);
+  Colosso_WaitForOpponentToFinish();
   for (i = 0; i < 10; i++) {
     Actor_WaitForScriptEndById(ACTOR_OPPONENT);
   }
@@ -1227,7 +1219,7 @@ s32 ColosseumNavampaMatch_Initialize(void) {
       Colosso_ControlCharacterAlone(ISAAC);
       Colosso_PlaceFriendsAtCheeringSpots();
       Actor_WatchAndSetScript(ACTOR_GARET, ACTOR_PARTY_LEADER);
-      ColosseumNavampaMatch_ShowRoundStartLettering(3);
+      Colosso_ShowRoundStartLettering(3);
     }
     Actor_WatchAndSetScript(ACTOR_GARET, ACTOR_PARTY_LEADER);
     Actor_WatchAndSetScript(ACTOR_IVAN, ACTOR_PARTY_LEADER);
@@ -1244,7 +1236,7 @@ s32 ColosseumNavampaMatch_Initialize(void) {
     }
     Colosso_PlaceFriendsAtCheeringSpots();
     Colosso_ControlCharacterAlone(GARET);
-    ColosseumNavampaMatch_ShowRoundStartLettering(0);
+    Colosso_ShowRoundStartLettering(0);
     break;
 
   case COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_NORTH:
@@ -2047,98 +2039,7 @@ static void ColosseumNavampaMatch_TalkToLogRollingAttendant(s32 actorId) {
 #include "shared/item_equip.h"
 #include "shared/colosso_task.h"
 
-/// Chooses the lettering animation script and resets its task state.
-static void ColosseumNavampaMatch_StartLetteringAnimation(u32 mode,
-                                                          u32 parameter) {
-  s32 handler;
-
-  gColosso_LetteringMode = mode;
-  gColosso_LetteringParameter = (parameter << 4);
-
-  {
-    s32 priority = TASK_PASS_FRAME;
-    TaskFunc task = Colosso_UpdateLettering;
-    Task_AddFrame(task, priority);
-  }
-
-  handler = (s32)gColossoLetteringScriptTitle;
-  if (mode == COLOSSO_SHAPE_DIGIT) {
-    handler = (s32)gColossoLetteringScriptDigit;
-  }
-  if (mode == COLOSSO_SHAPE_GO) {
-    handler = (s32)gColossoLetteringScriptGo;
-  }
-  if (mode == COLOSSO_SHAPE_RESULT) {
-    if (parameter != 0) {
-      handler = (s32)gColossoLetteringScriptLose;
-    } else {
-      handler = (s32)gColossoLetteringScriptWon;
-    }
-  }
-
-  gColosso_LetteringTimer = 0;
-  gColosso_LetteringScript = (s16 *)handler;
-  gColosso_ModeMoveTarget = 0;
-  gColosso_ModeMoveDuration = 0;
-  gColosso_LetteringPosition = 0;
-}
-
-/// Shows the lettering a visit opens with.
-///
-/// For the friends' turns (mode 0) it is `Lend a Hand`. For the race it is
-/// `Match 3`, then 3, 2, 1 and `Go!`.
-static void ColosseumNavampaMatch_ShowRoundStartLettering(s32 mode) {
-  if (mode == 0) {
-    Event_Start();
-    Event_StartScreenTransition();
-    Event_WaitTransitionFrames();
-    Event_Wait(30);
-    Sound_Play(MUS_LEVEL_UP);
-    Colosso_LoadLettering(COLOSSO_PICTURE_LEND_A_HAND);
-    ColosseumNavampaMatch_StartLetteringAnimation(COLOSSO_SHAPE_TITLE, 0);
-    Event_Wait(120);
-    Event_End();
-    return;
-  }
-
-  Sound_Play(SE_COLOSSO_LETTERING);
-  Event_Start();
-  Event_StartScreenTransition();
-  Event_WaitTransitionFrames();
-  {
-    s16 *base = gColossoLetteringScriptTitle;
-    *(s16 *)((u8 *)base + 30) = (mode * 60);
-  }
-  Event_Wait(30);
-  // Match 1 to 3 play MUS_JINGLE_SMALL, MUS_JINGLE_MEDIUM and MUS_JINGLE_LARGE.
-  Sound_Play(mode + (MUS_JINGLE_SMALL - COLOSSO_PICTURE_MATCH_1));
-  Colosso_LoadLettering(mode);
-  ColosseumNavampaMatch_StartLetteringAnimation(COLOSSO_SHAPE_TITLE, 0);
-  Event_Wait(120);
-
-  while (Sound_GetBgmRestoreDelay() != 0) {
-    wait(1);
-  }
-
-  Sound_Play(SOUND_FADE_OUT_ACTION_SE);
-  Colosso_LoadLettering(COLOSSO_PICTURE_COUNT_3_2);
-  ColosseumNavampaMatch_StartLetteringAnimation(COLOSSO_SHAPE_DIGIT, 0);
-  Sound_Play(SE_COLOSSO_COUNTDOWN);
-  Event_Wait(60);
-  ColosseumNavampaMatch_StartLetteringAnimation(COLOSSO_SHAPE_DIGIT, 1);
-  Sound_Play(SE_COLOSSO_COUNTDOWN);
-  Event_Wait(60);
-  Colosso_LoadLettering(COLOSSO_PICTURE_COUNT_1);
-  ColosseumNavampaMatch_StartLetteringAnimation(COLOSSO_SHAPE_DIGIT, 0);
-  Sound_Play(SE_COLOSSO_COUNTDOWN);
-  Event_Wait(60);
-  Colosso_LoadLettering(COLOSSO_PICTURE_GO);
-  ColosseumNavampaMatch_StartLetteringAnimation(COLOSSO_SHAPE_GO, 0);
-  Sound_Play(SE_COLOSSO_GO);
-  Scene_PlayMusic();
-  Event_End();
-  GameFlag_Set(FLAG_IN_TOWN);
-}
+#include "shared/colosso_lettering.h"
 
 /// Unused: shows the match's result, as in the first two finals sites.
 ///
@@ -2151,21 +2052,21 @@ UNUSED static void ColosseumNavampaMatch_UnusedShowMatchResult(s32 result) {
   Sound_Play(SE_COLOSSO_LETTERING);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  gColossoLetteringScriptWon[13] = result * 60;
-  STORE_CONST(gColossoLetteringScriptLose[13]) =
+  gColosso_LetteringWin[13] = result * 60;
+  STORE_CONST(gColosso_LetteringLose[13]) =
       (result < 0 ? -result : result) * 60;
   if (result < 0) {
     Event_Wait(30);
     Sound_Play(MUS_INN);
     Colosso_LoadLettering(COLOSSO_PICTURE_WON_LOSE_FOR_LOSS);
-    COLOSSEUM_NAVAMPA_MATCH_INITIALIZE_MODE_TASK(3, 1);
+    COLOSSEUM_NAVAMPA_MATCH_INITIALIZE_MODE_TASK(COLOSSO_SHAPE_RESULT, 1);
     Event_Wait(-result * 60 + 60);
     actorId = ACTOR_PARTY_LEADER;
   } else {
     Event_Wait(30);
     Sound_Play(result + 90);
     Colosso_LoadLettering(COLOSSO_PICTURE_WON_LOSE);
-    COLOSSEUM_NAVAMPA_MATCH_INITIALIZE_MODE_TASK(3, 0);
+    COLOSSEUM_NAVAMPA_MATCH_INITIALIZE_MODE_TASK(COLOSSO_SHAPE_RESULT, 0);
     Event_Wait(result * 60 + 60);
     actorId = ACTOR_OPPONENT;
   }
@@ -2183,229 +2084,13 @@ UNUSED static void ColosseumNavampaMatch_UnusedShowMatchResult(s32 result) {
 #include "shared/colosso_marker.h"
 #include "shared/colosso_item_icon.h"
 
-/// Writes value as eight hexadecimal digits and a terminating null.
-UNUSED static void String_WriteU32AsHex(u8 *hexText, u32 value) {
-  s32 digitIndex;
-
-  hexText += 8;
-  *hexText = 0;
-  hexText--;
-  for (digitIndex = 7; digitIndex >= 0; digitIndex--) {
-    *hexText = gHexDigits[value & 15];
-    value >>= 4;
-    hexText--;
-  }
-}
-
-static void ColosseumNavampaMatch_EmptyHook(void) {}
-
-/// Marks the opponent's path recorder finished.
-UNUSED static void ColosseumNavampaMatch_MarkOpponentFinished(void) {
-  struct PathRecorder *recorder = (struct PathRecorder *)gSceneLocalState;
-
-  recorder->mode = PATH_RECORDER_FINISHED;
-}
-
-/// Waits until the opponent path recorder reaches its finished mode.
-static void ColosseumNavampaMatch_WaitForOpponentToFinish(void) {
-  struct PathRecorder *recorder = (struct PathRecorder *)gSceneLocalState;
-
-  while (recorder->mode != PATH_RECORDER_FINISHED) {
-    wait(1);
-  }
-}
-
-/// Occasionally scatters an effect around the prize being raised at the
-/// arena.
-static void ColosseumNavampaMatch_SpawnRandomFinishEffect(struct Actor *actor) {
-  struct Actor *source = (struct Actor *)actor;
-
-  s32 position[3];
-  u32 randomValue;
-
-  if (source->velocityY >= -255 && source->velocityY <= 255) {
-    source->motionFlags = 0;
-  }
-  randomValue = Import_RandomNext();
-  if (randomValue * 100 >> 16 <= 9) {
-    struct Actor *effect;
-    s32 angle;
-    s32 radius;
-
-    SET_VECTOR(position, source->x.fixed, source->y.fixed, source->z.fixed);
-    angle = Import_RandomNext();
-    radius = Import_RandomNext();
-    Vector_AddPolarOffset(angle << 4, radius, position);
-    {
-      s32 x = position[0];
-      s32 y = position[1];
-      s32 z = position[2];
-
-      effect = FieldActor_Create(SPRITE_SPARKLE, x, y, z);
-    }
-    if (effect != 0) {
-      effect->motionFlags = 0;
-      Actor_SetSpriteFlags(effect, 0);
-      Actor_StartScript(effect, gColosseumNavampaMatch_PrizeEffectScript);
-      Actor_SelectAnimation(effect, 1);
-      Actor_SelectAnimation(effect, 0);
-    }
-  }
-}
-
-/// Presents the prize above the warrior who took it, with the treasure jingle,
-/// and clears the link.
-static s32
-ColosseumNavampaMatch_PlaceFinishItemAboveActor(struct Actor *interpreter) {
-  struct Actor *source = interpreter;
-
-  struct Actor *effect = Actor_Get(source->timer);
-
-  FieldActor_SetMoveTarget(effect, source->x.fixed,
-                           source->y.fixed + PIXELS(36), source->z.fixed);
-  effect->motionFlags = 0;
-  Actor_StartScript(effect, gColosseumNavampaMatch_PrizeScript);
-  Sound_Play(MUS_TREASURE_FOUND);
-  source->timer = 0;
-  return 0;
-}
-
-/// Moves to the available finish item, equips it and announces it.
-static s32 ColosseumNavampaMatch_CollectFinishEquipment(s32 firstItem,
-                                                        s32 secondItem) {
-  struct ColossoGaugeWork *gauge = (struct ColossoGaugeWork *)gColossoWork;
-  struct Actor *actor;
-  s32 opponentFinishedFirst;
-  s32 x;
-  s32 z;
-  u16 *itemActorId;
-  s16 *linkedItemActorId;
-
-  opponentFinishedFirst = GameFlag_Get(FLAG_ARENA_REACHED);
-  actor = Actor_Get(gMainRoutineWork.leaderActorId);
-  if (gauge->finishX < actor->x.fixed) {
-    x = gauge->finishX + PIXELS(12);
-  } else {
-    x = gauge->finishX - PIXELS(12);
-  }
-  if (opponentFinishedFirst != 0) {
-    z = gauge->finishZ + PIXELS(16);
-    itemActorId = &gauge->finishItemActorIdB;
-  } else {
-    z = gauge->finishZ - PIXELS(16);
-    itemActorId = &gauge->finishItemActorIdA;
-  }
-  linkedItemActorId = &actor->timer;
-  *linkedItemActorId = *itemActorId;
-  actor->acceleration = PIXELS(1) / 4;
-  actor->speedLimit = PIXELS(1);
-  FieldActor_SetMoveTarget(actor, x, 0, z);
-  GameFlag_Set(FLAG_ARENA_REACHED);
-  Actor_StartScript(actor, gColosseumNavampaMatch_PlaceScript);
-  while (*linkedItemActorId != 0) {
-    wait(1);
-  }
-  if (opponentFinishedFirst == 0) {
-    COLOSSEUM_NAVAMPA_MATCH_APPLY_MATCHING_SLOT_VALUES(ISAAC, firstItem);
-    MessageArgument_Push(firstItem, 2);
-  } else {
-    COLOSSEUM_NAVAMPA_MATCH_APPLY_MATCHING_SLOT_VALUES(ISAAC, secondItem);
-    MessageArgument_Push(secondItem, 2);
-  }
-  MessageArgument_Push(gMainRoutineWork.leaderActorId, 1);
-  FieldMessage_Show(MsgColossoIsaacGotItem, 3);
-  Actor_WaitForScriptEnd(actor);
-  return opponentFinishedFirst;
-}
+#include "shared/colosso_hex_string.h"
+#include "shared/colosso_finish.h"
 
 #include "shared/colosso_path_opponent.h"
 #include "shared/colosso_setup.h"
 #include "shared/colosso_map_state.h"
 #include "shared/actor_find_at_position.h"
-
-/// Pushes a neighboring actor one cell when its destination and overhead
-/// are clear.
-static void ColosseumNavampaMatch_PushActorAhead(void) {
-  struct Actor *subject;
-  struct Actor *target;
-  struct Actor *blocker;
-  u32 step;
-  u32 direction;
-  struct FieldPosition position;
-  s32 zero;
-  s32 subjectHandle;
-
-  subjectHandle = gMainRoutineWork.leaderActorId;
-  subject = Actor_Get(subjectHandle);
-
-  direction = subject->facing >> 12;
-
-  step = gPushedActor_DirectionSteps[direction];
-  position.x = subject->x.fixed + (step & 0xffff0000);
-  position.y = subject->y.fixed;
-  step <<= 16;
-  position.z = subject->z.fixed + step;
-
-  target = Actor_FindAtPosition(&position, subject);
-  if (target == 0) {
-    return;
-  }
-
-  step = gPushedActor_DirectionSteps[direction];
-  position.x = target->x.fixed + (step & 0xffff0000);
-  position.y = target->y.fixed;
-  step <<= 16;
-  position.z = target->z.fixed + step;
-
-  blocker = Actor_FindAtPosition(&position, target);
-  if (blocker != 0 && (blocker->collisionFlags & 1) != 0) {
-    return;
-  }
-
-  position.x = target->x.fixed;
-  position.y = target->y.fixed + PIXELS(16);
-  position.z = target->z.fixed;
-
-  blocker = Actor_FindAtPosition(&position, target);
-  if (blocker != 0 && (blocker->collisionFlags & 1) != 0) {
-    return;
-  }
-
-  target->layer = 2;
-  zero = 0;
-
-  step = gPushedActor_DirectionSteps[direction];
-  position.x = target->x.fixed + (step & 0xffff0000);
-  position.y = target->y.fixed;
-  step <<= 16;
-  position.z = target->z.fixed + step;
-
-  if (FieldActor_CheckMovementCollision(target, &position) > 0) {
-    return;
-  }
-
-  Actor_SelectAnimation(subject, 8);
-  wait(15);
-
-  target->speedLimit = PIXELS(1) / 5;
-  target->acceleration = PIXELS(1) / 5;
-  FieldActor_SetMoveTarget(target, position.x, position.y, position.z);
-
-  subject->speedLimit = PIXELS(1) / 5;
-  subject->acceleration = PIXELS(1) / 5;
-  FieldActor_SetMoveTarget(subject, position.x, position.y, position.z);
-
-  Sound_Play(SE_PUSH_STEP);
-  Actor_WaitForMove(target);
-  Sound_Play(SE_STOP_ACTION_SE);
-
-  target->x.fixed = position.x;
-  target->z.fixed = position.z;
-  target->velocityX = zero;
-  target->velocityZ = zero;
-
-  Actor_SelectAnimation(subject, 1);
-}
 
 #include "shared/colosso_occupant.h"
 
@@ -2459,99 +2144,11 @@ const s32 gColosseumNavampaMatch_SidewalkLogScript[] = {
     SC_LOOP(SC_FOREVER, SC_TO(1)),
 };
 
-const u8 gColosso_LetteringPaletteOffsets[] = {
-#if LANGUAGE == LANGUAGE_JAPANESE || LANGUAGE == LANGUAGE_ENGLISH
-    0, 32, 32, 32, 96, 64, 64, 64, 128, 0,
-#else
-    0, 32, 32, 32, 96, 64, 64, 160, 128, 0,
-#endif
-};
-
-const s16 gColossoLetteringScriptDigit[] = {
-    COLOSSO_LETTERING_SCALE, 512, 1,
-    COLOSSO_LETTERING_FADE, 0, 1,
-    COLOSSO_LETTERING_SCALE, 256, 6,
-    COLOSSO_LETTERING_FADE, 16, 6,
-    COLOSSO_LETTERING_WAIT, 30,
-    COLOSSO_LETTERING_FADE, 0, 30,
-    COLOSSO_LETTERING_WAIT, 30,
-    COLOSSO_LETTERING_END,
-};
-
-const s16 gColossoLetteringScriptLose[] = {
-    COLOSSO_LETTERING_SCALE, 128, 1,
-    COLOSSO_LETTERING_FADE, 0, 1,
-    COLOSSO_LETTERING_SCALE, 256, 6,
-    COLOSSO_LETTERING_FADE, 16, 6,
-    COLOSSO_LETTERING_WAIT, 60,
-    COLOSSO_LETTERING_SCALE, 384, 6,
-    COLOSSO_LETTERING_WAIT, 6,
-    COLOSSO_LETTERING_SCALE, 240, 6,
-    COLOSSO_LETTERING_WAIT, 6,
-    COLOSSO_LETTERING_SCALE, 368, 6,
-    COLOSSO_LETTERING_WAIT, 6,
-    COLOSSO_LETTERING_SCALE, 224, 6,
-    COLOSSO_LETTERING_WAIT, 6,
-    COLOSSO_LETTERING_FADE, 0, 30,
-    COLOSSO_LETTERING_SCALE, 352, 6,
-    COLOSSO_LETTERING_WAIT, 6,
-    COLOSSO_LETTERING_SCALE, 208, 6,
-    COLOSSO_LETTERING_WAIT, 6,
-    COLOSSO_LETTERING_SCALE, 336, 6,
-    COLOSSO_LETTERING_WAIT, 6,
-    COLOSSO_LETTERING_SCALE, 192, 6,
-    COLOSSO_LETTERING_WAIT, 6,
-    COLOSSO_LETTERING_SCALE, 320, 6,
-    COLOSSO_LETTERING_WAIT, 6,
-    COLOSSO_LETTERING_END,
-};
+#include "shared/colosso_lettering_tables.h"
 
 char gHexDigits[20] = "0123456789ABCDEF";
 
-s32 gColosseumNavampaMatch_PrizeEffectScript[] = {
-    SC_ADD(SW_Y, -(PIXELS(1) / 4)),
-    SC_WAIT(1),
-    SC_LOOP(60, SC_TOP),
-    SC_RELEASE,
-};
-
-s32 gColosseumNavampaMatch_PrizeScript[] = {
-    SC_SET(SW_HOOK, (s32)ColosseumNavampaMatch_SpawnRandomFinishEffect),
-    SC_LABEL(1),
-    SC_WAIT(10),
-    SC_SET(SW_SCALE_X, 11 * Q16_ONE / 8),
-    SC_SET(SW_SCALE_Y, 11 * Q16_ONE / 8),
-    SC_WAIT(2),
-    SC_SET(SW_SCALE_X, 3 * Q16_ONE / 2),
-    SC_SET(SW_SCALE_Y, 3 * Q16_ONE / 2),
-    SC_WAIT(2),
-    SC_SET(SW_SCALE_X, 9 * Q16_ONE / 8),
-    SC_SET(SW_SCALE_Y, 9 * Q16_ONE / 8),
-    SC_WAIT(2),
-    SC_SET(SW_SCALE_X, Q16_ONE),
-    SC_SET(SW_SCALE_Y, Q16_ONE),
-    SC_WAIT(2),
-    SC_SET(SW_SCALE_X, 11 * Q16_ONE / 8),
-    SC_SET(SW_SCALE_Y, 11 * Q16_ONE / 8),
-    SC_WAIT(2),
-    SC_SET(SW_SCALE_X, 3 * Q16_ONE / 2),
-    SC_SET(SW_SCALE_Y, 3 * Q16_ONE / 2),
-    SC_WAIT(2),
-    SC_SET(SW_SCALE_X, 9 * Q16_ONE / 8),
-    SC_SET(SW_SCALE_Y, 9 * Q16_ONE / 8),
-    SC_WAIT(2),
-    SC_SET(SW_SCALE_X, Q16_ONE),
-    SC_SET(SW_SCALE_Y, Q16_ONE),
-    SC_WAIT(2),
-    SC_WAIT(50),
-    SC_LOOP(2, SC_TO(1)),
-    SC_POSITION(0, 0, 0),
-    SC_SET(SW_HOOK, 0),
-    SC_END,
-};
-
-/// Pixel step by direction: X in the upper halfword, Z in the lower.
-#define DIRECTION_STEP(x, z) ((u32)(x) << 16 | (u16)(z))
+#include "shared/colosso_prize_scripts.h"
 
 u32 gPushedActor_DirectionSteps[] = {
     DIRECTION_STEP(16, 0),
@@ -2828,161 +2425,9 @@ s32 gColossoParticleKinds[] = {
 
 s16 gColosso_LetteringSlot = -1;
 
-s16 gColossoLetteringScriptTitle[] = {
-#if LANGUAGE == LANGUAGE_JAPANESE
-    COLOSSO_LETTERING_PLACE, -188, 2048,
-    COLOSSO_LETTERING_SCALE, 256, 1,
-    COLOSSO_LETTERING_FADE, 16, 1,
-#else
-    COLOSSO_LETTERING_PLACE, -188, 2048,
-    COLOSSO_LETTERING_SCALE, 384, 1,
-    COLOSSO_LETTERING_FADE, 16, 1,
-#endif
-    COLOSSO_LETTERING_WAIT, 14,
-    COLOSSO_LETTERING_ACCELERATE, 0, 20,
-    COLOSSO_LETTERING_WAIT, 60,
-    COLOSSO_LETTERING_ACCELERATE, 2048, 20,
-    COLOSSO_LETTERING_WAIT, 60,
-    COLOSSO_LETTERING_END,
-};
-
-s16 gColossoLetteringScriptGo[] = {
-#if LANGUAGE == LANGUAGE_FRENCH
-    COLOSSO_LETTERING_SCALE, 512, 1,
-    COLOSSO_LETTERING_FADE, 0, 1,
-    COLOSSO_LETTERING_SCALE, 384, 6,
-    COLOSSO_LETTERING_FADE, 16, 6,
-    COLOSSO_LETTERING_WAIT, 6,
-    COLOSSO_LETTERING_SCALE, 512, 6,
-    COLOSSO_LETTERING_WAIT, 6,
-    COLOSSO_LETTERING_SCALE, 384, 6,
-    COLOSSO_LETTERING_WAIT, 6,
-    COLOSSO_LETTERING_SCALE, 512, 6,
-    COLOSSO_LETTERING_WAIT, 6,
-    COLOSSO_LETTERING_SCALE, 384, 6,
-    COLOSSO_LETTERING_WAIT, 6,
-    COLOSSO_LETTERING_FADE, 0, 30,
-    COLOSSO_LETTERING_SCALE, 512, 6,
-    COLOSSO_LETTERING_WAIT, 6,
-    COLOSSO_LETTERING_SCALE, 384, 6,
-    COLOSSO_LETTERING_WAIT, 6,
-    COLOSSO_LETTERING_SCALE, 512, 6,
-    COLOSSO_LETTERING_WAIT, 6,
-    COLOSSO_LETTERING_SCALE, 384, 6,
-    COLOSSO_LETTERING_WAIT, 6,
-    COLOSSO_LETTERING_SCALE, 512, 6,
-    COLOSSO_LETTERING_WAIT, 6,
-    COLOSSO_LETTERING_END,
-#elif LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_ITALIAN
-    COLOSSO_LETTERING_SCALE, 384, 1,
-    COLOSSO_LETTERING_FADE, 0, 1,
-    COLOSSO_LETTERING_SCALE, 256, 6,
-    COLOSSO_LETTERING_FADE, 16, 6,
-    COLOSSO_LETTERING_WAIT, 6,
-    COLOSSO_LETTERING_SCALE, 384, 6,
-    COLOSSO_LETTERING_WAIT, 6,
-    COLOSSO_LETTERING_SCALE, 256, 6,
-    COLOSSO_LETTERING_WAIT, 6,
-    COLOSSO_LETTERING_SCALE, 384, 6,
-    COLOSSO_LETTERING_WAIT, 6,
-    COLOSSO_LETTERING_SCALE, 256, 6,
-    COLOSSO_LETTERING_WAIT, 6,
-    COLOSSO_LETTERING_FADE, 0, 30,
-    COLOSSO_LETTERING_SCALE, 384, 6,
-    COLOSSO_LETTERING_WAIT, 6,
-    COLOSSO_LETTERING_SCALE, 256, 6,
-    COLOSSO_LETTERING_WAIT, 6,
-    COLOSSO_LETTERING_SCALE, 384, 6,
-    COLOSSO_LETTERING_WAIT, 6,
-    COLOSSO_LETTERING_SCALE, 256, 6,
-    COLOSSO_LETTERING_WAIT, 6,
-    COLOSSO_LETTERING_SCALE, 384, 6,
-    COLOSSO_LETTERING_WAIT, 6,
-    COLOSSO_LETTERING_END,
-#else
-    COLOSSO_LETTERING_SCALE, 512, 1,
-    COLOSSO_LETTERING_FADE, 0, 1,
-    COLOSSO_LETTERING_SCALE, 256, 6,
-    COLOSSO_LETTERING_FADE, 16, 6,
-    COLOSSO_LETTERING_WAIT, 6,
-    COLOSSO_LETTERING_SCALE, 384, 6,
-    COLOSSO_LETTERING_WAIT, 6,
-    COLOSSO_LETTERING_SCALE, 256, 6,
-    COLOSSO_LETTERING_WAIT, 6,
-    COLOSSO_LETTERING_SCALE, 384, 6,
-    COLOSSO_LETTERING_WAIT, 6,
-    COLOSSO_LETTERING_SCALE, 256, 6,
-    COLOSSO_LETTERING_WAIT, 6,
-    COLOSSO_LETTERING_FADE, 0, 30,
-    COLOSSO_LETTERING_SCALE, 384, 6,
-    COLOSSO_LETTERING_WAIT, 6,
-    COLOSSO_LETTERING_SCALE, 256, 6,
-    COLOSSO_LETTERING_WAIT, 6,
-    COLOSSO_LETTERING_SCALE, 384, 6,
-    COLOSSO_LETTERING_WAIT, 6,
-    COLOSSO_LETTERING_SCALE, 256, 6,
-    COLOSSO_LETTERING_WAIT, 6,
-    COLOSSO_LETTERING_SCALE, 384, 6,
-    COLOSSO_LETTERING_WAIT, 6,
-    COLOSSO_LETTERING_END,
-#endif
-};
-
-s16 gColossoLetteringScriptWon[] = {
-    COLOSSO_LETTERING_SCALE, 128, 1,
-    COLOSSO_LETTERING_FADE, 0, 1,
-    COLOSSO_LETTERING_SCALE, 256, 6,
-    COLOSSO_LETTERING_FADE, 16, 6,
-    COLOSSO_LETTERING_WAIT, 60,
-    COLOSSO_LETTERING_SCALE, 384, 6,
-    COLOSSO_LETTERING_WAIT, 6,
-    COLOSSO_LETTERING_SCALE, 272, 6,
-    COLOSSO_LETTERING_WAIT, 6,
-    COLOSSO_LETTERING_SCALE, 400, 6,
-    COLOSSO_LETTERING_WAIT, 6,
-    COLOSSO_LETTERING_SCALE, 288, 6,
-    COLOSSO_LETTERING_WAIT, 6,
-    COLOSSO_LETTERING_FADE, 0, 30,
-    COLOSSO_LETTERING_SCALE, 416, 6,
-    COLOSSO_LETTERING_WAIT, 6,
-    COLOSSO_LETTERING_SCALE, 304, 6,
-    COLOSSO_LETTERING_WAIT, 6,
-    COLOSSO_LETTERING_SCALE, 432, 6,
-    COLOSSO_LETTERING_WAIT, 6,
-    COLOSSO_LETTERING_SCALE, 320, 6,
-    COLOSSO_LETTERING_WAIT, 6,
-    COLOSSO_LETTERING_SCALE, 448, 6,
-    COLOSSO_LETTERING_WAIT, 6,
-    COLOSSO_LETTERING_END,
-};
+#include "shared/colosso_lettering_scripts.h"
 // clang-format on
 
 s16 gColosso_MarkerSlot = -1;
 
-s32 gColosso_OpponentFinishScript[] = {
-    SC_ANIMATION(2),
-    SC_SYNC,
-    SC_ANIMATION(1),
-    SC_WAIT(6),
-    SC_CALL(ColosseumNavampaMatch_PlaceFinishItemAboveActor),
-    SC_WAIT(3),
-    SC_ANIMATION(10),
-    SC_WAIT(150),
-    SC_SET(SW_FACING, FACING_SOUTH),
-    SC_ANIMATION(1),
-    SC_END,
-};
-
-s32 gColosseumNavampaMatch_PlaceScript[] = {
-    SC_ANIMATION(2),
-    SC_SYNC,
-    SC_ANIMATION(1),
-    SC_WAIT(6),
-    SC_CALL(ColosseumNavampaMatch_PlaceFinishItemAboveActor),
-    SC_WAIT(3),
-    SC_ANIMATION(28),
-    SC_WAIT(150),
-    SC_SET(SW_FACING, FACING_SOUTH),
-    SC_ANIMATION(1),
-    SC_END,
-};
+#include "shared/colosso_finish_scripts.h"

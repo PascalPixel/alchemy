@@ -24,8 +24,8 @@
 #include "io_write_queue.h"
 
 /// The sites of the three Colosso finals matches (Colosseum Final 1, 2 and 3):
-/// the large lettering a race starts with. It reads "Match 1", "3", "2", "1",
-/// "Go!", from the pictures of games/tbs/src/graphics/colosso/lettering.tsv
+/// the large lettering a race starts with. It reads "The 1st Match", "3", "2",
+/// "1", "GO", from the pictures of games/tbs/src/graphics/colosso/lettering.tsv
 /// (enum ColossoLetteringPicture). Each picture is
 /// COLOSSO_LETTERING_PICTURE_BYTES of tiles after the palettes.
 ///
@@ -49,7 +49,7 @@ enum ColossoLetteringCommand {
 /// The lettering pictures, in lettering.tsv's order (Colosso_LoadLettering).
 enum ColossoLetteringPicture {
   COLOSSO_PICTURE_LEND_A_HAND = 0,
-  COLOSSO_PICTURE_MATCH_1 = 1, ///< "Match 1", then Match 2 and Match 3
+  COLOSSO_PICTURE_MATCH_1 = 1, ///< "The 1st Match", then the 2nd and 3rd
   COLOSSO_PICTURE_WON_LOSE = 4,
   COLOSSO_PICTURE_COUNT_3_2 = 5, ///< the countdown's 3 and 2
   COLOSSO_PICTURE_COUNT_1 = 6,   ///< the countdown's 1
@@ -65,10 +65,10 @@ enum ColossoLetteringPicture {
 /// How Colosso_UpdateLettering lays a picture out (gColosso_LetteringMode);
 /// gColosso_LetteringParameter picks the second half of a picture.
 enum ColossoLetteringShape {
-  /// Four 32x16 pieces in a row: Match 1 to 3, Lend a Hand.
+  /// Four 32x16 pieces in a row: The 1st to 3rd Match, Lend a Hand!
   COLOSSO_SHAPE_TITLE = 1,
   COLOSSO_SHAPE_DIGIT = 2,  ///< one 32x32 piece: 3, 2, 1
-  COLOSSO_SHAPE_RESULT = 3, ///< two 32x16 pieces: Won or Lose
+  COLOSSO_SHAPE_RESULT = 3, ///< two 32x16 pieces: WIN or LOSE
   COLOSSO_SHAPE_GO = 4      ///< Go!: one 64x32 piece, or two 32x16 in French
 };
 

@@ -1355,7 +1355,7 @@ static void ColosseumEntrance_ShowClearedTrial(void) {
   Actor_SetAnimation(ACTOR_CLEARING_WARRIOR, ANIM_STAND);
   actor = Actor_Get(ACTOR_CLEARING_WARRIOR);
   actor->facing = FACING_NORTH_NORTHEAST;
-  trialEffect->motionFlags = 3;
+  trialEffect->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   trialEffect->scaleX = Q16_ONE;
   trialEffect->scaleY = Q16_ONE;
   Event_Wait(10);

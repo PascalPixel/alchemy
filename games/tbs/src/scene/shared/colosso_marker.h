@@ -120,7 +120,7 @@ void Colosso_RestoreWarrior(s32 id) {
   actor->targetZ = ACTOR_NO_TARGET;
   actor->velocityX = zero;
   actor->velocityZ = zero;
-  actor->motionFlags = 3;
+  actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   actor->layer = 0;
   actor->y.fixed = zero;
   (actor)->groundHeight = zero;

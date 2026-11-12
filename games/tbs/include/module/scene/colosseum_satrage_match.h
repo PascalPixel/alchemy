@@ -23,12 +23,12 @@ void Scene_BuildDescriptorAndInstallTask(s32 leaderId, s32 opponentId,
 #endif
 extern const u8 gColosseumSatrageMatch_RollLogScript[];
 extern const u8 gColosso_LetteringPaletteOffsets[];
-extern const s16 gColosseumSatrageMatch_LetteringDigit[];
-extern const s16 gColosseumSatrageMatch_LetteringLose[];
+extern const s16 gColosso_LetteringDigit[];
+extern const s16 gColosso_LetteringLose[];
 extern char gHexDigits[20];
-extern s32 gColosseumSatrageMatch_SparkScript[];
-extern s32 gColosseumSatrageMatch_RaiseScript[];
-extern u32 gColosseumSatrageMatch_DirectionSteps[];
+extern s32 gColosso_PrizeSparkleScript[];
+extern s32 gColosso_PrizeScript[];
+extern u32 gPushedActor_DirectionSteps[];
 extern struct SceneEntrance gColosseumSatrageMatchEntrances[];
 extern u32 gColosseumSatrageMatchExits[];
 extern struct ActorPlacement gColosseumSatrageMatchActorPlacements[];
@@ -36,11 +36,11 @@ extern s32 gColosseumSatrageMatch_LiftPhase;
 extern s32 gColosseumSatrageMatch_LiftTimer;
 extern struct Trigger gColosseumSatrageMatchTriggers[];
 extern s16 gColosso_LetteringSlot;
-extern s16 gColosseumSatrageMatch_LetteringTitle[];
-extern s16 gColosseumSatrageMatch_LetteringGo[];
-extern s16 gColosseumSatrageMatch_LetteringWon[];
+extern s16 gColosso_LetteringTitle[];
+extern s16 gColosso_LetteringGo[];
+extern s16 gColosso_LetteringWin[];
 extern s16 gColosso_MarkerSlot;
 extern s32 gColosso_OpponentFinishScript[];
-extern s32 gColosseumSatrageMatch_ApproachScript[];
+extern s32 gColosso_LeaderFinishScript[];
 
 #endif

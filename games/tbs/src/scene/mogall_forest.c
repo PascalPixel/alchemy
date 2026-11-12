@@ -370,9 +370,9 @@ static s32 MogallForest_ClearActorSpriteFlags(struct Actor *interpreter) {
 }
 
 /// Hops an actor to a pixel destination with the requested vertical
-/// speed.
-static void MogallForest_HopActorTo(s32 actorId, s32 targetX, s32 targetZ,
-                                    s32 verticalSpeed) {
+/// speed, in 16.16 fixed point.
+static void MogallForest_HopActorToFixed(s32 actorId, s32 targetX, s32 targetZ,
+                                         s32 verticalSpeed) {
   struct Actor *actor;
 
   actor = Actor_Get(actorId);
@@ -388,6 +388,12 @@ static void MogallForest_HopActorTo(s32 actorId, s32 targetX, s32 targetZ,
   Actor_SetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
   actor->gravity = PIXELS(1);
 }
+
+/// Hops an actor with a vertical speed in pixels a frame:
+/// `MogallForest_HopActorTo(ACTOR_FIRST_AREA_NORTH_APE, 88, 120, 6)`.
+#define MogallForest_HopActorTo(actorId, targetX, targetZ, verticalSpeed)      \
+  MogallForest_HopActorToFixed(actorId, targetX, targetZ,                      \
+                               EVENT_DECIMAL_FIXED(verticalSpeed))
 
 /// Scatters a complete ring of rising puffs around an actor.
 static void MogallForest_SpawnPuffRing(s32 id) {
@@ -585,7 +591,7 @@ static void MogallForest_FirstArea_NorthApeShowsWay(void) {
   Event_Start();
 
   MogallForest_ApeComesOut(ACTOR_FIRST_AREA_NORTH_APE, SPRITE_COLOR_GRB);
-  MogallForest_HopActorTo(ACTOR_FIRST_AREA_NORTH_APE, 88, 120, PIXELS(6));
+  MogallForest_HopActorTo(ACTOR_FIRST_AREA_NORTH_APE, 88, 120, 6);
 
   FieldEffect_Spawn(creature->x.fixed, creature->y.fixed,
                     creature->z.fixed + PIXELS(24), 0, 0, 0,
@@ -593,15 +599,15 @@ static void MogallForest_FirstArea_NorthApeShowsWay(void) {
 
   MogallForest_ApePointsTheWay(ACTOR_FIRST_AREA_NORTH_APE);
 
-  MogallForest_HopActorTo(ACTOR_FIRST_AREA_NORTH_APE, 88, 152, PIXELS(3));
+  MogallForest_HopActorTo(ACTOR_FIRST_AREA_NORTH_APE, 88, 152, 3);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_FIRST_AREA_NORTH_APE, 0);
   Event_Wait(10);
 
-  MogallForest_HopActorTo(ACTOR_FIRST_AREA_NORTH_APE, 120, 192, PIXELS(3));
+  MogallForest_HopActorTo(ACTOR_FIRST_AREA_NORTH_APE, 120, 192, 3);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_FIRST_AREA_NORTH_APE, 0);
   Event_Wait(10);
 
-  MogallForest_HopActorTo(ACTOR_FIRST_AREA_NORTH_APE, 120, 240, PIXELS(3));
+  MogallForest_HopActorTo(ACTOR_FIRST_AREA_NORTH_APE, 120, 240, 3);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_FIRST_AREA_NORTH_APE, 0);
   Event_Wait(10);
 
@@ -624,7 +630,7 @@ static void MogallForest_FirstArea_ApeAttacks(void) {
   Event_Start();
 
   MogallForest_ApeComesOut(ACTOR_FIRST_AREA_ATTACKING_APE, SPRITE_COLOR_NORMAL);
-  MogallForest_HopActorTo(ACTOR_FIRST_AREA_ATTACKING_APE, 408, 456, PIXELS(6));
+  MogallForest_HopActorTo(ACTOR_FIRST_AREA_ATTACKING_APE, 408, 456, 6);
 
   FieldEffect_Spawn(creature->x.fixed, creature->y.fixed,
                     creature->z.fixed + PIXELS(24), 0, 0, 0,
@@ -642,8 +648,7 @@ static void MogallForest_FirstArea_ApeAttacks(void) {
 
   MogallForest_HopActorTo(ACTOR_FIRST_AREA_ATTACKING_APE,
                           Actor_Get(ACTOR_PARTY_LEADER)->x.part.pixel,
-                          Actor_Get(ACTOR_PARTY_LEADER)->z.part.pixel,
-                          PIXELS(4));
+                          Actor_Get(ACTOR_PARTY_LEADER)->z.part.pixel, 4);
 
   Event_Wait(10);
   GameFlag_Set(FLAG_MOGALL_FOREST_FIRST_AREA_ATTACKING_APE_OUT);
@@ -668,7 +673,7 @@ static void MogallForest_FirstArea_EastApeShowsWay(void) {
   Event_Start();
 
   MogallForest_ApeComesOut(ACTOR_FIRST_AREA_EAST_APE, SPRITE_COLOR_GRB);
-  MogallForest_HopActorTo(ACTOR_FIRST_AREA_EAST_APE, 536, 344, PIXELS(7));
+  MogallForest_HopActorTo(ACTOR_FIRST_AREA_EAST_APE, 536, 344, 7);
 
   FieldEffect_Spawn(creature->x.fixed, creature->y.fixed,
                     creature->z.fixed + PIXELS(16), 0, 0, 0,
@@ -676,15 +681,15 @@ static void MogallForest_FirstArea_EastApeShowsWay(void) {
 
   MogallForest_ApePointsTheWay(ACTOR_FIRST_AREA_EAST_APE);
 
-  MogallForest_HopActorTo(ACTOR_FIRST_AREA_EAST_APE, 584, 344, PIXELS(3));
+  MogallForest_HopActorTo(ACTOR_FIRST_AREA_EAST_APE, 584, 344, 3);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_FIRST_AREA_EAST_APE, 0);
   Event_Wait(6);
 
-  MogallForest_HopActorTo(ACTOR_FIRST_AREA_EAST_APE, 632, 344, PIXELS(3));
+  MogallForest_HopActorTo(ACTOR_FIRST_AREA_EAST_APE, 632, 344, 3);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_FIRST_AREA_EAST_APE, 0);
   Event_Wait(6);
 
-  MogallForest_HopActorTo(ACTOR_FIRST_AREA_EAST_APE, 680, 344, PIXELS(3));
+  MogallForest_HopActorTo(ACTOR_FIRST_AREA_EAST_APE, 680, 344, 3);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_FIRST_AREA_EAST_APE, 0);
   Event_Wait(6);
 
@@ -807,22 +812,22 @@ static void MogallForest_SecondArea_NorthApeShowsWay(void) {
   creature = Actor_Get(ACTOR_SECOND_AREA_NORTH_APE);
   Event_Start();
   MogallForest_ApeComesOut(ACTOR_SECOND_AREA_NORTH_APE, SPRITE_COLOR_GRB);
-  MogallForest_HopActorTo(ACTOR_SECOND_AREA_NORTH_APE, 392, 104, PIXELS(7));
+  MogallForest_HopActorTo(ACTOR_SECOND_AREA_NORTH_APE, 392, 104, 7);
   Event_Wait(10);
   FieldEffect_Spawn(creature->x.fixed, creature->y.fixed,
                     (creature->z.fixed + PIXELS(4)), 0, 0, 0,
                     EFFECT_SCRIPT_MEDIUM, 0);
   MogallForest_ApePointsTheWay(ACTOR_SECOND_AREA_NORTH_APE);
-  MogallForest_HopActorTo(ACTOR_SECOND_AREA_NORTH_APE, 424, 120, PIXELS(3));
+  MogallForest_HopActorTo(ACTOR_SECOND_AREA_NORTH_APE, 424, 120, 3);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_SECOND_AREA_NORTH_APE, 0);
   Event_Wait(6);
-  MogallForest_HopActorTo(ACTOR_SECOND_AREA_NORTH_APE, 424, 168, PIXELS(3));
+  MogallForest_HopActorTo(ACTOR_SECOND_AREA_NORTH_APE, 424, 168, 3);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_SECOND_AREA_NORTH_APE, 0);
   Event_Wait(6);
-  MogallForest_HopActorTo(ACTOR_SECOND_AREA_NORTH_APE, 424, 208, PIXELS(3));
+  MogallForest_HopActorTo(ACTOR_SECOND_AREA_NORTH_APE, 424, 208, 3);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_SECOND_AREA_NORTH_APE, 0);
   Event_Wait(6);
-  MogallForest_HopActorTo(ACTOR_SECOND_AREA_NORTH_APE, 424, 232, PIXELS(3));
+  MogallForest_HopActorTo(ACTOR_SECOND_AREA_NORTH_APE, 424, 232, 3);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_SECOND_AREA_NORTH_APE, 0);
   Event_Wait(6);
   Actor_SetPosition(ACTOR_SECOND_AREA_NORTH_APE, 0, 0);
@@ -842,7 +847,7 @@ static void MogallForest_SecondArea_EastApeShowsWay(void) {
   Event_Start();
 
   MogallForest_ApeComesOut(ACTOR_SECOND_AREA_EAST_APE, SPRITE_COLOR_GRB);
-  MogallForest_HopActorTo(ACTOR_SECOND_AREA_EAST_APE, 456, 104, PIXELS(7));
+  MogallForest_HopActorTo(ACTOR_SECOND_AREA_EAST_APE, 456, 104, 7);
   Event_Wait(10);
 
   FieldEffect_Spawn(creature->x.fixed, creature->y.fixed,
@@ -851,19 +856,19 @@ static void MogallForest_SecondArea_EastApeShowsWay(void) {
 
   MogallForest_ApePointsTheWay(ACTOR_SECOND_AREA_EAST_APE);
 
-  MogallForest_HopActorTo(ACTOR_SECOND_AREA_EAST_APE, 472, 136, PIXELS(3));
+  MogallForest_HopActorTo(ACTOR_SECOND_AREA_EAST_APE, 472, 136, 3);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_SECOND_AREA_EAST_APE, 0);
   Event_Wait(6);
 
-  MogallForest_HopActorTo(ACTOR_SECOND_AREA_EAST_APE, 504, 136, PIXELS(16) / 5);
+  MogallForest_HopActorTo(ACTOR_SECOND_AREA_EAST_APE, 504, 136, 3.2);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_SECOND_AREA_EAST_APE, 0);
   Event_Wait(6);
 
-  MogallForest_HopActorTo(ACTOR_SECOND_AREA_EAST_APE, 552, 136, PIXELS(7) / 2);
+  MogallForest_HopActorTo(ACTOR_SECOND_AREA_EAST_APE, 552, 136, 3.5);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_SECOND_AREA_EAST_APE, 0);
   Event_Wait(6);
 
-  MogallForest_HopActorTo(ACTOR_SECOND_AREA_EAST_APE, 584, 136, PIXELS(7) / 2);
+  MogallForest_HopActorTo(ACTOR_SECOND_AREA_EAST_APE, 584, 136, 3.5);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_SECOND_AREA_EAST_APE, 0);
   Event_Wait(6);
 
@@ -883,8 +888,7 @@ static void MogallForest_SecondArea_SouthApeHidesAgain(void) {
 
   Event_Start();
   MogallForest_ApeComesOut(ACTOR_SECOND_AREA_SOUTH_APE, SPRITE_COLOR_GRB);
-  MogallForest_HopActorTo(ACTOR_SECOND_AREA_SOUTH_APE, 424, 480,
-                          PIXELS(38) / 5);
+  MogallForest_HopActorTo(ACTOR_SECOND_AREA_SOUTH_APE, 424, 480, 7.6);
   Event_Wait(2);
   MogallForest_SpawnPuffRing(ACTOR_SECOND_AREA_SOUTH_APE);
   Actor_SetSpriteColorById(ACTOR_SECOND_AREA_SOUTH_APE, SPRITE_COLOR_HIDDEN);
@@ -907,7 +911,7 @@ static void MogallForest_SecondArea_SouthApeShowsWay(void) {
   Event_Start();
 
   MogallForest_ApeComesOut(ACTOR_SECOND_AREA_SOUTH_APE, SPRITE_COLOR_GRB);
-  MogallForest_HopActorTo(ACTOR_SECOND_AREA_SOUTH_APE, 392, 504, PIXELS(6));
+  MogallForest_HopActorTo(ACTOR_SECOND_AREA_SOUTH_APE, 392, 504, 6);
   Event_Wait(10);
 
   FieldEffect_Spawn(creature->x.fixed, creature->y.fixed,
@@ -916,19 +920,19 @@ static void MogallForest_SecondArea_SouthApeShowsWay(void) {
 
   MogallForest_ApePointsTheWay(ACTOR_SECOND_AREA_SOUTH_APE);
 
-  MogallForest_HopActorTo(ACTOR_SECOND_AREA_SOUTH_APE, 360, 528, PIXELS(3));
+  MogallForest_HopActorTo(ACTOR_SECOND_AREA_SOUTH_APE, 360, 528, 3);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_SECOND_AREA_SOUTH_APE, 0);
   Event_Wait(6);
 
-  MogallForest_HopActorTo(ACTOR_SECOND_AREA_SOUTH_APE, 328, 528, PIXELS(3));
+  MogallForest_HopActorTo(ACTOR_SECOND_AREA_SOUTH_APE, 328, 528, 3);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_SECOND_AREA_SOUTH_APE, 0);
   Event_Wait(6);
 
-  MogallForest_HopActorTo(ACTOR_SECOND_AREA_SOUTH_APE, 288, 528, PIXELS(3));
+  MogallForest_HopActorTo(ACTOR_SECOND_AREA_SOUTH_APE, 288, 528, 3);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_SECOND_AREA_SOUTH_APE, 0);
   Event_Wait(6);
 
-  MogallForest_HopActorTo(ACTOR_SECOND_AREA_SOUTH_APE, 256, 528, PIXELS(3));
+  MogallForest_HopActorTo(ACTOR_SECOND_AREA_SOUTH_APE, 256, 528, 3);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_SECOND_AREA_SOUTH_APE, 0);
   Event_Wait(6);
 
@@ -1101,7 +1105,8 @@ static void MogallForest_ThirdArea_ApeAttacks(void) {
   jumpSpeed = PIXELS(8);
   Event_Start();
   MogallForest_ApeComesOut(ACTOR_THIRD_AREA_ATTACKING_APE, SPRITE_COLOR_NORMAL);
-  MogallForest_HopActorTo(ACTOR_THIRD_AREA_ATTACKING_APE, 472, 104, jumpSpeed);
+  MogallForest_HopActorToFixed(ACTOR_THIRD_AREA_ATTACKING_APE, 472, 104,
+                               jumpSpeed);
   Event_Wait(10);
   FieldEffect_Spawn(creature->x.fixed, creature->y.fixed,
                     (creature->z.fixed + jumpSpeed), 0, 0, 0,
@@ -1119,7 +1124,7 @@ static void MogallForest_ThirdArea_ApeAttacks(void) {
   leaderX = leaderForX->x.part.pixel;
   leaderForZ = Actor_Get(ACTOR_PARTY_LEADER);
   MogallForest_HopActorTo(ACTOR_THIRD_AREA_ATTACKING_APE, leaderX,
-                          leaderForZ->z.part.pixel, PIXELS(6));
+                          leaderForZ->z.part.pixel, 6);
   Event_Wait(10);
   GameFlag_Set(FLAG_MOGALL_FOREST_THIRD_AREA_ATTACKING_APE_OUT);
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
@@ -1139,7 +1144,7 @@ static void MogallForest_ThirdArea_MiddleApeShowsWay(void) {
   Event_Start();
 
   MogallForest_ApeComesOut(ACTOR_THIRD_AREA_MIDDLE_APE, SPRITE_COLOR_GRB);
-  MogallForest_HopActorTo(ACTOR_THIRD_AREA_MIDDLE_APE, 456, 152, PIXELS(6));
+  MogallForest_HopActorTo(ACTOR_THIRD_AREA_MIDDLE_APE, 456, 152, 6);
   Event_Wait(10);
 
   FieldEffect_Spawn(creature->x.fixed, creature->y.fixed,
@@ -1148,15 +1153,15 @@ static void MogallForest_ThirdArea_MiddleApeShowsWay(void) {
 
   MogallForest_ApePointsTheWay(ACTOR_THIRD_AREA_MIDDLE_APE);
 
-  MogallForest_HopActorTo(ACTOR_THIRD_AREA_MIDDLE_APE, 448, 192, PIXELS(3));
+  MogallForest_HopActorTo(ACTOR_THIRD_AREA_MIDDLE_APE, 448, 192, 3);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_THIRD_AREA_MIDDLE_APE, 0);
   Event_Wait(6);
 
-  MogallForest_HopActorTo(ACTOR_THIRD_AREA_MIDDLE_APE, 424, 208, PIXELS(3));
+  MogallForest_HopActorTo(ACTOR_THIRD_AREA_MIDDLE_APE, 424, 208, 3);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_THIRD_AREA_MIDDLE_APE, 0);
   Event_Wait(6);
 
-  MogallForest_HopActorTo(ACTOR_THIRD_AREA_MIDDLE_APE, 424, 224, PIXELS(3));
+  MogallForest_HopActorTo(ACTOR_THIRD_AREA_MIDDLE_APE, 424, 224, 3);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_THIRD_AREA_MIDDLE_APE, 0);
   Event_Wait(6);
 
@@ -1180,7 +1185,7 @@ static void MogallForest_ThirdArea_WestApeShowsWay(void) {
   Event_Start();
 
   MogallForest_ApeComesOut(ACTOR_THIRD_AREA_WEST_APE, SPRITE_COLOR_GRB);
-  MogallForest_HopActorTo(ACTOR_THIRD_AREA_WEST_APE, 392, 104, PIXELS(6));
+  MogallForest_HopActorTo(ACTOR_THIRD_AREA_WEST_APE, 392, 104, 6);
   Event_Wait(10);
 
   FieldEffect_Spawn(creature->x.fixed, creature->y.fixed,
@@ -1189,15 +1194,15 @@ static void MogallForest_ThirdArea_WestApeShowsWay(void) {
 
   MogallForest_ApePointsTheWay(ACTOR_THIRD_AREA_WEST_APE);
 
-  MogallForest_HopActorTo(ACTOR_THIRD_AREA_WEST_APE, 376, 152, PIXELS(6));
+  MogallForest_HopActorTo(ACTOR_THIRD_AREA_WEST_APE, 376, 152, 6);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_THIRD_AREA_WEST_APE, 0);
   Event_Wait(10);
 
-  MogallForest_HopActorTo(ACTOR_THIRD_AREA_WEST_APE, 328, 160, PIXELS(3));
+  MogallForest_HopActorTo(ACTOR_THIRD_AREA_WEST_APE, 328, 160, 3);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_THIRD_AREA_WEST_APE, 0);
   Event_Wait(6);
 
-  MogallForest_HopActorTo(ACTOR_THIRD_AREA_WEST_APE, 296, 160, PIXELS(3));
+  MogallForest_HopActorTo(ACTOR_THIRD_AREA_WEST_APE, 296, 160, 3);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_THIRD_AREA_WEST_APE, 0);
   Event_Wait(6);
 
@@ -1220,7 +1225,7 @@ static void MogallForest_ThirdArea_EastApeHidesAgain(void) {
   Event_Start();
   MogallForest_ApeComesOut(ACTOR_THIRD_AREA_EAST_APE, SPRITE_COLOR_GRB);
   FieldCamera_MoveTo(744, CAMERA_KEEP, 504, 1);
-  MogallForest_HopActorTo(ACTOR_THIRD_AREA_EAST_APE, 744, 504, PIXELS(9));
+  MogallForest_HopActorTo(ACTOR_THIRD_AREA_EAST_APE, 744, 504, 9);
   MogallForest_SpawnPuffRing(ACTOR_THIRD_AREA_EAST_APE);
   Actor_SetSpriteColorById(ACTOR_THIRD_AREA_EAST_APE, SPRITE_COLOR_HIDDEN);
   creature = Actor_Get(ACTOR_THIRD_AREA_EAST_APE);
@@ -1242,7 +1247,7 @@ static void MogallForest_ThirdArea_EastApeShowsWay(void) {
   Event_Start();
 
   MogallForest_ApeComesOut(ACTOR_THIRD_AREA_EAST_APE, SPRITE_COLOR_GRB);
-  MogallForest_HopActorTo(ACTOR_THIRD_AREA_EAST_APE, 712, 536, PIXELS(6));
+  MogallForest_HopActorTo(ACTOR_THIRD_AREA_EAST_APE, 712, 536, 6);
   Event_Wait(10);
 
   FieldEffect_Spawn(creature->x.fixed, creature->y.fixed,
@@ -1251,19 +1256,19 @@ static void MogallForest_ThirdArea_EastApeShowsWay(void) {
 
   MogallForest_ApePointsTheWay(ACTOR_THIRD_AREA_EAST_APE);
 
-  MogallForest_HopActorTo(ACTOR_THIRD_AREA_EAST_APE, 712, 568, PIXELS(6));
+  MogallForest_HopActorTo(ACTOR_THIRD_AREA_EAST_APE, 712, 568, 6);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_THIRD_AREA_EAST_APE, 0);
   Event_Wait(10);
 
-  MogallForest_HopActorTo(ACTOR_THIRD_AREA_EAST_APE, 712, 600, PIXELS(3));
+  MogallForest_HopActorTo(ACTOR_THIRD_AREA_EAST_APE, 712, 600, 3);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_THIRD_AREA_EAST_APE, 0);
   Event_Wait(6);
 
-  MogallForest_HopActorTo(ACTOR_THIRD_AREA_EAST_APE, 736, 640, PIXELS(3));
+  MogallForest_HopActorTo(ACTOR_THIRD_AREA_EAST_APE, 736, 640, 3);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_THIRD_AREA_EAST_APE, 0);
   Event_Wait(6);
 
-  MogallForest_HopActorTo(ACTOR_THIRD_AREA_EAST_APE, 736, 704, PIXELS(3));
+  MogallForest_HopActorTo(ACTOR_THIRD_AREA_EAST_APE, 736, 704, 3);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_THIRD_AREA_EAST_APE, 0);
   Event_Wait(6);
 
@@ -1286,7 +1291,7 @@ static void MogallForest_ApeLeadsToKillerApe(void) {
   Event_Start();
   Actor_SetPosition(ACTOR_THIRD_AREA_EAST_APE, 136, 360);
   MogallForest_ApeComesOut(ACTOR_THIRD_AREA_EAST_APE, SPRITE_COLOR_GRB);
-  MogallForest_HopActorTo(ACTOR_THIRD_AREA_EAST_APE, 136, 408, PIXELS(8));
+  MogallForest_HopActorTo(ACTOR_THIRD_AREA_EAST_APE, 136, 408, 8);
   Event_Wait(10);
   FieldEffect_Spawn(creature->x.fixed, creature->y.fixed,
                     (creature->z.fixed + PIXELS(4)), 0, 0, 0,
@@ -1296,13 +1301,13 @@ static void MogallForest_ApeLeadsToKillerApe(void) {
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_RunRepeatedMotion(ACTOR_THIRD_AREA_EAST_APE, 2);
   FieldCamera_FollowActor(ACTOR_THIRD_AREA_EAST_APE, 1);
-  MogallForest_HopActorTo(ACTOR_THIRD_AREA_EAST_APE, 136, 440, PIXELS(6));
+  MogallForest_HopActorTo(ACTOR_THIRD_AREA_EAST_APE, 136, 440, 6);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_THIRD_AREA_EAST_APE, 0);
   Event_Wait(10);
-  MogallForest_HopActorTo(ACTOR_THIRD_AREA_EAST_APE, 136, 472, PIXELS(3));
+  MogallForest_HopActorTo(ACTOR_THIRD_AREA_EAST_APE, 136, 472, 3);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_THIRD_AREA_EAST_APE, 0);
   Event_Wait(6);
-  MogallForest_HopActorTo(ACTOR_THIRD_AREA_EAST_APE, 136, 504, PIXELS(3));
+  MogallForest_HopActorTo(ACTOR_THIRD_AREA_EAST_APE, 136, 504, 3);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_THIRD_AREA_EAST_APE, 0);
   Event_Wait(6);
   FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 1);
@@ -1353,7 +1358,7 @@ static void MogallForest_KillerApeAttacks(void) {
   actor->scaleX = 6 * Q16_ONE / 5;
   actor->scaleY = 6 * Q16_ONE / 5;
   Actor_SetSpriteColorById(ACTOR_THIRD_AREA_EAST_APE, SPRITE_COLOR_BRG);
-  MogallForest_HopActorTo(ACTOR_THIRD_AREA_EAST_APE, 136, 392, PIXELS(15));
+  MogallForest_HopActorTo(ACTOR_THIRD_AREA_EAST_APE, 136, 392, 15);
   Event_Wait(15);
   // The larger reveal uses a wider, level ring of puffs.
   MapGrid_SetShake(5, 5, 1);
@@ -1380,7 +1385,7 @@ static void MogallForest_KillerApeAttacks(void) {
 
     MogallForest_HopActorTo(ACTOR_THIRD_AREA_EAST_APE, leaderX,
                             Actor_Get(ACTOR_PARTY_LEADER)->z.part.pixel - 16,
-                            PIXELS(8));
+                            8);
   }
   Event_Wait(10);
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
@@ -1453,8 +1458,7 @@ s32 MogallForest_Initialize(void) {
                         EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
         Actor_RunRepeatedMotion(ACTOR_FIRST_AREA_NORTH_APE, 2);
         Event_Wait(30);
-        MogallForest_HopActorTo(ACTOR_FIRST_AREA_NORTH_APE, 136, 116,
-                                PIXELS(7));
+        MogallForest_HopActorTo(ACTOR_FIRST_AREA_NORTH_APE, 136, 116, 7);
         MogallForest_SpawnPuffRing(ACTOR_FIRST_AREA_NORTH_APE);
         Actor_SetSpriteColorById(ACTOR_FIRST_AREA_NORTH_APE,
                                  SPRITE_COLOR_HIDDEN);

@@ -26,12 +26,7 @@
 
 // A texture for the model kernels: its size as powers of two, then its
 // pixels.
-struct ModelTexture {
-  u32 logWidth : 8;
-  u32 logHeight : 8;
-  u32 unk02 : 16;
-  const void *pixels;
-};
+#include "render_model.h"
 
 // One entry of a model list, as Render_AllocateModelList allocates them and
 // Render_DrawModelList draws them.

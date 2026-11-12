@@ -363,11 +363,11 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
         s32 hold;
 
         /* FAKEMATCH(barrier): hold set by an empty asm takes r7 across the
-         * call, so heat takes r4 and its sp+8 save; without hold, 168 of 1532
+         * call, so heat takes r4 and its sp+8 save; without hold, 354 of 1532
          * instructions differ in tbs-en. */
         __asm__("" : "=r"(hold));
         /* FAKEMATCH(barrier): an empty asm that clobbers r6 before the call;
-         * without it, 175 of 1532 instructions differ in tbs-en. */
+         * without it, 354 of 1532 instructions differ in tbs-en. */
         __asm__("" : : : "r6");
         if (frame == 0)
           Sound_PlayFar(SE_RUMBLE);

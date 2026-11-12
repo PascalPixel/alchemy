@@ -100,7 +100,7 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args,
     s32 angle = Random16() & TRIG_ANGLE_MASK;
     s32 speed = (Random16() & 255) + 128;
 
-    SET_POSITION(spark, 0, ((Random16() & 31) + 20) << 16, 0);
+    SET_POSITION(spark, 0, PIXELS((Random16() & 31) + 20), 0);
     SET_VELOCITY(spark, (Trig_Sin(angle) * speed) >> 5, 0,
                  (Trig_Cos(angle) * speed) >> 5);
     spark->variant = 0;
@@ -113,19 +113,19 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args,
   // interpolation starts; none passes DJINNI_ANCHOR_USER_X.
   switch (anchor) {
   case DJINNI_ANCHOR_OVER_TARGET:
-    SET_VECTOR(goal, target->x.fixed, 60 << 16, target->z.fixed);
+    SET_VECTOR(goal, target->x.fixed, PIXELS(60), target->z.fixed);
     break;
   case DJINNI_ANCHOR_TARGET_X:
-    SET_VECTOR(goal, target->x.fixed, 60 << 16, 0);
+    SET_VECTOR(goal, target->x.fixed, PIXELS(60), 0);
     break;
   case DJINNI_ANCHOR_OVER_USER:
-    SET_VECTOR(goal, user->x.fixed, 60 << 16, user->z.fixed);
+    SET_VECTOR(goal, user->x.fixed, PIXELS(60), user->z.fixed);
     break;
   case DJINNI_ANCHOR_USER_X:
-    SET_VECTOR(goal, user->x.fixed, 60 << 16, 0);
+    SET_VECTOR(goal, user->x.fixed, PIXELS(60), 0);
     break;
   case DJINNI_ANCHOR_CENTRE:
-    SET_VECTOR(goal, 0, 60 << 16, 0);
+    SET_VECTOR(goal, 0, PIXELS(60), 0);
     break;
   }
   SET_VECTOR(step, (goal[0] - center[0]) / 40, (goal[1] - center[1]) / 40,
@@ -148,11 +148,13 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args,
     Transform_ApplyPosition(center);
     // The user glows white from frame 0 to frame 24.
     if (frame == 0)
-      BattleEffect_TintBattler(work->args->user, SPRITE_COLOR_WHITE, -1, -1, 0);
+      BattleEffect_TintBattler(work->args->user, SPRITE_COLOR_WHITE, TINT_KEEP,
+                               TINT_KEEP, 0);
     if (frame == 24)
-      BattleEffect_TintBattler(work->args->user, 0, -1, -1, 0);
+      BattleEffect_TintBattler(work->args->user, SPRITE_COLOR_NORMAL, TINT_KEEP,
+                               TINT_KEEP, 0);
     // Only the first 32 sparks are drawn. Spark i appears on frame i / 8 and
-    // spins about the centre on one of four axes, (256 + 32i) / 65536 turn a
+    // spins about the centre on one of four axes, (8 + i) / 2048 turn a
     // frame, drawn larger the nearer it is. From 24 frames after appearing
     // its speed gains 1/128 of its offset towards the centre each frame, then
     // keeps 62/64 of itself (on top of the step's own 60/64), and it goes out
@@ -167,17 +169,17 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args,
         Transform_Push();
         switch (i & 3) {
         case SPIN_YAW:
-          Transform_ApplyYaw(frame * (i * 32 + 256));
+          Transform_ApplyYaw(frame * ((i + 8) * (TRIG_TURN / 2048)));
           break;
         case SPIN_PITCH:
-          Transform_ApplyPitch(-frame * (i * 32 + 256));
+          Transform_ApplyPitch(-frame * ((i + 8) * (TRIG_TURN / 2048)));
           break;
         case SPIN_ROLL:
-          Transform_ApplyRoll(-frame * (i * 32 + 256));
+          Transform_ApplyRoll(-frame * ((i + 8) * (TRIG_TURN / 2048)));
           break;
         case SPIN_PITCH_AND_ROLL:
-          Transform_ApplyPitch(-frame * (i * 32 + 256));
-          Transform_ApplyRoll(-frame * (i * 32 + 256));
+          Transform_ApplyPitch(-frame * ((i + 8) * (TRIG_TURN / 2048)));
+          Transform_ApplyRoll(-frame * ((i + 8) * (TRIG_TURN / 2048)));
           break;
         }
         Projection_Point(&spark->x, &position);
@@ -206,7 +208,7 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args,
     // The Djinni sways 4 pixels either side of the centre on frames 54 to
     // 69; the short version ends on frame 63, before its burst.
     if (frame >= 54 && frame <= 69) {
-      SET_VECTOR(point, (Trig_Sin(frame << 10) * 4), 0, 0);
+      SET_VECTOR(point, (Trig_Sin(frame * (TRIG_TURN / 64)) * 4), 0, 0);
       Projection_Point(point, &position);
       *outX = position.x;
       *outY = position.y;
@@ -224,7 +226,7 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args,
         s32 speed = (Random16() & 255) + 128;
 
         mote->x = *outX << 15;
-        mote->y = *outY << 16;
+        mote->y = PIXELS(*outY);
         mote->velocityX = (Trig_Sin(angle) * speed) >> 6;
         mote->velocityY = (Trig_Cos(angle) * speed) >> 5;
         mote->variant = (Random16() & 15) + 8;
@@ -374,7 +376,8 @@ enum VolleyField {
 #define PROJECTILE_VOLLEY_COMET_OFFSETS 4096  ///< comets: the top half of each
 #define PROJECTILE_VOLLEY_STREAK_OFFSETS 8192 ///< wind streaks
 /// The hit flashes turned on their side, after the upright ones.
-#define PROJECTILE_VOLLEY_FLASH_TURNED 4746
+#define PROJECTILE_VOLLEY_FLASH_TURNED                                         \
+  (12 * 10 + 18 * 15 + 24 * 18 + 30 * 22 + 36 * 27 + 39 * 28 + 40 * 30)
 /// The yellow spark sheet: the small spark (12x8) first, then the medium one
 /// (18x13), then the large one.
 #define PROJECTILE_VOLLEY_MEDIUM_SPARK_OFFSETS (12 * 8)
@@ -569,20 +572,17 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
 
         shot->x = user->x.fixed;
         if (mode == PROJECTILE_VOLLEY_SLEET)
-          shot->y = user->y.fixed + ((Random16() & 15) << 16) + (58 << 16);
+          shot->y = user->y.fixed + PIXELS(Random16() & 15) + PIXELS(58);
         else if (mode == PROJECTILE_VOLLEY_ICE_BLESSING)
           shot->y = user->y.fixed + height / 2;
         else if (mode == PROJECTILE_VOLLEY_HEAT_WAVE)
           shot->y = user->y.fixed + height / 2;
         else if (mode == PROJECTILE_VOLLEY_BLIZZARD)
-          shot->y =
-              user->y.fixed + height / 2 + ((16 - (Random16() & 31)) << 16);
+          shot->y = user->y.fixed + height / 2 + PIXELS(16 - (Random16() & 31));
         else if ((u32)(mode - PROJECTILE_VOLLEY_WING_FLUTTER) <= 1)
-          shot->y =
-              user->y.fixed + height / 2 + ((16 - (Random16() & 31)) << 16);
+          shot->y = user->y.fixed + height / 2 + PIXELS(16 - (Random16() & 31));
         else if (mode == PROJECTILE_VOLLEY_WING_STROKE)
-          shot->y =
-              user->y.fixed + height / 2 + ((32 - (Random16() & 63)) << 16);
+          shot->y = user->y.fixed + height / 2 + PIXELS(32 - (Random16() & 63));
         else if (mode == PROJECTILE_VOLLEY_CUTTING_EDGE)
           shot->y = user->y.fixed + height / 2;
         else
@@ -590,20 +590,20 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
         shot->z = user->z.fixed;
         shot->velocityX = (target->x.fixed - shot->x) / steps;
         if (mode == PROJECTILE_VOLLEY_SLEET)
-          shot->velocityY = (s32)(target->y.fixed + ((Random16() & 63) << 16) -
-                                  shot->y - (12 << 16)) /
+          shot->velocityY = (s32)(target->y.fixed + PIXELS(Random16() & 63) -
+                                  shot->y - PIXELS(12)) /
                             steps;
         else if (mode == PROJECTILE_VOLLEY_IMPACT_COMETS)
-          shot->velocityY = (s32)(target->y.fixed + ((Random16() & 7) << 16) -
-                                  shot->y + (22 << 16)) /
+          shot->velocityY = (s32)(target->y.fixed + PIXELS(Random16() & 7) -
+                                  shot->y + PIXELS(22)) /
                             steps;
         else if (mode == PROJECTILE_VOLLEY_BLIZZARD)
           shot->velocityY = (s32)(target->y.fixed +
-                                  ((64 - (Random16() & 63)) << 16) - shot->y) /
+                                  PIXELS(64 - (Random16() & 63)) - shot->y) /
                             steps;
         else if (mode == PROJECTILE_VOLLEY_ICE_BLESSING)
-          shot->velocityY = (s32)(target->y.fixed + ((Random16() & 31) << 16) -
-                                  shot->y + (4 << 16)) /
+          shot->velocityY = (s32)(target->y.fixed + PIXELS(Random16() & 31) -
+                                  shot->y + PIXELS(4)) /
                             steps;
         else if ((u32)(mode - PROJECTILE_VOLLEY_WING_FLUTTER) <= 1 ||
                  mode == PROJECTILE_VOLLEY_WING_STROKE ||
@@ -611,11 +611,11 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
           shot->velocityY = 0;
         else if (mode == PROJECTILE_VOLLEY_HEAT_WAVE)
           shot->velocityY = (s32)(target->y.fixed + targetHeight / 2 +
-                                  ((Random16() & 15) << 16) - shot->y) /
+                                  PIXELS(Random16() & 15) - shot->y) /
                             steps;
         else
           shot->velocityY = (s32)(target->y.fixed + targetHeight -
-                                  ((Random16() & 15) << 16) - shot->y) /
+                                  PIXELS(Random16() & 15) - shot->y) /
                             steps;
         shot->velocityZ = (target->z.fixed - shot->z) / steps;
         shot->variant = 0;
@@ -658,8 +658,9 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
       // drawn twice on the first four frames. Its blitter is built and freed
       // each frame.
       if (work->args->prelude == 1) {
-        s32 x = ((-Trig_Sin(frame << 11) * 4) >> 16) + screenX / 2 - 10;
-        s32 y = ((Trig_Cos(frame << 11) * 2) >> 16) + screenY - 24;
+        s32 x = ((-Trig_Sin(frame * (TRIG_TURN / 32)) * 4) >> 16) +
+                screenX / 2 - 10;
+        s32 y = ((Trig_Cos(frame * (TRIG_TURN / 32)) * 2) >> 16) + screenY - 24;
 
         if (frame > 69)
           y = y - frame * 2 + 138;
@@ -707,8 +708,8 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
                 struct Particle *particle = &PARTICLES[k];
 
                 if (particle->variant == 0) {
-                  particle->x = position.x << 16;
-                  particle->y = position.y << 16;
+                  particle->x = PIXELS(position.x);
+                  particle->y = PIXELS(position.y);
                   particle->velocityX = ((Random16() & 255) - 128) << 11;
                   particle->velocityY = ((Random16() & 255) - 128) << 11;
                   particle->variant = (Random16() & 7) + 32;
@@ -726,7 +727,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
                 hit = x < 0;
                 /* FAKEMATCH(dead): two updates that cancel, under a test that
                  * emits nothing, make hit a 0 or 1 value before it is tested;
-                 * without them, 6 of 1605 instructions differ in tbs-en. */
+                 * without them, 55 of 1605 instructions differ in tbs-en. */
                 if (target) {
                   hit ^= x;
                   hit ^= x;
@@ -736,7 +737,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
               } else {
                 hit = x >= 0;
                 /* FAKEMATCH(dead): the same pair for the other side; without
-                 * it, 6 of 1605 instructions differ in tbs-en. */
+                 * it, 38 of 1605 instructions differ in tbs-en. */
                 if (target) {
                   hit ^= x;
                   hit ^= x;
@@ -796,8 +797,8 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
                   struct Particle *particle = &PARTICLES[k];
 
                   if (particle->variant == 0) {
-                    particle->x = position.x << 16;
-                    particle->y = position.y << 16;
+                    particle->x = PIXELS(position.x);
+                    particle->y = PIXELS(position.y);
                     particle->velocityX = ((Random16() & 255) - 128)
                                           << trailsOrShift;
                     particle->velocityY = ((Random16() & 255) - 128)
@@ -957,7 +958,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
           EFFECT_DRAW_MOTE(draw[0], canvas, sheet, Q_16_16_TO_INT(particle->x),
                            Q_16_16_TO_INT(particle->y), size);
           Particle_AdvanceWithGravity2D(particle, 60, Q16_ONE / 16);
-          if (particle->y > (112 << 16))
+          if (particle->y > PIXELS(112))
             particle->velocityY = -particle->velocityY / 2;
           particle->variant--;
         }

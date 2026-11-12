@@ -56,8 +56,9 @@
 // Edition-specific text and window layout values.
 // The password buffer: a Gold password is 260 symbols
 // (FileScreen_EncodePassword) in every edition, which the Japanese buffer holds
-// exactly. XXX (no evidence): why the other editions reserve 320; nothing in
-// this game writes or reads past 260, so the bytes show only the space.
+// exactly.
+// XXX (no evidence): why the other editions reserve 320; nothing in this game
+// writes or reads past 260, so the bytes show only the space.
 #if LANGUAGE != LANGUAGE_JAPANESE
 #define FILE_SCREEN_PASSWORD_BUFFER_SIZE 320
 #else
@@ -423,7 +424,7 @@ struct SaveLinkGreeting {
 };
 
 /// The compiler library's signed division, which FileScreen_Run calls by name
-/// at one site (its FAKEMATCH tag).
+/// at one site.
 s32 __divsi3(s32, s32);
 
 /// The overlay's initialize entry: the File Screen.

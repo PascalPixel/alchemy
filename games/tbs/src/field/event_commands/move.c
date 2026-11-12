@@ -303,10 +303,11 @@ void FieldPsynergy_Move(void) {
    * 4 of 24 instructions differ in tbs-en. */
   UNUSED s32 work[3];
   struct FieldEffectWork *effectWork;
-  void *object;
+  struct Actor *caster;
+  struct Actor *hand;
 
   effectWork = gFieldEffectWork;
-  object = effectWork->mainActor;
+  caster = effectWork->mainActor;
 
   /* FAKEMATCH(dead): an empty once-only loop before the call keeps the
    * mainActor load below the stack frame's sub sp; without it, 2 of 24
@@ -314,22 +315,22 @@ void FieldPsynergy_Move(void) {
   do {
   } while (0);
   FieldPsynergy_FadeToCastColor();
-  object = FieldEffect_SpawnMoveHand(object);
-  FieldEffect_SnapScaleToFull(object);
-  if (object != 0) {
-    Actor_SelectAnimationFar(object, 4);
+  hand = FieldEffect_SpawnMoveHand(caster);
+  FieldEffect_SnapScaleToFull(hand);
+  if (hand != 0) {
+    Actor_SelectAnimationFar(hand, 4);
     wait(30);
   }
   FieldPsynergy_FadeFromCastColor();
-  UpdateRisingParticleBurst(object);
+  UpdateRisingParticleBurst(hand);
 }
 
-/// Spawns Move's hand (sprite 215) 16 pixels above object, at quarter size,
-/// and moves it 16 pixels the way object faces (to the nearest quarter
-/// turn), with 8 particles round it. Returns the hand, or 0 when it cannot be
-/// spawned (Actor_Spawn); the caller releases it (UpdateRisingParticleBurst).
-void *FieldEffect_SpawnMoveHand(void *object) {
-  struct Actor *source = object;
+/// Spawns Move's hand (sprite 215) 16 pixels above the caster, at quarter
+/// size, and moves it 16 pixels the way the caster faces (to the nearest
+/// quarter turn), with 8 particles round it. Returns the hand, or 0 when it
+/// cannot be spawned (Actor_Spawn); the caller releases it
+/// (UpdateRisingParticleBurst).
+struct Actor *FieldEffect_SpawnMoveHand(struct Actor *caster) {
   struct Actor *parent;
   struct Actor *child;
   s32 angle;
@@ -340,9 +341,9 @@ void *FieldEffect_SpawnMoveHand(void *object) {
   u32 jitter;
 
   angle =
-      (source->facing + TRIG_TURN / 8) & 0xc000; // to the nearest quarter turn
-  parent = Actor_Spawn(SPRITE_MOVE_HAND, source->x.fixed,
-                       source->y.fixed + px(16), source->z.fixed);
+      (caster->facing + TRIG_TURN / 8) & 0xc000; // to the nearest quarter turn
+  parent = Actor_Spawn(SPRITE_MOVE_HAND, caster->x.fixed,
+                       caster->y.fixed + px(16), caster->z.fixed);
   if (parent == 0)
     return 0;
   parent->scaleY = Q16_ONE / 4;
@@ -357,8 +358,8 @@ void *FieldEffect_SpawnMoveHand(void *object) {
   // Particles: 8 to 32 pixels within 1/8 turn of the way it faces, at 1 to 2
   // pixels a frame.
   for (fragmentIndex = 7; fragmentIndex >= 0; fragmentIndex--) {
-    child = Actor_Spawn(SPRITE_SPARKLE, source->x.fixed,
-                        source->y.fixed + px(16), source->z.fixed);
+    child = Actor_Spawn(SPRITE_SPARKLE, caster->x.fixed,
+                        caster->y.fixed + px(16), caster->z.fixed);
     if (child != 0) {
       Actor_StartScriptFar(child, gFieldEffect_FragmentScript);
       speed = Random16() + Q16_ONE;
@@ -371,7 +372,7 @@ void *FieldEffect_SpawnMoveHand(void *object) {
       radius = Random16() * 24 + px(8);
       jitter = Random16();
       Actor_SetTargetPositionFromMagnitudeAngle(
-          child, radius, ((jitter - Random16()) >> 3) + source->facing);
+          child, radius, ((jitter - Random16()) >> 3) + caster->facing);
     }
   }
   Sound_PlayFar(SE_ITEM_BREAK);
@@ -404,8 +405,7 @@ void FieldEffect_SnapScaleToFull(struct Actor *actor) {
 /// by 1/32 of full size a frame, then bursts into 8 particles and is
 /// released. Not a per-frame update: it waits the frames itself. Called by
 /// the Move casts and Lift.
-void UpdateRisingParticleBurst(void *object) {
-  struct Actor *src = object;
+void UpdateRisingParticleBurst(struct Actor *hand) {
   struct Actor *child;
   s32 i;
   s32 dist;
@@ -413,15 +413,15 @@ void UpdateRisingParticleBurst(void *object) {
 
   Sound_PlayFar(SE_CAST);
   for (i = 30; i >= 0; i--) {
-    src->y.fixed += px(1);
-    src->facing += TRIG_TURN / 8;
-    src->scaleX += -Q16_ONE / 32;
-    src->scaleY += -Q16_ONE / 32;
+    hand->y.fixed += px(1);
+    hand->facing += TRIG_TURN / 8;
+    hand->scaleX += -Q16_ONE / 32;
+    hand->scaleY += -Q16_ONE / 32;
     wait(1);
   }
   for (i = 7; i >= 0; i--) {
-    child =
-        Actor_Spawn(SPRITE_SPARKLE, src->x.fixed, src->y.fixed, src->z.fixed);
+    child = Actor_Spawn(SPRITE_SPARKLE, hand->x.fixed, hand->y.fixed,
+                        hand->z.fixed);
     if (child != 0) {
       Actor_StartScriptFar(child, gFieldEffect_FragmentScript);
       child->speedLimit = Random16() + Q16_ONE;
@@ -435,7 +435,7 @@ void UpdateRisingParticleBurst(void *object) {
     }
   }
   Sound_PlayFar(SE_PSYNERGY_SPARKLE);
-  Actor_ReleaseFar(src);
+  Actor_ReleaseFar(hand);
 }
 
 #undef MOVE_CELL_MASK

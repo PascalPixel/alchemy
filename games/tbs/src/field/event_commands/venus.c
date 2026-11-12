@@ -81,21 +81,8 @@ void Djinn_RunVenusJoinEffect(s32 djinniId) {
   wait(140);
   // Walking whole slots instead of their state bytes grows native English
   // from 732 to 736 bytes.
-  {
-    s32 nextState;
-
-    nextState = VENUS_PARTICLE_LAST_RISE;
-    slotState = (s8 *)effectWork;
-    slotState += offsetof(struct FieldEffectWork, particles) +
-                 offsetof(struct FieldParticle, state);
-    remaining = 23;
-    do {
-      if (slotState[5] != 0)
-        slotState[0] = nextState;
-      remaining--;
-      slotState += sizeof(struct FieldParticle);
-    } while (remaining >= 0);
-  }
+  FIELD_PARTICLES_SET_ACTIVE_STATE(slotState, remaining, effectWork, particles,
+                                   VENUS_PARTICLE_LAST_RISE);
 
   // A shake of 1/65536 pixel: in effect the shake stops.
   wait(20);

@@ -81,48 +81,18 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
 
   // Every spark still in use stops its fountain. The cursor walks
   // the slots' state bytes; a slot's active flag is 5 bytes after its state.
-  {
-    /* FAKEMATCH(temporary): nextState holds MARS_SPARK_STOPPING; as the
-     * constant in the store, 2 of 179 instructions differ in tbs-en. */
-    s32 nextState;
-
-    wait(20);
-    nextState = MARS_SPARK_STOPPING;
-    slotState = &effectWork->particles[0].state;
-    remaining = 23;
-    do {
-      if (slotState[5] != 0)
-        slotState[0] = nextState;
-      remaining--;
-      slotState += sizeof(struct FieldParticle);
-    } while (remaining >= 0);
-  }
+  wait(20);
+  FIELD_PARTICLES_SET_ACTIVE_STATE(slotState, remaining, effectWork, particles,
+                                   MARS_SPARK_STOPPING);
 
   // The leader pulses while the sparks swarm it.
   wait(60);
   leader->update = FieldEffect_PulseActorScale;
   wait(100);
 
-  // Every spark still in use goes. This loop's cursor starts as
-  // the field effect plus 152, the first slot's state: written as above, the
-  // cursor's two loads swap (differ 22).
-  {
-    /* FAKEMATCH(temporary): nextState holds MARS_SPARK_LEAVING; as the
-     * constant in the store, 2 of 179 instructions differ in tbs-en. */
-    s32 nextState;
-
-    slotState = (s8 *)effectWork;
-    nextState = MARS_SPARK_LEAVING;
-    slotState += offsetof(struct FieldEffectWork, particles) +
-                 offsetof(struct FieldParticle, state);
-    remaining = 23;
-    do {
-      if (slotState[5] != 0)
-        slotState[0] = nextState;
-      remaining--;
-      slotState += sizeof(struct FieldParticle);
-    } while (remaining >= 0);
-  }
+  // Every spark still in use goes.
+  FIELD_PARTICLES_SET_ACTIVE_STATE(slotState, remaining, effectWork, particles,
+                                   MARS_SPARK_LEAVING);
 
   // The leader stops pulsing.
   wait(10);

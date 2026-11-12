@@ -521,14 +521,9 @@ void Sanctum_RunMemberIconBurst(s32 member) {
   // Let active particles finish, then release remaining slots and restore UI.
   Sound_WaitForJingle();
   {
-    u8 activeMode = SANCTUM_SPARKLE_LAST_FLIGHT;
-    u8 *entry = (u8 *)&shop->effects[0].state;
-    for (effectIndex = 23; effectIndex >= 0; effectIndex--) {
-      if (*(s8 *)(entry + 5) != 0) {
-        *entry = activeMode;
-      }
-      entry += sizeof(struct FieldParticle);
-    }
+    u8 *entry;
+    FIELD_PARTICLES_SET_ACTIVE_STATE(entry, effectIndex, shop, effects,
+                                     SANCTUM_SPARKLE_LAST_FLIGHT);
   }
 
   wait(20);

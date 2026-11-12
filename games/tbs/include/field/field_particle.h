@@ -59,4 +59,26 @@ STATIC_ASSERT(sizeof(struct FieldParticle) == 0x48);
 STATIC_ASSERT(offsetof(struct FieldParticle, orbitRadius) == 0x3c);
 STATIC_ASSERT(offsetof(struct FieldParticle, state) == 0x40);
 
+/// Gives every particle in use among the 24 in `work->member` the state
+/// `newState`: `cursor` walks their state bytes and `count` counts them down,
+/// both the caller's. Six routines that end a field effect run this same code,
+/// the state held in a local first; the macro is our reconstruction of that
+/// shared code, and its name is ours.
+#define FIELD_PARTICLES_SET_ACTIVE_STATE(cursor, count, work, member,          \
+                                         newState)                             \
+  {                                                                            \
+    s32 state_ = (newState);                                                   \
+    (cursor) = (void *)(work);                                                 \
+    (cursor) += offsetof(__typeof__(*(work)), member) +                        \
+                offsetof(struct FieldParticle, state);                         \
+    (count) = 24 - 1;                                                          \
+    do {                                                                       \
+      if (((s8 *)(cursor))[offsetof(struct FieldParticle, active) -            \
+                           offsetof(struct FieldParticle, state)] != 0)        \
+        *(cursor) = state_;                                                    \
+      (count)--;                                                               \
+      (cursor) += sizeof(struct FieldParticle);                                \
+    } while ((count) >= 0);                                                    \
+  }
+
 #endif

@@ -130,21 +130,8 @@ void Djinn_RunMercuryJoinEffect(s32 djinniId) {
   // Walking whole slots instead of their state bytes grows native English
   // from 572 to 576 bytes.
   wait(120);
-  {
-    s32 nextState;
-
-    nextState = MERCURY_DROPLET_LAST_FALL;
-    slotState = (s8 *)effectWork;
-    slotState += offsetof(struct FieldEffectWork, particles) +
-                 offsetof(struct FieldParticle, state);
-    remaining = MERCURY_PARTICLE_MAX - 1;
-    do {
-      if (slotState[5] != 0) // active
-        slotState[0] = nextState;
-      remaining--;
-      slotState += sizeof(struct FieldParticle);
-    } while (remaining >= 0);
-  }
+  FIELD_PARTICLES_SET_ACTIVE_STATE(slotState, remaining, effectWork, particles,
+                                   MERCURY_DROPLET_LAST_FALL);
 
   // Restore the colours.
   wait(50);

@@ -2373,18 +2373,9 @@ static void AltmillerCave_ReleaseWallBurst(void) {
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   wait(30);
   {
-    s32 mode = 2;
-    // Walk the state bytes within the complete field effect sprite array.
-    u8 *stateCursor =
-        (u8 *)&effectWork->particles + offsetof(struct FieldParticle, state);
-
-    for (fragmentIndex = 23; fragmentIndex >= 0; fragmentIndex--) {
-      if (((s8 *)stateCursor)[offsetof(struct FieldParticle, active) -
-                              offsetof(struct FieldParticle, state)] != 0) {
-        *stateCursor = mode;
-      }
-      stateCursor += sizeof(struct FieldParticle);
-    }
+    u8 *stateCursor;
+    FIELD_PARTICLES_SET_ACTIVE_STATE(stateCursor, fragmentIndex, effectWork,
+                                     particles, 2);
   }
   MapGrid_WaitForShakeToSettle();
   Shop_RestoreFieldPalette();

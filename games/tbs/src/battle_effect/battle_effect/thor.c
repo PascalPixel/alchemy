@@ -16,21 +16,14 @@
 
 #define THOR_PARTICLE_COUNT 910 ///< particles in THOR_PARTICLES
 #define THOR_DIMMED_DOTS 10000  ///< the darker copies of the dot pictures
-#define THOR_DIMMED_DOT_BYTES MOTE_SET_BYTES ///< bytes in each darker copy
-#define THOR_DUSK_FRAMES 170      ///< frames, at most, of the dusk part
-#define THOR_LIGHTNING_FRAMES 192 ///< frames of the lightning part
-#define THOR_BOLTS 30             ///< violet bolts after the pillar
-#define THOR_BOLT_SIZE 72         ///< each of the three bolt pictures is 72x72
-#define THOR_BOLT_BYTES (THOR_BOLT_SIZE * THOR_BOLT_SIZE)
+#define THOR_BOLTS 30           ///< violet bolts after the pillar
 
 /// Launches up to max sparks from (startX, startY), 16.16, into the free slots
 /// (variant 0) of THOR_PARTICLES, walking them with spark and counting with
 /// index. Each flies at angle (0 straight up, a full turn TRIG_TURN) at a
 /// random speed of 32 to 1055 128ths of a pixel a frame across, twice that
 /// up and down, and lives 32 to 39 frames. Used for the pillar's 512 sparks
-/// and each bolt's 16; the mote's sparks are launched inline. The speed is
-/// masked in place, the mask assigned first; as `Random16() & 0x3ff`, 3
-/// instructions differ.
+/// and each bolt's 16; the mote's sparks are launched inline.
 #define THOR_LAUNCH_SPARKS(spark, index, startX, startY, angleExpr, max)       \
   {                                                                            \
     s32 spawned = 0;                                                           \
@@ -54,26 +47,28 @@
     }                                                                          \
   }
 
-/// Over scrolling dusk clouds a circle of dots turns, sinks into the sky and
-/// sends down a beam of light; then a pillar of lightning strikes a formation,
-/// violet bolts follow, and the formation is pushed back in smoke.
+/// Over scrolling dusk clouds a ring with a triangle across it draws itself and
+/// turns, its colours cycling, then tips flat, sinks into the sky and sends
+/// down a beam of light; then a pillar of lightning strikes the targets, Thor
+/// appears in a spray of sparks, violet bolts strike the targets again and
+/// again, and Thor drifts back in crackling lightning.
 ///
 /// Abilities: Thor (SUMMON_EFFECT_THOR).
 ///
 /// The effect plays in two parts on the effect canvas. In the dusk part
-/// (THOR_DUSK_FRAMES, which A or B cuts short) a circle of 128 dots and three
+/// (170 frames, which A or B cuts short) a circle of 128 dots and three
 /// lines across it form over scrolling dusk clouds; the circle turns, sinks
 /// into the sky and a beam of light falls from it. In the lightning part
-/// (THOR_LIGHTNING_FRAMES) a pillar of lightning strikes the formation and
-/// throws sparks, THOR_BOLTS violet bolts follow while a violet mote sways
-/// above, and the formation is pushed back in smoke until an impact burst ends
-/// the effect. The sparks live in THOR_PARTICLES; a spark whose variant is 0
-/// is free, and a positive variant counts the frames it has left.
+/// (192 frames) a pillar of lightning strikes the targets and throws
+/// sparks, Thor appears, THOR_BOLTS violet bolts follow while a violet mote
+/// sways above, and Thor drifts back in crackling lightning until an impact
+/// burst ends the effect. The sparks live in THOR_PARTICLES; a spark whose
+/// variant is 0 is free, and a positive variant counts the frames it has left.
 ///
 /// Loads the dusk clouds as the battle background (BattleBackground_LoadFar),
 /// and for the dusk part sets view->busy and moves gProjection.centerY to
-/// 240 (BattleEffect_SetupBlendedDisplay puts the centre back). Spawns the nine
-/// formation sprites and releases them at the end; the closing
+/// 240 (BattleEffect_SetupBlendedDisplay puts the centre back). Spawns Thor's
+/// nine sprites and releases them at the end; the closing
 /// BattleEffect_RunImpactBurst builds and frees its own blitters and transfer
 /// and overwrites work->particles and PARTICLES 0 to 63. Closes the canvas
 /// layer.
@@ -94,7 +89,8 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
   void *canvas;
   u8 *sprites;
   s32 frame;
-  // Only blit[0] is used; the second blitter gives the stack frame 4 bytes.
+  /* FAKEMATCH(dead): blit[1], never used, gives the stack frame 4 bytes; as
+   * one DrawRectangle, 202 of 1640 instructions differ in tbs-en. */
   BlitterPair blit;
   s32 size;
   s32 count;
@@ -102,8 +98,10 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
   s32 j;
   s32 dotCount;
   struct Particle *spark;
-  DrawRectangle *blitters; // the heap slots read as blitters
-  s32 dimmedOffset = THOR_DIMMED_DOTS;
+  /* FAKEMATCH(temporary): blitters holds gHeapSlots; as
+   * EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE], 5 of 1640 instructions differ in
+   * tbs-en. */
+  DrawRectangle *blitters;
 
   slots = &gHeapSlots[HEAP_SLOT_BATTLE_BACKGROUND];
   view = slots[0];
@@ -126,7 +124,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
     s32 offset;
     for (i = 0, offset = 0; i != 8; i++) {
       u8 *src;
-      for (j = 0, src = sprites; j != THOR_DIMMED_DOT_BYTES; j++) {
+      for (j = 0, src = sprites; j != MOTE_SET_BYTES; j++) {
         s32 v = *src++;
 
         EFFECT_CAP_LEVEL(v, 64 - i * 7);
@@ -183,7 +181,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
   // First part, 170 frames (A or B skips it): a circle of dots and
   // three lines across it form and turn over dusk clouds, the circle shrinks
   // into the sky, and a beam of light falls from it.
-  for (frame = 0; frame != THOR_DUSK_FRAMES; frame++) {
+  for (frame = 0; frame != 170; frame++) {
     size = 2;
     count = frame * 2;
     if (frame == 16) {
@@ -281,8 +279,9 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
     // The circle of up to 128 dots, two more each frame, darkening once
     // the beam has fallen: from frame 140 it takes the brighter pixel
     // instead of adding, and from frame 157 each frame draws it with a
-    // darker copy of the dots, down to the seventh. The test on frame 179
-    // always holds, as the part has 170 frames.
+    // darker copy of the dots, down to the seventh.
+    /* FAKEMATCH(dead): frame <= 179 always holds, the part having 170 frames;
+     * without the test, 43 of 1640 instructions differ in tbs-en. */
     if (frame <= 179) {
       DrawRectangle drawAlt;
       s32 level = 0;
@@ -315,9 +314,9 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
         screen[0].y = (screen[0].y >> 16) + 60;
         drawAlt(canvas,
                 work->sheet +
-                    (level * THOR_DIMMED_DOT_BYTES +
+                    (level * MOTE_SET_BYTES +
                      gBattleEffect_MoteCells[dotSize - 1]) +
-                    dimmedOffset,
+                    THOR_DIMMED_DOTS,
                 screen[0].x - dotSize / 2, screen[0].y - dotSize, dotSize,
                 dotSize * 2);
       }
@@ -370,14 +369,14 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
     EFFECT_PRESENT_CANVAS(work);
   }
 
-  // Second part, 192 frames: a pillar of lightning strikes the
-  // formation, throwing sparks, then violet bolts strike again and again while
-  // the formation is pushed back in smoke, ending in an impact burst.
+  // Second part, 192 frames: a pillar of lightning strikes the targets,
+  // throwing sparks, then violet bolts strike again and again while Thor
+  // drifts back in crackling lightning, ending in an impact burst.
   view->busy = 0;
   Task_Remove(BattleEffect_AdvanceScrollOnInterval);
   BattleEffect_SetupBlendedDisplay();
   BattleEffect_SelectLivingTargets(work->args);
-  // Nine sprites of SPRITE_THOR, the formation (SUMMON_FORMATION_THOR),
+  // Thor: nine sprites of SPRITE_THOR, placed as SUMMON_FORMATION_THOR and
   // released at the end.
   BattleEffect_SpawnObjects(9, SPRITE_THOR, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet,
@@ -400,7 +399,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
 
     formationX = px(80);
     formationY = px(64);
-    // The particle loop's counter starts with the formation's defaults.
+    // The particle loop's counter is set with Thor's starting speeds.
     i = 0;
     formationSpeedX = 0;
     formationSpeedY = 0;
@@ -422,7 +421,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
     pillarX = 60;
     pillarY = 112;
 
-    for (frame = 0; frame != THOR_LIGHTNING_FRAMES; frame++) {
+    for (frame = 0; frame != 192; frame++) {
       s32 stormFrame;
       if (frame == 20) {
         Resource_LoadAndDecompress((s32)&ResourceId_VioletLightningSheetB,
@@ -439,7 +438,9 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
       }
       // The pillar of lightning, frames 8 to 16: its body on frames 9 to
       // 11, its top on 12 to 15, and on frame 10 up to 512 sparks thrown
-      // up from its foot. The loop runs once.
+      // up from its foot.
+      /* FAKEMATCH(dead): a loop that runs once, j being 0; without it, 533 of
+       * 1640 instructions differ in tbs-en. */
       for (j = 0; j != 1; j++) {
         s32 start = j * 128 + 8;
         if (frame >= start && frame < j * 128 + 17) {
@@ -450,6 +451,9 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
             blit[0](canvas, work->sheet + (48 * 112), 36, 0, 48, 112);
           }
           if (frame == start + 2) {
+            /* FAKEMATCH(temporary): THOR_LAUNCH_SPARKS's speed holds its mask
+             * before Random16() is masked in place; as Random16() & 0x3ff, 58
+             * of 1640 instructions differ in tbs-en. */
             THOR_LAUNCH_SPARKS(spark, i, px(pillarX), px(pillarY),
                                (Random16() & 0x7fff) - TRIG_TURN / 4, 512);
             work->shakeFrames = 8;
@@ -487,8 +491,8 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
               EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                                   COMPOSITE_LIGHTEN);
               EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE_2](
-                  canvas, work->sheet + i % 3 * THOR_BOLT_BYTES, boltX, boltY,
-                  THOR_BOLT_SIZE, THOR_BOLT_SIZE);
+                  canvas, work->sheet + i % 3 * (72 * 72), boltX, boltY, 72,
+                  72);
               HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
             }
             if (frame == i * 2 + 80) {
@@ -509,8 +513,9 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
           // The mote: a random offset 8 to 15 pixels from where it rests.
           s32 radius = 7;
           s32 angle;
-          // Masked in place, the mask assigned first; as Random16() & mask, 3
-          // instructions differ.
+          /* FAKEMATCH(temporary): radius holds 7 before Random16() is masked in
+           * place; as Random16() & 7, 39 of 1640 instructions differ in
+           * tbs-en. */
           radius &= Random16();
           angle = Random16() & TRIG_ANGLE_MASK;
           moteX = (Trig_Sin(angle) * (radius + 8)) >> 16;
@@ -552,8 +557,9 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
           if (spark->variant == 0) {
             s32 speed = 63;
             s32 angle;
-            // Masked in place, the mask assigned first; as Random16() & mask, 3
-            // instructions differ.
+            /* FAKEMATCH(temporary): speed holds 63 before Random16() is masked
+             * in place; as Random16() & 63, 37 of 1640 instructions differ in
+             * tbs-en. */
             speed &= Random16();
             angle = Random16() & TRIG_ANGLE_MASK;
             spark->x = px(mirrorX);
@@ -598,9 +604,9 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
       }
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
 
-      // The formation is placed from frame 16, its corner at (80, 64), and
-      // pushed back from frame 32: right 4 pixels a frame and up 1/4, the
-      // push slowing by 1/16 each frame.
+      // Thor is placed from frame 16 at (80, 64) and pushed back from frame
+      // 32: right 4 pixels a frame and up 1/4, the push slowing by 1/16 each
+      // frame.
       if (frame > 15) {
         if (frame == 32) {
           formationSpeedX = px(4);
@@ -615,10 +621,10 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
         BattleEffect_PlaceFormationObjects(SUMMON_FORMATION_THOR, formationX,
                                            formationY);
       }
-      // Frames 16 to 143: three puffs of smoke a frame around the
-      // formation, from the first three glint cells, placed and flipped at
-      // random, up to 8 pixels across and 40 up or down from canvas line
-      // 56, clipped at the canvas edges and drawn where brighter.
+      // Frames 16 to 143: three crackles of lightning a frame around Thor,
+      // the first three glint pictures, placed and flipped at random, up to 8
+      // pixels across and 40 up or down from canvas line 56, clipped at the
+      // canvas edges and drawn where brighter.
       if ((u32)(frame - 16) <= 127) {
         s32 formationScreenX;
         for (i = 0, formationScreenX = formationX >> 17; i != 3; i++) {
@@ -629,7 +635,9 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
           s32 y = ((Trig_Cos(angle) * 40) >> 16) -
                   (gBattleEffect_GlintCellHeights[glint] >> 1);
           EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
-                              3 | gThor_SmokeFlips[Random16() & 3], 2);
+                              EFFECT_CLIP_BOUNDS |
+                                  gThor_SmokeFlips[Random16() & 3],
+                              COMPOSITE_LIGHTEN);
           EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE_2](
               canvas, Ram_MapGridCellBuffer + gBattleEffect_GlintCells[glint],
               x, y + 56, gBattleEffect_GlintCellWidths[glint],
@@ -659,11 +667,6 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
 #undef THOR_MOTE_OFFSETS
 #undef THOR_PARTICLE_COUNT
 #undef THOR_DIMMED_DOTS
-#undef THOR_DIMMED_DOT_BYTES
-#undef THOR_DUSK_FRAMES
-#undef THOR_LIGHTNING_FRAMES
 #undef THOR_BOLTS
-#undef THOR_BOLT_SIZE
-#undef THOR_BOLT_BYTES
 #undef THOR_LAUNCH_SPARKS
 #undef THOR_SPRITES_OFFSETS

@@ -332,11 +332,7 @@ static void MercuryLighthouseEntrance_ActivateWithPly(void) {
     velocityZ = 0;
     do {
       effectData->priority = 1;
-      {
-        u16 effectType = SPRITE_GLINT;
-
-        effectData->type = effectType;
-      }
+      effectData->type = SPRITE_GLINT;
       effectData->script = gGlint_TwinkleScript;
       Sound_Play(SE_GLITTER);
       sparkX = 208 - ((u32)(Random_Next() << 4) >> 16);

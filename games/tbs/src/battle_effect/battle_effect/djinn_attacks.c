@@ -43,8 +43,8 @@ void BattleEffect_TransposeCopy(const u8 *src, u8 *dst, s32 w, s32 h) {
 }
 
 #define MERCURY_FRAMES 96
-/// The blue flame sheet's 34x65 flame, after its 17x104 shaft; Neptune draws
-/// the two as its water columns.
+/// The blue flame sheet's 34x65 flame, after its 17x104 shaft; Mercury turns
+/// both on their side, and Venus draws the flame as its rising columns.
 #define BLUE_FLAME_SHEET_FLAME (17 * 104)
 
 /// Mercury's sheet: its 20x40 Djinni, then the blue flame sheet's two pictures

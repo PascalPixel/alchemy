@@ -114,7 +114,7 @@ STATIC_ASSERT(offsetof(struct SceneEntrance, cameraLeft) == 14);
 /// field sequence, which MainRoutine_Run runs in its place. They have no row
 /// in gScenes.
 enum {
-  /// Runs nothing and returns 0; no ☀️ code sends the party there.
+  /// Runs nothing and returns 0; nothing in the game sends the party there.
   SEQUENCE_NONE = 507,
   SEQUENCE_SLOTS = 508, ///< Lucky Wheels, from its room in Tolbi,
                         ///< SceneId_StuccoRoomsC (lucky_wheels.c)

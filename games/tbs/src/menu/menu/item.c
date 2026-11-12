@@ -1512,9 +1512,10 @@ UNUSED void ItemMenu_NoOp(void) {}
 /// put back afterwards from a heap copy that is freed before returning. mode 1
 /// redraws only the lower part of the panel.
 void ItemMenu_DrawEquipPreview(s32 member, s32 slot, s32 mode, s32 target) {
-  /* FAKEMATCH(temporary): the saved unit reuses member (and buffer for
-   * Psynergy items), keeping member in r8 and panelStyle in r10; as a separate
-   * void *saved, 22 of 172 instructions differ in tbs-en. */
+  /* FAKEMATCH(temporary): member, an s32, takes the saved unit's address, and
+   * for Psynergy items buffer copies it twice, keeping member in r8 and
+   * panelStyle in r10; as a separate void *saved, 44 of 171 instructions
+   * differ in tbs-en. */
   struct ItemMenuWork *menu = gMenuWork;
   s32 panelStyle = 0;
   struct Unit *unit = Unit_GetFar(member);

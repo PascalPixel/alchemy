@@ -1100,7 +1100,7 @@ UNUSED static void Vault_SpawnDriftingEffect(s32 flags) {
     s32 directionBias;
 
     driftMultiplier = (u32)Import_RandomNext() % 10 + 5;
-    /* FAKEMATCH(temporary): x reused to hold 1; as the literal 1, 116 of 141
+    /* FAKEMATCH(temporary): x takes the 1; as the literal 1, 116 of 141
      * instructions differ in tbs-en. */
     x = 1;
     flags &= x;

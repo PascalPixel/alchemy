@@ -1144,9 +1144,7 @@ s32 Credits_DrawLine(const u8 *text, s32 firstTile, s32 alignment) {
   }
 
   // Measure the line in the credits font, then choose where it starts.
-  /* FAKEMATCH(temporary): sourceBytes, the measuring loop's cursor, is reused
-   * as the glyph rows' cursor below; as a cursor of its own, 163 of 277
-   * instructions differ in tbs-en. */
+  // sourceBytes walks the text here, and each glyph's rows below.
   sourceBytes = text;
   textAdvance = 0;
   while ((sourceValue = *sourceBytes++) != 0) {

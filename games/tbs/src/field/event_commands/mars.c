@@ -95,7 +95,7 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
 
   // The leader stops pulsing.
   wait(10);
-  /* FAKEMATCH(temporary): effect reused to hold NULL; as leader->update =
+  /* FAKEMATCH(temporary): effect takes the NULL stored; as leader->update =
    * NULL, 9 of 179 instructions differ in tbs-en. */
   effect = NULL;
   leader->update = (void *)effect;

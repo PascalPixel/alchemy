@@ -158,8 +158,8 @@ void Debug_SelectShortcuts(void) {
       VramCache_Load(slot, 128, gPointingHandTiles);
       cursor = WindowSprite_Create(slot, OUTPUT_SIZE_16X16, win, 0, 0);
     }
-    /* FAKEMATCH(temporary): slot reused for the title message; as the
-     * message at the call, 23 of 362 instructions differ in tbs-en. */
+    /* FAKEMATCH(temporary): slot takes the title's message; as the message
+     * at the call, 23 of 362 instructions differ in tbs-en. */
     slot = MsgPanelHpMaxLabel;
     Text_DrawMessageAsTiles(slot, title, 16, 0);
     // Redraw both shortcut rows and the selected ability's detail side.

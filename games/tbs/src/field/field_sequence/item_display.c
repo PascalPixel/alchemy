@@ -423,8 +423,7 @@ void FieldEffect_SpawnRevealMarkers(void) {
           case FIND_MIMIC:
             if (entry->condition != -1 &&
                 GameFlag_GetFar(entry->condition) == 0) {
-              /* FAKEMATCH(temporary): actor reused for the spawned marker; as a
-               * local of its own, 9 of 163 instructions differ in tbs-en. */
+              // actor now holds the spawned marker.
               actor = Actor_CreateFar(SPRITE_BLANK, (column << 20) + px(8), 0,
                                       (row << 20) + px(8));
               if (actor != 0) {

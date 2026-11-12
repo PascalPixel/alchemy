@@ -259,8 +259,8 @@ void FieldMotes_Start(void) {
   size = sizeof(struct WeatherWork);
   work = HeapSlot_AllocEwram(HEAP_SLOT_WEATHER, size);
   mote = work->particles;
-  /* FAKEMATCH(temporary): size reused for the fill's zero; as sizeof in the
-   * allocation and 0 in the fill, 4 of 83 instructions differ in tbs-en. */
+  /* FAKEMATCH(temporary): size takes the fill's 0; as 0 in the fill, 4 of 83
+   * instructions differ in tbs-en. */
   size = 0;
   Dma_Fill32(size, work, sizeof(*work));
   tiles = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 1024);
@@ -270,9 +270,10 @@ void FieldMotes_Start(void) {
   HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
   for (i = 0; i < WEATHER_PARTICLE_COUNT; i++) {
     s32 *pos = ((struct MapGridScrollWork *)gMapGridWork[0])->origin;
-    /* FAKEMATCH(temporary): one integer cursor for the attribute stores and
-     * the height's x keeps the stores in r1; as an s32 * cursor and an x of
-     * its own, 16 of 83 instructions differ in tbs-en. */
+    /* FAKEMATCH(temporary): the attribute stores' cursor kept as an integer,
+     * so that it can then take the height's x, keeps the stores in r1; as an
+     * s32 * cursor and an x of its own, 16 of 83 instructions differ in
+     * tbs-en. */
     u32 p = (u32)mote;
     s32 z;
     *(s32 *)p = 0;
@@ -412,8 +413,8 @@ void FieldEffect_InitializeSparkles(void) {
   u8 *tiles;
   u32 i;
 
-  /* FAKEMATCH(temporary): size reused for the fill's zero; as sizeof in the
-   * allocation and 0 in the fill, 4 of 74 instructions differ in tbs-en. */
+  /* FAKEMATCH(temporary): size takes the fill's 0; as 0 in the fill, 4 of 74
+   * instructions differ in tbs-en. */
   size = 0;
   Dma_Fill32(size, work, sizeof(*work));
   tiles = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 1024);
@@ -425,9 +426,9 @@ void FieldEffect_InitializeSparkles(void) {
   do {
     struct MapGridScrollWork *view = gMapGridWork[0];
     s32 *leader;
-    /* FAKEMATCH(temporary): one integer cursor for the stores and the x keeps
-     * the leader in r2; as a u32 * cursor and an x of its own, 14 of 74
-     * instructions differ in tbs-en. */
+    /* FAKEMATCH(temporary): the stores' cursor kept as an integer, so that it
+     * can then take the x, keeps the leader in r2; as a u32 * cursor and an x
+     * of its own, 14 of 74 instructions differ in tbs-en. */
     u32 attr;
     s32 z;
 

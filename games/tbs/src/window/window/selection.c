@@ -134,9 +134,7 @@ void SelectionMenu_BuildEntries(u32 unused) {
   // Icons are 16 pixels apart: the row is centred on x 100, at y 140.
   screen->baseX = 100 - rowPosition * 8;
   screen->baseY = 140;
-  /* FAKEMATCH(temporary): rowPosition, the row's icon count, reused as the
-   * pixel offset; as a separate offset, 34 of 129 instructions differ in
-   * tbs-en. */
+  // rowPosition, the row's icon count, now steps 16 pixels an icon.
   for (previous = screen->head, rowPosition = 0; previous != 0;
        previous = previous->next) {
     s32 x = screen->baseX + rowPosition;

@@ -430,7 +430,7 @@ UNUSED static void Actor_MoveAndRedraw(struct PushedActorProbe probe) {
   PushedActor_FillGridAttributeRectangle(0, tilePosition.x, tilePosition.z,
                                          horizontalExtent, verticalExtent,
                                          CELL_BEHAVIOR_NORMAL);
-  Actor_SetSpeedParameters(ACTOR_PARTY_LEADER, px(1) / 2, px(1) / 10);
+  Actor_SetSpeedAndAcceleration(ACTOR_PARTY_LEADER, 0.5, 0.1);
   Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_PUSH);
   Event_Wait(15);
 

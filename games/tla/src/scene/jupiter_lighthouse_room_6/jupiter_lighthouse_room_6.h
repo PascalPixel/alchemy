@@ -64,9 +64,6 @@ struct JupiterLighthouseRoom6EventWork {
 void Func_02001b44(void);
 void Func_02001b4c(void);
 void Func_02001ab4(struct JupiterLighthouseRoom6Object *object, s32 mode);
-void Actor_SetSingleChildFlags(struct JupiterLighthouseRoom6Object *object,
-                                        u32 value);
-void Animation_SetStateFlags(struct JupiterLighthouseRoom6Object *object, s32 flags);
 void Field_DispatchTypeHandler(s32 type);
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);

@@ -1443,7 +1443,6 @@ SECTIONS
         "*/games/tla/src/scene/jupiter_lighthouse_room_5/s0cb8.o"(.text)
         "*/games/tla/src/scene/jupiter_lighthouse_room_5/s1230.o"(.text)
         "*/games/tla/src/scene/jupiter_lighthouse_room_5/s1650.o"(.text)
-        "*/games/tla/src/scene/jupiter_lighthouse_room_5/s185c.o"(.text)
         "*/games/tla/src/field/field_effect/move.o"(.text)
         "*/games/tla/src/scene/jupiter_lighthouse_room_5/s1c88.o"(.text)
         "*/games/tla/src/scene/jupiter_lighthouse_room_5/s22b8.o"(.text)
@@ -1467,10 +1466,6 @@ SECTIONS
     {
         "*/games/tla/src/scene/jupiter_lighthouse_room_6/entry.o"(.text)
         "*/games/tla/src/scene/jupiter_lighthouse_room_6.o"(.text)
-        "*/games/tla/src/scene/jupiter_lighthouse_room_6/s00b4.o"(.text)
-        "*/games/tla/src/scene/jupiter_lighthouse_room_6/scene_events.o"(.text)
-        "*/games/tla/src/scene/jupiter_lighthouse_room_6/s01e8.o"(.text)
-        "*/games/tla/src/scene/jupiter_lighthouse_room_6/s047c.o"(.text)
         "*/games/tla/src/scene/jupiter_lighthouse_room_6/s0854.o"(.text)
         "*/games/tla/src/field/field_effect/move.o"(.text)
         "*/games/tla/src/scene/jupiter_lighthouse_room_6/s0f5c.o"(.text)
@@ -1571,7 +1566,6 @@ SECTIONS
     {
         "*/games/tla/src/scene/jupiter_lighthouse_room_m/entry.o"(.text)
         "*/games/tla/src/scene/jupiter_lighthouse_room_m.o"(.text)
-        "*/games/tla/src/scene/jupiter_lighthouse_room_m/s1c7c.o"(.text)
         "*/games/tla/src/scene/jupiter_lighthouse_room_m/s3474.o"(.text)
         "*/games/tla/src/field/field_effect/move.o"(.text)
         "*/games/tla/src/scene/jupiter_lighthouse_room_m/s3b7c.o"(.text)

@@ -1412,6 +1412,16 @@ enum LaurelFaceAnimation {
   LAUREL_FACE_LOOK_LEFT = 5
 };
 
+/// SPRITE_CHEST's animations (spr_020.tsv).
+enum ChestAnimation {
+  CHEST_ANIMATION_OPEN_EMPTY = 2, ///< the lid up over an empty chest, held
+  /// The lid lifting on treasure, then open over it as it glints.
+  CHEST_ANIMATION_OPEN_ON_TREASURE = 4,
+  /// The lid lifted on the treasure for six frames, then shut again (the
+  /// sprite's animation 1, closed).
+  CHEST_ANIMATION_PEEK_AND_SHUT = 5
+};
+
 /// SPRITE_TORCH's animations (spr_246.tsv).
 enum TorchAnimation {
   TORCH_ANIMATION_UNLIT = 1, ///< a cold torch, its bowl grey with ash

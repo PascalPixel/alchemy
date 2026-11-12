@@ -158,15 +158,6 @@ enum McCoyPalaceActorId {
   ACTOR_WATER_OF_LIFE_CHEST
 };
 
-/// Animations of the reward chests' sprite, SPRITE_CHEST, from its animation
-/// table (graphics/sprite/spr_020.tsv).
-enum {
-  CHEST_ANIMATION_OPEN_EMPTY = 2, ///< the lid up over an empty chest, held
-  /// The lid lifted on the treasure for six frames, then shut again (the
-  /// sprite's animation 1, closed).
-  CHEST_ANIMATION_PEEK_AND_SHUT = 5
-};
-
 /// The palace's temporary flags.
 /// The scene temp flags last until the party leaves the palace's scene, the
 /// area temp flags until it leaves McCoy's Palace.

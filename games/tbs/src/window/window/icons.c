@@ -248,10 +248,6 @@ void Ability_LoadGlyph(s32 action, s32 withBase, s32 *slot, s32 *tile,
                              reuse);
 }
 
-/// The heap slot Icon_Decode copies its decoding routines into, one at a
-/// time, for the length of one call each.
-#define ROUTINE_BLOCK 49
-
 /// Builds the Psynergy icon glyph, over the icon base when withBase is set,
 /// and loads it into *cacheSlot (a free slot unless reuse is set).
 /// Returns the tile in *tileOut.
@@ -338,18 +334,18 @@ void Icon_ReservedNoOp(void) {}
 /// set. Releases each copied decoder before loading the next routine into the
 /// same slot. glyph->width and height are the icon's size in tiles.
 void Icon_Decode(GlyphTransfer *glyph, s32 outlined) {
-  RamCode_LoadSlot(ROUTINE_BLOCK, Tile_Decompress4bpp,
+  RamCode_LoadSlot(HEAP_SLOT_RAM_CODE_TEMP, Tile_Decompress4bpp,
                    Tile_Decompress4bppCodeSize);
-  ((void (*)(const void *, u8 *))gHeapSlots[ROUTINE_BLOCK])(glyph->encoded,
-                                                            glyph->input);
-  HeapSlot_Release(ROUTINE_BLOCK);
+  ((void (*)(const void *, u8 *))gHeapSlots[HEAP_SLOT_RAM_CODE_TEMP])(
+      glyph->encoded, glyph->input);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE_TEMP);
   if (outlined)
-    RamCode_LoadSlot(ROUTINE_BLOCK, Tile_ExpandMasked,
+    RamCode_LoadSlot(HEAP_SLOT_RAM_CODE_TEMP, Tile_ExpandMasked,
                      Tile_ExpandMaskedCodeSize);
   else
-    RamCode_LoadSlot(ROUTINE_BLOCK, Tile_ExpandOpaque,
+    RamCode_LoadSlot(HEAP_SLOT_RAM_CODE_TEMP, Tile_ExpandOpaque,
                      Tile_ExpandOpaqueCodeSize);
-  ((void (*)(u8 *, u8 *, u32, u32))gHeapSlots[ROUTINE_BLOCK])(
+  ((void (*)(u8 *, u8 *, u32, u32))gHeapSlots[HEAP_SLOT_RAM_CODE_TEMP])(
       glyph->input, glyph->tiles, (u16)glyph->width, (u16)glyph->height);
-  HeapSlot_Release(ROUTINE_BLOCK);
+  HeapSlot_Release(HEAP_SLOT_RAM_CODE_TEMP);
 }

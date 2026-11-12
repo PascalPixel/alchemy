@@ -50,14 +50,15 @@ void Message_DecodeRaw(s32 message, u16 *text, s32 capacity) {
   u16 delta;
 #endif
 
-  // The decoder may already be in slot 50 (TEXT_WORK_BLOCK), as it is while
-  // Message_Decode decodes the names this is called for; then it
-  // is borrowed, and freed only if loaded here.
-  original = ((union HeapState *)&gHeapSlots)->slots[50];
+  // The decoder may already be in TEXT_WORK_BLOCK, as it is while
+  // Message_Decode decodes the names this is called for; then it is
+  // borrowed, and freed only if loaded here.
+  original = ((union HeapState *)&gHeapSlots)->slots[TEXT_WORK_BLOCK];
   if (original == NULL)
-    RamCode_LoadSlot(50, Text_DecodeSymbol, Text_DecodeSymbolCodeSize);
+    RamCode_LoadSlot(TEXT_WORK_BLOCK, Text_DecodeSymbol,
+                     Text_DecodeSymbolCodeSize);
   decode = (s32 (*)(struct MessageReader *))((union HeapState *)&gHeapSlots)
-               ->slots[50];
+               ->slots[TEXT_WORK_BLOCK];
   Message_Find(&reader, message);
 #if !defined(DECODE_EUROPEAN)
   delta = 0xffff;
@@ -128,7 +129,7 @@ s32 *Memory_ClearWordIfSet(s32 *p) {
 /// closing. Reached from the debug message viewer (DebugBattle_ViewMessages,
 /// battle/battle/debug.c).
 void Window_CloseAll(s32 unused) {
-  struct WindowWork *windowWork;
+  struct WindowWork *work;
   struct Message *message;
   struct Window *win;
   u32 done;
@@ -137,9 +138,9 @@ void Window_CloseAll(s32 unused) {
   s32 i;
   u16 flag;
 
-  windowWork = WINDOW_WORK;
-  message = windowWork->messages;
-  win = windowWork->windows;
+  work = WINDOW_WORK;
+  message = work->messages;
+  win = work->windows;
   i = 0;
   do {
     window = message->window;
@@ -153,7 +154,7 @@ void Window_CloseAll(s32 unused) {
   // wait a frame.
   for (;;) {
     done = 1;
-    message = windowWork->messages;
+    message = work->messages;
     i = 0;
     do {
       pollWindow = message->window;

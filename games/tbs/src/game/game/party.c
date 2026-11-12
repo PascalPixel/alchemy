@@ -38,9 +38,9 @@ s32 BattleUnit_Set(s32 unitId, s32 enemyId, s32 suffix) {
   s32 count;
 
   index = enemyId - ENEMY_ID_FIRST;
-  if (unitId <= 127)
+  if (unitId < FIRST_ENEMY_UNIT)
     return 0;
-  if (unitId > 134)
+  if (unitId > FIRST_ENEMY_UNIT + 6)
     return 0;
   if (index > 242)
     return 0;

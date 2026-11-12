@@ -445,13 +445,13 @@ s32 TolbiSpring_Initialize(void) {
         }
         Event_Wait(20);
         Event_SetMessageId(MsgTolbiYaWonNumber);
-        MessageArgument_Push(coinChange, 5);
+        MessageArgument_Push(coinChange, MESSAGE_ARGUMENT_NUMBER);
         // "Ya won ... coin! Talk about lucky!"
         Event_ShowMessage(ACTOR_TOLBI_SPRING_DICE_ATTENDANT, 0);
         Sound_WaitForJingle();
       } else if (coinChange < 0) {
         Event_SetMessageId(MsgTolbiYaLostNumber);
-        MessageArgument_Push(-coinChange, 5);
+        MessageArgument_Push(-coinChange, MESSAGE_ARGUMENT_NUMBER);
         // "Ya lost ... coin. Better luck next time."
         Event_ShowMessage(ACTOR_TOLBI_SPRING_DICE_ATTENDANT, 0);
       }
@@ -479,7 +479,7 @@ s32 TolbiSpring_Initialize(void) {
               Event_SetMessageId(MsgTolbiWonItemGo2);
             }
             item = TolbiSpring_SelectLuckyWheelsPrize(wonPrizes[prizeIndex]);
-            MessageArgument_Push(item, 2);
+            MessageArgument_Push(item, MESSAGE_ARGUMENT_ITEM);
             Event_ShowMessage(ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
             Item_ShowFound(item, 3);
             Party_GiveItem(item, 0);
@@ -602,7 +602,7 @@ static void TolbiSpring_OfferLuckyWheels(s32 spoken) {
       return;
     }
     Event_SetMessageId(message + 2);
-    MessageArgument_Push(tickets, 5);
+    MessageArgument_Push(tickets, MESSAGE_ARGUMENT_NUMBER);
     // "You have ... game ticket, Isaac. Would you like to use these..."
     Event_OpenMessage(ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
     if (Event_AskYesNoWithActorAnimation(0, 0) != 0) {
@@ -671,7 +671,7 @@ static void TolbiSpring_OfferLuckyDice(void) {
   *(u32 *)gSceneLocalState = coins;
   Actor_Snapshot();
   Event_SetMessageId(MsgTolbiBuddyWannaTry);
-  MessageArgument_Push(cost, 5);
+  MessageArgument_Push(cost, MESSAGE_ARGUMENT_NUMBER);
   // "Hey, buddy, wanna try yer luck at the dice? It's ... coin to..."
   Event_OpenMessage(ACTOR_TOLBI_SPRING_DICE_ATTENDANT, 0);
   if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
@@ -876,13 +876,14 @@ prompt:
 #endif
         Sound_Play(MUS_JINGLE_SMALL);
 #ifdef UBFIX
-        MessageArgument_Push(gTolbiSpring_CoinPrizes[result], 5);
+        MessageArgument_Push(gTolbiSpring_CoinPrizes[result],
+                             MESSAGE_ARGUMENT_NUMBER);
 #else
         // UB: retain the same native one-element view for this second read.
         MessageArgument_Push(
             ((struct { u16 coins[1]; } *)gTolbiSpring_CoinPrizes)
                 ->coins[result],
-            5);
+            MESSAGE_ARGUMENT_NUMBER);
 #endif
         Event_SetMessageId(MsgTolbiWonNumberCoin);
         // "You won ... coin!"

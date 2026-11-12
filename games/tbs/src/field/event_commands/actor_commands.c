@@ -928,8 +928,8 @@ s32 Actor_GetSpriteById(s32 actorId) {
 
   actorId &= 0x0fff;
   // BUG: the -1 sentinel becomes index 4095, beyond the field work. All
-  // indices from 66 to 4095 lie outside the actor table.
-  if (actorId >= 66)
+  // indices from ACTOR_ID_COUNT to 4095 lie outside the actor table.
+  if (actorId >= ACTOR_ID_COUNT)
     return -1;
   entry = state->actors[actorId];
 #else
@@ -943,16 +943,16 @@ s32 Actor_GetSpriteById(s32 actorId) {
   return sprite;
 }
 
-/// Returns the first of the scene's actors (8 to 65) showing sprite, or
-/// -1. Reached only through an unnamed veneer in the field sequence bank's
-/// far-call table; nothing in ☀️ names it.
+/// Returns the first of the scene's actors (ACTOR_FIRST_PLACED to
+/// ACTOR_LAST_ID) showing sprite, or -1. Reached only through an unnamed veneer
+/// in the field sequence bank's far-call table; nothing in the game names it.
 s32 Actor_FindBySprite(s32 sprite) {
   struct FieldWork *state = gFieldWork;
   s32 result = -1;
   s32 index;
   struct Actor *actor;
 
-  for (index = 8; index <= 65; index++) {
+  for (index = ACTOR_FIRST_PLACED; index <= ACTOR_LAST_ID; index++) {
     actor = state->actors[index];
     if (actor != 0 && actor->spriteStorageKind == ACTOR_SPRITE_ONE &&
         actor->sprite->entries[0]->animationId == sprite) {

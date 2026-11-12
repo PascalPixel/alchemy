@@ -586,7 +586,7 @@ static void KalayTolbiDocks_TalkToTicketSeller(void) {
       Event_ShowMessageThenWait(ACTOR_SELLING_TICKETS, 0, 10);
     } else {
       gFieldWork->message++;
-      MessageArgument_Push(ticketPrice, 5);
+      MessageArgument_Push(ticketPrice, MESSAGE_ARGUMENT_NUMBER);
       // "Let's see...there are four of you, so it will cost ......"
       Event_OpenMessage(ACTOR_SELLING_TICKETS, 0);
       // Keep the balance visible while the player confirms the purchase.

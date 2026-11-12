@@ -48,11 +48,11 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
   wait(10);
   // Sprite priority 0, over every background, until the end. With
   // ACTOR_FACES_MOTION off it keeps facing the leader as it hops away, and
-  // with motionFlags bit 1 alone it falls without following the ground.
+  // with ACTOR_FALLS alone it falls without following the ground.
   djinni->sprite->image.priority = 0;
   djinni->facing = back;
-  Actor_GetById(djinniId)->steeringFlags &= ~1;
-  djinni->motionFlags = 2;
+  Actor_GetById(djinniId)->steeringFlags &= ~ACTOR_FACES_MOTION;
+  djinni->motionFlags = ACTOR_FALLS;
 
   // Hop 16 pixels away from the leader, three times.
   dist = 16 << 16;
@@ -94,7 +94,7 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
       copy->scaleX = Q16_ONE * 15 / 16;
       copy->motionFlags = 0;
       copy->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
-      copy->steeringFlags |= 1;
+      copy->steeringFlags |= ACTOR_FACES_MOTION;
       copy->update = Actor_MoveHalfwayTowardTarget;
       copy->facing = djinni->facing;
       copy->sprite->image.priority = 0;
@@ -200,7 +200,7 @@ void Djinn_RestoreActorAfterBattle(void) {
     // test too.
     if (event - DJINNI_BATTLE_EVENT_FIRST <= 80 &&
         gMainRoutineWork.sequenceResult > 0) {
-      for (id = 8; id <= 65; id++) {
+      for (id = ACTOR_FIRST_PLACED; id <= ACTOR_LAST_ID; id++) {
         struct ActorPlacement *desc = Scene_FindActorPlacement(id);
         struct Actor *object;
 
@@ -280,7 +280,8 @@ void Djinn_ResolvePending(s32 shown) {
         s32 index = djinni % 20;
         s32 actorId;
 
-        for (actorId = 8; actorId <= 65; actorId++) {
+        for (actorId = ACTOR_FIRST_PLACED; actorId <= ACTOR_LAST_ID;
+             actorId++) {
           struct ActorPlacement *found = Scene_FindActorPlacement(actorId);
           if (found != 0 && found->condition - FLAG_DJINN_FIRST ==
                                 flag - DJINNI_BATTLE_EVENT_FIRST) {

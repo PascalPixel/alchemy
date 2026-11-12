@@ -454,7 +454,7 @@ static void Tolbi_EnterDoor(void) {
   s32 door;
 
   Event_Start();
-  for (actorId = ACTOR_FIRST_PLACED; actorId <= 65; actorId++) {
+  for (actorId = ACTOR_FIRST_PLACED; actorId <= ACTOR_LAST_ID; actorId++) {
     struct Actor *actor = Actor_Get(actorId);
     if (actor != NULL) {
       actor->motionFlags = 0;

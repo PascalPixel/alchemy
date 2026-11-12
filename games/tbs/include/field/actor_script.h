@@ -27,10 +27,10 @@
 /// Move toward the actor's position plus an offset that is never filled in;
 /// the operands are skipped unread.
 #define SC_MOVE_LOCAL(a, b) 7, (a), (b)
-// Wander to random points base to base + range away, within limit of home;
-// SC_WANDER_HOME heads home when outside it.
-#define SC_WANDER(a, b, c) 8, (a), (b), (c)
-#define SC_WANDER_HOME(a, b, c) 9, (a), (b), (c)
+// Wander to random points base to base + range pixels away, within limit
+// pixels of home; SC_WANDER_HOME heads home when outside it.
+#define SC_WANDER(base, range, limit) 8, px(base), px(range), px(limit)
+#define SC_WANDER_HOME(base, range, limit) 9, px(base), px(range), px(limit)
 #define SC_APPROACH_WATCHED 10 ///< Follow the watched actor to 16 pixels.
 #define SC_CAMERA 11           ///< Follow the leader.
 /// Jump to label to n - 1 times, so what lies between runs n times; loops

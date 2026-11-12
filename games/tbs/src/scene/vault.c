@@ -1205,7 +1205,7 @@ s32 gVault_WomanWantingTheRoofFixedRoute[] = {
     SC_SET(SW_RADIUS, PIXELS(40)),
     SC_LABEL(1),
     SC_ANIMATION(2),
-    SC_WANDER_HOME(PIXELS(8), PIXELS(16), PIXELS(24)),
+    SC_WANDER_HOME(8, 16, 24),
     SC_SYNC,
     SC_ANIMATION(0),
     SC_WAIT(40),

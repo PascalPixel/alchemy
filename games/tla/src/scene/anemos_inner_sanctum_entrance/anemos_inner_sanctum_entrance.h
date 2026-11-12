@@ -22,7 +22,7 @@ void wait(s32 frames);
 void Event_Wait(s32 frames);
 struct Actor *Actor_GetById(s32 id);
 void Actor_SetPartAttribute(struct Actor *object, s32 value);
-void Actor_StartRepeatedMotion(s32 id, s32 variant);
+void Actor_StartRepeatedMotion(u32 objectId, s32 variant);
 void Actor_SetMovementTypeById(s32 id, const void *script);
 void Actor_SetMovementTypeAndWaitById(s32 id, const void *script);
 void Func_02000494(void);

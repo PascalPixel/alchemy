@@ -1,4 +1,164 @@
 #include "types.h"
+#include "ram_buffer.h"
+#include "actor.h"
+#include "main_routine_work.h"
+#include "field_effect.h"
+#include "event_work.h"
+#include "event_inline.h"
+
+void Func_02003398(void);
+void Func_02003308(void);
+s32 Math_Cosine(s32 angle);
+u32 Random16Far(void);
+void Effect_AdvanceMotion(union FieldObject *object);
+void Func_02002780(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                   s32 velocityZ, u32 flags, struct EffectOptions *options);
+void Func_020033a0(void);
+
+void Func_02002f48(void) {
+  struct Actor *actor = Actor_Get(gMainRoutineWork.currentOwner);
+  u32 i;
+  struct EffectOptions options;
+  s32 spawn = 1;
+
+  Func_02003398();
+  FieldEvent_ResolvePendingActions(0);
+  /* FAKEMATCH(wrapper): the call forwarded through Call4, which builds each -1
+   * in its own register; as a direct call, 8 of 169 instructions differ in
+   * tla-en. */
+  FieldCamera_MoveTo(-1, -1, -1, 0);
+  Func_02003308();
+  System_Wait(1);
+  actor->y = 0x820000;
+  actor->gravity = 0x8000;
+  actor->bounce = 0;
+  actor->motionFlags = 0;
+  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
+  Event_StartScreenTransition();
+  Event_WaitTransitionFrames();
+  Event_PlaySound(204);
+  actor->motionFlags = 3;
+  FieldEvent_Wait(24);
+  options.palette = 7;
+  options.update = Effect_AdvanceMotion;
+  options.startScaleX = 0xa3d7;
+  options.startScaleY = 0xa3d7;
+  i = 0;
+  // A goto loop carries no loop notes: as a do-while loop, loop.c moves the
+  // velocity array's address out of the loop and 4 of 169 instructions differ
+  // in tla-en (10 as a for or while loop).
+loop:
+  {
+    s32 angle;
+    s32 velocity[3];
+    s32 cosine;
+
+    angle = i << 12;
+    cosine = Math_Cosine(angle);
+    /* FAKEMATCH(dead): spawn is always 1, a constant GCSE only folds after its
+     * partial redundancy pass, so that pass leaves the velocity array's
+     * address in the loop, built after the cosine call as the native has it;
+     * as the plain body, 4 of 169 instructions differ in tla-en. */
+    if (spawn) {
+      velocity[0] = cosine;
+      velocity[1] = 0;
+      velocity[2] = Math_Sin(angle);
+      velocity[0] += velocity[0] >> 1;
+      velocity[0] += (Random16Far() * 0xc000 >> 16) - 0x6000;
+      velocity[2] += (Random16Far() * 0x6000 >> 16) - 0x3000;
+      Func_02002780(actor->x, actor->y, actor->z, velocity[0], velocity[1],
+                    velocity[2], 0x1090001, &options);
+    }
+    i++;
+  }
+  if (i <= 16)
+    goto loop;
+  Event_PlaySound(188);
+  Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x101);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, 49);
+  /* FAKEMATCH(wrapper): the call forwarded through Call3, which builds each
+   * constant in its own register; as a direct call, 26 of 169 instructions
+   * differ in tla-en. */
+  MapGrid_SetShake(0x50000, 0x50000, 0x10000);
+  /* FAKEMATCH(wrapper): the call forwarded through Call3, which builds each -1
+   * in its own register; as a direct call, 7 of 169 instructions differ in
+   * tla-en. */
+  MapGrid_SetShake(-1, -1, 0xe666);
+  MapGrid_WaitForShakeToSettle();
+  Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x100);
+  actor->gravity = 0x10000;
+  actor->bounce = 0x4000;
+  FieldEvent_Wait(10);
+  Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);
+  Func_020033a0();
+}
+
+#include "cell_target.h"
+
+extern struct CellTarget Data_02004458;
+
+void GameFlag_SetByte(s32 flag, s32 value);
+void Func_02002d40(struct CellTarget *work, struct CellTargetEntry *entry);
+void Func_02002db0(struct CellTarget *work, struct CellTargetEntry *entry);
+
+s32 Func_020030e0(void) {
+  struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
+  s32 x = object->x >> 20;
+  s32 z = object->z >> 20;
+  struct CellTarget *work = &Data_02004458;
+  struct CellTargetEntry *entry = work->entries;
+  s32 i;
+
+  for (i = 0; i < work->count; i++, entry++) {
+    if (entry->x == x && entry->z == z) {
+      if (Event_GetFlag(entry->flag) == 0) {
+        Func_02002d40(work, entry);
+        Event_SetFlag(entry->flag);
+        work->current = i;
+        break;
+      }
+      if (i == work->current)
+        break;
+      work->current = i;
+      Func_02002db0(work, entry);
+      GameFlag_SetByte(work->flagByte, x);
+      GameFlag_SetByte(work->flagByte + 8, z);
+      return 1;
+    }
+  }
+  return 0;
+}
+
+struct JupiterLighthouseRoom8EventWork {
+  u8 unk000[0x1ac];
+  s32 screenEffect;
+  u8 unk1b0[0x1c];
+  struct Actor *marker;
+};
+
+void Func_02003190(s32 x, s32 z, s32 effect) {
+  struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
+  struct JupiterLighthouseRoom8EventWork *work = Ram_HeapSlots->eventWork;
+  s32 dx = FieldGameFlag_GetByte(Data_02004458.flagByte);
+  s32 dz = FieldGameFlag_GetByte(Data_02004458.flagByte + 8);
+
+  if (dx != 0 || dz != 0) {
+    struct Actor *marker;
+
+    GameFlag_SetByte(Data_02004458.flagByte, 0);
+    GameFlag_SetByte(Data_02004458.flagByte + 8, 0);
+    leader->x = ((dx + x) << 20) + 0x80000;
+    leader->z = ((dz + z) << 20) + 0x80000;
+    marker = work->marker;
+    marker->x = leader->x;
+    marker->z = leader->z;
+    Func_02003308();
+    Func_02002f48();
+    ((struct JupiterLighthouseRoom8EventWork *)Ram_HeapSlots->eventWork)
+        ->screenEffect = effect;
+  }
+}
+
 #include "scene_tables.h"
 
 void Func_02000654(void);

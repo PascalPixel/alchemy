@@ -1,5 +1,5 @@
 /// @file
-/// Overlay 0x6b7's scene: its code up to level/finish.c, then its tables, in ROM order.
+/// Overlay 0x6b7's scene: its code, then its tables, in ROM order.
 
 #include "battle.h"
 #include "field.h"
@@ -95,8 +95,6 @@ void Func_02000160(s32 owner, s32 delta) {
   Unit_Calculate(owner);
 }
 
-void Func_02000160(s32 owner, s32 delta);
-
 void Func_0200017c(s32 delta) {
   u16 owners[16];
   s32 count;
@@ -114,10 +112,8 @@ void Text_DrawMessage(s32 msg, void *window, s32 x, s32 y);
 void WindowSprite_RedrawSavedRect(void *window);
 void Text_DrawStringAtOffset(const u8 *text, void *window, s32 x, s32 y);
 void Text_DrawStringInWindow(const u8 *text, void *window, s32 x, s32 y);
-void Text_DrawNumberInWindow(s32 value, s32 digits, void *window, s32 x,
-                               s32 y);
+void Text_DrawNumberInWindow(s32 value, s32 digits, void *window, s32 x, s32 y);
 void Window_Close(void *window, s32 mode);
-void Func_0200017c(s32 delta);
 
 /// The pressed keys under a mask, for the last test of a group: the next
 /// test loads gInput's address again.
@@ -189,7 +185,6 @@ extern u32 gData_02000748[];
 extern u32 gData_02000754[];
 extern u32 gData_0200076c[];
 
-void WindowSprite_ClearList(void *window);
 void Text_DrawNumberAtOffset(s32 value, s32 format, void *window, s32 x, s32 y);
 void Text_DrawCharacterAtOffset(s32 character, void *window, s32 x, s32 y);
 s32 PartyInventory_HasSpace(void);
@@ -316,8 +311,6 @@ void Func_020002cc(void) {
   Window_Close(details, 1);
 }
 
-void Func_020001a8(void);
-void Func_020002cc(void);
 void Func_020005d8(void);
 void Func_02000610(void);
 void Func_02000624(void);
@@ -589,3 +582,52 @@ s32 gData_02000f10[] = {
     0,
     0,
 };
+
+void Func_02000570(s32 countdown) {
+  u8 *event = Ram_HeapSlots->eventWork;
+
+  *(s32 *)(event + 428) = 513;
+  *(s32 *)(event + 436) = 24;
+  Import_EventSetExitRequest(countdown);
+}
+
+s32 Func_02000590(void) {
+  u8 *event = Ram_HeapSlots->eventWork;
+
+  *(s32 *)(event + 428) = 516;
+  *(s32 *)(event + 436) = 24;
+  if (gMainRoutineWork.entrance <= 89) {
+    Actor_GetById(11)->scaleY = 0x1b333;
+    Actor_GetById(11)->scaleX = 0x1b333;
+  }
+  return 0;
+}
+
+void Func_020005d8(void) {
+  s32 x;
+  s32 z;
+  s32 id;
+
+  Func_020006e4();
+  Event_ResolvePendingActions(0);
+  Actor_SetModeById(10, 2);
+  Actor_SetModeById(11, 4);
+  Actor_WaitForAnimationChange(10);
+  x = 156;
+  z = 208;
+  id = 11;
+  /* FAKEMATCH(barrier): x, z and the actor held at an empty asm, so the actor
+   * is set between the halves of the position, as the ROM has it; as no asm,
+   * 2 of 20 instructions differ in tla-en. */
+  asm("" : "+l"(x), "+l"(z), "+l"(id));
+  Actor_SetHorizontalPositionWithTerrain(id, x << 17, z << 17);
+  Func_020006ec();
+}
+
+void Func_02000610(void) { *((u8 *)Ram_HeapSlots->effectWork + 53) = 1; }
+
+s32 Scene_PrepareMap(void) { return 0; }
+
+void Func_02000624(void) { Func_020006a4(); }
+
+void Func_0200062c(void) { Func_020006ac(); }

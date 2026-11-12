@@ -1,5 +1,5 @@
 /// @file
-/// Overlay 0x6b9's scene: its code up to psynergy_test_2/s01e0.c, then its tables, in ROM order.
+/// Overlay 0x6b9's scene: its code, then its tables, in ROM order.
 
 #include "battle.h"
 #include "field.h"
@@ -152,12 +152,6 @@ next:
     goto next;
 }
 
-void Func_02000054(void);
-void Func_0200007c(void);
-void Func_020000b8(void);
-
-void Func_02000078(void);
-
 struct SceneEntrance gSceneEntrances[] = {
     {0, CONDITION_ALWAYS, 408, 0, 88, FACING_SOUTH, 0, 280, 0, 780, 464, 0},
     {1, CONDITION_ALWAYS, 408, 0, 408, FACING_NORTH, 0, 280, 0, 780, 464, 0},
@@ -190,3 +184,239 @@ struct Trigger gSceneEvents[] = {
     {0x50009705, 50, CONDITION_ALWAYS, EVENT(Func_02000088)},
     {TRIGGERS_END},
 };
+
+extern char ResourceId_FallingRock;
+
+struct Spark {
+  s32 position[3];
+  s32 velocity[3];
+  s32 timer;
+};
+
+struct SparkSprite {
+  u8 unk00[5];
+  u8 unk05_0 : 5;
+  u8 unk05_5 : 1;
+  u8 unk05_6 : 2;
+  u8 unk06[2];
+  u32 tile : 10;
+  u32 unk08_10 : 2;
+  u32 unk08_12 : 4;
+  u8 unk0a[0x14];
+  u16 unk1e;
+  u8 unk20[8];
+};
+
+struct SparkWork {
+  u8 unk0000[0x500];
+  struct Spark sparks[64];
+  struct SparkSprite sprites[64];
+  s16 next;
+  u16 tileBase;
+  s16 resource;
+};
+
+s32 Random16Far(void);
+
+void Func_020001e0(s32 x, s32 y, s32 z, s32 count) {
+  struct SparkWork *work = Ram_HeapSlots->menuRuntime;
+  struct Spark *spark;
+  s32 angle;
+  s32 i;
+
+  if (count > 0) {
+    i = count;
+  loop:
+    angle = Random16Far();
+    spark = &work->sparks[work->next];
+    spark->timer = 0;
+    spark->position[0] = x;
+    spark->position[1] = y;
+    spark->position[2] = z;
+    FieldVector_AddPolarOffset((Random16Far() << 3) + 0x80000, angle,
+                               spark->position);
+    spark->velocity[0] = 0;
+    spark->velocity[1] = 0x50000;
+    spark->velocity[2] = 0;
+    FieldVector_AddPolarOffset((Random16Far() << 1) + 0x20000, angle,
+                               spark->velocity);
+    work->next++;
+    work->next &= 63;
+    i--;
+    if (i != 0)
+      goto loop;
+  }
+}
+
+#include "system/task.h"
+
+struct Rock {
+  u8 unk00[24];
+  s32 timer;
+};
+
+struct RockSprite {
+  u8 unk00[5];
+  u8 unk05_0 : 5;
+  u8 unk05_5 : 1;
+  u8 unk05_6 : 2;
+  u8 unk06[3];
+  u8 unk09_0 : 2;
+  u8 priority : 2;
+  u8 palette : 4;
+  u8 unk0a[20];
+  u16 unk1e;
+  u8 unk20[8];
+};
+
+struct RockWork {
+  u8 tiles[0x500];
+  struct Rock rocks[64];
+  struct RockSprite sprites[64];
+  s16 next;
+  u16 tileBase;
+  u16 resource;
+};
+
+struct RockWork *HeapSlot_AllocFar(s32 slot, s32 size);
+void *Resource_GetTableEntry(s32 id);
+void Func_02000560(void *entry, void *destination);
+s32 Resource_FindFreeEntry(void);
+void Func_020005f0(struct RockSprite *sprite, s32 width, s32 height,
+                   u32 attributes, s32 tile);
+
+static __inline__ void StartTask(void (*func)(void), s32 priority) {
+  /* FAKEMATCH(wrapper): Task_Add forwarded inline; as a direct call, 6 of 83
+   * instructions differ in tla-en. */
+  Task_Add(func, priority);
+}
+
+void Func_0200029c(void) {
+  struct RockWork *work = HeapSlot_AllocFar(220, sizeof(struct RockWork));
+  s32 entry;
+  s32 tile;
+  s32 i;
+  struct Rock *rock;
+  struct RockSprite *sprite;
+
+  Func_02000560(Resource_GetTableEntry((s32)&ResourceId_FallingRock), work);
+  entry = Resource_FindFreeEntry();
+  tile = Vram_Load(entry, 0x500, work);
+  work->tileBase = tile;
+  work->resource = entry;
+  rock = work->rocks;
+  sprite = work->sprites;
+  for (i = 63; i >= 0; i--, sprite++, rock++) {
+    Func_020005f0(sprite, 8, 8, 0x40000000, tile);
+    sprite->unk05_5 = 1;
+    sprite->palette = 0;
+    sprite->priority = 0;
+    sprite->unk1e = 240;
+    rock->timer = -1;
+  }
+  {
+    s32 zero = 0;
+
+    work->next = zero;
+  }
+  StartTask(Func_0200015c, 0x480);
+}
+
+#include "fixed_math.h"
+
+void Resource_ResetEntry(s32 entry);
+
+void Func_02000358(void) {
+  struct SparkWork *work = Ram_HeapSlots->menuRuntime;
+
+  FieldTask_Remove(Func_0200015c);
+  Resource_ResetEntry(work->resource);
+  HeapSlot_Release(220);
+}
+
+void Func_02000384(s32 mode, s32 a, s32 b, s32 c, s32 d, s32 e, s32 f) {
+  if (mode == 1)
+    MapGrid_CopyCells(a, b, c, d, e, f);
+}
+
+void Func_020003a8(s32 mode, s32 id, s32 x, s32 z) {
+  struct Actor *object;
+  s32 scale;
+
+  object = Actor_Get(id);
+  if (mode == 1) {
+    Actor_SetPosition(id, x << 16, z << 16);
+    object->scaleX = 0;
+    object->scaleY = 0;
+  }
+  if (mode == 2) {
+    while (object->scaleX < Q16_ONE) {
+      System_Wait(1);
+      scale = object->scaleX;
+      scale += 0x51e;
+      object->scaleX = scale;
+      object->scaleY = scale;
+    }
+    object->scaleX = Q16_ONE;
+    object->scaleY = Q16_ONE;
+  }
+}
+
+void Func_02000418(s32 mode, s32 id, s32 x, s32 z) {
+  struct Actor *object;
+
+  object = Actor_Get(id);
+  if (mode == 2) {
+    Actor_SetPosition(id, x << 16, z << 16);
+    object->y = 0x200000;
+    object->motionFlags = 3;
+    object->gravity = 0x170a;
+    System_Wait(50);
+  }
+}
+
+/// Mode 1 places object kind 354 at (x, z) in pixels; mode 2 grows object
+/// kind 252 there from 0x6666 to full size while it turns, then turns it
+/// opposite the leader's facing and passes scene and entrance on to
+/// Func_020005d8.
+void Func_02000468(s32 mode, s32 x, s32 z, s32 scene, s32 entrance) {
+  struct Actor *object;
+
+  if (mode == 1) {
+    object = FieldActor_Create(354, x << 16, 0, z << 16);
+    if (object != NULL) {
+      Actor_SetSingleChildFlags(object, 0);
+      object->priorityFlags = 2;
+    }
+  }
+  if (mode == 2) {
+    object = (FieldActor_Create(252, x << 16, 0, z << 16));
+    if (object != NULL) {
+      s32 scale;
+
+      Actor_SetSingleChildFlags(object, 0);
+      object->velocityY = 0x60000;
+      object->scaleX = 0x6666;
+      object->scaleY = 0x6666;
+      while (object->scaleX < Q16_ONE) {
+        System_Wait(1);
+        scale = object->scaleX + 0x51e;
+        {
+          /* FAKEMATCH(temporary): the turn is added as a word, so its step
+           * is built inside the loop as in the native; as
+           * object->angle += 0x1000, 22 of 86 instructions differ in
+           * tla-en. */
+          s32 angle = object->angle + 0x1000;
+
+          object->angle = angle;
+        }
+        object->scaleX = scale;
+        object->scaleY = scale;
+      }
+      object->scaleX = Q16_ONE;
+      object->scaleY = Q16_ONE;
+      object->angle = Actor_Get(gMainRoutineWork.currentOwner)->angle + 0x8000;
+      Func_020005d8(scene, entrance);
+    }
+  }
+}

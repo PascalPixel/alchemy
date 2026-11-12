@@ -125,3 +125,14 @@ void Func_02000760(s32 unused, s32 id) {
       Event_SetFlag(0x30d);
   }
 }
+
+#define FIELD_AT(base, type, off)                                              \
+  (((struct {                                                                  \
+     u8 pad[off];                                                              \
+     type v;                                                                   \
+   } *)(base))                                                                 \
+       ->v)
+
+void Func_02000864(void) { Field_RequestDjinnBattle(0x17, 0x4d); }
+
+void Func_02000870(void) { Djinn_JoinParty(9, 0, 0x13); }

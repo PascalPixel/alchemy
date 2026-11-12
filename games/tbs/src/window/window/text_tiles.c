@@ -584,6 +584,8 @@ void Text_SetStyle(u16 value) {
 void Text_DrawMessage(s32 message, struct Window *window, s32 x, s32 y) {
   struct WindowWork *canvas = WINDOW_WORK;
   u16 *counter = &canvas->textBufferEnd;
+  /* FAKEMATCH(temporary): zero holds the 0 both stores write; as 0 in each
+   * store, 12 of 48 instructions differ in tbs-en. */
   s32 zero = 0;
 
   *counter = zero;
@@ -610,6 +612,8 @@ void Text_DrawMessageAsTiles(s32 message, const struct Window *window,
 
   canvas = WINDOW_WORK;
   counter = &canvas->textBufferEnd;
+  /* FAKEMATCH(temporary): zero holds the 0 both stores write; as 0 in each
+   * store, 18 of 65 instructions differ in tbs-en. */
   zero = 0;
   *counter = zero;
   Message_Decode(message, 1);

@@ -1,29 +1,22 @@
+#include "../../field/object/set_sprite_priority.c"
+
+#include "../../field/object/prepare_object.c"
+
 #include "types.h"
-
-void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
-
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-
-#include "call.h"
+#include "actor.h"
 #include "event_inline.h"
-s32 Scene_SetActorSpritePriority();
 
-s32 Func_020000d0(s32 a0, s32 a1, s32 a2, s32 a3) {
-  s32 t0;
+struct Actor *Func_020000d0(s32 a0, s32 a1, s32 a2, s32 a3) {
+  struct Actor *t0;
 
   t0 = FieldActor_Create(a3, a0, a1, a2);
   if (t0 != 0) {
     Scene_SetActorSpritePriority(t0, 1);
-    FIELD_AT((t0 + 0x55), u8, 0) = 0;
-    FIELD_AT(((t0 + 0x55) + 4), u8, 0) = 8;
-    Call2(Actor_SetSingleChildFlags, t0, 0);
+    t0->motionFlags = 0;
+    t0->collisionFlags = 8;
+    Actor_SetSingleChildFlags(t0, 0);
     Actor_SetSpriteColor(t0, 0xf);
-    FIELD_AT((t0 + 0x23), u8, 0) = (0x22 | FIELD_AT((t0 + 0x23), u8, 0));
+    t0->priorityFlags = 0x22 | t0->priorityFlags;
     return t0;
   }
   return 0;

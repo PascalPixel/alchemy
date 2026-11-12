@@ -428,8 +428,6 @@ SECTIONS
     .text 0x2008000 :
     {
         "*/games/tla/src/scene/airs_rock/entry.o"(.text)
-        "*/games/tla/src/field/object/set_sprite_priority.o"(.text)
-        "*/games/tla/src/field/object/prepare_object.o"(.text)
         "*/games/tla/src/scene/airs_rock/s00d0.o"(.text)
         "*/games/tla/src/field/field_effect/move.o"(.text)
         "*/games/tla/src/scene/airs_rock/s015c.o"(.text)
@@ -962,8 +960,6 @@ SECTIONS
     .text 0x2008000 :
     {
         "*/games/tla/src/scene/gaia_rock_inside/entry.o"(.text)
-        "*/games/tla/src/field/object/set_sprite_priority.o"(.text)
-        "*/games/tla/src/field/object/prepare_object.o"(.text)
         "*/games/tla/src/scene/gaia_rock_inside/s00d0.o"(.text)
         "*/games/tla/src/field/field_effect/move.o"(.text)
         "*/games/tla/src/scene/gaia_rock_inside/s015c.o"(.text)
@@ -2007,8 +2003,6 @@ SECTIONS
     .text 0x2008000 :
     {
         "*/games/tla/src/scene/treasure_isle/entry.o"(.text)
-        "*/games/tla/src/field/object/set_sprite_priority.o"(.text)
-        "*/games/tla/src/field/object/prepare_object.o"(.text)
         "*/games/tla/src/scene/treasure_isle/s00d0.o"(.text)
         "*/games/tla/src/field/field_effect/move.o"(.text)
         "*/games/tla/src/scene/treasure_isle/s015c.o"(.text)

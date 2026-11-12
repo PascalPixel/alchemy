@@ -1,3 +1,6 @@
+/// @file
+/// The scene code of overlay 0x695, in ROM order.
+
 #include "battle.h"
 #include "field.h"
 #include "game.h"
@@ -35,7 +38,7 @@ L_02008094:
   return;
 }
 
-#include "local.h"
+#include "shaman_village_cave/local.h"
 
 void Func_02000098(s32 id) {
   struct Actor *object = Actor_Get(id);

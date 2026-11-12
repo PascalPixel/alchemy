@@ -1058,7 +1058,7 @@ void Func_020016e8(void) {
     FieldUnit_AddHp(4, -10);
   /* FAKEMATCH(dead): the byte store kept in a once-only block, whose end
    * holds the scene id's load behind it, as Func_02000430 in
-   * shaman_village_cave/scene_tables.c does with the same store; as the
+   * shaman_village_cave.c does with the same store; as the
    * plain store, 4 of 400 instructions
    * differ in tla-en. */
   do {

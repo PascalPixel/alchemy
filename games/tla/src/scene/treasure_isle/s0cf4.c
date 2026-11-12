@@ -1,3 +1,7 @@
+/// @file
+/// Scene code of overlay 0x6af, in ROM order, from s0cf4's offset to the end of
+/// its code, then the overlay's data.
+
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"

@@ -313,7 +313,7 @@ static __inline__ void SetCell(s32 a, s32 x, s32 z, s32 b) {
   SetMapCellCollision(a, x, z, b);
 }
 
-/// An event handler from the sanctum's event table (in anemos_inner_sanctum.c),
+/// An event handler from the sanctum's event table (in s2f48.c),
 /// reading the leader's place in 8-pixel cells: sets the cells of rooms 3 and
 /// 4, and sets flags 0xa80 to 0xa86 where the leader stands on given cells,
 /// running the event at x 67, z 45 of room 3 and moving object 13 to object 12

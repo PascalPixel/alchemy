@@ -28,7 +28,7 @@ static __inline__ struct Actor *Create(s32 type, s32 x, s32 y, s32 z) {
   return ((struct Actor *)Import_ActorCreate(type, x, y, z));
 }
 
-/// An event handler from the sanctum's event table (in anemos_inner_sanctum.c):
+/// An event handler from the sanctum's event table (in s2f48.c):
 /// changes the cells at the leader's place, spawns an effect of type 0x15d
 /// there and sets the flag the event work's unk154 selects; once flags 0x200 to
 /// 0x206 are all set, it moves object 8 in room 4 (else object 9) to mode 2 and

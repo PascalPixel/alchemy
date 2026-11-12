@@ -1250,6 +1250,7 @@ SECTIONS
         "*/games/tla/src/scene/tundaria_tower/script0.o"(.text)
         "*/games/tla/src/field/object/wait_until_idle.o"(.text)
         "*/games/tla/src/field/map/cell_get.o"(.text)
+        "*/games/tla/src/field/map/cell_set.o"(.text)
         "*/games/tla/src/scene/tundaria_tower/s0338.o"(.text)
         "*/games/tla/src/scene/tundaria_tower.o"(.text)
         "*/games/tla/src/scene/tundaria_tower/s05d0.o"(.text)
@@ -1412,7 +1413,7 @@ SECTIONS
     .text 0x2008000 :
     {
         "*/games/tla/src/scene/shaman_village_cave/entry.o"(.text)
-        "*/games/tla/src/scene/shaman_village_cave/scene_tables.o"(.text)
+        "*/games/tla/src/scene/shaman_village_cave.o"(.text)
         "*/games/tla/src/scene/shaman_village_cave/import.o"(.text)
         "*/games/tla/src/scene/shaman_village_cave/data.o"(.data)
     }
@@ -2127,9 +2128,9 @@ SECTIONS
         "*/games/tla/src/scene/treasure_isle/s043c.o"(.text)
         "*/games/tla/src/scene/treasure_isle/s05ac.o"(.text)
         "*/games/tla/src/scene/treasure_isle/s0880.o"(.text)
-        "*/games/tla/src/scene/treasure_isle.o"(.text)
+        "*/games/tla/src/scene/treasure_isle/s0cf4.o"(.text)
         "*/games/tla/src/scene/treasure_isle/import.o"(.text)
-        "*/games/tla/src/scene/treasure_isle.o"(.data)
+        "*/games/tla/src/scene/treasure_isle/s0cf4.o"(.data)
     }
     .bss :
     {
@@ -2159,9 +2160,9 @@ SECTIONS
         "*/games/tla/src/scene/anemos_inner_sanctum/move.o"(.text)
         "*/games/tla/src/scene/anemos_inner_sanctum/s2db0.o"(.text)
         "*/games/tla/src/field/field_effect/advance_motion.o"(.text)
-        "*/games/tla/src/scene/anemos_inner_sanctum.o"(.text)
+        "*/games/tla/src/scene/anemos_inner_sanctum/s2f48.o"(.text)
         "*/games/tla/src/scene/anemos_inner_sanctum/import.o"(.text)
-        "*/games/tla/src/scene/anemos_inner_sanctum.o"(.data)
+        "*/games/tla/src/scene/anemos_inner_sanctum/s2f48.o"(.data)
     }
     .bss :
     {

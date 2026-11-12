@@ -209,6 +209,24 @@ enum TolbiSpringActorId {
   ACTOR_TOLBI_SPRING_VISITOR_ONE_MEDAL
 };
 
+/// Animations of the spring's sprites, as their animation tables and frames
+/// under graphics/sprite draw them. The coin's and the Lucky Medal's sheets
+/// (spr_398.png, spr_399.png) are drawn alike.
+enum TolbiSpringAnimation {
+  ANIM_TOKEN_TUMBLE = 0, ///< turning over once as it is tossed
+  ANIM_TOKEN_FLOAT = 1,  ///< turning on the water as it drifts
+  ANIM_TOKEN_REST = 2,   ///< lying still
+  ANIM_TOKEN_SHADOW = 3, ///< a grey spot on the ground below it
+  /// A twinkle, as each of the three marks trailing a flying token.
+  ANIM_TOKEN_GLINT = 4,
+  ANIM_CRAB_SCUTTLE = 1,     ///< stepping sideways (spr_396.png)
+  ANIM_CRAB_RAISE_CLAWS = 3, ///< snapping its raised claws (spr_396.png)
+  ANIM_TURTLE_SWIM = 2,      ///< paddling (spr_397.png)
+  ANIM_TURTLE_HIDE = 3,      ///< head and flippers drawn in (spr_397.png)
+  /// The signpost sheet's second picture, a tuft of grass (spr_274.png).
+  ANIM_SIGN_GRASS = 2
+};
+
 /// The actor that draws toss->trail[n] of a tossed coin or medal, n from
 /// 1 to 3.
 ///
@@ -297,7 +315,7 @@ static void TolbiSpring_AskAboutLuckyMedal(s32 actorId) {
   Event_SetMessageId(question);
   // "Do you have a Lucky Medal?"
   Event_OpenMessage(actorId, 0);
-  if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     Event_Wait(10);
     Event_SetMessageId(question + 1);
   } else {
@@ -312,7 +330,7 @@ static void TolbiSpring_AskAboutFirstDiceGame(s32 actorId) {
   Event_SetMessageId(question);
   // "Is this yer first time to play Lucky Dice?"
   Event_OpenMessage(actorId, 0);
-  if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     Event_Wait(10);
     Event_SetMessageId(question + 1);
   } else {
@@ -392,8 +410,8 @@ s32 TolbiSpring_Initialize(void) {
     Io_Write16(BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL,
                &REG_BLDCNT);
     Io_Write16(BLEND_ALPHA(12, 8), &REG_BLDALPHA);
-    Actor_SetAnimation(ACTOR_TOLBI_SPRING_EAST_SIGN_GRASS, 2);
-    Actor_SetAnimation(ACTOR_TOLBI_SPRING_WEST_SIGN_GRASS, 2);
+    Actor_SetAnimation(ACTOR_TOLBI_SPRING_EAST_SIGN_GRASS, ANIM_SIGN_GRASS);
+    Actor_SetAnimation(ACTOR_TOLBI_SPRING_WEST_SIGN_GRASS, ANIM_SIGN_GRASS);
     Actor_Get(ACTOR_TOLBI_SPRING_EAST_SIGN_GRASS)->scaleX = -Q16_ONE;
     Actor_Get(ACTOR_TOLBI_SPRING_WEST_SIGN_GRASS)->scaleX = -Q16_ONE;
     Actor_Get(ACTOR_TOLBI_SPRING_EAST_SIGN_GRASS)->priorityFlags =
@@ -605,7 +623,7 @@ static void TolbiSpring_OfferLuckyWheels(s32 spoken) {
     MessageArgument_Push(tickets, MESSAGE_ARGUMENT_NUMBER);
     // "You have ... game ticket, Isaac. Would you like to use these..."
     Event_OpenMessage(ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
-    if (Event_AskYesNoWithActorAnimation(0, 0) != 0) {
+    if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) != 0) {
       // "The rules are listed on the sign. Take a look, take a look."
       Event_ShowMessage(ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
       return;
@@ -620,7 +638,8 @@ static void TolbiSpring_OfferLuckyWheels(s32 spoken) {
       // "If you win anything, you might not be able to take it with..."
       Event_OpenMessage(ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
     }
-    if (room <= 6 && Event_AskYesNoWithActorAnimation(0, 0) != 0) {
+    if (room <= 6 &&
+        Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) != 0) {
       Event_SetMessageId(MsgTolbiGetRidItems);
       // "Then get rid of some items and come again."
       Event_ShowMessage(ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
@@ -636,7 +655,7 @@ static void TolbiSpring_OfferLuckyWheels(s32 spoken) {
     Event_SetMessageId(MsgTolbiBadLikeUse);
     // "Too bad... Would you like to use your tickets to keep playing?"
     Event_OpenMessage(ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
-    if (Event_AskYesNoWithActorAnimation(0, 0) != 0) {
+    if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) != 0) {
       Event_SetMessageId(MsgTolbiComeAgain);
       // "Come again!"
       Event_ShowMessage(ACTOR_TOLBI_SPRING_WHEELS_ATTENDANT, 0);
@@ -674,7 +693,7 @@ static void TolbiSpring_OfferLuckyDice(void) {
   MessageArgument_Push(cost, MESSAGE_ARGUMENT_NUMBER);
   // "Hey, buddy, wanna try yer luck at the dice? It's ... coin to..."
   Event_OpenMessage(ACTOR_TOLBI_SPRING_DICE_ATTENDANT, 0);
-  if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     // "OK! Then take the dice."
     Event_ShowMessage(ACTOR_TOLBI_SPRING_DICE_ATTENDANT, 0);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 120, 128);
@@ -753,7 +772,7 @@ prompt:
       Event_SetMessageId(message + 4);
       // "You can't carry more items. Do you still want to play?"
       Event_OpenMessage(-1, 0);
-      if (Event_AskYesNoWithActorAnimation(0, 0) != 0) {
+      if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) != 0) {
         goto end;
       }
     }
@@ -826,7 +845,7 @@ prompt:
         Event_SetMessageId(message + 4);
         // "You can't carry more items. Do you still want to play?"
         Event_OpenMessage(-1, 0);
-        if (Event_AskYesNoWithActorAnimation(0, 0) != 0) {
+        if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) != 0) {
           Event_End();
           return 0;
         }
@@ -1086,9 +1105,11 @@ static void TolbiSpring_UpdateTossSimulation(void) {
       if (toss->velocity.y != 0) {
         toss->velocity.y = 0;
         if (sTossKind == SPRING_TOSS_MEDAL) {
-          Actor_SelectAnimation(Actor_Get(ACTOR_TOLBI_SPRING_MEDAL), 1);
+          Actor_SelectAnimation(Actor_Get(ACTOR_TOLBI_SPRING_MEDAL),
+                                ANIM_TOKEN_FLOAT);
         } else {
-          Actor_SelectAnimation(Actor_Get(ACTOR_TOLBI_SPRING_COIN), 1);
+          Actor_SelectAnimation(Actor_Get(ACTOR_TOLBI_SPRING_COIN),
+                                ANIM_TOKEN_FLOAT);
         }
       }
 
@@ -1118,12 +1139,14 @@ static void TolbiSpring_UpdateTossSimulation(void) {
         }
         if (toss->velocity.x == 0 && toss->velocity.z == 0) {
           if (sTossKind == SPRING_TOSS_MEDAL) {
-            Actor_SelectAnimation(Actor_Get(ACTOR_TOLBI_SPRING_MEDAL), 2);
+            Actor_SelectAnimation(Actor_Get(ACTOR_TOLBI_SPRING_MEDAL),
+                                  ANIM_TOKEN_REST);
             TolbiSpring_SetSpriteStorageKind(TOLBI_SPRING_MEDAL_TRAIL(1), 0);
             TolbiSpring_SetSpriteStorageKind(TOLBI_SPRING_MEDAL_TRAIL(2), 0);
             TolbiSpring_SetSpriteStorageKind(TOLBI_SPRING_MEDAL_TRAIL(3), 0);
           } else {
-            Actor_SelectAnimation(Actor_Get(ACTOR_TOLBI_SPRING_COIN), 2);
+            Actor_SelectAnimation(Actor_Get(ACTOR_TOLBI_SPRING_COIN),
+                                  ANIM_TOKEN_REST);
             TolbiSpring_SetSpriteStorageKind(TOLBI_SPRING_COIN_TRAIL(1), 0);
             TolbiSpring_SetSpriteStorageKind(TOLBI_SPRING_COIN_TRAIL(2), 0);
             TolbiSpring_SetSpriteStorageKind(TOLBI_SPRING_COIN_TRAIL(3), 0);
@@ -1254,18 +1277,20 @@ static void TolbiSpring_UpdateTossSimulation(void) {
       if (obstacle->reactionFrames > 0) {
         if (index == 0) {
           Actor_SelectAnimation(Actor_Get(ACTOR_TOLBI_SPRING_FIRST_OBSTACLE),
-                                3);
+                                ANIM_CRAB_RAISE_CLAWS);
         } else {
           Actor_SelectAnimation(
-              Actor_Get(ACTOR_TOLBI_SPRING_FIRST_OBSTACLE + 1), 3);
+              Actor_Get(ACTOR_TOLBI_SPRING_FIRST_OBSTACLE + 1),
+              ANIM_CRAB_RAISE_CLAWS);
         }
       } else {
         if (index == 0) {
           Actor_SelectAnimation(Actor_Get(ACTOR_TOLBI_SPRING_FIRST_OBSTACLE),
-                                1);
+                                ANIM_CRAB_SCUTTLE);
         } else {
           Actor_SelectAnimation(
-              Actor_Get(ACTOR_TOLBI_SPRING_FIRST_OBSTACLE + 1), 1);
+              Actor_Get(ACTOR_TOLBI_SPRING_FIRST_OBSTACLE + 1),
+              ANIM_CRAB_SCUTTLE);
         }
         if (obstacle->pauseOrPhase == 0) {
           if (obstacle->heading == 0) {
@@ -1300,10 +1325,10 @@ static void TolbiSpring_UpdateTossSimulation(void) {
       }
       if (obstacle->reactionFrames > 0) {
         Actor_SelectAnimation(Actor_Get(ACTOR_TOLBI_SPRING_FIRST_OBSTACLE + 2),
-                              3);
+                              ANIM_TURTLE_HIDE);
       } else {
         Actor_SelectAnimation(Actor_Get(ACTOR_TOLBI_SPRING_FIRST_OBSTACLE + 2),
-                              2);
+                              ANIM_TURTLE_SWIM);
         obstacle->position.x = Trig_Sin(obstacle->heading) * 48 + px(112);
         obstacle->position.z = Trig_Cos(obstacle->heading) * 40 + px(72);
         cycleFrame = (u16)obstacle->heading + motionStep;
@@ -1322,16 +1347,16 @@ static void TolbiSpring_UpdateTossSimulation(void) {
       }
       if (obstacle->reactionFrames > 0) {
         Actor_SelectAnimation(Actor_Get(ACTOR_TOLBI_SPRING_FIRST_OBSTACLE + 3),
-                              3);
+                              ANIM_TURTLE_HIDE);
       } else if (cycleFrame <= 383) {
         obstacle->position.x = Trig_Sin(obstacle->heading) * 52 + px(112);
         obstacle->position.z = Trig_Cos(obstacle->heading) * 24 + px(72);
         obstacle->heading = obstacle->heading + motionStep;
         Actor_SelectAnimation(Actor_Get(ACTOR_TOLBI_SPRING_FIRST_OBSTACLE + 3),
-                              2);
+                              ANIM_TURTLE_SWIM);
       } else {
         Actor_SelectAnimation(Actor_Get(ACTOR_TOLBI_SPRING_FIRST_OBSTACLE + 3),
-                              3);
+                              ANIM_TURTLE_HIDE);
       }
       obstacle->pauseOrPhase = obstacle->pauseOrPhase + 1;
     }
@@ -1436,9 +1461,12 @@ static void TolbiSpring_UpdateTossSimulation(void) {
     TolbiSpring_SetActorAppearance(TOLBI_SPRING_MEDAL_TRAIL(3),
                                    Vector3_Coordinates(&toss->trail[3]), 0, 0,
                                    16);
-    Actor_SelectAnimation(Actor_Get(TOLBI_SPRING_MEDAL_TRAIL(1)), 4);
-    Actor_SelectAnimation(Actor_Get(TOLBI_SPRING_MEDAL_TRAIL(2)), 4);
-    Actor_SelectAnimation(Actor_Get(TOLBI_SPRING_MEDAL_TRAIL(3)), 4);
+    Actor_SelectAnimation(Actor_Get(TOLBI_SPRING_MEDAL_TRAIL(1)),
+                          ANIM_TOKEN_GLINT);
+    Actor_SelectAnimation(Actor_Get(TOLBI_SPRING_MEDAL_TRAIL(2)),
+                          ANIM_TOKEN_GLINT);
+    Actor_SelectAnimation(Actor_Get(TOLBI_SPRING_MEDAL_TRAIL(3)),
+                          ANIM_TOKEN_GLINT);
   } else {
     TolbiSpring_SetActorAppearance(ACTOR_TOLBI_SPRING_COIN,
                                    Vector3_Coordinates(&toss->trail[0]), 0, 0,
@@ -1455,9 +1483,12 @@ static void TolbiSpring_UpdateTossSimulation(void) {
     TolbiSpring_SetActorAppearance(TOLBI_SPRING_COIN_TRAIL(3),
                                    Vector3_Coordinates(&toss->trail[3]), 0, 0,
                                    16);
-    Actor_SelectAnimation(Actor_Get(TOLBI_SPRING_COIN_TRAIL(1)), 4);
-    Actor_SelectAnimation(Actor_Get(TOLBI_SPRING_COIN_TRAIL(2)), 4);
-    Actor_SelectAnimation(Actor_Get(TOLBI_SPRING_COIN_TRAIL(3)), 4);
+    Actor_SelectAnimation(Actor_Get(TOLBI_SPRING_COIN_TRAIL(1)),
+                          ANIM_TOKEN_GLINT);
+    Actor_SelectAnimation(Actor_Get(TOLBI_SPRING_COIN_TRAIL(2)),
+                          ANIM_TOKEN_GLINT);
+    Actor_SelectAnimation(Actor_Get(TOLBI_SPRING_COIN_TRAIL(3)),
+                          ANIM_TOKEN_GLINT);
   }
 
   if (toss->launchFrame != -1) {
@@ -1504,8 +1535,10 @@ static void TolbiSpring_InitializeTossSimulation(void) {
   toss->velocity.z = 0;
   toss->attractionFrames = 0;
 
-  Actor_SelectAnimation(Actor_Get(ACTOR_TOLBI_SPRING_FIRST_OBSTACLE + 2), 2);
-  Actor_SelectAnimation(Actor_Get(ACTOR_TOLBI_SPRING_FIRST_OBSTACLE + 3), 2);
+  Actor_SelectAnimation(Actor_Get(ACTOR_TOLBI_SPRING_FIRST_OBSTACLE + 2),
+                        ANIM_TURTLE_SWIM);
+  Actor_SelectAnimation(Actor_Get(ACTOR_TOLBI_SPRING_FIRST_OBSTACLE + 3),
+                        ANIM_TURTLE_SWIM);
 
   {
     s32 budget = 3203;
@@ -1543,14 +1576,18 @@ static s32 TolbiSpring_RunToss(s32 tossKind) {
       toss->trail[0].z = px(152);
       toss->attractionFrames = 300;
       if (sTossKind == SPRING_TOSS_MEDAL) {
-        Actor_SelectAnimation(Actor_Get(ACTOR_TOLBI_SPRING_MEDAL_SHADOW), 3);
-        Actor_SelectAnimation(Actor_Get(ACTOR_TOLBI_SPRING_MEDAL), 0);
+        Actor_SelectAnimation(Actor_Get(ACTOR_TOLBI_SPRING_MEDAL_SHADOW),
+                              ANIM_TOKEN_SHADOW);
+        Actor_SelectAnimation(Actor_Get(ACTOR_TOLBI_SPRING_MEDAL),
+                              ANIM_TOKEN_TUMBLE);
         TolbiSpring_SetSpriteStorageKind(TOLBI_SPRING_MEDAL_TRAIL(1), 1);
         TolbiSpring_SetSpriteStorageKind(TOLBI_SPRING_MEDAL_TRAIL(2), 1);
         TolbiSpring_SetSpriteStorageKind(TOLBI_SPRING_MEDAL_TRAIL(3), 1);
       } else {
-        Actor_SelectAnimation(Actor_Get(ACTOR_TOLBI_SPRING_COIN_SHADOW), 3);
-        Actor_SelectAnimation(Actor_Get(ACTOR_TOLBI_SPRING_COIN), 0);
+        Actor_SelectAnimation(Actor_Get(ACTOR_TOLBI_SPRING_COIN_SHADOW),
+                              ANIM_TOKEN_SHADOW);
+        Actor_SelectAnimation(Actor_Get(ACTOR_TOLBI_SPRING_COIN),
+                              ANIM_TOKEN_TUMBLE);
         TolbiSpring_SetSpriteStorageKind(TOLBI_SPRING_COIN_TRAIL(1), 1);
         TolbiSpring_SetSpriteStorageKind(TOLBI_SPRING_COIN_TRAIL(2), 1);
         TolbiSpring_SetSpriteStorageKind(TOLBI_SPRING_COIN_TRAIL(3), 1);

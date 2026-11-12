@@ -194,6 +194,19 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *window,
 /// loads the icons into character block 1, 16 tiles each.
 #define COMMAND_ROW_ICON_TILE (BG_CHAR_SIZE / (8 * 8))
 
+/// Places a battle menu's pointing hand at its list window's selected row:
+/// `position` takes the hand's spot, `margin` pixels left of the window and
+/// 20 below the row's top, and `sprite` becomes a plain 16x16 sprite, its
+/// position still to come. The Djinn, item, summon and Psynergy battle menus
+/// each place their cursor so; the name is ours.
+#define MENU_PLACE_CURSOR(position, window, row, margin, sprite)               \
+  do {                                                                         \
+    (position).x = (window)->x * 8 - (margin);                                 \
+    (position).y = ((row) * 2 + (window)->y) * 8 + 20;                         \
+    ((u32 *)(sprite))[1] = OBJ_SIZE_16X16;                                     \
+    ((u32 *)(sprite))[2] = 0;                                                  \
+  } while (0)
+
 // The chosen item's window.
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
     (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)

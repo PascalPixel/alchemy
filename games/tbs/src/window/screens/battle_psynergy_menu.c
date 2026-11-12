@@ -190,10 +190,7 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
       Oam_AddSpriteAtDepth(&sprites[i], 240);
     }
 
-    cursorPosition.x = window->x * 8 - 4;
-    cursorPosition.y = (selectedRow * 2 + window->y) * 8 + 20;
-    ((u32 *)iconSprite)[1] = OBJ_SIZE_16X16;
-    ((u32 *)iconSprite)[2] = 0;
+    MENU_PLACE_CURSOR(cursorPosition, window, selectedRow, 4, iconSprite);
     iconSprite->oam.f.tile =
         VramCache_Reload(cursorHandle, (s32)gPointingHandTiles);
     iconSprite->oam.f.x = cursorPosition.x + ((gFrameCount & 4) >> 1) - 4;

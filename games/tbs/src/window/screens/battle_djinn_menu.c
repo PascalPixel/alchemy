@@ -491,24 +491,7 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
       }
     }
 
-    {
-      s32 cx;
-
-      cx = listWindow->x * 8;
-      /* FAKEMATCH(dead): an empty once-only loop after the x shift keeps the
-       * row's reload after it; as no loop, 2 of 1201 instructions differ in
-       * tbs-en. */
-      do {
-      } while (0);
-      /* FAKEMATCH(barrier): an empty asm reading the row in a low register
-       * reloads it before the subtract; as no asm, 2 of 1201 instructions
-       * differ in tbs-en. */
-      __asm__("" : : "l"(selectedRow));
-      cursorPos.x = cx - 2;
-    }
-    cursorPos.y = (selectedRow * 2 + listWindow->y) * 8 + 20;
-    ((u32 *)sprite)[1] = OBJ_SIZE_16X16;
-    ((u32 *)sprite)[2] = 0;
+    MENU_PLACE_CURSOR(cursorPos, listWindow, selectedRow, 2, sprite);
     sprite->tile = VramCache_Reload(cursorSlot, (s32)gPointingHandTiles);
     sprite->x = cursorPos.x + ((gFrameCount & 4) >> 1) - 6;
     sprite->y = cursorPos.y - ((gFrameCount & 4) >> 2) - 8;

@@ -39,40 +39,20 @@ struct ShopCursorSprite {
   u8 active;
 };
 
-void WindowSprite_RedrawSavedRectFar(void *window);
-void WindowSprite_PrepareForRedrawFar(void *window);
-struct ItemDefinition *Item_Get(s32 item);
-s32 Item_GetEquipmentGroupFar(s32 item);
 s32 Item_IsCompatibleWithOwnerFar(s32 unit, s32 item);
 
 s32 PartyInventory_CountItemFar(s32 item);
-s32 Inventory_AddItemFar(s32 unit, s32 item);
 
-s32 Inventory_CountFar(s32 unit);
-void Shop_PlaceCursor(void *window, s32 x, s32 y);
 void Shop_DrawMsg(s32 win, s32 message);
 s32 Shop_SelectBuyCount(s32 unit, s32 item);
 void Shop_BuyDone(s32 unit, s32 item, s32 quantity);
-void MessageArgument_PushFar(s32 value, s32 slot);
-void Func_08109188(void);
 void Func_08109068(struct RenderInput *window, s32 selected);
 void Func_081091cc(s32 window, s32 itemId, s32 price, s32 priceKind);
-s32 Func_08108690(s32 *cursor, s32 count, s32 columns);
 void Func_080f8040(void *window, s32 item, s32 count);
-void Func_080f8058(s32 first);
-void Func_080f8060(void *window, s32 a, s32 b);
 void Func_0810928c(struct RenderInput *window, s32 selected, s32 itemId);
 void Func_081095b0(struct RenderInput *window, s32 unitId, s32 itemId);
 void Func_081093a4(s32 window, s32 unitId, s32 itemId);
 void Func_0810a490(void *partyWindow, void *itemWindow);
-void Func_0810bea8(s32 mode);
-s32 Func_081080a8(void);
-void Func_081084f4(s32 message);
-void Func_0810857c(s32 message);
-s32 Func_08108630(s32 mode);
-void Menu_ReleaseEntryObjectsFar(void);
-void Sound_PlayFar(s32 cue);
-void wait(s32 frames);
 
 s32 Func_08108b70(void) {
   struct ShopRuntime *shop = Ram_HeapSlots->menuRuntime;
@@ -367,9 +347,6 @@ struct ShopWork_08109188 {
   void *coinWindow;
 };
 
-void WindowSprite_PrepareForRedrawFar(void *window);
-void Text_DrawCharacterAtOffsetFar(s32 message, void *window, s32 x, s32 y);
-
 void Func_08109188(void) {
   void *window =
       ((struct ShopWork_08109188 *)Ram_HeapSlots->menuRuntime)->coinWindow;
@@ -414,13 +391,6 @@ void Func_08109188(void) {
 
 /// MsgItemCondition starts a list: "----------", "Processed", "Rusted".
 extern u8 MsgCannotBuyThat[];
-extern u8 MsgNotBroken[];
-extern u8 MsgPrice[];
-extern u8 MsgItemName[];
-extern u8 MsgItemCondition[];
-
-void Text_DrawNumberInWindowFar(s32 value, s32 digits, s32 window, s32 x,
-                                  s32 y);
 
 /// Draws the shop item's name and price, or its cannot-buy or not-broken note;
 /// kind 3 draws the item condition message numbered by the price instead.
@@ -504,9 +474,6 @@ void Shop_DrawMsg(s32 win, s32 message) {
 
 #undef WindowSprite_ClearListFar
 
-void Animation_ApplyChildArgumentFar(void *object, s32 argument);
-s32 Item_IsCompatibleWithOwnerFar(s32 owner, s32 item);
-
 void Func_0810928c(struct RenderInput *window, s32 selected, s32 itemId) {
   struct ShopRuntime *shop = Ram_HeapSlots->menuRuntime;
   s32 page = selected / 4;
@@ -559,23 +526,6 @@ struct ShopWork {
   u8 unk506;
   s8 partyAction;
 };
-
-extern u8 MsgShopCannotEquip[];
-extern u8 MsgShopStatLabel[];
-extern u8 MsgItemName[];
-
-void Unit_CalculateFar(s32 unitId);
-s32 Item_CanOwnerEquip(s32 owner, s32 item);
-s32 Inventory_FindEquippedFar(s32 unitId, s32 type);
-
-void Text_DrawMessageFar(s32 message, s32 window, s32 x, s32 y);
-void Text_DrawNumberInWindowFar(s32 value, s32 digits, s32 window, s32 x,
-                                s32 y);
-
-void Window_DrawDividerLineFar(s32 window, s32 x, s32 y, s32 width, s32 style);
-struct WindowSprite *WindowSprite_CreateFar(s32 code, s32 layers,
-                                            struct RenderInput *input, s32 x,
-                                            s32 y);
 
 void Func_081093a4(s32 window, s32 unitId, s32 itemId) {
   struct ShopWork *shop = Ram_HeapSlots->menuRuntime;
@@ -645,14 +595,7 @@ void Func_081093a4(s32 window, s32 unitId, s32 itemId) {
     Text_DrawCharacterAtOffsetFar(replaced + (s32)MsgItemName, window, 0, 48);
 }
 
-void *Unit_Get(s32 unitId);
 s32 Inventory_FindFar(s32 unitId, s32 item_id);
-extern u8 MsgYouHave[];
-extern u8 MsgShopNoneInStock[];
-
-void MessageArgument_PushFar(s32 value, s32 digits);
-
-void Func_0810bf98(s16 *window, s32 x, s32 y, s32 owner);
 
 /// Shows how many of an item the member already carries and draws the
 /// member's inventory icons through Func_0810bf98 at (8, 8).
@@ -679,12 +622,8 @@ void Func_081095b0(struct RenderInput *window, s32 unitId, s32 itemId) {
   }
 }
 
-s32 Item_AdjustCounterFar(s32 item_id, s32 amount);
-void Func_081084f4(s32 messageId);
-void Shop_PlaceCursor(void *window, s32 x, s32 y);
 s32 Func_081096f8(s32 minimum, s32 maximum, s32 price);
 s32 __udivsi3(s32, s32);
-extern u8 MsgHowManyToBuy[];
 
 #if (LANGUAGE == LANGUAGE_GERMAN)
 #define QUANTITY_CURSOR_Y 120
@@ -786,9 +725,6 @@ s32 Shop_SelectBuyCount(s32 unitId, s32 itemId) {
 
 #endif
 extern const u8 gShop_QuantityTiles[];
-extern u8 MsgCoins[];
-
-void Shop_FillSelector(s32 count, s32 selector, u8 *base);
 
 struct UiSprite {
   u8 unk00[24];
@@ -887,14 +823,7 @@ s32 Func_081096f8(s32 minimum, s32 maximum, s32 price) {
 #undef QUANTITY_COINS_X
 #undef QUANTITY_COINS_X
 
-s32 Inventory_AddItemFar(s32 unitId, s32 item_id);
-s32 Inventory_FindEquippedFar(s32 unitId, s32 type);
-
 s32 Party_AdjustShopCreditFar(s32 amount);
-extern u8 MsgHereYouGo[];
-void Sound_PlayFar(s32 cue);
-void Func_0810857c(s32 messageId);
-void Func_08109188(void);
 s32 Shop_ConfirmEquip(s32 unitId, s32 slot);
 s32 Shop_SellOld(s32 unitId, s32 slot);
 
@@ -923,19 +852,7 @@ void Shop_BuyDone(s32 unitId, s32 itemId, s32 quantity) {
     Shop_SellOld(unitId, replacedSlot);
 }
 
-void *Unit_Get(s32 unitId);
-void Inventory_EquipFar(s32 unitId, s32 slot);
-void MessageArgument_PushFar(s32 value, s32 slot);
-void Func_081084f4(s32 messageId);
-s32 Func_08108630(s32 choice);
 void Shop_DrawItemCount(void *window, s32 item);
-void Message_CloseFinishedWindowsFar(void);
-
-s32 Message_AllTypedFar(void);
-void wait(s32 frames);
-extern u8 MsgEquipNowPrompt[];
-extern u8 MsgBecameCursed[];
-extern u8 MsgLookBolder[];
 
 s32 Shop_ConfirmEquip(s32 unitId, s32 slot) {
   struct ShopWork *shop = Ram_HeapSlots->menuRuntime;
@@ -996,8 +913,6 @@ s32 Shop_ConfirmEquip(s32 unitId, s32 slot) {
   Func_0810857c((s32)MsgLookBolder);
   return 1;
 }
-
-void Func_0810a108(s32 unitId, s32 slot, s32 count);
 
 s32 Shop_SellOld(s32 unitId, s32 slot) {
   u8 *unit;

@@ -5,12 +5,6 @@
 
 #include "../shop_internal.h"
 
-extern u8 MsgRightWhenI[];
-
-void Func_08108148(void);
-void Func_0810824c(void);
-
-void Func_081084f4(s32 message);
 s32 Func_0810b6bc(void);
 
 s32 Func_0810b5c4(s32 objectId) {
@@ -44,22 +38,9 @@ s32 Func_0810b5c4(s32 objectId) {
   return 0;
 }
 
-s32 Func_08109ad8(void);
-
 s32 Func_0810b6bc(void) { return Func_08109ad8(); }
 
-s32 Func_08109cac(s32 unitId);
-
 s32 Func_0810b6c4(s32 unitId) { return Func_08109cac(unitId); }
-
-s32 Forge_GetMaterialChance(s32 item);
-s32 Forge_RollResult(s32 item);
-void Forge_SetItem(s32 item);
-void Func_0810857c(s32 message);
-s32 Func_08108630(s32 value);
-void MessageArgument_PushFar(s32 value, s32 slot);
-s32 Inventory_RemoveFar(s32 unitId, s32 slot);
-void Shop_DrawItemCount(void *window, s32 unitId);
 
 /// The forge's offer for one inventory item: refuses an item that is no
 /// material, otherwise asks (a rare material, chance 1, takes its own lines),
@@ -112,21 +93,7 @@ void Func_0810b7a8(s32 a, s32 b) { Func_0810b7b4(a, b, 0); }
 // a page, returning the unit and slot through the pointers (both -1 when
 // cancelled): the twin of The Broken Seal's Shop_PickUnitItem.
 
-void Func_08108148(void);
-void Func_0810824c(void);
-
-void Func_080f8060(void *window, s32 a, s32 b);
-void Shop_PlaceCursor(void *window, s32 x, s32 y);
-void Func_080f8058(s32 first);
-void wait(s32 frames);
-
-void Shop_DrawItemCount(void *window, s32 unitId);
-s32 Inventory_CountFar(s32 unitId);
-void Sound_PlayFar(s32 cue);
-void WindowSprite_PrepareForRedrawFar(void *window);
 s32 Func_0810b9c0(s32 unitId);
-s32 Func_08108690(s32 *cursor, s32 count, s32 columns);
-void Menu_ReleaseEntryObjectsFar(void);
 
 s32 Func_0810b7b4(s32 *outUnit, s32 *outSlot, s32 itemMode) {
   struct ShopRuntime *shop;
@@ -228,24 +195,11 @@ s32 Func_0810b7b4(s32 *outUnit, s32 *outSlot, s32 itemMode) {
 
 // Unnamed in the catalog yet: 4676 and 4675 take placeholders here.
 extern u8 MsgCannotRemoveIt[];
-extern u8 MsgCannotDropIt[];
-extern u8 MsgItemPlainName[];
 
-s32 Inventory_CountFar(s32 unitId);
-void Shop_PlaceCursor(void *window, s32 x, s32 y);
 void Func_0810bca0(void *window, s32 unitId, s32 slot);
 
-void wait(s32 frames);
 s32 Func_080ad268(s32 unitId, s32 slot);
 s32 Func_080ad270(s32 unitId, s32 slot);
-void Sound_PlayFar(s32 cue);
-s32 Message_OpenWindowFar(s32 message, s32 x, s32 y, s32 mode);
-s32 Message_AllTypedFar(void);
-void Message_CloseFinishedWindowsFar(void);
-void ItemMenu_DrawItemDetailsFar(void *window, s32 item);
-
-void WindowSprite_PrepareForRedrawFar(void *window);
-void Shop_DrawItemCount(void *window, s32 unitId);
 
 s32 Func_0810b9c0(s32 unitId) {
   void *nameWindow;
@@ -405,18 +359,6 @@ s32 Func_0810b9c0(s32 unitId) {
 #else
 #define SHOP_PRICE_COINS_X 80
 #endif
-
-extern u8 MsgItemName[];
-extern u8 MsgCannotDrop[];
-extern u8 MsgCannotRemove[];
-extern u8 MsgPriceHeading[];
-
-void WindowSprite_RedrawSavedRectFar(void *window);
-void Text_DrawCharacterAtOffsetFar(s32 message, void *window, s32 x, s32 y);
-
-s32 Func_080ad268(s32 unitId, s32 slot);
-s32 Func_080ad270(s32 unitId, s32 slot);
-s32 Shop_GetSellPrice(s32 item);
 
 /// Draws the selected item's panel in the sell and drop lists: its name, then
 /// why it cannot be dropped or removed, or, while selling, what the whole

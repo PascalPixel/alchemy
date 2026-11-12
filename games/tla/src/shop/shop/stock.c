@@ -7,25 +7,8 @@
 extern const s16 Data_0810c38e[];
 // Unnamed in the catalog yet: 4724, 4687 and 4695 take placeholders here.
 extern u8 MsgLetMeGiveYouThis[];
-extern u8 MsgPackFull[];
-extern u8 MsgCannotCarryItem[];
-extern u8 MsgHereYouGo[];
-extern u8 MsgDontWantIt[];
-
-void MessageArgument_PushFar(s32 value, s32 slot);
-void Func_0810857c(s32 message);
-void Func_081084f4(s32 message);
-void Shop_PlaceCursor(void *window, s32 x, s32 y);
-void Func_080f8058(s32 first);
-void wait(s32 frames);
-
-s32 Inventory_AddItemFar(s32 unitId, s32 item);
-
-s32 Inventory_CountFar(s32 unitId);
-void Sound_PlayFar(s32 cue);
 
 void Party_AdjustShopGiftsFar(s32 amount);
-s32 Func_08108690(s32 *cursor, s32 count, s32 columns);
 
 void Func_0810a490(void *window, void *itemWindow) {
   struct ShopRuntime *shop = Ram_HeapSlots->menuRuntime;
@@ -126,8 +109,6 @@ void EventTable_ApplyRowAbilities(s32 rowNo) {
   }
 }
 
-extern const s16 gData_0810c3f4[][33];
-
 /// Copies the shop's ordinary stock, up to 24 items, to `output` with a 0
 /// after, and returns how many. Called by Func_081082c4 for Buy.
 s32 ShopStock_CopyItems(s32 stockRow, s16 *output) {
@@ -153,8 +134,6 @@ s32 ShopStock_CopyItems(s32 stockRow, s16 *output) {
   output[count] = 0;
   return count;
 }
-
-extern const s16 gData_0810c3f4[][33];
 
 s32 EventTable_GetRowType(s32 index) {
   s32 offset = index << 5;

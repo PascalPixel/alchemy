@@ -19,9 +19,6 @@ struct InnUnit {
   s16 hp;
 };
 
-void Func_08108148(void);
-void Func_0810824c(void);
-
 /// The price per guest of each inn.
 extern const s8 gData_0810cf2c[];
 
@@ -91,17 +88,6 @@ enum InnMessageId {
   INN_MESSAGE_GOODBYE,
   INN_MESSAGE_REST_COMPLETE,
 };
-
-extern u8 MsgInnWelcome[];
-
-void Func_08108148(void);
-void Func_0810824c(void);
-
-s32 Inn_RoomPrice(s32 mode);
-void MessageArgument_PushFar(s32 value, s32 slot);
-void Func_081084f4(s32 message);
-
-s32 Func_08108630(s32 value);
 
 void Inn_PlaySleep(s32 price);
 

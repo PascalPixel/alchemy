@@ -121,4 +121,24 @@ struct FieldObject {
   struct ObjectSpriteInfo *sprite;
 };
 
+// What several parts call, declared once here for all of them.
+s32 Item_GetEquipmentGroupFar(s32 item);
+s32 Item_AdjustCounterFar(s32 item_id, s32 delta);
+void Inventory_EquipFar(s32 owner, s32 slot);
+void Message_CloseFinishedWindowsFar(void);
+s32 Message_AllTypedFar(void);
+void Func_080f8060(void *window, s32 a, s32 b);
+void Func_080f8058(s32 first);
+s32 Inventory_CountFar(s32 unit);
+void WindowSprite_PrepareForRedrawFar(void *window);
+void Menu_ReleaseEntryObjectsFar(void);
+void Func_0810a108(s32 unitId, s32 slot, s32 count);
+void Func_0810bf98(s16 *window, s32 x, s32 y, s32 owner);
+s32 Inventory_FindEquippedFar(s32 unitId, s32 type);
+void *Actor_GetByIdFar(s32 id);
+void Animation_ApplyChildArgumentFar(void *object, s32 argument);
+void ItemMenu_DrawItemDetailsFar(void *window, s32 item);
+void WindowSprite_RedrawSavedRectFar(void *window);
+void Text_DrawCharacterAtOffsetFar(s32 message, void *window, s32 x, s32 y);
+
 #endif

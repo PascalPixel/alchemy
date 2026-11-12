@@ -11,22 +11,9 @@
 #define MONEY_WINDOW_WIDTH 12
 #endif
 
-void Func_08109188(void);
-void Func_080f8060(void *window, s32 a, s32 b);
-void Shop_PlaceCursor(void *window, s32 x, s32 y);
-void Func_080f8058(s32 first);
-void wait(s32 frames);
-
-void Shop_DrawItemCount(void *window, s32 unitId);
-s32 Inventory_CountFar(s32 unitId);
-void Sound_PlayFar(s32 cue);
-void WindowSprite_PrepareForRedrawFar(void *window);
 s32 Func_08109cac(s32 unitId);
 s32 Func_0810a2d0(s32 unitId);
 s32 Func_0810b6c4(s32 unitId);
-s32 Func_08108690(s32 *cursor, s32 count, s32 columns);
-void Func_0810bea8(s32 active);
-void Menu_ReleaseEntryObjectsFar(void);
 
 s32 Func_08109ad8(void) {
   struct ShopRuntime *shop = Ram_HeapSlots->menuRuntime;
@@ -123,27 +110,13 @@ s32 Func_08109ad8(void) {
 
 // Unnamed in the catalog yet: 4699, 4723 and 4862 take placeholders here.
 extern u8 MsgSellAnythingElse[];
-extern u8 MsgRepairAnythingElse[];
-extern u8 MsgWhichItemNeedsAttention[];
 
-s32 Inventory_CountFar(s32 unitId);
-void Shop_PlaceCursor(void *window, s32 x, s32 y);
-s32 Shop_GetSellPrice(s32 item);
 s32 Shop_GetItemPrice(s32 item);
 s32 Forge_GetMaterialChance(s32 item);
 
-void Sound_PlayFar(s32 cue);
-void ItemMenu_DrawItemDetailsFar(void *window, s32 item);
-void wait(s32 frames);
-
-void Func_08109188(void);
-void WindowSprite_PrepareForRedrawFar(void *window);
 s32 Func_0810a03c(s32 unitId, s32 slot);
-void Func_0810a108(s32 unitId, s32 slot, s32 count);
 void Func_0810a2d8(s32 unitId, s32 slot);
 s32 Func_0810b6cc(s32 unitId, s32 slot);
-void Func_081084f4(s32 message);
-void Shop_DrawItemCount(void *window, s32 unitId);
 
 s32 Func_08109cac(s32 unitId) {
   struct ShopRuntime *shop;
@@ -295,11 +268,6 @@ s32 Func_08109cac(s32 unitId) {
 #undef PRICE_WINDOW_WIDTH
 #undef DETAILS_WINDOW_WIDTH
 
-extern u8 MsgNoItems[];
-void WindowSprite_PrepareForRedrawFar(void *window);
-void Func_0810bf98(s16 *window, s32 x, s32 y, s32 owner);
-s32 Inventory_CountFar(s32 item);
-
 void Shop_DrawItemCount(void *window, s32 item) {
   if (window != NULL) {
     WindowSprite_PrepareForRedrawFar(window);
@@ -320,13 +288,7 @@ struct ShopSellWork {
   u8 mode;
 };
 
-void *Unit_Get(s32 unitId);
-s32 Shop_GetSellPrice(s32 item_id);
 s32 Inventory_GetQuantityFar(s32 unitId, s32 slot);
-void Func_081084f4(s32 messageId);
-void Shop_PlaceCursor(void *window, s32 x, s32 y);
-s32 Func_081096f8(s32 minimum, s32 maximum, s32 price);
-void wait(s32 frames);
 void Icon_PrepareActorFar(struct WindowSprite *object);
 
 #if (LANGUAGE == LANGUAGE_GERMAN)
@@ -375,32 +337,9 @@ s32 Func_0810a03c(s32 unitId, s32 slot) {
 }
 
 #undef QUANTITY_CURSOR_X
-#undef QUANTITY_CURSOR_X
-#undef QUANTITY_CURSOR_X
 
-// The shop work block, as this function reads it.
-extern u8 MsgCannotSellEquipped[];
-extern u8 MsgWeDoNotBuy[];
-extern u8 MsgSellOffer[];
-extern u8 MsgRareSellOffer[];
-extern u8 MsgSellTotal[];
-extern u8 MsgDamagedSellOffer[];
-extern u8 MsgOldItemSellOffer[];
-extern u8 MsgDeal[];
-extern u8 MsgChangedMind[];
-extern u8 MsgSold[];
-extern u8 MsgKeepIt[];
-
-s32 Shop_GetSellPrice(s32 item);
-void MessageArgument_PushFar(s32 value, s32 slot);
-void Func_0810857c(s32 message);
-s32 Func_08108630(s32 value);
-void Sound_PlayFar(s32 cue);
 void Inventory_DiscardFar(s32 unitId, s32 slot);
 void Unit_RefreshPsynergyFar(s32 unitId);
-void Unit_CalculateFar(s32 unitId);
-void Party_AdjustCoinsFar(s32 amount);
-void Func_08109188(void);
 
 void Func_0810a108(s32 unitId, s32 slot, s32 count) {
   struct ShopRuntime *shop;

@@ -175,9 +175,6 @@ void ShopCursor_Advance(struct ShopCursor *cursor) {
   }
 }
 
-void Shop_SetCursor(struct ShopCursor *cursor, s32 targetX, s32 targetY,
-                    s8 kind);
-
 /// Moves the cursor's sprite a quarter of the way to its target on each
 /// axis, at least one pixel.
 void MenuCursor_MoveTowardTarget(struct ShopCursor *cursor) {

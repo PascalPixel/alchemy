@@ -12,35 +12,17 @@ s32 Shop_GetItemPrice(s32 item) {
   return price;
 }
 
-s32 Func_08109ad8(void);
-
 s32 Func_0810a2c8(void) { return Func_08109ad8(); }
-
-s32 Func_08109cac(s32 unitId);
 
 s32 Func_0810a2d0(s32 unitId) { return Func_08109cac(unitId); }
 
-// The shop work block, as this function reads it.
 extern u8 MsgRepairNotHandled[];     // MsgCannotRepairKind
 extern u8 MsgRepairNotDamaged[];     // MsgNotDamaged
 extern u8 MsgRepairStuckOn[];        // MsgCursedWontComeOff
 extern u8 MsgRepairNotEnoughMoney[]; // MsgNotEnoughMoney
 extern u8 MsgRepairOffer[]; // MsgShopRepairConfirm, then its three replies
 
-s32 Inventory_FindEquippedFar(s32 unitId, s32 type);
-s32 Shop_GetItemPrice(s32 item);
-void MessageArgument_PushFar(s32 value, s32 slot);
-void Func_0810857c(s32 message);
-s32 Func_08108630(s32 value);
-void Message_CloseFinishedWindowsFar(void);
-void wait(s32 frames);
-void Sound_PlayFar(s32 cue);
 void Inventory_RepairFar(s32 unitId, s32 slot);
-
-void Func_08109188(void);
-
-s32 Shop_ConfirmEquip(s32 unitId, s32 slot);
-s32 Shop_SellOld(s32 unitId, s32 slot);
 
 void Func_0810a2d8(s32 unitId, s32 slot) {
   struct ShopRuntime *shop = Ram_HeapSlots->menuRuntime;

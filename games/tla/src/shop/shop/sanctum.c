@@ -32,7 +32,6 @@ s32 Shop_CanServe(s32 entry_id, s32 kind) {
   return result;
 }
 
-/// The sanctum's view of the shop work (heap slot 220).
 /// Counts the party members who need the selected sanctum service.
 // As ☀️'s Shop_CountUnits.
 s32 Shop_CountUnits(void) {
@@ -51,11 +50,6 @@ s32 Shop_CountUnits(void) {
   return eligibleCount;
 }
 
-extern u8 MsgReviveService[];
-extern u8 MsgCurePoisonService[];
-extern u8 MsgExorcismService[];
-extern u8 MsgRemoveCurseService[];
-
 s32 Shop_MsgByMode(s32 value) {
   s8 *shop;
   s8 mode;
@@ -73,11 +67,6 @@ s32 Shop_MsgByMode(s32 value) {
   }
   return value;
 }
-
-void Message_CloseFinishedWindowsFar(void);
-
-s32 Message_AllTypedFar(void);
-void wait(s32 frames);
 
 /// Shows the service message, its wording for the shop's mode, with the
 /// keeper's portrait, and waits until it has been read.
@@ -129,23 +118,12 @@ void Func_0810a9fc(s32 message) {
 // the downed, Func_0810abf0 for the service, Func_0810824c to clean up), its
 // work-block offsets and numbered messages.
 
-// The shop work block, as this function reads it.
-extern u8 MsgWelcomeWearyWanderers[];
-extern u8 MsgSanctumMoreAid[];
-extern u8 MsgSanctumFarewell[];
 extern u8 MsgReviveService[]; // "Hmm, you were downed ...", then "Fear not ..."
-
-void Func_08108148(void);
-void *Actor_GetByIdFar(s32 unitId);
 
 void SideObject_CreateFar(s32 a, s32 b, s32 c, s32 window, s32 d, s32 e);
 
-void Func_0810a9ac(s32 message);
-s32 Shop_CountUnits(void);
 s32 Func_0810abf0(void);
 s32 Menu_SelectSanctumServiceFar(s32 prev);
-
-void Func_0810824c(void);
 
 s32 Shop_ConfirmAct(s32 unitId) {
   s32 partyAction = 0;
@@ -208,31 +186,11 @@ s32 Shop_ConfirmAct(s32 unitId) {
 // Unnamed in the catalog yet: 4823 ("who to treat") and 4824 to 4828 (the
 // donation and its answers) take placeholders here.
 extern u8 MsgWhoShallIRevive[];
-extern u8 MsgReviving[];
 
-void Func_0810a9ac(s32 message);
-void Func_0810a9fc(s32 message);
-
-void Func_080f8060(void *window, s32 a, s32 b);
-s32 Shop_CanServe(s32 unitId, s32 serviceKind);
-s32 Shop_ServicePrice(s32 unitId, s32 serviceKind);
-void Shop_PlaceCursor(void *window, s32 x, s32 y);
-void Func_080f8058(s32 first);
-void wait(s32 frames);
 void Shop_DrawServiceParty(void *window, s32 memberIndex);
 void Shop_DrawSelectMsg(s32 window, s32 unitId);
-void Sound_PlayFar(s32 cue);
-void WindowSprite_PrepareForRedrawFar(void *window);
-void MessageArgument_PushFar(s32 value, s32 slot);
-s32 Func_08108660(s32 value);
-void Message_CloseFinishedWindowsFar(void);
 void BattleUnit_ResetStateByMode(s32 unitId, s32 serviceKind);
 void Func_0810b1b4(s32 member);
-void Party_AdjustCoinsFar(s32 amount);
-void Func_08109188(void);
-s32 Shop_CountUnits(void);
-s32 Func_08108690(s32 *cursor, s32 count, s32 columns);
-void Menu_ReleaseEntryObjectsFar(void);
 
 // Italian creates no price window and passes 0 where the others pass it, a
 // layout difference of that language's edition.
@@ -451,10 +409,6 @@ void BattleUnit_ResetStateByMode(s32 id, s32 mode) {
 // (games/tbs/src/shop/shop.c) shape over a page, each member dimmed when
 // Shop_CanServe refuses the chosen service.
 
-void WindowSprite_PrepareForRedrawFar(void *window);
-void Animation_ApplyChildArgumentFar(void *group, s32 argument);
-s32 Shop_CanServe(s32 unitId, s32 serviceKind);
-
 void Shop_DrawServiceParty(void *window, s32 selected) {
   struct ShopRuntime *shop = Ram_HeapSlots->menuRuntime;
   s32 serviceKind = shop->partyAction;
@@ -494,14 +448,6 @@ void Shop_DrawServiceParty(void *window, s32 selected) {
     }
   }
 }
-
-/// The sanctum's view of the shop work (heap slot 220).
-s32 Shop_ServicePrice(s32 unitId, s32 serviceKind);
-s32 Shop_CanServe(s32 unitId, s32 serviceKind);
-s32 Shop_MsgByMode(s32 message);
-
-void MessageArgument_PushFar(s32 value, s32 slot);
-void Text_DrawMessageFar(s32 message, s32 window, s32 x, s32 y);
 
 /// Shows the selected member's service price, or that no treatment is needed.
 // As ☀️'s Shop_DrawSelectMsg. The service kind's variable takes the message
@@ -586,7 +532,6 @@ void BattleEffect_UpdateRadialMotion(struct Effect_080b2f4c *effect) {
   }
 }
 
-u32 Random16(void);
 void FieldParticle_UpdateFar(void *slot);
 void Animation_ApplyChildValuesToRecordFar(void *child, u32 value);
 
@@ -611,23 +556,13 @@ void Func_0810b168(void) {
                                           (Random16() * 7) >> 16);
 }
 
-u32 Random16(void);
-void wait(s32 frames);
-void Sound_PlayFar(s32 sound_id);
-
-void Shop_RestoreSceneTiles(s32 address);
-
 void FieldParticle_InitializeFar(struct Effect_080b2f4c *effect, s32 mode,
                                  s32 x, s32 z);
 void FieldParticle_SetCallbackFar(struct Effect_080b2f4c *effect,
                                   void (*callback)(struct Effect_080b2f4c *));
 void FieldParticle_SetActorModeFar(struct Effect_080b2f4c *effect, s32 value);
 
-void Sound_WaitForJingle(void);
-
 void Animation_ApplyChildValueFar(s32 object, s32 arg);
-void Shop_InitializeEffect(void);
-void Func_0810b168(void);
 
 extern s8 Data_0810cf28[];
 

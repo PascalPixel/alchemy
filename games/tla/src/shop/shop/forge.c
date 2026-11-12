@@ -35,8 +35,6 @@ s32 Forge_GetMaterialChance(s32 item) {
   return 0;
 }
 
-u32 Random16(void);
-
 s32 Forge_RollResult(s32 item) {
   struct ForgeRecipe *recipe = Forge_FindRecipe(item);
   s32 total = 0;
@@ -59,8 +57,6 @@ s32 Forge_RollResult(s32 item) {
   return result;
 }
 
-s32 Forge_GetMaterialChance(s32 item);
-
 s32 Forge_OwnerHasMaterial(s32 owner) {
   u16 *item;
   s32 i;
@@ -75,8 +71,6 @@ s32 Forge_OwnerHasMaterial(s32 owner) {
   } while (i <= 14);
   return 0;
 }
-
-s32 Forge_OwnerHasMaterial(s32 owner);
 
 s32 Forge_PartyHasMaterial(void) {
   u16 owners[16];

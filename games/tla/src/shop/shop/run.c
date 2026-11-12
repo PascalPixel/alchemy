@@ -13,9 +13,6 @@ struct ShopItemList {
   s8 group;
 };
 
-s32 Item_GetEquipmentGroupFar(s32 item);
-s32 Item_AdjustCounterFar(s32 item_id, s32 delta);
-
 s32 Func_081080a8(void) {
   struct ShopItemList *menu = Ram_HeapSlots->menuRuntime;
   s32 count = 0;
@@ -38,7 +35,6 @@ s32 Func_081080a8(void) {
   return count;
 }
 
-extern char ResourceId_UiIconTiles;
 extern char ResourceId_ShopGemTiles;
 extern char ResourceId_MenuSmallDownArrowTiles;
 extern char ResourceId_MenuArrowTiles;
@@ -47,12 +43,10 @@ extern char ResourceId_ShopDownArrowTiles;
 
 void ShopCursor_Advance(struct ShopCursor *cursor);
 void Event_ResolveAllPendingActionsFar(void);
-s32 Party_ListActiveOwnersFar(s16 *owners);
 void Palette_CopyObjectBankToBackground14Far(void);
 void VramBlock_LoadResource(s32 slot, s32 size, s32 resource);
 void Func_0810bdf4(void);
 void Func_0810be3c(void);
-void Message_CloseFinishedWindowsFar(void);
 
 void Func_08108130(void) {
   ShopCursor_Advance(&((struct ShopRuntime *)Ram_HeapSlots->menuRuntime)->cursor);
@@ -116,20 +110,9 @@ void Func_0810824c(void) {
 // (games/tbs/src/shop/shop.c), without its warrior shop rows. The messages take
 // the twin's names.
 
-extern u8 MsgWeaponShopWelcome[];
-extern u8 MsgWhatWouldYouLike[];
-extern u8 MsgWhatToSell[];
-extern u8 MsgConnoisseur[];
-extern u8 MsgOutOfStock[];
-extern u8 MsgFixDamaged[];
-extern u8 MsgAnythingElse[];
-extern u8 MsgShopFarewell[];
-
 s32 EventTable_GetRowLimit(void);
 s32 EventTable_GetRowType(s32 row);
 void EventTable_ApplyRowAbilities(s32 row);
-void Func_08108148(void);
-void *Actor_GetByIdFar(s32 id);
 struct RenderInput *Func_080380f8(s32 resource, s32 x, s32 y, s32 mode);
 struct RenderInput *Window_CreateFar(s32 x, s32 y, s32 width, s32 height,
                                        s32 style);
@@ -139,11 +122,8 @@ s32 Menu_SelectShopCommandFar(s32 action);
 s32 ShopStock_CopyItems(s32 stockRow, s16 *output);
 s32 Func_08108b70(void);
 s32 Func_08109ad8(void);
-s32 Func_081080a8(void);
 s32 Func_0810a2c8(void);
 void Window_CloseFar(struct RenderInput *window, s32 mode);
-void Func_0810824c(void);
-void wait(s32 frames);
 
 s32 Func_081082c4(s32 stockRow, s32 keeperId) {
   struct ShopRuntime *shop;
@@ -203,9 +183,6 @@ s32 Func_081082c4(s32 stockRow, s32 keeperId) {
   return 0;
 }
 
-void Inventory_EquipFar(s32 owner, s32 slot);
-s32 Inventory_AddItemFar(s32 owner, s32 item);
-
 s32 Debug_ApplyPresetItemsAndFlags(void) {
   gMainRoutineWork.coins = 200000;
   gMainRoutineWork.counterC = 28;
@@ -225,8 +202,6 @@ void Sound_WaitForJingle(void) {
   }
 }
 
-s32 Message_AllTypedFar(void);
-void Message_CloseFinishedWindowsFar(void);
 s32 BattleEffect_GetResourceIdFar(u16 id);
 
 void Func_081084f4(s32 first) {
@@ -306,10 +281,6 @@ s32 Func_08108660(s32 arg0) {
   (*slot)->active = saved;
   return arg0;
 }
-
-void wait(s32);
-s32 Message_AllTypedFar(void);
-void Message_CloseFinishedWindowsFar(void);
 
 s32 Func_08108690(s32 *cursor, s32 count, s32 columns) {
   s32 changed = 0;

@@ -516,13 +516,13 @@ static void ColosseumEntrance_OfferLuckyGuess(void) {
       Event_SetMessageId(MsgColosseumWantTryOutLuckyGuess);
       // "Want to try out the Lucky Guess?"
       Event_OpenMessage(ACTOR_LUCKY_GUESS_MAN, 0);
-      if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
+      if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
         gFieldWork->message++;
         Actor_ShowEmote(ACTOR_LUCKY_GUESS_MAN,
                         EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
         // "Aren't you Isaac? The one handpicked by Babi?"
         Event_OpenMessage(ACTOR_LUCKY_GUESS_MAN, 0);
-        if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
+        if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
           gFieldWork->message++;
         }
         Event_Wait(40);
@@ -675,7 +675,7 @@ static void ColosseumEntrance_AskIfReadyForFinals(void) {
   Event_SetMessageId(MsgColosseumYouReadyForFinals);
   // "Are you ready for the finals?"
   Event_OpenMessage(ACTOR_FINALS_SOLDIER, 0);
-  if (Event_AskYesNoWithActorAnimation(0, 0) != 0)
+  if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) != 0)
     gFieldWork->message++;
   Event_ShowMessage(ACTOR_FINALS_SOLDIER, 0);
   Event_End();
@@ -801,7 +801,7 @@ static void ColosseumEntrance_CrowdRecognizesIsaac(void) {
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTHWEST, 0);
 
   // Either leave with the guide or let the companions persuade Isaac.
-  if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     Actor_SetAnimationAndWait(ACTOR_FIRST_GATE_SOLDIER, ANIM_NOD);
     ColosseumEntrance_ShowMessageAndPause(ACTOR_FIRST_GATE_SOLDIER);
     Actor_SetScript(ACTOR_GARET, gColosseumEntrance_GatherIntoIsaacScript);
@@ -858,7 +858,7 @@ static void ColosseumEntrance_CrowdRecognizesIsaac(void) {
     Event_Wait(20);
     Event_OpenMessage(ACTOR_GARET, 0);
 
-    if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
+    if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
       Actor_SetAnimationAndWait(ACTOR_FIRST_GATE_SOLDIER, ANIM_NOD);
       ColosseumEntrance_ShowMessageAndPause(ACTOR_FIRST_GATE_SOLDIER);
       Actor_SetScript(ACTOR_GARET, gColosseumEntrance_GatherIntoIsaacScript);
@@ -944,7 +944,7 @@ static void ColosseumEntrance_FinalsStart(void) {
     Event_SetMessageId(MsgColosseumYouReadyForFinals);
     // "Are you ready for the finals?"
     Event_OpenMessage(SPEAKER_WINDOW_BELOW | ACTOR_FINALS_SOLDIER, 0);
-    if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
+    if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
       Event_Wait(20);
       ColosseumEntrance_FaceDirection(ACTOR_MORGAN, FACING_NORTH_NORTHEAST);
       Actor_RunRepeatedMotion(ACTOR_MORGAN, 1);
@@ -1117,17 +1117,17 @@ static void ColosseumEntrance_ShowFailedTrial(void) {
   Event_Start();
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Sound_Play(SE_COLOSSO_LETTERING);
-  Actor_SetAnimation(ACTOR_GROUNDS_FIRST_TORCH, ANIM_WALK);
-  Actor_SetAnimation(ACTOR_GROUNDS_FIRST_TORCH + 1, ANIM_WALK);
-  Actor_SetAnimation(ACTOR_GROUNDS_FIRST_TORCH + 2, ANIM_WALK);
-  Actor_SetAnimation(ACTOR_GROUNDS_FIRST_TORCH + 3, ANIM_WALK);
-  Actor_SetAnimation(ACTOR_GROUNDS_FIRST_TORCH + 4, ANIM_WALK);
-  Actor_SetAnimation(ACTOR_GROUNDS_FIRST_TORCH + 5, ANIM_WALK);
+  Actor_SetAnimation(ACTOR_GROUNDS_FIRST_TORCH, TORCH_ANIMATION_LIT);
+  Actor_SetAnimation(ACTOR_GROUNDS_FIRST_TORCH + 1, TORCH_ANIMATION_LIT);
+  Actor_SetAnimation(ACTOR_GROUNDS_FIRST_TORCH + 2, TORCH_ANIMATION_LIT);
+  Actor_SetAnimation(ACTOR_GROUNDS_FIRST_TORCH + 3, TORCH_ANIMATION_LIT);
+  Actor_SetAnimation(ACTOR_GROUNDS_FIRST_TORCH + 4, TORCH_ANIMATION_LIT);
+  Actor_SetAnimation(ACTOR_GROUNDS_FIRST_TORCH + 5, TORCH_ANIMATION_LIT);
   Actor_SetAnimation(ACTOR_FIRST_TRIAL_WARRIOR, ANIM_STILL);
-  Actor_SetAnimation(ACTOR_FIRST_TRIAL_WARRIOR + 1, 0);
+  Actor_SetAnimation(ACTOR_FIRST_TRIAL_WARRIOR + 1, ANIM_STILL);
   Actor_SetAnimation(ACTOR_FAILING_WARRIOR, ANIM_STILL);
   Actor_SetAnimation(ACTOR_CLEARING_WARRIOR, ANIM_STILL);
-  Actor_SetAnimation(ACTOR_FIRST_TRIAL_WARRIOR + 4, 0);
+  Actor_SetAnimation(ACTOR_FIRST_TRIAL_WARRIOR + 4, ANIM_STILL);
   actor = Actor_Get(ACTOR_TRIAL_PILLAR);
   Actor_SetSpriteFlags(actor, 0);
   actor = Actor_Get(ACTOR_FIRST_FLAG_BEARER);
@@ -1147,9 +1147,9 @@ static void ColosseumEntrance_ShowFailedTrial(void) {
   Actor_SetSpeed(ACTOR_FAILING_WARRIOR, 0.8);
   Actor_WalkToAndWait(ACTOR_FAILING_WARRIOR, 164, 904);
   Event_Wait(20);
-  Actor_SetAnimation(ACTOR_FAILING_WARRIOR, 9);
+  Actor_SetAnimation(ACTOR_FAILING_WARRIOR, WARRIOR_ANIMATION_FIGHTING_STANCE);
   Event_Wait(40);
-  Actor_SetAnimation(ACTOR_FAILING_WARRIOR, 10);
+  Actor_SetAnimation(ACTOR_FAILING_WARRIOR, WARRIOR_ANIMATION_ARMS_RAISED);
   Event_Wait(60);
   Actor_SetAnimation(ACTOR_FAILING_WARRIOR, ANIM_STAND);
   Event_Wait(20);
@@ -1199,7 +1199,7 @@ static void ColosseumEntrance_ShowFailedTrial(void) {
                      FLAG_BEARER_ANIMATION_RED_FLAG);
   Event_Wait(60);
   Actor_FaceDirection(ACTOR_FAILING_WARRIOR, facing, 20);
-  Actor_SetAnimation(ACTOR_FAILING_WARRIOR, 8);
+  Actor_SetAnimation(ACTOR_FAILING_WARRIOR, WARRIOR_ANIMATION_DEFEATED);
   Event_Wait(20);
   Actor_SetAnimation(ACTOR_FIRST_TRIAL_WARRIOR, ANIM_SHAKE_HEAD);
   Actor_SetAnimation(ACTOR_FIRST_TRIAL_WARRIOR + 1, ANIM_SHAKE_HEAD);
@@ -1267,17 +1267,17 @@ static void ColosseumEntrance_ShowClearedTrial(void) {
   Event_Start();
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Sound_Play(SE_COLOSSO_LETTERING);
-  Actor_SetAnimation(ACTOR_GROUNDS_FIRST_TORCH, ANIM_WALK);
-  Actor_SetAnimation(ACTOR_GROUNDS_FIRST_TORCH + 1, ANIM_WALK);
-  Actor_SetAnimation(ACTOR_GROUNDS_FIRST_TORCH + 2, ANIM_WALK);
-  Actor_SetAnimation(ACTOR_GROUNDS_FIRST_TORCH + 3, ANIM_WALK);
-  Actor_SetAnimation(ACTOR_GROUNDS_FIRST_TORCH + 4, ANIM_WALK);
-  Actor_SetAnimation(ACTOR_GROUNDS_FIRST_TORCH + 5, ANIM_WALK);
+  Actor_SetAnimation(ACTOR_GROUNDS_FIRST_TORCH, TORCH_ANIMATION_LIT);
+  Actor_SetAnimation(ACTOR_GROUNDS_FIRST_TORCH + 1, TORCH_ANIMATION_LIT);
+  Actor_SetAnimation(ACTOR_GROUNDS_FIRST_TORCH + 2, TORCH_ANIMATION_LIT);
+  Actor_SetAnimation(ACTOR_GROUNDS_FIRST_TORCH + 3, TORCH_ANIMATION_LIT);
+  Actor_SetAnimation(ACTOR_GROUNDS_FIRST_TORCH + 4, TORCH_ANIMATION_LIT);
+  Actor_SetAnimation(ACTOR_GROUNDS_FIRST_TORCH + 5, TORCH_ANIMATION_LIT);
   Actor_SetAnimation(ACTOR_FIRST_TRIAL_WARRIOR, ANIM_STILL);
-  Actor_SetAnimation(ACTOR_FIRST_TRIAL_WARRIOR + 1, 0);
+  Actor_SetAnimation(ACTOR_FIRST_TRIAL_WARRIOR + 1, ANIM_STILL);
   Actor_SetPosition(ACTOR_FAILING_WARRIOR, 0, 0);
   Actor_SetAnimation(ACTOR_CLEARING_WARRIOR, ANIM_STILL);
-  Actor_SetAnimation(ACTOR_FIRST_TRIAL_WARRIOR + 4, 0);
+  Actor_SetAnimation(ACTOR_FIRST_TRIAL_WARRIOR + 4, ANIM_STILL);
   actor = Actor_Get(ACTOR_TRIAL_PILLAR);
   Actor_SetSpriteFlags(actor, 0);
   actor = Actor_Get(ACTOR_FIRST_FLAG_BEARER);
@@ -1297,9 +1297,9 @@ static void ColosseumEntrance_ShowClearedTrial(void) {
   Actor_SetSpeed(ACTOR_CLEARING_WARRIOR, 0.8);
   Actor_WalkToAndWait(ACTOR_CLEARING_WARRIOR, 164, 904);
   Event_Wait(20);
-  Actor_SetAnimation(ACTOR_CLEARING_WARRIOR, 9);
+  Actor_SetAnimation(ACTOR_CLEARING_WARRIOR, WARRIOR_ANIMATION_FIGHTING_STANCE);
   Event_Wait(40);
-  Actor_SetAnimation(ACTOR_CLEARING_WARRIOR, 10);
+  Actor_SetAnimation(ACTOR_CLEARING_WARRIOR, WARRIOR_ANIMATION_ARMS_RAISED);
   Event_Wait(60);
   Actor_SetAnimation(ACTOR_CLEARING_WARRIOR, ANIM_STAND);
   Event_Wait(20);
@@ -1369,13 +1369,13 @@ static void ColosseumEntrance_ShowClearedTrial(void) {
   Actor_WalkToAndWait(ACTOR_CLEARING_WARRIOR, 208, 928);
   Sound_Play(MUS_JINGLE_MEDIUM);
   Actor_FaceDirection(ACTOR_CLEARING_WARRIOR, FACING_SOUTH_SOUTHEAST, 20);
-  Actor_SetAnimation(ACTOR_CLEARING_WARRIOR, 9);
+  Actor_SetAnimation(ACTOR_CLEARING_WARRIOR, WARRIOR_ANIMATION_FIGHTING_STANCE);
   Event_Wait(20);
-  Actor_SetAnimation(ACTOR_CLEARING_WARRIOR, 10);
+  Actor_SetAnimation(ACTOR_CLEARING_WARRIOR, WARRIOR_ANIMATION_ARMS_RAISED);
   Event_Wait(40);
-  Actor_SetAnimation(ACTOR_CLEARING_WARRIOR, 9);
+  Actor_SetAnimation(ACTOR_CLEARING_WARRIOR, WARRIOR_ANIMATION_FIGHTING_STANCE);
   Event_Wait(20);
-  Actor_SetAnimation(ACTOR_CLEARING_WARRIOR, 10);
+  Actor_SetAnimation(ACTOR_CLEARING_WARRIOR, WARRIOR_ANIMATION_ARMS_RAISED);
   Event_Wait(80);
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
   gFieldWork->transitionFrames = 16;
@@ -1421,12 +1421,12 @@ static void ColosseumEntrance_ApplyArrivalState(void) {
   entrance = gMainRoutineWork.entrance;
   switch (entrance) {
   case COLOSSEUM_STANDS_FROM_STONE_PASSAGE_WEST:
-    Actor_SetAnimation(ACTOR_STANDS_WEST_TORCH, ANIM_WALK);
-    Actor_SetAnimation(ACTOR_STANDS_EAST_TORCH, ANIM_WALK);
+    Actor_SetAnimation(ACTOR_STANDS_WEST_TORCH, TORCH_ANIMATION_LIT);
+    Actor_SetAnimation(ACTOR_STANDS_EAST_TORCH, TORCH_ANIMATION_LIT);
     break;
   case COLOSSEUM_STANDS_FROM_TRIAL_GROUNDS:
-    Actor_SetAnimation(ACTOR_STANDS_WEST_TORCH, ANIM_WALK);
-    Actor_SetAnimation(ACTOR_STANDS_EAST_TORCH, ANIM_WALK);
+    Actor_SetAnimation(ACTOR_STANDS_WEST_TORCH, TORCH_ANIMATION_LIT);
+    Actor_SetAnimation(ACTOR_STANDS_EAST_TORCH, TORCH_ANIMATION_LIT);
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0)
       break;
     ColosseumEntrance_ExplainTrial();
@@ -1653,7 +1653,7 @@ static void ColosseumEntrance_ExplainPartySupport(void) {
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
   flag = 0;
-  if (Event_AskYesNoWithActorAnimation(0, 0) == 1) {
+  if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 1) {
     ColosseumEntrance_ShowMessageAndPause(ACTOR_IVAN);
     flag = 1;
   } else {

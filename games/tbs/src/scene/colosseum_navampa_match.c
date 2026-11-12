@@ -514,7 +514,7 @@ static void ColosseumNavampaMatch_StepOnScales(void) {
 static void ColosseumNavampaMatch_StepOffScales(void) {
   struct Actor *actor;
 
-  Actor_SetAnimation(gMainRoutineWork.leaderActorId, 1);
+  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_STAND);
 
   actor = Actor_Get(ACTOR_SCALES_EAST_LEDGE);
   actor->motionFlags = 0;
@@ -759,7 +759,7 @@ static void ColosseumNavampaMatch_RollLongLog(void) {
   MapGrid_CopyCellAttributes(74, 8, 1, 4, log->x.fixed >> 20, 9);
   MapGrid_CopyCellAttributes(120, 60, 8, 5, 74, 60);
   Event_Start();
-  Actor_SetAnimation(actorId, 8);
+  Actor_SetAnimation(actorId, ANIM_PUSH);
   Event_Wait(6);
   log->speedLimit = px(1) / 2;
   acceleration = px(1) / 5;
@@ -772,19 +772,19 @@ static void ColosseumNavampaMatch_RollLongLog(void) {
   Actor_StartCamera(work->camera, (s32)log);
   Actor_SetSpeedFixed(actorId, px(1) / 2, acceleration);
   Sound_Play(SE_HEAVY_MOVE);
-  Actor_SelectAnimation(rider, 2);
+  Actor_SelectAnimation(rider, ANIM_WALK);
   FieldActor_SetMoveTargetFixed(rider, px(steps * step) + rider->x.fixed, 0,
                                 rider->z.fixed);
   Actor_WaitForMove(rider);
-  Actor_SelectAnimation(rider, 1);
+  Actor_SelectAnimation(rider, ANIM_STAND);
   Actor_WaitForMove(log);
   // At the eastern end the log settles at the end of its stage.
   if (x >= px(1328)) {
     GameFlag_Set(FLAG_LONG_LOG_IN_PLACE);
-    Actor_SetAnimation(ACTOR_LONG_LOG, ANIM_NOD);
+    Actor_SetAnimation(ACTOR_LONG_LOG, LOG_ANIMATION_ROLL_WEST);
     Actor_SetDestinationOffset(ACTOR_LONG_LOG, 18, 6);
     Event_Wait(30);
-    Actor_SelectAnimation(log, 8);
+    Actor_SelectAnimation(log, LOG_ANIMATION_DROP_IN);
     Actor_WaitForMove(log);
     log->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
     column = 84;
@@ -871,7 +871,7 @@ static void ColosseumNavampaMatch_PassNorthWallOpening(void) {
   actor->speedLimit = px(2);
   Actor_SetAttachedEffect(*actorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Actor_SelectAnimation(actor, 5);
+  Actor_SelectAnimation(actor, ANIM_LEADER_RUN);
   z = actor->z.fixed & 0xFFF00000;
   FieldActor_SetMoveTargetFixed(actor, actor->x.fixed, actor->y.fixed,
                                 z + px(24));
@@ -902,7 +902,7 @@ static void ColosseumNavampaMatch_PassSouthWallOpening(void) {
   }
   actor->acceleration = px(1);
   actor->speedLimit = px(2);
-  Actor_SelectAnimation(actor, 5);
+  Actor_SelectAnimation(actor, ANIM_LEADER_RUN);
   z = actor->z.fixed & 0xFFF00000;
   FieldActor_SetMoveTargetFixed(actor, actor->x.fixed, actor->y.fixed,
                                 z + px(12));
@@ -1068,7 +1068,7 @@ s32 ColosseumNavampaMatch_Initialize(void) {
   actor->y.fixed = px(4);
 
   if (GameFlag_Get(FLAG_SCALES_FROZEN) != 0) {
-    Actor_SetAnimation(ACTOR_PUDDLE, 5);
+    Actor_SetAnimation(ACTOR_PUDDLE, PUDDLE_ANIMATION_PILLAR);
     actor = Actor_Get(ACTOR_SCALES_WEST_LEDGE);
     actor->y.fixed = px(4);
     actor = Actor_Get(ACTOR_SCALES_EAST_LEDGE);
@@ -1177,7 +1177,7 @@ s32 ColosseumNavampaMatch_Initialize(void) {
 
   if (GameFlag_Get(FLAG_LONG_LOG_IN_PLACE) != 0) {
     actor = Actor_Get(ACTOR_LONG_LOG);
-    Actor_SelectAnimation(actor, 8);
+    Actor_SelectAnimation(actor, LOG_ANIMATION_DROP_IN);
     actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
     MapGrid_CopyCellAttributes(86, 10, 1, 2, 84, 10);
     MapGrid_CopyCellAttributes(86, 9, 1, 1, 84, 12);
@@ -1403,7 +1403,7 @@ static void ColosseumNavampaMatch_PlayPostBattleReunion(s32 battleResult) {
   actor->scaleX = Q16_ONE;
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   actor->scaleY = Q16_ONE;
-  Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 36);
+  Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_LEADER_FALL);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   actor->x.fixed += px(3);
   Event_Wait(10);

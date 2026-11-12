@@ -224,7 +224,10 @@ enum ActorAnimation {
   ANIM_PARTY_RUN = 30,
   /// Held in ANIM_LEADER_SPRING's crouch, knees bent, as after a lost
   /// match.
-  ANIM_LEADER_CROUCH = 35
+  ANIM_LEADER_CROUCH = 35,
+  /// Staggering, reeling back, then lying flat (spr_000.png), as he collapses
+  /// at the end of a Colosso match.
+  ANIM_LEADER_FALL = 36
 };
 
 #endif

@@ -356,7 +356,7 @@ s32 Colosso_GreetAtStage(s32 speaker, s32 warrior) {
   GameFlag_Set(warrior + COLOSSO_STAGE_DESCRIBED);
   Event_SetMessageId(MsgColossoWouldYouLikeHearDescription);
   FieldMessage_ShowAtActor(speaker, 0);
-  return Event_AskYesNoWithActorAnimation(0, 0);
+  return Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0);
 }
 
 /// A stage's guide, after describing the stage, names it again: the copy of
@@ -428,7 +428,7 @@ void Colosso_OfferCheeringSpot(s32 mode, s32 guide, s32 stage) {
     } else {
       Event_SetMessageId(MsgColossoWouldLikeFriendCheerFor);
       Event_OpenMessage(guide, 0);
-      answer = Event_AskYesNoWithActorAnimation(0, 0);
+      answer = Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0);
     }
     if (answer == 0) {
       if (answer < memberCount) {
@@ -479,7 +479,7 @@ L_main:
   Actor_WalkToById(guide, besideX, behindZ);
   Actor_WatchAndSetScript(ACTOR_PARTY_LEADER, friendId);
   Actor_WalkToAndWait(friendId, guideX, behindZ);
-  Import_ActorSetAnimation(guide, 1);
+  Import_ActorSetAnimation(guide, ANIM_STAND);
   Actor_FaceDirection(guide, FACING_WEST, 0);
   Actor_WalkToAndWait(friendId, guideX, guideZ - 48);
   Actor_WalkToAndWait(guide, guideX, behindZ);

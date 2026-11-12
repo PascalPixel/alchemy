@@ -313,6 +313,13 @@ enum {
   FLAG_ARENA_REACHED = FLAG_SCENE_TEMP_11
 };
 
+/// SPRITE_FALLING_LOG's animations (spr_259.png).
+enum ColosseumSatrageMatchAnimation {
+  ANIM_FALLING_LOG_STANDING = 3, ///< standing on end
+  /// Lying across the water, bobbing.
+  ANIM_FALLING_LOG_FALLEN = 4
+};
+
 /// Sets the party leader's walking speed and acceleration.
 static inline void InitializeActorZero(void) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 1);
@@ -452,7 +459,7 @@ static void ColosseumSatrageMatch_KnockDownObstacle(void) {
 
     sprite->rotation = rotation;
   }
-  Actor_SetAnimation(ACTOR_FALLING_LOG, ANIM_SHAKE_HEAD);
+  Actor_SetAnimation(ACTOR_FALLING_LOG, ANIM_FALLING_LOG_FALLEN);
   obstacle->x.fixed = px(336);
   obstacle->y.fixed = -px(8);
   obstacle->z.fixed = px(264);
@@ -624,7 +631,7 @@ static void ColosseumSatrageMatch_RollLogToCell(s32 logId, s32 halfCellX,
     offsetZ = (halfCellZ - log->z.fixed) / 2;
   }
   Event_Start();
-  Actor_SetAnimation(pusher, 8);
+  Actor_SetAnimation(pusher, ANIM_PUSH);
   Event_Wait(6);
   log->speedLimit = px(1) / 2;
   log->acceleration = px(1) / 5;
@@ -639,12 +646,12 @@ static void ColosseumSatrageMatch_RollLogToCell(s32 logId, s32 halfCellX,
                         ->camera,
                     (s32)log);
   Actor_SetSpeedAndAcceleration(pusher, 0.5, 0.2);
-  Actor_SelectAnimation(pusherActor, 2);
+  Actor_SelectAnimation(pusherActor, ANIM_WALK);
   FieldActor_SetMoveTargetFixed(pusherActor, pusherActor->x.fixed + offsetX, 0,
                                 pusherActor->z.fixed + offsetZ);
   Sound_Play(SE_HEAVY_MOVE);
   Actor_WaitForMove(pusherActor);
-  Actor_SelectAnimation(pusherActor, 1);
+  Actor_SelectAnimation(pusherActor, ANIM_STAND);
   Actor_WaitForMove(log);
   Sound_Play(SE_STOP_ACTION_SE);
   Sound_Play(SE_HEAVY_STOP);
@@ -1017,7 +1024,7 @@ s32 ColosseumSatrageMatch_Initialize(void) {
     MapGrid_CopyCellAttributes(20, 80, 1, 1, 21, 80);
   } else {
     actor = Actor_Get(ACTOR_FALLING_LOG);
-    Actor_SelectAnimation(actor, 3);
+    Actor_SelectAnimation(actor, ANIM_FALLING_LOG_STANDING);
     actor->y.fixed = px(16);
   }
   Actor_Get(ACTOR_WALL_PILLAR)->priorityFlags = 2;
@@ -1035,13 +1042,13 @@ s32 ColosseumSatrageMatch_Initialize(void) {
   if (GameFlag_Get(FLAG_WEST_TARGET_FROZEN)) {
     Actor_Get(ACTOR_PUDDLE_WEST)->motionFlags = zero;
     Actor_Get(ACTOR_PUDDLE_WEST)->priorityFlags = 2;
-    Actor_SetAnimation(ACTOR_PUDDLE_WEST, 5);
+    Actor_SetAnimation(ACTOR_PUDDLE_WEST, PUDDLE_ANIMATION_PILLAR);
     MapGrid_CopyCellAttributes(46, 17, 1, 1, 44, 17);
   }
   if (GameFlag_Get(FLAG_EAST_TARGET_FROZEN)) {
     Actor_Get(ACTOR_PUDDLE_EAST)->motionFlags = zero;
     Actor_Get(ACTOR_PUDDLE_EAST)->priorityFlags = 2;
-    Actor_SetAnimation(ACTOR_PUDDLE_EAST, 5);
+    Actor_SetAnimation(ACTOR_PUDDLE_EAST, PUDDLE_ANIMATION_PILLAR);
     MapGrid_CopyCellAttributes(46, 17, 1, 1, 50, 17);
   }
   actor = Actor_Get(ACTOR_RIDING_LOG_NORTH);
@@ -1486,7 +1493,7 @@ static void ColosseumSatrageMatch_PushObstacleToCell(s32 obstacleId, s32 column,
     offsetX = 0;
     offsetZ = (row - obstacle->z.fixed) / 2;
   }
-  Actor_SetAnimation(pusher, 8);
+  Actor_SetAnimation(pusher, ANIM_PUSH);
   Event_Wait(6);
   obstacle->speedLimit = px(1) / 2;
   obstacle->acceleration = px(1) / 5;
@@ -1496,11 +1503,11 @@ static void ColosseumSatrageMatch_PushObstacleToCell(s32 obstacleId, s32 column,
   Event_Wait(6);
   Actor_SetAnimation(pusher, ANIM_WALK);
   Actor_SetSpeedAndAcceleration(pusher, 0.5, 0.2);
-  Actor_SelectAnimation(pusherActor, 2);
+  Actor_SelectAnimation(pusherActor, ANIM_WALK);
   FieldActor_SetMoveTargetFixed(pusherActor, pusherActor->x.fixed + offsetX, 0,
                                 pusherActor->z.fixed + offsetZ);
   Actor_WaitForMove(pusherActor);
-  Actor_SelectAnimation(pusherActor, 1);
+  Actor_SelectAnimation(pusherActor, ANIM_STAND);
   Actor_WaitForMove(obstacle);
   Actor_SelectAnimation(obstacle, 1);
   Sound_Play(SE_STOP_ACTION_SE);

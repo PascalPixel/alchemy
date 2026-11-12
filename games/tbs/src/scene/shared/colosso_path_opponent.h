@@ -64,7 +64,7 @@ static void Colosso_UpdatePathOpponent(void) {
     if (x == 0 && z == 0) {
       s32 fz;
       rec->mode = PATH_RECORDER_FINISHED;
-      Actor_SelectAnimation(actor, 1);
+      Actor_SelectAnimation(actor, ANIM_STAND);
       if (work->gauge.finishX < actor->x.fixed) {
         x = work->gauge.finishX + px(12);
       } else {
@@ -109,7 +109,7 @@ static void Colosso_UpdatePathOpponent(void) {
       rec->still++;
     }
     if (rec->still > 2) {
-      Actor_SelectAnimation(actor, 1);
+      Actor_SelectAnimation(actor, ANIM_STAND);
     } else {
       Actor_SelectAnimation(actor, 5);
     }

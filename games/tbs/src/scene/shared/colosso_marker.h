@@ -50,8 +50,8 @@ void Colosso_FadeInWarrior(s32 id, s32 x, s32 z) {
   actor->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
   actor->facing = FACING_SOUTH;
   Actor_SetSpriteFlags(actor, 3);
-  Actor_SelectAnimation(actor, 0);
-  Actor_SelectAnimation(actor, 1);
+  Actor_SelectAnimation(actor, ANIM_STILL);
+  Actor_SelectAnimation(actor, ANIM_STAND);
   Import_ActorSetPosition(id, px(x), px(z));
   // BUG: FACING_SOUTH is passed where an actor id belongs; no actor has
   // it, so the leader does not turn.
@@ -80,7 +80,7 @@ void Colosso_FadeInWarrior(s32 id, s32 x, s32 z) {
   Event_Wait(13);
   sprite->image.objectMode = 0;
   sprite->shadow.objectMode = 0;
-  Actor_SetAnimationAndWait(id, 3);
+  Actor_SetAnimationAndWait(id, ANIM_NOD);
   Event_Wait(20);
 }
 
@@ -98,10 +98,10 @@ void Colosso_RestoreWarrior(s32 id) {
   actor = Actor_GetById(id);
   if (gMainRoutineWork.movementMode == 1) {
     gMainRoutineWork.movementMode = 0;
-    Import_ActorSetAnimation(id, 1);
+    Import_ActorSetAnimation(id, ANIM_STAND);
   } else {
     Actor_FaceDirection(id, FACING_SOUTH, 30);
-    Import_ActorSetAnimation(id, 3);
+    Import_ActorSetAnimation(id, ANIM_NOD);
     Event_Wait(30);
   }
   zero = 0;
@@ -125,8 +125,8 @@ void Colosso_RestoreWarrior(s32 id) {
   actor->y.fixed = zero;
   (actor)->groundHeight = zero;
   Actor_SetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
-  Actor_SelectAnimation(actor, 0);
-  Actor_SelectAnimation(actor, 1);
+  Actor_SelectAnimation(actor, ANIM_STILL);
+  Actor_SelectAnimation(actor, ANIM_STAND);
   wait(1);
 }
 
@@ -286,6 +286,6 @@ void Colosso_WalkActorToAndStand(s32 actorId, s32 x, s32 z) {
     Actor_SelectAnimation(actor, 5);
     Actor_SetMoveTarget(actor, px(x), actor->y.fixed, px(z));
     Actor_WaitForMove(actor);
-    Actor_SelectAnimation(actor, 1);
+    Actor_SelectAnimation(actor, ANIM_STAND);
   }
 }

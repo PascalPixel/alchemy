@@ -68,7 +68,7 @@ static void Colosso_PushActorAhead(void) {
     return;
   }
 
-  Actor_SelectAnimation(leader, 8);
+  Actor_SelectAnimation(leader, ANIM_PUSH);
   wait(15);
 
   pushed->speedLimit = px(1) / 5;
@@ -88,7 +88,7 @@ static void Colosso_PushActorAhead(void) {
   pushed->velocityX = zero;
   pushed->velocityZ = zero;
 
-  Actor_SelectAnimation(leader, 1);
+  Actor_SelectAnimation(leader, ANIM_STAND);
 }
 
 /// Returns the placed actor standing one cell, or else two cells, ahead

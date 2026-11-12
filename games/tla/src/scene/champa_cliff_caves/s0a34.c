@@ -50,7 +50,7 @@ void Actor_SetSpeedParameters(u32 objectId, s32 speedLimit, s32 acceleration);
 void Actor_OffsetPositionAndResetMotion(u32 objectId, s32 xOffset, s32 zOffset);
 void Sound_Play(s32 cue);
 void Func_02000734(const u16 *from, const u16 *to, s32 frames);
-void Actor_CommitPositionAndActivate(u32 objectId, s32 xOffset, s32 zOffset);
+void Actor_CommitPositionAndActivate(u32 objectId, s32 x_offset, s32 z_offset);
 void Actor_StartRepeatedMotion(u32 objectId, s32 variant);
 void Func_080d489c(s32 id, s32 animation);
 void Func_0200360c(s32 a, s32 b);

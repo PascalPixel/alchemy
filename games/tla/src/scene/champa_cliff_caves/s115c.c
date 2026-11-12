@@ -22,10 +22,10 @@ struct Position {
 };
 
 void Actor_SetSingleChildFlags(struct FieldActor *object, s32 flags);
-void Motion_SetVarCbAndRefresh(s32 actor, s32 variant);
+void Motion_SetVarCbAndRefresh(u32 objectId, s32 variant);
 void Motion_SetModeAndWaitAnimation(s32 actor, s32 mode);
 void Camera_MoveWithinMapBounds(s32 a, s32 b, s32 c, s32 d);
-void Actor_CommitPositionAndActivate(s32 actor, s32 dx, s32 dz);
+void Actor_CommitPositionAndActivate(u32 objectId, s32 x_offset, s32 z_offset);
 void Actor_ResetAndSetPositionInMode2(s32 actor, s32 x, s32 z);
 void Party_SetFields1f2And1f4(s32 scene, s32 entrance);
 void Party_SetFields1eeAnd1f0(s32 scene, s32 entrance);
@@ -346,7 +346,7 @@ void Actor_SetMovementTypeById(s32 id, const u8 *script);
 void Actor_WatchAndSetScript(s32 id, s32 linkedId);
 void Actor_OffsetPositionAndReset(s32 id, s32 dx, s32 dz);
 void Actor_Stop(s32 id);
-void Actor_ResetAndSetPosition(s32 id, s32 x, s32 z);
+void Actor_ResetAndSetPosition(u32 objectId, s32 x, s32 z);
 
 /// The scene that opens with MsgMySalamanderYou: persons 8 and 11 talk and
 /// move with the party through three yes-or-no answers (each counted in the

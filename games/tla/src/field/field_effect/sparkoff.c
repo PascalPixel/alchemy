@@ -446,7 +446,7 @@ void Actor_SetSingleChildFlagsFar(struct Actor *object, u32 flags);
 struct Actor *Actor_GetById(u32 objectId);
 void Event_Start(void);
 void Event_End(void);
-void Motion_SetVarCbAndRefresh(s32 id, s32 variant);
+void Motion_SetVarCbAndRefresh(u32 objectId, s32 variant);
 void Actor_ArmCallback(s32 id, s32 angle, s32 frames);
 void Actor_Jump(s32 id, s32 speed, s32 frames);
 void *Func_080d47b4(s32 id, s32 flags, s32 state);

@@ -18,7 +18,7 @@ void Func_02003ac4(void) {
 }
 
 void Actor_SetSpeedParameters(u32 objectId, s32 speedLimit, s32 acceleration);
-void Actor_SetPositionAndCommit(s32 actor, s32 x, s32 z);
+void Actor_SetPositionAndCommit(u32 objectId, s32 x, s32 z);
 
 /// While the leader is no further than z 653, moves the leader to (376, 668)
 /// with bit 0 of its byte 90 cleared for the move.

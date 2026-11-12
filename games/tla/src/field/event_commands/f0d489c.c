@@ -388,7 +388,7 @@ void Event_Start(void);
 void Event_End(void);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, s32 *position);
 s32 Func_08020210(struct Actor *object, s32 *position);
-void Actor_SetPositionAndCommit(s32 id, s32 x, s32 z);
+void Actor_SetPositionAndCommit(u32 objectId, s32 x, s32 z);
 void Func_080203a0(struct Actor *object, s32 kind);
 s32 GetMapCellCollisionFar(s32 layer, s32 x, s32 z);
 

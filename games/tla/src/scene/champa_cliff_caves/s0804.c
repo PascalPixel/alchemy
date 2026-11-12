@@ -6,7 +6,7 @@ struct EventCounters {
   u16 count;
 };
 
-void Motion_SetVarCbAndRefresh(s32 actor, s32 variant);
+void Motion_SetVarCbAndRefresh(u32 objectId, s32 variant);
 void Motion_SetModeAndWaitAnimation(s32 actor, s32 mode);
 void Func_020005e8(s32 actor);
 void Func_0200067c(s32 value);

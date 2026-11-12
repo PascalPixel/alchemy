@@ -99,7 +99,7 @@ void Func_020040e8(s32 actor, s32 angle);
 void Func_02004138(s32 mode);
 void Func_02004118(s32 a, s32 b);
 void Camera_MoveWithinMapBounds(s32 x, s32 a, s32 z, s32 b);
-void Actor_SetPositionAndCommit(s32 id, s32 x, s32 z);
+void Actor_SetPositionAndCommit(u32 objectId, s32 x, s32 z);
 void Actor_Stop(s32 id);
 void Func_020021d4(void);
 void Func_02002180(void);

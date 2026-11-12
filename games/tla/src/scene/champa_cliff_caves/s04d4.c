@@ -78,7 +78,7 @@ struct ActorSolid {
 };
 
 void Motion_SetModeAndWaitAnimation(s32 actor, s32 mode);
-void Actor_CommitPositionAndActivate(s32 actor, s32 dx, s32 dz);
+void Actor_CommitPositionAndActivate(u32 objectId, s32 x_offset, s32 z_offset);
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.

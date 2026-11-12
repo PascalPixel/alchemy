@@ -9,7 +9,7 @@ void Func_02005e1c(void);
 void Func_02005f2c(s32 skip);
 void Func_02005f94(s32 cue);
 void Actor_SetSpeedParameters(u32 id, s32 speed, s32 acceleration);
-void Actor_SetPositionAndCommit(u32 id, s32 x, s32 z);
+void Actor_SetPositionAndCommit(u32 objectId, s32 x, s32 z);
 
 /// When the event work's warp number (0x154) is set, plays cue 186 and moves
 /// the leader to that warp's place (warps 50 to 55), inside an event.

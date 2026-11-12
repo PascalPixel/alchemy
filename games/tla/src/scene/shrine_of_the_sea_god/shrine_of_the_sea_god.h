@@ -119,7 +119,7 @@ void Func_080d489c(s32 actor, s32 emote);
 void Camera_SetSpeedParameters(s32 speed, s32 acceleration);
 void Func_02003ac8(void);
 struct ShrineOfTheSeaGodObject *Func_080d4568(void);
-void Actor_ResetAndSetPosition(s32 actor, s32 x, s32 z);
+void Actor_ResetAndSetPosition(u32 objectId, s32 x, s32 z);
 void Actor_WaitForMoveById(s32 actor);
 void Actor_Stop(s32 actor);
 void Actor_SetMovementTypeById(s32 actor, const void *callback);
@@ -127,8 +127,8 @@ void Actor_SetAngleToward(s32 actor, s32 target, s32 frames);
 void Actor_WatchAndSetScript(s32 actor, s32 target);
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 void Motion_SetModeAndWaitAnimation(s32 actor, s32 mode);
-void Motion_SetVarCbAndRefresh(s32 actor, s32 value);
-void Actor_SetPositionAndCommit(s32 actor, s32 x, s32 z);
+void Motion_SetVarCbAndRefresh(u32 objectId, s32 variant);
+void Actor_SetPositionAndCommit(u32 objectId, s32 x, s32 z);
 void Actor_SetSingleChildFlags(struct ShrineOfTheSeaGodObject *object,
                                         u32 value);
 

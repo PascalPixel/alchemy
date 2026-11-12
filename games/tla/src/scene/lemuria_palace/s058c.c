@@ -22,7 +22,7 @@ void Func_02001fcc();
 void Event_ResolvePendingActions();
 void Event_SetMessageId();
 void Actor_SetSpeedParameters();
-void Actor_CommitPositionAndActivate();
+void Actor_CommitPositionAndActivate(u32 objectId, s32 x_offset, s32 z_offset);
 s32 Actor_ArmCallbackAndRefresh();
 void Actor_SetAngleToward();
 void FieldMessage_ShowAtActor();
@@ -40,7 +40,7 @@ void Actor_SetPositionAndReset();
 void Camera_MoveWithinMapBounds();
 void Func_020020ac();
 void Func_080d47b4();
-void Motion_SetVarCbAndRefresh();
+void Motion_SetVarCbAndRefresh(u32 objectId, s32 variant);
 void Camera_FollowActor();
 void Actor_ResetAndSetPositionInMode2();
 void Actor_WaitForMoveById();
@@ -61,7 +61,7 @@ void Actor_OffsetPositionAndReset();
 void Actor_SetHorizontalPositionWithTerrain();
 void Actor_Stop();
 void Actor_Jump();
-void Actor_ResetAndSetPosition();
+void Actor_ResetAndSetPosition(u32 objectId, s32 x, s32 z);
 
 s32 Func_0200058c(s32 a0, s32 a1, s32 a2, s32 a3) {
   s32 r5_1, r7_1, r8_1, r5_3, r5_4, r5_5;

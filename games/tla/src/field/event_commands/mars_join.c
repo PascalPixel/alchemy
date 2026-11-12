@@ -29,7 +29,7 @@ struct Actor *Actor_GetById(u32 objectId);
 void BattleEffect_InitializeSlots(void);
 void Shop_RestoreSceneTilesFar(s32 value);
 void Sound_PlayFar(s32 cue);
-void Motion_SetVarCbAndRefresh(s32 id, s32 variant);
+void Motion_SetVarCbAndRefresh(u32 objectId, s32 variant);
 void wait(s32 frames);
 void Actor_ArmCallback(s32 id, s32 angle, s32 frames);
 #include "actor.h"

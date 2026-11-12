@@ -217,7 +217,7 @@ void Func_020013f8(void) {
 }
 
 void Func_02001d30(struct Actor *object);
-void Actor_SetPositionAndCommit(s32 id, s32 x, s32 z);
+void Actor_SetPositionAndCommit(u32 objectId, s32 x, s32 z);
 
 void Func_02001460(void) {
   struct Actor *object = Actor_GetById(gMainRoutineWork.currentOwner);

@@ -64,7 +64,7 @@ void Func_02003cc0(s32 id);
 void Func_080d489c(s32 id, s32 value);
 void Func_02003d40(struct Actor *object, s32 mode);
 void Func_02003bb8(struct Actor *object);
-void Motion_SetVarCbAndRefresh(s32 id, s32 value);
+void Motion_SetVarCbAndRefresh(u32 objectId, s32 variant);
 void PartyInventory_GiveItem(s32 item, s32 mode);
 void Func_02002b68(void);
 void Func_02002f08(void);

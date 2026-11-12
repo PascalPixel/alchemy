@@ -1,6 +1,9 @@
 /// @file
 /// The scene code of overlay 0x678, in ROM order.
 
+// field.h declares this on struct ActorView, as the routine behind it is
+// defined; this scene passes the same actors as struct Actor and declares it
+// so below.
 #define OWN_Actor_SetSingleChildFlags
 #include "taopo_swamp/local.h"
 #include "types.h"

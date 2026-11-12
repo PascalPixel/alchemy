@@ -20,7 +20,7 @@ explains them for The Broken Seal.
   cut where The Broken Seal's are, each function in the part holding its
   twin, and one of them, `flags.c`, missing: the game flags are read through
   `GameFlag_` functions that this game links in its first bank, so they are
-  in [The Lost Age: system](../system/README.md) (`flags/`).
+  in [The Lost Age: system](../system/README.md) (`system/flags.c`).
 - `classes.c` ends with `Unit_RefreshPsynergy`, which here only calls
   `Unit_UpdateClass`; The Broken Seal's function of that name rebuilds the
   Psynergy list, as `Owner_UpdateClassActions` in `levels.c` does here.

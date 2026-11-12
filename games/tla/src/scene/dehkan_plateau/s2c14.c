@@ -175,8 +175,6 @@ void Func_020002f8(const void *data);
 void Func_02000708(const void *data);
 void Func_02001474(s32 show);
 void Func_02002180(void);
-void Func_02003c28(void);
-void Func_02003c30(void);
 void Func_02003dc0(const void *data);
 void Func_02003dc8(void);
 void Func_02003de8(void);

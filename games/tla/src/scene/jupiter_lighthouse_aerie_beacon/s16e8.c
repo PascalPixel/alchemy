@@ -671,7 +671,6 @@ L_0200a9e0:
    } *)(base))                                                                 \
        ->v)
 
-s32 Event_FinishScreenTransition();
 extern u8 MsgWeDidItWe[];
 
 static __inline__ void W_Func_020058ec(s32 a0, s32 a1) {

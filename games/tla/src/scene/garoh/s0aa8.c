@@ -155,7 +155,6 @@ L_02008dea:
 }
 
 extern u8 gData_02005450[];
-void Func_02000a68(void);
 
 void Func_02000e00(void) {
   FieldTask_AddFrame(Func_02000a68, 1152);

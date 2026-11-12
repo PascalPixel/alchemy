@@ -12,20 +12,20 @@ enum ParticleStreamsMode {
 };
 
 /// The pictures in the flame sheet (ResourceId_FlameSheetB), each starting
-/// where the one before ends: six 32x32 pictures, then three 24x24 and three
+/// where the one before ends: six 32x32 flames, then three 24x24 and three
 /// 8x8 glows, each glow brighter at its centre than the one before. The rise
 /// draws only the six and the brightest glow of each size.
 enum ParticleStreamsSheetCell {
-  /// 32x32, six in a row: a rising mote's cells
-  PARTICLE_STREAMS_RISE_MOTE_CELLS = 0,
-  /// 24x24
-  PARTICLE_STREAMS_DROP_CELL = PARTICLE_STREAMS_RISE_MOTE_CELLS + 6 * 32 * 32 +
-      2 * 24 * 24,
-  /// 8x8
-  PARTICLE_STREAMS_SPARK_CELL = PARTICLE_STREAMS_DROP_CELL + 24 * 24 +
-      2 * 8 * 8,
+  /// The six 32x32 flames, in a row
+  PARTICLE_STREAMS_FLAME_CELLS = 0,
+  /// The brightest 24x24 glow
+  PARTICLE_STREAMS_LARGE_GLOW_CELL = PARTICLE_STREAMS_FLAME_CELLS +
+      6 * 32 * 32 + 2 * 24 * 24,
+  /// The brightest 8x8 glow
+  PARTICLE_STREAMS_SMALL_GLOW_CELL = PARTICLE_STREAMS_LARGE_GLOW_CELL +
+      24 * 24 + 2 * 8 * 8,
   /// Past the sheet's end: the heat lines, 160 colours the rise writes there.
-  PARTICLE_STREAMS_HEAT_LINES = PARTICLE_STREAMS_SPARK_CELL + 8 * 8
+  PARTICLE_STREAMS_HEAT_LINES = PARTICLE_STREAMS_SMALL_GLOW_CELL + 8 * 8
 };
 
 /// Adds per-channel steps to background colours 1 to 63, capped at 31.
@@ -493,7 +493,8 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
         Projection_Point(vector, screenPosition = &spot);
         screenPosition->x = Q_16_16_TO_INT(screenPosition->x) + 128;
         screenPosition->y = Q_16_16_TO_INT(screenPosition->y) + 60;
-        draw(Ram_MapGridCellBuffer, work->sheet + PARTICLE_STREAMS_SPARK_CELL,
+        draw(Ram_MapGridCellBuffer,
+             work->sheet + PARTICLE_STREAMS_SMALL_GLOW_CELL,
              screenPosition->x - 4, screenPosition->y - 4, 8, 8);
       }
       if (direction == 1)
@@ -507,7 +508,8 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
         s32 drop = gParticleStreams_DropPoints[i][1] + y;
 
         if (drop <= 93)
-          draw(Ram_MapGridCellBuffer, work->sheet + PARTICLE_STREAMS_DROP_CELL,
+          draw(Ram_MapGridCellBuffer,
+               work->sheet + PARTICLE_STREAMS_LARGE_GLOW_CELL,
                gParticleStreams_DropPoints[i][0] + x - 12, drop - 12, 24, 24);
         else if (drop <= 95)
           ParticleStreams_SpawnFlame(
@@ -520,7 +522,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
         // and 1.25 against the stream each frame, then frees its slot.
         if (mote->variant >= 0) {
           draw(Ram_MapGridCellBuffer,
-               work->sheet + PARTICLE_STREAMS_RISE_MOTE_CELLS +
+               work->sheet + PARTICLE_STREAMS_FLAME_CELLS +
                    mote->variant * (32 * 32),
                Q_16_16_TO_INT(mote->x) - 16, Q_16_16_TO_INT(mote->y) - 16, 32,
                32);

@@ -36,7 +36,9 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
   void *cells;
   BlitterPair draw;
   struct Actor *target;
-  // Only position[0] is used; the second gives the stack frame its 76 bytes.
+  /* FAKEMATCH(dead): position[1] is never used and only gives the stack frame
+   * its 76 bytes; as one ScreenPoint, 4 of 580 instructions differ in tbs-en.
+   */
   struct ScreenPoint position[2];
   s32 swayCenter[2];
   s32 drawReaper;

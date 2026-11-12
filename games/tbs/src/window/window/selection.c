@@ -4,14 +4,6 @@
 
 #include "../window_internal.h"
 
-/// Two halfwords of a selection record from its base field on, the second
-/// cleared as its cursor: SelectionMenu_Create frees records 7 and 8 through
-/// it.
-struct GlyphCursor {
-  u16 unused; ///< the record's base
-  u16 cursor; ///< the record's kind
-};
-
 /// Allocates and resets the selection screen: the row of icons the player picks
 /// from, with arrows at each end and a pointing hand over the chosen target.
 /// The work is HEAP_SLOT_SELECTION_MENU (gSelectionMenuWork), which
@@ -47,10 +39,9 @@ void SelectionMenu_Create(void) {
     screen->records[i + 9].kind = ICON_KIND_NONE;
     i++;
   } while (i != 5);
-  // Cleared through a view from each record's base field, which forms
-  // screen + 372 and stores at #2; through kind the address differs.
-  ((struct GlyphCursor *)&screen->records[7].base)->cursor = 0;
-  ((struct GlyphCursor *)&screen->records[8].base)->cursor = 0;
+  // i is 5: records 7 and 8.
+  screen->records[i + 2].kind = ICON_KIND_NONE;
+  screen->records[i + 3].kind = ICON_KIND_NONE;
   screen->records[0].kind = 0;
   screen->records[1].kind = 0;
   screen->records[0].y = 0;

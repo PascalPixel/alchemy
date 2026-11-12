@@ -204,7 +204,6 @@ void Func_080ea14c(s32 targetId);
 void Func_08038340(s32 value);
 void Func_080ad2f8(s32 value);
 void Party_AdjustCoinsFar(s32 amount);
-void Actor_Destroy(struct Actor *object);
 s32 PartyInventory_AddFar(s32 item);
 s32 BattleEffect_GetFlags(s32 id);
 void Actor_TurnToFaceEachOther(s32 first, s32 second, s32 mode);

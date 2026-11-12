@@ -4,12 +4,11 @@
 #include "types.h"
 #include "edition.h"
 
+struct Actor;
 struct ActorView;
 
 void *Actor_FindFreeObject(void);
 void Actor_Release(struct ActorView *object);
-#ifndef OWN_Actor_StartScriptFar
-void Actor_StartScriptFar(struct ActorView *object, const s32 *script);
-#endif
+void Actor_StartScriptFar(struct Actor *object, const s32 *script);
 
 #endif

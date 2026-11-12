@@ -67,9 +67,7 @@ void BattleHighlight_SetModesFar(u16 *, s32);
 void Map_RenderAllAnimatedTilePicturesFar(void **, s32);
 void Actor_SetPositionAndResetMotionFar(struct Actor *object, s32 x, s32 y,
                                         s32 z);
-#ifndef OWN_Actor_SetAnimationSpeedFar
-void Actor_SetAnimationSpeedFar(struct ActorView *object, s32 value);
-#endif
+void Actor_SetAnimationSpeedFar(struct Actor *object, s32 value);
 void Unit_SetHpFar(struct BattleUnit *, s32);
 void MessageArgument_ClearAllFar(void);
 void Window_CloseSharedFar(void);
@@ -148,9 +146,7 @@ void Func_0818f620(void *effect, s32 mode);
 void GameFlag_ClearBitFar(s32 flag);
 void GameFlag_SetBitFar(s32 flag);
 s32 Map_RenderAnimatedTilePicturesForObjectFar(void *object);
-#ifndef OWN_Actor_Destroy
-void Actor_Destroy(struct ActorView *work);
-#endif
+void Actor_Destroy(struct Actor *object);
 void Actor_SnapToTerrain(void *object);
 s32 Enemy_GetAttackElement(void *state);
 #ifndef OWN_Unit_CalculateFar

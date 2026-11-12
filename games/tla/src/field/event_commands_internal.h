@@ -8,11 +8,6 @@
 /// includes it too, so that a part read on its own resolves. It places no
 /// bytes.
 
-// objdisp.h declares this on struct ActorView, as the routine behind it is
-// defined; the parts pass the same actors as struct Actor and declare it so
-// below.
-#define OWN_Actor_StartScriptFar
-
 #include "types.h"
 #include "input.h"
 #include "ram_buffer.h"
@@ -69,7 +64,6 @@ void FieldMessage_ShowFar(s32 message, s32 mode);
 void MessageArgument_PushFar(s32 value, s32 slot);
 void Sound_PlayFar(s32 cue);
 s32 ArcTan2(s32 y, s32 x);
-void Actor_StartScriptFar(struct Actor *object, const void *script);
 struct Actor *ObjectTable_Get(u32 objectId);
 s32 Encounter_ResolveWorldMapZoneAndBackdrop(void *position);
 void BattleEffect_SelectBattleCue(s32 zone, s32 slot);

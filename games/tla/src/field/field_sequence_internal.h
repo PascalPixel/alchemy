@@ -8,13 +8,6 @@
 /// includes it too, so that a part read on its own resolves. It places no
 /// bytes.
 
-// The headers declare these on struct ActorView, as the routines behind them
-// are defined; the parts pass the same actors as struct Actor and declare them
-// so below.
-#define OWN_Actor_Destroy
-#define OWN_Actor_SetAnimationSpeedFar
-#define OWN_Actor_StartScriptFar
-
 #include "types.h"
 #include "field/world_map.h"
 #include "ram_buffer.h"
@@ -162,9 +155,6 @@ void ObjectEvent_Remove(u32 objectId);
 struct Actor;
 extern void *gOverlayArea[]; ///< the scene overlay's entry table
 extern s8 gData_02001000[];
-void Actor_Destroy(struct Actor *object);
-void Actor_SetAnimationSpeedFar(struct Actor *object, s32 value);
-void Actor_StartScriptFar(struct Actor *object, const void *script);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, s32 *position);
 s32 Map_GetTerrainHeightFar(u8 layer, s32 x, s32 z);
 void *Unit_Get(s32 owner);

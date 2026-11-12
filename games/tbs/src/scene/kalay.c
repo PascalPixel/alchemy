@@ -2207,8 +2207,6 @@ static void Kalay_PushTunnelStatue(void) {
   s32 moveStep;
   s32 leaderX;
   struct FieldPosition *target;
-  s32 stoppedVelocity;
-  s32 pushSpeed;
 
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   direction = (leader->facing >> 12);
@@ -2217,7 +2215,6 @@ static void Kalay_PushTunnelStatue(void) {
   statue = Actor_FindAtCell((leaderX + (probeStep >> 16)) >> 4,
                             (leader->z.part.pixel + (s16)probeStep) >> 4);
   if (statue != NULL) {
-    stoppedVelocity = 0;
     statue->layer = 2;
     /* FAKEMATCH(temporary): target holds &destination; as &destination and
      * destination.x directly, 44 of 100 instructions differ in tbs-en. */
@@ -2227,21 +2224,20 @@ static void Kalay_PushTunnelStatue(void) {
                  statue->y.fixed, statue->z.fixed + px(moveStep));
     if (FieldActor_CheckMovementCollision(statue, target) <= 0) {
       Actor_SelectAnimation(leader, ANIM_PUSH);
-      pushSpeed = px(1) / 5;
       wait(15);
       Sound_Play(SE_PUSH);
-      statue->speedLimit = pushSpeed;
-      statue->acceleration = pushSpeed;
+      statue->speedLimit = px(1) / 5;
+      statue->acceleration = px(1) / 5;
       FieldActor_SetMoveTargetFixed(statue, target->x, target->y, target->z);
-      leader->speedLimit = pushSpeed;
-      leader->acceleration = pushSpeed;
+      leader->speedLimit = px(1) / 5;
+      leader->acceleration = px(1) / 5;
       FieldActor_SetMoveTargetFixed(leader, target->x, target->y, target->z);
       Actor_WaitForMove(statue);
       Scene_PlayQueuedMusic();
       statue->x.fixed = target->x;
       statue->z.fixed = target->z;
-      statue->velocityX = stoppedVelocity;
-      statue->velocityZ = stoppedVelocity;
+      statue->velocityX = 0;
+      statue->velocityZ = 0;
       Actor_SelectAnimation(leader, ANIM_STAND);
       Kalay_UpdateTunnelPassages();
     }

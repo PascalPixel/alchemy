@@ -622,7 +622,6 @@ static void SolSanctumEntrance_RowStatue6Moved(void) {
 static void SolSanctumEntrance_PushStatue(void) {
   struct Actor *leader;
   struct Actor *statue;
-  s32 stoppedVelocity;
   s32 packedStep;
   u32 direction;
   struct FieldPosition target;
@@ -635,7 +634,6 @@ static void SolSanctumEntrance_PushStatue(void) {
       (leader->x.part.pixel + (gSolSanctumPushSteps[direction] >> 16)) >> 4,
       (leader->z.part.pixel + (s16)gSolSanctumPushSteps[direction]) >> 4);
   if (statue != NULL) {
-    stoppedVelocity = 0;
     statue->layer = 2;
     /* FAKEMATCH(temporary): destination holds &target; as &target and target.x,
      * 44 of 120 instructions differ in tbs-en. */
@@ -659,8 +657,8 @@ static void SolSanctumEntrance_PushStatue(void) {
       Actor_WaitForMove(statue);
       statue->x.fixed = destination->x;
       statue->z.fixed = destination->z;
-      statue->velocityX = stoppedVelocity;
-      statue->velocityZ = stoppedVelocity;
+      statue->velocityX = 0;
+      statue->velocityZ = 0;
       Actor_SelectAnimation(leader, ANIM_STAND);
       // Save the moved statue in the flag set belonging to this room.
       switch (gMainRoutineWork.entrance) {

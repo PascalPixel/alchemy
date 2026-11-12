@@ -142,7 +142,7 @@ restart:
     Sprite_AddAnimation(spriteWork.sprite, layers[3].spriteId);
     /* FAKEMATCH(temporary): the native adds the flags offset to the sprite's
      * own register (r5) in place; as spriteWork.sprite->flags = shadowsEnabled,
-     * 21 of 672 instructions differ in tbs-en. */
+     * 55 of 672 instructions differ in tbs-en. */
     spriteWork.flags = &spriteWork.sprite->flags;
     *spriteWork.flags = shadowsEnabled;
   }

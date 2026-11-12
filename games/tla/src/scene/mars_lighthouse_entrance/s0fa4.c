@@ -33,7 +33,7 @@ void *Heap_Alloc(s32 size);
 void Heap_Release(void *block);
 s32 Resource_FindFreeEntry(void);
 void Func_02000d18(void);
-void Func_02000fe0(u8 *cell);
+void Func_02000fe0(const struct MapCell *cell);
 void Func_020012e4(struct Actor *object);
 void Func_02002f4c(s32 id, s32 a1, s32 a2, s32 a3, const void *script);
 void Func_02002c2c(void);

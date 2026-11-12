@@ -20,6 +20,7 @@
 #include "call.h"
 #include "io_reg.h"
 #include "dma.h"
+#include "map.h"
 
 extern const struct SceneEntrance gIdejimaEntrances[];
 extern const struct Trigger gIdejimaEvents[];
@@ -666,21 +667,8 @@ void Func_02001558(void) {
           REG_DMA0);
 }
 
-struct MapLayer {
-  u8 unk00[4];
-  s32 y;
-  u8 unk08[0x10];
-  s32 unk18;
-  s32 unk1c;
-};
-
-struct MapWork {
-  u8 unk000[0x108];
-  struct MapLayer layer;
-};
-
 void Func_020015a0(void) {
-  struct MapLayer *layer = &Ram_HeapSlots->mapWork->layer;
+  struct MapLayer *layer = &Ram_HeapSlots->mapWork->layers[0];
   s16 *line = gData_02003990[gData_02003c14];
   s32 i;
 
@@ -713,7 +701,7 @@ void Func_0200161c(void) {
 }
 
 void DriftScene_Prepare(void) {
-  struct MapLayer *layer = &Ram_HeapSlots->mapWork->layer;
+  struct MapLayer *layer = &Ram_HeapSlots->mapWork->layers[0];
 
   layer->unk18 = 0x4000;
   layer->unk1c = 0x2000;

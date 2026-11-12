@@ -1,24 +1,14 @@
 #include "types.h"
 #include "ram_buffer.h"
+#include "map.h"
 
-struct MapLayer {
-  u8 unk00[0x30];
-  u8 *cells;
-  u8 unk34[4];
-};
+extern struct MapCell gMapCellBuffer[];
 
-struct MapLayers {
-  u8 unk000[0x108];
-  struct MapLayer layers[3];
-};
-
-extern u8 gMapCellBuffer[];
-
-/// Fills the third byte of each cell in a layer rectangle with value.
+/// Sets the collision code of each cell in a layer rectangle to value.
 /// Layers 3 and above use the shared buffer.
 s32 Func_02000538(u32 layer, u32 x, u32 y, u32 width, u32 height, s32 value) {
-  struct MapLayers *map = (struct MapLayers *)Ram_HeapSlots->mapWork;
-  u8 *cells;
+  struct MapWork *map = Ram_HeapSlots->mapWork;
+  struct MapCell *cells;
 
   if (map == NULL)
     return 0;
@@ -26,12 +16,12 @@ s32 Func_02000538(u32 layer, u32 x, u32 y, u32 width, u32 height, s32 value) {
     cells = map->layers[layer].cells;
   else
     cells = gMapCellBuffer;
-  cells += (x + (y << 7)) << 2;
+  cells += x + (y << 7);
   for (x = 0; x < height; x++) {
-    u8 *cell = cells + (x << 9);
+    struct MapCell *cell = cells + (x << 7);
 
-    for (y = 0; y < width; y++, cell += 4)
-      cell[2] = value;
+    for (y = 0; y < width; y++, cell++)
+      cell->collisionCode = value;
   }
   return 0;
 }

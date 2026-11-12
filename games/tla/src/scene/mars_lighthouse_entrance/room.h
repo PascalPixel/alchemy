@@ -7,6 +7,7 @@
 #include "actor.h"
 #include "flag_call.h"
 #include "event_inline.h"
+#include "map.h"
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 #define S16_AT(base, offset) (*(s16 *)((u8 *)(base) + (offset)))
@@ -20,17 +21,6 @@ struct SceneWork {
   s32 unk1ac;
   u8 unk1b0[0xb88];
   u8 unkd38;
-};
-
-struct MapLayer {
-  u8 unk00[0x30];
-  u8 *cells;
-  u8 unk34[4];
-};
-
-struct MapLayers {
-  u8 unk000[0x108];
-  struct MapLayer layers[3];
 };
 
 #define ABS(value) ((value) < 0 ? -(value) : (value))

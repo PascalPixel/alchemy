@@ -1,23 +1,9 @@
 #include "garoh.h"
 #include "event_inline.h"
-
-struct MapLayer {
-  u8 unk00[0x10];
-  s32 unk10;
-  s32 unk14;
-  u8 unk18[0x10];
-  u16 unk28;
-  u16 unk2a;
-  u8 unk2c[0x0c];
-};
-
-struct MapWork {
-  u8 unk000[0x108];
-  struct MapLayer layers[3];
-};
+#include "map.h"
 
 void Func_02000280(void) {
-  struct MapWork *map = (struct MapWork *)Ram_HeapSlots->mapWork;
+  struct MapWork *map = Ram_HeapSlots->mapWork;
   struct MapLayer *to = &map->layers[1];
   struct MapLayer *from = &map->layers[0];
 

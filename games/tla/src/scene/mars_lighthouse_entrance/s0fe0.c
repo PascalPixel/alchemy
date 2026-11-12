@@ -8,7 +8,7 @@ void GameFlag_SetByte(s32 flag, s32 value);
 void Func_02000df0(void);
 void Actor_SetAnimationSpeed(struct Actor *object, s32 speed);
 
-void Func_02000fe0(const u8 *event) {
+void Func_02000fe0(const struct MapCell *cell) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   s32 z = leader->z;
   // The leader's map column and, later, the frame count share one variable,
@@ -27,7 +27,7 @@ void Func_02000fe0(const u8 *event) {
   System_Wait(30);
   leader->angle = FACING_SOUTH;
   leader->motionFlags = 0;
-  if ((event[3] & 64) == 0) {
+  if ((cell->attributeB & 64) == 0) {
     {
       /* FAKEMATCH(temporary): the window mask is built in a word register, as
        * the native builds it; as REG_WINOUT = 0xf1f, 18 of 130 instructions

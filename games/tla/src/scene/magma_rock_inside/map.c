@@ -16,8 +16,8 @@ void Func_0200063c(struct Actor *object) {
 }
 
 s32 Func_02000658(u32 layer, s32 x, s32 y) {
-  struct MapLayers *map = (struct MapLayers *)Ram_HeapSlots->mapWork;
-  u8 *cell;
+  struct MapWork *map = Ram_HeapSlots->mapWork;
+  struct MapCell *cell;
 
   if (map == NULL)
     return 0;
@@ -25,13 +25,13 @@ s32 Func_02000658(u32 layer, s32 x, s32 y) {
     cell = map->layers[layer].cells;
   else
     cell = gMapCellBuffer;
-  cell += (x + (y << 7)) << 2;
-  return (cell[2] << 8) | cell[3];
+  cell += x + (y << 7);
+  return (cell->collisionCode << 8) | cell->attributeB;
 }
 
 s32 Func_02000694(u32 layer, s32 x, s32 y, s32 value) {
-  struct MapLayers *map = (struct MapLayers *)Ram_HeapSlots->mapWork;
-  u8 *cell;
+  struct MapWork *map = Ram_HeapSlots->mapWork;
+  struct MapCell *cell;
   s32 old;
 
   if (map == NULL)
@@ -40,9 +40,9 @@ s32 Func_02000694(u32 layer, s32 x, s32 y, s32 value) {
     cell = map->layers[layer].cells;
   else
     cell = gMapCellBuffer;
-  cell += (x + (y << 7)) << 2;
-  old = (cell[2] << 8) | cell[3];
-  cell[2] = value >> 8;
-  cell[3] = value;
+  cell += x + (y << 7);
+  old = (cell->collisionCode << 8) | cell->attributeB;
+  cell->collisionCode = value >> 8;
+  cell->attributeB = value;
   return old;
 }

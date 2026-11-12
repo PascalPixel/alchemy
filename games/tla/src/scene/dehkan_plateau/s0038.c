@@ -6,6 +6,7 @@
 #include "event_inline.h"
 #include "ram_buffer.h"
 #include "field.h"
+#include "map.h"
 
 void Func_02000128(s32 id, u32 mode, s32 flag, s32 layer);
 
@@ -72,24 +73,14 @@ void Func_020000a4(const void *data, s32 mode, s32 timer) {
   }
 }
 
-struct MapLayer {
-  u8 *cells;
-  u8 unk04[52];
-};
-
-struct MapLayers {
-  u8 unk000[0x138];
-  struct MapLayer layers[4];
-};
-
 s32 Func_02003db0(struct Actor *object);
 void Func_02003ba0(struct Actor *object, s32 mode);
 
 void Func_02000128(s32 id, u32 mode, s32 flag, s32 layer) {
   struct Actor *object = Actor_GetById(id);
-  u8 *cell = ((struct MapLayers *)Ram_HeapSlots->mapWork)->layers[layer].cells;
+  struct MapCell *cell = Ram_HeapSlots->mapWork->layers[layer].cells;
 
-  cell += Func_02003db0(object) * 4;
+  cell += Func_02003db0(object);
   if (GameFlag_Test(flag)) {
     /* FAKEMATCH(temporary): the flags read into a local before the cell store
      * and ORed into the register that holds 2, as the native does; as one |=,
@@ -98,7 +89,7 @@ void Func_02000128(s32 id, u32 mode, s32 flag, s32 layer) {
     u8 flags = object->priorityFlags;
     s32 bits;
 
-    cell[2] = 0;
+    cell->collisionCode = 0;
     bits = 2;
     bits |= flags;
     object->priorityFlags = bits;
@@ -114,7 +105,7 @@ void Func_02000128(s32 id, u32 mode, s32 flag, s32 layer) {
       break;
     }
   } else {
-    cell[2] = 255;
+    cell->collisionCode = 255;
     switch (mode) {
     case 0:
       Func_02003ba0(object, 1);

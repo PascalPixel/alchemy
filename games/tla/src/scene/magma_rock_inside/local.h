@@ -10,19 +10,9 @@
 #include "scene_ids.h"
 #include "frame.h"
 #include "event_inline.h"
+#include "map.h"
 
-struct MapLayer {
-  u8 unk00[0x30];
-  u8 *cells;
-  u8 unk34[4];
-};
-
-struct MapLayers {
-  u8 unk000[0x108];
-  struct MapLayer layers[3];
-};
-
-extern u8 gMapCellBuffer[];
+extern struct MapCell gMapCellBuffer[];
 
 extern char SceneId_Ov692Room1;
 extern char SceneId_Ov692Room2;

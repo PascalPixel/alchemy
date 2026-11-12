@@ -7,6 +7,7 @@
 #include "task.h"
 #include "event_inline.h"
 #include "field.h"
+#include "map.h"
 
 struct ClockWork {
   u8 *tiles;
@@ -140,24 +141,14 @@ void Func_02005428(u16 *list, s32 mode, s32 count) {
   }
 }
 
-struct MapLayer {
-  u8 *cells;
-  u8 unk04[52];
-};
-
-struct MapLayers {
-  u8 unk000[0x138];
-  struct MapLayer layers[4];
-};
-
 s32 Func_02005844(struct Actor *object);
 void Func_02005624(struct Actor *object, s32 mode);
 
 void Func_020054ac(s32 id, u32 mode, s32 flag, s32 layer) {
   struct Actor *object = Actor_Get(id);
-  u8 *cell = ((struct MapLayers *)Ram_HeapSlots->mapWork)->layers[layer].cells;
+  struct MapCell *cell = Ram_HeapSlots->mapWork->layers[layer].cells;
 
-  cell += Func_02005844(object) * 4;
+  cell += Func_02005844(object);
   if (Event_GetFlag(flag)) {
     /* FAKEMATCH(temporary): the flags read into a local before the cell store
      * and a local holding 2, so the flags are ORed into the register that holds
@@ -165,7 +156,7 @@ void Func_020054ac(s32 id, u32 mode, s32 flag, s32 layer) {
     u8 flags = object->priorityFlags;
     s32 bits;
 
-    cell[2] = 0;
+    cell->collisionCode = 0;
     bits = 2;
     bits |= flags;
     object->priorityFlags = bits;
@@ -181,7 +172,7 @@ void Func_020054ac(s32 id, u32 mode, s32 flag, s32 layer) {
       break;
     }
   } else {
-    cell[2] = 255;
+    cell->collisionCode = 255;
     switch (mode) {
     case 0:
       Func_02005624(object, 1);

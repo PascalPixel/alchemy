@@ -27,13 +27,13 @@ extern const u8 gData_02006778[];
 extern s16 gData_02006868;
 extern s16 gData_020068a0;
 extern u16 gData_020068a2;
-extern u8 gMapCellBuffer[];
+extern struct MapCell gMapCellBuffer[];
 
 void *Heap_Alloc(s32 size);
 void Heap_Release(void *block);
 s32 Resource_FindFreeEntry(void);
 void Func_02000d18(void);
-void Func_02000fe0(u8 *cell);
+void Func_02000fe0(const struct MapCell *cell);
 void Func_020012e4(struct Actor *object);
 void Func_02002f4c(s32 id, s32 a1, s32 a2, s32 a3, const void *script);
 void Func_02002c2c(void);
@@ -41,12 +41,12 @@ void Func_02004c88(s32 scene, s32 a1);
 void Func_02004d98(void);
 
 void Func_02001138(void) {
-  struct MapLayers *map = (struct MapLayers *)Ram_HeapSlots->mapWork;
+  struct MapWork *map = Ram_HeapSlots->mapWork;
   struct MainRoutineWork *party = &gMainRoutineWork;
   struct Actor *object;
   s32 x;
   s32 z;
-  u8 *cell;
+  struct MapCell *cell;
 
 
   object = Actor_Get(party->currentOwner);
@@ -55,9 +55,9 @@ void Func_02001138(void) {
   cell = gMapCellBuffer;
   if (map != NULL)
     cell = map->layers[object->terrainId & 3].cells;
-  cell += (x + (z << 7)) << 2;
-  if (cell[3] & 64)
-    Func_02000fe0(cell + 0x200);
+  cell += x + (z << 7);
+  if (cell->attributeB & 64)
+    Func_02000fe0(cell + 128);
 }
 
 const u8 *Func_0200119c(void) {

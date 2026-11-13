@@ -817,8 +817,8 @@ static void MercuryLighthouse_OpenFountainWithSpray(s32 delayFrames) {
   s32 rowOffset;
   s32 particleX;
   s32 particleIndex;
-  s32 negativeIndex;
-  s32 negativeRowOffset;
+  s32 sparkleOffset;
+  s32 rowShift;
   s32 randomX;
   s32 randomZ;
   s32 velocityX;
@@ -832,41 +832,39 @@ static void MercuryLighthouse_OpenFountainWithSpray(s32 delayFrames) {
   options.startScaleX = Q16_ONE / 2;
   options.startScaleY = Q16_ONE / 2;
   row = 0;
-  // Reveal each row while its edge emits particles in the two horizontal axes.
+  // Each row's edge sparkles and throws up spray as it opens.
   do {
-    rowOffset = (row << 4);
+    rowOffset = row << 4;
     particleIndex = 0;
-    negativeRowOffset = -(row << 20);
-    particleX = (px(728) + negativeRowOffset);
+    rowShift = -(row << 20);
+    particleX = px(728) + rowShift;
     do {
       if ((particleIndex & 1) != 0) {
         randomX = Random_Next();
-        // The original add/shift tree is multiplication by px(1) / 5.
-        velocityX = ((u32)(randomX << 3) >> 16) * (px(1) / 5) - px(4) / 5;
-        negativeIndex = -particleIndex;
+        velocityX = ((u32)randomX * 8 >> 16) * (px(1) / 5) - px(4) / 5;
+        sparkleOffset = -particleIndex;
         randomZ = Random_Next();
-        velocityZ = ((u32)(randomZ << 3) >> 16) * (px(1) / 5) - px(4) / 5;
+        velocityZ = ((u32)randomZ * 8 >> 16) * (px(1) / 5) - px(4) / 5;
         FieldEffect_Spawn(particleX, 0, px(584), velocityX, 0, velocityZ,
                           EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE,
                           &options);
         Event_Wait(1);
       } else {
-        negativeIndex = -particleIndex;
+        sparkleOffset = -particleIndex;
       }
       MercuryLighthouse_SparkleAt(
-          (MERCURY_LIGHTHOUSE_OFFSET_FIXED(negativeIndex - rowOffset) +
-           px(728)),
+          MERCURY_LIGHTHOUSE_OFFSET_FIXED(sparkleOffset - rowOffset) + px(728),
           0, px(584));
-      particleIndex = (particleIndex + 1);
-      particleX = (particleX + -px(1));
+      particleIndex++;
+      particleX -= px(1);
     } while ((u32)particleIndex <= 7);
-    MapGrid_CopyCellsTo(76, 59, (108 - row), 36, 2, 1);
+    MapGrid_CopyCellsTo(76, 59, 108 - row, 36, 2, 1);
     nextRow = row + 1;
     MercuryLighthouse_AnimateFountainTiles(delayFrames, row, nextRow);
     row = nextRow;
   } while ((u32)nextRow <= 1);
   Event_Wait(delayFrames);
-  MercuryLighthouse_AnimateFountainTiles(0, nextRow, (nextRow + 1));
+  MercuryLighthouse_AnimateFountainTiles(0, nextRow, nextRow + 1);
   Sound_Play(SE_MERCURY_LIGHTHOUSE_MECHANISM);
   // Keep the opened fountain spraying after the tile animation completes.
   Task_AddFrame(MercuryLighthouse_SprayAtFountain, TASK_PASS_FRAME);

@@ -41,9 +41,6 @@
 // The 16 bytes are space German alone reserves before gOamDepthLists
 // (system/iwram.s), so the test is on the language: French, Spanish and
 // Italian, which take German's other changes, lay IWRAM out as English does.
-// XXX (no evidence): what the 16 bytes were reserved for; nothing in the
-// German build reads or writes them: no literal in its main image or overlays
-// points into them, and no symbol names them.
 #if (LANGUAGE == LANGUAGE_GERMAN)
 #define Ram_BgScroll FIXED_ADDRESS((u8 *), 0x03001ae0, gBgScroll)
 #define Ram_VramCacheEntries                                                   \

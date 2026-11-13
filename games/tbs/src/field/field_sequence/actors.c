@@ -104,7 +104,6 @@ void Event_SpawnActorPlacements(struct ActorPlacement *entry, s32 slot) {
        entry++, placementSprite = entry->sprite) {
     // Current actor placement tables use sprites 0 to 504, so every live
     // row sets actorIndex.
-    // XXX (no evidence): what the 9989 cutoff was for; no table reaches it.
     if (entry->sprite <= 7)
       actorIndex = entry->sprite;
     else if (entry->sprite <= 9989)
@@ -155,8 +154,6 @@ void Event_SpawnActorPlacements(struct ActorPlacement *entry, s32 slot) {
       // from its first frame, unless it happens to be ANIM_STAND. The first
       // selection has just started it from that frame, so the idle looks the
       // same either way.
-      // XXX (no evidence): why the value is random when only whether it is 1
-      // matters; nothing else reads lastNo before the selection.
       if (actor->spriteStorageKind == ACTOR_SPRITE_ONE &&
           (sprite = actor->sprite) != 0)
         sprite->lastNo = ((u32)(Random16()) % (u32)30);
@@ -200,8 +197,7 @@ void Event_SpawnActorPlacements(struct ActorPlacement *entry, s32 slot) {
 }
 
 /// Releases the actor in slot actorIndex, if there is one, and
-/// empties the slot. No caller names it; its far-call veneer has no exported
-/// name.
+/// empties the slot.
 void Actor_ReleaseAtIndex(s32 actorIndex) {
   struct FieldWork *work = gFieldWork;
   void *object = Actor_Lookup(actorIndex);
@@ -397,7 +393,7 @@ void Actor_ClearOutOfBounds(void) {
   s32 bottom;
   struct Actor **actorSlot;
   s32 releaseCacheMask;
-  s32 remainingSlots;
+  s32 i;
 
   camera = work->camera;
   centerX = camera->x.fixed;
@@ -409,7 +405,7 @@ void Actor_ClearOutOfBounds(void) {
   actorSlot = &work->actors[ACTOR_FIRST_PLACED];
   releaseCacheMask = ~1;
 
-  for (remainingSlots = PLACED_MAX - 1; remainingSlots >= 0; remainingSlots--) {
+  for (i = 0; i < PLACED_MAX; i++) {
     struct Actor *actor = *actorSlot;
 
     if (actor != NULL) {
@@ -482,12 +478,10 @@ void Actor_ClearAll(void) {
   s32 actorIndex;
 
   emptyActor = NULL;
-  actorIndex = ACTOR_ID_COUNT - 1;
   work = gFieldWork;
-  do {
+  for (actorIndex = ACTOR_ID_COUNT - 1; actorIndex >= 0; actorIndex--) {
     work->actors[actorIndex] = emptyActor;
-    actorIndex--;
-  } while (actorIndex >= 0);
+  }
 }
 
 /// Returns the actor in slot index (below ACTOR_ID_COUNT), or

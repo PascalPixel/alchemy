@@ -32,7 +32,6 @@ void System_Initialize(void) {
   Dma_Fill32(0, (void *)IWRAM_START, 30 * 1024);
   Heap_Initialize();
   System_InstallIwramAndIrqs();
-  // UB: the count and its pad are cleared with one word store
 #ifdef UBFIX
   gIoWriteQueue.count = 0;
   gIoWriteQueue.pad = 0;
@@ -63,7 +62,7 @@ void System_Initialize(void) {
 }
 
 /// Unused: waits out frames forever; the frame loop still runs the
-/// tasks. Nothing in the game calls it.
+/// tasks.
 UNUSED void System_IdleForever(void) {
   for (;;) {
     (void)gKeysPressed;
@@ -101,8 +100,6 @@ s32 System_GetLanguage(void) {
 }
 #endif
 
-// XXX (no evidence): what the five reserved exports A to E were for; they are
-// empty in both games and nothing calls them.
 /// Unused: reserved empty export A in the System far-call table; no source
 /// caller.
 UNUSED void Stub_ReservedNoOpA(void) {}
@@ -166,62 +163,64 @@ void *Resource_GetTableEntry(s32 index) {
 /// the block, which turns it into the pc-relative offset the CPU expects; the
 /// pairs are rewritten in place. `byteLength` is the code size. Nothing calls
 /// it: Overlay_Load uses the ARM routine that does the same.
-UNUSED void Code_ResolveLongBranches(u16 *entries, s32 byteLength) {
-  s32 entryCount;
-  s32 entryIndex;
+UNUSED void Code_ResolveLongBranches(u16 *pair, s32 byteLength) {
+  s32 entryCount = byteLength >> 1;
+  s32 i = 1;
 
-  entryCount = byteLength >> 1;
-  entryIndex = 1;
+  pair++;
+  if (i < entryCount) {
+    u32 lowMarker = 0xf800;
+    u32 offsetBits = 0x7ff;
+    u32 highMarker = 0xf000;
+
 #ifndef UBFIX
-  entries++;
+    // UB: the walk starts a halfword before the block.
+    pair -= 2;
 #endif
-  if (entryIndex < entryCount) {
-    u32 nextMarkerMask = 0xf800;
-    u32 payloadMask = 0x7ff;
-    u32 currentMarkerMask = 0xf000;
-#ifndef UBFIX
-    // UB: temporarily forms a pointer before the start of the code block.
-    entries -= 2;
-#endif
-    // Only adjacent halfwords with both BL marker patterns are relocated.
+    // Each halfword from the second on is tried as the second of a pair.
     do {
-      u16 currentEntry;
-      u16 nextEntry;
-      u32 nextMarkerBits;
-      u32 currentMarkerBits;
+      u16 first, second;
+      u32 secondMarker, firstMarker;
 
 #ifdef UBFIX
-      nextEntry = entries[1];
+      second = pair[0];
 #else
-      nextEntry = entries[2];
+      second = pair[2];
 #endif
-      nextMarkerBits = nextEntry & nextMarkerMask;
-#ifndef UBFIX
-      entries++;
-#endif
-      if (nextMarkerBits == nextMarkerMask) {
-        currentEntry = entries[0];
-        currentMarkerBits = currentEntry & nextMarkerBits;
-        if (currentMarkerBits == currentMarkerMask) {
-          u32 packedOffset;
-          u32 adjustedCurrent;
-          u32 adjustedNext;
+      secondMarker = second & lowMarker;
 
-          packedOffset = (((currentEntry & payloadMask) << 12) |
-                          ((nextEntry & payloadMask) * 2)) -
-                         (entryIndex * 2);
-          adjustedCurrent =
-              ((packedOffset >> 12) & payloadMask) | currentMarkerBits;
-          adjustedNext = ((packedOffset >> 1) & payloadMask) | nextMarkerBits;
-          entries[0] = adjustedCurrent;
-          entries[1] = adjustedNext;
+#ifndef UBFIX
+      pair++;
+#endif
+      if (secondMarker == lowMarker) {
+#ifdef UBFIX
+        first = pair[-1];
+#else
+        first = pair[0];
+#endif
+        firstMarker = first & secondMarker;
+
+        if (firstMarker == highMarker) {
+          u32 offset =
+              (((first & offsetBits) << 12) | ((second & offsetBits) * 2)) -
+              i * 2;
+          u32 newFirst = ((offset >> 12) & offsetBits) | firstMarker;
+          u32 newSecond = ((offset >> 1) & offsetBits) | secondMarker;
+
+#ifdef UBFIX
+          pair[-1] = newFirst;
+          pair[0] = newSecond;
+#else
+          pair[0] = newFirst;
+          pair[1] = newSecond;
+#endif
         }
       }
 #ifdef UBFIX
-      entries++;
+      pair++;
 #endif
-      entryIndex++;
-    } while (entryIndex < entryCount);
+      i++;
+    } while (i < entryCount);
   }
 }
 
@@ -238,10 +237,6 @@ void Overlay_Load(u32 index, void *destination) {
   void (*patchBranches)(void *, s32);
   s32 codeSize;
 
-  // XXX (no evidence): why the packer stores each call's target as an offset
-  // from the overlay's start; likely so the overlays compress better, since
-  // every call to one routine then has the same bytes, but only Camelot's
-  // tools could say.
   codeSize = Decompress_TaggedLz(Resource_GetTableEntry(index), destination);
   RamCode_Load(patchBranches, Resource_PatchThumbBranch,
                Resource_PatchThumbBranchCodeSize);

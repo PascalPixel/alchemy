@@ -50,9 +50,8 @@ enum PlayerStepBlock {
   PLAYER_STEP_NO_DIRECTION = 4 ///< the direction pad is not held
 };
 
-/// FIELD_SPRITE_FOOTPRINT's animations (spr_025.png), and the leader's
-/// userValue that asks for the pair next.
-/// ★ Named from what the player sees: prints in Imil's snow (its render)
+/// The footprints left in snow such as Imil's (FIELD_SPRITE_FOOTPRINT,
+/// spr_025.png), and the leader's userValue that asks for the pair next.
 enum FootprintAnimation {
   FOOTPRINT_ONE_FOOT = 1, ///< one print, fading
   /// Two prints side by side, fading: laid first after a stop.
@@ -210,17 +209,13 @@ s32 Actor_UpdatePlayerControl(struct Actor *actor) {
       Sound_PlayFar(SE_CLICK);
   }
   // Debug: holding L spins through four empty loops (511, 96, 64 and 64
-  // passes), a short stall each frame. They are written with goto:
-  // as while loops, the loop optimizer deletes them.
+  // passes), a short stall each frame.
   if (gDebugMode != 0) {
     s32 delayKeyMask = KEY_L;
     if (gKeysHeld & delayKeyMask) {
       s32 delayIterations;
 
       delayIterations = delayKeyMask;
-      // Four empty delay loops, each written with goto: as do { } while, none
-      // matches in tbs-en (menu/status.c's spin records why: the loop optimizer
-      // deletes an empty loop).
     wait_a:
       --delayIterations;
       if (delayIterations != 0)
@@ -302,7 +297,7 @@ s32 Actor_UpdatePlayerControl(struct Actor *actor) {
               if (MapGrid_CheckCollision(actor, &testPosition) ==
                   COLLISION_NONE) {
                 heading = angle;
-                goto push_objects;
+                goto push_actors;
               }
             }
           }
@@ -354,7 +349,7 @@ s32 Actor_UpdatePlayerControl(struct Actor *actor) {
         Vector_AddPolarOffset(px(8), (u16)heading - TRIG_TURN / 8,
                               &testPosition);
         if (MapGrid_CheckCollision(actor, &testPosition) == COLLISION_NONE)
-          goto push_objects;
+          goto push_actors;
       }
       // Nothing passed: the step is the actor's own position.
       position.x = actor->x.fixed;
@@ -362,7 +357,7 @@ s32 Actor_UpdatePlayerControl(struct Actor *actor) {
       position.z = actor->z.fixed;
       collision |= PLAYER_STEP_BLOCKED_BY_MAP;
 
-    push_objects:
+    push_actors:
       // Push the movable actors (ACTOR_PUSHABLE) just ahead 4 pixels
       // further, when they have room; any other solid actor there blocks the
       // step (bit 1 of collision). Pushing slows the player down.
@@ -651,7 +646,7 @@ s32 Actor_MoveOnWorldMap(struct Actor *actor) {
                                     direction - TRIG_TURN / 8, &testPosition);
               if (WorldMap_IsWalkable(
                       (s32)actor, (struct WorldPosition *)&testPosition) == 0)
-                goto update_object;
+                goto update_actor;
             }
           }
         }
@@ -707,7 +702,7 @@ s32 Actor_MoveOnWorldMap(struct Actor *actor) {
                                 (struct WorldPosition *)&testPosition) != 0)
           continue;
         angle = (s16)direction;
-        goto update_object;
+        goto update_actor;
       }
       collision |= PLAYER_STEP_BLOCKED_BY_MAP;
 
@@ -757,7 +752,7 @@ s32 Actor_MoveOnWorldMap(struct Actor *actor) {
                    (s32)actor, (struct WorldPosition *)&rightPosition)) != 0)
             continue;
           angle = (s16)direction;
-          goto update_object;
+          goto update_actor;
         }
         collision |= PLAYER_STEP_BLOCKED_BY_MAP;
       }
@@ -765,7 +760,7 @@ s32 Actor_MoveOnWorldMap(struct Actor *actor) {
     }
   }
 
-update_object:
+update_actor:
   if (gFieldWork != NULL) {
     if ((collision & PLAYER_STEP_BLOCKED) != 0)
       gFieldWork->blockedSteps++;

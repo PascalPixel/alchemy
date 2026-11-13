@@ -74,6 +74,7 @@ void WorldPicture_Initialize(void) {
   s32 tileAttributes;
   u32 i;
   u32 tile;
+  u32 cursorAttributes;
 
   markerTiles = Heap_AllocEwram(WORLD_MAP_MARKER_ALLOCATION_SIZE);
   work = (struct WorldPictureWork *)gMapGridCellBuffer;
@@ -135,7 +136,9 @@ void WorldPicture_Initialize(void) {
   work->cursorSpeed = WORLD_MAP_CURSOR_MIN_SPEED;
   *entryWords++ = 0;
   *entryWords++ = OBJ_SIZE_16X16;
-  *entryWords = tile >> 5 | OBJ_PRIORITY(1);
+  cursorAttributes = OBJ_PRIORITY(1);
+  cursorAttributes |= tile >> 5;
+  *entryWords = cursorAttributes;
 }
 
 #if TBS_PATCH_2
@@ -401,7 +404,7 @@ void WorldPicture_UpdateMarkers(void) {
 /// other's scratch storage. The picture argument is unused; the resource is
 /// fixed.
 void WorldPicture_Show(s32 picture) {
-  struct MapGridScrollAnimView *gridState = HEAP_SLOT_BLOCK(HEAP_SLOT_MAP_GRID);
+  struct MapGridScrollWork *gridState = HEAP_SLOT_BLOCK(HEAP_SLOT_MAP_GRID);
   struct FieldWork *work =
       HeapSlot_AllocEwram(HEAP_SLOT_FIELD, sizeof(struct FieldWork));
   struct ActorSystemWork *menu = HEAP_SLOT_BLOCK(HEAP_SLOT_ACTOR_SYSTEM);

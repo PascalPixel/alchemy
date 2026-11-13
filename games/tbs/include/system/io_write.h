@@ -7,10 +7,6 @@
 #include "types.h"
 
 /// Writes a value to a 16-bit register or memory location.
-// A statement macro the whole game uses (107 sites, and 2 through
-// Io_Write32): the value is built in a word before the address and the store
-// stays where it is written. An inline function with a u32 parameter builds
-// the same value but lets the store move.
 #define Io_Write16(v, reg)                                                     \
   do {                                                                         \
     u32 value_ = (v);                                                          \

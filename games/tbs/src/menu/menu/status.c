@@ -410,8 +410,7 @@ s32 DjinnMenu_ShowCurrentList(void) {
   menu->cursor->motion = ICON_SHOWN;
   menu->secondCursor->motion = ICON_SHOWN;
   Sound_PlayFar(SE_MENU_CANCEL);
-  // Returns no value: the bytes have the s32 epilogue (pop {r1}; bx r1) after
-  // this void call.
+  // UB: returns no value.
 #ifdef UBFIX
   return 0;
 #endif
@@ -1125,8 +1124,6 @@ void StatusScreen_DrawStatusAilments(struct Window *window, s32 memberId,
 void Menu_BusyWait(void) {
   s32 count = 255;
 
-  // Written with goto: as a do-while loop, the loop optimizer
-  // deletes the empty loop and leaves 1 of the 7 instructions.
 spin:
   count--;
   if (count >= 0)
@@ -1532,7 +1529,7 @@ s32 PsynergyMenu_SelectAction(void) {
     s32 priority = 245;
     struct WindowSprite **icons = menu->entryIcons;
 
-    for (iconIndex = 31; iconIndex >= 0; iconIndex--) {
+    for (iconIndex = 0; iconIndex < 32; iconIndex++) {
       struct WindowSprite *icon = *icons++;
 
       if (icon != 0)
@@ -1917,7 +1914,7 @@ s32 ItemMenu_SelectItem(void) {
 }
 
 /// Moves through the status grid's irregular rows and returns row * 9 + column.
-/// Nothing in TBS calls it.
+/// Nothing calls it.
 s32 Menu_MoveGridCursor(s32 *columnOut, s32 *rowOut, s32 direction) {
   s32 row;
   s32 column;
@@ -2054,8 +2051,8 @@ void Menu_PlaceEntryActorsInGrid(s32 originX, s32 originY, s32 columns) {
   struct WindowSprite *icon;
   struct WindowSprite **icons;
 
-  icons = ((struct ItemMenuWork *)gMenuWork)->entryIcons;
-  for (entryIndex = 0; entryIndex <= 31; entryIndex++) {
+  for (entryIndex = 0, icons = ((struct ItemMenuWork *)gMenuWork)->entryIcons;
+       entryIndex <= 31; entryIndex++) {
     icon = *icons++;
     if (icon != NULL) {
       Menu_PlaceEntryActorInGrid(icon, entryIndex, originX, originY, columns);
@@ -2177,9 +2174,7 @@ void StatusScreen_ShowStatusIcons(const u8 *flags) {
 
   menu = gMenuWork;
   ItemMenu_ResetCategory();
-  slot = menu->categoryIcons;
-  shown = 0;
-  for (index = 0; index <= 4; index++) {
+  for (index = 0, slot = menu->categoryIcons, shown = 0; index <= 4; index++) {
     entry = *slot++;
     if (entry != 0 && flags[index] != 0) {
       entry->x = 8;

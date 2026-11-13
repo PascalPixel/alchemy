@@ -14,19 +14,20 @@ void SelectionMenu_Create(void) {
   struct SelectionSprite *visual;
   const u8 *table;
   s32 i;
+  u16 clear = 0;
 
   screen = HeapSlot_AllocEwram(HEAP_SLOT_SELECTION_MENU,
                                sizeof(struct SelectionMenuWork));
   screen->head = NULL;
   screen->path = NULL;
   screen->window = NULL;
-  screen->unread = 0;
-  screen->top = 0;
+  screen->unread = clear;
+  screen->top = clear;
   // Bit 7: the first list starts from its first entry. Until the list is
   // first cleared the row is drawn 32 pixels lower and takes no input.
   screen->cursorIndex = 128;
   screen->verticalScroll = 32;
-  screen->count = 0;
+  screen->count = clear;
   screen->locked = 999;
   // The records: 0 and 1 the end arrows, 2 to 8 the row's icons, 9 to 13 the
   // chosen icons, 14 the pointing hand and 15 the large icon.
@@ -607,8 +608,7 @@ SelectionMenu_GetCursorNode(struct SelectionMenuWork *screen) {
 
 /// Runs the selection row until the player chooses (the chosen entry's index)
 /// or, when mode allows it, cancels with B (-1). SELECTION_FIXED allows no
-/// moving or choosing; any mode but 0 allows cancelling. Reached only through
-/// a bare entry of the window far-call table.
+/// moving or choosing; any mode but 0 allows cancelling.
 s32 SelectionMenu_Run(s32 mode) {
   struct SelectionMenuWork *screen = gSelectionMenuWork;
 

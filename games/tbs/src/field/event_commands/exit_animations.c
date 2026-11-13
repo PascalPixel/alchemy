@@ -88,27 +88,28 @@ UNREAD_RESULT Field_StartEncounterTransition(s32 unused) {
 /// Called by Exit_StartStairsUp and Exit_StartStairsDown below.
 void Exit_PrepareAnimation(s32 animation) {
   struct Actor *actor;
-  struct Sprite *context;
-  struct SpriteAnimation *effect;
+  struct Sprite *sprite;
+  struct SpriteAnimation *doorway;
 
   actor = Actor_Lookup(gMainRoutineWork.leaderActorId);
-  context = actor->sprite;
-  effect =
-      (struct SpriteAnimation *)Sprite_AddAnimationFar(context, SPRITE_DOORWAY);
+  sprite = actor->sprite;
+  doorway =
+      (struct SpriteAnimation *)Sprite_AddAnimationFar(sprite, SPRITE_DOORWAY);
   {
-    u8 colorMode = SPRITE_COLOR_HIDDEN;
+    u32 cleared = 0;
+    u8 hidden = SPRITE_COLOR_HIDDEN;
 
     // No shadow as the leader leaves.
-    context->flags = 0;
-    effect->colorMode = colorMode;
-    // Positions are 16.16 fixed point and cells 16 pixels: keep the cell and
-    // put the leader at its middle in x (8 pixels) and its south edge in z.
-    // The coordinates as plain words: through .fixed, the union moves a
-    // store.
+    sprite->flags = cleared;
+    doorway->colorMode = hidden;
+    // Keep the cell and put the leader at its middle in x and its south edge
+    // in z.
+    /* FAKEMATCH(cast): the coordinates as plain words; through .fixed, 1 of
+     * 51 instructions moves in tbs-en. */
     *(s32 *)&actor->x = (*(s32 *)&actor->x & FIELD_CELL_MASK) + px(8);
     *(s32 *)&actor->z = (*(s32 *)&actor->z & FIELD_CELL_MASK) + px(16);
-    actor->velocityX = 0;
-    actor->velocityZ = 0;
+    actor->velocityX = cleared;
+    actor->velocityZ = cleared;
     actor->targetX = ACTOR_NO_TARGET;
     actor->targetZ = ACTOR_NO_TARGET;
     Actor_SelectAnimationFar(actor, animation);

@@ -22,9 +22,6 @@ void Window_UpdateZooms(void) {
   struct Window *window = state->windows;
   s32 index = 0;
 
-  // The loop is written with goto: as a do-while loop, loop.c
-  // keeps the 1 stored on closing in a saved register, and 59 of 99
-  // instructions differ in tbs-en.
 loop:
   // Flags 0 with a duration left means closing (Window_Close clears the
   // flags first).
@@ -46,6 +43,9 @@ loop:
                              (s16)window->previousHeight);
       Window_DrawZoomBorder(window, 1);
       window->zoomStage++;
+      /* FAKEMATCH(temporary): the flag through a local keeps this store apart
+       * from the else arm's; as a plain store, 4 of 101 instructions differ
+       * in tbs-en. */
       {
         u8 dirty = 1;
 

@@ -142,10 +142,6 @@ s32 DjinnMenu_Run(void) {
   return 1;
 }
 
-// A statement macro in the do-while shape both its uses match with; as a
-// plain { } block, 4 of 559 instructions of DjinnMenu_RunScreen differ in
-// tbs-en.
-
 /// Finds the moved Djinni in the list and selects its new position.
 #define DJINN_RESELECT_PAIR_ENTRY(menu, i)                                     \
   do {                                                                         \
@@ -779,10 +775,9 @@ s32 DjinnMenu_ShowHelp(void) {
   helpWindow = Window_CreateFar(8, 12, 22, 7, WINDOW_FLAG_INSTANT);
   statusWindow = Window_CreateFar(8, 9, 22, 3, WINDOW_FLAG_INSTANT);
   Window_MarkVisibleTextTilesFar();
-  listMessage = MsgDjinnInfoTopic;
-  for (helpIndex = 0; helpIndex <= 6; helpIndex++) {
+  for (helpIndex = 0, listMessage = MsgDjinnInfoTopic; helpIndex <= 6;
+       helpIndex++)
     Text_DrawMessageAsTilesFar(helpIndex + listMessage, list, 0, helpIndex * 8);
-  }
   do {
     WindowSprite_PrepareForRedrawFar(statusWindow);
     Text_DrawMessageFar(selection + MsgDjinnInfoTopic, statusWindow, 0, 0);

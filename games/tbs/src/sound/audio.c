@@ -61,9 +61,8 @@ void MPlayContinue(struct MusicPlayerInfo *player) {
 
 /// Starts a fade with the music player's ident raised, resuming the music
 /// player for fade-ins: FadeOutBody moves the level 16 of 256 every `period`
-/// VBlanks, so a whole fade takes 16 * period VBlanks. pret writes this body
-/// out in each of MPlayFadeOut, m4aMPlayFadeOutTemporarily and m4aMPlayFadeIn;
-/// the name is ours.
+/// VBlanks, so a whole fade takes 16 * period VBlanks. MPlayFadeOut,
+/// m4aMPlayFadeOutTemporarily and m4aMPlayFadeIn share it.
 static __inline__ void MPlayStartFade(struct MusicPlayerInfo *player,
                                       u16 period, u16 volume) {
   if (player->ident == ID_NUMBER) {
@@ -128,7 +127,6 @@ void m4aSongNumStart(u16 songId) {
 }
 
 /// Unused: starts the song unless its music player is already playing it.
-/// Nothing in the game calls it.
 UNUSED void m4aSongNumStartOrChange(u16 songId) {
   const struct MusicPlayer *mplayTable = gMPlayTable;
   const struct Song *songTable = gSongTable;
@@ -143,7 +141,7 @@ UNUSED void m4aSongNumStartOrChange(u16 songId) {
 }
 
 /// Unused: starts a different or finished song, or resumes the same paused
-/// song. Nothing in the game calls it.
+/// song.
 UNUSED void m4aSongNumStartOrContinue(u16 songId) {
   const struct MusicPlayer *mplayTable = gMPlayTable;
   const struct Song *songTable = gSongTable;
@@ -158,8 +156,7 @@ UNUSED void m4aSongNumStartOrContinue(u16 songId) {
     MPlayContinue(player);
 }
 
-/// Unused: stops the song's music player only when it holds this song. Nothing
-/// in the game calls it.
+/// Unused: stops the song's music player only when it holds this song.
 UNUSED void m4aSongNumStop(u16 songId) {
   const struct MusicPlayer *mplayTable = gMPlayTable;
   const struct Song *songTable = gSongTable;
@@ -171,7 +168,6 @@ UNUSED void m4aSongNumStop(u16 songId) {
 }
 
 /// Unused: resumes the song's music player only when it holds this song.
-/// Nothing in the game calls it.
 UNUSED void m4aSongNumContinue(u16 songId) {
   const struct MusicPlayer *mplayTable = gMPlayTable;
   const struct Song *songTable = gSongTable;
@@ -192,7 +188,7 @@ UNUSED void m4aMPlayAllStop(void) {
     m4aMPlayStop(gMPlayTable[playerIndex].info);
 }
 
-/// Unused: resumes `player`. Nothing in the game calls it.
+/// Unused: resumes `player`.
 UNUSED void m4aMPlayContinue(struct MusicPlayerInfo *player) {
   MPlayContinue(player);
 }
@@ -214,21 +210,19 @@ void m4aMPlayFadeOut(struct MusicPlayerInfo *player, u16 speed) {
 }
 
 /// Unused: begins a fade that pauses the music player at zero volume, keeping
-/// its tracks' state for a later resume. Nothing in the game calls it.
+/// its tracks' state for a later resume.
 UNUSED void m4aMPlayFadeOutTemporarily(struct MusicPlayerInfo *player,
                                        u16 speed) {
   MPlayStartFade(player, speed, SOUND_FADE_FULL_VOLUME | TEMPORARY_FADE);
 }
 
-/// Unused: starts a fade from zero volume and resumes the music player. Nothing
-/// in the game calls it.
+/// Unused: starts a fade from zero volume and resumes the music player.
 UNUSED void m4aMPlayFadeIn(struct MusicPlayerInfo *player, u16 speed) {
   MPlayStartFade(player, speed, FADE_IN);
 }
 
 /// Unused: initializes active tracks still carrying their reset flag: clears
 /// their settings and gives them the default bend range, volume and LFO speed.
-/// Nothing in the game calls it.
 UNUSED void m4aMPlayImmInit(struct MusicPlayerInfo *player) {
   s32 count = player->trackCount;
   struct MusicPlayerTrack *track = player->tracks;

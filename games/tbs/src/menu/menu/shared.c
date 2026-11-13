@@ -344,8 +344,7 @@ void Text_DrawNumberRightAligned(s32 number, struct Window *window, s32 x,
 /// TEXT_COLOR_LOW_HP when it is below a quarter of maximum HP and in
 /// TEXT_COLOR_NO_HP at 0; then the colour goes back to TEXT_COLOR_NORMAL.
 void StatusPanel_DrawHpPp(struct Unit *unit, struct Window *window) {
-  // Each figure in turn, as an s16. Read straight from unit, the figures
-  // compile differently.
+  // Each figure in turn, as an s16.
   s16 value;
 
 #if LANGUAGE != LANGUAGE_JAPANESE
@@ -528,7 +527,7 @@ struct Window *MenuCursor_Create(void *source) {
   sentinel = 254;
   cursor->sentinel = sentinel;
   sentinel -= 255;
-  // sideIcon[1] gets slot 255. Nothing in TBS stores sideIcon[1], so it is
+  // sideIcon[1] gets slot 255. Nothing stores sideIcon[1], so it is
   // still NULL from Window_InitializeWork and this byte goes to address 0xf,
   // in the BIOS, which ignores writes.
   menu->sideIcon[1]->sentinel = sentinel; // -1
@@ -1269,8 +1268,6 @@ s32 Sound_PlayReturnOne(s32 sound) {
 void Menu_WatchStart(void) {
   if (gKeysPressed & KEY_START) {
     Sound_PlayFar(SE_MENU_CANCEL);
-    // XXX (no evidence): why this is a game flag rather than a variable;
-    // nothing outside the menu's own code sets or tests it.
     GameFlag_SetFar(FLAG_MENU_START_PRESSED);
     Task_Remove(Menu_WatchStart);
   }

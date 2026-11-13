@@ -377,8 +377,7 @@ void PaletteFade_Initialize(void) {
   Task_Add(PaletteFade_Update, TASK_PASS_FRAME + 15);
 }
 
-/// Stops the palette fade and frees it. Reached only through a bare far-call
-/// veneer; nothing calls it by name.
+/// Stops the palette fade and frees it.
 void PaletteFade_Release(void) {
   Task_Remove(&PaletteFade_Update);
   HeapSlot_Release(HEAP_SLOT_PALETTE_FADE);

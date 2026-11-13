@@ -46,7 +46,7 @@ void ActorSystem_PlaceSprites(void) {
    * addresses the 36 at sp+44 to sp+79, above the position; as without them, 4
    * of 267 instructions differ in tbs-en. */
   UNUSED struct ActorCameraPoint unusedPoints[3];
-  s32 objectIndex;
+  s32 actorIndex;
   struct MapGridScrollWork *grid;
   s32 viewX;
   s32 viewZ;
@@ -78,7 +78,7 @@ void ActorSystem_PlaceSprites(void) {
                    Render_DecodePictureCodeSize);
   system->used = 0;
   actor = gActors;
-  for (objectIndex = 0; objectIndex < ACTOR_COUNT; objectIndex++, actor++) {
+  for (actorIndex = 0; actorIndex < ACTOR_COUNT; actorIndex++, actor++) {
     if (actor->script == 0)
       continue;
     // An actor at (x, z) = (0, 0) is not placed; only its sprite's VRAM is
@@ -172,7 +172,7 @@ void ActorSystem_PlaceSprites(void) {
   HeapSlot_Release(HEAP_SLOT_FRAME_SCRATCH);
 }
 
-/// Unused: returns 1; nothing calls it.
+/// Unused: returns 1.
 UNUSED s32 ActorCamera_ReturnTrue(void) { return 1; }
 
 /// Each frame, with the fixed camera: places every actor's sprite, from the
@@ -191,9 +191,9 @@ void ActorSystem_ProjectSprites(void) {
   struct ActorCameraPoint *target;
   struct Actor *actor;
   s32 angle;
-  s32 spritesRemaining;
+  s32 part;
   s32 kind;
-  s32 *objectPosition;
+  s32 *position;
   void **sprites;
   void *sprite;
   s32 groupScale[2];
@@ -204,7 +204,7 @@ void ActorSystem_ProjectSprites(void) {
    * 181 instructions differ in tbs-en. */
   UNUSED struct ActorCameraPoint unusedPoints[2];
 
-  camera = (struct ActorCameraFixed *)gBattleCamera;
+  camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
   system = gActorSystemWork;
   RamCode_LoadSlot(HEAP_SLOT_FRAME_SCRATCH, Render_DecodePicture,
                    Render_DecodePictureCodeSize);
@@ -242,7 +242,7 @@ void ActorSystem_ProjectSprites(void) {
       kind = actor->spriteStorageKind & 15;
       switch (kind) {
       case ACTOR_SPRITE_ONE:
-        objectPosition = &actor->x.fixed;
+        position = &actor->x.fixed;
         scale[0] = actor->scaleX;
         scale[1] = actor->scaleY;
         sprite = actor->sprite;
@@ -250,7 +250,7 @@ void ActorSystem_ProjectSprites(void) {
           scale[0] = fixedScale;
           scale[1] = fixedScale;
         }
-        Render_PlaceProjectedSprite(sprite, objectPosition, scale,
+        Render_PlaceProjectedSprite(sprite, position, scale,
                                     actor->facing + angle, actor->layer);
         break;
       case ACTOR_SPRITE_GROUP:
@@ -263,7 +263,7 @@ void ActorSystem_ProjectSprites(void) {
         // A group's sprite field points to its four sprite pointers; empty
         // ones are null.
         sprites = (void **)actor->sprite;
-        for (spritesRemaining = 3; spritesRemaining >= 0; spritesRemaining--) {
+        for (part = 0; part < 4; part++) {
           sprite = *sprites++;
           if (sprite != NULL)
             Render_PlaceProjectedSprite(sprite, &actor->x.fixed, groupScale,

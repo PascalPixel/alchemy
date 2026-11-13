@@ -41,7 +41,7 @@ struct ItemMenuWork {
   struct Window *unopenedWindow; ///< never given a window; only closed
   struct Window *modalWindow;
   struct Window *secondUnopenedWindow; ///< never given a window; only closed
-  struct WindowSprite *gridCursor;     ///< only prepared by name in TBS
+  struct WindowSprite *gridCursor;     ///< only prepared by name
   struct WindowSprite *entryIcons[32];
   struct WindowSprite *categoryIcons[8];
   u8 unusedAfterIcons[36]; ///< no view of the menu work names it
@@ -70,12 +70,21 @@ struct ItemMenuWork {
   struct WindowSprite *selectedItemIcon;
   u16 flags;          ///< 1 while the item's name and command grid are drawn
   s16 completionFlag; ///< set to 1 as item commands end; not read by name
-  /// ItemMenuFiguresView's row of four figures and DjinnMenuWork's pair;
-  /// not named here.
-  u8 figureRow[54];
-  s16 messageOffset; ///< the item use's result, after MsgItemUseResult
-  s8 equipPreview;   ///< 1 while the stats preview a removal, not an equip
-  u8 listMode; ///< the command chosen last (ItemMenuCommand); 0xff for none
+  /// The row of four figures the Djinn and status screens show
+  /// (djinn_figures.c): each one's sprite and place in screen pixels, and its
+  /// scale in 16.16, which closes a third of its gap to Q16_ONE each frame, or
+  /// holds -scale while negative. A negative y marks a recovering Djinni,
+  /// which faces west.
+  ///@{
+  struct Sprite *figures[4];
+  s16 figureX[4];
+  s16 figureY[4];
+  s32 figureScales[4];
+  ///@}
+  u8 unusedAfterFigures[6]; ///< DjinnMenuWork's pair; not named here
+  s16 messageOffset;        ///< the item use's result, after MsgItemUseResult
+  s8 equipPreview; ///< 1 while the stats preview a removal, not an equip
+  u8 listMode;     ///< the command chosen last (ItemMenuCommand); 0xff for none
   u8 unusedAfterListMode[2];   ///< no view of the menu work names it
   s8 selectedIndexByMember[8]; ///< each party member's entry chosen last
   u8 mode;           ///< not named through this struct; PsynergyMenuWork.mode
@@ -109,6 +118,7 @@ STATIC_ASSERT(offsetof(struct ItemMenuWork, memberIds) == 0x208);
 STATIC_ASSERT(offsetof(struct ItemMenuWork, itemCount) == 0x218);
 STATIC_ASSERT(offsetof(struct ItemMenuWork, sideMember) == 0x21a);
 STATIC_ASSERT(offsetof(struct ItemMenuWork, selectedItemIcon) == 0x21c);
+STATIC_ASSERT(offsetof(struct ItemMenuWork, figures) == 0x224);
 STATIC_ASSERT(offsetof(struct ItemMenuWork, messageOffset) == 0x25a);
 STATIC_ASSERT(offsetof(struct ItemMenuWork, equipPreview) == 0x25c);
 STATIC_ASSERT(offsetof(struct ItemMenuWork, selectedIndexByMember) == 0x260);

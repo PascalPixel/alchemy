@@ -86,11 +86,11 @@ struct SpritePictureCache {
 /// The actor system's work: the flag that suspends sprite projection, the
 /// outline's edge and fill colours, and the sprite picture caches. Heap slot 6.
 struct ActorSystemWork {
-  u16 used;      ///< sprite pixel bytes composed since the camera reset it
-  u8 unused[2];  ///< no code names it
-  s16 suspended; ///< nonzero while a menu has suspended sprite projection
-  u8 edge;       ///< outline edge colour; 15 when the field sets up
-  u8 fill;       ///< outline fill colour; 0 when the field sets up
+  u16 used; ///< sprite pixel bytes composed since the camera reset it
+  u8 unused[2];
+  s16 suspended;       ///< nonzero while a menu has suspended sprite projection
+  u8 edge;             ///< outline edge colour; 15 when the field sets up
+  u8 fill;             ///< outline fill colour; 0 when the field sets up
   u8 spriteGroups[16]; ///< the sprite group tables, taken in turn by count
   s32 count;           ///< sprite group tables taken from spriteGroups
   struct SpritePictureCache
@@ -123,7 +123,7 @@ struct AnimationSpritePart {
   u16 priority : 2;    ///< 2 when created
   u16 palette : 4;     ///< 16-colour palette; unused at 256 colours
   ///@}
-  u8 attr3[2]; ///< OAM attribute 3; zero when created, not named by TBS code
+  u8 attr3[2]; ///< OAM attribute 3; zero when created, not named
 };
 
 /// An animated sprite: its image and shadow, scale, rotation, size and up to

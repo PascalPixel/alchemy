@@ -8,9 +8,8 @@
 #include "types.h"
 
 // The three steps take ime, a pointer to REG_IME. Disabling writes the
-// pointer's low halfword (0x0208, bit 0 clear) back through it. Each step is a
-// do { } while (0) statement macro, the shape every lock and unlock site
-// matches through. Serial_Initialize writes IRQ_LOCK out (see its comment).
+// pointer's low halfword (0x0208, bit 0 clear) back through it.
+// Serial_Initialize writes IRQ_LOCK out (see its comment).
 
 /// Saves the original IME value in saved.
 #define IME_SAVE(ime, saved)                                                   \

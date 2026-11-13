@@ -12,8 +12,6 @@
 /// Detaches a note through the jump table entry installed by the driver
 /// (RealClearChain). Called by MPlayMain and ply_note.
 void ClearChain(struct SoundChannel *note) {
-  // Taking the entry address folds its slot into a literal address. Direct
-  // indexing adds an address-adjustment instruction with the library compiler.
   MPLAY_FUNC_CAST(void (*)(struct SoundChannel *),
                   *(&gMPlayJumpTable[MPLAY_JUMP_CLEAR_CHAIN]))(note);
 }
@@ -158,7 +156,7 @@ void m4aSoundMode(u32 mode) {
 }
 
 /// Unused: silences every PCM and CGB channel with the sound work's ident
-/// raised. Nothing in the game calls it.
+/// raised.
 UNUSED void SoundClear(void) {
   struct SoundInfo *work = SOUND_INFO_PTR;
   s32 channelCounter;
@@ -527,8 +525,6 @@ static __inline__ s32 CgbPan(struct CgbChannel *note) {
 /// one side; sustainLevel is peak * sustain / 16, rounded up. Called by
 /// CgbSound when a note starts and at each envelope step.
 void CgbModVol(struct CgbChannel *note) {
-  // The peak is calculated in each branch, the form the bytes show: with one
-  // shared calculation tbs-en is four bytes shorter.
   if (!CgbPan(note)) {
     note->panBits = 0xFF;
     note->peak = (u32)(note->outRight + note->outLeft) >> 4;
@@ -793,9 +789,6 @@ void CgbSound(void) {
         *triggerRegister = note->trigger | 0x80;
         // CGB_CHANNEL_SQUARE_1 is restarted a second time unless NR10 bit 3 is
         // set (a falling sweep, or 8 alone, no sweep), as in pret's m4a.c.
-        // XXX (no evidence): why; GBATEK's channel 1 page says nothing of a
-        // second restart, and neither the ROM nor a render shows how the
-        // hardware starts a rising sweep.
         if (channel == CGB_CHANNEL_SQUARE_1 && !(*sweepOrWaveControl & 8))
           *triggerRegister = note->trigger | 0x80;
       }
@@ -879,8 +872,7 @@ void m4aMPlayPitchControl(struct MusicPlayerInfo *player, u16 mask, s16 pitch) {
   player->ident = ID_NUMBER;
 }
 
-/// Unused: sets the stereo pan offset of selected active tracks. Nothing in the
-/// game calls it.
+/// Unused: sets the stereo pan offset of selected active tracks.
 UNUSED void m4aMPlayPanpotControl(struct MusicPlayerInfo *player, u16 mask,
                                   s8 pan) {
   s32 tracksRemaining;

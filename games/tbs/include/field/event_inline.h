@@ -6,15 +6,10 @@
 /// by its own name, passing it on to the main image's import
 /// (Actor_FaceEachOther calls Actor_TurnToFaceEachOther).
 ///
-/// It is a habit of the whole game written once: a layer, not a
-/// compiler-steering device. An event writes
-/// `Actor_FaceEachOther(ACTOR_GARET, ACTOR_PARTY_LEADER, 30);` and the inline
-/// makes the call; a site that matches only with the direct call names the
-/// routine instead. Where a site
-/// matches only through a second inline over the same routine, that inline
-/// takes the FieldActor_ prefix, as FieldActor_JumpDownLedge does; where an
-/// inline would have its routine's name, the routine keeps it and the inline
-/// takes the prefix.
+/// An event writes `Actor_FaceEachOther(ACTOR_GARET, ACTOR_PARTY_LEADER, 30);`
+/// and the inline makes the call. Where an inline would have its routine's
+/// name, the routine keeps it and the inline takes the FieldActor_ prefix, as
+/// FieldActor_JumpDownLedge does.
 
 #include "module/field/field_sequence.h"
 #include "module/field/event_commands.h"

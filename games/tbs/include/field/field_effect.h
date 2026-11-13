@@ -87,9 +87,8 @@ STATIC_ASSERT(offsetof(struct FieldEffect, spin) == 0x64);
 STATIC_ASSERT(offsetof(struct FieldEffect, countdown) == 0x68);
 STATIC_ASSERT(offsetof(struct FieldEffect, update) == 0x6c);
 
-/// An actor read as an actor and as a field effect at once: a view kept for
-/// the one store that matches only through it (BabiLighthouse_SetupMap), as
-/// an access through a union conflicts with every store to either struct.
+/// An actor read as an actor and as a field effect at once, as
+/// BabiLighthouse_SetupMap writes one.
 union ActorOrEffect {
   struct Actor actor;
   struct FieldEffect effect;

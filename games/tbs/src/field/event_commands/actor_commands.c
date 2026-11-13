@@ -49,10 +49,9 @@ void Actor_SetMovementTypeById(u32 actorId, s32 action) {
 /// (Actor_Stop), about 22 of them.
 void Actor_Stop(u32 actorId) {
   struct Actor *actor = Actor_Lookup(actorId);
-  u8 enabled = 1;
 
   if (actor != NULL) {
-    actor->steeringFlags = enabled | actor->steeringFlags;
+    actor->steeringFlags |= 1;
     Actor_StartIdleFar(actor);
   }
 }
@@ -410,7 +409,7 @@ void Actor_SetAnimationAndWait(u32 actorId, s32 animation) {
 }
 
 /// An empty function, reached only through an unnamed veneer in the object
-/// bank's far-call table; nothing in the game names it.
+/// bank's far-call table.
 void Actor_NoOp(void) {}
 
 /// The event command "actor jump": throws the actor upward at
@@ -421,16 +420,16 @@ void Actor_NoOp(void) {}
 /// four element parts) call it too.
 void Actor_Jump(u32 actorId, s32 speed, s32 frames) {
   struct Actor *actor;
-  u8 *objectFlags;
+  u8 *flagsByte;
   s32 updatedFlags;
   s32 verticalVelocity;
 
   actor = Actor_Lookup(actorId);
   if (actor != NULL) {
-    objectFlags = &actor->motionFlags;
-    updatedFlags = *objectFlags | ACTOR_FALLS;
+    flagsByte = &actor->motionFlags;
+    updatedFlags = *flagsByte | ACTOR_FALLS;
     verticalVelocity = px(speed);
-    *objectFlags = updatedFlags;
+    *flagsByte = updatedFlags;
     actor->velocityY = verticalVelocity;
     if (speed > 5) {
       Sound_PlayFar(SE_HIGH_JUMP);
@@ -557,7 +556,7 @@ void Actor_JumpDownLedge(s32 actorId, s32 pose, s32 param) {
   s32 nextY;
   s32 startZ;
   struct Actor *actor;
-  u8 *objectFlags;
+  u8 *flagsByte;
 
   actor = Actor_GetById(actorId);
   startZ = actor->z.fixed;
@@ -567,12 +566,12 @@ void Actor_JumpDownLedge(s32 actorId, s32 pose, s32 param) {
     wait(10);
 
     // Hop up and forward 12 pixels.
-    objectFlags = &actor->motionFlags;
+    flagsByte = &actor->motionFlags;
     Actor_SelectAnimationFar(actor, ANIM_STAND);
     {
       u8 flags = 2;
-      flags |= *objectFlags;
-      *objectFlags = flags;
+      flags |= *flagsByte;
+      *flagsByte = flags;
     }
     actor->velocityY = px(4);
     Actor_SetMoveTargetFar(actor, actor->x.fixed, actor->y.fixed,
@@ -585,7 +584,7 @@ void Actor_JumpDownLedge(s32 actorId, s32 pose, s32 param) {
     // From here pose counts frames.
     pose = 0;
     Actor_FaceDirectionById(actorId, FACING_SOUTH_SOUTHWEST, 0);
-    *objectFlags = 0;
+    *flagsByte = 0;
     do {
       nextY = actor->y.fixed - px(2);
       actor->y.fixed = nextY;
@@ -599,7 +598,7 @@ void Actor_JumpDownLedge(s32 actorId, s32 pose, s32 param) {
 
     // Jump 16 pixels forward and wait (at most 180 frames) to land, following
     // the ground and falling again.
-    *objectFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+    *flagsByte = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     actor->velocityY = px(3);
     Actor_SetMoveTargetFar(actor, actor->x.fixed, actor->y.fixed,
                            startZ + px(16));
@@ -693,14 +692,14 @@ void Actor_TurnPairToFaceEachOther(struct Actor *first, struct Actor *second) {
 /// empties its slot, writing NULL to its place in the field work's actor
 /// table. Events reach it (about 14 of them).
 void Actor_ReleaseById(s32 index) {
-  void *object = Actor_Lookup(index);
+  void *released = Actor_Lookup(index);
   struct FieldWork *table = gFieldWork;
 #ifdef UBFIX
   struct Actor *empty = NULL;
 #endif
 
-  if (object != 0) {
-    Actor_ReleaseFar(object);
+  if (released != 0) {
+    Actor_ReleaseFar(released);
 #ifdef UBFIX
     // The getter accepts slots through 191, including non-actor storage.
     // Copy the pointer representation without extending the actor array.
@@ -838,9 +837,8 @@ s32 Actor_StepAngle(struct Actor *actor) {
 }
 
 /// Clears an actor's destination, puts it under script control and
-/// stands it still. Reached only through an unnamed veneer in the field
-/// sequence bank's far-call table; nothing in the game names it.
-void Actor_ResetTargetAndSetMode1(u32 actorId) {
+/// stands it still.
+void Actor_ClearDestinationAndStand(u32 actorId) {
   struct Actor *actor = Actor_Lookup(actorId);
 
   if (actor != NULL) {
@@ -938,8 +936,7 @@ s32 Actor_GetSpriteById(s32 actorId) {
 }
 
 /// Returns the first of the scene's actors (ACTOR_FIRST_PLACED to
-/// ACTOR_LAST_ID) showing sprite, or -1. Reached only through an unnamed veneer
-/// in the field sequence bank's far-call table; nothing in the game names it.
+/// ACTOR_LAST_ID) showing sprite, or -1.
 s32 Actor_FindBySprite(s32 sprite) {
   struct FieldWork *state = gFieldWork;
   s32 result = -1;

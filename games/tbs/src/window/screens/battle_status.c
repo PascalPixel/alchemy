@@ -800,7 +800,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
   {
     s32 *statusSlotCursor = statusSlots;
 
-    for (i = 10; i >= 0; i--) {
+    for (i = 0; i < 11; i++) {
       VramCache_FreeEntry(*statusSlotCursor++);
     }
   }
@@ -812,7 +812,8 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
 #endif
   Window_Close(statusWindow, 1);
   Window_Close(helpWindow, 1);
-  PartyStatus_Draw(gBattleWork->partyStatus);
+  PartyStatus_Draw(
+      ((struct BattleWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE))->partyStatus);
   gBattleMenuWork->timerHidden = 0;
   wait(1);
   return 0;

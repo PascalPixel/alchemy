@@ -23,11 +23,11 @@ void String_FormatHex(u32 value) {
 /// (a space or '-') and its decimal digits, right-aligned. Called by
 /// DebugText_PrintDecimal and the Djinn preview's number text.
 void String_FormatDecimal(s32 number) {
-  const u32 *powers = (const u32 *)gString_PowersOfTen;
+  const u32 *placeValues = (const u32 *)gString_PowersOfTen;
   s8 sign = ' ';
   u8 *output = gNumberBuffer;
   s32 places;
-  u32 power;
+  u32 placeValue;
   s32 digit;
 #ifdef UBFIX
   u32 magnitude = number;
@@ -44,26 +44,26 @@ void String_FormatDecimal(s32 number) {
 #endif
     sign = '-';
   }
-  // A space for each power of ten above the number
-  power = *powers++;
+  // A space for each power of ten above the number, then its sign, then a
+  // digit for each power of ten left and the units.
+  placeValue = *placeValues++;
   places = 9;
-  if (magnitude < power) {
+  if (magnitude < placeValue) {
     do {
       places--;
       *output++ = ' ';
       if (places == 0)
         break;
-      power = *powers++;
-    } while (magnitude < power);
+      placeValue = *placeValues++;
+    } while (magnitude < placeValue);
   }
   *output++ = sign;
-  // Then its sign, a digit for each power of ten left and the units
-  powers--;
+  placeValues--;
   while (places != 0) {
-    power = *powers++;
-    digit = magnitude / power;
+    placeValue = *placeValues++;
+    digit = magnitude / placeValue;
     *output++ = digit + '0';
-    magnitude -= digit * power;
+    magnitude -= digit * placeValue;
     places--;
   }
   output[0] = magnitude + '0';
@@ -108,15 +108,13 @@ void DebugText_Print(const u8 *text) {
     u32 count = 0;
 
     text++;
-
     if (c != 0) {
-      // The end of the 32 by 20 entry screen wraps to its start.
-      u32 attribute = WINDOW_PALETTE << 12;
-      u16 *end = (u16 *)(BG_SCREEN_BLOCK(4) + 32 * 20 * 2);
+      u32 palette = WINDOW_PALETTE << 12;
 
+      // The end of the 32 by 20 entry screen wraps to its start.
       do {
-        *cursor++ = c | attribute;
-        if (cursor == end)
+        *cursor++ = c | palette;
+        if (cursor == (u16 *)(BG_SCREEN_BLOCK(4) + 32 * 20 * 2))
           cursor = (u16 *)BG_SCREEN_BLOCK(4);
         if (++count > 31)
           break;

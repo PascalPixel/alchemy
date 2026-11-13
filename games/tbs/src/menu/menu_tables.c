@@ -3,13 +3,9 @@
 /// ids. None of these is const: the code that reads them declares them without
 /// it.
 
-#include "menu.h"
 #include "field.h"
-#include "edition.h"
-#include "types.h"
 #include "item.h"
 #include "module/menu/menu.h"
-#include "game/character_ids.h"
 
 /// The hand cursor's bobbing offsets in pixels, which MenuCursor_Position
 /// adds to its x at step (gFrameCount >> 1) & 7; the ninth entry is never

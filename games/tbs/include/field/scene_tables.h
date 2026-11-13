@@ -67,7 +67,6 @@ enum {
 /// another trigger table and Healer line, and the Sol Sanctum approach moves
 /// its sentry, changes cell behaviors and stops sending its way down to
 /// SceneId_ValeEruption.
-/// ★ Named from its area name: Vale
 enum { FLAG_VALE_PARTY_LEFT = 0x815 };
 
 /// A scene's entrance: where and facing which way the party arrives,
@@ -198,15 +197,10 @@ enum ActorTalkFacing {
 /// (character_ids.h) as its actor id.
 enum ActorId {
   ACTOR_PARTY_LEADER = 0,
-  /// ★ Named from the game: "Garet" (MsgCharacterName)
   ACTOR_GARET = 1,
-  /// ★ Named from the game: "Ivan" (MsgCharacterName)
   ACTOR_IVAN = 2,
-  /// ★ Named from the game: "Mia" (MsgCharacterName)
   ACTOR_MIA = 3,
-  /// ★ Named from the game: "Jenna" (MsgCharacterName)
   ACTOR_JENNA = 5,
-  /// ★ Named from the game: "Sheba" (MsgCharacterName)
   ACTOR_SHEBA = 6,
   ACTOR_FIRST_PLACED = 8,
   /// The last actor id, as scenes loop over every placed actor.
@@ -233,7 +227,7 @@ struct Trigger {
   /// A message below TRIGGER_RESULT_MESSAGE_END, else an event; for an exit,
   /// the exit kind its scene's exit table matches, and for an examine trigger,
   /// a FIND_ value.
-  u32 value;
+  s32 value;
 };
 
 STATIC_ASSERT(sizeof(struct Trigger) == 12);

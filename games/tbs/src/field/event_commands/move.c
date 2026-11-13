@@ -352,7 +352,7 @@ struct Actor *FieldEffect_SpawnMoveHand(struct Actor *caster) {
 
   // Particles: 8 to 32 pixels within 1/8 turn of the way it faces, at 1 to 2
   // pixels a frame.
-  for (fragmentIndex = 7; fragmentIndex >= 0; fragmentIndex--) {
+  for (fragmentIndex = 0; fragmentIndex < 8; fragmentIndex++) {
     child = Actor_Spawn(SPRITE_SPARKLE, caster->x.fixed,
                         caster->y.fixed + px(16), caster->z.fixed);
     if (child != 0) {
@@ -407,14 +407,14 @@ void UpdateRisingParticleBurst(struct Actor *hand) {
   u32 spread;
 
   Sound_PlayFar(SE_CAST);
-  for (i = 30; i >= 0; i--) {
+  for (i = 0; i < 31; i++) {
     hand->y.fixed += px(1);
     hand->facing += TRIG_TURN / 8;
     hand->scaleX += -Q16_ONE / 32;
     hand->scaleY += -Q16_ONE / 32;
     wait(1);
   }
-  for (i = 7; i >= 0; i--) {
+  for (i = 0; i < 8; i++) {
     child = Actor_Spawn(SPRITE_SPARKLE, hand->x.fixed, hand->y.fixed,
                         hand->z.fixed);
     if (child != 0) {

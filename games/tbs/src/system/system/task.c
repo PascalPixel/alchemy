@@ -18,23 +18,20 @@ typedef s32 (*TaskIntFunc)(void);
 /// from a clean table.
 void Task_ResetAll(void) {
   struct Task *task = gTasks;
-  s32 remaining;
+  s32 i;
 
   gTasksInitialized = 0;
   gTasksRunning = 0;
-  remaining = TASK_COUNT - 1;
-  do {
+  for (i = 0; i < TASK_COUNT; i++) {
     task->func = 0;
     task->priority = TASK_PRIORITY_EMPTY;
     task->flags = 0;
     task++;
-    remaining--;
-  } while (remaining >= 0);
+  }
   gTasksInitialized = 1;
 }
 
-/// Unused: copies `byteCount` bytes a word at a time. Nothing in the game calls
-/// it.
+/// Unused: copies `byteCount` bytes a word at a time.
 UNUSED void Task_CopyWords(u32 *destination, u32 *source, u32 byteCount) {
   u32 index;
   byteCount >>= 2;
@@ -73,7 +70,6 @@ void Task_Sort(void) {
 }
 
 /// Unused: returns the table index of the task running `func`, or -1.
-/// Nothing in the game calls it.
 UNUSED s32 Task_Find(TaskFunc func) {
   s32 result;
   struct Task *task;
@@ -109,10 +105,7 @@ s32 Task_Add(TaskFunc func, s32 order) {
   s32 i;
 
   // Adding re-sorts the table, which would shift the tasks after the new one
-  // if it came during a pass; it never does. In a call graph of the English
-  // build, main image and overlays, no task reaches Task_Add, and neither does
-  // any function whose address is taken except main-thread entries (far-call
-  // entries, a scene's entry table and events, start-up).
+  // if it came during a pass; no task adds one.
   index = -1;
   task = gTasks;
   // DEAD: nothing uses the status read here; the ROM keeps the load, as The
@@ -144,10 +137,10 @@ s32 Task_Add(TaskFunc func, s32 order) {
   return index;
 }
 
-/// Unused: an empty routine; nothing in the game calls it.
+/// Unused: an empty routine.
 UNUSED void Task_Idle(void) {}
 
-/// Unused: an empty routine; nothing in the game calls it.
+/// Unused: an empty routine.
 UNUSED void Task_Empty(void) {}
 
 /// Removes the task running `func`: clears its routine and gives it
@@ -301,17 +294,17 @@ s32 Task_ResumeOverlayTasks(void) {
 /// gTasksInitialized.
 void Task_RunPass(s32 pass) {
   struct Task *task = gTasks;
-  s32 remaining;
+  s32 i;
 
   // A pass matches the high byte only; the low byte has already ranked the
   // tasks through the sort, and a suspended task's odd high byte matches no
   // pass
   pass >>= 8;
   if (gTasksInitialized == 1) {
-    remaining = TASK_COUNT + 1;
+    i = TASK_COUNT + 1;
     task--;
     for (;;) {
-      if (--remaining == 0)
+      if (--i == 0)
         return;
       task++;
       if (TASK_STATE_HIGH(task) == pass) {

@@ -5,17 +5,6 @@
 
 #include "../field_sequence_internal.h"
 
-/// The actor system's work (struct ActorSystemWork, gActorSystemWork in
-/// HEAP_SLOT_ACTOR_SYSTEM), seen as the flag that suspends sprite projection
-/// while the menu opens.
-struct ActorSystemSuspendView {
-  u16 used;     ///< ActorSystemWork's; not named here
-  u8 unused[2]; ///< ActorSystemWork's; no code names it
-  /// ActorSystemWork's suspended: while nonzero, sprites not held are not
-  /// drawn and give up their VRAM (actor_camera.c, sprite_draw.c).
-  u16 wait;
-};
-
 /// The field sequence: runs the current scene, which the party entered by
 /// entrance, until it leaves; returns the exit kind it left by, for
 /// Scene_TakeExit, or EXIT_KEEP_DESTINATION when the next scene is already in
@@ -332,22 +321,21 @@ s32 FieldSequence_Run(s32 entrance) {
               // each) free, sprite drawing stays suspended while the menu
               // runs, and a frame passes so that the field's sprites give
               // their VRAM back before it opens.
-              struct ActorSystemSuspendView *ctrl =
-                  (struct ActorSystemSuspendView *)gActorSystemWork;
+              struct ActorSystemWork *actorSystem = gActorSystemWork;
               u8 *owner = gVramCacheBlockOwners;
               s32 free = 0;
               s32 n = 512;
 
               do {
-                if (*owner++ == 0xff)
+                if (*owner++ == VRAM_BLOCK_OWNER_FREE)
                   free++;
               } while (--n != 0);
               if (free - 136 < 0) {
-                ctrl->wait = 1;
+                actorSystem->suspended = 1;
                 wait(1);
               }
               PauseMenu_RunFar(0);
-              ctrl->wait = 0;
+              actorSystem->suspended = 0;
             } else {
               FieldMessage_ShowFar(MsgFieldPauseUnavailable,
                                    FIELD_MESSAGE_ZOOM);
@@ -404,20 +392,19 @@ done:
 /// work->tile, for Field_ExamineCell), and by FieldMenu_Run's search
 /// entry through Actor_GetTriggerCellAheadOfCurrentFar. Changes nothing.
 s32 Actor_GetTriggerCellAheadOfCurrent(void) {
-  u8 *workBytes;
-  u8 *gridBytes;
+  struct FieldWork *work;
+  struct MapGridScrollWork *grid;
   struct Actor *leader;
   union PolarOffsetPosition probePosition;
   u8 *cell;
-  u8 *cells;
   s32 behavior;
   s32 groundHeight;
   s32 result;
 
   result = 0;
   leader = Actor_Lookup(gMainRoutineWork.leaderActorId);
-  workBytes = *(u8 **)Ram_FieldWork;
-  gridBytes = *(u8 **)Ram_MapGridWork;
+  work = gFieldWork;
+  grid = gMapGridWork[0];
   if (leader != 0) {
     probePosition.vector.x = leader->x.fixed;
     probePosition.vector.y = leader->y.fixed;
@@ -425,15 +412,15 @@ s32 Actor_GetTriggerCellAheadOfCurrent(void) {
     Vector_AddPolarOffset(px(16), leader->facing, probePosition.coordinates);
     // World Map cell pictures are 32 pixels square, 32 to a row; map cells 16
     // pixels square, 128 to a row, four bytes each.
-    if (((struct FieldWork *)workBytes)->mode == ACTOR_SYSTEM_WORLD_MAP) {
+    if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
       cell =
           Ram_CellPictures + ((((probePosition.vector.x / px(32)) & 31) +
                                (((probePosition.vector.z / px(32)) & 31) << 5))
                               << 2);
     } else {
-      // MAPGRID_LAYER_GROUND's cells, MapGridScrollAnimView's layers[0].cells
-      // at 0x130.
-      cells = *(u8 **)(gridBytes + 0x130);
+      // The ground layer's cells.
+      u8 *cells = (u8 *)grid->layers[MAPGRID_LAYER_GROUND].cells;
+
       cell = cells + (((probePosition.vector.x / px(16)) +
                        ((probePosition.vector.z / px(16)) << 7))
                       << 2);

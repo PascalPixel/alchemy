@@ -6,7 +6,6 @@
 #include "module/field/battle_music.h"
 #include "module/field/field_sequence.h"
 #include "sounds.h"
-#include "types.h"
 
 /// Battle music: which battles have music of their own
 /// (Encounter_SelectBattleMusic). Each song marker sets the music for the

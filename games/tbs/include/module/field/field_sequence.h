@@ -7,7 +7,7 @@
 struct SpeakerDefinition;
 struct Actor;
 struct ScreenTransitionState;
-struct TriggerView;
+struct Trigger;
 struct Vector3;
 struct ActorPlacement;
 
@@ -102,12 +102,7 @@ void Scene_SetRestartPoint(void);
 s16 BattleBackground_GetSelected(void);
 void BattleBackground_SelectForMap(void);
 void BattleBackground_SelectForEnvironment(s32 behavior);
-// Matching builds call Encounter_SelectBattleMusic without a prototype, as in
-// field_sequence.c above its definition: in one file its definition
-// would come before Field_RequestDjinnBattle and
-// Field_RequestBattleFromEncounterTable, and Field_RequestDjinnBattle changes
-// (2 of 52 instructions in tbs-en). Split evidence for
-// field_sequence|event_commands.
+// The field sequence calls Encounter_SelectBattleMusic without a prototype.
 #ifdef UBFIX
 void Encounter_SelectBattleMusic(s32 zone, s32 slot);
 #endif
@@ -115,16 +110,6 @@ void FieldEffect_ShrinkActorAndDestroySlow(struct Actor *actor);
 void FieldEffect_ShrinkActorAndDestroyFast(struct Actor *actor);
 void FieldPsynergy_Lift(void);
 void FieldPsynergy_Carry(void);
-
-/// One of the scene's triggers (the same 12 bytes as struct Trigger).
-struct TriggerView {
-  s32 flags; ///< the low 4 bits are the kind (TriggerKind; 7 talks to
-             ///< the actor the party stopped)
-  u8 value;  ///< the target (an actor id or a cell behavior)
-  u8 unused05;
-  s16 condition; ///< as for GameFlag_IsConditionActive
-  s32 result; ///< below TRIGGER_RESULT_MESSAGE_END a message, else a function
-};
 
 /// A trigger result below it is a message number, and from it on the address of
 /// the routine to run: every routine lies above it, so one word holds either.
@@ -203,7 +188,7 @@ void PaletteEditor_Run(void);
 struct ActorPlacement *Scene_FindActorPlacement(s32 id);
 s32 GameFlag_IsConditionActive(s32 condition);
 u32 Scene_ExamineTriggerIgnoresCondition(s32 flags, s32 result);
-struct TriggerView *Scene_FindTrigger(s32 kind, s32 target);
+const struct Trigger *Scene_FindTrigger(s32 kind, s32 target);
 void Overlay_CallInitialize(void);
 s32 Scene_FindActorTalkTrigger(s32 id);
 s32 Scene_TalkToActor(s32 id);
@@ -269,12 +254,7 @@ void PaletteFade_CalculateSteps(s16 *source, s16 *target, s16 *step,
                                 s32 frames);
 void PaletteFade_Update(void);
 // UB: event_commands.c calls PaletteFade_Build with no declaration in
-// scope, as a function returning int. With its prototype in scope (as in one
-// file with its definition) Weather_StartLightning and
-// Weather_StartLightningFlash change, 6 of 67 and 6 of 74 instructions in
-// tbs-en, and even a declaration without a prototype moves two instructions
-// in tbs-ja: evidence that field_sequence.c and event_commands.c were separate
-// files. UBFIX declares it.
+// scope, as a function returning int. UBFIX declares it.
 #ifdef UBFIX
 void PaletteFade_Build();
 #endif

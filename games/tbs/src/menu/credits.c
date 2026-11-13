@@ -7,35 +7,17 @@
 #include "module/system/system.h"
 #include "flash.h"
 #include "flash_data.h"
-#include "dma.h"
-#include "io_reg.h"
-#include "types.h"
 #include "battle.h"
-#include "debug.h"
 #include "field.h"
 #include "game.h"
 #include "graphics.h"
-#include "menu.h"
-#include "edition.h"
-#include "far_call.h"
-#include "sound.h"
 #include "system.h"
-#include "heap_release.h"
-#include "battle_sprite_id.h"
 #include "ram_code.h"
-#include "task.h"
 #include "io_write_queue.h"
 #include "io_write.h"
 #include "map_grid_scroll.h"
-#include "heap.h"
 #include "resource_ids.h"
-#include "edition.h"
 #include "iwram_call.h"
-#include "static_assert.h"
-#include "battle_side.h"
-#include "playback_queue.h"
-#include "battle_action_run.h"
-#include "frame.h"
 #include "flags.h"
 
 // Credits text uses six 32-pixel sprites across each 192-pixel line. Its
@@ -300,9 +282,6 @@ extern u16 gCreditsScrollPosition __asm__("gWaitForFlashWrite");
 // it reads them: IdentifyFlash, which Save_InitializeWork runs before
 // each use of the save, writes gFlash, gProgramFlashSector and
 // gWaitForFlashWrite, and each program routine sets gFlashNumRemainingBytes.
-// XXX (no evidence): why the credits borrow them rather than keep globals of
-// their own; only Camelot's link map or source could say whether the sharing
-// was meant.
 // UB: the casts alias the flash declarations and store a pointer through
 // a declared u16. UBFIX gives these assembler-backed cells their credits views.
 #ifdef UBFIX
@@ -962,8 +941,6 @@ const void *gCredits_Lines[] = {
 
 /// A credits line has been drawn, so its scratch buffer holds the shadow row to
 /// carry.
-/// ★ Named from what the player sees: the credits text scrolling up the screen
-/// one line at a time (its render)
 #define FLAG_CREDITS_LINE_DRAWN FLAG_SCENE_TEMP_00
 
 /// A VBlank task added by Credits_InitTextSprites: maps the
@@ -1084,6 +1061,10 @@ void Credits_InitTextSprites(void) {
     Credits_DrawLine(gCredits_Lines[0], row * CREDITS_LINE_TILES, 1);
 }
 
+/// Row `row` (4 bytes, 8 pixels) of sprite tile `tile` in OBJ VRAM.
+#define OBJ_TILE_ROW(tile, row)                                                \
+  (*(u32 *)(OBJ_VRAM0 + (row) * 4 + (tile) * TILE_SIZE_4BPP))
+
 /// Centers, right-aligns or left-aligns one credits line in a 192-pixel row.
 /// Rasterizes its glyphs and shadow, packs 4-bit pixels and uploads 24 tiles
 /// beginning at firstTile. Called by the line-rendering task and, for the blank
@@ -1164,7 +1145,7 @@ s32 Credits_DrawLine(const u8 *text, s32 firstTile, s32 alignment) {
       for (row = 0; row < 8; row++) {
         glyphBits = *sourceBytes++;
         glyphMask = 0x80;
-        for (columnIndex = 7; columnIndex >= 0; columnIndex--) {
+        for (columnIndex = 0; columnIndex < 8; columnIndex++) {
           if (glyphBits & glyphMask) {
             destination[257] = 1;
             destination[0] = 15;
@@ -1198,18 +1179,17 @@ s32 Credits_DrawLine(const u8 *text, s32 firstTile, s32 alignment) {
   // Transpose raster rows into the tile ring used by the scrolling sprites.
   for (row = 0; row < tileCount; row++) {
     s32 tileIndex = firstTile + row;
-    u32 *tile = (u32 *)(OBJ_VRAM0 + tileIndex * TILE_SIZE_4BPP);
     u32 *words = (u32 *)linePixels + row;
 
     // A tile's eight rows of 4 bytes, each a 256-pixel raster row apart.
-    tile[0] = words[0];
-    tile[1] = words[64];
-    tile[2] = words[128];
-    tile[3] = words[192];
-    tile[4] = words[256];
-    tile[5] = words[320];
-    tile[6] = words[384];
-    tile[7] = words[448];
+    OBJ_TILE_ROW(tileIndex, 0) = words[0];
+    OBJ_TILE_ROW(tileIndex, 1) = words[64];
+    OBJ_TILE_ROW(tileIndex, 2) = words[128];
+    OBJ_TILE_ROW(tileIndex, 3) = words[192];
+    OBJ_TILE_ROW(tileIndex, 4) = words[256];
+    OBJ_TILE_ROW(tileIndex, 5) = words[320];
+    OBJ_TILE_ROW(tileIndex, 6) = words[384];
+    OBJ_TILE_ROW(tileIndex, 7) = words[448];
   }
   Heap_Release(linePixels);
   return 0;

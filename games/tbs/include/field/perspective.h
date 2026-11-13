@@ -19,14 +19,14 @@ struct WorldMapView {
   /// As MapGridScrollWork: footprints, tileset animations and blend script.
   u8 animationsAndBlend[0xe4 - 0x17];
   s32 view[2]; ///< the view's top left, x then y, 16.16 fixed-point pixels
-  s32 scaleX; ///< 32 in 16.16 at load
-  s32 scaleY; ///< 64 in 16.16 at load
-  s32 limitX; ///< 8160 in 16.16 at load
-  s32 limitY; ///< 8160 in 16.16 at load
+  s32 scaleX;  ///< 32 in 16.16 at load
+  s32 scaleY;  ///< 64 in 16.16 at load
+  s32 limitX;  ///< 8160 in 16.16 at load
+  s32 limitY;  ///< 8160 in 16.16 at load
   /// Set by WorldMap_StartStillPicture while BG1 shows the drawn map; the
   /// tileset animations are then neither suspended nor resumed.
   s8 animationActive;
-  u8 unused[3]; ///< no code names it
+  u8 unused[3];
   /// Screen rows, 0 and 159 at load and 200 and 255 from
   /// WorldMap_StartStillPicture; each frame copies them to shownTop and
   /// shownBottom and picks BG mode 2 or 0 from them.
@@ -34,19 +34,19 @@ struct WorldMapView {
   u16 windowTop;
   u16 windowBottom;
   ///@}
-  u16 shownTop;            ///< windowTop as the frame update last applied it
-  u16 shownBottom;         ///< windowBottom as the frame update last applied it
-  u16 windowPending;       ///< cleared by the frame update; not set by name
-  u8 unusedAfterWindow[6]; ///< no code names it
+  u16 shownTop;      ///< windowTop as the frame update last applied it
+  u16 shownBottom;   ///< windowBottom as the frame update last applied it
+  u16 windowPending; ///< cleared by the frame update; not set by name
+  u8 unusedAfterWindow[6];
   /// The world map's tile offsets (ResourceId_PerspectiveDataA), each tile
   /// LZ-compressed.
   void *tiles;
-  u8 unusedAfterTiles[4]; ///< no code names it
-  u16 pitch;              ///< 1/65536 turns
-  u16 yaw;                ///< 1/65536 turns
-  u32 *resources;         ///< a row of gWorldMap_GraphicsResources, by terrain
-  u8 unusedAfterResources[24]; ///< no code names it
-  u16 tileIds[256];            ///< the world map tile in each of 16 by 16 cells
+  u8 unusedAfterTiles[4];
+  u16 pitch;      ///< 1/65536 turns
+  u16 yaw;        ///< 1/65536 turns
+  u32 *resources; ///< a row of gWorldMap_GraphicsResources, by terrain
+  u8 unusedAfterResources[24];
+  u16 tileIds[256]; ///< the world map tile in each of 16 by 16 cells
   /// The tile each quarter of each layer's block buffer shows, so an unchanged
   /// quarter is not decoded again.
   u16 quarterTiles[8];

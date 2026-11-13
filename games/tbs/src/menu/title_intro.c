@@ -2,40 +2,21 @@
 /// The title intro, the Nintendo and Camelot logos, and the palette fade the
 /// intro uses.
 
-#include "speaker.h"
 #include "module/menu/title_intro.h"
 #include "module/system/system.h"
 #include "battle.h"
-#include "input.h"
-#include "debug.h"
 #include "field.h"
 #include "game.h"
 #include "graphics.h"
-#include "menu.h"
-#include "types.h"
-#include "edition.h"
-#include "far_call.h"
-#include "sound.h"
 #include "system.h"
-#include "heap_release.h"
-#include "types.h"
-#include "task.h"
 #include "dma.h"
-#include "edition.h"
-#include "io_reg.h"
 #include "io_write_queue.h"
 #include "map_grid_scroll.h"
 #include "ram_buffer.h"
-#include "battle_sprite_id.h"
 #include "resource_ids.h"
-#include "palette_buffers.h"
 #include "iwram_call.h"
-#include "heap.h"
-#include "heap_slots.h"
-#include "frame.h"
 #include "oam_words.h"
 #include "macros.h"
-#include "sounds.h"
 
 /// A sprite of the "Press Start" prompt, linked into a render slot each frame:
 /// OAM attributes 0 to 2 with the position split out.
@@ -73,6 +54,11 @@ struct IntroWork {
     } prompt;
   } area;
 };
+
+/// The intro's two pictures share character block 0: the far one (BG1) in
+/// 16-colour tiles, the near one (BG2) in 256-colour tiles from tile 315.
+#define INTRO_BACK_TILE(n) (BG_CHAR_BLOCK(0) + (n) * TILE_SIZE_4BPP)
+#define INTRO_FRONT_TILE(n) (BG_CHAR_BLOCK(0) + (n) * 2 * TILE_SIZE_4BPP)
 
 /// The x of each of the six columns of intro sprites
 const u8 gTitle_IntroSpriteColumns[] = {96, 136, 140, 160, 168, 184};
@@ -218,7 +204,7 @@ void Title_LoadIntroBackgrounds(void) {
   Decompress_ByteLz(resourceData, Ram_MapGridCellBuffer);
   Dma_Set(Ram_MapGridCellBuffer + 10560, BG_CHAR_BLOCK(0),
           DMA_COPY_HALFWORDS(10080), REG_DMA3);
-  Dma_Set(Ram_MapGridCellBuffer + 41280, (void *)0x06004ec0,
+  Dma_Set(Ram_MapGridCellBuffer + 41280, INTRO_FRONT_TILE(315),
           DMA_COPY_HALFWORDS(20160), REG_DMA3);
 
   {
@@ -377,7 +363,7 @@ s32 Title_ShowIntro(s32 prompt) {
         y = gBgScroll[1].y;
         if ((y & 7) == 0) {
           Dma_Set(Ram_MapGridCellBuffer + 9600 - work->backRows * 960,
-                  (u8 *)0x06004b00 - work->backRows * 960,
+                  INTRO_BACK_TILE(600) - work->backRows * 960,
                   DMA_COPY_HALFWORDS(480), REG_DMA3);
           work->backRows++;
           frameCount = work->frameCount;
@@ -391,16 +377,17 @@ s32 Title_ShowIntro(s32 prompt) {
         if ((y & 7) == 0) {
           if (work->frontRows * 8 <= 24) {
             Dma_Set(Ram_MapGridCellBuffer + 39360 - work->frontRows * 1920,
-                    (u8 *)0x0600e4c0 - work->frontRows * 1920,
+                    INTRO_FRONT_TILE(915) - work->frontRows * 1920,
                     DMA_COPY_HALFWORDS(960), REG_DMA3);
           } else {
             // Once the finite picture is exhausted, clear incoming bands
             // so wrapped tile memory cannot expose earlier picture rows.
             clearValue = 0;
             Dma_Set(&clearValue,
-                    (u8 *)0x06004ec0 + (160 - work->frontRows * 8) % 160 * 240,
+                    INTRO_FRONT_TILE(315) +
+                        (160 - work->frontRows * 8) % 160 * 240,
                     (DMA_ENABLE | DMA_SRC_FIXED) << 16 | 960, REG_DMA3);
-            tilemap = (u16 *)0x0600f6c0;
+            tilemap = (u16 *)BG_SCREEN_BLOCK(30) + 27 * 32;
             for (i = 0; i < 5; i++) {
               for (j = 0; j < 30; j++)
                 *tilemap++ = 315;
@@ -506,8 +493,7 @@ s32 Title_ShowIntro(s32 prompt) {
         sprite++;
       }
 #endif
-      // The prompt pulses once a second: its blend weight over the picture
-      // (written out: as BLEND_ALPHA(level, 16 - level) the bytes differ).
+      // The prompt pulses once a second: its blend weight over the picture.
       level = gTitle_PromptBlendLevels[i % 60];
       REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_BG0 |
                    BLDCNT_TGT2_BG1 | BLDCNT_TGT2_BG2 | BLDCNT_TGT2_BG3 |
@@ -630,55 +616,52 @@ s32 Title_ShowCamelotLogo(void) {
   u32 workIndex;
   u8 *resourceData;
   s32 resourceId;
+  s32 result;
 
   gOamCopyEnabled = 1;
-  {
-    s32 result = 0;
-
-    resourceId = (s32)&ResourceId_CamelotLogo;
-    Task_ResetAll();
-    ScreenFade_ToBlack(1);
-    DebugText_Clear();
-    wait(1);
-    REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
-                 BGCNT_SCREEN_BASE(6);
-    REG_DISPCNT = DISPCNT_OBJ_1D_MAP | DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
-    gBgScroll[2].y = result;
-    resourceData = Resource_GetTableEntry(resourceId);
-    Decompress_TaggedLz(resourceData, Ram_MapGridCellBuffer);
-    // The decoded resource: 224 colours, the map, the still tiles, then four
-    // animation pictures of 1024 bytes each.
-    resourceData = Ram_MapGridCellBuffer;
-    Dma_Set(resourceData, (void *)BG_PLTT, DMA_COPY_WORDS(448 / 4), REG_DMA3);
-    resourceData += 448;
-    Dma_Set(resourceData, BG_SCREEN_BLOCK(6), DMA_COPY_WORDS(2048 / 4),
-            REG_DMA3);
-    resourceData += 2048;
-    Dma_Set(resourceData, BG_CHAR_BLOCK(1), DMA_COPY_WORDS(BG_CHAR_SIZE / 4),
-            REG_DMA3);
-    resourceData += BG_CHAR_SIZE;
-    for (workIndex = 0; workIndex < 4; workIndex++) {
-      gBgScroll[workIndex].y = 0;
-      gBgScroll[workIndex].x = 0;
-    }
-    Dma_Set(gBgScroll, REG_BG0HOFS, DMA_COPY_WORDS(4), REG_DMA3);
-    Window_LoadGraphics();
-    DebugText_Clear();
-    ScreenFade_FromWhite(1);
-    ScreenFade_Wait();
-    REG_DISPCNT =
-        DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
-    // Replace only the animated tiles; the rest of the decoded logo stays
-    // in VRAM while the four animation pictures cycle.
-    for (workIndex = 0; workIndex < 120; workIndex++) {
-      Dma_Set(((gFrameCount >> 3) & 3) * 1024 + resourceData,
-              BG_CHAR_BLOCK(1) + 256, DMA_COPY_WORDS(832 / 4), REG_DMA3);
-      if (gKeysPressed & (KEY_A | KEY_START))
-        break;
-      wait(1);
-    }
-    return result;
+  result = 0;
+  resourceId = (s32)&ResourceId_CamelotLogo;
+  Task_ResetAll();
+  ScreenFade_ToBlack(1);
+  DebugText_Clear();
+  wait(1);
+  REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
+               BGCNT_SCREEN_BASE(6);
+  REG_DISPCNT = DISPCNT_OBJ_1D_MAP | DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
+  gBgScroll[2].y = result;
+  resourceData = Resource_GetTableEntry(resourceId);
+  Decompress_TaggedLz(resourceData, Ram_MapGridCellBuffer);
+  // The decoded resource: 224 colours, the map, the still tiles, then four
+  // animation pictures of 1024 bytes each.
+  resourceData = Ram_MapGridCellBuffer;
+  Dma_Set(resourceData, (void *)BG_PLTT, DMA_COPY_WORDS(448 / 4), REG_DMA3);
+  resourceData += 448;
+  Dma_Set(resourceData, BG_SCREEN_BLOCK(6), DMA_COPY_WORDS(2048 / 4), REG_DMA3);
+  resourceData += 2048;
+  Dma_Set(resourceData, BG_CHAR_BLOCK(1), DMA_COPY_WORDS(BG_CHAR_SIZE / 4),
+          REG_DMA3);
+  resourceData += BG_CHAR_SIZE;
+  for (workIndex = 0; workIndex < 4; workIndex++) {
+    gBgScroll[workIndex].y = 0;
+    gBgScroll[workIndex].x = 0;
   }
+  Dma_Set(gBgScroll, REG_BG0HOFS, DMA_COPY_WORDS(4), REG_DMA3);
+  Window_LoadGraphics();
+  DebugText_Clear();
+  ScreenFade_FromWhite(1);
+  ScreenFade_Wait();
+  REG_DISPCNT =
+      DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
+  // Replace only the animated tiles; the rest of the decoded logo stays
+  // in VRAM while the four animation pictures cycle.
+  for (workIndex = 0; workIndex < 120; workIndex++) {
+    Dma_Set(((gFrameCount >> 3) & 3) * 1024 + resourceData,
+            BG_CHAR_BLOCK(1) + 256, DMA_COPY_WORDS(832 / 4), REG_DMA3);
+    if (gKeysPressed & (KEY_A | KEY_START))
+      break;
+    wait(1);
+  }
+  return result;
 }
 
 /// Unused: color entry retained in the far-call table.
@@ -1041,15 +1024,14 @@ void TitlePaletteFade_Initialize(void) {
   Task_Add(TitlePaletteFade_Update, TASK_PASS_FRAME);
 }
 
-/// Unused: removes the palette fade's task and frees its buffers. Nothing
-/// calls it.
+/// Unused: removes the palette fade's task and frees its buffers.
 UNUSED void TitlePaletteFade_Release(void) {
   Task_Remove(&TitlePaletteFade_Update);
   HeapSlot_Release(HEAP_SLOT_PALETTE_FADE);
 }
 
 /// Unused: sets the fade target by tinting the saved background and/or
-/// sprite palettes with the requested tint. Nothing calls it.
+/// sprite palettes with the requested tint.
 UNUSED void TitlePaletteFade_SetTarget(s32 mode, s32 selectedPalettes) {
   struct TitlePaletteFade *fade = (struct TitlePaletteFade *)gPaletteFadeWork;
 
@@ -1068,7 +1050,7 @@ void TitlePaletteFade_SetCurrent(s32 mode, s32 selectedPalettes) {
                                  selectedPalettes);
 }
 
-/// Unused: replaces the first saved colour, the backdrop. Nothing calls it.
+/// Unused: replaces the first saved colour, the backdrop.
 UNUSED void TitlePaletteFade_SetBackdrop(s32 color) {
   struct TitlePaletteFade *fade = (struct TitlePaletteFade *)gPaletteFadeWork;
 
@@ -1112,9 +1094,7 @@ s32 TitlePaletteFade_ClampShiftedComponent(s32 value) {
   return value;
 }
 
-// The response curves of TitlePaletteFade_BuildColors's filters. Like the
-// declarations in palette_buffers.h they are not const: as const the code
-// differs.
+// The response curves of TitlePaletteFade_BuildColors's filters.
 
 /// Maps a channel (0..31) to a component (0..31 << 10). The same curves as
 /// gColorBuffer_ChannelCurve and its Light and Contrast curves, which sit in

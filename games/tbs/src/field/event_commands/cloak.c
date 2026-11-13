@@ -47,9 +47,8 @@ void FieldPsynergy_CheckCloakTile(void) {
     tile = (u8 *)gCellPictures + ((tx + (ty << 5)) << 2);
   } else {
     if (leader->layer <= 2) {
-      tile = (u8 *)((struct MapGridScrollAnimView *)tile)
-                 ->layers[leader->layer]
-                 .cells;
+      tile =
+          (u8 *)((struct MapGridScrollWork *)tile)->layers[leader->layer].cells;
     } else
       tile = (u8 *)gMapGridCellBuffer;
 

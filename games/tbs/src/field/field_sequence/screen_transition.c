@@ -724,8 +724,7 @@ void ScreenTransition_Finish(s32 mode, s32 frames) {
 /// (DISPCNT_BG3_ON, DISPCNT_BG2_ON and DISPCNT_BG1_ON) for each argument that
 /// is set.
 ///
-/// Reached only through its unnamed far-call veneer. ScreenTransition_Start
-/// ORs these bits into DISPCNT.
+/// ScreenTransition_Start ORs these bits into DISPCNT.
 void ScreenTransition_HideBackgrounds(s32 clearBg3, s32 clearBg2,
                                       s32 clearBg1) {
   struct ScreenTransitionWin *state;
@@ -971,7 +970,7 @@ void ScreenTransition_FillTilemapAndSolidTile(s32 color) {
 /// Starts a dissolve of the given mode and waits 120 frames.
 ///
 /// It sets no duration, so the dissolve stays at value 0 until a caller moves
-/// it. Reached only through its unnamed far-call veneer.
+/// it.
 void ScreenTransition_InitializeState(s32 value) {
   struct ScreenTransitionState *state;
 

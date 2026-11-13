@@ -35,8 +35,6 @@ s32 VramCache_AllocateBlocks(u32 id, u32 size) {
       ret = pos;
       end = blocks + ret;
       while (pos < end) {
-        // Leaves the scan with goto: as a break and a test of how far the scan
-        // got, tbs-en does not match.
         if (gVramCacheBlockOwners[pos] != VRAM_BLOCK_OWNER_FREE) {
           goto occupied;
         }
@@ -83,23 +81,16 @@ s32 VramCache_GetLongestFreeRun(void) {
 /// (or `id` is out of range) and 0 when the entry owned none.
 s32 VramCache_FreeBlocks(s32 id) {
   s32 freed = 0;
-  s32 block;
   u8 *owner;
+  s32 block;
 
   if ((u32)id >= VRAM_CACHE_ENTRY_COUNT)
     return -1;
   owner = gVramCacheBlockOwners;
-  {
-    /* FAKEMATCH(temporary): the free mark held in a local before the count,
-     * so it is loaded first; as VRAM_BLOCK_OWNER_FREE in the store, 1 of 27
-     * instructions differ in tbs-en. */
-    u8 empty = VRAM_BLOCK_OWNER_FREE;
-
-    for (block = VRAM_BLOCK_COUNT; block != 0; block--, owner++) {
-      if (*owner == id) {
-        *owner = empty;
-        freed++;
-      }
+  for (block = 0; block < VRAM_BLOCK_COUNT; block++, owner++) {
+    if (*owner == id) {
+      *owner = VRAM_BLOCK_OWNER_FREE;
+      freed++;
     }
   }
   if (freed != 0)

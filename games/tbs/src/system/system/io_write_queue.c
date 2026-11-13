@@ -42,8 +42,6 @@ void IoWriteQueue_FlushPending(void) {
   struct IoWriteQueue *queue;
   u32 count;
 
-  // XXX (no evidence): why the routine runs from the stack rather than a heap
-  // block; either works, and the bytes show only the choice.
   queue = &gIoWriteQueue;
   count = queue->count;
   if (count != 0) {

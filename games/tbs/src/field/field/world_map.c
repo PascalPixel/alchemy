@@ -5,8 +5,7 @@
 
 #include "../field_internal.h"
 
-/// Io_Write16 as an inline function, whose store may move, as these sites
-/// match only through it (the macro keeps the store in place).
+/// Io_Write16 as an inline function.
 static __inline__ void Io_Write16Inline(s32 value, volatile u16 *reg) {
   *reg = value;
 }

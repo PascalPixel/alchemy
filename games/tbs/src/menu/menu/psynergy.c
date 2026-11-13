@@ -531,7 +531,7 @@ s32 PsynergyMenu_SelectTarget(s32 targetMode) {
       selection = (selection + count) % count;
       Unit_GetFar(menu->memberTable[selection]);
       // The marker over the party member, three tiles a party member. Nothing
-      // in TBS stores sideIcon[1], so it is still NULL from
+      // stores sideIcon[1], so it is still NULL from
       // Window_InitializeWork: these writes go to the BIOS area at address 0,
       // which ignores them, and no marker is drawn.
       marker = menu->sideIcon[1];
@@ -820,14 +820,14 @@ void PsynergyMenu_CloseWindows(void) {
 /// Loads each listed Psynergy's icon into its icon sprite (32 entries) and
 /// hides the icons of empty entries.
 void PsynergyMenu_DrawPsynergyIcons(u16 *psynergies) {
-  s32 remaining;
+  s32 i;
   struct WindowSprite **icons;
   u16 *p;
   s32 psynergyId;
 
   icons = ((struct PsynergyMenuWork *)gMenuWork)->entryIcons;
   p = psynergies;
-  for (remaining = 31; remaining >= 0; remaining--) {
+  for (i = 0; i < 32; i++) {
     psynergyId = *p++;
     if (psynergyId != 0) {
       Resource_LoadByModeIntoSlotFar(ICON_KIND_ABILITY, psynergyId,

@@ -167,21 +167,15 @@ done:
   return width;
 }
 
-// The view is a struct of its own for matching: read through a cast of
-// WindowSprite.link instead, WindowSprite_UpdateAll does not match (578
-// instructions become 605), and through WindowSprite itself Window_PutGlyph's
-// position stores move.
-
-/// A view of struct WindowSprite with its sprite cell (from offset 0x10) as the
-/// member attr, for the code that moves and queues the sprite. Its fields are
-/// WindowSprite's.
+/// A window sprite as the code that moves and queues it sees it: its link and
+/// OAM entry are the one sprite cell it queues, attr.
 struct WindowSpriteCellView {
   struct WindowSpriteCellView *next;
   u8 kind;
   u8 active;         ///< its WINDOW_SPRITE_MOTION_ motion
   u16 x;             ///< screen pixels, where the motion is centred
   u16 y;             ///< screen pixels, where the motion is centred
-  u16 unused;        ///< WindowSprite's; no code names it
+  u16 unused;        ///< WindowSprite's
   u16 animationStep; ///< step of its motion's animation
   u8 index;
   u8 sentinel;              ///< depth slot it is drawn at

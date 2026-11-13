@@ -261,13 +261,13 @@ s32 ActorScript_PlaySound(struct Actor *interpreter) {
 /// (actor_motion.c), and the carry and Force field Psynergy through
 /// ActorScript_CheckOverlapFar.
 s32 ActorScript_CheckOverlap(struct Actor *actor, s32 *values) {
-  s32 objectIndex;
+  s32 actorIndex;
   u8 *collisionFlags;
   struct Actor *candidate = gActors;
 
   collisionFlags = &candidate->collisionFlags;
-  for (objectIndex = 0; objectIndex < ACTOR_COUNT;
-       objectIndex++, candidate++, collisionFlags += sizeof(*candidate)) {
+  for (actorIndex = 0; actorIndex < ACTOR_COUNT;
+       actorIndex++, candidate++, collisionFlags += sizeof(*candidate)) {
     if (candidate->script != NULL && (ACTOR_SOLID & *collisionFlags) &&
         candidate != actor) {
       if (Field_CheckSpheresOverlap(&candidate->x.fixed, candidate->radius - 2,
@@ -283,13 +283,13 @@ s32 ActorScript_CheckOverlap(struct Actor *actor, s32 *values) {
 /// field Psynergy (move.c) through ActorScript_FindOverlappingEntryFar.
 struct Actor *ActorScript_FindOverlappingEntry(struct Actor *actor,
                                                s32 *values) {
-  s32 objectIndex;
+  s32 actorIndex;
   u8 *collisionFlags;
   struct Actor *candidate = gActors;
 
   collisionFlags = &candidate->collisionFlags;
-  for (objectIndex = 0; objectIndex < ACTOR_COUNT;
-       objectIndex++, candidate++, collisionFlags += sizeof(*candidate)) {
+  for (actorIndex = 0; actorIndex < ACTOR_COUNT;
+       actorIndex++, candidate++, collisionFlags += sizeof(*candidate)) {
     if (candidate->script != NULL && (ACTOR_SOLID & *collisionFlags) &&
         candidate != actor) {
       if (Field_CheckSpheresOverlap(&candidate->x.fixed, candidate->radius - 2,
@@ -615,8 +615,6 @@ retry:
         travelDistance, heading - SCRIPT_WANDER_DIAGONAL_ANGLE, &probePosition);
     if (MapGrid_CheckCollision(actor, &probePosition) != COLLISION_NONE)
       goto retry;
-    // The retry gotos stay: as for (;;) with continue, loop.c hoists the two
-    // positions' addresses, which the native recomputes each try.
     /* FAKEMATCH(dead): the offsets in both arms of a test of actor, which
      * keeps the test through cse2 so the division works on the loaded x; as
      * plain statements, 8 of 184 instructions differ in tbs-en. */

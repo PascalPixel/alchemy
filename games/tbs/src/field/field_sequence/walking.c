@@ -21,10 +21,9 @@ struct UnitHpPoisonView {
 ///
 /// Called by FieldSequence_Run while it sets a scene up.
 void Field_ClearRequests(void) {
-  s16 noRequest = 0;
-  struct FieldWork *work;
-  work = gFieldWork;
-  work->stepTrigger = noRequest;
+  struct FieldWork *work = gFieldWork;
+
+  work->stepTrigger = 0;
   work->pushCell = 0;
   work->exit = 0;
   work->fieldMenu = 0;
@@ -157,7 +156,6 @@ void Field_CheckExitRegions(s32 positionX, s32 positionY, s32 positionZ) {
   fixedZ = positionZ;
   region = gOverlayArea.regions();
   if (region != 0 && (work = gFieldWork, minX = region->minX, minX != -1)) {
-    // Written with goto: as do { } while, tbs-en does not match.
   loop:
     minY = region->minY;
     minZ = region->minZ;

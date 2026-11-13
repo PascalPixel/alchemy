@@ -114,9 +114,6 @@ s32 ItemMenu_Run(void) {
   Palette_LightenHighlight(HIGHLIGHT_PALETTE);
   Link_DrawPageArrowsFar(PAGE_ARROW_VRAM);
   screen->questionWindow = Window_CreateFar(13, 0, 17, 3, WINDOW_FLAG_INSTANT);
-  // XXX (no evidence): why the Japanese edition leaves the field's tasks
-  // running behind this screen, as the first editions do behind the Psynergy
-  // screen; the patches only add the calls.
 #if TBS_PATCH_1
   // Save the window tiles the menu draws over, and fill them with colour 3.
   Menu_SuspendFieldTasks();
@@ -949,7 +946,7 @@ void ItemMenu_HideAllIcons(void) {
   struct WindowSprite **icons = ((struct ItemMenuWork *)gMenuWork)->entryIcons;
   s32 slot;
 
-  for (slot = 31; slot >= 0; slot--) {
+  for (slot = 0; slot < 32; slot++) {
     struct WindowSprite *icon = *icons++;
     if (icon != 0) {
       icon->motion = ICON_HIDDEN;
@@ -962,14 +959,14 @@ void ItemMenu_HideAllIcons(void) {
 void ItemMenu_HidePageIcons(void) {
   struct ItemMenuWork *menu = gMenuWork;
   s32 slot = 0;
+  s32 hidden = ICON_HIDDEN;
   struct WindowSprite **iconSlot = menu->entryIcons;
 
   do {
     struct WindowSprite *icon = *iconSlot++;
 
-    if (icon != 0 && slot % MENU_ITEM_GRID_COLUMNS == 0) {
-      icon->motion = ICON_HIDDEN;
-    }
+    if (icon != NULL && slot % MENU_ITEM_GRID_COLUMNS == 0)
+      icon->motion = hidden;
     slot++;
   } while (slot <= 31);
 }
@@ -1194,7 +1191,7 @@ s32 ItemMenu_SelectTarget(s32 mode) {
       window = menu->itemWindow;
       Unit_GetFar(menu->memberIds[memberIndex]);
       // The marker over the chosen party member, three tiles a party member.
-      // Nothing in TBS stores sideIcons[1], so it is still NULL from
+      // Nothing stores sideIcons[1], so it is still NULL from
       // Window_InitializeWork: these writes go to the BIOS area at address
       // 0, which ignores them, and no marker is drawn.
       targetMarker = menu->sideIcons[1];
@@ -1384,11 +1381,11 @@ void Menu_HideEmptyEntryIcons(const u16 *items) {
 
 /// Returns how many of party member memberId's 15 inventory slots hold an item.
 s32 ItemMenu_CountItems(s32 memberId) {
-  u16 *inventory = Unit_GetFar(memberId)->inventory;
   s32 count = 0;
+  u16 *inventory = Unit_GetFar(memberId)->inventory;
   s32 slot;
 
-  for (slot = 0; slot < INVENTORY_SLOTS; slot++) {
+  for (slot = INVENTORY_SLOTS - 1; slot >= 0; slot--) {
     if ((*inventory++ & INVENTORY_ITEM_ID_MASK) != 0)
       count++;
   }
@@ -1450,15 +1447,14 @@ s32 ItemMenu_CollectItems(struct Unit *unit, u16 *items, s32 mode) {
 /// 0 draws the list's icons (ICON_KIND_ITEM); any other iconStyle the
 /// equipment view's (ICON_KIND_EQUIPMENT_ITEM).
 void ItemMenu_DrawIcons(u16 *inventoryEntries, s32 iconStyle) {
-  s32 remaining;
+  s32 i;
   u16 *entries;
   struct WindowSprite **icons;
   s32 itemId;
 
   icons = ((struct ItemMenuWork *)gMenuWork)->entryIcons;
   entries = inventoryEntries;
-  remaining = INVENTORY_SLOTS - 1;
-  do {
+  for (i = 0; i < INVENTORY_SLOTS; i++) {
     itemId = *entries++;
     if (itemId != 0) {
       if (iconStyle == 0) {
@@ -1470,8 +1466,7 @@ void ItemMenu_DrawIcons(u16 *inventoryEntries, s32 iconStyle) {
       }
     }
     icons++;
-    remaining--;
-  } while (remaining >= 0);
+  }
   Menu_HideEmptyEntryIcons(inventoryEntries);
 }
 

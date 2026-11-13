@@ -321,9 +321,6 @@ s32 Sprite_StartAnimation(struct Sprite *sprite, s32 animation) {
   keepPlace = animation & SPRITE_ANIMATION_KEEP_PLACE;
   animation &= SPRITE_ANIMATION_INDEX_MASK;
 
-  // The loop is written with goto, which keeps an 8-byte stack frame: as for (i
-  // = 0; i < sprite->count; i++), loop.c strength-reduces entries[i] into a
-  // spilled cursor and 16 of 76 instructions differ in tbs-en.
   if (sprite->lastNo != animation) {
     i = 0;
     goto test_entry;

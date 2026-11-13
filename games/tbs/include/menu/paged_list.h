@@ -10,8 +10,8 @@
 /// A paged list for one party member: their unit, the list's length and pages,
 /// and the page and row of the entry chosen last.
 struct PagedList {
-  s32 memberState;   ///< the party member's struct Unit, as a word
-  s32 unused04;      ///< not named by TBS code
+  s32 memberState; ///< the party member's struct Unit, as a word
+  s32 unused04;
   s32 page;          ///< the chosen entry's page, from 0
   s32 pageCount;     ///< pages the list fills, the last one perhaps part full
   s32 row;           ///< the chosen entry's row on its page

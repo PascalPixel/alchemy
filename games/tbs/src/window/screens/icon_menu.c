@@ -49,14 +49,16 @@ void IconMenu_DrawIcons(void) {
   struct IconMenuWork *work;
   struct IconMenuEntry *entry;
   struct AffineTransform transform;
-  struct ScreenTransitionState *state;
-  struct WindowBuffer *page;
-  struct WindowLine *line;
   s32 pulseScale;
   s32 affineIndex;
   s32 span;
-  s32 halfWidth;
+  s32 spriteY;
+  u32 lastLine;
   u32 index;
+  // UB: edge steps from one line's window 1 edges to the next line's, past
+  // the member it points into.
+  u16 *edge;
+  struct ScreenTransitionState *state;
 
   work = gIconMenuWork;
   entry = work->entries;
@@ -69,14 +71,14 @@ void IconMenu_DrawIcons(void) {
   // Pulse only the selection; the other icons keep their normal OAM shape.
   for (index = 0; index < work->count; index++, entry++) {
     s32 drawLayer;
-    s32 x = entry->x;
+    u32 *word;
+    s32 x;
 
+    x = entry->x;
     if (x == 0)
       continue;
-    entry->link = 0;
     if (index == work->selection) {
       s32 left = x + pulseScale * 7 / 512 - 20;
-      s32 spriteY;
 
       // On the top row the double-size box starts above the screen: its y
       // wraps within OAM's 8 bits.
@@ -84,51 +86,81 @@ void IconMenu_DrawIcons(void) {
         spriteY = entry->y + pulseScale * 3 / 256 - 20;
       else
         spriteY = (pulseScale * 15 / 256 - 30) & 255;
-      entry->attr01 = (affineIndex << 25) | spriteY | (left << 16) |
-                      OBJ_SIZE_32X32 | OBJ_256_COLORS | OBJ_DOUBLE_SIZE |
-                      OBJ_AFFINE;
+      word = entry->sprite;
+      *word++ = 0;
+      *word++ = (affineIndex << 25) | spriteY | (left << 16) | OBJ_SIZE_32X32 |
+                OBJ_256_COLORS | OBJ_DOUBLE_SIZE | OBJ_AFFINE;
+      *word = gVramCacheEntries[entry->slot].offset >> 5;
       drawLayer = 246;
     } else {
-      entry->attr01 = entry->y | (x << 16) | OBJ_SIZE_32X32 | OBJ_256_COLORS;
+      u32 attributes;
+      u32 tileOffset;
+
+      word = entry->sprite;
+      /* FAKEMATCH(cast): y read as halfword 7 from the word pointer, which
+       * keeps the copy before the load; as entry->y, 1 of 401 instructions
+       * moves in tbs-en. */
+      spriteY = ((s16 *)word)[7];
+      *word++ = 0;
+      attributes = spriteY | (x << 16) | OBJ_SIZE_32X32 | OBJ_256_COLORS;
+      tileOffset = gVramCacheEntries[entry->slot].offset;
+      *word++ = attributes;
+      *word = tileOffset >> 5;
       drawLayer = 245;
     }
-    entry->attr2 = gVramCacheEntries[entry->slot].offset >> 5;
     Oam_AddSpriteAtDepth(entry, drawLayer);
   }
-
-  state = gScreenTransitionWork;
-  if (state == NULL || work->count == 0)
-    return;
-  page = (struct WindowBuffer *)state->pages[state->page];
-  // Window 1 widens around the selected icon on the lines it overhangs:
-  // below a row at the top, above one at the bottom.
-  span = work->entries[work->selection].x;
-  halfWidth = (pulseScale * 12 - 2817) / 256;
-  span = ((span - halfWidth) << 8) + (span + halfWidth) + 23;
+  // Window 1 widens around the selected icon on the lines it overhangs, below
+  // it on the top row and above it on the bottom one, then covers the row's
+  // 24 lines from the first icon, keeping each line's right edge.
   if (work->row == 0) {
-    u32 lastLine = work->entries[work->selection].y + 24 +
-                   (pulseScale * 32 - 7937) / 512 + 1;
+    struct WindowBuffer *page;
+    s32 halfWidth;
 
-    line = &page->lines[24];
-    for (index = 24; index < lastLine; index++, line++)
-      line->span = (line->span & 0xff) | span;
+    state = gScreenTransitionWork;
+    if (state == NULL || work->count == 0)
+      return;
+    page = (struct WindowBuffer *)state->pages[state->page];
+    span = work->entries[work->selection].x;
+    halfWidth = (pulseScale * 12 - 2817) / 256;
+    span = ((span - halfWidth) << 8) + (span + halfWidth) + 23;
+    lastLine = work->entries[work->selection].y + 24;
+    lastLine += (pulseScale * 32 - 7937) / 512 + 1;
+    edge = &page->lines[24].span;
+    for (index = 24; index < lastLine; index++, edge += 2)
+      *edge = (*edge & 0xff) | span;
+    span = work->entries[0].x;
+    if (work->selection == 0)
+      span -= (pulseScale * 12 - 2817) / 256;
+    span <<= 8;
+    edge = &page->lines[0].span;
+    for (index = 0; index <= 23; index++, edge += 2)
+      *edge = (*edge & 0xff) | span;
   } else {
-    s32 firstLine = work->entries[work->selection].y -
-                    ((pulseScale * 32 - 7937) / 512 + 1);
+    struct WindowBuffer *page;
+    s32 firstLine;
+    s32 halfWidth;
 
-    line = &page->lines[firstLine];
-    for (index = firstLine; index < 136; index++, line++)
-      line->span = (line->span & 0xff) | span;
+    state = gScreenTransitionWork;
+    if (state == NULL || work->count == 0)
+      return;
+    page = (struct WindowBuffer *)state->pages[state->page];
+    span = work->entries[work->selection].x;
+    halfWidth = (pulseScale * 12 - 2817) / 256;
+    span = ((span - halfWidth) << 8) + (span + halfWidth) + 23;
+    firstLine = work->entries[work->selection].y;
+    firstLine -= (pulseScale * 32 - 7937) / 512 + 1;
+    edge = &page->lines[firstLine].span;
+    for (index = firstLine; index <= 135; index++, edge += 2)
+      *edge = (*edge & 0xff) | span;
+    span = work->entries[0].x;
+    if (work->selection == 0)
+      span -= (pulseScale * 12 - 2817) / 256;
+    span <<= 8;
+    edge = &page->lines[136].span;
+    for (index = 136; index <= 159; index++, edge += 2)
+      *edge = (*edge & 0xff) | span;
   }
-  // Then over the row's 24 lines from the first icon, keeping each line's
-  // right edge.
-  span = work->entries[0].x;
-  if (work->selection == 0)
-    span -= halfWidth;
-  span <<= 8;
-  line = &page->lines[work->row == 0 ? 0 : 136];
-  for (index = 0; index < 24; index++, line++)
-    line->span = (line->span & 0xff) | span;
 }
 
 /// Allocates and clears the resource-menu state, then schedules its icon pulse.
@@ -174,9 +206,6 @@ s32 IconMenu_Run(s32 initial) {
   s32 resource;
 
   work->selection = initial;
-  // The redraw is a loop written with goto: as a for (;;) round
-  // the key loop, left with break after a move, the frame and registers change
-  // and only 52 of 134 instructions still line up in tbs-en.
 redraw:
   WindowSprite_PrepareForRedraw(work->window);
   if (work->labelBase != 0)
@@ -569,8 +598,6 @@ void Menu_DrawModeLabel(void) {
 // window sprites, so the empty window the others redraw has nothing to clear,
 // and with two methods and the menu opening on Password, every move to Cable
 // comes from Password.
-// XXX (no evidence): why French alone was rewritten; both forms draw the same
-// screens, so nothing the game shows tells them apart.
 #if (LANGUAGE == LANGUAGE_FRENCH)
 
 /// Redraws password/cable transfer help when the chosen method changes. A
@@ -659,16 +686,15 @@ s32 IconMenu_ChooseSendOption(s32 mode) {
   if (mode != RESOURCE_LAYOUT_TRANSFER_METHOD) {
     Task_Add(Menu_DrawModeLabel, TASK_PASS_FRAME - 10);
     work->previousMode = 0xffff;
-    window = Window_Create(RESOURCE_MODE0_WINDOW_X, 0,
-                           RESOURCE_MODE0_WINDOW_WIDTH, 4, WINDOW_FLAG_INSTANT);
+    window = Window_Create(PASSWORD_LEVEL_WINDOW_X, 0,
+                           PASSWORD_LEVEL_WINDOW_WIDTH, 4, WINDOW_FLAG_INSTANT);
     message = MsgPasswordSelection;
     upper = &work->upperWindow;
     *upper = window;
     Text_DrawMessage(message, window, 0, 4);
 #if LANGUAGE != LANGUAGE_JAPANESE
-    window =
-        Window_Create(RESOURCE_MODE1_WINDOW_X, 4, RESOURCE_MODE1_WINDOW_WIDTH,
-                      12, WINDOW_FLAG_INSTANT);
+    window = Window_Create(PASSWORD_HELP_WINDOW_X, 4,
+                           PASSWORD_HELP_WINDOW_WIDTH, 12, WINDOW_FLAG_INSTANT);
     work->lowerWindow = window;
     Text_DrawMessage(message + 1, window, 8, 0);
     Text_DrawMessage(message + 2, work->lowerWindow, 8, 11);
@@ -723,7 +749,7 @@ s32 Menu_SelectShopCommand(s32 selection) {
   IconMenu_AddIcon(COMMAND_ICON_SELL);
   IconMenu_AddIcon(COMMAND_ICON_ARTIFACTS);
   IconMenu_AddIcon(COMMAND_ICON_REPAIR);
-  IconMenu_Center(17, ENTRY11_COMMAND_LABEL_WIDTH, 0);
+  IconMenu_Center(17, SHOP_COMMAND_LABEL_WIDTH, 0);
   result = IconMenu_Run(selection);
   IconMenu_Close();
   return result;
@@ -740,7 +766,7 @@ s32 Menu_SelectSanctumService(s32 selection) {
   IconMenu_AddIcon(COMMAND_ICON_CURE_POISON);
   IconMenu_AddIcon(COMMAND_ICON_REPEL_EVIL);
   IconMenu_AddIcon(COMMAND_ICON_REMOVE_CURSE);
-  IconMenu_Center(17, ENTRY19_COMMAND_LABEL_WIDTH, 0);
+  IconMenu_Center(17, SANCTUM_SERVICE_LABEL_WIDTH, 0);
   result = IconMenu_Run(selection);
   IconMenu_Close();
   return result;

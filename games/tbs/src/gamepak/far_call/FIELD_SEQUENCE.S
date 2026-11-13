@@ -58,7 +58,7 @@ FarCall_OverworldTable:
 	overlay_veneer Event_ForwardShowMessageAtPosition
 	overlay_veneer Event_ShowMessageAtPosition
 	export Actor_FaceDirectionByIdFar, Actor_FaceDirectionById
-	overlay_veneer Actor_ResetTargetAndSetMode1
+	overlay_veneer Actor_ClearDestinationAndStand
 	overlay_veneer Actor_ClosePortrait
 	export Event_ShowTwoMessagesAndWaitFar, Event_ShowTwoMessagesAndWait
 	export Message_SetVoiceFromActorFar, Message_SetVoiceFromActor

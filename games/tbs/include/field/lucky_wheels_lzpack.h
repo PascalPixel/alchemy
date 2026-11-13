@@ -3,13 +3,11 @@
 
 /// @file
 /// The LZ packer's work: hash chains over a 1024-byte window, one chain per
-/// byte value, and the output it is building. It borrows gWaitForFlashWrite as
-/// its work pointer.
+/// byte value, and the output it is building.
 
 #include "edition.h"
 #include "types.h"
 #include "static_assert.h"
-#include "sound_driver_symbols.h"
 
 /// A position of the LZ packer's window in the chain of the byte value it
 /// holds.
@@ -44,5 +42,10 @@ STATIC_ASSERT(sizeof(struct LzPackNode) == 12);
 STATIC_ASSERT(sizeof(struct LzPackWork) == 0x4444);
 STATIC_ASSERT(offsetof(struct LzPackWork, bucket) == 0x3000);
 STATIC_ASSERT(offsetof(struct LzPackWork, inputCursor) == 0x4438);
+
+/// The packer has no cell of its own for its work pointer: it borrows the flash
+/// library's, which IdentifyFlash sets again before the flash code reads it.
+extern struct LzPackWork *gWaitForFlashWrite;
+#define gLzPackWork gWaitForFlashWrite
 
 #endif

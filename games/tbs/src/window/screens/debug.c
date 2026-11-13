@@ -450,8 +450,8 @@ s32 DebugBrowser_Portraits(void) {
   s32 tile;
   s32 slot;
   s32 cancelKey;
-  u32 slotOffset;
   s32 palette = 15;
+  u32 slotOffset = offsetof(struct WindowWork, portraitSprites[1]);
 
   work = WINDOW_WORK;
   redraw = 1;
@@ -468,7 +468,6 @@ s32 DebugBrowser_Portraits(void) {
   /* FAKEMATCH(dead): a zero from the count keeps the mask in r9 and work in
    * fp; as cancelKey = KEY_B, 7 of 179 instructions differ in tbs-en. */
   cancelKey = ((u32)(u16)characterCount >> 16) | KEY_B;
-  slotOffset = WINDOW_WORK_PORTRAIT_SPRITES_OFFSET + 2;
   while (1) {
     if (gKeysRepeat & KEY_LEFT) {
       redraw = 1;

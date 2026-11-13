@@ -10,6 +10,7 @@
 /// on one who needs it. A later test wins: an effect over the ability
 /// kind, revival over all.
 s32 Battle_ClassifyEntryKind(const struct AbilityDefinition *act) {
+  s32 signedEffect;
   s32 abilityKind;
   s32 targetKind;
   u8 effect;
@@ -20,7 +21,10 @@ s32 Battle_ClassifyEntryKind(const struct AbilityDefinition *act) {
     targetKind = TARGET_HINT_HP;
   if (abilityKind == ABILITY_FORMULA_HEAL_PP)
     targetKind = TARGET_HINT_PP;
-  effect = act->effect;
+  /* FAKEMATCH(cast): read through a signed word, a load apart from the
+   * call's; as a plain read, 5 of 30 instructions differ in tbs-en. */
+  signedEffect = (s8)act->effect;
+  effect = signedEffect;
   if (effect == ABILITY_EFFECT_CURE_POISON)
     targetKind = TARGET_HINT_CURE_POISON;
   if (effect == ABILITY_EFFECT_RESTORE)
@@ -104,7 +108,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       (u16 *)(BG_CHAR_BLOCK(0) + LIST_PAGE_DIGITS_TILE * TILE_SIZE_4BPP));
   Link_DrawPageArrows(LIST_PAGE_ARROW_VRAM);
   Menu_BuildLocalizedPatternTiles();
-  battle = gBattleWork;
+  battle = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE);
   for (k = 0; k < 8; k++) {
     state->chosenDjinn[k] = BATTLE_MENU_NO_DJINNI;
   }
@@ -118,7 +122,9 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
   state->commandSelection[1] = 0;
   state->linkTimer = 0;
   state->timerHidden = 0;
-  state->timerWindow = 0;
+  /* FAKEMATCH(type): cleared as a word, among the other words; as a pointer
+   * store, 2 of 1841 instructions move in tbs-en. */
+  *(s32 *)&state->timerWindow = 0;
   // Both peers announce the command-entry phase before accepting commands:
   // this side writes "VSST" into halfwords 4 to 7 of its signature, then
   // waits for the partner's "VSST" (or "EDVS", already done) while its first
@@ -241,7 +247,9 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
 
       command = &commands[commandIndex];
       unitId = actors[commandIndex];
-      unit = Unit_GetFar(unitId);
+      /* FAKEMATCH(type): called as returning a doubleword; through its own
+       * type, 1 of 1841 instructions moves in tbs-en. */
+      unit = (struct Unit *)(s32)((s64 (*)(s32))Unit_GetFar)(unitId);
       // The party member's row starts on Attack; its portrait shows at the
       // left.
       gBattleMenuWork->commandActor = unitId;
@@ -393,6 +401,10 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         iconSprite->oam.word.attr23 = 0;
         iconSprite->oam.f.x = commandWindow->x * 8 + 8;
         iconSprite->oam.f.y = commandWindow->y * 8 + 4;
+        /* FAKEMATCH(barrier): counted as 4 bytes, the empty asm puts the pool
+         * after mov r1, r10 as native (constant 40); without it, 14 of 1727
+         * instructions differ in tbs-en. */
+        __asm__ volatile("");
         iconSprite->oam.f.tile =
             Resource_LoadIndexedEntryToBuffer(parameter, handle);
         state->iconShown[1] = 1;
@@ -473,6 +485,10 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         iconSprite->oam.word.attr01 =
             OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
         iconSprite->oam.word.attr23 = 0;
+        /* FAKEMATCH(barrier): counted as 4 bytes, the empty asm puts the pool
+         * after mov r2, r9 as native (constant 56); without it, 12 of 1727
+         * instructions differ in tbs-en. */
+        __asm__ volatile("");
         iconSprite->oam.f.x = commandWindow->x * 8 + 8;
         iconSprite->oam.f.y = commandWindow->y * 8 + 4;
         iconSprite->oam.f.tile = Resource_LoadIndexedEntryToBuffer(
@@ -672,6 +688,10 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         iconSprite->oam.word.attr01 =
             OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
         iconSprite->oam.word.attr23 = 0;
+        /* FAKEMATCH(barrier): counted as 4 bytes, the empty asm puts the pool
+         * after ldr r1, [sp, #72] as native (constant 48); without it, 10 of
+         * 1727 instructions differ in tbs-en. */
+        __asm__ volatile("");
         iconSprite->oam.f.x = commandWindow->x * 8 + 8;
         iconSprite->oam.f.y = commandWindow->y * 8 + 4;
         iconSprite->oam.f.tile =
@@ -749,18 +769,22 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
   Task_Remove(UpdateLinkSessionCountdown);
   if (state->linkTimer != 0) {
     // Keep the completion wait visible while the peer finishes its commands.
-    void Link_DrawWaitingForOpponent(void) {
+    // UB: declared to return a value it never returns.
+    s32 Link_DrawWaitingForOpponent(void) {
       u16 data[64];
       BATTLE_MENU_MESSAGE_COPY(MsgWaitingForOpponent, data,
                                BATTLE_MENU_MESSAGE_CAPACITY);
       Text_DrawWideStringAtOffset(data, state->timerWindow, 0, 4);
+#ifdef UBFIX
+      return 0;
+#endif
     }
 
     // The wait message shows only when the countdown never opened its
     // window, that is while the partner is still choosing; a timer window
     // was closed above and is only forgotten here. mode counts the frames
     // without the link: 25 give up (-1).
-    linkBattle = gBattleWork;
+    linkBattle = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE);
     mode = 0;
     if (state->timerWindow == 0 && linkBattle->linkPaused == 0) {
       state->timerWindow =

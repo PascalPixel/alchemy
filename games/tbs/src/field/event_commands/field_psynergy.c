@@ -37,8 +37,8 @@ void FieldPsynergy_Run(void) {
   s32 targetId;
   s32 nearestTargetId;
 
-  effectWork = *(gHeapSlots + HEAP_SLOT_FIELD_EFFECT);
-  runtime = *(gHeapSlots + HEAP_SLOT_FIELD);
+  effectWork = gFieldEffectWork;
+  runtime = gFieldWork;
   kind = effectWork->fieldPsynergy;
   targetId = effectWork->secondActorId;
 
@@ -125,8 +125,8 @@ void FieldPsynergy_Run(void) {
 /// happens to the target. Halt also moves gMainRoutineWork.haltedActor to
 /// the target.
 void FieldPsynergy_Dispatch(void) {
-  struct FieldEffectWork *effectWork = *(gHeapSlots + HEAP_SLOT_FIELD_EFFECT);
-  struct FieldWork *runtime = *(gHeapSlots + HEAP_SLOT_FIELD);
+  struct FieldEffectWork *effectWork = gFieldEffectWork;
+  struct FieldWork *runtime = gFieldWork;
   s32 kind = effectWork->fieldPsynergy;
   s32 targetId = effectWork->secondActorId;
 
@@ -245,11 +245,11 @@ s32 Field_RunPsynergyEvent(const void *event, s32 param, s32 target) {
   if (event != NULL) {
     // Every routine's address is above TRIGGER_RESULT_MESSAGE_END, so one word
     // holds either.
-    script = ((const struct TriggerView *)event)->result;
+    script = ((const struct Trigger *)event)->value;
     if (script != 0) {
       if (script < TRIGGER_RESULT_MESSAGE_END) {
         Event_Start();
-        Event_SetMessageId(((const struct TriggerView *)event)->result);
+        Event_SetMessageId(((const struct Trigger *)event)->value);
         Event_ShowMessageAndWait(target, 0);
         Event_End();
       } else {

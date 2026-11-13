@@ -61,8 +61,6 @@ void TreasureSpot_MoveLeaderAway(void) {
 /// succeeded. Allocation failure leaves the sparkle absent. The script sinks
 /// the sparkle a quarter pixel a frame for 60 frames, then releases it.
 static inline void Actor_InitializeSparkle(struct Actor *actor) {
-  // Sharing the offset and spawn as well changes literal/argument load order in
-  // both emitters, without changing their sizes.
   if (actor != 0) {
     Actor_StartScriptFar(actor, gFieldEffect_ParticleScript);
     Actor_SelectAnimationFar(actor, 0);

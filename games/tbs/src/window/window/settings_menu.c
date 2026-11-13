@@ -13,9 +13,9 @@ UNUSED void SettingsMenu_ReservedNoOpC9C4(void) {}
 /// (OptionMenuWork.entries); only its state is known, and only the unused
 /// SettingsMenu_ResetEntries writes it.
 struct OptionMenuEntry {
-  u8 unused[10]; ///< no code names it
+  u8 unused[10];
   u16 state; ///< cleared to 0 by SettingsMenu_ResetEntries; nothing reads it
-  u8 unusedAfterState[40]; ///< no code names it
+  u8 unusedAfterState[40];
 };
 
 /// Clears the settings menu's seven entry states, its row, its tint and its
@@ -211,8 +211,6 @@ enum OptionMenuRow {
 
 // The five-row settings menu SettingsMenu_Run runs uses none of these four
 // functions.
-// XXX (no evidence): what screen they were written for; nothing calls them, so
-// the game never shows one.
 /// Moves the three-row settings cursor up, wrapping to the bottom. The three
 /// rows are those of SettingsMenu_LowerSetting.
 UNUSED void SettingsMenu_PreviousRow(struct OptionMenuWork *work) {

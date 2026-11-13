@@ -512,7 +512,7 @@ struct SoundInfo {
   void (*noteOn)(u32 command, struct MusicPlayerInfo *player,
                  struct MusicPlayerTrack *track);
   /// The hook pret's MusicPlayer2000 calls ExtVolPit; set to
-  /// DummyFunc by SoundInit, and no TBS code calls it.
+  /// DummyFunc by SoundInit, and no code calls it.
   void (*externalVolumePitch)(void);
   u8 gap2[16];                      ///< Unused by this driver, as in pret's.
   struct SoundChannel pcmNotes[12]; ///< pcmNoteCount of them play.

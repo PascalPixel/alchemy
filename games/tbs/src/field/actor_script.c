@@ -4,10 +4,7 @@
 
 #include "module/field/actor_script.h"
 #include "module/field/field.h"
-#include "actor_builtin_scripts.h"
-#include "field.h"
 #include "actor_script.h"
-#include "types.h"
 
 /// The script Actor_Create gives every new actor: it does nothing and
 /// returns to the idle script.

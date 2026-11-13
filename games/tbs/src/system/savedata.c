@@ -15,8 +15,5 @@ const u8 gSave_HeaderTemplate[8] = {'C', 'A', 'M', 'E', 'L', 'O', 'T', 'T'};
 /// Nothing in the game reads it.
 const u32 gLink_TestWord = 0;
 
-// XXX (no evidence): what these two test strings were for; nothing in either
-// game reads them, and only their text, `Trans Data`, suggests a link cable
-// test.
 const u8 gLink_TestDataA[] = "Trans Data A: This is a pen.";
 const u8 gLink_TestDataB[] = "Trans Data B: Hello world.";

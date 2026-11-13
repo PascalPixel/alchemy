@@ -316,7 +316,7 @@ s32 Terrain_GetFlatCHeight(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
 /// ground, by the player control, and as MapGrid_GetTerrainHeightFar by the
 /// field sequence's actor code, field Psynergy and about ten scene overlays.
 s32 MapGrid_GetTerrainHeight(s32 layer, s32 x, s32 y) {
-  struct MapGridScrollAnimView *work = gMapGridWork[0];
+  struct MapGridScrollWork *work = gMapGridWork[0];
   struct MapGridCell *cell;
   u8 *heightBytes;
 
@@ -349,7 +349,7 @@ s32 MapGrid_GetTerrainHeight(s32 layer, s32 x, s32 y) {
 /// Called through MapGrid_GetCellAttributeLowNibbleFar by Move's field
 /// Psynergy.
 s32 MapGrid_GetCellAttributeLowNibble(s32 layer, s32 x, s32 y) {
-  struct MapGridScrollAnimView *gridState = gMapGridWork[0];
+  struct MapGridScrollWork *gridState = gMapGridWork[0];
   struct MapGridCell *cells;
   s32 cellX;
   s32 cellY;
@@ -374,7 +374,7 @@ s32 MapGrid_GetCellAttributeLowNibble(s32 layer, s32 x, s32 y) {
 /// through MapGrid_GetCellBehaviorAtFar by the Psynergy climbing and by
 /// scenes (Altin Peak, Colosso, Imil, Crossbone Isle).
 s32 MapGrid_GetCellBehaviorAt(s32 layer, s32 x, s32 y) {
-  struct MapGridScrollAnimView *gridState;
+  struct MapGridScrollWork *gridState;
   struct MapGridCell *cell;
 
   gridState = gMapGridWork[0];
@@ -395,7 +395,7 @@ s32 MapGrid_GetCellBehaviorAt(s32 layer, s32 x, s32 y) {
 /// (Colosso, Altin Peak, Crossbone Isle, Venus Lighthouse, Tolbi, Sol
 /// Sanctum).
 void MapGrid_SetCellBehaviorAt(u32 layer, s32 x, s32 y, u32 behavior) {
-  struct MapGridScrollAnimView *gridState = gMapGridWork[0];
+  struct MapGridScrollWork *gridState = gMapGridWork[0];
 
   x >>= 20;
   y >>= 20;
@@ -409,7 +409,7 @@ void MapGrid_SetCellBehaviorAt(u32 layer, s32 x, s32 y, u32 behavior) {
 }
 
 /// Unused: returns the top two bits of the cell picture halfword of the cell at
-/// pixel (x, y). Nothing calls it.
+/// pixel (x, y).
 UNUSED s32 MapGrid_GetCellHighFlags(s32 x, s32 y) {
   s32 cellX = x / 16;
   s32 cellY = y / 16;
@@ -430,7 +430,7 @@ UNUSED s32 MapGrid_GetCellHighFlags(s32 x, s32 y) {
 /// grid from its start.
 s32 MapGrid_CheckCollision(struct Actor *actor,
                            struct FieldPosition *position) {
-  struct MapGridScrollAnimView *gridState;
+  struct MapGridScrollWork *gridState;
   s32 pixelX;
   s32 pixelZ;
   struct MapGridCell *cell;
@@ -484,7 +484,7 @@ s32 MapGrid_IsWallAt(struct WorldPosition *position) {
   s32 pixelY;
   s32 cellX;
   s32 cellY;
-  struct MapGridScrollAnimView *gridState;
+  struct MapGridScrollWork *gridState;
   struct MapGridCell *cell;
 
   pixelX = position->x / 65536;

@@ -148,9 +148,6 @@ void Actor_UpdateAll(void) {
         }
       } else {
         // No target: brake by the acceleration until the actor stops.
-        // XXX (no evidence): why this branch calls the far-call stubs where
-        // the steering above calls the IWRAM routines by address; both reach
-        // the same routines, and nothing runs this copy to show a difference.
         deltaX = actor->velocityX;
         deltaZ = actor->velocityZ;
         distance =

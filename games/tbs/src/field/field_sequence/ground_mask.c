@@ -4,15 +4,6 @@
 
 #include "../field_sequence_internal.h"
 
-#ifndef UBFIX
-/// The map grid work in HEAP_SLOT_MAP_GRID, seen as the halfwords of its view
-/// position: the high halves are the view's x and z in whole pixels.
-struct MapGridScrollCameraView {
-  u8 beforeView[228]; ///< the map grid work up to its view position
-  s16 camera[4];
-};
-#endif
-
 /// Each frame of the fade overlay: on each of the two cells beside the
 /// actor (left and right of it), where the ground one or two cells south rises
 /// above the actor's floor, draws a semi-transparent 16-pixel-wide
@@ -130,10 +121,8 @@ void FieldEffect_StartFadeOverlay(void *object) {
   work->actor = object;
 }
 
-/// Stops drawing the fade overlay, keeping its work. Reached only through a
-/// bare far-call veneer; nothing in the game names it.
+/// Stops drawing the fade overlay, keeping its work.
 void FadeOverlay_Suspend(void) { Task_SuspendAll(FadeOverlay_DrawMarks); }
 
-/// Draws the fade overlay again after FadeOverlay_Suspend. Reached only
-/// through a bare far-call veneer.
+/// Draws the fade overlay again after FadeOverlay_Suspend.
 void FadeOverlay_Resume(void) { Task_ResumeAll(FadeOverlay_DrawMarks); }

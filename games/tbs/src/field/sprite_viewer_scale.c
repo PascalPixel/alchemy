@@ -3,8 +3,6 @@
 /// nothing in the game opens (sprite_viewer.c).
 
 #include "module/field/sprite_viewer_scale.h"
-#include "types.h"
-#include "render_placement.h"
 #include "fixed_math.h"
 
 /// The sprite viewer's (x, y) sprite scale, 1.0 each (Q16), which

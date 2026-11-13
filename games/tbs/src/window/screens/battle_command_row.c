@@ -106,12 +106,17 @@ s32 BattleCommandRow_Run(s32 mode) {
   selectionUi->affine.angle = 0;
   // Icons 24 pixels apart on line 136 (tile row 17), the last ending by the
   // name window.
-  for (entryIndex = 0; entryIndex < selectionUi->iconCount; entryIndex++) {
-    s32 x = (entryIndex - selectionUi->iconCount) * 24;
-    selectionUi->entries[entryIndex].positionX = x + 155;
-    if (mode != COMMAND_ROW_PARTY)
-      selectionUi->entries[entryIndex].positionX = x + WINDOW_X * 8 - 5;
-    selectionUi->entries[entryIndex].positionY = 136;
+  entryIndex = 0;
+  if (entryIndex < selectionUi->iconCount) {
+    do {
+      s32 x = (entryIndex - selectionUi->iconCount) * 24;
+
+      selectionUi->entries[entryIndex].positionX = x + 155;
+      if (mode != COMMAND_ROW_PARTY)
+        selectionUi->entries[entryIndex].positionX = x + WINDOW_X * 8 - 5;
+      selectionUi->entries[entryIndex].positionY = 136;
+      entryIndex++;
+    } while (entryIndex < selectionUi->iconCount);
   }
   // BG1 shows the icons: behind the other layers above line 136, in front
   // from there down (CommandRow_PutBg1Behind).
@@ -405,7 +410,7 @@ void Window_HighlightRect(s32 x, s32 y, s32 width, s32 height, s32 paletteBit) {
 /// column, when shown, lies left of them). Returns 0.
 /// Battle_CollectPartyCommands calls it.
 s32 PartyStatus_HighlightMembers(u16 *ids) {
-  struct BattleWork *battle = gBattleWork;
+  struct BattleWork *battle = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE);
   s32 count;
   s32 i;
   s32 j;
@@ -413,9 +418,6 @@ s32 PartyStatus_HighlightMembers(u16 *ids) {
   count = BattleUnit_ListIdsFar(1, 0);
   Window_HighlightRect(29 - count * 6, 0, 25, 5, WINDOW_PALETTE);
   i = 0;
-  // The loop over ids is written with goto: as
-  // for (i = 0; i < 4 && ids[i] != BATTLE_UNIT_LIST_END; i++), or as a do-while
-  // loop inside this test, 49 of 74 instructions differ in tbs-en.
   if (ids[0] != BATTLE_UNIT_LIST_END) {
   next_id:
     for (j = 0; j < 4 && battle->partyUnits[j] != ids[i]; j++) {

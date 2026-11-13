@@ -50,7 +50,7 @@ struct FieldParticle {
                    ///< frame
   s8 render;       ///< nonzero: drawn each frame
   s8 active;       ///< nonzero while the sprite is in use
-  u8 randomValue;  ///< random when filled; not read by name in TBS
+  u8 randomValue;  ///< random when filled
   /// bits: 2 z also lifts the sprite (set when it is filled)
   u8 flags;
 };
@@ -61,13 +61,8 @@ STATIC_ASSERT(offsetof(struct FieldParticle, state) == 0x40);
 
 /// Gives every particle in use in `work->member` the state `newState`:
 /// `cursor`, a byte pointer, walks their state bytes and `count` counts them
-/// down, both the caller's. Five routines that end a field effect run this
-/// same code, Mars's twice, the state held in a local first; the macro is our
-/// reconstruction of that shared code, and its name is ours. Its forms are
-/// the ones every site needs: the state stored straight from `newState`
-/// differs by 2 to 4 instructions at every site, Mars's second needs the
-/// cursor built as the work pointer plus the member's offset (22 otherwise),
-/// and a cursor and count of the macro's own differ by 10 to 40.
+/// down, both the caller's. Five routines that end a field effect use it,
+/// Mars's twice.
 #define FIELD_PARTICLES_SET_ACTIVE_STATE(cursor, count, work, member,          \
                                          newState)                             \
   {                                                                            \

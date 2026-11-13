@@ -287,12 +287,6 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *action,
   u8 *dst;
   s32 v;
   s32 *vec;
-  /* FAKEMATCH(wrapper): every clear through CLEAR, an inline that calls the
-   * fixed IWRAM clear; as direct Iwram_ClearWords calls, 211 of 7666
-   * instructions differ in tla-en. */
-  /* FAKEMATCH(wrapper): every fill through FILL, an inline that calls the fixed
-   * IWRAM fill; as direct Iwram_FillWords calls, 76 of 7666 instructions differ
-   * in tla-en. */
 
   buffer = Ram_MapCellBuffer;
   sparks = (struct Particle *)(Ram_MapCellBuffer + 0x6000);

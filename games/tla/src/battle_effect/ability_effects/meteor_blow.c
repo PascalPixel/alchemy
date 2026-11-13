@@ -210,9 +210,6 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
   Graphics_LoadGreyRamp();
   gCameraSceneParameters[4] = 240;
   wait(1);
-  /* FAKEMATCH(wrapper): both fills forwarded through FillWords_, which leaves
-   * 0x4000 without a pseudo of its own; as direct Iwram_FillWords calls, 286
-   * of 1556 instructions differ in tla-en. */
   // A once-only block: it closes the fill's block before the copy.
   do {
     Iwram_FillWords(map, 0x8000, 0x01010101);

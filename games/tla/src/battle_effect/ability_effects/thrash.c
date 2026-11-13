@@ -248,9 +248,6 @@ void Func_0816a2d8(struct BattleEffectArgument *effect, s32 variant) {
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   if (variant == 3) {
     // Clear the canvas and its tiles and hand the layer to the next scene.
-    /* FAKEMATCH(wrapper): both clears through ClearWords_, which sets the size
-     * for each call and holds the routine; as direct Iwram_ClearWords calls, 14
-     * of 469 instructions differ in tla-en. */
     Iwram_ClearWords((void *)0x06004000, 0x3c00);
     Iwram_ClearWords(canvas, 0x3c00);
     Task_Remove(Palette_StepFadeTransfer);

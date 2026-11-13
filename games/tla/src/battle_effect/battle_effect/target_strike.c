@@ -984,9 +984,6 @@ void Func_0813e7e0(struct BattleEffectArgument *effect) {
     }
   }
 
-  /* FAKEMATCH(wrapper): the clears through ClearWords; as a direct call to
-   * Iwram_ClearWords, 14 of 376 instructions of Func_0813e7e0 differ in tla-en.
-   */
   Iwram_ClearWords(canvas, 0x4000);
   Iwram_ClearWords((void *)0x06004000, 0x4000);
   IO_WRITE_QUEUE_PUSH(0x04000000, 0x7741, 0x20000);

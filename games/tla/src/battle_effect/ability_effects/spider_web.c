@@ -1244,9 +1244,6 @@ void BattleEffect_RunSpiderWeb(struct BattleEffectArgument *effect) {
 
   // Teardown: clear both canvases and hand over to the summon canvas.
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  /* FAKEMATCH(wrapper): both clears through ClearWords_, which builds the size
-   * anew for each; as direct Iwram_ClearWords calls, 16 of 228 instructions
-   * differ in tla-en. */
   Iwram_ClearWords((void *)0x06004000, 0x3c00);
   Iwram_ClearWords(canvas, 0x3c00);
   effect->prelude = 0;

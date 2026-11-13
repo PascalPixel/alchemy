@@ -110,12 +110,6 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
   struct EffectStep *p;
   struct EclipseObject *obj;
 
-  /* FAKEMATCH(wrapper): every fill through FillWords_, which sets a constant
-   * size in the call's register at each call; as direct Iwram_FillWords calls,
-   * 501 of 2159 instructions differ in tla-en. */
-  /* FAKEMATCH(wrapper): every copy through CopyWords_, which sets a constant
-   * size in the call's register at each call; as direct Iwram_CopyWords calls,
-   * 133 of 2159 instructions differ in tla-en. */
   canvas = Ram_HeapSlots->battleFxWork[1];
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   savedScroll = gBgScroll[1].x;
@@ -1116,21 +1110,10 @@ void BattleEffect_ProcessPendingGraphicsTransfer(void) {
     IRQ_UNLOCK(ime);
     switch (work->transferMode) {
     case 0:
-      /* FAKEMATCH(wrapper): the copy forwarded through CopyWords_, which keeps
-       * each call's own constants, as the scene layer does; as direct
-       * Iwram_CopyWords calls in this callback and in
-       * BattleEffect_ProcessPendingStampTransfer,
-       * BattleEffect_FlushPendingGraphicsTransfer and
-       * BattleEffect_ProcessPendingBlock2Transfer, 128 of 369 instructions
-       * differ in tla-en. */
       Iwram_CopyWords((void *)0x06004000, source, 0x4000);
       break;
     case 1:
       Iwram_CopyWords((void *)0x06004000, source, 0x4000);
-      /* FAKEMATCH(wrapper): the fill forwarded through FillWords_, which keeps
-       * each call's own constants, as the scene layer does; as direct
-       * Iwram_FillWords calls in this callback and in the same three
-       * callbacks, 16 of 369 instructions differ in tla-en. */
       Iwram_FillWords(source, 0x4000, work->transferValue);
       break;
     case 2:
@@ -1559,10 +1542,6 @@ void BattleEffect_OpenCanvasLayer(s32 bgControl) {
     }
   }
 
-  /* FAKEMATCH(wrapper): the clear forwarded through an inline, which keeps each
-   * call's own constants and the routine in a callee-saved register; as direct
-   * Iwram_ClearWords calls, 24 of 259 instructions of
-   * BattleEffect_OpenCanvasLayer differ in tla-en. */
   Iwram_ClearWords(canvas, 0x4000);
   Iwram_ClearWords(BG_CHAR_BLOCK(1), 0x4000);
   work->shakeFrames = 0;

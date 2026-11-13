@@ -26,15 +26,19 @@
 #include "module/scene/scene.h"
 #include "text/msg_ids.h"
 
-s32 Func_02000038(struct Actor *object) {
-  if ((gData_020007e4 >> 1) & 1)
+/// A mote's script call: it flickers between colours 15 and 7 every other
+/// frame.
+s32 MercuryLighthouse_FlickerMote(struct Actor *object) {
+  if ((gMercuryLighthouse_MoteFrames >> 1) & 1)
     Actor_SetSpriteColor(object, 15);
   else
     Actor_SetSpriteColor(object, 7);
   return 0;
 }
 
-void Func_02000060(struct Actor *object) {
+/// An Imil child's update while the voices talk: every 40 to 120 frames it
+/// turns between two headings, as if looking around for them.
+void MercuryLighthouse_LookAround(struct Actor *object) {
   u8 *timer = (u8 *)object + 98;
   u8 *state;
 
@@ -78,7 +82,10 @@ const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
 void Actor_StartScript(struct Actor *object, const void *script);
 
-void Func_020000f4(void) {
+/// The task Mercury Lighthouse runs while the lighthouses are lit: every 16
+/// frames it starts a sparkle above the beacon, and it counts the frames in
+/// gMercuryLighthouse_MoteFrames.
+void MercuryLighthouse_SpawnMotes(void) {
   struct Actor *object;
   struct FieldSprite *sprite;
   s32 phase;
@@ -105,22 +112,26 @@ void Func_020000f4(void) {
       Actor_SetSingleChildFlags(object, 0);
       object->priorityFlags &= ~1;
       sprite->priority = 2;
-      Actor_StartScript(object, gData_02000618);
+      Actor_StartScript(object, gMercuryLighthouse_MoteScript);
       Func_02000540(object, 1);
     }
   }
-  gData_020007e4++;
+  gMercuryLighthouse_MoteFrames++;
 }
 
-void Func_020001b0(void) {
+/// With all four beacons lit, two children of Imil at the base of Mercury
+/// Lighthouse hear Mia across the world by Mind Read, and the Wise One and
+/// Master Hamma join the voices.
+/// "We're in Imil! We're at the base of Mercury Lighthouse!"
+void MercuryLighthouse_HearVoices(void) {
   struct Actor *actor;
 
   Event_Start();
   Event_ResolvePendingActions(0);
   Actor_SetSpriteColor(Actor_GetById(gMainRoutineWork.currentOwner), 15);
   wait(1);
-  gData_020007e4 = 0;
-  Task_Add(Func_020000f4, TASK_PASS_VBLANK);
+  gMercuryLighthouse_MoteFrames = 0;
+  Task_Add(MercuryLighthouse_SpawnMotes, TASK_PASS_VBLANK);
   Actor_SetSpritePriority(8, 2);
   Actor_SetSpritePriority(9, 2);
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 436) = 40;
@@ -153,7 +164,7 @@ void Func_020001b0(void) {
   actor = Actor_GetById(11);
   *((u8 *)actor + 98) = ((Random16Far() * 80) >> 16) + 40;
   *((u8 *)actor + 99) = 0;
-  actor->update = (void (*)(void))Func_02000060;
+  actor->update = (void (*)(void))MercuryLighthouse_LookAround;
   actor = Actor_GetById(12);
   {
     /* FAKEMATCH(temporary): the timer's + 40 comes before its address, as in
@@ -163,7 +174,7 @@ void Func_020001b0(void) {
     *((u8 *)actor + 98) = timer;
   }
   *((u8 *)actor + 99) = 2;
-  actor->update = (void (*)(void))Func_02000060;
+  actor->update = (void (*)(void))MercuryLighthouse_LookAround;
   Func_080dc978(13, 14);
   Event_ShowMessage(3, 0);
   BattleEffect_FinishSceneAndReleaseHeapBlock();
@@ -223,24 +234,24 @@ s32 Scene_Initialize(void) {
     wait(20);
     Import_EventSetExitRequest(9);
   } else {
-    Func_020001b0();
+    MercuryLighthouse_HearVoices();
   }
   return 0;
 }
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-s32 gData_02000618[] = {
+s32 gMercuryLighthouse_MoteScript[] = {
     SC_ADD(SW_Y, PIXELS(-2)),
-    SC_CALL(Func_02000038),
+    SC_CALL(MercuryLighthouse_FlickerMote),
     SC_WAIT(1),
     SC_ADD(SW_Y, PIXELS(-2)),
-    SC_CALL(Func_02000038),
+    SC_CALL(MercuryLighthouse_FlickerMote),
     SC_WAIT(1),
     SC_LOOP(30, SC_TOP),
     SC_LABEL(1),
     SC_ADD(SW_Y, PIXELS(-1)),
-    SC_CALL(Func_02000038),
+    SC_CALL(MercuryLighthouse_FlickerMote),
     SC_WAIT(1),
     SC_LOOP(40, SC_TO(1)),
     SC_FREE,

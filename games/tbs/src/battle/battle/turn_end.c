@@ -221,47 +221,34 @@ s32 BattleUnit_CountDownAgilityStage(s32 unitId) {
 /// Battle_Run, and outside battle by Field_UpdateWalking as the party
 /// walks, by the Djinn menu's tutorial and by DjinnRecovery_CountDownTwenty.
 s32 DjinnRecovery_CountDown(void) {
-  struct DjinnRecoveryList *list;
-  struct DjinnRecoveryEntry *timedEntry;
-  struct DjinnRecoveryEntry *expiredEntry;
-  s32 index;
-  s32 removed;
-  s32 initialCount;
+  struct DjinnRecoveryList *list =
+      &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTableFar(
+            DJINN_RECOVERY_PARTY))
+           ->list;
+  s32 removed = 0;
+  s32 i;
 
-  list = &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTableFar(
-               DJINN_RECOVERY_PARTY))
-              ->list;
-  initialCount = list->count;
-  index = 0;
-  removed = 0;
-  if (index < initialCount) {
-    timedEntry = list->entries;
-    do {
-      if (timedEntry->turns > 0 && Unit_GetFar(timedEntry->unitId)->hp != 0) {
-        timedEntry->turns--;
-      }
-      index++;
-      timedEntry++;
-    } while (index < list->count);
+  for (i = 0; i < list->count; i++) {
+    struct DjinnRecoveryEntry *entry = &list->entries[i];
+
+    if (entry->turns > 0 && Unit_GetFar(entry->unitId)->hp != 0)
+      entry->turns--;
   }
-  // Removing an entry moves the next one into its place, so the cursor
-  // advances only past entries that stay.
-  index = 0;
-  if (index < list->count) {
-    expiredEntry = list->entries;
-    do {
-      if (expiredEntry->turns == 0) {
-        u8 id = expiredEntry->unitId;
+  // Removing an entry moves the next one into its place, so i advances only
+  // past entries that stay.
+  for (i = 0; i < list->count;) {
+    struct DjinnRecoveryEntry *entry = &list->entries[i];
 
-        Djinn_SetFar(id, expiredEntry->element, expiredEntry->index);
-        DjinnRecovery_RemoveFar(id, expiredEntry->element, expiredEntry->index);
-        Unit_CalculateFar(id);
-        removed = 1;
-      } else {
-        expiredEntry++;
-        index++;
-      }
-    } while (index < list->count);
+    if (entry->turns == 0) {
+      u8 unitId = entry->unitId;
+
+      Djinn_SetFar(unitId, entry->element, entry->index);
+      DjinnRecovery_RemoveFar(unitId, entry->element, entry->index);
+      Unit_CalculateFar(unitId);
+      removed = 1;
+    } else {
+      i++;
+    }
   }
   return removed;
 }
@@ -271,13 +258,10 @@ s32 DjinnRecovery_CountDown(void) {
 /// Called by the Battle Arena when it restores the party, and by Vault's event
 /// before Ivan hands back Isaac's Djinni.
 s32 DjinnRecovery_CountDownTwenty(void) {
-  s32 turns;
+  s32 turn;
 
-  turns = 19;
-  do {
-    turns--;
+  for (turn = 0; turn < 20; turn++)
     DjinnRecovery_CountDown();
-  } while (turns >= 0);
   return 0;
 }
 
@@ -302,10 +286,8 @@ UNREAD_RESULT Battle_ProcessTurnEnd(void) {
   s32 side;
   s32 sideCount;
   s32 count;
-  s32 recoveryIndex;
+  s32 i;
   struct DjinnRecoveryList *list;
-  struct DjinnRecoveryEntry *timedEntry;
-  struct DjinnRecoveryEntry *expiredEntry;
 
   // Djinn recovery: the party's list, and in a link battle the opponent's
   // too. Only a Djinni whose unit is on the field with HP counts down.
@@ -314,62 +296,50 @@ UNREAD_RESULT Battle_ProcessTurnEnd(void) {
   for (side = 0; side < sideCount; side++) {
     list =
         &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTableFar(side))->list;
-    recoveryIndex = 0;
-    if (recoveryIndex < list->count) {
-      timedEntry = list->entries;
-      do {
-        if (timedEntry->turns > 0 &&
-            BattleObject_Get(timedEntry->unitId) != 0 &&
-            Unit_GetFar(timedEntry->unitId)->hp != 0) {
-          timedEntry->turns--;
-        }
-        recoveryIndex++;
-        timedEntry++;
-      } while (recoveryIndex < list->count);
+    for (i = 0; i < list->count; i++) {
+      struct DjinnRecoveryEntry *entry = &list->entries[i];
+
+      if (entry->turns > 0 && BattleObject_Get(entry->unitId) != 0 &&
+          Unit_GetFar(entry->unitId)->hp != 0)
+        entry->turns--;
     }
     // Set each recovered Djinni, as DjinnRecovery_CountDown does, with its
     // message, the unit's POSE_CAST and its element's battle effect. As there,
-    // the cursor stays on a removed entry; it would stay for ever on one whose
-    // unit is off the field, but only a unit on the field counts down to 0
-    // above.
-    recoveryIndex = 0;
-    if (recoveryIndex < list->count) {
-      expiredEntry = list->entries;
-      do {
-        if (expiredEntry->turns == 0) {
-          u8 unitId = expiredEntry->unitId;
-          s32 element;
+    // i stays on a removed entry; it would stay for ever on one whose unit is
+    // off the field, but only a unit on the field counts down to 0 above.
+    for (i = 0; i < list->count;) {
+      struct DjinnRecoveryEntry *entry = &list->entries[i];
 
-          if (BattleObject_Get(unitId) != 0) {
-            BattlePlayback_Reset();
-            BattlePlayback_SchedulePhase(30);
-            BattlePlayback_Push(PLAYBACK_UNIT_NAME, unitId);
-            // The Djinni's own ability, which names it (ABILITY_DJINNI_FIRST).
-            BattlePlayback_Push(PLAYBACK_ABILITY_NAME,
-                                expiredEntry->element * DJINN_PER_ELEMENT +
-                                    expiredEntry->index + ABILITY_DJINNI_FIRST);
-            BattlePlayback_Push(PLAYBACK_SOUND, SE_NOTE_HIGH);
-            BattlePlayback_Push(PLAYBACK_DRAW_STATUS, 0);
-            PUSH_MESSAGE(MsgDjinnSet);
-            BattlePlayback_Push(PLAYBACK_REFRESH_UNIT, unitId);
-            Sound_PlayFar(SE_POWER_UP);
-            Actor_SelectAnimationFar(BattleObject_Get(unitId)->actor,
-                                     POSE_CAST);
-            Actor_SetAnimationSpeedFar(BattleObject_Get(unitId)->actor,
-                                       ANIMATION_STEP_NORMAL * 2);
-            element = expiredEntry->element;
-            Djinn_SetFar(unitId, element, expiredEntry->index);
-            DjinnRecovery_RemoveFar(unitId, expiredEntry->element,
-                                    expiredEntry->index);
-            Unit_CalculateFar(unitId);
-            ElementGlow_Play(unitId, element, GLOW_BURST, 0);
-            BattlePlayback_WaitForReady();
-          }
-        } else {
-          expiredEntry++;
-          recoveryIndex++;
+      if (entry->turns == 0) {
+        u8 unitId = entry->unitId;
+        s32 element;
+
+        if (BattleObject_Get(unitId) != 0) {
+          BattlePlayback_Reset();
+          BattlePlayback_SchedulePhase(30);
+          BattlePlayback_Push(PLAYBACK_UNIT_NAME, unitId);
+          // The Djinni's own ability, which names it (ABILITY_DJINNI_FIRST).
+          BattlePlayback_Push(PLAYBACK_ABILITY_NAME,
+                              entry->element * DJINN_PER_ELEMENT +
+                                  entry->index + ABILITY_DJINNI_FIRST);
+          BattlePlayback_Push(PLAYBACK_SOUND, SE_NOTE_HIGH);
+          BattlePlayback_Push(PLAYBACK_DRAW_STATUS, 0);
+          PUSH_MESSAGE(MsgDjinnSet);
+          BattlePlayback_Push(PLAYBACK_REFRESH_UNIT, unitId);
+          Sound_PlayFar(SE_POWER_UP);
+          Actor_SelectAnimationFar(BattleObject_Get(unitId)->actor, POSE_CAST);
+          Actor_SetAnimationSpeedFar(BattleObject_Get(unitId)->actor,
+                                     ANIMATION_STEP_NORMAL * 2);
+          element = entry->element;
+          Djinn_SetFar(unitId, element, entry->index);
+          DjinnRecovery_RemoveFar(unitId, entry->element, entry->index);
+          Unit_CalculateFar(unitId);
+          ElementGlow_Play(unitId, element, GLOW_BURST, 0);
+          BattlePlayback_WaitForReady();
         }
-      } while (recoveryIndex < list->count);
+      } else {
+        i++;
+      }
     }
   }
   // Fade 0 leaves the palette as it is: this only puts the zoomed

@@ -222,9 +222,8 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       Menu_DrawCoins((s32)menu->infoWindow);
       command = ItemMenu_SelectMember(0);
       if (command == -1) {
-        /* FAKEMATCH(dead): command cleared with selection, though neither is
-         * read again once done is set; as selection = 0;, 104 of 1355
-         * instructions differ in tla-en. */
+        // DEAD: selection and command cleared though the menu ends before
+        // reading either; the ROM keeps the 0 and its store to selection.
         selection = command = 0;
         ret = -1;
         done = 1;

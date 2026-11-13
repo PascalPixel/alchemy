@@ -4,6 +4,19 @@
 
 #include "../game_internal.h"
 
+/// A view of EWRAM from gSceneLocalState on, which
+/// MainRoutineWork_InitializeDefaults writes one byte through.
+struct MapLocalStateSnapshotView {
+  u8 mapAndInventory[256]; ///< gSceneLocalState, then most of
+                           ///< gInventorySnapshot
+  /// gInventorySnapshot's last word, past the 65 halfwords the snapshot
+  /// uses; nothing reads or writes it through this view.
+  u32 playTime;
+  /// gActorSnapshot.slots[0]: set to ACTOR_SNAPSHOT_EMPTY,
+  /// so a new game holds no saved actors.
+  u8 firstSnapshotSlot;
+};
+
 /// The running totals Unit_Calculate builds a unit's stats in. Each call takes
 /// a block from EWRAM first (Heap_AllocEwram) and frees it
 /// with Heap_Release before returning; only Unit_Calculate reads it.
@@ -529,7 +542,8 @@ void MainRoutineWork_InitializeDefaults(void) {
   zero = 0;
   START_DMA(&zero, gGameFlagBytes,
             (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 128);
-  gActorSnapshot.slots[0] = ACTOR_SNAPSHOT_EMPTY;
+  ((struct MapLocalStateSnapshotView *)gSceneLocalState)->firstSnapshotSlot =
+      ACTOR_SNAPSHOT_EMPTY;
   zero = 0;
   START_DMA(&zero, gBattleArenaRecord + 0x1c,
             (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 664);

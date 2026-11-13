@@ -3210,7 +3210,7 @@ s16 gData_020066bc[] = {
 };
 
 struct Trigger gSceneEvents[] = {
-    {0x9c05, 1, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_TELEPORT, PSYNERGY_PHASE_AFTER_CAST), 1, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit)},
     {TRIGGER_STEP, 10, 0xa3d, EVENT(MarsLighthouseAerie_FaceDoomDragon)},
     {TRIGGER_TALK, 0, CONDITION_ALWAYS, MSGNO(MsgOurQuestIs)},
     {TRIGGER_TALK, 1, CONDITION_ALWAYS, MSGNO(MsgIWishICould)},
@@ -3219,12 +3219,12 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_TALK, 6, CONDITION_ALWAYS, MSGNO(MsgIDonTKnowMy)},
     {TRIGGER_TALK, 7, CONDITION_ALWAYS, MSGNO(MsgIMSorryThings)},
     {TRIGGER_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgBothKyleAnd)},
-    {0x4400, 28, CONDITION_ALWAYS, EVENT(MarsLighthouseAerie_TalkToConsoler)},
-    {0x4400, 17, CONDITION_ALWAYS, EVENT(MarsLighthouseAerie_TalkToBlindedParent)},
-    {0x6400, 17, CONDITION_ALWAYS, EVENT(MarsLighthouseAerie_TalkToBlindedParent)},
-    {0xe400, 30, CONDITION_ALWAYS, EVENT(MarsLighthouseAerie_TalkToCoughingParent)},
-    {0x400, 30, CONDITION_ALWAYS, EVENT(MarsLighthouseAerie_TalkToCoughingParent)},
-    {0x2400, 30, CONDITION_ALWAYS, EVENT(MarsLighthouseAerie_TalkToCoughingParent)},
+    {TALK_TRIGGER_FACING(FACING_SOUTH), 28, CONDITION_ALWAYS, EVENT(MarsLighthouseAerie_TalkToConsoler)},
+    {TALK_TRIGGER_FACING(FACING_SOUTH), 17, CONDITION_ALWAYS, EVENT(MarsLighthouseAerie_TalkToBlindedParent)},
+    {TALK_TRIGGER_FACING(FACING_SOUTHWEST), 17, CONDITION_ALWAYS, EVENT(MarsLighthouseAerie_TalkToBlindedParent)},
+    {TALK_TRIGGER_FACING(FACING_NORTHEAST), 30, CONDITION_ALWAYS, EVENT(MarsLighthouseAerie_TalkToCoughingParent)},
+    {TALK_TRIGGER_FACING(FACING_EAST), 30, CONDITION_ALWAYS, EVENT(MarsLighthouseAerie_TalkToCoughingParent)},
+    {TALK_TRIGGER_FACING(FACING_SOUTHEAST), 30, CONDITION_ALWAYS, EVENT(MarsLighthouseAerie_TalkToCoughingParent)},
     {TRIGGER_TALK, 29, CONDITION_ALWAYS, EVENT(MarsLighthouseAerie_TalkToGladParent)},
 #if TLA_PATCH_1 /* From patch 1. */
     {PSYNERGY_ON_ACTOR(ABILITY_HALT), 28, CONDITION_ALWAYS, EVENT(Func_02004ec0)},

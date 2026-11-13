@@ -1722,7 +1722,8 @@ struct Trigger gIdejimaEvents[] = {
 };
 
 struct Trigger gIdejimaEventsEntrance1[] = {
-    {0xc602, 3, CONDITION_ALWAYS, EVENT(Idejima_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS,
+     EVENT(Idejima_EnterDoor)},
     {TRIGGER_TABLE_END},
 };
 

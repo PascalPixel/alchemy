@@ -68,7 +68,8 @@ struct ActorPlacement gActorPlacements[] = {
 
 struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {0xc400, 8, CONDITION_ALWAYS, EVENT(ChampaSanctum_ServeAcrossTheCounter)},
+    {TALK_TRIGGER_FACING(FACING_NORTH), 8, CONDITION_ALWAYS,
+     EVENT(ChampaSanctum_ServeAcrossTheCounter)},
     {TRIGGER_TALK, 8, IF_FLAG_SET(FLAG_BRIGGS_SAILED_FROM_ALHAFRA),
      MSGNO(MsgChampaTreasureEncouragesLaziness)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8,

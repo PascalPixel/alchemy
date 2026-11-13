@@ -981,8 +981,8 @@ struct Trigger gIzumoRuins_FirstRoomTriggers[] = {
      CONDITION_ALWAYS, EVENT(IzumoRuins_StartMovingPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 13, CONDITION_ALWAYS,
      EVENT(IzumoRuins_FinishMovingPillar)},
-    {8, 0, CONDITION_ALWAYS, EVENT(IzumoRuins_StartMovingPillar)},
-    {9, 0, CONDITION_ALWAYS, EVENT(IzumoRuins_FinishMovingPillar)},
+    {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(IzumoRuins_StartMovingPillar)},
+    {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(IzumoRuins_FinishMovingPillar)},
     {TRIGGER_TABLE_END},
 };
 

@@ -1149,7 +1149,7 @@ struct Trigger gLemurianShipDeck_Triggers[] = {
 };
 
 struct Trigger gLemurianShipDeck_Room2Triggers[] = {
-    {0xc602, 1, CONDITION_ALWAYS, EVENT(LemurianShipDeck_EnterCabin)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT(LemurianShipDeck_EnterCabin)},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_STEP, 10, 0x980, EVENT(LemurianShipDeck_SightMenardisShip)},
     {TRIGGER_STEP, 11, 0x981, EVENT(LemurianShipDeck_ReachPiersShip)},

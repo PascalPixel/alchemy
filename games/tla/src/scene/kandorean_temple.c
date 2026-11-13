@@ -3282,10 +3282,10 @@ struct Trigger gKandoreanTemple_Events[] = {
 struct Trigger gKandoreanTemple_LiftRoomEvents[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {0x31, 3, CONDITION_ALWAYS, 3},
-    {0x31, 4, CONDITION_ALWAYS, 4},
-    {8, 0, CONDITION_ALWAYS, EVENT(KandoreanTemple_StartMovingBlock)},
-    {9, 0, CONDITION_ALWAYS, EVENT(KandoreanTemple_FinishMovingBlock)},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 3, CONDITION_ALWAYS, 3},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 4, CONDITION_ALWAYS, 4},
+    {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(KandoreanTemple_StartMovingBlock)},
+    {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(KandoreanTemple_FinishMovingBlock)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 12, CONDITION_ALWAYS, EVENT(KandoreanTemple_StartMovingBlock)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 12, CONDITION_ALWAYS, EVENT(KandoreanTemple_FinishMovingBlock)},
     {TRIGGER_STEP, 10, 0x211, EVENT(KandoreanTemple_SinkIntoTheSteam)},
@@ -3302,12 +3302,12 @@ s16 gKandoreanTemple_Room2Events[] = {
 };
 
 struct Trigger gKandoreanTemple_ChestbeaterRoomEvents[] = {
-    {0x31, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 1, CONDITION_ALWAYS, 1},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 8, 0x304, EVENT(KandoreanTemple_StartMovingPot)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, 0x304, EVENT(KandoreanTemple_FinishMovingPot)},
-    {0x602, 10, 0x304, EVENT(KandoreanTemple_TouchTheHotFloor)},
-    {0xc602, 11, 0x304, EVENT(KandoreanTemple_TouchTheHotFloor)},
-    {0x8602, 12, 0x304, EVENT(KandoreanTemple_TouchTheHotFloor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 10, 0x304, EVENT(KandoreanTemple_TouchTheHotFloor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 11, 0x304, EVENT(KandoreanTemple_TouchTheHotFloor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 12, 0x304, EVENT(KandoreanTemple_TouchTheHotFloor)},
     {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(KandoreanTemple_ReadPoisSign)},
     {TRIGGER_STEP, 6, 0x92d, EVENT(KandoreanTemple_FightChestbeaters)},
     {TRIGGER_TABLE_END},
@@ -3315,9 +3315,9 @@ struct Trigger gKandoreanTemple_ChestbeaterRoomEvents[] = {
 
 struct Trigger gKandoreanTemple_VentRoomEvents[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {0x21, 2, CONDITION_ALWAYS, 2},
-    {8, 0, CONDITION_ALWAYS, EVENT(KandoreanTemple_StartMovingPillar)},
-    {9, 0, CONDITION_ALWAYS, EVENT(KandoreanTemple_FinishMovingPillar)},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(KandoreanTemple_StartMovingPillar)},
+    {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(KandoreanTemple_FinishMovingPillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 8, CONDITION_ALWAYS, EVENT(KandoreanTemple_StartMovingPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, CONDITION_ALWAYS, EVENT(KandoreanTemple_FinishMovingPillar)},
     {TRIGGER_STEP, 20, CONDITION_ALWAYS, EVENT(KandoreanTemple_LeaveBySteamExit3)},
@@ -3326,13 +3326,13 @@ struct Trigger gKandoreanTemple_VentRoomEvents[] = {
 };
 
 struct Trigger gKandoreanTemple_Room5Events[] = {
-    {0x21, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_TABLE_END},
 };
 // clang-format on
 
 struct Trigger gKandoreanTemple_Room6Events[] = {
-    {0x21, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_STEP, 10, CONDITION_ALWAYS,
      EVENT(KandoreanTemple_PushThroughTheSteam)},
@@ -3341,9 +3341,9 @@ struct Trigger gKandoreanTemple_Room6Events[] = {
 
 struct Trigger gKandoreanTemple_FogRoomEvents[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {0x21, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
-    {0x21, 4, CONDITION_ALWAYS, 4},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 4, CONDITION_ALWAYS, 4},
     {PSYNERGY_ON_ACTOR(ABILITY_LASH), 8, 0x20f, 0},
     {TRIGGER_TALK, 11, CONDITION_ALWAYS, EVENT(KandoreanTemple_FightFog)},
     {TRIGGER_STEP, 10, CONDITION_ALWAYS,
@@ -3359,12 +3359,16 @@ struct Trigger gKandoreanTemple_FogRoomEvents[] = {
 struct Trigger gKandoreanTemple_GateEvents[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {0x31, 3, CONDITION_ALWAYS, 3},
-    {0x4602, 6, CONDITION_ALWAYS, EVENT(KandoreanTemple_SlipIntoTheCrack)},
-    {0x1f3, 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgKandoreanTemple13))},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 3, CONDITION_ALWAYS, 3},
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 6, CONDITION_ALWAYS,
+     EVENT(KandoreanTemple_SlipIntoTheCrack)},
+    {EXAMINE_TRIGGER(EXAMINE_WELL), 200, CONDITION_ALWAYS,
+     FIND_MESSAGE(MSGNO(MsgKandoreanTemple13))},
     {TRIGGER_STEP, 20, 0x230, EVENT(KandoreanTemple_KradenSuspectsTheWall)},
-    {0x4602, 4, 0x212, EVENT(KandoreanTemple_OpenTheWellPassage)},
-    {0xc602, 5, 0x212, EVENT(KandoreanTemple_OpenTheWellPassage)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 4, 0x212,
+     EVENT(KandoreanTemple_OpenTheWellPassage)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 5, 0x212,
+     EVENT(KandoreanTemple_OpenTheWellPassage)},
     {TRIGGER_EXAMINE, 10, CONDITION_ALWAYS,
      EVENT(KandoreanTemple_TryTheLockedDoor)},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 8, CONDITION_ALWAYS,
@@ -3422,8 +3426,8 @@ struct Trigger gKandoreanTemple_PoisHallEvents[] = {
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
     {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
-    {0x202, 8, CONDITION_ALWAYS, EVENT(KandoreanTemple_ClimbDownTheWell)},
-    {0xc602, 9, CONDITION_ALWAYS, EVENT(KandoreanTemple_DropThroughTheTrapdoor)},
+    {STEP_TRIGGER_WALKING, 8, CONDITION_ALWAYS, EVENT(KandoreanTemple_ClimbDownTheWell)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT(KandoreanTemple_DropThroughTheTrapdoor)},
     {PSYNERGY_ON_ACTOR(ABILITY_LASH), 8, 0x20f, 0},
     {PSYNERGY_ON_ACTOR(ABILITY_LASH), 10, 0x210, 0},
     {TRIGGER_TALK, 13, 0x849, MSGNO(MsgFieldHeWentInBeforeMeWhat)},

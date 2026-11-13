@@ -883,6 +883,7 @@ struct Trigger gSceneEvents[] = {
      MSGNO(MsgAlhafraManor27)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
      MSGNO(MsgAlhafraManor28)},
-    {371, 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgAlhafraInteriors125))},
+    {EXAMINE_TRIGGER(EXAMINE_OVEN), 200, CONDITION_ALWAYS,
+     FIND_MESSAGE(MSGNO(MsgAlhafraInteriors125))},
     {TRIGGER_TABLE_END},
 };

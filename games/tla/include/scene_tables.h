@@ -145,6 +145,72 @@ struct TriggerView {
 /// An event that needs the leader to face within an eighth of a turn of the
 /// heading in control bits 15..12.
 #define TRIGGER_FLAG_FACING 0x400
+#define STEP_TRIGGER_WALKING (TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING)
+/// facing is an enum Facing; only its top four bits are compared.
+#define STEP_TRIGGER_FACING(facing)                                            \
+  (TRIGGER_STEP | TRIGGER_FLAG_FACING | (facing))
+#define STEP_TRIGGER_WALKING_INTO(facing)                                      \
+  (TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING | TRIGGER_FLAG_FACING | (facing))
+#define EXAMINE_TRIGGER(target) (TRIGGER_EXAMINE | (target) << 4)
+/// An examine trigger searched while facing the given way, as a counter is
+/// searched across.
+#define EXAMINE_TRIGGER_FACING(facing)                                         \
+  (TRIGGER_EXAMINE | TRIGGER_FLAG_FACING | (facing))
+/// A talk trigger that answers only while the leader faces the given way, so
+/// one actor can answer differently from each side.
+#define TALK_TRIGGER_FACING(facing)                                            \
+  (TRIGGER_TALK | TRIGGER_FLAG_FACING | (facing))
+
+/// An exit trigger's control bits 6..4: how the leader leaves
+/// (Scene_RunStepTriggerOrExit). Style 0x50 plays the plain exit sound and
+/// runs Func_080d5fd4 on the leader as it goes.
+enum ExitStyle {
+  EXIT_STYLE_NORMAL = 0x00, ///< with SE_MAP_EXIT
+  EXIT_STYLE_SILENT = 0x10,
+  EXIT_STYLE_STAIRS_UP = 0x20,   ///< with the stairs-up sound and walk
+  EXIT_STYLE_STAIRS_DOWN = 0x30, ///< with the stairs-down sound and walk
+  EXIT_STYLE_MASK = 0x70
+};
+
+/// What an examine trigger is on, EXAMINE_TRIGGER()'s control bits 8..4,
+/// as The Broken Seal's, with the pond added. Target n shows message
+/// MsgKey0dc4 + n, "<leader> checked the ...", as the leader checks it, unless
+/// the trigger has subject bit 10; target 0 shows nothing.
+enum ExamineTarget {
+  EXAMINE_SILENT = 0,
+  EXAMINE_CHEST = 1,
+  EXAMINE_JAR,
+  EXAMINE_BARREL,
+  EXAMINE_WALL,
+  EXAMINE_GROUND,
+  EXAMINE_ROCK,
+  EXAMINE_HOLE,
+  EXAMINE_GRAVE,
+  EXAMINE_TREE,
+  EXAMINE_UNDERBRUSH,
+  EXAMINE_DOOR,
+  EXAMINE_CHIMNEY,
+  EXAMINE_WOODEN_BOX,
+  EXAMINE_BED,
+  EXAMINE_BOOKCASE,
+  EXAMINE_STONE_COFFIN,
+  EXAMINE_FIREPLACE,
+  EXAMINE_WATER,
+  EXAMINE_STONE_PILLAR,
+  EXAMINE_STALACTITE,
+  EXAMINE_BOARDS,
+  EXAMINE_FOUNTAIN,
+  EXAMINE_OVEN,
+  EXAMINE_TABLE,
+  EXAMINE_STONE_STATUE,
+  EXAMINE_STONE_TABLET,
+  EXAMINE_SHELF,
+  EXAMINE_WARDROBE,
+  EXAMINE_FIREWOOD,
+  EXAMINE_BOOKS,
+  EXAMINE_WELL,
+  EXAMINE_POND
+};
 
 #include "ability_ids.h"
 
@@ -169,11 +235,15 @@ enum TriggerKind {
   TRIGGER_EXAMINE = 3, ///< the A button on what is ahead, when it is no actor
   TRIGGER_ITEM = 4,    ///< an item used on a cell or an actor
   TRIGGER_PSYNERGY = 5,
-  TRIGGER_RAISED = 6,     ///< raised by code
-  TRIGGER_TALK_HALTED = 7 ///< talking to an actor Halt has stopped
+  TRIGGER_RAISED = 6,      ///< raised by code
+  TRIGGER_TALK_HALTED = 7, ///< talking to an actor Halt has stopped
+  /// Pushing an actor ahead, for any actor: it runs, with the keys and the
+  /// actor's id, before the leader pushes (Field_RunPushCell).
+  TRIGGER_PUSH = 8,
+  TRIGGER_PUSHED = 9 ///< as TRIGGER_PUSH, once the leader has pushed
 };
 
-/// When a Psynergy trigger runs around its field Psynergy, control bits 30..28.
+/// When a Psynergy trigger runs around its field Psynergy, control bits 31..28.
 enum PsynergyPhase {
   /// After the field Psynergy, PSYNERGY_ON_ACTOR's phase.
   PSYNERGY_PHASE_AFTER_CAST = 0,
@@ -182,7 +252,11 @@ enum PsynergyPhase {
   PSYNERGY_PHASE_AFTER_END = 2,
   PSYNERGY_PHASE_BEFORE_END = 3, ///< as PSYNERGY_PHASE_AFTER_END, before it
   PSYNERGY_PHASE_FADES = 4,      ///< as Reveal's colours come back
-  PSYNERGY_PHASE_ACTS = 5        ///< run by the field Psynergy as it acts
+  PSYNERGY_PHASE_ACTS = 5,       ///< run by the field Psynergy as it acts
+  PSYNERGY_PHASE_HITS = 6, ///< as Blaze's fire reaches what it is aimed at
+  /// Before every other phase, as soon as the Psynergy is chosen and Retreat
+  /// has asked its question.
+  PSYNERGY_PHASE_FIRST = 8
 };
 
 /// A Psynergy trigger on the actor the leader faces.

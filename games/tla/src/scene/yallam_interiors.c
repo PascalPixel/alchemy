@@ -668,7 +668,8 @@ struct Trigger gYallamInteriors_Room1Triggers[] = {
      EVENT(YallamInteriors_MindReadSunshinesChild)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS,
      EVENT(YallamInteriors_MindReadSunshine)},
-    {0x173, 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgYallamInteriors40))},
+    {EXAMINE_TRIGGER(EXAMINE_OVEN), 200, CONDITION_ALWAYS,
+     FIND_MESSAGE(MSGNO(MsgYallamInteriors40))},
     {TRIGGER_TABLE_END},
 };
 

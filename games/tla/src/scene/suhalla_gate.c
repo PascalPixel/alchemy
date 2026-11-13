@@ -490,7 +490,8 @@ struct Trigger gSuhallaGate_Triggers[] = {
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
-    {0xc602, 3, CONDITION_ALWAYS, EVENT(SuhallaGate_EnterHouse)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS,
+     EVENT(SuhallaGate_EnterHouse)},
     {TRIGGER_STEP, 20, 0x894, EVENT(SuhallaGate_ThievesSpotParty)},
     {TRIGGER_STEP, 12, CONDITION_ALWAYS, EVENT(SuhallaGate_PointToMeetingSpot)},
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgOoooogMaybeI)},
@@ -509,14 +510,14 @@ struct Trigger gSuhallaGate_Room2Triggers[] = {
     {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgAllRightSo)},
     {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgOhManThere)},
     {TRIGGER_TALK, 13, CONDITION_ALWAYS, EVENT(SuhallaGate_FightRuffian)},
-    {19, 100, 0xfb4, 0x1000c3},
+    {EXAMINE_TRIGGER(EXAMINE_CHEST), 100, 0xfb4, 0x1000c3},
     {TRIGGER_TABLE_END},
 };
 
 struct Trigger gSuhallaGate_Room3Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {49, 2, CONDITION_ALWAYS, 2},
-    {33, 3, CONDITION_ALWAYS, 3},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT(SuhallaGate_LeaveForIdejima)},
     {TRIGGER_STEP, 22, 0x896, EVENT(SuhallaGate_PunchAntHopsFromWest)},
     {TRIGGER_STEP, 23, 0x896, EVENT(SuhallaGate_PunchAntHopsFromEast)},

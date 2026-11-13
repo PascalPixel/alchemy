@@ -274,7 +274,8 @@ struct WarpTarget gLemuriaDock_HouseDoor = {(s32)gLemuriaDock_HouseDoorOpening,
 
 struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {0xc602, 3, CONDITION_ALWAYS, EVENT(LemuriaDock_EnterHouse)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS,
+     EVENT(LemuriaDock_EnterHouse)},
     {TRIGGER_STEP, 21, CONDITION_ALWAYS, EVENT(LemuriaDock_MovePiers)},
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, EVENT(LemuriaDock_AskSettingOff)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 1032, CONDITION_ALWAYS,

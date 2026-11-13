@@ -16,10 +16,10 @@
 #include "module/scene/jupiter_lighthouse_room_8.h"
 #include "module/scene/scene.h"
 
-void Func_02001600(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                   s32 velocityZ, u32 flags, struct EffectOptions *options);
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags, struct EffectOptions *options);
 
-DEFINE_TELEPORTER_DROP_IN(Teleporter_DropIn, Func_02001600)
+DEFINE_TELEPORTER_DROP_IN(Teleporter_DropIn, FieldEffect_Spawn)
 
 void GameFlag_SetByte(s32 flag, s32 value);
 void Teleporter_Sink(struct CellTarget *work, struct CellTargetEntry *entry);

@@ -26,13 +26,13 @@ extern u8 gData_02006b70[];
 
 void Actor_SetSpriteFlags(struct FieldEffect *effect, s32 flags);
 void Whirlwind_Update(struct GustObject *object);
-void Func_02004bd4(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                   s32 velocityZ, u32 flags, struct EffectOptions *options);
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags, struct EffectOptions *options);
 
 DEFINE_WHIRLWIND_SPAWN_UPPER(Whirlwind_SpawnUpper, Actor_SelectAnimation,
-                             Whirlwind_Update, Func_02004bd4)
+                             Whirlwind_Update, FieldEffect_Spawn)
 
-DEFINE_ACTOR_EMIT_RISING_SPARKS_B(Actor_EmitRisingSparksB, Func_02004bd4)
+DEFINE_ACTOR_EMIT_RISING_SPARKS_B(Actor_EmitRisingSparksB, FieldEffect_Spawn)
 
 void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 

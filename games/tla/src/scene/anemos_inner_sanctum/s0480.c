@@ -17,9 +17,9 @@ void Actor_SelectAnimation(struct Actor *, s32);
 void Actor_StartScript(struct Actor *object, const s32 *script);
 extern const s32 *gData_02003840[];
 
-void Func_02000480(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                   s32 velocityZ, u32 flags,
-                   const struct EffectOptions *options) {
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags,
+                       const struct EffectOptions *options) {
   struct FieldEffect *party = ((struct FieldEffect *)Actor_GetById(0));
   struct FieldEffect *effect;
   struct FieldSprite *sprite;
@@ -155,8 +155,8 @@ s32 Func_02000794(struct Actor *object) {
 
   params.kind = 2;
   params.part = *((u8 *)object + 98);
-  Func_02000480(object->x, object->y, object->z, 0, 0x10000, 0, 0x30000,
-                &params);
+  FieldEffect_Spawn(object->x, object->y, object->z, 0, 0x10000, 0, 0x30000,
+                    &params);
   x = (object->bounce >> 20) + 64;
   y = object->gravity >> 20;
   MapGrid_CopyCellsTo(x, y + 26, x, y, 1, 1);

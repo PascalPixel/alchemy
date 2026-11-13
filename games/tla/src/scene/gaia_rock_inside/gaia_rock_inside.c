@@ -56,8 +56,8 @@ void Func_0200036c(void) {
 #include "../../field/field_effect/advance_motion.c"
 #endif
 
-void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                   s32 velocityZ, u32 flags, struct EffectOptions *options);
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags, struct EffectOptions *options);
 /* VIEW(gaia_rock_inside): routine Event_End as s32 Event_End(void);
  * module/scene/scene.h has void Event_End(void); tried as the rest of the
  * object declares it, it does not compile in tla-en:
@@ -114,8 +114,8 @@ loop:
       velocity[0] += velocity[0] >> 1;
       velocity[0] += (Random16Far() * 0xc000 >> 16) - 0x6000;
       velocity[2] += (Random16Far() * 0x6000 >> 16) - 0x3000;
-      Func_0200015c(actor->x, actor->y, actor->z, velocity[0], velocity[1],
-                    velocity[2], 0x1090001, &options);
+      FieldEffect_Spawn(actor->x, actor->y, actor->z, velocity[0], velocity[1],
+                        velocity[2], 0x1090001, &options);
     }
     i++;
   }

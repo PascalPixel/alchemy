@@ -77,10 +77,10 @@ void Func_020003f8(s32 unk0, s32 id) {
     options.targetScaleX = 0x18000;
     options.targetScaleY = 0x13333;
     options.startScaleY = 0xcccc;
-    Func_020001ec(actor->x, actor->y, actor->z, 0, 0, 0,
-                  EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
-                      EFFECT_SCALE_TO_TARGET,
-                  &options);
+    FieldEffect_Spawn(actor->x, actor->y, actor->z, 0, 0, 0,
+                      EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
+                          EFFECT_SCALE_TO_TARGET,
+                      &options);
     Event_PlaySound(154);
     Actor_SetAnimation(id, 3);
     FieldMapGrid_WaitForShakeToSettle();

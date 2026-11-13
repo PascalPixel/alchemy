@@ -34,7 +34,7 @@ void Func_02000170(void);
 
 void Func_0200021c(void);
 
-extern u32 gData_020023fc[];
+extern u32 gFieldEffect_LongLifeScript[];
 
 void LightSprites_InitA(void);
 

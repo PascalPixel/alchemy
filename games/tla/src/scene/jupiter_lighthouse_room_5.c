@@ -281,8 +281,8 @@ struct SparkWork {
 
 extern s32 gData_020033dc;
 
-void Func_02001c88(s32 x, s32 y, s32 z, s32 a3, s32 a4, s32 a5, s32 a6,
-                   struct EffectParams *params);
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 a3, s32 a4, s32 a5, s32 a6,
+                       struct EffectParams *params);
 
 void Func_020006ac(void) {
   if (!Event_GetFlag(0xa0e)) {
@@ -338,8 +338,8 @@ void Func_02000734(void) {
       x += -0xc0000;
       random2 = Random16Far();
       y = actor->y;
-      Func_02001c88(x, y + (((random2 << 5) >> 16) << 16) + 0x200000, actor->z,
-                    0, -0x40000, 0, 0x1b0000, p);
+      FieldEffect_Spawn(x, y + (((random2 << 5) >> 16) << 16) + 0x200000,
+                        actor->z, 0, -0x40000, 0, 0x1b0000, p);
     }
     if (i == 20)
       Actor_SetSpriteColorById(22, 0x100);
@@ -688,8 +688,8 @@ struct GustObject *Func_02001230(struct GustObject *source) {
   object->unk30 = 0x18000;
   options.priority = 1;
   options.palette = 7;
-  Func_02001c88(position.x, source->y, position.z - 0x60000, 0, 0, 0, 0x30000,
-                &options);
+  FieldEffect_Spawn(position.x, source->y, position.z - 0x60000, 0, 0, 0,
+                    0x30000, &options);
   return object;
 }
 
@@ -707,10 +707,10 @@ s32 Func_02001308(struct Actor *object) {
   x = object->x + (((s32)((u32)(Random16Far() * 9) >> 16) - 4) << 16);
   y = object->y + ((32 - (s32)((u32)(Random16Far() * 20) >> 16)) << 16);
   speed = (((s32)((u32)(Random16Far() * 5) >> 16) << 16) + 0x50000) / 10;
-  Func_02001c88(x, y, object->z, 0, speed, phase,
-                EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY |
-                    EFFECT_USE_START_SCALE,
-                &options);
+  FieldEffect_Spawn(x, y, object->z, 0, speed, phase,
+                    EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY |
+                        EFFECT_USE_START_SCALE,
+                    &options);
 done:
   return 0;
 }

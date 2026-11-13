@@ -120,9 +120,9 @@ DEFINE_AIRS_ROCK_INSIDE_TRACK_LEADER_CELL(Func_02002a14, 63)
 #include "system/field_effect.h"
 #include "system/vector3.h"
 
-void Func_020002f4(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                   s32 velocityZ, u32 flags,
-                   const struct EffectOptions *options);
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags,
+                       const struct EffectOptions *options);
 void MapGrid_SetScreenShake(s32 a, s32 b, s32 c);
 
 void Func_02002aa8(s32 x, s32 z) {
@@ -140,10 +140,10 @@ burst:
   spawn.x = x + ((Random16Far() & 63) << 16) - 0x200000;
   spawn.y = (Random16Far() & 15) << 12;
   spawn.z = z + ((Random16Far() & 7) << 16) - 0x100000;
-  Func_020002f4(spawn.x, 0, spawn.z, 0, spawn.y, 0,
-                EFFECT_SCALE_TO_TARGET | EFFECT_USE_START_SCALE |
-                    EFFECT_USE_PRIORITY | 1,
-                &options);
+  FieldEffect_Spawn(spawn.x, 0, spawn.z, 0, spawn.y, 0,
+                    EFFECT_SCALE_TO_TARGET | EFFECT_USE_START_SCALE |
+                        EFFECT_USE_PRIORITY | 1,
+                    &options);
   i++;
   if (i != 8)
     goto burst;
@@ -167,7 +167,8 @@ next:
   position.x = x + ((Random16Far() & 31) << 16) - 0x100000;
   position.y = 0x40000;
   position.z = z;
-  Func_020002f4(position.x, 0, position.z, 0, position.y, 0, 0x1a0000, &spawn);
+  FieldEffect_Spawn(position.x, 0, position.z, 0, position.y, 0, 0x1a0000,
+                    &spawn);
   FieldEvent_Wait(5);
   i++;
   if (i != 12)
@@ -900,11 +901,11 @@ DEFINE_ACTOR_AIM_AT_WATCHED(Actor_AimAtWatched)
 
 DEFINE_ACTOR_STEP_TO_WATCHED(Actor_StepToWatched)
 
-void Func_020002f4(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                   s32 velocityZ, u32 flags,
-                   const struct EffectOptions *options);
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags,
+                       const struct EffectOptions *options);
 
-DEFINE_ACTOR_EMIT_BUBBLES(Actor_EmitBubbles, Func_020002f4)
+DEFINE_ACTOR_EMIT_BUBBLES(Actor_EmitBubbles, FieldEffect_Spawn)
 
 extern const u8 gData_020060e0[], gData_02006094[], gData_020060b0[],
     gData_02006104[], gData_020060c0[], gData_02006128[], gData_02006158[];

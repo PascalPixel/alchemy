@@ -774,8 +774,8 @@ loop:
       velocity[0] += ((Random16Far() * 3) << 14) >> 16;
       velocity[0] += -0x6000;
       velocity[2] += (((Random16Far() * 3) << 13) >> 16) + -0x3000;
-      Func_02000fc4(leader->x, leader->y, leader->z, velocity[0], velocity[1],
-                    velocity[2], 0x01090001, opts);
+      FieldEffect_Spawn(leader->x, leader->y, leader->z, velocity[0],
+                        velocity[1], velocity[2], 0x01090001, opts);
     }
     i++;
   }

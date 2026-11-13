@@ -301,9 +301,9 @@ void Effect_AdvanceMotionLocal(union FieldObject *object) {
   sprite->rotation += effect->spin;
 }
 
-void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                   s32 velocityZ, u32 flags,
-                   const struct EffectOptions *options);
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags,
+                       const struct EffectOptions *options);
 
 void Func_02001c9c(void) {
   s32 velocity[3];
@@ -320,8 +320,9 @@ void Func_02001c9c(void) {
       velocity[1] = 0;
       velocity[2] = Math_Sin(angle);
       velocity[0] += velocity[0] / 3;
-      Func_0200015c(0x1d00000, -0x200000, 0x1480000, velocity[0], velocity[1],
-                    velocity[2], EFFECT_USE_UPDATE | 1, &options);
+      FieldEffect_Spawn(0x1d00000, -0x200000, 0x1480000, velocity[0],
+                        velocity[1], velocity[2], EFFECT_USE_UPDATE | 1,
+                        &options);
       i += 2;
     }
   } while (i <= 16);

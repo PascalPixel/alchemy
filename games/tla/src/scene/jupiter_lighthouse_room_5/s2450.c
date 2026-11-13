@@ -16,10 +16,10 @@
 #include "module/scene/jupiter_lighthouse_room_5.h"
 #include "module/scene/scene.h"
 
-void Func_02001c88(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                   s32 velocityZ, u32 flags, struct EffectOptions *options);
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags, struct EffectOptions *options);
 
-DEFINE_TELEPORTER_DROP_IN(Teleporter_DropIn, Func_02001c88)
+DEFINE_TELEPORTER_DROP_IN(Teleporter_DropIn, FieldEffect_Spawn)
 
 void GameFlag_SetByte(s32 flag, s32 value);
 void Teleporter_Sink(struct CellTarget *work, struct CellTargetEntry *entry);
@@ -39,11 +39,11 @@ void Func_02000064(void);
 void Func_020002b8(void);
 
 // clang-format off
-DEFINE_G_DATA_020012A4(gData_02002ebc, 22)
+DEFINE_FIELD_EFFECT_LIFE_SCRIPT(gFieldEffect_ShortLifeScript, 22)
 
-DEFINE_G_DATA_020012A4(gData_02002ef8, 44)
+DEFINE_FIELD_EFFECT_LIFE_SCRIPT(gFieldEffect_MediumLifeScript, 44)
 
-DEFINE_G_DATA_020012A4(gData_02002f34, 126)
+DEFINE_FIELD_EFFECT_LIFE_SCRIPT(gFieldEffect_LongLifeScript, 126)
 
 u32 gData_02002f70[] = {
     SC_ADD(SW_SCALE_X, 0x1000),
@@ -144,8 +144,8 @@ u32 gData_020033e0[] = {
 };
 // clang-format on
 
-s32 gData_020033f4[] = {
-    (s32)gData_02002ebc,
-    (s32)gData_02002ef8,
-    (s32)gData_02002f34,
+s32 gFieldEffect_LifeScripts[] = {
+    (s32)gFieldEffect_ShortLifeScript,
+    (s32)gFieldEffect_MediumLifeScript,
+    (s32)gFieldEffect_LongLifeScript,
 };

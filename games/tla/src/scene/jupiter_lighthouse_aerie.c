@@ -508,7 +508,7 @@ stop:
 #include "field_effect.h"
 
 DEFINE_WHIRLWIND_SPAWN(Whirlwind_Spawn, Import_ActorSelectAnimation,
-                       Whirlwind_Update, Func_02001e78)
+                       Whirlwind_Update, FieldEffect_Spawn)
 
 #include "field_coordinate.h"
 
@@ -528,7 +528,7 @@ s32 Func_02000de0(struct Actor *object) {
     x = object->x + (((((u32)Random16Far() * 9) >> 16) - 4) << 16);
     y = object->y + ((32 - (((u32)Random16Far() * 20) >> 16)) << 16);
     speed = (s32)(((((u32)Random16Far() * 5) >> 16) << 16) + 0x50000) / 10;
-    Func_02001e78(x, y, object->z, 0, speed, frame, 0xb0000, &spark);
+    FieldEffect_Spawn(x, y, object->z, 0, speed, frame, 0xb0000, &spark);
   }
   return 0;
 }

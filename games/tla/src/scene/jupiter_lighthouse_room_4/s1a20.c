@@ -16,10 +16,10 @@
 #include "module/scene/jupiter_lighthouse_room_4.h"
 #include "module/scene/scene.h"
 
-void Func_02001258(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                   s32 velocityZ, u32 flags, struct EffectOptions *options);
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags, struct EffectOptions *options);
 
-DEFINE_TELEPORTER_DROP_IN(Teleporter_DropIn, Func_02001258)
+DEFINE_TELEPORTER_DROP_IN(Teleporter_DropIn, FieldEffect_Spawn)
 
 void GameFlag_SetByte(s32 flag, s32 value);
 void Teleporter_Sink(struct CellTarget *puzzle, struct CellTargetEntry *tile);
@@ -84,15 +84,15 @@ void Func_02000114(void);
 void Func_020001dc(void);
 void Func_020001fc(void);
 
-extern u32 gData_02002384[];
-extern u32 gData_020023c0[];
+extern u32 gFieldEffect_ShortLifeScript[];
+extern u32 gFieldEffect_MediumLifeScript[];
 
 // clang-format off
-DEFINE_G_DATA_020012A4(gData_02002384, 22)
+DEFINE_FIELD_EFFECT_LIFE_SCRIPT(gFieldEffect_ShortLifeScript, 22)
 
-DEFINE_G_DATA_020012A4(gData_020023c0, 44)
+DEFINE_FIELD_EFFECT_LIFE_SCRIPT(gFieldEffect_MediumLifeScript, 44)
 
-DEFINE_G_DATA_020012A4(gData_020023fc, 126)
+DEFINE_FIELD_EFFECT_LIFE_SCRIPT(gFieldEffect_LongLifeScript, 126)
 
 struct SceneEntrance gSceneEntrances[] = {
     {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
@@ -172,8 +172,8 @@ u32 gWhirlwindEndScript[] = {
 };
 // clang-format on
 
-s32 gData_0200270c[] = {
-    (s32)gData_02002384,
-    (s32)gData_020023c0,
-    (s32)gData_020023fc,
+s32 gFieldEffect_LifeScripts[] = {
+    (s32)gFieldEffect_ShortLifeScript,
+    (s32)gFieldEffect_MediumLifeScript,
+    (s32)gFieldEffect_LongLifeScript,
 };

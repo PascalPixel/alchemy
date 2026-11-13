@@ -30,9 +30,9 @@ void Func_02000c7c(void);
 
 void Func_02000cec(void);
 
-extern u32 gData_02003110[];
-extern u32 gData_0200314c[];
-extern u32 gData_02003188[];
+extern u32 gFieldEffect_ShortLifeScript[];
+extern u32 gFieldEffect_MediumLifeScript[];
+extern u32 gFieldEffect_LongLifeScript[];
 
 void Actor_SetCellOpen(s32 id, u32 mode, s32 flag, s32 layer);
 

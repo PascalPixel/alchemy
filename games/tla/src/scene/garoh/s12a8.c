@@ -17,9 +17,9 @@
 #include "module/scene/garoh.h"
 #include "module/scene/scene.h"
 
-void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                   s32 velocityZ, u32 flags,
-                   const struct EffectOptions *options);
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags,
+                       const struct EffectOptions *options);
 
 void Func_020012a8(s32 objectId) {
   struct Actor *object;
@@ -44,8 +44,8 @@ burst:
   vec.z = z;
   x += x / 3;
   vec.x = x;
-  Func_020000b8(object->x, object->y, object->z, x, vec.y, z, 0x01000001,
-                &params);
+  FieldEffect_Spawn(object->x, object->y, object->z, x, vec.y, z, 0x01000001,
+                    &params);
   angleStep += 2;
   if (angleStep <= 16)
     goto burst;
@@ -2280,14 +2280,14 @@ void Func_02000fbc(void);
 void Func_0200101c(void);
 void Func_0200108c(void);
 
-extern u32 gData_020053d8[];
+extern u32 gFieldEffect_MediumLifeScript[];
 
 // clang-format off
-DEFINE_G_DATA_020012A4(gData_0200539c, 22)
+DEFINE_FIELD_EFFECT_LIFE_SCRIPT(gFieldEffect_ShortLifeScript, 22)
 
-DEFINE_G_DATA_020012A4(gData_020053d8, 44)
+DEFINE_FIELD_EFFECT_LIFE_SCRIPT(gFieldEffect_MediumLifeScript, 44)
 
-DEFINE_G_DATA_020012A4(gData_02005414, 126)
+DEFINE_FIELD_EFFECT_LIFE_SCRIPT(gFieldEffect_LongLifeScript, 126)
 
 s16 gData_02005450[] = {
     8, 9, 10, 11, -1, 0,
@@ -2319,10 +2319,10 @@ u16 gData_020054ee[] = {
     0,
 };
 
-s32 gData_02005520[] = {
-    (s32)gData_0200539c,
-    (s32)gData_020053d8,
-    (s32)gData_02005414,
+s32 gFieldEffect_LifeScripts[] = {
+    (s32)gFieldEffect_ShortLifeScript,
+    (s32)gFieldEffect_MediumLifeScript,
+    (s32)gFieldEffect_LongLifeScript,
 };
 
 s32 gData_0200552c[] = {

@@ -9,9 +9,9 @@ void Func_02000038(void);
 void Func_02000050(void);
 
 // clang-format off
-DEFINE_G_DATA_020012A4(gData_02005e98, 22)
+DEFINE_FIELD_EFFECT_LIFE_SCRIPT(gFieldEffect_ShortLifeScript, 22)
 
-DEFINE_G_DATA_020012A4(gData_02005ed4, 44)
+DEFINE_FIELD_EFFECT_LIFE_SCRIPT(gFieldEffect_MediumLifeScript, 44)
 
 s32 gData_02005f10[] = {
     SC_WAIT(1),
@@ -216,8 +216,8 @@ u32 gData_020069fc[] = {
 };
 // clang-format on
 
-s32 gData_0200ea10[] = {
-    (s32)gData_02005e98,
-    (s32)gData_02005ed4,
+s32 gFieldEffect_LifeScripts[] = {
+    (s32)gFieldEffect_ShortLifeScript,
+    (s32)gFieldEffect_MediumLifeScript,
     (s32)gData_02005f10,
 };

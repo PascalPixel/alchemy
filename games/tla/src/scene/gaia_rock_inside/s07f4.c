@@ -578,9 +578,9 @@ DEFINE_ACTOR_AIM_AT_WATCHED(Actor_AimAtWatched)
 
 DEFINE_ACTOR_STEP_TO_WATCHED(Actor_StepToWatched)
 
-void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                   s32 velocityZ, u32 flags,
-                   const struct EffectOptions *options);
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags,
+                       const struct EffectOptions *options);
 
-DEFINE_ACTOR_EMIT_BUBBLES(Actor_EmitBubbles, Func_0200015c)
+DEFINE_ACTOR_EMIT_BUBBLES(Actor_EmitBubbles, FieldEffect_Spawn)
 #undef BYTE_AT

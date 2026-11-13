@@ -51,9 +51,9 @@ void Func_02000724(void);
 
 void Func_020008a4(void);
 
-extern u32 gData_02002ebc[];
-extern u32 gData_02002ef8[];
-extern u32 gData_02002f34[];
+extern u32 gFieldEffect_ShortLifeScript[];
+extern u32 gFieldEffect_MediumLifeScript[];
+extern u32 gFieldEffect_LongLifeScript[];
 
 struct FieldEffect;
 struct SparkSprite__jupiter_lighthouse_room_5;

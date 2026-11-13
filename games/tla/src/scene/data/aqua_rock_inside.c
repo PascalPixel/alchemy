@@ -31,7 +31,7 @@ u32 gData_020044c8[] = {
     0, 0, 0, 0, 1, 38,
 };
 
-s32 gData_020044f8[] = {
+s32 gFieldEffect_LifeScripts[] = {
     (s32)gData_02003f04,
     (s32)gData_02003f40,
     (s32)gData_02003f7c,

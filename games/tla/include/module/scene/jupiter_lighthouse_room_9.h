@@ -33,8 +33,8 @@ void Func_0200007c(void);
 
 void Whirlwind_CarryLeader(void);
 
-extern u32 gData_0200211c[];
-extern u32 gData_02002158[];
+extern u32 gFieldEffect_ShortLifeScript[];
+extern u32 gFieldEffect_MediumLifeScript[];
 
 extern s32 gData_02002618;
 extern u16 gData_0200261c[];

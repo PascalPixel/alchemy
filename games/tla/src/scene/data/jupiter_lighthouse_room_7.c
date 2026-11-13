@@ -12,11 +12,11 @@ void Func_020009e4(void);
 void Func_02000e20(void);
 
 // clang-format off
-DEFINE_G_DATA_020012A4(gData_02003110, 22)
+DEFINE_FIELD_EFFECT_LIFE_SCRIPT(gFieldEffect_ShortLifeScript, 22)
 
-DEFINE_G_DATA_020012A4(gData_0200314c, 44)
+DEFINE_FIELD_EFFECT_LIFE_SCRIPT(gFieldEffect_MediumLifeScript, 44)
 
-DEFINE_G_DATA_020012A4(gData_02003188, 126)
+DEFINE_FIELD_EFFECT_LIFE_SCRIPT(gFieldEffect_LongLifeScript, 126)
 
 s16 gData_020031c4[] = {
     17, 1, 0xa16, 9, 1, 0xa17, -1, 0,
@@ -104,8 +104,8 @@ u32 gWhirlwindEndScript[] = {
 };
 // clang-format on
 
-s32 gData_020035ac[] = {
-    (s32)gData_02003110,
-    (s32)gData_0200314c,
-    (s32)gData_02003188,
+s32 gFieldEffect_LifeScripts[] = {
+    (s32)gFieldEffect_ShortLifeScript,
+    (s32)gFieldEffect_MediumLifeScript,
+    (s32)gFieldEffect_LongLifeScript,
 };

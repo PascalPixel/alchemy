@@ -34,9 +34,9 @@ extern void Actor_StartScript(struct FieldEffect *effect, const s32 *script);
 extern const s32 *gData_02004428[];
 void Actor_SetSpriteFlags(struct FieldEffect *effect, s32 flags);
 extern void Actor_SetSpritePriorityB(struct FieldEffect *effect, s32 priority);
-void Func_02002780(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                   s32 velocityZ, u32 flags,
-                   const struct EffectOptions *options) {
+void FieldEffect_SpawnLocal(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                            s32 velocityZ, u32 flags,
+                            const struct EffectOptions *options) {
   struct FieldEffect *party =
       ((struct FieldEffect *)Actor_GetById(gMainRoutineWork.currentOwner));
   struct FieldEffect *effect;

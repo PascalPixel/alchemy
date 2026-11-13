@@ -26,13 +26,13 @@
 void Actor_SelectAnimation(struct GustObject *object, s32 mode);
 void Actor_SetSpriteFlags(struct FieldEffect *effect, s32 flags);
 void Whirlwind_Update(struct GustObject *object);
-void Func_02001f74(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                   s32 velocityZ, u32 flags, struct EffectOptions *options);
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags, struct EffectOptions *options);
 
 DEFINE_WHIRLWIND_SPAWN(Whirlwind_Spawn, Actor_SelectAnimation, Whirlwind_Update,
-                       Func_02001f74)
+                       FieldEffect_Spawn)
 
-DEFINE_ACTOR_EMIT_RISING_SPARKS(Actor_EmitRisingSparks, Func_02001f74)
+DEFINE_ACTOR_EMIT_RISING_SPARKS(Actor_EmitRisingSparks, FieldEffect_Spawn)
 
 DEFINE_JUPITER_LIGHTHOUSE_PLACE_RAISED_ACTORS(
     JupiterLighthouse_PlaceRaisedActors)

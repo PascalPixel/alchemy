@@ -267,11 +267,11 @@ DEFINE_G_DATA_02001540(gData_02001540, 33)
 
 DEFINE_G_DATA_02001540(gData_02001570, 44)
 
-DEFINE_G_DATA_020012A4(gData_020015a0, 22)
+DEFINE_FIELD_EFFECT_LIFE_SCRIPT(gFieldEffect_ShortLifeScript, 22)
 
-DEFINE_G_DATA_020012A4(gData_020015dc, 44)
+DEFINE_FIELD_EFFECT_LIFE_SCRIPT(gFieldEffect_MediumLifeScript, 44)
 
-DEFINE_G_DATA_020012A4(gData_02001618, 126)
+DEFINE_FIELD_EFFECT_LIFE_SCRIPT(gFieldEffect_LongLifeScript, 126)
 
 s16 gData_02001654[] = {
     13, -1,
@@ -281,10 +281,10 @@ s16 gData_02001658[] = {
     10, 11, 12, 13, 14, 15, -1, 0,
 };
 
-s32 gData_02001668[] = {
-    (s32)gData_020015a0,
-    (s32)gData_020015dc,
-    (s32)gData_02001618,
+s32 gFieldEffect_LifeScripts[] = {
+    (s32)gFieldEffect_ShortLifeScript,
+    (s32)gFieldEffect_MediumLifeScript,
+    (s32)gFieldEffect_LongLifeScript,
 };
 
 s16 gData_02001674[] = {

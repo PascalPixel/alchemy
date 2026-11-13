@@ -15,8 +15,9 @@
 #include "module/scene/anemos_inner_sanctum.h"
 #include "module/scene/scene.h"
 
-void Func_02002780(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                   s32 velocityZ, u32 flags, struct EffectOptions *options);
+void FieldEffect_SpawnLocal(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                            s32 velocityZ, u32 flags,
+                            struct EffectOptions *options);
 
 void Teleporter_DropIn(void) {
   struct Actor *actor = Actor_Get(gMainRoutineWork.currentOwner);
@@ -66,8 +67,8 @@ loop:
       velocity[0] += velocity[0] >> 1;
       velocity[0] += (Random16Far() * 0xc000 >> 16) - 0x6000;
       velocity[2] += (Random16Far() * 0x6000 >> 16) - 0x3000;
-      Func_02002780(actor->x, actor->y, actor->z, velocity[0], velocity[1],
-                    velocity[2], 0x1090001, &options);
+      FieldEffect_SpawnLocal(actor->x, actor->y, actor->z, velocity[0],
+                             velocity[1], velocity[2], 0x1090001, &options);
     }
     i++;
   }

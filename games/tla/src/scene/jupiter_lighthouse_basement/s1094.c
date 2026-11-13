@@ -13,13 +13,13 @@
 #include "module/scene/jupiter_lighthouse_basement.h"
 #include "module/scene/scene.h"
 
-extern const s32 *gData_020023a0[];
+extern const s32 *gFieldEffect_LifeScripts[];
 
 void Actor_StartScript(struct FieldEffect *effect, const s32 *script);
 
-void Func_02001094(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                   s32 velocityZ, u32 flags,
-                   const struct EffectOptions *options) {
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags,
+                       const struct EffectOptions *options) {
   struct Actor *party = Actor_GetById(gMainRoutineWork.currentOwner);
   struct FieldEffect *effect;
   struct FieldSprite *sprite;
@@ -34,7 +34,8 @@ void Func_02001094(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
   sprite = effect->sprite;
   Actor_SelectAnimation(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
-  Actor_StartScript(effect, gData_020023a0[flags & EFFECT_SCRIPT_MASK]);
+  Actor_StartScript(effect,
+                    gFieldEffect_LifeScripts[flags & EFFECT_SCRIPT_MASK]);
   effect->motionFlags = 0;
   Actor_SetSpriteFlags(effect, 0);
   effect->update = FieldEffect_UpdateMotionScaleAndSpin;
@@ -63,7 +64,7 @@ void Func_02001094(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     s32 target;
     s32 frames;
 
-    script = gData_020023a0[flags & EFFECT_SCRIPT_MASK];
+    script = gFieldEffect_LifeScripts[flags & EFFECT_SCRIPT_MASK];
     target = options->targetScaleX;
     frames = script[3];
     if ((flags & EFFECT_USE_START_SCALE) != 0) {

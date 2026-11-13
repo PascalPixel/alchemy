@@ -28,7 +28,7 @@ s16 gData_02003d94[] = {
     12, 13, 15, 16, 22, -1,
 };
 
-s32 gData_02003da0[] = {
+s32 gFieldEffect_LifeScripts[] = {
     (s32)gData_02003ce0,
     (s32)gData_02003d1c,
     (s32)gData_02003d58,

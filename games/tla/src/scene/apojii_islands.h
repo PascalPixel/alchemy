@@ -31,8 +31,8 @@ void Func_02001e0c(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
 void Shop_Run(s32 a, s32 b);
 void Inn_CheckIn(s32 a, s32 b);
 
-void Func_0200015c(s32 x, s32 y, s32 z, s32 a, s32 b, s32 c, s32 flags,
-                   s32 *params);
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 a, s32 b, s32 c, s32 flags,
+                       s32 *params);
 void Func_020003e8(void);
 void Func_02000540(void);
 void Func_020006bc(void);

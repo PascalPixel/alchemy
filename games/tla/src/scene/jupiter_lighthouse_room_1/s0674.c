@@ -38,13 +38,13 @@ DEFINE_WHIRLWIND_UPDATE_LOWER(Whirlwind_UpdateLower, Func_02001bbc,
 
 void Actor_SetSpriteFlags(struct FieldEffect *effect, s32 flags);
 
-void Func_02000f3c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                   s32 velocityZ, u32 flags, struct EffectOptions *options);
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags, struct EffectOptions *options);
 
 DEFINE_WHIRLWIND_SPAWN(Whirlwind_Spawn, Actor_SelectAnimation,
-                       Whirlwind_UpdateLower, Func_02000f3c)
+                       Whirlwind_UpdateLower, FieldEffect_Spawn)
 
-DEFINE_ACTOR_EMIT_RISING_SPARKS_B(Actor_EmitRisingSparksB, Func_02000f3c)
+DEFINE_ACTOR_EMIT_RISING_SPARKS_B(Actor_EmitRisingSparksB, FieldEffect_Spawn)
 
 void Actor_SetSpriteColorMode(struct PositionedActor *object, s32 value);
 

@@ -24,9 +24,9 @@ void Func_02001a6c(void);
 void Func_02001a8c(void);
 void Func_020043ec(void);
 
-extern u8 gData_0200585c[];
-extern u8 gData_02005898[];
-extern u8 gData_020058d4[];
+extern u8 gFieldEffect_ShortLifeScript[];
+extern u8 gFieldEffect_MediumLifeScript[];
+extern u8 gFieldEffect_LongLifeScript[];
 
 // clang-format off
 u8 gData_02005aac[] = {
@@ -46,10 +46,10 @@ u32 gData_02005ad4[] = {
     0x60a0502, 0xa060107, 0x702040a, 0x1050a04,
 };
 
-s32 gData_02005ae4[] = {
-    (s32)gData_0200585c,
-    (s32)gData_02005898,
-    (s32)gData_020058d4,
+s32 gFieldEffect_LifeScripts[] = {
+    (s32)gFieldEffect_ShortLifeScript,
+    (s32)gFieldEffect_MediumLifeScript,
+    (s32)gFieldEffect_LongLifeScript,
 };
 
 u32 gData_02005af0[] = {

@@ -12,9 +12,9 @@ struct EffectOptions;
 
 extern u16 gLighthouseUnlitColors[];
 
-void Func_02000eac(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                   s32 velocityZ, u32 flags,
-                   const struct EffectOptions *options);
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags,
+                       const struct EffectOptions *options);
 
 extern s16 gLightSpriteCount;
 extern struct LightOam Data_02002244[];
@@ -37,10 +37,10 @@ void Func_020000f4(void);
 
 void Func_02000184(void);
 
-extern u32 gData_02001fc0[];
-extern u32 gData_02001ffc[];
+extern u32 gFieldEffect_ShortLifeScript[];
+extern u32 gFieldEffect_MediumLifeScript[];
 
-extern u32 gData_02002038[];
+extern u32 gFieldEffect_LongLifeScript[];
 
 extern u16 gData_020021c0[];
 extern u16 gData_020021e0[];

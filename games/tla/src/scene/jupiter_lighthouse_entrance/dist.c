@@ -40,7 +40,7 @@ DEFINE_WHIRLWIND_UPDATE_LOWER(Whirlwind_UpdateLower, Func_02001b2c,
 void Actor_SetSpriteFlags(struct FieldEffect *effect, s32 flags);
 
 DEFINE_WHIRLWIND_SPAWN_UPPER(Whirlwind_SpawnUpper, Import_ActorSelectAnimation,
-                             Whirlwind_UpdateLower, Func_02000eac)
+                             Whirlwind_UpdateLower, FieldEffect_Spawn)
 
 s32 Func_0200087c(struct SceneEffectSource *object) {
   struct SceneEffectParams params;
@@ -55,7 +55,7 @@ s32 Func_0200087c(struct SceneEffectSource *object) {
     x = object->x + (((s32)((u32)(Random16Far() * 9) >> 16) - 4) << 16);
     y = object->y + ((32 - (s32)((u32)(Random16Far() * 20) >> 16)) << 16);
     speed = ((((s32)((u32)(Random16Far() * 5) >> 16)) << 16) + 0x50000) / 10;
-    Func_02000eac(x, y, object->z, 0, speed, phase, 0xb0000, &params);
+    FieldEffect_Spawn(x, y, object->z, 0, speed, phase, 0xb0000, &params);
   }
   return 0;
 }

@@ -9,9 +9,9 @@
 struct Actor;
 struct FieldSprite;
 
-extern u32 gData_020015a0[];
-extern u32 gData_020015dc[];
-extern u32 gData_02001618[];
+extern u32 gFieldEffect_ShortLifeScript[];
+extern u32 gFieldEffect_MediumLifeScript[];
+extern u32 gFieldEffect_LongLifeScript[];
 
 s32 Func_02000128();
 

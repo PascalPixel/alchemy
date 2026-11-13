@@ -34,13 +34,13 @@ DEFINE_WHIRLWIND_UPDATE_LOWER(Whirlwind_UpdateLower, Func_02002450,
 
 void Actor_SetSpriteFlags(struct FieldEffect *effect, s32 flags);
 
-void Func_02001788(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                   s32 velocityZ, u32 flags, struct EffectOptions *options);
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags, struct EffectOptions *options);
 
 DEFINE_WHIRLWIND_SPAWN(Whirlwind_Spawn, Actor_SelectAnimation,
-                       Whirlwind_UpdateLower, Func_02001788)
+                       Whirlwind_UpdateLower, FieldEffect_Spawn)
 
-DEFINE_ACTOR_EMIT_RISING_SPARKS(Actor_EmitRisingSparks, Func_02001788)
+DEFINE_ACTOR_EMIT_RISING_SPARKS(Actor_EmitRisingSparks, FieldEffect_Spawn)
 
 DEFINE_JUPITER_LIGHTHOUSE_PLACE_RAISED_ACTORS(
     JupiterLighthouse_PlaceRaisedActors)

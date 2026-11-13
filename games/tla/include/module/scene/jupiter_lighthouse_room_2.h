@@ -49,9 +49,9 @@ void Func_020006dc(void);
 
 void Func_02000704(void);
 
-extern u32 gData_020027a8[];
-extern u32 gData_020027e4[];
-extern u32 gData_02002820[];
+extern u32 gFieldEffect_ShortLifeScript[];
+extern u32 gFieldEffect_MediumLifeScript[];
+extern u32 gFieldEffect_LongLifeScript[];
 
 void Func_0200230c(s32 actor);
 extern s32 gData_02002b88[3];

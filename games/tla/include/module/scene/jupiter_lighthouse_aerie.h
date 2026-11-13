@@ -21,9 +21,9 @@ void LightSprites_Add(s32 id, s32 value);
 
 void Func_02002b58();
 
-void Func_02001e78(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                   s32 velocityZ, u32 flags,
-                   const struct EffectOptions *options);
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags,
+                       const struct EffectOptions *options);
 
 extern char ResourceId_GoldenTrident;
 
@@ -41,8 +41,8 @@ extern s16 gLightSpritePriority;
 s32 BattleEffect_GetObjectPriority(struct Actor *actor);
 void Import_OamAddSpriteAtDepthClamped(struct LightOam *oam, s32 depth);
 
-extern u32 gData_02003020[];
-extern u32 gData_0200305c[];
+extern u32 gFieldEffect_MediumLifeScript[];
+extern u32 gFieldEffect_LongLifeScript[];
 
 struct CellTarget;
 struct CellTargetEntry;

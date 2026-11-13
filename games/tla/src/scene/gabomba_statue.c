@@ -30,11 +30,11 @@ extern void
 Func_02005624__gabomba_statue(struct FieldEffect *effect,
                               s32 mode) __asm__("Actor_SelectAnimation");
 extern void Actor_StartScript(struct FieldEffect *effect, const s32 *script);
-extern const s32 *gData_02005ae4[];
+extern const s32 *gFieldEffect_LifeScripts[];
 
-void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                   s32 velocityZ, u32 flags,
-                   const struct EffectOptions *options) {
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags,
+                       const struct EffectOptions *options) {
   struct FieldEffect *party =
       ((struct FieldEffect *)Actor_GetById(gMainRoutineWork.currentOwner));
   struct FieldEffect *effect;
@@ -51,7 +51,8 @@ void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
   sprite = effect->sprite;
   Func_02005624__gabomba_statue(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
-  Actor_StartScript(effect, gData_02005ae4[flags & EFFECT_SCRIPT_MASK]);
+  Actor_StartScript(effect,
+                    gFieldEffect_LifeScripts[flags & EFFECT_SCRIPT_MASK]);
   effect->motionFlags = 0;
   Actor_SetSpriteFlags(effect, 0);
   effect->update = FieldEffect_UpdateMotionScaleAndSpin;
@@ -80,7 +81,7 @@ void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     s32 targetX;
     s32 count;
 
-    script = gData_02005ae4[flags & EFFECT_SCRIPT_MASK];
+    script = gFieldEffect_LifeScripts[flags & EFFECT_SCRIPT_MASK];
     targetX = options->targetScaleX;
     count = script[3];
     if (start != 0) {

@@ -14,9 +14,9 @@ void Func_020001c0(void);
 
 void Func_020003c4(void);
 
-extern u32 gData_02002950[];
-extern u32 gData_0200298c[];
-extern u32 gData_020029c8[];
+extern u32 gFieldEffect_ShortLifeScript[];
+extern u32 gFieldEffect_MediumLifeScript[];
+extern u32 gFieldEffect_LongLifeScript[];
 
 extern s32 gWhirlwindRiding;
 

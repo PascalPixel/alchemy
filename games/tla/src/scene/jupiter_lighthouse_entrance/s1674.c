@@ -23,7 +23,7 @@ static __inline__ void SetWorkTriple(s32 a, s32 b, s32 c) {
   MapGrid_SetScreenShake(a, b, c);
 }
 
-DEFINE_TELEPORTER_DROP_IN_LOWER(Teleporter_DropInLower, Func_02000eac)
+DEFINE_TELEPORTER_DROP_IN_LOWER(Teleporter_DropInLower, FieldEffect_Spawn)
 
 void Teleporter_Uncover();
 void Teleporter_Sink();
@@ -43,11 +43,11 @@ void Func_02000054(void);
 void Func_02000094(void);
 
 // clang-format off
-DEFINE_G_DATA_020012A4(gData_02001fc0, 22)
+DEFINE_FIELD_EFFECT_LIFE_SCRIPT(gFieldEffect_ShortLifeScript, 22)
 
-DEFINE_G_DATA_020012A4(gData_02001ffc, 44)
+DEFINE_FIELD_EFFECT_LIFE_SCRIPT(gFieldEffect_MediumLifeScript, 44)
 
-DEFINE_G_DATA_020012A4(gData_02002038, 126)
+DEFINE_FIELD_EFFECT_LIFE_SCRIPT(gFieldEffect_LongLifeScript, 126)
 
 struct SceneEntrance gSceneEntrances[] = {
     {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
@@ -90,8 +90,8 @@ u32 gWhirlwindEndScript[] = {
 };
 // clang-format on
 
-s32 gData_020021b0[] = {
-    (s32)gData_02001fc0,
-    (s32)gData_02001ffc,
-    (s32)gData_02002038,
+s32 gFieldEffect_LifeScripts[] = {
+    (s32)gFieldEffect_ShortLifeScript,
+    (s32)gFieldEffect_MediumLifeScript,
+    (s32)gFieldEffect_LongLifeScript,
 };

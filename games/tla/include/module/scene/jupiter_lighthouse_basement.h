@@ -13,9 +13,9 @@ void Func_02001d3c(s32 id);
 
 void Func_02001d34();
 
-void Func_02001094(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                   s32 velocityZ, u32 flags,
-                   const struct EffectOptions *options);
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags,
+                       const struct EffectOptions *options);
 
 extern s16 gLightSpriteTile;
 extern s16 gLightSpriteCount;
@@ -30,9 +30,9 @@ void Func_020000f8(void);
 
 void Func_02000118(void);
 
-extern u32 gData_020021c8[];
-extern u32 gData_02002204[];
-extern u32 gData_02002240[];
+extern u32 gFieldEffect_ShortLifeScript[];
+extern u32 gFieldEffect_MediumLifeScript[];
+extern u32 gFieldEffect_LongLifeScript[];
 
 void Func_02001d1c(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
 extern u16 gData_020023b0[];

@@ -154,8 +154,8 @@
       drift = ((u32)(Random16Far() << 3) >> 16) * 0x3333;                      \
       x = object->x;                                                           \
       y = object->y;                                                           \
-      Func_0200015c(x + ((8 - (gFrameCount & 15)) << 16), y + 0x1a0000,        \
-                    object->z, 0, -drift, 0, 0xb0000, params);                 \
+      FieldEffect_Spawn(x + ((8 - (gFrameCount & 15)) << 16), y + 0x1a0000,    \
+                        object->z, 0, -drift, 0, 0xb0000, params);             \
     }                                                                          \
     return 0;                                                                  \
   }

@@ -1079,14 +1079,14 @@ void KandoreanTemple_PlaceLevitatingStudent(void);
 void KandoreanTemple_StartMovingPillar(void);
 void KandoreanTemple_ReceiveLash(void);
 
-extern u32 gFieldEffect_LargeSpawnScript[];
+extern u32 gFieldEffect_LongLifeScript[];
 
 // clang-format off
-DEFINE_G_DATA_020012A4(gFieldEffect_SmallSpawnScript, 22)
+DEFINE_FIELD_EFFECT_LIFE_SCRIPT(gFieldEffect_ShortLifeScript, 22)
 
-DEFINE_G_DATA_020012A4(gFieldEffect_MediumSpawnScript, 44)
+DEFINE_FIELD_EFFECT_LIFE_SCRIPT(gFieldEffect_MediumLifeScript, 44)
 
-DEFINE_G_DATA_020012A4(gFieldEffect_LargeSpawnScript, 126)
+DEFINE_FIELD_EFFECT_LIFE_SCRIPT(gFieldEffect_LongLifeScript, 126)
 
 s32 gKandoreanTemple_SteamScript[] = {
     0,
@@ -1125,10 +1125,10 @@ u32 gKandoreanTemple_StreamPuffScript[] = {
     0, 15, 3, 0, 1, 38,
 };
 
-s32 gFieldEffect_SpawnScripts[] = {
-    (s32)gFieldEffect_SmallSpawnScript,
-    (s32)gFieldEffect_MediumSpawnScript,
-    (s32)gFieldEffect_LargeSpawnScript,
+s32 gFieldEffect_LifeScripts[] = {
+    (s32)gFieldEffect_ShortLifeScript,
+    (s32)gFieldEffect_MediumLifeScript,
+    (s32)gFieldEffect_LongLifeScript,
 };
 
 u32 gKandoreanTemple_LookAroundScript[] = {

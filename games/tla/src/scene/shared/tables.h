@@ -248,9 +248,11 @@
       0x4000, -1,     -1,     0x4000, -1,     0,      0x8000, -1,              \
   };
 
-#define DEFINE_G_DATA_020012A4(name, n1)                                       \
+/// A field effect's script that keeps it for `frames` frames, then frees it;
+/// each overlay's effect spawner picks one of three by its flags.
+#define DEFINE_FIELD_EFFECT_LIFE_SCRIPT(name, frames)                          \
   u32 name[] = {                                                               \
-      SC_WAIT(1), SC_LOOP(n1, SC_TOP),                                         \
+      SC_WAIT(1), SC_LOOP(frames, SC_TOP),                                     \
       SC_WAIT(1), SC_POSITION(0, 0, 0),                                        \
       SC_WAIT(1), SC_FREE,                                                     \
       SC_END,                                                                  \

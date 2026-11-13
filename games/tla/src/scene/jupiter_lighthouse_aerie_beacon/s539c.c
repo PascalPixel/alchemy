@@ -15,8 +15,8 @@
 #include "module/scene/jupiter_lighthouse_aerie_beacon.h"
 #include "module/scene/scene.h"
 
-void Func_02004bd4(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                   s32 velocityZ, u32 flags, struct EffectOptions *options);
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags, struct EffectOptions *options);
 
 static __inline__ void Camera_SetBounds(s32 x, s32 y, s32 z, s32 use_setter) {
   FieldCamera_MoveWithinMapBounds(x, y, z, use_setter);
@@ -60,8 +60,8 @@ void Teleporter_DropIn(void) {
     velocity.x += velocity.x >> 1;
     velocity.x += ((u32)(Random16Far() * 3 << 14) >> 16) - 0x6000;
     velocity.z += ((u32)(Random16Far() * 3 << 13) >> 16) - 0x3000;
-    Func_02004bd4(leader->x, leader->y, leader->z, velocity.x, velocity.y,
-                  velocity.z, 0x1090001, &options);
+    FieldEffect_Spawn(leader->x, leader->y, leader->z, velocity.x, velocity.y,
+                      velocity.z, 0x1090001, &options);
   }
   Event_PlaySound(188);
   Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x101);

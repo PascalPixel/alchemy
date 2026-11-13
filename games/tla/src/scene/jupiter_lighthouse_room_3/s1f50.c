@@ -15,8 +15,8 @@
 #include "module/scene/jupiter_lighthouse_room_3.h"
 #include "module/scene/scene.h"
 
-void Func_02001788(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                   s32 velocityZ, u32 flags, struct EffectOptions *options);
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags, struct EffectOptions *options);
 
 static __inline__ void CamBounds(s32 x, s32 y, s32 z, s32 mode) {
   FieldCamera_MoveWithinMapBounds(x, y, z, mode);
@@ -26,7 +26,7 @@ static __inline__ void SetWorkTriple(s32 a, s32 b, s32 c) {
   MapGrid_SetScreenShake(a, b, c);
 }
 
-DEFINE_TELEPORTER_DROP_IN(Teleporter_DropIn, Func_02001788)
+DEFINE_TELEPORTER_DROP_IN(Teleporter_DropIn, FieldEffect_Spawn)
 
 void Teleporter_Uncover();
 void Teleporter_SinkEvent();

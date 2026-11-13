@@ -195,9 +195,9 @@ void Func_02002a14(void);
 void Func_02002a24(void);
 void Func_02002a34(void);
 
-extern u32 gData_0200501c[];
-extern u32 gData_02005058[];
-extern u32 gData_02005094[];
+extern u32 gFieldEffect_ShortLifeScript[];
+extern u32 gFieldEffect_MediumLifeScript[];
+extern u32 gFieldEffect_LongLifeScript[];
 
 extern char SceneId_Ov681Room5;
 

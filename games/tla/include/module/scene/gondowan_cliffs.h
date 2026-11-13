@@ -44,9 +44,9 @@ void Func_02000600(void);
 
 extern s32 gData_0200168c[];
 
-void Func_020001ec(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                   s32 velocityZ, u32 flags,
-                   const struct EffectOptions *options);
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags,
+                       const struct EffectOptions *options);
 
 void Func_02001304(s32 a, s32 b, s32 c);
 

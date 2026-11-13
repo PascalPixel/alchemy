@@ -15,8 +15,8 @@
 #include "module/scene/jupiter_lighthouse_room_1.h"
 #include "module/scene/scene.h"
 
-void Func_02000f3c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                   s32 velocityZ, u32 flags, struct EffectOptions *options);
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags, struct EffectOptions *options);
 
 static __inline__ void CamBounds(s32 x, s32 y, s32 z, s32 mode) {
   FieldCamera_MoveWithinMapBounds(x, y, z, mode);
@@ -26,7 +26,7 @@ static __inline__ void SetWorkTriple(s32 a, s32 b, s32 c) {
   MapGrid_SetScreenShake(a, b, c);
 }
 
-DEFINE_TELEPORTER_DROP_IN_LOWER(Teleporter_DropInLower, Func_02000f3c)
+DEFINE_TELEPORTER_DROP_IN_LOWER(Teleporter_DropInLower, FieldEffect_Spawn)
 
 extern struct CellTarget gTeleporters;
 void Teleporter_Uncover();
@@ -47,11 +47,11 @@ void Func_02000054(void);
 void Func_020001f4(void);
 
 // clang-format off
-DEFINE_G_DATA_020012A4(gData_02002050, 22)
+DEFINE_FIELD_EFFECT_LIFE_SCRIPT(gFieldEffect_ShortLifeScript, 22)
 
-DEFINE_G_DATA_020012A4(gData_0200208c, 44)
+DEFINE_FIELD_EFFECT_LIFE_SCRIPT(gFieldEffect_MediumLifeScript, 44)
 
-DEFINE_G_DATA_020012A4(gData_020020c8, 126)
+DEFINE_FIELD_EFFECT_LIFE_SCRIPT(gFieldEffect_LongLifeScript, 126)
 
 struct SceneEntrance gSceneEntrances[] = {
     {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
@@ -102,8 +102,8 @@ u32 gWhirlwindEndScript[] = {
 };
 // clang-format on
 
-s32 gData_02002248[] = {
-    (s32)gData_02002050,
-    (s32)gData_0200208c,
-    (s32)gData_020020c8,
+s32 gFieldEffect_LifeScripts[] = {
+    (s32)gFieldEffect_ShortLifeScript,
+    (s32)gFieldEffect_MediumLifeScript,
+    (s32)gFieldEffect_LongLifeScript,
 };

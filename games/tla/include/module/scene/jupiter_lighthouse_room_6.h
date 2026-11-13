@@ -23,9 +23,9 @@ void Leader_CenterInCell(void);
 
 void Scene_RunIfFlagCleared(void);
 
-extern u32 gData_02002068[];
-extern u32 gData_020020a4[];
-extern u32 gData_020020e0[];
+extern u32 gFieldEffect_ShortLifeScript[];
+extern u32 gFieldEffect_MediumLifeScript[];
+extern u32 gFieldEffect_LongLifeScript[];
 
 void Func_020001d0(void);
 

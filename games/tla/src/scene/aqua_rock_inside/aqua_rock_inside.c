@@ -828,11 +828,11 @@ DEFINE_ACTOR_STEP_TO_WATCHED(Actor_StepToWatched)
 
 #include "system/field_effect.h"
 
-void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                   s32 velocityZ, u32 flags,
-                   const struct EffectOptions *options);
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags,
+                       const struct EffectOptions *options);
 
-DEFINE_ACTOR_EMIT_BUBBLES(Actor_EmitBubbles, Func_0200015c)
+DEFINE_ACTOR_EMIT_BUBBLES(Actor_EmitBubbles, FieldEffect_Spawn)
 #undef BYTE_AT
 
 // ---- games/tla/src/scene/aqua_rock_inside/s1620.c ----

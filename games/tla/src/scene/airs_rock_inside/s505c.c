@@ -21,9 +21,9 @@
 
 void FieldCamera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 s32 Trig_Sin(s32 angle);
-void Func_020002f4(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                   s32 velocityZ, u32 flags,
-                   const struct EffectOptions *options);
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags,
+                       const struct EffectOptions *options);
 void MapGrid_SetScreenShake(s32 a, s32 b, s32 c);
 
 void Func_0200505c(void) {
@@ -62,7 +62,7 @@ void Func_0200505c(void) {
     velocity[0] += ((Random16Far() * 3) << 14) >> 16;
     velocity[0] += -0x6000;
     velocity[2] += (((Random16Far() * 3) << 13) >> 16) + -0x3000;
-    Func_020002f4(
+    FieldEffect_Spawn(
         leader->x, leader->y, leader->z, velocity[0], velocity[1], velocity[2],
         EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE | 1,
         &options);
@@ -457,7 +457,7 @@ s32 gData_02006158[] = {
     0, 1, 22, 26, 3, 17,
 };
 
-s32 gData_02006188[] = {
+s32 gFieldEffect_LifeScripts[] = {
     (s32)gData_02005f9c,
     (s32)gData_02005fd8,
     (s32)gData_02006014,

@@ -20,7 +20,7 @@ void Actor_SetSpriteFlags(struct FieldEffect *effect, s32 flags);
 void Whirlwind_UpdateLower(struct GustObject *object);
 
 DEFINE_WHIRLWIND_SPAWN(Whirlwind_Spawn, Actor_SelectAnimation,
-                       Whirlwind_UpdateLower, Func_02001094)
+                       Whirlwind_UpdateLower, FieldEffect_Spawn)
 
 #include "frame.h"
 #include "field_coordinate.h"
@@ -41,9 +41,9 @@ s32 Func_02000a64(struct Actor *object) {
     params.palette = 14;
     x = object->x + ((((Random16Far() * 9) >> 16) - 4) << 16);
     y = object->y + ((32 - ((Random16Far() * 20) >> 16)) << 16);
-    Func_02001094(x, y, object->z, 0,
-                  (s32)((((Random16Far() * 5) >> 16) << 16) + 0x50000) / 10, 0,
-                  0xb0000, &params);
+    FieldEffect_Spawn(x, y, object->z, 0,
+                      (s32)((((Random16Far() * 5) >> 16) << 16) + 0x50000) / 10,
+                      0, 0xb0000, &params);
   }
   return 0;
 }

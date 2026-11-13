@@ -23,8 +23,8 @@
 #include "module/tla.h"
 #include "resource.h"
 
-void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                   s32 velocityZ, u32 flags, struct EffectOptions *options);
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags, struct EffectOptions *options);
 
 void Func_02002394(void) {
   struct Actor *actor = Actor_Get(gMainRoutineWork.currentOwner);
@@ -62,8 +62,8 @@ void Func_02002394(void) {
     velocity[0] += velocity[0] >> 1;
     velocity[0] += (Random16Far() * 0xc000 >> 16) - 0x6000;
     velocity[2] += (Random16Far() * 0x6000 >> 16) - 0x3000;
-    Func_020000b8(actor->x, actor->y, actor->z, velocity[0], velocity[1],
-                  velocity[2], 0x1090001, &options);
+    FieldEffect_Spawn(actor->x, actor->y, actor->z, velocity[0], velocity[1],
+                      velocity[2], 0x1090001, &options);
     i++;
   } while (i <= 16);
   Event_PlaySound(188);
@@ -2087,11 +2087,11 @@ void Func_020054ac(s32 id, u32 mode, s32 flag, s32 layer) {
 #include "objcmd.h"
 
 // clang-format off
-DEFINE_G_DATA_020012A4(gData_0200585c, 22)
+DEFINE_FIELD_EFFECT_LIFE_SCRIPT(gFieldEffect_ShortLifeScript, 22)
 
-DEFINE_G_DATA_020012A4(gData_02005898, 44)
+DEFINE_FIELD_EFFECT_LIFE_SCRIPT(gFieldEffect_MediumLifeScript, 44)
 
-DEFINE_G_DATA_020012A4(gData_020058d4, 126)
+DEFINE_FIELD_EFFECT_LIFE_SCRIPT(gFieldEffect_LongLifeScript, 126)
 
 u32 gData_02005910[] = {
     0x20007, 512, 0x20003, 0x20004, 516, 515,

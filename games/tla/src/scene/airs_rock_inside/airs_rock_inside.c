@@ -500,9 +500,9 @@ void Func_02000d48(struct Actor *shot) {
 #include "system/field_effect.h"
 #include "system/vector3.h"
 
-void Func_020002f4(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                   s32 velocityZ, u32 flags,
-                   const struct EffectOptions *options);
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags,
+                       const struct EffectOptions *options);
 
 // A launcher's update with a new shot each time: while none of the event work's
 // four busy counters is set it counts frames in its action parameter, and at
@@ -546,8 +546,8 @@ void Func_02000f34(struct Actor *object) {
     object->timer = 0;
     options.priority = 1;
     options.palette = 7;
-    Func_020002f4(position.x, object->y, position.z - 0x60000, 0, 0, 0,
-                  EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE, &options);
+    FieldEffect_Spawn(position.x, object->y, position.z - 0x60000, 0, 0, 0,
+                      EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE, &options);
   }
   object->timer++;
 }
@@ -681,8 +681,8 @@ void Func_02001290(struct Actor *object) {
     object->timer = 0;
     options.priority = 1;
     options.palette = 7;
-    Func_020002f4(position.x, object->y, position.z - 0x60000, 0, 0, 0,
-                  EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE, &options);
+    FieldEffect_Spawn(position.x, object->y, position.z - 0x60000, 0, 0, 0,
+                      EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE, &options);
   }
   object->timer++;
 }
@@ -1008,9 +1008,9 @@ void Func_02001828(void) {
       velocity.x = Trig_Cos((gFrameCount & 0x1ff) << 12) << 1;
       velocity.y = gust->y + ((Random16Far() & 31) << 16);
       velocity.z = Trig_Sin((gFrameCount & 0x1ff) << 12);
-      Func_020002f4(gust->x, velocity.y, gust->z, velocity.x, 0, velocity.z,
-                    EFFECT_USE_TYPE | EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
-                    &leaves);
+      FieldEffect_Spawn(
+          gust->x, velocity.y, gust->z, velocity.x, 0, velocity.z,
+          EFFECT_USE_TYPE | EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE, &leaves);
     }
     FieldEvent_Wait(1);
   }
@@ -1078,9 +1078,9 @@ void Func_02001828(void) {
         velocity.x = Trig_Cos((gFrameCount & 0x1ff) << 12) << 1;
         velocity.y = 0x10000;
         velocity.z = Trig_Sin((gFrameCount & 0x1ff) << 12);
-        Func_020002f4(gust->x, gust->y, gust->z, velocity.x, velocity.y,
-                      velocity.z, EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY,
-                      &dust);
+        FieldEffect_Spawn(gust->x, gust->y, gust->z, velocity.x, velocity.y,
+                          velocity.z,
+                          EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY, &dust);
       }
       if ((gFrameCount & 3) == 0) {
         if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room4) {
@@ -1165,9 +1165,10 @@ shrink:
         Actor_SetSpritePriority(8, 2);
         for (i = 0; i != 8; i++) {
           dust.priority = 1;
-          Func_020002f4(velocity.x + ((Random16Far() & 15) << 16),
-                        velocity.y + ((Random16Far() & 31) << 16), velocity.z,
-                        0, 0, -0x8000, EFFECT_USE_PRIORITY, &dust);
+          FieldEffect_Spawn(velocity.x + ((Random16Far() & 15) << 16),
+                            velocity.y + ((Random16Far() & 31) << 16),
+                            velocity.z, 0, 0, -0x8000, EFFECT_USE_PRIORITY,
+                            &dust);
         }
         wait(30);
         SHAKE();
@@ -1190,9 +1191,10 @@ shrink:
         velocity.z = Actor_GetById(8)->z;
         for (i = 0; i != 8; i++) {
           dust.priority = 1;
-          Func_020002f4(velocity.x + ((Random16Far() & 15) << 16), velocity.y,
-                        velocity.z - ((Random16Far() & 31) << 16), 0, 0,
-                        -0x8000, EFFECT_USE_PRIORITY, &dust);
+          FieldEffect_Spawn(velocity.x + ((Random16Far() & 15) << 16),
+                            velocity.y,
+                            velocity.z - ((Random16Far() & 31) << 16), 0, 0,
+                            -0x8000, EFFECT_USE_PRIORITY, &dust);
         }
         wait(20);
       } else {

@@ -50,11 +50,11 @@ const u8 *Scene_GetPlacements(void) {
 #include "objcmd.h"
 
 // clang-format off
-DEFINE_G_DATA_020012A4(gData_02001324, 22)
+DEFINE_FIELD_EFFECT_LIFE_SCRIPT(gFieldEffect_ShortLifeScript, 22)
 
-DEFINE_G_DATA_020012A4(gData_02001360, 44)
+DEFINE_FIELD_EFFECT_LIFE_SCRIPT(gFieldEffect_MediumLifeScript, 44)
 
-DEFINE_G_DATA_020012A4(gData_0200139c, 126)
+DEFINE_FIELD_EFFECT_LIFE_SCRIPT(gFieldEffect_LongLifeScript, 126)
 // clang-format on
 
 #include "../field/object/set_sprite_priority.c"

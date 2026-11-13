@@ -243,9 +243,9 @@ void Func_02000848(struct Actor *object) {
    } *)(base))                                                                 \
        ->v)
 
-void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                   s32 velocityZ, u32 flags,
-                   const struct EffectOptions *options);
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags,
+                       const struct EffectOptions *options);
 void Import_ActorRelease(struct Actor *object);
 
 void Func_0200087c(void) {
@@ -318,8 +318,8 @@ void Func_0200087c(void) {
         /* FAKEMATCH(dead): sum, never read again, assigned the flags inside
          * the call's arguments; as 0x10b0000 passed directly, 6 of 255
          * instructions differ in tla-en. */
-        Func_0200015c(object->x, object->y, object->z, velocity[0], velocity[1],
-                      velocity[2], sum = 0x10b0000, &options);
+        FieldEffect_Spawn(object->x, object->y, object->z, velocity[0],
+                          velocity[1], velocity[2], sum = 0x10b0000, &options);
         i++;
       }
       if (i <= 16)
@@ -597,7 +597,7 @@ s16 gData_02001220[] = {
     8, 9, -1, 0,
 };
 
-s32 gData_02001228[] = {
+s32 gFieldEffect_LifeScripts[] = {
     (s32)gData_0200116c,
     (s32)gData_020011a8,
     (s32)gData_020011e4,

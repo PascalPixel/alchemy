@@ -289,9 +289,9 @@ void Actor_StartScript(struct Actor *object, const u8 *script);
  * function `Func_02003ba8'. */
 extern s32
 Func_02003ba8__airs_rock(struct Actor *object) __asm__("Func_02003ba8");
-void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                   s32 velocityZ, u32 flags,
-                   const struct EffectOptions *options);
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags,
+                       const struct EffectOptions *options);
 
 /// Whirlwind on a target in Air's Rock: a gust (object type 280) rises from the
 /// target and grows, shedding sparks every fourth frame while the target
@@ -393,9 +393,9 @@ void Func_0200095c(void) {
       velocity.x = Trig_Cos((gFrameCount & 0x1ff) << 12) << 1;
       velocity.y = gust->y + ((Random16Far() & 31) << 16);
       velocity.z = Trig_Sin((gFrameCount & 0x1ff) << 12);
-      Func_0200015c(gust->x, velocity.y, gust->z, velocity.x, 0, velocity.z,
-                    EFFECT_USE_TYPE | EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
-                    &leaves);
+      FieldEffect_Spawn(
+          gust->x, velocity.y, gust->z, velocity.x, 0, velocity.z,
+          EFFECT_USE_TYPE | EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE, &leaves);
     }
     Event_Wait(1);
   }
@@ -417,9 +417,9 @@ void Func_0200095c(void) {
         velocity.x = Trig_Cos((gFrameCount & 0x1ff) << 12) << 1;
         velocity.y = 0x10000;
         velocity.z = Trig_Sin((gFrameCount & 0x1ff) << 12);
-        Func_0200015c(gust->x, gust->y, gust->z, velocity.x, velocity.y,
-                      velocity.z, EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY,
-                      &dust);
+        FieldEffect_Spawn(gust->x, gust->y, gust->z, velocity.x, velocity.y,
+                          velocity.z,
+                          EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY, &dust);
       }
       if ((gFrameCount & 3) == 0) {
         s32 sourceX;
@@ -631,9 +631,9 @@ glow:
       velocity.y = 0;
       velocity.z = 0xfffe0000;
       x = ((Random16Far() % 144) << 16) + 0x1000000;
-      Func_0200015c(x, 0, (Random16Far() % 144) << 16, velocity.x, velocity.y,
-                    velocity.z, EFFECT_USE_UPDATE | EFFECT_USE_PRIORITY | 1,
-                    &options);
+      FieldEffect_Spawn(x, 0, (Random16Far() % 144) << 16, velocity.x,
+                        velocity.y, velocity.z,
+                        EFFECT_USE_UPDATE | EFFECT_USE_PRIORITY | 1, &options);
     }
     REG_BLDALPHA = (((j >> 4) & 15) << 8) | (16 - ((j >> 4) & 15));
     ((u8 *)Actor_Get(8))[98] = Random16Far() & 7;
@@ -961,8 +961,8 @@ void Func_02001b54(struct Actor *object) {
     object->timer = 0;
     options.priority = 1;
     options.palette = 7;
-    Func_0200015c(position.x, object->y, position.z - 0x60000, 0, 0, 0,
-                  EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE, &options);
+    FieldEffect_Spawn(position.x, object->y, position.z - 0x60000, 0, 0, 0,
+                      EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE, &options);
   }
   object->timer++;
 }
@@ -1043,11 +1043,12 @@ void Func_02001dc4(s32 x, s32 z) {
     scatter.y = (Random16Far() & 15) << 12;
     scatter.z = z + ((Random16Far() & 63) << 16) - 0x300000;
     if (i & 3)
-      Func_0200015c(scatter.x, 0, scatter.z, 0, scatter.y, 0,
-                    EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY | 1, &options);
+      FieldEffect_Spawn(scatter.x, 0, scatter.z, 0, scatter.y, 0,
+                        EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY | 1,
+                        &options);
     else
-      Func_0200015c(scatter.x, 0, scatter.z, 0, scatter.y, 0,
-                    EFFECT_USE_PRIORITY | 1, &options);
+      FieldEffect_Spawn(scatter.x, 0, scatter.z, 0, scatter.y, 0,
+                        EFFECT_USE_PRIORITY | 1, &options);
   }
   for (i = 0; i != 6; i++) {
     rock = first;

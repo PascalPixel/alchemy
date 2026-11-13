@@ -147,9 +147,9 @@ void Func_02001fdc(void);
 
 void Func_02003764(void);
 
-void Func_02000fc4(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                   s32 velocityZ, u32 flags,
-                   const struct EffectOptions *options);
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags,
+                       const struct EffectOptions *options);
 
 void Func_020019b8(void);
 

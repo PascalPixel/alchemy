@@ -28,9 +28,9 @@ void Teleporter_PlaceArrival(s32 x, s32 z, s32 effect);
 
 void Func_02000068(void);
 
-extern u32 gData_020027a8[];
-extern u32 gData_020027e4[];
-extern u32 gData_02002820[];
+extern u32 gFieldEffect_ShortLifeScript[];
+extern u32 gFieldEffect_MediumLifeScript[];
+extern u32 gFieldEffect_LongLifeScript[];
 
 struct Actor *PushTarget_FindAhead(s32 *direction, s32 *slot, s32 *kind);
 

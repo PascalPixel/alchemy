@@ -23,11 +23,11 @@
 
 void Actor_SetSpriteFlags(struct FieldEffect *effect, s32 flags);
 void Whirlwind_Update(struct GustObject *object);
-void Func_02001258(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                   s32 velocityZ, u32 flags, struct EffectOptions *options);
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags, struct EffectOptions *options);
 
 DEFINE_WHIRLWIND_SPAWN(Whirlwind_Spawn, Actor_SelectAnimation, Whirlwind_Update,
-                       Func_02001258)
+                       FieldEffect_Spawn)
 
 s32 Func_02000c28(struct Actor *object) {
   struct EffectOptions options;
@@ -43,10 +43,10 @@ s32 Func_02000c28(struct Actor *object) {
     x = object->x + ((((Random16Far() * 9) >> 16) - 4) << 16);
     y = object->y + ((32 - ((Random16Far() * 20) >> 16)) << 16);
     velocityY = (s32)(((((Random16Far() * 5) >> 16) << 16) + 0x50000)) / 10;
-    Func_02001258(x, y, object->z, 0, velocityY, 0,
-                  EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY |
-                      EFFECT_USE_START_SCALE,
-                  &options);
+    FieldEffect_Spawn(x, y, object->z, 0, velocityY, 0,
+                      EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY |
+                          EFFECT_USE_START_SCALE,
+                      &options);
   }
   return 0;
 }

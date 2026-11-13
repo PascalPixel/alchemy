@@ -60,9 +60,9 @@ Func_02003f54__contigo(struct ContigoObject *object) __asm__("Func_02003f54");
 
 void Actor_StartScript(struct FieldEffect *effect, const s32 *script);
 
-void Func_02000430(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                   s32 velocityZ, u32 flags,
-                   const struct EffectOptions *options) {
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags,
+                       const struct EffectOptions *options) {
   struct Actor *party = Actor_GetById(gMainRoutineWork.currentOwner);
   struct FieldEffect *effect;
   struct FieldSprite *sprite;
@@ -816,8 +816,8 @@ void Func_020015ac(void) {
     velocity[1] = 0;
     velocity[2] = Trig_Sin(angle);
     velocity[0] += velocity[0] / 3;
-    Func_02000430(object->x, object->y, object->z, velocity[0],
-                  velocity[1] + 0x1999, velocity[2], 0x20000, &options);
+    FieldEffect_Spawn(object->x, object->y, object->z, velocity[0],
+                      velocity[1] + 0x1999, velocity[2], 0x20000, &options);
   }
   Actor_SetSpriteColor(Actor_GetById(17), 0);
   Actor_SetSpriteFlags(Actor_GetById(17), 1);

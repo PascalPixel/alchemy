@@ -63,9 +63,9 @@ void Func_02000384(void) {
 #include "call.h"
 #include "system/field_effect.h"
 
-void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                   s32 velocityZ, u32 flags,
-                   const struct EffectOptions *options);
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags,
+                       const struct EffectOptions *options);
 
 // The Japanese form is the older revision and is still on its listing.
 #if TLA_PATCH_1
@@ -110,8 +110,8 @@ loop:
   velocity[0] += velocity[0] >> 1;
   velocity[0] += ((Random16Far() * 3) << 14 >> 16) - 0x6000;
   velocity[2] += ((Random16Far() * 3) << 13 >> 16) - 0x3000;
-  Func_0200015c(leader->x, leader->y, leader->z, velocity[0], velocity[1],
-                velocity[2], 0x1090001, &options);
+  FieldEffect_Spawn(leader->x, leader->y, leader->z, velocity[0], velocity[1],
+                    velocity[2], 0x1090001, &options);
   i++;
   if (i <= 16)
     goto loop;
@@ -363,8 +363,8 @@ void Func_02000b78(s32 rows, s32 frames, s32 x, s32 y, s32 startZ, s32 count) {
         dx &= r;
       }
       dy = Random16Far() & 31;
-      Func_0200015c(((x + left * 16) << 16) + ((dx - 8) << 16), (y + dy) << 16,
-                    z << 16, 0, 0, 0x100, 0x80001, &params);
+      FieldEffect_Spawn(((x + left * 16) << 16) + ((dx - 8) << 16),
+                        (y + dy) << 16, z << 16, 0, 0, 0x100, 0x80001, &params);
     }
     FieldEvent_Wait(frames);
     z += 2;
@@ -1177,7 +1177,8 @@ void Func_020023d0(struct Actor *object) {
     }
     dy = Random16Far() & 7;
     params.type = 673;
-    Func_0200015c(object->x + ((dx - 8) << 16), object->y + ((dy - 8) << 16),
-                  object->z, 0, 0x8000, phase, 0x100000, &params);
+    FieldEffect_Spawn(object->x + ((dx - 8) << 16),
+                      object->y + ((dy - 8) << 16), object->z, 0, 0x8000, phase,
+                      0x100000, &params);
   }
 }

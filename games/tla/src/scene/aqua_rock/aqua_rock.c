@@ -1085,8 +1085,8 @@ void Func_02001f60(s32 id) {
   }
 }
 
-void Func_0200015c(s32 x, s32 y, s32 z, s32 a, s32 b, s32 c, s32 flags,
-                   s32 *params);
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 a, s32 b, s32 c, s32 flags,
+                       s32 *params);
 
 void Func_02001f90(s32 arg0) {
   struct Actor *object = Actor_GetById(gMainRoutineWork.currentOwner);

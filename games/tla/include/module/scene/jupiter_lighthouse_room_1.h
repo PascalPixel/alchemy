@@ -29,9 +29,9 @@ void Scene_RunOnce(void);
 
 void Scene_RunIfFlagCleared(void);
 
-extern u32 gData_02002050[];
-extern u32 gData_0200208c[];
-extern u32 gData_020020c8[];
+extern u32 gFieldEffect_ShortLifeScript[];
+extern u32 gFieldEffect_MediumLifeScript[];
+extern u32 gFieldEffect_LongLifeScript[];
 
 extern u16 gData_02002258[];
 extern u16 gData_02002278[];

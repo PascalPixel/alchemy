@@ -12,9 +12,9 @@ void Func_02000610(void);
 void Func_02000660(void);
 void Func_020006f4(void);
 
-extern u8 gData_02001324[];
-extern u8 gData_02001360[];
-extern u8 gData_0200139c[];
+extern u8 gFieldEffect_ShortLifeScript[];
+extern u8 gFieldEffect_MediumLifeScript[];
+extern u8 gFieldEffect_LongLifeScript[];
 
 s32 gData_0200168c[] = {
     SC_CALL(TileSprite_Reset),
@@ -79,10 +79,10 @@ struct ActorPlacement gData_0200193c[] = {
     {SCENE_TABLE_END},
 };
 
-s32 gData_020019b4[] = {
-    (s32)gData_02001324,
-    (s32)gData_02001360,
-    (s32)gData_0200139c,
+s32 gFieldEffect_LifeScripts[] = {
+    (s32)gFieldEffect_ShortLifeScript,
+    (s32)gFieldEffect_MediumLifeScript,
+    (s32)gFieldEffect_LongLifeScript,
 };
 
 struct Trigger gData_020019c0[] = {

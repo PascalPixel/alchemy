@@ -30,9 +30,9 @@ VramCache_Load:
 	.thumb_func
 VramCache_FindFreeEntry:
 	overlay_veneer VramCache_FindFreeEntryFar
-	.global Func_020005ac
+	.global Import_OamAddSpriteAtDepthClamped
 	.thumb_func
-Func_020005ac:
+Import_OamAddSpriteAtDepthClamped:
 	overlay_veneer Oam_AddSpriteAtDepthClampedFar
 	.global Resource_GetTableEntry
 	.thumb_func
@@ -86,14 +86,14 @@ Event_StartScreenTransition:
 	.thumb_func
 Event_WaitTransitionFrames:
 	overlay_veneer Event_WaitTransitionFramesFar
-	.global Func_0200061c
+	.global Credits_Run
 	.thumb_func
-Func_0200061c:
-	overlay_veneer Resource_FarCall00A + 1
-	.global Func_02000624
+Credits_Run:
+	overlay_veneer Credits_RunFar
+	.global Title_ShowIntro
 	.thumb_func
-Func_02000624:
-	overlay_veneer Resource_FarCall00B + 1
+Title_ShowIntro:
+	overlay_veneer Title_ShowIntroFar
 	.global Title_ShowNintendoLogo
 	.thumb_func
 Title_ShowNintendoLogo:

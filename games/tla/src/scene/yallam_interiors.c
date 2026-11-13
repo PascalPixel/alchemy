@@ -1,5 +1,7 @@
 /// @file
-/// The scene code of overlay 0x677, in ROM order.
+/// Yallam's houses and shops, with Sunshine the blacksmith, who forges the
+/// rare materials the party brings him into weapons and armor once rain has
+/// let him reach Taopo Swamp.
 
 #include "battle.h"
 #include "field.h"
@@ -81,8 +83,6 @@ void Event_WaitTransitionFrames(void);
 
 void Func_02000a48(s32 a);
 void Event_StartScreenTransition(void);
-
-// ---- this overlay
 
 extern struct ActorPlacement gYallamInteriors_Placements[];
 extern struct ActorPlacement gYallamInteriors_Room1Placements[];
@@ -459,7 +459,7 @@ void YallamInteriors_TalkToSunshine(void) {
   }
 }
 
-u16 *Func_02000988(s32 item);
+u16 *Import_ItemGet(s32 item);
 
 /// Sunshine's wife keeps the smithy: she explains the forge, hands over what
 /// Sunshine made and takes the payment.
@@ -473,7 +473,7 @@ void YallamInteriors_TalkToSunshinesWife(s32 actor) {
     Event_ShowMessage(actor, 0);
   } else if (Forge_GetItem()) {
     s32 item = Forge_GetItem();
-    u32 price = *Func_02000988(item);
+    u32 price = *Import_ItemGet(item);
     s32 message;
 
     MessageArgument_Push(item, 2);
@@ -546,7 +546,9 @@ s32 Scene_Initialize(void) {
 s32 Scene_PrepareMap(void) { return 0; }
 
 // clang-format off
-u32 gData_02000a98[] = {
+/// The villager who asks about children's songs wanders between two corners of
+/// the room.
+u32 gYallamInteriors_SongLoverWanders[] = {
     22, 30, 131, 22, 16, 0x1999,
     22, 15, 0x4ccc, 0x80010000, 39, 2,
     4, 0x780000, 0, 0x680000, 1, 4,
@@ -596,8 +598,8 @@ struct ActorPlacement gYallamInteriors_Room1Placements[] = {
     {115, CONDITION_ALWAYS, 1, PIXELS(152), 0, PIXELS(140), FACING_SOUTHWEST, 1,
      0},
 #endif
-    {116, CONDITION_ALWAYS, (s32)gData_02000a98, PIXELS(88), 0, PIXELS(104),
-     FACING_EAST, 0, 0},
+    {116, CONDITION_ALWAYS, (s32)gYallamInteriors_SongLoverWanders, PIXELS(88),
+     0, PIXELS(104), FACING_EAST, 0, 0},
     {114, CONDITION_ALWAYS, 1, PIXELS(424), 0, PIXELS(88), FACING_SOUTHEAST, 1,
      0},
     {128, CONDITION_ALWAYS, 1, PIXELS(454), 0, PIXELS(120), FACING_SOUTHEAST, 1,

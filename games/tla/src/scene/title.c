@@ -1,5 +1,7 @@
 /// @file
-/// The scene code of overlay 0x649, in ROM order.
+/// The title: the Nintendo and Camelot logos, the intro, the title screen with
+/// its row of sprites revealed under the logo, and the starts it leads to, the
+/// prologue with Jenna or the game with Felix; entrance 8 plays the credits.
 
 #include "battle.h"
 #include "field.h"
@@ -33,7 +35,7 @@
 #include "module/system/system.h"
 #include "resource_ids.h"
 
-extern s16 gData_020006dc;
+extern s16 gTitle_RevealStep;
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -56,7 +58,7 @@ struct TitleSprite__title {
   u32 attr[3];
 };
 
-extern struct TitleSprite__title gData_020006f0[];
+extern struct TitleSprite__title gTitle_SpriteRow[];
 
 s32 Save_ScanFileSummaries(void);
 void Title_ShowNintendoLogo(s32 value);
@@ -84,7 +86,7 @@ s32 Title_Run(void) {
   }
   if (gMainRoutineWork.entrance == 8) {
     Event_PlaySound(68);
-    Func_0200061c(1);
+    Credits_Run(1);
     Event_PlaySound(78);
     ScreenFade_ToBlack(60);
     ScreenFade_Wait();
@@ -102,7 +104,7 @@ s32 Title_Run(void) {
       if (Save_ScanFileSummaries() > 0) {
         Event_PlaySound(40);
         Func_0200063c(1);
-        if (Func_02000624(1) == 0) {
+        if (Title_ShowIntro(1) == 0) {
           Event_PlaySound(78);
           ScreenFade_ToBlack(30);
           ScreenFade_Wait();
@@ -138,7 +140,7 @@ s32 Title_Run(void) {
     }
     if (gMainRoutineWork.entrance == 3) {
       Event_PlaySound(75);
-      Func_02000624(0);
+      Title_ShowIntro(0);
       FieldWindowColor_Apply(gMainRoutineWork.paletteGlow[0],
                              gMainRoutineWork.paletteGlow[1]);
       Party_SetLeaderFelix();
@@ -176,7 +178,7 @@ void Title_LoadSprites(s32 unused) {
 /// has reached, hiding the two newest on odd frames, then counts the reveal
 /// on.
 // ☀️'s Title_RevealSpriteRow.
-void Func_02000278(void) {
+void Title_RevealSpriteRow(void) {
   u32 *w;
   struct TitleSprite__title *p;
   s32 tile;
@@ -185,8 +187,8 @@ void Func_02000278(void) {
   s32 y;
   s32 x;
 
-  p = gData_020006f0;
-  w = gData_020006f0[0].attr;
+  p = gTitle_SpriteRow;
+  w = gTitle_SpriteRow[0].attr;
   {
     register u32 offset asm("r3") =
         gResourceTableEntries[gTitleVramBlock].offset;
@@ -204,16 +206,16 @@ void Func_02000278(void) {
     *w++ = 0;
     *w++ = (x << 16) | n | 0x8400;
     *w++ = 0xf000 | tile;
-    n = gData_020006dc / 2 - i;
+    n = gTitle_RevealStep / 2 - i;
     if (n < 0)
       n = 0;
     if (n <= 2 && (gFrameCount & 1))
       n = 0;
     if (n != 0)
-      Func_020005ac(p++, 255);
+      Import_OamAddSpriteAtDepthClamped(p++, 255);
     tile += 2;
   } while (++i <= 17);
-  gData_020006dc++;
+  gTitle_RevealStep++;
 }
 
 /// The title screen appears: the logo and its sprite row are loaded, the
@@ -223,9 +225,9 @@ void Title_RevealScreen(void) {
 
   Title_LoadBackground();
   Event_Wait(30);
-  gData_020006dc = 0;
+  gTitle_RevealStep = 0;
   Title_LoadSprites(0);
-  Task_Add(Func_02000278, TASK_PASS_VBLANK);
+  Task_Add(Title_RevealSpriteRow, TASK_PASS_VBLANK);
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
                       DISPCNT_OBJ_ON | DISPCNT_BG2_ON | DISPCNT_BG0_ON |
                           DISPCNT_OBJ_1D_MAP,

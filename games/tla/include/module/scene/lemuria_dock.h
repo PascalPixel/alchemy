@@ -6,6 +6,6 @@
 
 #include "types.h"
 
-extern s16 gData_02000604[];
+extern s16 gLemuriaDock_HouseDoorOpening[];
 
 #endif

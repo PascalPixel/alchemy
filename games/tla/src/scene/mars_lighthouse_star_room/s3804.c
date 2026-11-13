@@ -35,7 +35,6 @@ DEFINE_LEADER_CENTER_IN_CELL(Leader_CenterInCell)
 /// one of the table's cells.
 DEFINE_TELEPORTER_UNCOVER(Func_02003bfc, Leader_CenterInCell)
 
-#include "../shared/jupiter_lighthouse_room_3.h"
 #include "io_reg.h"
 
 DEFINE_TELEPORTER_SINK_EVENT(Teleporter_SinkEvent, Leader_CenterInCell)

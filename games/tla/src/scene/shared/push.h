@@ -302,7 +302,7 @@
           for (col = 0; col < width; col++) {                                  \
             /* FAKEMATCH(wrapper): the call through Func_02002338_; as         \
              * MapGrid_CheckCollision(object, position), 2 of 171 instructions \
-             * differ in tla-en. */                                                                 \
+             * differ in tla-en. */                                            \
             if (call2(object, position) == 2)                                  \
               goto blocked;                                                    \
             position[0] += 0x100000;                                           \

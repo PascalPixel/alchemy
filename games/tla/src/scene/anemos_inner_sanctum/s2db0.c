@@ -1,7 +1,14 @@
 /// @file
 /// Scene code of overlay 0x6b0, in ROM order.
 
-#include "../shared/jupiter_lighthouse_room_3.h"
+#include "types.h"
+#include "ram_buffer.h"
+#include "actor.h"
+#include "main_routine_work.h"
+#include "scene_tables.h"
+#include "iwram_call.h"
+#include "dma.h"
+#include "event_inline.h"
 #include "io_reg.h"
 #include "event_work.h"
 #include "field.h"

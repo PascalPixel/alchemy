@@ -9,7 +9,6 @@
 #include "iwram_call.h"
 #include "event_inline.h"
 #include "scene_tables.h"
-#include "../shared/jupiter_lighthouse_room_3.h"
 #include "io_reg.h"
 #include "cell_target.h"
 #include "event_work.h"

@@ -1,19 +1,29 @@
 /// @file
-/// Scene code of overlay 0x69c, in ROM order.
+/// The room of gaps and logs in Jupiter Lighthouse: the cracked tiles' steps
+/// and the fall to the floor below.
 
 #include "../shared/teleporter.h"
 #include "../shared/tables.h"
 #include "types.h"
+#include "cell_target.h"
 #include "ram_buffer.h"
 #include "actor.h"
 #include "main_routine_work.h"
 #include "field_effect.h"
 #include "event_inline.h"
-#include "../shared/jupiter_lighthouse_aerie.h"
+#include "system.h"
+#include "frame.h"
+void GameFlag_SetByte(s32 flag, s32 value);
+void Map_CenterOnFollowedPoint(void);
 #include "event_work.h"
 #include "module/field/field_effect.h"
-#include "module/scene/jupiter_lighthouse_room_3.h"
 #include "module/scene/scene.h"
+
+extern u16 gPushKinds[];
+
+/// The cells Teleporters_Step watches, and the cell it copies over the one the
+/// leader steps on.
+extern struct CellTarget gTeleporters;
 
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags, struct EffectOptions *options);
@@ -34,21 +44,5 @@ void Teleporter_SinkEvent();
 DEFINE_TELEPORTERS_STEP(Teleporters_Step, gTeleporters, Teleporter_Uncover,
                         Teleporter_SinkEvent)
 
-#include "cell_target.h"
-
 DEFINE_TELEPORTER_PLACE_ARRIVAL(Teleporter_PlaceArrival, gTeleporters,
                                 Teleporter_DropIn)
-
-#include "scene_tables.h"
-
-// clang-format off
-u16 gPushKinds[] = {
-    258, 259, 293, 294, 332, 331,
-};
-
-u32 gPushFootprints[] = {
-    0x820f8e0, 0x2008e0f8, 0x20f0e0, 0x2008e0f8, 0x820f8e0, 0x2008e0f8,
-};
-
-DEFINE_PUSH_LEADER_STEPS(gPushLeaderSteps)
-// clang-format on

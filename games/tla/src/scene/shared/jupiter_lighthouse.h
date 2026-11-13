@@ -165,10 +165,10 @@
     object = Actor_Get(id);                                                    \
     object->motionFlags = 4;                                                   \
     height = object->terrainHeight;                                            \
-    WORD_AT(object, 68) = 0;                                                   \
+    object->bounce = 0;                                                        \
     object->y = height + 0x200000;                                             \
     object->priorityFlags |= 128;                                              \
-    height = Map_GetTerrainHeight(BYTE_AT(object, 34), object->x, object->z);  \
+    height = Map_GetTerrainHeight(object->terrainId, object->x, object->z);    \
     call1(object->x, object->z, 0, (height >> 19) + 6);                        \
     call2(object->x, object->z, 0, 128);                                       \
   }

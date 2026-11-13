@@ -4,12 +4,16 @@
 #include "../shared/tables.h"
 #include "../shared/teleporter.h"
 #include "types.h"
+#include "cell_target.h"
 #include "ram_buffer.h"
 #include "actor.h"
 #include "main_routine_work.h"
 #include "field_effect.h"
 #include "event_inline.h"
-#include "../shared/jupiter_lighthouse_aerie.h"
+#include "system.h"
+#include "frame.h"
+void GameFlag_SetByte(s32 flag, s32 value);
+void Map_CenterOnFollowedPoint(void);
 #include "event_work.h"
 #include "module/field/field_effect.h"
 #include "module/scene/scene.h"
@@ -39,8 +43,6 @@ void Teleporter_Sink();
 
 DEFINE_TELEPORTERS_STEP(Teleporters_Step, gTeleporters, Teleporter_Uncover,
                         Teleporter_Sink)
-
-#include "cell_target.h"
 
 DEFINE_TELEPORTER_PLACE_ARRIVAL(Teleporter_PlaceArrival, gTeleporters,
                                 Teleporter_DropInLower)

@@ -1,16 +1,35 @@
 /// @file
-/// Scene code of overlay 0x69c, in ROM order.
+/// The room of gaps and logs in Jupiter Lighthouse: its copy of the effect
+/// spawner, and the cracked tiles, found, cracked and fallen through.
 
 #include "types.h"
 #include "field_effect.h"
 #include "main_routine_work.h"
 #include "event_inline.h"
+#include "../shared/teleporter.h"
+#include "ram_buffer.h"
+#include "actor.h"
+#include "iwram_call.h"
+#include "io_reg.h"
+#include "cell_target.h"
+#include "event_work.h"
+#include "field.h"
+#include "heap_release.h"
+#include "item_icon.h"
+#include "module/scene/scene.h"
+
+#include "field/cell_target.h"
+
+/// The cells Teleporters_Step watches, and the cell it copies over the one the
+/// leader steps on.
+extern struct CellTarget gTeleporters;
+
+void Teleporters_Update(void);
 
 extern const s32 *gFieldEffect_LifeScripts[];
 
 void Actor_SelectAnimation(struct FieldEffect *effect, s32 mode);
 void Actor_StartScript(struct FieldEffect *effect, const s32 *script);
-void Actor_SetSpriteFlags(struct FieldEffect *effect, s32 flags);
 
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
@@ -86,3 +105,16 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 #define CELL_SPRITE_DRAW Teleporters_Update
 #define CELL_PUSH_SLOT_ENTRY Import_OamAddSpriteAtDepthClamped
 #include "../../field/map/cell_sprite.c"
+
+DEFINE_TELEPORTERS_FIND_LOWER(Teleporters_FindLower, gTeleporters,
+                              Teleporters_Update)
+
+DEFINE_LEADER_CENTER_IN_CELL(Leader_CenterInCell)
+
+/// Centers the leader on its cell, plays sound 161 and copies the cell below
+/// the table's source cell over the leader's, keeping the source column's and
+/// row's 64 bit; Teleporters_Step calls it the first time the leader steps on
+/// one of the table's cells.
+DEFINE_TELEPORTER_UNCOVER(Teleporter_Uncover, Leader_CenterInCell)
+
+DEFINE_TELEPORTER_SINK_EVENT(Teleporter_SinkEvent, Leader_CenterInCell)

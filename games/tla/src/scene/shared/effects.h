@@ -8,7 +8,7 @@
 /// Sparks rising from an actor, every eighth frame.
 #define DEFINE_ACTOR_EMIT_RISING_SPARKS(name, call1)                           \
   s32 name(struct Actor *object) {                                             \
-    struct JupiterLighthouseAerieSpark spark;                                  \
+    struct EffectOptions spark;                                                \
     s32 frame = gFrameCount & 7;                                               \
                                                                                \
     if (frame == 0) {                                                          \
@@ -16,14 +16,16 @@
       s32 y;                                                                   \
       s32 speed;                                                               \
                                                                                \
-      spark.word[0] = 3;                                                       \
-      spark.word[2] = 0xb333;                                                  \
-      spark.word[3] = 0xb333;                                                  \
-      spark.word[1] = 14;                                                      \
+      spark.priority = 3;                                                      \
+      spark.startScaleX = 0xb333;                                              \
+      spark.startScaleY = 0xb333;                                              \
+      spark.palette = 14;                                                      \
       x = object->x + (((((u32)Random16Far() * 9) >> 16) - 4) << 16);          \
       y = object->y + ((32 - (((u32)Random16Far() * 20) >> 16)) << 16);        \
       speed = (s32)(((((u32)Random16Far() * 5) >> 16) << 16) + 0x50000) / 10;  \
-      call1(x, y, object->z, 0, speed, frame, 0xb0000, &spark);                \
+      call1(x, y, object->z, 0, speed, frame,                                  \
+            EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY | EFFECT_USE_START_SCALE, \
+            &spark);                                                           \
     }                                                                          \
     return 0;                                                                  \
   }

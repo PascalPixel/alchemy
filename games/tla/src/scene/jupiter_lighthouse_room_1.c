@@ -131,7 +131,8 @@ const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
 s32 Scene_Initialize(void) {
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
-  if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION) && gMainRoutineWork.entrance == 6)
+  if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION) &&
+      gMainRoutineWork.entrance == 6)
     Func_02001bcc(gMainRoutineWork.currentOwner);
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_GATES_PILLAR_PLACED)) {
     Actor_SetPosition(ACTOR_GATES_PILLAR, PIXELS(280), PIXELS(536));
@@ -149,7 +150,9 @@ s32 Scene_PrepareMap(void) {
 
 #include "shared/scene_set_arrival_flags.h"
 
-#include "shared/jupiter_lighthouse_aerie.h"
+#include "cell_target.h"
+void GameFlag_SetByte(s32 flag, s32 value);
+void Map_CenterOnFollowedPoint(void);
 #include "iwram_call.h"
 #include "dma.h"
 #include "io_reg.h"

@@ -164,7 +164,9 @@ s32 Scene_PrepareMap(void) {
 
 #include "shared/scene_set_arrival_flags.h"
 
-#include "shared/jupiter_lighthouse_aerie.h"
+#include "cell_target.h"
+void GameFlag_SetByte(s32 flag, s32 value);
+void Map_CenterOnFollowedPoint(void);
 #include "ram_buffer.h"
 #include "field_event.h"
 

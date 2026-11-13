@@ -1,10 +1,22 @@
+/// @file
+/// The tables of Jupiter Lighthouse's room of gaps and logs that the scene's
+/// getters return.
+
 #include "../shared/tables.h"
 #include "types.h"
 #include "scene_tables.h"
 #include "objcmd.h"
-#include "module/scene/jupiter_lighthouse_room_3.h"
 
-void JupiterLighthouse_PushBlockOffTheLedge(void);
+#include "field/cell_target.h"
+#include "module/scene/scene.h"
+void JupiterLighthouse_StartMovingPillar(void);
+void JupiterLighthouse_LeaveByCyclone(void);
+void JupiterLighthouse_JumpForward(void);
+extern u32 gFieldEffect_ShortLifeScript[];
+extern u32 gFieldEffect_MediumLifeScript[];
+extern u32 gFieldEffect_LongLifeScript[];
+
+void JupiterLighthouse_PushLogOffTheLedge(void);
 void JupiterLighthouse_FinishMovingPillar(void);
 
 // clang-format off
@@ -65,7 +77,7 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
     {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 12},
-    {514, 30, CONDITION_ALWAYS, EVENT(JupiterLighthouse_PushBlockOffTheLedge)},
+    {514, 30, CONDITION_ALWAYS, EVENT(JupiterLighthouse_PushLogOffTheLedge)},
     {0x8602, 31, CONDITION_ALWAYS, EVENT(JupiterLighthouse_JumpForward)},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 12, CONDITION_ALWAYS, 0},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 13, CONDITION_ALWAYS, 0},

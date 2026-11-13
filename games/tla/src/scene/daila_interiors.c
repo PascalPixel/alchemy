@@ -79,7 +79,7 @@ enum DailaSanctuaryActorId {
   /// ★ Named from the game: "Sea God's Tear" (MsgItemName)
   ACTOR_SEA_GODS_TEAR = ACTOR_FIRST_PLACED + 1,
   /// ★ Named from what the player sees: a puddle that Frost turns into a
-  /// pillar of ice (spr_290.png)
+  /// pillar of ice (puddle.png)
   ACTOR_FIRST_PILLAR,
   ACTOR_SECOND_PILLAR,
   ACTOR_THIRD_PILLAR,

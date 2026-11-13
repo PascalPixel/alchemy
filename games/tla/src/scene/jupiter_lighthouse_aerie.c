@@ -384,15 +384,7 @@ void Func_020008dc(s32 id) {
   height = object->terrainHeight;
   WORD_AT(object, 68) = 0;
   object->y = height + 0x200000;
-  {
-    u8 *flags = &object->priorityFlags;
-    /* FAKEMATCH(temporary): a local holding 128, so the bit is built in the
-     * register it is ORed into; as *flags |= 128, 4 of 38 instructions differ
-     * in tla-en. */
-    s32 bit = 128;
-
-    *flags = bit | *flags;
-  }
+  object->priorityFlags |= 128;
   height = Map_GetTerrainHeight(BYTE_AT(object, 34), object->x, object->z);
   Func_02002a78(object->x, object->z, 0, (height >> 19) + 6);
   Func_02002b58(object->x, object->z, 0, 128);
@@ -596,9 +588,6 @@ void Func_02001e78(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    const struct EffectOptions *options);
 
 struct GustObject *Func_02000d08(struct GustObject *source) {
-  /* FAKEMATCH(wrapper): calls forwarded through inlines (call.h's Call and
-   * Value, this file's own); as direct calls, 69 of 92 instructions differ in
-   * tla-en. */
   struct Vector3 position;
   struct EffectOptions options;
   struct GustObject *object;

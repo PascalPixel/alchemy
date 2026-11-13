@@ -619,8 +619,6 @@ void Func_02002fc4(struct Func_02002fc4_Entry *entry, s32 id) {
   s32 flag;
   s32 nextFlag;
 
-  /* FAKEMATCH(wrapper): Call3 kept; as direct Map_SetScreenShake calls, 20 of
-   * 91 instructions differ in tla-en. */
   target = Actor_Get(id);
   if (entry->id == 0xffff)
     return;
@@ -798,9 +796,6 @@ body:
         flags = &leader->motionFlags;
         *flags = 0;
         Sound_Play(185);
-        /* FAKEMATCH(wrapper): forwarded through Call3, which builds each
-         * 0x10000 apart; as MapGrid_SetShake(0x10000, 0x40000, 0x10000), 21
-         * of 191 instructions differ in tla-en. */
         MapGrid_SetShake(0x10000, 0x40000, 0x10000);
         Func_020034ac(0);
         wait(8);
@@ -810,9 +805,6 @@ body:
         wait(16);
         Func_02003784(-2, target->terrainId);
         wait(4);
-        /* FAKEMATCH(wrapper): forwarded through Call3, which builds each -1
-         * apart; as MapGrid_SetShake(-1, -1, 0xe666), 23 of 191 instructions
-         * differ in tla-en. */
         MapGrid_SetShake(-1, -1, 0xe666);
         wait(8);
         *flags = 3;

@@ -244,9 +244,6 @@ s32 Scene_Initialize(void) {
   if (scene == (s32)&SceneId_Ov6abRoom1) {
     Func_0200443c(0);
     if (GameFlag_Test(0xa30)) {
-      /* FAKEMATCH(wrapper): Map_CopyCellAttributeRect and Func_0802b450 called through
-       * Call6, here and below; as direct calls, 12 of 255 instructions differ
-       * in tla-en. */
       MapGrid_CopyCellAttributes(65, 65, 9, 21, 38, 24);
       MapGrid_CopyCellsLayered(65, 65, 9, 21, 38, 24);
       MapGrid_CopyCellsLayered(76, 64, 9, 22, 38, 87);

@@ -1238,10 +1238,6 @@ void Func_02001828(void) {
   s32 *p;
   s32 rowAbove;
 
-  /* FAKEMATCH(wrapper): the calls that repeat a constant, the flag tests and
-   * the cell copies go through call.h's forwarding inlines, so that each call
-   * builds its own constants and stack arguments; as direct calls, 163 of 496
-   * instructions differ in tla-en. */
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   // One local reused for the position's address, the loop counters and the

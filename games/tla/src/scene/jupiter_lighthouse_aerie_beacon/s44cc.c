@@ -100,9 +100,6 @@ static __inline__ void Func_02001c10_(s32 id, s32 x, s32 z) {
 static __inline__ s32 GameFlag_Test_(s32 flag) { return GameFlag_Test(flag); }
 
 void Func_02004644(void) {
-  /* FAKEMATCH(wrapper): calls forwarded through inlines (call.h's Call and
-   * Value, this file's own); as direct calls, 165 of 165 instructions differ in
-   * tla-en. */
   struct Actor *left = Actor_GetById(9);
   struct Actor *right = Actor_GetById(10);
   struct Actor *rider = Actor_GetById(23);

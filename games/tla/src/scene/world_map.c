@@ -709,9 +709,6 @@ s32 Scene_Initialize(void) {
   FieldCamera_SetSpeed(0x80000, 0x10000);
   GameFlag_ClearBit(0x12f);
   Func_02003960();
-  /* FAKEMATCH(wrapper): the three Map_SetWindowCellTile calls forwarded through
-   * Call4, so each builds its own constants (the 256 is not shared); as direct
-   * calls, 12 of 270 instructions differ in tla-en. */
   if (GameFlag_Test(0x90f))
     Field_SetWorldMapWindowCellTile(0, 240, 336, 288);
   if (GameFlag_Test(0xa21)) {
@@ -738,9 +735,6 @@ s32 Scene_Initialize(void) {
     Func_02003490();
     break;
   case 59:
-    /* FAKEMATCH(wrapper): the flag test here and case 98's four sets forwarded
-     * through flag_call.h's Flag_IsSet and Flag_Set; as direct GameFlag_Test
-     * and GameFlag_SetBit calls, 75 of 270 instructions differ in tla-en. */
     if (!Event_GetFlag(0x90a) && GameFlag_Test(0xa5f) != 0) {
       GameFlag_SetBit(0x90a);
       Func_02001c5c();

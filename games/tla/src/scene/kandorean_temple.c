@@ -1400,9 +1400,6 @@ void Func_02005330(struct Actor *object, s32 mode);
 void Func_02005148(struct Actor *object);
 
 void Func_020023e8(void) {
-  /* FAKEMATCH(wrapper): calls forwarded through inlines (call.h's Call and
-   * Value, this file's own); as direct calls, 180 of 260 instructions differ in
-   * tla-en. */
   s16 angle = *(s16 *)&Actor_GetById(gMainRoutineWork.currentOwner)->facing;
   struct Actor *object;
   struct FieldSprite *sprite;

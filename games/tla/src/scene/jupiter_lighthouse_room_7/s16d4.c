@@ -44,9 +44,6 @@ void Func_02001f74(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags, struct EffectOptions *options);
 
 struct GustObject *Func_020016d4(struct GustObject *source) {
-  /* FAKEMATCH(wrapper): calls forwarded through inlines (call.h's Call and
-   * Value, this file's own); as direct calls, 69 of 92 instructions differ in
-   * tla-en. */
   struct Vector3 position;
   struct EffectOptions options;
   struct GustObject *object;

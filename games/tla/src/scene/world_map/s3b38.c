@@ -233,9 +233,6 @@ void Func_02003d44(s32 mode) {
   gData_02006e08 = 0xc00;
   PUSH_PICTURE(0x3a80);
   if (mode == 1) {
-    /* FAKEMATCH(wrapper): Map_SetScreenShake called through Call3; as
-     * MapGrid_SetShake(0x20000, 0x20000, 0x10000), 19 of 593 instructions
-     * differ in tla-en. */
     MapGrid_SetShake(0x20000, 0x20000, 0x10000);
     Event_PlaySound(141);
     gData_02006e08 = 0xd00;
@@ -493,9 +490,6 @@ extern u8 Data_02006e20[][32];
 extern u8 gData_02006f20[][32];
 
 void Func_02004744(s32 progress) {
-  /* FAKEMATCH(wrapper): calls forwarded through inlines (call.h's Call and
-   * Value, this file's own); as direct calls, 2 of 181 instructions differ in
-   * tla-en. */
   s32 level = ((progress * 30 + 0x8000) >> 16) + 1;
   s32 kind = 0;
   s32 count, base, i;

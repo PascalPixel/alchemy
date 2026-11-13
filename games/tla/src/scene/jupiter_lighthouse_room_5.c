@@ -737,15 +737,7 @@ void Func_02000e04(s32 id) {
   height = object->terrainHeight;
   WORD_AT(object, 68) = 0;
   object->y = height + 0x200000;
-  {
-    u8 *flags = &object->priorityFlags;
-    /* FAKEMATCH(temporary): a local holding 128, so the bit is built in the
-     * register it is ORed into; as *flags |= 128, 4 of 38 instructions differ
-     * in tla-en. */
-    s32 bit = 128;
-
-    *flags = bit | *flags;
-  }
+  object->priorityFlags |= 128;
   height = Map_GetTerrainHeight(BYTE_AT(object, 34), object->x, object->z);
   Func_02002888(object->x, object->z, 0, (height >> 19) + 6);
   Func_02002a30(object->x, object->z, 0, 128);
@@ -758,9 +750,6 @@ void Event_Start(void);
 void Event_End(void);
 
 void Func_02000e58(void) {
-  /* FAKEMATCH(wrapper): calls forwarded through inlines (call.h's Call and
-   * Value, this file's own); as direct calls, 8 of 216 instructions differ in
-   * tla-en. */
   struct EventWork *work = Ram_HeapSlots->eventWork;
   struct Actor *actor = Actor_Get(gMainRoutineWork.currentOwner);
   struct Actor *linked = actor->watchedObject;
@@ -963,9 +952,6 @@ extern void Func_02001c88__s1230(s32 x, s32 y, s32 z, s32 velocityX, s32 velocit
                    s32 velocityZ, u32 flags, struct EffectOptions *options) __asm__("Func_02001c88");
 
 struct GustObject *Func_02001230(struct GustObject *source) {
-  /* FAKEMATCH(wrapper): calls forwarded through inlines (call.h's Call and
-   * Value, this file's own); as direct calls, 69 of 92 instructions differ in
-   * tla-en. */
   struct Vector3 position;
   struct EffectOptions options;
   struct GustObject *object;

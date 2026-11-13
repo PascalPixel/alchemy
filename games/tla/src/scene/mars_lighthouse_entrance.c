@@ -1018,9 +1018,6 @@ extern char SceneId_Ov6aaRoom6;
 extern char SceneId_Ov6aaRoom7;
 
 s32 Scene_Initialize(void) {
-  /* FAKEMATCH(wrapper): calls forwarded through inlines (call.h's Call and
-   * Value, this file's own); as direct calls, 103 of 549 instructions differ in
-   * tla-en. */
   s32 v_r8, v_r7, v_r5, t0, t1, t2, t8, t12, t17, t21;
   s32 t23, t24, t26, t27, t29, t34, t38, t40, t41, t48;
   s32 t51, t52, t55, t56, t57, t72, t73, t74, t78, t81;

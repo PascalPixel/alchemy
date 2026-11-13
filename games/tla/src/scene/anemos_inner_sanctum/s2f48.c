@@ -27,9 +27,6 @@ void Func_02002f48(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  /* FAKEMATCH(wrapper): the call forwarded through Call4, which builds each -1
-   * in its own register; as a direct call, 8 of 169 instructions differ in
-   * tla-en. */
   FieldCamera_MoveTo(-1, -1, -1, 0);
   Map_CenterOnFollowedPoint();
   System_Wait(1);
@@ -80,13 +77,7 @@ loop:
   Event_PlaySound(188);
   Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x101);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 49);
-  /* FAKEMATCH(wrapper): the call forwarded through Call3, which builds each
-   * constant in its own register; as a direct call, 26 of 169 instructions
-   * differ in tla-en. */
   MapGrid_SetShake(0x50000, 0x50000, 0x10000);
-  /* FAKEMATCH(wrapper): the call forwarded through Call3, which builds each -1
-   * in its own register; as a direct call, 7 of 169 instructions differ in
-   * tla-en. */
   MapGrid_SetShake(-1, -1, 0xe666);
   MapGrid_WaitForShakeToSettle();
   Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x100);

@@ -380,9 +380,6 @@ void Func_0200095c(void) {
   struct Cell delta, cell;
   s32 cellZ, cellX, newZ, newX, flag = 0, steps = 0, hit, angle, i;
 
-  /* FAKEMATCH(wrapper): calls forwarded through call.h's Value4, Call2, Call4
-   * and Call6, so each builds its own constants; as direct calls, 382 of 632
-   * instructions differ in tla-en. */
   Event_Start();
   Event_ResolvePendingActions(0);
   Sound_Play(207);

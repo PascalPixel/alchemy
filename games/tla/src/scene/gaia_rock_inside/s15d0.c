@@ -209,9 +209,6 @@ s32 Func_020019cc(void) {
   volatile u16 level;
   s32 message;
 
-  /* FAKEMATCH(wrapper): the calls that repeat an argument are forwarded through
-   * call.h, so each builds its own; as direct calls, 32 of 250 instructions differ
-   * in tla-en. */
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   message = (s32)MsgGaiaRockInside09;

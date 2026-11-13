@@ -655,8 +655,6 @@ void Func_020011a8(void) {
     if ((gFrameCount & 4) == 0)
       Func_020010d8(leader);
     if (result < 0) {
-      /* FAKEMATCH(wrapper): Call2 kept; as a direct call, 2 of 151 instructions
-       * differ in tla-en. */
       Actor_SetAttachedEffect(owner, 0x102);
       FieldActor_SetMoveTarget(leader, leader->x, leader->y, leader->z + 0x80000);
       Func_02001c6c(leader, 49);

@@ -523,8 +523,6 @@ void Event_End(void);
 extern void Func_02000038__s0a34(void) __asm__("Func_02000038");
 
 void Func_02000a34(s32 value) {
-  /* FAKEMATCH(wrapper): calls forwarded through call.h's CallN and ValueN; as
-   * direct calls, 146 of 529 instructions differ in tla-en. */
   struct Actor *thrown = Actor_GetById(10);
   u16 bright[5];
   u16 dim[5];

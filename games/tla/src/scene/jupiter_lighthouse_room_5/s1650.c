@@ -131,8 +131,6 @@ void Func_02001718(const s32 *from, const s32 *to) {
 
     work->next = zero;
   }
-  /* FAKEMATCH(wrapper): the task through Value2; as a direct call, 8 of 145
-   * instructions differ in tla-en. */
   Task_AddFrame(Func_02001538, 0x480);
 }
 

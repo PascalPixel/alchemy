@@ -237,8 +237,6 @@ ask:
   unitData = Unit_Get(unit);
   Func_020010b8(unitData->items[slot]);
   Actor_SetItemIcon(Actor_Get(18), unitData->items[slot]);
-  /* FAKEMATCH(wrapper): Actor_SetHorizontalPositionWithTerrain called through
-   * Call3; as a direct call, 70 of 376 instructions differ in tla-en. */
   Actor_SetPosition(18, 0x2a00000, 0x680000);
   FieldEvent_Wait(60);
   MessageArgument_Push(unitData->items[slot], 2);
@@ -261,8 +259,6 @@ ask:
 read:
   FieldEvent_SetMessageId(message + 4);
   Event_ShowMessage(10, 0);
-  /* FAKEMATCH(wrapper): BattleEffect_ApplyColorToSourceBuffer called through
-   * Call2; as a direct call, 59 of 376 instructions differ in tla-en. */
   PaletteFade_ApplySource(0x10000, 0);
   FieldEvent_Wait(30);
   PaletteFade_ApplyTarget(0x40250d, 1);
@@ -271,8 +267,6 @@ read:
   Event_PlaySound(11);
   Actor_SetAnimation(10, 5);
   Actor_WaitForAnimationChange(10);
-  /* FAKEMATCH(wrapper): DANCE_TO calls through Call3 at its five sites; as a
-   * direct call, 67 of 376 instructions differ in tla-en. */
   DANCE_TO(664);
   FieldEvent_Wait(30);
   DANCE_TO(680);
@@ -289,16 +283,12 @@ read:
   Event_PlaySound(11);
   PaletteFade_ApplyTarget(0x10000, 1);
   PaletteFade_Interpolate(30);
-  /* FAKEMATCH(wrapper): Actor_SetHorizontalPositionWithTerrain called through
-   * Call3; as a direct call, 62 of 376 instructions differ in tla-en. */
   Actor_SetPosition(20, 0x2a00000, 0x680000);
   Event_PlaySound(0x90);
   Actor_SetAnimation(20, 2);
   Actor_WaitForAnimationChange(20);
   Actor_SetPosition(20, 0, 0);
   FieldEvent_Wait(4);
-  /* FAKEMATCH(wrapper): Actor_SetHorizontalPositionWithTerrain called through
-   * Call3; as a direct call, 2 of 376 instructions differ in tla-en. */
   Actor_SetPosition(19, 0x2a00000, 0x680000);
   Actor_SetAnimation(19, 4);
   Actor_WaitForAnimationChange(19);

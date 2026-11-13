@@ -1892,8 +1892,6 @@ void Func_02002ca4(void) {
   if ((gFrameCount & 4) == 0)
     Func_02002bd4(actor);
   if (hit < 0) {
-    /* FAKEMATCH(wrapper): Call2 kept; as a direct call, 2 of 151 instructions
-     * differ in tla-en. */
     Actor_SetAttachedEffect(id, 258);
     FieldActor_SetMoveTarget(actor, actor->x, actor->y, actor->z + 0x80000);
     Func_02003cc4(actor, 49);

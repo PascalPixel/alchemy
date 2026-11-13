@@ -601,9 +601,6 @@ struct UnitItems {
   } while (0)
 
 void Func_02000cd0(void) {
-  /* FAKEMATCH(wrapper): calls forwarded through inlines (call.h's Call and
-   * Value, this file's own); as direct calls, 612 of 691 instructions differ in
-   * tla-en. */
   s32 t2, t4, t75, t77, t78, t79, t80;
   s32 t101, t102, t135, t139, t140, t143, t144;
   s32 slot;
@@ -958,10 +955,6 @@ void Func_020016e8(void) {
   s32 southeast;
   s32 north;
 
-  /* FAKEMATCH(wrapper): 20 calls forwarded through call.h's Call1, Call3,
-   * Call4, Value2 and Value3 (Func_080d47b4's through a cast of its type); as
-   * direct calls, 171 of 400 instructions differ in tla-en (any one alone, 2
-   * to 98; the five Value3 calls, 27). */
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   /* FAKEMATCH(temporary): the three angles held in locals; as FACING_
@@ -1582,9 +1575,6 @@ static __inline__ void W_Actor_EnableActionAndSetCallback(s32 a0, s32 a1) {
   } while (0)
 
 void Func_02002ae4(void) {
-  /* FAKEMATCH(wrapper): calls forwarded through inlines (call.h's Call and
-   * Value, this file's own); as direct calls, 652 of 1539 instructions differ
-   * in tla-en. */
   s32 fast;
   s32 slow;
   s32 mid;
@@ -2434,15 +2424,7 @@ void Func_020040a0(s32 id) {
   height = object->terrainHeight;
   WORD_AT(object, 68) = 0;
   object->y = height + 0x200000;
-  {
-    u8 *flags = &object->priorityFlags;
-    /* FAKEMATCH(temporary): a local holding 128, so the bit is built in the
-     * register it is ORed into; as *flags |= 128, 4 of 38 instructions differ
-     * in tla-en. */
-    s32 bit = 128;
-
-    *flags = bit | *flags;
-  }
+  object->priorityFlags |= 128;
   height = Map_GetTerrainHeight(BYTE_AT(object, 34), object->x, object->z);
   Func_020057c4(object->x, object->z, 0, (height >> 19) + 6);
   Func_020059ec(object->x, object->z, 0, 128);
@@ -2455,9 +2437,6 @@ void Event_Start(void);
 
 
 void Func_020040f4(void) {
-  /* FAKEMATCH(wrapper): calls forwarded through inlines (call.h's Call and
-   * Value, this file's own); as direct calls, 8 of 216 instructions differ in
-   * tla-en. */
   struct EventWork *work = Ram_HeapSlots->eventWork;
   struct Actor *actor = Actor_Get(gMainRoutineWork.currentOwner);
   struct Actor *linked = actor->watchedObject;

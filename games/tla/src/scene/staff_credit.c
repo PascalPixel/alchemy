@@ -987,9 +987,6 @@ extern u8 gData_02003fd8[][32];
 extern u8 gData_020040d8[][32];
 
 void Func_02001be0(s32 progress) {
-  /* FAKEMATCH(wrapper): calls forwarded through inlines (call.h's Call and
-   * Value, this file's own); as direct calls, 2 of 181 instructions differ in
-   * tla-en. */
   s32 level = ((progress * 30 + 0x8000) >> 16) + 1;
   s32 kind = 0;
   s32 count, base, i;

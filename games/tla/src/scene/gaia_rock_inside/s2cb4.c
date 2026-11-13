@@ -1592,14 +1592,8 @@ s32 Scene_PrepareMap(void) {
       }
       Func_020048a0();
       stage = (s32 *)(gData_020023c4 + 0x288);
-      /* FAKEMATCH(wrapper): the call forwarded through Call3; as a direct
-       * Actor_SetHorizontalPositionWithTerrain call, 2 of 229 instructions
-       * differ in tla-en. */
       if (*stage == 3 && !GameFlag_Test(0x3f6))
         Actor_SetPosition(64, 0x680000, 0x580000);
-      /* FAKEMATCH(wrapper): the call forwarded through Call3; as a direct
-       * Actor_SetHorizontalPositionWithTerrain call, 2 of 229 instructions
-       * differ in tla-en. */
       if (*stage == 9)
         Actor_SetPosition(65, 0x680000, 0x480000);
       if (GameFlag_Test(*stage + 0xa50)) {

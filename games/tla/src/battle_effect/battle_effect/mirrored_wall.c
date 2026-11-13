@@ -525,7 +525,7 @@ void BattleEffect_RunLobbedShells(struct BattleEffectArgument *effect,
 
   // Modes 3 and 5 clear both canvases and go on into a summon canvas effect.
   if (mode == 3 || mode == 5) {
-    Iwram_ClearWords((void *)0x06004000, 0x3c00);
+    Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), 0x3c00);
     Iwram_ClearWords(canvas, 0x3c00);
     Task_Remove(Palette_StepFadeTransfer);
     if (mode == 3)

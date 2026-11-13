@@ -353,7 +353,7 @@ void BattleEffect_RunFallingSword(struct BattleEffectArgument *effect,
   // Mode 1 turns the first 64 BG colours: red to blue, blue to green, green
   // to red.
   if (mode == 1) {
-    u16 *color = (u16 *)0x05000000;
+    u16 *color = (u16 *)BG_PLTT;
 
     for (i = 0; i != 64; i++) {
       s32 red = *color & 0x1f;
@@ -414,7 +414,7 @@ void BattleEffect_RunFallingSword(struct BattleEffectArgument *effect,
     } else if (mode == 1) {
       if (frame == 61) {
         Iwram_CopyWordsEntry(
-            (void *)0x05000000,
+            (void *)BG_PLTT,
             Resource_GetTableEntry((s32)&ResourceId_LightningBoltSheet), 128);
         Palette_MirrorBgColors();
       }

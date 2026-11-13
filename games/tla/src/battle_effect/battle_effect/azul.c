@@ -241,7 +241,7 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
   stripEnd = 0x3a08;
   for (frame = 0; frame != 228; frame++) {
     if ((gInput.repeat & (KEY_A | KEY_B)) && frame > 15 && frame <= 185) {
-      Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
+      Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
       work->transferPending = 1;
       wait(1);
       frame = 186;
@@ -801,7 +801,7 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
     }
     if (frame == 186) {
       BattleBackground_LoadFar(1, *(u16 *)(battle + 0x670), 24);
-      Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
+      Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
       IO_WRITE_QUEUE_PUSH(0x04000000, 0x7741, 0x20000);
       for (i = 0; i != effect->count; i++) {
         BattleEffect_TintBattler(effect->actors[i], 7, 5, i, 16);

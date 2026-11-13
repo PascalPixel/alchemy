@@ -450,7 +450,7 @@ void BattleEffect_RunMoteFountain(struct BattleEffectArgument *effect,
   HeapSlot_Release(SLOT_BLITTER);
   if (mode == MODE_SLAVER) {
     // Clear the canvas and run Impair's effect on the targets.
-    Iwram_ClearWords((void *)0x06004000, 0x3c00);
+    Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), 0x3c00);
     Iwram_ClearWords(canvas, 0x3c00);
     Task_Remove(Palette_StepFadeTransfer);
     SummonEffect_RunCanvasMode1(effect);

@@ -114,7 +114,7 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
     break;
   }
   palette = Resource_GetTableEntry(resource);
-  Iwram_CopyWords((void *)0x05000000, palette, 128);
+  Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   switch (kind) {
   case 0:
     resource = (s32)&ResourceId_VenusDjinnSmallSheet;
@@ -356,8 +356,8 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   HeapSlot_Release(188);
   HeapSlot_Release(104);
-  Iwram_ClearWords((void *)0x06004000, 0x4000);
-  Iwram_ClearWords(canvas, 0x4000);
+  Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), 0x4000);
+  Iwram_ClearWords(canvas, CANVAS_BYTES);
   REG_BLDALPHA = 0x1010;
 }
 

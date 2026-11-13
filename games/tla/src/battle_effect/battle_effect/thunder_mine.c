@@ -535,7 +535,7 @@ void BattleEffect_RunMegaera(struct BattleEffectArgument *effect) {
       }
     }
     if ((u32)(frame - 64) <= 3) {
-      Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
+      Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
     }
     if (frame > 103) {
       BattleEffect_StepPaletteToResource((s32)&ResourceId_TanPalette);

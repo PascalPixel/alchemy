@@ -15,7 +15,6 @@
 
 // Heap slots, as byte offsets into Ram_HeapSlots.
 #define SLOT_BATTLE_EFFECT 92      // battleFxWork[0]
-#define SLOT_BATTLE_CANVAS 96      // battleFxWork[1]
 #define SLOT_BATTLE_SHEET 100      // unk64[0]
 #define SLOT_BLITTER 104           // unk64[1]
 #define SLOT_BLITTER_ALTERNATE 188 // unkb8[1]
@@ -86,7 +85,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectArgument *effect) {
   s32 cy;
 
   work = HeapSlot_Alloc(SLOT_BATTLE_EFFECT, BATTLE_EFFECT_WORK_SIZE);
-  canvas = HeapSlot_Alloc(SLOT_BATTLE_CANVAS, 0x4000);
+  canvas = HeapSlot_Alloc(HEAP_SLOT_CANVAS, CANVAS_BYTES);
   battle = Ram_HeapSlots->battleWork;
   view = (struct BattleBackgroundView *)Ram_HeapSlots->transitionWork;
   work->effect = effect;
@@ -126,8 +125,8 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectArgument *effect) {
     }
   }
 
-  Iwram_ClearWords(canvas, 0x4000);
-  Iwram_ClearWords((void *)0x06004000, 0x4000);
+  Iwram_ClearWords(canvas, CANVAS_BYTES);
+  Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), 0x4000);
   IO_WRITE_QUEUE_PUSH(0x04000000, 0x7741, 0x20000);
   REG_BLDALPHA = 0x1010;
   REG_BLDCNT = 0;
@@ -160,14 +159,14 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectArgument *effect) {
 
   // Copy the picture at 0x06008000 aside, fill it with colour 1, and make
   // colours 6 to 13 white.
-  Iwram_CopyWords(Ram_MapCellBuffer, (void *)0x06008000, 0x7800);
+  Iwram_CopyWords(Ram_MapCellBuffer, (void *)BG_CHAR_BLOCK(2), 0x7800);
   Iwram_FillWords(Ram_MapCellBuffer, 0x7800, 0x01010101);
   view->busy = 1;
   work->savedBg1X = gBgScroll[1].x;
   work->savedBg1Y = gBgScroll[1].y;
   gBgScroll[1].x = 0;
   IO_WRITE_QUEUE_PUSH(0x0400000a, 0x1f81, 0x20000);
-  Iwram_FillWords((void *)0x050000c0, 0x100, 0x7fff7fff);
+  Iwram_FillWords((void *)(BG_PLTT + 6 * 16), 0x100, 0x7fff7fff);
   Sound_PlayFar(SE_POWER_UP);
   BattleEffect_TintBattler(effect->actors[0], 7, 3, 0, 30);
 
@@ -192,7 +191,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectArgument *effect) {
     if (frame > 7) {
       u16 *pal;
 
-      pal = (u16 *)0x050000c0;
+      pal = (u16 *)(BG_PLTT + 6 * 16);
       for (i = 0; i != 128; i++) {
         s32 red = *pal & 0x1f;
         s32 green = (*pal >> 5) & 0x1f;
@@ -218,7 +217,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectArgument *effect) {
     }
 
     if (frame == 4)
-      Iwram_FillWords((void *)0x06008000, 0x7800, 0x02020202);
+      Iwram_FillWords((void *)BG_CHAR_BLOCK(2), 0x7800, 0x02020202);
 
     // Frames 0 to 3: widen the circle by 32 pixels of radius, brightening
     // its grey.
@@ -302,7 +301,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectArgument *effect) {
           py++;
         }
       }
-      Iwram_CopyWords((void *)0x06008000, Ram_MapCellBuffer, 0x7800);
+      Iwram_CopyWords((void *)BG_CHAR_BLOCK(2), Ram_MapCellBuffer, 0x7800);
     }
 
     // Up to frame 50, draw the pieces; from frame 4 they fall.
@@ -387,7 +386,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectArgument *effect) {
   wait(1);
   IO_WRITE_QUEUE_PUSH(0x04000000, 0x7541, 0x20000);
   HeapSlot_Release(SLOT_BATTLE_SHEET);
-  HeapSlot_Release(SLOT_BATTLE_CANVAS);
+  HeapSlot_Release(HEAP_SLOT_CANVAS);
   HeapSlot_Release(SLOT_BATTLE_EFFECT);
 }
 
@@ -421,7 +420,7 @@ void BattleEffect_RunElementBurst(struct BattleEffectArgument *effect) {
   s32 i;
 
   work = HeapSlot_Alloc(SLOT_BATTLE_EFFECT, BATTLE_EFFECT_WORK_SIZE);
-  canvas = HeapSlot_Alloc(SLOT_BATTLE_CANVAS, 0x4000);
+  canvas = HeapSlot_Alloc(HEAP_SLOT_CANVAS, CANVAS_BYTES);
   sheet = HeapSlot_Alloc(SLOT_BATTLE_SHEET, 0x60e);
   work->vblanksSinceTransfer = 1;
   work->effect = effect;
@@ -537,7 +536,7 @@ void BattleEffect_RunElementBurst(struct BattleEffectArgument *effect) {
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
   HeapSlot_Release(SLOT_BATTLE_SHEET);
-  HeapSlot_Release(SLOT_BATTLE_CANVAS);
+  HeapSlot_Release(HEAP_SLOT_CANVAS);
   HeapSlot_Release(SLOT_BATTLE_EFFECT);
 }
 
@@ -554,7 +553,7 @@ void BattleEffect_TransferHalvedCanvas(void) {
     work->halvePending = 0;
     IRQ_UNLOCK(ime);
     {
-      void *destination = (void *)0x06004000;
+      void *destination = (void *)BG_CHAR_BLOCK(1);
 
       ColorBuffer_Halve(buffer, destination, 0x4000);
     }
@@ -656,7 +655,7 @@ void BattleEffect_StartElementStreaks(s32 kind) {
   s32 k;
 
   work = HeapSlot_Alloc(SLOT_BATTLE_EFFECT, sizeof *work);
-  canvas = HeapSlot_Alloc(SLOT_BATTLE_CANVAS, 0x4000);
+  canvas = HeapSlot_Alloc(HEAP_SLOT_CANVAS, CANVAS_BYTES);
   battle = Ram_HeapSlots->battleWork;
   view = (struct BattleBackgroundView *)Ram_HeapSlots->transitionWork;
 
@@ -693,8 +692,8 @@ void BattleEffect_StartElementStreaks(s32 kind) {
       *(volatile u16 *)(0x06003800 + i) = *(u16 *)&entry;
     }
   }
-  Iwram_ClearWords(canvas, 0x4000);
-  Iwram_ClearWords((void *)0x06004000, 0x4000);
+  Iwram_ClearWords(canvas, CANVAS_BYTES);
+  Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), 0x4000);
   wait(1);
 
   switch (kind) {
@@ -734,7 +733,7 @@ void BattleEffect_EndElementStreaks(void) {
   Task_Remove(BattleEffect_DrawStreaks);
   Task_Remove(BattleEffect_TransferHalvedCanvas);
   Task_Remove(BattleEffect_DimBackgroundStep);
-  Iwram_ClearWords((void *)0x06004000, 0x4000);
+  Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), 0x4000);
   HeapSlot_Release(96);
   HeapSlot_Release(92);
 }
@@ -855,7 +854,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
   }
   actor[18] = 0xab85;
   actor[3] = 0;
-  Iwram_FillWords((void *)0x06004000, 0x4000, 0x3f3f3f3f);
+  Iwram_FillWords((void *)BG_CHAR_BLOCK(1), 0x4000, 0x3f3f3f3f);
   gCameraSceneParameters[4] = 240;
   BattleEffect_SelectLivingTargets(work->effect);
   BattleBackground_LoadFar(1, (s32)&ResourceId_SunbeamCloudsBackdrop, 0);
@@ -993,7 +992,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
           Palette_BrightenSavedBattleBg(fr >> 16, fg >> 16, fb >> 16);
         }
         if (frame == 124) {
-          Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
+          Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
         }
         if (frame <= 123) {
           s32 size = 140;
@@ -1248,10 +1247,10 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
     }
     work->transferMode = 2;
     work->transferValue = 50;
-    Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
+    Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
     work->transferPending = 1;
     wait(1);
-    Iwram_FillWords(canvas, 0x4000, 0);
+    Iwram_FillWords(canvas, CANVAS_BYTES, 0);
     REG_BG2CNT = 0x786;
     BattleBackground_LoadFar(1, (s32)&ResourceId_VioletSkyBackdrop, 0);
     Palette_BrightenBattleBg(31, 31, 31);
@@ -1378,7 +1377,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
               Sound_PlayFar(SE_CLATTER);
             }
             work->shakeFrames = 8;
-            Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
+            Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
           }
           if ((u32)d <= 15) {
             s32 r = (Trig_Sin(d << 11) * gMirroredWall_Pictures[i] >> 16) + 2;
@@ -1625,7 +1624,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
   BG_PLTT_COLOR(5, 14) = BG_PLTT_COLOR(15, 4);
   work->transferMode = 3;
   work->transferValue = 0x02020202;
-  Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
+  Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
   REG_BG2CNT = 0x784;
   effect->actors[effect->count] = 0xff;
   BattleActor_SpawnObjectsForListFar(effect->actors, 0);
@@ -1659,7 +1658,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
         BattlePlayback_StartFar(134);
       }
       if (frame == 107) {
-        Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
+        Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
       }
       if (frame > 107) {
         work->transferMode = 3;
@@ -1767,7 +1766,6 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
   BattleEffect_EndCanvasLayer();
 }
 #undef SLOT_BATTLE_EFFECT
-#undef SLOT_BATTLE_CANVAS
 #undef SLOT_BATTLE_SHEET
 #undef SLOT_BLITTER
 #undef SLOT_BLITTER_ALTERNATE

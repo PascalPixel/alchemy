@@ -256,7 +256,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
   REG_BLDALPHA = 0x1010;
   REG_BLDCNT = 0x3f44;
   {
-    u16 *map = (u16 *)0x0600f800;
+    u16 *map = (u16 *)BG_SCREEN_BLOCK(31);
 
     {
       s32 i;
@@ -879,13 +879,13 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
       }
     }
     if (frame == 602) {
-      Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
+      Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
     }
     if (frame == 630) {
-      Iwram_FillWordsEntry(canvas, 0x4000, 0x1f1f1f1f);
+      Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(31));
     }
     if (frame == 634) {
-      Iwram_FillWordsEntry(canvas, 0x4000, 0x1f1f1f1f);
+      Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(31));
     }
     if ((u32)(frame - 552) <= 43) {
       p = work->particles;
@@ -1147,7 +1147,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
     if (!(gInput.repeat & (KEY_A | KEY_B))) {
       do {
         if (frame == 0) {
-          Iwram_FillWordsEntry(canvas, 0x4000, 0);
+          Iwram_FillWordsEntry(canvas, CANVAS_BYTES, 0);
           rise = -0x400000;
           Palette_BrightenSavedBattleBg(0, -16, -16);
           work->transferMode = 2;
@@ -1186,7 +1186,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
         if (frame == 82) {
           work->shakeFrames = 8;
           Sound_PlayFar(SE_BANE_ESCAPE);
-          IWRAM_FILL_WORDS(canvas, 0x4000, 0x3f3f3f3f);
+          IWRAM_FILL_WORDS(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
         }
         if (frame == 96) {
           Sound_PlayFar(SE_104);
@@ -1456,7 +1456,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
     bolts = Ram_MapCellBuffer + 0x4000;
     slide = 0;
     slideStep = 0;
-    Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
+    Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
     work->transferPending = 1;
     wait(1);
     gBgScroll[1].x = savedScroll;
@@ -1479,7 +1479,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
         frame = 88;
       }
       if (frame == 88) {
-        Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
+        Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
         work->transferMode = 3;
         work->transferValue = 0x02020202;
         gBgScroll[1].x = savedScroll;
@@ -1488,7 +1488,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
         BattlePlayback_StartFar(134);
       }
       if (frame == 0) {
-        IWRAM_FILL_WORDS(canvas, 0x4000, 0x3f3f3f3f);
+        IWRAM_FILL_WORDS(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
         work->scrollStepX = -16;
         gCameraSceneParameters[3] = -968;
         gCameraSceneParameters[4] = 120;

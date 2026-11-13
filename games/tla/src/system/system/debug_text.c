@@ -80,7 +80,7 @@ void DebugText_Print(const u8 *src) {
       do {
         *dst++ = c | mask;
         if (dst == (u16 *)addr)
-          dst = (u16 *)0x06002000;
+          dst = (u16 *)BG_SCREEN_BLOCK(4);
         cnt++;
         if (cnt > 31)
           break;
@@ -129,7 +129,7 @@ void DebugText_Clear(void) {
 
 void Window_LoadGraphics(void) {
   Dma_Set(Resource_GetTableEntry((s32)&ResourceId_WindowTiles),
-          (void *)0x06000000, 0x84000800, REG_DMA3);
+          (void *)BG_CHAR_BLOCK(0), 0x84000800, REG_DMA3);
   Dma_Set((const void *)gWindow_Palette, (void *)&BG_PLTT_COLOR(15, 0),
           DMA_COPY_HALFWORDS(16), REG_DMA3);
   Io_Write16(0, &PLTT_BACKDROP);
@@ -138,7 +138,7 @@ void Window_LoadGraphics(void) {
     s32 color;
 
     color = 0x4180;
-    pal = (volatile u16 *)0x050001e8;
+    pal = (volatile u16 *)(BG_PLTT + 244);
     *pal = color;
     color = 0x3960;
     pal++;

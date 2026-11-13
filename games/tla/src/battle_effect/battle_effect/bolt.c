@@ -58,7 +58,7 @@ void BattleEffect_RunBolt(struct BattleEffectArgument *effect) {
     // The sky flashes as each bolt starts.
     for (i = 0; i != effect->count; i++) {
       if (frame == i * BOLT_INTERVAL)
-        Iwram_FillWordsEntry(canvas, 0x4000, 0x10101010);
+        Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(16));
     }
 
     for (i = 0; i != effect->count; i++) {

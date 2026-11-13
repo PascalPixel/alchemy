@@ -413,7 +413,7 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
         s32 mirrorX;
         for (i = 0; i != 6; i++) {
           if (frame == i * 8 + 80) {
-            Iwram_FillWordsEntry(canvas, 0x4000, 0x10101010);
+            Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(16));
           }
         }
         for (i = 0; i != STORM_BOLTS; i++) {

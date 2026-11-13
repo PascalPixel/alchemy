@@ -390,7 +390,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
           b = 31;
         *pal = b << 10 | g << 5 | r;
       }
-      Iwram_FillWordsEntry(canvas, 0x4000, 0x01010101);
+      Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(1));
     }
 
     if (mode == 3) {
@@ -1051,7 +1051,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
         work->shakeFrames = 8;
         BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 12);
         BattleMotion_ApplyKnockbackFar(effect->actors[0], 4);
-        Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
+        Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
       }
       if (frame > 27) {
         struct EffectStep *q;
@@ -1182,7 +1182,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectArgument *effect, s32 mode) {
       if (frame == 8) {
         Sound_PlayFar(SE_POWER_UP);
         work->shakeFrames = 8;
-        Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
+        Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
         for (i = 0; i != effect->count; i++)
           BattleEffect_TintBattler(effect->actors[i], 7, 5, i, 7);
       }

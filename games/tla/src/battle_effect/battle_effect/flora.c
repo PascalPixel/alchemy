@@ -226,7 +226,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
       Task_Add(BattleEffect_AdvanceScrollOnInterval, 3200);
       transition[4] = 1;
       e = Resource_GetTableEntry((s32)&ResourceId_PinkPetalsTiles);
-      Iwram_CopyWordsEntry((void *)0x050003e0, e, 32);
+      Iwram_CopyWordsEntry((void *)(OBJ_PLTT + 15 * 16), e, 32);
       e += 32;
       Decompress_TaggedLz(e, source);
       cells = Ram_MapCellBuffer;
@@ -315,8 +315,8 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
        frame != 300 && (!(gInput.repeat & (KEY_A | KEY_B)) || frame <= 16);
        frame++) {
     if (frame == 0) {
-      Iwram_ClearWords((void *)0x06004000, 0x4000);
-      Iwram_ClearWordsEntry(canvas, 0x4000);
+      Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), 0x4000);
+      Iwram_ClearWordsEntry(canvas, CANVAS_BYTES);
       for (i = 0; i != 240; i++) {
         w->palette[i] = 0x7fff;
       }
@@ -374,7 +374,8 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
       Iwram_CopyWordsEntry((void *)OBJ_PLTT, Data_02014260, 480);
     }
     if (u <= 7) {
-      Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f - u * 0x01010101 * 8);
+      Iwram_FillWordsEntry(canvas, CANVAS_BYTES,
+                           CANVAS_FILL_WORD(63) - u * 0x01010101 * 8);
     }
     req = Data_08196ec8;
     dy = 0;
@@ -818,9 +819,9 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
     Sprite_DestroyFar(work->objects[i]);
   }
   Palette_LoadBasicSpriteColors();
-  Dma_Set((const void *)OBJ_PLTT, (void *)0x050000a0, 0x80000010,
+  Dma_Set((const void *)OBJ_PLTT, (void *)(BG_PLTT + 5 * 16), 0x80000010,
           (volatile u32 *)0x040000d4);
-  *(u16 *)0x050000bc = *(u16 *)0x050001e8;
+  *(u16 *)(BG_PLTT + 94) = *(u16 *)(BG_PLTT + 244);
   work->transferMode = 2;
   work->transferValue = 50;
   work->transferMode = 1;

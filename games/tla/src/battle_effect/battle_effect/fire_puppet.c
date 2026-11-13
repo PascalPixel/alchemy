@@ -181,7 +181,7 @@ void BattleEffect_RunFirePuppet(struct BattleEffectArgument *effect) {
       BattleEffect_TintBattler(effect->actor, 0, 0, 0, -1);
     }
     if (frame == 54) {
-      Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
+      Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
       Sound_PlayFar(SE_POWER_UP);
       BattlePlayback_StartFar(212);
       work->shakeFrames = 8;

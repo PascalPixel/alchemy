@@ -343,8 +343,8 @@ s32 NameEntry_EditMemberName(s32 member) {
     x = 72 + NameEntry_CountLetters(editedName) * 10;
     MenuCursor_SetPositionImmediateFar(&nameCaret.cursor, x, 22);
   }
-  palette = (u16 *)0x050001c0;
-  Dma_Set((void *)0x050001e0, palette, 0x84000008, REG_DMA3);
+  palette = (u16 *)(BG_PLTT + 14 * 16);
+  Dma_Set((void *)(BG_PLTT + 15 * 16), palette, 0x84000008, REG_DMA3);
   palette[4] = 0x6318;
   end = (u8 *)(byteCount + (s32)editedName) - 1;
   while (1) {
@@ -631,8 +631,8 @@ s32 NameEntry_EditMemberName(s32 member) {
     MenuCursor_SetPositionImmediateFar(&nameCaret.cursor,
                                        Text_SetString(editedName) + 70, 22);
   }
-  palette = (u16 *)0x050001c0;
-  Dma_Set((void *)0x050001e0, palette, 0x84000008, REG_DMA3);
+  palette = (u16 *)(BG_PLTT + 14 * 16);
+  Dma_Set((void *)(BG_PLTT + 15 * 16), palette, 0x84000008, REG_DMA3);
   palette[4] = 0x6318;
   end = (u8 *)(originalLength + (s32)editedName);
   while (1) {

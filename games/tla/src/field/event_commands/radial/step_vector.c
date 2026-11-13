@@ -172,8 +172,8 @@ void ColorBuffer_MapToFadeStep3(u8 *buffer, s32 count) {
 
 #include "system/dma.h"
 
-#define OBJ_TILES ((u8 *)0x06010000)
-#define BG_VRAM ((void *)0x06000000)
+#define OBJ_TILES ((u8 *)OBJ_VRAM0)
+#define BG_VRAM ((void *)BG_CHAR_BLOCK(0))
 #define TILE_SIZE 32
 
 /// The canvas in words, as one 32-bit DMA.

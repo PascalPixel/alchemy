@@ -90,11 +90,11 @@ void WorldMap_PreloadCurrentTileBlock(void) {
   buffer = Heap_Alloc(0x200);
   switch (window->reloadSteps) {
   case 12: {
-    s16 backdropColor = *(s16 *)0x05000000;
+    s16 backdropColor = *(s16 *)BG_PLTT;
 
     Resource_DecodeByteLzInRam(Resource_GetTableEntry(resources[0]), buffer);
     *(s16 *)buffer = backdropColor;
-    Dma_Set(buffer, (void *)0x05000000, 0x84000070, REG_DMA3);
+    Dma_Set(buffer, (void *)BG_PLTT, 0x84000070, REG_DMA3);
     {
       u8 *anim = Data_0202d000;
       BattleEffect_LoadBufferPaletteFar(buffer);
@@ -108,25 +108,25 @@ void WorldMap_PreloadCurrentTileBlock(void) {
     Decompress_TaggedLz(Resource_GetTableEntry(resources[3]), gData_02038000);
     break;
   case 10:
-    Dma_Set(gData_02038000, (void *)0x06008000, 0x84000800, REG_DMA3);
+    Dma_Set(gData_02038000, (void *)BG_CHAR_BLOCK(2), 0x84000800, REG_DMA3);
     break;
   case 9:
     Decompress_TaggedLz(Resource_GetTableEntry(resources[4]), gData_0203a000);
     break;
   case 8:
-    Dma_Set(gData_0203a000, (void *)0x0600a000, 0x84000800, REG_DMA3);
+    Dma_Set(gData_0203a000, (void *)BG_SCREEN_BLOCK(20), 0x84000800, REG_DMA3);
     break;
   case 7:
     Decompress_TaggedLz(Resource_GetTableEntry(resources[5]), gData_0203c000);
     break;
   case 6:
-    Dma_Set(gData_0203c000, (void *)0x0600c000, 0x84000800, REG_DMA3);
+    Dma_Set(gData_0203c000, (void *)BG_CHAR_BLOCK(3), 0x84000800, REG_DMA3);
     break;
   case 5:
     Decompress_TaggedLz(Resource_GetTableEntry(resources[6]), gData_0203e000);
     break;
   case 4:
-    Dma_Set(gData_0203e000, (void *)0x0600e000, 0x84000800, REG_DMA3);
+    Dma_Set(gData_0203e000, (void *)BG_SCREEN_BLOCK(28), 0x84000800, REG_DMA3);
     break;
   case 3:
     Decompress_TaggedLz(Resource_GetTableEntry(resources[7]), gData_02028000);
@@ -155,8 +155,8 @@ void MapAnimation_PresentPicture(void) {
   dma = REG_DMA3;
   /* FAKEMATCH(barrier): an empty asm on dma. */
   __asm__ volatile("" : "+l"(dma));
-  Dma_Set(Ram_MapCellBuffer, (void *)0x06006000, DMA_COPY_WORDS(0xa000 / 4),
-          dma);
+  Dma_Set(Ram_MapCellBuffer, (void *)BG_SCREEN_BLOCK(12),
+          DMA_COPY_WORDS(0xa000 / 4), dma);
 }
 
 void MapAnimation_Start(void) {
@@ -176,7 +176,7 @@ void MapAnimation_Start(void) {
   if (work->extraTiles != 0)
     Decompress_TaggedLz(Resource_GetTableEntry(resources[4]), gData_0203a000);
   work->extraTiles = 0;
-  Dma_Set((void *)0x06004000, gDecodeBuffer, DMA_COPY_WORDS(0x2000 / 4),
+  Dma_Set((void *)BG_CHAR_BLOCK(1), gDecodeBuffer, DMA_COPY_WORDS(0x2000 / 4),
           REG_DMA3);
   wait(1);
   TileMap_DrawRowsFromRam(pages + (gFrameCount & one) * 0x1400 + 0xc80,
@@ -200,7 +200,8 @@ void Map_ShowBg1FromBuffer(void) {
   dma = REG_DMA3;
   /* FAKEMATCH(barrier): an empty asm on dma. */
   __asm__ volatile("" : "+l"(dma));
-  Dma_Set(gData_02038000, (void *)0x06008000, DMA_COPY_WORDS(0x8000 / 4), dma);
+  Dma_Set(gData_02038000, (void *)BG_CHAR_BLOCK(2), DMA_COPY_WORDS(0x8000 / 4),
+          dma);
 }
 
 s32 WorldMap_LoadAreaGraphics(void) {
@@ -212,7 +213,7 @@ s32 WorldMap_LoadAreaGraphics(void) {
   state = (struct MapViewWork *)Ram_HeapSlots->mapWork;
   buffer = Ram_MapCellBuffer;
   resources = state->resources;
-  value = *(s16 *)0x05000000;
+  value = *(s16 *)BG_PLTT;
   Resource_DecodeByteLzInRam(Resource_GetTableEntry(resources[0]), buffer);
   *(s16 *)buffer = value;
   Dma_Set(buffer, (void *)BG_PLTT, DMA_COPY_WORDS(112), REG_DMA3);

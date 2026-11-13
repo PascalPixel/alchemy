@@ -120,7 +120,7 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, pixels, 0, 0);
   if (effect->variant == 1) {
     Iwram_CopyWordsEntry(
-        (void *)0x05000000,
+        (void *)BG_PLTT,
         Resource_GetTableEntry((s32)&ResourceId_EffectPalette02), 128);
     work->transferValue = 50;
     BattleEffect_LoadBlitter(

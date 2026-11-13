@@ -204,15 +204,15 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
   gCameraSceneParameters[4] = 240;
   wait(1);
   IWRAM_FILL_WORDS(map, 0x8000, 0x01010101);
-  Iwram_CopyWordsEntry((void *)0x06008000, map, 0x7800);
+  Iwram_CopyWordsEntry((void *)BG_CHAR_BLOCK(2), map, 0x7800);
   BattleEffect_SelectLivingTargets(work->effect);
   BattleEffect_SpawnObjects(1, 0x28a, 1);
   REG_BLDCNT = blank;
   REG_BG2PA = 0x100;
   REG_BG1CNT = 0x1f81;
   REG_BG2CNT = 0x2787;
-  IWRAM_FILL_WORDS(canvas, 0x4000, 0);
-  Iwram_CopyWordsEntry((void *)0x06004000, canvas, 0x4000);
+  IWRAM_FILL_WORDS(canvas, CANVAS_BYTES, 0);
+  Iwram_CopyWordsEntry((void *)BG_CHAR_BLOCK(1), canvas, 0x4000);
   Task_Add(BattleEffect_FlushPendingGraphicsTransfer, 3200);
   REG_BLDCNT = 0x3f46;
   REG_BLDALPHA = 0x1010;

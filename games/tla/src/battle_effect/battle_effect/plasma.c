@@ -95,7 +95,7 @@ void BattleEffect_RunPlasma(struct BattleEffectArgument *effect) {
       start = i * 8;
       if (frame == start) {
         Sound_PlayFar(SE_HEAVY_IMPACT);
-        Iwram_FillWordsEntry(canvas, 0x4000, 0x10101010);
+        Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(16));
       }
       if (frame >= start && frame < start + 9) {
         if (frame >= start + 1 && frame < start + 2)
@@ -315,7 +315,7 @@ void BattleEffect_RunSparkGroups(struct BattleEffectArgument *effect,
         camera->yaw -= 256;
     }
     if (effect->variant == 3 && frame == 4)
-      Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
+      Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
 
     if (kind == SPARKS_ORANGE || kind == SPARKS_FROM_ACTOR) {
       if (frame == 2) {

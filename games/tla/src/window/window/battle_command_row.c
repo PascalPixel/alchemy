@@ -167,7 +167,7 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
 
             for (col = 0; col <= 2; col++) {
               volatile u16 *vram =
-                  (volatile u16 *)0x0600f800 + 21 * 32 + WINDOW_X;
+                  (volatile u16 *)BG_SCREEN_BLOCK(31) + 21 * 32 + WINDOW_X;
 
               vram[panel * 3 + entryIndex * 32 + (col & 3) -
                    selectionUi->iconCount * 3] =
@@ -194,7 +194,8 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
             s32 col;
 
             for (col = 0; col <= 2; col++) {
-              volatile u16 *vram = (volatile u16 *)0x0600f800 + 21 * 32 + 20;
+              volatile u16 *vram =
+                  (volatile u16 *)BG_SCREEN_BLOCK(31) + 21 * 32 + 20;
 
               vram[panel * 3 + entryIndex * 32 + (col & 3) -
                    selectionUi->iconCount * 3] =

@@ -50,7 +50,7 @@ void BattleEffect_RunNirvana(struct BattleEffectArgument *effect) {
   sheet = Ram_HeapSlots->unk64[0];
   BattleEffect_StartCanvasLayer(1);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sheet, 0, 0);
-  Iwram_CopyWordsEntry((void *)0x05000000,
+  Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet),
                        128);
   object = BattleObject_GetFar(effect->actors[0])->object;
@@ -699,7 +699,7 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *effect) {
   }
   BattleEffect_RunDjinniEntrance(effect, (effect->side << 4) | 0x101, screenA,
                                  screenB);
-  Iwram_ClearWords((void *)0x06004000, 0x3c00);
+  Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), 0x3c00);
   Iwram_ClearWordsEntry(canvas, 0x3c00);
   REG_BLDALPHA = 0x1010;
   REG_BG2PA = 0x100;
@@ -947,7 +947,7 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *effect) {
 
       if (frame > 63) {
         if (frame == 64) {
-          Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
+          Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
           for (i = 0; i != 64; i++) {
             struct EffectStep *p = &work->particles[i];
             s32 angle = (i & 7) << 13;

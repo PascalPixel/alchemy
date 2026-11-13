@@ -141,7 +141,8 @@ void BattleEffect_RunGeode(struct BattleEffectArgument *effect) {
     for (i = 0; i <= 119; i++) {
       for (x = 0; x <= 2047; x += 64) {
         Iwram_CopyWordsEntry(
-            cell, (u8 *)0x06008000 + (((i / 8) << 8) + (i & 7)) * 8 + x, 8);
+            cell, (u8 *)BG_CHAR_BLOCK(2) + (((i / 8) << 8) + (i & 7)) * 8 + x,
+            8);
         cell += 8;
       }
     }
@@ -337,7 +338,7 @@ void BattleEffect_RunGeode(struct BattleEffectArgument *effect) {
     }
     if (frame == 48) {
       Sound_PlayFar(SE_CRASH);
-      Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
+      Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
     }
     if (frame == 64) {
       BattlePlayback_StartFar(134);

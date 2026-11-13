@@ -649,7 +649,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectArgument *effect,
       model->texture = &texture;
       model->corners = corners;
       if (frame == 8)
-        Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
+        Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
       if (frame >= 8 && frame <= 17) {
         s32 scale =
             Trig_Sin(((frame - 8) << 11) + TRIG_TURN * 3 / 16) * 612 >> 8;
@@ -812,7 +812,6 @@ void BattleEffect_RunBladeRain(struct BattleEffectArgument *effect) {
 
 // Heap slots, as byte offsets into Ram_HeapSlots.
 #define SLOT_BATTLE_EFFECT 92 // battleFxWork[0]
-#define SLOT_BATTLE_CANVAS 96 // battleFxWork[1]
 #define SLOT_BATTLE_SHEET 100 // unk64[0]
 
 // The whole effect work block: struct BattleEffectWork names only its first
@@ -847,7 +846,7 @@ void BattleEffect_RunElementPillar(struct BattleEffectArgument *effect) {
   s32 i;
 
   work = HeapSlot_Alloc(SLOT_BATTLE_EFFECT, BATTLE_EFFECT_WORK_SIZE);
-  canvas = HeapSlot_Alloc(SLOT_BATTLE_CANVAS, 0x4000);
+  canvas = HeapSlot_Alloc(HEAP_SLOT_CANVAS, CANVAS_BYTES);
   sheet = HeapSlot_Alloc(SLOT_BATTLE_SHEET, 0x60e);
   camera = Ram_HeapSlots->cameraWork;
   work->vblanksSinceTransfer = 1;
@@ -965,7 +964,7 @@ void BattleEffect_RunElementPillar(struct BattleEffectArgument *effect) {
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
   HeapSlot_Release(SLOT_BATTLE_SHEET);
-  HeapSlot_Release(SLOT_BATTLE_CANVAS);
+  HeapSlot_Release(HEAP_SLOT_CANVAS);
   HeapSlot_Release(SLOT_BATTLE_EFFECT);
 }
 
@@ -984,7 +983,7 @@ void BattleEffect_RunBackgroundFadeIn(struct BattleEffectArgument *effect) {
   s32 k;
 
   work = HeapSlot_Alloc(SLOT_BATTLE_EFFECT, BATTLE_EFFECT_WORK_SIZE);
-  canvas = HeapSlot_Alloc(SLOT_BATTLE_CANVAS, 0x4000);
+  canvas = HeapSlot_Alloc(HEAP_SLOT_CANVAS, CANVAS_BYTES);
   battle = Ram_HeapSlots->battleWork;
   view = (struct BattleBackgroundView *)Ram_HeapSlots->transitionWork;
   work->effect = effect;
@@ -1025,8 +1024,8 @@ void BattleEffect_RunBackgroundFadeIn(struct BattleEffectArgument *effect) {
     }
   }
 
-  Iwram_ClearWords(canvas, 0x4000);
-  Iwram_ClearWords((void *)0x06004000, 0x4000);
+  Iwram_ClearWords(canvas, CANVAS_BYTES);
+  Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), 0x4000);
   IO_WRITE_QUEUE_PUSH(0x04000000, 0x7741, 0x20000);
   REG_BLDALPHA = 0x1010;
   REG_BLDCNT = 0;
@@ -1038,7 +1037,7 @@ void BattleEffect_RunBackgroundFadeIn(struct BattleEffectArgument *effect) {
 
   // Keep the picture at 0x06008000 aside, show the battle background with
   // its colours black, and flash the first target.
-  Iwram_CopyWords(Ram_MapCellBuffer, (void *)0x06008000, 0x7800);
+  Iwram_CopyWords(Ram_MapCellBuffer, (void *)BG_CHAR_BLOCK(2), 0x7800);
   Iwram_FillWords(Ram_MapCellBuffer, 0x7800, 0x01010101);
   work->savedBg1X = gBgScroll[1].x;
   work->savedBg1Y = gBgScroll[1].y;
@@ -1074,7 +1073,7 @@ void BattleEffect_RunBackgroundFadeIn(struct BattleEffectArgument *effect) {
   wait(1);
   IO_WRITE_QUEUE_PUSH(0x04000000, 0x7541, 0x20000);
   HeapSlot_Release(SLOT_BATTLE_SHEET);
-  HeapSlot_Release(SLOT_BATTLE_CANVAS);
+  HeapSlot_Release(HEAP_SLOT_CANVAS);
   HeapSlot_Release(SLOT_BATTLE_EFFECT);
 }
 #undef SLOT_BLITTER
@@ -1103,7 +1102,6 @@ void BattleEffect_RunBackgroundFadeIn(struct BattleEffectArgument *effect) {
 #undef gSparks
 #undef BUILD_BLITTER
 #undef SLOT_BATTLE_EFFECT
-#undef SLOT_BATTLE_CANVAS
 #undef SLOT_BATTLE_SHEET
 #undef BATTLE_EFFECT_WORK_SIZE
 #undef gFlecks

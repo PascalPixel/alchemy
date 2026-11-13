@@ -241,7 +241,7 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectArgument *effect,
 
     // The flood: four frames of the canvas filled with colour 0x3f.
     if ((u32)(frame - FLOOD_FRAME) <= 3)
-      Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
+      Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
     if (frame == RESULTS_FRAME)
       BattlePlayback_StartFar(PHASE_RESULTS);
     if (frame == HIT_FRAME) {
@@ -259,7 +259,7 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectArgument *effect,
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   if (variant == 3) {
     // Clear the canvas and its tiles and hand the layer to the next scene.
-    Iwram_ClearWords((void *)0x06004000, 0x3c00);
+    Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), 0x3c00);
     Iwram_ClearWords(canvas, 0x3c00);
     Task_Remove(Palette_StepFadeTransfer);
     SummonEffect_RunCanvasMode2(effect);

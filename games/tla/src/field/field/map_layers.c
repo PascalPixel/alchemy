@@ -238,7 +238,7 @@ void MapGrid_RenderCellPictureRow(u32 layer, s32 tileX, s32 tileY) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
   struct MapLayerWindow *window = (struct MapLayerWindow *)&map->layers[layer];
   u32 originY = window->originY;
-  u8 *screenMap = (u8 *)0x06002800 + (layer << 11);
+  u8 *screenMap = (u8 *)BG_SCREEN_BLOCK(5) + (layer << 11);
   u32 maskY = window->maskY;
   u32 sourceRow = ((tileY / 2) & 0x7f) << 7;
   u32 screenRowOffset = (tileY & 30) << 5;
@@ -308,7 +308,7 @@ void MapGrid_RenderCellPictureColumn(u32 layer, s32 tileX, s32 tileY) {
   u32 *cells = (u32 *)Ram_MapCellBuffer;
   struct MapWork *map = Ram_HeapSlots->mapWork;
   struct MapLayerWindow *window = (struct MapLayerWindow *)&map->layers[layer];
-  u8 *screenMap = (u8 *)0x06002800 + (layer << 11);
+  u8 *screenMap = (u8 *)BG_SCREEN_BLOCK(5) + (layer << 11);
   u32 maskY = window->maskY;
   u32 originY = window->originY;
   u32 sourceRow = ((tileY / 2) & 0x7f) << 7;
@@ -496,7 +496,7 @@ void MapGrid_SetCameraCenter(s32 x, s32 y) {
       y += layer->offsetY;
       x /= 0x80000;
       y /= 0x80000;
-      screenMap = (u8 *)0x06002800 + (layerIndex << 11);
+      screenMap = (u8 *)BG_SCREEN_BLOCK(5) + (layerIndex << 11);
       maskY = layer->maskY;
       maskX = layer->maskX;
       originY = layer->originY;

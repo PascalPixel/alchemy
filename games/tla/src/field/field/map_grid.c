@@ -690,7 +690,7 @@ void TileMap_ConvertBuffer(s32 map, void *destination) {
 
   entry = gMaps[map];
   buffer = Heap_Alloc(0x200);
-  backdrop = *(s16 *)0x05000000;
+  backdrop = *(s16 *)BG_PLTT;
   Decompress_TaggedLz(
       Resource_GetTableEntry(entry[1] + (u32)&ResourceId_Map000), buffer);
   buffer[0] = backdrop;

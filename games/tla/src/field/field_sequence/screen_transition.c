@@ -1276,7 +1276,7 @@ void ScreenTransition_UpdateDissolve(void) {
 /// with that colour.
 void ScreenTransition_FillTilemapAndSolidTile(s32 color) {
   struct ScreenTransitionState *work = Ram_HeapSlots->screenTransition;
-  Dma_Fill32(0xf000f000, (void *)0x06002000, 0x500);
+  Dma_Fill32(0xf000f000, (void *)BG_SCREEN_BLOCK(4), 0x500);
   if (color != -1) {
     u32 pattern = 0;
     s32 cnt;
@@ -1286,7 +1286,8 @@ void ScreenTransition_FillTilemapAndSolidTile(s32 color) {
     tile = work->solidTile;
     for (cnt = 7; cnt >= 0; --cnt)
       *tile++ = pattern;
-    Dma_Set(work->solidTile, (void *)0x06000000, DMA_COPY_WORDS(8), REG_DMA3);
+    Dma_Set(work->solidTile, (void *)BG_CHAR_BLOCK(0), DMA_COPY_WORDS(8),
+            REG_DMA3);
   }
 }
 
@@ -2132,7 +2133,7 @@ void Heading_Show(s32 heading) {
 
   tile = 16;
   Event_WaitTransitionFrames();
-  cell = (u16 *)0x06002000;
+  cell = (u16 *)BG_SCREEN_BLOCK(4);
   tiles = Heap_AllocEwram(0x1040);
   headings += headings[heading] / 4;
   Resource_DecodeByteLzInRam(headings, tiles);
@@ -2239,9 +2240,9 @@ void Heading_Close(void) {
     step++;
   }
   REG_DISPCNT ^= DISPCNT_BG0_ON | DISPCNT_WIN0_ON;
-  Dma_Fill32Cell(fill, 0xf000, (void *)0x06002000, 0x800);
+  Dma_Fill32Cell(fill, 0xf000, (void *)BG_SCREEN_BLOCK(4), 0x800);
   Dma_Set(Resource_GetTableEntry((s32)&ResourceId_WindowTiles),
-          (void *)0x06000000, 0x84000800, DMA3);
+          (void *)BG_CHAR_BLOCK(0), 0x84000800, DMA3);
   REG_DISPCNT ^= DISPCNT_BG0_ON;
 }
 #undef DMA3

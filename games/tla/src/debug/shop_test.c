@@ -666,8 +666,10 @@ void Func_02000848(void) {
   redraw = 1;
   window = Window_Create(0, 0, 30, 7, 2);
   details = Window_Create(0, 8, 13, 10, 2);
-  Dma_Set((const void *)0x05000200, (void *)0x050001c0, 0x80000010, REG_DMA3);
-  Dma_Set((const void *)0x050001e8, (void *)0x050001dc, 0x80000001, REG_DMA3);
+  Dma_Set((const void *)OBJ_PLTT, (void *)(BG_PLTT + 14 * 16), 0x80000010,
+          REG_DMA3);
+  Dma_Set((const void *)(BG_PLTT + 244), (void *)(BG_PLTT + 238), 0x80000001,
+          REG_DMA3);
   Sound_Play(SE_MENU_CONFIRM);
   wait(1);
   while (1) {

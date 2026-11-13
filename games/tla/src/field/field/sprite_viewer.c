@@ -45,7 +45,7 @@ void SpriteViewer_Run(void) {
   layers[0].enabled = 1;
   gDebugMode = 2;
   REG_BLDCNT = 0x3f42;
-  *(volatile u16 *)0x05000000 = 0x7c00;
+  *(volatile u16 *)BG_PLTT = 0x7c00;
   REG_DISPCNT = 0x1140;
   ScreenFade_FromBlack(1);
 
@@ -253,7 +253,7 @@ next:
       goto restart;
     }
     if (gInput.pressed & KEY_B) {
-      volatile u16 *palette = (volatile u16 *)0x05000000;
+      volatile u16 *palette = (volatile u16 *)BG_PLTT;
       const u16 *colors = gData_0802f054;
       backdrop++;
       backdrop &= 7;

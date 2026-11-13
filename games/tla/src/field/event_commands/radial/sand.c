@@ -202,7 +202,7 @@ void FieldPsynergy_UpdateBurst(void) {
 
   work->shake = 0;
   if (work->paletteMode == 1) {
-    palette = (volatile u16 *)0x050003c0;
+    palette = (volatile u16 *)(OBJ_PLTT + 14 * 16);
     i = 0;
     frames = &canvas->drawnFrames;
     red = 31;
@@ -225,8 +225,8 @@ void FieldPsynergy_UpdateBurst(void) {
       } while (0);
     }
   } else if (work->paletteMode == 2) {
-    Dma_Set(Data_080f0fa0, (void *)0x050003e0, DMA_ENABLE << 16 | 0x10,
-            REG_DMA3);
+    Dma_Set(Data_080f0fa0, (void *)(OBJ_PLTT + 15 * 16),
+            DMA_ENABLE << 16 | 0x10, REG_DMA3);
     work->paletteMode = 0;
   }
   pos[0] = scene->x;

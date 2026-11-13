@@ -419,7 +419,7 @@ void Palette_CopyWithBrightnessOffset(s32 offset) {
       s32 val;
 
       idx = paletteNumber * 16 + col;
-      color = ((u16 *)0x05000000)[idx];
+      color = ((u16 *)BG_PLTT)[idx];
       b = (color >> 10) & mask;
       g = (color >> 5) & mask;
       r = color & mask;

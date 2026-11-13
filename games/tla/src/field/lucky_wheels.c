@@ -114,7 +114,7 @@ void Palette_DarkenScreenStep(void) {
   u16 *color;
   s32 i;
 
-  color = (u16 *)0x05000140;
+  color = (u16 *)(BG_PLTT + 10 * 16);
   for (i = 0; i != 16; i++) {
     s32 blue = (*color >> 10) & 0x1f;
     s32 green = (*color >> 5) & 0x1f;
@@ -132,7 +132,7 @@ void Palette_DarkenScreenStep(void) {
       red = 0;
     *color++ = RGB(red, green, blue);
   }
-  color = (u16 *)0x05000202;
+  color = (u16 *)(OBJ_PLTT + 1);
   for (i = 0; i != 239; i++) {
     s32 blue = (*color >> 10) & 0x1f;
     s32 green = (*color >> 5) & 0x1f;
@@ -1098,7 +1098,7 @@ void LuckyWheels_Run(void) {
   Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesD),
                       sheet);
   entry = Resource_GetTableEntry((s32)&ResourceId_SlotsMachinePicture);
-  Dma_Set(entry, (void *)0x05000140, 0x84000008, REG_DMA3);
+  Dma_Set(entry, (void *)(BG_PLTT + 10 * 16), 0x84000008, REG_DMA3);
   entry += 32;
   Decompress_TaggedLz(entry, tiles);
   j = 0;
@@ -1155,16 +1155,16 @@ void LuckyWheels_Run(void) {
     work->frame = 0;
     state->timer = 0;
     Dma_Set(Resource_GetTableEntry((s32)&ResourceId_JupiterDjinnSheet),
-            (void *)0x05000000, 0x84000020, REG_DMA3);
-    *(u16 *)0x05000080 = 0x2f8b;
-    *(u16 *)0x05000082 = 0x5bf6;
+            (void *)BG_PLTT, 0x84000020, REG_DMA3);
+    *(u16 *)(BG_PLTT + 4 * 16) = 0x2f8b;
+    *(u16 *)(BG_PLTT + 65) = 0x5bf6;
     entry = Resource_GetTableEntry((s32)&ResourceId_SlotsIcons);
-    Dma_Set(entry, (void *)0x05000200, 0x84000078, REG_DMA3);
+    Dma_Set(entry, (void *)OBJ_PLTT, 0x84000078, REG_DMA3);
     entry += 480;
     Decompress_TaggedLz(entry, tiles);
-    Dma_Set(tiles, (void *)0x06010000, 0x84001b30, REG_DMA3);
+    Dma_Set(tiles, (void *)OBJ_VRAM0, 0x84001b30, REG_DMA3);
     entry = Resource_GetTableEntry((s32)&ResourceId_SlotsJackpotBanner);
-    Dma_Set(entry, (void *)0x050003e0, 0x84000008, REG_DMA3);
+    Dma_Set(entry, (void *)(OBJ_PLTT + 15 * 16), 0x84000008, REG_DMA3);
     entry += 32;
     Decompress_TaggedLz(entry, tiles);
     Dma_Set(tiles, (void *)JACKPOT_TILES, JACKPOT_COPY, REG_DMA3);
@@ -1207,10 +1207,10 @@ void LuckyWheels_Run(void) {
     draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
     Iwram_FillWordsEntry(canvas, size, 0);
     Dma_Set(canvas, (void *)0x06003500, 0x84002000, REG_DMA3);
-    Dma_Set((void *)0x05000000, bgShade, 0x84000080, REG_DMA3);
-    Dma_Set((void *)0x05000200, shade, 0x84000080, REG_DMA3);
-    LuckyWheels_ScaleRgb555(shade, (u16 *)0x05000200, 0, 0x100);
-    LuckyWheels_ScaleRgb555(bgShade, (u16 *)0x05000000, 0, 0x100);
+    Dma_Set((void *)BG_PLTT, bgShade, 0x84000080, REG_DMA3);
+    Dma_Set((void *)OBJ_PLTT, shade, 0x84000080, REG_DMA3);
+    LuckyWheels_ScaleRgb555(shade, (u16 *)OBJ_PLTT, 0, 0x100);
+    LuckyWheels_ScaleRgb555(bgShade, (u16 *)BG_PLTT, 0, 0x100);
     REG_DISPCNT = 0x3740;
     if (PartyInventory_CountItemFar(228) == 1) {
       struct Window *window = Window_CreateFar(
@@ -1235,8 +1235,8 @@ void LuckyWheels_Run(void) {
 
     for (frame = 0; state->state != 10; frame++) {
       if (frame <= 16) {
-        LuckyWheels_ScaleRgb555(shade, (u16 *)0x05000200, frame << 12, 0x100);
-        LuckyWheels_ScaleRgb555(bgShade, (u16 *)0x05000000, frame << 12, 0x100);
+        LuckyWheels_ScaleRgb555(shade, (u16 *)OBJ_PLTT, frame << 12, 0x100);
+        LuckyWheels_ScaleRgb555(bgShade, (u16 *)BG_PLTT, frame << 12, 0x100);
       }
       if (state->state == 3) {
         s32 phase = frame % 80;
@@ -1349,9 +1349,9 @@ void LuckyWheels_Run(void) {
     }
 
     for (j = 0; j != 17; j++) {
-      LuckyWheels_ScaleRgb555(shade, (u16 *)0x05000200, Q16_ONE - (j << 12),
+      LuckyWheels_ScaleRgb555(shade, (u16 *)OBJ_PLTT, Q16_ONE - (j << 12),
                               0x100);
-      LuckyWheels_ScaleRgb555(bgShade, (u16 *)0x05000000, Q16_ONE - (j << 12),
+      LuckyWheels_ScaleRgb555(bgShade, (u16 *)BG_PLTT, Q16_ONE - (j << 12),
                               0x100);
       wait(1);
     }

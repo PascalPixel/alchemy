@@ -852,7 +852,7 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
     HeapSlot_Release(104);
     if (mode == 11 || mode == 14 || mode == 18) {
       // Hand over to the canvas effect: clear both canvases first.
-      Iwram_ClearWords((void *)0x06004000, 0x3c00);
+      Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), 0x3c00);
       Iwram_ClearWords(canvas, 0x3c00);
       effect->prelude = 0;
       Task_Remove(Palette_StepFadeTransfer);

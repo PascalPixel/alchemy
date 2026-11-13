@@ -208,8 +208,7 @@ void FieldPsynergy_GrindOnTarget(void) {
     }
     if (child != NULL && animation != NULL && animating) {
       s32 size = animation->width * animation->height;
-      dst =
-          (u8 *)0x06010000 + VramCache_Load(animation->entry, size, NULL) * 32;
+      dst = (u8 *)OBJ_VRAM0 + VramCache_Load(animation->entry, size, NULL) * 32;
       if (shifts % 3 == 0)
         BattleEffect_ShiftRowsDown(picture, animation->width,
                                    animation->height);
@@ -383,7 +382,7 @@ s32 HoverGlow_GetColor(s32 counter, s32 level) {
   return (blue << 10) | (green << 5) | red;
 }
 
-#define OBJ_PALETTE_14 ((u16 *)0x050003c0)
+#define OBJ_PALETTE_14 ((u16 *)(OBJ_PLTT + 14 * 16))
 
 // The glow's strength, in frames: full at 112, and it fades out a frame at a
 // time once the player leaves the place that feeds it.

@@ -50,7 +50,7 @@ void BattleEffect_DispatchByIdRange(struct BattleEffectArgument *effect) {
 
   HeapSlot_AllocEwram(100, 0x60e);
   HeapSlot_Alloc(92, 0x7b7c);
-  HeapSlot_Alloc(96, 0x4000);
+  HeapSlot_Alloc(HEAP_SLOT_CANVAS, CANVAS_BYTES);
   work = (struct BattleFxWorkTail *)Ram_HeapSlots->battleFxWork[0];
   work->effect = effect;
   work->active = 1;
@@ -550,7 +550,7 @@ void BattleEffect_RunCriticalHit(struct BattleEffectArgument *effect) {
   // The burst: clear both canvases, blend, and centre the layer on the
   // first target, kept within 128 pixels.
   Iwram_ClearWordsEntry(canvas, words);
-  Iwram_ClearWordsEntry((void *)0x06004000, words);
+  Iwram_ClearWordsEntry((void *)BG_CHAR_BLOCK(1), words);
   work->transferMode = 2;
   work->transferValue = 75;
   REG_BG1CNT = 0x1f81;

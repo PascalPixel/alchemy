@@ -53,7 +53,7 @@ struct Window *SaveProgress_Open(u32 kind) {
   window = Window_Create(0, 0, 30, 20, 0);
   tiles = Heap_AllocEwram(0x100);
   Decompress_TaggedLz(gWindow_ProgressBarTiles, tiles);
-  Dma_Set(tiles, (void *)0x06001000, DMA_COPY_WORDS(64), REG_DMA3);
+  Dma_Set(tiles, (void *)BG_SCREEN_BLOCK(2), DMA_COPY_WORDS(64), REG_DMA3);
   switch (kind) {
   case 0:
     Text_DrawMessage((s32)&MsgSaving, (s32)window, SAVING_X, 40);
@@ -674,7 +674,7 @@ void FileList_UpdatePulse(void) {
   s32 i;
 
   vblankCount = (s32 *)&gVBlankCount;
-  pal = (volatile u16 *)0x050001D0; // Background palette 14, color 8.
+  pal = (volatile u16 *)(BG_PLTT + 232); // Background palette 14, color 8.
   i = 0;
   do {
 #ifdef UBFIX

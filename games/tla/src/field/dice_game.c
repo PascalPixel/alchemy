@@ -472,21 +472,21 @@ void SuperLuckyDice_Run(void) {
   }
 
   resourceAddress = Resource_GetTableEntry((s32)&ResourceId_SlotsDomePicture);
-  Dma_Set((void *)0x05000000, bgPalette, (DMA_ENABLE | DMA_32BIT) << 16 | 0x80,
+  Dma_Set((void *)BG_PLTT, bgPalette, (DMA_ENABLE | DMA_32BIT) << 16 | 0x80,
           REG_DMA3);
   Dma_Set(resourceAddress, bgPalette, (DMA_ENABLE | DMA_32BIT) << 16 | 0x70,
           REG_DMA3);
   resourceAddress += 0x1c0;
   Decompress_TaggedLz(resourceAddress, cellBuffer);
-  Dma_Set(cellBuffer, (void *)0x06004000,
+  Dma_Set(cellBuffer, (void *)BG_CHAR_BLOCK(1),
           (DMA_ENABLE | DMA_32BIT) << 16 | 0x2580, REG_DMA3);
   resourceAddress = Resource_GetTableEntry((s32)&ResourceId_Data087);
   Dma_Set(resourceAddress, spritePalette, (DMA_ENABLE | DMA_32BIT) << 16 | 0x30,
           REG_DMA3);
   resourceAddress += 128;
   Decompress_TaggedLz(resourceAddress, cellBuffer);
-  Dma_Set(cellBuffer, (void *)0x06010000,
-          (DMA_ENABLE | DMA_32BIT) << 16 | 0x4c0, REG_DMA3);
+  Dma_Set(cellBuffer, (void *)OBJ_VRAM0, (DMA_ENABLE | DMA_32BIT) << 16 | 0x4c0,
+          REG_DMA3);
   resourceAddress =
       Resource_GetTableEntry((s32)&ResourceId_SlotsSmallDoubleUpBanner);
   Dma_Set(resourceAddress, spritePalette + 112,
@@ -540,14 +540,14 @@ void SuperLuckyDice_Run(void) {
       dst++;
     }
   }
-  Dma_Set(spritePalette + 176, (void *)0x05000360,
+  Dma_Set(spritePalette + 176, (void *)(OBJ_PLTT + 11 * 16),
           (DMA_ENABLE | DMA_32BIT) << 16 | 8, REG_DMA3);
   resourceAddress += 32;
   Decompress_TaggedLz(resourceAddress, cellBuffer);
   Dma_Set(cellBuffer, (void *)0x06016600,
           (DMA_ENABLE | DMA_32BIT) << 16 | 0x140, REG_DMA3);
-  Graphics_ScaleRgb555BufferB(spritePalette, (u16 *)0x05000200, 0, 256);
-  Graphics_ScaleRgb555BufferB(bgPalette, (u16 *)0x05000000, 0, 256);
+  Graphics_ScaleRgb555BufferB(spritePalette, (u16 *)OBJ_PLTT, 0, 256);
+  Graphics_ScaleRgb555BufferB(bgPalette, (u16 *)BG_PLTT, 0, 256);
 
   REG_BG1CNT = 0x686;
   REG_WININ = 0x3737;
@@ -626,10 +626,9 @@ void SuperLuckyDice_Run(void) {
   for (;;) {
     spriteCount = 0;
     if (frame <= 16) {
-      Graphics_ScaleRgb555BufferB(spritePalette, (u16 *)0x05000200, frame << 12,
+      Graphics_ScaleRgb555BufferB(spritePalette, (u16 *)OBJ_PLTT, frame << 12,
                                   256);
-      Graphics_ScaleRgb555BufferB(bgPalette, (u16 *)0x05000000, frame << 12,
-                                  256);
+      Graphics_ScaleRgb555BufferB(bgPalette, (u16 *)BG_PLTT, frame << 12, 256);
     }
     Transform_Reset();
     Transform_SetLookAt(camera->eye, camera->focus);
@@ -739,23 +738,23 @@ void SuperLuckyDice_Run(void) {
         }
       }
       if (lower == 0) {
-        SuperLuckyDice_BrightenColors(spritePalette + 192, (u16 *)0x05000380,
-                                      16, timer << 12);
-        Graphics_ScaleRgb555BufferB(spritePalette + 208, (u16 *)0x050003a0,
-                                    0x8000, 16);
-        SuperLuckyDice_BrightenColors(spritePalette + 224, (u16 *)0x050003c0,
-                                      16, timer << 12);
-        Graphics_ScaleRgb555BufferB(spritePalette + 240, (u16 *)0x050003e0,
-                                    0x8000, 16);
+        SuperLuckyDice_BrightenColors(
+            spritePalette + 192, (u16 *)(OBJ_PLTT + 12 * 16), 16, timer << 12);
+        Graphics_ScaleRgb555BufferB(spritePalette + 208,
+                                    (u16 *)(OBJ_PLTT + 13 * 16), 0x8000, 16);
+        SuperLuckyDice_BrightenColors(
+            spritePalette + 224, (u16 *)(OBJ_PLTT + 14 * 16), 16, timer << 12);
+        Graphics_ScaleRgb555BufferB(spritePalette + 240,
+                                    (u16 *)(OBJ_PLTT + 15 * 16), 0x8000, 16);
       } else {
-        SuperLuckyDice_BrightenColors(spritePalette + 208, (u16 *)0x050003a0,
-                                      16, timer << 12);
-        Graphics_ScaleRgb555BufferB(spritePalette + 192, (u16 *)0x05000380,
-                                    0x8000, 16);
-        SuperLuckyDice_BrightenColors(spritePalette + 240, (u16 *)0x050003e0,
-                                      16, timer << 12);
-        Graphics_ScaleRgb555BufferB(spritePalette + 224, (u16 *)0x050003c0,
-                                    0x8000, 16);
+        SuperLuckyDice_BrightenColors(
+            spritePalette + 208, (u16 *)(OBJ_PLTT + 13 * 16), 16, timer << 12);
+        Graphics_ScaleRgb555BufferB(spritePalette + 192,
+                                    (u16 *)(OBJ_PLTT + 12 * 16), 0x8000, 16);
+        SuperLuckyDice_BrightenColors(
+            spritePalette + 240, (u16 *)(OBJ_PLTT + 15 * 16), 16, timer << 12);
+        Graphics_ScaleRgb555BufferB(spritePalette + 224,
+                                    (u16 *)(OBJ_PLTT + 14 * 16), 0x8000, 16);
       }
     } else if (state == 2) {
       struct DiceParticle *die;
@@ -1057,15 +1056,15 @@ void SuperLuckyDice_Run(void) {
         cashOut = 1;
       }
       if (cashOut == 0) {
-        SuperLuckyDice_BrightenColors(spritePalette + 224, (u16 *)0x050003c0,
-                                      16, timer << 12);
-        Graphics_ScaleRgb555BufferB(spritePalette + 240, (u16 *)0x050003e0,
-                                    0x8000, 16);
+        SuperLuckyDice_BrightenColors(
+            spritePalette + 224, (u16 *)(OBJ_PLTT + 14 * 16), 16, timer << 12);
+        Graphics_ScaleRgb555BufferB(spritePalette + 240,
+                                    (u16 *)(OBJ_PLTT + 15 * 16), 0x8000, 16);
       } else {
-        SuperLuckyDice_BrightenColors(spritePalette + 240, (u16 *)0x050003e0,
-                                      16, timer << 12);
-        Graphics_ScaleRgb555BufferB(spritePalette + 224, (u16 *)0x050003c0,
-                                    0x8000, 16);
+        SuperLuckyDice_BrightenColors(
+            spritePalette + 240, (u16 *)(OBJ_PLTT + 15 * 16), 16, timer << 12);
+        Graphics_ScaleRgb555BufferB(spritePalette + 224,
+                                    (u16 *)(OBJ_PLTT + 14 * 16), 0x8000, 16);
       }
     }
 
@@ -1074,7 +1073,7 @@ void SuperLuckyDice_Run(void) {
       if (paletteRequest == 1) {
         resourceAddress =
             Resource_GetTableEntry((s32)&ResourceId_SlotsHigherBanner);
-        Dma_Set(resourceAddress, (void *)0x05000380,
+        Dma_Set(resourceAddress, (void *)(OBJ_PLTT + 12 * 16),
                 (DMA_ENABLE | DMA_32BIT) << 16 | 8, REG_DMA3);
         Dma_Set(resourceAddress, spritePalette + 192,
                 (DMA_ENABLE | DMA_32BIT) << 16 | 8, REG_DMA3);
@@ -1084,7 +1083,7 @@ void SuperLuckyDice_Run(void) {
                 (DMA_ENABLE | DMA_32BIT) << 16 | 0x180, REG_DMA3);
         resourceAddress =
             Resource_GetTableEntry((s32)&ResourceId_SlotsLowerBanner);
-        Dma_Set(resourceAddress, (void *)0x050003a0,
+        Dma_Set(resourceAddress, (void *)(OBJ_PLTT + 13 * 16),
                 (DMA_ENABLE | DMA_32BIT) << 16 | 8, REG_DMA3);
         Dma_Set(resourceAddress, spritePalette + 208,
                 (DMA_ENABLE | DMA_32BIT) << 16 | 8, REG_DMA3);
@@ -1114,9 +1113,9 @@ void SuperLuckyDice_Run(void) {
             dst++;
           }
         }
-        Dma_Set(spritePalette + 224, (void *)0x050003c0,
+        Dma_Set(spritePalette + 224, (void *)(OBJ_PLTT + 14 * 16),
                 (DMA_ENABLE | DMA_32BIT) << 16 | 8, REG_DMA3);
-        Dma_Set(spritePalette + 224, (void *)0x050003e0,
+        Dma_Set(spritePalette + 224, (void *)(OBJ_PLTT + 15 * 16),
                 (DMA_ENABLE | DMA_32BIT) << 16 | 8, REG_DMA3);
         Dma_Set(spritePalette + 224, spritePalette + 240,
                 (DMA_ENABLE | DMA_32BIT) << 16 | 8, REG_DMA3);
@@ -1147,7 +1146,7 @@ void SuperLuckyDice_Run(void) {
               Resource_GetTableEntry((s32)&ResourceId_SlotsPerfectBanner);
           break;
         }
-        Dma_Set(resourceAddress, (void *)0x050003a0,
+        Dma_Set(resourceAddress, (void *)(OBJ_PLTT + 13 * 16),
                 (DMA_ENABLE | DMA_32BIT) << 16 | 8, REG_DMA3);
         resourceAddress += 32;
         Decompress_TaggedLz(resourceAddress, cellBuffer);
@@ -1155,7 +1154,7 @@ void SuperLuckyDice_Run(void) {
                 (DMA_ENABLE | DMA_32BIT) << 16 | 0x400, REG_DMA3);
         resourceAddress =
             Resource_GetTableEntry((s32)&ResourceId_SlotsGreenDigits);
-        Dma_Set(resourceAddress, (void *)0x05000380,
+        Dma_Set(resourceAddress, (void *)(OBJ_PLTT + 12 * 16),
                 (DMA_ENABLE | DMA_32BIT) << 16 | 8, REG_DMA3);
         resourceAddress += 32;
         Decompress_TaggedLz(resourceAddress, cellBuffer);
@@ -1164,7 +1163,7 @@ void SuperLuckyDice_Run(void) {
       } else if (paletteRequest == 5) {
         resourceAddress =
             Resource_GetTableEntry((s32)&ResourceId_SlotsDoubleUpBanner);
-        Dma_Set(resourceAddress, (void *)0x050003c0,
+        Dma_Set(resourceAddress, (void *)(OBJ_PLTT + 14 * 16),
                 (DMA_ENABLE | DMA_32BIT) << 16 | 8, REG_DMA3);
         Dma_Set(resourceAddress, spritePalette + 224,
                 (DMA_ENABLE | DMA_32BIT) << 16 | 8, REG_DMA3);
@@ -1174,7 +1173,7 @@ void SuperLuckyDice_Run(void) {
                 (DMA_ENABLE | DMA_32BIT) << 16 | 0x280, REG_DMA3);
         resourceAddress =
             Resource_GetTableEntry((s32)&ResourceId_SlotsCashOutBanner);
-        Dma_Set(resourceAddress, (void *)0x050003e0,
+        Dma_Set(resourceAddress, (void *)(OBJ_PLTT + 15 * 16),
                 (DMA_ENABLE | DMA_32BIT) << 16 | 8, REG_DMA3);
         Dma_Set(resourceAddress, spritePalette + 240,
                 (DMA_ENABLE | DMA_32BIT) << 16 | 8, REG_DMA3);
@@ -1473,16 +1472,16 @@ void SuperLuckyDice_Run(void) {
       sprites->oam[index * 4 + 2].attr2 |= affineC << 16;
       sprites->oam[index * 4 + 3].attr2 |= affineD << 16;
     }
-    Dma_Set(sprites->oam, (void *)0x07000000,
-            (DMA_ENABLE | DMA_32BIT) << 16 | 0x100, REG_DMA3);
+    Dma_Set(sprites->oam, (void *)OAM, (DMA_ENABLE | DMA_32BIT) << 16 | 0x100,
+            REG_DMA3);
     wait(1);
     frame++;
   }
 
   for (index = 0; index != 17; index++) {
-    Graphics_ScaleRgb555BufferB(spritePalette, (u16 *)0x05000200,
+    Graphics_ScaleRgb555BufferB(spritePalette, (u16 *)OBJ_PLTT,
                                 0x10000 - (index << 12), 256);
-    Graphics_ScaleRgb555BufferB(bgPalette, (u16 *)0x05000000,
+    Graphics_ScaleRgb555BufferB(bgPalette, (u16 *)BG_PLTT,
                                 0x10000 - (index << 12), 256);
     wait(1);
   }

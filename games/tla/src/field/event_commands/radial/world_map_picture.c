@@ -522,9 +522,9 @@ void WorldMapPicture_Draw(void) {
     z = 0;
   }
   graphics = Resource_GetTableEntry(resource);
-  Dma_Set((u8 *)graphics + graphics[0], (void *)0x05000000, 0x84000078,
+  Dma_Set((u8 *)graphics + graphics[0], (void *)BG_PLTT, 0x84000078,
           (volatile u32 *)0x040000d4);
-  *(u16 *)0x05000000 = 0;
+  *(u16 *)BG_PLTT = 0;
   buffer = Ram_MapCellBuffer;
   right = 272 << 16;
   bottom = 224 << 16;
@@ -840,7 +840,7 @@ s32 WorldPicture_Show(s32 mode) {
     objects->suspended = 1;
     wait(1);
     blend = REG_BLDALPHA;
-    tiles = (u32 *)0x06003000;
+    tiles = (u32 *)BG_SCREEN_BLOCK(6);
     tile = 0x01810180;
     for (row = 0; row < 20; row++)
       for (column = 0; column < 16; column++) {

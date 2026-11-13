@@ -101,7 +101,7 @@ void BattleEffect_RunRay(struct BattleEffectArgument *effect) {
     if (frame < 16) {
       // Wipe the canvas every five frames.
       if (frame % 5 == 2)
-        Iwram_FillWordsEntry(canvas, 0x4000, 0x10101010);
+        Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(16));
       for (bolt = 0; bolt != BOLT_COUNT; bolt++) {
         s32 angle;
         s32 x;

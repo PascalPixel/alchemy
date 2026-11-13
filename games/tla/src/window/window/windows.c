@@ -128,7 +128,7 @@ void WindowSystem_UploadTilemap(void) {
   if (flags != 0) {
     if (!work->menuBusy) {
       src = (u8 *)work->tilemap;
-      dst = (u8 *)0x06002000;
+      dst = (u8 *)BG_SCREEN_BLOCK(4);
       if (flags & 1)
         flags = 63;
       flags &= 63;

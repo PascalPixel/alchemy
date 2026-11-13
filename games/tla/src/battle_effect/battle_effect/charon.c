@@ -165,9 +165,9 @@ extern u8 gData_02014000[];
 #define OAM_BUFFER ((u32 *)gData_02014000)
 #define REVEAL_BUFFER (Ram_MapCellBuffer + 0x4000)
 #define PARTICLES ((struct Particle__f175f74 *)(Ram_MapCellBuffer + 0x4200))
-#define OBJ_VRAM ((u8 *)0x06010000)
+#define OBJ_VRAM ((u8 *)OBJ_VRAM0)
 #define BG_VRAM_A900 ((u8 *)0x0600a900)
-#define PLTT ((u16 *)0x05000000)
+#define PLTT ((u16 *)BG_PLTT)
 
 extern char ResourceId_AerialViewBackdrop;
 extern char ResourceId_CrimsonBeastTiles;
@@ -1359,12 +1359,12 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
   // the size; without it, 2 of 4354 instructions differ in tla-en.
   do {
   } while (0);
-  Iwram_FillWords(canvas, 0x4000, 0);
+  Iwram_FillWords(canvas, CANVAS_BYTES, 0);
   // An empty once-only loop before the BG fill, so its address loads before
   // the size; without it, 10 of 4354 instructions differ in tla-en.
   do {
   } while (0);
-  Iwram_FillWords((void *)0x06004000, 0x4000, 0);
+  Iwram_FillWords((void *)BG_CHAR_BLOCK(1), 0x4000, 0);
   gCameraSceneParameters[4] = 120;
   unit30 = SYSTEM_WORK->unit30;
   shake = 0;

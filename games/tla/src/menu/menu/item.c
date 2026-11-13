@@ -110,8 +110,8 @@ s32 ItemMenu_Run(void) {
       (struct RenderInput *)Window_CreateFar(13, 0, 17, 3, 2);
 #if TLA_PATCH_1
   Menu_SuspendFieldTasks();
-  Iwram_CopyWords(backup, (void *)0x06004000, size);
-  Iwram_FillWords((void *)0x06004000, size, 0x33333333);
+  Iwram_CopyWords(backup, (void *)BG_CHAR_BLOCK(1), size);
+  Iwram_FillWords((void *)BG_CHAR_BLOCK(1), size, 0x33333333);
   Text_UseExtraTilesFar(1);
 #endif
 
@@ -140,7 +140,7 @@ s32 ItemMenu_Run(void) {
 #if TLA_PATCH_1
   Window_MarkVisibleTextTilesFar();
   Text_UseExtraTilesFar(0);
-  Iwram_CopyWords((void *)0x06004000, backup, size);
+  Iwram_CopyWords((void *)BG_CHAR_BLOCK(1), backup, size);
   Ram_HeapSlots->windowTiles[6] = 0;
   Heap_Release(backup);
   wait(1);

@@ -125,7 +125,7 @@ void BattleEffect_RunTripleChomp(struct BattleEffectArgument *effect) {
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, pixels, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, graphics, 0, 0);
-  Iwram_CopyWordsEntry((void *)0x05000000,
+  Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet),
                        128);
 

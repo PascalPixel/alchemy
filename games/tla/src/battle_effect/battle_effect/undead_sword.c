@@ -255,7 +255,7 @@ void BattleEffect_RunPlumeEdge(struct BattleEffectArgument *effect) {
       BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 16);
       work->shakeFrames = 8;
       BattlePlayback_StartFar(145);
-      Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
+      Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
     }
 
     // The target is pushed down 2 pixels a frame for the first 24 frames,
@@ -1124,7 +1124,7 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectArgument *effect) {
           } else {
             BattleMotion_ApplyKnockbackFar(effect->actors[0], 4);
             BattlePlayback_StartFar(144);
-            Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
+            Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
           }
           BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 6);
           top += 8;

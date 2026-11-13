@@ -137,7 +137,7 @@ void BattleEffect_RunTargetBursts(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_TargetBurstImage,
                              work->sheet + BURST_IMAGE, 0, 0);
   palette = Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet);
-  Iwram_CopyWordsEntry((void *)0x05000000, palette, 128);
+  Iwram_CopyWordsEntry((void *)BG_PLTT, palette, 128);
   BattleEffect_LoadBlitter(104, BLIT_MODE(BLIT_ADDITIVE, CLIP));
   rectangleA = (DrawRectangle)Ram_HeapSlots->unk64[1];
   BattleEffect_LoadBlitter(188, BLIT_MODE(BLIT_MAX, CLIP));

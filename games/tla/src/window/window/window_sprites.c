@@ -196,7 +196,7 @@ void ScanlineWindow_FillSpans(void *dst) {
 void BgScreen_FillRect(s32 unused0, s32 unused1, u32 width, u32 height,
                        s32 value) {
   u32 row = 0;
-  s16 *dst = (s16 *)0x06002000;
+  s16 *dst = (s16 *)BG_SCREEN_BLOCK(4);
 
   if (row < height) {
     do {

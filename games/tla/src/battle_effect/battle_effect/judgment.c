@@ -113,7 +113,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
       zoom = 0x80000;
     }
     if (frame == 143) {
-      FILL__actor_move_random(canvas, 0x4000, 0x2a2a2a2a);
+      FILL__actor_move_random(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(42));
       Sound_PlayFar(SE_CRASH);
     }
     if (frame == 80) {
@@ -330,7 +330,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
     frame++;
   } while (frame != 160 && (frame <= 4 || !(gInput.repeat & (KEY_A | KEY_B))));
 
-  Iwram_FillWords(canvas, 0x4000, 0);
+  Iwram_FillWords(canvas, CANVAS_BYTES, 0);
   for (i = 0; i != 16; i++) {
     Sprite_DestroyFar(work->objects[i]);
   }
@@ -371,7 +371,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
   REG_BG2PA = 0x100;
   REG_BG2X = -0x3c00;
   REG_BG2CNT = 0x784;
-  FILL__actor_move_random(canvas, 0x4000, 0);
+  FILL__actor_move_random(canvas, CANVAS_BYTES, 0);
   cx = 60;
   cy = 44;
   squash = 6;
@@ -421,7 +421,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
       }
     }
     if (frame == 318) {
-      FILL__actor_move_random(canvas, 0x4000, 0x3f3f3f3f);
+      FILL__actor_move_random(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
     }
     if (frame == 319) {
       Graphics_LoadGreyRamp();
@@ -431,7 +431,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
     if (frame == 64) {
       IO_WRITE_QUEUE_PUSH(0x04000020, 128, 0x20000);
       IO_WRITE_QUEUE_PUSH(0x04000028, 0, 0x30000);
-      FILL__actor_move_random(canvas, 0x4000, 0);
+      FILL__actor_move_random(canvas, CANVAS_BYTES, 0);
       Resource_LoadAndDecompress((s32)&ResourceId_ExplosionSheet,
                                  work->sheet + 0x4000, 1, 0);
       Resource_LoadAndDecompress((s32)&ResourceId_OverlayImageA,
@@ -445,7 +445,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
       }
     }
     if (frame == 69) {
-      FILL__actor_move_random(canvas, 0x4000, 0x3f3f3f3f);
+      FILL__actor_move_random(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
     }
     if (frame == 70) {
       BattleBackground_SetModeFar(1, (s32)&ResourceId_AerialViewBackdrop, 7);
@@ -457,12 +457,12 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
       rings = 4;
       squash = 8;
       FILL__actor_move_random(work->sheet, 0x3840, 0);
-      FILL__actor_move_random(canvas, 0x4000, 0x3f3f3f3f);
+      FILL__actor_move_random(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
       BattleBackground_LoadFar(1, (s32)&ResourceId_BeachBackdrop, 0);
     }
     if (frame == 214) {
       FILL__actor_move_random(work->sheet, 0x3840, 0);
-      FILL__actor_move_random(canvas, 0x4000, 0x3f3f3f3f);
+      FILL__actor_move_random(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
       BattleBackground_LoadFar(1, (s32)&ResourceId_ForestBackdrop, 0);
       {
         struct EffectStep *p = work->particles;
@@ -479,7 +479,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
     if (frame == 280) {
       BattleEffect_SetupBlendedDisplay();
       FILL__actor_move_random(work->sheet, 0x3840, 0);
-      FILL__actor_move_random(canvas, 0x4000, 0x01010101);
+      FILL__actor_move_random(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(1));
       transition[4] = 0;
       REG_BLDALPHA = 0x1010;
       {
@@ -519,7 +519,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
       }
     }
     if (frame == 182) {
-      FILL__actor_move_random(canvas, 0x4000, 0x3f3f3f3f);
+      FILL__actor_move_random(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
     }
 
     if (frame <= 63) {
@@ -717,7 +717,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
       shift -= 8;
     }
     if (frame == 238) {
-      FILL__actor_move_random(canvas, 0x4000, 0x3f3f3f3f);
+      FILL__actor_move_random(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
     }
     if ((u32)(frame - 214) <= 65) {
       gBgScroll[1].x += 8;

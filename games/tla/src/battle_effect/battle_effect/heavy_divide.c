@@ -1158,7 +1158,7 @@ void BattleEffect_RunHurricane(struct BattleEffectArgument *effect) {
   HeapSlot_Release(104);
   /* FAKEMATCH(barrier): an empty asm. */
   __asm__("");
-  Iwram_ClearWordsEntry((void *)0x06004000, size);
+  Iwram_ClearWordsEntry((void *)BG_CHAR_BLOCK(1), size);
   Iwram_ClearWordsEntry(canvas, size);
   Task_Remove(Palette_StepFadeTransfer);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);

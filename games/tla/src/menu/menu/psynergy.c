@@ -37,8 +37,8 @@ s32 PsynergyMenu_Run(void) {
   Window_InitializeWork(0);
 #if TLA_PATCH_2
   Menu_SuspendFieldTasks();
-  Iwram_CopyWords(savedTiles, (void *)0x06004000, 0x2000);
-  Iwram_FillWords((void *)0x06004000, 0x2000, 0x33333333);
+  Iwram_CopyWords(savedTiles, (void *)BG_CHAR_BLOCK(1), 0x2000);
+  Iwram_FillWords((void *)BG_CHAR_BLOCK(1), 0x2000, 0x33333333);
   Text_UseExtraTilesFar(1);
 #endif
   screen->partyCount = Party_ListMembersFar(screen->ownerIds);
@@ -68,7 +68,7 @@ s32 PsynergyMenu_Run(void) {
 #if TLA_PATCH_2
   Window_MarkVisibleTextTilesFar();
   Text_UseExtraTilesFar(0);
-  Iwram_CopyWords((void *)0x06004000, savedTiles, 0x2000);
+  Iwram_CopyWords((void *)BG_CHAR_BLOCK(1), savedTiles, 0x2000);
   Ram_HeapSlots->windowTiles[6] = 0;
   Heap_Release(savedTiles);
   wait(1);

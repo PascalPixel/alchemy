@@ -106,7 +106,7 @@ s32 StatusScreen_Run(void) {
   state->partyCount = Party_ListMembersFar(state->ownerIds);
   StatusScreen_Initialize(0, 3, 0, 7);
   Iwram_CopyWords(palette, (void *)BG_PLTT, 64);
-  Iwram_CopyWords(tiles, (void *)0x06004000, 0x2800);
+  Iwram_CopyWords(tiles, (void *)BG_CHAR_BLOCK(1), 0x2800);
   Palette_LightenHighlight(14);
   Dma_Set((void *)OBJ_PLTT, (void *)BG_PLTT, DMA_COPY_HALFWORDS(16), REG_DMA3);
   Dma_Set((void *)&BG_PLTT_COLOR(14, 4), (void *)&BG_PLTT_COLOR(0, 14),
@@ -136,7 +136,7 @@ s32 StatusScreen_Run(void) {
   Window_MarkVisibleTextTilesFar();
   Text_UseExtraTilesFar(0);
   Iwram_CopyWords((void *)BG_PLTT, palette, 64);
-  Iwram_CopyWords((void *)0x06004000, tiles, 0x2800);
+  Iwram_CopyWords((void *)BG_CHAR_BLOCK(1), tiles, 0x2800);
   Heap_Release(tiles);
   Heap_Release(palette);
   ((struct WindowWork *)heap->windowTiles)->menuBusy = 1;
@@ -1196,7 +1196,7 @@ void Menu_BuildPatternTiles(void) {
 
   for (set = 0; set < 2; set++) {
     for (n = 0; n < 6; n++) {
-      u32 *tile = (u32 *)0x06006000 + set * 0x60 + n * 0x10;
+      u32 *tile = (u32 *)BG_SCREEN_BLOCK(12) + set * 0x60 + n * 0x10;
       s32 x;
 
       Iwram_FillWordsEntry(tile, 64, 0x44444444);

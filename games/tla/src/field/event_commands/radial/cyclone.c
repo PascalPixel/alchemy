@@ -266,7 +266,7 @@ void FieldPsynergy_Cyclone(void) {
   BattleEffect_SetObjectUpdateMode(*(struct Actor **)(effect + 16), 0);
   owner->update = BattleEffect_SpinObject;
   owner->timer = owner->facing;
-  palette = (u16 *)0x050003c0;
+  palette = (u16 *)(OBJ_PLTT + 14 * 16);
   blue = 31 << 10;
   for (j = 0; j < 16; j++) {
     c = j + 16;

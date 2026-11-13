@@ -90,4 +90,11 @@ STATIC_ASSERT(offsetof(struct BattleEffectWork, actorTimers) == 0x78dc);
 STATIC_ASSERT(offsetof(struct BattleEffectWork, transferPending) == 0x78e8);
 STATIC_ASSERT(offsetof(struct BattleEffectWork, effect) == 0x78f0);
 
+/// The heap slot of the battle canvas, as canvas_sprite.h has it.
+#define HEAP_SLOT_CANVAS 96
+/// The battle canvas the effects draw into: 128 by 128 pixels, a byte each.
+#define CANVAS_BYTES (128 * 128)
+/// A word of four canvas pixels at one level, for filling the canvas.
+#define CANVAS_FILL_WORD(level) ((level) * 0x01010101)
+
 #endif

@@ -481,7 +481,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
       targets[0] = 255;
       BattleActor_SpawnObjectsForListFar(targets, 0);
       BattleBackground_LoadFar(1, (s32)&ResourceId_VioletSkyBackdrop, 0);
-      for (col = (u16 *)0x050000c0, i = 0; i != 128; i++, col++) {
+      for (col = (u16 *)(BG_PLTT + 6 * 16), i = 0; i != 128; i++, col++) {
         s32 mid;
         s32 s;
 
@@ -534,7 +534,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
       }
       src = (const u8 *)Resource_GetTableEntry(
           (s32)&ResourceId_ForestCanopyTiles);
-      Iwram_CopyWords((void *)0x050003e0, src, 32);
+      Iwram_CopyWords((void *)(OBJ_PLTT + 15 * 16), src, 32);
       src += 32;
       Decompress_TaggedLz(src, work->frames);
       for (j = 0; j != 2; j++) {
@@ -554,7 +554,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
       }
       src = (const u8 *)Resource_GetTableEntry(
           (s32)&ResourceId_BronzeAutomatonTiles);
-      Iwram_CopyWords((void *)0x05000200, src, 0x1c0);
+      Iwram_CopyWords((void *)OBJ_PLTT, src, 0x1c0);
       src += 0x1c0;
       Decompress_TaggedLz(src, DECODE_BUFFER);
       for (i = 0; i != 21; i++) {
@@ -578,7 +578,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
           (void *)(gResourceTableEntries[obj->vram].offset + 0x06010000),
           DECODE_BUFFER + i * 0x400, 0x800);
       src = (const u8 *)Resource_GetTableEntry((s32)&ResourceId_MissileTiles);
-      Iwram_CopyWords((void *)0x050003c0, src, 32);
+      Iwram_CopyWords((void *)(OBJ_PLTT + 14 * 16), src, 32);
       src += 32;
       Decompress_TaggedLz(src, DECODE_BUFFER);
       obj = EffectSprite_CreateWithTiles(16, 8, 0x4000, 0xe000);
@@ -666,7 +666,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
 
     HeapSlot_Release(104);
     Iwram_Clear(dest, 0x3c00);
-    Iwram_Clear((void *)0x06004000, 0x4000);
+    Iwram_Clear((void *)BG_CHAR_BLOCK(1), 0x4000);
     *(vu16 *)0x0400000c = 0x786;
     *(vu16 *)0x04000020 = 0x80;
     *(s32 *)0x04000028 = 0;
@@ -685,14 +685,14 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
     pixels = DECODE_BUFFER;
     Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, pixels, 0, 0);
     Iwram_CopyWords(
-        (void *)0x05000000,
+        (void *)BG_PLTT,
         (const void *)Resource_GetTableEntry((s32)&ResourceId_SmokeSheet), 128);
     work->transferMode = 2;
     work->transferValue = 50;
     *(vu16 *)0x04000052 = 0x1010;
     *(vu16 *)0x04000050 = 0x3f44;
     for (i = 0; i != 224; i++) {
-      pal = (u16 *)0x05000200 + i;
+      pal = (u16 *)OBJ_PLTT + i;
       if (((*pal >> 5) & 0x1f) == 31)
         break;
     }
@@ -782,7 +782,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
       }
       if (frame == 280) {
         Iwram_CopyWords(
-            (void *)0x05000000,
+            (void *)BG_PLTT,
             (const void *)Resource_GetTableEntry((s32)&ResourceId_SmokeSheet),
             128);
         work->particles[20].timer = 1;
@@ -1340,9 +1340,9 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
       Sprite_DestroyFar(work->sprites[i]);
     bank[21] = VramCache_AllocEntry(128);
     Palette_LoadBasicSpriteColors();
-    Dma_Set((void *)0x05000200, (void *)0x050000a0, 0x80000010,
+    Dma_Set((void *)OBJ_PLTT, (void *)(BG_PLTT + 5 * 16), 0x80000010,
             (vu32 *)0x040000d4);
-    *(u16 *)0x050000bc = *(u16 *)0x050001e8;
+    *(u16 *)(BG_PLTT + 94) = *(u16 *)(BG_PLTT + 244);
     work->transferMode = 2;
     work->transferValue = 50;
     *(s32 *)0x04000028 = 0;
@@ -1369,7 +1369,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
           (const void *)Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB);
       CopyFunc copy = IWRAM_COPY_WORDS_LINKED;
 
-      copy((void *)0x05000000, colors, 128);
+      copy((void *)BG_PLTT, colors, 128);
     }
 
     for (frame = 0; frame != 109; frame++) {

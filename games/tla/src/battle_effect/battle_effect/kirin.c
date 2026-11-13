@@ -73,8 +73,8 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
   BattleEffect_StartCanvasLayer(0);
   BattleEffect_ConfigureEffectDisplay();
   REG_BG2CNT = 0x784;
-  *(u16 *)0x05000000 = 0;
-  *(u16 *)0x05000002 = 0x18;
+  *(u16 *)BG_PLTT = 0;
+  *(u16 *)(BG_PLTT + 1) = 0x18;
   work->transferMode = 0;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   BattleEffect_WipeCanvas(1, 0);

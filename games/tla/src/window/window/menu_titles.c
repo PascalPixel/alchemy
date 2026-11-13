@@ -427,7 +427,7 @@ void BattleCommandRow_LoadIconTiles(struct GlyphPalette *palette, s32 glyph,
     if (palette->slot[index] == 255) {
       palette->slot[index] = palette->count;
       if (palette->count < 64) {
-        ((u16 *)0x05000000)[palette->count] = ((u16 *)0x05000200)[index];
+        ((u16 *)BG_PLTT)[palette->count] = ((u16 *)OBJ_PLTT)[index];
         palette->count++;
       }
     }

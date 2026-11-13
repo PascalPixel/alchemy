@@ -71,7 +71,7 @@ struct EffectSprite__f15b3b0 *EffectSprite_Acquire(s32 kind, s32 value) {
 /// Fills BG palette colours 1 to 63 with a grey ramp, each level i / 2.
 void Graphics_LoadGreyRamp(void) {
   s32 i = 0;
-  u16 *color = (u16 *)0x05000002;
+  u16 *color = (u16 *)(BG_PLTT + 1);
 
 next:
   {
@@ -394,7 +394,7 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
   IO_WRITE_QUEUE_PUSH(0x04000000, 0x1141, 0x20000);
   wait(1);
   {
-    u32 *map = (u32 *)0x0600f800;
+    u32 *map = (u32 *)BG_SCREEN_BLOCK(31);
     u32 v;
     s32 y;
     s32 x;
@@ -603,7 +603,7 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
       struct EffectStep *q;
 
       Iwram_FillWords(canvas, 0x3c00, 0);
-      Iwram_ClearWords((void *)0x06004000, 0x3c00);
+      Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), 0x3c00);
       REG_DISPCNT = 0x7541;
       src = Data_081986aa;
       q = (struct EffectStep *)(work->sheet + 0x4b98);
@@ -921,8 +921,8 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
 
     IWRAM_FILL_WORDS(destination, 0x4000, 0);
   }
-  IWRAM_FILL_WORDS((void *)0x06004000, 0x3c00, 0);
-  Iwram_FillWords((void *)0x06008000, 0x7800, 0);
+  IWRAM_FILL_WORDS((void *)BG_CHAR_BLOCK(1), 0x3c00, 0);
+  Iwram_FillWords((void *)BG_CHAR_BLOCK(2), 0x7800, 0);
   wait(1);
   REG_BLDALPHA = 0x100e;
   REG_BLDCNT = 0x3f46;
@@ -941,7 +941,7 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
   wait(1);
   BattleBackground_LoadFar(2, *(u16 *)(battle + 0x670), -1);
   REG_BG2CNT = 0x787;
-  Iwram_ClearWords((void *)0x06004000, 0x3c00);
+  Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), 0x3c00);
   Task_Remove(Palette_StepFadeTransfer);
   gBgScroll[1].y = 32;
   IO_WRITE_QUEUE_PUSH(0x04000000, 0x7341, 0x20000);
@@ -1058,7 +1058,7 @@ void BattleEffect_RunSwirlSwipe(struct BattleEffectArgument *effect, s32 mode) {
   if (mode == 0) {
     void *palette = Resource_GetTableEntry((s32)&ResourceId_LimePalette);
     s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;
-    copy((void *)0x05000000, palette, 128);
+    copy((void *)BG_PLTT, palette, 128);
   }
   work->transferMode = 2;
   work->transferValue = 75;
@@ -1217,7 +1217,7 @@ void BattleEffect_RunSpiderWeb(struct BattleEffectArgument *effect) {
 
   // Teardown: clear both canvases and hand over to the summon canvas.
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  Iwram_ClearWords((void *)0x06004000, 0x3c00);
+  Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), 0x3c00);
   Iwram_ClearWords(canvas, 0x3c00);
   effect->prelude = 0;
   Task_Remove(Palette_StepFadeTransfer);

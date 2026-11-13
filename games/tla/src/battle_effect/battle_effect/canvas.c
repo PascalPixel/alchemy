@@ -164,7 +164,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
     wait(1);
   }
   Iwram_FillWords(canvas, 0x3c00, 0);
-  Iwram_FillWords((void *)0x06004000, 0x3c00, 0);
+  Iwram_FillWords((void *)BG_CHAR_BLOCK(1), 0x3c00, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);
   REG_DISPCNT = 0x7741;
   REG_BG2PA = 0x80;
@@ -459,10 +459,10 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
   // Two empty once-only blocks before the fills: without them, 18 differ.
   do {
   } while (0);
-  Iwram_FillWords(canvas, 0x4000, 0);
+  Iwram_FillWords(canvas, CANVAS_BYTES, 0);
   do {
   } while (0);
-  Iwram_FillWords((void *)0x06004000, 0x4000, 0);
+  Iwram_FillWords((void *)BG_CHAR_BLOCK(1), 0x4000, 0);
   wait(1);
   REG_BLDALPHA = 0x1010;
   REG_BLDCNT = 0x3f46;
@@ -470,7 +470,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
   gCameraSceneParameters[4] = 120;
   work->transferMode = 3;
   work->transferValue = 0x02020202;
-  Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
+  Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
   REG_BG2CNT = 0x784;
   effect->actors[effect->count] = 0xff;
   BattleActor_SpawnObjectsForListFar(effect->actors, 0);
@@ -499,7 +499,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
     if (frame == 18) {
       work->shakeFrames = 90;
       Sound_PlayFar(SE_CRASH);
-      Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
+      Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
       for (i = 0; i != effect->count; i++) {
         BattleEffect_TintBattler(effect->actors[i], 7, 5, i, 4);
       }
@@ -766,7 +766,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
       wait(1);
     }
   }
-  Iwram_FillWords((void *)0x06004000, 0x3c00, 0x3f3f3f3f);
+  Iwram_FillWords((void *)BG_CHAR_BLOCK(1), 0x3c00, 0x3f3f3f3f);
   gBgScroll[1].x = savedScroll;
   transition[4] = 0;
   gCameraSceneParameters[4] = 120;
@@ -795,7 +795,6 @@ struct Model;
 
 // Heap slots, as byte offsets into Ram_HeapSlots.
 #define SLOT_BATTLE_EFFECT 92 // battleFxWork[0]
-#define SLOT_BATTLE_CANVAS 96 // battleFxWork[1]
 
 // The whole effect work block: struct BattleEffectWork names only its first
 // 0x78f4 bytes.
@@ -843,7 +842,7 @@ void BattleEffect_RunFormChange(struct BattleEffectArgument *effect, s32 kind) {
   s32 i;
 
   work = HeapSlot_Alloc(SLOT_BATTLE_EFFECT, BATTLE_EFFECT_WORK_SIZE);
-  canvas = HeapSlot_Alloc(SLOT_BATTLE_CANVAS, 0x4000);
+  canvas = HeapSlot_Alloc(HEAP_SLOT_CANVAS, CANVAS_BYTES);
   work->vblanksSinceTransfer = 1;
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = 0x1010;
@@ -1094,7 +1093,7 @@ void BattleEffect_RunFormChange(struct BattleEffectArgument *effect, s32 kind) {
   } else {
     BattleEffect_EndCanvasLayer();
   }
-  HeapSlot_Release(SLOT_BATTLE_CANVAS);
+  HeapSlot_Release(HEAP_SLOT_CANVAS);
   HeapSlot_Release(SLOT_BATTLE_EFFECT);
 }
 
@@ -1111,25 +1110,26 @@ void BattleEffect_ProcessPendingGraphicsTransfer(void) {
     IRQ_UNLOCK(ime);
     switch (work->transferMode) {
     case 0:
-      Iwram_CopyWords((void *)0x06004000, source, 0x4000);
+      Iwram_CopyWords((void *)BG_CHAR_BLOCK(1), source, 0x4000);
       break;
     case 1:
-      Iwram_CopyWords((void *)0x06004000, source, 0x4000);
+      Iwram_CopyWords((void *)BG_CHAR_BLOCK(1), source, 0x4000);
       Iwram_FillWords(source, 0x4000, work->transferValue);
       break;
     case 2:
       if (work->transferValue == 50)
-        ColorBuffer_Halve(source, (void *)0x06004000, 0x4000);
+        ColorBuffer_Halve(source, (void *)BG_CHAR_BLOCK(1), 0x4000);
       else
-        ColorBuffer_ScaleThreeQuarters(source, (void *)0x06004000, Q16_ONE / 4);
+        ColorBuffer_ScaleThreeQuarters(source, (void *)BG_CHAR_BLOCK(1),
+                                       Q16_ONE / 4);
       break;
     case 3:
-      ColorBuffer_Darken(source, work->transferValue, (void *)0x06004000,
+      ColorBuffer_Darken(source, work->transferValue, (void *)BG_CHAR_BLOCK(1),
                          0x4000);
       break;
     case 4:
-      ColorBuffer_Brighten(source, work->transferValue, (void *)0x06004000,
-                           0x4000);
+      ColorBuffer_Brighten(source, work->transferValue,
+                           (void *)BG_CHAR_BLOCK(1), 0x4000);
       break;
     }
     // DEAD: nothing uses the counter read here; its load is in the ROM.
@@ -1173,20 +1173,21 @@ void BattleEffect_FlushPendingGraphicsTransfer(void) {
     IRQ_UNLOCK(ime);
     switch (work->transferMode) {
     case 0:
-      Iwram_CopyWords((void *)0x06008000, source, 0x7800);
+      Iwram_CopyWords((void *)BG_CHAR_BLOCK(2), source, 0x7800);
       break;
     case 1:
-      Iwram_CopyWords((void *)0x06008000, source, 0x7800);
+      Iwram_CopyWords((void *)BG_CHAR_BLOCK(2), source, 0x7800);
       Iwram_FillWords(source, 0x7800, work->transferValue);
       break;
     case 2:
       if (work->transferValue == 50)
-        ColorBuffer_Halve(source, (void *)0x06008000, 0x7800);
+        ColorBuffer_Halve(source, (void *)BG_CHAR_BLOCK(2), 0x7800);
       else
-        ColorBuffer_ScaleThreeQuarters(source, (void *)0x06008000, 0x7800);
+        ColorBuffer_ScaleThreeQuarters(source, (void *)BG_CHAR_BLOCK(2),
+                                       0x7800);
       break;
     case 3:
-      ColorBuffer_Darken(source, work->transferValue, (void *)0x06008000,
+      ColorBuffer_Darken(source, work->transferValue, (void *)BG_CHAR_BLOCK(2),
                          0x7800);
       break;
     }
@@ -1212,20 +1213,21 @@ void BattleEffect_ProcessPendingBlock2Transfer(void) {
     IRQ_UNLOCK(ime);
     switch (work->transferMode) {
     case 0:
-      Iwram_CopyWords((void *)0x06008000, source, 0x7800);
+      Iwram_CopyWords((void *)BG_CHAR_BLOCK(2), source, 0x7800);
       break;
     case 1:
-      Iwram_CopyWords((void *)0x06008000, source, 0x7800);
+      Iwram_CopyWords((void *)BG_CHAR_BLOCK(2), source, 0x7800);
       Iwram_FillWords(source, 0x3c00, work->transferValue);
       break;
     case 2:
       if (work->transferValue == 50)
-        ColorBuffer_Halve(source, (void *)0x06008000, 0x3c00);
+        ColorBuffer_Halve(source, (void *)BG_CHAR_BLOCK(2), 0x3c00);
       else
-        ColorBuffer_ScaleThreeQuarters(source, (void *)0x06008000, 0x3c00);
+        ColorBuffer_ScaleThreeQuarters(source, (void *)BG_CHAR_BLOCK(2),
+                                       0x3c00);
       break;
     case 3:
-      ColorBuffer_Darken(source, work->transferValue, (void *)0x06008000,
+      ColorBuffer_Darken(source, work->transferValue, (void *)BG_CHAR_BLOCK(2),
                          0x3c00);
       break;
     }
@@ -1239,7 +1241,7 @@ void BattleEffect_ProcessPendingBlock2Transfer(void) {
 }
 
 void BattleEffect_BuildCanvasTilemap(void) {
-  u32 *map = (u32 *)0x0600f800;
+  u32 *map = (u32 *)BG_SCREEN_BLOCK(31);
   u32 tiles;
   s32 row;
   s32 column;
@@ -1449,7 +1451,7 @@ void BattleEffect_StartCanvasLayer(s32 bgControl) {
     }
   }
 
-  Iwram_ClearWords(canvas, 0x4000);
+  Iwram_ClearWords(canvas, CANVAS_BYTES);
   Iwram_ClearWords(BG_CHAR_BLOCK(1), 0x4000);
   work->shakeFrames = 0;
   work->transferPending = 0;
@@ -1524,7 +1526,7 @@ void BattleEffect_OpenCanvasLayer(s32 bgControl) {
     }
   }
 
-  Iwram_ClearWords(canvas, 0x4000);
+  Iwram_ClearWords(canvas, CANVAS_BYTES);
   Iwram_ClearWords(BG_CHAR_BLOCK(1), 0x4000);
   work->shakeFrames = 0;
   work->transferPending = 0;
@@ -1679,7 +1681,7 @@ void BattleEffect_SetupCanvasTileMap(void) {
               WININ_WIN0_BG2 | WININ_WIN0_BG1 | WININ_WIN0_BG0;
   REG_WINOUT = WINOUT_WINOBJ_ALL | WINOUT_WIN01_CLR | WINOUT_WIN01_BG0;
   REG_BLDALPHA = BLEND_ALPHA(14, 16);
-  Iwram_ClearWords(canvas, 0x4000);
+  Iwram_ClearWords(canvas, CANVAS_BYTES);
   Iwram_ClearWords(BG_CHAR_BLOCK(1), 0x4000);
   wait(1);
 }

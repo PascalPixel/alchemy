@@ -138,7 +138,7 @@ void BattleTransition_UploadTileVariant(void) {
 
   if (variant <= 31)
     Dma_Set(gBattleTransition_CurtainVariants + (variant >> 2) * 32,
-            (void *)0x06005000, DMA_COPY_WORDS(8), REG_DMA3);
+            (void *)BG_SCREEN_BLOCK(10), DMA_COPY_WORDS(8), REG_DMA3);
 }
 
 void BattleTransition_AdvanceTimer(void) {
@@ -259,14 +259,14 @@ void BattleTransition_Run(s32 arg, s32 kind) {
       u32 v = 0x33333333;
       /* FAKEMATCH(barrier): an empty asm on v. */
       __asm__("" : "=r"(v) : "0"(v));
-      Iwram_FillWordsEntry((void *)0x06005000, 32, v);
+      Iwram_FillWordsEntry((void *)BG_SCREEN_BLOCK(10), 32, v);
     }
     IWRAM_FILL_WORDS((void *)0x06005100, 32, 0);
     REG_BG1CNT = 0xc04;
     REG_BG0CNT |= 2;
     view->mode = 2;
     {
-      u16 *map = (u16 *)0x06006000;
+      u16 *map = (u16 *)BG_SCREEN_BLOCK(12);
 
       for (i = 0; i < 32; i++) {
         u32 tile;

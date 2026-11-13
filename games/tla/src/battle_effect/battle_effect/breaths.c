@@ -548,7 +548,7 @@ void BattleEffect_RunBreaths(struct BattleEffectArgument *effect, s32 mode) {
         }
         work->shakeFrames = 8;
         BattlePlayback_StartFar(144);
-        Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
+        Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
       }
       BattleCamera_Shake(8, 8);
       BattleEffect_CountDownBattlerTints();
@@ -630,7 +630,7 @@ void BattleEffect_RunCrescentSlash(struct BattleEffectArgument *effect,
                              0);
   if (mode == 0) {
     Iwram_CopyWordsEntry(
-        (void *)0x05000000,
+        (void *)BG_PLTT,
         Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet), 128);
     REG_BLDALPHA = 0x810;
     work->transferMode = 2;
@@ -679,7 +679,7 @@ void BattleEffect_RunCrescentSlash(struct BattleEffectArgument *effect,
           draw[0](canvas, work->sheet, x, y, 120, 120);
           break;
         case 1:
-          Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
+          Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
           break;
         case 2:
           draw[0](canvas, cells, x - 4, y, 128, 128);
@@ -694,7 +694,7 @@ void BattleEffect_RunCrescentSlash(struct BattleEffectArgument *effect,
       } else {
         switch (step) {
         case 1:
-          Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
+          Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
           break;
         case 0:
           draw[0](canvas, work->sheet, x, y, 120, 120);

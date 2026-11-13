@@ -138,8 +138,8 @@ void TitleIntro_LoadPictureTiles(void) {
   BG_PLTT[0] = 0;
   cells = Ram_MapCellBuffer;
   Resource_DecodeByteLzInRam(source + 0x200, cells);
-  Dma_Set(cells, (void *)0x06000000, DMA_COPY_WORDS(DATA018_TILE_BYTES / 4),
-          REG_DMA3);
+  Dma_Set(cells, (void *)BG_CHAR_BLOCK(0),
+          DMA_COPY_WORDS(DATA018_TILE_BYTES / 4), REG_DMA3);
 }
 
 s32 Title_WaitOrPress(u32 frames) {
@@ -188,7 +188,7 @@ s32 TitleIntro_ScrollPicture(s32 mode) {
   s32 j;
 
   REG_DISPCNT = 0;
-  map = (u16 *)0x0600f800;
+  map = (u16 *)BG_SCREEN_BLOCK(31);
   tile = 0;
   for (j = 0; j < 16; j++) {
     for (i = 0; i < 32; i++) {
@@ -201,7 +201,7 @@ s32 TitleIntro_ScrollPicture(s32 mode) {
       *map++ = tile++;
     }
   }
-  map = (u16 *)0x0600f000;
+  map = (u16 *)BG_SCREEN_BLOCK(30);
   tile = 0;
   for (j = 0; j < 16; j++) {
     for (i = 0; i < 32; i++) {
@@ -322,7 +322,7 @@ s32 TitleIntro_ShowCard(void) {
   s32 row;
 
   REG_DISPCNT = 0;
-  map = (u16 *)0x0600e800;
+  map = (u16 *)BG_SCREEN_BLOCK(29);
   tile = 0;
   for (row = 0; row < 20; row++) {
     if (row >= 9 && row < 9 + NUMBERED_ROWS) {
@@ -371,7 +371,7 @@ s32 TitleIntro_ShowBlendedCard(void) {
   s32 row;
 
   REG_DISPCNT = 0;
-  map = (u16 *)0x0600e800;
+  map = (u16 *)BG_SCREEN_BLOCK(29);
   tile = FIRST_TILE;
   for (row = 0; row < 20; row++) {
     if (row >= 7 && row <= 9) {
@@ -386,7 +386,7 @@ s32 TitleIntro_ShowBlendedCard(void) {
         *map++ = 0x3040;
     }
   }
-  map = (u16 *)0x0600e000;
+  map = (u16 *)BG_SCREEN_BLOCK(28);
   tile = FIRST_TILE + 96;
   for (row = 0; row < 20; row++) {
     if (row == 10 || row == 11) {
@@ -450,10 +450,10 @@ s32 TitleIntro_ScrollLighthouse(struct TitleScroll *s) {
         *s->cursor++ = 0x1ff;
         *s->cursor++ = 0x1ff;
         if (++s->rows == 32) {
-          s->dst = (u8 *)0x06000000;
+          s->dst = (u8 *)BG_CHAR_BLOCK(0);
           s->rows = 0;
           s->tile = 0;
-          s->cursor = (u16 *)0x0600f800;
+          s->cursor = (u16 *)BG_SCREEN_BLOCK(31);
         }
         s->scroll -= 8;
       }
@@ -544,8 +544,8 @@ extern s16 gData_081a84e6[];
   {                                                                            \
     u8 *buffer = Data_02026800;                                                \
     Resource_DecodeByteLzInRam(Resource_GetTableEntry((s32)&(id)), buffer);    \
-    Dma_Set(buffer, (void *)0x06010000,                                        \
-            (DMA_ENABLE | DMA_32BIT) << 16 | 0xc00, REG_DMA3);                 \
+    Dma_Set(buffer, (void *)OBJ_VRAM0, (DMA_ENABLE | DMA_32BIT) << 16 | 0xc00, \
+            REG_DMA3);                                                         \
   }
 
 /// The logo's per-frame task while the lighthouse scrolls: places its pieces
@@ -568,7 +568,7 @@ void TitleIntro_UpdateLogo(void) {
   volatile u16 *matrix;
 
   logo = Ram_HeapSlots->unk84[10];
-  Dma_Fill32Cell(fill, 0, (void *)0x07000000, 0x400);
+  Dma_Fill32Cell(fill, 0, (void *)OAM, 0x400);
   if (logo->phase == 0) {
     if (logo->timer == 0) {
       if (gData_081a8378[logo->frame + 5] != -1)
@@ -586,7 +586,7 @@ void TitleIntro_UpdateLogo(void) {
     x = gData_081a84e6[logo->step];
     if (x == -1) {
       Dma_Set(Resource_GetTableEntry((s32)&ResourceId_Data01B),
-              (void *)0x05000200, (DMA_ENABLE | DMA_32BIT) << 16 | 0x80,
+              (void *)OBJ_PLTT, (DMA_ENABLE | DMA_32BIT) << 16 | 0x80,
               REG_DMA3);
       LOAD_LOGO_TILES(ResourceId_Data01C);
       logo->phase = 1;
@@ -610,7 +610,7 @@ void TitleIntro_UpdateLogo(void) {
         sprite.tile = tile + column + row * 8;
         sprite.x = left + column * 8;
         sprite.y = top + row * 8;
-        Dma_Set(&sprite, (u8 *)0x07000000 + (row * 8 + column) * 8,
+        Dma_Set(&sprite, (u8 *)OAM + (row * 8 + column) * 8,
                 (DMA_ENABLE | DMA_32BIT) << 16 | 2, REG_DMA3);
       }
     }
@@ -672,26 +672,26 @@ s32 TitleIntro_ShowLighthouse(void) {
 
   logo = HeapSlot_Alloc(172, 112);
   REG_DISPCNT = 0;
-  Dma_Fill32Cell(fill, 0, (void *)0x07000000, 0x400);
+  Dma_Fill32Cell(fill, 0, (void *)OAM, 0x400);
   source = Resource_GetTableEntry((s32)&ResourceId_IntroGullSprites);
   buffer = gMapCellBuffer;
   source += 32;
   Resource_DecodeByteLzInRam(source, buffer);
-  Dma_Set(buffer, (void *)0x06010000, (DMA_ENABLE | DMA_32BIT) << 16 | 0x1b00,
+  Dma_Set(buffer, (void *)OBJ_VRAM0, (DMA_ENABLE | DMA_32BIT) << 16 | 0x1b00,
           REG_DMA3);
   wait(1);
   source = Resource_GetTableEntry((s32)&ResourceId_IntroLighthousePicture);
-  Dma_Set(source, (void *)0x05000000, (DMA_ENABLE | DMA_32BIT) << 16 | 0x80,
+  Dma_Set(source, (void *)BG_PLTT, (DMA_ENABLE | DMA_32BIT) << 16 | 0x80,
           REG_DMA3);
-  *(u16 *)0x05000000 = 0x7fff;
+  *(u16 *)BG_PLTT = 0x7fff;
   wait(1);
   source += 0x200;
   Resource_DecodeByteLzInRam(source, buffer);
-  Dma_Set(buffer, (void *)0x06000000, (DMA_ENABLE | DMA_32BIT) << 16 | 0x2580,
-          REG_DMA3);
+  Dma_Set(buffer, (void *)BG_CHAR_BLOCK(0),
+          (DMA_ENABLE | DMA_32BIT) << 16 | 0x2580, REG_DMA3);
   wait(1);
 
-  map = (u16 *)0x0600f800;
+  map = (u16 *)BG_SCREEN_BLOCK(31);
   tile = 0;
   q16One = 0x10000;
   for (row = 0; row < 20; row++) {
@@ -713,7 +713,7 @@ s32 TitleIntro_ShowLighthouse(void) {
     gBgScroll[i].y = 0;
     gBgScroll[i].x = 0;
   }
-  Dma_Set((void *)0x05000000, Ram_HeapSlots->block32,
+  Dma_Set((void *)BG_PLTT, Ram_HeapSlots->block32,
           (DMA_ENABLE | DMA_32BIT) << 16 | 0x80, REG_DMA3);
   wait(1);
   PaletteFade_SetTarget(q16One, 0);
@@ -744,7 +744,7 @@ s32 TitleIntro_ShowLighthouse(void) {
   if (map)
     goto stopped;
   Dma_Set(Resource_GetTableEntry((s32)&ResourceId_IntroGullSprites),
-          (void *)0x05000200, (DMA_ENABLE | DMA_32BIT) << 16 | 8, REG_DMA3);
+          (void *)OBJ_PLTT, (DMA_ENABLE | DMA_32BIT) << 16 | 8, REG_DMA3);
   logo->phase = 0;
   logo->frame = -5;
   logo->timer = 0;
@@ -760,7 +760,7 @@ s32 TitleIntro_ShowLighthouse(void) {
   scroll.step = -1;
   scroll.scroll = 0;
   scroll.src = Data_02017080;
-  scroll.dst = (u8 *)0x06007800;
+  scroll.dst = (u8 *)BG_SCREEN_BLOCK(15);
   scroll.cursor = (u16 *)0x0600f9c2;
   scroll.tile = 450;
   scroll.rows = 11;
@@ -781,7 +781,7 @@ stopped:
   TitlePaletteFade_Start(10);
   wait(10);
 done:
-  Dma_Fill32Cell(fill, 0, (void *)0x07000000, 0x400);
+  Dma_Fill32Cell(fill, 0, (void *)OAM, 0x400);
   Task_Remove(TitleIntro_UpdateLogo);
   HeapSlot_Release(172);
   wait(1);
@@ -908,10 +908,11 @@ s32 Title_ShowIntro(s32 prompt) {
     u8 *cells = Ram_MapCellBuffer;
 
     Decompress_TaggedLz(data + 0x1c0, cells);
-    Dma_Set(cells, (void *)0x06006800, DMA_COPY_WORDS(0x9600 / 4), REG_DMA3);
+    Dma_Set(cells, (void *)BG_SCREEN_BLOCK(13), DMA_COPY_WORDS(0x9600 / 4),
+            REG_DMA3);
   }
   {
-    u16 *start = (u16 *)0x06003000;
+    u16 *start = (u16 *)BG_SCREEN_BLOCK(6);
 
     tilemap = start;
   }
@@ -1064,10 +1065,11 @@ s32 Title_ShowNintendoLogo(s32 mode) {
     u8 *cells = Ram_MapCellBuffer;
 
     Decompress_TaggedLz(data + 448, cells);
-    Dma_Set(cells, (void *)0x06004000, DMA_COPY_WORDS(0x9600 / 4), REG_DMA3);
+    Dma_Set(cells, (void *)BG_CHAR_BLOCK(1), DMA_COPY_WORDS(0x9600 / 4),
+            REG_DMA3);
   }
   {
-    u16 *start = (u16 *)0x06003000;
+    u16 *start = (u16 *)BG_SCREEN_BLOCK(6);
 
     map = start;
   }
@@ -1165,7 +1167,7 @@ s32 Title_ShowCamelotLogo(void) {
   Dma_Set(buffer, (void *)BG_PLTT, (DMA_ENABLE | DMA_32BIT) << 16 | 0x1c0 / 4,
           REG_DMA3);
   buffer += 0x1c0;
-  Dma_Set(buffer, (void *)0x06003000,
+  Dma_Set(buffer, (void *)BG_SCREEN_BLOCK(6),
           (DMA_ENABLE | DMA_32BIT) << 16 | 0x800 / 4, REG_DMA3);
   buffer += 0x800;
   Dma_Set(buffer, BG_CHAR_BLOCK(1), (DMA_ENABLE | DMA_32BIT) << 16 | 0x4000 / 4,

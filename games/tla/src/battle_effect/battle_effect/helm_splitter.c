@@ -71,7 +71,7 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectArgument *effect) {
     Resource_LoadAndDecompress((s32)&ResourceId_SkullSheet,
                                work->sheet + 0x3e80, 1, 1);
     Iwram_CopyWordsEntry(
-        (void *)0x05000000,
+        (void *)BG_PLTT,
         Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet), 128);
     work->transferValue = 75;
   }

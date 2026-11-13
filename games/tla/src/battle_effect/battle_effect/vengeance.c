@@ -553,7 +553,7 @@ void BattleEffect_RunLifeShear(struct BattleEffectArgument *effect) {
       BattlePlayback_StartFar(134);
       work->shakeFrames = 12;
       BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 8);
-      Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
+      Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
       BattleMotion_ApplyKnockbackFar(effect->actors[0], 4);
     }
     timer = work->particles[0].variant;
@@ -1543,11 +1543,11 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
       work->transferValue = 50;
     }
     if (frame == 82) {
-      Iwram_FillWordsEntry(canvas, 0x4000, 0x2f2f2f2f);
+      Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(47));
       Sound_PlayFar(SE_PSYNERGY_START);
     }
     if (frame == 210) {
-      Iwram_FillWordsEntry(canvas, 0x4000, 0x2f2f2f2f);
+      Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(47));
       Sound_PlayFar(SE_PSYNERGY_START);
     }
     if (frame == 274) {
@@ -2062,7 +2062,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
       if (frame > 80) {
         for (i = 0; i != 3; i++) {
           if (frame == Data_0819974e[i]) {
-            Iwram_FillWordsEntry(canvas, 0x4000, 0x2f2f2f2f);
+            Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(47));
           }
           if (frame > Data_0819974e[i] && frame < Data_0819974e[i] + 10) {
             s32 d = frame - Data_0819974e[i];
@@ -2206,7 +2206,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
     work->transferPending = 1;
     wait(1);
   }
-  Iwram_FillWords((void *)0x06004000, 0x4000, 0x3f3f3f3f);
+  Iwram_FillWords((void *)BG_CHAR_BLOCK(1), 0x4000, 0x3f3f3f3f);
   IO_WRITE_QUEUE_PUSH(0x04000000, 0x7741, 0x20000);
   for (i = 0; i != 12; i++) {
     Sprite_DestroyFar(work->objects[i]);
@@ -2223,7 +2223,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet),
                        128);
-  Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
+  Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
   Palette_BrightenSavedBattleBg(0, 0, 11);
   frame = 0;
   for (; frame != 60; frame++) {

@@ -50,7 +50,7 @@ void BattleEffect_RunQuake(struct BattleEffectArgument *effect) {
                              work->sheet + ROCK_OFFSET, 1, 1);
 
   // Copy the background's characters and cut the band out of them.
-  Iwram_CopyWords(Ram_MapCellBuffer, (void *)0x06008000, 0x8000);
+  Iwram_CopyWords(Ram_MapCellBuffer, (void *)BG_CHAR_BLOCK(2), 0x8000);
   for (row = 0; row != 16; row++) {
     y = row + 96;
     for (col = 0; col != PILLAR_W; col++) {

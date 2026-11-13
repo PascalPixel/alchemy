@@ -560,7 +560,7 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  Iwram_ClearWords((void *)0x06004000, 0x4000);
+  Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), 0x4000);
   HeapSlot_Release(188);
   HeapSlot_Release(104);
 }
@@ -568,7 +568,7 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
 /// Adds the deltas to BG palette entries 1 to 63, as The Broken Seal does, but
 /// clamped at 0.
 void Palette_BrightenBgEntries(s32 blue_delta, s32 green_delta, s32 red_delta) {
-  u16 *color = (u16 *)0x05000002;
+  u16 *color = (u16 *)(BG_PLTT + 1);
   s32 i;
 
   for (i = 0; i != 63; i++) {
@@ -598,7 +598,7 @@ void Palette_BrightenBgEntries(s32 blue_delta, s32 green_delta, s32 red_delta) {
 /// As Palette_BrightenBgEntries over BG palette entries 96 to 223, the deltas
 /// red first.
 void Palette_BrightenBattleBg(s32 red_delta, s32 green_delta, s32 blue_delta) {
-  u16 *color = (u16 *)0x050000c0;
+  u16 *color = (u16 *)(BG_PLTT + 6 * 16);
   s32 i;
 
   for (i = 0; i != 128; i++) {
@@ -629,7 +629,7 @@ void Palette_BrightenBattleBg(s32 red_delta, s32 green_delta, s32 blue_delta) {
 /// palette entries 96 to 223.
 void Palette_BrightenSavedBattleBg(s32 redDelta, s32 greenDelta,
                                    s32 blueDelta) {
-  u16 *color = (u16 *)0x050000c0;
+  u16 *color = (u16 *)(BG_PLTT + 6 * 16);
   u16 *source = Ram_HeapSlots->battleWork->palette;
   s32 i;
 
@@ -871,7 +871,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
   // The copy in a once-only block, so its entry loads before the size; as
   // the plain call, 2 of 1591 instructions differ in tla-en.
   do {
-    Iwram_CopyWords((void *)0x06008000, Ram_MapCellBuffer, 0x7800);
+    Iwram_CopyWords((void *)BG_CHAR_BLOCK(2), Ram_MapCellBuffer, 0x7800);
   } while (0);
   wait(1);
   REG_BLDCNT = 0;
@@ -885,9 +885,9 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
     s32 green = (Random16() & 15) + 16;
     s32 blue = (Random16() & 15) + 16;
 
-    ((u16 *)0x05000100)[i] = (blue << 10) | (green << 5) | red;
+    ((u16 *)(BG_PLTT + 8 * 16))[i] = (blue << 10) | (green << 5) | red;
   }
-  IWRAM_FILL_WORDS(canvas, 0x4000, 0);
+  IWRAM_FILL_WORDS(canvas, CANVAS_BYTES, 0);
 
   for (i = 0; i != 256; i++) {
     s32 x = Random16() & 127;
@@ -896,7 +896,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
 
     ((u8 *)canvas)[((y / 8 * 16 + x / 8) * 8 + (y & 7)) * 8 + (x & 7)] = shade;
   }
-  Iwram_CopyWords((void *)0x06004000, canvas, 0x4000);
+  Iwram_CopyWords((void *)BG_CHAR_BLOCK(1), canvas, 0x4000);
   gCameraSceneParameters[4] = 240;
   BattleEffect_SelectLivingTargets(work->effect);
 

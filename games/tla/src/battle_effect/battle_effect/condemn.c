@@ -165,7 +165,7 @@ void BattleEffect_RunCondemn(struct BattleEffectArgument *effect) {
                            gCondemn_PictureX[column * 7 + 1],
                            gCondemn_PanelY[row * 7 + 1] + screenY, 99, 69);
         if ((u32)(frame - 72) <= 1)
-          Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
+          Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
         if ((u32)(frame - 74) <= 1)
           draw[effect->side](canvas, work->sheet + PANEL_C,
                              gCondemn_PictureX[column * 7 + 2],

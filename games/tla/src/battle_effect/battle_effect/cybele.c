@@ -169,7 +169,7 @@ void BattleEffect_RunCybele(struct BattleEffectArgument *effect) {
 
     // A or B skips the vines to the drop.
     if ((gInput.repeat & (KEY_A | KEY_B)) != 0 && frame > 190 && frame <= 285) {
-      Iwram_ClearWordsEntry(canvas, 0x4000);
+      Iwram_ClearWordsEntry(canvas, CANVAS_BYTES);
       frame = 286;
     }
     if (frame == 224)
@@ -327,7 +327,7 @@ void BattleEffect_RunCybele(struct BattleEffectArgument *effect) {
 
     // Every four frames, step the 64 BG colours one shade toward grey.
     if (frame >= 224 && frame <= 247 && (frame & 3) == 0) {
-      u16 *color = (u16 *)0x05000000;
+      u16 *color = (u16 *)BG_PLTT;
 
       for (i = 0; i != 64; i++) {
         s32 red = *color & 31;

@@ -312,9 +312,9 @@ void LuckyDice_Run(void) {
 
   resourceAddress =
       (s32)Resource_GetTableEntry((s32)&ResourceId_LuckyDiceBoard);
-  Dma_Set((void *)resourceAddress, (void *)0x05000000,
+  Dma_Set((void *)resourceAddress, (void *)BG_PLTT,
           (DMA_ENABLE | DMA_32BIT) << 16 | 0x70, REG_DMA3);
-  Dma_Set((void *)0x05000000, bgPalette, (DMA_ENABLE | DMA_32BIT) << 16 | 0x80,
+  Dma_Set((void *)BG_PLTT, bgPalette, (DMA_ENABLE | DMA_32BIT) << 16 | 0x80,
           REG_DMA3);
   resourceAddress += 0x1c0;
   // UB: Call2 passes integers to the decoder's two pointer parameters, as
@@ -326,13 +326,13 @@ void LuckyDice_Run(void) {
   Call2((void (*)())Decompress_TaggedLz, resourceAddress,
         (s32)Ram_MapCellBuffer);
 #endif
-  Dma_Set(Ram_MapCellBuffer, (void *)0x06004000,
+  Dma_Set(Ram_MapCellBuffer, (void *)BG_CHAR_BLOCK(1),
           (DMA_ENABLE | DMA_32BIT) << 16 | 0x2580, REG_DMA3);
   resourceAddress =
       (s32)Resource_GetTableEntry((s32)&ResourceId_LuckyDiceSprites);
   Dma_Set((void *)resourceAddress, spritePalette,
           (DMA_ENABLE | DMA_32BIT) << 16 | 0x80, REG_DMA3);
-  Dma_Set((void *)resourceAddress, (void *)0x05000200,
+  Dma_Set((void *)resourceAddress, (void *)OBJ_PLTT,
           (DMA_ENABLE | DMA_32BIT) << 16 | 0x80, REG_DMA3);
   resourceAddress += 0x200;
 #ifdef UBFIX
@@ -341,10 +341,10 @@ void LuckyDice_Run(void) {
   Call2((void (*)())Decompress_TaggedLz, resourceAddress,
         (s32)Ram_MapCellBuffer);
 #endif
-  Dma_Set(Ram_MapCellBuffer, (void *)0x06010000,
+  Dma_Set(Ram_MapCellBuffer, (void *)OBJ_VRAM0,
           (DMA_ENABLE | DMA_32BIT) << 16 | 0x1f00, REG_DMA3);
-  LuckyDice_ScaleRgb555Buffer(spritePalette, (u16 *)0x05000200, 0, 256);
-  LuckyDice_ScaleRgb555Buffer(bgPalette, (u16 *)0x05000000, 0, 256);
+  LuckyDice_ScaleRgb555Buffer(spritePalette, (u16 *)OBJ_PLTT, 0, 256);
+  LuckyDice_ScaleRgb555Buffer(bgPalette, (u16 *)BG_PLTT, 0, 256);
 
   REG_BG1CNT = 0x686;
   REG_WININ = 0x3737;
@@ -414,10 +414,9 @@ void LuckyDice_Run(void) {
   for (;;) {
     resetDice = 0;
     if (frame <= 16) {
-      LuckyDice_ScaleRgb555Buffer(spritePalette, (u16 *)0x05000200, frame << 12,
+      LuckyDice_ScaleRgb555Buffer(spritePalette, (u16 *)OBJ_PLTT, frame << 12,
                                   256);
-      LuckyDice_ScaleRgb555Buffer(bgPalette, (u16 *)0x05000000, frame << 12,
-                                  256);
+      LuckyDice_ScaleRgb555Buffer(bgPalette, (u16 *)BG_PLTT, frame << 12, 256);
     }
     Transform_Reset();
     Transform_SetLookAt(camera->eye, camera->focus);
@@ -877,16 +876,16 @@ void LuckyDice_Run(void) {
       sprites->oam[index * 4 + 3].attr2 |= affineD << 16;
     }
 
-    Dma_Set(sprites->oam, (void *)0x07000000,
-            (DMA_ENABLE | DMA_32BIT) << 16 | 0x100, REG_DMA3);
+    Dma_Set(sprites->oam, (void *)OAM, (DMA_ENABLE | DMA_32BIT) << 16 | 0x100,
+            REG_DMA3);
     wait(1);
     frame++;
   }
 
   for (index = 0; index != 17; index++) {
     scale = Q16_ONE - (index << 12);
-    LuckyDice_ScaleRgb555Buffer(spritePalette, (u16 *)0x05000200, scale, 256);
-    LuckyDice_ScaleRgb555Buffer(bgPalette, (u16 *)0x05000000, scale, 256);
+    LuckyDice_ScaleRgb555Buffer(spritePalette, (u16 *)OBJ_PLTT, scale, 256);
+    LuckyDice_ScaleRgb555Buffer(bgPalette, (u16 *)BG_PLTT, scale, 256);
     wait(1);
   }
   HeapSlot_Release(48);

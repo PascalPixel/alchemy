@@ -42,8 +42,8 @@ void BattleEffect_RunBoreas(struct BattleEffectArgument *effect) {
   step = 1;
   BattleEffect_StartCanvasLayer(0);
   BattleEffect_ConfigureEffectDisplay();
-  *(u16 *)0x05000000 = 0;
-  *(u16 *)0x05000002 = 0;
+  *(u16 *)BG_PLTT = 0;
+  *(u16 *)(BG_PLTT + 1) = 0;
   work->transferMode = 0;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   REG_WININ = 0x2137;

@@ -449,7 +449,7 @@ void BattleEffect_RunCards(struct BattleEffectArgument *effect, s32 mode) {
         Sound_PlayFar(SE_POWER_UP);
         BattlePlayback_StartFar(-1);
         work->shakeFrames = 4;
-        Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
+        Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
         BattleEffect_TintBattler(effect->actors[0], 7, -1, 0, 16);
         for (i = 0; i != 64; i++) {
           s32 angle = Random16() & 0xffff;
@@ -521,7 +521,7 @@ void BattleEffect_RunCards(struct BattleEffectArgument *effect, s32 mode) {
                   overflow + gData_0819750c[effect->side * 7 + 1],
                   gData_0819751a[1], 99, 69);
           if (frame >= 64 && frame <= 65)
-            Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
+            Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
           if (frame >= 66 && frame <= 67)
             draw[0](canvas, work->sheet + 0x3081,
                     overflow + gData_0819750c[effect->side * 7 + 2],

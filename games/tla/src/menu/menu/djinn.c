@@ -104,7 +104,7 @@ s32 DjinnMenu_Run(void) {
   Ram_HeapSlots->objectSystem->suspended = 0;
   Window_MarkVisibleTextTilesFar();
   Text_UseExtraTilesFar(0);
-  Iwram_CopyWords((void *)0x06004000, backdrop->tiles, 0x2000);
+  Iwram_CopyWords((void *)BG_CHAR_BLOCK(1), backdrop->tiles, 0x2000);
   Iwram_CopyWords((void *)&BG_PLTT_COLOR(4, 0), backdrop->palette, 128);
   wait(1);
   Menu_ResumeFieldTasks();
@@ -392,7 +392,7 @@ void DjinnMenu_AdjustPalettes(s32 d) {
       s32 v;
 
       idx = paletteNumber * 16 + col;
-      color = ((u16 *)0x05000000)[idx];
+      color = ((u16 *)BG_PLTT)[idx];
       b = (color >> 10) & mask;
       g = (color >> 5) & mask;
       r = color & mask;

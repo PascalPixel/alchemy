@@ -8,7 +8,7 @@
 
 #define TRAILS ((struct EffectStep *)Ram_MapCellBuffer)
 #define MATRICES (Ram_MapCellBuffer + 0x3800)
-#define OBJ_VRAM ((u8 *)0x06010000)
+#define OBJ_VRAM ((u8 *)OBJ_VRAM0)
 
 #define GIANT_PIECES 11
 

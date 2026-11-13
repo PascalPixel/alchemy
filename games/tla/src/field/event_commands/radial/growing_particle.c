@@ -159,7 +159,7 @@ void FieldPsynergy_EndSand(void) {
     if (frame <= 64) {
       Picture_SinkColumnsByWave(work, rippled, 92 - ripple / 2);
       ((void (*)(void *, s32, s32, void *))Ram_HeapSlots->unk4c[2])(
-          rippled, 32, 32, (u8 *)0x06010000 + pictureOffset);
+          rippled, 32, 32, (u8 *)OBJ_VRAM0 + pictureOffset);
       Sand_DrawLeaderSprite(work + 0x1900);
     }
     if (frame == 66) {

@@ -1114,7 +1114,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
   REG_BLDALPHA = 0x1010;
   REG_BLDCNT = 0x3f44;
   Iris_WipeScreen(0, 4, Iris_ChangeBackdrop);
-  Iwram_FillWords(canvas, 0x4000, 0);
+  Iwram_FillWords(canvas, CANVAS_BYTES, 0);
   while (((volatile struct DmaRegisters *)REG_DMA3)->control & 0x80000000) {
   }
   work->transferPending = 1;
@@ -1158,7 +1158,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
         frame = 176;
       } else if ((u32)(frame - 177) <= 268) {
         REG_BLDALPHA = 0x1010;
-        Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
+        Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
         work->transferPending = 1;
         wait(1);
         if (frame <= 386) {
@@ -1171,7 +1171,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
         }
         frame = 446;
       } else {
-        Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
+        Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
         work->transferPending = 1;
         wait(1);
         break;
@@ -1313,7 +1313,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       }
       if (frame == 175) {
         REG_BG2CNT = 0x785;
-        Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
+        Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
         Iwram_FillWords(FADE_PLTT, 0x100, 0x7fff7fff);
       }
     }
@@ -1323,7 +1323,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       u8 *colors;
       struct VramBlockCacheEntry *table;
 
-      Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
+      Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
       work->transferPending = 1;
       wait(1);
       battle[0x867] = 1;
@@ -1739,7 +1739,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
 
     // The fountain: the second backdrop, the motes and the light shafts.
     if (frame == 446) {
-      Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
+      Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
       Transform_Reset();
       BattleBackground_LoadFar(1, (s32)&ResourceId_StarfieldFlareBackdrop, 0);
       off = 0x302;
@@ -2004,7 +2004,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       }
     }
     if ((u32)(frame - 755) <= 2 || frame == 781)
-      Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
+      Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
     if (frame == 754) {
       s32 white;
       BattleEffect_BuildSteepShadeRampWave(work->sheet + 0x5810, 16, 32,
@@ -2176,7 +2176,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
   camera[27] = savedZoom;
   HeapSlot_Release(SLOT_BLITTER);
   Iris_RestoreBattle();
-  Iwram_FillWords(canvas, 0x4000, 0);
+  Iwram_FillWords(canvas, CANVAS_BYTES, 0);
   while (((volatile struct DmaRegisters *)REG_DMA3)->control & 0x80000000) {
   }
   work->transferPending = 1;

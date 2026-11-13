@@ -1208,7 +1208,7 @@ loaded:
         blue = 31;
       do { // once-only block: the listing schedules the store with it
         packed = (blue << 10) | (green << 5) | red;
-        ((u16 *)0x05000200)[255 - i] = packed;
+        ((u16 *)OBJ_PLTT)[255 - i] = packed;
       } while (0);
     }
     if (fade != -1 && fade <= 126)
@@ -1382,7 +1382,7 @@ void BgMap_DrawClipped16x16(s32 x, s32 y) {
     fill = Iwram_FillWordsEntry;
     /* FAKEMATCH(barrier): an empty asm taking the fill routine's entry. */
     asm volatile("" : : "l"(fill));
-    fill((void *)0x06002000, 0x400, 0);
+    fill((void *)BG_SCREEN_BLOCK(4), 0x400, 0);
   } while (0);
   for (row = 0, sy = y; row < 16; row++, sy++) {
     if (sy < 0)
@@ -1394,7 +1394,7 @@ void BgMap_DrawClipped16x16(s32 x, s32 y) {
         continue;
       if (sx > 29)
         break;
-      ((u16 *)0x06002000)[row * 32 + column] = tiles[row * 16 + column];
+      ((u16 *)BG_SCREEN_BLOCK(4))[row * 32 + column] = tiles[row * 16 + column];
     }
   }
 }
@@ -1484,8 +1484,8 @@ void FieldPsynergy_UpdateUnnamed28(void) {
       } while (0);
       color = blue | green | red;
 
-      ((u16 *)0x050001e0)[i] = color;
-      ((u16 *)0x050003e0)[i] = color;
+      ((u16 *)(BG_PLTT + 15 * 16))[i] = color;
+      ((u16 *)(OBJ_PLTT + 15 * 16))[i] = color;
     }
     if (++i < 16)
       goto cycle;

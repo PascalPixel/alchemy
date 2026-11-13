@@ -702,7 +702,7 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectArgument *effect,
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   HeapSlot_Release(104);
   if (mode == 0) {
-    Iwram_ClearWords((void *)0x06004000, 0x3c00);
+    Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), 0x3c00);
     Iwram_ClearWords(canvas, 0x3c00);
     Task_Remove(Palette_StepFadeTransfer);
     SummonEffect_RunCanvasMode1(effect);
@@ -717,7 +717,7 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectArgument *effect,
     gBgScroll[1].x = work->savedBg1X;
     gBgScroll[1].y = work->savedBg1Y;
     REG_BG2CNT = 0x787;
-    Iwram_ClearWords((void *)0x06004000, 0x4000);
+    Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), 0x4000);
     Task_Remove(Palette_StepFadeTransfer);
     IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, 0x7341, 0x20000);
     REG_BLDCNT = 0;

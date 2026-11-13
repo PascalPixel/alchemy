@@ -277,7 +277,7 @@ void BattleEffect_RunBurstScene(struct BattleEffectArgument *effect,
       // The hit; the last blow ends the run.
       if (frame == start + 2) {
         if (RECORD(RECORD_FILL) == 1)
-          Iwram_FillWordsEntry(canvas, 0x4000, 0x2f2f2f2f);
+          Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(47));
         BattleEffect_TintBattler(effect->actors[0], 7, 5, 0, 4);
         if (i == blows - 1) {
           BattleMotion_ApplyKnockbackFar(effect->actors[0], 4);

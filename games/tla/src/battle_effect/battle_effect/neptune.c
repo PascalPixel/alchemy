@@ -67,8 +67,8 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
   // below the line the IRQ handler picks.
   BattleEffect_StartCanvasLayer(0);
   BattleEffect_ConfigureEffectDisplay();
-  *(u16 *)0x05000000 = 0;
-  *(u16 *)0x05000002 = 0;
+  *(u16 *)BG_PLTT = 0;
+  *(u16 *)(BG_PLTT + 1) = 0;
   Task_Add(BattleEffect_ResetBg2Pa, TASK_PASS_FRAME);
   Irq_SetHandler(2, 0, BattleEffect_SetBg2AffineScaleHalf);
   work->transferMode = 0;
@@ -81,7 +81,7 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
   ((u8 *)Ram_HeapSlots->battleWork)[0x867] = 1;
   {
     u8 *sheet = Resource_GetTableEntry((s32)&ResourceId_SeaSerpentTiles);
-    Iwram_CopyWords((void *)0x05000200, sheet, 0x200);
+    Iwram_CopyWords((void *)OBJ_PLTT, sheet, 0x200);
     sheet += 0x200;
     Decompress_TaggedLz(sheet, tiles);
     for (i = 0; i != 8; i++) {
@@ -415,9 +415,9 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
   Irq_SetHandler(2, 0, 0);
   BattleEffect_SetupBlendedDisplay();
   Palette_LoadBasicSpriteColors();
-  Dma_Set((const void *)0x05000200, (void *)0x050000a0, 0x80000010,
+  Dma_Set((const void *)OBJ_PLTT, (void *)(BG_PLTT + 5 * 16), 0x80000010,
           (volatile u32 *)0x040000d4);
-  *(u16 *)0x050000bc = *(u16 *)0x050001e8;
+  *(u16 *)(BG_PLTT + 94) = *(u16 *)(BG_PLTT + 244);
   Task_Remove(BattleEffect_ResetBg2Pa);
   REG_WIN0H = 0xf0;
   work->transferMode = 2;

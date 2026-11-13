@@ -142,7 +142,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
   // Default: set again before each round's forced actions.
   forcedCount = 0;
   Resource_LoadIndexedIntoBuffer(largeIconSlot, 0);
-  Graphics_ExpandVramTilesByColorTable((u16 *)0x06006000);
+  Graphics_ExpandVramTilesByColorTable((u16 *)BG_SCREEN_BLOCK(12));
   Link_DrawPageArrows(0x06006680);
   Menu_BuildLocalizedPatternTiles();
   state->swappedUnit = -1;

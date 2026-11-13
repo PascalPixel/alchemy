@@ -5,6 +5,7 @@
 // Part of battle.c.
 
 #include "../battle_internal.h"
+#include "battle_effect_work.h"
 #include "fixed_math.h"
 #include "module/battle/presentation.h"
 #include "module/system/system.h"
@@ -39,7 +40,7 @@ void BattleBackground_SetPaletteLevel(s32 unused, s32 level) {
     Dma_Set(palette, (void *)&BG_PLTT_COLOR(6, 0), DMA_COPY_HALFWORDS(128),
             REG_DMA3);
   } else {
-    ColorBuffer_Scale(palette, (u16 *)0x050000c0,
+    ColorBuffer_Scale(palette, (u16 *)(BG_PLTT + 6 * 16),
                       screen->brightness = 0x10000 - level * 1092, 128);
   }
   {
@@ -68,7 +69,7 @@ void BattleBackground_SetMode(s32 mode, s32 value, s32 fade) {
 
   Dma_Set((void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(5, 0),
           DMA_COPY_HALFWORDS(16), REG_DMA3);
-  *(u16 *)0x050000bc = *(u16 *)0x050001e8;
+  *(u16 *)(BG_PLTT + 94) = *(u16 *)(BG_PLTT + 244);
 
   if (fade == 0x80) {
     struct BattleWork *work;
@@ -86,7 +87,7 @@ void BattleBackground_SetMode(s32 mode, s32 value, s32 fade) {
 
     work = Ram_HeapSlots->battleWork;
     source = work->palette;
-    destination = (u16 *)0x050000c0;
+    destination = (u16 *)(BG_PLTT + 6 * 16);
 
     for (i = 0; i != 128; i++) {
       s32 red = source[i] & 31;
@@ -108,8 +109,8 @@ void BattleBackground_SetMode(s32 mode, s32 value, s32 fade) {
       destination[i] = (blue << 10) | (green << 5) | red;
     }
   }
-  Graphics_BuildSequentialTileTable((void *)0x06003800);
-  BattleTransition_BuildTilemap((void *)0x0600f800);
+  Graphics_BuildSequentialTileTable((void *)BG_SCREEN_BLOCK(7));
+  BattleTransition_BuildTilemap((void *)BG_SCREEN_BLOCK(31));
 }
 
 void BattleBackground_Init(void) {
@@ -148,21 +149,21 @@ void BattleBackground_Load(s32 mode, s32 resource, s32 level) {
       offset++;
       offset--;
     }
-    vram = (void *)0x06008000;
+    vram = (void *)BG_CHAR_BLOCK(2);
     decode(data + offset, vram);
   }
   Heap_Release(decode);
   palette = session->palette;
   Dma_Set(data, palette, 0x84000040, REG_DMA3);
   if (level >= 0)
-    ColorBuffer_Scale(palette, (u16 *)0x050000c0,
+    ColorBuffer_Scale(palette, (u16 *)(BG_PLTT + 6 * 16),
                       session->brightness = 0x10000 - level * 1092, 128);
   if (session->keepBackdropPalette == 0) {
-    Dma_Set((void *)0x05000200, (void *)0x050000a0, 0x80000010, REG_DMA3);
-    *(u16 *)0x050000bc = *(u16 *)0x050001e8;
+    Dma_Set((void *)OBJ_PLTT, (void *)(BG_PLTT + 5 * 16), 0x80000010, REG_DMA3);
+    *(u16 *)(BG_PLTT + 94) = *(u16 *)(BG_PLTT + 244);
   }
-  Graphics_BuildSequentialTileTable((void *)0x06003800);
-  BattleTransition_BuildTilemap((void *)0x0600f800);
+  Graphics_BuildSequentialTileTable((void *)BG_SCREEN_BLOCK(7));
+  BattleTransition_BuildTilemap((void *)BG_SCREEN_BLOCK(31));
   Iwram_ClearWordsEntry((void *)0x0600ffc0, 64);
   if (view->mode == 0)
     Task_Add(BattleBackground_ShowZoomedPage, 0xcff);
@@ -821,7 +822,7 @@ s32 ElementGlow_UploadStarField(void) {
 
     if (*active != 0) {
       *active = 0;
-      return ColorBuffer_ScaleThreeQuarters(source, (void *)0x06004000,
+      return ColorBuffer_ScaleThreeQuarters(source, (void *)BG_CHAR_BLOCK(1),
                                             Q16_ONE / 4);
     }
   }
@@ -867,7 +868,7 @@ s32 ElementGlow_InitializeStarField(s32 mode) {
 
   ((s32 *)Ram_HeapSlots->transitionWork)[2] = 1;
   work = HeapSlot_AllocEwram(92, sizeof *work);
-  HeapSlot_Alloc(96, 0x4000);
+  HeapSlot_Alloc(HEAP_SLOT_CANVAS, CANVAS_BYTES);
   for (i = 0; i < 16; i++) {
     s32 angle = Random16();
     u32 radius = Random16() + 0x10000;
@@ -946,7 +947,7 @@ s32 ElementGlow_InitializeStarField(s32 mode) {
 /// ElementGlow_Play once mode 0's field has played. Returns Task_Remove's
 /// result, which the caller does not read.
 s32 ElementGlow_End(s32 unused) {
-  Iwram_ClearWordsEntry((void *)0x06004000, 0x4000);
+  Iwram_ClearWordsEntry((void *)BG_CHAR_BLOCK(1), 0x4000);
   HeapSlot_Release(188);
   HeapSlot_Release(104);
   HeapSlot_Release(96);
@@ -993,7 +994,7 @@ void ElementGlow_Play(s32 unit, s32 kind, s32 mode, s32 variant) {
 
   wait(1);
   BattleBackground_SetMode(1, session->background, 0);
-  Iwram_ClearWordsEntry((void *)0x06004000, 0x4000);
+  Iwram_ClearWordsEntry((void *)BG_CHAR_BLOCK(1), 0x4000);
   IoWriteQueue_Store16(0x04000000, 0x3741);
   IoWriteQueue_Store16(0x0400000c, 0x784);
   IoWriteQueue_Store16(0x04000050, 0x3f44);
@@ -1010,7 +1011,7 @@ void ElementGlow_Play(s32 unit, s32 kind, s32 mode, s32 variant) {
       ime = &REG_IME;
       work = (struct SparkWork *)Ram_HeapSlots->battleFxWork[0];
       if (frame <= 24)
-        ColorBuffer_Scale(session->palette, (u16 *)0x050000c0,
+        ColorBuffer_Scale(session->palette, (u16 *)(BG_PLTT + 6 * 16),
                           *brightness = 0x10000 - frame * 1092, 128);
       BattleMotion_ProjectScaledPosition(unit, (s32 *)pos);
       work->originX = (64 - pos->x) << 8;

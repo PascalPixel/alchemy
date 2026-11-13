@@ -244,7 +244,7 @@ void BattleEffect_RunStarMine(struct BattleEffectArgument *effect) {
 /// Fills the 32x30 tilemap at screen block 31: the upper 15 rows from tile
 /// 0x210 on, the lower 15 from tile 48 on, each row repeating 16 tiles.
 void BattleEffect_BuildRepeatingTilemap(void) {
-  u16 *dst = (u16 *)0x0600f800;
+  u16 *dst = (u16 *)BG_SCREEN_BLOCK(31);
   s32 y;
   s32 x;
 
@@ -470,7 +470,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *effect) {
     }
 
     if (frame == 59) {
-      Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
+      Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
     }
     if (frame == 60) {
       u16 *color;
@@ -516,7 +516,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *effect) {
     }
     if (frame == 134) {
       Sound_PlayFar(SE_CRASH);
-      Iwram_FillWordsEntry(canvas, 0x4000, 0x3f3f3f3f);
+      Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
     }
     if (frame > 59) {
       s32 scroll = gBgScroll[1].y;

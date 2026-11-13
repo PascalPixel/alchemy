@@ -100,7 +100,7 @@ void FieldPsynergy_Unnamed28(void) {
       do {
       } while (0);
       fill = Iwram_FillWordsEntry;
-      fill((void *)0x06002000, 0x800, 0);
+      fill((void *)BG_SCREEN_BLOCK(4), 0x800, 0);
     }
 
     // The picture's release and allocation in a once-only block, which ends
@@ -113,8 +113,8 @@ void FieldPsynergy_Unnamed28(void) {
     Iwram_FillWordsEntry(picture, 0x2000, 0);
 
     wait(1);
-    Dma_Set(picture, (void *)0x06000000, (DMA_ENABLE | DMA_32BIT) << 16 | 0x800,
-            REG_DMA3);
+    Dma_Set(picture, (void *)BG_CHAR_BLOCK(0),
+            (DMA_ENABLE | DMA_32BIT) << 16 | 0x800, REG_DMA3);
     {
       s32 control;
 
@@ -216,8 +216,8 @@ void FieldPsynergy_Unnamed28(void) {
 
     Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_RingArcs),
                         picture);
-    Dma_Set(picture, (void *)0x06000000, (DMA_ENABLE | DMA_32BIT) << 16 | 0x800,
-            REG_DMA3);
+    Dma_Set(picture, (void *)BG_CHAR_BLOCK(0),
+            (DMA_ENABLE | DMA_32BIT) << 16 | 0x800, REG_DMA3);
     Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_Data1ED), work);
     {
       s32 heading;
@@ -332,7 +332,7 @@ void FieldPsynergy_EndUnnamed28(void) {
       do {
       } while (0);
       fill = Iwram_FillWordsEntry;
-      fill((void *)0x06002000, 0x500, 0xf000f000);
+      fill((void *)BG_SCREEN_BLOCK(4), 0x500, 0xf000f000);
     }
     Window_LoadGraphics();
   } while (0);

@@ -21,7 +21,7 @@ void BattleEffect_ConvertBackgroundToBlueRamp(void) {
   u16 *palette;
   u32 delayMask;
 
-  palette = (u16 *)0x05000040;
+  palette = (u16 *)(BG_PLTT + 2 * 16);
   i = 0;
   do {
     s32 half;
@@ -33,7 +33,7 @@ void BattleEffect_ConvertBackgroundToBlueRamp(void) {
   delays = Ram_HeapSlots->unk64[0];
   end = 0;
   speed = 16;
-  Iwram_CopyWords(PIXEL_BUFFER, (void *)0x06008000, 0x7800);
+  Iwram_CopyWords(PIXEL_BUFFER, (void *)BG_CHAR_BLOCK(2), 0x7800);
   delayMask = 63;
   p = delays;
   do {
@@ -52,7 +52,7 @@ void BattleEffect_ConvertBackgroundToBlueRamp(void) {
           if (y <= 119) {
             pixel = PIXEL_BUFFER + ((x & 7) + ((x / 8) << 6) + ((y & 7) << 3) +
                                     ((y / 8) << 11));
-            color = ((s16 *)0x05000000)[*pixel];
+            color = ((s16 *)BG_PLTT)[*pixel];
             red = color & 31;
             green = (color >> 5) & 31;
             blue = (color >> 10) & 31;
@@ -67,13 +67,13 @@ void BattleEffect_ConvertBackgroundToBlueRamp(void) {
       } while (x != 256);
       row++;
     }
-    Iwram_CopyWords((void *)0x06008000, PIXEL_BUFFER, 0x7800);
+    Iwram_CopyWords((void *)BG_CHAR_BLOCK(2), PIXEL_BUFFER, 0x7800);
     wait(1);
     if (end > 248)
       break;
     i++;
   } while (i != 27);
-  palette = (u16 *)0x050000c0;
+  palette = (u16 *)(BG_PLTT + 6 * 16);
   i = 0;
   do {
     s32 half;
@@ -91,7 +91,7 @@ void BattleEffect_ConvertBackgroundToBlueRamp(void) {
       i++;
     } while (i != 0x7800);
   }
-  Iwram_CopyWords((void *)0x06008000, PIXEL_BUFFER, 0x7800);
+  Iwram_CopyWords((void *)BG_CHAR_BLOCK(2), PIXEL_BUFFER, 0x7800);
   wait(1);
 }
 

@@ -236,8 +236,8 @@ void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_DrawModelList__ability_effects(struct Model *);
 
-#define PLTT ((void *)0x05000000)
-#define BG_VRAM ((void *)0x06004000)
+#define PLTT ((void *)BG_PLTT)
+#define BG_VRAM ((void *)BG_CHAR_BLOCK(1))
 #define SPARKS sparks
 #define RINGS ((struct Particle *)(Ram_MapCellBuffer + 0x6e00))
 #define IWRAM_SLOT_68 (IWRAM->slot68)

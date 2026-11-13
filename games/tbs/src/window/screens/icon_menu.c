@@ -691,16 +691,15 @@ s32 IconMenu_ChooseSendOption(s32 mode) {
   if (mode != RESOURCE_LAYOUT_TRANSFER_METHOD) {
     Task_Add(Menu_DrawModeLabel, TASK_PASS_FRAME - 10);
     work->previousMode = 0xffff;
-    window = Window_Create(RESOURCE_MODE0_WINDOW_X, 0,
-                           RESOURCE_MODE0_WINDOW_WIDTH, 4, WINDOW_FLAG_INSTANT);
+    window = Window_Create(PASSWORD_LEVEL_WINDOW_X, 0,
+                           PASSWORD_LEVEL_WINDOW_WIDTH, 4, WINDOW_FLAG_INSTANT);
     message = MsgPasswordSelection;
     upper = &work->upperWindow;
     *upper = window;
     Text_DrawMessage(message, window, 0, 4);
 #if LANGUAGE != LANGUAGE_JAPANESE
-    window =
-        Window_Create(RESOURCE_MODE1_WINDOW_X, 4, RESOURCE_MODE1_WINDOW_WIDTH,
-                      12, WINDOW_FLAG_INSTANT);
+    window = Window_Create(PASSWORD_HELP_WINDOW_X, 4,
+                           PASSWORD_HELP_WINDOW_WIDTH, 12, WINDOW_FLAG_INSTANT);
     work->lowerWindow = window;
     Text_DrawMessage(message + 1, window, 8, 0);
     Text_DrawMessage(message + 2, work->lowerWindow, 8, 11);
@@ -755,7 +754,7 @@ s32 Menu_SelectShopCommand(s32 selection) {
   IconMenu_AddIcon(COMMAND_ICON_SELL);
   IconMenu_AddIcon(COMMAND_ICON_ARTIFACTS);
   IconMenu_AddIcon(COMMAND_ICON_REPAIR);
-  IconMenu_Center(17, ENTRY11_COMMAND_LABEL_WIDTH, 0);
+  IconMenu_Center(17, SHOP_COMMAND_LABEL_WIDTH, 0);
   result = IconMenu_Run(selection);
   IconMenu_Close();
   return result;
@@ -772,7 +771,7 @@ s32 Menu_SelectSanctumService(s32 selection) {
   IconMenu_AddIcon(COMMAND_ICON_CURE_POISON);
   IconMenu_AddIcon(COMMAND_ICON_REPEL_EVIL);
   IconMenu_AddIcon(COMMAND_ICON_REMOVE_CURSE);
-  IconMenu_Center(17, ENTRY19_COMMAND_LABEL_WIDTH, 0);
+  IconMenu_Center(17, SANCTUM_SERVICE_LABEL_WIDTH, 0);
   result = IconMenu_Run(selection);
   IconMenu_Close();
   return result;

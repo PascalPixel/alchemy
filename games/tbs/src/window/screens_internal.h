@@ -89,9 +89,9 @@
 #include "enemy_ids.h"
 
 #ifdef MODERN
-// The menu object calls these window functions with no prototype in scope, as
-// its bytes need (module/window/window.h says why for each); a current GCC gets
-// them here.
+// The menu object calls these window functions with no prototype in scope, so
+// their arguments take the old promotions (module/window/window.h says why for
+// each); a current GCC, which refuses implicit declarations, gets them here.
 void WindowSprite_AppendToList(struct WindowSpriteList *list,
                                struct WindowSprite *node);
 struct Message *Message_Start(struct Window *window, s32 entry, s32 x, s32 y,
@@ -220,25 +220,25 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *window,
 // and, outside the Japanese edition, the explanation window under it.
 #if (LANGUAGE == LANGUAGE_ENGLISH) || (LANGUAGE == LANGUAGE_GERMAN) ||         \
     (LANGUAGE == LANGUAGE_ITALIAN)
-#define RESOURCE_MODE0_WINDOW_X 7
-#define RESOURCE_MODE0_WINDOW_WIDTH 17
+#define PASSWORD_LEVEL_WINDOW_X 7
+#define PASSWORD_LEVEL_WINDOW_WIDTH 17
 #elif (LANGUAGE == LANGUAGE_SPANISH)
-#define RESOURCE_MODE0_WINDOW_X 5
-#define RESOURCE_MODE0_WINDOW_WIDTH 21
+#define PASSWORD_LEVEL_WINDOW_X 5
+#define PASSWORD_LEVEL_WINDOW_WIDTH 21
 #elif (LANGUAGE == LANGUAGE_FRENCH)
-#define RESOURCE_MODE0_WINDOW_X 5
-#define RESOURCE_MODE0_WINDOW_WIDTH 22
+#define PASSWORD_LEVEL_WINDOW_X 5
+#define PASSWORD_LEVEL_WINDOW_WIDTH 22
 #else
-#define RESOURCE_MODE0_WINDOW_X 9
-#define RESOURCE_MODE0_WINDOW_WIDTH 13
+#define PASSWORD_LEVEL_WINDOW_X 9
+#define PASSWORD_LEVEL_WINDOW_WIDTH 13
 #endif
 
 #if (LANGUAGE == LANGUAGE_GERMAN)
-#define RESOURCE_MODE1_WINDOW_X 1
-#define RESOURCE_MODE1_WINDOW_WIDTH 28
+#define PASSWORD_HELP_WINDOW_X 1
+#define PASSWORD_HELP_WINDOW_WIDTH 28
 #else
-#define RESOURCE_MODE1_WINDOW_X 3
-#define RESOURCE_MODE1_WINDOW_WIDTH 25
+#define PASSWORD_HELP_WINDOW_X 3
+#define PASSWORD_HELP_WINDOW_WIDTH 25
 #endif
 
 // The transfer method menu (IconMenu_ChooseSendOption,
@@ -276,25 +276,21 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *window,
 #define TRANSFER_HELP_WINDOW_WIDTH 21
 #endif
 
-// The width inside the border of the name window of the shop's commands
-// (icons 17 to 20) and of the Sanctum's services (icons 25 to 28).
+// The width inside the border of the name window under the shop's commands
+// and the Sanctum's services.
 #if (LANGUAGE == LANGUAGE_GERMAN)
-#define ENTRY11_COMMAND_LABEL_WIDTH 8
+#define SHOP_COMMAND_LABEL_WIDTH 8
 #elif LANGUAGE != LANGUAGE_JAPANESE
-#define ENTRY11_COMMAND_LABEL_WIDTH 7
+#define SHOP_COMMAND_LABEL_WIDTH 7
 #else
-#define ENTRY11_COMMAND_LABEL_WIDTH 6
+#define SHOP_COMMAND_LABEL_WIDTH 6
 #endif
 
 #if LANGUAGE != LANGUAGE_JAPANESE
-#define ENTRY19_COMMAND_LABEL_WIDTH 10
+#define SANCTUM_SERVICE_LABEL_WIDTH 10
 #else
-#define ENTRY19_COMMAND_LABEL_WIDTH 8
+#define SANCTUM_SERVICE_LABEL_WIDTH 8
 #endif
-
-// The palette of the two portrait slots of the UI work
-// (WindowWork.portraitPictures and portraitSprites).
-#define PORTRAIT_PALETTE 14 ///< sprite palette of slot 0; slot 1 uses 15
 
 // The battle menus' message buffers, in halfwords, and the copier that fills
 // them: the Japanese edition decodes the message (Message_DecodeRaw), the

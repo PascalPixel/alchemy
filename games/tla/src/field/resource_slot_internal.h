@@ -18,7 +18,6 @@ struct FieldPosition;
 /// Defined in map/tile_animation.c.
 s32 MapGrid_CheckCollision(struct Actor *actor, struct FieldPosition *position);
 
-
 typedef void (*ConvertFn)(void *destination, void *source, void *saved);
 
 /// The words of an object's script. As in The Broken Seal's ActorScriptWords,

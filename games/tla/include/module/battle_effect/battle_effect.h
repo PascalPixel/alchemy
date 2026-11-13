@@ -73,7 +73,7 @@ enum { BLITTER_ADDITIVE, BLITTER_MAX, BLITTER_TRANSPARENT, BLITTER_COPY };
 
 void BattleEffect_UpdatePhasePalette(
     s32 frame, s32 redPhase, s32 greenPhase,
-    s32 bluePhase); // Graphics_UpdatePhasePalette
+    s32 bluePhase);                       // Graphics_UpdatePhasePalette
 extern u16 gBattleEffect_FlarePictures[]; // flare sizes 1 to 5: cell offsets
 /// The canvas layer and its helpers; the comments give The Broken Seal's
 /// names where the twin is known.
@@ -188,8 +188,8 @@ void SummonEffect_RunCanvasMode3(void *action);
 void BattleEffect_RunGatheringLights(struct BattleEffectArgument *effect,
                                      s32 mode);
 void BattleEffect_ArmBg1HBlankDma(void); // arms the BG1 scroll's HBlank DMA
-void Func_0815b634(void); // mode 3 only
-extern s32 gData_08197834[]; // ☀️ gPrism_ShardOffsets
+void Func_0815b634(void);                // mode 3 only
+extern s32 gData_08197834[];             // ☀️ gPrism_ShardOffsets
 extern u8 gPrism_ShardWidths[];
 extern u8 gData_08197826[];     // ☀️ gPrism_ShardHeights
 extern u8 gPrism_ShardStarts[]; // ☀️ gPrism_ShardStarts: x, y for each shard

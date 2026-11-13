@@ -2,8 +2,8 @@
 #define ALCHEMY_BATTLE_EFFECT_INTERNAL_H
 
 /// @file
-/// What every part of the battle_effect object shares: its includes. battle_effect.c
-/// includes it before the parts, and each part includes it too.
+/// What every part of the battle_effect object shares: its includes.
+/// battle_effect.c includes it before the parts, and each part includes it too.
 
 #include "types.h"
 #include "io_reg.h"
@@ -270,7 +270,7 @@ extern u8 Data_081977f4[];
 
 extern char ResourceId_EffectPalette03;
 
-extern u8 Data_081978f0[];   // each panel's x, by side (7 a side)
+extern u8 Data_081978f0[]; // each panel's x, by side (7 a side)
 
 extern u8 gCondemn_PanelY[]; // each panel's y
 
@@ -333,7 +333,7 @@ extern const s32 Data_08197734[];
 
 extern void (*gData_08197aa0[])(s32 *script);
 
-extern char ResourceId_Data0D0;      // directory row 0xd0
+extern char ResourceId_Data0D0; // directory row 0xd0
 
 extern char ResourceId_FeatherSheet; // directory row 0xd1
 
@@ -345,11 +345,11 @@ extern const u16 Data_08197a38[][2]; // the charging Zagan's parts
 
 extern const u16 Data_08197a64[][2]; // the galloping Zagan's
 
-extern const u8 Data_08197a94[];     // each ring's start
+extern const u8 Data_08197a94[]; // each ring's start
 
-extern const u8 Data_08197a98[];     // growth
+extern const u8 Data_08197a98[]; // growth
 
-extern const s8 Data_08197a9c[];     // height
+extern const s8 Data_08197a9c[]; // height
 
 // Shards and frames for each variant (The Broken Seal's
 // gFalling_IceCounts).
@@ -363,24 +363,24 @@ extern u8
 
 extern u16 gMirroredWall_Cells[]; // the beam's head: three pictures, offsets
 
-extern u8 Data_0819787a[];        // ... their widths
+extern u8 Data_0819787a[]; // ... their widths
 
-extern u8 Data_0819787d[];        // ... their heights
+extern u8 Data_0819787d[]; // ... their heights
 
 // Each mode's record: whether its shots burst into shards (else into smoke),
 // the shots' blitter, shots per target, and frames before the targets'
 // share.
 extern s8 Data_08197880[];
 
-extern u8 gLobbedShells_ShardWidths[];   // shard widths
+extern u8 gLobbedShells_ShardWidths[]; // shard widths
 
-extern u8 gLobbedShells_ShardHeights[];  // shard heights
+extern u8 gLobbedShells_ShardHeights[]; // shard heights
 
 extern u16 gLobbedShells_ShardOffsets[]; // shard cell offsets
 
-extern u8 gNereid_Columns[];             // the three columns' feet, x and y
+extern u8 gNereid_Columns[]; // the three columns' feet, x and y
 
-extern s32 Data_08197998[];              // a falling spark's gravity, by spark
+extern s32 Data_08197998[]; // a falling spark's gravity, by spark
 
 // Per mode: how many motes each target gets, and the effect's frame count
 // before the targets' share.
@@ -404,37 +404,37 @@ extern u8 Data_081979b7[];
 
 extern struct Scale Data_08196df8; // the comets' unit scale
 
-extern u8 gProcne_GridX[];       // the nine comets' grid: x
+extern u8 gProcne_GridX[]; // the nine comets' grid: x
 
-extern u8 gProcne_GridY[];       // ... and depth
+extern u8 gProcne_GridY[]; // ... and depth
 
-extern u16 gProcne_Frames[];     // the four comet strikes' frames
+extern u16 gProcne_Frames[]; // the four comet strikes' frames
 
-extern u8 gProcne_CellWidths[];  // a strike's three pictures: widths
+extern u8 gProcne_CellWidths[]; // a strike's three pictures: widths
 
 extern u8 gProcne_CellHeights[]; // ... heights
 
-extern u8 gProcne_CellBiasY[];   // ... raise above the mark
+extern u8 gProcne_CellBiasY[]; // ... raise above the mark
 
-extern u16 gProcne_Cells[];      // ... cell offsets
+extern u16 gProcne_Cells[]; // ... cell offsets
 
-extern u8 gTiamat_DropSpeeds[];  // a grain's added speed, by grain
+extern u8 gTiamat_DropSpeeds[]; // a grain's added speed, by grain
 
-extern u8 Data_0819796c[];       // a spark's two pixels
+extern u8 Data_0819796c[]; // a spark's two pixels
 
-extern u8 gTiamat_DropSizes[];   // a grain's size, by grain
+extern u8 gTiamat_DropSizes[]; // a grain's size, by grain
 
-extern u8 Data_08197972[];       // the streak's six pictures: widths
+extern u8 Data_08197972[]; // the streak's six pictures: widths
 
-extern u8 Data_08197978[];       // ... heights
+extern u8 Data_08197978[]; // ... heights
 
 extern u8 gTiamat_StreakDrops[]; // ... drops below the streak
 
-extern u16 Data_08197984[];      // ... cell offsets
+extern u16 Data_08197984[]; // ... cell offsets
 
-extern s32 gStar_Points[];       // the two ring points, alternating
+extern s32 gStar_Points[]; // the two ring points, alternating
 
-extern u8 gData_0819793c[];      // ring radii, alternating: 32, 16
+extern u8 gData_0819793c[]; // ring radii, alternating: 32, 16
 
 // Four signed bytes for each mode (The Broken Seal's gStreaks_Styles).
 extern s8 gStreaks_Records[];

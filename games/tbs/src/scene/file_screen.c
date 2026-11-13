@@ -447,9 +447,9 @@ s32 FileScreen_Run(void) {
   s32 tileValue;
   // These three scalars each serve several phases: separate per-phase
   // variables reorder the instructions or shorten the function.
-  s32 v5;
-  s32 v7;
-  s32 v6;
+  s32 limit;
+  s32 index;
+  s32 result;
   s32 linkMessage;
   s32 peerIndex;
   s32 requiredLinkMask;
@@ -477,15 +477,15 @@ s32 FileScreen_Run(void) {
   L_ask:
     FieldMessage_Show(MsgSaveAdventureQuestion,
                       FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_KEEP_OPEN);
-    v7 = FieldYesNo_Ask(1);
+    index = FieldYesNo_Ask(1);
     Message_CloseFinishedWindows();
-    if (v7 == 0) {
+    if (index == 0) {
       FieldMessage_Show(MsgSaveAdventureQuestion + 1, FIELD_MESSAGE_ZOOM);
       // Marks the file cleared (SaveFileSummary's sendFlag): its data can be
       // sent, and the message says it cannot be continued.
       gMainRoutineWork.sendFlag = 1;
-      v7 = Save_ToChosenFile();
-      if (v7 == -1) {
+      index = Save_ToChosenFile();
+      if (index == -1) {
         goto L_ask;
       }
     }
@@ -503,9 +503,9 @@ s32 FileScreen_Run(void) {
   // continue, 101 of 920 instructions differ in tbs-en, and with this menu as
   // for (;;), 462.
 menu_top:;
-  v6 = Save_ScanFileSummaries();
+  result = Save_ScanFileSummaries();
   // No backup memory: in debug mode, say so and turn idle sleep on.
-  if (v6 < 0) {
+  if (result < 0) {
     if (gDebugMode != 0) {
       gMainRoutineWork.idleSleepEnabled = 1;
       gIdleSleepEnabled = 1;
@@ -513,7 +513,7 @@ menu_top:;
     }
   }
   // No save file: fade the menu layers in, once, and start a new game.
-  if (v6 == 0) {
+  if (result == 0) {
     if (blendStarted == 0) {
       wait(30);
       Task_AddFrame(FileScreen_UpdateBlend, TASK_PASS_FRAME);
@@ -524,37 +524,37 @@ menu_top:;
   // The start menu's choices (gFileList_ActionByPosition): 0 New Game,
   // 1 Continue, 2 Copy, 3 Erase, 4 Battle and 5 Send; any other shows the
   // menu again.
-  if (v6 > 0) {
-    v6 = FileList_SelectAction();
+  if (result > 0) {
+    result = FileList_SelectAction();
   } else {
-    v6 = 0;
+    result = 0;
   }
-  if (v6 == 0) {
+  if (result == 0) {
     // Hidden button codes expand the list of names offered for a new game:
     // Isaac alone, with the first code to Mia, with the second to Sheba. B on
     // the first name goes back to the menu.
     MainRoutineWork_InitializeDefaults();
     WindowColor_Apply(gMainRoutineWork.windowHue,
                       gMainRoutineWork.windowBrightness);
-    v5 = 1;
-    v7 = 0;
+    limit = 1;
+    index = 0;
     for (;;) {
       wait(6);
-      v6 = NameEntry_EditMemberName(v7);
-      if (v6 == -1) {
-        if (v7 == 0) {
+      result = NameEntry_EditMemberName(index);
+      if (result == -1) {
+        if (index == 0) {
           goto menu_top;
         }
-        v7--;
+        index--;
         continue;
       }
       if (gFileScreen_CodeUnlocked != 0) {
-        v5 = 4;
+        limit = 4;
       }
       if (gFileScreen_ExtraCodeUnlocked != 0) {
-        v5 = 7;
+        limit = 7;
       }
-      if (++v7 >= v5) {
+      if (++index >= limit) {
         break;
       }
     }
@@ -568,11 +568,11 @@ menu_top:;
   // Sanctum (restartScene); a file whose two play times differ is reported
   // corrupted, with the offer to restart there. The two chosen restarts set
   // flags that nothing reads.
-  if (v6 == 1) {
+  if (result == 1) {
     struct MainRoutineWork *state;
 
-    v6 = Save_ChooseAndLoadFile(1);
-    if (v6 == -1) {
+    result = Save_ChooseAndLoadFile(1);
+    if (result == -1) {
       goto menu_top;
     }
     Event_SetFlag(FLAG_KEEP_PARTY_POSITION);
@@ -620,20 +620,20 @@ menu_top:;
     GameFlag_Clear(FLAG_MENU_OPEN);
     goto leave;
   }
-  if (v6 == 2) {
+  if (result == 2) {
     Save_CopyFile();
     goto menu_top;
   }
-  if (v6 == 3) {
+  if (result == 3) {
     Save_EraseSelectedFile();
     goto menu_top;
   }
   // Battle: go to the Battle Arena with a file. One saved while the Colosso
   // held the party's equipment gets it back, and its party is reset to Isaac,
   // Garet, Ivan and Mia, in order.
-  if (v6 == 4) {
-    v6 = Save_ChooseAndLoadFile(4);
-    if (v6 == -1) {
+  if (result == 4) {
+    result = Save_ChooseAndLoadFile(4);
+    if (result == -1) {
       goto menu_top;
     }
     gMainRoutineWork.leaderActorId = 0;
@@ -658,33 +658,33 @@ menu_top:;
                          BATTLE_ARENA_FROM_FILE_SCREEN);
     goto leave;
   } else {
-    if (v6 != 5) {
+    if (result != 5) {
       goto menu_top;
     }
     // Send: choose a cleared file, then Password (0) or Cable (1).
   link_load:;
-    v6 = Save_ChooseAndLoadFile(5);
-    if (v6 == -1) {
+    result = Save_ChooseAndLoadFile(5);
+    if (result == -1) {
       goto menu_top;
     }
     WindowColor_Apply(gMainRoutineWork.windowHue,
                       gMainRoutineWork.windowBrightness);
   link_select:;
-    v6 = IconMenu_ChooseSendOption(RESOURCE_LAYOUT_TRANSFER_METHOD);
-    if (v6 == -1) {
+    result = IconMenu_ChooseSendOption(RESOURCE_LAYOUT_TRANSFER_METHOD);
+    if (result == -1) {
       goto link_load;
     }
     // Link transfer waits for the other game's edition-specific greeting in
     // the partner's payload (struct SaveLinkGreeting); B gives up.
-    if (v6 == TRANSFER_METHOD_CABLE) {
-      v6 = (s32)Window_Create(FILE_SCREEN_LINK_WINDOW_X, 5,
-                              FILE_SCREEN_LINK_WINDOW_WIDTH, 8,
-                              WINDOW_FLAG_INSTANT);
+    if (result == TRANSFER_METHOD_CABLE) {
+      result = (s32)Window_Create(FILE_SCREEN_LINK_WINDOW_X, 5,
+                                  FILE_SCREEN_LINK_WINDOW_WIDTH, 8,
+                                  WINDOW_FLAG_INSTANT);
       linkMessage = MsgClearSaveLabel;
 
-      Text_DrawMessage(linkMessage, (struct Window *)v6, 0, 4);
-      Text_DrawMessage((linkMessage + 1), (struct Window *)v6, 0, 16);
-      Text_DrawMessage((linkMessage + 3), (struct Window *)v6, 0, 36);
+      Text_DrawMessage(linkMessage, (struct Window *)result, 0, 4);
+      Text_DrawMessage((linkMessage + 1), (struct Window *)result, 0, 16);
+      Text_DrawMessage((linkMessage + 3), (struct Window *)result, 0, 36);
       Serial_Initialize();
       wait(10);
       {
@@ -695,8 +695,8 @@ menu_top:;
         sync[2] = '0';
         sync[3] = '0';
       }
-      v7 = 0;
-      v5 = 3;
+      index = 0;
+      limit = 3;
       for (peerIndex = 0; peerIndex != 4; peerIndex++) {
         u16 *greeting =
             ((struct SaveLinkGreeting *)gLinkPeerSignatures)[peerIndex].code;
@@ -711,7 +711,7 @@ menu_top:;
           Sound_Play(SE_MENU_CANCEL);
           break;
         }
-        if ((v5 & gLinkStatus) == v5) {
+        if ((limit & gLinkStatus) == limit) {
           u32 control = REG_SIOCNT;
           u32 peer = ((control << 26) >> 30) ^ 1;
           u16 *received =
@@ -721,7 +721,7 @@ menu_top:;
             if (received[1] == 'V') {
               if (received[2] == 'T') {
                 if (received[3] == 'S') {
-                  v7 = 1;
+                  index = 1;
                   break;
                 }
               }
@@ -730,29 +730,29 @@ menu_top:;
         }
         wait(1);
       }
-      Window_Close((struct Window *)v6, 2);
-      if (v7 == 0) {
+      Window_Close((struct Window *)result, 2);
+      if (index == 0) {
         goto link_select;
       }
-      v6 = (s32)Window_Create(FILE_SCREEN_LINK_ERROR_WINDOW_X, 10,
-                              FILE_SCREEN_LINK_ERROR_WINDOW_WIDTH, 4,
-                              WINDOW_FLAG_INSTANT);
+      result = (s32)Window_Create(FILE_SCREEN_LINK_ERROR_WINDOW_X, 10,
+                                  FILE_SCREEN_LINK_ERROR_WINDOW_WIDTH, 4,
+                                  WINDOW_FLAG_INSTANT);
 
-      Text_DrawMessage(MsgClearSendingData, (struct Window *)v6, 0, 4);
+      Text_DrawMessage(MsgClearSendingData, (struct Window *)result, 0, 4);
       wait(10);
       Serial_StartSend(gSaveBuffer, 4100);
       wait(10);
       // Wait for the send to finish, at most 600000 frames (about 2.8
       // hours); ten frames in a row without both consoles is an error.
-      v5 = 0;
+      limit = 0;
       requiredLinkMask = 3;
       linkConnectionOk = 1;
-      for (v7 = 0; v7 <= 599999; v7++) {
-        v5 = (v5 + 1);
+      for (index = 0; index <= 599999; index++) {
+        limit = (limit + 1);
         if ((requiredLinkMask & gLinkStatus) == requiredLinkMask) {
-          v5 = 0;
+          limit = 0;
         }
-        if (v5 == 10) {
+        if (limit == 10) {
           linkConnectionOk = 0;
           break;
         }
@@ -762,69 +762,71 @@ menu_top:;
         wait(1);
       }
       if (linkConnectionOk == 0) {
-        WindowSprite_PrepareForRedraw((struct Window *)v6);
-        Text_DrawMessage(MsgClearCommunicationError, (struct Window *)v6, 0, 4);
-        // Wait for A: v5 is KEY_A here.
-        v5 = 1;
+        WindowSprite_PrepareForRedraw((struct Window *)result);
+        Text_DrawMessage(MsgClearCommunicationError, (struct Window *)result, 0,
+                         4);
+        // Wait for A.
+        limit = KEY_A;
         do {
           wait(1);
-        } while ((gKeysPressed & v5) == 0);
+        } while ((gKeysPressed & limit) == 0);
       }
       wait(10);
       Serial_RemoveIrqHandlers();
       wait(10);
 #if TBS_PATCH_4
-      Window_Close((struct Window *)v6, 2);
+      Window_Close((struct Window *)result, 2);
       wait(1);
 #else
-      WindowSprite_PrepareForRedraw((struct Window *)v6);
-      Window_Close((struct Window *)v6, 2);
+      WindowSprite_PrepareForRedraw((struct Window *)result);
+      Window_Close((struct Window *)result, 2);
 #endif
       goto menu_top;
     }
-    if (v6 == TRANSFER_METHOD_PASSWORD) {
+    if (result == TRANSFER_METHOD_PASSWORD) {
     // Password output packs save data, appends CRC bytes, then groups glyphs.
     // The level is Gold, Silver or Bronze (enum PasswordLevel): 260, 61 or 16
     // symbols, shown 50 to a page.
     page_select:;
-      v6 = IconMenu_ChooseSendOption(RESOURCE_LAYOUT_PASSWORD_LEVEL);
+      result = IconMenu_ChooseSendOption(RESOURCE_LAYOUT_PASSWORD_LEVEL);
 
-      if (v6 == -1) {
+      if (result == -1) {
         goto link_select;
       }
       {
         u8 *data = saveData;
         s16 sum;
 
-        encodedSize = FileScreen_PackPasswordData(0, v6, data);
+        encodedSize = FileScreen_PackPasswordData(0, result, data);
         sum = FileScreen_CalculatePasswordCrc16(encodedSize, data);
         saveData[encodedSize] = (u16)sum >> 8;
         saveData[encodedSize + 1] = sum;
         encodedSize += 2;
         encodedSize = FileScreen_EncodePassword(data, encodedSize, password);
       }
-      v6 = 2;
+      result = 2;
       Window_LoadGraphics();
-      pageWindow = Window_Create(5, 4, 20, 12, v6);
+      pageWindow = Window_Create(5, 4, 20, 12, result);
       pageIndex = 0;
       pageCount = ((encodedSize / PASSWORD_SYMBOLS_PER_PAGE) + 1);
-      windowHandle = (s32)Window_Create(FILE_SCREEN_HELP_WINDOW_X, 0,
-                                        FILE_SCREEN_HELP_WINDOW_WIDTH, 4, v6);
+      windowHandle =
+          (s32)Window_Create(FILE_SCREEN_HELP_WINDOW_X, 0,
+                             FILE_SCREEN_HELP_WINDOW_WIDTH, 4, result);
       passwordHeadingMessage = MsgClearPasswordLabel;
       headingWindow = (struct Window *)windowHandle;
       Text_DrawMessage(passwordHeadingMessage, headingWindow, 6, 4);
-      v7 = 1;
+      index = 1;
       // The help line below: B alone for one page, with Left and Right for
       // more (the two messages before MsgClearPasswordLabel).
       if (pageCount == 1) {
-        windowHandle = (s32)Window_Create(5, 16, 20, 3, v6);
+        windowHandle = (s32)Window_Create(5, 16, 20, 3, result);
         helpWindow = (struct Window *)windowHandle;
         Text_DrawMessageAsTiles(passwordHeadingMessage - 2, helpWindow,
                                 FILE_SCREEN_PAGE_LABEL_X, 0);
       } else {
         windowHandle =
             (s32)Window_Create(FILE_SCREEN_MESSAGE_WINDOW_X, 16,
-                               FILE_SCREEN_MESSAGE_WINDOW_WIDTH, 3, v6);
+                               FILE_SCREEN_MESSAGE_WINDOW_WIDTH, 3, result);
         helpWindow = (struct Window *)windowHandle;
         Text_DrawMessageAsTiles(passwordHeadingMessage - 1, helpWindow, 0, 0);
       }
@@ -835,7 +837,7 @@ menu_top:;
       WindowSprite_PrepareForRedraw(pageWindow);
       // A turns the page, and on the last returns to the menu; Left and Right
       // turn back and forth, wrapping round; B goes back to the level choice.
-      // v7 is 1 when the page must be drawn again.
+      // index is 1 when the page must be drawn again.
       for (;;) {
         Link_DrawPageArrows(PAGE_ARROW_VRAM);
         if ((gKeysPressed & KEY_B) != 0) {
@@ -848,7 +850,7 @@ menu_top:;
         }
         if ((gKeysPressed & KEY_A) != 0) {
           pageIndex = (pageIndex + 1);
-          v7 = 1;
+          index = 1;
           if (pageIndex == pageCount) {
             Sound_Play(SE_MENU_CONFIRM);
             WindowSprite_PrepareForRedraw(pageWindow);
@@ -875,35 +877,35 @@ menu_top:;
             goto keys_done;
           }
           wrappedPage = (wrappedPage % pageCount);
-          v7 = 1;
+          index = 1;
           pageIndex = wrappedPage;
         }
       keys_done:;
-        if (v7 == 1) {
+        if (index == 1) {
           WindowSprite_PrepareForRedraw(pageWindow);
-          v7 = 0;
-          v5 = 2;
+          index = 0;
+          limit = 2;
           do {
-            Window_DrawDividerLine(pageWindow, 0, v5, 18, v5);
-            v5 = (v5 + 2);
-            v7 = (v7 + 1);
-          } while (v7 != 4);
+            Window_DrawDividerLine(pageWindow, 0, limit, 18, limit);
+            limit = (limit + 2);
+            index = (index + 1);
+          } while (index != 4);
           // The page numbers beside the arrows, on WINDOW_PALETTE: tile 769 +
           // n is the digit n + 1, and 779 + n the same digit in the second
           // colouring, for the page shown.
           if (pageCount > 1) {
-            v7 = 0;
+            index = 0;
             if (pageCount != 0) {
-              v6 = 0;
+              result = 0;
               do {
-                tileValue = v7 + WINDOW_TILE(769);
-                if (v7 == pageIndex) {
-                  tileValue = v7 + WINDOW_TILE(779);
+                tileValue = index + WINDOW_TILE(769);
+                if (index == pageIndex) {
+                  tileValue = index + WINDOW_TILE(779);
                 }
                 Window_SetTilemapEntry(pageWindow, tileValue,
-                                       v7 + 18 - pageCount, -1, v6);
-                v7 = (v7 + 1);
-              } while (v7 != pageCount);
+                                       index + 18 - pageCount, -1, result);
+                index = (index + 1);
+              } while (index != pageCount);
             }
             Window_SetTilemapEntry(pageWindow, PAGE_ARROW_LEFT,
                                    (17 - (s32)pageCount), -1, 0);
@@ -914,21 +916,22 @@ menu_top:;
           // Each page holds 50 symbols in five rows, split into two groups.
           // Rows are 16 pixels apart; the second five of a row sit 10 pixels
           // further right.
-          v6 =
+          result =
               pageIndex * PASSWORD_SYMBOLS_PER_PAGE + PASSWORD_SYMBOLS_PER_PAGE;
-          if (v6 > encodedSize) {
-            v6 = encodedSize;
+          if (result > encodedSize) {
+            result = encodedSize;
           }
-          for (v7 = pageIndex * PASSWORD_SYMBOLS_PER_PAGE, pageGlyphIndex = 0;
-               v7 != v6; v7++, pageGlyphIndex++) {
+          for (index = pageIndex * PASSWORD_SYMBOLS_PER_PAGE,
+              pageGlyphIndex = 0;
+               index != result; index++, pageGlyphIndex++) {
             /* FAKEMATCH(dead): a once-only block round the draw call makes each
              * call rebuild the glyph's address; as the plain call, 170 of 920
              * instructions differ in tbs-en. */
             do {
-              FileScreen_NameEntryCharacter(password[v7] & PASSWORD_SYMBOL_MASK,
-                                            glyph);
+              FileScreen_NameEntryCharacter(
+                  password[index] & PASSWORD_SYMBOL_MASK, glyph);
             } while (0);
-            passwordColumn = (v7 % 10);
+            passwordColumn = (index % 10);
             if (passwordColumn > 4) {
               s32 row;
 
@@ -947,7 +950,7 @@ menu_top:;
                               (row << 4) + 2);
             }
           }
-          v7 = 0;
+          index = 0;
         }
         wait(1);
       }

@@ -1276,11 +1276,6 @@ static inline void InitializeSelectedActor(s32 actorId) {
   Actor_SetSpeed(actorId, 1);
 }
 
-/// Advances to the next message in the current explanation.
-static __inline__ void AdvanceMessage(s32 amount) {
-  gFieldWork->message += amount;
-}
-
 // This scene's exits for colosso_solo.h.
 #define COLOSSO_SOLO_TO_RACE COLOSSEUM_AZART_MATCH_LEND_A_HAND_TO_RACE
 #define COLOSSO_SOLO_TO_COLOSSEUM COLOSSEUM_AZART_MATCH_TO_COLOSSEUM_WEST

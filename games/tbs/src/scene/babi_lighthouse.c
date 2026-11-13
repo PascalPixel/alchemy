@@ -224,11 +224,6 @@ enum { PIT_MASK = SPRITE_CRATE };
 static void BabiLighthouse_CloseTruthDoor(void);
 static void BabiLighthouse_RedrawLedgePillarCells(void);
 
-/// Unused: a signed division nothing calls.
-static __inline__ s32 UNUSED Entrance_Divide(s32 dividend, s32 divisor) {
-  return dividend / divisor;
-}
-
 #include "shared/staged_actor.h"
 
 #include "shared/field_effect_create.h"

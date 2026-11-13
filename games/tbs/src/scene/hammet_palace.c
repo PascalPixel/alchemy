@@ -910,7 +910,7 @@ static void HammetPalace_HammetsHomecoming(void) {
 
   struct Actor *leader;
   struct FieldWork *work;
-  s32 v5;
+  s32 answeredYes;
   const s32 *partyScript;
 
   Event_Start();
@@ -921,7 +921,7 @@ static void HammetPalace_HammetsHomecoming(void) {
   MapGrid_CenterOnFollowedPoint();
   wait(1);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 864, 630);
-  gFieldWork->transition = v5 = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   gFieldWork->transitionFrames = 40;
   Event_StartScreenTransition();
   FieldCamera_SetSpeed(0.4);
@@ -952,12 +952,12 @@ static void HammetPalace_HammetsHomecoming(void) {
   Actor_SetAnimation(ACTOR_IVAN, ANIM_STAND);
   Event_Wait(10);
   HammetPalace_FacePartyNorth(10);
-  Actor_ShowEmote(ACTOR_HAMMET, v5, 20);
+  Actor_ShowEmote(ACTOR_HAMMET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   Actor_FaceDirection(ACTOR_HAMMET, FACING_SOUTH_SOUTHWEST, 20);
   Event_SetMessageId(MsgKalayItsIvanHisCompanionsPerfect);
   // "So! It's Ivan and his companions... Perfect timing!"
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_HAMMET, 0, 10);
-  Actor_ShowEmote(ACTOR_LAYANA, v5, 20);
+  Actor_ShowEmote(ACTOR_LAYANA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   Actor_FaceDirection(ACTOR_LAYANA, FACING_SOUTH_SOUTHEAST, 20);
   // "So, it's you..."
   Event_ShowMessageThenWait(ACTOR_LAYANA, 0, 20);
@@ -987,7 +987,7 @@ static void HammetPalace_HammetsHomecoming(void) {
   Actor_FaceDirection(ACTOR_LAYANA, FACING_SOUTH_SOUTHEAST, 10);
   // "You had a more pressing quest at hand, no?"
   Event_OpenMessage(ACTOR_LAYANA, 0);
-  v5 = 1;
+  answeredYes = 1;
   if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
     Event_Wait(10);
     Actor_SetAnimation(ACTOR_LAYANA, ANIM_NOD);
@@ -995,10 +995,10 @@ static void HammetPalace_HammetsHomecoming(void) {
     Event_Wait(10);
     HammetPalace_AdvanceMessage(1);
     Actor_SetAnimation(ACTOR_LAYANA, ANIM_SHAKE_HEAD);
-    v5 = 0;
+    answeredYes = 0;
   }
   Event_ShowMessageThenWait(ACTOR_LAYANA, 0, 10);
-  if (v5 != 0) {
+  if (answeredYes != 0) {
     HammetPalace_AdvanceMessage(1);
   }
   Actor_StartRepeatedMotion(ACTOR_HAMMET, 2);

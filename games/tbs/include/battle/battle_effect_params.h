@@ -37,13 +37,6 @@ STATIC_ASSERT(sizeof(struct BattleEffectParams) == 0x34);
 STATIC_ASSERT(offsetof(struct BattleEffectParams, targetCount) == 0x14);
 STATIC_ASSERT(offsetof(struct BattleEffectParams, targets) == 0x24);
 
-/// Defines the battle effect kind `name` as a call of a shared runner with
-/// one fixed argument, its style or variant. The strike, volley, shower, mote
-/// and stat-change families each have one runner and a kind like this for each
-/// ability that uses it.
-#define DEFINE_BATTLE_EFFECT_KIND(name, runner, arg)                           \
-  void name(struct BattleEffectParams *args) { runner(args, arg); }
-
 /// Loops `i` over the effect's targets, effect->targets[0] to
 /// effect->targets[effect->targetCount - 1]: the loops that flash, shake,
 /// strike or aim at each target in turn.

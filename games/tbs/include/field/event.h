@@ -425,9 +425,6 @@ static inline void Actor_SetSpriteColorById(s32 actorId, s32 value) {
   Actor_ConfigureSpriteColor(actorId, value);
 }
 
-/// Not used in TBS.
-#define ACTION_TABLE_STOP ((const u8 *)1)
-
 /// Changes what part of the room shows, copying the cells' pictures but not
 /// their cell behaviors.
 static inline void MapGrid_CopyCellsTo(s32 sourceX, s32 sourceY,

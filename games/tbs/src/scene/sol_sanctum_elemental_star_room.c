@@ -154,7 +154,7 @@ enum SolSanctumElementalStarRoomCellBehavior {
       11 ///< a jump spot, walked into south
 };
 
-// The room's map (map_014) draws its middle layer from the grid 40 rows down
+// The room's map (sol_sanctum_elemental_star_room) draws its middle layer from the grid 40 rows down
 // and its overhead layer from 56 columns across, so a cell of either layer is
 // written as the room's cell plus that start.
 #define MIDDLE_LAYER_ROW 40

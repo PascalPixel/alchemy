@@ -27,7 +27,7 @@
 ///   Vale's VALE_PLAZA_TO_CHEST_CAVE leads in at
 ///   GOMA_CAVE_STREAM_CHEST_CAVE_FROM_VALE_PLAZA, which shows no area name.
 ///   Its only way out is the cell behavior 1 cell at its south tip, cell
-///   (38, 55) in map_023's map.txt, two cells south of the arrival. That
+///   (38, 55) in goma_cave_stream's map.txt, two cells south of the arrival. That
 ///   cell leads back to the plaza (GOMA_CAVE_STREAM_CHEST_CAVE_TO_VALE_PLAZA).
 ///
 /// - SceneId_GomaCaveBridge, the way out, where a wooden bridge crosses the

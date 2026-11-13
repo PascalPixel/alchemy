@@ -1,7 +1,7 @@
 # Maps
 
 A map is the ground a place is drawn on and walked over. Each is a folder
-here, such as `map_002/` for Vale, and the heart of it is one text file
+here, such as `vale/` for Vale, and the heart of it is one text file
 you can open, `map.txt`.
 
 ## Cells
@@ -75,16 +75,17 @@ with, each a resource of its own
 ([Graphics](../graphics/README.md#tilesets)). Many scenes share a map, and
 many maps share tiles.
 
-One thing to know before you go looking: a folder is numbered by its
-resource, where maps that share tiles sit together, so a folder's number
-rarely matches its row in `gMaps`.
+A folder is named for the scene that uses it, or for the place when
+several scenes of one place share it. The three that no one
+place or scene names keep their resource number, such as `map_001/`, the
+first row `gMaps` counts from.
 
 When the party arrives, the grid, the cell pictures, the shapes and the
 tiles are unpacked into memory, where the field reads them directly.
 
 ## Where the files are
 
-Each `map_NNN/` folder holds `map.txt` (the grid), `cell_pictures.tsv`,
+Each folder holds `map.txt` (the grid), `cell_pictures.tsv`,
 `shapes.tsv` and `tileset_anims.tsv`. Where a language changes a map,
 its own grid sits beside it, such as `map_es.txt`. The code that reads
 them is in [Field code](../field/README.md).

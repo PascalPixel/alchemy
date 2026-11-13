@@ -13,7 +13,7 @@
 /// numbers.
 ///
 /// Vines hang from one branch to the one below. Step triggers on cell behaviors
-/// 10 to 15 lie in pairs at the top and bottom of the vines. In map_047's
+/// 10 to 15 lie in pairs at the top and bottom of the vines. In tret_tree_branch's
 /// map.txt these are cells (7, 12) and (8, 17), (37, 11) and (36, 16), (41, 20)
 /// and (40, 26). Each trigger moves the leader and the camera five or six cells
 /// north or south in one step, up or down its vine, with no walk. Each vine has

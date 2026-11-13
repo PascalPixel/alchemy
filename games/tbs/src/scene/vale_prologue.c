@@ -489,7 +489,7 @@ static void ValePrologue_LeaveToCottageRoomsAWest(void) {
 }
 
 /// Unused: its row answers cell behavior 11, which no cell of the stormy
-/// night's layout (map/map_000) carries.
+/// night's layout (map/vale_prologue) carries.
 ///
 /// It would have opened the door of the house west of the river. That is the
 /// door ValePrologue_LeaveToCottageRoomsBWest uses for behavior 12, one row

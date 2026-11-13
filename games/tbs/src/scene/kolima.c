@@ -41,7 +41,7 @@
 ///   (KOLIMA_TUNNEL_TO_LOG_ROOMS_C and KOLIMA_TUNNEL_TO_KOLIMA).
 ///
 ///   That table's two jars, an Apple and an Herb (examine triggers 100 and
-///   101), are in the village. Only Kolima's layout (map_037's
+///   101), are in the village. Only Kolima's layout (kolima's
 ///   treasure_spots.tsv) places them, at cells (23, 8) and (13, 23).
 ///
 /// - Kolima Bridge (SceneId_KolimaBridge), "the grand bridge across the

@@ -742,7 +742,7 @@ static void Vale_EnterCottageRoomsAWest(void) {
 }
 
 /// Unused: its row answers cell behavior 11, which no cell of Vale's layout
-/// (map/map_000, the stormy night's too) carries, as
+/// (map/vale_prologue, the stormy night's too) carries, as
 /// ValePrologue_UnusedLeaveToCottageRoomsAWestByWestBankDoor in
 /// vale_prologue.c.
 ///

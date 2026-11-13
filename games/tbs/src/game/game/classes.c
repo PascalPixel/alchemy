@@ -22,8 +22,7 @@ s32 Unit_GetElementLevels(s32 record, const u8 *source, s32 output[4]) {
   if (record > PIERS) {
     u32 index;
 
-    index = ((const struct EnemyDefinition *)Enemy_GetDefinition(record))
-                ->elementPreset;
+    index = Enemy_GetDefinition(record)->elementPreset;
     if (index > 43)
       index = 0;
 
@@ -74,8 +73,7 @@ s32 Unit_GetElementLevel(s32 unitId, s32 element) {
 /// Returns the element an enemy attacks with, from its element preset. Called
 /// by Item_GetEquippedElement for an enemy, which has no weapon.
 s32 Enemy_GetAttackElement(struct Unit *unit) {
-  const struct EnemyDefinition *enemy =
-      (const struct EnemyDefinition *)Enemy_GetDefinition(unit->id);
+  const struct EnemyDefinition *enemy = Enemy_GetDefinition(unit->id);
   u8 presetIndex = enemy->elementPreset;
 
   if (presetIndex > 43)
@@ -95,9 +93,7 @@ void Unit_CalculateBaseElements(s32 unitId,
   s32 i;
 
   if (state->classId == CLASS_NONE) {
-    u32 preset =
-        ((const struct EnemyDefinition *)Enemy_GetDefinition(state->id))
-            ->elementPreset;
+    u32 preset = Enemy_GetDefinition(state->id)->elementPreset;
 
     if (preset > 43)
       preset = 0;

@@ -10,6 +10,7 @@ struct CharacterDefinition;
 struct ClassDefinition;
 struct DjinnDefinition;
 struct DjinnRecoveryTable;
+struct EnemyDefinition;
 struct ItemDefinition;
 struct LevelUpResult;
 struct SummonDefinition;
@@ -18,7 +19,7 @@ void Game_RestartQuest(void);
 struct DjinnRecoveryTable *Djinn_GetRecoveryTable(s32 enemySide);
 u32 Party_GetAverageLevel(void);
 struct Unit *Unit_Get(u32 unitId);
-const u8 *Enemy_GetDefinition(s32 selector);
+const struct EnemyDefinition *Enemy_GetDefinition(s32 selector);
 void Memory_CopyBytesDirectional(u8 *first, u8 *second, s32 count,
                                  s32 direction);
 void Unit_Calculate(s32 unitId);

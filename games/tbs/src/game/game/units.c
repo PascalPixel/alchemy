@@ -8,20 +8,23 @@
 /// a block from EWRAM first (Heap_AllocEwram) and frees it
 /// with Heap_Release before returning; only Unit_Calculate reads it.
 struct StatWork {
-  s32 hp;                 ///< maximum HP
-  s32 pp;                 ///< maximum PP
-  s32 atk;                ///< Attack, 0 to UNIT_STAT_MAX once clamped
-  s32 def;                ///< Defense, 0 to UNIT_STAT_MAX once clamped
-  s32 agi;                ///< Agility, 0 to UNIT_STAT_MAX once clamped
-  s32 unused;             ///< never written; a gap between Agility and Luck
-  s32 luck;               ///< Luck, 0 to UNIT_LUCK_MAX once clamped
-  s32 actionCount;        ///< actions a turn, 0 to 2
-  s32 hpRegen;            ///< HP regained each turn
-  s32 ppRegen;            ///< PP regained each turn
-  s32 element[4][2];      ///< [element][0] power and [1] resistance
-  s32 kind;               ///< the item effect being applied
-  s32 unusedAfterKind[2]; ///< never written
-  s32 amount;             ///< the amount of the item effect being applied
+  s32 hp;          ///< maximum HP
+  s32 pp;          ///< maximum PP
+  s32 atk;         ///< Attack, 0 to UNIT_STAT_MAX once clamped
+  s32 def;         ///< Defense, 0 to UNIT_STAT_MAX once clamped
+  s32 agi;         ///< Agility, 0 to UNIT_STAT_MAX once clamped
+  s32 unused;      ///< never written; a gap between Agility and Luck
+  s32 luck;        ///< Luck, 0 to UNIT_LUCK_MAX once clamped
+  s32 actionCount; ///< actions a turn, 0 to 2
+  s32 hpRegen;     ///< HP regained each turn
+  s32 ppRegen;     ///< PP regained each turn
+  struct {
+    s32 power;
+    s32 resistance;
+  } element[ELEMENT_COUNT];    ///< each element's power and resistance
+  s32 kind;                    ///< the item effect being applied
+  s32 unusedAfterKind[2];      ///< never written
+  s32 amount;                  ///< the amount of the item effect being applied
   struct ItemDefinition *item; ///< the equipped item being applied
   s32 unusedAfterItem;         ///< never written
 };
@@ -52,20 +55,15 @@ struct DjinnRecoveryTable *Djinn_GetRecoveryTable(s32 enemySide) {
 /// random battle's enemies, and by the Lucky Dice game in Tolbi to set its
 /// prizes.
 u32 Party_GetAverageLevel(void) {
-  s32 partySize;
-  s32 totalLevels;
-  s32 partyIndex;
+  s32 partySize = Party_CountMembers();
+  s32 totalLevels = 0;
+  s32 i;
 
-  totalLevels = 0;
-  partySize = Party_CountMembers();
-  if (partySize == 0) {
+  if (partySize == 0)
     return 0;
-  }
-  for (partyIndex = 0; partyIndex < partySize; partyIndex++) {
-    totalLevels += Unit_Get(gMainRoutineWork.party[partyIndex])->level;
-  }
-  totalLevels = totalLevels / partySize;
-  return totalLevels;
+  for (i = 0; i < partySize; i++)
+    totalLevels += Unit_Get(gMainRoutineWork.party[i])->level;
+  return totalLevels / partySize;
 }
 
 /// Returns the unit of `unitId`: ISAAC to PIERS are the playable
@@ -91,10 +89,9 @@ struct Unit *Unit_Get(u32 unitId) {
 /// attack effect and hop) before the enemies'. Called by the
 /// battle code that builds and scores enemies (the formations, the enemy AI,
 /// the spoils) and by the element and weakness reads in this object.
-const u8 *Enemy_GetDefinition(s32 selector) {
-  u32 recordIndex;
+const struct EnemyDefinition *Enemy_GetDefinition(s32 selector) {
+  u32 recordIndex = selector - ENEMY_ID_FIRST;
 
-  recordIndex = selector - ENEMY_ID_FIRST;
   // BUG: the table has 165 rows, but only rows past 249 are refused, so 165 to
   // 249 read the tables after it. BattleUnit_Set refuses them itself.
 #ifdef BUGFIX
@@ -104,25 +101,20 @@ const u8 *Enemy_GetDefinition(s32 selector) {
 #endif
     recordIndex = 0;
   }
-  return (const u8 *)&gEnemy_Definitions[recordIndex];
+  return &gEnemy_Definitions[recordIndex];
 }
 
 /// Copies `count` bytes from `first` to `second` when `direction` is set, and
 /// from `second` to `first` otherwise.
 void Memory_CopyBytesDirectional(u8 *first, u8 *second, s32 count,
                                  s32 direction) {
-  s32 index;
+  s32 i;
 
-  if (direction != 0) {
-    for (index = 0; index < count; index++) {
-      *second++ = *first++;
-    }
-  } else if (count > 0) {
-    index = count;
-    do {
-      *first++ = *second++;
-      index--;
-    } while (index != 0);
+  for (i = 0; i < count; i++) {
+    if (direction != 0)
+      second[i] = first[i];
+    else
+      first[i] = second[i];
   }
 }
 
@@ -157,8 +149,8 @@ void Unit_Calculate(s32 unitId) {
   stats->hpRegen = unit->baseHpRegen;
   stats->ppRegen = unit->basePpRegen;
   for (index = 0; index < ELEMENT_COUNT; index++) {
-    stats->element[index][0] = unit->baseElement[index].power;
-    stats->element[index][1] = unit->baseElement[index].resistance;
+    stats->element[index].power = unit->baseElement[index].power;
+    stats->element[index].resistance = unit->baseElement[index].resistance;
   }
 
   // A gauge is HP or PP as a fraction of its maximum, UNIT_GAUGE_FULL full.
@@ -224,28 +216,28 @@ void Unit_Calculate(s32 unitId) {
           stats->luck += stats->amount;
           break;
         case EQUIP_EFFECT_ADD_VENUS_POWER:
-          stats->element[0][0] += stats->amount;
+          stats->element[ELEMENT_VENUS].power += stats->amount;
           break;
         case EQUIP_EFFECT_ADD_MERCURY_POWER:
-          stats->element[1][0] += stats->amount;
+          stats->element[ELEMENT_MERCURY].power += stats->amount;
           break;
         case EQUIP_EFFECT_ADD_MARS_POWER:
-          stats->element[2][0] += stats->amount;
+          stats->element[ELEMENT_MARS].power += stats->amount;
           break;
         case EQUIP_EFFECT_ADD_JUPITER_POWER:
-          stats->element[3][0] += stats->amount;
+          stats->element[ELEMENT_JUPITER].power += stats->amount;
           break;
         case EQUIP_EFFECT_ADD_VENUS_RESIST:
-          stats->element[0][1] += stats->amount;
+          stats->element[ELEMENT_VENUS].resistance += stats->amount;
           break;
         case EQUIP_EFFECT_ADD_MERCURY_RESIST:
-          stats->element[1][1] += stats->amount;
+          stats->element[ELEMENT_MERCURY].resistance += stats->amount;
           break;
         case EQUIP_EFFECT_ADD_MARS_RESIST:
-          stats->element[2][1] += stats->amount;
+          stats->element[ELEMENT_MARS].resistance += stats->amount;
           break;
         case EQUIP_EFFECT_ADD_JUPITER_RESIST:
-          stats->element[3][1] += stats->amount;
+          stats->element[ELEMENT_JUPITER].resistance += stats->amount;
           break;
         case EQUIP_EFFECT_ADD_UNLEASH_CHANCE:
           unit->equipBonus[0] += stats->amount;
@@ -347,12 +339,12 @@ void Unit_Calculate(s32 unitId) {
   stats->def = stats->def * (unit->defenseStage + 8) / 8;
   stats->agi = stats->agi * (unit->agilityStage + 8) / 8;
   for (index = 0; index < ELEMENT_COUNT; index++)
-    stats->element[index][0] +=
+    stats->element[index].power +=
         (unit->summonBoost[index] * unit->summonBoost[index] +
          unit->summonBoost[index]) *
         5;
   for (index = 0; index < ELEMENT_COUNT; index++)
-    stats->element[index][1] += unit->resistanceStage * 20;
+    stats->element[index].resistance += unit->resistanceStage * 20;
 
   if (unit->classId != CLASS_NONE) {
     lighthouseLit = 0;
@@ -386,8 +378,8 @@ void Unit_Calculate(s32 unitId) {
   CLAMP(stats->hpRegen, 0, UNIT_HP_REGEN_MAX);
   CLAMP(stats->ppRegen, 0, UNIT_PP_REGEN_MAX);
   for (index = 0; index < ELEMENT_COUNT; index++) {
-    CLAMP(stats->element[index][0], 0, UNIT_ELEMENT_MAX);
-    CLAMP(stats->element[index][1], 0, UNIT_ELEMENT_MAX);
+    CLAMP(stats->element[index].power, 0, UNIT_ELEMENT_MAX);
+    CLAMP(stats->element[index].resistance, 0, UNIT_ELEMENT_MAX);
   }
 
   unit->atk = stats->atk;
@@ -398,8 +390,8 @@ void Unit_Calculate(s32 unitId) {
   unit->hpRegen = stats->hpRegen;
   unit->ppRegen = stats->ppRegen;
   for (index = 0; index < ELEMENT_COUNT; index++) {
-    unit->element[index].power = stats->element[index][0];
-    unit->element[index].resistance = stats->element[index][1];
+    unit->element[index].power = stats->element[index].power;
+    unit->element[index].resistance = stats->element[index].resistance;
   }
 
   statLimit = UNIT_HP_MAX;

@@ -8,11 +8,12 @@
 
 s32 Vent_IsActive(s32 hole);
 
-void Func_02002114();
+void TaopoSwamp_FocusMapMiddle();
+void TaopoSwamp_JumpForward(void);
 
 void TaopoSwamp_GrowVine(void);
 
-void Func_02000334(void);
+void TaopoSwamp_DigHoleUnderfoot(void);
 
 void TaopoSwamp_StartMadPlantBattle(void);
 

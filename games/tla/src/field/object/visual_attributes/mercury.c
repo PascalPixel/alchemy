@@ -67,7 +67,7 @@ void FieldParticle_SetActorMode(struct FieldParticle *effect, s32 mode);
 void Shop_InitializeEffectFar(void);
 void BattleEffect_ClearActiveSlotsAndScheduleUpdates(void);
 
-void BattleEffect_RunMercuryDjinnCapture(s32 arg) {
+void Djinn_RunMercuryJoinEffect(s32 arg) {
   struct CaptureObject__f0d8740 *djinni;
   struct CaptureObject__f0d8740 *copy;
   struct CaptureObject__f0d8740 *previous;

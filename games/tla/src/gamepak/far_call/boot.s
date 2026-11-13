@@ -438,4 +438,4 @@ Task_FindFar:
 	.global Func_08000420
 	.thumb_func
 Func_08000420:
-	overlay_veneer Func_08014220
+	overlay_veneer VramCache_CountFreeBlocks

@@ -29,12 +29,12 @@ gData_080f0ee8:
 @ quadrant modes, which no code reads
 	.byte 3, 1, 2, 1
 
-@ The Broken Seal's gBattleEffect_HeavyImpactScript: sync, call Func_080de154,
+@ The Broken Seal's gBattleEffect_HeavyImpactScript: sync, call SpawnHeavyImpactEffect,
 @ free
 	.global gData_080f0ef8
 gData_080f0ef8:
 	.4byte 0x01
-	.4byte 0x2e, Func_080de154
+	.4byte 0x2e, SpawnHeavyImpactEffect
 	.4byte 0x26
 @ The Broken Seal's short, medium and long effect scripts: wait 24, 46
 @ or 128 frames and free

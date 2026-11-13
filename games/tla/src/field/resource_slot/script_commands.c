@@ -793,7 +793,10 @@ void Vector_AddPolarOffset(s32 radius, s32 angle,
 /* VIEW(offset): routine ScriptObject_CheckOverlap as s32 ScriptObject_CheckOverlap(struct ScriptObjectEntry *object, s32 *position); the definition has s32 ScriptObject_CheckOverlap(struct Actor *object, s32 *values). */
 extern s32 ScriptObject_CheckOverlap__offset(struct ScriptObjectEntry *object, s32 *position) __asm__("ScriptObject_CheckOverlap");
 
-s32 Func_08025698(struct ActorScriptView *object) {
+/// SC_WANDER(base, range, limit), as The Broken Seal's: walks to a random
+/// point base to base + range away within 90 degrees of its heading, that
+/// nothing blocks, and within limit pixels of home.
+s32 Actor_Wander(struct ActorScriptView *object) {
   struct FieldPosition pos;
   struct FieldPosition probe;
   s32 base;

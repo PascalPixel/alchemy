@@ -156,7 +156,7 @@ Func_080c81b0:
 	.global Func_080c81b8
 	.thumb_func
 Func_080c81b8:
-	overlay_veneer Func_080d40dc
+	overlay_veneer Event_ShowSpeakerMessage
 	.global Func_080c81c0
 	.thumb_func
 Func_080c81c0:

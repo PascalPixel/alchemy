@@ -277,7 +277,9 @@ struct ParticleTimer {
   u16 timer;
 };
 
-s32 Func_080de154(struct Actor *src) {
+/// A heavy impact, as The Broken Seal's: an actor placed below the source
+/// for a moment, scattering shards from it.
+s32 SpawnHeavyImpactEffect(struct Actor *src) {
   struct ImpactVector pos;
   struct Actor *obj;
   struct Actor *frag;

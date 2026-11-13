@@ -68,7 +68,9 @@ s32 VramCache_GetLongestFreeRun(void) {
   return longest;
 }
 
-s32 Func_08014220(void) {
+/// Counts the free blocks (owner 0xff) of the sprite VRAM cache's 512
+/// blocks, as The Broken Seal's.
+s32 VramCache_CountFreeBlocks(void) {
   u8 *marker = gResourceBlockOwners;
   s32 freeCount;
   s32 remaining;

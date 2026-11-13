@@ -25,7 +25,7 @@ struct OrbitEffect {
 
 void Effect_AdvanceMotion(struct FieldEffect *effect);
 void FieldEffect_RunWhirlwind(void);
-void Func_080df8e0(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+void FieldEffect_SpawnResident(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options);
 
@@ -47,7 +47,7 @@ void BattleEffect_SpawnRadialParticleRing(struct MotionObject *origin) {
     velocity[1] = 0;
     sine = Trig_Sin(angle);
     velocity[2] = sine;
-    Func_080df8e0(origin->x, origin->y, origin->z, velocity[0], velocity[1],
+    FieldEffect_SpawnResident(origin->x, origin->y, origin->z, velocity[0], velocity[1],
                   sine, 0x01090001, &options);
     i++;
   } while (i <= 16);

@@ -278,7 +278,7 @@ void BattleEffect_UpdateDescendingOrbitObject(
 
 void BattleEffect_UpdateRadialSpread(struct FieldParticle *effect);
 
-void BattleEffect_RunVenusDjinnCapture(s32 arg);
+void Djinn_RunVenusJoinEffect(s32 arg);
 
 void FieldEffect_UpdateRandomTargetParticle(struct FieldParticle *effect);
 #undef Actor_SetChildValueUnlessFifteenFar

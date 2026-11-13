@@ -156,7 +156,7 @@ s32 Script_ApplyRelativePosition();
 s32 Script_StoreAngleToWatchedObject();
 s32 Script_ApplyWatchedObjectPosition();
 s32 Script_ApplyLocalOffsetPosition();
-s32 Func_08025698();
+s32 Actor_Wander();
 s32 Func_08025830();
 s32 Actor_ApproachWatchedActor();
 s32 Func_08025160();
@@ -381,7 +381,7 @@ const ScriptCommandFn gData_0802f204[54] = {
     Script_StoreAngleToWatchedObject,    // 0x06 SC_FACE_WATCHED
     Script_ApplyWatchedObjectPosition,   // 0x07 SC_MOVE_TO_WATCHED
     Script_ApplyLocalOffsetPosition,     // 0x08 SC_MOVE_LOCAL
-    Func_08025698,                       // 0x09 SC_WANDER
+    Actor_Wander,                       // 0x09 SC_WANDER
     Func_08025830,                       // 0x0a SC_WANDER_HOME
     Actor_ApproachWatchedActor,          // 0x0b SC_APPROACH_WATCHED
     Func_08025160,                       // 0x0c SC_CAMERA

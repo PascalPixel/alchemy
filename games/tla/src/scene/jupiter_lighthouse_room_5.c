@@ -371,15 +371,9 @@ extern s32 gPaletteCyclePausesInEvents__jupiter_lighthouse_room_5 __asm__(
 #define gPaletteCyclePausesInEvents                                            \
   gPaletteCyclePausesInEvents__jupiter_lighthouse_room_5
 
-/* VIEW(jupiter_lighthouse_room_5): routine FieldEffect_Spawn as this part
- * declared it; the joined file has another; tried as the definition's void
- * FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32
- * velocityZ, u32 flags, const struct EffectOptions *options), which the object
- * already declares, Func_02001230 moves: 1 of 90 instructions in tla-ja. */
-void FieldEffect_Spawn__jupiter_lighthouse_room_5(
-    s32 x, s32 y, s32 z, s32 a3, s32 a4, s32 a5, s32 a6,
-    struct EffectParams *params) __asm__("FieldEffect_Spawn");
-#define FieldEffect_Spawn FieldEffect_Spawn__jupiter_lighthouse_room_5
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags,
+                       const struct EffectOptions *options);
 
 void Func_020006ac(void) {
   if (!Event_GetFlag(0xa0e)) {
@@ -1009,7 +1003,6 @@ void LightSprites_SetPriority(s32 value) { gLightSpritePriority = value; }
 #undef gData_02003274
 #undef gData_02003278
 #undef gPaletteCyclePausesInEvents
-#undef FieldEffect_Spawn
 #undef gPaletteCycleFrame
 // @file
 // Scene code of overlay 0x69e, in ROM order.
@@ -1137,15 +1130,9 @@ DEFINE_CRACKED_TILE_FALL(CrackedTile_Fall, CellTarget__s22b8,
 // @file
 // Scene code of overlay 0x69e, in ROM order.
 
-/* VIEW(s2450): routine FieldEffect_Spawn as this part declared it; the joined
- * file has another; tried as the definition's void FieldEffect_Spawn(s32 x, s32
- * y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags, const
- * struct EffectOptions *options), which the object already declares,
- * CrackedTile_Fall (gone) moves: 131 of 131 instructions in tla-ja. */
-void FieldEffect_Spawn__s2450(
-    s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags,
-    struct EffectOptions *options) __asm__("FieldEffect_Spawn");
-#define FieldEffect_Spawn FieldEffect_Spawn__s2450
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags,
+                       const struct EffectOptions *options);
 
 DEFINE_CRACKED_TILE_DROP_IN(CrackedTile_DropIn, FieldEffect_Spawn)
 
@@ -1273,4 +1260,3 @@ const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_MediumScript,
     gFieldEffect_LongScript,
 };
-#undef FieldEffect_Spawn

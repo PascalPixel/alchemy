@@ -826,15 +826,9 @@ void Field_TryJumpForward(void);
 
 void Actor_SetSpriteFlags(struct Actor *object, u32 value);
 void Whirlwind_Update(struct Actor *self);
-/* VIEW(s16d4): routine FieldEffect_Spawn as this part declared it; the joined
- * file has another; tried as the definition's void FieldEffect_Spawn(s32 x, s32
- * y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags, const
- * struct EffectOptions *options), which the object already declares,
- * Whirlwind_Spawn moves: 1 of 90 instructions in tla-ja. */
-void FieldEffect_Spawn__s16d4(
-    s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags,
-    struct EffectOptions *options) __asm__("FieldEffect_Spawn");
-#define FieldEffect_Spawn FieldEffect_Spawn__s16d4
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags,
+                       const struct EffectOptions *options);
 
 DEFINE_WHIRLWIND_SPAWN(Whirlwind_Spawn, Actor_SelectAnimation, Whirlwind_Update,
                        FieldEffect_Spawn)
@@ -939,7 +933,6 @@ void LightSprites_SetPriority(u16 value) {
 #undef FIELD_AT
 #undef gPaletteCyclePausesInEvents
 #undef gPaletteCycleFrame
-#undef FieldEffect_Spawn
 // @file
 // Scene code of overlay 0x6a0, in ROM order.
 
@@ -1081,15 +1074,9 @@ DEFINE_CRACKED_TILE_FALL(CrackedTile_Fall__s25a4, CellTarget__s25a4,
 // @file
 // Scene code of overlay 0x6a0, in ROM order.
 
-/* VIEW(s273c): routine FieldEffect_Spawn as this part declared it; the joined
- * file has another; tried as the definition's void FieldEffect_Spawn(s32 x, s32
- * y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags, const
- * struct EffectOptions *options), which the object already declares,
- * CrackedTile_Fall (gone) moves: 131 of 131 instructions in tla-ja. */
-void FieldEffect_Spawn__s273c(
-    s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags,
-    struct EffectOptions *options) __asm__("FieldEffect_Spawn");
-#define FieldEffect_Spawn FieldEffect_Spawn__s273c
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags,
+                       const struct EffectOptions *options);
 
 void CrackedTile_DropIn(void) {
   struct Actor *actor = Actor_Get(gMainRoutineWork.currentOwner);
@@ -1169,8 +1156,6 @@ s16 gData_02002c64[][2] = {
     {12, 18}, {13, 18}, {8, 20},  {10, 20}, {13, 20}, {15, 20}, {-1, 0},
 };
 // clang-format on
-
-#undef FieldEffect_Spawn
 
 void JupiterLighthouse_FightWhorl(void);
 void JupiterLighthouse_StepOnButton(void);

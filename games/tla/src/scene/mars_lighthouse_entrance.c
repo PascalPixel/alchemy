@@ -990,29 +990,9 @@ void Func_02001378(void) {
      type v;                                                                   \
    } *)(base))                                                                 \
        ->v)
-/* VIEW(mars_lighthouse_entrance): routine Func_020022e4 as s32 Func_020022e4();
- * scene/mars_lighthouse_entrance/s2270 has DEFINE_BEAM_START(Func_020022e4,
- * Func_020020ec) s32 Func_02002418(s32 index) {; tried as the one declaration
- * s32 Func_020022e4(), it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_entrance.c:1057: `Func_020022e4'
- * undeclared (first use in this function). */
-s32 Func_020022e4__mars_lighthouse_entrance() __asm__("Func_020022e4");
-#define Func_020022e4 Func_020022e4__mars_lighthouse_entrance
-/* VIEW(mars_lighthouse_entrance): routine Func_0200248c as s32 Func_0200248c();
- * scene/mars_lighthouse_entrance/s2270 has void Func_0200248c(s32 index, s16
- * value) {; tried as the definition's void Func_0200248c(s32 index, s16 value),
- * which the object already declares, it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_entrance.c:1158: `Func_0200248c'
- * undeclared (first use in this function). */
-s32 Func_0200248c__mars_lighthouse_entrance() __asm__("Func_0200248c");
-#define Func_0200248c Func_0200248c__mars_lighthouse_entrance
-/* VIEW(first): routine Palette_SetColorsFade as this part declared it; the
- * joined file has another; tried as the one declaration s32
- * Palette_SetColorsFade(), it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_entrance.c:1274: `Palette_SetColorsFade'
- * undeclared (first use in this function). */
-s32 Func_020045f8__first() __asm__("Palette_SetColorsFade");
-#define Palette_SetColorsFade Func_020045f8__first
+void Func_020022e4(u16 *targets, u16 *stops, s32 a2, s32 a3);
+void Func_0200248c(s32 index, s16 value);
+void Palette_SetColorsFade(u16 *slots, u16 *colours, u16 *a, u16 *b);
 void Func_0200196c(void);
 extern u32 gData_02005314[];
 extern s16 gData_020053d8[];
@@ -1551,10 +1531,8 @@ DEFINE_BEAM_DRAW_TARGETS(Func_020020ec, Func_0200206c__s20ec, Func_02001e60,
                          Func_02001ef0, Func_02001ea8, Func_02001c74)
 #undef IWRAM
 
-#undef Func_0200248c
 #undef Oam_AddSpriteAtDepthClamped
 #undef Func_02002c2c
-#undef Func_020022e4
 // ---- scene/mars_lighthouse_entrance/s2270.c ----
 
 /// Scene code of overlay 0x6aa, in ROM order.
@@ -1663,7 +1641,6 @@ DEFINE_PARTY_TAKE_FALL_DAMAGE(Party_TakeFallDamage)
 
 DEFINE_ACTOR_BLINK(Func_02002614, 10, 4, 0)
 
-#undef Func_020022e4
 #undef Unit_Get
 #undef Func_0200246c
 // ---- scene/mars_lighthouse_entrance/s263c.c ----
@@ -2132,8 +2109,6 @@ DEFINE_LEADER_SLIDE_ON_ICE_AHEAD(Leader_SlideOnIceAhead, Leader_StopIfPending,
 #undef gMarsLighthouseEntrance_Room5Triggers
 #undef gMarsLighthouseEntrance_Room6Triggers
 #undef gMarsLighthouseEntrance_Room7Triggers
-#undef Func_020022e4
-#undef Func_0200248c
 #undef gMarsLighthouseEntrance_Triggers
 #undef gMarsLighthouseEntrance_Room1Triggers
 #undef gMarsLighthouseEntrance_Room2Triggers
@@ -2155,7 +2130,6 @@ DEFINE_LEADER_SLIDE_ON_ICE_AHEAD(Leader_SlideOnIceAhead, Leader_StopIfPending,
 #undef gMarsLighthouseEntrance_Room7Triggers
 #undef Position
 #undef Position
-#undef Palette_SetColorsFade
 // @file
 // Scene code of overlay 0x6aa, in ROM order.
 
@@ -3224,6 +3198,5 @@ s32 gFieldEffect_DurationScripts[] = {
     (s32)gFieldEffect_LongScript,
 };
 #undef Func_02004160
-#undef Palette_SetColorsFade
 #undef MarsLighthouseEntrance_BurstIceSheet
 #undef MarsLighthouseEntrance_PushStatueIntoFlames

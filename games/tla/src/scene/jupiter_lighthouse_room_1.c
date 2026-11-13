@@ -203,16 +203,9 @@ DEFINE_WHIRLWIND_UPDATE_LOWER(Whirlwind_UpdateLower, MapGrid_GetCellBehavior,
                               Position_FlatDistance, gWhirlwindEndScript,
                               gWhirlwindRiding)
 
-/* VIEW(first): routine FieldEffect_Spawn as this part declared it; the joined
- * file has another; tried as the definition's void FieldEffect_Spawn(s32 x, s32
- * y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags, const
- * struct EffectOptions *options), which the object already declares, it does
- * not compile in tla-ja: games/tla/src/scene/jupiter_lighthouse_room_1.c:204:
- * `Whirlwind_UpdateLower' undeclared (first use in this function). */
-void FieldEffect_Spawn__first(
-    s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags,
-    struct EffectOptions *options) __asm__("FieldEffect_Spawn");
-#define FieldEffect_Spawn FieldEffect_Spawn__first
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags,
+                       const struct EffectOptions *options);
 
 DEFINE_WHIRLWIND_SPAWN(Whirlwind_Spawn, Actor_SelectAnimation,
                        Whirlwind_UpdateLower, FieldEffect_Spawn)
@@ -324,7 +317,6 @@ const s32 *gFieldEffect_DurationScripts[] = {
 #include "../field/field_effect/move.c"
 
 #undef FLAG_GATES_BUTTON_HELD
-#undef FieldEffect_Spawn
 // @file
 // Jupiter Lighthouse's ground floor: its copy of the effect spawner, and the
 // cracked tiles, found, cracked and fallen through.

@@ -275,15 +275,9 @@ DEFINE_WHIRLWIND_UPDATE(Whirlwind_Update, MapGrid_GetCellBehavior,
 
 extern u8 gLightSpriteCount[];
 
-/* VIEW(first): routine FieldEffect_Spawn as this part declared it; the joined
- * file has another; tried as the definition's void FieldEffect_Spawn(s32 x, s32
- * y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags, const
- * struct EffectOptions *options), which the object already declares,
- * Whirlwind_SpawnUpper moves: 1 of 90 instructions in tla-ja. */
-void FieldEffect_Spawn__first(
-    s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags,
-    struct EffectOptions *options) __asm__("FieldEffect_Spawn");
-#define FieldEffect_Spawn FieldEffect_Spawn__first
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags,
+                       const struct EffectOptions *options);
 
 DEFINE_WHIRLWIND_SPAWN_UPPER(Whirlwind_SpawnUpper, Actor_SelectAnimation,
                              Whirlwind_Update, FieldEffect_Spawn)
@@ -445,7 +439,6 @@ const s32 *gFieldEffect_DurationScripts[] = {
 
 #include "../field/field_effect/move.c"
 
-#undef FieldEffect_Spawn
 // @file
 // The hover-tile hall of Jupiter Lighthouse's right tower: its copy of the
 // effect spawner, and the cracked tiles, found, cracked and fallen through.

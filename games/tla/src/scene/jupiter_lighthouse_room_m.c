@@ -184,19 +184,7 @@ void Func_02000080(void) {
  * assignment. */
 extern s16 gBgScroll__jupiter_lighthouse_room_m[] __asm__("gBgScroll");
 
-/* VIEW(jupiter_lighthouse_room_m): routine Actor_EmitRisingSparks as void
- * Actor_EmitRisingSparks(void); scene/jupiter_lighthouse_room_m/s3474 has
- * DEFINE_ACTOR_EMIT_RISING_SPARKS(Actor_EmitRisingSparks, FieldEffect_Spawn)
- * DEFINE_JUPITER_LIGHTHOUSE_PLACE_RAISED_ACTORS(
- * JupiterLighthouse_PlaceRaisedActors) extern s16 gLightSpritesLarge; tried as
- * the definition's DEFINE_WHIRLWIND_SPAWN(Whirlwind_Spawn,
- * Actor_SelectAnimation, Whirlwind_Update, FieldEffect_Spawn) UNUSED s32
- * Actor_EmitRisingSparks(struct..., it does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_room_m.c:238: `Actor_EmitRisingSparks'
- * undeclared (first use in this function). */
-void Actor_EmitRisingSparks__jupiter_lighthouse_room_m(void) __asm__(
-    "Actor_EmitRisingSparks");
-#define Actor_EmitRisingSparks Actor_EmitRisingSparks__jupiter_lighthouse_room_m
+s32 Actor_EmitRisingSparks(struct Actor *object);
 
 void Func_020000c4(void) {
 
@@ -1775,22 +1763,15 @@ DEFINE_WHIRLWIND_UPDATE(Whirlwind_Update, MapGrid_GetCellBehavior,
                         Position_FlatDistance, gWhirlwindEndScript,
                         gWhirlwindRiding)
 
-#undef Actor_EmitRisingSparks
 // ---- scene/jupiter_lighthouse_room_m/s3474.c ----
 
 /// Scene code of overlay 0x6a3, in ROM order.
 
 void Actor_SetSpriteFlags(struct Actor *object, u32 value);
 void Whirlwind_Update(struct Actor *self);
-/* VIEW(s3474): routine FieldEffect_Spawn as this part declared it; the joined
- * file has another; tried as the definition's void FieldEffect_Spawn(s32 x, s32
- * y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags, const
- * struct EffectOptions *options), which the object already declares,
- * Whirlwind_SpawnUpper moves: 1 of 90 instructions in tla-ja. */
-void FieldEffect_Spawn__s3474(
-    s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags,
-    struct EffectOptions *options) __asm__("FieldEffect_Spawn");
-#define FieldEffect_Spawn FieldEffect_Spawn__s3474
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags,
+                       const struct EffectOptions *options);
 
 DEFINE_WHIRLWIND_SPAWN_UPPER(Whirlwind_SpawnUpper, Import_ActorSelectAnimation,
                              Whirlwind_Update, FieldEffect_Spawn)
@@ -1844,10 +1825,8 @@ void LightSprites_SetPriority(s32 value) { gLightSpritePriority = value; }
 #undef PLACE
 #undef EVENT_WORK
 #undef ACTOR_SET_MODE_AND_WAIT
-#undef Actor_EmitRisingSparks
 #undef gPaletteCyclePausesInEvents
 #undef gPaletteCycleFrame
-#undef FieldEffect_Spawn
 // @file
 // Scene code of overlay 0x6a3, in ROM order.
 
@@ -1990,15 +1969,9 @@ DEFINE_CRACKED_TILE_FALL(CrackedTile_Fall, CellTarget__s41ac,
 // @file
 // Scene code of overlay 0x6a3, in ROM order.
 
-/* VIEW(s4344): routine FieldEffect_Spawn as this part declared it; the joined
- * file has another; tried as the definition's void FieldEffect_Spawn(s32 x, s32
- * y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags, const
- * struct EffectOptions *options), which the object already declares,
- * CrackedTile_Fall (gone) moves: 131 of 131 instructions in tla-ja. */
-void FieldEffect_Spawn__s4344(
-    s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags,
-    struct EffectOptions *options) __asm__("FieldEffect_Spawn");
-#define FieldEffect_Spawn FieldEffect_Spawn__s4344
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags,
+                       const struct EffectOptions *options);
 
 static __inline__ void CamBounds(s32 x, s32 y, s32 z, s32 mode) {
   FieldCamera_MoveWithinMapBounds(x, y, z, mode);
@@ -2081,8 +2054,6 @@ DEFINE_G_DATA_02004AB4(gData_02004ae8, 679)
 
 DEFINE_G_DATA_02004AB4(gData_02004b1c, 659)
 // clang-format on
-
-#undef FieldEffect_Spawn
 
 extern u32 gFieldEffect_LongScript[];
 extern s32 gData_02005078[];

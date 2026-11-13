@@ -194,20 +194,7 @@ extern s16 gData_02005ae0[];
 extern u32 gData_02005b0c[];
 
 void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
-/* VIEW(mars_lighthouse_aerie): routine Palette_SetColorsFade as void
- * Palette_SetColorsFade(const u8 *a, const u8 *b, const u8 *c, const u8 *d);
- * scene/mars_lighthouse_aerie/s3370 has
- * DEFINE_PALETTE_SET_COLORS_FADE(Palette_SetColorsFade, gData_02006ce0,
- * Data_02006ce4, Data_02006ce8, Data_02006cd4, Func_020051e0) #include "task.h"
- * DEFINE_PALETTE_CYCLE_START(Func_02004fac, gData_02006cf0, gData_02006cec,
- * List_CountEntries, gData_02006ce0, gData_02006cdc, 15, gData_02006cd8, 16,
- * gData_02006cd0, PaletteCycle_Fade) void Func_02005010(void) {; tried as the
- * one declaration void Palette_SetColorsFade(const u8 *a, const u8 *b, const u8
- * *c, const u8 *d), Func_020001d8 moves: 3 of 124 instructions in tla-ja. */
-void Func_02004ef0__mars_lighthouse_aerie(
-    const u8 *a, const u8 *b, const u8 *c,
-    const u8 *d) __asm__("Palette_SetColorsFade");
-#define Palette_SetColorsFade Func_02004ef0__mars_lighthouse_aerie
+void Palette_SetColorsFade(u16 *slots, u16 *colours, u16 *a, u16 *b);
 void Func_020004a4(void);
 
 void Func_020001d8(void) {
@@ -1752,7 +1739,6 @@ DEFINE_ORBS_SPAWN_RISING(Orbs_SpawnRising, 0x200, gData_02006afc, Func_02003210,
 
 #undef FIELD_AT
 
-#undef Palette_SetColorsFade
 // ---- scene/mars_lighthouse_aerie/s3370.c ----
 
 /// Scene code of overlay 0x6ae, in ROM order.

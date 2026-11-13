@@ -2654,15 +2654,9 @@ void Whirlwind_Update(struct Object6a5 *object) {
 extern u8 gLightSpritesLarge[];
 
 void Actor_SetSpriteFlags(struct Actor *object, u32 value);
-/* VIEW(s44cc): routine FieldEffect_Spawn as this part declared it; the joined
- * file has another; tried as the definition's void FieldEffect_Spawn(s32 x, s32
- * y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags, const
- * struct EffectOptions *options), which the object already declares,
- * Whirlwind_SpawnUpper moves: 1 of 90 instructions in tla-ja. */
-void FieldEffect_Spawn__s44cc(
-    s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags,
-    struct EffectOptions *options) __asm__("FieldEffect_Spawn");
-#define FieldEffect_Spawn FieldEffect_Spawn__s44cc
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags,
+                       const struct EffectOptions *options);
 
 DEFINE_WHIRLWIND_SPAWN_UPPER(Whirlwind_SpawnUpper, Actor_SelectAnimation,
                              Whirlwind_Update, FieldEffect_Spawn)
@@ -2775,7 +2769,6 @@ void LightSprites_SetPriority(s32 value) { gLightSpritePriority = value; }
 #undef gData_020061e0
 #undef gPaletteCyclePausesInEvents
 #undef gPaletteCycleFrame
-#undef FieldEffect_Spawn
 // @file
 // Scene code of overlay 0x6a5, in ROM order.
 
@@ -2880,15 +2873,9 @@ DEFINE_CRACKED_TILE_FALL_EVENT(CrackedTile_FallEvent, Leader_CenterInCell)
 // @file
 // Scene code of overlay 0x6a5, in ROM order.
 
-/* VIEW(s539c): routine FieldEffect_Spawn as this part declared it; the joined
- * file has another; tried as the definition's void FieldEffect_Spawn(s32 x, s32
- * y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags, const
- * struct EffectOptions *options), which the object already declares,
- * CrackedTiles_Find (gone) moves: 267 of 267 instructions in tla-ja. */
-void FieldEffect_Spawn__s539c(
-    s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags,
-    struct EffectOptions *options) __asm__("FieldEffect_Spawn");
-#define FieldEffect_Spawn FieldEffect_Spawn__s539c
+void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                       s32 velocityZ, u32 flags,
+                       const struct EffectOptions *options);
 
 static __inline__ void Camera_SetBounds(s32 x, s32 y, s32 z, s32 use_setter) {
   FieldCamera_MoveWithinMapBounds(x, y, z, use_setter);
@@ -2986,7 +2973,6 @@ s32 gData_02005a20[] = {
     64,
 };
 
-#undef FieldEffect_Spawn
 #undef CrackedTile_FallEvent
 
 // clang-format off

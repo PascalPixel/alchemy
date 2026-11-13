@@ -149,7 +149,7 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *win, s32 member,
       sprite->kind = WINDOW_SPRITE_ICON;
       // Stored through a cast, the index stays ahead of the attribute word.
       *(s8 *)&sprite->index = VramCache_AllocEntry(128);
-      entry = (struct PreviewSprite *)((u8 *)sprite + 16);
+      entry = (struct PreviewSprite *)sprite->link;
       sprite->sentinel = 240;
       sprite->x = 120;
       sprite->y = 120;

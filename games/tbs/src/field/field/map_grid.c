@@ -139,7 +139,7 @@ MapGrid_CopyCellPictureHalfColumn(u32 *cell, u8 *screenMap, u32 screenRowOffset,
   // its bottom two. The cell's low 12 bits times 4 index its first halfword.
   u32 index = ((*cell << 20) >> 18) + tileHalf;
 
-  /* FAKEMATCH(register): entry starts at each row's table and steps to the
+  /* FAKEMATCH(temporary): entry holds each row's table, then steps to the
    * picture; as one expression, about 30 of 81 instructions differ in tbs-en.
    */
   entry = (u16 *)Ram_CellPictures;
@@ -162,7 +162,7 @@ static __inline__ void MapGrid_CopyCellPictureToScreen(u32 *cell, u8 *screenMap,
   // The cell's low 12 bits times 2 index the picture's first word.
   u32 index = (*cell << 20) >> 19;
 
-  /* FAKEMATCH(register): as in MapGrid_CopyCellPictureHalfColumn, rows
+  /* FAKEMATCH(temporary): as in MapGrid_CopyCellPictureHalfColumn, rows
    * steps from each row's table to the picture; as one expression, about 35
    * of 66 instructions differ in tbs-en. */
   rows = (u32 *)Ram_CellPictures;
@@ -371,11 +371,12 @@ s32 MapGrid_LoadMap(s32 index) {
   REG_MOSAIC = control;
   REG_BLDCNT = control;
   control = DISPCNT_BG0_ON | DISPCNT_OBJ_1D_MAP;
-  REG_DISPCNT = control;
-  /* FAKEMATCH(type): called as returning nothing; through its own type,
-   * which returns a value, 3 of 376 instructions differ in tbs-en. */
-  ((void (*)(TaskFunc, s32))Task_Add)(MapGrid_UpdateLayerScroll,
-                                      TASK_PASS_FRAME + 5);
+  /* FAKEMATCH(dead): a once-only block around the store, as at The Lost Age's
+   * twin; as a plain store, 4 of 349 instructions differ in tbs-en. */
+  do {
+    REG_DISPCNT = control;
+  } while (0);
+  Task_Add(MapGrid_UpdateLayerScroll, TASK_PASS_FRAME + 5);
   return 2;
 }
 
@@ -636,11 +637,6 @@ struct MapGridTilePosition {
 // written to its BG map; the layers' BG maps follow each other, 2,048 bytes
 // apart, from screen block 5, and in each a row of cells is 128 bytes and a
 // cell 4.
-//
-// FAKEMATCH(register): each copy builds the addresses as numbers, a step at a
-// time; as plain pointer expressions, about 75 of 150 instructions differ in
-// each in tbs-en.
-
 /// Copies the cell picture numbers of a rectangle of cells from (sourceX,
 /// sourceY) to (dstX, dstY), width by height cells, keeping each destination's
 /// attributes, and redraws the copied cells that are on screen. It does what
@@ -685,6 +681,9 @@ void MapGrid_CopyCellPictureIndicesRect(s32 sourceX, s32 sourceY, u32 dstX,
           u32 screenAddress, cellPictureAddress;
           u8 *screen, *cellPicture;
 
+          /* FAKEMATCH(temporary): the addresses held as numbers, a step at a
+           * time; as plain pointer expressions, about 75 of 150 instructions
+           * differ in tbs-en. */
           screenAddress = (u32)BG_SCREEN_BLOCK(5);
           screen = (u8 *)screenAddress;
           screen += offset;
@@ -823,6 +822,9 @@ void MapGrid_CopyCellPictureCellsRect(s32 sourceX, s32 sourceY, s32 width,
           u32 screenAddress, cellPictureAddress;
           u8 *screen, *cellPicture;
 
+          /* FAKEMATCH(temporary): the addresses held as numbers, a step at a
+           * time; as plain pointer expressions, about 75 of 150 instructions
+           * differ in tbs-en. */
           screenAddress = (u32)BG_SCREEN_BLOCK(5);
           screen = (u8 *)screenAddress;
           screen += offset;
@@ -919,6 +921,9 @@ void MapGrid_CopyCellIndexRect(s32 sourceX, s32 sourceY, s32 width, s32 height,
           u32 screenAddress, cellPictureAddress;
           u8 *screen, *cellPicture;
 
+          /* FAKEMATCH(temporary): the addresses held as numbers, a step at a
+           * time; as plain pointer expressions, about 75 of 150 instructions
+           * differ in tbs-en. */
           screenAddress = (u32)BG_SCREEN_BLOCK(5);
           screen = (u8 *)screenAddress;
           screen += offset;

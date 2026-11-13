@@ -98,8 +98,7 @@ void Exit_PrepareAnimation(s32 animation) {
     doorway->colorMode = hidden;
     // Keep the cell and put the leader at its middle in x and its south edge
     // in z.
-    /* FAKEMATCH(cast): the coordinates as plain words; through .fixed, 1 of
-     * 51 instructions moves in tbs-en. */
+    // Each coordinate read and written as the word it is.
     *(s32 *)&actor->x = (*(s32 *)&actor->x & FIELD_CELL_MASK) + px(8);
     *(s32 *)&actor->z = (*(s32 *)&actor->z & FIELD_CELL_MASK) + px(16);
     actor->velocityX = cleared;

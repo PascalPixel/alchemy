@@ -21,8 +21,9 @@ s32 Battle_ClassifyEntryKind(const struct AbilityDefinition *act) {
     targetKind = TARGET_HINT_HP;
   if (abilityKind == ABILITY_FORMULA_HEAL_PP)
     targetKind = TARGET_HINT_PP;
-  /* FAKEMATCH(cast): read through a signed word, a load apart from the
-   * call's; as a plain read, 5 of 30 instructions differ in tbs-en. */
+  /* FAKEMATCH(temporary): the effect copied through a signed word, as at The
+   * Lost Age's twin; as a plain read, 5 of 30 instructions differ in tbs-en.
+   */
   signedEffect = (s8)act->effect;
   effect = signedEffect;
   if (effect == ABILITY_EFFECT_CURE_POISON)
@@ -247,9 +248,12 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
 
       command = &commands[commandIndex];
       unitId = actors[commandIndex];
-      /* FAKEMATCH(type): called as returning a doubleword; through its own
-       * type, 1 of 1841 instructions moves in tbs-en. */
+      // UB: Unit_GetFar returns a pointer, not the cast's doubleword result.
+#ifdef UBFIX
+      unit = Unit_GetFar(unitId);
+#else
       unit = (struct Unit *)(s32)((s64 (*)(s32))Unit_GetFar)(unitId);
+#endif
       // The party member's row starts on Attack; its portrait shows at the
       // left.
       gBattleMenuWork->commandActor = unitId;

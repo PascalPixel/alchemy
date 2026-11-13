@@ -2,7 +2,10 @@
 /// Scene code of overlay 0x6ad, in ROM order.
 
 // ---- games/tla/src/scene/mars_lighthouse_room_f/s3d80.c ----
-#include "../shared/routines.h"
+#include "../shared/teleporter.h"
+#include "../shared/jupiter_lighthouse.h"
+#include "../shared/mars_lighthouse.h"
+#include "../shared/push.h"
 #include "../shared/tables.h"
 #include "types.h"
 #include "system.h"
@@ -28,7 +31,7 @@ static __inline__ void SetWorkTriple(s32 a, s32 b, s32 c) {
   Map_SetScreenShake(a, b, c);
 }
 
-DEFINE_FUNC_02001E24(Func_02003d80, Func_020035b8)
+DEFINE_TELEPORTER_DROP_IN(Func_02003d80, Func_020035b8)
 
 #include "../mars_lighthouse_room_f.h"
 
@@ -99,9 +102,9 @@ void Func_02003fc8(s32 dx, s32 dz, s32 value) {
 /* VIEW(s3d80): variable gData_02005ef8 as extern const s16 gData_02005ef8[]; the definition has s32 gData_02005ef8[] = { 0xffff, - 0x8000, (s32) 0xe000c000, (s32) 0xc000a000, 0x20004000, 0x40006000, 0xffff, - 0x8000, }; tried as the definition's extern struct Trigger gData_02005ef8[], it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_room_f/s3d80.c:160: incompatible types in assignment. */
 extern const s16 gData_02005ef8__s3d80[] __asm__("gData_02005ef8");
 
-DEFINE_FUNC_02002D04(Func_02004080, gData_02005ef8__s3d80, Func_02005480)
+DEFINE_ACTOR_STEER_BY_PAD(Func_02004080, gData_02005ef8__s3d80, Func_02005480)
 
-DEFINE_FUNC_02003284(Func_0200410c)
+DEFINE_LEADER_STOP_IF_PENDING(Func_0200410c)
 
 #include "fixed_math.h"
 #include "scene_tables.h"
@@ -117,7 +120,7 @@ struct Position {
 /* VIEW(s3d80): variable gData_02005f38 as extern s16 gData_02005f38[]; the definition has s32 gData_02005f38[] = { 0xffff, - 0x8000, 0xc000, (s32) 0xc0008000, 0x4000, 0x40008000, 0xffff, - 0x8000, }; tried as the definition's extern s32 gData_02005f38[], it does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_room_f/s3d80.c:243: `gData_02005f38__s3d80' undeclared (first use in this function). */
 extern s16 gData_02005f38__s3d80[] __asm__("gData_02005f38");
 
-DEFINE_FUNC_02002DC4(Func_02004140, Func_0200410c, gData_02005f38__s3d80,
+DEFINE_LEADER_SLIDE_ON_ICE(Func_02004140, Func_0200410c, gData_02005f38__s3d80,
     Func_02005480, Func_02004080, Func_02005538)
 
 #include "version.h"
@@ -148,7 +151,7 @@ void Func_02004700(s32 value) { gData_020074c8 = value; }
 
 #include "system/main_routine_work.h"
 
-DEFINE_FUNC_02003390(Func_0200470c, Func_0200410c, Func_02005480, Func_02004080,
+DEFINE_LEADER_SLIDE_ON_ICE_AHEAD(Func_0200470c, Func_0200410c, Func_02005480, Func_02004080,
     Func_02005538)
 
 #include "field_sprite.h"
@@ -227,7 +230,7 @@ static inline s32 Func_020054f8_(struct Actor *object, s32 *position) {
 /// at a time in the leader's direction, until a cell of it is blocked
 /// (Func_020054f8 returns 2). Leaves the object's resting place in target and
 /// returns 1, or 0 when nothing is pushed or it cannot move at all.
-DEFINE_FUNC_02000C44(Func_02004a8c, Func_02004bf4, gData_02005f64__s4700,
+DEFINE_PUSH_TARGET_FIND_SLIDE(Func_02004a8c, Func_02004bf4, gData_02005f64__s4700,
     gData_02005f7c__s4700, Func_020054f8_)
 
 #include "event_work.h"
@@ -236,15 +239,15 @@ DEFINE_FUNC_02000C44(Func_02004a8c, Func_02004bf4, gData_02005f64__s4700,
 /// The whole-pixel half of a 16.16 coordinate.
 #define PIXELS(v) (((s16 *)&(v))[1])
 
-DEFINE_FUNC_02000DAC(Func_02004bf4, gData_02005f58, gData_02005f7c__s4700,
+DEFINE_PUSH_TARGET_FIND_AHEAD(Func_02004bf4, gData_02005f58, gData_02005f7c__s4700,
     gData_02005f64__s4700)
 
 #undef PIXELS
 
-DEFINE_FUNC_02003A5C(Func_02004d10, gData_02005f64__s4700, Func_02004a44,
+DEFINE_PUSH_TARGET_PUSH(Func_02004d10, gData_02005f64__s4700, Func_02004a44,
     Func_02004fc0, Func_02005480, gData_02005f7c__s4700)
 
-DEFINE_FUNC_02004774(Func_02004fc0, Func_02005680, gData_02005f58,
+DEFINE_ACTOR_STOP_AT_PUSH_TARGET(Func_02004fc0, Func_02005680, gData_02005f58,
     Func_020054f8)
 #undef ABS
 #undef PIXELS
@@ -261,7 +264,7 @@ DEFINE_FUNC_02004774(Func_02004fc0, Func_02005680, gData_02005f58,
 /// Queues the lit actors' sprites: for each listed actor with a position, projects it
 /// from the map's view, skips it off screen, and writes a 16 by 16 sprite, or a 32 by
 /// 64 one when the big switch is set, at its animation picture and depth.
-DEFINE_FUNC_02000AAC(Func_02005048, gData_020074cc, Data_0200f510,
+DEFINE_LIGHT_SPRITES_DRAW(Func_02005048, gData_020074cc, Data_0200f510,
     gData_020074ce, gData_020074d0, gData_020075d0, gData_020075d2,
     Func_02005698, Func_02005440)
 
@@ -272,16 +275,16 @@ DEFINE_FUNC_02000AAC(Func_02005048, gData_020074cc, Data_0200f510,
 // event_inline.h's are, a layer and not a compiler-steering device.
 static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 
-DEFINE_FUNC_02000A98(Func_02005204, gData_020074d0, gData_020074cc,
+DEFINE_LIGHT_SPRITES_INIT_A(Func_02005204, gData_020074d0, gData_020074cc,
     Func_02005048, gData_020074ce, gData_020075d0, gData_020075d2)
 
-DEFINE_FUNC_02000CE8(Func_02005284, gData_020074d0, gData_020074cc,
+DEFINE_LIGHT_SPRITES_INIT_B(Func_02005284, gData_020074d0, gData_020074cc,
     Func_02005048, gData_020074ce, gData_020075d0, gData_020075d2)
 
-DEFINE_FUNC_02000D68(Func_02005304, gData_020074d0, gData_020074cc,
+DEFINE_LIGHT_SPRITES_INIT_C(Func_02005304, gData_020074d0, gData_020074cc,
     Func_02005048, gData_020074ce, gData_020075d0, gData_020075d2)
 
-DEFINE_FUNC_02000DF0(Func_0200538c, gData_020074ce, gData_020074d0)
+DEFINE_LIGHT_SPRITES_ADD(Func_0200538c, gData_020074ce, gData_020074d0)
 
 void Func_020053bc(s32 value) { gData_020075d2 = value; }
 

@@ -1,7 +1,10 @@
 /// @file
 /// The scene code of overlay 0x69d, in ROM order.
 
-#include "shared/routines.h"
+#include "shared/whirlwind.h"
+#include "shared/jupiter_lighthouse.h"
+#include "shared/actors.h"
+#include "shared/effects.h"
 #include "battle.h"
 #include "field.h"
 #include "game.h"
@@ -95,6 +98,15 @@ void Func_020001ac(void) {
   MapGrid_CopyCellsLayered(103, 18, 1, 4, 104, 18);
   MapGrid_CopyCellAttributes(40, 9, 1, 1, 40, 20);
 }
+
+/// 2 copies: jupiter_lighthouse_room_4, jupiter_lighthouse_room_4.
+#define DEFINE_FUNC_020001DC(name, n1, call1)                                  \
+  void name(s32 item) {                                                        \
+    Event_SetFlag(n1);                                                         \
+    Event_PlaySound(134);                                                      \
+    call1();                                                                   \
+    PartyInventory_Remove(item);                                               \
+  }
 
 DEFINE_FUNC_020001DC(Func_020001dc, 0xa07, Func_0200017c)
 
@@ -246,25 +258,25 @@ extern s32 gData_020026f0;
 /// Sets the counter, its value built as a word.
 static inline void Counter_Set(s32 value) { gData_020026f0 = value; }
 
-DEFINE_FUNC_0200027C(Func_020005e4, gData_020026f0, gData_020026f4,
+DEFINE_PALETTE_CYCLE_STEP(Func_020005e4, gData_020026f0, gData_020026f4,
     gData_0200271c)
 
-DEFINE_FUNC_020002F4(Func_020006a0, gData_020026f4, gData_0200271c,
+DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(Func_020006a0, gData_020026f4, gData_0200271c,
     gData_0200273c, Func_020005e4, gData_02002740)
 
-DEFINE_FUNC_02000378(Func_02000724, Func_02001e28, Func_02001ef8)
+DEFINE_ACTOR_RAISE_FROM_CELL(Func_02000724, Func_02001e28, Func_02001ef8)
 
 #include "frame.h"
 #include "event_work.h"
 
-DEFINE_FUNC_02000410(Func_02000778)
+DEFINE_WHIRLWIND_CARRY_LEADER(Func_02000778)
 
-DEFINE_FUNC_020003D0(Func_02000964)
+DEFINE_POSITION_FLAT_DISTANCE(Func_02000964)
 
 extern const s32 gData_020026f8[];
 
 s32 Func_02001ee8(s32 x, s32 z, s32 layer);
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
-DEFINE_FUNC_02000628(Func_02000990, Func_02001ee8, Func_02000964,
+DEFINE_WHIRLWIND_UPDATE(Func_02000990, Func_02001ee8, Func_02000964,
     gData_020026f8, gData_02002718)

@@ -3,7 +3,8 @@
 
 // ---- games/tla/src/scene/apojii_islands.c ----
 
-#include "../shared/routines.h"
+#include "../shared/actors.h"
+#include "../shared/effects.h"
 #include "../shared/tables.h"
 #include "../apojii_islands.h"
 #include "types.h"
@@ -161,7 +162,7 @@ void Func_02000770(struct Actor *object) {
   object->update = 0;
 }
 
-DEFINE_FUNC_02000780(Func_02000780, 7)
+DEFINE_ACTOR_FLICKER_CHILD(Func_02000780, 7)
 
 // ---- games/tla/src/scene/apojii_islands/s07a4.c ----
 #include "scene_tables.h"
@@ -280,6 +281,27 @@ void Func_02000974(void) {
 }
 
 void Func_02000a48(void) { Func_02001e0c_(68, 38, 39, 24, 68, 4, 1); }
+
+/// 3 copies: apojii_islands/apojii_islands, apojii_islands/apojii_islands,
+/// apojii_islands/apojii_islands.
+#define DEFINE_FUNC_02000A68(name, n1, n2, n3, n4, n5, n6, n7, n8, n9, n10)    \
+  void name(void) {                                                            \
+    struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);           \
+                                                                               \
+    Func_02001e0c_(n1, 38, n2, n3, n1, n4, 1);                                 \
+    if (Event_GetFlag(n5) == 0) {                                              \
+      Func_02001d04_(n6, PIXELS(n7), PIXELS(n8));                              \
+      if (leader->x >> 20 == n9 && leader->z >> 20 == n10) {                   \
+        Event_Start();                                                         \
+        FieldEvent_ResolvePendingActions(0);                                   \
+        Actor_SetAttachedEffect(gMainRoutineWork.currentOwner, 0x102);         \
+        Actor_SetDestinationOffset(gMainRoutineWork.currentOwner, 16, 0);      \
+        leader->velocityY = 0x60000;                                           \
+        FieldActor_WaitForMoveById(gMainRoutineWork.currentOwner);             \
+        Event_End();                                                           \
+      }                                                                        \
+    }                                                                          \
+  }
 
 DEFINE_FUNC_02000A68(Func_02000a68, 68, 38, 21, 4, 0xf9b, 65, 376, 376, 23, 23)
 
@@ -417,10 +439,10 @@ void Func_02000ef8(void) {
   }
 }
 
-DEFINE_FUNC_02000E90(Func_02000f58, gData_02002a98, gData_02002a9c,
+DEFINE_LAYER_TRACK_SCROLL(Func_02000f58, gData_02002a98, gData_02002a9c,
     gData_02002a9e)
 
-DEFINE_FUNC_02000ED0(Func_02000f98, Func_02000ef8, Func_02000f58)
+DEFINE_SCROLL_START_HBLANK(Func_02000f98, Func_02000ef8, Func_02000f58)
 
 /// The overlay's entry: sets the map mode and screen effect 0x202, then starts
 /// each room's own setup.
@@ -497,7 +519,7 @@ void Func_020010d8(struct Actor *object) {
 // ---- games/tla/src/scene/apojii_islands/events_h.c ----
 // Scene code of overlay 0x679, in ROM order, from events_h's offset up to the next object the overlay links.
 
-DEFINE_FUNC_02001140(Func_02001140, gData_02001ef4)
+DEFINE_ACTOR_EMIT_WATER_DROP(Func_02001140, gData_02001ef4)
 
 void Func_020011a8(void) {
   struct EventWork1cc *work = Ram_HeapSlots->eventWork;
@@ -552,18 +574,18 @@ void Func_020011a8(void) {
   }
 }
 
-DEFINE_FUNC_02001308(Func_02001308, Func_02001c6c)
+DEFINE_ACTOR_SHOW_PARTS(Func_02001308, Func_02001c6c)
 
-DEFINE_FUNC_02001338(Func_02001338, Func_02001c6c, Func_020010d8)
+DEFINE_LEADER_SPIN_AWAY(Func_02001338, Func_02001c6c, Func_020010d8)
 
 /// Every other frame, emits particle 7 (5 on every other such frame) from the
 /// object, 26 pixels up, swaying with the frame count and drifting by a random
 /// amount.
-DEFINE_FUNC_020013D8(Func_020013d8)
+DEFINE_ACTOR_EMIT_MIST(Func_020013d8)
 
-DEFINE_FUNC_02001464(Func_02001464, Func_020013d8)
+DEFINE_LEADER_SINK_AWAY(Func_02001464, Func_020013d8)
 
-DEFINE_FUNC_02001500(Func_02001500, Func_020013d8)
+DEFINE_LEADER_RISE_FROM_WATER(Func_02001500, Func_020013d8)
 
 #include "graphics/vram_tab.h"
 #include "system/dma.h"
@@ -714,7 +736,7 @@ void Func_020017f8(u32 base, s32 a, s32 b) {
 
 extern s16 gData_02001f18[];
 
-DEFINE_FUNC_02001940(Func_02001940, gData_02001f18)
+DEFINE_GROUND_PARTICLES_DRAW(Func_02001940, gData_02001f18)
 
 /// Starts the sparkles: 64 sprites on the ground at the origin, their tiles
 /// decoded into VRAM, and Func_02001940 scheduled at priority 0x480 to move

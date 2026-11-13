@@ -1,7 +1,8 @@
 /// @file
 /// Scene code of overlay 0x690, in ROM order.
 
-#include "../shared/routines.h"
+#include "../shared/actors.h"
+#include "../shared/effects.h"
 #include "../settlements.h"
 #include "field_event.h"
 #include "field.h"
@@ -19,7 +20,7 @@ s32 Func_020002b0(struct Actor *object) {
   return 0;
 }
 
-DEFINE_FUNC_02000058(Func_020002bc)
+DEFINE_ACTOR_BOB(Func_020002bc)
 
 #include "battle.h"
 #include "field.h"
@@ -556,10 +557,10 @@ void Func_02000e30(void) {
   }
 }
 
-DEFINE_FUNC_02000E90(Func_02000e90, gData_02002ce0, gData_02002ce4,
+DEFINE_LAYER_TRACK_SCROLL(Func_02000e90, gData_02002ce0, gData_02002ce4,
     gData_02002ce6)
 
-DEFINE_FUNC_02000ED0(Func_02000ed0, Func_02000e30, Func_02000e90)
+DEFINE_SCROLL_START_HBLANK(Func_02000ed0, Func_02000e30, Func_02000e90)
 
 void Func_02000ef0(void) { Func_02002190(gData_0200226c); }
 

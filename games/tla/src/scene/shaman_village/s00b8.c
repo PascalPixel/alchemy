@@ -1,5 +1,5 @@
 // ---- games/tla/src/scene/shaman_village/s00b8.c ----
-#include "../shared/routines.h"
+#include "../shared/actors.h"
 #include "types.h"
 #include "field_effect.h"
 #include "main_routine_work.h"
@@ -543,7 +543,7 @@ void *Scene_GetEvents(void) {
   return gData_02005aa0;
 }
 
-DEFINE_FUNC_0200098C(Func_02000d08)
+DEFINE_SCENE_SHOW_ENTRANCE_LOCKED(Func_02000d08)
 
 void Func_02000d28(void) {
   Event_Start();

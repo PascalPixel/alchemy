@@ -2,7 +2,7 @@
 /// Scene code of overlay 0x69b, in ROM order.
 
 #include "../shared/tables.h"
-#include "../shared/routines.h"
+#include "../shared/teleporter.h"
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -26,17 +26,17 @@ static __inline__ void SetWorkTriple(s32 a, s32 b, s32 c) {
   Map_SetScreenShake(a, b, c);
 }
 
-DEFINE_FUNC_02001E24(Func_02001e24, Func_0200165c)
+DEFINE_TELEPORTER_DROP_IN(Func_02001e24, Func_0200165c)
 
 void Func_02001c1c();
 void Func_02001c8c();
 
-DEFINE_FUNC_0200180C(Func_02001fbc, gData_02002ce0, Func_02001c1c,
+DEFINE_TELEPORTERS_STEP(Func_02001fbc, gData_02002ce0, Func_02001c1c,
     Func_02001c8c)
 
 #include "cell_target.h"
 
-DEFINE_FUNC_020018BC(Func_0200206c, gData_02002ce0, Func_02001e24)
+DEFINE_TELEPORTER_PLACE_ARRIVAL(Func_0200206c, gData_02002ce0, Func_02001e24)
 
 #include "scene_tables.h"
 #include "objcmd.h"

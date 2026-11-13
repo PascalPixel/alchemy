@@ -2,7 +2,6 @@
 /// The scene code of overlay 0x686 that its scene tables belong to, in ROM
 /// order; the rest of the overlay is in ankohl_ruins/.
 
-#include "shared/routines.h"
 #include "battle.h"
 #include "field.h"
 #include "game.h"
@@ -955,6 +954,23 @@ void Func_02001d34(void) {
     Event_SetFlag(0x202);
   }
 }
+
+/// 2 copies: ankohl_ruins, ankohl_ruins.
+#define DEFINE_FUNC_02001DDC(name, n1, n2, n3, n4, n5)                         \
+  void name(void) {                                                            \
+    if (AnkohlRuins_FlagCheck(n1) == 0) {                                      \
+      Event_SetFlag(n1);                                                       \
+      Event_PlaySound(584);                                                    \
+      Event_Start();                                                           \
+      FieldEvent_ResolvePendingActions(0);                                     \
+      MapGrid_CopyCells(26, 70, 1, 3, n2, n3);                                 \
+      FieldEvent_Wait(20);                                                     \
+      Event_PlaySound(181);                                                    \
+      MapGrid_CopyCells(26, 67, 1, 3, n2, n3);                                 \
+      MapGrid_CopyCellAttributes(n4, n5, 1, 1, n2, n5);                        \
+      Event_End();                                                             \
+    }                                                                          \
+  }
 
 DEFINE_FUNC_02001DDC(Func_02001ddc, 0x9e2, 14, 65, 15, 5)
 

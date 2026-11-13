@@ -1,11 +1,11 @@
 /// @file
 /// The scene code of overlay 0x6a9, in ROM order.
 
-#include "shared/routines.h"
+#include "shared/actors.h"
 #include "../field/object/set_sprite_priority.c"
 
 #include "../field/object/prepare_object.c"
 
 #include "caverns.h"
 
-DEFINE_FUNC_020000D0_2(Func_020000d0, 0x22)
+DEFINE_SCENE_CREATE_IMPORTED_ACTOR(Func_020000d0, 0x22)

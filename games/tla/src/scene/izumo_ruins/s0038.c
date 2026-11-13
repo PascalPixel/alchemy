@@ -1,5 +1,5 @@
 // ---- games/tla/src/scene/izumo_ruins/s0038.c ----
-#include "../shared/routines.h"
+#include "../shared/map_cells.h"
 #include "iwram_call.h"
 #include "actor.h"
 #include "main_routine_work.h"
@@ -102,7 +102,7 @@ top:
     goto top;
 }
 
-DEFINE_FUNC_02000128__S00A4(Func_02000128__s00a4, Func_02001508, Func_02001428)
+DEFINE_ACTOR_SET_CELL_OPEN(Func_02000128__s00a4, Func_02001508, Func_02001428)
 
 s32 Func_02001528(s32 layer, s32 shape, s32 height);
 

@@ -3,7 +3,7 @@
 
 // ---- games/tla/src/scene/contigo.c ----
 #include "../shared/tables.h"
-#include "../shared/routines.h"
+#include "../shared/actors.h"
 #include "types.h"
 #include "field_effect.h"
 #include "main_routine_work.h"
@@ -125,9 +125,9 @@ void Func_02000608(void) {
   GameFlag_SetBit(2534);
 }
 
-DEFINE_FUNC_02000038_75(Func_02000620)
+DEFINE_POSITION_DISTANCE(Func_02000620)
 
-DEFINE_FUNC_02000070(Func_02000658, Func_02000620)
+DEFINE_ACTOR_IS_FACING_NEAR(Func_02000658, Func_02000620)
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 
@@ -263,7 +263,7 @@ void Func_0200096c(void) {
   Event_End();
 }
 
-DEFINE_FUNC_0200098C(Func_0200098c)
+DEFINE_SCENE_SHOW_ENTRANCE_LOCKED(Func_0200098c)
 
 void Func_020009ac(void) {
   Event_Start();
@@ -417,7 +417,7 @@ void Func_02004294(s32 a, s32 b);
 void Func_0200429c(s32 a);
 void Func_020042a4(s32 a, s32 b);
 
-DEFINE_FUNC_020002E8(Func_02000cc4)
+DEFINE_LEADER_IS_FACING_NORTH(Func_02000cc4)
 
 void Func_02000cf4(void) {
   if (Func_02000cc4()) {

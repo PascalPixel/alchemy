@@ -1,7 +1,6 @@
 /// @file
 /// The scene code of overlay 0x657, in ROM order.
 
-#include "shared/routines.h"
 #include "battle.h"
 #include "field.h"
 #include "game.h"
@@ -99,6 +98,28 @@ void Func_02000168(void) {
 }
 
 #define OBJ_PALETTE ((volatile u16 *)&BG_PLTT_COLOR(11, 0))
+
+/// 2 copies: lemurian_ship_deck, lemurian_ship_deck.
+#define DEFINE_FUNC_02000188(name, n1, n2)                                     \
+  void name(void) {                                                            \
+    if ((gFrameCount & 7) == 0) {                                              \
+      s16 last = OBJ_PALETTE[n1];                                              \
+      s32 i;                                                                   \
+                                                                               \
+      /* The loop is written with goto so that it carries no loop notes: the   \
+       * bytes */                                                              \
+      /* rebuild the palette base on every pass, and a for or do loop hoists   \
+       * it */                                                                 \
+      /* and steps two pointers (differ 30). */                                \
+      i = n1;                                                                  \
+    loop:                                                                      \
+      OBJ_PALETTE[i] = OBJ_PALETTE[i - 1];                                     \
+      i--;                                                                     \
+      if (i != n2)                                                             \
+        goto loop;                                                             \
+      OBJ_PALETTE[n2] = last;                                                  \
+    }                                                                          \
+  }
 
 DEFINE_FUNC_02000188(Func_02000188, 15, 12)
 

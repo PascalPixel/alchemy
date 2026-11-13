@@ -1,7 +1,8 @@
 /// @file
 /// The scene code of overlay 0x675, in ROM order.
 
-#include "shared/routines.h"
+#include "shared/actors.h"
+#include "shared/effects.h"
 #include "field/field.h"
 #include "system/main_routine_work.h"
 
@@ -21,14 +22,14 @@ extern u16 *gData_02001a18;
 /// Records the four palette lists, writes each listed palette entry from its
 /// red, green and blue, then copies two palettes from block32 and starts the
 /// blend.
-DEFINE_FUNC_02000038_4(Func_02000038, gData_02001a24, gData_02001a28,
+DEFINE_PALETTE_SET_COLORS(Func_02000038, gData_02001a24, gData_02001a28,
     Data_02001a2c, gData_02001a18, Func_02000328)
 
 #include "task.h"
 
 extern u16 gData_02001a1c;
 
-DEFINE_FUNC_020000F4_2(Func_020000f4, gData_02001a34, gData_02001a30,
+DEFINE_PALETTE_CYCLE_START_VBLANK(Func_020000f4, gData_02001a34, gData_02001a30,
     Func_020001d4, gData_02001a24, gData_02001a20, 15, gData_02001a1c, 16,
     gData_02001a14, Func_020001f8)
 
@@ -37,11 +38,11 @@ void Func_02000158(void) {
   Task_RemoveFar(Func_020001f8);
 }
 
-DEFINE_FUNC_020000F4_2(Func_02000178, gData_02001a34, gData_02001a30,
+DEFINE_PALETTE_CYCLE_START_VBLANK(Func_02000178, gData_02001a34, gData_02001a30,
     Func_020001d4, gData_02001a24, gData_02001a20, 2, gData_02001a1c, 2,
     gData_02001a14, Func_020001f8)
 
-DEFINE_FUNC_020001D4(Func_020001d4)
+DEFINE_LIST_COUNT_ENTRIES(Func_020001d4)
 
 void Func_020001f8(void) {
   s32 step;
@@ -204,6 +205,19 @@ void Func_020004ac(void) {
   Actor_ConfigureSpriteColor(gMainRoutineWork.currentOwner, 0);
   work->screenEffect = effect;
 }
+
+/// 2 copies: islet_cave, islet_cave.
+#define DEFINE_FUNC_02000508(name, n1, n2)                                     \
+  void name(void) {                                                            \
+    Func_020000f4();                                                           \
+    Func_02001334();                                                           \
+                                                                               \
+    gMainRoutineWork.unk2c2 = 1;                                               \
+    Event_Wait(40);                                                            \
+    Actor_SetHorizontalPositionWithTerrain(gMainRoutineWork.currentOwner,      \
+                                           PIXELS(n1), PIXELS(n2));            \
+    Func_020004ac();                                                           \
+  }
 
 DEFINE_FUNC_02000508(Func_02000508, 232, 136)
 
@@ -471,7 +485,55 @@ void Func_020009f8(s32 actorId, s32 dx, s32 dz) {
   Event_End();
 }
 
+/// 3 copies: islet_cave, islet_cave, islet_cave.
+#define DEFINE_FUNC_02000AEC(name, n1, n2, n3)                                 \
+  void name(void) {                                                            \
+    struct Actor *object0;                                                     \
+    s32 value1;                                                                \
+    struct Actor *object2;                                                     \
+    s32 value3;                                                                \
+    struct Actor *object4;                                                     \
+                                                                               \
+    object0 = Actor_GetById(n1);                                               \
+    value1 = object0->x;                                                       \
+    object2 = Actor_GetById(n1);                                               \
+    value3 = object2->z;                                                       \
+    Func_020009f8(n1, n2, 0);                                                  \
+    wait(2);                                                                   \
+    object4 = Actor_GetById(n1);                                               \
+    Map_CopyCellAttributeRect((value1 >> 20), ((value3 >> 20) - 1), 1, 3,      \
+                              (object4->x >> 20), ((value3 >> 20) - 1));       \
+    Map_CopyCellAttributeRect(0, 0, 1, 3, (value1 >> 20),                      \
+                              ((value3 >> 20) - 1));                           \
+    GameFlag_ClearBit(n3);                                                     \
+    return;                                                                    \
+  }
+
 DEFINE_FUNC_02000AEC(Func_02000aec, 8, 32, 0x280)
+
+/// 2 copies: islet_cave, islet_cave.
+#define DEFINE_FUNC_02000B4C(name, n1, n2, n3)                                 \
+  void name(void) {                                                            \
+    struct Actor *object0;                                                     \
+    s32 value1;                                                                \
+    struct Actor *object2;                                                     \
+    s32 value3;                                                                \
+    struct Actor *object4;                                                     \
+                                                                               \
+    object0 = Actor_GetById(n1);                                               \
+    value1 = object0->x;                                                       \
+    object2 = Actor_GetById(n1);                                               \
+    value3 = object2->z;                                                       \
+    Func_020009f8(n1, -n2, 0);                                                 \
+    wait(2);                                                                   \
+    object4 = Actor_GetById(n1);                                               \
+    Map_CopyCellAttributeRect((value1 >> 20), ((value3 >> 20) - 1), 1, 3,      \
+                              (object4->x >> 20), ((value3 >> 20) - 1));       \
+    Map_CopyCellAttributeRect(0, 0, 1, 3, (value1 >> 20),                      \
+                              ((value3 >> 20) - 1));                           \
+    GameFlag_SetBit(n3);                                                       \
+    return;                                                                    \
+  }
 
 DEFINE_FUNC_02000B4C(Func_02000b4c, 8, 32, 0x280)
 
@@ -519,7 +581,55 @@ void Func_02000c1c(void) {
   return;
 }
 
+/// 2 copies: islet_cave, islet_cave.
+#define DEFINE_FUNC_02000C8C(name, n1, n2)                                     \
+  void name(void) {                                                            \
+    struct Actor *object0;                                                     \
+    s32 value1;                                                                \
+    struct Actor *object2;                                                     \
+    s32 value3;                                                                \
+    struct Actor *object4;                                                     \
+                                                                               \
+    object0 = Actor_GetById(n1);                                               \
+    value1 = object0->x;                                                       \
+    object2 = Actor_GetById(n1);                                               \
+    value3 = object2->z;                                                       \
+    Func_020009f8(n1, 80, 0);                                                  \
+    wait(2);                                                                   \
+    object4 = Actor_GetById(n1);                                               \
+    Map_CopyCellAttributeRect((value1 >> 20), ((value3 >> 20) - 1), 1, 3,      \
+                              (object4->x >> 20), ((value3 >> 20) - 1));       \
+    Map_CopyCellAttributeRect(0, 0, 1, 3, (value1 >> 20),                      \
+                              ((value3 >> 20) - 1));                           \
+    GameFlag_SetBit(n2);                                                       \
+    return;                                                                    \
+  }
+
 DEFINE_FUNC_02000C8C(Func_02000c8c, 10, 0x282)
+
+/// 3 copies: islet_cave, islet_cave, islet_cave.
+#define DEFINE_FUNC_02000CF0(name, n1, n2)                                     \
+  void name(void) {                                                            \
+    struct Actor *object0;                                                     \
+    s32 value1;                                                                \
+    struct Actor *object2;                                                     \
+    s32 value3;                                                                \
+    struct Actor *object4;                                                     \
+                                                                               \
+    object0 = Actor_GetById(n1);                                               \
+    value1 = object0->x;                                                       \
+    object2 = Actor_GetById(n1);                                               \
+    value3 = object2->z;                                                       \
+    Func_020009f8(n1, -80, 0);                                                 \
+    wait(2);                                                                   \
+    object4 = Actor_GetById(n1);                                               \
+    Map_CopyCellAttributeRect((value1 >> 20), ((value3 >> 20) - 1), 1, 3,      \
+                              (object4->x >> 20), ((value3 >> 20) - 1));       \
+    Map_CopyCellAttributeRect(0, 0, 1, 3, (value1 >> 20),                      \
+                              ((value3 >> 20) - 1));                           \
+    GameFlag_ClearBit(n2);                                                     \
+    return;                                                                    \
+  }
 
 DEFINE_FUNC_02000CF0(Func_02000cf0, 10, 0x282)
 

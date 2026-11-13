@@ -1,7 +1,7 @@
 /// @file
 /// Scene code of overlay 0x6a1, in ROM order.
 
-#include "../shared/routines.h"
+#include "../shared/push.h"
 #include "types.h"
 #include "map.h"
 #include "actor.h"
@@ -37,16 +37,16 @@ static inline s32 Func_020021b8_(struct Actor *object, s32 *position) {
 /// at a time in the leader's direction, until a cell of it is blocked
 /// (Func_020021b8 returns 2). Leaves the object's resting place in target and
 /// returns 1, or 0 when nothing is pushed or it cannot move at all.
-DEFINE_FUNC_02000C44(Func_02000c44, Func_02000dac, gData_020022dc,
+DEFINE_PUSH_TARGET_FIND_SLIDE(Func_02000c44, Func_02000dac, gData_020022dc,
     gData_020022f4, Func_020021b8_)
 
 /// The whole-pixel half of a 16.16 coordinate.
 #define PIXELS(v) (((s16 *)&(v))[1])
 
-DEFINE_FUNC_02000DAC(Func_02000dac, gData_020022d0, gData_020022f4,
+DEFINE_PUSH_TARGET_FIND_AHEAD(Func_02000dac, gData_020022d0, gData_020022f4,
     gData_020022dc)
 
 void Func_02001178(void);
 
-DEFINE_FUNC_02000EC8(Func_02000ec8, gData_020022dc, Func_02001178,
+DEFINE_PUSH_TARGET_PUSH_FILL(Func_02000ec8, gData_020022dc, Func_02001178,
     Func_02002160, gData_020022f4)

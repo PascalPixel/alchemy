@@ -1,7 +1,7 @@
 /// @file
 /// Scene code of overlay 0x654, in ROM order.
 
-#include "../shared/routines.h"
+#include "../shared/actors.h"
 #include "../shrine_of_the_sea_god.h"
 #include "system.h"
 #include "macros.h"
@@ -665,9 +665,68 @@ void Func_020027d4(void) {
   Event_End();
 }
 
+/// 6 copies: shrine_of_the_sea_god/s1340, shrine_of_the_sea_god/s1340,
+/// shrine_of_the_sea_god/s1340, shrine_of_the_sea_god/s1340,
+/// shrine_of_the_sea_god/s1340, shrine_of_the_sea_god/s1340.
+#define DEFINE_FUNC_020027F8(name, n1, n2, n3)                                 \
+  void name(void) {                                                            \
+    Func_0200279c();                                                           \
+    Camera_MoveWithinMapBounds(n1 << 16, 16 << 16, n2 << 16, 1);               \
+    Actor_SetPositionAndReset(14, n1, n2);                                     \
+    Actor_GetById(14)->state = n3;                                             \
+    Func_020027d4();                                                           \
+  }
+
 DEFINE_FUNC_020027F8(Func_020027f8, 392, 216, 1)
 
+/// 2 copies: shrine_of_the_sea_god/s1340, shrine_of_the_sea_god/s1340.
+#define DEFINE_FUNC_02002830(name, n1, n2, n3, n4, n5, n6)                     \
+  void name(void) {                                                            \
+    struct ShrineOfTheSeaGodObject *block = Actor_GetById(14);                 \
+    u8 *state;                                                                 \
+    s32 flag;                                                                  \
+                                                                               \
+    Func_0200279c();                                                           \
+    ShrineOfTheSeaGod_CamMove(n1 << 16, 16 << 16, 216 << 16, 1);               \
+    ShrineOfTheSeaGod_ObjWalk(14, n1, 216);                                    \
+    flag = GameFlag_Test(0x207);                                               \
+    state = &block->state;                                                     \
+    if (flag) {                                                                \
+      block->facing = n2;                                                      \
+      ShrineOfTheSeaGod_ObjEmote(14, 258);                                     \
+      Event_Wait(20);                                                          \
+      *state = n3;                                                             \
+      GameFlag_SetBit(0x206);                                                  \
+    } else {                                                                   \
+      Event_Wait(5);                                                           \
+      Camera_MoveWithinMapBounds(n4 << 16, 16 << 16, 216 << 16, 1);            \
+      Sound_Play(153);                                                         \
+      Actor_SetSingleChildFlags(Actor_GetById(14), 0);                         \
+      ShrineOfTheSeaGod_ObjSpeed(14, 0x4cccc, 0x26666);                        \
+      block->speed = 0x80000;                                                  \
+      Actor_SetPositionAndCommit(14, n5, 216);                                 \
+      Actor_SetSingleChildFlags(Actor_GetById(14), 1);                         \
+      Event_Wait(10);                                                          \
+      ShrineOfTheSeaGod_ObjSpeed(14, 0x19999, 0xcccc);                         \
+      ShrineOfTheSeaGod_ObjWalk(14, n4, 216);                                  \
+      *state = n6;                                                             \
+    }                                                                          \
+    Func_020027d4();                                                           \
+  }
+
 DEFINE_FUNC_02002830(Func_02002830, 360, 0x8000, 4, 296, 328, 2)
+
+/// 2 copies: shrine_of_the_sea_god/s1340, shrine_of_the_sea_god/s1340.
+#define DEFINE_FUNC_0200291C(name, n1, n2, n3, n4)                             \
+  void name(void) {                                                            \
+    Func_0200279c();                                                           \
+    Camera_MoveWithinMapBounds(n1 << 16, 16 << 16, n2 << 16, 1);               \
+    ShrineOfTheSeaGod_ObjWalk(14, n3, 248);                                    \
+    ShrineOfTheSeaGod_ObjWalk(14, n1, 248);                                    \
+    Actor_SetPositionAndReset(14, n1, n2);                                     \
+    Actor_GetById(14)->state = n4;                                             \
+    Func_020027d4();                                                           \
+  }
 
 DEFINE_FUNC_0200291C(Func_0200291c, 280, 296, 296, 3)
 
@@ -680,6 +739,38 @@ DEFINE_FUNC_0200291C(Func_020029dc, 296, 216, 280, 2)
 DEFINE_FUNC_02002830(Func_02002a2c, 328, 0, 5, 392, 360, 1)
 
 DEFINE_FUNC_020027F8(Func_02002b18, 392, 296, 0)
+
+/// 2 copies: shrine_of_the_sea_god/s1340, shrine_of_the_sea_god/s1340.
+#define DEFINE_FUNC_02002B50(name, n1, n2, n3, n4, n5)                         \
+  void name(void) {                                                            \
+    struct ShrineOfTheSeaGodObject *block = Actor_GetById(14);                 \
+    u8 *state;                                                                 \
+    s32 flag;                                                                  \
+                                                                               \
+    Func_0200279c();                                                           \
+    flag = GameFlag_Test(0x207);                                               \
+    state = &block->state;                                                     \
+    if (flag) {                                                                \
+      block->facing = n1;                                                      \
+      ShrineOfTheSeaGod_ObjEmote(14, 258);                                     \
+      Event_Wait(20);                                                          \
+      *state = n2;                                                             \
+      GameFlag_SetBit(0x206);                                                  \
+    } else {                                                                   \
+      Camera_MoveWithinMapBounds(n3 << 16, 16 << 16, 216 << 16, 1);            \
+      Sound_Play(153);                                                         \
+      Actor_SetSingleChildFlags(Actor_GetById(14), 0);                         \
+      ShrineOfTheSeaGod_ObjSpeed(14, 0x4cccc, 0x26666);                        \
+      block->speed = 0x80000;                                                  \
+      Actor_SetPositionAndCommit(14, n4, 216);                                 \
+      Actor_SetSingleChildFlags(Actor_GetById(14), 1);                         \
+      Event_Wait(10);                                                          \
+      ShrineOfTheSeaGod_ObjSpeed(14, 0x19999, 0xcccc);                         \
+      ShrineOfTheSeaGod_ObjWalk(14, n3, 216);                                  \
+      *state = n5;                                                             \
+    }                                                                          \
+    Func_020027d4();                                                           \
+  }
 
 DEFINE_FUNC_02002B50(Func_02002b50, 0x8000, 4, 296, 328, 2)
 
@@ -822,11 +913,11 @@ struct ShrineOfTheSeaGodObject *Func_02002f88(s32 id) {
   return object;
 }
 
-DEFINE_FUNC_02001F38(Func_02002fb0, Func_02003aa0)
+DEFINE_ACTOR_HIDE(Func_02002fb0, Func_02003aa0)
 
-DEFINE_FUNC_02002D10(Func_02002fe0, 0x208, Func_0200123c)
+DEFINE_SCENE_RUN_UNLESS_FLAG(Func_02002fe0, 0x208, Func_0200123c)
 
-DEFINE_FUNC_02001F94(Func_0200300c, 2, Func_02002fb0, 9, Func_02002fe0)
+DEFINE_ACTORS_FOR_RANGE(Func_0200300c, 2, Func_02002fb0, 9, Func_02002fe0)
 
 void Func_02003024(void) {
   const struct ShrineOfTheSeaGodSpot *spot = gData_02003cc0;

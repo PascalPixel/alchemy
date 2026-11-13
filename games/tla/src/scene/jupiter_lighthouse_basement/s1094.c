@@ -1,7 +1,7 @@
 /// @file
 /// Scene code of overlay 0x699, in ROM order.
 
-#include "../shared/routines.h"
+#include "../shared/teleporter.h"
 #include "types.h"
 #include "field_effect.h"
 #include "main_routine_work.h"
@@ -96,7 +96,7 @@ void Func_02001094(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 #include "iwram_call.h"
 #include "cell_target.h"
 
-DEFINE_FUNC_020011A0(Func_02001388, gData_020024f8, Func_0200125c)
+DEFINE_TELEPORTERS_FIND_LOWER(Func_02001388, gData_020024f8, Func_0200125c)
 
 #include "scene_ids.h"
 #include "frame.h"
@@ -138,4 +138,4 @@ void Func_020015cc(void) {
 /// the table's source cell over the leader's, keeping the source column's and
 /// row's 64 bit; Func_020019f4 calls it the first time the leader steps on
 /// one of the table's cells.
-DEFINE_FUNC_0200146C(Func_02001654, Func_020015cc)
+DEFINE_TELEPORTER_UNCOVER(Func_02001654, Func_020015cc)

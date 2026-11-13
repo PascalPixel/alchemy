@@ -3,7 +3,7 @@
 
 // ---- games/tla/src/scene/airs_rock_inside/s2770.c ----
 
-#include "../shared/routines.h"
+#include "../shared/effects.h"
 #include "../airs_rock_inside.h"
 #include "system.h"
 #include "task.h"
@@ -92,6 +92,27 @@ void Func_02002898(void) {
 
 /// When the controlled object steps onto a new cell, saves the 1 by 3 cells
 /// below it at (73, 72) and stamps the cells kept at (72, 72) in their place.
+/// 2 copies: airs_rock_inside/s2770, airs_rock_inside/s2770.
+#define DEFINE_FUNC_02002980(name, n1)                                         \
+  void name(void) {                                                            \
+    struct Actor *object = Actor_GetById(Party_GetLeaderActor());              \
+    s32 x = object->x >> 20;                                                   \
+    s32 y = object->y >> 20;                                                   \
+    s32 z = object->z >> 20;                                                   \
+    s32 key = (x << 16) + z;                                                   \
+                                                                               \
+    if (key != gData_02006c0c) {                                               \
+      gData_02006c0c = key;                                                    \
+      gData_020073dc = 1;                                                      \
+      gData_020073e0 = 3;                                                      \
+      gData_020073e4 = x;                                                      \
+      gData_020073e8 = z - y + n1;                                             \
+      CopyCells(x, gData_020073e8, 1, 3, 73, 72);                              \
+      CopyCells(72, 72, gData_020073dc, gData_020073e0, gData_020073e4,        \
+                gData_020073e8);                                               \
+    }                                                                          \
+  }
+
 DEFINE_FUNC_02002980(Func_02002980, 64)
 
 /// As Func_02002980, one row nearer.
@@ -801,6 +822,15 @@ void Func_02003d40(void) {
 
 extern const u8 gData_02006084[];
 
+/// 2 copies: airs_rock_inside/s2770, airs_rock_inside/s2770.
+#define DEFINE_FUNC_02003DD4(name, n1, n2)                                     \
+  void name(void) {                                                            \
+    Map_CopyCellAttributeRect(n1, 17, 1, 1, 8, 19);                            \
+    Map_CopyCellAttributeRect(n1, 17, 1, 1, 24, 19);                           \
+    Call6((void (*)())Map_CopyCellPictureIndicesRect, n2, 17, 72, 19, 1, 2);   \
+    Map_CopyCellPictureIndicesRect(n2, 17, 88, 19, 1, 2);                      \
+  }
+
 DEFINE_FUNC_02003DD4(Func_02003dd4, 26, 90)
 
 DEFINE_FUNC_02003DD4(Func_02003e28, 25, 89)
@@ -869,15 +899,15 @@ s32 Func_02003f94(struct Orbit *object) {
   return 1;
 }
 
-DEFINE_FUNC_020014D0(Func_02004038)
+DEFINE_ACTOR_AIM_AT_WATCHED(Func_02004038)
 
-DEFINE_FUNC_0200151C(Func_02004084)
+DEFINE_ACTOR_STEP_TO_WATCHED(Func_02004084)
 
 void Func_020002f4(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options);
 
-DEFINE_FUNC_02001548(Func_020040b0, Func_020002f4)
+DEFINE_ACTOR_EMIT_BUBBLES(Func_020040b0, Func_020002f4)
 
 extern const u8 gData_020060e0[], gData_02006094[], gData_020060b0[],
     gData_02006104[], gData_020060c0[], gData_02006128[], gData_02006158[];
@@ -1144,6 +1174,23 @@ void Func_02004740(void) {
     Func_02004534();
   }
 }
+
+/// 2 copies: airs_rock_inside/s2770, airs_rock_inside/s2770.
+#define DEFINE_FUNC_020047B0(name, n1)                                         \
+  void name(void) {                                                            \
+    if (GameFlag_Test(0x8d4)) {                                                \
+      Event_Start();                                                           \
+      Event_ResolvePendingActions(0);                                          \
+      FieldMessage_Show(MsgCheckedTheTablet, 1);                               \
+      Event_End();                                                             \
+    } else {                                                                   \
+      Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, n1, 136);       \
+      Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 264, 136);      \
+      Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTH, 0);       \
+      FieldEvent_Wait(10);                                                     \
+      Func_02004534();                                                         \
+    }                                                                          \
+  }
 
 DEFINE_FUNC_020047B0(Func_020047b0, 280)
 

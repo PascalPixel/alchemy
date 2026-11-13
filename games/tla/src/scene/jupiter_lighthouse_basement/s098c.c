@@ -1,7 +1,8 @@
 /// @file
 /// Scene code of overlay 0x699, in ROM order.
 
-#include "../shared/routines.h"
+#include "../shared/whirlwind.h"
+#include "../shared/jupiter_lighthouse.h"
 #include "types.h"
 #include "system.h"
 #include "call.h"
@@ -17,7 +18,7 @@
 void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags);
 void Func_020007cc(struct GustObject *object);
 
-DEFINE_FUNC_020007E8(Func_0200098c, Func_02001bec, Func_020007cc, Func_02001094)
+DEFINE_WHIRLWIND_SPAWN(Func_0200098c, Func_02001bec, Func_020007cc, Func_02001094)
 
 #include "frame.h"
 #include "field_coordinate.h"
@@ -47,7 +48,7 @@ s32 Func_02000a64(struct Actor *object) {
 
 void Animation_ApplyChildValues(struct PositionedActor *object, s32 value);
 
-DEFINE_FUNC_0200091C(Func_02000b04)
+DEFINE_JUPITER_LIGHTHOUSE_PLACE_RAISED_ACTORS(Func_02000b04)
 
 // Queues the lit actors' sprites: for each listed actor with a position,
 // projects it from the map's view, skips it off screen, and writes a 16 by 16
@@ -138,16 +139,16 @@ void Func_02000c94(void) {
 // event_inline.h's are, a layer and not a compiler-steering device.
 static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 
-DEFINE_FUNC_02000A98(Func_02000e50, gData_020023f4, gData_020023f0,
+DEFINE_LIGHT_SPRITES_INIT_A(Func_02000e50, gData_020023f4, gData_020023f0,
     Func_02000c94, gData_020023f2, gData_020024f4__s098c, gData_020024f6)
 
-DEFINE_FUNC_02000CE8(Func_02000ed0, gData_020023f4, gData_020023f0,
+DEFINE_LIGHT_SPRITES_INIT_B(Func_02000ed0, gData_020023f4, gData_020023f0,
     Func_02000c94, gData_020023f2, gData_020024f4__s098c, gData_020024f6)
 
-DEFINE_FUNC_02000D68(Func_02000f50, gData_020023f4, gData_020023f0,
+DEFINE_LIGHT_SPRITES_INIT_C(Func_02000f50, gData_020023f4, gData_020023f0,
     Func_02000c94, gData_020023f2, gData_020024f4__s098c, gData_020024f6)
 
-DEFINE_FUNC_02000DF0(Func_02000fd8, gData_020023f2, gData_020023f4)
+DEFINE_LIGHT_SPRITES_ADD(Func_02000fd8, gData_020023f2, gData_020023f4)
 
 void Func_02001008(s32 value) { gData_020024f6 = value; }
 

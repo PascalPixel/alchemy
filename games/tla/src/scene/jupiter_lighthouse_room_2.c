@@ -1,7 +1,10 @@
 /// @file
 /// The scene code of overlay 0x69b, in ROM order.
 
-#include "shared/routines.h"
+#include "shared/whirlwind.h"
+#include "shared/jupiter_lighthouse.h"
+#include "shared/actors.h"
+#include "shared/effects.h"
 #include "battle.h"
 #include "field.h"
 #include "game.h"
@@ -203,6 +206,16 @@ spin:
   Func_02000054();
   Event_End();
 }
+
+/// 2 copies: jupiter_lighthouse_room_2, jupiter_lighthouse_room_2.
+#define DEFINE_FUNC_020003F4(name, n1)                                         \
+  void name(void) {                                                            \
+    struct EventWork *event = Ram_HeapSlots->eventWork;                        \
+    u8 *effect = Ram_HeapSlots->effectWork;                                    \
+                                                                               \
+    event->unk16a = n1;                                                        \
+    effect[52] = 1;                                                            \
+  }
 
 DEFINE_FUNC_020003F4(Func_020003f4, 30)
 
@@ -443,23 +456,23 @@ extern s32 gData_02002b34;
 /// Sets the counter, its value built as a word.
 static inline void Counter_Set(s32 value) { gData_02002b34 = value; }
 
-DEFINE_FUNC_02000238(Func_020009e8, gData_02002b34, gData_02002b38,
+DEFINE_PALETTE_CYCLE_STEP_AT(Func_020009e8, gData_02002b34, gData_02002b38,
     gData_02002b98, 0x05000184)
 
 extern u16 gData_02002bb8[];
 
-DEFINE_FUNC_020002F4(Func_02000aa4, gData_02002b38, gData_02002b98,
+DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(Func_02000aa4, gData_02002b38, gData_02002b98,
     gData_02002bb8, Func_020009e8, gData_02002bbc)
 
 void Func_0200223c();
 /* VIEW(jupiter_lighthouse_room_2): routine Func_0200230c as void Func_0200230c(); module/scene/scene.h has void Func_0200230c(s32 actor); tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/jupiter_lighthouse_room_2.c:525: too many arguments to function `Func_0200230c'. */
 extern void Func_0200230c__jupiter_lighthouse_room_2() __asm__("Func_0200230c");
 
-DEFINE_FUNC_02000378(Func_02000b28, Func_0200223c,
+DEFINE_ACTOR_RAISE_FROM_CELL(Func_02000b28, Func_0200223c,
     Func_0200230c__jupiter_lighthouse_room_2)
 
 #include "frame.h"
 
-DEFINE_FUNC_020003CC(Func_02000b7c)
+DEFINE_WHIRLWIND_CARRY_LEADER_LOWER(Func_02000b7c)
 
-DEFINE_FUNC_020003D0(Func_02000d68)
+DEFINE_POSITION_FLAT_DISTANCE(Func_02000d68)

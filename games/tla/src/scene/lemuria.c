@@ -2,7 +2,7 @@
 /// The scene code of overlay 0x68b, in ROM order.
 
 #include "shared/tables.h"
-#include "shared/routines.h"
+#include "shared/actors.h"
 #include "types.h"
 #include "iwram_call.h"
 #include "actor.h"
@@ -31,9 +31,9 @@
 #include "module/scene/lemuria.h"
 #include "module/system/system.h"
 
-DEFINE_FUNC_02000038_75(Func_02000038)
+DEFINE_POSITION_DISTANCE(Func_02000038)
 
-DEFINE_FUNC_02000070(Func_02000070, Func_02000038)
+DEFINE_ACTOR_IS_FACING_NEAR(Func_02000070, Func_02000038)
 
 s32 Func_02001d54(struct Actor *object);
 void Func_02001b7c(struct Actor *object, s32 mode);

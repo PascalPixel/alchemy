@@ -1,7 +1,9 @@
 /// @file
 /// The scene code of overlay 0x662, in ROM order.
 
-#include "shared/routines.h"
+#include "shared/map_cells.h"
+#include "shared/actors.h"
+#include "shared/effects.h"
 #include "types.h"
 #include "ram_buffer.h"
 #include "map.h"
@@ -370,12 +372,12 @@ void Func_02000754(struct Actor *object) {
 /// Records the four palette lists, writes each listed palette entry from its
 /// red, green and blue, then copies two palettes from block32 and starts the
 /// blend.
-DEFINE_FUNC_02000038_4(Func_020007dc, gData_02001fd8, gData_02001fdc,
+DEFINE_PALETTE_SET_COLORS(Func_020007dc, gData_02001fd8, gData_02001fdc,
     gData_02001fe0, gData_02001fcc, Func_02000acc)
 
 #include "task.h"
 
-DEFINE_FUNC_020000F4_2(Func_02000898, gData_02001fe8, gData_02001fe4,
+DEFINE_PALETTE_CYCLE_START_VBLANK(Func_02000898, gData_02001fe8, gData_02001fe4,
     Func_02000978, gData_02001fd8, gData_02001fd4, 15, gData_02001fd0, 16,
     gData_02001fc8, Func_0200099c)
 
@@ -384,11 +386,11 @@ void Func_020008fc(void) {
   Task_RemoveFar(Func_0200099c);
 }
 
-DEFINE_FUNC_020000F4_2(Func_0200091c, gData_02001fe8, gData_02001fe4,
+DEFINE_PALETTE_CYCLE_START_VBLANK(Func_0200091c, gData_02001fe8, gData_02001fe4,
     Func_02000978, gData_02001fd8, gData_02001fd4, 2, gData_02001fd0, 2,
     gData_02001fc8, Func_0200099c)
 
-DEFINE_FUNC_020001D4(Func_02000978)
+DEFINE_LIST_COUNT_ENTRIES(Func_02000978)
 
 void Func_0200099c(void) {
   s32 step = 0;
@@ -483,13 +485,13 @@ loop:
 }
 
 // Finds the current target's table row and shrinks it.
-DEFINE_FUNC_02000BC0_69(Func_02000bc0, Func_02000c44)
+DEFINE_STATUE_SINK(Func_02000bc0, Func_02000c44)
 
 #include "field_event.h"
 
 s32 Func_02001940(struct Actor *object);
 
-DEFINE_FUNC_02000128(Func_02000c44, Func_02001940, Func_02001828)
+DEFINE_ACTOR_SET_CELL_OPEN(Func_02000c44, Func_02001940, Func_02001828)
 
 #include "battle.h"
 #include "game.h"
@@ -537,9 +539,40 @@ void Func_02000d84(void) {
     Func_02000458(rect);
 }
 
+/// 2 copies: yampi_desert_cave, yampi_desert_cave.
+#define DEFINE_FUNC_02000DAC_2(name, n1)                                       \
+  void name(void) {                                                            \
+    Func_02000898();                                                           \
+    Func_02001958();                                                           \
+    {                                                                          \
+      u8 *party = (u8 *)&gMainRoutineWork;                                     \
+                                                                               \
+      party[0x2c2] = 2;                                                        \
+    }                                                                          \
+    Event_SetDestination((s32)&SceneId_Ov662Room1, n1);                        \
+    Event_Wait(40);                                                            \
+    Func_020008fc();                                                           \
+  }
+
 DEFINE_FUNC_02000DAC_2(Func_02000dac, 10)
 
 DEFINE_FUNC_02000DAC_2(Func_02000de0, 9)
+
+/// 2 copies: yampi_desert_cave, yampi_desert_cave.
+#define DEFINE_FUNC_02000E14(name, n1, id1, n2)                                \
+  void name(s32 arg0) {                                                        \
+    s32 result0;                                                               \
+                                                                               \
+    result0 = Event_GetFlag(n1);                                               \
+    if (result0 != 0)                                                          \
+      goto id1;                                                                \
+    if (arg0 != 3)                                                             \
+      goto id1;                                                                \
+    Actor_SetHorizontalPositionWithTerrain(n2, 0, 0);                          \
+    GameFlag_SetBit(n1);                                                       \
+  id1:                                                                         \
+    return;                                                                    \
+  }
 
 DEFINE_FUNC_02000E14(Func_02000e14, 0x300, L_02008e3a, 11)
 

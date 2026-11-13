@@ -1,7 +1,7 @@
 /// @file
 /// Scene code of overlay 0x6ad, in ROM order.
 
-#include "../shared/routines.h"
+#include "../shared/mars_lighthouse.h"
 #include "types.h"
 #include "ram_buffer.h"
 #include "frame.h"
@@ -64,9 +64,9 @@ s32 Func_02002778(void) {
   return ((struct RideWork *)(gData_020023c4 + 0x188))->counter;
 }
 
-DEFINE_FUNC_02001F50(Func_02002784)
+DEFINE_RIDE_ADVANCE_COUNTER(Func_02002784)
 
-DEFINE_FUNC_02001F78(Func_020027ac)
+DEFINE_RIDE_SET_ENTRY(Func_020027ac)
 
 void Func_020027cc(s32 index, s16 value) {
   ((struct RideWork *)(gData_020023c4 + 0x188))->entries[index].c = value;
@@ -76,7 +76,7 @@ s32 Func_020027dc(s32 index) {
   return ((struct RideRow *)(gData_020023c4 + 0x188 + index * 16))->b;
 }
 
-DEFINE_FUNC_02001FB8(Func_020027ec)
+DEFINE_RIDE_SET_SLOT(Func_020027ec)
 
 #include "main_routine_work.h"
 #include "battle_unit.h"
@@ -91,6 +91,6 @@ struct MarsLighthouseEventWork {
 
 struct BattleUnit *Unit_Get(s32 owner);
 
-DEFINE_FUNC_02001FCC(Func_02002800)
+DEFINE_PARTY_TAKE_FALL_DAMAGE(Func_02002800)
 
 #include "../../field/field_effect/advance_spin.c"

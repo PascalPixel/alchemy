@@ -1,7 +1,7 @@
 /// @file
 /// Scene code of overlay 0x6a0, in ROM order.
 
-#include "../shared/routines.h"
+#include "../shared/teleporter.h"
 #include "types.h"
 #include "system.h"
 #include "ram_buffer.h"
@@ -84,10 +84,10 @@ extern struct CellTarget gData_02003704;
 
 void GameFlag_SetByte(s32 flag, s32 value);
 
-DEFINE_FUNC_0200180C(Func_020028d4, gData_02003704, Func_02002534,
+DEFINE_TELEPORTERS_STEP(Func_020028d4, gData_02003704, Func_02002534,
     Func_020025a4)
 
-DEFINE_FUNC_020018BC(Func_02002984, gData_02003704, Func_0200273c)
+DEFINE_TELEPORTER_PLACE_ARRIVAL(Func_02002984, gData_02003704, Func_0200273c)
 
 #include "scene_tables.h"
 

@@ -2,7 +2,10 @@
 /// Scene code of overlay 0x692, in ROM order.
 
 // ---- games/tla/src/scene/magma_rock_inside/s03b4.c ----
-#include "../shared/routines.h"
+#include "../shared/push.h"
+#include "../shared/map_cells.h"
+#include "../shared/actors.h"
+#include "../shared/effects.h"
 #include "types.h"
 #include "main_routine_work.h"
 #include "event_inline.h"
@@ -21,7 +24,7 @@
 
 extern s32 gData_02004fec[];
 
-DEFINE_FUNC_0200038C(Func_020003b4, gData_02004fec, Func_02004cf8,
+DEFINE_BLOCK_PUSH_ONTO(Func_020003b4, gData_02004fec, Func_02004cf8,
     Func_02004c98)
 
 #include "ram_buffer.h"
@@ -58,14 +61,14 @@ void Func_02000594(void) { Func_080d2b4c(15, 56); }
 
 void Func_020005a0(void) { Func_080d7788(17, 2, 19); }
 
-DEFINE_FUNC_020003D0(Func_020005b0)
+DEFINE_POSITION_FLAT_DISTANCE(Func_020005b0)
 
 #include "actor.h"
 
 s32 Func_02004d20(s32 layer, s32 x, s32 z);
 s32 Func_02004ef0(s32 layer, s32 shape, s32 height);
 
-DEFINE_FUNC_020005CC(Func_020005dc, Func_02004d20, Func_02004ef0)
+DEFINE_MAP_CELL_SET_SHAPE(Func_020005dc, Func_02004d20, Func_02004ef0)
 
 void Func_0200063c(struct Actor *object) {
   s32 count;
@@ -82,18 +85,18 @@ void Func_0200063c(struct Actor *object) {
   }
 }
 
-DEFINE_FUNC_0200012C(Func_02000658)
+DEFINE_MAP_CELL_GET(Func_02000658)
 
-DEFINE_FUNC_02000168(Func_02000694)
+DEFINE_MAP_CELL_SWAP(Func_02000694)
 
 /// For each id of a list ended by 0xffff: clears the object's mark and, on a
 /// cell with attribute bit 6, blocks the cells ahead of and behind it and sets
 /// the mark.
-DEFINE_FUNC_020003E8(Func_020006dc, Func_02000658)
+DEFINE_BLOCKS_MARK_CELLS(Func_020006dc, Func_02000658)
 
 /// Clears the object's mark and the cells ahead of and behind it that the mark
 /// blocked.
-DEFINE_FUNC_0200074C(Func_0200075c)
+DEFINE_BLOCK_CLEAR_CELLS(Func_0200075c)
 
 void Func_020007ac(struct Actor *object) {
   u8 *work = (u8 *)Ram_HeapSlots->eventWork;
@@ -170,7 +173,7 @@ L_02008870:
 
 s32 Func_020005dc(s32 terrain, s32 x, s32 z, s32 height);
 
-DEFINE_FUNC_02000668(Func_02000880, Func_020005dc)
+DEFINE_ACTORS_RAISE_CELLS(Func_02000880, Func_020005dc)
 
 #include "battle.h"
 #include "game.h"
@@ -390,7 +393,7 @@ void Func_02000d1c(struct Actor *object) {
                 &options);
 }
 
-DEFINE_FUNC_02000DA4(Func_02000da4, 10)
+DEFINE_ACTOR_FLASH_COLOR(Func_02000da4, 10)
 
 // The cell watch's table lookup over (id, cell, value) rows ended by 0xffff:
 // for the row of the cell under the watch, sets the watch's object to the row's
@@ -1074,6 +1077,17 @@ void Func_02001828(void) {
 }
 
 // ---- games/tla/src/scene/magma_rock_inside/s1ca0.c ----
+/// 2 copies: magma_rock_inside/magma_rock_inside,
+/// magma_rock_inside/magma_rock_inside.
+#define DEFINE_FUNC_02001CA0(name, n1, n2)                                     \
+  void name(s32 a, s32 b) {                                                    \
+    struct Actor **work = Ram_HeapSlots->effectWork;                           \
+                                                                               \
+    work[5] = Actor_Get(n1);                                                   \
+    Func_02001190(a, b);                                                       \
+    Event_SetFlag(n2);                                                         \
+  }
+
 DEFINE_FUNC_02001CA0(Func_02001ca0, 9, 0x350)
 
 DEFINE_FUNC_02001CA0(Func_02001cd0, 11, 0x351)
@@ -1183,6 +1197,17 @@ void Func_02002128(void) {
     Actor_Get(22)->scaleX = Actor_Get(22)->scaleY = 0x1000;
   }
 }
+
+/// 2 copies: magma_rock_inside/magma_rock_inside,
+/// magma_rock_inside/magma_rock_inside.
+#define DEFINE_FUNC_0200217C(name, n1, n2, n3, n4)                             \
+  void name(void) {                                                            \
+    if (!Event_GetFlag(n1)) {                                                  \
+      Actor_SetSpriteColor(Actor_Get(n2), 15);                                 \
+      Actor_SetPosition(n2, PIXELS(n3), PIXELS(n4));                           \
+      Actor_Get(n2)->scaleX = Actor_Get(n2)->scaleY = 0x1000;                  \
+    }                                                                          \
+  }
 
 DEFINE_FUNC_0200217C(Func_0200217c, 0x303, 21, 600, 312)
 
@@ -1583,7 +1608,7 @@ s32 Func_02002a6c(struct Orbiter__magma_rock_inside *object) {
 }
 
 // Moves around in a circle.
-DEFINE_FUNC_0200147C(Func_02002b2c)
+DEFINE_ORBIT_UPDATE(Func_02002b2c)
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 
@@ -1896,6 +1921,24 @@ void Func_020032d8(void) {
     Func_020030cc();
   }
 }
+
+/// 2 copies: magma_rock_inside/magma_rock_inside,
+/// magma_rock_inside/magma_rock_inside.
+#define DEFINE_FUNC_02003348(name, n1)                                         \
+  void name(void) {                                                            \
+    if (Event_GetFlag(0x9fa)) {                                                \
+      Event_Start();                                                           \
+      FieldEvent_ResolvePendingActions(0);                                     \
+      Message_ShowCentered(MsgBlazeTabletInscription, 1);                      \
+      Event_End();                                                             \
+    } else {                                                                   \
+      Actor_WalkToAndWait(gMainRoutineWork.currentOwner, n1, 136);             \
+      Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 264, 136);            \
+      Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 0);     \
+      FieldEvent_Wait(10);                                                     \
+      Func_020030cc();                                                         \
+    }                                                                          \
+  }
 
 DEFINE_FUNC_02003348(Func_02003348, 280)
 

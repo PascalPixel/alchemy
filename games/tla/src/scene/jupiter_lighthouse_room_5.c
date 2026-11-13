@@ -3,7 +3,10 @@
 
 // ---- games/tla/src/scene/jupiter_lighthouse_room_5.c ----
 
-#include "shared/routines.h"
+#include "shared/whirlwind.h"
+#include "shared/jupiter_lighthouse.h"
+#include "shared/actors.h"
+#include "shared/effects.h"
 #include "battle.h"
 #include "field.h"
 #include "game.h"
@@ -70,7 +73,7 @@ void Func_02000064(s32 unused, s32 id) {
 u32 __umodsi3();
 void Animation_ApplyChildValues();
 
-DEFINE_FUNC_020000C8(Func_020000c8)
+DEFINE_ACTOR_CYCLE_PICTURES(Func_020000c8)
 
 void Func_02000120(struct Actor *object) {
   u32 frameCount = gFrameCount;
@@ -114,7 +117,7 @@ static inline struct OrbitEffect *CreateOrbitEffect(s32 type, s32 x, s32 y,
 
 /// Every third frame, or every frame once flag 0x201 is set, starts a particle
 /// circling actor 23 at a random height above it.
-DEFINE_FUNC_020001A4(Func_020001a4, 0x201, gData_02003214, Func_02000148, 1)
+DEFINE_ORBS_SPAWN_RISING(Func_020001a4, 0x201, gData_02003214, Func_02000148, 1)
 
 extern s32 gData_02003274;
 extern s32 gData_02003278;
@@ -525,22 +528,22 @@ extern s32 gData_020033d8;
 /// Sets the counter, its value built as a word.
 static inline void Counter_Set(s32 value) { gData_020033d8 = value; }
 
-DEFINE_FUNC_0200027C(Func_02000cc4, gData_020033d8, gData_020033dc,
+DEFINE_PALETTE_CYCLE_STEP(Func_02000cc4, gData_020033d8, gData_020033dc,
     gData_02003404)
 
 void Func_02002888();
 
-DEFINE_FUNC_020002F4(Func_02000d80, gData_020033dc, gData_02003404,
+DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(Func_02000d80, gData_020033dc, gData_02003404,
     gData_02003424, Func_02000cc4, gData_02003428)
 
-DEFINE_FUNC_02000378(Func_02000e04, Func_02002888, Func_02002a30)
+DEFINE_ACTOR_RAISE_FROM_CELL(Func_02000e04, Func_02002888, Func_02002a30)
 
 #include "field_sprite.h"
 #include "event_work.h"
 
-DEFINE_FUNC_02000410(Func_02000e58)
+DEFINE_WHIRLWIND_CARRY_LEADER(Func_02000e58)
 
-DEFINE_FUNC_020003D0(Func_02001044)
+DEFINE_POSITION_FLAT_DISTANCE(Func_02001044)
 
 extern const s32 gData_020033e0[];
 extern s32 gData_02003400;
@@ -688,7 +691,7 @@ done:
   return 0;
 }
 
-DEFINE_FUNC_0200091C(Func_020013a8)
+DEFINE_JUPITER_LIGHTHOUSE_PLACE_RAISED_ACTORS(Func_020013a8)
 
 struct Spark {
   u8 unk00[0x0c];

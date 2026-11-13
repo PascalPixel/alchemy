@@ -3,7 +3,7 @@
 
 // ---- games/tla/src/scene/kibombo/s0038.c ----
 
-#include "shared/routines.h"
+#include "shared/actors.h"
 #include "kibombo.h"
 #include "event_work.h"
 #include "gamepak/far_call/system.h"
@@ -202,7 +202,7 @@ void Func_020002c4(void) {
   Event_End();
 }
 
-DEFINE_FUNC_020002E8(Func_020002e8)
+DEFINE_LEADER_IS_FACING_NORTH(Func_020002e8)
 
 void Func_02000318(void) {
   if (Func_020002e8()) {
@@ -1445,6 +1445,20 @@ void Func_02002ba4(s32 index, s32 entry, s32 delta) {
     *dst = r;
   }
 }
+
+/// 2 copies: kibombo, kibombo.
+#define DEFINE_FUNC_02002C34(name, n1, n2, n3, n4, call1, n5, n6, n7)          \
+  void name(void) {                                                            \
+    struct KibomboEventWork *work = Ram_HeapSlots->eventWork;                  \
+                                                                               \
+    if (work->field166 == 0 && work->field15a == 0 && work->field15e == 0 &&   \
+        (gFrameCount & 7) == 0) {                                              \
+      Func_02002b18(9, 0, ((Random16Far() * 10) >> 16) - 5);                   \
+      Func_02002b18(n1, 1, ((Random16Far() * n2) >> 16) - n3);                 \
+      Func_02002b18(n4, 2, ((Random16Far() * 4) >> 16) - 2);                   \
+      call1(n5, 3, ((Random16Far() * n6) >> 16) - n7);                         \
+    }                                                                          \
+  }
 
 DEFINE_FUNC_02002C34(Func_02002c34, 87, 8, 4, 103, Func_02002b18, 119, 4, 2)
 

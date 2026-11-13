@@ -2,7 +2,8 @@
 /// Scene code of overlay 0x6ae, in ROM order.
 
 // ---- games/tla/src/scene/mars_lighthouse_aerie/s3370.c ----
-#include "../shared/routines.h"
+#include "../shared/actors.h"
+#include "../shared/effects.h"
 #include "../shared/tables.h"
 #include "types.h"
 #include "actor.h"
@@ -1018,12 +1019,12 @@ void Func_02004ee4(void) { Func_02004e80(29, 21); }
 /// Records the four palette lists, writes each listed palette entry from its
 /// red, green and blue, then copies two palettes from block32 and starts the
 /// blend.
-DEFINE_FUNC_0200154C(Func_02004ef0, gData_02006ce0, Data_02006ce4,
+DEFINE_PALETTE_SET_COLORS_FADE(Func_02004ef0, gData_02006ce0, Data_02006ce4,
     Data_02006ce8, Data_02006cd4, Func_020051e0)
 
 #include "task.h"
 
-DEFINE_FUNC_020000F4(Func_02004fac, gData_02006cf0, gData_02006cec,
+DEFINE_PALETTE_CYCLE_START(Func_02004fac, gData_02006cf0, gData_02006cec,
     Func_0200508c, gData_02006ce0, gData_02006cdc, 15, gData_02006cd8, 16,
     gData_02006cd0, Func_020050b0)
 
@@ -1032,13 +1033,13 @@ void Func_02005010(void) {
   FieldTask_Remove(Func_020050b0);
 }
 
-DEFINE_FUNC_020000F4(Func_02005030, gData_02006cf0, gData_02006cec,
+DEFINE_PALETTE_CYCLE_START(Func_02005030, gData_02006cf0, gData_02006cec,
     Func_0200508c, gData_02006ce0, gData_02006cdc, 2, gData_02006cd8, 2,
     gData_02006cd0, Func_020050b0)
 
-DEFINE_FUNC_020001D4(Func_0200508c)
+DEFINE_LIST_COUNT_ENTRIES(Func_0200508c)
 
-DEFINE_FUNC_020001F8(Func_020050b0, gData_02006cd8, gData_02006cdc,
+DEFINE_PALETTE_CYCLE_FADE(Func_020050b0, gData_02006cd8, gData_02006cdc,
     Data_02006ce8, gData_02006cec, Data_02006cd4, gData_02006cf0,
     gData_02006ce0, gData_02006cd0, Data_02006ce4)
 

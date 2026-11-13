@@ -1,7 +1,6 @@
 /// @file
 /// The scene code of overlay 0x67d, in ROM order.
 
-#include "shared/routines.h"
 #include "shared/tables.h"
 #include "types.h"
 #include "actor.h"
@@ -22,6 +21,22 @@
 #include "module/field/event_commands.h"
 #include "module/scene/izumo_interiors.h"
 #include "module/scene/scene.h"
+
+/// 2 copies: izumo_interiors, izumo_interiors.
+#define DEFINE_FUNC_02000038_2(name, n1, n2)                                   \
+  s32 name(void) {                                                             \
+    struct Actor *object = Actor_GetById(n1);                                  \
+                                                                               \
+    if ((u32)(object->x - n2) <= 0x80000) {                                    \
+      s32 z = object->z;                                                       \
+                                                                               \
+      if (z >= 0x26c0000) {                                                    \
+        if (z <= 0x2740000)                                                    \
+          return 0;                                                            \
+      }                                                                        \
+    }                                                                          \
+    return 1;                                                                  \
+  }
 
 DEFINE_FUNC_02000038_2(Func_02000038, 10, 0x940000)
 

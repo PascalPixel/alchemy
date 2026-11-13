@@ -1,7 +1,7 @@
 /// @file
 /// The scene code of overlay 0x681, in ROM order.
 
-#include "shared/routines.h"
+#include "shared/actors.h"
 #include "../field/object/set_sprite_priority.c"
 
 #include "../field/object/prepare_object.c"
@@ -10,4 +10,4 @@
 #include "actor.h"
 #include "event_inline.h"
 
-DEFINE_FUNC_020000D0(Func_020000d0)
+DEFINE_SCENE_CREATE_ACTOR(Func_020000d0)

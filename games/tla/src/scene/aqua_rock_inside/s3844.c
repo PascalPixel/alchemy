@@ -1,7 +1,7 @@
 /// @file
 /// Scene code of overlay 0x67c, in ROM order.
 
-#include "../shared/routines.h"
+#include "../shared/vents.h"
 #include "../shared/tables.h"
 #include "../aqua_rock_inside.h"
 #include "types.h"
@@ -15,7 +15,7 @@
 #define VENT_BOUNCE Func_0200389c
 #include "../../field/object/vent_bounce.c"
 
-DEFINE_FUNC_020024F8(Func_02003994, Func_02003cc4, gData_020044c8)
+DEFINE_ACTOR_START_SCRIPTED(Func_02003994, Func_02003cc4, gData_020044c8)
 
 void Func_020039f0(s32 *position, s32 base) {
   struct Actor *object = Import_ActorCreate_(0x11d, position[0], position[1],
@@ -39,7 +39,7 @@ void Func_020039f0(s32 *position, s32 base) {
   }
 }
 
-DEFINE_FUNC_020025D4(Func_02003a70, Func_020039f0)
+DEFINE_VENTS_UPDATE(Func_02003a70, Func_020039f0)
 
 void Func_02003ab0(const u16 *spots, const u16 *levels, void (*handler)(void)) {
   struct WaterWork *work = (struct WaterWork *)(gData_020023c4 + 0x188);
@@ -111,7 +111,7 @@ s32 Func_02003bb8(s32 index, s32 value) {
 
 s32 Func_02003bcc(void) { return VENT_WORK->counter; }
 
-DEFINE_FUNC_0200273C(Func_02003bd8)
+DEFINE_VENTS_ADVANCE_COUNTER(Func_02003bd8)
 
 void Func_02003c00(s32 index, s32 value) {
   u8 *base = (u8 *)VENT_WORK;
@@ -119,7 +119,7 @@ void Func_02003c00(s32 index, s32 value) {
   ((struct VentRow *)(base + index * 20))->value = value;
 }
 
-DEFINE_FUNC_02002778(Func_02003c14)
+DEFINE_VENTS_SET_ID(Func_02003c14)
 
 #include "scene_tables.h"
 

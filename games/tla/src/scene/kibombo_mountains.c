@@ -1,7 +1,8 @@
 /// @file
 /// The scene code of overlay 0x66f, in ROM order.
 
-#include "shared/routines.h"
+#include "shared/map_cells.h"
+#include "shared/actors.h"
 #include "field/field.h"
 
 #include "types.h"
@@ -35,7 +36,7 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 #include "field_event.h"
 
-DEFINE_FUNC_02000058(Func_02000058)
+DEFINE_ACTOR_BOB(Func_02000058)
 
 #include "scene_ids.h"
 
@@ -53,7 +54,7 @@ const u8 *Scene_GetPlacements(void) {
   return gData_02001294;
 }
 
-DEFINE_FUNC_020000EC(Func_020000ec, 11, 24, 32, 22, 0x221)
+DEFINE_PILLAR_SET_MOVED(Func_020000ec, 11, 24, 32, 22, 0x221)
 
 void Func_02000124(void) {
   MapGrid_CopyCellAttributes(30, 35, 1, 1, 28, 34);
@@ -61,7 +62,7 @@ void Func_02000124(void) {
   Event_SetFlag(0x222);
 }
 
-DEFINE_FUNC_0200015C(Func_0200015c)
+DEFINE_ACTOR_WAIT_TO_LAND(Func_0200015c)
 
 void Func_02000190(s32 unused, s32 id) {
   if (id == 15)
@@ -172,9 +173,9 @@ void Func_02000428(void) { GameFlag_SetBit(0x882); }
 
 void Func_02000438(void) { Func_0200114c(); }
 
-DEFINE_FUNC_020000EC(Func_02000440, 18, 6, 16, 4, 0x210)
+DEFINE_PILLAR_SET_MOVED(Func_02000440, 18, 6, 16, 4, 0x210)
 
-DEFINE_FUNC_020000EC(Func_02000478, 19, 8, 30, 10, 0x211)
+DEFINE_PILLAR_SET_MOVED(Func_02000478, 19, 8, 30, 10, 0x211)
 
 void Func_020004b0(s32 unused, s32 cell) {
   if (cell == 16 || cell == 17)

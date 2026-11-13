@@ -1,7 +1,8 @@
 /// @file
 /// The scene code of overlay 0x664, in ROM order.
 
-#include "shared/routines.h"
+#include "shared/map_cells.h"
+#include "shared/actors.h"
 #include "airs_rock_inside.h"
 #include "system.h"
 
@@ -69,10 +70,10 @@ void Func_020000a4(u16 *list, s32 mode, s32 count) {
 
 #include "map.h"
 
-DEFINE_FUNC_02000128(Func_02000128, Func_02005f64, Func_02005d5c)
+DEFINE_ACTOR_SET_CELL_OPEN(Func_02000128, Func_02005f64, Func_02005d5c)
 
 #include "../field/object/set_sprite_priority.c"
 
 #include "../field/object/prepare_object.c"
 
-DEFINE_FUNC_020000D0_2(Func_02000268, 0x22)
+DEFINE_SCENE_CREATE_IMPORTED_ACTOR(Func_02000268, 0x22)

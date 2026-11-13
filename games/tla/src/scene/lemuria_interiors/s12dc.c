@@ -1,7 +1,8 @@
 /// @file
 /// Scene code of overlay 0x68c, in ROM order.
 
-#include "../shared/routines.h"
+#include "../shared/actors.h"
+#include "../shared/effects.h"
 #include "types.h"
 #include "field_event.h"
 #include "event_inline.h"
@@ -18,9 +19,9 @@
 
 void Func_0200128c();
 
-DEFINE_FUNC_02000438(Func_020012dc, Func_0200128c)
+DEFINE_ACTOR_EMIT_NOTES(Func_020012dc, Func_0200128c)
 
-DEFINE_FUNC_020000C8(Func_02001398)
+DEFINE_ACTOR_CYCLE_PICTURES(Func_02001398)
 
 void Event_Start();
 void Event_End();

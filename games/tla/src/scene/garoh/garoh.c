@@ -1,7 +1,6 @@
 /// @file
 /// Scene code of overlay 0x65f, in ROM order.
 
-#include "../shared/routines.h"
 #include "../garoh.h"
 #include "event_inline.h"
 #include "map.h"
@@ -87,6 +86,31 @@ extern const u16 gData_020054ee[];
 extern const u16 gData_020054b8[];
 
 // Build BG palette 1 colors 8-15 from the table.
+/// 2 copies: garoh/garoh, garoh/garoh.
+#define DEFINE_FUNC_02000390(name, data1, n1, n2)                              \
+  void name(void) {                                                            \
+    struct BattleEffectBuffers *buffers = Ram_HeapSlots->block32;              \
+    const u8 *table = (const u8 *)data1;                                       \
+    u32 i = 0;                                                                 \
+    u16 *dst = &buffers->palette[n1];                                          \
+    s32 blue = 4;                                                              \
+    s32 red = 0;                                                               \
+    volatile u16 *color;                                                       \
+    s32 green;                                                                 \
+                                                                               \
+  loop:                                                                        \
+    color = BG_PLTT + n1 + i;                                                  \
+    green = blue - 2;                                                          \
+    *color = *(const u16 *)(table + blue) << 10 |                              \
+             *(const u16 *)(table + green) << 5 | *(const u16 *)(table + red); \
+    *dst++ = *color;                                                           \
+    i++;                                                                       \
+    blue += 6;                                                                 \
+    red += 6;                                                                  \
+    if (i < n2)                                                                \
+      goto loop;                                                               \
+  }
+
 DEFINE_FUNC_02000390(Func_02000390, gData_020054ee, 24, 8)
 
 // Build BG palette 6 colors 1-9 from the table.
@@ -574,6 +598,22 @@ void Func_02000e78(s32 id, struct Actor *object) {
   Event_PlaySound(136);
   Func_020012a8(saved);
 }
+
+/// 2 copies: garoh/garoh, garoh/garoh.
+#define DEFINE_FUNC_02000EB0(name, n1, n2, n3, n4)                             \
+  void name(void) {                                                            \
+    struct Actor *object = Actor_Get(n1);                                      \
+    s32 x = object->x >> 20;                                                   \
+    s32 raw;                                                                   \
+    s32 z;                                                                     \
+                                                                               \
+    raw = object->z;                                                           \
+    z = raw >> 20;                                                             \
+    if (!Flag_IsSet(n2) && x == n3 && z == n4) {                               \
+      Func_02000e78(n1, object);                                               \
+      Flag_Set(n2);                                                            \
+    }                                                                          \
+  }
 
 DEFINE_FUNC_02000EB0(Func_02000eb0, 8, 0x201, 10, 29)
 

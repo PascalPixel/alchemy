@@ -1,4 +1,5 @@
-#include "shared/routines.h"
+#include "shared/map_cells.h"
+#include "shared/actors.h"
 #include "types.h"
 #include "ram_buffer.h"
 #include "iwram_call.h"
@@ -16,7 +17,7 @@ struct EventObjects {
 
 void Func_02000594(void) { Func_080d2b4c(8, 56); }
 
-DEFINE_FUNC_020003D0(Func_020005a0)
+DEFINE_POSITION_FLAT_DISTANCE(Func_020005a0)
 
 extern u8 gMapShapeGrid[];
 
@@ -24,13 +25,13 @@ s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 s32 Func_02003adc(s32 layer, s32 x, s32 z);
 s32 Func_02003c24(s32 layer, s32 shape, s32 height);
 
-DEFINE_FUNC_020005CC(Func_020005cc, Func_02003adc, Func_02003c24)
+DEFINE_MAP_CELL_SET_SHAPE(Func_020005cc, Func_02003adc, Func_02003c24)
 
 #include "../field/map/cell_get.c"
 
 #include "field.h"
 
-DEFINE_FUNC_02000668(Func_02000668, Func_020005cc)
+DEFINE_ACTORS_RAISE_CELLS(Func_02000668, Func_020005cc)
 
 #include "battle.h"
 #include "game.h"
@@ -90,7 +91,7 @@ struct Object0200074c {
   u8 marked;
 };
 
-DEFINE_FUNC_0200074C(Func_0200074c)
+DEFINE_BLOCK_CLEAR_CELLS(Func_0200074c)
 
 // For each id of a list ended by 0xffff: settles the object on its ground,
 // copies the cell under it, and blocks the cells ahead of and behind it on a
@@ -476,4 +477,4 @@ void Func_02000ee4(u16 id, s16 first, s16 side) {
   *flags = 0;
 }
 
-DEFINE_FUNC_02000DA4(Func_02000fcc, 10)
+DEFINE_ACTOR_FLASH_COLOR(Func_02000fcc, 10)

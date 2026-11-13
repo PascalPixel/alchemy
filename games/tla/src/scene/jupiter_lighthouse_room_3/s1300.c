@@ -1,7 +1,7 @@
 /// @file
 /// Scene code of overlay 0x69c, in ROM order.
 
-#include "../shared/routines.h"
+#include "../shared/jupiter_lighthouse.h"
 #include "../shared/jupiter_lighthouse_room_3.h"
 #include "types.h"
 #include "ram_buffer.h"
@@ -61,7 +61,7 @@ void Func_020022b8(struct LightOam *oam, s32 depth);
 /// Queues the lit actors' sprites: for each listed actor with a position, projects it
 /// from the map's view, skips it off screen, and writes a 16 by 16 sprite, or a 32 by
 /// 64 one when the big switch is set, at its animation picture and depth.
-DEFINE_FUNC_02000AAC(Func_02001388, gData_02002d2c, Data_02002d70,
+DEFINE_LIGHT_SPRITES_DRAW(Func_02001388, gData_02002d2c, Data_02002d70,
     gData_02002d2e, gData_02002d30, gData_02002e30, gData_02002e32,
     Func_02002448, Func_020022b8)
 
@@ -70,16 +70,16 @@ DEFINE_FUNC_02000AAC(Func_02001388, gData_02002d2c, Data_02002d70,
 // event_inline.h's are, a layer and not a compiler-steering device.
 static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 
-DEFINE_FUNC_02000A98(Func_02001544, gData_02002d30, gData_02002d2c,
+DEFINE_LIGHT_SPRITES_INIT_A(Func_02001544, gData_02002d30, gData_02002d2c,
     Func_02001388, gData_02002d2e, gData_02002e30, gData_02002e32)
 
-DEFINE_FUNC_02000CE8(Func_020015c4, gData_02002d30, gData_02002d2c,
+DEFINE_LIGHT_SPRITES_INIT_B(Func_020015c4, gData_02002d30, gData_02002d2c,
     Func_02001388, gData_02002d2e, gData_02002e30, gData_02002e32)
 
-DEFINE_FUNC_02000D68(Func_02001644, gData_02002d30, gData_02002d2c,
+DEFINE_LIGHT_SPRITES_INIT_C(Func_02001644, gData_02002d30, gData_02002d2c,
     Func_02001388, gData_02002d2e, gData_02002e30, gData_02002e32)
 
-DEFINE_FUNC_02000DF0(Func_020016cc, gData_02002d2e, gData_02002d30)
+DEFINE_LIGHT_SPRITES_ADD(Func_020016cc, gData_02002d2e, gData_02002d30)
 
 void Func_020016fc(s32 value) { gData_02002e32 = value; }
 

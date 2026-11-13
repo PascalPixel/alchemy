@@ -1,7 +1,7 @@
 /// @file
 /// The scene code of overlay 0x683, in ROM order.
 
-#include "shared/routines.h"
+#include "shared/actors.h"
 #include "battle.h"
 #include "field.h"
 #include "game.h"
@@ -69,7 +69,7 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-DEFINE_FUNC_0200014C(Func_0200014c)
+DEFINE_SCENE_FADE_IN_AND_CLEAR_FLAG(Func_0200014c)
 
 #include "text/msg_ids.h"
 

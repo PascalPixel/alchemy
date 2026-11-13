@@ -3,7 +3,8 @@
 
 // ---- games/tla/src/scene/aqua_rock.c ----
 
-#include "../shared/routines.h"
+#include "../shared/actors.h"
+#include "../shared/effects.h"
 #include "battle.h"
 #include "field.h"
 #include "game.h"
@@ -303,9 +304,9 @@ void Func_02000844(void) {
   Task_Add(Func_02000580, TASK_PASS_VBLANK);
 }
 
-DEFINE_FUNC_02000780(Func_02000b10, 7)
+DEFINE_ACTOR_FLICKER_CHILD(Func_02000b10, 7)
 
-DEFINE_FUNC_02000780(Func_02000b34, 6)
+DEFINE_ACTOR_FLICKER_CHILD(Func_02000b34, 6)
 
 void Func_02000b58(struct Actor *object) {
   Animation_ApplyChildValues(object, 0);
@@ -557,11 +558,36 @@ void Func_0200106c(void) {
   Event_End();
 }
 
+/// 3 copies: aqua_rock/aqua_rock, aqua_rock/aqua_rock, aqua_rock/aqua_rock.
+#define DEFINE_FUNC_020010F4(name, n1, n2, n3, n4)                             \
+  void name(s32 unused, s32 id) {                                              \
+    struct Actor *object = Actor_GetById(id);                                  \
+                                                                               \
+    object->priorityFlags = 0;                                                 \
+    object->motionFlags = 0;                                                   \
+    Func_02002960_(n1, n2, 1, 1, n3, n2);                                      \
+    GameFlag_SetBit(n4);                                                       \
+  }
+
 DEFINE_FUNC_020010F4(Func_020010f4, 42, 32, 44, 0x221)
 
 DEFINE_FUNC_020010F4(Func_0200112c, 48, 32, 46, 0x222)
 
 DEFINE_FUNC_020010F4(Func_02001164, 44, 44, 46, 0x223)
+
+/// 2 copies: aqua_rock/aqua_rock, aqua_rock/aqua_rock.
+#define DEFINE_FUNC_0200119C(name, n1, n2)                                     \
+  void name(s32 unused, s32 id) {                                              \
+    struct Actor *object = Actor_GetById(id);                                  \
+    s32 column = object->x >> 20;                                              \
+                                                                               \
+    if (column == 53) {                                                        \
+      wait(30);                                                                \
+      object->z += 0x10000;                                                    \
+      GameFlag_SetBit(n1);                                                     \
+      Map_CopyCellAttributeRect(54, 58, 1, 1, column, n2);                     \
+    }                                                                          \
+  }
 
 DEFINE_FUNC_0200119C(Func_0200119c, 0x951, 52)
 
@@ -979,7 +1005,7 @@ void Func_02001d30(struct Actor *object) {
 }
 
 // ---- games/tla/src/scene/aqua_rock/events_g.c ----
-DEFINE_FUNC_02001140(Func_02001d98, gData_02002c50)
+DEFINE_ACTOR_EMIT_WATER_DROP(Func_02001d98, gData_02002c50)
 
 #include "scene_ids.h"
 
@@ -1089,7 +1115,7 @@ void Func_02001f90(s32 arg0) {
 /// Every other frame, emits particle 7 (5 on every other such frame) from the
 /// object, 26 pixels up, swaying with the frame count and drifting by a random
 /// amount.
-DEFINE_FUNC_020013D8(Func_02002030)
+DEFINE_ACTOR_EMIT_MIST(Func_02002030)
 
 void Func_020020bc(s32 entrance) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -1320,7 +1346,7 @@ void Func_020025a8(s32 id) {
 #include "io_reg.h"
 #include "resource.h"
 
-DEFINE_FUNC_02001940(Func_020025d4, gData_02002cd4)
+DEFINE_GROUND_PARTICLES_DRAW(Func_020025d4, gData_02002cd4)
 
 /// Starts the sparkles: 64 sprites on the ground at the origin, their tiles
 /// decoded into VRAM, and Func_020025d4 scheduled at priority 0x480 to move

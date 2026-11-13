@@ -3,7 +3,9 @@
 
 // ---- games/tla/src/scene/jupiter_lighthouse_aerie.c ----
 
-#include "shared/routines.h"
+#include "shared/whirlwind.h"
+#include "shared/jupiter_lighthouse.h"
+#include "shared/actors.h"
 #include "battle.h"
 #include "field.h"
 #include "game.h"
@@ -330,10 +332,10 @@ next:
   gData_02003314++;
 }
 
-DEFINE_FUNC_020004C0(Func_02000858, gData_02003318, gData_02003340,
+DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES_ZERO(Func_02000858, gData_02003318, gData_02003340,
     gData_02003360, gData_02003314, Func_0200079c, gData_02003364)
 
-DEFINE_FUNC_02000378(Func_020008dc, Func_02002a78, Func_02002b58)
+DEFINE_ACTOR_RAISE_FROM_CELL(Func_020008dc, Func_02002a78, Func_02002b58)
 
 #include "frame.h"
 #include "field_sprite.h"
@@ -403,7 +405,7 @@ void Func_02000930(void) {
   Event_End();
 }
 
-DEFINE_FUNC_020003D0(Func_02000b1c)
+DEFINE_POSITION_FLAT_DISTANCE(Func_02000b1c)
 
 extern const s32 gData_0200331c[];
 extern s32 gData_0200333c;
@@ -496,7 +498,7 @@ stop:
 #include "call.h"
 #include "field_effect.h"
 
-DEFINE_FUNC_020007E8(Func_02000d08, Func_020029f0, Func_02000b48, Func_02001e78)
+DEFINE_WHIRLWIND_SPAWN(Func_02000d08, Func_020029f0, Func_02000b48, Func_02001e78)
 
 #include "field_coordinate.h"
 
@@ -521,7 +523,7 @@ s32 Func_02000de0(struct Actor *object) {
   return 0;
 }
 
-DEFINE_FUNC_0200091C(Func_02000e80)
+DEFINE_JUPITER_LIGHTHOUSE_PLACE_RAISED_ACTORS(Func_02000e80)
 
 void Func_02001010(struct Actor *object) {
   u8 *fill = &gDecodeFillByte;

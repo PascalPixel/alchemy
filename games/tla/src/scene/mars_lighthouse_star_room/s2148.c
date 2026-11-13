@@ -2,7 +2,7 @@
 /// Scene code of overlay 0x6ab, in ROM order.
 
 // ---- games/tla/src/scene/mars_lighthouse_star_room/s2148.c ----
-#include "../shared/routines.h"
+#include "../shared/mars_lighthouse.h"
 #include "version.h"
 
 #include "types.h"
@@ -197,7 +197,7 @@ s32 Func_0200236c(void) {
 
 extern u16 gData_02004cf0[];
 
-DEFINE_FUNC_020024AC(Func_020024ac, Func_0200236c)
+DEFINE_RIDE_IF_ACTIVE(Func_020024ac, Func_0200236c)
 
 s32 Func_020024c8(void) {
   return ((struct RideWork *)(gData_020023c4 + 0x188))->active;
@@ -376,7 +376,7 @@ struct WorkEvent {
   s16 unk166;
 };
 
-DEFINE_FUNC_0200274C(Func_0200274c, Work020023c4__s236c, Func_0200422c,
+DEFINE_ACTOR_ROLL_AND_CRUMBLE(Func_0200274c, Work020023c4__s236c, Func_0200422c,
     Func_02002658, Func_020024d4)
 #undef WORK
 #undef ABS
@@ -409,24 +409,24 @@ void Func_02002a58(s32 sourceId, s32 id, s32 kind, s32 value,
 /// gives it Func_0200274c as its update hook and its speed, clears its scale
 /// and action, has it watch what self watches, and calls Event_PlaySound(104).
 /// The twin of overlay 6ac's Func_02002e6c.
-DEFINE_FUNC_02002AD0(Func_02002ad0, Func_0200274c)
+DEFINE_ACTOR_LAUNCH_AHEAD(Func_02002ad0, Func_0200274c)
 
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 void Actor_SetSpritePriorityDirect(struct Actor *object, s32 mode);
 void Animation_ApplyChildValues(struct Actor *object, s32 value);
 
-DEFINE_FUNC_02002B98(Func_02002b98, Func_020041cc)
+DEFINE_ACTOR_POP_UP_SLOW(Func_02002b98, Func_020041cc)
 
-DEFINE_FUNC_02002C44(Func_02002c44, Func_020041cc)
+DEFINE_ACTOR_POP_UP(Func_02002c44, Func_020041cc)
 
 #include "macros.h"
 
 extern u8 gData_020023c4[];
 extern u16 gData_02004cf0[];
 
-DEFINE_FUNC_02002CE8(Func_02002ce8, Func_02002ad0)
+DEFINE_ACTOR_PARK(Func_02002ce8, Func_02002ad0)
 
-DEFINE_FUNC_02002D04(Func_02002d04, gData_020047fc, Func_020041cc)
+DEFINE_ACTOR_STEER_BY_PAD(Func_02002d04, gData_020047fc, Func_020041cc)
 
 void Func_02002d90(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
@@ -454,7 +454,7 @@ struct Position {
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 extern s16 gData_0200483c[];
 
-DEFINE_FUNC_02002DC4(Func_02002dc4, Func_02002d90, gData_0200483c,
+DEFINE_LEADER_SLIDE_ON_ICE(Func_02002dc4, Func_02002d90, gData_0200483c,
     Func_020041cc, Func_02002d04, Func_0200428c)
 
 // ---- games/tla/src/scene/mars_lighthouse_star_room/s3070.c ----

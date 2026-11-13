@@ -4,7 +4,7 @@
 
 // ---- games/tla/src/scene/sea_of_time.c ----
 
-#include "shared/routines.h"
+#include "shared/actors.h"
 #include "sea_of_time/sea_of_time.h"
 #include "event_work.h"
 #include "module/field/event_commands.h"
@@ -51,7 +51,7 @@ s32 Func_02000388(u32 layer, s32 x, s32 y, s32 value) {
   return old;
 }
 
-DEFINE_FUNC_020003D0(Func_020003d0)
+DEFINE_POSITION_FLAT_DISTANCE(Func_020003d0)
 
 #include "battle.h"
 #include "field.h"
@@ -853,6 +853,20 @@ void Func_0200141c(s32 x, s32 z, s32 actor) {
   Actor_SetHorizontalPositionWithTerrain(actor, 0, 0);
 }
 
+/// 6 copies: sea_of_time, sea_of_time, sea_of_time, sea_of_time, sea_of_time,
+/// sea_of_time.
+#define DEFINE_FUNC_02001480(name, n1, n2)                                     \
+  void name(void) {                                                            \
+    struct Actor *object;                                                      \
+                                                                               \
+    Event_Start();                                                             \
+    Event_ResolvePendingActions(0);                                            \
+    object = Actor_GetById(n1);                                                \
+    Func_0200141c(object->x, Actor_GetById(n1)->z, n1);                        \
+    GameFlag_SetBit(n2);                                                       \
+    Func_02001fb4();                                                           \
+  }
+
 DEFINE_FUNC_02001480(Func_02001480, 9, 0xa90)
 
 DEFINE_FUNC_02001480(Func_020014b4, 10, 0xa91)
@@ -864,6 +878,17 @@ DEFINE_FUNC_02001480(Func_02001524, 12, 0xa93)
 DEFINE_FUNC_02001480(Func_0200155c, 13, 0xa94)
 
 DEFINE_FUNC_02001480(Func_02001594, 9, 0xa95)
+
+/// 2 copies: sea_of_time, sea_of_time.
+#define DEFINE_FUNC_020015CC(name, n1)                                         \
+  void name(void) {                                                            \
+    Event_Start();                                                             \
+    Event_ResolvePendingActions(0);                                            \
+    Import_EventSetExitRequest(n1);                                            \
+    Event_FinishScreenTransition();                                            \
+    Event_WaitTransitionFrames();                                              \
+    Func_02001fb4();                                                           \
+  }
 
 DEFINE_FUNC_020015CC(Func_020015cc, 4)
 

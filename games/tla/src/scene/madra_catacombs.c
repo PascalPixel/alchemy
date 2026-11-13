@@ -1,7 +1,8 @@
 /// @file
 /// The scene code of overlay 0x65a, in ROM order.
 
-#include "shared/routines.h"
+#include "shared/map_cells.h"
+#include "shared/actors.h"
 #include "shared/tables.h"
 #include "types.h"
 #include "ram_buffer.h"
@@ -24,7 +25,7 @@ s32 Func_020011d4(struct Actor *object);
 
 // Raises each listed actor's cells: the shape grid and the cell flags under it,
 // then lifts the leader if the new terrain is above the leader.
-DEFINE_FUNC_02000038(Func_02000038, Func_020010ec, Func_020011d4, Func_020011f4)
+DEFINE_PILLARS_RAISE(Func_02000038, Func_020010ec, Func_020011d4, Func_020011f4)
 
 #define HELD_OBJECT(work) (*(struct Actor **)((u8 *)(work) + 0xcbc))
 
@@ -84,7 +85,7 @@ void Func_02003c00(s32 a, s32 b, s32 c);
 // One-field view: the shape store is memory of its own to sched2, which sinks
 // it past the cell read; a plain store keeps its order.
 
-DEFINE_FUNC_02000270(Func_02000270, Func_020010ec, Func_020011d4, Func_020011f4)
+DEFINE_HELD_ACTOR_RAISE_CELL(Func_02000270, Func_020010ec, Func_020011d4, Func_020011f4)
 
 struct SceneWork {
   u8 unk000[0x1ac];
@@ -162,7 +163,7 @@ void Func_02000474(void) {
   Event_End();
 }
 
-DEFINE_FUNC_020004A4(Func_020004a4)
+DEFINE_ACTOR_DROP_AND_WAIT(Func_020004a4)
 
 void Func_020004cc(void) {
   struct Actor *object = Actor_GetById(11);
@@ -329,7 +330,7 @@ void Func_020008d0(struct Actor *object) {
     GameFlag_SetBit(0x9ef);
 }
 
-DEFINE_FUNC_020008F4(Func_020008f4, Func_020011fc, Func_02001184, Func_0200014c,
+DEFINE_SCENE_RUN_IF_HELD(Func_020008f4, Func_020011fc, Func_02001184, Func_0200014c,
     gData_020013ca, Func_02001204, Func_020008d0)
 
 void Func_0200092c(void) { Func_0200014c(gData_020013ca); }
@@ -454,6 +455,22 @@ void Func_02000c40(void) { Func_02000b38(109, 1, 109, 3, 1, 2); }
 void Func_02000c5c(void) { Func_02000b38(118, 1, 118, 3, 1, 2); }
 
 void Func_02000c78(void) { Func_02000b38(92, 29, 92, 31, 1, 2); }
+
+/// 2 copies: madra_catacombs, madra_catacombs.
+#define DEFINE_FUNC_02000C94(name, n1)                                         \
+  void name(void) {                                                            \
+    Event_Start();                                                             \
+    Event_ResolvePendingActions(0);                                            \
+    FieldCamera_MoveTo(-1, -1, -1, 0);                                         \
+    Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),    \
+                              0);                                              \
+    Actor_SetPartAttribute(Actor_GetById(gMainRoutineWork.currentOwner), 15);  \
+    wait(1);                                                                   \
+    Event_StartScreenTransition();                                             \
+    Event_WaitTransitionFrames();                                              \
+    Event_Wait(40);                                                            \
+    Import_EventSetExitRequest(n1);                                            \
+  }
 
 DEFINE_FUNC_02000C94(Func_02000c94, 3)
 

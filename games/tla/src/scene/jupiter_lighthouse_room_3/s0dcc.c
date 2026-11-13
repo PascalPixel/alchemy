@@ -1,7 +1,7 @@
 /// @file
 /// Scene code of overlay 0x69c, in ROM order.
 
-#include "../shared/routines.h"
+#include "../shared/push.h"
 #include "types.h"
 #include "map.h"
 #include "actor.h"
@@ -36,7 +36,7 @@ static inline s32 Func_02002338_(struct Actor *object, s32 *position) {
 /// at a time in the leader's direction, until a cell of it is blocked
 /// (Func_02002338 returns 2). Leaves the object's resting place in target and
 /// returns 1, or 0 when nothing is pushed or it cannot move at all.
-DEFINE_FUNC_02000C44(Func_02000dcc, Func_02000f34, gData_02002484,
+DEFINE_PUSH_TARGET_FIND_SLIDE(Func_02000dcc, Func_02000f34, gData_02002484,
     gData_0200249c, Func_02002338_)
 
 /// The whole-pixel half of a 16.16 coordinate.
@@ -46,11 +46,11 @@ DEFINE_FUNC_02000C44(Func_02000dcc, Func_02000f34, gData_02002484,
 /// shape is in the six-entry footprint table, the one whose footprint holds the
 /// cell one step ahead of the leader, when the leader is not in line with its
 /// near edge. Returns the object, with its id and the footprint's index.
-DEFINE_FUNC_02000DAC(Func_02000f34, gData_02002478, gData_0200249c,
+DEFINE_PUSH_TARGET_FIND_AHEAD(Func_02000f34, gData_02002478, gData_0200249c,
     gData_02002484)
 
 void Func_020022e0(struct Actor *object, s32 mode);
 void Func_02001300(void);
 
-DEFINE_FUNC_02000EC8(Func_02001050, gData_02002484, Func_02001300,
+DEFINE_PUSH_TARGET_PUSH_FILL(Func_02001050, gData_02002484, Func_02001300,
     Func_020022e0, gData_0200249c)

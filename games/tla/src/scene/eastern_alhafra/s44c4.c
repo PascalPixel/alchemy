@@ -1,7 +1,8 @@
 /// @file
 /// Scene code of overlay 0x668, in ROM order.
 
-#include "../shared/routines.h"
+#include "../shared/push.h"
+#include "../shared/map_cells.h"
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -114,7 +115,7 @@ void Func_020044c4(struct PushTarget target) {
 }
 
 
-DEFINE_FUNC_02004774(Func_02004774, Func_02004c3c, gData_02004ca4,
+DEFINE_ACTOR_STOP_AT_PUSH_TARGET(Func_02004774, Func_02004c3c, gData_02004ca4,
     Func_02004a64)
 
 void Func_020047fc(const u16 *list) {
@@ -148,8 +149,8 @@ next:
 }
 
 // Finds the current target's table row and shrinks it.
-DEFINE_FUNC_02004868(Func_02004868, Func_020048ec)
+DEFINE_STATUE_SINK(Func_02004868, Func_020048ec)
 
 #include "field_event.h"
 
-DEFINE_FUNC_02000128__S00A4(Func_020048ec, Func_02004c34, Func_02004a0c)
+DEFINE_ACTOR_SET_CELL_OPEN(Func_020048ec, Func_02004c34, Func_02004a0c)

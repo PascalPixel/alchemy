@@ -2,7 +2,7 @@
 /// Scene code of overlay 0x6ad, in ROM order.
 
 // ---- games/tla/src/scene/mars_lighthouse_room_f/flash.c ----
-#include "../shared/routines.h"
+#include "../shared/mars_lighthouse.h"
 #include "types.h"
 #include "ram_buffer.h"
 #include "frame.h"
@@ -56,7 +56,7 @@ void Animation_ApplyChildValues(struct Actor *object, s32 value);
 void Func_020041ec(void *handle);
 void Func_0200236c(struct Actor *object, s32 unused);
 
-DEFINE_FUNC_020012BC(Func_02002954, 10, 4, 0)
+DEFINE_ACTOR_BLINK(Func_02002954, 10, 4, 0)
 
 #include "version.h"
 
@@ -288,7 +288,7 @@ s32 Func_02002ba0(void) {
   ride->active = 0;
 }
 
-DEFINE_FUNC_020024AC(Func_02002ce0, Func_02002ba0)
+DEFINE_RIDE_IF_ACTIVE(Func_02002ce0, Func_02002ba0)
 
 s32 Func_02002cfc(void) {
   return ((struct RideWork *)(gData_020023c4 + 0x188))->active;
@@ -403,7 +403,7 @@ extern const u8 gData_02005e00[];
 
 /// Throws two sparks (object kind 325) from (x, y, z), each upward at about
 /// speed plus 0x14000 with a random spread, at a random angle and size.
-DEFINE_FUNC_020029F4(Func_02002e8c, gData_02005e00)
+DEFINE_EMBERS_SPAWN(Func_02002e8c, gData_02005e00)
 
 void Func_02002f6c(struct Actor *object) {
   object->movementState = Event_GetFlag(260);
@@ -441,6 +441,6 @@ void Func_02002d08(struct Actor *actor);
 void Func_02002e8c(s32 x, s32 y, s32 z, s32 speed);
 extern u8 gData_020023c4[];
 
-DEFINE_FUNC_0200274C(Func_02002f80, Work020023c4__s2f80, Func_020054d8,
+DEFINE_ACTOR_ROLL_AND_CRUMBLE(Func_02002f80, Work020023c4__s2f80, Func_020054d8,
     Func_02002e8c, Func_02002d08)
 #undef ABS

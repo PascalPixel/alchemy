@@ -3,7 +3,8 @@
 
 // ---- games/tla/src/scene/dehkan_plateau.c ----
 
-#include "../shared/routines.h"
+#include "../shared/map_cells.h"
+#include "../shared/actors.h"
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -200,7 +201,7 @@ void Func_02001500(void) {
   GameFlag_ClearBit(0x200);
 }
 
-DEFINE_FUNC_02001514(Func_02001514)
+DEFINE_ACTORS_SET_HIDDEN(Func_02001514)
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -215,7 +216,7 @@ void Func_02001590(s32 a, s32 b) { Func_020000a4(gData_02003fb0, a, b); }
 
 void Func_020015a4(s32 a, s32 b) { Func_020000a4(gData_02003fb8, a, b); }
 
-DEFINE_FUNC_020004A4(Func_020015b8)
+DEFINE_ACTOR_DROP_AND_WAIT(Func_020015b8)
 
 void Func_020015e0(void) {
   struct Actor *object = Actor_GetById(12);
@@ -319,6 +320,41 @@ loop:
     goto loop;
   }
 }
+
+/// 3 copies: dehkan_plateau/dehkan_plateau, dehkan_plateau/dehkan_plateau,
+/// dehkan_plateau/dehkan_plateau.
+#define DEFINE_FUNC_02001820(name, data1, n1, data2)                           \
+  void name(void) {                                                            \
+    const u16 *cell = &data1[0].present;                                       \
+    s32 flag = 0x240;                                                          \
+    u32 i;                                                                     \
+    const u16 *dest;                                                           \
+                                                                               \
+    for (i = 0; i <= n1; i++) {                                                \
+      if (GameFlag_Test(0x109) != 0) {                                         \
+        if (GameFlag_Test(flag) != 0) {                                        \
+          s32 x;                                                               \
+          s32 y;                                                               \
+                                                                               \
+          cell = &data1[i].x;                                                  \
+          x = *cell++;                                                         \
+          y = *cell++;                                                         \
+          /* FAKEMATCH(temporary): the destination table through a local set   \
+           * here, which loads its first halfword before the 1 is built; as    \
+           * gData_02003fd2[0], 2 of 56 instructions differ in tla-en. */      \
+          dest = data2;                                                        \
+          Map_CopyCellPictureIndicesRect(dest[0], dest[1], x, y, 1, 1);        \
+        }                                                                      \
+      } else {                                                                 \
+        if (*cell != 0)                                                        \
+          GameFlag_SetBit(flag);                                               \
+        cell += 6;                                                             \
+      }                                                                        \
+      flag++;                                                                  \
+    }                                                                          \
+    if (GameFlag_Test(0x109) == 0)                                             \
+      Func_02001804();                                                         \
+  }
 
 DEFINE_FUNC_02001820(Func_02001820, gData_02004066, 13, gData_02003fd2)
 
@@ -546,7 +582,7 @@ void Func_02001ee8(void) {
   }
 }
 
-DEFINE_FUNC_02001F38(Func_02001f38, Func_02003cc0)
+DEFINE_ACTOR_HIDE(Func_02001f38, Func_02003cc0)
 
 void Func_02001f68(void) {
   if (GameFlag_Test(0x109) != 0) {
@@ -557,15 +593,15 @@ void Func_02001f68(void) {
   }
 }
 
-DEFINE_FUNC_02001F94(Func_02001f94, 13, Func_02001f38, 13, Func_02001f68)
+DEFINE_ACTORS_FOR_RANGE(Func_02001f94, 13, Func_02001f38, 13, Func_02001f68)
 
-DEFINE_FUNC_02001F94(Func_02001fac, 12, Func_02001f38, 25, Func_02001f68)
+DEFINE_ACTORS_FOR_RANGE(Func_02001fac, 12, Func_02001f38, 25, Func_02001f68)
 
-DEFINE_FUNC_02001F94(Func_02001fc4, 9, Func_02001f38, 26, Func_02001f68)
+DEFINE_ACTORS_FOR_RANGE(Func_02001fc4, 9, Func_02001f38, 26, Func_02001f68)
 
-DEFINE_FUNC_02001F94(Func_02001fdc, 2, Func_02001f38, 8, Func_02001f68)
+DEFINE_ACTORS_FOR_RANGE(Func_02001fdc, 2, Func_02001f38, 8, Func_02001f68)
 
-DEFINE_FUNC_02001F94(Func_02001ff4, 5, Func_02001f38, 10, Func_02001f68)
+DEFINE_ACTORS_FOR_RANGE(Func_02001ff4, 5, Func_02001f38, 10, Func_02001f68)
 
 void Func_02000e9c(struct Actor *object);
 
@@ -601,7 +637,7 @@ void Func_0200200c(struct Actor *object) {
 void Func_02000d78(const void *data);
 extern const u8 gData_02003fc8[];
 
-DEFINE_FUNC_020008F4(Func_020020dc, Func_02003de0, Func_02003d10, Func_02000d78,
+DEFINE_SCENE_RUN_IF_HELD(Func_020020dc, Func_02003de0, Func_02003d10, Func_02000d78,
     gData_02003fc8, Func_02003de8, Func_0200200c)
 
 void Func_02002114(void) { Func_02000d78(gData_02003fc8); }

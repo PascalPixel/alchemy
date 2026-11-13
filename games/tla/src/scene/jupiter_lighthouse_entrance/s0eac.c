@@ -1,7 +1,7 @@
 /// @file
 /// Scene code of overlay 0x698, in ROM order.
 
-#include "../shared/routines.h"
+#include "../shared/teleporter.h"
 #include "types.h"
 #include "field_effect.h"
 #include "main_routine_work.h"
@@ -95,11 +95,11 @@ void Func_02000eac(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 #include "iwram_call.h"
 #include "cell_target.h"
 
-DEFINE_FUNC_020011A0(Func_020011a0, gData_02002308, Func_02001074)
+DEFINE_TELEPORTERS_FIND_LOWER(Func_020011a0, gData_02002308, Func_02001074)
 
 #include "scene_tables.h"
 
-DEFINE_FUNC_020013E4(Func_020013e4)
+DEFINE_LEADER_CENTER_IN_CELL(Func_020013e4)
 #include "../shared/cell_with_bit.h"
 
 /// Map_CopyCellsRect through this overlay's import.
@@ -108,4 +108,4 @@ DEFINE_FUNC_020013E4(Func_020013e4)
 /// the table's source cell over the leader's, keeping the source column's and
 /// row's 64 bit; Func_0200180c calls it the first time the leader steps on
 /// one of the table's cells.
-DEFINE_FUNC_0200146C(Func_0200146c, Func_020013e4)
+DEFINE_TELEPORTER_UNCOVER(Func_0200146c, Func_020013e4)

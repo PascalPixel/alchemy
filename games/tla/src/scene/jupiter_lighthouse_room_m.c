@@ -1,7 +1,10 @@
 /// @file
 /// The scene code of overlay 0x6a3, in ROM order.
 
-#include "shared/routines.h"
+#include "shared/whirlwind.h"
+#include "shared/jupiter_lighthouse.h"
+#include "shared/actors.h"
+#include "shared/effects.h"
 #include "types.h"
 #include "battle.h"
 #include "field.h"
@@ -1661,22 +1664,22 @@ extern s32 gData_02005a14;
 static inline void Counter_Set(s32 value) { gData_02005a14 = value; }
 extern u16 gData_02005a40[];
 
-DEFINE_FUNC_0200027C(Func_02002f08, gData_02005a14, gData_02005a18,
+DEFINE_PALETTE_CYCLE_STEP(Func_02002f08, gData_02005a14, gData_02005a18,
     gData_02005a40)
 
-DEFINE_FUNC_020002F4(Func_02002fc4, gData_02005a18, gData_02005a40,
+DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(Func_02002fc4, gData_02005a18, gData_02005a40,
     gData_02005a60, Func_02002f08, gData_02005a64)
 
-DEFINE_FUNC_02000378(Func_02003048, Func_02004774__jupiter_lighthouse_room_m,
+DEFINE_ACTOR_RAISE_FROM_CELL(Func_02003048, Func_02004774__jupiter_lighthouse_room_m,
     Func_020049b4)
 
-DEFINE_FUNC_020012FC(Func_0200309c)
+DEFINE_WHIRLWIND_CARRY_LEADER(Func_0200309c)
 
-DEFINE_FUNC_020003D0(Func_02003288)
+DEFINE_POSITION_FLAT_DISTANCE(Func_02003288)
 
 extern const s32 gData_02005a1c[];
 
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
-DEFINE_FUNC_02000628(Func_020032b4, Func_020049a4, Func_02003288,
+DEFINE_WHIRLWIND_UPDATE(Func_020032b4, Func_020049a4, Func_02003288,
     gData_02005a1c, gData_02005a3c)

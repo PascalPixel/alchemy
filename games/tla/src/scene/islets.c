@@ -1,7 +1,8 @@
 /// @file
 /// The scene code of overlay 0x674, in ROM order.
 
-#include "shared/routines.h"
+#include "shared/actors.h"
+#include "shared/effects.h"
 #include "battle.h"
 #include "field.h"
 #include "game.h"
@@ -205,7 +206,7 @@ L_020083cc:
   return;
 }
 
-DEFINE_FUNC_020003DC(Func_020003dc)
+DEFINE_LEADER_IS_FACING_NORTH(Func_020003dc)
 
 void Func_0200040c(void) {
   s32 result0;
@@ -538,7 +539,7 @@ struct Actor *Func_02000da0(struct Actor *object, s32 value) {
   return spawned;
 }
 
-DEFINE_FUNC_02000DF8(Func_02000df8, 3, Func_02003de4, gData_020044f0)
+DEFINE_ACTOR_EMIT_SMOKE(Func_02000df8, 3, Func_02003de4, gData_020044f0)
 
 #include "call.h"
 
@@ -1148,9 +1149,9 @@ void Func_0200208c(void) {
   return;
 }
 
-DEFINE_FUNC_020011B8(Func_020020b4, 2)
+DEFINE_LEADER_SET_LAYER(Func_020020b4, 2)
 
-DEFINE_FUNC_020011B8(Func_020020d0, 0)
+DEFINE_LEADER_SET_LAYER(Func_020020d0, 0)
 
 void Func_020020ec(s32 x, s32 z, s32 layers, s32 value) {
   struct MapWork *map = Ram_HeapSlots->mapWork;

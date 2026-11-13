@@ -2,7 +2,8 @@
 /// The scene code of overlay 0x6ab, in ROM order.
 
 // ---- games/tla/src/scene/mars_lighthouse_star_room.c ----
-#include "shared/routines.h"
+#include "shared/mars_lighthouse.h"
+#include "shared/actors.h"
 #include "types.h"
 #include "ram_buffer.h"
 #include "frame.h"
@@ -203,7 +204,7 @@ void Func_0200024c(s32 phase, s32 frame) {
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
-DEFINE_FUNC_020002D4(Func_020002d4)
+DEFINE_ACTOR_FREEZE(Func_020002d4)
 
 #include "main_routine_work.h"
 
@@ -1169,7 +1170,7 @@ struct RideWork__s1424 {
 
 extern u8 gData_020023c4[];
 
-DEFINE_FUNC_020015EC(Func_020015ec, RideWork__s1424, Func_02001528,
+DEFINE_RIDE_UPDATE_CARRIED(Func_020015ec, RideWork__s1424, Func_02001528,
     Func_0200158c)
 
 // ---- games/tla/src/scene/mars_lighthouse_star_room/spawn.c ----
@@ -1178,7 +1179,7 @@ extern const u8 gData_02004744[];
 void Func_020041cc(struct Actor *object, s32 mode);
 void Actor_StartScript(struct Actor *object, const void *script);
 
-DEFINE_FUNC_02001750(Func_02001750, gData_02004744)
+DEFINE_ACTOR_RESET_SCRIPTED(Func_02001750, gData_02004744)
 
 void Func_02001780(s32 *position, s32 speed, s32 flag) {
   struct Actor *object = FieldActor_Create(366, position[0], position[1], position[2]);
@@ -1285,7 +1286,25 @@ void Func_02001928(struct Actor *object, s32 priority);
 /// Stops the object and sets its sprite part, then restarts its script at
 /// gData_02004744; Func_02001e1c of the Mars Lighthouse entrance is the same
 /// function.
-DEFINE_FUNC_02001928(Func_02001928, gData_02004744)
+DEFINE_ACTOR_SETUP_SCRIPTED_PART(Func_02001928, gData_02004744)
+
+/// 2 copies: mars_lighthouse_star_room, mars_lighthouse_star_room.
+#define DEFINE_FUNC_0200196C_97(name, call1)                                   \
+  void name(s32 *position, s32 speed, s32 flag) {                              \
+    struct Actor *object =                                                     \
+        FieldActor_Create(366, position[0], position[1], position[2]);         \
+                                                                               \
+    if (object != NULL) {                                                      \
+      object->bounce = 0;                                                      \
+      object->gravity = 0;                                                     \
+      object->unk4c = -speed;                                                  \
+      Func_02001928(object, 3);                                                \
+      object->update = call1;                                                  \
+      if (flag != 0)                                                           \
+        object->unk5c[0] = 2;                                                  \
+      Func_020041cc(object, 2);                                                \
+    }                                                                          \
+  }
 
 DEFINE_FUNC_0200196C_97(Func_0200196c, Func_020015ec)
 
@@ -1320,11 +1339,11 @@ s32 Func_02001a44(struct Actor *a, struct Actor *b) {
 
 #define ABS(value) ((value) < 0 ? -(value) : (value))
 
-DEFINE_FUNC_02001A9C(Func_02001a9c, Func_02001a44)
+DEFINE_RIDE_UPDATE_DRIFT(Func_02001a9c, Func_02001a44)
 
 extern const u8 gData_02004744[];
 
-DEFINE_FUNC_02001B38(Func_02001b38, Func_020041cc, gData_02004744)
+DEFINE_ACTOR_SETUP_SCRIPTED(Func_02001b38, Func_020041cc, gData_02004744)
 
 // ---- games/tla/src/scene/mars_lighthouse_star_room/s1b78.c ----
 void Animation_SetStateFlags(struct Actor *object, u32 value);
@@ -1414,7 +1433,7 @@ typedef struct IwramGlobals {
 
 #define IWRAM ((IwramGlobals *)Ram_HeapSlots)
 
-DEFINE_FUNC_02001BF8(Func_02001bf8, Func_02001b78__s1bf8, Func_0200196c,
+DEFINE_BEAM_DRAW_TARGETS(Func_02001bf8, Func_02001b78__s1bf8, Func_0200196c,
     Func_020019fc, Func_020019b4, Func_02001780)
 #undef IWRAM
 

@@ -1,4 +1,4 @@
-#include "../shared/routines.h"
+#include "../shared/map_cells.h"
 #include "tundaria_tower.h"
 #include "call.h"
 #include "types.h"
@@ -189,7 +189,7 @@ top:
 
 #include "map.h"
 
-DEFINE_FUNC_02000128(Func_02002184, Func_02003160, Func_02002f80)
+DEFINE_ACTOR_SET_CELL_OPEN(Func_02002184, Func_02003160, Func_02002f80)
 
 // On entering, sets each listed pillar from its two flags (pushed: moved to its
 // place; else its cell raised and its shape redrawn), then lifts the leader

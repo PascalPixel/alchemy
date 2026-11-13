@@ -1,7 +1,9 @@
 /// @file
 /// Scene code of overlay 0x6a5, in ROM order.
 
-#include "../shared/routines.h"
+#include "../shared/whirlwind.h"
+#include "../shared/jupiter_lighthouse.h"
+#include "../shared/effects.h"
 #include "types.h"
 #include "system.h"
 #include "call.h"
@@ -25,9 +27,9 @@ void Func_0200430c(struct GustObject *object);
 void Func_02004bd4(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags, struct EffectOptions *options);
 
-DEFINE_FUNC_020007A4(Func_020044cc, Func_02005754, Func_0200430c, Func_02004bd4)
+DEFINE_WHIRLWIND_SPAWN_UPPER(Func_020044cc, Func_02005754, Func_0200430c, Func_02004bd4)
 
-DEFINE_FUNC_0200090C(Func_020045a4, Func_02004bd4)
+DEFINE_ACTOR_EMIT_RISING_SPARKS_B(Func_020045a4, Func_02004bd4)
 
 void Animation_ApplyChildValues(struct Actor *object, s32 value);
 
@@ -88,7 +90,7 @@ void Func_0200571c(struct LightOam *oam, s32 depth);
 /// Queues the lit actors' sprites: for each listed actor with a position, projects it
 /// from the map's view, skips it off screen, and writes a 16 by 16 sprite, or a 32 by
 /// 64 one when the big switch is set, at its animation picture and depth.
-DEFINE_FUNC_02000AAC(Func_020047d4, gData_02006a6c, Data_02006ab0,
+DEFINE_LIGHT_SPRITES_DRAW(Func_020047d4, gData_02006a6c, Data_02006ab0,
     gData_02006a6e, gData_02006a70, gData_02006b70__s44cc, gData_02006b72,
     Func_020059bc, Func_0200571c)
 
@@ -96,16 +98,16 @@ DEFINE_FUNC_02000AAC(Func_020047d4, gData_02006a6c, Data_02006ab0,
 // event_inline.h's are, a layer and not a compiler-steering device.
 static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 
-DEFINE_FUNC_02000A98(Func_02004990, gData_02006a70, gData_02006a6c,
+DEFINE_LIGHT_SPRITES_INIT_A(Func_02004990, gData_02006a70, gData_02006a6c,
     Func_020047d4, gData_02006a6e, gData_02006b70__s44cc, gData_02006b72)
 
-DEFINE_FUNC_02000CE8(Func_02004a10, gData_02006a70, gData_02006a6c,
+DEFINE_LIGHT_SPRITES_INIT_B(Func_02004a10, gData_02006a70, gData_02006a6c,
     Func_020047d4, gData_02006a6e, gData_02006b70__s44cc, gData_02006b72)
 
-DEFINE_FUNC_02000D68(Func_02004a90, gData_02006a70, gData_02006a6c,
+DEFINE_LIGHT_SPRITES_INIT_C(Func_02004a90, gData_02006a70, gData_02006a6c,
     Func_020047d4, gData_02006a6e, gData_02006b70__s44cc, gData_02006b72)
 
-DEFINE_FUNC_02000EA0(Func_02004b18, gData_02006a70, gData_02006a6e)
+DEFINE_LIGHT_SPRITES_ADD_COUNTED(Func_02004b18, gData_02006a70, gData_02006a6e)
 
 void Func_02004b48(s32 value) { gData_02006b72 = value; }
 

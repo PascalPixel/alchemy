@@ -1,7 +1,10 @@
 /// @file
 /// The scene code of overlay 0x69a, in ROM order.
 
-#include "shared/routines.h"
+#include "shared/whirlwind.h"
+#include "shared/jupiter_lighthouse.h"
+#include "shared/actors.h"
+#include "shared/effects.h"
 #include "battle.h"
 #include "field.h"
 #include "game.h"
@@ -58,11 +61,11 @@ void Func_020000ec(void) {
   MapGrid_CopyCellAttributes(23, 22, 2, 1, 15, 39);
 }
 
-DEFINE_FUNC_02000100(Func_02000178, 10, 0xa01, 17, 33)
+DEFINE_JUPITER_LIGHTHOUSE_CHECK_BLOCK_ON_CELL(Func_02000178, 10, 0xa01, 17, 33)
 
-DEFINE_FUNC_0200013C(Func_020001b4, 0x200, Func_02000060)
+DEFINE_SCENE_RUN_ONCE(Func_020001b4, 0x200, Func_02000060)
 
-DEFINE_FUNC_02000160(Func_020001d4, 0x200, Func_020000ec, Func_02000178)
+DEFINE_SCENE_RUN_IF_FLAG_CLEARED(Func_020001d4, 0x200, Func_020000ec, Func_02000178)
 
 void Func_020001f4(void) {
   System_Wait(10);
@@ -105,21 +108,21 @@ extern s32 gData_0200222c;
 /// Sets the counter, its value built as a word.
 static inline void Counter_Set(s32 value) { gData_0200222c = value; }
 
-DEFINE_FUNC_02000238(Func_020002c8, gData_0200222c, gData_02002230,
+DEFINE_PALETTE_CYCLE_STEP_AT(Func_020002c8, gData_0200222c, gData_02002230,
     gData_02002258, 0x05000184)
 
 void Func_02001b14();
 void Func_02001bc4();
 
-DEFINE_FUNC_020002F4(Func_02000384, gData_02002230, gData_02002258,
+DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(Func_02000384, gData_02002230, gData_02002258,
     gData_02002278, Func_020002c8, gData_0200227c)
 
-DEFINE_FUNC_02000378(Func_02000408, Func_02001b14, Func_02001bc4)
+DEFINE_ACTOR_RAISE_FROM_CELL(Func_02000408, Func_02001b14, Func_02001bc4)
 
 #include "actor.h"
 #include "frame.h"
 #include "event_work.h"
 
-DEFINE_FUNC_020003CC(Func_0200045c)
+DEFINE_WHIRLWIND_CARRY_LEADER_LOWER(Func_0200045c)
 
-DEFINE_FUNC_020003D0(Func_02000648)
+DEFINE_POSITION_FLAT_DISTANCE(Func_02000648)

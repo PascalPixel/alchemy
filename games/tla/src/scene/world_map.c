@@ -1,7 +1,7 @@
 /// @file
 /// The scene code of overlay 0x64b, in ROM order.
 
-#include "shared/routines.h"
+#include "shared/actors.h"
 #include "types.h"
 #include "ram_buffer.h"
 #include "main_routine_work.h"
@@ -102,7 +102,7 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 void Animation_ApplyChildValues(struct Actor *object, s32 value);
 u32 __umodsi3(u32 a, u32 b);
 
-DEFINE_FUNC_02000038_58(Func_020002a4)
+DEFINE_TILE_SPRITE_RESET(Func_020002a4)
 
 static __inline__ s32 MulQ16(s32 a, s32 b) {
   /* FAKEMATCH(wrapper): through the inline the multiply's address loads between
@@ -157,7 +157,7 @@ s32 StoryActor_Initialize(struct Actor *actor) {
   return 0;
 }
 
-DEFINE_FUNC_02000038_58(Func_02000388)
+DEFINE_TILE_SPRITE_RESET(Func_02000388)
 
 s32 Func_020003a8(struct Actor *object) {
   Actor_SetSingleChildFlags(object, 0);
@@ -2026,4 +2026,4 @@ void Func_02003490(void) {
   FieldEvent_SetExitRequest(78);
 }
 
-DEFINE_FUNC_02000038_58(Func_020035e0)
+DEFINE_TILE_SPRITE_RESET(Func_020035e0)

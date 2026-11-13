@@ -1,7 +1,7 @@
 /// @file
 /// Scene code of overlay 0x668, in ROM order.
 
-#include "../shared/routines.h"
+#include "../shared/push.h"
 #include "types.h"
 #include "map.h"
 #include "system/task.h"
@@ -208,5 +208,5 @@ s32 Func_02004240(struct PushState *push) {
 /// The whole-pixel half of a 16.16 coordinate.
 #define PIXELS(v) (((s16 *)&(v))[1])
 
-DEFINE_FUNC_02000DAC(Func_020043a8, gData_02004ca4, gData_02004cc8,
+DEFINE_PUSH_TARGET_FIND_AHEAD(Func_020043a8, gData_02004ca4, gData_02004cc8,
     gData_02004cb0)

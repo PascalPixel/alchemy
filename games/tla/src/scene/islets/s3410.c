@@ -1,7 +1,7 @@
 /// @file
 /// Scene code of overlay 0x674, in ROM order.
 
-#include "../shared/routines.h"
+#include "../shared/push.h"
 #include "types.h"
 #include "heap_release.h"
 #include "palette_snapshots.h"
@@ -353,5 +353,5 @@ void Func_02003d0c(void);
 
 #define ABS(x) ((x) < 0 ? -(x) : (x))
 
-DEFINE_FUNC_02003A5C(Func_02003a5c, gData_0200407c, Func_02003790,
+DEFINE_PUSH_TARGET_PUSH(Func_02003a5c, gData_0200407c, Func_02003790,
     Func_02003d0c, Func_02003de4, gData_02004094)

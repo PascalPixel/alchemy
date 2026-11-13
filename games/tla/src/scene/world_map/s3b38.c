@@ -1,7 +1,7 @@
 /// @file
 /// Scene code of overlay 0x64b, in ROM order.
 
-#include "../shared/routines.h"
+#include "../shared/flight.h"
 #include "types.h"
 #include "system.h"
 #include "frame.h"
@@ -22,16 +22,16 @@
 
 void Animation_ApplyChildValues(struct Actor *object, s32 value);
 
-DEFINE_FUNC_020011F4(Func_02003b38, Func_020039f4)
+DEFINE_ACTOR_FLICKER(Func_02003b38, Func_020039f4)
 
 extern s32 gData_02006be4;
 
-DEFINE_FUNC_0200122C(Func_02003b70, gData_02004fc8, gData_02006be4,
+DEFINE_ACTOR_CYCLE_CHILD_VALUES(Func_02003b70, gData_02004fc8, gData_02006be4,
     Func_02003aac)
 
-DEFINE_FUNC_02001274(Func_02003bb8, Func_02003b38, Func_02003b70)
+DEFINE_ACTOR_SET_FLIGHT_MODE(Func_02003bb8, Func_02003b38, Func_02003b70)
 
-DEFINE_FUNC_020012AC(Func_02003bf0, Func_02003bb8, Func_02004b90)
+DEFINE_LEADER_SEARCH(Func_02003bf0, Func_02003bb8, Func_02004b90)
 
 u32 __umodsi3(u32 a, u32 b);
 
@@ -67,7 +67,7 @@ static inline void CameraMove(s32 x, s32 y, s32 z, s32 mode) {
 }
 
 /// Shakes the camera diagonally by one pixel every three frames.
-DEFINE_FUNC_02001364(Func_02003ca8)
+DEFINE_CAMERA_JITTER(Func_02003ca8)
 
 #include "event_work.h"
 #include "bg_scroll.h"
@@ -239,15 +239,15 @@ void Func_020042e0(void) {
   gBgScroll[0].y = 0;
 }
 
-DEFINE_FUNC_020011F4(Func_02004500, Func_02004634)
+DEFINE_ACTOR_FLICKER(Func_02004500, Func_02004634)
 
-DEFINE_FUNC_020019D4(Func_02004538, Func_02004634)
+DEFINE_ACTOR_ANIMATE_AND_EMIT(Func_02004538, Func_02004634)
 
-DEFINE_FUNC_02001A0C(Func_02004570)
+DEFINE_ACTOR_ANIMATE(Func_02004570)
 
-DEFINE_FUNC_02001A34(Func_02004598, Func_02004b38)
+DEFINE_ACTOR_GROW_UP(Func_02004598, Func_02004b38)
 
-DEFINE_FUNC_02001A80(Func_020045e4, Func_02004b38)
+DEFINE_ACTOR_GROW_DOWN(Func_020045e4, Func_02004b38)
 
 s32 Animation_ApplyChildArgument(struct AnimationGroup *state, s32 flags);
 
@@ -313,7 +313,7 @@ extern s16 gData_02006e0e__s3b38 __asm__("gData_02006e0e");
 /* VIEW(s3b38): variable gData_02006f20 as u8 gData_02006f20[][32]; module/scene/scene.h has u8 gData_02006f20[]; tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/world_map/s3b38.c:492: subscripted value is neither array nor pointer. */
 extern u8 gData_02006f20__s3b38[][32] __asm__("gData_02006f20");
 
-DEFINE_FUNC_02001BE0(Func_02004744, gData_02006e0c__s3b38, Data_02006e20,
+DEFINE_GAUGE_DRAW(Func_02004744, gData_02006e0c__s3b38, Data_02006e20,
     gData_02006f20__s3b38, gData_02006e0e__s3b38)
 
 // The world map cursor: counts down while A or B is held, redraws the gauge and
@@ -345,10 +345,10 @@ void Func_020048f4(void) {
   Func_02004ad0(Data_02006e14, 255);
 }
 
-DEFINE_FUNC_02001E58(Func_020049bc, gData_02006f20__s3b38,
+DEFINE_GAUGE_INIT(Func_020049bc, gData_02006f20__s3b38,
     gData_02006e0e__s3b38, gData_02006e0c__s3b38, gData_02006e10, Func_020048f4)
 
-DEFINE_FUNC_02001EB8(Func_02004a1c, gData_02006f20__s3b38,
+DEFINE_GAUGE_END(Func_02004a1c, gData_02006f20__s3b38,
     gData_02006e0e__s3b38, gData_02006e0c__s3b38, Func_020048f4)
 
 #include "scene_tables.h"

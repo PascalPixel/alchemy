@@ -1,7 +1,7 @@
 /// @file
 /// The scene code of overlay 0x6aa, in ROM order.
 
-#include "shared/routines.h"
+#include "shared/map_cells.h"
 #include "mars_lighthouse_entrance.h"
 #include "event_inline.h"
 #include "field.h"
@@ -77,8 +77,8 @@ void Func_02000118(void) {
 
 extern struct MapCell gMapCellBuffer[];
 
-DEFINE_FUNC_0200012C(Func_0200012c)
+DEFINE_MAP_CELL_GET(Func_0200012c)
 
-DEFINE_FUNC_02000168(Func_02000168)
+DEFINE_MAP_CELL_SWAP(Func_02000168)
 
 #include "../field/object/set_sprite_priority.c"

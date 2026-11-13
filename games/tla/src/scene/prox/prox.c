@@ -4,7 +4,9 @@
 // ---- games/tla/src/scene/prox.c ----
 
 #include "../shared/tables.h"
-#include "../shared/routines.h"
+#include "../shared/mars_lighthouse.h"
+#include "../shared/actors.h"
+#include "../shared/effects.h"
 #include "types.h"
 #include "ram_buffer.h"
 #include "event_work.h"
@@ -232,7 +234,7 @@ void Func_02000620(void) {
   Func_0200446c();
 }
 
-DEFINE_FUNC_020003DC(Func_02000644)
+DEFINE_LEADER_IS_FACING_NORTH(Func_02000644)
 
 void Func_02000674(void) {
   s32 t0;
@@ -1858,7 +1860,7 @@ void Func_020043c4(struct Actor *object, s32 mode);
 /* VIEW(s1cf0): variable gData_02004740 as extern const s16 gData_02004740[]; the definition has s32 gData_02004740[] = { 0xffff, - 0x8000, (s32) 0xe000c000, (s32) 0xc000a000, 0x20004000, 0x40006000, 0xffff, - 0x8000, 0xffff, - 0x8000, -...; tried as the definition's extern s32 gData_02004740[], Func_0200385c moves: 7 of 60 instructions in tla-ja. */
 extern const s16 gData_02004740__s1cf0[] __asm__("gData_02004740");
 
-DEFINE_FUNC_02002D04(Func_0200385c, gData_02004740__s1cf0, Func_020043c4)
+DEFINE_ACTOR_STEER_BY_PAD(Func_0200385c, gData_02004740__s1cf0, Func_020043c4)
 
 // The scene's own event inlines: a habit of the whole game written once, as
 // event_inline.h's are, a layer and not a compiler-steering device.
@@ -1899,7 +1901,7 @@ s32 Map_GetTerrainHeight(u8 layer, s32 x, s32 z);
 /* VIEW(s391c): variable gData_02004780 as extern s16 gData_02004780[]; the definition has s32 gData_02004780[] = { 0xffff, - 0x8000, 0xc000, (s32) 0xc0008000, 0x4000, 0x40008000, 0xffff, - 0x8000, }; tried as the definition's extern s32 gData_02004780[], it does not compile in tla-ja: games/tla/src/scene/prox.c:1976: `gData_02004780__s391c' undeclared (first use in this function). */
 extern s16 gData_02004780__s391c[] __asm__("gData_02004780");
 
-DEFINE_FUNC_02002DC4(Func_0200391c, Func_020038e8, gData_02004780__s391c,
+DEFINE_LEADER_SLIDE_ON_ICE(Func_0200391c, Func_020038e8, gData_02004780__s391c,
     Func_020043c4, Func_0200385c__s391c, Func_02004454)
 
 extern volatile s16 gData_020062a4;
@@ -1933,7 +1935,7 @@ s32 Func_0200444c(struct Actor *object);
 
 void Func_02003edc(s32 a0) { gData_020062a4 = a0; }
 
-DEFINE_FUNC_02003390(Func_02003ee8, Func_020038e8, Func_020043c4,
+DEFINE_LEADER_SLIDE_ON_ICE_AHEAD(Func_02003ee8, Func_020038e8, Func_020043c4,
     Func_0200385c__s391c, Func_02004454)
 
 struct ParticleSprite {
@@ -1953,7 +1955,7 @@ struct ParticleWork {
 void Func_0200460c(struct ParticleSprite *sprite, struct Particle *particle);
 void BattleEffect_StepVector3(struct Particle *particle, s32 unk1, s32 step);
 
-DEFINE_FUNC_0200379C(Func_02004114, Func_0200460c)
+DEFINE_PARTICLES_UPDATE_FALLING(Func_02004114, Func_0200460c)
 
 /// One falling rock: where it is, how it moves and how long it has fallen.
 struct Rock {
@@ -1988,7 +1990,7 @@ struct RockWork {
 
 /// Spawns count rocks around (x, y, z), each pushed out at a random angle and
 /// thrown up and out along it.
-DEFINE_FUNC_02003F48(Func_02004198)
+DEFINE_ROCKS_SPAWN(Func_02004198)
 #undef FIELD_AT
 
 // ---- games/tla/src/scene/prox/s4254.c ----

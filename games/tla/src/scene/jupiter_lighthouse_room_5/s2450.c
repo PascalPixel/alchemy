@@ -1,7 +1,7 @@
 /// @file
 /// Scene code of overlay 0x69e, in ROM order.
 
-#include "../shared/routines.h"
+#include "../shared/teleporter.h"
 #include "../shared/tables.h"
 #include "types.h"
 #include "system.h"
@@ -19,14 +19,14 @@
 void Func_02001c88(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags, struct EffectOptions *options);
 
-DEFINE_FUNC_02001724(Func_02002450, Func_02001c88)
+DEFINE_TELEPORTER_DROP_IN(Func_02002450, Func_02001c88)
 
 void GameFlag_SetByte(s32 flag, s32 value);
 void Func_020022b8(struct CellTarget *work, struct CellTargetEntry *entry);
 
-DEFINE_FUNC_0200180C(Func_020025e8, Data_0200354c, Func_02002248, Func_020022b8)
+DEFINE_TELEPORTERS_STEP(Func_020025e8, Data_0200354c, Func_02002248, Func_020022b8)
 
-DEFINE_FUNC_0200196C(Func_02002698, Data_0200354c, Func_02002450)
+DEFINE_TELEPORTER_PLACE_ARRIVAL(Func_02002698, Data_0200354c, Func_02002450)
 
 #include "scene_tables.h"
 #include "text/msg_ids.h"

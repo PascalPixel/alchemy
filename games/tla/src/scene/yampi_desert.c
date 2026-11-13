@@ -3,7 +3,8 @@
 
 // ---- games/tla/src/scene/yampi_desert/s0b84.c ----
 
-#include "shared/routines.h"
+#include "shared/map_cells.h"
+#include "shared/actors.h"
 #include "types.h"
 #include "system.h"
 #include "field_effect.h"
@@ -402,7 +403,7 @@ void Func_0200163c(void) {
   GameFlag_ClearBit(0x20d);
 }
 
-DEFINE_FUNC_02001514(Func_02001650)
+DEFINE_ACTORS_SET_HIDDEN(Func_02001650)
 
 s32 Actor_Jump();
 s32 Motion_SetModeAndWaitAnimation();
@@ -1219,9 +1220,9 @@ void Func_02002ca0(void) {
   BattleEffect_CleanupSceneObjects();
 }
 
-DEFINE_FUNC_02001F38(Func_02002ce0, Func_020040f8)
+DEFINE_ACTOR_HIDE(Func_02002ce0, Func_020040f8)
 
-DEFINE_FUNC_02002D10(Func_02002d10, 0x20d, Func_0200163c)
+DEFINE_SCENE_RUN_UNLESS_FLAG(Func_02002d10, 0x20d, Func_0200163c)
 
 void Func_02002d40(void) {
   Func_02002ce0(11);
@@ -1229,7 +1230,7 @@ void Func_02002d40(void) {
   Func_02002d10();
 }
 
-DEFINE_FUNC_02001F94(Func_02002d54, 6, Func_02002ce0, 9, Func_02002d10)
+DEFINE_ACTORS_FOR_RANGE(Func_02002d54, 6, Func_02002ce0, 9, Func_02002d10)
 
 void Func_02002d6c(struct Actor *object, s32 x, s32 z, s32 mode) {
   struct MainRoutineWork *party;
@@ -1656,14 +1657,14 @@ loop:
 #undef MAIN_ROUTINE_WORK_U16
 
 // Finds the current target's table row and shrinks it.
-DEFINE_FUNC_02000BC0_69(Func_0200388c, Func_02003910)
+DEFINE_STATUE_SINK(Func_0200388c, Func_02003910)
 
 // ---- games/tla/src/scene/yampi_desert/s3910.c ----
 // Scene code of overlay 0x661, in ROM order, from s3910's offset up to the next object the overlay links, and the overlay's data.
 
 #include "iwram_call.h"
 
-DEFINE_FUNC_02000128(Func_02003910, Func_020041e0, Func_02003fa8)
+DEFINE_ACTOR_SET_CELL_OPEN(Func_02003910, Func_020041e0, Func_02003fa8)
 
 /// The whole-pixel half of a 16.16 coordinate.
 /* VIEW(s3910): macro PIXELS as PIXELS__s3910; another part or header has another definition; tried with the definition the rest of the object has, Func_020039b8 moves: 33 of 212 instructions in tla-ja. */

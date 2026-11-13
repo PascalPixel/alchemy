@@ -3,7 +3,9 @@
 
 // ---- games/tla/src/scene/jupiter_lighthouse_aerie_beacon/s0198.c ----
 
-#include "../shared/routines.h"
+#include "../shared/jupiter_lighthouse.h"
+#include "../shared/actors.h"
+#include "../shared/effects.h"
 #include "types.h"
 #include "heap_release.h"
 #include "actor.h"
@@ -2283,16 +2285,16 @@ extern s32 gData_020069f4;
 /// Sets the counter, its value built as a word.
 static inline void Counter_Set(s32 value) { gData_020069f4 = value; }
 
-DEFINE_FUNC_0200027C(Func_02003f60, gData_020069f4, gData_020069f8,
+DEFINE_PALETTE_CYCLE_STEP(Func_02003f60, gData_020069f4, gData_020069f8,
     gData_02006a2c)
 
 /* VIEW(s0198): routine Func_020057c4 as void Func_020057c4(); module/scene/scene.h has void Func_020057c4(void); tried as the rest of the object declares it, it does not compile in tla-ja: games/tla/src/scene/jupiter_lighthouse_aerie_beacon/s0198.c:2369: too many arguments to function `Func_020057c4'. */
 extern void Func_020057c4__s0198() __asm__("Func_020057c4");
 
-DEFINE_FUNC_020002F4(Func_0200401c, gData_020069f8, gData_02006a2c,
+DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(Func_0200401c, gData_020069f8, gData_02006a2c,
     gData_02006a4c, Func_02003f60, gData_02006a50)
 
-DEFINE_FUNC_02000378(Func_020040a0, Func_020057c4__s0198, Func_020059ec)
+DEFINE_ACTOR_RAISE_FROM_CELL(Func_020040a0, Func_020057c4__s0198, Func_020059ec)
 
 #include "vector3.h"
 #include "main_routine_work.h"
@@ -2368,7 +2370,7 @@ void Func_020040f4(void) {
   Func_0200581c__s0198();
 }
 
-DEFINE_FUNC_020003D0(Func_020042e0)
+DEFINE_POSITION_FLAT_DISTANCE(Func_020042e0)
 
 /* VIEW(s3f54): routine Actor_StartScript as void Actor_StartScript(struct Object6a5 *object, const void *script); s0198 has void Actor_StartScript(struct Actor *object, const void *script); not tried: Actor_StartScript's bound declaration was not found. */
 extern void Func_02005764__s3f54(struct Object6a5 *object, const void *script) __asm__("Actor_StartScript");

@@ -3,7 +3,7 @@
 
 // ---- games/tla/src/scene/gaia_rock_inside/s07f4.c ----
 
-#include "../shared/routines.h"
+#include "../shared/effects.h"
 #include "types.h"
 #include "system.h"
 #include "actor.h"
@@ -535,7 +535,7 @@ void Func_02001314(s32 a0) {
 // takes a second, shrinking step. Returns 1 while it runs. The same code as
 // overlay 67C's Func_020013bc. The first push goes through Call3 (directly, its
 // offset pointer is set after the angle's load).
-DEFINE_FUNC_0200136C(Func_0200136c, Func_02001314)
+DEFINE_ORBITER_SPIRAL(Func_0200136c, Func_02001314)
 
 // Moves around in a circle.
 s32 Func_0200142c(struct GaiaRockInsideOrbit *object) {
@@ -559,13 +559,13 @@ s32 Func_0200142c(struct GaiaRockInsideOrbit *object) {
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 
-DEFINE_FUNC_020014D0(Func_020014d0)
+DEFINE_ACTOR_AIM_AT_WATCHED(Func_020014d0)
 
-DEFINE_FUNC_0200151C(Func_0200151c)
+DEFINE_ACTOR_STEP_TO_WATCHED(Func_0200151c)
 
 void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options);
 
-DEFINE_FUNC_02001548(Func_02001548, Func_0200015c)
+DEFINE_ACTOR_EMIT_BUBBLES(Func_02001548, Func_0200015c)
 #undef BYTE_AT

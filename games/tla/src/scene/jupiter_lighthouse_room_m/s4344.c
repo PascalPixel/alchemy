@@ -2,7 +2,7 @@
 /// Scene code of overlay 0x6a3, in ROM order.
 
 #include "../shared/tables.h"
-#include "../shared/routines.h"
+#include "../shared/teleporter.h"
 #include "types.h"
 #include "system.h"
 #include "ram_buffer.h"
@@ -27,13 +27,13 @@ static __inline__ void SetWorkTriple(s32 a, s32 b, s32 c) {
   Map_SetScreenShake(a, b, c);
 }
 
-DEFINE_FUNC_02001E24(Func_02004344, Func_02003b7c)
+DEFINE_TELEPORTER_DROP_IN(Func_02004344, Func_02003b7c)
 
 void GameFlag_SetByte(s32 flag, s32 value);
 
-DEFINE_FUNC_0200180C(Func_020044dc, Data_02005b88, Func_0200413c, Func_020041ac)
+DEFINE_TELEPORTERS_STEP(Func_020044dc, Data_02005b88, Func_0200413c, Func_020041ac)
 
-DEFINE_FUNC_020018BC(Func_0200458c, Data_02005b88, Func_02004344)
+DEFINE_TELEPORTER_PLACE_ARRIVAL(Func_0200458c, Data_02005b88, Func_02004344)
 
 #include "scene_tables.h"
 #include "objcmd.h"

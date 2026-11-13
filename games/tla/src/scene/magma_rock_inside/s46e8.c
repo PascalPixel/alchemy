@@ -2,7 +2,8 @@
 /// Scene code of overlay 0x692, in ROM order.
 
 // ---- games/tla/src/scene/magma_rock_inside/s46e8.c ----
-#include "../shared/routines.h"
+#include "../shared/map_cells.h"
+#include "../shared/effects.h"
 #include "../shared/tables.h"
 #include "types.h"
 #include "system.h"
@@ -111,7 +112,7 @@ void Func_0200481c(void) {
 s32 Func_02004d20(s32 layer, s32 x, s32 z);
 s32 Func_02004ef0(s32 layer, s32 shape, s32 height);
 
-DEFINE_FUNC_02000BC0(Func_02004934, Func_02004d20, Func_02004ef0)
+DEFINE_ACTOR_SET_CELL_SHAPE(Func_02004934, Func_02004d20, Func_02004ef0)
 
 #include "../magma_rock_inside.h"
 
@@ -123,7 +124,7 @@ void Func_020049c0(s32 a, s32 b) {
 
 void BattleEffect_StepVector3(struct Particle *particle, s32 unk1, s32 step);
 
-DEFINE_FUNC_0200379C(Func_020049d8, Func_02004f18)
+DEFINE_PARTICLES_UPDATE_FALLING(Func_020049d8, Func_02004f18)
 
 /// The falling rocks' work: their tiles, 64 rocks and their sprites, in a
 /// ring that next walks round.
@@ -138,7 +139,7 @@ struct RockWork {
 
 /// Spawns count rocks around (x, y, z), each pushed out at a random angle and
 /// thrown up and out along it.
-DEFINE_FUNC_02003F48(Func_02004a5c)
+DEFINE_ROCKS_SPAWN(Func_02004a5c)
 
 // ---- games/tla/src/scene/magma_rock_inside/s4b18.c ----
 #include "system/task.h"

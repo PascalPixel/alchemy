@@ -2,7 +2,7 @@
 /// Scene code of overlay 0x69d, in ROM order.
 
 #include "../shared/tables.h"
-#include "../shared/routines.h"
+#include "../shared/teleporter.h"
 #include "types.h"
 #include "system.h"
 #include "ram_buffer.h"
@@ -19,7 +19,7 @@
 void Func_02001258(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags, struct EffectOptions *options);
 
-DEFINE_FUNC_02001724(Func_02001a20, Func_02001258)
+DEFINE_TELEPORTER_DROP_IN(Func_02001a20, Func_02001258)
 
 void GameFlag_SetByte(s32 flag, s32 value);
 void Func_02001888(struct CellTarget *puzzle, struct CellTargetEntry *tile);

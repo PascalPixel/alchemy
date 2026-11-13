@@ -3,7 +3,6 @@
 
 // ---- games/tla/src/scene/garoh/s12a8.c ----
 
-#include "../shared/routines.h"
 #include "../shared/tables.h"
 #include "types.h"
 #include "field_effect.h"
@@ -129,6 +128,17 @@ void Func_020013b0(s32 id) {
   Event_PlaySound(151);
   FieldEvent_Wait(20);
 }
+
+/// 2 copies: garoh/s12a8, garoh/s12a8.
+#define DEFINE_FUNC_02001418(name, n1, n2)                                     \
+  void name(s32 actor) {                                                       \
+    BattleEffect_LoadActionEffectResources(144, 1);                            \
+    BattleEffect_SetupObjectPair(actor, 0);                                    \
+    Field_DispatchTypeHandler(n1);                                             \
+    BlendBack(n2, 5, 3, 3, 19, 5);                                             \
+    BattleEffect_StopMainActor();                                              \
+    BattleEffect_CleanupSceneObjects();                                        \
+  }
 
 DEFINE_FUNC_02001418(Func_02001418, 1, 44)
 

@@ -4,7 +4,7 @@
 // ---- games/tla/src/scene/gabomba_statue/s2394.c ----
 
 #include "../shared/tables.h"
-#include "../shared/routines.h"
+#include "../shared/map_cells.h"
 #include "types.h"
 #include "system.h"
 #include "ram_buffer.h"
@@ -2037,7 +2037,7 @@ void Func_020053bc(const u16 *entry) {
 }
 
 // Finds the current target's table row and shrinks it.
-DEFINE_FUNC_02004868(Func_02005428, Func_020054ac)
+DEFINE_STATUE_SINK(Func_02005428, Func_020054ac)
 
 void Func_020054ac(s32 id, u32 mode, s32 flag, s32 layer) {
   struct Actor *object = Actor_Get(id);

@@ -3,7 +3,7 @@
 
 // ---- games/tla/src/scene/madra.c ----
 
-#include "shared/routines.h"
+#include "shared/actors.h"
 #include "battle.h"
 #include "field.h"
 #include "game.h"
@@ -1569,7 +1569,7 @@ void Func_02002a80(void) {
   Func_020029c8();
 }
 
-DEFINE_FUNC_02000544(Func_02002ab0, Func_020029c8)
+DEFINE_SCENE_TURN_ACTOR_AND_RUN(Func_02002ab0, Func_020029c8)
 
 void Func_0200006c(void);
 void Func_020002bc(void);

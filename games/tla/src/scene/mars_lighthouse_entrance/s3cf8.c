@@ -1,7 +1,7 @@
 /// @file
 /// Scene code of overlay 0x6aa, in ROM order.
 
-#include "../shared/routines.h"
+#include "../shared/teleporter.h"
 #include "field.h"
 #include "heap_release.h"
 #include "item_icon.h"
@@ -20,11 +20,11 @@
 #include "event_inline.h"
 #include "cell_target.h"
 
-DEFINE_FUNC_02001250(Func_02003e24, Data_020068b4, Func_02003cf8)
+DEFINE_TELEPORTERS_FIND(Func_02003e24, Data_020068b4, Func_02003cf8)
 
 #include "scene_tables.h"
 
-DEFINE_FUNC_020013E4(Func_02004068)
+DEFINE_LEADER_CENTER_IN_CELL(Func_02004068)
 #include "../shared/cell_with_bit.h"
 
 /// Map_CopyCellsRect through this overlay's import.
@@ -33,7 +33,7 @@ DEFINE_FUNC_020013E4(Func_02004068)
 /// the table's source cell over the leader's, keeping the source column's and
 /// row's 64 bit; Func_02004490 calls it the first time the leader steps on
 /// one of the table's cells.
-DEFINE_FUNC_0200146C(Func_020040f0, Func_02004068)
+DEFINE_TELEPORTER_UNCOVER(Func_020040f0, Func_02004068)
 
 #include "../shared/jupiter_lighthouse_room_3.h"
 #include "io_reg.h"

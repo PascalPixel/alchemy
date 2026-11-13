@@ -1,7 +1,7 @@
 /// @file
 /// Scene code of overlay 0x6ab, in ROM order.
 
-#include "../shared/routines.h"
+#include "../shared/mars_lighthouse.h"
 #include "types.h"
 #include "ram_buffer.h"
 #include "frame.h"
@@ -52,7 +52,7 @@ void Animation_ApplyChildValues(struct Actor *object, s32 value);
 void Func_020041ec(struct Actor *object);
 void Func_0200236c(void);
 
-DEFINE_FUNC_02001DD0(Func_02001dd0, Func_020041ec)
+DEFINE_RIDE_RELEASE_HANDLE(Func_02001dd0, Func_020041ec)
 
 void Func_02001de4(s16 value) {
   ((struct RideWork *)(gData_020023c4 + 0x188))->value0e = value;
@@ -185,9 +185,9 @@ s32 Func_02001f44(void) {
   return ((struct RideWork *)(gData_020023c4 + 0x188))->counter;
 }
 
-DEFINE_FUNC_02001F50(Func_02001f50)
+DEFINE_RIDE_ADVANCE_COUNTER(Func_02001f50)
 
-DEFINE_FUNC_02001F78(Func_02001f78)
+DEFINE_RIDE_SET_ENTRY(Func_02001f78)
 
 void Func_02001f98(s32 index, s16 value) {
   ((struct RideWork *)(gData_020023c4 + 0x188))->entries[index].c = value;
@@ -197,7 +197,7 @@ s32 Func_02001fa8(s32 index) {
   return ((struct RideRow *)(gData_020023c4 + 0x188 + index * 16))->b;
 }
 
-DEFINE_FUNC_02001FB8(Func_02001fb8)
+DEFINE_RIDE_SET_SLOT(Func_02001fb8)
 
 #include "main_routine_work.h"
 #include "battle_unit.h"
@@ -212,8 +212,8 @@ struct MarsLighthouseEventWork {
 
 struct BattleUnit *Unit_Get(s32 owner);
 
-DEFINE_FUNC_02001FCC(Func_02001fcc)
+DEFINE_PARTY_TAKE_FALL_DAMAGE(Func_02001fcc)
 
 #include "../../field/field_effect/advance_spin.c"
 
-DEFINE_FUNC_020012BC(Func_02002120, 10, 4, 0)
+DEFINE_ACTOR_BLINK(Func_02002120, 10, 4, 0)

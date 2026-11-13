@@ -1,7 +1,9 @@
 /// @file
 /// Scene code of overlay 0x698, in ROM order.
 
-#include "../shared/routines.h"
+#include "../shared/whirlwind.h"
+#include "../shared/jupiter_lighthouse.h"
+#include "../shared/actors.h"
 #include "types.h"
 #include "system.h"
 #include "iwram_call.h"
@@ -23,7 +25,7 @@
 #include "module/scene/jupiter_lighthouse_entrance.h"
 #include "module/scene/scene.h"
 
-DEFINE_FUNC_020003D0(Func_020005b8)
+DEFINE_POSITION_FLAT_DISTANCE(Func_020005b8)
 
 extern const s32 gData_0200219c[];
 extern s32 gData_020021bc;
@@ -31,12 +33,12 @@ extern s32 gData_020021bc;
 s32 Func_02001b2c(s32 x, s32 z, s32 layer);
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
-DEFINE_FUNC_020005E4(Func_020005e4, Func_02001b2c, Func_020005b8,
+DEFINE_WHIRLWIND_UPDATE_LOWER(Func_020005e4, Func_02001b2c, Func_020005b8,
     gData_0200219c, gData_020021bc)
 
 void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags);
 
-DEFINE_FUNC_020007A4(Func_020007a4, Func_020019fc, Func_020005e4, Func_02000eac)
+DEFINE_WHIRLWIND_SPAWN_UPPER(Func_020007a4, Func_020019fc, Func_020005e4, Func_02000eac)
 
 s32 Func_0200087c(struct SceneEffectSource *object) {
   struct SceneEffectParams params;
@@ -58,7 +60,7 @@ s32 Func_0200087c(struct SceneEffectSource *object) {
 
 void Animation_ApplyChildValues(struct PositionedActor *object, s32 value);
 
-DEFINE_FUNC_0200091C(Func_0200091c)
+DEFINE_JUPITER_LIGHTHOUSE_PLACE_RAISED_ACTORS(Func_0200091c)
 
 // Queues the lit actors' sprites: for each listed actor with a position, projects it
 // from the map's view, skips it off screen, and writes a 16 by 16 sprite, or a 32 by
@@ -71,7 +73,7 @@ extern u32 gData_02002204[];
 
 void Func_020019d4(struct LightOam *oam, s32 depth);
 
-DEFINE_FUNC_02000AAC(Func_02000aac, gData_02002200, Data_02002244,
+DEFINE_LIGHT_SPRITES_DRAW(Func_02000aac, gData_02002200, Data_02002244,
     gData_02002202, gData_02002204, gData_02002304, gData_02002306,
     Func_02001b24, Func_020019d4)
 
@@ -79,16 +81,16 @@ DEFINE_FUNC_02000AAC(Func_02000aac, gData_02002200, Data_02002244,
 // event_inline.h's are, a layer and not a compiler-steering device.
 static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 
-DEFINE_FUNC_02000A98(Func_02000c68, gData_02002204, gData_02002200,
+DEFINE_LIGHT_SPRITES_INIT_A(Func_02000c68, gData_02002204, gData_02002200,
     Func_02000aac, gData_02002202, gData_02002304, gData_02002306)
 
-DEFINE_FUNC_02000CE8(Func_02000ce8, gData_02002204, gData_02002200,
+DEFINE_LIGHT_SPRITES_INIT_B(Func_02000ce8, gData_02002204, gData_02002200,
     Func_02000aac, gData_02002202, gData_02002304, gData_02002306)
 
-DEFINE_FUNC_02000D68(Func_02000d68, gData_02002204, gData_02002200,
+DEFINE_LIGHT_SPRITES_INIT_C(Func_02000d68, gData_02002204, gData_02002200,
     Func_02000aac, gData_02002202, gData_02002304, gData_02002306)
 
-DEFINE_FUNC_02000DF0(Func_02000df0, gData_02002202, gData_02002204)
+DEFINE_LIGHT_SPRITES_ADD(Func_02000df0, gData_02002202, gData_02002204)
 
 void Func_02000e20(s32 value) { gData_02002306 = value; }
 

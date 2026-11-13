@@ -1,7 +1,8 @@
 /// @file
 /// The scene code of overlay 0x6ae, in ROM order.
 
-#include "shared/routines.h"
+#include "shared/mars_lighthouse.h"
+#include "shared/effects.h"
 #include "mars_lighthouse_aerie.h"
 #include "event_work.h"
 #include "module/scene/mars_lighthouse_aerie.h"
@@ -108,7 +109,7 @@ const struct Trigger *Scene_GetPlacements(void) {
   return (const struct Trigger *)gData_0200626c;
 }
 
-DEFINE_FUNC_020001A0(Func_020001a0, Func_02004fac, Func_020057cc, 1,
+DEFINE_SCENE_LEAVE_BY_EXIT(Func_020001a0, Func_02004fac, Func_020057cc, 1,
     Func_02005010)
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
@@ -1669,6 +1670,6 @@ static inline struct OrbitEffect *CreateOrbitEffect(s32 type, s32 x, s32 y,
 /// Every third frame, or every frame once flag 0x200 is set, starts a particle
 /// circling actor 23 at a random height above it, as overlay 69e's
 /// Func_020001a4 does under flag 0x201.
-DEFINE_FUNC_020001A4(Func_0200326c, 0x200, gData_02006afc, Func_02003210, 2)
+DEFINE_ORBS_SPAWN_RISING(Func_0200326c, 0x200, gData_02006afc, Func_02003210, 2)
 
 #include "../field/object/park_record.c"

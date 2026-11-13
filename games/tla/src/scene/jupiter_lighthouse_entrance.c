@@ -1,7 +1,9 @@
 /// @file
 /// The scene code of overlay 0x698, in ROM order.
 
-#include "shared/routines.h"
+#include "shared/whirlwind.h"
+#include "shared/jupiter_lighthouse.h"
+#include "shared/effects.h"
 #include "battle.h"
 #include "field.h"
 #include "game.h"
@@ -117,20 +119,20 @@ extern s32 gData_02002194;
 /// Sets the counter, its value built as a word.
 static inline void Counter_Set(s32 value) { gData_02002194 = value; }
 
-DEFINE_FUNC_02000238(Func_02000238, gData_02002194, gData_02002198,
+DEFINE_PALETTE_CYCLE_STEP_AT(Func_02000238, gData_02002194, gData_02002198,
     gData_020021c0, 0x05000184)
 
 #include "field_event.h"
 
 void Func_02001a6c();
 
-DEFINE_FUNC_020002F4(Func_020002f4, gData_02002198, gData_020021c0,
+DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(Func_020002f4, gData_02002198, gData_020021c0,
     gData_020021e0, Func_02000238, gData_020021e4)
 
-DEFINE_FUNC_02000378(Func_02000378, Func_02001a6c, Func_02001b34)
+DEFINE_ACTOR_RAISE_FROM_CELL(Func_02000378, Func_02001a6c, Func_02001b34)
 
 #include "actor.h"
 #include "frame.h"
 #include "event_work.h"
 
-DEFINE_FUNC_020003CC(Func_020003cc)
+DEFINE_WHIRLWIND_CARRY_LEADER_LOWER(Func_020003cc)

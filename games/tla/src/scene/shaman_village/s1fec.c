@@ -1,4 +1,3 @@
-#include "../shared/routines.h"
 #include "shaman_village.h"
 #include "event_inline.h"
 #include "scene_tables.h"
@@ -1295,6 +1294,17 @@ void Func_02004394(void) {
     Func_0200430c(0x680000, 0x620000, 0x980000);
   }
 }
+
+/// 2 copies: shaman_village/s1fec, shaman_village/s1fec.
+#define DEFINE_FUNC_020043C8(name, n1, n2)                                     \
+  void name(void) {                                                            \
+    s32 variant = ((struct ShamanVillageObject *)Actor_GetById(                \
+                       gMainRoutineWork.currentOwner))                         \
+                      ->sprite->priority;                                      \
+                                                                               \
+    Actor_SetSpritePriority(n1, variant);                                      \
+    Actor_SetSpritePriority(n2, variant);                                      \
+  }
 
 DEFINE_FUNC_020043C8(Func_020043c8, 21, 14)
 

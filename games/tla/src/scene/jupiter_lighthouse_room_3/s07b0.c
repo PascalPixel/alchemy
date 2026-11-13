@@ -1,7 +1,9 @@
 /// @file
 /// Scene code of overlay 0x69c, in ROM order.
 
-#include "../shared/routines.h"
+#include "../shared/whirlwind.h"
+#include "../shared/jupiter_lighthouse.h"
+#include "../shared/effects.h"
 #include "types.h"
 #include "map.h"
 #include "ram_buffer.h"
@@ -26,7 +28,7 @@ s32 Func_02002450(s32 x, s32 z, s32 layer);
 s32 Func_02000784(s32 *from, s32 *to);
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
-DEFINE_FUNC_020005E4(Func_020007b0, Func_02002450, Func_02000784,
+DEFINE_WHIRLWIND_UPDATE_LOWER(Func_020007b0, Func_02002450, Func_02000784,
     gData_02002cc8, gData_02002ce8)
 
 void Func_020022e0(struct GustObject *object, s32 mode);
@@ -35,11 +37,11 @@ void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags);
 void Func_02001788(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags, struct EffectOptions *options);
 
-DEFINE_FUNC_020007E8(Func_02000970, Func_020022e0, Func_020007b0, Func_02001788)
+DEFINE_WHIRLWIND_SPAWN(Func_02000970, Func_020022e0, Func_020007b0, Func_02001788)
 
-DEFINE_FUNC_020008C0(Func_02000a48, Func_02001788)
+DEFINE_ACTOR_EMIT_RISING_SPARKS(Func_02000a48, Func_02001788)
 
-DEFINE_FUNC_0200091C(Func_02000ae8)
+DEFINE_JUPITER_LIGHTHOUSE_PLACE_RAISED_ACTORS(Func_02000ae8)
 
 extern const s8 gData_02002484[][4];
 

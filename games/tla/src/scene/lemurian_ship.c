@@ -2,7 +2,6 @@
 /// The scene code of overlay 0x656, in ROM order.
 
 // ---- games/tla/src/scene/lemurian_ship/scene_tables.c ----
-#include "shared/routines.h"
 #include "shared/tables.h"
 #include "battle.h"
 #include "field.h"
@@ -590,6 +589,20 @@ void Func_02000af4(void) {
   }
 }
 
+/// 3 copies: lemurian_ship, lemurian_ship, lemurian_ship.
+#define DEFINE_FUNC_02000BF0(name, n1)                                         \
+  void name(s32 id) {                                                          \
+    Event_Start();                                                             \
+    Event_ResolvePendingActions(0);                                            \
+    Actor_SetAngleToward(id, gMainRoutineWork.currentOwner, 0);                \
+    Actor_StartRepeatedMotion(id, 2);                                          \
+    Actor_SetAttachedEffect(id, 0x102);                                        \
+    Event_Wait(20);                                                            \
+    gMainRoutineWork.battleRule24b = 2;                                        \
+    Field_RequestBattleFromEncounterTable(11, 0);                              \
+    GameFlag_SetBit(id + n1);                                                  \
+  }
+
 DEFINE_FUNC_02000BF0(Func_02000bf0, 0x2f8)
 
 DEFINE_FUNC_02000BF0(Func_02000c50, 0x2f9)
@@ -741,6 +754,15 @@ void Func_020010cc(void) {
   Func_02000e2c();
 }
 
+/// 2 copies: lemurian_ship, lemurian_ship.
+#define DEFINE_FUNC_020010D8(name, n1, n2)                                     \
+  void name(void) {                                                            \
+    Sound_Play(106);                                                           \
+    Actor_SetModeById(n1, 2);                                                  \
+    GameFlag_SetBit(n2);                                                       \
+    Func_02000e2c();                                                           \
+  }
+
 DEFINE_FUNC_020010D8(Func_020010d8, 8, 0x204)
 
 DEFINE_FUNC_020010D8(Func_020010f8, 9, 0x205)
@@ -752,6 +774,35 @@ void Func_02001118(void) {
 void Func_02001128(void) {
   Actor_SetPartAttribute(((struct LemurianShipObject *)Actor_GetById(11)), 0);
 }
+
+/// 2 copies: lemurian_ship, lemurian_ship.
+#define DEFINE_FUNC_02001138(name, n1, n2, n3, n4)                             \
+  void name(void) {                                                            \
+    struct LemurianShipEventWork *work = Ram_HeapSlots->eventWork;             \
+    struct LemurianShipObject *object =                                        \
+        ((struct LemurianShipObject *)Actor_GetById(n1));                      \
+    u32 i;                                                                     \
+                                                                               \
+    Event_Start();                                                             \
+    Event_ResolvePendingActions(0);                                            \
+    work->field16a = 0;                                                        \
+    GameFlag_ClearBit(n2);                                                     \
+    GameFlag_ClearBit(n3);                                                     \
+    Event_Wait(20);                                                            \
+    Sound_Play(186);                                                           \
+    for (i = 0; i <= 63; i++) {                                                \
+      object->y += 0x4000;                                                     \
+      wait(1);                                                                 \
+    }                                                                          \
+    Actor_SetSpritePriority(n1, 2);                                            \
+    Map_CopyCellPictureIndicesRect(4, 123, n4, 69, 1, 1);                      \
+    MapGrid_CopyCellAttributes(36, 0, 1, 1, n4, 9);                            \
+    Sound_Play(188);                                                           \
+    MapGrid_CopyCellsTo(7, 124, 31, 64, 3, 2);                                 \
+    GameFlag_ClearBit(0x982);                                                  \
+    Event_Wait(20);                                                            \
+    Event_End();                                                               \
+  }
 
 DEFINE_FUNC_02001138(Func_02001138, 8, 0x202, 0x204, 35)
 
@@ -787,6 +838,18 @@ void Func_02001368(void) {
   Event_ResolvePendingActions(0);
   Event_End();
 }
+
+/// 2 copies: lemurian_ship, lemurian_ship.
+#define DEFINE_FUNC_02001380(name, n1)                                         \
+  void name(s32 id) {                                                          \
+    struct LemurianShipObject *object =                                        \
+        ((struct LemurianShipObject *)Actor_GetById(id));                      \
+                                                                               \
+    ((struct LemurianShipObject *)Actor_GetById(id))->priorityFlags |= 0x20;   \
+    Actor_SetSpritePriority(id, n1);                                           \
+    object->priorityFlags &= ~2;                                               \
+    object->timer = 1;                                                         \
+  }
 
 DEFINE_FUNC_02001380(Func_02001380, 1)
 

@@ -1,7 +1,7 @@
 /// @file
 /// Scene code of overlay 0x657, in ROM order.
 
-#include "../shared/routines.h"
+#include "../shared/effects.h"
 #include "../shared/tables.h"
 #include "types.h"
 #include "system.h"
@@ -826,7 +826,7 @@ void Func_020014c0(void) {
   Event_End();
 }
 
-DEFINE_FUNC_02000DF8(Func_02001d60, 7, Func_02001efc, gData_02002498)
+DEFINE_ACTOR_EMIT_SMOKE(Func_02001d60, 7, Func_02001efc, gData_02002498)
 
 void Func_02001da0(void) {
   if (Event_GetFlag(7)) {

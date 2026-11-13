@@ -1,7 +1,6 @@
 /// @file
 /// Scene code of overlay 0x653, in ROM order.
 
-#include "../shared/routines.h"
 #include "../shared/tables.h"
 #include "../kandorean_temple.h"
 #include "field_effect.h"
@@ -112,6 +111,21 @@ do {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(10);
+/// 2 copies: kandorean_temple/s2ec4, kandorean_temple/s2ec4.
+#define DEFINE_FUNC_02000CF8(n1, n2, n3, n4, n5)                               \
+  do {                                                                         \
+    leader->y += -0x6c000;                                                     \
+    statue->y += -0x6c000;                                                     \
+    ride->y += -0x2b333;                                                       \
+    limit = 0x1800;                                                            \
+    Func_02000cf8(n1, 0x30000, limit);                                         \
+    Func_02000cf8(n2, 0x24000, limit);                                         \
+    Func_02000cf8(n3, 0x18000, limit);                                         \
+    Func_02000cf8(n4, 0xc000, limit);                                          \
+    Func_02000cf8(n5, 0, limit);                                               \
+    wait(1);                                                                   \
+  } while (Actor_GetById(n5)->scaleY > limit);
+
 DEFINE_FUNC_02000CF8(11, 13, 14, 15, 16)
   gData_02006298 = 0;
   GameFlag_ClearBit(0x20c);
@@ -261,6 +275,56 @@ void Func_02003584(void) {
 }
 
 /// The leader and actor 13 rise into view while actor 15 scales.
+/// 2 copies: kandorean_temple/s2ec4, kandorean_temple/s2ec4.
+#define DEFINE_FUNC_02003684(name, n1, n2, n3, n4, n5, n6, n7, data1)          \
+  void name(void) {                                                            \
+    struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);       \
+    struct Actor *first = Actor_GetById(n1);                                   \
+    struct Actor *second = Actor_GetById(n2);                                  \
+                                                                               \
+    Event_Start();                                                             \
+    Event_ResolvePendingActions(0);                                            \
+    Func_02005388(162);                                                        \
+    FieldCamera_MoveTo(-1, -1, -1, 0);                                         \
+    wait(1);                                                                   \
+    leader->motionFlags = 0;                                                   \
+    Actor_SetPositionAndResetMotion_(                                          \
+        Actor_GetById(gMainRoutineWork.currentOwner), PIXELS(n3), PIXELS(-20), \
+        PIXELS(n4));                                                           \
+    Actor_SetSingleChildFlags_(Actor_GetById(gMainRoutineWork.currentOwner),   \
+                               0);                                             \
+    Actor_SetPositionAndResetMotion_(Actor_GetById(n1), PIXELS(n3),            \
+                                     PIXELS(-20), PIXELS(n5));                 \
+    Actor_SetPositionAndResetMotion_(Actor_GetById(n2), PIXELS(n3),            \
+                                     PIXELS(-20), PIXELS(n4));                 \
+    Actor_SetSpritePriority(n1, 2);                                            \
+    Actor_SetSpritePriority(n2, 3);                                            \
+    {                                                                          \
+      u8 *flags = &second->priorityFlags;                                      \
+      s32 c = 2 | *flags;                                                      \
+                                                                               \
+      *flags = c;                                                              \
+    }                                                                          \
+    second->scaleY = 0x400;                                                    \
+    Actor_SetModeById(n1, 4);                                                  \
+    Actor_SetModeById(n2, 2);                                                  \
+    ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->value = 521;            \
+    Event_StartScreenTransition();                                             \
+    Event_WaitTransitionFrames();                                              \
+    /* A goto loop, as in Func_0200393c. */                                    \
+  rise:                                                                        \
+    first->y += PIXELS(4);                                                     \
+    leader->y += PIXELS(4);                                                    \
+    Func_02000cd8(n2, 0x4ccc, 0x4ccc);                                         \
+    wait(1);                                                                   \
+    if (first->y < 0)                                                          \
+      goto rise;                                                               \
+    MapGrid_CopyCellAttributes(0, 0, 1, 1, n6, n7);                            \
+    data1 = 2000;                                                              \
+    ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->value = 516;            \
+    Event_End();                                                               \
+  }
+
 DEFINE_FUNC_02003684(Func_02003684, 13, 15, 440, 200, 204, 27, 12,
     gData_020062a0)
 

@@ -1,7 +1,7 @@
 /// @file
 /// The scene code of overlay 0x65d, in ROM order.
 
-#include "shared/routines.h"
+#include "shared/actors.h"
 #include "shared/tables.h"
 #include "battle.h"
 #include "field.h"
@@ -249,7 +249,7 @@ void Func_02000514(void) {
   Func_02000438();
 }
 
-DEFINE_FUNC_02000544(Func_02000544, Func_02000438)
+DEFINE_SCENE_TURN_ACTOR_AND_RUN(Func_02000544, Func_02000438)
 
 void Func_02000564(void) {
   s32 x = ((s16 *)&Actor_GetById(4)->x)[1];

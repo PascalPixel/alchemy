@@ -1,7 +1,7 @@
 /// @file
 /// Scene code of overlay 0x69a, in ROM order.
 
-#include "../shared/routines.h"
+#include "../shared/teleporter.h"
 #include "types.h"
 #include "field_effect.h"
 #include "main_routine_work.h"
@@ -98,13 +98,13 @@ void Func_02000f3c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 #include "scene_tables.h"
 #include "cell_target.h"
 
-DEFINE_FUNC_020011A0(Func_02001230, gData_020023a0, Func_02001104)
+DEFINE_TELEPORTERS_FIND_LOWER(Func_02001230, gData_020023a0, Func_02001104)
 
-DEFINE_FUNC_020013E4(Func_02001474)
+DEFINE_LEADER_CENTER_IN_CELL(Func_02001474)
 #include "../shared/cell_with_bit.h"
 
 /// Centers the leader on its cell, plays sound 161 and copies the cell below
 /// the table's source cell over the leader's, keeping the source column's and
 /// row's 64 bit; Func_0200189c calls it the first time the leader steps on
 /// one of the table's cells.
-DEFINE_FUNC_0200146C(Func_020014fc, Func_02001474)
+DEFINE_TELEPORTER_UNCOVER(Func_020014fc, Func_02001474)

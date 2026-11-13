@@ -3,7 +3,7 @@
 
 // ---- games/tla/src/scene/treasure_isle/scene_tables.c ----
 #include "../shared/tables.h"
-#include "../shared/routines.h"
+#include "../shared/map_cells.h"
 #include "battle.h"
 #include "field.h"
 #include "game.h"
@@ -50,7 +50,7 @@ const u8 *Scene_GetPlacements(void) {
 
 extern struct MapCell gMapCellBuffer[];
 
-DEFINE_FUNC_02000168(Func_020003b4)
+DEFINE_MAP_CELL_SWAP(Func_020003b4)
 
 #include "event_inline.h"
 
@@ -248,6 +248,21 @@ void Func_02000880(s32 unused, s32 frame, s32 id) {
     Event_ClearFlag(cells[id].flag);
   }
 }
+
+/// 8 copies: treasure_isle/treasure_isle, treasure_isle/treasure_isle,
+/// treasure_isle/treasure_isle, treasure_isle/treasure_isle,
+/// treasure_isle/treasure_isle, treasure_isle/treasure_isle,
+/// treasure_isle/treasure_isle, treasure_isle/treasure_isle.
+#define DEFINE_FUNC_02000914(name, n1, n2)                                     \
+  void name(void) {                                                            \
+    s32 t0;                                                                    \
+                                                                               \
+    t0 = ((s32)Actor_Get(n1));                                                 \
+    FIELD_AT(FIELD_AT(t0, s32, 80), s8, 9) =                                   \
+        ((-13 & FIELD_AT(FIELD_AT(t0, s32, 80), s8, 9)) | 4);                  \
+    FIELD_AT((t0 + 0x23), u8, 0) = (0xfe & FIELD_AT((t0 + 0x23), u8, 0));      \
+    Event_SetFlag(n2);                                                         \
+  }
 
 DEFINE_FUNC_02000914(Func_02000914, 9, 0x200)
 

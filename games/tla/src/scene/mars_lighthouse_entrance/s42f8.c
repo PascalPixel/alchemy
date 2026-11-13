@@ -2,7 +2,10 @@
 /// Scene code of overlay 0x6aa, in ROM order.
 
 #include "../shared/tables.h"
-#include "../shared/routines.h"
+#include "../shared/teleporter.h"
+#include "../shared/map_cells.h"
+#include "../shared/actors.h"
+#include "../shared/effects.h"
 #include "../shared/mars_lighthouse_entrance_room.h"
 #include "field_effect.h"
 #include "module/field/field_effect.h"
@@ -82,9 +85,9 @@ void GameFlag_SetByte(s32 flag, s32 value);
 void Func_02004160(struct CellTarget *work,
                    struct CellTargetEntry *entry);
 
-DEFINE_FUNC_0200180C(Func_02004490, Data_020068b4, Func_020040f0, Func_02004160)
+DEFINE_TELEPORTERS_STEP(Func_02004490, Data_020068b4, Func_020040f0, Func_02004160)
 
-DEFINE_FUNC_020018BC(Func_02004540, Data_020068b4, Func_020042f8)
+DEFINE_TELEPORTER_PLACE_ARRIVAL(Func_02004540, Data_020068b4, Func_020042f8)
 
 #include "dma.h"
 #include "io_reg.h"
@@ -95,14 +98,14 @@ extern u16 *gData_02006890;
 /// Records the four palette lists, writes each listed palette entry from its
 /// red, green and blue, then copies two palettes from block32 and starts the
 /// blend.
-DEFINE_FUNC_0200154C(Func_020045f8, gData_0200e88c, gData_02006890,
+DEFINE_PALETTE_SET_COLORS_FADE(Func_020045f8, gData_0200e88c, gData_02006890,
     Data_02006894, Data_02006880, Func_020048e8)
 
 #include "task.h"
 
 extern u16 gData_02006898;
 
-DEFINE_FUNC_020000F4(Func_020046b4, gData_0200689c, gData_02006898,
+DEFINE_PALETTE_CYCLE_START(Func_020046b4, gData_0200689c, gData_02006898,
     Func_02004794, gData_0200e88c, gData_0200e888, 15, gData_02006884, 16,
     gData_0200687c, Func_020047b8)
 
@@ -111,13 +114,13 @@ void Func_02004718(void) {
   FieldTask_Remove(Func_020047b8);
 }
 
-DEFINE_FUNC_020000F4(Func_02004738, gData_0200689c, gData_02006898,
+DEFINE_PALETTE_CYCLE_START(Func_02004738, gData_0200689c, gData_02006898,
     Func_02004794, gData_0200e88c, gData_0200e888, 2, gData_02006884, 2,
     gData_0200687c, Func_020047b8)
 
-DEFINE_FUNC_020001D4(Func_02004794)
+DEFINE_LIST_COUNT_ENTRIES(Func_02004794)
 
-DEFINE_FUNC_020001F8(Func_020047b8, gData_02006884, gData_0200e888,
+DEFINE_PALETTE_CYCLE_FADE(Func_020047b8, gData_02006884, gData_0200e888,
     Data_02006894, gData_02006898, Data_02006880, gData_0200689c,
     gData_0200e88c, gData_0200687c, gData_02006890)
 
@@ -154,7 +157,7 @@ void Func_020048e8(void) {
 
 #include "field.h"
 
-DEFINE_FUNC_020019DC(Func_02004970, Func_02004a60)
+DEFINE_ACTORS_SET_CELLS_OPEN(Func_02004970, Func_02004a60)
 
 // Finds the current target's table row and shrinks it.
 void Func_020049dc(u16 *list, s32 mode, s32 count) {
@@ -194,7 +197,7 @@ void Func_020049dc(u16 *list, s32 mode, s32 count) {
 #include "field_event.h"
 #include "map.h"
 
-DEFINE_FUNC_02000128__S00A4(Func_02004a60, Func_02004db8, Func_02004bc0)
+DEFINE_ACTOR_SET_CELL_OPEN(Func_02004a60, Func_02004db8, Func_02004bc0)
 
 #include "scene_tables.h"
 #include "version.h"

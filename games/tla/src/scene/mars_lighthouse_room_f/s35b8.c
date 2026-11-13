@@ -1,7 +1,7 @@
 /// @file
 /// Scene code of overlay 0x6ad, in ROM order.
 
-#include "../shared/routines.h"
+#include "../shared/teleporter.h"
 #include "types.h"
 #include "main_routine_work.h"
 #include "field_sprite.h"
@@ -246,7 +246,7 @@ s32 Func_020038ac(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {
 
 #include "scene_tables.h"
 
-DEFINE_FUNC_020013E4(Func_02003af0)
+DEFINE_LEADER_CENTER_IN_CELL(Func_02003af0)
 #include "../shared/cell_with_bit.h"
 
 /// Map_CopyCellsRect through this overlay's import.
@@ -255,9 +255,9 @@ DEFINE_FUNC_020013E4(Func_02003af0)
 /// the table's source cell over the leader's, keeping the source column's and
 /// row's 64 bit; Func_02003f18 calls it the first time the leader steps on
 /// one of the table's cells.
-DEFINE_FUNC_0200146C(Func_02003b78, Func_02003af0)
+DEFINE_TELEPORTER_UNCOVER(Func_02003b78, Func_02003af0)
 
 #include "../shared/jupiter_lighthouse_room_3.h"
 #include "io_reg.h"
 
-DEFINE_FUNC_02003BE8(Func_02003be8, Func_02003af0)
+DEFINE_TELEPORTER_SINK_EVENT(Func_02003be8, Func_02003af0)

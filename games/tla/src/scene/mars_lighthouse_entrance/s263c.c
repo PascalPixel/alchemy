@@ -2,7 +2,7 @@
 /// Scene code of overlay 0x6aa, in ROM order.
 
 // ---- games/tla/src/scene/mars_lighthouse_entrance/s263c.c ----
-#include "../shared/routines.h"
+#include "../shared/mars_lighthouse.h"
 #include "version.h"
 
 #include "types.h"
@@ -266,7 +266,7 @@ extern const u8 gData_02005714[];
 
 /// Throws two sparks (object kind 325) from (x, y, z), each upward at about
 /// speed plus 0x14000 with a random spread, at a random angle and size.
-DEFINE_FUNC_020029F4(Func_02002b4c, gData_02005714)
+DEFINE_EMBERS_SPAWN(Func_02002b4c, gData_02005714)
 
 void Func_02002c2c(struct Actor *object) {
   object->movementState = Event_GetFlag(260);
@@ -293,7 +293,7 @@ struct WorkEvent {
   s16 unk166;
 };
 
-DEFINE_FUNC_0200274C(Func_02002c40, Work020023c4__s2860, Func_02004c18,
+DEFINE_ACTOR_ROLL_AND_CRUMBLE(Func_02002c40, Work020023c4__s2860, Func_02004c18,
     Func_02002b4c, Func_020029c8)
 #undef WORK
 #undef ABS
@@ -327,7 +327,7 @@ extern u16 gData_020068a2;
 
 void Func_02004c88(s32 scene, s32 a1);
 
-DEFINE_FUNC_02002F4C(Func_02002f4c, Func_02004bc0, Func_02002c2c)
+DEFINE_ACTOR_ATTACH(Func_02002f4c, Func_02004bc0, Func_02002c2c)
 
 #include "field_sprite.h"
 #include "scene_tables.h"
@@ -338,25 +338,25 @@ DEFINE_FUNC_02002F4C(Func_02002f4c, Func_02004bc0, Func_02002c2c)
 /// gives it Func_02002c40 as its update hook and its speed, clears its scale
 /// and action, has it watch what self watches, and calls Event_PlaySound(104).
 /// The twin of overlay 6ac's Func_02002e6c.
-DEFINE_FUNC_02002AD0(Func_02002fc4, Func_02002c40)
+DEFINE_ACTOR_LAUNCH_AHEAD(Func_02002fc4, Func_02002c40)
 
 void Actor_SetSpritePriorityDirect(struct Actor *object, s32 mode);
 
-DEFINE_FUNC_02002B98(Func_0200308c, Func_02004bc0)
+DEFINE_ACTOR_POP_UP_SLOW(Func_0200308c, Func_02004bc0)
 
-DEFINE_FUNC_02002C44(Func_02003138, Func_02004bc0)
+DEFINE_ACTOR_POP_UP(Func_02003138, Func_02004bc0)
 
 #include "macros.h"
 
-DEFINE_FUNC_02002CE8(Func_020031dc, Func_02002fc4)
+DEFINE_ACTOR_PARK(Func_020031dc, Func_02002fc4)
 
 #include "input.h"
 
 extern const s16 gData_02005758[];
 
-DEFINE_FUNC_02002D04(Func_020031f8, gData_02005758, Func_02004bc0)
+DEFINE_ACTOR_STEER_BY_PAD(Func_020031f8, gData_02005758, Func_02004bc0)
 
-DEFINE_FUNC_02003284(Func_02003284)
+DEFINE_LEADER_STOP_IF_PENDING(Func_02003284)
 
 // ---- games/tla/src/scene/mars_lighthouse_entrance/s32b8.c ----
 #include "system/iwram_call.h"
@@ -374,7 +374,7 @@ void Func_02004bc0(struct Actor *actor, s32 mode);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 extern s16 gData_02005798[];
 
-DEFINE_FUNC_02002DC4(Func_020032b8, Func_02003284, gData_02005798,
+DEFINE_LEADER_SLIDE_ON_ICE(Func_020032b8, Func_02003284, gData_02005798,
     Func_02004bc0, Func_020031f8, Func_02004c78)
 
 // ---- games/tla/src/scene/mars_lighthouse_entrance/s3564.c ----

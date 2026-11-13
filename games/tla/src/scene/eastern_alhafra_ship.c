@@ -4,7 +4,7 @@
 // ---- games/tla/src/scene/eastern_alhafra_ship.c ----
 
 #include "shared/tables.h"
-#include "shared/routines.h"
+#include "shared/effects.h"
 #include "battle.h"
 #include "field.h"
 #include "game.h"
@@ -217,7 +217,7 @@ void Func_020003e8(s32 x, s32 y, s32 z, s16 value, s32 fifth) {
 /* VIEW(s0438): routine Func_020003e8 as s32 Func_020003e8(s32 x, s32 y, s32 z, s32 rotation, s32 timer); the definition has void Func_020003e8(s32 x, s32 y, s32 z, s16 value, s32 fifth); tried as the definition's void Func_020003e8(u16 *ids), it does not compile in tla-ja: games/tla/src/scene/eastern_alhafra_ship.c:215: conflicting types for `Func_020003e8'. */
 extern s32 Func_020003e8__s0438(s32 x, s32 y, s32 z, s32 rotation, s32 timer) __asm__("Func_020003e8");
 
-DEFINE_FUNC_02000438(Func_02000438, Func_020003e8__s0438)
+DEFINE_ACTOR_EMIT_NOTES(Func_02000438, Func_020003e8__s0438)
 
 extern u32 gData_020033c8[];
 void Event_Start();

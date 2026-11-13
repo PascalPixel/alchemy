@@ -1,4 +1,4 @@
-#include "../shared/routines.h"
+#include "../shared/map_cells.h"
 #include "../shared/tables.h"
 #include "types.h"
 #include "system.h"
@@ -104,7 +104,7 @@ void Func_02002b04(void) {
 #include "map.h"
 #include "system/ram_buffer.h"
 
-DEFINE_FUNC_02000BC0(Func_02002c1c, Func_02003010, Func_02003180)
+DEFINE_ACTOR_SET_CELL_SHAPE(Func_02002c1c, Func_02003010, Func_02003180)
 
 void Func_02002ca8(s32 a, s32 b) {
   Func_02002c1c(a, b, gMainRoutineWork.currentOwner);

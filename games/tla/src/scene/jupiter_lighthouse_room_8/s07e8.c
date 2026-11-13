@@ -1,7 +1,9 @@
 /// @file
 /// Scene code of overlay 0x6a1, in ROM order.
 
-#include "../shared/routines.h"
+#include "../shared/whirlwind.h"
+#include "../shared/jupiter_lighthouse.h"
+#include "../shared/effects.h"
 #include "types.h"
 #include "map.h"
 #include "call.h"
@@ -21,11 +23,11 @@ void Func_02000628(struct GustObject *object);
 void Func_02001600(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags, struct EffectOptions *options);
 
-DEFINE_FUNC_020007E8(Func_020007e8, Func_02002160, Func_02000628, Func_02001600)
+DEFINE_WHIRLWIND_SPAWN(Func_020007e8, Func_02002160, Func_02000628, Func_02001600)
 
-DEFINE_FUNC_020008C0(Func_020008c0, Func_02001600)
+DEFINE_ACTOR_EMIT_RISING_SPARKS(Func_020008c0, Func_02001600)
 
-DEFINE_FUNC_0200091C(Func_02000960)
+DEFINE_JUPITER_LIGHTHOUSE_PLACE_RAISED_ACTORS(Func_02000960)
 
 extern const s8 gData_020022dc[][4];
 

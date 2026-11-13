@@ -1,4 +1,5 @@
-#include "../shared/routines.h"
+#include "../shared/map_cells.h"
+#include "../shared/effects.h"
 #include "../shared/tables.h"
 #include "types.h"
 #include "system.h"
@@ -109,7 +110,7 @@ s32 Func_02003adc(s32 terrainId, s32 x, s32 z);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 s32 Func_02003c24(s32 terrainId, s32 value, s32 height);
 
-DEFINE_FUNC_02000BC0_89(Func_020036f8, Func_02003adc, Func_02003c24)
+DEFINE_ACTOR_SET_CELL_SHAPE_AT(Func_020036f8, Func_02003adc, Func_02003c24)
 
 void Func_02002e30(const u8 *data);
 
@@ -133,7 +134,7 @@ struct ParticleWork {
 
 void BattleEffect_StepVector3(struct Particle *particle, s32 unk1, s32 step);
 
-DEFINE_FUNC_0200379C(Func_0200379c, Func_02003c3c)
+DEFINE_PARTICLES_UPDATE_FALLING(Func_0200379c, Func_02003c3c)
 
 void Func_02003820(s32 x, s32 y, s32 z, s32 count) {
   struct EntryWork *work;

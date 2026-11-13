@@ -3,7 +3,6 @@
 
 // ---- games/tla/src/scene/champa_cliff_caves.c ----
 
-#include "shared/routines.h"
 #include "event_inline.h"
 #include "types.h"
 #include "main_routine_work.h"
@@ -66,6 +65,17 @@ static __inline__ void Func_02003534_(s32 actor, s32 angle) {
 #include "resource.h"
 #include "scene_call.h"
 #include "system.h"
+
+/// 2 copies: champa_cliff_caves, champa_cliff_caves.
+#define DEFINE_FUNC_02000038_3(name, n1)                                       \
+  void name(struct RiseObject *object) {                                       \
+    object->scale += n1;                                                       \
+    if (object->scale >= 0x10000) {                                            \
+      object->scale = 0x10000;                                                 \
+      object->update = 0;                                                      \
+    }                                                                          \
+    object->scaleCopy = object->scale;                                         \
+  }
 
 DEFINE_FUNC_02000038_3(Func_02000038, 0x1000)
 

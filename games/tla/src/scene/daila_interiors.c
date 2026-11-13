@@ -4,7 +4,7 @@
 // ---- games/tla/src/scene/daila_interiors.c ----
 
 #include "shared/tables.h"
-#include "shared/routines.h"
+#include "shared/actors.h"
 #include "battle.h"
 #include "field.h"
 #include "game.h"
@@ -361,7 +361,7 @@ void Func_020006c4(void) {
   Import_EventEnd();
 }
 
-DEFINE_FUNC_02000704(Func_02000704, Func_02000dcc, gData_02000e04)
+DEFINE_SCENE_RAISE_HELD_ACTOR(Func_02000704, Func_02000dcc, gData_02000e04)
 
 // ---- games/tla/src/scene/daila_interiors/item.c ----
 // Scene code of overlay 0x652, in ROM order, from item's offset up to the next object the overlay links.
@@ -602,7 +602,7 @@ s32 Scene_PrepareMap(void) {
   return 0;
 }
 
-DEFINE_FUNC_0200014C(Func_02000c58)
+DEFINE_SCENE_FADE_IN_AND_CLEAR_FLAG(Func_02000c58)
 
 void Func_02000c74(void) { Func_02000d9c(); }
 

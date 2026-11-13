@@ -1,7 +1,10 @@
 /// @file
 /// The scene code of overlay 0x69f, in ROM order.
 
-#include "shared/routines.h"
+#include "shared/whirlwind.h"
+#include "shared/jupiter_lighthouse.h"
+#include "shared/actors.h"
+#include "shared/effects.h"
 #include "battle.h"
 #include "field.h"
 #include "game.h"
@@ -48,9 +51,9 @@ void Func_02000084(s32 value) {
 
 #include "jupiter_lighthouse_room_6.h"
 
-DEFINE_FUNC_02000060(Func_020000b4, 84, 36, 2, 78, 40, 84, 39, 20, 38, 14, 42)
+DEFINE_JUPITER_LIGHTHOUSE_OPEN_DOOR(Func_020000b4, 84, 36, 2, 78, 40, 84, 39, 20, 38, 14, 42)
 
-DEFINE_FUNC_020000B4(Func_02000108, 84, 36, 2, 78, 40, 84, 20, 44, 14, 42)
+DEFINE_JUPITER_LIGHTHOUSE_CLOSE_DOOR(Func_02000108, 84, 36, 2, 78, 40, 84, 20, 44, 14, 42)
 
 void Func_02000154(void) {
   struct JupiterLighthouseRoom6Object *object =
@@ -62,9 +65,9 @@ void Func_02000154(void) {
   }
 }
 
-DEFINE_FUNC_0200013C(Func_02000190, 512, Func_020000b4)
+DEFINE_SCENE_RUN_ONCE(Func_02000190, 512, Func_020000b4)
 
-DEFINE_FUNC_02000160(Func_020001b0, 512, Func_02000108, Func_02000154)
+DEFINE_SCENE_RUN_IF_FLAG_CLEARED(Func_020001b0, 512, Func_02000108, Func_02000154)
 
 void Func_020001d0(void) {
   System_Wait(10);
@@ -123,10 +126,10 @@ s32 Scene_PrepareMap(void) {
 
 void Func_020002dc(s32 value) { gData_020023c0 = value; }
 
-DEFINE_FUNC_0200027C(Func_020002e8, gData_020023bc, gData_020023c0,
+DEFINE_PALETTE_CYCLE_STEP(Func_020002e8, gData_020023bc, gData_020023c0,
     gData_020023e8)
 
-DEFINE_FUNC_020002F4(Func_020003a4, gData_020023c0, gData_020023e8,
+DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(Func_020003a4, gData_020023c0, gData_020023e8,
     gData_02002408, Func_020002e8, gData_0200240c)
 
 void Func_02000428(s32 id) {
@@ -148,13 +151,13 @@ void Func_02000428(s32 id) {
 #include "field_sprite.h"
 #include "event_work.h"
 
-DEFINE_FUNC_02000410(Func_0200047c)
+DEFINE_WHIRLWIND_CARRY_LEADER(Func_0200047c)
 
-DEFINE_FUNC_020003D0(Func_02000668)
+DEFINE_POSITION_FLAT_DISTANCE(Func_02000668)
 
 extern const s32 gData_0200a3c4[];
 
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
-DEFINE_FUNC_02000628(Func_02000694, Func_02001bdc, Func_02000668,
+DEFINE_WHIRLWIND_UPDATE(Func_02000694, Func_02001bdc, Func_02000668,
     gData_0200a3c4, Data_020023e4)

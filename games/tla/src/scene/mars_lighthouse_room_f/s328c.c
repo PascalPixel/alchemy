@@ -1,14 +1,14 @@
 /// @file
 /// Scene code of overlay 0x6ad, in ROM order.
 
-#include "../shared/routines.h"
+#include "../shared/mars_lighthouse.h"
 #include "../mars_lighthouse_room_f.h"
 #include "field.h"
 #include "module/scene/mars_lighthouse_star_room.h"
 
 void Func_02002f6c(struct Actor *object);
 
-DEFINE_FUNC_02002F4C(Func_0200328c, Func_02005480, Func_02002f6c)
+DEFINE_ACTOR_ATTACH(Func_0200328c, Func_02005480, Func_02002f6c)
 
 #include "types.h"
 #include "actor.h"
@@ -57,9 +57,9 @@ void Func_02003304(struct Actor *self) {
 
 void Actor_SetSpritePriorityDirect(struct Actor *object, s32 mode);
 
-DEFINE_FUNC_02002B98(Func_020033cc, Func_02005480)
+DEFINE_ACTOR_POP_UP_SLOW(Func_020033cc, Func_02005480)
 
-DEFINE_FUNC_02002C44(Func_02003478, Func_02005480)
+DEFINE_ACTOR_POP_UP(Func_02003478, Func_02005480)
 
 #include "ram_buffer.h"
 #include "frame.h"
@@ -107,6 +107,6 @@ extern u16 gData_02004cf0[];
 void Func_020041ec(void *handle);
 void Func_0200236c(struct Actor *object, s32 unused);
 
-DEFINE_FUNC_02002CE8(Func_0200351c, Func_02003304)
+DEFINE_ACTOR_PARK(Func_0200351c, Func_02003304)
 
 #include "../../field/object/set_sprite_priority.c"

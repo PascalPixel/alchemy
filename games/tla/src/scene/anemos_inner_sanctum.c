@@ -1,7 +1,8 @@
 /// @file
 /// The scene code of overlay 0x6b0, in ROM order.
 
-#include "shared/routines.h"
+#include "shared/actors.h"
+#include "shared/effects.h"
 #include "dma.h"
 #include "io_reg.h"
 #include "event_inline.h"
@@ -51,7 +52,7 @@ void Func_02000038(u16 *slots, u16 *colours, u16 *a, u16 *b) {
     Func_02000328();
 }
 
-DEFINE_FUNC_020000F4(Func_020000f4, gData_02004454, gData_02004450,
+DEFINE_PALETTE_CYCLE_START(Func_020000f4, gData_02004454, gData_02004450,
     Func_020001d4, gData_02004444, gData_02004440, 15, gData_0200443c, 16,
     gData_02004434, Func_020001f8)
 
@@ -67,13 +68,13 @@ void Func_02000158(void) {
   FieldTask_Remove((s32)Func_020001f8);
 }
 
-DEFINE_FUNC_020000F4(Func_02000178, gData_02004454, gData_02004450,
+DEFINE_PALETTE_CYCLE_START(Func_02000178, gData_02004454, gData_02004450,
     Func_020001d4, gData_02004444, gData_02004440, 2, gData_0200443c, 2,
     gData_02004434, Func_020001f8)
 
-DEFINE_FUNC_020001D4(Func_020001d4)
+DEFINE_LIST_COUNT_ENTRIES(Func_020001d4)
 
-DEFINE_FUNC_020001F8(Func_020001f8, gData_0200443c, gData_02004440,
+DEFINE_PALETTE_CYCLE_FADE(Func_020001f8, gData_0200443c, gData_02004440,
     Data_0200444c, gData_02004450, Data_02004438, gData_02004454,
     gData_02004444, gData_02004434, Data_02004448)
 

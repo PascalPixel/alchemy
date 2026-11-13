@@ -1,7 +1,7 @@
 /// @file
 /// Scene code of overlay 0x66b, in ROM order.
 
-#include "../shared/routines.h"
+#include "../shared/map_cells.h"
 #include "types.h"
 #include "actor.h"
 #include "event_inline.h"
@@ -93,7 +93,7 @@ void Func_020003f8(s32 unk0, s32 id) {
 
 #include "scene_tables.h"
 
-DEFINE_FUNC_020000EC(Func_02000584, 12, 79, 28, 81, 0x201)
+DEFINE_PILLAR_SET_MOVED(Func_02000584, 12, 79, 28, 81, 0x201)
 
 void Func_020005bc(void) {
   struct Actor *object = Actor_Get(13);

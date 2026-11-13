@@ -1,7 +1,8 @@
 /// @file
 /// Scene code of overlay 0x663, in ROM order.
 
-#include "../shared/routines.h"
+#include "../shared/map_cells.h"
+#include "../shared/actors.h"
 #include "system/main_routine_work.h"
 #include "field/field.h"
 #include "event_work.h"
@@ -23,7 +24,7 @@
 #include "resource.h"
 #include "text/msg_ids.h"
 
-DEFINE_FUNC_020003E8(Func_020003e8, Func_02000348)
+DEFINE_BLOCKS_MARK_CELLS(Func_020003e8, Func_02000348)
 
 void Func_02000468(struct Unk_02000468 *unk) {
   struct MapWork *map;
@@ -821,9 +822,9 @@ void Func_02001560(void) {
   Event_End();
 }
 
-DEFINE_FUNC_020003D0(Func_020018ac)
+DEFINE_POSITION_FLAT_DISTANCE(Func_020018ac)
 
-DEFINE_FUNC_02000D18(Func_020018d8)
+DEFINE_POSITION_DISTANCE_ABOVE(Func_020018d8)
 
 #include "field/event_work.h"
 
@@ -1476,7 +1477,7 @@ void Func_02002b88(void) {
   }
 }
 
-DEFINE_FUNC_0200244C(Func_02002c24)
+DEFINE_LEADER_LIFT(Func_02002c24)
 
 #define LEADER() Actor_GetById(gMainRoutineWork.currentOwner)
 #define BEAM ((s32 *)((u8 *)Ram_HeapSlots->mapWork + 0x178))

@@ -1,7 +1,6 @@
 /// @file
 /// The scene code of overlay 0x673, in ROM order.
 
-#include "shared/routines.h"
 #include "shared/tables.h"
 #include "types.h"
 #include "ram_buffer.h"
@@ -117,6 +116,24 @@ void Func_020001b0(void) {
 
 void Func_020001d4(void) { Import_EventSetExitRequest(5); }
 
+/// 6 copies: gabomba_catacombs, gabomba_catacombs, gabomba_catacombs,
+/// gabomba_catacombs, gabomba_catacombs, gabomba_catacombs.
+#define DEFINE_FUNC_020001E0(name, n1, n2, n3, n4, n5, n6, n7, n8, n9)         \
+  void name(void) {                                                            \
+    struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);       \
+                                                                               \
+    Func_02001274_(n1, n2, 0, n3, 3, 56, n4);                                  \
+    Actor_SetPosition(n5, PIXELS(n6), PIXELS(n7));                             \
+    if (leader->x >> 20 == n8 && leader->z >> 20 == n9) {                      \
+      LEADER_HOP();                                                            \
+      Actor_OffsetPositionAndResetMotion(gMainRoutineWork.currentOwner, 16,    \
+                                         0);                                   \
+      leader->velocityY = PIXELS(6);                                           \
+      Actor_WaitForMoveById(gMainRoutineWork.currentOwner);                    \
+      Event_End();                                                             \
+    }                                                                          \
+  }
+
 DEFINE_FUNC_020001E0(Func_020001e0, 7, 22, 3, 58, 8, 136, 376, 8, 23)
 
 DEFINE_FUNC_020001E0(Func_02000260, 5, 13, 5, 52, 9, 136, 248, 8, 15)
@@ -182,6 +199,19 @@ void Func_0200069c(void) {
   Func_0802b450(1, 0, 1, 2, 7, 11);
   Map_CopyCellAttributeRect(2, 5, 1, 1, 7, 14);
 }
+
+/// 8 copies: gabomba_catacombs, gabomba_catacombs, gabomba_catacombs,
+/// gabomba_catacombs, gabomba_catacombs, gabomba_catacombs, gabomba_catacombs,
+/// gabomba_catacombs.
+#define DEFINE_FUNC_020006CC(name, n1, n2, n3, n4, n5, n6)                     \
+  void name(void) {                                                            \
+    struct Actor *object = Actor_GetById(n1);                                  \
+                                                                               \
+    GameFlag_SetBit(n2);                                                       \
+    object->motionFlags = 0;                                                   \
+    object->priorityFlags = 0;                                                 \
+    MapGrid_CopyCellAttributes(n3, n4, 1, 1, n5, n6);                          \
+  }
 
 DEFINE_FUNC_020006CC(Func_020006cc, 8, 0x200, 6, 23, 8, 23)
 

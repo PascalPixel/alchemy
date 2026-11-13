@@ -2,7 +2,7 @@
 /// The scene code of overlay 0x67f that its scene tables belong to, in ROM
 /// order, and the overlay's data; the rest of the overlay is in izumo_ruins/.
 
-#include "shared/routines.h"
+#include "shared/actors.h"
 #include "shared/tables.h"
 #include "izumo_ruins/izumo_ruins.h"
 #include "battle.h"
@@ -179,7 +179,7 @@ L_020091b2:
   return;
 }
 
-DEFINE_FUNC_020011B8(Func_020011b8, 0)
+DEFINE_LEADER_SET_LAYER(Func_020011b8, 0)
 
 /// Outside the first room, sets the high byte of map cell (50, 13) on layer 2
 /// to 0xff; then starts the room's effect.

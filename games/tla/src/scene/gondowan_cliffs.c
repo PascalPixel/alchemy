@@ -2,7 +2,7 @@
 /// The scene code of overlay 0x66b, in ROM order.
 
 #include "shared/tables.h"
-#include "shared/routines.h"
+#include "shared/actors.h"
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -14,7 +14,7 @@
 extern const u8 gData_02001698[];
 extern const u8 gData_02001728[];
 
-DEFINE_FUNC_02000038_58(Func_02000038)
+DEFINE_TILE_SPRITE_RESET(Func_02000038)
 
 void Func_02000058(void) { Func_080d2b4c(21, 49); }
 
@@ -61,4 +61,4 @@ DEFINE_G_DATA_020012A4(gData_0200139c, 126)
 
 #include "../field/object/prepare_object.c"
 
-DEFINE_FUNC_020000D0(Func_02000160)
+DEFINE_SCENE_CREATE_ACTOR(Func_02000160)

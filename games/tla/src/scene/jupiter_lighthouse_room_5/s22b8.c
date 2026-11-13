@@ -1,7 +1,7 @@
 /// @file
 /// Scene code of overlay 0x69e, in ROM order.
 
-#include "../shared/routines.h"
+#include "../shared/teleporter.h"
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -27,4 +27,4 @@ struct CellTarget__s22b8 {
 
 #include "io_write.h"
 
-DEFINE_FUNC_0200156C(Func_020022b8, CellTarget__s22b8, Func_020021c0)
+DEFINE_TELEPORTER_SINK(Func_020022b8, CellTarget__s22b8, Func_020021c0)

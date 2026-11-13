@@ -2,7 +2,7 @@
 /// Scene code of overlay 0x6a2, in ROM order.
 
 #include "../shared/tables.h"
-#include "../shared/routines.h"
+#include "../shared/teleporter.h"
 #include "types.h"
 #include "system.h"
 #include "ram_buffer.h"
@@ -19,14 +19,14 @@
 void Func_02001018(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags, struct EffectOptions *options);
 
-DEFINE_FUNC_02001724(Func_020017e0, Func_02001018)
+DEFINE_TELEPORTER_DROP_IN(Func_020017e0, Func_02001018)
 
 void GameFlag_SetByte(s32 flag, s32 value);
 void Func_02001648(struct CellTarget *work, struct CellTargetEntry *entry);
 
-DEFINE_FUNC_0200180C(Func_02001978, Data_02002764, Func_020015d8, Func_02001648)
+DEFINE_TELEPORTERS_STEP(Func_02001978, Data_02002764, Func_020015d8, Func_02001648)
 
-DEFINE_FUNC_0200196C(Func_02001a28, Data_02002764, Func_020017e0)
+DEFINE_TELEPORTER_PLACE_ARRIVAL(Func_02001a28, Data_02002764, Func_020017e0)
 
 #include "scene_tables.h"
 #include "objcmd.h"

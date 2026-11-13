@@ -3,7 +3,7 @@
 
 // ---- games/tla/src/scene/kibombo/s2f34.c ----
 
-#include "../shared/routines.h"
+#include "../shared/actors.h"
 #include "../shared/tables.h"
 #include "../kibombo.h"
 #include "event_work.h"
@@ -144,9 +144,9 @@ void Func_02003184(void) {
 
 #include "scene_tables.h"
 
-DEFINE_FUNC_02001F38(Func_020031f0, Func_02005b8c)
+DEFINE_ACTOR_HIDE(Func_020031f0, Func_02005b8c)
 
-DEFINE_FUNC_02002D10(Func_02003220, 0x200, Func_0200057c)
+DEFINE_SCENE_RUN_UNLESS_FLAG(Func_02003220, 0x200, Func_0200057c)
 
 void Func_0200324c(void) {
   u32 i;
@@ -177,6 +177,15 @@ void Func_02003288(void) {
   }
   Func_02003220();
 }
+
+/// 2 copies: kibombo/s2f34, kibombo/s2f34.
+#define DEFINE_FUNC_020032B0(name, n1)                                         \
+  void name(void) {                                                            \
+    u32 i;                                                                     \
+                                                                               \
+    for (i = 0; i <= 7; i++)                                                   \
+      Actor_SetModeById(i + 18, n1);                                           \
+  }
 
 DEFINE_FUNC_020032B0(Func_020032b0, 5)
 
@@ -595,6 +604,25 @@ void Func_02003ac8(void) {
     return;
   Func_02003a08(680, 352);
 }
+
+/// 2 copies: kibombo/s2f34, kibombo/s2f34.
+#define DEFINE_FUNC_02003B20(name, n1, n2, n3, n4, n5, n6, n7)                 \
+  void name(void) {                                                            \
+    struct KibomboObject *leader =                                             \
+        Actor_GetById(gMainRoutineWork.currentOwner);                          \
+    s32 x = leader->x >> 20;                                                   \
+    s32 z = leader->z >> 20;                                                   \
+                                                                               \
+    if (z == n1) {                                                             \
+      if (x == n2 && (gInput.held & 16) == 0)                                  \
+        return;                                                                \
+      if (x == n3 && (gInput.held & 32) == 0)                                  \
+        return;                                                                \
+    } else if (x == n4 && z == n5 && (gInput.held & 64) == 0) {                \
+      return;                                                                  \
+    }                                                                          \
+    Func_02003a08(n6, n7);                                                     \
+  }
 
 DEFINE_FUNC_02003B20(Func_02003b20, 38, 23, 25, 24, 39, 392, 608)
 

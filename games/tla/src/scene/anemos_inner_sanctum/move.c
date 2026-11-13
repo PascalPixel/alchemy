@@ -1,7 +1,7 @@
 /// @file
 /// Scene code of overlay 0x6b0, in ROM order.
 
-#include "../shared/routines.h"
+#include "../shared/teleporter.h"
 #include "types.h"
 #include "field_effect.h"
 #include "heap_release.h"
@@ -115,7 +115,7 @@ void Func_02002780(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 #include "iwram_call.h"
 #include "cell_target.h"
 
-DEFINE_FUNC_02001250(Func_02002a74, Data_02004458, Func_02002948)
+DEFINE_TELEPORTERS_FIND(Func_02002a74, Data_02004458, Func_02002948)
 
 void Func_02002cb8(void) {
   struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
@@ -142,4 +142,4 @@ void Func_02002cb8(void) {
 /// the table's source cell over the leader's, keeping the source column's and
 /// row's 64 bit; Func_020030e0 calls it the first time the leader steps on
 /// one of the table's cells.
-DEFINE_FUNC_0200146C(Func_02002d40, Func_02002cb8)
+DEFINE_TELEPORTER_UNCOVER(Func_02002d40, Func_02002cb8)

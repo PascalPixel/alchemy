@@ -1,7 +1,7 @@
 /// @file
 /// The scene code of overlay 0x651, in ROM order.
 
-#include "shared/routines.h"
+#include "shared/actors.h"
 #include "battle.h"
 #include "field.h"
 #include "game.h"
@@ -356,6 +356,17 @@ void Func_020003a0(void) {
   GameFlag_SetBit(0x84b);
 }
 
+/// 6 copies: daila, daila, daila, daila, daila, daila.
+#define DEFINE_FUNC_02000924(name, n1, n2, n3, n4, n5)                         \
+  void name(void) {                                                            \
+    Import_EventStart();                                                       \
+    Event_ResolvePendingActions(0);                                            \
+    MapGrid_CopyCellAttributes(n1, n2, 1, 1, n3, n2);                          \
+    Actor_SetHorizontalPositionWithTerrain(n4, 0, 0);                          \
+    GameFlag_SetBit(n5);                                                       \
+    Import_EventEnd();                                                         \
+  }
+
 DEFINE_FUNC_02000924(Func_02000924, 10, 19, 11, 22, 0x210)
 
 DEFINE_FUNC_02000924(Func_02000960, 25, 20, 26, 23, 0x211)
@@ -370,7 +381,7 @@ DEFINE_FUNC_02000924(Func_02000a5c, 16, 23, 17, 31, 0x215)
 
 void Actor_SetWideSprite(s32 actor, s32 flag);
 
-DEFINE_FUNC_02000704(Func_02000a9c, Func_02000d58, gData_02000d80)
+DEFINE_SCENE_RAISE_HELD_ACTOR(Func_02000a9c, Func_02000d58, gData_02000d80)
 
 s32 Scene_Initialize(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x100;

@@ -1,7 +1,6 @@
 /// @file
 /// Scene code of overlay 0x697, in ROM order.
 
-#include "../shared/routines.h"
 #include "../shared/trial_road.h"
 #include "event_inline.h"
 #include "types.h"
@@ -15,6 +14,22 @@
 #include "event_work.h"
 #include "module/scene/trial_road.h"
 #include "module/window/window.h"
+
+/// 2 copies: trial_road/s0218, trial_road/s0218.
+#define DEFINE_FUNC_02000218(name, n1, n2, n3, n4, n5, n6)                     \
+  void name(s32 side, s32 phase) {                                             \
+    if (side == 0) {                                                           \
+      if (phase == 3)                                                          \
+        Func_0802b450(0, 120, 1, 2, n1, phase);                                \
+      MapGrid_CopyCellsLayered(127, 3, 1, 2, n2, 3);                           \
+      MapGrid_CopyCellAttributes(n3, 127, 1, 1, n1, 8);                        \
+    } else {                                                                   \
+      if (phase == 3)                                                          \
+        Func_0802b450(0, 120, 1, 2, n4, phase);                                \
+      MapGrid_CopyCellsLayered(127, 3, 1, 2, n5, 3);                           \
+      MapGrid_CopyCellAttributes(n6, 127, 1, 1, n4, 8);                        \
+    }                                                                          \
+  }
 
 DEFINE_FUNC_02000218(Func_02000218, 23, 57, 0, 9, 43, 1)
 
@@ -228,6 +243,18 @@ void Func_0200070c(s32 id, s32 value) {
 
 /// While the party's render mode is 0, clears the map cell flag under the
 /// object.
+/// 2 copies: trial_road/s0218, trial_road/s0218.
+#define DEFINE_FUNC_02000728(name, call1)                                      \
+  void name(s32 a, s32 id) {                                                   \
+    struct MainRoutineWork *party = &gMainRoutineWork;                         \
+    u8 mode;                                                                   \
+                                                                               \
+    mode = party->renderMode;                                                  \
+                                                                               \
+    if (mode == 0)                                                             \
+      call1(id);                                                               \
+  }
+
 DEFINE_FUNC_02000728(Func_02000728, Func_02000660)
 
 /// While the party's render mode is 0, sets the map cell flag under the object.

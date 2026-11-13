@@ -1,7 +1,7 @@
 /// @file
 /// Scene code of overlay 0x6ab, in ROM order.
 
-#include "../shared/routines.h"
+#include "../shared/mars_lighthouse.h"
 #include "types.h"
 #include "ram_buffer.h"
 #include "frame.h"
@@ -30,7 +30,7 @@ struct Position {
 };
 
 
-DEFINE_FUNC_02003390(Func_02003390, Func_02002d90, Func_020041cc, Func_02002d04,
+DEFINE_LEADER_SLIDE_ON_ICE_AHEAD(Func_02003390, Func_02002d90, Func_020041cc, Func_02002d04,
     Func_0200428c)
 
 #include "../../field/object/set_sprite_priority.c"

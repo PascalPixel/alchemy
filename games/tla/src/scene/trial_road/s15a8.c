@@ -2,7 +2,8 @@
 /// Scene code of overlay 0x697, in ROM order.
 
 // ---- games/tla/src/scene/trial_road/s15a8.c ----
-#include "../shared/routines.h"
+#include "../shared/map_cells.h"
+#include "../shared/effects.h"
 #include "../shared/trial_road.h"
 #include "event_inline.h"
 #include "event_work.h"
@@ -33,6 +34,17 @@ void Func_020015d8(void) {
 }
 
 s32 Func_02001638(void) { return 1; }
+
+/// 2 copies: trial_road/s15a8, trial_road/s15a8.
+#define DEFINE_FUNC_0200163C(name, n1, n2)                                     \
+  void name(void) {                                                            \
+    MapGrid_CopyCells(n1, 30, 1, 1, 10, 11);                                   \
+    Map_CopyCellsRect(n1, 30, 1, 1, 18, 7);                                    \
+    Map_CopyCellsRect(n1, 30, 1, 1, 18, 15);                                   \
+    Map_CopyCellsRect(n2, 30, 1, 1, 74, 11);                                   \
+    Map_CopyCellsRect(n2, 30, 1, 1, 82, 7);                                    \
+    Map_CopyCellsRect(n2, 30, 1, 1, 82, 15);                                   \
+  }
 
 DEFINE_FUNC_0200163C(Func_0200163c, 33, 35)
 
@@ -364,7 +376,7 @@ void Func_02001efc(s32 value) { gData_02007e24 = value; }
 
 extern s32 gData_02007e20;
 
-DEFINE_FUNC_02000238(Func_02001f08, gData_02007e20, gData_02007e24,
+DEFINE_PALETTE_CYCLE_STEP_AT(Func_02001f08, gData_02007e20, gData_02007e24,
     gData_02007e28, 0x050000a4)
 
 // ---- games/tla/src/scene/trial_road/s1fc4.c ----
@@ -1755,7 +1767,7 @@ done:
   }
 }
 
-DEFINE_FUNC_0200406C(Func_02004418, Func_020059c0, Func_02005a28, Func_020057c8,
+DEFINE_TRAPS_CHECK(Func_02004418, Func_020059c0, Func_02005a28, Func_020057c8,
     Func_02004a94, Func_02004d6c, Func_02004bc8)
 
 void Func_020045ac(const void *data, s32 id) {
@@ -2090,7 +2102,7 @@ void Func_02004bc8(void) {
 
 #include "../../../../games/tla/src/scene/tundaria_tower/tundaria_tower.h"
 
-DEFINE_FUNC_02000BC0(Func_02004ce0, Func_02005848, Func_02005a20)
+DEFINE_ACTOR_SET_CELL_SHAPE(Func_02004ce0, Func_02005848, Func_02005a20)
 
 void Func_02004d6c(s32 a, s32 b) {
   Func_02004ce0(a, b, gMainRoutineWork.currentOwner);

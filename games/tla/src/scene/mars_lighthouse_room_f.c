@@ -2,7 +2,11 @@
 /// The scene code of overlay 0x6ad, in ROM order.
 
 // ---- games/tla/src/scene/mars_lighthouse_room_f.c ----
-#include "shared/routines.h"
+#include "shared/whirlwind.h"
+#include "shared/jupiter_lighthouse.h"
+#include "shared/mars_lighthouse.h"
+#include "shared/actors.h"
+#include "shared/effects.h"
 #include "battle.h"
 #include "field.h"
 #include "game.h"
@@ -239,6 +243,17 @@ void Func_02000418(void) {
     Func_020003b4();
   }
 }
+
+/// 3 copies: mars_lighthouse_room_f, mars_lighthouse_room_f,
+/// mars_lighthouse_room_f.
+#define DEFINE_FUNC_02000444(name, n1, n2, n3)                                 \
+  void name(s32 state, s32 unused) {                                           \
+    if (state == 1) {                                                          \
+      MapGrid_CopyCells(29, 56, 3, 4, n1, 50);                                 \
+      MapGrid_CopyCellsLayered(93, 56, 3, 4, n2, 50);                          \
+      Event_SetFlag(n3);                                                       \
+    }                                                                          \
+  }
 
 DEFINE_FUNC_02000444(Func_02000444, 10, 74, 0xa44)
 
@@ -580,6 +595,22 @@ void Func_02000cb8(s32 id) {
   }
 }
 
+/// 2 copies: mars_lighthouse_room_f, mars_lighthouse_room_f.
+#define DEFINE_FUNC_02000CF4(name, n1, n2)                                     \
+  void name(s32 unused, s32 id) {                                              \
+    Func_02000c80(id);                                                         \
+    Flag_Set(n1);                                                              \
+    if (Func_020027dc(n2) != 64) {                                             \
+      struct Actor *object = Actor_Get(id);                                    \
+                                                                               \
+      WORD_AT(object, 108) = 0;                                                \
+      Animation_ApplyChildValues(object, 0);                                   \
+      Actor_SetAnimation(id, 6);                                               \
+      Flag_Clear(n1);                                                          \
+      Func_02000cb8(id);                                                       \
+    }                                                                          \
+  }
+
 DEFINE_FUNC_02000CF4(Func_02000cf4, 0x220, 2)
 
 DEFINE_FUNC_02000CF4(Func_02000d38, 0x221, 0)
@@ -837,7 +868,7 @@ void Func_020014dc(s32 value) { gData_02007040 = value; }
 extern s32 gData_0200703c;
 extern u16 gData_02007068[];
 
-DEFINE_FUNC_0200027C(Func_020014e8, gData_0200703c, gData_02007040,
+DEFINE_PALETTE_CYCLE_STEP(Func_020014e8, gData_0200703c, gData_02007040,
     gData_02007068)
 
 #include "ram_buffer.h"
@@ -862,7 +893,7 @@ void Func_020015a4(s32 mode) {
 
 #include "event_inline.h"
 
-DEFINE_FUNC_02000378(Func_02001628, Func_02005540, Func_020056a8)
+DEFINE_ACTOR_RAISE_FROM_CELL(Func_02001628, Func_02005540, Func_020056a8)
 
 // ---- games/tla/src/scene/mars_lighthouse_room_f/s167c.c ----
 #include "actor.h"
@@ -952,13 +983,13 @@ void Func_0200167c(void) {
   Event_End();
 }
 
-DEFINE_FUNC_020003D0(Func_02001868)
+DEFINE_POSITION_FLAT_DISTANCE(Func_02001868)
 
 #include "field_sprite.h"
 
 extern const s32 gData_02007044[];
 
-DEFINE_FUNC_02000628(Func_02001894, Func_020056a0, Func_02001868,
+DEFINE_WHIRLWIND_UPDATE(Func_02001894, Func_020056a0, Func_02001868,
     gData_02007044, Data_02007064)
 
 // ---- games/tla/src/scene/mars_lighthouse_room_f/s1a54.c ----
@@ -996,7 +1027,7 @@ struct GustObject *Func_02001a54(struct GustObject *source) {
   return object;
 }
 
-DEFINE_FUNC_0200090C(Func_02001b2c, Func_020035b8)
+DEFINE_ACTOR_EMIT_RISING_SPARKS_B(Func_02001b2c, Func_020035b8)
 
 #include "call.h"
 #include "field_coordinate.h"
@@ -1058,9 +1089,9 @@ void Func_02001bcc(void) {
 
 #define ABS(value) ((value) < 0 ? -(value) : (value))
 
-DEFINE_FUNC_02001A1C(Func_02001d5c)
+DEFINE_ACTOR_IS_TOUCHING(Func_02001d5c)
 
-DEFINE_FUNC_02001A80_117(Func_02001dc0)
+DEFINE_ACTOR_IS_BESIDE(Func_02001dc0)
 
 // ---- games/tla/src/scene/mars_lighthouse_room_f/s1e20.c ----
 #define MapLayer MapLayer__s1e20
@@ -1160,9 +1191,9 @@ void Func_02001e20(struct Actor *object) {
 
 extern const u8 gData_02005d8c[];
 
-DEFINE_FUNC_02001C44(Func_02001f84, gData_02005d8c)
+DEFINE_ACTOR_RESET_SCRIPTED_FOR(Func_02001f84, gData_02005d8c)
 
-DEFINE_FUNC_02001C74(Func_02001fb4, Func_02005498_, Func_02001f84, 2,
+DEFINE_RIDE_SPAWN_FRONT(Func_02001fb4, Func_02005498_, Func_02001f84, 2,
     Func_02001e20, Func_02005480)
 
 // ---- games/tla/src/scene/mars_lighthouse_room_f/s1ffc.c ----
@@ -1186,7 +1217,7 @@ struct RideWork__s1ffc {
   struct RideDirection direction;
 };
 
-DEFINE_FUNC_02001B64(Func_02001ffc, RideWork__s1ffc, Func_02001d5c,
+DEFINE_RIDE_UPDATE_LANDING(Func_02001ffc, RideWork__s1ffc, Func_02001d5c,
     Func_02001dc0)
 
 #define ABS(value) ((value) < 0 ? -(value) : (value))
@@ -1198,24 +1229,24 @@ void Func_020022d0(struct Actor *object);
 /// Stops the object and sets its sprite part, then restarts its script at
 /// gData_02005d8c; Func_02001e1c of the Mars Lighthouse entrance is the same
 /// function.
-DEFINE_FUNC_02001928(Func_0200215c, gData_02005d8c)
+DEFINE_ACTOR_SETUP_SCRIPTED_PART(Func_0200215c, gData_02005d8c)
 
-DEFINE_FUNC_02001E60(Func_020021a0, Func_02005498_, Func_0200215c,
+DEFINE_RIDE_SPAWN_BACK(Func_020021a0, Func_02005498_, Func_0200215c,
     Func_02001e20, Func_02005480)
 
-DEFINE_FUNC_02001C74(Func_020021e8, Func_02005498_, Func_0200215c, 3,
+DEFINE_RIDE_SPAWN_FRONT(Func_020021e8, Func_02005498_, Func_0200215c, 3,
     Func_02001ffc, Func_02005480)
 
-DEFINE_FUNC_02001E60(Func_02002230, Func_02005498_, Func_0200215c,
+DEFINE_RIDE_SPAWN_BACK(Func_02002230, Func_02005498_, Func_0200215c,
     Func_02001ffc, Func_02005480)
 
-DEFINE_FUNC_02001F38_118(Func_02002278)
+DEFINE_ACTOR_IS_ABOVE(Func_02002278)
 
-DEFINE_FUNC_02001A9C(Func_020022d0, Func_02002278)
+DEFINE_RIDE_UPDATE_DRIFT(Func_020022d0, Func_02002278)
 
-DEFINE_FUNC_0200202C(Func_0200236c, Func_02005480, gData_02005d8c)
+DEFINE_ACTOR_SETUP_SCRIPTED_FOR(Func_0200236c, Func_02005480, gData_02005d8c)
 
-DEFINE_FUNC_0200206C(Func_020023ac, Func_02005498_, Func_0200236c,
+DEFINE_RIDE_SPAWN_SPARK(Func_020023ac, Func_02005498_, Func_0200236c,
     Func_020022d0)
 
 // ---- games/tla/src/scene/mars_lighthouse_room_f/s242c.c ----
@@ -1273,7 +1304,7 @@ typedef struct IwramGlobals {
 
 #define IWRAM ((IwramGlobals *)Ram_HeapSlots)
 
-DEFINE_FUNC_02001BF8(Func_0200242c, Func_020023ac__s242c, Func_020021a0,
+DEFINE_BEAM_DRAW_TARGETS(Func_0200242c, Func_020023ac__s242c, Func_020021a0,
     Func_02002230, Func_020021e8, Func_02001fb4)
 #undef IWRAM
 
@@ -1339,4 +1370,4 @@ void Func_02002618(s16 value) {
   ((struct RideWork__s25b0 *)(gData_020023c4 + 0x188))->value0e = value;
 }
 
-DEFINE_FUNC_0200218C(Func_02002624, Func_0200242c)
+DEFINE_BEAM_START(Func_02002624, Func_0200242c)

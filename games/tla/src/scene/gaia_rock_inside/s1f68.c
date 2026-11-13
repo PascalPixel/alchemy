@@ -3,7 +3,7 @@
 
 // ---- games/tla/src/scene/gaia_rock_inside/s1f68.c ----
 
-#include "../shared/routines.h"
+#include "../shared/actors.h"
 #include "types.h"
 #include "main_routine_work.h"
 #include "actor_view.h"
@@ -21,9 +21,9 @@
 
 #include "event_inline.h"
 
-DEFINE_FUNC_02001644(Func_02001f68, 2)
+DEFINE_LEADER_SET_LAYER_BYTE(Func_02001f68, 2)
 
-DEFINE_FUNC_02001644(Func_02001f84, 0)
+DEFINE_LEADER_SET_LAYER_BYTE(Func_02001f84, 0)
 
 #include "ram_buffer.h"
 

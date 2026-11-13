@@ -2,7 +2,9 @@
 /// The scene code of overlay 0x6ac, in ROM order.
 
 // ---- games/tla/src/scene/mars_lighthouse_room_m.c ----
-#include "shared/routines.h"
+#include "shared/mars_lighthouse.h"
+#include "shared/actors.h"
+#include "shared/effects.h"
 #include "battle.h"
 #include "field.h"
 #include "game.h"
@@ -799,8 +801,19 @@ void Func_0200183c(void);
 /// Records the four palette lists, writes each listed palette entry from its
 /// red, green and blue, then copies two palettes from block32 and starts the
 /// blend.
-DEFINE_FUNC_0200154C(Func_0200154c, gData_02003928, Data_0200392c,
+DEFINE_PALETTE_SET_COLORS_FADE(Func_0200154c, gData_02003928, Data_0200392c,
     Data_02003930, Data_0200391c, Func_0200183c)
+
+/// 2 copies: mars_lighthouse_room_m, mars_lighthouse_room_m.
+#define DEFINE_FUNC_02001608(name, n1, n2)                                     \
+  void name(void) {                                                            \
+    gData_02003938 = 0;                                                        \
+    gData_02003934 = Func_020016e8(gData_02003928);                            \
+    gData_02003924 = n1;                                                       \
+    gData_02003920 = n2;                                                       \
+    gData_02003918 = 1;                                                        \
+    Task_AddFrame(Func_0200170c, 0x480);                                       \
+  }
 
 DEFINE_FUNC_02001608(Func_02001608, 15, 16)
 
@@ -830,13 +843,13 @@ void Func_0200166c(void) {
 
 DEFINE_FUNC_02001608(Func_0200168c, 2, 2)
 
-DEFINE_FUNC_020001D4(Func_020016e8)
+DEFINE_LIST_COUNT_ENTRIES(Func_020016e8)
 
 extern u16 *Data_0200391c;
 extern u16 *Data_0200392c;
 extern u16 *Data_02003930;
 
-DEFINE_FUNC_020001F8(Func_0200170c, gData_02003920, gData_02003924,
+DEFINE_PALETTE_CYCLE_FADE(Func_0200170c, gData_02003920, gData_02003924,
     Data_02003930, gData_02003934, Data_0200391c, gData_02003938,
     gData_02003928, gData_02003918, Data_0200392c)
 
@@ -926,12 +939,12 @@ struct RideWork__s1988 {
 s32 Func_020018c4(struct Actor *a, struct Actor *b);
 s32 Func_02001928(struct Actor *a, struct Actor *b);
 
-DEFINE_FUNC_020015EC(Func_02001988, RideWork__s1988, Func_020018c4,
+DEFINE_RIDE_UPDATE_CARRIED(Func_02001988, RideWork__s1988, Func_020018c4,
     Func_02001928)
 
 void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
 
-DEFINE_FUNC_02001750(Func_02001aec, gData_020032d4)
+DEFINE_ACTOR_RESET_SCRIPTED(Func_02001aec, gData_020032d4)
 
 void Func_02001b1c(struct MarsLighthouseRoomMVector *position, s32 value, s32 flag) {
   struct Actor *object = FieldActor_Create(366, position->x, position->y, position->z);
@@ -980,7 +993,7 @@ extern u8 gData_020023c4[];
 s32 Func_020018c4(struct Actor *a, struct Actor *b);
 s32 Func_02001928(struct Actor *a, struct Actor *b);
 
-DEFINE_FUNC_02001B64(Func_02001b64, RideWork__s1b64, Func_020018c4,
+DEFINE_RIDE_UPDATE_LANDING(Func_02001b64, RideWork__s1b64, Func_020018c4,
     Func_02001928)
 
 void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
@@ -988,7 +1001,7 @@ void Actor_SetSingleChildFlags(struct Actor *object, u32 flags);
 /// Stops the object and sets its sprite part, then restarts its script at
 /// gData_020032d4; Func_02001e1c of the Mars Lighthouse entrance is the same
 /// function.
-DEFINE_FUNC_02001928(Func_02001cc4, gData_020032d4)
+DEFINE_ACTOR_SETUP_SCRIPTED_PART(Func_02001cc4, gData_020032d4)
 
 void Func_02001d08(struct MarsLighthouseRoomMVector *position, s32 value,
                    s32 flag) {
@@ -1077,7 +1090,7 @@ void Func_02001e38(struct Actor *object) {
   }
 }
 
-DEFINE_FUNC_02001B38(Func_02001ed4, Func_02003118, gData_020032d4)
+DEFINE_ACTOR_SETUP_SCRIPTED(Func_02001ed4, Func_02003118, gData_020032d4)
 
 void Func_02001f14(struct MarsLighthouseRoomMVector *position, s32 value) {
   struct Actor *object =
@@ -1161,6 +1174,6 @@ typedef struct IwramGlobals {
 
 #define IWRAM ((IwramGlobals *)Ram_HeapSlots)
 
-DEFINE_FUNC_02001BF8(Func_02001f94, Func_02001f14__s1f94, Func_02001d08,
+DEFINE_BEAM_DRAW_TARGETS(Func_02001f94, Func_02001f14__s1f94, Func_02001d08,
     Func_02001d98, Func_02001d50, Func_02001b1c)
 #undef IWRAM

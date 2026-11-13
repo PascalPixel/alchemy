@@ -3,7 +3,6 @@
 
 // ---- games/tla/src/scene/gabomba_statue.c ----
 
-#include "shared/routines.h"
 #include "field/field.h"
 
 #include "types.h"
@@ -904,7 +903,46 @@ void Func_020011bc(s32 x, s32 z) {
   FieldEvent_SetExitRequest(work->exit);
 }
 
+/// 3 copies: gabomba_statue, gabomba_statue, gabomba_statue.
+#define DEFINE_FUNC_02001284(name, n1, n2, n3, n4, n5, n6, n7)                 \
+  void name(void) {                                                            \
+    struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);           \
+    s32 x = leader->x >> 20;                                                   \
+    s32 z = leader->z >> 20;                                                   \
+                                                                               \
+    if (z == n1) {                                                             \
+      if (x == n2 && (gInput.held & 16) == 0)                                  \
+        return;                                                                \
+      if (x == n3 && (gInput.held & 32) == 0)                                  \
+        return;                                                                \
+    } else if (x == n4 && z == n5 && (gInput.held & 64) == 0) {                \
+      return;                                                                  \
+    }                                                                          \
+    Func_020011bc(n6, n7);                                                     \
+  }
+
 DEFINE_FUNC_02001284(Func_02001284, 11, 18, 20, 19, 12, 312, 180)
+
+/// 2 copies: gabomba_statue, gabomba_statue.
+#define DEFINE_FUNC_020012EC(name, n1, n2, n3, n4, n5, n6, n7, n8)             \
+  void name(void) {                                                            \
+    struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);           \
+    s32 x = leader->x >> 20;                                                   \
+    s32 z = leader->z >> 20;                                                   \
+                                                                               \
+    if (x == n1) {                                                             \
+      if (z == n2 && (gInput.held & 128) == 0)                                 \
+        return;                                                                \
+      if (z == n3 && (gInput.held & 64) == 0)                                  \
+        return;                                                                \
+    } else if (z == n4) {                                                      \
+      if (x == n5 && (gInput.held & 16) == 0)                                  \
+        return;                                                                \
+      if (x == n6 && (gInput.held & 32) == 0)                                  \
+        return;                                                                \
+    }                                                                          \
+    Func_020011bc(n7, n8);                                                     \
+  }
 
 DEFINE_FUNC_020012EC(Func_020012ec, 29, 11, 13, 12, 28, 30, 472, 196)
 
@@ -1012,6 +1050,18 @@ void Func_02001630(void) {
   Event_WaitTransitionFrames();
   FieldEvent_SetExitRequest(work->exit);
 }
+
+/// 5 copies: gabomba_statue, gabomba_statue, gabomba_statue, gabomba_statue,
+/// gabomba_statue.
+#define DEFINE_FUNC_02001728(name, n1, n2)                                     \
+  void name(struct Actor *actor) {                                             \
+    Func_020056b4();                                                           \
+    FieldEvent_ResolvePendingActions(0);                                       \
+    Event_PlaySound(581);                                                      \
+    Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x19999, 0x19999);           \
+    Actor_MoveToAndWait(gMainRoutineWork.currentOwner, n1, n2);                \
+    Event_End();                                                               \
+  }
 
 DEFINE_FUNC_02001728(Func_02001728, 152, 424)
 
@@ -1149,6 +1199,26 @@ void Func_02001b0c(void) {
     Event_SetFlag(512);
   }
 }
+/// 2 copies: gabomba_statue, gabomba_statue.
+#define DEFINE_FUNC_02001B38_2(name, n1, n2)                                   \
+  void name(void) {                                                            \
+    u32 i = 0;                                                                 \
+                                                                               \
+  next:                                                                        \
+    {                                                                          \
+      s32 id = i + n1;                                                         \
+      struct Actor *object = Actor_Get(id);                                    \
+                                                                               \
+      Func_02001adc(id);                                                       \
+      object->motionFlags = 0;                                                 \
+      object->y = PIXELS(36);                                                  \
+      i++;                                                                     \
+    }                                                                          \
+    if (i < n2)                                                                \
+      goto next;                                                               \
+    Func_02001b0c();                                                           \
+  }
+
 DEFINE_FUNC_02001B38_2(Func_02001b38, 8, 1)
 
 DEFINE_FUNC_02001B38_2(Func_02001b68, 29, 2)

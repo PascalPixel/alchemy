@@ -1,7 +1,8 @@
 /// @file
 /// The scene code of overlay 0x64c, in ROM order.
 
-#include "shared/routines.h"
+#include "shared/actors.h"
+#include "shared/flight.h"
 #include "battle.h"
 #include "field.h"
 #include "game.h"
@@ -505,7 +506,7 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-DEFINE_FUNC_02000038_58(Func_02000c9c)
+DEFINE_TILE_SPRITE_RESET(Func_02000c9c)
 
 /// The two countdown choices the world map (overlay 64b) also has, under this
 /// overlay's names.
@@ -562,16 +563,16 @@ s32 Func_02001064(struct Actor *object) {
 #define gData_02004f9c gData_02002e80
 #include "shared/world_map_s39f4.h"
 
-DEFINE_FUNC_020011F4(Func_020011f4, Func_020010b0)
+DEFINE_ACTOR_FLICKER(Func_020011f4, Func_020010b0)
 
 extern s32 gData_02003db8;
 
-DEFINE_FUNC_0200122C(Func_0200122c, gData_02002eac, gData_02003db8,
+DEFINE_ACTOR_CYCLE_CHILD_VALUES(Func_0200122c, gData_02002eac, gData_02003db8,
     Func_02001168)
 
-DEFINE_FUNC_02001274(Func_02001274, Func_020011f4, Func_0200122c)
+DEFINE_ACTOR_SET_FLIGHT_MODE(Func_02001274, Func_020011f4, Func_0200122c)
 
-DEFINE_FUNC_020012AC(Func_020012ac, Func_02001274, Func_02002004)
+DEFINE_LEADER_SEARCH(Func_020012ac, Func_02001274, Func_02002004)
 
 void Func_020012f8(void) {
   Func_02001274(Actor_Get(FieldParty_GetLeaderActor()), 0);
@@ -601,7 +602,7 @@ static inline void CameraMove(s32 x, s32 y, s32 z, s32 mode) {
 }
 
 /// Shakes the camera diagonally by one pixel every three frames.
-DEFINE_FUNC_02001364(Func_02001364)
+DEFINE_CAMERA_JITTER(Func_02001364)
 
 #define PUSH_PICTURE(offset)                                                   \
   IO_WRITE_QUEUE_PUSH(0x06002000, (u32)(buffer + (offset)), 0x84000140)
@@ -724,15 +725,15 @@ void Func_02001400(s32 mode) {
   Event_SetFlag(0x101);
 }
 
-DEFINE_FUNC_020011F4(Func_0200199c, Func_02001ad0)
+DEFINE_ACTOR_FLICKER(Func_0200199c, Func_02001ad0)
 
-DEFINE_FUNC_020019D4(Func_020019d4, Func_02001ad0)
+DEFINE_ACTOR_ANIMATE_AND_EMIT(Func_020019d4, Func_02001ad0)
 
-DEFINE_FUNC_02001A0C(Func_02001a0c)
+DEFINE_ACTOR_ANIMATE(Func_02001a0c)
 
-DEFINE_FUNC_02001A34(Func_02001a34, Func_02001fd4)
+DEFINE_ACTOR_GROW_UP(Func_02001a34, Func_02001fd4)
 
-DEFINE_FUNC_02001A80(Func_02001a80, Func_02001fd4)
+DEFINE_ACTOR_GROW_DOWN(Func_02001a80, Func_02001fd4)
 
 #include "field_sprite.h"
 #include "vram_tab.h"
@@ -797,7 +798,7 @@ void Func_02001ad0(struct Actor *parent) {
 extern s16 gData_02003fc4;
 extern u8 gData_02003fd8[][32];
 
-DEFINE_FUNC_02001BE0(Func_02001be0, gData_02003fc4, gData_02003fd8,
+DEFINE_GAUGE_DRAW(Func_02001be0, gData_02003fc4, gData_02003fd8,
     gData_020040d8, gData_02003fc6)
 
 extern u32 gInput;
@@ -832,10 +833,10 @@ void Func_02001d90(void) {
   Func_02001f7c(Data_02003fcc, 255);
 }
 
-DEFINE_FUNC_02001E58(Func_02001e58, gData_020040d8, gData_02003fc6,
+DEFINE_GAUGE_INIT(Func_02001e58, gData_020040d8, gData_02003fc6,
     gData_02003fc4, gData_02003fc8, Func_02001d90)
 
-DEFINE_FUNC_02001EB8(Func_02001eb8, gData_020040d8, gData_02003fc6,
+DEFINE_GAUGE_END(Func_02001eb8, gData_020040d8, gData_02003fc6,
     gData_02003fc4, Func_02001d90)
 
 s32 gData_02002e74[] = {

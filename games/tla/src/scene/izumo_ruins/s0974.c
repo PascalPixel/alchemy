@@ -1,7 +1,7 @@
 /// @file
 /// The overlay code of scene/izumo_ruins between two shared objects, in ROM order.
 
-#include "../shared/routines.h"
+#include "../shared/map_cells.h"
 #include "types.h"
 #include "system.h"
 #include "iwram_call.h"
@@ -105,7 +105,7 @@ void Func_02000aa8(void) {
 
 s32 Func_02001528(s32 terrainId, s32 value, s32 height);
 
-DEFINE_FUNC_02000BC0_89(Func_02000bc0, Func_02001478, Func_02001528)
+DEFINE_ACTOR_SET_CELL_SHAPE_AT(Func_02000bc0, Func_02001478, Func_02001528)
 
 void Func_02000c4c(s32 a, s32 b) {
   Func_02000bc0(a, b, gMainRoutineWork.currentOwner);

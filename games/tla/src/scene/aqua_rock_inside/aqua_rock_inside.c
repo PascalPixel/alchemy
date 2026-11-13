@@ -3,7 +3,7 @@
 
 // ---- games/tla/src/scene/aqua_rock_inside.c ----
 
-#include "../shared/routines.h"
+#include "../shared/effects.h"
 #include "../aqua_rock_inside.h"
 #include "field.h"
 #include "module/field/map.h"
@@ -806,16 +806,16 @@ void Func_02001364(struct Actor *object) {
 // overlay 681's Func_0200136c. The first push goes through Call3 (directly, its
 // offset pointer is set after the angle's load).
 
-DEFINE_FUNC_0200136C(Func_020013bc, Func_02001364)
+DEFINE_ORBITER_SPIRAL(Func_020013bc, Func_02001364)
 
 // Moves around in a circle.
-DEFINE_FUNC_0200147C(Func_0200147c)
+DEFINE_ORBIT_UPDATE(Func_0200147c)
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 
-DEFINE_FUNC_020014D0(Func_02001520)
+DEFINE_ACTOR_AIM_AT_WATCHED(Func_02001520)
 
-DEFINE_FUNC_0200151C(Func_0200156c)
+DEFINE_ACTOR_STEP_TO_WATCHED(Func_0200156c)
 
 #include "system/field_effect.h"
 
@@ -823,7 +823,7 @@ void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options);
 
-DEFINE_FUNC_02001548(Func_02001598, Func_0200015c)
+DEFINE_ACTOR_EMIT_BUBBLES(Func_02001598, Func_0200015c)
 #undef BYTE_AT
 
 // ---- games/tla/src/scene/aqua_rock_inside/s1620.c ----
@@ -1094,6 +1094,24 @@ void Func_02001c68(void) {
     Func_02001a1c();
   }
 }
+
+/// 2 copies: aqua_rock_inside/aqua_rock_inside,
+/// aqua_rock_inside/aqua_rock_inside.
+#define DEFINE_FUNC_02001CD8(name, n1)                                         \
+  void name(void) {                                                            \
+    if (Event_GetFlag(0x9ae)) {                                                \
+      Event_Start();                                                           \
+      FieldEvent_ResolvePendingActions(0);                                     \
+      Message_ShowCentered(MsgCheckedTheTabletIt, 1);                          \
+      Event_End();                                                             \
+    } else {                                                                   \
+      Actor_WalkToAndWait(gMainRoutineWork.currentOwner, n1, 184);             \
+      Actor_WalkToAndWait(gMainRoutineWork.currentOwner, 264, 184);            \
+      Actor_FaceDirection(gMainRoutineWork.currentOwner, FACING_NORTH, 0);     \
+      FieldEvent_Wait(10);                                                     \
+      Func_02001a1c();                                                         \
+    }                                                                          \
+  }
 
 DEFINE_FUNC_02001CD8(Func_02001cd8, 280)
 
@@ -1642,7 +1660,7 @@ void Func_02002bd4(struct Actor *object) {
   }
 }
 
-DEFINE_FUNC_02001140(Func_02002c3c, gData_02004128)
+DEFINE_ACTOR_EMIT_WATER_DROP(Func_02002c3c, gData_02004128)
 
 void Func_02002ca4(void) {
   struct Actor *center;
@@ -1703,17 +1721,17 @@ void Func_02002ca4(void) {
   actor->facing = 0x4000;
 }
 
-DEFINE_FUNC_02001308(Func_02002e04, Func_02003cc4)
+DEFINE_ACTOR_SHOW_PARTS(Func_02002e04, Func_02003cc4)
 
-DEFINE_FUNC_02001338(Func_02002e34, Func_02003cc4, Func_02002bd4)
+DEFINE_LEADER_SPIN_AWAY(Func_02002e34, Func_02003cc4, Func_02002bd4)
 
 /// On odd frames, spawns a drifting effect above the object, swaying with the
 /// frame count; Func_02002030 of Aqua Rock is the same function.
-DEFINE_FUNC_020013D8(Func_02002ed4)
+DEFINE_ACTOR_EMIT_MIST(Func_02002ed4)
 
-DEFINE_FUNC_02001464(Func_02002f60, Func_02002ed4)
+DEFINE_LEADER_SINK_AWAY(Func_02002f60, Func_02002ed4)
 
-DEFINE_FUNC_02001500(Func_02002ffc, Func_02002ed4)
+DEFINE_LEADER_RISE_FROM_WATER(Func_02002ffc, Func_02002ed4)
 
 #include "map.h"
 #include "vram_tab.h"

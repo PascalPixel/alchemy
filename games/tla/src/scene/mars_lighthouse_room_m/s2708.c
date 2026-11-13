@@ -2,7 +2,7 @@
 /// Scene code of overlay 0x6ac, in ROM order.
 
 #include "../shared/tables.h"
-#include "../shared/routines.h"
+#include "../shared/mars_lighthouse.h"
 #include "../mars_lighthouse_room_m.h"
 #include "event_inline.h"
 #include "display_transition.h"
@@ -148,7 +148,7 @@ void Func_02003230(s32 a, s32 b);
 void Func_02003228(void);
 void Func_020032a8(void);
 
-DEFINE_FUNC_020024AC(Func_02002848, Func_02002708)
+DEFINE_RIDE_IF_ACTIVE(Func_02002848, Func_02002708)
 
 s32 Func_02002864(void) {
   return ((struct RideWork *)(gData_020023c4 + 0x188))->active;
@@ -260,7 +260,7 @@ void Func_02002870(struct Actor *actor) {
 
 /// Throws two sparks (object kind 325) from (x, y, z), each upward at about
 /// speed plus 0x14000 with a random spread, at a random angle and size.
-DEFINE_FUNC_020029F4(Func_020029f4, gData_02003348)
+DEFINE_EMBERS_SPAWN(Func_020029f4, gData_02003348)
 
 void Func_02002ad4(struct Actor *object) {
   object->movementState = Event_GetFlag(260);
@@ -436,18 +436,18 @@ void Func_02002df4(s32 sourceId, s32 id, s32 value, s32 angle,
 /// gives it Func_02002ae8 as its update hook and its speed, clears its scale
 /// and action, has it watch what self watches, and calls Event_PlaySound(104).
 /// Overlays 6aa and 6ab keep the same code.
-DEFINE_FUNC_02002AD0(Func_02002e6c, Func_02002ae8)
+DEFINE_ACTOR_LAUNCH_AHEAD(Func_02002e6c, Func_02002ae8)
 
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 void Actor_SetSpritePriorityDirect(struct Actor *object, s32 mode);
 
-DEFINE_FUNC_02002B98(Func_02002f34, Func_02003118)
+DEFINE_ACTOR_POP_UP_SLOW(Func_02002f34, Func_02003118)
 
-DEFINE_FUNC_02002C44(Func_02002fe0, Func_02003118)
+DEFINE_ACTOR_POP_UP(Func_02002fe0, Func_02003118)
 
 #include "macros.h"
 
-DEFINE_FUNC_02002CE8(Func_02003084, Func_02002e6c)
+DEFINE_ACTOR_PARK(Func_02003084, Func_02002e6c)
 
 #include "objcmd.h"
 

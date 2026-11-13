@@ -1,7 +1,8 @@
 /// @file
 /// Scene code of overlay 0x69d, in ROM order.
 
-#include "../shared/routines.h"
+#include "../shared/whirlwind.h"
+#include "../shared/jupiter_lighthouse.h"
 #include "types.h"
 #include "system.h"
 #include "call.h"
@@ -25,7 +26,7 @@ void Func_02000990(struct GustObject *object);
 void Func_02001258(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags, struct EffectOptions *options);
 
-DEFINE_FUNC_020007E8(Func_02000b50, Func_02001da8, Func_02000990, Func_02001258)
+DEFINE_WHIRLWIND_SPAWN(Func_02000b50, Func_02001da8, Func_02000990, Func_02001258)
 
 s32 Func_02000c28(struct Actor *object) {
   struct EffectOptions options;
@@ -103,7 +104,7 @@ void Func_02001d80(struct LightOam *oam, s32 depth);
 /// Queues the lit actors' sprites: for each listed actor with a position, projects it
 /// from the map's view, skips it off screen, and writes a 16 by 16 sprite, or a 32 by
 /// 64 one when the big switch is set, at its animation picture and depth.
-DEFINE_FUNC_02000AAC(Func_02000e58, gData_0200275c, gData_020027a0,
+DEFINE_LIGHT_SPRITES_DRAW(Func_02000e58, gData_0200275c, gData_020027a0,
     gData_0200275e, gData_02002760__s0b50, gData_02002860, gData_02002862,
     Func_02001ee0, Func_02001d80)
 
@@ -111,16 +112,16 @@ DEFINE_FUNC_02000AAC(Func_02000e58, gData_0200275c, gData_020027a0,
 // event_inline.h's are, a layer and not a compiler-steering device.
 static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 
-DEFINE_FUNC_02000A98(Func_02001014, gData_02002760__s0b50, gData_0200275c,
+DEFINE_LIGHT_SPRITES_INIT_A(Func_02001014, gData_02002760__s0b50, gData_0200275c,
     Func_02000e58, gData_0200275e, gData_02002860, gData_02002862)
 
-DEFINE_FUNC_02000CE8(Func_02001094, gData_02002760__s0b50, gData_0200275c,
+DEFINE_LIGHT_SPRITES_INIT_B(Func_02001094, gData_02002760__s0b50, gData_0200275c,
     Func_02000e58, gData_0200275e, gData_02002860, gData_02002862)
 
-DEFINE_FUNC_02000D68(Func_02001114, gData_02002760__s0b50, gData_0200275c,
+DEFINE_LIGHT_SPRITES_INIT_C(Func_02001114, gData_02002760__s0b50, gData_0200275c,
     Func_02000e58, gData_0200275e, gData_02002860, gData_02002862)
 
-DEFINE_FUNC_02000DF0(Func_0200119c, gData_0200275e, gData_02002760__s0b50)
+DEFINE_LIGHT_SPRITES_ADD(Func_0200119c, gData_0200275e, gData_02002760__s0b50)
 
 void Func_020011cc(s32 value) { gData_02002862 = value; }
 

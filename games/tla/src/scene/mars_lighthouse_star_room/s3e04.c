@@ -2,7 +2,7 @@
 /// Scene code of overlay 0x6ab, in ROM order.
 
 #include "../shared/tables.h"
-#include "../shared/routines.h"
+#include "../shared/teleporter.h"
 #include "types.h"
 #include "system.h"
 #include "ram_buffer.h"
@@ -26,7 +26,7 @@ static __inline__ void SetWorkTriple(s32 a, s32 b, s32 c) {
   Map_SetScreenShake(a, b, c);
 }
 
-DEFINE_FUNC_02001E24(Func_02003e04, Func_0200363c)
+DEFINE_TELEPORTER_DROP_IN(Func_02003e04, Func_0200363c)
 
 #include "cell_target.h"
 
@@ -34,10 +34,10 @@ void GameFlag_SetByte(s32 flag, s32 value);
 void Func_02003c6c(struct CellTarget *work,
                    struct CellTargetEntry *entry);
 
-DEFINE_FUNC_0200180C(Func_02003f9c, gData_02004cf4, Func_02003bfc,
+DEFINE_TELEPORTERS_STEP(Func_02003f9c, gData_02004cf4, Func_02003bfc,
     Func_02003c6c)
 
-DEFINE_FUNC_020018BC(Func_0200404c, gData_02004cf4, Func_02003e04)
+DEFINE_TELEPORTER_PLACE_ARRIVAL(Func_0200404c, gData_02004cf4, Func_02003e04)
 
 #include "scene_tables.h"
 #include "text/msg_ids.h"

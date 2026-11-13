@@ -1,5 +1,5 @@
 // ---- games/tla/src/scene/magma_rock/s0ff4.c ----
-#include "../shared/routines.h"
+#include "../shared/actors.h"
 #include "types.h"
 #include "system.h"
 #include "ram_buffer.h"
@@ -559,11 +559,39 @@ void Func_02001738(struct Actor *object) {
 
 /// In room 1 or 2, targets actor 15 or 14, runs Func_020014bc and sets flag
 /// 0x200.
+/// 2 copies: magma_rock/s0ff4, magma_rock/s0ff4.
+#define DEFINE_FUNC_020019E8(name, n1, n2, n3)                                 \
+  void name(s32 mode, s32 cue) {                                               \
+    struct MagmaRockWork *work = Ram_HeapSlots->effectWork;                    \
+    struct MainRoutineWork *party = &gMainRoutineWork;                         \
+                                                                               \
+    {                                                                          \
+      s32 scene = party->scene;                                                \
+                                                                               \
+      if (scene == (s32)&SceneId_Ov691Room1)                                   \
+        work->target = Actor_Get(n1);                                          \
+      else if (scene == (s32)&SceneId_Ov691Room2)                              \
+        work->target = Actor_Get(n2);                                          \
+      Func_020014bc(mode, cue);                                                \
+    }                                                                          \
+    Event_SetFlag(n3);                                                         \
+  }
+
 DEFINE_FUNC_020019E8(Func_020019e8, 15, 14, 0x200)
 
 /// In room 1 or 2, targets actor 16 or 10, runs Func_020014bc and sets flag
 /// 0x201.
 DEFINE_FUNC_020019E8(Func_02001a38, 16, 10, 0x201)
+
+/// 3 copies: magma_rock/s0ff4, magma_rock/s0ff4, magma_rock/s0ff4.
+#define DEFINE_FUNC_02001A8C(name, n1, n2)                                     \
+  void name(s32 mode, s32 cue) {                                               \
+    struct MagmaRockWork *work = Ram_HeapSlots->effectWork;                    \
+                                                                               \
+    work->target = Actor_Get(n1);                                              \
+    Func_020014bc(mode, cue);                                                  \
+    Event_SetFlag(n2);                                                         \
+  }
 
 DEFINE_FUNC_02001A8C(Func_02001a8c, 17, 0x202)
 
@@ -810,7 +838,7 @@ loop:
   Event_SetFlag(0x8dc);
 }
 
-DEFINE_FUNC_02000DA4(Func_020020d0, 7)
+DEFINE_ACTOR_FLASH_COLOR(Func_020020d0, 7)
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 

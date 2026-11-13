@@ -3,7 +3,7 @@
 
 // ---- games/tla/src/scene/eastern_alhafra.c ----
 
-#include "shared/routines.h"
+#include "shared/effects.h"
 #include "battle.h"
 #include "field.h"
 #include "game.h"
@@ -2096,7 +2096,7 @@ void Func_02003274(void) {
 
 void BattleEffect_StepVector3(struct Particle *particle, s32 unk1, s32 step);
 
-DEFINE_FUNC_0200379C(Func_02003ec4, Func_02004c6c)
+DEFINE_PARTICLES_UPDATE_FALLING(Func_02003ec4, Func_02004c6c)
 
 
 /// The falling rocks' work: their tiles, 64 rocks and their sprites, in a
@@ -2112,4 +2112,4 @@ struct RockWork {
 
 /// Spawns count rocks around (x, y, z), each pushed out at a random angle and
 /// thrown up and out along it.
-DEFINE_FUNC_02003F48(Func_02003f48)
+DEFINE_ROCKS_SPAWN(Func_02003f48)

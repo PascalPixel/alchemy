@@ -1,5 +1,5 @@
 // ---- games/tla/src/scene/anemos_inner_sanctum_entrance/hide.c ----
-#include "shared/routines.h"
+#include "shared/jupiter_lighthouse.h"
 #include "types.h"
 #include "actor.h"
 #include "event_inline.h"
@@ -396,7 +396,7 @@ void Func_02000858(void) {
 // event_inline.h's are, a layer and not a compiler-steering device.
 static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 
-DEFINE_FUNC_02000A98(Func_02000a98, gData_02001ce0, gData_02001cdc,
+DEFINE_LIGHT_SPRITES_INIT_A(Func_02000a98, gData_02001ce0, gData_02001cdc,
     Func_02000858, gData_02001cde, gData_02001de0, gData_02001de2__s0588)
 
 void Func_02000b18(void) {

@@ -1,7 +1,10 @@
 /// @file
 /// The scene code of overlay 0x6a0, in ROM order.
 
-#include "shared/routines.h"
+#include "shared/whirlwind.h"
+#include "shared/jupiter_lighthouse.h"
+#include "shared/actors.h"
+#include "shared/effects.h"
 #include "types.h"
 #include "iwram_call.h"
 #include "actor.h"
@@ -46,15 +49,15 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 #include "main_routine_work.h"
 #include "call.h"
 
-DEFINE_FUNC_02000060(Func_02000060, 76, 42, 4, 76, 35, 81, 42, 12, 41, 12, 35)
+DEFINE_JUPITER_LIGHTHOUSE_OPEN_DOOR(Func_02000060, 76, 42, 4, 76, 35, 81, 42, 12, 41, 12, 35)
 
-DEFINE_FUNC_020000B4(Func_020000b4, 76, 42, 4, 76, 35, 71, 12, 36, 12, 35)
+DEFINE_JUPITER_LIGHTHOUSE_CLOSE_DOOR(Func_020000b4, 76, 42, 4, 76, 35, 71, 12, 36, 12, 35)
 
-DEFINE_FUNC_02000100(Func_02000100, 16, 0xa1b, 8, 37)
+DEFINE_JUPITER_LIGHTHOUSE_CHECK_BLOCK_ON_CELL(Func_02000100, 16, 0xa1b, 8, 37)
 
-DEFINE_FUNC_0200013C(Func_0200013c, 514, Func_02000060)
+DEFINE_SCENE_RUN_ONCE(Func_0200013c, 514, Func_02000060)
 
-DEFINE_FUNC_02000160(Func_02000160, 514, Func_020000b4, Func_02000100)
+DEFINE_SCENE_RUN_IF_FLAG_CLEARED(Func_02000160, 514, Func_020000b4, Func_02000100)
 
 void Func_02000184(void) {
   System_Wait(10);
@@ -680,7 +683,7 @@ extern s32 gData_02003590;
 static inline void Counter_Set(s32 value) { gData_02003590 = value; }
 extern u32 gData_020035bc[];
 
-DEFINE_FUNC_0200027C(Func_02001168, gData_02003590, gData_02003594,
+DEFINE_PALETTE_CYCLE_STEP(Func_02001168, gData_02003590, gData_02003594,
     gData_020035bc)
 
 extern u16 gData_020035dc[];
@@ -688,10 +691,10 @@ extern u16 gData_020035e0[];
 
 void Func_02002c44();
 
-DEFINE_FUNC_020002F4(Func_02001224, gData_02003594, gData_020035bc,
+DEFINE_JUPITER_LIGHTHOUSE_LOAD_PALETTES(Func_02001224, gData_02003594, gData_020035bc,
     gData_020035dc, Func_02001168, gData_020035e0)
 
-DEFINE_FUNC_02000378(Func_020012a8, Func_02002b54, Func_02002c44)
+DEFINE_ACTOR_RAISE_FROM_CELL(Func_020012a8, Func_02002b54, Func_02002c44)
 
 #include "frame.h"
 #include "field_sprite.h"
@@ -702,9 +705,9 @@ static __inline__ void Camera_MoveWithinMapBounds_(s32 x, s32 y, s32 z,
   Camera_MoveWithinMapBounds(x, y, z, mode);
 }
 
-DEFINE_FUNC_020012FC(Func_020012fc)
+DEFINE_WHIRLWIND_CARRY_LEADER(Func_020012fc)
 
-DEFINE_FUNC_020003D0(Func_020014e8)
+DEFINE_POSITION_FLAT_DISTANCE(Func_020014e8)
 
 extern const s32 gData_02003598[];
 extern s32 Data_020035b8;
@@ -713,5 +716,5 @@ s32 Func_02002c34(s32 x, s32 z, s32 layer);
 s32 Math_Cosine(s32 angle);
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
-DEFINE_FUNC_02000628(Func_02001514, Func_02002c34, Func_020014e8,
+DEFINE_WHIRLWIND_UPDATE(Func_02001514, Func_02002c34, Func_020014e8,
     gData_02003598, Data_020035b8)

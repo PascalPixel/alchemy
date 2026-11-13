@@ -1,7 +1,7 @@
 /// @file
 /// Scene code of overlay 0x664, in ROM order.
 
-#include "../shared/routines.h"
+#include "../shared/actors.h"
 #include "../airs_rock_inside.h"
 #include "system.h"
 #include "module/field/field.h"
@@ -408,9 +408,9 @@ void Func_02000988(void) {
   Event_End();
 }
 
-DEFINE_FUNC_020003D0(Func_02000cec)
+DEFINE_POSITION_FLAT_DISTANCE(Func_02000cec)
 
-DEFINE_FUNC_02000D18(Func_02000d18)
+DEFINE_POSITION_DISTANCE_ABOVE(Func_02000d18)
 
 // Func_020010b4's twin for another shot: it also stops while the render mode
 // is 5, and on a cell of kind 212 it ends with one of two end scripts by its

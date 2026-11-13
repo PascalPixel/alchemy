@@ -1,7 +1,7 @@
 /// @file
 /// The scene code of overlay 0x64e that its scene tables belong to, in ROM order; the rest of the overlay is in venus_lighthouse/.
 
-#include "shared/routines.h"
+#include "shared/push.h"
 #include "types.h"
 #include "main_routine_work.h"
 #include "event_inline.h"
@@ -15,7 +15,7 @@ extern s32 gData_02001d8c[];
 void Func_02001b2c(struct StagedActor *object, s32 mode);
 s32 Func_02001b64(struct StagedActor *object, struct FieldPosition *position);
 
-DEFINE_FUNC_0200038C(Func_0200038c, gData_02001d8c, Func_02001b64,
+DEFINE_BLOCK_PUSH_ONTO(Func_0200038c, gData_02001d8c, Func_02001b64,
     Func_02001b2c)
 
 #include "../field/map/cell_fill_byte.c"

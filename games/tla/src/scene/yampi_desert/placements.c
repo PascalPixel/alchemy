@@ -1,7 +1,6 @@
 /// @file
 /// Scene code of overlay 0x661, in ROM order, from placements' offset up to the next object the overlay links.
 
-#include "../shared/routines.h"
 #include "scene.h"
 #include "module/scene/yampi_desert.h"
 #include "module/tla.h"
@@ -188,6 +187,16 @@ void Func_02000600(void) {
 void Func_02000620(s32 a, s32 b) { Func_0200388c(gData_02004768, a, b); }
 
 void Func_02000634(s32 a, s32 b) { Func_0200388c(gData_0200478e, a, b); }
+
+/// 2 copies: yampi_desert/placements, yampi_desert/placements.
+#define DEFINE_FUNC_02000648(name, data1)                                      \
+  void name(s32 a, s32 b) {                                                    \
+    Func_0200388c(data1, a, b);                                                \
+    if (a == 1) {                                                              \
+      if (gData_02004808 == 0)                                                 \
+        gData_02004808 = 210;                                                  \
+    }                                                                          \
+  }
 
 DEFINE_FUNC_02000648(Func_02000648, gData_020047d2)
 

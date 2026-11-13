@@ -1,7 +1,8 @@
 /// @file
 /// The scene code of overlay 0x678, in ROM order.
 
-#include "shared/routines.h"
+#include "shared/actors.h"
+#include "shared/vents.h"
 #include "types.h"
 #include "system.h"
 #include "ram_buffer.h"
@@ -498,7 +499,7 @@ void Func_0200065c(void) {
   Event_End();
 }
 
-DEFINE_FUNC_0200015C(Func_02000710)
+DEFINE_ACTOR_WAIT_TO_LAND(Func_02000710)
 
 void Func_02000744(s32 a, s32 id) {
   struct Actor *object = Actor_Get(id);
@@ -517,6 +518,17 @@ void Func_02000784(s32 a, s32 id) {
   Event_SetFlag(0x220);
   Event_SetFlag(0x222);
 }
+
+/// 2 copies: taopo_swamp, taopo_swamp.
+#define DEFINE_FUNC_020007BC(name, n1, n2, n3)                                 \
+  void name(s32 a, s32 id) {                                                   \
+    Func_02002840_(n1, n2, 1, 1, n3, n2);                                      \
+    FieldActor_SetSpritePriority(id, 2);                                       \
+    Actor_Get(id)->priorityFlags &= 0xfd;                                      \
+    Func_02002778(0, id);                                                      \
+    Event_SetFlag(0x221);                                                      \
+    Event_ClearFlag(0x222);                                                    \
+  }
 
 DEFINE_FUNC_020007BC(Func_020007bc, 28, 8, 26)
 
@@ -974,6 +986,35 @@ void Func_02001304(void) {
   Func_0200273c(480);
 }
 
+/// 2 copies: taopo_swamp, taopo_swamp.
+#define DEFINE_FUNC_02001424(name, call1, n1, call2)                           \
+  void name(void) {                                                            \
+    s32 timer = Func_02002730();                                               \
+                                                                               \
+    /* FAKEMATCH(signature): Func_0200271c called as returning s32, as in      \
+     * Func_02001304; as a call to the void setter, 4 of 50 instructions       \
+     * differ in tla-en. */                                                    \
+    switch (timer) {                                                           \
+    case 0:                                                                    \
+      Vent_SetActive(0, 1);                                                    \
+      Vent_SetActive(1, 1);                                                    \
+      Func_02002978(170);                                                      \
+      break;                                                                   \
+    case 120:                                                                  \
+      Vent_SetActive(0, 0);                                                    \
+      Vent_SetActive(1, 0);                                                    \
+      Func_02002978(-1);                                                       \
+      break;                                                                   \
+    }                                                                          \
+    if ((u32)(timer - 11) <= 118) {                                            \
+      if (Event_GetFlag(0x221))                                                \
+        call1(n1);                                                             \
+      else if (Event_GetFlag(0x220))                                           \
+        call2(n1);                                                             \
+    }                                                                          \
+    Func_0200273c(480);                                                        \
+  }
+
 DEFINE_FUNC_02001424(Func_02001424, Func_02000810, 8, Func_020008d8)
 
 DEFINE_FUNC_02001424(Func_020014a0, Func_020009c0, 10, Func_02000a94)
@@ -1061,6 +1102,29 @@ s32 Func_0200166c(struct Actor *object) {
     return 0;
   return 1;
 }
+
+/// 2 copies: taopo_swamp, taopo_swamp.
+#define DEFINE_FUNC_02001684(name, n1, n2)                                     \
+  void name(void) {                                                            \
+    if ((gFrameCount & 7) == 0 && (u32)Random16Far() < 0x4000) {               \
+      s32 offset = Random16Far() << 5;                                         \
+      s32 x = offset + n1;                                                     \
+      s32 z = n2 - offset;                                                     \
+      s32 y = 0xa00000;                                                        \
+      struct Actor *object = FieldActor_Create(0x12d, x, y, z);                \
+      s32 scale = 0x547a;                                                      \
+                                                                               \
+      if (object != NULL) {                                                    \
+        object->scaleX = scale;                                                \
+        object->scaleY = scale;                                                \
+        object->motionFlags = 2;                                               \
+        object->terrainHeight = 0xffc00000;                                    \
+        object->gravity = 0x7333;                                              \
+        Actor_StartScript(object, gData_02002a6c);                             \
+        Actor_SetSingleChildFlags(object, 0);                                  \
+      }                                                                        \
+    }                                                                          \
+  }
 
 DEFINE_FUNC_02001684(Func_02001684, 0x1800000, 0x1900000)
 
@@ -1687,7 +1751,7 @@ void Func_0200237c(void) {
 #define VENT_BOUNCE Func_02002400
 #include "../field/object/vent_bounce.c"
 
-DEFINE_FUNC_020024F8(Func_020024f8, Func_020027f8, gData_02002af4)
+DEFINE_ACTOR_START_SCRIPTED(Func_020024f8, Func_020027f8, gData_02002af4)
 
 void Func_02002554(s32 *position, s32 base) {
   struct Actor *object =
@@ -1711,7 +1775,7 @@ void Func_02002554(s32 *position, s32 base) {
   }
 }
 
-DEFINE_FUNC_020025D4(Func_020025d4, Func_02002554)
+DEFINE_VENTS_UPDATE(Func_020025d4, Func_02002554)
 
 // The registers by io_reg.h's names from here on: local.h names the blend
 // register its own way for Func_02002084 above.
@@ -1795,7 +1859,7 @@ void Func_0200271c(s32 index, s32 active) {
 
 s32 Func_02002730(void) { return VENT_WORK->counter; }
 
-DEFINE_FUNC_0200273C(Func_0200273c)
+DEFINE_VENTS_ADVANCE_COUNTER(Func_0200273c)
 
 /// The accessors step the work pointer by whole entries and then take entry 0:
 /// the bytes add the base to index * 20 before the field offset.
@@ -1807,4 +1871,4 @@ void Func_02002764(s32 index, s32 value) {
   VENT_AT(work, index)->entries[0].value = value;
 }
 
-DEFINE_FUNC_02002778(Func_02002778)
+DEFINE_VENTS_SET_ID(Func_02002778)

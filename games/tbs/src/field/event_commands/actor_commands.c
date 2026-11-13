@@ -57,8 +57,7 @@ void Actor_Stop(u32 actorId) {
 }
 
 /// Makes an actor follow another (the watched actor script): writes its
-/// watchedActor. Called by the Colosso log's event, and by Altmiller
-/// Cave's.
+/// watchedActor.
 void Actor_WatchAndSetScript(u32 actorId, u32 watchedActorId) {
   struct Actor *actor = Actor_Lookup(actorId);
 
@@ -231,10 +230,9 @@ void Actor_WalkByAndWaitById(u32 actorId, s32 xOffset, s32 zOffset) {
   }
 }
 
-/// Places an actor on the leader and sends it walking (xOffset, zOffset)
-/// pixels away at speed 0.6 and acceleration 0.3, through the launch script;
-/// the actor then takes movement type action. Called by the Lemurian ship, Babi
-/// Lighthouse and Lalivero events.
+/// Places an actor on the leader and sends it walking (xOffset, zOffset) pixels
+/// away at speed 0.6 and acceleration 0.3, through the launch script; the actor
+/// then takes movement type action.
 void Actor_LaunchFromLeader(u32 actorId, s32 xOffset, s32 zOffset, s32 action) {
   struct Actor *actor = Actor_Lookup(actorId);
 
@@ -365,8 +363,7 @@ void Actor_SetAnimationById(u32 actorId, s32 animation) {
 }
 
 /// Sets the animation timer steps of each of an actor's sprites
-/// (Sprite_SetAnimationSpeed). Called by the Tolbi ship and
-/// Lamakan Desert events.
+/// (Sprite_SetAnimationSpeed).
 void Actor_SetAnimationSpeedById(u32 actorId, s32 steps) {
   struct Actor *actor = Actor_Lookup(actorId);
 
@@ -374,10 +371,8 @@ void Actor_SetAnimationSpeedById(u32 actorId, s32 steps) {
     Actor_SetAnimationSpeedFar(actor, steps);
 }
 
-/// Waits, at most 90 frames, for an actor's animation to change. Only an
-/// actor drawn as a sprite (ACTOR_SPRITE_ONE) is waited for.
-/// Called by Actor_SetAnimationAndWait, a few events and the debug
-/// level screen.
+/// Waits, at most 90 frames, for an actor's animation to change. Only an actor
+/// drawn as a sprite (ACTOR_SPRITE_ONE) is waited for.
 void Actor_WaitForAnimationChange(u32 actorId) {
   struct Actor *actor;
   struct Sprite *sprite;
@@ -790,13 +785,11 @@ void Actor_SetSpriteColor(struct Actor *actor, s32 param) {
   }
 }
 
-/// Makes an actor watch the actor in the low 8 bits of targetId and
-/// starts script on it. Unless ACTOR_WATCH_KEEP_MOTION is set it takes a
-/// follow distance of 40 pixels (timer 40, read by
-/// Actor_MoveTowardTarget), the target's top speed with twice its
-/// acceleration, to keep up with it, and no collision flags, so it cannot block
-/// the target. Called by Vale's, Bilibin's, Imil's, Kolima's and McCoy's palace
-/// events, among others.
+/// Makes an actor watch the actor in the low 8 bits of targetId and starts
+/// script on it. Unless ACTOR_WATCH_KEEP_MOTION is set it takes a follow
+/// distance of 40 pixels (timer 40, read by Actor_MoveTowardTarget), the
+/// target's top speed with twice its acceleration, to keep up with it, and no
+/// collision flags, so it cannot block the target.
 void Actor_WatchAndStartScript(u32 actorId, s32 targetId, const void *script) {
   struct Actor *follower = Actor_Lookup(actorId);
   struct Actor *target = Actor_Lookup(targetId & 0xff);
@@ -881,9 +874,8 @@ void Actor_SetSpritePriority(s32 actorId, s32 priority) {
   }
 }
 
-/// Makes the target actor's sprite show the source actor's
-/// graphics (its VRAM block and tile). Neither actor is checked for
-/// NULL. Called by the Tolbi ship deck's event.
+/// Makes the target actor's sprite show the source actor's graphics (its VRAM
+/// block and tile). Neither actor is checked for NULL.
 void Actor_CopyGraphics(u32 targetId, u32 sourceId) {
   struct Actor *actor;
   struct Sprite *sprite;

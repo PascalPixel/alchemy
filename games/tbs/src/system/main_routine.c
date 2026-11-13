@@ -25,15 +25,11 @@
 #define EXIT_TABLE_END 0x1ff
 #define EXIT_ID_ANY 0xff
 
-/// Chooses the scene and entrance to go to when the party leaves the
-/// current scene. exitId is the kind of exit FieldSequence_Run ended on; the
-/// scene's exit table gives the first exit of that kind (or of any kind) whose
-/// flag, if it has one, is not set. An exit of kind 0 or the end of the scene's
-/// exits falls back to the scene of its first exit, at entrance 0.
-/// Called by MainRoutine_Run with FieldSequence_Run's result; sets
-/// gMainRoutineWork.next and .entrance, and leaves them alone for
-/// EXIT_KEEP_DESTINATION, whose destination is set already, or for a scene with
-/// no header in the table.
+/// Chooses the scene and entrance to go to when the party leaves the current
+/// scene. exitId is the kind of exit FieldSequence_Run ended on; the scene's
+/// exit table gives the first exit of that kind (or of any kind) whose flag, if
+/// it has one, is not set. An exit of kind 0 or the end of the scene's exits
+/// falls back to the scene of its first exit, at entrance 0.
 void Scene_TakeExit(s32 exitId) {
   s16 currentMap;
   const u32 *exitTable;
@@ -97,19 +93,14 @@ void Scene_TakeExit(s32 exitId) {
 }
 
 /// Chooses where the game continues after a sequence other than the field
-/// sequence (see MainRoutine_Run). result is its result:
-/// -1 when the party was defeated, which revives the leader with 1 HP (and,
-/// with FLAG_CHILDHOOD, fully heals Isaac and Garet) and
-/// returns to the story battle's defeat point
-/// (Event_SetDefeatDestination) or, when none is set, to the restart
-/// point, usually the last Sanctum (Scene_SetRestartPoint). Any other
-/// result goes to the after-battle destination an event set, or to the return
-/// point (the scene the battle or minigame was started from) with the party
-/// keeping its position (FLAG_KEEP_PARTY_POSITION). Called by
-/// MainRoutine_Run after each sequence other than the field sequence (the
-/// ids from SEQUENCE_NONE up); stores result in
-/// gMainRoutineWork.sequenceResult and sets gMainRoutineWork.next and
-/// .entrance.
+/// sequence (see MainRoutine_Run). result is its result: -1 when the party was
+/// defeated, which revives the leader with 1 HP (and, with FLAG_CHILDHOOD,
+/// fully heals Isaac and Garet) and returns to the story battle's defeat point
+/// (Event_SetDefeatDestination) or, when none is set, to the restart point,
+/// usually the last Sanctum (Scene_SetRestartPoint). Any other result goes to
+/// the after-battle destination an event set, or to the return point (the scene
+/// the battle or minigame was started from) with the party keeping its position
+/// (FLAG_KEEP_PARTY_POSITION).
 void Scene_ReturnFromSequence(s32 result) {
   struct Unit *unit;
   s32 i;
@@ -312,7 +303,6 @@ void MainRoutine_Run(s32 mode) {
 }
 
 /// Loads the current scene's overlay code (its resource) into gOverlayArea.
-/// Called by MainRoutine_Run before FieldSequence_Run.
 void Scene_LoadOverlay(s32 unused) {
   const struct Scene *table;
 
@@ -322,15 +312,12 @@ void Scene_LoadOverlay(s32 unused) {
 
 #define MAP_HEADER(id) (&gScenes[id])
 
-/// Updates the flags and state that last for one scene or one area, on
-/// entering the current scene. Unless keep is set (the party returns to where
-/// it was, as after a battle), the flags of the last scene are cleared, and on
-/// entering a new area so are the area's flags and step
-/// counters, the area name is shown and the entrance becomes the
-/// point Retreat returns to. Then the area's visited flag
-/// (FLAG_AREA_VISITED) is set. Called by MainRoutine_Run before each
-/// scene, with keep from FLAG_KEEP_PARTY_POSITION; sets
-/// gMainRoutineWork.area and .sceneType.
+/// Updates the flags and state that last for one scene or one area, on entering
+/// the current scene. Unless keep is set (the party returns to where it was, as
+/// after a battle), the flags of the last scene are cleared, and on entering a
+/// new area so are the area's flags and step counters, the area name is shown
+/// and the entrance becomes the point Retreat returns to. Then the area's
+/// visited flag (FLAG_AREA_VISITED) is set.
 void Scene_Arrive(s32 unused, s32 keep) {
   s32 area = MAP_HEADER(gMainRoutineWork.next)->area;
   s32 flag;

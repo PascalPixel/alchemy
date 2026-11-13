@@ -113,12 +113,11 @@ void BattleIntro_AnnounceEncounter(s32 enemyCount) {
   }
 }
 
-/// Fills the battle's two unit lists, each ended by BATTLE_UNIT_LIST_END:
-/// the party members in their order, and the enemies, left to right for a
-/// random formation or, for a fixed one, alternating out from the centre
-/// (gBattleParty_CenterOrderOffsets). Called by Battle_Run as the
-/// battle is set up. Writes gBattleWork->partyUnits and enemyIds, and marks
-/// each party member's side.
+/// Fills the battle's two unit lists, each ended by BATTLE_UNIT_LIST_END: the
+/// party members in their order, and the enemies, left to right for a random
+/// formation or, for a fixed one, alternating out from the centre
+/// (gBattleParty_CenterOrderOffsets). Writes gBattleWork->partyUnits and
+/// enemyIds, and marks each party member's side.
 void BattleUnit_Collect(void) {
   u16 unitIds[UNIT_MAX];
   struct BattleWork *battle;
@@ -175,10 +174,9 @@ void Battle_ClearBg0Vofs(void) {
 /// up.
 void Party_BattleSetupNoOp(s32 unused) {}
 
-/// Clears every battle-only state of the party members (stat stages and
-/// their turns, statuses, Djinn element boosts, the countdowns) and
-/// recalculates their stats, as a battle ends. Called by Battle_Run
-/// on every way out of the battle.
+/// Clears every battle-only state of the party members (stat stages and their
+/// turns, statuses, Djinn element boosts, the countdowns) and recalculates
+/// their stats, as a battle ends.
 UNREAD_RESULT BattleParty_ResetActiveRuntimeFields(void) {
   u16 unitIds[10];
   s32 count;
@@ -221,12 +219,11 @@ UNREAD_RESULT BattleParty_ResetActiveRuntimeFields(void) {
   }
 }
 
-/// Brings the Djinn recovery list up to date as a battle starts: every
-/// Djinni a party member has on standby that the list lacks joins it. Then,
-/// outside a link battle, each Djinni waiting for a battle to end whose
-/// unit has no battle object is Set again and leaves the list. Called by
-/// Battle_Run once the unit lists and battle objects are in place.
-/// Changes the party's and the opponent's recovery lists and Djinn states.
+/// Brings the Djinn recovery list up to date as a battle starts: every Djinni a
+/// party member has on standby that the list lacks joins it. Then, outside a
+/// link battle, each Djinni waiting for a battle to end whose unit has no
+/// battle object is Set again and leaves the list. Changes the party's and the
+/// opponent's recovery lists and Djinn states.
 UNREAD_RESULT DjinnRecovery_Reconcile(void) {
   u16 unitIds[10];
   s32 count;

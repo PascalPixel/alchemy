@@ -43,8 +43,7 @@ void FieldEffect_StartWindowHBlankDma(void) {
 ///
 /// A task (priority TASK_PASS_FRAME), added with
 /// FieldEffect_StartWindowHBlankDma; it removes both and stops DMA 0 when a
-/// transition with no next mode ends. Writes the hidden page of the
-/// transition state (HEAP_SLOT_SCREEN_TRANSITION) and then flips state->page.
+/// transition with no next mode ends.
 void ScreenTransition_UpdateScanlineTable(void) {
   struct ScreenTransitionState *state;
   struct TransitionSpan *span;
@@ -503,12 +502,9 @@ void ScreenTransition_UpdateScanlineTable(void) {
 /// Starts window transition mode at value 0, with no duration: the caller
 /// moves it.
 ///
-/// Called by Reveal (WINDOW_TRANSITION_RIPPLE) and, through
-/// ScreenTransition_InitializeBattleEffectStateFar, by three scenes (Altmiller
-/// Cave, Tret Tree's branch and Babi's palace). Allocates and clears the
-/// transition state in HEAP_SLOT_SCREEN_TRANSITION and adds both window
-/// tasks; its mask (WININ_WIN0_ALL | WININ_WIN1_ALL) shows every layer in both
-/// windows.
+/// Allocates and clears the transition state in HEAP_SLOT_SCREEN_TRANSITION and
+/// adds both window tasks; its mask (WININ_WIN0_ALL | WININ_WIN1_ALL) shows
+/// every layer in both windows.
 void ScreenTransition_InitializeBattleEffectState(s32 mode) {
   struct ScreenTransitionState *state =
       HeapSlot_AllocEwram(HEAP_SLOT_SCREEN_TRANSITION, sizeof(*state));
@@ -531,9 +527,6 @@ UNUSED void ScreenTransition_SuspendCallbacks(void) {
 
 /// Allocates the screen transition state (HEAP_SLOT_SCREEN_TRANSITION) and
 /// clears it.
-///
-/// Called by ScreenTransition_Start and ScreenTransition_Finish for every
-/// kind but the two fades.
 struct ScreenTransitionState *ScreenTransition_AllocateAndClearState(void) {
   struct ScreenTransitionState *state;
 
@@ -549,11 +542,9 @@ struct ScreenTransitionState *ScreenTransition_AllocateAndClearState(void) {
 /// It returns after one frame while the fade runs on: a caller that must wait
 /// for it, as FieldSequence_Run does, waits itself.
 ///
-/// Called by FieldSequence_Run to fade a scene in with work->transition and
-/// work->transitionFrames, and by Event_StartScreenTransition for
-/// events. Every style but the fades adds a task (and the centre
-/// line the HBlank handler, IRQ 1) that runs the transition; every kind
-/// ORs the map's display bits into DISPCNT through the I/O write queue.
+/// Every style but the fades adds a task (and the centre line the HBlank
+/// handler, IRQ 1) that runs the transition; every kind ORs the map's display
+/// bits into DISPCNT through the I/O write queue.
 void ScreenTransition_Start(s32 mode, s32 frames) {
   struct ScreenTransitionWin *display;
   s32 variant;
@@ -645,13 +636,9 @@ void ScreenTransition_Start(s32 mode, s32 frames) {
 /// Fades the screen out over frames frames, as ScreenTransition_Start fades
 /// it in.
 ///
-/// Called by FieldSequence_Run as a scene ends, by
-/// Field_StartEncounterTransition before a battle (the flickering centre line,
-/// and the WINDOW_TRANSITION_LEADER_INVERSE window), and by
-/// Event_FinishScreenTransition for events. The window and
-/// dissolve kinds run from value 32 to 64, the centre line from 0 to 80. Like
-/// ScreenTransition_Start it does not wait for the fade: FieldSequence_Run
-/// waits transitionFrames after it.
+/// The window and dissolve kinds run from value 32 to 64, the centre line from
+/// 0 to 80. Like ScreenTransition_Start it does not wait for the fade:
+/// FieldSequence_Run waits transitionFrames after it.
 void ScreenTransition_Finish(s32 mode, s32 frames) {
   s32 variant;
   s32 transitionKind;
@@ -947,9 +934,6 @@ void ScreenTransition_UpdateDissolve(void) {
 /// Fills background screen block 4 with tile 0 in WINDOW_PALETTE and, unless
 /// color is -1, makes tile 0 solid color. The fill is 1,280 bytes: the block's
 /// first 20 rows of 32 entries, the screen's height.
-///
-/// Sets up the dissolve for ScreenTransition_Start (colour 15),
-/// ScreenTransition_Finish and ScreenTransition_InitializeState (colour 0).
 void ScreenTransition_FillTilemapAndSolidTile(s32 color) {
   struct ScreenTransitionState *work = gScreenTransitionWork;
   Dma_Fill32(0xf000f000, BG_SCREEN_BLOCK(4), 1280);

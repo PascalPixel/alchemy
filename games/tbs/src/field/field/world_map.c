@@ -38,9 +38,6 @@ struct WorldMapCell {
 /// cell picture buffer, decompressing it from the area's graphics, and with
 /// update set also draws it into the layer's BG map. Returns 0 when that
 /// quarter already shows the tile (and update is 0), else 1.
-///
-/// Sets the quarter's entry in perspective->quarterTiles, and borrows
-/// HEAP_SLOT_TILE_SCRATCH for the decoded tile.
 s32 WorldMap_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update) {
   struct WorldMapView *perspective = gMapGridWork[0];
   u32 *tileOffsets = perspective->tiles;
@@ -104,13 +101,11 @@ s32 WorldMap_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update) {
 /// (Transform_UpdateVertices) and its first frame, and the per-frame view and
 /// HBlank updates.
 ///
-/// Called through WorldMap_InitializePerspectiveFar when the world map
-/// starts (field_sequence.c). Allocates and clears the perspective work in
-/// HEAP_SLOT_MAP_GRID, the camera in HEAP_SLOT_CAMERA and the affine pages in
-/// HEAP_SLOT_WORLD_MAP_AFFINE; loads the default cells, cell picture attributes
-/// and tileset animations; writes the blend, BG and affine registers and
-/// REG_DISPCNT (DISPCNT_MODE_2); and adds WorldMap_UpdateView and
-/// WorldMap_ApplyAffinePage as tasks.
+/// Allocates and clears the perspective work in HEAP_SLOT_MAP_GRID, the camera
+/// in HEAP_SLOT_CAMERA and the affine pages in HEAP_SLOT_WORLD_MAP_AFFINE;
+/// loads the default cells, cell picture attributes and tileset animations;
+/// writes the blend, BG and affine registers and REG_DISPCNT (DISPCNT_MODE_2);
+/// and adds WorldMap_UpdateView and WorldMap_ApplyAffinePage as tasks.
 UNREAD_RESULT WorldMap_InitializePerspective(void) {
   struct WorldMapView *perspective;
   struct BattleCamera *camera;
@@ -268,8 +263,7 @@ UNREAD_RESULT WorldMap_InitializePerspective(void) {
 /// cellY count 32-pixel world map cells, so a grid cell is a 512-pixel tile; it
 /// is next to the view when cellX / 8 and cellY / 8, in 256-pixel steps, are
 /// within one step of the followed point's. Layer 1 takes the tile 320 further
-/// on. Called by the world map's events (Field_SetWorldMapWindowCellTile,
-/// through WorldMap_SetWindowCellTileFar). Sets perspective->tileIds.
+/// on. Sets perspective->tileIds.
 void WorldMap_SetWindowCellTile(s32 x, s32 y, s32 cellX, s32 cellY) {
   struct WorldMapView *perspective;
   s32 *followedPosition;
@@ -307,11 +301,9 @@ void WorldMap_SetWindowCellTile(s32 x, s32 y, s32 cellX, s32 cellY) {
 /// the BG maps, and for the second set swaps in its own tiles at ids 10-12 and
 /// 26-28.
 ///
-/// Called through WorldMap_LoadGraphicsFar when the world map starts,
-/// with the party's position (field_sequence.c). Sets perspective->resources,
-/// which WorldMap_LoadAreaGraphics reloads from; writes BG palette colours 1 to
-/// 223 (keeping the backdrop), char blocks 2 and 3, gMapGridAnimTiles and
-/// screen blocks 5 and 6.
+/// Sets perspective->resources, which WorldMap_LoadAreaGraphics reloads from;
+/// writes BG palette colours 1 to 223 (keeping the backdrop), char blocks 2 and
+/// 3, gMapGridAnimTiles and screen blocks 5 and 6.
 void WorldMap_LoadGraphics(s32 x, s32 z) {
   struct WorldMapView *perspective;
   u32 *resources;
@@ -383,10 +375,7 @@ void WorldMap_LoadGraphics(s32 x, s32 z) {
 /// and BG3 affine parameters, starts the HBlank DMA for the rest, and picks
 /// the BG mode from the window's top and bottom.
 ///
-/// Added as a VBlank-pass task by WorldMap_InitializePerspective. Reads this
-/// frame's affine page (gFrameCount & 1), restarts DMA 0,
-/// sets shownTop and shownBottom, writes REG_DISPCNT's mode and clears
-/// windowPending.
+/// Added as a VBlank-pass task by WorldMap_InitializePerspective.
 void WorldMap_ApplyAffinePage(void) {
   struct WorldMapAffinePair(*affinePages)[160] =
       ((struct WorldMapAffineWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_WORLD_MAP_AFFINE))
@@ -456,9 +445,8 @@ static __inline__ void WorldMap_CopyCellTiles(u8 *cellBytes, u8 *screenTile) {
   *(u16 *)(screenTile + 64) = *cellPictureTiles;
 }
 
-/// Draws world map tileRow into the BG map: 32 cells, then 32
-/// more a screen block on. Called by WorldMap_UpdateView when the view
-/// crosses a row.
+/// Draws world map tileRow into the BG map: 32 cells, then 32 more a screen
+/// block on.
 void WorldMap_RenderPaletteMappedRow(u32 tileRow) {
   u8 *sourceCell;
   u8 *screenTile;
@@ -485,8 +473,7 @@ void WorldMap_RenderPaletteMappedRow(u32 tileRow) {
   } while (cellsCopied <= 31);
 }
 
-/// Draws world map tileColumn into the BG map: 64 cells down. Called by
-/// WorldMap_UpdateView when the view crosses a column.
+/// Draws world map tileColumn into the BG map: 64 cells down.
 void WorldMap_RenderPaletteMappedColumn(u32 tileColumn) {
   u8 *sourceCell;
   u8 *screenTile;
@@ -608,10 +595,6 @@ void WorldMap_UpdateView(void) {
 }
 
 /// Loads and draws the 2x2 world map tiles around the player in both layers.
-/// Called through WorldMap_UpdateCurrentTileBlockFar when the world map
-/// starts, by WorldMap_LoadGraphics for the second graphics set, and by
-/// WorldMap_LoadAreaGraphics and WorldMap_LoadDefaultCellsAndUpdateBlock after
-/// the still picture.
 void WorldMap_UpdateCurrentTileBlock(void) {
   struct WorldMapView *perspective = gMapGridWork[0];
   s32 firstQuarterX = 0;
@@ -700,13 +683,10 @@ void WorldMap_PresentStillPicture(void) {
 /// saves BG1's tiles, draws the current affine frame into pixels and hands
 /// the window and VBlank to it.
 ///
-/// Called through WorldMap_StartStillPictureFar by WorldMap_Freeze
-/// when a menu or event starts on the world map, and by the world map's
-/// lighthouse transition. Sets animationActive, suspends the tileset
-/// animations (TilesetAnim_Update), copies 8 KB of char block 1 to
-/// gDecodeBuffer, sets the window rows to 200 and 255 (DISPCNT_MODE_0) and sets
-/// gVBlankCallback to WorldMap_PresentStillPicture. WorldMap_LoadAreaGraphics
-/// undoes it.
+/// Sets animationActive, suspends the tileset animations (TilesetAnim_Update),
+/// copies 8 KB of char block 1 to gDecodeBuffer, sets the window rows to 200
+/// and 255 (DISPCNT_MODE_0) and sets gVBlankCallback to
+/// WorldMap_PresentStillPicture. WorldMap_LoadAreaGraphics undoes it.
 void WorldMap_StartStillPicture(void) {
   struct WorldMapAffineWork *affineWork =
       HEAP_SLOT_BLOCK(HEAP_SLOT_WORLD_MAP_AFFINE);
@@ -736,9 +716,6 @@ void WorldMap_ShowBg1FromBuffer(void) {
 /// Reloads the world map area's palette and tiles after the still picture, puts
 /// the default cells back and returns to the perspective view.
 ///
-/// Called through WorldMap_LoadAreaGraphicsFar by
-/// WorldMap_Unfreeze when a menu or event ends, by
-/// WorldPicture_Show, and by the world map's lighthouse transition.
 /// Decodes into gMapGridCellBuffer and gBgTileBuffer, sets gVBlankCallback to
 /// WorldMap_ShowBg1FromBuffer, sets the window rows back to 0 and 159, clears
 /// animationActive and resumes the tileset animations. Waits two frames.

@@ -79,7 +79,6 @@ s32 ActorScript_InvokeCallback(struct Actor *interpreter) {
 /// matched without the bit that tells them apart), searching its first 1024
 /// words, or 0 (the start) when key is 0 or not found, so a missing label
 /// restarts the script. Clears the wait.
-/// Called by the jumps: SC_JUMP, SC_LOOP, SC_IF and SC_IFNOT.
 s32 ActorScript_FindLabel(struct Actor *interpreter, u32 labelKey) {
   u32 *scriptWords;
   s32 wordIndex;
@@ -254,12 +253,9 @@ s32 ActorScript_PlaySound(struct Actor *interpreter) {
   return 1;
 }
 
-/// Returns -1 when an actor at position values would overlap a solid
-/// actor (ACTOR_SOLID), each radius less 2 pixels; otherwise 0.
-/// The actor itself is skipped. Called by SC_WANDER and SC_WANDER_HOME, the
-/// player's control (player_control.c), the motion loop's solid test
-/// (actor_motion.c), and the carry and Force field Psynergy through
-/// ActorScript_CheckOverlapFar.
+/// Returns -1 when an actor at position values would overlap a solid actor
+/// (ACTOR_SOLID), each radius less 2 pixels; otherwise 0. The actor itself is
+/// skipped.
 s32 ActorScript_CheckOverlap(struct Actor *actor, s32 *values) {
   s32 actorIndex;
   u8 *collisionFlags;
@@ -279,8 +275,7 @@ s32 ActorScript_CheckOverlap(struct Actor *actor, s32 *values) {
 }
 
 /// Returns the first solid actor that an actor at position values would
-/// overlap, as ActorScript_CheckOverlap tests, or NULL. Called by the Move
-/// field Psynergy (move.c) through ActorScript_FindOverlappingEntryFar.
+/// overlap, as ActorScript_CheckOverlap tests, or NULL.
 struct Actor *ActorScript_FindOverlappingEntry(struct Actor *actor,
                                                s32 *values) {
   s32 actorIndex;
@@ -394,9 +389,8 @@ s32 ActorScript_ApplyLocalOffsetPosition(struct Actor *actor) {
 /// at most its speed limit, and a quarter of a large height difference; when
 /// timer is set it jumps there at once.
 ///
-/// Run each frame by gActor_CameraScript, which
-/// Actor_StartCamera starts. Clears the camera's flags and target,
-/// moves its position, and counts its step.
+/// Clears the camera's flags and target, moves its position, and counts its
+/// step.
 s32 FieldCamera_FollowLeaderInBounds(struct Actor *cameraActor) {
 
   struct Actor *leader;
@@ -501,9 +495,8 @@ s32 FieldCamera_FollowLeaderInBounds(struct Actor *cameraActor) {
 /// pixels away it walks to 16 pixels short of it and runs on;
 /// within 16 it stands and waits for the next frame.
 ///
-/// Run each frame by gActor_ApproachWatchedScript, which
-/// Actor_StartApproachWatched starts. Copies the watched actor's speed
-/// limit and acceleration, and sets the move target.
+/// Copies the watched actor's speed limit and acceleration, and sets the move
+/// target.
 s32 Actor_ApproachWatchedActor(struct Actor *actor) {
 
   s32 distancePixels;
@@ -643,9 +636,8 @@ retry:
 /// more ground around the point, while it is within limit pixels of home;
 /// outside that, or when no point works, it heads back towards home.
 ///
-/// Used by scripts in Vault and Vale (vault.c, vale_plaza.c). Sets bit 1 of
-/// collisionFlags while it roams and clears it on the way home, sets the move
-/// target, and always moves on to the next command.
+/// Sets bit 1 of collisionFlags while it roams and clears it on the way home,
+/// sets the move target, and always moves on to the next command.
 s32 ActorScript_WanderNearHome(struct Actor *actor) {
 
   struct FieldPosition candidatePosition;

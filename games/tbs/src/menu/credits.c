@@ -107,11 +107,10 @@ const u32 gCredits_Backgrounds[] = {
 
 /// Loads a credits battle background into one of the two tile/palette halves. A
 /// zero resource clears that half; the second half offsets its palette indices.
-/// Called by Credits_Run for each picture. A battle background
-/// resource is its 128 colours (256 bytes) and then its packed tiles. The
-/// decoder runs from a copy in HEAP_SLOT_RAM_CODE_TEMP, released before
-/// returning; the colours reach palette RAM at the next VBlank, through the
-/// I/O write queue.
+/// A battle background resource is its 128 colours (256 bytes) and then its
+/// packed tiles. The decoder runs from a copy in HEAP_SLOT_RAM_CODE_TEMP,
+/// released before returning; the colours reach palette RAM at the next VBlank,
+/// through the I/O write queue.
 void Credits_LoadBackground(u32 resourceId, s32 alternate) {
   const u8 *resourceData;
   u32 paletteDestination;
@@ -996,15 +995,10 @@ void Credits_DrawEnteringLine(void) {
   }
 }
 
-/// Allocates the credits sprites, builds the blank border and text rows,
-/// clears the tile ring and adds the scrolling and line-rendering tasks. Called
-/// by Credits_Run; the credits keep their state in four borrowed
-/// flash-library cells: the sprite buffer's pointer in gFlashNumRemainingBytes
-/// (SCROLL_OBJECTS), the scroll in gCreditsScrollPosition, the last line drawn
-/// in gFlash (CREDITS_LAST_LINE_POSITION) and the end-of-text latch in
-/// gProgramFlashSector (CREDITS_END_OF_TEXT). The 1 KB sprite buffer comes from
-/// the EWRAM bump pool and is never freed; each line buffer is taken from the
-/// pool after it and given back.
+/// Allocates the credits sprites, builds the blank border and text rows, clears
+/// the tile ring and adds the scrolling and line-rendering tasks. The 1 KB
+/// sprite buffer comes from the EWRAM bump pool and is never freed; each line
+/// buffer is taken from the pool after it and given back.
 void Credits_InitTextSprites(void) {
   volatile u32 dmaFill;
   u32 *oamWords;
@@ -1067,11 +1061,10 @@ void Credits_InitTextSprites(void) {
 
 /// Centers, right-aligns or left-aligns one credits line in a 192-pixel row.
 /// Rasterizes its glyphs and shadow, packs 4-bit pixels and uploads 24 tiles
-/// beginning at firstTile. Called by the line-rendering task and, for the blank
-/// rows, by Credits_InitTextSprites. Returns -1 at the null end
-/// marker, otherwise zero. alignment 1 centres, 2 right-aligns and any other
-/// value left-aligns; every caller passes 1. The glyphs are colour 15 with a
-/// colour 1 shadow a pixel down and right.
+/// beginning at firstTile. Returns -1 at the null end marker, otherwise zero.
+/// alignment 1 centres, 2 right-aligns and any other value left-aligns; every
+/// caller passes 1. The glyphs are colour 15 with a colour 1 shadow a pixel
+/// down and right.
 s32 Credits_DrawLine(const u8 *text, s32 firstTile, s32 alignment) {
   u8 *linePixels = Heap_AllocEwram(CREDITS_BUFFER_BYTES);
   s32 startX = 0;

@@ -300,10 +300,8 @@ UNREAD_RESULT BattleObject_UpdatePose(s32 unitId) {
                              (unitId & 3) + 14);
 }
 
-/// Releases every sprite unitId's actor holds and leaves it with none,
-/// clearing the battle object's animationEntry and shadowEntry. Called by
-/// BattleObject_SpawnObjectsForList; BATTLE.S also gives it an unnamed
-/// overlay veneer, which nothing in the source calls.
+/// Releases every sprite unitId's actor holds and leaves it with none, clearing
+/// the battle object's animationEntry and shadowEntry.
 void ReleaseBattleObjectRecords(s32 unitId) {
   struct BattleObject *battleObject;
   struct Actor *actor;
@@ -327,15 +325,12 @@ void ReleaseBattleObjectRecords(s32 unitId) {
   }
 }
 
-/// Readies the sprites of the units in list: releases those of every place
-/// list lacks, then creates each listed unit's sprites (body, weapon, status
-/// icon and shadow; or the two parts of a two-part enemy) unless it has
-/// them, building its status icons and setting its pose. With refreshPoses,
-/// sets every listed unit's pose again afterwards. Called by BattleObject_Put
-/// (refreshing) and BattleUnit_ListAllAndSubmit, by the staging and
-/// entry transition code, and through its far stub by
-/// BattleEffect_SelectLivingTargets. Writes the actors' sprites, their storage
-/// kind and height, and the battle objects' icon and shadow entries.
+/// Readies the sprites of the units in list: releases those of every place list
+/// lacks, then creates each listed unit's sprites (body, weapon, status icon
+/// and shadow; or the two parts of a two-part enemy) unless it has them,
+/// building its status icons and setting its pose. With refreshPoses, sets
+/// every listed unit's pose again afterwards. Writes the actors' sprites, their
+/// storage kind and height, and the battle objects' icon and shadow entries.
 void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses) {
   s32 unitIndex;
   s32 unitId;
@@ -534,8 +529,7 @@ s32 BattleObject_MarkForRelease(s32 unitId) {
 }
 
 /// Releases the actor of every unit marked by BattleObject_MarkForRelease,
-/// leaving its battle object with no actor. Called by Battle_Run
-/// at the end of each turn and by BattleStaging_DispatchAction.
+/// leaving its battle object with no actor.
 #ifdef UBFIX
 void BattleObject_DestroyAll(void) {
 #else
@@ -571,9 +565,7 @@ s32 Battle_GetWorkEntryPair(s32 place, struct FixedPointPosition *position) {
 
 /// Sets up the camera's view for projecting points; under
 /// FLAG_CHOOSING_COMMANDS, through the extra transform
-/// gBattleCamera_CommandMatrix first. Called by the three projections,
-/// BattleMotion_ProjectPosition, BattleMotion_ProjectScaledPosition and
-/// BattleMotion_ProjectConditionalPosition. Replaces the transform state.
+/// gBattleCamera_CommandMatrix first. Replaces the transform state.
 UNREAD_RESULT BattleCamera_ApplyTransform(void) {
   struct BattleCamera *camera = gBattleCamera;
   Transform_Reset();
@@ -618,9 +610,8 @@ void *GetMotionRecord(struct Actor *actor, s32 recordIndex) {
 }
 
 /// Puts the battle camera at its default view of the battlefield's centre.
-/// Called by Battle_Run as the battle is set up and by
-/// Battle_GatherActions. Writes the camera's yaw, pitch,
-/// distance, position and eye, and the transform state.
+/// Writes the camera's yaw, pitch, distance, position and eye, and the
+/// transform state.
 void BattleCamera_SetDefaultView(void) {
   struct BattleCamera *camera = gBattleCamera;
   struct FixedPointPosition eyeOffset;

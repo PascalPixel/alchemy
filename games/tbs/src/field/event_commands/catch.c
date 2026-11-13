@@ -5,8 +5,6 @@
 #include "../event_commands_internal.h"
 
 /// Runs Catch cast on a target, through FieldPsynergy_Catch.
-///
-/// Called by FieldPsynergy_Dispatch; the target is ignored.
 void FieldPsynergy_CatchOnTarget(s32 unused) { FieldPsynergy_Catch(); }
 
 /// Carries the hand (sprite 215) from 16 pixels above the caster to the goal in

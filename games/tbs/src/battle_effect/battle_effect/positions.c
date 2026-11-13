@@ -23,9 +23,8 @@
 /// gravity to its vertical speed, then damps every speed by damping / 64.
 ///
 /// Called each frame for the 3D sparks, motes, shards and shells of 18 parts,
-/// from the casting impacts, the beams and the flurry to the
-/// lobbed shells and the stat reductions; each then projects the particle
-/// with Projection_Point. Changes only the step.
+/// from the casting impacts, the beams and the flurry to the lobbed shells and
+/// the stat reductions; each then projects the particle with Projection_Point.
 void Particle_AdvanceWithGravity3D(struct Particle *step, s32 damping,
                                    s32 gravity) {
   step->x += step->velocityX;
@@ -39,10 +38,9 @@ void Particle_AdvanceWithGravity3D(struct Particle *step, s32 damping,
 /// Moves a particle one frame on the screen: adds its velocity, then
 /// gravity to its vertical speed, then damps both speeds by damping / 64.
 ///
-/// Called each frame for the screen-space sparks, motes, chips and puffs of
-/// 20 parts, among them Thor, Spire, Ramses, Ragnarok, the Titan Blade, the
-/// Helm Splitter, the Djinn attacks and the projectile volleys. Changes only
-/// the step; z and velocityZ are left alone.
+/// Called each frame for the screen-space sparks, motes, chips and puffs of 20
+/// parts, among them Thor, Spire, Ramses, Ragnarok, the Titan Blade, the Helm
+/// Splitter, the Djinn attacks and the projectile volleys.
 void Particle_AdvanceWithGravity2D(struct Particle *step, s32 damping,
                                    s32 gravity) {
   step->x += step->velocityX;
@@ -76,9 +74,7 @@ s32 Projection_Point(const void *point, struct ScreenPoint *position) {
 /// The screen position of a unit's sprite, at its scaled height, 16
 /// pixels higher.
 ///
-/// Called by BattleEffect_RunAttackSlash (beams.c), for the first target, and
-/// BattleEffect_RunBurstShower (burst_shower.c), for the user. Leaves the view
-/// set to the battle camera (BattleUnit_ProjectToScreen).
+/// Leaves the view set to the battle camera (BattleUnit_ProjectToScreen).
 void Projection_Sprite(s32 id, struct ScreenPoint *position) {
   BattleUnit_ProjectToScreen(id, ScreenPoint_Coordinates(position));
   position->y -= 16;

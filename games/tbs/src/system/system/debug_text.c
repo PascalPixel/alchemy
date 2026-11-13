@@ -18,9 +18,8 @@ void String_FormatHex(u32 value) {
   gNumberBuffer[8] = 0;
 }
 
-/// Writes `number` to the number buffer as eleven characters: spaces, a sign
-/// (a space or '-') and its decimal digits, right-aligned. Called by
-/// DebugText_PrintDecimal and the Djinn preview's number text.
+/// Writes `number` to the number buffer as eleven characters: spaces, a sign (a
+/// space or '-') and its decimal digits, right-aligned.
 void String_FormatDecimal(s32 number) {
   const u32 *placeValues = (const u32 *)gString_PowersOfTen;
   s8 sign = ' ';
@@ -95,9 +94,8 @@ void *memcpy(void *destination, const void *source, unsigned long size) {
 #endif
 
 /// Prints the string `text` (at most 32 characters) at the debug text cursor,
-/// wrapping from the end of the screen to its start, when debug text is on;
-/// the cursor moves past it. Called by the hex and decimal number routines and
-/// through the far-call table.
+/// wrapping from the end of the screen to its start, when debug text is on; the
+/// cursor moves past it.
 void DebugText_Print(const u8 *text) {
   if (gDebugTextEnabled != 0) {
     u16 *cursor = gDebugTextCursor;
@@ -143,7 +141,6 @@ void DebugText_PrintDecimal(s32 value, s32 digits) {
 }
 
 /// Blanks the debug text screen, homes the cursor and points BG0 at it.
-/// Called by System_Initialize, MainRoutine_Run and the debug modes.
 void DebugText_Clear(void) {
   Dma_Fill32(0xf000f000, BG_SCREEN_BLOCK(4), 32 * 20 * 2);
   gDebugTextCursor = (u16 *)BG_SCREEN_BLOCK(4);
@@ -152,8 +149,7 @@ void DebugText_Clear(void) {
 
 /// Loads the window font and border tiles into BG character block 0, the window
 /// palette into WINDOW_PALETTE with its gradient colours, and the basic sprite
-/// palettes. Called by System_Initialize and by the modes that replace those
-/// graphics and must put them back (the debug battle, the palette editor).
+/// palettes.
 void Window_LoadGraphics(void) {
   // 2048 words: 8 KB, 256 tiles of 4 bits a pixel
   Dma_Set(Resource_GetTableEntry((s32)&ResourceId_WindowTiles),
@@ -172,8 +168,7 @@ void Window_LoadGraphics(void) {
           REG_DMA3);
 }
 
-/// Loads the basic sprite palettes (palettes 0 to 13). Called by
-/// Window_LoadGraphics and the actor setup.
+/// Loads the basic sprite palettes (palettes 0 to 13).
 void Palette_LoadBasicSpriteColors(void) {
   Dma_Set(gBasicSpritePalettes, (void *)OBJ_PLTT, DMA_COPY_HALFWORDS(224),
           REG_DMA3);

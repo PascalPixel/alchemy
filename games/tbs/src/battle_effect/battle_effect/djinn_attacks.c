@@ -8,9 +8,6 @@
 
 /// Copies a w x h byte picture into an h x w one turned 90 degrees
 /// clockwise: the top row of src becomes the right column of dst.
-///
-/// Called twice by BattleEffect_RunMercury, to lay the blue flame sheet's two
-/// pictures on their side. Writes only dst.
 void BattleEffect_TransposeCopy(const u8 *src, u8 *dst, s32 w, s32 h) {
   s32 x;
   s32 y;
@@ -314,9 +311,6 @@ void BattleEffect_RunJupiter(struct BattleEffectParams *args) {
 }
 
 /// Decompresses a resource whose first 128 bytes may be a palette.
-///
-/// Called by nearly every effect to load its pictures. Writes dst and, with
-/// copyPalette, the first 128 bytes of BG palette RAM.
 ///
 /// id: the resource.
 /// dst: receives the decompressed data.

@@ -266,11 +266,10 @@ struct DescendingArcSprite {
   struct SpriteAnimation *firstEntry; ///< entries[0], its first layer
 };
 
-/// Spawns a pair of falling arcs (one upside down) on arc, 64 pixels above
-/// it, at 0.4 of full size, drawn with the tiles in effectWork->arcTileSlot.
-/// The upside-down arc draws in front of everything (priority 0), the other at
-/// the caster's priority, as FieldEffect_SpawnScaledArcActors does. Called by
-/// FieldEffect_UpdateAvoidCaster, so arc is Avoid's caster.
+/// Spawns a pair of falling arcs (one upside down) on arc, 64 pixels above it,
+/// at 0.4 of full size, drawn with the tiles in effectWork->arcTileSlot. The
+/// upside-down arc draws in front of everything (priority 0), the other at the
+/// caster's priority, as FieldEffect_SpawnScaledArcActors does.
 void FieldEffect_SpawnDescendingArcParticles(struct Actor *source) {
   struct FieldEffectWork *effectWork = gFieldEffectWork;
   struct Actor *leader = effectWork->mainActor;

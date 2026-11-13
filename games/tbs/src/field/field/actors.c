@@ -7,10 +7,8 @@
 /// One step of dissolving a sprite pixel by pixel. In each 8x8 tile (256
 /// colours) one pixel is cleared, in gSpriteDissolve_PixelOrder's order; each
 /// tile runs one step ahead of the last, and only tiles whose step is 64-127
-/// clear a pixel. obj is the sprite (struct Sprite), pos the step
-/// (0-127). Writes the sprite's tiles in OBJ VRAM. Called by the two
-/// functions below and, as SpriteDissolve_StepFar, by the battle's
-/// playback (battle/battle/playback.c).
+/// clear a pixel. obj is the sprite (struct Sprite), pos the step (0-127).
+/// Writes the sprite's tiles in OBJ VRAM.
 void SpriteDissolve_Step(u8 *obj, u32 pos) {
   u16 *tile;
   s32 tileCount;
@@ -59,8 +57,6 @@ void SpriteDissolve_Step(u8 *obj, u32 pos) {
 }
 
 /// Dissolves a sprite pixel by pixel, four steps a frame, over 32 frames.
-/// Called through SpriteDissolve_RunFar by the auto
-/// battle (battle/battle/auto_battle.c).
 void SpriteDissolve_Run(u8 *sprite) {
   u32 step;
 
@@ -77,8 +73,6 @@ void SpriteDissolve_Run(u8 *sprite) {
 }
 
 /// Dissolves count sprites together, pixel by pixel, over 32 frames.
-/// Called through SpriteDissolve_RunManyFar by the battle's staging
-/// (battle/battle/staging.c), after the unit is taken off its lists.
 void SpriteDissolve_RunMany(u8 **sprites, s32 count) {
   u8 **firstSprite;
   u8 **spriteCursor;
@@ -155,11 +149,8 @@ s32 MapGrid_GetScreenRelativePosition(struct Actor *actor,
 /// their memory too; Heap_Initialize clears the slots at the next
 /// scene change.
 ///
-/// Called through ActorSystem_InitializeFar by the field sequence
-/// (field/field_sequence/run.c) and the battle's encounter, and
-/// directly by the sprite viewer, each with its enum ActorSystemMode. Allocates
-/// HEAP_SLOT_ACTOR_SYSTEM for the ActorSystemWork and HEAP_SLOT_ACTORS
-/// for the actors, and sets the sprite outline colours.
+/// Allocates HEAP_SLOT_ACTOR_SYSTEM for the ActorSystemWork and
+/// HEAP_SLOT_ACTORS for the actors, and sets the sprite outline colours.
 void ActorSystem_Initialize(s32 controlMode) {
   struct ActorSystemWork *system;
   struct Actor *pool;
@@ -320,11 +311,8 @@ struct Actor *Actor_Create(s32 encodedSprite, s32 x, s32 y, s32 z) {
   return actor;
 }
 
-/// Gives an actor a script and starts it from the top.
-/// Sets the script and clears the cursor, the pause, the loop count and the
-/// last flag test. Called by the Start functions below and the player
-/// control, and as Actor_StartScriptFar by the battle's placement,
-/// field Psynergy and events.
+/// Gives an actor a script and starts it from the top. Sets the script and
+/// clears the cursor, the pause, the loop count and the last flag test.
 void Actor_StartScript(struct Actor *actor, const s32 *script) {
   if (actor != 0) {
     actor->scriptCursor = 0;
@@ -469,11 +457,8 @@ void Actor_StartIdle(struct Actor *actor) {
   Actor_StartScript(actor, gActor_IdleScript);
 }
 
-/// Starts an actor on the camera script (SC_CAMERA). With a leader to
-/// follow, it also gets a speed limit of 4 pixels a frame and an
-/// acceleration of 0.5. Called through
-/// Actor_StartCameraFar by the field sequence's actor code, the Psynergy
-/// camera and the Colosso and Kolima Forest scenes.
+/// Starts an actor on the camera script (SC_CAMERA). With a leader to follow,
+/// it also gets a speed limit of 4 pixels a frame and an acceleration of 0.5.
 void Actor_StartCamera(struct Actor *actor, s32 watchedActorHandle) {
   Actor_StartScript(actor, gActor_CameraScript);
   if (watchedActorHandle != 0) {
@@ -484,12 +469,9 @@ void Actor_StartCamera(struct Actor *actor, s32 watchedActorHandle) {
   }
 }
 
-/// Waits until the actor's script reaches SC_END, at most 300 frames
-/// (five seconds); it returns as soon as the script idles, and after the
-/// limit whether or not it has.
-/// Called through Actor_WaitForScriptEndFar by the Psynergy actor
-/// commands and by events that wait for a scripted move (Colosso, Venus
-/// Lighthouse, Vale).
+/// Waits until the actor's script reaches SC_END, at most 300 frames (five
+/// seconds); it returns as soon as the script idles, and after the limit
+/// whether or not it has.
 void Actor_WaitForScriptEnd(void *rawActor) {
   struct Actor *interpreter = rawActor;
   s32 waitedFrames;
@@ -555,8 +537,6 @@ void ActorSystem_SuspendProjectionAndShowSprites(void) {
 }
 
 /// Resumes the actor camera updates and hides BG1-3 and the sprites.
-/// Called through ActorSystem_ResumeProjectionAndHideLayersFar by the same
-/// events except Colosso's.
 void ActorSystem_ResumeProjectionAndHideLayers(void) {
   Task_ResumeAll(ActorSystem_PlaceSprites);
   Task_ResumeAll(ActorSystem_ProjectSprites);

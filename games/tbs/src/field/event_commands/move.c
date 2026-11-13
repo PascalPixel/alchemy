@@ -375,8 +375,7 @@ struct Actor *FieldEffect_SpawnMoveHand(struct Actor *caster) {
 
 /// Sets an actor's scale at once to full size (its first step of 1/16 past
 /// Q16_ONE - 1: exactly Q16_ONE from a multiple of 1/16) when it is smaller,
-/// then waits, at most 600 frames, for it to arrive at its target. Called by
-/// both Move casts on the hand.
+/// then waits, at most 600 frames, for it to arrive at its target.
 void FieldEffect_SnapScaleToFull(struct Actor *actor) {
   s32 next;
   s32 scale;
@@ -395,10 +394,9 @@ void FieldEffect_SnapScaleToFull(struct Actor *actor) {
   }
 }
 
-/// Ends a hand: over 31 frames it rises 1 pixel, turns 1/8 turn and shrinks
-/// by 1/32 of full size a frame, then bursts into 8 particles and is
-/// released. Not a per-frame update: it waits the frames itself. Called by
-/// the Move casts and Lift.
+/// Ends a hand: over 31 frames it rises 1 pixel, turns 1/8 turn and shrinks by
+/// 1/32 of full size a frame, then bursts into 8 particles and is released. Not
+/// a per-frame update: it waits the frames itself.
 void UpdateRisingParticleBurst(struct Actor *hand) {
   struct Actor *child;
   s32 i;

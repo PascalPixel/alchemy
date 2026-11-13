@@ -11,13 +11,9 @@ struct BattleWorkUnitListView {
 };
 #endif
 
-/// Picks a random place: with requireLivingUnit, a party member still
-/// standing; otherwise any enemy place in use. Returns its place code, or 0
-/// when there is none.
-/// Called by BattleAI_ChooseAction when BattleAI_ChooseTarget
-/// finds no one listed on the side (TARGET_PICK_SIDE_EMPTY), with
-/// requireLivingUnit set for a party unit. Takes one Random16 roll when any
-/// position qualifies.
+/// Picks a random place: with requireLivingUnit, a party member still standing;
+/// otherwise any enemy place in use. Returns its place code, or 0 when there is
+/// none. Takes one Random16 roll when any position qualifies.
 s32 BattleAI_ChooseRandomTarget(s32 requireLivingUnit) {
   u16 positions[6];
   s32 count;
@@ -308,13 +304,11 @@ s32 BattleAI_ChooseRandomTarget(s32 requireLivingUnit) {
 
 /// Picks the target of an enemy's ability (or a confused unit's), as a place
 /// code: among the units of the side it may target, those it would affect
-/// (CHECK_EFFECT_TARGET), at random; a single-target attack by an enemy with
-/// a strategy favours the strongest, the first of the sorted targets 6 times
-/// in 11, 15 or 18, the next 5 times, and so on. Returns
-/// TARGET_PICK_SIDE_EMPTY when the side has no one, TARGET_PICK_NONE when the
-/// ability would affect no one.
-/// Called by BattleAI_ChooseAction for an ability aimed at allies,
-/// the user or foes. Takes Random16 rolls to choose among eligible targets.
+/// (CHECK_EFFECT_TARGET), at random; a single-target attack by an enemy with a
+/// strategy favours the strongest, the first of the sorted targets 6 times in
+/// 11, 15 or 18, the next 5 times, and so on. Returns TARGET_PICK_SIDE_EMPTY
+/// when the side has no one, TARGET_PICK_NONE when the ability would affect no
+/// one. Takes Random16 rolls to choose among eligible targets.
 s32 BattleAI_ChooseTarget(s32 userId, struct AbilityDefinition *action) {
   u16 orderPositions[6];
   s32 unitIds[6];

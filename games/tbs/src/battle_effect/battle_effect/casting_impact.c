@@ -15,8 +15,7 @@
 /// resource holds.
 ///
 /// Called once a frame, so a palette arrives in at most 31 frames: by the
-/// casting impacts, Ragnarok, the Titan Blade and Ground (hail.c). Reads
-/// and rewrites background palette RAM.
+/// casting impacts, Ragnarok, the Titan Blade and Ground (hail.c).
 void BattleEffect_StepPaletteToResource(s32 resourceId) {
   u16 target[64];
   u16 *color = (u16 *)BG_PLTT;
@@ -178,14 +177,12 @@ enum CastingImpact {
 /// (CASTING_IMPACT_IMPACT_UNUSED_MYSTIC_FLAME); none
 /// (CASTING_IMPACT_IMPACT_UNUSED_COMETS).
 ///
-/// Called only by BattleEffect_RunByIdRange (positions.c), for effect
-/// kinds in the casting impacts' range (enum BattleEffectIdRange). The phases,
-/// the hand-offs and the particle ranges are in the folder README under
-/// "Effect families". Opens the canvas layer (tiled
-/// for Terra Strike, Mortal Danger and Asura), writes the background palette,
-/// BG2's scale and reference and REG_BLDALPHA, holds the caster still while
-/// the sparks gather, and adds BattleEffect_ArmBg2AffineHBlankDma for the
-/// waving impacts; it releases all of them before it returns, or hands them on.
+/// The phases, the hand-offs and the particle ranges are in the folder README
+/// under "Effect families". Opens the canvas layer (tiled for Terra Strike,
+/// Mortal Danger and Asura), writes the background palette, BG2's scale and
+/// reference and REG_BLDALPHA, holds the caster still while the sparks gather,
+/// and adds BattleEffect_ArmBg2AffineHBlankDma for the waving impacts; it
+/// releases all of them before it returns, or hands them on.
 ///
 /// mode: the impact, an enum CastingImpact (the effect kind less
 ///       EFFECT_RANGE_CASTING_IMPACT). The tests for mode 100, written as

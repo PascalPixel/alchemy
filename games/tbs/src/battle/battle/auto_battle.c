@@ -8,9 +8,8 @@
 /// action order. The party act at their Agility and target the first enemy
 /// unit, 128; enemies act at half their Agility plus a random part of it and
 /// target unit id 0 to n - 1 for n living party members, which
-/// AutoBattle_RunAction replaces if it is down. Returns how many
-/// actions there are. Called by Battle_Run each turn under
-/// FLAG_AUTO_BATTLE; fills entries.
+/// AutoBattle_RunAction replaces if it is down. Returns how many actions there
+/// are.
 s32 AutoBattle_BuildActions(struct BattleAction *entries) {
   struct BattleAction swap;
   u16 unitIds[UNIT_MAX];
@@ -83,12 +82,10 @@ s32 AutoBattle_BuildActions(struct BattleAction *entries) {
 /// Turns the camera while L or R is held. Nothing in the source calls it.
 DEFINE_ADJUST_CAMERA(BattleCamera_AdjustByShoulderKeys)
 
-/// Auto battle: plays one action. A unit already down does nothing (-1);
-/// a defeated target is replaced by a living unit of its side first.
-/// Returns 1 when the party got away, 0 otherwise. Called by
-/// Battle_Run for each action under FLAG_AUTO_BATTLE. Turns the
-/// camera to the acting unit's side (gBattleBackgroundWork) and rewrites
-/// action->target.
+/// Auto battle: plays one action. A unit already down does nothing (-1); a
+/// defeated target is replaced by a living unit of its side first. Returns 1
+/// when the party got away, 0 otherwise. Turns the camera to the acting unit's
+/// side (gBattleBackgroundWork) and rewrites action->target.
 s32 AutoBattle_RunAction(struct BattleAction *action) {
   struct BattleBackgroundWork *view;
   s32 unitId;
@@ -144,7 +141,6 @@ s32 AutoBattle_RunAction(struct BattleAction *action) {
 }
 
 /// Returns 0 for a party member's or an enemy's unit id, -1 for any other.
-/// Called by the auto battle's action players.
 s32 BattleObject_IsValidId(u32 unitId) {
   if (unitId <= ALLY_MAX) {
     return 0;
@@ -206,11 +202,10 @@ s32 AutoBattle_ShowDefend(const struct BattleAction *action) {
   return 0;
 }
 
-/// Auto battle: casts Psynergy. The camera turns to the caster's side and
-/// the caster raises its hand; the target side fades out, its living units
-/// are readied alone, the Psynergy's effect (kind action->parameter) plays
-/// on them, and everyone fades back in. Returns -1 for an invalid unit or
-/// target. Called by AutoBattle_RunAction for COMMAND_PSYNERGY. Writes
+/// Auto battle: casts Psynergy. The camera turns to the caster's side and the
+/// caster raises its hand; the target side fades out, its living units are
+/// readied alone, the Psynergy's effect (kind action->parameter) plays on them,
+/// and everyone fades back in. Returns -1 for an invalid unit or target. Writes
 /// REG_BLDCNT and REG_BLDALPHA and the actors' colour modes, and leaves the
 /// battle objects readied again.
 s32 AutoBattle_RunPsynergy(struct BattleAction *action) {
@@ -383,9 +378,7 @@ s32 AutoBattle_RunApproachAttack(struct BattleAction *input) {
 /// Auto battle: an attack or an item. Turns the camera to the acting unit's
 /// side, poses the unit and plays the battle effect (kind action->parameter) on
 /// the first living unit of the target's side, then sends both back. Returns -1
-/// for an invalid unit. Called by AutoBattle_RunAction for
-/// COMMAND_ATTACK, COMMAND_ITEM and any other command but fleeing, defending
-/// and Psynergy.
+/// for an invalid unit.
 s32 AutoBattle_RunAttackOrItem(struct BattleAction *action) {
   struct BattleStagingWork work;
   struct BattleBackgroundWork *view = gBattleBackgroundWork;

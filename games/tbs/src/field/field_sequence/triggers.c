@@ -9,10 +9,6 @@
 /// actor placement tables, or NULL: for a party character (0 to 7) the row with
 /// its sprite, and for a placed actor (8 on) the row it was created
 /// from, counting the placed rows in order.
-///
-/// Called by Scene_TalkToActor for the talk facing, and by the field
-/// Psynergy and event commands that read an actor's placement (Mind Read,
-/// a Djinni's joining, the event messages and the view).
 struct ActorPlacement *Scene_FindActorPlacement(s32 id) {
   struct ActorPlacement *placement;
   s32 tableIndex;
@@ -109,9 +105,6 @@ u32 Scene_ExamineTriggerIgnoresCondition(s32 flags, s32 result) {
 /// pushed against it for more than 12 frames (2 with control bit 11);
 /// TRIGGER_FLAG_FACING needs the leader to face within an eighth of a turn of
 /// the direction in the top four bits.
-///
-/// Called by every lookup of a scene's triggers in this part and by
-/// Actor_GetTriggerCellAheadOfCurrent. Changes nothing.
 const struct Trigger *Scene_FindTrigger(s32 kind, s32 target) {
   struct FieldWork *work = gFieldWork;
   const struct Trigger *trigger = work->triggers;
@@ -177,10 +170,6 @@ UNUSED void Overlay_CallInitialize(void) { gOverlayArea.initialize(); }
 /// (gMainRoutineWork.haltedActor), its TRIGGER_TALK_HALTED event if it has
 /// one, the event for talking to it while it is stopped (Crossbone Isle's Bane
 /// has one).
-///
-/// Called by FieldSequence_Run for the A button, to choose between talking and
-/// searching, and by the field Psynergy dispatch, which Halts only an
-/// actor with a talk trigger; both test the result only for non-zero.
 s32 Scene_FindActorTalkTrigger(s32 id) {
   const struct Trigger *talkTrigger = Scene_FindTrigger(TRIGGER_TALK, id);
   s32 pausedActorId = gMainRoutineWork.haltedActor;
@@ -204,8 +193,7 @@ s32 Scene_FindActorTalkTrigger(s32 id) {
 /// pauses). Returns 0 when an event ran, -1 when there was none or such a line
 /// stood in for it; FieldSequence_Run ignores the result.
 ///
-/// Called by FieldSequence_Run for its talk request (work->talk). Resumes
-/// the stopped actor and sets gMainRoutineWork.haltedActor back to -1
+/// Resumes the stopped actor and sets gMainRoutineWork.haltedActor back to -1
 /// afterwards.
 s32 Scene_TalkToActor(s32 id) {
   struct ActorPlacement *placement = Scene_FindActorPlacement(id);
@@ -305,8 +293,6 @@ finish:
 
 /// Runs the scene's raised trigger (TRIGGER_RAISED) for value: its message or
 /// its function. Returns 0 when an event ran, -1 when there was none.
-///
-/// Called by FieldSequence_Run for a positive event request (work->event).
 s32 Scene_RunRaisedTrigger(s32 value) {
   s32 result;
   s32 handled;
@@ -337,10 +323,8 @@ s32 Scene_RunRaisedTrigger(s32 value) {
 /// records where it leads. Returns 0 when something ran, -1 when there was
 /// nothing.
 ///
-/// Called by FieldSequence_Run for its step request (work->stepTrigger), which
-/// Field_UpdateWalking raises for CELL_BEHAVIOR_EVENT_FIRST to
-/// CELL_BEHAVIOR_EVENT_LAST. Sets work->exit for an exit, and clears
-/// work->blockedSteps after a step trigger that needs pushing.
+/// Sets work->exit for an exit, and clears work->blockedSteps after a step
+/// trigger that needs pushing.
 s32 Scene_RunStepTriggerOrExit(s32 value) {
   const struct Trigger *touch;
   const struct Trigger *exit;
@@ -395,9 +379,7 @@ s32 Scene_RunStepTriggerOrExit(s32 value) {
 /// CELL_BEHAVIOR_JUMP_FORWARD, and CELL_BEHAVIOR_JUMP_FORWARD_UNREACHED), once
 /// it has pushed for more than 12 frames; the count then restarts.
 ///
-/// Called by FieldSequence_Run for its push request (work->pushCell), which
-/// Field_UpdateWalking raises for CELL_BEHAVIOR_LEDGE to
-/// CELL_BEHAVIOR_JUMP_FORWARD. Clears work->blockedSteps when it acts.
+/// Clears work->blockedSteps when it acts.
 s32 Field_RunPushCell(s32 behavior) {
   struct FieldWork *work = gFieldWork;
   s32 leader = gMainRoutineWork.leaderActorId;
@@ -436,8 +418,7 @@ s32 Field_RunPushCell(s32 behavior) {
 /// message, or a chest holding a Psynergy Stone, a mimic, coins or an item;
 /// with no event, "checked the ground" and "found nothing".
 ///
-/// Called by FieldSequence_Run for its search request (work->tile). Opening a
-/// chest sets its condition flag, and it may raise a mimic battle
+/// Opening a chest sets its condition flag, and it may raise a mimic battle
 /// (work->encounter), give coins or an item, or restore all PP.
 s32 Field_ExamineCell(s32 tile) {
   const struct Trigger *trigger;

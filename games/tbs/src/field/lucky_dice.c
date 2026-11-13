@@ -27,10 +27,8 @@ s32 LuckyDice_Start(void) {
 }
 
 /// Puts the 3D camera back at its starting view: at the origin, unturned,
-/// pitched to 152 and 510 units away, following nothing. Recomputes the eye
-/// and sets the projection's focal length (250), near plane and far plane.
-/// Called only by LuckyDice_Run, once the camera's heap block is allocated;
-/// writes gBattleCamera's fields and gProjection.
+/// pitched to 152 and 510 units away, following nothing. Recomputes the eye and
+/// sets the projection's focal length (250), near plane and far plane.
 void Camera_ResetViewDefaults(void) {
   struct BattleCamera *camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
   s32 offset[3];
@@ -196,7 +194,7 @@ enum LuckyDiceState {
 
 /// Copies count RGB555 colours from source to destination with each channel
 /// multiplied by scale (16.16: 0 is black, Q16_ONE unchanged), for fades.
-/// Returns 0. Called only by LuckyDice_Run, to fade both palettes in and out.
+/// Returns 0.
 s32 LuckyDice_ScaleRgb555Buffer(u16 *source, u16 *destination, s32 scale,
                                 s32 count) {
   s32 remaining;

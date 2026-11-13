@@ -142,10 +142,9 @@ void BattleBackground_SetMode(s32 mode, s32 unusedResource, s32 fade) {
   BattleTransition_BuildTilemap(BG_SCREEN_BLOCK(31));
 }
 
-/// Allocates the zoomed background's scanline work
-/// (HEAP_SLOT_BATTLE_SCANLINES) cleared, and sets the background's mode to
-/// BATTLE_BACKGROUND_NONE, so the next load adds its scanline task.
-/// Called once by Battle_Run before BattleBackground_Load.
+/// Allocates the zoomed background's scanline work (HEAP_SLOT_BATTLE_SCANLINES)
+/// cleared, and sets the background's mode to BATTLE_BACKGROUND_NONE, so the
+/// next load adds its scanline task.
 void BattleBackground_Init(void) {
   struct BattleAffineHdma *work;
   struct BattleBackgroundWork *state;
@@ -363,15 +362,11 @@ UNUSED void BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y) {
 }
 
 /// Points the battle camera at (x, depth, y) with a zoom in percent, and lines
-/// the zoomed background up with it.
-/// The camera's eye is set 510 pixels from the focus along its yaw and pitch;
-/// where the battlefield's origin then projects decides the plane's offset
-/// (BattleCamera_SetRange), and the projection's focal length and depth range
-/// are then scaled by the zoom. Called by the battle's staging
-/// (BattleTransition_Run, Battle_Run, staging.c,
-/// auto_battle.c), BattleCamera_SetViewAtPairMidpoint and several
-/// effects. Writes the camera's pos and eye, gProjection, and the plane's
-/// next page.
+/// the zoomed background up with it. The camera's eye is set 510 pixels from
+/// the focus along its yaw and pitch; where the battlefield's origin then
+/// projects decides the plane's offset (BattleCamera_SetRange), and the
+/// projection's focal length and depth range are then scaled by the zoom.
+/// Writes the camera's pos and eye, gProjection, and the plane's next page.
 void BattleCamera_SetView(s32 x, s32 depth, s32 y, s32 zoom) {
   struct BattleCamera *camera = gBattleCamera;
   s32 *focus = camera->focus;
@@ -421,10 +416,8 @@ void BattleCamera_SetView(s32 x, s32 depth, s32 y, s32 zoom) {
   Projection_Set(width, result, half * 4);
 }
 
-/// Points the battle camera, through BattleCamera_SetView,
-/// at the ground between two units' battle objects, with a zoom in percent.
-/// Called by the staging of a paired action (staging.c) and by the beam
-/// effects (beams.c).
+/// Points the battle camera, through BattleCamera_SetView, at the ground
+/// between two units' battle objects, with a zoom in percent.
 void BattleCamera_SetViewAtPairMidpoint(s32 firstUnitId, s32 secondUnitId,
                                         s32 zoom) {
   struct Actor *firstActor = BattleObject_Get(firstUnitId)->actor;
@@ -531,12 +524,9 @@ s32 Battle_AdjustDebugValue(s32 selectedValue) {
   return selectedValue;
 }
 
-/// Sets the OBJ mode (enum BattleSpriteMode) of every sprite of a unit's
-/// battle object, the picture and its shadow.
-/// Does nothing for a unit with no battle object or actor. Called by
-/// BattleHighlight_SetModes and its helpers here, by the opening's
-/// storm (BattleTransition_Run), by the staging (staging.c)
-/// and by auto battle (auto_battle.c).
+/// Sets the OBJ mode (enum BattleSpriteMode) of every sprite of a unit's battle
+/// object, the picture and its shadow. Does nothing for a unit with no battle
+/// object or actor.
 void BattleHighlight_SetSpriteMode(s32 unitId, s32 mode) {
   struct BattleObject *slot = BattleObject_Get(unitId);
   struct Actor *actor;

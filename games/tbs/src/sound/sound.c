@@ -239,9 +239,8 @@ void SoundTest_Run(void) {
   }
 }
 
-/// Starts the sound driver, resets the BGM ramps (gBgmVolume and its kin)
-/// and clears every player's last sound. Called by System_Initialize through
-/// the sound far-call table.
+/// Starts the sound driver, resets the BGM ramps (gBgmVolume and its kin) and
+/// clears every player's last sound.
 void Sound_Initialize(void) {
   s32 i;
 
@@ -331,9 +330,7 @@ void Sound_UpdateCommandMask(u32 command) {
 /// (MainRoutine_Run, system/main_routine.c).
 s32 Sound_GetCurrentBgm(void) { return gCurrentBgm; }
 
-/// Waits a frame at a time for jingle restoration, giving up after 300
-/// frames. Called only by Vale's sanctum, after the jingle (MUS_INN) for
-/// accepting the Great Healer's quest.
+/// Waits a frame at a time for jingle restoration, giving up after 300 frames.
 void Sound_WaitForBgmRestore(void) {
   s32 framesWaited = 0;
 

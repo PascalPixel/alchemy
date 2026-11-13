@@ -1195,10 +1195,9 @@ void Palette_LoadIconsIntoHighlight(void) {
           DMA_COPY_HALFWORDS(1), REG_DMA3);
 }
 
-/// Shows the icons of one page of a list, one row of 16 pixels each from
-/// (x, y): entries first to first + pageSize - 1, stopping early at an empty
-/// icon slot or the work's itemCount. Hides all the others. Used by the item
-/// and Psynergy lists and the Status screen's lists.
+/// Shows the icons of one page of a list, one row of 16 pixels each from (x,
+/// y): entries first to first + pageSize - 1, stopping early at an empty icon
+/// slot or the work's itemCount. Hides all the others.
 void Menu_SetPageIcons(s32 pageSize, s32 first, struct Window *window, s32 x,
                        s32 y) {
   struct ItemMenuWork *menu = gMenuWork;
@@ -1256,8 +1255,7 @@ void Window_ReleaseTilemapUpload(void) {
   ((struct WindowWork *)gWindowWork[0])->holdTilemapUpload = 0;
 }
 
-/// Plays a sound and returns 1. Called by
-/// Ability_PlayUseAnimation, which ignores the value.
+/// Plays a sound and returns 1.
 s32 Sound_PlayReturnOne(s32 sound) {
   Sound_PlayFar(sound);
   return 1;

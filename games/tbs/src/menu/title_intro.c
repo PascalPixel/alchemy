@@ -744,15 +744,13 @@ void TitlePaletteFade_Update(void) {
   }
 }
 
-/// Tints 512 source colours into destination components (three
-/// per colour, each in the high bits of a halfword). `mode` picks the
-/// tint: a colour below PALETTE_TINT_FROM_SOURCE fills every colour
-/// with it; PALETTE_TINT_FROM_SOURCE takes that colour from source[0];
-/// PALETTE_TINT_NONE to PALETTE_TINT_WARM_DARK are the whole-palette
-/// filters; the TINT, BLEND and SPLIT flags carry
-/// a colour in their low bits; anything else is the address of components to
-/// copy. `selectedPalettes` is an enum PaletteSelection.
-/// Called by TitlePaletteFade_Initialize and the palette fade's setters.
+/// Tints 512 source colours into destination components (three per colour, each
+/// in the high bits of a halfword). `mode` picks the tint: a colour below
+/// PALETTE_TINT_FROM_SOURCE fills every colour with it;
+/// PALETTE_TINT_FROM_SOURCE takes that colour from source[0]; PALETTE_TINT_NONE
+/// to PALETTE_TINT_WARM_DARK are the whole-palette filters; the TINT, BLEND and
+/// SPLIT flags carry a colour in their low bits; anything else is the address
+/// of components to copy. `selectedPalettes` is an enum PaletteSelection.
 void TitlePaletteFade_BuildColors(u32 mode, u16 *source, u16 *destination,
                                   s32 selectedPalettes) {
   u32 colorIndex;
@@ -1089,12 +1087,7 @@ s32 TitlePaletteFade_ClampShiftedComponent(s32 value) {
 
 // The response curves of TitlePaletteFade_BuildColors's filters.
 
-/// Maps a channel (0..31) to a component (0..31 << 10). The same curves as
-/// gColorBuffer_ChannelCurve and its Light and Contrast curves, which sit in
-/// the field sequence bank: the title bank keeps its own copy, as no code in
-/// the main image reads data placed in another bank (in the English build,
-/// every literal pool that points into another bank points at a far-call entry
-/// or table).
+/// Maps a channel (0..31) to a component (0..31 << 10).
 // clang-format off
 u16 gTitleIntro_ChannelCurve[32] = {
     0, 524, 1071, 1643, 2240, 2863, 3513, 4191,

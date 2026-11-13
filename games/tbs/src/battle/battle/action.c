@@ -6,9 +6,6 @@
 
 /// Returns 1 when the unit is in its side's list of units in the battle
 /// (BattleUnit_ListIds), 0 otherwise.
-/// Called by BattleActionRun_Build, for the units holding the standby Djinn a
-/// summon uses.
-/// @param unitId a party member's, up to ALLY_MAX, or an enemy's
 u32 BattleUnit_IsListed(u32 unitId) {
   u16 list[8];
   s32 side;
@@ -28,15 +25,10 @@ u32 BattleUnit_IsListed(u32 unitId) {
   return unitIndex != unitCount;
 }
 
-/// Counts the standby Djinn held by units on unitId's side, from that
-/// side's Djinn recovery list.
-/// Called by BattleActionRun_Build for a summon, and through
-/// BattleDjinn_CountStandbyFar by the command menu (BattleCommandRow_Run,
-/// Battle_CollectPartyCommands, PartyStatus_Draw). Returns the total.
-/// @param unitId a unit of the party's side, up to ALLY_MAX, or of the
-/// enemies'
-/// @param counts if not null, receives the count for each of the four
-/// elements
+/// Counts the standby Djinn held by units on unitId's side, from that side's
+/// Djinn recovery list. Returns the total. @param unitId a unit of the party's
+/// side, up to ALLY_MAX, or of the enemies' @param counts if not null, receives
+/// the count for each of the four elements
 s32 BattleDjinn_CountStandby(u32 unitId, u8 *counts) {
   u16 unitIds[8];
   struct DjinnRecoveryList *list;
@@ -81,14 +73,13 @@ s32 BattleDjinn_CountStandby(u32 unitId, u8 *counts) {
 #define DJINN_INDEX(v) ((v) & 255)
 /// The most targets an action holds (BATTLE_TARGET_CAPACITY).
 #define TARGET_MAX 14
-/// Announces the action and builds it for its targets: its targets and
-/// effect. Returns 0 to stage the action, ACTION_REPORTED when the action
-/// failed (its message shown), or ACTION_NOTHING_TO_SHOW. Called by
-/// BattleStaging_DispatchAction for each action of the turn. Fills plan (its
-/// acting unit, targets, hit and critical rolls, ability, element, staging,
-/// effect word and failure), resets the playback and shows the announcing
-/// message. The command's costs are paid here: a caster's PP, a Djinni set or
-/// put on standby (with its own effect), the standby Djinn a summon uses
+/// Announces the action and builds it for its targets: its targets and effect.
+/// Returns 0 to stage the action, ACTION_REPORTED when the action failed (its
+/// message shown), or ACTION_NOTHING_TO_SHOW. Fills plan (its acting unit,
+/// targets, hit and critical rolls, ability, element, staging, effect word and
+/// failure), resets the playback and shows the announcing message. The
+/// command's costs are paid here: a caster's PP, a Djinni set or put on standby
+/// (with its own effect), the standby Djinn a summon uses
 /// (DJINN_RECOVERY_SUMMONED). A unit that cannot act, or finds no target, may
 /// be set to Defend (defendLevel).
 ///
@@ -104,9 +95,8 @@ s32 BattleActionRun_Build(struct BattleAction *request,
 
   /// Fills the action's targets: the aimed unit, or for a range the places
   /// within range - 1 of the aimed place on its side, standing units only
-  /// unless the ability revives. With none, the unit defends ("defends")
-  /// and it returns ACTION_REPORTED.
-  /// Called by BattleActionRun_Build once the command gives its ability id.
+  /// unless the ability revives. With none, the unit defends ("defends") and it
+  /// returns ACTION_REPORTED.
   s32 BattleActionRun_SetTargets(s32 abilityId) {
     struct AbilityDefinition *ability = Ability_Get(abilityId);
     s32 mode = ability->targetMode;

@@ -89,13 +89,11 @@ void BattleEffect_RunRottenBlood(struct BattleEffectParams *args) {
 /// flashes and the battle shows the damage; the shell bursts into 4 smoke
 /// puffs that drift up or 16 shards that fly up and fall.
 ///
-/// Called by the seven handlers above, from BattleEffect_RunMadSpatter to
-/// BattleEffect_RunRottenBlood. Loads three palettes over the first 64
-/// background colours in turn, the style's last; frees PARTICLES 0 to 1023,
-/// then gives the shells 16 a target from 0 and the bursts 32 a target from
-/// LOBBED_SHELLS_BURSTS. Runs 8 frames a target plus 72 for smoke or 56 for
-/// shards, and before it returns removes its transfer task, frees its
-/// blitters and closes the canvas layer.
+/// Loads three palettes over the first 64 background colours in turn, the
+/// style's last; frees PARTICLES 0 to 1023, then gives the shells 16 a target
+/// from 0 and the bursts 32 a target from LOBBED_SHELLS_BURSTS. Runs 8 frames a
+/// target plus 72 for smoke or 56 for shards, and before it returns removes its
+/// transfer task, frees its blitters and closes the canvas layer.
 ///
 /// mode: the style (enum LobbedShellsMode): its colours and its row of
 ///       gLobbedShells_Styles, which makes Rotten Blood's and Mad Spatter's

@@ -222,12 +222,6 @@ void BattleEffect_RunDynamite(struct BattleEffectParams *args) {
 /// on frame 4.
 /// mode: where the bursts go off (enum SparkGroupsMode).
 ///
-/// Called by BattleEffect_RunNova and BattleEffect_RunDynamite, and with
-/// SPARK_GROUPS_RISING by BattleEffect_RunCastingImpact for Severe Blow and by
-/// BattleEffect_RunThrash and BattleEffect_RunUnusedSevereBlowLeap in thrash.c,
-/// which set args->variant first (SPARK_GROUPS_SEVERE_BLOW or
-/// SPARK_GROUPS_THRASH).
-///
 /// work->particles hold the ring flashes, 16 for each burst; PARTICLES the
 /// sparks, one run of gPlasma_Shapes' count for each burst. Sets
 /// REG_BLDALPHA, loads the flash burst palette into the first 64 background

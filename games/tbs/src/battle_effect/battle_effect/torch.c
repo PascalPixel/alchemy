@@ -17,10 +17,7 @@
 /// throughout as BG2's x reference is fed line by line
 /// (BattleEffect_ArmBg2AffineHBlankDma), and fades out over the last 7.
 ///
-/// Opens the canvas layer for the entrance and closes it at the end. Writes
-/// background colours 1 to 63 and keeps their working copy in the first 128
-/// bytes of Ram_MapGridCellBuffer; adds and removes the HBlank DMA
-/// task.
+/// Opens the canvas layer for the entrance and closes it at the end.
 void BattleEffect_RunTorch(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;

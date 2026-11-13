@@ -42,7 +42,6 @@ extern u32 gCpuLoadPeak;
 // device.
 extern volatile u32 gFrameCount;
 extern u32 gVBlankCount; ///< Counted up by every VBlank.
-/// Run once by the next VBlank handler, which clears it first.
 extern void (*gVBlankCallback)(void);
 
 /// Nonzero: wait() counts no idle time and ignores sleep requests.

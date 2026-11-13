@@ -59,10 +59,9 @@ s32 ReadFlashId(void) {
 /// unknown. Returns 0 when the chip's id is one of gFlash_Chips' SST, Atmel,
 /// Macronix and Panasonic entries and 1 when not; either way it installs an
 /// entry's routines, timings and type (gFlash), for an unknown chip
-/// gFlash_ChipDefault's: SST's routines and timings. Called by
-/// Save_InitializeWork, up to eight times a frame apart, before
-/// each use of the save. It rewrites three of the cells the credits borrow;
-/// menu/credits.c says why that borrowing is harmless.
+/// gFlash_ChipDefault's: SST's routines and timings. It rewrites three of the
+/// cells the credits borrow; menu/credits.c says why that borrowing is
+/// harmless.
 s32 IdentifyFlash(void) {
   u16 missing;
   u16 id;
@@ -237,8 +236,7 @@ typedef void (*FlashReadCore)(const u8 *source, u8 *destination, u32 size);
 /// Reads `size` bytes from `offset` in `sector` into `destination`, running
 /// ReadFlashCore from a copy in a 128-byte local. Sectors are addressed with
 /// gFlash_ChipDefault's 4 KB geometry whatever the chip, which is the same:
-/// every entry gFlash can point to has 4 KB sectors. Called by the save code
-/// for a sector's part and a file's summary (system/system/save.c).
+/// every entry gFlash can point to has 4 KB sectors.
 void ReadFlash(u16 sector, u32 offset, u8 *destination, s32 size) {
   u16 code[64];
   u16 *sourceCode;
@@ -284,8 +282,7 @@ typedef u8 *(*FlashVerifyCore)(u8 *source, u8 *flash, u16 size);
 
 /// Copies the verifier to RAM and compares a standard flash sector with source
 /// data. Returns 0 when sector `sector` holds the 4 KB at `source`, else the
-/// address of its first differing byte. Called by Save_WriteSector
-/// after each write.
+/// address of its first differing byte.
 s32 Flash_VerifySector(u16 sector, u8 *source) {
   u16 code[128];
   u16 *sourceCode;

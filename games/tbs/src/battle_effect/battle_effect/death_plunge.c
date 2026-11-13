@@ -362,13 +362,10 @@ UNUSED void BattleEffect_RunBladeRain(struct BattleEffectParams *args) {
 /// feet while motes spiral up around it, for 56 frames, and the first target
 /// flashes.
 ///
-/// Called through BattleEffect_RunElementPillarFar by
-/// ElementGlow_Play (GLOW_PILLAR) and four times in a row, one
-/// for each element, by AutoBattle_RunAttackOrItem. Allocates and frees
-/// its own work, canvas and sheet slots; loads the element's colours over the
-/// first 64 of the background palette, fills PARTICLES 0 to 127 and moves
-/// BG2X with the unit. Increments args->variant in place, so
-/// AutoBattle_RunAttackOrItem's four calls draw ever larger motes.
+/// Allocates and frees its own work, canvas and sheet slots; loads the
+/// element's colours over the first 64 of the background palette, fills
+/// PARTICLES 0 to 127 and moves BG2X with the unit. Increments args->variant in
+/// place, so AutoBattle_RunAttackOrItem's four calls draw ever larger motes.
 ///
 /// args->kind    : the element (enum Element), which picks the palette:
 ///                   Venus yellow, Mercury blue, Mars red, others Jupiter
@@ -549,10 +546,8 @@ void BattleEffect_RunElementPillar(struct BattleEffectParams *args) {
 /// background's colours, and from frame 51 32 flashes rise. Runs for 128
 /// frames.
 ///
-/// Called through BattleEffect_RunShatteringOpeningFar by
-/// BattleTransition_Run, as a battle opens. Allocates and
-/// frees its own work, canvas and sheet slots; sets up BG2 as the canvas
-/// itself, as BattleEffect_StartCanvasLayer would; draws the disc in
+/// Allocates and frees its own work, canvas and sheet slots; sets up BG2 as the
+/// canvas itself, as BattleEffect_StartCanvasLayer would; draws the disc in
 /// Ram_MapGridCellBuffer and copies it over the BATTLE_BACKGROUND_BYTES of BG
 /// character block 2; writes background colours 1 to 63 and palettes 6 to 13;
 /// reloads the battle background on BG1 on frame 5, and on its way out restores
@@ -1148,13 +1143,10 @@ void BattleEffect_DrawStreaks(void) {
 /// adds BattleEffect_DrawStreaks as a task, with a canvas that darkens each
 /// frame.
 ///
-/// Called through BattleEffect_StartElementStreaksFar by
-/// ElementGlow_Play (GLOW_STREAKS), which keeps the canvas on
-/// its unit and ends the burst with BattleEffect_EndElementStreaks. Allocates
-/// the work and canvas slots, which the end frees; loads the element's
-/// colours over the first 64 of the background palette; adds
-/// BattleEffect_DrawStreaks and the canvas transfer as tasks, beside
-/// the battle background's palette fade BattleEffect_StartCanvasLayer adds.
+/// Allocates the work and canvas slots, which the end frees; loads the
+/// element's colours over the first 64 of the background palette; adds
+/// BattleEffect_DrawStreaks and the canvas transfer as tasks, beside the battle
+/// background's palette fade BattleEffect_StartCanvasLayer adds.
 ///
 /// element: the element (enum Element), which picks the palette: Venus
 ///          yellow, Mercury blue, Mars red, Jupiter violet, and a dusty grey

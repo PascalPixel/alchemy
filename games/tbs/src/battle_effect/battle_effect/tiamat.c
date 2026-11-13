@@ -60,12 +60,6 @@ void BattleEffect_RunTiamat(struct BattleEffectParams *args) {
 /// goes out. A fireball is never idle: its variant starts at minus its wait (0
 /// to 31 frames) and counts up to 0, when it starts to fall.
 ///
-/// Sets REG_BLDALPHA and REG_BG2CNT (the canvas in front, priority 0), loads
-/// the breath's and later the flames' palette (or the lightning bolt's) into
-/// the first 64 background colours and brightens them over frames 160 to 175,
-/// sets work->shakeFrames, and tints and shakes the targets. Tiamat spawns her
-/// eight sprites and releases them after the impact burst.
-///
 /// mode: Tiamat's or Dragon Driver's (enum DragonFireMode).
 void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
   struct ScreenPoint origin;

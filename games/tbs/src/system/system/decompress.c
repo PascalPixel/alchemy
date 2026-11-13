@@ -5,7 +5,7 @@
 #include "../system_internal.h"
 
 /// Decompresses the halfword LZ stream at `source` to `destination`, with a
-/// copy of the ARM decoder on the stack. Called by the palette editor.
+/// copy of the ARM decoder on the stack.
 void Decompress_Halfwords(const void *source, void *destination) {
   u32 words = (u32)Decompress_HalfwordsCodeSize >> 2;
   u32 routine[words];
@@ -75,7 +75,7 @@ PALETTE_FADE_DEFINE_SHADE_BY(PaletteFade_BackupAndDarken,
 PALETTE_FADE_DEFINE_SHADE(PaletteFade_BackupAndScaleThreeQuarters,
                           PaletteFade_ScaleThreeQuartersKernel,
                           PaletteFade_BackupAndScaleThreeQuartersCodeSize)
-/// Halves every pixel. Called by the battle effect canvas's transfers.
+/// Halves every pixel.
 PALETTE_FADE_DEFINE_SHADE(PaletteFade_BackupAndHalve, PaletteFade_HalveKernel,
                           PaletteFade_BackupAndHalveCodeSize)
 /// As PaletteFade_BackupAndBrighten, skipping groups already all at 63.
@@ -91,8 +91,7 @@ PALETTE_FADE_DEFINE_SHADE(
     PaletteFade_BackupAndScaleNonzeroThreeQuarters,
     PaletteFade_ScaleNonzeroThreeQuartersKernel,
     PaletteFade_BackupAndScaleNonzeroThreeQuartersCodeSize)
-/// Halves every pixel, skipping all-zero groups. Called by the Lucky Wheels
-/// wheels' canvas transfer.
+/// Halves every pixel, skipping all-zero groups.
 PALETTE_FADE_DEFINE_SHADE(PaletteFade_BackupAndHalveNonzero,
                           PaletteFade_HalveNonzeroKernel,
                           PaletteFade_BackupAndHalveNonzeroCodeSize)

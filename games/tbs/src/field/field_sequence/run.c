@@ -14,12 +14,11 @@
 /// loops: the party walks (Field_UpdateWalking each frame) until a request is
 /// made, and then the requests are handled until none is left.
 ///
-/// Called by MainRoutine_Run for every scene, which
-/// passes the result to Scene_TakeExit. Allocates the field work in
-/// HEAP_SLOT_FIELD, cleared, and frees it on the way out, with every
-/// block the scene took after it from the same pool; sets gMainRoutineWork's
-/// return point, after-battle and defeat destinations, and clears
-/// FLAG_IN_BATTLE and, once the scene has started, FLAG_KEEP_PARTY_POSITION.
+/// Allocates the field work in HEAP_SLOT_FIELD, cleared, and frees it on the
+/// way out, with every block the scene took after it from the same pool; sets
+/// gMainRoutineWork's return point, after-battle and defeat destinations, and
+/// clears FLAG_IN_BATTLE and, once the scene has started,
+/// FLAG_KEEP_PARTY_POSITION.
 s32 FieldSequence_Run(s32 entrance) {
   struct FieldWork *work;
   struct Actor *actor;
@@ -387,10 +386,6 @@ done:
 /// (CELL_BEHAVIOR_JAR to CELL_BEHAVIOR_WELL) whose ground is level with the
 /// leader or up to 64 pixels above it, or a behavior the scene has an examine
 /// trigger for. Returns 0 otherwise.
-///
-/// Called by FieldSequence_Run for the A button (a non-zero result becomes
-/// work->tile, for Field_ExamineCell), and by FieldMenu_Run's search
-/// entry through Actor_GetTriggerCellAheadOfCurrentFar. Changes nothing.
 s32 Actor_GetTriggerCellAheadOfCurrent(void) {
   struct FieldWork *work;
   struct MapGridScrollWork *grid;
@@ -442,10 +437,6 @@ s32 Actor_GetTriggerCellAheadOfCurrent(void) {
 /// Places the party at the entrance it came in by (the first matching
 /// entry, or the scene's first one) unless it keeps its position, and sets the
 /// map's scroll bounds, at least a screen (240 x 160 pixels) wide and tall.
-///
-/// Called by FieldSequence_Run once the scene's events are set. Writes
-/// gMainRoutineWork's position, heading and turn, and the scene's minX to
-/// maxY.
 void Scene_ApplyEntrance(void) {
   struct MapGridScrollWork *grid = gMapGridWork[0];
   s32 entrance = gMainRoutineWork.entrance;

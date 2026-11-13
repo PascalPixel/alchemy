@@ -14,10 +14,6 @@ enum {
 /// FLAG_CHILDHOOD gives Isaac and Garet SPRITE_ISAAC_CHILD and
 /// SPRITE_GARET_CHILD, and FLAG_ISAAC_WEARS_TUNIC gives grown Isaac sprite
 /// SPRITE_ISAAC_TUNIC.
-///
-/// Called by Event_SpawnActorPlacements for every actor
-/// placement, and by Menu_CreatePartyFigures (through
-/// Party_GetCharacterSpriteFar) for the party's figures.
 s32 Party_GetCharacterSprite(s32 character) {
   s32 sprite;
 
@@ -223,11 +219,8 @@ void Actor_ReleaseAtIndex(s32 actorIndex) {
 /// (CELL_BEHAVIOR_CLIMB) is raised by the ground height of the cell north of it
 /// less 32 pixels, and starts climbing (LEADER_MOVEMENT_CLIMB).
 ///
-/// Called by FieldSequence_Run on entering a scene, and by
-/// Event_RunActorUpdateAndWait.
-/// Empties every actor slot and table first, without releasing the
-/// actors in them; sets work->camera, the map's origin and
-/// gMainRoutineWork.movementMode.
+/// Empties every actor slot and table first, without releasing the actors in
+/// them; sets work->camera, the map's origin and gMainRoutineWork.movementMode.
 void Actor_ResetForLeader(struct ActorPlacement *table) {
   struct FieldWork *work;
   struct ActorPlacement *entry;
@@ -301,9 +294,6 @@ void Actor_ResetForLeader(struct ActorPlacement *table) {
 /// Returns the slot after the last placed actor (8 when there is none),
 /// or -1 when the last slot is occupied. Earlier holes are not reused by this
 /// append scan.
-///
-/// Called by Actor_Respawn and Event_AppendActorPlacements
-/// to choose where Event_SpawnActorPlacements starts.
 s32 Actor_FindLastActiveId(void) {
   struct FieldWork *work = gFieldWork;
   s32 lastActorIndex = ACTOR_FIRST_PLACED - 1;
@@ -342,9 +332,6 @@ UNUSED void *Actor_GetSlotAddress(u32 actorIndex) {
 
 /// Gives each actor placement with condition 0 a condition saying whether
 /// it lies within the map's view bounds, so that only those inside appear.
-///
-/// Writes the actor placements' condition, and clears FLAG_IN_VIEW and sets
-/// FLAG_OUT_OF_VIEW.
 void Scene_AssignViewFlags(struct ActorPlacement *entry) {
   struct MapGridScrollWork *view = gMapGridWork[0];
 
@@ -506,10 +493,6 @@ void *Actor_Lookup(u32 actorIndex) {
 /// Saves up to 32 actors (only the party's 8 on the World Map) into
 /// gActorSnapshot, with each one's slot, animation, sprite flags and
 /// priority, so that Actor_Restore can put them back.
-///
-/// Called by FieldSequence_Run before a random battle, by saving the game
-/// through Save_CaptureActorsFar, and by two scenes (Tolbi's spring and the
-/// Venus Lighthouse aerie).
 void Actor_Snapshot(void) {
   struct FieldWork *work;
   struct Actor *snapshot = gActorSnapshot.actors;
@@ -563,10 +546,8 @@ void Actor_Snapshot(void) {
 /// Puts back the actors Actor_Snapshot saved, and moves the camera
 /// to the party leader's height.
 ///
-/// Called by FieldSequence_Run when the party keeps its position
-/// (FLAG_KEEP_PARTY_POSITION), and by the Venus Lighthouse aerie scene through
-/// Actor_RestoreFar. Only actors whose slots are filled again are
-/// restored; the leader is set idle.
+/// Only actors whose slots are filled again are restored; the leader is set
+/// idle.
 void Actor_Restore(void) {
   struct Actor *snapshot = gActorSnapshot.actors;
   u8 *indices = gActorSnapshot.slots;

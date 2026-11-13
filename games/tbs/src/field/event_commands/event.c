@@ -65,10 +65,7 @@ void Event_Wait(s32 frames) {
 
 /// Stops the leader where it stands: no horizontal velocity, the normal walking
 /// speed (1.0) and acceleration (0.5), no destination, and the standing pose,
-/// or the climbing pose (12) while the leader is on a climbable wall. Called by
-/// Event_Start, by FieldSequence_Run before it handles several requests,
-/// by Field_UsePsynergy, Scene_TalkToActor, Field_CheckExitRegions and
-/// the World Map's zoom (WorldMap_ZoomOutWhileLHeld).
+/// or the climbing pose (12) while the leader is on a climbable wall.
 void Leader_StopMoving(void) {
   struct Actor *actor;
 
@@ -139,9 +136,7 @@ void Event_RunActorUpdateAndWait(struct ActorPlacement *table) {
   Actor_Lookup(gMainRoutineWork.leaderActorId);
 }
 
-/// Spawns the actors of an actor placement table after the last
-/// actor in use. Called by the Kolima, Kalay and Tolbi ship events
-/// to bring actors in during an event.
+/// Spawns the actors of an actor placement table after the last actor in use.
 void Event_AppendActorPlacements(struct ActorPlacement *table) {
   Event_SpawnActorPlacements(table, Actor_FindLastActiveId());
 }
@@ -154,10 +149,8 @@ void Event_SetTriggers(const struct Trigger *triggers) {
   work->triggers = triggers;
 }
 
-/// Adds unit to the party. With announce nonzero it also shows
-/// `<name> joined your party.` (Party_ShowJoinedMessage, which receives
-/// announce too). Called by six events as a character joins (Vale,
-/// the Vault, Goma Cave and Mercury Lighthouse among them).
+/// Adds unit to the party. With announce nonzero it also shows `<name> joined
+/// your party.` (Party_ShowJoinedMessage, which receives announce too).
 void Event_AddPartyMember(s32 unit, s32 announce) {
   Unit_GetFar(unit);
   Party_AddMemberFar(unit);
@@ -206,8 +199,7 @@ void Party_ClearUnusableShortcuts(void) {
 
 /// Takes unit out of the party, fully restoring its HP and PP and curing its
 /// poison. If no party member left standing has HP, the leader is given 1 HP so
-/// the party is never left all down. Called by the events where a party member
-/// leaves: Vale in the storm, the Vault, and Sol Sanctum.
+/// the party is never left all down.
 void Party_RemoveMemberRestored(s32 unit) {
   struct Unit *vitals;
   s32 partyIndex;
@@ -455,9 +447,8 @@ s32 Event_AskYesNoWithActorAnimation(s32 actorId, s32 forceBottom) {
   return answer;
 }
 
-/// Asks yes or no at the top of the screen, or at the bottom with atBottom
-/// set. Returns 0 for yes, 1 for no. Called by PartyInventory_GiveItem,
-/// Field_UseItem, Field_UsePsynergy and the cleared game's menu.
+/// Asks yes or no at the top of the screen, or at the bottom with atBottom set.
+/// Returns 0 for yes, 1 for no.
 s32 FieldYesNo_Ask(s32 atBottom) { return YesNoMenu_RunFar(atBottom, 0, 0, 0); }
 
 /// Teaches unit the Psynergy ability and says so with its jingle, waiting for
@@ -497,11 +488,9 @@ void Event_FinishScreenTransition(void) {
 /// (work->transitionFrames). Events reach it.
 void Event_WaitTransitionFrames(void) { wait(gFieldWork->transitionFrames); }
 
-/// Makes the event leave for the given entrance of the given scene:
-/// raises the exit request EXIT_KEEP_DESTINATION and writes
-/// gMainRoutineWork.next and entrance. Called by the Title, the File
-/// Screen, the Battle Arena, the debug battle command and five events (the
-/// Lemurian ship and the World Map among them).
+/// Makes the event leave for the given entrance of the given scene: raises the
+/// exit request EXIT_KEEP_DESTINATION and writes gMainRoutineWork.next and
+/// entrance.
 void Event_SetDestination(s32 sceneId, s32 entrance) {
   gFieldWork->exit = EXIT_KEEP_DESTINATION;
   gMainRoutineWork.next = sceneId;

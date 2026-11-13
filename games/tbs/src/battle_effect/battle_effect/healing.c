@@ -95,15 +95,6 @@ void BattleEffect_RunPsyCrystal(struct BattleEffectParams *args) {
 /// every 8 frames, with the recovery sound on each target's 20th frame and a
 /// tint on its 36th.
 ///
-/// Called by the wrappers above, each with its enum HealingMotesMode.
-///
-/// Sets work->args, overwrites PARTICLES 0 to 511 and the first 64 colours
-/// of the background palette, decodes into the battle sheet slot and
-/// work->sheet, and for Ply writes REG_BG2X and REG_BG2PA. After a Djinni
-/// prelude it clears args->variant, so the mote count and resource fall
-/// back to the basic variant's. The transfer task it adds is
-/// removed again at the end, with the blitters and the canvas layer.
-///
 /// args: the targets. With prelude 1, a Djinni (Mars for Psy Crystal,
 ///         Mercury otherwise) appears first, sways and rises. variant picks
 ///         the motes per target (32 for the basic variant, 128 for the

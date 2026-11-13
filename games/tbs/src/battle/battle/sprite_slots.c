@@ -5,11 +5,7 @@
 #include "../battle_internal.h"
 
 /// Readies the sprite of every unit in the battle (releasing those of units
-/// that left) and sets each one's display mode and motion afresh. Called by
-/// Battle_Run as the battle is set up, by
-/// BattleStaging_DispatchAction, BattleStaging_HideField,
-/// the auto battle and BattleAbility_ApplyToTarget after a call for help, and
-/// through the far stub BattleObject_PutFar by BattleEffect_RunParticleStreams.
+/// that left) and sets each one's display mode and motion afresh.
 void BattleObject_Put(void) {
   s16 unitIds[UNIT_MAX];
 
@@ -26,9 +22,7 @@ void BattleUnit_ListAllAndSubmit(void) {
   BattleObject_SpawnObjectsForList(unitIds, 0);
 }
 
-/// Returns the palette of unit id's battle object. Called by
-/// BattlePlayback_Run and BattleMotion_FlashHit, and through its far stub
-/// by the battle effect dispatcher (battle_effect/battle_effect/dispatch.c).
+/// Returns the palette of unit id's battle object.
 s32 BattleObject_GetPalette(s32 id) { return BattleObject_Get(id)->palette; }
 
 /// The battle has six enemy sprite slots; a large enemy takes two side by
@@ -36,9 +30,8 @@ s32 BattleObject_GetPalette(s32 id) { return BattleObject_Get(id)->palette; }
 #define ENEMY_SPRITE_SLOTS 6
 
 /// Returns 1 if an enemy of class classId would find room among the enemy
-/// sprite slots: one free slot for a small enemy, two free side by side for
-/// a large one. Called by BattleAbility_ApplyToTarget before an enemy calls for
-/// help.
+/// sprite slots: one free slot for a small enemy, two free side by side for a
+/// large one.
 s32 Enemy_HasSpriteRoom(s32 classId) {
   struct BattleWork *battle;
   s32 needsSingleSlot;
@@ -192,9 +185,7 @@ s32 BattleUnit_GetWeaponKind(s32 itemId) {
 
 /// Returns the weapon sprite a party member's attack shows for the kind of
 /// weapon they have equipped (gBattleUnit_WeaponAnimations tables), or 0 for no
-/// weapon, for Felix, or for a unit that is no party member. Called by
-/// BattleObject_Make, which keeps it in BattleObject.overlay for
-/// BattleObject_SpawnObjectsForList to add as a layer of the body sprite.
+/// weapon, for Felix, or for a unit that is no party member.
 s32 BattleUnit_GetWeaponSprite(s32 unitId) {
   struct Unit *unit;
   s32 slot;

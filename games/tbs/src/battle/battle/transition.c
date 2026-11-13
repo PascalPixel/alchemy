@@ -245,15 +245,13 @@ void BattleTransition_ClearBg0Vofs(void) {
   REG_BG0VOFS = top;
 }
 
-/// Opens a battle: the curtain opening, or for the Fusion Dragon the storm
-/// on the Venus Lighthouse aerie; then announces the enemies and leaves the
-/// battle's display set.
-/// Called once by Battle_Run with the enemy count and formation.
-/// Uses HEAP_SLOT_BATTLE_ENTRY_TIMER for the opening's frame timer and frees
-/// it; leaves BG1 on BATTLE_BG1CNT, BG0's priority lowered by 2 again,
-/// REG_DISPCNT showing BG0, BG2 and the sprites, and no VCount handler. The
-/// storm also sets BattleWork.background to the aerie's storm battle
-/// background.
+/// Opens a battle: the curtain opening, or for the Fusion Dragon the storm on
+/// the Venus Lighthouse aerie; then announces the enemies and leaves the
+/// battle's display set. Uses HEAP_SLOT_BATTLE_ENTRY_TIMER for the opening's
+/// frame timer and frees it; leaves BG1 on BATTLE_BG1CNT, BG0's priority
+/// lowered by 2 again, REG_DISPCNT showing BG0, BG2 and the sprites, and no
+/// VCount handler. The storm also sets BattleWork.background to the aerie's
+/// storm battle background.
 void BattleTransition_Run(s32 enemyCount, s32 encounterId) {
   volatile u32 fill;
   struct BattleStagingWork work;

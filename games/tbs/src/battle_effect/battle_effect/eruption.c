@@ -42,8 +42,7 @@ enum {
 /// falls back, hitting the targets one frame apart from frame 6.
 ///
 /// A sound and a 6-frame screen shake start on frame 2, and the battle shows
-/// the damage 48 frames before the end. Writes the first 64 BG colours, sets
-/// work->shakeFrames.
+/// the damage 48 frames before the end.
 ///
 /// args: the targets.
 /// mode: fire or smoke (enum EruptionMode). The rows of gEruption_Counts
@@ -225,11 +224,9 @@ void BattleEffect_RunEruption(struct BattleEffectParams *args, s32 mode) {
 
 /// Creates the effect's sprites in gBattleEffectWork's sprites.
 ///
-/// Called by the summon effects (Ramses, Nereid, Kirin, Atalanta, Cybele,
-/// Neptune, Tiamat, Procne, Boreas, Thor), Judgment and the particle streams.
-/// Fills work->sprites[0] to [entryCount - 1]: sprite n plays animation n,
-/// with its flags cleared and its sprite priority set. A slot whose sprite
-/// could not be created is left NULL.
+/// Fills work->sprites[0] to [entryCount - 1]: sprite n plays animation n, with
+/// its flags cleared and its sprite priority set. A slot whose sprite could not
+/// be created is left NULL.
 ///
 /// entryCount: how many sprites to create.
 /// source: the sprite every one of them is made from.

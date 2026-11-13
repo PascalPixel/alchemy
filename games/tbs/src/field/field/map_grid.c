@@ -107,15 +107,14 @@ UNUSED void TileMap_NumberPlaceholderCellPictures(void) {
 }
 
 /// Converts the map's cells in place with Tile_ConvertMapGrid, run from RAM.
-/// The grid is decoded as three planes: cell behaviors and shapes
-/// (16 KB each), then 32 KB of cell picture halfwords (the cell picture number
-/// with the layer and priority bits an actor standing there takes). The routine
-/// makes each cell picture halfword the low half of a cell word, numbering
-/// placeholder cell pictures (0xfff) from 0 up, and interleaves the other two
-/// planes into the high halves. The 128 by 128 cell words overwrite the first
-/// two planes, so those 32 KB are first copied to a buffer from the EWRAM pool;
-/// the buffer and the routine's RAM copy are freed when done. Called by
-/// MapGrid_LoadMap once the cell planes are decoded.
+/// The grid is decoded as three planes: cell behaviors and shapes (16 KB each),
+/// then 32 KB of cell picture halfwords (the cell picture number with the layer
+/// and priority bits an actor standing there takes). The routine makes each
+/// cell picture halfword the low half of a cell word, numbering placeholder
+/// cell pictures (0xfff) from 0 up, and interleaves the other two planes into
+/// the high halves. The 128 by 128 cell words overwrite the first two planes,
+/// so those 32 KB are first copied to a buffer from the EWRAM pool; the buffer
+/// and the routine's RAM copy are freed when done.
 void TileMap_ConvertBuffer(void) {
   u8 *savedCells;
   TilemapConvertFn convertGrid;
@@ -221,12 +220,10 @@ struct MapHeader {
 /// loads the palette and tile graphics unless FLAG_KEEP_LAYER_GRAPHICS says
 /// they are loaded; and starts the layer scrolling. Returns 2.
 ///
-/// Called through MapGrid_LoadMapFar when a map with a layout
-/// starts (index is gMainRoutineWork.map). Allocates and clears the map work
-/// in HEAP_SLOT_MAP_GRID; writes the BG palette (keeping the backdrop colour),
-/// char blocks 1 to 3, gMapGridAnimTiles, BG1CNT to BG3CNT, REG_MOSAIC,
-/// REG_BLDCNT and REG_DISPCNT; and adds MapGrid_UpdateLayerScroll as a
-/// task.
+/// Allocates and clears the map work in HEAP_SLOT_MAP_GRID; writes the BG
+/// palette (keeping the backdrop colour), char blocks 1 to 3,
+/// gMapGridAnimTiles, BG1CNT to BG3CNT, REG_MOSAIC, REG_BLDCNT and REG_DISPCNT;
+/// and adds MapGrid_UpdateLayerScroll as a task.
 s32 MapGrid_LoadMap(s32 index) {
   struct MapResources *mapResources;
   struct MapGridScrollWork *grid;
@@ -409,8 +406,7 @@ void MapGrid_CenterOnFollowedPoint(void) {
 
 /// Draws a row of 16 cell pictures (32 tiles) of a layer's cells into its BG
 /// map (screen block 5 + layer), starting at tile (tileX, tileY); the BG map
-/// wraps every 32 tiles. Called by MapGrid_UpdateLayerScroll when a layer
-/// scrolls onto a new row of cell pictures.
+/// wraps every 32 tiles.
 void MapGrid_RenderCellPictureRow(u32 layer, s32 tileX, s32 tileY) {
   u8 *screenMap = BG_SCREEN_BLOCK(5) + layer * MAPGRID_LAYER_SCREEN_BYTES;
   u32 sourceRow = ((tileY / 2) & 127) << 7;
@@ -434,9 +430,7 @@ void MapGrid_RenderCellPictureRow(u32 layer, s32 tileX, s32 tileY) {
 }
 
 /// Draws a column of 11 cell pictures of a layer's cells, one tile wide, into
-/// its BG map, starting at tile (tileX, tileY). Called by
-/// MapGrid_UpdateLayerScroll when a layer scrolls onto a new column of tiles;
-/// tileX's low bit picks the cell picture's left or right half.
+/// its BG map, starting at tile (tileX, tileY).
 void MapGrid_RenderCellPictureColumn(u32 layer, s32 tileX, s32 tileY) {
   u8 *screenMap = BG_SCREEN_BLOCK(5) + layer * MAPGRID_LAYER_SCREEN_BYTES;
   u32 sourceRow = ((tileY / 2) & 127) << 7;
@@ -884,8 +878,7 @@ void MapGrid_CopyCellAttributeRect(s32 sourceX, s32 sourceY, s32 width,
 
 /// Copies only the cell picture numbers of a rectangle of cells, from (sourceX,
 /// sourceY) to (dstX, dstY), width by height cells, keeping each destination
-/// cell's attributes; cells in a visible area update the BG maps too. Called by
-/// seven events through MapGrid_CopyCellIndexRectFar.
+/// cell's attributes; cells in a visible area update the BG maps too.
 void MapGrid_CopyCellIndexRect(s32 sourceX, s32 sourceY, s32 width, s32 height,
                                s32 dstX, s32 dstY) {
   s32 y;
@@ -954,8 +947,7 @@ void MapGrid_CopyCellIndexRect(s32 sourceX, s32 sourceY, s32 width, s32 height,
 }
 
 /// Sets which of BG1-BG3 the map shows (bits 9-11 of its display flags, as in
-/// REG_DISPCNT) from layerFlags, keeping its other flags. Called by Lunpa
-/// Fortress's event through MapGrid_SetShownLayersFar.
+/// REG_DISPCNT) from layerFlags, keeping its other flags.
 void MapGrid_SetShownLayers(u32 layerFlags) {
   struct MapGridScrollWork *grid = gMapGridWork[0];
   u32 shown = layerFlags & (DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_BG3_ON);

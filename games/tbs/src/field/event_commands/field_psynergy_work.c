@@ -189,14 +189,12 @@ void FieldPsynergy_End(void) {
   }
 }
 
-/// Starts casting: the caster takes its casting pose (animation 20) and
-/// stops. Unless the Psynergy is silent the caster flashes with a sound; unless
-/// it is quiet, the ability's name is shown while every other actor stands
-/// still. With FLAG_PLAY_PSYNERGY_CAST the caster's colours keep cycling and it
-/// takes pose 21; otherwise the caster's update routine stops. Sets the field
-/// work's castStarted, which FieldPsynergy_End clears. Called by
-/// Field_UsePsynergy and Goma Cave Entrance once the Psynergy's caster and
-/// target are set up.
+/// Starts casting: the caster takes its casting pose (animation 20) and stops.
+/// Unless the Psynergy is silent the caster flashes with a sound; unless it is
+/// quiet, the ability's name is shown while every other actor stands still.
+/// With FLAG_PLAY_PSYNERGY_CAST the caster's colours keep cycling and it takes
+/// pose 21; otherwise the caster's update routine stops. Sets the field work's
+/// castStarted, which FieldPsynergy_End clears.
 void FieldPsynergy_StartCast(void) {
   s32 ability;
   struct Actor *caster;

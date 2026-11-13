@@ -51,11 +51,8 @@ s32 Unit_GetElementLevels(s32 record, const u8 *source, s32 output[4]) {
   return 0;
 }
 
-/// Returns how strongly a unit is attuned to `element`, its whole element
-/// level (a tenth of what Unit_GetElementLevels counts), and 0 for
-/// `ELEMENT_NONE`.
-/// Called by the two status screens to show the element levels, and by
-/// Battle_IsReviveEffect.
+/// Returns how strongly a unit is attuned to `element`, its whole element level
+/// (a tenth of what Unit_GetElementLevels counts), and 0 for `ELEMENT_NONE`.
 s32 Unit_GetElementLevel(s32 unitId, s32 element) {
   struct Unit *unit = Unit_Get(unitId);
   s32 summonBoost[4];
@@ -68,8 +65,7 @@ s32 Unit_GetElementLevel(s32 unitId, s32 element) {
   return result;
 }
 
-/// Returns the element an enemy attacks with, from its element preset. Called
-/// by Item_GetEquippedElement for an enemy, which has no weapon.
+/// Returns the element an enemy attacks with, from its element preset.
 s32 Enemy_GetAttackElement(struct Unit *unit) {
   const struct EnemyDefinition *enemy = Enemy_GetDefinition(unit->id);
   u8 presetIndex = enemy->elementPreset;

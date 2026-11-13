@@ -38,12 +38,9 @@ void Palette_UpdatePulseBrightness(void) {
 
 /// Sets the camera up for the fixed view the battle shows while commands are
 /// chosen, raised by verticalOffset pixels, with its projection and the
-/// background's zoom to match. Called by
-/// Battle_GatherActions, and through its far stub by
-/// Battle_CollectPartyCommands and UpdateLinkSessionCountdown. Writes the
-/// camera, gBattleBackgroundWork's targetYaw and flag (left 1, so the camera
-/// task leaves the background alone), gProjection and the background's
-/// affine page.
+/// background's zoom to match. Writes the camera, gBattleBackgroundWork's
+/// targetYaw and flag (left 1, so the camera task leaves the background alone),
+/// gProjection and the background's affine page.
 void BattleCamera_SetCommandView(s32 verticalOffset) {
   void **slots = &gHeapSlots[HEAP_SLOT_CAMERA];
   struct BattleCamera *camera = slots[0];
@@ -90,8 +87,7 @@ void BattleCamera_SetCommandView(s32 verticalOffset) {
 }
 
 /// Ends every unit's guard (Defend and the like) and recalculates its stats.
-/// Called by Battle_GatherActions as each turn begins. Clears
-/// every unit's defendLevel.
+/// Clears every unit's defendLevel.
 void BattleUnit_ResetGuardLevels(void) {
   u16 unitIds[UNIT_MAX];
   s32 count;
@@ -107,14 +103,12 @@ void BattleUnit_ResetGuardLevels(void) {
   }
 }
 
-/// Rolls whether the party gets away. The chance, in hundredths of a
-/// percent, is 5000 plus 2000 for each attempt that failed, plus 500 times
-/// the party's average level, less 500 times the enemies' average level. A
-/// party that struck first always gets away; no one gets away from a battle
-/// that forbids it. Every attempt counts toward the next. Returns 1 when
-/// the party gets away. Called by Battle_GatherActions when the
-/// first action is COMMAND_FLEE. Each roll, even a successful one, raises
-/// gBattleWork->fleeFailures.
+/// Rolls whether the party gets away. The chance, in hundredths of a percent,
+/// is 5000 plus 2000 for each attempt that failed, plus 500 times the party's
+/// average level, less 500 times the enemies' average level. A party that
+/// struck first always gets away; no one gets away from a battle that forbids
+/// it. Every attempt counts toward the next. Returns 1 when the party gets
+/// away. Each roll, even a successful one, raises gBattleWork->fleeFailures.
 s32 BattleFlee_CheckSuccess(void) {
   s32 escaped;
   u8 *failedAttempts;
@@ -213,12 +207,11 @@ s32 Battle_BuildPartyActions(struct BattleAction *entries) {
 }
 
 /// The enemies' actions for the turn, in a shuffled order, each chosen by
-/// BattleAI_ChooseAction; a sleeping or stunned enemy loses its
-/// actions. An enemy acting more than once a turn acts later at half its
-/// Agility. None act when the party struck first; when the party is caught
-/// by surprise, only two to five enemies act, once each. Returns how many
-/// actions there are. Called by Battle_GatherActions outside a
-/// link battle. Fills entries.
+/// BattleAI_ChooseAction; a sleeping or stunned enemy loses its actions. An
+/// enemy acting more than once a turn acts later at half its Agility. None act
+/// when the party struck first; when the party is caught by surprise, only two
+/// to five enemies act, once each. Returns how many actions there are. Fills
+/// entries.
 s32 Battle_BuildEnemyActions(struct BattleAction *entries) {
   u16 unitIds[UNIT_MAX];
   s32 entryCount = 0;
@@ -365,17 +358,16 @@ struct BattleLinkedActionState {
   ((u32)((count) * 16 + LINK_PACKET_BYTES - 1) / LINK_PACKET_BYTES *           \
    LINK_PACKET_BYTES)
 
-/// Link battle: exchanges the turn's actions with the other console and
-/// appends the opponent's after the count of this console's. Each console
-/// sees its own party as the party: the received actions' units take the
-/// ids they have here and their targets swap sides. The parent sends first
-/// and gives the turn its random seed; the child checks both consoles
-/// agree on the next random number. A party member's priority is made even
-/// on the parent and odd on the child, so equal speeds sort alike on both.
-/// Returns how many actions were received, or -1 when the exchange fails.
-/// Called by Battle_GatherActions in a link battle. Sets
-/// gBattleRandomSeed, writes each action's slot and priority, and on a
-/// failure resets the link transfer and removes its interrupt handlers.
+/// Link battle: exchanges the turn's actions with the other console and appends
+/// the opponent's after the count of this console's. Each console sees its own
+/// party as the party: the received actions' units take the ids they have here
+/// and their targets swap sides. The parent sends first and gives the turn its
+/// random seed; the child checks both consoles agree on the next random number.
+/// A party member's priority is made even on the parent and odd on the child,
+/// so equal speeds sort alike on both. Returns how many actions were received,
+/// or -1 when the exchange fails. Sets gBattleRandomSeed, writes each action's
+/// slot and priority, and on a failure resets the link transfer and removes its
+/// interrupt handlers.
 s32 Battle_AppendLinkedActions(struct BattleAction *actions, s32 count) {
   struct BattleWork *battle = gBattleWork;
   s32 result = 0;
@@ -581,14 +573,12 @@ void Palette_CopyWithBrightnessOffset(s32 offset) {
 }
 
 /// Builds the turn's actions and sorts them into action order: the party's
-/// commands, then the link opponent's or the enemies' actions.
-/// Returns how many actions there are; negative to abort (a link failure).
-/// Called by Battle_Run at the start of each turn outside auto
-/// battle. Clears gBattleWork->actions, sets every defender's defendLevel,
-/// may set firstStrike to FIRST_STRIKE_ENEMIES after a failed
-/// attempt to flee, and holds FLAG_CHOOSING_COMMANDS while the commands are
-/// chosen.
-/// @param actions the actions (20 at most)
+/// commands, then the link opponent's or the enemies' actions. Returns how many
+/// actions there are; negative to abort (a link failure). Clears
+/// gBattleWork->actions, sets every defender's defendLevel, may set firstStrike
+/// to FIRST_STRIKE_ENEMIES after a failed attempt to flee, and holds
+/// FLAG_CHOOSING_COMMANDS while the commands are chosen. @param actions the
+/// actions (20 at most)
 s32 Battle_GatherActions(struct BattleAction *actions) {
   struct Unit *unit;
   struct BattleWork *battle;

@@ -4,12 +4,9 @@
 
 #include "../battle_internal.h"
 
-/// Returns an item's rank among the spoils, higher for a better item and 0
-/// for none: an indispensable item first, then a rare item, then the higher
-/// item id.
-/// The rank's bits: 10 ITEM_INDISPENSABLE | 9 ITEM_RARE | 8..0 the item id.
-/// Called by BattleEnemy_RecordDefeat, to keep the best four drops, and by
-/// Battle_AwardSpoils, to hand them out best first.
+/// Returns an item's rank among the spoils, higher for a better item and 0 for
+/// none: an indispensable item first, then a rare item, then the higher item
+/// id. The rank's bits: 10 ITEM_INDISPENSABLE | 9 ITEM_RARE | 8..0 the item id.
 u32 BattleSpoils_RankItem(u32 inventoryEntry) {
   u32 priority = 0;
   u32 itemId = inventoryEntry & INVENTORY_ITEM_ID_MASK;
@@ -30,8 +27,7 @@ u32 BattleSpoils_RankItem(u32 inventoryEntry) {
 }
 
 /// Empties the battle's spoils (BattleWork.spoils) and
-/// gMainRoutineWork.pendingItem. Called once by Battle_Run as the battle
-/// opens.
+/// gMainRoutineWork.pendingItem.
 void BattleSpoils_Clear(void) {
   struct BattleWork *battle = gBattleWork;
   struct BattleSpoils *spoils = &battle->spoils;
@@ -186,13 +182,11 @@ s32 BattleEnemy_RecordDefeat(s32 unitId, s32 djinnBonus) {
 }
 
 /// Hands out the spoils after a victory: the experience to each party member
-/// still standing, with every level gained and what it brings, then the
-/// coins, then the items best first.
-/// Each level up shows its message, every Psynergy newly learned and each
-/// stat that rose. An item the inventory cannot take goes to gOverflowItem
-/// and ends the handing out. Called by Battle_Run once the battle is
-/// won. Changes the party members' experience, levels and stats, the party's
-/// coins and inventory.
+/// still standing, with every level gained and what it brings, then the coins,
+/// then the items best first. Each level up shows its message, every Psynergy
+/// newly learned and each stat that rose. An item the inventory cannot take
+/// goes to gOverflowItem and ends the handing out. Changes the party members'
+/// experience, levels and stats, the party's coins and inventory.
 void Battle_AwardSpoils(void) {
   struct BattleSpoils *spoils;
   s32 count;

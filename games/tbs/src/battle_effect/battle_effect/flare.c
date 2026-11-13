@@ -11,9 +11,7 @@
 ///
 /// Abilities: Flare, Flare Wall, Flare Storm (BATTLE_EFFECT_FLARE).
 ///
-/// Each target flashes red in turn, 8 frames apart from frame 16. Writes
-/// REG_BLDCNT and REG_BLDALPHA, and ends with the blitter freed, the transfer
-/// task removed and the canvas layer closed.
+/// Each target flashes red in turn, 8 frames apart from frame 16.
 ///
 /// args: the targets. Flare Wall, the stronger variant, adds a second flame
 ///         16 pixels above each one, and Flare Storm, the strongest, a third
@@ -171,7 +169,7 @@ void BattleEffect_RunFlare(struct BattleEffectParams *args) {
 /// and returns how many there are.
 ///
 /// Only the first indexRadius * 2 + 1 values are searched, and with no match
-/// the window centres on index 0. Changes nothing but output. Nothing calls it.
+/// the window centres on index 0. Nothing calls it.
 UNUSED s32 BattleEffect_BuildCenteredIndexList(BattleEffectIndexWindow *window,
                                                s16 *output) {
   s32 windowLength = window->indexRadius * 2 + 1;

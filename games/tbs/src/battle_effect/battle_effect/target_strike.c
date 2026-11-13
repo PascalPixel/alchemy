@@ -116,12 +116,11 @@ void BattleEffect_RunDrainFang(struct BattleEffectParams *args) {
 /// bite of closing fangs, with the extras its flags choose, and lets the
 /// battle show the damage on the hits.
 ///
-/// Called by the twelve wrappers above, from BattleEffect_RunNumbingSting to
-/// BattleEffect_RunDrainFang. Loads the style's colours over the first 64 of
-/// the background palette; uses work->particles 0 to 63 for smoke, PARTICLES 0
-/// to 127 for motes and TARGET_STRIKE_SPARKS for sparks; builds and frees its
-/// blitters in both slots every frame, sets work->shakeFrames on each hit and
-/// lights the user while an absorb runs. Leaves the canvas layer closed.
+/// Loads the style's colours over the first 64 of the background palette; uses
+/// work->particles 0 to 63 for smoke, PARTICLES 0 to 127 for motes and
+/// TARGET_STRIKE_SPARKS for sparks; builds and frees its blitters in both slots
+/// every frame, sets work->shakeFrames on each hit and lights the user while an
+/// absorb runs. Leaves the canvas layer closed.
 ///
 /// mode: the style (enum TargetStrikeStyle), a row of gTargetStrike_Styles.
 void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {

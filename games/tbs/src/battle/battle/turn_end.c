@@ -6,10 +6,9 @@
 #include "../battle_internal.h"
 
 /// Rolls whether a stat change or status with five turns or fewer left ends
-/// early, and returns 1 when it does.
-/// The chance is `luck * 3 - turns * 5 + bias` percent, so a lucky unit and a
-/// counter near its end recover sooner; a chance above 100 always ends it.
-/// Called by the turn-end CountDown functions below, each with its own bias.
+/// early, and returns 1 when it does. The chance is `luck * 3 - turns * 5 +
+/// bias` percent, so a lucky unit and a counter near its end recover sooner; a
+/// chance above 100 always ends it.
 s32 BattleUnit_RollCounterEarlyEnd(s32 unitId, s32 turns, s32 bias) {
   struct Unit *unit = Unit_GetFar(unitId);
 
@@ -23,10 +22,9 @@ s32 BattleUnit_RollCounterEarlyEnd(s32 unitId, s32 turns, s32 bias) {
   return 0;
 }
 
-/// Counts down an Attack change and returns 1 when it ends.
-/// Clears attackStage when the turns run out, and clears attackStage and
-/// attackTurns when a lowered Attack recovers early (bias 30). Called by
-/// Battle_ProcessTurnEnd, which then shows `MsgAtkNormal`.
+/// Counts down an Attack change and returns 1 when it ends. Clears attackStage
+/// when the turns run out, and clears attackStage and attackTurns when a
+/// lowered Attack recovers early (bias 30).
 s32 BattleUnit_CountDownAttackStage(s32 unitId) {
   struct Unit *unit = Unit_GetFar(unitId);
 
@@ -115,12 +113,10 @@ DEFINE_COUNT_DOWN_STATUS(BattleUnit_CountDownStun, stun, 40)
 /// shows `MsgWakes` when it returns 1.
 DEFINE_COUNT_DOWN_STATUS(BattleUnit_CountDownSleep, sleep, 50)
 
-/// Counts down both seals packed in Unit.psySeal and returns 1 when the
-/// last ends.
-/// Luff's seal counts down by 8 above the low three bits and Bind's by 1 in
-/// them (PSY_SEAL_LUFF, PSY_SEAL_BIND); only Bind's, once Luff's is gone, may
-/// end early (bias 30), which clears psySeal. Called by
-/// Battle_ProcessTurnEnd, which then shows `MsgCureSeal`.
+/// Counts down both seals packed in Unit.psySeal and returns 1 when the last
+/// ends. Luff's seal counts down by 8 above the low three bits and Bind's by 1
+/// in them (PSY_SEAL_LUFF, PSY_SEAL_BIND); only Bind's, once Luff's is gone,
+/// may end early (bias 30), which clears psySeal.
 s32 BattleUnit_CountDownPsynergySeal(s32 unitId) {
   s32 decremented;
   u8 remaining;
@@ -239,8 +235,6 @@ s32 DjinnRecovery_CountDown(void) {
 
 /// Runs DjinnRecovery_CountDown twenty times, which sets every recovering
 /// Djinni of a party member with HP; those on standby stay so. Returns 0.
-/// Called by the Battle Arena when it restores the party, and by Vault's event
-/// before Ivan hands back Isaac's Djinni.
 s32 DjinnRecovery_CountDownTwenty(void) {
   s32 turn;
 
@@ -260,10 +254,9 @@ struct BattleSideOrder {
   s32 group[2]; ///< enum BattleSideMask: the party, then the enemies
 };
 
-/// Ends a turn: sets recovered Djinn, then gives each unit its regeneration
-/// and counts down its stat changes and statuses, showing each that ends.
-/// Called by Battle_Run once every unit has acted. Changes HP, PP,
-/// Unit.ready, the Djinn recovery lists and the counters the CountDown
+/// Ends a turn: sets recovered Djinn, then gives each unit its regeneration and
+/// counts down its stat changes and statuses, showing each that ends. Changes
+/// HP, PP, Unit.ready, the Djinn recovery lists and the counters the CountDown
 /// functions clear, and puts the background back in BATTLE_BACKGROUND_ZOOMED.
 UNREAD_RESULT Battle_ProcessTurnEnd(void) {
   struct BattleWork *battle;
@@ -473,12 +466,10 @@ UNREAD_RESULT Battle_ProcessTurnEnd(void) {
 
 /// Ends one unit's action: its Djinn on standby are taken off its set, the
 /// Djinn a summon used begin to recover, and the unit takes its summon's power
-/// boost, the haunt's damage, poison and the Grim Reaper.
-/// Called by BattleStaging_DispatchAction after every action, with the
-/// action's run. Changes the side's Djinn recovery list, the unit's
-/// summonBoost, HP and grimReaper, and works out its stats again
-/// (Unit_Calculate); the messages are queued and played at once
-/// (BattlePlayback_RunAll).
+/// boost, the haunt's damage, poison and the Grim Reaper. Changes the side's
+/// Djinn recovery list, the unit's summonBoost, HP and grimReaper, and works
+/// out its stats again (Unit_Calculate); the messages are queued and played at
+/// once (BattlePlayback_RunAll).
 UNREAD_RESULT BattleUnit_ProcessActionEnd(struct BattleActionRun *plan) {
   s32 unitId;
   struct Unit *unit;

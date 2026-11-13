@@ -9,10 +9,9 @@
 
 /// Returns the multiplier (256 = 1x) for an element difference `input`, read
 /// from a five-point line (gElement_PowerResistCurve); with `halve` the effect
-/// of the difference is half. Called by the damage and recovery formulas
-/// below. The curve's points lie on one straight line, so the result is 256
-/// plus 1.28 for each point of difference, with the difference held to -200
-/// to 200: 0 to 512, or 128 to 384 halved.
+/// of the difference is half. The curve's points lie on one straight line, so
+/// the result is 256 plus 1.28 for each point of difference, with the
+/// difference held to -200 to 200: 0 to 512, or 128 to 384 halved.
 s32 Battle_GetElementMultiplier(s32 input, s32 halve) {
   s32 minimumDifference;
   s32 maximumDifference;
@@ -131,7 +130,6 @@ s32 Battle_CalculateRecovery(s32 power, s32 elementPower, s32 powerMultiplier) {
 
 /// Returns the element the unit attacks with (ELEMENT_NONE for none): an
 /// enemy's comes from its kind, a character's from its equipped weapon.
-/// Called by BattleActionRun_Build for an attack's element.
 s32 Item_GetEquippedElement(s32 unitId) {
   struct ItemDefinition *item;
   struct Unit *unit;
@@ -170,8 +168,7 @@ s32 Equipment_GetUnleashRateBonus(struct Unit *unit) {
 
 /// Rolls whether a character's weapon unleashes: its chance is the weapon's
 /// unleashChance times 5 percent plus what the equipment adds. Returns the
-/// unleash action, or 1 for a plain attack. Called by BattleActionRun_Build for
-/// each Attack command.
+/// unleash action, or 1 for a plain attack.
 s32 RollWeaponUnleash(struct Unit *unit) {
   struct ItemDefinition *item;
   s32 rate;
@@ -272,9 +269,8 @@ s32 BattleAbility_IsWeakToEffect(const struct Unit *target, s32 effectId) {
   return 0;
 }
 
-/// Returns 1 for the revive effects (Revive, Quartz, Dew), which only work on
-/// a downed unit. Called by the battle's targeting, which lets them aim at
-/// downed party members, and by Battle_RollEffectSuccess.
+/// Returns 1 for the revive effects (Revive, Quartz, Dew), which only work on a
+/// downed unit.
 s32 Battle_IsReviveEffect(s32 effectId) {
   if ((effectId == ABILITY_EFFECT_REVIVE) ||
       (effectId == ABILITY_EFFECT_REVIVE_HALF) ||

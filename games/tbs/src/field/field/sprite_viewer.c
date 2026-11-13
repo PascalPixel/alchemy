@@ -423,9 +423,8 @@ s32 SpriteViewer_FindNextSpriteWithPictures(s32 spriteId, s32 direction) {
 
 /// Lays out the sprite viewer's ring around pixel (x, z): one position per
 /// facing of the first sprite's facing kind (6, 8, 10 or 4, or two opposite
-/// pairs for ANIM_FACING_TWO_PART), 56 pixels out (40 for a two-part
-/// sprite). B held turns the ring. Called by SpriteViewer_Run when it starts
-/// and while Start moves the ring.
+/// pairs for ANIM_FACING_TWO_PART), 56 pixels out (40 for a two-part sprite). B
+/// held turns the ring.
 void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
                                  struct SpritePlacement *positions) {
   struct SpritePlacement *pairedPositions;

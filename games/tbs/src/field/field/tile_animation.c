@@ -130,9 +130,7 @@ void TilesetAnim_Pause(u32 channelIndex) {
 /// Starts the tileset animations a map's animation script lists: each
 /// TILESET_ANIM_MARKER starts the tileset animation its low four bits name
 /// there (paused with TILESET_ANIM_MARKER_PAUSED). Clears all 16 first, and
-/// adds TilesetAnim_Update as a task when any starts. Called by MapGrid_LoadMap
-/// with the map's own script, and by WorldMap_InitializePerspective with the
-/// world map's default one.
+/// adds TilesetAnim_Update as a task when any starts.
 void TilesetAnim_StartAll(const u16 *script) {
   struct MapGridScrollWork *gridState;
   s32 channelsStarted;
@@ -254,7 +252,6 @@ again:
 
 /// Starts a map's blend script, unless it is empty. Clears the map work's
 /// three-word blend state first, then adds BlendScript_Run as a task.
-/// Called by MapGrid_LoadMap when the map's header has a blend script.
 void BlendScript_Start(u16 *script) {
   struct BlendScriptState *blend;
   s32 hasScript;

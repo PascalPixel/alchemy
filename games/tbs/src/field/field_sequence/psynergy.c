@@ -4,20 +4,18 @@
 
 #include "../field_sequence_internal.h"
 
-/// Uses Psynergy on the field. code holds the Psynergy (bits 0 to 9), its
-/// user (bits 10 to 13; UNIT_NONE for ISAAC) and ACT_PACKED to use it without
-/// paying PP. Checks it can be used here (Reveal not on the World Map, Retreat
-/// where it is not blocked, after asking), pays its PP, then plays it
-/// between the scene's Psynergy triggers for what the leader faces:
+/// Uses Psynergy on the field. code holds the Psynergy (bits 0 to 9), its user
+/// (bits 10 to 13; UNIT_NONE for ISAAC) and ACT_PACKED to use it without paying
+/// PP. Checks it can be used here (Reveal not on the World Map, Retreat where
+/// it is not blocked, after asking), pays its PP, then plays it between the
+/// scene's Psynergy triggers for what the leader faces:
 /// PSYNERGY_PHASE_BEFORE_CAST before and PSYNERGY_PHASE_AFTER_CAST after. A
-/// PSYNERGY_PHASE_ACTS event is not run here; it only makes
-/// the Psynergy aim at the actor ahead, and the Psynergy that acts on it
-/// (Force, Frost, Reveal) finds it itself. An after trigger whose subject
-/// has TRIGGER_SUBJECT_OWN_EFFECT plays the Psynergy itself. Called by
-/// FieldSequence_Run for the Psynergy request (work->psynergy); sets
-/// work->psynergyActing while the Psynergy plays. On the World Map, placed
-/// actors far from the view are released for the Psynergy, and all placed
-/// actors are placed again afterwards. Returns 0 whatever happens;
+/// PSYNERGY_PHASE_ACTS event is not run here; it only makes the Psynergy aim at
+/// the actor ahead, and the Psynergy that acts on it (Force, Frost, Reveal)
+/// finds it itself. An after trigger whose subject has
+/// TRIGGER_SUBJECT_OWN_EFFECT plays the Psynergy itself. On the World Map,
+/// placed actors far from the view are released for the Psynergy, and all
+/// placed actors are placed again afterwards. Returns 0 whatever happens;
 /// FieldSequence_Run ignores it.
 s32 Field_UsePsynergy(u32 code) {
   s32 abilityId = ABILITY_ID(code);
@@ -145,10 +143,8 @@ s32 Field_UsePsynergy(u32 code) {
   return 0;
 }
 
-/// Returns whether the scene has a Psynergy trigger, in any phase, for
-/// Psynergy of group and what the leader faces. Called by the Psynergy menu
-/// (PsynergyMenu_ClassifySelectedPsynergy) through
-/// Scene_HasFieldPsynergyTriggerFar.
+/// Returns whether the scene has a Psynergy trigger, in any phase, for Psynergy
+/// of group and what the leader faces.
 s32 Scene_HasFieldPsynergyTrigger(s32 group) {
   s32 target;
   s32 eventAddress =
@@ -157,8 +153,6 @@ s32 Scene_HasFieldPsynergyTrigger(s32 group) {
 }
 
 /// Returns whether the scene has an event for item and what the leader faces.
-/// Called by the item menu (menu/item.c) through Scene_HasPsynergyTriggerFar:
-/// such an item closes the menu and is used on the field.
 u32 Scene_HasPsynergyTrigger(u16 item) {
   s32 eventAddress;
 

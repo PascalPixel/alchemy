@@ -5,8 +5,7 @@
 #include "../shop_internal.h"
 
 /// Returns what a repair costs: a quarter of the price for a broken item,
-/// nothing for one that is not broken. Called by the repair list and
-/// Shop_RepairItem.
+/// nothing for one that is not broken.
 s32 Shop_RepairPrice(s32 inventoryEntry) {
   s32 repairCost = Item_GetDirectFar(inventoryEntry)->price / 4;
 
@@ -16,8 +15,7 @@ s32 Shop_RepairPrice(s32 inventoryEntry) {
   return repairCost;
 }
 
-/// Runs the repair counter's party member choice; always returns 0. Called by
-/// Shop_Run for Repair.
+/// Runs the repair counter's party member choice; always returns 0.
 s32 Shop_RunRepairMemberChoice(void) {
   Shop_ChooseMember();
   return 0;

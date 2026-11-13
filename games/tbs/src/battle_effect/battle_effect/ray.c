@@ -14,8 +14,7 @@
 ///
 /// Abilities: Ray, Storm Ray, Destruct Ray (BATTLE_EFFECT_RAY).
 ///
-/// The targets flash white 4 frames apart from frame 4. Writes REG_BG2PA and
-/// REG_BG2X, sets work->shakeFrames over the first 16 frames.
+/// The targets flash white 4 frames apart from frame 4.
 ///
 /// args: the targets. Destruct Ray shows the canvas at double width; Ray
 ///         draws every bolt with the maximum blend, the others alternate it

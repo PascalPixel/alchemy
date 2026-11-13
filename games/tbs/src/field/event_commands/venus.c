@@ -8,10 +8,9 @@
 /// away; the leader turns to the camera and plays ANIM_LEADER_ARMS_RAISED while
 /// 24 particles rise round it (FieldEffect_UpdateRadialSpread). Then 24 motes
 /// spiral down onto the leader from 120 pixels above
-/// (FieldEffect_UpdateDescendingOrbitActor) and 8 sparks burst from the
-/// leader. Called by Djinn_JoinParty for a Venus Djinni, which then clears the
-/// Djinni's actor slot. Uses all 24 field effect sprites, tints the
-/// field palette green and fades it back at the end.
+/// (FieldEffect_UpdateDescendingOrbitActor) and 8 sparks burst from the leader.
+/// Uses all 24 field effect sprites, tints the field palette green and fades it
+/// back at the end.
 void Djinn_RunVenusJoinEffect(s32 djinniId) {
   struct Actor *leader;
   struct Actor *djinni;

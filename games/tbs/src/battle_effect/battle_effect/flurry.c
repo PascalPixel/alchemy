@@ -93,11 +93,10 @@ enum FlurryColumn {
 /// The motes wait above the target until their strike releases them, then
 /// bounce off the ground and die out.
 ///
-/// Called by the six wrappers above it, with the mode their ability needs.
-/// Uses PARTICLES 0 to 767 for the motes, 32 a strike, and both blitter
-/// slots, rebuilt twice a frame; loads palette colours 0 to 63 from the
-/// row's palette resource. Sets work->shakeFrames on each hit, and ends with
-/// the transfer task removed and the canvas layer closed.
+/// Uses PARTICLES 0 to 767 for the motes, 32 a strike, and both blitter slots,
+/// rebuilt twice a frame; loads palette colours 0 to 63 from the row's palette
+/// resource. Sets work->shakeFrames on each hit, and ends with the transfer
+/// task removed and the canvas layer closed.
 ///
 /// args: the user and the targets; prelude 1 first brings in a Jupiter
 ///         Djinni over the user, the 84-frame entrance

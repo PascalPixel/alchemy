@@ -8,9 +8,8 @@
 /// (the bytes of the odd columns win).
 ///
 /// Called by BattleEffect_RunRushingStrike and once by
-/// BattleEffect_RunCastingImpact, both to
-/// squeeze the yellow orb's 40-pixel-wide sheet into six 20x48 pictures. Writes
-/// only dst.
+/// BattleEffect_RunCastingImpact, both to squeeze the yellow orb's
+/// 40-pixel-wide sheet into six 20x48 pictures.
 ///
 /// src: the rows to pack.
 /// dst: receives the packed rows, half the stride apart.
@@ -74,11 +73,9 @@ void BattleEffect_RunHeadbutt(struct BattleEffectParams *args) {
 /// The user rushes at the first target and strikes it on frame 10; a ring
 /// flares where it hits and 64 sparks scatter.
 ///
-/// Called by the four wrappers above. work->particles holds the sparks, each
-/// variant its frames left; the six packed ring pictures go to
-/// Ram_MapGridCellBuffer. Moves the user with BattleEffect_SetApproachMotion
-/// and does not bring it back. Copies the mode's palette over the first 128
-/// bytes of BG palette RAM, sets work->shakeFrames on the strike.
+/// Moves the user with BattleEffect_SetApproachMotion and does not bring it
+/// back. Copies the mode's palette over the first 128 bytes of BG palette RAM,
+/// sets work->shakeFrames on the strike.
 ///
 /// args: the user and the targets.
 /// mode: the sparks' palette (enum RushingStrikeMode).

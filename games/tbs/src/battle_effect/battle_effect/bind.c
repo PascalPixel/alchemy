@@ -20,10 +20,7 @@
 /// the picture moves onto a second blue ramp at colours 96 to 127. Takes 256
 /// random numbers, one a column.
 ///
-/// Nothing calls it or takes its address. Writes background colours 32 to 63
-/// and then 96 to 127, the BATTLE_BACKGROUND_BYTES of BG character block 2 (the
-/// battle background's picture) and Ram_MapGridCellBuffer, keeps its delays in
-/// the sheet slot, and waits a frame for each step of the edge.
+/// Nothing calls it or takes its address.
 UNUSED void BattleEffect_ConvertBackgroundToBlueRamp(void) {
   s32 i, x, y, row, end, speed;
   s32 red, green, blue;
@@ -292,10 +289,8 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
 ///
 /// Abilities: none (BATTLE_EFFECT_UNUSED_TRIANGLE_STRIKE).
 ///
-/// It reads its own copy of the vertex, gBind_TriangleStrikeVertex, which
-/// holds the same point as Bind's (gBind_Vertex). Changes the same state as
-/// BattleEffect_RunBind, on the narrow canvas at priority 0, and starts the
-/// user's approach through BattleMotion_ApproachTargetFar.
+/// It reads its own copy of the vertex, gBind_TriangleStrikeVertex, which holds
+/// the same point as Bind's (gBind_Vertex).
 void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectParams *args) {
   struct ScreenPoint anchor;
   /* FAKEMATCH(temporary): one workspace for the target's position and each

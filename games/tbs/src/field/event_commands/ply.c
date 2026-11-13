@@ -103,10 +103,6 @@ void FieldPsynergy_PlyOnTarget(s32 unused) {
 /// flies far away.
 ///
 /// Abilities: Ply, Ply Well, Pure Ply (FIELD_PSYNERGY_PLY).
-///
-/// Called by FieldPsynergy_Run and FieldPsynergy_PlyOnTarget; frees the
-/// particles' shared VRAM cache entry at the end and runs the effect
-/// event's finishCallback.
 void FieldPsynergy_Ply(void) {
   struct FieldEffectWork *effectWork = gFieldEffectWork;
   struct Actor *target = effectWork->mainActor;

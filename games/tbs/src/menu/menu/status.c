@@ -1732,8 +1732,7 @@ s32 ItemMenu_DrawEquipPage(struct Window *window, s32 unused,
 
 /// Draws one page of the Status menu's equipment page into window: up to
 /// PAGE_ROWS item names with their icons and the page numbers, or "no items",
-/// and the party member's name with their Attack and Defense. Returns 1. Called
-/// by ItemMenu_SelectItem for each page.
+/// and the party member's name with their Attack and Defense. Returns 1.
 s32 ItemMenu_DrawItemPage(struct Window *window, s32 unused,
                           struct PagedList *state) {
   struct ItemMenuWork *menu = gMenuWork;
@@ -1986,11 +1985,10 @@ s32 Menu_MoveGridCursor(s32 *columnOut, s32 *rowOut, s32 direction) {
 /// Nothing calls it.
 s32 Menu_ReservedStatusOne(void) { return 1; }
 
-/// Writes the four equipment slot labels (Weapon, Head, Shield and Chest, one
-/// a 16-pixel row) and the names of the items worn in them into window; mode 0
+/// Writes the four equipment slot labels (Weapon, Head, Shield and Chest, one a
+/// 16-pixel row) and the names of the items worn in them into window; mode 0
 /// also shows their icons at the right. Reads the work's items list, which the
-/// caller fills (ItemMenu_CollectItems). Used by the item screen's R view and
-/// the Status menu's equipment page.
+/// caller fills (ItemMenu_CollectItems).
 void ItemMenu_DrawCategory(struct Window *window, s32 memberId, s32 mode) {
   struct ItemMenuWork *menu = gMenuWork;
   u16 *items;

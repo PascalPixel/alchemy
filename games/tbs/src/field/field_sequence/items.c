@@ -10,10 +10,8 @@ typedef s32 (*BattleItemCallback)(s32 item, s32 actorId, s32 slot);
 
 /// Returns the scene's item trigger (TRIGGER_ITEM) for item that applies to
 /// what the leader faces, or 0 (item 0 matches any item). The event's trigger
-/// names an actor (TRIGGER_ITEM_ON_ACTOR) or a cell behavior,
-/// and may also require the leader to face within 0x17ff (about 34 degrees) of
-/// a direction. Called by Field_UseItem, and by Scene_HasPsynergyTrigger
-/// (psynergy.c) to test whether an item would do anything here.
+/// names an actor (TRIGGER_ITEM_ON_ACTOR) or a cell behavior, and may also
+/// require the leader to face within 0x17ff (about 34 degrees) of a direction.
 s32 Field_FindItemTrigger(s32 item) {
   struct FieldWork *work = gFieldWork;
   const struct Trigger *trigger = work->triggers;
@@ -63,10 +61,9 @@ s32 Field_FindItemTrigger(s32 item) {
 /// uses it (Retreat asks first and leaves the scene). FLAG_NOTHING_HAPPENS
 /// still set afterwards says "But nothing happens."; FLAG_ITEM_USED_UP removes
 /// the item. Returns 0 when the scene's event ran or Retreat was declined, else
-/// -1, the item's own action included; FieldSequence_Run ignores it. Called by
-/// FieldSequence_Run for the item request (work->item and work->itemSlot).
-/// Retreat sets gMainRoutineWork.next and .entrance to the Retreat point
-/// and raises work->exit.
+/// -1, the item's own action included; FieldSequence_Run ignores it. Retreat
+/// sets gMainRoutineWork.next and .entrance to the Retreat point and raises
+/// work->exit.
 s32 Field_UseItem(s32 packedItem, s32 slot) {
   s32 result;
   s32 itemId;
@@ -199,13 +196,11 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
 }
 
 /// Returns the scene's Psynergy trigger (TRIGGER_PSYNERGY) for Psynergy of the
-/// given group that applies to what the leader faces, or NULL; stores the
-/// actor the Psynergy would target in *target. eventFlags gives the
-/// event's phase and kind (PSYNERGY_TRIGGER_ANY for any phase). The event may
-/// apply to any target (TRIGGER_PSYNERGY_ANYWHERE), to an actor
-/// (TRIGGER_PSYNERGY_ON_ACTOR) or to a cell behavior. Called by
-/// Field_UsePsynergy for each phase, by Field_RunPsynergyEndEvents, and by the
-/// Force, Frost and Reveal (event_commands/) for their own phases.
+/// given group that applies to what the leader faces, or NULL; stores the actor
+/// the Psynergy would target in *target. eventFlags gives the event's phase and
+/// kind (PSYNERGY_TRIGGER_ANY for any phase). The event may apply to any target
+/// (TRIGGER_PSYNERGY_ANYWHERE), to an actor (TRIGGER_PSYNERGY_ON_ACTOR) or to a
+/// cell behavior.
 void *Scene_FindPsynergyTrigger(s32 eventFlags, s32 group, void *target) {
   struct FieldWork *work = gFieldWork;
   const struct Trigger *trigger = work->triggers;
@@ -252,10 +247,8 @@ void *Scene_FindPsynergyTrigger(s32 eventFlags, s32 group, void *target) {
 
 /// Runs the scene's events for Psynergy without paying its PP or showing its
 /// usual effect (PSYNERGY_PHASE_BEFORE_END and PSYNERGY_PHASE_AFTER_END, around
-/// the kind's ending), as for a
-/// Psynergy that ends by itself: packed holds the Psynergy (bits 0 to 9) and
-/// its user (bits 10 to 13). Called by Field_UsePsynergy for a use with
-/// ACT_PACKED, and by Field_EndBusyAndReveal to end Reveal.
+/// the kind's ending), as for a Psynergy that ends by itself: packed holds the
+/// Psynergy (bits 0 to 9) and its user (bits 10 to 13).
 s32 Field_RunPsynergyEndEvents(s32 packed) {
   s32 target;
   s32 abilityId;

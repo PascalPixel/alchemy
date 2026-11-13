@@ -271,10 +271,9 @@ void Text_ResetStyle(void) {
   state->unusedAfterLineSpacing = 1;
 }
 
-/// Reserves the glyph sprites' tiles, resets the text style, starts the ring
-/// of decoded text from its beginning and starts the per-frame window update
-/// (WindowSystem_Update). Called by the field's setup,
-/// WindowSystem_InitField.
+/// Reserves the glyph sprites' tiles, resets the text style, starts the ring of
+/// decoded text from its beginning and starts the per-frame window update
+/// (WindowSystem_Update).
 void WindowSystem_StartFieldUpdate(void) {
   struct WindowWork *state = WINDOW_WORK;
   s32 priority;
@@ -296,8 +295,7 @@ void WindowSystem_StartFieldUpdate(void) {
 
 /// Resets the text style and starts the per-frame window update
 /// (WindowSystem_Update), reserving the glyph sprites' tiles first when
-/// loadGlyphTiles is set. Called by the battle's setup,
-/// WindowSystem_InitBattle.
+/// loadGlyphTiles is set.
 void WindowSystem_StartBattleUpdate(s32 loadGlyphTiles) {
   struct WindowWork *state = WINDOW_WORK;
   s32 priority;

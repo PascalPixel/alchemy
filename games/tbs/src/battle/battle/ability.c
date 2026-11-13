@@ -8,8 +8,6 @@
 /// Returns 1 for an effect that still applies when the ability's damage has
 /// just knocked its target out: the drains, which give the damage they dealt
 /// back to the user.
-/// Called by BattleAbility_ApplyToTarget before the added effect.
-/// @param effect the ability's effect (enum AbilityEffect)
 s32 Ability_EffectAppliesToDowned(s32 effect) {
   switch (effect) {
   case ABILITY_EFFECT_DRAIN_HP:
@@ -98,13 +96,8 @@ s32 Ability_EffectAppliesToDowned(s32 effect) {
 /// Unit_RecalculateGaugesFar its HP and PP gauges after either changes.
 ///
 /// Called for each target in turn by BattlePlayback_Run (an action with an
-/// battle effect) and BattleStaging_RunActorEntries (one without). Changes the
-/// target's HP, PP, statuses, stat stages and turns, and its guard; the user's
-/// HP or PP for a drain, and plan->hauntDamage; adds an enemy to
-/// gBattleWork->enemyIds when one is called; sets gBattleWork->challengeFlag
-/// bit 1 when the party is challenged; queues the playback that shows it all.
-/// It takes Battle_RandomFar rolls, and borrows a heap block for the target's
-/// copy.
+/// battle effect) and BattleStaging_RunActorEntries (one without). It takes
+/// Battle_RandomFar rolls, and borrows a heap block for the target's copy.
 ///
 /// It runs in phases, each marked in the body:
 /// 1. Setup: a copy of the target as it was; the target's distance from the

@@ -5,7 +5,6 @@
 #include "../game_internal.h"
 
 /// Gives a unit `itemId` and equips every exactly matching inventory entry.
-/// Called by InventorySnapshot_Save to arm Isaac for the Colosso.
 void Inventory_AddAndEquip(s32 unitId, s32 itemId) {
   struct Unit *unit = Unit_Get(unitId);
   s32 slot;
@@ -32,10 +31,9 @@ struct InventorySnapshot {
 };
 
 /// Saves the first four characters' inventories, shortcuts and party order,
-/// then keeps only the Psynergy-granting items, gives Isaac the Short
-/// Sword, sets FLAG_COLOSSO_HOLDS_EQUIPMENT and restores everyone's HP and PP.
-/// Nothing happens when a snapshot is already saved, apart from the restore.
-/// Called by the Colosseum entrance scene as Isaac enters the Colosso.
+/// then keeps only the Psynergy-granting items, gives Isaac the Short Sword,
+/// sets FLAG_COLOSSO_HOLDS_EQUIPMENT and restores everyone's HP and PP. Nothing
+/// happens when a snapshot is already saved, apart from the restore.
 void InventorySnapshot_Save(void) {
   u16 *save;
   struct Unit *unit;
@@ -84,8 +82,7 @@ void InventorySnapshot_Save(void) {
 }
 
 /// Gives back the inventories, shortcuts and party order InventorySnapshot_Save
-/// put aside, then clears the snapshot and FLAG_COLOSSO_HOLDS_EQUIPMENT. Called
-/// by the Babi palace scene after the Colosso, and by the File Screen.
+/// put aside, then clears the snapshot and FLAG_COLOSSO_HOLDS_EQUIPMENT.
 void InventorySnapshot_Restore(void) {
   struct InventorySnapshot *snapshot =
       (struct InventorySnapshot *)gInventorySnapshot;

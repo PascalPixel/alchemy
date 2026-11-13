@@ -91,11 +91,8 @@ void FadeOverlay_DrawMarks(void) {
 /// solid tiles, sets the blending and draws it each frame. Allocates
 /// HEAP_SLOT_FADE_OVERLAY for its work, borrows HEAP_SLOT_TILE_SCRATCH for the
 /// tiles (512 bytes of colour 1, VRAM_CACHE_ENTRY_FADE_OVERLAY) and registers
-/// FadeOverlay_DrawMarks. Called by seven scene overlays (Venus and Mercury
-/// Lighthouses, Kalay, the tunnel ruins, Crossbone Isle, the ice room by Imil
-/// and Fuchin Falls); Crossbone Isle then switches it on and off by setting the
-/// work's actor. Nothing in the game stops it (FadeOverlay_Suspend has no
-/// named caller): the work and the task last until the next scene change
+/// FadeOverlay_DrawMarks. Nothing in the game stops it (FadeOverlay_Suspend has
+/// no named caller): the work and the task last until the next scene change
 /// resets the heap and the task table (MainRoutine_Run).
 void FieldEffect_StartFadeOverlay(void *object) {
   struct FadeOverlayWork *work;

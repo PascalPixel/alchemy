@@ -6,7 +6,7 @@
 
 /// Returns the sanctum's fee, in coins, for `serviceKind` on party member
 /// `unitId`: 20 a level to revive, 10 to cure poison, 50 to exorcise and 10 a
-/// level to remove a curse. Called by the party member choice and its fee line.
+/// level to remove a curse.
 s32 Sanctum_ServicePrice(s32 unitId, s32 serviceKind) {
   u8 level = Unit_GetFar(unitId)->level;
   s32 donation = 0;
@@ -24,11 +24,10 @@ s32 Sanctum_ServicePrice(s32 unitId, s32 serviceKind) {
 }
 
 /// Returns 1 when party member `unitId` needs `serviceKind`: down (HP 0) for a
-/// revive, poisoned for a cure, haunted for an exorcism, any curse bit set
-/// for removing a curse. Called by the party member choice, its count, its
-/// highlight and its fee line. Unit_Calculate sets the curse bits only for a
-/// cursed item worn, and nothing sets CURSE_KEEP_BOUND, so a party member
-/// accepted for removing a curse always has a cursed item to take off.
+/// revive, poisoned for a cure, haunted for an exorcism, any curse bit set for
+/// removing a curse. Unit_Calculate sets the curse bits only for a cursed item
+/// worn, and nothing sets CURSE_KEEP_BOUND, so a party member accepted for
+/// removing a curse always has a cursed item to take off.
 s32 Sanctum_NeedsService(s32 unitId, s32 serviceKind) {
   struct Unit *unit = Unit_GetFar(unitId);
   s32 eligible = 0;
@@ -113,10 +112,9 @@ void Sanctum_ShowKeeperMessageHidingCursor(s32 messageId) {
 }
 
 /// Runs a sanctum: the keeper's welcome, then the service menu (revive, cure
-/// poison, exorcise, remove a curse) until B, and the farewell. `unitId` is
-/// the keeper's actor, whose portrait the lines show. Holds the shop work
-/// block while it runs; returns 0. Called by the
-/// scenes' sanctum keepers and the Battle Arena, and by the debug test.
+/// poison, exorcise, remove a curse) until B, and the farewell. `unitId` is the
+/// keeper's actor, whose portrait the lines show. Holds the shop work block
+/// while it runs; returns 0.
 s32 Sanctum_Run(s32 unitId) {
   s32 serviceSelection = 0;
   struct Window *listWindow = 0;
@@ -370,7 +368,7 @@ void Sanctum_HighlightMembers(struct Window *window, s32 selected) {
 
 /// Draws in `target` the party member's fee for the current service (its cost
 /// line with the donation filled in), or the line that the party member needs
-/// no treatment. Called by Sanctum_RunPartyService each time the cursor moves.
+/// no treatment.
 void Sanctum_DrawFee(struct Window *target, s32 unitId) {
   s32 serviceOrMessage;
   s32 donation;
@@ -462,13 +460,12 @@ static const s8 sSanctumServiceCues[4] = {
     [SANCTUM_SERVICE_REMOVE_CURSE] = MUS_REMOVE_CURSE,
 };
 
-/// Plays the service's burst on party member `member` (an index into the
-/// party row): the service's tune, the field's colours tinted, 18 sparkles
-/// in random colour modes flying in from a ring around the party member's icon
-/// three frames apart, the icon cycling through colour modes, then, once the
-/// sound driver is done, the sparkles freed and the colours faded back. The
-/// hand cursor is hidden throughout. Called by Sanctum_RunPartyService once
-/// the party member is cured.
+/// Plays the service's burst on party member `member` (an index into the party
+/// row): the service's tune, the field's colours tinted, 18 sparkles in random
+/// colour modes flying in from a ring around the party member's icon three
+/// frames apart, the icon cycling through colour modes, then, once the sound
+/// driver is done, the sparkles freed and the colours faded back. The hand
+/// cursor is hidden throughout.
 void Sanctum_RunMemberIconBurst(s32 member) {
 
   struct ShopWork *shop;

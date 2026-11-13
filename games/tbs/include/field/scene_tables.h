@@ -307,12 +307,8 @@ enum PsynergyPhase {
   /// As Reveal's colours come back (FieldPsynergy_EndReveal): the scenes
   /// hide again what Reveal showed.
   PSYNERGY_PHASE_FADES = 4,
-  /// Run by the field Psynergy itself as it acts (force.c, frost.c and
-  /// reveal.c): as
-  /// Force strikes, Frost freezes or Reveal shows what is hidden. An event in
-  /// this phase also makes Field_UsePsynergy aim the field Psynergy at the
-  /// actor
-  /// ahead.
+  /// An event in this phase also makes Field_UsePsynergy aim the field Psynergy
+  /// at the actor ahead.
   PSYNERGY_PHASE_ACTS = 5,
   PSYNERGY_PHASE_ANY = 7 ///< Scene_FindPsynergyTrigger matches every phase
 };

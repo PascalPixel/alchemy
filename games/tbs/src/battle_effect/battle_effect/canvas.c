@@ -18,11 +18,6 @@
 /// it goes. Returns when the wipe is done, a frame at a time: 23 frames
 /// across, 15 down.
 ///
-/// Called by the summons and effects that open on a wiped canvas: Boreas,
-/// Thor, Atalanta, Neptune, Kirin, Ramses, the particle streams and
-/// Judgment. Writes the canvas and sets work->transferPending each frame;
-/// the caller's transfer task must already be running.
-///
 /// direction: CANVAS_WIPE_ACROSS sweeps left to right, anything else top to
 ///            bottom (enum CanvasWipeDirection).
 /// fill: what the wipe leaves (enum CanvasWipeFill).
@@ -201,8 +196,7 @@ void BattleEffect_FlushPendingGraphicsTransfer(void) {
 /// Writes the window, display and blend registers the effect keeps in its
 /// work, all at once.
 ///
-/// Nothing in the build calls it or takes its address. Writes WIN0H to
-/// BLDALPHA from the work block's copies.
+/// Nothing in the build calls it or takes its address.
 void BattleEffect_ApplyWindowBlendRegisters(void) {
   struct BattleEffectWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
 
@@ -268,9 +262,7 @@ void BattleEffect_ClearActorTimers(void) {
 /// starts; when one runs out, the target gets its own palette back. Timer n
 /// belongs to args->targets[n].
 ///
-/// Called once a frame by nearly every effect, most through
-/// EFFECT_END_FRAME. Changes work->actorTimers and, through
-/// BattleEffect_TintBattler, the colour of a target whose timer ends.
+/// Called once a frame by nearly every effect, most through EFFECT_END_FRAME.
 void BattleEffect_CountDownBattlerTints(void) {
   struct BattleEffectWork *work;
   s32 actorIndex;
@@ -301,13 +293,7 @@ void BattleEffect_CountDownBattlerTints(void) {
 ///
 /// Called at the start of nearly every canvas effect, directly or through
 /// EFFECT_START_NARROW_CANVAS, and by BattleEffect_StartTiledCanvas. Waits five
-/// frames of its own. Writes BLDCNT, BLDALPHA, BG2CNT and BG2's affine
-/// registers, the windows, WININ and WINOUT, and queues DISPCNT; writes BG2's
-/// map in screen block 7, clears the canvas in its slot and in character block
-/// 1; adds Palette_StepFadeTransfer with work->fadeFrames 0, so the battle
-/// background keeps its colours until the effect sets a count; sets
-/// gBgScroll[1].y to 32, clears work->actorTimers and work->shakeFrames, and
-/// saves gBgScroll[1] in work->savedBg1X and savedBg1Y.
+/// frames of its own.
 ///
 /// bgControl : added to BG2CNT, the layer's priority (0 to 3) and so on.
 void BattleEffect_StartCanvasLayer(s32 bgControl) {
@@ -386,9 +372,7 @@ void BattleEffect_StartCanvasLayer(s32 bgControl) {
 /// faded, and a 24-frame fade. It neither saves BG1's scroll nor resets the
 /// shake.
 ///
-/// Nothing in the build calls it or takes its address. Writes the same
-/// registers, map and canvas as BattleEffect_StartCanvasLayer and sets
-/// work->fadeFrames to 24.
+/// Nothing in the build calls it or takes its address.
 ///
 /// bgControl : added to BG2CNT, the layer's priority (0 to 3) and so on.
 void BattleEffect_OpenCanvasLayer(s32 bgControl) {
@@ -484,10 +468,7 @@ void BattleEffect_StartTiledCanvas(s32 bgControl) {
 /// 8 frames, then shows BG2 again and hides BG1.
 ///
 /// Called at the end of nearly every canvas effect, most through
-/// EFFECT_FINISH_CANVAS, after the transfer task is removed. Takes 11
-/// frames. Writes gBgScroll[1], gProjection's centre, BG2CNT (priority 3)
-/// and BLDCNT, clears character block 1, removes Palette_StepFadeTransfer
-/// and queues two DISPCNT values.
+/// EFFECT_FINISH_CANVAS, after the transfer task is removed. Takes 11 frames.
 void BattleEffect_EndCanvasLayer(void) {
   struct BattleEffectWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   struct BattleWork *battle = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE);
@@ -531,10 +512,6 @@ void BattleEffect_EndCanvasLayer(void) {
 
 /// Hides BG1 and the windows and starts bringing the battle background's
 /// palette back.
-///
-/// Sets the background view's secondMode to BATTLE_BACKGROUND_FIXED, queues
-/// DISPCNT for VBlank, starts the battle's palette fade to
-/// BATTLE_BACKGROUND_ZOOMED and waits two frames.
 void BattleEffect_HideBg1AndRestoreBackdrop(void) {
   struct BattleWork *battle;
   s32 *flag;
@@ -626,10 +603,6 @@ void BattleEffect_SetupCanvasTileMap(void) {
 /// kept on the canvas; x is not. The line steps a pixel at a time along its
 /// longer axis, following the other in 8-bit fixed point, and leaves out its
 /// last pixel on that axis.
-///
-/// Writes only the canvas, and only while the caller keeps x within 0 to 127:
-/// any other x wraps into a neighbouring row of tiles, or off the canvas from
-/// its first or last row of tiles.
 ///
 /// x0, y0 : the start, in pixels
 /// x1, y1 : the end, in pixels

@@ -80,11 +80,9 @@ UNUSED void BattleEffect_RunLimeStreaks(struct BattleEffectParams *args) {
 /// A streak image is 20x40 and drawn twice, mirrored upwards, as a 20x80
 /// streak that leaves a fading trail.
 ///
-/// Called by the five streak handlers above and the unused
-/// BattleEffect_RunLimeStreaks. Loads the style's colours over the first 64 of
-/// the background palette, writes work->bg2xLines and, over the last 16
-/// frames, BLDALPHA; sets work->shakeFrames on a recoiling hit, and moves a
-/// trembling target's x.
+/// Loads the style's colours over the first 64 of the background palette,
+/// writes work->bg2xLines and, over the last 16 frames, BLDALPHA; sets
+/// work->shakeFrames on a recoiling hit, and moves a trembling target's x.
 ///
 /// mode : the style, 0 to 4: the streak colour (ember, lime, violet, red,
 ///        cyan) and the row of gStreaks_Styles that says how a hit looks.

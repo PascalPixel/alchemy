@@ -73,9 +73,7 @@ UNUSED void System_IdleForever(void) {
 #if LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_ITALIAN
 
 /// Returns the language of this cartridge from the header's game code letter,
-/// an enum CartridgeLanguage. Only the Spanish and
-/// Italian editions have it. Called by the battle target selection and the
-/// Status screen, which lay text out by language.
+/// an enum CartridgeLanguage. Only the Spanish and Italian editions have it.
 s32 System_GetLanguage(void) {
   s32 language;
 
@@ -231,8 +229,6 @@ UNUSED void Code_ResolveLongBranches(u16 *pair, s32 byteLength) {
 /// overlay, and the patch turns that into the offset from the instruction,
 /// which the processor expects; the packer, tools/ags-overlays, does the
 /// reverse.
-/// Called by Scene_LoadOverlay for each scene's overlay, and through the
-/// far-call table.
 void Overlay_Load(u32 index, void *destination) {
   void (*patchBranches)(void *, s32);
   s32 codeSize;
@@ -251,8 +247,7 @@ void Irq_Ignore(void) {}
 /// (gIrqVector) at its dispatcher, installs the default handler table and
 /// enables the VBlank and keypad interrupts (and, in the German, French,
 /// Spanish and Italian editions, the cartridge-removed interrupt, which halts
-/// the game). Called by System_Initialize; it clears IME first and sets it
-/// again at the end.
+/// the game).
 void System_InstallIwramAndIrqs(void) {
   u8 *iwram;
 

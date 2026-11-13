@@ -16,8 +16,7 @@ STATIC_ASSERT(offsetof(struct Actor, sprite) == 0x50);
 /// Keeps the party leader off the treasure spots: a leader within 16 pixels of
 /// a treasure spot's centre is moved 20 pixels from that centre, in the
 /// direction it stood, and loses its move target. Only the first treasure spot
-/// it stands on moves it. Called by two scene overlays (Suhalla Desert, Lamakan
-/// Desert).
+/// it stands on moves it.
 void TreasureSpot_MoveLeaderAway(void) {
   struct Actor *leader = Actor_Lookup(gMainRoutineWork.leaderActorId);
   struct TreasureSpot *marker = gFieldWork->treasureSpots;
@@ -99,15 +98,13 @@ void ItemDisplay_EmitSparkles(struct Actor *emitter) {
 
 /// Shows the picture of item (0 for none) at the centre of the cell 16 pixels
 /// in front of character actorId, at a height of 16 pixels whatever the
-/// actor's,
-/// with sparkles. While Reveal is active, its marks and sparkles are cleared
-/// first. Returns the picture's actor, or 0 without the actor or
-/// an empty actor slot. The picture is sprite 22, thrown up (velocityY 2 << 16,
+/// actor's, with sparkles. While Reveal is active, its marks and sparkles are
+/// cleared first. Returns the picture's actor, or 0 without the actor or an
+/// empty actor slot. The picture is sprite 22, thrown up (velocityY 2 << 16,
 /// gravity px(1) / 4: it rises for 8 frames) while it grows to full size, its
 /// icon drawn through HEAP_SLOT_GLYPH_TRANSFER, which is released again, and
 /// loaded into VRAM. The caller owns the picture: Field_ExamineCell releases it
-/// once the find is told. Called by Field_ExamineCell for coins and items
-/// found, and by FieldEffect_PlayCueAndStartEmitterOnTarget.
+/// once the find is told.
 struct Actor *ItemDisplay_ShowItemInFront(s32 actorId, s32 item) {
   struct Actor *picture;
 
@@ -188,17 +185,14 @@ struct Actor *ItemDisplay_ShowItemInFront(s32 actorId, s32 item) {
   return picture;
 }
 
-/// Releases object unless it is NULL. Called by Field_ExamineCell to drop the
-/// picture of an item nobody could carry.
+/// Releases object unless it is NULL.
 void Actor_ReleaseIfPresent(void *object) {
   if (object != 0)
     Actor_ReleaseFar(object);
 }
 
-/// Raises a found item's picture to 36 pixels above the party leader, who
-/// holds it up (ANIM_LEADER_ARMS_RAISED) facing the screen. Called by
-/// Field_ExamineCell for what a search finds, by ItemDisplay_ShowPicture and by
-/// ItemDisplay_ShowItem.
+/// Raises a found item's picture to 36 pixels above the party leader, who holds
+/// it up (ANIM_LEADER_ARMS_RAISED) facing the screen.
 void ItemDisplay_RaiseAboveLeader(struct Actor *actor) {
   struct Actor *leader;
 
@@ -290,9 +284,7 @@ void ItemDisplay_ShowItem(s32 item, s32 flags) {
 // while a menu is open.
 #if TBS_PATCH_2
 
-/// While Reveal is active, releases all its sparkles, leaving its marks. Called
-/// by the field menu (FieldMenu_Run, window/selection.c) each time
-/// FieldMenu_SelectCommand returns, a cancel included, while Reveal is active.
+/// While Reveal is active, releases all its sparkles, leaving its marks.
 void FieldEffect_ReleaseRevealSparkles(void) {
   if (gFieldWork->revealActive != 0) {
     struct Actor *effect = EFFECT_OBJECT_POOL;
@@ -357,8 +349,7 @@ s32 Field_IsRevealActive(struct Actor *interpreter) {
 /// and 5 up or down of the leader: treasure spots (ids 100 to 239) with no
 /// actor placed, whose examine trigger (TRIGGER_EXAMINE) gives an item, coins,
 /// a Psynergy Stone or a mimic and whose flag is not yet set. Each mark is an
-/// actor of SPRITE_BLANK running gFieldEffect_MarkerParticleScript. Called by
-/// Reveal (event_commands/reveal.c).
+/// actor of SPRITE_BLANK running gFieldEffect_MarkerParticleScript.
 void FieldEffect_SpawnRevealMarkers(void) {
   u8 *markerData;
   struct Actor *actor;

@@ -6,11 +6,10 @@
 
 /// A Mars Djinni joins the party: it turns to the camera, bounces three times,
 /// spins ever faster and shrinks away in a fountain of 24 sparks
-/// (FieldEffect_UpdateMarsSpark). The leader turns to the camera and
-/// plays ANIM_LEADER_ARMS_RAISED, the sparks swarm the leader, who pulses for
-/// 100 frames, and the sparks vanish. Called by Djinn_JoinParty for a Mars
-/// Djinni, which then clears the Djinni's actor slot. Uses all 24 field
-/// effect sprites, tints the field palette red and fades it back at the end.
+/// (FieldEffect_UpdateMarsSpark). The leader turns to the camera and plays
+/// ANIM_LEADER_ARMS_RAISED, the sparks swarm the leader, who pulses for 100
+/// frames, and the sparks vanish. Uses all 24 field effect sprites, tints the
+/// field palette red and fades it back at the end.
 void Djinn_RunMarsJoinEffect(s32 djinniId) {
   struct Vector3 position;
   s32 scale;

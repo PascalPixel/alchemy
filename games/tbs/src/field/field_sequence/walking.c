@@ -18,8 +18,6 @@ struct UnitHpPoisonView {
 #endif
 
 /// Clears the field's twelve pending requests (see struct FieldWork).
-///
-/// Called by FieldSequence_Run while it sets a scene up.
 void Field_ClearRequests(void) {
   struct FieldWork *work = gFieldWork;
 
@@ -65,9 +63,6 @@ s32 Field_CountRequests(void) {
 
 /// Returns the cell behavior of the map cell 16 pixels ahead of the party
 /// leader (a World Map cell picture on the World Map), or 0 without a leader.
-///
-/// Called by Field_FindItemTrigger and Scene_FindPsynergyTrigger (items.c),
-/// which match an item or Psynergy trigger to the cell the leader faces.
 s32 Field_GetCollisionAheadOfLeader(void) {
   struct FieldWork *work;
   struct Actor *leader;
@@ -134,8 +129,7 @@ s32 Field_GetCollisionAheadOfLeader(void) {
 /// leaving the scene. A region's bounds are whole pixels, its maxima
 /// exclusive; a table whose first minX is -1, or no table, has no exits.
 ///
-/// Called by Field_UpdateWalking when the leader steps on a cell with a
-/// non-zero cell behavior. Sets work->exit and stops the leader.
+/// Sets work->exit and stops the leader.
 void Field_CheckExitRegions(s32 positionX, s32 positionY, s32 positionZ) {
   s32 exitValue;
   struct FieldWork *work;
@@ -188,11 +182,8 @@ void Field_CheckExitRegions(s32 positionX, s32 positionY, s32 positionZ) {
 /// the party, the leader flinches and characters who fall are listed in the
 /// field work.
 ///
-/// Called by FieldSequence_Run each frame while the party walks (in debug mode,
-/// FLAG_DEBUG_STEPS_OFF skips it), so the counts below advance
-/// per frame. Sets work->stepTrigger, pushCell, encounter, psynergy and
-/// raisedTrigger
-/// (-1 when someone fell), work->currentCell and previousCell, walkingDistance,
+/// Sets work->stepTrigger, pushCell, encounter, psynergy and raisedTrigger (-1
+/// when someone fell), work->currentCell and previousCell, walkingDistance,
 /// fallenOwners and survivorCount, and gMainRoutineWork's hazard and Avoid
 /// counts.
 void Field_UpdateWalking(s32 layer, s32 x, s32 y, s32 z) {
@@ -391,8 +382,6 @@ void Party_AddPp(s32 amount, s32 unused) {
 /// HP when percent is set. A percentage that truncates to zero falls back to
 /// the positive magnitude of amount. Damage flashes and plays an impact sound;
 /// healing plays the recovery sound.
-///
-/// Called by Field_UpdateWalking for hazardous ground.
 void Party_AddHp(s32 amount, s32 percent) {
   s32 partyCount;
   s32 partyIndex;
@@ -480,13 +469,9 @@ s32 Party_ApplyPoisonDamage(void) {
 /// in progress, pauses camera movement and freezes the perspective view as a
 /// still picture. Elsewhere it does nothing.
 ///
-/// Called by FieldSequence_Run around the handling of most requests, by the
-/// joining of a Djinni and by the World Map's overlay; each call is paired with
-/// WorldMap_Unfreeze. Changes the screen transition state in
-/// HEAP_SLOT_SCREEN_TRANSITION only when it is running. Both allocations return
-/// the slot's block when it has one; with that slot free, the World Map takes a
-/// new, uncleared block there, kept until the scene ends, whose step is then
-/// leftover memory.
+/// Both allocations return the slot's block when it has one; with that slot
+/// free, the World Map takes a new, uncleared block there, kept until the scene
+/// ends, whose step is then leftover memory.
 void WorldMap_Freeze(void) {
   struct FieldWork *work;
   struct ScreenTransitionState *state;

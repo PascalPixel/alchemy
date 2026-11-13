@@ -7,13 +7,6 @@
 /// Puts the battle screen back into the display state every effect starts
 /// from and ends with: no blending, window 0 and window 1 both covering the
 /// battle view (lines 16 to 135), and the effect display mode queued.
-///
-/// Called by the handlers that change the display themselves: at the start of
-/// the beam (beams.c), the particle streams and the summon effects
-/// Ramses, Kirin, Atalanta, Neptune, Boreas, Thor and Judgment, and at both
-/// ends of Ice and Douse (falling.c). Writes BLDCNT, BLDALPHA, the window
-/// registers and WININ and WINOUT, queues DISPCNT for VBlank and
-/// waits one frame.
 void BattleEffect_ConfigureEffectDisplay(void) {
   REG_BLDCNT = 0;
   // 14/16 of the top layer over all of the bottom, for when blending is on.

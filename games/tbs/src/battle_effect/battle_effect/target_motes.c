@@ -111,15 +111,10 @@ enum { TARGET_MOTES_GLINT_PICTURES = 9600 };
 /// before the end. The effect layer ripples, except for Taint's smokes and
 /// Paralyze.
 ///
-/// Called by the wrappers above, each with its enum TargetMotesMode.
-///
-/// Lasts 8 frames a target plus 64 (the wide styles) or 32. Overwrites
-/// PARTICLES 0 to 511, loads the mode's palette into the first 64 background
-/// colours, and in the rippling modes writes work->bg2xLines each frame for
-/// BattleEffect_ArmBg2AffineHBlankDma, which it adds as a task and removes. It
-/// builds both blitters afresh for each target every frame and releases them
-/// again, Paralyze a mirrored one for each glint too, so it ends with none
-/// held. Demon Fire sets work->shakeFrames.
+/// Lasts 8 frames a target plus 64 (the wide styles) or 32. It builds both
+/// blitters afresh for each target every frame and releases them again,
+/// Paralyze a mirrored one for each glint too, so it ends with none held. Demon
+/// Fire sets work->shakeFrames.
 ///
 /// mode: the style (enum TargetMotesMode).
 void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {

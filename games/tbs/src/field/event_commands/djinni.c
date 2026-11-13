@@ -301,10 +301,7 @@ void FieldEffect_UpdateAllSlots(void) { FieldEffect_UpdateEffectSlots(); }
 
 /// Allocates and clears the field effect sprites (HEAP_SLOT_FIELD_EFFECT) and
 /// starts their update task. The block is a whole field effect,
-/// gFieldEffectWork, the slot a field Psynergy also takes. Called by
-/// the Djinn joining effects (jupiter.c, mars.c, venus.c and mercury.c) and
-/// Altmiller Cave's event; each ends with
-/// FieldEffect_ReleaseSlots.
+/// gFieldEffectWork, the slot a field Psynergy also takes.
 void FieldEffect_InitializeSlots(void) {
   void *work;
 

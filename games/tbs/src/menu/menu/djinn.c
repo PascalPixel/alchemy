@@ -509,10 +509,6 @@ MenuBackdropResult Menu_OpenBackdropScreen(void) {
 
 /// Lists the actions after a preview, marking gains, then appends the losses.
 /// The two output counts distinguish gained and lost actions.
-///
-/// Writes every action of after (up to 32), with DJINN_PREVIEW_GAINED on
-/// those before lacks, then each action of before that after lacks, with
-/// DJINN_PREVIEW_LOST. Returns the number written, up to 64.
 s32 PsynergyList_Diff(struct PsynergyEntry *before, struct PsynergyEntry *after,
                       u16 *actionsOut, s32 *gainedCountOut, s32 *lostCountOut) {
   s32 actionIndex;
@@ -1585,10 +1581,6 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
 
 /// Lists owned Djinn by element and index, marking those that are set.
 /// For element -1, entries also encode their party member.
-///
-/// Writes one Djinn list entry (DJINN_ENTRY_) for each Djinni of element the
-/// unit holds, or of every element for -1, and returns how many. The Djinn
-/// menu passes a DjinnListTable row, which holds DJINN_LIST_ROWS (10).
 s32 Djinn_ListUnitEntries(u16 *entriesOut, s32 memberId, s32 element) {
   struct Unit *unit = Unit_GetFar(memberId);
   s32 count = 0;

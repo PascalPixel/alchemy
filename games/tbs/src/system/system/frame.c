@@ -28,9 +28,7 @@ static __inline__ void System_SoftReset(void) {
 /// null handler disables it and installs the do-nothing handler. The three
 /// display interrupts are also switched in DISPSTAT; for VCount, `vcount` is
 /// the line it fires on. Writes REG_IE, REG_DISPSTAT and gIrqHandlers with
-/// interrupts disabled. Called by System_Initialize, the link cable and save
-/// code for their timer and serial interrupts, and the battle transitions for
-/// their HBlank and VCount effects.
+/// interrupts disabled.
 void Irq_SetHandler(u32 irq, s32 vcount, InterruptHandler handler) {
   if (irq <= IRQ_GAMEPAK) {
     u32 ime;
@@ -436,9 +434,8 @@ void System_VBlankHandler(void) {
 }
 
 /// Copies the mixer code for reverb code `code` (enum SoundReverbCode; anything
-/// else loads SOUND_REVERB_MONO) from ROM into IwramSoundReverbCode. Called by
-/// Sound_Play for music, the battle and the Battle Arena for theirs, and
-/// the sound test. Always returns 0.
+/// else loads SOUND_REVERB_MONO) from ROM into IwramSoundReverbCode. Always
+/// returns 0.
 s32 Sound_LoadReverbCode(s32 code) {
   s32 index;
 

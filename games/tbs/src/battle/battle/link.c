@@ -360,10 +360,9 @@ s32 LinkBattle_SyncTurn(void) {
   return 0;
 }
 
-/// Records, for each party member, the unit id the link opponent knows them
-/// by (FIRST_ENEMY_UNIT plus their place in the party), in
-/// gBattleWork->opponentSlots. Called by Battle_Run as a link battle
-/// is set up.
+/// Records, for each party member, the unit id the link opponent knows them by
+/// (FIRST_ENEMY_UNIT plus their place in the party), in
+/// gBattleWork->opponentSlots.
 UNREAD_RESULT BattleParty_AssignOpponentSlots(void) {
   u16 activeMembers[8];
   struct BattleWork *battleState = gBattleWork;
@@ -378,9 +377,7 @@ UNREAD_RESULT BattleParty_AssignOpponentSlots(void) {
 }
 
 /// Clears the first 16 bytes of the link transfer's payload, the eight
-/// signature halfwords LinkBattle_WaitSync and
-/// LinkBattle_SyncTurn write. Called by Battle_Run on each way
-/// out of the battle but fleeing.
+/// signature halfwords LinkBattle_WaitSync and LinkBattle_SyncTurn write.
 s32 Battle_ClearSerialTransferPayload(void) {
   return Iwram_ClearWords(gSerialTransfer.payload, 16);
 }

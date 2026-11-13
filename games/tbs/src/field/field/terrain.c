@@ -311,10 +311,6 @@ s32 Terrain_GetFlatCHeight(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
 /// Returns the ground height of a layer at (x, y) in 16.16 pixels: the
 /// height function of the cell's terrain kind applied to its samples.
 /// y is the map's down axis, an actor's z.
-///
-/// Called each frame by Actor_UpdateAllThumb for actors that follow the
-/// ground, by the player control, and as MapGrid_GetTerrainHeightFar by the
-/// field sequence's actor code, field Psynergy and about ten scene overlays.
 s32 MapGrid_GetTerrainHeight(s32 layer, s32 x, s32 y) {
   struct MapGridScrollWork *work = gMapGridWork[0];
   struct MapGridCell *cell;
@@ -346,8 +342,6 @@ s32 MapGrid_GetTerrainHeight(s32 layer, s32 x, s32 y) {
 
 /// Returns the terrain kind of a layer's cell at (x, y) in 16.16 pixels: the
 /// low four bits of the first byte of the cell's shape.
-/// Called through MapGrid_GetCellAttributeLowNibbleFar by Move's field
-/// Psynergy.
 s32 MapGrid_GetCellAttributeLowNibble(s32 layer, s32 x, s32 y) {
   struct MapGridScrollWork *gridState = gMapGridWork[0];
   struct MapGridCell *cells;
@@ -369,10 +363,8 @@ s32 MapGrid_GetCellAttributeLowNibble(s32 layer, s32 x, s32 y) {
   return *(Ram_MapGridShapes + heightAttributeIndex * 4) & 15;
 }
 
-/// Returns the cell behavior of a layer's cell at (x, y) in 16.16 pixels.
-/// The shift by 20 takes 16.16 pixels straight to 16-pixel cells. Called
-/// through MapGrid_GetCellBehaviorAtFar by the Psynergy climbing and by
-/// scenes (Altin Peak, Colosso, Imil, Crossbone Isle).
+/// Returns the cell behavior of a layer's cell at (x, y) in 16.16 pixels. The
+/// shift by 20 takes 16.16 pixels straight to 16-pixel cells.
 s32 MapGrid_GetCellBehaviorAt(s32 layer, s32 x, s32 y) {
   struct MapGridScrollWork *gridState;
   struct MapGridCell *cell;
@@ -421,10 +413,7 @@ UNUSED s32 MapGrid_GetCellHighFlags(s32 x, s32 y) {
 /// whether the cell there is a wall, or the ground too high or too low for a
 /// step from the actor's.
 ///
-/// Called by the player control and the script commands that pick a free
-/// step, and as MapGrid_CheckCollisionFar by field Psynergy (Move,
-/// Carry, Force, climbing). A layer past MAPGRID_LAYER_OVERHEAD reads the
-/// grid from its start.
+/// A layer past MAPGRID_LAYER_OVERHEAD reads the grid from its start.
 s32 MapGrid_CheckCollision(struct Actor *actor,
                            struct FieldPosition *position) {
   struct MapGridScrollWork *gridState;
@@ -474,8 +463,7 @@ s32 MapGrid_CheckCollision(struct Actor *actor,
 
 /// Returns -1 when the cell under position (its x, and y less its height) in
 /// MAPGRID_LAYER_OVERHEAD is a wall (CELL_BEHAVIOR_WALL), else 0; also 0 before
-/// the map work exists. Called by the player control and, as
-/// MapGrid_IsWallAtFar, by the Psynergy climbing.
+/// the map work exists.
 s32 MapGrid_IsWallAt(struct WorldPosition *position) {
   s32 pixelX;
   s32 pixelY;
@@ -503,9 +491,6 @@ s32 MapGrid_IsWallAt(struct WorldPosition *position) {
 /// collision layer where it has one, else the lower, else
 /// WORLD_MAP_COLLISION_DEFAULT. Each layer is a
 /// tile map of 4-bit collision pixels.
-///
-/// Called by the player control, WorldMap_IsWalkable and
-/// WorldMap_GetBattleEnvironment.
 s32 WorldMap_GetCollision(struct WorldPosition *position) {
   s32 halfPixelX = position->x >> 17;
   s32 y = position->y;
@@ -554,10 +539,8 @@ s32 WorldMap_GetCollision(struct WorldPosition *position) {
 
 /// Returns 0 when the world map at position can be walked on (collision
 /// WORLD_MAP_COLLISION_WALKABLE_FIRST to WORLD_MAP_COLLISION_WALKABLE_LAST),
-/// else -1.
-/// The first argument is not read; the player control passes its actor.
-/// Called by the player control as it probes the steps around the actor it
-/// moves.
+/// else -1. The first argument is not read; the player control passes its
+/// actor.
 s32 WorldMap_IsWalkable(s32 unused, struct WorldPosition *position) {
   // One unsigned compare tests the walkable range.
   if ((WorldMap_GetCollision(position) - WORLD_MAP_COLLISION_WALKABLE_FIRST) <=
@@ -571,8 +554,6 @@ s32 WorldMap_IsWalkable(s32 unused, struct WorldPosition *position) {
 /// Returns the world map's battle environment at position from
 /// gWorldMap_BattleEnvironments, and stores the block's encounter region in
 /// terrainKind.
-/// Called through WorldMap_GetBattleEnvironmentFar by the world map's
-/// encounters (Encounter_ResolveWorldMapZoneAndBackdrop).
 s32 WorldMap_GetBattleEnvironment(struct WorldPosition *position,
                                   s32 *terrainKind) {
   s32 collisionKind = WorldMap_GetCollision(position);

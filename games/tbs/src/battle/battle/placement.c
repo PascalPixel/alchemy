@@ -4,14 +4,12 @@
 
 #include "../battle_internal.h"
 
-/// Creates the battle object of unit at (x, y) on the battlefield, in
-/// pixels: its sprite (an enemy's from its class, sharing the slot it
-/// already holds; a party member's battle sprite), palette, size and weapon
-/// sprite, turned to face the centre, and starts its actor script
-/// (gBattleObject_EmptyScript). Called by
-/// BattleUnit_RefreshPlacement and by BattleAbility_ApplyToTarget for an enemy
-/// that joins. Fills in actor, creates an actor for it and, for an
-/// enemy, claims its sprite slots.
+/// Creates the battle object of unit at (x, y) on the battlefield, in pixels:
+/// its sprite (an enemy's from its class, sharing the slot it already holds; a
+/// party member's battle sprite), palette, size and weapon sprite, turned to
+/// face the centre, and starts its actor script (gBattleObject_EmptyScript).
+/// Fills in actor, creates an actor for it and, for an enemy, claims its sprite
+/// slots.
 void BattleObject_Make(struct BattleObject *actor, s32 unitId, s32 x, s32 y) {
   s32 fixedX;
   s32 fixedZ;
@@ -280,14 +278,12 @@ void BattlePlacement_GetStepPair(s32 partyPlace, s32 *x, s32 *y) {
 #define ENEMY_SPACING_EMPTY 25
 
 /// Lays out count enemies in a column left of the centre (ENEMY_COLUMN_X),
-/// spaced by their size: each takes its ENEMY_SPACING_ pixels of the line,
-/// half before and half after it, none before the first. The column starts from
-/// an estimate of its length, 30 pixels an enemy (27 for more than four), so it
+/// spaced by their size: each takes its ENEMY_SPACING_ pixels of the line, half
+/// before and half after it, none before the first. The column starts from an
+/// estimate of its length, 30 pixels an enemy (27 for more than four), so it
 /// sits only roughly centred. The Kraken and the Fusion Dragon would stand
 /// nearer (ENEMY_COLUMN_NEAR_X), past the first place; each is fought alone
-/// (formations.c rows 213 and 347), so neither does. Called by
-/// BattleUnit_RefreshPlacement and BattlePlacement_RelayoutEnemies; writes only
-/// xPositions and zPositions, in pixels.
+/// (formations.c rows 213 and 347), so neither does.
 void BattlePlacement_LayoutEnemies(u16 *actorIds, s32 count, s32 *xPositions,
                                    s32 *zPositions) {
   s32 totalSpacing = count <= 4 ? 30 : 27;
@@ -328,7 +324,6 @@ void BattlePlacement_LayoutEnemies(u16 *actorIds, s32 count, s32 *xPositions,
 }
 
 /// Returns the id of the first free enemy unit, or -1 when all six are taken.
-/// Called by BattleAbility_ApplyToTarget when an enemy calls for help.
 s32 Enemy_GetFreeUnitId(void) {
   s32 enemySlot;
   s32 unitId;
@@ -344,8 +339,7 @@ s32 Enemy_GetFreeUnitId(void) {
 }
 
 /// Lays the enemies out again and moves each one's battle object anchor to its
-/// new place. Called by BattleAbility_ApplyToTarget after an enemy joins.
-/// Writes the anchorX and anchorZ of every enemy's battle object.
+/// new place. Writes the anchorX and anchorZ of every enemy's battle object.
 UNREAD_RESULT BattlePlacement_RelayoutEnemies(void) {
   struct BattleWork *battle = gBattleWork;
   u16 unitIds[UNIT_MAX];
@@ -373,9 +367,9 @@ UNREAD_RESULT BattlePlacement_RelayoutEnemies(void) {
 }
 
 /// Places every unit at the start of a battle: numbers the places (party
-/// members 0 up in their order, enemies 8 to 13) and creates each unit's
-/// battle object at its spot. Called by Battle_Run once the unit lists are
-/// filled. Writes gBattleWork->placement and every unit's battle object.
+/// members 0 up in their order, enemies 8 to 13) and creates each unit's battle
+/// object at its spot. Writes gBattleWork->placement and every unit's battle
+/// object.
 void BattleUnit_RefreshPlacement(void) {
   struct BattleWork *battle;
   u16 unitIds[UNIT_MAX];

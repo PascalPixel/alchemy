@@ -21,12 +21,10 @@ enum {
 /// the damage 11 frames after the burst, and the effect ends 75 frames after
 /// it.
 ///
-/// work->particles holds the 64 motes (angle, height and radius in x, y and
-/// z); after the burst the first 32 also hold the sparkles, in their
-/// velocity and variant fields, while motes 0 to 15 keep moving in theirs.
-/// PARTICLES holds the 32 chips. Writes REG_BG2PA and, on EFFECT_SIDE_PARTY,
-/// REG_BG2X; ends with the blitters freed, the transfer task removed and
-/// the canvas layer closed.
+/// work->particles holds the 64 motes (angle, height and radius in x, y and z);
+/// after the burst the first 32 also hold the sparkles, in their velocity and
+/// variant fields, while motes 0 to 15 keep moving in theirs. PARTICLES holds
+/// the 32 chips.
 ///
 /// args: the targets; variant picks the number of motes and mounds and
 ///         the burst frame (gFrost_Timings): 32 motes, 8 mounds and frame

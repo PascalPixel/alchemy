@@ -6,8 +6,7 @@
 
 /// Lists the current shop's artifacts: every item of the shop's type whose
 /// shared stock counter is above zero. Writes them to the work block's stock
-/// list and returns how many. Called by Shop_Run when the player picks
-/// Artifacts, and by Shop_SelectBuy to refresh the list after a purchase.
+/// list and returns how many.
 s32 Shop_ListAvailableArtifacts(void) {
   struct ShopWork *shop;
   s16 *stockItems;
@@ -99,10 +98,9 @@ void Shop_ReleaseWork(void) {
 
 /// Runs a shop: the shopkeeper's welcome, then buy, sell, artifacts and repair
 /// until the player leaves. `stockRow` picks the row of sStockTable
-/// (SHOP_STOCK_ROW_EMPTY for a row out of range) and `keeperId` the actor
-/// whose portrait the messages show. Seeds the row's artifacts on the first
-/// visit and holds the work block while it runs. Called by the town scenes'
-/// shopkeepers through SHOP.S, and by the debug shop. Returns 0.
+/// (SHOP_STOCK_ROW_EMPTY for a row out of range) and `keeperId` the actor whose
+/// portrait the messages show. Seeds the row's artifacts on the first visit and
+/// holds the work block while it runs. Returns 0.
 s32 Shop_Run(s32 stockRow, s32 keeperId) {
   struct ShopWork *shop;
   struct WindowSprite *anchor;
@@ -200,18 +198,16 @@ s32 Shop_OpenDebugShop(s32 unused) {
 }
 
 /// Waits one frame at a time until the sound driver has finished the last
-/// command. Called by the inn's sleep, the sanctum and two events that wait
-/// for a jingle.
+/// command.
 void Sound_WaitForJingle(void) {
   while (Sound_GetBgmRestoreDelayFar() != 0) {
     wait(1);
   }
 }
 
-/// Shows a shopkeeper's line and waits for its window to finish, one more
-/// frame included. `messageId` is the weapon shop's line; the armor, item and
+/// Shows a shopkeeper's line and waits for its window to finish, one more frame
+/// included. `messageId` is the weapon shop's line; the armor, item and
 /// warriors' shops say theirs, at the same distance from their own welcome.
-/// Called by every counter.
 void Shop_ShowKeeperMessage(s32 messageId) {
   struct ShopWork *shop = gMenuWork;
   s32 portraitResource = Speaker_GetVoiceFar(shop->keeperGraphics);
@@ -270,10 +266,9 @@ void Shop_ShowKeeperMessageHidingCursor(s32 messageId) {
   shop->cursor.anchor->motion = savedCursorMode;
 }
 
-/// Runs the Yes or No choice beside the shopkeeper's line and returns it: 0
-/// for Yes, 1 for No or B. `choice` is where the cursor starts. Keeps the
-/// hand cursor's motion. Called by the counters before they buy, sell, equip
-/// or repair, and by the inn.
+/// Runs the Yes or No choice beside the shopkeeper's line and returns it: 0 for
+/// Yes, 1 for No or B. `choice` is where the cursor starts. Keeps the hand
+/// cursor's motion.
 s32 Shop_AskYesNo(s32 choice) {
   struct WindowSprite **cursorSlot =
       &((struct ShopWork *)gMenuWork)->cursor.anchor;

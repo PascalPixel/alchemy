@@ -29,11 +29,9 @@
 
 /// Debug: replaces the party with the party members of parameter set number
 /// set. Each party member is raised to the row's level, given the row's Djinn
-/// (Set, in order of their numbers across the party), the row's abilities,
-/// and an emptied inventory holding the row's items, each equipped. Called by
-/// DebugBattle_RunMenu and, through its far stub, by the Battle Arena's
-/// BattleArena_ChooseDebugParameterSet. Changes the active party and each
-/// party member's level, Djinn, abilities and inventory.
+/// (Set, in order of their numbers across the party), the row's abilities, and
+/// an emptied inventory holding the row's items, each equipped. Changes the
+/// active party and each party member's level, Djinn, abilities and inventory.
 /// Returns 1 when the table ends before that parameter set, 0 otherwise.
 s32 DebugParameterSet_Load(s32 set) {
   // The next Djinni number of each element to hand out.
@@ -125,17 +123,16 @@ s32 DebugParameterSet_Load(s32 set) {
   (MsgLaliveroHowDidSearchForSheba -                                           \
    MsgBabiLighthouseTheyWereTerribleWeWereAbsolutely + 5)
 
-/// Debug: a message viewer that never returns. Names the first party member
-/// "Ha hi fu he ho" (MsgDebugSampleName), fills the message arguments with
-/// sample values and shows one message at a time, counted from the Babi
-/// Lighthouse dialogue (MsgBabiLighthouseTheyWereTerribleWeWereAbsolutely) or,
-/// in the second range, from DEBUG_SECOND_FORM. Right steps the index on by
-/// one and Left back by two, R and L step it by ten, Up and Down pick the
-/// range, and B alternates between the ranges, moving on one message each
-/// time it leaves the first. A closes the window and shows the message again.
-/// Called by DebugBattle_RunMenu when Start is pressed. Renames party member
-/// 0, sets REG_DISPCNT and gMainRoutineWork.messageSpeed, and clears the
-/// window work's message busy byte after each window.
+/// Debug: a message viewer that never returns. Names the first party member "Ha
+/// hi fu he ho" (MsgDebugSampleName), fills the message arguments with sample
+/// values and shows one message at a time, counted from the Babi Lighthouse
+/// dialogue (MsgBabiLighthouseTheyWereTerribleWeWereAbsolutely) or, in the
+/// second range, from DEBUG_SECOND_FORM. Right steps the index on by one and
+/// Left back by two, R and L step it by ten, Up and Down pick the range, and B
+/// alternates between the ranges, moving on one message each time it leaves the
+/// first. A closes the window and shows the message again. Renames party member
+/// 0, sets REG_DISPCNT and gMainRoutineWork.messageSpeed, and clears the window
+/// work's message busy byte after each window.
 void DebugBattle_ViewMessages(void) {
   u16 text[64];
   s32 secondRange = 0;

@@ -93,11 +93,8 @@ void BattleEffect_RunDeadlyGas(struct BattleEffectParams *args) {
 /// Each burst lives 24 frames. A sound plays on frame 4 and the battle shows
 /// the damage on frame 24 (frame 60 in the grey mode).
 ///
-/// Called by the seven wrappers above, six blessings and Deadly Gas. Each
-/// burst is one of work->particles, its variant counting the frames it has
-/// lived (-1 when free). Writes REG_BLDALPHA, the first 64 BG colours (all but
-/// the lightning and the faces), REG_BLDCNT in the grey mode and REG_BG2PA in
-/// the lightning mode; sets work->shakeFrames on each hit.
+/// Each burst is one of work->particles, its variant counting the frames it has
+/// lived (-1 when free).
 ///
 /// args: the user and the targets.
 /// mode: the burst and its palette (enum BurstShowerMode). The grey mode turns

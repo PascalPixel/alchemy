@@ -55,8 +55,7 @@ void Game_RestartQuest(void) {
 /// Returns the party's Djinn recovery bank (the standby Djinn and their turns
 /// to recover), or for the enemy side battle unit FIRST_ENEMY_UNIT + 3 itself,
 /// read as a bank. The bank also holds the summon flags Summon_ListLearned
-/// reads. Called by the battle code that sets, recovers and links Djinn
-/// (DjinnRecovery_CountDown, BattleSummon_UpdateAvailability, the link battle).
+/// reads.
 struct DjinnRecoveryTable *Djinn_GetRecoveryTable(s32 enemySide) {
   if (enemySide != 0)
     return (struct DjinnRecoveryTable *)Unit_Get(FIRST_ENEMY_UNIT + 3);
@@ -64,9 +63,7 @@ struct DjinnRecoveryTable *Djinn_GetRecoveryTable(s32 enemySide) {
 }
 
 /// Returns the average level of the party members, rounded down (0 with no
-/// party members). Called by Encounter_CountStepsAndSelectFormation to pick a
-/// random battle's enemies, and by the Lucky Dice game in Tolbi to set its
-/// prizes.
+/// party members).
 u32 Party_GetAverageLevel(void) {
   s32 totalLevels = 0;
   s32 partySize = Party_CountMembers();
@@ -115,9 +112,7 @@ struct Unit *Unit_Get(u32 unitId) {
 /// ENEMY_ID_FIRST`; an id past the first 250 gives the first. Enemy ids start
 /// past the eight characters' so that one id names any unit: Unit.id holds
 /// either, and gBattleSprites, indexed by it, keeps the characters' rows (their
-/// attack effect and hop) before the enemies'. Called by the
-/// battle code that builds and scores enemies (the formations, the enemy AI,
-/// the spoils) and by the element and weakness reads in this object.
+/// attack effect and hop) before the enemies'.
 const struct EnemyDefinition *Enemy_GetDefinition(s32 selector) {
   u32 recordIndex = selector - ENEMY_ID_FIRST;
 
@@ -517,11 +512,10 @@ u32 BuildStamp_GetTime(void) {
 }
 
 /// Clears the game-state header, the scene state with the Colosso's inventory
-/// snapshot and the actor snapshot after it, the flags and most of the
-/// save stamp; sets a new game's defaults: Isaac alone in the party, the
-/// standard button layout, the message speed, the play time clock and the Lucky
-/// Wheels prize odds. Called by the File Screen's new game, by
-/// Game_RestartQuest and MainRoutine_Run, and by the debug battle menu.
+/// snapshot and the actor snapshot after it, the flags and most of the save
+/// stamp; sets a new game's defaults: Isaac alone in the party, the standard
+/// button layout, the message speed, the play time clock and the Lucky Wheels
+/// prize odds.
 void MainRoutineWork_InitializeDefaults(void) {
   volatile s32 zero;
 
@@ -591,8 +585,7 @@ void MainRoutineWork_InitializeDefaults(void) {
 }
 
 /// Sets FLAG_CHILDHOOD and recomputes Isaac, Garet and Jenna, whose classes
-/// then take their childhood forms. Called by the File Screen when a
-/// new game starts the prologue.
+/// then take their childhood forms.
 void Party_StartChildhood(void) {
   GameFlag_Set(FLAG_CHILDHOOD);
   Unit_UpdateClass(ISAAC);
@@ -606,8 +599,7 @@ void Party_StartChildhood(void) {
 /// The party set-up after the prologue: flags, Jenna recomputed, Isaac and
 /// Garet healed with the Machete in their inventories replaced by the Short
 /// Sword and equipped, Move and Retreat taught to Isaac, Move to Garet, Mind
-/// Read to Ivan, and 300 coins. Called by Title_Run when the title shown after
-/// the prologue hands over to Vale, three years later.
+/// Read to Ivan, and 300 coins.
 void Party_EndChildhood(void) {
   s32 unitId;
 
@@ -648,9 +640,7 @@ void Party_EndChildhood(void) {
 }
 
 /// Restores every party member's HP and PP; with `cureConditions` 1 it also
-/// cures poison and haunting. Called by the events that heal the party
-/// (leaving Vale, meeting Flint, the Colosso trials, Faran in Lalivero), by
-/// the Battle Arena after a battle, and by InventorySnapshot_Save.
+/// cures poison and haunting.
 void Party_RestoreHpPp(s32 cureConditions) {
   s32 partySize;
   s32 partyIndex;
@@ -673,7 +663,6 @@ void Party_RestoreHpPp(s32 cureConditions) {
 
 /// Restores the PP of each party member whose element group has a lit
 /// lighthouse: Venus or Mars for group 0, Mercury or Jupiter for the others.
-/// Called by the events at the top of the Mercury and Venus Lighthouses.
 void Party_RestorePpOfLitElements(void) {
   s32 partySize;
   s32 partyIndex;
@@ -768,8 +757,6 @@ UNIT_DEFINE_SET(Unit_SetPp, pp, ppMax)
     return unit->field;                                                        \
   }
 
-/// Called by battle's turn end, poison and regeneration, and by the field's
-/// damage floors and status damage.
 UNIT_DEFINE_ADD(s32, Unit_AddHp, hp, hpMax)
 /// Called when Psynergy is used in the field, in battle and from the menu, by
 /// PP recovery at the end of a battle turn, and by the debug menu.

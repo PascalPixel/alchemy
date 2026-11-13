@@ -76,13 +76,10 @@ struct MapGridCellAnimation {
   u16 y; ///< destination cell row
 };
 
-// The imports below keep a name of their own, prefixed Import_: the scenes'
-// calls of these routines were compiled against declarations that differ from
-// the routines' own, as the bytes measure. Import_EventSetExitRequest,
-// Import_ActorSetPosition, Import_ActorSetAnimation and
-// Import_RandomNext are called with differing argument counts, so they keep
-// old-style declarations; Event_SetExitRequest also takes a u16 and
-// Random16 returns a u32, where the scenes pass and read an int. Imil's and Sol
+// Import_EventSetExitRequest, Import_ActorSetPosition, Import_ActorSetAnimation
+// and Import_RandomNext are called with differing argument counts, so they keep
+// old-style declarations; Event_SetExitRequest also takes a u16 and Random16
+// returns a u32, where the scenes pass and read an int. Imil's and Sol
 // Sanctum's Psynergy Stone room's calls of GameFlag_Set, which returns the
 // flag, compile only as calls of a void routine (Import_GameFlagSet), where
 // every other scene's match through GameFlag_Set itself, and the scenes pass
@@ -114,8 +111,6 @@ s32 Math_DivideUnsigned(s32 value, s32 divisor);
 /// The remainder of an unsigned division, from the ARM routine in IWRAM that
 /// also serves as __umodsi3 (IwramUnsignedRemainder).
 u32 Math_RemainderUnsigned(u32 dividend, u32 divisor);
-/// Signed division, the compiler's helper for `/`, imported from the ARM
-/// routine in IWRAM (IwramSignedDivide).
 s32 __divsi3(s32 dividend, s32 divisor);
 /// Frees heap slot's block, and with it every later block of the same pool.
 void HeapSlot_Release(s32 slot);

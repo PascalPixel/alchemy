@@ -5,12 +5,9 @@
 
 #include "../event_commands_internal.h"
 
-/// Finds where an actor is on screen: position[0] and position[1]
-/// receive its x and y in pixels, y at the top of its sprite. Returns 0, or -1
-/// if there is no such actor. Called by the message window code in
-/// messages.c to place a speaker's bubble, and through
-/// Actor_GetScreenPositionFar by the window code to open a message
-/// window above or below the leader.
+/// Finds where an actor is on screen: position[0] and position[1] receive its x
+/// and y in pixels, y at the top of its sprite. Returns 0, or -1 if there is no
+/// such actor.
 s32 Actor_GetScreenPosition(s32 actorId, s32 *position) {
   struct Actor *actor = Actor_Lookup(actorId);
   struct MapGridScrollWork *grid;
@@ -41,9 +38,7 @@ UNUSED void Exit_NoOp(void) {}
 
 /// Starts the transition into a random battle: plays the scene's battle music
 /// and the encounter sounds, closes the screen and flashes the backdrop white,
-/// fading it to black over 16 frames. Called by FieldSequence_Run when it
-/// handles work->encounter; clears work->transitionActive once the screen is
-/// closed.
+/// fading it to black over 16 frames.
 UNREAD_RESULT Field_StartEncounterTransition(s32 unused) {
   struct FieldWork *work = gFieldWork;
   s32 i;
@@ -82,10 +77,9 @@ UNREAD_RESULT Field_StartEncounterTransition(s32 unused) {
   }
 }
 
-/// Starts the leader's animation for leaving through an exit: centres it on
-/// its cell, at the cell's south edge, stops it and plays animation over 18
-/// frames. The leader's sprite gains a second part (metadata 27) for it.
-/// Called by Exit_StartStairsUp and Exit_StartStairsDown below.
+/// Starts the leader's animation for leaving through an exit: centres it on its
+/// cell, at the cell's south edge, stops it and plays animation over 18 frames.
+/// The leader's sprite gains a second part (metadata 27) for it.
 void Exit_PrepareAnimation(s32 animation) {
   struct Actor *actor;
   struct Sprite *sprite;
@@ -119,27 +113,22 @@ void Exit_PrepareAnimation(s32 animation) {
 
 /// Leaves through a EXIT_STYLE_STAIRS_UP exit (ANIM_LEADER_LEAVE);
 /// FLAG_ARRIVAL_STAIRS_UP makes the next scene play the matching arrival
-/// (Entrance_PlayArrival). Called by the exit handling in
-/// field_sequence/triggers.c, after it plays SE_STAIRS_UP.
+/// (Entrance_PlayArrival).
 void Exit_StartStairsUp(void) {
   Exit_PrepareAnimation(ANIM_LEADER_LEAVE);
   GameFlag_SetFar(FLAG_ARRIVAL_STAIRS_UP);
 }
 
-/// Leaves through a EXIT_STYLE_STAIRS_DOWN exit
-/// (ANIM_LEADER_LEAVE_ALTERNATE), recorded in
-/// FLAG_ARRIVAL_STAIRS_DOWN. Called by the exit handling in
-/// field_sequence/triggers.c, after it plays SE_STAIRS_DOWN.
+/// Leaves through a EXIT_STYLE_STAIRS_DOWN exit (ANIM_LEADER_LEAVE_ALTERNATE),
+/// recorded in FLAG_ARRIVAL_STAIRS_DOWN.
 void Exit_StartStairsDown(void) {
   Exit_PrepareAnimation(ANIM_LEADER_LEAVE_ALTERNATE);
   GameFlag_SetFar(FLAG_ARRIVAL_STAIRS_DOWN);
 }
 
-/// Plays the leader's arrival animation through an exit: centred on its cell
-/// at the cell's north edge, the leader plays animation for 30 frames, loses
-/// the extra sprite part and walks 8 pixels south. Called by
-/// Entrance_PlayArrival; frees the sprite part
-/// Exit_PrepareAnimation registered.
+/// Plays the leader's arrival animation through an exit: centred on its cell at
+/// the cell's north edge, the leader plays animation for 30 frames, loses the
+/// extra sprite part and walks 8 pixels south.
 void Entrance_EndArrivalAnimation(s32 animation) {
   struct Actor *leader = Actor_Lookup(gMainRoutineWork.leaderActorId);
   struct Sprite *spriteAnimation = leader->sprite;

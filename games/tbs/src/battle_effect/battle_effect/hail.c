@@ -17,9 +17,7 @@
 /// alternately mirrored; the battle shows the damage on frame 8. The chips live
 /// in PARTICLES, since work holds the waves' sheet.
 ///
-/// The Djinni entrance plays whatever the prelude. Writes REG_BLDALPHA and
-/// the first 128 bytes of BG palette RAM (the water spray's, then the ice
-/// chips' on frame 1), sets work->shakeFrames on frame 8.
+/// The Djinni entrance plays whatever the prelude.
 ///
 /// args: the user and the targets; prelude 1 keeps the Djinni circling.
 void BattleEffect_RunHail(struct BattleEffectParams *args) {
@@ -172,10 +170,9 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
 /// Abilities: Ground (BATTLE_EFFECT_GROUND).
 ///
 /// A portal's variant is 1 while it flies and 0 once it has struck; its
-/// crackles are particles 32 to 63, four for each portal, each with its
-/// picture in velocityX and its blitter flags in velocityY. The Djinni
-/// entrance plays whatever the prelude. Writes REG_BLDALPHA, sets
-/// work->shakeFrames on each strike.
+/// crackles are particles 32 to 63, four for each portal, each with its picture
+/// in velocityX and its blitter flags in velocityY. The Djinni entrance plays
+/// whatever the prelude.
 ///
 /// args: the user and the targets; prelude 1 keeps the Djinni circling.
 void BattleEffect_RunGround(struct BattleEffectParams *args) {
@@ -354,9 +351,8 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
 /// takes two random numbers each shaking frame, x first.
 ///
 /// Called once a frame by nearly every effect, before it presents the frame.
-/// Writes gBgScroll[1] and gProjection.centerX and centerY, and counts down
-/// work->shakeFrames. The x offset is centred on half of rangeY too, so with
-/// rangeX smaller (Hail's 4 and 8) the x offset is never positive.
+/// The x offset is centred on half of rangeY too, so with rangeX smaller
+/// (Hail's 4 and 8) the x offset is never positive.
 ///
 /// rangeX: the horizontal range, a power of two.
 /// rangeY: the vertical range, a power of two; both offsets are centred on

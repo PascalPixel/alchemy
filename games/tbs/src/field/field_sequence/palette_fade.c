@@ -11,8 +11,7 @@
 
 /// Sets each of the 1344 colour channels of step to the amount to add each
 /// frame for source to reach target in frames frames; with frames 0 or less
-/// step is left as it was. Called by PaletteFade_StartInterpolation and by
-/// the weather effects (event_commands/weather.c).
+/// step is left as it was.
 void PaletteFade_CalculateSteps(s16 *source, s16 *target, s16 *step,
                                 s32 frames) {
   s32 remainingChannels;
@@ -93,13 +92,11 @@ void PaletteFade_Update(void) {
 
 /// Builds colours for the palette fade from the palette src into dst, which
 /// holds each colour as B, G and R channels shifted up 10 bits. mode below
-/// 0x8000 is one colour for all; PALETTE_TINT_FROM_SOURCE the backdrop
-/// colour; the other PALETTE_TINT_* values tint each colour; any
-/// other value is the address of a ready buffer to copy. half is the palette
-/// selection: PALETTES_ALL for all 448 colours, PALETTES_BG for the BG's 224,
-/// PALETTES_OBJECTS for the OBJ's 224. Called by the
-/// ApplyColorTo functions below, PaletteFade_Initialize and the
-/// weather effects (event_commands/weather.c).
+/// 0x8000 is one colour for all; PALETTE_TINT_FROM_SOURCE the backdrop colour;
+/// the other PALETTE_TINT_* values tint each colour; any other value is the
+/// address of a ready buffer to copy. half is the palette selection:
+/// PALETTES_ALL for all 448 colours, PALETTES_BG for the BG's 224,
+/// PALETTES_OBJECTS for the OBJ's 224.
 void PaletteFade_Build(u32 mode, u16 *src, u16 *dst, s32 half) {
   u32 i;
   u32 colorCount = COLOR_MAX;
@@ -361,9 +358,8 @@ void PaletteFade_Build(u32 mode, u16 *src, u16 *dst, s32 half) {
   }
 }
 
-/// Sets up the palette fade (gPaletteFadeWork) from the BG and OBJ palettes
-/// and starts updating the palettes from it each frame. Called by
-/// FieldSequence_Run on scene load.
+/// Sets up the palette fade (gPaletteFadeWork) from the BG and OBJ palettes and
+/// starts updating the palettes from it each frame.
 void PaletteFade_Initialize(void) {
   struct PaletteFade *work;
 
@@ -384,8 +380,7 @@ void PaletteFade_Release(void) {
 }
 
 /// Sets the colours the buffer moves toward (see PaletteFade_Build); does
-/// nothing without a palette fade. Called by field Psynergy,
-/// the scene transitions, the shop cursor, and scene overlays.
+/// nothing without a palette fade.
 void PaletteFade_SetTarget(s32 mode, s32 half) {
   struct PaletteFade *work = gPaletteFadeWork;
 
@@ -394,9 +389,7 @@ void PaletteFade_SetTarget(s32 mode, s32 half) {
   }
 }
 
-/// Sets the colours the buffer shows now (see PaletteFade_Build). Called by
-/// Reveal, the leader's walking update (walking.c), the transitions, and scene
-/// overlays.
+/// Sets the colours the buffer shows now (see PaletteFade_Build).
 void PaletteFade_SetSource(s32 mode, s32 half) {
   struct PaletteFade *work = gPaletteFadeWork;
 
@@ -405,8 +398,7 @@ void PaletteFade_SetSource(s32 mode, s32 half) {
   }
 }
 
-/// Sets the buffer's source backdrop colour (BG colour 0 of its palette
-/// copy). Called by the transitions (screen_transition.c).
+/// Sets the buffer's source backdrop colour (BG colour 0 of its palette copy).
 void PaletteFade_SetBackdrop(u32 color) {
   struct PaletteFade *work = gPaletteFadeWork;
 

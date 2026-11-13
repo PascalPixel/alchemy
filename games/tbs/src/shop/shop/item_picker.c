@@ -242,8 +242,7 @@ s32 ItemPicker_SelectItem(s32 unitId) {
 }
 
 /// Draws the slot's item name and, below it, why it cannot be dropped or what
-/// the whole stack would sell for. Called by ItemPicker_SelectItem each time
-/// the cursor moves.
+/// the whole stack would sell for.
 void ItemPicker_DrawItem(struct Window *window, s32 unitId, s32 slot) {
   struct Unit *unit = Unit_GetFar(unitId);
   s32 itemId = unit->inventory[slot] & INVENTORY_ITEM_ID_MASK;

@@ -36,8 +36,7 @@ IO_QUEUE_DEFINE_WRITE(IoWriteQueue_ClearBits16, IO_WRITE_CLEAR | IO_WRITE_16)
 IO_QUEUE_DEFINE_WRITE(IoWriteQueue_ClearBits32, IO_WRITE_CLEAR | IO_WRITE_32)
 
 /// Runs the queued register writes and empties the queue, with a copy of the
-/// executor routine on the stack. Called by System_VBlankHandler once the
-/// frame loop has finished a frame.
+/// executor routine on the stack.
 void IoWriteQueue_FlushPending(void) {
   struct IoWriteQueue *queue;
   u32 count;

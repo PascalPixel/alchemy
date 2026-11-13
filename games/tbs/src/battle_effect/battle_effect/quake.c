@@ -32,10 +32,6 @@ struct RockWallHeights {
 ///
 /// Each pillar is capped with a strip of ground cut from the background.
 ///
-/// Writes REG_BG2PA, REG_BLDCNT and, on EFFECT_SIDE_PARTY, REG_BG2X; overwrites
-/// the first two character blocks of Ram_MapGridCellBuffer with BG tiles; sets
-/// the targets' vertical velocity and gravity; arms work->shakeFrames.
-///
 /// args: the targets; variant picks the row of gQuake_Timings.
 void BattleEffect_RunQuake(struct BattleEffectParams *args) {
   static s32 wallHeights[4] = {

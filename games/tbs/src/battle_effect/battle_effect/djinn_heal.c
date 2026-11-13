@@ -248,8 +248,7 @@ UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
 /// CAMERA_PHASE_FRAME_DONE at the end of its own frame. Then the task turns the
 /// whole delta and clears the phase; otherwise it turns half the delta and
 /// moves the phase between CAMERA_PHASE_IDLE and CAMERA_PHASE_HALF_TURNED,
-/// which the effects leave unmarked. Changes the camera slot's yaw and
-/// work->cameraPhase.
+/// which the effects leave unmarked.
 void BattleCamera_ApplyPhasedDelta(void) {
   struct BattleEffectWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   struct BattleCamera *camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);

@@ -5,7 +5,6 @@
 #include "../field_sequence_internal.h"
 
 /// Sets an actor's y and groundHeight to the map's height at its x and z.
-/// Called by Field_PlaceTreasureSpots for each treasure spot it places.
 void Actor_SnapToTerrain(void *object) {
   struct Actor *actor = object;
   s32 groundHeight;
@@ -48,8 +47,7 @@ enum {
 /// once its flag is set and gone once its mimic was beaten, and a Psynergy
 /// Stone for an examine trigger giving one, until it is taken. A treasure spot
 /// with no such event takes no slot. The actors are kept in
-/// work->treasureSpots, not in actor slots. Called by FieldSequence_Run on
-/// scene load; clears and fills work->treasureSpots.
+/// work->treasureSpots, not in actor slots.
 void Field_PlaceTreasureSpots(void) {
   u32 id;
   struct MapGridMarkers *grid = gMapGridWork[0];
@@ -154,8 +152,8 @@ void Field_PlaceTreasureSpots(void) {
 }
 
 /// Returns the treasure spot slot (below TREASURE_SPOT_MAX) whose event trigger
-/// is id, or -1. Called by the TreasureSpot_ functions below. Unused slots hold
-/// id 0, which no treasure spot has (ids are 100 to 239).
+/// is id, or -1. Unused slots hold id 0, which no treasure spot has (ids are
+/// 100 to 239).
 s32 TreasureSpot_FindSlot(s32 id) {
   s32 slotIndex;
   s32 matchingSlot;
@@ -203,7 +201,7 @@ void TreasureSpot_CloseChest(s32 id) {
 
 /// Makes the chest of treasure spot id jump up as a mimic: after 18 frames it
 /// takes TREASURE_SPOT_CHEST_MIMIC, plays SE_ENEMY_CRY and gets an upward
-/// velocityY of 8 << 16. Called by Field_ExamineCell before the mimic's battle.
+/// velocityY of 8 << 16.
 void TreasureSpot_LaunchMimic(s32 id) {
   s32 slotIndex;
   struct TreasureSpot *marker;
@@ -224,15 +222,13 @@ void TreasureSpot_LaunchMimic(s32 id) {
   }
 }
 
-/// Opens the chest of treasure spot id with SE_CHEST_OPEN, and waits 12
-/// frames. Called by Field_ExamineCell when a chest is searched.
+/// Opens the chest of treasure spot id with SE_CHEST_OPEN, and waits 12 frames.
 void TreasureSpot_OpenChest(s32 id) {
   SetMarkerAnimationAndPlaySound(id, TREASURE_SPOT_CHEST_OPENING,
                                  SE_CHEST_OPEN);
 }
 
-/// Shows the chest of treasure spot id open, with no sound. Called by
-/// Field_ExamineCell once a chest's contents are taken.
+/// Shows the chest of treasure spot id open, with no sound.
 void TreasureSpot_ShowOpened(s32 id) {
   s32 slotIndex;
   struct TreasureSpot *marker;
@@ -247,9 +243,7 @@ void TreasureSpot_ShowOpened(s32 id) {
   }
 }
 
-/// Returns the actor of treasure spot id, or NULL when no slot has it. Called
-/// by Field_ExamineCell, and by Reveal's marks (item_display.c) to skip a
-/// treasure spot already placed.
+/// Returns the actor of treasure spot id, or NULL when no slot has it.
 struct Actor *TreasureSpot_GetActor(s32 id) {
   s32 slotIndex = TreasureSpot_FindSlot(id);
   struct TreasureSpot *marker;
@@ -261,8 +255,7 @@ struct Actor *TreasureSpot_GetActor(s32 id) {
 }
 
 /// Hides the actor of treasure spot id by clearing its animationKind:
-/// ACTOR_SPRITE_NONE draws no sprite, and the actor stays in its slot. Called
-/// by Field_ExamineCell once a Psynergy Stone is taken.
+/// ACTOR_SPRITE_NONE draws no sprite, and the actor stays in its slot.
 void TreasureSpot_Hide(s32 id) {
   s32 slotIndex;
   struct TreasureSpot *marker;

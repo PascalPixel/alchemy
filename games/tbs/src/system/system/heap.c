@@ -10,8 +10,7 @@
 
 /// Empties the heap: clears the 64 words of gHeapSlots (both pool pointers and
 /// every heap slot) and sets the pools' next addresses to gIwramHeap and
-/// gEwramHeap. Called by System_Initialize, by MainRoutine_Run and by
-/// the debug modes that start over, so every earlier block is forgotten.
+/// gEwramHeap.
 void Heap_Initialize(void) {
   union HeapState *work = (union HeapState *)gHeapSlots;
 

@@ -10,10 +10,9 @@
 #include "../../include/system/io_reg.h"
 
 /// Interpolates adjacent key frequencies and scales them by the wave sample
-/// frequency. Called by ply_note for each PCM note. Returns the wave's
-/// frequency word (offset 4) times 2^((key - 60) / 12) / 1024, with `pitch`
-/// (0 to 255) moving it in a straight line towards the next key; keys above
-/// 178 play key 178 at pitch 255.
+/// frequency. Returns the wave's frequency word (offset 4) times 2^((key - 60)
+/// / 12) / 1024, with `pitch` (0 to 255) moving it in a straight line towards
+/// the next key; keys above 178 play key 178 at pitch 255.
 s32 MidiKeyToFreq(void *wave, u8 key, u8 pitch) {
   u32 keyIndex;
   u32 pitchScale;
@@ -50,7 +49,6 @@ void UnusedDummyFunc(void) {}
 #define MAX_LINES ((u32)gMaxLines)
 
 /// Clears the music player's paused flag, raising its ident while it works.
-/// Called by the resume and play-or-resume commands.
 void MPlayContinue(struct MusicPlayerInfo *player) {
   if (player->ident == ID_NUMBER) {
     player->ident++;
@@ -86,9 +84,8 @@ void MPlayFadeOut(struct MusicPlayerInfo *player, u16 speed) {
 #define SOUND_MIXER_CODE_SIZE 1024
 
 /// Copies the RAM mixer to IWRAM, initializes the PCM and CGB paths and
-/// configures every music player from gMPlayTable. Called by Sound_Initialize
-/// at power-on. Unlike pret's games, it opens no extra music players for
-/// cries.
+/// configures every music player from gMPlayTable. Unlike pret's games, it
+/// opens no extra music players for cries.
 void m4aSoundInit(void) {
   s32 playerIndex;
 
@@ -203,8 +200,7 @@ UNUSED void m4aMPlayAllContinue(void) {
     MPlayContinue(gMPlayTable[playerIndex].info);
 }
 
-/// Begins the standard stop-and-clear fade. Called by Sound_Play's fade
-/// controls.
+/// Begins the standard stop-and-clear fade.
 void m4aMPlayFadeOut(struct MusicPlayerInfo *player, u16 speed) {
   MPlayFadeOut(player, speed);
 }

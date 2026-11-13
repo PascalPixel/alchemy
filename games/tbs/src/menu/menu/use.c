@@ -330,8 +330,7 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
   return 0;
 }
 
-/// Plays the use sound of item's action (Ability_PlayUseAnimation). Called by
-/// ItemMenu_Use after a use that changed something.
+/// Plays the use sound of item's action (Ability_PlayUseAnimation).
 void Item_PlayUseAnimation(u32 item) {
   Ability_PlayUseAnimation(Item_GetDirectFar(item)->abilityId &
                            PSYNERGY_ABILITY_MASK);

@@ -74,9 +74,6 @@ UNUSED void Actor_SetUpdateValue(void *rawActor, s32 value) {
 /// FIELD_RAISED_TRIGGER_WORLD_MAP_ZOOM. Returns the request id, the
 /// assignment's low 14 bits, even when it raised an event instead; a shortcut
 /// with nothing assigned returns 0, as no key pressed does.
-///
-/// Sets work->psynergy, work->item or work->event, which the field sequence
-/// (field_sequence.c) acts on.
 u32 Field_RequestShortcut(u32 encodedAssignment) {
   u32 assignmentKind = encodedAssignment >> 14;
   u32 requestId = FIELD_SHORTCUT_ID_MASK & encodedAssignment;
@@ -110,8 +107,7 @@ u32 Field_RequestShortcut(u32 encodedAssignment) {
 /// when none is pressed, or with no field work. Every caller drops the result.
 /// Only the first configured key pressed this frame counts, in that order.
 ///
-/// Called each frame by the leader's control commands: SC_PLAYER, SC_WORLD
-/// and SC_KEY_COUNT. Sets work->fieldMenu, aButton or pauseMenu.
+/// Sets work->fieldMenu, aButton or pauseMenu.
 s32 Field_CheckConfiguredKeys(void) {
   struct FieldWork *work = gFieldWork;
   s32 result = 0;
@@ -135,10 +131,8 @@ s32 Field_CheckConfiguredKeys(void) {
   return result;
 }
 
-/// Returns 0 when two spheres overlap: at positions a and b (16.16 pixels)
-/// with radii radiusA and radiusB (pixels); -1 otherwise. Called by
-/// SC_PLAYER's push test, ActorScript_CheckOverlap and
-/// ActorScript_FindOverlappingEntry.
+/// Returns 0 when two spheres overlap: at positions a and b (16.16 pixels) with
+/// radii radiusA and radiusB (pixels); -1 otherwise.
 s32 Field_CheckSpheresOverlap(s32 *firstPosition, s32 radiusA,
                               s32 *secondPosition, s32 radiusB) {
   const struct FieldPosition *firstPoint =
@@ -168,12 +162,8 @@ s32 Field_CheckSpheresOverlap(s32 *firstPosition, s32 radiusA,
 /// the matching animation and leaving footprints. Also checks the configured
 /// keys. Returns 1.
 ///
-/// Run each frame by gActor_PlayerScript, which the field sequence
-/// (field_sequence.c) starts on the leader through
-/// Actor_StartPlayerControl when it hands control back on the field.
-/// Sets the leader's speed, target, velocity, angle and timer, moves the
-/// actors it pushes, counts gFieldWork->blockedSteps and creates the
-/// footprint actors.
+/// Sets the leader's speed, target, velocity, angle and timer, moves the actors
+/// it pushes, counts gFieldWork->blockedSteps and creates the footprint actors.
 s32 Actor_UpdatePlayerControl(struct Actor *actor) {
 
   struct FieldPosition position;
@@ -549,11 +539,9 @@ s32 Actor_UpdatePlayerControl(struct Actor *actor) {
 /// Shallow water (WORLD_MAP_COLLISION_SHALLOW_WATER) leaves a ripple and a
 /// forest (WORLD_MAP_COLLISION_FOREST) hides the shadow.
 ///
-/// Run each frame by gActor_WorldMapScript, which the field sequence
-/// (field_sequence.c) starts on the leader through
-/// Actor_StartWorldMapControl on the world map. Sets the leader's
-/// speed, target, velocity, angle and timer, turns the perspective work's
-/// yaw, counts gFieldWork->blockedSteps and creates the ripple actors.
+/// Sets the leader's speed, target, velocity, angle and timer, turns the
+/// perspective work's yaw, counts gFieldWork->blockedSteps and creates the
+/// ripple actors.
 s32 Actor_MoveOnWorldMap(struct Actor *actor) {
 
   struct FieldPosition position;
@@ -857,9 +845,7 @@ update_actor:
 }
 
 /// SC_KEY_COUNT: checks the configured keys (Field_CheckConfiguredKeys).
-/// Returns 1. Run each frame by gActor_KeyCheckScript, which the
-/// field sequence starts on the leader in LEADER_MOVEMENT_AIRBORNE, where the
-/// pad does not move it.
+/// Returns 1.
 s32 Field_CheckConfiguredKeysAndCount(struct Actor *actor) {
 
   Field_CheckConfiguredKeys();
@@ -872,9 +858,8 @@ s32 Field_CheckConfiguredKeysAndCount(struct Actor *actor) {
 /// into an occupied cell, across a change of cell behavior, or onto ground
 /// too high (up) or too low (down). Returns 1.
 ///
-/// Run each frame by gActor_KeysScript, which the field sequence starts
-/// on the leader in LEADER_MOVEMENT_CLIMB. Sets the leader's speed,
-/// angle, target or velocity, and counts gFieldWork->blockedSteps.
+/// Sets the leader's speed, angle, target or velocity, and counts
+/// gFieldWork->blockedSteps.
 s32 Actor_MoveByKeys(struct Actor *actor) {
 
   struct FieldPosition position;

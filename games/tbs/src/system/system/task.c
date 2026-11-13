@@ -13,9 +13,7 @@ typedef s32 (*TaskIntFunc)(void);
 
 /// Empties the task table: every slot gets no routine, priority
 /// TASK_PRIORITY_EMPTY and no flags. Clears gTasksInitialized while it works
-/// and sets it at the end, so neither pass runs a half-cleared table. Called by
-/// System_Initialize and by the battle, Lucky Dice and other modes that start
-/// from a clean table.
+/// and sets it at the end, so neither pass runs a half-cleared table.
 void Task_ResetAll(void) {
   struct Task *task = gTasks;
   s32 i;
@@ -41,8 +39,7 @@ UNUSED void Task_CopyWords(u32 *destination, u32 *source, u32 byteCount) {
 
 /// Bubble-sorts the task table by priority, highest first, so each pass runs
 /// its tasks from the highest priority down; removed tasks
-/// (TASK_PRIORITY_REMOVED) rise to the front. Called by Task_Add with
-/// interrupts disabled.
+/// (TASK_PRIORITY_REMOVED) rise to the front.
 void Task_Sort(void) {
   struct Task saved;
   // Default: the table's start, which every pass sets again.
@@ -168,11 +165,9 @@ s32 Task_Remove(TaskFunc func) {
   return result;
 }
 
-/// Suspends the task running `func`, or every task when `func` is
-/// null, by setting bit 0 of its priority's high byte, which then matches
-/// neither pass. Returns the last index changed, or -1. Called by the map
-/// animation and battle code, through the far-call table, to pause tasks
-/// Task_ResumeAll restarts later.
+/// Suspends the task running `func`, or every task when `func` is null, by
+/// setting bit 0 of its priority's high byte, which then matches neither pass.
+/// Returns the last index changed, or -1.
 s32 Task_SuspendAll(TaskFunc func) {
   struct Task *task;
   u32 savedInterruptMaster;
@@ -195,9 +190,8 @@ s32 Task_SuspendAll(TaskFunc func) {
 }
 
 /// Suspends every task whose routine is in an overlay (EWRAM, 0x02xxxxxx)
-/// unless its flag bit 0 asks to keep it running, as Task_SuspendAll
-/// does. Called by the menus' shared code while a menu is open, and by the
-/// world map's visibility transition. Returns the last index changed, or -1.
+/// unless its flag bit 0 asks to keep it running, as Task_SuspendAll does.
+/// Returns the last index changed, or -1.
 s32 Task_SuspendOverlayTasks(void) {
   struct Task *task;
   u32 savedInterruptMaster;
@@ -220,9 +214,7 @@ s32 Task_SuspendOverlayTasks(void) {
 }
 
 /// Stores `mask` as the flags of the task running `func`; bit 0 keeps it
-/// running while the overlay tasks are suspended. Called by the Battle Arena
-/// and Colosso scenes for the tasks that must keep running under a menu.
-/// Returns its index, or -1.
+/// running while the overlay tasks are suspended. Returns its index, or -1.
 s32 Task_SetFlags(TaskFunc func, u32 mask) {
   struct Task *task;
   u32 savedInterruptMaster;
@@ -243,9 +235,9 @@ s32 Task_SetFlags(TaskFunc func, u32 mask) {
   return result;
 }
 
-/// Resumes the task running `func`, or every task when `func` is
-/// null, by clearing bit 0 of its priority's high byte. Called by the map
-/// animation and actor code. Returns the last index changed, or -1.
+/// Resumes the task running `func`, or every task when `func` is null, by
+/// clearing bit 0 of its priority's high byte. Returns the last index changed,
+/// or -1.
 s32 Task_ResumeAll(TaskFunc func) {
   struct Task *task;
   u32 savedInterruptMaster;
@@ -265,9 +257,8 @@ s32 Task_ResumeAll(TaskFunc func) {
   return result;
 }
 
-/// Resumes every task whose routine is in an overlay, flagged or not. Called
-/// by the menus' shared code when a menu closes, and by the world map's
-/// visibility transition. Returns the last index changed, or -1.
+/// Resumes every task whose routine is in an overlay, flagged or not. Returns
+/// the last index changed, or -1.
 s32 Task_ResumeOverlayTasks(void) {
   struct Task *task;
   u32 savedInterruptMaster;

@@ -62,10 +62,8 @@ void BattleEffect_RunPunji(struct BattleEffectParams *args) {
 /// end; the effect fades out over 16 frames, and nothing grows in its
 /// last 4.
 ///
-/// Called by BattleEffect_RunGrowth and BattleEffect_RunPunji.
-/// work->particles holds the 16 columns (struct GrowingColumn) and
-/// PARTICLES the dust. Writes REG_BG2PA, REG_BLDCNT, REG_BLDALPHA and, on side
-/// 1, REG_BG2X; sets work->shakeFrames as each column appears.
+/// Called by BattleEffect_RunGrowth and BattleEffect_RunPunji. work->particles
+/// holds the 16 columns (struct GrowingColumn) and PARTICLES the dust.
 ///
 /// args: the targets; variant picks the number of columns
 ///         (gGrowth_ColumnCounts): 4 for Growth and Punji, 8 for Mad Growth,
@@ -332,8 +330,7 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectParams *args, s32 mode) {
 /// 32 the targets react together, with a sound.
 ///
 /// A Djinni appears first (BattleEffect_RunDjinniEntrance). work->particles
-/// holds the 16 vines' x. Writes REG_BG2PA, REG_BLDCNT and REG_BG2X, sets
-/// work->shakeFrames.
+/// holds the 16 vines' x.
 void BattleEffect_RunVine(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -432,9 +429,7 @@ void BattleEffect_RunVine(struct BattleEffectParams *args) {
 ///         effect runs 8 frames a thorn and 56 more. gGrowth_Kinds gives
 ///         each thorn's size and direction.
 ///
-/// PARTICLES holds the dust, 64 puffs. Writes REG_BG2PA, REG_BLDCNT,
-/// REG_BLDALPHA and, on EFFECT_SIDE_PARTY, REG_BG2X; sets work->shakeFrames as
-/// each thorn appears.
+/// PARTICLES holds the dust, 64 puffs.
 void BattleEffect_RunThorn(struct BattleEffectParams *args) {
   void *canvas;
   s32 frame;

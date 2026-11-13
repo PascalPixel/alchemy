@@ -31,9 +31,7 @@ struct AbilityDefinition *Ability_GetDirect(s32 abilityId) {
   return (struct AbilityDefinition *)&gAbilityDefinitions[entryIndex];
 }
 
-/// Returns 1 when `abilityId` is in the unit's Psynergy list. Called by the
-/// events that check whether a party member knows a Psynergy
-/// (Party_CheckShortcut).
+/// Returns 1 when `abilityId` is in the unit's Psynergy list.
 s32 Unit_KnowsPsynergy(s32 unitId, s32 abilityId) {
   struct Unit *unit = Unit_Get(unitId);
   struct PsynergyEntry *entry;
@@ -183,9 +181,7 @@ struct LevelUpWork {
 
 /// Teaches a character action `value` for good (or makes a class action
 /// permanent by clearing its marks), then rebuilds its list. Returns the
-/// action's place in the list, or -1 when the list is full. Called by the
-/// events that teach Psynergy, the prologue's end, the debug parameter sets and
-/// the debug shortcut menu.
+/// action's place in the list, or -1 when the list is full.
 s32 Unit_LearnPsynergy(s32 stateIndex, s32 value) {
   struct Unit *state = Unit_Get(stateIndex);
   s32 key = value & PSYNERGY_ABILITY_MASK;
@@ -307,8 +303,7 @@ void Party_InitializeCharacters(void) {
 UNUSED void Unit_LevelNoOp(void) {}
 
 /// Returns the experience a character needs for `level` (0 for level 0 and
-/// below); -1 for an enemy or a level above 99. Called by the levelling code
-/// and by the two status screens to show the experience to the next level.
+/// below); -1 for an enemy or a level above 99.
 u32 Unit_GetExperienceForLevel(s32 unitId, s32 level) {
   struct Unit *unit = Unit_Get(unitId);
 
@@ -436,8 +431,7 @@ struct LevelUpResult *Unit_TryLevelUp(s32 unitId, struct LevelUpResult *gains) {
 }
 
 /// Levels character `unitId` up one level at a time until `targetLevel`, then
-/// recomputes its stats. Called by Party_InitializeCharacters for the starting
-/// levels, and by the debug menus and parameter sets.
+/// recomputes its stats.
 void Unit_LevelUpTo(s32 unitId, s32 targetLevel) {
   // Each level's gains are discarded.
   struct LevelUpResult gains;

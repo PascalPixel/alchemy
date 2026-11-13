@@ -4,10 +4,9 @@
 
 #include "../shop_internal.h"
 
-/// Lets the player choose whose items to sell or repair, with the coins
-/// window and the party member's item grid, and runs Shop_SelectSell or
-/// Shop_SelectRepair for each party member chosen until B. Called by Shop_Run
-/// for Sell and Repair.
+/// Lets the player choose whose items to sell or repair, with the coins window
+/// and the party member's item grid, and runs Shop_SelectSell or
+/// Shop_SelectRepair for each party member chosen until B.
 s32 Shop_ChooseMember(void) {
   struct ShopWork *shop = gMenuWork;
   struct Window *listWindow;
@@ -188,8 +187,7 @@ s32 Shop_SelectSell(s32 unitId) {
 }
 
 /// Draws the party member's items as icons in rows of five, or a line saying it
-/// has none. Called by the sell, repair and drop screens each time the party
-/// member changes, and after a sale.
+/// has none.
 void Shop_DrawMemberItems(struct Window *window, s32 unitId) {
   struct Unit *unit;
   s32 x;

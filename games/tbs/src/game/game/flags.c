@@ -18,9 +18,7 @@ s32 GameFlag_Get(s32 flag) {
   return NONZERO(gGameFlagBytes[flag] & bit);
 }
 
-/// Sets `flag` and returns its byte number. Called from every bank, as
-/// GameFlag_SetFar, and by the events directly or through the event
-/// layer.
+/// Sets `flag` and returns its byte number.
 s32 GameFlag_Set(s32 flag) {
   s32 bit = GAME_FLAG_BIT(flag);
   u8 *flags = gGameFlagBytes;
@@ -30,8 +28,7 @@ s32 GameFlag_Set(s32 flag) {
   return flag;
 }
 
-/// Clears `flag`. Called from every bank, as GameFlag_ClearFar, and by the
-/// events directly or through event.h.
+/// Clears `flag`.
 void GameFlag_Clear(s32 flag) {
   s32 bit = GAME_FLAG_BIT(flag);
   u8 *flags = gGameFlagBytes;
@@ -51,9 +48,7 @@ u32 GameFlag_Toggle(s32 flag) {
   return NONZERO(flags[flag] & bit);
 }
 
-/// Returns the whole byte `flag` is in, a counter kept among the flags. Called
-/// by the battle encounter code and, through FieldGameFlag_GetByte, by the
-/// Colosso scenes and the Battle Arena.
+/// Returns the whole byte `flag` is in, a counter kept among the flags.
 s32 GameFlag_GetByte(s32 flag) {
   flag = GAME_FLAG_BYTE(flag);
 

@@ -306,8 +306,7 @@ void BattleEffect_RunWingBeat(struct BattleEffectParams *args) {
 /// Puts the user into its leap pose and fires the volley in this mode
 /// while its effect runs fast.
 ///
-/// Called by Cutting Edge, Heat Wave and Blizzard. Leaves the user in its
-/// action pose, its animation back at the usual speed.
+/// Leaves the user in its action pose, its animation back at the usual speed.
 static inline void
 BattleEffect_RunVolleyWithAction(struct BattleEffectParams *args, s32 mode) {
   struct Actor *user;
@@ -386,15 +385,9 @@ enum VolleyField {
 /// Shots fly from the user to each target and burst into a flash and sparks
 /// when they pass it. The hit sound plays at most once every 8 frames.
 ///
-/// Called by the eleven wrappers above, and by two unused casting impacts
-/// once their prelude ends: CASTING_IMPACT_IMPACT_UNUSED_ICE_CHIPS fires
-/// Blizzard's volley, CASTING_IMPACT_IMPACT_UNUSED_COMETS
-/// PROJECTILE_VOLLEY_IMPACT_COMETS, which no wrapper uses. With more than 63
-/// shots in all it fires at the first target only, writing
-/// work->args->targetCount. Writes REG_BLDCNT for Shuriken and the first 128
-/// bytes of BG palette RAM for Crazy Voice and Cutting Edge; sets
-/// work->shakeFrames on each hit but for Sleet. The second blitter is built and
-/// freed for each picture that needs it.
+/// With more than 63 shots in all it fires at the first target only, writing
+/// work->args->targetCount. The second blitter is built and freed for each
+/// picture that needs it.
 ///
 /// args: the user and the targets. variant picks Slash's comet (Cutting
 ///         Edge always fires PROJECTILE_VOLLEY_COMET_C, the impact's comets
@@ -1008,10 +1001,6 @@ UNUSED void BattleEffect_InitializeRisingObject(s32 id) {
 /// Moves a unit 80% of the way to another one over a number of frames,
 /// in its leap pose. The speed is that distance over the frames; the
 /// distance is taken in 1/256 pixels so its square fits in 32 bits.
-///
-/// Sets the unit's acceleration, speed limit and gravity, turns it to face its
-/// motion, starts it moving on the ground towards that point and selects
-/// POSE_LEAP.
 void BattleEffect_SetApproachMotion(s32 id, s32 targetId, s32 frames) {
   struct BattleObject *slot = GetBattleObjectSlotFar(id);
   struct BattleObject *targetSlot = GetBattleObjectSlotFar(targetId);

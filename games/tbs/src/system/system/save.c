@@ -29,14 +29,12 @@ enum {
 /// library's SAVE_FLASH_TIMER handler, identifies the flash chip (up to eight
 /// tries, a frame apart) and scans all 16 sectors into the workspace's
 /// occupied, partId and counter tables: a sector counts as taken when its
-/// signature and checksum are good, and of two copies of a part only the
-/// newer stays taken. Returns 1 when no flash chip answers, 0 otherwise; either
-/// way the caller ends with Save_ReleaseWork. Called by the save
-/// screens (window/screens/save.c) before every save, load, copy or
-/// delete. The workspace is EWRAM first (HeapSlot_AllocEwram) and not cleared
-/// by the allocator, so it is cleared here; the part and sector-table
-/// functions in this file read it through gSaveWork, the slot's word in
-/// gHeapSlots, and need it allocated.
+/// signature and checksum are good, and of two copies of a part only the newer
+/// stays taken. Returns 1 when no flash chip answers, 0 otherwise; either way
+/// the caller ends with Save_ReleaseWork. The workspace is EWRAM first
+/// (HeapSlot_AllocEwram) and not cleared by the allocator, so it is cleared
+/// here; the part and sector-table functions in this file read it through
+/// gSaveWork, the slot's word in gHeapSlots, and need it allocated.
 s32 Save_InitializeWork(void) {
   struct SaveWork *work;
   struct SaveSectorHeader headerStorage;
@@ -174,11 +172,10 @@ s32 Save_ReadSector(s32 index) {
 /// this chip.
 UNUSED u16 Save_EraseSector(u16 sector) { return gEraseFlashSector(sector); }
 
-/// Saves 4080 bytes from `source` as part `partId`: writes the new copy
-/// with the next counter, then invalidates the old one, updating the
-/// workspace's sector tables. When the counter passes 65000 it restarts at 1,
-/// written back over the old sector. Called by the save screens. Returns 0 on
-/// success and 1 on failure.
+/// Saves 4080 bytes from `source` as part `partId`: writes the new copy with
+/// the next counter, then invalidates the old one, updating the workspace's
+/// sector tables. When the counter passes 65000 it restarts at 1, written back
+/// over the old sector. Returns 0 on success and 1 on failure.
 s32 Save_WritePart(s32 partId, void *source) {
   struct SaveWork *work;
   struct SaveSectorHeader header;
@@ -232,11 +229,10 @@ s32 Save_WritePart(s32 partId, void *source) {
   return 0;
 }
 
-/// Loads the current copy of part `partId` (4080 bytes) into
-/// `destination`. Called by the save screens to load or copy a file. Returns
-/// 1 when there is none and 0 otherwise. The checksum result of the read is
-/// ignored: a sector counts as occupied only after the scan's checksum or a
-/// verified write.
+/// Loads the current copy of part `partId` (4080 bytes) into `destination`.
+/// Returns 1 when there is none and 0 otherwise. The checksum result of the
+/// read is ignored: a sector counts as occupied only after the scan's checksum
+/// or a verified write.
 u32 Save_ReadPart(s32 partId, void *destination) {
   struct SaveWork *work;
   u32 index;
@@ -294,8 +290,8 @@ s32 Save_ChecksumSector(void) {
   return sum;
 }
 
-/// Returns the occupied sector holding the newest copy of part `partId`,
-/// or SAVE_SECTOR_COUNT. Called by every part operation in this file.
+/// Returns the occupied sector holding the newest copy of part `partId`, or
+/// SAVE_SECTOR_COUNT.
 u32 Save_FindLatestSector(s32 partId) {
   struct SaveWork *work;
   u32 latestCounter;
@@ -339,8 +335,7 @@ s32 Save_InvalidateSector(s32 index) {
   return 0;
 }
 
-/// Compares `count` bytes, as memcmp does. Called by
-/// Save_InitializeWork to check each sector's signature.
+/// Compares `count` bytes, as memcmp does.
 s32 Save_CompareBytes(u8 *left, u8 *right, s32 count) {
   s32 difference = 0;
 
@@ -356,7 +351,6 @@ s32 Save_CompareBytes(u8 *left, u8 *right, s32 count) {
 }
 
 /// Returns the highest counter among the copies of part `partId`.
-/// Called by Save_WritePart to number the new copy.
 u32 Save_GetLatestCounter(s32 partId) {
   struct SaveWork *work;
   u32 latestCounter;
@@ -374,11 +368,10 @@ u32 Save_GetLatestCounter(s32 partId) {
 }
 
 /// Reads the summary at the start of each of the three save files into the
-/// workspace's summary table for the file list, and four bytes from
-/// offset 0x110 of each file's second part into its secondPartPlayTime
-/// (zero when it has none). A file with no first part keeps a cleared
-/// summary, so its level reads 0. Called by the save screens. Returns how many
-/// save files exist.
+/// workspace's summary table for the file list, and four bytes from offset
+/// 0x110 of each file's second part into its secondPartPlayTime (zero when it
+/// has none). A file with no first part keeps a cleared summary, so its level
+/// reads 0. Returns how many save files exist.
 s32 Save_LoadFileSummaries(void) {
   struct SaveWork *work;
   struct SaveFileSummary *summary;
@@ -411,9 +404,8 @@ s32 Save_LoadFileSummaries(void) {
 }
 
 /// Removes the flash timer handler and frees the save workspace's heap slot,
-/// with every block allocated after it in the same pool. Called by the save
-/// screens after every save operation. It returns no value, whatever its
-/// declaration says; no caller reads one.
+/// with every block allocated after it in the same pool. It returns no value,
+/// whatever its declaration says; no caller reads one.
 u32 Save_ReleaseWork(void) {
   Irq_SetHandler(IRQ_TIMER2, 0, NULL);
   HeapSlot_Release(HEAP_SLOT_SAVE);

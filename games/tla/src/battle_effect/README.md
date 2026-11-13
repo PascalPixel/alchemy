@@ -9,6 +9,6 @@ effect is drawn in The Broken Seal.
 
 ## What differs from The Broken Seal
 
-- The code is not yet one object with parts: each file holds a run of
-  neighbouring routines whose declarations agree, many still named by address
-  (`f14153c.c`).
+- The code is five objects, not one: `battle_effect.c`, `tiled_canvas_begin.c`,
+  `ability_effects.c`, `liquifier.c` and `summon_effects.c`, in ROM order,
+  each part named for the first ability it draws.

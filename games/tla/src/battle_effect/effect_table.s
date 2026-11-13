@@ -1971,11 +1971,11 @@ Data_08198c0c:
 	.global Data_08198c10
 Data_08198c10:
 	.byte -24, -8, 24, 48
-@ read by Func_08172b00
+@ read by BattleEffect_RunDjinniCharge
 	.global Data_08198c14
 Data_08198c14:
 	.byte 2, 10, 0, 0
-@ read by Func_08172b00
+@ read by BattleEffect_RunDjinniCharge
 	.global Data_08198c18
 Data_08198c18:
 	.4byte -0x2000, -0x1000, -2048, -1024

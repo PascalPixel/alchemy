@@ -420,10 +420,7 @@ static void ColosseumNavampaMatch_RideMovingSidewalk(void) {
 /// shortcut (FLAG_PLANT_GROWN).
 static void ColosseumNavampaMatch_GrowPlant(void) {
   GameFlag_Set(FLAG_PLANT_GROWN);
-  {
-
-    MapGrid_CopyCellAttributes(47, 61, 1, 4, 49, 61);
-  }
+  MapGrid_CopyCellAttributes(47, 61, 1, 4, 49, 61);
 }
 
 /// Moves a scale ledge vertically to a height in whole pixels, at the shared
@@ -513,9 +510,7 @@ static void ColosseumNavampaMatch_StepOffScales(void) {
   ColosseumNavampaMatch_MoveOnScales(actor, 32);
 
   Actor_WaitForMoveById(ACTOR_SCALES_WEST_LEDGE);
-  {
-    MapGrid_CopyCellAttributes(0, 25, 1, 1, 9, 12);
-  }
+  MapGrid_CopyCellAttributes(0, 25, 1, 1, 9, 12);
   wait(2);
   GameFlag_Clear(FLAG_ON_SCALES);
 }

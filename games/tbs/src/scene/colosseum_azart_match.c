@@ -369,10 +369,7 @@ static void ColosseumAzartMatch_PushRock(void) {
 ///
 /// Its cell becomes walkable, and FLAG_PLANT_GROWN keeps it grown.
 static void ColosseumAzartMatch_GrowPlant(void) {
-  {
-
-    MapGrid_CopyCellAttributes(47, 24, 1, 1, 47, 12);
-  }
+  MapGrid_CopyCellAttributes(47, 24, 1, 1, 47, 12);
   GameFlag_Set(FLAG_PLANT_GROWN);
 }
 

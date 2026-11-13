@@ -464,10 +464,7 @@ static void ColosseumSatrageMatch_FreezeWestTarget(void) {
   GameFlag_Set(FLAG_WEST_TARGET_FROZEN);
   obstacle = Actor_Get(ACTOR_PUDDLE_WEST);
   obstacle->motionFlags = 0;
-  {
-
-    MapGrid_CopyCellAttributes(46, 17, 1, 1, 44, 17);
-  }
+  MapGrid_CopyCellAttributes(46, 17, 1, 1, 44, 17);
 }
 
 /// Frost on the Log-Rolling Stage's eastern target freezes it and opens its
@@ -478,20 +475,14 @@ static void ColosseumSatrageMatch_FreezeEastTarget(void) {
   GameFlag_Set(FLAG_EAST_TARGET_FROZEN);
   obstacle = Actor_Get(ACTOR_PUDDLE_EAST);
   obstacle->motionFlags = 0;
-  {
-
-    MapGrid_CopyCellAttributes(46, 17, 1, 1, 50, 17);
-  }
+  MapGrid_CopyCellAttributes(46, 17, 1, 1, 50, 17);
 }
 
 /// Growth on the plant by The Wall grows it into a strip that can be climbed
 /// (FLAG_PLANT_GROWN).
 static void ColosseumSatrageMatch_GrowPlant(void) {
   GameFlag_Set(FLAG_PLANT_GROWN);
-  {
-
-    MapGrid_CopyCellAttributes(32, 37, 1, 4, 32, 77);
-  }
+  MapGrid_CopyCellAttributes(32, 37, 1, 4, 32, 77);
 }
 
 /// The selected actor jumps down off the ledge by an obstacle.

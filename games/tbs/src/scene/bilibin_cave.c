@@ -282,12 +282,7 @@ static void BilibinCave_WalkOffLedgeOverCaveMouth(void) {
 ///
 /// The path is a strip of tiles and two rows of the cells under it.
 static void BilibinCave_RevealHiddenPath(void) {
-  {
-    s32 width = 1;
-    s32 height = 3;
-
-    MapGrid_CopyCellsTo(111, 37, 97, 21, width, height);
-  }
+  MapGrid_CopyCellsTo(111, 37, 97, 21, 1, 3);
   {
     s32 destinationCellX = 32;
     s32 destinationCellZ = 24;
@@ -302,12 +297,7 @@ static void BilibinCave_RevealHiddenPath(void) {
 ///
 /// The strip's tiles and one row of its cells are restored.
 static void BilibinCave_HideRevealedPath(void) {
-  {
-    s32 width = 1;
-    s32 height = 3;
-
-    MapGrid_CopyCellsTo(95, 21, 97, 21, width, height);
-  }
+  MapGrid_CopyCellsTo(95, 21, 97, 21, 1, 3);
   {
     s32 destinationCellX = 32;
     s32 destinationCellZ = 25;

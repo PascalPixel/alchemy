@@ -347,9 +347,7 @@ static void HammetPalace_SetUpEntrance(void) {
   case HAMMET_PALACE_FROM_KALAY_TUNNEL_TREASURE_ROOM:
     if (GameFlag_Get(FLAG_KALAY_TUNNEL_OPEN) != 0) {
       MapGrid_CopyCellsTo(58, 70, 54, 70, 4, 3);
-      {
-        MapGrid_CopyCellAttributes(55, 9, 2, 1, 55, 8);
-      }
+      MapGrid_CopyCellAttributes(55, 9, 2, 1, 55, 8);
       MapGrid_CenterOnFollowedPoint();
       wait(1);
     }

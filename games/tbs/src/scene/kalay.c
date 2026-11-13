@@ -1373,9 +1373,7 @@ static void Kalay_StartWindowTransition(void) {
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (GameFlag_Get(FLAG_KALAY_TUNNEL_OPEN) != 0) {
     MapGrid_CopyCellsTo(58, 5, 58, 8, 2, 3);
-    {
-      MapGrid_CopyCellAttributes(8, 11, 2, 1, 8, 10);
-    }
+    MapGrid_CopyCellAttributes(8, 11, 2, 1, 8, 10);
     MapGrid_CopyCellsTo(8, 12, 8, 11, 2, 1);
     MapGrid_CenterOnFollowedPoint();
     wait(1);

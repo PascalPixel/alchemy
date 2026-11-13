@@ -1662,21 +1662,15 @@ s32 gKolima_EffectActive __attribute__((section(".bss")));
 static void Kolima_RestoreBridgeState(void) {
   if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
     Actor_SetPosition(ACTOR_BRIDGE_VILLAGER, 0, 0);
-    {
-      MapGrid_CopyCellAttributes(9, 17, 5, 1, 9, 18);
-    }
+    MapGrid_CopyCellAttributes(9, 17, 5, 1, 9, 18);
     MapGrid_CenterOnFollowedPoint();
     wait(1);
   } else {
     Actor_SetPosition(ACTOR_BRIDGE_VILLAGER_AS_TREE, 0, 0);
   }
   if (GameFlag_Get(FLAG_KOLIMA_BRIDGE_LOWERED) != 0) {
-    {
-      MapGrid_CopyCellsTo(91, 19, 72, 9, 5, 7);
-    }
-    {
-      MapGrid_CopyCellAttributes(23, 11, 5, 7, 8, 11);
-    }
+    MapGrid_CopyCellsTo(91, 19, 72, 9, 5, 7);
+    MapGrid_CopyCellAttributes(23, 11, 5, 7, 8, 11);
     MapGrid_CenterOnFollowedPoint();
     wait(1);
   }

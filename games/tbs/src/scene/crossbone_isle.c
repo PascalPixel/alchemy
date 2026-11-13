@@ -719,10 +719,7 @@ static void CrossboneIsle_GrowFourthPlant(s32 actorId) {
 /// its cell opens.
 static void CrossboneIsle_BlowAwayFirstIvy(void) {
   GameFlag_Set(FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY);
-  {
-
-    MapGrid_CopyCellAttributes(0, 0, 1, 1, 8, 21);
-  }
+  MapGrid_CopyCellAttributes(0, 0, 1, 1, 8, 21);
 }
 
 /// Unused: Whirlwind on Crossbone Isle's second ivy would blow it away for

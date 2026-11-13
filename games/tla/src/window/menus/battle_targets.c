@@ -62,11 +62,11 @@ Window_Create__menus(s32 x, s32 y, s32 width, s32 height,
  */
 extern s32 Oam_AddSpriteAtDepth__menus(void *sprite, s32 depth) __asm__(
     "Oam_AddSpriteAtDepth"); // Returns void; see the tag.
-/* VIEW(menus): routine AffineMatrix_BuildForEffect as s32
- * AffineMatrix_BuildForEffect(struct TargetAffine *affine); affine.h has s32
- * AffineMatrix_BuildForEffect(struct AffineTransform *source). */
+/* VIEW(menus): routine OamMatrix_AllocFromTransform as s32
+ * OamMatrix_AllocFromTransform(struct TargetAffine *affine); affine.h has s32
+ * OamMatrix_AllocFromTransform(struct AffineTransform *source). */
 extern s32 AffineMatrix_BuildForEffect__menus(
-    struct TargetAffine *affine) __asm__("AffineMatrix_BuildForEffect");
+    struct TargetAffine *affine) __asm__("OamMatrix_AllocFromTransform");
 /* VIEW(menus): routine Window_Close as void Window_Close(void *window, s32
  * mode); uiflow.h has void Window_Close(struct Window *window, s32 release);
  * tried as the definition's void Window_Close(struct Window *work, s32

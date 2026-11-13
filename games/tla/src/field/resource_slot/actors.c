@@ -264,7 +264,7 @@ void Actor_Release(struct Actor *obj) {
   if (obj) {
     switch (obj->animationKind & 15) {
     case 1: // One graphic.
-      ResourceObject_Release(
+      Sprite_Destroy(
           (struct ResourceObjectWork *)((struct ActorSpriteView *)obj->sprite));
       break;
     case 2: // Up to four graphics.
@@ -274,7 +274,7 @@ void Actor_Release(struct Actor *obj) {
       do {
         struct ResourceObjectWork *res = *child++;
         if (res)
-          ResourceObject_Release(res);
+          Sprite_Destroy(res);
       } while (--n >= 0);
       break;
     }
@@ -301,7 +301,7 @@ struct Actor *Actor_Create(s32 id, s32 x, s32 y, s32 z) {
     object->radius = 16;
     switch (kind) {
     case 0:
-      sprite = ResourceObject_Create(id);
+      sprite = Sprite_Create(id);
       if (sprite != NULL) {
         object->animationKind = 1;
         object->sprite = sprite;
@@ -317,13 +317,13 @@ struct Actor *Actor_Create(s32 id, s32 x, s32 y, s32 z) {
       object->sprite = entry;
       zero = 0;
       Dma_Set(&zero, entry, 0x85000004, REG_DMA3);
-      sprite = ResourceObject_Create(id);
+      sprite = Sprite_Create(id);
       if (sprite != NULL) {
         object->radius = Resource_GetMetadataRecordFar(id)->boxY >> 1;
         *entry = sprite;
         entry++;
       }
-      sprite = ResourceObject_Create(id + 1);
+      sprite = Sprite_Create(id + 1);
       if (sprite != NULL)
         *entry = sprite;
       break;
@@ -504,17 +504,17 @@ void Func_08023524(struct Actor *object) {
     script = gData_0802f0f8;
     break;
   case 6:
-    script = gData_0802f170;
+    script = gActor_KeyCheckScript;
     break;
   case 7:
-    script = gData_0802f188;
+    script = gActor_KeysScript;
     break;
   case 8:
-    script = gData_0802f1a0;
+    script = gActor_PlayerScript;
     break;
   case 9:
     wait(1);
-    script = gData_0802f1b8;
+    script = gActor_WorldMapScript;
     break;
   case 10:
     script = gData_0802f110;
@@ -1001,7 +1001,7 @@ void ObjectSystem_UpdateCameraFixed(void) {
   if (GameFlag_Test(363)) {
     Transform_Reset();
     angle += 0xffffe000;
-    Iwram_TransformMatrixEntry(gData_0802eb98);
+    Iwram_TransformMatrixEntry(gCamera_FixedViewMatrix);
     Transform_ApplyLookAt((s32 *)eye, (s32 *)target);
   } else {
     SceneTransform_RewindStack();

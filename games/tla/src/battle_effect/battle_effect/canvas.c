@@ -440,7 +440,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
   gBgScroll[1].x = savedScroll;
   transition[4] = 0;
   for (i = 0; i != 32; i++) {
-    ResourceObject_ReleaseFar(work->objects[i]);
+    Sprite_DestroyFar(work->objects[i]);
   }
   VramBlock_Load93Far();
   *(s32 *)(battle + 84) = VramCache_AllocEntry(128);
@@ -1423,7 +1423,7 @@ void BattleEffect_StartCanvasLayer(s32 bgControl) {
   gBgScroll[1].y = 32;
   wait(1);
 
-  BattleStaging_ConfigurePaletteFadeFar(1, *(u16 *)battle->unk670, 0);
+  BattleBackground_SetModeFar(1, *(u16 *)battle->unk670, 0);
   work->fadeFrames = 0;
   work->fadeStep = 0;
   Task_Add(Palette_StepFadeTransfer, TASK_PASS_VBLANK);
@@ -1499,7 +1499,7 @@ void BattleEffect_OpenCanvasLayer(s32 bgControl) {
                       IO_WRITE_16);
   gBgScroll[1].y = 32;
   wait(1);
-  BattleStaging_ConfigurePaletteFadeFar(1, *(u16 *)battle->unk670, 128);
+  BattleBackground_SetModeFar(1, *(u16 *)battle->unk670, 128);
   work->fadeFrames = 24;
   work->fadeStep = 0;
   Task_Add(Palette_StepFadeTransfer, TASK_PASS_VBLANK);
@@ -1622,7 +1622,7 @@ void BattleEffect_EndCanvasLayer(void) {
   REG_BLDCNT = 0;
   wait(1);
 
-  BattleStaging_ConfigurePaletteFadeFar(2, *(u16 *)battle->unk670, 7);
+  BattleBackground_SetModeFar(2, *(u16 *)battle->unk670, 7);
   wait(1);
   for (i = 0; i != 8; i++) {
     BattleBackground_SetPaletteLevelFar(*(u16 *)battle->unk670, 21 - i * 3);
@@ -1651,7 +1651,7 @@ void BattleEffect_HideBg1AndRestoreBackdrop(void) {
                        DISPCNT_OBJ_ON | DISPCNT_BG2_ON | DISPCNT_BG0_ON |
                            DISPCNT_OBJ_1D_MAP | DISPCNT_MODE_1);
   wait(1);
-  BattleStaging_ConfigurePaletteFadeFar(2, *(u16 *)battle->unk670, 0);
+  BattleBackground_SetModeFar(2, *(u16 *)battle->unk670, 0);
   IO_WRITE_QUEUE_PUSH((u32)&REG_BG1CNT,
                       BGCNT_SCREEN_BASE(31) | BGCNT_256_COLORS |
                           BGCNT_PRIORITY(3),
@@ -1669,7 +1669,7 @@ void BattleEffect_SetupCanvasTileMap(void) {
   s32 off;
 
   BattleEffect_ClearActorTimers();
-  BattleStaging_ConfigurePaletteFadeFar(2, *(u16 *)screen->unk670, 0);
+  BattleBackground_SetModeFar(2, *(u16 *)screen->unk670, 0);
   gBgScroll[1].y = 32;
   layer->secondMode = 0;
   Iwram_ClearWords((void *)0x06003fc0, 64);

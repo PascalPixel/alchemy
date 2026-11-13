@@ -766,7 +766,7 @@ void FileList_ShowPartySprites(struct RenderInput *origin, s32 x, s32 y,
 
   for (i = 0; i < 4 && descriptor->party[i] != -1; i++) {
     struct FieldSprite *object =
-        (struct FieldSprite *)ResourceObject_CreateFar(descriptor->party[i]);
+        (struct FieldSprite *)Sprite_CreateFar(descriptor->party[i]);
 
     if (object != 0) {
       Animation_ApplyChildArgumentFar(object, 1);
@@ -797,7 +797,7 @@ void Menu_ClearFirstObjectRowAndScheduleUpdate(void) {
     void *entry = *(void **)(offset + (unsigned int)base);
 
     if (entry != 0) {
-      ResourceObject_ReleaseFar(entry);
+      Sprite_DestroyFar(entry);
       *(s32 *)(offset + (unsigned int)base) = zero;
     }
     count--;

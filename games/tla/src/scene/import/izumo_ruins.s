@@ -110,10 +110,10 @@ Actor_SetSpriteColor:
 	.thumb_func
 Func_020014c0:
 	overlay_veneer Func_080c8208
-	.global ObjectVisual_CopyAttributes
+	.global Actor_CopyGraphics
 	.thumb_func
-ObjectVisual_CopyAttributes:
-	overlay_veneer ObjectVisual_CopyAttributesFar
+Actor_CopyGraphics:
+	overlay_veneer Actor_CopyGraphicsFar
 	.global FieldCamera_FollowActor
 	.thumb_func
 FieldCamera_FollowActor:

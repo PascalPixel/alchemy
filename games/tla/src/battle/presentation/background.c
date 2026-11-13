@@ -56,15 +56,15 @@ void BattleBackground_SetPaletteLevel(s32 unused, s32 level) {
   }
 }
 
-/// The Broken Seal's BattleBackground_SetMode, with this
-/// game's heap slots, its callback BattleStaging_UpdateHBlankScroll at 0xcff
-/// and its IO write of 0x1f83 to BG1CNT.
-void BattleStaging_ConfigurePaletteFade(s32 mode, s32 value, s32 fade) {
+/// As The Broken Seal's, with this game's heap slots, its callback
+/// BattleBackground_ShowZoomedPage at 0xcff and its IO write of 0x1f83 to
+/// BG1CNT.
+void BattleBackground_SetMode(s32 mode, s32 value, s32 fade) {
   struct BattleBackgroundView *transition =
       (struct BattleBackgroundView *)Ram_HeapSlots->transitionWork;
 
   if (transition->mode == 0)
-    Task_Add(BattleStaging_UpdateHBlankScroll, 0xcff);
+    Task_Add(BattleBackground_ShowZoomedPage, 0xcff);
   transition->mode = mode;
 
   if (mode == 1)
@@ -181,7 +181,7 @@ void BattleBackground_Load(s32 mode, s32 resource, s32 level) {
   BattleTransition_BuildTilemap((void *)0x0600f800);
   Iwram_ClearWordsEntry((void *)0x0600ffc0, 64);
   if (view->mode == 0)
-    Task_Add(BattleStaging_UpdateHBlankScroll, 0xcff);
+    Task_Add(BattleBackground_ShowZoomedPage, 0xcff);
   view->mode = mode;
   if (mode == 1)
     REG_BG1CNT = 0x1f83;
@@ -1027,7 +1027,7 @@ void ElementGlow_Play(s32 unit, s32 kind, s32 mode, s32 variant) {
   struct EffectPosition *pos;
 
   wait(1);
-  BattleStaging_ConfigurePaletteFade(1, session->background, 0);
+  BattleBackground_SetMode(1, session->background, 0);
   Iwram_ClearWordsEntry((void *)0x06004000, 0x4000);
   IoWriteQueue_Store16(0x04000000, 0x3741);
   IoWriteQueue_Store16(0x0400000c, 0x784);

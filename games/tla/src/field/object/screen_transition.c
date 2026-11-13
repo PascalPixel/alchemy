@@ -321,7 +321,7 @@ struct EffectVisual__rising {
 };
 struct Actor *Actor_CreateFar(s32 kind, s32 x, s32 y, s32 z);
 
-void BattleEffect_StartEffectObject22(s32 item, s32 flags) {
+void ItemDisplay_ShowItem(s32 item, s32 flags) {
   struct Actor *owner = ObjectTable_Get(Party_GetLeaderActor());
   u8 *buffer = HeapSlot_Alloc(68, 0x608);
   struct Actor *object =

@@ -134,14 +134,14 @@ MapGrid_WaitForShakeToSettle:
 	.thumb_func
 Actor_SetSpriteColorMode:
 	overlay_veneer Actor_SetSpriteColorModeFar
-	.global Map_EnableUpdateCallback
+	.global TilesetAnim_SuspendAll
 	.thumb_func
-Map_EnableUpdateCallback:
-	overlay_veneer Map_EnableUpdateCallbackFar
-	.global Map_DisableUpdateCallback
+TilesetAnim_SuspendAll:
+	overlay_veneer TilesetAnim_SuspendAllFar
+	.global TilesetAnim_ResumeAll
 	.thumb_func
-Map_DisableUpdateCallback:
-	overlay_veneer Map_DisableUpdateCallbackFar
+TilesetAnim_ResumeAll:
+	overlay_veneer TilesetAnim_ResumeAllFar
 	.global Func_02001c74
 	.thumb_func
 Func_02001c74:

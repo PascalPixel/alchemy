@@ -494,8 +494,8 @@ void BattleEffect_RunMegaera(struct BattleEffectArgument *effect) {
       BattleEffect_SpawnObjects(2, 657, 2);
     }
     if (frame == 108) {
-      ResourceObject_ReleaseFar(work->objects[0]);
-      ResourceObject_ReleaseFar(work->objects[1]);
+      Sprite_DestroyFar(work->objects[0]);
+      Sprite_DestroyFar(work->objects[1]);
       BattleEffect_SpawnObjects(11, 656, 2);
     }
 
@@ -747,7 +747,7 @@ void BattleEffect_RunMegaera(struct BattleEffectArgument *effect) {
   HeapSlot_Release(104);
   BattleEffect_RunImpactBurst(4, position.x, position.y);
   for (i = 0; i != 11; i++) {
-    ResourceObject_ReleaseFar(work->objects[i]);
+    Sprite_DestroyFar(work->objects[i]);
   }
   BattleEffect_EndCanvasLayer();
 }

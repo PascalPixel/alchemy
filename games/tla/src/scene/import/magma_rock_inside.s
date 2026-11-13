@@ -258,10 +258,10 @@ Actor_SetSpritePriority:
 	.thumb_func
 Func_02004df8:
 	overlay_veneer Func_080c8208
-	.global ObjectVisual_CopyAttributes
+	.global Actor_CopyGraphics
 	.thumb_func
-ObjectVisual_CopyAttributes:
-	overlay_veneer ObjectVisual_CopyAttributesFar
+Actor_CopyGraphics:
+	overlay_veneer Actor_CopyGraphicsFar
 	.global FieldCamera_FollowActor
 	.thumb_func
 FieldCamera_FollowActor:
@@ -305,7 +305,7 @@ PaletteFade_StartInterpolation:
 	.global Func_02004e58
 	.thumb_func
 Func_02004e58:
-	overlay_veneer BattleEffect_StartEffectObject22Far
+	overlay_veneer ItemDisplay_ShowItemFar
 	.global Func_02004e60
 	.thumb_func
 Func_02004e60:

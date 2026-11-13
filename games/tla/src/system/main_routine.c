@@ -173,9 +173,7 @@ void Scene_ReturnFromSequence(s32 result) {
   }
 }
 
-s8 BattleEffect_GetResourceGroup(s32 effectIndex) {
-  return gScenes[effectIndex].group;
-}
+s8 Scene_GetArea(s32 effectIndex) { return gScenes[effectIndex].group; }
 
 s16 Field_GetSceneAttributes(s32 scene) { return gScenes[scene].attributes; }
 

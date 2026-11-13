@@ -184,7 +184,7 @@ update_object:
   }
 
   camera = (struct WorldCamera__resource_slot *)Ram_HeapSlots->mapWork;
-  targetCameraYaw = gData_0802eca0[(gInput.held >> 4) & 15];
+  targetCameraYaw = gWorldMap_KeyYaws[(gInput.held >> 4) & 15];
   yawStep = (s16)(targetCameraYaw - camera->yaw) / 8;
   if (yawStep > 0x200)
     yawStep = 0x200;
@@ -803,7 +803,7 @@ update_object:
   }
 
   camera = (struct WorldCamera__resource_slot *)Ram_HeapSlots->mapWork;
-  targetCameraYaw = gData_0802eca0[(gInput.held >> 4) & 15];
+  targetCameraYaw = gWorldMap_KeyYaws[(gInput.held >> 4) & 15];
   yawStep = (s16)(targetCameraYaw - camera->yaw) / 8;
   if (yawStep > 0x200)
     yawStep = 0x200;
@@ -1076,7 +1076,7 @@ update_object:
   }
 
   camera = (struct WorldCamera__resource_slot *)Ram_HeapSlots->mapWork;
-  targetCameraYaw = Iwram_MulQ16(gData_0802eca0[(gInput.held >> 4) & 15],
+  targetCameraYaw = Iwram_MulQ16(gWorldMap_KeyYaws[(gInput.held >> 4) & 15],
                                  object->y / 4 + 0x10000);
   yawStep = (s16)(targetCameraYaw - camera->yaw) / 8;
   if (yawStep > 32)

@@ -153,7 +153,7 @@ void Credits_BuildBackgroundTilemap(u32 *table) {
     *table++ = 0;
 }
 
-void DisplayScroll_StepPositionEveryFourVBlanks(void) {
+void Credits_ScrollBackgrounds(void) {
   if ((gVBlankCount & 3) == 0) {
     u32 decrement = 0xffff;
 
@@ -177,7 +177,7 @@ s32 Credits_Run(s32 mode) {
   Data_02007500 = 0;
   gAutoSleepEnabled = 0;
   Task_ResetAll();
-  Task_Add(DisplayScroll_StepPositionEveryFourVBlanks, TASK_PASS_FRAME);
+  Task_Add(Credits_ScrollBackgrounds, TASK_PASS_FRAME);
   Io_Write16(0x40, &REG_DISPCNT);
   Credits_BuildBackgroundTilemap((u32 *)0x06007800);
   Credits_BuildBackgroundTilemap((u32 *)0x0600f800);
@@ -278,7 +278,7 @@ void Func_081a08c4(void) {
   }
 }
 
-void DisplayScroll_RenderEnteringLine(void) {
+void Credits_DrawEnteringLine(void) {
   s32 first = (s32)MsgIntroCrawl;
   u32 current;
   s32 line;
@@ -365,7 +365,7 @@ void Credits_InitTextSprites(void) {
   gDisplayScroll_LastPosition = 0;
   gDisplayScroll_Busy = 0;
   Task_Add(Func_081a08c4, TASK_PASS_FRAME);
-  Task_Add(DisplayScroll_RenderEnteringLine, TASK_PASS_VBLANK);
+  Task_Add(Credits_DrawEnteringLine, TASK_PASS_VBLANK);
   for (i = 0; i < 32; i++)
     Credits_DrawLine(gDisplayScroll_LineTable[0], i * 24, 1);
 }

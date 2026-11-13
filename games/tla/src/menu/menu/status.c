@@ -126,7 +126,7 @@ s32 StatusScreen_Run(void) {
     DjinnFigures_InitializeTopRow();
   Link_DrawPageArrowsFar(0x06002500);
   Func_081053a8();
-  Menu_CancelSoundReset();
+  Menu_StartWatchingStart();
   *page = 0;
 
   result = StatusScreen_RunPages();

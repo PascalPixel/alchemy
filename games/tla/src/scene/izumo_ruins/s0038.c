@@ -317,7 +317,7 @@ void Func_02000584(u16 *list) {
       // after the cell store.
       *shape = Func_02001528(actor->terrainId, kind, (ground >> 19) + 4);
       if (Event_GetFlag(flag))
-        ObjectVisual_CopyAttributes(id, 9);
+        Actor_CopyGraphics(id, 9);
     }
     list += 2;
   }
@@ -366,7 +366,7 @@ body:
         Actor_SetSpriteColor(Actor_GetById(8), 7);
         wait(2);
         Func_02001428(helper, 0);
-        ObjectVisual_CopyAttributes(id, 9);
+        Actor_CopyGraphics(id, 9);
         Actor_SetSpriteColor(Actor_GetById(8), 0);
         wait(2);
         Actor_SetSpriteColor(Actor_GetById(8), 7);

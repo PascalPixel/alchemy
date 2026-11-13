@@ -954,7 +954,7 @@ void Func_0813e7e0(struct BattleEffectArgument *effect) {
   BattleEffect_ClearActorTimers();
   view->secondMode = 1;
   gBgScroll[1].y = 32;
-  BattleStaging_ConfigurePaletteFadeFar(1, BACKGROUND(battle), 0);
+  BattleBackground_SetModeFar(1, BACKGROUND(battle), 0);
   REG_BG2CNT = 0x784;
   BattleCamera_SetViewFar(0, 0, 0, 100);
   view->secondMode = 0;
@@ -1028,7 +1028,7 @@ void Func_0813e7e0(struct BattleEffectArgument *effect) {
   BattleEffect_TintBattler(effect->actors[0], -1, 1, -1, 0);
   gBgScroll[1].x = work->savedBg1X;
   gBgScroll[1].y = 32;
-  BattleStaging_ConfigurePaletteFadeFar(2, BACKGROUND(battle), 0);
+  BattleBackground_SetModeFar(2, BACKGROUND(battle), 0);
   wait(1);
   IO_WRITE_QUEUE_PUSH(0x04000000, 0x7541, 0x20000);
   HeapSlot_Release(SLOT_BATTLE_SHEET);

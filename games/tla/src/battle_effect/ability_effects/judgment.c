@@ -332,7 +332,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
 
   Iwram_FillWords(canvas, 0x4000, 0);
   for (i = 0; i != 16; i++) {
-    ResourceObject_ReleaseFar(work->objects[i]);
+    Sprite_DestroyFar(work->objects[i]);
   }
   wait(1);
   Palette_LoadBasicSpriteColors();
@@ -340,7 +340,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
           REG_DMA3);
   BG_PLTT_COLOR(5, 14) = BG_PLTT_COLOR(15, 4);
   for (i = 0; i != 16; i++) {
-    struct JudgmentObject *obj = ResourceObject_CreateFar(0x28d);
+    struct JudgmentObject *obj = Sprite_CreateFar(0x28d);
 
     work->objects[i] = obj;
     if (obj) {
@@ -448,8 +448,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
       FILL__actor_move_random(canvas, 0x4000, 0x3f3f3f3f);
     }
     if (frame == 70) {
-      BattleStaging_ConfigurePaletteFadeFar(
-          1, (s32)&ResourceId_AerialViewBackdrop, 7);
+      BattleBackground_SetModeFar(1, (s32)&ResourceId_AerialViewBackdrop, 7);
     }
     if (frame == 150) {
       cx = 112;
@@ -804,7 +803,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
   }
 
   for (i = 0; i != 16; i++) {
-    ResourceObject_ReleaseFar(work->objects[i]);
+    Sprite_DestroyFar(work->objects[i]);
   }
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   HeapSlot_Release(SLOT_BLITTER);

@@ -357,12 +357,12 @@ void TilesetAnim_StartAll(const u16 *script) {
     Task_Add(TilesetAnim_Update, TASK_PASS_VBLANK);
 }
 
-void Map_EnableUpdateCallback(void) {
+void TilesetAnim_SuspendAll(void) {
   if (((struct MapViewWork *)Ram_HeapSlots->mapWork)->animationActive == 0)
     Task_SuspendAll(TilesetAnim_Update);
 }
 
-void Map_DisableUpdateCallback(void) {
+void TilesetAnim_ResumeAll(void) {
   if (((struct MapViewWork *)Ram_HeapSlots->mapWork)->animationActive == 0)
     Task_ResumeAll(TilesetAnim_Update);
 }

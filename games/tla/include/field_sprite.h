@@ -24,7 +24,7 @@ struct FieldSprite {
   u16 palette : 4;
   ///@}
   u8 unk0a[2];
-  s32 scale; ///< 16.16, in the projection draft's layout (LayeredSprite)
+  s32 scale;    ///< 16.16, in the projection draft's layout (LayeredSprite)
   u8 vramBlock; ///< VRAM cache entry holding its tiles
   /// The keep-cache-entry and own-scale bits in the projection draft's layout.
   u8 unk11;
@@ -48,7 +48,7 @@ struct FieldSprite {
   u16 secondPalette : 4;
   ///@}
   u8 unk26[2];  ///< not named by TLA code
-  void *record; ///< released by ResourceMetadata_ClearRecordFar
+  void *record; ///< released by SpriteAnimation_ClearFar
 };
 
 #endif

@@ -731,7 +731,7 @@ Func_0815b290__actor_move_random(s32 width, s32 height, u32 shape,
                                  u32 attributes) __asm__("Func_0815b290");
 
 void Palette_LoadBasicSpriteColors(void);
-void BattleStaging_ConfigurePaletteFadeFar(s32 mode, s32 background, s32 speed);
+void BattleBackground_SetModeFar(s32 mode, s32 background, s32 speed);
 void Graphics_LoadGreyRamp(void);
 
 #define SLOT_ALT 188 // unkb8[1]

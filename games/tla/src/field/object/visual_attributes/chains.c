@@ -716,11 +716,11 @@ struct ChainWork__f0d9b80 {
   struct ChainSlot__f0d9b80 slots[8];
 };
 
-/* VIEW(f0d9b80): routine AffineMatrix_BuildForEffect as s32
- * AffineMatrix_BuildForEffect(struct ChainTransform *source); affine.h has s32
- * AffineMatrix_BuildForEffect(struct AffineTransform *source). */
+/* VIEW(f0d9b80): routine OamMatrix_AllocFromTransform as s32
+ * OamMatrix_AllocFromTransform(struct ChainTransform *source); affine.h has s32
+ * OamMatrix_AllocFromTransform(struct AffineTransform *source). */
 extern s32 AffineMatrix_BuildForEffect__f0d9b80(
-    struct ChainTransform *source) __asm__("AffineMatrix_BuildForEffect");
+    struct ChainTransform *source) __asm__("OamMatrix_AllocFromTransform");
 /* VIEW(f0d9b80): routine Func_080140d8 as void Func_080140d8(void *entry, s32
  * slot); f0d6674 has void Func_080140d8(struct GroundParticle *sprite, s32
  * depth). */
@@ -1391,7 +1391,7 @@ void Func_080daab0(void) {
             transform.scaleX = 0x100;
             transform.scaleY = 0x100;
             link->sprite.affine = 1;
-            link->sprite.affineIndex = AffineMatrix_BuildForEffect(
+            link->sprite.affineIndex = OamMatrix_AllocFromTransform(
                 (struct AffineTransform *)&transform);
           }
           link->angle = angle;

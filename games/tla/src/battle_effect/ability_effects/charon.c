@@ -695,8 +695,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
     }
     if (frame >= 132 && frame < 860) {
       if (frame == 132) {
-        ResourceObject_ReleaseFar(
-            (struct ResourceObjectWork *)work->objects[0]);
+        Sprite_DestroyFar((struct ResourceObjectWork *)work->objects[0]);
         source =
             (u8 *)Resource_GetTableEntry((s32)&ResourceId_CrimsonBeastTiles);
         Iwram_FillWords(PLTT + 0x100, 0x180, 0x7fff7fff);
@@ -1371,14 +1370,14 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
 
   Sound_PlayFar(162);
   if (frame < 132) {
-    ResourceObject_ReleaseFar((struct ResourceObjectWork *)work->objects[0]);
+    Sprite_DestroyFar((struct ResourceObjectWork *)work->objects[0]);
   } else {
     for (i = 0; i != 14; i++) {
-      ResourceObject_ReleaseFar((struct ResourceObjectWork *)work->objects[i]);
+      Sprite_DestroyFar((struct ResourceObjectWork *)work->objects[i]);
     }
   }
   for (i = 0; i != 48; i++) {
-    ResourceObject_ReleaseFar((struct ResourceObjectWork *)SPRITES[i]);
+    Sprite_DestroyFar((struct ResourceObjectWork *)SPRITES[i]);
   }
   HeapSlot_Release(188);
   HeapSlot_Release(104);

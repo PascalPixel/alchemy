@@ -95,7 +95,7 @@ void Func_02000138(s32 direction) {
       if (GameFlag_Test(2559) && Func_020000fc(0) == 0)
         GameFlag_SetBit(901);
       Sound_Play(128);
-      ObjectEffect_StartContextEffect26();
+      Exit_StartStairsUp();
       Import_EventSetExitRequest(direction + 4);
     } else {
       Import_EventSetExitRequest(direction);

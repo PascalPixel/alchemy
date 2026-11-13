@@ -155,7 +155,7 @@ void Unit_Calculate(s32 owner);
 s32 PartyInventory_HasSpace(void);
 s32 PartyInventory_Add(s32 itemId);
 
-extern const s32 Data_080c6604[4][4];
+extern const s32 gClass_SeriesByElements[4][4];
 
 extern u8 gItemCounters[ITEM_COUNTER_COUNT];
 

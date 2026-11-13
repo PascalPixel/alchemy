@@ -71,7 +71,7 @@ s32 Enemy_GetAttackElement(void *state) {
   return *(u32 *)((u8 *)table + offset);
 }
 
-extern struct ElementLevelBonus Data_080c6644[16];
+extern struct ElementLevelBonus gElement_PowerResistByLevel[16];
 
 void Unit_CalculateBaseElements(s32 owner,
                                 struct BattleElementStats *destination) {
@@ -109,14 +109,16 @@ void Unit_CalculateBaseElements(s32 owner,
       tens = 0;
 
 #ifdef UBFIX
-    destination[i].power = Data_080c6644[tens].power + ones;
-    destination[i].resistance = Data_080c6644[tens].res + ones;
+    destination[i].power = gElement_PowerResistByLevel[tens].power + ones;
+    destination[i].resistance = gElement_PowerResistByLevel[tens].res + ones;
 #else
     // UB: the stats are stored through an s16 [4][2] view of the four
     // structs, the element pair table's spelling; as destination[i].power
     // and .resistance, 4 of 86 instructions differ in tla-en.
-    ((s16 (*)[2])destination)[i][0] = Data_080c6644[tens].power + ones;
-    ((s16 (*)[2])destination)[i][1] = Data_080c6644[tens].res + ones;
+    ((s16 (*)[2])destination)[i][0] =
+        gElement_PowerResistByLevel[tens].power + ones;
+    ((s16 (*)[2])destination)[i][1] =
+        gElement_PowerResistByLevel[tens].res + ones;
 #endif
   }
 }
@@ -160,7 +162,7 @@ s32 Class_Determine(s32 character, u32 *djinn, s32 item) {
   }
   if (levels[second] <= 9)
     second = primary;
-  series = Data_080c6604[primary][second];
+  series = gClass_SeriesByElements[primary][second];
   if (series == 2 && character == 5)
     series = 13;
   else if (series == 6 && character == 7)

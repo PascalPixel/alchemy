@@ -211,25 +211,25 @@ const s32 gData_0802f158[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-const s32 gData_0802f170[] = {
+const s32 gActor_KeyCheckScript[] = {
     SC_CMD_1F,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-const s32 gData_0802f188[] = {
+const s32 gActor_KeysScript[] = {
     SC_CMD_20,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-const s32 gData_0802f1a0[] = {
+const s32 gActor_PlayerScript[] = {
     SC_CMD_21,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-const s32 gData_0802f1b8[] = {
+const s32 gActor_WorldMapScript[] = {
     SC_CMD_22,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),

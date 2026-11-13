@@ -1144,7 +1144,7 @@ s32 Func_080cec24(s32 value, s32 *out);
 
 void MapGrid_SetCellBehaviorAtFar(s32 terrain, s32 x, s32 z, s32 value);
 
-void ResourceMetadata_ClearRecordFar(void *record);
+void SpriteAnimation_ClearFar(void *record);
 
 void Djinn_ShowJoinedMessageFar(s32 owner, s32 element, s32 djinni);
 
@@ -1201,10 +1201,10 @@ extern const s32 gData_0802f110[];
 extern const s32 gData_0802f128[];
 extern const s32 gData_0802f140[];
 extern const s32 gData_0802f158[];
-extern const s32 gData_0802f170[];
-extern const s32 gData_0802f188[];
-extern const s32 gData_0802f1a0[];
-extern const s32 gData_0802f1b8[];
+extern const s32 gActor_KeyCheckScript[];
+extern const s32 gActor_KeysScript[];
+extern const s32 gActor_PlayerScript[];
+extern const s32 gActor_WorldMapScript[];
 extern const s32 gData_0802f1e8[];
 
 s32 MapGrid_GetTerrainHeight(s32 layer, s32 x, s32 z);

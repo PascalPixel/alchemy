@@ -838,7 +838,7 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
   Task_Remove(BattleEffect_ArmPaletteHBlankDma);
   HeapSlot_Release(SLOT_BLITTER);
   for (i = 0; i != 28; i++) {
-    ResourceObject_ReleaseFar(work->objects[i]);
+    Sprite_DestroyFar(work->objects[i]);
   }
   BattleEffect_EndCanvasLayer();
 }

@@ -461,7 +461,7 @@ void Window_SetTilemapEntry(struct Window *window, s32 value, s32 x, s32 y,
   }
 }
 
-s32 AffineMatrix_BuildForEffect(struct AffineTransform *transform);
+s32 OamMatrix_AllocFromTransform(struct AffineTransform *transform);
 
 struct OutputSprite {
   u32 link;
@@ -507,7 +507,7 @@ void WindowSprite_UpdateScaleAnimation(struct WindowSprite *windowSprite) {
     effect.scaleX = scale;
     effect.scaleY = scale;
     effect.angle = 0;
-    sprite->affineIndex = AffineMatrix_BuildForEffect(&effect);
+    sprite->affineIndex = OamMatrix_AllocFromTransform(&effect);
     if (scale > 256) {
       sprite->affine = 3;
       // x read through a u16 pointer, which loads it after the -8 is built;
@@ -615,7 +615,7 @@ void WindowSprite_UpdateAll(void) {
           effect.packed.scaleX = 512;
           effect.packed.scaleY = 512;
           effect.packed.angle = 0;
-          sprite->affineIndex = AffineMatrix_BuildForEffect(&effect.plain);
+          sprite->affineIndex = OamMatrix_AllocFromTransform(&effect.plain);
           sprite->affine = 3;
           sprite->x = output->x - 5;
           sprite->y = output->y - 5;
@@ -632,7 +632,7 @@ void WindowSprite_UpdateAll(void) {
         effect.plain.scaleY = 256;
         output->animStep += 768;
         effect.plain.angle = output->animStep;
-        sprite->affineIndex = AffineMatrix_BuildForEffect(&effect.plain);
+        sprite->affineIndex = OamMatrix_AllocFromTransform(&effect.plain);
         sprite->affine = 1;
         sprite->x =
             output->x - (Trig_Sin(effect.plain.angle + 0xe800) >> 14) - 2;

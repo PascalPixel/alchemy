@@ -577,7 +577,7 @@ update_object:
   }
 
   camera = (struct WorldCamera__resource_slot *)Ram_HeapSlots->mapWork;
-  targetCameraYaw = gData_0802eca0[(gInput.held >> 4) & 15];
+  targetCameraYaw = gWorldMap_KeyYaws[(gInput.held >> 4) & 15];
   yawStep = (s16)(targetCameraYaw - camera->yaw) / 8;
   if (yawStep > 0x200)
     yawStep = 0x200;

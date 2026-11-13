@@ -266,8 +266,7 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
         s32 angle;
 
         BattleBackground_LoadFar(1, (s32)&ResourceId_VioletSkyBackdrop, 0);
-        BattleStaging_ConfigurePaletteFadeFar(
-            1, (s32)&ResourceId_VioletSkyBackdrop, 8);
+        BattleBackground_SetModeFar(1, (s32)&ResourceId_VioletSkyBackdrop, 8);
         BattleEffect_SelectLivingTargets(work->effect);
         BattleEffect_SpawnObjects(COMETS, FORMATION_RESOURCE, 2);
         Resource_LoadAndDecompress((s32)&ResourceId_VioletCometSheet,
@@ -541,7 +540,7 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
 
     index = 0;
     do {
-      ResourceObject_ReleaseFar(work->objects[index]);
+      Sprite_DestroyFar(work->objects[index]);
       index++;
     } while (index != COMETS);
 
@@ -955,7 +954,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectArgument *effect, s32 mode) {
     }
     if (mode == 0) {
       for (i = 0; i != 8; i++)
-        ResourceObject_ReleaseFar(work->objects[i]);
+        Sprite_DestroyFar(work->objects[i]);
     }
   }
   BattleEffect_EndCanvasLayer();

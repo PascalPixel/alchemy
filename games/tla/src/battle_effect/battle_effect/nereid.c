@@ -244,7 +244,7 @@ void BattleEffect_RunNereid(struct BattleEffectArgument *effect) {
     HeapSlot_Release(HEAP_BLITTER);
     BattleEffect_RunImpactBurst(1, focus.x, focus.y);
     for (k = 0; k != FORMATION_SIZE; k++)
-      ResourceObject_ReleaseFar(work->objects[k]);
+      Sprite_DestroyFar(work->objects[k]);
   }
   BattleEffect_EndCanvasLayer();
 }

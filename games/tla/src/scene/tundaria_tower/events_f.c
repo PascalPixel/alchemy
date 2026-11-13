@@ -426,7 +426,7 @@ next:
     cell->attributeB = 128;
     *slot = Func_02003180(object->terrainId, shape, (height >> 19) + 4);
     if (GameFlag_Test(flag))
-      ObjectVisual_CopyAttributes(id, 9);
+      Actor_CopyGraphics(id, 9);
   }
   list += 2;
   if (*list != 0xffff)
@@ -476,7 +476,7 @@ void Func_02002764(const u16 *table) {
       Actor_SetSpriteColor(Actor_GetById(8), 7);
       wait(2);
       Func_02002f80(partner, 0);
-      ObjectVisual_CopyAttributes(id, 9);
+      Actor_CopyGraphics(id, 9);
       Actor_SetSpriteColor(Actor_GetById(8), 0);
       wait(2);
       Actor_SetSpriteColor(Actor_GetById(8), 7);

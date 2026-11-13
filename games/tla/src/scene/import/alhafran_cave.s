@@ -182,10 +182,10 @@ Func_02001520:
 	.thumb_func
 Event_ResolvePendingActions:
 	overlay_veneer Event_ResolvePendingActionsFar
-	.global BattleEffect_StartItemBreak
+	.global FieldEffect_SpawnMoveHand
 	.thumb_func
-BattleEffect_StartItemBreak:
-	overlay_veneer BattleEffect_StartItemBreakFar
+FieldEffect_SpawnMoveHand:
+	overlay_veneer FieldEffect_SpawnMoveHandFar
 	.global FieldEffect_SnapScaleToFull
 	.thumb_func
 FieldEffect_SnapScaleToFull:

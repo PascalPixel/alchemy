@@ -245,7 +245,7 @@ restart:
     if (Resource_GetMetadataRecordFar(layers[0].spriteId)->drawKind == 20 &&
         (i & 1))
       part = 1;
-    sprite = ResourceObject_Create(layers[0].spriteId + part + (part << 12));
+    sprite = Sprite_Create(layers[0].spriteId + part + (part << 12));
     ResourceMetadata_Register(sprite, layers[1].spriteId);
     ResourceMetadata_Register(sprite, layers[2].spriteId);
     ResourceMetadata_Register(sprite, layers[3].spriteId);
@@ -680,7 +680,7 @@ void SpriteViewer_SetGridColumnNumber(s32 slot, s32 no) {
 
     count--;
     *(u16 *)entry = no;
-    Animation_InitializeWorkFromMetadata(entry);
+    SpriteAnimation_Reset(entry);
     base += 56;
   } while (count >= 0);
 }

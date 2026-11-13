@@ -627,7 +627,7 @@ void BattleEffect_RunZagan(struct BattleEffectArgument *effect) {
   HeapSlot_Release(104);
   transition[4] = 0;
   for (i = 0; i != ZAGAN_PARTS; i++) {
-    ResourceObject_ReleaseFar(work->objects[i]);
+    Sprite_DestroyFar(work->objects[i]);
   }
   BattleEffect_EndCanvasLayer();
 }

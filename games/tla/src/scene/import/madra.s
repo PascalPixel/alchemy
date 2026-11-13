@@ -197,7 +197,7 @@ Event_WaitTransitionFrames:
 	.global Func_02002c50
 	.thumb_func
 Func_02002c50:
-	overlay_veneer BattleEffect_StartEffectObject22Far
+	overlay_veneer ItemDisplay_ShowItemFar
 	.global Event_ResolvePendingActions
 	.thumb_func
 Event_ResolvePendingActions:

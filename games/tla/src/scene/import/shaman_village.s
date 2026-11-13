@@ -74,10 +74,10 @@ VramCache_FindFreeEntry:
 	.thumb_func
 DebugText_Clear:
 	overlay_veneer DebugText_ClearFar
-	.global AffineMatrix_BuildForEffect
+	.global OamMatrix_AllocFromTransform
 	.thumb_func
-AffineMatrix_BuildForEffect:
-	overlay_veneer AffineMatrix_BuildForEffectFar
+OamMatrix_AllocFromTransform:
+	overlay_veneer OamMatrix_AllocFromTransformFar
 	.global Oam_AddSpriteAtDepth
 	.thumb_func
 Oam_AddSpriteAtDepth:

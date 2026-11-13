@@ -94,8 +94,8 @@ void Actor_SetSpriteColor(struct Actor *object, s32 attribute);
 #endif
 void Scene_SetActorSpritePriority(struct Actor *object, s32 priority);
 void Actor_StartCameraFar(void *object, void *effect);
-void ObjectEffect_EndContextEffect(s32 effect);
-void ObjectEffect_PrepareContextEffect(s32 effect);
+void Entrance_EndArrivalAnimation(s32 effect);
+void Exit_PrepareAnimation(s32 effect);
 void Actor_CenterOnColumn(u32 objectId, s32 action, s32 z_offset);
 void Actor_WalkByAndWaitById(u32 objectId, s32 x_offset, s32 z_offset);
 void Actor_WalkByById(u32 objectId, s32 x_offset, s32 z_offset);

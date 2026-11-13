@@ -10,7 +10,7 @@ Resource_FarCall009:
 	export BattleBackground_FadeAlphaInFar, BattleBackground_FadeAlphaIn
 	export BattleCamera_SetViewFar, BattleCamera_SetView
 	export BattleCamera_SetViewAtPairMidpointFar, BattleCamera_SetViewAtPairMidpoint
-	export BattleStaging_ConfigurePaletteFadeFar, BattleStaging_ConfigurePaletteFade
+	export BattleBackground_SetModeFar, BattleBackground_SetMode
 	export BattleBackground_LoadFar, BattleBackground_Load
 	export BattleBackground_SetPaletteLevelFar, BattleBackground_SetPaletteLevel
 	export BattleSprite_GetEffectHeightFar, BattleSprite_GetEffectHeight

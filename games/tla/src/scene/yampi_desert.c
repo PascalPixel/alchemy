@@ -762,8 +762,8 @@ void Func_02001cc4(struct Actor *object, s32 dx, s32 dz) {
 #include "fixed_math.h"
 #include "version.h"
 
-void Map_EnableUpdateCallback(void);
-void Map_DisableUpdateCallback(void);
+void TilesetAnim_SuspendAll(void);
+void TilesetAnim_ResumeAll(void);
 
 void Func_02001e58(void) {
   u8 *work = Ram_HeapSlots->eventWork;
@@ -777,7 +777,7 @@ void Func_02001e58(void) {
   if (*(s16 *)(work + 0x166) != 0 || *(s16 *)(work + 0x15a) != 0 ||
       *(s16 *)(work + 0x15e) != 0) {
     Actor_SetAnimationSpeed(leader, 0);
-    Map_EnableUpdateCallback();
+    TilesetAnim_SuspendAll();
     return;
   }
   map = Ram_HeapSlots->mapWork;
@@ -789,7 +789,7 @@ void Func_02001e58(void) {
   ahead = cells + (column + row * 128);
   under = map->layers[1].cells + index;
   Actor_SetAnimationSpeed(leader, 16);
-  Map_DisableUpdateCallback();
+  TilesetAnim_ResumeAll();
   if ((u8)(under->collisionCode - 10) <= 4) {
     if (gMainRoutineWork.renderMode == 5)
       speed = 0;

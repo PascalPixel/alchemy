@@ -44,7 +44,7 @@ s32 PsynergyMenu_Run(void) {
   Palette_LightenHighlight(14);
   Link_DrawPageArrowsFar((void *)0x06002500);
 
-  Menu_CancelSoundReset();
+  Menu_StartWatchingStart();
   result = PsynergyMenu_RunSteps(&owner, &target, &item);
   Menu_StopWatchingStart();
   if (result == 1) {

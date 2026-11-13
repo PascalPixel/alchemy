@@ -173,7 +173,7 @@ Event_StartScreenTransition:
 	.global Func_020013f0
 	.thumb_func
 Func_020013f0:
-	overlay_veneer BattleEffect_StartEffectObject22Far
+	overlay_veneer ItemDisplay_ShowItemFar
 	.global Event_ResolvePendingActions
 	.thumb_func
 Event_ResolvePendingActions:

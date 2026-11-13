@@ -1842,7 +1842,7 @@
       cell->attributeB = 128;                                                  \
       *slot = call5(object->terrainId, shape, (height >> 19) + 4);             \
       if (Event_GetFlag(flag))                                                 \
-        ObjectVisual_CopyAttributes(id, 9);                                    \
+        Actor_CopyGraphics(id, 9);                                             \
     }                                                                          \
     list += 2;                                                                 \
     if (*list != 0xffff)                                                       \

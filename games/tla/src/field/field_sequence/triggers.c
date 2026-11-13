@@ -526,11 +526,11 @@ s32 Scene_RunStepTriggerOrExit(s32 value) {
         break;
       case 32:
         Sound_PlayFar(128);
-        ObjectEffect_StartContextEffect26();
+        Exit_StartStairsUp();
         break;
       case 48:
         Sound_PlayFar(129);
-        ObjectEffect_StartContextEffect25();
+        Exit_StartStairsDown();
         break;
       case 80:
         Sound_PlayFar(123);

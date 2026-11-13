@@ -161,7 +161,7 @@ Event_WaitTransitionFrames:
 	.global Func_02001cec
 	.thumb_func
 Func_02001cec:
-	overlay_veneer BattleEffect_StartEffectObject22Far
+	overlay_veneer ItemDisplay_ShowItemFar
 	.global ObjectEvent_PlaceOnGround
 	.thumb_func
 ObjectEvent_PlaceOnGround:

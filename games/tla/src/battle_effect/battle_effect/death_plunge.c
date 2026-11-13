@@ -94,7 +94,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectArgument *effect) {
   BattleEffect_ClearActorTimers();
   view->secondMode = 1;
   gBgScroll[1].y = 32;
-  BattleStaging_ConfigurePaletteFadeFar(1, BACKGROUND(battle), 0);
+  BattleBackground_SetModeFar(1, BACKGROUND(battle), 0);
   REG_BG2CNT = 0x784;
   BattleCamera_SetViewFar(0, 0, 0, 100);
   view->secondMode = 0;
@@ -380,7 +380,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectArgument *effect) {
   BattleEffect_TintBattler(effect->actors[0], -1, 1, -1, 0);
   gBgScroll[1].x = work->savedBg1X;
   gBgScroll[1].y = 32;
-  BattleStaging_ConfigurePaletteFadeFar(2, BACKGROUND(battle), 0);
+  BattleBackground_SetModeFar(2, BACKGROUND(battle), 0);
   wait(1);
   IO_WRITE_QUEUE_PUSH(0x04000000, 0x7541, 0x20000);
   HeapSlot_Release(SLOT_BATTLE_SHEET);
@@ -665,7 +665,7 @@ void BattleEffect_StartElementStreaks(s32 kind) {
   IO_WRITE_QUEUE_PUSH(0x04000000, 0x1741, 0x20000);
   gBgScroll[1].y = 32;
   wait(1);
-  BattleStaging_ConfigurePaletteFadeFar(1, BACKGROUND(battle), 0);
+  BattleBackground_SetModeFar(1, BACKGROUND(battle), 0);
   IO_WRITE_QUEUE_PUSH(0x04000000, 0x7341, 0x20000);
   wait(1);
   REG_BG2CNT = 0x784;
@@ -1636,7 +1636,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
   gCameraSceneParameters[4] = 120;
   Sound_PlayFar(390);
   for (i = 0; i != 18; i++) {
-    ResourceObject_ReleaseFar(work->objects[i]);
+    Sprite_DestroyFar(work->objects[i]);
   }
   Palette_LoadBasicSpriteColors();
   Dma_Set((const void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(5, 0),

@@ -77,7 +77,7 @@ enum PaletteTransform {
   PALETTE_TRANSFORM_SPLIT = 0x800000
 };
 
-void Palette_Transform(u32 mode, u16 *source, u16 *destination, s32 half);
+void PaletteFade_Build(u32 mode, u16 *source, u16 *destination, s32 half);
 
 void PaletteFade_Initialize(void);
 void PaletteFade_Update(void);

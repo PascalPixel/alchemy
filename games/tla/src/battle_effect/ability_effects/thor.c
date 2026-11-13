@@ -567,7 +567,7 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
     BattleEffect_RunImpactBurst(0, formationX, formationY);
   }
   for (i = 0; i != 9; i++) {
-    ResourceObject_ReleaseFar(work->objects[i]);
+    Sprite_DestroyFar(work->objects[i]);
   }
   BattleEffect_EndCanvasLayer();
 }

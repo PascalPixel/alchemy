@@ -73,7 +73,7 @@ struct MotionObject {
 typedef s32 (*MotionCommand)(struct MotionObject *object);
 
 extern const MotionCommand gData_0802f204[];
-extern const s32 gData_0802ebc8[];
+extern const s32 gActorScript_CycleTable[];
 
 /* VIEW(f023680): routine ActorScript_CheckOverlap as s32
  * ActorScript_CheckOverlap(struct MotionObject *object, s32 *values); the
@@ -342,10 +342,10 @@ void Actor_UpdateAllThumb(void) {
 
           if (object->motionFlags & 8)
             object->velocityY =
-                gData_0802ebc8[phase >> 1] * object->gravity / 16;
+                gActorScript_CycleTable[phase >> 1] * object->gravity / 16;
           else
             object->velocityY =
-                gData_0802ebc8[phase >> 1] * object->gravity / 64;
+                gActorScript_CycleTable[phase >> 1] * object->gravity / 64;
           object->bounce++;
         }
       }

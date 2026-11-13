@@ -375,7 +375,7 @@ void ObjectTable_Snapshot(void) {
     *indices++ = 255;
 }
 
-void ObjectTable_Restore(void) {
+void Actor_Restore(void) {
   struct Actor *copy = gSnapshotObjects;
   u8 *indices = (u8 *)gSnapshotObjects - 32;
   u8 *frames = (u8 *)&gSnapshotObjects[32];

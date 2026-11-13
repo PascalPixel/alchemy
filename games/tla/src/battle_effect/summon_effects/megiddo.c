@@ -712,7 +712,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
     wait(1);
   }
 
-  ResourceObject_ReleaseFar(work->objects[0]);
+  Sprite_DestroyFar(work->objects[0]);
   caster[18] = casterValue;
   BattleActor_CommitPlacementFar();
   transition[4] = 0;

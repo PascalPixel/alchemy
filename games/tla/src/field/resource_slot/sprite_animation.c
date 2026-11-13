@@ -17,7 +17,7 @@ struct ChildObject {
   u8 mode;
 };
 
-/// The sprite as ResourceObject_Create fills it: the image's three attribute
+/// The sprite as Sprite_Create fills it: the image's three attribute
 /// words, its layout, then the shadow's three words.
 struct ResourceSprite {
   u32 imageAttributes[3];
@@ -216,7 +216,7 @@ s32 InitializeAnimationObjects(struct ActorSpriteView__resource_slot *state) {
 
 #include "debug.h"
 
-void Animation_InitializeWorkFromMetadata(struct AnimationEntry *work) {
+void SpriteAnimation_Reset(struct AnimationEntry *work) {
   s32 value;
   s32 z;
   s32 animation;
@@ -287,7 +287,7 @@ void Sprite_RemoveAnimation(struct MetadataSlotState *state, s32 handle) {
   u32 i;
 
   if (state != NULL && handle != 0) {
-    ResourceMetadata_ClearRecord((void *)handle);
+    SpriteAnimation_Clear((void *)handle);
     for (slot = 0; slot <= 3; slot++) {
       if (handle == state->slots[slot])
         break;
@@ -313,7 +313,7 @@ void Sprite_RemoveAnimationAt(struct MetadataSlotState *state, u32 no) {
   if (state != NULL && no <= 3) {
     slot = state->slots[no];
     if (slot != 0) {
-      ResourceMetadata_ClearRecord((void *)slot);
+      SpriteAnimation_Clear((void *)slot);
       state->slots[no] = 0;
       count = 0;
       for (i = no + 1; i <= 3; i++) {
@@ -527,7 +527,7 @@ struct AnimationEntry *SpriteAnimation_Alloc(s32 id) {
 // Resources: clear an animation record.
 
 /// Zeroes one AnimationEntry; does nothing for NULL.
-void ResourceMetadata_ClearRecord(void *dst) {
+void SpriteAnimation_Clear(void *dst) {
   if (dst != 0) {
     volatile u32 zero;
 
@@ -559,7 +559,7 @@ extern s32 ResourceMetadata_Register__vram_block_93(
 /// Creates an animated sprite object for animation id, using one of 64 free
 /// objects and a VRAM cache entry. Returns the object, or NULL on failure.
 // As ☀️'s function of the same name.
-struct ResourceObject *ResourceObject_Create(s32 id) {
+struct ResourceObject *Sprite_Create(s32 id) {
   struct AnimationMetadata *metadata;
   struct ResourceSprite *sprite;
   struct ResourceSprite *freeSprite;
@@ -650,7 +650,7 @@ struct ResourceObject *ResourceObject_Create(s32 id) {
 
 /// Releases an object: gives back its VRAM cache entry unless flags bit 0 is
 /// set, releases its four children and zeroes the 56-byte workspace.
-void ResourceObject_Release(struct ResourceObjectWork *work) {
+void Sprite_Destroy(struct ResourceObjectWork *work) {
   volatile u32 zero;
   s32 n;
   void **child;
@@ -661,7 +661,7 @@ void ResourceObject_Release(struct ResourceObjectWork *work) {
     child = work->children;
     n = 3;
     do {
-      ResourceMetadata_ClearRecord(*child++);
+      SpriteAnimation_Clear(*child++);
     } while (--n >= 0);
     zero = 0;
     Dma_Set(&zero, work,

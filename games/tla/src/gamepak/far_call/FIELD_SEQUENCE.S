@@ -71,7 +71,7 @@ Resource_FarCall006:
 	export Func_080c8208, Func_080d390c
 	export Actor_ShowEmoteByIdFar, Actor_ShowEmoteById
 	export FieldEffect_SetAttachedFar, FieldEffect_SetAttached
-	export ObjectVisual_CopyAttributesFar, ObjectVisual_CopyAttributes
+	export Actor_CopyGraphicsFar, Actor_CopyGraphics
 	export FieldCamera_FollowActorFar, FieldCamera_FollowActor
 	export Camera_SetSpeedParametersFar, Camera_SetSpeedParameters
 	export FieldCamera_MoveWithinMapBoundsFar, FieldCamera_MoveWithinMapBounds
@@ -100,11 +100,11 @@ Resource_FarCall006:
 	export Func_080c82f0, Func_080d53b8
 	export Leader_StopMovingFar, Leader_StopMoving
 	export Func_080c8300, Func_080d690c
-	export BattleEffect_StartTwelveFrameBlendFar, BattleEffect_StartTwelveFrameBlend
+	export Weather_StartLightningFar, Weather_StartLightning
 	export Weather_StopLightningFar, Weather_StopLightning
 	export Weather_LastLightningFar, Weather_LastLightning
 	export Weather_ResumeLightningFar, Weather_ResumeLightning
-	export BattleEffect_StartBufferBlendFar, BattleEffect_StartBufferBlend
+	export Weather_StartLightningFlashFar, Weather_StartLightningFlash
 	export Func_080c8330, Func_080d6b90
 	export FieldEffect_InitializeSparklesFar, FieldEffect_InitializeSparkles
 	export ScreenTransition_InitializeBattleEffectStateFar, ScreenTransition_InitializeBattleEffectState
@@ -127,7 +127,7 @@ Resource_FarCall006:
 	export DisplayScroll_DisarmHBlankDmaFar, LineScroll_Stop
 	export FieldEffect_PlayCueAndStartEmitterOnTargetFar, FieldEffect_PlayCueAndStartEmitterOnTarget
 	export ItemDisplay_ShowPictureFar, ItemDisplay_ShowPicture
-	export BattleEffect_StartEffectObject22Far, BattleEffect_StartEffectObject22
+	export ItemDisplay_ShowItemFar, ItemDisplay_ShowItem
 	export ObjectEvent_GetObjectFar, ObjectEvent_GetObject
 	export ObjectEvent_SetMode4WithCueFar, ObjectEvent_SetMode4WithCue
 	export ObjectEvent_SetMode5WithCueFar, ObjectEvent_SetMode5WithCue
@@ -168,7 +168,7 @@ Resource_FarCall006:
 	export BattleEffect_HasTriggerFar, BattleEffect_HasTrigger
 	export Sprite_ShareVramCacheEntryFar, Sprite_ShareVramCacheEntry
 	export BattleBackground_GetSelectedFar, BattleBackground_GetSelected
-	export BattleEffect_StartItemBreakFar, BattleEffect_StartItemBreak
+	export FieldEffect_SpawnMoveHandFar, FieldEffect_SpawnMoveHand
 	export FieldEffect_SnapScaleToFullFar, FieldEffect_SnapScaleToFull
 	export UpdateRisingParticleBurstFar, UpdateRisingParticleBurst
 	export Party_AddPpFar, Party_AddPp
@@ -201,7 +201,7 @@ Resource_FarCall006:
 	export Actor_FindBySpriteFar, Actor_FindBySprite
 	export Actor_GetSpriteByIdFar, Actor_GetSpriteById
 	export ObjectTable_SnapshotFar, ObjectTable_Snapshot
-	export ObjectTable_RestoreFar, ObjectTable_Restore
+	export Actor_RestoreFar, Actor_Restore
 	export WorldMap_StartZoomFar, WorldMap_StartZoom
 	export Event_WaitForZoomTransitionFar, Event_WaitForZoomTransition
 	export Area_GetNameIndexFar, Area_GetNameIndex
@@ -313,8 +313,8 @@ Func_080c88e8:
 	.4byte Func_080e74d8
 	export Func_080c88f0, Func_080d4aa8
 	export Actor_ResetTargetsAndVelocityFar, Actor_ResetTargetsAndVelocity
-	export ObjectEffect_StartContextEffect26Far, ObjectEffect_StartContextEffect26
-	export ObjectEffect_StartContextEffect25Far, ObjectEffect_StartContextEffect25
+	export Exit_StartStairsUpFar, Exit_StartStairsUp
+	export Exit_StartStairsDownFar, Exit_StartStairsDown
 	export FieldMotes_StartFar, FieldMotes_Start
 	export Weather_StartRainFar, Weather_StartRain
 	export Func_080c8920, Func_080d7024

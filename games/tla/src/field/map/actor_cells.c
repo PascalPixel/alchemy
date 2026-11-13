@@ -318,7 +318,7 @@ void Func_080eb01c(struct EffectSprite *sprite) {
     transform.angle = sprite->angle;
     transform.scaleX = scaleX >> 8;
     transform.scaleY = scaleY >> 8;
-    matrix = AffineMatrix_BuildForEffect(&transform);
+    matrix = OamMatrix_AllocFromTransform(&transform);
     affineMode = 1;
   }
 

@@ -14,35 +14,35 @@
 
 /// gAnimationFacing_Kind1
 // clang-format off
-const u8 gData_0802eac4[16] = {
+const u8 gAnimationFacing_OnePicture[16] = {
     0x00, 0x00, 0x00, 0x80, 0x80, 0x80, 0x80, 0x00,
     0x80, 0x80, 0x80, 0x00, 0x00, 0x00, 0x00, 0x80,
 };
 
 /// gAnimationFacing_Kind22
-const u8 gData_0802ead4[8] = {
+const u8 gAnimationFacing_FrontBackSwapped[8] = {
     0x80, 0x80, 0x00, 0x00, 0x01, 0x01, 0x81, 0x81,
 };
 
 /// gAnimationFacing_Kind2
-const u8 gData_0802eadc[8] = {
+const u8 gAnimationFacing_FrontBack[8] = {
     0x00, 0x00, 0x80, 0x80, 0x01, 0x01, 0x81, 0x81,
 };
 
 /// gAnimationFacing_Kind3
-const u8 gData_0802eae4[16] = {
+const u8 gAnimationFacing_ThreePictures[16] = {
     0x01, 0x01, 0x00, 0x00, 0x80, 0x80, 0x81, 0x81,
     0x81, 0x81, 0x82, 0x82, 0x02, 0x02, 0x02, 0x01,
 };
 
 /// gAnimationFacing_Kind5: nothing in The Lost Age reads it.
-const u8 gData_0802eaf4[16] = {
+const u8 gAnimationFacing_FivePictures[16] = {
     0x01, 0x00, 0x00, 0x03, 0x03, 0x80, 0x80, 0x81,
     0x81, 0x82, 0x82, 0x04, 0x04, 0x02, 0x02, 0x01,
 };
 
 /// Sixty-four facings, The Lost Age's own.
-const u8 gData_0802eb04[64] = {
+const u8 gAnimationFacing_SixPictures[64] = {
     0x01, 0x01, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00,
     0x00, 0x00, 0x00, 0x00, 0x03, 0x03, 0x03, 0x03,
     0x03, 0x03, 0x03, 0x83, 0x80, 0x80, 0x80, 0x80,
@@ -73,8 +73,8 @@ const s32 gData_0802eb90[2] = {
     0x10000, 0x10000,
 };
 
-/// gCamera_FixedViewMatrix (Q16)
-const s32 gData_0802eb98[12] = {
+/// The fixed view matrix (Q16), as The Broken Seal's.
+const s32 gCamera_FixedViewMatrix[12] = {
     0x10000, 0, 0,
     -0xcccc, 0x10000, 0,
     0, 0, 0x10000,
@@ -82,7 +82,7 @@ const s32 gData_0802eb98[12] = {
 };
 
 /// gScriptObject_CycleTable: a triangle wave.
-const s32 gData_0802ebc8[32] = {
+const s32 gActorScript_CycleTable[32] = {
     1, 2, 3, 4, 5, 6, 7, 8,
     7, 6, 5, 4, 3, 2, 1, 0,
     -1, -2, -3, -4, -5, -6, -7, -8,
@@ -122,8 +122,8 @@ const s32 gData_0802ec94[] = {
     SC_FREE,
 };
 
-/// gWorldMap_KeyYaws: the turn for each direction pad state.
-const s32 gData_0802eca0[16] = {
+/// The turn for each direction pad state.
+const s32 gWorldMap_KeyYaws[16] = {
     0, -512, 512, 0,
     0, -384, 384, 0,
     0, -384, 384, 0,

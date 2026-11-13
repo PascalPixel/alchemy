@@ -432,7 +432,7 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
   BattlePlayback_StartFar(PHASE_SUMMON_RESULTS);
   i = 0;
   do {
-    ResourceObject_ReleaseFar(work->objects[i]);
+    Sprite_DestroyFar(work->objects[i]);
     i++;
   } while (i != 9);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);

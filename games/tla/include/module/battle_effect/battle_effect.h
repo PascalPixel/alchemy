@@ -184,7 +184,7 @@ void ColorBuffer_ScaleFar(void *source, void *destination, s32 scale,
 
 void BattleEffect_ConfigureEffectDisplay(void);
 
-void BattleStaging_ConfigurePaletteFadeFar(s32 mode, s32 background, s32 value);
+void BattleBackground_SetModeFar(s32 mode, s32 background, s32 value);
 
 void BattleEffect_ClearActorTimers(void);
 void BattleEffect_DrawClippedCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1,

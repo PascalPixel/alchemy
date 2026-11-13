@@ -198,10 +198,10 @@ Func_02003b3c:
 	.thumb_func
 FieldEffect_SetAttached:
 	overlay_veneer FieldEffect_SetAttachedFar
-	.global ObjectVisual_CopyAttributes
+	.global Actor_CopyGraphics
 	.thumb_func
-ObjectVisual_CopyAttributes:
-	overlay_veneer ObjectVisual_CopyAttributesFar
+Actor_CopyGraphics:
+	overlay_veneer Actor_CopyGraphicsFar
 	.global FieldCamera_FollowActor
 	.thumb_func
 FieldCamera_FollowActor:

@@ -98,10 +98,10 @@ GameFlag_GetByte:
 	.thumb_func
 GameFlag_SetByte:
 	overlay_veneer GameFlag_SetByteFar
-	.global ResourceMetadata_ClearRecord
+	.global SpriteAnimation_Clear
 	.thumb_func
-ResourceMetadata_ClearRecord:
-	overlay_veneer ResourceMetadata_ClearRecordFar
+SpriteAnimation_Clear:
+	overlay_veneer SpriteAnimation_ClearFar
 	.global Func_020041cc
 	.thumb_func
 Func_020041cc:

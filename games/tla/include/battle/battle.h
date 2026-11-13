@@ -36,7 +36,7 @@ void FieldPsynergy_FadeToCastColor(void);
 void BattlePlayback_Run(void);
 void FieldEffect_DrawScaledActor(struct FieldParticle *object);
 #ifndef OWN_BattleEffect_GetResourceGroup
-s8 BattleEffect_GetResourceGroup(s32 effect_index);
+s8 Scene_GetArea(s32 effect_index);
 #endif
 void FieldPsynergy_FadeFromCastColor(void);
 void BattleEffect_RunTargetMotes(struct BattleEffectArgument *effect, u32 mode);
@@ -46,7 +46,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
                                       s32 mode);
 void BattleEffect_RunHealingMotes(struct BattleEffectArgument *effect,
                                   u32 mode);
-void *BattleEffect_StartItemBreak(void *object);
+void *FieldEffect_SpawnMoveHand(void *object);
 s32 BattleMotion_GetSlotPalette(s32 id);
 void BattleMotion_HopBack(s32 objectId);
 void BattleMotion_PlayFall(s32 unitId);

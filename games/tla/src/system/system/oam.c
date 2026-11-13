@@ -11,7 +11,7 @@ void Oam_ResetFrame(void) {
 
 /// Takes the next of the 32 sprite affine matrices and fills it with the
 /// rotation and scale of source; returns its index, or 31 when all are taken.
-s32 AffineMatrix_BuildForEffect(struct AffineTransform *source) {
+s32 OamMatrix_AllocFromTransform(struct AffineTransform *source) {
   union AffineMatrix *matrix;
   s16 *coefficient;
   s32 xScale;

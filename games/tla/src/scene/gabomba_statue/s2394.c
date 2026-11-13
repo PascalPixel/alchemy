@@ -1476,7 +1476,7 @@ void Func_02004710(void) {
     effect.angle = state->statueOffset;
     effect.scaleX = 0x100;
     effect.scaleY = 0x100;
-    affine = AffineMatrix_BuildForEffect(&effect);
+    affine = OamMatrix_AllocFromTransform(&effect);
   }
   for (id = state->firstId; id < state->endId; id++) {
     struct Actor *piece = Actor_Get(id);
@@ -1934,12 +1934,12 @@ void Func_02005090(void) {
   effect.angle = 0;
   effect.scaleX = 0x200;
   effect.scaleY = 0x200;
-  plain = AffineMatrix_BuildForEffect(&effect);
+  plain = OamMatrix_AllocFromTransform(&effect);
   scale = Func_02005020(*timer);
   effect.angle = 0;
   effect.scaleX = scale;
   effect.scaleY = scale;
-  scaled = AffineMatrix_BuildForEffect(&effect);
+  scaled = OamMatrix_AllocFromTransform(&effect);
   old = clock->old;
   now = clock->now;
   for (i = 0; i <= 4; i++, tile += 2, oam++) {

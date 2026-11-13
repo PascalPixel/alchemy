@@ -411,7 +411,7 @@ void SelectionMenu_Draw(void) {
       state->transform.scaleX = transfer->scale;
       state->transform.scaleY = transfer->scale;
       state->transform.angle = 0;
-      te->param = AffineMatrix_BuildForEffect(&state->transform);
+      te->param = OamMatrix_AllocFromTransform(&state->transform);
       te->affine = 3;
       te->x = te->x + 0xfff0;
       te->y = te->y + 0xf0;
@@ -440,7 +440,7 @@ void SelectionMenu_Draw(void) {
       state->transform.scaleX = node->scale;
       state->transform.scaleY = node->scale;
       state->transform.angle = 0;
-      e->param = AffineMatrix_BuildForEffect(&state->transform);
+      e->param = OamMatrix_AllocFromTransform(&state->transform);
       e->affine = 3;
       e->x = e->x + 0xfff8;
       e->y = e->y + 0xf8;

@@ -12,7 +12,7 @@ Resource_FarCall007:
 	export DjinnMenu_RunFar, DjinnMenu_Run
 	export ItemMenu_DrawItemDetailsFar, ItemMenu_DrawItemDetails
 	export ItemMenu_DrawItemDetailsWithCountFar, ItemMenu_DrawItemDetailsWithCount
-	export Palette_CopyObjectBankToBackground14Far, Palette_CopyObjectBankToBackground14
+	export Palette_LoadIconsIntoHighlightFar, Palette_LoadIconsIntoHighlight
 	export Menu_UpdateEntryObjectTransformsFar, Menu_UpdateEntryObjectTransforms
 	export Menu_CreateOwnerEntryObjectsFar, Menu_CreateOwnerEntryObjects
 	export Menu_PlaceOwnerEntryObjectsFar, Menu_PlaceOwnerEntryObjects

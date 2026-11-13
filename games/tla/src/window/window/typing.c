@@ -81,7 +81,7 @@ void Message_UpdateAll(void) {
 }
 
 extern const u8 gText_SpeedDelays[];
-extern const u8 gData_080aa0df[];
+extern const u8 gMessageSpeed_Delays[];
 extern const u8 gMessageSpeed_Steps[];
 extern const u8 gMessageSpeed_VoiceGaps[];
 
@@ -178,7 +178,7 @@ s32 Message_Type(struct UiChannelSlot *channel) {
 
       case 1:
         if (channel->countdown == 0) {
-          channel->countdown = gData_080aa0df[TEXT_SPEED];
+          channel->countdown = gMessageSpeed_Delays[TEXT_SPEED];
           if (work->mode != 0)
             gInput.pendingPressed = 0;
         }
@@ -243,7 +243,7 @@ s32 Message_Type(struct UiChannelSlot *channel) {
 
       case 2:
         if (channel->countdown == 0) {
-          channel->countdown = gData_080aa0df[TEXT_SPEED];
+          channel->countdown = gMessageSpeed_Delays[TEXT_SPEED];
           if (work->mode != 0)
             gInput.pendingPressed = 0;
         }

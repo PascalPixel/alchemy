@@ -163,7 +163,7 @@ void ReleaseBattleObjectRecords(s32 no) {
       slot->effectEntry = 0;
       i = 0;
       while ((rec = GetMotionRecord(obj, i)) != NULL) {
-        ResourceObject_ReleaseFar(rec);
+        Sprite_DestroyFar(rec);
         i += 1;
       }
       obj->recordStorageKind = 0; // No graphics.
@@ -235,7 +235,7 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses,
       object->recordStorageKind = 2;
       object->records = records;
       Iwram_ClearWordsEntry(records, 16);
-      record = (struct TlaSpriteRecord *)ResourceObject_CreateFar(spriteId);
+      record = (struct TlaSpriteRecord *)Sprite_CreateFar(spriteId);
       if (record != 0) {
         record->scale = Iwram_MulQ16(record->scale, battleObject->scale);
         boxY = Resource_GetMetadataRecordFarFar(spriteId)->boxY;
@@ -244,16 +244,15 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses,
         records++;
       }
       record->flags = 0;
-      record =
-          (struct TlaSpriteRecord *)ResourceObject_CreateFar(spriteId + 0x2001);
+      record = (struct TlaSpriteRecord *)Sprite_CreateFar(spriteId + 0x2001);
       if (record != 0) {
         record->scale = Iwram_MulQ16(record->scale, battleObject->scale);
         *records = record;
       }
       record->flags = 0;
     } else {
-      record = (struct TlaSpriteRecord *)ResourceObject_CreateFar(
-          battleObject->resource);
+      record =
+          (struct TlaSpriteRecord *)Sprite_CreateFar(battleObject->resource);
       if (record != 0) {
         object->recordStorageKind = 1;
         object->records = record;

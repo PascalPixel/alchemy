@@ -288,7 +288,7 @@ void Func_08104e38(s32 first, s32 second) {
   for (i = 0; i < 8; i++) {
     figure = menu->entryObjects[i];
     if (figure != NULL) {
-      ResourceObject_ReleaseFar(figure);
+      Sprite_DestroyFar(figure);
       menu->entryObjects[i] = NULL;
       menu->ids[i] = -1;
     }
@@ -299,7 +299,7 @@ void Func_08104e38(s32 first, s32 second) {
       id = second;
     if (id != -1) {
       menu->ids[i] = id;
-      figure = ResourceObject_CreateFar(Party_GetCharacterSpriteFar(id));
+      figure = Sprite_CreateFar(Party_GetCharacterSpriteFar(id));
       if (figure != NULL) {
         Animation_ApplyChildArgumentFar(figure, 1);
         figure->image.priority = 0;
@@ -319,7 +319,7 @@ void Menu_CreateOwnerEntryObjects(s32 first) {
   for (i = 0; i < 8; i++) {
     object = menu->objects[i];
     if (object != NULL) {
-      ResourceObject_ReleaseFar(object);
+      Sprite_DestroyFar(object);
       menu->objects[i] = NULL;
       menu->ids[i] = -1;
     }
@@ -327,8 +327,7 @@ void Menu_CreateOwnerEntryObjects(s32 first) {
   menu->count = Party_ListMembersFar(owners);
   for (i = 0; i < 4 && owners[first + i] != 255; i++) {
     menu->ids[i] = owners[first + i];
-    object = ResourceObject_CreateFar(
-        Party_GetCharacterSpriteFar(owners[first + i]));
+    object = Sprite_CreateFar(Party_GetCharacterSpriteFar(owners[first + i]));
     if (object != NULL) {
       Animation_ApplyChildArgumentFar(object, 1);
       ((s8 *)object)[9] &= -13;
@@ -372,7 +371,7 @@ void Menu_ReleaseEntryObjects(void) {
     void *object = *objects++;
 
     if (object != NULL)
-      ResourceObject_ReleaseFar(object);
+      Sprite_DestroyFar(object);
   }
   Task_Remove(Menu_UpdateEntryObjectTransforms);
 }
@@ -444,7 +443,7 @@ struct MenuIconWork {
   u8 unkc13[1];
 };
 
-extern s32 gMenuIcon_ResourceIds[];
+extern s32 gDjinnFigures_SpriteIds[];
 
 void DjinnFigures_InitializeTopRow(void) {
   struct MenuIconWork *menu = Ram_HeapSlots->menuRuntime;
@@ -453,12 +452,12 @@ void DjinnFigures_InitializeTopRow(void) {
 
   for (i = 0; i < 4; i++) {
     if (menu->objects[i] != NULL) {
-      ResourceObject_ReleaseFar(menu->objects[i]);
+      Sprite_DestroyFar(menu->objects[i]);
       menu->objects[i] = NULL;
     }
   }
   for (i = 0; i < 4; i++) {
-    object = ResourceObject_CreateFar(gMenuIcon_ResourceIds[i]);
+    object = Sprite_CreateFar(gDjinnFigures_SpriteIds[i]);
     if (object != NULL) {
       Animation_ApplyChildArgumentFar(object, 2);
       object[9] &= -13;
@@ -479,7 +478,7 @@ void DjinnFigures_ReleaseTopRow(void) {
 
   for (i = 0; i < 4; i++) {
     if (menu->objects[i] != NULL) {
-      ResourceObject_ReleaseFar(menu->objects[i]);
+      Sprite_DestroyFar(menu->objects[i]);
       menu->objects[i] = NULL;
     }
   }
@@ -491,10 +490,10 @@ void MenuIcon_ReplaceObject(s32 index, s32 kind, s32 animation) {
   s8 *object;
 
   if (menu->objects[index] != NULL) {
-    ResourceObject_ReleaseFar(menu->objects[index]);
+    Sprite_DestroyFar(menu->objects[index]);
     menu->objects[index] = NULL;
   }
-  object = ResourceObject_CreateFar(gMenuIcon_ResourceIds[kind]);
+  object = Sprite_CreateFar(gDjinnFigures_SpriteIds[kind]);
   if (object != NULL) {
     Animation_ApplyChildArgumentFar(object, animation);
     object[9] &= -13;

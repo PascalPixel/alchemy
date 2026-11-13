@@ -234,7 +234,7 @@ s32 VramCache_Reload(s32 no, s32 src) {
 
 /// Takes the next of the 32 sprite affine matrices and fills it with a
 /// rotation by angle and the scales; returns its index, or 31 when all are
-/// taken. The body is AffineMatrix_BuildForEffect's.
+/// taken. The body is OamMatrix_AllocFromTransform's.
 s32 AffineMatrix_Build(s32 angle, s32 x_scale, s32 y_scale) {
   union AffineMatrix *matrix;
   s16 *coefficient;

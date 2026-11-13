@@ -134,14 +134,14 @@ Map_CopyCellAttributeRect:
 	.thumb_func
 Actor_SetSingleChildFlags:
 	overlay_veneer Actor_SetSingleChildFlagsFar
-	.global Map_EnableUpdateCallback
+	.global TilesetAnim_SuspendAll
 	.thumb_func
-Map_EnableUpdateCallback:
-	overlay_veneer Map_EnableUpdateCallbackFar
-	.global Map_DisableUpdateCallback
+TilesetAnim_SuspendAll:
+	overlay_veneer TilesetAnim_SuspendAllFar
+	.global TilesetAnim_ResumeAll
 	.thumb_func
-Map_DisableUpdateCallback:
-	overlay_veneer Map_DisableUpdateCallbackFar
+TilesetAnim_ResumeAll:
+	overlay_veneer TilesetAnim_ResumeAllFar
 	.global Func_02004020
 	.thumb_func
 Func_02004020:

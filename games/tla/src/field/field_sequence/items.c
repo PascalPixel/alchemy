@@ -21,11 +21,11 @@ void Event_ResolvePendingActions(s32 skip) {
 
   state->actionCounter = 0;
   if (state->pendingFirst != 0 && !(skip & 1))
-    Event_ExecutePackedAction(0x2090);
+    Field_RunPsynergyEndEvents(0x2090);
   if (state->pendingSecond != 0 && !(skip & 2))
-    Event_ExecutePackedAction(0x209b);
+    Field_RunPsynergyEndEvents(0x209b);
   if (gMainRoutineWork.pendingThird != 0 && !(skip & 4))
-    Event_ExecutePackedAction(0x208b);
+    Field_RunPsynergyEndEvents(0x208b);
 }
 
 s32 Party_GetLeaderActor(void) {
@@ -339,7 +339,7 @@ struct TriggerEvent *Scene_FindPsynergyTrigger(s32 filter, s32 kind,
   return NULL;
 }
 
-s32 Event_ExecutePackedAction(u32 packed) {
+s32 Field_RunPsynergyEndEvents(u32 packed) {
   s32 action, mode, kind, selector, target;
   struct PendingEvent *first, *second;
 

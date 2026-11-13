@@ -51,8 +51,8 @@ s32 Animation_LookupValueByKey(s32 key);
 #ifndef OWN_CountRemainingErasedFlashBytes
 s32 CountRemainingErasedFlashBytes(u8 *ptr);
 #endif
-s32 Map_DisableUpdateCallbackFar(void);
-s32 Map_EnableUpdateCallbackFar(void);
+s32 TilesetAnim_ResumeAllFar(void);
+s32 TilesetAnim_SuspendAllFar(void);
 s32 RunFlashEraseVerifier(u8 *, u8 *);
 void DebugText_Print(const u8 *src);
 #ifndef OWN_StartFlashTimer
@@ -92,7 +92,7 @@ void Actor_NoOp(void);
 void Actor_SetMotionActionCallback(struct Actor *, s32);
 void Overlay_Load(u32 index, void *destination);
 s32 Resource_LoadIndexedEntryToBuffer(s32 resource, s32 index);
-void ResourceMetadata_ClearRecord(void *destination);
+void SpriteAnimation_Clear(void *destination);
 void String_FormatHex(u32);
 
 void Iwram_Halt(void);

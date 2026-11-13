@@ -297,20 +297,20 @@ s32 Sprite_ComposePicture(struct LayeredSprite *obj, u32 dir) {
   select_direction:
     switch (layer->kind) {
     case 1:
-      facing = gData_0802eac4[(dir >> 13) & 7];
+      facing = gAnimationFacing_OnePicture[(dir >> 13) & 7];
       break;
     case 2:
     case 20:
-      facing = gData_0802eadc[(dir >> 13) & 7];
+      facing = gAnimationFacing_FrontBack[(dir >> 13) & 7];
       break;
     case 22:
-      facing = gData_0802ead4[(dir >> 13) & 7];
+      facing = gAnimationFacing_FrontBackSwapped[(dir >> 13) & 7];
       break;
     case 3:
-      facing = gData_0802eae4[(dir >> 12) & 15];
+      facing = gAnimationFacing_ThreePictures[(dir >> 12) & 15];
       break;
     case 5:
-      facing = gData_0802eb04[(dir >> 10) & 63];
+      facing = gAnimationFacing_SixPictures[(dir >> 10) & 63];
       break;
     case 8:
       facing = gData_0802eb44[((dir + 0x1000) >> 13) & 7];
@@ -329,7 +329,7 @@ s32 Sprite_ComposePicture(struct LayeredSprite *obj, u32 dir) {
   }
 
   if (obj->flags & 0x20) {
-    if (gData_0802eadc[(dir >> 13) & 7] & 0x80)
+    if (gAnimationFacing_FrontBack[(dir >> 13) & 7] & 0x80)
       mirrored = 1;
   } else if (obj->dirty != 0) {
     size = obj->width * obj->height;
@@ -568,7 +568,7 @@ void Render_ApplyProjectedPlacement(struct LayeredSprite *object, s32 *pos,
     effect.scaleY = scaleY >> 8;
     if (flip != 0)
       effect.scaleX = -effect.scaleX;
-    matrix = AffineMatrix_BuildForEffect(&effect);
+    matrix = OamMatrix_AllocFromTransform(&effect);
   }
   if (scaleX > 0x10000 || scaleY > 0x10000) {
     affine = 3;
@@ -668,7 +668,7 @@ void Func_08022318(struct LayeredSprite *object, s32 *pos, s32 *scale, s32 mode,
     effect.scaleY = scaleY >> 8;
     if (flip != 0)
       effect.scaleX = -effect.scaleX;
-    matrix = AffineMatrix_BuildForEffect(&effect);
+    matrix = OamMatrix_AllocFromTransform(&effect);
   }
   if (scaleX > 0x10000 || scaleY > 0x10000) {
     affine = 3;

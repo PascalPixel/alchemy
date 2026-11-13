@@ -117,7 +117,7 @@ Actor_SetSpritePriority:
 	.global Func_02000a40
 	.thumb_func
 Func_02000a40:
-	overlay_veneer BattleEffect_StartEffectObject22Far
+	overlay_veneer ItemDisplay_ShowItemFar
 	.global Func_02000a48
 	.thumb_func
 Func_02000a48:

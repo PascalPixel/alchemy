@@ -973,11 +973,11 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
 // pulses the selected icon with one affine matrix, draws the others plain,
 // and while the screen transition runs widens window 1 over the icon row.
 
-/* VIEW(battle_party_commands): routine AffineMatrix_BuildForEffect as s32
- * AffineMatrix_BuildForEffect(struct AffineTransform *transform); menus has s32
- * AffineMatrix_BuildForEffect(struct TargetAffine *affine). */
+/* VIEW(battle_party_commands): routine OamMatrix_AllocFromTransform as s32
+ * OamMatrix_AllocFromTransform(struct AffineTransform *transform); menus has
+ * s32 OamMatrix_AllocFromTransform(struct TargetAffine *affine). */
 extern s32 AffineMatrix_BuildForEffect__battle_party_commands(
-    struct AffineTransform *transform) __asm__("AffineMatrix_BuildForEffect");
+    struct AffineTransform *transform) __asm__("OamMatrix_AllocFromTransform");
 
 /* VIEW(menus): variable gWindowSprite_BounceScales as const u16
  * gWindowSprite_BounceScales[]; module/window/scales.h has const u16

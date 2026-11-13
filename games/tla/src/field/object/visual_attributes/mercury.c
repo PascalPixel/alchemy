@@ -232,11 +232,11 @@ struct ChainWork {
   struct ChainSlot slots[8];
 };
 
-/* VIEW(f0d8740): routine AffineMatrix_BuildForEffect as s32
- * AffineMatrix_BuildForEffect(struct ChainTransform *source); affine.h has s32
- * AffineMatrix_BuildForEffect(struct AffineTransform *source). */
+/* VIEW(f0d8740): routine OamMatrix_AllocFromTransform as s32
+ * OamMatrix_AllocFromTransform(struct ChainTransform *source); affine.h has s32
+ * OamMatrix_AllocFromTransform(struct AffineTransform *source). */
 extern s32 AffineMatrix_BuildForEffect__f0d8740(
-    struct ChainTransform *source) __asm__("AffineMatrix_BuildForEffect");
+    struct ChainTransform *source) __asm__("OamMatrix_AllocFromTransform");
 /* VIEW(f0d8740): routine Func_080140d8 as void Func_080140d8(void *entry, s32
  * slot); f0d6674 has void Func_080140d8(struct GroundParticle *sprite, s32
  * depth). */

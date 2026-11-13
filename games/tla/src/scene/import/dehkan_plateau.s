@@ -210,10 +210,10 @@ Actor_ShowEmoteById:
 	.thumb_func
 FieldEffect_SetAttached:
 	overlay_veneer FieldEffect_SetAttachedFar
-	.global ObjectVisual_CopyAttributes
+	.global Actor_CopyGraphics
 	.thumb_func
-ObjectVisual_CopyAttributes:
-	overlay_veneer ObjectVisual_CopyAttributesFar
+Actor_CopyGraphics:
+	overlay_veneer Actor_CopyGraphicsFar
 	.global Camera_SetSpeedParameters
 	.thumb_func
 Camera_SetSpeedParameters:

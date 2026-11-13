@@ -188,8 +188,7 @@ s32 Encounter_CountStepsAndSelectFormation(s32 zone, s32 steps) {
   return sum;
 }
 
-#define BattleEffect_GetResourceGroup                                          \
-  ((s32 (*)(s32))BattleEffect_GetResourceGroup)
+#define Scene_GetArea ((s32 (*)(s32))Scene_GetArea)
 
 s32 Encounter_RollTerrain(u32 index, s32 steps) {
   u8 *table = (u8 *)Ram_HeapSlots->eventWork + 0x18c;
@@ -264,7 +263,7 @@ void Scene_ChooseMusic(void) {
 s32 Area_GetNameIndex(s32 scene, s32 entrance) {
   const struct SceneAreaNameRule *entry = gScene_AreaNameRules;
   s32 areaNameIndex = 0;
-  s32 group = BattleEffect_GetResourceGroup(scene);
+  s32 group = Scene_GetArea(scene);
 
   while (entry->id != -1) {
     if (entry->useSceneId) {

@@ -43,7 +43,7 @@ void System_Initialize(void) {
   MainRoutine_RunFar(0);
 }
 
-void System_Halt(void) {
+void System_IdleForever(void) {
   volatile struct InputState *input = &gInput;
 
   for (;;) {

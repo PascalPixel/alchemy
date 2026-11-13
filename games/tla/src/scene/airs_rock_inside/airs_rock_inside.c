@@ -15,8 +15,8 @@ extern u32 gData_020069e4[];
 extern u32 gData_02006aec[];
 extern u32 gData_02006bac[];
 
-void Map_EnableUpdateCallback(void);
-void Map_DisableUpdateCallback(void);
+void TilesetAnim_SuspendAll(void);
+void TilesetAnim_ResumeAll(void);
 
 /// On most frames, moves the object to a random spot: x 176 to 431 pixels, y
 /// and z up to 31 and 127 pixels past the leader's. Then it keeps its action as
@@ -59,11 +59,11 @@ void Func_02000550(struct Actor *object) {
   if (*(s16 *)(work + 358) != 0 || *(s16 *)(work + 346) != 0 ||
       *(s16 *)(work + 350) != 0 || *(s16 *)(work + 360) != 0) {
     Actor_SetAnimationSpeed(object, 0);
-    Map_EnableUpdateCallback();
+    TilesetAnim_SuspendAll();
     return;
   }
   Actor_SetAnimationSpeed(object, 16);
-  Map_DisableUpdateCallback();
+  TilesetAnim_ResumeAll();
   if (BYTE_AT(object, 99) != 0) {
     if ((gFrameCount & 7) == 0)
       BYTE_AT(object, 99)--;

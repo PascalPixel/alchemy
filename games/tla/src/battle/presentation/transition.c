@@ -94,7 +94,7 @@ void Graphics_BuildSequentialTileTable(s32 *dst) {
 
 /// Builds a flat tilemap: rows 0 to 3 0xffff, rows 4 and 5 tile 1023, rows 6
 /// to 20 tiles 512 to 991 in order, then tile 1023. Called with screen block
-/// 31 by BattleStaging_ConfigurePaletteFade and BattleBackground_Load.
+/// 31 by BattleBackground_SetMode and BattleBackground_Load.
 void BattleTransition_BuildTilemap(s32 *destination) {
   s32 entry;
   u32 index;
@@ -115,7 +115,7 @@ void BattleTransition_BuildTilemap(s32 *destination) {
 
 /// Copies this frame's BG2CNT word and starts the HBlank DMA of the BG2 lines
 /// and the affine block, while the background view is in mode 2.
-void BattleStaging_UpdateHBlankScroll(void) {
+void BattleBackground_ShowZoomedPage(void) {
   struct BattleAffineHdma *records;
   u16 *record;
 

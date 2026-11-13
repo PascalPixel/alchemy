@@ -254,7 +254,7 @@ void Func_020029c8(struct Actor *actor) {
       VramCache_FreeEntry(sprite->vramBlock);
       sprite->keepEntry = 1;
       sprite->vramBlock = work->vramBlock;
-      ResourceMetadata_ClearRecord(sprite->record);
+      SpriteAnimation_Clear(sprite->record);
       sprite->record = NULL;
       sprite->unk1b = 0;
       sprite->unk14[0] = source->unk14[0];

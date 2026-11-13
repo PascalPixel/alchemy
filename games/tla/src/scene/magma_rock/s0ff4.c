@@ -423,7 +423,7 @@ void Func_02003c4c(struct Actor *object, s32 a);
 
 struct AnimationEntry;
 
-/// The sprite as ResourceObject_Create fills it, laid out as vram_block_93.c
+/// The sprite as Sprite_Create fills it, laid out as vram_block_93.c
 /// declares it.
 struct ResourceSprite {
   u32 imageAttributes[3];

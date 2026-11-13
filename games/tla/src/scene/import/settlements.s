@@ -233,7 +233,7 @@ Event_WaitTransitionFrames:
 	.global Func_02002130
 	.thumb_func
 Func_02002130:
-	overlay_veneer BattleEffect_StartEffectObject22Far
+	overlay_veneer ItemDisplay_ShowItemFar
 	.global ObjectTable_Get
 	.thumb_func
 ObjectTable_Get:

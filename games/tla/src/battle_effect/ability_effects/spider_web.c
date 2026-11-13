@@ -1015,7 +1015,7 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
     Task_Remove(Func_0815b68c);
   }
   for (i = 0; i != 8; i++) {
-    ResourceObject_ReleaseFar(work->objects[i]);
+    Sprite_DestroyFar(work->objects[i]);
   }
 }
 

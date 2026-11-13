@@ -1112,7 +1112,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
     frame++;
   }
   for (i = 0; i != 50; i++) {
-    ResourceObject_ReleaseFar(work->objects[i]);
+    Sprite_DestroyFar(work->objects[i]);
   }
   VramBlock_Load93Far();
   *(s32 *)(battle + 84) = VramCache_AllocEntry(128);

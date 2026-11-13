@@ -6,7 +6,7 @@
 #include "../artifact_slots_internal.h"
 
 // clang-format off
-const struct AbilityDefinition gBattleAction_DefinitionTable[] = {
+const struct AbilityDefinition gAbilityDefinitions[] = {
     // Nothing
     {
         .targetMode = 1,

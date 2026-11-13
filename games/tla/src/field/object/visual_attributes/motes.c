@@ -352,7 +352,7 @@ loop:
   Task_Add(FieldEffect_UpdateSparkles, TASK_PASS_VBLANK);
 }
 
-void BattleEffect_StartTwelveFrameBlend(void) {
+void Weather_StartLightning(void) {
   struct FieldBlendWork *work;
   struct BattleEffectBuffers *buffers;
   volatile u32 zero;
@@ -393,7 +393,7 @@ void Weather_ResumeLightning(void) {
   state->enabled = 1;
 }
 
-void BattleEffect_StartBufferBlend(s32 from, s32 to) {
+void Weather_StartLightningFlash(s32 from, s32 to) {
   struct FieldBlendWork *work;
   struct BattleEffectBuffers *buffers;
   volatile u32 zero;

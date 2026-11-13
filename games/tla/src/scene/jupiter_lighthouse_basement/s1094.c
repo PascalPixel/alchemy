@@ -108,8 +108,8 @@ struct EventWork1ac {
   s32 value;
 };
 
-void Map_EnableUpdateCallback(void);
-void Map_DisableUpdateCallback(void);
+void TilesetAnim_SuspendAll(void);
+void TilesetAnim_ResumeAll(void);
 void Func_0200015c(struct Actor *object);
 void Func_020004dc(s32 mode);
 

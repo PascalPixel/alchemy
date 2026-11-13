@@ -652,7 +652,7 @@ void FieldParticle_Initialize(struct FieldParticle *effect, s32 kind, s32 x,
   volatile u32 zero;
 
   Dma_Fill32Cell(zero, 0, effect, sizeof *effect);
-  object = (struct FieldSprite *)ResourceObject_CreateFar(kind);
+  object = (struct FieldSprite *)Sprite_CreateFar(kind);
   effect->object = object;
   if (object != NULL)
     object->priority = 0;
@@ -677,6 +677,6 @@ void FieldParticle_Initialize(struct FieldParticle *effect, s32 kind, s32 x,
 
 void FieldEffect_ClearOwnedSlot(struct FieldParticle *slot) {
   if (slot->object)
-    ResourceObject_ReleaseFar((struct ResourceObjectWork *)slot->object);
+    Sprite_DestroyFar((struct ResourceObjectWork *)slot->object);
   Dma_Fill32(0, slot, sizeof *slot);
 }

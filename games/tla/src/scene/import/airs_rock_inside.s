@@ -130,14 +130,14 @@ MapGrid_SetScreenShake:
 	.thumb_func
 Func_02005dd4:
 	overlay_veneer MapGrid_WaitForShakeToSettleFar
-	.global Map_EnableUpdateCallback
+	.global TilesetAnim_SuspendAll
 	.thumb_func
-Map_EnableUpdateCallback:
-	overlay_veneer Map_EnableUpdateCallbackFar
-	.global Map_DisableUpdateCallback
+TilesetAnim_SuspendAll:
+	overlay_veneer TilesetAnim_SuspendAllFar
+	.global TilesetAnim_ResumeAll
 	.thumb_func
-Map_DisableUpdateCallback:
-	overlay_veneer Map_DisableUpdateCallbackFar
+TilesetAnim_ResumeAll:
+	overlay_veneer TilesetAnim_ResumeAllFar
 	.global Func_02005dec
 	.thumb_func
 Func_02005dec:

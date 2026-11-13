@@ -74,10 +74,10 @@ VramCache_Load:
 	.thumb_func
 VramCache_FindFreeEntry:
 	overlay_veneer VramCache_FindFreeEntryFar
-	.global AffineMatrix_BuildForEffect
+	.global OamMatrix_AllocFromTransform
 	.thumb_func
-AffineMatrix_BuildForEffect:
-	overlay_veneer AffineMatrix_BuildForEffectFar
+OamMatrix_AllocFromTransform:
+	overlay_veneer OamMatrix_AllocFromTransformFar
 	.global Func_020055ec
 	.thumb_func
 Func_020055ec:

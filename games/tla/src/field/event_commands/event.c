@@ -378,7 +378,7 @@ s32 FieldYesNo_Ask(s32 a) { return YesNoMenu_RunFar(a, 0, 0, 0); }
 s32 Func_080d296c(s32 actor, s32 item, s32 flag) {
   if (PartyInventory_FindRoomFar(item) < 0) {
     Actor_GetById(actor)->scaleX = 0;
-    BattleEffect_StartEffectObject22(item, 3);
+    ItemDisplay_ShowItem(item, 3);
     MessageArgument_PushFar(item, 2);
     FieldMessage_ShowFar((s32)&MsgFoundItem, 1);
     // Four messages on: "But <protagonist>'s party can't carry any more".
@@ -389,7 +389,7 @@ s32 Func_080d296c(s32 actor, s32 item, s32 flag) {
     return -1;
   }
   Actor_SetHorizontalPositionWithTerrain(actor, 0, 0);
-  BattleEffect_StartEffectObject22(item, 3);
+  ItemDisplay_ShowItem(item, 3);
   PartyInventory_GiveItem(item, 0);
   if (flag != -1)
     GameFlag_SetBit(flag);

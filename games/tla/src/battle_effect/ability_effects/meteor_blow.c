@@ -718,7 +718,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   HeapSlot_Release(SLOT_BLITTER);
-  ResourceObject_ReleaseFar(work->objects[0]);
+  Sprite_DestroyFar(work->objects[0]);
   BattleEffect_EndCanvasLayer();
 }
 #undef SLOT_BLITTER

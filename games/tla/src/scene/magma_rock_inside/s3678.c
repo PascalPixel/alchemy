@@ -384,7 +384,7 @@ next:
       Actor_SetSpriteColor(Actor_GetById(8), 7);
       wait(2);
       Func_02004c98(partner, 0);
-      ObjectVisual_CopyAttributes(id, 9);
+      Actor_CopyGraphics(id, 9);
       Actor_SetSpriteColor(Actor_GetById(8), 0);
       wait(2);
       Actor_SetSpriteColor(Actor_GetById(8), 7);

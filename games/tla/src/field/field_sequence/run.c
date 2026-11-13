@@ -104,7 +104,7 @@ s32 FieldSequence_Run(void) {
   Func_080caa4c(OVERLAY_CALL(7));
   Field_PlaceTreasureSpots();
   if (GameFlag_Test(265))
-    ObjectTable_Restore();
+    Actor_Restore();
   if (gMainRoutineWork.pendingDjinnEvent != 0)
     Djinn_RestoreActorAfterBattle();
   work->queuedSound = -1;
@@ -159,7 +159,7 @@ s32 FieldSequence_Run(void) {
     goto done;
   }
   GameFlag_ClearBit(265);
-  if (BattleEffect_SumCounters() == 0) {
+  if (Field_CountRequests() == 0) {
     value = work->transitionActive;
     if (value == 0) {
       if (ARRIVAL.state == 1) {
@@ -252,7 +252,7 @@ s32 FieldSequence_Run(void) {
     party->z = leader->z;
     party->heading = leader->facing;
     *turn = leader->terrainId;
-    while (BattleEffect_SumCounters() != 0) {
+    while (Field_CountRequests() != 0) {
       if (work->warp != 0) {
         result = work->warp;
         work->warp = 0;
@@ -490,7 +490,7 @@ s32 FieldSequence_Run(void) {
           Field_UpdateWalking(leader->terrainId, leader->x, leader->y,
                               leader->z);
       }
-    } while (BattleEffect_SumCounters() == 0);
+    } while (Field_CountRequests() == 0);
   }
 
 done:

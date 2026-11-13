@@ -2236,7 +2236,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
   Iwram_FillWords((void *)0x06004000, 0x4000, 0x3f3f3f3f);
   IO_WRITE_QUEUE_PUSH(0x04000000, 0x7741, 0x20000);
   for (i = 0; i != 12; i++) {
-    ResourceObject_ReleaseFar(work->objects[i]);
+    Sprite_DestroyFar(work->objects[i]);
   }
   Palette_LoadBasicSpriteColors();
   Dma_Set((const void *)OBJ_PLTT, (void *)(BG_PLTT + 80), 0x80000010,

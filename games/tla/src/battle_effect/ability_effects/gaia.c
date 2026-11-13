@@ -161,7 +161,7 @@ void BattleEffect_RunGaia(struct BattleEffectArgument *effect) {
 
   // The rocks: eleven animated objects, four of each size.
   for (i = 0; i != ROCK_COUNT; i++) {
-    struct RockObject *object = ResourceObject_CreateFar(653);
+    struct RockObject *object = Sprite_CreateFar(653);
 
     work->objects[i] = object;
     if (object != 0) {
@@ -383,7 +383,7 @@ void BattleEffect_RunGaia(struct BattleEffectArgument *effect) {
   HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
   HeapSlot_Release(HEAP_BLITTER);
   for (i = 0; i != ROCK_COUNT; i++)
-    ResourceObject_ReleaseFar(work->objects[i]);
+    Sprite_DestroyFar(work->objects[i]);
   BattleEffect_EndCanvasLayer();
 }
 

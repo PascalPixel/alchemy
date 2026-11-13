@@ -96,7 +96,7 @@ void BattleEffect_RunRamses(struct BattleEffectArgument *effect) {
   BattleEffect_SelectLivingTargets(work->effect);
   BattleEffect_SpawnObjects(FORMATION_SIZE, FORMATION, 2);
   for (i = 0; i != ROCK_COUNT; i++) {
-    struct FxAnimObject *rock = ResourceObject_CreateFar(ROCK_OBJECT);
+    struct FxAnimObject *rock = Sprite_CreateFar(ROCK_OBJECT);
 
     work->objects[FIRST_ROCK + i] = rock;
     if (rock != 0) {
@@ -322,7 +322,7 @@ void BattleEffect_RunRamses(struct BattleEffectArgument *effect) {
   BattlePlayback_StartFar(PHASE_SUMMON_RESULTS);
   BattleEffect_SetupBlendedDisplay();
   for (i = 0; i != FIRST_ROCK + ROCK_COUNT; i++)
-    ResourceObject_ReleaseFar(work->objects[i]);
+    Sprite_DestroyFar(work->objects[i]);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
   HeapSlot_Release(HEAP_BLITTER);

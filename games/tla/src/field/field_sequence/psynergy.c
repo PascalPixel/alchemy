@@ -89,7 +89,7 @@ s32 Field_UsePsynergy(u32 code) {
     Field_RunPsynergyEvent(pending, userId, target);
   }
   if (code & 0x2000)
-    return Event_ExecutePackedAction(code);
+    return Field_RunPsynergyEndEvents(code);
 
   selector = Func_080ce31c(group);
   before = Scene_FindPsynergyTrigger(0x10000005, group, selector);

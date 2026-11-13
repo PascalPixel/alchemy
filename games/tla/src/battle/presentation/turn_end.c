@@ -495,8 +495,7 @@ void Battle_ProcessTurnEnd(void) {
       } while (recoveryIndex < list->count);
     }
   }
-  BattleStaging_ConfigurePaletteFade(
-      2, *(u16 *)&Ram_HeapSlots->battleWork->unk670[0], 0);
+  BattleBackground_SetMode(2, *(u16 *)&Ram_HeapSlots->battleWork->unk670[0], 0);
   {
     s32 *groupList;
     struct BattleGroupOrder order = Data_081297c4;

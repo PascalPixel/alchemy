@@ -316,7 +316,7 @@ void MenuCursor_Advance(struct ShopCursor *cursor);
 
 void Event_ResolveAllPendingActionsFar(void);
 
-void Palette_CopyObjectBankToBackground14Far(void);
+void Palette_LoadIconsIntoHighlightFar(void);
 
 void VramBlock_LoadResource(s32 slot, s32 size, s32 resource);
 

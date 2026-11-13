@@ -491,7 +491,7 @@ void Func_02000818(void) {
   BattleEffect_SetObjectUpdateMode(Actor_Get(21), 2);
   Event_PlaySound(201);
   FieldEvent_Wait(40);
-  effect = BattleEffect_StartItemBreak(actor21);
+  effect = FieldEffect_SpawnMoveHand(actor21);
   position[0] = actor15->x;
   effect->watchedObject = actor15;
   position[1] = actor15->y + 0x100000;

@@ -113,7 +113,7 @@ void WindowSprite_Pulse(struct Object *obj) {
     effect.y = v;
     effect.z = 0;
     obj->affine22 =
-        AffineMatrix_BuildForEffect((struct AffineTransform *)&effect);
+        OamMatrix_AllocFromTransform((struct AffineTransform *)&effect);
     obj->mode21 = 3;
     obj->pos22 = obj->src6 + 0xfff0;
     obj->out20 = obj->src8 + 0xf0;

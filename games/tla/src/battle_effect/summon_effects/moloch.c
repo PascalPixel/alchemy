@@ -374,7 +374,7 @@ void BattleEffect_RunMoloch(struct BattleEffectArgument *effect) {
     HeapSlot_Release(104);
     BattleEffect_RunImpactBurst(5, focus.x, focus.y);
     for (i = 0; i != 12; i++)
-      ResourceObject_ReleaseFar(work->objects[i]);
+      Sprite_DestroyFar(work->objects[i]);
   }
   BattleEffect_EndCanvasLayer();
 }
@@ -1185,7 +1185,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
         wait(1);
         if (frame <= 386) {
           for (i = 0; i != 16; i++)
-            ResourceObject_ReleaseFar(work->objects[i]);
+            Sprite_DestroyFar(work->objects[i]);
           BattleEffect_SelectLivingTargets(work->effect);
           Palette_LoadBasicSpriteColors();
           for (i = 0; i != work->effect->count; i++)
@@ -1459,7 +1459,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       }
       if (frame == 386) {
         for (i = 0; i != 16; i++)
-          ResourceObject_ReleaseFar(work->objects[i]);
+          Sprite_DestroyFar(work->objects[i]);
         BattleEffect_SelectLivingTargets(work->effect);
         Palette_LoadBasicSpriteColors();
         for (i = 0; i != work->effect->count; i++)
@@ -2210,7 +2210,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
   REG_BG2X = 0;
   gBgScroll[1].x = savedScroll;
   for (i = 0; i != 36; i++)
-    ResourceObject_ReleaseFar(objects[i]);
+    Sprite_DestroyFar(objects[i]);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }

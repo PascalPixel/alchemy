@@ -1161,7 +1161,7 @@ void PaletteFade_Update(void) {
   IO_WRITE_QUEUE_PUSH((u32)OBJ_PLTT, (u32)(bank + 256), DMA_COPY_WORDS(128));
 }
 
-void Palette_Transform(u32 mode, u16 *source, u16 *destination,
+void PaletteFade_Build(u32 mode, u16 *source, u16 *destination,
                        s32 selectedPalettes) {
   u32 colorIndex;
   u32 colorCount = 512;
@@ -1422,7 +1422,7 @@ void PaletteFade_Initialize(void) {
   Dma_Set((void *)BG_PLTT, buffer, DMA_COPY_WORDS(128), REG_DMA3);
   Dma_Set((void *)OBJ_PLTT, &buffer->palette[256], DMA_COPY_WORDS(128),
           REG_DMA3);
-  Palette_Transform(0x10000, buffer->palette, buffer->target, 0);
+  PaletteFade_Build(0x10000, buffer->palette, buffer->target, 0);
   operation = 1152;
   Task_Add((s32)(PaletteFade_Update), operation);
 }
@@ -1436,14 +1436,14 @@ void PaletteFade_SetTarget(s32 index, s32 transform) {
   struct PaletteFade *target = Ram_HeapSlots->block32;
 
   if (target != NULL)
-    Palette_Transform(index, target->palette, target->target, transform);
+    PaletteFade_Build(index, target->palette, target->target, transform);
 }
 
 void PaletteFade_SetSource(s32 index, s32 transform) {
   struct PaletteFade *target = Ram_HeapSlots->block32;
 
   if (target != NULL)
-    Palette_Transform(index, (u16 *)target, target->current, transform);
+    PaletteFade_Build(index, (u16 *)target, target->current, transform);
 }
 
 void PaletteFade_SetBackdrop(s32 value) {

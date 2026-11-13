@@ -11,14 +11,14 @@ Resource_FarCall003:
 	export InitializeAnimationObjectsFar, InitializeAnimationObjects
 	export Animation_ApplyChildArgumentFar, Animation_ApplyChildArgument
 	export Sprite_SetAnimationTimersFar, Sprite_SetAnimationTimers
-	export ResourceObject_CreateFar, ResourceObject_Create
-	export ResourceObject_ReleaseFar, ResourceObject_Release
+	export Sprite_CreateFar, Sprite_Create
+	export Sprite_DestroyFar, Sprite_Destroy
 	export Render_PlaceSpritePartPairFar, Render_PlaceSpritePartPair
 	export ResourceMetadata_RegisterFar, ResourceMetadata_Register
 	export Sprite_RemoveAnimationFar, Sprite_RemoveAnimation
 	export Sprite_RemoveAnimationAtFar, Sprite_RemoveAnimationAt
-	export ResourceMetadata_ClearRecordFar, ResourceMetadata_ClearRecord
-	export Animation_InitializeWorkFromMetadataFar, Animation_InitializeWorkFromMetadata
+	export SpriteAnimation_ClearFar, SpriteAnimation_Clear
+	export SpriteAnimation_ResetFar, SpriteAnimation_Reset
 	export SpriteAnimation_StartFar, SpriteAnimation_Start
 	export ActorSystem_InitializeFar, ActorSystem_Initialize
 	export Actor_SetMode, Actor_SelectAnimation
@@ -94,8 +94,8 @@ Resource_FarCall003:
 	export MapGrid_SetCellBehaviorAtFar, MapGrid_SetCellBehaviorAt
 	export Animation_ApplyChildValueFar, Animation_ApplyChildValue
 	export SpriteColor_RemapPixelsFar, SpriteColor_RemapPixels
-	export Map_EnableUpdateCallbackFar, Map_EnableUpdateCallback
-	export Map_DisableUpdateCallbackFar, Map_DisableUpdateCallback
+	export TilesetAnim_SuspendAllFar, TilesetAnim_SuspendAll
+	export TilesetAnim_ResumeAllFar, TilesetAnim_ResumeAll
 	export ActorScript_FindOverlappingEntryFar, ActorScript_FindOverlappingEntry
 	export MapGrid_GetTerrainKindFar, MapGrid_GetTerrainKind
 	export Func_080202f8, Func_08023f94

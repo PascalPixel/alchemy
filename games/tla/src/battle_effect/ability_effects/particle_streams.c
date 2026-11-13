@@ -318,7 +318,7 @@ UNUSED void Func_08163e14(struct BattleEffectArgument *effect) {
     HeapSlot_Release(HEAP_BLITTER);
     BattleEffect_RunImpactBurst(1, focus.x, focus.y);
     for (k = 0; k != FORMATION_SIZE; k++)
-      ResourceObject_ReleaseFar(work->objects[k]);
+      Sprite_DestroyFar(work->objects[k]);
   }
   BattleEffect_EndCanvasLayer();
 }
@@ -863,7 +863,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
   // Mode 1's two flames, or mode 0's sun.
   if (mode == 1) {
     for (i = 0; i != 2; i++) {
-      struct FxAnimObject *flame = ResourceObject_CreateFar(638 + i * 0x2001);
+      struct FxAnimObject *flame = Sprite_CreateFar(638 + i * 0x2001);
 
       work->objects[i] = flame;
       if (flame != 0) {
@@ -1242,8 +1242,8 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
       Sound_PlayFar(SE_RISE);
     if (frame == BLAST_HIT_FRAME) {
       if (mode == 1) {
-        ResourceObject_ReleaseFar(work->objects[0]);
-        ResourceObject_ReleaseFar(work->objects[1]);
+        Sprite_DestroyFar(work->objects[0]);
+        Sprite_DestroyFar(work->objects[1]);
         BattleActor_CommitPlacementFar();
       }
       BattlePlayback_StartFar(PHASE_SUMMON_RESULTS);
@@ -1358,6 +1358,6 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   HeapSlot_Release(HEAP_BLITTER);
   if (mode == 0)
-    ResourceObject_ReleaseFar(work->objects[0]);
+    Sprite_DestroyFar(work->objects[0]);
   BattleEffect_EndCanvasLayer();
 }

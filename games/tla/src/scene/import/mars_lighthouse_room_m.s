@@ -58,10 +58,10 @@ GameFlag_SetBit:
 	.thumb_func
 GameFlag_ClearBit:
 	overlay_veneer GameFlag_ClearFar
-	.global ResourceMetadata_ClearRecord
+	.global SpriteAnimation_Clear
 	.thumb_func
-ResourceMetadata_ClearRecord:
-	overlay_veneer ResourceMetadata_ClearRecordFar
+SpriteAnimation_Clear:
+	overlay_veneer SpriteAnimation_ClearFar
 	.global Func_02003118
 	.thumb_func
 Func_02003118:

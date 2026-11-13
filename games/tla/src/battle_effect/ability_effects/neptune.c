@@ -520,7 +520,7 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
   } while (++frame != 144);
 
   for (i = 0; i != 8; i++)
-    ResourceObject_ReleaseFar(work->objects[i]);
+    Sprite_DestroyFar(work->objects[i]);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   HeapSlot_Release(188);
   HeapSlot_Release(104);

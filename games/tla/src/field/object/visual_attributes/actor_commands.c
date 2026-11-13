@@ -53,7 +53,7 @@ void Actor_SetSpritePriority(u32 objectId, s32 priority) {
   }
 }
 
-void ObjectVisual_CopyAttributes(u32 targetId, u32 sourceId) {
+void Actor_CopyGraphics(u32 targetId, u32 sourceId) {
   struct FieldSprite *sprite;
   u8 block;
   u32 tile;
@@ -201,7 +201,7 @@ void Actor_ShowItemIconById(u32 id, s32 resource) {
       tile = VramCache_Load(sprite->vramBlock, 0x80, buffer);
       HeapSlot_Release(68);
       object->unk5c[0] = kind;
-      ResourceMetadata_ClearRecordFar(sprite->record);
+      SpriteAnimation_ClearFar(sprite->record);
       sprite->record = NULL;
       sprite->unk1b[0] = zero;
       sprite->fullColor = zero;

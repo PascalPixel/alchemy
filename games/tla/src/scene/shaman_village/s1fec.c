@@ -501,7 +501,7 @@ commands:
       word |= low << 16;
       work[0] = word;
     }
-    matrix = (s16)AffineMatrix_BuildForEffect((struct AffineTransform *)t);
+    matrix = (s16)OamMatrix_AllocFromTransform((struct AffineTransform *)t);
   }
   gData_020064a0 += pos;
   pos = gData_020064a0 / 256;

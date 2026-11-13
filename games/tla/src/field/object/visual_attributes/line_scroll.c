@@ -11,7 +11,7 @@
 /// mode, then waits 18 frames. The leader's sprite gains a second part
 /// (metadata 267) for it.
 // As ☀️'s function of the same name.
-void ObjectEffect_PrepareContextEffect(s32 animation) {
+void Exit_PrepareAnimation(s32 animation) {
   u32 zero;
   u8 param;
   struct Actor *object;
@@ -43,17 +43,17 @@ void ObjectEffect_PrepareContextEffect(s32 animation) {
   wait(18);
 }
 
-void ObjectEffect_StartContextEffect26(void) {
-  ObjectEffect_PrepareContextEffect(0x1A);
+void Exit_StartStairsUp(void) {
+  Exit_PrepareAnimation(0x1A);
   GameFlag_SetBit(0x120);
 }
 
-void ObjectEffect_StartContextEffect25(void) {
-  ObjectEffect_PrepareContextEffect(0x19);
+void Exit_StartStairsDown(void) {
+  Exit_PrepareAnimation(0x19);
   GameFlag_SetBit(0x121);
 }
 
-void ObjectEffect_EndContextEffect(s32 mode) {
+void Entrance_EndArrivalAnimation(s32 mode) {
   s32 zero;
   struct Actor *obj = ObjectTable_Get(gMainRoutineWork.currentOwner);
   struct ContextSprite *ctx = obj->sprite;
@@ -67,7 +67,7 @@ void ObjectEffect_EndContextEffect(s32 mode) {
   Actor_SetMode(obj, mode);
   wait(30);
   ctx->count = 1;
-  ResourceMetadata_ClearRecordFar(ctx->entries[1]);
+  SpriteAnimation_ClearFar(ctx->entries[1]);
   {
     /* FAKEMATCH(pin): the sprite copied into r1 for its two stores, leaving
      * r3 to the zero's copy from sl; as ctx in both stores, 8 of 69
@@ -90,13 +90,13 @@ s32 Entrance_PlayArrival(void) {
   s32 flag = 0x120;
 
   if (GameFlag_Test(flag) != 0) {
-    ObjectEffect_EndContextEffect(24);
+    Entrance_EndArrivalAnimation(24);
     GameFlag_ClearBit(flag);
     result = 1;
   } else {
     flag = 0x121;
     if (GameFlag_Test(flag) != 0) {
-      ObjectEffect_EndContextEffect(23);
+      Entrance_EndArrivalAnimation(23);
       GameFlag_ClearBit(flag);
       result = 2;
     } else {

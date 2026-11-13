@@ -22,7 +22,7 @@ const u16 Data_080b1290[4][7] = {
 
 /// Experience per level, 99 levels for each character in turn.
 // clang-format off
-const u32 gOwner_ExperienceThresholds[] = {
+const u32 gCharacter_LevelExpTable[] = {
     // Isaac
     0, 24, 67, 144, 283, 519, 873, 1369,
     2039, 2910, 3999, 5306, 6861, 8696, 10843, 13334,

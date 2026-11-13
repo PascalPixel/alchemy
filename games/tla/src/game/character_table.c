@@ -4,7 +4,7 @@
 #include "game.h"
 
 // clang-format off
-const struct CharacterDefinition gOwner_GrowthRecords[] = {
+const struct CharacterDefinition gCharacter_DefinitionTable[] = {
     // Isaac
     {
         .hp = {30, 182, 334, 486, 638, 790},

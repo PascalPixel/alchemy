@@ -306,10 +306,10 @@ Func_02005958:
 	.thumb_func
 Actor_ShowEmoteById:
 	overlay_veneer Actor_ShowEmoteByIdFar
-	.global ObjectVisual_CopyAttributes
+	.global Actor_CopyGraphics
 	.thumb_func
-ObjectVisual_CopyAttributes:
-	overlay_veneer ObjectVisual_CopyAttributesFar
+Actor_CopyGraphics:
+	overlay_veneer Actor_CopyGraphicsFar
 	.global Camera_SetSpeedParameters
 	.thumb_func
 Camera_SetSpeedParameters:
@@ -426,10 +426,10 @@ Actor_SetSpriteRotationById:
 	.thumb_func
 Func_02005a50:
 	overlay_veneer Func_080c88d0
-	.global ObjectEffect_StartContextEffect26
+	.global Exit_StartStairsUp
 	.thumb_func
-ObjectEffect_StartContextEffect26:
-	overlay_veneer ObjectEffect_StartContextEffect26Far
+Exit_StartStairsUp:
+	overlay_veneer Exit_StartStairsUpFar
 	.global Func_02005a60
 	.thumb_func
 Func_02005a60:

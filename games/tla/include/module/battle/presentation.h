@@ -35,7 +35,7 @@ s32 BattleStaging_RunAttack(struct BattlePlan *plan, s32 mode);
 
 s32 Func_08124cc4(s32 side);
 
-void BattleStaging_ConfigurePaletteFade(s32 mode, s32 background, s32 value);
+void BattleBackground_SetMode(s32 mode, s32 background, s32 value);
 
 s32 Func_08122514(struct BattleActionRecord *request, s32 retry);
 

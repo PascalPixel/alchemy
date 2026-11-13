@@ -18,7 +18,7 @@ u8 Func_080dbdf4(s32 x, s32 z, s32 layer, s32 value);
 
 extern const s32 gData_080f32e0[];
 
-void BattleEffect_StartEffectObject22(s32 item, s32 flags);
+void ItemDisplay_ShowItem(s32 item, s32 flags);
 void FieldEffect_SpawnRevealMarkers(void);
 
 void Func_080daecc(s32 objectId, s32 grow);
@@ -45,11 +45,11 @@ s32 Func_080dbda8(s32 x, s32 z, s32 layer);
 
 void Djinn_RunBattleStartHop(s32 djinniId);
 
-extern const u8 gData_0802eac4[16];
-extern const u8 gData_0802ead4[8];
-extern const u8 gData_0802eadc[8];
-extern const u8 gData_0802eae4[16];
-extern const u8 gData_0802eb04[64];
+extern const u8 gAnimationFacing_OnePicture[16];
+extern const u8 gAnimationFacing_FrontBackSwapped[8];
+extern const u8 gAnimationFacing_FrontBack[8];
+extern const u8 gAnimationFacing_ThreePictures[16];
+extern const u8 gAnimationFacing_SixPictures[64];
 extern const u8 gData_0802eb44[8];
 
 extern const struct ActorPlacement gData_080f21d4[];
@@ -57,8 +57,8 @@ extern const struct ActorPlacement gData_080f21d4[];
 void BattleEffect_InitializeBuffers(void);
 
 s32 Entrance_PlayArrival(void);
-void ObjectEffect_StartContextEffect25(void);
-void ObjectEffect_StartContextEffect26(void);
+void Exit_StartStairsDown(void);
+void Exit_StartStairsUp(void);
 void Func_080d5fd4(void);
 
 s32 Field_TryJumpForward(void);
@@ -169,9 +169,9 @@ void BattleEffect_InterpolateBuffers(s16 *source, s16 *target, s16 *step,
                                      s32 frames);
 
 extern const s32 gData_0802eb90[2];
-extern const s32 gData_0802eb98[12];
+extern const s32 gCamera_FixedViewMatrix[12];
 extern const s32 gData_0802ec7c[];
-extern const s32 gData_0802eca0[16];
+extern const s32 gWorldMap_KeyYaws[16];
 extern const s32 gData_0802ec94[];
 extern const s32 gData_0802ed28[];
 extern const s32 gData_0802ece0[];
@@ -180,7 +180,7 @@ extern const s32 gData_0802ec88[];
 struct Actor *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type);
 
 s32 Actor_GetSpriteById(s32 key);
-void ObjectVisual_CopyAttributes(u32 targetId, u32 sourceId);
+void Actor_CopyGraphics(u32 targetId, u32 sourceId);
 
 s32 ResourceTable_CountFreeBlocks(void);
 void Func_080dbb40(void);

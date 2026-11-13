@@ -217,7 +217,7 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
           selectionUi->commandKinds[selectionUi->selectedIndex]);
     }
     selectionUi->affineIndex =
-        AffineMatrix_BuildForEffect(&selectionUi->affine);
+        OamMatrix_AllocFromTransform(&selectionUi->affine);
     for (entryIndex = 0; entryIndex < selectionUi->iconCount; entryIndex++) {
       struct CommandRowIcon *entry = &selectionUi->entries[entryIndex];
 

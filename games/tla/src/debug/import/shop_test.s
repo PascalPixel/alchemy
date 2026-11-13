@@ -235,7 +235,7 @@ Func_02000e20:
 	.global Func_02000e28
 	.thumb_func
 Func_02000e28:
-	overlay_veneer BattleEffect_StartEffectObject22Far
+	overlay_veneer ItemDisplay_ShowItemFar
 	.global Party_GetLeaderActor
 	.thumb_func
 Party_GetLeaderActor:

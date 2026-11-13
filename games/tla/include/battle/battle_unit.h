@@ -142,7 +142,7 @@ enum AbilityEffect {
   ABILITY_EFFECT_PSY_LEECH = 69           ///< Psy Leech
 };
 
-/// An ability's definition, a row of gBattleAction_DefinitionTable: its
+/// An ability's definition, a row of gAbilityDefinitions: its
 /// targeting, kind, element, effect, range, PP cost and power.
 struct BattleAct {
   u8 targetMode; ///< TARGET_MODE_NONE, _FOES, _ALLIES or _SELF

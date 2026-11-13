@@ -384,7 +384,7 @@ void FieldPsynergy_SteerPushedTarget(void) {
   FieldPsynergy_FadeToCastColor();
   user->watchedObject = target;
   Actor_StartScriptFar(user, gFieldEffect_SourceHoldScript);
-  pusher = BattleEffect_StartItemBreak(user);
+  pusher = FieldEffect_SpawnMoveHand(user);
   if (pusher == NULL) {
     FieldPsynergy_FadeFromCastColor();
     return;
@@ -604,7 +604,7 @@ void FieldPsynergy_Move(void) {
   object = scene->mainObject;
 
   FieldPsynergy_FadeToCastColor();
-  object = BattleEffect_StartItemBreak(object);
+  object = FieldEffect_SpawnMoveHand(object);
   FieldEffect_SnapScaleToFull(object);
   if (object != 0) {
     Actor_SetMode(object, 4);
@@ -629,10 +629,10 @@ extern void BattleEffect_UpdateItemBreakFragment__item_break(void) __asm__(
 
 #define SE_ITEM_BREAK 138
 
-/// The Broken Seal's BattleEffect_StartItemBreak with this game's objects
+/// The Broken Seal's FieldEffect_SpawnMoveHand with this game's objects
 /// 278 and 673: spawns the breaking item above object and eight fragments
 /// that scatter from it.
-void *BattleEffect_StartItemBreak(void *object) {
+void *FieldEffect_SpawnMoveHand(void *object) {
   struct Actor *source = object;
   struct Actor *parent;
   struct Actor *child;

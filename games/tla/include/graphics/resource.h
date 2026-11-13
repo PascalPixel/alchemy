@@ -12,10 +12,10 @@
 struct ResourceObject;
 struct ResourceObjectWork;
 
-struct ResourceObject *ResourceObject_Create(s32 resource);
-void ResourceObject_Release(struct ResourceObjectWork *work);
-struct ResourceObject *ResourceObject_CreateFar(s32 resource);
-void ResourceObject_ReleaseFar(struct ResourceObjectWork *work);
+struct ResourceObject *Sprite_Create(s32 resource);
+void Sprite_Destroy(struct ResourceObjectWork *work);
+struct ResourceObject *Sprite_CreateFar(s32 resource);
+void Sprite_DestroyFar(struct ResourceObjectWork *work);
 
 void *Resource_GetTableEntry(s32 resourceId);
 

@@ -847,7 +847,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
   transition[4] = 0;
   BattleEffect_SetupBlendedDisplay();
   for (i = 0; i != 44; i++) {
-    ResourceObject_ReleaseFar(work->objects[i]);
+    Sprite_DestroyFar(work->objects[i]);
   }
   Palette_LoadBasicSpriteColors();
   Dma_Set((const void *)OBJ_PLTT, (void *)0x050000a0, 0x80000010,

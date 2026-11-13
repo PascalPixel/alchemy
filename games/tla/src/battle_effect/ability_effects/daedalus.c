@@ -1357,7 +1357,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
     ctl[4] = 0;
     BattleEffect_SetupBlendedDisplay();
     for (i = 0; i != 57; i++)
-      ResourceObject_ReleaseFar(work->sprites[i]);
+      Sprite_DestroyFar(work->sprites[i]);
     bank[21] = VramCache_AllocEntry(128);
     Palette_LoadBasicSpriteColors();
     Dma_Set((void *)0x05000200, (void *)0x050000a0, 0x80000010,
@@ -1512,7 +1512,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
       wait(1);
     }
     for (i = 0; i != 16; i++)
-      ResourceObject_ReleaseFar(work->sprites[i]);
+      Sprite_DestroyFar(work->sprites[i]);
     Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
     HeapSlot_Release(188);
     HeapSlot_Release(104);
@@ -1838,7 +1838,7 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectArgument *effect) {
   } while (frame != DAEDALUS_FRAMES);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   HeapSlot_Release(104);
-  ResourceObject_ReleaseFar(work->objects[0]);
+  Sprite_DestroyFar(work->objects[0]);
   BattleEffect_EndCanvasLayer();
 }
 #undef HEAP_SLOT_BLITTER

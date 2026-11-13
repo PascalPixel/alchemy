@@ -557,7 +557,7 @@ void BattleEffect_RunCybele(struct BattleEffectArgument *effect) {
    * 1490 instructions differ in tla-en. */
   BurstAt_(2, 128 << 16, height);
   for (i = 0; i != 8; i++)
-    ResourceObject_ReleaseFar(work->objects[i]);
+    Sprite_DestroyFar(work->objects[i]);
   BattleEffect_EndCanvasLayer();
 }
 
@@ -880,7 +880,7 @@ void BattleEffect_RunBoreas(struct BattleEffectArgument *effect) {
 
   // The second half: ice rains on the targets, boulders pile up and burst.
   for (i = 0; i != 9; i++)
-    ResourceObject_ReleaseFar(work->objects[i]);
+    Sprite_DestroyFar(work->objects[i]);
   BattleEffect_SetupBlendedDisplay();
   REG_BLDALPHA = 0x1010;
   Sound_PlayFar(390);
@@ -3491,8 +3491,7 @@ void BattleEffect_SpawnObjects(s32 entryCount, s32 kind, u32 variant) {
   if (entryCount == 0)
     return;
   do {
-    struct FieldSprite *object =
-        (struct FieldSprite *)ResourceObject_CreateFar(kind);
+    struct FieldSprite *object = (struct FieldSprite *)Sprite_CreateFar(kind);
 
     work->objects[entryIndex] = object;
     if (object != NULL) {
@@ -4847,7 +4846,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect) {
           (volatile u32 *)0x040000d4);
   BG_PLTT[94] = BG_PLTT[244];
   for (i = 0; i != GIANT_PIECES; i++)
-    ResourceObject_ReleaseFar(work->objects[i]);
+    Sprite_DestroyFar(work->objects[i]);
   REG_BG2PA = 0x80;
   REG_DISPCNT = 0x7741;
   Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet,

@@ -18,7 +18,7 @@ struct SummonDefinition;
 
 /// A field Psynergy, as the field kind: an ability's fieldPsynergy, named for
 /// the abilities that have it (the English release's names in
-/// gBattleAction_DefinitionTable). The field effect keeps it as its animation.
+/// gAbilityDefinitions). The field effect keeps it as its animation.
 /// The Broken Seal has 1 to 16; The Lost Age adds 17 to 30.
 enum FieldPsynergy {
   FIELD_PSYNERGY_MOVE = 1,
@@ -65,7 +65,7 @@ enum FieldPsynergyHandler {
   FIELD_PSYNERGY_HANDLER_EXTRA = 3   ///< runs its kind's extra handler
 };
 
-/// An ability's definition, a row of gBattleAction_DefinitionTable: its
+/// An ability's definition, a row of gAbilityDefinitions: its
 /// targeting, kind, element, effect, icon, range, PP cost and power, as The
 /// Broken Seal's first twelve bytes.
 struct AbilityDefinition {
@@ -84,7 +84,8 @@ struct AbilityDefinition {
 
 STATIC_ASSERT(sizeof(struct AbilityDefinition) == 12);
 
-/// The elemental power and resistance of one element level, in Data_080c6644.
+/// The elemental power and resistance of one element level, in
+/// gElement_PowerResistByLevel.
 struct ElementLevelBonus {
   u16 power; ///< base power, before the tenths of a level
   u16 res;   ///< base resistance, likewise
@@ -98,8 +99,8 @@ struct BattleElementStats;
 
 extern const u16 gBattle_Effect90Classes[47];
 extern const u16 gBattle_Effect91Classes[29];
-extern const struct AbilityDefinition gBattleAction_DefinitionTable[];
-extern const struct DjinnDefinition gDjinn_Definitions[];
+extern const struct AbilityDefinition gAbilityDefinitions[];
+extern const struct DjinnDefinition gDjinn_DefinitionTable[];
 extern const struct EnemyDefinition gEnemy_DefinitionTable[];
 extern u8 gGameFlagBytes[];
 void DjinnRecovery_CountDownTwentyFar(void);

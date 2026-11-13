@@ -213,7 +213,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
   dived = 0;
   BattleEffect_SpawnObjects(2, 0x293, 2);
   for (i = 0; i != 4; i++) {
-    sprite = ResourceObject_CreateFar(0x294);
+    sprite = Sprite_CreateFar(0x294);
     work->objects[12 + i] = sprite;
     if (sprite != NULL) {
       sprite->nextFrame = 0;
@@ -227,7 +227,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
     }
   }
   for (i = 0; i != 2; i++) {
-    sprite = ResourceObject_CreateFar(0x295);
+    sprite = Sprite_CreateFar(0x295);
     work->objects[16 + i] = sprite;
     if (sprite != NULL) {
       sprite->nextFrame = 0;
@@ -698,15 +698,15 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
           work->transferMode = 1;
           work->transferValue = 0;
           dived = 1;
-          ResourceObject_ReleaseFar(work->objects[0]);
-          ResourceObject_ReleaseFar(work->objects[1]);
+          Sprite_DestroyFar(work->objects[0]);
+          Sprite_DestroyFar(work->objects[1]);
           for (i = 0; i != 4; i++) {
-            ResourceObject_ReleaseFar(work->objects[12 + i]);
+            Sprite_DestroyFar(work->objects[12 + i]);
           }
           for (i = 0; i != 2; i++) {
-            ResourceObject_ReleaseFar(work->objects[16 + i]);
+            Sprite_DestroyFar(work->objects[16 + i]);
           }
-          ResourceObject_ReleaseFar(work->objects[18]);
+          Sprite_DestroyFar(work->objects[18]);
           BattleEffect_SpawnObjects(11, 0x293, 2);
           q = Data_08199bf9;
           {
@@ -852,18 +852,18 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
     } while (frame != 440 && !(gInput.repeat & 3));
   }
   if (dived == 0) {
-    ResourceObject_ReleaseFar(work->objects[0]);
-    ResourceObject_ReleaseFar(work->objects[1]);
+    Sprite_DestroyFar(work->objects[0]);
+    Sprite_DestroyFar(work->objects[1]);
     for (i = 0; i != 4; i++) {
-      ResourceObject_ReleaseFar(work->objects[12 + i]);
+      Sprite_DestroyFar(work->objects[12 + i]);
     }
     for (i = 0; i != 2; i++) {
-      ResourceObject_ReleaseFar(work->objects[16 + i]);
+      Sprite_DestroyFar(work->objects[16 + i]);
     }
-    ResourceObject_ReleaseFar(work->objects[18]);
+    Sprite_DestroyFar(work->objects[18]);
   } else {
     for (i = 0; i != 11; i++) {
-      ResourceObject_ReleaseFar(work->objects[i]);
+      Sprite_DestroyFar(work->objects[i]);
     }
   }
   transition[4] = 0;
@@ -1108,7 +1108,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
     wait(1);
   }
   for (i = 0; i != 11; i++) {
-    ResourceObject_ReleaseFar(work->objects[i]);
+    Sprite_DestroyFar(work->objects[i]);
   }
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   HeapSlot_Release(SLOT_BLITTER);

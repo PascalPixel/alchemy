@@ -31,7 +31,7 @@ void Field_ClearRequests(void) {
   state->counters[11] = 0;
 }
 
-s32 BattleEffect_SumCounters(void) {
+s32 Field_CountRequests(void) {
   struct BattleEffectCounterState *state = Ram_HeapSlots->eventWork;
 
   return state->counters[0] + state->counters[1] + state->counters[2] +
@@ -111,7 +111,7 @@ s32 Func_080cb144(void) {
 
 // The overlay's entry table; entry 11 returns the map's region list.
 
-void UpdateMapRegionAtPosition(s32 positionX, s32 positionY, s32 positionZ) {
+void Field_CheckExitRegions(s32 positionX, s32 positionY, s32 positionZ) {
   s32 selectedValue;
   struct EventWork *runtime;
   s32 z;
@@ -207,7 +207,7 @@ void Field_UpdateWalking(u32 layer, s32 x, s32 y, s32 z) {
   work->previousCell = work->currentCell;
   work->currentCell = tile;
   if (attributes != 0)
-    UpdateMapRegionAtPosition(x, y, z);
+    Field_CheckExitRegions(x, y, z);
   if (event - 1 <= 229)
     work->exit = event;
   if (attributes & 0xe2)

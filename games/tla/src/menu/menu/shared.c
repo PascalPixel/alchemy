@@ -16,7 +16,7 @@ s32 GameFlag_SetBit(s32 flag_no);
 
 void Menu_ResumeFieldTasks(void) {
   Task_ResumeOverlayTasks();
-  Map_DisableUpdateCallbackFar();
+  TilesetAnim_ResumeAllFar();
   GameFlag_ClearBit(0x166);
   GameFlag_ClearBit(0x152);
 }
@@ -24,7 +24,7 @@ void Menu_ResumeFieldTasks(void) {
 s32 Menu_SuspendFieldTasks(void) {
   GameFlag_SetBit(0x152);
   GameFlag_SetBit(0x166);
-  Map_EnableUpdateCallbackFar();
+  TilesetAnim_SuspendAllFar();
   return Task_SuspendOverlayTasks();
 }
 
@@ -1087,7 +1087,7 @@ void Render_SetTilemapFlagRect(const struct Window *object, s32 x, s32 y,
   }
 }
 
-void Palette_CopyObjectBankToBackground14(void) {
+void Palette_LoadIconsIntoHighlight(void) {
   Dma_Set((const void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(14, 0),
           DMA_COPY_HALFWORDS(16), REG_DMA3);
   Dma_Set((const void *)&BG_PLTT_COLOR(15, 4), (void *)&BG_PLTT_COLOR(14, 14),
@@ -1188,7 +1188,7 @@ void Menu_UpdateCancelSound(void) {
     ;
 }
 
-void Menu_CancelSoundReset(void) {
+void Menu_StartWatchingStart(void) {
   GameFlag_ClearBit(0x150);
   Task_Add((s32)Menu_UpdateCancelSound, TASK_PASS_VBLANK);
 }

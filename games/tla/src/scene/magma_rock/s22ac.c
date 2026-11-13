@@ -610,7 +610,7 @@ body:
         Actor_SetSpriteColor(Actor_GetById(8), 7);
         wait(2);
         Func_02003a54(actor8, 0);
-        ObjectVisual_CopyAttributes(id, 9);
+        Actor_CopyGraphics(id, 9);
         Actor_SetSpriteColor(Actor_GetById(8), 0);
         wait(2);
         Actor_SetSpriteColor(Actor_GetById(8), 7);

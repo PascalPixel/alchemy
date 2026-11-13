@@ -83,7 +83,7 @@ s32 ItemMenu_Run(void) {
   Text_UseExtraTilesFar(1);
 #endif
 
-  Menu_CancelSoundReset();
+  Menu_StartWatchingStart();
   result = ItemMenu_RunCommands(&owner, &target, &item);
   Menu_StopWatchingStart();
   if (result == 1) {
@@ -2003,7 +2003,7 @@ s32 ItemMenu_OpenDetail(s32 itemIndex) {
   struct InventoryMenuDetailsState *menu = Ram_HeapSlots->menuRuntime;
 
   Window_UpdateOrCreate(&menu->detailsWindow, 0, 0, 13, 10, 2);
-  Palette_CopyObjectBankToBackground14();
+  Palette_LoadIconsIntoHighlight();
 
   if (menu->itemIds[itemIndex] != 0)
     ItemMenu_DrawItemDetails(menu->detailsWindow, menu->itemIds[itemIndex]);
@@ -2055,7 +2055,7 @@ s32 ItemMenu_ShowDetails(s32 value) {
     struct ItemMenuIcon *cursor = menu->cursor;
     cursor->state = 13;
   }
-  Palette_CopyObjectBankToBackground14();
+  Palette_LoadIconsIntoHighlight();
   wait(1);
 
   for (;;) {

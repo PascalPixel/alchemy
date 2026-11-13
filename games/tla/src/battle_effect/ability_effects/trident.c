@@ -512,7 +512,7 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   HeapSlot_Release(104);
   for (i = 0; i != 4; i++) {
-    ResourceObject_ReleaseFar(work->objects[i]);
+    Sprite_DestroyFar(work->objects[i]);
   }
   BattleEffect_EndCanvasLayer();
 }

@@ -28,6 +28,8 @@
 /// and reloads the battle background on BG1 before it closes the layer. It
 /// never calls EFFECT_SHOW_DAMAGE, and leaves the flash timers alone.
 void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
+  void **slots;
+  void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
   u8 *sheet;
@@ -44,10 +46,16 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
   s32 drawReaper;
   s32 pictureColumn;
   s32 pictureRow;
+  s32 transferValue;
   s32 frame;
 
-  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
-  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
+  slots = &gHeapSlots[HEAP_SLOT_BATTLE_EFFECT];
+  cursor = slots;
+  work = *cursor++;
+  canvas = *cursor;
+  /* FAKEMATCH(temporary): transferValue set here, after the slots; as declared
+   * with its 0, 14 of 580 instructions differ in tbs-en. */
+  transferValue = 0;
   work->args = args;
   BattleEffect_StartTiledCanvas(0);
   REG_BG2PA = Q_8_8(1);
@@ -74,7 +82,7 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
   draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
   Task_Add(BattleEffect_ArmBg2AffineHBlankDma, TASK_PASS_VBLANK);
   // Redraw from blank each frame.
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, transferValue);
   // swayCenter is the point the reaper sways about, in 16.16 pixels: the
   // first pass high up on the near side.
   drawReaper = 1;
@@ -167,7 +175,10 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
         pictureRow = 0;
       } else {
         pictureColumn = 1;
-        pictureRow = 0;
+        /* FAKEMATCH(dead): i is 160 here, so i >> 31 folds to 0 and only
+         * changes allocation; as pictureRow = 0, 452 of 580 instructions differ
+         * in tbs-en. */
+        pictureRow = i >> 31;
       }
       // The reaper with its scythe raised until frame 91, and swung from
       // frame 88; a white flash (the brightest level over the whole canvas,

@@ -102,7 +102,7 @@ void FieldMotes_Start(void) {
 /// decodes the particle tiles into VRAM, sets each of the 64 particles' sprite
 /// words and places it on the ground at the map's focus with a timer of
 /// (i & 11) + 1, turns on alpha blending of all layers at 16/16, schedules the
-/// update and, when asked, plays cue 137 (Scene_QueueMusic).
+/// update and, when asked, plays SE_137 (Scene_QueueMusic).
 void Weather_StartRain(s32 withCue) {
   struct SparkParticleWork *work = HeapSlot_AllocEwram(116, 0x814);
   struct SparkParticle *particle = work->particles;
@@ -153,7 +153,7 @@ void Weather_StartRain(s32 withCue) {
   Io_Write16(clear, &REG_BLDY);
   Task_Add(Weather_UpdateRain, TASK_PASS_VBLANK);
   if (withCue != 0)
-    Scene_QueueMusic(137);
+    Scene_QueueMusic(SE_137);
 }
 
 /// Stops Weather_StartRain's particles. Unused: nothing calls

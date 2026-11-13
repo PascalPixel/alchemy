@@ -39,7 +39,7 @@ void GroundParticles_Start(void) {
   work = HeapSlot_AllocEwram(
       116, sizeof(struct GroundParticleWork__ground_particles));
   leader = Ram_HeapSlots->mapWork->origin;
-  Scene_QueueMusic(170);
+  Scene_QueueMusic(SE_170);
   particle = work->particles;
   Dma_Fill32(zero, work, sizeof(struct GroundParticleWork__ground_particles));
   words = HeapSlot_AllocEwram(56, 0x400);

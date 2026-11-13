@@ -4,8 +4,8 @@
 #include "system/io_reg.h"
 
 u32 umul3232H32(u32 left, u32 right);
-extern u8 gSound_PcmPitchCodes[];
-extern u32 gSound_PcmFrequencySteps[];
+extern u8 gScaleTable[];
+extern u32 gFreqTable[];
 
 /// Interpolates adjacent key frequencies and scales them by the wave sample
 /// frequency.
@@ -22,12 +22,10 @@ s32 MidiKeyToFreq(void *wave, u8 key, u8 pitch) {
     pitchScale = 255U << 24;
   }
 
-  lowerFrequency = gSound_PcmPitchCodes[keyIndex];
-  lowerFrequency =
-      gSound_PcmFrequencySteps[lowerFrequency & 15] >> (lowerFrequency >> 4);
-  upperFrequency = gSound_PcmPitchCodes[keyIndex + 1];
-  upperFrequency =
-      gSound_PcmFrequencySteps[upperFrequency & 15] >> (upperFrequency >> 4);
+  lowerFrequency = gScaleTable[keyIndex];
+  lowerFrequency = gFreqTable[lowerFrequency & 15] >> (lowerFrequency >> 4);
+  upperFrequency = gScaleTable[keyIndex + 1];
+  upperFrequency = gFreqTable[upperFrequency & 15] >> (upperFrequency >> 4);
 
   return umul3232H32(
       *(s32 *)((u8 *)wave + 4),

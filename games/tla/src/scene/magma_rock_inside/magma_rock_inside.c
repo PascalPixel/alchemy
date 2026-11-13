@@ -2084,15 +2084,7 @@ DEFINE_MAGMA_ROCK_INSIDE_READ_TABLET_FROM(
 DEFINE_MAGMA_ROCK_INSIDE_READ_TABLET_FROM(
     MagmaRockInside_ReadBlazeTabletFromSouth, 248)
 
-/* VIEW(magma_rock_inside): variable gMagmaRockInside_Triggers as u8
- * gMagmaRockInside_Triggers[]; scene/magma_rock_inside/s46e8 has struct Trigger
- * gMagmaRockInside_Triggers[] = {; tried as the definition's extern struct
- * Trigger gMagmaRockInside_Triggers[], it does not compile in tla-ja:
- * games/tla/src/scene/magma_rock_inside/magma_rock_inside.c:2051:
- * `gMagmaRockInside_Triggers' undeclared (first use in this function). */
-extern u8 gMagmaRockInside_Triggers__magma_rock_inside[] __asm__(
-    "gMagmaRockInside_Triggers");
-#define gMagmaRockInside_Triggers gMagmaRockInside_Triggers__magma_rock_inside
+extern struct Trigger gMagmaRockInside_Triggers[];
 extern struct Trigger gMagmaRockInside_Room2Triggers[];
 #define gMagmaRockInside_Room2Triggers gMagmaRockInside_Room2Triggers
 extern struct Trigger gMagmaRockInside_Room3Triggers[];
@@ -2227,7 +2219,6 @@ void MagmaRockInside_LayerWithLeader(struct Actor *arg) {
 #undef gMagmaRockInside_Room6Placements
 #undef gMagmaRockInside_Room7Placements
 #undef gMagmaRockInside_Room8Placements
-#undef gMagmaRockInside_Triggers
 #undef gMagmaRockInside_Room2Triggers
 #undef gMagmaRockInside_Room3Triggers
 #undef gMagmaRockInside_Room4Triggers
@@ -2283,17 +2274,7 @@ extern const u8 gMagmaRockInside_PlatformPath1__s3678[] __asm__(
 extern const u8 gMagmaRockInside_PlatformPath2__s3678[] __asm__(
     "gMagmaRockInside_PlatformPath2");
 #define gMagmaRockInside_PlatformPath2 gMagmaRockInside_PlatformPath2__s3678
-/* VIEW(s3678): variable gMagmaRockInside_PlatformPath3 as const u8
- * gMagmaRockInside_PlatformPath3[]; scene/magma_rock_inside/s46e8 has u16
- * gMagmaRockInside_PlatformPath3[] = {; tried as the definition's extern
- * DEFINE_G_DATA_02005074(gMagmaRockInside_PlatformPath1, 776, 680, 744, 680,
- * 744, 632, 776, 632) DEFINE_G_DATA_020050D4(gMagmaRockInsid..., it does not
- * compile in tla-ja:
- * games/tla/src/scene/magma_rock_inside/magma_rock_inside.c:2296:
- * `gMagmaRockInside_PlatformPath3' undeclared (first use in this function). */
-extern const u8 gMagmaRockInside_PlatformPath3__s3678[] __asm__(
-    "gMagmaRockInside_PlatformPath3");
-#define gMagmaRockInside_PlatformPath3 gMagmaRockInside_PlatformPath3__s3678
+extern u16 gMagmaRockInside_PlatformPath3[];
 /* VIEW(s3678): variable gMagmaRockInside_PlatformPath4 as const u8
  * gMagmaRockInside_PlatformPath4[]; scene/magma_rock_inside/s46e8 has
  * DEFINE_G_DATA_020050D4(gMagmaRockInside_PlatformPath4, 184, 232, 280, 232,
@@ -2809,7 +2790,6 @@ test:
 #include "../../field/field_effect/advance_motion_priority.c"
 
 #undef MagmaRockInside_StartLavaPlatform
-#undef gMagmaRockInside_PlatformPath3
 #undef gMagmaRockInside_Statues
 
 #undef gMagmaRockInside_PlatformPath1

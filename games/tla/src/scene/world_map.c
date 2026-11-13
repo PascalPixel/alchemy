@@ -1105,27 +1105,9 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
   }
 }
 
-/* VIEW(world_map): variable gData_02004e38 as const u8 gData_02004e38[];
- * scene/world_map/s3b38 has u32 gData_02004e38[] = {; tried as the definition's
- * extern u32 gData_02004e38[], it does not compile in tla-ja:
- * games/tla/src/scene/world_map.c:1157: `gData_02004e38' undeclared (first use
- * in this function). */
-extern const u8 gData_02004e38__world_map[] __asm__("gData_02004e38");
-#define gData_02004e38 gData_02004e38__world_map
-/* VIEW(world_map): variable gData_02004e58 as const u8 gData_02004e58[];
- * scene/world_map/s3b38 has u32 gData_02004e58[] = {; tried as the definition's
- * extern u32 gData_02004e58[], it does not compile in tla-ja:
- * games/tla/src/scene/world_map.c:1159: `gData_02004e58' undeclared (first use
- * in this function). */
-extern const u8 gData_02004e58__world_map[] __asm__("gData_02004e58");
-#define gData_02004e58 gData_02004e58__world_map
-/* VIEW(world_map): variable gData_02004e88 as const u8 gData_02004e88[];
- * scene/world_map/s3b38 has u32 gData_02004e88[] = {; tried as the definition's
- * extern u32 gData_02004e88[], it does not compile in tla-ja:
- * games/tla/src/scene/world_map.c:1160: `gData_02004e88' undeclared (first use
- * in this function). */
-extern const u8 gData_02004e88__world_map[] __asm__("gData_02004e88");
-#define gData_02004e88 gData_02004e88__world_map
+extern u32 gData_02004e38[];
+extern u32 gData_02004e58[];
+extern u32 gData_02004e88[];
 
 /// ★ Named from the game: "We got the cannon onto your ship with no problems."
 /// (MsgYouDonT)
@@ -1580,13 +1562,7 @@ void WorldMap_WatchVenusLighthouseCollapse(void) {
   FieldEvent_Wait(120);
 }
 
-/* VIEW(world_map): variable gData_02004f10 as const u8 gData_02004f10[];
- * scene/world_map/s3b38 has s32 gData_02004f10[] = {; tried as the definition's
- * extern struct Trigger gData_02004f10[], it does not compile in tla-ja:
- * games/tla/src/scene/world_map.c:1602: `gData_02004f10' undeclared (first use
- * in this function). */
-extern const u8 gData_02004f10__world_map[] __asm__("gData_02004f10");
-#define gData_02004f10 gData_02004f10__world_map
+extern s32 gData_02004f10[];
 
 void Func_020028cc(void) {
   struct Actor *leader;
@@ -1626,13 +1602,7 @@ void Func_020028cc(void) {
 
 #include "io_reg.h"
 
-/* VIEW(world_map): variable gData_02004eb8 as const u8 gData_02004eb8[];
- * scene/world_map/s3b38 has u32 gData_02004eb8[] = {; tried as the definition's
- * extern u32 gData_02004eb8[], it does not compile in tla-ja:
- * games/tla/src/scene/world_map.c:1628: `gData_02004eb8' undeclared (first use
- * in this function). */
-extern const u8 gData_02004eb8__world_map[] __asm__("gData_02004eb8");
-#define gData_02004eb8 gData_02004eb8__world_map
+extern u32 gData_02004eb8[];
 
 void Func_020029a4(void) {
   struct Actor *actor;
@@ -1985,13 +1955,7 @@ s32 Func_02003418(struct Actor *object) {
   return 0;
 }
 
-/* VIEW(world_map): variable gData_02004f70 as const u8 gData_02004f70[];
- * scene/world_map/s3b38 has s32 gData_02004f70[] = {; tried as the definition's
- * extern s32 gData_02004f70[], it does not compile in tla-ja:
- * games/tla/src/scene/world_map.c:1975: `gData_02004f70' undeclared (first use
- * in this function). */
-extern const u8 gData_02004f70__world_map[] __asm__("gData_02004f70");
-#define gData_02004f70 gData_02004f70__world_map
+extern s32 gData_02004f70[];
 
 void Func_0200343c(struct Actor *parent) {
   if ((gFrameCount & 7) == 0) {
@@ -2043,12 +2007,6 @@ void Func_02003490(void) {
 DEFINE_TILE_SPRITE_RESET(Func_020035e0)
 
 #undef Actor_SetSpriteColorMode
-#undef gData_02004e38
-#undef gData_02004e58
-#undef gData_02004e88
-#undef gData_02004eb8
-#undef gData_02004f10
-#undef gData_02004f70
 // ---- scene/world_map/s3600.c ----
 
 /* VIEW(s3600): variable gData_02006c08 as struct Actor *gData_02006c08[];

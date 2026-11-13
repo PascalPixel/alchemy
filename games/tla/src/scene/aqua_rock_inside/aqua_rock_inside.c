@@ -870,22 +870,8 @@ union ActorView {
     u8 unk63;
   } bytes;
 };
-/* VIEW(s1620): variable gData_02004034 as const u8 gData_02004034[];
- * scene/aqua_rock_inside/s3844 has u32 gData_02004034[] = {; tried as the
- * definition's extern DEFINE_G_DATA_02003584(gData_02004004, Orbiter_Spiral,
- * 38, 17) DEFINE_G_DATA_02004014(gData_02004014, Orbit_Update,
- * Actor_AimAtWatche..., it does not compile in tla-ja:
- * games/tla/src/scene/aqua_rock_inside/aqua_rock_inside.c:912: `gData_02004034'
- * undeclared (first use in this function). */
-extern const u8 gData_02004034__s1620[] __asm__("gData_02004034");
-#define gData_02004034 gData_02004034__s1620
-/* VIEW(s1620): variable gData_02003fe8 as const u8 gData_02003fe8[];
- * scene/aqua_rock_inside/s3844 has u32 gData_02003fe8[] = {; tried as the
- * definition's extern u32 gData_02003fe8[], it does not compile in tla-ja:
- * games/tla/src/scene/aqua_rock_inside/aqua_rock_inside.c:932: `gData_02003fe8'
- * undeclared (first use in this function). */
-extern const u8 gData_02003fe8__s1620[] __asm__("gData_02003fe8");
-#define gData_02003fe8 gData_02003fe8__s1620
+extern u32 gData_02004034[];
+extern u32 gData_02003fe8[];
 /* VIEW(s1620): variable gData_02004004 as const u8 gData_02004004[];
  * scene/aqua_rock_inside/s3844 has DEFINE_G_DATA_02003584(gData_02004004,
  * Orbiter_Spiral, 38, 17) DEFINE_G_DATA_02004014(gData_02004014, Orbit_Update,
@@ -895,13 +881,7 @@ extern const u8 gData_02003fe8__s1620[] __asm__("gData_02003fe8");
  * undeclared (first use in this function). */
 extern const u8 gData_02004004__s1620[] __asm__("gData_02004004");
 #define gData_02004004 gData_02004004__s1620
-/* VIEW(s1620): variable gData_02004058 as const u8 gData_02004058[];
- * scene/aqua_rock_inside/s3844 has u32 gData_02004058[] = {; tried as the
- * definition's extern u32 gData_02004058[], it does not compile in tla-ja:
- * games/tla/src/scene/aqua_rock_inside/aqua_rock_inside.c:897: `gData_02004058'
- * undeclared (first use in this function). */
-extern const u8 gData_02004058__s1620[] __asm__("gData_02004058");
-#define gData_02004058 gData_02004058__s1620
+extern u32 gData_02004058[];
 /* VIEW(s1620): variable gData_02004014 as const u8 gData_02004014[];
  * scene/aqua_rock_inside/s3844 has DEFINE_G_DATA_02004014(gData_02004014,
  * Orbit_Update, Actor_AimAtWatched, Actor_StepToWatched) u32 gData_02004034[] =
@@ -911,20 +891,8 @@ extern const u8 gData_02004058__s1620[] __asm__("gData_02004058");
  * `gData_02004014' undeclared (first use in this function). */
 extern const u8 gData_02004014__s1620[] __asm__("gData_02004014");
 #define gData_02004014 gData_02004014__s1620
-/* VIEW(s1620): variable gData_0200407c as const u8 gData_0200407c[];
- * scene/aqua_rock_inside/s3844 has s32 gData_0200407c[] = {; tried as the
- * definition's extern s32 gData_0200407c[], it does not compile in tla-ja:
- * games/tla/src/scene/aqua_rock_inside/aqua_rock_inside.c:1018:
- * `gData_0200407c' undeclared (first use in this function). */
-extern const u8 gData_0200407c__s1620[] __asm__("gData_0200407c");
-#define gData_0200407c gData_0200407c__s1620
-/* VIEW(s1620): variable gData_020040ac as const u8 gData_020040ac[];
- * scene/aqua_rock_inside/s3844 has s32 gData_020040ac[] = {; tried as the
- * definition's extern s32 gData_020040ac[], it does not compile in tla-ja:
- * games/tla/src/scene/aqua_rock_inside/aqua_rock_inside.c:1019:
- * `gData_020040ac' undeclared (first use in this function). */
-extern const u8 gData_020040ac__s1620[] __asm__("gData_020040ac");
-#define gData_020040ac gData_020040ac__s1620
+extern s32 gData_0200407c[];
+extern s32 gData_020040ac[];
 
 void Func_02001620(s32 firstId, s32 secondId) {
   struct Actor *first = Actor_GetById(firstId);
@@ -1322,34 +1290,10 @@ void Func_02001fcc(void) {
   Vents_AdvanceCounter(0x34bc0);
 }
 
-/* VIEW(s1620): variable gData_020040f4 as const u8 gData_020040f4[];
- * scene/aqua_rock_inside/s3844 has u16 gData_020040f4[] = {; tried as the
- * definition's extern u16 gData_020040f4[], it does not compile in tla-ja:
- * games/tla/src/scene/aqua_rock_inside/aqua_rock_inside.c:1363:
- * `gData_020040f4' undeclared (first use in this function). */
-extern const u8 gData_020040f4__s1620[] __asm__("gData_020040f4");
-#define gData_020040f4 gData_020040f4__s1620
-/* VIEW(s1620): variable gData_02004102 as const u8 gData_02004102[];
- * scene/aqua_rock_inside/s3844 has u16 gData_02004102[] = {; tried as the
- * definition's extern u16 gData_02004102[], it does not compile in tla-ja:
- * games/tla/src/scene/aqua_rock_inside/aqua_rock_inside.c:1363:
- * `gData_02004102' undeclared (first use in this function). */
-extern const u8 gData_02004102__s1620[] __asm__("gData_02004102");
-#define gData_02004102 gData_02004102__s1620
-/* VIEW(s1620): variable gData_02004106 as const u8 gData_02004106[];
- * scene/aqua_rock_inside/s3844 has u16 gData_02004106[] = {; tried as the
- * definition's extern u16 gData_02004106[], it does not compile in tla-ja:
- * games/tla/src/scene/aqua_rock_inside/aqua_rock_inside.c:1368:
- * `gData_02004106' undeclared (first use in this function). */
-extern const u8 gData_02004106__s1620[] __asm__("gData_02004106");
-#define gData_02004106 gData_02004106__s1620
-/* VIEW(s1620): variable gData_02004114 as const u8 gData_02004114[];
- * scene/aqua_rock_inside/s3844 has u32 gData_02004114[] = {; tried as the
- * definition's extern u32 gData_02004114[], it does not compile in tla-ja:
- * games/tla/src/scene/aqua_rock_inside/aqua_rock_inside.c:1368:
- * `gData_02004114' undeclared (first use in this function). */
-extern const u8 gData_02004114__s1620[] __asm__("gData_02004114");
-#define gData_02004114 gData_02004114__s1620
+extern u16 gData_020040f4[];
+extern u16 gData_02004102[];
+extern u16 gData_02004106[];
+extern u32 gData_02004114[];
 
 // Returns what its closing Task_Add call leaves in r0.
 s32 Func_02003ab0(const u8 *a, const u8 *b, void (*handler)(void));
@@ -2228,17 +2172,8 @@ s32 Func_020036b8(s32 first, s32 target) {
 #undef BG1_SET_PRIORITY_1
 #undef LAYER_S32
 
-#undef gData_02003fe8
 #undef gData_02004004
 #undef gData_02004014
-#undef gData_02004034
-#undef gData_02004058
-#undef gData_0200407c
-#undef gData_020040ac
-#undef gData_020040f4
-#undef gData_02004102
-#undef gData_02004106
-#undef gData_02004114
 // ---- scene/aqua_rock_inside/s3844.c ----
 
 /// Scene code of overlay 0x67c, in ROM order.

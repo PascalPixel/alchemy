@@ -40,13 +40,7 @@
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-/* VIEW(gaia_rock_inside): variable gData_02005458 as const u8 gData_02005458[];
- * scene/gaia_rock_inside/s4d00 has u32 gData_02005458[] = {; tried as the
- * definition's extern u32 gData_02005458[], it does not compile in tla-ja:
- * games/tla/src/scene/gaia_rock_inside/gaia_rock_inside.c:46: `gData_02005458'
- * undeclared (first use in this function). */
-extern const u8 gData_02005458__gaia_rock_inside[] __asm__("gData_02005458");
-#define gData_02005458 gData_02005458__gaia_rock_inside
+extern u32 gData_02005458[];
 
 const u8 *Scene_GetRegions(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov681Room5)
@@ -179,16 +173,7 @@ s32 Func_020005f8(void) {
   return 0;
 }
 
-/* VIEW(gaia_rock_inside): variable gData_020050d0 as const u8 gData_020050d0[];
- * scene/gaia_rock_inside/s4d00 has u32 gData_020050d0[] = {; tried as the
- * definition's extern
- * DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_ShortScript, 22)
- * DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_MediumScript, 44) ..., it
- * does not compile in tla-ja:
- * games/tla/src/scene/gaia_rock_inside/gaia_rock_inside.c:221: `gData_020050d0'
- * undeclared (first use in this function). */
-extern const u8 gData_020050d0__gaia_rock_inside[] __asm__("gData_020050d0");
-#define gData_020050d0 gData_020050d0__gaia_rock_inside
+extern u32 gData_020050d0[];
 
 /* VIEW(gaia_rock_inside): routine Actor_StartScript as void
  * Actor_StartScript(struct Actor *object, const u8 *script); actor_view.h has
@@ -247,26 +232,14 @@ s32 Func_02000678(void) {
   return 0;
 }
 
-/* VIEW(gaia_rock_inside): variable gData_02005544 as u8 gData_02005544[];
- * scene/gaia_rock_inside/s4d00 has s32 gData_02005544[] = {; tried as the
- * definition's extern s32 gData_02005544[], it does not compile in tla-ja:
- * games/tla/src/scene/gaia_rock_inside/gaia_rock_inside.c:237: `gData_02005544'
- * undeclared (first use in this function). */
-extern u8 gData_02005544__gaia_rock_inside[] __asm__("gData_02005544");
-#define gData_02005544 gData_02005544__gaia_rock_inside
+extern s32 gData_02005544[];
 
 s32 Func_020006e0(void) {
   Actor_StartScript(((s32)Actor_Get(9)), (s32)gData_02005544);
   return 0;
 }
 
-/* VIEW(gaia_rock_inside): variable gData_0200559c as u8 gData_0200559c[];
- * scene/gaia_rock_inside/s4d00 has u32 gData_0200559c[] = {; tried as the
- * definition's extern u32 gData_0200559c[], it does not compile in tla-ja:
- * games/tla/src/scene/gaia_rock_inside/gaia_rock_inside.c:246: `gData_0200559c'
- * undeclared (first use in this function). */
-extern u8 gData_0200559c__gaia_rock_inside[] __asm__("gData_0200559c");
-#define gData_0200559c gData_0200559c__gaia_rock_inside
+extern u32 gData_0200559c[];
 
 s32 Func_020006f8(void) {
   Actor_StartScript(((s32)Actor_Get(9)), (s32)gData_0200559c);
@@ -298,10 +271,6 @@ s32 Func_02000748(void) {
 #include "../../field/field_effect/advance_motion_priority.c"
 
 #undef Actor_StartScript
-#undef gData_020050d0
-#undef gData_02005458
-#undef gData_02005544
-#undef gData_0200559c
 #undef FIELD_AT
 
 // ---- scene/gaia_rock_inside/s07f4.c ----
@@ -326,13 +295,6 @@ s32 Func_02000748(void) {
 #include "module/tla.h"
 #include "text/msg_ids.h"
 #include "module/field/field_effect.h"
-/* VIEW(s07f4): variable gData_0200559c as s32 gData_0200559c[];
- * scene/gaia_rock_inside/gaia_rock_inside has u8 gData_0200559c[]; tried as the
- * definition's extern u32 gData_0200559c[], it does not compile in tla-ja:
- * games/tla/src/scene/gaia_rock_inside/gaia_rock_inside.c:658: `gData_0200559c'
- * undeclared (first use in this function). */
-extern s32 gData_0200559c__s07f4[] __asm__("gData_0200559c");
-#define gData_0200559c gData_0200559c__s07f4
 
 /* VIEW(s07f4): routine Actor_StartScript as void Actor_StartScript(struct Actor
  * *object, const s32 *script); scene/gaia_rock_inside/gaia_rock_inside has void
@@ -717,7 +679,6 @@ void Func_02000fac(void) {
 }
 #undef FIELD_AT
 
-#undef gData_0200559c
 #undef Actor_StartScript
 #undef gData_020051d8
 #undef gData_02005ee4
@@ -727,13 +688,6 @@ void Func_02000fac(void) {
 
 #include "text/msg_ids.h"
 
-/* VIEW(s1048): variable gData_0200559c as s32 gData_0200559c[];
- * scene/gaia_rock_inside/gaia_rock_inside has u8 gData_0200559c[]; tried as the
- * definition's extern u32 gData_0200559c[], it does not compile in tla-ja:
- * games/tla/src/scene/gaia_rock_inside/gaia_rock_inside.c:712: `gData_0200559c'
- * undeclared (first use in this function). */
-extern s32 gData_0200559c__s1048[] __asm__("gData_0200559c");
-#define gData_0200559c gData_0200559c__s1048
 /* VIEW(s1048): variable gData_0200646c as extern s32 gData_0200646c[]; s07f4
  * has extern struct Actor gData_0200646c; tried as the one declaration extern
  * s32 gData_0200646c[], it does not compile in tla-ja:
@@ -818,7 +772,6 @@ void Func_020011c8(void) {
   Event_End();
 }
 
-#undef gData_0200559c
 // ---- games/tla/src/scene/gaia_rock_inside/s12ac.c ----
 // Scene code of overlay 0x681, in ROM order, from s12ac's offset up to the next
 // object the overlay links.
@@ -857,13 +810,7 @@ void Func_020012ac(void) {
  * void Actor_StartScript(struct Actor *object, const s32 *script); not tried:
  * Actor_StartScript's bound declaration was not found. */
 extern s32 Func_02004dac__s12ac() __asm__("Actor_StartScript");
-/* VIEW(s12ac): variable gData_02005208 as u8 gData_02005208[];
- * scene/gaia_rock_inside/s4d00 has u32 gData_02005208[] = {; tried as the
- * definition's extern u32 gData_02005208[], it does not compile in tla-ja:
- * games/tla/src/scene/gaia_rock_inside/gaia_rock_inside.c:824: `gData_02005208'
- * undeclared (first use in this function). */
-extern u8 gData_02005208__s12ac[] __asm__("gData_02005208");
-#define gData_02005208 gData_02005208__s12ac
+extern u32 gData_02005208[];
 
 void Func_02001314(s32 a0) {
   s32 t0;
@@ -882,7 +829,6 @@ void Func_02001314(s32 a0) {
 }
 #undef FIELD_AT
 
-#undef gData_02005208
 // ---- games/tla/src/scene/gaia_rock_inside/s136c.c ----
 // Scene code of overlay 0x681, in ROM order, from s136c's offset up to the next
 // object the overlay links.
@@ -995,14 +941,7 @@ extern const u8 gData_02005264__s15d0[] __asm__("gData_02005264");
  * undeclared (first use in this function). */
 extern const u8 gData_02005218__s15d0[] __asm__("gData_02005218");
 #define gData_02005218 gData_02005218__s15d0
-/* VIEW(s15d0): variable gData_02005234 as const u8 gData_02005234[];
- * scene/gaia_rock_inside/s4d00 has s32 gData_02005234[] = {; tried as the
- * definition's extern DEFINE_G_DATA_02005218(gData_02005218) s32
- * gData_02005234[], it does not compile in tla-ja:
- * games/tla/src/scene/gaia_rock_inside/gaia_rock_inside.c:1030:
- * `gData_02005234' undeclared (first use in this function). */
-extern const u8 gData_02005234__s15d0[] __asm__("gData_02005234");
-#define gData_02005234 gData_02005234__s15d0
+extern s32 gData_02005234[];
 /* VIEW(s15d0): variable gData_02005288 as const u8 gData_02005288[];
  * scene/gaia_rock_inside/s4d00 has DEFINE_G_DATA_02005264(gData_02005288, 16)
  * DEFINE_G_DATA_020052AC(gData_020052ac, 24, 0)
@@ -1426,7 +1365,6 @@ void Func_02001ebc(void) {
 
 #undef Actor_StartScript
 #undef gData_02005218
-#undef gData_02005234
 #undef gData_02005244
 #undef gData_02005264
 #undef gData_02005288
@@ -1915,61 +1853,13 @@ void Func_02002a24(void) { Func_02004af0(0xc, 0x304); }
 void Func_02002a34(void) { Func_02004af0(0xd, 0x305); }
 
 extern char SceneId_Ov681Room5;
-/* VIEW(s1f68): variable gData_02005ee8 as const u8 gData_02005ee8[];
- * scene/gaia_rock_inside/s4d00 has struct Trigger gData_02005ee8[] = {; tried
- * as the definition's extern struct Trigger gData_02005ee8[], it does not
- * compile in tla-ja:
- * games/tla/src/scene/gaia_rock_inside/gaia_rock_inside.c:1845:
- * `gData_02005ee8' undeclared (first use in this function). */
-extern const u8 gData_02005ee8__s1f68[] __asm__("gData_02005ee8");
-#define gData_02005ee8 gData_02005ee8__s1f68
-/* VIEW(s1f68): variable gData_02005f30 as const u8 gData_02005f30[];
- * scene/gaia_rock_inside/s4d00 has struct Trigger gData_02005f30[] = {; tried
- * as the definition's extern struct Trigger gData_02005f30[], it does not
- * compile in tla-ja:
- * games/tla/src/scene/gaia_rock_inside/gaia_rock_inside.c:1842:
- * `gData_02005f30' undeclared (first use in this function). */
-extern const u8 gData_02005f30__s1f68[] __asm__("gData_02005f30");
-#define gData_02005f30 gData_02005f30__s1f68
-/* VIEW(s1f68): variable gData_02005fcc as const u8 gData_02005fcc[];
- * scene/gaia_rock_inside/s4d00 has struct Trigger gData_02005fcc[] = {; tried
- * as the definition's extern struct Trigger gData_02005fcc[], it does not
- * compile in tla-ja:
- * games/tla/src/scene/gaia_rock_inside/gaia_rock_inside.c:1844:
- * `gData_02005fcc' undeclared (first use in this function). */
-extern const u8 gData_02005fcc__s1f68[] __asm__("gData_02005fcc");
-#define gData_02005fcc gData_02005fcc__s1f68
-/* VIEW(s1f68): variable gData_02006038 as const u8 gData_02006038[];
- * scene/gaia_rock_inside/s4d00 has struct Trigger gData_02006038[] = {; tried
- * as the definition's extern struct Trigger gData_02006038[], it does not
- * compile in tla-ja:
- * games/tla/src/scene/gaia_rock_inside/gaia_rock_inside.c:1834:
- * `gData_02006038' undeclared (first use in this function). */
-extern const u8 gData_02006038__s1f68[] __asm__("gData_02006038");
-#define gData_02006038 gData_02006038__s1f68
-/* VIEW(s1f68): variable gData_020060f8 as const u8 gData_020060f8[];
- * scene/gaia_rock_inside/s4d00 has s32 gData_020060f8[] = {; tried as the
- * definition's extern s32 gData_020060f8[], it does not compile in tla-ja:
- * games/tla/src/scene/gaia_rock_inside/gaia_rock_inside.c:1836:
- * `gData_020060f8' undeclared (first use in this function). */
-extern const u8 gData_020060f8__s1f68[] __asm__("gData_020060f8");
-#define gData_020060f8 gData_020060f8__s1f68
-/* VIEW(s1f68): variable gData_02006164 as const u8 gData_02006164[];
- * scene/gaia_rock_inside/s4d00 has struct Trigger gData_02006164[] = {; tried
- * as the definition's extern struct Trigger gData_02006164[], it does not
- * compile in tla-ja:
- * games/tla/src/scene/gaia_rock_inside/gaia_rock_inside.c:1838:
- * `gData_02006164' undeclared (first use in this function). */
-extern const u8 gData_02006164__s1f68[] __asm__("gData_02006164");
-#define gData_02006164 gData_02006164__s1f68
-/* VIEW(s1f68): variable gData_020061a0 as const u8 gData_020061a0[];
- * scene/gaia_rock_inside/s4d00 has struct Trigger gData_020061a0[] = {; tried
- * as the definition's extern struct Trigger gData_020061a0[], it does not
- * compile in tla-ja:
- * games/tla/src/scene/gaia_rock_inside/gaia_rock_inside.c:1840:
- * `gData_020061a0' undeclared (first use in this function). */
-extern const u8 gData_020061a0__s1f68[] __asm__("gData_020061a0");
-#define gData_020061a0 gData_020061a0__s1f68
+extern struct Trigger gData_02005ee8[];
+extern struct Trigger gData_02005f30[];
+extern struct Trigger gData_02005fcc[];
+extern struct Trigger gData_02006038[];
+extern s32 gData_020060f8[];
+extern struct Trigger gData_02006164[];
+extern struct Trigger gData_020061a0[];
 
 /// Returns the current room's table.
 const u8 *Scene_GetEvents(void) {
@@ -1990,13 +1880,6 @@ const u8 *Scene_GetEvents(void) {
 #undef FIELD_AT
 
 #undef gData_0200530c
-#undef gData_02005ee8
-#undef gData_02005f30
-#undef gData_02005fcc
-#undef gData_02006038
-#undef gData_020060f8
-#undef gData_02006164
-#undef gData_020061a0
 // ---- games/tla/src/scene/gaia_rock_inside/s2ac8.c ----
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -4251,13 +4134,7 @@ void Func_02004a5c(s32 id, s32 x, s32 y, s32 z) {
  * `gData_020062d4' undeclared (first use in this function). */
 extern const u8 gData_020062d4__s2cb4[] __asm__("gData_020062d4");
 #define gData_020062d4 gData_020062d4__s2cb4
-/* VIEW(s2cb4): variable gData_02006290 as const u8 gData_02006290[];
- * scene/gaia_rock_inside/s4d00 has u32 gData_02006290[] = {; tried as the
- * definition's extern u32 gData_02006290[], it does not compile in tla-ja:
- * games/tla/src/scene/gaia_rock_inside/gaia_rock_inside.c:4058:
- * `gData_02006290' undeclared (first use in this function). */
-extern const u8 gData_02006290__s2cb4[] __asm__("gData_02006290");
-#define gData_02006290 gData_02006290__s2cb4
+extern u32 gData_02006290[];
 
 void Func_02004af0(s32 id, s32 flag) {
   struct MainRoutineWork *entryWork = &gMainRoutineWork;
@@ -4355,7 +4232,6 @@ burst:
 #undef gData_020053d8
 #undef gData_020053fc
 #undef gData_0200578c
-#undef gData_02006290
 #undef gData_020062d4
 
 #undef Actor_StartScript

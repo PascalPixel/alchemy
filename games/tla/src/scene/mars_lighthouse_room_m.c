@@ -559,34 +559,10 @@ void Func_0200154c(u16 *slots, u16 *colours, u16 *a, u16 *b);
  * function `Func_02002e6c'. */
 extern void Func_02002e6c__s0b64(void) __asm__("Func_02002e6c");
 
-/* VIEW(mars_lighthouse_room_m): variable gData_0200338c as u8 gData_0200338c[];
- * scene/mars_lighthouse_room_m/s2708 has s16 gData_0200338c[] = {; tried as the
- * one declaration extern u8 gData_0200338c[], it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_room_m.c:569: `gData_0200338c' undeclared
- * (first use in this function). */
-extern u8 gData_0200338c__mars_lighthouse_room_m[] __asm__("gData_0200338c");
-#define gData_0200338c gData_0200338c__mars_lighthouse_room_m
-/* VIEW(mars_lighthouse_room_m): variable gData_0200339c as u8 gData_0200339c[];
- * scene/mars_lighthouse_room_m/s2708 has s16 gData_0200339c[] = {; tried as the
- * one declaration extern u8 gData_0200339c[], it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_room_m.c:569: `gData_0200339c' undeclared
- * (first use in this function). */
-extern u8 gData_0200339c__mars_lighthouse_room_m[] __asm__("gData_0200339c");
-#define gData_0200339c gData_0200339c__mars_lighthouse_room_m
-/* VIEW(mars_lighthouse_room_m): variable gData_020033c8 as u8 gData_020033c8[];
- * scene/mars_lighthouse_room_m/s2708 has s16 gData_020033c8[] = {; tried as the
- * one declaration extern u8 gData_020033c8[], it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_room_m.c:570: `gData_020033c8' undeclared
- * (first use in this function). */
-extern u8 gData_020033c8__mars_lighthouse_room_m[] __asm__("gData_020033c8");
-#define gData_020033c8 gData_020033c8__mars_lighthouse_room_m
-/* VIEW(mars_lighthouse_room_m): variable gData_020033f4 as u8 gData_020033f4[];
- * scene/mars_lighthouse_room_m/s2708 has u32 gData_020033f4[] = {; tried as the
- * one declaration extern u8 gData_020033f4[], it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_room_m.c:570: `gData_020033f4' undeclared
- * (first use in this function). */
-extern u8 gData_020033f4__mars_lighthouse_room_m[] __asm__("gData_020033f4");
-#define gData_020033f4 gData_020033f4__mars_lighthouse_room_m
+extern s16 gData_0200338c[];
+extern s16 gData_0200339c[];
+extern s16 gData_020033c8[];
+extern u32 gData_020033f4[];
 
 s32 Scene_Initialize(void) {
   s32 entrance;
@@ -1354,10 +1330,6 @@ DEFINE_BEAM_DRAW_TARGETS(Func_02001f94, Func_02001f14__s1f94, Func_02001d08,
                          Func_02001d98, Func_02001d50, Func_02001b1c)
 #undef IWRAM
 
-#undef gData_0200338c
-#undef gData_0200339c
-#undef gData_020033c8
-#undef gData_020033f4
 #undef gData_020036c4
 #undef gData_02003704
 // ---- scene/mars_lighthouse_room_m/s2118.c ----

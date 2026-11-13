@@ -68,7 +68,7 @@
 #include "irq.h"
 #include "status_screen.h"
 #include "sprite.h"
-#include "djinn_figures.h"
+#include "item_menu.h"
 #include "io_write_queue.h"
 #include "map_grid_scroll.h"
 #include "djinn_preview.h"

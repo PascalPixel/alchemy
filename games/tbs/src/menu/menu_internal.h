@@ -60,7 +60,6 @@
 #include "field_work.h"
 #include "djinn_menu.h"
 #include "blitter.h"
-#include "djinn_figures.h"
 #include "item_ids.h"
 #include "macros.h"
 #include "flags.h"

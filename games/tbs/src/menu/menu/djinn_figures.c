@@ -11,15 +11,15 @@
 /// DjinnFigures_UpdateAllPositions. The Status menu calls it when the
 /// party has Djinn; DjinnFigures_ReleaseTopRow releases them.
 void DjinnFigures_InitializeTopRow(void *unused0, s32 unused1) {
-  struct ItemMenuFiguresView *state = gMenuWork;
+  struct ItemMenuWork *state = gMenuWork;
   s32 index;
 
   for (index = 0; index < 4; index++) {
-    struct Sprite *animation = state->animations[index];
+    struct Sprite *animation = state->figures[index];
 
     if (animation != NULL) {
       Sprite_DestroyFar(animation);
-      state->animations[index] = NULL;
+      state->figures[index] = NULL;
     }
   }
 
@@ -29,9 +29,9 @@ void DjinnFigures_InitializeTopRow(void *unused0, s32 unused1) {
     if (animation != NULL) {
       Sprite_StartAnimationFar(animation, ANIM_WALK);
     }
-    state->animations[index] = animation;
-    state->positionsX[index] = 16;
-    state->positionsY[index] = 32;
+    state->figures[index] = animation;
+    state->figureX[index] = 16;
+    state->figureY[index] = 32;
   }
   Task_Add(DjinnFigures_UpdateAllPositions, TASK_PASS_FRAME);
 }
@@ -41,15 +41,15 @@ void DjinnFigures_InitializeTopRow(void *unused0, s32 unused1) {
 /// DjinnFigures_ReleaseBottomRow (the Djinn menu's).
 #define FOUR_OBJECT_MOTION_DEFINE_RELEASE(name, update)                        \
   void name(void) {                                                            \
-    struct ItemMenuFiguresView *state = gMenuWork;                             \
+    struct ItemMenuWork *state = gMenuWork;                             \
     s32 index = 0;                                                             \
                                                                                \
     do {                                                                       \
-      struct Sprite *object = state->animations[index];                        \
+      struct Sprite *object = state->figures[index];                        \
                                                                                \
       if (object != NULL) {                                                    \
         Sprite_DestroyFar(object);                                             \
-        state->animations[index] = NULL;                                       \
+        state->figures[index] = NULL;                                       \
       }                                                                        \
       index++;                                                                 \
     } while (index < 4);                                                       \
@@ -68,27 +68,27 @@ FOUR_OBJECT_MOTION_DEFINE_RELEASE(DjinnFigures_ReleaseTopRow,
 
 /// Projects the four sprites at full scale from their saved row positions.
 /// Task, each frame from DjinnFigures_InitializeTopRow. The
-/// image stands at (positionsX, positionsY); verticalOrigins, which is the
+/// image stands at (figureX, figureY); memberY, which is the
 /// party figures' memberY, only moves the depth slot.
 void DjinnFigures_UpdateAllPositions(void) {
-  struct ItemMenuFiguresView *state = gMenuWork;
+  struct ItemMenuWork *state = gMenuWork;
   s32 index;
   struct SpriteScale scale;
   struct SpritePlacement placement;
 
   index = 0;
   while (1) {
-    struct Sprite *animation = state->animations[index];
+    struct Sprite *animation = state->figures[index];
 
     if (animation != 0) {
       u32 vertical =
-          FOUR_OBJECT_MOTION_ORIGIN_Y - px((s32)state->verticalOrigins[index]);
+          FOUR_OBJECT_MOTION_ORIGIN_Y - px((s32)state->memberY[index]);
       animation->image.priority = 0;
       scale.x = FOUR_OBJECT_MOTION_FULL_SCALE;
       scale.y = FOUR_OBJECT_MOTION_FULL_SCALE;
-      placement.x = px((s32)state->positionsX[index]);
+      placement.x = px((s32)state->figureX[index]);
       placement.height = vertical;
-      placement.y = px((s32)state->positionsY[index]) + vertical;
+      placement.y = px((s32)state->figureY[index]) + vertical;
       placement.groundHeight = 0;
       Actor_ApplyProjectedPlacementFar(animation, &placement, &scale,
                                        FACING_SOUTH);
@@ -105,18 +105,18 @@ void DjinnFigures_UpdateAllPositions(void) {
 /// DjinnFigures_SetSlotPosition's negative mark (a recovering Djinni)
 /// faces FACING_WEST instead of FACING_SOUTH.
 void DjinnFigures_UpdateBottomRow(void) {
-  struct ItemMenuFiguresView *menu = gMenuWork;
+  struct ItemMenuWork *menu = gMenuWork;
   s32 objectIndex;
   struct SpriteScale scale;
   struct SpritePlacement placement;
 
   Link_DrawPageArrowsFar(PAGE_ARROW_VRAM);
   for (objectIndex = 0; objectIndex <= 3; objectIndex++) {
-    struct Sprite *animation = menu->animations[objectIndex];
+    struct Sprite *animation = menu->figures[objectIndex];
 
     if (animation != 0) {
       u32 projectedY =
-          (241u << 17) - px((u32)(s32)menu->verticalOrigins[objectIndex]);
+          (241u << 17) - px((u32)(s32)menu->memberY[objectIndex]);
       s32 phase;
       s32 limit;
       s32 rowY;
@@ -124,20 +124,20 @@ void DjinnFigures_UpdateBottomRow(void) {
       animation->image.priority = 0;
       // A negative phase is a fixed scale of -phase; otherwise the scale
       // closes a third of its gap to full size (Q16_ONE) each frame.
-      phase = menu->phases[objectIndex];
+      phase = menu->figureScales[objectIndex];
       if (phase < 0) {
         scale.x = -phase;
         scale.y = -phase;
       } else {
         scale.x = phase + (s32)(Q16_ONE - phase) / 3;
         scale.y = scale.x;
-        menu->phases[objectIndex] = scale.x;
+        menu->figureScales[objectIndex] = scale.x;
       }
-      placement.x = px((u32)(s32)menu->positionsX[objectIndex]);
+      placement.x = px((u32)(s32)menu->figureX[objectIndex]);
       placement.height = projectedY;
-      placement.y = px((u32)(s32)menu->positionsY[objectIndex]) + projectedY;
+      placement.y = px((u32)(s32)menu->figureY[objectIndex]) + projectedY;
       placement.groundHeight = 0;
-      rowY = menu->positionsY[objectIndex];
+      rowY = menu->figureY[objectIndex];
       /* FAKEMATCH(dead): the scale's x assigned to itself while rowY is live,
        * so rowY takes r2 and limit keeps r3; as no statement, 81 of 119
        * instructions differ in tbs-en. */
@@ -155,15 +155,15 @@ void DjinnFigures_UpdateBottomRow(void) {
 /// below the screen until the Djinn menu moves one. DjinnMenu_Run calls it
 /// and DjinnFigures_ReleaseBottomRow releases them.
 void DjinnFigures_InitializeBottomRow(s32 unused0, s32 unused1) {
-  struct ItemMenuFiguresView *state = gMenuWork;
+  struct ItemMenuWork *state = gMenuWork;
   s32 index;
 
   for (index = 0; index < 4; index++) {
-    struct Sprite *animation = state->animations[index];
+    struct Sprite *animation = state->figures[index];
 
     if (animation != NULL) {
       Sprite_DestroyFar(animation);
-      state->animations[index] = NULL;
+      state->figures[index] = NULL;
     }
   }
   for (index = 0; index < 4; index++) {
@@ -171,24 +171,24 @@ void DjinnFigures_InitializeBottomRow(s32 unused0, s32 unused1) {
 
     if (animation != NULL)
       Sprite_StartAnimationFar(animation, ANIM_WALK);
-    state->animations[index] = animation;
-    state->phases[index] = Q16_ONE;
-    state->positionsX[index] = 16;
-    state->positionsY[index] = 200;
+    state->figures[index] = animation;
+    state->figureScales[index] = Q16_ONE;
+    state->figureX[index] = 16;
+    state->figureY[index] = 200;
   }
   Task_Add(DjinnFigures_UpdateBottomRow, TASK_PASS_FRAME);
 }
 
 /// Updates one object's saved position and its signed y marker: with negative
 /// set, y keeps its low bits but gets bit 15, which makes it negative. Does
-/// nothing to an empty slot. Returns the work offset of positionsY[index]
+/// nothing to an empty slot. Returns the work offset of figureY[index]
 /// (0x23c + 2 * index), or index for an empty slot; callers ignore it.
 s32 DjinnFigures_SetSlotPosition(s32 index, s32 x, s32 y, s32 negative) {
-  struct ItemMenuFiguresView *state = gMenuWork;
+  struct ItemMenuWork *state = gMenuWork;
 
-  if (state->animations[index] != NULL) {
-    state->positionsX[index] = x;
-    state->positionsY[index] = negative != 0 ? y | (s32)0xffff8000 : y;
+  if (state->figures[index] != NULL) {
+    state->figureX[index] = x;
+    state->figureY[index] = negative != 0 ? y | (s32)0xffff8000 : y;
     return 0x23c + index * 2;
   }
   return index;
@@ -198,7 +198,7 @@ s32 DjinnFigures_SetSlotPosition(s32 index, s32 x, s32 y, s32 negative) {
 /// -phase, otherwise the scale it grows from toward full size. The Djinn
 /// chooser sets 0 after each cursor move, so the figure grows in again.
 s32 DjinnFigures_SetSlotPhase(s32 index, s32 phase) {
-  ((struct ItemMenuFiguresView *)gMenuWork)->phases[index] = phase;
+  ((struct ItemMenuWork *)gMenuWork)->figureScales[index] = phase;
 #ifdef UBFIX
   return 0;
 #endif
@@ -208,11 +208,11 @@ s32 DjinnFigures_SetSlotPhase(s32 index, s32 phase) {
 /// becomes the Djinni figure of element resourceKind
 /// (gDjinnFigures_SpriteIds) playing `animation`. Returns 1.
 s32 DjinnFigures_ReplaceSlot(s32 index, s32 resourceKind, s32 animation) {
-  struct ItemMenuFiguresView *state = gMenuWork;
+  struct ItemMenuWork *state = gMenuWork;
 
-  if (state->animations[index] != NULL) {
-    Sprite_DestroyFar(state->animations[index]);
-    state->animations[index] = NULL;
+  if (state->figures[index] != NULL) {
+    Sprite_DestroyFar(state->figures[index]);
+    state->figures[index] = NULL;
   }
   {
     struct Sprite *figure =
@@ -220,7 +220,7 @@ s32 DjinnFigures_ReplaceSlot(s32 index, s32 resourceKind, s32 animation) {
 
     if (figure != NULL)
       Sprite_StartAnimationFar(figure, animation);
-    state->animations[index] = figure;
+    state->figures[index] = figure;
   }
   return 1;
 }

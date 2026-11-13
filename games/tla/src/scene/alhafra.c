@@ -438,8 +438,7 @@ const struct Trigger *Scene_GetEvents(void) {
        ->v)
 
 s32 Scene_Initialize(void) {
-  s32 t1, t2, t3, t4, t9, t10, t11, t23, t24, t25, t37, t39, t41, t44, t50, t51,
-      t53, t56, t58, t60;
+  s32 t1, t2, t9, t23, t37, t39, t41, t44, t51, t53, t56, t58, t60;
 
   FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1ac), s32, 0) = 0x100;
   t1 = GameFlag_Test(0x8a7);
@@ -448,10 +447,8 @@ s32 Scene_Initialize(void) {
   t2 = GameFlag_Test(0x90f);
   if (t2 != 0)
     goto L_02008836;
-  t3 = ((s32)Actor_GetById(24));
-  FIELD_AT(t3, s32, 108) = (s32)Func_02000a98;
-  t4 = ((s32)Actor_GetById(19));
-  FIELD_AT(t4, s32, 108) = (s32)Func_02000a98;
+  Actor_GetById(24)->update = (void (*)(void))Func_02000a98;
+  Actor_GetById(19)->update = (void (*)(void))Func_02000a98;
   Actor_SetSpritePriority(20, 2);
   Actor_SetSpritePriority(14, 3);
   Actor_SetSpritePriority(16, 3);
@@ -460,10 +457,8 @@ s32 Scene_Initialize(void) {
 L_02008836:
   t9 = (s32)Actor_Get(14);
   FIELD_AT(t9, s32, 108) = (s32)Func_02000a98;
-  t10 = ((s32)Actor_GetById(20));
-  FIELD_AT(t10, s32, 108) = (s32)Func_02000a98;
-  t11 = ((s32)Actor_GetById(22));
-  FIELD_AT(t11, s32, 108) = (s32)Func_02000a98;
+  Actor_GetById(20)->update = (void (*)(void))Func_02000a98;
+  Actor_GetById(22)->update = (void (*)(void))Func_02000a98;
   Actor_SetSpritePriority(13, 2);
   Actor_SetSpritePriority(19, 3);
   Actor_SetSpritePriority(23, 2);
@@ -480,10 +475,8 @@ L_020088aa:
   t23 = GameFlag_Test(0x8ab);
   if (t23 == 0)
     goto L_0200898a;
-  t24 = ((s32)Actor_GetById(14));
-  FIELD_AT(t24, s32, 108) = (s32)Func_02000a98;
-  t25 = ((s32)Actor_GetById(20));
-  FIELD_AT(t25, s32, 108) = (s32)Func_02000a98;
+  Actor_GetById(14)->update = (void (*)(void))Func_02000a98;
+  Actor_GetById(20)->update = (void (*)(void))Func_02000a98;
   Actor_SetSpritePriority(13, 2);
   Actor_SetSpritePriority(19, 3);
   Actor_SetSpritePriority(23, 3);
@@ -518,8 +511,7 @@ L_0200898a:
   Actor_SetSpritePriority(13, 2);
   Actor_SetSpritePriority(23, 2);
   Actor_SetSpritePriority(10, 3);
-  t50 = ((s32)Actor_GetById(24));
-  FIELD_AT(t50, s32, 108) = (s32)Func_02000a98;
+  Actor_GetById(24)->update = (void (*)(void))Func_02000a98;
   t51 = GameFlag_Test(0x8b3);
   if (t51 == 0)
     goto L_020089c8;

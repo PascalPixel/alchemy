@@ -157,16 +157,6 @@ void YampiDesert_CornerScorpion(void) {
   Event_End();
 }
 
-/* VIEW(yampi_desert): routine Import_ActorCreate as struct Actor
- * *Import_ActorCreate(s32 kind, s32 x, s32 y, s32 z);
- * module/scene/gabomba_statue.h has s32 Import_ActorCreate(s32 x0, s32 z0, s32
- * x1, s32 z1, s32 a, s32 b, s32 c, s32 d); tried as the definition's s32
- * Import_ActorCreate(s32 x0, s32 z0, s32 endX, s32 endZ, s32 length, s32
- * direction, s32 last, s32 bit), it does not compile in tla-ja:
- * games/tla/src/scene/yampi_desert.c:156: too few arguments to function
- * `Import_ActorCreate'. */
-extern struct Actor *Import_ActorCreate(s32 kind, s32 x, s32 y,
-                                        s32 z) __asm__("Import_ActorCreate");
 void Actor_StartScript(struct Actor *object, const void *script);
 
 /// Spawns an object of kind 285 at each of the fifteen cells of

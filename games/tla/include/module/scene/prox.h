@@ -50,18 +50,18 @@ void Func_02004114(void);
 
 void Func_02000290(void);
 
-void Func_020006c4(void);
+void Prox_PraiseReturnedWarrior(void);
 
-void Func_02000714(void);
-void Func_02000764(void);
+void Prox_FearForWeyard(void);
+void Prox_TalkToPlayingChild(void);
 
-void Func_02000884(void);
+void Prox_TalkToTrainingChild(void);
 
-void Func_02000914(void);
+void Prox_SearchForParents(void);
 
-void Func_02000ad8(void);
+void Prox_DecideToGoToLighthouse(void);
 
-void Func_02000dac(void);
+void Prox_MeetPuelle(void);
 
 void Func_020015d0(void);
 
@@ -81,7 +81,7 @@ void Func_02001b28(void);
 
 void Func_02001b60(void);
 void Func_02001b7c(void);
-void Func_02002a8c(void);
+void Prox_SayFarewell(void);
 void Func_0200391c(void);
 extern u32 gData_02004644[];
 extern u32 gData_02004680[];

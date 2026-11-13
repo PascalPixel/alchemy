@@ -224,7 +224,8 @@ const u8 *Scene_GetEvents(void) {
 
 s32 Func_0200446c();
 
-void Func_02000620(void) {
+/// ★ Named from the game: ", you like igloos, right?" (MsgProx33)
+void Prox_AskAboutIgloos(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgProx33);
@@ -234,7 +235,9 @@ void Func_02000620(void) {
 
 DEFINE_FUNC_020003DC(Func_02000644)
 
-void Func_02000674(void) {
+/// ★ Named from the game: ", your parents have gone away... They were very
+/// worried about you." (MsgProx56)
+void Prox_TalkAboutParents(void) {
   s32 t0;
   s32 t4;
 
@@ -257,7 +260,9 @@ void Func_02000674(void) {
 
 s32 Shop_Run();
 
-void Func_020006c4(void) {
+/// ★ Named from the game: "You go away for a little while, and you come back a
+/// strong and mighty warrior!" (MsgProx53)
+void Prox_PraiseReturnedWarrior(void) {
   s32 t0;
   s32 t4;
 
@@ -280,7 +285,9 @@ void Func_020006c4(void) {
 
 s32 Sanctum_Run();
 
-void Func_02000714(void) {
+/// ★ Named from the game: "Now that the lighthouse has been lit, I fear for
+/// what will happen to Weyard." (MsgProx139)
+void Prox_FearForWeyard(void) {
   s32 t0;
   s32 t4;
 
@@ -310,7 +317,9 @@ struct TalkActor {
   u8 unk63; ///< Func_020002d8 reads it
 };
 
-void Func_02000764(void) {
+/// ★ Named from the game: "Weeee! What fun! Now that it's stopped snowing, we
+/// can go outside and play." (MsgProx113)
+void Prox_TalkToPlayingChild(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
   struct TalkActor *object = ((struct TalkActor *)Actor_Get(16));
   s16 angle = object->angle;
@@ -331,7 +340,8 @@ void Func_02000764(void) {
   Func_0200446c();
 }
 
-void Func_020007f4(void) {
+/// ★ Named from the game: "I miss running around outside." (MsgProx114)
+void Prox_TalkToRestlessChild(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
   struct TalkActor *object = ((struct TalkActor *)Actor_Get(17));
   s16 angle = object->angle;
@@ -352,7 +362,9 @@ void Func_020007f4(void) {
   Func_0200446c();
 }
 
-void Func_02000884(void) {
+/// ★ Named from the game: "If I'm going to be a great warrior, like , I'm gonna
+/// have to train hard." (MsgProx115)
+void Prox_TalkToTrainingChild(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
   struct TalkActor *object = ((struct TalkActor *)Actor_Get(18));
   s16 angle = object->angle;
@@ -373,7 +385,8 @@ void Func_02000884(void) {
   Func_0200446c();
 }
 
-void Func_02000914(void) {
+/// ★ Named from the game: "They're not here..." (MsgProx47)
+void Prox_SearchForParents(void) {
   s32 t0;
   s32 t8;
 
@@ -430,7 +443,9 @@ void Func_02000914(void) {
 
 void FieldCamera_WaitForArrival(void);
 
-void Func_02000ad8(void) {
+/// ★ Named from the game: "We can't wait for Agatio and his men any longer..."
+/// (MsgProx62)
+void Prox_DecideToGoToLighthouse(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_SetSpeed(0x4cccc, 0x9999);
@@ -511,7 +526,8 @@ void Func_02000ad8(void) {
 s32 Actor_MoveToObject();
 extern u32 gData_020049c4[];
 
-void Func_02000dac(void) {
+/// ★ Named from the game: "You... , it's you..." (MsgProx75)
+void Prox_MeetPuelle(void) {
   u32 i;
   s32 result;
   s32 owner;
@@ -873,7 +889,7 @@ struct EventWork154 {
   s16 returnEntrance;
 };
 
-void Func_020019a4(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f) {
+void Prox_EnterDoor(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f) {
   struct EventWork154 *work = Ram_HeapSlots->eventWork;
   struct Actor *object;
   s32 cell;
@@ -906,21 +922,21 @@ void Func_020019a4(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f) {
   FieldEvent_SetExitRequest(work->returnEntrance);
 }
 
-void Func_02001a9c(void) { Func_020019a4(0x30, 0x27, 0x39, 0x1a, 1, 2); }
+void Func_02001a9c(void) { Prox_EnterDoor(0x30, 0x27, 0x39, 0x1a, 1, 2); }
 
-void Func_02001ab8(void) { Func_020019a4(0x31, 0x27, 0x41, 0x18, 1, 2); }
+void Func_02001ab8(void) { Prox_EnterDoor(0x31, 0x27, 0x41, 0x18, 1, 2); }
 
-void Func_02001ad4(void) { Func_020019a4(0x32, 0x27, 0x38, 0x13, 1, 2); }
+void Func_02001ad4(void) { Prox_EnterDoor(0x32, 0x27, 0x38, 0x13, 1, 2); }
 
-void Func_02001af0(void) { Func_020019a4(0x33, 0x27, 0x3d, 0xd, 1, 2); }
+void Func_02001af0(void) { Prox_EnterDoor(0x33, 0x27, 0x3d, 0xd, 1, 2); }
 
-void Func_02001b0c(void) { Func_020019a4(0x33, 0x27, 0x50, 0x10, 1, 2); }
+void Func_02001b0c(void) { Prox_EnterDoor(0x33, 0x27, 0x50, 0x10, 1, 2); }
 
-void Func_02001b28(void) { Call6(Func_020019a4, 0x34, 0x27, 0x32, 9, 2, 2); }
+void Func_02001b28(void) { Call6(Prox_EnterDoor, 0x34, 0x27, 0x32, 9, 2, 2); }
 
-void Func_02001b44(void) { Func_020019a4(0x57, 2, 0x50, 7, 1, 2); }
+void Func_02001b44(void) { Prox_EnterDoor(0x57, 2, 0x50, 7, 1, 2); }
 
-void Func_02001b60(void) { Func_020019a4(0x59, 0, 0x4d, 0x10, 1, 2); }
+void Func_02001b60(void) { Prox_EnterDoor(0x59, 0, 0x4d, 0x10, 1, 2); }
 
 void Func_02001b7c(void) {
   struct EventWork154 *work = Ram_HeapSlots->eventWork;
@@ -999,7 +1015,8 @@ void Func_02001c24(s32 a0) {
 void FieldCamera_WaitForArrival(void);
 s32 Func_0200446c();
 
-void Func_02001cf0(void) {
+/// ★ Named from the game: "Thank you, . And you, too, and Kraden." (MsgProx80)
+void Prox_GiveThanksForBeacon(void) {
   s32 t83;
   s32 t144;
   s32 t159;
@@ -1434,7 +1451,7 @@ void Func_020029c8(void) {
   if (gMainRoutineWork.entrance == 0x14) {
     t2 = Event_GetFlag(0x9c5);
     if (t2 == 0) {
-      Func_02001cf0();
+      Prox_GiveThanksForBeacon();
     }
   }
 }
@@ -1485,7 +1502,9 @@ extern u8 gData_020060fc__s1cf0[] __asm__("gData_020060fc");
 /* VIEW(s1cf0): variable gData_02006268 as extern u8 gData_02006268[]; the definition has u32 gData_02006268[] = { 39, 2, 4, 0x980000, 0, 0x15c0000, 1, 39, 1, 0, 1, 3, 0, 1, 17, }; tried as the definition's extern s16 gData_02006268[], it does not compile in tla-ja: games/tla/src/scene/prox.c:3179: conflicting types for `gData_02006268'. */
 extern u8 gData_02006268__s1cf0[] __asm__("gData_02006268");
 
-void Func_02002a8c(void) {
+/// ★ Named from the game: "What took you so long? Mom and Dad are tired of
+/// waiting for you..." (MsgProx153)
+void Prox_SayFarewell(void) {
   u32 i;
 
   if (Event_GetFlag(0x9c5) != 0) {
@@ -2055,9 +2074,9 @@ void Func_02004310(void) {
 #include "text/msg_ids.h"
 
 void Func_02000280(void);
-void Func_02000620(void);
-void Func_02000674(void);
-void Func_020007f4(void);
+void Prox_AskAboutIgloos(void);
+void Prox_TalkAboutParents(void);
+void Prox_TalkToRestlessChild(void);
 
 extern u32 gData_020046bc[];
 
@@ -2350,7 +2369,7 @@ struct Trigger gData_0200554c[] = {
 struct Trigger gData_02005558[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {TRIGGER_STEP, 10, 0x9cc, EVENT(Func_02002a8c)},
+    {TRIGGER_STEP, 10, 0x9cc, EVENT(Prox_SayFarewell)},
     {TRIGGERS_END},
 };
 
@@ -2398,12 +2417,12 @@ struct Trigger gData_02005588[] = {
     {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgProx88)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, 0xa3d, MSGNO(MsgProx16)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgProx96)},
-    {TRIGGER_TALK, 16, CONDITION_ALWAYS, EVENT(Func_02000764)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, EVENT(Func_02000764)},
-    {TRIGGER_TALK, 17, CONDITION_ALWAYS, EVENT(Func_020007f4)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, EVENT(Func_020007f4)},
-    {TRIGGER_TALK, 18, CONDITION_ALWAYS, EVENT(Func_02000884)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, EVENT(Func_02000884)},
+    {TRIGGER_TALK, 16, CONDITION_ALWAYS, EVENT(Prox_TalkToPlayingChild)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, EVENT(Prox_TalkToPlayingChild)},
+    {TRIGGER_TALK, 17, CONDITION_ALWAYS, EVENT(Prox_TalkToRestlessChild)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, EVENT(Prox_TalkToRestlessChild)},
+    {TRIGGER_TALK, 18, CONDITION_ALWAYS, EVENT(Prox_TalkToTrainingChild)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, EVENT(Prox_TalkToTrainingChild)},
     {0x50008805, 100, 0x300, EVENT(Func_02000588)},
     {PSYNERGY_ON_ACTOR(ABILITY_LIFT), 19, CONDITION_ALWAYS, 0},
     {TRIGGERS_END},
@@ -2420,9 +2439,9 @@ struct Trigger gData_020057f8[] = {
     {0x8805, 255, CONDITION_ALWAYS, EVENT(Func_02001800)},
     {0x50008805, 8, CONDITION_ALWAYS, EVENT(Func_02001770)},
     {TRIGGER_RAISED, 200, 0xa3d, EVENT(Func_02000280)},
-    {TRIGGER_STEP, 11, 0x9c0, EVENT(Func_02000914)},
-    {TRIGGER_STEP, 12, 0x9c1, EVENT(Func_02000ad8)},
-    {TRIGGER_STEP, 13, 0x9c2, EVENT(Func_02000dac)},
+    {TRIGGER_STEP, 11, 0x9c0, EVENT(Prox_SearchForParents)},
+    {TRIGGER_STEP, 12, 0x9c1, EVENT(Prox_DecideToGoToLighthouse)},
+    {TRIGGER_STEP, 13, 0x9c2, EVENT(Prox_MeetPuelle)},
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgProx48)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgProx50)},
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgProx49)},
@@ -2497,7 +2516,7 @@ struct Trigger gData_02005a20[] = {
     {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgProx110)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, 0xa3d, MSGNO(MsgProx32)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgProx112)},
-    {TRIGGER_TALK, 15, CONDITION_ALWAYS, EVENT(Func_02000620)},
+    {TRIGGER_TALK, 15, CONDITION_ALWAYS, EVENT(Prox_AskAboutIgloos)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgProx37)},
     {TRIGGER_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgProx34)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgProx38)},
@@ -2521,7 +2540,7 @@ struct Trigger gData_02005a20[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, CONDITION_ALWAYS, MSGNO(MsgProx126)},
     {TRIGGER_TALK, 26, CONDITION_ALWAYS, MSGNO(MsgProx122)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 26, CONDITION_ALWAYS, MSGNO(MsgProx127)},
-    {TRIGGER_TALK, 22, CONDITION_ALWAYS, EVENT(Func_02000674)},
+    {TRIGGER_TALK, 22, CONDITION_ALWAYS, EVENT(Prox_TalkAboutParents)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, 0xa3d, MSGNO(MsgProx58)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS, MSGNO(MsgProx137)},
     {TRIGGER_TALK, 23, 0xa3d, MSGNO(MsgProx57)},
@@ -2549,7 +2568,7 @@ struct Trigger gData_02005da4[] = {
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgProx131)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0xa3d, MSGNO(MsgProx54)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgProx133)},
-    {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(Func_020006c4)},
+    {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(Prox_PraiseReturnedWarrior)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, 0xa3d, MSGNO(MsgProx55)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgProx134)},
     {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgProx125)},
@@ -2563,7 +2582,7 @@ struct Trigger gData_02005da4[] = {
 
 struct Trigger gData_02005eac[] = {
     {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
-    {TRIGGER_TALK, 8, CONDITION_ALWAYS, EVENT(Func_02000714)},
+    {TRIGGER_TALK, 8, CONDITION_ALWAYS, EVENT(Prox_FearForWeyard)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0xa3d, MSGNO(MsgProx61)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgProx140)},
     {TRIGGERS_END},

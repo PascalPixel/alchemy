@@ -6,6 +6,7 @@
 /// (KibomboMountains_FightWaft).
 
 #include "flags.h"
+#include "item_ids.h"
 #include "shared/map_cells.h"
 #include "shared/actors.h"
 #include "field/field.h"
@@ -351,7 +352,7 @@ s32 Scene_Initialize(void) {
       Actor_SetAttachedEffect(10, ATTACHED_EFFECT_IN_FRONT |
                                       ATTACHED_EFFECT_ATTACH);
     }
-    Actor_ShowItemIconById(17, 231);
+    Actor_ShowItemIconById(17, ITEM_BONE);
     if (GameFlag_Get(0x882))
       Actor_SetHorizontalPositionWithTerrain(13, 0, 0);
     else

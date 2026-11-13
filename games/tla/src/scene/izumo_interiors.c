@@ -4,6 +4,7 @@
 
 #include "shared/tables.h"
 #include "types.h"
+#include "item_ids.h"
 #include "flags.h"
 #include "actor.h"
 #include "field/event_inline.h"
@@ -1442,7 +1443,7 @@ struct Trigger gIzumoInteriors_TriggersOnceTheSerpentIsSlain[] = {
      MSGNO(MsgIfSDescendants)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS,
      MSGNO(MsgIMNo)},
-    {0x1c314, 15, FLAG_UZUME_HAS_THE_DOLL,
+    {USE_ITEM_ON_ACTOR(ITEM_DANCING_IDOL), 15, FLAG_UZUME_HAS_THE_DOLL,
      EVENT(IzumoInteriors_GiveUzumeTheDoll)},
     {TRIGGER_TABLE_END},
 };

@@ -1,6 +1,7 @@
 /// @file
 #include "shared/actors.h"
 #include "flags.h"
+#include "item_ids.h"
 #include "types.h"
 #include "system/ram_buffer.h"
 #include "system/main_routine_work.h"
@@ -694,7 +695,7 @@ void Func_02000d4c(void) {
   u8 *animation;
   s32 a, id;
 
-  FieldActor_ShowItemIconById(19, 408);
+  FieldActor_ShowItemIconById(19, ITEM_GOLDEN_BOOTS);
   object = Actor_Get(19);
   animation = object->sprite;
   animation[17] |= 1;

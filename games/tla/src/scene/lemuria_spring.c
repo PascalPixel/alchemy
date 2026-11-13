@@ -5,6 +5,7 @@
 
 #include "battle/battle.h"
 #include "flags.h"
+#include "item_ids.h"
 #include "system/io_write.h"
 #include "field/field.h"
 #include "game/game.h"
@@ -239,7 +240,7 @@ s32 LemuriaSpring_RunSpringGame(void) {
   Event_ResolvePendingActions(0);
 prompt:
   coins = gMainRoutineWork.coins;
-  medals = PartyInventory_CountItem(229);
+  medals = PartyInventory_CountItem(ITEM_LUCKY_MEDAL);
   message = (s32)MsgWhatWillYou;
   Event_SetMessageId(message);
   Event_OpenMessage(-1, 0);
@@ -307,7 +308,7 @@ toss:
   Event_ResolvePendingActions(0);
   for (;;) {
     coins = gMainRoutineWork.coins;
-    medals = PartyInventory_CountItem(229);
+    medals = PartyInventory_CountItem(ITEM_LUCKY_MEDAL);
     message = (s32)MsgWhatWillYou;
     Event_SetMessageId(message);
     Event_OpenMessage(-1, 0);

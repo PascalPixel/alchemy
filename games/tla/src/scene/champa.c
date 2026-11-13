@@ -18,6 +18,7 @@
 #include "sound/sound.h"
 #include "system/system.h"
 #include "types.h"
+#include "item_ids.h"
 #include "flags.h"
 #include "scene_tables.h"
 #include "field/event_inline.h"
@@ -300,7 +301,7 @@ void Champa_TakeFeizhisGift(s32 a0) {
 }
 
 void Champa_FeizhiHoldsHerGift(void) {
-  FieldActor_ShowItemIconById(31, 415);
+  FieldActor_ShowItemIconById(31, ITEM_GOLDEN_RING);
   {
     s32 facing = FACING_NORTH;
 

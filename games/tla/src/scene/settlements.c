@@ -20,6 +20,7 @@
 
 #include "shared/actors.h"
 #include "flags.h"
+#include "item_ids.h"
 #include "shared/effects.h"
 #include "shared/mars_lighthouse.h"
 #include "types.h"
@@ -305,9 +306,9 @@ void Settlements_CatchApple(void) {
   FieldEvent_ResolvePendingActions(0);
   Actor_SetPosition(11, 0, 0);
   Event_SetFlag(0xf5d);
-  ItemDisplay_ShowItem(193, 3);
+  ItemDisplay_ShowItem(ITEM_APPLE, 3);
   mode = 0;
-  Party_GiveItem(193, mode);
+  Party_GiveItem(ITEM_APPLE, mode);
   Event_End();
 }
 
@@ -532,7 +533,7 @@ void Settlements_SetUpKaltIsland(void) {
   actor->flags23 &= 0xfe;
   actor->visible = 1;
   transfer = HeapSlot_Alloc(68, 0x608);
-  Item_LoadIcon(193);
+  Item_LoadIcon(ITEM_APPLE);
   transfer += 0x400;
   Vram_Load(sprite->palette, 128, transfer);
   HeapSlot_Release(68);

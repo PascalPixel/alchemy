@@ -7,6 +7,7 @@
 
 #include "shared/effects.h"
 #include "types.h"
+#include "item_ids.h"
 #include "system/main_routine_work.h"
 #include "system/ram_buffer.h"
 #include "system/dma.h"
@@ -1103,7 +1104,7 @@ void Event_LeaveFor(s32 scene, s32 entrance);
 // The lucky wheels attendant: checks the game tickets and free item slots,
 // then sends the player in.
 void Func_02001938(s32 spoken) {
-  s32 tickets = PartyInventory_CountItem(228);
+  s32 tickets = PartyInventory_CountItem(ITEM_GAME_TICKET);
   s32 room;
 
   ObjectTable_Snapshot();

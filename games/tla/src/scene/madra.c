@@ -10,6 +10,7 @@
 
 #include "shared/actors.h"
 #include "flags.h"
+#include "item_ids.h"
 #include "battle/battle.h"
 #include "field/field.h"
 #include "game/game.h"
@@ -1093,8 +1094,8 @@ void Madra_MeetKarst(void) {
   Actor_WalkByAndWaitById(34, 16, 8);
   Actor_FaceDirection(34, FACING_SOUTH, 0);
   if (PartyInventory_FindRoom(210) >= 0) {
-    ItemDisplay_ShowItem(210, 3);
-    PartyInventory_GiveItem(210, 0);
+    ItemDisplay_ShowItem(ITEM_CYCLONE_CHIP, 3);
+    PartyInventory_GiveItem(ITEM_CYCLONE_CHIP, 0);
     (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
     Actor_ArmCallback(4, FACING_NORTH, 0);
     GameFlag_Set(0x918);

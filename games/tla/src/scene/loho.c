@@ -5,6 +5,7 @@
 
 #include "shared/tables.h"
 #include "flags.h"
+#include "item_ids.h"
 #include "types.h"
 #include "system/ram_buffer.h"
 #include "actor.h"
@@ -220,7 +221,7 @@ inPlace:
   Actor_FaceDirectionAndWait(4, FACING_NORTH);
   Event_Wait(30);
   Event_PlaySound(SE_CLATTER);
-  FieldActor_ShowItemIconById(21, 460);
+  FieldActor_ShowItemIconById(21, ITEM_MAGMA_BALL);
   Actor_SetPosition(21, 488, 330);
   Actor_SetDestinationOffset(20, 0, 8);
   Actor_SetSpeed(21, 3);
@@ -1005,7 +1006,7 @@ struct Trigger gLoho_Room1Triggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgLoho25)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgLoho26)},
     {EXAMINE_TRIGGER(EXAMINE_WELL), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgLoho58))},
-    {0x1cc14, 20, CONDITION_ALWAYS, EVENT(Loho_FireCannon)},
+    {USE_ITEM_ON_ACTOR(ITEM_MAGMA_BALL), 20, CONDITION_ALWAYS, EVENT(Loho_FireCannon)},
     {TRIGGER_TALK, 19, CONDITION_ALWAYS, EVENT(Loho_MeetLull)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 101, 0x300, EVENT(Loho_ScoopFirstTreasure)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 102, 0x301, EVENT(Loho_ScoopSecondTreasure)},

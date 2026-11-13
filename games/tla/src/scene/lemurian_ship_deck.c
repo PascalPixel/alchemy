@@ -6,6 +6,7 @@
 
 #include "battle/battle.h"
 #include "flags.h"
+#include "item_ids.h"
 #include "field/field.h"
 #include "game/game.h"
 #include "graphics/graphics.h"
@@ -724,7 +725,7 @@ struct Actor *LemurianShipDeck_CreateBlackCrystal(void) {
   sprite->nextFrame = 0;
   sprite->unk1b[0] = 0;
   buffer = HeapSlot_Alloc(68, 0x608);
-  Icon_DrawItem(242);
+  Icon_DrawItem(ITEM_BLACK_CRYSTAL);
   VramCache_Load(sprite->vramBlock, 128, buffer + 0x400);
   HeapSlot_Release(68);
   return object;

@@ -1,5 +1,6 @@
 /// @file
 #include "types.h"
+#include "item_ids.h"
 #include "flags.h"
 #include "field/event_inline.h"
 #include "battle/battle.h"
@@ -510,7 +511,7 @@ void Func_0200065c(void) {
         created->speedLimit = 0x6666;
         created->acceleration = 0xccc;
         buffer = HeapSlot_Alloc(68, 0x608);
-        Item_LoadIcon(246);
+        Item_LoadIcon(ITEM_JUPITER_STAR);
         Vram_Load(sprite->vramBlock, 128, buffer + 0x400);
         Call1((void (*)())HeapSlot_Release, 68);
       }

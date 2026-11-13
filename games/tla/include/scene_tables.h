@@ -272,8 +272,12 @@ enum PsynergyPhase {
 #define PSYNERGY_PHASE_ON_CELL(ability, phase)                                 \
   ((u32)(phase) << 28 | (ability) << 8 | TRIGGER_PSYNERGY)
 
-/// Using an item (one byte) on a cell behavior, as The Broken Seal's USE_ITEM.
+/// Using an item on a cell behavior, or on an actor, as The Broken Seal's
+/// USE_ITEM; the item is an ItemId (item_ids.h) or an ITEM_FILTER_ value.
+#define TRIGGER_ITEM_ON_ACTOR 0x10
 #define USE_ITEM(item) (TRIGGER_ITEM | (item) << 8)
+#define USE_ITEM_ON_ACTOR(item)                                                \
+  (TRIGGER_ITEM | TRIGGER_ITEM_ON_ACTOR | (item) << 8)
 
 /// A Psynergy trigger for any target, not a particular actor or cell.
 #define TRIGGER_PSYNERGY_ANYWHERE 0x80

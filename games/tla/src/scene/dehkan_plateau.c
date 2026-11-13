@@ -12,6 +12,7 @@
 /// (DehkanPlateau_FightCannon).
 
 #include "types.h"
+#include "item_ids.h"
 #include "system/system.h"
 #include "actor.h"
 #include "field/event_inline.h"
@@ -1834,7 +1835,7 @@ void DehkanPlateau_TakePoundCube(void) {
   Event_ResolvePendingActions(0);
   if (gDehkanPlateau_PoundCube != 0)
     ItemDisplay_ShowPicture(gDehkanPlateau_PoundCube, 3);
-  PartyInventory_GiveItem(199, 0);
+  PartyInventory_GiveItem(ITEM_POUND_CUBE, 0);
   if (gDehkanPlateau_PoundCube != 0)
     Actor_Release(gDehkanPlateau_PoundCube);
   Map_CopyAttributes(1, 0, 1, 1, 15, 5);
@@ -2261,7 +2262,7 @@ void Func_02003a30(void) {
     sprite->nextFrame = zero;
     sprite->unk1b[0] = zero;
     buffer = HeapSlot_Alloc(68, 0x608);
-    Icon_DrawItem(199);
+    Icon_DrawItem(ITEM_POUND_CUBE);
     VramCache_Load(sprite->vramBlock, 128, buffer + 0x400);
     HeapSlot_Release(68);
   }

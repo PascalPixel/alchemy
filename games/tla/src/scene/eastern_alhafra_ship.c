@@ -17,6 +17,7 @@
 #include "sound/sound.h"
 #include "system/system.h"
 #include "types.h"
+#include "item_ids.h"
 #include "flags.h"
 #include "scene_tables.h"
 #include "actor.h"
@@ -176,7 +177,7 @@ s32 Scene_Initialize(void) {
   if (GameFlag_Get(0x900))
     Actor_SetPosition(13, 392, 648);
   Actor_GetById(13)->priorityFlags |= 32;
-  Actor_ShowItemIconById(15, 457);
+  Actor_ShowItemIconById(15, ITEM_LARGE_BREAD);
   if (!GameFlag_Get(0x901)) {
     if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
       Actor_GetById(14)->priorityFlags |= 128;

@@ -9,6 +9,7 @@
 #include "../field/object/prepare_object.c"
 
 #include "types.h"
+#include "item_ids.h"
 #include "flags.h"
 #include "system/ram_buffer.h"
 #include "actor.h"
@@ -1450,12 +1451,12 @@ void MagmaRockInside_ExamineEmberStone(void) {
   Event_OpenMessage(12, 0);
   if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
       0) {
-    Party_GiveItem(460, 0);
+    Party_GiveItem(ITEM_MAGMA_BALL, 0);
     if (FieldPartyInventory_FindMember(460) == -1) {
       Event_End();
       return;
     }
-    ItemDisplay_ShowItem(460, 3);
+    ItemDisplay_ShowItem(ITEM_MAGMA_BALL, 3);
     Actor_SetAnimation(12, 2);
     Event_SetFlag(0x9f9);
   }

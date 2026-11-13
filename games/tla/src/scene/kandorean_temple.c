@@ -31,6 +31,7 @@
 /// lifts.
 
 #include "flags.h"
+#include "item_ids.h"
 #include "types.h"
 #include "system/system.h"
 #include "system/ram_buffer.h"
@@ -1631,7 +1632,7 @@ void KandoreanTemple_ReceiveLash(void) {
   Actor_ArmCallback(gMainRoutineWork.currentOwner, (u16)angle, 10);
   if (gKandoreanTemple_LashPebble != 0)
     ItemDisplay_ShowPicture(gKandoreanTemple_LashPebble, 3);
-  Party_GiveItem(198, 0);
+  Party_GiveItem(ITEM_LASH_PEBBLE, 0);
   if (gKandoreanTemple_LashPebble != 0)
     Actor_Release(gKandoreanTemple_LashPebble);
   Actor_SetAnimation(12, 4);
@@ -2997,7 +2998,7 @@ void KandoreanTemple_CreateLashPebble(void) {
     sprite->nextFrame = zero;
     sprite->unk1b[0] = zero;
     buffer = HeapSlot_Alloc(68, 0x608);
-    Icon_DrawItem(198);
+    Icon_DrawItem(ITEM_LASH_PEBBLE);
     VramCache_Load(sprite->vramBlock, 128, buffer + 0x400);
     HeapSlot_Release(68);
   }

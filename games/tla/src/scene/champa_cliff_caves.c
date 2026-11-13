@@ -1,6 +1,7 @@
 /// @file
 #include "field/event_inline.h"
 #include "types.h"
+#include "item_ids.h"
 #include "flags.h"
 #include "system/main_routine_work.h"
 #include "system/ram_buffer.h"
@@ -350,7 +351,7 @@ s32 Scene_Initialize(void) {
       Func_02001868();
     }
     if (GameFlag_Get(0x977) && !GameFlag_Get(0x978)) {
-      FieldActor_ShowItemIconById(10, 326);
+      FieldActor_ShowItemIconById(10, ITEM_TRIDENT);
       Actor_SetPosition(10, 664, 232);
       Actor_GetById(10)->motionFlags = 4;
     }

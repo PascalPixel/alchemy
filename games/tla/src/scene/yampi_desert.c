@@ -24,6 +24,7 @@ void PartyInventory_GiveItem__placements(s32 item, s32 flags) __asm__(
 #define Statue_Sink Statue_Sink__placements
 #define PartyInventory_GiveItem PartyInventory_GiveItem__placements
 #include "types.h"
+#include "item_ids.h"
 #include "system/io_reg.h"
 #include "flags.h"
 #include "system/task.h"
@@ -1271,7 +1272,7 @@ struct Actor *YampiDesert_CreateScoopGem(void) {
     visual->value1a = 0;
     visual->value1b = 0;
     buffer = HeapSlot_Alloc(68, 0x608);
-    Icon_DrawItem(209);
+    Icon_DrawItem(ITEM_SCOOP_GEM);
     VramCache_Load(visual->tileSlot, 128, buffer + 0x400);
     HeapSlot_Release(68);
   }
@@ -1288,7 +1289,7 @@ void YampiDesert_DropScoopGem(void) {
   FieldEvent_Wait(20);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 28);
   object = YampiDesert_CreateScoopGem();
-  PartyInventory_GiveItem(209, 0);
+  PartyInventory_GiveItem(ITEM_SCOOP_GEM, 0);
   if (object != 0) {
     Actor_SetPositionAndResetMotion((struct Actor *)object, 0, 0, 0);
     wait(1);

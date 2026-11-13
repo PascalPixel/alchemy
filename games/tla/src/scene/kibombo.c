@@ -11,6 +11,7 @@
 
 #include "shared/actors.h"
 #include "flags.h"
+#include "item_ids.h"
 #include "types.h"
 struct Actor;
 #include "kibombo.h"
@@ -1431,7 +1432,7 @@ void Func_02002de0(void) {
     sprite->nextFrame = zero;
     sprite->unk1b[0] = zero;
     buffer = HeapSlot_Alloc(68, 0x608);
-    Icon_DrawItem(242);
+    Icon_DrawItem(ITEM_BLACK_CRYSTAL);
     VramCache_Load(sprite->vramBlock, 128, buffer + 0x400);
     HeapSlot_Release(68);
   }

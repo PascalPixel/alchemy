@@ -9,6 +9,7 @@
 
 #include "shared/mars_lighthouse.h"
 #include "flags.h"
+#include "item_ids.h"
 #include "shared/effects.h"
 #include "event_work.h"
 #include "module/scene/mars_lighthouse_aerie.h"
@@ -1929,7 +1930,7 @@ void MarsLighthouseAerie_LightBeacon(void) {
     A(object)->acceleration = 0xccc;
     A(object)->gravity = 0x8000;
     block = HeapSlot_Alloc(68, 0x608);
-    Item_LoadIcon(247);
+    Item_LoadIcon(ITEM_MARS_STAR);
     tiles = (block + 0x400);
     Vram_Load(sprite->vramBlock, 128, tiles);
     HeapSlot_Release(68);

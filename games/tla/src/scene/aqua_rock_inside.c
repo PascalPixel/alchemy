@@ -9,6 +9,7 @@
 
 #include "shared/actors.h"
 #include "types.h"
+#include "item_ids.h"
 #include "system/system.h"
 #include "system/ram_buffer.h"
 #include "actor.h"
@@ -531,7 +532,7 @@ void Func_020007a8(void) {
   struct Actor *object;
   struct FieldSpriteFlags *sprite;
 
-  FieldActor_ShowItemIconById(10, 456);
+  FieldActor_ShowItemIconById(10, ITEM_AQUARIUS_STONE);
   object = Actor_Get(20);
   sprite = object->sprite;
   sprite->flag0 = 1;
@@ -2845,7 +2846,7 @@ LATE_DATA struct Trigger gAquaRockInside_Room3Triggers[] = {
     {STEP_TRIGGER_FACING(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT(Leader_SinkAway)},
     {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, EVENT(AquaRockInside_CheckColumn)},
-    {0x1c814, 9, 0x95d, EVENT(Func_020007d4)},
+    {USE_ITEM_ON_ACTOR(ITEM_AQUARIUS_STONE), 9, 0x95d, EVENT(Func_020007d4)},
     {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), 8, 0xa66, EVENT(Func_02000a98)},
     {TRIGGER_TABLE_END},
 };

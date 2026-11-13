@@ -9,6 +9,7 @@
 
 #include "shared/map_cells.h"
 #include "flags.h"
+#include "item_ids.h"
 #include "shared/actors.h"
 #include "shared/tables.h"
 #include "types.h"
@@ -964,7 +965,8 @@ struct Trigger gMadraCatacombs_Room6Triggers[] = {
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS,
      EVENT(MadraCatacombs_OpenTabletRoomDoor)},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
-    {0x1cb04, 10, CONDITION_ALWAYS, EVENT(MadraCatacombs_UnlockWithRuinKey)},
+    {USE_ITEM(ITEM_RUIN_KEY), 10, CONDITION_ALWAYS,
+     EVENT(MadraCatacombs_UnlockWithRuinKey)},
     {TRIGGER_EXAMINE, 10, 0x8c9, EVENT(MadraCatacombs_TryLockedDoor)},
     {TRIGGER_TABLE_END},
 };

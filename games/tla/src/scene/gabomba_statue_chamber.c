@@ -1,5 +1,6 @@
 /// @file
 #include "flags.h"
+#include "item_ids.h"
 #include "battle/battle.h"
 #include "field/field.h"
 #include "game/game.h"
@@ -326,7 +327,7 @@ void Func_02000184(void) {
                         leader->z);
     Actor_WaitForMove((s32)gData_02002058);
   }
-  PartyInventory_GiveItem(242, 0);
+  PartyInventory_GiveItem(ITEM_BLACK_CRYSTAL, 0);
   if (gData_02002058 != 0)
     Actor_Release((s32)gData_02002058);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 1);
@@ -652,7 +653,7 @@ void Func_020010d4(void) {
     sprite->priority = 1;
     ((u8 *)statue)[0x5c] = 1;
     block = (u8 *)HeapSlot_Alloc(68, 0x608);
-    Icon_DrawItem(242);
+    Icon_DrawItem(ITEM_BLACK_CRYSTAL);
     VramCache_Load(sprite->vramBlock, 0x80, (s32)(block + 0x400));
     HeapSlot_Release(68);
   }

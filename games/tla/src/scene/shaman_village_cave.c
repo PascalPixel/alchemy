@@ -5,6 +5,7 @@
 
 #include "battle/battle.h"
 #include "flags.h"
+#include "item_ids.h"
 #include "field/field.h"
 #include "game/game.h"
 #include "graphics/graphics.h"
@@ -262,7 +263,7 @@ void ShamanVillageCave_PlaceGladiators(void) {
 void ShamanVillageCave_PlaceGoldenShirt(void) {
   s32 angle;
 
-  FieldActor_ShowItemIconById(22, 400);
+  FieldActor_ShowItemIconById(22, ITEM_GOLDEN_SHIRT);
   angle = 0xc000;
   Actor_SetPositionAndFacing(22, PIXELS(212), PIXELS(199), angle);
   Event_SetFlag(0xa73);

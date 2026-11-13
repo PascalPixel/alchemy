@@ -10,6 +10,7 @@
 
 #include "shared/actors.h"
 #include "flags.h"
+#include "item_ids.h"
 #include "types.h"
 #include "system/field_effect.h"
 #include "system/main_routine_work.h"
@@ -1372,7 +1373,7 @@ struct Actor *ShamanVillage_CreateRodIcon(void) {
     sprite->nextFrame = 0;
     sprite->unk1b[0] = 0;
     buffer = HeapSlot_Alloc(68, 0x608);
-    Icon_DrawItem(65);
+    Icon_DrawItem(ITEM_SHAMANS_ROD);
     VramCache_Load(sprite->vramBlock, 128, buffer + 0x400);
     HeapSlot_Release(68);
   }
@@ -3277,10 +3278,14 @@ struct Trigger gShamanVillage_Room2Triggers[] = {
      MSGNO(MsgShamanMoapaSparedOutsiders)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS,
      MSGNO(MsgShamanGuardBlamesMountainClimb)},
-    {0x4114, 15, 0x9e1, EVENT(ShamanVillage_ShowShamansRod)},
-    {0x1ff14, 15, CONDITION_ALWAYS, EVENT(ShamanVillage_ShowItemToMoapa)},
-    {0x1ff14, 16, CONDITION_ALWAYS, EVENT(ShamanVillage_ShowItemToGuard)},
-    {0x1ff14, 17, CONDITION_ALWAYS, EVENT(ShamanVillage_ShowItemToOtherGuard)},
+    {USE_ITEM_ON_ACTOR(ITEM_SHAMANS_ROD), 15, 0x9e1,
+     EVENT(ShamanVillage_ShowShamansRod)},
+    {USE_ITEM_ON_ACTOR(ITEM_FILTER_ANY), 15, CONDITION_ALWAYS,
+     EVENT(ShamanVillage_ShowItemToMoapa)},
+    {USE_ITEM_ON_ACTOR(ITEM_FILTER_ANY), 16, CONDITION_ALWAYS,
+     EVENT(ShamanVillage_ShowItemToGuard)},
+    {USE_ITEM_ON_ACTOR(ITEM_FILTER_ANY), 17, CONDITION_ALWAYS,
+     EVENT(ShamanVillage_ShowItemToOtherGuard)},
     {TRIGGER_TABLE_END},
 };
 

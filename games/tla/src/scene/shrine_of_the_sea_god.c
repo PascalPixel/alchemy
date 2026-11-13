@@ -11,6 +11,7 @@
 #include "../field/field_effect/spawn.c"
 
 #include "types.h"
+#include "item_ids.h"
 #include "field/emote.h"
 #include "field/speaker.h"
 #include "flags.h"
@@ -2505,7 +2506,8 @@ struct Trigger gShrineOfTheSeaGod_Room8Triggers[] = {
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXAMINE, 10, CONDITION_ALWAYS,
      EVENT(ShrineOfTheSeaGod_ExamineStatue)},
-    {0x1ca04, 10, CONDITION_ALWAYS, EVENT(ShrineOfTheSeaGod_UseSeaGodsTear)},
+    {USE_ITEM(ITEM_SEA_GODS_TEAR), 10, CONDITION_ALWAYS,
+     EVENT(ShrineOfTheSeaGod_UseSeaGodsTear)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0,
      CONDITION_ALWAYS, EVENT(Func_020019dc)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0,
@@ -2516,6 +2518,6 @@ struct Trigger gShrineOfTheSeaGod_Room8Triggers[] = {
 struct Trigger gShrineOfTheSeaGod_Room9Triggers[] = {
     {TRIGGER_EXAMINE, 1, CONDITION_ALWAYS,
      EVENT(ShrineOfTheSeaGod_ExamineStatue)},
-    {0x1ca04, 1, CONDITION_ALWAYS, EVENT(Func_02000e38)},
+    {USE_ITEM(ITEM_SEA_GODS_TEAR), 1, CONDITION_ALWAYS, EVENT(Func_02000e38)},
     {TRIGGER_TABLE_END},
 };

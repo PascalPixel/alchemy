@@ -1,5 +1,6 @@
 /// @file
 #include "flags.h"
+#include "item_ids.h"
 #include "shared/actors.h"
 #include "shared/effects.h"
 #include "battle/battle.h"
@@ -500,7 +501,7 @@ void Func_02000568(void) {
     FieldPsynergy_RestoreMindReadPalette();
     Message_ShowCentered((s32)MsgOhMyThat + 1, 1);
     PartyInventory_Remove(0x1c4);
-    Party_GiveItem(453, 0);
+    Party_GiveItem(ITEM_RED_CLOTH, 0);
     FieldPsynergy_GreyMindReadPalette();
     if (spawned != 0) {
       Actor_Release(spawned);
@@ -546,7 +547,7 @@ void Func_02000568(void) {
     STEP(10, 116, 164);                                                        \
     FieldPsynergy_RestoreMindReadPalette();                                    \
     PartyInventory_Remove(453);                                                \
-    PartyInventory_GiveItem(454, 0);                                           \
+    PartyInventory_GiveItem(ITEM_MILK, 0);                                     \
     if (given != 0) {                                                          \
       Actor_Release(given);                                                    \
       Actor_SetModeById(gMainRoutineWork.currentOwner, 1);                     \
@@ -1257,7 +1258,7 @@ void Func_02001db0(void) {
                                        leader->z);
   FieldEvent_Wait(20);
   FieldPsynergy_RestoreMindReadPalette();
-  Party_GiveItem(452, 0);
+  Party_GiveItem(ITEM_PRETTY_STONE, 0);
   FieldPsynergy_GreyMindReadPalette();
   Actor_SetPosition(20, 0, 0);
   Actor_SetAnimation(gMainRoutineWork.currentOwner, 1);

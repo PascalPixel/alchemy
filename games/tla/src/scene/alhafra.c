@@ -21,6 +21,7 @@
 #include "sound/sound.h"
 #include "system/system.h"
 #include "types.h"
+#include "item_ids.h"
 #include "flags.h"
 #include "scene_tables.h"
 #include "event_work.h"
@@ -1304,7 +1305,7 @@ struct Trigger gAlhafra_TriggersOnceBriggsIsCaught[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 26, CONDITION_ALWAYS, MSGNO(MsgAlhafra67)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 27, FLAG_HUNGRY_BOY_FED, MSGNO(MsgAlhafra68)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 27, CONDITION_ALWAYS, MSGNO(MsgAlhafra72)},
-    {0x1c914, 27, CONDITION_ALWAYS, EVENT(Alhafra_GiveBreadToHungryBoy)},
+    {USE_ITEM_ON_ACTOR(ITEM_LARGE_BREAD), 27, CONDITION_ALWAYS, EVENT(Alhafra_GiveBreadToHungryBoy)},
     {TRIGGER_TALK, 28, CONDITION_ALWAYS, MSGNO(MsgAlhafra73)},
     {TRIGGER_TALK, 29, CONDITION_ALWAYS, MSGNO(MsgAlhafra75)},
     {TRIGGER_TALK, 30, CONDITION_ALWAYS, MSGNO(MsgAlhafra77)},

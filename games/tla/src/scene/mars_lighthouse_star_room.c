@@ -9,6 +9,7 @@
 
 #include "shared/mars_lighthouse.h"
 #include "flags.h"
+#include "item_ids.h"
 #include "shared/actors.h"
 #include "types.h"
 #include "system/ram_buffer.h"
@@ -627,7 +628,7 @@ void MarsLighthouseStarRoom_CreateMarsStar(s32 rise) {
   sprite->nextFrame = zero;
   sprite->unk1b[0] = zero;
   block = HeapSlot_Alloc(68, size);
-  Item_LoadIcon(247);
+  Item_LoadIcon(ITEM_MARS_STAR);
   block += 0x400;
   Vram_Load(sprite->vramBlock, 128, block);
   HeapSlot_Release(68);
@@ -690,7 +691,7 @@ void MarsLighthouseStarRoom_TakeMarsStar(void) {
     FieldActor_WaitForMove(gMarsLighthouseStarRoom_MarsStar);
     Event_PlaySound(MUS_083);
     PartyInventory_Remove(224);
-    Inventory_AddItem(4, 222);
+    Inventory_AddItem(4, ITEM_MYTHRIL_BAG);
     Message_ShowCentered((s32)MsgMarsStar08, 1);
     i = 0;
     offset = 216;
@@ -810,7 +811,7 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
     sprite->unk1b[0] = 0;
     object->priorityFlags |= 2;
     buffer = HeapSlot_Alloc(68, 0x608);
-    Item_LoadIcon(247);
+    Item_LoadIcon(ITEM_MARS_STAR);
     Vram_Load(sprite->vramBlock, 128, buffer + 0x400);
     HeapSlot_Release(68);
   }
@@ -929,7 +930,7 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
       sprite->unk1b[0] = 0;
       object->priorityFlags |= 2;
       buffer = HeapSlot_Alloc(68, 0x608);
-      Item_LoadIcon(247);
+      Item_LoadIcon(ITEM_MARS_STAR);
       Vram_Load(sprite->vramBlock, 128, buffer + 0x400);
       HeapSlot_Release(68);
     }
@@ -990,7 +991,7 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
     object2->unk5c[0] = 1;
     object2->priorityFlags |= 2;
     buffer2 = HeapSlot_Alloc(68, 0x608);
-    Item_LoadIcon(247);
+    Item_LoadIcon(ITEM_MARS_STAR);
     Vram_Load(sprite2->vramBlock, 128, buffer2 + 0x400);
     HeapSlot_Release(68);
   }
@@ -2462,7 +2463,8 @@ struct Trigger gSceneEvents[] = {
      MSGNO(MsgMarsStar04)},
     {TRIGGER_EXAMINE, 21, CONDITION_ALWAYS,
      EVENT(MarsLighthouseStarRoom_ExamineStatue)},
-    {0xde04, 1045, CONDITION_ALWAYS, EVENT(MarsLighthouseStarRoom_UseMarsStar)},
+    {USE_ITEM(ITEM_MYTHRIL_BAG), 1045, CONDITION_ALWAYS,
+     EVENT(MarsLighthouseStarRoom_UseMarsStar)},
     {TRIGGER_TABLE_END},
 };
 

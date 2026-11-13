@@ -17,7 +17,7 @@ extern const u8 gWorldMap_TerrainBehaviorTable[];
 extern u8 Render_DecodePictureCodeSize[];
 extern u8 gSpriteColorRemapTables[];
 s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen);
-s32 Event_ValidatePackedId(u32 packed_id);
+s32 Party_CheckShortcut(u32 packed_id);
 void SpriteDissolve_Step(u8 *object, u32 position);
 void FieldCamera_FollowActor(s32 id, s32 flag);
 void Actor_UpdateAllMotion(void);

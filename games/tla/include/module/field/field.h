@@ -977,7 +977,7 @@ s32 WorldMap_GetCollisionFar(s32 *position);
 
 extern u8 gData_0202e000[];
 
-void Event_ClearValidPackedIds(void);
+void Party_ClearUnusableShortcuts(void);
 
 void BattleBackground_SelectForMap(void);
 

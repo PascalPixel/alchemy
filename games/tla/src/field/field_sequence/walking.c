@@ -241,7 +241,7 @@ void Field_UpdateWalking(u32 layer, s32 x, s32 y, s32 z) {
       Party_AddPp(amount, 0);
       if (DjinnRecovery_CountDownFar())
         Sound_PlayFar(139);
-      Event_ClearValidPackedIds();
+      Party_ClearUnusableShortcuts();
       partyHurt = Party_ApplyPoisonDamage();
     }
 

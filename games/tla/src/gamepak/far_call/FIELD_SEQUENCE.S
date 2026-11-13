@@ -189,7 +189,7 @@ Resource_FarCall006:
 	export FieldEffect_ClearOwnedSlotFar, FieldEffect_ClearOwnedSlot
 	export Camera_WorldToScreenFar, Camera_WorldToScreen
 	export BattleEffect_GetResourceIdFar, Speaker_GetVoice
-	export Event_ClearInvalidPackedValuesFar, Event_ClearValidPackedIds
+	export Event_ClearInvalidPackedValuesFar, Party_ClearUnusableShortcuts
 	export FieldEffect_InitializeSlotsFar, FieldEffect_InitializeSlots
 	export FieldEffect_ReleaseSlotsFar, FieldEffect_ReleaseSlots
 	export Motion_LaunchFromFocusedObjectFar, Actor_LaunchFromLeader

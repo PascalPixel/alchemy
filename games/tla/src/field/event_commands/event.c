@@ -113,7 +113,7 @@ void Event_PrepareTwoObjectsAndApply(s32 first, s32 second) {
   Party_ShowPairJoinedMessageFar(first, second);
 }
 
-s32 Event_ValidatePackedId(u32 packed_id) {
+s32 Party_CheckShortcut(u32 packed_id) {
   s32 group = (packed_id >> 10) & 0xf;
   s32 entry = packed_id & 0x3ff;
 
@@ -126,10 +126,10 @@ s32 Event_ValidatePackedId(u32 packed_id) {
   return 0;
 }
 
-void Event_ClearValidPackedIds(void) {
-  if (Event_ValidatePackedId(gMainRoutineWork.packedEvents[0]))
+void Party_ClearUnusableShortcuts(void) {
+  if (Party_CheckShortcut(gMainRoutineWork.packedEvents[0]))
     gMainRoutineWork.packedEvents[0] = 0;
-  if (Event_ValidatePackedId(gMainRoutineWork.packedEvents[1]))
+  if (Party_CheckShortcut(gMainRoutineWork.packedEvents[1]))
     gMainRoutineWork.packedEvents[1] = 0;
 }
 
@@ -152,7 +152,7 @@ void Party_RemoveMemberRestored(s32 owner) {
   s32 standing;
 
   Party_RemoveMemberFar(owner);
-  Event_ClearValidPackedIds();
+  Party_ClearUnusableShortcuts();
   vitals = Unit_Get(owner);
   // The two copies in a once-only block keep both ahead of the ratio; as the
   // plain stores, 2 of 148 instructions differ in tla-en.

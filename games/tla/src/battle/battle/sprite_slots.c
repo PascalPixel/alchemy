@@ -162,7 +162,7 @@ done:
 }
 
 /// The value of the owner's equipped weapon from its class's table, or 0.
-s32 BattleUnit_LookupWeaponValueByClass(s32 owner) {
+s32 BattleUnit_GetWeaponSprite(s32 owner) {
   struct OwnerInventoryState *unit = Unit_Get(owner);
   s32 slot = Inventory_FindEquippedFar(owner, 1);
   s32 result = 0;

@@ -136,8 +136,8 @@ s32 ActorScript_ApplyOperandCompare();
 s32 Actor_UpdatePlayerControl();
 s32 Actor_MoveOnWorldMap();
 s32 Actor_MoveByKeys();
-s32 Func_080292fc();
-s32 Func_08029570();
+s32 Actor_CrossRope();
+s32 Actor_CrossTightrope();
 s32 Func_080298c0();
 s32 Func_08027e20();
 s32 Func_08028534();
@@ -281,8 +281,8 @@ const ScriptCommandFn gData_0802f204[54] = {
     Actor_UpdatePlayerControl,                // 0x19 SC_PLAYER
     Actor_MoveOnWorldMap,                     // 0x1a SC_CMD_1A
     Actor_MoveByKeys,                         // 0x1b SC_KEYS
-    Func_080292fc,                            // 0x1c SC_CMD_1C
-    Func_08029570,                            // 0x1d SC_CMD_1D
+    Actor_CrossRope,                          // 0x1c SC_CMD_1C
+    Actor_CrossTightrope,                     // 0x1d SC_CMD_1D
     Func_080298c0,                            // 0x1e SC_CMD_1E
     Func_08027e20,                            // 0x1f SC_CMD_1F
     Func_08028534,                            // 0x20 SC_CMD_20

@@ -155,7 +155,9 @@ struct ChainWork {
 
 #define CHAIN_WORK (*(struct ChainWork **)&Ram_HeapSlots->unk84[6])
 
-s32 Func_080292fc(struct Actor *object) {
+/// Script command 0x1c, the leader's control on a tied rope (render mode 3):
+/// the pad moves it from node to node along the rope, a half cell a step.
+s32 Actor_CrossRope(struct Actor *object) {
   struct FieldPosition position;
   s32 collisionFlags;
   struct SpriteAngle *sprite;
@@ -291,7 +293,8 @@ static inline void TurnToward(struct Actor *object, u16 angle) {
   object->facing += delta;
 }
 
-s32 Func_08029570(struct Actor *object) {
+/// Script command 0x1d, Actor_CrossRope on a tightrope (render mode 4).
+s32 Actor_CrossTightrope(struct Actor *object) {
   struct FieldPosition position;
   s32 collisionFlags;
   struct ObjectAnimationState *sprite;

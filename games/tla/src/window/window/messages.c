@@ -356,7 +356,6 @@ void Message_CloseFinishedWindows(void) {
 #define UI_WORK ((struct WindowWork *)Ram_HeapSlots->windowTiles)
 
 s32 Message_Decode(s32 key, s32 mode);
-s32 Text_GetMessageSize(s32 message, s32 *x, s32 *y, u32 *width, u32 *height);
 struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 attrs);
 s32 Message_AllTyped(void);
 s32 Window_IsClosed(struct Window *window);

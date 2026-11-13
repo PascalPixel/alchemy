@@ -357,7 +357,7 @@ void Func_02000a24(void) {
   if (!seen) {
     Message_ShowCentered(message, 1);
     Message_ShowCentered(message + 1, 1);
-    if (FieldPartyInventory_FindOwner(0x1c8) != -1)
+    if (FieldPartyInventory_FindMember(0x1c8) != -1)
       ((struct SceneEventWork *)Ram_HeapSlots->eventWork)->value15a = 1;
   } else {
     Message_ShowCentered(message, 1);

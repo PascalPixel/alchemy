@@ -166,7 +166,7 @@ static __inline__ s32 Vitals_Ratio(s32 value, s32 max) {
   return clamped;
 }
 
-void Party_RemoveOwnerRestored(s32 owner) {
+void Party_RemoveMemberRestored(s32 owner) {
   struct OwnerVitals *vitals;
   s32 i;
   s32 count;
@@ -326,7 +326,7 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
 /// inventory is full.
 /// item: item ID.
 /// owner: recipient character ID.
-s32 Inventory_TryAddAndReturnOwner(s32 item, s32 unused, s32 owner) {
+s32 Inventory_TryAddAndReturnMember(s32 item, s32 unused, s32 owner) {
   if (Inventory_AddItemFar(owner, item) >= 0)
     return owner;
   return -1;

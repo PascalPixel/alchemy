@@ -1411,7 +1411,7 @@ extern void Actor_SetPartAttribute__s516c(struct Actor *object, s32 attribute) _
 void Event_Start(void);
 void Event_End(void);
 void *Unit_Get(s32 owner);
-void Party_RemoveOwnerRestored(s32 unit);
+void Party_RemoveMemberRestored(s32 unit);
 void Func_020050ac(void);
 void Func_020031f0(s32 id);
 void Event_StartScreenTransition(void);
@@ -1485,7 +1485,7 @@ void Func_0200516c(void) {
       unit[0x140] = 0;
       GameFlag_SetBit(0x92f);
       GameFlag_ClearBit(0x92e);
-      Party_RemoveOwnerRestored(7);
+      Party_RemoveMemberRestored(7);
     }
   }
   GameFlag_SetBit(0x202);

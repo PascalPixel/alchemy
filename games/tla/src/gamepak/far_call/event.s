@@ -41,18 +41,18 @@ Event_PrepareObjectAndApplyValueFar:
 	.thumb_func
 Event_PrepareTwoObjectsAndApplyFar:
 	overlay_veneer Event_PrepareTwoObjectsAndApply
-	.global Party_RemoveOwnerRestoredFar
+	.global Party_RemoveMemberRestoredFar
 	.thumb_func
-Party_RemoveOwnerRestoredFar:
-	overlay_veneer Party_RemoveOwnerRestored
+Party_RemoveMemberRestoredFar:
+	overlay_veneer Party_RemoveMemberRestored
 	.global PartyInventory_GiveItemFar
 	.thumb_func
 PartyInventory_GiveItemFar:
 	overlay_veneer PartyInventory_GiveItem
-	.global Inventory_TryAddAndReturnOwnerFar
+	.global Inventory_TryAddAndReturnMemberFar
 	.thumb_func
-Inventory_TryAddAndReturnOwnerFar:
-	overlay_veneer Inventory_TryAddAndReturnOwner
+Inventory_TryAddAndReturnMemberFar:
+	overlay_veneer Inventory_TryAddAndReturnMember
 	.global Event_AskYesNoWithActorAnimationFar
 	.thumb_func
 Event_AskYesNoWithActorAnimationFar:

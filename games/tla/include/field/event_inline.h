@@ -209,7 +209,7 @@ static inline void Actor_WaitForMove(void *actor) {
 }
 
 /// PartyInventory_FindMember, from an event.
-static inline s32 FieldPartyInventory_FindOwner(s32 item) {
+static inline s32 FieldPartyInventory_FindMember(s32 item) {
   return PartyInventory_FindMember(item);
 }
 

@@ -700,7 +700,7 @@ void Func_02000d74(void) {
   }
 }
 
-void Party_RemoveOwnerRestored(s32 owner);
+void Party_RemoveMemberRestored(s32 owner);
 
 void Func_02001218(void) {
   if (!Kibombo_FlagCheck(0x92e)) {
@@ -728,7 +728,7 @@ void Func_02001218(void) {
   Import_EventSetExitRequest(5);
   GameFlag_ClearBit(0x92e);
   GameFlag_SetBit(0x92f);
-  Party_RemoveOwnerRestored(7);
+  Party_RemoveMemberRestored(7);
   Event_End();
 }
 

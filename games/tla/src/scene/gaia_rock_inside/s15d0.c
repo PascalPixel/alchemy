@@ -426,7 +426,7 @@ void Func_02001ebc(void) {
     } while (0);
     scene = (s32)&SceneId_Ov681Room1;
     Event_SetAfterBattleDestination(scene, 10);
-    if (FieldPartyInventory_FindOwner(0x1c3) != -1) {
+    if (FieldPartyInventory_FindMember(0x1c3) != -1) {
       if (count == 0)
         Event_SetDefeatDestination(scene, 12);
     } else {

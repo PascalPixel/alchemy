@@ -479,9 +479,9 @@ s32 Func_020009a4(void) {
     return 4;
   if (Party_FindOwnerWithAction(138) == -1)
     return 5;
-  if (FieldPartyInventory_FindOwner(213) == -1)
+  if (FieldPartyInventory_FindMember(213) == -1)
     return 6;
-  if (FieldPartyInventory_FindOwner(214) == -1)
+  if (FieldPartyInventory_FindMember(214) == -1)
     return 7;
   return 8;
 }
@@ -489,11 +489,11 @@ s32 Func_020009a4(void) {
 s32 Func_020009f8(void) {
   if (Event_GetFlag(0x8ff) == 0)
     return 0;
-  if (FieldPartyInventory_FindOwner(326) == -1) {
+  if (FieldPartyInventory_FindMember(326) == -1) {
     if (Event_GetFlag(0x940) == 0) {
-      if (FieldPartyInventory_FindOwner(439) == -1 ||
-          FieldPartyInventory_FindOwner(440) == -1 ||
-          FieldPartyInventory_FindOwner(441) == -1)
+      if (FieldPartyInventory_FindMember(439) == -1 ||
+          FieldPartyInventory_FindMember(440) == -1 ||
+          FieldPartyInventory_FindMember(441) == -1)
         return 9;
       return (Event_GetFlag(0x905) != 0) + 10;
     }
@@ -505,25 +505,25 @@ s32 Func_020009f8(void) {
 }
 
 s32 Func_02000a7c(void) {
-  if (FieldPartyInventory_FindOwner(439) == -1 &&
-      (FieldPartyInventory_FindOwner(441) != -1 ||
-       FieldPartyInventory_FindOwner(440) != -1))
+  if (FieldPartyInventory_FindMember(439) == -1 &&
+      (FieldPartyInventory_FindMember(441) != -1 ||
+       FieldPartyInventory_FindMember(440) != -1))
     return 14;
-  if (FieldPartyInventory_FindOwner(439) != -1 &&
-      FieldPartyInventory_FindOwner(440) == -1 &&
-      FieldPartyInventory_FindOwner(441) == -1)
+  if (FieldPartyInventory_FindMember(439) != -1 &&
+      FieldPartyInventory_FindMember(440) == -1 &&
+      FieldPartyInventory_FindMember(441) == -1)
     return 15;
-  if (FieldPartyInventory_FindOwner(439) != -1 &&
-      FieldPartyInventory_FindOwner(440) == -1 &&
-      FieldPartyInventory_FindOwner(441) != -1)
+  if (FieldPartyInventory_FindMember(439) != -1 &&
+      FieldPartyInventory_FindMember(440) == -1 &&
+      FieldPartyInventory_FindMember(441) != -1)
     return 15;
-  if (FieldPartyInventory_FindOwner(439) != -1 &&
-      FieldPartyInventory_FindOwner(440) != -1 &&
-      FieldPartyInventory_FindOwner(441) == -1)
+  if (FieldPartyInventory_FindMember(439) != -1 &&
+      FieldPartyInventory_FindMember(440) != -1 &&
+      FieldPartyInventory_FindMember(441) == -1)
     return 16;
-  if (FieldPartyInventory_FindOwner(439) != -1 &&
-      FieldPartyInventory_FindOwner(440) != -1 &&
-      FieldPartyInventory_FindOwner(441) != -1)
+  if (FieldPartyInventory_FindMember(439) != -1 &&
+      FieldPartyInventory_FindMember(440) != -1 &&
+      FieldPartyInventory_FindMember(441) != -1)
     return 17;
   // No remaining combinations: the native falls off the end without a value.
 }

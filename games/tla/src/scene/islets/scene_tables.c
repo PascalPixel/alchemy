@@ -296,7 +296,7 @@ void Func_02000568(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  if (FieldPartyInventory_FindOwner(0x1c4) == -1) {
+  if (FieldPartyInventory_FindMember(0x1c4) == -1) {
     if (Event_GetFlag(0xaa4)) {
       FieldActor_WatchAndSetScript(10, gMainRoutineWork.currentOwner);
       FieldEvent_SetMessageId((s32)MsgWhatDoYou);
@@ -415,7 +415,7 @@ void Func_020006f4(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  if (FieldPartyInventory_FindOwner(453) != -1) {
+  if (FieldPartyInventory_FindMember(453) != -1) {
     if (Event_GetFlag(513)) {
       FieldCamera_MoveTo(-1, -1, -1, 0);
       FieldCamera_SetSpeed(0xcccc, 0x1999);
@@ -577,7 +577,7 @@ void Func_02000e38(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  if (FieldPartyInventory_FindOwner(454) != -1) {
+  if (FieldPartyInventory_FindMember(454) != -1) {
     leader = Actor_GetById(gMainRoutineWork.currentOwner);
     trader = Actor_GetById(11);
     // Default: the trader's zero update stores read it.

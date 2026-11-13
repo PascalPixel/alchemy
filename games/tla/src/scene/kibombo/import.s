@@ -142,10 +142,10 @@ Event_End:
 	.thumb_func
 Event_PrepareObjectAndApplyValue:
 	overlay_veneer Event_PrepareObjectAndApplyValueFar
-	.global Party_RemoveOwnerRestored
+	.global Party_RemoveMemberRestored
 	.thumb_func
-Party_RemoveOwnerRestored:
-	overlay_veneer Party_RemoveOwnerRestoredFar
+Party_RemoveMemberRestored:
+	overlay_veneer Party_RemoveMemberRestoredFar
 	.global Event_AskYesNoWithActorAnimation
 	.thumb_func
 Event_AskYesNoWithActorAnimation:

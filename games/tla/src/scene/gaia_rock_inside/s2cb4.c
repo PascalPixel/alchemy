@@ -264,7 +264,7 @@ s32 Scene_Initialize(void) {
       if (Test(0x927))
         goto end;
       C1(Sound_Play, 53);
-      found = FieldPartyInventory_FindOwner(451);
+      found = FieldPartyInventory_FindMember(451);
       none = -1;
       if (found != none) {
         s32 flag;
@@ -976,7 +976,7 @@ s32 Scene_Initialize(void) {
       if (Test(0x927))
         goto end;
       C1(Sound_Play, 53);
-      found = FieldPartyInventory_FindOwner(451);
+      found = FieldPartyInventory_FindMember(451);
       none = -1;
       if (found != none) {
         s32 flag;

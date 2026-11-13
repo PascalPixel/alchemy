@@ -1453,7 +1453,7 @@ L_0200a47a:
 
 extern const u8 MsgWhatSTheMatter[];
 void Func_020055fc();
-void Party_RemoveOwnerRestored();
+void Party_RemoveMemberRestored();
 
 static __inline__ void Func_02005714_(s32 actor, s32 a, s32 b) {
   Func_080d47b4(actor, a, b);
@@ -1658,13 +1658,13 @@ void Func_020029ac(void) {
   Event_SetFlag(0x202);
   MapGrid_CopyCellAttributes(0x27, 0x28, 0x12, 0x10, 0x17, 0xa);
   Func_020055fc(1);
-  Party_RemoveOwnerRestored(7);
-  Party_RemoveOwnerRestored(5);
-  Party_RemoveOwnerRestored(6);
-  Party_RemoveOwnerRestored(0);
-  Party_RemoveOwnerRestored(3);
-  Party_RemoveOwnerRestored(2);
-  Party_RemoveOwnerRestored(1);
+  Party_RemoveMemberRestored(7);
+  Party_RemoveMemberRestored(5);
+  Party_RemoveMemberRestored(6);
+  Party_RemoveMemberRestored(0);
+  Party_RemoveMemberRestored(3);
+  Party_RemoveMemberRestored(2);
+  Party_RemoveMemberRestored(1);
   Actor_Get(20)->collisionFlags |= 8;
   Actor_Get(21)->collisionFlags |= 8;
   Actor_SetSpriteColor(Actor_Get(28), 0xf);

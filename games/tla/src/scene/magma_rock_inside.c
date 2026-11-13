@@ -1613,7 +1613,7 @@ void Func_02002364(void) {
   if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
       0) {
     Party_GiveItem(460, 0);
-    if (FieldPartyInventory_FindOwner(460) == -1) {
+    if (FieldPartyInventory_FindMember(460) == -1) {
       Event_End();
       return;
     }

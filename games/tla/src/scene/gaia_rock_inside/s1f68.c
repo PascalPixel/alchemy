@@ -59,7 +59,7 @@ void Func_02001fd8(void) {
   s32 owner;
 
   Message_ShowCentered(message, 1);
-  owner = FieldPartyInventory_FindOwner(451);
+  owner = FieldPartyInventory_FindMember(451);
   next = message + 2;
   if (owner != -1) {
     struct GaiaRockInsideEventWork *work = Ram_HeapSlots->eventWork;

@@ -556,7 +556,7 @@ void Func_020012ac(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  t2 = FieldPartyInventory_FindOwner(0x1c3);
+  t2 = FieldPartyInventory_FindMember(0x1c3);
   if (t2 != -1) {
     FieldEvent_SetMessageId((s32)MsgGaiaRockInside07);
     Event_ShowMessage(0xa, 0);

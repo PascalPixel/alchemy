@@ -68,7 +68,8 @@ void Func_020000b0(s32 arg) {
   FieldEvent_SetExitRequest(arg);
 }
 
-void Func_02000100(void) {
+/// Grind breaks up the rock in the way, for good (flag 0x909).
+void LemuriaEntrance_GrindRock(void) {
   Event_SetFlag(0x909);
   Actor_SetPosition(19, 0, 0);
 }
@@ -316,6 +317,6 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT(Func_02000060)},
     {TRIGGER_STEP, 5, CONDITION_ALWAYS, EVENT(Func_020000b0)},
-    {PSYNERGY_ON_ACTOR(ABILITY_GRIND), 19, CONDITION_ALWAYS, EVENT(Func_02000100)},
+    {PSYNERGY_ON_ACTOR(ABILITY_GRIND), 19, CONDITION_ALWAYS, EVENT(LemuriaEntrance_GrindRock)},
     {TRIGGERS_END},
 };

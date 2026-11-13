@@ -41,13 +41,18 @@ struct WarpTarget {
 extern u8 MsgAreWeSetting[];
 extern s32 gData_0200057c[];
 extern s32 gData_0200059c[];
-extern struct WarpTarget gData_02000610;
+extern struct WarpTarget gLemuriaDock_HouseDoor;
 
 void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 
-void Func_02000254(const struct WarpTarget *warp, s32 door, s32 mode);
-void Func_020002f8(void);
+/// The party leader walks into the door `warp` names, which opens with its cell
+/// animation, and leaves by exit `door`; mode 0 lines the leader up with the
+/// door first.
+void LemuriaDock_EnterDoor(const struct WarpTarget *warp, s32 door, s32 mode);
+/// A palette task: every 8 frames it turns colours 5 to 9 and 13 to 15 of
+/// background palette 11 round by one.
+void LemuriaDock_CyclePalette(void);
 void Event_End(void);
 #include "event_inline.h"
 #include "version.h"
@@ -68,7 +73,10 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
   return gActorPlacements;
 }
 
-void Func_0200006c(void) {
+/// Arriving on the dock (entrance 2): where Piers is not already on the dock he
+/// steps out of the party and walks to his place by the ship; where he is, he
+/// walks back into the leader.
+void LemuriaDock_MovePiers(void) {
   struct MainRoutineWork *party = &gMainRoutineWork;
 
   if (party->entrance == 2) {
@@ -99,7 +107,10 @@ void Func_0200006c(void) {
   }
 }
 
-void Func_02000158(void) {
+/// Piers asks whether the party is ready to sail; yes takes it aboard the ship
+/// (exit 1).
+/// "Felix, are we setting off now?"
+void LemuriaDock_AskSettingOff(void) {
   struct MainRoutineWork *party;
   s32 id;
   s32 limit;
@@ -139,7 +150,7 @@ void Func_02000158(void) {
   }
 }
 
-void Func_02000254(const struct WarpTarget *warp, s32 door, s32 mode) {
+void LemuriaDock_EnterDoor(const struct WarpTarget *warp, s32 door, s32 mode) {
   s32 id;
 
   Event_Start();
@@ -161,11 +172,11 @@ void Func_02000254(const struct WarpTarget *warp, s32 door, s32 mode) {
   Event_End();
 }
 
-void Func_020002dc(s32 door) { Func_02000254(&gData_02000610, door, 0); }
+void LemuriaDock_EnterHouse(s32 door) { LemuriaDock_EnterDoor(&gLemuriaDock_HouseDoor, door, 0); }
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
-void Func_020002f8(void) {
+void LemuriaDock_CyclePalette(void) {
   if ((gFrameCount & 7) == 0) {
     volatile u16 *palette;
     volatile u16 *slot;
@@ -198,7 +209,7 @@ void Func_020002f8(void) {
 s32 Scene_Initialize(void) {
   SCENE_WORK->unk1ac = 256;
   Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
-  Task_Add(Func_020002f8, 0x480);
+  Task_Add(LemuriaDock_CyclePalette, 0x480);
   Flag_Clear(0x12f);
 #if TLA_PATCH_1 /* From patch 1. */
   if (Flag_IsSet(0x90a))
@@ -249,13 +260,13 @@ s16 gData_02000604[] = {
 };
 // clang-format on
 
-struct WarpTarget gData_02000610 = {(s32)gData_02000604, 70, 22};
+struct WarpTarget gLemuriaDock_HouseDoor = {(s32)gData_02000604, 70, 22};
 
 struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {0xc602, 3, CONDITION_ALWAYS, EVENT(Func_020002dc)},
-    {TRIGGER_STEP, 21, CONDITION_ALWAYS, EVENT(Func_0200006c)},
-    {TRIGGER_TALK, 8, CONDITION_ALWAYS, EVENT(Func_02000158)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 1032, CONDITION_ALWAYS, EVENT(Func_02000158)},
+    {0xc602, 3, CONDITION_ALWAYS, EVENT(LemuriaDock_EnterHouse)},
+    {TRIGGER_STEP, 21, CONDITION_ALWAYS, EVENT(LemuriaDock_MovePiers)},
+    {TRIGGER_TALK, 8, CONDITION_ALWAYS, EVENT(LemuriaDock_AskSettingOff)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 1032, CONDITION_ALWAYS, EVENT(LemuriaDock_AskSettingOff)},
     {TRIGGERS_END},
 };

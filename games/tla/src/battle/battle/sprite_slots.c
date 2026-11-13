@@ -138,26 +138,20 @@ void BattleObject_ReleaseSpriteSlots(s32 value) {
 
 s32 BattleUnit_GetWeaponKind(s32 key) {
   s32 index;
-  s32 entry;
-  s32 result;
   u32 value;
+  s32 result;
 
   for (index = 0;; index++) {
-    entry = gResource_SlotAssignments[index];
-    if (key == (entry & 0x1ff)) {
-      /* FAKEMATCH(barrier): an empty asm clobbering memory, so the entry is
-       * read again for the result; without it, 22 of 24 instructions differ in
-       * tla-en. */
-      asm("" : : : "memory");
-      value = gResource_SlotAssignments[index];
+    if (key == (gBattleUnit_WeaponKinds[index] & 0x1ff)) {
+      value = gBattleUnit_WeaponKinds[index];
       result = value >> 9;
-      goto done;
-    }
-    if ((s16)entry == -1)
       break;
+    }
+    if ((s16)gBattleUnit_WeaponKinds[index] == -1) {
+      result = 6;
+      break;
+    }
   }
-  result = 6;
-done:
   return result;
 }
 

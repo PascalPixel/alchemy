@@ -23,7 +23,7 @@ extern s8 gBattleEffect_RandomChildValues[];
 extern const s8 gBattlePlacement_StepPairs[];
 extern u8 gEncounter_AreaEntryTable[];
 extern u8 gPlayerObjectId[];
-extern u16 gResource_SlotAssignments[];
+extern u16 gBattleUnit_WeaponKinds[];
 s32 BattleTarget_Execute(struct BattlePlan *plan, s32 slot);
 struct BattleObj;
 #ifndef OWN_BattleObject_Make

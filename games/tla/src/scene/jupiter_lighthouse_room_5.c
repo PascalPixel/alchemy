@@ -123,7 +123,11 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 }
 
 /* VIEW(jupiter_lighthouse_room_5): routine gData_02002fb8 as this part declared
- * it; the joined file has another. */
+ * it; the joined file has another; tried as the definition's extern
+ * DEFINE_G_DATA_02002F94(gData_02002f94, 960, 140) s16 gData_02002fb8[], it
+ * does not compile in tla-ja:
+ * games/tla/src/scene/jupiter_lighthouse_room_5.c:126: `gData_02002fb8'
+ * undeclared (first use in this function). */
 extern u8 gData_02002fb8__jupiter_lighthouse_room_5[] __asm__("gData_02002fb8");
 #define gData_02002fb8 gData_02002fb8__jupiter_lighthouse_room_5
 
@@ -205,11 +209,17 @@ static inline struct OrbitEffect *CreateOrbitEffect(s32 type, s32 x, s32 y,
 DEFINE_ORBS_SPAWN_RISING(Orbs_SpawnRising, 0x201, gOrbScript, Orb_Update, 1)
 
 /* VIEW(jupiter_lighthouse_room_5): routine gData_02003274 as this part declared
- * it; the joined file has another. */
+ * it; the joined file has another; tried as the definition's extern
+ * DEFINE_G_DATA_02003214(gOrbScript) u32 gData_02003274[], it does not compile
+ * in tla-ja: games/tla/src/scene/jupiter_lighthouse_room_5.c:209:
+ * `gData_02003274' undeclared (first use in this function). */
 extern s32 gData_02003274__jupiter_lighthouse_room_5 __asm__("gData_02003274");
 #define gData_02003274 gData_02003274__jupiter_lighthouse_room_5
 /* VIEW(jupiter_lighthouse_room_5): routine gData_02003278 as this part declared
- * it; the joined file has another. */
+ * it; the joined file has another; tried as the definition's extern u32
+ * gData_02003278[], it does not compile in tla-ja:
+ * games/tla/src/scene/jupiter_lighthouse_room_5.c:211: `gData_02003278'
+ * undeclared (first use in this function). */
 extern s32 gData_02003278__jupiter_lighthouse_room_5 __asm__("gData_02003278");
 #define gData_02003278 gData_02003278__jupiter_lighthouse_room_5
 
@@ -222,12 +232,20 @@ void Func_02000294(void) {
 }
 
 /* VIEW(jupiter_lighthouse_room_5): routine gData_02002f70 as this part declared
- * it; the joined file has another. */
+ * it; the joined file has another; tried as the definition's extern
+ * DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_ShortScript, 22)
+ * DEFINE_FIELD_EFFECT_DURATION_SCRIPT(gFieldEffect_MediumScript, 44) ..., it
+ * does not compile in tla-ja:
+ * games/tla/src/scene/jupiter_lighthouse_room_5.c:236: `gData_02002f70'
+ * undeclared (first use in this function). */
 extern const u8
     gData_02002f70__jupiter_lighthouse_room_5[] __asm__("gData_02002f70");
 #define gData_02002f70 gData_02002f70__jupiter_lighthouse_room_5
 /* VIEW(jupiter_lighthouse_room_5): routine gData_02002f94 as this part declared
- * it; the joined file has another. */
+ * it; the joined file has another; tried as the one declaration extern const u8
+ * gData_02002f94[], it does not compile in tla-ja:
+ * games/tla/src/scene/jupiter_lighthouse_room_5.c:322: `gData_02002f94'
+ * undeclared (first use in this function). */
 extern const u8
     gData_02002f94__jupiter_lighthouse_room_5[] __asm__("gData_02002f94");
 #define gData_02002f94 gData_02002f94__jupiter_lighthouse_room_5
@@ -374,14 +392,20 @@ struct SparkWork {
 };
 
 /* VIEW(jupiter_lighthouse_room_5): routine gPaletteCyclePausesInEvents as this
- * part declared it; the joined file has another. */
+ * part declared it; the joined file has another; tried as the definition's
+ * extern s32 gPaletteCyclePausesInEvents, it does not compile in tla-ja:
+ * games/tla/src/scene/jupiter_lighthouse_room_5.c:1263: conflicting types for
+ * `gPaletteCyclePausesInEvents'. */
 extern s32 gPaletteCyclePausesInEvents__jupiter_lighthouse_room_5 __asm__(
     "gPaletteCyclePausesInEvents");
 #define gPaletteCyclePausesInEvents                                            \
   gPaletteCyclePausesInEvents__jupiter_lighthouse_room_5
 
 /* VIEW(jupiter_lighthouse_room_5): routine FieldEffect_Spawn as this part
- * declared it; the joined file has another. */
+ * declared it; the joined file has another; tried as the definition's void
+ * FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32
+ * velocityZ, u32 flags, const struct EffectOptions *options), which the object
+ * already declares, Func_02001230 moves: 1 of 90 instructions in tla-ja. */
 void FieldEffect_Spawn__jupiter_lighthouse_room_5(
     s32 x, s32 y, s32 z, s32 a3, s32 a4, s32 a5, s32 a6,
     struct EffectParams *params) __asm__("FieldEffect_Spawn");
@@ -632,7 +656,10 @@ void PaletteCycle_SetPausesInEvents(s32 value) {
 }
 
 /* VIEW(s0cb8): routine gPaletteCycleFrame as this part declared it; the joined
- * file has another. */
+ * file has another; tried as the definition's extern s32 gPaletteCycleFrame, it
+ * does not compile in tla-ja:
+ * games/tla/src/scene/jupiter_lighthouse_room_5.c:623: `gPaletteCycleFrame'
+ * undeclared (first use in this function). */
 extern s32 gPaletteCycleFrame__s0cb8 __asm__("gPaletteCycleFrame");
 #define gPaletteCycleFrame gPaletteCycleFrame__s0cb8
 
@@ -659,7 +686,9 @@ DEFINE_WHIRLWIND_CARRY_LEADER(Whirlwind_CarryLeader)
 DEFINE_POSITION_FLAT_DISTANCE(Position_FlatDistance)
 
 /* VIEW(s0cb8): routine gData_020033e0 as this part declared it; the joined file
- * has another. */
+ * has another; tried as the definition's extern u32 gData_020033e0[], it does
+ * not compile in tla-ja: games/tla/src/scene/jupiter_lighthouse_room_5.c:718:
+ * `gData_020033e0' undeclared (first use in this function). */
 extern const s32 gData_020033e0__s0cb8[] __asm__("gData_020033e0");
 #define gData_020033e0 gData_020033e0__s0cb8
 extern s32 gData_02003400;
@@ -831,7 +860,7 @@ struct Spark {
 /* VIEW(jupiter_lighthouse_room_5): tag struct SparkSprite as struct
  * SparkSprite__jupiter_lighthouse_room_5; module/tla.h has another definition;
  * tried with the definition the rest of the object has, it does not compile in
- * tla-ja: games/tla/src/scene/jupiter_lighthouse_room_5.c:755: structure has no
+ * tla-ja: games/tla/src/scene/jupiter_lighthouse_room_5.c:844: structure has no
  * member named `x'. */
 struct SparkSprite__jupiter_lighthouse_room_5 {
   u8 unk00[0x0c];
@@ -843,7 +872,7 @@ struct SparkSprite__jupiter_lighthouse_room_5 {
 /* VIEW(s1230): tag struct SparkWork as struct SparkWork__s1230;
  * jupiter_lighthouse_room_5.c has another definition; tried with the definition
  * the rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_room_5.c:730: structure has no member
+ * games/tla/src/scene/jupiter_lighthouse_room_5.c:819: structure has no member
  * named `sparks'. */
 struct SparkWork__s1230 {
   u8 unk0000[0x400];
@@ -894,7 +923,7 @@ void Func_02001538(void) {
 /* VIEW(s1650): tag struct SparkWork as struct SparkWork__s1650;
  * games/tla/src/scene/jupiter_lighthouse_room_5 has another definition; tried
  * with the definition the rest of the object has, it does not compile in
- * tla-ja: games/tla/src/scene/jupiter_lighthouse_room_5.c:805: structure has no
+ * tla-ja: games/tla/src/scene/jupiter_lighthouse_room_5.c:880: structure has no
  * member named `sparks'. */
 struct SparkWork__s1650 {
   u8 tiles[0x400];
@@ -1006,12 +1035,6 @@ void Func_0200185c(void) {
 
 extern struct LightOam gLightSpriteOams[];
 
-/* VIEW(s1650): routine Oam_AddSpriteAtDepthClamped as this part declared it;
- * the joined file has another. */
-void Oam_AddSpriteAtDepthClamped__s1650(
-    struct LightOam *oam, s32 depth) __asm__("Oam_AddSpriteAtDepthClamped");
-#define Oam_AddSpriteAtDepthClamped Oam_AddSpriteAtDepthClamped__s1650
-
 /// Queues the lit actors' sprites: for each listed actor with a position,
 /// projects it from the map's view, skips it off screen, and writes a 16 by 16
 /// sprite, or a 32 by 64 one when the big switch is set, at its animation
@@ -1059,14 +1082,14 @@ void LightSprites_SetPriority(s32 value) { gLightSpritePriority = value; }
 #undef FieldEffect_Spawn
 #undef gPaletteCycleFrame
 #undef gData_020033e0
-#undef Oam_AddSpriteAtDepthClamped
 // @file
 // Scene code of overlay 0x69e, in ROM order.
 
 extern const s32 *gFieldEffect_DurationScripts[];
 
 /* VIEW(s1c88): routine Actor_StartScript as this part declared it; the joined
- * file has another. */
+ * file has another; not tried: Actor_StartScript's bound declaration was not
+ * found. */
 void Actor_StartScript__s1c88(struct FieldEffect *effect,
                               const s32 *script) __asm__("Actor_StartScript");
 #define Actor_StartScript Actor_StartScript__s1c88
@@ -1193,7 +1216,10 @@ DEFINE_CRACKED_TILE_FALL(CrackedTile_Fall, CellTarget__s22b8,
 // Scene code of overlay 0x69e, in ROM order.
 
 /* VIEW(s2450): routine FieldEffect_Spawn as this part declared it; the joined
- * file has another. */
+ * file has another; tried as the definition's void FieldEffect_Spawn(s32 x, s32
+ * y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags, const
+ * struct EffectOptions *options), which the object already declares,
+ * CrackedTile_Fall (gone) moves: 131 of 131 instructions in tla-ja. */
 void FieldEffect_Spawn__s2450(
     s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags,
     struct EffectOptions *options) __asm__("FieldEffect_Spawn");
@@ -1202,12 +1228,6 @@ void FieldEffect_Spawn__s2450(
 DEFINE_CRACKED_TILE_DROP_IN(CrackedTile_DropIn, FieldEffect_Spawn)
 
 void GameFlag_SetByte(s32 flag, s32 value);
-/* VIEW(s2450): routine CrackedTile_Fall as this part declared it; the joined
- * file has another. */
-void CrackedTile_Fall__s2450(
-    struct CellTarget *work,
-    struct CellTargetEntry *entry) __asm__("CrackedTile_Fall");
-#define CrackedTile_Fall CrackedTile_Fall__s2450
 
 DEFINE_CRACKED_TILES_STEP(CrackedTiles_Step, gCrackedTiles, CrackedTile_Crack,
                           CrackedTile_Fall)
@@ -1218,10 +1238,6 @@ DEFINE_CRACKED_TILE_PLACE_LANDING(CrackedTile_PlaceLanding, gCrackedTiles,
 #include "text/msg_ids.h"
 
 void Func_02000054(void);
-/* VIEW(s2450): routine Func_02000064 as this part declared it; the joined file
- * has another. */
-void Func_02000064__s2450(void) __asm__("Func_02000064");
-#define Func_02000064 Func_02000064__s2450
 void Func_020002b8(void);
 
 // clang-format off
@@ -1336,5 +1352,3 @@ const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_LongScript,
 };
 #undef FieldEffect_Spawn
-#undef CrackedTile_Fall
-#undef Func_02000064

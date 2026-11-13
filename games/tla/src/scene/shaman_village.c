@@ -229,7 +229,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
  * ShamanVillageObject *object, s32 mode); field_event.h has void
  * Import_ActorSetMode(struct Actor *object, s32 mode); tried as the rest of the
  * object declares it, it does not compile in tla-ja:
- * games/tla/src/scene/shaman_village.c:150: conflicting types for
+ * games/tla/src/scene/shaman_village.c:278: conflicting types for
  * `Import_ActorSetMode'. */
 struct ShamanVillageObject;
 extern void Import_ActorSetMode__s0280(struct ShamanVillageObject *object,
@@ -391,7 +391,7 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
  * gShamanVillage_Placements[]; scene/shaman_village/s1fec has struct
  * ActorPlacement gShamanVillage_Placements[] = {; tried as the definition's
  * extern struct ActorPlacement gShamanVillage_Placements[], it does not compile
- * in tla-ja: games/tla/src/scene/shaman_village.c:301:
+ * in tla-ja: games/tla/src/scene/shaman_village.c:406:
  * `gShamanVillage_Placements' undeclared (first use in this function). */
 extern u32
     gShamanVillage_Placements__s00b8[] __asm__("gShamanVillage_Placements");
@@ -404,7 +404,7 @@ extern struct ActorPlacement gShamanVillage_Room3Placements[];
  * scene/shaman_village/s1fec has struct ActorPlacement
  * gShamanVillage_Room2Placements[] = {; tried as the definition's extern struct
  * ActorPlacement gShamanVillage_Room2Placements[], it does not compile in
- * tla-ja: games/tla/src/scene/shaman_village.c:291:
+ * tla-ja: games/tla/src/scene/shaman_village.c:396:
  * `gShamanVillage_Room2Placements' undeclared (first use in this function). */
 extern struct ShamanVillageSceneBlock
     gShamanVillage_Room2Placements__s00b8 __asm__(
@@ -532,7 +532,7 @@ void ShamanVillage_SwirlSandGrain(struct ShamanVillageObject *object) {
  * gFieldEffect_MediumScript[]; scene/shaman_village/s1fec has u32
  * gFieldEffect_MediumScript[] = {; tried as the definition's extern u32
  * gFieldEffect_MediumScript[], which the object already declares, it does not
- * compile in tla-ja: games/tla/src/scene/shaman_village.c:487:
+ * compile in tla-ja: games/tla/src/scene/shaman_village.c:579:
  * `gFieldEffect_MediumScript' undeclared (first use in this function). */
 extern const s32
     gFieldEffect_MediumScript__s00b8[] __asm__("gFieldEffect_MediumScript");

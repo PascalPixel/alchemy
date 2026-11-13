@@ -177,27 +177,45 @@ s32 Func_0200028c(struct Wanderer *actor) {
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 /* VIEW(gabomba_statue): routine gData_02005dfc as this part declared it; the
- * joined file has another. */
+ * joined file has another; tried as the definition's extern LATE_DATA s16
+ * gData_02005dfc[], it does not compile in tla-ja:
+ * games/tla/src/scene/gabomba_statue.c:196: `gData_02005dfc' undeclared (first
+ * use in this function). */
 extern const u8 gData_02005dfc__gabomba_statue[] __asm__("gData_02005dfc");
 #define gData_02005dfc gData_02005dfc__gabomba_statue
 /* VIEW(gabomba_statue): routine gData_02005e2c as this part declared it; the
- * joined file has another. */
+ * joined file has another; tried as the definition's extern LATE_DATA u32
+ * gData_02005e2c[], it does not compile in tla-ja:
+ * games/tla/src/scene/gabomba_statue.c:198: `gData_02005e2c' undeclared (first
+ * use in this function). */
 extern const u8 gData_02005e2c__gabomba_statue[] __asm__("gData_02005e2c");
 #define gData_02005e2c gData_02005e2c__gabomba_statue
 /* VIEW(gabomba_statue): routine gData_02005e4c as this part declared it; the
- * joined file has another. */
+ * joined file has another; tried as the definition's extern LATE_DATA s16
+ * gData_02005e4c[], it does not compile in tla-ja:
+ * games/tla/src/scene/gabomba_statue.c:200: `gData_02005e4c' undeclared (first
+ * use in this function). */
 extern const u8 gData_02005e4c__gabomba_statue[] __asm__("gData_02005e4c");
 #define gData_02005e4c gData_02005e4c__gabomba_statue
 /* VIEW(gabomba_statue): routine gData_02005e8c as this part declared it; the
- * joined file has another. */
+ * joined file has another; tried as the definition's extern LATE_DATA s16
+ * gData_02005e8c[], it does not compile in tla-ja:
+ * games/tla/src/scene/gabomba_statue.c:202: `gData_02005e8c' undeclared (first
+ * use in this function). */
 extern const u8 gData_02005e8c__gabomba_statue[] __asm__("gData_02005e8c");
 #define gData_02005e8c gData_02005e8c__gabomba_statue
 /* VIEW(gabomba_statue): routine gData_02005ecc as this part declared it; the
- * joined file has another. */
+ * joined file has another; tried as the definition's extern LATE_DATA u32
+ * gData_02005ecc[], it does not compile in tla-ja:
+ * games/tla/src/scene/gabomba_statue.c:204: `gData_02005ecc' undeclared (first
+ * use in this function). */
 extern const u8 gData_02005ecc__gabomba_statue[] __asm__("gData_02005ecc");
 #define gData_02005ecc gData_02005ecc__gabomba_statue
 /* VIEW(gabomba_statue): routine gData_02005eec as this part declared it; the
- * joined file has another. */
+ * joined file has another; tried as the definition's extern LATE_DATA u32
+ * gData_02005eec[], it does not compile in tla-ja:
+ * games/tla/src/scene/gabomba_statue.c:206: `gData_02005eec' undeclared (first
+ * use in this function). */
 extern const u8 gData_02005eec__gabomba_statue[] __asm__("gData_02005eec");
 #define gData_02005eec gData_02005eec__gabomba_statue
 
@@ -232,7 +250,7 @@ s32 Func_02000364(struct Actor *actor) {
 /* VIEW(gabomba_statue): tag struct Orbiter as struct Orbiter__gabomba_statue;
  * module/scene/scene.h has another definition; tried with the definition the
  * rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/gabomba_statue.c:201: structure has no member named
+ * games/tla/src/scene/gabomba_statue.c:231: structure has no member named
  * `phase'. */
 struct Orbiter__gabomba_statue {
   u8 unk00[6];
@@ -251,7 +269,10 @@ struct Orbiter__gabomba_statue {
 };
 
 /* VIEW(gabomba_statue): routine gData_02005af0 as this part declared it; the
- * joined file has another. */
+ * joined file has another; tried as the definition's extern LATE_DATA u32
+ * gData_02005af0[], it does not compile in tla-ja:
+ * games/tla/src/scene/gabomba_statue.c:249: `gData_02005af0' undeclared (first
+ * use in this function). */
 extern s32 gData_02005af0__gabomba_statue __asm__("gData_02005af0");
 #define gData_02005af0 gData_02005af0__gabomba_statue
 s32 __divsi3(s32 numerator, s32 denominator);
@@ -309,15 +330,12 @@ struct IoReg16 {
 
 extern struct SceneState gSceneState;
 /* VIEW(gabomba_statue): routine gData_02005940 as this part declared it; the
- * joined file has another. */
+ * joined file has another; tried as the definition's extern u16
+ * gData_02005940[], it does not compile in tla-ja:
+ * games/tla/src/scene/gabomba_statue.c:1433: `gData_02005940' undeclared (first
+ * use in this function). */
 extern const s8 gData_02005940__gabomba_statue[] __asm__("gData_02005940");
 #define gData_02005940 gData_02005940__gabomba_statue
-
-/* VIEW(gabomba_statue): routine Func_02004380 as this part declared it; the
- * joined file has another. */
-void Func_02004380__gabomba_statue(s32 x, s32 z,
-                                   s32 a) __asm__("Func_02004380");
-#define Func_02004380 Func_02004380__gabomba_statue
 
 s32 Func_0200047c(struct Actor *object) {
   struct Actor *owner = object->watchedObject;
@@ -336,35 +354,59 @@ s32 Func_0200047c(struct Actor *object) {
 }
 
 /* VIEW(gabomba_statue): routine gData_02006b20 as this part declared it; the
- * joined file has another. */
+ * joined file has another; tried as the definition's extern LATE_DATA struct
+ * ActorPlacement gData_02006b20[], it does not compile in tla-ja:
+ * games/tla/src/scene/gabomba_statue.c:342: `gData_02006b20' undeclared (first
+ * use in this function). */
 extern const u8 gData_02006b20__gabomba_statue[] __asm__("gData_02006b20");
 #define gData_02006b20 gData_02006b20__gabomba_statue
 /* VIEW(gabomba_statue): routine gData_02005fd4 as this part declared it; the
- * joined file has another. */
+ * joined file has another; tried as the definition's extern LATE_DATA struct
+ * ActorPlacement gData_02005fd4[], it does not compile in tla-ja:
+ * games/tla/src/scene/gabomba_statue.c:345: `gData_02005fd4' undeclared (first
+ * use in this function). */
 extern const u8 gData_02005fd4__gabomba_statue[] __asm__("gData_02005fd4");
 #define gData_02005fd4 gData_02005fd4__gabomba_statue
 /* VIEW(gabomba_statue): routine gData_02006004 as this part declared it; the
- * joined file has another. */
+ * joined file has another; tried as the definition's extern LATE_DATA struct
+ * ActorPlacement gData_02006004[], it does not compile in tla-ja:
+ * games/tla/src/scene/gabomba_statue.c:347: `gData_02006004' undeclared (first
+ * use in this function). */
 extern const u8 gData_02006004__gabomba_statue[] __asm__("gData_02006004");
 #define gData_02006004 gData_02006004__gabomba_statue
 /* VIEW(gabomba_statue): routine gData_02006244 as this part declared it; the
- * joined file has another. */
+ * joined file has another; tried as the definition's extern LATE_DATA s16
+ * gData_02006244[], it does not compile in tla-ja:
+ * games/tla/src/scene/gabomba_statue.c:349: `gData_02006244' undeclared (first
+ * use in this function). */
 extern const u8 gData_02006244__gabomba_statue[] __asm__("gData_02006244");
 #define gData_02006244 gData_02006244__gabomba_statue
 /* VIEW(gabomba_statue): routine gData_020064cc as this part declared it; the
- * joined file has another. */
+ * joined file has another; tried as the definition's extern LATE_DATA s16
+ * gData_020064cc[], it does not compile in tla-ja:
+ * games/tla/src/scene/gabomba_statue.c:351: `gData_020064cc' undeclared (first
+ * use in this function). */
 extern const u8 gData_020064cc__gabomba_statue[] __asm__("gData_020064cc");
 #define gData_020064cc gData_020064cc__gabomba_statue
 /* VIEW(gabomba_statue): routine gData_020067e4 as this part declared it; the
- * joined file has another. */
+ * joined file has another; tried as the definition's extern LATE_DATA s16
+ * gData_020067e4[], it does not compile in tla-ja:
+ * games/tla/src/scene/gabomba_statue.c:353: `gData_020067e4' undeclared (first
+ * use in this function). */
 extern const u8 gData_020067e4__gabomba_statue[] __asm__("gData_020067e4");
 #define gData_020067e4 gData_020067e4__gabomba_statue
 /* VIEW(gabomba_statue): routine gData_02006898 as this part declared it; the
- * joined file has another. */
+ * joined file has another; tried as the definition's extern LATE_DATA struct
+ * ActorPlacement gData_02006898[], it does not compile in tla-ja:
+ * games/tla/src/scene/gabomba_statue.c:355: `gData_02006898' undeclared (first
+ * use in this function). */
 extern const u8 gData_02006898__gabomba_statue[] __asm__("gData_02006898");
 #define gData_02006898 gData_02006898__gabomba_statue
 /* VIEW(gabomba_statue): routine gData_02006a90 as this part declared it; the
- * joined file has another. */
+ * joined file has another; tried as the definition's extern LATE_DATA s16
+ * gData_02006a90[], it does not compile in tla-ja:
+ * games/tla/src/scene/gabomba_statue.c:357: `gData_02006a90' undeclared (first
+ * use in this function). */
 extern const u8 gData_02006a90__gabomba_statue[] __asm__("gData_02006a90");
 #define gData_02006a90 gData_02006a90__gabomba_statue
 
@@ -398,7 +440,7 @@ const u8 *Scene_GetPlacements(void) {
 /* VIEW(find_near): tag struct Orbiter as struct Orbiter__find_near;
  * gabomba_statue.c has another definition; tried with the definition the rest
  * of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/gabomba_statue.c:351: structure has no member named
+ * games/tla/src/scene/gabomba_statue.c:395: structure has no member named
  * `phase'. */
 struct Orbiter__find_near {
   u8 unk00[6];
@@ -421,7 +463,10 @@ struct Orbiter__find_near {
 };
 
 /* VIEW(find_near): routine gData_02006b38 as this part declared it; the joined
- * file has another. */
+ * file has another; tried as the definition's extern LATE_DATA s32
+ * gData_02006b38[], it does not compile in tla-ja:
+ * games/tla/src/scene/gabomba_statue.c:412: `gData_02006b38' undeclared (first
+ * use in this function). */
 extern const s8 gData_02006b38__find_near[] __asm__("gData_02006b38");
 #define gData_02006b38 gData_02006b38__find_near
 
@@ -925,35 +970,59 @@ void Func_02000fc0(void) {
 }
 
 /* VIEW(find_near): routine gData_02006e9c as this part declared it; the joined
- * file has another. */
+ * file has another; tried as the definition's extern LATE_DATA struct Trigger
+ * gData_02006e9c[], it does not compile in tla-ja:
+ * games/tla/src/scene/gabomba_statue.c:918: `gData_02006e9c' undeclared (first
+ * use in this function). */
 extern const u8 gData_02006e9c__find_near[] __asm__("gData_02006e9c");
 #define gData_02006e9c gData_02006e9c__find_near
 /* VIEW(find_near): routine gData_02006b54 as this part declared it; the joined
- * file has another. */
+ * file has another; tried as the definition's extern LATE_DATA struct Trigger
+ * gData_02006b54[], it does not compile in tla-ja:
+ * games/tla/src/scene/gabomba_statue.c:921: `gData_02006b54' undeclared (first
+ * use in this function). */
 extern const u8 gData_02006b54__find_near[] __asm__("gData_02006b54");
 #define gData_02006b54 gData_02006b54__find_near
 /* VIEW(find_near): routine gData_02006b6c as this part declared it; the joined
- * file has another. */
+ * file has another; tried as the definition's extern LATE_DATA struct Trigger
+ * gData_02006b6c[], it does not compile in tla-ja:
+ * games/tla/src/scene/gabomba_statue.c:923: `gData_02006b6c' undeclared (first
+ * use in this function). */
 extern const u8 gData_02006b6c__find_near[] __asm__("gData_02006b6c");
 #define gData_02006b6c gData_02006b6c__find_near
 /* VIEW(find_near): routine gData_02006bd8 as this part declared it; the joined
- * file has another. */
+ * file has another; tried as the definition's extern LATE_DATA struct Trigger
+ * gData_02006bd8[], it does not compile in tla-ja:
+ * games/tla/src/scene/gabomba_statue.c:925: `gData_02006bd8' undeclared (first
+ * use in this function). */
 extern const u8 gData_02006bd8__find_near[] __asm__("gData_02006bd8");
 #define gData_02006bd8 gData_02006bd8__find_near
 /* VIEW(find_near): routine gData_02006c80 as this part declared it; the joined
- * file has another. */
+ * file has another; tried as the definition's extern LATE_DATA struct Trigger
+ * gData_02006c80[], it does not compile in tla-ja:
+ * games/tla/src/scene/gabomba_statue.c:927: `gData_02006c80' undeclared (first
+ * use in this function). */
 extern const u8 gData_02006c80__find_near[] __asm__("gData_02006c80");
 #define gData_02006c80 gData_02006c80__find_near
 /* VIEW(find_near): routine gData_02006d1c as this part declared it; the joined
- * file has another. */
+ * file has another; tried as the definition's extern LATE_DATA struct Trigger
+ * gData_02006d1c[], it does not compile in tla-ja:
+ * games/tla/src/scene/gabomba_statue.c:929: `gData_02006d1c' undeclared (first
+ * use in this function). */
 extern const u8 gData_02006d1c__find_near[] __asm__("gData_02006d1c");
 #define gData_02006d1c gData_02006d1c__find_near
 /* VIEW(find_near): routine gData_02006db8 as this part declared it; the joined
- * file has another. */
+ * file has another; tried as the definition's extern LATE_DATA struct Trigger
+ * gData_02006db8[], it does not compile in tla-ja:
+ * games/tla/src/scene/gabomba_statue.c:931: `gData_02006db8' undeclared (first
+ * use in this function). */
 extern const u8 gData_02006db8__find_near[] __asm__("gData_02006db8");
 #define gData_02006db8 gData_02006db8__find_near
 /* VIEW(find_near): routine gData_02006e78 as this part declared it; the joined
- * file has another. */
+ * file has another; tried as the definition's extern LATE_DATA struct Trigger
+ * gData_02006e78[], it does not compile in tla-ja:
+ * games/tla/src/scene/gabomba_statue.c:933: `gData_02006e78' undeclared (first
+ * use in this function). */
 extern const u8 gData_02006e78__find_near[] __asm__("gData_02006e78");
 #define gData_02006e78 gData_02006e78__find_near
 
@@ -1117,7 +1186,7 @@ DEFINE_GABOMBA_STATUE_STEP_WHEN_HELD_FOUR(Func_020015b8, 27, 17, 19, 18, 26, 28,
  * EventWork154__gabomba_statue; module/scene/scene.h has another definition;
  * tried with the definition the rest of the object has, its members read exit
  * as returnEntrance, it does not compile in tla-ja:
- * games/tla/src/scene/gabomba_statue.c:906: structure has no member named
+ * games/tla/src/scene/gabomba_statue.c:960: structure has no member named
  * `returnEntrance'. */
 struct EventWork154__gabomba_statue {
   u8 unk000[0x154];
@@ -1207,14 +1276,12 @@ void Func_020018ec(s32 show) {
 }
 
 /* VIEW(find_near): routine gData_02005d7c as this part declared it; the joined
- * file has another. */
+ * file has another; tried as the definition's extern LATE_DATA s16
+ * gData_02005d7c[], it does not compile in tla-ja:
+ * games/tla/src/scene/gabomba_statue.c:1188: `gData_02005d7c' undeclared (first
+ * use in this function). */
 extern const u8 gData_02005d7c__find_near[] __asm__("gData_02005d7c");
 #define gData_02005d7c gData_02005d7c__find_near
-/* VIEW(find_near): routine Statue_Sink as this part declared it; the joined
- * file has another. */
-void Statue_Sink__find_near(const u8 *data, s32 a,
-                            s32 b) __asm__("Statue_Sink");
-#define Statue_Sink Statue_Sink__find_near
 
 void Func_02001928(void) {
   Func_020018ec(1);
@@ -1269,10 +1336,6 @@ void Func_020019d0(void) {
   Event_End();
 }
 
-/* VIEW(find_near): routine Func_020043a4 as this part declared it; the joined
- * file has another. */
-void Func_020043a4__find_near(s32 value) __asm__("Func_020043a4");
-#define Func_020043a4 Func_020043a4__find_near
 void Actor_SetAnimationSpeed(struct Actor *object, s32 value);
 void Func_02001a6c(s32 value) {
   Func_020043a4(value);
@@ -1545,7 +1608,10 @@ void Func_020020f0(s32 direction) {
 }
 
 /* VIEW(find_near): routine gData_0200e88c as this part declared it; the joined
- * file has another. */
+ * file has another; tried as the definition's extern LATE_DATA s32
+ * gData_0200e88c[], it does not compile in tla-ja:
+ * games/tla/src/scene/gabomba_statue.c:1505: `gData_0200e88c' undeclared (first
+ * use in this function). */
 extern const u8 gData_0200e88c__find_near[] __asm__("gData_0200e88c");
 #define gData_0200e88c gData_0200e88c__find_near
 
@@ -1615,8 +1681,6 @@ void Func_020022d0(s32 slot, s32 value, s32 targetId, s32 angle) {
 #undef gData_02006db8
 #undef gData_02006e78
 #undef gData_02005d7c
-#undef Statue_Sink
-#undef Func_020043a4
 #undef gData_0200e88c
 /* VIEW(s2394): tags Wanderer and SceneState as this part has them; the scene
  * before has its own. */
@@ -1626,13 +1690,6 @@ void Func_020022d0(s32 slot, s32 value, s32 targetId, s32 angle) {
 // Scene code of overlay 0x671, in ROM order.
 
 // ---- games/tla/src/scene/gabomba_statue/s2394.c ----
-
-/* VIEW(s2394): routine FieldEffect_Spawn as this part declared it; the joined
- * file has another. */
-void FieldEffect_Spawn__s2394(
-    s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags,
-    struct EffectOptions *options) __asm__("FieldEffect_Spawn");
-#define FieldEffect_Spawn FieldEffect_Spawn__s2394
 
 void Func_02002394(void) {
   struct Actor *actor = Actor_Get(gMainRoutineWork.currentOwner);
@@ -1841,7 +1898,9 @@ void Func_020027cc(void) {
 }
 
 /* VIEW(s2394): routine gData_02005d7c as this part declared it; the joined file
- * has another. */
+ * has another; tried as the definition's extern LATE_DATA s16 gData_02005d7c[],
+ * it does not compile in tla-ja: games/tla/src/scene/gabomba_statue.c:2087:
+ * `gData_02005d7c' undeclared (first use in this function). */
 extern const u8 gData_02005d7c__s2394[] __asm__("gData_02005d7c");
 #define gData_02005d7c gData_02005d7c__s2394
 extern u32 gData_02005d8c[];
@@ -2423,8 +2482,8 @@ void Func_02003974(void) {
  * turn); the definition has u8 Func_02004380(s32 x, s32 z, s32 direction);
  * tried as the definition's u8 Func_02004380(s32 x, s32 z, s32 direction),
  * which the object already declares, it does not compile in tla-ja (make
- * modern): games/tla/include/field/event_inline.h:171:48: note: expected 's32'
- * {aka 'int'} but argument is of type 'u8 *' {aka 'unsigned char *'}. */
+ * modern): games/tla/include/field/field.h:25:41: note: expected 'struct Actor
+ * *' but argument is of type 'struct FieldEffect *'. */
 extern s32 Func_02004380__s2394(s32 col, s32 row,
                                 s32 turn) __asm__("Func_02004380");
 
@@ -2666,11 +2725,15 @@ turn_next:
 extern u8 Data_02006fc8[], Data_02006fe8[], Data_02007008[], Data_02007028[],
     Data_02007048[], gData_02007068[];
 /* VIEW(s2394): routine gData_02005ac0 as this part declared it; the joined file
- * has another. */
+ * has another; tried as the definition's extern LATE_DATA u32 gData_02005ac0[],
+ * it does not compile in tla-ja: games/tla/src/scene/gabomba_statue.c:2658:
+ * `gData_02005ac0' undeclared (first use in this function). */
 extern s8 gData_02005ac0__s2394[] __asm__("gData_02005ac0");
 #define gData_02005ac0 gData_02005ac0__s2394
 /* VIEW(s2394): routine gData_02005ac8 as this part declared it; the joined file
- * has another. */
+ * has another; tried as the definition's extern LATE_DATA u32 gData_02005ac8[],
+ * it does not compile in tla-ja: games/tla/src/scene/gabomba_statue.c:2640:
+ * `gData_02005ac8' undeclared (first use in this function). */
 extern u8 gData_02005ac8__s2394[] __asm__("gData_02005ac8");
 #define gData_02005ac8 gData_02005ac8__s2394
 // Lays a random path of `length` cells across the Gabomba Statue grid
@@ -2798,11 +2861,15 @@ done:
 }
 
 /* VIEW(s2394): routine gData_02005ad4 as this part declared it; the joined file
- * has another. */
+ * has another; tried as the definition's extern LATE_DATA u32 gData_02005ad4[],
+ * it does not compile in tla-ja: games/tla/src/scene/gabomba_statue.c:2727:
+ * `gData_02005ad4' undeclared (first use in this function). */
 extern const u8 gData_02005ad4__s2394[] __asm__("gData_02005ad4");
 #define gData_02005ad4 gData_02005ad4__s2394
 /* VIEW(s2394): routine gData_02006ea8 as this part declared it; the joined file
- * has another. */
+ * has another; tried as the definition's extern LATE_DATA u32 gData_02006ea8[],
+ * it does not compile in tla-ja: games/tla/src/scene/gabomba_statue.c:2842:
+ * `gData_02006ea8' undeclared (first use in this function). */
 extern const u8 gData_02006ea8__s2394[] __asm__("gData_02006ea8");
 #define gData_02006ea8 gData_02006ea8__s2394
 s32 Func_02004224(s32 row, s32 column, s32 direction) {
@@ -3134,15 +3201,22 @@ s32 Func_020048a4(s32 x, s32 z, s32 value, s32 id) {
 }
 
 /* VIEW(puzzle_turn): routine gData_02006f38 as this part declared it; the
- * joined file has another. */
+ * joined file has another; tried as the definition's extern LATE_DATA s32
+ * gData_02006f38[], it does not compile in tla-ja:
+ * games/tla/src/scene/gabomba_statue.c:3093: `gData_02006f38__puzzle_turn'
+ * undeclared (first use in this function). */
 /* VIEW(puzzle_turn): routine gData_02006ec0 as this part declared it; the
- * joined file has another. */
+ * joined file has another; tried as the definition's extern LATE_DATA u32
+ * gData_02006ec0[], it does not compile in tla-ja:
+ * games/tla/src/scene/gabomba_statue.c:3215: `gData_02006ec0' undeclared (first
+ * use in this function). */
 extern const u8 gData_02006f38__puzzle_turn[] __asm__("gData_02006f38");
 extern const u8 gData_02006ec0__puzzle_turn[] __asm__("gData_02006ec0");
 #define gData_02006ec0 gData_02006ec0__puzzle_turn
 #define gData_02006f38 gData_02006f38__puzzle_turn
 /* VIEW(puzzle_turn): routine Actor_StartScript as this part declared it; the
- * joined file has another. */
+ * joined file has another; not tried: Actor_StartScript's bound declaration was
+ * not found. */
 void Actor_StartScript__puzzle_turn(
     struct Actor *object, const u8 *script) __asm__("Actor_StartScript");
 #define Actor_StartScript Actor_StartScript__puzzle_turn
@@ -3325,8 +3399,8 @@ done:
  * it has another declaration; tried as the definition's void
  * Func_02004938(struct Actor *ball, s32 step), which the object already
  * declares, it does not compile in tla-ja:
- * games/tla/src/scene/gabomba_statue/s2394.c:1753: too many arguments to
- * function `Func_02004938'. */
+ * games/tla/src/scene/gabomba_statue.c:3293: too many arguments to function
+ * `Func_02004938'. */
 extern void Func_02004938__s4d48() __asm__("Func_02004938");
 
 s32 Func_02004d48(s32 first, s32 check) {
@@ -3738,77 +3812,11 @@ u32 gData_02005944[] = {
 #undef gSceneState
 
 void Func_02000280(void);
-/* VIEW(data): routine Func_0200028c as this part declared it; the joined file
- * has another. */
-void Func_0200028c__data(void) __asm__("Func_0200028c");
-#define Func_0200028c Func_0200028c__data
-/* VIEW(data): routine Func_02000364 as this part declared it; the joined file
- * has another. */
-void Func_02000364__data(void) __asm__("Func_02000364");
-#define Func_02000364 Func_02000364__data
-/* VIEW(data): routine Func_02000408 as this part declared it; the joined file
- * has another. */
-void Func_02000408__data(void) __asm__("Func_02000408");
-#define Func_02000408 Func_02000408__data
-/* VIEW(data): routine Func_0200047c as this part declared it; the joined file
- * has another. */
-void Func_0200047c__data(void) __asm__("Func_0200047c");
-#define Func_0200047c Func_0200047c__data
 void Func_02000550(void);
 void Func_02000784(void);
-/* VIEW(data): routine Func_02000cf0 as this part declared it; the joined file
- * has another. */
-void Func_02000cf0__data(void) __asm__("Func_02000cf0");
-#define Func_02000cf0 Func_02000cf0__data
 void Func_020013bc(void);
 void Func_02001564(void);
-/* VIEW(data): routine Func_02001728 as this part declared it; the joined file
- * has another. */
-void Func_02001728__data(void) __asm__("Func_02001728");
-#define Func_02001728 Func_02001728__data
-/* VIEW(data): routine Func_020017dc as this part declared it; the joined file
- * has another. */
-void Func_020017dc__data(void) __asm__("Func_020017dc");
-#define Func_020017dc Func_020017dc__data
-/* VIEW(data): routine Func_02001820 as this part declared it; the joined file
- * has another. */
-void Func_02001820__data(void) __asm__("Func_02001820");
-#define Func_02001820 Func_02001820__data
-/* VIEW(data): routine Func_02001864 as this part declared it; the joined file
- * has another. */
-void Func_02001864__data(void) __asm__("Func_02001864");
-#define Func_02001864 Func_02001864__data
-/* VIEW(data): routine Func_020018a8 as this part declared it; the joined file
- * has another. */
-void Func_020018a8__data(void) __asm__("Func_020018a8");
-#define Func_020018a8 Func_020018a8__data
-/* VIEW(data): routine Func_02001990 as this part declared it; the joined file
- * has another. */
-void Func_02001990__data(void) __asm__("Func_02001990");
-#define Func_02001990 Func_02001990__data
-/* VIEW(data): routine Func_02001a6c as this part declared it; the joined file
- * has another. */
-void Func_02001a6c__data(void) __asm__("Func_02001a6c");
-#define Func_02001a6c Func_02001a6c__data
 void Func_02001a8c(void);
-/* VIEW(data): routine Func_020043ec as this part declared it; the joined file
- * has another. */
-void Func_020043ec__data(void) __asm__("Func_020043ec");
-#define Func_020043ec Func_020043ec__data
-
-/* VIEW(data): routine gFieldEffect_ShortScript as this part declared it; the
- * joined file has another. */
-extern u8 gFieldEffect_ShortScript__data[] __asm__("gFieldEffect_ShortScript");
-#define gFieldEffect_ShortScript gFieldEffect_ShortScript__data
-/* VIEW(data): routine gFieldEffect_MediumScript as this part declared it; the
- * joined file has another. */
-extern u8
-    gFieldEffect_MediumScript__data[] __asm__("gFieldEffect_MediumScript");
-#define gFieldEffect_MediumScript gFieldEffect_MediumScript__data
-/* VIEW(data): routine gFieldEffect_LongScript as this part declared it; the
- * joined file has another. */
-extern u8 gFieldEffect_LongScript__data[] __asm__("gFieldEffect_LongScript");
-#define gFieldEffect_LongScript gFieldEffect_LongScript__data
 
 // clang-format off
 LATE_DATA u8 gData_02005aac[] = {
@@ -4332,19 +4340,3 @@ LATE_DATA s32 gData_02006f38[] = {
     SC_END,
 };
 // clang-format on
-#undef Func_0200028c
-#undef Func_02000364
-#undef Func_02000408
-#undef Func_0200047c
-#undef Func_02000cf0
-#undef Func_02001728
-#undef Func_020017dc
-#undef Func_02001820
-#undef Func_02001864
-#undef Func_020018a8
-#undef Func_02001990
-#undef Func_02001a6c
-#undef Func_020043ec
-#undef gFieldEffect_ShortScript
-#undef gFieldEffect_MediumScript
-#undef gFieldEffect_LongScript

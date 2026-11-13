@@ -500,7 +500,10 @@ void Func_02000930(void) {
 DEFINE_POSITION_FLAT_DISTANCE(Position_FlatDistance)
 
 /* VIEW(jupiter_lighthouse_aerie): routine gData_0200331c as this part declared
- * it; the joined file has another. */
+ * it; the joined file has another; tried as the definition's extern u32
+ * gData_0200331c[], it does not compile in tla-ja:
+ * games/tla/src/scene/jupiter_lighthouse_aerie.c:582: `gData_0200331c'
+ * undeclared (first use in this function). */
 extern const s32
     gData_0200331c__jupiter_lighthouse_aerie[] __asm__("gData_0200331c");
 #define gData_0200331c gData_0200331c__jupiter_lighthouse_aerie
@@ -850,7 +853,7 @@ void Func_02001080(void) {
 /* VIEW(s17a8): tag struct BeamWork as struct BeamWork__s17a8;
  * games/tla/src/scene/jupiter_lighthouse_aerie/s0d08 has another definition;
  * tried with the definition the rest of the object has, it does not compile in
- * tla-ja: games/tla/src/scene/jupiter_lighthouse_aerie.c:815: structure has no
+ * tla-ja: games/tla/src/scene/jupiter_lighthouse_aerie.c:875: structure has no
  * member named `smallTile'. */
 struct BeamWork__s17a8 {
   u8 tiles[0x200];
@@ -1024,11 +1027,6 @@ void Import_ActorSelectAnimation(struct FieldEffect *effect, s32 mode);
 
 extern const s32 *gFieldEffect_DurationScripts[];
 
-/* VIEW(s1e78): routine Actor_StartScript as this part declared it; the joined
- * file has another. */
-void Actor_StartScript__s1e78(struct FieldEffect *effect,
-                              const s32 *script) __asm__("Actor_StartScript");
-#define Actor_StartScript Actor_StartScript__s1e78
 void Actor_SetSpriteFlags(struct Actor *object, u32 value);
 
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
@@ -1104,7 +1102,11 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 #define CELL_TABLE gData_02003488
 #define CELL_SPRITE_DRAW CrackedTiles_Update
 /* VIEW(s1e78): routine Oam_AddSpriteAtDepthClamped as cell_sprite.c declares
- * it; the joined file has another. */
+ * it; the joined file has another; tried as the definition's void
+ * Oam_AddSpriteAtDepthClamped(void *entry, s32 slot), which the object already
+ * declares, it does not compile in tla-ja:
+ * games/tla/src/field/map/cell_sprite.c:20: conflicting types for
+ * `Oam_AddSpriteAtDepthClamped'. */
 void Oam_AddSpriteAtDepthClamped__s1e78(void *entry, s32 priority) __asm__(
     "Oam_AddSpriteAtDepthClamped");
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped__s1e78
@@ -1211,15 +1213,6 @@ void Func_02002888(s32 dx, s32 dz, s32 value) {
   }
 }
 
-/* VIEW(s2640): routine Func_02000314 as this part declared it; the joined file
- * has another. */
-void Func_02000314__s2640(void) __asm__("Func_02000314");
-#define Func_02000314 Func_02000314__s2640
-/* VIEW(s2640): routine Func_0200032c as this part declared it; the joined file
- * has another. */
-void Func_0200032c__s2640(void) __asm__("Func_0200032c");
-#define Func_0200032c Func_0200032c__s2640
-
 extern u32 gFieldEffect_ShortScript[];
 
 // clang-format off
@@ -1286,5 +1279,3 @@ const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_LongScript,
 };
 #undef CrackedTile_Fall
-#undef Func_02000314
-#undef Func_0200032c

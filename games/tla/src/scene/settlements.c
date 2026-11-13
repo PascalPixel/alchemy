@@ -273,46 +273,73 @@ u32 *Scene_GetRegions(void) {
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 /* VIEW(first): routine gSettlements_Placements as this part declared it; the
- * joined file has another. */
+ * joined file has another; tried as the definition's extern struct
+ * ActorPlacement gSettlements_Placements[], it does not compile in tla-ja:
+ * games/tla/src/scene/settlements.c:327: `gSettlements_Placements' undeclared
+ * (first use in this function). */
 extern u8 gSettlements_Placements__first[] __asm__("gSettlements_Placements");
 #define gSettlements_Placements gSettlements_Placements__first
 /* VIEW(first): routine gSettlements_Room1Placements as this part declared it;
- * the joined file has another. */
+ * the joined file has another; tried as the definition's extern struct
+ * ActorPlacement gSettlements_Room1Placements[], it does not compile in tla-ja:
+ * games/tla/src/scene/settlements.c:311: `gSettlements_Room1Placements'
+ * undeclared (first use in this function). */
 extern u8 gSettlements_Room1Placements__first[] __asm__(
     "gSettlements_Room1Placements");
 #define gSettlements_Room1Placements gSettlements_Room1Placements__first
 /* VIEW(first): routine gSettlements_Room2Placements as this part declared it;
- * the joined file has another. */
+ * the joined file has another; tried as the definition's extern struct
+ * ActorPlacement gSettlements_Room2Placements[], it does not compile in tla-ja:
+ * games/tla/src/scene/settlements.c:313: `gSettlements_Room2Placements'
+ * undeclared (first use in this function). */
 extern u8 gSettlements_Room2Placements__first[] __asm__(
     "gSettlements_Room2Placements");
 #define gSettlements_Room2Placements gSettlements_Room2Placements__first
 /* VIEW(first): routine gSettlements_Room4Placements as this part declared it;
- * the joined file has another. */
+ * the joined file has another; tried as the definition's extern struct
+ * ActorPlacement gSettlements_Room4Placements[], it does not compile in tla-ja:
+ * games/tla/src/scene/settlements.c:315: `gSettlements_Room4Placements'
+ * undeclared (first use in this function). */
 extern u8 gSettlements_Room4Placements__first[] __asm__(
     "gSettlements_Room4Placements");
 #define gSettlements_Room4Placements gSettlements_Room4Placements__first
 /* VIEW(first): routine gSettlements_Room5Placements as this part declared it;
- * the joined file has another. */
+ * the joined file has another; tried as the definition's extern struct
+ * ActorPlacement gSettlements_Room5Placements[], it does not compile in tla-ja:
+ * games/tla/src/scene/settlements.c:317: `gSettlements_Room5Placements'
+ * undeclared (first use in this function). */
 extern u8 gSettlements_Room5Placements__first[] __asm__(
     "gSettlements_Room5Placements");
 #define gSettlements_Room5Placements gSettlements_Room5Placements__first
 /* VIEW(first): routine gSettlements_Room9Placements as this part declared it;
- * the joined file has another. */
+ * the joined file has another; tried as the definition's extern struct
+ * ActorPlacement gSettlements_Room9Placements[], it does not compile in tla-ja:
+ * games/tla/src/scene/settlements.c:323: `gSettlements_Room9Placements'
+ * undeclared (first use in this function). */
 extern u8 gSettlements_Room9Placements__first[] __asm__(
     "gSettlements_Room9Placements");
 #define gSettlements_Room9Placements gSettlements_Room9Placements__first
 /* VIEW(first): routine gSettlements_Room10Placements as this part declared it;
- * the joined file has another. */
+ * the joined file has another; tried as the definition's extern struct
+ * ActorPlacement gSettlements_Room10Placements[], it does not compile in
+ * tla-ja: games/tla/src/scene/settlements.c:325:
+ * `gSettlements_Room10Placements' undeclared (first use in this function). */
 extern u8 gSettlements_Room10Placements__first[] __asm__(
     "gSettlements_Room10Placements");
 #define gSettlements_Room10Placements gSettlements_Room10Placements__first
 /* VIEW(first): routine gSettlements_Room7Placements as this part declared it;
- * the joined file has another. */
+ * the joined file has another; tried as the definition's extern struct
+ * ActorPlacement gSettlements_Room7Placements[], it does not compile in tla-ja:
+ * games/tla/src/scene/settlements.c:319: `gSettlements_Room7Placements'
+ * undeclared (first use in this function). */
 extern u8 gSettlements_Room7Placements__first[] __asm__(
     "gSettlements_Room7Placements");
 #define gSettlements_Room7Placements gSettlements_Room7Placements__first
 /* VIEW(first): routine gSettlements_Room8Placements as this part declared it;
- * the joined file has another. */
+ * the joined file has another; tried as the definition's extern struct
+ * ActorPlacement gSettlements_Room8Placements[], it does not compile in tla-ja:
+ * games/tla/src/scene/settlements.c:321: `gSettlements_Room8Placements'
+ * undeclared (first use in this function). */
 extern u8 gSettlements_Room8Placements__first[] __asm__(
     "gSettlements_Room8Placements");
 #define gSettlements_Room8Placements gSettlements_Room8Placements__first
@@ -436,46 +463,73 @@ void Settlements_GrowVine(void) {
 }
 
 /* VIEW(first): routine gSettlements_Triggers as this part declared it; the
- * joined file has another. */
+ * joined file has another; tried as the definition's extern struct Trigger
+ * gSettlements_Triggers[], it does not compile in tla-ja:
+ * games/tla/src/scene/settlements.c:481: `gSettlements_Triggers' undeclared
+ * (first use in this function). */
 extern u8 gSettlements_Triggers__first[] __asm__("gSettlements_Triggers");
 #define gSettlements_Triggers gSettlements_Triggers__first
 /* VIEW(first): routine gSettlements_Room1Triggers as this part declared it; the
- * joined file has another. */
+ * joined file has another; tried as the definition's extern struct Trigger
+ * gSettlements_Room1Triggers[], it does not compile in tla-ja:
+ * games/tla/src/scene/settlements.c:465: `gSettlements_Room1Triggers'
+ * undeclared (first use in this function). */
 extern u8
     gSettlements_Room1Triggers__first[] __asm__("gSettlements_Room1Triggers");
 #define gSettlements_Room1Triggers gSettlements_Room1Triggers__first
 /* VIEW(first): routine gSettlements_Room2Triggers as this part declared it; the
- * joined file has another. */
+ * joined file has another; tried as the definition's extern struct Trigger
+ * gSettlements_Room2Triggers[], it does not compile in tla-ja:
+ * games/tla/src/scene/settlements.c:467: `gSettlements_Room2Triggers'
+ * undeclared (first use in this function). */
 extern u8
     gSettlements_Room2Triggers__first[] __asm__("gSettlements_Room2Triggers");
 #define gSettlements_Room2Triggers gSettlements_Room2Triggers__first
 /* VIEW(first): routine gSettlements_Room4Triggers as this part declared it; the
- * joined file has another. */
+ * joined file has another; tried as the definition's extern struct Trigger
+ * gSettlements_Room4Triggers[], it does not compile in tla-ja:
+ * games/tla/src/scene/settlements.c:469: `gSettlements_Room4Triggers'
+ * undeclared (first use in this function). */
 extern u8
     gSettlements_Room4Triggers__first[] __asm__("gSettlements_Room4Triggers");
 #define gSettlements_Room4Triggers gSettlements_Room4Triggers__first
 /* VIEW(first): routine gSettlements_Room5Triggers as this part declared it; the
- * joined file has another. */
+ * joined file has another; tried as the definition's extern struct Trigger
+ * gSettlements_Room5Triggers[], it does not compile in tla-ja:
+ * games/tla/src/scene/settlements.c:471: `gSettlements_Room5Triggers'
+ * undeclared (first use in this function). */
 extern u8
     gSettlements_Room5Triggers__first[] __asm__("gSettlements_Room5Triggers");
 #define gSettlements_Room5Triggers gSettlements_Room5Triggers__first
 /* VIEW(first): routine gSettlements_Room7Triggers as this part declared it; the
- * joined file has another. */
+ * joined file has another; tried as the definition's extern struct Trigger
+ * gSettlements_Room7Triggers[], it does not compile in tla-ja:
+ * games/tla/src/scene/settlements.c:473: `gSettlements_Room7Triggers'
+ * undeclared (first use in this function). */
 extern u8
     gSettlements_Room7Triggers__first[] __asm__("gSettlements_Room7Triggers");
 #define gSettlements_Room7Triggers gSettlements_Room7Triggers__first
 /* VIEW(first): routine gSettlements_Room8Triggers as this part declared it; the
- * joined file has another. */
+ * joined file has another; tried as the definition's extern struct Trigger
+ * gSettlements_Room8Triggers[], it does not compile in tla-ja:
+ * games/tla/src/scene/settlements.c:475: `gSettlements_Room8Triggers'
+ * undeclared (first use in this function). */
 extern u8
     gSettlements_Room8Triggers__first[] __asm__("gSettlements_Room8Triggers");
 #define gSettlements_Room8Triggers gSettlements_Room8Triggers__first
 /* VIEW(first): routine gSettlements_Room9Triggers as this part declared it; the
- * joined file has another. */
+ * joined file has another; tried as the definition's extern struct Trigger
+ * gSettlements_Room9Triggers[], it does not compile in tla-ja:
+ * games/tla/src/scene/settlements.c:477: `gSettlements_Room9Triggers'
+ * undeclared (first use in this function). */
 extern u8
     gSettlements_Room9Triggers__first[] __asm__("gSettlements_Room9Triggers");
 #define gSettlements_Room9Triggers gSettlements_Room9Triggers__first
 /* VIEW(first): routine gSettlements_Room10Triggers as this part declared it;
- * the joined file has another. */
+ * the joined file has another; tried as the definition's extern struct Trigger
+ * gSettlements_Room10Triggers[], it does not compile in tla-ja:
+ * games/tla/src/scene/settlements.c:479: `gSettlements_Room10Triggers'
+ * undeclared (first use in this function). */
 extern u8
     gSettlements_Room10Triggers__first[] __asm__("gSettlements_Room10Triggers");
 #define gSettlements_Room10Triggers gSettlements_Room10Triggers__first
@@ -623,7 +677,10 @@ void Settlements_SetUpKaltIsland(void) {
 }
 
 /* VIEW(first): routine gSettlements_WallCrate as this part declared it; the
- * joined file has another. */
+ * joined file has another; tried as the definition's extern s16
+ * gSettlements_WallCrate[], it does not compile in tla-ja:
+ * games/tla/src/scene/settlements.c:644: `gSettlements_WallCrate' undeclared
+ * (first use in this function). */
 extern const u8
     gSettlements_WallCrate__first[] __asm__("gSettlements_WallCrate");
 #define gSettlements_WallCrate gSettlements_WallCrate__first
@@ -747,7 +804,10 @@ void Settlements_LashRope(void) {
 }
 
 /* VIEW(first): routine gSettlements_WaterColorFrame as this part declared it;
- * the joined file has another. */
+ * the joined file has another; tried as the definition's extern s32
+ * gSettlements_WaterColorFrame[], it does not compile in tla-ja:
+ * games/tla/src/scene/settlements.c:739: `gSettlements_WaterColorFrame'
+ * undeclared (first use in this function). */
 extern s32
     gSettlements_WaterColorFrame__first __asm__("gSettlements_WaterColorFrame");
 #define gSettlements_WaterColorFrame gSettlements_WaterColorFrame__first
@@ -984,7 +1044,10 @@ void Settlements_UnblockCrate(void) {
 }
 
 /* VIEW(first): routine gSettlements_CrateDropScript as this part declared it;
- * the joined file has another. */
+ * the joined file has another; tried as the definition's extern s32
+ * gSettlements_CrateDropScript[], it does not compile in tla-ja:
+ * games/tla/src/scene/settlements.c:1008: `gSettlements_CrateDropScript'
+ * undeclared (first use in this function). */
 extern const u8 gSettlements_CrateDropScript__first[] __asm__(
     "gSettlements_CrateDropScript");
 #define gSettlements_CrateDropScript gSettlements_CrateDropScript__first
@@ -1056,7 +1119,10 @@ void Settlements_BlockCrate(void) {
 }
 
 /* VIEW(first): routine gSettlements_SmokeScript as this part declared it; the
- * joined file has another. */
+ * joined file has another; tried as the definition's extern u32
+ * gSettlements_SmokeScript[], it does not compile in tla-ja:
+ * games/tla/src/scene/settlements.c:1052: `gSettlements_SmokeScript' undeclared
+ * (first use in this function). */
 extern const u8
     gSettlements_SmokeScript__first[] __asm__("gSettlements_SmokeScript");
 #define gSettlements_SmokeScript gSettlements_SmokeScript__first
@@ -1147,16 +1213,16 @@ void Settlements_LiftBoulder(void) { GameFlag_Set(0x208); }
 
 /* VIEW(s1620): variable gInput as extern u32 gInput; input.h has extern struct
  * InputState gInput; tried as the rest of the object declares it, it does not
- * compile in tla-ja: games/tla/src/scene/settlements/settlements.c:66: `gInput'
- * undeclared (first use in this function). */
+ * compile in tla-ja: games/tla/src/scene/settlements.c:1143: invalid operands
+ * to binary >>. */
 extern u32 gInput__s1620 __asm__("gInput");
 /* VIEW(settlements): variable gSettlements_SlideAngles as const s16
  * gSettlements_SlideAngles[]; scene/settlements/s1d30 has
  * DEFINE_G_DATA_02002276(gSettlements_SlideAngles) s16
  * gSettlements_SlideAnglesByKey[] = {; tried as the one declaration extern
  * const s16 gSettlements_SlideAngles[], it does not compile in tla-ja:
- * games/tla/src/scene/settlements/settlements.c:64: `gSettlements_SlideAngles'
- * undeclared (first use in this function). */
+ * games/tla/src/scene/settlements.c:1141: `gSettlements_SlideAngles' undeclared
+ * (first use in this function). */
 extern const s16
     gSettlements_SlideAngles__settlements[] __asm__("gSettlements_SlideAngles");
 #define gSettlements_SlideAngles gSettlements_SlideAngles__settlements
@@ -1204,8 +1270,8 @@ void Settlements_StopLeader(void) {
  * Settlements_KeepSliding(struct Actor *object); tried as the definition's void
  * Settlements_KeepSliding(struct Actor *object), which the object already
  * declares, it does not compile in tla-ja:
- * games/tla/src/scene/settlements/settlements.c:171:
- * `Settlements_KeepSliding__s173c' undeclared (first use in this function). */
+ * games/tla/src/scene/settlements.c:1241: `Settlements_KeepSliding__s173c'
+ * undeclared (first use in this function). */
 extern void
 Settlements_KeepSliding__s173c(void) __asm__("Settlements_KeepSliding");
 
@@ -1348,7 +1414,7 @@ end:
  * gSettlements_SlideStopped; scene/settlements.h has u16
  * gSettlements_SlideStopped; tried as the 2 declarations' extern volatile s16
  * gSettlements_SlideStopped, it does not compile in tla-en:
- * games/tla/src/scene/settlements/settlements.c:243: conflicting types for
+ * games/tla/src/scene/settlements.c:1310: conflicting types for
  * `gSettlements_SlideStopped'. */
 extern volatile s16
     gSettlements_SlideStopped__s1a1c __asm__("gSettlements_SlideStopped");
@@ -1683,8 +1749,8 @@ void Settlements_SetSlideStopped(s32 value) {
  * Settlements_KeepSliding(struct Actor *object) {; tried as the definition's
  * void Settlements_KeepSliding(struct Actor *object), which the object already
  * declares, it does not compile in tla-ja:
- * games/tla/src/scene/settlements/settlements.c:641:
- * `Settlements_KeepSliding__s1d30' undeclared (first use in this function). */
+ * games/tla/src/scene/settlements.c:1694: `Settlements_KeepSliding__s1d30'
+ * undeclared (first use in this function). */
 void Settlements_KeepSliding__s1d30(void) __asm__("Settlements_KeepSliding");
 
 void Settlements_SlideOnIceFacing(void) {
@@ -1798,20 +1864,6 @@ end:
 
 void Settlements_MeetGel(void);
 void Settlements_MeetLostJupiterDjinni(void);
-/* VIEW(s1d30): routine Settlements_ClearSpriteFlags as this part declared it;
- * the joined file has another. */
-void Settlements_ClearSpriteFlags__s1d30(void) __asm__(
-    "Settlements_ClearSpriteFlags");
-#define Settlements_ClearSpriteFlags Settlements_ClearSpriteFlags__s1d30
-/* VIEW(s1d30): routine Actor_Bob as this part declared it; the joined file has
- * another. */
-void Actor_Bob__s1d30(void) __asm__("Actor_Bob");
-#define Actor_Bob Actor_Bob__s1d30
-/* VIEW(s1d30): routine Settlements_WarnOfRiddleOfRock as this part declared it;
- * the joined file has another. */
-void Settlements_WarnOfRiddleOfRock__s1d30(void) __asm__(
-    "Settlements_WarnOfRiddleOfRock");
-#define Settlements_WarnOfRiddleOfRock Settlements_WarnOfRiddleOfRock__s1d30
 void Settlements_EnterDoor4(void);
 void Settlements_GrowVine(void);
 void Settlements_EnterCave(void);
@@ -2153,6 +2205,3 @@ s32 gSettlements_WaterColorFrame[] = {
     -1,
 };
 #undef gSettlements_SlideAngles
-#undef Settlements_ClearSpriteFlags
-#undef Actor_Bob
-#undef Settlements_WarnOfRiddleOfRock

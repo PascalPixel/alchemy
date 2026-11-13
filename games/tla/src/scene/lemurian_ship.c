@@ -27,9 +27,9 @@
 /* VIEW(scene_tables): variable gData_0200312c as extern u8 gData_0200312c[];
  * the definition has s16 gData_0200312c[] = { 0, - 1, 72, 0, 72, 0x4000, 0, -
  * 1, - 1, - 1, - 1, 0, 1, - 1, 72, 0, 72, 0x4000, 0, 8, 16, 248, 256, 0, 2, -
- * 1, 168,...; tried as the definition's extern struct ActorPlacement
+ * 1, 168,...; tried as the definition's extern LATE_DATA struct ActorPlacement
  * gData_0200312c[], it does not compile in tla-ja:
- * games/tla/src/scene/lemurian_ship.c:1706: conflicting types for
+ * games/tla/src/scene/lemurian_ship.c:1702: conflicting types for
  * `gData_0200312c'. */
 extern u8 gData_0200312c__scene_tables[] __asm__("gData_0200312c");
 

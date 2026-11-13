@@ -119,30 +119,30 @@ const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 /* VIEW(ankohl_ruins): variable gData_02003780 as s16 gData_02003780;
  * scene/ankohl_ruins/s2438 has u16 gData_02003780[] = {; tried as the
  * definition's extern u16 gData_02003780[], it does not compile in tla-ja:
- * games/tla/src/scene/ankohl_ruins.c:975: `gData_02003780' has an incomplete
+ * games/tla/src/scene/ankohl_ruins.c:1036: `gData_02003780' has an incomplete
  * type. */
 extern s16 gData_02003780__ankohl_ruins __asm__("gData_02003780");
 /* VIEW(ankohl_ruins): variable gData_02003782 as s16 gData_02003782;
  * scene/ankohl_ruins/s2438 has u16 gData_02003782[] = {; tried as the
  * definition's extern u16 gData_02003782[], it does not compile in tla-ja:
- * games/tla/src/scene/ankohl_ruins.c:785: wrong type argument to increment. */
+ * games/tla/src/scene/ankohl_ruins.c:848: wrong type argument to increment. */
 extern s16 gData_02003782__ankohl_ruins __asm__("gData_02003782");
 /* VIEW(ankohl_ruins): variable gData_02003784 as s16 gData_02003784;
  * scene/ankohl_ruins/s2438 has u32 gData_02003784[] = {; tried as the
  * definition's extern u32 gData_02003784[], it does not compile in tla-ja:
- * games/tla/src/scene/ankohl_ruins.c:977: `gData_02003784' has an incomplete
+ * games/tla/src/scene/ankohl_ruins.c:1038: `gData_02003784' has an incomplete
  * type. */
 extern s16 gData_02003784__ankohl_ruins __asm__("gData_02003784");
 /* VIEW(ankohl_ruins): variable gData_02003788 as s32 gData_02003788;
  * scene/ankohl_ruins/s2438 has u32 gData_02003788[] = {; tried as the
  * definition's extern u32 gData_02003788[], it does not compile in tla-ja:
- * games/tla/src/scene/ankohl_ruins.c:978: `gData_02003788' has an incomplete
+ * games/tla/src/scene/ankohl_ruins.c:1039: `gData_02003788' has an incomplete
  * type. */
 extern s32 gData_02003788__ankohl_ruins __asm__("gData_02003788");
 /* VIEW(ankohl_ruins): variable gData_0200378c as s32 gData_0200378c;
  * scene/ankohl_ruins/s2438 has u32 gData_0200378c[] = {; tried as the
  * definition's extern u32 gData_0200378c[], it does not compile in tla-ja:
- * games/tla/src/scene/ankohl_ruins.c:979: `gData_0200378c' has an incomplete
+ * games/tla/src/scene/ankohl_ruins.c:1040: `gData_0200378c' has an incomplete
  * type. */
 extern s32 gData_0200378c__ankohl_ruins __asm__("gData_0200378c");
 
@@ -878,7 +878,7 @@ void Func_020015ac(void) {
 /* VIEW(ankohl_ruins): variable gData_02002fa8 as struct AnkohlRuinsWaterRow
  * gData_02002fa8[]; scene/ankohl_ruins/s2438 has u32 gData_02002fa8[] = {;
  * tried as the definition's extern u32 gData_02002fa8[], it does not compile in
- * tla-ja: games/tla/src/scene/ankohl_ruins.c:851: request for member `level' in
+ * tla-ja: games/tla/src/scene/ankohl_ruins.c:914: request for member `level' in
  * something not a structure or union. */
 extern struct AnkohlRuinsWaterRow
     gData_02002fa8__ankohl_ruins[] __asm__("gData_02002fa8");
@@ -965,7 +965,7 @@ void Func_0200160c(void) {
 /* VIEW(ankohl_ruins): variable gData_02002ff0 as struct AnkohlRuinsWaterRow
  * gData_02002ff0[]; scene/ankohl_ruins/s2438 has u32 gData_02002ff0[] = {;
  * tried as the definition's extern u32 gData_02002ff0[], it does not compile in
- * tla-ja: games/tla/src/scene/ankohl_ruins.c:935: request for member `level' in
+ * tla-ja: games/tla/src/scene/ankohl_ruins.c:998: request for member `level' in
  * something not a structure or union. */
 extern struct AnkohlRuinsWaterRow
     gData_02002ff0__ankohl_ruins[] __asm__("gData_02002ff0");
@@ -1350,7 +1350,7 @@ struct AnkohlRuinsFloatWork {
  * Data_02004030; scene/ankohl_ruins has struct AnkohlRuinsSpriteWork
  * Data_02004030; tried as the 2 declarations' extern struct
  * AnkohlRuinsFloatWork Data_02004030, it does not compile in tla-en:
- * games/tla/src/scene/ankohl_ruins.c:1240: conflicting types for
+ * games/tla/src/scene/ankohl_ruins.c:1322: conflicting types for
  * `Data_02004030'. */
 extern struct AnkohlRuinsFloatWork
     Data_02004030__s2438 __asm__("Data_02004030");
@@ -1359,7 +1359,7 @@ void Func_020010f4(void);
  * scene/ankohl_ruins has void Func_020023d0(struct Actor *object) {; tried as
  * the definition's void Func_020023d0(struct Actor *object), which the object
  * already declares, it does not compile in tla-en:
- * games/tla/src/scene/ankohl_ruins.c:1499: `Func_020023d0__s2438' undeclared
+ * games/tla/src/scene/ankohl_ruins.c:1581: `Func_020023d0__s2438' undeclared
  * (first use in this function). */
 void Func_020023d0__s2438(void) __asm__("Func_020023d0");
 void FieldEffect_StartBlankOverlay();
@@ -1368,7 +1368,7 @@ void Event_StartScreenTransition(void);
 /* VIEW(s2438): routine Func_02001420 as void Func_02001420(s32 a0);
  * scene/ankohl_ruins has void Func_02001420(void) {; tried as the definition's
  * void Func_02001420(struct Actor *object, s16 timer, u8 value), it does not
- * compile in tla-en: games/tla/src/scene/ankohl_ruins.c:1249: conflicting types
+ * compile in tla-en: games/tla/src/scene/ankohl_ruins.c:1331: conflicting types
  * for `Func_02001420'. */
 void Func_02001420__s2438(s32 a0) __asm__("Func_02001420");
 void Map_CenterOnFollowedPoint(void);

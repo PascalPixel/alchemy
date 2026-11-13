@@ -7,7 +7,10 @@
 #include "types.h"
 struct KibomboObject;
 /* VIEW(kibombo): routine Import_ActorCreate as kibombo.h declares it;
- * field_event.h, which a helper below includes, has another. */
+ * field_event.h, which a helper below includes, has another; tried as the rest
+ * of the object declares it, it does not compile in tla-ja:
+ * games/tla/include/field_event.h:56: conflicting types for
+ * `Import_ActorCreate'. */
 struct KibomboObject *
 Import_ActorCreate__kibombo(s32 type, s32 x, s32 y,
                             s32 z) __asm__("Import_ActorCreate");
@@ -31,7 +34,9 @@ s32 Func_02000048(struct KibomboObject *object) {
 }
 
 /* VIEW(s0038): routine gData_0200635c as this part declared it; the joined file
- * has another. */
+ * has another; tried as the definition's extern s16 gData_0200635c[], it does
+ * not compile in tla-ja: games/tla/src/scene/kibombo.c:126: `gData_0200635c'
+ * undeclared (first use in this function). */
 extern u8 gData_0200635c__s0038[] __asm__("gData_0200635c");
 #define gData_0200635c gData_0200635c__s0038
 
@@ -159,51 +164,87 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 // next object the overlay links.
 
 /* VIEW(events_a): routine gData_02006510 as this part declared it; the joined
- * file has another. */
+ * file has another; tried as the definition's extern struct ActorPlacement
+ * gData_02006510[], it does not compile in tla-ja:
+ * games/tla/src/scene/kibombo.c:177: `gData_02006510' undeclared (first use in
+ * this function). */
 extern u8 gData_02006510__events_a[] __asm__("gData_02006510");
 #define gData_02006510 gData_02006510__events_a
 /* VIEW(events_a): routine gData_020066d8 as this part declared it; the joined
- * file has another. */
+ * file has another; tried as the definition's extern struct ActorPlacement
+ * gData_020066d8[], it does not compile in tla-ja:
+ * games/tla/src/scene/kibombo.c:179: `gData_020066d8' undeclared (first use in
+ * this function). */
 extern u8 gData_020066d8__events_a[] __asm__("gData_020066d8");
 #define gData_020066d8 gData_020066d8__events_a
 /* VIEW(events_a): routine gData_020069a8 as this part declared it; the joined
- * file has another. */
+ * file has another; tried as the definition's extern struct ActorPlacement
+ * gData_020069a8[], it does not compile in tla-ja:
+ * games/tla/src/scene/kibombo.c:181: `gData_020069a8' undeclared (first use in
+ * this function). */
 extern u8 gData_020069a8__events_a[] __asm__("gData_020069a8");
 #define gData_020069a8 gData_020069a8__events_a
 /* VIEW(events_a): routine gData_02006a98 as this part declared it; the joined
- * file has another. */
+ * file has another; tried as the definition's extern struct ActorPlacement
+ * gData_02006a98[], it does not compile in tla-ja:
+ * games/tla/src/scene/kibombo.c:183: `gData_02006a98' undeclared (first use in
+ * this function). */
 extern u8 gData_02006a98__events_a[] __asm__("gData_02006a98");
 #define gData_02006a98 gData_02006a98__events_a
 /* VIEW(events_a): routine gData_02006cd8 as this part declared it; the joined
- * file has another. */
+ * file has another; tried as the definition's extern struct ActorPlacement
+ * gData_02006cd8[], it does not compile in tla-ja:
+ * games/tla/src/scene/kibombo.c:186: `gData_02006cd8' undeclared (first use in
+ * this function). */
 extern u8 gData_02006cd8__events_a[] __asm__("gData_02006cd8");
 #define gData_02006cd8 gData_02006cd8__events_a
 /* VIEW(events_a): routine gData_020064f8 as this part declared it; the joined
- * file has another. */
+ * file has another; tried as the definition's extern struct ActorPlacement
+ * gData_020064f8[], it does not compile in tla-ja:
+ * games/tla/src/scene/kibombo.c:189: `gData_020064f8' undeclared (first use in
+ * this function). */
 extern u8 gData_020064f8__events_a[] __asm__("gData_020064f8");
 #define gData_020064f8 gData_020064f8__events_a
 /* VIEW(events_a): routine gData_02006ef4 as this part declared it; the joined
- * file has another. */
+ * file has another; tried as the definition's extern struct Trigger
+ * gData_02006ef4[], it does not compile in tla-ja:
+ * games/tla/src/scene/kibombo.c:196: `gData_02006ef4' undeclared (first use in
+ * this function). */
 extern u8 gData_02006ef4__events_a[] __asm__("gData_02006ef4");
 #define gData_02006ef4 gData_02006ef4__events_a
 /* VIEW(events_a): routine gData_020070d4 as this part declared it; the joined
- * file has another. */
+ * file has another; tried as the definition's extern struct Trigger
+ * gData_020070d4[], it does not compile in tla-ja:
+ * games/tla/src/scene/kibombo.c:198: `gData_020070d4' undeclared (first use in
+ * this function). */
 extern u8 gData_020070d4__events_a[] __asm__("gData_020070d4");
 #define gData_020070d4 gData_020070d4__events_a
 /* VIEW(events_a): routine gData_02007434 as this part declared it; the joined
- * file has another. */
+ * file has another; tried as the definition's extern struct Trigger
+ * gData_02007434[], it does not compile in tla-ja:
+ * games/tla/src/scene/kibombo.c:200: `gData_02007434' undeclared (first use in
+ * this function). */
 extern u8 gData_02007434__events_a[] __asm__("gData_02007434");
 #define gData_02007434 gData_02007434__events_a
 /* VIEW(events_a): routine gData_020074dc as this part declared it; the joined
- * file has another. */
+ * file has another; tried as the definition's extern struct Trigger
+ * gData_020074dc[], it does not compile in tla-ja:
+ * games/tla/src/scene/kibombo.c:202: `gData_020074dc' undeclared (first use in
+ * this function). */
 extern u8 gData_020074dc__events_a[] __asm__("gData_020074dc");
 #define gData_020074dc gData_020074dc__events_a
 /* VIEW(events_a): routine gData_02007698 as this part declared it; the joined
- * file has another. */
+ * file has another; tried as the definition's extern struct Trigger
+ * gData_02007698[], it does not compile in tla-ja:
+ * games/tla/src/scene/kibombo.c:204: `gData_02007698' undeclared (first use in
+ * this function). */
 extern u8 gData_02007698__events_a[] __asm__("gData_02007698");
 #define gData_02007698 gData_02007698__events_a
 /* VIEW(events_a): routine gData_02006ee8 as this part declared it; the joined
- * file has another. */
+ * file has another; tried as the definition's extern struct Trigger
+ * gData_02006ee8[], it does not compile in tla-ja:
+ * games/tla/src/scene/kibombo.c:205: `gData_02006ee8' undeclared (first use in
+ * this function). */
 extern u8 gData_02006ee8__events_a[] __asm__("gData_02006ee8");
 #define gData_02006ee8 gData_02006ee8__events_a
 
@@ -827,9 +868,8 @@ Actor_GetById__s1318(u32 objectId) __asm__("Actor_GetById");
  * Actor *actor, s32 x, s32 y, s32 z); kibombo.h has void
  * Actor_SetMoveTarget(struct KibomboObject *object, s32 x, s32 y, s32 z); tried
  * as the definition's void Actor_SetMoveTarget(struct Actor *object, s32 x, s32
- * y, s32 z), which the object already declares, it does not compile in tla-ja:
- * games/tla/include/field/event.h:67: conflicting types for
- * `Actor_SetMoveTarget'. */
+ * y, s32 z), it does not compile in tla-ja: games/tla/include/field/event.h:67:
+ * conflicting types for `Actor_SetMoveTarget'. */
 struct Actor;
 extern void Actor_SetMoveTarget__s1318(struct Actor *actor, s32 x, s32 y,
                                        s32 z) __asm__("Actor_SetMoveTarget");
@@ -839,7 +879,7 @@ extern void Actor_SetMoveTarget__s1318(struct Actor *actor, s32 x, s32 y,
  * KibomboObject *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z); tried as
  * the rest of the object declares it, it does not compile in tla-ja:
  * games/tla/include/field/event.h:68: conflicting types for
- * `Import_ActorCreate'. */
+ * `Import_ActorCreate__kibombo'. */
 struct Actor;
 extern struct Actor *
 Import_ActorCreate__s1318(s32 type, s32 x, s32 y,
@@ -906,27 +946,42 @@ extern s32 Task_Add__s1318(TaskFunc func, s32 order) __asm__("Task_Add");
 
 void Party_GivePiersDjinn(void);
 /* VIEW(s1318): routine gData_02005e88 as this part declared it; the joined file
- * has another. */
+ * has another; tried as the definition's extern u32 gData_02005e88[], it does
+ * not compile in tla-ja: games/tla/src/scene/kibombo.c:876: `gData_02005e88'
+ * undeclared (first use in this function). */
 extern const u8 gData_02005e88__s1318[] __asm__("gData_02005e88");
 #define gData_02005e88 gData_02005e88__s1318
 /* VIEW(s1318): routine gData_02005eec as this part declared it; the joined file
- * has another. */
+ * has another; tried as the definition's extern LATE_DATA u32 gData_02005eec[],
+ * it does not compile in tla-ja: games/tla/src/scene/kibombo.c:874:
+ * `gData_02005eec' undeclared (first use in this function). */
 extern const u8 gData_02005eec__s1318[] __asm__("gData_02005eec");
 #define gData_02005eec gData_02005eec__s1318
 /* VIEW(s1318): routine gData_02005f14 as this part declared it; the joined file
- * has another. */
+ * has another; tried as the one declaration extern const u8 gData_02005f14[],
+ * it does not compile in tla-ja: games/tla/src/scene/kibombo.c:885:
+ * `gData_02005f14' undeclared (first use in this function). */
 extern const u8 gData_02005f14__s1318[] __asm__("gData_02005f14");
 #define gData_02005f14 gData_02005f14__s1318
 /* VIEW(s1318): routine gData_02005f58 as this part declared it; the joined file
- * has another. */
+ * has another; tried as the one declaration extern const u8 gData_02005f58[],
+ * it does not compile in tla-ja: games/tla/src/scene/kibombo.c:886:
+ * `gData_02005f58' undeclared (first use in this function). */
 extern const u8 gData_02005f58__s1318[] __asm__("gData_02005f58");
 #define gData_02005f58 gData_02005f58__s1318
 /* VIEW(s1318): routine gData_02005f9c as this part declared it; the joined file
- * has another. */
+ * has another; tried as the definition's extern u32 gData_02005f9c[], it does
+ * not compile in tla-ja: games/tla/src/scene/kibombo.c:887: `gData_02005f9c'
+ * undeclared (first use in this function). */
 extern const u8 gData_02005f9c__s1318[] __asm__("gData_02005f9c");
 #define gData_02005f9c gData_02005f9c__s1318
 /* VIEW(s1318): routine gData_02005fe0 as this part declared it; the joined file
- * has another. */
+ * has another; tried as the definition's extern
+ * DEFINE_G_DATA_02002F1C(gData_02005eec, 88, 372)
+ * DEFINE_G_DATA_02003534(gData_02005f14, 48, 384, 1)
+ * DEFINE_G_DATA_02003534(gData_02005..., it does not compile in tla-ja:
+ * games/tla/src/scene/kibombo.c:1155: `gData_02005fe0' undeclared (first use in
+ * this function). */
 extern const u8 gData_02005fe0__s1318[] __asm__("gData_02005fe0");
 #define gData_02005fe0 gData_02005fe0__s1318
 
@@ -1247,23 +1302,38 @@ void Func_02001318(void) {
 #define EVENT_WORK ((u8 *)Ram_HeapSlots->eventWork)
 
 /* VIEW(s1318): routine gData_02006014 as this part declared it; the joined file
- * has another. */
+ * has another; tried as the definition's extern u32 gData_02006014[], it does
+ * not compile in tla-ja: games/tla/src/scene/kibombo.c:1206: `gData_02006014'
+ * undeclared (first use in this function). */
 extern const u8 gData_02006014__s1318[] __asm__("gData_02006014");
 #define gData_02006014 gData_02006014__s1318
 /* VIEW(s1318): routine gData_02006058 as this part declared it; the joined file
- * has another. */
+ * has another; tried as the one declaration extern const u8 gData_02006058[],
+ * it does not compile in tla-ja: games/tla/src/scene/kibombo.c:1207:
+ * `gData_02006058' undeclared (first use in this function). */
 extern const u8 gData_02006058__s1318[] __asm__("gData_02006058");
 #define gData_02006058 gData_02006058__s1318
 /* VIEW(s1318): routine gData_0200609c as this part declared it; the joined file
- * has another. */
+ * has another; tried as the one declaration extern const u8 gData_0200609c[],
+ * it does not compile in tla-ja: games/tla/src/scene/kibombo.c:1208:
+ * `gData_0200609c' undeclared (first use in this function). */
 extern const u8 gData_0200609c__s1318[] __asm__("gData_0200609c");
 #define gData_0200609c gData_0200609c__s1318
 /* VIEW(s1318): routine gData_020060e0 as this part declared it; the joined file
- * has another. */
+ * has another; tried as the definition's extern
+ * DEFINE_G_DATA_02003584(gData_020060b0, Func_02003ed4, 38, 17)
+ * DEFINE_G_DATA_02004014(gData_020060c0, Orbit_Update, Actor_AimAtWatched...,
+ * it does not compile in tla-ja: games/tla/src/scene/kibombo.c:1209:
+ * `gData_020060e0' undeclared (first use in this function). */
 extern const u8 gData_020060e0__s1318[] __asm__("gData_020060e0");
 #define gData_020060e0 gData_020060e0__s1318
 /* VIEW(s1318): routine gData_02006108 as this part declared it; the joined file
- * has another. */
+ * has another; tried as the definition's extern
+ * DEFINE_G_DATA_02002F88(gData_02006014, 298, 200, 1)
+ * DEFINE_G_DATA_02002F88(gData_02006058, 308, 188, 1)
+ * DEFINE_G_DATA_02002F88(gData_..., it does not compile in tla-ja:
+ * games/tla/src/scene/kibombo.c:1441: `gData_02006108' undeclared (first use in
+ * this function). */
 extern const u8 gData_02006108__s1318[] __asm__("gData_02006108");
 #define gData_02006108 gData_02006108__s1318
 void Func_0200384c(void);
@@ -1924,91 +1994,9 @@ void Func_020032e0(void) {
 
 // ---- games/tla/src/scene/kibombo/s3308.c ----
 #include "types.h"
-/* VIEW(s3308): routine Actor_SetPositionAndResetMotion as void
- * Actor_SetPositionAndResetMotion(struct Actor *object, s32 x, s32 y, s32 z);
- * kibombo.h has void Actor_SetPositionAndResetMotion(struct KibomboObject
- * *object, s32 x, s32 y, s32 z); tried as the definition's void
- * Actor_SetPositionAndResetMotion(struct Actor *obj, s32 x, s32 y, s32 z), it
- * does not compile in tla-ja: games/tla/include/actor.h:95: conflicting types
- * for `Actor_SetPositionAndResetMotion'. */
-struct Actor;
-extern void Actor_SetPositionAndResetMotion__s3308(
-    struct Actor *object, s32 x, s32 y,
-    s32 z) __asm__("Actor_SetPositionAndResetMotion");
-#define Actor_SetPositionAndResetMotion Actor_SetPositionAndResetMotion__s3308
-/* VIEW(s3308): routine Actor_SetSpritePriority as void
- * Actor_SetSpritePriority(u32, s32); kibombo.h has void
- * Actor_SetSpritePriority(s32 actor, s32 variant); tried as the definition's
- * void Actor_SetSpritePriority(u32 objectId, s32 priority), it does not compile
- * in tla-ja: games/tla/include/actor.h:106: conflicting types for
- * `Actor_SetSpritePriority'. */
-extern void
-Actor_SetSpritePriority__s3308(u32, s32) __asm__("Actor_SetSpritePriority");
-#define Actor_SetSpritePriority Actor_SetSpritePriority__s3308
 #include "actor.h"
-#undef Actor_SetSpritePriority
-#undef Actor_SetPositionAndResetMotion
 #include "field_sprite.h"
 #include "system/vector3.h"
-/* VIEW(s3308): routine Task_Add as s32 Task_Add(TaskFunc func, s32 order);
- * kibombo.h has void Task_Add(void(*func) (void), s32 priority); tried as the
- * definition's s32 Task_Add(TaskFunc func, s32 order), which the object already
- * declares, it does not compile in tla-ja: games/tla/include/system/task.h:55:
- * conflicting types for `Task_Add'. */
-#define Task_Add Task_Add__s3308
-/* VIEW(s3308): routine Actor_GetById as struct Actor *Actor_GetById(u32
- * objectId); kibombo.h has struct KibomboObject *Actor_GetById(s32 id); tried
- * as the definition's struct Actor *Actor_GetById(u32 objectId), which the
- * object already declares, it does not compile in tla-ja:
- * games/tla/include/field/event.h:43: conflicting types for `Actor_GetById'. */
-struct Actor;
-extern struct Actor *
-Actor_GetById__s3308(u32 objectId) __asm__("Actor_GetById");
-#define Actor_GetById Actor_GetById__s3308
-/* VIEW(s3308): routine Actor_SetMoveTarget as void Actor_SetMoveTarget(struct
- * Actor *actor, s32 x, s32 y, s32 z); kibombo.h has void
- * Actor_SetMoveTarget(struct KibomboObject *object, s32 x, s32 y, s32 z); tried
- * as the definition's void Actor_SetMoveTarget(struct Actor *object, s32 x, s32
- * y, s32 z), which the object already declares, it does not compile in tla-ja:
- * games/tla/include/field/event.h:67: conflicting types for
- * `Actor_SetMoveTarget'. */
-struct Actor;
-extern void Actor_SetMoveTarget__s3308(struct Actor *actor, s32 x, s32 y,
-                                       s32 z) __asm__("Actor_SetMoveTarget");
-#define Actor_SetMoveTarget Actor_SetMoveTarget__s3308
-/* VIEW(s3308): routine Import_ActorCreate as struct Actor
- * *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z); kibombo.h has struct
- * KibomboObject *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z); tried as
- * the rest of the object declares it, it does not compile in tla-ja:
- * games/tla/include/field/event.h:68: conflicting types for
- * `Import_ActorCreate'. */
-struct Actor;
-extern struct Actor *
-Import_ActorCreate__s3308(s32 type, s32 x, s32 y,
-                          s32 z) __asm__("Import_ActorCreate");
-#define Import_ActorCreate Import_ActorCreate__s3308
-/* VIEW(s3308): routine Actor_SetSpritePriority as void
- * Actor_SetSpritePriority(u32 actorId, s32 priority); kibombo.h has void
- * Actor_SetSpritePriority(s32 actor, s32 variant); tried as the definition's
- * void Actor_SetSpritePriority(u32 objectId, s32 priority), it does not compile
- * in tla-ja: games/tla/include/field/event.h:113: conflicting types for
- * `Actor_SetSpritePriority'. */
-extern void
-Actor_SetSpritePriority__s3308(u32 actorId,
-                               s32 priority) __asm__("Actor_SetSpritePriority");
-#define Actor_SetSpritePriority Actor_SetSpritePriority__s3308
-/* VIEW(s3308): routine Actor_SetPositionAndResetMotion as void
- * Actor_SetPositionAndResetMotion(struct Actor *object, s32 x, s32 y, s32 z);
- * kibombo.h has void Actor_SetPositionAndResetMotion(struct KibomboObject
- * *object, s32 x, s32 y, s32 z); tried as the definition's void
- * Actor_SetPositionAndResetMotion(struct Actor *obj, s32 x, s32 y, s32 z), it
- * does not compile in tla-ja: games/tla/include/field/event.h:118: conflicting
- * types for `Actor_SetPositionAndResetMotion'. */
-struct Actor;
-extern void Actor_SetPositionAndResetMotion__s3308(
-    struct Actor *object, s32 x, s32 y,
-    s32 z) __asm__("Actor_SetPositionAndResetMotion");
-#define Actor_SetPositionAndResetMotion Actor_SetPositionAndResetMotion__s3308
 /* VIEW(s3308): routine Actor_SetSpriteColor as void Actor_SetSpriteColor(struct
  * Actor *object, s32 attribute); kibombo.h has void Actor_SetSpriteColor(struct
  * KibomboObject *object, s32 value); not tried: Actor_SetSpriteColor's bound
@@ -2036,13 +2024,6 @@ extern struct Actor *Func_080d4568__s3308(void) __asm__("FieldCamera_GetActor");
 #undef FieldCamera_GetActor
 #undef Actor_WaitForMove
 #undef Actor_SetSpriteColor
-#undef Actor_SetPositionAndResetMotion
-#undef Actor_SetSpritePriority
-#undef Import_ActorCreate
-#undef Actor_SetMoveTarget
-#undef Actor_GetById
-#undef Task_Add
-extern s32 Task_Add__s3308(TaskFunc func, s32 order) __asm__("Task_Add");
 
 s32 VramCache_FreeEntry(u32 slot);
 
@@ -3507,22 +3488,6 @@ void Func_02005994(void) { Field_TryJumpForward(); }
 #include "text/msg_ids.h"
 #include "objcmd.h"
 
-/* VIEW(s538c): routine Func_02000038 as this part declared it; the joined file
- * has another. */
-void Func_02000038__s538c(void) __asm__("Func_02000038");
-#define Func_02000038 Func_02000038__s538c
-/* VIEW(s538c): routine Func_02000048 as this part declared it; the joined file
- * has another. */
-void Func_02000048__s538c(void) __asm__("Func_02000048");
-#define Func_02000048 Func_02000048__s538c
-/* VIEW(s538c): routine Func_02000054 as this part declared it; the joined file
- * has another. */
-void Func_02000054__s538c(void) __asm__("Func_02000054");
-#define Func_02000054 Func_02000054__s538c
-/* VIEW(s538c): routine Func_020000c4 as this part declared it; the joined file
- * has another. */
-void Func_020000c4__s538c(void) __asm__("Func_020000c4");
-#define Func_020000c4 Func_020000c4__s538c
 void Func_02000228(void);
 void Func_0200024c(void);
 void Func_02000270(void);
@@ -3536,26 +3501,6 @@ void Func_0200042c(void);
 void Func_020004dc(void);
 void Func_02000500(void);
 void Func_020005d0(void);
-/* VIEW(s538c): routine Func_02000618 as this part declared it; the joined file
- * has another. */
-void Func_02000618__s538c(void) __asm__("Func_02000618");
-#define Func_02000618 Func_02000618__s538c
-/* VIEW(s538c): routine Func_0200065c as this part declared it; the joined file
- * has another. */
-void Func_0200065c__s538c(void) __asm__("Func_0200065c");
-#define Func_0200065c Func_0200065c__s538c
-/* VIEW(s538c): routine Func_020006a0 as this part declared it; the joined file
- * has another. */
-void Func_020006a0__s538c(void) __asm__("Func_020006a0");
-#define Func_020006a0 Func_020006a0__s538c
-/* VIEW(s538c): routine Func_020006e4 as this part declared it; the joined file
- * has another. */
-void Func_020006e4__s538c(void) __asm__("Func_020006e4");
-#define Func_020006e4 Func_020006e4__s538c
-/* VIEW(s538c): routine Func_02000728 as this part declared it; the joined file
- * has another. */
-void Func_02000728__s538c(void) __asm__("Func_02000728");
-#define Func_02000728 Func_02000728__s538c
 void Func_02000734(void);
 void Func_020007c8(void);
 void Func_02000c90(void);
@@ -4297,12 +4242,3 @@ struct Trigger gData_02007698[] = {
 #undef Import_ActorCreate
 #undef Actor_SetSpritePriority
 #undef Actor_SetPositionAndResetMotion
-#undef Func_02000038
-#undef Func_02000048
-#undef Func_02000054
-#undef Func_020000c4
-#undef Func_02000618
-#undef Func_0200065c
-#undef Func_020006a0
-#undef Func_020006e4
-#undef Func_02000728

@@ -217,7 +217,10 @@ void LemuriaPalace_CastMapSparks(void) {
 
 extern u8 gLemuriaPalace_MapMode[];
 /* VIEW(first): routine gLemuriaPalace_MapCrossfade as this part declared it;
- * the joined file has another. */
+ * the joined file has another; tried as the definition's extern LATE_DATA u32
+ * gLemuriaPalace_MapCrossfade[], it does not compile in tla-ja:
+ * games/tla/src/scene/lemuria_palace.c:248: `gLemuriaPalace_MapCrossfade'
+ * undeclared (first use in this function). */
 extern u8
     gLemuriaPalace_MapCrossfade__first[] __asm__("gLemuriaPalace_MapCrossfade");
 #define gLemuriaPalace_MapCrossfade gLemuriaPalace_MapCrossfade__first
@@ -296,7 +299,7 @@ extern s32 gLemuriaPalace_FirstMapVram;
  * LemuriaPalaceMapSprite gLemuriaPalace_FirstMapSprite; lemuria_palace has
  * extern u8 gLemuriaPalace_FirstMapSprite[]; tried as the one declaration
  * extern struct LemuriaPalaceMapSprite gLemuriaPalace_FirstMapSprite, it does
- * not compile in tla-ja: games/tla/src/scene/lemuria_palace.c:276: conflicting
+ * not compile in tla-ja: games/tla/src/scene/lemuria_palace.c:289: conflicting
  * types for `gLemuriaPalace_FirstMapSprite'. */
 extern struct LemuriaPalaceMapSprite
     gLemuriaPalace_FirstMapSprite__s03a0 __asm__(
@@ -305,7 +308,7 @@ extern struct LemuriaPalaceMapSprite
  * LemuriaPalaceMapSprite gLemuriaPalace_SecondMapSprite; lemuria_palace has
  * extern u8 gLemuriaPalace_SecondMapSprite[]; tried as the one declaration
  * extern struct LemuriaPalaceMapSprite gLemuriaPalace_SecondMapSprite, it does
- * not compile in tla-ja: games/tla/src/scene/lemuria_palace.c:280: conflicting
+ * not compile in tla-ja: games/tla/src/scene/lemuria_palace.c:293: conflicting
  * types for `gLemuriaPalace_SecondMapSprite'. */
 extern struct LemuriaPalaceMapSprite
     gLemuriaPalace_SecondMapSprite__s03a0 __asm__(
@@ -314,7 +317,7 @@ extern struct LemuriaPalaceMapSprite
  * gLemuriaPalace_FirstMapShown; lemuria_palace has extern u8
  * gLemuriaPalace_FirstMapShown[]; tried as the one declaration extern s32
  * gLemuriaPalace_FirstMapShown, it does not compile in tla-ja:
- * games/tla/src/scene/lemuria_palace.c:284: conflicting types for
+ * games/tla/src/scene/lemuria_palace.c:297: conflicting types for
  * `gLemuriaPalace_FirstMapShown'. */
 extern s32
     gLemuriaPalace_FirstMapShown__s03a0 __asm__("gLemuriaPalace_FirstMapShown");
@@ -322,7 +325,7 @@ extern s32
  * gLemuriaPalace_SecondMapShown; lemuria_palace has extern u8
  * gLemuriaPalace_SecondMapShown[]; tried as the one declaration extern s32
  * gLemuriaPalace_SecondMapShown, it does not compile in tla-ja:
- * games/tla/src/scene/lemuria_palace.c:287: conflicting types for
+ * games/tla/src/scene/lemuria_palace.c:300: conflicting types for
  * `gLemuriaPalace_SecondMapShown'. */
 extern s32 gLemuriaPalace_SecondMapShown__s03a0 __asm__(
     "gLemuriaPalace_SecondMapShown");
@@ -330,14 +333,14 @@ extern s32 gLemuriaPalace_SecondMapShown__s03a0 __asm__(
  * gLemuriaPalace_MapTime; lemuria_palace has extern u8
  * gLemuriaPalace_MapTime[]; tried as the one declaration extern s32
  * gLemuriaPalace_MapTime, it does not compile in tla-ja:
- * games/tla/src/scene/lemuria_palace.c:290: conflicting types for
+ * games/tla/src/scene/lemuria_palace.c:303: conflicting types for
  * `gLemuriaPalace_MapTime'. */
 extern s32 gLemuriaPalace_MapTime__s03a0 __asm__("gLemuriaPalace_MapTime");
 /* VIEW(s03a0): variable gLemuriaPalace_MapMode as extern u8
  * gLemuriaPalace_MapMode; lemuria_palace has extern u8
  * gLemuriaPalace_MapMode[]; tried as the one declaration extern u8
  * gLemuriaPalace_MapMode, it does not compile in tla-ja:
- * games/tla/src/scene/lemuria_palace.c:292: conflicting types for
+ * games/tla/src/scene/lemuria_palace.c:305: conflicting types for
  * `gLemuriaPalace_MapMode'. */
 extern u8 gLemuriaPalace_MapMode__s03a0 __asm__("gLemuriaPalace_MapMode");
 
@@ -453,7 +456,7 @@ void Event_Start();
  * LemuriaPalace_CastMapSparks(); the definition has void
  * LemuriaPalace_CastMapSparks(void); tried as the definition's void
  * LemuriaPalace_CastMapSparks(void), which the object already declares, it does
- * not compile in tla-ja: games/tla/src/scene/lemuria_palace.c:622: too many
+ * not compile in tla-ja: games/tla/src/scene/lemuria_palace.c:635: too many
  * arguments to function `LemuriaPalace_CastMapSparks'. */
 extern s32
 LemuriaPalace_CastMapSparks__s03a0() __asm__("LemuriaPalace_CastMapSparks");

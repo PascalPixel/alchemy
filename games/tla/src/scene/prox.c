@@ -358,7 +358,7 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 /* VIEW(prox): variable gData_02004b14 as extern struct ActorPlacement
  * gData_02004b14[]; the definition has u32 gData_02004b14[] = { 0xffff, 0, 0,
  * 0, 0, 0, }; tried as the definition's extern struct Trigger gData_02004b14[],
- * it does not compile in tla-ja: games/tla/src/scene/prox.c:2310: conflicting
+ * it does not compile in tla-ja: games/tla/src/scene/prox.c:2382: conflicting
  * types for `gData_02004b14'. */
 extern struct ActorPlacement gData_02004b14__prox[] __asm__("gData_02004b14");
 extern u32 gData_0200506c[];
@@ -367,7 +367,7 @@ extern u32 gData_0200506c[];
  * 0, 104, 0, 0, 0, 196, 0x8000, 0, 172, - 1, 1, 0, 0, 128, 0, 0, 0, 106,
  * 0xb000, 1, 178, - 1, 1, 0, 0...; tried as the definition's extern s16
  * gData_0200521c[], it does not compile in tla-ja:
- * games/tla/src/scene/prox.c:291: request for member `talkFacing' in something
+ * games/tla/src/scene/prox.c:379: request for member `talkFacing' in something
  * not a structure or union. */
 extern struct ActorPlacement gData_0200521c__prox[] __asm__("gData_0200521c");
 
@@ -418,7 +418,7 @@ void Func_02000588(s32 a0) { Call3(Actor_ReturnHome, a0, 0x40, 0x300); }
  * definition has struct Trigger gData_02005a20[] = { { 1, 1, CONDITION_ALWAYS,
  * 1 }, { 1, 2, CONDITION_ALWAYS, 2 }, { 1, 3, CONDITION_ALWAYS, 3 }, { 1, 4,
  * CON...; tried as the definition's extern u32 gData_02005a20[], it does not
- * compile in tla-ja: games/tla/src/scene/prox.c:2590: conflicting types for
+ * compile in tla-ja: games/tla/src/scene/prox.c:2662: conflicting types for
  * `gData_02005a20'. */
 extern const u8 gData_02005a20__prox[] __asm__("gData_02005a20");
 
@@ -1702,13 +1702,13 @@ s32 Actor_MoveToObject();
  * definition has u32 gData_02005ee8[] = { 39, 2, 4, 0x780000, 0, 0xc40000, 1,
  * 39, 1, 0, 10, 22, 3, 0x4000, 0, 10, 17, }; tried as the definition's extern
  * struct Trigger gData_02005ee8[], it does not compile in tla-ja:
- * games/tla/src/scene/prox.c:2701: conflicting types for `gData_02005ee8'. */
+ * games/tla/src/scene/prox.c:2773: conflicting types for `gData_02005ee8'. */
 extern u8 gData_02005ee8__s1cf0[] __asm__("gData_02005ee8");
 /* VIEW(s1cf0): variable gData_02006038 as extern u8 gData_02006038[]; the
  * definition has u32 gData_02006038[] = { 39, 2, 4, 0x980000, 0, 0xf80000, 1,
  * 4, 0x980000, 0, 0x15c0000, 1, 39, 1, 0, 1, 3, 0, 1, 17, }; tried as the
  * definition's extern struct Trigger gData_02006038[], it does not compile in
- * tla-ja: games/tla/src/scene/prox.c:2732: conflicting types for
+ * tla-ja: games/tla/src/scene/prox.c:2804: conflicting types for
  * `gData_02006038'. */
 extern u8 gData_02006038__s1cf0[] __asm__("gData_02006038");
 extern u32 gData_02006088[];
@@ -1717,7 +1717,7 @@ extern u32 gData_020060fc[];
  * definition has u32 gData_02006268[] = { 39, 2, 4, 0x980000, 0, 0x15c0000, 1,
  * 39, 1, 0, 1, 3, 0, 1, 17, }; tried as the definition's extern s16
  * gData_02006268[], it does not compile in tla-ja:
- * games/tla/src/scene/prox.c:2777: conflicting types for `gData_02006268'. */
+ * games/tla/src/scene/prox.c:2851: conflicting types for `gData_02006268'. */
 extern u8 gData_02006268__s1cf0[] __asm__("gData_02006268");
 
 /// ★ Named from the game: "What took you so long? Mom and Dad are tired of
@@ -2229,7 +2229,7 @@ extern char ResourceId_FallingRock;
 
 /* VIEW(s4254): tag struct RockSprite as struct RockSprite__s4254; prox.c has
  * another definition; tried with the definition the rest of the object has, it
- * does not compile in tla-ja: games/tla/src/scene/prox.c:2140: structure has no
+ * does not compile in tla-ja: games/tla/src/scene/prox.c:2216: structure has no
  * member named `unk05_5'. */
 struct RockSprite__s4254 {
   u8 unk00[5];

@@ -192,7 +192,7 @@ void Func_02000080(void) {
 /* VIEW(jupiter_lighthouse_room_m): variable gBgScroll as s16 gBgScroll[];
  * bg_scroll.h has struct BgScroll gBgScroll[]; tried as the rest of the object
  * declares it, it does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_room_m.c:125: incompatible types in
+ * games/tla/src/scene/jupiter_lighthouse_room_m.c:222: incompatible types in
  * assignment. */
 extern s16 gBgScroll__jupiter_lighthouse_room_m[] __asm__("gBgScroll");
 
@@ -204,7 +204,7 @@ extern s16 gBgScroll__jupiter_lighthouse_room_m[] __asm__("gBgScroll");
  * the definition's DEFINE_WHIRLWIND_SPAWN(Whirlwind_Spawn,
  * Actor_SelectAnimation, Whirlwind_Update, FieldEffect_Spawn) UNUSED s32
  * Actor_EmitRisingSparks(struct..., it does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_room_m.c:141: `Actor_EmitRisingSparks'
+ * games/tla/src/scene/jupiter_lighthouse_room_m.c:238: `Actor_EmitRisingSparks'
  * undeclared (first use in this function). */
 void Actor_EmitRisingSparks__jupiter_lighthouse_room_m(void) __asm__(
     "Actor_EmitRisingSparks");
@@ -600,19 +600,31 @@ s32 Func_02000b38(u8 *object) {
 }
 
 /* VIEW(first): routine gData_0200558c as this part declared it; the joined file
- * has another. */
+ * has another; tried as the definition's extern LATE_DATA s32 gData_0200558c[],
+ * it does not compile in tla-ja:
+ * games/tla/src/scene/jupiter_lighthouse_room_m.c:604: `gData_0200558c'
+ * undeclared (first use in this function). */
 extern u32 gData_0200558c__first[] __asm__("gData_0200558c");
 #define gData_0200558c gData_0200558c__first
 /* VIEW(first): routine gData_020055ec as this part declared it; the joined file
- * has another. */
+ * has another; tried as the definition's extern LATE_DATA s32 gData_020055ec[],
+ * it does not compile in tla-ja:
+ * games/tla/src/scene/jupiter_lighthouse_room_m.c:606: `gData_020055ec'
+ * undeclared (first use in this function). */
 extern u32 gData_020055ec__first[] __asm__("gData_020055ec");
 #define gData_020055ec gData_020055ec__first
 /* VIEW(first): routine gData_02005644 as this part declared it; the joined file
- * has another. */
+ * has another; tried as the definition's extern LATE_DATA s32 gData_02005644[],
+ * it does not compile in tla-ja:
+ * games/tla/src/scene/jupiter_lighthouse_room_m.c:605: `gData_02005644'
+ * undeclared (first use in this function). */
 extern u32 gData_02005644__first[] __asm__("gData_02005644");
 #define gData_02005644 gData_02005644__first
 /* VIEW(first): routine gData_0200569c as this part declared it; the joined file
- * has another. */
+ * has another; tried as the definition's extern LATE_DATA s32 gData_0200569c[],
+ * it does not compile in tla-ja:
+ * games/tla/src/scene/jupiter_lighthouse_room_m.c:607: `gData_0200569c'
+ * undeclared (first use in this function). */
 extern u32 gData_0200569c__first[] __asm__("gData_0200569c");
 #define gData_0200569c gData_0200569c__first
 
@@ -660,13 +672,22 @@ void Func_02000c08(void) {
 
 extern u32 gData_02005748[];
 /* VIEW(first): routine gData_0200578c as this part declared it; the joined file
- * has another. */
+ * has another; tried as the definition's extern
+ * DEFINE_G_DATA_020056C4(gData_020056c4, 424, 344)
+ * DEFINE_G_DATA_020056C4(gData_02005728, 512, 384) s32 gData_0200578c[], it
+ * does not compile in tla-ja:
+ * games/tla/src/scene/jupiter_lighthouse_room_m.c:713: `gData_0200578c'
+ * undeclared (first use in this function). */
 extern u32 gData_0200578c__first[] __asm__("gData_0200578c");
 #define gData_0200578c gData_0200578c__first
 extern u32 gData_02005860[];
 extern u32 gData_02005890[];
 /* VIEW(first): routine gData_02005950 as this part declared it; the joined file
- * has another. */
+ * has another; tried as the definition's extern LATE_DATA
+ * DEFINE_G_DATA_020057D0(gData_02005920, 5, 708, 328) LATE_DATA s32
+ * gData_02005950[], it does not compile in tla-ja:
+ * games/tla/src/scene/jupiter_lighthouse_room_m.c:732: `gData_02005950'
+ * undeclared (first use in this function). */
 extern u32 gData_02005950__first[] __asm__("gData_02005950");
 #define gData_02005950 gData_02005950__first
 extern u32 gData_020049dc[];
@@ -1762,7 +1783,10 @@ s32 Scene_PrepareMap(void) {
 #include "shared/scene_set_arrival_flags.c"
 
 /* VIEW(first): routine gPaletteCyclePausesInEvents as this part declared it;
- * the joined file has another. */
+ * the joined file has another; tried as the definition's extern s32
+ * gPaletteCyclePausesInEvents, it does not compile in tla-ja:
+ * games/tla/src/scene/jupiter_lighthouse_room_m.c:1735:
+ * `gPaletteCyclePausesInEvents' undeclared (first use in this function). */
 extern s32
     gPaletteCyclePausesInEvents__first __asm__("gPaletteCyclePausesInEvents");
 #define gPaletteCyclePausesInEvents gPaletteCyclePausesInEvents__first
@@ -1772,7 +1796,10 @@ void PaletteCycle_SetPausesInEvents(s32 value) {
 }
 
 /* VIEW(first): routine gPaletteCycleFrame as this part declared it; the joined
- * file has another. */
+ * file has another; tried as the definition's extern s32 gPaletteCycleFrame, it
+ * does not compile in tla-ja:
+ * games/tla/src/scene/jupiter_lighthouse_room_m.c:1744: `gPaletteCycleFrame'
+ * undeclared (first use in this function). */
 extern s32 gPaletteCycleFrame__first __asm__("gPaletteCycleFrame");
 #define gPaletteCycleFrame gPaletteCycleFrame__first
 
@@ -1799,7 +1826,10 @@ DEFINE_WHIRLWIND_CARRY_LEADER(Whirlwind_CarryLeader)
 DEFINE_POSITION_FLAT_DISTANCE(Position_FlatDistance)
 
 /* VIEW(first): routine gWhirlwindEndScript as this part declared it; the joined
- * file has another. */
+ * file has another; tried as the definition's extern u32 gWhirlwindEndScript[],
+ * it does not compile in tla-ja:
+ * games/tla/src/scene/jupiter_lighthouse_room_m.c:1755: `gWhirlwindEndScript'
+ * undeclared (first use in this function). */
 extern const s32 gWhirlwindEndScript__first[] __asm__("gWhirlwindEndScript");
 #define gWhirlwindEndScript gWhirlwindEndScript__first
 
@@ -1818,7 +1848,10 @@ DEFINE_WHIRLWIND_UPDATE(Whirlwind_Update, MapGrid_GetCellBehavior,
 void Actor_SetSpriteFlags(struct Actor *object, u32 value);
 void Whirlwind_Update(struct Actor *self);
 /* VIEW(s3474): routine FieldEffect_Spawn as this part declared it; the joined
- * file has another. */
+ * file has another; tried as the definition's void FieldEffect_Spawn(s32 x, s32
+ * y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags, const
+ * struct EffectOptions *options), which the object already declares,
+ * Whirlwind_SpawnUpper moves: 1 of 90 instructions in tla-ja. */
 void FieldEffect_Spawn__s3474(
     s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags,
     struct EffectOptions *options) __asm__("FieldEffect_Spawn");
@@ -1893,11 +1926,6 @@ void LightSprites_SetPriority(s32 value) { gLightSpritePriority = value; }
 
 extern const s32 *gFieldEffect_DurationScripts[];
 
-/* VIEW(s3b7c): routine Actor_StartScript as this part declared it; the joined
- * file has another. */
-void Actor_StartScript__s3b7c(struct FieldEffect *effect,
-                              const s32 *script) __asm__("Actor_StartScript");
-#define Actor_StartScript Actor_StartScript__s3b7c
 void Actor_SetSpriteFlags(struct Actor *object, u32 value);
 
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
@@ -2014,8 +2042,8 @@ struct CellTarget__s41ac {
  * CellTarget *table, struct CellTargetEntry *entry); tried as the definition's
  * DEFINE_CRACKED_TILE_CRACK(CrackedTile_Crack, Leader_CenterInCell) void
  * CrackedTile_Fall(struct PushEvent *event), it does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_room_m/s3b7c.c:146: conflicting types
- * for `CrackedTile_Fall'. */
+ * games/tla/src/scene/jupiter_lighthouse_room_m.c:1970: conflicting types for
+ * `CrackedTile_Fall'. */
 void CrackedTile_Fall__s41ac(
     struct CellTarget__s41ac *table,
     struct CellTargetEntry *entry) __asm__("CrackedTile_Fall");
@@ -2036,7 +2064,10 @@ DEFINE_CRACKED_TILE_FALL(CrackedTile_Fall, CellTarget__s41ac,
 // Scene code of overlay 0x6a3, in ROM order.
 
 /* VIEW(s4344): routine FieldEffect_Spawn as this part declared it; the joined
- * file has another. */
+ * file has another; tried as the definition's void FieldEffect_Spawn(s32 x, s32
+ * y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags, const
+ * struct EffectOptions *options), which the object already declares,
+ * CrackedTile_Fall (gone) moves: 131 of 131 instructions in tla-ja. */
 void FieldEffect_Spawn__s4344(
     s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags,
     struct EffectOptions *options) __asm__("FieldEffect_Spawn");
@@ -2127,29 +2158,10 @@ DEFINE_G_DATA_02004AB4(gData_02004b1c, 659)
 #undef FieldEffect_Spawn
 
 /* VIEW(data): routine Func_02000038 as this part declared it; the joined file
- * has another. */
+ * has another; tried as the definition's void Func_02000038(s16 *list),
+ * gData_02004ab4 (gone) moves: 0 of 0 instructions in tla-ja. */
 void Func_02000038__data(void) __asm__("Func_02000038");
 #define Func_02000038 Func_02000038__data
-/* VIEW(data): routine Func_0200039c as this part declared it; the joined file
- * has another. */
-void Func_0200039c__data(void) __asm__("Func_0200039c");
-#define Func_0200039c Func_0200039c__data
-/* VIEW(data): routine Func_020003b8 as this part declared it; the joined file
- * has another. */
-void Func_020003b8__data(void) __asm__("Func_020003b8");
-#define Func_020003b8 Func_020003b8__data
-/* VIEW(data): routine Func_02000970 as this part declared it; the joined file
- * has another. */
-void Func_02000970__data(void) __asm__("Func_02000970");
-#define Func_02000970 Func_02000970__data
-/* VIEW(data): routine Func_02000ad0 as this part declared it; the joined file
- * has another. */
-void Func_02000ad0__data(void) __asm__("Func_02000ad0");
-#define Func_02000ad0 Func_02000ad0__data
-/* VIEW(data): routine Func_02000b38 as this part declared it; the joined file
- * has another. */
-void Func_02000b38__data(void) __asm__("Func_02000b38");
-#define Func_02000b38 Func_02000b38__data
 
 extern u32 gFieldEffect_LongScript[];
 extern s32 gData_02005078[];
@@ -2424,8 +2436,3 @@ LATE_DATA const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_LongScript,
 };
 #undef Func_02000038
-#undef Func_0200039c
-#undef Func_020003b8
-#undef Func_02000970
-#undef Func_02000ad0
-#undef Func_02000b38

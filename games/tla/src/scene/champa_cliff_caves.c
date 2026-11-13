@@ -52,7 +52,10 @@ struct RiseObject {
 };
 
 /* VIEW(champa_cliff_caves): routine gData_02003d10 as this part declared it;
- * the joined file has another. */
+ * the joined file has another; tried as the definition's extern LATE_DATA s32
+ * gData_02003d10[], it does not compile in tla-ja:
+ * games/tla/src/scene/champa_cliff_caves.c:212: `gData_02003d10' undeclared
+ * (first use in this function). */
 extern const struct WarpTarget
     gData_02003d10__champa_cliff_caves __asm__("gData_02003d10");
 #define gData_02003d10 gData_02003d10__champa_cliff_caves
@@ -143,11 +146,17 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 extern struct ActorPlacement gData_0200381c[];
 extern struct ActorPlacement gData_02003864[];
 /* VIEW(champa_cliff_caves): routine gData_020039cc as this part declared it;
- * the joined file has another. */
+ * the joined file has another; tried as the definition's extern LATE_DATA s16
+ * gData_020039cc[], it does not compile in tla-ja:
+ * games/tla/src/scene/champa_cliff_caves.c:171: `gData_020039cc' undeclared
+ * (first use in this function). */
 extern u32 gData_020039cc__champa_cliff_caves[] __asm__("gData_020039cc");
 #define gData_020039cc gData_020039cc__champa_cliff_caves
 /* VIEW(champa_cliff_caves): routine gData_02003c84 as this part declared it;
- * the joined file has another. */
+ * the joined file has another; tried as the definition's extern LATE_DATA s16
+ * gData_02003c84[], it does not compile in tla-ja:
+ * games/tla/src/scene/champa_cliff_caves.c:160: `gData_02003c84' undeclared
+ * (first use in this function). */
 extern u32 gData_02003c84__champa_cliff_caves[] __asm__("gData_02003c84");
 #define gData_02003c84 gData_02003c84__champa_cliff_caves
 
@@ -220,7 +229,10 @@ void Func_020001f4(s32 door) {
 }
 
 /* VIEW(champa_cliff_caves): routine gData_02003d18 as this part declared it;
- * the joined file has another. */
+ * the joined file has another; tried as the definition's extern LATE_DATA s32
+ * gData_02003d18[], it does not compile in tla-ja:
+ * games/tla/src/scene/champa_cliff_caves.c:258: `gData_02003d18' undeclared
+ * (first use in this function). */
 extern const struct WarpTarget
     gData_02003d18__champa_cliff_caves __asm__("gData_02003d18");
 #define gData_02003d18 gData_02003d18__champa_cliff_caves
@@ -539,7 +551,7 @@ void Func_02000978(s32 actor) {
 /* VIEW(s0a34): variable gData_02003634 as extern const struct ThrowAnimations
  * gData_02003634; the definition has u32 gData_02003634[] = { 439, 440, 441, };
  * tried as the definition's extern u32 gData_02003634[], it does not compile in
- * tla-ja: games/tla/src/scene/champa_cliff_caves.c:550: incompatible types in
+ * tla-ja: games/tla/src/scene/champa_cliff_caves.c:599: incompatible types in
  * assignment. */
 extern const struct ThrowAnimations
     gData_02003634__s0a34 __asm__("gData_02003634");
@@ -993,7 +1005,7 @@ void Func_0200115c(void) {
 /* VIEW(s0a34): tag struct EventTransition as struct EventTransition__s0a34;
  * champa_cliff_caves.c has another definition; tried with the definition the
  * rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/champa_cliff_caves.c:965: structure has no member named
+ * games/tla/src/scene/champa_cliff_caves.c:1012: structure has no member named
  * `frames'. */
 struct EventTransition__s0a34 {
   u8 unk000[0x1ac];
@@ -1037,19 +1049,27 @@ void Func_02001774(void) {
 }
 
 /* VIEW(s0a34): routine gData_020041e8 as this part declared it; the joined file
- * has another. */
+ * has another; tried as the definition's extern LATE_DATA u32 gData_020041e8[],
+ * it does not compile in tla-ja: games/tla/src/scene/champa_cliff_caves.c:1175:
+ * `gData_020041e8' undeclared (first use in this function). */
 extern const u8 gData_020041e8__s0a34[] __asm__("gData_020041e8");
 #define gData_020041e8 gData_020041e8__s0a34
 /* VIEW(s0a34): routine gData_02004254 as this part declared it; the joined file
- * has another. */
+ * has another; tried as the definition's extern LATE_DATA u32 gData_02004254[],
+ * it does not compile in tla-ja: games/tla/src/scene/champa_cliff_caves.c:1180:
+ * `gData_02004254' undeclared (first use in this function). */
 extern const u8 gData_02004254__s0a34[] __asm__("gData_02004254");
 #define gData_02004254 gData_02004254__s0a34
 /* VIEW(s0a34): routine gData_0200432c as this part declared it; the joined file
- * has another. */
+ * has another; tried as the definition's extern LATE_DATA u32 gData_0200432c[],
+ * it does not compile in tla-ja: games/tla/src/scene/champa_cliff_caves.c:1183:
+ * `gData_0200432c' undeclared (first use in this function). */
 extern const u8 gData_0200432c__s0a34[] __asm__("gData_0200432c");
 #define gData_0200432c gData_0200432c__s0a34
 /* VIEW(s0a34): routine gData_020042d4 as this part declared it; the joined file
- * has another. */
+ * has another; tried as the definition's extern LATE_DATA u32 gData_020042d4[],
+ * it does not compile in tla-ja: games/tla/src/scene/champa_cliff_caves.c:1186:
+ * `gData_020042d4' undeclared (first use in this function). */
 extern const u8 gData_020042d4__s0a34[] __asm__("gData_020042d4");
 #define gData_020042d4 gData_020042d4__s0a34
 
@@ -1683,7 +1703,7 @@ next:
 /* VIEW(s2d34): tag struct ChampaCliffCavesWork as struct
  * ChampaCliffCavesWork__s2d34; champa_cliff_caves.c has another definition;
  * tried with the definition the rest of the object has, it does not compile in
- * tla-ja: games/tla/src/scene/champa_cliff_caves.c:1654: request for member
+ * tla-ja: games/tla/src/scene/champa_cliff_caves.c:1689: request for member
  * `value' in something not a structure or union. */
 struct ChampaCliffCavesWork__s2d34 {
   u8 tiles[0x1000];
@@ -1744,7 +1764,7 @@ next:
 /* VIEW(champa_cliff_caves): tag struct GlowSprite as struct
  * GlowSprite__champa_cliff_caves; module/scene/scene.h has another definition;
  * tried with the definition the rest of the object has, it does not compile in
- * tla-ja: games/tla/src/scene/champa_cliff_caves.c:1731: structure has no
+ * tla-ja: games/tla/src/scene/champa_cliff_caves.c:1766: structure has no
  * member named `x'. */
 struct GlowSprite__champa_cliff_caves {
   u8 unk_0[12];
@@ -1932,7 +1952,7 @@ void Func_02003078(void) {
 /* VIEW(s3164): tag struct ChampaCliffCavesWork as struct
  * ChampaCliffCavesWork__s3164; champa_cliff_caves.c has another definition;
  * tried with the definition the rest of the object has, it does not compile in
- * tla-ja: games/tla/src/scene/champa_cliff_caves.c:1894: invalid operands to
+ * tla-ja: games/tla/src/scene/champa_cliff_caves.c:1928: invalid operands to
  * binary +. */
 struct ChampaCliffCavesWork__s3164 {
   u8 tiles[0x1000];
@@ -2101,31 +2121,6 @@ u32 gData_02003634[] = {
 #undef gData_020042d4
 
 #include "text/msg_ids.h"
-
-/* VIEW(data): routine Func_020001f4 as this part declared it; the joined file
- * has another. */
-void Func_020001f4__data(void) __asm__("Func_020001f4");
-#define Func_020001f4 Func_020001f4__data
-/* VIEW(data): routine Func_02000304 as this part declared it; the joined file
- * has another. */
-void Func_02000304__data(void) __asm__("Func_02000304");
-#define Func_02000304 Func_02000304__data
-/* VIEW(data): routine Func_02000350 as this part declared it; the joined file
- * has another. */
-void Func_02000350__data(void) __asm__("Func_02000350");
-#define Func_02000350 Func_02000350__data
-/* VIEW(data): routine Func_0200038c as this part declared it; the joined file
- * has another. */
-void Func_0200038c__data(void) __asm__("Func_0200038c");
-#define Func_0200038c Func_0200038c__data
-/* VIEW(data): routine Func_02000464 as this part declared it; the joined file
- * has another. */
-void Func_02000464__data(void) __asm__("Func_02000464");
-#define Func_02000464 Func_02000464__data
-/* VIEW(data): routine Func_02000f48 as this part declared it; the joined file
- * has another. */
-void Func_02000f48__data(void) __asm__("Func_02000f48");
-#define Func_02000f48 Func_02000f48__data
 
 LATE_DATA struct SceneEntrance gSceneEntrances[] = {
     {0, CONDITION_ALWAYS, 440, 0, 520, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
@@ -2615,9 +2610,3 @@ LATE_DATA u32 gData_0200432c[] = {
     0xe60000,  1, 39, 1,         0, 1,         17,
 };
 // clang-format on
-#undef Func_020001f4
-#undef Func_02000304
-#undef Func_02000350
-#undef Func_0200038c
-#undef Func_02000464
-#undef Func_02000f48

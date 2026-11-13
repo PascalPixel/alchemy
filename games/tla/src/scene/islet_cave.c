@@ -193,27 +193,45 @@ const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 /* VIEW(first): routine gData_02001548 as this part declared it; the joined file
- * has another. */
+ * has another; tried as the definition's extern struct ActorPlacement
+ * gData_02001548[], it does not compile in tla-ja:
+ * games/tla/src/scene/islet_cave.c:218: `gData_02001548' undeclared (first use
+ * in this function). */
 extern const u8 gData_02001548__first[] __asm__("gData_02001548");
 #define gData_02001548 gData_02001548__first
 /* VIEW(first): routine gData_02001668 as this part declared it; the joined file
- * has another. */
+ * has another; tried as the definition's extern struct ActorPlacement
+ * gData_02001668[], it does not compile in tla-ja:
+ * games/tla/src/scene/islet_cave.c:215: `gData_02001668' undeclared (first use
+ * in this function). */
 extern const u8 gData_02001668__first[] __asm__("gData_02001668");
 #define gData_02001668 gData_02001668__first
 /* VIEW(first): routine gData_02001740 as this part declared it; the joined file
- * has another. */
+ * has another; tried as the definition's extern struct ActorPlacement
+ * gData_02001740[], it does not compile in tla-ja:
+ * games/tla/src/scene/islet_cave.c:217: `gData_02001740' undeclared (first use
+ * in this function). */
 extern const u8 gData_02001740__first[] __asm__("gData_02001740");
 #define gData_02001740 gData_02001740__first
 /* VIEW(first): routine gData_02001788 as this part declared it; the joined file
- * has another. */
+ * has another; tried as the definition's extern struct Trigger
+ * gData_02001788[], it does not compile in tla-ja:
+ * games/tla/src/scene/islet_cave.c:228: `gData_02001788' undeclared (first use
+ * in this function). */
 extern const u8 gData_02001788__first[] __asm__("gData_02001788");
 #define gData_02001788 gData_02001788__first
 /* VIEW(first): routine gData_02001914 as this part declared it; the joined file
- * has another. */
+ * has another; tried as the definition's extern struct Trigger
+ * gData_02001914[], it does not compile in tla-ja:
+ * games/tla/src/scene/islet_cave.c:225: `gData_02001914' undeclared (first use
+ * in this function). */
 extern const u8 gData_02001914__first[] __asm__("gData_02001914");
 #define gData_02001914 gData_02001914__first
 /* VIEW(first): routine gData_020019b0 as this part declared it; the joined file
- * has another. */
+ * has another; tried as the definition's extern struct Trigger
+ * gData_020019b0[], it does not compile in tla-ja:
+ * games/tla/src/scene/islet_cave.c:227: `gData_020019b0' undeclared (first use
+ * in this function). */
 extern const u8 gData_020019b0__first[] __asm__("gData_020019b0");
 #define gData_020019b0 gData_020019b0__first
 
@@ -305,7 +323,9 @@ void Func_02000580(s32 scale) {
 }
 
 /* VIEW(first): routine gData_020019ec as this part declared it; the joined file
- * has another. */
+ * has another; tried as the definition's extern s32 gData_020019ec[], it does
+ * not compile in tla-ja: games/tla/src/scene/islet_cave.c:326: `gData_020019ec'
+ * undeclared (first use in this function). */
 extern const struct IsletCaveEntry
     gData_020019ec__first[] __asm__("gData_020019ec");
 #define gData_020019ec gData_020019ec__first
@@ -365,7 +385,9 @@ extern u16 gData_020013b4[];
 #define gData_0200135c gData_0200135c__first
 #define gData_02001388 gData_02001388__first
 /* VIEW(first): routine gData_02001454 as this part declared it; the joined file
- * has another. */
+ * has another; tried as the definition's extern s32 gData_02001454[], it does
+ * not compile in tla-ja: games/tla/src/scene/islet_cave.c:381: `gData_02001454'
+ * undeclared (first use in this function). */
 extern u8 gData_02001454__first[] __asm__("gData_02001454");
 #define gData_02001454 gData_02001454__first
 
@@ -501,7 +523,7 @@ void Func_020009ec(void) {
 /* VIEW(islet_cave): tag struct FieldActor as struct FieldActor__islet_cave;
  * field_event.h has another definition; tried with the definition the rest of
  * the object has, it does not compile in tla-ja:
- * games/tla/src/scene/islet_cave.c:424: dereferencing pointer to incomplete
+ * games/tla/src/scene/islet_cave.c:506: dereferencing pointer to incomplete
  * type. */
 struct FieldActor__islet_cave {
   u8 unk00[8];
@@ -767,14 +789,6 @@ void Func_0200115c(void) {
 #undef gData_02001388
 #undef gData_02001454
 
-/* VIEW(data): routine Func_020003c8 as this part declared it; the joined file
- * has another. */
-void Func_020003c8__data(void) __asm__("Func_020003c8");
-#define Func_020003c8 Func_020003c8__data
-/* VIEW(data): routine Func_020003d4 as this part declared it; the joined file
- * has another. */
-void Func_020003d4__data(void) __asm__("Func_020003d4");
-#define Func_020003d4 Func_020003d4__data
 void Func_02000b4c(void);
 void Func_02000cf0(void);
 
@@ -952,5 +966,3 @@ s32 gData_020019ec[] = {
     (s32)gData_020019d4, 0x40060, (s32)gData_020019d4, 0x4006b,
     (s32)gData_020019d4, 0x40076,
 };
-#undef Func_020003c8
-#undef Func_020003d4

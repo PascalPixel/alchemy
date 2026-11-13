@@ -1433,15 +1433,21 @@ next_column:
 }
 
 /* VIEW(first): routine gData_020026a0 as this part declared it; the joined file
- * has another. */
+ * has another; tried as the definition's extern LATE_DATA u32 gData_020026a0[],
+ * it does not compile in tla-ja: games/tla/src/scene/clear.c:1477:
+ * `gData_020026a0' undeclared (first use in this function). */
 extern s32 gData_020026a0__first[] __asm__("gData_020026a0");
 #define gData_020026a0 gData_020026a0__first
 /* VIEW(first): routine gData_020026b0 as this part declared it; the joined file
- * has another. */
+ * has another; tried as the definition's extern LATE_DATA u32 gData_020026b0[],
+ * it does not compile in tla-ja: games/tla/src/scene/clear.c:1534:
+ * `gData_020026b0' undeclared (first use in this function). */
 extern u16 gData_020026b0__first[] __asm__("gData_020026b0");
 #define gData_020026b0 gData_020026b0__first
 /* VIEW(first): routine gData_020026c0 as this part declared it; the joined file
- * has another. */
+ * has another; tried as the definition's extern LATE_DATA u32 gData_020026c0[],
+ * it does not compile in tla-ja: games/tla/src/scene/clear.c:1576:
+ * `gData_020026c0' undeclared (first use in this function). */
 extern u16 gData_020026c0__first[] __asm__("gData_020026c0");
 #define gData_020026c0 gData_020026c0__first
 
@@ -1599,15 +1605,21 @@ void Func_020018e0(s32 mode, u8 *in) {
 }
 
 /* VIEW(first): routine gData_02002700 as this part declared it; the joined file
- * has another. */
+ * has another; tried as the definition's extern LATE_DATA u32 gData_02002700[],
+ * it does not compile in tla-ja: games/tla/src/scene/clear.c:1637:
+ * `gData_02002700' undeclared (first use in this function). */
 extern u16 gData_02002700__first[] __asm__("gData_02002700");
 #define gData_02002700 gData_02002700__first
 /* VIEW(first): routine gData_020026f0 as this part declared it; the joined file
- * has another. */
+ * has another; tried as the definition's extern LATE_DATA u32 gData_020026f0[],
+ * it does not compile in tla-ja: games/tla/src/scene/clear.c:1643:
+ * `gData_020026f0' undeclared (first use in this function). */
 extern s32 gData_020026f0__first[] __asm__("gData_020026f0");
 #define gData_020026f0 gData_020026f0__first
 /* VIEW(first): routine gData_0200270c as this part declared it; the joined file
- * has another. */
+ * has another; tried as the definition's extern LATE_DATA u32 gData_0200270c[],
+ * it does not compile in tla-ja: games/tla/src/scene/clear.c:1696:
+ * `gData_0200270c' undeclared (first use in this function). */
 extern u16 gData_0200270c__first[] __asm__("gData_0200270c");
 #define gData_0200270c gData_0200270c__first
 

@@ -1412,7 +1412,7 @@ void VenusLighthouseEntrance_UpdateDust(void) {
 /* VIEW(venus_lighthouse_entrance): tag struct SparkSprite as struct
  * SparkSprite__venus_lighthouse_entrance; module/tla.h has another definition;
  * tried with the definition the rest of the object has, it does not compile in
- * tla-ja: games/tla/src/scene/venus_lighthouse_entrance.c:1405: structure has
+ * tla-ja: games/tla/src/scene/venus_lighthouse_entrance.c:1430: structure has
  * no member named `unk1e'. */
 struct SparkSprite__venus_lighthouse_entrance {
   u8 unk00[8];
@@ -1458,7 +1458,7 @@ void VenusLighthouseEntrance_EmitDust(struct Actor *source, s32 x, s32 y,
 /* VIEW(s26f4): tag struct SparkSprite as struct SparkSprite__s26f4;
  * venus_lighthouse_entrance.c has another definition; tried with the definition
  * the rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/venus_lighthouse_entrance.c:1460: structure has no member
+ * games/tla/src/scene/venus_lighthouse_entrance.c:1485: structure has no member
  * named `unk1e'. */
 struct SparkSprite__s26f4 {
   u8 unk00[4];
@@ -1477,7 +1477,7 @@ struct SparkSprite__s26f4 {
 /* VIEW(s26f4): tag struct SparkWork as struct SparkWork__s26f4;
  * venus_lighthouse_entrance.c has another definition; tried with the definition
  * the rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/venus_lighthouse_entrance.c:1457: structure has no member
+ * games/tla/src/scene/venus_lighthouse_entrance.c:1482: structure has no member
  * named `resource'. */
 struct SparkWork__s26f4 {
   u8 unk0000[0x800];
@@ -1523,7 +1523,7 @@ void VenusLighthouseEntrance_StartDust(void) {
 /* VIEW(sparks): tag struct SparkWork as struct SparkWork__sparks;
  * venus_lighthouse_entrance.c has another definition; tried with the definition
  * the rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/venus_lighthouse_entrance.c:1494: structure has no member
+ * games/tla/src/scene/venus_lighthouse_entrance.c:1516: structure has no member
  * named `resource'. */
 struct SparkWork__sparks {
   u8 unk0000[0x2102];

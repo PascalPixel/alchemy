@@ -148,11 +148,15 @@ loop:
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 /* VIEW(first): routine gData_020033d0 as this part declared it; the joined file
- * has another. */
+ * has another; tried as the definition's extern u32 gData_020033d0[], it does
+ * not compile in tla-ja: games/tla/src/scene/tundaria_tower.c:156:
+ * `gData_020033d0' undeclared (first use in this function). */
 extern const u8 gData_020033d0__first[] __asm__("gData_020033d0");
 #define gData_020033d0 gData_020033d0__first
 /* VIEW(first): routine gData_020033f0 as this part declared it; the joined file
- * has another. */
+ * has another; tried as the definition's extern u32 gData_020033f0[], it does
+ * not compile in tla-ja: games/tla/src/scene/tundaria_tower.c:158:
+ * `gData_020033f0' undeclared (first use in this function). */
 extern const u8 gData_020033f0__first[] __asm__("gData_020033f0");
 #define gData_020033f0 gData_020033f0__first
 
@@ -167,27 +171,43 @@ const struct ActorPlacement *Func_02000488(void) {
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 /* VIEW(first): routine gData_02003618 as this part declared it; the joined file
- * has another. */
+ * has another; tried as the definition's extern struct ActorPlacement
+ * gData_02003618[], it does not compile in tla-ja:
+ * games/tla/src/scene/tundaria_tower.c:185: `gData_02003618' undeclared (first
+ * use in this function). */
 extern const u8 gData_02003618__first[] __asm__("gData_02003618");
 #define gData_02003618 gData_02003618__first
 /* VIEW(first): routine gData_02003648 as this part declared it; the joined file
- * has another. */
+ * has another; tried as the definition's extern struct ActorPlacement
+ * gData_02003648[], it does not compile in tla-ja:
+ * games/tla/src/scene/tundaria_tower.c:187: `gData_02003648' undeclared (first
+ * use in this function). */
 extern const u8 gData_02003648__first[] __asm__("gData_02003648");
 #define gData_02003648 gData_02003648__first
 /* VIEW(first): routine gData_02003660 as this part declared it; the joined file
- * has another. */
+ * has another; tried as the definition's extern struct ActorPlacement
+ * gData_02003660[], it does not compile in tla-ja:
+ * games/tla/src/scene/tundaria_tower.c:189: `gData_02003660' undeclared (first
+ * use in this function). */
 extern const u8 gData_02003660__first[] __asm__("gData_02003660");
 #define gData_02003660 gData_02003660__first
 /* VIEW(first): routine gData_02003690 as this part declared it; the joined file
- * has another. */
+ * has another; tried as the one declaration extern const u8 gData_02003690[],
+ * it does not compile in tla-ja: games/tla/src/scene/tundaria_tower.c:191:
+ * `gData_02003690' undeclared (first use in this function). */
 extern const u8 gData_02003690__first[] __asm__("gData_02003690");
 #define gData_02003690 gData_02003690__first
 /* VIEW(first): routine gData_02003708 as this part declared it; the joined file
- * has another. */
+ * has another; tried as the definition's extern struct ActorPlacement
+ * gData_02003708[], it does not compile in tla-ja:
+ * games/tla/src/scene/tundaria_tower.c:193: `gData_02003708' undeclared (first
+ * use in this function). */
 extern const u8 gData_02003708__first[] __asm__("gData_02003708");
 #define gData_02003708 gData_02003708__first
 /* VIEW(first): routine gData_020037c8 as this part declared it; the joined file
- * has another. */
+ * has another; tried as the definition's extern u32 gData_020037c8[], it does
+ * not compile in tla-ja: games/tla/src/scene/tundaria_tower.c:195:
+ * `gData_020037c8' undeclared (first use in this function). */
 extern const u8 gData_020037c8__first[] __asm__("gData_020037c8");
 #define gData_020037c8 gData_020037c8__first
 
@@ -410,7 +430,9 @@ void Func_02000920(void) {
 void Func_0200095c(void) { Func_0200189c(); }
 
 /* VIEW(first): routine gData_02003370 as this part declared it; the joined file
- * has another. */
+ * has another; tried as the definition's extern u32 gData_02003370[], it does
+ * not compile in tla-ja: games/tla/src/scene/tundaria_tower.c:424:
+ * `gData_02003370' undeclared (first use in this function). */
 extern const u8 gData_02003370__first[] __asm__("gData_02003370");
 #define gData_02003370 gData_02003370__first
 
@@ -1018,8 +1040,8 @@ s32 Scene_PrepareMap(void) { return 0; }
 
 /* VIEW(s11e0): variable gInput as extern u32 gInput; input.h has extern struct
  * InputState gInput; tried as the rest of the object declares it, it does not
- * compile in tla-ja: games/tla/src/scene/tundaria_tower/events_f.c:249:
- * `gInput' undeclared (first use in this function). */
+ * compile in tla-ja: games/tla/src/scene/tundaria_tower.c:1022: invalid
+ * operands to binary >>. */
 extern u32 gInput__s11e0 __asm__("gInput");
 void Actor_SelectAnimation(struct Actor *object, s32 mode);
 
@@ -1065,7 +1087,7 @@ void Func_02001868(void) {
  * definition has void Func_020017dc(struct Actor *object); tried as the
  * definition's void Func_020017dc(struct Actor *object), which the object
  * already declares, it does not compile in tla-ja:
- * games/tla/src/scene/tundaria_tower/events_f.c:350: `Func_020017dc__events_e'
+ * games/tla/src/scene/tundaria_tower.c:1120: `Func_020017dc__events_e'
  * undeclared (first use in this function). */
 extern void Func_020017dc__events_e(void) __asm__("Func_020017dc");
 
@@ -1206,8 +1228,8 @@ end:
 /* VIEW(s1b48): variable gData_02003cd0 as volatile s16 gData_02003cd0;
  * scene/shared/tundaria_tower.h has u16 gData_02003cd0; tried as the 2
  * declarations' extern volatile s16 gData_02003cd0, it does not compile in
- * tla-en: games/tla/src/scene/tundaria_tower/events_f.c:419: conflicting types
- * for `gData_02003cd0'. */
+ * tla-en: games/tla/src/scene/tundaria_tower.c:1187: conflicting types for
+ * `gData_02003cd0'. */
 extern volatile s16 gData_02003cd0__s1b48 __asm__("gData_02003cd0");
 extern s16 gData_020032b2[];
 void Func_020017dc(struct Actor *object);
@@ -1550,7 +1572,7 @@ void Func_02001e5c(s32 value) { gData_02003cd0 = value; }
  * games/tla/src/scene/tundaria_tower/s11e0 has void Func_020017dc(struct Actor
  * *object) {; tried as the definition's void Func_020017dc(struct Actor
  * *object), which the object already declares, it does not compile in tla-ja:
- * games/tla/src/scene/tundaria_tower/events_f.c:831: `Func_020017dc__events_f'
+ * games/tla/src/scene/tundaria_tower.c:1582: `Func_020017dc__events_f'
  * undeclared (first use in this function). */
 void Func_020017dc__events_f(void) __asm__("Func_020017dc");
 void Actor_SelectAnimation(struct Actor *object, s32 mode);
@@ -2188,9 +2210,8 @@ next:
 // A falling rock's sprite.
 /* VIEW(s29d0): tag struct RockSprite as struct RockSprite__s29d0; module/tla.h
  * has another definition; tried with the definition the rest of the object has,
- * it does not compile in tla-ja:
- * games/tla/src/scene/tundaria_tower/events_f.c:1477: structure has no member
- * named `blend'. */
+ * it does not compile in tla-ja: games/tla/src/scene/tundaria_tower.c:2205:
+ * structure has no member named `blend'. */
 struct RockSprite__s29d0 {
   u8 unk00[5];
   u8 unk05_0 : 5;
@@ -2283,10 +2304,6 @@ void Func_020005d0(void);
 void Func_020008a8(void);
 void Func_02000b3c(void);
 void Func_02000bfc(void);
-/* VIEW(s29d0): routine Func_02000c64 as this part declared it; the joined file
- * has another. */
-void Func_02000c64__s29d0(void) __asm__("Func_02000c64");
-#define Func_02000c64 Func_02000c64__s29d0
 
 // clang-format off
 u32 gData_020031b0[] = {
@@ -2618,7 +2635,6 @@ struct Trigger gData_02003c90[] = {
 #undef EFFECT_SCRIPTS
 #undef FIELD_AT
 #undef BYTE_AT
-#undef Func_02000c64
 #undef Func_020010d4
 #undef Func_02000404
 #undef Func_020007dc

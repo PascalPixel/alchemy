@@ -333,7 +333,9 @@ extern struct ActorPlacement gData_020068f4[];
 extern struct ActorPlacement gData_020069e4[];
 extern struct ActorPlacement gData_02006aec[];
 /* VIEW(first): variable gData_02006bac as this part declared it; the joined
- * file has another. */
+ * file has another; tried as the one declaration extern u32 gData_02006bac[],
+ * it does not compile in tla-ja: games/tla/src/scene/airs_rock_inside.c:1552:
+ * `gData_02006bac' undeclared (first use in this function). */
 extern u32 gData_02006bac__first[] __asm__("gData_02006bac");
 #define gData_02006bac gData_02006bac__first
 
@@ -733,11 +735,17 @@ DEFINE_POSITION_DISTANCE_ABOVE(Position_DistanceAbove)
 // is 0xc000.
 
 /* VIEW(airs_rock_inside): routine gData_020061ac as this part declared it; the
- * joined file has another. */
+ * joined file has another; tried as the definition's extern u32
+ * gData_020061ac[], it does not compile in tla-ja:
+ * games/tla/src/scene/airs_rock_inside.c:755: `gData_020061ac' undeclared
+ * (first use in this function). */
 extern u8 gData_020061ac__airs_rock_inside[] __asm__("gData_020061ac");
 #define gData_020061ac gData_020061ac__airs_rock_inside
 /* VIEW(airs_rock_inside): routine gData_02006194 as this part declared it; the
- * joined file has another. */
+ * joined file has another; tried as the definition's extern u32
+ * gData_02006194[], it does not compile in tla-ja:
+ * games/tla/src/scene/airs_rock_inside.c:769: `gData_02006194' undeclared
+ * (first use in this function). */
 extern u8 gData_02006194__airs_rock_inside[] __asm__("gData_02006194");
 #define gData_02006194 gData_02006194__airs_rock_inside
 
@@ -871,7 +879,10 @@ void Func_02001084(struct Actor *object, s16 timer, u8 value) {
 }
 
 /* VIEW(airs_rock_inside): routine gData_020061cc as this part declared it; the
- * joined file has another. */
+ * joined file has another; tried as the definition's extern u32
+ * gData_020061cc[], it does not compile in tla-ja:
+ * games/tla/src/scene/airs_rock_inside.c:894: `gData_020061cc' undeclared
+ * (first use in this function). */
 extern u8 gData_020061cc__airs_rock_inside[] __asm__("gData_020061cc");
 #define gData_020061cc gData_020061cc__airs_rock_inside
 
@@ -1525,7 +1536,10 @@ shrink:
 
 extern struct ActorPlacement gData_02006238[];
 /* VIEW(airs_rock_inside): routine gData_02006268 as this part declared it; the
- * joined file has another. */
+ * joined file has another; tried as the definition's extern s16
+ * gData_02006268[], it does not compile in tla-ja:
+ * games/tla/src/scene/airs_rock_inside.c:1526: `gData_02006268' undeclared
+ * (first use in this function). */
 extern const u8 gData_02006268__airs_rock_inside[] __asm__("gData_02006268");
 #define gData_02006268 gData_02006268__airs_rock_inside
 
@@ -2378,7 +2392,9 @@ void Func_02003d40(void) {
 }
 
 /* VIEW(s2cf0): routine gData_02006084 as this part declared it; the joined file
- * has another. */
+ * has another; tried as the definition's extern u32 gData_02006084[], it does
+ * not compile in tla-ja: games/tla/src/scene/airs_rock_inside.c:2401:
+ * `gData_02006084' undeclared (first use in this function). */
 extern const u8 gData_02006084__s2cf0[] __asm__("gData_02006084");
 #define gData_02006084 gData_02006084__s2cf0
 
@@ -2468,31 +2484,47 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 DEFINE_ACTOR_EMIT_BUBBLES(Actor_EmitBubbles, FieldEffect_Spawn)
 
 /* VIEW(s2cf0): routine gData_020060e0 as this part declared it; the joined file
- * has another. */
+ * has another; tried as the definition's extern
+ * DEFINE_G_DATA_02003584(gData_020060b0, Func_02003ed4, 38, 17)
+ * DEFINE_G_DATA_02004014(gData_020060c0, Orbit_Update, Actor_AimAtWatched...,
+ * it does not compile in tla-ja: games/tla/src/scene/airs_rock_inside.c:2505:
+ * `gData_020060e0' undeclared (first use in this function). */
 extern const u8 gData_020060e0__s2cf0[] __asm__("gData_020060e0");
 #define gData_020060e0 gData_020060e0__s2cf0
 /* VIEW(s2cf0): routine gData_02006094 as this part declared it; the joined file
- * has another. */
+ * has another; tried as the definition's extern u32 gData_02006094[], it does
+ * not compile in tla-ja: games/tla/src/scene/airs_rock_inside.c:2528:
+ * `gData_02006094' undeclared (first use in this function). */
 extern const u8 gData_02006094__s2cf0[] __asm__("gData_02006094");
 #define gData_02006094 gData_02006094__s2cf0
 /* VIEW(s2cf0): routine gData_020060b0 as this part declared it; the joined file
- * has another. */
+ * has another; tried as the one declaration extern const u8 gData_020060b0[],
+ * it does not compile in tla-ja: games/tla/src/scene/airs_rock_inside.c:2569:
+ * `gData_020060b0' undeclared (first use in this function). */
 extern const u8 gData_020060b0__s2cf0[] __asm__("gData_020060b0");
 #define gData_020060b0 gData_020060b0__s2cf0
 /* VIEW(s2cf0): routine gData_02006104 as this part declared it; the joined file
- * has another. */
+ * has another; tried as the definition's extern u32 gData_02006104[], it does
+ * not compile in tla-ja: games/tla/src/scene/airs_rock_inside.c:2578:
+ * `gData_02006104' undeclared (first use in this function). */
 extern const u8 gData_02006104__s2cf0[] __asm__("gData_02006104");
 #define gData_02006104 gData_02006104__s2cf0
 /* VIEW(s2cf0): routine gData_020060c0 as this part declared it; the joined file
- * has another. */
+ * has another; tried as the one declaration extern const u8 gData_020060c0[],
+ * it does not compile in tla-ja: games/tla/src/scene/airs_rock_inside.c:2608:
+ * `gData_020060c0' undeclared (first use in this function). */
 extern const u8 gData_020060c0__s2cf0[] __asm__("gData_020060c0");
 #define gData_020060c0 gData_020060c0__s2cf0
 /* VIEW(s2cf0): routine gData_02006128 as this part declared it; the joined file
- * has another. */
+ * has another; tried as the definition's extern s32 gData_02006128[], it does
+ * not compile in tla-ja: games/tla/src/scene/airs_rock_inside.c:2624:
+ * `gData_02006128' undeclared (first use in this function). */
 extern const u8 gData_02006128__s2cf0[] __asm__("gData_02006128");
 #define gData_02006128 gData_02006128__s2cf0
 /* VIEW(s2cf0): routine gData_02006158 as this part declared it; the joined file
- * has another. */
+ * has another; tried as the definition's extern s32 gData_02006158[], it does
+ * not compile in tla-ja: games/tla/src/scene/airs_rock_inside.c:2625:
+ * `gData_02006158' undeclared (first use in this function). */
 extern const u8 gData_02006158__s2cf0[] __asm__("gData_02006158");
 #define gData_02006158 gData_02006158__s2cf0
 void Actor_SetMovementTypeById(s32 actor, const void *callback);
@@ -2784,8 +2816,8 @@ void Func_02004880(void) {}
  * scene/airs_rock_inside/airs_rock_inside has void Func_020007b4(s32 mode, s32
  * step) {; tried as the definition's void Func_020007b4(s32 mode, s32 step),
  * which the object already declares, it does not compile in tla-ja:
- * games/tla/src/scene/airs_rock_inside/airs_rock_inside.c:2519: too few
- * arguments to function `Func_020007b4'. */
+ * games/tla/src/scene/airs_rock_inside.c:2781: too few arguments to function
+ * `Func_020007b4'. */
 void Func_020007b4__s2cf0(void) __asm__("Func_020007b4");
 
 void Func_02004884(void) {
@@ -3070,7 +3102,9 @@ void Func_02004eb0(void) {
 }
 
 /* VIEW(s2cf0): routine gData_020073d8 as this part declared it; the joined file
- * has another. */
+ * has another; tried as the definition's extern s32 gData_020073d8[], it does
+ * not compile in tla-ja: games/tla/src/scene/airs_rock_inside.c:3066:
+ * `gData_020073d8' undeclared (first use in this function). */
 extern s32 gData_020073d8__s2cf0 __asm__("gData_020073d8");
 #define gData_020073d8 gData_020073d8__s2cf0
 
@@ -3208,37 +3242,20 @@ void Func_0200505c(void) {
 }
 
 /* VIEW(s505c): routine gData_0200621c as this part declared it; the joined file
- * has another. */
+ * has another; tried as the definition's extern s16 gData_0200621c[], it does
+ * not compile in tla-ja: games/tla/src/scene/airs_rock_inside.c:3582:
+ * conflicting types for `gData_0200621c'. */
 extern s16 gData_02006050[], gData_02006054[], gData_0200605a[],
     gData_02006064[], gData_02006068[], gData_02006072[], gData_0200607e[],
     gData_0200621c__s505c[] __asm__("gData_0200621c");
 #define gData_0200621c gData_0200621c__s505c
 void Func_02001690(void);
-/* VIEW(s505c): routine Actor_SetHorizontalPositionWithTerrain as this part
- * declared it; the joined file has another. */
-void Actor_SetHorizontalPositionWithTerrain__s505c(
-    s32 id, s32 x, s32 z) __asm__("Actor_SetHorizontalPositionWithTerrain");
 #define Actor_SetHorizontalPositionWithTerrain                                 \
-  Actor_SetHorizontalPositionWithTerrain__s505c
-/* VIEW(s505c): routine Func_02001084 as this part declared it; the joined file
- * has another. */
-void Func_02001084__s505c(struct Actor *object, s32 a,
-                          s32 b) __asm__("Func_02001084");
-#define Func_02001084 Func_02001084__s505c
-/* VIEW(s505c): routine Func_02001420 as this part declared it; the joined file
- * has another. */
-void Func_02001420__s505c(struct Actor *object, s32 a,
-                          s32 b) __asm__("Func_02001420");
-#define Func_02001420 Func_02001420__s505c
+  Actor_SetHorizontalPositionWithTerrain
 void MapGrid_CopyCellPictureIndicesRect(s32 x, s32 z, s32 width, s32 height,
                                         s32 a, s32 b);
 void Map_CopyCellAttributeRect(s32 srcX, s32 srcZ, s32 width, s32 height,
                                s32 destX, s32 destZ);
-/* VIEW(s505c): routine Func_0200062c as this part declared it; the joined file
- * has another. */
-s32 Func_0200062c__s505c(s32 layer, s32 x, s32 z,
-                         s32 cell) __asm__("Func_0200062c");
-#define Func_0200062c Func_0200062c__s505c
 
 s32 Scene_Initialize(void) {
   struct Actor *object;
@@ -3510,22 +3527,6 @@ s32 Scene_PrepareMap(void) {
 }
 
 void Func_02000610(void);
-/* VIEW(s505c): routine Func_02003ed4 as this part declared it; the joined file
- * has another. */
-void Func_02003ed4__s505c(void) __asm__("Func_02003ed4");
-#define Func_02003ed4 Func_02003ed4__s505c
-/* VIEW(s505c): routine Orbit_Update as this part declared it; the joined file
- * has another. */
-void Orbit_Update__s505c(void) __asm__("Orbit_Update");
-#define Orbit_Update Orbit_Update__s505c
-/* VIEW(s505c): routine Actor_AimAtWatched as this part declared it; the joined
- * file has another. */
-void Actor_AimAtWatched__s505c(void) __asm__("Actor_AimAtWatched");
-#define Actor_AimAtWatched Actor_AimAtWatched__s505c
-/* VIEW(s505c): routine Actor_StepToWatched as this part declared it; the joined
- * file has another. */
-void Actor_StepToWatched__s505c(void) __asm__("Actor_StepToWatched");
-#define Actor_StepToWatched Actor_StepToWatched__s505c
 
 extern u32 gData_02005f9c[];
 extern u32 gData_02006014[];
@@ -4026,10 +4027,3 @@ s32 gData_020073d8[] = {
 };
 #undef gData_0200621c
 #undef Actor_SetHorizontalPositionWithTerrain
-#undef Func_02001084
-#undef Func_02001420
-#undef Func_0200062c
-#undef Func_02003ed4
-#undef Orbit_Update
-#undef Actor_AimAtWatched
-#undef Actor_StepToWatched

@@ -436,7 +436,7 @@ DEFINE_SCENE_RAISE_HELD_ACTOR(Scene_RaiseHeldActor, FlagBlock_ApplyFlags,
 /* VIEW(item): tag struct DailaActor as struct DailaActor__item;
  * daila_interiors.c has another definition; tried with the definition the rest
  * of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/daila_interiors.c:454: structure has no member named
+ * games/tla/src/scene/daila_interiors.c:452: structure has no member named
  * `unk48'. */
 struct DailaActor__item {
   u8 unk00[0xc];
@@ -460,7 +460,7 @@ struct DailaActor__item {
  * *Actor_GetById(s32 id); daila_interiors has struct DailaActor
  * *Actor_GetById(s32 id); tried as the definition's struct Actor
  * *Actor_GetById(u32 objectId), which the object already declares, it does not
- * compile in tla-ja: games/tla/src/scene/daila_interiors.c:469: structure has
+ * compile in tla-ja: games/tla/src/scene/daila_interiors.c:467: structure has
  * no member named `unk48'. */
 extern struct DailaActor__item *
 Actor_GetById__item(s32 id) __asm__("Actor_GetById");
@@ -607,7 +607,7 @@ void Map_SetLayerEntryFlag(s32 mode);
  * *Actor_GetById(s32 id); item has struct DailaActor__item *Actor_GetById(s32
  * id); tried as the definition's struct Actor *Actor_GetById(u32 objectId),
  * which the object already declares, it does not compile in tla-ja:
- * games/tla/src/scene/daila_interiors.c:623: structure has no member named
+ * games/tla/src/scene/daila_interiors.c:620: structure has no member named
  * `priorityFlags'. */
 extern struct DailaStartActor *
 Actor_GetById__arrival(s32 id) __asm__("Actor_GetById");

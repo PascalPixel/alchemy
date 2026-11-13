@@ -350,7 +350,9 @@ void Func_0200092c(struct Actor *object) {
 // The Whirlwind gust in Air's Rock.
 
 /* VIEW(airs_rock): routine gData_02004674 as this part declared it; the joined
- * file has another. */
+ * file has another; tried as the definition's extern u32 gData_02004674[], it
+ * does not compile in tla-ja: games/tla/src/scene/airs_rock.c:489:
+ * `gData_02004674' undeclared (first use in this function). */
 extern s16 gData_02004674__airs_rock[][4] __asm__("gData_02004674");
 #define gData_02004674 gData_02004674__airs_rock
 void Actor_StartScript(struct Actor *object, const s32 *script);
@@ -901,11 +903,15 @@ DEFINE_POSITION_FLAT_DISTANCE(Position_FlatDistance)
 DEFINE_POSITION_DISTANCE_ABOVE(Position_DistanceAbove)
 
 /* VIEW(airs_rock): routine gData_02003de0 as this part declared it; the joined
- * file has another. */
+ * file has another; tried as the definition's extern u32 gData_02003de0[], it
+ * does not compile in tla-ja: games/tla/src/scene/airs_rock.c:923:
+ * `gData_02003de0' undeclared (first use in this function). */
 extern u8 gData_02003de0__airs_rock[] __asm__("gData_02003de0");
 #define gData_02003de0 gData_02003de0__airs_rock
 /* VIEW(airs_rock): routine gData_02003dcc as this part declared it; the joined
- * file has another. */
+ * file has another; tried as the definition's extern u32 gData_02003dcc[], it
+ * does not compile in tla-ja: games/tla/src/scene/airs_rock.c:929:
+ * `gData_02003dcc' undeclared (first use in this function). */
 extern u8 gData_02003dcc__airs_rock[] __asm__("gData_02003dcc");
 #define gData_02003dcc gData_02003dcc__airs_rock
 
@@ -1091,7 +1097,9 @@ void Func_02001da8(void) {
 }
 
 /* VIEW(airs_rock): routine gData_02003dfc as this part declared it; the joined
- * file has another. */
+ * file has another; tried as the definition's extern s32 gData_02003dfc[], it
+ * does not compile in tla-ja: games/tla/src/scene/airs_rock.c:1117:
+ * `gData_02003dfc' undeclared (first use in this function). */
 extern u8 gData_02003dfc__airs_rock[] __asm__("gData_02003dfc");
 #define gData_02003dfc gData_02003dfc__airs_rock
 
@@ -1528,7 +1536,9 @@ void Func_020026b8(void) {
 }
 
 /* VIEW(airs_rock): routine gData_02004698 as this part declared it; the joined
- * file has another. */
+ * file has another; tried as the definition's extern s32 gData_02004698[], it
+ * does not compile in tla-ja: games/tla/src/scene/airs_rock.c:1527:
+ * `gData_02004698' undeclared (first use in this function). */
 extern s32 gData_02004698__airs_rock __asm__("gData_02004698");
 #define gData_02004698 gData_02004698__airs_rock
 
@@ -1881,10 +1891,6 @@ s32 Scene_PrepareMap(void) {
 #undef gData_02003dfc
 #undef gData_02004698
 
-/* VIEW(data): routine Func_0200033c as this part declared it; the joined file
- * has another. */
-void Func_0200033c__data(void) __asm__("Func_0200033c");
-#define Func_0200033c Func_0200033c__data
 void Func_02000620(void);
 
 // clang-format off
@@ -2140,4 +2146,3 @@ s8 gData_02004697 = 1;
 s32 gData_02004698[] = {
     -1,
 };
-#undef Func_0200033c

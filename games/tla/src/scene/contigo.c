@@ -251,10 +251,14 @@ void Func_02000328(void) {
 #include "../field/field_effect/move.c"
 
 /* VIEW(contigo): tag struct TalkActor as this part has it; the joined file has
- * another. */
+ * another; tried with the definition the rest of the object has, it does not
+ * compile in tla-ja: games/tla/src/scene/contigo.c:830: redefinition of `struct
+ * TalkActor'. */
 #define TalkActor TalkActor__contigo
 /* VIEW(contigo): tag struct ContigoEventWork as this part has it; the joined
- * file has another. */
+ * file has another; tried with the definition the rest of the object has, it
+ * does not compile in tla-ja: games/tla/src/scene/contigo.c:2123: redefinition
+ * of `struct ContigoEventWork'. */
 #define ContigoEventWork ContigoEventWork__contigo
 // @file
 // Scene code of overlay 0x694, in ROM order.
@@ -1338,37 +1342,36 @@ void Func_02001d38(void) {
  * 1, 39, 1, 0, 10, 22, 3, 0xa000, 0, 10, 22, 3, 0x8000, 0, 10, 17, }; tried as
  * the definition's extern DEFINE_G_DATA_02002634(gData_02004758, 0x1520000,
  * 0x34c0000, 0x13e0000, 0x1300000, 0x3680000, 0x1400000, 0x3740000, 0x1500000,
- * 0x1600..., it does not compile in tla-ja:
- * games/tla/src/scene/contigo/contigo.c:1141: `gData_020048a0__contigo'
- * undeclared (first use in this function). */
+ * 0x1600..., it does not compile in tla-ja: games/tla/src/scene/contigo.c:1365:
+ * `gData_020048a0__contigo' undeclared (first use in this function). */
 extern const u8 gData_020048a0__contigo[] __asm__("gData_020048a0");
 /* VIEW(contigo): variable gData_020048f8 as extern const u8 gData_020048f8[];
  * the definition has u32 gData_020048f8[] = { 39, 2, 4, 0xbe0000, 0, 0x1600000,
  * 1, 39, 1, 0, 10, 22, 3, 0x8000, 0, 10, 17, }; tried as the definition's
  * extern u32 gData_020048f8[], it does not compile in tla-ja:
- * games/tla/src/scene/contigo/contigo.c:1144: `gData_020048f8__contigo'
- * undeclared (first use in this function). */
+ * games/tla/src/scene/contigo.c:1368: `gData_020048f8__contigo' undeclared
+ * (first use in this function). */
 extern const u8 gData_020048f8__contigo[] __asm__("gData_020048f8");
 /* VIEW(contigo): variable gData_0200493c as extern const u8 gData_0200493c[];
  * the definition has u32 gData_0200493c[] = { 39, 2, 4, 0xbe0000, 0, 0x1860000,
  * 1, 39, 1, 0, 10, 22, 3, 0x8000, 0, 10, 17, }; tried as the definition's
  * extern u32 gData_0200493c[], it does not compile in tla-ja:
- * games/tla/src/scene/contigo/contigo.c:1143: `gData_0200493c__contigo'
- * undeclared (first use in this function). */
+ * games/tla/src/scene/contigo.c:1367: `gData_0200493c__contigo' undeclared
+ * (first use in this function). */
 extern const u8 gData_0200493c__contigo[] __asm__("gData_0200493c");
 /* VIEW(contigo): variable gData_02004980 as extern const u8 gData_02004980[];
  * the definition has u32 gData_02004980[] = { 39, 2, 4, 0xb60000, 0, 0x1700000,
  * 1, 39, 1, 0, 10, 22, 3, 0x8000, 0, 10, 17, }; tried as the definition's
- * extern u32 gData_02004980[], which the object already declares, it does not
- * compile in tla-ja: games/tla/src/scene/contigo/contigo.c:1141:
- * `gData_02004980__contigo' undeclared (first use in this function). */
+ * extern u32 gData_02004980[], it does not compile in tla-ja:
+ * games/tla/src/scene/contigo.c:1366: `gData_02004980__contigo' undeclared
+ * (first use in this function). */
 extern const u8 gData_02004980__contigo[] __asm__("gData_02004980");
 /* VIEW(contigo): variable gData_020049c4 as extern const u8 gData_020049c4[];
  * the definition has u32 gData_020049c4[] = { 39, 2, 4, 0xa00000, 0, 0x17e0000,
  * 1, 39, 1, 0, 1, 3, 0, 1, 17, 39, 2, 0, 10, 13, 0xffff, 0, }; tried as the
  * definition's extern u32 gData_020049c4[], it does not compile in tla-ja:
- * games/tla/src/scene/contigo/contigo.c:1546: `gData_020049c4__contigo'
- * undeclared (first use in this function). */
+ * games/tla/src/scene/contigo.c:1770: `gData_020049c4__contigo' undeclared
+ * (first use in this function). */
 extern const u8 gData_020049c4__contigo[] __asm__("gData_020049c4");
 extern const u8 gData_02006030[];
 
@@ -2067,11 +2070,6 @@ void Func_020036f0(void) {
   }
 }
 
-/* VIEW(contigo): routine Palette_SetColors as this part declared it; the joined
- * file has another. */
-void Palette_SetColors__contigo(const u8 *a, const u8 *b, const u8 *c,
-                                const u8 *d) __asm__("Palette_SetColors");
-#define Palette_SetColors Palette_SetColors__contigo
 void Map_CenterOnFollowedPoint(void);
 
 // Schedules Func_020036f0 and gives objects 14 and 15 their flag bytes and
@@ -2440,8 +2438,7 @@ struct ResourceTableEntry {
 /* VIEW(s3e54): tag struct SparkleSprite as struct SparkleSprite__s3e54;
  * contigo.c has another definition; tried with the definition the rest of the
  * object has, it does not compile in tla-ja:
- * games/tla/src/scene/contigo/contigo.c:2203: structure has no member named
- * `blend'. */
+ * games/tla/src/scene/contigo.c:2425: structure has no member named `blend'. */
 struct SparkleSprite__s3e54 {
   u8 unk00[5];
   u8 unk05_0 : 5;
@@ -2456,7 +2453,7 @@ struct SparkleSprite__s3e54 {
 
 /* VIEW(s3e54): tag struct SparkleWork as struct SparkleWork__s3e54; contigo.c
  * has another definition; tried with the definition the rest of the object has,
- * it does not compile in tla-ja: games/tla/src/scene/contigo/contigo.c:2195:
+ * it does not compile in tla-ja: games/tla/src/scene/contigo.c:2417:
  * incompatible types in assignment. */
 struct SparkleWork__s3e54 {
   struct SparkleSprite__s3e54 sprites[4];
@@ -2500,8 +2497,7 @@ void Func_02003e54(struct Actor *object, struct SparkleWork__s3e54 *work) {
 /* VIEW(s3e54): tag struct ContigoObject as struct ContigoObject__s3e54;
  * contigo.c has another definition; tried with the definition the rest of the
  * object has, it does not compile in tla-ja:
- * games/tla/src/scene/contigo/contigo.c:2224: structure has no member named
- * `unk62'. */
+ * games/tla/src/scene/contigo.c:2446: structure has no member named `unk62'. */
 struct ContigoObject__s3e54 {
   u8 unk00[0x62];
   u8 unk62;

@@ -124,15 +124,24 @@ void Tightrope_Initialize(void);
 void MapGrid_SetAttributeBAt();
 
 /* VIEW(eastern_alhafra): routine gData_02004d0c as this part declared it; the
- * joined file has another. */
+ * joined file has another; tried as the definition's extern s16
+ * gData_02004d0c[], it does not compile in tla-ja:
+ * games/tla/src/scene/eastern_alhafra.c:167: `gData_02004d0c' undeclared (first
+ * use in this function). */
 extern u8 gData_02004d0c__eastern_alhafra[] __asm__("gData_02004d0c");
 #define gData_02004d0c gData_02004d0c__eastern_alhafra
 /* VIEW(eastern_alhafra): routine gData_02004dbc as this part declared it; the
- * joined file has another. */
+ * joined file has another; tried as the definition's extern s16
+ * gData_02004dbc[], it does not compile in tla-ja:
+ * games/tla/src/scene/eastern_alhafra.c:144: `gData_02004dbc' undeclared (first
+ * use in this function). */
 extern u8 gData_02004dbc__eastern_alhafra[] __asm__("gData_02004dbc");
 #define gData_02004dbc gData_02004dbc__eastern_alhafra
 /* VIEW(eastern_alhafra): routine gData_02004fe4 as this part declared it; the
- * joined file has another. */
+ * joined file has another; tried as the definition's extern s16
+ * gData_02004fe4[], it does not compile in tla-ja:
+ * games/tla/src/scene/eastern_alhafra.c:143: `gData_02004fe4' undeclared (first
+ * use in this function). */
 extern u8 gData_02004fe4__eastern_alhafra[] __asm__("gData_02004fe4");
 #define gData_02004fe4 gData_02004fe4__eastern_alhafra
 
@@ -222,7 +231,10 @@ void Func_02000190(s32 unused, s32 id) {
 #include "text/msg_ids.h"
 
 /* VIEW(eastern_alhafra): routine gData_02005290 as this part declared it; the
- * joined file has another. */
+ * joined file has another; tried as the definition's extern s32
+ * gData_02005290[], it does not compile in tla-ja:
+ * games/tla/src/scene/eastern_alhafra.c:492: `gData_02005290' undeclared (first
+ * use in this function). */
 extern u8 gData_02005290__eastern_alhafra[] __asm__("gData_02005290");
 #define gData_02005290 gData_02005290__eastern_alhafra
 
@@ -546,7 +558,9 @@ check:
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
 /* VIEW(s0514): routine gData_020054f0 as this part declared it; the joined file
- * has another. */
+ * has another; tried as the definition's extern u32 gData_020054f0[], it does
+ * not compile in tla-ja: games/tla/src/scene/eastern_alhafra.c:542:
+ * `gData_020054f0' undeclared (first use in this function). */
 extern u8 gData_020054f0__s0514[] __asm__("gData_020054f0");
 #define gData_020054f0 gData_020054f0__s0514
 
@@ -1194,7 +1208,9 @@ L_02009b74:
 }
 
 /* VIEW(s0514): routine gData_020056d4 as this part declared it; the joined file
- * has another. */
+ * has another; tried as the definition's extern u32 gData_020056d4[], it does
+ * not compile in tla-ja: games/tla/src/scene/eastern_alhafra.c:1191:
+ * `gData_020056d4' undeclared (first use in this function). */
 extern const u8 gData_020056d4__s0514[] __asm__("gData_020056d4");
 #define gData_020056d4 gData_020056d4__s0514
 
@@ -2289,7 +2305,9 @@ void Func_020040c0(void) {
 // footprint.
 
 /* VIEW(s4004): routine gPushFootprints as this part declared it; the joined
- * file has another. */
+ * file has another; tried as the definition's extern u32 gPushFootprints[], it
+ * does not compile in tla-ja: games/tla/src/scene/eastern_alhafra.c:2299:
+ * `gPushFootprints' undeclared (first use in this function). */
 extern s8 gPushFootprints__s4004[][4] __asm__("gPushFootprints");
 #define gPushFootprints gPushFootprints__s4004
 
@@ -2344,7 +2362,9 @@ s32 Func_020040ec(s32 id) {
 #include "../field/map/cellfill.c"
 
 /* VIEW(s4004): routine gPushDirectionSteps as this part declared it; the joined
- * file has another. */
+ * file has another; tried as the definition's extern s16 gPushDirectionSteps[],
+ * it does not compile in tla-ja: games/tla/src/scene/eastern_alhafra.c:2347:
+ * `gPushDirectionSteps' undeclared (first use in this function). */
 extern s32 gPushDirectionSteps__s4004[] __asm__("gPushDirectionSteps");
 #define gPushDirectionSteps gPushDirectionSteps__s4004
 
@@ -2438,8 +2458,8 @@ struct PushTarget {
 /* VIEW(s44c4): variable gPushFootprints as s8 gPushFootprints[];
  * scene/eastern_alhafra/s4004 has s8 gPushFootprints[][4]; tried as the
  * definition's extern u32 gPushFootprints[], it does not compile in tla-ja:
- * games/tla/src/scene/eastern_alhafra.c:2348: conflicting types for
- * `gPushFootprints'. */
+ * games/tla/src/scene/eastern_alhafra.c:2412: conflicting types for
+ * `gPushFootprints__s4004'. */
 extern s8 gPushFootprints__s44c4[] __asm__("gPushFootprints");
 
 #define ABS(x) ((x) < 0 ? -(x) : (x))
@@ -2586,37 +2606,12 @@ DEFINE_ACTOR_SET_CELL_OPEN(Actor_SetCellOpen, Actor_GetCellIndex,
 #include "text/msg_ids.h"
 
 /* VIEW(data): routine Func_0200006c as this part declared it; the joined file
- * has another. */
+ * has another; tried as the definition's void Func_0200006c(s32 mode, s32 id),
+ * which the object already declares, it does not compile in tla-ja:
+ * games/tla/src/scene/eastern_alhafra.c:2544: conflicting types for
+ * `gPushFootprints__s4004'. */
 void Func_0200006c__data(void) __asm__("Func_0200006c");
 #define Func_0200006c Func_0200006c__data
-/* VIEW(data): routine Func_020000c8 as this part declared it; the joined file
- * has another. */
-void Func_020000c8__data(void) __asm__("Func_020000c8");
-#define Func_020000c8 Func_020000c8__data
-/* VIEW(data): routine Func_02000190 as this part declared it; the joined file
- * has another. */
-void Func_02000190__data(void) __asm__("Func_02000190");
-#define Func_02000190 Func_02000190__data
-/* VIEW(data): routine Func_02000200 as this part declared it; the joined file
- * has another. */
-void Func_02000200__data(void) __asm__("Func_02000200");
-#define Func_02000200 Func_02000200__data
-/* VIEW(data): routine Func_02000394 as this part declared it; the joined file
- * has another. */
-void Func_02000394__data(void) __asm__("Func_02000394");
-#define Func_02000394 Func_02000394__data
-/* VIEW(data): routine Func_0200042c as this part declared it; the joined file
- * has another. */
-void Func_0200042c__data(void) __asm__("Func_0200042c");
-#define Func_0200042c Func_0200042c__data
-/* VIEW(data): routine Func_020006ec as this part declared it; the joined file
- * has another. */
-void Func_020006ec__data(void) __asm__("Func_020006ec");
-#define Func_020006ec Func_020006ec__data
-/* VIEW(data): routine Func_02000940 as this part declared it; the joined file
- * has another. */
-void Func_02000940__data(void) __asm__("Func_02000940");
-#define Func_02000940 Func_02000940__data
 void Func_02000958(void);
 
 // clang-format off
@@ -2848,10 +2843,3 @@ u32 gData_020056d4[] = {
     38,
 };
 #undef Func_0200006c
-#undef Func_020000c8
-#undef Func_02000190
-#undef Func_02000200
-#undef Func_02000394
-#undef Func_0200042c
-#undef Func_020006ec
-#undef Func_02000940

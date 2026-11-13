@@ -76,7 +76,10 @@ extern u16 *gYampiDesertCave_MarkCycleSlots;
 void Actor_DisableById(s32 id);
 
 /* VIEW(first): routine gYampiDesertCave_LogFootprints as this part declared it;
- * the joined file has another. */
+ * the joined file has another; tried as the definition's extern u32
+ * gYampiDesertCave_LogFootprints[], it does not compile in tla-ja:
+ * games/tla/src/scene/yampi_desert_cave.c:108: `gYampiDesertCave_LogFootprints'
+ * undeclared (first use in this function). */
 extern s8 gYampiDesertCave_LogFootprints__first[] __asm__(
     "gYampiDesertCave_LogFootprints");
 #define gYampiDesertCave_LogFootprints gYampiDesertCave_LogFootprints__first
@@ -298,37 +301,60 @@ extern u16 *gYampiDesertCave_MarkSlots;
 extern u16 gYampiDesertCave_MarkCount;
 extern u16 gYampiDesertCave_MarkCycleIndex;
 /* VIEW(first): routine gYampiDesertCave_Placements as this part declared it;
- * the joined file has another. */
+ * the joined file has another; tried as the definition's extern struct
+ * ActorPlacement gYampiDesertCave_Placements[], it does not compile in tla-ja:
+ * games/tla/src/scene/yampi_desert_cave.c:629: `gYampiDesertCave_Placements'
+ * undeclared (first use in this function). */
 extern u32
     gYampiDesertCave_Placements__first[] __asm__("gYampiDesertCave_Placements");
 #define gYampiDesertCave_Placements gYampiDesertCave_Placements__first
 /* VIEW(first): routine gYampiDesertCave_Room2Placements as this part declared
- * it; the joined file has another. */
+ * it; the joined file has another; tried as the definition's extern struct
+ * ActorPlacement gYampiDesertCave_Room2Placements[], it does not compile in
+ * tla-ja: games/tla/src/scene/yampi_desert_cave.c:626:
+ * `gYampiDesertCave_Room2Placements' undeclared (first use in this function).
+ */
 extern s32 gYampiDesertCave_Room2Placements__first[] __asm__(
     "gYampiDesertCave_Room2Placements");
 #define gYampiDesertCave_Room2Placements gYampiDesertCave_Room2Placements__first
 /* VIEW(first): routine gYampiDesertCave_Room3Placements as this part declared
- * it; the joined file has another. */
+ * it; the joined file has another; tried as the definition's extern struct
+ * ActorPlacement gYampiDesertCave_Room3Placements[], it does not compile in
+ * tla-ja: games/tla/src/scene/yampi_desert_cave.c:628:
+ * `gYampiDesertCave_Room3Placements' undeclared (first use in this function).
+ */
 extern s32 gYampiDesertCave_Room3Placements__first[] __asm__(
     "gYampiDesertCave_Room3Placements");
 #define gYampiDesertCave_Room3Placements gYampiDesertCave_Room3Placements__first
 /* VIEW(first): routine gYampiDesertCave_Room3Stakes as this part declared it;
- * the joined file has another. */
+ * the joined file has another; tried as the definition's extern u32
+ * gYampiDesertCave_Room3Stakes[], it does not compile in tla-ja:
+ * games/tla/src/scene/yampi_desert_cave.c:777: `gYampiDesertCave_Room3Stakes'
+ * undeclared (first use in this function). */
 extern const u8 gYampiDesertCave_Room3Stakes__first[] __asm__(
     "gYampiDesertCave_Room3Stakes");
 #define gYampiDesertCave_Room3Stakes gYampiDesertCave_Room3Stakes__first
 /* VIEW(first): routine gYampiDesertCave_Triggers as this part declared it; the
- * joined file has another. */
+ * joined file has another; tried as the definition's extern struct Trigger
+ * gYampiDesertCave_Triggers[], it does not compile in tla-ja:
+ * games/tla/src/scene/yampi_desert_cave.c:903: `gYampiDesertCave_Triggers'
+ * undeclared (first use in this function). */
 extern const u8
     gYampiDesertCave_Triggers__first[] __asm__("gYampiDesertCave_Triggers");
 #define gYampiDesertCave_Triggers gYampiDesertCave_Triggers__first
 /* VIEW(first): routine gYampiDesertCave_Room2Triggers as this part declared it;
- * the joined file has another. */
+ * the joined file has another; tried as the definition's extern struct Trigger
+ * gYampiDesertCave_Room2Triggers[], it does not compile in tla-ja:
+ * games/tla/src/scene/yampi_desert_cave.c:900: `gYampiDesertCave_Room2Triggers'
+ * undeclared (first use in this function). */
 extern const u8 gYampiDesertCave_Room2Triggers__first[] __asm__(
     "gYampiDesertCave_Room2Triggers");
 #define gYampiDesertCave_Room2Triggers gYampiDesertCave_Room2Triggers__first
 /* VIEW(first): routine gYampiDesertCave_Room3Triggers as this part declared it;
- * the joined file has another. */
+ * the joined file has another; tried as the definition's extern struct Trigger
+ * gYampiDesertCave_Room3Triggers[], it does not compile in tla-ja:
+ * games/tla/src/scene/yampi_desert_cave.c:902: `gYampiDesertCave_Room3Triggers'
+ * undeclared (first use in this function). */
 extern const u8 gYampiDesertCave_Room3Triggers__first[] __asm__(
     "gYampiDesertCave_Room3Triggers");
 #define gYampiDesertCave_Room3Triggers gYampiDesertCave_Room3Triggers__first
@@ -791,7 +817,10 @@ void YampiDesertCave_PoundStake(s32 a, s32 b) {
 }
 
 /* VIEW(first): routine gYampiDesertCave_RipplePath as this part declared it;
- * the joined file has another. */
+ * the joined file has another; tried as the definition's extern
+ * DEFINE_PUSH_LEADER_STEPS(gPushLeaderSteps) u32 gYampiDesertCave_RipplePath[],
+ * it does not compile in tla-ja: games/tla/src/scene/yampi_desert_cave.c:795:
+ * `gYampiDesertCave_RipplePath' undeclared (first use in this function). */
 extern const s16
     gYampiDesertCave_RipplePath__first[] __asm__("gYampiDesertCave_RipplePath");
 #define gYampiDesertCave_RipplePath gYampiDesertCave_RipplePath__first
@@ -920,19 +949,21 @@ const u8 *Scene_GetEvents(void) {
 // room's palette cycle and Retreat destination, the third room's background
 // priorities, and in each room the objects its flags place.
 
-/* VIEW(first): routine gYampiDesertCave_MarkPaletteSlots as this part declared
- * it; the joined file has another. */
-extern u16 gYampiDesertCave_MarkPaletteSlots__first[] __asm__(
-    "gYampiDesertCave_MarkPaletteSlots");
-#define gYampiDesertCave_MarkPaletteSlots                                      \
-  gYampiDesertCave_MarkPaletteSlots__first
+extern s16 gYampiDesertCave_MarkPaletteSlots[];
+#define gYampiDesertCave_MarkPaletteSlots gYampiDesertCave_MarkPaletteSlots
 /* VIEW(first): routine gYampiDesertCave_MarkColorsLit as this part declared it;
- * the joined file has another. */
+ * the joined file has another; tried as the definition's extern s16
+ * gYampiDesertCave_MarkColorsLit[], it does not compile in tla-ja:
+ * games/tla/src/scene/yampi_desert_cave.c:932: `gYampiDesertCave_MarkColorsLit'
+ * undeclared (first use in this function). */
 extern u16 gYampiDesertCave_MarkColorsLit__first[] __asm__(
     "gYampiDesertCave_MarkColorsLit");
 #define gYampiDesertCave_MarkColorsLit gYampiDesertCave_MarkColorsLit__first
 /* VIEW(first): routine gYampiDesertCave_MarkColorsDim as this part declared it;
- * the joined file has another. */
+ * the joined file has another; tried as the definition's extern s16
+ * gYampiDesertCave_MarkColorsDim[], it does not compile in tla-ja:
+ * games/tla/src/scene/yampi_desert_cave.c:933: `gYampiDesertCave_MarkColorsDim'
+ * undeclared (first use in this function). */
 extern u16 gYampiDesertCave_MarkColorsDim__first[] __asm__(
     "gYampiDesertCave_MarkColorsDim");
 #define gYampiDesertCave_MarkColorsDim gYampiDesertCave_MarkColorsDim__first
@@ -1066,44 +1097,9 @@ s32 Scene_PrepareMap(void) { return 0; }
 #undef gYampiDesertCave_MarkColorsLit
 #undef gYampiDesertCave_MarkColorsDim
 
-/* VIEW(data): routine YampiDesertCave_BurstRoom1Pillar as this part declared
- * it; the joined file has another. */
-void YampiDesertCave_BurstRoom1Pillar__data(void) __asm__(
-    "YampiDesertCave_BurstRoom1Pillar");
-#define YampiDesertCave_BurstRoom1Pillar YampiDesertCave_BurstRoom1Pillar__data
-/* VIEW(data): routine YampiDesertCave_BurstRoom3Pillar as this part declared
- * it; the joined file has another. */
-void YampiDesertCave_BurstRoom3Pillar__data(void) __asm__(
-    "YampiDesertCave_BurstRoom3Pillar");
-#define YampiDesertCave_BurstRoom3Pillar YampiDesertCave_BurstRoom3Pillar__data
-/* VIEW(data): routine YampiDesertCave_StartMovingPillar as this part declared
- * it; the joined file has another. */
-void YampiDesertCave_StartMovingPillar__data(void) __asm__(
-    "YampiDesertCave_StartMovingPillar");
-#define YampiDesertCave_StartMovingPillar                                      \
-  YampiDesertCave_StartMovingPillar__data
-/* VIEW(data): routine YampiDesertCave_FinishMovingPillar as this part declared
- * it; the joined file has another. */
-void YampiDesertCave_FinishMovingPillar__data(void) __asm__(
-    "YampiDesertCave_FinishMovingPillar");
-#define YampiDesertCave_FinishMovingPillar                                     \
-  YampiDesertCave_FinishMovingPillar__data
-/* VIEW(data): routine YampiDesertCave_PoundStake as this part declared it; the
- * joined file has another. */
-void YampiDesertCave_PoundStake__data(void) __asm__(
-    "YampiDesertCave_PoundStake");
-#define YampiDesertCave_PoundStake YampiDesertCave_PoundStake__data
-/* VIEW(data): routine YampiDesertCave_ScoopDjinni as this part declared it; the
- * joined file has another. */
-void YampiDesertCave_ScoopDjinni__data(void) __asm__(
-    "YampiDesertCave_ScoopDjinni");
-#define YampiDesertCave_ScoopDjinni YampiDesertCave_ScoopDjinni__data
+#define YampiDesertCave_StartMovingPillar YampiDesertCave_StartMovingPillar
+#define YampiDesertCave_FinishMovingPillar YampiDesertCave_FinishMovingPillar
 void YampiDesertCave_MeetGuardianOfFire(void);
-/* VIEW(data): routine YampiDesertCave_ScoopTreasure as this part declared it;
- * the joined file has another. */
-void YampiDesertCave_ScoopTreasure__data(void) __asm__(
-    "YampiDesertCave_ScoopTreasure");
-#define YampiDesertCave_ScoopTreasure YampiDesertCave_ScoopTreasure__data
 
 // clang-format off
 u16 gYampiDesertCave_LogSprites[] = {
@@ -1303,10 +1299,5 @@ struct Trigger gYampiDesertCave_Room3Triggers[] = {
      IF_FLAG_SET(0x270), EVENT(YampiDesertCave_ScoopDjinni)},
     {TRIGGER_TABLE_END},
 };
-#undef YampiDesertCave_BurstRoom1Pillar
-#undef YampiDesertCave_BurstRoom3Pillar
 #undef YampiDesertCave_StartMovingPillar
 #undef YampiDesertCave_FinishMovingPillar
-#undef YampiDesertCave_PoundStake
-#undef YampiDesertCave_ScoopDjinni
-#undef YampiDesertCave_ScoopTreasure

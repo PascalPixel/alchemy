@@ -106,11 +106,17 @@ struct MainRoutineWork254 {
 };
 
 /* VIEW(first): routine gData_020022e8 as this part declared it; the joined file
- * has another. */
+ * has another; tried as the definition's extern struct Trigger
+ * gData_020022e8[], it does not compile in tla-ja:
+ * games/tla/src/scene/jupiter_lighthouse_basement.c:148: `gData_020022e8'
+ * undeclared (first use in this function). */
 extern const u8 gData_020022e8__first[] __asm__("gData_020022e8");
 #define gData_020022e8 gData_020022e8__first
 /* VIEW(first): routine gData_0200236c as this part declared it; the joined file
- * has another. */
+ * has another; tried as the definition's extern struct Trigger
+ * gData_0200236c[], it does not compile in tla-ja:
+ * games/tla/src/scene/jupiter_lighthouse_basement.c:147: `gData_0200236c'
+ * undeclared (first use in this function). */
 extern const u8 gData_0200236c__first[] __asm__("gData_0200236c");
 #define gData_0200236c gData_0200236c__first
 
@@ -276,7 +282,10 @@ s32 Scene_PrepareMap(void) {
 #include "shared/scene_set_arrival_flags.c"
 
 /* VIEW(first): routine gPaletteCyclePausesInEvents as this part declared it;
- * the joined file has another. */
+ * the joined file has another; tried as the definition's extern s32
+ * gPaletteCyclePausesInEvents, it does not compile in tla-ja:
+ * games/tla/src/scene/jupiter_lighthouse_basement.c:278:
+ * `gPaletteCyclePausesInEvents' undeclared (first use in this function). */
 extern s32
     gPaletteCyclePausesInEvents__first __asm__("gPaletteCyclePausesInEvents");
 #define gPaletteCyclePausesInEvents gPaletteCyclePausesInEvents__first
@@ -286,7 +295,10 @@ void PaletteCycle_SetPausesInEvents(s32 value) {
 }
 
 /* VIEW(first): routine gPaletteCycleFrame as this part declared it; the joined
- * file has another. */
+ * file has another; tried as the definition's extern s32 gPaletteCycleFrame, it
+ * does not compile in tla-ja:
+ * games/tla/src/scene/jupiter_lighthouse_basement.c:287: `gPaletteCycleFrame'
+ * undeclared (first use in this function). */
 extern s32 gPaletteCycleFrame__first __asm__("gPaletteCycleFrame");
 #define gPaletteCycleFrame gPaletteCycleFrame__first
 
@@ -312,7 +324,10 @@ DEFINE_WHIRLWIND_CARRY_LEADER_LOWER(Whirlwind_CarryLeaderLower)
 DEFINE_POSITION_FLAT_DISTANCE(Position_FlatDistance)
 
 /* VIEW(first): routine gWhirlwindEndScript as this part declared it; the joined
- * file has another. */
+ * file has another; tried as the definition's extern u32 gWhirlwindEndScript[],
+ * it does not compile in tla-ja:
+ * games/tla/src/scene/jupiter_lighthouse_basement.c:297: `gWhirlwindEndScript'
+ * undeclared (first use in this function). */
 extern const s32 gWhirlwindEndScript__first[] __asm__("gWhirlwindEndScript");
 #define gWhirlwindEndScript gWhirlwindEndScript__first
 
@@ -353,26 +368,8 @@ s32 Func_02000a64(struct Actor *object) {
   return 0;
 }
 
-DEFINE_JUPITER_LIGHTHOUSE_PLACE_RAISED_ACTORS(
-    JupiterLighthouse_PlaceRaisedActors)
-
-// Queues the lit actors' sprites: for each listed actor with a position,
-// projects it from the map's view, skips it off screen, and writes a 16 by 16
-// sprite, or a 32 by 64 one when the big switch is set, at its animation
-// picture and depth.
-
-/* VIEW(s098c): variable gData_020024f4 as s16 gData_020024f4;
- * module/scene/clear.h has u16 gData_020024f4[]; tried as the definition's
- * extern u16 gData_020024f4[], which the object already declares, it does not
- * compile in tla-ja: games/tla/src/scene/jupiter_lighthouse_basement.c:321:
- * dereferencing pointer to incomplete type. */
-extern s16 gData_020024f4__s098c __asm__("gData_020024f4");
-
-/* VIEW(s098c): routine Oam_AddSpriteAtDepthClamped as this part declared it;
- * the joined file has another. */
-void Oam_AddSpriteAtDepthClamped__s098c(
-    struct LightOam *oam, s32 depth) __asm__("Oam_AddSpriteAtDepthClamped");
-#define Oam_AddSpriteAtDepthClamped Oam_AddSpriteAtDepthClamped__s098c
+extern DEFINE_JUPITER_LIGHTHOUSE_PLACE_RAISED_ACTORS(
+    JupiterLighthouse_PlaceRaisedActors) extern s16 gData_020024f4;
 
 void LightSprites_Draw(void) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
@@ -397,8 +394,8 @@ void LightSprites_Draw(void) {
       z = actor->z - viewZ - viewY;
       oy = z - y;
       depth = ((y + z) >> 16) + 58;
-      big = gData_020024f4__s098c;
-      big = gData_020024f4__s098c;
+      big = gData_020024f4;
+      big = gData_020024f4;
       if (big == 0) {
         s32 x, sy;
         frame = actor->timer;
@@ -452,18 +449,15 @@ static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 
 DEFINE_LIGHT_SPRITES_INIT_A(LightSprites_InitA, gLightSpriteActors,
                             gLightSpriteTile, LightSprites_Draw,
-                            gLightSpriteCount, gData_020024f4__s098c,
-                            gData_020024f6)
+                            gLightSpriteCount, gData_020024f4, gData_020024f6)
 
 DEFINE_LIGHT_SPRITES_INIT_B(LightSprites_InitB, gLightSpriteActors,
                             gLightSpriteTile, LightSprites_Draw,
-                            gLightSpriteCount, gData_020024f4__s098c,
-                            gData_020024f6)
+                            gLightSpriteCount, gData_020024f4, gData_020024f6)
 
 DEFINE_LIGHT_SPRITES_INIT_C(LightSprites_InitC, gLightSpriteActors,
                             gLightSpriteTile, LightSprites_Draw,
-                            gLightSpriteCount, gData_020024f4__s098c,
-                            gData_020024f6)
+                            gLightSpriteCount, gData_020024f4, gData_020024f6)
 
 DEFINE_LIGHT_SPRITES_ADD(LightSprites_Add, gLightSpriteCount,
                          gLightSpriteActors)
@@ -480,17 +474,10 @@ void Func_02001008(s32 value) { gData_020024f6 = value; }
 #undef gPaletteCyclePausesInEvents
 #undef gPaletteCycleFrame
 #undef gWhirlwindEndScript
-#undef Oam_AddSpriteAtDepthClamped
 // @file
 // Scene code of overlay 0x699, in ROM order.
 
 extern const s32 *gFieldEffect_DurationScripts[];
-
-/* VIEW(s1094): routine Actor_StartScript as this part declared it; the joined
- * file has another. */
-void Actor_StartScript__s1094(struct FieldEffect *effect,
-                              const s32 *script) __asm__("Actor_StartScript");
-#define Actor_StartScript Actor_StartScript__s1094
 
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,

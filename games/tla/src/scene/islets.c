@@ -151,7 +151,9 @@ void Func_02001cac(void);
 void Func_02001cfc(void);
 
 /* VIEW(first): routine gSmokeScript as this part declared it; the joined file
- * has another. */
+ * has another; tried as the definition's extern u32 gSmokeScript[], it does not
+ * compile in tla-ja: games/tla/src/scene/islets.c:739: `gSmokeScript'
+ * undeclared (first use in this function). */
 extern const u8 gSmokeScript__first[] __asm__("gSmokeScript");
 #define gSmokeScript gSmokeScript__first
 extern struct Trigger gData_02004b14[];
@@ -207,11 +209,15 @@ extern s32 gData_02005194;
 extern s32 gData_02005198;
 extern s32 gData_0200519c;
 /* VIEW(first): routine gData_02004028 as this part declared it; the joined file
- * has another. */
+ * has another; tried as the one declaration extern const u8 gData_02004028[],
+ * it does not compile in tla-ja: games/tla/src/scene/islets.c:1610:
+ * `gData_02004028' undeclared (first use in this function). */
 extern const u8 gData_02004028__first[] __asm__("gData_02004028");
 #define gData_02004028 gData_02004028__first
 /* VIEW(first): routine gData_020046bc as this part declared it; the joined file
- * has another. */
+ * has another; tried as the definition's extern u32 gData_020046bc[], it does
+ * not compile in tla-ja: games/tla/src/scene/islets.c:1606: `gData_020046bc'
+ * undeclared (first use in this function). */
 extern const struct IsletsExit
     gData_020046bc__first[] __asm__("gData_020046bc");
 #define gData_020046bc gData_020046bc__first
@@ -745,11 +751,15 @@ struct Actor *Func_02000da0(struct Actor *object, s32 value) {
 DEFINE_ACTOR_EMIT_SMOKE(Actor_EmitSmoke, 3, Actor_SelectAnimation, gSmokeScript)
 
 /* VIEW(first): routine gData_020043f8 as this part declared it; the joined file
- * has another. */
+ * has another; tried as the definition's extern s32 gData_020043f8[], it does
+ * not compile in tla-ja: games/tla/src/scene/islets.c:779: `gData_020043f8'
+ * undeclared (first use in this function). */
 extern const u8 gData_020043f8__first[] __asm__("gData_020043f8");
 #define gData_020043f8 gData_020043f8__first
 /* VIEW(first): routine gData_02004300 as this part declared it; the joined file
- * has another. */
+ * has another; tried as the definition's extern s32 gData_02004300[], it does
+ * not compile in tla-ja: games/tla/src/scene/islets.c:789: `gData_02004300'
+ * undeclared (first use in this function). */
 extern const u8 gData_02004300__first[] __asm__("gData_02004300");
 #define gData_02004300 gData_02004300__first
 
@@ -882,7 +892,9 @@ void Func_02001278(struct Actor *object) {
 #endif
 
 /* VIEW(first): routine gData_02004004 as this part declared it; the joined file
- * has another. */
+ * has another; tried as the definition's extern u32 gData_02004004[], it does
+ * not compile in tla-ja: games/tla/src/scene/islets.c:883: `gData_02004004'
+ * undeclared (first use in this function). */
 extern struct ActionScript gData_02004004__first __asm__("gData_02004004");
 #define gData_02004004 gData_02004004__first
 
@@ -1112,11 +1124,15 @@ void Func_020014e0(void) {
 }
 
 /* VIEW(first): routine gData_020045a4 as this part declared it; the joined file
- * has another. */
+ * has another; tried as the one declaration extern const u8 gData_020045a4[],
+ * it does not compile in tla-ja: games/tla/src/scene/islets.c:1150:
+ * `gData_020045a4' undeclared (first use in this function). */
 extern const u8 gData_020045a4__first[] __asm__("gData_020045a4");
 #define gData_020045a4 gData_020045a4__first
 /* VIEW(first): routine gData_020045f0 as this part declared it; the joined file
- * has another. */
+ * has another; tried as the one declaration extern const u8 gData_020045f0[],
+ * it does not compile in tla-ja: games/tla/src/scene/islets.c:1153:
+ * `gData_020045f0' undeclared (first use in this function). */
 extern const u8 gData_020045f0__first[] __asm__("gData_020045f0");
 #define gData_020045f0 gData_020045f0__first
 
@@ -1209,9 +1225,9 @@ void Func_02001c4c(void) {
 
 /* VIEW(scene_tables): variable gData_02004f04 as u8 gData_02004f04;
  * module/scene/prox.h has s32 gData_02004f04[]; tried as the definition's
- * extern s32 gData_02004f04[], which the object already declares, it does not
- * compile in tla-ja: games/tla/src/scene/islets.c:1105:
- * `gData_02004f04__scene_tables' undeclared (first use in this function). */
+ * extern s32 gData_02004f04[], it does not compile in tla-ja:
+ * games/tla/src/scene/islets.c:1207: `gData_02004f04__scene_tables' undeclared
+ * (first use in this function). */
 extern u8 gData_02004f04__scene_tables __asm__("gData_02004f04");
 extern s16 gData_02004f10[2][160];
 
@@ -1714,11 +1730,15 @@ void Func_02002830(void) {
 #define OBJECT(id) ((struct Actor *)((s32)Actor_Get((id))))
 
 /* VIEW(first): routine gData_02004508 as this part declared it; the joined file
- * has another. */
+ * has another; tried as the one declaration extern const u8 gData_02004508[],
+ * it does not compile in tla-ja: games/tla/src/scene/islets.c:1739:
+ * `gData_02004508' undeclared (first use in this function). */
 extern const u8 gData_02004508__first[] __asm__("gData_02004508");
 #define gData_02004508 gData_02004508__first
 /* VIEW(first): routine gData_02004554 as this part declared it; the joined file
- * has another. */
+ * has another; tried as the one declaration extern const u8 gData_02004554[],
+ * it does not compile in tla-ja: games/tla/src/scene/islets.c:1740:
+ * `gData_02004554' undeclared (first use in this function). */
 extern const u8 gData_02004554__first[] __asm__("gData_02004554");
 #define gData_02004554 gData_02004554__first
 
@@ -1922,7 +1942,9 @@ void Func_02002d7c(void) {
 }
 
 /* VIEW(first): routine gData_02004274 as this part declared it; the joined file
- * has another. */
+ * has another; tried as the definition's extern u32 gData_02004274[], it does
+ * not compile in tla-ja: games/tla/src/scene/islets.c:1962: `gData_02004274'
+ * undeclared (first use in this function). */
 extern const u8 gData_02004274__first[] __asm__("gData_02004274");
 #define gData_02004274 gData_02004274__first
 
@@ -2288,7 +2310,7 @@ void Func_020034ec(void) {
 /* VIEW(s3410): tag struct PaletteCycleWork as struct PaletteCycleWork__s3410;
  * palette_snapshots.h has another definition; tried with the definition the
  * rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/islets.c:2186: structure has no member named `count'. */
+ * games/tla/src/scene/islets.c:2277: structure has no member named `count'. */
 struct PaletteCycleWork__s3410 {
   struct PaletteCycle entries[4];
   u16 count;
@@ -2362,7 +2384,9 @@ void Func_0200367c(void) {
 // with no footprint. The twin of overlay 668's Func_020040ec.
 
 /* VIEW(s3410): routine gPushFootprints as this part declared it; the joined
- * file has another. */
+ * file has another; tried as the definition's extern u32 gPushFootprints[], it
+ * does not compile in tla-ja: games/tla/src/scene/islets.c:2375:
+ * `gPushFootprints' undeclared (first use in this function). */
 extern s8 gPushFootprints__s3410[][4] __asm__("gPushFootprints");
 #define gPushFootprints gPushFootprints__s3410
 

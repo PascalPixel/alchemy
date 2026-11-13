@@ -333,37 +333,33 @@ u32 *Scene_GetRegions(void) {
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-/* VIEW(kandorean_temple): routine gKandoreanTemple_Placements as this part
- * declared it; the joined file has another. */
-extern u32 gKandoreanTemple_Placements__kandorean_temple[] __asm__(
-    "gKandoreanTemple_Placements");
-#define gKandoreanTemple_Placements                                            \
-  gKandoreanTemple_Placements__kandorean_temple
+extern struct ActorPlacement gKandoreanTemple_Placements[];
+#define gKandoreanTemple_Placements gKandoreanTemple_Placements
 /* VIEW(kandorean_temple): routine gKandoreanTemple_LiftRoomPlacements as this
- * part declared it; the joined file has another. */
+ * part declared it; the joined file has another; tried as the one declaration
+ * extern u32 gKandoreanTemple_LiftRoomPlacements[], it does not compile in
+ * tla-ja: games/tla/src/scene/kandorean_temple.c:3276: conflicting types for
+ * `gKandoreanTemple_LiftRoomPlacements'. */
 extern u32 gKandoreanTemple_LiftRoomPlacements__kandorean_temple[] __asm__(
     "gKandoreanTemple_LiftRoomPlacements");
 #define gKandoreanTemple_LiftRoomPlacements                                    \
   gKandoreanTemple_LiftRoomPlacements__kandorean_temple
 /* VIEW(kandorean_temple): routine gKandoreanTemple_ChestbeaterRoomPlacements as
- * this part declared it; the joined file has another. */
+ * this part declared it; the joined file has another; tried as the definition's
+ * extern DEFINE_G_DATA_020057C0(gKandoreanTemple_LiftRoomPlacements, 407, 1, 2,
+ * 3, 4, 272, 5, 351) struct ActorPlacement gKandoreanTemple_Ches..., it does
+ * not compile in tla-ja: games/tla/src/scene/kandorean_temple.c:344:
+ * conflicting types for
+ * `gKandoreanTemple_LiftRoomPlacements__kandorean_temple'. */
 extern u32
     gKandoreanTemple_ChestbeaterRoomPlacements__kandorean_temple[] __asm__(
         "gKandoreanTemple_ChestbeaterRoomPlacements");
 #define gKandoreanTemple_ChestbeaterRoomPlacements                             \
   gKandoreanTemple_ChestbeaterRoomPlacements__kandorean_temple
-/* VIEW(kandorean_temple): routine gKandoreanTemple_VentRoomPlacements as this
- * part declared it; the joined file has another. */
-extern u32 gKandoreanTemple_VentRoomPlacements__kandorean_temple[] __asm__(
-    "gKandoreanTemple_VentRoomPlacements");
-#define gKandoreanTemple_VentRoomPlacements                                    \
-  gKandoreanTemple_VentRoomPlacements__kandorean_temple
-/* VIEW(kandorean_temple): routine gKandoreanTemple_FogRoomPlacements as this
- * part declared it; the joined file has another. */
-extern u32 gKandoreanTemple_FogRoomPlacements__kandorean_temple[] __asm__(
-    "gKandoreanTemple_FogRoomPlacements");
-#define gKandoreanTemple_FogRoomPlacements                                     \
-  gKandoreanTemple_FogRoomPlacements__kandorean_temple
+extern struct ActorPlacement gKandoreanTemple_VentRoomPlacements[];
+#define gKandoreanTemple_VentRoomPlacements gKandoreanTemple_VentRoomPlacements
+extern struct ActorPlacement gKandoreanTemple_FogRoomPlacements[];
+#define gKandoreanTemple_FogRoomPlacements gKandoreanTemple_FogRoomPlacements
 
 void *Scene_GetPlacements(void) {
   s32 scene = gMainRoutineWork.scene;
@@ -428,58 +424,30 @@ void KandoreanTemple_KradenSuspectsTheWall(void) {
 }
 
 /* VIEW(kandorean_temple): routine gKandoreanTemple_Events as this part declared
- * it; the joined file has another. */
+ * it; the joined file has another; tried as the definition's extern struct
+ * Trigger gKandoreanTemple_Events[], it does not compile in tla-ja:
+ * games/tla/src/scene/kandorean_temple.c:465: `gKandoreanTemple_Events'
+ * undeclared (first use in this function). */
 extern s32 gKandoreanTemple_Events__kandorean_temple[] __asm__(
     "gKandoreanTemple_Events");
 #define gKandoreanTemple_Events gKandoreanTemple_Events__kandorean_temple
-/* VIEW(kandorean_temple): routine gKandoreanTemple_LiftRoomEvents as this part
- * declared it; the joined file has another. */
-extern s32 gKandoreanTemple_LiftRoomEvents__kandorean_temple[] __asm__(
-    "gKandoreanTemple_LiftRoomEvents");
-#define gKandoreanTemple_LiftRoomEvents                                        \
-  gKandoreanTemple_LiftRoomEvents__kandorean_temple
-/* VIEW(kandorean_temple): routine gKandoreanTemple_ChestbeaterRoomEvents as
- * this part declared it; the joined file has another. */
-extern s32 gKandoreanTemple_ChestbeaterRoomEvents__kandorean_temple[] __asm__(
-    "gKandoreanTemple_ChestbeaterRoomEvents");
+extern struct Trigger gKandoreanTemple_LiftRoomEvents[];
+#define gKandoreanTemple_LiftRoomEvents gKandoreanTemple_LiftRoomEvents
+extern struct Trigger gKandoreanTemple_ChestbeaterRoomEvents[];
 #define gKandoreanTemple_ChestbeaterRoomEvents                                 \
-  gKandoreanTemple_ChestbeaterRoomEvents__kandorean_temple
-/* VIEW(kandorean_temple): routine gKandoreanTemple_VentRoomEvents as this part
- * declared it; the joined file has another. */
-extern s32 gKandoreanTemple_VentRoomEvents__kandorean_temple[] __asm__(
-    "gKandoreanTemple_VentRoomEvents");
-#define gKandoreanTemple_VentRoomEvents                                        \
-  gKandoreanTemple_VentRoomEvents__kandorean_temple
-/* VIEW(kandorean_temple): routine gKandoreanTemple_Room5Events as this part
- * declared it; the joined file has another. */
-extern s32 gKandoreanTemple_Room5Events__kandorean_temple[] __asm__(
-    "gKandoreanTemple_Room5Events");
-#define gKandoreanTemple_Room5Events                                           \
-  gKandoreanTemple_Room5Events__kandorean_temple
-/* VIEW(kandorean_temple): routine gKandoreanTemple_Room6Events as this part
- * declared it; the joined file has another. */
-extern s32 gKandoreanTemple_Room6Events__kandorean_temple[] __asm__(
-    "gKandoreanTemple_Room6Events");
-#define gKandoreanTemple_Room6Events                                           \
-  gKandoreanTemple_Room6Events__kandorean_temple
-/* VIEW(kandorean_temple): routine gKandoreanTemple_FogRoomEvents as this part
- * declared it; the joined file has another. */
-extern s32 gKandoreanTemple_FogRoomEvents__kandorean_temple[] __asm__(
-    "gKandoreanTemple_FogRoomEvents");
-#define gKandoreanTemple_FogRoomEvents                                         \
-  gKandoreanTemple_FogRoomEvents__kandorean_temple
-/* VIEW(kandorean_temple): routine gKandoreanTemple_GateEvents as this part
- * declared it; the joined file has another. */
-extern s32 gKandoreanTemple_GateEvents__kandorean_temple[] __asm__(
-    "gKandoreanTemple_GateEvents");
-#define gKandoreanTemple_GateEvents                                            \
-  gKandoreanTemple_GateEvents__kandorean_temple
-/* VIEW(kandorean_temple): routine gKandoreanTemple_PoisHallEvents as this part
- * declared it; the joined file has another. */
-extern s32 gKandoreanTemple_PoisHallEvents__kandorean_temple[] __asm__(
-    "gKandoreanTemple_PoisHallEvents");
-#define gKandoreanTemple_PoisHallEvents                                        \
-  gKandoreanTemple_PoisHallEvents__kandorean_temple
+  gKandoreanTemple_ChestbeaterRoomEvents
+extern struct Trigger gKandoreanTemple_VentRoomEvents[];
+#define gKandoreanTemple_VentRoomEvents gKandoreanTemple_VentRoomEvents
+extern struct Trigger gKandoreanTemple_Room5Events[];
+#define gKandoreanTemple_Room5Events gKandoreanTemple_Room5Events
+extern struct Trigger gKandoreanTemple_Room6Events[];
+#define gKandoreanTemple_Room6Events gKandoreanTemple_Room6Events
+extern struct Trigger gKandoreanTemple_FogRoomEvents[];
+#define gKandoreanTemple_FogRoomEvents gKandoreanTemple_FogRoomEvents
+extern struct Trigger gKandoreanTemple_GateEvents[];
+#define gKandoreanTemple_GateEvents gKandoreanTemple_GateEvents
+extern struct Trigger gKandoreanTemple_PoisHallEvents[];
+#define gKandoreanTemple_PoisHallEvents gKandoreanTemple_PoisHallEvents
 
 void *Scene_GetEvents(void) {
   s32 scene = gMainRoutineWork.scene;
@@ -568,7 +536,7 @@ void KandoreanTemple_PushThroughTheSteam(void) {
  * EventWork1cc__kandorean_temple; module/tla.h has another definition; tried
  * with the definition the rest of the object has, its members read focus as
  * object, it does not compile in tla-ja:
- * games/tla/src/scene/kandorean_temple.c:298: dereferencing pointer to
+ * games/tla/src/scene/kandorean_temple.c:535: dereferencing pointer to
  * incomplete type. */
 struct EventWork1cc__kandorean_temple {
   u8 unk000[0x1cc];
@@ -1394,7 +1362,7 @@ void KandoreanTemple_WatchLifts(void) {
 /* VIEW(kandorean_temple): tag struct MapCell as struct
  * MapCell__kandorean_temple; map.h has another definition; tried with the
  * definition the rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/kandorean_temple.c:1135: arithmetic on pointer to an
+ * games/tla/src/scene/kandorean_temple.c:1372: arithmetic on pointer to an
  * incomplete type. */
 struct MapCell__kandorean_temple {
   u8 unk0[2];
@@ -3128,29 +3096,10 @@ void KandoreanTemple_LowerTheLadder(void) {
 }
 
 void KandoreanTemple_FightFog(void);
-/* VIEW(events): routine KandoreanTemple_CountDownSteam as this part declared
- * it; the joined file has another. */
-void KandoreanTemple_CountDownSteam__events(void) __asm__(
-    "KandoreanTemple_CountDownSteam");
-#define KandoreanTemple_CountDownSteam KandoreanTemple_CountDownSteam__events
-/* VIEW(events): routine KandoreanTemple_MeditateRestlessly as this part
- * declared it; the joined file has another. */
-void KandoreanTemple_MeditateRestlessly__events(void) __asm__(
-    "KandoreanTemple_MeditateRestlessly");
-#define KandoreanTemple_MeditateRestlessly                                     \
-  KandoreanTemple_MeditateRestlessly__events
-/* VIEW(events): routine KandoreanTemple_LevitateStudentBob as this part
- * declared it; the joined file has another. */
-void KandoreanTemple_LevitateStudentBob__events(void) __asm__(
-    "KandoreanTemple_LevitateStudentBob");
-#define KandoreanTemple_LevitateStudentBob                                     \
-  KandoreanTemple_LevitateStudentBob__events
-/* VIEW(events): routine KandoreanTemple_PlaceLevitatingStudent as this part
- * declared it; the joined file has another. */
-void KandoreanTemple_PlaceLevitatingStudent__events(void) __asm__(
-    "KandoreanTemple_PlaceLevitatingStudent");
+#define KandoreanTemple_MeditateRestlessly KandoreanTemple_MeditateRestlessly
+#define KandoreanTemple_LevitateStudentBob KandoreanTemple_LevitateStudentBob
 #define KandoreanTemple_PlaceLevitatingStudent                                 \
-  KandoreanTemple_PlaceLevitatingStudent__events
+  KandoreanTemple_PlaceLevitatingStudent
 void KandoreanTemple_StartMovingPillar(void);
 void KandoreanTemple_ReceiveLash(void);
 
@@ -3571,7 +3520,6 @@ struct Trigger gKandoreanTemple_PoisHallEvents[] = {
     {TRIGGER_TABLE_END},
 };
 // clang-format on
-#undef KandoreanTemple_CountDownSteam
 #undef KandoreanTemple_MeditateRestlessly
 #undef KandoreanTemple_LevitateStudentBob
 #undef KandoreanTemple_PlaceLevitatingStudent

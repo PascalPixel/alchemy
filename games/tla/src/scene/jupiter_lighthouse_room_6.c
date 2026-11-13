@@ -226,7 +226,11 @@ DEFINE_WHIRLWIND_UPDATE(Whirlwind_Update, MapGrid_GetCellBehavior,
                         gWhirlwindRiding)
 
 /* VIEW(first): routine FieldEffect_Spawn as this part declared it; the joined
- * file has another. */
+ * file has another; tried as the definition's void FieldEffect_Spawn(s32 x, s32
+ * y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags, const
+ * struct EffectOptions *options), which the object already declares, it does
+ * not compile in tla-ja: games/tla/src/scene/jupiter_lighthouse_room_6.c:224:
+ * `Whirlwind_Update' undeclared (first use in this function). */
 void FieldEffect_Spawn__first(
     s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags,
     struct EffectOptions *options) __asm__("FieldEffect_Spawn");
@@ -241,12 +245,6 @@ DEFINE_JUPITER_LIGHTHOUSE_PLACE_RAISED_ACTORS(
     JupiterLighthouse_PlaceRaisedActors)
 
 extern struct Actor *gLightSpriteActors[];
-
-/* VIEW(first): routine Oam_AddSpriteAtDepthClamped as this part declared it;
- * the joined file has another. */
-void Oam_AddSpriteAtDepthClamped__first(
-    struct LightOam *oam, s32 depth) __asm__("Oam_AddSpriteAtDepthClamped");
-#define Oam_AddSpriteAtDepthClamped Oam_AddSpriteAtDepthClamped__first
 
 /// Queues the lit actors' sprites: for each listed actor with a position,
 /// projects it from the map's view, skips it off screen, and writes a 16 by 16
@@ -379,7 +377,6 @@ const s32 *gFieldEffect_DurationScripts[] = {
 
 #undef FLAG_DOOR_BUTTON_HELD
 #undef FieldEffect_Spawn
-#undef Oam_AddSpriteAtDepthClamped
 #undef CrackedTiles_Find
 #undef CrackedTiles_Step
 // @file
@@ -387,12 +384,6 @@ const s32 *gFieldEffect_DurationScripts[] = {
 // and the cracked tiles, found, cracked and fallen through.
 
 extern const s32 *gFieldEffect_DurationScripts[];
-
-/* VIEW(cracked_tiles): routine Actor_StartScript as this part declared it; the
- * joined file has another. */
-void Actor_StartScript__cracked_tiles(
-    struct FieldEffect *effect, const s32 *script) __asm__("Actor_StartScript");
-#define Actor_StartScript Actor_StartScript__cracked_tiles
 
 void Import_ActorSelectAnimation(struct FieldEffect *effect, s32 mode);
 
@@ -508,7 +499,6 @@ DEFINE_CRACKED_TILE_FALL(CrackedTile_Fall, CellTarget__s158c,
 #undef CELL_TABLE
 #undef CELL_SPRITE_DRAW
 #undef CELL_PUSH_SLOT_ENTRY
-#undef Actor_StartScript
 // @file
 // The hall below Jupiter Lighthouse's aerie: the cracked tiles' steps and
 // landings.
@@ -520,30 +510,15 @@ extern u32 gFieldEffect_MediumScript[];
 extern u32 gFieldEffect_LongScript[];
 void JupiterLighthouse_FinishMovingBlock(void);
 
-/* VIEW(cracked_tile_steps): routine FieldEffect_Spawn as this part declared it;
- * the joined file has another. */
-void FieldEffect_Spawn__cracked_tile_steps(
-    s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags,
-    struct EffectOptions *options) __asm__("FieldEffect_Spawn");
-#define FieldEffect_Spawn FieldEffect_Spawn__cracked_tile_steps
-
 DEFINE_CRACKED_TILE_DROP_IN(CrackedTile_DropIn, FieldEffect_Spawn)
 
 extern struct CellTarget gCrackedTiles;
 
 void GameFlag_SetByte(s32 flag, s32 value);
 void CrackedTile_Crack(struct CellTarget *work, struct CellTargetEntry *entry);
-/* VIEW(cracked_tile_steps): routine CrackedTile_Fall as this part declared it;
- * the joined file has another. */
-void CrackedTile_Fall__cracked_tile_steps(
-    struct CellTarget *work,
-    struct CellTargetEntry *entry) __asm__("CrackedTile_Fall");
-#define CrackedTile_Fall CrackedTile_Fall__cracked_tile_steps
 
 DEFINE_CRACKED_TILES_STEP(CrackedTiles_Step, gCrackedTiles, CrackedTile_Crack,
                           CrackedTile_Fall)
 
 DEFINE_CRACKED_TILE_PLACE_LANDING(CrackedTile_PlaceLanding, gCrackedTiles,
                                   CrackedTile_DropIn)
-#undef FieldEffect_Spawn
-#undef CrackedTile_Fall

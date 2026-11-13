@@ -305,23 +305,39 @@ s32 Func_020003b4(struct Actor *object) {
 }
 
 /* VIEW(first): routine gData_02006338 as this part declared it; the joined file
- * has another. */
+ * has another; tried as the definition's extern LATE_DATA
+ * DEFINE_G_DATA_02006088(gData_02006088, 409, 376, 344, 312, 278) LATE_DATA
+ * DEFINE_G_DATA_02006088(gData_020061e0, 616, 648, ..., it does not compile in
+ * tla-ja: games/tla/src/scene/world_map.c:330: `gData_02006338' undeclared
+ * (first use in this function). */
 extern u8 gData_02006338__first[] __asm__("gData_02006338");
 #define gData_02006338 gData_02006338__first
 /* VIEW(first): routine gData_02006500 as this part declared it; the joined file
- * has another. */
+ * has another; tried as the definition's extern LATE_DATA struct ActorPlacement
+ * gData_02006500[], it does not compile in tla-ja:
+ * games/tla/src/scene/world_map.c:321: `gData_02006500' undeclared (first use
+ * in this function). */
 extern u8 gData_02006500__first[] __asm__("gData_02006500");
 #define gData_02006500 gData_02006500__first
 /* VIEW(first): routine gData_02006598 as this part declared it; the joined file
- * has another. */
+ * has another; tried as the definition's extern LATE_DATA struct ActorPlacement
+ * gData_02006598[], it does not compile in tla-ja:
+ * games/tla/src/scene/world_map.c:323: `gData_02006598' undeclared (first use
+ * in this function). */
 extern u8 gData_02006598__first[] __asm__("gData_02006598");
 #define gData_02006598 gData_02006598__first
 /* VIEW(first): routine gData_02006700 as this part declared it; the joined file
- * has another. */
+ * has another; tried as the definition's extern LATE_DATA struct ActorPlacement
+ * gData_02006700[], it does not compile in tla-ja:
+ * games/tla/src/scene/world_map.c:326: `gData_02006700' undeclared (first use
+ * in this function). */
 extern u8 gData_02006700__first[] __asm__("gData_02006700");
 #define gData_02006700 gData_02006700__first
 /* VIEW(first): routine gData_02006790 as this part declared it; the joined file
- * has another. */
+ * has another; tried as the definition's extern LATE_DATA struct ActorPlacement
+ * gData_02006790[], it does not compile in tla-ja:
+ * games/tla/src/scene/world_map.c:328: `gData_02006790' undeclared (first use
+ * in this function). */
 extern u8 gData_02006790__first[] __asm__("gData_02006790");
 #define gData_02006790 gData_02006790__first
 
@@ -742,7 +758,9 @@ void Func_02000db0(s32 id) { Func_02003654(id, 3, 2); }
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
 /* VIEW(first): routine gData_0200632c as this part declared it; the joined file
- * has another. */
+ * has another; tried as the definition's extern u32 gData_0200632c[], it does
+ * not compile in tla-ja: games/tla/src/scene/world_map.c:801: `gData_0200632c'
+ * undeclared (first use in this function). */
 extern u8 gData_0200632c__first[] __asm__("gData_0200632c");
 #define gData_0200632c gData_0200632c__first
 
@@ -1560,7 +1578,9 @@ refused:
 }
 
 /* VIEW(first): routine gData_02006bc8 as this part declared it; the joined file
- * has another. */
+ * has another; tried as the definition's extern LATE_DATA u32 gData_02006bc8[],
+ * it does not compile in tla-ja: games/tla/src/scene/world_map.c:1577:
+ * `gData_02006bc8' undeclared (first use in this function). */
 extern const u8 gData_02006bc8__first[] __asm__("gData_02006bc8");
 #define gData_02006bc8 gData_02006bc8__first
 
@@ -2132,9 +2152,9 @@ DEFINE_TILE_SPRITE_RESET(Func_020035e0)
 
 /* VIEW(s3600): variable gData_02006c08 as struct Actor *gData_02006c08[];
  * module/scene/scene.h has u8 gData_02006c08[]. The three parts after see it so
- * too; tried as the rest of the object declares it, it does not compile in
- * tla-ja: games/tla/src/scene/shared/world_map_s3600.c:8: conflicting types for
- * `gData_02006c08'. */
+ * too; tried as the 3 declarations' extern struct Actor *gData_02006c08[], it
+ * does not compile in tla-ja: games/tla/src/scene/shared/world_map_s3600.c:8:
+ * conflicting types for `gData_02006c08'. */
 extern struct Actor *gData_02006c08__s3600[] __asm__("gData_02006c08");
 #define gData_02006c08 gData_02006c08__s3600
 
@@ -2195,7 +2215,11 @@ extern u8 gData_02006e0c[];
 DEFINE_ACTOR_FLICKER(Func_02003b38, Func_020039f4)
 
 /* VIEW(s3b38): routine gData_02006be4 as this part declared it; the joined file
- * has another. */
+ * has another; tried as the definition's extern LATE_DATA
+ * DEFINE_G_DATA_02003584(gData_02006bd4, Func_020035e0, 17, 0) LATE_DATA u32
+ * gData_02006be4[], it does not compile in tla-ja:
+ * games/tla/src/scene/world_map.c:2182: `gData_02006be4' undeclared (first use
+ * in this function). */
 extern s32 gData_02006be4__s3b38 __asm__("gData_02006be4");
 #define gData_02006be4 gData_02006be4__s3b38
 
@@ -2420,7 +2444,7 @@ DEFINE_ACTOR_GROW_DOWN(Func_020045e4, Actor_Release)
  * actor_view.h has s32 Animation_ApplyChildArgument(struct ActorSpriteView *,
  * s32); tried as the definition's s32 Animation_ApplyChildArgument(struct
  * AnimationGroup *state, s32 flags), it does not compile in tla-ja:
- * games/tla/src/scene/world_map.c:2358: `Func_020045e4' undeclared (first use
+ * games/tla/src/scene/world_map.c:2430: `Func_020045e4' undeclared (first use
  * in this function). */
 s32 Animation_ApplyChildArgument__s3b38(
     struct AnimationGroup *state,
@@ -2492,7 +2516,7 @@ extern s16 gData_02006e0e__s3b38 __asm__("gData_02006e0e");
 /* VIEW(s3b38): variable gData_02006f20 as u8 gData_02006f20[][32];
  * module/scene/scene.h has u8 gData_02006f20[]; tried as the rest of the object
  * declares it, it does not compile in tla-ja:
- * games/tla/src/scene/world_map.c:2396: `gData_02006f20__s3b38' undeclared
+ * games/tla/src/scene/world_map.c:2466: `gData_02006f20__s3b38' undeclared
  * (first use in this function). */
 extern u8 gData_02006f20__s3b38[][32] __asm__("gData_02006f20");
 
@@ -2621,44 +2645,8 @@ u32 gData_02004fc8[] = {
 #undef Func_02003418
 
 void Func_02000038(void);
-/* VIEW(data): routine TileSprite_Reset as this part declared it; the joined
- * file has another. */
-void TileSprite_Reset__data(void) __asm__("TileSprite_Reset");
-#define TileSprite_Reset TileSprite_Reset__data
-/* VIEW(data): routine Func_02000388 as this part declared it; the joined file
- * has another. */
-void Func_02000388__data(void) __asm__("Func_02000388");
-#define Func_02000388 Func_02000388__data
-/* VIEW(data): routine Func_020003a8 as this part declared it; the joined file
- * has another. */
-void Func_020003a8__data(void) __asm__("Func_020003a8");
-#define Func_020003a8 Func_020003a8__data
-/* VIEW(data): routine Func_020003b4 as this part declared it; the joined file
- * has another. */
-void Func_020003b4__data(void) __asm__("Func_020003b4");
-#define Func_020003b4 Func_020003b4__data
 void WorldMap_BoardShip(void);
 void WorldMap_LeaveShip(void);
-/* VIEW(data): routine Func_02000d98 as this part declared it; the joined file
- * has another. */
-void Func_02000d98__data(void) __asm__("Func_02000d98");
-#define Func_02000d98 Func_02000d98__data
-/* VIEW(data): routine Func_02000da4 as this part declared it; the joined file
- * has another. */
-void Func_02000da4__data(void) __asm__("Func_02000da4");
-#define Func_02000da4 Func_02000da4__data
-/* VIEW(data): routine Func_02000db0 as this part declared it; the joined file
- * has another. */
-void Func_02000db0__data(void) __asm__("Func_02000db0");
-#define Func_02000db0 Func_02000db0__data
-/* VIEW(data): routine Func_020035e0 as this part declared it; the joined file
- * has another. */
-void Func_020035e0__data(void) __asm__("Func_020035e0");
-#define Func_020035e0 Func_020035e0__data
-/* VIEW(data): routine StoryActor_Initialize as this part declared it; the
- * joined file has another. */
-void StoryActor_Initialize__data(void) __asm__("StoryActor_Initialize");
-#define StoryActor_Initialize StoryActor_Initialize__data
 
 LATE_DATA struct SceneEntrance gSceneEntrances[] = {
     {0, CONDITION_ALWAYS, 9850, 0, 9748, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
@@ -3040,12 +3028,3 @@ LATE_DATA DEFINE_G_DATA_02003584(gData_02006bd4, Func_020035e0, 17, 0)
     LATE_DATA u32 gData_02006be4[] = {
         0,
 };
-#undef TileSprite_Reset
-#undef Func_02000388
-#undef Func_020003a8
-#undef Func_020003b4
-#undef Func_02000d98
-#undef Func_02000da4
-#undef Func_02000db0
-#undef Func_020035e0
-#undef StoryActor_Initialize

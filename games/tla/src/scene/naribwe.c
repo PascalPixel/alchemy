@@ -31,67 +31,106 @@ void Sanctum_Run(s32 a);
 void Naribwe_HideStone(void);
 
 /* VIEW(first): routine gNaribwe_Placements as this part declared it; the joined
- * file has another. */
+ * file has another; tried as the one declaration extern const u8
+ * gNaribwe_Placements[], it does not compile in tla-ja:
+ * games/tla/src/scene/naribwe.c:91: `gNaribwe_Placements' undeclared (first use
+ * in this function). */
 extern const u8 gNaribwe_Placements__first[] __asm__("gNaribwe_Placements");
 #define gNaribwe_Placements gNaribwe_Placements__first
 /* VIEW(first): routine gNaribwe_Entrance10Placements as this part declared it;
- * the joined file has another. */
+ * the joined file has another; tried as the definition's extern
+ * DEFINE_G_SCENE_EXITS_4(105, 106, 2, 23, 24)
+ * DEFINE_NARIBWE_PLACEMENTS(gNaribwe_Placements) struct ActorPlacement
+ * gNaribwe_Entrance10P..., it does not compile in tla-ja:
+ * games/tla/src/scene/naribwe.c:87: `gNaribwe_Entrance10Placements' undeclared
+ * (first use in this function). */
 extern const u8 gNaribwe_Entrance10Placements__first[] __asm__(
     "gNaribwe_Entrance10Placements");
 #define gNaribwe_Entrance10Placements gNaribwe_Entrance10Placements__first
 /* VIEW(first): routine gNaribwe_PlacementsOnReturn as this part declared it;
- * the joined file has another. */
+ * the joined file has another; tried as the one declaration extern const u8
+ * gNaribwe_PlacementsOnReturn[], it does not compile in tla-ja:
+ * games/tla/src/scene/naribwe.c:89: `gNaribwe_PlacementsOnReturn' undeclared
+ * (first use in this function). */
 extern const u8
     gNaribwe_PlacementsOnReturn__first[] __asm__("gNaribwe_PlacementsOnReturn");
 #define gNaribwe_PlacementsOnReturn gNaribwe_PlacementsOnReturn__first
 /* VIEW(first): routine gNaribwe_Triggers as this part declared it; the joined
- * file has another. */
+ * file has another; tried as the definition's extern
+ * DEFINE_NARIBWE_PLACEMENTS(gNaribwe_PlacementsOnReturn) struct Trigger
+ * gNaribwe_Triggers[], it does not compile in tla-ja:
+ * games/tla/src/scene/naribwe.c:109: `gNaribwe_Triggers' undeclared (first use
+ * in this function). */
 extern const u8 gNaribwe_Triggers__first[] __asm__("gNaribwe_Triggers");
 #define gNaribwe_Triggers gNaribwe_Triggers__first
 /* VIEW(first): routine gNaribwe_TriggersOnReturn as this part declared it; the
- * joined file has another. */
+ * joined file has another; tried as the definition's extern struct Trigger
+ * gNaribwe_TriggersOnReturn[], it does not compile in tla-ja:
+ * games/tla/src/scene/naribwe.c:107: `gNaribwe_TriggersOnReturn' undeclared
+ * (first use in this function). */
 extern const u8
     gNaribwe_TriggersOnReturn__first[] __asm__("gNaribwe_TriggersOnReturn");
 #define gNaribwe_TriggersOnReturn gNaribwe_TriggersOnReturn__first
 /* VIEW(first): routine gNaribwe_Doors as this part declared it; the joined file
- * has another. */
+ * has another; tried as the one declaration extern const struct WarpEntry
+ * gNaribwe_Doors[], it does not compile in tla-ja:
+ * games/tla/src/scene/naribwe.c:251: `gNaribwe_Doors' undeclared (first use in
+ * this function). */
 extern const struct WarpEntry gNaribwe_Doors__first[] __asm__("gNaribwe_Doors");
 #define gNaribwe_Doors gNaribwe_Doors__first
 
 /* VIEW(first): routine MsgNaribwe02 as this part declared it; the joined file
- * has another. */
+ * has another; tried as the rest of the object declares it, it does not compile
+ * in tla-ja: games/tla/src/scene/naribwe.c:119: `MsgNaribwe02' undeclared
+ * (first use in this function). */
 extern u8 MsgNaribwe02__first __asm__("MsgNaribwe02");
 #define MsgNaribwe02 MsgNaribwe02__first
 /* VIEW(first): routine MsgNaribwe03 as this part declared it; the joined file
- * has another. */
+ * has another; tried as the rest of the object declares it, it does not compile
+ * in tla-ja: games/tla/src/scene/naribwe.c:130: `MsgNaribwe03' undeclared
+ * (first use in this function). */
 extern u8 MsgNaribwe03__first __asm__("MsgNaribwe03");
 #define MsgNaribwe03 MsgNaribwe03__first
 /* VIEW(first): routine MsgNaribwe07 as this part declared it; the joined file
- * has another. */
+ * has another; tried as the rest of the object declares it, it does not compile
+ * in tla-ja: games/tla/src/scene/naribwe.c:140: `MsgNaribwe07' undeclared
+ * (first use in this function). */
 extern u8 MsgNaribwe07__first __asm__("MsgNaribwe07");
 #define MsgNaribwe07 MsgNaribwe07__first
 /* VIEW(first): routine MsgNaribwe08 as this part declared it; the joined file
- * has another. */
+ * has another; tried as the rest of the object declares it, it does not compile
+ * in tla-ja: games/tla/src/scene/naribwe.c:151: `MsgNaribwe08' undeclared
+ * (first use in this function). */
 extern u8 MsgNaribwe08__first __asm__("MsgNaribwe08");
 #define MsgNaribwe08 MsgNaribwe08__first
 /* VIEW(first): routine MsgNaribwe09 as this part declared it; the joined file
- * has another. */
+ * has another; tried as the rest of the object declares it, it does not compile
+ * in tla-ja: games/tla/src/scene/naribwe.c:158: `MsgNaribwe09' undeclared
+ * (first use in this function). */
 extern u8 MsgNaribwe09__first __asm__("MsgNaribwe09");
 #define MsgNaribwe09 MsgNaribwe09__first
 /* VIEW(first): routine MsgNaribwe21 as this part declared it; the joined file
- * has another. */
+ * has another; tried as the rest of the object declares it, it does not compile
+ * in tla-ja: games/tla/src/scene/naribwe.c:182: `MsgNaribwe21' undeclared
+ * (first use in this function). */
 extern u8 MsgNaribwe21__first __asm__("MsgNaribwe21");
 #define MsgNaribwe21 MsgNaribwe21__first
 /* VIEW(first): routine MsgNaribwe43 as this part declared it; the joined file
- * has another. */
+ * has another; tried as the rest of the object declares it, it does not compile
+ * in tla-ja: games/tla/src/scene/naribwe.c:195: `MsgNaribwe43' undeclared
+ * (first use in this function). */
 extern u8 MsgNaribwe43__first __asm__("MsgNaribwe43");
 #define MsgNaribwe43 MsgNaribwe43__first
 /* VIEW(first): routine MsgNaribwe23 as this part declared it; the joined file
- * has another. */
+ * has another; tried as the rest of the object declares it, it does not compile
+ * in tla-ja: games/tla/src/scene/naribwe.c:210: `MsgNaribwe23' undeclared
+ * (first use in this function). */
 extern u8 MsgNaribwe23__first __asm__("MsgNaribwe23");
 #define MsgNaribwe23 MsgNaribwe23__first
 /* VIEW(first): routine MsgNaribwe45 as this part declared it; the joined file
- * has another. */
+ * has another; tried as the rest of the object declares it, it does not compile
+ * in tla-ja: games/tla/src/scene/naribwe.c:223: `MsgNaribwe45' undeclared
+ * (first use in this function). */
 extern u8 MsgNaribwe45__first __asm__("MsgNaribwe45");
 #define MsgNaribwe45 MsgNaribwe45__first
 
@@ -368,26 +407,7 @@ extern u32 gNaribwe_FlameRises[];
 extern u32 gNaribwe_IvyAnimation[];
 extern s16 gNaribwe_DoorOpening[];
 
-/* VIEW(data): routine Naribwe_PraiseFortuneTeller as this part declared it; the
- * joined file has another. */
-void Naribwe_PraiseFortuneTeller__data(void) __asm__(
-    "Naribwe_PraiseFortuneTeller");
-#define Naribwe_PraiseFortuneTeller Naribwe_PraiseFortuneTeller__data
-/* VIEW(data): routine Naribwe_PraiseFortuneTellerOnReturn as this part declared
- * it; the joined file has another. */
-void Naribwe_PraiseFortuneTellerOnReturn__data(void) __asm__(
-    "Naribwe_PraiseFortuneTellerOnReturn");
-#define Naribwe_PraiseFortuneTellerOnReturn                                    \
-  Naribwe_PraiseFortuneTellerOnReturn__data
-/* VIEW(data): routine Naribwe_TalkToPilgrim as this part declared it; the
- * joined file has another. */
-void Naribwe_TalkToPilgrim__data(void) __asm__("Naribwe_TalkToPilgrim");
-#define Naribwe_TalkToPilgrim Naribwe_TalkToPilgrim__data
-/* VIEW(data): routine Naribwe_TalkToPilgrimOnReturn as this part declared it;
- * the joined file has another. */
-void Naribwe_TalkToPilgrimOnReturn__data(void) __asm__(
-    "Naribwe_TalkToPilgrimOnReturn");
-#define Naribwe_TalkToPilgrimOnReturn Naribwe_TalkToPilgrimOnReturn__data
+#define Naribwe_PraiseFortuneTellerOnReturn Naribwe_PraiseFortuneTellerOnReturn
 void Naribwe_HideStone(void);
 
 // The village's placements, the same before and after the return with Piers.
@@ -594,7 +614,4 @@ struct Trigger gNaribwe_TriggersOnReturn[] = {
      CONDITION_ALWAYS, EVENT(Naribwe_HideStone)},
     {TRIGGER_TABLE_END},
 };
-#undef Naribwe_PraiseFortuneTeller
 #undef Naribwe_PraiseFortuneTellerOnReturn
-#undef Naribwe_TalkToPilgrim
-#undef Naribwe_TalkToPilgrimOnReturn

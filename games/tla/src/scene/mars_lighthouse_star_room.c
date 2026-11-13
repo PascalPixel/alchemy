@@ -141,14 +141,20 @@ static __inline__ struct Actor *ObjectCreate_(s32 kind, s32 x, s32 y, s32 z) {
 void Actor_StartScript(struct Actor *object, const void *script);
 void Actor_SetAnimationSpeed(struct Actor *object, s32 value);
 /* VIEW(first): routine gData_020047fc as this part declared it; the joined file
- * has another. */
+ * has another; tried as the one declaration extern const s16 gData_020047fc[],
+ * it does not compile in tla-ja:
+ * games/tla/src/scene/mars_lighthouse_star_room.c:1974: `gData_020047fc'
+ * undeclared (first use in this function). */
 extern const s16 gData_020047fc__first[] __asm__("gData_020047fc");
 #define gData_020047fc gData_020047fc__first
 
 #endif
 
 /* VIEW(first): routine gMarsLighthouseStarRoom_ScatterIceChipsScript as this
- * part declared it; the joined file has another. */
+ * part declared it; the joined file has another; tried as the one declaration
+ * extern const u8 gMarsLighthouseStarRoom_ScatterIceChipsScript[], it does not
+ * compile in tla-ja: games/tla/src/scene/mars_lighthouse_star_room.c:2255:
+ * conflicting types for `gMarsLighthouseStarRoom_ScatterIceChipsScript'. */
 extern const u8 gMarsLighthouseStarRoom_ScatterIceChipsScript__first[] __asm__(
     "gMarsLighthouseStarRoom_ScatterIceChipsScript");
 #define gMarsLighthouseStarRoom_ScatterIceChipsScript                          \
@@ -444,19 +450,23 @@ void Actor_MoveToObject();
 void Scene_PlayMusic();
 extern u8 MsgMarsStar01[];
 /* VIEW(first): routine gData_0200491c as this part declared it; the joined file
- * has another. */
+ * has another; not tried: gData_0200491c's declaration holds a FAKEMATCH tag.
+ */
 extern u8 gData_0200491c__first[] __asm__("gData_0200491c");
 #define gData_0200491c gData_0200491c__first
 /* VIEW(first): routine gData_02004958 as this part declared it; the joined file
- * has another. */
+ * has another; not tried: gData_02004958's declaration holds a FAKEMATCH tag.
+ */
 extern u8 gData_02004958__first[] __asm__("gData_02004958");
 #define gData_02004958 gData_02004958__first
 /* VIEW(first): routine gData_020049a0 as this part declared it; the joined file
- * has another. */
+ * has another; not tried: gData_020049a0's declaration holds a FAKEMATCH tag.
+ */
 extern u8 gData_020049a0__first[] __asm__("gData_020049a0");
 #define gData_020049a0 gData_020049a0__first
 /* VIEW(first): routine gData_020049dc as this part declared it; the joined file
- * has another. */
+ * has another; not tried: gData_020049dc's declaration holds a FAKEMATCH tag.
+ */
 extern u8 gData_020049dc__first[] __asm__("gData_020049dc");
 #define gData_020049dc gData_020049dc__first
 
@@ -1190,11 +1200,13 @@ void Func_02001424(void) {
 }
 
 /* VIEW(first): routine gData_020044b8 as this part declared it; the joined file
- * has another. */
+ * has another; not tried: gData_020044b8's declaration holds a FAKEMATCH tag.
+ */
 extern const u8 gData_020044b8__first[] __asm__("gData_020044b8");
 #define gData_020044b8 gData_020044b8__first
 /* VIEW(first): routine gData_020045b8 as this part declared it; the joined file
- * has another. */
+ * has another; not tried: gData_020045b8's declaration holds a FAKEMATCH tag.
+ */
 extern const u8 gData_020045b8__first[] __asm__("gData_020045b8");
 #define gData_020045b8 gData_020045b8__first
 
@@ -1262,7 +1274,8 @@ DEFINE_RIDE_UPDATE_CARRIED(Func_020015ec, RideWork__s1424, Func_02001528,
                            Func_0200158c)
 
 /* VIEW(first): routine gData_02004744 as this part declared it; the joined file
- * has another. */
+ * has another; not tried: gData_02004744's declaration holds a FAKEMATCH tag.
+ */
 extern const u8 gData_02004744__first[] __asm__("gData_02004744");
 #define gData_02004744 gData_02004744__first
 
@@ -1382,7 +1395,8 @@ s32 Func_02001a44(struct Actor *a, struct Actor *b) {
 DEFINE_RIDE_UPDATE_DRIFT(Func_02001a9c, Func_02001a44)
 
 /* VIEW(first): routine gData_02004744 as this part declared it; the joined file
- * has another. */
+ * has another; not tried: gData_02004744's declaration holds a FAKEMATCH tag.
+ */
 extern const u8 gData_02004744__first[] __asm__("gData_02004744");
 #define gData_02004744 gData_02004744__first
 
@@ -1540,7 +1554,7 @@ void Func_02001de4(s16 value) {
 /* VIEW(ride_handle): tag struct MarsLighthouseBeam as struct
  * MarsLighthouseBeam__ride_handle; module/scene/scene.h has another definition;
  * tried with the definition the rest of the object has, it does not compile in
- * tla-ja: games/tla/src/scene/mars_lighthouse_star_room.c:1562: structure has
+ * tla-ja: games/tla/src/scene/mars_lighthouse_star_room.c:1577: structure has
  * no member named `stopCount'. */
 struct MarsLighthouseBeam__ride_handle {
   u8 unk00[10];
@@ -1691,7 +1705,7 @@ struct MarsLighthouseEventWork {
  * owner); scene/mars_lighthouse_star_room has void *Unit_Get(s32 owner); tried
  * as the definition's void *Unit_Get(s32 owner), which the object already
  * declares, it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_star_room.c:1642: request for member `hp'
+ * games/tla/src/scene/mars_lighthouse_star_room.c:1654: request for member `hp'
  * in something not a structure or union. */
 struct BattleUnit *Unit_Get__ride_handle(s32 owner) __asm__("Unit_Get");
 #define Unit_Get Unit_Get__ride_handle
@@ -1873,7 +1887,9 @@ struct Work {
 };
 
 /* VIEW(s2148): routine gData_02004774 as this part declared it; the joined file
- * has another. */
+ * has another; tried as the rest of the object declares it, it does not compile
+ * in tla-ja: games/tla/src/scene/mars_lighthouse_star_room.c:1870:
+ * `gData_02004774' undeclared (first use in this function). */
 extern u8 gData_02004774__s2148[] __asm__("gData_02004774");
 #define gData_02004774 gData_02004774__s2148
 
@@ -1944,7 +1960,9 @@ void Func_020024d4(struct Actor *actor) {
 }
 
 /* VIEW(s2148): routine gData_020047b8 as this part declared it; the joined file
- * has another. */
+ * has another; tried as the rest of the object declares it, it does not compile
+ * in tla-ja: games/tla/src/scene/mars_lighthouse_star_room.c:1906:
+ * `gData_020047b8' undeclared (first use in this function). */
 extern const u8 gData_020047b8__s2148[] __asm__("gData_020047b8");
 #define gData_020047b8 gData_020047b8__s2148
 
@@ -1961,7 +1979,7 @@ void Func_02002738(struct Actor *object) {
 /* VIEW(s236c): tag struct Work020023c4 as struct Work020023c4__s236c; s2148.c
  * has another definition; tried with the definition the rest of the object has,
  * it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_star_room.c:1939: structure has no member
+ * games/tla/src/scene/mars_lighthouse_star_room.c:1927: structure has no member
  * named `unk6c'. */
 struct Work020023c4__s236c {
   u8 unk00[4];
@@ -2038,7 +2056,7 @@ void Func_02002d90(void) {
 /* VIEW(s2148): tag struct Position as struct Position__s2148;
  * scene/mars_lighthouse_star_room has another definition; tried with the
  * definition the rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_star_room.c:2013: redefinition of `struct
+ * games/tla/src/scene/mars_lighthouse_star_room.c:1991: redefinition of `struct
  * Position'. */
 #define Position Position__s2148
 /// A point on the map: 16.16 fixed-point pixels.
@@ -2050,7 +2068,9 @@ struct Position {
 
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 /* VIEW(s2148): routine gData_0200483c as this part declared it; the joined file
- * has another. */
+ * has another; tried as the rest of the object declares it, it does not compile
+ * in tla-ja: games/tla/src/scene/mars_lighthouse_star_room.c:2003:
+ * `gData_0200483c' undeclared (first use in this function). */
 extern s16 gData_0200483c__s2148[] __asm__("gData_0200483c");
 #define gData_0200483c gData_0200483c__s2148
 
@@ -2064,10 +2084,6 @@ DEFINE_LEADER_SLIDE_ON_ICE(Func_02002dc4, Func_02002d90, gData_0200483c,
  * games/tla/src/scene/shared/func_02003070.c:33: `gData_02004cf0' has an
  * incomplete type. */
 extern volatile s16 gData_02004cf0__s3070 __asm__("gData_02004cf0");
-/* VIEW(s2148): routine gData_0200483c as this part declared it; the joined file
- * has another. */
-extern s16 gData_0200483c__s2148[] __asm__("gData_0200483c");
-#define gData_0200483c gData_0200483c__s2148
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 s32 Actor_HasArrived(struct Actor *object);
 /* VIEW(s3070): routine Field_CheckSpheresOverlap as s32
@@ -2112,7 +2128,7 @@ void Func_02003384(u16 value) { gData_02004cf0[0] = value; }
 /* VIEW(set_data): tag struct Position as struct Position__set_data;
  * scene/mars_lighthouse_star_room has another definition; tried with the
  * definition the rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_star_room.c:2087: redefinition of `struct
+ * games/tla/src/scene/mars_lighthouse_star_room.c:2048: redefinition of `struct
  * Position'. */
 #define Position Position__set_data
 /// A point on the map: 16.16 fixed-point pixels.
@@ -2179,14 +2195,10 @@ DEFINE_LEADER_SLIDE_ON_ICE_AHEAD(Func_02003390, Func_02002d90,
 // Scene code of overlay 0x6ab, in ROM order.
 
 void Actor_SelectAnimation(struct Actor *object, s32 mode);
-/* VIEW(s363c): routine Actor_StartScript as this part declared it; the joined
- * file has another. */
-extern void
-Actor_StartScript__s363c(struct FieldEffect *effect,
-                         const s32 *script) __asm__("Actor_StartScript");
-#define Actor_StartScript Actor_StartScript__s363c
 /* VIEW(s363c): routine gData_02004ce0 as this part declared it; the joined file
- * has another. */
+ * has another; tried as the rest of the object declares it, it does not compile
+ * in tla-ja: games/tla/src/scene/mars_lighthouse_star_room.c:2133:
+ * `gData_02004ce0' undeclared (first use in this function). */
 extern const s32 *gData_02004ce0__s363c[] __asm__("gData_02004ce0");
 #define gData_02004ce0 gData_02004ce0__s363c
 void Actor_SetSpriteFlags(struct Actor *object, u32 value);
@@ -2285,13 +2297,14 @@ DEFINE_CRACKED_TILE_FALL_EVENT(CrackedTile_FallEvent, Leader_CenterInCell)
 #undef CELL_TABLE
 #undef CELL_SPRITE_DRAW
 #undef CELL_PUSH_SLOT_ENTRY
-#undef Actor_StartScript
 #undef gData_02004ce0
 // @file
 // Scene code of overlay 0x6ab, in ROM order.
 
 /* VIEW(s3e04): routine Func_0200363c as this part declared it; the joined file
- * has another. */
+ * has another; tried as the rest of the object declares it, it does not compile
+ * in tla-ja: games/tla/src/scene/mars_lighthouse_star_room.c:2534: conflicting
+ * types for `gData_02004ce0__s363c'. */
 void Func_0200363c__s3e04(
     s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ, u32 flags,
     struct EffectOptions *options) __asm__("Func_0200363c");
@@ -2309,7 +2322,10 @@ DEFINE_CRACKED_TILE_DROP_IN(Func_02003e04, Func_0200363c)
 
 void GameFlag_SetByte(s32 flag, s32 value);
 /* VIEW(s3e04): routine CrackedTile_FallEvent as this part declared it; the
- * joined file has another. */
+ * joined file has another; tried as the one declaration void
+ * CrackedTile_FallEvent(), it does not compile in tla-ja:
+ * games/tla/src/scene/mars_lighthouse_star_room.c:2235: too many arguments to
+ * function `CrackedTile_FallEvent'. */
 void CrackedTile_FallEvent__s3e04(
     struct CellTarget *work,
     struct CellTargetEntry *entry) __asm__("CrackedTile_FallEvent");
@@ -2324,29 +2340,12 @@ DEFINE_CRACKED_TILE_PLACE_LANDING(CrackedTile_PlaceLanding, gData_02004cf4,
 #include "text/msg_ids.h"
 
 /* VIEW(s3e04): routine Func_02000038 as this part declared it; the joined file
- * has another. */
+ * has another; tried as the definition's void Func_02000038(s16 *list),
+ * CrackedTiles_Step (gone) moves: 76 of 76 instructions in tla-ja. */
 void Func_02000038__s3e04(void) __asm__("Func_02000038");
 #define Func_02000038 Func_02000038__s3e04
-/* VIEW(s3e04): routine MarsLighthouseStarRoom_BurstIce as this part declared
- * it; the joined file has another. */
-void MarsLighthouseStarRoom_BurstIce__s3e04(void) __asm__(
-    "MarsLighthouseStarRoom_BurstIce");
-#define MarsLighthouseStarRoom_BurstIce MarsLighthouseStarRoom_BurstIce__s3e04
 void MarsLighthouseStarRoom_ExamineStatue(void);
-/* VIEW(s3e04): routine MarsLighthouseStarRoom_SlideOnIce as this part declared
- * it; the joined file has another. */
-void MarsLighthouseStarRoom_SlideOnIce__s3e04(void) __asm__(
-    "MarsLighthouseStarRoom_SlideOnIce");
-#define MarsLighthouseStarRoom_SlideOnIce                                      \
-  MarsLighthouseStarRoom_SlideOnIce__s3e04
-/* VIEW(s3e04): routine Func_02002c44 as this part declared it; the joined file
- * has another. */
-void Func_02002c44__s3e04(void) __asm__("Func_02002c44");
-#define Func_02002c44 Func_02002c44__s3e04
-/* VIEW(s3e04): routine Func_02002ce8 as this part declared it; the joined file
- * has another. */
-void Func_02002ce8__s3e04(void) __asm__("Func_02002ce8");
-#define Func_02002ce8 Func_02002ce8__s3e04
+#define MarsLighthouseStarRoom_SlideOnIce MarsLighthouseStarRoom_SlideOnIce
 
 extern s32 gData_02004910[];
 
@@ -2664,7 +2663,4 @@ s32 gData_02004ce0[] = {
 #undef Func_0200363c
 #undef CrackedTile_FallEvent
 #undef Func_02000038
-#undef MarsLighthouseStarRoom_BurstIce
 #undef MarsLighthouseStarRoom_SlideOnIce
-#undef Func_02002c44
-#undef Func_02002ce8

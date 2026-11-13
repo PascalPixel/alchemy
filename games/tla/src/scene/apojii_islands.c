@@ -217,8 +217,8 @@ void Func_020003cc(void) {
 /* VIEW(apojii_islands): variable gData_020024c4 as extern s32 gData_020024c4;
  * the definition has s32 gData_020024c4[] = { - 1, }; tried as the definition's
  * extern s32 gData_020024c4[], it does not compile in tla-ja:
- * games/tla/src/scene/apojii_islands/apojii_islands.c:95: `gData_020024c4' has
- * an incomplete type. */
+ * games/tla/src/scene/apojii_islands.c:238: `gData_020024c4' has an incomplete
+ * type. */
 extern s32 gData_020024c4__apojii_islands __asm__("gData_020024c4");
 extern u16 Data_02002958[];
 extern u16 Data_02002978[];
@@ -259,8 +259,8 @@ void Func_020003e8(void) {
 /* VIEW(apojii_islands): variable gData_020024c8 as extern s32 gData_020024c8;
  * the definition has s32 gData_020024c8[] = { - 1, }; tried as the definition's
  * extern s32 gData_020024c8[], it does not compile in tla-ja:
- * games/tla/src/scene/apojii_islands/apojii_islands.c:132: `gData_020024c8' has
- * an incomplete type. */
+ * games/tla/src/scene/apojii_islands.c:275: `gData_020024c8' has an incomplete
+ * type. */
 extern s32 gData_020024c8__apojii_islands __asm__("gData_020024c8");
 extern u16 Data_020029d8[];
 extern u16 Data_020029f8[];

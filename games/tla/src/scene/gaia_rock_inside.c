@@ -515,8 +515,8 @@ void Actor_StartScript__s07f4(struct Actor *object,
 /* VIEW(s07f4): tag struct DustSprite as struct DustSprite__s07f4;
  * module/scene/scene.h has another definition; tried with the definition the
  * rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/gaia_rock_inside/gaia_rock_inside.c:333: structure has no
- * member named `layer'. */
+ * games/tla/src/scene/gaia_rock_inside.c:525: structure has no member named
+ * `layer'. */
 struct DustSprite__s07f4 {
   u8 unk00[9];
   u8 unused09 : 2;
@@ -614,8 +614,8 @@ extern struct ActorPlacement gData_02005a54[];
 /* VIEW(s07f4): variable gData_02005ee4 as s32 gData_02005ee4;
  * scene/gaia_rock_inside/s4d00 has u32 gData_02005ee4[] = {; tried as the
  * definition's extern u32 gData_02005ee4[], it does not compile in tla-ja:
- * games/tla/src/scene/gaia_rock_inside/gaia_rock_inside.c:439: `gData_02005ee4'
- * undeclared (first use in this function). */
+ * games/tla/src/scene/gaia_rock_inside.c:622: `gData_02005ee4' undeclared
+ * (first use in this function). */
 extern s32 gData_02005ee4__s07f4 __asm__("gData_02005ee4");
 #define gData_02005ee4 gData_02005ee4__s07f4
 extern s32 gData_02005e28[];
@@ -756,8 +756,8 @@ void Func_02000cf8(void) { Func_02004ff4_(18, 17, 0, 3, 3, 31, 0); }
 /* VIEW(s07f4): variable gData_020051d8 as const struct CellPoint
  * gData_020051d8[12]; scene/gaia_rock_inside/s4d00 has u16 gData_020051d8[] =
  * {; tried as the definition's extern u16 gData_020051d8[], it does not compile
- * in tla-ja: games/tla/src/scene/gaia_rock_inside/gaia_rock_inside.c:571:
- * `gData_020051d8' undeclared (first use in this function). */
+ * in tla-ja: games/tla/src/scene/gaia_rock_inside.c:755: `gData_020051d8'
+ * undeclared (first use in this function). */
 extern const struct CellPoint
     gData_020051d8__s07f4[12] __asm__("gData_020051d8");
 #define gData_020051d8 gData_020051d8__s07f4
@@ -894,8 +894,8 @@ void Func_02000fac(void) {
 /* VIEW(s1048): variable gData_0200646c as extern s32 gData_0200646c[]; s07f4
  * has extern struct Actor gData_0200646c; tried as the one declaration extern
  * s32 gData_0200646c[], it does not compile in tla-ja:
- * games/tla/src/scene/gaia_rock_inside/gaia_rock_inside.c:693: conflicting
- * types for `gData_0200646c'. */
+ * games/tla/src/scene/gaia_rock_inside.c:874: conflicting types for
+ * `gData_0200646c'. */
 extern s32 gData_0200646c__s1048[] __asm__("gData_0200646c");
 
 // Object 10 turns to the leader, talks and walks to its place while the camera
@@ -1113,16 +1113,16 @@ struct Spark {
  * DEFINE_G_DATA_020052AC(gData_020052ac, 24, 0)
  * DEFINE_G_DATA_020052AC(gData_020052dc, 16, 3) u16 gData_0200530c[] = {; tried
  * as the one declaration extern const u8 gData_02005264[], it does not compile
- * in tla-ja: games/tla/src/scene/gaia_rock_inside/gaia_rock_inside.c:976:
- * `gData_02005264' undeclared (first use in this function). */
+ * in tla-ja: games/tla/src/scene/gaia_rock_inside.c:1128: `gData_02005264'
+ * undeclared (first use in this function). */
 extern const u8 gData_02005264__s15d0[] __asm__("gData_02005264");
 #define gData_02005264 gData_02005264__s15d0
 /* VIEW(s15d0): variable gData_02005218 as const u8 gData_02005218[];
  * scene/gaia_rock_inside/s4d00 has DEFINE_G_DATA_02005218(gData_02005218) s32
  * gData_02005234[] = {; tried as the one declaration extern const u8
  * gData_02005218[], it does not compile in tla-ja:
- * games/tla/src/scene/gaia_rock_inside/gaia_rock_inside.c:997: `gData_02005218'
- * undeclared (first use in this function). */
+ * games/tla/src/scene/gaia_rock_inside.c:1149: `gData_02005218' undeclared
+ * (first use in this function). */
 extern const u8 gData_02005218__s15d0[] __asm__("gData_02005218");
 #define gData_02005218 gData_02005218__s15d0
 extern s32 gData_02005234[];
@@ -1131,8 +1131,8 @@ extern s32 gData_02005234[];
  * DEFINE_G_DATA_020052AC(gData_020052ac, 24, 0)
  * DEFINE_G_DATA_020052AC(gData_020052dc, 16, 3) u16 gData_0200530c[] = {; tried
  * as the one declaration extern const u8 gData_02005288[], it does not compile
- * in tla-ja: games/tla/src/scene/gaia_rock_inside/gaia_rock_inside.c:1040:
- * `gData_02005288' undeclared (first use in this function). */
+ * in tla-ja: games/tla/src/scene/gaia_rock_inside.c:1192: `gData_02005288'
+ * undeclared (first use in this function). */
 extern const u8 gData_02005288__s15d0[] __asm__("gData_02005288");
 #define gData_02005288 gData_02005288__s15d0
 /* VIEW(s15d0): variable gData_02005244 as const u8 gData_02005244[];
@@ -1143,16 +1143,15 @@ extern const u8 gData_02005288__s15d0[] __asm__("gData_02005288");
  * DEFINE_G_DATA_020052AC(gData_020052ac, 24, 0)
  * DEFINE_G_DATA_020052AC(gData_020052dc, 16, 3) u16 gData_0200530c[] = {; tried
  * as the one declaration extern const u8 gData_02005244[], it does not compile
- * in tla-ja: games/tla/src/scene/gaia_rock_inside/gaia_rock_inside.c:1068:
- * `gData_02005244' undeclared (first use in this function). */
+ * in tla-ja: games/tla/src/scene/gaia_rock_inside.c:1220: `gData_02005244'
+ * undeclared (first use in this function). */
 extern const u8 gData_02005244__s15d0[] __asm__("gData_02005244");
 #define gData_02005244 gData_02005244__s15d0
 /* VIEW(s15d0): variable gData_020052ac as const u8 gData_020052ac[];
  * scene/gaia_rock_inside/s4d00 has DEFINE_G_DATA_020052AC(gData_020052ac, 24,
  * 0) DEFINE_G_DATA_020052AC(gData_020052dc, 16, 3) u16 gData_0200530c[] = {;
  * tried as the one declaration extern const u8 gData_020052ac[], it does not
- * compile in tla-ja:
- * games/tla/src/scene/gaia_rock_inside/gaia_rock_inside.c:1084:
+ * compile in tla-ja: games/tla/src/scene/gaia_rock_inside.c:1236:
  * `gData_020052ac' undeclared (first use in this function). */
 extern const u8 gData_020052ac__s15d0[] __asm__("gData_020052ac");
 #define gData_020052ac gData_020052ac__s15d0
@@ -1160,8 +1159,8 @@ extern const u8 gData_020052ac__s15d0[] __asm__("gData_020052ac");
  * scene/gaia_rock_inside/s4d00 has DEFINE_G_DATA_020052AC(gData_020052dc, 16,
  * 3) u16 gData_0200530c[] = {; tried as the one declaration extern const u8
  * gData_020052dc[], it does not compile in tla-ja:
- * games/tla/src/scene/gaia_rock_inside/gaia_rock_inside.c:1085:
- * `gData_020052dc' undeclared (first use in this function). */
+ * games/tla/src/scene/gaia_rock_inside.c:1237: `gData_020052dc' undeclared
+ * (first use in this function). */
 extern const u8 gData_020052dc__s15d0[] __asm__("gData_020052dc");
 #define gData_020052dc gData_020052dc__s15d0
 /* VIEW(s15d0): routine Actor_StartScript as void Actor_StartScript(void
@@ -1983,8 +1982,8 @@ void Func_02002718(void) {
  * definition's extern DEFINE_G_DATA_02005244(gData_02005244, Orbit_Update,
  * Actor_AimAtWatched, Actor_StepToWatched)
  * DEFINE_G_DATA_02005264(gData_02005264, ..., it does not compile in tla-ja:
- * games/tla/src/scene/gaia_rock_inside/gaia_rock_inside.c:1790:
- * `gData_0200530c' undeclared (first use in this function). */
+ * games/tla/src/scene/gaia_rock_inside.c:1927: `gData_0200530c' undeclared
+ * (first use in this function). */
 extern const s16 gData_0200530c__s1f68[][2] __asm__("gData_0200530c");
 #define gData_0200530c gData_0200530c__s1f68
 
@@ -2059,8 +2058,7 @@ const u8 *Scene_GetEvents(void) {
 /* VIEW(s2ac8): routine Actor_GetById as s32 Actor_GetById(); event.h has struct
  * Actor *Actor_GetById(u32 objectId); tried as the definition's struct Actor
  * *Actor_GetById(u32 objectId), which the object already declares, it does not
- * compile in tla-ja:
- * games/tla/src/scene/gaia_rock_inside/gaia_rock_inside.c:1873: too few
+ * compile in tla-ja: games/tla/src/scene/gaia_rock_inside.c:1989: too few
  * arguments to function `Actor_GetById'. */
 extern s32 Actor_GetById__s2ac8() __asm__("Actor_GetById");
 
@@ -2105,8 +2103,7 @@ void Func_02002b04(u32 id, s8 mode) {
 /* VIEW(s2b58): routine Actor_GetById as s32 Actor_GetById(); event.h has struct
  * Actor *Actor_GetById(u32 objectId); tried as the definition's struct Actor
  * *Actor_GetById(u32 objectId), which the object already declares, it does not
- * compile in tla-ja:
- * games/tla/src/scene/gaia_rock_inside/gaia_rock_inside.c:1914: too few
+ * compile in tla-ja: games/tla/src/scene/gaia_rock_inside.c:2029: too few
  * arguments to function `Actor_GetById'. */
 extern s32 Actor_GetById__s2b58() __asm__("Actor_GetById");
 
@@ -2187,16 +2184,15 @@ step:
 /* VIEW(s2cb4): variable gSceneState as u16 gSceneState[];
  * games/tla/src/scene/gaia_rock_inside/s2b8c has struct SwayState gSceneState;
  * tried as the 3 declarations' extern struct SceneState gSceneState, it does
- * not compile in tla-ja:
- * games/tla/src/scene/gaia_rock_inside/gaia_rock_inside.c:2005: incompatible
- * types in initialization. */
+ * not compile in tla-ja: games/tla/src/scene/gaia_rock_inside.c:2109:
+ * incompatible types in initialization. */
 extern u16 gSceneState__s2cb4[] __asm__("gSceneState");
 #define gSceneState gSceneState__s2cb4
 /* VIEW(s2cb4): variable gData_0200533c as const s16 gData_0200533c[][2];
  * scene/gaia_rock_inside/s4d00 has u32 gData_0200533c[] = {; tried as the
  * definition's extern u32 gData_0200533c[], it does not compile in tla-ja:
- * games/tla/src/scene/gaia_rock_inside/gaia_rock_inside.c:2016:
- * `gData_0200533c' undeclared (first use in this function). */
+ * games/tla/src/scene/gaia_rock_inside.c:2120: `gData_0200533c' undeclared
+ * (first use in this function). */
 extern const s16 gData_0200533c__s2cb4[][2] __asm__("gData_0200533c");
 #define gData_0200533c gData_0200533c__s2cb4
 
@@ -2320,37 +2316,38 @@ struct GaiaRockInsideSceneWork {
  * games/tla/src/scene/gaia_rock_inside/s1f68 has const s16 gData_0200530c[][2];
  * tried as the definition's extern DEFINE_G_DATA_02005244(gData_02005244,
  * Orbit_Update, Actor_AimAtWatched, Actor_StepToWatched)
- * DEFINE_G_DATA_02005264(gData_02005264, ..., it does not compile in tla-en:
- * games/tla/src/scene/gaia_rock_inside/gaia_rock_inside.c:2712:
- * `gData_0200530c' undeclared (first use in this function). */
+ * DEFINE_G_DATA_02005264(gData_02005264, ..., it does not compile in tla-ja:
+ * games/tla/src/scene/gaia_rock_inside.c:4291: conflicting types for
+ * `gData_0200530c__s2cb4'. */
 extern s16 gData_0200530c__s2cb4[][2] __asm__("gData_0200530c");
 #define gData_0200530c gData_0200530c__s2cb4
 /* VIEW(s2cb4): variable gData_02005360 as u8 gData_02005360[];
  * scene/gaia_rock_inside/s4d00 has u32 gData_02005360[] = {; tried as the
- * definition's extern u32 gData_02005360[], it does not compile in tla-en:
- * games/tla/src/scene/gaia_rock_inside/gaia_rock_inside.c:2382:
- * `gData_02005360' undeclared (first use in this function). */
+ * definition's extern u32 gData_02005360[], it does not compile in tla-ja:
+ * games/tla/src/scene/gaia_rock_inside.c:4302: conflicting types for
+ * `gData_02005360__s2cb4'. */
 extern u8 gData_02005360__s2cb4[] __asm__("gData_02005360");
 #define gData_02005360 gData_02005360__s2cb4
 /* VIEW(s2cb4): variable gData_0200539c as u8 gData_0200539c[];
  * scene/gaia_rock_inside/s4d00 has u32 gData_0200539c[] = {; tried as the
- * definition's extern u32 gData_0200539c[], it does not compile in tla-en:
- * games/tla/src/scene/gaia_rock_inside/gaia_rock_inside.c:2371:
- * `gData_0200539c' undeclared (first use in this function). */
+ * definition's extern u32 gData_0200539c[], it does not compile in tla-ja:
+ * games/tla/src/scene/gaia_rock_inside.c:4306: conflicting types for
+ * `gData_0200539c__s2cb4'. */
 extern u8 gData_0200539c__s2cb4[] __asm__("gData_0200539c");
 #define gData_0200539c gData_0200539c__s2cb4
 /* VIEW(s2cb4): variable gData_020053d8 as u8 gData_020053d8[];
  * scene/gaia_rock_inside/s4d00 has u32 gData_020053d8[] = {; tried as the
- * definition's extern u32 gData_020053d8[], it does not compile in tla-en:
- * games/tla/src/scene/gaia_rock_inside/gaia_rock_inside.c:2751:
- * `gData_020053d8' undeclared (first use in this function). */
+ * definition's extern u32 gData_020053d8[], it does not compile in tla-ja:
+ * games/tla/src/scene/gaia_rock_inside.c:4310: conflicting types for
+ * `gData_020053d8__s2cb4'. */
 extern u8 gData_020053d8__s2cb4[] __asm__("gData_020053d8");
 #define gData_020053d8 gData_020053d8__s2cb4
 /* VIEW(s2cb4): variable gData_0200578c as u8 gData_0200578c[];
  * scene/gaia_rock_inside/s4d00 has s32 gData_0200578c[] = {; tried as the
- * definition's extern s32 gData_0200578c[], it does not compile in tla-en:
- * games/tla/src/scene/gaia_rock_inside/gaia_rock_inside.c:2437:
- * `gData_0200578c' undeclared (first use in this function). */
+ * definition's extern DEFINE_G_DATA_020056C4(gData_020056c4, 424, 344)
+ * DEFINE_G_DATA_020056C4(gData_02005728, 512, 384) s32 gData_0200578c[], it
+ * does not compile in tla-ja: games/tla/src/scene/gaia_rock_inside.c:4462:
+ * conflicting types for `gData_0200578c__s2cb4'. */
 extern u8 gData_0200578c__s2cb4[] __asm__("gData_0200578c");
 #define gData_0200578c gData_0200578c__s2cb4
 
@@ -3064,35 +3061,36 @@ extern char SceneId_Ov681Room5;
  * definition's extern DEFINE_G_DATA_02005244(gData_02005244, Orbit_Update,
  * Actor_AimAtWatched, Actor_StepToWatched)
  * DEFINE_G_DATA_02005264(gData_02005264, ..., it does not compile in tla-ja:
- * games/tla/src/scene/gaia_rock_inside/gaia_rock_inside.c:3452:
- * `gData_0200530c' undeclared (first use in this function). */
+ * games/tla/src/scene/gaia_rock_inside.c:3509: `gData_0200530c' undeclared
+ * (first use in this function). */
 extern s16 gData_0200530c__s2cb4[][2] __asm__("gData_0200530c");
 #define gData_0200530c gData_0200530c__s2cb4
 /* VIEW(s2cb4): variable gData_02005360 as u8 gData_02005360[];
  * scene/gaia_rock_inside/s4d00 has u32 gData_02005360[] = {; tried as the
  * definition's extern u32 gData_02005360[], it does not compile in tla-ja:
- * games/tla/src/scene/gaia_rock_inside/gaia_rock_inside.c:3105:
- * `gData_02005360' undeclared (first use in this function). */
+ * games/tla/src/scene/gaia_rock_inside.c:3198: `gData_02005360' undeclared
+ * (first use in this function). */
 extern u8 gData_02005360__s2cb4[] __asm__("gData_02005360");
 #define gData_02005360 gData_02005360__s2cb4
 /* VIEW(s2cb4): variable gData_0200539c as u8 gData_0200539c[];
  * scene/gaia_rock_inside/s4d00 has u32 gData_0200539c[] = {; tried as the
  * definition's extern u32 gData_0200539c[], it does not compile in tla-ja:
- * games/tla/src/scene/gaia_rock_inside/gaia_rock_inside.c:3094:
- * `gData_0200539c' undeclared (first use in this function). */
+ * games/tla/src/scene/gaia_rock_inside.c:3187: `gData_0200539c' undeclared
+ * (first use in this function). */
 extern u8 gData_0200539c__s2cb4[] __asm__("gData_0200539c");
 #define gData_0200539c gData_0200539c__s2cb4
 /* VIEW(s2cb4): variable gData_020053d8 as u8 gData_020053d8[];
  * scene/gaia_rock_inside/s4d00 has u32 gData_020053d8[] = {; tried as the
  * definition's extern u32 gData_020053d8[], it does not compile in tla-ja:
- * games/tla/src/scene/gaia_rock_inside/gaia_rock_inside.c:3475:
- * `gData_020053d8' undeclared (first use in this function). */
+ * games/tla/src/scene/gaia_rock_inside.c:3568: `gData_020053d8' undeclared
+ * (first use in this function). */
 extern u8 gData_020053d8__s2cb4[] __asm__("gData_020053d8");
 #define gData_020053d8 gData_020053d8__s2cb4
 /* VIEW(s2cb4): variable gData_0200578c as u8 gData_0200578c[];
  * scene/gaia_rock_inside/s4d00 has s32 gData_0200578c[] = {; tried as the
- * definition's extern s32 gData_0200578c[], it does not compile in tla-ja:
- * games/tla/src/scene/gaia_rock_inside/gaia_rock_inside.c:3160:
+ * definition's extern DEFINE_G_DATA_020056C4(gData_020056c4, 424, 344)
+ * DEFINE_G_DATA_020056C4(gData_02005728, 512, 384) s32 gData_0200578c[], it
+ * does not compile in tla-ja: games/tla/src/scene/gaia_rock_inside.c:3253:
  * `gData_0200578c' undeclared (first use in this function). */
 extern u8 gData_0200578c__s2cb4[] __asm__("gData_0200578c");
 #define gData_0200578c gData_0200578c__s2cb4
@@ -4156,8 +4154,8 @@ void Func_0200485c(s32 direction) {
 /* VIEW(s2cb4): variable gData_020053fc as s8 gData_020053fc[][2];
  * scene/gaia_rock_inside/s4d00 has u32 gData_020053fc[] = {; tried as the
  * definition's extern u32 gData_020053fc[], it does not compile in tla-ja:
- * games/tla/src/scene/gaia_rock_inside/gaia_rock_inside.c:3912:
- * `gData_020053fc' undeclared (first use in this function). */
+ * games/tla/src/scene/gaia_rock_inside.c:4011: `gData_020053fc' undeclared
+ * (first use in this function). */
 extern s8 gData_020053fc__s2cb4[][2] __asm__("gData_020053fc");
 #define gData_020053fc gData_020053fc__s2cb4
 
@@ -4280,8 +4278,7 @@ void Func_02004a5c(s32 id, s32 x, s32 y, s32 z) {
  * #undef Orbiter_Spiral #undef Orbit_Update #undef Actor_AimAtWatched #undef
  * Actor_StepToWatched #undef Func_020019cc #undef Func_02002974 #undef
  * Func_0200485c; tried as the one declaration extern const u8 gData_020062d4[],
- * it does not compile in tla-ja:
- * games/tla/src/scene/gaia_rock_inside/gaia_rock_inside.c:4049:
+ * it does not compile in tla-ja: games/tla/src/scene/gaia_rock_inside.c:4146:
  * `gData_020062d4' undeclared (first use in this function). */
 extern const u8 gData_020062d4__s2cb4[] __asm__("gData_020062d4");
 #define gData_020062d4 gData_020062d4__s2cb4

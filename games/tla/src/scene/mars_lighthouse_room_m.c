@@ -289,7 +289,7 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 /* VIEW(mars_lighthouse_room_m): variable gData_020036c4 as s32 gData_020036c4;
  * scene/mars_lighthouse_room_m/s2708 has s32 gData_020036c4[] = {; tried as the
  * one declaration extern s32 gData_020036c4, it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_room_m.c:239: `gData_020036c4' undeclared
+ * games/tla/src/scene/mars_lighthouse_room_m.c:304: `gData_020036c4' undeclared
  * (first use in this function). */
 extern s32 gData_020036c4__mars_lighthouse_room_m __asm__("gData_020036c4");
 #define gData_020036c4 gData_020036c4__mars_lighthouse_room_m
@@ -388,7 +388,7 @@ void Func_0200030c(void) {
 /* VIEW(mars_lighthouse_room_m): variable gData_02003704 as s32 gData_02003704;
  * scene/mars_lighthouse_room_m/s2708 has s32 gData_02003704[] = {; tried as the
  * one declaration extern s32 gData_02003704, it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_room_m.c:332: `gData_02003704' undeclared
+ * games/tla/src/scene/mars_lighthouse_room_m.c:397: `gData_02003704' undeclared
  * (first use in this function). */
 extern s32 gData_02003704__mars_lighthouse_room_m __asm__("gData_02003704");
 #define gData_02003704 gData_02003704__mars_lighthouse_room_m
@@ -616,7 +616,7 @@ void Func_0200154c(u16 *slots, u16 *colours, u16 *a, u16 *b);
 /* VIEW(s0b64): routine Func_02002e6c as void Func_02002e6c(void);
  * mars_lighthouse_room_m has void Func_02002e6c(struct Actor *self); tried as
  * the rest of the object declares it, it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_room_m.c:614: too few arguments to
+ * games/tla/src/scene/mars_lighthouse_room_m.c:667: too few arguments to
  * function `Func_02002e6c'. */
 extern void Func_02002e6c__s0b64(void) __asm__("Func_02002e6c");
 
@@ -710,7 +710,7 @@ s32 Scene_Initialize(void) {
 /* VIEW(s0b64): routine Func_02000058 as s32 Func_02000058(); the definition has
  * void Func_02000058(s32 id, s32 value); tried as the definition's void
  * Func_02000058(void), it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_room_m.c:645: conflicting types for
+ * games/tla/src/scene/mars_lighthouse_room_m.c:698: conflicting types for
  * `Func_02000058'. */
 extern s32 Func_02000058__s0b64() __asm__("Func_02000058");
 /* VIEW(mars_lighthouse_room_m): routine Map_ClearLayerEntryFlag as void
@@ -1455,8 +1455,8 @@ struct MarsLighthouseEventWork {
 /* VIEW(s2118): routine Unit_Get as struct BattleUnit *Unit_Get(s32 owner);
  * item_icon.h has void *Unit_Get(s32 owner); tried as the definition's void
  * *Unit_Get(s32 owner), which the object already declares, it does not compile
- * in tla-ja: games/tla/src/scene/mars_lighthouse_room_m.c:1404: invalid type
- * argument of `->'. */
+ * in tla-ja: games/tla/src/scene/mars_lighthouse_room_m.c:1426: request for
+ * member `hp' in something not a structure or union. */
 struct BattleUnit *Unit_Get__s2118(s32 owner) __asm__("Unit_Get");
 #define Unit_Get Unit_Get__s2118
 
@@ -1505,7 +1505,7 @@ void Func_020026f0(void) {
 /* VIEW(s2708): routine Func_02002368 as int Func_02002368(), called with no
  * declaration in scope as its bytes need; the definition has void
  * Func_02002368(void); tried as the rest of the object declares it, it does not
- * compile in tla-ja: games/tla/src/scene/mars_lighthouse_room_m.c:1511: too
+ * compile in tla-ja: games/tla/src/scene/mars_lighthouse_room_m.c:1521: too
  * many arguments to function `Func_02002368'. */
 s32 Func_02002368__s2708() __asm__("Func_02002368");
 #define Func_02002368 Func_02002368__s2708
@@ -1721,7 +1721,7 @@ void Func_02002ad4(struct Actor *object) {
 /* VIEW(s2708): tag struct Work020023c4 as struct Work020023c4__s2708;
  * module/scene/scene.h has another definition; tried with the definition the
  * rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_room_m.c:1683: redefinition of `struct
+ * games/tla/src/scene/mars_lighthouse_room_m.c:1680: redefinition of `struct
  * Work020023c4'. */
 #define Work020023c4 Work020023c4__s2708
 struct Work020023c4 {
@@ -1779,9 +1779,8 @@ DEFINE_ACTOR_PARK(Func_02003084, Func_02002e6c)
 
 /* VIEW(s2708): routine Func_0200004c as void Func_0200004c(void);
  * scene/mars_lighthouse_room_m has s32 Func_0200004c(struct Actor *object) {;
- * tried as the definition's void *Func_0200004c(void), it does not compile in
- * tla-ja: games/tla/src/scene/mars_lighthouse_room_m.c:1741: initializer
- * element is not constant. */
+ * tried as the definition's void *Func_0200004c(void), Func_02002f34 (gone)
+ * moves: 74 of 74 instructions in tla-ja. */
 void Func_0200004c__s2708(void) __asm__("Func_0200004c");
 #define Func_0200004c Func_0200004c__s2708
 void Func_0200030c(void);

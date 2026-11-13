@@ -82,24 +82,12 @@ s32 GameFlag_Get(s32 flag);
 void GameFlag_Set(s32 flag);
 void GameFlag_Clear(s32 flag);
 void FieldMessage_Show(s32 message, s32 position);
-/* VIEW(shrine_header): routine Actor_SetSpritePriority as void
- * Actor_SetSpritePriority(s32 actor, s32 variant); actor.h has another
- * declaration. */
-void Actor_SetSpritePriority__shrine_header(s32 actor, s32 variant) __asm__(
-    "Actor_SetSpritePriority");
-#define Actor_SetSpritePriority Actor_SetSpritePriority__shrine_header
 void Actor_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
 void Actor_WalkToAndWaitById(s32 actor, s32 x, s32 z);
 void Actor_ArmCallback(s32 actor, s32 angle, s32 frames);
 void Actor_Jump(s32 actor, s32 speed, s32 frames);
-/* VIEW(shrine_header): routine Actor_SetPositionAndResetMotion as void
- * Actor_SetPositionAndResetMotion(struct ShrineOfTheSeaGodObject *object, s32
- * x, s32 y, s32 z); actor.h has another declaration. */
-void Actor_SetPositionAndResetMotion__shrine_header(
-    struct ShrineOfTheSeaGodObject *object, s32 x, s32 y,
-    s32 z) __asm__("Actor_SetPositionAndResetMotion");
-#define Actor_SetPositionAndResetMotion                                        \
-  Actor_SetPositionAndResetMotion__shrine_header
+void Actor_SetPositionAndResetMotion(struct Actor *obj, s32 x, s32 y, s32 z);
+#define Actor_SetPositionAndResetMotion Actor_SetPositionAndResetMotion
 void Actor_SetModeById(u32 actorId, s32 animation);
 void Event_Start(void);
 void Event_End(void);
@@ -301,17 +289,26 @@ extern void Actor_SetSingleChildFlags__shrine_of_the_sea_god(
 #undef Actor_SetPositionAndResetMotion
 
 /* VIEW(shrine_of_the_sea_god): routine gData_02003df4 as this part declared it;
- * the joined file has another. */
+ * the joined file has another; tried as the definition's extern u32
+ * gData_02003df4[], it does not compile in tla-ja:
+ * games/tla/src/scene/shrine_of_the_sea_god.c:303: `gData_02003df4' undeclared
+ * (first use in this function). */
 extern const u8
     gData_02003df4__shrine_of_the_sea_god[] __asm__("gData_02003df4");
 #define gData_02003df4 gData_02003df4__shrine_of_the_sea_god
 /* VIEW(shrine_of_the_sea_god): routine gData_02003e14 as this part declared it;
- * the joined file has another. */
+ * the joined file has another; tried as the definition's extern s16
+ * gData_02003e14[], it does not compile in tla-ja:
+ * games/tla/src/scene/shrine_of_the_sea_god.c:305: `gData_02003e14' undeclared
+ * (first use in this function). */
 extern const u8
     gData_02003e14__shrine_of_the_sea_god[] __asm__("gData_02003e14");
 #define gData_02003e14 gData_02003e14__shrine_of_the_sea_god
 /* VIEW(shrine_of_the_sea_god): routine gData_02003e44 as this part declared it;
- * the joined file has another. */
+ * the joined file has another; tried as the definition's extern u32
+ * gData_02003e44[], it does not compile in tla-ja:
+ * games/tla/src/scene/shrine_of_the_sea_god.c:307: `gData_02003e44' undeclared
+ * (first use in this function). */
 extern const u8
     gData_02003e44__shrine_of_the_sea_god[] __asm__("gData_02003e44");
 #define gData_02003e44 gData_02003e44__shrine_of_the_sea_god
@@ -330,137 +327,61 @@ const struct SceneRegion *Scene_GetRegions(void) {
   return 0;
 }
 
-/* VIEW(shrine_of_the_sea_god): routine gShrineOfTheSeaGod_Placements as this
- * part declared it; the joined file has another. */
-extern const u8 gShrineOfTheSeaGod_Placements__shrine_of_the_sea_god[] __asm__(
-    "gShrineOfTheSeaGod_Placements");
-#define gShrineOfTheSeaGod_Placements                                          \
-  gShrineOfTheSeaGod_Placements__shrine_of_the_sea_god
-/* VIEW(shrine_of_the_sea_god): routine gShrineOfTheSeaGod_Room1Placements as
- * this part declared it; the joined file has another. */
-extern const u8
-    gShrineOfTheSeaGod_Room1Placements__shrine_of_the_sea_god[] __asm__(
-        "gShrineOfTheSeaGod_Room1Placements");
-#define gShrineOfTheSeaGod_Room1Placements                                     \
-  gShrineOfTheSeaGod_Room1Placements__shrine_of_the_sea_god
-/* VIEW(shrine_of_the_sea_god): routine gShrineOfTheSeaGod_Room2Placements as
- * this part declared it; the joined file has another. */
-extern const u8
-    gShrineOfTheSeaGod_Room2Placements__shrine_of_the_sea_god[] __asm__(
-        "gShrineOfTheSeaGod_Room2Placements");
-#define gShrineOfTheSeaGod_Room2Placements                                     \
-  gShrineOfTheSeaGod_Room2Placements__shrine_of_the_sea_god
-/* VIEW(shrine_of_the_sea_god): routine gShrineOfTheSeaGod_Room3Placements as
- * this part declared it; the joined file has another. */
-extern const u8
-    gShrineOfTheSeaGod_Room3Placements__shrine_of_the_sea_god[] __asm__(
-        "gShrineOfTheSeaGod_Room3Placements");
-#define gShrineOfTheSeaGod_Room3Placements                                     \
-  gShrineOfTheSeaGod_Room3Placements__shrine_of_the_sea_god
-/* VIEW(shrine_of_the_sea_god): routine gShrineOfTheSeaGod_Room4Placements as
- * this part declared it; the joined file has another. */
-extern const u8
-    gShrineOfTheSeaGod_Room4Placements__shrine_of_the_sea_god[] __asm__(
-        "gShrineOfTheSeaGod_Room4Placements");
-#define gShrineOfTheSeaGod_Room4Placements                                     \
-  gShrineOfTheSeaGod_Room4Placements__shrine_of_the_sea_god
-/* VIEW(shrine_of_the_sea_god): routine gShrineOfTheSeaGod_Room5Placements as
- * this part declared it; the joined file has another. */
-extern const u8
-    gShrineOfTheSeaGod_Room5Placements__shrine_of_the_sea_god[] __asm__(
-        "gShrineOfTheSeaGod_Room5Placements");
-#define gShrineOfTheSeaGod_Room5Placements                                     \
-  gShrineOfTheSeaGod_Room5Placements__shrine_of_the_sea_god
-/* VIEW(shrine_of_the_sea_god): routine gShrineOfTheSeaGod_Room6Placements as
- * this part declared it; the joined file has another. */
-extern const u8
-    gShrineOfTheSeaGod_Room6Placements__shrine_of_the_sea_god[] __asm__(
-        "gShrineOfTheSeaGod_Room6Placements");
-#define gShrineOfTheSeaGod_Room6Placements                                     \
-  gShrineOfTheSeaGod_Room6Placements__shrine_of_the_sea_god
-/* VIEW(shrine_of_the_sea_god): routine gShrineOfTheSeaGod_Room7Placements as
- * this part declared it; the joined file has another. */
-extern const u8
-    gShrineOfTheSeaGod_Room7Placements__shrine_of_the_sea_god[] __asm__(
-        "gShrineOfTheSeaGod_Room7Placements");
-#define gShrineOfTheSeaGod_Room7Placements                                     \
-  gShrineOfTheSeaGod_Room7Placements__shrine_of_the_sea_god
+extern struct ActorPlacement gShrineOfTheSeaGod_Placements[];
+#define gShrineOfTheSeaGod_Placements gShrineOfTheSeaGod_Placements
+extern struct ActorPlacement gShrineOfTheSeaGod_Room1Placements[];
+#define gShrineOfTheSeaGod_Room1Placements gShrineOfTheSeaGod_Room1Placements
+extern struct ActorPlacement gShrineOfTheSeaGod_Room2Placements[];
+#define gShrineOfTheSeaGod_Room2Placements gShrineOfTheSeaGod_Room2Placements
+extern struct ActorPlacement gShrineOfTheSeaGod_Room3Placements[];
+#define gShrineOfTheSeaGod_Room3Placements gShrineOfTheSeaGod_Room3Placements
+extern struct ActorPlacement gShrineOfTheSeaGod_Room4Placements[];
+#define gShrineOfTheSeaGod_Room4Placements gShrineOfTheSeaGod_Room4Placements
+extern struct ActorPlacement gShrineOfTheSeaGod_Room5Placements[];
+#define gShrineOfTheSeaGod_Room5Placements gShrineOfTheSeaGod_Room5Placements
+extern struct ActorPlacement gShrineOfTheSeaGod_Room6Placements[];
+#define gShrineOfTheSeaGod_Room6Placements gShrineOfTheSeaGod_Room6Placements
+extern struct ActorPlacement gShrineOfTheSeaGod_Room7Placements[];
+#define gShrineOfTheSeaGod_Room7Placements gShrineOfTheSeaGod_Room7Placements
 /* VIEW(shrine_of_the_sea_god): routine gShrineOfTheSeaGod_Room8Placements as
- * this part declared it; the joined file has another. */
+ * this part declared it; the joined file has another; tried as the one
+ * declaration extern const u8 gShrineOfTheSeaGod_Room8Placements[], it does not
+ * compile in tla-ja: games/tla/src/scene/shrine_of_the_sea_god.c:2527:
+ * conflicting types for `gShrineOfTheSeaGod_Room8Placements'. */
 extern const u8
     gShrineOfTheSeaGod_Room8Placements__shrine_of_the_sea_god[] __asm__(
         "gShrineOfTheSeaGod_Room8Placements");
 #define gShrineOfTheSeaGod_Room8Placements                                     \
   gShrineOfTheSeaGod_Room8Placements__shrine_of_the_sea_god
 /* VIEW(shrine_of_the_sea_god): routine gShrineOfTheSeaGod_Triggers as this part
- * declared it; the joined file has another. */
+ * declared it; the joined file has another; tried as the definition's extern
+ * DEFINE_G_DATA_02001330(gShrineOfTheSeaGod_Room8Placements, 297, 160, 202,
+ * 176, 298, 1, 320, 218) struct Trigger gShrineOfTheSeaGod_Tr..., it does not
+ * compile in tla-ja: games/tla/src/scene/shrine_of_the_sea_god.c:345:
+ * conflicting types for
+ * `gShrineOfTheSeaGod_Room8Placements__shrine_of_the_sea_god'. */
 extern const u8 gShrineOfTheSeaGod_Triggers__shrine_of_the_sea_god[] __asm__(
     "gShrineOfTheSeaGod_Triggers");
 #define gShrineOfTheSeaGod_Triggers                                            \
   gShrineOfTheSeaGod_Triggers__shrine_of_the_sea_god
-/* VIEW(shrine_of_the_sea_god): routine gShrineOfTheSeaGod_Room1Triggers as this
- * part declared it; the joined file has another. */
-extern const u8
-    gShrineOfTheSeaGod_Room1Triggers__shrine_of_the_sea_god[] __asm__(
-        "gShrineOfTheSeaGod_Room1Triggers");
-#define gShrineOfTheSeaGod_Room1Triggers                                       \
-  gShrineOfTheSeaGod_Room1Triggers__shrine_of_the_sea_god
-/* VIEW(shrine_of_the_sea_god): routine gShrineOfTheSeaGod_Room2Triggers as this
- * part declared it; the joined file has another. */
-extern const u8
-    gShrineOfTheSeaGod_Room2Triggers__shrine_of_the_sea_god[] __asm__(
-        "gShrineOfTheSeaGod_Room2Triggers");
-#define gShrineOfTheSeaGod_Room2Triggers                                       \
-  gShrineOfTheSeaGod_Room2Triggers__shrine_of_the_sea_god
-/* VIEW(shrine_of_the_sea_god): routine gShrineOfTheSeaGod_Room3Triggers as this
- * part declared it; the joined file has another. */
-extern const u8
-    gShrineOfTheSeaGod_Room3Triggers__shrine_of_the_sea_god[] __asm__(
-        "gShrineOfTheSeaGod_Room3Triggers");
-#define gShrineOfTheSeaGod_Room3Triggers                                       \
-  gShrineOfTheSeaGod_Room3Triggers__shrine_of_the_sea_god
-/* VIEW(shrine_of_the_sea_god): routine gShrineOfTheSeaGod_Room4Triggers as this
- * part declared it; the joined file has another. */
-extern const u8
-    gShrineOfTheSeaGod_Room4Triggers__shrine_of_the_sea_god[] __asm__(
-        "gShrineOfTheSeaGod_Room4Triggers");
-#define gShrineOfTheSeaGod_Room4Triggers                                       \
-  gShrineOfTheSeaGod_Room4Triggers__shrine_of_the_sea_god
-/* VIEW(shrine_of_the_sea_god): routine gShrineOfTheSeaGod_Room5Triggers as this
- * part declared it; the joined file has another. */
-extern const u8
-    gShrineOfTheSeaGod_Room5Triggers__shrine_of_the_sea_god[] __asm__(
-        "gShrineOfTheSeaGod_Room5Triggers");
-#define gShrineOfTheSeaGod_Room5Triggers                                       \
-  gShrineOfTheSeaGod_Room5Triggers__shrine_of_the_sea_god
-/* VIEW(shrine_of_the_sea_god): routine gShrineOfTheSeaGod_Room6Triggers as this
- * part declared it; the joined file has another. */
-extern const u8
-    gShrineOfTheSeaGod_Room6Triggers__shrine_of_the_sea_god[] __asm__(
-        "gShrineOfTheSeaGod_Room6Triggers");
-#define gShrineOfTheSeaGod_Room6Triggers                                       \
-  gShrineOfTheSeaGod_Room6Triggers__shrine_of_the_sea_god
-/* VIEW(shrine_of_the_sea_god): routine gShrineOfTheSeaGod_Room7Triggers as this
- * part declared it; the joined file has another. */
-extern const u8
-    gShrineOfTheSeaGod_Room7Triggers__shrine_of_the_sea_god[] __asm__(
-        "gShrineOfTheSeaGod_Room7Triggers");
-#define gShrineOfTheSeaGod_Room7Triggers                                       \
-  gShrineOfTheSeaGod_Room7Triggers__shrine_of_the_sea_god
-/* VIEW(shrine_of_the_sea_god): routine gShrineOfTheSeaGod_Room8Triggers as this
- * part declared it; the joined file has another. */
-extern const u8
-    gShrineOfTheSeaGod_Room8Triggers__shrine_of_the_sea_god[] __asm__(
-        "gShrineOfTheSeaGod_Room8Triggers");
-#define gShrineOfTheSeaGod_Room8Triggers                                       \
-  gShrineOfTheSeaGod_Room8Triggers__shrine_of_the_sea_god
-/* VIEW(shrine_of_the_sea_god): routine gShrineOfTheSeaGod_Room9Triggers as this
- * part declared it; the joined file has another. */
-extern const u8
-    gShrineOfTheSeaGod_Room9Triggers__shrine_of_the_sea_god[] __asm__(
-        "gShrineOfTheSeaGod_Room9Triggers");
-#define gShrineOfTheSeaGod_Room9Triggers                                       \
-  gShrineOfTheSeaGod_Room9Triggers__shrine_of_the_sea_god
+extern struct Trigger gShrineOfTheSeaGod_Room1Triggers[];
+#define gShrineOfTheSeaGod_Room1Triggers gShrineOfTheSeaGod_Room1Triggers
+extern struct Trigger gShrineOfTheSeaGod_Room2Triggers[];
+#define gShrineOfTheSeaGod_Room2Triggers gShrineOfTheSeaGod_Room2Triggers
+extern struct Trigger gShrineOfTheSeaGod_Room3Triggers[];
+#define gShrineOfTheSeaGod_Room3Triggers gShrineOfTheSeaGod_Room3Triggers
+extern struct Trigger gShrineOfTheSeaGod_Room4Triggers[];
+#define gShrineOfTheSeaGod_Room4Triggers gShrineOfTheSeaGod_Room4Triggers
+extern struct Trigger gShrineOfTheSeaGod_Room5Triggers[];
+#define gShrineOfTheSeaGod_Room5Triggers gShrineOfTheSeaGod_Room5Triggers
+extern struct Trigger gShrineOfTheSeaGod_Room6Triggers[];
+#define gShrineOfTheSeaGod_Room6Triggers gShrineOfTheSeaGod_Room6Triggers
+extern struct Trigger gShrineOfTheSeaGod_Room7Triggers[];
+#define gShrineOfTheSeaGod_Room7Triggers gShrineOfTheSeaGod_Room7Triggers
+extern struct Trigger gShrineOfTheSeaGod_Room8Triggers[];
+#define gShrineOfTheSeaGod_Room8Triggers gShrineOfTheSeaGod_Room8Triggers
+extern struct Trigger gShrineOfTheSeaGod_Room9Triggers[];
+#define gShrineOfTheSeaGod_Room9Triggers gShrineOfTheSeaGod_Room9Triggers
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
@@ -515,7 +436,10 @@ const struct Trigger *Scene_GetEvents(void) {
 #include "text/msg_ids.h"
 
 /* VIEW(shrine_of_the_sea_god): routine gData_02003c10 as this part declared it;
- * the joined file has another. */
+ * the joined file has another; tried as the definition's extern struct Trigger
+ * gData_02003c10[], it does not compile in tla-ja:
+ * games/tla/src/scene/shrine_of_the_sea_god.c:455: `gData_02003c10' undeclared
+ * (first use in this function). */
 extern const u8
     gData_02003c10__shrine_of_the_sea_god[] __asm__("gData_02003c10");
 #define gData_02003c10 gData_02003c10__shrine_of_the_sea_god
@@ -834,7 +758,10 @@ void Func_02000994(void) {
 }
 
 /* VIEW(shrine_of_the_sea_god): routine gData_02003cbc as this part declared it;
- * the joined file has another. */
+ * the joined file has another; tried as the definition's extern s16
+ * gData_02003cbc[], it does not compile in tla-ja:
+ * games/tla/src/scene/shrine_of_the_sea_god.c:873: `gData_02003cbc' undeclared
+ * (first use in this function). */
 extern const u8
     gData_02003cbc__shrine_of_the_sea_god[] __asm__("gData_02003cbc");
 #define gData_02003cbc gData_02003cbc__shrine_of_the_sea_god
@@ -1122,8 +1049,7 @@ void Func_020012b4(void) {
 #include "../field/field_effect/advance_motion.c"
 
 #undef Actor_SetPositionAndResetMotion
-#define Actor_SetPositionAndResetMotion                                        \
-  Actor_SetPositionAndResetMotion__shrine_header
+#define Actor_SetPositionAndResetMotion Actor_SetPositionAndResetMotion
 #undef Actor_SetSpriteFlags
 #undef EFFECT_SPAWN
 #undef EFFECT_CREATE
@@ -1458,7 +1384,9 @@ void ShrineOfTheSeaGod_ThrowRopeAgain(void) {
 }
 
 /* VIEW(s1340): routine gData_02003c58 as this part declared it; the joined file
- * has another. */
+ * has another; tried as the definition's extern u32 gData_02003c58[], it does
+ * not compile in tla-ja: games/tla/src/scene/shrine_of_the_sea_god.c:1536:
+ * `gData_02003c58' undeclared (first use in this function). */
 extern const u8 gData_02003c58__s1340[] __asm__("gData_02003c58");
 #define gData_02003c58 gData_02003c58__s1340
 
@@ -1969,24 +1897,26 @@ void Func_02002d50(void) {
 }
 
 /* VIEW(s1340): routine gData_02003cc0 as this part declared it; the joined file
- * has another. */
+ * has another; tried as the definition's extern s16 gData_02003cc0[], it does
+ * not compile in tla-ja: games/tla/src/scene/shrine_of_the_sea_god.c:1951:
+ * `gData_02003cc0' undeclared (first use in this function). */
 extern const struct ShrineOfTheSeaGodSpot
     gData_02003cc0__s1340[] __asm__("gData_02003cc0");
 #define gData_02003cc0 gData_02003cc0__s1340
 /* VIEW(s1340): routine gData_02003cbc as this part declared it; the joined file
- * has another. */
+ * has another; tried as the definition's extern s16 gData_02003cbc[], it does
+ * not compile in tla-ja: games/tla/src/scene/shrine_of_the_sea_god.c:2010:
+ * `gData_02003cbc' undeclared (first use in this function). */
 extern const u8 gData_02003cbc__s1340[] __asm__("gData_02003cbc");
 #define gData_02003cbc gData_02003cbc__s1340
 /* VIEW(s1340): routine gData_02003c10 as this part declared it; the joined file
- * has another. */
+ * has another; tried as the definition's extern struct Trigger
+ * gData_02003c10[], it does not compile in tla-ja:
+ * games/tla/src/scene/shrine_of_the_sea_god.c:2022: `gData_02003c10' undeclared
+ * (first use in this function). */
 extern const u8 gData_02003c10__s1340[] __asm__("gData_02003c10");
 #define gData_02003c10 gData_02003c10__s1340
 
-/* VIEW(s1340): routine Actor_SetSpriteColor as this part declared it; the
- * joined file has another. */
-void Actor_SetSpriteColor__s1340(struct ShrineOfTheSeaGodObject *object,
-                                 s32 value) __asm__("Actor_SetSpriteColor");
-#define Actor_SetSpriteColor Actor_SetSpriteColor__s1340
 void Rope_Place(s32 a, s32 b, s32 c, s32 d);
 void Actor_PlaceBlocks(const void *script);
 void Func_02001128(void);
@@ -2388,7 +2318,6 @@ s32 Scene_PrepareMap(void) {
 #undef gData_02003cc0
 #undef gData_02003cbc
 #undef gData_02003c10
-#undef Actor_SetSpriteColor
 #include "text/msg_ids.h"
 
 void Func_02000280(void);

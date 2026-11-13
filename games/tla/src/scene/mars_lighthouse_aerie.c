@@ -394,7 +394,7 @@ s32 Actor_MoveToObject();
  * DEFINE_G_DATA_02002F1C(gData_02005c20, 528, 328)
  * DEFINE_G_DATA_02002F1C(gData_02005c48, 512, 328) s32 gData_02005c70[] = {;
  * tried as the one declaration extern u8 gData_02005ba8[], it does not compile
- * in tla-ja: games/tla/src/scene/mars_lighthouse_aerie.c:511: `gData_02005ba8'
+ * in tla-ja: games/tla/src/scene/mars_lighthouse_aerie.c:513: `gData_02005ba8'
  * undeclared (first use in this function). */
 extern u8 gData_02005ba8__mars_lighthouse_aerie[] __asm__("gData_02005ba8");
 #define gData_02005ba8 gData_02005ba8__mars_lighthouse_aerie
@@ -404,7 +404,7 @@ extern u8 gData_02005ba8__mars_lighthouse_aerie[] __asm__("gData_02005ba8");
  * DEFINE_G_DATA_02002F1C(gData_02005c20, 528, 328)
  * DEFINE_G_DATA_02002F1C(gData_02005c48, 512, 328) s32 gData_02005c70[] = {;
  * tried as the one declaration extern u8 gData_02005bd0[], it does not compile
- * in tla-ja: games/tla/src/scene/mars_lighthouse_aerie.c:512: `gData_02005bd0'
+ * in tla-ja: games/tla/src/scene/mars_lighthouse_aerie.c:514: `gData_02005bd0'
  * undeclared (first use in this function). */
 extern u8 gData_02005bd0__mars_lighthouse_aerie[] __asm__("gData_02005bd0");
 #define gData_02005bd0 gData_02005bd0__mars_lighthouse_aerie
@@ -413,7 +413,7 @@ extern u8 gData_02005bd0__mars_lighthouse_aerie[] __asm__("gData_02005bd0");
  * 488, 320) DEFINE_G_DATA_02002F1C(gData_02005c20, 528, 328)
  * DEFINE_G_DATA_02002F1C(gData_02005c48, 512, 328) s32 gData_02005c70[] = {;
  * tried as the one declaration extern u8 gData_02005bf8[], it does not compile
- * in tla-ja: games/tla/src/scene/mars_lighthouse_aerie.c:513: `gData_02005bf8'
+ * in tla-ja: games/tla/src/scene/mars_lighthouse_aerie.c:515: `gData_02005bf8'
  * undeclared (first use in this function). */
 extern u8 gData_02005bf8__mars_lighthouse_aerie[] __asm__("gData_02005bf8");
 #define gData_02005bf8 gData_02005bf8__mars_lighthouse_aerie
@@ -422,7 +422,7 @@ extern u8 gData_02005bf8__mars_lighthouse_aerie[] __asm__("gData_02005bf8");
  * 528, 328) DEFINE_G_DATA_02002F1C(gData_02005c48, 512, 328) s32
  * gData_02005c70[] = {; tried as the one declaration extern u8
  * gData_02005c20[], it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_aerie.c:515: `gData_02005c20' undeclared
+ * games/tla/src/scene/mars_lighthouse_aerie.c:517: `gData_02005c20' undeclared
  * (first use in this function). */
 extern u8 gData_02005c20__mars_lighthouse_aerie[] __asm__("gData_02005c20");
 #define gData_02005c20 gData_02005c20__mars_lighthouse_aerie
@@ -430,7 +430,7 @@ extern u8 gData_02005c20__mars_lighthouse_aerie[] __asm__("gData_02005c20");
  * scene/mars_lighthouse_aerie/s3370 has DEFINE_G_DATA_02002F1C(gData_02005c48,
  * 512, 328) s32 gData_02005c70[] = {; tried as the one declaration extern u8
  * gData_02005c48[], it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_aerie.c:514: `gData_02005c48' undeclared
+ * games/tla/src/scene/mars_lighthouse_aerie.c:516: `gData_02005c48' undeclared
  * (first use in this function). */
 extern u8 gData_02005c48__mars_lighthouse_aerie[] __asm__("gData_02005c48");
 #define gData_02005c48 gData_02005c48__mars_lighthouse_aerie
@@ -439,8 +439,8 @@ extern u8 gData_02005c48__mars_lighthouse_aerie[] __asm__("gData_02005c48");
  * definition's extern DEFINE_G_DATA_02005B54(gData_02005b54)
  * DEFINE_G_DATA_02002F1C(gData_02005ba8, 496, 328)
  * DEFINE_G_DATA_02002F1C(gData_02005bd0, 480, 3..., it does not compile in
- * tla-ja: games/tla/src/scene/mars_lighthouse_aerie.c:393: parse error before
- * `DEFINE_G_DATA_02002F1C'. */
+ * tla-ja: games/tla/src/scene/mars_lighthouse_aerie.c:396: conflicting types
+ * for `gData_02005ba8__mars_lighthouse_aerie'. */
 extern u8 gData_02005c70__mars_lighthouse_aerie[] __asm__("gData_02005c70");
 extern u32 gData_02005cac[];
 /* VIEW(mars_lighthouse_aerie): variable gData_02005ce8 as u8 gData_02005ce8[];
@@ -453,7 +453,7 @@ extern u32 gData_02005cac[];
  * DEFINE_G_DATA_02002F88(gData_02005e80, 552, 304, 10)
  * DEFINE_G_DATA_02005EC4(gData_02005ec4) u32 gData_02005f08[] = {; tried as the
  * one declaration extern u8 gData_02005ce8[], it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_aerie.c:1156: `gData_02005ce8' undeclared
+ * games/tla/src/scene/mars_lighthouse_aerie.c:1159: `gData_02005ce8' undeclared
  * (first use in this function). */
 extern u8 gData_02005ce8__mars_lighthouse_aerie[] __asm__("gData_02005ce8");
 #define gData_02005ce8 gData_02005ce8__mars_lighthouse_aerie
@@ -466,7 +466,7 @@ extern u8 gData_02005ce8__mars_lighthouse_aerie[] __asm__("gData_02005ce8");
  * DEFINE_G_DATA_02002F88(gData_02005e80, 552, 304, 10)
  * DEFINE_G_DATA_02005EC4(gData_02005ec4) u32 gData_02005f08[] = {; tried as the
  * one declaration extern u8 gData_02005d2c[], it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_aerie.c:1157: `gData_02005d2c' undeclared
+ * games/tla/src/scene/mars_lighthouse_aerie.c:1160: `gData_02005d2c' undeclared
  * (first use in this function). */
 extern u8 gData_02005d2c__mars_lighthouse_aerie[] __asm__("gData_02005d2c");
 #define gData_02005d2c gData_02005d2c__mars_lighthouse_aerie
@@ -478,7 +478,7 @@ extern u8 gData_02005d2c__mars_lighthouse_aerie[] __asm__("gData_02005d2c");
  * DEFINE_G_DATA_02002F88(gData_02005e80, 552, 304, 10)
  * DEFINE_G_DATA_02005EC4(gData_02005ec4) u32 gData_02005f08[] = {; tried as the
  * one declaration extern u8 gData_02005d70[], it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_aerie.c:1159: `gData_02005d70' undeclared
+ * games/tla/src/scene/mars_lighthouse_aerie.c:1162: `gData_02005d70' undeclared
  * (first use in this function). */
 extern u8 gData_02005d70__mars_lighthouse_aerie[] __asm__("gData_02005d70");
 #define gData_02005d70 gData_02005d70__mars_lighthouse_aerie
@@ -489,7 +489,7 @@ extern u8 gData_02005d70__mars_lighthouse_aerie[] __asm__("gData_02005d70");
  * DEFINE_G_DATA_02002F88(gData_02005e80, 552, 304, 10)
  * DEFINE_G_DATA_02005EC4(gData_02005ec4) u32 gData_02005f08[] = {; tried as the
  * one declaration extern u8 gData_02005db4[], it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_aerie.c:1158: `gData_02005db4' undeclared
+ * games/tla/src/scene/mars_lighthouse_aerie.c:1161: `gData_02005db4' undeclared
  * (first use in this function). */
 extern u8 gData_02005db4__mars_lighthouse_aerie[] __asm__("gData_02005db4");
 #define gData_02005db4 gData_02005db4__mars_lighthouse_aerie
@@ -499,7 +499,7 @@ extern u8 gData_02005db4__mars_lighthouse_aerie[] __asm__("gData_02005db4");
  * DEFINE_G_DATA_02002F88(gData_02005e80, 552, 304, 10)
  * DEFINE_G_DATA_02005EC4(gData_02005ec4) u32 gData_02005f08[] = {; tried as the
  * one declaration extern u8 gData_02005df8[], it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_aerie.c:1154: `gData_02005df8' undeclared
+ * games/tla/src/scene/mars_lighthouse_aerie.c:1157: `gData_02005df8' undeclared
  * (first use in this function). */
 extern u8 gData_02005df8__mars_lighthouse_aerie[] __asm__("gData_02005df8");
 #define gData_02005df8 gData_02005df8__mars_lighthouse_aerie
@@ -508,15 +508,15 @@ extern u8 gData_02005df8__mars_lighthouse_aerie[] __asm__("gData_02005df8");
  * 538, 320, 10) DEFINE_G_DATA_02002F88(gData_02005e80, 552, 304, 10)
  * DEFINE_G_DATA_02005EC4(gData_02005ec4) u32 gData_02005f08[] = {; tried as the
  * one declaration extern u8 gData_02005e3c[], it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_aerie.c:1160: `gData_02005e3c' undeclared
+ * games/tla/src/scene/mars_lighthouse_aerie.c:1163: `gData_02005e3c' undeclared
  * (first use in this function). */
 extern u8 gData_02005e3c__mars_lighthouse_aerie[] __asm__("gData_02005e3c");
 #define gData_02005e3c gData_02005e3c__mars_lighthouse_aerie
 /* VIEW(mars_lighthouse_aerie): variable gData_02005e80 as u8 gData_02005e80[];
  * scene/mars_lighthouse_aerie/s3370 has DEFINE_G_DATA_02002F88(gData_02005e80,
  * 552, 304, 10) DEFINE_G_DATA_02005EC4(gData_02005ec4) u32 gData_02005f08[] =
- * {; tried as the 2 declarations' extern u8 gData_02005e80[], it does not
- * compile in tla-ja: games/tla/src/scene/mars_lighthouse_aerie.c:1161:
+ * {; tried as the one declaration extern u8 gData_02005e80[], it does not
+ * compile in tla-ja: games/tla/src/scene/mars_lighthouse_aerie.c:1164:
  * `gData_02005e80' undeclared (first use in this function). */
 extern u8 gData_02005e80__mars_lighthouse_aerie[] __asm__("gData_02005e80");
 #define gData_02005e80 gData_02005e80__mars_lighthouse_aerie
@@ -524,7 +524,7 @@ extern u8 gData_02005e80__mars_lighthouse_aerie[] __asm__("gData_02005e80");
  * scene/mars_lighthouse_aerie/s3370 has DEFINE_G_DATA_02005EC4(gData_02005ec4)
  * u32 gData_02005f08[] = {; tried as the one declaration extern u8
  * gData_02005ec4[], it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_aerie.c:1162: `gData_02005ec4' undeclared
+ * games/tla/src/scene/mars_lighthouse_aerie.c:1165: `gData_02005ec4' undeclared
  * (first use in this function). */
 extern u8 gData_02005ec4__mars_lighthouse_aerie[] __asm__("gData_02005ec4");
 #define gData_02005ec4 gData_02005ec4__mars_lighthouse_aerie
@@ -1322,7 +1322,7 @@ extern u32 gData_02005f50[];
  * DEFINE_G_DATA_02005EC4(gData_0200602c) DEFINE_G_DATA_02002F88(gData_02006070,
  * 548, 292, 10) s32 gData_020060b4[] = {; tried as the one declaration extern
  * u8 gData_02005f98[], it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_aerie.c:1470: `gData_02005f98' undeclared
+ * games/tla/src/scene/mars_lighthouse_aerie.c:1474: `gData_02005f98' undeclared
  * (first use in this function). */
 extern u8 gData_02005f98__mars_lighthouse_aerie[] __asm__("gData_02005f98");
 #define gData_02005f98 gData_02005f98__mars_lighthouse_aerie
@@ -1332,7 +1332,7 @@ extern u8 gData_02005f98__mars_lighthouse_aerie[] __asm__("gData_02005f98");
  * DEFINE_G_DATA_02005EC4(gData_0200602c) DEFINE_G_DATA_02002F88(gData_02006070,
  * 548, 292, 10) s32 gData_020060b4[] = {; tried as the one declaration extern
  * u8 gData_02005fdc[], it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_aerie.c:1471: `gData_02005fdc' undeclared
+ * games/tla/src/scene/mars_lighthouse_aerie.c:1475: `gData_02005fdc' undeclared
  * (first use in this function). */
 extern u8 gData_02005fdc__mars_lighthouse_aerie[] __asm__("gData_02005fdc");
 #define gData_02005fdc gData_02005fdc__mars_lighthouse_aerie
@@ -1340,9 +1340,9 @@ extern u8 gData_02005fdc__mars_lighthouse_aerie[] __asm__("gData_02005fdc");
  * scene/mars_lighthouse_aerie/s3370 has DEFINE_G_DATA_02002F1C(gData_02006004,
  * 528, 292) DEFINE_G_DATA_02005EC4(gData_0200602c)
  * DEFINE_G_DATA_02002F88(gData_02006070, 548, 292, 10) s32 gData_020060b4[] =
- * {; tried as the definition's extern struct ActorPlacement gData_02006004[],
- * it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_aerie.c:1472: `gData_02006004' undeclared
+ * {; tried as the definition's extern LATE_DATA struct ActorPlacement
+ * gData_02006004[], it does not compile in tla-ja:
+ * games/tla/src/scene/mars_lighthouse_aerie.c:1476: `gData_02006004' undeclared
  * (first use in this function). */
 extern u8 gData_02006004__mars_lighthouse_aerie[] __asm__("gData_02006004");
 #define gData_02006004 gData_02006004__mars_lighthouse_aerie
@@ -1350,7 +1350,7 @@ extern u8 gData_02006004__mars_lighthouse_aerie[] __asm__("gData_02006004");
  * scene/mars_lighthouse_aerie/s3370 has DEFINE_G_DATA_02005EC4(gData_0200602c)
  * DEFINE_G_DATA_02002F88(gData_02006070, 548, 292, 10) s32 gData_020060b4[] =
  * {; tried as the one declaration extern u8 gData_0200602c[], it does not
- * compile in tla-ja: games/tla/src/scene/mars_lighthouse_aerie.c:1473:
+ * compile in tla-ja: games/tla/src/scene/mars_lighthouse_aerie.c:1477:
  * `gData_0200602c' undeclared (first use in this function). */
 extern u8 gData_0200602c__mars_lighthouse_aerie[] __asm__("gData_0200602c");
 #define gData_0200602c gData_0200602c__mars_lighthouse_aerie
@@ -1358,7 +1358,7 @@ extern u8 gData_0200602c__mars_lighthouse_aerie[] __asm__("gData_0200602c");
  * scene/mars_lighthouse_aerie/s3370 has DEFINE_G_DATA_02002F88(gData_02006070,
  * 548, 292, 10) s32 gData_020060b4[] = {; tried as the one declaration extern
  * u8 gData_02006070[], it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_aerie.c:1481: `gData_02006070' undeclared
+ * games/tla/src/scene/mars_lighthouse_aerie.c:1485: `gData_02006070' undeclared
  * (first use in this function). */
 extern u8 gData_02006070__mars_lighthouse_aerie[] __asm__("gData_02006070");
 #define gData_02006070 gData_02006070__mars_lighthouse_aerie
@@ -3078,7 +3078,7 @@ void Func_02005268(struct Actor *object) {
 /* VIEW(s53e4): tag struct SparkleSprite as struct SparkleSprite__s53e4; s3370.c
  * has another definition; tried with the definition the rest of the object has,
  * it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_aerie.c:3002: structure has no member
+ * games/tla/src/scene/mars_lighthouse_aerie.c:2972: structure has no member
  * named `flag'. */
 struct SparkleSprite__s53e4 {
   u8 unk00[5];
@@ -3095,7 +3095,7 @@ struct SparkleSprite__s53e4 {
 
 /* VIEW(s53e4): tag struct SparkleWork as struct SparkleWork__s53e4; s3370.c has
  * another definition; tried with the definition the rest of the object has, it
- * does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_aerie.c:2992:
+ * does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_aerie.c:2962:
  * incompatible types in assignment. */
 struct SparkleWork__s53e4 {
   struct SparkleSprite__s53e4 sprites[4];

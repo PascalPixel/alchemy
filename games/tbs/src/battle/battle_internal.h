@@ -123,13 +123,6 @@
 /// three enemy ids from FIRST_ENEMY_UNIT.
 #define LINK_PARTY_SIZE 3
 
-/// The party fights four at a time, three in a link battle; six enemies at
-/// most, three in a link battle.
-#define PARTY_BATTLE_SIZE 4
-#define ENEMY_BATTLE_SIZE 6
-
-#define ALLY_MAX 7 ///< the last party member's unit id
-
 /// BattleWork.objectIndex of a unit with no place on the battlefield:
 /// BattleUnit_RefreshPlacement fills the list with it, and BattleObject_Get
 /// returns NULL for it.

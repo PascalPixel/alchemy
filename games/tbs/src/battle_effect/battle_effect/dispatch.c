@@ -193,7 +193,7 @@ void BattleEffect_SelectLivingTargets(struct BattleEffectParams *args) {
 
   count = 0;
   if (args->targets[0] >= FIRST_ENEMY_UNIT) {
-    for (i = 0; i != BATTLE_ENEMY_CAPACITY; i++) {
+    for (i = 0; i != ENEMY_BATTLE_SIZE; i++) {
       s32 id = i + FIRST_ENEMY_UNIT;
 
       if (Unit_GetFar(id)->hp > 0)

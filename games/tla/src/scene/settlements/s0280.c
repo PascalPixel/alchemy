@@ -309,11 +309,6 @@ s32 Func_020007fc(s32 *p) {
     u32 x;
     s32 angle;
 
-    /* FAKEMATCH(dead): the empty once-only block keeps the first random
-     * value's shift after the second call; without it, 2 of 44 instructions
-     * differ in tla-en (with the asm below also removed, none differ). */
-    do {
-    } while (0);
     x = (u32)a << 9;
     angle = p[12];
     p[12] = angle + ((x >> 16) + (((u32)b << 9) >> 16)) + 0x400;

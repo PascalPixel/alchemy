@@ -1695,10 +1695,6 @@ void Func_02003210(struct Actor *self) {
   z += sine * 2;
   self->z = z;
   self->targetX = x;
-  /* FAKEMATCH(dead): the target z store stays ahead of the timer load;
-   * without it, 2 of 40 instructions differ in tla-en. */
-  do {
-  } while (0);
   self->targetZ = z;
   self->timer += -0x800;
 }

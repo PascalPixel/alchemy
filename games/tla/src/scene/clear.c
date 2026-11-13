@@ -172,13 +172,8 @@ void Func_020001f4(void) {
         gData_020024fe = keys;
     } else if (*held != 0) {
       if (*held == gData_02002410[gData_020024fa]) {
-        /* FAKEMATCH(dead): the two stores in a once-only block, which keeps
-         * them together; as plain statements, 4 of 92 instructions differ in
-         * tla-en. */
-        do {
-          gData_020024fa++;
-          gData_020024fe = 1;
-        } while (0);
+        gData_020024fa++;
+        gData_020024fe = 1;
         if (gData_02002410[gData_020024fa] == 0) {
           gData_020024f6 = 1;
           Event_PlaySound(110);
@@ -202,13 +197,8 @@ void Func_020001f4(void) {
         gData_02002500 = keys;
     } else if (*held != 0) {
       if (*held == gData_02002418[gData_020024fc]) {
-        /* FAKEMATCH(dead): the two stores in a once-only block, as for the
-         * first code; as plain statements, 4 of 92 instructions differ in
-         * tla-en. */
-        do {
-          gData_020024fc++;
-          gData_02002500 = 1;
-        } while (0);
+        gData_020024fc++;
+        gData_02002500 = 1;
         if (gData_02002418[gData_020024fc] == 0) {
           gData_020024f8 = 1;
           Event_PlaySound(110);

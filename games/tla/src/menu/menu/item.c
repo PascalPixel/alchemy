@@ -724,11 +724,6 @@ s32 ItemMenu_Use(void) {
   }
 
   item = menu->selectedItems[0];
-  /* FAKEMATCH(dead): an empty once-only block between the item load and the
-   * 0x1ff mask; as mask = item & 0x1ff, 2 of 67 instructions differ in tla-en.
-   */
-  do {
-  } while (0);
   mask = 0x1ff;
   mask &= item;
   Func_08100d40(mask);
@@ -1836,15 +1831,10 @@ void Func_080fb410(s8 *commandStates) {
 
   if (item->flags & ITEM_CANNOT_UNEQUIP) {
     commandStates[4] = COMMAND_DISABLED;
-    /* FAKEMATCH(dead): the equipped test in a once-only block, which
-     * keeps the store above from sinking below the selected item's address;
-     * as the plain if, 2 of 157 instructions differ in tla-en. */
-    do {
-      if (menu->selectedItems[0] & INVENTORY_EQUIPPED) {
-        commandStates[3] = COMMAND_DISABLED;
-        commandStates[5] = COMMAND_DISABLED;
-      }
-    } while (0);
+    if (menu->selectedItems[0] & INVENTORY_EQUIPPED) {
+      commandStates[3] = COMMAND_DISABLED;
+      commandStates[5] = COMMAND_DISABLED;
+    }
   }
 
   if (BattleEffect_HasTriggerFar(menu->selectedItems[0] & ITEM_ID_MASK) != 0)

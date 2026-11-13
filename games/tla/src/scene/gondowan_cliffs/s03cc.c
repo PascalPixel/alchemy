@@ -314,37 +314,32 @@ s32 Func_02000988(void) {
     return 0;
   }
   Actor_GetById(Party_GetLeaderActor())->priorityFlags |= 32;
-  /* FAKEMATCH(dead): the room test through the placing of actor 17 in a
-   * once-only block, which loads gMainRoutineWork before the scene offset; as
-   * plain statements, 2 of 227 instructions differ in tla-en. */
-  do {
-    if (gMainRoutineWork.scene != (s32)&SceneId_Ov66bRoom1)
-      goto done;
-    Func_020012f4();
-    Func_0200130c(0, 0x200, 10, 11);
-    if (GameFlag_Test(0x8ab)) {
-      Func_020012fc();
-      Func_02001304(0, 8, 9);
-    }
-    if (GameFlag_Test(0x885))
-      Actor_SetPosition(14, 0, 0);
-    else
-      Actor_GetById(14)->scaleY = 0x14000;
-    if (GameFlag_Test(0x201))
-      MapGrid_CopyCellAttributes(79, 28, 1, 1, 81, 28);
-    if (GameFlag_Test(0x202))
-      MapGrid_CopyCellAttributes(115, 35, 1, 1, 117, 35);
-    Func_02000fcc(0, 240);
-    Func_02001068(0, 17, 0, 0, 64);
-    if (GameFlag_Test(0x886)) {
-      actor = Actor_GetById(17);
-      MapGrid_CopyCellsLayered(124, 1, 1, 1, 119, 43);
-      Actor_SetPosition(17, PIXELS(1912), PIXELS(728));
-      height = Map_GetTerrainHeight(0, actor->x, actor->z);
-      actor->y = height;
-      actor->terrainHeight = height;
-    }
-  } while (0);
+  if (gMainRoutineWork.scene != (s32)&SceneId_Ov66bRoom1)
+    goto done;
+  Func_020012f4();
+  Func_0200130c(0, 0x200, 10, 11);
+  if (GameFlag_Test(0x8ab)) {
+    Func_020012fc();
+    Func_02001304(0, 8, 9);
+  }
+  if (GameFlag_Test(0x885))
+    Actor_SetPosition(14, 0, 0);
+  else
+    Actor_GetById(14)->scaleY = 0x14000;
+  if (GameFlag_Test(0x201))
+    MapGrid_CopyCellAttributes(79, 28, 1, 1, 81, 28);
+  if (GameFlag_Test(0x202))
+    MapGrid_CopyCellAttributes(115, 35, 1, 1, 117, 35);
+  Func_02000fcc(0, 240);
+  Func_02001068(0, 17, 0, 0, 64);
+  if (GameFlag_Test(0x886)) {
+    actor = Actor_GetById(17);
+    MapGrid_CopyCellsLayered(124, 1, 1, 1, 119, 43);
+    Actor_SetPosition(17, PIXELS(1912), PIXELS(728));
+    height = Map_GetTerrainHeight(0, actor->x, actor->z);
+    actor->y = height;
+    actor->terrainHeight = height;
+  }
   Actor_SetAnimation(16, 4);
   if (GameFlag_Test(0x884)) {
     MapGrid_CopyCellAttributes(74, 31, 1, 1, 74, 33);

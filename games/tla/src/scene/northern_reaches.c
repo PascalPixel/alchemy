@@ -25,18 +25,11 @@
 #include "module/scene/northern_reaches.h"
 #include "module/scene/scene.h"
 #include "render_input.h"
+#include "effect_sprite.h"
 #include "resource.h"
 
 /// The Magma Ball's ice shards and the explosion's sparks, as the ice wall
 /// shatters (NorthernReaches_ShatterIceWall).
-struct IceShardSprite {
-  u32 unk_00;
-  struct OamData oam;
-  u8 unk_0c[18];
-  u16 depth;
-  u8 unk_20[8];
-};
-
 struct IceShard {
   s32 x;
   s32 y;
@@ -48,14 +41,14 @@ struct IceShard {
 };
 
 struct IceShardSpark {
-  u32 unk_00;
+  struct IceShardSpark *next; ///< The sprite list's link.
   union SparkOam oam;
   s32 timer;
 };
 
 struct IceWallWork {
   u8 sheet[0x1000];
-  struct IceShardSprite sprites[54];
+  struct EffectSprite sprites[54];
   struct IceShard particles[54];
 };
 
@@ -374,8 +367,8 @@ void NorthernReaches_ShatterIceWall(s32 unused, s32 *position,
                                     void (*callback)(void)) {
   struct IceWallWork *work;
   struct IceShard *particle;
-  struct IceShardSprite *sprite;
-  struct IceShardSprite *flySprite;
+  struct EffectSprite *sprite;
+  struct EffectSprite *flySprite;
   struct IceShardSpark *sparks;
   struct IceShardSpark *spark;
   s32 *timer;
@@ -398,7 +391,7 @@ void NorthernReaches_ShatterIceWall(s32 unused, s32 *position,
     zero = 0;
     sprite->depth = 250;
     sprite->oam.priority = zero;
-    sprite->oam.fullColor = 1;
+    sprite->oam.palette256 = 1;
     sprite->oam.palette = zero;
     column = i / 6;
     particle->x = position[0] + (column << 20);

@@ -332,29 +332,18 @@ void Func_02001d2c();
 /// in another way.
 /// "The door doesn't want to open."
 void Lemuria_KnockAtBrokenDoor(void) {
-  s32 t1, t2, t3, t4, t12, t30, t31, v5;
+  s32 t12, v5;
 
-  t1 = (s32)Actor_Get(gMainRoutineWork.currentOwner);
-  if (FIELD_AT(t1, s32, 12) > 0x600000)
-    goto L_02008654;
-  t2 = Event_GetFlag(0x969);
-  if (t2 == 0)
-    goto L_02008666;
-L_02008654:
-  FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x15a), s16, 0) = 1;
-  goto L_020088d4;
-L_02008666:
-  t3 = Event_GetFlag(0x966);
-  if (t3 == 0)
-    goto L_02008682;
-  t4 = Event_GetFlag(0x968);
-  if (t4 == 0)
-    goto L_02008694;
-L_02008682:
-  FieldEvent_SetMessageId((s32)&MsgTheDoorDoesn);
-  Event_ShowMessage(-1, 0);
-  goto L_020088d4;
-L_02008694:
+  if (Actor_Get(gMainRoutineWork.currentOwner)->y > PIXELS(96) ||
+      Event_GetFlag(0x969)) {
+    FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x15a), s16, 0) = 1;
+    return;
+  }
+  if (!Event_GetFlag(0x966) || Event_GetFlag(0x968)) {
+    FieldEvent_SetMessageId((s32)&MsgTheDoorDoesn);
+    Event_ShowMessage(-1, 0);
+    return;
+  }
   Event_SetFlag(0x968);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -378,17 +367,9 @@ L_02008694:
   FieldEvent_ShowMessageThenWait(12, 0, 10);
   FieldCamera_MoveTo(PIXELS(872), -1, PIXELS(928), 1);
   FieldCamera_WaitForArrival();
-  t30 = Party_FindOwnerWithAction(133);
-  v5 = t30;
-  if (v5 == -1)
-    goto L_02008778;
-  goto L_020088cc;
-L_02008778:
-  t31 = Event_GetFlag(0x962);
-  if (t31 == 0)
-    goto L_02008788;
-  goto L_020088cc;
-L_02008788:
+  v5 = Party_FindOwnerWithAction(133);
+  if (v5 != -1 || Event_GetFlag(0x962))
+    goto done;
   FieldEvent_SetMessageId((s32)&MsgWhatSThe);
   FieldEvent_Wait(20);
   Actor_WalkToAndWait(4, 856, 952);
@@ -421,10 +402,9 @@ L_02008788:
   EventCamera_FollowActor(4, 1);
   Actor_WalkByAndWait(12, 0, -32);
   Event_SetFlag(0x96f);
-L_020088cc:
+done:
   Lemuria_PoseActor12();
   Event_End();
-L_020088d4:
 }
 
 void Party_RestoreHpPp(s32 value);
@@ -571,119 +551,77 @@ void Func_02001d4c();
 void Actor_SetWideSprite();
 
 s32 Scene_Initialize(void) {
-  s32 t3, t7, t11, t12, t15, t16, t17, t19, t20, t23, t25, t26, t27, t32, t33,
-      t34, t40, t42, t45, t47, t49, t51, t53, t55, v5, v6;
+  struct Actor *actor;
 
   FIELD_AT(((s32)Ram_HeapSlots->eventWork + 0x1ac), s32, 0) = 0x201;
   FieldTask_AddFrame((s32)Lemuria_CycleWaterColors, 0xc80);
   Func_02001cfc(0);
-  t3 = Actor_Get(11);
-  Actor_SetSpriteFlags(t3, 0);
+  Actor_SetSpriteFlags(Actor_Get(11), 0);
   FieldActor_SetSpritePriority(9, 3);
   FieldActor_SetSpritePriority(29, 3);
-  t7 = Actor_Get(21);
-  FIELD_AT(t7, s32, 108) = (s32)Func_02001b3c;
+  Actor_Get(21)->update = Lemuria_TakeLeaderLayer;
   Actor_SetAnimation(22, 3);
   Actor_SetPosition(18, PIXELS(40), PIXELS(952));
   Actor_SetScript(18, (s32)&gLemuria_FirstWalkerPaces);
-  t11 = Actor_Get(18);
-  v6 = t11;
-  t12 = Actor_Get(19);
-  FIELD_AT(v6, s32, 104) = t12;
-  FIELD_AT(v6, s32, 108) = (s32)Lemuria_NoticeLeader;
+  actor = Actor_Get(18);
+  actor->watchedObject = Actor_Get(19);
+  actor->update = Lemuria_NoticeLeader;
   Actor_SetPosition(19, PIXELS(88), PIXELS(904));
   Actor_SetScript(19, (s32)&gLemuria_SecondWalkerPaces);
-  t15 = Actor_Get(19);
-  v6 = t15;
-  t16 = Actor_Get(18);
-  FIELD_AT(v6, s32, 104) = t16;
-  FIELD_AT(v6, s32, 108) = (s32)Lemuria_NoticeLeader;
-  t17 = Event_GetFlag(0x908);
-  if (t17 == 0)
-    goto L_02008c9c;
-  Actor_SetPosition(30, PIXELS(440), PIXELS(1048));
-L_02008c9c:
-  t19 = Event_GetFlag(0x964);
-  if (t19 == 0)
-    goto L_02008cd4;
-  t20 = Event_GetFlag(0x969);
-  if (t20 != 0)
-    goto L_02008cd4;
-  Actor_SetPosition(24, PIXELS(456), PIXELS(520));
-  Actor_SetPosition(25, PIXELS(472), PIXELS(520));
-L_02008cd4:
-  t23 = Event_GetFlag(0x969);
-  if (t23 != 0)
-    goto L_02008cee;
-  Actor_SetPosition(26, 0, 0);
-  goto L_02008cf8;
-L_02008cee:
-  t25 = Actor_Get(26);
-  FIELD_AT(t25, s32, 108) = (s32)Func_02001b3c;
-L_02008cf8:
-  t26 = Event_GetFlag(0x966);
-  if (t26 == 0)
-    goto L_02008d2a;
-  t27 = Event_GetFlag(0x969);
-  if (t27 != 0)
-    goto L_02008d2a;
-  Actor_SetPosition(7, PIXELS(56), PIXELS(1016));
-  Actor_SetAnimation(7, 9);
-L_02008d2a:
+  actor = Actor_Get(19);
+  actor->watchedObject = Actor_Get(18);
+  actor->update = Lemuria_NoticeLeader;
+  if (Event_GetFlag(0x908)) {
+    Actor_SetPosition(30, PIXELS(440), PIXELS(1048));
+  }
+  if (Event_GetFlag(0x964) && !Event_GetFlag(0x969)) {
+    Actor_SetPosition(24, PIXELS(456), PIXELS(520));
+    Actor_SetPosition(25, PIXELS(472), PIXELS(520));
+  }
+  if (!Event_GetFlag(0x969)) {
+    Actor_SetPosition(26, 0, 0);
+  } else {
+    Actor_Get(26)->update = Lemuria_TakeLeaderLayer;
+  }
+  if (Event_GetFlag(0x966) && !Event_GetFlag(0x969)) {
+    Actor_SetPosition(7, PIXELS(56), PIXELS(1016));
+    Actor_SetAnimation(7, 9);
+  }
   Func_02001d24();
   Func_02001d3c(0, 0x962, 8, 9);
-  t32 = Actor_Get(8);
-  FIELD_AT(t32, u8, 35) = (FIELD_AT(t32, u8, 35) | 32);
-  t33 = Actor_Get(9);
-  v5 = (32 | FIELD_AT(t33, u8, 35));
-  FIELD_AT(t33, u8, 35) = v5;
-  t34 = Event_GetFlag(0x96f);
-  if (t34 == 0)
-    goto L_02008da6;
-  FieldActor_SetSpritePriority(28, 2);
-  FieldActor_SetSpritePriority(27, 2);
-  Actor_SetPosition(28, PIXELS(840), PIXELS(920));
-  Actor_SetPosition(27, PIXELS(840), PIXELS(936));
-  Call4(Func_02001d3c, 1, 0x96f, 28, 27);
-L_02008da6:
-  t40 = Actor_Get(28);
-  Actor_SetSpriteFlags(t40, 0);
-  t42 = Event_GetFlag(0x963);
-  if (t42 == 0)
-    goto L_02008dcc;
-  Func_02001d4c(10, 1);
-  Lemuria_GrowVine();
-L_02008dcc:
-  t45 = Event_GetFlag(0x303);
-  if (t45 != 0)
-    goto L_02008de2;
-  Actor_SetWideSprite(67, 0);
-L_02008de2:
-  t47 = Event_GetFlag(0x304);
-  if (t47 != 0)
-    goto L_02008df6;
-  Actor_SetWideSprite(68, 0);
-L_02008df6:
-  t49 = Event_GetFlag(0x306);
-  if (t49 != 0)
-    goto L_02008e0c;
-  Actor_SetWideSprite(70, 0);
-L_02008e0c:
-  t51 = Event_GetFlag(0x307);
-  if (t51 != 0)
-    goto L_02008e22;
-  Actor_SetWideSprite(71, 0);
-L_02008e22:
-  t53 = Event_GetFlag(0x966);
-  if (t53 == 0)
-    goto L_02008e44;
-  MapGrid_CopyCellsLayered(3, 1, 1, 1, 54, 45);
-L_02008e44:
-  t55 = Actor_Get(31);
-  v6 = t55;
-  FIELD_AT(v6, u8, 85) = 0;
-  FIELD_AT(v6, s32, 20) = 0x400000;
-  FIELD_AT(v6, s32, 12) = 0x400000;
+  Actor_Get(8)->priorityFlags |= 32;
+  Actor_Get(9)->priorityFlags |= 32;
+  if (Event_GetFlag(0x96f)) {
+    FieldActor_SetSpritePriority(28, 2);
+    FieldActor_SetSpritePriority(27, 2);
+    Actor_SetPosition(28, PIXELS(840), PIXELS(920));
+    Actor_SetPosition(27, PIXELS(840), PIXELS(936));
+    Call4(Func_02001d3c, 1, 0x96f, 28, 27);
+  }
+  Actor_SetSpriteFlags(Actor_Get(28), 0);
+  if (Event_GetFlag(0x963)) {
+    Func_02001d4c(10, 1);
+    Lemuria_GrowVine();
+  }
+  if (!Event_GetFlag(0x303)) {
+    Actor_SetWideSprite(67, 0);
+  }
+  if (!Event_GetFlag(0x304)) {
+    Actor_SetWideSprite(68, 0);
+  }
+  if (!Event_GetFlag(0x306)) {
+    Actor_SetWideSprite(70, 0);
+  }
+  if (!Event_GetFlag(0x307)) {
+    Actor_SetWideSprite(71, 0);
+  }
+  if (Event_GetFlag(0x966)) {
+    MapGrid_CopyCellsLayered(3, 1, 1, 1, 54, 45);
+  }
+  actor = Actor_Get(31);
+  actor->motionFlags = 0;
+  actor->terrainHeight = PIXELS(64);
+  actor->y = PIXELS(64);
   return 0;
 }
 
@@ -1072,7 +1010,8 @@ void Lemuria_MarvelAtCity(void) {
 
 void Func_02001d6c(void);
 
-void Func_02001b3c(void) { Func_02001d6c(); }
+/// An actor's per-frame hook: it is drawn on the party leader's layer.
+void Lemuria_TakeLeaderLayer(void) { Func_02001d6c(); }
 
 #include "objcmd.h"
 

@@ -30,6 +30,28 @@
 
 s32 Oam_AddSpriteAtDepthClamped();
 
+/// One of the 96 sparks the cannon's blast throws over the screen: the link the
+/// sprite list threads it by, its sprite, and its age in frames, negative while
+/// it waits to appear.
+struct LohoSpark {
+  struct LohoSpark *next;
+  union {
+    u32 words[2];
+    u16 halves[4];
+    u8 bytes[8];
+    struct {
+      u16 y : 8;
+      u16 attr0 : 8;
+      u16 x : 9;
+      u16 attr1 : 7;
+      u16 tile : 10;
+      u16 priority : 2;
+      u16 palette : 4;
+    } oam;
+  } sprite;
+  s32 age;
+};
+
 void Actor_ReturnHome(s32 a, s32 b, s32 c);
 
 /// Lull, the Jupiter Djinni behind the wall the cannon breaks, joins the party
@@ -98,8 +120,8 @@ void FieldCamera_WaitForArrival();
 /// "Is everyone all right?"
 void Loho_FireCannon(void) {
   s32 v_r1, v_r2, v_r0, t0;
-  struct Unk16 *p;
-  struct Unk16 *table;
+  struct LohoSpark *p;
+  struct LohoSpark *table;
   s32 tiles, entry, i, value, zero;
   s32 t38, t47, t48, t49, t50, t51;
   s32 t147, t186, t189;
@@ -109,7 +131,7 @@ void Loho_FireCannon(void) {
   t0 = ((s32)Actor_GetById(4));
   Event_Start();
   Event_ResolvePendingActions(0);
-  p = (struct Unk16 *)t0;
+  p = (struct LohoSpark *)t0;
   goto start;
 approach:
   if (v_r1 == 0)
@@ -177,19 +199,19 @@ inPlace:
   Actor_WaitForMoveById(21);
   Actor_SetPosition(21, 0, 0);
   MapGrid_SetShake(0x70000, 0x70000, 0x10000);
-  table = (struct Unk16 *)Heap_AllocEwram(0x600);
-  p = (struct Unk16 *)Heap_Alloc(0x1000);
+  table = (struct LohoSpark *)Heap_AllocEwram(0x600);
+  p = (struct LohoSpark *)Heap_Alloc(0x1000);
   t38 = Resource_GetTableEntry((s32)&ResourceId_FieldEffectExplosion);
   Decompress_TaggedLz(t38, p);
   entry = VramCache_FindFreeEntry();
   tiles = VramCache_Load(entry, 0x400, p);
   Heap_Release(p);
-  p = (struct Unk16 *)&table->unk_0c;
+  p = (struct LohoSpark *)&table->age;
   i = 95;
 seedSparks:
   *(s32 *)p = -((u32)(Random16Far() << 5) >> 16);
   i = (i - 1);
-  p = (struct Unk16 *)((s32)p + 16);
+  p = (struct LohoSpark *)((s32)p + 16);
   if (i >= 0)
     goto seedSparks;
   Dma_Set((const void *)(s32)Field_Palette685, (void *)0x50003e0, 0x80000010,
@@ -214,7 +236,7 @@ checkFlash:
 sparks:
   p = table;
 spark:
-  if (p->unk_0c != 0)
+  if (p->age != 0)
     goto drawSpark;
   p->sprite.words[0] = 0x40000000;
   p->sprite.words[1] = 0;
@@ -227,7 +249,7 @@ spark:
   p->sprite.bytes[5] = t51 & -13;
 drawSpark:
   // Through long: read as s32, PRE merges this with the read after the call.
-  value = *(long *)&p->unk_0c;
+  value = *(long *)&p->age;
   if (value < 0)
     goto ageSpark;
   t49 = (u16)(((value >> 2) * 4 + tiles) & 0x3ff);
@@ -235,10 +257,10 @@ drawSpark:
   p->sprite.halves[2] = (t50 & -0x400) | t49;
   Oam_AddSpriteAtDepthClamped(p, 100);
 ageSpark:
-  p->unk_0c += 1;
-  if (p->unk_0c <= 31)
+  p->age += 1;
+  if (p->age <= 31)
     goto nextSpark;
-  p->unk_0c = -((u32)(Random16Far() * 7) >> 16);
+  p->age = -((u32)(Random16Far() * 7) >> 16);
 nextSpark:
   p++;
   if ((s32)p <= (s32)&table[95])

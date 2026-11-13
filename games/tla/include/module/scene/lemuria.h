@@ -12,7 +12,7 @@ void Func_02001d34();
 
 void Func_02001d3c();
 
-void Func_02001b3c(void);
+void Lemuria_TakeLeaderLayer(void);
 extern u32 gLemuria_FirstWalkerPaces[];
 extern u32 gLemuria_SecondWalkerPaces[];
 extern s16 gLemuria_DoorOpening[];

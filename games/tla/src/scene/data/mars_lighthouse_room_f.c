@@ -35,7 +35,7 @@ void Func_02000aac(void);
 void Func_02000cf4(void);
 void Func_02000d38(void);
 void Func_0200297c(void);
-void Func_02002ce0(void);
+void MarsLighthouseRoomF_ContinueSlide(void);
 
 extern u8 gData_020056c8[];
 extern u8 gData_020056d4[];
@@ -243,8 +243,8 @@ struct Trigger gMarsLighthouseRoomF_Room3Triggers[] = {
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, EVENT(Func_020008bc)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(Func_02000900)},
     {TRIGGER_STEP, 88, CONDITION_ALWAYS, EVENT(Func_0200297c)},
-    {TRIGGER_STEP, 90, CONDITION_ALWAYS, EVENT(Func_02002ba0)},
-    {TRIGGER_STEP, 14, CONDITION_ALWAYS, EVENT(Func_02002ce0)},
+    {TRIGGER_STEP, 90, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_SlideOnIce)},
+    {TRIGGER_STEP, 14, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_ContinueSlide)},
     {TRIGGERS_END},
 };
 

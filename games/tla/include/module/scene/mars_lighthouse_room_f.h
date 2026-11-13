@@ -106,7 +106,7 @@ void Func_02000ad8(void);
 
 void Func_02000b40(void);
 
-s32 Func_02002ba0(void);
+s32 MarsLighthouseRoomF_SlideOnIce(void);
 
 void Func_02004140(void);
 

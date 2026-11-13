@@ -228,7 +228,9 @@ void Func_02002b88(void) {
 
 void ScreenTransition_Start(s32 mode, s32 frames);
 
-s32 Func_02002ba0(void) {
+/// Stepping onto ice (cell behavior 90, as Imil's ice slide is in The Broken
+/// Seal): the leader slides until the ice stops.
+s32 MarsLighthouseRoomF_SlideOnIce(void) {
   /* FAKEMATCH(signature): declared returning s32 with no return; as void, 2
    * of 138 instructions differ in tla-en. */
   struct EventWork *event = Ram_HeapSlots->eventWork;
@@ -288,7 +290,7 @@ s32 Func_02002ba0(void) {
   ride->active = 0;
 }
 
-DEFINE_FUNC_020024AC(Func_02002ce0, Func_02002ba0)
+DEFINE_FUNC_020024AC(MarsLighthouseRoomF_ContinueSlide, MarsLighthouseRoomF_SlideOnIce)
 
 s32 Func_02002cfc(void) {
   return ((struct RideWork *)(gData_020023c4 + 0x188))->active;

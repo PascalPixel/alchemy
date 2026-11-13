@@ -545,7 +545,7 @@ extern const u8 gMarsLighthouseRoomF_Room4Triggers[];
 extern const u8 gMarsLighthouseRoomF_Room1Triggers[];
 extern const u8 gMarsLighthouseRoomF_Room3Triggers[];
 extern const u8 gMarsLighthouseRoomF_Room2Triggers[];
-void Func_02002ce0(void);
+void MarsLighthouseRoomF_ContinueSlide(void);
 void Func_020043ec(void);
 
 void Func_02000c80(s32 id) {
@@ -595,7 +595,7 @@ void Func_02000d80(void) {
 
 void Func_02000df8(void) {
   Func_020043ec();
-  Func_02002ce0();
+  MarsLighthouseRoomF_ContinueSlide();
 }
 
 const u8 *Scene_GetEvents(void) {

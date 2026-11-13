@@ -72,6 +72,7 @@
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
+#include "io_write.h"
 #include "game.h"
 #include "graphics.h"
 #include "display_transition.h"
@@ -543,13 +544,15 @@ static void HeatGauge_RaiseQuarterTriggers(void) {
   }
 }
 
-/// The distance in whole pixels from a position (x, height, z) to an oasis.
-static s32 LamakanDesert_PixelsToOasis(const s32 *position,
-                                       const struct LamakanDesertOasis *oasis) {
-  s32 dx = (oasis->x - position[0]) >> 16;
-  s32 dz = (oasis->z - position[2]) >> 16;
+/// The distance in whole pixels from a position (x, height, z) to an oasis
+/// (x, z), walking both a coordinate at a time.
+static s32 LamakanDesert_PixelsToOasis(const s32 *position, const s32 *oasis) {
+  s32 dx = (*oasis++ - *position++) >> 16;
+  s32 dz = (*oasis - position[1]) >> 16;
+  s32 squaredDeltaZ = dz * dz;
+  s32 squaredDeltaX = dx * dx;
 
-  return Iwram_Sqrt(dx * dx + dz * dz);
+  return Iwram_Sqrt(squaredDeltaX + squaredDeltaZ);
 }
 
 /// In Lamakan Desert, stepping into an oasis
@@ -558,18 +561,25 @@ static s32 LamakanDesert_PixelsToOasis(const s32 *position,
 /// heart over his head while the gauge drains 5 steps a frame, for at least a
 /// second, then hops out.
 static void LamakanDesert_BatheInOasis(void) {
-  struct FieldWork *work = gFieldWork;
-  const struct LamakanDesertOasis *oases;
-  const struct LamakanDesertOasis *oasis;
-  struct Actor *leader;
-  struct EffectOptions splash;
-  s32 frames = 60;
-  s32 best = px(240);
+  struct FieldWork *work;
+  s32 frames;
+  s32 best;
   s32 count;
-  s32 i;
+  const s32 *oases;
+  s32 total;
+  s32 passed;
+  const s32 *oasis;
   s32 nearest;
   s32 distance;
+  struct Actor *leader;
+  struct EffectOptions splashIn;
+  struct EffectOptions splashOut;
+  s16 *heat;
+  u16 *revealFrames;
 
+  work = gFieldWork;
+  frames = 60;
+  best = px(240);
   GameFlag_Set(FLAG_DESERT_EVENT_RUNNING);
   HeatGauge_SetHeld(1);
   if (gMainRoutineWork.next == (s32)&SceneId_LamakanDesertEast) {
@@ -583,73 +593,106 @@ static void LamakanDesert_BatheInOasis(void) {
     oases = gLamakanDesertOasesOther;
   }
   // Every oasis is nearer than 240 pixels, so the first always counts; a tie
-  // goes to the later.
-  nearest = 0;
-  for (i = 0; i < count; i++) {
-    distance = LamakanDesert_PixelsToOasis(
-        &Actor_Get(ACTOR_PARTY_LEADER)->x.fixed, &oases[i]);
-    if (distance <= best) {
-      best = distance;
-      nearest = i;
+  // goes to the later. The table is walked by its byte offset.
+  total = count;
+  oasis = oases;
+  if (count != 0) {
+    passed = 0;
+    do {
+      distance = LamakanDesert_PixelsToOasis(
+          &Actor_Get(ACTOR_PARTY_LEADER)->x.fixed, oasis);
+      if (distance <= best) {
+        best = distance;
+        nearest = total - count;
+      }
+      passed += 2 * sizeof(s32);
+      oasis = (const s32 *)((const u8 *)oases + passed);
+    } while (--count != 0);
+    /* FAKEMATCH(dead): two self-tests of passed, each with updates that cancel
+     * out, rank it above count in allocation; without them, 22 of 228
+     * instructions differ in tbs-en. */
+    if (passed) {
+      passed++;
+      passed--;
+    }
+    if (passed) {
+      passed++;
+      passed--;
     }
   }
+  // The oasis's x, then its z.
+  nearest <<= 1;
 
   // Hop the leader into the middle of the oasis before draining the heat gauge.
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 2);
-  oasis = &oases[nearest];
-  FieldActor_SetMoveTargetFixed(Actor_Get(ACTOR_PARTY_LEADER), oasis->x, 0,
-                                oasis->z);
+  leader = Actor_Get(ACTOR_PARTY_LEADER);
+  FieldActor_SetMoveTargetFixed(leader, oases[nearest], 0, oases[nearest + 1]);
   Actor_Get(ACTOR_PARTY_LEADER)->velocityY = px(6);
   Sound_Play(SE_JUMP);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  Actor_WaitBelowHeight(leader, leader->y.fixed);
+  Actor_WaitBelowHeight(leader, Actor_Get(ACTOR_PARTY_LEADER)->y.fixed);
   Sound_Play(SE_WATER_MOVE);
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  splash.type = SPRITE_SPLASH;
-  splash.startScaleX = Q16_ONE / 2;
-  splash.startScaleY = 4 * Q16_ONE / 5;
-  splash.targetScaleX = Q16_ONE;
-  splash.targetScaleY = 6 * Q16_ONE / 5;
-  FieldEffect_Spawn(leader->x.fixed, leader->y.fixed, leader->z.fixed, 0, 0, 0,
-                    EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
-                        EFFECT_SCALE_TO_TARGET,
-                    &splash);
+  {
+    struct Actor *bather = Actor_Get(ACTOR_PARTY_LEADER);
+
+    splashIn.type = SPRITE_SPLASH;
+    splashIn.startScaleX = Q16_ONE / 2;
+    splashIn.startScaleY = 4 * Q16_ONE / 5;
+    splashIn.targetScaleX = Q16_ONE;
+    splashIn.targetScaleY = 6 * Q16_ONE / 5;
+    FieldEffect_Spawn(
+        bather->x.fixed, bather->y.fixed, bather->z.fixed, 0, 0, 0,
+        EFFECT_USE_TYPE | EFFECT_USE_START_SCALE | EFFECT_SCALE_TO_TARGET,
+        &splashIn);
+  }
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_HEART, 0);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_BATHE);
 
-  // A running Reveal's countdown stays full while the leader bathes,
-  // at least 60 frames and until the heat has drained.
-  do {
-    work->revealFrames = 600;
-    frames--;
-    if (gMainRoutineWork.hazardSteps != 0) {
-      gMainRoutineWork.hazardSteps -= 5;
-      if (gMainRoutineWork.hazardSteps <= 0) {
-        gMainRoutineWork.hazardSteps = 0;
-      } else if (frames == 0) {
-        frames = 1;
-      }
-    }
-    wait(1);
-  } while (frames != 0);
+  // A running Reveal's countdown stays full while the leader bathes, at least
+  // 60 frames and until the heat has drained.
+  revealFrames = &work->revealFrames;
+  heat = &gMainRoutineWork.hazardSteps;
+  {
+    /* FAKEMATCH(temporary): the drained gauge's 0 is held from before the
+     * loop; as 0 in its store, the constant is loaded from the pool. */
+    s32 drained = 0;
 
-  leader = Actor_Get(ACTOR_PARTY_LEADER);
-  splash.type = SPRITE_SPLASH;
-  splash.startScaleX = Q16_ONE / 2;
-  splash.startScaleY = 4 * Q16_ONE / 5;
-  splash.targetScaleX = Q16_ONE / 2;
-  splash.targetScaleY = 6 * Q16_ONE / 5;
-  FieldEffect_Spawn(leader->x.fixed, leader->y.fixed, leader->z.fixed, 0, 0, 0,
-                    EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
-                        EFFECT_SCALE_TO_TARGET,
-                    &splash);
+    do {
+      Io_Write16(600, revealFrames);
+      frames--;
+      if (*heat != 0) {
+        *heat -= 5;
+        if (*heat <= 0) {
+          *heat = drained;
+        } else if (frames == 0) {
+          frames = 1;
+        }
+      }
+      wait(1);
+    } while (frames != 0);
+  }
+
+  // frames is 0 from here: the splash out does not move, and a running
+  // Reveal ends as the leader gets up.
+  {
+    struct Actor *bather = Actor_Get(ACTOR_PARTY_LEADER);
+
+    splashOut.type = SPRITE_SPLASH;
+    splashOut.startScaleX = Q16_ONE / 2;
+    splashOut.startScaleY = 4 * Q16_ONE / 5;
+    splashOut.targetScaleX = Q16_ONE / 2;
+    splashOut.targetScaleY = 6 * Q16_ONE / 5;
+    FieldEffect_Spawn(
+        bather->x.fixed, bather->y.fixed, bather->z.fixed, 0, frames, frames,
+        EFFECT_USE_TYPE | EFFECT_USE_START_SCALE | EFFECT_SCALE_TO_TARGET,
+        &splashOut);
+  }
   Sound_Play(SE_STOP_ACTION_SE);
   Sound_Play(SE_JUMP);
   Actor_Get(ACTOR_PARTY_LEADER)->velocityY = px(6);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Event_Wait(10);
-  // A running Reveal ends as the leader gets up.
-  work->revealFrames = 0;
+  work->revealFrames = frames;
   HeatGauge_SetHeld(0);
 }
 
@@ -1145,23 +1188,23 @@ static void HeatGauge_SetHeld(u16 value) { gHeatGauge_Held = value; }
 
 // clang-format off
 /// Each map's oases, the middle of each as x, z pairs.
-const struct LamakanDesertOasis gLamakanDesertEast_Oases[] = {
-    { px(384), px(128) },
-    { px(288), px(688) },
-    { px(608), px(720) },
+const s32 gLamakanDesertEast_Oases[] = {
+    px(384), px(128),
+    px(288), px(688),
+    px(608), px(720),
 };
 
-const struct LamakanDesertOasis gLamakanDesertSmog_Oases[] = {
-    { px(704), px(96) },
-    { px(448), px(464) },
-    { px(832), px(592) },
-    { px(128), px(752) },
-    { px(464), px(896) },
+const s32 gLamakanDesertSmog_Oases[] = {
+    px(704), px(96),
+    px(448), px(464),
+    px(832), px(592),
+    px(128), px(752),
+    px(464), px(896),
 };
 
-const struct LamakanDesertOasis gLamakanDesertOasesOther[] = {
-    { px(192), px(224) },
-    { px(192), px(352) },
+const s32 gLamakanDesertOasesOther[] = {
+    px(192), px(224),
+    px(192), px(352),
 };
 
 const s32 *gFieldEffect_DurationScripts[] = {

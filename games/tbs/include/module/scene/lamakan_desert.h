@@ -11,15 +11,11 @@ const struct ActorPlacement *LamakanDesert_GetActorPlacements(void);
 const struct Trigger *LamakanDesert_GetTriggers(void);
 s32 LamakanDesert_Initialize(void);
 void HeatGauge_Start(void);
-/// The middle of an oasis, where a leader stepping into it bathes.
-struct LamakanDesertOasis {
-  s32 x; ///< 16.16 fixed-point pixels
-  s32 z; ///< 16.16 fixed-point pixels
-};
-
-extern const struct LamakanDesertOasis gLamakanDesertEast_Oases[];
-extern const struct LamakanDesertOasis gLamakanDesertSmog_Oases[];
-extern const struct LamakanDesertOasis gLamakanDesertOasesOther[];
+/// The middles of the oases, where a leader stepping into one bathes: x and z
+/// of each, in 16.16 fixed-point pixels.
+extern const s32 gLamakanDesertEast_Oases[];
+extern const s32 gLamakanDesertSmog_Oases[];
+extern const s32 gLamakanDesertOasesOther[];
 extern struct SceneEntrance gLamakanDesertEntrancesOther[];
 extern struct SceneEntrance gLamakanDesertEastEntrances[];
 extern struct SceneEntrance gLamakanDesertSmogEntrances[];

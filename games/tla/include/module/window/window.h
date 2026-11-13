@@ -47,7 +47,7 @@ void BattleDjinn_CountStandbyFar(s32 kind, u8 *counts);
 
 void Window_MarkVisibleTextTiles(void);
 
-s32 Func_0804519c(void);
+s32 Djinn_GetGiveTutorialMessage(void);
 
 void WindowSprite_PrepareForRedraw(struct Window *);
 

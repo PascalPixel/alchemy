@@ -497,7 +497,7 @@ s32 ActorScript_ApplyAbsolutePosition(struct ActorScriptView *object) {
   return 1;
 }
 
-s32 Func_0802509c(struct ActorScriptView *object) {
+s32 ActorScript_SetMoveTargetXZ(struct ActorScriptView *object) {
   const s32 *argument = object->script + (s16)object->scriptCursor + 1;
   s32 x = *argument++;
   s32 z = *argument;
@@ -655,7 +655,7 @@ s32 FieldCamera_FollowLeaderInBounds(struct Actor *interpreter) {
   return 1;
 }
 
-s32 Func_08025428(struct Actor *cameraObject) {
+s32 FieldCamera_FollowWatchedInBounds(struct Actor *cameraObject) {
   struct Actor *leader;
   struct MapWork *bounds;
   s32 minX;

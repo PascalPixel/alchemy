@@ -925,7 +925,7 @@ void LuckyWheels_Update(void) {
 /// the eight title letters, then restarts the HBlank DMA of the scanline
 /// offsets into BLDY and copies the frame's sprites to OAM.
 // Split out of what The Broken Seal keeps in LuckyWheels_Update.
-void Func_081b3294(void) {
+void LuckyWheels_FinishFrame(void) {
   struct ReelWork *work;
   struct ReelEffectWork *fx;
   volatile u16 *dma;
@@ -1231,7 +1231,7 @@ void LuckyWheels_Run(void) {
     }
     work->transferPending = 0;
     Task_Add(LuckyWheels_Update, 0x480);
-    Task_Add(Func_081b3294, 0xc80);
+    Task_Add(LuckyWheels_FinishFrame, 0xc80);
     Task_Add(LuckyWheels_TransferCanvas, 0xc80);
 
     for (frame = 0; state->state != 10; frame++) {
@@ -1360,7 +1360,7 @@ void LuckyWheels_Run(void) {
     HeapSlot_Release(104);
     Task_Remove(LuckyWheels_TransferCanvas);
     Task_Remove(LuckyWheels_Update);
-    Task_Remove(Func_081b3294);
+    Task_Remove(LuckyWheels_FinishFrame);
     HeapSlot_Release(180);
     HeapSlot_Release(96);
     HeapSlot_Release(92);

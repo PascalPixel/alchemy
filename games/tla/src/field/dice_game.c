@@ -1,5 +1,6 @@
 /// @file
-/// The casino's dice game, in the order it has in the ROM.
+/// Super Lucky Dice, Contigo's four-dice game with its Hi-Lo double-up, in the
+/// order it has in the ROM.
 
 #include "battle.h"
 #include "debug.h"
@@ -34,9 +35,9 @@
 #include "task.h"
 #include "transform.h"
 
-s32 Func_081b83c4_Start(void) {
+s32 SuperLuckyDice_Start(void) {
   REG_DISPCNT = DISPCNT_OBJ_1D_MAP;
-  Func_081b83c4();
+  SuperLuckyDice_Run();
   return 0;
 }
 
@@ -116,7 +117,8 @@ s32 Graphics_ScaleRgb555BufferB(u16 *source, u16 *destination, s32 scale,
 
 /// Writes count RGB555 colours from source to destination brightened by
 /// 16 - cos(angle) / 4096 on each channel, each clamped at 31.
-void Func_081b810c(u16 *source, u16 *destination, u32 count, s32 angle) {
+void SuperLuckyDice_BrightenColors(u16 *source, u16 *destination, u32 count,
+                                   s32 angle) {
   s32 add;
   u32 i;
 
@@ -143,8 +145,8 @@ struct ReelWork {
   struct ReelSprite obj[128];
 };
 
-s32 Func_081b8180(s32 sprite, s32 x, s32 y, s32 value, s32 palette,
-                  s32 digits) {
+s32 SuperLuckyDice_DrawNumber(s32 sprite, s32 x, s32 y, s32 value, s32 palette,
+                              s32 digits) {
   // The sprite words are volatile, as The Broken Seal's struct OamWords; as
   // plain u32 members, 84 of 119 instructions differ in tla-en.
   struct ReelWork *work;
@@ -174,10 +176,10 @@ s32 Func_081b8180(s32 sprite, s32 x, s32 y, s32 value, s32 palette,
 }
 
 /// Draws value as digits large digit sprites from x, 22 pixels apart, leading
-/// zeros skipped, tiles 640 + 16 * digit in palette, as Func_081b8180 does.
-/// Returns the next free sprite.
-s32 Func_081b8274(s32 sprite, s32 x, s32 y, s32 value, s32 palette,
-                  s32 digits) {
+/// zeros skipped, tiles 640 + 16 * digit in palette, as
+/// SuperLuckyDice_DrawNumber does. Returns the next free sprite.
+s32 SuperLuckyDice_DrawLargeNumber(s32 sprite, s32 x, s32 y, s32 value,
+                                   s32 palette, s32 digits) {
   struct ReelWork *work;
   s32 started;
   s32 digit;
@@ -203,16 +205,16 @@ s32 Func_081b8274(s32 sprite, s32 x, s32 y, s32 value, s32 palette,
   return sprite;
 }
 
-// The casino's dice game's scoring (the game itself, Func_081b83c4, follows
-// it). Its one table, after its code, is gLuckyDice_FaceTiles again: the die
-// face tile at each step of its roll.
+// The casino's dice game's scoring (the game itself, SuperLuckyDice_Run,
+// follows it). Its one table, after its code, is gLuckyDice_FaceTiles again:
+// the die face tile at each step of its roll.
 
 /// Scores four dice for the dice game: 5 when all four match, otherwise by
 /// the number of matching pairs: 2 for one, 3 for two, 4 for three, 0 for
 /// none. The matched values are collected in a local array the score never
 /// reads.
 // The native's stack frame and stores keep that array.
-s32 Func_081b834c(s32 *dice) {
+s32 SuperLuckyDice_ScoreDice(s32 *dice) {
   s32 matches[2];
   s32 score;
   s32 pairs;
@@ -400,7 +402,10 @@ extern char ResourceId_FarCall00C, ResourceId_SlotsDomePicture,
     }                                                                          \
   }
 
-void Func_081b83c4(void) {
+/// Runs a game of Super Lucky Dice.
+/// ★ Named from the game: "Super Lucky Dice\nThe Rules of the Game."
+/// (MsgContigo25)
+void SuperLuckyDice_Run(void) {
   u16 bgPalette[256];
   s32 spinRate[4];
   s32 spriteDepth[8];
@@ -735,17 +740,21 @@ void Func_081b83c4(void) {
         }
       }
       if (lower == 0) {
-        Func_081b810c(spritePalette + 192, (u16 *)0x05000380, 16, timer << 12);
+        SuperLuckyDice_BrightenColors(spritePalette + 192, (u16 *)0x05000380,
+                                      16, timer << 12);
         Graphics_ScaleRgb555BufferB(spritePalette + 208, (u16 *)0x050003a0,
                                     0x8000, 16);
-        Func_081b810c(spritePalette + 224, (u16 *)0x050003c0, 16, timer << 12);
+        SuperLuckyDice_BrightenColors(spritePalette + 224, (u16 *)0x050003c0,
+                                      16, timer << 12);
         Graphics_ScaleRgb555BufferB(spritePalette + 240, (u16 *)0x050003e0,
                                     0x8000, 16);
       } else {
-        Func_081b810c(spritePalette + 208, (u16 *)0x050003a0, 16, timer << 12);
+        SuperLuckyDice_BrightenColors(spritePalette + 208, (u16 *)0x050003a0,
+                                      16, timer << 12);
         Graphics_ScaleRgb555BufferB(spritePalette + 192, (u16 *)0x05000380,
                                     0x8000, 16);
-        Func_081b810c(spritePalette + 240, (u16 *)0x050003e0, 16, timer << 12);
+        SuperLuckyDice_BrightenColors(spritePalette + 240, (u16 *)0x050003e0,
+                                      16, timer << 12);
         Graphics_ScaleRgb555BufferB(spritePalette + 224, (u16 *)0x050003c0,
                                     0x8000, 16);
       }
@@ -869,7 +878,7 @@ void Func_081b83c4(void) {
         resultKind = 0;
         jingle = -1;
         if (round == 0) {
-          resultKind = Func_081b834c(numbers);
+          resultKind = SuperLuckyDice_ScoreDice(numbers);
           switch (resultKind) {
           case 5:
             jingle = 93;
@@ -1049,11 +1058,13 @@ void Func_081b83c4(void) {
         cashOut = 1;
       }
       if (cashOut == 0) {
-        Func_081b810c(spritePalette + 224, (u16 *)0x050003c0, 16, timer << 12);
+        SuperLuckyDice_BrightenColors(spritePalette + 224, (u16 *)0x050003c0,
+                                      16, timer << 12);
         Graphics_ScaleRgb555BufferB(spritePalette + 240, (u16 *)0x050003e0,
                                     0x8000, 16);
       } else {
-        Func_081b810c(spritePalette + 240, (u16 *)0x050003e0, 16, timer << 12);
+        SuperLuckyDice_BrightenColors(spritePalette + 240, (u16 *)0x050003e0,
+                                      16, timer << 12);
         Graphics_ScaleRgb555BufferB(spritePalette + 224, (u16 *)0x050003c0,
                                     0x8000, 16);
       }
@@ -1235,8 +1246,10 @@ void Func_081b83c4(void) {
           (((560 - multiplierDigits * 10) & 0x1ff) << 16) | 0x40000018;
       sprites->oam[spriteCount].attr2 = 0x9118;
       spriteCount++;
-      spriteCount = Func_081b8180(spriteCount, 48, 20, multiplier, 10, 5);
-      spriteCount = Func_081b8180(spriteCount, MULTIPLIER_ZERO_X, 20, 0, 11, 1);
+      spriteCount =
+          SuperLuckyDice_DrawNumber(spriteCount, 48, 20, multiplier, 10, 5);
+      spriteCount = SuperLuckyDice_DrawNumber(spriteCount, MULTIPLIER_ZERO_X,
+                                              20, 0, 11, 1);
     }
 
     // The higher and lower choices, with the target to beat.
@@ -1249,14 +1262,14 @@ void Func_081b83c4(void) {
       wobble = lower == 0 ? Trig_Sin((frame << 10) & 0x7fff) >> 14 : 0;
       left = x + slide * 15;
       if (target <= 23)
-        spriteCount = Func_081b8180(spriteCount, left - 110, wobble + 60,
-                                    target + 1, 14, 2);
+        spriteCount = SuperLuckyDice_DrawNumber(spriteCount, left - 110,
+                                                wobble + 60, target + 1, 14, 2);
       x = (timer > 0 && lower == 0) ? timer * 12 + 64 : 64;
       wobble = lower == 1 ? Trig_Sin((frame << 10) & 0x7fff) >> 14 : 0;
       left = x + slide * 15;
       if (target > 4)
-        spriteCount = Func_081b8180(spriteCount, left - 110, 94 - wobble,
-                                    target - 1, 15, 2);
+        spriteCount = SuperLuckyDice_DrawNumber(spriteCount, left - 110,
+                                                94 - wobble, target - 1, 15, 2);
       for (index = 0; index != 3; index++) {
         s32 column;
 
@@ -1341,7 +1354,8 @@ void Func_081b83c4(void) {
         y = doubled - 360;
       }
       if (x >= -31)
-        spriteCount = Func_081b8274(spriteCount, x, y, total, 12, 2);
+        spriteCount =
+            SuperLuckyDice_DrawLargeNumber(spriteCount, x, y, total, 12, 2);
       if (timer > 30 || (state == 5 && resultKind != 0)) {
         s32 bannerX;
         s32 bannerY;

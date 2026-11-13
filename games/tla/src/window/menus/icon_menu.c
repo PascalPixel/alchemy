@@ -737,7 +737,8 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
           mode = BattleTarget_RunSelection(actorId, ability->targetMode, cost,
                                            Battle_ClassifyEntryKind(ability));
           if (state->tutorialStep != 0) {
-            void *hint = Message_ShowAndWait(Func_0804519c() + 14, 15, 8);
+            void *hint =
+                Message_ShowAndWait(Djinn_GetGiveTutorialMessage() + 14, 15, 8);
 
             while (Message_AllTyped() == 0)
               wait(1);

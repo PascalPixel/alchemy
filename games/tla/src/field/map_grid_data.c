@@ -152,8 +152,8 @@ s32 ActorScript_Nop();
 s32 Script_PlaySound();
 s32 Script_CallWithOperand();
 s32 ActorScript_InvokeCallback();
-s32 Func_08025428();
-s32 Func_0802509c();
+s32 FieldCamera_FollowWatchedInBounds();
+s32 ActorScript_SetMoveTargetXZ();
 
 /// Each runs one control command every frame: the command, SC_WAIT(1),
 /// SC_LOOP(SC_FOREVER, SC_TOP).
@@ -300,8 +300,8 @@ const ScriptCommandFn gData_0802f204[54] = {
     ActorScript_HideSprites,                  // 0x2c SC_B54_OFF
     ActorScript_ShowSprite,                   // 0x2d SC_B54_ON
     ActorScript_InvokeCallback,               // 0x2e SC_CALL
-    Func_08025428,                            // 0x2f SC_CMD_2F
-    Func_0802509c,                            // 0x30 SC_MOVE_XZ
+    FieldCamera_FollowWatchedInBounds,        // 0x2f SC_CMD_2F
+    ActorScript_SetMoveTargetXZ,              // 0x30 SC_MOVE_XZ
     ActorScript_End,                          // 0x31
     ActorScript_End,                          // 0x32
     ActorScript_End,                          // 0x33

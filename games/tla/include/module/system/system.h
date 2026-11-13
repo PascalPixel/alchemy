@@ -27,7 +27,7 @@ typedef s32 (*Dot3Fn)(s32 ax, s32 bx, s32 ay, s32 by, s32 az, s32 bz);
 /// SEQUENCE_ values: the sequences other than the field sequence.
 enum {
   // XXX: what sequence Resource_FarCall00F runs here, where The Broken
-  // Seal's SEQUENCE_NONE runs nothing; Func_081b83c4
+  // Seal's SEQUENCE_NONE runs nothing; SuperLuckyDice_Run
   // (field/dice_game.c) and a scene that leaves for it would
   // settle it.
   SEQUENCE_UNK_1FB = 0x1fb,

@@ -43,15 +43,15 @@ struct ReelSprite {
 // The casino's four-dice game, built
 // like LuckyDice_Run (four dice in a round dome, Slots_DomePicture): A throws
 // for a bet of ten coins a level. A pair, two pairs, a triple or four of a kind
-// (Func_081b834c, banners Slots_OnePairBanner to Slots_PerfectBanner) pays 1,
-// 2, 3 or 8 times the bet; a win offers a double-up round (state 5,
-// Slots_DoubleUpBanner and Slots_CashOutBanner): guess whether the next total
-// is higher or lower than this one (state 1, Slots_HigherBanner and
-// Slots_LowerBanner) for twice the winnings, up to five rounds, the last the
-// final game; a miss loses everything. Winnings are counted into the coins a
-// coin a frame (state 4). The dice bounce off the dome's round wall, settle to
-// a face and are drawn back to front with their shadows; palettes of the
-// banners pulse with Func_081b810c.
+// (SuperLuckyDice_ScoreDice, banners Slots_OnePairBanner to
+// Slots_PerfectBanner) pays 1, 2, 3 or 8 times the bet; a win offers a
+// double-up round (state 5, Slots_DoubleUpBanner and Slots_CashOutBanner):
+// guess whether the next total is higher or lower than this one (state 1,
+// Slots_HigherBanner and Slots_LowerBanner) for twice the winnings, up to five
+// rounds, the last the final game; a miss loses everything. Winnings are
+// counted into the coins a coin a frame (state 4). The dice bounce off the
+// dome's round wall, settle to a face and are drawn back to front with their
+// shadows; palettes of the banners pulse with SuperLuckyDice_BrightenColors.
 struct DiceParticle {
   s32 x;
   s32 y;
@@ -921,10 +921,13 @@ struct AnimationGroup {
 extern const u8 gData_081ba30c[];
 s32 Graphics_ScaleRgb555BufferB(u16 *source, u16 *destination, s32 scale,
                                 s32 count);
-void Func_081b810c(u16 *source, u16 *destination, u32 count, s32 angle);
-s32 Func_081b834c(s32 *dice);
-s32 Func_081b8180(s32 sprite, s32 x, s32 y, s32 value, s32 palette, s32 digits);
-s32 Func_081b8274(s32 sprite, s32 x, s32 y, s32 value, s32 palette, s32 digits);
+void SuperLuckyDice_BrightenColors(u16 *source, u16 *destination, u32 count,
+                                   s32 angle);
+s32 SuperLuckyDice_ScoreDice(s32 *dice);
+s32 SuperLuckyDice_DrawNumber(s32 sprite, s32 x, s32 y, s32 value, s32 palette,
+                              s32 digits);
+s32 SuperLuckyDice_DrawLargeNumber(s32 sprite, s32 x, s32 y, s32 value,
+                                   s32 palette, s32 digits);
 
 void Func_080caa4c(s32 table);
 

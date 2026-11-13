@@ -257,10 +257,12 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
 
               ((u8 *)Ram_HeapSlots->windowTiles)[5] |= 4;
               if (selectionUi->commandKinds[selectionUi->selectedIndex] == 15)
-                message = Message_ShowAndWait(Func_0804519c() + 10, 15, 8);
+                message = Message_ShowAndWait(
+                    Djinn_GetGiveTutorialMessage() + 10, 15, 8);
               else if (selectionUi->commandKinds[selectionUi->selectedIndex] ==
                        16)
-                message = Message_ShowAndWait(Func_0804519c() + 9, 15, 8);
+                message = Message_ShowAndWait(
+                    Djinn_GetGiveTutorialMessage() + 9, 15, 8);
               ((u8 *)Ram_HeapSlots->windowTiles)[5] &= ~4;
               BattleMessage_WaitForAdvanceAtFar(102, 155);
               Window_Close(message, 1);

@@ -46,7 +46,7 @@ s32 LuckyDice_Start(void) {
 /// Called only by LuckyDice_Run, once the camera's heap block is allocated;
 /// writes gBattleCamera's fields and gProjection.
 void Camera_ResetViewDefaults(void) {
-  struct BattleCamera *camera = gBattleCamera;
+  struct BattleCamera *camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
   s32 offset[3];
   u32 nearPlane;
   u32 focalLength;

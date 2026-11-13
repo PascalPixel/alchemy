@@ -204,7 +204,7 @@ void ActorSystem_ProjectSprites(void) {
    * 181 instructions differ in tbs-en. */
   UNUSED struct ActorCameraPoint unusedPoints[2];
 
-  camera = (struct ActorCameraFixed *)gBattleCamera;
+  camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
   system = gActorSystemWork;
   RamCode_LoadSlot(HEAP_SLOT_FRAME_SCRATCH, Render_DecodePicture,
                    Render_DecodePictureCodeSize);

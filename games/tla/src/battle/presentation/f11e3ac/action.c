@@ -128,7 +128,7 @@ s32 Func_0812381c(struct BattleActionRecord *request, struct BattlePlan *plan) {
   s32 abilityId;
 
   s32 Func_08123648(s32 abilityId) {
-    struct BattleAct *ability = BattleAction_Get(abilityId);
+    struct BattleAct *ability = Ability_Get(abilityId);
     s32 mode = ability->targetMode;
     s32 includeDowned = 0;
     s32 targetCount;
@@ -340,7 +340,7 @@ s32 Func_0812381c(struct BattleActionRecord *request, struct BattlePlan *plan) {
     s32 canCast = 1;
 
     abilityId = request->parameter;
-    ability = BattleAction_Get(abilityId);
+    ability = Ability_Get(abilityId);
     if (Func_08123648(abilityId) == -1)
       return -1;
     MessageArgument_PushFar(request->unitId, 1);
@@ -431,7 +431,7 @@ s32 Func_0812381c(struct BattleActionRecord *request, struct BattlePlan *plan) {
       return -1;
     MessageArgument_PushFar(request->unitId, 1);
     MessageArgument_PushFar(abilityId, 4);
-    if ((BattleAction_Get(abilityId)->flags & 15) == 6)
+    if ((Ability_Get(abilityId)->flags & 15) == 6)
       message = (s32)&MsgActorUnleashesAbility;
     else
       message = (s32)&MsgActorUsesAbility;
@@ -502,7 +502,7 @@ s32 Func_0812381c(struct BattleActionRecord *request, struct BattlePlan *plan) {
                         request->parameter & 255)) {
       if (Djinn_CanSetFar(request->unitId, (request->parameter >> 8) & 15,
                           request->parameter & 255)) {
-        BattleAction_Get(abilityId);
+        Ability_Get(abilityId);
         BattleHighlight_SetModes(0, 0);
         Djinn_SetFar(request->unitId, (request->parameter >> 8) & 15,
                      request->parameter & 255);
@@ -542,7 +542,7 @@ s32 Func_0812381c(struct BattleActionRecord *request, struct BattlePlan *plan) {
       DjinnRecovery_AddStandbyFar(request->unitId,
                                   (request->parameter >> 8) & 15,
                                   request->parameter & 255);
-      ability = BattleAction_Get(abilityId);
+      ability = Ability_Get(abilityId);
       MessageArgument_PushFar(request->unitId, 1);
       MessageArgument_PushFar(abilityId, 4);
       BattleMessage_ShowAndWaitFar((s32)&MsgActorUnleashesDjinn);
@@ -639,7 +639,7 @@ s32 Func_0812381c(struct BattleActionRecord *request, struct BattlePlan *plan) {
         plan->targetCritical[0] = 1;
     }
   } else {
-    struct BattleAct *ability = BattleAction_Get(abilityId);
+    struct BattleAct *ability = Ability_Get(abilityId);
     s32 chance;
     s32 amount;
 

@@ -5,9 +5,9 @@
 	.thumb_func
 Inventory_GetEquippedItemFar:
 	overlay_veneer Inventory_GetEquippedItem
-	.global BattleAction_Get
+	.global Ability_Get
 	.thumb_func
-BattleAction_Get:
+Ability_Get:
 	overlay_veneer Ability_GetDirect
 	.global Unit_LearnPsynergyFar
 	.thumb_func

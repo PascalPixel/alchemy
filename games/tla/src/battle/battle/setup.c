@@ -87,7 +87,7 @@ void BattleIntro_AnnounceEncounter(s32 enemyCount) {
     } while (announced != enemyCount);
   }
 
-  Window_CloseSharedFar();
+  BattleMessage_CloseFar();
   if (battle->encounterMode == 1) {
     MessageArgument_ClearAllFar();
     BattleMessage_ShowAndWaitFar((s32)MsgPartyStrikesFirst);

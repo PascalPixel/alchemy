@@ -642,7 +642,7 @@ s32 Func_080cc54c(void) {
     }
     collisionCode = cell[2];
     if (collisionCode >= 242 && collisionCode <= 247) {
-      terrainHeight = Map_GetTerrainHeightFar(
+      terrainHeight = MapGrid_GetTerrainHeightFar(
           leader->kind, probePosition.vector.x, probePosition.vector.z);
       if (terrainHeight >= leader->pos.y &&
           terrainHeight <= leader->pos.y + 0x100000) {
@@ -762,7 +762,7 @@ s32 Func_080cc7c4(void) {
       z = Stream_ReadS16(&cursor);
       xFixed = x << 16;
       zFixed = z << 16;
-      height = Map_GetTerrainHeightFar(0, xFixed, zFixed) >> 16;
+      height = MapGrid_GetTerrainHeightFar(0, xFixed, zFixed) >> 16;
       flags = *cursor;
       base = (s32)gData_0202e000;
       if (!GameFlag_Test(0x109)) {

@@ -401,7 +401,7 @@ void Func_080cf554(void) {
     if (object->unk4c == 0x31415927) {
       x = object->timer << 16;
       z = (s16)object->unk66 << 16;
-      y = Map_GetTerrainHeightFar(0, x, z);
+      y = MapGrid_GetTerrainHeightFar(0, x, z);
     } else {
       if ((u16)(type - 128) <= 1)
         continue;

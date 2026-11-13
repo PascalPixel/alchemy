@@ -493,7 +493,7 @@ SceneEvent_FindActiveRecord:
 	.global Func_02004e28
 	.thumb_func
 Func_02004e28:
-	overlay_veneer DjinnMenu_Open
+	overlay_veneer DjinnMenu_RunFar
 	.global Sound_Play
 	.thumb_func
 Sound_Play:

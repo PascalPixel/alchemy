@@ -9,9 +9,9 @@ Djinn_IsSetFar:
 	.thumb_func
 Djinn_CanSetFar:
 	overlay_veneer Djinn_CanSet
-	.global Item_CanOwnerEquip
+	.global Item_CanUnitEquip
 	.thumb_func
-Item_CanOwnerEquip:
+Item_CanUnitEquip:
 	overlay_veneer Item_CanUnitEquipDirect
 	.global Item_IsCompatibleWithUnitFar
 	.thumb_func

@@ -71,7 +71,7 @@ void Actor_SetPositionAndResetMotionFar(struct Actor *object, s32 x, s32 y,
 void Actor_SetAnimationSpeedFar(struct Actor *object, s32 value);
 void Unit_SetHpFar(struct BattleUnit *, s32);
 void MessageArgument_ClearAllFar(void);
-void Window_CloseSharedFar(void);
+void BattleMessage_CloseFar(void);
 void UpdateRisingParticleBurst(void *object);
 
 struct AnimationObject;

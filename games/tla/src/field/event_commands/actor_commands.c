@@ -240,7 +240,7 @@ void Actor_SetHorizontalPositionWithTerrain(u32 objectId, s32 x, s32 z) {
     Actor_SetPositionAndResetMotionFar(object, x, object->y, z);
     if (object->motionFlags & 1) {
       terrainHeight =
-          Map_GetTerrainHeightFar(object->terrainId, object->x, object->z);
+          MapGrid_GetTerrainHeightFar(object->terrainId, object->x, object->z);
       object->y = object->y - object->terrainHeight + terrainHeight;
       object->terrainHeight = terrainHeight;
     }
@@ -258,7 +258,7 @@ void Actor_SetHorizontalPositionAndAngleWithTerrain(u32 objectId, s32 x,
     object->facing = angle;
     if (object->motionFlags & 1) {
       terrainHeight =
-          Map_GetTerrainHeightFar(object->terrainId, object->x, object->z);
+          MapGrid_GetTerrainHeightFar(object->terrainId, object->x, object->z);
       object->y = object->y - object->terrainHeight + terrainHeight;
       object->terrainHeight = terrainHeight;
     }
@@ -274,7 +274,7 @@ void Actor_SetPositionWithTerrain(u32 objectId, s32 x, s32 y, s32 z) {
     Actor_SetPositionAndResetMotionFar(object, x, y, z);
     if (object->motionFlags & 1) {
       terrainHeight =
-          Map_GetTerrainHeightFar(object->terrainId, object->x, object->z);
+          MapGrid_GetTerrainHeightFar(object->terrainId, object->x, object->z);
       object->y = object->y - object->terrainHeight + terrainHeight;
       object->terrainHeight = terrainHeight;
     }

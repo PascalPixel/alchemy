@@ -1939,7 +1939,7 @@ s32 DjinnMenu_DrawStatPreview(s32 window, s32 x, s32 y, s32 ownerId, s32 removeP
       Text_DrawMessageAsTilesFar((s32)MsgAbilityNothing +
                                         (actions[first] & 0x3fff),
                                     window, x * 8 + 16, (y + line * 2) * 8 + 8);
-      Text_DrawNumberAtOffsetFar(BattleAction_Get(actions[first])->ppCost, 2,
+      Text_DrawNumberAtOffsetFar(Ability_Get(actions[first])->ppCost, 2,
                                  window, x * 8 + 88, (y + line * 2) * 8 + 8);
       line++;
     }

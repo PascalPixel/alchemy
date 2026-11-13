@@ -101,7 +101,7 @@ DisplayBlend_EnableRunScript:
 	.global Map_GetTerrainHeight
 	.thumb_func
 Map_GetTerrainHeight:
-	overlay_veneer Map_GetTerrainHeightFar
+	overlay_veneer MapGrid_GetTerrainHeightFar
 	.global Func_02003168
 	.thumb_func
 Func_02003168:

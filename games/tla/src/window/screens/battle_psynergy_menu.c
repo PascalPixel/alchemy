@@ -254,7 +254,7 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
           encodedAction = actions[firstEntry + i];
           if (encodedAction == 0)
             break;
-          action = BattleAction_Get(encodedAction);
+          action = Ability_Get(encodedAction);
           Window_SetTilemapEntry(window, WINDOW_TILE_PP_LABEL, COST_COLUMN,
                                  i * 2, 0);
           Window_SetTilemapEntry(window, WINDOW_TILE_PP_LABEL_END,
@@ -339,7 +339,7 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
     if (gInput.pressed & 1) {
       if (count != 0) {
         result = firstEntry + selectedRow;
-        if ((BattleAction_Get(actions[result])->flags & 0x80) == 0) {
+        if ((Ability_Get(actions[result])->flags & 0x80) == 0) {
           // Not usable in battle: the menu stays open.
         } else {
           break;

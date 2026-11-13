@@ -555,7 +555,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         entryValue = unit->actionSlots[k].encodedAction & 0x3fff;
         if (entryValue != 0) {
           do {
-            if (BattleAction_Get(entryValue)->flags & 0x80) {
+            if (Ability_Get(entryValue)->flags & 0x80) {
               pick[cnt] = k;
               list[cnt] = entryValue;
               cnt++;
@@ -572,7 +572,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         if (mode == -1)
           goto mark_visible;
         parameter = unit->actionSlots[pick[mode]].encodedAction & 0x3fff;
-        ability = BattleAction_Get(parameter);
+        ability = Ability_Get(parameter);
         cost = ability->range;
         iconSprite = &state->icons[1];
         handle = VramCache_AllocEntry(128);
@@ -642,7 +642,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         wait(1);
         iconSprite = &state->icons[1];
         summon = SummonDefinition_Get(mode);
-        ability = BattleAction_Get(summon->nameMessageId);
+        ability = Ability_Get(summon->nameMessageId);
         summonIconSlot = VramCache_AllocEntry(128);
         commandWindow = Window_Create__battle_party_commands(SUMMON_WINDOW_X, 17, SUMMON_WINDOW_WIDTH,
                                       3, commandKind);
@@ -726,7 +726,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         index = parameter & 255;
         if (Djinn_IsSetFar(actorId, element, index) != 0) {
           ability =
-              BattleAction_Get(Djinn_GetDefinitionHeaderFar(element, index));
+              Ability_Get(Djinn_GetDefinitionHeaderFar(element, index));
           cost = ability->range;
           commandWindow = Window_Create__battle_party_commands(11, 17, 10, 3, 6);
           COMMAND_ICON_X(state) = 64;
@@ -827,7 +827,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
           goto mark_visible;
         selection = pick[mode];
         parameter = selection;
-        ability = BattleAction_Get(Item_Get__battle_party_commands(unit->inventory[selection])[20]);
+        ability = Ability_Get(Item_Get__battle_party_commands(unit->inventory[selection])[20]);
         cost = ability->range;
         iconSprite = &state->icons[1];
         handle = VramCache_AllocEntry(128);

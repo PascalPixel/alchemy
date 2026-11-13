@@ -8,7 +8,7 @@ void Actor_SnapToTerrain(void *object) {
   struct Actor *state = object;
   s32 height;
 
-  height = Map_GetTerrainHeightFar(0, state->x, state->z);
+  height = MapGrid_GetTerrainHeightFar(0, state->x, state->z);
   state->y = height;
   state->terrainHeight = height;
 }
@@ -105,7 +105,7 @@ void Func_080cec34(void) {
           object->y = 0;
         } else {
           object->terrainHeight =
-              Map_GetTerrainHeightFar(0, object->x, object->z);
+              MapGrid_GetTerrainHeightFar(0, object->x, object->z);
           object->y += object->terrainHeight;
           if (buried) {
             u8 *motionFlags = &object->motionFlags;
@@ -308,5 +308,5 @@ void ObjectEvent_PlaceOnGround(u32 objectId, s32 x, s32 z) {
     z = object->homeZ << 16;
   object->x = x;
   object->z = z;
-  object->y = object->terrainHeight = Map_GetTerrainHeightFar(0, x, z);
+  object->y = object->terrainHeight = MapGrid_GetTerrainHeightFar(0, x, z);
 }

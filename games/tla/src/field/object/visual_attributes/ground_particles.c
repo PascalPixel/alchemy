@@ -54,7 +54,7 @@ void Func_080d690c(void) {
     z = leader[2];
     particle->posX = x;
     particle->posZ = z;
-    particle->posY = Map_GetTerrainHeightFar(0, x, z);
+    particle->posY = MapGrid_GetTerrainHeightFar(0, x, z);
     particle->timer = (i & 15) + 1;
     particle++;
   }
@@ -130,7 +130,7 @@ void Func_080d69f4(void) {
       y = Q16_ONE * 80 - Random16() * 20;
       particle->posX = x;
       particle->posZ = y;
-      particle->posY = Map_GetTerrainHeightFar(0, x, y);
+      particle->posY = MapGrid_GetTerrainHeightFar(0, x, y);
       particle->timer = 120;
       particle->drift = 0;
     }
@@ -197,7 +197,7 @@ void Func_080d6b90(void) {
     z = 0x500000 - Random16() * 20;
     particle->posX = x;
     particle->posZ = z;
-    particle->posY = Map_GetTerrainHeightFar(0, x, z);
+    particle->posY = MapGrid_GetTerrainHeightFar(0, x, z);
     particle->drift = 0;
     particle->timer = i * 2;
   }
@@ -293,7 +293,7 @@ void Func_080d6c60(void) {
       y = leader[2] + (Random16() << 8) - 0x800000;
       mote->posX = x;
       mote->posZ = y;
-      mote->posY = Map_GetTerrainHeightFar(0, x, y);
+      mote->posY = MapGrid_GetTerrainHeightFar(0, x, y);
       mote->timer = 120;
       mote->delay = 0;
       spawned++;

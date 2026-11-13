@@ -543,7 +543,7 @@ void Shop_DrawEquipComparison(s32 window, s32 unitId, s32 itemId) {
   if (window == 0)
     return;
   WindowSprite_PrepareForRedrawFar(window);
-  if (!Item_CanOwnerEquip(unitId, itemId)) {
+  if (!Item_CanUnitEquip(unitId, itemId)) {
     Text_DrawMessageFar((s32)MsgShopCannotEquip, window, 8, 24);
     return;
   }
@@ -872,7 +872,7 @@ s32 Shop_ConfirmEquip(s32 unitId, s32 slot) {
   if (unit->inventory[slot] & 0x200)
     return 0;
 
-  if (Item_CanOwnerEquip(unitId, itemId) == 0)
+  if (Item_CanUnitEquip(unitId, itemId) == 0)
     return 0;
 
   replaced = Inventory_FindEquippedFar(unitId, info->type);

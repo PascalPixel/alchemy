@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 	.include "games/tla/src/gamepak/far_call/veneer.s"
-	.global Window_CloseSharedFar
+	.global BattleMessage_CloseFar
 	.thumb_func
-Window_CloseSharedFar:
+BattleMessage_CloseFar:
 	overlay_veneer BattleMessage_Close
 	.global Message_ResetIdleFar
 	.thumb_func

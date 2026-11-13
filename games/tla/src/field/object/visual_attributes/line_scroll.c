@@ -467,7 +467,7 @@ void Func_080d64f0(void) {
       y = focus[2] + (Random16() << 8) - 0x800000;
       particle->posX = x;
       particle->posZ = y;
-      particle->posY = Map_GetTerrainHeightFar(0, x, y);
+      particle->posY = MapGrid_GetTerrainHeightFar(0, x, y);
       particle->timer = 16;
     }
   }

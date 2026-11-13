@@ -1270,7 +1270,7 @@ void Func_080fabe0(void) {
       s32 owner = menu->owners[i];
 
       if (owner != -1) {
-        if (Item_CanOwnerEquip(owner, menu->item & 0x1ff))
+        if (Item_CanUnitEquip(owner, menu->item & 0x1ff))
           Animation_ApplyChildArgumentFar(menu->ownerIcons[i], 3);
         else
           Animation_ApplyChildArgumentFar(menu->ownerIcons[i], 1);
@@ -1837,7 +1837,7 @@ void ItemMenu_BuildCommands(s8 *commandStates) {
   if (menu->selectedItems[0] & INVENTORY_BROKEN)
     commandStates[0] = COMMAND_DISABLED;
 
-  if (Item_CanOwnerEquip(menu->paneOwner[0], menu->selectedItems[0] & ITEM_ID_MASK) ==
+  if (Item_CanUnitEquip(menu->paneOwner[0], menu->selectedItems[0] & ITEM_ID_MASK) ==
       0) {
     commandStates[1] = COMMAND_DISABLED;
   }
@@ -1959,12 +1959,12 @@ s32 Item_ClassifyUseMode(s32 owner, s32 itemId) {
 
     id = 0x3fff;
     id &= use;
-    abilityData = BattleAction_Get(id);
+    abilityData = Ability_Get(id);
 
     if (FIELD_AT_OFFSET(itemData, u16, 40) != 0) {
       if (FIELD_AT_OFFSET(itemData, u8, 2) != 0) {
         if (FIELD_AT_OFFSET(itemData, u8, 12) != 3) {
-          if (Item_CanOwnerEquip(owner, masked) != 0) {
+          if (Item_CanUnitEquip(owner, masked) != 0) {
             result = 1;
           }
         }
@@ -3119,7 +3119,7 @@ s32 ItemMenu_RunList(s32 pane) {
         for (i = 0; i <= 3; i++) {
           s32 slot = menu->partySlots[i];
           if (slot != -1 &&
-              Item_CanOwnerEquip(slot,
+              Item_CanUnitEquip(slot,
                                  0x1ff & menu->items[state.selectedIndex]) != 0)
             Animation_ApplyChildArgumentFar(menu->ownerObjects[i], 3);
         }

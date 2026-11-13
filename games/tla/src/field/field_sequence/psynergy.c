@@ -15,7 +15,7 @@ s32 Func_080ce61c(u32 code) {
   u8 *event = Ram_HeapSlots->eventWork;
   s32 abilityId = code & 0x3ff;
   struct PendingEvent *before;
-  s32 group = BattleAction_Get(abilityId)->fieldEffect;
+  s32 group = Ability_Get(abilityId)->fieldEffect;
   s32 userId = (code >> 10) & 15;
   s32 retreat = 0;
   struct PendingEvent *after;
@@ -102,7 +102,7 @@ s32 Func_080ce61c(u32 code) {
     return 0;
   }
   if (userId <= 7) {
-    struct BattleAct *action = BattleAction_Get(abilityId);
+    struct BattleAct *action = Ability_Get(abilityId);
 
     struct FieldUnit *unit = Unit_Get(userId);
     s32 ppCost = action->ppCost;

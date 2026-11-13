@@ -226,7 +226,7 @@ void StatusPanel_Draw(struct RenderInput *unused, s32 owner, s32 slot, s32 mode)
   classChange:
     value = unit->classIndex + MESSAGE_CLASS_NAME;
     Text_DrawMessageAsTilesFar(value, window, 0, 32);
-    if (!Item_CanOwnerEquip(owner, item)) {
+    if (!Item_CanUnitEquip(owner, item)) {
       Text_DrawMessageAsTilesFar(MESSAGE_CANNOT_EQUIP, window, 16, 48);
       break;
     }
@@ -261,7 +261,7 @@ void StatusPanel_Draw(struct RenderInput *unused, s32 owner, s32 slot, s32 mode)
     break;
   case STATUS_PANEL_EQUIP:
   case STATUS_PANEL_EQUIP + 1:
-    if (!Item_CanOwnerEquip(owner, item)) {
+    if (!Item_CanUnitEquip(owner, item)) {
       Text_DrawMessageAsTilesFar(MESSAGE_CANNOT_EQUIP, window,
                                     STATUS_PANEL_CANNOT_EQUIP_X, 48);
       break;

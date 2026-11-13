@@ -49,7 +49,7 @@ void Func_080ea8d4(struct ActorFlag *list) {
   owner = Actor_GetById(Party_GetLeaderActor());
   if (Func_08020310__f0ea8d4(owner->x, owner->z, owner->terrainId, owner->terrainHeight))
     owner->terrainHeight = owner->y =
-        Map_GetTerrainHeightFar(owner->terrainId, owner->x, owner->z);
+        MapGrid_GetTerrainHeightFar(owner->terrainId, owner->x, owner->z);
 }
 
 struct SwitchCell {
@@ -107,7 +107,7 @@ void Func_080eaa14(struct ActorFlag *list) {
       slot = Func_080eab70(object);
       key = Func_080202f0(object->terrainId, object->x, object->z);
       height =
-          Map_GetTerrainHeightFar(object->terrainId, object->x, object->z) >>
+          MapGrid_GetTerrainHeightFar(object->terrainId, object->x, object->z) >>
           19;
 
       *(struct Actor **)(event + 0xcbc) = object;

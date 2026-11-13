@@ -1,9 +1,9 @@
 .syntax unified
 	.thumb
 	.include "games/tla/src/gamepak/far_call/veneer.s"
-	.global Map_GetTerrainHeightFar
+	.global MapGrid_GetTerrainHeightFar
 	.thumb_func
-Map_GetTerrainHeightFar:
+MapGrid_GetTerrainHeightFar:
 	overlay_veneer MapGrid_GetTerrainHeight
 	.global GetMapCellCollisionFar
 	.thumb_func

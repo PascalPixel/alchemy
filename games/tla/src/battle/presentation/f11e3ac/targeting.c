@@ -903,7 +903,7 @@ s32 BattleTarget_Execute(struct BattlePlan *plan, s32 slot) {
   adj = plan->targetMultiplier[slot];
   crit = plan->targetCritical[slot];
 
-  action = BattleAction_Get(abilityId);
+  action = Ability_Get(abilityId);
   actor = Unit_Get__f11f66c(aid);
   target = Unit_Get__f11f66c(tid);
   Iwram_CopyWords(bak, target, size);
@@ -2206,7 +2206,7 @@ u32 Ability_IsPsynergy(s32 abilityId) {
 
   if (abilityId == 126) // Psy Drain.
     return 1;
-  pp = BattleAction_Get(abilityId)->ppCost;
+  pp = Ability_Get(abilityId)->ppCost;
   return (u32)((0 - pp) | pp) >> 31; // 1 if pp is nonzero.
 }
 
@@ -2418,7 +2418,7 @@ select_again:
       if (item->useType != 1) {
         useItem = 0;
       } else {
-        BattleAction_Get(item->actionId);
+        Ability_Get(item->actionId);
         abilityId = item->actionId;
         request->command = COMMAND_ITEM;
         request->parameter = 0;
@@ -2429,7 +2429,7 @@ select_again:
   }
 
   if (needsChoice != 0) {
-    ability = BattleAction_Get(abilityId);
+    ability = Ability_Get(abilityId);
     switch (ability->effect) {
     case ABILITY_EFFECT_DEFEND:
       request->command = COMMAND_DEFEND;
@@ -2501,7 +2501,7 @@ select_again:
           goto next_candidate;
         request->parameter = summons[summonIndex];
         abilityId = SummonDefinition_Get(summons[summonIndex])->nameMessageId;
-        ability = BattleAction_Get(abilityId);
+        ability = Ability_Get(abilityId);
       }
     }
 

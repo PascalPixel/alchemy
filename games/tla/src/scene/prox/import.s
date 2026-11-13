@@ -117,7 +117,7 @@ Func_02004414:
 	.global Map_GetTerrainHeight
 	.thumb_func
 Map_GetTerrainHeight:
-	overlay_veneer Map_GetTerrainHeightFar
+	overlay_veneer MapGrid_GetTerrainHeightFar
 	.global GetMapCellCollision
 	.thumb_func
 GetMapCellCollision:

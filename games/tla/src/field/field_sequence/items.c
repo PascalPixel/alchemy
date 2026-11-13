@@ -287,7 +287,7 @@ s32 Func_080ce31c(s32 kind) {
     s32 high = event->trigger & 0xf000;
     s16 hasFacing = (u16)event->trigger & 0x800;
     s32 target = (u16)event->trigger & 0xff;
-    s32 eventKind = ((const struct PendingAction *)BattleAction_Get((u16)flags >> 8))->eventKind;
+    s32 eventKind = ((const struct PendingAction *)Ability_Get((u16)flags >> 8))->eventKind;
 
     if ((event->control & 15) == 5 && eventKind == kind &&
         GameFlag_IsConditionActive(event->condition)) {
@@ -346,7 +346,7 @@ struct TriggerEvent *Func_080ce458(s32 filter, s32 kind, s32 selector) {
     s32 high = event->trigger & 0xf000;
     s16 hasFacing = (u16)event->trigger & 0x800;
     s32 target = (u16)event->trigger & 0xff;
-    s32 eventKind = ((const struct PendingAction *)BattleAction_Get((u16)flags >> 8))->eventKind;
+    s32 eventKind = ((const struct PendingAction *)Ability_Get((u16)flags >> 8))->eventKind;
 
     if ((event->control & 15) == 5 && eventKind == kind &&
         GameFlag_IsConditionActive(event->condition)) {
@@ -388,7 +388,7 @@ s32 Event_ExecutePackedAction(u32 packed) {
 
   action = packed & 0x3ff;
   mode = (packed >> 10) & 15;
-  kind = BattleAction_Get(action)->unk04[2];
+  kind = Ability_Get(action)->unk04[2];
   selector = Func_080ce31c(kind);
   first = (struct PendingEvent *)Func_080ce458(0x30000005, kind, selector);
   second = (struct PendingEvent *)Func_080ce458(0x20000005, kind, selector);

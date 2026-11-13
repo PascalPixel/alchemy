@@ -170,7 +170,7 @@ void Event_SpawnObjectTable(struct ActorPlacement *entry, s32 slot) {
           sprite->scale = Iwram_MulQ16(sprite->scale, 0xc000);
       } else {
         object->terrainHeight =
-            Map_GetTerrainHeightFar(0, object->x, object->z);
+            MapGrid_GetTerrainHeightFar(0, object->x, object->z);
         object->y += object->terrainHeight;
       }
       object->priorityFlags = 1;
@@ -282,7 +282,7 @@ void Func_080caa4c(s32 table) {
     if (gMainRoutineWork.y != 0 && (cell->attributeB & 0x40) &&
         (above->attributeB & 0x40)) {
       gMainRoutineWork.renderMode = 2;
-      height = Map_GetTerrainHeightFar(0, object->x, object->z - 0x100000) -
+      height = MapGrid_GetTerrainHeightFar(0, object->x, object->z - 0x100000) -
                0x200000;
       object->y += height;
       object->terrainHeight = object->y;

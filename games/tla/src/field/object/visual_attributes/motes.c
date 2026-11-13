@@ -92,7 +92,7 @@ void FieldMotes_Start(void) {
     z = pos[2];
     mote->posX = (s32)p;
     mote->posZ = z;
-    mote->posY = Map_GetTerrainHeightFar(0, (s32)p, z);
+    mote->posY = MapGrid_GetTerrainHeightFar(0, (s32)p, z);
     mote->timer = (i & 15) + 1;
     mote++;
   }
@@ -194,7 +194,7 @@ void Func_080d6f34(s32 withCue) {
     z = focus[2];
     particle->posX = (s32)p;
     particle->posZ = z;
-    particle->posY = Map_GetTerrainHeightFar(0, (s32)p, z);
+    particle->posY = MapGrid_GetTerrainHeightFar(0, (s32)p, z);
     particle->timer = (i & 11) + 1;
   }
   Io_Write16(BLDCNT_TGT2_ALL, &REG_BLDCNT);
@@ -319,7 +319,7 @@ void FieldEffect_UpdateSparkles(void) {
       if (delay != 0) {
         sparkle->posX = spawnX;
         sparkle->posZ = spawnZ;
-        sparkle->height = Map_GetTerrainHeightFar(0, sx, sy);
+        sparkle->height = MapGrid_GetTerrainHeightFar(0, sx, sy);
         sparkle->timer = 62 - delay;
         sparkle->delay = 0;
         spawned++;
@@ -330,7 +330,7 @@ void FieldEffect_UpdateSparkles(void) {
         spawnZ = leader[2] + (Random16() << 8) - 0x800000;
         sparkle->posX = spawnX;
         sparkle->posZ = spawnZ;
-        sparkle->height = Map_GetTerrainHeightFar(0, sx, sy);
+        sparkle->height = MapGrid_GetTerrainHeightFar(0, sx, sy);
         sparkle->timer = 30;
         sparkle->delay = delay;
         spawned++;
@@ -423,7 +423,7 @@ loop:
     z = leader[2];
     p->posX = clear;
     p->posZ = clear;
-    p->posY = Map_GetTerrainHeightFar(0, attr, z);
+    p->posY = MapGrid_GetTerrainHeightFar(0, attr, z);
     p->timer = (i & 15) + 1;
   }
   i++;

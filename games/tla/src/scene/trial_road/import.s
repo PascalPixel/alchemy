@@ -133,7 +133,7 @@ Script_WaitForEventTimeout:
 	.global Map_GetTerrainHeight
 	.thumb_func
 Map_GetTerrainHeight:
-	overlay_veneer Map_GetTerrainHeightFar
+	overlay_veneer MapGrid_GetTerrainHeightFar
 	.global Map_CopyCellsRect
 	.thumb_func
 Map_CopyCellsRect:

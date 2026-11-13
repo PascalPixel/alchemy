@@ -57,7 +57,7 @@ s32 PsynergyMenu_Run(void) {
     u8 *event = Ram_HeapSlots->eventWork;
     u16 request;
 
-    BattleAction_Get(0x3fff & screen->selectedItems[0]);
+    Ability_Get(0x3fff & screen->selectedItems[0]);
     request = item | (owner << 10);
     *(u16 *)(event + 0x166) = request;
   }
@@ -278,7 +278,7 @@ s32 PsynergyMenu_RunSteps(s32 *outMember, s32 *unused, s32 *outAction) {
 
         mask = PSYNERGY_ABILITY_MASK;
         mask &= entry;
-        action = BattleAction_Get(mask);
+        action = Ability_Get(mask);
         Unit_AddPpFar(menu->memberIds[0], -action->ppCost);
       }
       Unit_CalculateFar(menu->memberIds[0]);
@@ -354,7 +354,7 @@ s32 PsynergyMenu_ClassifySelectedPsynergy(void) {
 
   menu = Ram_HeapSlots->menuRuntime;
   action = menu->paneAction[0];
-  psynergy = BattleAction_Get(0x3fff & action);
+  psynergy = Ability_Get(0x3fff & action);
   if (BattleEffect_HasMatchingEvent5Far(psynergy->fieldEffect) != 0)
     return 0;
   ret = 2;
@@ -855,7 +855,7 @@ s32 PsynergyMenu_CollectActions(struct BattleUnit *unit, u16 *actions, s32 mode)
   if (mode == 1) {
     for (i = 0; i < 32; i++) {
       if (unit->actionSlots[i].encodedAction != 0) {
-        if (BattleAction_Get(unit->actionSlots[i].encodedAction & 0x3fff)
+        if (Ability_Get(unit->actionSlots[i].encodedAction & 0x3fff)
                 ->fieldEffect != 0) {
           actions[count] = unit->actionSlots[i].encodedAction;
           count++;
@@ -865,7 +865,7 @@ s32 PsynergyMenu_CollectActions(struct BattleUnit *unit, u16 *actions, s32 mode)
   } else {
     for (i = 0; i < 32; i++) {
       if (unit->actionSlots[i].encodedAction != 0) {
-        ability = BattleAction_Get(unit->actionSlots[i].encodedAction & 0x3fff);
+        ability = Ability_Get(unit->actionSlots[i].encodedAction & 0x3fff);
         if (ability->fieldEffect != 0 || (ability->flags & 0x40) != 0) {
           actions[count] = unit->actionSlots[i].encodedAction;
           count++;
@@ -876,7 +876,7 @@ s32 PsynergyMenu_CollectActions(struct BattleUnit *unit, u16 *actions, s32 mode)
       for (i = 0; i < 32; i++) {
         if (unit->actionSlots[i].encodedAction != 0) {
           ability =
-              BattleAction_Get(unit->actionSlots[i].encodedAction & 0x3fff);
+              Ability_Get(unit->actionSlots[i].encodedAction & 0x3fff);
           if (ability->fieldEffect == 0 && (ability->flags & 0x40) == 0) {
             actions[count] = unit->actionSlots[i].encodedAction;
             count++;
@@ -1039,7 +1039,7 @@ s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused, const struct MenuResult 
     cursor = firstEntry * 2 + 0x1c4;
     do {
       owner = Unit_Get(menu->memberIds[0]);
-      ability = BattleAction_Get(0x3fff & *(const u16 *)(cursor + (s32)menu));
+      ability = Ability_Get(0x3fff & *(const u16 *)(cursor + (s32)menu));
 
       if (ability->ppCost > owner->pp) {
         Text_SetColorFar(2);
@@ -1177,7 +1177,7 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
 
       if (menu->mode == 0) {
         if ((gInput.pressed & 4) && shortcutHelp == 0) {
-          ability = BattleAction_Get(menu->psynergies[state.selectedIndex] &
+          ability = Ability_Get(menu->psynergies[state.selectedIndex] &
                                      OWNER_ACTION_ID_MASK);
           if (ability->unk04[2] == 0) {
             Sound_PlayFar(114);
@@ -1213,7 +1213,7 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
             Sound_PlayFar(114);
             continue;
           }
-          ability = BattleAction_Get(menu->psynergies[state.selectedIndex] &
+          ability = Ability_Get(menu->psynergies[state.selectedIndex] &
                                      OWNER_ACTION_ID_MASK);
           if (ability->ppCost > owner->pp) {
             Sound_PlayFar(114);
@@ -1264,7 +1264,7 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
       }
 
       if ((gInput.pressed & 0x200) && (gInput.held & 4)) {
-        ability = BattleAction_Get(menu->psynergies[state.selectedIndex] &
+        ability = Ability_Get(menu->psynergies[state.selectedIndex] &
                                    OWNER_ACTION_ID_MASK);
         if (ability->unk04[2] == 0) {
           Sound_PlayFar(114);
@@ -1280,7 +1280,7 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
       }
 
       if ((gInput.pressed & 0x100) && (gInput.held & 4)) {
-        ability = BattleAction_Get(menu->psynergies[state.selectedIndex] &
+        ability = Ability_Get(menu->psynergies[state.selectedIndex] &
                                    OWNER_ACTION_ID_MASK);
         if (ability->unk04[2] == 0) {
           Sound_PlayFar(114);
@@ -1314,7 +1314,7 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
 #undef CHANGE_HELP_X
 
 s32 PsynergyMenu_IsActionRestricted(s32 no) {
-  u8 *action = BattleAction_Get((u32)(no << 18) >> 18);
+  u8 *action = Ability_Get((u32)(no << 18) >> 18);
   u32 flags;
 
   if (action[6] == 0) {

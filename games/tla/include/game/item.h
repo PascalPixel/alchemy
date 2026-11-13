@@ -123,8 +123,8 @@ s32 Equipment_GetUnleashRateBonus(struct BattleUnit *owner);
 s32 RollWeaponUnleash(struct BattleUnit *owner);
 
 s32 RollWeaponUnleashFar(struct BattleUnit *owner);
-s32 Item_CanOwnerEquip(s32 owner, s32 item);
-s32 Item_CanUnitEquipDirect(s32 owner, s32 item);
+s32 Item_CanUnitEquip(s32 unit, s32 item);
+s32 Item_CanUnitEquipDirect(s32 unit, s32 item);
 s32 Item_IsCompatibleWithUnit(s32 owner, s32 item);
 s32 Item_GetEquipmentGroup(s32 item);
 u8 Item_GetTargetMode(s32 item);

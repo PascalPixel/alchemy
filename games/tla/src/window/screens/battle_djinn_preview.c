@@ -44,7 +44,7 @@ s32 BattleDjinnMenu_ListChangedDjinn(struct DjinnSlot *oldGrid,
   lostCount = 0;
   count = 0;
   for (i = 0; i < 32 && newGrid[i].id != 0; i++) {
-    if (BattleAction_Get(newGrid[i].id)->flags & 0x80) {
+    if (Ability_Get(newGrid[i].id)->flags & 0x80) {
       out[count] = newGrid[i].id & 0x3fff;
       count++;
       for (j = 0; j < 32; j++) {
@@ -58,7 +58,7 @@ s32 BattleDjinnMenu_ListChangedDjinn(struct DjinnSlot *oldGrid,
     }
   }
   for (i = 0; i < 32 && oldGrid[i].id != 0; i++) {
-    if (BattleAction_Get(oldGrid[i].id)->flags & 0x80) {
+    if (Ability_Get(oldGrid[i].id)->flags & 0x80) {
       for (j = 0; j < 32; j++) {
         if (((oldGrid[i].id ^ newGrid[j].id) & 0x3fff) == 0)
           break;
@@ -333,7 +333,7 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *window, s32 memb
     i = page * 5 - 5;
     for (visibleRow = 0; visibleRow < visibleRows && i < abilityCount;
          visibleRow++, i++) {
-      ability = BattleAction_Get(changedAbilities[i]);
+      ability = Ability_Get(changedAbilities[i]);
       if (ability->element != 4)
         Window_SetTilemapEntry(window, 0x5001 + ability->element, 15,
                                visibleRow * 2, 0);
@@ -359,7 +359,7 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *window, s32 memb
                              0);
       Window_SetTilemapEntry(window, WINDOW_TILE_PP_LABEL_END, 12,
                              visibleRow * 2, 0);
-      Text_DrawNumberInWindow(BattleAction_Get(changedAbilities[i])->ppCost, 2,
+      Text_DrawNumberInWindow(Ability_Get(changedAbilities[i])->ppCost, 2,
                               window, 104, visibleRow * 16);
     }
     if (gained != 0) {

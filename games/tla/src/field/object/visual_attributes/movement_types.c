@@ -616,8 +616,8 @@ s32 Func_080d50f8(void) {
     south = cell + 128;
     if (south->collisionCode == 255)
       goto failure;
-    if (Map_GetTerrainHeightFar(leader->terrainId, gridX << 16, gridZ << 16) <=
-        Map_GetTerrainHeightFar(leader->terrainId, gridX << 16,
+    if (MapGrid_GetTerrainHeightFar(leader->terrainId, gridX << 16, gridZ << 16) <=
+        MapGrid_GetTerrainHeightFar(leader->terrainId, gridX << 16,
                                 (gridZ + 16) << 16))
       goto failure;
     position[0] = leader->x;
@@ -706,8 +706,8 @@ s32 Func_080d53b8(void) {
     north = cell - 128;
     if (north->collisionCode == 255)
       goto failure;
-    if (Map_GetTerrainHeightFar(leader->terrainId, gridX << 16, gridZ << 16) >=
-        Map_GetTerrainHeightFar(leader->terrainId, gridX << 16,
+    if (MapGrid_GetTerrainHeightFar(leader->terrainId, gridX << 16, gridZ << 16) >=
+        MapGrid_GetTerrainHeightFar(leader->terrainId, gridX << 16,
                                 (gridZ - 16) << 16))
       goto failure;
     position[0] = leader->x;

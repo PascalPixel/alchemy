@@ -586,9 +586,9 @@ void Func_080d1840(void) {
   terrainLayer = actor->terrainId;
   tile = gResourceTableEntries[94].offset >> 5;
   x -= 0x80000;
-  height = Map_GetTerrainHeightFar(terrainLayer, x, z + 0x100000) >> 16;
+  height = MapGrid_GetTerrainHeightFar(terrainLayer, x, z + 0x100000) >> 16;
   secondHeight =
-      (Map_GetTerrainHeightFar(terrainLayer, x, z + 0x200000) >> 16) - 16;
+      (MapGrid_GetTerrainHeightFar(terrainLayer, x, z + 0x200000) >> 16) - 16;
   if (secondHeight > height)
     height = secondHeight;
   if (height > 0 && height > terrainFloor) {
@@ -603,10 +603,10 @@ void Func_080d1840(void) {
     Func_080140d8(mark, 0);
   }
   x += 0x100000;
-  height = Map_GetTerrainHeightFar(terrainLayer, x, z + 0x100000) >> 16;
+  height = MapGrid_GetTerrainHeightFar(terrainLayer, x, z + 0x100000) >> 16;
   mark = &work->marks[1];
   secondHeight =
-      (Map_GetTerrainHeightFar(terrainLayer, x, z + 0x200000) >> 16) - 16;
+      (MapGrid_GetTerrainHeightFar(terrainLayer, x, z + 0x200000) >> 16) - 16;
   if (secondHeight > height)
     height = secondHeight;
   if (height > 0 && height > terrainFloor) {

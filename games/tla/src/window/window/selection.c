@@ -1658,7 +1658,7 @@ void Resource_ResetPendingTransfer(void) {
 
 void PartyStatus_CreateWindow(s32 flags);
 s32 FieldMenu_SelectCommand(s32);
-s32 DjinnMenu_Open(void);
+s32 DjinnMenu_RunFar(void);
 s32 Actor_GetTriggerTileAheadOfCurrentFar(void);
 s32 PsynergyMenu_RunFar(void);
 s32 Func_080f8000(void);
@@ -1703,7 +1703,7 @@ loop:
       goto loop;
     break;
   case 2:
-    ret = DjinnMenu_Open();
+    ret = DjinnMenu_RunFar();
     if (ret != 0)
       goto loop;
     break;

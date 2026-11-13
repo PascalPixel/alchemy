@@ -313,7 +313,7 @@ void Func_080ea7c0(struct ActorFlag *actors) {
   }
   Func_080eaa14(list);
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
-  height = Map_GetTerrainHeightFar(leader->terrainId, leader->x, leader->z);
+  height = MapGrid_GetTerrainHeightFar(leader->terrainId, leader->x, leader->z);
   if (leader->y < height)
     leader->y = leader->terrainHeight = height;
 }

@@ -59,7 +59,7 @@ s32 BattleEffect_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
   s32 messageOffset;
 
   menu = Ram_HeapSlots->menuRuntime;
-  effect = BattleAction_Get(effectId);
+  effect = Ability_Get(effectId);
   changed = 0;
   messageOffset = 0;
   partyResultShown = 0;
@@ -313,7 +313,7 @@ s32 Item_PlayUseAnimation(s32 item) {
 /// formula 1 twice; otherwise effects 1, 2, 31 and 32 play nothing, effect 5
 /// sound 82, effect 3 sound 84, and every other effect sound 91.
 s32 Ability_PlayUseAnimation(s32 action) {
-  u8 *definition = BattleAction_Get(action);
+  u8 *definition = Ability_Get(action);
 
   switch (definition[1] & 15) {
   case 1:

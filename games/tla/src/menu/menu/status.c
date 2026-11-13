@@ -1313,7 +1313,7 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused,
             (s32)MsgAbilityDescription,
         (s32)menu->infoWindow, 0, 0);
 #endif
-    ability = BattleAction_Get(menu->psynergies[state->selectedIndex] &
+    ability = Ability_Get(menu->psynergies[state->selectedIndex] &
                                ACTION_ID_MASK);
     Window_ClearInteriorTilesFar(window, 0, USABLE_TOP, USABLE_RIGHT,
                                  USABLE_BOTTOM);
@@ -1357,7 +1357,7 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused,
   base = state->page * PAGE_ROWS;
   for (row = 0; row <= PAGE_ROWS - 1; row++) {
     if (row == state->row) {
-      ability = BattleAction_Get(menu->psynergies[base + row] & ACTION_ID_MASK);
+      ability = Ability_Get(menu->psynergies[base + row] & ACTION_ID_MASK);
       if (ability->element != ELEMENT_NONE) {
         Window_SetTilemapEntryFar(window, ability->element + 1, 24,
                                   row * 2 + FIRST_TILE_ROW, 0);
@@ -1370,7 +1370,7 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused,
                                   14);
       }
     } else {
-      ability = BattleAction_Get(menu->psynergies[base + row] & ACTION_ID_MASK);
+      ability = Ability_Get(menu->psynergies[base + row] & ACTION_ID_MASK);
       if (ability->element != ELEMENT_NONE) {
         Window_SetTilemapEntryFar(window, ability->element + 1, 24,
                                   row * 2 + FIRST_TILE_ROW, 4);
@@ -1463,7 +1463,7 @@ s32 PsynergyMenu_DrawListPage(s32 window, s32 unused,
       s32 msg;
       s32 y;
       s32 range;
-      act = BattleAction_Get(ACT_ID_MASK & *(u16 *)(offset + (s32)menu));
+      act = Ability_Get(ACT_ID_MASK & *(u16 *)(offset + (s32)menu));
       msg =
           (*(u16 *)(offset + (s32)menu) & ACT_ID_MASK) + (s32)MsgAbilityNothing;
       y = row * 16 + FIRST_ROW_Y;

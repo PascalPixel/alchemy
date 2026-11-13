@@ -40,7 +40,7 @@ void Func_080eabd0(u16 *actors) {
     struct Actor *object = Actor_GetById(*actors);
     u32 key = Func_080202f0(object->terrainId, object->x, object->z);
     s32 level =
-        Map_GetTerrainHeightFar(object->terrainId, object->x, object->z) >> 19;
+        MapGrid_GetTerrainHeightFar(object->terrainId, object->x, object->z) >> 19;
     s32 slot = Func_080eab70(object);
     struct SwitchCell *cells = map->layers[object->terrainId].cells;
     // The row's address as an integer sum, index first: &grid[row] adds the
@@ -66,7 +66,7 @@ void Func_080eabd0(u16 *actors) {
     cell->block = 0xff;
   }
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
-  height = Map_GetTerrainHeightFar(leader->terrainId, leader->x, leader->z);
+  height = MapGrid_GetTerrainHeightFar(leader->terrainId, leader->x, leader->z);
   if (leader->y < height)
     leader->y = leader->terrainHeight = height;
 }
@@ -99,7 +99,7 @@ void Func_080eace8(u16 *actors) {
       u8 *shapes = &grid[((s32)cells - (s32)Ram_MapCellBuffer) >> 2];
       u32 key = Func_080202f0(target->terrainId, target->x, target->z);
       s32 level =
-          Map_GetTerrainHeightFar(target->terrainId, target->x, target->z);
+          MapGrid_GetTerrainHeightFar(target->terrainId, target->x, target->z);
       s32 slot = Func_080eab70(target);
       s32 tag;
 
@@ -152,7 +152,7 @@ void Func_080eadfc(void) {
     /* FAKEMATCH(wrapper): x read through ActorX for the height call; as
      * target->x, 12 of 84 instructions differ in tla-en. */
     level =
-        Map_GetTerrainHeightFar(target->terrainId, ActorX(target), target->z);
+        MapGrid_GetTerrainHeightFar(target->terrainId, ActorX(target), target->z);
     slot = Func_080eab70(target);
     shapes += slot;
     tag = Func_080eab98(target->terrainId, key, (level >> 19) + 4);

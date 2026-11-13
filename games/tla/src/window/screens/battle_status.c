@@ -782,7 +782,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
       for (index = 0;
            index != 32 && (id = unit->psynergy[index].id & 0x3fff) != 0;
            index++) {
-        if (BattleAction_Get(id)->flags & 0x80)
+        if (Ability_Get(id)->flags & 0x80)
           entries[count++] = id;
       }
       entries[count] = 0;
@@ -808,7 +808,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
         if (rowBase != j) {
           Window_DrawDividerLine(statusWindow, 0, 16, 29, 16);
           for (j = 0; j <= 3 && (id = entries[rowBase + j]) != 0; j++) {
-            struct SummaryAbility *ability = BattleAction_Get(id);
+            struct SummaryAbility *ability = Ability_Get(id);
             s32 range;
             s32 tileFlags;
 

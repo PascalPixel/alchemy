@@ -39,10 +39,10 @@ s32 Item_ClassifyUseAbility(s32 unit, s32 item) {
   if (def->actionId == 0) {
     return ret;
   }
-  if ((def->type != 0) && (Item_CanOwnerEquip(unit, item) == 0)) {
+  if ((def->type != 0) && (Item_CanUnitEquip(unit, item) == 0)) {
     return ret;
   }
-  if ((BATTLE_OK & BattleAction_Get(def->actionId)->flags) == 0) {
+  if ((BATTLE_OK & Ability_Get(def->actionId)->flags) == 0) {
     return 2;
   }
   return 0;

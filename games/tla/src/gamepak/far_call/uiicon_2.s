@@ -5,9 +5,9 @@
 	.thumb_func
 Icon_PrepareActorFar:
 	overlay_veneer Icon_PrepareActor
-	.global DjinnMenu_Open
+	.global DjinnMenu_RunFar
 	.thumb_func
-DjinnMenu_Open:
+DjinnMenu_RunFar:
 	overlay_veneer DjinnMenu_Run
 	.global ItemMenu_DrawItemDetailsFar
 	.thumb_func

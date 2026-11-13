@@ -44,13 +44,13 @@ void Icon_BuildItemIconTiles(u32 glyph, s32 withBase, s32 *cacheSlot,
 void Icon_Decode(GlyphTransfer *work, s32 overlay);
 s32 Icon_CountItemIcons(void);
 
-u8 *BattleAction_Get(s32);
+u8 *Ability_Get(s32);
 
 /// Builds the icon of a battle action's item.
 // As ☀️'s Ability_RequestGlyph.
 void Ability_RequestGlyph(s32 action, s32 withBase, s32 *slot, s32 *tile,
                           s32 reuse) {
-  Icon_BuildItemIconTiles(*(u16 *)(BattleAction_Get(action) + 4), withBase, slot,
+  Icon_BuildItemIconTiles(*(u16 *)(Ability_Get(action) + 4), withBase, slot,
                             tile, reuse);
 }
 
@@ -226,7 +226,7 @@ s32 Icon_CountPsynergyIcons(void);
 void Ability_LoadGlyph(s32 action, s32 with_base, s32 *slot, s32 *tile,
                        s32 reuse) {
   Icon_BuildAbilityIconTiles(
-      ((struct BattleActionGlyph *)BattleAction_Get(action))->icon, with_base,
+      ((struct BattleActionGlyph *)Ability_Get(action))->icon, with_base,
       slot, tile, reuse);
 }
 

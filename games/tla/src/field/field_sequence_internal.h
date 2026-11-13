@@ -156,7 +156,7 @@ struct Actor;
 extern void *gOverlayArea[]; ///< the scene overlay's entry table
 extern s8 gData_02001000[];
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, s32 *position);
-s32 Map_GetTerrainHeightFar(u8 layer, s32 x, s32 z);
+s32 MapGrid_GetTerrainHeightFar(u8 layer, s32 x, s32 z);
 void wait(s32 frames);
 s32 Party_CountMembersFar(void);
 s32 GameFlag_Test(s32 flag);

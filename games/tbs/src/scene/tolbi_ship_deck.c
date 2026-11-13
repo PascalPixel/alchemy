@@ -401,191 +401,113 @@ static s32 TolbiShipDeck_ShowSprite(struct Actor *a) {
 // the bob direction. Using the actor's fields keeps one layout for the
 // whole slot.
 
-/// The update of a sea monster hovering by Ouranos's side of the deck while the
-/// monsters attack.
+/// Defines `name`, the update of a sea monster hovering by one warrior's side
+/// of the deck while the monsters attack.
 ///
-/// It drifts and bobs at random. One frame in a hundred it dives at Ouranos,
-/// who turns and jumps (sometimes with an emote). Then it returns to its
-/// side. riseEnabled picks which side it returns to.
+/// It drifts between minX and maxX and bobs, at random. One frame in a hundred
+/// it dives at the warrior to (diveX, diveZ), 20 pixels up, and the warrior
+/// turns and jumps (sometimes with an emote). Then it returns to its side,
+/// (eastX, eastZ) or (westX, westZ) as riseEnabled picks.
 ///
 /// Returns 1 to keep running.
-static s32 TolbiShipDeck_HoverAndDiveAtOuranos(struct Actor *actor) {
-  if (actor->riseCounter != 0) {
-    switch (actor->riseCounter) {
-    case 1:
-      actor->speedLimit = px(4);
-      actor->acceleration = px(2);
-      FieldActor_SetMoveTarget(actor, 268, 20, 692);
-      actor->riseCounter++;
-      break;
-    case 2:
-      actor->riseCounter++;
-      break;
-    case 3:
-      if (actor->targetX == ACTOR_NO_TARGET &&
-          actor->targetY == actor->targetX &&
-          actor->targetZ == actor->targetY) {
-        actor->riseCounter++;
-        Sound_Play(SE_ENEMY_CRY);
-        if (actor->riseEnabled != 0)
-          Actor_FaceDirection(ACTOR_SEA_OURANOS, FACING_NORTH_NORTHEAST, 0);
-        else
-          Actor_FaceDirection(ACTOR_SEA_OURANOS, FACING_NORTH_NORTHWEST, 0);
-        if (((u32)Import_RandomNext() << 2) >> 16 != 0) {
-          Actor_Get(ACTOR_SEA_OURANOS)->velocityY = px(2);
-        } else {
-          Actor_ShowEmote(ACTOR_SEA_OURANOS, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN,
-                          0);
-          Actor_Get(ACTOR_SEA_OURANOS)->velocityY = px(6);
-        }
-      }
-      break;
-    case 4:
-      actor->riseCounter++;
-      break;
-    case 5:
-      if (actor->riseEnabled != 0)
-        FieldActor_SetMoveTarget(actor, 282, 0, 658);
-      else
-        FieldActor_SetMoveTarget(actor, 254, 0, 668);
-      actor->riseCounter++;
-      break;
-    case 6:
-      actor->riseCounter++;
-      break;
-    case 7:
-      if (actor->targetX == ACTOR_NO_TARGET &&
-          actor->targetY == actor->targetX &&
-          actor->targetZ == actor->targetY) {
-        actor->speedLimit = px(2);
-        actor->acceleration = px(1);
-        actor->timer = 0;
-        actor->userValue = 0;
-        actor->riseCounter++;
-        actor->riseBaseY = 0;
-      }
-      break;
-    case 8:
-      actor->riseCounter = 0;
-      break;
-    }
-  } else {
-    if (actor->timer != 0) {
-      actor->riseBaseY -= ((u32)Import_RandomNext() << 12) >> 16;
-      if (actor->riseBaseY < -px(1) / 4)
-        actor->timer = 0;
-    } else {
-      actor->riseBaseY += ((u32)Import_RandomNext() << 12) >> 16;
-      if (actor->riseBaseY > px(1) / 4)
-        actor->timer = 1;
-    }
-    if (actor->x.fixed > px(248) && actor->x.fixed < px(292))
-      actor->x.fixed += actor->riseBaseY;
-    if ((s16)actor->userValue != 0) {
-      actor->y.fixed =
-          actor->y.fixed - (((u32)Import_RandomNext() << 15) >> 16) - px(1) / 2;
-      if (actor->y.fixed < 0)
-        actor->userValue = 0;
-    } else {
-      actor->y.fixed =
-          actor->y.fixed + (((u32)Import_RandomNext() << 15) >> 16) + px(1) / 2;
-      if (actor->y.fixed > px(8))
-        actor->userValue = 1;
-    }
+#define TOLBI_SHIP_DECK_HOVER_AND_DIVE(name, warrior, diveX, diveZ, eastX,     \
+                                       eastZ, westX, westZ, minX, maxX)        \
+  static s32 name(struct Actor *actor) {                                       \
+    if (actor->riseCounter != 0) {                                             \
+      switch (actor->riseCounter) {                                            \
+      case 1:                                                                  \
+        actor->speedLimit = px(4);                                             \
+        actor->acceleration = px(2);                                           \
+        FieldActor_SetMoveTarget(actor, diveX, 20, diveZ);                     \
+        actor->riseCounter++;                                                  \
+        break;                                                                 \
+      case 2:                                                                  \
+        actor->riseCounter++;                                                  \
+        break;                                                                 \
+      case 3:                                                                  \
+        if (actor->targetX == ACTOR_NO_TARGET &&                               \
+            actor->targetY == actor->targetX &&                                \
+            actor->targetZ == actor->targetY) {                                \
+          actor->riseCounter++;                                                \
+          Sound_Play(SE_ENEMY_CRY);                                            \
+          if (actor->riseEnabled != 0)                                         \
+            Actor_FaceDirection(warrior, FACING_NORTH_NORTHEAST, 0);           \
+          else                                                                 \
+            Actor_FaceDirection(warrior, FACING_NORTH_NORTHWEST, 0);           \
+          if (((u32)Import_RandomNext() << 2) >> 16 != 0) {                    \
+            Actor_Get(warrior)->velocityY = px(2);                             \
+          } else {                                                             \
+            Actor_ShowEmote(warrior, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);    \
+            Actor_Get(warrior)->velocityY = px(6);                             \
+          }                                                                    \
+        }                                                                      \
+        break;                                                                 \
+      case 4:                                                                  \
+        actor->riseCounter++;                                                  \
+        break;                                                                 \
+      case 5:                                                                  \
+        if (actor->riseEnabled != 0)                                           \
+          FieldActor_SetMoveTarget(actor, eastX, 0, eastZ);                    \
+        else                                                                   \
+          FieldActor_SetMoveTarget(actor, westX, 0, westZ);                    \
+        actor->riseCounter++;                                                  \
+        break;                                                                 \
+      case 6:                                                                  \
+        actor->riseCounter++;                                                  \
+        break;                                                                 \
+      case 7:                                                                  \
+        if (actor->targetX == ACTOR_NO_TARGET &&                               \
+            actor->targetY == actor->targetX &&                                \
+            actor->targetZ == actor->targetY) {                                \
+          actor->speedLimit = px(2);                                           \
+          actor->acceleration = px(1);                                         \
+          actor->timer = 0;                                                    \
+          actor->userValue = 0;                                                \
+          actor->riseCounter++;                                                \
+          actor->riseBaseY = 0;                                                \
+        }                                                                      \
+        break;                                                                 \
+      case 8:                                                                  \
+        actor->riseCounter = 0;                                                \
+        break;                                                                 \
+      }                                                                        \
+    } else {                                                                   \
+      if (actor->timer != 0) {                                                 \
+        actor->riseBaseY -= ((u32)Import_RandomNext() << 12) >> 16;            \
+        if (actor->riseBaseY < -px(1) / 4)                                     \
+          actor->timer = 0;                                                    \
+      } else {                                                                 \
+        actor->riseBaseY += ((u32)Import_RandomNext() << 12) >> 16;            \
+        if (actor->riseBaseY > px(1) / 4)                                      \
+          actor->timer = 1;                                                    \
+      }                                                                        \
+      if (actor->x.fixed > px(minX) && actor->x.fixed < px(maxX))              \
+        actor->x.fixed += actor->riseBaseY;                                    \
+      if ((s16)actor->userValue != 0) {                                        \
+        actor->y.fixed = actor->y.fixed -                                      \
+                         (((u32)Import_RandomNext() << 15) >> 16) - px(1) / 2; \
+        if (actor->y.fixed < 0)                                                \
+          actor->userValue = 0;                                                \
+      } else {                                                                 \
+        actor->y.fixed = actor->y.fixed +                                      \
+                         (((u32)Import_RandomNext() << 15) >> 16) + px(1) / 2; \
+        if (actor->y.fixed > px(8))                                            \
+          actor->userValue = 1;                                                \
+      }                                                                        \
+    }                                                                          \
+    if (((u32)Import_RandomNext() * 100) >> 16 == 0)                           \
+      actor->riseCounter = 1;                                                  \
+    return 1;                                                                  \
   }
-  if (((u32)Import_RandomNext() * 100) >> 16 == 0)
-    actor->riseCounter = 1;
-  return 1;
-}
 
-/// The same for the monster that dives at Sean.
-static s32 TolbiShipDeck_HoverAndDiveAtSean(struct Actor *actor) {
-  if (actor->riseCounter != 0) {
-    switch (actor->riseCounter) {
-    case 1:
-      actor->speedLimit = px(4);
-      actor->acceleration = px(2);
-      FieldActor_SetMoveTarget(actor, 256, 20, 640);
-      actor->riseCounter++;
-      break;
-    case 2:
-      actor->riseCounter++;
-      break;
-    case 3:
-      if (actor->targetX == ACTOR_NO_TARGET &&
-          actor->targetY == actor->targetX &&
-          actor->targetZ == actor->targetY) {
-        actor->riseCounter++;
-        Sound_Play(SE_ENEMY_CRY);
-        if (actor->riseEnabled != 0)
-          Actor_FaceDirection(ACTOR_SEA_SEAN, FACING_NORTH_NORTHEAST, 0);
-        else
-          Actor_FaceDirection(ACTOR_SEA_SEAN, FACING_NORTH_NORTHWEST, 0);
-        if (((u32)Import_RandomNext() << 2) >> 16 != 0) {
-          Actor_Get(ACTOR_SEA_SEAN)->velocityY = px(2);
-        } else {
-          Actor_ShowEmote(ACTOR_SEA_SEAN, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
-          Actor_Get(ACTOR_SEA_SEAN)->velocityY = px(6);
-        }
-      }
-      break;
-    case 4:
-      actor->riseCounter++;
-      break;
-    case 5:
-      if (actor->riseEnabled != 0)
-        FieldActor_SetMoveTarget(actor, 264, 0, 600);
-      else
-        FieldActor_SetMoveTarget(actor, 242, 0, 604);
-      actor->riseCounter++;
-      break;
-    case 6:
-      actor->riseCounter++;
-      break;
-    case 7:
-      if (actor->targetX == ACTOR_NO_TARGET &&
-          actor->targetY == actor->targetX &&
-          actor->targetZ == actor->targetY) {
-        actor->speedLimit = px(2);
-        actor->acceleration = px(1);
-        actor->timer = 0;
-        actor->userValue = 0;
-        actor->riseCounter++;
-        actor->riseBaseY = 0;
-      }
-      break;
-    case 8:
-      actor->riseCounter = 0;
-      break;
-    }
-  } else {
-    if (actor->timer != 0) {
-      actor->riseBaseY -= ((u32)Import_RandomNext() << 12) >> 16;
-      if (actor->riseBaseY < -px(1) / 4)
-        actor->timer = 0;
-    } else {
-      actor->riseBaseY += ((u32)Import_RandomNext() << 12) >> 16;
-      if (actor->riseBaseY > px(1) / 4)
-        actor->timer = 1;
-    }
-    if (actor->x.fixed > px(232) && actor->x.fixed < px(272))
-      actor->x.fixed += actor->riseBaseY;
-    if ((s16)actor->userValue != 0) {
-      actor->y.fixed =
-          actor->y.fixed - (((u32)Import_RandomNext() << 15) >> 16) - px(1) / 2;
-      if (actor->y.fixed < 0)
-        actor->userValue = 0;
-    } else {
-      actor->y.fixed =
-          actor->y.fixed + (((u32)Import_RandomNext() << 15) >> 16) + px(1) / 2;
-      if (actor->y.fixed > px(8))
-        actor->userValue = 1;
-    }
-  }
-  if (((u32)Import_RandomNext() * 100) >> 16 == 0)
-    actor->riseCounter = 1;
-  return 1;
-}
+/// A monster hovering on Ouranos's side, diving at him.
+TOLBI_SHIP_DECK_HOVER_AND_DIVE(TolbiShipDeck_HoverAndDiveAtOuranos,
+                               ACTOR_SEA_OURANOS, 268, 692, 282, 658, 254, 668,
+                               248, 292)
+
+/// A monster hovering on Sean's side, diving at him.
+TOLBI_SHIP_DECK_HOVER_AND_DIVE(TolbiShipDeck_HoverAndDiveAtSean, ACTOR_SEA_SEAN,
+                               256, 640, 264, 600, 242, 604, 232, 272)
 
 static u16 sStrokePhase[4];
 

@@ -1878,6 +1878,10 @@ static void VenusLighthouse_StepOnWallSwitch(void) {
   }
 }
 
+/// The cell of the gate pillar's socket in VenusLighthouseSecondFloor.
+#define VENUS_GATE_PILLAR_SOCKET_COLUMN 46
+#define VENUS_GATE_PILLAR_SOCKET_ROW 45
+
 /// In VenusLighthouseSecondFloor, Move pushes the pillar before the gate. In
 /// its socket it sinks in and the gate opens, the first time only
 /// (FLAG_VENUS_LIGHTHOUSE_GATE_OPEN).
@@ -1897,24 +1901,24 @@ static void VenusLighthouse_MoveGatePillar(void) {
   Event_Start();
   MapGrid_CopyCellAttributes(109, 43, 7, 5, 45, 43);
   flags = &pillar->priorityFlags;
-  if ((2 & pillar->priorityFlags) != 0) {
+  if ((ACTOR_PRIORITY_UNDERFOOT & pillar->priorityFlags) != 0) {
     MapGrid_CopyCellAttributes(45, 45, 1, 1, 46, 45);
   } else {
     MapGrid_CopyCellAttributes(48, 42, 1, 1, pillar->x.fixed >> 20,
                                pillar->z.fixed >> 20);
   }
   column = pillar->x.fixed >> 20;
-  if (column != 46) {
+  if (column != VENUS_GATE_PILLAR_SOCKET_COLUMN) {
   } else {
     row = pillar->z.fixed >> 20;
-    if (row != 45) {
+    if (row != VENUS_GATE_PILLAR_SOCKET_ROW) {
     } else {
       // Sink an unsolved pillar only when both of its target cell coordinates
       // match.
       gateOpened = GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_GATE_OPEN);
       if (gateOpened != 0) {
       } else {
-        if ((leader->z.fixed >> 20) <= 45) {
+        if ((leader->z.fixed >> 20) <= VENUS_GATE_PILLAR_SOCKET_ROW) {
           occlusionEffect = VenusLighthouse_CreateOccludingPassageEffect(
               px(744), 0, px(704), SPRITE_CHEST);
           Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 3);
@@ -1932,16 +1936,16 @@ static void VenusLighthouse_MoveGatePillar(void) {
         pillar->y.fixed = -px(16);
         Actor_SetSpritePriority(ACTOR_GATE_PILLAR, 3);
         {
-          u8 two = 2;
+          u8 underfoot = ACTOR_PRIORITY_UNDERFOOT;
 
-          *flags = two;
+          *flags = underfoot;
         }
         MapGrid_CopyCellAttributes(45, 45, 1, 1, column, row);
         Actor_Get(ACTOR_PARTY_LEADER)->priorityFlags |=
             ACTOR_PRIORITY_AUTOMATIC;
         Actor_Release(occlusionEffect);
         pillar->collisionFlags = gateOpened;
-        *flags |= 2;
+        *flags |= ACTOR_PRIORITY_UNDERFOOT;
         Actor_Get(ACTOR_GATE_SPARKLE)->collisionFlags = gateOpened;
         Actor_Get(ACTOR_GATE_SPARKLE)->priorityFlags |=
             ACTOR_PRIORITY_UNDERFOOT;

@@ -55,6 +55,6 @@ void WorldMap_CreateAttachedEffects(struct Actor *parent) {
 
     effectSprite->image.priority = 1;
     effect->update = FieldEffect_AnimateVerticalPositive;
-    effect->priorityFlags = 2;
+    effect->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   }
 }

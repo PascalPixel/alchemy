@@ -216,6 +216,10 @@ void Actor_SelectAnimation(void *raw, s32 no);
 void Actor_SetAnimationSpeed(struct Actor *actor, s32 val);
 s32 ActorScript_SetFlagAndTest(struct Actor *interpreter);
 s32 ActorScript_ClearFlagAndTest(struct Actor *interpreter);
+// The work values of SC_SET, SC_ADD and SC_CMP, one handler each
+// (gActorScript_OperandHandlerTable, field/field/script_commands.c): by
+// operation, each sets one of the actor's fields to value, adds value to it, or
+// compares the two into conditionResult.
 void ActorScript_SetOrCompareScriptAddress(struct ScriptOperands *state,
                                            s32 operation, s32 value);
 void ActorScript_SetOrCompareFacing(struct ScriptOperands *state, s32 operation,

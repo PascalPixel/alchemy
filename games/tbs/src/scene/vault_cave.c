@@ -311,8 +311,8 @@ static struct Actor *VaultCave_FindCollidableActorAtCell(s32 column, s32 row) {
   for (actorSlot = ACTOR_FIRST_PLACED; actorSlot <= 65; actorSlot++) {
     struct Actor *actor = work->actors[actorSlot];
 
-    if (actor != NULL && column == (actor->x.fixed >> 20) &&
-        row == (actor->z.fixed >> 20) && actor->collisionFlags != 0) {
+    if (actor != NULL && column == FIELD_CELL(actor->x.fixed) &&
+        row == FIELD_CELL(actor->z.fixed) && actor->collisionFlags != 0) {
       return actor;
     }
   }
@@ -950,7 +950,7 @@ static void VaultCave_SpawnPuffs(struct Actor *source) {
     puff->motionFlags = ACTOR_FALLS;
     puff->velocityY = -px(1);
     puff->speedLimit = Import_RandomNext() + px(4) / 5;
-    puff->collisionFlags = 1;
+    puff->collisionFlags = ACTOR_SOLID;
     VaultCave_OffsetActorRadially(puff, px(32), Import_RandomNext());
     {
       u16 *timer = &puff->wait;
@@ -1094,7 +1094,7 @@ s32 Scene_Initialize(void) {
     Actor_SetAnimation(ACTOR_SOUTHERN_PILLAR, FLAME_PILLAR_ANIMATION_BURNING);
     Actor_SetSpriteFlags(Actor_Get(ACTOR_PILLAR_EAST_OF_SOUTHERN_SWITCH), 0);
     Actor_SetSpriteFlags(Actor_Get(ACTOR_SOUTHERN_PILLAR), 0);
-    Actor_Get(ACTOR_SOUTHERN_PILLAR)->collisionFlags = 1;
+    Actor_Get(ACTOR_SOUTHERN_PILLAR)->collisionFlags = ACTOR_SOLID;
   }
   if (gMainRoutineWork.next == (s32)&SceneId_VaultCaveMouth) {
     Actor_SetAnimation(ACTOR_PILLAR_EAST_OF_NORTHERN_SWITCH,
@@ -1111,13 +1111,18 @@ s32 Scene_Initialize(void) {
     case VAULT_CAVE_MOUTH_NORTH_FROM_SOUTH:
     case VAULT_CAVE_MOUTH_FROM_VAULT_CAVE_VAMBRACE_NORTH:
       VaultCave_StartTimedFalls();
-      Actor_Get(ACTOR_FIRST_TIMED_WATER_DROP)->collisionFlags = 2;
-      Actor_Get(ACTOR_FIRST_TIMED_WATER_DROP + 1)->collisionFlags = 2;
-      Actor_Get(ACTOR_FIRST_TIMED_WATER_DROP + 2)->collisionFlags = 2;
-      Actor_Get(ACTOR_FIRST_TIMED_WATER_DROP + 3)->collisionFlags = 2;
-      Actor_Get(ACTOR_PILLAR_EAST_OF_NORTHERN_SWITCH)->collisionFlags = 1;
-      Actor_Get(ACTOR_NORTHERN_PILLAR)->collisionFlags = 1;
-      Actor_Get(ACTOR_PILLAR_SOUTH_OF_NORTHERN_SWITCH)->collisionFlags = 1;
+      Actor_Get(ACTOR_FIRST_TIMED_WATER_DROP)->collisionFlags = ACTOR_PUSHABLE;
+      Actor_Get(ACTOR_FIRST_TIMED_WATER_DROP + 1)->collisionFlags =
+          ACTOR_PUSHABLE;
+      Actor_Get(ACTOR_FIRST_TIMED_WATER_DROP + 2)->collisionFlags =
+          ACTOR_PUSHABLE;
+      Actor_Get(ACTOR_FIRST_TIMED_WATER_DROP + 3)->collisionFlags =
+          ACTOR_PUSHABLE;
+      Actor_Get(ACTOR_PILLAR_EAST_OF_NORTHERN_SWITCH)->collisionFlags =
+          ACTOR_SOLID;
+      Actor_Get(ACTOR_NORTHERN_PILLAR)->collisionFlags = ACTOR_SOLID;
+      Actor_Get(ACTOR_PILLAR_SOUTH_OF_NORTHERN_SWITCH)->collisionFlags =
+          ACTOR_SOLID;
       if (GameFlag_Get(FLAG_VAULT_CAVE_NORTH_PILLAR_ON_SWITCH) != 0) {
         VaultCave_ApplyNorthernSwitchCells();
         Actor_SetPosition(ACTOR_NORTHERN_PILLAR, 264, 204);

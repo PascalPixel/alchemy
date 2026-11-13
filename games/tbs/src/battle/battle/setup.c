@@ -138,7 +138,7 @@ void BattleIntro_AnnounceEncounter(s32 enemyCount) {
 /// battle is set up. Writes gBattleWork->partyUnits and enemyIds, and marks
 /// each party member's side.
 void BattleUnit_Collect(void) {
-  u16 unitIds[14];
+  u16 unitIds[UNIT_MAX];
   struct BattleWork *battle;
   s32 count;
   s32 i;

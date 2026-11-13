@@ -15,6 +15,12 @@
 
 struct Unit;
 
+/// Levels between two points of a growth curve (CharacterDefinition.hp and its
+/// siblings).
+#define GROWTH_BAND_LEVELS 20
+/// Points on a growth curve: levels 0 to 100, GROWTH_BAND_LEVELS apart.
+#define GROWTH_POINTS 6
+
 /// A character's definition: the growth curves of its stats, its element
 /// bonus, starting level and starting equipment.
 struct CharacterDefinition {
@@ -23,12 +29,12 @@ struct CharacterDefinition {
   /// level up adds a twentieth of the step around the new level, with a
   /// random part; level 1 adds the first point (Unit_LevelUp).
   ///@{
-  s16 hp[6];
-  s16 pp[6];
-  u16 atk[6];
-  u16 def[6];
-  u16 agi[6];
-  u8 luck[6];
+  s16 hp[GROWTH_POINTS];
+  s16 pp[GROWTH_POINTS];
+  u16 atk[GROWTH_POINTS];
+  u16 def[GROWTH_POINTS];
+  u16 agi[GROWTH_POINTS];
+  u8 luck[GROWTH_POINTS];
   ///@}
   /// Added to ten times the Djinn set in each element to give the
   /// character's element levels (Unit_GetElementLevels).
@@ -77,6 +83,9 @@ enum ClassSeries {
   CLASS_SERIES_HERMIT
 };
 
+/// How many actions a class can teach (ClassDefinition.abilities).
+#define CLASS_ABILITY_SLOTS 16
+
 /// A class: its series, the element levels it needs, its stat multipliers and
 /// the abilities it teaches.
 struct ClassDefinition {
@@ -86,14 +95,15 @@ struct ClassDefinition {
   /// The element levels the class needs, in tens: the last class of the
   /// series the character meets in all four is its class.
   u8 required[4];
-  u8 hp;                             ///< tenths of the base stat
-  u8 pp;                             ///< tenths of the base stat
-  u8 atk;                            ///< tenths of the base stat
-  u8 def;                            ///< tenths of the base stat
-  u8 agi;                            ///< tenths of the base stat
-  u8 luck;                           ///< tenths of the base stat
-  u8 padding[2];                     ///< padding
-  struct ClassAbility abilities[16]; ///< the Psynergy the class teaches
+  u8 hp;         ///< tenths of the base stat
+  u8 pp;         ///< tenths of the base stat
+  u8 atk;        ///< tenths of the base stat
+  u8 def;        ///< tenths of the base stat
+  u8 agi;        ///< tenths of the base stat
+  u8 luck;       ///< tenths of the base stat
+  u8 padding[2]; ///< padding
+  struct ClassAbility
+      abilities[CLASS_ABILITY_SLOTS]; ///< the Psynergy the class teaches
   /// [0] to [2]: the ability effects the class is weak to
   /// (BattleAbility_IsWeakToEffect); [3] is 0 in every row and not read.
   u8 weakEffects[4];

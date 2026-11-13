@@ -463,15 +463,15 @@ static s32 CrossboneIsleSteppingStones_LowerActorToLedge(s32 id, s32 far) {
                                    (row << 20) + actor->z.fixed);
     top /= px(16);
     if (level < top) {
-      x = ((actor->x.fixed >> 20) << 20) + px(8);
+      x = (FIELD_CELL(actor->x.fixed) << 20) + px(8);
       if (far == 0) {
         row += 2;
-        z = ((row + (actor->z.fixed >> 20)) << 20) + px(2);
+        z = ((row + FIELD_CELL(actor->z.fixed)) << 20) + px(2);
         y = top << 20;
         kind = 223;
       } else {
         row += 3;
-        z = ((row + (actor->z.fixed >> 20)) << 20) - px(2);
+        z = ((row + FIELD_CELL(actor->z.fixed)) << 20) - px(2);
         y = top << 20;
         kind = 253;
       }
@@ -1089,8 +1089,9 @@ static void CrossboneIsleSteppingStones_MovePillar(void) {
     actor = Actor_Get(id);
     actor->layer = 2;
     i = id - ACTOR_FIRST_PILLAR;
-    if ((actor->x.fixed >> 20) == sPillarSlots[i].x &&
-        (actor->z.fixed >> 20) == sPillarSlots[i].z && actor->velocityY == 0) {
+    if (FIELD_CELL(actor->x.fixed) == sPillarSlots[i].x &&
+        (FIELD_CELL(actor->z.fixed)) == sPillarSlots[i].z &&
+        actor->velocityY == 0) {
       continue;
     }
     Dma_Set(&actor->x, &sProbePosition,
@@ -1133,13 +1134,14 @@ static void CrossboneIsleSteppingStones_MovePillar(void) {
       *flags = 0;
     }
     // Save the new ground cell before applying the pillar's height attributes.
-    CrossboneIsleSteppingStones_ReadMapGridCell(
-        0, actor->x.fixed >> 20, actor->z.fixed >> 20, &sPillarSlots[i].cell);
+    CrossboneIsleSteppingStones_ReadMapGridCell(0, FIELD_CELL(actor->x.fixed),
+                                                FIELD_CELL(actor->z.fixed),
+                                                &sPillarSlots[i].cell);
     if (actor->y.fixed >= 0) {
       CrossboneIsleSteppingStones_ReadMapGridCell(
-          0, 27, (actor->y.fixed >> 20) + 6, &cell);
+          0, 27, FIELD_CELL(actor->y.fixed) + 6, &cell);
       CrossboneIsleSteppingStones_SetCellAttributes(
-          0, actor->x.fixed >> 20, actor->z.fixed >> 20, &cell);
+          0, FIELD_CELL(actor->x.fixed), FIELD_CELL(actor->z.fixed), &cell);
       cell.bits.highFlags = sPillarSlots[i].cell.bits.highFlags;
       // x and z read by their offsets: through Actor's single/group
       // union, as actor->x.fixed, a load moves.
@@ -1147,9 +1149,9 @@ static void CrossboneIsleSteppingStones_MovePillar(void) {
           2, *(s32 *)((u8 *)actor + offsetof(struct Actor, x)) >> 20,
           *(s32 *)((u8 *)actor + offsetof(struct Actor, z)) >> 20, &cell);
     }
-    sPillarSlots[i].x = actor->x.fixed >> 20;
-    sPillarSlots[i].y = actor->y.fixed >> 20;
-    sPillarSlots[i].z = actor->z.fixed >> 20;
+    sPillarSlots[i].x = FIELD_CELL(actor->x.fixed);
+    sPillarSlots[i].y = FIELD_CELL(actor->y.fixed);
+    sPillarSlots[i].z = FIELD_CELL(actor->z.fixed);
     // Mark pillars covered by this one, then restore their sort order.
     for (k = 0; k <= 3; k++) {
       if (k == i) {
@@ -1157,8 +1159,8 @@ static void CrossboneIsleSteppingStones_MovePillar(void) {
       }
       GameFlag_Clear(sPillarSlots[k].flag);
       other = Actor_Get(k + ACTOR_FIRST_PILLAR);
-      if ((actor->x.fixed >> 20) == (other->x.fixed >> 20) &&
-          (actor->z.fixed >> 20) == (other->z.fixed >> 20) &&
+      if (FIELD_CELL(actor->x.fixed) == FIELD_CELL(other->x.fixed) &&
+          (FIELD_CELL(actor->z.fixed)) == FIELD_CELL(other->z.fixed) &&
           actor->y.fixed > other->y.fixed) {
         GameFlag_Set(sPillarSlots[k].flag);
       }
@@ -1268,8 +1270,8 @@ static void CrossboneIsleSteppingStones_FreezePuddle(s32 id) {
   actor->update = (void (*)(
       struct Actor *))CrossboneIsleSteppingStones_UpdateFrozenPuddlePriority;
 #endif
-  MapGrid_CopyCellAttributes(20, 14, 1, 1, actor->x.fixed >> 20,
-                             actor->z.fixed >> 20);
+  MapGrid_CopyCellAttributes(20, 14, 1, 1, FIELD_CELL(actor->x.fixed),
+                             FIELD_CELL(actor->z.fixed));
   GameFlag_Set(FLAG_CROSSBONE_ISLE_DRAGON_STATUE_FIRST_PUDDLE_FROZEN + id -
                ACTOR_FIRST_PUDDLE);
   Actor_SetScript(id, gCrossboneIsleSteppingStones_ActionTable);
@@ -1297,8 +1299,8 @@ static void CrossboneIsleSteppingStones_FrostStartsOnThirdPuddle(void) {
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   puddle = Actor_Get(ACTOR_THIRD_PUDDLE);
   effects = gFieldEffectWork;
-  if (puddle->x.fixed >> 20 == leader->x.fixed >> 20 &&
-      puddle->z.fixed >> 20 == leader->z.fixed >> 20) {
+  if (FIELD_CELL(puddle->x.fixed) == FIELD_CELL(leader->x.fixed) &&
+      puddle->z.fixed >> 20 == FIELD_CELL(leader->z.fixed)) {
     GameFlag_Set(FLAG_CROSSBONE_ISLE_DRAGON_STATUE_LEADER_ON_THIRD_PUDDLE);
     effects[53] = 1;
   } else {
@@ -1464,8 +1466,8 @@ static void CrossboneIsleSteppingStones_StartMovingSinkingPillar(void) {
 
   Event_Start();
 
-  x = pillar->x.fixed >> 20;
-  z = pillar->z.fixed >> 20;
+  x = FIELD_CELL(pillar->x.fixed);
+  z = FIELD_CELL(pillar->z.fixed);
 
   PushedActor_FillGridAttributeRectangle(2, x, z, 1, 1, CELL_BEHAVIOR_NORMAL);
   Event_End();
@@ -1479,10 +1481,10 @@ static void CrossboneIsleSteppingStones_MoveSinkingPillar(void) {
 
   pillar = Actor_Get(ACTOR_SINKING_BOULDER);
   Event_Start();
-  PushedActor_FillGridAttributeRectangle(2, (pillar->x.fixed >> 20),
-                                         (pillar->z.fixed >> 20), 1, 1,
+  PushedActor_FillGridAttributeRectangle(2, FIELD_CELL(pillar->x.fixed),
+                                         (FIELD_CELL(pillar->z.fixed)), 1, 1,
                                          CELL_BEHAVIOR_WALL);
-  if ((pillar->x.fixed >> 20) == 16) {
+  if (FIELD_CELL(pillar->x.fixed) == 16) {
     alreadyLowered =
         Event_GetFlag(FLAG_CROSSBONE_ISLE_DRAGON_STATUE_BOULDER_SUNK);
     if (alreadyLowered == 0) {
@@ -1561,8 +1563,8 @@ static void CrossboneIsleSteppingStones_RestoreFlaggedPillar(s32 actorId) {
     actor->update = (void (*)(
         struct Actor *))CrossboneIsleSteppingStones_UpdateFrozenPuddlePriority;
 #endif
-    MapGrid_CopyCellAttributes(20, 14, 1, 1, actor->x.fixed >> 20,
-                               actor->z.fixed >> 20);
+    MapGrid_CopyCellAttributes(20, 14, 1, 1, FIELD_CELL(actor->x.fixed),
+                               FIELD_CELL(actor->z.fixed));
     Actor_SetScript(actorId, gCrossboneIsleSteppingStones_ActionTable);
   }
 }
@@ -1678,9 +1680,9 @@ s32 Scene_Initialize(void) {
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0) {
       for (id = ACTOR_FIRST_PILLAR; id < ACTOR_FIRST_PILLAR + 4; id++) {
         actor = Actor_Get(id);
-        x = actor->x.fixed >> 20;
+        x = FIELD_CELL(actor->x.fixed);
         if (x == 37) {
-          z = actor->z.fixed >> 20;
+          z = FIELD_CELL(actor->z.fixed);
           if (z == 9) {
             MapGrid_CopyCellAttributes(27, 8, 1, 1, x, z);
             break;

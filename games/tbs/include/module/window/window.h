@@ -52,10 +52,24 @@ enum {
 
 /// The BG palette of the windows and their text, the UI palette.
 #define WINDOW_PALETTE 15
+
+// The window colour settings (MainRoutineWork.windowHue and windowBrightness),
+// which WindowColor_Apply turns into WINDOW_PALETTE's colours 4 to 10.
+#define WINDOW_HUE_COUNT 24 ///< "Window color" takes 0 to 23
+/// "Window brightness" takes 0 to 14.
+#define WINDOW_BRIGHTNESS_COUNT 15
+/// The brightness that adds nothing to the hue's colour.
+#define WINDOW_BRIGHTNESS_NEUTRAL 7
+/// Steps round gWindowColor_WaveTable's colour wheel; each hue is four.
+#define WINDOW_COLOR_WHEEL_STEPS 96
+
 /// The BG palette the menus keep for their selected row or page: a copy of
 /// WINDOW_PALETTE with its background lightened (Palette_LightenHighlight),
 /// which the item icons borrow (Palette_LoadIconsIntoHighlight).
 #define HIGHLIGHT_PALETTE 14
+/// How many levels HIGHLIGHT_PALETTE lightens each channel of
+/// WINDOW_BACKGROUND_COLOR by (Palette_LightenHighlight).
+#define HIGHLIGHT_LIGHTEN_STEPS 9
 /// The window palette's background colour, behind its text; in
 /// HIGHLIGHT_PALETTE, the selected row's.
 #define WINDOW_BACKGROUND_COLOR 4

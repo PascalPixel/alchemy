@@ -79,8 +79,10 @@ struct WindowSprite {
   u16 y;                     ///< screen pixels
   u16 unused;                ///< no code names it
   u16 animationStep;         ///< step of its motion's animation
-  s8 index;    ///< VRAM cache slot, or a glyph's tile after glyphTiles
-  u8 sentinel; ///< depth slot it is drawn at (254 for glyphs)
+  s8 index; ///< VRAM cache slot, or a glyph's tile after glyphTiles
+  /// The depth slot it is drawn at (Oam_AddSpriteAtDepth): a higher slot is
+  /// drawn in front. The windows' glyphs take 254.
+  u8 sentinel;
   /// The depth queue's link: with oam it is the sprite entry queued each
   /// frame, read as struct CursorSprite.
   u8 link[4];

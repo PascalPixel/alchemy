@@ -13,7 +13,7 @@
 /// FLAG_AUTO_BATTLE; fills entries.
 s32 AutoBattle_BuildActions(struct BattleAction *entries) {
   struct BattleAction swap;
-  u16 unitIds[14];
+  u16 unitIds[UNIT_MAX];
   s32 partyCount;
   s32 count = 0;
   s32 enemyCount;
@@ -159,7 +159,7 @@ s32 BattleObject_IsValidId(u32 unitId) {
 /// living party member running off in turn. Returns 1 when they got away; else
 /// shows MsgCannotEscape and returns 0. Called by AutoBattle_RunAction.
 s32 BattleFlee_PlayRun(struct BattleAction *action) {
-  s16 partyMembers[14];
+  s16 partyMembers[UNIT_MAX];
   s32 partySize;
   s32 animated;
   s32 memberSlot;
@@ -216,7 +216,7 @@ s32 AutoBattle_ShowDefend(const struct BattleAction *action) {
 /// REG_BLDCNT and REG_BLDALPHA and the actors' colour modes, and leaves the
 /// battle objects readied again.
 s32 AutoBattle_RunPsynergy(struct BattleAction *action) {
-  u16 visibleUnits[14];
+  u16 visibleUnits[UNIT_MAX];
   struct BattleStagingWork context;
   s32 unitId;
   s32 targetId;
@@ -364,7 +364,8 @@ s32 AutoBattle_RunApproachAttack(struct BattleAction *input) {
   MessageArgument_PushFar(work.effect.user, MESSAGE_ARGUMENT_ACTOR);
   BattleMessage_ShowAndWaitFar(MsgActorAttacks);
   BattleMotion_ApproachTarget(work.effect.user, work.effect.targets[0], 13, 0);
-  Actor_SetAnimationSpeedFar(BattleObject_Get(work.effect.user)->actor, 16);
+  Actor_SetAnimationSpeedFar(BattleObject_Get(work.effect.user)->actor,
+                             ANIMATION_STEP_NORMAL);
   BattleObject_Get(work.effect.targets[0]);
 
   work.effect.targetCount = 1;
@@ -424,7 +425,7 @@ s32 AutoBattle_RunAttackOrItem(struct BattleAction *action) {
   // the target's side takes the effect.
   object = BattleObject_Get(work.effect.user)->actor;
   Actor_SelectAnimationFar(object, POSE_CAST);
-  Actor_SetAnimationSpeedFar(object, 16);
+  Actor_SetAnimationSpeedFar(object, ANIMATION_STEP_NORMAL);
   if ((u16)action->target <= ALLY_MAX) {
     work.effect.side = EFFECT_SIDE_PARTY;
     BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, work.effect.targets);
@@ -557,7 +558,7 @@ void BattleMotion_PlayFall(s32 unitId) {
 /// the target is down; TARGET_SIDE_DEFEATED when none is left. Called by
 /// AutoBattle_RunAction.
 s32 BattleAbility_ReplaceDefeated(const struct BattleAction *action) {
-  u16 livingUnits[14];
+  u16 livingUnits[UNIT_MAX];
   s32 targetId;
   s32 livingCount;
 

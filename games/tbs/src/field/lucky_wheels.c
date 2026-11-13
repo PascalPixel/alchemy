@@ -144,9 +144,9 @@ void Palette_DarkenScreenStep(void) {
 
   col = (u16 *)&BG_PLTT_COLOR(10, 0);
   for (i = 0; i != 16; i++) {
-    s32 b = (*col >> 10) & 0x1f;
-    s32 g = (*col >> 5) & 0x1f;
-    s32 r = *col & 0x1f;
+    s32 b = RGB_BLUE(*col);
+    s32 g = RGB_GREEN(*col);
+    s32 r = RGB_RED(*col);
 
     b--;
     g--;
@@ -162,9 +162,9 @@ void Palette_DarkenScreenStep(void) {
   }
   col = (u16 *)&OBJ_PLTT[1];
   for (i = 0; i != 239; i++) {
-    s32 b = (*col >> 10) & 0x1f;
-    s32 g = (*col >> 5) & 0x1f;
-    s32 r = *col & 0x1f;
+    s32 b = RGB_BLUE(*col);
+    s32 g = RGB_GREEN(*col);
+    s32 r = RGB_RED(*col);
 
     b--;
     g--;
@@ -190,12 +190,12 @@ void Palette_StepTowardResource(s32 resource) {
   Dma_Set(Resource_GetTableEntry(resource), dst,
           (DMA_ENABLE | DMA_32BIT) << 16 | sizeof dst / 4, REG_DMA3);
   for (i = 0; i != 64; i++, col++) {
-    s32 r = *col & 0x1f;
-    s32 g = (*col >> 5) & 0x1f;
-    s32 b = (*col >> 10) & 0x1f;
-    s32 targetRed = dst[i] & 0x1f;
-    s32 targetGreen = (dst[i] >> 5) & 0x1f;
-    s32 targetBlue = (dst[i] >> 10) & 0x1f;
+    s32 r = RGB_RED(*col);
+    s32 g = RGB_GREEN(*col);
+    s32 b = RGB_BLUE(*col);
+    s32 targetRed = RGB_RED(dst[i]);
+    s32 targetGreen = RGB_GREEN(dst[i]);
+    s32 targetBlue = RGB_BLUE(dst[i]);
 
     if (r < targetRed)
       r++;
@@ -297,12 +297,39 @@ void LuckyWheels_DrawCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1, s32 color) {
   }
 }
 
+/// The machine's five wheels; the cursor's next place, past the last wheel,
+/// is the lever.
+#define LUCKY_WHEELS_REEL_COUNT 5
+#define LUCKY_WHEELS_LEVER LUCKY_WHEELS_REEL_COUNT
+/// The symbols round a wheel, each 16 pixels tall: a wheel turns once in 336
+/// pixels, 8 a frame, and stops only with a symbol centred on a line.
+#define LUCKY_WHEELS_REEL_SYMBOLS 21
+#define LUCKY_WHEELS_SYMBOL_HEIGHT 16
+#define LUCKY_WHEELS_REEL_TURN                                                 \
+  (LUCKY_WHEELS_REEL_SYMBOLS * LUCKY_WHEELS_SYMBOL_HEIGHT)
+#define LUCKY_WHEELS_SPIN_SPEED 8
+/// The seven paylines: the two diagonals (0 and 6) and the five rows between.
+/// A bet of n tickets plays the middle row and n - 1 lines either side of it,
+/// so a bet of LUCKY_WHEELS_BET_MAX plays all seven.
+#define LUCKY_WHEELS_PAYLINES 7
+#define LUCKY_WHEELS_MIDDLE_LINE 3
+#define LUCKY_WHEELS_BET_MAX 4
+/// The pulls of the lever after the first, before betting again.
+#define LUCKY_WHEELS_RESPINS 4
+/// The symbol that matches any other on a payline
+/// (gLuckyWheels_SymbolPrizes).
+#define LUCKY_WHEELS_WILD_SYMBOL 5
+/// A held direction moves the cursor once, waits 12 frames, then moves it
+/// again with 4 frames between each move.
+#define LUCKY_WHEELS_REPEAT_DELAY 12
+#define LUCKY_WHEELS_REPEAT_INTERVAL 4
+
 /// One of Lucky Wheels' five wheels: how far it has turned, its 21
 /// symbols, whether it is held, and the countdown to its stop (-1 until one
 /// starts).
 struct Reel {
-  s32 position; ///< pixels, 16 a symbol
-  u8 symbols[21];
+  s32 position; ///< pixels, LUCKY_WHEELS_SYMBOL_HEIGHT a symbol
+  u8 symbols[LUCKY_WHEELS_REEL_SYMBOLS];
   u8 held;
   s8 stop; ///< frames
 };
@@ -325,7 +352,7 @@ enum LuckyWheelsState {
 /// Lucky Wheels' work in heap slot 45: its wheels, state, bet and spins,
 /// keys, timer, winning lines, sprites and windows.
 struct LuckyWheelsWork {
-  struct Reel reels[5];
+  struct Reel reels[LUCKY_WHEELS_REEL_COUNT];
   s32 state;
   s32 cursor;
   s32 spins;
@@ -336,7 +363,7 @@ struct LuckyWheelsWork {
   u16 repeat;
   u8 unused[4]; ///< no code names it
   s32 timer;
-  s32 winningLines[7];
+  s32 winningLines[LUCKY_WHEELS_PAYLINES];
   struct OamWords oam[128];
   struct Window *window;
   struct Window *subWindow;
@@ -406,16 +433,16 @@ void LuckyWheels_Update(void) {
   work->pressed = keys & ~work->keys;
   work->direction = dpad;
   if ((work->keys & KEYS_DPAD) == work->direction) {
-    if (work->repeat > 12)
-      work->repeat = 12;
+    if (work->repeat > LUCKY_WHEELS_REPEAT_DELAY)
+      work->repeat = LUCKY_WHEELS_REPEAT_DELAY;
     if (work->repeat == 0) {
-      work->repeat = 4;
+      work->repeat = LUCKY_WHEELS_REPEAT_INTERVAL;
     } else {
       work->repeat--;
       work->direction = sprite; // 0: no sprite is built yet
     }
   } else {
-    work->repeat = 12;
+    work->repeat = LUCKY_WHEELS_REPEAT_DELAY;
   }
   work->keys = keys;
 
@@ -434,7 +461,7 @@ void LuckyWheels_Update(void) {
         Window_CloseFar(work->window, 1);
       } else {
         if (work->pressed & KEY_UP) {
-          if (work->bet <= 3 && tickets > work->bet) {
+          if (work->bet < LUCKY_WHEELS_BET_MAX && tickets > work->bet) {
             work->bet++;
             Sound_PlayFar(SE_MENU_CURSOR_MOVE);
           } else {
@@ -464,29 +491,29 @@ void LuckyWheels_Update(void) {
     } else if (work->state == LUCKY_WHEELS_CHOOSING_HOLDS) {
       allHeld = 0;
       work->timer++;
-      for (k = 0; k != 5 && work->reels[k].held != 0; k++)
+      for (k = 0; k != LUCKY_WHEELS_REEL_COUNT && work->reels[k].held != 0; k++)
         ;
-      if (k == 5)
+      if (k == LUCKY_WHEELS_REEL_COUNT)
         allHeld = 1;
       if (work->pressed & KEY_A) {
         work->timer = 0;
         fx->frame = 0;
-        if (work->spins == 4) {
+        if (work->spins == LUCKY_WHEELS_RESPINS) {
           work->spins = 0;
           work->cursor = 0;
           work->state = LUCKY_WHEELS_BETTING;
-          for (i = 0; i != 5; i++) {
+          for (i = 0; i != LUCKY_WHEELS_REEL_COUNT; i++) {
             work->reels[i].held = 0;
             work->reels[i].stop = -1;
           }
-        } else if (work->cursor <= 4) {
+        } else if (work->cursor < LUCKY_WHEELS_LEVER) {
           Sound_PlayFar(SE_LUCKY_WHEELS_HOLD);
           work->reels[work->cursor].held ^= 1;
         } else if (allHeld == 0) {
           Sound_PlayFar(SE_LUCKY_WHEELS_SPIN);
           work->state = LUCKY_WHEELS_SPINNING;
           work->cursor = 0;
-          for (i = 0; i != 5; i++)
+          for (i = 0; i != LUCKY_WHEELS_REEL_COUNT; i++)
             work->reels[i].stop = -1;
           work->spins++;
         } else {
@@ -494,18 +521,19 @@ void LuckyWheels_Update(void) {
         }
       } else {
         if (work->direction & KEY_RIGHT) {
-          work->cursor = (work->cursor + 1) % 6;
+          work->cursor = (work->cursor + 1) % (LUCKY_WHEELS_LEVER + 1);
           Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         }
         if (work->direction & KEY_LEFT) {
-          work->cursor = (work->cursor + 5) % 6;
+          work->cursor =
+              (work->cursor + LUCKY_WHEELS_LEVER) % (LUCKY_WHEELS_LEVER + 1);
           Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         }
       }
 
       if (work->state == LUCKY_WHEELS_CHOOSING_HOLDS) {
 #if TBS_PATCH_1
-        if (work->cursor == 5) {
+        if (work->cursor == LUCKY_WHEELS_LEVER) {
           if (allHeld != 0) {
             if (work->phase != 1 && work->phase != 2) {
               Window_CloseFar(work->window, 1);
@@ -547,7 +575,7 @@ void LuckyWheels_Update(void) {
         }
 #else
         Window_CloseFar(work->window, 1);
-        if (work->cursor == 5) {
+        if (work->cursor == LUCKY_WHEELS_LEVER) {
           if (allHeld != 0) {
             work->window = Window_CreateFar(12, 0, 18, 3, 6);
             Text_DrawMessageAsTilesFar(MsgSlotsAllHeld, work->window, 0, 0);
@@ -615,7 +643,7 @@ void LuckyWheels_Update(void) {
       if (work->timer > 56) {
         if (fx->frame > 31 || (work->pressed & KEY_R)) {
           fx->frame = 0;
-          for (i = 0; i != 5; i++) {
+          for (i = 0; i != LUCKY_WHEELS_REEL_COUNT; i++) {
             if (work->reels[i].held == 0 && work->reels[i].stop == -1) {
               work->reels[i].stop = (Random16() & 3) + 4;
               Sound_PlayFar(SE_LUCKY_WHEELS_STOP);
@@ -625,49 +653,57 @@ void LuckyWheels_Update(void) {
         }
       }
 
-      for (i = 0; i != 5; i++) {
+      for (i = 0; i != LUCKY_WHEELS_REEL_COUNT; i++) {
         if (work->reels[i].stop > 0)
           work->reels[i].stop--;
       }
 
       stoppedReels = 0;
-      for (i = 0; i != 5; i++) {
+      for (i = 0; i != LUCKY_WHEELS_REEL_COUNT; i++) {
         if (work->reels[i].held == 1)
           stoppedReels++;
         else if (work->reels[i].stop == 0 &&
-                 (work->reels[i].position & 15) == 8)
+                 (work->reels[i].position & (LUCKY_WHEELS_SYMBOL_HEIGHT - 1)) ==
+                     LUCKY_WHEELS_SYMBOL_HEIGHT / 2)
           stoppedReels++;
       }
 
-      if (stoppedReels == 5) {
+      if (stoppedReels == LUCKY_WHEELS_REEL_COUNT) {
         struct LuckyWheelsWonPrizesView *save =
             (struct LuckyWheelsWonPrizesView *)((u8 *)&gMainRoutineWork + 12);
         s32 hits = 0;
 
-        for (col = 0; col != 7; col++) {
+        for (col = 0; col != LUCKY_WHEELS_PAYLINES; col++) {
           s32 mixed;
           s32 found;
 
           found = -1;
           mixed = 0;
           work->winningLines[col] = 0;
-          if (col > 3 - work->bet && col < work->bet + 3) {
-            for (i = 0; i != 5; i++) {
+          if (col > LUCKY_WHEELS_MIDDLE_LINE - work->bet &&
+              col < work->bet + LUCKY_WHEELS_MIDDLE_LINE) {
+            for (i = 0; i != LUCKY_WHEELS_REEL_COUNT; i++) {
               s32 sym;
 
               if (col == 0)
-                sym =
-                    work->reels[i]
-                        .symbols[(i - work->reels[i].position / 16 + 22) % 21];
+                sym = work->reels[i].symbols[(i -
+                                              work->reels[i].position /
+                                                  LUCKY_WHEELS_SYMBOL_HEIGHT +
+                                              LUCKY_WHEELS_REEL_SYMBOLS + 1) %
+                                             LUCKY_WHEELS_REEL_SYMBOLS];
               else if (col == 6)
-                sym =
-                    work->reels[i]
-                        .symbols[(-i - work->reels[i].position / 16 + 26) % 21];
+                sym = work->reels[i].symbols[(-i -
+                                              work->reels[i].position /
+                                                  LUCKY_WHEELS_SYMBOL_HEIGHT +
+                                              LUCKY_WHEELS_REEL_SYMBOLS + 5) %
+                                             LUCKY_WHEELS_REEL_SYMBOLS];
               else
-                sym = work->reels[i]
-                          .symbols[(col - work->reels[i].position / 16 + 21) %
-                                   21];
-              if (sym != 5) {
+                sym = work->reels[i].symbols[(col -
+                                              work->reels[i].position /
+                                                  LUCKY_WHEELS_SYMBOL_HEIGHT +
+                                              LUCKY_WHEELS_REEL_SYMBOLS) %
+                                             LUCKY_WHEELS_REEL_SYMBOLS];
+              if (sym != LUCKY_WHEELS_WILD_SYMBOL) {
                 if (found == -1)
                   found = sym;
                 else if (found != sym)
@@ -696,7 +732,7 @@ void LuckyWheels_Update(void) {
           work->phase = 0;
           Window_CloseFar(work->window, 1);
 #if LUCKY_WHEELS_HINT_BEFORE_LAST_SPIN
-          if (work->spins <= 3)
+          if (work->spins < LUCKY_WHEELS_RESPINS)
 #endif
           {
             work->window = Window_CreateFar(3, 16, 24, 4, 6);
@@ -713,7 +749,7 @@ void LuckyWheels_Update(void) {
             Text_DrawMessageAsTilesFar(message + 1, work->window, 0, 8);
           }
 #endif
-          if (work->spins == 4) {
+          if (work->spins == LUCKY_WHEELS_RESPINS) {
             s32 left = PartyInventory_CountItemFar(ITEM_GAME_TICKET);
             struct Window *window;
             s32 message;
@@ -728,7 +764,7 @@ void LuckyWheels_Update(void) {
               work->bet = left;
             work->spins = 0;
             work->cursor = 0;
-            for (i = 0; i != 5; i++) {
+            for (i = 0; i != LUCKY_WHEELS_REEL_COUNT; i++) {
               work->reels[i].held = 0;
               work->reels[i].stop = -1;
             }
@@ -745,15 +781,16 @@ void LuckyWheels_Update(void) {
       }
 
       if (work->state == LUCKY_WHEELS_SPINNING) {
-        for (i = 0; i != 5; i++) {
+        for (i = 0; i != LUCKY_WHEELS_REEL_COUNT; i++) {
           struct Reel *reel = &work->reels[i];
 
           if (reel->held == 0) {
             if (reel->stop != 0)
-              reel->position += 8;
-            else if ((reel->position & 15) != 8)
-              reel->position += 8;
-            if (reel->position == 336)
+              reel->position += LUCKY_WHEELS_SPIN_SPEED;
+            else if ((reel->position & (LUCKY_WHEELS_SYMBOL_HEIGHT - 1)) !=
+                     LUCKY_WHEELS_SYMBOL_HEIGHT / 2)
+              reel->position += LUCKY_WHEELS_SPIN_SPEED;
+            if (reel->position == LUCKY_WHEELS_REEL_TURN)
               reel->position = 0;
           }
         }
@@ -769,7 +806,7 @@ void LuckyWheels_Update(void) {
     v = 0;
     if ((work->timer & 15) <= 7)
       v = 1;
-    if (work->cursor == 5) {
+    if (work->cursor == LUCKY_WHEELS_LEVER) {
       x = 208;
       y = 32;
     }
@@ -832,7 +869,7 @@ void LuckyWheels_Update(void) {
     sprite++;
   }
 
-  for (i = 0; i != 5; i++) {
+  for (i = 0; i != LUCKY_WHEELS_REEL_COUNT; i++) {
     if (work->reels[i].held == 0) {
       work->oam[sprite].attr01 = objMode | ((i * 36 + 32) << 16) | 124 |
                                  OBJ_SIZE_32X32 | OBJ_256_COLORS;
@@ -845,7 +882,9 @@ void LuckyWheels_Update(void) {
     sprite++;
   }
 
-  for (i = 0; i != 5; i++) {
+  // One sprite for each pull of the lever, the first and its re-pulls; the
+  // current pull's takes other tiles.
+  for (i = 0; i != LUCKY_WHEELS_RESPINS + 1; i++) {
     work->oam[sprite].attr01 =
         objMode | ((i * 16 + 32) << 16) | 3 | OBJ_SIZE_32X16 | OBJ_256_COLORS;
     if (i == work->spins)
@@ -855,26 +894,30 @@ void LuckyWheels_Update(void) {
     sprite++;
   }
 
-  for (col = 0; col != 7; col++) {
+  for (col = 0; col != LUCKY_WHEELS_PAYLINES; col++) {
     work->oam[sprite].attr01 = (((0x204 - ((col & 1) << 3)) & 0x1ff) << 16) |
                                objMode | (col * 16 + 5) | OBJ_SIZE_32X32 |
                                OBJ_256_COLORS;
-    if (col > 3 - work->bet && col < work->bet + 3)
+    if (col > LUCKY_WHEELS_MIDDLE_LINE - work->bet &&
+        col < work->bet + LUCKY_WHEELS_MIDDLE_LINE)
       work->oam[sprite].attr2 = OBJ_PRIORITY(1) | 464;
     else
       work->oam[sprite].attr2 = OBJ_PRIORITY(1) | 272;
     sprite++;
   }
 
-  for (i = 0; i != 5; i++) {
+  for (i = 0; i != LUCKY_WHEELS_REEL_COUNT; i++) {
     struct Reel *reel = &work->reels[i];
 
-    for (col = 0; col != 7; col++) {
+    for (col = 0; col != LUCKY_WHEELS_PAYLINES; col++) {
       work->oam[sprite].attr01 = (col * 16 + reel->position % 16 + 4) |
                                  ((i * 32 + 40) << 16) | OBJ_SIZE_32X16 |
                                  OBJ_256_COLORS;
       work->oam[sprite].attr2 =
-          (reel->symbols[(col - reel->position / 16 + 21) % 21] << 4) |
+          (reel->symbols[(col - reel->position / LUCKY_WHEELS_SYMBOL_HEIGHT +
+                          LUCKY_WHEELS_REEL_SYMBOLS) %
+                         LUCKY_WHEELS_REEL_SYMBOLS]
+           << 4) |
           OBJ_PRIORITY(2);
       sprite++;
     }
@@ -1113,20 +1156,23 @@ void LuckyWheels_Run(void) {
     WindowSystem_InitFieldFar();
     LuckyWheels_InitializeTitle();
 
-    for (i = 0; i != 5; i++) {
+    for (i = 0; i != LUCKY_WHEELS_REEL_COUNT; i++) {
       struct Reel *reel = &state->reels[i];
 
-      reel->position = 8;
+      reel->position = LUCKY_WHEELS_SYMBOL_HEIGHT / 2;
       reel->held = 0;
       reel->stop = -1;
-      for (k = 0; k != 21; k++)
-        reel->symbols[k] = Random16() % 5;
+      for (k = 0; k != LUCKY_WHEELS_REEL_SYMBOLS; k++)
+        // One of the plain symbols, all numbered below the wild one.
+        reel->symbols[k] = Random16() % LUCKY_WHEELS_WILD_SYMBOL;
     }
-    for (i = 0; i != 5; i++) {
+    // Then eight different places on each wheel take symbols 0 to 4 and three
+    // wilds, so every symbol is on every wheel.
+    for (i = 0; i != LUCKY_WHEELS_REEL_COUNT; i++) {
       struct Reel *reel = &state->reels[i];
 
       for (j = 0; j != 8; j++) {
-        picks[j] = Random16() % 21;
+        picks[j] = Random16() % LUCKY_WHEELS_REEL_SYMBOLS;
         for (k = 0; k != j; k++) {
           if (picks[j] == picks[k]) {
             j--;
@@ -1137,8 +1183,8 @@ void LuckyWheels_Run(void) {
       for (k = 0; k != 8; k++) {
         s32 rank = k;
 
-        if (rank > 5)
-          rank = 5;
+        if (rank > LUCKY_WHEELS_WILD_SYMBOL)
+          rank = LUCKY_WHEELS_WILD_SYMBOL;
         reel->symbols[picks[k]] = rank;
       }
     }

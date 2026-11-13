@@ -27,9 +27,7 @@ s32 ReadFlashId(void) {
   readByte = (FlashByteRead)(locals.buffer + 1);
 
   // Unlock the chip and enter its manufacturer/device identification mode.
-  FLASH_WRITE(0x5555, 0xaa);
-  FLASH_WRITE(0x2AAA, 0x55);
-  FLASH_WRITE(0x5555, 0x90);
+  FLASH_SEND_COMMAND(FLASH_COMMAND_ENTER_ID_MODE);
 
   // Give the chip time to answer.
   {
@@ -44,10 +42,8 @@ s32 ReadFlashId(void) {
   result = (u16)readByte((u8 *)(FLASH_BASE + 1)) << 8;
   result |= readByte((u8 *)FLASH_BASE);
 
-  // Leave ID mode (0xf0) and wait as long again.
-  FLASH_WRITE(0x5555, 0xaa);
-  FLASH_WRITE(0x2AAA, 0x55);
-  FLASH_WRITE(0x5555, 0xf0);
+  // Leave ID mode and wait as long again.
+  FLASH_SEND_COMMAND(FLASH_COMMAND_RESET);
 
   {
     volatile u16 *delay = &locals.delay;
@@ -207,8 +203,9 @@ void CopyFlashReadRoutineToRam(void *destination) {
 /// error. Every chip's wait routine (gWaitForFlashWrite). timingIndex is the
 /// phase, 1 programming, 2 a sector erase and 3 a chip erase: it picks the
 /// max-time row and is the error's low byte. Returns 0 once address reads
-/// expected, else 0xc000 | timingIndex. Reads through gFlashReadRoutine, which
-/// the caller must have copied to RAM (CopyFlashReadRoutineToRam).
+/// expected, else FLASH_ERROR_TIMEOUT | timingIndex. Reads through
+/// gFlashReadRoutine, which the caller must have copied to RAM
+/// (CopyFlashReadRoutineToRam).
 u16 WaitForFlashWrite(u8 timingIndex, volatile u8 *address, u8 expected) {
   u16 result = 0;
 
@@ -218,10 +215,10 @@ u16 WaitForFlashWrite(u8 timingIndex, volatile u8 *address, u8 expected) {
       // Allow a final successful read at the timeout boundary.
       if ((u8)gFlashReadRoutine((u8 *)address) == expected)
         break;
-      // A Macronix chip (0x1cc2) is sent the reset command, 0xf0.
+      // A Macronix chip (0x1cc2) is sent FLASH_COMMAND_RESET.
       if (gFlash->id == 0x1cc2)
-        FLASH_WRITE(0x5555, 0xf0);
-      result = timingIndex | 0xc000;
+        FLASH_WRITE(FLASH_COMMAND_ADDRESS, FLASH_COMMAND_RESET);
+      result = timingIndex | FLASH_ERROR_TIMEOUT;
       break;
     }
   }

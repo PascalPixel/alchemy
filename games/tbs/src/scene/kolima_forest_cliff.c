@@ -89,7 +89,7 @@ static void KolimaForestCliff_PushLog(void) {
   if (PushedActor_FindClearPosition(&result)) {
     Actor_MoveAndRedraw(result);
     if (result.actorSlot == ACTOR_RIVER_LOG &&
-        (result.position.x >> 20) == 12) {
+        (FIELD_CELL(result.position.x)) == 12) {
       struct Actor *actor;
       Actor_SetAnimation(ACTOR_RIVER_LOG, LOG_ANIMATION_ROLL_WEST);
       Actor_SetDestinationOffset(ACTOR_RIVER_LOG, -18, 6);

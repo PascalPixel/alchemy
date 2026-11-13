@@ -237,6 +237,19 @@ enum AbilityUse {
 /// Unit ids from 128 are the enemies'.
 #define FIRST_ENEMY_UNIT 128
 
+/// The last party unit id: ids 0 to 7, one for each character, ISAAC to PIERS.
+#define ALLY_MAX 7
+#define PARTY_UNIT_COUNT (ALLY_MAX + 1)
+
+/// The party fights four at a time, three in a link battle; six enemies at
+/// most, three in a link battle.
+#define PARTY_BATTLE_SIZE 4
+#define ENEMY_BATTLE_SIZE 6
+
+/// The most units in a battle, every party unit and the most enemies: the
+/// length of a unit list such as BattleUnit_ListIds fills.
+#define UNIT_MAX (PARTY_UNIT_COUNT + ENEMY_BATTLE_SIZE)
+
 /// A full HP or PP gauge (Unit.hpGauge, Unit.ppGauge): the gauge is the
 /// current value over the maximum in 2.14 fixed point, as Unit_Calculate
 /// multiplies a maximum by it and divides by this, and the cap
@@ -265,6 +278,9 @@ enum AbilityUse {
 #define UNIT_ELEMENT_MAX 200 ///< elemental power and resistance
 #define UNIT_HP_REGEN_MAX 10000
 #define UNIT_PP_REGEN_MAX 200
+
+/// How many actions a unit's list holds (Unit.psynergy).
+#define PSYNERGY_SLOTS 32
 
 /// A unit in battle: a party member's or an enemy's stats, Psynergy, items,
 /// Djinn and statuses.
@@ -315,7 +331,7 @@ struct Unit {
   struct BattleElementStats element[ELEMENT_COUNT];
   /// The action list: Psynergy taught for good, then the class's and the
   /// equipment's (Unit_RefreshPsynergy). An empty entry is 0.
-  struct PsynergyEntry psynergy[32];
+  struct PsynergyEntry psynergy[PSYNERGY_SLOTS];
   /// Items held, one entry each: bits 15..11 quantity | 10 broken |
   /// 9 equipped | 8..0 item id (INVENTORY_*). An empty entry is 0.
   u16 inventory[15];

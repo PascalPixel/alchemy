@@ -255,8 +255,8 @@ s32 MercuryLighthouseAerie_Initialize(void) {
     Actor_SetSpritePriority(ACTOR_FIRST_BEACON_STATUE + 3, 1);
     for (i = ACTOR_FIRST_PLATFORM; i < ACTOR_FIRST_PLATFORM + 6; i++) {
       Actor_SetSpritePriority(i, 1);
-      Actor_Get(i)->motionFlags = 4;
-      Actor_Get(i)->priorityFlags |= 2;
+      Actor_Get(i)->motionFlags = ACTOR_FLOATS;
+      Actor_Get(i)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
       Actor_Get(i)->y.fixed = -(px(50) + px(1) / 2);
     }
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) &&
@@ -419,8 +419,8 @@ static void MercuryLighthouseAerie_JumpToPlatform(void) {
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   angle = (actor->facing + TRIG_TURN / 16) & 0xe000;
   flags = actor->motionFlags;
-  SET_POSITION(&position, (actor->x.fixed & 0xfff00000) + px(8), actor->y.fixed,
-               (actor->z.fixed & 0xfff00000) + px(8));
+  SET_POSITION(&position, (actor->x.fixed & FIELD_CELL_MASK) + px(8),
+               actor->y.fixed, (actor->z.fixed & FIELD_CELL_MASK) + px(8));
   Vector_AddPolarOffset(px(32), angle, &position);
   if (FieldActor_CheckMovementCollision(actor, &position) == 0) {
     GameFlag_Clear(FLAG_ON_PLATFORM);
@@ -485,13 +485,14 @@ static void MercuryLighthouseAerie_StepOntoPlatform(void) {
 ///
 /// The leader walks normally again and the platforms stop following.
 static void MercuryLighthouseAerie_SettlePlatforms(void) {
-  Actor_Get(ACTOR_PARTY_LEADER)->motionFlags = 3;
-  Actor_Get(ACTOR_FIRST_PLATFORM)->motionFlags = 4;
-  Actor_Get(ACTOR_FIRST_PLATFORM + 1)->motionFlags = 4;
-  Actor_Get(ACTOR_FIRST_PLATFORM + 2)->motionFlags = 4;
-  Actor_Get(ACTOR_FIRST_LIFT_PLATFORM)->motionFlags = 4;
-  Actor_Get(ACTOR_SECOND_LIFT_PLATFORM)->motionFlags = 4;
-  Actor_Get(ACTOR_FIRST_PLATFORM + 5)->motionFlags = 4;
+  Actor_Get(ACTOR_PARTY_LEADER)->motionFlags =
+      ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+  Actor_Get(ACTOR_FIRST_PLATFORM)->motionFlags = ACTOR_FLOATS;
+  Actor_Get(ACTOR_FIRST_PLATFORM + 1)->motionFlags = ACTOR_FLOATS;
+  Actor_Get(ACTOR_FIRST_PLATFORM + 2)->motionFlags = ACTOR_FLOATS;
+  Actor_Get(ACTOR_FIRST_LIFT_PLATFORM)->motionFlags = ACTOR_FLOATS;
+  Actor_Get(ACTOR_SECOND_LIFT_PLATFORM)->motionFlags = ACTOR_FLOATS;
+  Actor_Get(ACTOR_FIRST_PLATFORM + 5)->motionFlags = ACTOR_FLOATS;
 }
 
 /// Lighthouse Aerie: touching cell behavior 5 before the confrontation.
@@ -869,10 +870,10 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   Sound_Play(SE_JUMP);
   Actor_Get(ACTOR_MENARDI)->motionFlags &= 0x7e;
   Actor_SetSpriteFlags(Actor_Get(ACTOR_MENARDI), 0);
-  Actor_Get(ACTOR_FIRST_LIFT_PLATFORM)->motionFlags = 4;
+  Actor_Get(ACTOR_FIRST_LIFT_PLATFORM)->motionFlags = ACTOR_FLOATS;
   Actor_MoveToAndWait(ACTOR_MENARDI, 104, 168);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_MENARDI), SPRITE_FLAG_SHADOW);
-  Actor_Get(ACTOR_MENARDI)->motionFlags = 3;
+  Actor_Get(ACTOR_MENARDI)->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   Actor_FaceDirection(ACTOR_MENARDI, FACING_EAST, 30);
   Actor_FaceDirection(ACTOR_FELIX, FACING_EAST, 10);
   // "Isaac and Garet shouldn't have come after us..."
@@ -1758,8 +1759,8 @@ static void MercuryLighthouseAerie_FindLiftRiders(s32 *out, s32 y) {
     struct Actor *actor = work->actors[slot];
 
     if (actor != 0) {
-      s32 cell = actor->x.fixed >> 20;
-      s32 row = actor->z.fixed >> 20;
+      s32 cell = FIELD_CELL(actor->x.fixed);
+      s32 row = FIELD_CELL(actor->z.fixed);
 
       if (cell >= 4 && cell <= 8 && y + 8 <= row && row < y + 11)
         *out++ = slot;

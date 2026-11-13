@@ -58,12 +58,18 @@ void Serial_Initialize(void) {
   Dma_Fill32(0, state, sizeof(*state));
   state->sendIndex = -1;
   state->sendBuffer[0] = (u16 *)(state->storage + 0);
-  state->sendBuffer[1] = (u16 *)(state->storage + 32);
+  state->sendBuffer[1] = (u16 *)(state->storage + SERIAL_PACKET_BYTES);
   // Each console has separate incoming, completed and pending packet buffers.
   for (index = 0; index <= 1; index++) {
-    state->incomingBuffer[index] = (u16 *)(state->storage + 64 + index * 96);
-    state->readyBuffer[index] = (u16 *)(state->storage + 96 + index * 96);
-    state->pendingBuffer[index] = (u16 *)(state->storage + 128 + index * 96);
+    state->incomingBuffer[index] =
+        (u16 *)(state->storage + SERIAL_PACKET_BYTES * 2 +
+                index * SERIAL_PACKET_BYTES * 3);
+    state->readyBuffer[index] =
+        (u16 *)(state->storage + SERIAL_PACKET_BYTES * 3 +
+                index * SERIAL_PACKET_BYTES * 3);
+    state->pendingBuffer[index] =
+        (u16 *)(state->storage + SERIAL_PACKET_BYTES * 4 +
+                index * SERIAL_PACKET_BYTES * 3);
   }
   REG_IME = 0;
   REG_IE |= INTR_FLAG_SERIAL;
@@ -160,7 +166,7 @@ s32 Serial_PollAndTransfer(void *send, void *receive) {
   if (gSerialWork.mode == SERIAL_MODE_CLOCKING)
     status |= LINK_STATUS_CLOCKING;
   result = Serial_AddErrorFlag(status);
-  if (((control << 26) >> 30) > 1)
+  if (SIO_ID_OF(control) > 1)
     result |= LINK_STATUS_EXTRA_CONSOLE;
   return result;
 }
@@ -205,7 +211,7 @@ s32 Serial_PollStatus(void) {
   if (gSerialWork.mode == SERIAL_MODE_CLOCKING)
     status |= LINK_STATUS_CLOCKING;
   result = Serial_AddErrorFlag(status);
-  if (((control << 26) >> 30) > 1)
+  if (SIO_ID_OF(control) > 1)
     result |= LINK_STATUS_EXTRA_CONSOLE;
   return result;
 }
@@ -240,7 +246,7 @@ s32 Serial_ExchangePayloads(void *send, void *receive) {
     status |= LINK_STATUS_CLOCKING;
   result = Serial_AddErrorFlag(status);
   // SIOCNT bits 4 and 5, the multiplayer id
-  if (((control << 26) >> 30) > 1)
+  if (SIO_ID_OF(control) > 1)
     result |= LINK_STATUS_EXTRA_CONSOLE;
   return result;
 }
@@ -450,7 +456,7 @@ u32 Serial_WaitForStatusMask(s32 mask) {
       wait(1);
     } while ((mask & gLinkStatus) != mask);
   }
-  return (REG_SIOCNT << 26) >> 30;
+  return SIO_ID_OF(REG_SIOCNT);
 }
 
 /// Starts sending `size` bytes from `source` to the partner in 20-byte blocks:
@@ -570,7 +576,7 @@ void Serial_StepBlockTransfer(void) {
   struct SerialHalfword one;
 
   // The partner's payload: of multiplayer ids 0 and 1, the one not ours
-  id = ~((REG_SIOCNT << 26) >> 30) & 1;
+  id = ~(SIO_ID_OF(REG_SIOCNT)) & 1;
   one.v = 1;
   own = &gSerialTransfer;
   peer = (struct SerialTransferState *)gSerialPeerPayloads[id];

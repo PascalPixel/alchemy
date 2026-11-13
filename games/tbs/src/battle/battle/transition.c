@@ -273,8 +273,8 @@ void BattleTransition_ClearBg0Vofs(void) {
 void BattleTransition_Run(s32 enemyCount, s32 encounterId) {
   volatile u32 fill;
   struct BattleStagingWork work;
-  u16 unitIds[14];
-  u16 visibleUnitIds[14];
+  u16 unitIds[UNIT_MAX];
+  u16 visibleUnitIds[UNIT_MAX];
   struct BattleBackgroundWork *view;
   s32 *timer;
   u16 *tilemap;

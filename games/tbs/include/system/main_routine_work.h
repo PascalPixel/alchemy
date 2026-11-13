@@ -136,7 +136,8 @@ struct MainRoutineWork {
   s32 leaderActorId;       ///< the leader: its unit and its actor
   u8 party[8];             ///< the party in order
   u8 unusedAfterOwners[5]; ///< no code names it
-  u8 windowColor[2];       ///< window hue (0 to 23), brightness (0 to 14)
+  u8 windowHue;            ///< the "Window color" setting, 0 to 23
+  u8 windowBrightness;     ///< the "Window brightness" setting, 0 to 14
   u8 unusedAfterGlow[3];   ///< no code names it
   /// The voice sound option: 1, as on a new game, plays each speaker's voice
   /// sound as their message types (Speaker_GetVoice).

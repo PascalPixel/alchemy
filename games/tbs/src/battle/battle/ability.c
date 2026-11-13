@@ -290,7 +290,7 @@ s32 BattleAbility_ApplyToTarget(struct BattleActionRun *plan, s32 slot) {
       {
         s32 i;
 
-        for (i = 0; i < BATTLE_ENEMY_CAPACITY; i++) {
+        for (i = 0; i < ENEMY_BATTLE_SIZE; i++) {
           if (battle->enemyIds[i] == BATTLE_UNIT_REMOVED) {
             battle->enemyIds[i] = newUnitId;
             break;

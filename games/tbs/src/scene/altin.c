@@ -819,7 +819,7 @@ static void Altin_BeastHopAway(void) {
 static void Altin_CheckPillarMoved(void) {
   struct Actor *pillar = Actor_Get(ACTOR_STONE_STATUE);
 
-  if ((pillar->x.fixed >> 20) == 22) {
+  if (FIELD_CELL(pillar->x.fixed) == 22) {
     GameFlag_Set(FLAG_ALTIN_PILLAR_MOVED);
   } else {
     GameFlag_Clear(FLAG_ALTIN_PILLAR_MOVED);

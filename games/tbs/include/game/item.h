@@ -83,6 +83,12 @@ enum ItemType {
   ITEM_TYPE_SHIRT = 9   ///< Mythril Shirt, Silk Shirt, Running Shirt
 };
 
+/// How many effects an item has while equipped (ItemDefinition.effects).
+#define EQUIP_EFFECT_SLOTS 4
+/// A multiplier of 10 tenths, which keeps a stat as it is: the classes'
+/// stats (ClassDefinition) and the EQUIP_EFFECT_SCALE_ effects are in tenths.
+#define STAT_SCALE_ONE 10
+
 enum EquipEffectKind {
   EQUIP_EFFECT_NONE,
   EQUIP_EFFECT_ADD_HP,
@@ -154,11 +160,12 @@ struct ItemDefinition {
   u8 reserved0d;      ///< not named by TBS code
   u16 unleashAbility; ///< the action a weapon unleashes, or 0
 
-  u8 reserved10[4];              ///< not named by TBS code
-  s32 element;                   ///< a weapon's attack element; 4 for none
-  struct EquipEffect effects[4]; ///< what it does while equipped
-  u16 abilityId;                 ///< the ability used, or taught as Psynergy
-  u8 reserved2a[2];              ///< not named by TBS code
+  u8 reserved10[4]; ///< not named by TBS code
+  s32 element;      ///< a weapon's attack element; 4 for none
+  struct EquipEffect
+      effects[EQUIP_EFFECT_SLOTS]; ///< what it does while equipped
+  u16 abilityId;                   ///< the ability used, or taught as Psynergy
+  u8 reserved2a[2];                ///< not named by TBS code
 };
 
 STATIC_ASSERT(sizeof(struct ItemDefinition) == 0x2c);

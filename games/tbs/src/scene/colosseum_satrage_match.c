@@ -363,7 +363,7 @@ static void ColosseumSatrageMatch_MoveWallPillar(void) {
   s32 row;
 
   obstacle = Actor_Get(ACTOR_WALL_PILLAR);
-  if ((obstacle->x.fixed >> 20) == 36) {
+  if (FIELD_CELL(obstacle->x.fixed) == 36) {
     GameFlag_Set(FLAG_WALL_PILLAR_MOVED);
     column = 35;
     row = 77;
@@ -396,17 +396,17 @@ static void ColosseumSatrageMatch_MoveMiniMazePillar(void) {
   MapGrid_CopyCellAttributes(100, 11, 12, 4, 14, 11);
 
   obstacle = Actor_Get(ACTOR_MINI_MAZE_FIRST_PILLAR);
-  column = obstacle->x.fixed >> 20;
+  column = FIELD_CELL(obstacle->x.fixed);
   FieldGameFlag_SetByte(FLAG_MINI_MAZE_FIRST_PILLAR_COLUMN, column);
   MapGrid_CopyCellAttributes(71, 16, 1, 1, column, 16);
 
   obstacle = Actor_Get(ACTOR_MINI_MAZE_FIRST_PILLAR + 1);
-  column = obstacle->x.fixed >> 20;
+  column = FIELD_CELL(obstacle->x.fixed);
   FieldGameFlag_SetByte(FLAG_MINI_MAZE_SECOND_PILLAR_COLUMN, column);
   MapGrid_CopyCellAttributes(71, 16, 1, 1, column, 16);
 
   obstacle = Actor_Get(ACTOR_MINI_MAZE_FIRST_PILLAR + 2);
-  column = obstacle->x.fixed >> 20;
+  column = FIELD_CELL(obstacle->x.fixed);
   FieldGameFlag_SetByte(FLAG_MINI_MAZE_THIRD_PILLAR_COLUMN, column);
   MapGrid_CopyCellAttributes(71, 16, 1, 1, column, 16);
 }
@@ -538,11 +538,11 @@ static void ColosseumSatrageMatch_MovePusherAndLog(s32 logId, s32 offsetX,
   {
     destinationX =
         ((pusher->x.fixed + COLOSSEUM_SATRAGE_MATCH_OFFSET_FIXED(offsetX)) &
-         0xFFF00000) +
+         FIELD_CELL_MASK) +
         px(8);
     destinationZ =
         ((pusher->z.fixed + COLOSSEUM_SATRAGE_MATCH_OFFSET_FIXED(offsetZ)) &
-         0xFFF00000) +
+         FIELD_CELL_MASK) +
         px(8);
 
     pusher->speedLimit = px(1);
@@ -554,11 +554,11 @@ static void ColosseumSatrageMatch_MovePusherAndLog(s32 logId, s32 offsetX,
   {
     destinationX =
         ((log->x.fixed + COLOSSEUM_SATRAGE_MATCH_OFFSET_FIXED(offsetX)) &
-         0xFFF00000) +
+         FIELD_CELL_MASK) +
         px(8);
     destinationZ =
         ((log->z.fixed + COLOSSEUM_SATRAGE_MATCH_OFFSET_FIXED(offsetZ)) &
-         0xFFF00000) +
+         FIELD_CELL_MASK) +
         px(8);
 
     log->speedLimit = px(1);
@@ -582,14 +582,14 @@ static void ColosseumSatrageMatch_MovePusherAndLog(s32 logId, s32 offsetX,
 /// the rider across the water the way the player holds.
 static void ColosseumSatrageMatch_RideLog(void) {
   struct Actor *pusher = Actor_Get(gMainRoutineWork.leaderActorId);
-  s32 column = pusher->x.fixed >> 20;
+  s32 column = FIELD_CELL(pusher->x.fixed);
   s32 offsetX = 0;
   s32 logId = ACTOR_RIDING_LOG_NORTH;
 
-  if (pusher->z.fixed >> 20 > 12) {
+  if (FIELD_CELL(pusher->z.fixed) > 12) {
     logId = ACTOR_RIDING_LOG_SOUTH;
   }
-  if (Actor_Get(logId)->x.fixed >> 20 != column) {
+  if (FIELD_CELL(Actor_Get(logId)->x.fixed) != column) {
     return;
   }
   if (column > 51) {
@@ -603,9 +603,9 @@ static void ColosseumSatrageMatch_RideLog(void) {
     ColosseumSatrageMatch_MovePusherAndLog(logId, offsetX, 0);
     // Replace both log footprints after the moving pair has stopped.
     MapGrid_CopyCellAttributes(120, 10, 5, 6, 48, 10);
-    column = Actor_Get(ACTOR_RIDING_LOG_NORTH)->x.fixed >> 20;
+    column = FIELD_CELL(Actor_Get(ACTOR_RIDING_LOG_NORTH)->x.fixed);
     MapGrid_CopyCellAttributes(52, 28, 1, 3, column, 10);
-    column = Actor_Get(ACTOR_RIDING_LOG_SOUTH)->x.fixed >> 20;
+    column = FIELD_CELL(Actor_Get(ACTOR_RIDING_LOG_SOUTH)->x.fixed);
     MapGrid_CopyCellAttributes(52, 28, 1, 3, column, 13);
   }
 }
@@ -617,7 +617,7 @@ static void ColosseumSatrageMatch_RollLogToCell(s32 logId, s32 halfCellX,
   struct Actor *pusherActor = Actor_Get(pusher);
   struct Actor *log = Actor_Get(logId);
   s32 heading = (pusherActor->facing + TRIG_TURN / 16) & 0xe000;
-  s32 alongX = (log->x.fixed >> 20) != halfCellX / 2;
+  s32 alongX = FIELD_CELL(log->x.fixed) != halfCellX / 2;
   s32 offsetX;
   s32 offsetZ;
 
@@ -667,13 +667,13 @@ static void ColosseumSatrageMatch_UpdateRollingLogCollision(void) {
 
   MapGrid_CopyCellAttributes(100, 11, 12, 4, 14, 11);
 
-  cell = Actor_Get(ACTOR_ROLLING_LOG_WEST)->x.fixed >> 20;
+  cell = FIELD_CELL(Actor_Get(ACTOR_ROLLING_LOG_WEST)->x.fixed);
   MapGrid_CopyCellAttributes(13, 28, 1, 4, cell, 11);
 
-  cell = Actor_Get(ACTOR_ROLLING_LOG_EAST)->x.fixed >> 20;
+  cell = FIELD_CELL(Actor_Get(ACTOR_ROLLING_LOG_EAST)->x.fixed);
   MapGrid_CopyCellAttributes(13, 28, 1, 4, cell, 11);
 
-  cell = Actor_Get(ACTOR_ROLLING_LOG_CENTER)->z.fixed >> 20;
+  cell = FIELD_CELL(Actor_Get(ACTOR_ROLLING_LOG_CENTER)->z.fixed);
   MapGrid_CopyCellAttributes(13, 28, 4, 1, 18, cell);
 }
 
@@ -1012,9 +1012,9 @@ s32 ColosseumSatrageMatch_Initialize(void) {
     Actor_SelectAnimation(actor, 4);
     actor->motionFlags = 0;
     actor->y.fixed = 0;
-    actor->priorityFlags = 2;
+    actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   }
-  Actor_Get(ACTOR_FORCE_TARGET)->priorityFlags = 2;
+  Actor_Get(ACTOR_FORCE_TARGET)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   if (GameFlag_Get(FLAG_OBSTACLE_KNOCKED_DOWN)) {
     actor = Actor_Get(ACTOR_FALLING_LOG);
     actor->x.fixed = px(336);
@@ -1027,7 +1027,7 @@ s32 ColosseumSatrageMatch_Initialize(void) {
     Actor_SelectAnimation(actor, FALLING_LOG_ANIMATION_STANDING);
     actor->y.fixed = px(16);
   }
-  Actor_Get(ACTOR_WALL_PILLAR)->priorityFlags = 2;
+  Actor_Get(ACTOR_WALL_PILLAR)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   zero = 0;
   // With the wall pillar moved, the cell it stood on takes the ground of the
   // cell south of it. The map stores the two alike, open ground, so the copy
@@ -1041,25 +1041,25 @@ s32 ColosseumSatrageMatch_Initialize(void) {
   }
   if (GameFlag_Get(FLAG_WEST_TARGET_FROZEN)) {
     Actor_Get(ACTOR_PUDDLE_WEST)->motionFlags = zero;
-    Actor_Get(ACTOR_PUDDLE_WEST)->priorityFlags = 2;
+    Actor_Get(ACTOR_PUDDLE_WEST)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
     Actor_SetAnimation(ACTOR_PUDDLE_WEST, PUDDLE_ANIMATION_PILLAR);
     MapGrid_CopyCellAttributes(46, 17, 1, 1, 44, 17);
   }
   if (GameFlag_Get(FLAG_EAST_TARGET_FROZEN)) {
     Actor_Get(ACTOR_PUDDLE_EAST)->motionFlags = zero;
-    Actor_Get(ACTOR_PUDDLE_EAST)->priorityFlags = 2;
+    Actor_Get(ACTOR_PUDDLE_EAST)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
     Actor_SetAnimation(ACTOR_PUDDLE_EAST, PUDDLE_ANIMATION_PILLAR);
     MapGrid_CopyCellAttributes(46, 17, 1, 1, 50, 17);
   }
   actor = Actor_Get(ACTOR_RIDING_LOG_NORTH);
-  column = actor->x.fixed >> 20;
+  column = FIELD_CELL(actor->x.fixed);
   actor->motionFlags = zero;
-  actor->priorityFlags = 2;
+  actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   MapGrid_CopyCellAttributes(52, 28, 1, 3, column, 10);
   actor = Actor_Get(ACTOR_RIDING_LOG_SOUTH);
-  column = actor->x.fixed >> 20;
+  column = FIELD_CELL(actor->x.fixed);
   actor->motionFlags = zero;
-  actor->priorityFlags = 2;
+  actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   MapGrid_CopyCellAttributes(52, 28, 1, 3, column, 13);
 
   // Each Mini-Maze pillar returns to the column its area temp flag byte
@@ -1071,7 +1071,7 @@ s32 ColosseumSatrageMatch_Initialize(void) {
   actor = Actor_Get(ACTOR_MINI_MAZE_FIRST_PILLAR);
   actor->x.fixed = (x << 20) + px(8);
   actor->motionFlags = zero;
-  actor->priorityFlags = 2;
+  actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   MapGrid_CopyCellAttributes(71, 16, 1, 1, x, 16);
   x = FieldGameFlag_GetByte(FLAG_MINI_MAZE_SECOND_PILLAR_COLUMN);
   if (x == 0) {
@@ -1080,7 +1080,7 @@ s32 ColosseumSatrageMatch_Initialize(void) {
   actor = Actor_Get(ACTOR_MINI_MAZE_FIRST_PILLAR + 1);
   actor->x.fixed = (x << 20) + px(8);
   actor->motionFlags = zero;
-  actor->priorityFlags = 2;
+  actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   MapGrid_CopyCellAttributes(71, 16, 1, 1, x, 16);
   x = FieldGameFlag_GetByte(FLAG_MINI_MAZE_THIRD_PILLAR_COLUMN);
   if (x == 0) {
@@ -1089,7 +1089,7 @@ s32 ColosseumSatrageMatch_Initialize(void) {
   actor = Actor_Get(ACTOR_MINI_MAZE_FIRST_PILLAR + 2);
   actor->x.fixed = (x << 20) + px(8);
   actor->motionFlags = zero;
-  actor->priorityFlags = 2;
+  actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   MapGrid_CopyCellAttributes(71, 16, 1, 1, x, 16);
 
   ColosseumSatrageMatch_UpdateRollingLogCollision();
@@ -1102,7 +1102,7 @@ s32 ColosseumSatrageMatch_Initialize(void) {
          liftId <= ACTOR_COLOSSEUM_SATRAGE_MATCH_LAST_LIFT;
          liftId++, columnOffset += 2) {
       actor = Actor_Get(liftId);
-      actor->priorityFlags = 2;
+      actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
       Actor_SelectAnimation(actor, 4);
       MapGrid_CopyCellAttributes(56, 13, 1, 1, columnOffset, row);
     }
@@ -1112,7 +1112,7 @@ s32 ColosseumSatrageMatch_Initialize(void) {
     for (liftId = ACTOR_COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT;
          liftId <= ACTOR_COLOSSEUM_SATRAGE_MATCH_LAST_LIFT; liftId++) {
       actor = Actor_Get(liftId);
-      actor->priorityFlags = 2;
+      actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
       Actor_SelectAnimation(actor, 4);
       actor->speedLimit = px(1) / 2;
       actor->acceleration = px(1) / 5;
@@ -1480,7 +1480,7 @@ static void ColosseumSatrageMatch_PushObstacleToCell(s32 obstacleId, s32 column,
   s32 pusher = gMainRoutineWork.leaderActorId;
   struct Actor *pusherActor = Actor_Get(pusher);
   struct Actor *obstacle = Actor_Get(obstacleId);
-  s32 alongX = (obstacle->x.fixed >> 20) != column / 2;
+  s32 alongX = FIELD_CELL(obstacle->x.fixed) != column / 2;
   s32 offsetX;
   s32 offsetZ;
 

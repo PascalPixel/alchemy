@@ -333,8 +333,9 @@ static void VenusLighthouseAerie_JumpToNextPlatform(void) {
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   angle = (actor->facing + TRIG_TURN / 16) & 0xe000;
   flags = actor->motionFlags;
-  SET_VECTOR(destination.coordinates, (actor->x.fixed & 0xfff00000) + px(8),
-             actor->y.fixed, (actor->z.fixed & 0xfff00000) + px(8));
+  SET_VECTOR(destination.coordinates,
+             (actor->x.fixed & FIELD_CELL_MASK) + px(8), actor->y.fixed,
+             (actor->z.fixed & FIELD_CELL_MASK) + px(8));
   Vector_AddPolarOffset(px(32), angle, destination.coordinates);
   if (FieldActor_CheckMovementCollision(actor, &destination.position) == 0) {
     GameFlag_Clear(FLAG_VENUS_AERIE_ON_PLATFORM);
@@ -454,7 +455,7 @@ s32 VenusLighthouseAerie_Initialize(void) {
     Actor_SetSpriteFlags(Actor_Get(platformId), clear);
     Actor_SetSpritePriority(platformId, 1);
     platform->motionFlags = ACTOR_FLOATS;
-    platform->priorityFlags |= 2;
+    platform->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     platform->y.fixed = px(1) / 2;
     platformId++;
   } while (platformId <= ACTOR_LAST_PLATFORM);
@@ -2617,7 +2618,7 @@ static void VenusLighthouseAerie_RestorePartyOnBrokenAerie(void) {
 
   Actor_Get(ACTOR_FELIX)->riseCounter = 0;
   Actor_Get(ACTOR_SHEBA)->riseCounter = 0;
-  Actor_Get(ACTOR_BEACON_ORB)->motionFlags |= 4;
+  Actor_Get(ACTOR_BEACON_ORB)->motionFlags |= ACTOR_FLOATS;
   Actor_SetSpriteColorById(ACTOR_BEACON_ORB, SPRITE_COLOR_GBR);
   Task_AddFrame(VenusLighthouseAerie_SpawnSideOrbitParticles, TASK_PASS_FRAME);
   gFieldWork->transitionFrames = 1;

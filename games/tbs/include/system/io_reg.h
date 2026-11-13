@@ -195,6 +195,12 @@ enum DisplayControl {
 /// A 15-bit colour from its red, green and blue levels (0 to 31 each), as
 /// the palette stores it: blue in the high bits.
 #define RGB(r, g, b) (((b) << 10) | ((g) << 5) | (r))
+/// A 15-bit colour's red, green and blue levels, 0 to 31 each.
+#define RGB_RED(color) ((color) & 0x1f)
+#define RGB_GREEN(color) (((color) >> 5) & 0x1f)
+#define RGB_BLUE(color) (((color) >> 10) & 0x1f)
+/// A colour channel's brightest level.
+#define RGB_LEVEL_MAX 31
 
 /// The start of the 32 KB of IWRAM, the CPU's fast internal work memory, as
 /// pret names it.
@@ -212,6 +218,11 @@ enum DisplayControl {
 /// The 2 KB screen block `n` of VRAM, 0 to 31, that holds a map.
 #define BG_SCREEN_BLOCK(n) ((u8 *)VRAM + (n) * BG_SCREEN_SIZE)
 #define TILE_SIZE_4BPP 32 ///< bytes in an 8x8 tile of 16 colours
+/// A word of eight 4-bit pixels, all colour `color`: one row of a 16-colour
+/// tile.
+#define PIXELS_4BPP(color) ((color) * 0x11111111u)
+/// A word of four 8-bit pixels, all colour `color`.
+#define PIXELS_8BPP(color) ((color) * 0x01010101)
 /// Sprite tile memory, as pret names it: the 32 KB of sprite tiles after the
 /// four character blocks.
 #define OBJ_VRAM0 (VRAM + 0x10000)
@@ -241,9 +252,11 @@ enum DisplayControl {
 #define SIO_115200_BPS 0x0003 ///< multiplayer's fastest baud rate
 #define SIO_MULTI_SI                                                           \
   0x0004 ///< multiplayer: this console's SI pin, clear on the parent
-#define SIO_MULTI_SD 0x0008    ///< multiplayer: every console is ready
-#define SIO_ID 0x0030          ///< multiplayer: this console's id, 0 the parent
-#define SIO_ID_SHIFT 4         ///< SIO_ID's lowest bit
+#define SIO_MULTI_SD 0x0008 ///< multiplayer: every console is ready
+#define SIO_ID 0x0030       ///< multiplayer: this console's id, 0 the parent
+#define SIO_ID_SHIFT 4      ///< SIO_ID's lowest bit
+/// The multiplayer id (SIO_ID) in a SIOCNT value, taken out by shifts.
+#define SIO_ID_OF(control) (((control) << 26) >> 30)
 #define SIO_ERROR 0x0040       ///< multiplayer: the last transfer failed
 #define SIO_START 0x0080       ///< starts a transfer; set while one runs
 #define SIO_32BIT_MODE 0x1000  ///< normal mode, 32 bits a transfer

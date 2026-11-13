@@ -338,21 +338,21 @@ static void ColosseumAzartMatch_SettleRocks(void) {
     actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
     actor->motionFlags = 0;
     {
-      s32 x = actor->x.fixed >> 20;
-      s32 y = actor->z.fixed >> 20;
+      s32 x = FIELD_CELL(actor->x.fixed);
+      s32 y = FIELD_CELL(actor->z.fixed);
 
       MapGrid_CopyCellAttributes(14, 13, 1, 1, x, y);
     }
   }
   actor = Actor_Get(ACTOR_ROCK_B);
   {
-    s32 x = actor->x.fixed >> 20;
+    s32 x = FIELD_CELL(actor->x.fixed);
 
     FieldGameFlag_SetByte(FLAG_SECOND_ROCK_COLUMN, x);
   }
   {
-    s32 x = actor->x.fixed >> 20;
-    s32 y = actor->z.fixed >> 20;
+    s32 x = FIELD_CELL(actor->x.fixed);
+    s32 y = FIELD_CELL(actor->z.fixed);
 
     MapGrid_CopyCellAttributes(14, 13, 1, 1, x, y);
   }
@@ -419,8 +419,8 @@ static void ColosseumAzartMatch_MoveActorPairByOffset(s32 actorId, s32 dx,
   actor = Actor_Get(actorId);
   Event_Start();
   {
-    x = ((leader->x.fixed + (dx << 16)) & 0xFFF00000) + px(8);
-    z = ((leader->z.fixed + (dz << 16)) & 0xFFF00000) + px(8);
+    x = ((leader->x.fixed + (dx << 16)) & FIELD_CELL_MASK) + px(8);
+    z = ((leader->z.fixed + (dz << 16)) & FIELD_CELL_MASK) + px(8);
 
     leader->speedLimit = px(1);
     leader->acceleration = px(1) / 2;
@@ -428,8 +428,8 @@ static void ColosseumAzartMatch_MoveActorPairByOffset(s32 actorId, s32 dx,
   }
   Actor_SelectAnimation(leader, 27);
   {
-    x = ((actor->x.fixed + (dx << 16)) & 0xFFF00000) + px(8);
-    z = ((actor->z.fixed + (dz << 16)) & 0xFFF00000) + px(8);
+    x = ((actor->x.fixed + (dx << 16)) & FIELD_CELL_MASK) + px(8);
+    z = ((actor->z.fixed + (dz << 16)) & FIELD_CELL_MASK) + px(8);
 
     actor->speedLimit = px(1);
     actor->acceleration = px(1) / 2;
@@ -457,7 +457,7 @@ static void ColosseumAzartMatch_RollLogNorthSouth(void) {
   s32 offset;
 
   actor = Actor_Get(gMainRoutineWork.leaderActorId);
-  row = actor->z.fixed >> 20;
+  row = FIELD_CELL(actor->z.fixed);
   offset = -48;
   if (row <= 8) {
     offset = 48;
@@ -465,7 +465,7 @@ static void ColosseumAzartMatch_RollLogNorthSouth(void) {
   MapGrid_CopyCellAttributes(67, 8, 3, 1, 64, row);
   ColosseumAzartMatch_MoveActorPairByOffset(ACTOR_LOG_NORTH_SOUTH, 0, offset);
   actor = Actor_Get(ACTOR_LOG_NORTH_SOUTH);
-  row = actor->z.fixed >> 20;
+  row = FIELD_CELL(actor->z.fixed);
   MapGrid_CopyCellAttributes(64, 24, 3, 1, 64, row);
 }
 
@@ -480,7 +480,7 @@ static void ColosseumAzartMatch_RollLogEastWest(void) {
   s32 direction;
 
   actor = Actor_Get(gMainRoutineWork.leaderActorId);
-  column = actor->x.fixed >> 20;
+  column = FIELD_CELL(actor->x.fixed);
   if ((gKeysHeld & KEY_LEFT) != 0) {
     direction = -1;
   }
@@ -488,7 +488,7 @@ static void ColosseumAzartMatch_RollLogEastWest(void) {
     direction = 1;
   }
   actor = Actor_Get(ACTOR_LOG_NORTH_SOUTH);
-  offset = actor->z.fixed >> 20;
+  offset = FIELD_CELL(actor->z.fixed);
   if (column == 63) {
     if (offset == 11) {
       return;
@@ -510,7 +510,7 @@ static void ColosseumAzartMatch_RollLogEastWest(void) {
   MapGrid_CopyCellAttributes(72, 9, 1, 3, column, 9);
   ColosseumAzartMatch_MoveActorPairByOffset(ACTOR_LOG_EAST_WEST, offset, 0);
   actor = Actor_Get(ACTOR_LOG_EAST_WEST);
-  column = actor->x.fixed >> 20;
+  column = FIELD_CELL(actor->x.fixed);
   MapGrid_CopyCellAttributes(63, 25, 1, 3, column, 9);
 }
 
@@ -749,10 +749,10 @@ s32 ColosseumAzartMatch_Initialize(void) {
   actor = Actor_Get(ACTOR_ROCK_A);
   hit = MapGrid_GetTerrainHeight(0, actor->x.fixed, actor->z.fixed);
   if (actor->y.fixed == 0 && hit == 0) {
-    actor->priorityFlags = 2;
+    actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
     actor->motionFlags = hit;
-    MapGrid_CopyCellAttributes(14, 13, 1, 1, actor->x.fixed >> 20,
-                               actor->z.fixed >> 20);
+    MapGrid_CopyCellAttributes(14, 13, 1, 1, FIELD_CELL(actor->x.fixed),
+                               FIELD_CELL(actor->z.fixed));
   }
   x = FieldGameFlag_GetByte(FLAG_SECOND_ROCK_COLUMN);
   if (x == 0) {
@@ -761,7 +761,7 @@ s32 ColosseumAzartMatch_Initialize(void) {
   actor = Actor_Get(ACTOR_ROCK_B);
   actor->x.fixed = (x << 20) + px(8);
   actor->motionFlags = 0;
-  actor->priorityFlags = 2;
+  actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   MapGrid_CopyCellAttributes(14, 13, 1, 1, x, 12);
   Task_AddFrame(ColosseumAzartMatch_UpdateBrokenBridge, TASK_PASS_FRAME);
   actor = Actor_Get(ACTOR_GROWTH_PLANT);
@@ -775,14 +775,14 @@ s32 ColosseumAzartMatch_Initialize(void) {
     MapGrid_CopyCellAttributes(47, 24, 1, 1, 47, 12);
   }
   actor = Actor_Get(ACTOR_LOG_NORTH_SOUTH);
-  col = actor->z.fixed >> 20;
+  col = FIELD_CELL(actor->z.fixed);
   actor->motionFlags = zero;
-  actor->priorityFlags = 2;
+  actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   MapGrid_CopyCellAttributes(64, 24, 3, 1, 64, col);
   actor = Actor_Get(ACTOR_LOG_EAST_WEST);
-  col = actor->x.fixed >> 20;
+  col = FIELD_CELL(actor->x.fixed);
   actor->motionFlags = zero;
-  actor->priorityFlags = 2;
+  actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   MapGrid_CopyCellAttributes(63, 25, 1, 3, col, 9);
   // With the pipeworks' pillar pushed, water pours from the pipe above it
   // down into the pool at the wall's foot.
@@ -802,7 +802,7 @@ s32 ColosseumAzartMatch_Initialize(void) {
   } else {
     Actor_SelectAnimation(actor, 2);
   }
-  Actor_Get(ACTOR_PIPE_EAST)->priorityFlags = 2;
+  Actor_Get(ACTOR_PIPE_EAST)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   Colosso_ShowItemIcon(ACTOR_PRIZE_A, ITEM_IRON_SHIELD);
   Colosso_ShowItemIcon(ACTOR_PRIZE_B, ITEM_PADDED_GLOVES);
   // Select competition, support, explanation, or post-battle arrival.

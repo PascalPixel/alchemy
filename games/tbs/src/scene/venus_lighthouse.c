@@ -487,7 +487,7 @@ static __inline__ void SetFlagBits(u8 *flags, u8 bits) { *flags |= bits; }
 static void VenusLighthouse_ConfigurePassageEffect(struct Actor *actor,
                                                    s32 childValue) {
   actor->motionFlags = 0;
-  actor->collisionFlags = 8;
+  actor->collisionFlags = ACTOR_NOT_TARGETED;
   Actor_SetSpriteFlags(actor, 0);
   Actor_SetSpriteColor(actor, childValue);
 }
@@ -1024,9 +1024,9 @@ static s32 VenusLighthouse_JumpAcrossGap(void) {
   // ahead.
   savedMotionFlags = *motionFlags;
 #if TBS_PATCH_1
-  landing.x = (leader->x.fixed & 0xfff00000) + px(8);
+  landing.x = (leader->x.fixed & FIELD_CELL_MASK) + px(8);
   landing.y = leader->y.fixed;
-  landing.z = (leader->z.fixed & 0xfff00000) + px(8);
+  landing.z = (leader->z.fixed & FIELD_CELL_MASK) + px(8);
   direction = (leader->facing + TRIG_TURN / 8) & 0xc000;
   Vector_AddPolarOffset(px(16), direction, &landing);
 #else
@@ -1036,9 +1036,9 @@ static s32 VenusLighthouse_JumpAcrossGap(void) {
   if (FieldActor_CheckMovementCollision(leader, &landing) != 1 &&
       Actor_FindAtPosition(&landing, leader) == 0) {
 #if TBS_PATCH_1
-    landing.x = (leader->x.fixed & 0xfff00000) + px(8);
+    landing.x = (leader->x.fixed & FIELD_CELL_MASK) + px(8);
     landing.y = leader->y.fixed;
-    landing.z = (leader->z.fixed & 0xfff00000) + px(8);
+    landing.z = (leader->z.fixed & FIELD_CELL_MASK) + px(8);
     Vector_AddPolarOffset(px(32), (leader->facing + TRIG_TURN / 8) & 0xc000,
                           &landing);
 #else
@@ -1203,7 +1203,7 @@ static void VenusLighthouse_CarryPillarPastWall(void) {
 
   pillar = Actor_Get(ACTOR_WALL_PILLAR);
   Event_Start();
-  if (pillar->x.fixed >> 20 == 54 || pillar->z.fixed >> 20 == 6) {
+  if (FIELD_CELL(pillar->x.fixed) == 54 || FIELD_CELL(pillar->z.fixed) == 6) {
     GameFlag_Set(FLAG_VENUS_LIGHTHOUSE_PILLAR_CARRIED);
   }
   Event_End();
@@ -1293,7 +1293,7 @@ static void VenusLighthouse_JumpDown(void) {
   Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_GREY);
   leader->velocityY = px(4);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 4);
-  if (leader->z.fixed >> 20 <= 54) {
+  if (FIELD_CELL(leader->z.fixed) <= 54) {
     Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
     landingQuarterZ = 210;
   } else {
@@ -1438,7 +1438,7 @@ static void VenusLighthouse_MovePillarTowardWall(void) {
   garetX = 824;
   Event_Start();
   actor = Actor_Get(ACTOR_WALL_PILLAR);
-  if (actor->x.fixed >> 20 == 53) {
+  if (FIELD_CELL(actor->x.fixed) == 53) {
     if (GameFlag_Get(conversationFlag) == 0) {
       // Record the one-time conversation before bringing Garet out to inspect
       // the pillar.
@@ -1501,7 +1501,7 @@ static void VenusLighthouse_MovePillarOntoSwitch(void) {
 
   pillar = Actor_Get(ACTOR_FLOOR_SWITCH_STATUE);
   Event_Start();
-  if (pillar->x.fixed >> 20 == 42) {
+  if (FIELD_CELL(pillar->x.fixed) == 42) {
     Event_Wait(30);
     Sound_Play(SE_THUMP);
     pillar->motionFlags = 0;
@@ -1669,8 +1669,8 @@ static void VenusLighthouse_MoveCappedPillar(void) {
   pillarIndex = 0;
   do {
     pillar = Actor_Get(pillarIndex + ACTOR_FIRST_CAPPED_PILLAR);
-    column = pillar->x.fixed >> 20;
-    row = pillar->z.fixed >> 20;
+    column = FIELD_CELL(pillar->x.fixed);
+    row = FIELD_CELL(pillar->z.fixed);
     MapGrid_CopyCellAttributes(12, 50, 1, 1, column, row);
     pillarIndex++;
   } while (pillarIndex <= 2);
@@ -1740,8 +1740,8 @@ static void VenusLighthouse_FixPillarAtDestination(struct Actor *pillar) {
 
   pillar->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   pillar->motionFlags = 0;
-  column = pillar->x.fixed >> 20;
-  row = pillar->z.fixed >> 20;
+  column = FIELD_CELL(pillar->x.fixed);
+  row = FIELD_CELL(pillar->z.fixed);
   MapGrid_CopyCellAttributes(9, 24, 1, 1, column, row);
 }
 
@@ -1776,14 +1776,14 @@ static void VenusLighthouse_CarryPillarAcrossGap(void) {
 
   Event_Start();
   pillar = Actor_Get(ACTOR_FIRST_CARRY_PILLAR);
-  if (pillar->x.fixed >> 20 == 8) {
+  if (FIELD_CELL(pillar->x.fixed) == 8) {
     Actor_WaitUntilIdle(pillar);
     VenusLighthouse_FixPillarAtDestination(pillar);
   } else {
     VenusLighthouse_ReleaseFallenCarryPillar(pillar);
   }
   pillar = Actor_Get(ACTOR_FIRST_CARRY_PILLAR + 1);
-  if (pillar->x.fixed >> 20 == 7) {
+  if (FIELD_CELL(pillar->x.fixed) == 7) {
     Actor_WaitUntilIdle(pillar);
     VenusLighthouse_FixPillarAtDestination(pillar);
   } else {
@@ -1878,6 +1878,10 @@ static void VenusLighthouse_StepOnWallSwitch(void) {
   }
 }
 
+/// The cell of the gate pillar's socket in VenusLighthouseSecondFloor.
+#define VENUS_GATE_PILLAR_SOCKET_COLUMN 46
+#define VENUS_GATE_PILLAR_SOCKET_ROW 45
+
 /// In VenusLighthouseSecondFloor, Move pushes the pillar before the gate. In
 /// its socket it sinks in and the gate opens, the first time only
 /// (FLAG_VENUS_LIGHTHOUSE_GATE_OPEN).
@@ -1897,24 +1901,24 @@ static void VenusLighthouse_MoveGatePillar(void) {
   Event_Start();
   MapGrid_CopyCellAttributes(109, 43, 7, 5, 45, 43);
   flags = &pillar->priorityFlags;
-  if ((2 & pillar->priorityFlags) != 0) {
+  if ((ACTOR_PRIORITY_UNDERFOOT & pillar->priorityFlags) != 0) {
     MapGrid_CopyCellAttributes(45, 45, 1, 1, 46, 45);
   } else {
-    MapGrid_CopyCellAttributes(48, 42, 1, 1, pillar->x.fixed >> 20,
-                               pillar->z.fixed >> 20);
+    MapGrid_CopyCellAttributes(48, 42, 1, 1, FIELD_CELL(pillar->x.fixed),
+                               FIELD_CELL(pillar->z.fixed));
   }
-  column = pillar->x.fixed >> 20;
-  if (column != 46) {
+  column = FIELD_CELL(pillar->x.fixed);
+  if (column != VENUS_GATE_PILLAR_SOCKET_COLUMN) {
   } else {
-    row = pillar->z.fixed >> 20;
-    if (row != 45) {
+    row = FIELD_CELL(pillar->z.fixed);
+    if (row != VENUS_GATE_PILLAR_SOCKET_ROW) {
     } else {
       // Sink an unsolved pillar only when both of its target cell coordinates
       // match.
       gateOpened = GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_GATE_OPEN);
       if (gateOpened != 0) {
       } else {
-        if ((leader->z.fixed >> 20) <= 45) {
+        if (FIELD_CELL(leader->z.fixed) <= VENUS_GATE_PILLAR_SOCKET_ROW) {
           occlusionEffect = VenusLighthouse_CreateOccludingPassageEffect(
               px(744), 0, px(704), SPRITE_CHEST);
           Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 3);
@@ -1932,16 +1936,16 @@ static void VenusLighthouse_MoveGatePillar(void) {
         pillar->y.fixed = -px(16);
         Actor_SetSpritePriority(ACTOR_GATE_PILLAR, 3);
         {
-          u8 two = 2;
+          u8 underfoot = ACTOR_PRIORITY_UNDERFOOT;
 
-          *flags = two;
+          *flags = underfoot;
         }
         MapGrid_CopyCellAttributes(45, 45, 1, 1, column, row);
         Actor_Get(ACTOR_PARTY_LEADER)->priorityFlags |=
             ACTOR_PRIORITY_AUTOMATIC;
         Actor_Release(occlusionEffect);
         pillar->collisionFlags = gateOpened;
-        *flags |= 2;
+        *flags |= ACTOR_PRIORITY_UNDERFOOT;
         Actor_Get(ACTOR_GATE_SPARKLE)->collisionFlags = gateOpened;
         Actor_Get(ACTOR_GATE_SPARKLE)->priorityFlags |=
             ACTOR_PRIORITY_UNDERFOOT;
@@ -1998,15 +2002,16 @@ static void VenusLighthouse_MoveSwitchPillar(void) {
     pillar = Actor_Get(pillarId);
     flags = &pillar->priorityFlags;
     if (*flags != 2) {
-      MapGrid_CopyCellAttributes(47, 39, 1, 1, pillar->x.fixed >> 20,
-                                 pillar->z.fixed >> 20);
+      MapGrid_CopyCellAttributes(47, 39, 1, 1, FIELD_CELL(pillar->x.fixed),
+                                 FIELD_CELL(pillar->z.fixed));
     } else {
-      MapGrid_CopyCellAttributes(46, 39, 1, 1, pillar->x.fixed >> 20,
-                                 pillar->z.fixed >> 20);
+      MapGrid_CopyCellAttributes(46, 39, 1, 1, FIELD_CELL(pillar->x.fixed),
+                                 FIELD_CELL(pillar->z.fixed));
     }
     switchIndex = 5;
     for (candidateIndex = 0; candidateIndex <= 3; candidateIndex++) {
-      if (pillar->x.fixed >> 20 == gVenusThirdFloorSockets[candidateIndex].x &&
+      if (FIELD_CELL(pillar->x.fixed) ==
+              gVenusThirdFloorSockets[candidateIndex].x &&
           pillar->z.fixed >> 20 == gVenusThirdFloorSockets[candidateIndex].z &&
           pillar->y.fixed >= 0) {
         switchIndex = candidateIndex;
@@ -2020,8 +2025,8 @@ static void VenusLighthouse_MoveSwitchPillar(void) {
          candidateIndex <= ACTOR_FIRST_SWITCH_PILLAR + 2; candidateIndex++) {
       other = Actor_Get(candidateIndex);
       if (pillarId != candidateIndex &&
-          pillar->x.fixed >> 20 == other->x.fixed >> 20 &&
-          pillar->z.fixed >> 20 == other->z.fixed >> 20) {
+          pillar->x.fixed >> 20 == FIELD_CELL(other->x.fixed) &&
+          pillar->z.fixed >> 20 == FIELD_CELL(other->z.fixed)) {
         switchIndex = 5;
         break;
       }
@@ -2032,7 +2037,7 @@ static void VenusLighthouse_MoveSwitchPillar(void) {
     // Preserve overlapping actors while the selected pillar sinks into
     // its socket.
     savedPriority = leader->sprite->image.priority;
-    if (leader->z.fixed >> 20 <= gVenusThirdFloorSockets[switchIndex].z) {
+    if (FIELD_CELL(leader->z.fixed) <= gVenusThirdFloorSockets[switchIndex].z) {
       occlusionEffect = VenusLighthouse_CreateOccludingPassageEffect(
           pillar->x.fixed, pillar->y.fixed, pillar->z.fixed - px(4),
           SPRITE_CHEST);
@@ -2088,7 +2093,7 @@ static void VenusLighthouse_MoveSwitchPillar(void) {
         Sound_Play(SE_DOOR_OPEN);
         MapGrid_PlayMapEdit(gVenusThirdFloorGateCells, 109, 37);
         MapGrid_CopyCellAttributes(45, 37, 1, 1, 45, 38);
-        if (Actor_Get(ACTOR_FIRST_SWITCH_PILLAR)->x.fixed >> 20 ==
+        if (FIELD_CELL(Actor_Get(ACTOR_FIRST_SWITCH_PILLAR)->x.fixed) ==
                 gVenusThirdFloorSockets[0].x &&
             Actor_Get(ACTOR_FIRST_SWITCH_PILLAR)->z.fixed >> 20 ==
                 gVenusThirdFloorSockets[0].z) {
@@ -2168,8 +2173,8 @@ static void VenusLighthouse_LowerFloatingPillars(s32 waitFrames) {
     struct Actor *actor = Actor_Get(pillarIndex + ACTOR_BALANCE_WEST);
 
     if (actor->y.fixed / px(1) < 0 && actor->y.fixed / px(1) > -30) {
-      MapGrid_CopyCellAttributes(4, 19, 1, 1, actor->x.fixed >> 20,
-                                 actor->z.fixed >> 20);
+      MapGrid_CopyCellAttributes(4, 19, 1, 1, FIELD_CELL(actor->x.fixed),
+                                 FIELD_CELL(actor->z.fixed));
     }
   }
   Event_Wait(waitFrames);
@@ -2194,8 +2199,8 @@ static void VenusLighthouse_StackFloatingPillar(s32 pillarId) {
     candidate = Actor_Get(candidateId);
     pillar = Actor_Get(pillarId);
 
-    if ((candidate->x.fixed >> 20) != (pillar->x.fixed >> 20) ||
-        (candidate->z.fixed >> 20) != (pillar->z.fixed >> 20)) {
+    if (FIELD_CELL(candidate->x.fixed) != FIELD_CELL(pillar->x.fixed) ||
+        (FIELD_CELL(candidate->z.fixed)) != FIELD_CELL(pillar->z.fixed)) {
       continue;
     }
 
@@ -2253,8 +2258,8 @@ static void VenusLighthouse_CarryFloatingPillar(void) {
   // stack.
   for (pillarIndex = 0; pillarIndex < 4; pillarIndex++) {
     pillar = Actor_Get(pillarIndex + ACTOR_FIRST_FLOATING_PILLAR);
-    column = pillar->x.fixed >> 20;
-    if (column == 13 && (row = pillar->z.fixed >> 20) == 7 &&
+    column = FIELD_CELL(pillar->x.fixed);
+    if (column == 13 && (row = FIELD_CELL(pillar->z.fixed)) == 7 &&
         !GameFlag_Get(FLAG_SCENE_TEMP_00 + pillarIndex)) {
       Actor_WaitUntilIdle(pillar);
       GameFlag_Set(FLAG_SCENE_TEMP_00 + pillarIndex);
@@ -2270,7 +2275,7 @@ static void VenusLighthouse_CarryFloatingPillar(void) {
       earlierIndex = 0;
       Actor_SetSpritePriority(pillarIndex + ACTOR_FIRST_FLOATING_PILLAR, 1);
       pillar->bounce = 0;
-      if (pillar->z.fixed >> 20 <= 12) {
+      if (FIELD_CELL(pillar->z.fixed) <= 12) {
         firstPassageEffect = VenusLighthouse_CreateBlendedPassageEffect(
             pillar->x.fixed, 0, px(224), SPRITE_CAPPED_PILLAR);
         secondPassageEffect = VenusLighthouse_CreateBlendedPassageEffect(
@@ -2283,7 +2288,7 @@ static void VenusLighthouse_CarryFloatingPillar(void) {
       GameFlag_Set(FLAG_SCENE_TEMP_00 + pillarIndex);
       break;
     }
-    if (pillar->z.fixed >> 20 == 19 &&
+    if (FIELD_CELL(pillar->z.fixed) == 19 &&
         !GameFlag_Get(FLAG_SCENE_TEMP_00 + pillarIndex)) {
       // Keep settled pillars at the front of the actor slots before
       // finding their support.
@@ -2530,17 +2535,17 @@ static void VenusLighthouse_MoveSocketPillar(void) {
     pillar = Actor_Get(pillarId);
     flags = &pillar->priorityFlags;
     if (*flags != 2)
-      MapGrid_CopyCellAttributes(72, 48, 1, 1, pillar->x.fixed >> 20,
-                                 pillar->z.fixed >> 20);
+      MapGrid_CopyCellAttributes(72, 48, 1, 1, FIELD_CELL(pillar->x.fixed),
+                                 FIELD_CELL(pillar->z.fixed));
     else
-      MapGrid_CopyCellAttributes(73, 48, 1, 1, pillar->x.fixed >> 20,
-                                 pillar->z.fixed >> 20);
+      MapGrid_CopyCellAttributes(73, 48, 1, 1, FIELD_CELL(pillar->x.fixed),
+                                 FIELD_CELL(pillar->z.fixed));
 
     switchIndex = 8;
     for (candidateIndex = 0; candidateIndex < 8; candidateIndex++) {
-      if ((pillar->x.fixed >> 20) ==
+      if (FIELD_CELL(pillar->x.fixed) ==
               gVenusFourthFloorSockets[candidateIndex].x &&
-          (pillar->z.fixed >> 20) ==
+          (FIELD_CELL(pillar->z.fixed)) ==
               gVenusFourthFloorSockets[candidateIndex].z &&
           pillar->y.fixed >= 0) {
         switchIndex = candidateIndex;
@@ -2553,8 +2558,8 @@ static void VenusLighthouse_MoveSocketPillar(void) {
          candidateIndex <= ACTOR_FIRST_SOCKET_PILLAR + 3; candidateIndex++) {
       otherPillar = Actor_Get(candidateIndex);
       if (pillarId != candidateIndex &&
-          (pillar->x.fixed >> 20) == (otherPillar->x.fixed >> 20) &&
-          (pillar->z.fixed >> 20) == (otherPillar->z.fixed >> 20)) {
+          (FIELD_CELL(pillar->x.fixed)) == FIELD_CELL(otherPillar->x.fixed) &&
+          (FIELD_CELL(pillar->z.fixed)) == FIELD_CELL(otherPillar->z.fixed)) {
         switchIndex = 8;
         break;
       }
@@ -2563,7 +2568,8 @@ static void VenusLighthouse_MoveSocketPillar(void) {
       continue;
 
     savedPriority = leader->sprite->image.priority;
-    if ((leader->z.fixed >> 20) <= gVenusFourthFloorSockets[switchIndex].z) {
+    if (FIELD_CELL(leader->z.fixed) <=
+        gVenusFourthFloorSockets[switchIndex].z) {
       occlusionEffect = VenusLighthouse_CreateOccludingPassageEffect(
           pillar->x.fixed, pillar->y.fixed, pillar->z.fixed - px(4),
           SPRITE_CHEST);
@@ -2573,8 +2579,9 @@ static void VenusLighthouse_MoveSocketPillar(void) {
          candidateIndex <= ACTOR_FIRST_SOCKET_PILLAR + 3; candidateIndex++) {
       otherPillar = Actor_Get(candidateIndex);
       if (pillarId != candidateIndex &&
-          (pillar->x.fixed >> 20) == (otherPillar->x.fixed >> 20) &&
-          (pillar->z.fixed >> 20) - 1 == (otherPillar->z.fixed >> 20))
+          (FIELD_CELL(pillar->x.fixed)) == FIELD_CELL(otherPillar->x.fixed) &&
+          (FIELD_CELL(pillar->z.fixed)) - 1 ==
+              (FIELD_CELL(otherPillar->z.fixed)))
         Actor_SetSpritePriority(candidateIndex, 3);
     }
     Actor_SetSpriteFlags(Actor_Get(pillarId), 0);
@@ -2602,8 +2609,9 @@ static void VenusLighthouse_MoveSocketPillar(void) {
          candidateIndex <= ACTOR_FIRST_SOCKET_PILLAR + 3; candidateIndex++) {
       otherPillar = Actor_Get(candidateIndex);
       if (pillarId != candidateIndex &&
-          (pillar->x.fixed >> 20) == (otherPillar->x.fixed >> 20) &&
-          (pillar->z.fixed >> 20) - 1 == (otherPillar->z.fixed >> 20)) {
+          (FIELD_CELL(pillar->x.fixed)) == FIELD_CELL(otherPillar->x.fixed) &&
+          (FIELD_CELL(pillar->z.fixed)) - 1 ==
+              (FIELD_CELL(otherPillar->z.fixed))) {
         Actor_SetSpritePriority(candidateIndex, 1);
         Actor_Get(candidateIndex)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
       }
@@ -2734,7 +2742,7 @@ static void VenusLighthouse_LayDownHurtActor(s32 actorId) {
   Actor_SelectAnimation(actor, ANIM_HURT_LYING);
   Actor_SetSpritePriority(actorId, 3);
   {
-    s32 priorityFlags = 2;
+    s32 priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
     priorityFlags |= actor->priorityFlags;
     actor->priorityFlags = priorityFlags;
   }
@@ -2861,10 +2869,10 @@ s32 VenusLighthouse_Initialize(void) {
     case VENUS_LIGHTHOUSE_FIRST_FLOOR_GAP_FROM_LADDERS:
       actor = Actor_Get(ACTOR_FIRST_CARRY_PILLAR);
       VenusLighthouse_MoveCarryPillar();
-      if (actor->x.fixed >> 20 == 8)
+      if (FIELD_CELL(actor->x.fixed) == 8)
         VenusLighthouse_FixPillarAtDestination(actor);
       actor = Actor_Get(ACTOR_FIRST_CARRY_PILLAR + 1);
-      if (actor->x.fixed >> 20 == 7)
+      if (FIELD_CELL(actor->x.fixed) == 7)
         VenusLighthouse_FixPillarAtDestination(actor);
       VenusLighthouse_CreateBlendedPassageEffect(px(206), 0, px(449),
                                                  SPRITE_CRATE);
@@ -3097,9 +3105,9 @@ s32 VenusLighthouse_Initialize(void) {
         Actor_WaitUntilIdle(Actor_Get(ACTOR_PARTY_LEADER));
         for (pillarIndex = 0; pillarIndex <= 3; pillarIndex++) {
           actor = Actor_Get(pillarIndex + ACTOR_FIRST_FLOATING_PILLAR);
-          column = actor->x.fixed >> 20;
+          column = FIELD_CELL(actor->x.fixed);
           if (column == 13) {
-            row = actor->z.fixed >> 20;
+            row = FIELD_CELL(actor->z.fixed);
             if (row == 7 && GameFlag_Get(pillarIndex + FLAG_SCENE_TEMP_00)) {
               actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
               actor->collisionFlags = 0;
@@ -3818,7 +3826,7 @@ static s32 VenusLighthouse_RouteLight(struct Actor *interpreter) {
     if (gMainRoutineWork.next == (s32)&SceneId_VenusLighthouseThirdFloor) {
       for (socket = 0;
            socket <= 3 &&
-           !(light->x.fixed >> 20 == gVenusThirdFloorSockets[socket].x &&
+           !(FIELD_CELL(light->x.fixed) == gVenusThirdFloorSockets[socket].x &&
              light->z.fixed >> 20 == gVenusThirdFloorSockets[socket].z);
            socket++) {
       }
@@ -3838,7 +3846,7 @@ static s32 VenusLighthouse_RouteLight(struct Actor *interpreter) {
     } else {
       for (socket = 0;
            socket <= 7 &&
-           !(light->x.fixed >> 20 == gVenusFourthFloorSockets[socket].x &&
+           !(FIELD_CELL(light->x.fixed) == gVenusFourthFloorSockets[socket].x &&
              light->z.fixed >> 20 == gVenusFourthFloorSockets[socket].z);
            socket++) {
       }

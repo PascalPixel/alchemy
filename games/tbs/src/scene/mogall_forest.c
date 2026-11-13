@@ -497,7 +497,7 @@ static void MogallForest_FirstArea_PushLog(void) {
   if (PushedActor_FindClearPosition(&probe) != 0) {
     Actor_MoveAndRedraw(probe);
     if (probe.actorSlot == ACTOR_FIRST_AREA_RIVER_LOG &&
-        (probe.position.z >> 20) == 26) {
+        (FIELD_CELL(probe.position.z)) == 26) {
       GameFlag_Set(FLAG_MOGALL_FOREST_FIRST_AREA_LOG_ROLLED);
       Actor_SetAnimation(ACTOR_FIRST_AREA_RIVER_LOG, MOGALL_FOREST_LOG_ROLLING);
       Actor_SetSpeedAndAcceleration(ACTOR_FIRST_AREA_RIVER_LOG, 0.25, 0.5);
@@ -522,9 +522,9 @@ static void MogallForest_FirstArea_JumpNorth(void) {
 #if TBS_PATCH_1
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
-  position.x = (leader->x.fixed & 0xfff00000) + px(8);
+  position.x = (leader->x.fixed & FIELD_CELL_MASK) + px(8);
   position.y = leader->y.fixed;
-  position.z = (leader->z.fixed & 0xfff00000) - px(24);
+  position.z = (leader->z.fixed & FIELD_CELL_MASK) - px(24);
 #else
   position.x = Actor_Get(ACTOR_PARTY_LEADER)->x.fixed;
   position.y = Actor_Get(ACTOR_PARTY_LEADER)->y.fixed;
@@ -542,9 +542,9 @@ static void MogallForest_FirstArea_JumpSouth(void) {
   s32 savedMotionFlags = *motionFlags;
 
 #if TBS_PATCH_1
-  position.x = (actor->x.fixed & 0xfff00000) + px(8);
+  position.x = (actor->x.fixed & FIELD_CELL_MASK) + px(8);
   position.y = actor->y.fixed;
-  position.z = (actor->z.fixed & 0xfff00000) + px(40);
+  position.z = (actor->z.fixed & FIELD_CELL_MASK) + px(40);
 #else
   position.x = Actor_Get(ACTOR_PARTY_LEADER)->x.fixed;
   position.y = Actor_Get(ACTOR_PARTY_LEADER)->y.fixed;
@@ -728,13 +728,13 @@ static void MogallForest_SecondArea_PushLog(void) {
     Actor_MoveAndRedraw(probe);
 
     if (probe.actorSlot == ACTOR_SECOND_AREA_LOG &&
-        (probe.position.z >> 20) == 23) {
+        (FIELD_CELL(probe.position.z)) == 23) {
       destinationColumn = 35;
       destinationRow = 68;
       MapGrid_CopyCellAttributes(35, 67, 4, 1, destinationColumn,
                                  destinationRow);
     } else if (probe.actorSlot == ACTOR_SECOND_AREA_RIVER_LOG &&
-               (probe.position.x >> 20) == 35) {
+               (FIELD_CELL(probe.position.x)) == 35) {
 
       attributes = 0;
       GameFlag_Set(FLAG_MOGALL_FOREST_SECOND_AREA_LOG_ROLLED);
@@ -785,8 +785,8 @@ static void MogallForest_SecondArea_UpdateRock(void) {
 
   Event_Start();
 
-  column = Actor_Get(ACTOR_SECOND_AREA_ROCK)->x.fixed >> 20;
-  row = Actor_Get(ACTOR_SECOND_AREA_ROCK)->z.fixed >> 20;
+  column = FIELD_CELL(Actor_Get(ACTOR_SECOND_AREA_ROCK)->x.fixed);
+  row = FIELD_CELL(Actor_Get(ACTOR_SECOND_AREA_ROCK)->z.fixed);
 
   MogallForest_UpdateRockFootprint(column, row);
 
@@ -959,16 +959,19 @@ static void MogallForest_ThirdArea_PushLog(void) {
     if (probe.actorSlot == ACTOR_THIRD_AREA_NORTH_RIVER_LOG ||
         probe.actorSlot == ACTOR_THIRD_AREA_SOUTH_RIVER_LOG) {
       if (probe.actorSlot == ACTOR_THIRD_AREA_NORTH_RIVER_LOG) {
-        MapGrid_CopyCellAttributes(38, 68, 1, 4, probe.position.x >> 20, 68);
-        if (probe.position.x >> 20 == 42) {
-          MapGrid_CopyCellAttributes(26, 20, 2, 4, probe.position.x >> 20, 23);
+        MapGrid_CopyCellAttributes(38, 68, 1, 4, FIELD_CELL(probe.position.x),
+                                   68);
+        if (FIELD_CELL(probe.position.x) == 42) {
+          MapGrid_CopyCellAttributes(26, 20, 2, 4, FIELD_CELL(probe.position.x),
+                                     23);
           Actor_SetSpritePriority(ACTOR_THIRD_AREA_NORTH_RIVER_LOG, 1);
           landed = 1;
           GameFlag_Set(FLAG_MOGALL_FOREST_THIRD_AREA_NORTH_LOG_ROLLED);
         }
       } else {
-        if (probe.position.x >> 20 == 40) {
-          MapGrid_CopyCellAttributes(26, 20, 2, 4, probe.position.x >> 20, 32);
+        if (FIELD_CELL(probe.position.x) == 40) {
+          MapGrid_CopyCellAttributes(26, 20, 2, 4, FIELD_CELL(probe.position.x),
+                                     32);
           Actor_SetSpritePriority(ACTOR_THIRD_AREA_SOUTH_RIVER_LOG, 1);
           landed = 1;
           GameFlag_Set(FLAG_MOGALL_FOREST_THIRD_AREA_SOUTH_LOG_ROLLED);
@@ -986,7 +989,8 @@ static void MogallForest_ThirdArea_PushLog(void) {
       Actor_Get(probe.actorSlot)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
     } else {
       if (probe.actorSlot == ACTOR_THIRD_AREA_LOG)
-        MapGrid_CopyCellAttributes(42, 49, 1, 4, probe.position.x >> 20, 49);
+        MapGrid_CopyCellAttributes(42, 49, 1, 4, FIELD_CELL(probe.position.x),
+                                   49);
     }
   }
   Event_End();
@@ -1044,8 +1048,8 @@ static void MogallForest_ThirdArea_UpdateNorthRock(void) {
 
   Event_Start();
 
-  column = Actor_Get(ACTOR_THIRD_AREA_NORTH_ROCK)->x.fixed >> 20;
-  row = Actor_Get(ACTOR_THIRD_AREA_NORTH_ROCK)->z.fixed >> 20;
+  column = FIELD_CELL(Actor_Get(ACTOR_THIRD_AREA_NORTH_ROCK)->x.fixed);
+  row = FIELD_CELL(Actor_Get(ACTOR_THIRD_AREA_NORTH_ROCK)->z.fixed);
 
   MogallForest_UpdateRockFootprint(column, row);
 
@@ -1077,7 +1081,7 @@ static void MogallForest_ThirdArea_UpdateSouthRock(void) {
   row >>= 20;
   MogallForest_UpdateRockFootprint(column, row);
   rock = Actor_Get(ACTOR_THIRD_AREA_SOUTH_ROCK);
-  if ((rock->z.fixed >> 20) == 27) {
+  if (FIELD_CELL(rock->z.fixed) == 27) {
     rock = Actor_Get(ACTOR_THIRD_AREA_SOUTH_ROCK);
     rock->motionFlags = 0;
     rock->groundHeight = -px(2);

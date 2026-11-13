@@ -205,8 +205,8 @@ u32 Save_BuildFileSummary(void) {
   for (i = 0; i <= 3 && members[i] != 255; i++)
     summary->party[i] = members[i];
   summary->party[i] = -1;
-  summary->windowHue = gMainRoutineWork.windowColor[0];
-  summary->windowBrightness = gMainRoutineWork.windowColor[1];
+  summary->windowHue = gMainRoutineWork.windowHue;
+  summary->windowBrightness = gMainRoutineWork.windowBrightness;
   summary->sendFlag = gMainRoutineWork.sendFlag;
   summary->flagCount = 0;
   for (i = 48; i <= 127; i++) {
@@ -1094,8 +1094,8 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
           djinnWindow = NULL;
         }
       } else {
-        WindowColor_Apply(gMainRoutineWork.windowColor[0],
-                          gMainRoutineWork.windowColor[1]);
+        WindowColor_Apply(gMainRoutineWork.windowHue,
+                          gMainRoutineWork.windowBrightness);
         FileList_HideDjinnSprites();
         FileList_HidePartySprites();
         Window_Close(djinnWindow, 2);
@@ -1174,8 +1174,8 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
 #endif
   // 55 is HEAP_SLOT_MENU, spriteWork's block.
   HeapSlot_Release(HEAP_SLOT_MENU);
-  WindowColor_Apply(gMainRoutineWork.windowColor[0],
-                    gMainRoutineWork.windowColor[1]);
+  WindowColor_Apply(gMainRoutineWork.windowHue,
+                    gMainRoutineWork.windowBrightness);
   wait(1);
 done:
   return result;

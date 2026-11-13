@@ -395,13 +395,14 @@ static void BilibinCave_UpdateThirdPuddleFromTorches(void) {
   // target.
   firstActor = Actor_Get(ACTOR_THIRD_TORCH);
   secondActor = Actor_Get(ACTOR_FOURTH_TORCH);
-  if ((firstActor->x.fixed >> 20) == 35 && (firstActor->z.fixed >> 20) == 23) {
+  if (FIELD_CELL(firstActor->x.fixed) == 35 &&
+      (FIELD_CELL(firstActor->z.fixed)) == 23) {
     GameFlag_Set(FLAG_BILIBIN_CAVE_THIRD_TORCH_BY_PILLAR);
   } else {
     GameFlag_Clear(FLAG_BILIBIN_CAVE_THIRD_TORCH_BY_PILLAR);
   }
-  if ((secondActor->x.fixed >> 20) == 35 &&
-      (secondActor->z.fixed >> 20) == 23) {
+  if (FIELD_CELL(secondActor->x.fixed) == 35 &&
+      (FIELD_CELL(secondActor->z.fixed)) == 23) {
     GameFlag_Set(FLAG_BILIBIN_CAVE_FOURTH_TORCH_BY_PILLAR);
   } else {
     GameFlag_Clear(FLAG_BILIBIN_CAVE_FOURTH_TORCH_BY_PILLAR);

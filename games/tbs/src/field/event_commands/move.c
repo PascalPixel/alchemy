@@ -54,8 +54,6 @@ void FieldEffect_UpdateMoveHand(struct Actor *actor) {
   FieldEffect_InitializeFallingFragment(fragment);
 }
 
-#define MOVE_CELL_MASK 0xfff00000 ///< a 16-pixel cell
-
 /// When Move is cast on a target, the pushing hand appears beside it and pushes
 /// it 16 pixels the way the d-pad points, for as long as the player pushes; A,
 /// B, L or R end it.
@@ -175,17 +173,17 @@ void FieldPsynergy_SteerPushedTarget(s32 targetId) {
       // The push runs into the caster: if the caster stands on the cell the
       // target would move to, it cannot be pushed; if the caster stands on the
       // cell 32 pixels on, the caster moves along when the cell beyond is free.
-      cellX = user->x.fixed & MOVE_CELL_MASK;
-      cellZ = user->z.fixed & MOVE_CELL_MASK;
-      if (cellX == (position.x & MOVE_CELL_MASK) &&
-          cellZ == (position.z & MOVE_CELL_MASK)) {
+      cellX = user->x.fixed & FIELD_CELL_MASK;
+      cellZ = user->z.fixed & FIELD_CELL_MASK;
+      if (cellX == (position.x & FIELD_CELL_MASK) &&
+          cellZ == (position.z & FIELD_CELL_MASK)) {
         Actor_SelectAnimationFar(pusher, MOVE_HAND_ANIMATION_FLEX);
         if ((gFrameCount & 15) == 0)
           Sound_PlayFar(SE_MENU_ERROR);
         continue;
       }
-      if (cellX == (beyond.x & MOVE_CELL_MASK) &&
-          cellZ == (beyond.z & MOVE_CELL_MASK)) {
+      if (cellX == (beyond.x & FIELD_CELL_MASK) &&
+          cellZ == (beyond.z & FIELD_CELL_MASK)) {
         // The caster can be pushed only onto flat ground.
         if (MapGrid_GetCellAttributeLowNibbleFar(user->layer, beyond.x,
                                                  beyond.z) != TERRAIN_FLAT) {
@@ -438,5 +436,3 @@ void UpdateRisingParticleBurst(struct Actor *hand) {
   Sound_PlayFar(SE_PSYNERGY_SPARKLE);
   Actor_ReleaseFar(hand);
 }
-
-#undef MOVE_CELL_MASK

@@ -185,12 +185,12 @@ s32 PartyStatus_DrawBars(struct Window *window, s32 x, s32 y, s32 length) {
     // 8 nibbles, the leftmost pixel lowest, so shifting the empty pattern
     // left by 4 * length bits leaves room for that many filled pixels.
     tile = work->tilemap[y * 32 + x];
-    bar = 0x22222222;
-    shadow = 0xcccccccc;
+    bar = PIXELS_4BPP(2);
+    shadow = PIXELS_4BPP(12);
     tile &= TILE_NUMBER_MASK;
     if (length > 7) {
-      bar = 0x88888888;
-      shadow = 0xdddddddd;
+      bar = PIXELS_4BPP(8);
+      shadow = PIXELS_4BPP(13);
 #ifdef UBFIX
       // At zero (including a multiple-of-eight remainder), the native
       // right shifts by 32 yield zero. Keep the empty patterns without

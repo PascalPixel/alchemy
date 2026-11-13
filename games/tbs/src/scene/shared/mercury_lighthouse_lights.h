@@ -78,7 +78,7 @@ void MercuryLighthouse_RestoreLights(s32 region,
     Actor_StartScript(obj, gMercuryLighthouse_RampScript);
     obj->motionFlags = 0;
     obj->timer = 0;
-    obj->priorityFlags = 2;
+    obj->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
     obj->speedLimit = px(4);
     if (animation != 0) {
       Sprite_StartAnimation(animation, 6);

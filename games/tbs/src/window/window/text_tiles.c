@@ -129,11 +129,11 @@ s32 Text_DrawStringAsTiles(u16 *text, u16 *tiles, u16 *mirror, s32 x) {
   if (paletteBits == WINDOW_PALETTE << 12) {
     pens[1] = gFont_ColorPens[work->colour & 15];
     pens[3] = 3;
-    Iwram_FillWords(canvas, 2048, 0x04040404);
+    Iwram_FillWords(canvas, 2048, PIXELS_8BPP(WINDOW_BACKGROUND_COLOR));
   } else {
     pens[1] = (u8)work->colour & 15;
     pens[3] = 1;
-    Iwram_FillWords(canvas, 2048, 0x0E0E0E0E);
+    Iwram_FillWords(canvas, 2048, PIXELS_8BPP(TEXT_BACKGROUND_COLOR));
   }
   // Expand glyph pixels and control-code colour changes into a byte canvas.
   if (text != 0) {

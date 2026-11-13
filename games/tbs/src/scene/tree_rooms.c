@@ -335,8 +335,8 @@ static void TreeRooms_StepOnCocoon(s32 cocoonFlag, s32 sourceColumn,
   struct Actor *actor;
   s32 spinFrame;
 
-  destinationColumn = (gMainRoutineWork.x >> 20) + 64;
-  destinationRow = gMainRoutineWork.z >> 20;
+  destinationColumn = FIELD_CELL(gMainRoutineWork.x) + 64;
+  destinationRow = FIELD_CELL(gMainRoutineWork.z);
   leaderActorId = gMainRoutineWork.leaderActorId;
   actor = Actor_Get(leaderActorId);
   if (entrance == *sLastCocoon)

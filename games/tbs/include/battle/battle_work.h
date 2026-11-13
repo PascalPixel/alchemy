@@ -74,8 +74,8 @@ struct BattlePlaybackWork {
   s32 flags;
 };
 
-/// Six enemies at most, and a turn's queue of up to 20 actions.
-enum { BATTLE_ENEMY_CAPACITY = 6, BATTLE_ACTION_CAPACITY = 20 };
+/// The most actions a turn's queue holds.
+enum { BATTLE_ACTION_CAPACITY = 20 };
 
 /// The battle's own work: its enemies, units and their battle objects, the
 /// turn's actions, the spoils, the background palette, the action under way and
@@ -119,14 +119,14 @@ struct BattleWork {
   u8 linkPaused;       ///< set when the link drops or the console's id changes
   u8 paddingAfterLink; ///< up to the word arrowTiles starts on
   s32 arrowTiles; ///< resource entry of the advance arrow's tiles; -1 for none
-  s16 partyUnits[7];                       ///< ends with BATTLE_UNIT_LIST_END
-  s16 enemyIds[BATTLE_ENEMY_CAPACITY + 1]; ///< ends with BATTLE_UNIT_LIST_END
+  s16 partyUnits[7];                   ///< ends with BATTLE_UNIT_LIST_END
+  s16 enemyIds[ENEMY_BATTLE_SIZE + 1]; ///< ends with BATTLE_UNIT_LIST_END
   /// The units' battle objects, reached through placement (BattleObject_Get).
-  struct BattleObject objects[14];
+  struct BattleObject objects[UNIT_MAX];
   /// Each unit's index in slots, indexed by party unit id (0 to 7), or 8 + n
   /// for enemy unit FIRST_ENEMY_UNIT + n: a party unit's place in the active
   /// party, an enemy's own 8 + n; 0xff for a party unit with no battle object.
-  u8 objectIndex[14];
+  u8 objectIndex[UNIT_MAX];
   u8 unusedAfterPlacement[2]; ///< no code names it
   /// The actions chosen for the turn.
   struct BattleAction actions[BATTLE_ACTION_CAPACITY];

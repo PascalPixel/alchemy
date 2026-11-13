@@ -1064,10 +1064,11 @@ s32 PagedList_HandleInput(s32 horizontal, s32 count, s32 pageSize, s32 *cursor,
 }
 
 /// Copies WINDOW_PALETTE into background palette paletteNumber and lightens its
-/// WINDOW_BACKGROUND_COLOR by 9 steps in each channel: the highlight colour of
-/// the menu's selected rows. Each screen sets up HIGHLIGHT_PALETTE as it opens,
-/// and again after the Details window has borrowed it (ItemMenu_ShowDetails);
-/// only Item_PrepareUsePalette, which nothing calls, uses palette 13.
+/// WINDOW_BACKGROUND_COLOR by HIGHLIGHT_LIGHTEN_STEPS in each channel: the
+/// highlight colour of the menu's selected rows. Each screen sets up
+/// HIGHLIGHT_PALETTE as it opens, and again after the Details window has
+/// borrowed it (ItemMenu_ShowDetails); only Item_PrepareUsePalette, which
+/// nothing calls, uses palette 13.
 void Palette_LightenHighlight(s32 paletteNumber) {
   u16 *palette = (u16 *)&BG_PLTT_COLOR(paletteNumber, 0);
   u32 red;
@@ -1081,19 +1082,19 @@ void Palette_LightenHighlight(s32 paletteNumber) {
   Dma_Set((const void *)&BG_PLTT_COLOR(WINDOW_PALETTE, 0), palette,
           (DMA_ENABLE | DMA_32BIT) << 16 | 8, REG_DMA3);
   // BGR555: five bits a channel, 0 to 31, red lowest.
-  blue = palette[4] >> 10;
-  green = (palette[4] >> 5) & 31;
-  red = palette[4] & 31;
-  blue += 9;
-  if (blue > 31)
-    blue = 31;
-  green += 9;
-  if (green > 31)
-    green = 31;
-  red += 9;
-  if (red > 31)
-    red = 31;
-  palette[4] = (blue << 10) | (green << 5) | red;
+  blue = palette[WINDOW_BACKGROUND_COLOR] >> 10;
+  green = (palette[WINDOW_BACKGROUND_COLOR] >> 5) & 31;
+  red = palette[WINDOW_BACKGROUND_COLOR] & 31;
+  blue += HIGHLIGHT_LIGHTEN_STEPS;
+  if (blue > RGB_LEVEL_MAX)
+    blue = RGB_LEVEL_MAX;
+  green += HIGHLIGHT_LIGHTEN_STEPS;
+  if (green > RGB_LEVEL_MAX)
+    green = RGB_LEVEL_MAX;
+  red += HIGHLIGHT_LIGHTEN_STEPS;
+  if (red > RGB_LEVEL_MAX)
+    red = RGB_LEVEL_MAX;
+  palette[WINDOW_BACKGROUND_COLOR] = RGB(red, green, blue);
 }
 
 /// Draws a paged list's page numbers on the top border of window, ending at

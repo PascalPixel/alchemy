@@ -2007,9 +2007,9 @@ static void Imil_SlideActorAcrossIce(void) {
     Event_Start();
 
     // Start at the cell center and reject a blocked or raised next cell.
-    probe.x = (actor->x.fixed & 0xfff00000) + px(8);
+    probe.x = (actor->x.fixed & FIELD_CELL_MASK) + px(8);
     probe.y = actor->y.fixed;
-    probe.z = (actor->z.fixed & 0xfff00000) + px(8);
+    probe.z = (actor->z.fixed & FIELD_CELL_MASK) + px(8);
     z = probe.z;
     x = probe.x;
     startBehavior = MapGrid_GetCellBehaviorAt(actor->layer, x, z);

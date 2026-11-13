@@ -14,11 +14,6 @@
 #define DEBUG_SELECT_VALUE 480
 #endif
 
-/// BattleBackground_SetPaletteLevel's and BattleBackground_Load's darkening
-/// step: each level takes 1092 from the 16.16 brightness, so level 60 is
-/// almost black.
-#define BACKGROUND_LEVEL_STEP 1092
-
 /// The zoomed background's BG2CNT for the first 256 picture tiles: a 256 by
 /// 256 affine map in screen block 7, 256 colours, priority 2.
 #define BACKGROUND_PLANE_UPPER                                                 \
@@ -32,6 +27,11 @@
 #define BACKGROUND_PLANE_OFF                                                   \
   (BGCNT_WRAP | BGCNT_SCREEN_BASE(31) | BGCNT_256_COLORS |                     \
    BGCNT_CHAR_BASE(3) | BGCNT_PRIORITY(2))
+
+/// The screen lines the plane covers, 0 to 135, above the status window.
+#define BACKGROUND_PLANE_LINES 136
+/// The plane's top lines, left off except while commands are chosen.
+#define BACKGROUND_PLANE_HIDDEN_LINES 16
 
 /// Copies the background's saved palette to BG palettes 6 to 13, darkened by
 /// level (0 for none).
@@ -57,11 +57,13 @@ void BattleBackground_SetPaletteLevel(s32 unused, s32 level) {
   IRQ_LOCK(*savedInterruptEnable);
 
   if (level == 0) {
-    Dma_Set(palette, BATTLE_BG_PALETTE, DMA_COPY_HALFWORDS(128), REG_DMA3);
+    Dma_Set(palette, BATTLE_BG_PALETTE,
+            DMA_COPY_HALFWORDS(BATTLE_BG_PALETTE_COLORS), REG_DMA3);
   } else {
-    Graphics_ScaleRgb555Clamped(
-        palette, BATTLE_BG_PALETTE,
-        battle->brightness = Q16_ONE - level * BACKGROUND_LEVEL_STEP, 128);
+    Graphics_ScaleRgb555Clamped(palette, BATTLE_BG_PALETTE,
+                                battle->brightness =
+                                    Q16_ONE - level * BACKGROUND_LEVEL_STEP,
+                                BATTLE_BG_PALETTE_COLORS);
   }
   {
     u32 saved = *savedInterruptEnable;
@@ -106,14 +108,14 @@ void BattleBackground_SetMode(s32 mode, s32 unusedResource, s32 fade) {
       *(u16 *)&BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR);
 
   if (fade == BATTLE_BACKGROUND_FADE_RESTORE) {
-    Dma_Set(gBattleWork->palette, BATTLE_BG_PALETTE, DMA_COPY_HALFWORDS(128),
-            REG_DMA3);
+    Dma_Set(gBattleWork->palette, BATTLE_BG_PALETTE,
+            DMA_COPY_HALFWORDS(BATTLE_BG_PALETTE_COLORS), REG_DMA3);
   } else if (fade != 0) {
     u16 *source = gBattleWork->palette;
     u16 *destination = BATTLE_BG_PALETTE;
     s32 colorIndex;
 
-    for (colorIndex = 0; colorIndex != 128; colorIndex++) {
+    for (colorIndex = 0; colorIndex != BATTLE_BG_PALETTE_COLORS; colorIndex++) {
       s32 red = source[colorIndex] & 31;
       s32 green = (source[colorIndex] >> 5) & 31;
       s32 blue = (source[colorIndex] >> 10) & 31;
@@ -133,7 +135,7 @@ void BattleBackground_SetMode(s32 mode, s32 unusedResource, s32 fade) {
       } else {
         blue = 0;
       }
-      destination[colorIndex] = (blue << 10) | (green << 5) | red;
+      destination[colorIndex] = RGB(red, green, blue);
     }
   }
 
@@ -201,9 +203,10 @@ void BattleBackground_Load(s32 mode, s32 resourceId, s32 level) {
   palette = battle->palette;
   Dma_Set(backgroundData, palette, DMA_COPY_WORDS(64), REG_DMA3);
   if (level >= 0)
-    Graphics_ScaleRgb555Clamped(
-        palette, BATTLE_BG_PALETTE,
-        battle->brightness = Q16_ONE - level * BACKGROUND_LEVEL_STEP, 128);
+    Graphics_ScaleRgb555Clamped(palette, BATTLE_BG_PALETTE,
+                                battle->brightness =
+                                    Q16_ONE - level * BACKGROUND_LEVEL_STEP,
+                                BATTLE_BG_PALETTE_COLORS);
   Dma_Set((void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(BASIC_COLORS_PALETTE, 0),
           DMA_COPY_HALFWORDS(16), REG_DMA3);
   *(u16 *)&BG_PLTT_COLOR(BASIC_COLORS_PALETTE, TEXT_BACKGROUND_COLOR) =
@@ -288,18 +291,17 @@ void BattleCamera_SetRange(s32 centerX, s32 centerY, s32 offsetX, s32 offsetY,
   // in 8.8 (64 << 8): the first screen line that reaches it at this zoom.
   lowerHalfLine = (Iwram_RatioMulQ14((s16)step, (64 << 8) - y) >> 16) + 1;
 
-  // Each line's BG2CNT. The plane covers lines 0 to 135, above the status
-  // window; its top 16 lines are left off except while commands are chosen.
+  // Each line's BG2CNT.
   scanline = 0;
   if (!GameFlag_GetFar(FLAG_CHOOSING_COMMANDS)) {
-    for (; scanline < 16; scanline++)
+    for (; scanline < BACKGROUND_PLANE_HIDDEN_LINES; scanline++)
       *line++ = BACKGROUND_PLANE_OFF;
   }
-  if (lowerHalfLine > 136)
-    lowerHalfLine = 136;
+  if (lowerHalfLine > BACKGROUND_PLANE_LINES)
+    lowerHalfLine = BACKGROUND_PLANE_LINES;
   for (; scanline < lowerHalfLine; scanline++)
     *line++ = wrap | BACKGROUND_PLANE_UPPER;
-  for (; scanline < 136; scanline++)
+  for (; scanline < BACKGROUND_PLANE_LINES; scanline++)
     *line++ = wrap | BACKGROUND_PLANE_LOWER;
   for (; scanline < DISPLAY_HEIGHT; scanline++)
     *line++ = BACKGROUND_PLANE_OFF;
@@ -315,7 +317,7 @@ UNUSED void BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y, s32 zoom) {
 #else
 UNUSED void BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y) {
 #endif
-  s32 span = 510 << 16;
+  s32 span = BATTLE_CAMERA_DISTANCE;
   // BUG: zoom is uninitialized; reads entry r4 directly (lsls r0, r4, #16).
 #ifndef UBFIX
   s32 zoom;
@@ -378,7 +380,7 @@ void BattleCamera_SetView(s32 x, s32 depth, s32 y, s32 zoom) {
   s32 renderBounds[3];
   s32 measuredBounds[3];
   s32 sourceBounds[3];
-  s32 span = 510 << 16;
+  s32 span = BATTLE_CAMERA_DISTANCE;
   s32 alpha;
   s32 half;
   s32 width;
@@ -574,7 +576,7 @@ void BattleHighlight_SetSpriteMode(s32 unitId, s32 mode) {
 /// Makes every unit's sprites semi-transparent but selectedUnitId's, which are
 /// left as they are; nothing calls it.
 void BattleHighlight_SetOtherSpriteModes(s32 selectedUnitId) {
-  s16 unitIds[14];
+  s16 unitIds[UNIT_MAX];
   s32 unitCount = BattleUnit_ListIds(BATTLE_SIDE_MASK_BOTH, unitIds);
   s32 unitIndex;
 
@@ -588,7 +590,7 @@ void BattleHighlight_SetOtherSpriteModes(s32 selectedUnitId) {
 /// Returns every unit's sprites to SPRITE_OPAQUE; called by
 /// BattleHighlight_SetModes when the highlight stops.
 void BattleHighlight_ClearAllSpriteModes(void) {
-  s16 unitIds[14];
+  s16 unitIds[UNIT_MAX];
   s32 unitCount = BattleUnit_ListIds(BATTLE_SIDE_MASK_BOTH, unitIds);
   s32 unitIndex;
 
@@ -633,7 +635,7 @@ void BattleBackground_StepHighlightBlend(void) {
 /// selection.c), and with 0 when either is done. Sets BattleWork.highlightMode
 /// and highlightStep, and adds or removes the task.
 void BattleHighlight_SetModes(u16 *selectedUnits, s32 mode) {
-  s16 unitIds[14];
+  s16 unitIds[UNIT_MAX];
   struct BattleWork *battle = gBattleWork;
   u32 unitCount;
   u32 unitIndex;
@@ -676,7 +678,8 @@ void BattleHighlight_SetModes(u16 *selectedUnits, s32 mode) {
   }
 }
 
-#undef BACKGROUND_LEVEL_STEP
+#undef BACKGROUND_PLANE_LINES
+#undef BACKGROUND_PLANE_HIDDEN_LINES
 #undef BACKGROUND_PLANE_UPPER
 #undef BACKGROUND_PLANE_LOWER
 #undef BACKGROUND_PLANE_OFF

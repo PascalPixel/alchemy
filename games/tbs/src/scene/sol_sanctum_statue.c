@@ -1139,9 +1139,9 @@ static void SolSanctumStatue_PrepareMoveOnCenterStatue(void) {
   struct Actor *leader;
 
   leaderPosition = Actor_Get(ACTOR_PARTY_LEADER);
-  column = leaderPosition->x.fixed >> 20;
+  column = FIELD_CELL(leaderPosition->x.fixed);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if ((leader->z.fixed >> 20) == 8) {
+  if (FIELD_CELL(leader->z.fixed) == 8) {
     if ((u32)(column - 17) <= 1) {
       Field_SetCellBehaviorAt(2, 272, 128, CELL_BEHAVIOR_WALL);
       Field_SetCellBehaviorAt(2, 288, 128, CELL_BEHAVIOR_WALL);
@@ -1155,8 +1155,8 @@ static void SolSanctumStatue_PrepareMoveOnCenterStatue(void) {
 /// Reached by the first phase of Move on ACTOR_LEFT_BEAM_STATUE until
 /// FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING is set.
 static void SolSanctumStatue_PrepareMoveOnLeftBeamStatue(void) {
-  s32 column = Actor_Get(ACTOR_PARTY_LEADER)->x.fixed >> 20;
-  s32 row = Actor_Get(ACTOR_PARTY_LEADER)->z.fixed >> 20;
+  s32 column = FIELD_CELL(Actor_Get(ACTOR_PARTY_LEADER)->x.fixed);
+  s32 row = FIELD_CELL(Actor_Get(ACTOR_PARTY_LEADER)->z.fixed);
 
   if (row == 7 && (u32)(column - 13) <= 1) {
     Field_SetCellBehaviorAt(2, 208, 112, CELL_BEHAVIOR_WALL);
@@ -1166,8 +1166,8 @@ static void SolSanctumStatue_PrepareMoveOnLeftBeamStatue(void) {
 /// Starting Move beside the right beam statue does as the left one, on
 /// ACTOR_RIGHT_BEAM_STATUE.
 static void SolSanctumStatue_PrepareMoveOnRightBeamStatue(void) {
-  s32 column = Actor_Get(ACTOR_PARTY_LEADER)->x.fixed >> 20;
-  s32 row = Actor_Get(ACTOR_PARTY_LEADER)->z.fixed >> 20;
+  s32 column = FIELD_CELL(Actor_Get(ACTOR_PARTY_LEADER)->x.fixed);
+  s32 row = FIELD_CELL(Actor_Get(ACTOR_PARTY_LEADER)->z.fixed);
 
   if (row == 7 && (u32)(column - 21) <= 1) {
     Field_SetCellBehaviorAt(2, 352, 112, CELL_BEHAVIOR_WALL);
@@ -1276,7 +1276,7 @@ static void SolSanctumStatue_PushCenterStatueNorth(void) {
 
   movingActor = Actor_Get(ACTOR_CENTER_STATUE);
   if (movingActor != 0) {
-    if ((movingActor->z.fixed >> 20) == 8) {
+    if (FIELD_CELL(movingActor->z.fixed) == 8) {
       Event_Start();
       Sound_Play(SE_PUSH);
       Actor_SetSpeed(ACTOR_CENTER_STATUE, 0.2);
@@ -1350,7 +1350,7 @@ static void SolSanctumStatue_PushLeftBeamStatueSouth(void) {
     return;
   }
 
-  row = statue->z.fixed >> 20;
+  row = FIELD_CELL(statue->z.fixed);
   SolSanctumStatue_PushStatue(ACTOR_LEFT_BEAM_STATUE, 13, row + 1, 13, row);
 }
 
@@ -1361,7 +1361,7 @@ static void SolSanctumStatue_PushLeftBeamStatueSouth(void) {
 static void SolSanctumStatue_PushLeftBeamStatueNorth(void) {
   struct Actor *statue = Actor_Get(ACTOR_LEFT_BEAM_STATUE);
   if (statue != NULL) {
-    s32 row = statue->z.fixed >> 20;
+    s32 row = FIELD_CELL(statue->z.fixed);
     SolSanctumStatue_PushStatue(ACTOR_LEFT_BEAM_STATUE, 13, row - 1, 13, row);
   }
 }
@@ -1381,7 +1381,7 @@ static void SolSanctumStatue_PushRightBeamStatueWest(void) {
 static void SolSanctumStatue_PushRightBeamStatueSouth(void) {
   struct Actor *statue = Actor_Get(ACTOR_RIGHT_BEAM_STATUE);
   if (statue != NULL) {
-    s32 row = statue->z.fixed >> 20;
+    s32 row = FIELD_CELL(statue->z.fixed);
     SolSanctumStatue_PushStatue(ACTOR_RIGHT_BEAM_STATUE, 22, row + 1, 22, row);
   }
 }
@@ -1393,7 +1393,7 @@ static void SolSanctumStatue_PushRightBeamStatueSouth(void) {
 static void SolSanctumStatue_PushRightBeamStatueNorth(void) {
   struct Actor *statue = Actor_Get(ACTOR_RIGHT_BEAM_STATUE);
   if (statue != NULL) {
-    s32 row = statue->z.fixed >> 20;
+    s32 row = FIELD_CELL(statue->z.fixed);
     SolSanctumStatue_PushStatue(ACTOR_RIGHT_BEAM_STATUE, 22, row - 1, 22, row);
   }
 }
@@ -1424,10 +1424,10 @@ static void SolSanctumStatue_PushStatue(s32 statueId, s32 statueColumn,
 /// Returns 1 when the actor stands in the given map cell.
 static s32 SolSanctumStatue_IsActorAtCell(s32 actorId, s32 column, s32 row) {
   struct Actor *actor = Actor_Get(actorId);
-  if (actor == NULL || (actor->x.fixed >> 20) != column) {
+  if (actor == NULL || FIELD_CELL(actor->x.fixed) != column) {
     return 0;
   }
-  if ((actor->z.fixed >> 20) != row) {
+  if (FIELD_CELL(actor->z.fixed) != row) {
     return 0;
   }
   return 1;

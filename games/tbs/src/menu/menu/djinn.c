@@ -426,9 +426,9 @@ void DjinnMenu_AdjustPalettes(s32 brightnessDelta) {
   s32 mask;
   s32 paletteIndex;
 
-  paletteNumber = 15;
+  paletteNumber = WINDOW_PALETTE;
   copyIndex = 0;
-  mask = 31;
+  mask = RGB_LEVEL_MAX;
   do {
     for (colorIndex = 0; colorIndex <= 15; colorIndex++) {
       u32 color;
@@ -445,21 +445,19 @@ void DjinnMenu_AdjustPalettes(s32 brightnessDelta) {
       blue += brightnessDelta;
       green += brightnessDelta;
       red += brightnessDelta;
-      if (blue > 31)
-        blue = 31;
-      if (green > 31)
-        green = 31;
-      if (red > 31)
-        red = 31;
+      if (blue > RGB_LEVEL_MAX)
+        blue = RGB_LEVEL_MAX;
+      if (green > RGB_LEVEL_MAX)
+        green = RGB_LEVEL_MAX;
+      if (red > RGB_LEVEL_MAX)
+        red = RGB_LEVEL_MAX;
       if (blue < 0)
         blue = 0;
       if (green < 0)
         green = 0;
       if (red < 0)
         red = 0;
-      adjustedColor = blue << 10;
-      adjustedColor |= green << 5;
-      adjustedColor |= red;
+      adjustedColor = RGB(red, green, blue);
       // Into the palette before this one.
       ((s16 *)BG_PLTT - 16)[paletteIndex] = adjustedColor;
     }
@@ -496,7 +494,7 @@ MenuBackdropResult Menu_OpenBackdropScreen(void) {
   wait(1);
   Iwram_CopyWords(backdrop->tiles, BG_CHAR_BLOCK(1), sizeof(backdrop->tiles));
   Iwram_CopyWords(backdrop->palette, (void *)&BG_PLTT_COLOR(4, 0), 128);
-  Iwram_FillWords(BG_CHAR_BLOCK(1), sizeof(backdrop->tiles), 0x33333333);
+  Iwram_FillWords(BG_CHAR_BLOCK(1), sizeof(backdrop->tiles), PIXELS_4BPP(3));
   Iwram_FillWords((void *)&BG_PLTT_COLOR(4, 0), 128, 0x55555555);
   Graphics_ExpandVramTilesByColorTableFar((u16 *)(BG_CHAR_BLOCK(1) + 4096));
   Iwram_CopyWords(BG_CHAR_BLOCK(1) +
@@ -537,32 +535,32 @@ s32 PsynergyList_Diff(struct PsynergyEntry *before, struct PsynergyEntry *after,
   gainedCount = 0;
   lostCount = 0;
   for (actionIndex = 0;
-       actionIndex < 32 && after[actionIndex].encodedAction != 0;
+       actionIndex < PSYNERGY_SLOTS && after[actionIndex].encodedAction != 0;
        actionIndex++) {
     actionsOut[actionCount] =
         after[actionIndex].encodedAction & PSYNERGY_ABILITY_MASK;
     actionCount++;
-    for (otherIndex = 0; otherIndex < 32; otherIndex++) {
+    for (otherIndex = 0; otherIndex < PSYNERGY_SLOTS; otherIndex++) {
       if (((after[actionIndex].encodedAction ^
             before[otherIndex].encodedAction) &
            PSYNERGY_ABILITY_MASK) == 0)
         break;
     }
-    if (otherIndex == 32) {
+    if (otherIndex == PSYNERGY_SLOTS) {
       gainedCount++;
       actionsOut[actionCount - 1] |= DJINN_PREVIEW_GAINED;
     }
   }
   for (actionIndex = 0;
-       actionIndex < 32 && before[actionIndex].encodedAction != 0;
+       actionIndex < PSYNERGY_SLOTS && before[actionIndex].encodedAction != 0;
        actionIndex++) {
-    for (otherIndex = 0; otherIndex < 32; otherIndex++) {
+    for (otherIndex = 0; otherIndex < PSYNERGY_SLOTS; otherIndex++) {
       if (((before[actionIndex].encodedAction ^
             after[otherIndex].encodedAction) &
            PSYNERGY_ABILITY_MASK) == 0)
         break;
     }
-    if (otherIndex == 32) {
+    if (otherIndex == PSYNERGY_SLOTS) {
       lostCount++;
       actionsOut[actionCount] =
           (before[actionIndex].encodedAction & PSYNERGY_ABILITY_MASK) |

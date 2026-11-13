@@ -62,9 +62,9 @@ PushedActor_FindAtTile(const struct FieldPosition *position,
     if (actor == NULL)
       continue;
 #endif
-    if ((position->x >> 20) == (actor->x.fixed >> 20) &&
+    if ((position->x >> 20) == FIELD_CELL(actor->x.fixed) &&
         (position->y / px(1)) == (actor->y.fixed / px(1)) &&
-        (position->z >> 20) == (actor->z.fixed >> 20)) {
+        (position->z >> 20) == FIELD_CELL(actor->z.fixed)) {
       return actor;
     }
   }
@@ -235,11 +235,11 @@ static struct Actor *Scene_FindActorRegion(s32 *direction, s32 *slot,
             4;
         if (left <= x && x < right && top <= z && z < bottom) {
           if (j & 1) {
-            if (left != (player->x.fixed >> 20)) {
+            if (left != FIELD_CELL(player->x.fixed)) {
               *slot = i;
               return actor;
             }
-          } else if (top != (player->z.fixed >> 20)) {
+          } else if (top != FIELD_CELL(player->z.fixed)) {
             *slot = i;
             return actor;
           }

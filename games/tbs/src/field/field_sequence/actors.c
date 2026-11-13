@@ -164,7 +164,7 @@ void Event_SpawnActorPlacements(struct ActorPlacement *entry, s32 slot) {
         sprite->lastNo = ((u32)(Random16()) % (u32)30);
       object->facing = entry->facing;
       // Solid.
-      object->collisionFlags = 1;
+      object->collisionFlags = ACTOR_SOLID;
       Actor_SetMovementType(object, entry->movement);
       Actor_SelectAnimationFar(object, ANIM_STAND);
       (object)->homeX = object->x.fixed / Q16_ONE;

@@ -68,11 +68,11 @@ static void KolimaForest_HopEast(void) {
   // gMainRoutineWork.leaderActorId
   s32 off = 500;
   struct Actor *p = Actor_GetById(*(s32 *)((u8 *)&gMainRoutineWork + off));
-  u32 base = p->x.fixed & 0xfff00000;
+  u32 base = p->x.fixed & FIELD_CELL_MASK;
 
   target.x = base + px(8);
   target.y = p->y.fixed;
-  target.z = (p->z.fixed & 0xfff00000) + px(8);
+  target.z = (p->z.fixed & FIELD_CELL_MASK) + px(8);
   target.x = base + px(40);
 #endif
   PushedActor_RunStepEffect(&target);

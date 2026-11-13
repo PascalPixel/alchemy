@@ -397,7 +397,7 @@ static void MercuryLighthouse_UpdateLeaderEffectTarget(void) {
   struct FadeOverlayWork *effectWork =
       *(struct FadeOverlayWork **)Ram_ActorEffectWork;
 
-  if (leader->layer == 0 && leader->z.fixed >> 20 > 12 &&
+  if (leader->layer == 0 && FIELD_CELL(leader->z.fixed) > 12 &&
       leader->z.fixed >> 20 <= 18)
     effectWork->actor = NULL;
   else
@@ -565,7 +565,7 @@ static void MercuryLighthouse_PushChannelPipes(void) {
     // Each pipe controls one channel; restore the connected water tiles too.
     switch ((u32)probe.actorSlot) {
     case ACTOR_FIRST_PIPE:
-      if (probe.position.z >> 20 == 8) {
+      if (FIELD_CELL(probe.position.z) == 8) {
         Actor_MoveAndRedraw(probe);
         Event_Wait(20);
         MapGrid_CopyCellsTo(119, 9, 109, 11, 1, 1);
@@ -583,7 +583,7 @@ static void MercuryLighthouse_PushChannelPipes(void) {
       }
       break;
     case ACTOR_SECOND_PIPE:
-      if (probe.position.z >> 20 == 12) {
+      if (FIELD_CELL(probe.position.z) == 12) {
         Actor_MoveAndRedraw(probe);
         Event_Wait(10);
         if (Event_GetFlag(FLAG_PIPE_1_JOINED)) {
@@ -954,7 +954,7 @@ static void MercuryLighthouse_PushStairAndFountainPipes(void) {
         GameFlag_Clear(FLAG_STAIRS_RAISED);
       }
     } else if (pillarId == ACTOR_FOUNTAIN_PIPE) {
-      if ((probe.position.z >> 20) == 40) {
+      if (FIELD_CELL(probe.position.z) == 40) {
         Actor_MoveAndRedraw(probe);
         if (Event_GetFlag(FLAG_FOUNTAIN_SHOWN) == 0) {
           FieldCamera_SetSpeed(1.5);
@@ -967,7 +967,7 @@ static void MercuryLighthouse_PushStairAndFountainPipes(void) {
           MercuryLighthouse_OpenFountainWithSpray(5);
         }
         GameFlag_Set(FLAG_FOUNTAIN_RUNNING);
-      } else if ((probe.position.z >> 20) == 42) {
+      } else if (FIELD_CELL(probe.position.z) == 42) {
         probe.callback = MercuryLighthouse_StopFountainSpray;
         Actor_MoveAndRedraw(probe);
         MercuryLighthouse_RestoreFountainTiles(5);
@@ -1061,6 +1061,17 @@ static void MercuryLighthouse_ReleaseStairFloorSwitch(void) {
 /// The west one opens along its column and the other two along their rows.
 /// The north one is two cells above the south one.
 enum { STONE_DOOR_WEST = 0, STONE_DOOR_SOUTH = 1, STONE_DOOR_NORTH = 2 };
+
+/// The door switch pipe's stops along its row, in cells: at the first two it
+/// opens the north or the south stone door, at the third it shuts them all,
+/// and anywhere else, as at the last, it opens the west one.
+#define DOOR_SWITCH_PIPE_NORTH_DOOR_COLUMN 47
+#define DOOR_SWITCH_PIPE_SOUTH_DOOR_COLUMN 48
+#define DOOR_SWITCH_PIPE_SHUT_COLUMN 53
+#define DOOR_SWITCH_PIPE_WEST_DOOR_COLUMN 54
+/// The door room pipe's row once it has been pushed
+/// (FLAG_DOOR_ROOM_PIPE_PUSHED).
+#define DOOR_ROOM_PIPE_PUSHED_ROW 38
 
 /// Chooses the random speed component used by stone-door particles.
 static __inline__ s32 MercuryLighthouse_RandomDoorParticleSpeed(void) {
@@ -1259,28 +1270,28 @@ static void MercuryLighthouse_PushStoneDoorPipes(void) {
     switch (probe.actorSlot) {
     case ACTOR_DOOR_ROOM_PIPE:
       Actor_MoveAndRedraw(probe);
-      if (probe.position.z >> 20 == 38)
+      if (FIELD_CELL(probe.position.z) == DOOR_ROOM_PIPE_PUSHED_ROW)
         GameFlag_Set(FLAG_DOOR_ROOM_PIPE_PUSHED);
       else
         GameFlag_Clear(FLAG_DOOR_ROOM_PIPE_PUSHED);
       break;
     case ACTOR_DOOR_SWITCH_PIPE:
       // Close the previous opening before revealing the new door edge.
-      startColumn = Actor_Get(ACTOR_DOOR_SWITCH_PIPE)->x.fixed >> 20;
+      startColumn = FIELD_CELL(Actor_Get(ACTOR_DOOR_SWITCH_PIPE)->x.fixed);
       Actor_MoveAndRedraw(probe);
-      destinationColumn = probe.position.x >> 20;
-      if (destinationColumn == 47) {
+      destinationColumn = FIELD_CELL(probe.position.x);
+      if (destinationColumn == DOOR_SWITCH_PIPE_NORTH_DOOR_COLUMN) {
         GameFlag_Set(FLAG_DOOR_SWITCH_PIPE_OPENS_NORTH_DOOR);
         GameFlag_Clear(FLAG_DOOR_SWITCH_PIPE_OPENS_SOUTH_DOOR);
         GameFlag_Clear(FLAG_DOOR_SWITCH_PIPE_SHUTS_DOORS);
         MercuryLighthouse_StartStatueSlide();
-        if (startColumn == 54)
+        if (startColumn == DOOR_SWITCH_PIPE_WEST_DOOR_COLUMN)
           MercuryLighthouse_CloseStoneDoor(STONE_DOOR_WEST);
-        else if (startColumn == 48)
+        else if (startColumn == DOOR_SWITCH_PIPE_SOUTH_DOOR_COLUMN)
           MercuryLighthouse_CloseStoneDoor(STONE_DOOR_SOUTH);
         MercuryLighthouse_OpenStoneDoor(STONE_DOOR_NORTH);
         Event_Wait(60);
-      } else if (destinationColumn == 48) {
+      } else if (destinationColumn == DOOR_SWITCH_PIPE_SOUTH_DOOR_COLUMN) {
         GameFlag_Set(FLAG_DOOR_SWITCH_PIPE_OPENS_SOUTH_DOOR);
         GameFlag_Clear(FLAG_DOOR_SWITCH_PIPE_SHUTS_DOORS);
         GameFlag_Clear(FLAG_DOOR_SWITCH_PIPE_OPENS_NORTH_DOOR);
@@ -1321,7 +1332,7 @@ static void MercuryLighthouse_PushStoneDoorPipes(void) {
           MercuryLighthouse_OpenStoneDoor(STONE_DOOR_SOUTH);
           Event_Wait(60);
         }
-      } else if (destinationColumn == 53) {
+      } else if (destinationColumn == DOOR_SWITCH_PIPE_SHUT_COLUMN) {
         GameFlag_Set(FLAG_DOOR_SWITCH_PIPE_SHUTS_DOORS);
         GameFlag_Clear(FLAG_DOOR_SWITCH_PIPE_OPENS_NORTH_DOOR);
         GameFlag_Clear(FLAG_DOOR_SWITCH_PIPE_OPENS_SOUTH_DOOR);
@@ -1333,9 +1344,9 @@ static void MercuryLighthouse_PushStoneDoorPipes(void) {
         GameFlag_Clear(FLAG_DOOR_SWITCH_PIPE_OPENS_SOUTH_DOOR);
         GameFlag_Clear(FLAG_DOOR_SWITCH_PIPE_SHUTS_DOORS);
         MercuryLighthouse_StartStatueSlide();
-        if (startColumn == 47)
+        if (startColumn == DOOR_SWITCH_PIPE_NORTH_DOOR_COLUMN)
           MercuryLighthouse_CloseStoneDoor(STONE_DOOR_NORTH);
-        else if (startColumn == 48)
+        else if (startColumn == DOOR_SWITCH_PIPE_SOUTH_DOOR_COLUMN)
           MercuryLighthouse_CloseStoneDoor(STONE_DOOR_SOUTH);
         MercuryLighthouse_OpenStoneDoor(STONE_DOOR_WEST);
         Event_Wait(60);
@@ -2576,7 +2587,7 @@ s32 MercuryLighthouse_Initialize(void) {
 #if TBS_PATCH_2
       if (GameFlag_Get(FLAG_DOOR_SWITCH_PIPE_OPENS_NORTH_DOOR)) {
         MercuryLighthouse_OpenStoneDoor(STONE_DOOR_NORTH);
-        if (Actor_Get(ACTOR_SLIDING_STATUE)->z.fixed >> 20 == 44)
+        if (FIELD_CELL(Actor_Get(ACTOR_SLIDING_STATUE)->z.fixed) == 44)
           Task_AddFrame(MercuryLighthouse_SprayAboveStatue, TASK_PASS_FRAME);
       } else if (GameFlag_Get(FLAG_DOOR_SWITCH_PIPE_OPENS_SOUTH_DOOR)) {
         MercuryLighthouse_OpenStoneDoor(STONE_DOOR_SOUTH);
@@ -2613,7 +2624,7 @@ s32 MercuryLighthouse_Initialize(void) {
       MercuryLighthouse_CloseStoneDoor(STONE_DOOR_WEST);
       if (GameFlag_Get(FLAG_DOOR_SWITCH_PIPE_OPENS_NORTH_DOOR)) {
         MercuryLighthouse_OpenStoneDoor(STONE_DOOR_NORTH);
-        if (Actor_Get(ACTOR_SLIDING_STATUE)->z.fixed >> 20 == 44)
+        if (FIELD_CELL(Actor_Get(ACTOR_SLIDING_STATUE)->z.fixed) == 44)
           Task_AddFrame(MercuryLighthouse_SprayAboveStatue, TASK_PASS_FRAME);
       } else if (GameFlag_Get(FLAG_DOOR_SWITCH_PIPE_OPENS_SOUTH_DOOR)) {
         MercuryLighthouse_OpenStoneDoor(STONE_DOOR_SOUTH);
@@ -2633,7 +2644,8 @@ s32 MercuryLighthouse_Initialize(void) {
       gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
       Event_StartScreenTransition();
       Event_WaitTransitionFrames();
-      Actor_Get(ACTOR_FALLEN_STATUE)->motionFlags = 3;
+      Actor_Get(ACTOR_FALLEN_STATUE)->motionFlags =
+          ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
       Sound_Play(SE_STONE_GRIND);
       Event_Wait(32);
       Sound_Play(SE_THUMP);
@@ -2910,7 +2922,8 @@ static void MercuryLighthouse_RideLift(void) {
   liftLayer->offsetY = px(1024);
   MapGrid_CenterOnFollowedPoint();
   wait(2);
-  Actor_Get(ACTOR_PARTY_LEADER)->motionFlags = 3;
+  Actor_Get(ACTOR_PARTY_LEADER)->motionFlags =
+      ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   Actor_Get(ACTOR_LIFT_STATUE)->z.fixed = px(440);
   Actor_Get(ACTOR_LIFT_STATUE)->targetZ = Actor_Get(ACTOR_LIFT_STATUE)->z.fixed;
   Event_Wait(30);
@@ -3002,7 +3015,7 @@ static void MercuryLighthouse_SpawnRipple(struct Actor *source) {
 
   effect->motionFlags = 0;
   effect->layer = 1;
-  effect->priorityFlags = 2;
+  effect->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 
   if (sprite != 0) {
     Sprite_StartAnimation(sprite, 2);

@@ -43,10 +43,10 @@ struct SaveFileSummary {
   s8 sendFlag;
   s8 flagCount; ///< how many Djinn flags (FLAG_DJINN_FIRST on) are set
   u8 childhood; ///< FLAG_CHILDHOOD is set; remaps the party's sprites
-  /// bits: 15..8 windowBrightness | 7..0 windowColor
+  /// bits: 15..8 windowBrightness | 7..0 windowHue
   ///@{
-  u16 windowHue : 8;        ///< MainRoutineWork.windowColor[0]
-  u16 windowBrightness : 8; ///< MainRoutineWork.windowColor[1]
+  u16 windowHue : 8;        ///< MainRoutineWork.windowHue
+  u16 windowBrightness : 8; ///< MainRoutineWork.windowBrightness
   ///@}
   /// Low half of MainRoutineWork.buildStamp; a file below the current stamp
   /// is listed as from an older build.

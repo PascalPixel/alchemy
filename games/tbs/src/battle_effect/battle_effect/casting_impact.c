@@ -530,7 +530,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
     BattleEffect_RunProjectileVolley(args, PROJECTILE_VOLLEY_IMPACT_COMETS);
     return;
   }
-  Actor_SetAnimationSpeedFar(casterActor, 16);
+  Actor_SetAnimationSpeedFar(casterActor, ANIMATION_STEP_NORMAL);
   SET_VELOCITY(casterActor, savedVelocityX, savedVelocityY, savedVelocityZ);
   casterActor->acceleration = savedAcceleration;
   casterActor->gravity = savedVerticalStrength;

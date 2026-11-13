@@ -54,13 +54,22 @@ struct SelectionNode {
   struct SelectionSprite sprite;
 };
 
+/// The entries of SelectionMenuWork.records.
+enum SelectionRecord {
+  SELECTION_RECORD_ROW = 2,         ///< the first of the row's seven icons
+  SELECTION_RECORD_CHOSEN = 9,      ///< the first of the five icons chosen
+  SELECTION_RECORD_HAND = 14,       ///< the pointing hand
+  SELECTION_RECORD_LARGE_ICON = 15, ///< the large icon
+  SELECTION_RECORD_COUNT = 16
+};
+
 /// The selection screen (heap block 18): the row of icons the player picks
 /// from, with arrows at each end and a pointing hand over the chosen target.
 struct SelectionMenuWork {
   /// 0 and 1 the arrows at the row's ends, 2 to 8 the row's icons, 9 to 13 the
   /// icons chosen so far, 14 the pointing hand, whose picture is loaded at
   /// setup, and 15 the large icon.
-  struct SelectionNode records[16];
+  struct SelectionNode records[SELECTION_RECORD_COUNT];
   struct AffineTransform transform; ///< a zooming icon's scale
   struct SelectionNode *head;       ///< the first icon of the row
   struct SelectionNode *path;       ///< the icons chosen so far

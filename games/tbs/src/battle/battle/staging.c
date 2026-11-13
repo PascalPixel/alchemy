@@ -21,7 +21,7 @@ s32 BattleStaging_DispatchAction(struct BattleAction *request, s32 delay) {
   struct BattleCamera *camera;
   struct Unit *unit;
   u16 actingUnit[2];
-  u16 unitIds[14];
+  u16 unitIds[UNIT_MAX];
   s32 fled;
   s32 result;
   s32 unitCount;
@@ -50,7 +50,8 @@ s32 BattleStaging_DispatchAction(struct BattleAction *request, s32 delay) {
   camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
   Transform_Reset();
   Transform_SetLookAt(camera->eye, camera->focus);
-  Projection_Set(510 << 16, Iwram_RatioMulQ14(510 << 16, Q16_ONE * 3 / 4),
+  Projection_Set(BATTLE_CAMERA_DISTANCE,
+                 Iwram_RatioMulQ14(BATTLE_CAMERA_DISTANCE, Q16_ONE * 3 / 4),
                  0x7fff0000);
   if (delay != 0) {
     view->targetYaw = YAW_PARTY_ACTION;
@@ -204,7 +205,7 @@ s32 BattleStaging_RunFlee(struct BattleActionRun *plan) {
       BattleMessage_ShowAndWaitFar(MsgNoEscape);
       BattleMessage_WaitForAdvance();
     } else {
-      s16 unitIds[14];
+      s16 unitIds[UNIT_MAX];
       s32 index =
           BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, (u16 *)unitIds) - 1;
 
@@ -251,7 +252,7 @@ s32 BattleStaging_RunFlee(struct BattleActionRun *plan) {
 /// the battle effect.
 /// @param mode STAGING_HIDE_ACTOR hides the acting unit too (the summons)
 s32 BattleStaging_HideField(struct BattleActionRun *plan, s32 mode) {
-  u16 units[14];
+  u16 units[UNIT_MAX];
   struct BattleStagingWork work;
   u32 actor;
   u32 target;
@@ -525,7 +526,8 @@ s32 BattleStaging_RunAttack(struct BattleActionRun *plan, s32 mode) {
       animation->entries[0]->animationId, 2, 1);
   BattleMotion_ApproachTarget(work.effect.user, work.effect.targets[0], frames,
                               px(BattleSprite_GetAttackHop(unit->id)));
-  Actor_SetAnimationSpeedFar(BattleObject_Get(work.effect.user)->actor, 16);
+  Actor_SetAnimationSpeedFar(BattleObject_Get(work.effect.user)->actor,
+                             ANIMATION_STEP_NORMAL);
   BattleObject_Get(work.effect.targets[0]);
 
   if ((u16)work.effect.targets[0] <= ALLY_MAX)
@@ -664,7 +666,8 @@ UNUSED s32 BattleStaging_RunPlainAttack(struct BattleActionRun *input,
       animation->entries[0]->animationId, 2, 1);
   BattleMotion_ApproachTarget(work.effect.user, savedInput->targetIds[0],
                               frames, 0);
-  Actor_SetAnimationSpeedFar(BattleObject_Get(work.effect.user)->actor, 16);
+  Actor_SetAnimationSpeedFar(BattleObject_Get(work.effect.user)->actor,
+                             ANIMATION_STEP_NORMAL);
   BattleObject_Get(savedInput->targetIds[0]);
 
   if (savedInput->targetIds[0] <= ALLY_MAX)
@@ -726,7 +729,7 @@ s32 BattleStaging_RunItem(struct BattleActionRun *plan, s32 unused,
   BattleHighlight_SetModes(0, HIGHLIGHT_OFF);
   actor = BattleObject_Get(work.effect.user)->actor;
   Actor_SelectAnimationFar(actor, POSE_CAST);
-  Actor_SetAnimationSpeedFar(actor, 16);
+  Actor_SetAnimationSpeedFar(actor, ANIMATION_STEP_NORMAL);
   if (plan->targetIds[0] <= ALLY_MAX)
     work.effect.side = EFFECT_SIDE_PARTY;
   else
@@ -920,7 +923,7 @@ s32 BattleStaging_RunPsynergyCast(struct BattleActionRun *plan, s32 mode) {
   PartyStatus_DrawFar(gBattleWork->partyStatus & ~PARTY_STATUS_SHOW_PP);
   object = BattleObject_Get(work.effect.user)->actor;
   Actor_SelectAnimationFar(object, POSE_CAST);
-  Actor_SetAnimationSpeedFar(object, 16);
+  Actor_SetAnimationSpeedFar(object, ANIMATION_STEP_NORMAL);
   Sound_PlayFar(SE_CAST);
   if (mode & CAST_ENEMY)
     ElementGlow_Play(work.effect.user, plan->element, GLOW_STREAKS, 0);

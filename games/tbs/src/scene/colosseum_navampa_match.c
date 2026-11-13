@@ -332,7 +332,7 @@ const struct ActorPlacement *ColosseumNavampaMatch_GetActorPlacements(void) {
 static void ColosseumNavampaMatch_UpdateWallWedge(void) {
   struct FieldWork *work = gFieldWork;
   struct Actor *actor = Actor_Get(gMainRoutineWork.leaderActorId);
-  s32 row = actor->z.fixed >> 20;
+  s32 row = FIELD_CELL(actor->z.fixed);
   s32 i;
   s32 kind;
 
@@ -545,9 +545,9 @@ static void ColosseumNavampaMatch_SetWeightOnScales(void) {
   s32 z;
 
   probe = Actor_Get(ACTOR_SCALES_WEIGHT);
-  x = probe->x.fixed >> 20;
+  x = FIELD_CELL(probe->x.fixed);
   if (x == 9) {
-    z = probe->z.fixed >> 20;
+    z = FIELD_CELL(probe->z.fixed);
     if (z == 12) {
       log = Actor_Get(ACTOR_SCALES_WEIGHT);
       Actor_SetSpriteFlags(log, 0);
@@ -583,7 +583,7 @@ static void ColosseumNavampaMatch_MoveStone(void) {
   s32 x;
 
   actor = Actor_Get(ACTOR_STONE);
-  x = actor->x.fixed >> 20;
+  x = FIELD_CELL(actor->x.fixed);
   FieldGameFlag_SetByte(FLAG_STONE_COLUMN, x);
   MapGrid_CopyCellAttributes(18, 10, 3, 1, 18, 11);
   MapGrid_CopyCellAttributes(17, 11, 1, 1, x, 11);
@@ -612,13 +612,13 @@ static void ColosseumNavampaMatch_SettleStones(void) {
   for (slot = ACTOR_LOG_AREA_STONE_A; slot <= ACTOR_LOG_AREA_STONE_C; slot++) {
     actor = Actor_Get(slot);
     if (MapGrid_GetTerrainHeight(0, actor->x.fixed, actor->z.fixed) == 0) {
-      actor->priorityFlags = 2;
+      actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
       actor->motionFlags = 0;
-      x = actor->x.fixed >> 20;
-      z = actor->z.fixed >> 20;
+      x = FIELD_CELL(actor->x.fixed);
+      z = FIELD_CELL(actor->z.fixed);
       MapGrid_CopyCellAttributes(83, 13, 1, 1, x, z);
-      x2 = actor->x.fixed >> 20;
-      z2 = actor->z.fixed >> 20;
+      x2 = FIELD_CELL(actor->x.fixed);
+      z2 = FIELD_CELL(actor->z.fixed);
       MapGrid_CopyCellAttributes(83, 13, 1, 1, x2, z2 + 52);
       GameFlag_Set(slot - ACTOR_LOG_AREA_STONE_A +
                    FLAG_FIRST_LOG_AREA_STONE_SETTLED);
@@ -637,9 +637,9 @@ static void ColosseumNavampaMatch_UpdateEastEndCollision(void) {
   s32 behavior;
 
   actor = Actor_Get(gMainRoutineWork.leaderActorId);
-  x = actor->x.fixed >> 20;
+  x = FIELD_CELL(actor->x.fixed);
   behavior = 23;
-  z = actor->z.fixed >> 20;
+  z = FIELD_CELL(actor->z.fixed);
   if (x == 81 && z == 12) {
     if ((actor->facing & 0xE000) == FACING_SOUTH) {
       behavior = CELL_BEHAVIOR_CLIMB;
@@ -659,15 +659,15 @@ static s32 ColosseumNavampaMatch_CheckLongLogCell(s32 x, s32 z) {
   actor = Actor_Get(ACTOR_LOG_AREA_STONE_A);
   x >>= 20;
   z >>= 20;
-  if (actor->x.fixed >> 20 == x && actor->z.fixed >> 20 == z) {
+  if (FIELD_CELL(actor->x.fixed) == x && FIELD_CELL(actor->z.fixed) == z) {
     return -1;
   }
   actor = Actor_Get(ACTOR_LOG_AREA_STONE_B);
-  if (actor->x.fixed >> 20 == x && actor->z.fixed >> 20 == z) {
+  if (FIELD_CELL(actor->x.fixed) == x && FIELD_CELL(actor->z.fixed) == z) {
     return -1;
   }
   actor = Actor_Get(ACTOR_LOG_AREA_STONE_C);
-  if (actor->x.fixed >> 20 == x && actor->z.fixed >> 20 == z) {
+  if (FIELD_CELL(actor->x.fixed) == x && FIELD_CELL(actor->z.fixed) == z) {
     return -1;
   }
   return 0;
@@ -756,7 +756,7 @@ static void ColosseumNavampaMatch_RollLongLog(void) {
     return;
   }
   // Clear the old footprint, then move the log and rider together.
-  MapGrid_CopyCellAttributes(74, 8, 1, 4, log->x.fixed >> 20, 9);
+  MapGrid_CopyCellAttributes(74, 8, 1, 4, FIELD_CELL(log->x.fixed), 9);
   MapGrid_CopyCellAttributes(120, 60, 8, 5, 74, 60);
   Event_Start();
   Actor_SetAnimation(actorId, ANIM_PUSH);
@@ -872,7 +872,7 @@ static void ColosseumNavampaMatch_PassNorthWallOpening(void) {
   Actor_SetAttachedEffect(*actorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_SelectAnimation(actor, ANIM_LEADER_RUN);
-  z = actor->z.fixed & 0xFFF00000;
+  z = actor->z.fixed & FIELD_CELL_MASK;
   FieldActor_SetMoveTargetFixed(actor, actor->x.fixed, actor->y.fixed,
                                 z + px(24));
   Actor_WaitForMove(actor);
@@ -903,7 +903,7 @@ static void ColosseumNavampaMatch_PassSouthWallOpening(void) {
   actor->acceleration = px(1);
   actor->speedLimit = px(2);
   Actor_SelectAnimation(actor, ANIM_LEADER_RUN);
-  z = actor->z.fixed & 0xFFF00000;
+  z = actor->z.fixed & FIELD_CELL_MASK;
   FieldActor_SetMoveTargetFixed(actor, actor->x.fixed, actor->y.fixed,
                                 z + px(12));
   Actor_WaitForMove(actor);
@@ -1123,10 +1123,10 @@ s32 ColosseumNavampaMatch_Initialize(void) {
     if (actor->y.fixed == 0 && height == 0) {
       actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
       actor->motionFlags = height;
-      MapGrid_CopyCellAttributes(83, 13, 1, 1, actor->x.fixed >> 20,
-                                 actor->z.fixed >> 20);
-      MapGrid_CopyCellAttributes(83, 13, 1, 1, actor->x.fixed >> 20,
-                                 (actor->z.fixed >> 20) + 52);
+      MapGrid_CopyCellAttributes(83, 13, 1, 1, FIELD_CELL(actor->x.fixed),
+                                 FIELD_CELL(actor->z.fixed));
+      MapGrid_CopyCellAttributes(83, 13, 1, 1, FIELD_CELL(actor->x.fixed),
+                                 (FIELD_CELL(actor->z.fixed)) + 52);
     }
   }
 
@@ -1183,8 +1183,8 @@ s32 ColosseumNavampaMatch_Initialize(void) {
     MapGrid_CopyCellAttributes(86, 9, 1, 1, 84, 12);
   } else {
     actor = Actor_Get(ACTOR_LONG_LOG);
-    MapGrid_CopyCellAttributes(85, 9, 1, 4, actor->x.fixed >> 20, 9);
-    MapGrid_CopyCellAttributes(85, 9, 1, 4, actor->x.fixed >> 20, 61);
+    MapGrid_CopyCellAttributes(85, 9, 1, 4, FIELD_CELL(actor->x.fixed), 9);
+    MapGrid_CopyCellAttributes(85, 9, 1, 4, FIELD_CELL(actor->x.fixed), 61);
   }
 
   actor = Actor_Get(ACTOR_PUDDLE);

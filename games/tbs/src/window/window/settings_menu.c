@@ -56,11 +56,14 @@ UNUSED void WindowColor_CalculateTint(struct OptionMenuWork *work) {
   s32 red;
   s32 green;
 
-  phase = (gMainRoutineWork.windowColor[0] + 12) % 24 * 4;
-  bias = gMainRoutineWork.windowColor[1] - 7;
-  red = gWindowColor_WaveTable[(phase % 96)];
-  green = gWindowColor_WaveTable[(phase + 32) % 96];
-  blue = gWindowColor_WaveTable[(phase + 64) % 96];
+  phase = (gMainRoutineWork.windowHue + WINDOW_HUE_COUNT / 2) %
+          WINDOW_HUE_COUNT * 4;
+  bias = gMainRoutineWork.windowBrightness - WINDOW_BRIGHTNESS_NEUTRAL;
+  red = gWindowColor_WaveTable[(phase % WINDOW_COLOR_WHEEL_STEPS)];
+  green = gWindowColor_WaveTable[(phase + WINDOW_COLOR_WHEEL_STEPS / 3) %
+                                 WINDOW_COLOR_WHEEL_STEPS];
+  blue = gWindowColor_WaveTable[(phase + WINDOW_COLOR_WHEEL_STEPS * 2 / 3) %
+                                WINDOW_COLOR_WHEEL_STEPS];
   red += bias;
   green += bias;
   blue += bias;
@@ -70,12 +73,12 @@ UNUSED void WindowColor_CalculateTint(struct OptionMenuWork *work) {
     green = 0;
   if (blue < 0)
     blue = 0;
-  if (red > 31)
-    red = 31;
-  if (green > 31)
-    green = 31;
-  if (blue > 31)
-    blue = 31;
+  if (red > RGB_LEVEL_MAX)
+    red = RGB_LEVEL_MAX;
+  if (green > RGB_LEVEL_MAX)
+    green = RGB_LEVEL_MAX;
+  if (blue > RGB_LEVEL_MAX)
+    blue = RGB_LEVEL_MAX;
   work->tint[0] = red;
   work->tint[1] = green;
   work->tint[2] = blue;
@@ -117,12 +120,12 @@ u16 WindowColor_ScaleTint(struct OptionMenuWork *work, s32 redScale,
     green = 0;
   if (blue < 0)
     blue = 0;
-  if (red > 31)
-    red = 31;
-  if (green > 31)
-    green = 31;
-  if (blue > 31)
-    blue = 31;
+  if (red > RGB_LEVEL_MAX)
+    red = RGB_LEVEL_MAX;
+  if (green > RGB_LEVEL_MAX)
+    green = RGB_LEVEL_MAX;
+  if (blue > RGB_LEVEL_MAX)
+    blue = RGB_LEVEL_MAX;
   return red + ((blue << 10) + (green << 5));
 }
 
@@ -138,9 +141,9 @@ u16 Color_ScaleComponents(s16 *rgb, s32 redScale, s32 greenScale,
   red = Iwram_MulQ16(rgb[0] << 16, redScale) >> 16;
   green = Iwram_MulQ16(rgb[1] << 16, greenScale) >> 16;
   blue = Iwram_MulQ16(rgb[2] << 16, blueScale) >> 16;
-  CLAMP(red, 0, 31);
-  CLAMP(green, 0, 31);
-  CLAMP(blue, 0, 31);
+  CLAMP(red, 0, RGB_LEVEL_MAX);
+  CLAMP(green, 0, RGB_LEVEL_MAX);
+  CLAMP(blue, 0, RGB_LEVEL_MAX);
   return red + ((blue << 10) + (green << 5));
 }
 
@@ -165,14 +168,18 @@ void WindowColor_Apply(s32 phase, s32 brightness) {
   // The 24 hues are every fourth step of the 96-step wheel, hue 0 at step 48.
   // Brightness 7 adds nothing; each step from it adds or takes one level from
   // every channel.
-  step = ((phase + 12) % 24) * 4;
-  offset = brightness - 7;
-  red = gWindowColor_WaveTable[(step % 96)] + offset;
-  green = gWindowColor_WaveTable[(step + 32) % 96] + offset;
-  blue = gWindowColor_WaveTable[(step + 64) % 96] + offset;
-  CLAMP(red, 0, 31);
-  CLAMP(green, 0, 31);
-  CLAMP(blue, 0, 31);
+  step = ((phase + WINDOW_HUE_COUNT / 2) % WINDOW_HUE_COUNT) * 4;
+  offset = brightness - WINDOW_BRIGHTNESS_NEUTRAL;
+  red = gWindowColor_WaveTable[(step % WINDOW_COLOR_WHEEL_STEPS)] + offset;
+  green = gWindowColor_WaveTable[(step + WINDOW_COLOR_WHEEL_STEPS / 3) %
+                                 WINDOW_COLOR_WHEEL_STEPS] +
+          offset;
+  blue = gWindowColor_WaveTable[(step + WINDOW_COLOR_WHEEL_STEPS * 2 / 3) %
+                                WINDOW_COLOR_WHEEL_STEPS] +
+         offset;
+  CLAMP(red, 0, RGB_LEVEL_MAX);
+  CLAMP(green, 0, RGB_LEVEL_MAX);
+  CLAMP(blue, 0, RGB_LEVEL_MAX);
   rgb[0] = red;
   rgb[1] = green;
   rgb[2] = blue;
@@ -231,12 +238,12 @@ UNUSED void SettingsMenu_LowerSetting(struct OptionMenuWork *work) {
       gMainRoutineWork.messageSpeed--;
     break;
   case OPTION_ROW_WINDOW_HUE:
-    if (gMainRoutineWork.windowColor[0] != 0)
-      gMainRoutineWork.windowColor[0]--;
+    if (gMainRoutineWork.windowHue != 0)
+      gMainRoutineWork.windowHue--;
     break;
   case OPTION_ROW_WINDOW_BRIGHTNESS:
-    if (gMainRoutineWork.windowColor[1] != 0)
-      gMainRoutineWork.windowColor[1]--;
+    if (gMainRoutineWork.windowBrightness != 0)
+      gMainRoutineWork.windowBrightness--;
     break;
   }
 }
@@ -250,12 +257,12 @@ UNUSED void SettingsMenu_RaiseSetting(struct OptionMenuWork *work) {
       gMainRoutineWork.messageSpeed++;
     break;
   case OPTION_ROW_WINDOW_HUE:
-    if (gMainRoutineWork.windowColor[0] <= 23)
-      gMainRoutineWork.windowColor[0]++;
+    if (gMainRoutineWork.windowHue <= WINDOW_HUE_COUNT - 1)
+      gMainRoutineWork.windowHue++;
     break;
   case OPTION_ROW_WINDOW_BRIGHTNESS:
-    if (gMainRoutineWork.windowColor[1] <= 14)
-      gMainRoutineWork.windowColor[1]++;
+    if (gMainRoutineWork.windowBrightness <= WINDOW_BRIGHTNESS_COUNT - 1)
+      gMainRoutineWork.windowBrightness++;
     break;
   }
 }
@@ -318,10 +325,10 @@ void SettingsMenu_InitializeWork(void) {
   work = HeapSlot_AllocEwram(HEAP_SLOT_SETTINGS_MENU,
                              sizeof(struct OptionMenuWork));
   Dma_Fill32(0, work, sizeof(struct OptionMenuWork));
-  work->option[0] = gMainRoutineWork.windowColor[0];
-  work->optionCount[0] = 24;
-  work->option[1] = gMainRoutineWork.windowColor[1];
-  work->optionCount[1] = 15;
+  work->option[0] = gMainRoutineWork.windowHue;
+  work->optionCount[0] = WINDOW_HUE_COUNT;
+  work->option[1] = gMainRoutineWork.windowBrightness;
+  work->optionCount[1] = WINDOW_BRIGHTNESS_COUNT;
   work->option[2] = gMainRoutineWork.messageSpeed;
   work->optionCount[2] = 3;
   work->option[3] = gMainRoutineWork.speech;
@@ -631,15 +638,15 @@ s32 SettingsMenu_Run(void) {
   // Keep the edits, auto-sleep also taking effect at once
   // (gIdleSleepEnabled); or put the saved window colours back.
   if (result == 0) {
-    gMainRoutineWork.windowColor[0] = work->option[0];
-    gMainRoutineWork.windowColor[1] = work->option[1];
+    gMainRoutineWork.windowHue = work->option[0];
+    gMainRoutineWork.windowBrightness = work->option[1];
     gMainRoutineWork.messageSpeed = work->option[2];
     gMainRoutineWork.speech = work->option[3];
     gMainRoutineWork.idleSleepEnabled = work->option[4];
     gIdleSleepEnabled = gMainRoutineWork.idleSleepEnabled;
   } else {
-    WindowColor_Apply(gMainRoutineWork.windowColor[0],
-                      gMainRoutineWork.windowColor[1]);
+    WindowColor_Apply(gMainRoutineWork.windowHue,
+                      gMainRoutineWork.windowBrightness);
   }
   SettingsMenu_Release();
   wait(1);

@@ -1045,8 +1045,8 @@ void Credits_InitTextSprites(void) {
   // Solid border sprites immediately after the ring mask the partial text
   // rows at the top and bottom of the window.
   Dma_Fill32Cell(dmaFill, 0, (void *)OBJ_VRAM0, CREDITS_RING_BYTES);
-  Dma_Fill32Cell(dmaFill, 0x11111111, (void *)(OBJ_VRAM0 + CREDITS_RING_BYTES),
-                 256);
+  Dma_Fill32Cell(dmaFill, PIXELS_4BPP(1),
+                 (void *)(OBJ_VRAM0 + CREDITS_RING_BYTES), 256);
 
   // OAM attributes 0 and 1 share the first word; attribute 2 is the second.
   // Here row counts the sprites across, 32 pixels apart (row << 21 is x).

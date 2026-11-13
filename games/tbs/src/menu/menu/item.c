@@ -121,11 +121,10 @@ s32 ItemMenu_Run(void) {
   // running behind this screen, as the first editions do behind the Psynergy
   // screen; the patches only add the calls.
 #if TBS_PATCH_1
-  // Save the window tiles the menu draws over, and fill them with colour 3
-  // (0x33333333: eight 4-bit pixels of colour 3 a word).
+  // Save the window tiles the menu draws over, and fill them with colour 3.
   Menu_SuspendFieldTasks();
   Iwram_CopyWords(backup, BG_CHAR_BLOCK(1), size);
-  Iwram_FillWords(BG_CHAR_BLOCK(1), size, 0x33333333);
+  Iwram_FillWords(BG_CHAR_BLOCK(1), size, PIXELS_4BPP(3));
   Text_UseExtraTilesFar(1);
 #endif
 
@@ -2160,7 +2159,7 @@ void ItemMenu_DrawItemDetails(struct Window *window, s32 inventoryEntry) {
   if (def->type != ITEM_TYPE_NONE) {
     hasEffects = 0;
     if (def->primaryBonus == 0 && def->secondaryBonus == 0) {
-      for (i = 0; i < 4; i++) {
+      for (i = 0; i < EQUIP_EFFECT_SLOTS; i++) {
         if (def->effects[i].kind != 0 || def->useType == ITEM_USE_TEACHES) {
           hasEffects = 1;
           break;
@@ -2187,7 +2186,7 @@ void ItemMenu_DrawItemDetails(struct Window *window, s32 inventoryEntry) {
     }
   }
   // Each of its effects.
-  for (i = 0; i < 4; i++) {
+  for (i = 0; i < EQUIP_EFFECT_SLOTS; i++) {
     if (def->effects[i].kind == EQUIP_EFFECT_NONE)
       continue;
     amount = def->effects[i].amount;

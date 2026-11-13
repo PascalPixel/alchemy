@@ -58,29 +58,29 @@ s32 BattleDjinnMenu_ListChangedDjinn(const struct PsynergyEntry *oldGrid,
   gainedCount = 0;
   lostCount = 0;
   count = 0;
-  for (i = 0; i < 32 && newGrid[i].encodedAction != 0; i++) {
+  for (i = 0; i < PSYNERGY_SLOTS && newGrid[i].encodedAction != 0; i++) {
     if (Ability_Get(newGrid[i].encodedAction)->flags & BATTLE_OK) {
       out[count] = newGrid[i].encodedAction & ACTION_ID_MASK;
       count++;
-      for (j = 0; j < 32; j++) {
+      for (j = 0; j < PSYNERGY_SLOTS; j++) {
         if (((newGrid[i].encodedAction ^ oldGrid[j].encodedAction) &
              ACTION_ID_MASK) == 0)
           break;
       }
-      if (j == 32) {
+      if (j == PSYNERGY_SLOTS) {
         gainedCount++;
         out[count - 1] |= DJINN_PREVIEW_ABILITY_GAINED;
       }
     }
   }
-  for (i = 0; i < 32 && oldGrid[i].encodedAction != 0; i++) {
+  for (i = 0; i < PSYNERGY_SLOTS && oldGrid[i].encodedAction != 0; i++) {
     if (Ability_Get(oldGrid[i].encodedAction)->flags & BATTLE_OK) {
-      for (j = 0; j < 32; j++) {
+      for (j = 0; j < PSYNERGY_SLOTS; j++) {
         if (((oldGrid[i].encodedAction ^ newGrid[j].encodedAction) &
              ACTION_ID_MASK) == 0)
           break;
       }
-      if (j == 32) {
+      if (j == PSYNERGY_SLOTS) {
         lostCount++;
         out[count] = (oldGrid[i].encodedAction & ACTION_ID_MASK) |
                      DJINN_PREVIEW_ABILITY_LOST;

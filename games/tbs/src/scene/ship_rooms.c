@@ -744,7 +744,7 @@ static s32 ShipRooms_LayFlat(struct Actor *interpreter) {
   struct Actor *work = interpreter;
   struct Sprite *sprite = work->sprite;
 
-  work->collisionFlags = 8;
+  work->collisionFlags = ACTOR_NOT_TARGETED;
   Actor_SetSpriteFlags(work, 0);
   sprite->image.priority = 1;
   sprite->shadow.priority = 1;

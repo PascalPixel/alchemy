@@ -552,7 +552,7 @@ static void AltinPeak_SettleSpritzRoomPillar(void) {
     s32 column;
 
     MapGrid_CopyCellAttributes(24, 27, 2, 1, 24, 26);
-    column = pillar->x.fixed >> 20;
+    column = FIELD_CELL(pillar->x.fixed);
     if (column == 25) {
       MapGrid_CopyCellAttributes(0, 0, 1, 1, column, 26);
     } else {
@@ -2402,9 +2402,9 @@ static void AltinPeak_StopCartAndJumpOff(struct Actor *actor) {
 
   Sound_Play(SE_STOP_ACTION_SE);
   Sound_Play(SE_CRUNCH);
-  x = actor->x.fixed & 0xfff00000;
+  x = actor->x.fixed & FIELD_CELL_MASK;
   centerZ = px(8);
-  z = actor->z.fixed & 0xfff00000;
+  z = actor->z.fixed & FIELD_CELL_MASK;
   actor->acceleration = px(2);
   x += centerZ;
   centerZ += z;
@@ -2452,8 +2452,8 @@ static void AltinPeak_TurnCartRight(struct Actor *actor) {
   angle = (actor->facing + TRIG_TURN / 4) & 0xc000;
   SET_POSITION(&position, actor->x.fixed, actor->y.fixed, actor->z.fixed);
   FieldVector_AddPolarOffset(24, angle, &position);
-  x = (position.x + px(8)) & 0xfff00000;
-  z = (position.z + px(8)) & 0xfff00000;
+  x = (position.x + px(8)) & FIELD_CELL_MASK;
+  z = (position.z + px(8)) & FIELD_CELL_MASK;
   angle += TRIG_TURN / 2;
   Actor_SelectAnimation(actor, 5);
   turnFrame = 0;
@@ -2483,8 +2483,8 @@ static void AltinPeak_TurnCartLeft(struct Actor *actor) {
   angle = (actor->facing - TRIG_TURN / 4) & 0xc000;
   SET_POSITION(&position, actor->x.fixed, actor->y.fixed, actor->z.fixed);
   FieldVector_AddPolarOffset(24, angle, &position);
-  x = (position.x + px(8)) & 0xfff00000;
-  z = (position.z + px(8)) & 0xfff00000;
+  x = (position.x + px(8)) & FIELD_CELL_MASK;
+  z = (position.z + px(8)) & FIELD_CELL_MASK;
   angle += TRIG_TURN / 2;
   Actor_SelectAnimation(actor, 6);
   turnFrame = 0;

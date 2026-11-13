@@ -83,17 +83,18 @@ s32 Unit_RefreshPsynergy(s32 unitId) {
     return 0;
   // Remove actions inherited from the previous class and equipment.
   originFlag = PSYNERGY_FROM_CLASS;
-  for (sourceIndex = 0; sourceIndex < 32; sourceIndex++) {
+  for (sourceIndex = 0; sourceIndex < PSYNERGY_SLOTS; sourceIndex++) {
     if (PSYNERGY_ACTION_AT(abilities, sourceIndex) & originFlag)
       PSYNERGY_ACTION_AT(abilities, sourceIndex) = 0;
   }
   originFlag = PSYNERGY_FROM_ITEM;
-  for (sourceIndex = 0; sourceIndex < 32; sourceIndex++) {
+  for (sourceIndex = 0; sourceIndex < PSYNERGY_SLOTS; sourceIndex++) {
     if (PSYNERGY_ACTION_AT(abilities, sourceIndex) & originFlag)
       PSYNERGY_ACTION_AT(abilities, sourceIndex) = 0;
   }
   // Pack permanent actions at the end to leave room for class abilities.
-  for (slot = 31, sourceIndex = 31; slot >= 0;) {
+  for (slot = PSYNERGY_SLOTS - 1, sourceIndex = PSYNERGY_SLOTS - 1;
+       slot >= 0;) {
     if (PSYNERGY_ACTION_AT(abilities, slot) == 0) {
       slot--;
     } else {
@@ -108,26 +109,27 @@ s32 Unit_RefreshPsynergy(s32 unitId) {
 
   // Add level-eligible class abilities, followed by equipped-item abilities.
   originFlag = PSYNERGY_FROM_CLASS;
-  for (sourceIndex = 0; sourceIndex < 16; sourceIndex++) {
+  for (sourceIndex = 0; sourceIndex < CLASS_ABILITY_SLOTS; sourceIndex++) {
     classAbility = &classDefinition->abilities[sourceIndex];
     if (classDefinition->abilities[sourceIndex].ability == 0)
       continue;
     if (unit->level < classDefinition->abilities[sourceIndex].level)
       continue;
     slot = 0;
-    while (slot < 32 && PSYNERGY_ACTION_AT(abilities, slot) !=
-                            classDefinition->abilities[sourceIndex].ability)
+    while (slot < PSYNERGY_SLOTS &&
+           PSYNERGY_ACTION_AT(abilities, slot) !=
+               classDefinition->abilities[sourceIndex].ability)
       slot++;
-    if (slot != 32)
+    if (slot != PSYNERGY_SLOTS)
       continue;
-    for (slot = 0; slot < 32; slot++) {
+    for (slot = 0; slot < PSYNERGY_SLOTS; slot++) {
       if (PSYNERGY_ACTION_AT(abilities, slot) == 0) {
         PSYNERGY_ACTION_AT(abilities, slot) =
             classAbility->ability | originFlag;
         break;
       }
     }
-    if (slot == 32)
+    if (slot == PSYNERGY_SLOTS)
       break;
   }
 
@@ -139,26 +141,26 @@ s32 Unit_RefreshPsynergy(s32 unitId) {
     item = Item_GetDirect(unit->inventory[sourceIndex]);
     if (item->useType != ITEM_USE_TEACHES)
       continue;
-    for (slot = 0; slot < 32; slot++) {
+    for (slot = 0; slot < PSYNERGY_SLOTS; slot++) {
       if ((PSYNERGY_ACTION_AT(abilities, slot) & PSYNERGY_ABILITY_MASK) ==
           item->abilityId)
         break;
     }
-    if (slot != 32)
+    if (slot != PSYNERGY_SLOTS)
       continue;
-    for (slot = 0; slot < 32; slot++) {
+    for (slot = 0; slot < PSYNERGY_SLOTS; slot++) {
       if (PSYNERGY_ACTION_AT(abilities, slot) == 0) {
         PSYNERGY_ACTION_AT(abilities, slot) =
             item->abilityId | PSYNERGY_FROM_ITEM;
         break;
       }
     }
-    if (slot == 32)
+    if (slot == PSYNERGY_SLOTS)
       break;
   }
 
   // Restore a dense display list with empty slots at the end.
-  for (slot = 0, sourceIndex = 0; slot < 32;) {
+  for (slot = 0, sourceIndex = 0; slot < PSYNERGY_SLOTS;) {
     if (PSYNERGY_ACTION_AT(abilities, slot) == 0) {
       slot++;
     } else {
@@ -168,7 +170,7 @@ s32 Unit_RefreshPsynergy(s32 unitId) {
       sourceIndex++;
     }
   }
-  for (; sourceIndex < 32; sourceIndex++)
+  for (; sourceIndex < PSYNERGY_SLOTS; sourceIndex++)
     PSYNERGY_ACTION_AT(abilities, sourceIndex) = 0;
   return 0;
 }
@@ -219,7 +221,7 @@ s32 Unit_LearnPsynergy(s32 stateIndex, s32 value) {
   }
 
   Unit_RefreshPsynergy(stateIndex);
-  for (index = 0; index <= 31; index++) {
+  for (index = 0; index < PSYNERGY_SLOTS; index++) {
     if (state->psynergy[index].encodedAction == key) {
       break;
     }
@@ -258,7 +260,7 @@ void Party_InitializeCharacters(void) {
   s32 slot;
   u8 *name;
 
-  for (unitId = 0; unitId <= 7; unitId++) {
+  for (unitId = 0; unitId <= ALLY_MAX; unitId++) {
     unit = Unit_Get(unitId);
     Message_DecodeRawUnboundedFar(unitId + MsgCharacterName, nameBuf);
     name = unit->name;
@@ -284,7 +286,7 @@ void Party_InitializeCharacters(void) {
         unit->id = *startingUnitId;
         character = Character_GetDefinition(unit->id);
 
-        for (i = 14; i >= 0; i--)
+        for (i = INVENTORY_SLOTS - 1; i >= 0; i--)
           unit->inventory[i] = 0;
 
         for (i = 0; i < sizeof(character->items) / sizeof(character->items[0]);
@@ -370,30 +372,37 @@ struct LevelUpResult *Unit_LevelUp(s32 unitId, struct LevelUpResult *gains) {
     }
     // Each twenty-level band interpolates between adjacent growth points.
     // Keep one RNG draw per stat, in HP, PP, attack, defense, agility, luck
-    // order. Random16() * 20 >> 16 is 0 to 19, so a rising step of d gives
-    // d / 20 rounded up with a chance of about (d % 20) / 20: on average a
-    // twentieth of the step a level, the whole step over a 20-level band
-    // (band 0, levels 1 to 19, gains nineteen twentieths).
-    growthBand = gains->level / 20;
-    CLAMP(growthBand, 0, 4);
+    // order. Random16() * GROWTH_BAND_LEVELS >> 16 is 0 to 19, so a rising step
+    // of d gives d / 20 rounded up with a chance of about (d % 20) / 20: on
+    // average a twentieth of the step a level, the whole step over a 20-level
+    // band (band 0, levels 1 to 19, gains nineteen twentieths).
+    growthBand = gains->level / GROWTH_BAND_LEVELS;
+    CLAMP(growthBand, 0, GROWTH_POINTS - 2);
     growthDifference =
         work->growth->hp[growthBand + 1] - work->growth->hp[growthBand];
-    gains->hp += ((Random16() * 20 >> 16) + growthDifference) / 20;
+    gains->hp += ((Random16() * GROWTH_BAND_LEVELS >> 16) + growthDifference) /
+                 GROWTH_BAND_LEVELS;
     growthDifference =
         work->growth->pp[growthBand + 1] - work->growth->pp[growthBand];
-    gains->pp += ((Random16() * 20 >> 16) + growthDifference) / 20;
+    gains->pp += ((Random16() * GROWTH_BAND_LEVELS >> 16) + growthDifference) /
+                 GROWTH_BAND_LEVELS;
     growthDifference =
         work->growth->atk[growthBand + 1] - work->growth->atk[growthBand];
-    gains->atk += ((Random16() * 20 >> 16) + growthDifference) / 20;
+    gains->atk += ((Random16() * GROWTH_BAND_LEVELS >> 16) + growthDifference) /
+                  GROWTH_BAND_LEVELS;
     growthDifference =
         work->growth->def[growthBand + 1] - work->growth->def[growthBand];
-    gains->def += ((Random16() * 20 >> 16) + growthDifference) / 20;
+    gains->def += ((Random16() * GROWTH_BAND_LEVELS >> 16) + growthDifference) /
+                  GROWTH_BAND_LEVELS;
     growthDifference =
         work->growth->agi[growthBand + 1] - work->growth->agi[growthBand];
-    gains->agi += ((Random16() * 20 >> 16) + growthDifference) / 20;
+    gains->agi += ((Random16() * GROWTH_BAND_LEVELS >> 16) + growthDifference) /
+                  GROWTH_BAND_LEVELS;
     growthDifference =
         work->growth->luck[growthBand + 1] - work->growth->luck[growthBand];
-    gains->luck += ((Random16() * 20 >> 16) + growthDifference) / 20;
+    gains->luck +=
+        ((Random16() * GROWTH_BAND_LEVELS >> 16) + growthDifference) /
+        GROWTH_BAND_LEVELS;
     // Commit the six gains before rebuilding Psynergy and derived stats.
     unit->baseHp += gains->hp;
     unit->basePp += gains->pp;

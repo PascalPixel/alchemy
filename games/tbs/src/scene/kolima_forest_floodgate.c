@@ -560,8 +560,8 @@ static void KolimaForestFloodgate_RollLog(struct FloodgateLog *runs) {
   moved = 0;
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   facing = (actor->facing + TRIG_TURN / 8) & 0xc000;
-  SET_VECTOR(point, (actor->x.fixed & 0xfff00000) + px(8), actor->y.fixed,
-             (actor->z.fixed & 0xfff00000) + px(8));
+  SET_VECTOR(point, (actor->x.fixed & FIELD_CELL_MASK) + px(8), actor->y.fixed,
+             (actor->z.fixed & FIELD_CELL_MASK) + px(8));
   Vector_AddPolarOffset(px(16), facing, point);
   run = KolimaForestFloodgate_FindLogAt(runs, point[0] / px(16),
                                         point[2] / px(16));
@@ -587,8 +587,8 @@ static void KolimaForestFloodgate_RollLog(struct FloodgateLog *runs) {
   }
   if (moved == 0)
     return;
-  SET_VECTOR(point, (actor->x.fixed & 0xfff00000) + px(8), actor->y.fixed,
-             (actor->z.fixed & 0xfff00000) + px(8));
+  SET_VECTOR(point, (actor->x.fixed & FIELD_CELL_MASK) + px(8), actor->y.fixed,
+             (actor->z.fixed & FIELD_CELL_MASK) + px(8));
   Vector_AddPolarOffset(px(8), facing, point);
   actor = run->actor;
   quarter = facing / (TRIG_TURN / 4);

@@ -7,17 +7,17 @@
 
 /// Erases a standard sector and programs bytes until completion or an error.
 /// The program routine (gProgramFlashSector) of the Macronix and Panasonic
-/// chips, which Save_WriteSector calls with 4 KB at `source`. Returns 0, 0x80ff
-/// for a sector above 15, the erase's error, or 0xc001 for the first byte that
-/// did not read back in time; gFlashNumRemainingBytes is left at the bytes not
-/// written.
+/// chips, which Save_WriteSector calls with 4 KB at `source`. Returns 0,
+/// FLASH_ERROR_NO_SECTOR for a sector above 15, the erase's error, or a program
+/// timeout for the first byte that did not read back in time;
+/// gFlashNumRemainingBytes is left at the bytes not written.
 u16 ProgramFlashSector(u16 sector, u8 *source) {
   u8 savedCode[64];
   u16 result;
   u8 *destination;
 
-  if ((u32)sector > 15)
-    return 0x80FF;
+  if ((u32)sector > FLASH_LAST_SECTOR)
+    return FLASH_ERROR_NO_SECTOR;
 
   result = EraseFlashSector(sector);
   if (result != 0)

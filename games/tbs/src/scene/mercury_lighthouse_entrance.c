@@ -516,7 +516,8 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     Event_Wait(30);
-    Actor_Get(ACTOR_PARTY_LEADER)->motionFlags = 3;
+    Actor_Get(ACTOR_PARTY_LEADER)->motionFlags =
+        ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     Sound_Play(SE_DUST_PUFF);
     Event_Wait(24);
     // Scatter seventeen effects around the leader before the landing.
@@ -731,7 +732,7 @@ static void MercuryLighthouse_SpawnRipple(struct Actor *source) {
     Actor_StartScript(effect, gMercuryLighthouseEntrance_RippleScript);
     effect->motionFlags = 0;
     effect->layer = 1;
-    effect->priorityFlags = 2;
+    effect->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
     if (sprite != 0) {
       Sprite_StartAnimation(sprite, 2);
       sprite->flags = 0;

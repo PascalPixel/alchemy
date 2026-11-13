@@ -46,22 +46,17 @@ struct WindowBuffer {
 /// icon on the lines it overhangs (below a row at the top, above one at the
 /// bottom, whose lines are 136 to 159).
 void IconMenu_DrawIcons(void) {
-  // UB: the pointers run from scalar link and span fields into the fields and
-  // records after them. UBFIX uses their real members.
   struct IconMenuWork *work;
   struct IconMenuEntry *entry;
   struct AffineTransform transform;
+  struct ScreenTransitionState *state;
+  struct WindowBuffer *page;
+  struct WindowLine *line;
   s32 pulseScale;
   s32 affineIndex;
-  s32 packedSpan;
-
-  s32 spriteY;
-  u32 lastLine;
+  s32 span;
+  s32 halfWidth;
   u32 index;
-#ifndef UBFIX
-  u16 *spanCursor;
-#endif
-  struct ScreenTransitionState *state;
 
   work = gIconMenuWork;
   entry = work->entries;
@@ -73,17 +68,15 @@ void IconMenu_DrawIcons(void) {
   affineIndex = OamMatrix_AllocFromTransform(&transform);
   // Pulse only the selection; the other icons keep their normal OAM shape.
   for (index = 0; index < work->count; index++, entry++) {
-#ifndef UBFIX
-    u32 *nativeAttributes;
-#endif
     s32 drawLayer;
-    s32 x;
+    s32 x = entry->x;
 
-    x = entry->x;
     if (x == 0)
       continue;
+    entry->link = 0;
     if (index == work->selection) {
       s32 left = x + pulseScale * 7 / 512 - 20;
+      s32 spriteY;
 
       // On the top row the double-size box starts above the screen: its y
       // wraps within OAM's 8 bits.
@@ -91,149 +84,51 @@ void IconMenu_DrawIcons(void) {
         spriteY = entry->y + pulseScale * 3 / 256 - 20;
       else
         spriteY = (pulseScale * 15 / 256 - 30) & 255;
-#ifdef UBFIX
-      entry->link = 0;
       entry->attr01 = (affineIndex << 25) | spriteY | (left << 16) |
                       OBJ_SIZE_32X32 | OBJ_256_COLORS | OBJ_DOUBLE_SIZE |
                       OBJ_AFFINE;
-      entry->attr2 = gVramCacheEntries[entry->slot].offset >> 5;
-#else
-      nativeAttributes = &entry->link;
-      *nativeAttributes++ = 0;
-      *nativeAttributes++ = (affineIndex << 25) | spriteY | (left << 16) |
-                            OBJ_SIZE_32X32 | OBJ_256_COLORS | OBJ_DOUBLE_SIZE |
-                            OBJ_AFFINE;
-      *nativeAttributes = gVramCacheEntries[entry->slot].offset >> 5;
-#endif
       drawLayer = 246;
     } else {
-      u32 vramOffset;
-      u32 packedAttributes;
-
-#ifndef UBFIX
-      nativeAttributes = &entry->link;
-      // Read through the attribute pointer, y keeps the pointer copy before
-      // its load.
-      spriteY = ((s16 *)nativeAttributes)[7];
-      *nativeAttributes++ = 0;
-#else
-      spriteY = entry->y;
-      entry->link = 0;
-#endif
-      packedAttributes = spriteY | (x << 16) | OBJ_SIZE_32X32 | OBJ_256_COLORS;
-      vramOffset = gVramCacheEntries[entry->slot].offset;
-#ifdef UBFIX
-      entry->attr01 = packedAttributes;
-      entry->attr2 = vramOffset >> 5;
-#else
-      *nativeAttributes++ = packedAttributes;
-      *nativeAttributes = vramOffset >> 5;
-#endif
+      entry->attr01 = entry->y | (x << 16) | OBJ_SIZE_32X32 | OBJ_256_COLORS;
       drawLayer = 245;
     }
+    entry->attr2 = gVramCacheEntries[entry->slot].offset >> 5;
     Oam_AddSpriteAtDepth(entry, drawLayer);
   }
-  // The top and bottom rows reveal opposite sides of the selected icon.
+
+  state = gScreenTransitionWork;
+  if (state == NULL || work->count == 0)
+    return;
+  page = (struct WindowBuffer *)state->pages[state->page];
+  // Window 1 widens around the selected icon on the lines it overhangs:
+  // below a row at the top, above one at the bottom.
+  span = work->entries[work->selection].x;
+  halfWidth = (pulseScale * 12 - 2817) / 256;
+  span = ((span - halfWidth) << 8) + (span + halfWidth) + 23;
   if (work->row == 0) {
-    struct WindowBuffer *page;
+    u32 lastLine = work->entries[work->selection].y + 24 +
+                   (pulseScale * 32 - 7937) / 512 + 1;
 
-    s32 halfWidth;
-
-    state = (struct ScreenTransitionState *)gScreenTransitionWork;
-    if (state == 0 || work->count == 0)
-      return;
-    page = (struct WindowBuffer *)state->pages[state->page];
-    packedSpan = work->entries[work->selection].x;
-    halfWidth = (pulseScale * 12 - 2817) / 256;
-    packedSpan =
-        ((packedSpan - halfWidth) << 8) + (packedSpan + halfWidth) + 23;
-    lastLine = work->entries[work->selection].y + 24;
-    lastLine += (pulseScale * 32 - 7937) / 512 + 1;
-#ifndef UBFIX
-    spanCursor = &page->lines[24].span;
-#endif
-    index = 24;
-    if (index < lastLine) {
-      do {
-#ifdef UBFIX
-        page->lines[index].span = (page->lines[index].span & 0xff) | packedSpan;
-#else
-        *spanCursor = (*spanCursor & 0xff) | packedSpan;
-#endif
-        index++;
-#ifndef UBFIX
-        spanCursor += 2;
-#endif
-      } while (index < lastLine);
-    }
-    packedSpan = work->entries[0].x;
-    if (work->selection == 0)
-      packedSpan -= (pulseScale * 12 - 2817) / 256;
-    packedSpan <<= 8;
-#ifndef UBFIX
-    spanCursor = &page->lines[0].span;
-#endif
-    for (index = 0; index <= 23; index++) {
-#ifdef UBFIX
-      page->lines[index].span = (page->lines[index].span & 0xff) | packedSpan;
-#else
-      *spanCursor = (*spanCursor & 0xff) | packedSpan;
-#endif
-#ifndef UBFIX
-      spanCursor += 2;
-#endif
-    }
+    line = &page->lines[24];
+    for (index = 24; index < lastLine; index++, line++)
+      line->span = (line->span & 0xff) | span;
   } else {
-    struct WindowBuffer *page;
-    s32 firstLine;
+    s32 firstLine = work->entries[work->selection].y -
+                    ((pulseScale * 32 - 7937) / 512 + 1);
 
-    s32 halfWidth;
-
-    state = (struct ScreenTransitionState *)gScreenTransitionWork;
-    if (state == 0 || work->count == 0)
-      return;
-    page = (struct WindowBuffer *)state->pages[state->page];
-    packedSpan = work->entries[work->selection].x;
-    halfWidth = (pulseScale * 12 - 2817) / 256;
-    packedSpan =
-        ((packedSpan - halfWidth) << 8) + (packedSpan + halfWidth) + 23;
-    firstLine = work->entries[work->selection].y;
-    firstLine -= (pulseScale * 32 - 7937) / 512 + 1;
-#ifndef UBFIX
-    spanCursor = &page->lines[firstLine].span;
-#endif
-    index = firstLine;
-    if (index <= 135) {
-      do {
-#ifdef UBFIX
-        page->lines[index].span = (page->lines[index].span & 0xff) | packedSpan;
-#else
-        *spanCursor = (*spanCursor & 0xff) | packedSpan;
-#endif
-        index++;
-#ifndef UBFIX
-        spanCursor += 2;
-#endif
-      } while (index <= 135);
-    }
-    packedSpan = work->entries[0].x;
-    if (work->selection == 0)
-      packedSpan -= (pulseScale * 12 - 2817) / 256;
-    packedSpan <<= 8;
-#ifndef UBFIX
-    spanCursor = &page->lines[136].span;
-#endif
-    for (index = 136; index <= 159; index++) {
-#ifdef UBFIX
-      page->lines[index].span = (page->lines[index].span & 0xff) | packedSpan;
-#else
-      *spanCursor = (*spanCursor & 0xff) | packedSpan;
-#endif
-#ifndef UBFIX
-      spanCursor += 2;
-#endif
-    }
+    line = &page->lines[firstLine];
+    for (index = firstLine; index < 136; index++, line++)
+      line->span = (line->span & 0xff) | span;
   }
+  // Then over the row's 24 lines from the first icon, keeping each line's
+  // right edge.
+  span = work->entries[0].x;
+  if (work->selection == 0)
+    span -= halfWidth;
+  span <<= 8;
+  line = &page->lines[work->row == 0 ? 0 : 136];
+  for (index = 0; index < 24; index++, line++)
+    line->span = (line->span & 0xff) | span;
 }
 
 /// Allocates and clears the resource-menu state, then schedules its icon pulse.

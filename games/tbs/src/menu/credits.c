@@ -1198,16 +1198,18 @@ s32 Credits_DrawLine(const u8 *text, s32 firstTile, s32 alignment) {
   // Transpose raster rows into the tile ring used by the scrolling sprites.
   for (row = 0; row < tileCount; row++) {
     s32 tileIndex = firstTile + row;
+    u32 *tile = (u32 *)(OBJ_VRAM0 + tileIndex * TILE_SIZE_4BPP);
     u32 *words = (u32 *)linePixels + row;
 
-    *(u32 *)(OBJ_VRAM0 + tileIndex * 32) = words[0];
-    *(u32 *)(OBJ_VRAM0 + 4 + tileIndex * 32) = words[64];
-    *(u32 *)(OBJ_VRAM0 + 8 + tileIndex * 32) = words[128];
-    *(u32 *)(OBJ_VRAM0 + 12 + tileIndex * 32) = words[192];
-    *(u32 *)(OBJ_VRAM0 + 16 + tileIndex * 32) = words[256];
-    *(u32 *)(OBJ_VRAM0 + 20 + tileIndex * 32) = words[320];
-    *(u32 *)(OBJ_VRAM0 + 24 + tileIndex * 32) = words[384];
-    *(u32 *)(OBJ_VRAM0 + 28 + tileIndex * 32) = words[448];
+    // A tile's eight rows of 4 bytes, each a 256-pixel raster row apart.
+    tile[0] = words[0];
+    tile[1] = words[64];
+    tile[2] = words[128];
+    tile[3] = words[192];
+    tile[4] = words[256];
+    tile[5] = words[320];
+    tile[6] = words[384];
+    tile[7] = words[448];
   }
   Heap_Release(linePixels);
   return 0;

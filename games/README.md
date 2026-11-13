@@ -12,11 +12,11 @@ the same ROMs as the originals, byte for byte.
 This lets you explore how the games are made, and helps preserve them for
 posterity.
 
-These pages are the documentation that goes with it. They explain how The
-Broken Seal works, from the moment the console is switched on, through its
+These pages are the documentation that goes with it. They explain how
+both games work, from the moment the console is switched on, through their
 battles, and even the Lucky Wheels. 🎰
 
-Enjoy! It is a fascinating game with unique engineering, and a great read.
+Enjoy! They are fascinating games with unique engineering, and a great read.
 
 ## Where to start
 
@@ -33,7 +33,12 @@ After that, go wherever you are curious:
 Each of the four links on to guides one step closer to the code, and
 [Source](tbs/src/README.md) says what each folder of it holds.
 
-There is more to wander through.
+[The Lost Age](tla/README.md) has a guide of its own, in exactly the same
+shape. Most of its code works as The Broken Seal's does, so each of its pages
+says plainly what the sequel adds: a party of eight, the ship, the forge, and a
+third game of chance.
+
+There is more to wander through in The Broken Seal.
 [Places](https://alchemy.pascalpixel.com/tbs/places) has a page for every
 town and dungeon in story order, with its map and a recording of each of its
 events. [Unused](https://alchemy.pascalpixel.com/tbs/unused) collects what

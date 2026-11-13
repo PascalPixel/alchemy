@@ -61,6 +61,6 @@ and a battle.
 
 - `test_scenes.c`, `level.c`, `psynergy_test.c`, `psynergy_test_2.c` and
   `shop_test.c` are the five overlays.
-- The scene selector and the flag editor are in `window/menus/`
+- The scene selector and the flag editor are in `window/window/`
   (`DebugSceneSelect_Run`, `DebugFlagEditor_Run`), and the palette editor
   is `PaletteEditor_Run` in `field/field_sequence/`.

@@ -206,8 +206,10 @@ those few routines into the console's fast memory and runs them there.
 ## Where the code is
 
 - `field_sequence/` is the sequence itself: set-up, the walk, requests,
+  the screen transitions, the event commands,
   triggers, encounters and the treasure spots.
-- `resource_slot/` is the actors' motion, the player's control orders and
+- `field/` holds the field object's parts: decompression and sprite drawing,
+  the actors' motion, the player's control orders and
   the other script commands, and the map and the World Map on screen.
 - `object/` is the actors' placement, stock behaviours and screen
   transitions, and the choice of which field Psynergy cast plays.
@@ -217,6 +219,6 @@ those few routines into the console's fast memory and runs them there.
   the like.
 - `event_commands/` is the orders an event gives, such as showing a
   message or moving an actor, and field Psynergy, with most of the new
-  kinds in `psynergy/`.
+  kinds in `event_commands/radial/`.
 - The three games of chance and the scene table, `gScenes`, sit in this
   folder itself.

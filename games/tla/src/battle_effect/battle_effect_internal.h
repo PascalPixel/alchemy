@@ -40,6 +40,23 @@
 
 #include "field/effect_step.h"
 #include "battle/battle_effect.h"
+#include "debug.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "menu/menu.h"
+#include "field_event.h"
+#include "battle/b5_context.h"
+#include "battle/battle_action.h"
+#include "field/sprite.h"
+#include "graphics/render_placement.h"
+#include "battle/battle_unit.h"
+#include "system/irq.h"
+#include "system/scene.h"
+#include "owner_state.h"
+#include "version.h"
+#include "field_sprite.h"
+#include "system/vector3.h"
+#include "system/ram_code.h"
 
 struct EclipseObject {
   u8 unk0[9];

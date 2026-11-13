@@ -101,14 +101,14 @@ choices.
 
 ### Saving
 
-The Save command and the File Screen's list are in `screens/`. Each file
+The Save command and the File Screen's list are in `window/` (`save.c`). Each file
 carries a short summary, so the list is drawn without reading any file
 whole. What a save holds, and how it is written safely, is in
 [System code](../system/README.md#saving).
 
 ## Windows the rest of the game borrows
 
-`screens/` and `menus/` hold the windows other parts of the game ask for:
+The later parts of `window/` hold the windows other parts of the game ask for:
 a battle's command row, its Psynergy, Djinn, item and summon menus, the
 preview of what setting a Djinni changes, the target cursor, the choice of
 a reserve member for a party slot, the party status panel, the Status

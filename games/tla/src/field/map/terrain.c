@@ -232,7 +232,7 @@ restart:
   Task_ResetAll();
   ring = HeapSlot_AllocEwram(36, 160);
   VramCache_Reset();
-  Func_080230e0(2);
+  ObjectSystem_Initialize(2);
   ResourceSlot_Load(0, gMapCellBuffer, layers[0].spriteId, 0);
   if (Resource_GetMetadataRecordFar(layers[0].spriteId)->drawKind == 20)
     ResourceSlot_Load(1, Data_02018000, layers[0].spriteId + 1, 0);
@@ -499,7 +499,8 @@ s32 Func_0802e444(s32 value, s32 delta) {
 /// pairs for ANIM_FACING_TWO_PART), 56 pixels out (40 for a two-part
 /// sprite). B held turns the ring. Called by SpriteViewer_Run when it starts
 /// and while Start moves the ring.
-void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY, struct SpritePlacement *positions) {
+void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
+                                 struct SpritePlacement *positions) {
   struct SpritePlacement *pair;
   s32 angle;
   s32 i;

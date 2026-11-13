@@ -63,7 +63,7 @@ void BattleEffect_SpawnObjects(s32 entryCount, s32 kind,
                                u32 variant); // SpawnObjects
 void BattleEffect_SelectLivingTargets(
     struct FxPartyList *party); // SelectLivingTargets
-void Func_080150e4(s32 angle);  // SceneTransform_ApplyRoll
+void SceneTransform_ApplyRoll(s32 angle);
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                    s32 speedLimit, s32 velocityY, s32 percent);
 
@@ -413,7 +413,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
         Func_08015160(-0x20000, -0x400000, 0);
         Func_080151e4(42000, 0x24650, 0x10000);
         Func_080151e4(scale, scale, scale);
-        Func_080150e4(0x8000);
+        SceneTransform_ApplyRoll(0x8000);
         SceneTransform_ApplyYaw(angle);
         Render_TransformVertices(meshA, projected, 32);
         Render_DrawModelList(model);

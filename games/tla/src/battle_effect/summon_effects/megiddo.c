@@ -43,7 +43,7 @@ void BattleEffect_SpawnObjects(s32 entryCount, s32 kind,
                                u32 variant); // SpawnObjects
 void BattleEffect_SelectLivingTargets(
     struct FxPartyList *party); // SelectLivingTargets
-void Func_080150e4(s32 angle);  // SceneTransform_ApplyRoll
+void SceneTransform_ApplyRoll(s32 angle);
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                    s32 speedLimit, s32 velocityY, s32 percent);
 void Render_ApplyProjectedPlacementFar(struct ScaledSprite *sprite,
@@ -548,7 +548,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
           Func_08015160(-0x20000, -0x200000, 0);
           Func_080151e4(82000, 0x35208, 0x10000);
           Func_0801521c(scale);
-          Func_080150e4(0x8000);
+          SceneTransform_ApplyRoll(0x8000);
           scroll += 20;
           SceneTransform_ApplyPitch(tilt - 0x3000);
           SceneTransform_ApplyYaw(angle);
@@ -685,9 +685,9 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
         }
         Func_080151e4(0x8000, 0x10000, 0x8000);
         if (!effect->side) {
-          Func_080150e4(Data_08199f0a[i]);
+          SceneTransform_ApplyRoll(Data_08199f0a[i]);
         } else {
-          Func_080150e4(-Data_08199f0a[i]);
+          SceneTransform_ApplyRoll(-Data_08199f0a[i]);
         }
         SceneTransform_ApplyPitch(Data_08199eea[i]);
         SceneTransform_ApplyYaw(Data_08199efa[i]);

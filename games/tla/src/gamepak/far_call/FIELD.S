@@ -20,7 +20,7 @@ Resource_FarCall003:
 	export ResourceMetadata_ClearRecordFar, ResourceMetadata_ClearRecord
 	export Animation_InitializeWorkFromMetadataFar, Animation_InitializeWorkFromMetadata
 	export Animation_SetWorkEntryFar, Animation_SetWorkEntry
-	export ObjectSystem_InitializeFar, Func_080230e0
+	export ObjectSystem_InitializeFar, ObjectSystem_Initialize
 	export Actor_SetMode, Actor_SelectAnimation
 	export Actor_SetAnimationSpeedFar, Actor_SetAnimationSpeed
 	export Actor_SetAnimationAndSpeedFar, Actor_SetAnimationAndSpeed
@@ -39,15 +39,15 @@ Resource_FarCall003:
 	export MapGrid_LoadMapFar, MapGrid_LoadMap
 	export Func_08020110, Func_0802b998
 	export Func_08020118, Func_0802af9c
-	export Map_CenterOnFollowedPointFar, Func_0802aa74
+	export Map_CenterOnFollowedPointFar, Map_CenterOnFollowedPoint
 	export Map_UpdateCurrentTileBlockFar, Map_UpdateCurrentTileBlock
-	export WorldMap_LoadGraphicsFar, Func_0802be4c
+	export WorldMap_LoadGraphicsFar, WorldMap_LoadGraphics
 	export Actor_ResetMotion, Actor_StartIdle
 	export Actor_RefreshSelector, Actor_WaitForCommandEnd
 	export Actor_SetTargetPosition, Actor_SetMoveTarget
 	export Actor_CommitPosition, Script_WaitForEventTimeout
 	export Map_GetScreenRelativePositionFar, Map_GetScreenRelativePosition
-	export WorldMap_UpdateViewFar, Func_0802c240
+	export WorldMap_UpdateViewFar, WorldMap_UpdateView
 	export Map_LoadDefaultCellsAndUpdateBlockFar, Map_LoadDefaultCellsAndUpdateBlock
 	export Map_PlayMapEditFar, Map_PlayMapEdit
 	export Map_CopyCellPictureIndicesRectFar, Map_CopyCellPictureIndicesRect

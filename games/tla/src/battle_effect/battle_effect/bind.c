@@ -93,10 +93,10 @@ void Graphics_ConvertBackgroundToBlueRamp(void) {
   wait(1);
 }
 
-void Func_080151ac(s32 *scale);    // SceneTransform_ApplyScale
+void SceneTransform_ApplyScale(s32 *scale);
 
-#define FLARE_SHEET 0x1000  // the flares, after the rune picture
-#define DJINN_SHEET 0x2000  // the Jupiter Djinn, after the flares
+#define FLARE_SHEET 0x1000 // the flares, after the rune picture
+#define DJINN_SHEET 0x2000 // the Jupiter Djinn, after the flares
 #define DJINN_SIZE 40
 
 #define CORNERS 3
@@ -217,11 +217,11 @@ void BattleEffect_RunBind(struct BattleEffectArgument *effect) {
               scale[0] = 0x2a000 - (memberFrame * 3 << 9);
               scale[1] = 0x2a000 - (memberFrame * 3 << 9);
               scale[2] = 0x2a000 - (memberFrame * 3 << 9);
-              Func_080151ac(scale);
-              Func_080150e4((64 - memberFrame) << 9);
+              SceneTransform_ApplyScale(scale);
+              SceneTransform_ApplyRoll((64 - memberFrame) << 9);
               SceneTransform_ApplyYaw((64 - memberFrame) << 9);
             }
-            Func_080150e4(j * 0x5555);
+            SceneTransform_ApplyRoll(j * 0x5555);
             EffectPosition_ProjectPoint(Data_0819790c,
                                         (struct EffectPosition *)vector);
             point->velocityX = vector[0] + screen.x;
@@ -353,11 +353,11 @@ void BattleEffect_RunTriangleStrike(struct BattleEffectArgument *effect) {
               scale[0] = 0x2a000 - (memberFrame * 3 << 9);
               scale[1] = 0x2a000 - (memberFrame * 3 << 9);
               scale[2] = 0x2a000 - (memberFrame * 3 << 9);
-              Func_080151ac(scale);
-              Func_080150e4((64 - memberFrame) << 9);
+              SceneTransform_ApplyScale(scale);
+              SceneTransform_ApplyRoll((64 - memberFrame) << 9);
               SceneTransform_ApplyYaw((64 - memberFrame) << 9);
             }
-            Func_080150e4(j * 0x5555);
+            SceneTransform_ApplyRoll(j * 0x5555);
             EffectPosition_ProjectPoint(Data_08197918,
                                         (struct EffectPosition *)vector);
             point->velocityX = vector[0] + screen.x;

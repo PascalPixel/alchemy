@@ -59,7 +59,7 @@ void BattleBackground_SetPaletteLevel(s32 unused, s32 level) {
 /// The Broken Seal's BattleBackground_SetMode, with this
 /// game's heap slots, its callback BattleStaging_UpdateHBlankScroll at 0xcff
 /// and its IO write of 0x1f83 to BG1CNT.
-void Func_0812628c(s32 mode, s32 value, s32 fade) {
+void BattleStaging_ConfigurePaletteFade(s32 mode, s32 value, s32 fade) {
   struct BattleBackgroundView *transition =
       (struct BattleBackgroundView *)Ram_HeapSlots->transitionWork;
 
@@ -143,7 +143,7 @@ Resource_GetTableEntry__presentation(s32 id) __asm__("Resource_GetTableEntry");
 // Loads a battle backdrop: its picture decoded into BG VRAM, its palette
 // (darkened by level steps of 1/60 when level is not negative), the tile
 // table and tilemap, and the HBlank scroll the first time.
-void Func_081263fc(s32 mode, s32 resource, s32 level) {
+void BattleBackground_Load(s32 mode, s32 resource, s32 level) {
   struct BattlePresentationTransition *view = Ram_HeapSlots->transitionWork;
   u8 *data = Resource_GetTableEntry__presentation(resource);
   struct BattleBackdropWork *session =
@@ -1027,7 +1027,7 @@ void Func_08127308(s32 unit, s32 kind, s32 mode, s32 variant) {
   struct EffectPosition *pos;
 
   wait(1);
-  Func_0812628c(1, session->background, 0);
+  BattleStaging_ConfigurePaletteFade(1, session->background, 0);
   Iwram_ClearWordsEntry((void *)0x06004000, 0x4000);
   QueueIoWriteDelay2(0x04000000, 0x3741);
   QueueIoWriteDelay2(0x0400000c, 0x784);

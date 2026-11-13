@@ -1,6 +1,6 @@
 /// @file
-/// A whole battle, Func_081197f0 (The Broken Seal's Battle_Run), its tutorial
-/// helpers, and the lists of the units in it.
+/// A whole battle, Battle_RunEncounter (The Broken Seal's Battle_Run), its
+/// tutorial helpers, and the lists of the units in it.
 // Part of battle.c.
 
 #include "../battle_internal.h"
@@ -40,7 +40,7 @@ void Func_081195ec(void) {
     to->anchorX = from->anchorX;
     to->anchorZ = from->anchorZ;
     Actor_SetPositionAndResetMotionFar((void *)object, place->x, place->y,
-                                        place->z);
+                                       place->z);
     gMainRoutineWork.activeOwners[i] = id;
     work->partyUnits[i] = id;
   }
@@ -156,11 +156,14 @@ s32 GameFlag_GetByte(s32 flag);
 void ObjectSystem_InitializeFar(s32 mode);
 void Sound_LoadReverbCode(s32 preset);
 struct BattleSortedUnitEntry;
-/* VIEW(battle): routine Window_CloseFar as void Window_CloseFar(s32 window, s32 mode); gamepak/far_call/window.h has void Window_CloseFar(struct RenderInput *window, s32 mode). */
-extern void Window_CloseFar__battle(s32 window, s32 mode) __asm__("Window_CloseFar");
+/* VIEW(battle): routine Window_CloseFar as void Window_CloseFar(s32 window, s32
+ * mode); gamepak/far_call/window.h has void Window_CloseFar(struct RenderInput
+ * *window, s32 mode). */
+extern void Window_CloseFar__battle(s32 window,
+                                    s32 mode) __asm__("Window_CloseFar");
 void Func_08120060(s32 x, s32 y);
 
-s32 Func_081197f0(s32 enemyGroup) {
+s32 Battle_RunEncounter(s32 enemyGroup) {
   struct BattleCamera *camera;
   struct EncounterWork *battle;
   struct BattlePresentationTransition *transition;
@@ -282,7 +285,7 @@ s32 Func_081197f0(s32 enemyGroup) {
   Camera_InitializeDefaultTransform();
   BattleObject_Put();
   Func_081263c4();
-  Func_081263fc(1, battle->background, 0);
+  BattleBackground_Load(1, battle->background, 0);
   BattleCamera_SetRange(0xa00000, 0x500000, 0, 0, 0x20000);
   BattleCamera_SetView(0, 0, 0, 190);
   Party_ReservedNoOp5B14(1);

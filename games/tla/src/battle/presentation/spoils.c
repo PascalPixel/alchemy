@@ -29,7 +29,7 @@ u32 BattleSpoils_RankItem(u32 value) {
 }
 
 /// Empties the battle's spoils and the party's pending item, as The Broken
-/// Seal's BattleSpoils_Clear does. Called by Func_081197f0.
+/// Seal's BattleSpoils_Clear does. Called by Battle_RunEncounter.
 void BattleSpoils_Clear(void) {
   struct BattleWork *battle;
   struct BattleSpoils *spoils;

@@ -132,7 +132,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
 
         if (frame > i / 4 + 80 && p->x > 0) {
           Render_ResetTransformState();
-          Func_080150e4(p->velocityY);
+          SceneTransform_ApplyRoll(p->velocityY);
           SceneTransform_ApplyPitch(p->velocityX);
           SceneTransform_ApplyYaw(p->velocityY + (frame << 9));
           anchor[0] = p->x;

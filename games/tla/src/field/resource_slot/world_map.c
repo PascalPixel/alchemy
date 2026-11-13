@@ -145,7 +145,7 @@ void Func_0802b998(void) {
   gBgScroll[3].y = 0;
   view->windowTop = 0;
   view->windowBottom = 159;
-  Task_Add(Func_0802c240, 0x485);
+  Task_Add(WorldMap_UpdateView, 0x485);
   Task_Add(Func_0802c088, 0xc80);
   for (tileIndex = 0; tileIndex <= 0x3ff; tileIndex++)
     ((u16 *)(perspective + 0x148))[tileIndex] = tileIndex;
@@ -225,7 +225,7 @@ void Func_0802bdd0(s32 x, s32 y, s32 px, s32 py) {
  * type. */
 extern u8 gWorldMapWork__world_map[] __asm__("gWorldMapWork");
 
-void Func_0802be4c(s32 x, s32 z) {
+void WorldMap_LoadGraphics(s32 x, s32 z) {
   u8 *buffer;
   struct MapViewWork *view;
   struct Data02020000 *block;
@@ -455,7 +455,7 @@ void Map_RenderPaletteMappedColumn(u32 tileColumn) {
 u32 Random16(void);
 void Func_0802dd70(s32 ratio, s32 *position, void *affineWork);
 
-void Func_0802c240(void) {
+void WorldMap_UpdateView(void) {
   u8 *camera = Ram_HeapSlots->cameraWork;
   u8 *affineWork = Ram_HeapSlots->unk1c[0];
   struct WorldView *view = (struct WorldView *)Ram_HeapSlots->mapWork;

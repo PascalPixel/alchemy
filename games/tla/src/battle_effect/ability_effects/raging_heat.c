@@ -32,7 +32,7 @@ void BattleEffect_SpawnObjects(s32 entryCount, s32 kind,
                                u32 variant); // SpawnObjects
 void BattleEffect_SelectLivingTargets(
     struct FxPartyList *party); // SelectLivingTargets
-void Func_080150e4(s32 angle);  // SceneTransform_ApplyRoll
+void SceneTransform_ApplyRoll(s32 angle);
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                    s32 speedLimit, s32 velocityY, s32 percent);
 
@@ -431,7 +431,7 @@ void BattleEffect_RunJuggle(struct BattleEffectArgument *effect) {
 
       Render_ResetTransformState();
       Func_08015160(ring->x - (128 << 16), ring->y - (64 << 16), 0);
-      Func_080150e4(frame * 256);
+      SceneTransform_ApplyRoll(frame * 256);
       SceneTransform_ApplyPitch(frame * 256 + 500);
       if (i > 7)
         SceneTransform_ApplyPitch(0x4000);

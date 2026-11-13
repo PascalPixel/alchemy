@@ -35,7 +35,7 @@ void BattleEffect_SpawnObjects(s32 entryCount, s32 kind,
                                u32 variant); // SpawnObjects
 void BattleEffect_SelectLivingTargets(
     struct FxPartyList *party); // SelectLivingTargets
-void Func_080150e4(s32 angle);  // SceneTransform_ApplyRoll
+void SceneTransform_ApplyRoll(s32 angle);
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                    s32 speedLimit, s32 velocityY, s32 percent);
 
@@ -609,18 +609,18 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
         switch (i & 3) {
         case 0:
           SceneTransform_ApplyPitch(p->z);
-          Func_080150e4(p->z);
+          SceneTransform_ApplyRoll(p->z);
           break;
         case 1:
           SceneTransform_ApplyPitch(p->z);
-          Func_080150e4(-p->z);
+          SceneTransform_ApplyRoll(-p->z);
           break;
         case 2:
           SceneTransform_ApplyPitch(p->z);
           SceneTransform_ApplyYaw(p->z);
           break;
         case 3:
-          Func_080150e4(p->z);
+          SceneTransform_ApplyRoll(p->z);
           SceneTransform_ApplyYaw(-p->z);
           break;
         }
@@ -770,7 +770,7 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
         Render_ResetTransformState();
         Func_08015160(-0x100000, pos.y + -0x500000, 0);
         Func_080151e4(size >> 1, size, size >> 1);
-        Func_080150e4(frame << 11);
+        SceneTransform_ApplyRoll(frame << 11);
         Render_TransformVertices(Data_081991e0, verts, 4);
         Render_DrawModelList(model);
       }

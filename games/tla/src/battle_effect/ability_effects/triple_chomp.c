@@ -27,7 +27,11 @@
 
 // One entry of a model list, as Render_AllocateModelList allocates them and
 // Render_DrawModelList draws them.
-/* VIEW(f18b868): tag struct Model as struct Model__f18b868; ability_effects.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/battle_effect/ability_effects.c:39584: structure has no member named `vertices'. */
+/* VIEW(f18b868): tag struct Model as struct Model__f18b868; ability_effects.c
+ * has another definition; tried with the definition the rest of the object has,
+ * it does not compile in tla-ja:
+ * games/tla/src/battle_effect/ability_effects.c:39584: structure has no member
+ * named `vertices'. */
 struct Model__f18b868 {
   s32 kind;
   s32 next;
@@ -67,12 +71,15 @@ void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
                    s32 frames);
 void Func_080151e4(s32 x, s32 y, s32 z);
 void Func_08015160(s32 x, s32 y, s32 z);
-void Func_080150e4(s32 angle);
+void SceneTransform_ApplyRoll(s32 angle);
 void SceneTransform_ApplyPitch(s32 angle);
 void Func_0801521c(s32 scale);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
-/* VIEW(f18b868): routine Render_DrawModelList as void Render_DrawModelList(struct Model__f18b868 *model); f18ad40 has void Render_DrawModelList(struct Model *model). */
-extern void Render_DrawModelList__f18b868(struct Model__f18b868 *model) __asm__("Render_DrawModelList");
+/* VIEW(f18b868): routine Render_DrawModelList as void
+ * Render_DrawModelList(struct Model__f18b868 *model); f18ad40 has void
+ * Render_DrawModelList(struct Model *model). */
+extern void Render_DrawModelList__f18b868(struct Model__f18b868 *model) __asm__(
+    "Render_DrawModelList");
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                           s32 gravity);
 void Heap_Release(void *block);
@@ -124,7 +131,8 @@ void BattleEffect_RunTripleChomp(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, pixels, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, graphics, 0, 0);
   Iwram_CopyWordsEntry((void *)0x05000000,
-                  Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet), 128);
+                       Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet),
+                       128);
 
   for (frame = 0; frame != 50; frame++) {
     if (frame == 0) {
@@ -194,7 +202,7 @@ void BattleEffect_RunTripleChomp(struct BattleEffectArgument *effect) {
           Func_080151e4(0x8000, 0x10000, 0x8000);
           Func_08015160((BITE_ANCHOR(i)->x - 128) << 16,
                         (BITE_ANCHOR(i)->y - 64) << 16, 0);
-          Func_080150e4((i << 14) + 0x2000);
+          SceneTransform_ApplyRoll((i << 14) + 0x2000);
           SceneTransform_ApplyPitch(-0x1000);
           Func_0801521c(scale);
           Render_TransformVertices(gData_08199210, vertices, 4);

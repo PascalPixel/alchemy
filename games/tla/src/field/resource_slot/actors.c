@@ -143,7 +143,7 @@ s32 Map_GetScreenRelativePosition(struct Thing *obj, s32 *out) {
 /// (mode 4 runs its own; modes 3 and 4 take ObjectSystem_UpdateCameraFixed at
 /// 0x480, the others Func_0802386c).
 // No ☀️ twin found; ☀️'s field.c starts its map animations the same way.
-void Func_080230e0(s32 mode) {
+void ObjectSystem_Initialize(s32 mode) {
   struct MapAnimationWork *work;
   void *buffer;
   // The fill word Dma_Fill32Cell reads its zero from, one for both fills.

@@ -18,7 +18,7 @@
 #define SUFFIX_COUNT 9
 #endif
 
-s32 Func_080afbec(s32 unitId, s32 enemyId, s32 suffix) {
+s32 BattleUnit_Set(s32 unitId, s32 enemyId, s32 suffix) {
   struct BattleUnit *unit;
   const struct EnemyRecord *enemy;
   u16 name[15];

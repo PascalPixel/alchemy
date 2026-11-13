@@ -106,7 +106,7 @@ void Func_080151e4(s32 x, s32 y, s32 z);
 void Func_08015160(s32 x, s32 y, s32 z);
 void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
-void Func_080150e4(s32 angle);
+void SceneTransform_ApplyRoll(s32 angle);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 /* VIEW(f18bc98): routine Render_DrawModelList as void
  * Render_DrawModelList(struct Model__f18bc98 *model); f18ad40 has void
@@ -410,7 +410,7 @@ void Func_0818bc98(struct BattleEffectArgument *effect, s32 mode) {
               if (mode == BREATH_BLAST) {
                 Func_08015160((mouthX - 64) << 16, (mouthY - 64) << 16, 0);
                 Func_080151e4(0x10000, 0x20000, 0x10000);
-                Func_080150e4((i << 14) + 0x2000);
+                SceneTransform_ApplyRoll((i << 14) + 0x2000);
                 SceneTransform_ApplyPitch(-0x1000);
               } else {
                 if (effect->side == 0)
@@ -499,7 +499,7 @@ void Func_0818bc98(struct BattleEffectArgument *effect, s32 mode) {
             angle = (frame << 7) + 0x2c60;
           if (effect->side == 1)
             angle = -angle;
-          Func_080150e4(angle);
+          SceneTransform_ApplyRoll(angle);
           Func_080151e4(0x40000, 0x20000, 0x10000);
           Render_TransformVertices(Data_081991c0, vertices, 4);
           Render_DrawModelList__f18bc98(model);

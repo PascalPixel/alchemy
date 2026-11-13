@@ -41,7 +41,7 @@ void Func_08164abc(s32 red, s32 green, s32 blue);
 void SceneTransform_ApplyPosition(const s32 *pos);
 void SceneTransform_ApplyYaw(s32 angle);
 void SceneTransform_ApplyPitch(s32 angle);
-void Func_080150e4(s32 angle); // SceneTransform_ApplyRoll
+void SceneTransform_ApplyRoll(s32 angle);
 void Transform_Pop(void);
 /// Flashes an actor in a palette for some frames.
 void Func_0814cd48(s32 actor, s32 palette, s32 a, s32 timer, s32 frames);
@@ -272,11 +272,11 @@ void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen,
             SceneTransform_ApplyPitch(-frame * (i * 32 + 256));
             break;
           case 2:
-            Func_080150e4(-frame * (i * 32 + 256));
+            SceneTransform_ApplyRoll(-frame * (i * 32 + 256));
             break;
           case 3:
             SceneTransform_ApplyPitch(-frame * (i * 32 + 256));
-            Func_080150e4(-frame * (i * 32 + 256));
+            SceneTransform_ApplyRoll(-frame * (i * 32 + 256));
             break;
           }
           EffectPosition_ProjectPoint(&spark->x, &position);

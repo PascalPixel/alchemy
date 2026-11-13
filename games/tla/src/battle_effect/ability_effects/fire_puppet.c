@@ -59,7 +59,7 @@ void BattleEffect_SpawnObjects(s32 entryCount, s32 kind,
                                u32 variant); // SpawnObjects
 void BattleEffect_SelectLivingTargets(
     struct FxPartyList *party); // SelectLivingTargets
-void Func_080150e4(s32 angle);  // SceneTransform_ApplyRoll
+void SceneTransform_ApplyRoll(s32 angle);
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                    s32 speedLimit, s32 velocityY, s32 percent);
 
@@ -263,7 +263,7 @@ void BattleEffect_RunFirePuppet(struct BattleEffectArgument *effect) {
       if (effect->side == 1) {
         SceneTransform_ApplyYaw(0x8000);
       }
-      Func_080150e4(0x4000);
+      SceneTransform_ApplyRoll(0x4000);
       if (frame > 73) {
         Func_0801521c((212 << 10) - (frame << 11));
       }
@@ -282,7 +282,7 @@ void BattleEffect_RunFirePuppet(struct BattleEffectArgument *effect) {
       texture.pixels = work->sheet + 0x4000;
       model->shade = 0;
       Func_08015160(endX << 16, endY << 16, 0);
-      Func_080150e4(22384 - (length << 5));
+      SceneTransform_ApplyRoll(22384 - (length << 5));
       Func_0801521c(length * 23 + 0x8000);
       Render_TransformVertices(Data_081991e0, projected, 4);
       Render_DrawModelList(model);

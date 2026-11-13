@@ -279,7 +279,7 @@ void BattleEffect_WaitForArcGroups(void);
 void BattleEffect_EndArcEffect(void);
 
 void BattleEffect_CleanupSceneObjects(void);
-void Func_080dc6d8(void);
+void EventObject_Initialize(void);
 
 void Djinn_ResolvePending(s32 shown);
 

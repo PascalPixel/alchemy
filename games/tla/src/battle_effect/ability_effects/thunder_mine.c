@@ -33,7 +33,7 @@ void BattleEffect_SpawnObjects(s32 entryCount, s32 kind,
                                u32 variant); // SpawnObjects
 void BattleEffect_SelectLivingTargets(
     struct FxPartyList *party); // SelectLivingTargets
-void Func_080150e4(s32 angle);  // SceneTransform_ApplyRoll
+void SceneTransform_ApplyRoll(s32 angle);
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                    s32 speedLimit, s32 velocityY, s32 percent);
 
@@ -350,7 +350,7 @@ void Func_0816fca8(struct BattleEffectArgument *effect, s32 mode) {
         model->shade = shade;
         Render_ResetTransformState();
         Func_08015160(ball->x / 2 - 0x400000, ball->y - 0x400000, 0);
-        Func_080150e4(bolt->z);
+        SceneTransform_ApplyRoll(bolt->z);
         bolt->z += bolt->velocityZ;
         if (mode == 0) {
           Func_080151e4(0x40000, 0x10000, 0x10000);

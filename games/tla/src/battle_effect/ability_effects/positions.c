@@ -386,7 +386,7 @@ void BattleBackground_SetPaletteLevelFar(s32 background, s32 level);
 void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
 // The roll step of the scene transform.
-void Func_080150e4(s32 angle);
+void SceneTransform_ApplyRoll(s32 angle);
 
 void Func_0815e9f4(struct BattleEffectArgument *effect) {
   struct EffectPosition pos;
@@ -518,7 +518,7 @@ void Func_0815e9f4(struct BattleEffectArgument *effect) {
           s32 size = (i & 1) + 5;
 
           Render_ResetTransformState();
-          Func_080150e4(mote->velocityZ);
+          SceneTransform_ApplyRoll(mote->velocityZ);
           SceneTransform_ApplyPitch(mote->velocityX);
           SceneTransform_ApplyYaw(mote->velocityY);
           EffectPosition_ProjectPoint(&mote->x, &point);

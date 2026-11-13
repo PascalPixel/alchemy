@@ -50,9 +50,9 @@ FarCall_RuntimeTable:
 	export SceneTransform_ApplyRotationFar, SceneTransform_ApplyRotation
 	export SceneTransform_ApplyPitchFar, SceneTransform_ApplyPitch
 	export SceneTransform_ApplyYawFar, SceneTransform_ApplyYaw
-	export SceneTransform_ApplyRollFar, Func_080150e4
+	export SceneTransform_ApplyRollFar, SceneTransform_ApplyRoll
 	export SceneTransform_ApplyPositionFar, SceneTransform_ApplyPosition
-	export SceneTransform_ApplyScaleFar, Func_080151ac
+	export SceneTransform_ApplyScaleFar, SceneTransform_ApplyScale
 	export SceneTransform_ApplyRotationTranslationFar, SceneTransform_ApplyRotationTranslation
 	export SceneTransform_ApplyScaledRotationFar, SceneTransform_ApplyScaledRotation
 	export Transform_SetLookAtFar, Transform_SetLookAt
@@ -70,11 +70,11 @@ FarCall_RuntimeTable:
 	export Fade_FromWhiteFar, Fade_FromWhite
 	export Fade_StartFar, Fade_Start
 	export Fade_WaitFar, Fade_Wait
-	export RuntimeDispatch_ReservedNoOpAFar, Func_080132b8
-	export RuntimeDispatch_ReservedNoOpBFar, Func_080132bc
-	export RuntimeDispatch_ReservedNoOpCFar, Func_080132c0
-	export RuntimeDispatch_ReservedNoOpDFar, Func_080132c4
-	export RuntimeDispatch_ReservedNoOpEFar, Func_080132c8
+	export RuntimeDispatch_ReservedNoOpAFar, RuntimeDispatch_ReservedNoOpA
+	export RuntimeDispatch_ReservedNoOpBFar, RuntimeDispatch_ReservedNoOpB
+	export RuntimeDispatch_ReservedNoOpCFar, RuntimeDispatch_ReservedNoOpC
+	export RuntimeDispatch_ReservedNoOpDFar, RuntimeDispatch_ReservedNoOpD
+	export RuntimeDispatch_ReservedNoOpEFar, RuntimeDispatch_ReservedNoOpE
 	export Serial_InitializeFar, Serial_Initialize
 	export Serial_PollAndTransferFar, Serial_PollAndTransfer
 	export QueueIoWriteDelay1Far, QueueIoWriteDelay1

@@ -989,7 +989,7 @@ void BattleParty_ApplyHealthDelta(s32 amount, s32 scaled);
 s32 BattleParty_ApplyStatusDamage(void);
 void *Func_080cb8e8(void);
 
-s32 Func_080cc54c(void);
+s32 Actor_GetTriggerTileAheadOfCurrent(void);
 u32 Stream_ReadU16(u8 **cursor);
 s16 Stream_ReadS16(u8 **cursor);
 void BattleMap_ApplySceneEntranceView(void);
@@ -1051,7 +1051,7 @@ void Map_UpdateCurrentTileBlock(void);
 
 extern const u16 gData_0802f054[8];
 
-void Func_080230e0(s32 mode);
+void ObjectSystem_Initialize(s32 mode);
 
 s32 ResourceSlot_Load(u32 slot, u32 *buffer, s32 number, u32 variant);
 
@@ -1222,7 +1222,7 @@ void Tilemap_ConvertBuffer(void);
 
 void Func_0802ad84(void);
 
-void Func_0802c240(void);
+void WorldMap_UpdateView(void);
 void Func_0802c088(void);
 
 void Func_0802af9c(s32 x, s32 y);

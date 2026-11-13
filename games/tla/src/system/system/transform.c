@@ -149,7 +149,7 @@ void Func_080150ac(s32 ang) {
 }
 
 /// Applies a rotation about the Z axis.
-void Func_080150e4(s32 ang) {
+void SceneTransform_ApplyRoll(s32 ang) {
   s32 m[12];
   s32 sin, cos;
 
@@ -196,7 +196,7 @@ void SceneTransform_SetPosition(const s32 *pos) {
 }
 
 /// Applies a scale by scale's X, Y and Z factors in Q16.
-void Func_080151ac(const s32 *scale) {
+void SceneTransform_ApplyScale(const s32 *scale) {
   s32 m[12];
 
   CAMELOT_ASM("the fixed-register identity store above")

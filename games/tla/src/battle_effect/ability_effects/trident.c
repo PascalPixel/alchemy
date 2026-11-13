@@ -33,7 +33,7 @@ void BattleEffect_SpawnObjects(s32 entryCount, s32 kind,
                                u32 variant); // SpawnObjects
 void BattleEffect_SelectLivingTargets(
     struct FxPartyList *party); // SelectLivingTargets
-void Func_080150e4(s32 angle);  // SceneTransform_ApplyRoll
+void SceneTransform_ApplyRoll(s32 angle);
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                    s32 speedLimit, s32 velocityY, s32 percent);
 
@@ -398,7 +398,7 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
           texture.pixels = work->sheet + (x << 12) + 0xc56;
           Render_ResetTransformState();
           Func_08015160((centerX - 64) << 16, 0x200000, 0);
-          Func_080150e4(spinner->z);
+          SceneTransform_ApplyRoll(spinner->z);
           if (i & 1) {
             SceneTransform_ApplyYaw(0x8000);
           }
@@ -752,10 +752,10 @@ void Func_0818d5a8(struct BattleEffectArgument *effect, s32 mode) {
           Func_08015160((pos.x - 60) << 16, (pos.y - 80) << 16, 0);
           Func_080151e4(0x8000, 0x10000, 0x8000);
           if (effect->side == 0) {
-            Func_080150e4(-0x3388);
+            SceneTransform_ApplyRoll(-0x3388);
           } else {
             SceneTransform_ApplyYaw(0x8000);
-            Func_080150e4(-0x3388);
+            SceneTransform_ApplyRoll(-0x3388);
           }
           Func_0801521c(0x286a0);
           Render_TransformVertices(Data_081991e0, projected, 4);

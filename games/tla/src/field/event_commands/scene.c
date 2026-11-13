@@ -206,7 +206,7 @@ void FieldPsynergy_SetupActorPair(s32 userId, s32 targetId) {
   }
 }
 
-void Func_080dc6d8(void) {
+void EventObject_Initialize(void) {
   struct FinishWork *work = Ram_HeapSlots->effectWork;
   u8 *event = Ram_HeapSlots->eventWork;
   struct Actor *object = work->object;

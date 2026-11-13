@@ -360,7 +360,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
               Func_08015160(cx + x + o, cy - (((i & 3) + 2) << 16) + o, 0);
             }
             Func_080151e4(0x8000, 0x10000, 0x10000);
-            Func_080150e4(work->particles[i].x);
+            SceneTransform_ApplyRoll(work->particles[i].x);
             Func_080151e4(Trig_Sin(work->particles[i].variant * 682) + 0x4000,
                           0x20000, 0x10000);
             Render_TransformVertices(gData_081991b0, verts, 4);
@@ -386,7 +386,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
           Func_08015160(cx + -0x3e0000, cy + -0x420000, 0);
           Func_080151e4(s >> 1, s, s);
           SceneTransform_ApplyPitch(0x2000);
-          Func_080150e4(0x2800);
+          SceneTransform_ApplyRoll(0x2800);
           SceneTransform_ApplyYaw(-frame << 10);
           Render_TransformVertices(gData_08199210, verts, 4);
           Render_DrawModelList(model);
@@ -395,7 +395,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
           Render_ResetTransformState();
           Func_08015160(cx + -0x3e0000, cy + -0x420000, 0);
           Func_080151e4(0x8000, 0x10000, 0x10000);
-          Func_080150e4(0x2800);
+          SceneTransform_ApplyRoll(0x2800);
           if (frame > 203) {
             Func_080151e4(0x80000 - ((frame - 204) << 15), 0x20000, 0x10000);
           } else {
@@ -540,7 +540,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
         Render_ResetTransformState();
         Func_08015160(q->x + -0x3f0000, q->y + -0x400000, 0);
         Func_080151e4(0x8000, 0x10000, 0x8000);
-        Func_080150e4(0x9800);
+        SceneTransform_ApplyRoll(0x9800);
         Func_080151e4(0xdc500, 0x29c40, 0x8000);
         Render_TransformVertices(Data_081991c0, verts, 4);
         Render_DrawModelList(model);
@@ -673,7 +673,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
         Render_ResetTransformState();
         Func_08015160(-0x20000, 0x100000, 0);
         Func_080151e4(0x8000, 0x10000, 0x8000);
-        Func_080150e4(0x9800);
+        SceneTransform_ApplyRoll(0x9800);
         Func_080151e4(s, 0x20000, 0x8000);
         Render_TransformVertices(Data_081991c0, gMapCellBuffer, 4);
         Render_DrawModelList(model);
@@ -1033,7 +1033,7 @@ void Func_08142944(struct BattleEffectArgument *effect, s32 kind) {
                           cy - ((column + 2) << 16) - 0x400000, 0);
           }
           Func_080151e4(0x8000, 0x10000, 0x10000);
-          Func_080150e4(ring->x);
+          SceneTransform_ApplyRoll(ring->x);
           Func_080151e4(Trig_Sin(ring->variant * 682) + 0x10000, 0x20000,
                         0x10000);
           Render_TransformVertices(gData_081991b0, corners, 4);

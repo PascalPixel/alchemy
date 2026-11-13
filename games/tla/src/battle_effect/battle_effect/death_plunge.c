@@ -31,12 +31,16 @@
 // The battle background's id, read through a union whose s32 member gives
 // the read view->secondMode's alias set and not the scroll's, so those two
 // stores stay in source order.
-/* VIEW(f13eb70): tag struct BattleBackgroundId as struct BattleBackgroundId__f13eb70; battle_effect.c has another definition; tried with the definition the rest of the object has, Func_0813eb70 moves: 1 of 1093 instructions in tla-ja. */
+/* VIEW(f13eb70): tag struct BattleBackgroundId as struct
+ * BattleBackgroundId__f13eb70; battle_effect.c has another definition; tried
+ * with the definition the rest of the object has, Func_0813eb70 moves: 1 of
+ * 1093 instructions in tla-ja. */
 union BattleBackgroundId__f13eb70 {
   u16 id;
   s32 word;
 };
-#define BACKGROUND(battle) (((union BattleBackgroundId__f13eb70 *)(battle)->unk670)->id)
+#define BACKGROUND(battle)                                                     \
+  (((union BattleBackgroundId__f13eb70 *)(battle)->unk670)->id)
 
 // Puts colour 2 at (x, y) in the 256x120 8bpp tile sheet (32 tiles wide) in
 // the map cell buffer.
@@ -589,7 +593,7 @@ void Func_0813f8d4(void) {
       s32 fade;
 
       Render_ResetTransformState();
-      Func_080150e4(streak->roll);
+      SceneTransform_ApplyRoll(streak->roll);
       SceneTransform_ApplyPitch(streak->pitch);
       SceneTransform_ApplyYaw(streak->yaw);
       point.x = streak->head;
@@ -739,19 +743,32 @@ struct Model;
 
 void Render_DrawModelList(struct Model *model);
 
-/* VIEW(f13eb70): routine GetBattleObjectSlotFar as void **GetBattleObjectSlotFar(s32 objectId); motobj.h has struct BattleObj *GetBattleObjectSlotFar(s32 objectId); tried as the 11 declarations' void **GetBattleObjectSlotFar(s32 objectId), it does not compile in tla-ja: games/tla/src/battle_effect/battle_effect.c:3126: conflicting types for `GetBattleObjectSlotFar'. */
-extern void **GetBattleObjectSlotFar__f13eb70(s32 objectId) __asm__("GetBattleObjectSlotFar");
+/* VIEW(f13eb70): routine GetBattleObjectSlotFar as void
+ * **GetBattleObjectSlotFar(s32 objectId); motobj.h has struct BattleObj
+ * *GetBattleObjectSlotFar(s32 objectId); tried as the 11 declarations' void
+ * **GetBattleObjectSlotFar(s32 objectId), it does not compile in tla-ja:
+ * games/tla/src/battle_effect/battle_effect.c:3126: conflicting types for
+ * `GetBattleObjectSlotFar'. */
+extern void **
+GetBattleObjectSlotFar__f13eb70(s32 objectId) __asm__("GetBattleObjectSlotFar");
 
 #define HI(v) (((s16 *)&(v))[1])
 
-/* VIEW(battle_effect): tag struct ResourceTableEntry as struct ResourceTableEntry__battle_effect; module/tla.h has another definition. */
+/* VIEW(battle_effect): tag struct ResourceTableEntry as struct
+ * ResourceTableEntry__battle_effect; module/tla.h has another definition. */
 struct ResourceTableEntry__battle_effect {
   u16 unk0;
   u16 tile;
 };
 
-/* VIEW(f13eb70): variable gResourceTableEntries as extern struct ResourceTableEntry gResourceTableEntries[]; vram_tab.h has extern struct VramBlockCacheEntry gResourceTableEntries[]; tried as the 12 declarations' extern struct ResourceTableEntry gResourceTableEntries[], it does not compile in tla-ja: games/tla/include/graphics/vram_tab.h:26: conflicting types for `gResourceTableEntries'. */
-extern struct ResourceTableEntry__battle_effect gResourceTableEntries__f13eb70[] __asm__("gResourceTableEntries");
+/* VIEW(f13eb70): variable gResourceTableEntries as extern struct
+ * ResourceTableEntry gResourceTableEntries[]; vram_tab.h has extern struct
+ * VramBlockCacheEntry gResourceTableEntries[]; tried as the 12 declarations'
+ * extern struct ResourceTableEntry gResourceTableEntries[], it does not compile
+ * in tla-ja: games/tla/include/graphics/vram_tab.h:26: conflicting types for
+ * `gResourceTableEntries'. */
+extern struct ResourceTableEntry__battle_effect
+    gResourceTableEntries__f13eb70[] __asm__("gResourceTableEntries");
 extern char ResourceId_Data0B4, ResourceId_Data0C2, ResourceId_Data0C9;
 extern char ResourceId_Data0CA, ResourceId_Data104, ResourceId_Data134;
 extern char ResourceId_CornerRuneASheet, ResourceId_ForestCanopyTiles;
@@ -1097,7 +1114,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
             Render_ResetTransformState();
             Func_08015160(-0x40000, -0x2c0000, 0);
             Func_080151e4(sc, sc / 3, sc >> 1);
-            Func_080150e4(t);
+            SceneTransform_ApplyRoll(t);
             if (shade > -64) {
               Render_TransformVertices(Data_081991e0, verts, 4);
               Render_DrawModelList(model);
@@ -1115,7 +1132,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
               Render_ResetTransformState();
               Func_08015160(-0x40000, -0x2c0000, 0);
               Func_080151e4(sc, sc >> 1, sc >> 1);
-              Func_080150e4(t);
+              SceneTransform_ApplyRoll(t);
               Render_TransformVertices(Data_081991e0, verts, 4);
               Render_DrawModelList(model);
             }
@@ -1141,7 +1158,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
               Render_ResetTransformState();
               Func_08015160(-0x40000, -0x2c0000, 0);
               Func_080151e4(0x8000, 0x10000, 0x8000);
-              Func_080150e4(p->z);
+              SceneTransform_ApplyRoll(p->z);
               Func_080151e4(30384, sy, 0x8000);
               Render_TransformVertices(Data_081991c0, verts, 4);
               Render_DrawModelList(model);
@@ -1177,7 +1194,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
             Render_ResetTransformState();
             Func_08015160(q->x + -0x3f0000, q->y + -0x400000, 0);
             Func_080151e4(0x8000, 0x10000, 0x8000);
-            Func_080150e4(0xa000);
+            SceneTransform_ApplyRoll(0xa000);
             Func_080151e4(r * 9400, 0x20000, 0x8000);
             Render_TransformVertices(Data_081976e0, verts, 4);
             Render_DrawModelList(model);
@@ -1430,7 +1447,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
           Func_08015160(px, py, 0);
           Func_080151e4(0x8000, 0x10000, 0x8000);
           angle = Data_08197734[i];
-          Func_080150e4(angle);
+          SceneTransform_ApplyRoll(angle);
           scale = size * 9400;
           Func_080151e4(scale, 0x20000, 0x8000);
           Render_TransformVertices(Data_081976e0, verts, 4);
@@ -1501,9 +1518,9 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
             Func_08015160(x, -0x100000, 0);
             Func_080151e4(45536, 0x10000, 0x8000);
             if (i == 0) {
-              Func_080150e4(-0xbe8);
+              SceneTransform_ApplyRoll(-0xbe8);
             } else {
-              Func_080150e4(-0x400);
+              SceneTransform_ApplyRoll(-0x400);
             }
             Render_TransformVertices(cells, verts, 66);
             Render_DrawModelList(model);
@@ -1740,7 +1757,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
           Render_ResetTransformState();
           Func_08015160(q->x + -0x3f0000, q->y + -0x400000, 0);
           Func_080151e4(0x8000, 0x10000, 0x8000);
-          Func_080150e4(0xa000);
+          SceneTransform_ApplyRoll(0xa000);
           Func_080151e4(r * 9400, 0x20000, 0x8000);
           Render_TransformVertices(Data_081976e0, verts, 4);
           Render_DrawModelList(model);

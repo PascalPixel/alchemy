@@ -187,7 +187,7 @@ s32 MapGrid_LoadMap(s32 index) {
 
 #define ABS(v) ((v) < 0 ? -(v) : (v))
 
-void Func_0802aa74(void) {
+void Map_CenterOnFollowedPoint(void) {
   struct MapWork *work = Ram_HeapSlots->mapWork;
   s32 x = 0;
   s32 height = 0;

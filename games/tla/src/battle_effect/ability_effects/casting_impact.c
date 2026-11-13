@@ -638,7 +638,7 @@ void Func_0815f16c(struct BattleEffectArgument *action, s32 kind) {
           if (frame >= i / 4) {
             n = 5;
             Render_ResetTransformState();
-            Func_080150e4(p->vz);
+            SceneTransform_ApplyRoll(p->vz);
             SceneTransform_ApplyPitch(p->vx);
             SceneTransform_ApplyYaw(p->vy);
             EffectPosition_ProjectPoint(p, pos);
@@ -1958,7 +1958,7 @@ void Func_0815f16c(struct BattleEffectArgument *action, s32 kind) {
               Render_ResetTransformState();
               Func_08015160((target[0] / 2 - 64) << 16, (target[1] - 64) << 16,
                             0);
-              Func_080150e4(p->z);
+              SceneTransform_ApplyRoll(p->z);
               p->z += p->vz;
               Func_080151e4(0x40000, 0x10000, 0x10000);
               Render_TransformVertices(gData_081991b0, matrix, 4);
@@ -2056,7 +2056,7 @@ void Func_0815f16c(struct BattleEffectArgument *action, s32 kind) {
                 Func_08015160((target[0] / 2 - 64) << 16,
                               (target[1] - 64) << 16, 0);
                 Func_080151e4(0x8000, 0x10000, 0x8000);
-                Func_080150e4((i << 14) + 0x2000);
+                SceneTransform_ApplyRoll((i << 14) + 0x2000);
                 SceneTransform_ApplyPitch(-0x1000);
                 Func_0801521c(angle >> 1);
                 Render_TransformVertices(gData_08199210, matrix, 4);
@@ -2099,7 +2099,7 @@ void Func_0815f16c(struct BattleEffectArgument *action, s32 kind) {
                 Func_08015160((target[0] / 2 - 64) << 16,
                               (target[1] - 64) << 16, 0);
                 Func_080151e4(0x8000, 0x10000, 0x8000);
-                Func_080150e4((i << 14) + 0x2000);
+                SceneTransform_ApplyRoll((i << 14) + 0x2000);
                 SceneTransform_ApplyPitch(-0x1000);
                 Func_0801521c(t * 3 << 12);
                 Render_TransformVertices(gData_08199210, matrix, 4);

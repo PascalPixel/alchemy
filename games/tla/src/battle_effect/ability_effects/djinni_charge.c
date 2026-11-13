@@ -36,7 +36,7 @@ void BattleEffect_SpawnObjects(s32 entryCount, s32 kind,
                                u32 variant); // SpawnObjects
 void BattleEffect_SelectLivingTargets(
     struct FxPartyList *party); // SelectLivingTargets
-void Func_080150e4(s32 angle);  // SceneTransform_ApplyRoll
+void SceneTransform_ApplyRoll(s32 angle);
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                    s32 speedLimit, s32 velocityY, s32 percent);
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
@@ -432,9 +432,9 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectArgument *effect,
         SceneTransform_ApplyPosition(focus);
         Func_08015160(0, 0x100000, 0);
         if (effect->side == 0) {
-          Func_080150e4(20576);
+          SceneTransform_ApplyRoll(20576);
         } else {
-          Func_080150e4(44960);
+          SceneTransform_ApplyRoll(44960);
         }
         scale = 0xa000;
         if (frame > 31) {

@@ -184,7 +184,7 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
       }
       SceneTransform_ApplyPosition(position);
       SceneTransform_ApplyPitch(-0x1000);
-      Func_080150e4(0x8000);
+      SceneTransform_ApplyRoll(0x8000);
       SceneTransform_ApplyPitch(0x8000);
       SceneTransform_ApplyYaw(sinkFrame << 12);
       if (frame > 150) {
@@ -194,12 +194,12 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
       } else {
         SET_VECTOR(scale, 0x10000 - sinkFrame * 3 * 0x400, scale[0], scale[0]);
       }
-      Func_080151ac(scale);
+      SceneTransform_ApplyScale(scale);
     } else {
       SET_VECTOR(position, 0, 0, 0x1000000);
       SceneTransform_ApplyPosition(position);
       SceneTransform_ApplyPitch(-0x1000);
-      Func_080150e4(frame << 8);
+      SceneTransform_ApplyRoll(frame << 8);
       SceneTransform_ApplyPitch(frame << 8);
     }
 

@@ -380,7 +380,7 @@ s32 FieldSequence_Run(void) {
         if (talk) {
           work->talk = value | 0x4000;
           work->menu = 0;
-        } else if ((talk = Func_080cc54c()) != 0) {
+        } else if ((talk = Actor_GetTriggerTileAheadOfCurrent()) != 0) {
           work->searchCell = talk;
           work->menu = 0;
         } else {
@@ -513,7 +513,7 @@ struct Object__field_sequence {
   u8 kind;
 };
 
-s32 Func_080cc54c(void) {
+s32 Actor_GetTriggerTileAheadOfCurrent(void) {
   u8 *workBytes;
   u8 *mapBytes;
   struct Object__field_sequence *leader;

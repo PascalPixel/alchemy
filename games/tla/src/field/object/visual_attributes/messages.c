@@ -219,7 +219,7 @@ void Func_080d3fb0(s32 object, s32 message) {
     }
   }
 
-  Func_080d4330(0x80000000);
+  Message_SetVoiceFromActor(0x80000000);
   wait(1);
 }
 
@@ -387,7 +387,7 @@ void Battle_ShowPairedUnitWorkAndWait(s32 first, s32 firstX, s32 firstY,
 
 extern const u8 gData_080f330c[];
 
-void Func_080d4330(s32 key) {
+void Message_SetVoiceFromActor(s32 key) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
   u8 value;
   s32 id;

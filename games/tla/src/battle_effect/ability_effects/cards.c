@@ -32,7 +32,9 @@ enum {
 
 // A texture for the model kernels: its size as powers of two, then its
 // pixels.
-/* VIEW(f18ad40): tag struct ModelTexture as struct ModelTexture__f18ad40; render_model.h has another definition; tried with the definition the rest of the object has, Func_0818ad40 moves: 1 of 1232 instructions in tla-ja. */
+/* VIEW(f18ad40): tag struct ModelTexture as struct ModelTexture__f18ad40;
+ * render_model.h has another definition; tried with the definition the rest of
+ * the object has, Func_0818ad40 moves: 1 of 1232 instructions in tla-ja. */
 struct ModelTexture__f18ad40 {
   u32 logWidth : 8;
   u32 logHeight : 8;
@@ -42,7 +44,11 @@ struct ModelTexture__f18ad40 {
 
 // One entry of a model list, as Render_AllocateModelList allocates them and
 // Render_DrawModelList draws them.
-/* VIEW(f18ad40): tag struct Model as struct Model__f18ad40; ability_effects.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/battle_effect/ability_effects.c:39213: structure has no member named `vertices'. */
+/* VIEW(f18ad40): tag struct Model as struct Model__f18ad40; ability_effects.c
+ * has another definition; tried with the definition the rest of the object has,
+ * it does not compile in tla-ja:
+ * games/tla/src/battle_effect/ability_effects.c:39213: structure has no member
+ * named `vertices'. */
 struct Model__f18ad40 {
   s32 kind;
   s32 next;
@@ -96,11 +102,14 @@ void Func_080151e4(s32 x, s32 y, s32 z);
 void Func_08015160(s32 x, s32 y, s32 z);
 void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
-void Func_080150e4(s32 angle);
+void SceneTransform_ApplyRoll(s32 angle);
 void Func_0801521c(s32 scale);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
-/* VIEW(f18ad40): routine Render_DrawModelList as void Render_DrawModelList(struct Model__f18ad40 *model); f188714 has void Render_DrawModelList(struct Model__f188714 *model). */
-extern void Render_DrawModelList__f18ad40(struct Model__f18ad40 *model) __asm__("Render_DrawModelList");
+/* VIEW(f18ad40): routine Render_DrawModelList as void
+ * Render_DrawModelList(struct Model__f18ad40 *model); f188714 has void
+ * Render_DrawModelList(struct Model__f188714 *model). */
+extern void Render_DrawModelList__f18ad40(struct Model__f18ad40 *model) __asm__(
+    "Render_DrawModelList");
 void Heap_Release(void *block);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void BattleEffect_CountDownBattlerTints(void);
@@ -340,15 +349,15 @@ void Func_0818ad40(struct BattleEffectArgument *effect, s32 mode) {
       Func_08015160(overflow << 16, (card.y << 16) - (64 << 16), 0);
       if (frame <= 47) {
         if (effect->side == 0)
-          Func_080150e4((frame << 10) - 0xd000);
+          SceneTransform_ApplyRoll((frame << 10) - 0xd000);
         else
-          Func_080150e4((52 - frame) << 10);
+          SceneTransform_ApplyRoll((52 - frame) << 10);
         SceneTransform_ApplyPitch((52 - frame) << 10);
       } else {
         if (effect->side == 0)
-          Func_080150e4(-0x1000);
+          SceneTransform_ApplyRoll(-0x1000);
         else
-          Func_080150e4(0x1000);
+          SceneTransform_ApplyRoll(0x1000);
         SceneTransform_ApplyPitch(0x1000);
       }
       SceneTransform_ApplyYaw(0x1770);

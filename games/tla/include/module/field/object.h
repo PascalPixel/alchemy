@@ -158,7 +158,7 @@ s32 Func_080d8e08(s32 index, s32 x1, s32 y1, s32 z1, s32 x2, s32 y2, s32 z2);
 s32 Func_080d8ff8(s32 index, s32 x, s32 y, s32 z, s32 to_x, s32 to_y, s32 to_z,
                   s32 mode);
 
-void Func_080d4330(s32 key);
+void Message_SetVoiceFromActor(s32 key);
 void Event_ShowCounterAtPosition(s32 unused0, s32 unused1, s32 x, s32 y);
 
 void Func_080d6c60(void);

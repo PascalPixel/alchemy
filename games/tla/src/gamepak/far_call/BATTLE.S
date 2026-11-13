@@ -10,8 +10,8 @@ Resource_FarCall009:
 	export BattleBackground_FadeAlphaInFar, BattleBackground_FadeAlphaIn
 	export BattleCamera_SetViewFar, BattleCamera_SetView
 	export BattleCamera_SetViewAtPairMidpointFar, BattleCamera_SetViewAtPairMidpoint
-	export BattleStaging_ConfigurePaletteFadeFar, Func_0812628c
-	export BattleBackground_LoadFar, Func_081263fc
+	export BattleStaging_ConfigurePaletteFadeFar, BattleStaging_ConfigurePaletteFade
+	export BattleBackground_LoadFar, BattleBackground_Load
 	export BattleBackground_SetPaletteLevelFar, BattleBackground_SetPaletteLevel
 	export BattleClass_GetEffectHeightFar, BattleClass_GetEffectHeight
 	export Summon_IsEntrySecondaryFlaggedFar, Summon_IsEntrySecondaryFlagged
@@ -23,7 +23,7 @@ Resource_FarCall009:
 	export BattleMotion_ApplyKnockbackFar, BattleMotion_ApplyKnockback
 	export BattleParty_ListActorIdsFar, BattleParty_ListActorIds
 	export GetBattleObjectSlotFar, BattleObject_Get
-	export Battle_RunEncounterFar, Func_081197f0
+	export Battle_RunEncounterFar, Battle_RunEncounter
 	export BattleMotion_ProjectPositionFar, BattleMotion_ProjectPosition
 	export BattleMotion_ProjectScaledPositionFar, BattleMotion_ProjectScaledPosition
 	export BattleMotion_ProjectConditionalPositionFar, BattleMotion_ProjectConditionalPosition

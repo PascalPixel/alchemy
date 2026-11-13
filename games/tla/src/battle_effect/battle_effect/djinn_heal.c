@@ -204,7 +204,7 @@ void Func_0814b9e8(struct BattleEffectArgument *effect, s32 mode) {
           Func_08015160(across, quad->y, deep);
           Func_080151e4(scale, scale, scale);
           SceneTransform_ApplyPitch(quad->velocityX);
-          Func_080150e4(quad->velocityZ);
+          SceneTransform_ApplyRoll(quad->velocityZ);
           quad->velocityX += 0x400;
           quad->velocityZ += 0x400;
           Render_TransformVertices(gData_08199210, vertices, 4);

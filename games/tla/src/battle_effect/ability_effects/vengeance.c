@@ -36,7 +36,7 @@ void BattleEffect_SpawnObjects(s32 entryCount, s32 kind,
                                u32 variant); // SpawnObjects
 void BattleEffect_SelectLivingTargets(
     struct FxPartyList *party); // SelectLivingTargets
-void Func_080150e4(s32 angle);  // SceneTransform_ApplyRoll
+void SceneTransform_ApplyRoll(s32 angle);
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                    s32 speedLimit, s32 velocityY, s32 percent);
 
@@ -578,15 +578,15 @@ void BattleEffect_RunLifeShear(struct BattleEffectArgument *effect) {
         if (effect->side == 1) {
           SceneTransform_ApplyYaw(0x8000);
         }
-        Func_080150e4(work->particles[0].z);
+        SceneTransform_ApplyRoll(work->particles[0].z);
         Func_0801521c(scale);
         texture.logHeight = 5;
         texture.pixels = Data_0201476b;
         texture.logWidth = width;
         model->mesh = Data_0819962c;
         Transform_Push();
-        Func_080150e4((Trig_Sin(work->particles[0].velocityZ << 11) >> 3) -
-                      0x2000);
+        SceneTransform_ApplyRoll(
+            (Trig_Sin(work->particles[0].velocityZ << 11) >> 3) - 0x2000);
         Render_TransformVertices(Data_08199650, vertices, 4);
         Render_DrawModelList(model);
         Transform_Pop();
@@ -594,8 +594,8 @@ void BattleEffect_RunLifeShear(struct BattleEffectArgument *effect) {
         texture.logWidth = width;
         texture.logHeight = 6;
         texture.pixels = Data_0201276b;
-        Func_080150e4(0x2000 -
-                      (Trig_Sin(work->particles[0].velocityZ << 11) >> 3));
+        SceneTransform_ApplyRoll(
+            0x2000 - (Trig_Sin(work->particles[0].velocityZ << 11) >> 3));
         Func_080151e4(0x10000, 0x15f90, 0x10000);
         Render_TransformVertices(Data_08199650, vertices, 4);
         Render_DrawModelList(model);
@@ -621,7 +621,7 @@ void BattleEffect_RunLifeShear(struct BattleEffectArgument *effect) {
         texture.pixels = Data_0201576b;
         for (i = 0; i != 4; i++) {
           Transform_Push();
-          Func_080150e4(i * 0x4000 + 0x5650);
+          SceneTransform_ApplyRoll(i * 0x4000 + 0x5650);
           Func_080151e4(0x4000, ((i & 1) << 15) + 0xc000, 0x8000);
           Func_0801521c(0x10000);
           Render_TransformVertices(gData_081991f0, vertices, 4);
@@ -1090,11 +1090,11 @@ void Func_081823a8(struct BattleEffectArgument *effect, s32 mode) {
             SceneTransform_ApplyPitch(-frame * (i + 8) * 32);
             break;
           case 2:
-            Func_080150e4(-frame * (i + 8) * 32);
+            SceneTransform_ApplyRoll(-frame * (i + 8) * 32);
             break;
           case 3:
             SceneTransform_ApplyPitch(-frame * (i + 8) * 32);
-            Func_080150e4(-frame * (i + 8) * 32);
+            SceneTransform_ApplyRoll(-frame * (i + 8) * 32);
             break;
           }
           EffectPosition_ProjectPoint(&star->x, &screen);
@@ -2010,7 +2010,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
         Func_080151e4(0x8000, 0x10000, 0x8000);
         Func_0801521c(s);
         if (frame <= 273) {
-          Func_080150e4(spin - 0x12400);
+          SceneTransform_ApplyRoll(spin - 0x12400);
         }
         SceneTransform_ApplyPitch(pitch);
         SceneTransform_ApplyYaw(spin);
@@ -2099,7 +2099,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
             Render_ResetTransformState();
             Func_08015160(-0x40000, -0x2c0000, 0);
             Func_080151e4(s, s << 1, s);
-            Func_080150e4((i << 14) + 0x2000);
+            SceneTransform_ApplyRoll((i << 14) + 0x2000);
             SceneTransform_ApplyPitch(-0x1000);
             SceneTransform_ApplyYaw(frame << 9);
             Render_TransformVertices(gData_08199210, verts, 64);
@@ -2169,7 +2169,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
               }
               Func_08015160(0, v << 16, 0);
             }
-            Func_080150e4(Data_0819975c[i] - (frame << 8));
+            SceneTransform_ApplyRoll(Data_0819975c[i] - (frame << 8));
             sh = -16;
           } else {
             s32 x = -48;
@@ -2181,9 +2181,9 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
               x = -16;
             }
             Func_08015160(x << 16, 0, 0);
-            Func_080150e4(Data_0819975c[i] + (frame << 8));
+            SceneTransform_ApplyRoll(Data_0819975c[i] + (frame << 8));
             if (frame > 209) {
-              Func_080150e4((frame << 8) + -0xd200);
+              SceneTransform_ApplyRoll((frame << 8) + -0xd200);
             }
             sh = ((frame - Data_08199756[i]) << 2) - 64;
             if (sh > -16) {
@@ -2193,9 +2193,9 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
           if (frame > 273) {
             sh = 1080 - (frame << 2);
             if (i == 0) {
-              Func_080150e4((274 - frame) << 10);
+              SceneTransform_ApplyRoll((274 - frame) << 10);
             } else {
-              Func_080150e4((frame << 9) + -0x22400);
+              SceneTransform_ApplyRoll((frame << 9) + -0x22400);
             }
           }
         } else {
@@ -2328,7 +2328,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
           Func_08015160(0, (112 - lift) << 16, 0);
           Func_080151e4(0x8000, 0x10000, 0x8000);
           Func_0801521c(s);
-          Func_080150e4((i << 14) + 0x2000);
+          SceneTransform_ApplyRoll((i << 14) + 0x2000);
           SceneTransform_ApplyPitch(-0x1000);
           SceneTransform_ApplyYaw(frame << 10);
           Render_TransformVertices(gData_08199210, verts2, 4);

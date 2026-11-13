@@ -156,7 +156,7 @@ s32 Func_080ce61c(u32 code) {
     effect[35] = 0;
   }
   FieldPsynergy_SetupActorPair(Party_GetLeaderActor(), target);
-  Func_080dc6d8();
+  EventObject_Initialize();
   Field_RunPsynergyEvent(before, userId, target);
   if (GameFlag_Test(320)) {
     if (GameFlag_Test(321))

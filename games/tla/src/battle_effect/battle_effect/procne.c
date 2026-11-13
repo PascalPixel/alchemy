@@ -482,7 +482,7 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
               mark->y += 2;
 
               if (frame < threshold + 8) {
-                Func_080150e4(-2048);
+                SceneTransform_ApplyRoll(-2048);
                 SceneTransform_ApplyYaw(-4096);
 
                 slot = 0;

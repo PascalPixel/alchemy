@@ -304,7 +304,7 @@ s32 Func_0811d9cc(struct BattleActionRecord *request, s32 delay) {
   Func_0811d9a4();
   request->unitId = 255;
 finish:
-  Func_0812628c(
+  BattleStaging_ConfigurePaletteFade(
       2, ((struct DispatchBattleWork *)Ram_HeapSlots->battleWork)->background,
       0);
   Sound_PlayFar(390);

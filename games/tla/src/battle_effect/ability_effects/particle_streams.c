@@ -67,8 +67,8 @@ struct FxPartyList;
 
 extern char ResourceId_WaterSpraySheet;
 extern char ResourceId_FirePillarSheetA;
-extern char ResourceId_Data134;    // ☀️ ParticleSpritesA
-extern u8 gData_0819896a[];        // the pillars' feet, x and y
+extern char ResourceId_Data134; // ☀️ ParticleSpritesA
+extern u8 gData_0819896a[];     // the pillars' feet, x and y
 // ☀️ gBattleEffect_MoteCells: the Data134 sheet's spark cells, by size - 1
 // (byte offsets).
 extern u16 gData_08197410[];
@@ -693,11 +693,11 @@ DEFINE_EFFECT_KIND(BattleEffect_RunOuterSpace, BattleEffect_RunParticleStreams,
 
 // Twin: ☀️ BattleEffect_RunParticleStreams (games/tbs/src/effect/effect.c),
 // ported: the heap blocks read from Ram_HeapSlots (canvas first), the effect
-// kept as the argument, BattleEffect_WipeCanvas for the canvas wipe, the fills through
-// IwramFillWords where ☀️ uses DMA, mode 1's two objects resource 638 + i *
-// 0x2001 (☀️ 483), mode 0's spawn 650 (☀️ 381), the palette lines at 0x7640 in
-// the work (☀️ 0x1f80), the blitter modes counted down from 3, and the callback
-// orders 0xc80, 0xcfe and 0xcff (☀️ 0x480, 0x4fe, 0x4ff).
+// kept as the argument, BattleEffect_WipeCanvas for the canvas wipe, the fills
+// through IwramFillWords where ☀️ uses DMA, mode 1's two objects resource 638 +
+// i * 0x2001 (☀️ 483), mode 0's spawn 650 (☀️ 381), the palette lines at 0x7640
+// in the work (☀️ 0x1f80), the blitter modes counted down from 3, and the
+// callback orders 0xc80, 0xcfe and 0xcff (☀️ 0x480, 0x4fe, 0x4ff).
 
 // The map cell buffer: first a 256 x 128 picture the streams draw into (BG1's
 // tiles), then, in the second act, the flashes and the embers.
@@ -754,7 +754,7 @@ s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
                   u32 mode); // BattleEffect_BuildBlitter
 
 void SceneTransform_ApplyPosition(const s32 *pos);
-void Func_080150e4(s32 roll); // SceneTransform_ApplyRoll
+void SceneTransform_ApplyRoll(s32 roll); // SceneTransform_ApplyRoll
 void SceneTransform_ApplyYaw(s32 yaw);
 void Func_0814cca8(void); // BattleEffect_SetupBlendedDisplay
 void BattleActor_CommitPlacementFar(void);
@@ -877,8 +877,8 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
   Resource_LoadAndDecompress((s32)&ResourceId_FlameSheetB, work->sheet, 1, 1);
   if (mode == 1)
     Iwram_CopyWords((void *)BG_PLTT,
-               Resource_GetTableEntry((s32)&ResourceId_LightningBoltSheet),
-               128);
+                    Resource_GetTableEntry((s32)&ResourceId_LightningBoltSheet),
+                    128);
 
   // BG1 shows the ground: the map cell buffer filled with colour 1.
   Iwram_FillWords(Ram_MapCellBuffer, 0x8000, 0x01010101);
@@ -1122,7 +1122,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
       point.depth = 0x2000000;
       Render_ResetTransformState();
       SceneTransform_ApplyPosition(&point.x);
-      Func_080150e4(0x800);
+      SceneTransform_ApplyRoll(0x800);
       SceneTransform_ApplyYaw(frame << 8);
       for (i = 0; i != 7; i++) {
         vector[0] = (Data_08198a02[i][0] / 2) << 16;

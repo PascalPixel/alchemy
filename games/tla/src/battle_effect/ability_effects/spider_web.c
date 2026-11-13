@@ -278,7 +278,7 @@ void BattleEffect_SpawnObjects(s32 entryCount, s32 kind,
                                u32 variant); // SpawnObjects
 void BattleEffect_SelectLivingTargets(
     struct FxPartyList *party); // SelectLivingTargets
-void Func_080150e4(s32 angle);  // SceneTransform_ApplyRoll
+void SceneTransform_ApplyRoll(s32 angle);
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                    s32 speedLimit, s32 velocityY, s32 percent);
 
@@ -857,7 +857,7 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
               Func_0801521c(sc);
             } else {
               SceneTransform_ApplyPitch(0x3ff0 - t * 682);
-              Func_080150e4(t * 169 + 0xf028);
+              SceneTransform_ApplyRoll(t * 169 + 0xf028);
             }
             SceneTransform_ApplyYaw(t << 9);
           }

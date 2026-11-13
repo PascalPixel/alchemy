@@ -58,7 +58,7 @@ void BattleEffect_SpawnObjects(s32 entryCount, s32 kind,
                                u32 variant); // SpawnObjects
 void BattleEffect_SelectLivingTargets(
     struct FxPartyList *party); // SelectLivingTargets
-void Func_080150e4(s32 angle);  // SceneTransform_ApplyRoll
+void SceneTransform_ApplyRoll(s32 angle);
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                    s32 speedLimit, s32 velocityY, s32 percent);
 
@@ -676,7 +676,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
           Render_ResetTransformState();
           Func_08015160(Data_08199446[i] << 16, Data_0819944a[i] << 16, 0);
           Func_080151e4(0x8000, 0x10000, 0x8000);
-          Func_080150e4(Data_08199436[i]);
+          SceneTransform_ApplyRoll(Data_08199436[i]);
           SceneTransform_ApplyPitch(Data_0819943e[i]);
           Func_0801521c(scale);
           SceneTransform_ApplyYaw(frame << 11);
@@ -694,7 +694,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
       spin = 512;
       angle = 0;
     }
-    Func_080150e4(angle);
+    SceneTransform_ApplyRoll(angle);
     if (frame == 156) {
       Sound_PlayFar(142);
     }
@@ -779,7 +779,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
       sy = 36 - c;
       dot[0] = c;
       dot[1] = c;
-      Func_080150e4(frame << 10);
+      SceneTransform_ApplyRoll(frame << 10);
       if (frame <= 221) {
         SceneTransform_ApplyPitch(sy << 10);
       }
@@ -1126,7 +1126,7 @@ void BattleEffect_RunSabreDance(struct BattleEffectArgument *effect) {
       Render_ResetTransformState();
       Func_08015160(dagger->x - (64 << 16), dagger->y - (64 << 16), 0);
       Func_0801521c(0x8000);
-      Func_080150e4(dagger->z);
+      SceneTransform_ApplyRoll(dagger->z);
       Render_TransformVertices(gData_08199474, vertices, 4);
       Render_DrawModelList(quad);
       if (frame >= DAGGER_FALL_FRAME)

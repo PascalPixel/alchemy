@@ -105,7 +105,7 @@ Resource_FarCall004:
 	export DebugBrowser_IconsFar, DebugBrowser_Icons
 	export DebugBrowser_PortraitsFar, DebugBrowser_Portraits
 	export Func_08038328, Func_08044a58
-	export Party_ShowJoinedMessageFar, Func_08044b98
+	export Party_ShowJoinedMessageFar, Party_ShowJoinedMessage
 	export Party_ShowPairJoinedMessageFar, Party_ShowPairJoinedMessage
 	export Func_08038340, Func_08044dc8
 	export Func_08038348, Func_0803f9c0

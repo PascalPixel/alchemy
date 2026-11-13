@@ -35,7 +35,7 @@ void BattleEffect_SpawnObjects(s32 entryCount, s32 kind,
                                u32 variant); // SpawnObjects
 void BattleEffect_SelectLivingTargets(
     struct FxPartyList *party); // SelectLivingTargets
-void Func_080150e4(s32 angle);  // SceneTransform_ApplyRoll
+void SceneTransform_ApplyRoll(s32 angle);
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                    s32 speedLimit, s32 velocityY, s32 percent);
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
@@ -217,9 +217,9 @@ void Func_0816e65c(struct BattleEffectArgument *effect, s32 mode) {
           Func_08015160((source.x / 2 - 64) << 16, (source.y - 88) << 16, 0);
           Func_080151e4(0x8000, 0x10000, 0x8000);
           if (effect->side == 0) {
-            Func_080150e4(0x8000 - step->variant);
+            SceneTransform_ApplyRoll(0x8000 - step->variant);
           } else {
-            Func_080150e4(step->variant + 0x8000);
+            SceneTransform_ApplyRoll(step->variant + 0x8000);
           }
           Func_08015160(0, 0xfff00000, 0);
           Func_080151e4(size << 15, size * 13192, size << 13);
@@ -256,7 +256,7 @@ void Func_0816e65c(struct BattleEffectArgument *effect, s32 mode) {
         Func_08015160(work->particles[0].x - 0x400000,
                       work->particles[0].y - 0x400000, 0);
         Func_080151e4(scale >> 1, scale, 0x8000);
-        Func_080150e4(work->particles[0].z);
+        SceneTransform_ApplyRoll(work->particles[0].z);
         if (effect->side == 0) {
           SceneTransform_ApplyYaw(0x8000);
         }
@@ -966,7 +966,7 @@ void BattleEffect_RunRadiantFire(struct BattleEffectArgument *effect) {
           model->shade = brightness;
           Render_ResetTransformState();
           Func_08015160((square->x - 64) << 16, (square->y - 64) << 16, 0);
-          Func_080150e4(square->velocityZ);
+          SceneTransform_ApplyRoll(square->velocityZ);
           SceneTransform_ApplyPitch(square->velocityY);
           Func_0801521c(roll);
           Render_TransformVertices(Data_081991e0, vertices, 4);

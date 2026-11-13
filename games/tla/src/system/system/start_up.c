@@ -80,15 +80,15 @@ s32 System_GetLanguage(void) {
 }
 #endif
 
-void Func_080132b8(void) {}
+void RuntimeDispatch_ReservedNoOpA(void) {}
 
-void Func_080132bc(void) {}
+void RuntimeDispatch_ReservedNoOpB(void) {}
 
-void Func_080132c0(void) {}
+void RuntimeDispatch_ReservedNoOpC(void) {}
 
-void Func_080132c4(void) {}
+void RuntimeDispatch_ReservedNoOpD(void) {}
 
-void Func_080132c8(void) {}
+void RuntimeDispatch_ReservedNoOpE(void) {}
 
 s32 System_ReturnZero(s32 unused0, const u8 *unused1) { return 0; }
 

@@ -12,7 +12,7 @@
 
 void Func_08118430(void) {
   for (;;)
-    Func_081197f0(0);
+    Battle_RunEncounter(0);
 }
 
 void Func_0811843c(void) {
@@ -296,7 +296,7 @@ restart:
       GameFlag_SetBit(354);
       if (startModeSet)
         m->battleRule24b = 5;
-      Func_081197f0(encounter);
+      Battle_RunEncounter(encounter);
       gData_03001110 = 1;
       Window_LoadGraphics();
       DebugText_Clear();
@@ -306,6 +306,6 @@ restart:
     }
   }
   GameFlag_SetBit(354);
-  Func_081197f0(69);
+  Battle_RunEncounter(69);
   goto restart;
 }

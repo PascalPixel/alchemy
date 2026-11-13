@@ -35,7 +35,7 @@ Unit_CalculateFar:
 	export Unit_RecalculateGaugesFar, Unit_RecalculateGauges
 	export Unit_SetHpFar, Unit_SetHp
 	export Unit_SetPpFar, Unit_SetPp
-	export BattleUnit_SetFar, Func_080afbec
+	export BattleUnit_SetFar, BattleUnit_Set
 	export Party_CountMembersFar, Party_CountMembers
 	export Party_AddMemberFar, Party_AddMember
 	export Party_ListMembersFar, Party_ListMembers

@@ -17,7 +17,10 @@
 
 // A texture for the model kernels: its size as powers of two, then its
 // pixels.
-/* VIEW(f188714): tag struct ModelTexture as struct ModelTexture__f188714; render_model.h has another definition; tried with the definition the rest of the object has, BattleEffect_RunDeathPlunge moves: 1 of 632 instructions in tla-ja. */
+/* VIEW(f188714): tag struct ModelTexture as struct ModelTexture__f188714;
+ * render_model.h has another definition; tried with the definition the rest of
+ * the object has, BattleEffect_RunDeathPlunge moves: 1 of 632 instructions in
+ * tla-ja. */
 struct ModelTexture__f188714 {
   u32 logWidth : 8;
   u32 logHeight : 8;
@@ -27,7 +30,11 @@ struct ModelTexture__f188714 {
 
 // One entry of a model list, as Render_AllocateModelList allocates them and
 // Render_DrawModelList draws them.
-/* VIEW(f188714): tag struct Model as struct Model__f188714; ability_effects.c has another definition; tried with the definition the rest of the object has, it does not compile in tla-ja: games/tla/src/battle_effect/ability_effects.c:37378: structure has no member named `vertices'. */
+/* VIEW(f188714): tag struct Model as struct Model__f188714; ability_effects.c
+ * has another definition; tried with the definition the rest of the object has,
+ * it does not compile in tla-ja:
+ * games/tla/src/battle_effect/ability_effects.c:37378: structure has no member
+ * named `vertices'. */
 struct Model__f188714 {
   s32 kind;
   s32 next;
@@ -59,11 +66,14 @@ void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
 struct PoolEntry *Render_AllocateModelList(s32 count);
 void Func_08015160(s32 x, s32 y, s32 z);
 void Func_080151e4(s32 x, s32 y, s32 z);
-void Func_080150e4(s32 angle);
+void SceneTransform_ApplyRoll(s32 angle);
 void SceneTransform_ApplyPitch(s32 angle);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
-/* VIEW(f188714): routine Render_DrawModelList as void Render_DrawModelList(struct Model__f188714 *model); f186dfc has void Render_DrawModelList(struct Model *model). */
-extern void Render_DrawModelList__f188714(struct Model__f188714 *model) __asm__("Render_DrawModelList");
+/* VIEW(f188714): routine Render_DrawModelList as void
+ * Render_DrawModelList(struct Model__f188714 *model); f186dfc has void
+ * Render_DrawModelList(struct Model *model). */
+extern void Render_DrawModelList__f188714(struct Model__f188714 *model) __asm__(
+    "Render_DrawModelList");
 void Heap_Release(void *block);
 void Func_081180e8(s32 phase);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
@@ -114,9 +124,9 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectArgument *effect) {
   pixels = Ram_MapCellBuffer;
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, pixels, 0, 0);
   if (effect->variant == 1) {
-    Iwram_CopyWordsEntry((void *)0x05000000,
-                    Resource_GetTableEntry((s32)&ResourceId_EffectPalette02),
-                    128);
+    Iwram_CopyWordsEntry(
+        (void *)0x05000000,
+        Resource_GetTableEntry((s32)&ResourceId_EffectPalette02), 128);
     work->transferValue = 50;
     BattleEffect_LoadBlitter(
         HEAP_SLOT_BLITTER,
@@ -264,7 +274,7 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectArgument *effect) {
             Render_ResetTransformState();
             Func_08015160((targetScreen.x / 2 - 64) << 16, 32 << 16, 0);
             Func_080151e4(scale, scale, scale);
-            Func_080150e4(angle);
+            SceneTransform_ApplyRoll(angle);
             SceneTransform_ApplyPitch(-0x1000);
             Render_TransformVertices(gData_08199210, vertices, 4);
             Render_DrawModelList__f188714(model);

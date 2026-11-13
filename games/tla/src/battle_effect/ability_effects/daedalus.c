@@ -420,7 +420,7 @@ void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                           s32 gravity);
 
-void Func_080150e4(s32 angle); // SceneTransform_ApplyRoll
+void SceneTransform_ApplyRoll(s32 angle);
 void SceneTransform_ApplyPitch(s32);
 
 void Func_0814cca8(void);
@@ -1149,7 +1149,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
           beam[5] = z;
           Render_ResetTransformState();
           Func_08015160(camera + 0x20000, 0x80000, 0);
-          Func_080150e4(0x4300);
+          SceneTransform_ApplyRoll(0x4300);
           SceneTransform_ApplyPitch(-0x800);
           Func_0801521c((v << 14) + 0x4180);
           Render_TransformVertices(gData_08199210, buffer, 4);
@@ -1819,7 +1819,7 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectArgument *effect) {
           Func_08015160((k << 17) + ringX + ringOffset,
                         discY - ((k + 2) << 16) + ringOffset, 0);
           Func_080151e4(0x8000, 0x10000, 0x10000);
-          Func_080150e4(ring->x);
+          SceneTransform_ApplyRoll(ring->x);
           Func_080151e4(Trig_Sin(ring->variant * 682) + 0x10000, 0x20000,
                         0x10000);
           Render_TransformVertices(gData_081991b0, vertices, 4);

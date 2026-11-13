@@ -236,7 +236,7 @@ void BattleEffect_DispatchByIdRangeFar(struct BattlePresentationWork *work);
 void BattleEffect_RunTableEffectFar(struct BattlePresentationWork *work);
 void Func_08138020(struct BattlePresentationWork *work);
 
-s32 Func_081197f0(s32 enemyGroup);
+s32 Battle_RunEncounter(s32 enemyGroup);
 
 extern struct Snapshot Data_0200ff58;
 extern struct SnapshotCopy Data_0200ff6c[];

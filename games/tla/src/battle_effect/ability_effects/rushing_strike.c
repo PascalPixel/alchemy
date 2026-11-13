@@ -308,7 +308,7 @@ void BattleEffect_SpawnObjects(s32 entryCount, s32 kind,
                                u32 variant); // SpawnObjects
 void BattleEffect_SelectLivingTargets(
     struct FxPartyList *party); // SelectLivingTargets
-void Func_080150e4(s32 angle);  // SceneTransform_ApplyRoll
+void SceneTransform_ApplyRoll(s32 angle);
 
 void BattleMotion_ApplyKnockbackFar(
     s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
@@ -629,7 +629,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *effect) {
       model->scrollU = zero;
       tex->pixels = work->sheet + 0x4000;
       Func_08015160((target.x - 124) << 16, (height - 144) << 16, 0);
-      Func_080150e4(0x4000);
+      SceneTransform_ApplyRoll(0x4000);
       Func_080151e4(0x19c40, 0x14e20, 0x10000);
       Render_TransformVertices(Data_081991e0, vertices, 4);
       Render_DrawModelList(model);

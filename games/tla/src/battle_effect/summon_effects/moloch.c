@@ -572,7 +572,7 @@ void Func_0818caa8(void *cells, s32 x, s32 y, s32 size);
 void Func_0801521c(s32 scale);
 void SceneTransform_ApplyYaw(s32 angle);
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
-void Func_080150e4(s32 angle); // SceneTransform_ApplyRoll
+void SceneTransform_ApplyRoll(s32 angle);
 
 void BattleMotion_ApplyKnockbackFar(
     s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
@@ -742,7 +742,7 @@ void Func_08191cc4(void);
 void BattleEffect_BuildSteepShadeRampWave(u8 *table, u32 count, u32 repeats,
                                           s32 scale);
 void SceneTransform_ResetMatrix(void);
-void Func_080151ac(s32 *scale); // SceneTransform_ApplyScale
+void SceneTransform_ApplyScale(s32 *scale);
 
 #define SLOT_ALT 188 // unkb8[1]
 #define OBJ_TILES(obj)                                                         \
@@ -1054,7 +1054,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
           SceneTransform_ApplyPosition(place);
           place[1] = place[0] = work->particles[i].velocityZ;
           place[2] = 0;
-          Func_080151ac(place);
+          SceneTransform_ApplyScale(place);
           work->particles[i].velocityZ += 0x2000;
           model->kind = 4;
           model->texture = &texture;
@@ -2106,13 +2106,13 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       place[1] = -0x180000;
       place[2] = 0;
       SceneTransform_ApplyPosition(place);
-      Func_080150e4(0x9800);
+      SceneTransform_ApplyRoll(0x9800);
       grow[0] = 0x10000;
       grow[1] = (frame - 758) << 10;
       if (grow[1] > 0x10000)
         grow[1] = 0x10000;
       grow[2] = 0;
-      Func_080151ac(grow);
+      SceneTransform_ApplyScale(grow);
       model->kind = 4;
       model->mesh = Data_0819a160;
       model->texture = &texture2;

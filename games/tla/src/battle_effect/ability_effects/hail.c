@@ -458,7 +458,7 @@ void Func_0816442c(s32 group, s32 x,
 void Func_0816467c(s32 group, s32 x, s32 y); // BattleEffect_RunImpactBurst
 
 void Func_0818caa8(void *source, s32 x, s32 y, s32 size); // four motes
-void Func_080151ac(s32 *scale); // SceneTransform_ApplyScale
+void SceneTransform_ApplyScale(s32 *scale);
 
 void Projection_Set(s32 a, s32 b, s32 c);
 void BattleBackground_LoadFar(s32 layer, s32 resource, s32 mode);

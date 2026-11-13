@@ -17,7 +17,7 @@ u32 BattleParty_IsUnitListed(u32 id);
 s32 Func_08127cd4(s32 recordId);
 
 void Func_081263c4(void);
-void Func_081263fc(s32 mode, s32 resource, s32 level);
+void BattleBackground_Load(s32 mode, s32 resource, s32 level);
 
 void Func_08125d74(s32 arg, s32 kind);
 
@@ -34,7 +34,7 @@ s32 Func_0811ea0c(struct BattlePlan *plan, s32 mode);
 
 s32 Func_08124cc4(s32 side);
 
-void Func_0812628c(s32 mode, s32 background, s32 value);
+void BattleStaging_ConfigurePaletteFade(s32 mode, s32 background, s32 value);
 
 s32 Func_08122514(struct BattleActionRecord *request, s32 retry);
 

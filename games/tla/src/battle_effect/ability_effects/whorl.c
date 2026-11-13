@@ -59,7 +59,7 @@ void BattleEffect_SpawnObjects(s32 entryCount, s32 kind,
                                u32 variant); // SpawnObjects
 void BattleEffect_SelectLivingTargets(
     struct FxPartyList *party); // SelectLivingTargets
-void Func_080150e4(s32 angle);  // SceneTransform_ApplyRoll
+void SceneTransform_ApplyRoll(s32 angle);
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                    s32 speedLimit, s32 velocityY, s32 percent);
 
@@ -507,7 +507,7 @@ void Func_08171bb0(struct BattleEffectArgument *effect, u32 mode) {
           if (effect->side == 1) {
             SceneTransform_ApplyYaw(0x8000);
           }
-          Func_080150e4((i << 10) + 256);
+          SceneTransform_ApplyRoll((i << 10) + 256);
           SceneTransform_ApplyPitch((i << 13) - (frame << 11));
           Func_080151e4(0x21770, 0x10000, 0x10000);
           Render_TransformVertices(gMapCellBuffer, vertices, 66);
@@ -537,7 +537,7 @@ void Func_08171bb0(struct BattleEffectArgument *effect, u32 mode) {
               Render_ResetTransformState();
               Func_08015160((apos.x / 2 - 64) << 16, (apos.y - 64) << 16, 0);
               Func_080151e4(0x8000, 0x10000, 0x8000);
-              Func_080150e4((i << 14) + 0x2000);
+              SceneTransform_ApplyRoll((i << 14) + 0x2000);
               SceneTransform_ApplyPitch(-0x1000);
               SceneTransform_ApplyYaw(frame << 12);
               Func_0801521c(s);
@@ -579,7 +579,8 @@ void Func_08171bb0(struct BattleEffectArgument *effect, u32 mode) {
             SceneTransform_ApplyYaw(0x8000);
           }
           SceneTransform_ApplyPitch(i << 15);
-          Func_080150e4((Trig_Sin((frame + i * 8) << 11) << 11) >> 16);
+          SceneTransform_ApplyRoll((Trig_Sin((frame + i * 8) << 11) << 11) >>
+                                   16);
           Func_080151e4(0x14e20, 0x8000, 0x10000);
           Render_TransformVertices(gMapCellBuffer, vertices, 66);
           Render_DrawModelList(model);
@@ -610,7 +611,7 @@ void Func_08171bb0(struct BattleEffectArgument *effect, u32 mode) {
             if (effect->side == 1) {
               SceneTransform_ApplyYaw(0x8000);
             }
-            Func_080150e4((i << 10) + 3096);
+            SceneTransform_ApplyRoll((i << 10) + 3096);
             if (mode != 1) {
               SceneTransform_ApplyPitch((frame + i * 4) << 11);
             } else {

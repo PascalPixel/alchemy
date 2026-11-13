@@ -623,11 +623,11 @@ void Func_0814b350(struct BattleEffectArgument *effect) {
           SceneTransform_ApplyPitch(-frame * (i * 32 + 256));
           break;
         case 2:
-          Func_080150e4(-frame * (i * 32 + 256));
+          SceneTransform_ApplyRoll(-frame * (i * 32 + 256));
           break;
         case 3:
           SceneTransform_ApplyPitch(-frame * (i * 32 + 256));
-          Func_080150e4(-frame * (i * 32 + 256));
+          SceneTransform_ApplyRoll(-frame * (i * 32 + 256));
           break;
         }
         EffectPosition_ProjectPoint((s32 *)spark, &screen);

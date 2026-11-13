@@ -732,7 +732,7 @@ void Func_0816aeec(struct BattleEffectArgument *effect, s32 mode) {
         Render_ResetTransformState();
         Func_08015160((target.x / 2 - 64) << 16, (target.y - 64) << 16, 0);
         Func_080151e4(0x8000, 0x10000, 0x8000);
-        Func_080150e4((i << 14) + 0x2000);
+        SceneTransform_ApplyRoll((i << 14) + 0x2000);
         SceneTransform_ApplyPitch(0x1000);
         SceneTransform_ApplyYaw(angle);
         Func_0801521c(t * 0x3000);
@@ -1276,7 +1276,7 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectArgument *effect) {
         Func_08015160((target.x / 2 - 64) << 16, (target.y - 80) << 16, 0);
         Func_080151e4(0x8000, 0x10000, 0x8000);
         SceneTransform_ApplyYaw((effect->side << 15) + 0x8000);
-        Func_080150e4(Data_08198b32[k]);
+        SceneTransform_ApplyRoll(Data_08198b32[k]);
         SceneTransform_ApplyPitch(Data_08198b42[k]);
         Func_0801521c(scale);
         Render_TransformVertices(gData_08199210, vertices, 4);

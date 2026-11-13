@@ -1676,10 +1676,10 @@ void BattleEffect_RunHealingMotes(struct BattleEffectArgument *effect,
           SceneTransform_ApplyYaw((frame - start) << 11);
         } else if (mode == 11) {
         } else if (mode == 13) {
-          Func_080150e4(frame << 9);
+          SceneTransform_ApplyRoll(frame << 9);
         } else if (mode == 1) {
           SceneTransform_ApplyPitch(frame << 9);
-          Func_080150e4(frame << 9);
+          SceneTransform_ApplyRoll(frame << 9);
         } else if (mode == 2 || mode == 12) {
           SceneTransform_ApplyYaw((frame - member * 40) << 9);
         } else if (mode == 3) {
@@ -2095,7 +2095,7 @@ void Func_0814fab8(struct BattleEffectArgument *effect, u32 mode) {
             SceneTransform_ApplyYaw(frame << 10);
           } else {
             SceneTransform_ApplyYaw(frame << 10);
-            Func_080150e4(frame << 10);
+            SceneTransform_ApplyRoll(frame << 10);
           }
           for (i = 0; i != 32; i++) {
             struct EffectStep *flare = &FLARES[member * FLARES_PER_MEMBER + i];
@@ -4410,11 +4410,11 @@ void BattleEffect_RunSwirlingStars(struct BattleEffectArgument *effect) {
           SceneTransform_ApplyPitch(-frame * (i + 32) * 8);
           break;
         case 2:
-          Func_080150e4(-frame * (i + 32) * 8);
+          SceneTransform_ApplyRoll(-frame * (i + 32) * 8);
           break;
         case 3:
           SceneTransform_ApplyPitch(-frame * (i + 32) * 8);
-          Func_080150e4(-frame * (i + 32) * 8);
+          SceneTransform_ApplyRoll(-frame * (i + 32) * 8);
           break;
         }
         EffectPosition_ProjectPoint((s32 *)star, &pos);
@@ -4697,7 +4697,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect) {
     for (j = 0; j != 24; j++) {
       TRAILS[i * 24 + j].x = (Random16() & 15) + 48;
       Render_ResetTransformState();
-      Func_080150e4(Random16() & 0xffff);
+      SceneTransform_ApplyRoll(Random16() & 0xffff);
       SceneTransform_ApplyPitch(Random16() & 0xffff);
       SceneTransform_ApplyYaw(Random16() & 0xffff);
       Transform_Store(MATRICES + (i * 24 + j) * 48);

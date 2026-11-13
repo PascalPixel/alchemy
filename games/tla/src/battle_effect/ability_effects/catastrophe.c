@@ -48,7 +48,7 @@ void BattleEffect_SpawnObjects(s32 entryCount, s32 kind,
                                u32 variant); // SpawnObjects
 void BattleEffect_SelectLivingTargets(
     struct FxPartyList *party); // SelectLivingTargets
-void Func_080150e4(s32 angle);  // SceneTransform_ApplyRoll
+void SceneTransform_ApplyRoll(s32 angle);
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                    s32 speedLimit, s32 velocityY, s32 percent);
 
@@ -733,7 +733,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
         Render_ResetTransformState();
         Func_08015160((Data_08199824[i] - 48) << 16,
                       (Data_0819982b[i] - 44) << 16, 0);
-        Func_080150e4(0);
+        SceneTransform_ApplyRoll(0);
         Func_080151e4(0x8000, 0x10000, 0x8000);
         Render_TransformVertices(Data_081991e0, verts, 4);
         Render_DrawModelList(model);
@@ -895,7 +895,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
                           ((p->y / 8 - 64) << 16) + camZ + sway, 0);
           }
           Func_080151e4(0x8000, 0x10000, 0x10000);
-          Func_080150e4(p->z);
+          SceneTransform_ApplyRoll(p->z);
           Func_080151e4(0x40000, 85536, 0x8000);
           Render_TransformVertices(Data_081991d0, verts, 4);
           Render_DrawModelList(model);
@@ -923,7 +923,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
       Render_ResetTransformState();
       Func_08015160((span - drift) / 2 + 0x40000, camZ + 0xcc0000, 0);
       Func_080151e4(0x8000, 0x10000, 0x10000);
-      Func_080150e4(p->y);
+      SceneTransform_ApplyRoll(p->y);
       Func_080151e4(0x40000, 85536, 0x8000);
       Render_TransformVertices(Data_081991d0, verts, 4);
       Render_DrawModelList(model);
@@ -961,7 +961,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
         Func_080151e4(sx, 0x10000, 0x8000);
         Func_08015160(p4->x, 0, 0);
         Func_080151e4(0x8000, 0x20000, 0x10000);
-        Func_080150e4(0x8000);
+        SceneTransform_ApplyRoll(0x8000);
         Render_TransformVertices(Data_081991d0, verts, 4);
         Render_DrawModelList(model);
       }
@@ -1007,7 +1007,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
         SceneTransform_ApplyPitch(18768);
         a = -frame;
         a <<= 10;
-        Func_080150e4(a);
+        SceneTransform_ApplyRoll(a);
         Func_0801521c(s);
         Func_08015160(0, -0xf0000, 0);
         Render_TransformVertices(Data_081991e0, verts, 4);
@@ -1016,7 +1016,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
         texture.pixels = work->sheet;
         for (i = 0; i != 3; i++) {
           Transform_Push();
-          Func_080150e4(i * 21845 + 10922);
+          SceneTransform_ApplyRoll(i * 21845 + 10922);
           {
             s32 phase = i * 21845 + 10922;
             model->shade = -24 - (Trig_Cos(phase + a) << 3 >> 16);
@@ -1057,7 +1057,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
             Func_08015160(((b + (s32)((u32)b >> 31)) >> 1) + 0x50000,
                           camZ + 0xdc0000, 0);
             Func_080151e4(0x10000, 32000, 0x10000);
-            Func_080150e4(frame << 11);
+            SceneTransform_ApplyRoll(frame << 11);
             Func_0801521c(s);
             Render_TransformVertices(Data_081991e0, verts, 4);
             Render_DrawModelList(model);
@@ -1082,7 +1082,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
         Render_ResetTransformState();
         Func_08015160(0x10000, -0x100000, 0);
         Func_080151e4(0x10000, 32000, 0x10000);
-        Func_080150e4(frame << 10);
+        SceneTransform_ApplyRoll(frame << 10);
         Func_0801521c(s);
         Render_TransformVertices(Data_081991e0, verts, 4);
         Render_DrawModelList(model);
@@ -1308,7 +1308,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
           Func_080151e4(0x8000, 0x10000, 0x8000);
           SceneTransform_ApplyPitch(18768);
           a = frame << 9;
-          Func_080150e4(a);
+          SceneTransform_ApplyRoll(a);
           Func_0801521c(s);
           Func_08015160(0, -0xf0000, 0);
           Render_TransformVertices(Data_081991e0, verts2, 4);
@@ -1321,7 +1321,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
             s32 v;
 
             Transform_Push();
-            Func_080150e4(i * 21845 + 10922);
+            SceneTransform_ApplyRoll(i * 21845 + 10922);
             model2->shade = tone;
             Func_08015160(0, -0x100000, 0);
             v = 19712;
@@ -1371,7 +1371,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
                 Render_ResetTransformState();
                 Func_08015160(0, 0x100000, 0);
                 Func_080151e4(0x10000, 32000, 0x10000);
-                Func_080150e4(frame << 10);
+                SceneTransform_ApplyRoll(frame << 10);
                 Func_0801521c(s);
                 Render_TransformVertices(Data_081991e0, verts2, 4);
                 Render_DrawModelList(model2);
@@ -1412,7 +1412,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
             }
             texture2.pixels = work->sheet + 0x1456 + (p->variant << 12);
             Render_ResetTransformState();
-            Func_080150e4(p->z);
+            SceneTransform_ApplyRoll(p->z);
             p->z += p->velocityZ;
             Func_080151e4(s << 2, s, 0x10000);
             Render_TransformVertices(gData_081991b0, verts2, 4);
@@ -1663,7 +1663,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
         Func_08015160(slide, (c << 5) + Trig_Cos(b) * 24, 0);
         Func_0801521c(55536);
         Transform_Push();
-        Func_080150e4(0x4000);
+        SceneTransform_ApplyRoll(0x4000);
         Func_0801521c(0x42ee0);
         Render_TransformVertices(cellBuffer, quads, 24);
         Render_DrawModelList(model3);
@@ -1674,7 +1674,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
         model3->scrollU = 0;
         texture3.pixels = work->sheet + 0x800;
         Func_08015160(-0x20000, (Trig_Sin(frame << 10) << 2) + -0x60000, 0);
-        Func_080150e4(-0x800);
+        SceneTransform_ApplyRoll(-0x800);
         {
           s32 s0 = Trig_Sin(a);
           s32 y0 = (s0 << 5) + Trig_Cos(b) * 24;
@@ -1685,7 +1685,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
           s1 = Trig_Sin(a);
           b += 0x2000;
           y1 = (s1 << 5) + Trig_Cos(b) * 24;
-          Func_080150e4((y0 - y1) / 512 + -0x400);
+          SceneTransform_ApplyRoll((y0 - y1) / 512 + -0x400);
         }
         Func_080151e4(0x21170, 105536, 0x10000);
         Render_TransformVertices(Data_081991e0, quads, 4);

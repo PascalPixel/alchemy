@@ -48,7 +48,7 @@ void BattleEffect_RunAstralBlast(struct BattleEffectArgument *effect) {
   // max blitter and the transfer.
   BattleEffect_StartCanvasLayer(1);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
-                  Resource_GetTableEntry((s32)&ResourceId_RuneSheet), 128);
+                       Resource_GetTableEntry((s32)&ResourceId_RuneSheet), 128);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, graphics, 0, 0);
   Actor_SetMode(caster, 2);
   Actor_SetAnimationSpeedFar(caster, 48);
@@ -111,15 +111,15 @@ void BattleEffect_RunAstralBlast(struct BattleEffectArgument *effect) {
           s32 depth;
 
           Transform_Push();
-          Func_080150e4((frame - start) << 10);
+          SceneTransform_ApplyRoll((frame - start) << 10);
           SceneTransform_ApplyYaw(0x4000);
           scale[0] = ((frame - start) << 12) + 0x1000;
           if (scale[0] > 0x10000)
             scale[0] = 0x10000;
           scale[1] = scale[0];
           scale[2] = scale[0];
-          Func_080151ac(scale);
-          Func_080150e4(j * 0x199a);
+          SceneTransform_ApplyScale(scale);
+          SceneTransform_ApplyRoll(j * 0x199a);
           depth =
               EffectPosition_ProjectPoint(&gData_08197924[(j & 1) * 3], &pos);
           if (nearest < depth)
@@ -231,7 +231,7 @@ void BattleEffect_RunShiningStar(struct BattleEffectArgument *effect) {
   // Set up: the rune palette, the dot sheet, one max blitter and the transfer.
   BattleEffect_StartCanvasLayer(1);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
-                  Resource_GetTableEntry((s32)&ResourceId_RuneSheet), 128);
+                       Resource_GetTableEntry((s32)&ResourceId_RuneSheet), 128);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, graphics, 0, 0);
   BattleEffect_LoadBlitter(
       HEAP_BLITTER, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));

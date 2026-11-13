@@ -47,7 +47,7 @@ void BattleEffect_SpawnObjects(s32 entryCount, s32 kind,
                                u32 variant); // SpawnObjects
 void BattleEffect_SelectLivingTargets(
     struct FxPartyList *party); // SelectLivingTargets
-void Func_080150e4(s32 angle);  // SceneTransform_ApplyRoll
+void SceneTransform_ApplyRoll(s32 angle);
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                    s32 speedLimit, s32 velocityY, s32 percent);
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
@@ -367,7 +367,7 @@ void BattleEffect_RunRisingDragon(struct BattleEffectArgument *effect) {
           if (effect->side == 1) {
             SceneTransform_ApplyYaw(0x8000);
           }
-          Func_080150e4(i * 14192 - 0x1000);
+          SceneTransform_ApplyRoll(i * 14192 - 0x1000);
           Func_0801521c(0x40000);
           Render_TransformVertices(strip0 + i * 66, vertices, 66);
           Render_DrawModelList(model);
@@ -378,7 +378,7 @@ void BattleEffect_RunRisingDragon(struct BattleEffectArgument *effect) {
             model->mesh = gData_08199340;
             texture.pixels = work->sheet + 0x4000;
             Func_08015160(endX[i] << 16, endY[i] << 16, 0);
-            Func_080150e4(0x3060 - (arcs[i * 2] << 5));
+            SceneTransform_ApplyRoll(0x3060 - (arcs[i * 2] << 5));
             Func_0801521c(20768);
             Render_TransformVertices(Data_081991e0, vertices, 4);
             Render_DrawModelList(model);

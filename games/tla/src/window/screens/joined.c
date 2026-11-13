@@ -104,7 +104,7 @@ s32 Func_08044b80(u32 index) {
   return gCharacter_SpriteTable[index];
 }
 
-void Func_08044b98(s32 member) {
+void Party_ShowJoinedMessage(s32 member) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
   struct Window *window = NULL;
   s32 sprite[3];
@@ -116,8 +116,8 @@ void Func_08044b98(s32 member) {
   if (window != NULL) {
     Window_DrawDividerLine(window, 4, 0, 4, 4);
     work->dirty = 1;
-    Icon_LoadWithPalette(Portrait_GetForSpeaker(Func_08044b80(member)),
-                                 0, &slot, &tile, 14, 0);
+    Icon_LoadWithPalette(Portrait_GetForSpeaker(Func_08044b80(member)), 0,
+                         &slot, &tile, 14, 0);
     // The portrait as a bare OAM entry, pushed at depth 250 each frame: a link
     // word, attributes 0 and 1 (32x32 at x 20, y 12) and attribute 2, its tile
     // with palette 14.
@@ -171,8 +171,8 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second) {
 
     work->dirty = 1;
 
-    Icon_LoadWithPalette(Portrait_GetForSpeaker(Func_08044b80(first)),
-                                 0, &handle1, &palette, 14, 0);
+    Icon_LoadWithPalette(Portrait_GetForSpeaker(Func_08044b80(first)), 0,
+                         &handle1, &palette, 14, 0);
     // The portraits as bare OAM entries, pushed at depth 250 each frame: a
     // link word, attributes 0 and 1 (32x32 at y 12, x 12 and 44) and
     // attribute 2, the tile with palette 14 or 15.
@@ -182,8 +182,8 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second) {
     *p = palette | 0xe000;
 
     entry2 = sprite2;
-    Icon_LoadWithPalette(Portrait_GetForSpeaker(Func_08044b80(second)),
-                                 0, &handle2, &palette, 15, 0);
+    Icon_LoadWithPalette(Portrait_GetForSpeaker(Func_08044b80(second)), 0,
+                         &handle2, &palette, 15, 0);
     p = entry2;
     *p++ = 0;
     *p++ = 0x802c000c;

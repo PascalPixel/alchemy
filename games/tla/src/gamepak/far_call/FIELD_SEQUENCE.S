@@ -66,7 +66,7 @@ Resource_FarCall006:
 	export Actor_ResetTargetAndSetMode1Far, Actor_ResetTargetAndSetMode1
 	export ObjectTable_RunIfActiveFar, ObjectTable_RunIfActive
 	export Battle_ShowPairedUnitWorkAndWaitFar, Battle_ShowPairedUnitWorkAndWait
-	export Message_SetVoiceFromActorFar, Func_080d4330
+	export Message_SetVoiceFromActorFar, Message_SetVoiceFromActor
 	export Actor_SetSpritePriorityFar, Actor_SetSpritePriority
 	export Func_080c8208, Func_080d390c
 	export Func_080c8210, Func_080d47b4
@@ -89,7 +89,7 @@ Resource_FarCall006:
 	export Party_SetFields1f2And1f4Far, Party_SetFields1f2And1f4
 	export Field_SetDestinationFar, Field_SetDestination
 	export Actor_GetScreenPositionFar, Actor_GetScreenPosition
-	export Actor_GetTriggerTileAheadOfCurrentFar, Func_080cc54c
+	export Actor_GetTriggerTileAheadOfCurrentFar, Actor_GetTriggerTileAheadOfCurrent
 	export Party_RemapCharacterIdByFlagsFar, Party_RemapCharacterIdByFlags
 	export Field_FindNearbyTalkTargetFar, Field_FindNearbyTalkTarget
 	export FieldPsynergy_SteerPushedTargetFar, FieldPsynergy_SteerPushedTarget
@@ -155,7 +155,7 @@ Resource_FarCall006:
 	export BattleEffect_SetupObjectPairFar, FieldPsynergy_SetupActorPair
 	export BattleEffect_StopMainActorFar, BattleEffect_StopMainActor
 	export BattleEffect_CleanupSceneObjectsFar, BattleEffect_CleanupSceneObjects
-	export EventObject_InitializeFar, Func_080dc6d8
+	export EventObject_InitializeFar, EventObject_Initialize
 	export BattleEffect_InitializeSharedSceneFar, FieldPsynergy_FadeToCastColor
 	export BattleEffect_PrepareBufferInterpolationFar, FieldPsynergy_FadeFromCastColor
 	export Event_ResolveAllPendingActionsFar, Event_ResolveAllPendingActions

@@ -38,5 +38,5 @@ gLightSpritesLarge:
 	.global gLightSpritePriority
 gLightSpritePriority:
 	.space 0x00000002
-	.global gTeleporters
-gTeleporters:
+	.global gCrackedTiles
+gCrackedTiles:

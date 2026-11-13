@@ -5,10 +5,10 @@
 /// across the floor and the upper ledges as the party passes their cells
 /// (JupiterLighthouse_RaiseWhirlwind, JupiterLighthouse_RaiseUpperWhirlwind).
 /// Cracked tiles give way under a second step
-/// (JupiterLighthouse_StepOnLowerTeleporter,
-/// JupiterLighthouse_StepOnUpperTeleporter); the way on leads out to the aerie.
+/// (JupiterLighthouse_StepOnLowerCrackedTile,
+/// JupiterLighthouse_StepOnUpperCrackedTile); the way on leads out to the aerie.
 ///
-/// The cracked tiles' code, the Teleporter routines, is in
+/// The cracked tiles' code is in
 /// jupiter_lighthouse_room_9/, in two parts the shared field effect objects
 /// link between.
 
@@ -52,7 +52,7 @@ enum { ACTOR_WHIRLWIND_SOURCE = ACTOR_FIRST_PLACED };
 #include "objcmd.h"
 struct Actor;
 struct LightOam;
-void Teleporter_PlaceArrival(s32 x, s32 z, s32 effect);
+void CrackedTile_PlaceLanding(s32 x, s32 z, s32 effect);
 void JupiterLighthouse_LoadPalettes(s32 mode);
 extern s16 gLightSpriteTile;
 extern struct Actor *gLightSpriteActors[];
@@ -77,7 +77,7 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
   return gActorPlacements;
 }
 
-s32 Teleporters_Step();
+s32 CrackedTiles_Step();
 struct GustObject *Whirlwind_SpawnUpper();
 
 void JupiterLighthouse_StartHovering(void) {
@@ -139,13 +139,13 @@ void JupiterLighthouse_RaiseUpperWhirlwind(s32 id) {
   }
 }
 
-void JupiterLighthouse_StepOnLowerTeleporter(s32 arg) {
+void JupiterLighthouse_StepOnLowerCrackedTile(s32 arg) {
   if (Actor_Get(gMainRoutineWork.currentOwner)->y == 0 &&
-      Teleporters_Step(arg) != 0)
+      CrackedTiles_Step(arg) != 0)
     FieldEvent_SetExitRequest(13);
 }
 
-void JupiterLighthouse_StepOnUpperTeleporter(s32 arg) {
+void JupiterLighthouse_StepOnUpperCrackedTile(s32 arg) {
   struct Actor *leader;
   s32 x;
   s32 z;
@@ -158,19 +158,19 @@ void JupiterLighthouse_StepOnUpperTeleporter(s32 arg) {
       FieldActor_SetSpritePriority(gMainRoutineWork.currentOwner, 3);
     if (x == 8 && z == 39)
       FieldActor_SetSpritePriority(gMainRoutineWork.currentOwner, 3);
-    if (Teleporters_Step(arg) != 0)
+    if (CrackedTiles_Step(arg) != 0)
       FieldEvent_SetExitRequest(14);
   }
 }
 
-void JupiterLighthouse_StepOnTeleporterOrWhirlwind(s32 arg) {
+void JupiterLighthouse_StepOnCrackedTileOrWhirlwind(s32 arg) {
   struct Actor *leader;
   s32 x;
   s32 z;
 
   leader = Actor_Get(gMainRoutineWork.currentOwner);
   if (leader->y <= 0) {
-    JupiterLighthouse_StepOnLowerTeleporter(arg);
+    JupiterLighthouse_StepOnLowerCrackedTile(arg);
   } else {
     x = leader->x >> 20;
     z = leader->z >> 20;
@@ -191,10 +191,10 @@ void JupiterLighthouse_StepOnTeleporterOrWhirlwind(s32 arg) {
 
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
-void Teleporters_Find(s32 kind, s32 x, s32 z, s32 a, s32 b);
+void CrackedTiles_Find(s32 kind, s32 x, s32 z, s32 a, s32 b);
 
 /// The scene's set-up: screen effect 0x204, actor 64's action variant 3 and
-/// actor 8 held still, then Teleporters_Find and Teleporter_PlaceArrival by the
+/// actor 8 held still, then CrackedTiles_Find and CrackedTile_PlaceLanding by the
 /// entrance.
 s32 Scene_Initialize(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
@@ -204,15 +204,15 @@ s32 Scene_Initialize(void) {
   gWhirlwindRiding = 0;
   Actor_Get(ACTOR_WHIRLWIND_SOURCE)->motionFlags = 0;
   if ((u16)(gMainRoutineWork.entrance - 6) <= 1) {
-    Teleporters_Find(33, 0x280, 0x380, 48, 1);
-    Teleporter_PlaceArrival(0, 0, 0x204);
+    CrackedTiles_Find(33, 0x280, 0x380, 48, 1);
+    CrackedTile_PlaceLanding(0, 0, 0x204);
   } else if (gMainRoutineWork.entrance == 3 || gMainRoutineWork.entrance == 5 ||
              gMainRoutineWork.entrance == 13) {
-    Teleporters_Find(43, 0x280, 0x380, 49, 1);
-    Teleporter_PlaceArrival(-21, 32, 0x204);
+    CrackedTiles_Find(43, 0x280, 0x380, 49, 1);
+    CrackedTile_PlaceLanding(-21, 32, 0x204);
   } else {
-    Teleporters_Find(43, 0x280, 0x380, 0, 0);
-    Teleporter_PlaceArrival(-2, -27, 0x204);
+    CrackedTiles_Find(43, 0x280, 0x380, 0, 0);
+    CrackedTile_PlaceLanding(-2, -27, 0x204);
   }
   return 0;
 }
@@ -407,12 +407,12 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_STEP, 52, CONDITION_ALWAYS, EVENT(JupiterLighthouse_RaiseUpperWhirlwind)},
     {TRIGGER_STEP, 53, CONDITION_ALWAYS, EVENT(JupiterLighthouse_RaiseUpperWhirlwind)},
     {TRIGGER_RAISED, 200, CONDITION_ALWAYS, EVENT(Whirlwind_CarryLeader)},
-    {TRIGGER_STEP, 33, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StepOnLowerTeleporter)},
-    {TRIGGER_STEP, 34, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StepOnTeleporterOrWhirlwind)},
-    {TRIGGER_STEP, 35, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StepOnLowerTeleporter)},
-    {TRIGGER_STEP, 43, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StepOnUpperTeleporter)},
-    {TRIGGER_STEP, 44, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StepOnUpperTeleporter)},
-    {TRIGGER_STEP, 45, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StepOnUpperTeleporter)},
+    {TRIGGER_STEP, 33, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StepOnLowerCrackedTile)},
+    {TRIGGER_STEP, 34, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StepOnCrackedTileOrWhirlwind)},
+    {TRIGGER_STEP, 35, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StepOnLowerCrackedTile)},
+    {TRIGGER_STEP, 43, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StepOnUpperCrackedTile)},
+    {TRIGGER_STEP, 44, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StepOnUpperCrackedTile)},
+    {TRIGGER_STEP, 45, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StepOnUpperCrackedTile)},
     {PSYNERGY_ANYWHERE(ABILITY_HOVER, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StartHovering)},
     {PSYNERGY_ANYWHERE(ABILITY_HOVER, PSYNERGY_PHASE_AFTER_END), 0, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StopHovering)},
     {TRIGGER_TABLE_END},

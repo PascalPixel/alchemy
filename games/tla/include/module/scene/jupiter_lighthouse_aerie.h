@@ -53,11 +53,11 @@ void JupiterLighthouse_PlaceRaisedActors(void);
 
 void Leader_CenterInCell(void);
 
-void Teleporter_Uncover(struct CellTarget *work, struct CellTargetEntry *entry);
+void CrackedTile_Crack(struct CellTarget *work, struct CellTargetEntry *entry);
 
-void Teleporter_Sink(struct CellTarget *work, struct CellTargetEntry *entry);
+void CrackedTile_Fall(struct CellTarget *work, struct CellTargetEntry *entry);
 
-void Teleporter_DropIn(void);
+void CrackedTile_DropIn(void);
 
 struct BeamSpark;
 struct BeamSprite;

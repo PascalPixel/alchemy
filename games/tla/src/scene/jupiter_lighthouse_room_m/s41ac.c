@@ -1,7 +1,7 @@
 /// @file
 /// Scene code of overlay 0x6a3, in ROM order.
 
-#include "../shared/teleporter.h"
+#include "../shared/cracked_tile.h"
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -33,4 +33,4 @@ struct CellTarget__s41ac {
 
 #include "io_write.h"
 
-DEFINE_TELEPORTER_SINK(Teleporter_Sink, CellTarget__s41ac, Leader_CenterInCell)
+DEFINE_CRACKED_TILE_FALL(CrackedTile_Fall, CellTarget__s41ac, Leader_CenterInCell)

@@ -8,7 +8,7 @@
 /// open. A Cyclone on the teleporter here leads back down
 /// (JupiterLighthouse_LeaveByCyclone).
 ///
-/// The cracked tiles' code, the Teleporter routines, is in
+/// The cracked tiles' code is in
 /// jupiter_lighthouse_room_1/, in two parts the shared field effect objects
 /// link between.
 

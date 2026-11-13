@@ -7,7 +7,7 @@
 /// (JupiterLighthouse_LeaveByCyclone). The gates lead into the ground floor,
 /// once they are opened from within.
 ///
-/// The cracked tiles' code, the Teleporter routines, is in
+/// The cracked tiles' code is in
 /// jupiter_lighthouse_entrance/, in two parts the shared field effect objects
 /// link between.
 

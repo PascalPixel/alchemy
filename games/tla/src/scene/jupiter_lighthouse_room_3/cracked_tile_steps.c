@@ -1,8 +1,9 @@
 /// @file
-/// Jupiter Lighthouse's ground floor: the teleporters' steps and arrivals.
+/// The room of gaps and logs in Jupiter Lighthouse: the cracked tiles' steps
+/// and the fall to the floor below.
 
+#include "../shared/cracked_tile.h"
 #include "../shared/tables.h"
-#include "../shared/teleporter.h"
 #include "types.h"
 #include "cell_target.h"
 #include "ram_buffer.h"
@@ -18,11 +19,11 @@ void Map_CenterOnFollowedPoint(void);
 #include "module/field/field_effect.h"
 #include "module/scene/scene.h"
 
-void JupiterLighthouse_StepOnButton(void);
-void JupiterLighthouse_StepOffButton(void);
-extern u32 gFieldEffect_ShortScript[];
-extern u32 gFieldEffect_MediumScript[];
-extern u32 gFieldEffect_LongScript[];
+extern u16 gPushKinds[];
+
+/// The cells CrackedTiles_Step watches, and the cell it copies over the one the
+/// leader steps on.
+extern struct CellTarget gCrackedTiles;
 
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags, struct EffectOptions *options);
@@ -35,14 +36,13 @@ static __inline__ void SetWorkTriple(s32 a, s32 b, s32 c) {
   MapGrid_SetScreenShake(a, b, c);
 }
 
-DEFINE_TELEPORTER_DROP_IN_LOWER(Teleporter_DropInLower, FieldEffect_Spawn)
+DEFINE_CRACKED_TILE_DROP_IN(CrackedTile_DropIn, FieldEffect_Spawn)
 
-extern struct CellTarget gTeleporters;
-void Teleporter_Uncover();
-void Teleporter_Sink();
+void CrackedTile_Crack();
+void CrackedTile_FallEvent();
 
-DEFINE_TELEPORTERS_STEP(Teleporters_Step, gTeleporters, Teleporter_Uncover,
-                        Teleporter_Sink)
+DEFINE_CRACKED_TILES_STEP(CrackedTiles_Step, gCrackedTiles, CrackedTile_Crack,
+                        CrackedTile_FallEvent)
 
-DEFINE_TELEPORTER_PLACE_ARRIVAL(Teleporter_PlaceArrival, gTeleporters,
-                                Teleporter_DropInLower)
+DEFINE_CRACKED_TILE_PLACE_LANDING(CrackedTile_PlaceLanding, gCrackedTiles,
+                                CrackedTile_DropIn)

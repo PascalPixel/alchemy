@@ -29,7 +29,7 @@ runs, its tables and its [events](../../../tbs/glossary.md#event).
   pieces: `drift_spawn.c`, compiled inside Idejima and its own object in one
   other overlay, `scene_set_arrival_flags.h`, compiled inside each scene that
   links it, and the routines several scenes copy, each written once as a macro
-  a scene expands where its copy sits, in headers by kind: `teleporter.h`,
+  a scene expands where its copy sits, in headers by kind: `cracked_tile.h`,
   `whirlwind.h`, `push.h`, `map_cells.h` and the rest.
 - The Title (`title/`), the scene in the row after it, `SceneId_Ov64a`
   (`clear/`, `0x64a`), with its password grid and button codes, and the lobby

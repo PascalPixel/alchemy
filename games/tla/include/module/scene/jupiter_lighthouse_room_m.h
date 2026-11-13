@@ -64,12 +64,11 @@ extern s16 gLightSpritePriority;
 s32 BattleEffect_GetObjectPriority(struct Actor *actor);
 void Import_ActorSelectAnimation(struct FieldEffect *effect, s32 mode);
 
-extern struct CellTarget gTeleporters;
+extern struct CellTarget gCrackedTiles;
 
-void Teleporter_Uncover(struct CellTarget *table,
-                        struct CellTargetEntry *entry);
+void CrackedTile_Crack(struct CellTarget *table, struct CellTargetEntry *entry);
 
-void Teleporter_Sink(struct CellTarget *table, struct CellTargetEntry *entry);
+void CrackedTile_Fall(struct CellTarget *table, struct CellTargetEntry *entry);
 
 s32 Event_ClearInvalidPackedValues();
 void HangingVine_Place(s32 id, s32 mode);

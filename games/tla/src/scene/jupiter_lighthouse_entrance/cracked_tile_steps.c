@@ -1,9 +1,9 @@
 /// @file
-/// The grounds before Jupiter Lighthouse's gates: the teleporters' steps and
-/// arrivals.
+/// The grounds before Jupiter Lighthouse's gates: the cracked tiles' steps and
+/// landings.
 
 #include "../shared/tables.h"
-#include "../shared/teleporter.h"
+#include "../shared/cracked_tile.h"
 #include "types.h"
 #include "cell_target.h"
 #include "ram_buffer.h"
@@ -22,7 +22,7 @@ void Map_CenterOnFollowedPoint(void);
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);
-extern struct CellTarget gTeleporters;
+extern struct CellTarget gCrackedTiles;
 void JupiterLighthouse_CycloneSecondPatch(void);
 void JupiterLighthouse_CycloneFourthPatch(void);
 void JupiterLighthouse_CycloneFifthPatch(void);
@@ -40,13 +40,13 @@ static __inline__ void SetWorkTriple(s32 a, s32 b, s32 c) {
   MapGrid_SetScreenShake(a, b, c);
 }
 
-DEFINE_TELEPORTER_DROP_IN_LOWER(Teleporter_DropInLower, FieldEffect_Spawn)
+DEFINE_CRACKED_TILE_DROP_IN_LOWER(CrackedTile_DropInLower, FieldEffect_Spawn)
 
-void Teleporter_Uncover();
-void Teleporter_Sink();
+void CrackedTile_Crack();
+void CrackedTile_Fall();
 
-DEFINE_TELEPORTERS_STEP(Teleporters_Step, gTeleporters, Teleporter_Uncover,
-                        Teleporter_Sink)
+DEFINE_CRACKED_TILES_STEP(CrackedTiles_Step, gCrackedTiles, CrackedTile_Crack,
+                        CrackedTile_Fall)
 
-DEFINE_TELEPORTER_PLACE_ARRIVAL(Teleporter_PlaceArrival, gTeleporters,
-                                Teleporter_DropInLower)
+DEFINE_CRACKED_TILE_PLACE_LANDING(CrackedTile_PlaceLanding, gCrackedTiles,
+                                CrackedTile_DropInLower)

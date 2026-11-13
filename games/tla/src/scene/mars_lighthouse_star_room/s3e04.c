@@ -2,7 +2,7 @@
 /// Scene code of overlay 0x6ab, in ROM order.
 
 #include "../shared/tables.h"
-#include "../shared/teleporter.h"
+#include "../shared/cracked_tile.h"
 #include "types.h"
 #include "system.h"
 #include "ram_buffer.h"
@@ -26,18 +26,18 @@ static __inline__ void SetWorkTriple(s32 a, s32 b, s32 c) {
   MapGrid_SetShake(a, b, c);
 }
 
-DEFINE_TELEPORTER_DROP_IN(Func_02003e04, Func_0200363c)
+DEFINE_CRACKED_TILE_DROP_IN(Func_02003e04, Func_0200363c)
 
 #include "cell_target.h"
 
 void GameFlag_SetByte(s32 flag, s32 value);
-void Teleporter_SinkEvent(struct CellTarget *work,
+void CrackedTile_FallEvent(struct CellTarget *work,
                           struct CellTargetEntry *entry);
 
-DEFINE_TELEPORTERS_STEP(Teleporters_Step, gData_02004cf4, Func_02003bfc,
-                        Teleporter_SinkEvent)
+DEFINE_CRACKED_TILES_STEP(CrackedTiles_Step, gData_02004cf4, Func_02003bfc,
+                        CrackedTile_FallEvent)
 
-DEFINE_TELEPORTER_PLACE_ARRIVAL(Teleporter_PlaceArrival, gData_02004cf4,
+DEFINE_CRACKED_TILE_PLACE_LANDING(CrackedTile_PlaceLanding, gData_02004cf4,
                                 Func_02003e04)
 
 #include "scene_tables.h"

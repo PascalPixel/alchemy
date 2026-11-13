@@ -24,14 +24,13 @@ extern s16 gLightSpritePriority;
 s32 BattleEffect_GetObjectPriority(struct Actor *actor);
 extern void Actor_SelectAnimation(struct FieldEffect *effect, s32 mode);
 
-/// The cells Teleporters_Step watches, and the cell it copies over the one the
+/// The cells CrackedTiles_Step watches, and the cell it copies over the one the
 /// leader steps on.
-extern struct CellTarget gTeleporters;
+extern struct CellTarget gCrackedTiles;
 
 void Event_End(void);
 
-void Teleporter_Uncover(struct CellTarget *table,
-                        struct CellTargetEntry *entry);
+void CrackedTile_Crack(struct CellTarget *table, struct CellTargetEntry *entry);
 
 /// The halves of a 16.16 coordinate. Read through an s16 pointer instead, the
 /// high half's offset folds into the coordinate's (differ 11).

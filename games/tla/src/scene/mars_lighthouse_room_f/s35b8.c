@@ -1,7 +1,7 @@
 /// @file
 /// Scene code of overlay 0x6ad, in ROM order.
 
-#include "../shared/teleporter.h"
+#include "../shared/cracked_tile.h"
 #include "types.h"
 #include "main_routine_work.h"
 #include "field_sprite.h"
@@ -86,7 +86,7 @@ void Func_020035b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 }
 
 #define CELL_TABLE gData_020070a8
-#define CELL_SPRITE_DRAW Teleporters_Update
+#define CELL_SPRITE_DRAW CrackedTiles_Update
 #define CELL_PUSH_SLOT_ENTRY Import_OamAddSpriteAtDepthClamped
 #include "../../field/map/cell_sprite.c"
 
@@ -95,7 +95,7 @@ void Func_020035b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 #include "iwram_call.h"
 #include "cell_target.h"
 
-DEFINE_TELEPORTERS_FIND(Func_020038ac, gData_020070a8, Teleporters_Update)
+DEFINE_CRACKED_TILES_FIND(Func_020038ac, gData_020070a8, CrackedTiles_Update)
 
 #include "scene_tables.h"
 
@@ -107,8 +107,8 @@ DEFINE_LEADER_CENTER_IN_CELL(Leader_CenterInCell)
 /// the table's source cell over the leader's, keeping the source column's and
 /// row's 64 bit; Func_02003f18 calls it the first time the leader steps on
 /// one of the table's cells.
-DEFINE_TELEPORTER_UNCOVER(Teleporter_Uncover, Leader_CenterInCell)
+DEFINE_CRACKED_TILE_CRACK(CrackedTile_Crack, Leader_CenterInCell)
 
 #include "io_reg.h"
 
-DEFINE_TELEPORTER_SINK_EVENT(Teleporter_SinkEvent, Leader_CenterInCell)
+DEFINE_CRACKED_TILE_FALL_EVENT(CrackedTile_FallEvent, Leader_CenterInCell)

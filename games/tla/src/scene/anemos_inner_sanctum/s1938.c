@@ -292,8 +292,8 @@ void Func_02001df4(void) {
 #include "call.h"
 s32 Func_02000038();
 s32 Func_02000a78();
-s32 Teleporters_Find();
-s32 Teleporter_PlaceArrival();
+s32 CrackedTiles_Find();
+s32 CrackedTile_PlaceLanding();
 extern u8 gData_020036e4[];
 extern u8 gData_020036ea[];
 extern u8 gData_020036f6[];
@@ -456,7 +456,7 @@ L_0200a2ce:
   v_r2 = (FIELD_AT(v_r6, s16, 482));
   if (v_r2 != 1)
     goto L_0200a4a2;
-  Teleporters_Find(33, 0x280, 0x380, 18, 68);
+  CrackedTiles_Find(33, 0x280, 0x380, 18, 68);
   v_r5 = (Event_GetFlag(0x304));
   if (v_r5 == 0) {
     t91 = FIELD_AT(v_r6, s32, 532);
@@ -505,21 +505,21 @@ L_0200a3a8:
   goto L_0200a6e6;
 L_0200a4a2:
   if (v_r2 == 11) {
-    Teleporters_Find(33, 0x280, 0x380, 18, 68);
-    Teleporter_PlaceArrival(22, 0, v_r7);
+    CrackedTiles_Find(33, 0x280, 0x380, 18, 68);
+    CrackedTile_PlaceLanding(22, 0, v_r7);
     goto L_0200a6e6;
   }
   if (v_r2 != 12)
     goto L_0200a4f4;
-  Teleporters_Find(35, 0x280, 0x380, 18, 68);
+  CrackedTiles_Find(35, 0x280, 0x380, 18, 68);
   if ((Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) != 0)
     goto L_0200a6e6;
-  Teleporter_PlaceArrival(36, -0x24, v_r7);
+  CrackedTile_PlaceLanding(36, -0x24, v_r7);
   goto L_0200a6e6;
 L_0200a4f4:
   if ((u32)((v_r3 - 4) << 16) > (u32)0x10000)
     goto L_0200a6e6;
-  Teleporters_Find(35, 0x280, 0x380, 18, 68);
+  CrackedTiles_Find(35, 0x280, 0x380, 18, 68);
   goto L_0200a6e6;
 L_0200a52c:
   if (v_r1 != (s32)&SceneId_Ov6B0Room5)

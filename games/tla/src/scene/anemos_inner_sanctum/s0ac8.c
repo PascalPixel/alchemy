@@ -510,13 +510,13 @@ void Func_020016fc(void) {
   Event_End();
 }
 
-s32 Teleporters_Step();
+s32 CrackedTiles_Step();
 
 #define DEFINE_ANEMOS_INNER_SANCTUM_EXIT_IF(name, n1)                          \
   void name(void) {                                                            \
     s32 t0;                                                                    \
                                                                                \
-    t0 = Teleporters_Step();                                                   \
+    t0 = CrackedTiles_Step();                                                   \
     if (t0 != 0) {                                                             \
       FieldEvent_SetExitRequest(n1);                                           \
     }                                                                          \

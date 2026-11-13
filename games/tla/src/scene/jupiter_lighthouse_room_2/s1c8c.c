@@ -1,7 +1,7 @@
 /// @file
 /// Scene code of overlay 0x69b, in ROM order.
 
-#include "../shared/teleporter.h"
+#include "../shared/cracked_tile.h"
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -16,7 +16,7 @@ struct CellTargetEntry;
 
 /* VIEW(s1c8c): tag struct CellTarget as struct CellTarget__s1c8c; cell_target.h
  * has another definition; tried with the definition the rest of the object has,
- * Teleporter_Sink moves: 2 of 131 instructions in tla-ja. */
+ * CrackedTile_Fall moves: 2 of 131 instructions in tla-ja. */
 struct CellTarget__s1c8c {
   s16 firstFlag;
   s16 flagByte;
@@ -31,4 +31,4 @@ struct CellTarget__s1c8c {
 
 #include "io_write.h"
 
-DEFINE_TELEPORTER_SINK(Teleporter_Sink, CellTarget__s1c8c, Leader_CenterInCell)
+DEFINE_CRACKED_TILE_FALL(CrackedTile_Fall, CellTarget__s1c8c, Leader_CenterInCell)

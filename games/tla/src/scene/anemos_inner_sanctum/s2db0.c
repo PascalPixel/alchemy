@@ -15,7 +15,7 @@
 #include "module/scene/anemos_inner_sanctum.h"
 #include "module/scene/scene.h"
 
-void Teleporter_Sink(struct PushEvent *event) {
+void CrackedTile_Fall(struct PushEvent *event) {
   struct Actor *object = Actor_GetById(gMainRoutineWork.currentOwner);
   s32 x;
   s32 z;

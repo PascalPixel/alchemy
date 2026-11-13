@@ -96,10 +96,9 @@ void Teleport_PlaySparks(void);
 
 void Leader_CenterInCell(void);
 
-extern struct CellTarget gTeleporters;
+extern struct CellTarget gCrackedTiles;
 
-void Teleporter_Uncover(struct CellTarget *table,
-                        struct CellTargetEntry *entry);
+void CrackedTile_Crack(struct CellTarget *table, struct CellTargetEntry *entry);
 
 void Func_02000ac8(void);
 void Func_02001090(void);

@@ -2,7 +2,7 @@
 /// Scene code of overlay 0x699, in ROM order.
 
 #include "../shared/tables.h"
-#include "../shared/teleporter.h"
+#include "../shared/cracked_tile.h"
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -23,19 +23,19 @@ static __inline__ void SetWorkTriple(s32 a, s32 b, s32 c) {
   MapGrid_SetScreenShake(a, b, c);
 }
 
-DEFINE_TELEPORTER_DROP_IN_LOWER(Teleporter_DropInLower, FieldEffect_Spawn)
+DEFINE_CRACKED_TILE_DROP_IN_LOWER(CrackedTile_DropInLower, FieldEffect_Spawn)
 
-extern struct CellTarget gTeleporters;
-void Teleporter_Uncover();
-void Teleporter_Sink();
+extern struct CellTarget gCrackedTiles;
+void CrackedTile_Crack();
+void CrackedTile_Fall();
 
-DEFINE_TELEPORTERS_STEP(Teleporters_Step, gTeleporters, Teleporter_Uncover,
-                        Teleporter_Sink)
+DEFINE_CRACKED_TILES_STEP(CrackedTiles_Step, gCrackedTiles, CrackedTile_Crack,
+                        CrackedTile_Fall)
 
 #include "cell_target.h"
 
-DEFINE_TELEPORTER_PLACE_ARRIVAL(Teleporter_PlaceArrival, gTeleporters,
-                                Teleporter_DropInLower)
+DEFINE_CRACKED_TILE_PLACE_LANDING(CrackedTile_PlaceLanding, gCrackedTiles,
+                                CrackedTile_DropInLower)
 
 #include "scene_tables.h"
 #include "objcmd.h"

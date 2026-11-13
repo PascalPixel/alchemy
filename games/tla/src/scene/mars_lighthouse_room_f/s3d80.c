@@ -1,7 +1,7 @@
 /// @file
 /// Scene code of overlay 0x6ad, in ROM order.
 
-#include "../shared/teleporter.h"
+#include "../shared/cracked_tile.h"
 #include "../shared/jupiter_lighthouse.h"
 #include "../shared/mars_lighthouse.h"
 #include "../shared/push.h"
@@ -30,13 +30,13 @@ static __inline__ void SetWorkTriple(s32 a, s32 b, s32 c) {
   MapGrid_SetShake(a, b, c);
 }
 
-DEFINE_TELEPORTER_DROP_IN(Func_02003d80, Func_020035b8)
+DEFINE_CRACKED_TILE_DROP_IN(Func_02003d80, Func_020035b8)
 
 #include "../mars_lighthouse_room_f.h"
 
 void GameFlag_SetByte(s32 flag, s32 value);
-void Teleporter_Uncover(struct WarpWork *work, struct WarpEntry *entry);
-void Teleporter_SinkEvent(struct WarpWork *work, struct WarpEntry *entry);
+void CrackedTile_Crack(struct WarpWork *work, struct WarpEntry *entry);
+void CrackedTile_FallEvent(struct WarpWork *work, struct WarpEntry *entry);
 
 s32 Func_02003f18(void) {
   struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
@@ -52,7 +52,7 @@ s32 Func_02003f18(void) {
 top:
   if (entry->x == x && entry->z == z) {
     if (!Event_GetFlag(entry->flag)) {
-      Teleporter_Uncover(work, entry);
+      CrackedTile_Crack(work, entry);
       Event_SetFlag(entry->flag);
       work->current = index;
       goto end;
@@ -60,7 +60,7 @@ top:
     if (index == work->current)
       goto end;
     work->current = index;
-    Teleporter_SinkEvent(work, entry);
+    CrackedTile_FallEvent(work, entry);
     GameFlag_SetByte(work->positionFlag, x);
     GameFlag_SetByte(work->positionFlag + 8, z);
     return 1;

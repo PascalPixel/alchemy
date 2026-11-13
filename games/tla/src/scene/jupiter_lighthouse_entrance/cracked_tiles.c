@@ -1,8 +1,8 @@
 /// @file
 /// The grounds before Jupiter Lighthouse's gates: its copy of the effect
-/// spawner, and the teleporter cells, found, uncovered and sunk into.
+/// spawner, and the cracked tiles, found, cracked and fallen through.
 
-#include "../shared/teleporter.h"
+#include "../shared/cracked_tile.h"
 #include "types.h"
 #include "cell_target.h"
 #include "field_effect.h"
@@ -90,8 +90,8 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     effect->update = options->update;
 }
 
-#define CELL_TABLE gTeleporters
-#define CELL_SPRITE_DRAW Teleporters_Update
+#define CELL_TABLE gCrackedTiles
+#define CELL_SPRITE_DRAW CrackedTiles_Update
 #define CELL_PUSH_SLOT_ENTRY Import_OamAddSpriteAtDepthClamped
 #include "../../field/map/cell_sprite.c"
 
@@ -99,8 +99,8 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 #include "actor.h"
 #include "iwram_call.h"
 
-DEFINE_TELEPORTERS_FIND_LOWER(Teleporters_FindLower, gTeleporters,
-                              Teleporters_Update)
+DEFINE_CRACKED_TILES_FIND_LOWER(CrackedTiles_FindLower, gCrackedTiles,
+                              CrackedTiles_Update)
 
 #include "scene_tables.h"
 
@@ -110,15 +110,15 @@ DEFINE_LEADER_CENTER_IN_CELL(Leader_CenterInCell)
 
 /// Centers the leader on its cell, plays sound 161 and copies the cell below
 /// the table's source cell over the leader's, keeping the source column's and
-/// row's 64 bit; Teleporters_Step calls it the first time the leader steps on
+/// row's 64 bit; CrackedTiles_Step calls it the first time the leader steps on
 /// one of the table's cells.
-DEFINE_TELEPORTER_UNCOVER(Teleporter_Uncover, Leader_CenterInCell)
+DEFINE_CRACKED_TILE_CRACK(CrackedTile_Crack, Leader_CenterInCell)
 
 struct CellTargetEntry;
 
 /* VIEW(s14dc): tag struct CellTarget as struct CellTarget__s14dc; cell_target.h
  * has another definition; tried with the definition the rest of the object has,
- * Teleporter_Sink moves: 2 of 131 instructions in tla-ja. */
+ * CrackedTile_Fall moves: 2 of 131 instructions in tla-ja. */
 struct CellTarget__s14dc {
   s16 firstFlag;
   s16 flagByte;
@@ -133,7 +133,7 @@ struct CellTarget__s14dc {
 
 #include "io_write.h"
 
-void Teleporter_Sink(struct CellTarget__s14dc *table,
+void CrackedTile_Fall(struct CellTarget__s14dc *table,
                      struct CellTargetEntry *entry) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   s32 x = (leader->x >> 20) | (s16)(table->x & 64);

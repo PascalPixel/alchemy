@@ -2,7 +2,7 @@
 /// Scene code of overlay 0x6aa, in ROM order.
 
 #include "../shared/tables.h"
-#include "../shared/teleporter.h"
+#include "../shared/cracked_tile.h"
 #include "../shared/map_cells.h"
 #include "../shared/actors.h"
 #include "../shared/effects.h"
@@ -82,10 +82,10 @@ next:
 void GameFlag_SetByte(s32 flag, s32 value);
 void Func_02004160(struct CellTarget *work, struct CellTargetEntry *entry);
 
-DEFINE_TELEPORTERS_STEP(Teleporters_Step, Data_020068b4, Func_020040f0,
+DEFINE_CRACKED_TILES_STEP(CrackedTiles_Step, Data_020068b4, Func_020040f0,
                         Func_02004160)
 
-DEFINE_TELEPORTER_PLACE_ARRIVAL(Teleporter_PlaceArrival, Data_020068b4,
+DEFINE_CRACKED_TILE_PLACE_LANDING(CrackedTile_PlaceLanding, Data_020068b4,
                                 Func_020042f8)
 
 #include "dma.h"

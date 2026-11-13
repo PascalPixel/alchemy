@@ -9,7 +9,7 @@
 /// JupiterLighthouse_LeaveBySecondCyclone), and motes of light circle the room
 /// (JupiterLighthouse_SpawnCirclingMotes).
 ///
-/// The cracked tiles' code, the Teleporter routines, is in
+/// The cracked tiles' code is in
 /// jupiter_lighthouse_room_4/, in two parts the shared field effect objects
 /// link between.
 

@@ -1,7 +1,7 @@
 /// @file
 /// Scene code of overlay 0x6a5, in ROM order.
 
-#include "../shared/teleporter.h"
+#include "../shared/cracked_tile.h"
 #include "types.h"
 #include "system.h"
 #include "ram_buffer.h"
@@ -26,7 +26,7 @@ static __inline__ void Func_020057ac_(s32 a, s32 b, s32 c) {
   MapGrid_SetScreenShake(a, b, c);
 }
 
-void Teleporter_DropIn(void) {
+void CrackedTile_DropIn(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);
   struct EffectOptions options;
   struct Vector3 velocity;
@@ -78,14 +78,14 @@ void Teleporter_DropIn(void) {
 }
 
 void GameFlag_SetByte(s32 flag, s32 value);
-void Teleporter_SinkEvent(struct CellTarget *work,
+void CrackedTile_FallEvent(struct CellTarget *work,
                           struct CellTargetEntry *entry);
 
-DEFINE_TELEPORTERS_STEP(Teleporters_Step, gTeleporters, Teleporter_Uncover,
-                        Teleporter_SinkEvent)
+DEFINE_CRACKED_TILES_STEP(CrackedTiles_Step, gCrackedTiles, CrackedTile_Crack,
+                        CrackedTile_FallEvent)
 
-DEFINE_TELEPORTER_PLACE_ARRIVAL(Teleporter_PlaceArrival, gTeleporters,
-                                Teleporter_DropIn)
+DEFINE_CRACKED_TILE_PLACE_LANDING(CrackedTile_PlaceLanding, gCrackedTiles,
+                                CrackedTile_DropIn)
 
 #include "scene_tables.h"
 

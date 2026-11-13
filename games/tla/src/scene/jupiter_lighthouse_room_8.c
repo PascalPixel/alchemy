@@ -3,7 +3,7 @@
 /// The leader pushes five blue logs about (JupiterLighthouse_PushBlock), Move
 /// drops the pillar into a gap in the floor
 /// (JupiterLighthouse_DropBlockIntoHole), and cracked tiles give way under a
-/// second step (JupiterLighthouse_StepOnTeleporter) to the floor below. Stairs
+/// second step (JupiterLighthouse_StepOnCrackedTile) to the floor below. Stairs
 /// lead on to room m and back to the hall below the aerie.
 ///
 /// The cracked tiles' code is in jupiter_lighthouse_room_8/, in two parts the
@@ -55,10 +55,10 @@ struct IsletsVector {
   s32 y;
   s32 z;
 };
-s32 Teleporters_Step(void);
+s32 CrackedTiles_Step(void);
 void MapGrid_SetAttributeBAt(s32 x, s32 z, s32 a, s32 b);
 void Actor_DisableById(s32 id);
-void Teleporter_PlaceArrival(s32 x, s32 z, s32 effect);
+void CrackedTile_PlaceLanding(s32 x, s32 z, s32 effect);
 void JupiterLighthouse_PushBlock(void);
 struct Actor *PushTarget_FindAhead(s32 *direction, s32 *slot, s32 *kind);
 extern u16 gPushKinds[];
@@ -94,8 +94,8 @@ struct PushTarget {
 s32 PushTarget_FindSlide(struct PushTarget *target);
 void PushTarget_PushFill(struct PushTarget target);
 
-void JupiterLighthouse_StepOnTeleporter(void) {
-  if (Teleporters_Step())
+void JupiterLighthouse_StepOnCrackedTile(void) {
+  if (CrackedTiles_Step())
     FieldEvent_SetExitRequest(13);
 }
 
@@ -150,7 +150,7 @@ void JupiterLighthouse_DropBlockIntoHole(s32 unused, s32 id) {
 const struct Trigger *Scene_GetEvents(void) { return gSceneEvents; }
 
 s32 PushTarget_FillFootprint(s32 id);
-void Teleporters_Find(s32 a, s32 b, s32 c, s32 d, s32 e);
+void CrackedTiles_Find(s32 a, s32 b, s32 c, s32 d, s32 e);
 
 s32 Scene_Initialize(void) {
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
@@ -168,11 +168,11 @@ s32 Scene_Initialize(void) {
   PushTarget_FillFootprint(ACTOR_FIRST_LOG + 2);
   PushTarget_FillFootprint(ACTOR_FIRST_LOG + 3);
   PushTarget_FillFootprint(ACTOR_FIRST_LOG + 4);
-  Teleporters_Find(33, 0x280, 0x380, 0, 1);
+  CrackedTiles_Find(33, 0x280, 0x380, 0, 1);
   if (gMainRoutineWork.entrance == 13)
-    Teleporter_PlaceArrival(19, 0, 0x204);
+    CrackedTile_PlaceLanding(19, 0, 0x204);
   else if (gMainRoutineWork.entrance == 14)
-    Teleporter_PlaceArrival(-20, -22, 0x204);
+    CrackedTile_PlaceLanding(-20, -22, 0x204);
   return 0;
 }
 

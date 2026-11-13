@@ -31,5 +31,5 @@ gData_020024f4:
 	.global gData_020024f6
 gData_020024f6:
 	.space 0x00000002
-	.global gTeleporters
-gTeleporters:
+	.global gCrackedTiles
+gCrackedTiles:

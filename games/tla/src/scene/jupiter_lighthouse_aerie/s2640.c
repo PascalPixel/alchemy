@@ -2,7 +2,7 @@
 /// Scene code of overlay 0x6a4, in ROM order.
 
 #include "../shared/tables.h"
-#include "../shared/teleporter.h"
+#include "../shared/cracked_tile.h"
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -30,10 +30,10 @@ static __inline__ void SetWorkTriple(s32 a, s32 b, s32 c) {
   MapGrid_SetScreenShake(a, b, c);
 }
 
-DEFINE_TELEPORTER_DROP_IN(Teleporter_DropIn, FieldEffect_Spawn)
+DEFINE_CRACKED_TILE_DROP_IN(CrackedTile_DropIn, FieldEffect_Spawn)
 
-DEFINE_TELEPORTERS_STEP(Teleporters_Step, gData_02003488, Teleporter_Uncover,
-                        Teleporter_Sink)
+DEFINE_CRACKED_TILES_STEP(CrackedTiles_Step, gData_02003488, CrackedTile_Crack,
+                        CrackedTile_Fall)
 
 void Func_02002888(s32 dx, s32 dz, s32 value) {
   struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);
@@ -53,7 +53,7 @@ void Func_02002888(s32 dx, s32 dz, s32 value) {
     shadow->x = object->x;
     shadow->z = object->z;
     Map_CenterOnFollowedPoint();
-    Teleporter_DropIn();
+    CrackedTile_DropIn();
     ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = value;
   }
 }

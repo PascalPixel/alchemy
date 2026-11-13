@@ -1,9 +1,9 @@
 /// @file
-/// The hall below Jupiter Lighthouse's aerie: the teleporters' steps and
-/// arrivals.
+/// The hall below Jupiter Lighthouse's aerie: the cracked tiles' steps and
+/// landings.
 
 #include "../shared/tables.h"
-#include "../shared/teleporter.h"
+#include "../shared/cracked_tile.h"
 #include "types.h"
 #include "cell_target.h"
 #include "system.h"
@@ -16,7 +16,7 @@
 #include "module/field/field_effect.h"
 #include "module/scene/scene.h"
 
-void Teleporter_PlaceArrival(s32 x, s32 z, s32 effect);
+void CrackedTile_PlaceLanding(s32 x, s32 z, s32 effect);
 void JupiterLighthouse_StepOffButton(void);
 extern u32 gFieldEffect_ShortScript[];
 extern u32 gFieldEffect_MediumScript[];
@@ -26,16 +26,16 @@ void JupiterLighthouse_FinishMovingBlock(void);
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags, struct EffectOptions *options);
 
-DEFINE_TELEPORTER_DROP_IN(Teleporter_DropIn, FieldEffect_Spawn)
+DEFINE_CRACKED_TILE_DROP_IN(CrackedTile_DropIn, FieldEffect_Spawn)
 
-extern struct CellTarget gTeleporters;
+extern struct CellTarget gCrackedTiles;
 
 void GameFlag_SetByte(s32 flag, s32 value);
-void Teleporter_Uncover(struct CellTarget *work, struct CellTargetEntry *entry);
-void Teleporter_Sink(struct CellTarget *work, struct CellTargetEntry *entry);
+void CrackedTile_Crack(struct CellTarget *work, struct CellTargetEntry *entry);
+void CrackedTile_Fall(struct CellTarget *work, struct CellTargetEntry *entry);
 
-DEFINE_TELEPORTERS_STEP(Teleporters_Step, gTeleporters, Teleporter_Uncover,
-                        Teleporter_Sink)
+DEFINE_CRACKED_TILES_STEP(CrackedTiles_Step, gCrackedTiles, CrackedTile_Crack,
+                        CrackedTile_Fall)
 
-DEFINE_TELEPORTER_PLACE_ARRIVAL(Teleporter_PlaceArrival, gTeleporters,
-                                Teleporter_DropIn)
+DEFINE_CRACKED_TILE_PLACE_LANDING(CrackedTile_PlaceLanding, gCrackedTiles,
+                                CrackedTile_DropIn)

@@ -40,10 +40,9 @@ extern s16 gLightSpritePriority;
 
 void Leader_CenterInCell(void);
 
-extern struct CellTarget gTeleporters;
+extern struct CellTarget gCrackedTiles;
 
-void Teleporter_Uncover(struct CellTarget *table,
-                        struct CellTargetEntry *entry);
+void CrackedTile_Crack(struct CellTarget *table, struct CellTargetEntry *entry);
 
 void Func_020006ac(void);
 

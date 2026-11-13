@@ -1,16 +1,16 @@
 /// @file
-/// The Cyclone teleporters of Jupiter Lighthouse (and the Mars Lighthouse
-/// and Anemos rooms built the same way): the cells that hide them, uncovering
-/// one, sending the leader through and landing on the far side.
+/// The cracked floor tiles of Jupiter Lighthouse (and the Mars Lighthouse
+/// and Anemos rooms built the same way): the first step cracks one, the next
+/// drops the leader through it to the floor below.
 /// Each routine is a macro a scene expands where its copy sits, with the
 /// names of its own data and calls.
-#ifndef ALCHEMY_SCENE_SHARED_TELEPORTER_H
-#define ALCHEMY_SCENE_SHARED_TELEPORTER_H
+#ifndef ALCHEMY_SCENE_SHARED_CRACKED_TILE_H
+#define ALCHEMY_SCENE_SHARED_CRACKED_TILE_H
 
-/// Finds the room's teleporters: every cell whose event is `kind` (covered) or
-/// `kind + 1` (uncovered), each given the next flag from `flag`; returns how
+/// Finds the room's cracked tiles: every cell whose event is `kind` (whole) or
+/// `kind + 1` (cracked), each given the next flag from `flag`; returns how
 /// many.
-#define DEFINE_TELEPORTERS_FIND(name, data1, call1)                            \
+#define DEFINE_CRACKED_TILES_FIND(name, data1, call1)                            \
   s32 name(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {                   \
     struct CellTarget *table = &data1;                                         \
     struct CellTargetEntry *entry = table->entries;                            \
@@ -117,10 +117,10 @@
     return table->count;                                                       \
   }
 
-/// Run each frame: when the leader steps onto a covered teleporter it is
-/// uncovered, and onto an uncovered one other than the last used, the leader is
-/// sent through it; 1 when sent.
-#define DEFINE_TELEPORTERS_STEP(name, data1, call1, call2)                     \
+/// Run each frame: when the leader steps onto a whole tile it cracks,
+/// and onto a cracked one other than the one it cracked last, the leader falls
+/// through it; 1 when it falls.
+#define DEFINE_CRACKED_TILES_STEP(name, data1, call1, call2)                     \
   s32 name(void) {                                                             \
     struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);           \
     s32 x = object->x >> 20;                                                   \
@@ -169,9 +169,9 @@
     EventCamera_GetActor()->y -= 0x80000;                                      \
   }
 
-/// On arriving through a teleporter, puts the leader on the cell the flag bytes
+/// On landing below a cracked tile, puts the leader on the cell the flag bytes
 /// saved, offset from (x, z), and starts the screen effect.
-#define DEFINE_TELEPORTER_PLACE_ARRIVAL(name, data1, call1)                    \
+#define DEFINE_CRACKED_TILE_PLACE_LANDING(name, data1, call1)                    \
   void name(s32 x, s32 z, s32 effect) {                                        \
     struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);           \
     struct JupiterLighthouseRoom8EventWork *work = Ram_HeapSlots->eventWork;   \
@@ -195,9 +195,9 @@
     }                                                                          \
   }
 
-/// The leader drops in from above after a teleporter, lands with a burst of
+/// The leader drops in from above through a cracked tile, lands with a burst of
 /// dust and a shake.
-#define DEFINE_TELEPORTER_DROP_IN(name, call1)                                 \
+#define DEFINE_CRACKED_TILE_DROP_IN(name, call1)                                 \
   void name(void) {                                                            \
     struct Actor *actor = Actor_Get(gMainRoutineWork.currentOwner);            \
     u32 i;                                                                     \
@@ -252,9 +252,9 @@
     Event_End();                                                               \
   }
 
-/// Sends the leader through a teleporter: it lights up and the leader spins
+/// Drops the leader through a cracked tile: it gives way and the leader spins
 /// down into it while the screen fades.
-#define DEFINE_TELEPORTER_SINK(name, id1, call1)                               \
+#define DEFINE_CRACKED_TILE_FALL(name, id1, call1)                               \
   void name(struct id1 *table, struct CellTargetEntry *entry) {                \
     struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);           \
     s32 x = (leader->x >> 20) | (s16)(table->x & 64);                          \
@@ -289,8 +289,8 @@
     Event_WaitTransitionFrames();                                              \
   }
 
-/// Teleporters_Find as the lower floors' copies compile it.
-#define DEFINE_TELEPORTERS_FIND_LOWER(name, data1, call1)                      \
+/// CrackedTiles_Find as the lower floors' copies compile it.
+#define DEFINE_CRACKED_TILES_FIND_LOWER(name, data1, call1)                      \
   s32 name(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {                   \
     struct CellTarget *table = &data1;                                         \
     struct CellTargetEntry *entry = table->entries;                            \
@@ -418,8 +418,8 @@
     return table->count;                                                       \
   }
 
-/// Uncovers the teleporter under the leader, swapping in its picture.
-#define DEFINE_TELEPORTER_UNCOVER(name, call1)                                 \
+/// Cracks the tile under the leader, swapping in its cracked picture.
+#define DEFINE_CRACKED_TILE_CRACK(name, call1)                                 \
   void name(struct CellTarget *table, struct CellTargetEntry *entry) {         \
     struct Actor *leader = Actor_Get(gMainRoutineWork.currentOwner);           \
     s32 x;                                                                     \
@@ -433,8 +433,8 @@
     FieldEvent_Wait(12);                                                       \
   }
 
-/// Teleporter_DropIn as the lower floors' copies compile it.
-#define DEFINE_TELEPORTER_DROP_IN_LOWER(name, call1)                           \
+/// CrackedTile_DropIn as the lower floors' copies compile it.
+#define DEFINE_CRACKED_TILE_DROP_IN_LOWER(name, call1)                           \
   void name(void) {                                                            \
     struct Actor *actor = Actor_Get(gMainRoutineWork.currentOwner);            \
     u32 i;                                                                     \
@@ -504,8 +504,8 @@
     Event_End();                                                               \
   }
 
-/// Teleporter_Sink for a push event's teleporter.
-#define DEFINE_TELEPORTER_SINK_EVENT(name, call1)                              \
+/// CrackedTile_Fall for a push event's cracked tile.
+#define DEFINE_CRACKED_TILE_FALL_EVENT(name, call1)                              \
   void name(struct PushEvent *event) {                                         \
     struct Actor *object = Actor_Get(gMainRoutineWork.currentOwner);           \
     s32 x;                                                                     \

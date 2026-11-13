@@ -28,5 +28,5 @@ gPaletteCycleLength:
 	.global gPaletteCycleIndex
 gPaletteCycleIndex:
 	.space 0x00000004
-	.global gTeleporters
-gTeleporters:
+	.global gCrackedTiles
+gCrackedTiles:

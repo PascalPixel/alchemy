@@ -36,7 +36,7 @@ s32 BattleEffect_GetObjectPriority(struct Actor *actor);
 
 void Leader_CenterInCell(void);
 
-extern struct CellTarget gTeleporters;
+extern struct CellTarget gCrackedTiles;
 
 void Func_020003f4(void);
 void Func_02000410(void);

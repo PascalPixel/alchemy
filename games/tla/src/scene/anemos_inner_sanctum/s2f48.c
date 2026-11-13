@@ -2,7 +2,7 @@
 /// Scene code of overlay 0x6b0, in ROM order.
 
 #include "../shared/tables.h"
-#include "../shared/teleporter.h"
+#include "../shared/cracked_tile.h"
 #include "types.h"
 #include "system.h"
 #include "ram_buffer.h"
@@ -19,7 +19,7 @@ void FieldEffect_SpawnLocal(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                             s32 velocityZ, u32 flags,
                             struct EffectOptions *options);
 
-void Teleporter_DropIn(void) {
+void CrackedTile_DropIn(void) {
   struct Actor *actor = Actor_Get(gMainRoutineWork.currentOwner);
   u32 i;
   struct EffectOptions options;
@@ -91,13 +91,13 @@ loop:
 #include "cell_target.h"
 
 void GameFlag_SetByte(s32 flag, s32 value);
-void Teleporter_Sink(struct CellTarget *work, struct CellTargetEntry *entry);
+void CrackedTile_Fall(struct CellTarget *work, struct CellTargetEntry *entry);
 
-DEFINE_TELEPORTERS_STEP(Teleporters_Step, gTeleporters, Teleporter_Uncover,
-                        Teleporter_Sink)
+DEFINE_CRACKED_TILES_STEP(CrackedTiles_Step, gCrackedTiles, CrackedTile_Crack,
+                        CrackedTile_Fall)
 
-DEFINE_TELEPORTER_PLACE_ARRIVAL(Teleporter_PlaceArrival, gTeleporters,
-                                Teleporter_DropIn)
+DEFINE_CRACKED_TILE_PLACE_LANDING(CrackedTile_PlaceLanding, gCrackedTiles,
+                                CrackedTile_DropIn)
 
 #include "scene_tables.h"
 

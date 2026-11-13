@@ -1,14 +1,14 @@
 /// @file
 /// Scene code of overlay 0x6aa, in ROM order.
 
-#include "../shared/teleporter.h"
+#include "../shared/cracked_tile.h"
 #include "field.h"
 #include "heap_release.h"
 #include "item_icon.h"
 #include "module/scene/scene.h"
 
 #define CELL_TABLE Data_020068b4
-#define CELL_SPRITE_DRAW Teleporters_Update
+#define CELL_SPRITE_DRAW CrackedTiles_Update
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped
 #include "../../field/map/cell_sprite.c"
 
@@ -20,7 +20,7 @@
 #include "event_inline.h"
 #include "cell_target.h"
 
-DEFINE_TELEPORTERS_FIND(Func_02003e24, Data_020068b4, Teleporters_Update)
+DEFINE_CRACKED_TILES_FIND(Func_02003e24, Data_020068b4, CrackedTiles_Update)
 
 #include "scene_tables.h"
 
@@ -30,9 +30,9 @@ DEFINE_LEADER_CENTER_IN_CELL(Leader_CenterInCell)
 
 /// Centers the leader on its cell, plays sound 161 and copies the cell below
 /// the table's source cell over the leader's, keeping the source column's and
-/// row's 64 bit; Teleporters_Step calls it the first time the leader steps on
+/// row's 64 bit; CrackedTiles_Step calls it the first time the leader steps on
 /// one of the table's cells.
-DEFINE_TELEPORTER_UNCOVER(Func_020040f0, Leader_CenterInCell)
+DEFINE_CRACKED_TILE_CRACK(Func_020040f0, Leader_CenterInCell)
 
 #include "io_reg.h"
 #include "event_work.h"

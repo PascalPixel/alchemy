@@ -6,7 +6,7 @@
 /// in the floor (JupiterLighthouse_FinishMovingPillar). A Cyclone teleporter
 /// leads on (JupiterLighthouse_LeaveByCyclone).
 ///
-/// The cracked tiles' code, the Teleporter routines, is in
+/// The cracked tiles' code is in
 /// jupiter_lighthouse_room_3/, in two parts the shared field effect objects
 /// link between, and the tables the scene's getters return are in
 /// data/jupiter_lighthouse_room_3.c, which the overlay links after the field's

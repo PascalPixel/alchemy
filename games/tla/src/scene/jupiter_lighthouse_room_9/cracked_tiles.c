@@ -1,30 +1,18 @@
 /// @file
-/// The room of gaps and logs in Jupiter Lighthouse: its copy of the effect
-/// spawner, and the cracked tiles, found, cracked and fallen through.
+/// The hover-tile hall of Jupiter Lighthouse's right tower: its copy of the
+/// effect spawner, and the cracked tiles, found, cracked and fallen through.
 
+#include "../shared/cracked_tile.h"
 #include "types.h"
 #include "field_effect.h"
 #include "main_routine_work.h"
 #include "event_inline.h"
-#include "../shared/teleporter.h"
-#include "ram_buffer.h"
-#include "actor.h"
-#include "iwram_call.h"
-#include "io_reg.h"
-#include "cell_target.h"
-#include "event_work.h"
-#include "field.h"
 #include "heap_release.h"
 #include "item_icon.h"
 #include "module/scene/scene.h"
-
-#include "field/cell_target.h"
-
-/// The cells Teleporters_Step watches, and the cell it copies over the one the
-/// leader steps on.
-extern struct CellTarget gTeleporters;
-
-void Teleporters_Update(void);
+#include "io_reg.h"
+#include "field.h"
+#include "event_work.h"
 
 extern const s32 *gFieldEffect_DurationScripts[];
 
@@ -101,20 +89,44 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     effect->update = options->update;
 }
 
-#define CELL_TABLE gTeleporters
-#define CELL_SPRITE_DRAW Teleporters_Update
+// The cells CrackedTiles_Step watches, and the cell it copies over the one the
+// leader steps on.
+#define CELL_TABLE gCrackedTiles
+#define CELL_SPRITE_DRAW CrackedTiles_Update
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped
 #include "../../field/map/cell_sprite.c"
 
-DEFINE_TELEPORTERS_FIND_LOWER(Teleporters_FindLower, gTeleporters,
-                              Teleporters_Update)
+#include "ram_buffer.h"
+#include "actor.h"
+#include "iwram_call.h"
+#include "scene_tables.h"
+#include "cell_target.h"
+
+DEFINE_CRACKED_TILES_FIND(CrackedTiles_Find, gCrackedTiles, CrackedTiles_Update)
 
 DEFINE_LEADER_CENTER_IN_CELL(Leader_CenterInCell)
 
 /// Centers the leader on its cell, plays sound 161 and copies the cell below
 /// the table's source cell over the leader's, keeping the source column's and
-/// row's 64 bit; Teleporters_Step calls it the first time the leader steps on
+/// row's 64 bit; CrackedTiles_Step calls it the first time the leader steps on
 /// one of the table's cells.
-DEFINE_TELEPORTER_UNCOVER(Teleporter_Uncover, Leader_CenterInCell)
+DEFINE_CRACKED_TILE_CRACK(CrackedTile_Crack, Leader_CenterInCell)
 
-DEFINE_TELEPORTER_SINK_EVENT(Teleporter_SinkEvent, Leader_CenterInCell)
+/* VIEW(s1648): tag struct CellTarget as struct CellTarget__s1648; cell_target.h
+ * has another definition; tried with the definition the rest of the object has,
+ * CrackedTile_Fall moves: 2 of 131 instructions in tla-ja. */
+struct CellTarget__s1648 {
+  s16 firstFlag;
+  s16 flagByte;
+  s16 kind;
+  s16 x;
+  s16 z;
+  s16 count;
+  s16 current;
+  s16 shown;
+  s16 tile;
+};
+
+#include "io_write.h"
+
+DEFINE_CRACKED_TILE_FALL(CrackedTile_Fall, CellTarget__s1648, Leader_CenterInCell)

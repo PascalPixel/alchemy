@@ -4,11 +4,11 @@
 /// on the button by its door holds the door open; the pillar pushed onto it
 /// (JupiterLighthouse_CheckBlockOnCell) keeps it open, a shortcut through the
 /// tower. Cracked tiles on the floor and on the upper ledge give way under a
-/// second step (JupiterLighthouse_StepOnLowerTeleporter,
-/// JupiterLighthouse_StepOnUpperTeleporter), dropping the party to the floor
+/// second step (JupiterLighthouse_StepOnLowerCrackedTile,
+/// JupiterLighthouse_StepOnUpperCrackedTile), dropping the party to the floor
 /// below or to room 8.
 ///
-/// The cracked tiles' code, the Teleporter routines, is in
+/// The cracked tiles' code is in
 /// jupiter_lighthouse_room_6/, in two parts the shared field effect objects
 /// link between.
 
@@ -54,7 +54,7 @@ enum { ACTOR_SHORTCUT_PILLAR = ACTOR_FIRST_PLACED + 4 };
 
 void JupiterLighthouse_OpenDoor(s32 value);
 void JupiterLighthouse_CheckBlockOnCell(void);
-void Teleporter_PlaceArrival(s32 x, s32 z, s32 effect);
+void CrackedTile_PlaceLanding(s32 x, s32 z, s32 effect);
 extern s16 gLightSpriteTile;
 extern struct LightOam gLightSpriteOams[];
 extern s16 gLightSpritesLarge;
@@ -83,19 +83,19 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 }
 
 extern s32 gPaletteCyclePausesInEvents;
-s32 Teleporters_Step(s32 value);
+s32 CrackedTiles_Step(s32 value);
 void JupiterLighthouse_CloseDoor(void);
 void JupiterLighthouse_LoadPalettes(s32 value);
 
-void JupiterLighthouse_StepOnLowerTeleporter(s32 value) {
+void JupiterLighthouse_StepOnLowerCrackedTile(s32 value) {
   if (Actor_Get(gMainRoutineWork.currentOwner)->y == 0 &&
-      Teleporters_Step(value))
+      CrackedTiles_Step(value))
     FieldEvent_SetExitRequest(13);
 }
 
-void JupiterLighthouse_StepOnUpperTeleporter(s32 value) {
+void JupiterLighthouse_StepOnUpperCrackedTile(s32 value) {
   if (Actor_Get(gMainRoutineWork.currentOwner)->y == 0 &&
-      Teleporters_Step(value))
+      CrackedTiles_Step(value))
     FieldEvent_SetExitRequest(14);
 }
 
@@ -133,7 +133,7 @@ extern s32 gPaletteCycleFrame;
 static inline void Counter_Set(s32 value) { gPaletteCycleFrame = value; }
 
 s32 __modsi3();
-void Teleporters_Find(s32 a, s32 b, s32 c, s32 d, s32 e);
+void CrackedTiles_Find(s32 a, s32 b, s32 c, s32 d, s32 e);
 
 s32 Scene_Initialize(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
@@ -146,10 +146,10 @@ s32 Scene_Initialize(void) {
   if (Event_GetFlag(FLAG_DOOR_BUTTON_HELD))
     JupiterLighthouse_OpenDoor(0);
   if ((u16)(gMainRoutineWork.entrance - 5) <= 1) {
-    Teleporters_Find(33, 0x280, 0x380, 20, 31);
+    CrackedTiles_Find(33, 0x280, 0x380, 20, 31);
   } else {
-    Teleporters_Find(43, 0x280, 0x380, 21, 31);
-    Teleporter_PlaceArrival(21, -3, 0x204);
+    CrackedTiles_Find(43, 0x280, 0x380, 21, 31);
+    CrackedTile_PlaceLanding(21, -3, 0x204);
   }
   return 0;
 }
@@ -332,12 +332,12 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 12},
     {TRIGGER_STEP, 20, FLAG_JUPITER_LIGHTHOUSE_SHORTCUT_PILLAR_PLACED, EVENT(JupiterLighthouse_StepOnButton)},
     {TRIGGER_STEP, 21, FLAG_JUPITER_LIGHTHOUSE_SHORTCUT_PILLAR_PLACED, EVENT(JupiterLighthouse_StepOffButton)},
-    {TRIGGER_STEP, 33, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StepOnLowerTeleporter)},
-    {TRIGGER_STEP, 34, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StepOnLowerTeleporter)},
-    {TRIGGER_STEP, 35, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StepOnLowerTeleporter)},
-    {TRIGGER_STEP, 43, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StepOnUpperTeleporter)},
-    {TRIGGER_STEP, 44, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StepOnUpperTeleporter)},
-    {TRIGGER_STEP, 45, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StepOnUpperTeleporter)},
+    {TRIGGER_STEP, 33, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StepOnLowerCrackedTile)},
+    {TRIGGER_STEP, 34, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StepOnLowerCrackedTile)},
+    {TRIGGER_STEP, 35, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StepOnLowerCrackedTile)},
+    {TRIGGER_STEP, 43, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StepOnUpperCrackedTile)},
+    {TRIGGER_STEP, 44, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StepOnUpperCrackedTile)},
+    {TRIGGER_STEP, 45, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StepOnUpperCrackedTile)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SHORTCUT_PILLAR, FLAG_JUPITER_LIGHTHOUSE_SHORTCUT_PILLAR_PLACED, EVENT(JupiterLighthouse_FinishMovingBlock)},
     {TRIGGER_TABLE_END},
 };

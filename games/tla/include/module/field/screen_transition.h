@@ -114,7 +114,7 @@ extern const u8 Data_080f01c4[];
 
 extern const s8 Data_080f01e6[];
 
-extern struct TransitionShape Data_080f2e9c[];
+extern struct TransitionShape gScreenTransition_Shapes[];
 
 extern const u8 gData_080f0206[];
 

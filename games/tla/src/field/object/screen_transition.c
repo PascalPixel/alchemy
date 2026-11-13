@@ -626,7 +626,7 @@ void ScreenTransition_UpdateScanlineTable(void) {
 
   case 1:
     value = state->value;
-    shape = &Data_080f2e9c[value & 31];
+    shape = &gScreenTransition_Shapes[value & 31];
     if (value & 32) {
       *scanlineData++ = shape->first;
       *scanlineData++ = shape->second;

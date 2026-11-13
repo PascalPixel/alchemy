@@ -1,3 +1,7 @@
+/// @file
+/// Actors standing as blocks in the map: their cells tagged and the tags
+/// cleared, the actor at a position, and effect sprites filled and queued.
+
 #include "types.h"
 #include "actor.h"
 #include "main_routine_work.h"

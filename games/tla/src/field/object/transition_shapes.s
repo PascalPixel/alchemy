@@ -1,7 +1,7 @@
 	.section .rodata
-@ A copy of The Broken Seal's gScreenTransition_Shapes
-	.global Data_080f2e9c
-Data_080f2e9c:
+@ As The Broken Seal has it.
+	.global gScreenTransition_Shapes
+gScreenTransition_Shapes:
 	.2byte 1, 32639
 	.2byte 160, 65535
 	.byte 0, 0, 0, 0

@@ -767,7 +767,7 @@ s32 Func_081a71c8(void) {
 /// map numbered from tile 0x1a0, two blank columns a row) and, with prompt
 /// set, loads the five prompt sprites. After the fade from white it holds 660
 /// frames, or 5400 with the prompt; after the first 120 the prompt's three
-/// sprites blink by Data_081a873e's levels, and A or Start ends it early,
+/// sprites blink by gTitle_PromptBlendLevels's levels, and A or Start ends it early,
 /// returning 1 (else 0).
 // As the end of The Broken Seal's Title_RunIntro.
 s32 Func_081a729c(s32 prompt) {
@@ -897,7 +897,7 @@ column:
           sprite++;
         }
 #endif
-        level = Data_081a873e[i % 60];
+        level = gTitle_PromptBlendLevels[i % 60];
         REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_BG0 |
                      BLDCNT_TGT2_BG1 | BLDCNT_TGT2_BG2 | BLDCNT_TGT2_BG3 |
                      BLDCNT_TGT2_BD;

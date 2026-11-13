@@ -570,7 +570,7 @@ void Func_080dc954(void);
 void Actor_SetOthersPaused(struct Actor *excludedObject, s32 groupMode,
                            s32 action);
 
-extern const u8 Data_080f1100[];
+extern const u8 gWorldMap_MarkerBlendCycle[];
 
 extern const u16 Data_080f1120[];
 

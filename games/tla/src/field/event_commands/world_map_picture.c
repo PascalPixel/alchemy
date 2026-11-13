@@ -258,7 +258,7 @@ void WorldPicture_UpdateMarkers(void) {
   places = FlagEntries_GetTable();
   scrollX = work->scrollX & 0xffff0000;
   scrollY = work->scrollZ & 0xffff0000;
-  blend = Data_080f1100[(gFrameCount >> 1) & 31];
+  blend = gWorldMap_MarkerBlendCycle[(gFrameCount >> 1) & 31];
 
   if (Data_0202a644 != 0) {
     x = Data_0202a644;

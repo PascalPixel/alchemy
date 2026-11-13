@@ -133,7 +133,7 @@ extern char ResourceId_IntroLighthousePicture;
 extern char ResourceId_IntroGullSprites;
 extern char ResourceId_TitleScreenPicture;
 
-extern const u8 Data_081a873e[];
+extern const u8 gTitle_PromptBlendLevels[];
 
 extern u16 Data_081a877a[];
 

@@ -1,20 +1,20 @@
 .syntax unified
 	.thumb
 	.section .bss,"aw",%nobits
-	.global gData_02002c60
-gData_02002c60:
+	.global gSettlements_WaterColors
+gSettlements_WaterColors:
 	.space 0x00000020
-	.global gData_02002c80
-gData_02002c80:
+	.global gSettlements_WaterColorsSaved
+gSettlements_WaterColorsSaved:
 	.space 0x00000060
-	.global gData_02002ce0
-gData_02002ce0:
+	.global gSettlements_WaterfallLine
+gSettlements_WaterfallLine:
 	.space 0x00000004
-	.global gData_02002ce4
-gData_02002ce4:
+	.global gSettlements_WaterfallScrollAbove
+gSettlements_WaterfallScrollAbove:
 	.space 0x00000002
-	.global gData_02002ce6
-gData_02002ce6:
+	.global gSettlements_WaterfallScrollBelow
+gSettlements_WaterfallScrollBelow:
 	.space 0x00000002
-	.global gData_02002ce8
-gData_02002ce8:
+	.global gSettlements_SlideStopped
+gSettlements_SlideStopped:

@@ -22,35 +22,18 @@
 
 struct AffineTransform;
 struct SpriteAnimation;
-struct AnimationMetadata;
 struct Sprite;
 struct BattleAction;
 struct BattleEffectParams;
-struct AbilityDefinition;
-struct BattleObject;
-struct Unit;
 struct Actor;
-struct EffectLaunch;
-struct ScreenPoint;
-struct FieldParticle;
 struct Vector3;
-struct EnemyDefinition;
 struct FieldPosition;
-struct BattleEffectObject;
-struct ItemDefinition;
-struct LevelUpResult;
 struct MenuSprite;
-struct PolarOffsetOutput;
-struct GlyphRect;
-struct WindowSprite;
 struct Trigger;
 struct ActorPlacement;
 struct MenuCursor;
 struct SpritePlacement;
 struct SpriteScale;
-struct SummonDefinition;
-struct TransitionActorList;
-struct Window;
 struct WorldPosition;
 
 // Entries have their target's parameters. Seven keep empty parameter lists

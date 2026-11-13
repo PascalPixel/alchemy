@@ -13,7 +13,6 @@
 #include "far_call.h"
 
 struct Actor;
-struct ScreenPoint;
 
 /// An IWRAM word the scrolling camera's setup clears; nothing in the tree
 /// reads it.
@@ -31,25 +30,11 @@ extern u8 Render_DecodePictureCodeSize[];
 /// first also remapping the command icons (SpriteColor_RemapPixels).
 extern const u8 gSpriteColorRemapTables[];
 
-struct AbilityListEntry;
 struct BattleEffectParams;
-struct Unit;
-struct BurstParticle;
-struct Particle;
 struct FieldPosition;
-struct MercuryLighthouseLights;
-struct MapActor;
-struct MapGridCell;
 struct MenuSprite;
-struct ModeRecord;
-struct FieldRecord;
-struct SceneEntrance;
-struct MapEntry;
 struct Trigger;
 struct ActorPlacement;
-struct SceneExitRegion;
-struct SparklePicture;
-struct Swirl;
 
 /// The Colosso opponent's path player, at the start of gSceneLocalState: the
 /// path in ColossoRaceWork is played back or recorded by

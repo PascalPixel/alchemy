@@ -7,13 +7,9 @@
 struct SpeakerDefinition;
 struct Actor;
 struct ScreenTransitionState;
-struct ActorDouseView;
 struct TriggerView;
-struct FieldParticle;
 struct Vector3;
-struct OrbitEffect;
 struct ActorPlacement;
-struct Window;
 
 /// The exit request whose destination is already in gMainRoutineWork.next
 /// and .entrance, so that Scene_TakeExit leaves them as they are. Random

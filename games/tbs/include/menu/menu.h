@@ -32,19 +32,9 @@ extern u8 gShop_GlyphBytes[];
 extern u8 gStatusScreen_LevelLetterString[];
 
 struct Sprite;
-struct AbilityDefinition;
-struct DjinnListTable;
-struct FieldParticle;
-struct PagedList;
 struct ActorSystemWork;
-struct PsynergyEntry;
-struct PlacementDescriptor;
-struct GlyphRect;
-struct WindowSprite;
 struct SelectionMenuWork;
 struct MenuCursor;
-struct Window;
-struct Work;
 
 /// A background's horizontal and vertical scroll offsets.
 struct ScrollPair {

@@ -14,7 +14,6 @@
 #include "window.h"
 
 struct Unit;
-struct PsynergyEntry;
 
 /// The work of the party member chooser and the Status menu, in the
 /// HEAP_SLOT_MENU heap slot, which each takes as it opens and frees before it

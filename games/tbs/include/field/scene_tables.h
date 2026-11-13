@@ -423,6 +423,4 @@ enum ExamineTarget {
 #define EVENT(script) ((u32)(script))
 #define TRIGGER_TABLE_END 0xffffffff ///< ends a trigger table
 
-struct SceneExitRegion;
-
 #endif

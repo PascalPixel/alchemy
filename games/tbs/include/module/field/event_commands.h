@@ -298,9 +298,6 @@ void FieldPsynergy_FadeToCastColor(void);
 void FieldPsynergy_FadeFromCastColor(void);
 void Camera_WorldToScreen(struct Vector3 *position);
 
-struct ActorDouseView;
-struct OrbitEffect;
-
 void FieldPsynergy_StartMindReadWave(s32 x, s32 y);
 void FieldPsynergy_StopMindReadWave(void);
 void FieldPsynergy_UpdateMindReadWave(void);

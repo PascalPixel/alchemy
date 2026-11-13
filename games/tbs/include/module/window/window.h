@@ -7,17 +7,12 @@
 
 struct AbilityListEntry;
 struct BattleAction;
-struct AbilityDefinition;
-struct GlyphPalette;
 struct MenuSprite;
-struct PsynergyEntry;
 struct Window;
 struct WindowSprite;
 struct WindowSpriteList;
-struct SaveFileSummary;
 struct SelectionNode;
 struct SelectionMenuWork;
-struct BattleCommandRowWork;
 struct MessageReader;
 struct Message;
 struct OptionMenuWork;

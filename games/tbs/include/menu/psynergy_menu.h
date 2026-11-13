@@ -13,8 +13,6 @@
 
 struct Sprite;
 
-struct Unit;
-
 /// The Psynergy menu: its windows, icons and cursors, the party members' tabs
 /// and the Psynergy listed for the chosen party member. It is the
 /// HEAP_SLOT_MENU block as this menu reads it, from the menu's opening to its

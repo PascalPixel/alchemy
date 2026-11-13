@@ -137,7 +137,8 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *win, s32 member,
     if (sprite) {
       sprite->motion = 1;
       sprite->kind = WINDOW_SPRITE_ICON;
-      // Stored through a cast, the index stays ahead of the attribute word.
+      /* FAKEMATCH(type): the u8 index stored through an s8 pointer; as a plain
+       * store, 1 of 93 instructions differ in tbs-en. */
       *(s8 *)&sprite->index = VramCache_AllocEntry(128);
       entry = (struct PreviewSprite *)sprite->link;
       sprite->sentinel = 240;

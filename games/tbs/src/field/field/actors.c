@@ -233,7 +233,9 @@ struct Actor *Actor_Create(s32 encodedSprite, s32 x, s32 y, s32 z) {
       spriteSlots =
           (void **)((u32 *)gActorSystemWork + gActorSystemWork->count++ + 2);
       actor->spriteStorageKind = spriteStorageKind;
-      // Through the sprite union this store moves before the next.
+      /* FAKEMATCH(type): the group stored through a struct Sprite **; as
+       * actor->sprites = spriteSlots, 5 of 186 instructions differ in tbs-en.
+       */
       *(struct Sprite **)&actor->sprite = (struct Sprite *)spriteSlots;
       Dma_Fill32(0, spriteSlots, 16);
       sprite = Sprite_Create(encodedSprite);

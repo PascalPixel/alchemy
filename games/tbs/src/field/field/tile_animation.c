@@ -286,7 +286,7 @@ void BlendScript_Suspend(void) { Task_SuspendAll(BlendScript_Run); }
 void BlendScript_Resume(void) { Task_ResumeAll(BlendScript_Run); }
 
 /// Unused: allocates the palette cycling queue (HEAP_SLOT_PALETTE_CYCLES) with
-/// its four entries cleared. Nothing calls it.
+/// its four entries cleared.
 UNUSED void PaletteCycle_Initialize(void) {
   struct PaletteCycleWork *paletteCycles;
   struct PaletteCycle *cycle;
@@ -345,7 +345,7 @@ UNUSED s32 PaletteCycle_Add(s16 paletteNumber, s16 firstColor, s16 delay,
 }
 
 /// Unused: stops the palette cycles and frees their queue
-/// (HEAP_SLOT_PALETTE_CYCLES). Nothing calls it.
+/// (HEAP_SLOT_PALETTE_CYCLES).
 UNUSED void PaletteCycle_Stop(void) {
   Task_Remove(PaletteCycle_Step);
   HeapSlot_Release(HEAP_SLOT_PALETTE_CYCLES);

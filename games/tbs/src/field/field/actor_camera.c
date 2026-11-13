@@ -172,7 +172,7 @@ void ActorSystem_PlaceSprites(void) {
   HeapSlot_Release(HEAP_SLOT_FRAME_SCRATCH);
 }
 
-/// Unused: returns 1; nothing calls it.
+/// Unused: returns 1.
 UNUSED s32 ActorCamera_ReturnTrue(void) { return 1; }
 
 /// Each frame, with the fixed camera: places every actor's sprite, from the

@@ -1024,15 +1024,14 @@ void TitlePaletteFade_Initialize(void) {
   Task_Add(TitlePaletteFade_Update, TASK_PASS_FRAME);
 }
 
-/// Unused: removes the palette fade's task and frees its buffers. Nothing
-/// calls it.
+/// Unused: removes the palette fade's task and frees its buffers.
 UNUSED void TitlePaletteFade_Release(void) {
   Task_Remove(&TitlePaletteFade_Update);
   HeapSlot_Release(HEAP_SLOT_PALETTE_FADE);
 }
 
 /// Unused: sets the fade target by tinting the saved background and/or
-/// sprite palettes with the requested tint. Nothing calls it.
+/// sprite palettes with the requested tint.
 UNUSED void TitlePaletteFade_SetTarget(s32 mode, s32 selectedPalettes) {
   struct TitlePaletteFade *fade = (struct TitlePaletteFade *)gPaletteFadeWork;
 
@@ -1051,7 +1050,7 @@ void TitlePaletteFade_SetCurrent(s32 mode, s32 selectedPalettes) {
                                  selectedPalettes);
 }
 
-/// Unused: replaces the first saved colour, the backdrop. Nothing calls it.
+/// Unused: replaces the first saved colour, the backdrop.
 UNUSED void TitlePaletteFade_SetBackdrop(s32 color) {
   struct TitlePaletteFade *fade = (struct TitlePaletteFade *)gPaletteFadeWork;
 

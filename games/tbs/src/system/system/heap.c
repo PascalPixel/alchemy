@@ -169,5 +169,5 @@ void *Heap_AllocEwram(s32 size) {
   return (void *)allocationAddress;
 }
 
-/// Unused: reserved empty memory export; nothing calls it.
+/// Unused: reserved empty memory export.
 UNUSED void Heap_ReservedNoOp(void) {}

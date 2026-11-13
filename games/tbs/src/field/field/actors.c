@@ -568,7 +568,7 @@ void ActorSystem_ResumeProjectionAndHideLayers(void) {
       ~(DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_BG3_ON | DISPCNT_OBJ_ON);
 }
 
-/// Unused: returns 1; nothing calls it.
+/// Unused: returns 1.
 UNUSED s32 Actor_ReturnTrue(void) { return 1; }
 
 #undef ACTOR_DEFINE_APPLY

@@ -355,7 +355,7 @@ void Sound_WaitForBgmRestore(void) {
 
 /// Unused: returns the reverb code Sound_Play gives music `command`:
 /// SOUND_REVERB_LONG for MUS_ENDING, MUS_TITLE and MUS_ENDING_LOGO,
-/// SOUND_REVERB_NORMAL for the rest. Nothing in the game calls it.
+/// SOUND_REVERB_NORMAL for the rest.
 UNUSED s32 Sound_GetReverbCode(s32 command) {
   if (command == MUS_TITLE || command == MUS_ENDING_LOGO ||
       command == MUS_ENDING)

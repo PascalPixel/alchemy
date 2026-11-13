@@ -170,7 +170,7 @@ const struct Trigger *Scene_FindTrigger(s32 kind, s32 target) {
   return 0;
 }
 
-/// Unused: runs the loaded overlay's initialize entry; nothing calls it.
+/// Unused: runs the loaded overlay's initialize entry.
 UNUSED void Overlay_CallInitialize(void) { gOverlayArea.initialize(); }
 
 /// Returns the talk trigger of actor id, or 0: for the actor

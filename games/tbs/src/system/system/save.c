@@ -174,7 +174,7 @@ s32 Save_ReadSector(s32 index) {
 }
 
 /// Unused: erases flash sector `sector` with the flash library's routine for
-/// this chip. Nothing calls it.
+/// this chip.
 UNUSED u16 Save_EraseSector(u16 sector) { return gEraseFlashSector(sector); }
 
 /// Saves 4080 bytes from `source` as part `partId`: writes the new copy

@@ -409,7 +409,7 @@ void MapGrid_SetCellBehaviorAt(u32 layer, s32 x, s32 y, u32 behavior) {
 }
 
 /// Unused: returns the top two bits of the cell picture halfword of the cell at
-/// pixel (x, y). Nothing calls it.
+/// pixel (x, y).
 UNUSED s32 MapGrid_GetCellHighFlags(s32 x, s32 y) {
   s32 cellX = x / 16;
   s32 cellY = y / 16;

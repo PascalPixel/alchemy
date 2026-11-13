@@ -156,7 +156,7 @@ void m4aSoundMode(u32 mode) {
 }
 
 /// Unused: silences every PCM and CGB channel with the sound work's ident
-/// raised. Nothing in the game calls it.
+/// raised.
 UNUSED void SoundClear(void) {
   struct SoundInfo *work = SOUND_INFO_PTR;
   s32 channelCounter;
@@ -872,8 +872,7 @@ void m4aMPlayPitchControl(struct MusicPlayerInfo *player, u16 mask, s16 pitch) {
   player->ident = ID_NUMBER;
 }
 
-/// Unused: sets the stereo pan offset of selected active tracks. Nothing in the
-/// game calls it.
+/// Unused: sets the stereo pan offset of selected active tracks.
 UNUSED void m4aMPlayPanpotControl(struct MusicPlayerInfo *player, u16 mask,
                                   s8 pan) {
   s32 tracksRemaining;

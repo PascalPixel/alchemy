@@ -257,15 +257,15 @@ static s32 SuhallaDesert_ToggleActorActive(struct Actor *actor) {
 }
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
-  s16 selector = gMainRoutineWork.next;
+  s16 scene = gMainRoutineWork.next;
 
-  if (selector == (s32)&SceneId_SuhallaDesertNorth) {
+  if (scene == (s32)&SceneId_SuhallaDesertNorth) {
     return gSuhallaDesertNorthEntrances;
   }
-  if (selector == (s32)&SceneId_SuhallaDesertSouth) {
+  if (scene == (s32)&SceneId_SuhallaDesertSouth) {
     return gSuhallaDesertSouthEntrances;
   }
-  if (selector == (s32)&SceneId_SuhallaDesertCaves) {
+  if (scene == (s32)&SceneId_SuhallaDesertCaves) {
     return gSuhallaDesertCavesEntrances;
   }
   return gSuhallaDesertEntrancesOther;
@@ -278,15 +278,15 @@ const u32 *Scene_GetExits(void) { return gSuhallaDesertExits; }
 
 /// The storms, Iodem, and in the second scene Flash and what Reveal shows.
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  s16 selector = gMainRoutineWork.next;
+  s16 scene = gMainRoutineWork.next;
 
-  if (selector == (s32)&SceneId_SuhallaDesertNorth) {
+  if (scene == (s32)&SceneId_SuhallaDesertNorth) {
     return gSuhallaDesertNorthActorPlacements;
   }
-  if (selector == (s32)&SceneId_SuhallaDesertSouth) {
+  if (scene == (s32)&SceneId_SuhallaDesertSouth) {
     return gSuhallaDesertSouthActorPlacements;
   }
-  if (selector == (s32)&SceneId_SuhallaDesertCaves) {
+  if (scene == (s32)&SceneId_SuhallaDesertCaves) {
     return gSuhallaDesertCavesActorPlacements;
   }
   return gSuhallaDesertActorPlacementsOther;

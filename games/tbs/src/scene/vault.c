@@ -168,23 +168,23 @@ static void Vault_FaceActorAndWait(s32 actorId, s32 other, s32 delay);
 // The woman wanting the roof fixed walks about looking for the man who should
 // be fixing it and stops to face the leader when near, or while a conversation
 // holds the field.
-static UNREAD_RESULT Vault_UpdateRoofComplainerProximity(struct Actor *entity) {
+static UNREAD_RESULT Vault_UpdateRoofComplainerProximity(struct Actor *complainer) {
   struct WindowWork *window = (struct WindowWork *)gWindowWork[0];
   struct FieldWork *field =
       (struct FieldWork *)gWindowWork[HEAP_SLOT_FIELD - HEAP_SLOT_WINDOW];
-  s32 flag = 0;
-  s32 selector = 18;
+  s32 force = 0;
+  s32 range = 18;
   struct Actor *leader;
 
-  if (entity->targetX == ACTOR_NO_TARGET)
+  if (complainer->targetX == ACTOR_NO_TARGET)
     RETURN_UNREAD(0);
 
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if ((s16)field->talk != 0 || window->mindRead != 0) {
-    selector = 26;
-    flag = 1;
+    range = 26;
+    force = 1;
   }
-  Vault_StopIfFacingNear(entity, leader, selector, flag);
+  Vault_StopIfFacingNear(complainer, leader, range, force);
   RETURN_UNREAD(0);
 }
 

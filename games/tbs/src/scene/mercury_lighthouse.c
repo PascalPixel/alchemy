@@ -410,15 +410,15 @@ static void MercuryLighthouse_UpdateLeaderEffectTarget(void) {
 #include "shared/mercury_lighthouse_palette_cycle.h"
 
 const struct SceneEntrance *MercuryLighthouse_GetEntrances(void) {
-  s16 selector = gMainRoutineWork.next;
+  s16 scene = gMainRoutineWork.next;
 
-  if (selector == (s32)&SceneId_MercuryLighthouseExterior) {
+  if (scene == (s32)&SceneId_MercuryLighthouseExterior) {
     return gMercuryLighthouseExteriorEntrances;
   }
-  if (selector == (s32)&SceneId_MercuryLighthouseUpper) {
+  if (scene == (s32)&SceneId_MercuryLighthouseUpper) {
     return gMercuryLighthouseUpperEntrances;
   }
-  if (selector == (s32)&SceneId_MercuryLighthouseMiddle) {
+  if (scene == (s32)&SceneId_MercuryLighthouseMiddle) {
     return gMercuryLighthouseMiddleEntrances;
   }
   return gMercuryLighthouseEntrancesOther;
@@ -433,18 +433,18 @@ const u32 *MercuryLighthouse_GetExits(void) { return gMercuryLighthouse_Exits; }
 
 /// Selects the actors and obstacles for the current lighthouse scene.
 const struct ActorPlacement *MercuryLighthouse_GetActorPlacements(void) {
-  s16 selector = gMainRoutineWork.next;
+  s16 scene = gMainRoutineWork.next;
 
-  if (selector == (s32)&SceneId_MercuryLighthouseLower) {
+  if (scene == (s32)&SceneId_MercuryLighthouseLower) {
     return gMercuryLighthouseLowerActorPlacements;
   }
-  if (selector == (s32)&SceneId_MercuryLighthouseMiddle) {
+  if (scene == (s32)&SceneId_MercuryLighthouseMiddle) {
     return gMercuryLighthouseMiddleActorPlacements;
   }
-  if (selector == (s32)&SceneId_MercuryLighthouseUpper) {
+  if (scene == (s32)&SceneId_MercuryLighthouseUpper) {
     return gMercuryLighthouseUpperActorPlacements;
   }
-  if (selector == (s32)&SceneId_MercuryLighthouseExterior) {
+  if (scene == (s32)&SceneId_MercuryLighthouseExterior) {
     return gMercuryLighthouseExteriorActorPlacements;
   }
   return gMercuryLighthouseActorPlacementsOther;
@@ -489,15 +489,15 @@ static void MercuryLighthouse_InspectBlockedPassage(void) {
 
 /// Selects the puzzle interactions and dialogue for the current scene.
 const struct Trigger *MercuryLighthouse_GetTriggers(void) {
-  s16 selector = gMainRoutineWork.next;
+  s16 scene = gMainRoutineWork.next;
 
-  if (selector == (s32)&SceneId_MercuryLighthouseLower) {
+  if (scene == (s32)&SceneId_MercuryLighthouseLower) {
     return gMercuryLighthouseLowerTriggers;
   }
-  if (selector == (s32)&SceneId_MercuryLighthouseMiddle) {
+  if (scene == (s32)&SceneId_MercuryLighthouseMiddle) {
     return gMercuryLighthouseMiddleTriggers;
   }
-  if (selector == (s32)&SceneId_MercuryLighthouseUpper) {
+  if (scene == (s32)&SceneId_MercuryLighthouseUpper) {
     return gMercuryLighthouseUpperTriggers;
   }
   return gMercuryLighthouseTriggersOther;

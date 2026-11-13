@@ -438,15 +438,15 @@ static inline void MogallForest_ApePointsTheWay(s32 guideId) {
 }
 
 const struct SceneEntrance *MogallForest_GetEntrances(void) {
-  s16 selector = gMainRoutineWork.next;
+  s16 scene = gMainRoutineWork.next;
 
-  if (selector == (s32)&SceneId_MogallForestSign) {
+  if (scene == (s32)&SceneId_MogallForestSign) {
     return gMogallForestSign_Entrances;
   }
-  if (selector == (s32)&SceneId_MogallForestQuartz) {
+  if (scene == (s32)&SceneId_MogallForestQuartz) {
     return gMogallForestQuartz_Entrances;
   }
-  if (selector == (s32)&SceneId_MogallForestKillerApe) {
+  if (scene == (s32)&SceneId_MogallForestKillerApe) {
     return gMogallForestKillerApe_Entrances;
   }
   return gMogallForestSidePaths_Entrances;
@@ -458,15 +458,15 @@ const struct SceneExitRegion *MogallForest_GetRegions(void) { return NULL; }
 const u32 *MogallForest_GetExits(void) { return gMogallForest_Exits; }
 
 const struct ActorPlacement *MogallForest_GetActorPlacements(void) {
-  s16 selector = gMainRoutineWork.next;
+  s16 scene = gMainRoutineWork.next;
 
-  if (selector == (s32)&SceneId_MogallForestSign) {
+  if (scene == (s32)&SceneId_MogallForestSign) {
     return gMogallForestSign_ActorPlacements;
   }
-  if (selector == (s32)&SceneId_MogallForestQuartz) {
+  if (scene == (s32)&SceneId_MogallForestQuartz) {
     return gMogallForestQuartz_ActorPlacements;
   }
-  if (selector == (s32)&SceneId_MogallForestKillerApe) {
+  if (scene == (s32)&SceneId_MogallForestKillerApe) {
     return gMogallForestKillerApe_ActorPlacements;
   }
   return gMogallForestSidePaths_ActorPlacements;
@@ -1373,15 +1373,15 @@ static void MogallForest_KillerApeAttacks(void) {
 }
 
 const struct Trigger *MogallForest_GetTriggers(void) {
-  s16 selector = gMainRoutineWork.next;
+  s16 scene = gMainRoutineWork.next;
 
-  if (selector == (s32)&SceneId_MogallForestSign) {
+  if (scene == (s32)&SceneId_MogallForestSign) {
     return gMogallForestSign_Triggers;
   }
-  if (selector == (s32)&SceneId_MogallForestQuartz) {
+  if (scene == (s32)&SceneId_MogallForestQuartz) {
     return gMogallForestQuartz_Triggers;
   }
-  if (selector == (s32)&SceneId_MogallForestKillerApe) {
+  if (scene == (s32)&SceneId_MogallForestKillerApe) {
     return gMogallForestKillerApe_Triggers;
   }
   return gMogallForestSidePaths_Triggers;
